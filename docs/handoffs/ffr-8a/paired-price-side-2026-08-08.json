@@ -1,0 +1,133 @@
+{
+ "probe": "ffr8a phase3 paired price-side read",
+ "screens": {
+  "into_2022": {
+   "control": {
+    "adder_mean": 27.099,
+    "basis_source": "fallback",
+    "h_gt_100": 48,
+    "h_gt_1000": 48,
+    "margins": {
+     "coal": 200.8,
+     "gas_cc": 278.59,
+     "gas_ct": 246.03,
+     "gas_st": 192.4,
+     "nuclear": 349.47
+    },
+    "max": 5000.0,
+    "mean": 52.72
+   },
+   "repair": {
+    "adder_mean": 28.568,
+    "basis_source": "fallback",
+    "h_gt_100": 72,
+    "h_gt_1000": 72,
+    "margins": {
+     "coal": 219.19,
+     "gas_cc": 300.74,
+     "gas_ct": 268.05,
+     "gas_st": 208.61,
+     "nuclear": 374.14
+    },
+    "max": 5000.0,
+    "mean": 55.88
+   }
+  },
+  "into_2023": {
+   "control": {
+    "adder_mean": 39.997,
+    "basis_source": "fallback",
+    "h_gt_100": 72,
+    "h_gt_1000": 72,
+    "margins": {
+     "coal": 300.55,
+     "gas_cc": 390.69,
+     "gas_ct": 360.95,
+     "gas_st": 289.99,
+     "nuclear": 470.45
+    },
+    "max": 5000.0,
+    "mean": 67.73
+   },
+   "repair": {
+    "adder_mean": 39.362,
+    "basis_source": "fallback",
+    "h_gt_100": 120,
+    "h_gt_1000": 72,
+    "margins": {
+     "coal": 301.98,
+     "gas_cc": 392.68,
+     "gas_ct": 362.9,
+     "gas_st": 289.04,
+     "nuclear": 472.68
+    },
+    "max": 5000.0,
+    "mean": 68.02
+   }
+  },
+  "into_2024": {
+   "control": {
+    "adder_mean": 0.0,
+    "basis_source": "fallback",
+    "h_gt_100": 0,
+    "h_gt_1000": 0,
+    "margins": {
+     "coal": 0.0,
+     "gas_cc": 3.1,
+     "gas_ct": 0.12,
+     "gas_st": 0.0,
+     "nuclear": 31.97
+    },
+    "max": 24.4,
+    "mean": 10.49
+   },
+   "repair": {
+    "adder_mean": 0.005,
+    "basis_source": "fallback",
+    "h_gt_100": 0,
+    "h_gt_1000": 0,
+    "margins": {
+     "coal": 0.05,
+     "gas_cc": 8.94,
+     "gas_ct": 0.69,
+     "gas_st": 0.01,
+     "nuclear": 48.58
+    },
+    "max": 36.3,
+    "mean": 14.15
+   }
+  },
+  "into_2025": {
+   "control": {
+    "adder_mean": 0.004,
+    "basis_source": "fallback",
+    "h_gt_100": 0,
+    "h_gt_1000": 0,
+    "margins": {
+     "coal": 0.03,
+     "gas_cc": 0.44,
+     "gas_ct": 0.04,
+     "gas_st": 0.02,
+     "nuclear": 20.5
+    },
+    "max": 46.2,
+    "mean": 9.54
+   },
+   "repair": {
+    "adder_mean": 2.456,
+    "basis_source": "fallback",
+    "h_gt_100": 13,
+    "h_gt_1000": 7,
+    "margins": {
+     "coal": 16.96,
+     "gas_cc": 20.53,
+     "gas_ct": 19.37,
+     "gas_st": 17.13,
+     "nuclear": 49.8
+    },
+    "max": 4247.8,
+    "mean": 14.27
+   }
+  }
+ }
+}
