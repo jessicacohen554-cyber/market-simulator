@@ -61,6 +61,20 @@ override cannot engage below 5 days). Windows are capped strictly below the
 standard floor so the two extracts are disjoint. Consumed by
 ``market_sim.data.outages.unit_outage_short_derate_factors`` under
 ``ScenarioConfig.unit_outage_short_windows`` (default off).
+
+``--hour-grain`` (default off) additionally emits ``outage_start_hour`` /
+``outage_end_hour``, the DETECTED hour-of-day of each window's first and last
+outage hour. Detection has always been hourly while the extract stored dates, so
+``market_sim.data.outages`` had to re-expand every window to 00:00-23:00 and
+asserted up to 23 h per edge the detector never detected — precisely where the
+event-based contract guarantees the neighbouring hour was *running*
+(``results/calibration/FINDING-caiso181-envelope-depth-2026-08-07.md`` section 2
+measured this at 100 % of unit-grain CEMS contradictions). The two columns are
+OPTIONAL and per-ISO adoptable: the loader consumes them when present and falls
+back to the day-granular reconstruction when absent, and the flag-absent extract
+is byte-identical, so an ISO adopts the finer grain by re-deriving its own
+extract and nothing else (rule 25 ``[R-ISO-SCOPE]``). Zero DOF — no parameter,
+threshold or detector constant is involved.
 """
 
 from __future__ import annotations
@@ -754,6 +768,91 @@ def derive_eia923_noncampd_fallback(
         print(f"{code:>6} {str(nm)[:27]:<28}{g:<11}{n:>5}{td:>8.0f}")
 
 
+# ---------------------------------------------------------------------------
+# Optional hour-grain carriage (caiso-183)
+# ---------------------------------------------------------------------------
+# The detector works in HOURS (`start = clock[s]`, `last = clock[e - 1]`) but the
+# extract has always been written in DAYS, and the loader re-expands
+# `outage_start` 00:00 -> `outage_end` 23:00 — asserting up to 23 h at each edge
+# that the detector never detected, exactly where the event-based contract
+# guarantees the neighbouring hour was RUNNING. caiso-181 confirmed that seam at
+# 100 % of unit-grain CEMS contradictions (max distance from a window boundary
+# 22 h < 24, every year) and filed the repair as its own charter:
+# results/calibration/FINDING-caiso181-envelope-depth-2026-08-07.md section 5
+# item 1, pre-registered here as PRECHECK-caiso183-hedge-grain-2026-08-08.md.
+#
+# These two columns carry the DETECTED hour-of-day through the schema so the
+# loader can stop widening the window. They are OPTIONAL and emitted only under
+# --hour-grain, because this writer and market_sim.data.outages serve ALL SIX
+# ISOs: the flag-absent extract stays byte-identical, and an ISO adopts the finer
+# grain by re-deriving its own extract and nothing else (rule 25 [R-ISO-SCOPE]).
+# Zero DOF: no parameter, no threshold, no detector constant is involved.
+HOUR_GRAIN_COLUMNS: tuple[str, str] = ("outage_start_hour", "outage_end_hour")
+
+#: capacity_source of the EIA-923 net-zero fallback rows, whose window is a whole
+#: calendar year by construction and so carries a nominal 365.0 duration_days
+#: even in a leap year. Excluded from the duration cross-check below.
+_NETZERO_SOURCE: str = "eia923_netzero"
+
+
+def assert_hour_grain_consistent(frame: pd.DataFrame) -> None:
+    """Assert the emitted hour columns agree with the day columns they accompany.
+
+    Stop-the-line by design (the ercot-174 BE-3 discipline): a grain change may
+    express a window more precisely, but it may never move one. Three checks,
+    all on the frame exactly as it will be written:
+
+    1. every emitted hour is an integer in ``[0, 23]``;
+    2. the reconstructed window ``[start + h0, end + h1 + 1h)`` is non-empty and
+       a **subset** of the incumbent day-granular window ``[start, end + 1 day)``
+       — so the repair can only ever REMOVE asserted unavailability, never
+       invent it;
+    3. the reconstructed window's length in hours reproduces the detector's own
+       ``duration_days`` (which is ``round((e - s) / 24, 1)``), which ties the
+       hours back to the detection pass rather than to a re-derivation.
+
+    Args:
+        frame: The extract as built, carrying :data:`HOUR_GRAIN_COLUMNS`.
+
+    Raises:
+        AssertionError: If any row's hour grain is inconsistent with its days.
+    """
+    if frame.empty:
+        return
+    h0, h1 = (frame[c] for c in HOUR_GRAIN_COLUMNS)
+    bad_range = ~(h0.between(0, 23) & h1.between(0, 23))
+    assert not bad_range.any(), (
+        f"hour-grain: {int(bad_range.sum())} row(s) carry an hour outside [0, 23]"
+    )
+
+    start = pd.to_datetime(frame["outage_start"]) + pd.to_timedelta(
+        h0.astype(int), unit="h"
+    )
+    stop = pd.to_datetime(frame["outage_end"]) + pd.to_timedelta(
+        h1.astype(int) + 1, unit="h"
+    )
+    day_stop = pd.to_datetime(frame["outage_end"]) + pd.Timedelta(days=1)
+    empty = stop <= start
+    assert not empty.any(), (
+        f"hour-grain: {int(empty.sum())} row(s) reconstruct to an empty window"
+    )
+    outside = (start < pd.to_datetime(frame["outage_start"])) | (stop > day_stop)
+    assert not outside.any(), (
+        f"hour-grain: {int(outside.sum())} row(s) reconstruct OUTSIDE the "
+        f"day-granular window — the repair must only ever narrow it"
+    )
+
+    detected = frame["capacity_source"].astype(str) != _NETZERO_SOURCE
+    hours = (stop - start).dt.total_seconds() / 3600.0
+    mismatch = detected & (
+        (hours / 24.0).round(1) != frame["duration_days"].astype(float)
+    )
+    assert not mismatch.any(), (
+        f"hour-grain: {int(mismatch.sum())} row(s) whose reconstructed window "
+        f"length disagrees with the detector's own duration_days"
+    )
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
@@ -851,6 +950,22 @@ def main() -> None:
         default=None,
         help="Output CSV; defaults to data/raw/campd-unit-outages.csv "
         "(ERCOT) or campd-unit-outages-{ISO}.csv.",
+    )
+    ap.add_argument(
+        "--hour-grain",
+        action="store_true",
+        help="DEFAULT-OFF: also emit outage_start_hour / outage_end_hour, the "
+        "DETECTED hour-of-day of the window's first and last outage hour. The "
+        "detector has always worked in hours while the extract stored days, so "
+        "market_sim.data.outages re-expanded every window to 00:00-23:00 and "
+        "asserted up to 23 h per edge it never detected — precisely where the "
+        "event-based contract guarantees the neighbouring hour was RUNNING "
+        "(caiso-181 measured this at 100%% of unit-grain CEMS contradictions, "
+        "max 22 h from a boundary). The loader consumes the two columns when "
+        "present and falls back to the day-granular reconstruction when absent, "
+        "so this is per-ISO adoptable and the flag-absent extract is "
+        "BYTE-IDENTICAL. Zero DOF: no parameter, threshold or detector constant "
+        "is involved. See PRECHECK-caiso183-hedge-grain-2026-08-08.md.",
     )
     ap.add_argument(
         "--eia923-noncampd-fallback",
@@ -1435,6 +1550,15 @@ def main() -> None:
                             "capacity_source": cap_src,
                             "outage_start": start.strftime("%Y-%m-%d"),
                             "outage_end": last.strftime("%Y-%m-%d"),
+                            # caiso-183: the DETECTED hour-of-day, taken from the
+                            # SAME `start` / `last` the day strings above are
+                            # formatted from, so the two grains can never
+                            # disagree. Always computed; emitted only when
+                            # HOUR_GRAIN_COLUMNS is in `cols` (--hour-grain),
+                            # which is what keeps the default extract byte-inert
+                            # for all six ISOs.
+                            "outage_start_hour": int(start.hour),
+                            "outage_end_hour": int(last.hour),
                             "duration_days": duration_days,
                             "peer_units_online": peers,
                             "total_units_at_plant": len(units),
@@ -1522,6 +1646,13 @@ def main() -> None:
                         "capacity_source": "eia923_netzero",
                         "outage_start": f"{year}-01-01",
                         "outage_end": f"{year}-12-31",
+                        # caiso-183: an EIA-923 net-zero fallback window spans a
+                        # whole calendar year by construction, so its hour grain
+                        # IS its day grain (00:00 through 23:00). Written
+                        # explicitly rather than left null so the column is fully
+                        # populated wherever it is emitted.
+                        "outage_start_hour": 0,
+                        "outage_end_hour": 23,
                         "duration_days": 365.0,
                         "peer_units_online": 0,
                         "total_units_at_plant": 1,
@@ -1554,14 +1685,33 @@ def main() -> None:
         "peer_units_online",
         "total_units_at_plant",
     ]
+    base_cols = list(cols)
+    if args.hour_grain:
+        # caiso-183: appended AFTER the incumbent header, so every existing
+        # column and value keeps its position. Without the flag these keys are
+        # simply not selected out of `rows`, which is what makes the default
+        # extract byte-identical for all six ISOs.
+        cols += list(HOUR_GRAIN_COLUMNS)
     if args.partial_windows:
         # Unit-grain partial file carries the measured availability fraction the
         # unit ran at during each plateau (the extra column vs the full-stop
         # extracts); the consumer removes (1 - derate_factor) x unit_capacity.
         cols.append("derate_factor")
-    out = pd.DataFrame(rows, columns=cols).sort_values(
-        ["facility_id", "unit_id", "outage_start"]
-    )
+        base_cols.append("derate_factor")
+    sort_by = ["facility_id", "unit_id", "outage_start"]
+    out = pd.DataFrame(rows, columns=cols).sort_values(sort_by)
+    if args.hour_grain:
+        # Stop-the-line (ercot-174 BE-3 discipline): the hour columns must agree
+        # with the day columns they accompany, and the base-column projection
+        # must be exactly the frame this run would write WITHOUT the flag — the
+        # in-process statement that the two columns are additive and coupled to
+        # nothing. A failure here means the grain change reached detection.
+        assert_hour_grain_consistent(out)
+        base_frame = pd.DataFrame(rows, columns=base_cols).sort_values(sort_by)
+        assert out[base_cols].equals(base_frame), (
+            "hour-grain: the base-column projection is not identical to the "
+            "flag-absent frame — the grain change moved a detected window"
+        )
     out.to_csv(args.out, index=False)
 
     if args.merit_order_guard:
@@ -1587,6 +1737,10 @@ def main() -> None:
             )
         lay = pd.DataFrame(layup_rows, columns=[*cols, "out_of_merit_share"])
         lay = lay.sort_values(["facility_id", "unit_id", "outage_start"])
+        if args.hour_grain:
+            # The companion carries the same windows at the same grain, so it
+            # answers to the same invariant.
+            assert_hour_grain_consistent(lay)
         lay.to_csv(layup_path, index=False)
         print(
             f"\nmerit-order guard: reclassified {len(lay)} windows as economic "

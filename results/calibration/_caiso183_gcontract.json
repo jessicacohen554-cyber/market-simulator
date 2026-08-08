@@ -1,0 +1,102 @@
+{
+ "session": "caiso-183",
+ "gate": "G-CONTRACT",
+ "statement": "the repaired envelope must still clear caiso-181's B-1 (interior CEMS contradiction ~ 0) AND its EDGE contradictions must COLLAPSE. Instrument: scripts/probes/_caiso181_cems_confrontation.py, made grain-aware so it keeps mirroring the loader it was built to mirror.",
+ "years": {
+  "2023": {
+   "before_day_grain": {
+    "n_windows": 545,
+    "share_above_contract": 0.03358004,
+    "interior_share_above_contract": 0.0,
+    "contradicted_cems_mwh": 762479.0,
+    "edge_share_of_contradicted_mwh": 0.9999,
+    "B1_fires": false,
+    "L2_impossible_mwh": 1349277.5,
+    "L2_impossible_share_of_depth": 0.036785,
+    "B2_fires": false
+   },
+   "after_hour_grain": {
+    "n_windows": 545,
+    "share_above_contract": 0.0,
+    "interior_share_above_contract": 0.0,
+    "contradicted_cems_mwh": 185.0,
+    "edge_share_of_contradicted_mwh": 0.8216,
+    "B1_fires": false,
+    "L2_impossible_mwh": 734242.1,
+    "L2_impossible_share_of_depth": 0.020018,
+    "B2_fires": false
+   },
+   "collapse": {
+    "windows_unchanged": true,
+    "contradiction_share": "0.033580 -> 0.000000",
+    "contradicted_cems_mwh_removed_pct": 99.976,
+    "interior_stays_zero": true
+   }
+  },
+  "2024": {
+   "before_day_grain": {
+    "n_windows": 456,
+    "share_above_contract": 0.03248471,
+    "interior_share_above_contract": 0.0,
+    "contradicted_cems_mwh": 927356.0,
+    "edge_share_of_contradicted_mwh": 1.0,
+    "B1_fires": false,
+    "L2_impossible_mwh": 1714458.0,
+    "L2_impossible_share_of_depth": 0.039983,
+    "B2_fires": false
+   },
+   "after_hour_grain": {
+    "n_windows": 456,
+    "share_above_contract": 0.0,
+    "interior_share_above_contract": 0.0,
+    "contradicted_cems_mwh": 182.0,
+    "edge_share_of_contradicted_mwh": 0.8846,
+    "B1_fires": false,
+    "L2_impossible_mwh": 951313.1,
+    "L2_impossible_share_of_depth": 0.022185,
+    "B2_fires": false
+   },
+   "collapse": {
+    "windows_unchanged": true,
+    "contradiction_share": "0.032485 -> 0.000000",
+    "contradicted_cems_mwh_removed_pct": 99.98,
+    "interior_stays_zero": true
+   }
+  },
+  "2025": {
+   "before_day_grain": {
+    "n_windows": 603,
+    "share_above_contract": 0.03549923,
+    "interior_share_above_contract": 0.0,
+    "contradicted_cems_mwh": 1263185.0,
+    "edge_share_of_contradicted_mwh": 0.9999,
+    "B1_fires": false,
+    "L2_impossible_mwh": 1839441.4,
+    "L2_impossible_share_of_depth": 0.033185,
+    "B2_fires": false
+   },
+   "after_hour_grain": {
+    "n_windows": 603,
+    "share_above_contract": 0.0,
+    "interior_share_above_contract": 0.0,
+    "contradicted_cems_mwh": 299.0,
+    "edge_share_of_contradicted_mwh": 0.8696,
+    "B1_fires": false,
+    "L2_impossible_mwh": 764713.2,
+    "L2_impossible_share_of_depth": 0.013796,
+    "B2_fires": false
+   },
+   "collapse": {
+    "windows_unchanged": true,
+    "contradiction_share": "0.035499 -> 0.000000",
+    "contradicted_cems_mwh_removed_pct": 99.976,
+    "interior_stays_zero": true
+   }
+  }
+ },
+ "verdict": {
+  "G_CONTRACT": "PASS",
+  "basis": "edge contradictions collapse to EXACTLY 0.000000 in all three years while interior stays exactly 0; contradicted CEMS energy falls 762,479/927,356/1,263,185 -> 185/182/299 MW-h (99.98 %). Window count is unchanged (545/456/603 scored), so nothing was removed from DETECTION \u2014 only the un-detected edge hours stop being asserted.",
+  "caiso181_cross_check": "caiso-181 decomposed L2 into a BASIS term (1.26/1.62/0.75 pp, un-representable by any envelope) and an ENVELOPE-EXCESS term (2.42/2.38/2.57 pp) of which it measured 74.2/79.6/80.8 % as edge-day. Post-repair L2 is 2.00/2.22/1.38 pp, so the envelope-excess term falls to ~0.74/0.60/0.63 pp -- a 69/75/75 % reduction against a predicted 74/80/81 %. The repair lands where caiso-181 said it would."
+ }
+}

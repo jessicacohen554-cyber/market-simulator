@@ -1,0 +1,135 @@
+{
+ "session": "caiso-183",
+ "precheck": "results/calibration/PRECHECK-caiso183-hedge-grain-2026-08-08.md",
+ "recipe": "--years 2018 \u2026 2026 --merit-order-guard",
+ "be_ledger": {
+  "ERCOT": {
+   "committed_sha": "b569de2a48d0b6e03b22272d1fb165e11b826b6c11b4dfd4f622e63f96d32812",
+   "be1_sha": "b569de2a48d0b6e03b22272d1fb165e11b826b6c11b4dfd4f622e63f96d32812",
+   "be2_sha": "b569de2a48d0b6e03b22272d1fb165e11b826b6c11b4dfd4f622e63f96d32812",
+   "be1_reproduces_committed": true,
+   "be2_identical_to_be1": true,
+   "be2_identical_to_committed": true
+  },
+  "CAISO": {
+   "committed_sha": "c4ded33df08de5927fd58fa7200320353e73ceedfeb0084586ffd2e32f93ff5e",
+   "be1_sha": "c4ded33df08de5927fd58fa7200320353e73ceedfeb0084586ffd2e32f93ff5e",
+   "be2_sha": "c4ded33df08de5927fd58fa7200320353e73ceedfeb0084586ffd2e32f93ff5e",
+   "be1_reproduces_committed": true,
+   "be2_identical_to_be1": true,
+   "be2_identical_to_committed": true
+  },
+  "PJM": {
+   "committed_sha": "312a11b84778441cdf3f4dbe580ab4941122e5e30355d7b91b9b4c56e3924312",
+   "be1_sha": "312a11b84778441cdf3f4dbe580ab4941122e5e30355d7b91b9b4c56e3924312",
+   "be2_sha": "312a11b84778441cdf3f4dbe580ab4941122e5e30355d7b91b9b4c56e3924312",
+   "be1_reproduces_committed": true,
+   "be2_identical_to_be1": true,
+   "be2_identical_to_committed": true
+  },
+  "MISO": {
+   "committed_sha": "690ae22061c7f4fbfcfd00c998bb66236751559c373b95dbcc61b4d814d323b1",
+   "be1_sha": "6a893a6e654073a4ec8657a6430b0e205b79c5bf3d2b1cae9a9969655548ceb3",
+   "be2_sha": "6a893a6e654073a4ec8657a6430b0e205b79c5bf3d2b1cae9a9969655548ceb3",
+   "be1_reproduces_committed": false,
+   "be2_identical_to_be1": true,
+   "be2_identical_to_committed": false
+  },
+  "NYISO": {
+   "committed_sha": "587dd6fae0570203675ad7469ff7cbdb1842972818b721e0b93dcd5077299524",
+   "be1_sha": "587dd6fae0570203675ad7469ff7cbdb1842972818b721e0b93dcd5077299524",
+   "be2_sha": "587dd6fae0570203675ad7469ff7cbdb1842972818b721e0b93dcd5077299524",
+   "be1_reproduces_committed": true,
+   "be2_identical_to_be1": true,
+   "be2_identical_to_committed": true
+  },
+  "NEISO": {
+   "committed_sha": "83e80b4962098de4fdd4796f6d5f8013128efab66871b28b87a69500397fb04a",
+   "be1_sha": "3c169057dc4ba2375b8f88c9e58e844f3862cc5bb2ada126b70cc5cb32ed6861",
+   "be2_sha": "3c169057dc4ba2375b8f88c9e58e844f3862cc5bb2ada126b70cc5cb32ed6861",
+   "be1_reproduces_committed": false,
+   "be2_identical_to_be1": true,
+   "be2_identical_to_committed": false
+  },
+  "_gate_G_SIXISO": {
+   "statement": "every ISO's flag-absent extract is sha256-identical to its own BE-1 output",
+   "verdict": "PASS"
+  },
+  "_be1_committed_mismatches": [
+   "MISO",
+   "NEISO"
+  ],
+  "_be1_note": "PRECHECK \u00a74a disclosed MISO's BE-1 mismatch in advance (xiso-2 \u00a74: strict superset, +17 windows / 0 lost, all 2022 COAL, layup companion byte-identical; root cause commit 5cd937407 filling the MISO EIA-930 2022 hole). It is a property of the committed MISO blob, not of this change \u2014 which is why G-SIXISO binds on the self-comparison above."
+ },
+ "be3_detection_identity": {
+  "rows": 4328,
+  "base_columns_identical": true,
+  "row_order_identical": true,
+  "hours_in_range": true,
+  "windows_by_year": {
+   "2023": 547,
+   "2024": 458,
+   "2025": 635
+  },
+  "start_hour_nonzero_share": 0.8138,
+  "end_hour_not_23_share": 0.9217,
+  "verdict": "PASS"
+ },
+ "G_NOFIT": {
+  "values": {
+   "_MIN_DAYS": 5.0,
+   "_SMOOTH_DAYS": 7.0,
+   "_CEILING_FRAC": 0.65,
+   "_RUN_FLOOR_CF": 0.06,
+   "_BASELOAD_CF": 0.55,
+   "ST_GAS_CF_PEAK": 0.02
+  },
+  "verdict": "PASS"
+ },
+ "depth": {
+  "per_year": {
+   "2023": {
+    "day_grain_depth_mwh": 36679915.2,
+    "hour_grain_depth_mwh": 34836206.8,
+    "removed_mwh": 1843708.4,
+    "removed_share_of_day_depth": 0.050265,
+    "G_DEPTH_literal_floor_mwh": 38025422.4,
+    "G_DEPTH_literal_pass": false,
+    "G_DEPTH_literal_baseline_pass": false,
+    "G_DEPTH_prime_allowance_mwh": 1345507.2,
+    "G_DEPTH_prime_pass": false
+   },
+   "2024": {
+    "day_grain_depth_mwh": 42880322.4,
+    "hour_grain_depth_mwh": 41041818.0,
+    "removed_mwh": 1838504.4,
+    "removed_share_of_day_depth": 0.042875,
+    "G_DEPTH_literal_floor_mwh": 38803483.2,
+    "G_DEPTH_literal_pass": true,
+    "G_DEPTH_literal_baseline_pass": true,
+    "G_DEPTH_prime_allowance_mwh": 4076839.2,
+    "G_DEPTH_prime_pass": true
+   },
+   "2025": {
+    "day_grain_depth_mwh": 55429857.6,
+    "hour_grain_depth_mwh": 52955071.8,
+    "removed_mwh": 2474785.8,
+    "removed_share_of_day_depth": 0.044647,
+    "G_DEPTH_literal_floor_mwh": 49987807.2,
+    "G_DEPTH_literal_pass": true,
+    "G_DEPTH_literal_baseline_pass": true,
+    "G_DEPTH_prime_allowance_mwh": 5442050.4,
+    "G_DEPTH_prime_pass": true
+   }
+  },
+  "G_DEPTH_prime_verdict": "FAIL",
+  "G_DEPTH_prime_years_failed": [
+   "2023"
+  ],
+  "G_DEPTH_literal_verdict": "FAIL",
+  "G_DEPTH_literal_years_below_floor": [
+   "2023"
+  ],
+  "note": "PRECHECK \u00a76a pre-registered BOTH readings before measurement, because the literal floor's 2023 leg is already breached by the UNREPAIRED baseline (A0 36.68 M < A1 38.03 M): the regeneration REMOVED depth that year, so the gate's premise does not hold there. G-DEPTH\u2032 is the binding form and is well-defined in all three years."
+ }
+}

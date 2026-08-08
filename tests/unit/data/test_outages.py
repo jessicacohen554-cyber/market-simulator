@@ -1610,5 +1610,171 @@ class UnitScopedEventCapCompositionTest(unittest.TestCase):
         )
 
 
+def _unit_outage_row(**over) -> dict:
+    """Return one well-formed unit-outage event row, overridable per test."""
+    row = {
+        "facility_name": "Grain Test",
+        "facility_id": 70002,
+        "unit_id": "1",
+        "unit_capacity_mw": 500.0,
+        "plant_capacity_mw": 500.0,
+        "unit_pct_of_plant": 100.0,
+        "plant_group": "COAL",
+        "capacity_source": "eia_exact",
+        "outage_start": "2023-06-01",
+        "outage_end": "2023-06-20",
+        "duration_days": 20.0,
+        "peer_units_online": 0,
+        "total_units_at_plant": 1,
+    }
+    row.update(over)
+    return row
+
+
+class UnitOutageHourGrainTest(unittest.TestCase):
+    """The OPTIONAL hour-grain carriage (caiso-183).
+
+    The detector works in hours but the extract stored days, so the loader used
+    to re-expand every window to ``outage_start`` 00:00 -> ``outage_end`` 23:00
+    and assert up to 23 h per edge it never detected. These cover the three
+    properties the repair rests on: the day-granular fallback is unchanged, the
+    hour grain narrows the window to exactly what was detected, and a null hour
+    falls back per row.
+    """
+
+    def _factors(self, rows: list[dict], year: int = 2023):
+        from unittest.mock import patch
+
+        from market_sim.data import outages
+
+        with tempfile.TemporaryDirectory() as td:
+            csv = Path(td) / "campd-unit-outages-MISO.csv"
+            pd.DataFrame(rows).to_csv(csv, index=False)
+            outages.unit_outage_derate_factors.cache_clear()
+            with (
+                patch.object(outages, "unit_outage_csv_for_iso", return_value=csv),
+                patch.object(
+                    outages,
+                    "_iso_plant_capacity",
+                    return_value={(70002, "COAL"): 500.0},
+                ),
+            ):
+                return outages.unit_outage_derate_factors(
+                    year, HOURS_PER_YEAR, iso="MISO"
+                )
+
+    def test_absent_hour_columns_reproduce_the_day_granular_window(self):
+        # The fallback is the incumbent behaviour by IDENTITY: an absent grain
+        # is exactly start_hour 0 / end_hour 23, and +(23+1) h == +1 day.
+        without = self._factors([_unit_outage_row()])[(70002, "COAL")]
+        with_zero_23 = self._factors(
+            [_unit_outage_row(outage_start_hour=0, outage_end_hour=23)]
+        )[(70002, "COAL")]
+        np.testing.assert_array_equal(without, with_zero_23)
+        # Jun 1 00:00 through Jun 20 23:00 inclusive = 20 days.
+        self.assertEqual(int((1.0 - without).sum()), 20 * 24)
+
+    def test_hour_grain_narrows_the_window_to_what_was_detected(self):
+        arr = self._factors(
+            [
+                _unit_outage_row(
+                    outage_start_hour=22, outage_end_hour=1, duration_days=18.2
+                )
+            ]
+        )[(70002, "COAL")]
+        # Detected span is Jun 1 22:00 -> Jun 20 01:00 inclusive = 19.2 days.
+        self.assertEqual(int((1.0 - arr).sum()), 20 * 24 - 22 - 22)
+        self.assertEqual(arr[_hour_of_year(6, 1, 21)], 1.0)  # still running
+        self.assertEqual(arr[_hour_of_year(6, 1, 22)], 0.0)  # first detected hour
+        self.assertEqual(arr[_hour_of_year(6, 20, 1)], 0.0)  # last detected hour
+        self.assertEqual(arr[_hour_of_year(6, 20, 2)], 1.0)  # back in service
+
+    def test_hour_grain_only_ever_narrows(self):
+        # The monotone-subset invariant the deriver asserts, seen from the
+        # loader: no hour grain can widen the day-granular window.
+        day = self._factors([_unit_outage_row()])[(70002, "COAL")]
+        for h0, h1 in ((0, 23), (5, 23), (0, 5), (23, 0)):
+            arr = self._factors(
+                [_unit_outage_row(outage_start_hour=h0, outage_end_hour=h1)]
+            )[(70002, "COAL")]
+            self.assertTrue(
+                bool(np.all(arr >= day)),
+                f"hour grain ({h0}, {h1}) widened the window",
+            )
+
+    def test_null_hours_fall_back_row_by_row(self):
+        # A partially-populated extract degrades per row rather than raising.
+        arr = self._factors(
+            [
+                _unit_outage_row(outage_start_hour=float("nan"), outage_end_hour=23),
+                _unit_outage_row(
+                    facility_id=70002,
+                    unit_id="2",
+                    outage_start="2023-09-01",
+                    outage_end="2023-09-10",
+                    duration_days=10.0,
+                    outage_start_hour=6,
+                    outage_end_hour=5,
+                ),
+            ]
+        )[(70002, "COAL")]
+        # Row 1 fell back to the full day-granular window...
+        self.assertEqual(arr[_hour_of_year(6, 1, 0)], 0.0)
+        # ...row 2 used its detected hours.
+        self.assertEqual(arr[_hour_of_year(9, 1, 5)], 1.0)
+        self.assertEqual(arr[_hour_of_year(9, 1, 6)], 0.0)
+
+
+class DeriverHourGrainAssertionTest(unittest.TestCase):
+    """The deriver's stop-the-line grain assertions (ercot-174 BE-3 class)."""
+
+    def _assert_fn(self):
+        import importlib
+
+        mod = importlib.import_module("scripts.data.derive_campd_unit_outages")
+        return mod.assert_hour_grain_consistent
+
+    def _frame(self, **over) -> pd.DataFrame:
+        # Jun 1 22:00 -> Jun 20 01:00 inclusive = 436 h = 18.2 d, which is what
+        # the detector's own round((e - s) / 24, 1) would record.
+        row = _unit_outage_row(outage_start_hour=22, outage_end_hour=1)
+        row["duration_days"] = 18.2
+        row.update(over)
+        return pd.DataFrame([row])
+
+    def test_accepts_a_consistent_frame(self):
+        self._assert_fn()(self._frame())
+
+    def test_rejects_an_hour_outside_the_day(self):
+        with self.assertRaises(AssertionError):
+            self._assert_fn()(self._frame(outage_start_hour=24))
+
+    def test_rejects_a_window_that_disagrees_with_duration_days(self):
+        with self.assertRaises(AssertionError):
+            self._assert_fn()(self._frame(duration_days=20.0))
+
+    def test_rejects_an_empty_window(self):
+        with self.assertRaises(AssertionError):
+            self._assert_fn()(
+                self._frame(
+                    outage_end="2023-06-01", outage_start_hour=10, outage_end_hour=5
+                )
+            )
+
+    def test_netzero_rows_are_exempt_from_the_duration_check(self):
+        # An EIA-923 net-zero window is a whole calendar year carrying a nominal
+        # 365.0 duration_days, which a leap year would otherwise trip.
+        self._assert_fn()(
+            self._frame(
+                capacity_source="eia923_netzero",
+                outage_start="2024-01-01",
+                outage_end="2024-12-31",
+                outage_start_hour=0,
+                outage_end_hour=23,
+                duration_days=365.0,
+            )
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
