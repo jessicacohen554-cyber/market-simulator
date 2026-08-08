@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import sys
 from collections import defaultdict
+from collections.abc import Iterator
 from pathlib import Path
 
 import pandas as pd
@@ -56,10 +57,24 @@ def _curate_spec(
     written: list[Path] = []
     for year in sorted(by_year):
         files = by_year[year]
-        frames = [spec.parse_day(f) for f in files]
-        df = pd.concat(frames, ignore_index=True)
-        out = clean_io.write_clean(
-            df,
+        # STREAMED, not concatenated: holding every day-frame and then letting
+        # write_clean take a full pa.Table.from_pandas copy on top put a
+        # 365-day CAISO year (~32 M rows) at ~14.3 GB against a ~15 GB ceiling
+        # (caiso-178; data/raw/caiso-public-bids/README.md). write_clean_iter
+        # bounds peak memory at one row group and is proven to write the same
+        # bytes (scripts/probes/_caiso182_curate_stream_be.py: content,
+        # row-group layout and normalised data sha256 all identical).
+        n_rows = 0
+
+        def _days() -> Iterator[pd.DataFrame]:
+            nonlocal n_rows
+            for f in files:
+                frame = spec.parse_day(f)
+                n_rows += len(frame)
+                yield frame
+
+        out = clean_io.write_clean_iter(
+            _days(),
             DATATYPE,
             iso=spec.iso,
             year=year,
@@ -72,7 +87,7 @@ def _curate_spec(
         )
         clean_io.validate_clean(out)
         written.append(out)
-        print(f"  {spec.iso} {year}: {len(df):,} rows from {len(files)} days -> {out}")
+        print(f"  {spec.iso} {year}: {n_rows:,} rows from {len(files)} days -> {out}")
     return written
 
 
