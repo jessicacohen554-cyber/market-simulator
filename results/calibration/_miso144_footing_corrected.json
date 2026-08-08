@@ -1,0 +1,178 @@
+{
+  "prereg": "results/calibration/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md",
+  "status": "SUPPLEMENTARY / POST-HOC -- not among the pre-registered predictions; two-sided completion of the construction-error account (the miso-143 footing bar 4.00 median|err| is carried for reference, not re-adjudicated)",
+  "miso143_footing_reference": {
+    "construction": "ALL-CLASS stack vs THERMAL_COLS need",
+    "result": "median|err| 9.66-10.00, bias -10.6 to -10.9 (2025 JJA), FAIL"
+  },
+  "years": {
+    "2023": {
+      "W1_jun_jul_h8_20": {
+        "n_hours": 793,
+        "lo": {
+          "v1_thermal_need": {
+            "bias_mean": 0.731,
+            "median_abs_err": 0.72,
+            "r": 0.9847
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -0.76,
+            "median_abs_err": 0.718,
+            "r": 0.987
+          }
+        },
+        "hi": {
+          "v1_thermal_need": {
+            "bias_mean": 0.171,
+            "median_abs_err": 0.384,
+            "r": 0.9877
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -1.435,
+            "median_abs_err": 1.366,
+            "r": 0.9873
+          }
+        }
+      },
+      "JJA_h12_17": {
+        "n_hours": 552,
+        "lo": {
+          "v1_thermal_need": {
+            "bias_mean": 1.144,
+            "median_abs_err": 0.958,
+            "r": 0.9965
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -2.373,
+            "median_abs_err": 0.753,
+            "r": 0.9369
+          }
+        },
+        "hi": {
+          "v1_thermal_need": {
+            "bias_mean": 0.46,
+            "median_abs_err": 0.469,
+            "r": 0.9973
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -3.176,
+            "median_abs_err": 1.479,
+            "r": 0.9399
+          }
+        }
+      }
+    },
+    "2024": {
+      "W1_jun_jul_h8_20": {
+        "n_hours": 793,
+        "lo": {
+          "v1_thermal_need": {
+            "bias_mean": 0.225,
+            "median_abs_err": 0.54,
+            "r": 0.9833
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -1.315,
+            "median_abs_err": 1.298,
+            "r": 0.979
+          }
+        },
+        "hi": {
+          "v1_thermal_need": {
+            "bias_mean": -0.319,
+            "median_abs_err": 0.515,
+            "r": 0.9867
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -1.924,
+            "median_abs_err": 1.802,
+            "r": 0.9805
+          }
+        }
+      },
+      "JJA_h12_17": {
+        "n_hours": 552,
+        "lo": {
+          "v1_thermal_need": {
+            "bias_mean": 2.674,
+            "median_abs_err": 0.588,
+            "r": 0.9876
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -1.579,
+            "median_abs_err": 1.109,
+            "r": 0.9964
+          }
+        },
+        "hi": {
+          "v1_thermal_need": {
+            "bias_mean": 2.061,
+            "median_abs_err": 0.512,
+            "r": 0.9857
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -2.262,
+            "median_abs_err": 1.666,
+            "r": 0.9964
+          }
+        }
+      }
+    },
+    "2025": {
+      "W1_jun_jul_h8_20": {
+        "n_hours": 793,
+        "lo": {
+          "v1_thermal_need": {
+            "bias_mean": 0.843,
+            "median_abs_err": 0.977,
+            "r": 0.9929
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -3.626,
+            "median_abs_err": 1.37,
+            "r": 0.9161
+          }
+        },
+        "hi": {
+          "v1_thermal_need": {
+            "bias_mean": -0.062,
+            "median_abs_err": 0.672,
+            "r": 0.9919
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -4.657,
+            "median_abs_err": 2.488,
+            "r": 0.9196
+          }
+        }
+      },
+      "JJA_h12_17": {
+        "n_hours": 552,
+        "lo": {
+          "v1_thermal_need": {
+            "bias_mean": 0.999,
+            "median_abs_err": 0.995,
+            "r": 0.9924
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -3.094,
+            "median_abs_err": 1.152,
+            "r": 0.887
+          }
+        },
+        "hi": {
+          "v1_thermal_need": {
+            "bias_mean": 0.062,
+            "median_abs_err": 0.581,
+            "r": 0.9916
+          },
+          "v2_plus_reserve": {
+            "bias_mean": -4.188,
+            "median_abs_err": 2.232,
+            "r": 0.8927
+          }
+        }
+      }
+    }
+  }
+}
