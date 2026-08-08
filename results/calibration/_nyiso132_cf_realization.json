@@ -1,0 +1,93 @@
+{
+  "iso": "NYISO",
+  "fuel": "solar",
+  "constant": {
+    "symbol": "RENEWABLE_AVG_CF['NYISO']['solar']",
+    "value": 0.15,
+    "tier": "Tier-3 approximation, carries needs-citation"
+  },
+  "measured_target_cf_2025": 0.1955,
+  "years": [
+    {
+      "year": 2023,
+      "shape_source": "donor-repaired (NEISO)",
+      "values_sum": 1.0000000000000002,
+      "hourly_mean_cf": 0.15,
+      "hours_clipped_at_max": 0,
+      "bases": {
+        "eia860": {
+          "first_month_mw": 1365.4999999999995,
+          "year_end_mw": 1644.5999999999997,
+          "mean_monthly_mw": 1481.358333333333,
+          "mean_over_year_end": 0.9007408083019173,
+          "energy_gwh": 1938.0569407523176,
+          "realized_cf_vs_year_end": 0.13452473355114303,
+          "realized_cf_vs_mean_monthly": 0.14934899397391574
+        },
+        "registered": {
+          "first_month_mw": 114.4,
+          "year_end_mw": 174.4,
+          "mean_monthly_mw": 161.0666666666667,
+          "mean_over_year_end": 0.9235474006116209,
+          "energy_gwh": 213.56299543180475,
+          "realized_cf_vs_year_end": 0.13978977854392147,
+          "realized_cf_vs_mean_monthly": 0.15136178007901427
+        }
+      }
+    },
+    {
+      "year": 2024,
+      "shape_source": "donor-repaired (NEISO)",
+      "values_sum": 0.9999999999999998,
+      "hourly_mean_cf": 0.14999999999999997,
+      "hours_clipped_at_max": 0,
+      "bases": {
+        "eia860": {
+          "first_month_mw": 1665.8999999999996,
+          "year_end_mw": 2566.3,
+          "mean_monthly_mw": 2019.2166666666662,
+          "mean_over_year_end": 0.7868201950928052,
+          "energy_gwh": 2643.865619131268,
+          "realized_cf_vs_year_end": 0.11760555809392749,
+          "realized_cf_vs_mean_monthly": 0.14946941985907714
+        },
+        "registered": {
+          "first_month_mw": 174.4,
+          "year_end_mw": 573.4,
+          "mean_monthly_mw": 389.8999999999999,
+          "mean_over_year_end": 0.6799790722009068,
+          "energy_gwh": 515.4266373411594,
+          "realized_cf_vs_year_end": 0.10261363311950812,
+          "realized_cf_vs_mean_monthly": 0.15090704598801222
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "shape_source": "donor-repaired (NEISO)",
+      "values_sum": 1.0,
+      "hourly_mean_cf": 0.15,
+      "hours_clipped_at_max": 0,
+      "bases": {
+        "eia860": {
+          "first_month_mw": 2582.4,
+          "year_end_mw": 2929.7999999999997,
+          "mean_monthly_mw": 2712.4583333333335,
+          "mean_over_year_end": 0.9258168930757504,
+          "energy_gwh": 3554.4963354543697,
+          "realized_cf_vs_year_end": 0.138495604428808,
+          "realized_cf_vs_mean_monthly": 0.1495928681628369
+        },
+        "registered": {
+          "first_month_mw": 573.4,
+          "year_end_mw": 573.4,
+          "mean_monthly_mw": 573.3999999999999,
+          "mean_over_year_end": 0.9999999999999998,
+          "energy_gwh": 753.4476,
+          "realized_cf_vs_year_end": 0.15,
+          "realized_cf_vs_mean_monthly": 0.15000000000000002
+        }
+      }
+    }
+  ]
+}
