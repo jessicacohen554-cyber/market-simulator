@@ -1,0 +1,337 @@
+{
+  "prereg": "results/calibration/PREREG-miso143-coal-gas-merit-order-2026-08-08.md",
+  "gate": "G-A0 (footing STOP gate) + P2 marginal-class + P9 self-check",
+  "keeper": "2026-08-05-miso-132b-cc-committed",
+  "posture": "NO SOLVE -- run_year(fleet_only=True) reconstruction only",
+  "basis": "model-only (keeper P0 offer stack + keeper P1 sidecars); no EIA-930/EIA-923 instrument enters this gate (TRAP 3)",
+  "bars": {
+    "P1_median_abs_err_max": 4.0,
+    "P1_pearson_r_min": 0.85,
+    "P2_band": [
+      0.3,
+      0.55
+    ],
+    "P2_falsify_outside": [
+      0.2,
+      0.7
+    ],
+    "P9_rel_tol": 0.01
+  },
+  "years": {
+    "2023": {
+      "n_gen": 3092,
+      "markup_rows_nonzero": 728,
+      "markup_mean_usd_per_mwh_nonzero": 2.1669,
+      "windows": {
+        "W1_jun_jul_h8_20": {
+          "n_hours": 793,
+          "p9_coal_sidecar_mw": 28925.14,
+          "p9_coal_capability_mw": 32881.17,
+          "p9_coal_dispatch_over_capability": 0.8797,
+          "lo": {
+            "model_clear_mean": 27.146,
+            "keeper_p1_mean": 35.838,
+            "bias_mean": -8.693,
+            "median_abs_err": 8.409,
+            "pearson_r": 0.9355,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.0933,
+              "CC_REGULAR": 0.3607,
+              "COAL": 0.2308,
+              "CT_CHP": 0.0088,
+              "CT_PEAKER": 0.1021,
+              "ST_CHP": 0.005,
+              "ST_GAS": 0.0845,
+              "biomass": 0.0063,
+              "import": 0.1084
+            },
+            "marginal_coal_share": 0.2308
+          },
+          "hi": {
+            "model_clear_mean": 27.281,
+            "keeper_p1_mean": 35.838,
+            "bias_mean": -8.557,
+            "median_abs_err": 8.246,
+            "pearson_r": 0.9383,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.0984,
+              "CC_REGULAR": 0.3329,
+              "COAL": 0.2446,
+              "CT_CHP": 0.0038,
+              "CT_PEAKER": 0.0971,
+              "ST_CHP": 0.0038,
+              "ST_GAS": 0.1059,
+              "biomass": 0.0038,
+              "import": 0.1097
+            },
+            "marginal_coal_share": 0.2446
+          }
+        },
+        "JJA_h12_17": {
+          "n_hours": 552,
+          "p9_coal_sidecar_mw": 30382.91,
+          "p9_coal_capability_mw": 33563.94,
+          "p9_coal_dispatch_over_capability": 0.9052,
+          "lo": {
+            "model_clear_mean": 28.699,
+            "keeper_p1_mean": 38.946,
+            "bias_mean": -10.247,
+            "median_abs_err": 8.84,
+            "pearson_r": 0.5992,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.0507,
+              "CC_REGULAR": 0.2935,
+              "COAL": 0.2808,
+              "CT_CHP": 0.0109,
+              "CT_PEAKER": 0.1159,
+              "ST_CHP": 0.0091,
+              "ST_GAS": 0.1105,
+              "biomass": 0.0054,
+              "import": 0.1232
+            },
+            "marginal_coal_share": 0.2808
+          },
+          "hi": {
+            "model_clear_mean": 28.855,
+            "keeper_p1_mean": 38.946,
+            "bias_mean": -10.091,
+            "median_abs_err": 8.664,
+            "pearson_r": 0.604,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.0761,
+              "CC_REGULAR": 0.2627,
+              "COAL": 0.2591,
+              "CT_CHP": 0.0054,
+              "CT_PEAKER": 0.1014,
+              "ST_CHP": 0.0018,
+              "ST_GAS": 0.1504,
+              "biomass": 0.0054,
+              "import": 0.1377
+            },
+            "marginal_coal_share": 0.2591
+          }
+        }
+      }
+    },
+    "2024": {
+      "n_gen": 3092,
+      "markup_rows_nonzero": 728,
+      "markup_mean_usd_per_mwh_nonzero": 2.1669,
+      "windows": {
+        "W1_jun_jul_h8_20": {
+          "n_hours": 793,
+          "p9_coal_sidecar_mw": 27287.08,
+          "p9_coal_capability_mw": 33920.07,
+          "p9_coal_dispatch_over_capability": 0.8045,
+          "lo": {
+            "model_clear_mean": 24.114,
+            "keeper_p1_mean": 32.851,
+            "bias_mean": -8.736,
+            "median_abs_err": 8.668,
+            "pearson_r": 0.9486,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.1072,
+              "CC_REGULAR": 0.4275,
+              "COAL": 0.14,
+              "CT_CHP": 0.0126,
+              "CT_PEAKER": 0.145,
+              "ST_CHP": 0.0202,
+              "ST_GAS": 0.0593,
+              "biomass": 0.0101,
+              "import": 0.0782
+            },
+            "marginal_coal_share": 0.14
+          },
+          "hi": {
+            "model_clear_mean": 24.272,
+            "keeper_p1_mean": 32.851,
+            "bias_mean": -8.579,
+            "median_abs_err": 8.534,
+            "pearson_r": 0.9522,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.0958,
+              "CC_REGULAR": 0.4023,
+              "COAL": 0.1526,
+              "CT_CHP": 0.0139,
+              "CT_PEAKER": 0.1236,
+              "ST_CHP": 0.0227,
+              "ST_GAS": 0.0769,
+              "biomass": 0.0189,
+              "import": 0.0933
+            },
+            "marginal_coal_share": 0.1526
+          }
+        },
+        "JJA_h12_17": {
+          "n_hours": 552,
+          "p9_coal_sidecar_mw": 28807.41,
+          "p9_coal_capability_mw": 34380.6,
+          "p9_coal_dispatch_over_capability": 0.8379,
+          "lo": {
+            "model_clear_mean": 25.051,
+            "keeper_p1_mean": 37.83,
+            "bias_mean": -12.78,
+            "median_abs_err": 8.832,
+            "pearson_r": 0.3994,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.1105,
+              "CC_REGULAR": 0.3098,
+              "COAL": 0.1902,
+              "CT_CHP": 0.0054,
+              "CT_PEAKER": 0.1649,
+              "ST_CHP": 0.0145,
+              "ST_GAS": 0.0996,
+              "biomass": 0.0054,
+              "import": 0.0996
+            },
+            "marginal_coal_share": 0.1902
+          },
+          "hi": {
+            "model_clear_mean": 25.25,
+            "keeper_p1_mean": 37.83,
+            "bias_mean": -12.58,
+            "median_abs_err": 8.66,
+            "pearson_r": 0.4015,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.087,
+              "CC_REGULAR": 0.2808,
+              "COAL": 0.2083,
+              "CT_CHP": 0.0127,
+              "CT_PEAKER": 0.1558,
+              "ST_CHP": 0.0163,
+              "ST_GAS": 0.1214,
+              "biomass": 0.0145,
+              "import": 0.1033
+            },
+            "marginal_coal_share": 0.2083
+          }
+        }
+      }
+    },
+    "2025": {
+      "n_gen": 3088,
+      "markup_rows_nonzero": 726,
+      "markup_mean_usd_per_mwh_nonzero": 2.1673,
+      "windows": {
+        "W1_jun_jul_h8_20": {
+          "n_hours": 793,
+          "p9_coal_sidecar_mw": 30838.4,
+          "p9_coal_capability_mw": 32342.33,
+          "p9_coal_dispatch_over_capability": 0.9535,
+          "lo": {
+            "model_clear_mean": 32.886,
+            "keeper_p1_mean": 43.704,
+            "bias_mean": -10.818,
+            "median_abs_err": 9.606,
+            "pearson_r": 0.7786,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.0883,
+              "CC_REGULAR": 0.2497,
+              "COAL": 0.3506,
+              "CT_CHP": 0.0088,
+              "CT_PEAKER": 0.1513,
+              "ST_CHP": 0.0088,
+              "ST_GAS": 0.0441,
+              "biomass": 0.0088,
+              "import": 0.0895
+            },
+            "marginal_coal_share": 0.3506
+          },
+          "hi": {
+            "model_clear_mean": 33.13,
+            "keeper_p1_mean": 43.704,
+            "bias_mean": -10.574,
+            "median_abs_err": 9.443,
+            "pearson_r": 0.7873,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.0769,
+              "CC_REGULAR": 0.2522,
+              "COAL": 0.3682,
+              "CT_CHP": 0.0038,
+              "CT_PEAKER": 0.1513,
+              "ST_CHP": 0.0076,
+              "ST_GAS": 0.0429,
+              "biomass": 0.0076,
+              "import": 0.0895
+            },
+            "marginal_coal_share": 0.3682
+          }
+        },
+        "JJA_h12_17": {
+          "n_hours": 552,
+          "p9_coal_sidecar_mw": 31495.21,
+          "p9_coal_capability_mw": 32838.06,
+          "p9_coal_dispatch_over_capability": 0.9591,
+          "lo": {
+            "model_clear_mean": 32.748,
+            "keeper_p1_mean": 43.608,
+            "bias_mean": -10.861,
+            "median_abs_err": 9.998,
+            "pearson_r": 0.8526,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.0851,
+              "CC_REGULAR": 0.2337,
+              "COAL": 0.3804,
+              "CT_CHP": 0.0127,
+              "CT_PEAKER": 0.1486,
+              "ST_CHP": 0.0109,
+              "ST_GAS": 0.0507,
+              "biomass": 0.0072,
+              "import": 0.0707
+            },
+            "marginal_coal_share": 0.3804
+          },
+          "hi": {
+            "model_clear_mean": 33.011,
+            "keeper_p1_mean": 43.608,
+            "bias_mean": -10.597,
+            "median_abs_err": 9.661,
+            "pearson_r": 0.8591,
+            "unreached_frac": 0.0,
+            "marginal_class_share": {
+              "CC_CHP": 0.0888,
+              "CC_REGULAR": 0.2337,
+              "COAL": 0.3877,
+              "CT_CHP": 0.0054,
+              "CT_PEAKER": 0.1504,
+              "ST_CHP": 0.0109,
+              "ST_GAS": 0.0399,
+              "biomass": 0.0054,
+              "import": 0.0779
+            },
+            "marginal_coal_share": 0.3877
+          }
+        }
+      }
+    }
+  },
+  "verdict_2025_JJA_h12_17": {
+    "lo": {
+      "P1_median_abs_err": 9.998,
+      "P1_pearson_r": 0.8526,
+      "P1_PASS": false,
+      "P2_marginal_coal_share": 0.3804,
+      "P2_in_band": true,
+      "P2_falsified": false
+    },
+    "hi": {
+      "P1_median_abs_err": 9.661,
+      "P1_pearson_r": 0.8591,
+      "P1_PASS": false,
+      "P2_marginal_coal_share": 0.3877,
+      "P2_in_band": true,
+      "P2_falsified": false
+    }
+  }
+}

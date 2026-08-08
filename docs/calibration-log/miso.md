@@ -6001,3 +6001,101 @@ directly measurable from committed artifacts, on both sides, without a single
 solve.
 
 Next number: **miso-143**.
+
+## 2026-08-08 — miso-143: the coal→gas MERIT-ORDER GAIN is MATERIAL ($2.30–5.47/MWh, 7.5–18.0 % of the 2025 deficit) but UNOWNED — all four candidate mechanisms eliminated by measurement, so candidate (A) is CLOSED AS A LEVER, NOT AS AN OBJECT. Phase 0, NO LP, keeper UNCHANGED, no cell verdict minted. Successor: the 19.3 GW IN-MERIT IDLE BLOCK
+
+**Lane.** §5.4 queue **item 4 (NEW)** — miso-142's named successor candidate
+**(A)**, the coal-vs-gas merit order in the 2025 high-gas regime. PREREG
+`results/calibration/PREREG-miso143-coal-gas-merit-order-2026-08-08.md`, pushed
+at `1f79a700` (blob `a7979fd8`, verified against the remote) **before any
+adjudicating statistic**: ten falsifiable predictions, four pre-committed
+verdict branches, seven kill-gate bars fixed in advance, six traps each with a
+counter-measurement. Finding
+`results/calibration/FINDING-miso143-merit-order-gain-is-material-but-unowned-2026-08-08.md`.
+
+**Posture.** **NO LP SOLVED.** No `ScenarioConfig` field, no parameter, no
+mechanism armed, no run registered, **no cell verdict minted**. Keeper
+UNCHANGED at `2026-08-05-miso-132b-cc-committed`. §0 re-verified from committed
+artifacts (`calibration_verdict.py --run-id`, no re-solve, all three years in
+one invocation): **NOT-YET**, rubric v3.1, **sole FAIL C3a** −0.4 / −6.0 /
+−14.1 %, sole ledgered caveat C3c (1 of 1) — identical to the charter in every
+cell.
+
+**The gain, measured.** Displacing the **measured** C2-2025 coal excess
+(+4.2 %, the scorer's own basis — never the price residual) up the model's own
+offer ladder is worth **+$2.297 (lower bound) to +$5.474 (upper bound) /MWh**
+against a 2025 JJA h12–17 deficit of **−$30.435**: **7.5 %–18.0 %**,
+BRANCH-MATERIAL at **both** replacement-supply bounds. P4 was predicted at
+[$0.50, $6.00] point $2.20. *(EIA-930 endpoint, separately labelled: +$11.28 →
++$28.55.)*
+
+**And it cannot be armed — all four G-B candidates eliminated by measurement.**
+**B-1** `gas_offer_net_revenue_margin`'s fixed-anchor form: fleet-wide haircut
+**$5.70/MWh**, **price-relevant haircut $0.33**, 2023→2025 swing **$0.18**
+against a $0.50 inert bar — a factor of 17 between where it is LARGE and where
+it is MARGINAL, the ERCOT-138 §J nuance reproduced independently in a second
+ISO (**cell stays `K`**; note + evidence updated, status unchanged).
+**B-2** delivered coal price: trajectory-fallback share **0.62 %** in 2025,
+**0.00 %** in 2023/24 — the model's coal price IS the measured EIA-923 series.
+**B-3** coal tranche offer curve: marginal-coal effective passthrough
+**1.000** — the sunk-fuel 0.0/0.35 bands are inframarginal.
+**B-4** CC/CT heat rates: flat to **<0.4 %** across three years, structurally
+incapable of a 2025-specific step.
+
+**The pre-registered footing STOP GATE FAILED and the bar was not moved.** A
+copperplate merit-order clear under-prices the keeper's committed P1 price by
+**$8.7–12.8/MWh** (median |Δ| **9.998** vs the **4.00** bar; the startup-markup
+bracket moves it $0.25). **BRANCH-INSTRUMENT-FAIL** fired as pre-committed and
+the ladder was re-anchored on the keeper's OWN committed P1 price, reporting
+**gaps only** — after which it reproduced miso-142's six committed window
+deficits **exactly** (−4.75 / −8.333 / −10.676 / −10.671 / −30.999 / −30.435).
+
+**A correction to miso-142's instrument, two-sided by design.** The **true
+within-hour offer ladder** is steeper than its *empirical* binned curve in every
+year-window pair (model vs model): **1.23× / 3.03× / 1.42× / 2.59× / 2.49× /
+2.35×**; 2025 JJA h12–17 reads **$1.496/MWh per GW** against its **0.637**, and
+walking it to the measured actual price takes **16.14 GW**, not 47.7.
+**miso-142's VERDICT SURVIVES — no quantity lever of admissible size closes C3a
+in MISO — but its MARGIN was overstated**, and re-deriving it is not a division
+against the 13.28 GW cushion (the ladder and the cushion are not disjoint).
+
+**THE SUCCESSOR — new, measured here for the first time, NOT opened (rule 19):
+the IN-MERIT IDLE BLOCK.** In 2025 JJA h12–17 the model offers **84.2 GW at or
+below its own clearing price** while serving **65.8 GW** — **19.3 GW (29 %)** of
+in-merit capability undispatched (2023: 22.0; 2024: 20.0). **Congestion is
+REFUTED** as the cause: *r* = **−0.113**, and the under-price is LARGEST
+(**$12.06**) in the 320 hours with **zero** zonal spread, falling to **$9.84** in
+the top quartile. Idle by class: CT_PEAKER **64.5 %**, ST_GAS **41.6 %**,
+CC_REGULAR 7.3 %, COAL 4.1 % — against ST_GAS **45.1 %** forced (C8, grounded)
+and twelve live reliability-floor limbs. **The floors are a HYPOTHESIS, not a
+finding**: the block was measured and congestion refuted; the block was **not**
+attributed, and D-2 attribution must precede any floor work.
+
+**Reported against interest.** (1) The session's primary instrument failed its
+own gate. (2) **P6's premise was wrong**: MISO delivered gas in the summer
+window is **$4.28 / $3.93 / $4.24**/MMBtu — ABOVE the $3.0492 anchor in *every*
+year including 2023 — so the charter's leading G-B candidate was built on a
+fuel-price basis crossing inside the PREREG itself, and the fleet swing runs the
+opposite sign (−$1.71). (3) A load-weighted/unweighted basis crossing in this
+session's own probe, caught by the miso-142 reproduction check and fixed before
+any verdict (2025 JJA deficit −31.07 → −30.435). (4) PREREG §9 named the wrong
+cause for the right failure. (5) **The charter's framing did not survive its
+blocker year**: at the model's own clearing price the 2025 marginal tranche is
+**CT_PEAKER 43.7 %** / **COAL 20.1 %** — coal's marginal share *falls* in 2025
+(33.3 → 45.7 → 20.1 %), its marginal band halves (2,734 → 3,503 → **1,602 MW**),
+and coal runs at 95.9 % of capability. A successor must re-pose the coal
+question at the MARGIN, not in annual volumes.
+
+**Governance carried forward.** C1 and C2 are both SKIPPED for 2025 on EIA-923
+preliminary-vintage grounds, so the +4.2 % coal / −11.2 % gas substitution that
+SIZED this displacement **is not certifiable until the final 2025 vintage
+lands** — a reportable limit on the finding, and a blind spot that would not
+catch a regression either.
+
+**Rule duties.** Rule 15 — no LP solved, no run to register (miso-131…142
+precedent). Rule 28(b) — **no cell verdict minted**; `gas_offer_net_revenue_margin`
+stays `K` in all six lanes with note + evidence updated only; **§5.4 queue stamp
+written and item 4 written into the queue**. Rule 22 — 2023–2025 only, MISO
+holds no marker. Rules 13/14/19/21/23/24/25 throughout; the ERCOT-138 parallel
+is cited as a precedent for a measurement pattern, never as a transferred
+verdict (rule 25). **Next number: miso-144.**
