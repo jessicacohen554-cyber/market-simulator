@@ -856,7 +856,7 @@ def _conditional_surface_markup_contpct(
         from market_sim.config import paths as _paths
 
         default = _paths.CALIBRATION_DIR / spec.default_filename.replace(
-            ".json", "_contpct.json"
+            "_condbinned.json", "_contpct.json"
         )
         if not default.exists():
             raise FileNotFoundError(
