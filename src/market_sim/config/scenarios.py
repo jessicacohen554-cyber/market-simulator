@@ -228,6 +228,18 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # values never drop). Found and repaired by FFR-8A, 2026-08-08.
     "ercot_offline_commit_offer",
     "ercot_offline_commit_offer_path",
+    # caiso-184 unit-outage derate denominator on the LP's own capacity basis
+    # (GATED default-off; every consumer reads it via
+    # ``getattr(config, "unit_outage_lp_capacity_basis", False)`` in
+    # data/fleet/arrays.py, so the off path is byte-inert — the field
+    # docstring's own claim). BACKFILL registration (the nyiso-128 pattern,
+    # THIRD occurrence): the field landed on main unregistered and entered the
+    # default hash, moving the pinned default key
+    # 603c2498bf71d21d -> c6bcb4c8a1bdede4. Registering it restores every
+    # orphaned default-config cache key; armed runs keep their distinct keys.
+    # Found by FFR-8A Phase 3's pin-test run and repaired 2026-08-08
+    # (single-field drop scan blamed exactly this field).
+    "unit_outage_lp_capacity_basis",
     # FFR-5E near-term VRE procurement channel (GATED default-off): dropped
     # from the hash at its default so every pre-existing cache key is
     # byte-stable; an armed run injects committed EIA-860 pipeline MW into the
@@ -855,6 +867,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "capacity_screen_scarcity_restoration": "False",
     "ercot_offline_commit_offer": "False",
     "ercot_offline_commit_offer_path": "None",
+    # Backfilled at FFR-8A Phase 3 alongside the field's (missing) registration
+    # above: caiso-184 landed the field unregistered, moving the pinned
+    # default key (nyiso-128 pattern, third occurrence).
+    "unit_outage_lp_capacity_basis": "False",
     "vre_procurement_additions_enabled": "False",
     # Backfilled at FFR-7B alongside the field's (missing) registration above:
     # nyiso-128 landed the field unregistered, moving the pinned default key.
