@@ -3099,3 +3099,41 @@ clean after the session itself caught and re-stamped the stale §5.5 prose heade
 DEFERRED on the AA.2 rubric-v3.1 re-score question, which remains with the MISO lane.**
 Board otherwise unchanged: FFR-3V-FIX and HOUSE-1 ready in pack §0v (not yet pasted);
 D-21(a) deferred (owner's); the NEISO 9.3 MW taxonomy tail rides the next NEISO session.
+
+## Addendum AC — D-21(a) RE-OPENED by the owner; FFR-8A chartered; the completion path staged
+
+**Written 2026-08-07 by the workstream manager at `origin/main` `2cd4b120`.**
+
+### AC.1 The owner's re-opening, and the program's completion path
+
+Asked whether the forecast workstream is complete, the manager answered NO with three gaps
+(the broken forward price object under the deferred D-21(a); FH-4/FH-5 unvalidated; the
+final T1 battery re-measurement outstanding under Q.2). **The owner's instruction — "Ok
+then do those" — RE-OPENS D-21(a)** (deferred at V.6) and stands as the signature for the
+completion path, staged as: (1) **FFR-8A** (this dispatch) — restore the forward object's
+scarcity content from published market design, price-side-validated per FFR-7C's
+evidence-kind finding; (2) on FFR-8A's measurement, the **FH-4/FH-5 lift determination**
+(manager's, I.1, against G.2 + the V.3 α/β/γ conditions as sharpened by 7C); (3) **when
+keepers settle**, the full T1/T1-FF battery re-measurement (Q.2's condition — keepers are
+NOT settled: ERCOT moved again this cycle to `2026-08-07-run176-control-offline-increment`).
+FFR-3V-FIX and HOUSE-1 (pack §0v) remain dispatched-to-owner, not yet pasted — they are
+part of "those" and stay live.
+
+### AC.2 State changes verified this cycle
+
+ERCOT keeper → `2026-08-07-run176-control-offline-increment` (the ercot-176 control
+re-solve; the offline-increment arm measured INERT). **CAISO's `complete` marker was
+WITHDRAWN 2026-08-06** (entry moved to the `withdrawn` block with full genealogy;
+`one_shot_status`: NOTHING WAS EVER SPENT — the freeze was active for the marker's entire
+life, so the withdrawal loses nothing). `complete` = {NEISO, NYISO, PJM}. Recorded, not
+re-litigated here — the withdrawal is a calibration-lane/owner act with its own record.
+
+### AC.3 Card D-28 put — the §45U-vs-clean-dual composition
+
+The one open design question blocking Arm-3 (`miso_clean_tier_rows`) arming: how the
+IRA §45U existing-nuclear PTC composes with a clean-tier attribute dual in the retirement
+screen's revenue. FFR-6B §6.4's analysis: §45U carries its own statutory gross-receipts
+phase-down (§45U(b)(2)) that already reduces the credit as revenue rises — so
+phase-down-then-add is the composition the statute itself describes, while a max() would
+understate statutory revenue; it stopped short of deciding. Disposition recorded at AC.4
+when signed.
