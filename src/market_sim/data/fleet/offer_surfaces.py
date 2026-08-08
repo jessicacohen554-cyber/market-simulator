@@ -338,6 +338,150 @@ def _assert_surface_vintage(
         )
 
 
+#: Provenance tag the ERCOT-178 continuous-conditioning artifact vintage carries
+#: (PRECOMMIT-ercot178 §2). The `ercot_offer_surface_continuous` gate and the
+#: loaded artifact's vintage must agree in both directions — the PJM
+#: within-season `_assert_surface_vintage` pattern applied at grain level.
+_CONTPCT_TAG = "continuous-netload-pct"
+#: Vintage implied by an artifact with no conditioning tag (every stepped
+#: artifact predates the tag, so absence means stepped by construction).
+_STEPPED_TAG = "stepped-netload-bins"
+
+
+def _netload_rank_pct(net_load: np.ndarray) -> np.ndarray:
+    """Within-year percentile rank (0, 1] of each hour's net load.
+
+    The solve-side conditioner of the ERCOT-178 continuous grain
+    (PRECOMMIT-ercot178 §2): the exact mirror of the derives'
+    ``rank(pct=True)`` node coordinate (ties averaged), on the model's own
+    net load — forward-native exactly as the stepped ``np.quantile`` +
+    ``searchsorted`` binning it replaces (rule 13: a forecast year ranks its
+    own simulated net load).
+    """
+    return pd.Series(np.asarray(net_load, dtype=float)).rank(pct=True).to_numpy()
+
+
+def _assert_contpct_vintage(
+    surface: dict, err_name: str, rederive_hint: str, *, armed: bool = True
+) -> None:
+    """Hard-fail when the artifact vintage disagrees with the continuous gate.
+
+    Arming ``ercot_offer_surface_continuous`` against a stepped JSON would
+    price a continuous mechanism off pooled-bin ladders (and the legacy path
+    against a node JSON, the reverse) — the half-migrated state the PJM
+    within-season vintage guard exists to prevent (PRECOMMIT-ercot178 §2).
+    """
+    tag = str(surface.get("_provenance", {}).get("conditioning", _STEPPED_TAG))
+    want = _CONTPCT_TAG if armed else _STEPPED_TAG
+    if tag != want:
+        raise ValueError(
+            f"{err_name}: surface vintage mismatch — the JSON is conditioned "
+            f"{tag!r} but the run wants {want!r} "
+            f"(ercot_offer_surface_continuous={armed}). {rederive_hint}"
+        )
+
+
+def _assert_contpct_compat(config: ScenarioConfig, err_name: str) -> None:
+    """Hard-fail on family members with no migrated continuous geometry.
+
+    PRECOMMIT-ercot178 §2: the continuous vintage migrates the four ARMED
+    family members only (conditional peak surface, cleared-share wall, RT leg,
+    fast-start pool). Any other member armed alongside the gate would mix
+    stepped and continuous conditioning inside one family — loud, never
+    silent.
+    """
+    unmigrated = [
+        f
+        for f in (
+            "ercot_offer_surface_cleared_share_state",
+            "ercot_offer_surface_cleared_share_steam",
+            "ercot_shoulder_online_span",
+            "ercot_offer_surface_lowcurve",
+            "ercot_offer_surface_lowcurve_floorscoped",
+            "ercot_offer_surface_midcurve_conditional",
+            "ercot_offline_commit_offer",
+        )
+        if getattr(config, f, False)
+    ]
+    if int(getattr(config, "ercot_offer_surface_min_bin", 0) or 0) != 0:
+        unmigrated.append("ercot_offer_surface_min_bin != 0")
+    if unmigrated:
+        raise ValueError(
+            f"{err_name}: ercot_offer_surface_continuous carries no migrated "
+            f"continuous geometry for: {', '.join(unmigrated)} — disarm them "
+            "or leave the continuous gate off (PRECOMMIT-ercot178 §2)."
+        )
+
+
+def _interp_rows(x_t: np.ndarray, xq: np.ndarray, y_rows: np.ndarray) -> np.ndarray:
+    """Per-hour ``np.interp(x_t[t], xq, y_rows[t, :])``, vectorized over hours.
+
+    The continuous grain's rel-geometry step: each hour carries its OWN
+    interpolated ladder (``y_rows`` is ``(T, n_q)``), and the row's rel
+    coordinate ``x_t`` may be time-varying (per-hour boundary). End behavior
+    mirrors ``np.interp`` exactly: clamped flat at the terminal quantiles.
+    """
+    xq = np.asarray(xq, dtype=float)
+    j = np.clip(np.searchsorted(xq, x_t, side="right") - 1, 0, xq.size - 2)
+    x0 = xq[j]
+    x1 = xq[j + 1]
+    rows = np.arange(x_t.size)
+    y0 = y_rows[rows, j]
+    y1 = y_rows[rows, j + 1]
+    # np.interp's own arithmetic (slope form) so a node table that encodes the
+    # stepped ladder reproduces the stepped builders BIT-exactly (SP-3):
+    # slope*(x - x0) + y0, end-clamped to the terminal values.
+    with np.errstate(divide="ignore", invalid="ignore"):
+        slope = (y1 - y0) / (x1 - x0)
+    out = slope * (x_t - x0) + y0
+    out = np.where(x_t <= xq[0], y_rows[:, 0], out)
+    out = np.where(x_t >= xq[-1], y_rows[:, -1], out)
+    return out
+
+
+def _contpct_curve(
+    tbl: dict, x_key: str, y_key: str, p_t: np.ndarray, n_q: int | None = None
+) -> "np.ndarray | None":
+    """Interpolate one node table onto the solve hours.
+
+    Returns ``(T,)`` for a scalar-valued table (``n_q is None``) or
+    ``(T, n_q)`` for a ladder-valued one; ``None`` when the table is absent or
+    malformed. Nodes are the corpus's own hours (PRECOMMIT-ercot178 §2);
+    ``np.interp`` clamps flat beyond the terminal nodes, so nothing is
+    extrapolated beyond the tightest measured hour.
+    """
+    xs = np.asarray(tbl.get(x_key, ()), dtype=float)
+    ys = np.asarray(tbl.get(y_key, ()), dtype=float)
+    if xs.size == 0 or ys.shape[0] != xs.size:
+        return None
+    if n_q is None:
+        if ys.ndim != 1:
+            return None
+        return np.interp(p_t, xs, ys)
+    if ys.ndim != 2 or ys.shape[1] != n_q:
+        return None
+    return np.stack([np.interp(p_t, xs, ys[:, q]) for q in range(n_q)], axis=1)
+
+
+def _ercot_gas_day(year: int, hours: int) -> np.ndarray:
+    """Delivered-gas day series on the model clock (HH daily + ERCOT basis).
+
+    The continuous builders' copy of the stepped bodies' inline normalizer —
+    identical construction (the derives' own price normalizer), factored out
+    so the ERCOT-178 branches never touch the stepped lines (SP-2 gate-off
+    byte-identity is a code-path property, not just an assertion).
+    """
+    from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL
+    from market_sim.data.fuel import HENRY_HUB_DAILY_PATH
+
+    hh = pd.read_csv(HENRY_HUB_DAILY_PATH, parse_dates=["date"])
+    s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
+    full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
+    daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["ERCOT"])
+    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    return daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)
+
+
 def build_offer_surface_conditional_markup(
     iso: str,
     fleet_arrays: "FleetArrays",
@@ -363,6 +507,12 @@ def build_offer_surface_conditional_markup(
         return None
     if config.iso != iso:
         return None
+    # ERCOT-178 continuous conditioning grain (rule 25: ERCOT-gated; every
+    # other ISO keeps the stepped path byte-identical).
+    if iso == "ERCOT" and getattr(config, "ercot_offer_surface_continuous", False):
+        return _conditional_surface_markup_contpct(
+            fleet_arrays, generators, fuel_prices, net_load_mw, config, spec=spec
+        )
     # PJM-only within-season vintage (rule 25): armed, the default filename
     # resolves to the `_withinseason` artifact and the binning below ranks
     # per season. Every other ISO is untouched and stays within-year.
@@ -403,6 +553,10 @@ def build_offer_surface_conditional_markup(
         _assert_surface_vintage(
             surface, within_season, spec.err_name, spec.rederive_hint
         )
+    if iso == "ERCOT":
+        # Reverse half of the ERCOT-178 vintage guard: the legacy stepped path
+        # must never consume a continuous-node JSON via a path override.
+        _assert_contpct_vintage(surface, spec.err_name, spec.rederive_hint, armed=False)
 
     edges = tuple(float(x) for x in getattr(config, spec.pcts_field))
     json_edges = tuple(
@@ -673,6 +827,117 @@ def _conditional_surface_markup(
         n_bins,
         tight,
         hours,
+    )
+    return markup
+
+
+def _conditional_surface_markup_contpct(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    fuel_prices: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    *,
+    spec: "_CondSurfaceSpec",
+) -> "np.ndarray | None":
+    """ERCOT-178 continuous-grain body of the conditional peak-rung surface.
+
+    The stepped core's arithmetic with the bin lookup replaced by node
+    interpolation (PRECOMMIT-ercot178 §2): per hour, each peak rung's measured
+    multiplier is ``np.interp``-olated over the corpus's own hour nodes at the
+    hour's within-year net-load percentile rank; the ``ratio >= 1`` clamp, the
+    resolved-peak reference, the per-rung VOLL cap and the row scope are the
+    stepped body's own lines. Zero fitted scalars; the stepped artifact and
+    code path are untouched.
+    """
+    _assert_contpct_compat(config, spec.err_name)
+    path = getattr(config, spec.path_field, None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        default = _paths.CALIBRATION_DIR / spec.default_filename.replace(
+            "_condbinned.json", "_contpct.json"
+        )
+        if not default.exists():
+            raise FileNotFoundError(
+                f"{spec.err_name}: ercot_offer_surface_continuous is armed but "
+                f"{default.name} does not exist — derive it "
+                "(scripts/data/derive_dam_offer_hrmults.py --continuous) or "
+                "leave the gate off (PRECOMMIT-ercot178 §2: never a silent "
+                "fallback to the stepped vintage)."
+            )
+        path = str(default)
+    surface = _load_condbinned_surface(str(path))
+    _assert_contpct_vintage(
+        surface,
+        spec.err_name,
+        "derive scripts/data/derive_dam_offer_hrmults.py --continuous",
+    )
+
+    curves = getattr(config, "offer_curve_by_group", None) or {}
+    class_rows: dict[str, list[tuple[int, int]]] = {}
+    resolved_peak: dict[str, float] = {}
+    for g, gen in enumerate(generators):
+        cls = getattr(gen, "plant_group", None) or getattr(gen, "efficiency_bin", None)
+        if cls not in spec.groups or cls not in surface:
+            continue
+        sfx = gen.unit_id.rpartition("_")[2]
+        if sfx == "peak":
+            rung = 0
+        elif sfx.startswith("peak") and sfx[4:].isdigit():
+            rung = int(sfx[4:]) - 1
+        else:
+            continue
+        class_rows.setdefault(cls, []).append((g, rung))
+        resolved_peak.setdefault(cls, float(curves.get(cls, {}).get("peak", 0.0)))
+    if not class_rows:
+        return None
+
+    hours = int(fuel_prices.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    p_t = _netload_rank_pct(net_load)  # (T,)
+    price_cap = float(getattr(config, spec.cap_frac_field, 0.95)) * float(
+        getattr(config, "voll", 5000.0)
+    )
+
+    heat_rate = fleet_arrays.heat_rate
+    markup = np.zeros((len(generators), hours), dtype=float)
+    n_priced = 0
+    for cls, rows in class_rows.items():
+        pk = resolved_peak.get(cls, 0.0)
+        cont = surface[cls].get("cont") or {}
+        n_rungs_meas = int(cont.get("n_rungs", 0) or 0)
+        if pk <= 0.0 or n_rungs_meas <= 0:
+            continue
+        mult_t = _contpct_curve(cont, "pct", "mult", p_t, n_q=n_rungs_meas)
+        if mult_t is None:
+            continue
+        # ratio_t[t, r] = measured multiplier / resolved peak, clamped >= 1 so
+        # a loose hour never lowers the offer below the keeper's peak height —
+        # the stepped body's own clamp, per hour instead of per bin.
+        ratio_t = np.maximum(1.0, mult_t / pk)  # (T, n_rungs)
+        for g, rung in rows:
+            energy = heat_rate[g] * fuel_prices[g, :hours]  # (T,) fuel MC
+            # Rungs beyond the measured ladder keep ratio 1 — the stepped
+            # body's own convention (a rung the surface never measured is
+            # never repriced), mirrored exactly.
+            if rung < n_rungs_meas:
+                row_ratio = ratio_t[:, rung]  # (T,)
+            else:
+                row_ratio = np.ones(hours)
+            with np.errstate(divide="ignore", invalid="ignore"):
+                ratio_cap = np.where(energy > 0.0, price_cap / energy, row_ratio)
+            eff = np.minimum(row_ratio, np.maximum(1.0, ratio_cap))
+            markup[g, :] = energy * (eff - 1.0)
+            n_priced += 1
+
+    if n_priced == 0 or not np.any(markup > 0.0):
+        return None
+    logger.info(
+        "ERCOT conditional offer surface (continuous grain, ERCOT-178): "
+        "repriced %d gas peak-rung rows over the corpus's own hour nodes; "
+        "P1-only, loose hours self-gating",
+        n_priced,
     )
     return markup
 
@@ -1425,12 +1690,34 @@ def build_ercot_offer_surface_cleared_share_markup(
             "ercot_offer_surface_midcurve_conditional both price the gas econ "
             "rows — one mechanism per row (rule 19); arm exactly one."
         )
+    # ERCOT-178 continuous conditioning grain: same rows, same boundary/ladder
+    # statistics, bin lookup -> node interpolation (PRECOMMIT-ercot178 §2/§4).
+    if getattr(config, "ercot_offer_surface_continuous", False):
+        return _cleared_share_markup_contpct(
+            fleet_arrays,
+            generators,
+            mc_base,
+            net_load_mw,
+            config,
+            year,
+            class_of=class_of,
+            rt_flag=rt_flag,
+            rt_mode=rt_mode,
+        )
     path = getattr(config, "ercot_offer_surface_cleared_share_path", None)
     if not path:
         from market_sim.config import paths as _paths
 
         path = str(_paths.CALIBRATION_DIR / "ercot_dam_cleared_share_condbinned.json")
     surface = json.loads(Path(path).read_text())
+    # Reverse half of the ERCOT-178 vintage guard (the gate-on branch returned
+    # above): the stepped path must never consume a continuous-node JSON.
+    _assert_contpct_vintage(
+        surface,
+        "ercot_offer_surface_cleared_share",
+        "re-derive scripts/data/derive_ercot_dam_cleared_share.py",
+        armed=False,
+    )
     prov = surface.get("_provenance", {})
     edges = tuple(float(x) for x in prov.get("netload_pct_edges", ()))
     ladder_q = np.asarray(prov.get("ladder_quantiles", ()), dtype=float)
@@ -1800,6 +2087,228 @@ def build_ercot_offer_surface_cleared_share_markup(
     return markup
 
 
+def _cleared_share_markup_contpct(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    mc_base: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    year: int,
+    *,
+    class_of: dict[str, str],
+    rt_flag: bool,
+    rt_mode: str,
+) -> "np.ndarray | None":
+    """ERCOT-178 continuous-grain body of the cleared-share wall + RT leg.
+
+    The stepped builder's arithmetic with every per-bin lookup replaced by
+    node interpolation over the corpus's own hours (PRECOMMIT-ercot178 §2):
+    per-hour boundary (cleared share), per-hour DAM/RT ladders, the same rel
+    geometry, gas-day normalization, VOLL cap, ``max(0, target − mc)`` markup,
+    ``replace``/``tier`` RT composition, class scope, row scope and P1-only
+    seam. Zero fitted scalars; the stepped artifact and code path stay
+    byte-untouched. Year scoping preserved exactly: RT tables are per-year
+    with no pooled fallback; the DAM wall falls back to its pooled table for
+    an unmapped year.
+    """
+    _assert_contpct_compat(config, "ercot_offer_surface_cleared_share")
+    path = getattr(config, "ercot_offer_surface_cleared_share_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        path = str(_paths.CALIBRATION_DIR / "ercot_dam_cleared_share_contpct.json")
+    surface = json.loads(Path(path).read_text())
+    _assert_contpct_vintage(
+        surface,
+        "ercot_offer_surface_cleared_share",
+        "derive scripts/data/derive_ercot_dam_cleared_share.py --continuous",
+    )
+    prov = surface.get("_provenance", {})
+    ladder_q = np.asarray(prov.get("ladder_quantiles", ()), dtype=float)
+    if ladder_q.size == 0:
+        raise ValueError(
+            "ercot_offer_surface_cleared_share: continuous surface JSON "
+            "carries no ladder_quantiles — derive "
+            "scripts/data/derive_ercot_dam_cleared_share.py --continuous"
+        )
+    n_q = int(ladder_q.size)
+
+    hours = int(mc_base.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    p_t = _netload_rank_pct(net_load)  # (T,)
+
+    # Per-class per-hour boundary + DAM wall ladder from the node tables
+    # (years table, pooled fallback — the stepped builder's own precedence).
+    bnd_t: dict[str, np.ndarray] = {}
+    wall_t: dict[str, np.ndarray] = {}
+    year_tables: set[str] = set()
+    for cls_key in set(class_of.values()):
+        entry = surface.get(cls_key)
+        if not entry:
+            continue
+        tbl = entry.get("years", {}).get(str(year))
+        if tbl:
+            year_tables.add(cls_key)
+        else:
+            tbl = entry.get("pooled")
+        if not tbl:
+            continue
+        share = _contpct_curve(tbl, "share_pct", "share", p_t)
+        wall = _contpct_curve(tbl, "pct", "ladder", p_t, n_q=n_q)
+        if share is None or wall is None:
+            continue
+        bnd_t[cls_key] = share
+        wall_t[cls_key] = wall
+
+    # ERCOT-86 RT/SCED-basis ladder, continuous vintage. YEAR-SCOPED exactly
+    # as the stepped artifact: per-year node tables only, no pooled fallback —
+    # an absent year keeps the DAM basis byte-identical (rule 13).
+    rt_t: dict[str, np.ndarray] = {}
+    if rt_flag:
+        rt_path = getattr(config, "ercot_offer_surface_cleared_share_rt_path", None)
+        if not rt_path:
+            from market_sim.config import paths as _paths
+
+            rt_path = str(_paths.CALIBRATION_DIR / "ercot_sced_offer_wall_contpct.json")
+        rt_surface = json.loads(Path(rt_path).read_text())
+        _assert_contpct_vintage(
+            rt_surface,
+            "ercot_offer_surface_cleared_share_rt",
+            "derive scripts/data/derive_ercot_sced_offer_wall.py --continuous",
+        )
+        rt_q = np.asarray(
+            rt_surface.get("_provenance", {}).get("ladder_quantiles", ()), dtype=float
+        )
+        if not np.array_equal(rt_q, ladder_q):
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_rt: continuous RT artifact "
+                f"ladder quantiles {rt_q.tolist()} != DAM wall quantiles "
+                f"{ladder_q.tolist()} — re-derive "
+                "scripts/data/derive_ercot_sced_offer_wall.py --continuous"
+            )
+        for cls_key in set(class_of.values()):
+            entry = rt_surface.get(cls_key)
+            if not entry:
+                continue
+            tbl = entry.get("years", {}).get(str(year))  # year-scoped: no pooled
+            if not tbl:
+                continue
+            rtw = _contpct_curve(tbl, "pct", "ladder", p_t, n_q=n_q)
+            if rtw is not None:
+                rt_t[cls_key] = rtw
+        if not rt_t:
+            logger.info(
+                "ERCOT cleared-share RT basis (continuous): year %s absent "
+                "from the RT artifact — DAM basis retained byte-identical "
+                "(year-scoped, rule 13)",
+                year,
+            )
+
+    gas_day = _ercot_gas_day(year, hours)  # (T,)
+
+    # Target rows + within-plant share midpoints — the stepped builder's own
+    # construction, unchanged.
+    prefixes: dict[str, list[int]] = {}
+    row_cls: dict[int, str] = {}
+    for g, gen in enumerate(generators):
+        cls = getattr(gen, "plant_group", None) or ""
+        if cls not in class_of:
+            continue
+        prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
+        row_cls[g] = cls
+
+    pmax = fleet_arrays.pmax
+    voll_cap = float(
+        getattr(config, "ercot_offer_surface_price_cap_frac", 0.95)
+    ) * float(getattr(config, "voll", 5000.0))
+    markup = np.zeros_like(mc_base)
+    n_priced = 0
+    n_rt_priced = 0
+    mean_mc = mc_base.mean(axis=1)
+    for rows in prefixes.values():
+        rows_arr = np.asarray(rows, dtype=int)
+        order = rows_arr[np.argsort(mean_mc[rows_arr], kind="stable")]
+        caps = pmax[order]
+        total = caps.sum()
+        if total <= 0.0:
+            continue
+        cum = np.cumsum(caps)
+        mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
+        for g, s_g in zip(order, mids):
+            gen = generators[g]
+            sfx = gen.unit_id.rpartition("_")[2]
+            # Row-family scope: CC/CT wall econ* rows only (the ST_GAS steam
+            # extension hard-errors with the gate, so the stepped ST branch is
+            # unreachable here).
+            if not sfx.startswith("econ"):
+                continue
+            cls_key = class_of[row_cls[g]]
+            if cls_key not in bnd_t:
+                continue
+            bnd = bnd_t[cls_key]  # (T,)
+            # Above-boundary row-hours: the stepped per-bin test per hour.
+            above = (s_g > bnd) & np.isfinite(bnd) & (bnd < 1.0)
+            if not above.any():
+                continue
+            with np.errstate(divide="ignore", invalid="ignore"):
+                rel_t = np.where(above, (s_g - bnd) / (1.0 - bnd), 0.0)
+            mult_h = np.where(
+                above, _interp_rows(rel_t, ladder_q, wall_t[cls_key]), 0.0
+            )
+            rtw = rt_t.get(cls_key)
+            if rtw is not None:
+                rt_mult_h = np.where(above, _interp_rows(rel_t, ladder_q, rtw), 0.0)
+                rt_has_h = above
+            else:
+                rt_mult_h = np.zeros(hours)
+                rt_has_h = np.zeros(hours, dtype=bool)
+            if not mult_h.any() and not rt_has_h.any():
+                continue
+            target = mult_h * gas_day  # (T,); 0 where no floor
+            target = np.minimum(target, voll_cap)
+            row = np.maximum(0.0, target - mc_base[g, :])
+            if rt_has_h.any():
+                # RT leg composition — the stepped builder's own lines.
+                rt_target = rt_mult_h * gas_day
+                rt_target = np.minimum(rt_target, voll_cap)
+                rt_row = np.maximum(0.0, rt_target - mc_base[g, :])
+                rt_row = np.where(rt_has_h, rt_row, 0.0)
+                if rt_mode == "replace":
+                    row = np.where(rt_has_h, rt_row, row)
+                else:
+                    row = np.maximum(row, rt_row)
+                if rt_row.any():
+                    n_rt_priced += 1
+            if row.any():
+                markup[g, :] = row
+                n_priced += 1
+
+    if n_priced == 0 or not np.any(markup > 0.0):
+        logger.info(
+            "ERCOT cleared-share offer boundary (continuous): no econ row "
+            "floored — byte-identical"
+        )
+        return None
+    logger.info(
+        "ERCOT cleared-share offer boundary (continuous grain, ERCOT-178): "
+        "floored %d gas econ tranche rows over the corpus's own hour nodes "
+        "(year table %s); P1-only",
+        n_priced,
+        sorted(year_tables) if year_tables else "pooled",
+    )
+    if rt_flag and rt_t:
+        logger.info(
+            "ERCOT cleared-share RT basis (continuous, ERCOT-86): %s "
+            "composition — %d rows carry the measured SCED spare-offer node "
+            "ladder (year %s, classes %s)",
+            rt_mode,
+            n_rt_priced,
+            year,
+            sorted(rt_t),
+        )
+    return markup
+
+
 def _load_ercot_online_span_tables(
     config: ScenarioConfig,
     year: int,
@@ -1956,6 +2465,13 @@ def build_ercot_faststart_pool_markup(
             "ercot_faststart_pool_offer composes against the cleared-share "
             "wall's row pricing (charter §9.1 enumeration) — arm "
             "ercot_offer_surface_cleared_share too."
+        )
+    # ERCOT-178 continuous conditioning grain: same rows, same pool_frac +
+    # ladder statistics, bin lookup -> node interpolation (PRECOMMIT-ercot178
+    # §2/§4); the own_mask replace-by-mask composition is unchanged.
+    if getattr(config, "ercot_offer_surface_continuous", False):
+        return _faststart_pool_markup_contpct(
+            fleet_arrays, generators, mc_base, net_load_mw, config, year
         )
     from market_sim.config.constants import FASTSTART_POOL_MIN_DOWN_HOURS
 
@@ -2156,6 +2672,136 @@ def build_ercot_faststart_pool_markup(
         "min_down <= %.0f h; replace-by-mask composition, never "
         "state-weighted)",
         ("; ERCOT-89 conditional online-span boundary" if span_ct is not None else ""),
+        n_priced,
+        year,
+        FASTSTART_POOL_MIN_DOWN_HOURS,
+    )
+    return markup, own_mask
+
+
+def _faststart_pool_markup_contpct(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    mc_base: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    year: int,
+) -> "tuple[np.ndarray, np.ndarray] | None":
+    """ERCOT-178 continuous-grain body of the ERCOT-88 fast-start pool.
+
+    The stepped builder's arithmetic with the per-bin ``pool_frac`` boundary
+    and ladder replaced by node interpolation over the corpus's own hours
+    (PRECOMMIT-ercot178 §2): per-hour boundary ``1 − pool_frac(p_t)``,
+    per-hour above-LSL SCED2 ladder, the same physics gate, row universe,
+    VOLL cap, ``own_mask`` replace-by-mask composition and P1-only seam.
+    Year-scoped with no pooled fallback, exactly as the stepped artifact.
+    """
+    _assert_contpct_compat(config, "ercot_faststart_pool_offer")
+    from market_sim.config.constants import FASTSTART_POOL_MIN_DOWN_HOURS
+
+    pool_path = getattr(config, "ercot_faststart_pool_offer_path", None)
+    if not pool_path:
+        from market_sim.config import paths as _paths
+
+        pool_path = str(_paths.CALIBRATION_DIR / "ercot_faststart_pool_contpct.json")
+    pool_surface = json.loads(Path(pool_path).read_text())
+    _assert_contpct_vintage(
+        pool_surface,
+        "ercot_faststart_pool_offer",
+        "derive scripts/data/derive_ercot_faststart_pool.py --continuous",
+    )
+    ladder_q = np.asarray(
+        pool_surface.get("_provenance", {}).get("ladder_quantiles", ()), dtype=float
+    )
+    if ladder_q.size == 0:
+        raise ValueError(
+            "ercot_faststart_pool_offer: continuous pool artifact carries no "
+            "ladder_quantiles — derive "
+            "scripts/data/derive_ercot_faststart_pool.py --continuous"
+        )
+    n_q = int(ladder_q.size)
+
+    tbl = pool_surface.get("CT", {}).get("years", {}).get(str(year))
+    if not tbl:  # year-scoped: no pooled fallback (rule 13)
+        logger.info(
+            "ERCOT fast-start pool (continuous, ERCOT-88): year %s absent "
+            "from the pool artifact — every surface byte-identical "
+            "(year-scoped, rule 13)",
+            year,
+        )
+        return None
+
+    hours = int(mc_base.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    p_t = _netload_rank_pct(net_load)  # (T,)
+    frac_t = _contpct_curve(tbl, "frac_pct", "pool_frac", p_t)
+    wall_t = _contpct_curve(tbl, "pct", "ladder", p_t, n_q=n_q)
+    if frac_t is None or wall_t is None:
+        return None
+    pool_bnd_t = 1.0 - np.clip(frac_t, 0.0, 1.0)  # (T,)
+
+    gas_day = _ercot_gas_day(year, hours)  # (T,)
+
+    # Row universe + physics gate — the stepped builder's own lines.
+    ct_groups = {
+        grp for grp, key in _ERCOT_CLEARED_SHARE_CLASS_OF.items() if key == "CT"
+    }
+    prefixes: dict[str, list[int]] = {}
+    for g, gen in enumerate(generators):
+        if (getattr(gen, "plant_group", None) or "") not in ct_groups:
+            continue
+        prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
+
+    pmax = fleet_arrays.pmax
+    voll_cap = float(
+        getattr(config, "ercot_offer_surface_price_cap_frac", 0.95)
+    ) * float(getattr(config, "voll", 5000.0))
+    markup = np.zeros_like(mc_base)
+    own_mask = np.zeros_like(mc_base, dtype=bool)
+    n_priced = 0
+    mean_mc = mc_base.mean(axis=1)
+    for rows in prefixes.values():
+        rows_arr = np.asarray(rows, dtype=int)
+        order = rows_arr[np.argsort(mean_mc[rows_arr], kind="stable")]
+        caps = pmax[order]
+        total = caps.sum()
+        if total <= 0.0:
+            continue
+        cum = np.cumsum(caps)
+        mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
+        for g, s_g in zip(order, mids):
+            gen = generators[g]
+            if (
+                float(getattr(gen, "min_down_hours", 0) or 0)
+                > FASTSTART_POOL_MIN_DOWN_HOURS
+            ):
+                continue
+            sfx = gen.unit_id.rpartition("_")[2]
+            if not (sfx.startswith("econ") or sfx.startswith("peak")):
+                continue
+            mask = (s_g > pool_bnd_t) & np.isfinite(pool_bnd_t) & (pool_bnd_t < 1.0)
+            if not mask.any():
+                continue
+            with np.errstate(divide="ignore", invalid="ignore"):
+                rel_t = np.where(mask, (s_g - pool_bnd_t) / (1.0 - pool_bnd_t), 0.0)
+            mult_h = np.where(mask, _interp_rows(rel_t, ladder_q, wall_t), 0.0)
+            target = mult_h * gas_day  # (T,)
+            target = np.minimum(target, voll_cap)
+            row = np.maximum(0.0, target - mc_base[g, :])
+            markup[g, :] = np.where(mask, row, 0.0)
+            own_mask[g, :] = mask
+            n_priced += 1
+
+    if not own_mask.any():
+        logger.info(
+            "ERCOT fast-start pool (continuous, ERCOT-88): no fast-start row "
+            "above the measured pool boundary — byte-identical"
+        )
+        return None
+    logger.info(
+        "ERCOT fast-start pool (continuous grain, ERCOT-178): %d fast-start "
+        "rows carry the offline-pool above-LSL SCED2 node ladder (year %s; "
+        "physics gate min_down <= %.0f h; replace-by-mask composition)",
         n_priced,
         year,
         FASTSTART_POOL_MIN_DOWN_HOURS,
