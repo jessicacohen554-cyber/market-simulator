@@ -1,0 +1,904 @@
+{
+  "prereg": "results/calibration/PREREG-miso143-coal-gas-merit-order-2026-08-08.md",
+  "gate": "G-A1 (merit-order gain) + G-A2 (true ladder slope), under BRANCH-INSTRUMENT-FAIL",
+  "keeper": "2026-08-05-miso-132b-cc-committed",
+  "posture": "NO SOLVE -- run_year(fleet_only=True) offer stack, anchored on the keeper's OWN committed P1 price",
+  "branch": "BRANCH-INSTRUMENT-FAIL fired at G-A0 (P1 median|err| 9.998 vs the 4.00 bar; r 0.853 vs 0.85). The bar is NOT moved and the failed reading is reported at full magnitude; per the PREREG this instrument reports GAPS ONLY and the gain as a BOUND, never a point.",
+  "displacements": {
+    "c2_eia923": "the SCORER's own C2 basis (EIA-923); 2025 coal +4.2 %",
+    "eia930_w1_2025": "miso-142's EIA-930 hourly W1 read, 2025 ONLY (+14.6 %) -- a separately labelled endpoint, never averaged with the C2 reading (TRAP 3)"
+  },
+  "bounds": {
+    "cap": "replacement supply = raw above-anchor capability -> LOWER bound on the gain (overstates deliverable supply)",
+    "idle": "that capability x each class's measured idle fraction -> UPPER bound on the gain"
+  },
+  "miso142_empirical_slope_usd_per_gw": {
+    "2023|W1_jun_jul_h8_20": 0.507,
+    "2023|JJA_h12_17": 0.583,
+    "2024|W1_jun_jul_h8_20": 0.447,
+    "2024|JJA_h12_17": 0.491,
+    "2025|W1_jun_jul_h8_20": 0.635,
+    "2025|JJA_h12_17": 0.637
+  },
+  "years": {
+    "2023": {
+      "n_gen": 3092,
+      "W1_jun_jul_h8_20": {
+        "n_hours": 793,
+        "anchor_lw_price": 36.223,
+        "actual_lw_price": 40.973,
+        "deficit_usd_per_mwh": -4.75,
+        "mean_thermal_mw": 64403.9,
+        "class_idle_frac": {
+          "CC_CHP": 0.1092,
+          "CC_REGULAR": 0.117,
+          "COAL": 0.1203,
+          "CT_CHP": 0.1271,
+          "CT_PEAKER": 0.7699,
+          "ST_CHP": 0.3582,
+          "ST_GAS": 0.3108,
+          "biomass": 0.4763,
+          "hydro": 0.4463,
+          "import": 0.3307,
+          "nuclear": 0.0,
+          "oil": 1.0
+        },
+        "lo": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 33.6528,
+            "mw_mean": 3001.0806,
+            "hours_with_marginal_coal": 793,
+            "hours_share": 1.0,
+            "band_tranche_counts": {
+              "2.0": 20908,
+              "5.0": 57442,
+              "10.0": 114386
+            },
+            "band_mw_mean": {
+              "2.0": 1143.2056,
+              "5.0": 3001.0806,
+              "10.0": 5989.7561
+            },
+            "p8_effective_fuel_passthrough": 0.996
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 37.2448,
+            "+2GW": 38.3457,
+            "+5GW": 42.5194
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 0,
+            "+2GW": 0,
+            "+5GW": 0
+          },
+          "p3_srmc_gap_gas_minus_coal": 3.592,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 0.6226,
+            "+2GW": 0.6452,
+            "+5GW": 0.7651
+          },
+          "p5_miso142_empirical_slope": 0.507,
+          "p5_vs_miso142_empirical_ratio": 1.228,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 40.973,
+            "mean_gw": 8.9333,
+            "median_gw": 8.6924,
+            "unreached_hours": 0,
+            "reached_hours": 793
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 85865.9875,
+            "thermal_served_mw": 64403.9,
+            "excess_cheap_capability_mw": 21462.1
+          },
+          "p4_gain_usd_per_mwh": {},
+          "p4_displacement_direction": {
+            "c2_eia923": "coal UNDER-run -> no coal->gas displacement",
+            "eia930_w1_2025": "not measured for this year"
+          },
+          "p4_gain_reachable_frac": {}
+        },
+        "hi": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 33.6528,
+            "mw_mean": 3001.0806,
+            "hours_with_marginal_coal": 793,
+            "hours_share": 1.0,
+            "band_tranche_counts": {
+              "2.0": 20908,
+              "5.0": 57442,
+              "10.0": 114386
+            },
+            "band_mw_mean": {
+              "2.0": 1143.2056,
+              "5.0": 3001.0806,
+              "10.0": 5989.7561
+            },
+            "p8_effective_fuel_passthrough": 0.996
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 37.1883,
+            "+2GW": 38.2632,
+            "+5GW": 42.3275
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 0,
+            "+2GW": 0,
+            "+5GW": 0
+          },
+          "p3_srmc_gap_gas_minus_coal": 3.5355,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 0.62,
+            "+2GW": 0.6256,
+            "+5GW": 0.7304
+          },
+          "p5_miso142_empirical_slope": 0.507,
+          "p5_vs_miso142_empirical_ratio": 1.2229,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 40.973,
+            "mean_gw": 8.9941,
+            "median_gw": 8.9276,
+            "unreached_hours": 0,
+            "reached_hours": 793
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 84865.736,
+            "thermal_served_mw": 64403.9,
+            "excess_cheap_capability_mw": 20461.9
+          },
+          "p4_gain_usd_per_mwh": {},
+          "p4_displacement_direction": {
+            "c2_eia923": "coal UNDER-run -> no coal->gas displacement",
+            "eia930_w1_2025": "not measured for this year"
+          },
+          "p4_gain_reachable_frac": {}
+        }
+      },
+      "JJA_h12_17": {
+        "n_hours": 552,
+        "anchor_lw_price": 39.488,
+        "actual_lw_price": 47.821,
+        "deficit_usd_per_mwh": -8.333,
+        "mean_thermal_mw": 67875.0,
+        "class_idle_frac": {
+          "CC_CHP": 0.0907,
+          "CC_REGULAR": 0.1071,
+          "COAL": 0.0948,
+          "CT_CHP": 0.1005,
+          "CT_PEAKER": 0.7237,
+          "ST_CHP": 0.305,
+          "ST_GAS": 0.2097,
+          "biomass": 0.4711,
+          "hydro": 0.357,
+          "import": 0.272,
+          "nuclear": 0.0,
+          "oil": 0.9998
+        },
+        "lo": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 35.4264,
+            "mw_mean": 2818.4736,
+            "hours_with_marginal_coal": 547,
+            "hours_share": 0.9909,
+            "band_tranche_counts": {
+              "2.0": 11991,
+              "5.0": 34306,
+              "10.0": 75248
+            },
+            "band_mw_mean": {
+              "2.0": 1013.8504,
+              "5.0": 2733.9948,
+              "10.0": 5851.3831
+            },
+            "p8_effective_fuel_passthrough": 0.9979
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 39.7135,
+            "+2GW": 40.6298,
+            "+5GW": 45.2957
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 3,
+            "+2GW": 5,
+            "+5GW": 6
+          },
+          "p3_srmc_gap_gas_minus_coal": 4.2871,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 1.7674,
+            "+2GW": 1.684,
+            "+5GW": 2.1038
+          },
+          "p5_miso142_empirical_slope": 0.583,
+          "p5_vs_miso142_empirical_ratio": 3.0316,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 47.821,
+            "mean_gw": 11.0617,
+            "median_gw": 10.8949,
+            "unreached_hours": 0,
+            "reached_hours": 552
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 89826.1772,
+            "thermal_served_mw": 67875.0,
+            "excess_cheap_capability_mw": 21951.2
+          },
+          "p4_gain_usd_per_mwh": {},
+          "p4_displacement_direction": {
+            "c2_eia923": "coal UNDER-run -> no coal->gas displacement",
+            "eia930_w1_2025": "not measured for this year"
+          },
+          "p4_gain_reachable_frac": {}
+        },
+        "hi": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 35.4264,
+            "mw_mean": 2818.4736,
+            "hours_with_marginal_coal": 547,
+            "hours_share": 0.9909,
+            "band_tranche_counts": {
+              "2.0": 11991,
+              "5.0": 34306,
+              "10.0": 75248
+            },
+            "band_mw_mean": {
+              "2.0": 1013.8504,
+              "5.0": 2733.9948,
+              "10.0": 5851.3831
+            },
+            "p8_effective_fuel_passthrough": 0.9979
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 39.6604,
+            "+2GW": 40.6138,
+            "+5GW": 44.9526
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 3,
+            "+2GW": 5,
+            "+5GW": 6
+          },
+          "p3_srmc_gap_gas_minus_coal": 4.234,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 1.7485,
+            "+2GW": 1.6252,
+            "+5GW": 2.0439
+          },
+          "p5_miso142_empirical_slope": 0.583,
+          "p5_vs_miso142_empirical_ratio": 2.9991,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 47.821,
+            "mean_gw": 10.9163,
+            "median_gw": 11.1175,
+            "unreached_hours": 0,
+            "reached_hours": 552
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 88841.2097,
+            "thermal_served_mw": 67875.0,
+            "excess_cheap_capability_mw": 20966.2
+          },
+          "p4_gain_usd_per_mwh": {},
+          "p4_displacement_direction": {
+            "c2_eia923": "coal UNDER-run -> no coal->gas displacement",
+            "eia930_w1_2025": "not measured for this year"
+          },
+          "p4_gain_reachable_frac": {}
+        }
+      }
+    },
+    "2024": {
+      "n_gen": 3092,
+      "W1_jun_jul_h8_20": {
+        "n_hours": 793,
+        "anchor_lw_price": 33.297,
+        "actual_lw_price": 43.973,
+        "deficit_usd_per_mwh": -10.676,
+        "mean_thermal_mw": 61260.8,
+        "class_idle_frac": {
+          "CC_CHP": 0.0954,
+          "CC_REGULAR": 0.0907,
+          "COAL": 0.1955,
+          "CT_CHP": 0.1322,
+          "CT_PEAKER": 0.7658,
+          "ST_CHP": 0.1929,
+          "ST_GAS": 0.4265,
+          "biomass": 0.5313,
+          "hydro": 0.2385,
+          "import": 0.4073,
+          "nuclear": 0.0,
+          "oil": 1.0
+        },
+        "lo": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 30.9416,
+            "mw_mean": 3221.3594,
+            "hours_with_marginal_coal": 793,
+            "hours_share": 1.0,
+            "band_tranche_counts": {
+              "2.0": 22205,
+              "5.0": 52030,
+              "10.0": 87061
+            },
+            "band_mw_mean": {
+              "2.0": 1401.3387,
+              "5.0": 3221.3594,
+              "10.0": 5228.8391
+            },
+            "p8_effective_fuel_passthrough": 0.9962
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 34.4436,
+            "+2GW": 35.611,
+            "+5GW": 38.9802
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 0,
+            "+2GW": 0,
+            "+5GW": 6
+          },
+          "p3_srmc_gap_gas_minus_coal": 3.502,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 0.6348,
+            "+2GW": 0.6526,
+            "+5GW": 0.9435
+          },
+          "p5_miso142_empirical_slope": 0.447,
+          "p5_vs_miso142_empirical_ratio": 1.4201,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 43.973,
+            "mean_gw": 17.3673,
+            "median_gw": 18.2527,
+            "unreached_hours": 0,
+            "reached_hours": 793
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 80676.1902,
+            "thermal_served_mw": 61260.8,
+            "excess_cheap_capability_mw": 19415.4
+          },
+          "p4_gain_usd_per_mwh": {},
+          "p4_displacement_direction": {
+            "c2_eia923": "coal UNDER-run -> no coal->gas displacement",
+            "eia930_w1_2025": "not measured for this year"
+          },
+          "p4_gain_reachable_frac": {}
+        },
+        "hi": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 30.9416,
+            "mw_mean": 3221.3594,
+            "hours_with_marginal_coal": 793,
+            "hours_share": 1.0,
+            "band_tranche_counts": {
+              "2.0": 22205,
+              "5.0": 52030,
+              "10.0": 87061
+            },
+            "band_mw_mean": {
+              "2.0": 1401.3387,
+              "5.0": 3221.3594,
+              "10.0": 5228.8391
+            },
+            "p8_effective_fuel_passthrough": 0.9962
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 34.4462,
+            "+2GW": 35.6045,
+            "+5GW": 39.2067
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 0,
+            "+2GW": 0,
+            "+5GW": 4
+          },
+          "p3_srmc_gap_gas_minus_coal": 3.5046,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 0.6263,
+            "+2GW": 0.6313,
+            "+5GW": 0.8515
+          },
+          "p5_miso142_empirical_slope": 0.447,
+          "p5_vs_miso142_empirical_ratio": 1.4011,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 43.973,
+            "mean_gw": 17.2013,
+            "median_gw": 18.1621,
+            "unreached_hours": 0,
+            "reached_hours": 793
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 79789.7158,
+            "thermal_served_mw": 61260.8,
+            "excess_cheap_capability_mw": 18529.0
+          },
+          "p4_gain_usd_per_mwh": {},
+          "p4_displacement_direction": {
+            "c2_eia923": "coal UNDER-run -> no coal->gas displacement",
+            "eia930_w1_2025": "not measured for this year"
+          },
+          "p4_gain_reachable_frac": {}
+        }
+      },
+      "JJA_h12_17": {
+        "n_hours": 552,
+        "anchor_lw_price": 39.1,
+        "actual_lw_price": 49.772,
+        "deficit_usd_per_mwh": -10.671,
+        "mean_thermal_mw": 64921.9,
+        "class_idle_frac": {
+          "CC_CHP": 0.0741,
+          "CC_REGULAR": 0.0817,
+          "COAL": 0.1621,
+          "CT_CHP": 0.0954,
+          "CT_PEAKER": 0.7165,
+          "ST_CHP": 0.1648,
+          "ST_GAS": 0.3539,
+          "biomass": 0.5325,
+          "hydro": 0.2195,
+          "import": 0.363,
+          "nuclear": 0.0,
+          "oil": 0.9974
+        },
+        "lo": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 31.7261,
+            "mw_mean": 3506.8744,
+            "hours_with_marginal_coal": 547,
+            "hours_share": 0.9909,
+            "band_tranche_counts": {
+              "2.0": 16137,
+              "5.0": 39362,
+              "10.0": 67585
+            },
+            "band_mw_mean": {
+              "2.0": 1456.757,
+              "5.0": 3503.4759,
+              "10.0": 5977.3066
+            },
+            "p8_effective_fuel_passthrough": 0.9973
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 35.3496,
+            "+2GW": 36.5925,
+            "+5GW": 42.2998
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 5,
+            "+2GW": 5,
+            "+5GW": 10
+          },
+          "p3_srmc_gap_gas_minus_coal": 3.6235,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 1.2725,
+            "+2GW": 1.0181,
+            "+5GW": 1.2932
+          },
+          "p5_miso142_empirical_slope": 0.491,
+          "p5_vs_miso142_empirical_ratio": 2.5916,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 49.772,
+            "mean_gw": 18.4435,
+            "median_gw": 18.7563,
+            "unreached_hours": 1,
+            "reached_hours": 551
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 84922.9454,
+            "thermal_served_mw": 64921.9,
+            "excess_cheap_capability_mw": 20001.0
+          },
+          "p4_gain_usd_per_mwh": {},
+          "p4_displacement_direction": {
+            "c2_eia923": "coal UNDER-run -> no coal->gas displacement",
+            "eia930_w1_2025": "not measured for this year"
+          },
+          "p4_gain_reachable_frac": {}
+        },
+        "hi": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 31.7261,
+            "mw_mean": 3506.8744,
+            "hours_with_marginal_coal": 547,
+            "hours_share": 0.9909,
+            "band_tranche_counts": {
+              "2.0": 16137,
+              "5.0": 39362,
+              "10.0": 67585
+            },
+            "band_mw_mean": {
+              "2.0": 1456.757,
+              "5.0": 3503.4759,
+              "10.0": 5977.3066
+            },
+            "p8_effective_fuel_passthrough": 0.9973
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 35.3338,
+            "+2GW": 36.5404,
+            "+5GW": 42.1898
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 5,
+            "+2GW": 5,
+            "+5GW": 8
+          },
+          "p3_srmc_gap_gas_minus_coal": 3.6077,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 1.2566,
+            "+2GW": 0.9826,
+            "+5GW": 1.1545
+          },
+          "p5_miso142_empirical_slope": 0.491,
+          "p5_vs_miso142_empirical_ratio": 2.5593,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 49.772,
+            "mean_gw": 18.768,
+            "median_gw": 19.0305,
+            "unreached_hours": 1,
+            "reached_hours": 551
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 83953.4006,
+            "thermal_served_mw": 64921.9,
+            "excess_cheap_capability_mw": 19031.5
+          },
+          "p4_gain_usd_per_mwh": {},
+          "p4_displacement_direction": {
+            "c2_eia923": "coal UNDER-run -> no coal->gas displacement",
+            "eia930_w1_2025": "not measured for this year"
+          },
+          "p4_gain_reachable_frac": {}
+        }
+      }
+    },
+    "2025": {
+      "n_gen": 3088,
+      "W1_jun_jul_h8_20": {
+        "n_hours": 793,
+        "anchor_lw_price": 44.439,
+        "actual_lw_price": 75.438,
+        "deficit_usd_per_mwh": -30.999,
+        "mean_thermal_mw": 64249.5,
+        "class_idle_frac": {
+          "CC_CHP": 0.0776,
+          "CC_REGULAR": 0.0768,
+          "COAL": 0.0465,
+          "CT_CHP": 0.0962,
+          "CT_PEAKER": 0.6648,
+          "ST_CHP": 0.282,
+          "ST_GAS": 0.4471,
+          "biomass": 0.791,
+          "hydro": 0.2468,
+          "import": 0.5394,
+          "nuclear": 0.0,
+          "oil": 0.9997
+        },
+        "lo": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 39.9972,
+            "mw_mean": 1913.1696,
+            "hours_with_marginal_coal": 776,
+            "hours_share": 0.9786,
+            "band_tranche_counts": {
+              "2.0": 12566,
+              "5.0": 35559,
+              "10.0": 80310
+            },
+            "band_mw_mean": {
+              "2.0": 597.6827,
+              "5.0": 1741.6165,
+              "10.0": 4428.682
+            },
+            "p8_effective_fuel_passthrough": 1.0
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 45.4541,
+            "+2GW": 46.7222,
+            "+5GW": 49.5061
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 2,
+            "+2GW": 7,
+            "+5GW": 36
+          },
+          "p3_srmc_gap_gas_minus_coal": 5.4569,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 1.5824,
+            "+2GW": 1.9578,
+            "+5GW": 2.9534
+          },
+          "p5_miso142_empirical_slope": 0.635,
+          "p5_vs_miso142_empirical_ratio": 2.492,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 75.438,
+            "mean_gw": 17.4401,
+            "median_gw": 17.1354,
+            "unreached_hours": 0,
+            "reached_hours": 793
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 82916.1171,
+            "thermal_served_mw": 64249.5,
+            "excess_cheap_capability_mw": 18666.6
+          },
+          "p4_gain_usd_per_mwh": {
+            "c2_eia923|cap": 2.4178,
+            "c2_eia923|idle": 5.1056,
+            "eia930_w1_2025|cap": 11.5404,
+            "eia930_w1_2025|idle": 25.4199
+          },
+          "p4_displacement_direction": {
+            "c2_eia923": "coal OVER-run -> displace to gas",
+            "eia930_w1_2025": "coal OVER-run -> displace to gas"
+          },
+          "p4_gain_reachable_frac": {
+            "c2_eia923|cap": 1.0,
+            "c2_eia923|idle": 1.0,
+            "eia930_w1_2025|cap": 0.9955,
+            "eia930_w1_2025|idle": 0.9848
+          }
+        },
+        "hi": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 39.9972,
+            "mw_mean": 1913.1696,
+            "hours_with_marginal_coal": 776,
+            "hours_share": 0.9786,
+            "band_tranche_counts": {
+              "2.0": 12566,
+              "5.0": 35559,
+              "10.0": 80310
+            },
+            "band_mw_mean": {
+              "2.0": 597.6827,
+              "5.0": 1741.6165,
+              "10.0": 4428.682
+            },
+            "p8_effective_fuel_passthrough": 1.0
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 45.2731,
+            "+2GW": 46.5311,
+            "+5GW": 49.4167
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 2,
+            "+2GW": 7,
+            "+5GW": 31
+          },
+          "p3_srmc_gap_gas_minus_coal": 5.2759,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 1.5006,
+            "+2GW": 1.8374,
+            "+5GW": 2.8174
+          },
+          "p5_miso142_empirical_slope": 0.635,
+          "p5_vs_miso142_empirical_ratio": 2.3631,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 75.438,
+            "mean_gw": 18.5189,
+            "median_gw": 18.8465,
+            "unreached_hours": 0,
+            "reached_hours": 793
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 81824.9073,
+            "thermal_served_mw": 64249.5,
+            "excess_cheap_capability_mw": 17575.4
+          },
+          "p4_gain_usd_per_mwh": {
+            "c2_eia923|cap": 2.3086,
+            "c2_eia923|idle": 4.7887,
+            "eia930_w1_2025|cap": 10.9503,
+            "eia930_w1_2025|idle": 22.5151
+          },
+          "p4_displacement_direction": {
+            "c2_eia923": "coal OVER-run -> displace to gas",
+            "eia930_w1_2025": "coal OVER-run -> displace to gas"
+          },
+          "p4_gain_reachable_frac": {
+            "c2_eia923|cap": 1.0,
+            "c2_eia923|idle": 1.0,
+            "eia930_w1_2025|cap": 0.9955,
+            "eia930_w1_2025|idle": 0.9848
+          }
+        }
+      },
+      "JJA_h12_17": {
+        "n_hours": 552,
+        "anchor_lw_price": 44.245,
+        "actual_lw_price": 74.68,
+        "deficit_usd_per_mwh": -30.435,
+        "mean_thermal_mw": 65840.6,
+        "class_idle_frac": {
+          "CC_CHP": 0.0773,
+          "CC_REGULAR": 0.0731,
+          "COAL": 0.0409,
+          "CT_CHP": 0.0927,
+          "CT_PEAKER": 0.6445,
+          "ST_CHP": 0.2444,
+          "ST_GAS": 0.4158,
+          "biomass": 0.7903,
+          "hydro": 0.2425,
+          "import": 0.5089,
+          "nuclear": 0.0,
+          "oil": 0.9999
+        },
+        "lo": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 40.2542,
+            "mw_mean": 1776.672,
+            "hours_with_marginal_coal": 541,
+            "hours_share": 0.9801,
+            "band_tranche_counts": {
+              "2.0": 8287,
+              "5.0": 23718,
+              "10.0": 55199
+            },
+            "band_mw_mean": {
+              "2.0": 527.6731,
+              "5.0": 1602.1808,
+              "10.0": 4313.64
+            },
+            "p8_effective_fuel_passthrough": 1.0
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 45.1157,
+            "+2GW": 47.3217,
+            "+5GW": 49.6612
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 1,
+            "+2GW": 2,
+            "+5GW": 24
+          },
+          "p3_srmc_gap_gas_minus_coal": 4.8615,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 1.4962,
+            "+2GW": 1.8946,
+            "+5GW": 2.89
+          },
+          "p5_miso142_empirical_slope": 0.637,
+          "p5_vs_miso142_empirical_ratio": 2.3488,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 74.68,
+            "mean_gw": 16.1424,
+            "median_gw": 16.127,
+            "unreached_hours": 0,
+            "reached_hours": 552
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 85170.6288,
+            "thermal_served_mw": 65840.6,
+            "excess_cheap_capability_mw": 19330.1
+          },
+          "p4_gain_usd_per_mwh": {
+            "c2_eia923|cap": 2.2969,
+            "c2_eia923|idle": 5.4736,
+            "eia930_w1_2025|cap": 11.276,
+            "eia930_w1_2025|idle": 28.5461
+          },
+          "p4_displacement_direction": {
+            "c2_eia923": "coal OVER-run -> displace to gas",
+            "eia930_w1_2025": "coal OVER-run -> displace to gas"
+          },
+          "p4_gain_reachable_frac": {
+            "c2_eia923|cap": 1.0,
+            "c2_eia923|idle": 1.0,
+            "eia930_w1_2025|cap": 0.9979,
+            "eia930_w1_2025|idle": 0.9871
+          }
+        },
+        "hi": {
+          "marginal_coal": {
+            "srmc_mean_usd_mwh": 40.2542,
+            "mw_mean": 1776.672,
+            "hours_with_marginal_coal": 541,
+            "hours_share": 0.9801,
+            "band_tranche_counts": {
+              "2.0": 8287,
+              "5.0": 23718,
+              "10.0": 55199
+            },
+            "band_mw_mean": {
+              "2.0": 527.6731,
+              "5.0": 1602.1808,
+              "10.0": 4313.64
+            },
+            "p8_effective_fuel_passthrough": 1.0
+          },
+          "gas_srmc_above_anchor": {
+            "+1GW": 45.038,
+            "+2GW": 47.1039,
+            "+5GW": 49.7394
+          },
+          "gas_ladder_unreached_hours": {
+            "+1GW": 1,
+            "+2GW": 2,
+            "+5GW": 20
+          },
+          "p3_srmc_gap_gas_minus_coal": 4.7838,
+          "p5_ladder_slope_usd_per_gw": {
+            "+1GW": 1.4701,
+            "+2GW": 1.7754,
+            "+5GW": 2.7089
+          },
+          "p5_miso142_empirical_slope": 0.637,
+          "p5_vs_miso142_empirical_ratio": 2.3078,
+          "gw_up_ladder_to_reach_actual_price": {
+            "target_usd_mwh": 74.68,
+            "mean_gw": 17.2609,
+            "median_gw": 17.603,
+            "unreached_hours": 0,
+            "reached_hours": 552
+          },
+          "footing_failure_diagnostic": {
+            "capability_at_or_below_anchor_mw": 84050.7521,
+            "thermal_served_mw": 65840.6,
+            "excess_cheap_capability_mw": 18210.2
+          },
+          "p4_gain_usd_per_mwh": {
+            "c2_eia923|cap": 2.2041,
+            "c2_eia923|idle": 5.0976,
+            "eia930_w1_2025|cap": 10.5513,
+            "eia930_w1_2025|idle": 23.9204
+          },
+          "p4_displacement_direction": {
+            "c2_eia923": "coal OVER-run -> displace to gas",
+            "eia930_w1_2025": "coal OVER-run -> displace to gas"
+          },
+          "p4_gain_reachable_frac": {
+            "c2_eia923|cap": 1.0,
+            "c2_eia923|idle": 1.0,
+            "eia930_w1_2025|cap": 0.9979,
+            "eia930_w1_2025|idle": 0.9871
+          }
+        }
+      }
+    }
+  },
+  "congestion_diagnostic": {
+    "2025": {
+      "window": "JJA_h12_17",
+      "n_hours": 552,
+      "mean_underprice_usd_mwh": 10.861,
+      "mean_zonal_price_spread_usd_mwh": 2.401,
+      "pearson_r_spread_vs_underprice": -0.1129,
+      "by_spread_quartile": [
+        {
+          "zonal_spread_range": [
+            0.0,
+            0.0
+          ],
+          "n": 320,
+          "mean_underprice": 12.058
+        },
+        {
+          "zonal_spread_range": [
+            0.0,
+            0.0
+          ],
+          "n": 320,
+          "mean_underprice": 12.058
+        },
+        {
+          "zonal_spread_range": [
+            0.0,
+            2.66
+          ],
+          "n": 414,
+          "mean_underprice": 11.202
+        },
+        {
+          "zonal_spread_range": [
+            2.66,
+            27.83
+          ],
+          "n": 138,
+          "mean_underprice": 9.839
+        }
+      ],
+      "footing_median_abs_err": 9.998
+    }
+  }
+}
