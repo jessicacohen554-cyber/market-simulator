@@ -1,0 +1,1196 @@
+{
+ "prereg": "results/calibration/PREREG-miso142-summer-supply-stack-2026-08-08.md",
+ "gate": "G-B / G-C2 -- model supply curve vs measured supply curve",
+ "keeper": "2026-08-05-miso-132b-cc-committed",
+ "note": "x-axes sit on different instruments (EIA-930 hourly BA vs model grid-delivered); slopes in $/MWh per GW are offset-invariant and a self-centred x is reported. No intercept is quoted.",
+ "years": {
+  "2023": {
+   "W1_jun_jul_h8_20": {
+    "n_model_hours": 793,
+    "n_actual_hours": 793,
+    "model": {
+     "curve": {
+      "median_thermal_gw": 65.037,
+      "bins": [
+       {
+        "n": 80,
+        "thermal_gw": 52.3758,
+        "thermal_gw_centred": -12.6609,
+        "price_median": 29.508,
+        "price_p90": 31.82
+       },
+       {
+        "n": 79,
+        "thermal_gw": 57.2932,
+        "thermal_gw_centred": -7.7436,
+        "price_median": 32.092,
+        "price_p90": 33.601
+       },
+       {
+        "n": 79,
+        "thermal_gw": 59.9874,
+        "thermal_gw_centred": -5.0493,
+        "price_median": 33.354,
+        "price_p90": 34.802
+       },
+       {
+        "n": 79,
+        "thermal_gw": 61.7094,
+        "thermal_gw_centred": -3.3273,
+        "price_median": 33.748,
+        "price_p90": 37.422
+       },
+       {
+        "n": 79,
+        "thermal_gw": 64.2663,
+        "thermal_gw_centred": -0.7704,
+        "price_median": 35.429,
+        "price_p90": 37.517
+       },
+       {
+        "n": 80,
+        "thermal_gw": 65.7725,
+        "thermal_gw_centred": 0.7358,
+        "price_median": 36.562,
+        "price_p90": 38.353
+       },
+       {
+        "n": 79,
+        "thermal_gw": 67.3559,
+        "thermal_gw_centred": 2.3191,
+        "price_median": 37.247,
+        "price_p90": 38.815
+       },
+       {
+        "n": 79,
+        "thermal_gw": 69.0054,
+        "thermal_gw_centred": 3.9687,
+        "price_median": 37.99,
+        "price_p90": 39.624
+       },
+       {
+        "n": 79,
+        "thermal_gw": 70.8188,
+        "thermal_gw_centred": 5.7821,
+        "price_median": 38.406,
+        "price_p90": 43.04
+       },
+       {
+        "n": 80,
+        "thermal_gw": 76.5571,
+        "thermal_gw_centred": 11.5204,
+        "price_median": 41.34,
+        "price_p90": 48.684
+       }
+      ]
+     },
+     "slope": {
+      "n": 633,
+      "slope_usd_per_gw": 0.5068,
+      "se": 0.0172,
+      "band_gw": [
+       55.12,
+       72.3
+      ],
+      "r2": 0.5803
+     },
+     "price_min_median_max": [
+      19.84,
+      35.9,
+      61.79
+     ],
+     "price_p90_p99": [
+      40.43,
+      48.68
+     ]
+    },
+    "actual": {
+     "curve": {
+      "median_thermal_gw": 67.938,
+      "bins": [
+       {
+        "n": 80,
+        "thermal_gw": 52.237,
+        "thermal_gw_centred": -15.701,
+        "price_median": 24.08,
+        "price_p90": 27.609
+       },
+       {
+        "n": 79,
+        "thermal_gw": 58.039,
+        "thermal_gw_centred": -9.899,
+        "price_median": 27.46,
+        "price_p90": 34.114
+       },
+       {
+        "n": 79,
+        "thermal_gw": 61.189,
+        "thermal_gw_centred": -6.749,
+        "price_median": 29.69,
+        "price_p90": 37.202
+       },
+       {
+        "n": 79,
+        "thermal_gw": 63.957,
+        "thermal_gw_centred": -3.981,
+        "price_median": 32.75,
+        "price_p90": 61.662
+       },
+       {
+        "n": 79,
+        "thermal_gw": 66.568,
+        "thermal_gw_centred": -1.37,
+        "price_median": 33.73,
+        "price_p90": 57.772
+       },
+       {
+        "n": 80,
+        "thermal_gw": 68.9145,
+        "thermal_gw_centred": 0.9765,
+        "price_median": 35.82,
+        "price_p90": 78.732
+       },
+       {
+        "n": 79,
+        "thermal_gw": 71.297,
+        "thermal_gw_centred": 3.359,
+        "price_median": 37.96,
+        "price_p90": 78.472
+       },
+       {
+        "n": 79,
+        "thermal_gw": 73.599,
+        "thermal_gw_centred": 5.661,
+        "price_median": 36.8,
+        "price_p90": 51.114
+       },
+       {
+        "n": 79,
+        "thermal_gw": 76.434,
+        "thermal_gw_centred": 8.496,
+        "price_median": 40.02,
+        "price_p90": 73.44
+       },
+       {
+        "n": 80,
+        "thermal_gw": 82.4865,
+        "thermal_gw_centred": 14.5485,
+        "price_median": 40.805,
+        "price_p90": 53.339
+       }
+      ]
+     },
+     "slope": {
+      "n": 633,
+      "slope_usd_per_gw": 0.9576,
+      "se": 0.1962,
+      "band_gw": [
+       55.68,
+       78.31
+      ],
+      "r2": 0.0364
+     },
+     "price_min_median_max": [
+      16.6,
+      34.39,
+      354.91
+     ],
+     "price_p90_p99": [
+      55.08,
+      142.23
+     ]
+    },
+    "slope_ratio_actual_over_model": 1.89
+   },
+   "JJA_h12_17": {
+    "n_model_hours": 552,
+    "n_actual_hours": 552,
+    "model": {
+     "curve": {
+      "median_thermal_gw": 67.777,
+      "bins": [
+       {
+        "n": 56,
+        "thermal_gw": 56.2224,
+        "thermal_gw_centred": -11.5546,
+        "price_median": 32.019,
+        "price_p90": 33.539
+       },
+       {
+        "n": 55,
+        "thermal_gw": 60.4492,
+        "thermal_gw_centred": -7.3279,
+        "price_median": 33.529,
+        "price_p90": 35.041
+       },
+       {
+        "n": 55,
+        "thermal_gw": 63.301,
+        "thermal_gw_centred": -4.4761,
+        "price_median": 35.501,
+        "price_p90": 37.023
+       },
+       {
+        "n": 55,
+        "thermal_gw": 65.5735,
+        "thermal_gw_centred": -2.2036,
+        "price_median": 36.364,
+        "price_p90": 38.605
+       },
+       {
+        "n": 55,
+        "thermal_gw": 66.9728,
+        "thermal_gw_centred": -0.8043,
+        "price_median": 37.247,
+        "price_p90": 38.809
+       },
+       {
+        "n": 55,
+        "thermal_gw": 68.7609,
+        "thermal_gw_centred": 0.9839,
+        "price_median": 37.99,
+        "price_p90": 38.985
+       },
+       {
+        "n": 55,
+        "thermal_gw": 69.8642,
+        "thermal_gw_centred": 2.0871,
+        "price_median": 38.595,
+        "price_p90": 42.8
+       },
+       {
+        "n": 55,
+        "thermal_gw": 71.2675,
+        "thermal_gw_centred": 3.4904,
+        "price_median": 40.255,
+        "price_p90": 44.833
+       },
+       {
+        "n": 55,
+        "thermal_gw": 76.5316,
+        "thermal_gw_centred": 8.7545,
+        "price_median": 41.741,
+        "price_p90": 45.227
+       },
+       {
+        "n": 56,
+        "thermal_gw": 80.4063,
+        "thermal_gw_centred": 12.6292,
+        "price_median": 45.692,
+        "price_p90": 64.589
+       }
+      ]
+     },
+     "slope": {
+      "n": 440,
+      "slope_usd_per_gw": 0.5829,
+      "se": 0.0234,
+      "band_gw": [
+       58.89,
+       78.7
+      ],
+      "r2": 0.5858
+     },
+     "price_min_median_max": [
+      22.87,
+      37.46,
+      182.91
+     ],
+     "price_p90_p99": [
+      44.26,
+      64.53
+     ]
+    },
+    "actual": {
+     "curve": {
+      "median_thermal_gw": 72.088,
+      "bins": [
+       {
+        "n": 56,
+        "thermal_gw": 57.377,
+        "thermal_gw_centred": -14.7105,
+        "price_median": 27.955,
+        "price_p90": 33.93
+       },
+       {
+        "n": 55,
+        "thermal_gw": 62.826,
+        "thermal_gw_centred": -9.2615,
+        "price_median": 31.85,
+        "price_p90": 37.58
+       },
+       {
+        "n": 55,
+        "thermal_gw": 66.027,
+        "thermal_gw_centred": -6.0605,
+        "price_median": 35.58,
+        "price_p90": 63.776
+       },
+       {
+        "n": 55,
+        "thermal_gw": 68.828,
+        "thermal_gw_centred": -3.2595,
+        "price_median": 38.19,
+        "price_p90": 75.566
+       },
+       {
+        "n": 55,
+        "thermal_gw": 71.163,
+        "thermal_gw_centred": -0.9245,
+        "price_median": 38.38,
+        "price_p90": 61.808
+       },
+       {
+        "n": 55,
+        "thermal_gw": 73.07,
+        "thermal_gw_centred": 0.9825,
+        "price_median": 39.21,
+        "price_p90": 61.644
+       },
+       {
+        "n": 55,
+        "thermal_gw": 75.157,
+        "thermal_gw_centred": 3.0695,
+        "price_median": 41.67,
+        "price_p90": 60.58
+       },
+       {
+        "n": 55,
+        "thermal_gw": 77.383,
+        "thermal_gw_centred": 5.2955,
+        "price_median": 40.85,
+        "price_p90": 57.798
+       },
+       {
+        "n": 55,
+        "thermal_gw": 81.125,
+        "thermal_gw_centred": 9.0375,
+        "price_median": 42.92,
+        "price_p90": 64.876
+       },
+       {
+        "n": 56,
+        "thermal_gw": 88.2565,
+        "thermal_gw_centred": 16.169,
+        "price_median": 47.41,
+        "price_p90": 106.23
+       }
+      ]
+     },
+     "slope": {
+      "n": 440,
+      "slope_usd_per_gw": 1.0146,
+      "se": 0.3524,
+      "band_gw": [
+       60.87,
+       84.72
+      ],
+      "r2": 0.0186
+     },
+     "price_min_median_max": [
+      22.02,
+      38.86,
+      585.12
+     ],
+     "price_p90_p99": [
+      63.57,
+      172.86
+     ]
+    },
+    "slope_ratio_actual_over_model": 1.74
+   }
+  },
+  "2024": {
+   "W1_jun_jul_h8_20": {
+    "n_model_hours": 793,
+    "n_actual_hours": 780,
+    "model": {
+     "curve": {
+      "median_thermal_gw": 62.304,
+      "bins": [
+       {
+        "n": 80,
+        "thermal_gw": 44.9017,
+        "thermal_gw_centred": -17.4025,
+        "price_median": 24.984,
+        "price_p90": 27.554
+       },
+       {
+        "n": 79,
+        "thermal_gw": 50.8705,
+        "thermal_gw_centred": -11.4336,
+        "price_median": 28.798,
+        "price_p90": 31.385
+       },
+       {
+        "n": 79,
+        "thermal_gw": 54.5856,
+        "thermal_gw_centred": -7.7186,
+        "price_median": 29.993,
+        "price_p90": 33.314
+       },
+       {
+        "n": 79,
+        "thermal_gw": 58.1127,
+        "thermal_gw_centred": -4.1915,
+        "price_median": 29.972,
+        "price_p90": 33.119
+       },
+       {
+        "n": 79,
+        "thermal_gw": 61.1302,
+        "thermal_gw_centred": -1.174,
+        "price_median": 31.348,
+        "price_p90": 33.16
+       },
+       {
+        "n": 80,
+        "thermal_gw": 63.254,
+        "thermal_gw_centred": 0.9498,
+        "price_median": 32.883,
+        "price_p90": 34.288
+       },
+       {
+        "n": 79,
+        "thermal_gw": 65.0487,
+        "thermal_gw_centred": 2.7445,
+        "price_median": 33.98,
+        "price_p90": 36.642
+       },
+       {
+        "n": 79,
+        "thermal_gw": 67.8539,
+        "thermal_gw_centred": 5.5497,
+        "price_median": 35.855,
+        "price_p90": 37.501
+       },
+       {
+        "n": 79,
+        "thermal_gw": 70.7381,
+        "thermal_gw_centred": 8.4339,
+        "price_median": 37.56,
+        "price_p90": 40.107
+       },
+       {
+        "n": 80,
+        "thermal_gw": 74.7688,
+        "thermal_gw_centred": 12.4646,
+        "price_median": 41.338,
+        "price_p90": 46.64
+       }
+      ]
+     },
+     "slope": {
+      "n": 633,
+      "slope_usd_per_gw": 0.447,
+      "se": 0.0117,
+      "band_gw": [
+       48.23,
+       72.89
+      ],
+      "r2": 0.6999
+     },
+     "price_min_median_max": [
+      19.35,
+      32.58,
+      51.66
+     ],
+     "price_p90_p99": [
+      38.71,
+      46.64
+     ]
+    },
+    "actual": {
+     "curve": {
+      "median_thermal_gw": 66.149,
+      "bins": [
+       {
+        "n": 78,
+        "thermal_gw": 44.9,
+        "thermal_gw_centred": -21.249,
+        "price_median": 22.0,
+        "price_p90": 30.624
+       },
+       {
+        "n": 78,
+        "thermal_gw": 52.3995,
+        "thermal_gw_centred": -13.7495,
+        "price_median": 24.195,
+        "price_p90": 47.242
+       },
+       {
+        "n": 78,
+        "thermal_gw": 57.085,
+        "thermal_gw_centred": -9.064,
+        "price_median": 26.57,
+        "price_p90": 39.323
+       },
+       {
+        "n": 78,
+        "thermal_gw": 61.5935,
+        "thermal_gw_centred": -4.5555,
+        "price_median": 29.115,
+        "price_p90": 73.694
+       },
+       {
+        "n": 78,
+        "thermal_gw": 64.904,
+        "thermal_gw_centred": -1.245,
+        "price_median": 29.11,
+        "price_p90": 53.985
+       },
+       {
+        "n": 78,
+        "thermal_gw": 67.263,
+        "thermal_gw_centred": 1.114,
+        "price_median": 30.12,
+        "price_p90": 46.866
+       },
+       {
+        "n": 78,
+        "thermal_gw": 69.3855,
+        "thermal_gw_centred": 3.2365,
+        "price_median": 33.35,
+        "price_p90": 69.706
+       },
+       {
+        "n": 78,
+        "thermal_gw": 72.2745,
+        "thermal_gw_centred": 6.1255,
+        "price_median": 36.155,
+        "price_p90": 84.097
+       },
+       {
+        "n": 78,
+        "thermal_gw": 76.042,
+        "thermal_gw_centred": 9.893,
+        "price_median": 36.935,
+        "price_p90": 60.808
+       },
+       {
+        "n": 78,
+        "thermal_gw": 81.374,
+        "thermal_gw_centred": 15.225,
+        "price_median": 46.565,
+        "price_p90": 112.506
+       }
+      ]
+     },
+     "slope": {
+      "n": 624,
+      "slope_usd_per_gw": 0.9205,
+      "se": 0.2421,
+      "band_gw": [
+       49.31,
+       78.0
+      ],
+      "r2": 0.0227
+     },
+     "price_min_median_max": [
+      12.9,
+      31.03,
+      704.06
+     ],
+     "price_p90_p99": [
+      65.08,
+      225.78
+     ]
+    },
+    "slope_ratio_actual_over_model": 2.06
+   },
+   "JJA_h12_17": {
+    "n_model_hours": 552,
+    "n_actual_hours": 546,
+    "model": {
+     "curve": {
+      "median_thermal_gw": 65.252,
+      "bins": [
+       {
+        "n": 56,
+        "thermal_gw": 49.1551,
+        "thermal_gw_centred": -16.0969,
+        "price_median": 27.762,
+        "price_p90": 31.055
+       },
+       {
+        "n": 55,
+        "thermal_gw": 55.1987,
+        "thermal_gw_centred": -10.0534,
+        "price_median": 30.509,
+        "price_p90": 33.353
+       },
+       {
+        "n": 55,
+        "thermal_gw": 59.9884,
+        "thermal_gw_centred": -5.2637,
+        "price_median": 30.541,
+        "price_p90": 32.618
+       },
+       {
+        "n": 55,
+        "thermal_gw": 62.8034,
+        "thermal_gw_centred": -2.4486,
+        "price_median": 32.154,
+        "price_p90": 34.065
+       },
+       {
+        "n": 55,
+        "thermal_gw": 64.5265,
+        "thermal_gw_centred": -0.7256,
+        "price_median": 33.14,
+        "price_p90": 35.21
+       },
+       {
+        "n": 55,
+        "thermal_gw": 66.2678,
+        "thermal_gw_centred": 1.0157,
+        "price_median": 33.998,
+        "price_p90": 36.751
+       },
+       {
+        "n": 55,
+        "thermal_gw": 68.4475,
+        "thermal_gw_centred": 3.1955,
+        "price_median": 35.396,
+        "price_p90": 37.683
+       },
+       {
+        "n": 55,
+        "thermal_gw": 70.7381,
+        "thermal_gw_centred": 5.486,
+        "price_median": 37.56,
+        "price_p90": 39.818
+       },
+       {
+        "n": 55,
+        "thermal_gw": 73.4669,
+        "thermal_gw_centred": 8.2149,
+        "price_median": 38.718,
+        "price_p90": 42.522
+       },
+       {
+        "n": 56,
+        "thermal_gw": 79.1883,
+        "thermal_gw_centred": 13.9363,
+        "price_median": 43.495,
+        "price_p90": 55.282
+       }
+      ]
+     },
+     "slope": {
+      "n": 440,
+      "slope_usd_per_gw": 0.4915,
+      "se": 0.0185,
+      "band_gw": [
+       52.62,
+       75.25
+      ],
+      "r2": 0.6166
+     },
+     "price_min_median_max": [
+      21.9,
+      33.68,
+      500.0
+     ],
+     "price_p90_p99": [
+      40.69,
+      55.21
+     ]
+    },
+    "actual": {
+     "curve": {
+      "median_thermal_gw": 69.869,
+      "bins": [
+       {
+        "n": 55,
+        "thermal_gw": 50.602,
+        "thermal_gw_centred": -19.267,
+        "price_median": 23.69,
+        "price_p90": 37.834
+       },
+       {
+        "n": 54,
+        "thermal_gw": 57.283,
+        "thermal_gw_centred": -12.586,
+        "price_median": 26.305,
+        "price_p90": 36.15
+       },
+       {
+        "n": 55,
+        "thermal_gw": 62.615,
+        "thermal_gw_centred": -7.254,
+        "price_median": 28.31,
+        "price_p90": 78.398
+       },
+       {
+        "n": 54,
+        "thermal_gw": 66.4125,
+        "thermal_gw_centred": -3.4565,
+        "price_median": 29.28,
+        "price_p90": 44.897
+       },
+       {
+        "n": 55,
+        "thermal_gw": 68.672,
+        "thermal_gw_centred": -1.197,
+        "price_median": 32.85,
+        "price_p90": 58.934
+       },
+       {
+        "n": 54,
+        "thermal_gw": 71.092,
+        "thermal_gw_centred": 1.223,
+        "price_median": 35.29,
+        "price_p90": 64.728
+       },
+       {
+        "n": 55,
+        "thermal_gw": 73.572,
+        "thermal_gw_centred": 3.703,
+        "price_median": 37.97,
+        "price_p90": 80.054
+       },
+       {
+        "n": 54,
+        "thermal_gw": 76.2085,
+        "thermal_gw_centred": 6.3395,
+        "price_median": 39.36,
+        "price_p90": 67.922
+       },
+       {
+        "n": 55,
+        "thermal_gw": 79.829,
+        "thermal_gw_centred": 9.96,
+        "price_median": 43.96,
+        "price_p90": 125.988
+       },
+       {
+        "n": 55,
+        "thermal_gw": 86.046,
+        "thermal_gw_centred": 16.177,
+        "price_median": 60.03,
+        "price_p90": 162.058
+       }
+      ]
+     },
+     "slope": {
+      "n": 436,
+      "slope_usd_per_gw": 1.492,
+      "se": 0.3303,
+      "band_gw": [
+       53.43,
+       81.49
+      ],
+      "r2": 0.0449
+     },
+     "price_min_median_max": [
+      14.62,
+      33.95,
+      704.06
+     ],
+     "price_p90_p99": [
+      75.85,
+      274.62
+     ]
+    },
+    "slope_ratio_actual_over_model": 3.04
+   }
+  },
+  "2025": {
+   "W1_jun_jul_h8_20": {
+    "n_model_hours": 793,
+    "n_actual_hours": 793,
+    "model": {
+     "curve": {
+      "median_thermal_gw": 65.544,
+      "bins": [
+       {
+        "n": 80,
+        "thermal_gw": 47.0144,
+        "thermal_gw_centred": -18.53,
+        "price_median": 33.509,
+        "price_p90": 36.375
+       },
+       {
+        "n": 79,
+        "thermal_gw": 54.7154,
+        "thermal_gw_centred": -10.829,
+        "price_median": 36.938,
+        "price_p90": 39.705
+       },
+       {
+        "n": 79,
+        "thermal_gw": 58.1335,
+        "thermal_gw_centred": -7.4109,
+        "price_median": 38.458,
+        "price_p90": 42.464
+       },
+       {
+        "n": 79,
+        "thermal_gw": 62.0107,
+        "thermal_gw_centred": -3.5338,
+        "price_median": 41.15,
+        "price_p90": 45.593
+       },
+       {
+        "n": 79,
+        "thermal_gw": 64.0002,
+        "thermal_gw_centred": -1.5443,
+        "price_median": 42.508,
+        "price_p90": 49.032
+       },
+       {
+        "n": 80,
+        "thermal_gw": 66.7557,
+        "thermal_gw_centred": 1.2112,
+        "price_median": 42.316,
+        "price_p90": 47.51
+       },
+       {
+        "n": 79,
+        "thermal_gw": 69.075,
+        "thermal_gw_centred": 3.5305,
+        "price_median": 44.123,
+        "price_p90": 49.004
+       },
+       {
+        "n": 79,
+        "thermal_gw": 70.9799,
+        "thermal_gw_centred": 5.4354,
+        "price_median": 45.767,
+        "price_p90": 51.402
+       },
+       {
+        "n": 79,
+        "thermal_gw": 73.3693,
+        "thermal_gw_centred": 7.8249,
+        "price_median": 46.041,
+        "price_p90": 59.146
+       },
+       {
+        "n": 80,
+        "thermal_gw": 76.571,
+        "thermal_gw_centred": 11.0265,
+        "price_median": 52.865,
+        "price_p90": 76.687
+       }
+      ]
+     },
+     "slope": {
+      "n": 633,
+      "slope_usd_per_gw": 0.6346,
+      "se": 0.0251,
+      "band_gw": [
+       51.91,
+       74.76
+      ],
+      "r2": 0.5033
+     },
+     "price_min_median_max": [
+      27.26,
+      42.81,
+      183.16
+     ],
+     "price_p90_p99": [
+      51.29,
+      76.47
+     ]
+    },
+    "actual": {
+     "curve": {
+      "median_thermal_gw": 68.969,
+      "bins": [
+       {
+        "n": 80,
+        "thermal_gw": 46.2615,
+        "thermal_gw_centred": -22.7075,
+        "price_median": 26.085,
+        "price_p90": 37.92
+       },
+       {
+        "n": 79,
+        "thermal_gw": 55.294,
+        "thermal_gw_centred": -13.675,
+        "price_median": 32.28,
+        "price_p90": 49.786
+       },
+       {
+        "n": 79,
+        "thermal_gw": 59.363,
+        "thermal_gw_centred": -9.606,
+        "price_median": 37.19,
+        "price_p90": 53.982
+       },
+       {
+        "n": 79,
+        "thermal_gw": 63.522,
+        "thermal_gw_centred": -5.447,
+        "price_median": 42.06,
+        "price_p90": 93.458
+       },
+       {
+        "n": 79,
+        "thermal_gw": 67.037,
+        "thermal_gw_centred": -1.932,
+        "price_median": 41.04,
+        "price_p90": 57.498
+       },
+       {
+        "n": 80,
+        "thermal_gw": 70.6355,
+        "thermal_gw_centred": 1.6665,
+        "price_median": 49.945,
+        "price_p90": 87.569
+       },
+       {
+        "n": 79,
+        "thermal_gw": 73.298,
+        "thermal_gw_centred": 4.329,
+        "price_median": 51.02,
+        "price_p90": 121.734
+       },
+       {
+        "n": 79,
+        "thermal_gw": 75.245,
+        "thermal_gw_centred": 6.276,
+        "price_median": 50.55,
+        "price_p90": 131.826
+       },
+       {
+        "n": 79,
+        "thermal_gw": 77.869,
+        "thermal_gw_centred": 8.9,
+        "price_median": 55.24,
+        "price_p90": 114.14
+       },
+       {
+        "n": 80,
+        "thermal_gw": 81.5675,
+        "thermal_gw_centred": 12.5985,
+        "price_median": 118.61,
+        "price_p90": 470.644
+       }
+      ]
+     },
+     "slope": {
+      "n": 633,
+      "slope_usd_per_gw": 1.7133,
+      "se": 0.2087,
+      "band_gw": [
+       51.63,
+       79.03
+      ],
+      "r2": 0.0965
+     },
+     "price_min_median_max": [
+      15.03,
+      45.34,
+      1782.55
+     ],
+     "price_p90_p99": [
+      114.31,
+      551.26
+     ]
+    },
+    "slope_ratio_actual_over_model": 2.7
+   },
+   "JJA_h12_17": {
+    "n_model_hours": 552,
+    "n_actual_hours": 552,
+    "model": {
+     "curve": {
+      "median_thermal_gw": 68.167,
+      "bins": [
+       {
+        "n": 56,
+        "thermal_gw": 49.2645,
+        "thermal_gw_centred": -18.9025,
+        "price_median": 34.073,
+        "price_p90": 37.156
+       },
+       {
+        "n": 55,
+        "thermal_gw": 56.2571,
+        "thermal_gw_centred": -11.9098,
+        "price_median": 36.213,
+        "price_p90": 38.8
+       },
+       {
+        "n": 55,
+        "thermal_gw": 60.012,
+        "thermal_gw_centred": -8.1549,
+        "price_median": 38.819,
+        "price_p90": 43.983
+       },
+       {
+        "n": 55,
+        "thermal_gw": 63.5581,
+        "thermal_gw_centred": -4.6088,
+        "price_median": 42.059,
+        "price_p90": 46.891
+       },
+       {
+        "n": 55,
+        "thermal_gw": 66.656,
+        "thermal_gw_centred": -1.5109,
+        "price_median": 41.039,
+        "price_p90": 47.407
+       },
+       {
+        "n": 55,
+        "thermal_gw": 68.9825,
+        "thermal_gw_centred": 0.8156,
+        "price_median": 43.206,
+        "price_p90": 48.6
+       },
+       {
+        "n": 55,
+        "thermal_gw": 70.7084,
+        "thermal_gw_centred": 2.5415,
+        "price_median": 44.756,
+        "price_p90": 50.467
+       },
+       {
+        "n": 55,
+        "thermal_gw": 72.5248,
+        "thermal_gw_centred": 4.3578,
+        "price_median": 44.82,
+        "price_p90": 49.222
+       },
+       {
+        "n": 55,
+        "thermal_gw": 74.3396,
+        "thermal_gw_centred": 6.1726,
+        "price_median": 46.713,
+        "price_p90": 60.655
+       },
+       {
+        "n": 56,
+        "thermal_gw": 76.7055,
+        "thermal_gw_centred": 8.5386,
+        "price_median": 50.321,
+        "price_p90": 75.611
+       }
+      ]
+     },
+     "slope": {
+      "n": 440,
+      "slope_usd_per_gw": 0.6375,
+      "se": 0.0319,
+      "band_gw": [
+       53.0,
+       75.39
+      ],
+      "r2": 0.4766
+     },
+     "price_min_median_max": [
+      28.52,
+      43.44,
+      132.2
+     ],
+     "price_p90_p99": [
+      50.76,
+      75.61
+     ]
+    },
+    "actual": {
+     "curve": {
+      "median_thermal_gw": 72.189,
+      "bins": [
+       {
+        "n": 56,
+        "thermal_gw": 48.566,
+        "thermal_gw_centred": -23.623,
+        "price_median": 26.45,
+        "price_p90": 37.545
+       },
+       {
+        "n": 55,
+        "thermal_gw": 56.429,
+        "thermal_gw_centred": -15.76,
+        "price_median": 31.37,
+        "price_p90": 42.628
+       },
+       {
+        "n": 55,
+        "thermal_gw": 60.969,
+        "thermal_gw_centred": -11.22,
+        "price_median": 39.44,
+        "price_p90": 78.038
+       },
+       {
+        "n": 55,
+        "thermal_gw": 66.393,
+        "thermal_gw_centred": -5.796,
+        "price_median": 40.09,
+        "price_p90": 63.682
+       },
+       {
+        "n": 55,
+        "thermal_gw": 70.64,
+        "thermal_gw_centred": -1.549,
+        "price_median": 43.68,
+        "price_p90": 84.906
+       },
+       {
+        "n": 55,
+        "thermal_gw": 73.359,
+        "thermal_gw_centred": 1.17,
+        "price_median": 47.91,
+        "price_p90": 80.03
+       },
+       {
+        "n": 55,
+        "thermal_gw": 75.168,
+        "thermal_gw_centred": 2.979,
+        "price_median": 50.67,
+        "price_p90": 107.25
+       },
+       {
+        "n": 55,
+        "thermal_gw": 77.212,
+        "thermal_gw_centred": 5.023,
+        "price_median": 51.52,
+        "price_p90": 120.07
+       },
+       {
+        "n": 55,
+        "thermal_gw": 78.803,
+        "thermal_gw_centred": 6.614,
+        "price_median": 61.79,
+        "price_p90": 154.678
+       },
+       {
+        "n": 56,
+        "thermal_gw": 81.8005,
+        "thermal_gw_centred": 9.6115,
+        "price_median": 75.235,
+        "price_p90": 401.72
+       }
+      ]
+     },
+     "slope": {
+      "n": 440,
+      "slope_usd_per_gw": 2.1537,
+      "se": 0.3181,
+      "band_gw": [
+       52.93,
+       80.05
+      ],
+      "r2": 0.0948
+     },
+     "price_min_median_max": [
+      17.07,
+      46.6,
+      1782.55
+     ],
+     "price_p90_p99": [
+      114.37,
+      496.4
+     ]
+    },
+    "slope_ratio_actual_over_model": 3.38
+   }
+  }
+ }
+}
