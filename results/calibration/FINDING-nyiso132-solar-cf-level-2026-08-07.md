@@ -92,7 +92,7 @@ presented as a clean win.
 Two facts bound how much that costs, and neither is an excuse:
 
 1. That band is `calibration_verdict.VRE_TOL`, explicitly **report-only**, and
-   the D-1 diagnostics classify solar as **`delivered_pinned` — "PINNED
+   the D-10 diagnostic classifies solar as **`delivered_pinned` — "PINNED
    (advisory-only, excluded from skill claims)"**. So no gated criterion moves
    on it, which §3 confirms empirically.
 2. NYISO solar is 0.2–1.0 TWh against ~150 TWh of load, so even the worst year's

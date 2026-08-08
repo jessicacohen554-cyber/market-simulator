@@ -5821,7 +5821,7 @@ artifacts the sibling control tree reports — the same fold
 Solar vs the published Gold Book registry: **-7.1 / +2.4 / -23.3 %** ->
 **+20.9 / +33.2 / -0.1 %**. The arm buys an essentially exact mature year and
 costs **two** advisory-band breaches instead of one. That band
-(`calibration_verdict.VRE_TOL`, +/-10 %) is explicitly **report-only** and D-1
+(`calibration_verdict.VRE_TOL`, +/-10 %) is explicitly **report-only** and D-10
 classes solar `delivered_pinned` — "advisory-only, excluded from skill claims" —
 so no gated criterion moves on it; but it is not called a clean win.
 
