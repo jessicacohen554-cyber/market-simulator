@@ -892,6 +892,72 @@ rule-13-admissible mechanism available to carry it.
 
 ### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**)
 
+> **caiso-182 (2026-08-08) — THE MEASURED OFFER SURFACE CANNOT BE EXTENDED. BOTH
+> IDENTIFICATION TESTS FAIL AND ARM A IS REFUSED. READ THIS BEFORE PROPOSING ANY
+> OFFER-CURVE COVERAGE LEVER.**
+> **NO LP, NO solve, NO arm, keeper UNCHANGED, DOF 11/8, nothing registered, no
+> `ScenarioConfig` field written, NO cell verdict moved** — `measured_offer_surface` CAISO
+> stays **K** (the mechanism was neither rejected nor found inert, only found
+> **un-extendable**). Pre-registered ROUTE = **REFUSED**, the charter's directed outcome.
+> **THE OBJECT, confirmed:** 26.0 % of CAISO's thermal fleet — **7,527.4 MW** across
+> **CC_CHP 2,706.7 / CT_CHP 1,961.9 / ST_GAS 2,858.8** — prices on 100 % fitted,
+> ERCOT-inherited multipliers, and ST_GAS is exactly the class caiso-180 measured
+> backfilling the CC_REGULAR the accurate envelope removed.
+> **CORRECTED BASIS (binding):** caiso-181 §7.2 named this successor on the rule-23
+> source-data-changed basis cited to the 2026-07-24 CAMPD change. **THAT BASIS IS WRONG** —
+> the offer surface consumes OASIS public bids + the citygate series, neither changed on
+> 2026-07-24, and nothing in the offer path consumes the outage envelope. Rule 23 is **NOT**
+> triggered; the basis is rule 21 `[R-DOF]` + rule 14 `[R-ACCURATE]`. No frozen
+> identification constant was re-valued and the deriver ran **unmodified**.
+> **IT-2 SEPARABILITY FAILS for every coverage-extending boundary.** Cuts are midpoints
+> between adjacent registered class base HRs (existing constants). The only PASS is
+> **9.152** (CC_REGULAR|CT_PEAKER) — a boundary the incumbent `hr_cut` 8.5 **already
+> serves**, buying no new class. The three uncovered-class cuts fail the pre-registered
+> leg-(b) G1 reconciliation at **3.634 / 2.311 / 9.751**, and for both CT-side cuts the
+> antimode **does not lie between the two class base HRs at all** (the same two bins are
+> even cited for two different cuts — one valley cannot separate three populations). The
+> density is **146 resources over 44 bins = 3.32/bin**, where a strict local minimum is
+> nearly free. Root cause is physical: the three CT-like base HRs span **0.99 MMBtu/MWh
+> total** (10.86/11.01/11.85) inside a recovered-slope IQR of **3.87**.
+> **IT-1 CONDUCT HOMOGENEITY FAILS on 5 of 6 consumed bands** (spreads 0.2249–0.4980 vs the
+> deriver's own frozen G3 tolerance 0.1255–0.1601, i.e. 1.8–3.6×), measured by
+> re-normalising each resource's band multiplier by its **own** recovered HR. A bucket's
+> measured band is therefore **NOT** transferable to the other classes in that bucket.
+> **BE-1 PASSES EXACTLY.** The corpus is **gitignored and was ABSENT** from the container
+> (caiso-178's "FETCHED IN FULL" describes a container, not the repo), so it was re-fetched
+> in full — **1,095/1,096 dates, 422 MB**, the gap being the known 2023-06-01 archive hole,
+> zero AUP responses. The **unmodified** deriver then reproduced **66,985,503** curve rows,
+> **50,164,548** at cap≥20, **694** resources, G1 **0.871/1.306**, all bands and ladder p50s,
+> and **both CONSUMED JSONs byte-identical ex `derived_utc`**. The pre-registered pandas-3
+> major-version risk did **not** materialise. Artifacts restored to committed sha256.
+> **KNOWN-OPEN ITEM 5 IS CLOSED:** `curate_dam_public_bids.py`'s ~14.3 GB ceiling is fixed by
+> `clean_io.write_clean_iter` (streams into a ParquetWriter; root cause was holding every
+> day-frame **plus** a full `pa.Table.from_pandas` copy). Proven byte-equivalent BEFORE use —
+> content, row-group layout and normalised data sha256 all identical — then all three full
+> years curated (34.7M+36.8M+40.0M rows).
+> **INCIDENTAL:** the committed `caiso_offer_surface_summary.csv` is **STALE** — it and the
+> condbinned JSON are written from the **same `ladder` object in one `main()`**, yet **0/8**
+> ladder bins agree with the committed JSON while **8/8** of the re-derived CSV do. No loader
+> reads it; the refreshed CSV is committed as the repair.
+> **TWO SELF-CORRECTIONS, both against interest:** IT-2 leg (b) was pre-registered but
+> missing from the first implementation (on leg (a) alone all four cuts "passed"), and the
+> route selector counted the already-covered 9.152 pass as coverage-extending. Both fixed and
+> re-run; **no bar was moved**.
+> **G-DOF IS UNACHIEVABLE AS CHARTERED** (filed at P0, before any arm): `offer_curve_by_group`
+> is ONE entry of 112 scalars, so a coverage extension retires scalars but cannot move
+> `n_residual` off 8; the only entry small enough to retire whole needs a measured
+> **committed** band, which the deriver's frozen method refuses. Owner item.
+> **ARM B (the caiso-181 H-EDGE grain repair) NOT BUILT** — charter-secondary, and its repair
+> touches `outages.py`, shared by **all six ISOs**, which would risk CAISO's required $0.000
+> same-head control drift before any control exists. Sites now located exactly:
+> `derive_campd_unit_outages.py:1417-1437` and `outages.py:519-523`.
+> `results/calibration/PRECHECK-caiso182-offer-coverage-2026-08-08.md` (pushed +
+> blob-verified **before** any value existed) · `FINDING-caiso182-offer-coverage-2026-08-08.md` ·
+> `scripts/probes/_caiso182_offer_coverage_census.py` ·
+> `scripts/probes/_caiso182_curate_stream_be.py` ·
+> `results/calibration/_caiso182_offer_coverage_census.json` · `_caiso182_be1.json` ·
+> `_caiso182_stale_csv.json` · `_caiso182_curate_stream_be.json`.
+
 > **caiso-181 (2026-08-07) — THE ENVELOPE IS MEASURED DEPTH-CORRECT, AND caiso-180'S OPEN
 > RESIDUAL IS RE-LOCATED TO THE OFFER CURVES. READ THIS BEFORE PROPOSING ANY OUTAGE LEVER.**
 > **NO LP, NO solve, NO arm, keeper UNCHANGED, DOF 11/8, nothing registered, no `ScenarioConfig`
