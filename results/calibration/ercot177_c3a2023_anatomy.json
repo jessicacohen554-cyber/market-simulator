@@ -1,0 +1,184 @@
+{
+ "year": 2023,
+ "bundle": "ercot176_control_A",
+ "model_lw_annual": 43.45258692539652,
+ "actual_lw_annual": 64.32,
+ "monthly": {
+  "months": [
+   {
+    "month": 1,
+    "model_lw": 24.80373654480945,
+    "actual_lw": 26.39,
+    "gap_dollars": 51360817.00751615,
+    "share_of_annual_gap": 0.005598367736775057
+   },
+   {
+    "month": 2,
+    "model_lw": 21.1152836289725,
+    "actual_lw": 21.86,
+    "gap_dollars": 22622954.44910575,
+    "share_of_annual_gap": 0.0024659190736757777
+   },
+   {
+    "month": 3,
+    "model_lw": 23.330097868923446,
+    "actual_lw": 30.28,
+    "gap_dollars": 222074774.98018503,
+    "share_of_annual_gap": 0.024206317730863004
+   },
+   {
+    "month": 4,
+    "model_lw": 23.412054916478457,
+    "actual_lw": 23.86,
+    "gap_dollars": 13833623.502823975,
+    "share_of_annual_gap": 0.0015078753807512342
+   },
+   {
+    "month": 5,
+    "model_lw": 27.277312883200555,
+    "actual_lw": 32.23,
+    "gap_dollars": 181208103.98877084,
+    "share_of_annual_gap": 0.019751819813622833
+   },
+   {
+    "month": 6,
+    "model_lw": 64.83173506376625,
+    "actual_lw": 74.55,
+    "gap_dollars": 415981516.12918854,
+    "share_of_annual_gap": 0.04534229855906736
+   },
+   {
+    "month": 7,
+    "model_lw": 36.67053121041039,
+    "actual_lw": 48.38,
+    "gap_dollars": 555479600.0465405,
+    "share_of_annual_gap": 0.06054769477055201
+   },
+   {
+    "month": 8,
+    "model_lw": 118.31629258365008,
+    "actual_lw": 220.61,
+    "gap_dollars": 5128905628.260273,
+    "share_of_annual_gap": 0.5590545763712126
+   },
+   {
+    "month": 9,
+    "model_lw": 55.4863471393008,
+    "actual_lw": 109.75,
+    "gap_dollars": 2332458707.2612095,
+    "share_of_annual_gap": 0.2542397558080181
+   },
+   {
+    "month": 10,
+    "model_lw": 27.835176370648256,
+    "actual_lw": 31.7,
+    "gap_dollars": 137439157.3846098,
+    "share_of_annual_gap": 0.01498097166871293
+   },
+   {
+    "month": 11,
+    "model_lw": 28.777076193947302,
+    "actual_lw": 31.28,
+    "gap_dollars": 78803403.43715654,
+    "share_of_annual_gap": 0.008589630326287154
+   },
+   {
+    "month": 12,
+    "model_lw": 22.15892399581112,
+    "actual_lw": 23.18,
+    "gap_dollars": 34080248.55553544,
+    "share_of_annual_gap": 0.0037147727604618036
+   }
+  ],
+  "total_gap_dollars": 9174248535.002916
+ },
+ "summer_share_of_gap": 0.8132943321792308,
+ "concentration": {
+  "10": 0.2928260782302324,
+  "25": 0.5464624803485566,
+  "50": 0.8060752424950849,
+  "100": 1.0309761711757766,
+  "200": 1.1047918183765062
+ },
+ "component_split": {
+  "model_price": 468.14522301495856,
+  "actual_price": 1922.2987060546875,
+  "model_energy_only": 360.22681770141935,
+  "actual_system_lambda": 1889.6310258139304,
+  "model_adder": 107.91840531353915,
+  "actual_adder": 104.81975256274323,
+  "energy_term": 1529.404208112511,
+  "adder_term": -3.098652750795921,
+  "energy_share": 1.0020301654147237,
+  "adder_share": -0.002030165414723646,
+  "model_reserve_held_mw": 5901.52490234375,
+  "actual_prc_mw": 5471.087546140543,
+  "model_ordc_dual": 11.691003799438477,
+  "model_shed_hours": 0
+ },
+ "bin_dilution": {
+  "bins": [
+   {
+    "bin": "p0-p80",
+    "hours": 7008,
+    "actual_p50": 19.344999313354492,
+    "actual_p90": 34.34474868774414,
+    "actual_max": 742.2424926757812,
+    "actual_mean": 22.54434585571289,
+    "model_mean": 23.858464200399887
+   },
+   {
+    "bin": "p80-p90",
+    "hours": 876,
+    "actual_p50": 27.762500762939453,
+    "actual_p90": 54.91499900817871,
+    "actual_max": 696.4774780273438,
+    "actual_mean": 36.842952728271484,
+    "model_mean": 35.18054498322574
+   },
+   {
+    "bin": "p90-p97",
+    "hours": 613,
+    "actual_p50": 45.154998779296875,
+    "actual_p90": 110.25149841308597,
+    "actual_max": 1787.592529296875,
+    "actual_mean": 69.34368133544922,
+    "model_mean": 54.54305829261606
+   },
+   {
+    "bin": "p97-p100",
+    "hours": 263,
+    "actual_p50": 198.1925048828125,
+    "actual_p90": 2254.0549804687503,
+    "actual_max": 5046.41748046875,
+    "actual_mean": 725.6007690429688,
+    "model_mean": 349.0251416014659
+   }
+  ],
+  "top_bin_split": [
+   {
+    "slice": "p97.0-p99.0",
+    "hours": 175,
+    "actual_mean": 404.17266845703125,
+    "model_mean": 197.58630320213246,
+    "ratio": 2.045550030072475
+   },
+   {
+    "slice": "p99.0-p99.5",
+    "hours": 44,
+    "actual_mean": 846.6709594726562,
+    "model_mean": 225.9647381849214,
+    "ratio": 3.7469162944342727
+   },
+   {
+    "slice": "p99.5-p100.0",
+    "hours": 44,
+    "actual_mean": 1882.9376220703125,
+    "model_mean": 1074.399106833541,
+    "ratio": 1.752549504270986
+   }
+  ],
+  "tail_hours": 181,
+  "tail_share_of_year": 0.020662100456621004
+ }
+}
