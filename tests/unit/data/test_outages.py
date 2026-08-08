@@ -1776,5 +1776,113 @@ class DeriverHourGrainAssertionTest(unittest.TestCase):
         )
 
 
+class UnitOutageLpCapacityBasisTest(unittest.TestCase):
+    """The derate DENOMINATOR on the LP's own capacity basis (caiso-184).
+
+    ``ScenarioConfig.unit_outage_lp_capacity_basis``. The extract's
+    ``unit_capacity_mw`` numerator is the EIA-860 NAMEPLATE the deriver writes;
+    the denominator ``_iso_plant_capacity`` supplies is the fleet's NET-SUMMER
+    pmax sum, and with ``cc_nameplate_summer_derate`` armed ``fleet_to_bins``
+    additionally raises the CC bin to full nameplate for the LP. The removed
+    FRACTION is then inflated by ``nameplate / net_summer``. These cover the four
+    properties the repair rests on: it is OFF by default (BE-1), it reaches only
+    the CC groups, it is MONOTONE (a denominator can only rise, so a removed
+    fraction can only fall), and the raised denominator reproduces
+    ``fleet_to_bins``' own arithmetic exactly.
+    """
+
+    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
+
+    def test_default_is_byte_identical_for_every_iso(self):
+        # BE-1: the gate absent must be the incumbent map, exactly, everywhere.
+        from market_sim.data.outages import _iso_plant_capacity
+
+        for iso in self.ISOS:
+            with self.subTest(iso=iso):
+                self.assertEqual(
+                    _iso_plant_capacity(iso), _iso_plant_capacity(iso, False, False)
+                )
+
+    def test_repair_reaches_only_the_cc_groups(self):
+        # fleet_to_bins raises CC_REGULAR / CC_CHP and nothing else, so the
+        # denominator repair must move exactly those bins and no others.
+        from market_sim.data.outages import _CC_NAMEPLATE_BASIS_GROUPS, _iso_plant_capacity
+
+        for iso in self.ISOS:
+            off = _iso_plant_capacity(iso)
+            on = _iso_plant_capacity(iso, False, True)
+            moved = [k for k in off if abs(on[k] - off[k]) > 1e-9]
+            with self.subTest(iso=iso):
+                self.assertTrue(moved, f"{iso} has no CC bin to raise")
+                self.assertFalse(
+                    [k for k in moved if k[1] not in _CC_NAMEPLATE_BASIS_GROUPS],
+                    f"{iso} moved a non-CC bin",
+                )
+
+    def test_monotone_a_denominator_can_only_rise(self):
+        # G-MONO: nameplate >= net summer, so no removed fraction can increase.
+        # A falling denominator would be a stop-the-line event.
+        from market_sim.data.outages import _iso_plant_capacity
+
+        for iso in self.ISOS:
+            off = _iso_plant_capacity(iso)
+            on = _iso_plant_capacity(iso, False, True)
+            with self.subTest(iso=iso):
+                self.assertFalse([k for k in off if on[k] < off[k] - 1e-9])
+
+    def test_raised_denominator_reproduces_fleet_to_bins_arithmetic(self):
+        # G-CONSIST: the repaired denominator must be the SAME number
+        # fleet_to_bins puts in the LP -- `cap / cc_summer_derate_ratio` on the
+        # same published ratio, with the same absent-plant fallback.
+        from market_sim.data.fleet.campd_bins import cc_summer_derate_ratio
+        from market_sim.data.outages import _CC_NAMEPLATE_BASIS_GROUPS, _iso_plant_capacity
+
+        off = _iso_plant_capacity("CAISO")
+        on = _iso_plant_capacity("CAISO", False, True)
+        checked = 0
+        for key, base in off.items():
+            if key[1] not in _CC_NAMEPLATE_BASIS_GROUPS:
+                continue
+            ratio = cc_summer_derate_ratio(int(key[0]))
+            expected = base / ratio if ratio is not None and ratio > 0.0 else base
+            self.assertAlmostEqual(on[key], expected, places=9, msg=str(key))
+            checked += 1
+        self.assertGreater(checked, 0)
+
+    def test_derate_share_falls_when_the_denominator_is_raised(self):
+        # The end-to-end property: a two-unit plant with one unit out removes a
+        # SMALLER fraction once the denominator is the capacity the multiplier
+        # is applied to. 100 MW out of a 400 MW nameplate plant carried at 360 MW
+        # net summer: 27.8 % removed today, 25.0 % after the repair.
+        from unittest.mock import patch
+
+        from market_sim.data import outages
+
+        rows = [_unit_outage_row(plant_group="CC_REGULAR", unit_capacity_mw=100.0)]
+        with tempfile.TemporaryDirectory() as td:
+            csv = Path(td) / "campd-unit-outages-MISO.csv"
+            pd.DataFrame(rows).to_csv(csv, index=False)
+            out = {}
+            for armed, cap in ((False, 360.0), (True, 400.0)):
+                outages.unit_outage_derate_factors.cache_clear()
+                with (
+                    patch.object(outages, "unit_outage_csv_for_iso", return_value=csv),
+                    patch.object(
+                        outages,
+                        "_iso_plant_capacity",
+                        return_value={(70002, "CC_REGULAR"): cap},
+                    ),
+                ):
+                    out[armed] = outages.unit_outage_derate_factors(
+                        2023, HOURS_PER_YEAR, iso="MISO"
+                    )[(70002, "CC_REGULAR")]
+            outages.unit_outage_derate_factors.cache_clear()
+        removed_now = 1.0 - out[False].min()
+        removed_fix = 1.0 - out[True].min()
+        self.assertAlmostEqual(removed_now, 100.0 / 360.0, places=9)
+        self.assertAlmostEqual(removed_fix, 100.0 / 400.0, places=9)
+        self.assertLess(removed_fix, removed_now)
+
+
 if __name__ == "__main__":
     unittest.main()

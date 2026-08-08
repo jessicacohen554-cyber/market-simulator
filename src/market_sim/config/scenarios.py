@@ -9052,6 +9052,32 @@ class ScenarioConfig:
     # default.
     cc_nameplate_summer_derate: bool = False
 
+    # Unit-outage derate DENOMINATOR on the LP's own capacity basis
+    # (unit_outage_lp_capacity_basis, off by default). A consistency repair, not
+    # a market feature: the CAMPD unit-outage overlay derates a bin by the share
+    # ``unit_capacity_mw / plant_capacity_mw``, where the numerator is the
+    # EIA-860 NAMEPLATE the extract deriver writes
+    # (derive_campd_unit_outages.build_capacity_index, whose docstring states it
+    # is written on "the same basis as the model bin denominator the derate
+    # divides into") and the denominator is outages._iso_plant_capacity — the
+    # fleet's NET-SUMMER pmax sum (eia860 sets pmax = net_summer_capacity_mw).
+    # With cc_nameplate_summer_derate armed the two bases diverge outright:
+    # fleet_to_bins raises the CC bin to full nameplate for the LP while the
+    # denominator stays net summer, so the removed FRACTION is inflated by
+    # nameplate / net_summer and the model removes MORE MW than went out. This
+    # flag raises the CC bins of that denominator by the SAME published
+    # cc_summer_derate_ratio fleet_to_bins uses, so the share is taken against
+    # the capacity it is applied to — the identical invariant
+    # _iso_plant_capacity already enforces for cc_steam_part_reclass (NEISO 6081
+    # Stony Brook, "46 % more than actually went out"). MEASURED (EIA-860
+    # published nameplate and net-summer), ZERO fitted scalars, and monotone: a
+    # removed fraction can only fall. caiso-184; measured at CAISO as 4.50 /
+    # 5.63 / 7.02 % of the committed 2023/2024/2025 envelope depth, and there
+    # the raised denominator reproduces the extract's own plant_capacity_mw
+    # EXACTLY on every EIA-sourced CC bin (median ratio 1.000 vs 1.072 unraised).
+    # Per-ISO adoptable and byte-inert while off; no other ISO moves.
+    unit_outage_lp_capacity_basis: bool = False
+
     # COAL net-summer capacity derate (coal_nameplate_summer_derate, off by
     # default). The exact coal analogue of cc_nameplate_summer_derate above: a
     # coal steam unit carries its EIA-860 NAMEPLATE capacity in the LP (the
