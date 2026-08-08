@@ -4833,3 +4833,83 @@ Budget honesty: prereqs ~65 min + two cold 4-LP-year ERCOT hindcast invocations 
 land the control + ablation + records first (commit as they exist) and hand off the repair
 arm explicitly — a truthful partial beats a silent one.
 ```
+
+**§0z addendum (2026-08-08, same sitting @ `69addfdf`) — D-28 SIGNED (option A); F1-45U
+dispatched; §0v re-deliveries.** The owner signed D-28 option A (adopt composition (c),
+F-1 first — AD.5), approved the FFR-8A-P3 paste, and confirmed FFR-3V-FIX / HOUSE-1 were
+NEVER pasted. Re-deliveries: HOUSE-1 verbatim from §0v; FFR-3V-FIX re-issued with its
+VERIFIED STATE block refreshed to `69addfdf` (keepers: ERCOT run176-control-offline-
+increment, NYISO nyiso-132-cf-arm; `complete` = {NEISO, NYISO, PJM}, CAISO withdrawn;
+freeze ACTIVE) plus a coordination note: FFR-8A-P3 runs in a parallel container on the
+ERCOT hindcast lane, so an UNGATED pool-seeding fix must state in its handoff that the
+FFR-8A §1.3 reproduction-gate numbers go stale for future ERCOT hindcast re-runs at that
+HEAD. The F-2/composition-(c) seam charter dispatches only after F1-45U lands. The new
+prompt:
+
+### F1-45U [OPUS] — the §45U 5×-ordering statutory fix (F-1) + inflation adjustment (F-3)
+
+```
+[OPUS] F1-45U — Statutory-compliance fix to the IRA §45U existing-nuclear PTC: the
+5×-ordering inversion (F-1) + the §45U(c)(1) inflation adjustment (F-3). Owner decision
+D-28 option A (sitting Addendum AD.5): sequencing step 1 of 3 — this charter is the BUG
+FIX ONLY; the composition seam (F-2/(c)) is the NEXT charter and Arm-3 arming the one
+after. Do NOT touch the retirements.py composition seam in this lane.
+
+Repo /home/user/market-simulator. Rule 27: OPUS ok (policy/ module). Branch
+claude/f1-45u-ordering-<suffix> off fresh origin/main. Authority:
+docs/handoffs/d28-45u-composition-memo-2026-08-08.md — §1 (the statute, worked), §2.3
+(the table your tests pin), §4 (F-1/F-3), §5 (the signed card).
+
+=== THE FIX (F-1) ===
+src/market_sim/policy/ira.py: §45U(d)(1) multiplies the credit "determined under
+subsection (a)" — the NET, post-phase-down amount — by 5. The code instead folds the 5×
+into SECTION_45U_CREDIT_CENTS_PER_KWH and phases the multiplied rate down at the
+unmultiplied 16% slope. Restructure so the wage-compliant credit is
+  5 x max(0, 0.3c − 0.16 x max(0, GR c/kWh − 2.5c))   [= max(0, 15 − 0.80x(GR−25)) $/MWh]
+Citations on every constant (rule 5): §45U(a)(1)(A), (d)(1), (b)(2)(A). The zero-out
+price moves $118.75 -> $43.75/MWh; pin BOTH numbers in a test named for the statute, and
+pin memo §2.3's D=0 rows (P=$30.80 -> $10.36/MWh; P=$42.85 -> $0.72/MWh).
+
+=== THE FIX (F-3) ===
+§45U(c)(1): the 0.3c and 2.5c amounts are inflation-adjusted (base year 2023; rounding to
+0.05c / 0.1c per (c)(2)). RE-READ THE PRIMARY — the memo's 2026 amounts are its OWN
+arithmetic from Notice 2026-41's factor 1.053 (IRB 2026-29; the IRB PDF did not parse for
+the memo); your implementation reads the notice's PRINTED applicable amounts and says so.
+2025 factor 1.0242 (Notice 2025-37). Years beyond the last published notice: HOLD the
+last published amounts, cited as such — deterministic, zero DOF; do NOT invent an
+escalator. If F-3 cannot land without a tunable, land F-1 alone and record F-3 escalated.
+
+=== SCOPE GUARDS ===
+- retirements.py's §45U call site (the energy-only basis and the max() fold, with its
+  "owner call pending" annotation) is UNTOUCHED — that is F-2, the next charter. If F-1
+  cannot land without touching it, STOP and escalate.
+- Backcast contact: capacity evolution does not run in backcast keepers — state the
+  inertness argument explicitly and prove it (test or recipe-level reasoning); no keeper
+  metric may move. F-4 (no start-year gate) is memo-noted, forecast-inert: not yours.
+- No new ScenarioConfig field expected. If one becomes unavoidable: matrix row +
+  _CACHE_KEY_OPTIONAL_FIELDS + defaults ledger in the SAME COMMIT (nyiso-128 incident).
+- Matrix duty: update the §45U/IRA row's citation if such a row exists; no cell verdict
+  moves (this is a bug fix, not a lever test).
+
+=== MEASUREMENT (two-stage; pre-register the reads before computing) ===
+Stage 1 (no solve): re-compute per-unit §45U $/kW-yr for the MISO nuclear fleet (memo
+§2.1) at the memo's committed price basis (2024 $30.80, 2025 $42.85 RT ATC) before/after
+— must reproduce memo §2.3's today-vs-(c) deltas at D=0 (2025: 12.14 -> 0.72 $/MWh,
+~$90/kW-yr recovered). Then margin-vs-bar: does any unit's going-forward margin cross the
+$130/kW-yr bar (scenarios.py fixed_om_nuclear) in either direction?
+Stage 2 (solve, ONLY on a stage-1 crossing): a bounded paired MISO forecast run (<=5
+years, sequential, rule 12), registered to the FORECAST namespace via
+register_forecast_run.py — NEVER the backcast registry. If no crossing, stage 2 is
+explicitly SKIPPED with the margin table as the evidence.
+
+=== TRAPS ===
+ruff-autofix reflows src/market_sim/config/constants.py on ANY .py write (HOUSE-1 may not
+have landed yet): git status --short after every Python write; restore exact HEAD bytes;
+never stage the reflow. Push: fetch+rebase fresh origin/main first; never push_files a
+>=300-line file; no new GitHub Actions workflows. uv sync before tests;
+regenerate_clean.py (~63-65 min) ONLY if stage 2 solves.
+
+Deliverable: the PR + docs/handoffs/f1-45u-ordering-<date>.md (the statutory read, the
+before/after credit curve, the stage-1 table, stage-2 run-or-skip with evidence, F-3's
+primary-source amounts or its escalation).
+```
