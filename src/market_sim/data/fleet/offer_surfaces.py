@@ -346,6 +346,40 @@ _CONTPCT_TAG = "continuous-netload-pct"
 #: Vintage implied by an artifact with no conditioning tag (every stepped
 #: artifact predates the tag, so absence means stepped by construction).
 _STEPPED_TAG = "stepped-netload-bins"
+#: Provenance tag of the ERCOT-180 TOP-SCOPED vintage (PRECOMMIT-ercot180 §3):
+#: frozen stepped values below p97, conduct-identified stepped sub-bins above,
+#: ULP-pair step-encoded for the same interpolation machinery.
+_TOPSCOPED_TAG = "topscoped-netload-bins"
+
+#: Refined-conditioning grain modes: gate field -> (vintage tag, artifact
+#: filename suffix replacing "_condbinned.json", derive CLI flag). One gate,
+#: one vintage, one derive mode — the guard logic reads this table so a new
+#: grain form never forks the load path (rule 19: one mechanism family).
+_CONTPCT_MODES: dict[str, tuple[str, str, str]] = {
+    "continuous": (_CONTPCT_TAG, "_contpct.json", "--continuous"),
+    "topscoped": (_TOPSCOPED_TAG, "_topscoped.json", "--top-scoped"),
+}
+
+
+def _contpct_mode(config: ScenarioConfig) -> "str | None":
+    """Which refined-grain gate is armed: ``"continuous"``, ``"topscoped"`` or None.
+
+    Arming both is a hard error (PRECOMMIT-ercot180 §3: one conditioning grain
+    per family — the mixed-grain state the vintage guards exist to prevent).
+    """
+    cont = bool(getattr(config, "ercot_offer_surface_continuous", False))
+    top = bool(getattr(config, "ercot_offer_surface_top_scoped", False))
+    if cont and top:
+        raise ValueError(
+            "ercot_offer_surface_continuous and ercot_offer_surface_top_scoped "
+            "both refine the measured offer-surface family's conditioning "
+            "grain — arm at most one (PRECOMMIT-ercot180 §3)."
+        )
+    if cont:
+        return "continuous"
+    if top:
+        return "topscoped"
+    return None
 
 
 def _netload_rank_pct(net_load: np.ndarray) -> np.ndarray:
@@ -362,34 +396,49 @@ def _netload_rank_pct(net_load: np.ndarray) -> np.ndarray:
 
 
 def _assert_contpct_vintage(
-    surface: dict, err_name: str, rederive_hint: str, *, armed: bool = True
+    surface: dict,
+    err_name: str,
+    rederive_hint: str,
+    *,
+    armed: bool = True,
+    mode: str = "continuous",
 ) -> None:
-    """Hard-fail when the artifact vintage disagrees with the continuous gate.
+    """Hard-fail when the artifact vintage disagrees with the armed grain gate.
 
-    Arming ``ercot_offer_surface_continuous`` against a stepped JSON would
-    price a continuous mechanism off pooled-bin ladders (and the legacy path
-    against a node JSON, the reverse) — the half-migrated state the PJM
-    within-season vintage guard exists to prevent (PRECOMMIT-ercot178 §2).
+    Arming a refined-grain gate against a stepped JSON would price a refined
+    mechanism off pooled-bin ladders; arming it against the OTHER refined
+    vintage would price one pre-registered mechanism off another's artifact;
+    and the legacy path consuming any refined-node JSON is the reverse — all
+    the half-migrated states the PJM within-season vintage guard pattern
+    exists to prevent (PRECOMMIT-ercot178 §2; PRECOMMIT-ercot180 §3).
     """
     tag = str(surface.get("_provenance", {}).get("conditioning", _STEPPED_TAG))
-    want = _CONTPCT_TAG if armed else _STEPPED_TAG
+    want = _CONTPCT_MODES[mode][0] if armed else _STEPPED_TAG
     if tag != want:
         raise ValueError(
             f"{err_name}: surface vintage mismatch — the JSON is conditioned "
             f"{tag!r} but the run wants {want!r} "
-            f"(ercot_offer_surface_continuous={armed}). {rederive_hint}"
+            f"(armed grain mode: {mode if armed else 'none'}). {rederive_hint}"
         )
 
 
-def _assert_contpct_compat(config: ScenarioConfig, err_name: str) -> None:
-    """Hard-fail on family members with no migrated continuous geometry.
+def _assert_contpct_compat(
+    config: ScenarioConfig, err_name: str, *, mode: str = "continuous"
+) -> None:
+    """Hard-fail on family members with no migrated refined-grain geometry.
 
-    PRECOMMIT-ercot178 §2: the continuous vintage migrates the four ARMED
-    family members only (conditional peak surface, cleared-share wall, RT leg,
-    fast-start pool). Any other member armed alongside the gate would mix
-    stepped and continuous conditioning inside one family — loud, never
-    silent.
+    PRECOMMIT-ercot178 §2 / PRECOMMIT-ercot180 §3: the refined vintages
+    migrate the four ARMED family members only (conditional peak surface,
+    cleared-share wall, RT leg, fast-start pool). Any other member armed
+    alongside a grain gate would mix stepped and refined conditioning inside
+    one family — loud, never silent. Shared by both grain modes; this guard
+    is intentional and is never weakened to get a run through.
     """
+    gate = (
+        "ercot_offer_surface_continuous"
+        if mode == "continuous"
+        else "ercot_offer_surface_top_scoped"
+    )
     unmigrated = [
         f
         for f in (
@@ -407,9 +456,9 @@ def _assert_contpct_compat(config: ScenarioConfig, err_name: str) -> None:
         unmigrated.append("ercot_offer_surface_min_bin != 0")
     if unmigrated:
         raise ValueError(
-            f"{err_name}: ercot_offer_surface_continuous carries no migrated "
-            f"continuous geometry for: {', '.join(unmigrated)} — disarm them "
-            "or leave the continuous gate off (PRECOMMIT-ercot178 §2)."
+            f"{err_name}: {gate} carries no migrated refined-grain geometry "
+            f"for: {', '.join(unmigrated)} — disarm them or leave the grain "
+            "gate off (PRECOMMIT-ercot178 §2; PRECOMMIT-ercot180 §3)."
         )
 
 
@@ -507,11 +556,18 @@ def build_offer_surface_conditional_markup(
         return None
     if config.iso != iso:
         return None
-    # ERCOT-178 continuous conditioning grain (rule 25: ERCOT-gated; every
+    # ERCOT-178/180 refined conditioning grains (rule 25: ERCOT-gated; every
     # other ISO keeps the stepped path byte-identical).
-    if iso == "ERCOT" and getattr(config, "ercot_offer_surface_continuous", False):
+    grain_mode = _contpct_mode(config) if iso == "ERCOT" else None
+    if grain_mode is not None:
         return _conditional_surface_markup_contpct(
-            fleet_arrays, generators, fuel_prices, net_load_mw, config, spec=spec
+            fleet_arrays,
+            generators,
+            fuel_prices,
+            net_load_mw,
+            config,
+            spec=spec,
+            mode=grain_mode,
         )
     # PJM-only within-season vintage (rule 25): armed, the default filename
     # resolves to the `_withinseason` artifact and the binning below ranks
@@ -839,30 +895,39 @@ def _conditional_surface_markup_contpct(
     config: ScenarioConfig,
     *,
     spec: "_CondSurfaceSpec",
+    mode: str = "continuous",
 ) -> "np.ndarray | None":
-    """ERCOT-178 continuous-grain body of the conditional peak-rung surface.
+    """ERCOT-178/180 refined-grain body of the conditional peak-rung surface.
 
     The stepped core's arithmetic with the bin lookup replaced by node
-    interpolation (PRECOMMIT-ercot178 §2): per hour, each peak rung's measured
-    multiplier is ``np.interp``-olated over the corpus's own hour nodes at the
+    interpolation (PRECOMMIT-ercot178 §2; the ercot-180 top-scoped vintage
+    reuses the identical load/interp path with its own step-encoded node
+    tables, PRECOMMIT-ercot180 §3): per hour, each peak rung's measured
+    multiplier is ``np.interp``-olated over the artifact's nodes at the
     hour's within-year net-load percentile rank; the ``ratio >= 1`` clamp, the
     resolved-peak reference, the per-rung VOLL cap and the row scope are the
     stepped body's own lines. Zero fitted scalars; the stepped artifact and
     code path are untouched.
     """
-    _assert_contpct_compat(config, spec.err_name)
+    _assert_contpct_compat(config, spec.err_name, mode=mode)
+    _tag, suffix, flag = _CONTPCT_MODES[mode]
+    gate = (
+        "ercot_offer_surface_continuous"
+        if mode == "continuous"
+        else "ercot_offer_surface_top_scoped"
+    )
     path = getattr(config, spec.path_field, None)
     if not path:
         from market_sim.config import paths as _paths
 
         default = _paths.CALIBRATION_DIR / spec.default_filename.replace(
-            "_condbinned.json", "_contpct.json"
+            "_condbinned.json", suffix
         )
         if not default.exists():
             raise FileNotFoundError(
-                f"{spec.err_name}: ercot_offer_surface_continuous is armed but "
+                f"{spec.err_name}: {gate} is armed but "
                 f"{default.name} does not exist — derive it "
-                "(scripts/data/derive_dam_offer_hrmults.py --continuous) or "
+                f"(scripts/data/derive_dam_offer_hrmults.py {flag}) or "
                 "leave the gate off (PRECOMMIT-ercot178 §2: never a silent "
                 "fallback to the stepped vintage)."
             )
@@ -871,7 +936,8 @@ def _conditional_surface_markup_contpct(
     _assert_contpct_vintage(
         surface,
         spec.err_name,
-        "derive scripts/data/derive_dam_offer_hrmults.py --continuous",
+        f"derive scripts/data/derive_dam_offer_hrmults.py {flag}",
+        mode=mode,
     )
 
     curves = getattr(config, "offer_curve_by_group", None) or {}
@@ -1690,9 +1756,11 @@ def build_ercot_offer_surface_cleared_share_markup(
             "ercot_offer_surface_midcurve_conditional both price the gas econ "
             "rows — one mechanism per row (rule 19); arm exactly one."
         )
-    # ERCOT-178 continuous conditioning grain: same rows, same boundary/ladder
-    # statistics, bin lookup -> node interpolation (PRECOMMIT-ercot178 §2/§4).
-    if getattr(config, "ercot_offer_surface_continuous", False):
+    # ERCOT-178/180 refined conditioning grains: same rows, same boundary/
+    # ladder statistics, bin lookup -> node interpolation (PRECOMMIT-ercot178
+    # §2/§4; PRECOMMIT-ercot180 §3).
+    grain_mode = _contpct_mode(config)
+    if grain_mode is not None:
         return _cleared_share_markup_contpct(
             fleet_arrays,
             generators,
@@ -1703,6 +1771,7 @@ def build_ercot_offer_surface_cleared_share_markup(
             class_of=class_of,
             rt_flag=rt_flag,
             rt_mode=rt_mode,
+            mode=grain_mode,
         )
     path = getattr(config, "ercot_offer_surface_cleared_share_path", None)
     if not path:
@@ -2098,12 +2167,15 @@ def _cleared_share_markup_contpct(
     class_of: dict[str, str],
     rt_flag: bool,
     rt_mode: str,
+    mode: str = "continuous",
 ) -> "np.ndarray | None":
-    """ERCOT-178 continuous-grain body of the cleared-share wall + RT leg.
+    """ERCOT-178/180 refined-grain body of the cleared-share wall + RT leg.
 
     The stepped builder's arithmetic with every per-bin lookup replaced by
-    node interpolation over the corpus's own hours (PRECOMMIT-ercot178 §2):
-    per-hour boundary (cleared share), per-hour DAM/RT ladders, the same rel
+    node interpolation over the artifact's nodes (PRECOMMIT-ercot178 §2; the
+    ercot-180 top-scoped vintage reuses the identical load/interp path with
+    its own step-encoded node tables, PRECOMMIT-ercot180 §3): per-hour
+    boundary (cleared share), per-hour DAM/RT ladders, the same rel
     geometry, gas-day normalization, VOLL cap, ``max(0, target − mc)`` markup,
     ``replace``/``tier`` RT composition, class scope, row scope and P1-only
     seam. Zero fitted scalars; the stepped artifact and code path stay
@@ -2111,25 +2183,27 @@ def _cleared_share_markup_contpct(
     with no pooled fallback; the DAM wall falls back to its pooled table for
     an unmapped year.
     """
-    _assert_contpct_compat(config, "ercot_offer_surface_cleared_share")
+    _assert_contpct_compat(config, "ercot_offer_surface_cleared_share", mode=mode)
+    _tag, suffix, flag = _CONTPCT_MODES[mode]
     path = getattr(config, "ercot_offer_surface_cleared_share_path", None)
     if not path:
         from market_sim.config import paths as _paths
 
-        path = str(_paths.CALIBRATION_DIR / "ercot_dam_cleared_share_contpct.json")
+        path = str(_paths.CALIBRATION_DIR / f"ercot_dam_cleared_share{suffix}")
     surface = json.loads(Path(path).read_text())
     _assert_contpct_vintage(
         surface,
         "ercot_offer_surface_cleared_share",
-        "derive scripts/data/derive_ercot_dam_cleared_share.py --continuous",
+        f"derive scripts/data/derive_ercot_dam_cleared_share.py {flag}",
+        mode=mode,
     )
     prov = surface.get("_provenance", {})
     ladder_q = np.asarray(prov.get("ladder_quantiles", ()), dtype=float)
     if ladder_q.size == 0:
         raise ValueError(
-            "ercot_offer_surface_cleared_share: continuous surface JSON "
+            "ercot_offer_surface_cleared_share: refined-grain surface JSON "
             "carries no ladder_quantiles — derive "
-            "scripts/data/derive_ercot_dam_cleared_share.py --continuous"
+            f"scripts/data/derive_ercot_dam_cleared_share.py {flag}"
         )
     n_q = int(ladder_q.size)
 
@@ -2169,22 +2243,23 @@ def _cleared_share_markup_contpct(
         if not rt_path:
             from market_sim.config import paths as _paths
 
-            rt_path = str(_paths.CALIBRATION_DIR / "ercot_sced_offer_wall_contpct.json")
+            rt_path = str(_paths.CALIBRATION_DIR / f"ercot_sced_offer_wall{suffix}")
         rt_surface = json.loads(Path(rt_path).read_text())
         _assert_contpct_vintage(
             rt_surface,
             "ercot_offer_surface_cleared_share_rt",
-            "derive scripts/data/derive_ercot_sced_offer_wall.py --continuous",
+            f"derive scripts/data/derive_ercot_sced_offer_wall.py {flag}",
+            mode=mode,
         )
         rt_q = np.asarray(
             rt_surface.get("_provenance", {}).get("ladder_quantiles", ()), dtype=float
         )
         if not np.array_equal(rt_q, ladder_q):
             raise ValueError(
-                "ercot_offer_surface_cleared_share_rt: continuous RT artifact "
+                "ercot_offer_surface_cleared_share_rt: refined-grain RT artifact "
                 f"ladder quantiles {rt_q.tolist()} != DAM wall quantiles "
                 f"{ladder_q.tolist()} — re-derive "
-                "scripts/data/derive_ercot_sced_offer_wall.py --continuous"
+                f"scripts/data/derive_ercot_sced_offer_wall.py {flag}"
             )
         for cls_key in set(class_of.values()):
             entry = rt_surface.get(cls_key)
@@ -2466,12 +2541,19 @@ def build_ercot_faststart_pool_markup(
             "wall's row pricing (charter §9.1 enumeration) — arm "
             "ercot_offer_surface_cleared_share too."
         )
-    # ERCOT-178 continuous conditioning grain: same rows, same pool_frac +
+    # ERCOT-178/180 refined conditioning grains: same rows, same pool_frac +
     # ladder statistics, bin lookup -> node interpolation (PRECOMMIT-ercot178
-    # §2/§4); the own_mask replace-by-mask composition is unchanged.
-    if getattr(config, "ercot_offer_surface_continuous", False):
+    # §2/§4; PRECOMMIT-ercot180 §3); own_mask composition unchanged.
+    grain_mode = _contpct_mode(config)
+    if grain_mode is not None:
         return _faststart_pool_markup_contpct(
-            fleet_arrays, generators, mc_base, net_load_mw, config, year
+            fleet_arrays,
+            generators,
+            mc_base,
+            net_load_mw,
+            config,
+            year,
+            mode=grain_mode,
         )
     from market_sim.config.constants import FASTSTART_POOL_MIN_DOWN_HOURS
 
@@ -2686,38 +2768,44 @@ def _faststart_pool_markup_contpct(
     net_load_mw: np.ndarray,
     config: ScenarioConfig,
     year: int,
+    *,
+    mode: str = "continuous",
 ) -> "tuple[np.ndarray, np.ndarray] | None":
-    """ERCOT-178 continuous-grain body of the ERCOT-88 fast-start pool.
+    """ERCOT-178/180 refined-grain body of the ERCOT-88 fast-start pool.
 
     The stepped builder's arithmetic with the per-bin ``pool_frac`` boundary
-    and ladder replaced by node interpolation over the corpus's own hours
-    (PRECOMMIT-ercot178 §2): per-hour boundary ``1 − pool_frac(p_t)``,
+    and ladder replaced by node interpolation over the artifact's nodes
+    (PRECOMMIT-ercot178 §2; the ercot-180 top-scoped vintage reuses the
+    identical load/interp path with its own step-encoded node tables,
+    PRECOMMIT-ercot180 §3): per-hour boundary ``1 − pool_frac(p_t)``,
     per-hour above-LSL SCED2 ladder, the same physics gate, row universe,
     VOLL cap, ``own_mask`` replace-by-mask composition and P1-only seam.
     Year-scoped with no pooled fallback, exactly as the stepped artifact.
     """
-    _assert_contpct_compat(config, "ercot_faststart_pool_offer")
+    _assert_contpct_compat(config, "ercot_faststart_pool_offer", mode=mode)
+    _tag, suffix, flag = _CONTPCT_MODES[mode]
     from market_sim.config.constants import FASTSTART_POOL_MIN_DOWN_HOURS
 
     pool_path = getattr(config, "ercot_faststart_pool_offer_path", None)
     if not pool_path:
         from market_sim.config import paths as _paths
 
-        pool_path = str(_paths.CALIBRATION_DIR / "ercot_faststart_pool_contpct.json")
+        pool_path = str(_paths.CALIBRATION_DIR / f"ercot_faststart_pool{suffix}")
     pool_surface = json.loads(Path(pool_path).read_text())
     _assert_contpct_vintage(
         pool_surface,
         "ercot_faststart_pool_offer",
-        "derive scripts/data/derive_ercot_faststart_pool.py --continuous",
+        f"derive scripts/data/derive_ercot_faststart_pool.py {flag}",
+        mode=mode,
     )
     ladder_q = np.asarray(
         pool_surface.get("_provenance", {}).get("ladder_quantiles", ()), dtype=float
     )
     if ladder_q.size == 0:
         raise ValueError(
-            "ercot_faststart_pool_offer: continuous pool artifact carries no "
-            "ladder_quantiles — derive "
-            "scripts/data/derive_ercot_faststart_pool.py --continuous"
+            "ercot_faststart_pool_offer: refined-grain pool artifact carries "
+            "no ladder_quantiles — derive "
+            f"scripts/data/derive_ercot_faststart_pool.py {flag}"
         )
     n_q = int(ladder_q.size)
 
