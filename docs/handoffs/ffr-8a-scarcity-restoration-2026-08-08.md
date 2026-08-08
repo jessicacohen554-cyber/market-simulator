@@ -279,11 +279,299 @@ curve) remain REFUSED BY NAME.
 
 ## 2. Phase 1 — the measured decomposition
 
-*(filled after §1 was committed; nothing above this line changed after)*
+*(filled after §1 was committed; nothing above this line changed after. Part A — the
+measured-data legs — was probed and committed in the FFR-8A Phase-1/2 session
+(`scripts/probes/ffr8a_scarcity_decomposition.py` →
+`docs/handoffs/ffr-8a/part-a-measured-2026-08-08.json`); this narrative is written FROM that
+committed JSON, no re-measurement. Part B — the A1–A5 ablation chain on the control arm's
+dumps — is §2.5, filled by the Phase-3 session after the control arm solved.)*
+
+### 2.1 Leg (a) — the reserve quantity: what the published curve prices vs what the arm prices
+
+The measured NP6-905-CD committed on-line capability (RTOLCAP) for 2024: mean 16,679 MW,
+p50 16,197, p5 9,298, **p1 7,874, minimum 5,094 MW** (8,760 h). With RTOFFCAP added (the
+second half-hour's offline quick-start tier): mean 21,813, p1 9,515, min 5,099 MW. For 2025
+(8,112 h — the series ends at the 2025-12-05 RTC+B go-live, NaN tail excluded): RTOLCAP mean
+19,124, p1 8,955, min 7,060 MW; +RTOFFCAP mean 24,610, p1 11,015, min 7,389 MW.
+
+Against the curve's knees (the reserve level where the shipped construction's adder crosses
+each threshold, λ = $30): the as-shipped flat-fallback parameter set (μ=0, σ=1400) reaches
+$10 at 7,415 MW, $100 at 6,200 MW, $1,000 at 4,578 MW; the committed NP6-576-ER seasonal
+table (μ≈904–947, σ≈1333–1368) shifts each knee up ~700–1,000 MW ($10 at 8,102–8,255, $100
+at 6,911–7,033, $1,000 at 5,208–5,282 MW).
+
+So the MEASURED online reserve spends ≈1 % of 2024 hours at or below the fallback $10-knee
+(p1 ≈ the knee) and its minimum sits between the $100- and $1,000-knees — the real
+committed-capability series genuinely visits adder territory a few dozen hours a year. The
+§1.1(a) expectation for the arm's own quantity (installed availability-derated headroom
+never approaches the knee — that is WHY the arm's adder is identically zero) is quantified
+on the arm's dump in Part B (§2.5, row A1); Part A establishes the measured side: **the
+quantity the published curve prices is committed on-line capability with a realized low
+tail near the knee, not installed headroom.**
+
+### 2.2 Leg (b) — the ORDC transcription and the reproduction test
+
+Parameter diff of the shipped construction (`results/scarcity.py::ordc_adder`/`lolp`)
+against the published design, as recorded in the probe's `ordc_params_as_shipped`: VOLL
+$5,000 (HCAP, 16 TAC 25.509) ✓; X = MCL 3,000 MW (OBDRR038) ✓; PUCT 48551 shift 0.5σ ✓;
+OBDRR048 multi-step floor present ✓ (but mode-keyed rather than date-gated — repaired for
+the lookahead tail by the entering-year gate, §3.2); two half-hour LOLP terms (RTOLCAP /
+RTOLCAP+RTOFFCAP) ✓; RDPA — not represented in the ORDC-regime forward path by design
+(`effective_reliability_deployment_mw` = 0; measured RTORDPA is near-inert in the target
+years: 2024 mean $0.23/MWh, max $90.0; 2025 mean $0.40, max $93.4) — NOT repaired, per
+§1.4. The one open parameter question was μ/σ: the arm runs the flat fallback (μ=0,
+σ=1400; no `ordc_lolp_params_path` set), while the committed NP6-576-ER table carries the
+published seasonal values.
+
+**The reproduction test** — the implemented curve evaluated on the MEASURED 2024/2025
+RTOLCAP/RTOFFCAP series against the MEASURED RTORPA series, both parameter sets
+(`legs_ab.<year>.curve_{fallback,np6_576_er}`; `tightest50_*` = the mean of each series' own
+50 largest values):
+
+| year | series | h>$1 | h>$10 | h>$100 | max $ | mean $ | top-50 mean $ |
+|---|---|---|---|---|---|---|---|
+| 2024 | measured RTORPA | 78 | 26 | 4 | 252.7 | 0.203 | 33.9 |
+| 2024 | fallback | 48 | 18 | 6 | 279.0 | 0.181 | 31.5 |
+| 2024 | NP6-576-ER table | 77 | 37 | **11** | 639.5 | 0.521 | **89.8** |
+| 2025 | measured RTORPA | 15 | 3 | 1 | 414.1 | 0.065 | 10.6 |
+| 2025 | fallback | 4 | 1 | 0 | 10.3 | 0.003 | 0.4 |
+| 2025 | NP6-576-ER table | **15** | **3** | 0 | 44.5 | 0.014 | 2.2 |
+
+**The result is MIXED ACROSS YEARS.** In 2024 the fallback reproduces the deep tail and the
+top-50 magnitude (31.5 vs 33.9 measured; h>$100 6 vs 4) while the table over-produces ~2.6×
+(top-50 89.8 vs 33.9; h>$100 11 vs 4) — the table is REFUTED on 2024. In 2025 the table
+reproduces the exceedance counts exactly (15/15 h>$1, 3/3 h>$10) while the fallback
+under-produces (4/15, 1/3) — but BOTH under-produce the 2025 top-50 magnitude (2.2 / 0.4 vs
+10.6 measured). Neither transcription reproduces the published adder series in both years.
+Disposition under the prereg's own branches: **E3 escalates as a finding** (§3.3).
+
+### 2.3 The scarcity-hour decomposition — where the measured $100+ content actually lives
+
+The probe's `scarcity_hour_decomposition` splits the measured scarcity hours into energy
+(system λ) and adder content. 2024: 192 h RTSPP > $100, of which 184 h had λ > $100 — and
+**149 of those 184 had adders ≤ $10**; only **5 h** had adders > $100. Median RTOLCAP inside
+the RTSPP>$100 hours: 8,742 MW — ABOVE the $100-knee (6,200 fallback / ~6,970 table). 2025:
+228 h RTSPP > $100, 210 h λ > $100, 194 of them with adders ≤ $10, **1 h** adders > $100.
+Measured λ itself: 2024 mean $28.79, p99 $158.5, max $2,978.8; 2025 mean $34.77, p99
+$134.5, max $1,870.5.
+
+**The measured 2024/2025 scarcity content is λ-led, not adder-led**: the ORDC adder proper
+contributes > $100 in 5 (2024) / 1 (2025) hours and a mean of $0.20 / $0.065/MWh. The
+161/217 measured h>$100 the charter cites are hours where the ENERGY price cleared high with
+the adder small — real-time offer conduct, commitment tightness and fuel-price hours, priced
+by SCED's λ. This bounds what any design-faithful forward ORDC repair can restore on the
+price side (the §3.4 expectation) — the repair's energy-side element (E2) moves the λ
+analogue, but a time-mean-mc static stack cannot (and per rule 1 must not be tuned to)
+reproduce real-time λ volatility.
+
+### 2.4 Leg (d) — the forward AS-requirement model vs the measured plan
+
+The model's own NP3-160-CD forward AS model (`ercot_as_forward_requirement_mw`, drivers
+from the entering year's own load/wind/solar) against the measured ASPLANNP433 plan
+(mean / p95 MW):
+
+| product | 2024 fwd | 2024 measured | 2025 fwd | 2025 measured |
+|---|---|---|---|---|
+| REGUP | 407 / 502 | 406 / 748 | 433 / 577 | 436 / 666 |
+| RRS | 2,710 / 3,011 | 2,722 / 3,128 | 2,737 / 3,058 | 2,739 / 3,145 |
+| ECRS | 1,484 / 1,917 | 1,752 / 2,673 | 1,590 / 2,218 | 1,416 / 2,556 |
+| NSPIN | 2,762 / 2,980 | 2,684 / 3,614 | 2,793 / 3,071 | 2,886 / 4,167 |
+
+RegUp and RRS means reproduce within 0.5 %; ECRS within −15.3 % (2024) / +12.3 % (2025) —
+the newest product, methodology still moving in the published plans; NSPIN within ±3.6 %
+(excluded from E2's hold anyway — a 30-minute product the offline tier supplies). The
+forward model is validated as the E2 quantity input; the measured plan is NOT wired into any
+solve path (§1.6), and per §1.1(d) the 2023 ECRS energy-price term is out of the failing
+screens' critical path (the into-2023 screen consumes the growth-scaled 2021 object).
+
+Leg (c) — fleet-length inheritance — carries no Part-A measurement by design: its
+quantification is the ablation chain's term-(c) actual-fleet re-price (§2.5), per §1.1(c)
+expected to have the wrong sign to explain the missing scarcity.
+
+### 2.5 Part B — the A1–A5 ablation chain on the control arm's dumps
+
+*(filled after the control arm solved and its reproduction gate passed;
+`scripts/probes/ffr8a_ablation_chain.py` →
+`docs/handoffs/ffr-8a/part-b-ablation-2026-08-08.json`)*
 
 ## 3. Phase 2 — the repair as landed
 
-*(filled after Phase 1)*
+*(filled after Phase 1; the element inventory below is written from the MERGED code at
+`origin/main` (PR #3722), not from the plan — names, gates and dispositions are the
+as-landed facts.)*
+
+### 3.1 The gate and its registration
+
+`ScenarioConfig.capacity_screen_scarcity_restoration` (`config/scenarios.py:3363`), GATED
+default OFF, registered in `_CACHE_KEY_OPTIONAL_FIELDS` AND the defaults ledger in the SAME
+commit — **`cc0cbd6`** ("FFR-8A: add capacity_screen_scarcity_restoration (gated
+default-off, registered) + backfill ERCOT-176 cache-key registration"). That commit also
+carries the FFR-8A pre-work discovery: ERCOT-176's `ercot_offline_commit_offer` +
+`ercot_offline_commit_offer_path` had landed on main UNREGISTERED, silently moving the
+pinned default cache key `603c2498bf71d21d → efd1cda1683a0ebe` (the nyiso-128 pattern, two
+fields at once so the pin test's single-field blame could not name them); registering the
+pair restores every orphaned default-config key. `__post_init__` hard-requires
+`capacity_screen_unified_lookahead` (the repair extends that object's armed stack — one
+object, one gate per layer) and `iso == "ERCOT"` (the committed-capability tables are
+ERCOT-identified; rule 25 — other ISOs enter the matrix as `U`). Unarmed byte-identity and
+the default-key pin are tested in
+`tests/unit/model/test_capacity_screen_scarcity_restoration.py`.
+
+### 3.2 The as-landed element inventory (E1, E2, E4 — the landed tail carries these three)
+
+All in `results/scarcity.py`, consumed by `runner.py::_lookahead_reprice_signal` under the
+armed bundle (runner seam at `runner.py:3270–3320`):
+
+* **E1 — `ercot_lookahead_committed_reserves`** (scarcity.py:1566): `(r_online, r_full)` =
+  the model's own forward RTOLCAP/RTOFFCAP formula
+  (`ercot_rtolcap_forward_supply_cap_mw`, CAMPD-quantity-identified share tables on the
+  ENTERING year's own net load and the EVOLVED fleet's class capacities) plus the evolved
+  storage fleet's AS-award share, each tier bounded above by the physical stack headroom
+  (`min()` — a physical identity: commitment can withhold below the physical bound, never
+  create reserves beyond it; headroom below the MCL still pins LOLP to 1, carrying
+  energy-shortage hours to VOLL). Raises rather than approximates when the fleet carries no
+  plant groups (rule 19 — no silent second construction). The LR term is deliberately
+  absent (already inside the deliverability coefficient's fit target — adding it would
+  double-count).
+* **E2 — `ercot_lookahead_as_hold_mw`** (scarcity.py:1508): the energy-stack search runs at
+  `net_load + clip(REGUP + RRS + ECRS − LR_credit − storage_as, 0, ·)` from the forward
+  NP3-160-CD model (§2.4-validated); NSPIN and REGDN excluded; ECRS design-date-gated at
+  its go-live (`ERCOT_ECRS_LAUNCH_YEAR`/`ERCOT_ECRS_LAUNCH_HOUR` = 2023 / hour 3840,
+  2023-06-10; `model/reserves/spec.py:126–127`). Search-target only — the reserve
+  quantities do NOT net these MW (RTOLCAP's published definition counts AS-held headroom
+  as reserve).
+* **E4 — `ercot_lookahead_expected_ordc_adder`** (scarcity.py:1627) over
+  **`ercot_fleet_forced_outage_sigma_mw`** (scarcity.py:1401): `E[ordc_adder(R + ε)]`,
+  ε ~ N(0, σ_R(t)²), σ_R² = Σ_plants q_p(t)(1−q_p(t))·P_p² from the model's own WEFOR/EFORD
+  machinery at the model's own plant grain (seasonal composition, `wefor_multiplier` and
+  `gas_st_wefor_base_override` honoured), fixed-order Gauss–Hermite quadrature
+  (`_FFR8A_GH_ORDER = 31`, a resolution constant pinned by unit test — order 31 sits within
+  0.3 % of order 61 on the worst case near the administrative LOLP=1 pin). λ held at its
+  point value inside `(VOLL − λ)` (< 1 % effect, documented approximation); every node and
+  the sum respect the `VOLL − λ` protocol cap. The same ε shifts both reserve tiers.
+* **The OBDRR048 entering-year date gate — `floor_active_mask`** (scarcity.py:342): the
+  multi-step floor applies by the ENTERING year against the design's own 2023-11-01
+  effective date (`ORDC_FLOOR_START_HOUR_2023 = 304×24`, `model/reserves/spec.py:95`) —
+  replacing, for the lookahead tail only, the mode-keyed gate that applied it
+  anachronistically to pre-Nov-2023 entering years (inert before this repair because the
+  tail never left zero; the post-solve overlay path keeps its own gate untouched).
+* **The storage split** (runner seam): one measured constant
+  (`ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC` = 0.35), two disjoint uses — the AS-award share
+  enters the tail's R (E1) and the E2 netting; only the merchant share (1 − 0.35) of
+  storage power/energy runs the FFR-5D peak shave. The same MW cannot simultaneously hold
+  an AS award and arbitrage the peak.
+* **The diagnostic dump** (runner.py:3321–3365): armed with the unified lookahead
+  (control and repair arms alike), writes
+  `screen_signal_diag_<year>_for_<entering>.npz` next to the year's evolution ledger —
+  net loads, top-of-stack, installed headroom, base price, adder, sorted stack, σ_R, class
+  capacities, storage/VRE context — self-contained for the offline A1–A5 chain and the
+  term-(c) actual-fleet re-price, so the diagnosis never replays a solve. Output-only: no
+  config field, no cache-key term, no solve-path change (the control arm's reproduction
+  gate is the proof).
+
+### 3.3 E3's disposition — ESCALATED AS A FINDING, not landed
+
+The landed tail carries **E1/E2/E4 only**. E3 — switching the tail's LOLP parameters from
+the shipped flat fallback (μ=0, σ=1400) to the committed NP6-576-ER seasonal table — was
+pre-committed CONDITIONAL on the §1.1(b) reproduction test "validating that transcription";
+§1.1(b) further pre-committed "whichever transcription reproduces the published adder
+series is the repair's parameter set; **if NEITHER reproduces it, that is a finding and the
+element escalates**."
+
+The measured outcome (§2.2) is the NEITHER branch: the table is refuted on 2024 (deep tail
+over-produced ~2.6×) and the fallback is refuted on 2025 (h>$1 4/15; top-50 mean $0.4 vs
+$10.6) — no parameter set reproduces the published series in both years. Per the prereg's
+own pre-commitment this is **a finding to record, not a judgment call to absorb**: E3 is
+NOT landed, and the open question — why the published NP6-576-ER seasonal (μ, σ) over-produce
+the 2024 deep tail on the design's own reserve telemetry while the flat fallback
+under-produces 2025 (candidate causes: table vintage vs operating year, seasonal blending,
+the 2025 series' RTC+B-transition truncation, RTORPA floor interactions) — escalates to the
+manager with the FH-4/FH-5 determination (§5). The landed tail therefore evaluates
+`resolve_lolp_params(config, ·)` = the as-shipped fallback — retained as the UNCHANGED
+shipped configuration (the absence of the E3 change), not as a validated winner. Two
+as-landed compressions of this mixed result are noted for the record: the E4 docstring's
+"the Phase-1 reproduction test validated the as-shipped fallback" (true for the 2024 deep
+tail, not for 2025) and the ablation script's A3 header "REFUTED the committed NP6-576-ER
+table transcription (over-produces ~2.6× ...)" (the 2024 read; 2025's count-exact table
+result is the counterpoint) — this section and the committed part-a JSON are the full
+record. The A3 chain row accordingly records A2 unchanged, with the refuted-table
+counterfactual emitted as a clearly-labelled annex column, never a candidate.
+
+### 3.4 The honest expectation (the prereg-2 commit)
+
+*(Committed BEFORE invocation 2 — the repair arm — solves; §1.5 requires it. This section's
+content is the prereg-2 commit — hash recorded here: **`ea04f03`** (originally committed as
+`4a4cc75`, rewritten to `ea04f03` by a push-discipline rebase onto the then-current
+`origin/main` `7fd1c28` BEFORE the repair arm started — same tree, same content; the hash
+was backfilled by header-only edits, content untouched). Derived from Part A + the
+ablation-chain REASONING alone — the control arm had not finished and the repair arm had not
+started when this was written. Nothing below is a target; every line is a falsifiable
+statement the §4 reads will confirm or refute at full magnitude.)*
+
+**What the elements can and cannot move, from Part A alone.** The measured scarcity content
+the charter cites (161/217 h > $100) is λ-led (§2.3): the adder proper contributed > $100 in
+5 (2024) / 1 (2025) hours with mean $0.20/$0.065. The repair's tail elements (E1+E4) act on
+the ADDER analogue; E2 shifts the ENERGY-stack search point. A design-faithful tail on a
+faithful committed-capability series should therefore restore adder content of the measured
+RTORPA's ORDER (mean ≲ $1, tail counts in the tens of h > $1, single digits > $100) — NOT
+the measured λ tail (mean $28.79/$34.77, p99 $158/$135), which is real-time offer conduct
+and volatility a time-mean-mc static stack cannot reproduce and must not be tuned toward
+(rule 1). E2's search shift is bounded by the §2.4 quantities: REGUP+RRS+ECRS forward means
+≈ 4.60 GW (2024) / 4.76 GW (2025), minus the forward LR credit and the evolved storage AS
+share — a net thermal hold of roughly 1.5–3.5 GW, which moves the marginal unit up the
+merit stack in every hour; its price effect concentrates where the stack is steep (the
+scarcity shoulder), raising the base price by a few $/MWh on average and more in tight
+hours. The forward committed-capability formula (E1) is a share-table point model on
+net-load deciles — SMOOTHER than realized RTOLCAP — so its own dips will under-visit the
+measured p1 tail; E4's expectation over σ_R partially compensates by pricing the
+outage-realization mass the point evaluation cannot see. Directionally the two should
+land the tail's content between the point-evaluation zero and the measured RTORPA.
+
+Numbered expectations for the §4 reads:
+
+1. **Tail nonzero but adder-scaled.** Repaired per-screen h > $1 of order 10¹–10²;
+   h > $100 of order 10⁰–10¹; h > $1000 zero or low single digits (only E4's expectation
+   near the deepest committed dips can reach it). The recorded control zeros (p_max
+   $24.4/$46.2, 0 h > $100) must NOT reproduce under the repair — if they do, the repair is
+   inert at the screens and that is the finding.
+2. **Mean well below measured.** Repaired screen p_mean rises from $10.49/$9.54 by roughly
+   $1–5/MWh (E2 shift + small mean adder), remaining WELL BELOW the measured $26.82/$32.49.
+   The residual λ-led gap is the honest headline, not a failure of the tail elements.
+3. **Max may be large.** A single deep committed-dip hour under E4 can carry an expected
+   adder in the $10²–10³ range (protocol-capped at VOLL − λ), so repaired p_max in the
+   hundreds is consistent with expectation 2's modest mean.
+4. **Per-fuel margins move by single-digit $/kW-yr.** The restored content integrates to
+   roughly $1–10/kW-yr per fuel — a FRACTION of the FFR-6A replica margins (47–97 $/kW-yr)
+   and far below the bars (21–58.5). Expectation: the margin gap does NOT close; the
+   measurement establishes how much a design-faithful forward ORDC restores (≲ ~20 % of
+   the replica margins), and the remainder is λ-led content this object does not carry.
+5. **The 10.9 GW gas_st false wave shrinks; full disappearance is the open question.** The
+   control decided gas_st 45 / 10,942.9 MW at net $17.90 vs bar $35.00 (into-2022 screen,
+   2021 stack basis). The repair only ADDS revenue, so the wave cannot grow. It vanishes
+   iff the restored content at that screen adds ≥ ~$17.1/kW-yr to gas_st's
+   dispatch-weighted margin — plausible if the 2022 entering net load carries genuinely
+   tight hours against the 2021 fleet, but not guaranteed by expectation 4's range. Either
+   branch is reported as measured; partial shrink (fewer units/MW deciding) also counts as
+   movement toward the truth (actual gas_st exits in-window: 0.0).
+6. **In-window economic executions stay ≈ 0** (FFR-7C falsification bound). The repair
+   raises pro-forma revenue everywhere, so any NEW economic execution the control did not
+   carry would be a mechanism bug, not a market finding.
+7. **entry_capped stays fleet-wide.** With bars at 21–58.5 $/kW-yr against expectation 4's
+   restored margins, the adequacy cap keeps doing the retention work: entry_capped counts
+   remain at the control's order (564 / 62,971.7 MW in 2024; 554 / 66,060.5 in 2025),
+   shrinking only by whatever units the restored margin lifts over their bar.
+8. **The FFR-5A coal cohort still decides.** Control: coal 11 / 1,482.1 MW decided in the
+   2025 ledger at net $0.04 vs bar $58.5 — the repair must add ~$58/kW-yr at that screen to
+   flip it, ~3× expectation 4's upper range. Expected: still decided; a flip would be a
+   surprise worth its own diagnosis.
+9. **Additions move little.** The entry screen consumes the same repaired object, so
+   additions may tick up from 17.0 GW but remain FAR below the 55.4 GW actual — the entry
+   economics and caps are FFR-4/5 lanes' objects (§1.5(iii): reported, not targeted).
+
+The FALSIFIABLE core, one line: **the repair should produce a nonzero, adder-scaled tail
+and single-digit-$/kW-yr margin restoration with ≈ 0 economic executions, and should NOT
+reproduce the measured price level — a repaired object that lands ON the measured curve
+would itself be suspect (nothing in E1/E2/E4 knows the measured prices).**
 
 ## 4. Phase 3 — the paired-arm measurement
 

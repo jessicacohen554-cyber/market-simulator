@@ -190,6 +190,7 @@ from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     caiso_scarcity_overlay,
     effective_reliability_deployment_mw,
+    ercot_fleet_forced_outage_sigma_mw,
     ercot_lookahead_as_hold_mw,
     ercot_lookahead_committed_reserves,
     ercot_lookahead_expected_ordc_adder,
