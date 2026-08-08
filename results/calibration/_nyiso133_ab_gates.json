@@ -1,0 +1,263 @@
+{
+ "probe": "nyiso-133 A/B kill gates",
+ "prereg": "results/calibration/PREREG-nyiso133-market-solar-cod-basis-2026-08-08.md",
+ "control_bundle": "results/calibration/nyiso133_cod_control",
+ "arm_bundle": "results/calibration/nyiso133_cod_arm",
+ "armed_field": "nyiso_solar_registry_cod_dates",
+ "control_reproduces_keeper": {
+  "check": "control reproduces the superseded keeper (class-year GWh delta)",
+  "passed": true,
+  "max_abs_delta_gwh": 0.0,
+  "rows": {
+   "2023:solar": 0.0,
+   "2023:wind": 0.0,
+   "2023:CC_REGULAR": 0.0,
+   "2023:ST_GAS": 0.0,
+   "2023:CT_PEAKER": 0.0,
+   "2024:solar": 0.0,
+   "2024:wind": 0.0,
+   "2024:CC_REGULAR": 0.0,
+   "2024:ST_GAS": 0.0,
+   "2024:CT_PEAKER": 0.0,
+   "2025:solar": 0.0,
+   "2025:wind": 0.0,
+   "2025:CC_REGULAR": 0.0,
+   "2025:ST_GAS": 0.0,
+   "2025:CT_PEAKER": 0.0
+  }
+ },
+ "gates": [
+  {
+   "gate": "K1 config isolation",
+   "passed": true,
+   "n_fields_compared": 703,
+   "differing": {
+    "nyiso_solar_registry_cod_dates": [
+     false,
+     true
+    ]
+   }
+  },
+  {
+   "gate": "K2 feasibility",
+   "passed": true,
+   "rows": {
+    "control_2023": {
+     "slack_mwh": 0.0,
+     "dump_mwh": 0.0
+    },
+    "control_2024": {
+     "slack_mwh": 0.0,
+     "dump_mwh": 0.0
+    },
+    "control_2025": {
+     "slack_mwh": 0.0,
+     "dump_mwh": 0.0
+    },
+    "arm_2023": {
+     "slack_mwh": 0.0,
+     "dump_mwh": 0.0
+    },
+    "arm_2024": {
+     "slack_mwh": 0.0,
+     "dump_mwh": 0.0
+    },
+    "arm_2025": {
+     "slack_mwh": 0.0,
+     "dump_mwh": 0.0
+    }
+   }
+  },
+  {
+   "gate": "K3 liveness",
+   "passed": true,
+   "rows": {
+    "2023": {
+     "control_gwh": 277.85,
+     "arm_gwh": 281.12,
+     "ratio": 1.0118,
+     "expected_ratio": 1.0118,
+     "within_tol": true
+    },
+    "2024": {
+     "control_gwh": 670.18,
+     "arm_gwh": 586.13,
+     "ratio": 0.8746,
+     "expected_ratio": 0.8746,
+     "within_tol": true
+    },
+    "2025": {
+     "control_gwh": 981.28,
+     "arm_gwh": 981.28,
+     "ratio": 1.0,
+     "expected_ratio": 1.0,
+     "within_tol": true
+    }
+   }
+  },
+  {
+   "gate": "K4 scope (wind unchanged)",
+   "passed": true,
+   "rows": {
+    "2023": {
+     "control_gwh": 4600.91,
+     "arm_gwh": 4600.91,
+     "delta_gwh": 0.0,
+     "within_1pct": true
+    },
+    "2024": {
+     "control_gwh": 6011.65,
+     "arm_gwh": 6011.65,
+     "delta_gwh": 0.0,
+     "within_1pct": true
+    },
+    "2025": {
+     "control_gwh": 7048.69,
+     "arm_gwh": 7048.69,
+     "delta_gwh": 0.0,
+     "within_1pct": true
+    }
+   }
+  },
+  {
+   "gate": "K5 gated-criterion regression",
+   "passed": true,
+   "control_statuses": {
+    "C1": "PASS",
+    "C2": "PASS",
+    "C3a": "PASS",
+    "C3b": "PASS",
+    "C4": "PASS",
+    "C6": "PASS",
+    "C8": "PASS"
+   },
+   "arm_statuses": {
+    "C1": "PASS",
+    "C2": "PASS",
+    "C3a": "PASS",
+    "C3b": "PASS",
+    "C4": "PASS",
+    "C6": "PASS",
+    "C8": "PASS"
+   },
+   "regressions": {}
+  },
+  {
+   "gate": "K6 scarcity collapse",
+   "passed": true,
+   "rt_actual_hours": {
+    "2023": 10,
+    "2024": 12,
+    "2025": 42
+   },
+   "control_model_hours": {
+    "2023": 21.0,
+    "2024": 3.0,
+    "2025": 24.0
+   },
+   "arm_model_hours": {
+    "2023": 21.0,
+    "2024": 3.0,
+    "2025": 24.0
+   },
+   "fired": []
+  },
+  {
+   "gate": "K7 forcing budget (C8)",
+   "passed": true,
+   "c8_control": "PASS",
+   "c8_arm": "PASS",
+   "shares_risen_over_1pp": {},
+   "control_shares": {
+    "2023:": 0.9997,
+    "2023:CC_CHP": 0.0043,
+    "2023:CC_REGULAR": 0.0507,
+    "2023:CT_CHP": 0.2028,
+    "2023:ST_GAS": 0.2188,
+    "2023:hydro": 0.214,
+    "2024:": 0.9999,
+    "2024:CC_CHP": 0.0043,
+    "2024:CC_REGULAR": 0.029,
+    "2024:CT_CHP": 0.3184,
+    "2024:ST_GAS": 0.2451,
+    "2024:hydro": 0.2296,
+    "2025:": 0.9997,
+    "2025:CC_CHP": 0.0017,
+    "2025:CC_REGULAR": 0.0215,
+    "2025:CT_CHP": 0.0742,
+    "2025:ST_GAS": 0.1791,
+    "2025:hydro": 0.3814
+   },
+   "arm_shares": {
+    "2023:": 0.9997,
+    "2023:CC_CHP": 0.0043,
+    "2023:CC_REGULAR": 0.0506,
+    "2023:CT_CHP": 0.203,
+    "2023:ST_GAS": 0.2188,
+    "2023:hydro": 0.2139,
+    "2024:": 0.9999,
+    "2024:CC_CHP": 0.0043,
+    "2024:CC_REGULAR": 0.0288,
+    "2024:CT_CHP": 0.3162,
+    "2024:ST_GAS": 0.2445,
+    "2024:hydro": 0.2296,
+    "2025:": 0.9997,
+    "2025:CC_CHP": 0.0017,
+    "2025:CC_REGULAR": 0.0215,
+    "2025:CT_CHP": 0.0742,
+    "2025:ST_GAS": 0.1791,
+    "2025:hydro": 0.3814
+   }
+  }
+ ],
+ "advisory": {
+  "block": "ADVISORY solar level vs published Gold Book Net Energy",
+  "passed": null,
+  "note": "calibration_verdict.VRE_TOL is a +/-10 % ADVISORY band, explicitly report-only, and D-10 classes NYISO solar delivered_pinned ('advisory-only, excluded from skill claims'), so no gated criterion moves on it. PREREG ADV-1 predicted 2023 gets WORSE and expressly ruled that out as grounds for rejection (rule 1).",
+  "rows": {
+   "2023": {
+    "published_gwh": 229.9,
+    "control": {
+     "gwh": 277.85,
+     "pct_vs_published": 20.9,
+     "within_advisory_band": false
+    },
+    "arm": {
+     "gwh": 281.12,
+     "pct_vs_published": 22.3,
+     "within_advisory_band": false
+    }
+   },
+   "2024": {
+    "published_gwh": 503.2,
+    "control": {
+     "gwh": 670.18,
+     "pct_vs_published": 33.2,
+     "within_advisory_band": false
+    },
+    "arm": {
+     "gwh": 586.13,
+     "pct_vs_published": 16.5,
+     "within_advisory_band": false
+    }
+   },
+   "2025": {
+    "published_gwh": 981.8,
+    "control": {
+     "gwh": 981.28,
+     "pct_vs_published": -0.1,
+     "within_advisory_band": true
+    },
+    "arm": {
+     "gwh": 981.28,
+     "pct_vs_published": -0.1,
+     "within_advisory_band": true
+    }
+   }
+  }
+ },
+ "determination": {
+  "control": "CALIBRATED-WITH-CAVEATS",
+  "arm": "CALIBRATED-WITH-CAVEATS"
+ }
+}

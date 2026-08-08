@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-08-nyiso-133-cod-control",
+  "label": "nyiso 133 cod control",
+  "date": "2026-08-08",
+  "shorthand": "nyiso-133-cod-control",
+  "definition": "nyiso-133 PAIRED CONTROL: keeper 2026-08-08-nyiso-132-cf-arm recipe replayed at HEAD with ZERO delta. Baseline for the nyiso_solar_registry_cod_dates single-delta A/B (PREREG-nyiso133-market-solar-cod-basis-2026-08-08.md).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-08-nyiso-133-cod-control.js",
+  "bundle": "results/calibration/nyiso133_cod_control"
+}
