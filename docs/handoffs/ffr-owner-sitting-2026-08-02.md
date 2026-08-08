@@ -3254,3 +3254,79 @@ run176 and NYISO nyiso-132 promotions and CAISO's `complete` withdrawal) plus on
 coordination note toward the in-flight FFR-8A-P3 reproduction gate. Paste-order guidance
 given: FFR-8A-P3 first (critical lane checks out its base immediately), HOUSE-1 second
 (kills the reflow trap every other lane hand-guards), FFR-3V-FIX and F1-45U at will.
+
+## Addendum AE — the refresh sweep: all four lanes live; F1-45U CLEAN; the enforcement gap named; F2-45U dispatched
+
+**Written 2026-08-08 by the workstream manager at `origin/main` `0501f9b8`.**
+
+### AE.1 Lane sweep (every §0z-cycle prompt pasted; ZERO open questions on liveness)
+
+**FFR-8A-P3 — mid-flight, exemplary discipline.** Merged so far (PRs #3744 + prior): §2
+narrative filled from the committed Part-A json; §3.1–3.3 as-landed inventory with **E3's
+disposition recorded as ESCALATED-NOT-LANDED** (the mixed reproduction test taken to the
+prereg's escalate branch, as pre-committed); the §3.4 HONEST EXPECTATION committed BEFORE
+the repair arm (prereg-2 `ea04f03`, hash bookkeeping corrected after a rebase by
+header-only edits); the control arm SOLVING with per-screen lookahead dumps committed as
+produced (2021 and 2023 screens at this writing — the commit-as-they-exist discipline).
+Two cross-lane repairs made in passing, both verified by the manager on main: the E4
+helper's missing runner import (`ercot_fleet_forced_outage_sigma_mw`, the two F821s
+HOUSE-1's handoff reports — now imported at `runner.py:193`) and the caiso-184
+unregistered-field backfill (below). **FFR-3V-FIX** — the vintage-seed fix (`d1965d6`) +
+the bounded MISO before/after pair prereg (reads R1–R6) merged via #3745; measurement
+in flight; handoff (the FFR-5E unblocked/blocked sentence) not yet landed. **F1-45U** —
+merged (#3746), adjudicated at AE.2. **HOUSE-1** — PR #3749 OPEN, adjudicated at AE.3.
+
+### AE.2 F1-45U adjudication: CLEAN, and stage 2 was correctly NOT spent
+
+The lane landed exactly its charter: the net-then-5× statutory ordering (zero-out
+$118.75 → $43.75/MWh, both pinned in tests with memo §2.3's D=0 rows); F-3 implemented
+from the notices' PRINTED applicable amounts (the memo's verification limit honoured —
+2025 printed threshold 2.6¢, hold-last-published beyond, zero DOF); **stage 1 measured NO
+margin-vs-bar crossing for any MISO nuclear unit at either committed price basis, at any
+CF the model can produce — so stage 2 (the paired forecast solve) was SKIPPED per the
+pre-registered gate**, margin tables as evidence. Backcast inertness pinned by
+reachability (one call site, `evolve_fleet` only) plus
+`tests/regression/test_45u_backcast_inertness.py`. Matrix `ira_credits` citation updated,
+no cell verdict moved. The F-1 revenue correction (~$90/kW-yr at 2025 prices) flips no
+retirement decision at today's prices — measured, reported, and exactly why option A's
+attribution sequencing cost nothing. **F2-45U (step 2 of 3) dispatched — pack §0aa.**
+
+### AE.3 HOUSE-1 adjudication + the X.2 finding: detection was never the gap; ENFORCEMENT is an owner act
+
+PR #3749 (open) is right on both halves. T.1: hook scoped to the edited file only with
+`--force-exclude`; `constants.py` excluded prophylactically (the chartered enumeration of
+other failing core files came back EMPTY — main's copy now passes `--check`); the
+verification used a live natural experiment (caiso-184's `test_outages.py` format
+regression) and repaired it. X.2, the load-bearing diagnosis: **the pin tests were
+ALREADY job-level-blocking in three places and all of them FAILED on nyiso-128's PR —
+the merge simply did not wait** (PR #3624 merged 86 s after creation; sampled: #3652 8 s,
+#3715 11 s, #3712 22 s; no check can complete in those windows), with ambient red
+destroying the signal for anyone who did look. The new isolated `cache-key-pin` job fixes
+the signal half. The enforcement half is a REPO-SETTINGS act only the owner can perform —
+**card put this sitting: required status checks on `main`** (recommendation: require
+"Pinned default cache key" NOW — it is green on repaired main — and stage further checks
+as each reaches stable green; requiring the ambiently-red jobs today would block every
+merge and force bypass, making the protection theater). Also adopted from §3.5(2): the
+prompt-pack standing line — sessions wait for the `cache-key-pin` verdict before merging.
+
+**The caiso-184 recurrence (nyiso-128 pattern, THIRD occurrence) and its cross-lane
+clearing, verified on main:** PR #3742 landed `unit_outage_lp_capacity_basis`
+unregistered, moving the pinned default key (`603c2498… → c6bcb4c8…`) and putting the pin
+tests red on clean main; FFR-8A-P3's `7c14d11` backfilled the registration (optional list
++ defaults ledger, honest third-occurrence comment) and fixed the F821s — both verified
+present at `0501f9b8`. HOUSE-1's handoff §3.4 reports the red as live because it was
+written at `7fd1c28`, pre-backfill; its own `cache-key-pin` check should go green on
+rebase. Benign overlap: #3748 and #3749 carry the IDENTICAL `test_outages.py` format
+hunks. caiso-184's open #3748 carries no scenarios.py duplicate (complementary, no
+collision).
+
+### AE.4 CAISO keeper moved: caiso-183-b1-hour — R.1 CLEAN
+
+Promoted same-day over caiso-175-tac-intake: the keeper recipe replayed on the REPAIRED
+hour-grain CAISO outage envelope (`campd-unit-outages-CAISO.csv` re-derived with
+`--hour-grain` so detected start/end hours survive the schema instead of every window
+expanding to 00:00–23:00). Single data delta vs its own B0 control, zero DOF, detection
+byte-identical (same 4,328 rows/tuples/order), five other ISOs byte-inert per its P0.
+CAISO holds no `complete` marker (withdrawn), so no re-key duty. Keeper-auditor launched
+scoped `--iso CAISO`; result recorded when it returns. Keeper churn count for Q.2: CAISO
+moved TODAY — the battery hold stands with no settle window yet open.
