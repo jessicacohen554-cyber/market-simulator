@@ -6411,3 +6411,56 @@ attempted.
 
 Records: `results/calibration/FINDING-ercot177-temp-derate-refused-2026-08-07.md`,
 `scripts/probes/ercot177_waterfill_identity.py`. Next: ercot-178.
+
+## 2026-08-08 — ercot-178: the CONTINUOUS conditioning grain — arm REJECTED-AS-ARMED on its own gates; the 2023 mechanism evidence is the largest on the record (+$8.18/MWh)
+
+**Charter:** matrix §5.1 item 21 — the ercot-177 diagnosis §4 conditioning-GRAIN
+lever (`ercot_offer_surface_netload_pcts`), form (a) CONTINUOUS elected and
+pre-registered BEFORE any derive or measurement
+(`docs/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md` + pre-solve
+Amendment 1). Object: C3a-2023 −32.4 % under the owner's standing instruction
+(under 10 % without disturbing 2024/2025 — a HARD gate).
+
+**Built:** ONE default-off gate `ercot_offer_surface_continuous` switches the
+four armed measured surfaces (conditional peak / cleared-share wall / RT leg
+mode-replace / fast-start pool) from stepped net-load-percentile bins to
+continuous interpolation over the corpus's own hour nodes — identical
+statistics re-keyed bin → hour-rank, zero fitted scalars, NO edge to fit,
+vintage-guarded `_contpct.json` artifacts (`--continuous` derive modes; frozen
+stepped artifacts byte-untouched). Seam proof ALL-PASS
+(`ercot178_contpct_seamproof.json`): SP-3 fed the machinery a step-ENCODED node
+table and reproduced the gate-off control BYTE-IDENTICALLY in all three years —
+grain, not level.
+
+**A/B (both registered):** control `2026-08-08-run178-control` reproduces the
+run176 keeper ARRAY-EQUAL (third consecutive reproduction, new HEAD); arm
+`2026-08-08-run178-continuous-grain` (PROBE — REJECTED-AS-ARMED). Arm results:
+**C3a-2023 −32.4 % → −19.7 %** (lw 43.45 → 51.63, +$8.18 of the +$14.44 the
+bar needs), C3b-2023 0.602 → 0.349, 2025 C3a −9.1 % → ≈ −4 %, C3c-2024 crosses
+INTO band (25 → 28 of 53), >$1000 tail 22 → 29 (actual 52). **Kill gates:**
+G-OWNER/G-SPAN′ FAIL ~20× (2024 ST_GAS +9.7 % / CT +8.7 % / CC −3.0 %; 2025
+ST_GAS +12.7 % / CT +11.4 % vs the 0.5 % cap); G-SHED FAIL (2023 shed 4 → 14 —
+part of the top formation is physical shortage, the ercot-48 signature); G-C3c
+FAIL (2023 61 → 57 away from 181; 2025 3 → 0); C3b-2024 0.205 → 0.208. Root
+mechanics, measured: the de-dilution is TWO-SIDED (rank-local body walls
+reprice DOWN where the pooled bins subsidized them) and the 2024/25 RT/pool
+node bases are sample-day-thin (561/500 nodes vs 2023's 7,917), so continuous
+interpolation bridges sample conduct across the whole rank axis where the
+stepped bins bounded each measurement's reach.
+
+**Adjudication:** REJECTED-AS-ARMED exactly per the precommit; keeper UNCHANGED
+(`2026-08-07-run176-control-offline-increment`). Matrix: new row
+`ercot_offer_surface_continuous` cell `R` (rule 28(c) same-PR), §5.1 item 21.
+**Named successor (not built):** form (b) — finer edges ABOVE p97 ONLY, so the
+body bins stay byte-identical and the sparse years never bridge; edges from
+submitted-offer conduct structure (never realized prices), max-edges bound
+pre-stated; expressible as a node table step-encoded below p97 (the SP-3-proven
+core is reusable). If the top-scoped variant still lands short of −10 %, the
+residual is the p97–99 formation — a quantity-position phenomenon (the last
+accepted step's position), not conditioning grain.
+
+Records: `results/calibration/FINDING-ercot178-continuous-grain-2026-08-08.md`,
+`docs/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md`,
+`results/calibration/ercot178_contpct_seamproof.json`,
+`scripts/probes/ercot178_contpct_seamproof.py`, bundles
+`ercot178_control_A` / `ercot178_grain_B`. Next: ercot-179.
