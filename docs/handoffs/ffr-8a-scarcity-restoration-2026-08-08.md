@@ -390,9 +390,72 @@ expected to have the wrong sign to explain the missing scarcity.
 
 ### 2.5 Part B — the A1–A5 ablation chain on the control arm's dumps
 
-*(filled after the control arm solved and its reproduction gate passed;
-`scripts/probes/ffr8a_ablation_chain.py` →
-`docs/handoffs/ffr-8a/part-b-ablation-2026-08-08.json`)*
+*(Filled after the control arm solved and its reproduction gate passed on all six content
+legs; `scripts/probes/ffr8a_ablation_chain.py` →
+`docs/handoffs/ffr-8a/part-b-ablation-2026-08-08.json`. A3 records A2 unchanged per §3.3;
+the refuted-table counterfactual is the clearly-labelled annex column.)*
+
+**A1 reproduces the record exactly** at all four screens: into-2024 mean $10.490 / max
+$24.41, into-2025 $9.544 / $46.22 (0 h > $100 both), into-2022 $52.715 (48 h > $1000 — Uri
+at VOLL), into-2023 $67.726 (72 h > $1000).
+
+The chain at the two thin (2024/2025) screens, the failing screens the charter targets
+(mean $/MWh | h>$100 | h>$1000 | per-fuel replica margins $/kW-yr coal/cc/ct/st):
+
+| step | into-2024 | into-2025 |
+|---|---|---|
+| A1 as-built | 10.490 \| 0 \| 0 \| 0.0/3.1/0.1/0.0 | 9.544 \| 0 \| 0 \| 0.03/0.44/0.04/0.02 |
+| A2 + E1 committed R | 10.454 \| 0 \| 0 \| 0.0/3.0/0.1/0.0 | 9.516 \| 0 \| 0 \| 0.03/0.41/0.04/0.02 |
+| A3 (= A2; annex: table cf.) | (annex: max $24.41) | (annex: 1 h>$100, max $117) |
+| A4 + E4 outage uncertainty | 10.459 \| 0 \| 0 \| 0.0/3.0/0.1/0.0 | 9.719 \| **4** \| 0 \| 1.34/1.92/1.55/1.33 |
+| A5 + E2 AS hold | 10.459 \| 0 \| 0 \| unchanged | 9.719 \| 4 \| 0 \| unchanged |
+
+Three measured facts, each a finding:
+
+* **E1 is near-inert at the thin screens.** The committed-capability quantity (r_full mean
+  25.9–26.0 GW, **p1 16.1 GW**; r_online p1 13.3 GW) sits FAR above the knee ($10 at
+  7.4 GW) — replacing installed headroom (mean 50.3–52.6 GW, p1 23.1–26.7 GW) with
+  committed capability moves the mean by −$0.03 and the tail not at all. The §2.1
+  measured-side conclusion now has its model half: the missing structure is not only
+  commitment (installed → online) but the **realization distribution** — the measured 2024
+  RTOLCAP visits p1 7.9 GW / min 5.1 GW, while the forward share-table formula on the
+  evolved fleet never leaves ~13 GW. The formula is a net-load-decile point model; it does
+  not carry the weather/outage realizations that produce the measured low tail.
+* **E2 is measured INERT on the evolved fleet.** `as_hold` is identically ~0 at every
+  screen: the evolved storage fleet's AS share (0.35 × ~23 GW = **8.05 GW** by the
+  2023/2024 solves; 5.95 GW at 2021) alone exceeds the entire forward responsive
+  requirement (REGUP+RRS+ECRS ≈ 4.6 GW), so
+  `clip(REGUP+RRS+ECRS − LR − storage_as, 0, ·) = 0` in (essentially) every hour. The
+  element's design is sound for the REAL fleet (2024 actual storage ≈ 9–11 GW power,
+  AS-award share ~3–4 GW, thermal hold ~1–2 GW); on THIS arm's over-built storage fleet
+  (a known FFR-4/5 lane object) it never fires. The element stays landed and armed — it is
+  condition-responsive by construction and will fire when the storage fleet is right — but
+  in Phase 3 it contributes zero.
+* **E4 is the only live element, and it acts in BOTH directions.** At the thin screens the
+  Gauss–Hermite expectation adds the small tail the point evaluation cannot see (into-2025:
+  0 → 4 h > $100, max $46 → $639, mean +$0.18; into-2024: nothing — installed headroom p1
+  23.1 GW is ~6.7σ from the knee at σ_R ≈ 2.3 GW, so even the expectation finds no mass).
+  At the Uri-priced 2022/2023 screens it works the OTHER way: the expectation SMOOTHS the
+  VOLL point-mass (a pinned hour's expected adder is < VOLL once ε can lift reserves off
+  the pin), pulling into-2022 mean $52.72 → $46.62 and into-2023 $67.73 → $62.75, with the
+  replica-construction margins dropping 20–45 $/kW-yr (gas_st into-2022: 192.4 → 149.7).
+  **This contradicts §3.4 expectation 5's "the repair only ADDS revenue" reasoning** — at
+  screens whose as-built object already prices deep scarcity, the uncertainty integration
+  REDISTRIBUTES it; recorded here before the repair arm's ledgers were read.
+* **Term (c) — the wrong sign, confirmed.** Re-priced on the ACTUAL fleet (vintage classes
+  minus the FFR-7C corrected exits, measured entering net load), committed r_full is
+  HIGHER (mean 28.5 vs 25.9 GW) and the chain output is essentially unchanged (into-2025
+  A5: same 4 h > $100, mean $9.71) — the actual, longer fleet has MORE headroom, so
+  fleet-length inheritance cannot explain the missing scarcity, exactly as §1.1(c)
+  pre-stated.
+
+Net Part-B statement: **the full pre-registered repair chain, applied offline to the
+control's own stacks, moves the 2024 screen by −$0.03/MWh and the 2025 screen by
++$0.18/MWh (0 → 4 h > $100), restoring ~1–3 $/kW-yr of per-fuel margin against a
+47–97 $/kW-yr replica gap — and LOWERS the Uri-priced screens by $5–6/MWh.** The λ-led
+content of §2.3 (the real 161/217 h > $100) is untouched by construction; the elements'
+own quantities say why: committed reserves on this fleet never visit the knee, and the AS
+hold is swallowed by the over-built storage fleet.
 
 ## 3. Phase 2 — the repair as landed
 
