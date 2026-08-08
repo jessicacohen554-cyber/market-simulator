@@ -24,6 +24,7 @@ import datetime as _dt
 import json
 import re
 import subprocess
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -355,6 +356,120 @@ def write_clean(
     merged = {**existing, **kv}
     table = table.replace_schema_metadata(merged)
     pq.write_table(table, out)
+    return out
+
+
+#: Default parquet row-group size (rows). Matches the pyarrow default that
+#: :func:`write_clean`'s single-shot ``pq.write_table`` applies, so the
+#: streaming writer below lays out identical row groups.
+_ROW_GROUP_ROWS = 1024 * 1024
+
+
+def write_clean_iter(
+    frames: Iterable[pd.DataFrame],
+    datatype: str,
+    iso: str | None = None,
+    year: int | None = None,
+    market: str | None = None,
+    *,
+    source: str | None = None,
+    extra_provenance: dict[str, Any] | None = None,
+    row_group_rows: int = _ROW_GROUP_ROWS,
+) -> Path:
+    """Streaming sibling of :func:`write_clean` for datasets too big to concat.
+
+    Same contract, same validation, same embedded metadata — but the caller
+    hands over an *iterable* of schema-conforming chunks instead of one frame,
+    and peak memory is bounded by ``row_group_rows`` rather than by the whole
+    dataset. :func:`write_clean` materialises the full frame *and* a full
+    ``pa.Table.from_pandas`` copy of it, which is what puts a 365-day CAISO
+    ``dam-public-bids`` year (~32 M rows) past a 15 GB ceiling.
+
+    The output is laid out to be **data-byte identical** to what
+    :func:`write_clean` would have written for the concatenation of ``frames``:
+    each chunk is cast to the first chunk's Arrow schema, buffered to exactly
+    ``row_group_rows`` rows, and ``combine_chunks``-ed before the row group is
+    flushed — so both writers produce the same row groups from the same
+    contiguous column data. Only the provenance metadata differs, and only in
+    the fields that are timestamps by construction (``created_utc``).
+
+    Every chunk is validated with :func:`validate_df`, so a schema violation in
+    a late chunk still fails the write (the file is removed before raising).
+
+    Parameters
+    ----------
+    frames:
+        Iterable of chunks, each conforming to the ``datatype`` schema and each
+        carrying the same columns/dtypes. Consumed lazily — pass a generator.
+    row_group_rows:
+        Rows buffered before a row group is flushed. Bounds peak memory.
+
+    Returns
+    -------
+    Path
+        The path written.
+
+    Raises
+    ------
+    SchemaError
+        If any chunk violates the schema, or if ``frames`` is empty.
+    """
+    out = paths.clean_path(datatype, iso=iso, year=year, market=market)
+    out.parent.mkdir(parents=True, exist_ok=True)
+
+    schema = load_schema(datatype)
+    writer: pq.ParquetWriter | None = None
+    arrow_schema: pa.Schema | None = None
+    buf: list[pa.Table] = []
+    buffered = 0
+
+    def _flush(n_rows: int) -> None:
+        """Write exactly ``n_rows`` rows off the front of ``buf``."""
+        nonlocal buf, buffered
+        table = pa.concat_tables(buf)
+        head = table.slice(0, n_rows).combine_chunks()
+        assert writer is not None
+        writer.write_table(head, row_group_size=n_rows)
+        rest = table.slice(n_rows)
+        buf = [rest] if rest.num_rows else []
+        buffered = rest.num_rows
+
+    try:
+        for chunk in frames:
+            if chunk is None or chunk.empty:
+                continue
+            validate_df(chunk, datatype, schema=schema)
+            table = pa.Table.from_pandas(chunk, preserve_index=False)
+            if writer is None:
+                kv = _build_metadata(
+                    schema,
+                    iso=iso,
+                    year=year,
+                    market=market,
+                    source=source,
+                    extra=extra_provenance,
+                )
+                existing = table.schema.metadata or {}
+                arrow_schema = table.schema.with_metadata({**existing, **kv})
+                writer = pq.ParquetWriter(out, arrow_schema)
+            else:
+                table = table.cast(arrow_schema.remove_metadata())
+            buf.append(table)
+            buffered += table.num_rows
+            while buffered >= row_group_rows:
+                _flush(row_group_rows)
+        if writer is None:
+            raise SchemaError(
+                f"write_clean_iter({datatype!r}): no non-empty chunks to write"
+            )
+        if buffered:
+            _flush(buffered)
+    except BaseException:
+        if writer is not None:
+            writer.close()
+        out.unlink(missing_ok=True)
+        raise
+    writer.close()
     return out
 
 
