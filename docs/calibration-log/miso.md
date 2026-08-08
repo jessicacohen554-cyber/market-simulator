@@ -6099,3 +6099,101 @@ written and item 4 written into the queue**. Rule 22 — 2023–2025 only, MISO
 holds no marker. Rules 13/14/19/21/23/24/25 throughout; the ERCOT-138 parallel
 is cited as a precedent for a measurement pattern, never as a transferred
 verdict (rule 25). **Next number: miso-144.**
+
+## 2026-08-08 — miso-144: §5.4 QUEUE ITEM 5 SET AND DISCHARGED, OBJECT DISSOLVED — the 19.3 GW "in-merit idle block" is ~97 % an INSTRUMENT UNIVERSE ARTIFACT (capability of ALL fleet classes minus dispatch of THERMAL_COLS only), and the pre-registered attribution CLOSES with a NEGATIVE residual. Corrected same-universe copperplate reproduces the keeper P1 price to median |Δ| $0.58 (r 0.99). NO in-model dispatch defect. Phase 0, NO LP, no arm, no cell verdict, keeper UNCHANGED
+
+**Lane.** §5.4 queue **item 5 (NEW)** — miso-143's named successor, the
+in-merit idle block, diagnosis-first. PREREG
+`results/calibration/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md`,
+pushed at `017f6bee` (blob `5599ba80`, verified against the remote) **before
+any adjudicating statistic**: 13 falsifiable predictions, four pre-committed
+branches with priors, two construction-error stops, seven kill-gate bars fixed
+in advance, 11 traps each with a counter-measurement, and a full disclosure of
+every committed artifact read before registration. Finding
+`results/calibration/FINDING-miso144-idle-block-is-universe-artifact-2026-08-08.md`.
+
+**Posture.** **NO LP SOLVED.** No `ScenarioConfig` field, no parameter, no
+mechanism armed, no run registered, **no cell verdict minted**
+(BRANCH-INSTRUMENT is an instrument verdict — no mechanism was tested). Keeper
+UNCHANGED at `2026-08-05-miso-132b-cc-committed`. §0 re-verified from committed
+artifacts, all three years one invocation: **NOT-YET**, sole FAIL C3a (2025
+−14.1 %), sole ledgered caveat C3c (1 of 1), C8 ST_GAS grounded above budget —
+identical to the charter in every cell.
+
+**G-A0 — replication exact.** All six committed miso-143 excess values
+(3 years × lo/hi) reproduced at HEAD to ≤ 0.03 MW against a ≤ 5 MW bar.
+
+**G-A1 — the universe term is the block.** miso-143's `below − thermal`
+subtracted `THERMAL_COLS` dispatch from capability summed over **every** fleet
+row. 2025 JJA h12–17, one weight: **T_universe = 18,765 MW** (nuclear 10,665 +
+hydro 2,372 + import 4,272 + biomass 1,456) vs A0 = 18,523 — **97 %** (2024:
+106 %; 2023: 104 % — year-general, as a three-year block's explanation must
+be). Injections (OTHER + biomass, 12-value profiles, −1,136) bring the
+same-universe **thermal gap to +894 MW (`lo`) / −226 MW (`hi`)**.
+
+**G-A2/A3 — the remainder closes with room to spare.** Strict in-merit idle at
+each unit's OWN zonal price at the `hi` (P1-markup) offer basis: **611 MW**
+(CT_PEAKER 411 = 2.3 % of its capability, CC 122), sitting entirely inside the
+LP's **2,543 MW** physical reserve holding (rbdc family; midwest + south =
+rbdc asserted ≤ 1 MW — TRAP 9, no family double-count). Out-of-merit forced-in
+dispatch **~1.3 GW**, unit-grain attributed by `min_gen_mechanism`: ST_GAS
+per-plant must-run 966 + reliability-floor limbs 202–271 + CHP steam 100–111 —
+all D-4-cleared, C8-grounded. Identities CC-1/CC-2 close to < 0.001 MW.
+**T_resid NEGATIVE (over-explained) in every year/window/bracket; the
+pre-registered |resid| > 3 GW stop never fires. The twelve floor limbs are
+exonerated as the block's author.**
+
+**Supplementary (labelled post-hoc) — the price side of the same artifact.**
+Re-clearing the THERMAL stack against fleet-thermal need reproduces the
+keeper's P1 price at **median |Δ| $0.38–1.00, r ≈ 0.99, bias +$0.06 (`hi`,
+2025 JJA h12–17)** — against miso-143's all-class-stack footing FAIL (median
+9.998, bias −10.9). **The model's summer-afternoon price IS the merit-order
+clear of its own thermal stack at its own P1 offers.** The v2 (need + reserve)
+variant overshoots negative: reserve sits on above-margin capability — also
+why reserve duals are ~0 outside 5 hours.
+
+**Survives / corrected.** SURVIVES: every miso-143 above-anchor instrument
+(gain bracket +$2.30/+$5.47, ladder $1.496/MWh/GW, 16.14 GW walk, B-1…B-4
+eliminations) and miso-142's no-quantity-lever verdict — REINFORCED (dispatch
+is optimal; no mis-dispatch to harvest). CORRECTED: the footing failure was
+the instrument's; the "idle by class" table was TOTAL idle fractions, not the
+block's composition; "cheap capability held out, dearer held in" is REFUTED.
+Fourth instrument correction in four sessions, each caught by
+reproduce-before-extend.
+
+**Predictions scored against interest.** P2/P3/P6/P7/P9/P10/P12/P13 confirmed;
+P1 exact. **Misses, all in the same direction (the artifact was MORE total
+than predicted):** P4 `hi` sign flip (−226 MW, outside band), P8 tie term
+0.076 GW below its band, P11 `hi` residual −1.93 GW outside band (inside
+stop), P5 point high (2023 `lo` 0.51 below band). BRANCH-INSTRUMENT (65 %
+prior) fired on its pre-registered condition.
+
+**Frontier statement for the owner.** Quantity (miso-142), merit order
+(miso-143) and dispatch/price-formation optimality (miso-144) are ALL closed
+by measurement. The C3a deficit lives where miso-142 measured it: **the stack
+never reaches the actual price** (model max $51.97 in 2025 JJA h12–17 vs
+actual lw $74.68) — offer LEVELS above SRMC in ordinary summer-afternoon
+hours. Explicitly NOT the exhausted C3c tail list (that is the >$200
+ORDC/RCPF spike tail; this is −40 % across 403 ordinary July hours at ~$75,
+zero shortfall, reserve duals zero). Named successor requiring an OWNER
+decision (rules 19/24), not opened: **intake MISO's published historical
+RT/DA offer curves (~90-day lag)** — a measured, forward-regenerable, rule-13
+input that would identify offer-vs-SRMC conduct directly rather than by
+residual. Item 5's reopen condition: material in-merit idle on a
+same-universe, own-zone-price, P1-offer-basis ledger that reserves and
+D-4-cleared floors cannot absorb (largest strict residual at HEAD: −0.9 GW,
+over-explained).
+
+**Governance carried.** C1/C2 SKIPPED for 2025 (preliminary EIA-923) — the
+blocker year's fuel mix stays ungated; nothing here reads C1/C2 as 2025
+safety.
+
+**Rule duties.** Rule 15 — no LP, no run to register (miso-131…143 precedent).
+Rule 28(b) — no cell verdict; **§5.4 queue stamp written and item 5 written
+into the queue as discharged**. Rule 22 — 2023–2025 only, no marker. Rules
+13/14/19/21/23/24/25 throughout; probe hygiene via `_miso143_stack.hygiene()`
+reuse; DO-NOT-REDO honoured (congestion not re-run; T_zonal is the
+instrument's price-basis term; seam classes untouched — import's universe
+line cites the armed `miso_seam_envelope_merit_cap` as its owner; no `*_lw`
+re-derivation; trough untouched). Concurrent-session check at open and close:
+zero MISO PRs, no live MISO branch. **Next number: miso-145.**

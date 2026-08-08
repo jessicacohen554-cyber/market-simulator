@@ -1,0 +1,940 @@
+{
+  "prereg": "results/calibration/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md",
+  "prereg_commit": "017f6bee",
+  "gate": "G-A0..G-A3 -- attribution of the miso-143 in-merit idle block",
+  "keeper": "2026-08-05-miso-132b-cc-committed",
+  "posture": "NO SOLVE -- run_year(fleet_only=True) offer stack vs the keeper's own committed sidecars; miso-143 anchor reused",
+  "notes": {
+    "T_resid_semantics": "strict-zonal idle at delta=0.10 minus rbdc held; held is the PHYSICAL total (partition asserted) and over-subtracts by any non-thermal/storage-backed holding, so T_resid is biased DOWN by that share",
+    "instrument_limit": "fleet_only availability is the reconstruction's, not re-verifiable against the solve's own draw from committed artifacts (PREREG \u00a76 stop 2 successor if the residual blows)"
+  },
+  "years": {
+    "2023": {
+      "n_gen": 3092,
+      "w_model_vs_den_max_abs": 0.0,
+      "reserve_partition_max_dev_mw": 0.0002,
+      "has_min_gen": true,
+      "has_min_gen_mechanism": true,
+      "W1_jun_jul_h8_20": {
+        "n_hours": 793,
+        "anchor_lw_price": 36.223,
+        "thermal_served_unweighted_mw": 64403.9,
+        "thermal_served_lw_mw": 65056.9,
+        "lo": {
+          "replication_g_a0": null,
+          "excess_miso143_construction_mw": 21462.1,
+          "A0_oneweight_mw": 20809.1,
+          "T_universe_by_class_mw": {
+            "nuclear": 11136.0,
+            "hydro": 2464.9,
+            "import": 6848.6,
+            "biomass": 1364.9
+          },
+          "T_universe_total_mw": 21814.4,
+          "T_injected_mw": 2216.9,
+          "thermal_gap_mw": 1211.6,
+          "cc1_identity_dev_mw": 0.000591,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 53.4,
+            "CC_REGULAR": 406.2,
+            "CT_PEAKER": 1022.2,
+            "ST_GAS": 25.0,
+            "CC_CHP": 75.3,
+            "CT_CHP": 26.3,
+            "ST_CHP": 52.3,
+            "oil": 0.0
+          },
+          "idle_sys_LB_total_mw": 1660.6,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 8.8,
+            "CC_REGULAR": 0.9,
+            "CT_PEAKER": 73.3,
+            "ST_GAS": 349.5,
+            "CC_CHP": 6.0,
+            "CT_CHP": 9.9,
+            "ST_CHP": 0.6,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 449.0,
+          "cc2_identity_dev_mw": 0.000591,
+          "floor_oom_mw": 965.1,
+          "floor_oom_by_mechanism_mw": {
+            "2": 44.1,
+            "4": 474.1,
+            "16": 446.9
+          },
+          "T_zonal_mw": 95.6,
+          "idle_zonal_LB_total_mw": 1564.9,
+          "T_tie_mw_at_delta": {
+            "0.01": 32.1,
+            "0.1": 99.6,
+            "0.5": 392.7,
+            "1.0": 726.0
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 1532.9,
+            "0.1": 1465.3,
+            "0.5": 1172.3,
+            "1.0": 838.9
+          },
+          "T_reserve_mw": 2447.5,
+          "T_resid_mw_strict_primary_minus_reserve": -982.1,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 356.7,
+            "CT_PEAKER": 955.5,
+            "ST_GAS": 10.0,
+            "CC_CHP": 67.4,
+            "CT_CHP": 25.3,
+            "ST_CHP": 50.4,
+            "oil": 0.0
+          }
+        },
+        "hi": {
+          "replication_g_a0": null,
+          "excess_miso143_construction_mw": 20461.9,
+          "A0_oneweight_mw": 19808.8,
+          "T_universe_by_class_mw": {
+            "nuclear": 11136.0,
+            "hydro": 2464.9,
+            "import": 6848.6,
+            "biomass": 1364.9
+          },
+          "T_universe_total_mw": 21814.4,
+          "T_injected_mw": 2216.9,
+          "thermal_gap_mw": 211.4,
+          "cc1_identity_dev_mw": 0.000591,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 53.4,
+            "CC_REGULAR": 406.2,
+            "CT_PEAKER": 300.6,
+            "ST_GAS": 25.0,
+            "CC_CHP": 75.3,
+            "CT_CHP": 22.1,
+            "ST_CHP": 52.3,
+            "oil": 0.0
+          },
+          "idle_sys_LB_total_mw": 934.9,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 8.8,
+            "CC_REGULAR": 0.9,
+            "CT_PEAKER": 341.8,
+            "ST_GAS": 349.5,
+            "CC_CHP": 6.0,
+            "CT_CHP": 16.0,
+            "ST_CHP": 0.6,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 723.5,
+          "cc2_identity_dev_mw": 0.000591,
+          "floor_oom_mw": 1057.5,
+          "floor_oom_by_mechanism_mw": {
+            "2": 52.1,
+            "4": 558.4,
+            "16": 446.9
+          },
+          "T_zonal_mw": 97.9,
+          "idle_zonal_LB_total_mw": 837.0,
+          "T_tie_mw_at_delta": {
+            "0.01": 30.7,
+            "0.1": 80.8,
+            "0.5": 287.6,
+            "1.0": 469.5
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 806.3,
+            "0.1": 756.2,
+            "0.5": 549.4,
+            "1.0": 367.5
+          },
+          "T_reserve_mw": 2447.5,
+          "T_resid_mw_strict_primary_minus_reserve": -1691.3,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 356.7,
+            "CT_PEAKER": 250.8,
+            "ST_GAS": 10.0,
+            "CC_CHP": 67.4,
+            "CT_CHP": 20.9,
+            "ST_CHP": 50.4,
+            "oil": 0.0
+          }
+        }
+      },
+      "JJA_h12_17": {
+        "n_hours": 552,
+        "anchor_lw_price": 39.488,
+        "thermal_served_unweighted_mw": 67875.0,
+        "thermal_served_lw_mw": 68470.2,
+        "lo": {
+          "replication_g_a0": {
+            "committed_mw": 21951.2,
+            "replicated_mw": 21951.2,
+            "delta_mw": -0.01,
+            "pass": true
+          },
+          "excess_miso143_construction_mw": 21951.2,
+          "A0_oneweight_mw": 21356.0,
+          "T_universe_by_class_mw": {
+            "nuclear": 11109.8,
+            "hydro": 2464.9,
+            "import": 7224.6,
+            "biomass": 1417.2
+          },
+          "T_universe_total_mw": 22216.5,
+          "T_injected_mw": 2299.2,
+          "thermal_gap_mw": 1438.6,
+          "cc1_identity_dev_mw": 0.000474,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 208.0,
+            "CC_REGULAR": 432.8,
+            "CT_PEAKER": 1150.4,
+            "ST_GAS": 11.2,
+            "CC_CHP": 63.5,
+            "CT_CHP": 24.3,
+            "ST_CHP": 60.8,
+            "oil": 0.0
+          },
+          "idle_sys_LB_total_mw": 1951.0,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 2.3,
+            "CC_REGULAR": 0.0,
+            "CT_PEAKER": 52.8,
+            "ST_GAS": 448.4,
+            "CC_CHP": 1.4,
+            "CT_CHP": 7.2,
+            "ST_CHP": 0.1,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 512.4,
+          "cc2_identity_dev_mw": 0.000474,
+          "floor_oom_mw": 911.2,
+          "floor_oom_by_mechanism_mw": {
+            "2": 21.7,
+            "4": 483.4,
+            "16": 406.1
+          },
+          "T_zonal_mw": 334.0,
+          "idle_zonal_LB_total_mw": 1617.0,
+          "T_tie_mw_at_delta": {
+            "0.01": 30.1,
+            "0.1": 89.4,
+            "0.5": 357.5,
+            "1.0": 664.5
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 1587.0,
+            "0.1": 1527.6,
+            "0.5": 1259.6,
+            "1.0": 952.6
+          },
+          "T_reserve_mw": 2447.5,
+          "T_resid_mw_strict_primary_minus_reserve": -919.9,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 356.2,
+            "CT_PEAKER": 1024.1,
+            "ST_GAS": 8.2,
+            "CC_CHP": 53.7,
+            "CT_CHP": 25.3,
+            "ST_CHP": 60.0,
+            "oil": 0.0
+          }
+        },
+        "hi": {
+          "replication_g_a0": {
+            "committed_mw": 20966.2,
+            "replicated_mw": 20966.2,
+            "delta_mw": 0.02,
+            "pass": true
+          },
+          "excess_miso143_construction_mw": 20966.2,
+          "A0_oneweight_mw": 20371.0,
+          "T_universe_by_class_mw": {
+            "nuclear": 11109.8,
+            "hydro": 2464.9,
+            "import": 7224.6,
+            "biomass": 1417.2
+          },
+          "T_universe_total_mw": 22216.5,
+          "T_injected_mw": 2299.2,
+          "thermal_gap_mw": 453.7,
+          "cc1_identity_dev_mw": 0.000474,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 208.0,
+            "CC_REGULAR": 432.8,
+            "CT_PEAKER": 399.5,
+            "ST_GAS": 11.2,
+            "CC_CHP": 63.5,
+            "CT_CHP": 20.1,
+            "ST_CHP": 60.8,
+            "oil": 0.0
+          },
+          "idle_sys_LB_total_mw": 1195.9,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 2.3,
+            "CC_REGULAR": 0.0,
+            "CT_PEAKER": 280.6,
+            "ST_GAS": 448.4,
+            "CC_CHP": 1.4,
+            "CT_CHP": 9.2,
+            "ST_CHP": 0.1,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 742.2,
+          "cc2_identity_dev_mw": 0.000474,
+          "floor_oom_mw": 996.0,
+          "floor_oom_by_mechanism_mw": {
+            "2": 25.6,
+            "4": 564.3,
+            "16": 406.1
+          },
+          "T_zonal_mw": 311.3,
+          "idle_zonal_LB_total_mw": 884.5,
+          "T_tie_mw_at_delta": {
+            "0.01": 29.2,
+            "0.1": 71.7,
+            "0.5": 268.5,
+            "1.0": 458.2
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 855.3,
+            "0.1": 812.8,
+            "0.5": 616.0,
+            "1.0": 426.3
+          },
+          "T_reserve_mw": 2447.5,
+          "T_resid_mw_strict_primary_minus_reserve": -1634.7,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 356.2,
+            "CT_PEAKER": 313.8,
+            "ST_GAS": 8.2,
+            "CC_CHP": 53.7,
+            "CT_CHP": 20.8,
+            "ST_CHP": 60.0,
+            "oil": 0.0
+          }
+        }
+      }
+    },
+    "2024": {
+      "n_gen": 3092,
+      "w_model_vs_den_max_abs": 0.0,
+      "reserve_partition_max_dev_mw": 0.0002,
+      "has_min_gen": true,
+      "has_min_gen_mechanism": true,
+      "W1_jun_jul_h8_20": {
+        "n_hours": 793,
+        "anchor_lw_price": 33.297,
+        "thermal_served_unweighted_mw": 61260.8,
+        "thermal_served_lw_mw": 62093.5,
+        "lo": {
+          "replication_g_a0": null,
+          "excess_miso143_construction_mw": 19415.4,
+          "A0_oneweight_mw": 18582.7,
+          "T_universe_by_class_mw": {
+            "nuclear": 11297.4,
+            "hydro": 2371.5,
+            "import": 5205.7,
+            "biomass": 1299.7
+          },
+          "T_universe_total_mw": 20174.4,
+          "T_injected_mw": 1924.1,
+          "thermal_gap_mw": 332.4,
+          "cc1_identity_dev_mw": 0.002394,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 209.0,
+            "CC_REGULAR": 298.3,
+            "CT_PEAKER": 1026.1,
+            "ST_GAS": 2.4,
+            "CC_CHP": 46.6,
+            "CT_CHP": 10.9,
+            "ST_CHP": 34.7,
+            "oil": 0.0
+          },
+          "idle_sys_LB_total_mw": 1628.1,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 61.6,
+            "CC_REGULAR": 3.2,
+            "CT_PEAKER": 118.2,
+            "ST_GAS": 1055.7,
+            "CC_CHP": 23.0,
+            "CT_CHP": 34.0,
+            "ST_CHP": 0.0,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 1295.7,
+          "cc2_identity_dev_mw": 0.002394,
+          "floor_oom_mw": 1451.4,
+          "floor_oom_by_mechanism_mw": {
+            "2": 100.6,
+            "4": 442.9,
+            "16": 907.9
+          },
+          "T_zonal_mw": 342.9,
+          "idle_zonal_LB_total_mw": 1285.2,
+          "T_tie_mw_at_delta": {
+            "0.01": 33.4,
+            "0.1": 85.7,
+            "0.5": 316.6,
+            "1.0": 560.2
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 1251.8,
+            "0.1": 1199.5,
+            "0.5": 968.6,
+            "1.0": 725.0
+          },
+          "T_reserve_mw": 2580.6,
+          "T_resid_mw_strict_primary_minus_reserve": -1381.1,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 247.2,
+            "CT_PEAKER": 857.0,
+            "ST_GAS": 2.7,
+            "CC_CHP": 45.5,
+            "CT_CHP": 13.6,
+            "ST_CHP": 33.4,
+            "oil": 0.0
+          }
+        },
+        "hi": {
+          "replication_g_a0": null,
+          "excess_miso143_construction_mw": 18529.0,
+          "A0_oneweight_mw": 17696.2,
+          "T_universe_by_class_mw": {
+            "nuclear": 11297.4,
+            "hydro": 2371.5,
+            "import": 5205.7,
+            "biomass": 1299.7
+          },
+          "T_universe_total_mw": 20174.4,
+          "T_injected_mw": 1924.1,
+          "thermal_gap_mw": -554.1,
+          "cc1_identity_dev_mw": 0.002394,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 209.0,
+            "CC_REGULAR": 298.3,
+            "CT_PEAKER": 383.1,
+            "ST_GAS": 2.4,
+            "CC_CHP": 46.6,
+            "CT_CHP": 9.3,
+            "ST_CHP": 34.7,
+            "oil": 0.0
+          },
+          "idle_sys_LB_total_mw": 983.5,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 61.6,
+            "CC_REGULAR": 3.2,
+            "CT_PEAKER": 338.4,
+            "ST_GAS": 1055.7,
+            "CC_CHP": 23.0,
+            "CT_CHP": 55.8,
+            "ST_CHP": 0.0,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 1537.6,
+          "cc2_identity_dev_mw": 0.002394,
+          "floor_oom_mw": 1547.6,
+          "floor_oom_by_mechanism_mw": {
+            "2": 121.7,
+            "4": 518.1,
+            "16": 907.9
+          },
+          "T_zonal_mw": 322.5,
+          "idle_zonal_LB_total_mw": 661.0,
+          "T_tie_mw_at_delta": {
+            "0.01": 31.8,
+            "0.1": 74.6,
+            "0.5": 233.7,
+            "1.0": 380.7
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 629.2,
+            "0.1": 586.4,
+            "0.5": 427.2,
+            "1.0": 280.3
+          },
+          "T_reserve_mw": 2580.6,
+          "T_resid_mw_strict_primary_minus_reserve": -1994.2,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 247.2,
+            "CT_PEAKER": 246.0,
+            "ST_GAS": 2.7,
+            "CC_CHP": 45.5,
+            "CT_CHP": 11.4,
+            "ST_CHP": 33.4,
+            "oil": 0.0
+          }
+        }
+      },
+      "JJA_h12_17": {
+        "n_hours": 552,
+        "anchor_lw_price": 39.1,
+        "thermal_served_unweighted_mw": 64921.9,
+        "thermal_served_lw_mw": 65656.1,
+        "lo": {
+          "replication_g_a0": {
+            "committed_mw": 20001.0,
+            "replicated_mw": 20001.0,
+            "delta_mw": 0.03,
+            "pass": true
+          },
+          "excess_miso143_construction_mw": 20001.0,
+          "A0_oneweight_mw": 19266.8,
+          "T_universe_by_class_mw": {
+            "nuclear": 11334.5,
+            "hydro": 2371.5,
+            "import": 5344.9,
+            "biomass": 1326.9
+          },
+          "T_universe_total_mw": 20377.8,
+          "T_injected_mw": 1878.6,
+          "thermal_gap_mw": 767.6,
+          "cc1_identity_dev_mw": 0.000951,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 264.8,
+            "CC_REGULAR": 325.5,
+            "CT_PEAKER": 1206.0,
+            "ST_GAS": 5.9,
+            "CC_CHP": 32.9,
+            "CT_CHP": 10.6,
+            "ST_CHP": 33.5,
+            "oil": 23.5
+          },
+          "idle_sys_LB_total_mw": 1902.7,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 40.4,
+            "CC_REGULAR": 0.2,
+            "CT_PEAKER": 79.3,
+            "ST_GAS": 977.6,
+            "CC_CHP": 18.8,
+            "CT_CHP": 18.8,
+            "ST_CHP": 0.1,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 1135.1,
+          "cc2_identity_dev_mw": 0.000951,
+          "floor_oom_mw": 1279.6,
+          "floor_oom_by_mechanism_mw": {
+            "2": 66.1,
+            "4": 427.9,
+            "16": 785.6
+          },
+          "T_zonal_mw": 419.2,
+          "idle_zonal_LB_total_mw": 1483.6,
+          "T_tie_mw_at_delta": {
+            "0.01": 34.1,
+            "0.1": 88.7,
+            "0.5": 331.4,
+            "1.0": 581.0
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 1449.5,
+            "0.1": 1394.9,
+            "0.5": 1152.1,
+            "1.0": 902.6
+          },
+          "T_reserve_mw": 2594.4,
+          "T_resid_mw_strict_primary_minus_reserve": -1199.5,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 270.2,
+            "CT_PEAKER": 1019.1,
+            "ST_GAS": 3.8,
+            "CC_CHP": 32.8,
+            "CT_CHP": 14.1,
+            "ST_CHP": 36.1,
+            "oil": 18.7
+          }
+        },
+        "hi": {
+          "replication_g_a0": {
+            "committed_mw": 19031.5,
+            "replicated_mw": 19031.5,
+            "delta_mw": -0.02,
+            "pass": true
+          },
+          "excess_miso143_construction_mw": 19031.5,
+          "A0_oneweight_mw": 18297.3,
+          "T_universe_by_class_mw": {
+            "nuclear": 11334.5,
+            "hydro": 2371.5,
+            "import": 5344.9,
+            "biomass": 1326.9
+          },
+          "T_universe_total_mw": 20377.8,
+          "T_injected_mw": 1878.6,
+          "thermal_gap_mw": -202.0,
+          "cc1_identity_dev_mw": 0.000951,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 264.8,
+            "CC_REGULAR": 325.5,
+            "CT_PEAKER": 465.8,
+            "ST_GAS": 5.9,
+            "CC_CHP": 32.9,
+            "CT_CHP": 9.0,
+            "ST_CHP": 33.5,
+            "oil": 23.5
+          },
+          "idle_sys_LB_total_mw": 1160.9,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 40.4,
+            "CC_REGULAR": 0.2,
+            "CT_PEAKER": 295.2,
+            "ST_GAS": 977.6,
+            "CC_CHP": 18.8,
+            "CT_CHP": 30.6,
+            "ST_CHP": 0.1,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 1362.8,
+          "cc2_identity_dev_mw": 0.000951,
+          "floor_oom_mw": 1372.5,
+          "floor_oom_by_mechanism_mw": {
+            "2": 77.8,
+            "4": 509.1,
+            "16": 785.6
+          },
+          "T_zonal_mw": 396.4,
+          "idle_zonal_LB_total_mw": 764.5,
+          "T_tie_mw_at_delta": {
+            "0.01": 32.0,
+            "0.1": 74.7,
+            "0.5": 239.4,
+            "1.0": 397.6
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 732.5,
+            "0.1": 689.8,
+            "0.5": 525.1,
+            "1.0": 366.9
+          },
+          "T_reserve_mw": 2594.4,
+          "T_resid_mw_strict_primary_minus_reserve": -1904.6,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 270.2,
+            "CT_PEAKER": 316.4,
+            "ST_GAS": 3.8,
+            "CC_CHP": 32.8,
+            "CT_CHP": 11.8,
+            "ST_CHP": 36.1,
+            "oil": 18.7
+          }
+        }
+      }
+    },
+    "2025": {
+      "n_gen": 3088,
+      "w_model_vs_den_max_abs": 0.0,
+      "reserve_partition_max_dev_mw": 0.0002,
+      "has_min_gen": true,
+      "has_min_gen_mechanism": true,
+      "W1_jun_jul_h8_20": {
+        "n_hours": 793,
+        "anchor_lw_price": 44.439,
+        "thermal_served_unweighted_mw": 64249.5,
+        "thermal_served_lw_mw": 65110.5,
+        "lo": {
+          "replication_g_a0": null,
+          "excess_miso143_construction_mw": 18666.6,
+          "A0_oneweight_mw": 17805.6,
+          "T_universe_by_class_mw": {
+            "nuclear": 10352.9,
+            "hydro": 2371.7,
+            "import": 4237.8,
+            "biomass": 1454.2
+          },
+          "T_universe_total_mw": 18416.6,
+          "T_injected_mw": 1201.2,
+          "thermal_gap_mw": 590.3,
+          "cc1_identity_dev_mw": 0.001524,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 175.5,
+            "CC_REGULAR": 120.0,
+            "CT_PEAKER": 1514.5,
+            "ST_GAS": 2.6,
+            "CC_CHP": 21.1,
+            "CT_CHP": 10.2,
+            "ST_CHP": 32.4,
+            "oil": 0.0
+          },
+          "idle_sys_LB_total_mw": 1876.4,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 1.4,
+            "CC_REGULAR": 24.3,
+            "CT_PEAKER": 28.2,
+            "ST_GAS": 1140.2,
+            "CC_CHP": 64.7,
+            "CT_CHP": 26.4,
+            "ST_CHP": 0.9,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 1286.1,
+          "cc2_identity_dev_mw": 0.001524,
+          "floor_oom_mw": 1357.2,
+          "floor_oom_by_mechanism_mw": {
+            "2": 136.5,
+            "4": 175.9,
+            "16": 1044.9
+          },
+          "T_zonal_mw": 362.8,
+          "idle_zonal_LB_total_mw": 1513.6,
+          "T_tie_mw_at_delta": {
+            "0.01": 15.7,
+            "0.1": 76.9,
+            "0.5": 328.3,
+            "1.0": 632.2
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 1497.9,
+            "0.1": 1436.8,
+            "0.5": 1185.4,
+            "1.0": 881.5
+          },
+          "T_reserve_mw": 2580.5,
+          "T_resid_mw_strict_primary_minus_reserve": -1143.7,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 119.8,
+            "CT_PEAKER": 1248.0,
+            "ST_GAS": 1.9,
+            "CC_CHP": 27.0,
+            "CT_CHP": 10.2,
+            "ST_CHP": 29.9,
+            "oil": 0.0
+          }
+        },
+        "hi": {
+          "replication_g_a0": null,
+          "excess_miso143_construction_mw": 17575.4,
+          "A0_oneweight_mw": 16714.4,
+          "T_universe_by_class_mw": {
+            "nuclear": 10352.9,
+            "hydro": 2371.7,
+            "import": 4237.8,
+            "biomass": 1454.2
+          },
+          "T_universe_total_mw": 18416.6,
+          "T_injected_mw": 1201.2,
+          "thermal_gap_mw": -500.9,
+          "cc1_identity_dev_mw": 0.001524,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 175.5,
+            "CC_REGULAR": 120.0,
+            "CT_PEAKER": 517.3,
+            "ST_GAS": 2.6,
+            "CC_CHP": 21.1,
+            "CT_CHP": 9.1,
+            "ST_CHP": 32.4,
+            "oil": 0.0
+          },
+          "idle_sys_LB_total_mw": 878.1,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 1.4,
+            "CC_REGULAR": 24.3,
+            "CT_PEAKER": 110.4,
+            "ST_GAS": 1140.2,
+            "CC_CHP": 64.7,
+            "CT_CHP": 37.1,
+            "ST_CHP": 0.9,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 1379.0,
+          "cc2_identity_dev_mw": 0.001524,
+          "floor_oom_mw": 1431.0,
+          "floor_oom_by_mechanism_mw": {
+            "2": 147.9,
+            "4": 238.2,
+            "16": 1044.9
+          },
+          "T_zonal_mw": 321.7,
+          "idle_zonal_LB_total_mw": 556.4,
+          "T_tie_mw_at_delta": {
+            "0.01": 13.5,
+            "0.1": 58.8,
+            "0.5": 230.6,
+            "1.0": 371.6
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 542.9,
+            "0.1": 497.6,
+            "0.5": 325.8,
+            "1.0": 184.7
+          },
+          "T_reserve_mw": 2580.5,
+          "T_resid_mw_strict_primary_minus_reserve": -2082.9,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 119.8,
+            "CT_PEAKER": 309.9,
+            "ST_GAS": 1.9,
+            "CC_CHP": 27.0,
+            "CT_CHP": 9.0,
+            "ST_CHP": 29.9,
+            "oil": 0.0
+          }
+        }
+      },
+      "JJA_h12_17": {
+        "n_hours": 552,
+        "anchor_lw_price": 44.245,
+        "thermal_served_unweighted_mw": 65840.6,
+        "thermal_served_lw_mw": 66647.7,
+        "lo": {
+          "replication_g_a0": {
+            "committed_mw": 19330.1,
+            "replicated_mw": 19330.1,
+            "delta_mw": -0.02,
+            "pass": true
+          },
+          "excess_miso143_construction_mw": 19330.1,
+          "A0_oneweight_mw": 18523.0,
+          "T_universe_by_class_mw": {
+            "nuclear": 10664.8,
+            "hydro": 2371.7,
+            "import": 4272.0,
+            "biomass": 1456.1
+          },
+          "T_universe_total_mw": 18764.6,
+          "T_injected_mw": 1135.7,
+          "thermal_gap_mw": 894.1,
+          "cc1_identity_dev_mw": 0.000317,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 194.2,
+            "CC_REGULAR": 116.3,
+            "CT_PEAKER": 1655.5,
+            "ST_GAS": 1.0,
+            "CC_CHP": 31.7,
+            "CT_CHP": 12.4,
+            "ST_CHP": 35.1,
+            "oil": 0.0
+          },
+          "idle_sys_LB_total_mw": 2046.2,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 1.2,
+            "CC_REGULAR": 10.0,
+            "CT_PEAKER": 33.2,
+            "ST_GAS": 1055.3,
+            "CC_CHP": 31.2,
+            "CT_CHP": 21.1,
+            "ST_CHP": 0.2,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 1152.2,
+          "cc2_identity_dev_mw": 0.000317,
+          "floor_oom_mw": 1266.8,
+          "floor_oom_by_mechanism_mw": {
+            "2": 99.5,
+            "4": 201.7,
+            "16": 965.6
+          },
+          "T_zonal_mw": 393.9,
+          "idle_zonal_LB_total_mw": 1652.4,
+          "T_tie_mw_at_delta": {
+            "0.01": 17.1,
+            "0.1": 75.9,
+            "0.5": 327.6,
+            "1.0": 634.8
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 1635.3,
+            "0.1": 1576.5,
+            "0.5": 1324.7,
+            "1.0": 1017.6
+          },
+          "T_reserve_mw": 2543.0,
+          "T_resid_mw_strict_primary_minus_reserve": -966.5,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 122.2,
+            "CT_PEAKER": 1375.3,
+            "ST_GAS": 0.3,
+            "CC_CHP": 34.6,
+            "CT_CHP": 12.5,
+            "ST_CHP": 31.6,
+            "oil": 0.0
+          }
+        },
+        "hi": {
+          "replication_g_a0": {
+            "committed_mw": 18210.2,
+            "replicated_mw": 18210.2,
+            "delta_mw": -0.0,
+            "pass": true
+          },
+          "excess_miso143_construction_mw": 18210.2,
+          "A0_oneweight_mw": 17403.1,
+          "T_universe_by_class_mw": {
+            "nuclear": 10664.8,
+            "hydro": 2371.7,
+            "import": 4272.0,
+            "biomass": 1456.1
+          },
+          "T_universe_total_mw": 18764.6,
+          "T_injected_mw": 1135.7,
+          "thermal_gap_mw": -225.8,
+          "cc1_identity_dev_mw": 0.000317,
+          "idle_sys_LB_by_class_mw": {
+            "COAL": 194.2,
+            "CC_REGULAR": 116.3,
+            "CT_PEAKER": 638.6,
+            "ST_GAS": 1.0,
+            "CC_CHP": 31.7,
+            "CT_CHP": 11.2,
+            "ST_CHP": 35.1,
+            "oil": 0.0
+          },
+          "idle_sys_LB_total_mw": 1028.1,
+          "oom_sys_LB_by_class_mw": {
+            "COAL": 1.2,
+            "CC_REGULAR": 10.0,
+            "CT_PEAKER": 124.6,
+            "ST_GAS": 1055.3,
+            "CC_CHP": 31.2,
+            "CT_CHP": 31.3,
+            "ST_CHP": 0.2,
+            "oil": 0.0
+          },
+          "oom_sys_LB_total_mw": 1253.9,
+          "cc2_identity_dev_mw": 0.000317,
+          "floor_oom_mw": 1346.7,
+          "floor_oom_by_mechanism_mw": {
+            "2": 110.6,
+            "4": 270.5,
+            "16": 965.6
+          },
+          "T_zonal_mw": 355.9,
+          "idle_zonal_LB_total_mw": 672.2,
+          "T_tie_mw_at_delta": {
+            "0.01": 14.0,
+            "0.1": 61.1,
+            "0.5": 253.2,
+            "1.0": 424.6
+          },
+          "idle_strict_total_mw_at_delta": {
+            "0.01": 658.2,
+            "0.1": 611.1,
+            "0.5": 419.0,
+            "1.0": 247.6
+          },
+          "T_reserve_mw": 2543.0,
+          "T_resid_mw_strict_primary_minus_reserve": -1931.9,
+          "idle_strict_by_class_primary": {
+            "COAL": 0.0,
+            "CC_REGULAR": 122.2,
+            "CT_PEAKER": 411.3,
+            "ST_GAS": 0.3,
+            "CC_CHP": 34.6,
+            "CT_CHP": 11.1,
+            "ST_CHP": 31.6,
+            "oil": 0.0
+          }
+        }
+      }
+    }
+  }
+}
