@@ -181,11 +181,24 @@ in minor classes is a reject, not a partial success.
   not only diluting the top, it was SUBSIDIZING the mid-top — and at body
   ranks the 2024/2025 sample-day node bases generalize thinner than the bins
   did, moving out-of-object years the gates protect.
-* **P-3 (formation matched, not invented):** the > $1000 gain (22 → 29 vs
-  actual 52) lands in the extreme hours; but shed hours 4 → 14 in 2023 means
-  part of the top formation is PHYSICAL SHORTAGE at VOLL — the ercot-48
-  right-number-wrong-mechanism signature the prediction warned about,
-  adverse.
+* **P-3 (formation matched, not invented):** **FAILED, and this is the
+  decisive result of the session** (quantified post-registration, 2026-08-08,
+  from the committed sidecars + `actual_lmp_hourly_ERCOT.parquet`).
+  **67.5 % of the +$8.18/MWh comes from 10 NEW load-shed hours at VOLL**
+  (+$5.53 of +$8.18); all 14 arm-shed hours together carry 68.0 %. Only
+  **+$2.62/MWh (32 %) is offer-based formation in non-shed hours.** The shed
+  hours are real tight hours (not spurious timing — Jun 20, Aug 17/24/25/26/27/30,
+  Sep 7 afternoons), but the arm prices them by PHYSICAL SHORTAGE and
+  **overshoots the actual by > 1.5× in 7 of 10**, egregiously at
+  2023-08-26 18:00 (actual **$570** → arm **$5,000**, 8.8×) and 2023-08-27
+  15:00 (actual **$359** → arm **$5,000**, 13.9×). Reality had **4 hours
+  ≥ $4,500 in all of 2023** (max $5,046); the arm posts 14 shed hours at
+  ~$5,000+. This is the **ercot-48/49 signature verbatim** — "it manufactured
+  the tail through physical shortage … right-number-wrong-mechanism",
+  REJECTED WITH CAUSE by the owner 2026-07-09 — and it is why this arm is
+  **not a keeper on structural grounds, independent of its gate failures**:
+  rule 1 `[R-STRUCT]`'s "never reach the right number through a mechanism that
+  isn't real" bites directly. ERCOT shed no firm load in these hours.
 * **P-4 (C3b):** CONFIRMED on 2023 (0.602 → **0.349** — the shape improves
   with the object, as predicted: one residual) and FIRED as the named risk on
   2024 (0.205 → **0.208**, degrading past the ≤ 0.20 bar it already missed —
@@ -204,10 +217,14 @@ in minor classes is a reject, not a partial success.
 The rejection is of the ARM'S REACH, not the mechanism class, and the record
 now measures exactly where the reach went wrong:
 
-1. **The dilution and its cure are PROVEN at the top.** Rank-local conduct
-   above p99 is 4–6× the pooled rungs (§4) and repricing it moved C3a-2023 by
-   +$8.18/MWh with the extreme tail forming in the right hours (>$1000:
-   22 → 29 vs actual 52).
+1. **The dilution is PROVEN; its cure is only one-third proven.** Rank-local
+   conduct above p99 is 4–6× the pooled rungs (§4), and repricing it moved
+   C3a-2023 by +$8.18/MWh — but **only +$2.62 of that is offer-formation**;
+   the other +$5.53 is manufactured VOLL shortage (P-3). **The successor's
+   honest budget is therefore ~$2.6/MWh from this family, not $8.2**, against
+   the +$14.44 the bar needs. A top-scoped variant must be gated on
+   `shed_hours must not rise in ANY year` as a PRIMARY falsifier, not an
+   inherited protective clause.
 2. **The damage came from everywhere else the continuous form reaches:** the
    BODY (rank-local walls reprice down where the pooled bin subsidized them —
    the composition shifts and C3b-2024), and the SPARSE YEARS (2024/2025
@@ -227,11 +244,15 @@ now measures exactly where the reach went wrong:
    expressed as a node table that is step-encoded below p97 and continuous
    above it — zero new machinery.
 
-**Honest sizing against the owner's bar, carried forward:** the arm delivered
-+$8.18 of the +$14.44 needed with its gates blown; a top-scoped variant keeps
-the top's share of that gain (the top-50 hours carry 80.6 % of the gap) while
-forfeiting the body-side over-pricing correction (which was disturbance, not
-gain, everywhere it mattered). If the honest top-scoped refinement lands short
+**Honest sizing against the owner's bar, carried forward:** the arm's
+headline was +$8.18 of the needed +$14.44, but **net of the manufactured
+shortage it is +$2.62 — about 18 % of the bar, not 57 %.** A top-scoped
+variant keeps the offer-formation share and must SUPPRESS the shed channel
+(the repriced top rungs clamp at 0.95 × VOLL = $4,750, so any hour whose
+residual demand cannot clear below that sheds at $5,000 — the mechanism by
+which measured conduct becomes false shortage). The body-side over-pricing
+correction is forfeited, and it was disturbance rather than gain everywhere
+it mattered. If the honest top-scoped refinement lands short
 of −10 %, what remains is the p97–99 slice's formation — reality's marginal
 price there forms above any submitted-curve level statistic (the P-2 residual,
 now measured twice), and that residual belongs to a quantity-position
