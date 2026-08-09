@@ -508,6 +508,7 @@ from market_sim.data.fleet.campd_bins import (  # noqa: F401
     cc_summer_capacity,
     cc_summer_derate_ratio,
     cc_winter_capacity,
+    summer_basis_measured_plants,
     coal_min_config,
     coal_summer_capacity,
     coal_summer_derate_ratio,

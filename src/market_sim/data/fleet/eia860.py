@@ -762,6 +762,28 @@ def _apply_egrid_boundary_hr_repairs(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+#: Plants whose carried pmax the CC guard CLIPPED off the published net-summer
+#: basis onto ``max(nameplate, demonstrated_peak)``, per ISO — rewritten on
+#: every fleet load by :func:`_reconcile_cc_pmax_to_nameplate`.
+#:
+#: Read by ``config.summer_derate_basis_aware`` (miso-148) to decide, per plant,
+#: whether the flat ambient haircut may be suppressed. It must be the LOADER'S
+#: OWN determination rather than a re-derivation from the raw sheet: the
+#: plant-total-on-one-row pattern hides behind NaN component rows the loader
+#: nameplate-fills, so a raw summer-sum audit MISSES corrupt plants (the
+#: hazard :func:`_reconcile_cc_pmax_to_nameplate` documents, and which a
+#: re-derived predicate walked straight into during miso-148).
+_CC_PMAX_RECONCILED_PLANTS: dict[str, frozenset[int]] = {}
+
+
+def cc_pmax_reconciled_plants(iso: str) -> frozenset[int]:
+    """Plants the CC guard clipped off the net-summer basis for ``iso``.
+
+    Empty before the ISO's fleet has been loaded in this process.
+    """
+    return _CC_PMAX_RECONCILED_PLANTS.get(iso.upper(), frozenset())
+
+
 def _reconcile_cc_pmax_to_nameplate(
     records: list[dict], cc_nameplate_sum: dict[int, float], iso: str
 ) -> None:
@@ -811,6 +833,7 @@ def _reconcile_cc_pmax_to_nameplate(
     bound, not a residual-tuned value.
     """
     demonstrated_peak = _pkg_ns()._cc_demonstrated_peaks(iso)
+    reconciled: set[int] = set()
     cc_pmax: dict[int, float] = {}
     for rec in records:
         if rec["plant_group"] == "CC_REGULAR":
@@ -827,6 +850,7 @@ def _reconcile_cc_pmax_to_nameplate(
         if pmax_sum <= bound * _CC_NAMEPLATE_GUARD_TOL:
             continue
         scale = bound / pmax_sum
+        reconciled.add(int(code))
         for rec in records:
             if rec["plant_group"] == "CC_REGULAR" and int(rec["plant_code"]) == code:
                 rec["pmax_mw"] = float(rec["pmax_mw"]) * scale
@@ -844,6 +868,11 @@ def _reconcile_cc_pmax_to_nameplate(
             bound_kind,
             pmax_sum - bound,
         )
+    # Record the loader's OWN clip decision for this ISO (see
+    # _CC_PMAX_RECONCILED_PLANTS): these plants are no longer carried on the
+    # published net-summer basis, so a basis-aware consumer must keep the flat
+    # ambient derate for them.
+    _CC_PMAX_RECONCILED_PLANTS[iso.upper()] = frozenset(reconciled)
 
 
 def _rows_to_generators(
