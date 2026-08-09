@@ -890,7 +890,80 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-08-caiso-183-b1-hour`** — caiso-183, the H-EDGE grain repair, promoted 2026-08-08 on STRUCTURAL INTEGRITY; **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**, now **+3.9 / +10.9 / +13.9 %** having narrowed in all three years)
+### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-09-caiso-184-c1-lpbasis`** — caiso-184, the outage-derate DENOMINATOR repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY with **EVERY pre-registered gate PASSING**; **NOT-YET**, 8 criteria scored, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.5 / +13.1 %** having narrowed in all three years against a **ZERO** same-head noise floor)
+
+> **caiso-184 (2026-08-09) — THE CHARTERED OBJECT IS *REFUTED* AND A LARGER, DIFFERENT
+> DEFECT IS FOUND IN ITS PLACE. THE OUTAGE-DERATE **DENOMINATOR** REPAIR IS BUILT,
+> MEASURED AND *PROMOTED* WITH EVERY PRE-REGISTERED GATE PASSING. C3a NARROWS IN ALL
+> THREE YEARS AGAINST A **ZERO** NOISE FLOOR — AND STILL DOES NOT CLOSE.**
+> **NEW KEEPER `2026-08-09-caiso-184-c1-lpbasis`** (NOT-YET, C3a the sole load-bearing
+> FAIL). **DOF 11/8 on both arms.** ONE new `ScenarioConfig` field
+> (`unit_outage_lp_capacity_basis`, default **off**), its matrix row landed in the same
+> PR (duty c). `calibration-complete.json` and `holdout-freeze.json` untouched (owner
+> acts); 2023+2024+2025 only. **NO data file was re-derived or rewritten** — both arms
+> read caiso-183's adopted hour-grain extract `25360e90…`.
+> **THE CHARTERED OBJECT, REFUTED.** caiso-181 §5 item 2 filed the `f_CEMS > 1` "BASIS"
+> term (CEMS gross above the bin's ENTIRE capacity, `f_CEMS` to 1.146) to the
+> fleet-capacity lane. Measured here it is **96.2 / 96.5 / 97.4 % a DIAGNOSTIC-basis
+> artifact**: **46.3 / 37.1 / 39.7 %** gross-vs-net (CAMPD reports **GROSS**; every model
+> capacity is **NET**) plus **49.9 / 59.4 / 57.7 %** net-summer-vs-nameplate — caiso-181's
+> denominator was `_iso_plant_capacity`, which it called *"nameplate"* but which
+> `eia860.py:1007` sets to **`net_summer_capacity_mw`**, and which for a CC bin under
+> `cc_nameplate_summer_derate` **is not the LP's capacity at all**. Against the LP's OWN
+> capacity the residual is **0.050 / 0.059 / 0.020 % of envelope depth**, so the
+> pre-registered **B-ARTIFACT** branch FIRES: **the LP's capacity basis is NOT
+> contradicted by its own CEMS record**, and NO capacity-basis lever is licensed.
+> **THE DEFECT ACTUALLY FOUND** is the derate **denominator**. The extract's
+> `unit_capacity_mw` numerator is EIA-860 **NAMEPLATE** —
+> `derive_campd_unit_outages.build_capacity_index`'s own docstring asserts it is written
+> on *"the same basis as the model bin denominator the derate divides into"* — while that
+> denominator is **net summer**, and `fleet_to_bins` carries the CC bin at **full
+> nameplate** for the LP. The removed **fraction** is inflated by `nameplate/net_summer`,
+> so **the model removes MORE MW than went out** — the identical arithmetic
+> `_iso_plant_capacity` already forwards `cc_steam_part_reclass` to prevent (NEISO 6081
+> Stony Brook, *"46 % more than actually went out"*), **never forwarded for this flag**.
+> **Measured over-removal: 4.50 / 5.63 / 7.02 % of committed envelope depth**, computed
+> EXACTLY (both availability arrays rebuilt with the shipped accumulator, concurrent-row
+> summation and clip included), not as a bound.
+> **THE REPAIR — ZERO DOF, ZERO fitted scalars:** raise the denominator's CC bins by the
+> SAME published `cc_summer_derate_ratio` `fleet_to_bins` uses, same clamp, same
+> absent-plant fallback. **MONOTONE** by construction and scoped to CC_REGULAR/CC_CHP —
+> **zero non-CC bins move in ANY of the six ISOs**.
+> **INDEPENDENT CORROBORATION:** the raised denominator reproduces the extract's OWN
+> `plant_capacity_mw` — built by the deriver from the same `derate_mw` capacities as the
+> numerator — **EXACTLY on 11 of 12 EIA-sourced CAISO CC bins** (median 1.000 vs 1.072).
+> **ALL GATES PASS.** **G-BASIS**: `f_CEMS > 1` capacity-year down **90.3 / 89.3 /
+> 91.9 %** against a 50 % bar, **no over-correction** (median armed denominator exactly at
+> demonstrated capability). **BE-1 / G-SIXISO**: all six ISOs byte-identical to the
+> **ACTUAL pre-change tree** (digests measured under `git stash`, not reconstructed).
+> **G-MONO** 0. **G-DOF** 11/8. **G-C1** 12/12, free 8/8. **C8 PASS and SCORED**, **C6
+> PASS**. **G-LOYO not reached** (no verdict flipped). **CONTROL is BIT-ZERO** — 0 of
+> 61,320 zone-hours differ from the incumbent keeper in **all three years** at full
+> precision, *stronger* than caiso-183's control, which drifted on the zero-demand WECC
+> import nodes. **Unlike caiso-183 this promotion needs NO gate-regression latitude: no
+> bar was moved and none fired.**
+> **C3a NARROWS IN ALL THREE YEARS — a CONSEQUENCE, never a target (rules 1/13):**
+> **+3.9→+3.7 %** (PASS), **+10.9→+10.5 %**, **+13.9→+13.1 %**, against a **zero** noise
+> floor. **IT DOES NOT CLOSE** — 2024/2025 stay FAIL, determination **NOT-YET**. The first
+> named remaining contributor is still the **WALLED hourly pumped-storage water state**
+> (caiso-140 §B / caiso-141 A2), an **owner-funded intake, not a session lever**.
+> **A DEFECT THIS SESSION INTRODUCED AND CAUGHT BEFORE SCORING:** the new field moved the
+> pinned default cache key off `603c2498bf71d21d`, which would have **orphaned every
+> on-disk cached run in all six ISOs**. Registered in `_CACHE_KEY_OPTIONAL_FIELDS` +
+> `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` (the nyiso-119 discipline) and **both arms were
+> re-solved at the final head** rather than scored on superseded code.
+> **HONESTY NOTE ON H-GROSS:** `parasitic_load_factors.parquet` covers 463 plants, **none
+> in CAISO**, so the gross→net leg used `campd.DEFAULT_PARASITIC_LOAD_PCT` class defaults,
+> not per-plant measured factors. This bounds the PRECISION of the gross-vs-net split
+> only; the residual is measured against the LP's own capacity directly and does not
+> depend on it.
+> `results/calibration/PRECHECK-caiso184-capacity-basis-2026-08-08.md` (pushed +
+> blob-verified **before any measurement**) ·
+> `FINDING-caiso184-capacity-basis-2026-08-09.md` ·
+> `scripts/probes/_caiso184_capacity_basis_census.py` · `_caiso184_be_proof.py` ·
+> `_caiso184_gbasis.py` · `_caiso184_arm_identity.py` · `_caiso184_solve_arm.py` ·
+> records `_caiso184_capacity_basis_census.json` · `_caiso184_be_proof.json` ·
+> `_caiso184_gbasis.json` · `_caiso184_arm_identity.json`.
 
 > **caiso-183 (2026-08-08) — THE H-EDGE GRAIN REPAIR IS BUILT, PROVEN BYTE-INERT FOR
 > FIVE ISOs, MEASURED, AND *PROMOTED*. C3a NARROWS IN ALL THREE YEARS. TWO
