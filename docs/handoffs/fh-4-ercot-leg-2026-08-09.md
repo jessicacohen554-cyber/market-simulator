@@ -229,13 +229,107 @@ posture the FH-1 FAIL was measured on. Phase A's ERCOT leg proceeds; per
 §1.2 this probe IS Arm R, so its `crossover_score.json` is quotable as the
 Arm R skill read (§4).
 
-## 3. Arm K
+## 3. Arm K — solved clean at the pre-registered posture
 
-*(pending)*
+Registered `ercot-2023-2025-t1ff-armk-fh4` (hindcast namespace,
+`kind="full_forward"`), solved `[2023, 2024, 2025]`, bridged `[]`,
+`leakage_violations: []`, freeze ACTIVE and read at launch, runtime
+`cache_key=74323d2ef75551dd`. Meta records the full as-known posture: gas
+`hindcast_asknown_aeo2023`, `weather_posture="base_year"`,
+`demand_growth_vintage: 2023` (the §1.3 wiring's first armed solve — 2024/25
+demand grown at the cited as-of-2023 LTLF 2.433 %/yr), both screen flags
+armed, `retirement_rule="pipeline"` via the shipped default. The FFR-9A
+vintage storage seed fired in both arms (`ERCOT 2023: 5 measured EIA-860
+storage units (3814 MW incl. pumped storage)` — the vintage-2023 measured
+fleet to the decimal).
+
+Invariants: **I6 PASS** (2025 economic retirement 1.14 GW = **1.5 %** of
+prior thermal — two orders under the cap). Two FAILs, reported at full
+magnitude: **I7 FAIL** — the 2025 exit leaves thermal 77,382 MW, 1,145 MW
+under the retirement-bounded floor 78,527 MW; the exit is an 11-tranche,
+3-plant **gas_st** economic wave (1,144.4 MW: plants 56708 / 3628 / 4266 /
+3507, South_Central + North) decided at the as-known 2024→2025 screen.
+**I12 FAIL** — reserve margin below the scalar floor band in all three years
+(7.8 / 11.2 / 7.2 % vs [13.8 %, 28.7 %]; the Arm R probe had two years out,
+WARN). Neither is the gate criterion (the step-0 gate is Arm R's, §2);
+both stand in the sidecar.
 
 ## 4. Skill reads — the three-way table
 
-*(pending)*
+Scored by `score_crossover.py` verbatim against the committed bench and the
+CURRENT keeper `2026-08-09-run181-position-tail`, per the prereg (§1.4).
+Quotable as T1-FF skill: the gate PASSED and both arms ran the determined
+posture. Errors at full magnitude; `gap` = input_gap = |arm err| / |keeper
+err|. Keeper → Arm R spread = **overlay value**; Arm R → Arm K spread =
+**driver-forecast error**.
+
+**price_mean** (fraction of actual, signed = model − actual):
+
+| Year | Keeper err | Arm R err (gap) | Arm K err (gap) |
+|---|---|---|---|
+| 2023 | 0.325 | **−0.651** (2.01) | **−0.292** (0.90) |
+| 2024 | 0.025 | **−0.149** (6.00) | **+0.185** (7.47) |
+| 2025 | 0.080 | **−0.136** (1.69) | **−0.092** (1.14) |
+
+**price_shape** (monthly NRMSE): keeper 0.602 / 0.205 / 0.101; Arm R 1.137
+(1.89) / 0.682 (3.33) / 0.162 (1.60); Arm K 0.948 (1.58) / 0.327 (1.60) /
+0.155 (1.54).
+
+**fuelmix** (TWh Σ|Δ| over scoreable classes): keeper 11.28 / 6.46 / 2.39;
+Arm R 99.4 (8.8) / 115.3 (17.9) / 62.2 (26.0); Arm K 96.8 (8.6) / 90.5
+(14.0) / 62.2 (26.0).
+
+**co2** (fraction, reported — keeper record carries no comparable): Arm R
+−35.2 / −27.6 / −35.4 %; Arm K −47.8 / −44.3 / −40.8 %.
+
+**Reading, honestly:**
+
+1. **The FH-1 defect artifacts are gone.** The pre-fix probe's 2024
+   price_mean gap of 54.0 (pre-wave tight fleet) reads 6.00 at the
+   determined posture; its 2025 mix was post-wave-gutted, this one is not.
+   The pre-registered direction (gaps materially below the defect-dominated
+   reads) held everywhere except the 2025 fuelmix gap, which is unchanged —
+   see (2): it was never wave-driven.
+2. **The dominant structural gap is COAL-ZERO, and it is the leg's headline
+   overlay-value finding.** Both arms dispatch **0.0 TWh of coal in every
+   year** against actuals of 60.4 / 61.5 / 62.2 TWh (COAL_PRB +
+   COAL_LIGNITE) — the entire 2025 fuelmix error (62.2 TWh, identical
+   across arms because the preliminary-vintage 2025 actuals leave only the
+   coal classes scoreable) and most of 2023/2024's. The FH-1 probe showed
+   the same property, so it is a standing T1-FF forward-stack behavior at
+   base 2023, not an artifact of this arming: without the backcast's
+   measured overlays and with the forward coal price flat at
+   `COAL_PRB_BASE`-level (the FH-3 §6 DISCLOSE line — pre-2026 coal carries
+   zero historic signal), the binned coal fleet never clears into merit.
+   It also drives the CO2 undershoot (−28…−48 %). Root cause belongs to the
+   coal-economics / fuel-trajectory lanes; nothing here was tuned (rule 1).
+3. **Overlay value on price level (Arm R):** −65.1 % in 2023 vs the keeper's
+   −32.4 % — the forward stack roughly doubles the keeper's known
+   model-class 2023 undershoot (C3a-2023, the ledgered scarcity/conduct
+   limitation) because it also loses the overlays' conduct content. In
+   2024/2025 Arm R holds −14.9 / −13.6 % against keeper errs of 2.5 / 8.0 %.
+4. **Driver-forecast error (Arm K vs Arm R) realized the pre-registered
+   directions:** the +116 % as-known 2023 gas lifts the 2023 price from
+   −65.1 % to −29.2 % — an error-compensation artifact (wrong driver
+   masking missing conduct content), NOT skill, even though the 2023 gap
+   prints 0.90 (< 1, nominally "better than the keeper"). 2024 flips to
+   +18.5 % overshoot (+98 % gas vintage); 2025 nearly converges (−9.2 %,
+   +7.6 % gas vintage). Fuel-mix moved WITH the gas error in 2024 (90.5 vs
+   115.3 — expensive as-known gas pushes gas classes down toward their
+   actuals) — the direction the prereg named for 2023–2024, realized in
+   2024; in 2023 the mix is R-equal (96.8 vs 99.4) because coal-zero (2)
+   caps what any gas-price change can move.
+5. **Exit side (with §5's rider attached):** Arm R retires nothing
+   (`total_gw` 0.0 vs the scorer's window-unfiltered 2.294 actual, the
+   under-side FAIL FFR-8B/9A recorded); Arm K's as-known screen produces a
+   1.14 GW gas_st econ wave (false-retire 0.256 GW vs the file's 0.888 GW
+   gas_st actual). Zero MW of the actual exits were confirmed-knowable at
+   the vintage cutoff (§5), so both arms' exit-side rows measure the
+   economic/announced channel only.
+6. **Entry side (reported, FFR-4/5 lanes' object):** decision-basis
+   additions Arm R 26.4 GW / Arm K 17.4 GW vs 55.4 GW actual — the VRE
+   build shortfall FFR-9B is chartered to diagnose persists in both arms
+   (wind 5.0/1.7 vs 12.7 actual; solar 5.0/5.0 vs 25.1).
 
 ## 5. The γ rider — instrument-date split
 
@@ -277,4 +371,31 @@ recorded the same 0.0-vs-actual under-side FAIL), untouched here.
 
 ## 6. Governance close-out
 
-*(pending)*
+* **The AG.2 condition is DISCHARGED for the ERCOT leg**: the step-0 gate
+  PASSED (§2) and both arms ran the determined posture, so the §4 reads are
+  quotable as T1-FF skill. The five sibling ISO legs and FH-5 remain the
+  manager's dispatches; nothing here re-litigates the lift.
+* **Rule 22.** Solves were {2023, 2024, 2025} in both arms — training tier
+  only; freeze ACTIVE and read at launch (recorded in both metas); no
+  out-of-training year solved/scored/registered; no measured H1-2026
+  contact; the scorer's bounds refused nothing because nothing out-of-bounds
+  was asked.
+* **Rules 1/13/14.** Nothing tuned toward any residual: the coal-zero
+  finding, the I7/I12 FAILs on Arm K, the exit-side under-miss and the VRE
+  entry shortfall are all reported at full magnitude and left standing. No
+  bar re-level, no signal scaling, no default flip, no keeper contact.
+* **Rule 28.** No new `ScenarioConfig` field (the wiring engages FH-2's
+  registered field from the harness). Duty (b): the FH-4 measurement
+  citations added to `capacity_screen_unified_lookahead`,
+  `capacity_screen_scarcity_restoration` and `demand_growth_vintage`
+  (fc-ERCOT U→O, measured-not-adjudicated); **no verdict cell moved** —
+  both screen rows stay O with the adjudication the manager's.
+* **Rule 27.** Fable; all edits local on-disk bytes; blob verification run
+  after every push touching a ≥300-line file (all MATCH).
+* **Registration.** Both runs registered regardless of reads:
+  `ercot-2023-2025-t1ff-armr-fh4gate` + `ercot-2023-2025-t1ff-armk-fh4`,
+  hindcast namespace only; the backcast registry and
+  `frontend/data/forecast/` committed inputs are untouched.
+* **Cost note for the sibling legs** (manager's planning): each 3-solve-year
+  ERCOT arm ran ~8–10 min wall on a 15 GB / 4-core container (P0 ~140–190 s,
+  P1 ~28–71 s per year), cold at the 2026-08-09 epoch.
