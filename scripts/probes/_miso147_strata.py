@@ -76,14 +76,16 @@ MODEL_BUCKETS: dict[str, tuple[str, ...]] = {
     "wind": ("wind",),
     "solar": ("solar",),
     "hydro": ("hydro",),
-    "oil": ("oil",),
-    "other_bio": ("OTHER", "biomass"),
+    "other_oil_bio": ("OTHER", "biomass", "oil"),
     "net_import": ("import",),
 }
 
-#: EIA-930 series per bucket; gas buckets all compare against "gas" (the CHP
-#: split is model-side only — 930 cannot see it, PREREG §4.1 BTM caveat);
-#: net_import compares to −interchange; storage to battery+pumped_storage.
+#: EIA-930 series per bucket, on MISO's OWN reporting fold (verified at run
+#: time): the MISO BA carries NO ``NG: OIL`` (oil folds into ``other``) and NO
+#: ``NG: PS`` (pumped storage folds into hydro/``NG: WAT``); batteries appear
+#: only from 2025. Gas buckets all compare against "gas" (the CHP split is
+#: model-side only — 930 cannot see it, PREREG §4.1 BTM caveat); net_import
+#: compares to −interchange.
 E930_KEY: dict[str, str] = {
     "coal": "coal",
     "gas_merchant": "gas",
@@ -92,11 +94,10 @@ E930_KEY: dict[str, str] = {
     "nuclear": "nuclear",
     "wind": "wind",
     "solar": "solar",
-    "hydro": "hydro",
-    "oil": "oil",
-    "other_bio": "other",
+    "hydro_ps": "hydro",
+    "other_oil_bio": "other",
     "net_import": "-interchange",
-    "storage": "battery+pumped_storage",
+    "battery": "battery (2025 only)",
 }
 
 # PREREG §4.2 — Pair B family map (CAMPD families from bench_multiclass)
@@ -182,10 +183,17 @@ def sidecar_pivot(year: int) -> pd.DataFrame:
     return piv
 
 
-def storage_net(year: int) -> np.ndarray:
-    """P1 storage net output (discharge - charge), (8760,) MW."""
+def storage_net(year: int, techs: tuple[str, ...] | None = None) -> np.ndarray:
+    """P1 storage net output (discharge - charge), (8760,) MW.
+
+    ``techs`` restricts to sidecar tech values (e.g. ``("pumped_storage",)``) —
+    needed because EIA-930 MISO folds PS into hydro (NG: WAT) and carries
+    batteries separately (2025 only), so the Pair-A fold must mirror that.
+    """
     df = pd.read_parquet(KEEPER / "hourly" / f"storage_{year}.parquet")
     df = df[df["pass"] == "P1"]
+    if techs is not None:
+        df = df[df["tech"].isin(techs)]
     g = df.groupby("hour").agg(d=("discharge_mw", "sum"), c=("charge_mw", "sum"))
     g = g.reindex(range(HOURS)).fillna(0.0)
     return (g["d"] - g["c"]).to_numpy(float)
