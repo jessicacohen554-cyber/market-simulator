@@ -1,0 +1,27 @@
+{
+ "finding": "results/calibration/FINDING-miso145-offer-conduct-2026-08-09.md",
+ "gate": "G-F2 addendum -- measures the universe crossing behind the gate's numeric pass",
+ "year": 2025,
+ "window": "JJA_h12_17",
+ "n_hours": 552,
+ "basis": "UNWEIGHTED window means (a composition statistic, not a price statistic)",
+ "corpus": {
+  "RT": {
+   "mw_le_0_gw": 19.945,
+   "mw_le_5_gw": 22.135,
+   "mw_le_10_gw": 29.823,
+   "total_gw": 106.14
+  },
+  "DA": {
+   "mw_le_0_gw": 17.654,
+   "mw_le_5_gw": 21.696,
+   "mw_le_10_gw": 29.97,
+   "total_gw": 131.871
+  }
+ },
+ "model_sidecar_variable_renewables": {
+  "wind": 7.007,
+  "solar": 9.279,
+  "wind_plus_solar_gw": 16.286
+ }
+}
