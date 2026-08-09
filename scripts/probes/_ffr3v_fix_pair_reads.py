@@ -28,6 +28,7 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 _MWH_PER_TWH = 1.0e6
@@ -41,24 +42,35 @@ def _bundle_dir(out_dir: Path, meta: dict) -> Path:
     return out_dir / meta["iso"] / meta["cache_key"]
 
 
+def _stack(df: pd.DataFrame, col: str) -> np.ndarray:
+    """Stack one per-hour object column of per-zone vectors into ``(T, n_zones)``."""
+    return np.vstack([np.asarray(v, dtype=float).ravel() for v in df[col]])
+
+
 def _year_reads(path: Path) -> dict:
-    """Return the per-year R2/R3 reads from one ``year_<Y>.parquet``."""
+    """Return the per-year R2/R3 reads from one ``year_<Y>.parquet``.
+
+    Each column holds one per-zone vector per hour, so every read stacks to a
+    ``(T, n_zones)`` array first. The price read is given BOTH ways — the plain
+    zone-mean and the demand-weighted system price — because the two answer
+    different questions and neither is the obvious default.
+    """
     df = pd.read_parquet(path)
     out: dict[str, float] = {}
-    price_col = next(
-        (c for c in ("price", "lmp", "energy_price") if c in df.columns), None
+    price = _stack(df, "price")
+    demand = _stack(df, "demand")
+    out["mean_price_zone_mean"] = float(price.mean())
+    weight = demand.sum()
+    out["mean_price_load_wtd"] = (
+        float((price * demand).sum() / weight) if weight else 0.0
     )
-    if price_col is not None:
-        out["mean_price"] = float(df[price_col].mean())
+    out["demand_twh"] = float(demand.sum()) / _MWH_PER_TWH
     for tech in ("wind", "solar"):
-        col = next(
-            (c for c in (f"{tech}_gen", f"{tech}_mwh", tech) if c in df.columns), None
-        )
-        if col is not None:
-            out[f"{tech}_twh"] = float(df[col].sum()) / _MWH_PER_TWH
-    if "wind_twh" in out and "solar_twh" in out:
-        out["vre_twh"] = out["wind_twh"] + out["solar_twh"]
-    out["_columns"] = sorted(df.columns)[:40]
+        out[f"{tech}_twh"] = float(_stack(df, tech).sum()) / _MWH_PER_TWH
+    out["vre_twh"] = out["wind_twh"] + out["solar_twh"]
+    out["vre_share_of_load"] = out["vre_twh"] / out["demand_twh"]
+    for tech in ("slack", "dump"):
+        out[f"{tech}_twh"] = float(_stack(df, tech).sum()) / _MWH_PER_TWH
     return out
 
 
