@@ -129,6 +129,16 @@ def main() -> None:
         capacity_screen_unified_lookahead=True,
         capacity_screen_scarcity_restoration=True,
     )
+    # The runner's own config resolution (run_scenario_iso lines ~1013-1022):
+    # policy bundle, then the ISO scenario defaults (ERCOT arms
+    # scarcity_price_overlay). Verified to reproduce the registered runtime
+    # cache_key 816031a3308cccde exactly.
+    from market_sim.config.iso_configs import apply_iso_scenario_defaults
+    from market_sim.config.scenarios import resolve_policy_bundle
+
+    config = resolve_policy_bundle(config)
+    config = apply_iso_scenario_defaults(config, ISO)
+    print(f"probe config cache_key={config.cache_key()}")
     set_eia860_vintage(2020)
     iso_config = get_iso_config(ISO)
     zone_names = list(iso_config.zone_names)
