@@ -350,6 +350,8 @@ def derive_year(
             else [float("nan")] * len(LADDER_QUANTILES)
         )
         if position_tail:
+            from lib.positiontail import tail_support
+
             tails.append(
                 tail_support(gb["mult"].to_numpy(float), gb["mw"].to_numpy(float))
                 if len(gb)
@@ -466,6 +468,8 @@ def _main_position_tail(args) -> None:
     mismatch is stop-the-line. CC blocks are copied untouched (the archived
     slow-start tier's scope; the positiontail vintage arms the CT pool only).
     """
+    from lib.positiontail import POSITIONTAIL_TAG
+
     frozen = json.loads(DEFAULT_OUT.read_text())
     gas_day = _gas_day_series()
     result = json.loads(json.dumps(frozen))  # deep copy via round-trip
