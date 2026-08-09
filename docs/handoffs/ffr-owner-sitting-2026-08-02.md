@@ -3643,3 +3643,13 @@ seed fix rides automatically at head), **ARM3-FIX** [FABLE, LP core], **FFR-9B**
 diagnose-only — no repair, no epoch, explicitly parallel-safe with FH-4-ERCOT], **FFR-4F**
 [OPUS, the licensed anchor merits-charter, hard non-row-4 framing]. All four disjoint
 surfaces; FH-5's charter text still to be located (not guessed).
+
+### AH.5 The ercot-181 keeper audit returned: PASS, zero drift
+
+The worktree-isolated auditor pass (--iso ERCOT) against origin/main: audit_keepers.py
+clean (0 fail / 0 warn, E1–E7/M1a-b/S1); a fresh LIVE re-verification
+(`calibration_verdict.py --run-id 2026-08-09-run181-position-tail`) independently returns
+NOT-YET with the exact shard fail set {C3a mean LMP 2023 −32.4 %; C3b NRMSE 0.602/0.205}
+and C3c ledgered ×3 under rubric v3.2 — keeper shard, registry definition and status
+shard all agree with the live scorer, magnitudes included; the promoting session's own
+status-shard regeneration was verified merged, not stale. No repairs, nothing committed.
