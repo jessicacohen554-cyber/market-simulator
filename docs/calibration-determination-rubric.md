@@ -1,6 +1,26 @@
 # Calibration Determination Rubric (v2)
 
-Status: **canonical, machine-enforced. RUBRIC VERSION 3.1** (2026-08-06 owner
+Status: **canonical, machine-enforced. RUBRIC VERSION 3.2** (2026-08-09 owner
+amendment, session neiso-keeper-87-control. Directive verbatim: *"make sure c3c
+is an acceptable caveat for any holdout or training year"*. **(a) The C3c
+standing rule fires in EVERY year**, not out-of-training only — a LONE C3c
+`FAIL` with governance passing auto-ledgers to `CALIBRATED-WITH-CAVEATS` on
+2023–2025 exactly as it already did on the holdout tiers. Not a loosening of the
+band: in-sample the same reclassification was already reachable via an explicit
+exceptions-ledger entry — the route every current keeper with a C3c caveat used
+— so the split governed who typed the justification, not what a run could claim.
+The guards are unchanged: lone failure only, governance must PASS, supporting
+tier only (fail-closed), never `CALIBRATED`, and it still spends the single
+ledgerable slot. **(b) A defect is fixed in the same amendment**: "lone" was
+measured over every scored record including the REPORTED-ONLY streams the rubric
+demoted out of the determination (C5a `co2`, removed at v2.9), so a `co2` FAIL
+silenced the rule — it is now measured over `CRITERIA` membership. That
+under-fired out-of-training years too, so (b) is a correction, not part of (a).
+Effects, measured over all 66 registered runs: **2 determinations change, both
+NYISO non-keeper probes** (`2026-08-06-nyiso-130-control`/`-n11-tsl`, `NOT-YET →
+CALIBRATED-WITH-CAVEATS`), both unlocked by (b); **every keeper of all six ISOs
+is unchanged**. Scorer-only: no re-solve, keepers re-score in place. Full detail
+in §9. Prior banner, v3.1: (2026-08-06 owner
 amendment, session-logged. TWO changes, both narrowing what a determination may
 excuse. **(a) Ledgering is restricted to C3c alone** —
 `calibration_verdict.LEDGERABLE_CRITERIA`, fail-closed: an exceptions-ledger
@@ -1097,6 +1117,54 @@ down to.
 > change. Ratifying this one after the fact does not license the next one.
 
 ## 9. Version history
+
+- **v3.2 (2026-08-09, owner amendment — session neiso-keeper-87-control;
+  directive verbatim: "make sure c3c is an acceptable caveat for any holdout or
+  training year")** — two changes, one widening the C3c standing rule's *scope*
+  and one *correcting* a defect that had been suppressing the rule as declared.
+
+  **(a) The C3c standing rule now fires in EVERY year.** Declared at v3.1-time
+  (2026-08-06) for out-of-training years only, `_apply_c3c_standing_rule`
+  reclassifies a **lone** C3c `FAIL` — governance passing — to a ledgered
+  `CAVEAT` (`ACCEPTED MODEL-CLASS LIMITATION`), so the run reads
+  `CALIBRATED-WITH-CAVEATS` rather than `NOT-YET`. That now applies to 2023–2025
+  exactly as it already did to 2020–2022 / 2019 / H1-2026.
+
+  **This is not a loosening of the band, and the guard that matters is
+  untouched.** The removed scope split was never a statement about C3c's
+  severity — band, tier and reported magnitude are identical in every year. It
+  was procedural: in-sample, the same reclassification was already reachable
+  through an explicit exceptions-ledger entry, and that is the route **every**
+  current keeper carrying a C3c caveat actually used, so the split governed who
+  typed the justification rather than what a run could claim. Since v3.1 C3c is
+  the only ledgerable criterion at all, the two routes had already collapsed
+  onto one criterion; v3.2 collapses them onto one rule. What still stops it
+  being an escape hatch: **lone failure only** (any second failing criterion and
+  the rule is silent and every failure stands, C3c's included — so it can only
+  ever fire on an otherwise-clean model), **governance must PASS**, **supporting
+  tier only** (the v3.0 fail-closed guard refuses `model-class` on load-bearing
+  and protective criteria), **never `CALIBRATED`**, and the caveat still spends
+  the single ledgerable slot.
+
+  **(b) "Lone" is now measured over the determination's own criteria.** The test
+  read EVERY scored record, including the **reported-only** streams the rubric
+  has demoted out of the determination — C5a `co2`, removed at v2.9 because
+  eGRID's latest released vintage is 2024. A `co2` `FAIL` therefore silenced the
+  rule even though co2 contributes no status, no caveat budget and no reason
+  line. It is now filtered to `CRITERIA` membership. **This under-fired
+  out-of-training years too**, so (b) is a correction, not part of (a).
+
+  **Effect at amendment — measured over all 66 registered runs against a
+  pre-change snapshot, not asserted.** 2 determinations change, both NYISO
+  **non-keeper** probes from the `nyiso_li_tsl_n11_security` pair
+  (`2026-08-06-nyiso-130-control` and `-n11-tsl`: `NOT-YET →
+  CALIBRATED-WITH-CAVEATS`, C3c `FAIL → CAVEAT`, nothing else moves), and both
+  are unlocked by **(b)**, not by (a). **Every keeper of all six ISOs is
+  unchanged** — each either has no C3c failure, already carries an explicit
+  ledger entry for it, or fails a second criterion. `2026-08-06-pjm-158-novirtual-disarmed`
+  is a lone C3c failure and still does **not** reclassify: its C6 is
+  `UNATTESTED`, i.e. the governance guard working. **Scorer-only: no re-solve,
+  no bundle regeneration, keepers re-score in place.**
 
 - **v3.1 (2026-08-06, owner amendment — session-logged; directive: "Any ISOs
   backcast calibrated with caveats on LMP exceeding 10% from actual should be
