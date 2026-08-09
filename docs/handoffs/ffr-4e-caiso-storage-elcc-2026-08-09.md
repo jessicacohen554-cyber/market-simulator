@@ -525,7 +525,48 @@ transcription).
 * **Rule 27 `[R-PUSH]`.** Opus. No file ≥300 lines was rewritten from generated
   content; every change is a local `Edit` of on-disk bytes, pushed via `git push`
   on a freshly-rebased base, and **every pushed file ≥300 lines was blob-verified
-  against the remote** (line count + object hash) before the next commit.
+  against the remote** (line count + object hash).
+  **A VERIFICATION-METHOD DEFECT IS RECORDED RATHER THAN QUIETLY FIXED**, because
+  rule 27 is a rule about verification discipline and a weak check is worth naming:
+  the first two verification passes in this session compared the local blob against
+  `origin/<branch>:<path>`, which resolves the **local remote-tracking ref** — a
+  cache of the last fetch, NOT the remote. It would have reported MATCH even if the
+  push had never landed, and in this session it did exactly that (§8a). The final
+  pass re-verified all ten files after an explicit
+  `git fetch origin refs/heads/<branch>:refs/remotes/origin/<branch> --force`, so
+  the comparison is against bytes actually read back from the remote. **All ten
+  MATCH, plus the PDF blob.** Any future session copying this protocol should fetch
+  first; comparing against a stale tracking ref is not a verification.
+
+### 8a. Push-transport incident, recorded because it changed the branch's history
+
+Mid-session the designated branch **disappeared from the remote** and every
+subsequent push — including a zero-object push of a commit the remote already had
+— failed with `HTTP 408` / `the remote end hung up unexpectedly`, while reads
+(`git ls-remote`, `git fetch`) kept working. Two independent things were happening
+and it is worth separating them, since the first is easy to misdiagnose as the
+second:
+
+1. **The branch was gone because it had been MERGED.** PR **#3787** (head
+   `dab52ec`) merged at 04:36:42Z and GitHub deleted the head branch. Four of the
+   session's five commits (`091ae93`, `0b6858e`, `032a4e4`, `dab52ec`) are
+   therefore already in `main`. Per the merged-PR protocol the branch was restarted
+   from the latest default branch (`git checkout -B <branch> origin/main`, main at
+   `5fbc7bd`) and the ONE unmerged commit — the row-4 results + matrix verdict —
+   was replayed onto it rather than discarded. It cherry-picked clean, and the
+   matrix guard, the cache-key check and the tests were re-run green on the new
+   base.
+2. **The 408s were a transient write-path outage**, not pack size. This was
+   established rather than assumed: a push of a commit the remote ALREADY had
+   (zero objects) failed identically, which rules out size, history depth and the
+   shallow clone. It cleared on its own and the next attempt succeeded.
+
+One real mistake is recorded in full: an earlier `git add -A` swept the **24 MB of
+per-year dispatch parquets** into the results commit, which I had staged
+selectively to exclude. It was caught by measuring the pending pack before blaming
+the network, the commit was amended to drop them, and `.gitignore` now carries a
+scoped `/results/ffr4e/*/*/*/*.parquet` rule (with a comment saying exactly which
+slim artifacts ARE committed and why) so it cannot recur in this family.
 * **Rule 28 `[R-MECH-MATRIX]`.** Row `caiso_storage_nqc_accreditation` minted in
   the same commit as its field (duty c) and its verdict updated in this session
   from the solve (duty b).
