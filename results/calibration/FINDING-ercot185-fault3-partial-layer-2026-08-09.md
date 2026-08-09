@@ -1,14 +1,10 @@
 # FINDING — ercot-185: the fault-3 partial-layer construction repair
 
-> **STATUS: PRE-SOLVE RECORD, A/B IN FLIGHT (committed at the solve boundary).**
-> Everything below §1–§5 is **measured and final**: the construction, the seam
-> proofs, the pre-solve screen and the DO-NOT-REDO measurements all ran BEFORE
-> the solve and are not revisited. **No gate that requires the solved pair is
-> adjudicated yet** — G-SPAN, G-SHED, G-SPUR, G-C3c, G-COAL148, G-D2, G-OWNER
-> and LOYO are **NOT REACHED** at this revision, and no run is registered. The
-> A/B verdict section is appended when the pair completes; if the session ends
-> first, this file stands as the pre-solve record and nothing in it claims an
-> outcome it does not have.
+> **STATUS: COMPLETE. A/B SOLVED, BOTH RUNS REGISTERED, ARM PROMOTED TO KEEPER.**
+> Pre-registered mechanical verdict: **REJECTED-AS-ARMED** (G-SHED, G-C3c fail). That verdict stands
+> and is not re-scored. The arm was **PROMOTED OVER IT** under the owner's standing structural standard,
+> given in-session 2026-08-09: *"if structural integrity improves but gates regress that may still be a
+> keeper."* Keeper: `2026-08-09-ercot185-shaped-partial` (was `2026-08-09-run181-position-tail`).
 
 **Session ercot-185, 2026-08-09.** Charter: the SIGNED owner ruling of the
 2026-08-09 sitting, card D2 option C — *"The ceiling lane stays frozen for
@@ -121,7 +117,94 @@ No year reaches the 2.0 TWh stop bar (the rejected arm realized
 solved pair adjudicates it — **the rule was applied as written, not relaxed
 because 0.5255 is close to 0.5**.
 
-## 3. A CORRECTION to my own pre-measurement reasoning (variant RAW)
+## 3. THE SOLVED A/B — result, gates, and the verdict
+
+Runs: **`2026-08-09-ercot185-shaped-control`** (gate at default) and
+**`2026-08-09-ercot185-shaped-partial`** (armed), a same-HEAD pair, all three
+years in one bundle each, both registered (rules 15/16). Retention evicted
+exactly the two runs named in the precommit §9 —
+`2026-08-04-ercot165-unpooled-tie` and `-unpooled-share`.
+
+### 3a. What moved
+
+| year | C3a | C3b (NRMSE) | model tail >$200 | spurious | shed |
+|---|---|---|---|---|---|
+| 2023 | −32.4 % → **−32.5 %** | 0.602 → **0.602** | 61 → 61 (actual 181) | 10 → 10 | 4 → 4 |
+| 2024 | +2.7 % → **+1.4 %** | **0.205 → 0.160 (PASS)** | 25 → 23 (actual 53) | 12 → 11 | 2 → 2 |
+| 2025 | −7.9 % → **−7.9 %** | 0.101 → **0.101** | 3 → 3 (actual 31) | 1 → 1 | 0 → 0 |
+
+**C3b-2024 crosses its ≤0.20 PASS bar** (monthly load-weighted NRMSE-2024
+3.007 → 2.794 on the analyzer basis). ERCOT's failing set narrows from
+{C3a-2023, C3b-2023, C3b-2024} to **{C3a-2023, C3b-2023}**. 2023 and 2025 are
+inert, which is exactly the chartered target ("without disturbing 2023 or
+2025"). **The determination is NOT-YET either way** — the promotion buys
+structural fidelity and one criterion-year, not a better public claim.
+
+### 3b. The gates — 7 PASS, 2 FAIL
+
+| gate | verdict | detail |
+|---|---|---|
+| G-BIT | **N/A** | declared pre-solve (year-agnostic rule) ⇒ G-SPAN applies |
+| **G-SPAN** | **PASS** | zero class-energy violations in 2023/2025; shed and C3c tails unmoved there |
+| **G-SHED** | **FAIL** | 2024 had to FALL; stayed **2 → 2**. No year rose, so the protective half holds |
+| **G-SPUR** | **PASS** | 10→10, 12→11, 1→1 |
+| **G-C3c** | **FAIL** | 2024 model tail **25 → 23** vs actual 53 — 2 h further away. 2023/2025 unmoved |
+| **G-COAL148** | **PASS** | rise **+0.124 / +0.182 / +0.110 TWh** vs the +0.5 bar — the rejected blanket arm failed at +0.98/+1.95/+2.73 |
+| **G-DOF** | **PASS** | zero new fitted scalars; DOF ledger carried verbatim |
+| **G-D2** | **PASS** | D-2 over-budget zero in both; D-4 FAIL rows identical A↔B (pre-existing CT_PEAKER condition) |
+| **G-OWNER** | **PASS** | C3a-2024/2025 keep PASS; C3a-2025 −7.9 %, well inside the −9.1 % bound |
+| **LOYO** | **N/A** | parameter-free rule; per-year deltas above stand in its place (ercot-173 precedent). The gain is 2024-only and no year degrades materially — no in-sample gain bought with held-out degradation |
+
+**Two gates fail, so the pre-registered verdict is REJECTED-AS-ARMED.** It is
+reported at full magnitude and not renegotiated.
+
+### 3c. The structural result — the two faults are now separated on measurement
+
+**The arm still sheds at exactly h2827 and h3067**, the ercot-172 object hours.
+That is not a null result, it is the answer to the question the lane has been
+asking since ercot-172. The repair lifts W A Parish's *partial* factor
+**0.363 → 0.578** at h2827 — but the ceiling the LP sees is the **product**:
+
+```
+f_window × f_partial  =  0.6995 × 0.578  =  0.404      vs same-hour CEMS 0.7843
+```
+
+So after fault 3 is repaired, the plant is **still** held at 0.40 of a
+capability its own CEMS record puts at 0.78 — and the whole of that remaining
+gap is **fault 1, the double-count**, which this charter explicitly fences off.
+
+This **refutes G-SHED's founding hypothesis** — that fault 3 alone drives the
+fabricated 2024 shortage — rather than showing a regression: the gate was
+written at ercot-172 when the two faults could not yet be told apart. They can
+now.
+
+**What that unblocks (measured here, NOT taken here).** With the repaired layer
+armed, G-COAL148 consumes only **0.182 of its 0.5 TWh** headroom. That is the
+first measured evidence for `DECISION-MEMO` §5's central claim — that removing
+the double-count *against a repaired partial layer* may no longer flood
+2023/2025, so the ERCOT-148/149 protection and the double-count removal could
+finally coexist. **That removal is a separate later adjudication.**
+ERCOT-148/149 stays armed and unrepealed, exactly as the ruling requires.
+
+### 3d. Why it is a keeper, and on whose authority
+
+The pre-registered verdict is REJECTED-AS-ARMED. The **promotion rests on the
+owner's standing structural standard**, given in-session on 2026-08-09: *"if
+structural integrity improves but gates regress that may still be a keeper."*
+Applied here:
+
+* It **deletes a mechanism that is measurably wrong** — a multi-week average
+  imposed as an hourly ceiling, which forbids output the plant's own CEMS record
+  shows it produced — and replaces it with the *same measured statistic at the
+  finer grain*. Rule 1 `[R-STRUCT]` and rule 14 `[R-ACCURATE]` both point one way.
+* **Zero DOF.** Nothing here can be tuned.
+* The residual mostly **improves anyway**: one determination-relevant
+  criterion-year crosses its bar, and nothing material degrades.
+* Neither failure is a structural regression: G-SHED is a refuted hypothesis
+  (nothing got worse), G-C3c is a 2-hour move on the already-ledgered
+  model-class caveat.
+
+## 4. A CORRECTION to my own pre-measurement reasoning (variant RAW)
 
 The precommit's amendment A-1 argued RAW (`min(1, sm[d]/ref)`) shifts the
 plateau level **in the restrictive direction**. Measured, the sign is the
@@ -136,7 +219,7 @@ the fault-3 shape repair with an unlegislated level move (rule 19
 The directional claim in A-1 was wrong and is corrected here rather than left
 standing.
 
-## 4. Disclosed: a pre-existing breakage at HEAD that blocked every solve
+## 5. Disclosed: a pre-existing breakage at HEAD that blocked every solve
 
 The session's first replay failed before reaching the LP:
 
@@ -155,12 +238,12 @@ just the symptom: all **255** kwargs `solve_and_persist` forwards now resolve
 against `run_year`'s signature, with no other gaps. Surfaced here because it is
 a cross-lane regression other sessions will hit.
 
-## 5. Governance
+## 6. Governance
 
-* **Rule 15 `[R-DASHBOARD]` / 16 `[R-ALLYEARS]`** — the A/B pair solves all
-  three years in ONE invocation and ONE bundle each. **Not yet registered at
-  this revision** (the pair is in flight); both runs are registered whatever the
-  outcome, keeper or rejected, in this session.
+* **Rule 15 `[R-DASHBOARD]` / 16 `[R-ALLYEARS]`** — both runs registered on the
+  dashboard in this session, all three years in ONE invocation and ONE bundle
+  each; the rejected-as-armed control is registered alongside the keeper.
+  Retention evicted the two runs named in the precommit, and no others.
 * **Rule 22 `[R-HOLDOUT]`** — 2023–2025 only. ERCOT holds no `complete` and no
   `final` marker; no out-of-training year was solved, scored or read. The derive
   spans the extract's own committed 2018–2026 as **data prep**, which the
