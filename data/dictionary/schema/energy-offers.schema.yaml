@@ -1,6 +1,28 @@
-# Canonical schema: PJM energy market generation offers (long/step format)
+# Canonical schema: ISO energy market generation offers (long/step format)
 #
-# Source: PJM DataMiner2 ``energy_market_offers`` feed via api.pjm.com/api/v1
+# v2 (miso-145, 2026-08-09) generalised this datatype from PJM-only to
+# ISO-generic.  ``market`` (DA/RT) joins the key, and every ISO-specific column
+# is nullable so each ISO's curator writes only the columns its source
+# publishes.  Two curators write it today:
+#
+#   PJM  — scripts/data/curate_energy_offers.py       (RT effective offers)
+#   MISO — scripts/data/curate_miso_energy_offers.py  (DA and RT submitted offers)
+#
+# MISO source
+# -----------
+#   https://docs.misoenergy.org/marketreports/YYYYMMDD_da_co.zip  (Day-Ahead)
+#   https://docs.misoenergy.org/marketreports/YYYYMMDD_rt_co.zip  (Real-Time)
+# Daily CSV, one row per masked ``Unit Code`` x operating hour, ten price/MW
+# breakpoints, published at a ~90-day lag.  Unit identity is MASKED and NO fuel
+# or technology attribute is published; the masked code IS persistent across
+# days and years (miso-136).  Region is North / Central / South.
+#
+# RULE 13 [R-MEASURED] — OUTCOME COLUMNS ARE EXCLUDED BY CONSTRUCTION.  The
+# MISO source files also carry dispatch awards (RT ``Cleared MW1``-``Cleared
+# MW12``, DA ``MW``).  Those are outcomes, not conduct, and are dropped at
+# curation: they have no column in this schema and cannot be read downstream.
+#
+# PJM source: PJM DataMiner2 ``energy_market_offers`` feed via api.pjm.com/api/v1
 #   Browser UI: https://dataminer2.pjm.com/feed/energy_market_offers
 #   REST API:   https://api.pjm.com/api/v1/energy_market_offers
 #   Auth:       Ocp-Apim-Subscription-Key (public key embedded in settings.json)
@@ -34,17 +56,20 @@
 # by straight lines, so dispatch between two breakpoints has a continuously rising
 # MC).  ``False`` → step function (constant $/MWh across the MW block).
 datatype: energy-offers
-schema_version: 1
-title: PJM energy market generation offers (long step format)
+schema_version: 2
+title: ISO energy market generation offers (long step format)
 description: >-
-  PJM Real-Time effective energy offer curves in long (normalized) format.
-  One row per generating unit × operating hour × offer step.  Source: PJM
-  DataMiner2 energy_market_offers feed (api.pjm.com/api/v1); raw data fetched
-  by scripts/data/fetch_pjm_energy_offers.py and curated by
-  scripts/data/curate_energy_offers.py.  Posted on a four-month delay; available
-  from 2017-11-01 with indefinite retention.
+  Masked generator energy offer curves in long (normalized) format — one row
+  per ISO × market × unit × operating hour × offer step.  PJM: Real-Time
+  effective offers from the DataMiner2 energy_market_offers feed
+  (scripts/data/fetch_pjm_energy_offers.py + curate_energy_offers.py), posted
+  on a four-month delay, available from 2017-11-01.  MISO: submitted Day-Ahead
+  and Real-Time offers from the Market Reports *_da_co / *_rt_co daily files
+  (scripts/data/fetch_miso_energy_offers.py + curate_miso_energy_offers.py),
+  posted on a ~90-day lag.  Dispatch-award columns present in the MISO source
+  are outcomes (rule 13) and are excluded from this datatype by construction.
 
-key_columns: [iso, unit_code, interval_start_utc, step_idx]
+key_columns: [iso, market, unit_code, interval_start_utc, step_idx]
 allow_additional_columns: false
 
 columns:
@@ -69,16 +94,28 @@ columns:
     dtype: string
     unit: none
     nullable: false
-    description: Always "PJM" for this feed.
+    description: ISO the offer was submitted into — "PJM" or "MISO".
+
+  - name: market
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Market the offer set belongs to — "DA" (day-ahead) or "RT" (real-time).
+      PJM's DataMiner2 feed is the RT effective offer set, so PJM rows are
+      always "RT"; MISO publishes both books as separate daily files.  DA and
+      RT are SEPARATE INSTRUMENTS and must never be averaged together.
 
   - name: unit_code
     dtype: string
     unit: none
     nullable: false
     description: >-
-      Anonymised, base64-encoded unit identifier assigned by PJM
-      (DataMiner2 ``unit_code``).  Rotated annually — codes are NOT
-      comparable across calendar years.
+      Anonymised unit identifier assigned by the ISO.  PJM: base64-encoded,
+      ROTATED ANNUALLY — codes are NOT comparable across calendar years.
+      MISO: the masked ``Unit Code``, PERSISTENT across days and years
+      (miso-136 measured 92–99 % overlap across 2023↔2024↔2025), so per-unit
+      longitudinal statistics are meaningful for MISO but not for PJM.
 
   - name: bid_slope_flag
     dtype: bool
@@ -183,3 +220,91 @@ columns:
     description: >-
       Minimum continuous runtime (hours) once the unit is committed.
       DataMiner2 ``min_runtime``.
+
+  # ------------------------------------------------------------------
+  # MISO-specific columns (v2).  All nullable: PJM's feed publishes none
+  # of them, so the PJM curator omits them and validation still passes.
+  # ------------------------------------------------------------------
+
+  - name: region
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      MISO market Region the unit sits in — "North", "Central" or "South"
+      (MISO ``Region``).  The only locational attribute the masked corpus
+      publishes; it is a market region, NOT a model zone, and no zone
+      crosswalk is asserted from it.
+
+  - name: economic_flag
+    dtype: bool
+    unit: none
+    nullable: true
+    description: >-
+      MISO ``Economic Flag`` — the unit declared itself economically
+      dispatchable for the hour.
+
+  - name: emergency_flag
+    dtype: bool
+    unit: none
+    nullable: true
+    description: MISO ``Emergency Flag`` — emergency range offered for the hour.
+
+  - name: must_run_flag
+    dtype: bool
+    unit: none
+    nullable: true
+    description: >-
+      MISO ``Must Run Flag`` — the unit declared a must-run commitment status
+      for the hour.  A declaration, not an outcome.
+
+  - name: unit_available_flag
+    dtype: bool
+    unit: none
+    nullable: true
+    description: >-
+      MISO ``Unit Available Flag`` — the unit declared itself available to the
+      market for the hour.
+
+  - name: self_scheduled_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      MISO ``Self Scheduled MW`` — MW the participant self-scheduled (price
+      taker) for the hour.  A submitted quantity, not an award.
+
+  - name: emergency_max_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: MISO ``Emergency Max`` — declared emergency upper limit (MW).
+
+  - name: emergency_min_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: MISO ``Emergency Min`` — declared emergency lower limit (MW).
+
+  - name: curtailment_offer_price_usd_per_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: >-
+      MISO ``Curtailment Offer Price`` — the price at which a dispatchable
+      intermittent / demand resource offers curtailment ($/MWh).
+
+  - name: min_energy_storage_level_mwh
+    dtype: float64
+    unit: mwh
+    nullable: true
+    description: >-
+      MISO ``MinEnergyStorageLevel`` — declared minimum state-of-charge for
+      an electric storage resource (MWh).  Populated for storage rows only,
+      and therefore also serves as the storage-row screen.
+
+  - name: max_energy_storage_level_mwh
+    dtype: float64
+    unit: mwh
+    nullable: true
+    description: MISO ``MaxEnergyStorageLevel`` — declared maximum SOC (MWh).
