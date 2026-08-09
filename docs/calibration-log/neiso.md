@@ -2036,3 +2036,63 @@ nor worsened here; it needs a re-solve and should be settled in the same session
 
 **6. Holdout posture unchanged.** `final` stays EMPTY, the freeze stays ACTIVE, the 2022
 validation touchpoint block is untouched, and this session solved nothing at all.
+
+## 2026-08-09 — Site retention: NEISO reduced to the keeper + the same recipe on 2022
+
+**Session:** neiso-keeper-87-control · **Owner directive.** No solve, no LP, no mechanism, no
+holdout spend. Keeper UNCHANGED (`2026-08-06-neiso-87-control`).
+
+**The rule applied, in the owner's words:** keep the keeper for the training years and the same
+keeper recipe on 2022; *"if the 2022 holdout was a NOT-YET then any runs after that. But if the
+keeper is resolved and 2022 passes then just keep that on the site."* Both conditions hold for
+NEISO — the keeper is CALIBRATED-WITH-CAVEATS on 2023–2025, and `2026-08-06-neiso-2022-corrected-basis`
+is **CALIBRATED-WITH-CAVEATS on 2022 with every criterion HELD out-of-sample except C3c carried**
+(stamped this session from committed artifacts, no re-solve). So NEISO keeps **two** runs where PJM,
+whose 2022 touchpoint is NOT-YET, keeps four.
+
+**Pruned (6)** via `scripts/prune_iso_runs.py --force-uncite`, each removing the registry sidecar,
+the `runs/<id>.js` payload and the `results/calibration/<bundle>/` directory together:
+`2026-07-31-neiso-72-hy-window`, `2026-08-03-neiso-caiso156-meter-screen`,
+`2026-08-04-neiso81-chpheatrate`, `2026-08-05-neiso-83-ca1-reclass`,
+`2026-08-05-neiso-83-control-zerodelta`, and the superseded `2026-08-05-neiso-2022-touchpoint`.
+
+**Five of those are still named as evidence** in `keepers/NEISO.json` and
+`calibration-complete.json` — the keeper genealogy, the neiso-83 zero-delta control, the promotion
+comparisons. Those citations now point at runs that are no longer on the site. That is deliberate
+and on the owner's instruction, it is **recorded rather than hidden** (`site_retention_note` in the
+shard, `site_retention_2026_08_09` in the marker), and the narrative text is left **verbatim and
+un-retracted** because it is the record of how the determination was reached. Nothing that
+constitutes the evidence was deleted: every `FINDING-*` / `PREREG-*` / `ASSESSMENT-*` document
+under `results/calibration/`, the A/B records, this log, and the mechanism-matrix cells are all
+retained by the prune tool by design, and the runs themselves remain in git history.
+
+**`holdout_touchpoint` re-keyed** from the superseded `2026-08-05-neiso-2022-touchpoint`
+(NOT-YET; C3a and C3b degraded) to `2026-08-06-neiso-2022-corrected-basis`
+(CALIBRATED-WITH-CAVEATS). **Not a re-tune and not a fit bought with a parameter:** the two runs
+are the same frozen recipe and the only difference is the repaired measured input — neiso-85
+diagnosed the hub-basis series as seasonally inverted (EIA N3050MA3 LDC purchase-portfolio
+average), neiso-86 replaced it with the measured ISO-NE MA gas index. This is rule 22's touchpoint
+loop working exactly as written: the touchpoint surfaced an **object**, the fix was a data repair
+with **zero free parameters**, and nothing was ever fitted to 2022.
+
+**NOT DONE, and it is not a judgement call — it is blocked.** The directive also asks that the
+keeper and its 2022 be **one 2022–2025 bundle**. That needs a fresh combined solve, and the gate
+refuses it, measured this session rather than assumed:
+
+```
+enforce_holdout_year_gate([2022,2023,2024,2025], 'NEISO', holdout_authorized=True)
+  -> REFUSED: --year [2022] is under an ACTIVE HOLDOUT SPEND FREEZE (declared 2026-07-25)
+enforce_holdout_year_gate([2023,2024,2025],      'NEISO', holdout_authorized=True)  -> ALLOWED
+```
+
+`holdout-freeze.json` is ACTIVE (re-armed 2026-08-06 immediately after the narrow single-purpose
+lift that produced the corrected-basis run) and outranks the `complete` marker for **every** ISO,
+`--holdout-authorized` notwithstanding. Lifting it is an owner action. Two things are worth
+weighing before it is lifted for this purpose: (a) the freeze's own stated reason is still open —
+the CAMPD detector books sustained economic layup as mechanical outage in all six ISO extracts, so
+the availability envelope every keeper is calibrated against is expected to move; and (b) a single
+bundle scored as one determination **merges a validation-tier year into the keeper's headline**,
+which is the one thing rule 22 says a validation number must never become ("selection evidence,
+never a certified out-of-sample skill number"). Until then the site carries the two runs and the
+Run Explorer composes them into a single 2022–2025 year selector on the keeper, with the 2022
+entry labelled `validation holdout` and its provenance banner naming the source run.

@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-06-pjm-158-control-virtual",
+  "label": "pjm 158 control virtual",
+  "date": "2026-08-06",
+  "shorthand": "pjm-158-control-virtual",
+  "definition": "pjm-158 CONTROL: pjm-152 keeper recipe replayed at HEAD (unchanged, pjm_da_virtual_bids=True). Paired arm of the pre-registered DA-virtual A/B, PREREG-pjm158-da-virtual-clearing-2026-08-05.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-08-06-pjm-158-control-virtual.js",
+  "bundle": "results/calibration/pjm158_ctl_A"
+}
