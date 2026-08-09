@@ -402,7 +402,7 @@ def derive_year(
                 n_days = len(day_seen[key])
                 mw_sum = float(mw.sum())
                 if position_tail:
-                    from scripts.lib.positiontail import tail_support
+                    from lib.positiontail import tail_support
 
                     tails.append(tail_support(mult, mw))
             else:
@@ -515,7 +515,7 @@ def _main_position_tail(args) -> None:
     inconsistent with its p90 anchor, so a mismatch is stop-the-line, never
     papered over.
     """
-    from scripts.lib.positiontail import POSITIONTAIL_TAG
+    from lib.positiontail import POSITIONTAIL_TAG
 
     frozen = json.loads(DEFAULT_OUT.read_text())
     gas_day = _gas_day_series()
