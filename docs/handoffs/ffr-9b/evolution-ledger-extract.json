@@ -1,0 +1,538 @@
+{
+ "source_bundle": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9b-regen/ERCOT/816031a3308cccde",
+ "note": "FFR-9B R1 evidence extract: the per-year entry_pipeline events, decision-grain additions and storage additions from the regenerated evolution ledgers (the ledgers themselves sit under a gitignored scratch family).",
+ "years": {
+  "2021": {
+   "entry_pipeline": null,
+   "entry_decided_mw_by_tech": null,
+   "storage_additions": [],
+   "rps_dual": 0.0,
+   "bridge": false
+  },
+  "2022": {
+   "entry_pipeline": [
+    {
+     "cod_year": 2024,
+     "decision_year": 2022,
+     "event": "decided",
+     "kind": "thermal",
+     "mw": 3000.0,
+     "seq": 0,
+     "tech": "gas_cc",
+     "zone": "North"
+    },
+    {
+     "cod_year": 2024,
+     "decision_year": 2022,
+     "event": "decided",
+     "kind": "thermal",
+     "mw": 1571.0,
+     "seq": 1,
+     "tech": "gas_ct",
+     "zone": "North"
+    },
+    {
+     "cod_year": 2024,
+     "decision_year": 2022,
+     "event": "decided",
+     "kind": "vre",
+     "mw": 4946.6,
+     "seq": 2,
+     "tech": "solar",
+     "zone": "West"
+    },
+    {
+     "cod_year": 2024,
+     "decision_year": 2022,
+     "event": "decided",
+     "kind": "thermal",
+     "mw": 2000.0,
+     "seq": 3,
+     "tech": "nuclear_smr",
+     "zone": "North"
+    },
+    {
+     "cod_year": 2024,
+     "decision_year": 2022,
+     "event": "decided",
+     "kind": "vre",
+     "mw": 482.39999999999964,
+     "seq": 4,
+     "tech": "wind",
+     "zone": "West"
+    }
+   ],
+   "entry_decided_mw_by_tech": {
+    "gas_cc": 3000.0,
+    "gas_ct": 1571.0,
+    "nuclear_smr": 2000.0,
+    "solar": 4946.6,
+    "wind": 482.39999999999964
+   },
+   "storage_additions": [
+    {
+     "duration_h": 100.0,
+     "mw": 448.2,
+     "tech": "iron_air",
+     "unit_id": "West_iron_air_new_2022_0",
+     "zone": "West"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 919.2,
+     "tech": "iron_air",
+     "unit_id": "North_iron_air_new_2022_0",
+     "zone": "North"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 105.3,
+     "tech": "iron_air",
+     "unit_id": "Northeast_iron_air_new_2022_0",
+     "zone": "Northeast"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 794.7,
+     "tech": "iron_air",
+     "unit_id": "Houston_iron_air_new_2022_0",
+     "zone": "Houston"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 492.6,
+     "tech": "iron_air",
+     "unit_id": "South_Central_iron_air_new_2022_0",
+     "zone": "South_Central"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 240.0,
+     "tech": "iron_air",
+     "unit_id": "South_iron_air_new_2022_0",
+     "zone": "South"
+    },
+    {
+     "duration_h": 8.0,
+     "mw": 298.8,
+     "tech": "compressed_air",
+     "unit_id": "West_compressed_air_new_2022_1",
+     "zone": "West"
+    },
+    {
+     "duration_h": 8.0,
+     "mw": 612.8,
+     "tech": "compressed_air",
+     "unit_id": "North_compressed_air_new_2022_1",
+     "zone": "North"
+    },
+    {
+     "duration_h": 8.0,
+     "mw": 70.2,
+     "tech": "compressed_air",
+     "unit_id": "Northeast_compressed_air_new_2022_1",
+     "zone": "Northeast"
+    },
+    {
+     "duration_h": 8.0,
+     "mw": 529.8000000000001,
+     "tech": "compressed_air",
+     "unit_id": "Houston_compressed_air_new_2022_1",
+     "zone": "Houston"
+    },
+    {
+     "duration_h": 8.0,
+     "mw": 328.40000000000003,
+     "tech": "compressed_air",
+     "unit_id": "South_Central_compressed_air_new_2022_1",
+     "zone": "South_Central"
+    },
+    {
+     "duration_h": 8.0,
+     "mw": 160.0,
+     "tech": "compressed_air",
+     "unit_id": "South_compressed_air_new_2022_1",
+     "zone": "South"
+    }
+   ],
+   "rps_dual": null,
+   "bridge": true
+  },
+  "2023": {
+   "entry_pipeline": [
+    {
+     "cod_year": 2025,
+     "decision_year": 2023,
+     "event": "decided",
+     "kind": "thermal",
+     "mw": 1429.0,
+     "seq": 1,
+     "tech": "gas_ct",
+     "zone": "North"
+    },
+    {
+     "cod_year": 2025,
+     "decision_year": 2023,
+     "event": "decided",
+     "kind": "vre",
+     "mw": 53.399999999999636,
+     "seq": 3,
+     "tech": "solar",
+     "zone": "West"
+    },
+    {
+     "cod_year": 2025,
+     "decision_year": 2023,
+     "event": "decided",
+     "kind": "vre",
+     "mw": 4517.6,
+     "seq": 4,
+     "tech": "wind",
+     "zone": "West"
+    }
+   ],
+   "entry_decided_mw_by_tech": {
+    "gas_ct": 1429.0,
+    "solar": 53.399999999999636,
+    "wind": 4517.6
+   },
+   "storage_additions": [
+    {
+     "duration_h": 100.0,
+     "mw": 448.2,
+     "tech": "iron_air",
+     "unit_id": "West_iron_air_new_2023_0",
+     "zone": "West"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 919.2,
+     "tech": "iron_air",
+     "unit_id": "North_iron_air_new_2023_0",
+     "zone": "North"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 105.3,
+     "tech": "iron_air",
+     "unit_id": "Northeast_iron_air_new_2023_0",
+     "zone": "Northeast"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 794.7,
+     "tech": "iron_air",
+     "unit_id": "Houston_iron_air_new_2023_0",
+     "zone": "Houston"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 492.6,
+     "tech": "iron_air",
+     "unit_id": "South_Central_iron_air_new_2023_0",
+     "zone": "South_Central"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 240.0,
+     "tech": "iron_air",
+     "unit_id": "South_iron_air_new_2023_0",
+     "zone": "South"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 298.8,
+     "tech": "flow_battery",
+     "unit_id": "West_flow_battery_new_2023_1",
+     "zone": "West"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 612.8,
+     "tech": "flow_battery",
+     "unit_id": "North_flow_battery_new_2023_1",
+     "zone": "North"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 70.2,
+     "tech": "flow_battery",
+     "unit_id": "Northeast_flow_battery_new_2023_1",
+     "zone": "Northeast"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 529.8000000000001,
+     "tech": "flow_battery",
+     "unit_id": "Houston_flow_battery_new_2023_1",
+     "zone": "Houston"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 328.40000000000003,
+     "tech": "flow_battery",
+     "unit_id": "South_Central_flow_battery_new_2023_1",
+     "zone": "South_Central"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 160.0,
+     "tech": "flow_battery",
+     "unit_id": "South_flow_battery_new_2023_1",
+     "zone": "South"
+    }
+   ],
+   "rps_dual": 0.0,
+   "bridge": false
+  },
+  "2024": {
+   "entry_pipeline": [
+    {
+     "cod_year": 2026,
+     "decision_year": 2024,
+     "event": "decided",
+     "kind": "thermal",
+     "mw": 3000.0,
+     "seq": 0,
+     "tech": "gas_cc",
+     "zone": "North"
+    },
+    {
+     "cod_year": 2026,
+     "decision_year": 2024,
+     "event": "decided",
+     "kind": "thermal",
+     "mw": 1571.0,
+     "seq": 1,
+     "tech": "gas_ct",
+     "zone": "North"
+    },
+    {
+     "cod_year": 2026,
+     "decision_year": 2024,
+     "event": "decided",
+     "kind": "vre",
+     "mw": 4946.6,
+     "seq": 2,
+     "tech": "solar",
+     "zone": "West"
+    },
+    {
+     "cod_year": 2026,
+     "decision_year": 2024,
+     "event": "decided",
+     "kind": "thermal",
+     "mw": 2000.0,
+     "seq": 3,
+     "tech": "nuclear_smr",
+     "zone": "North"
+    },
+    {
+     "cod_year": 2026,
+     "decision_year": 2024,
+     "event": "decided",
+     "kind": "vre",
+     "mw": 482.39999999999964,
+     "seq": 4,
+     "tech": "wind",
+     "zone": "West"
+    },
+    {
+     "cod_year": 2024,
+     "decision_year": 2022,
+     "event": "commissioned",
+     "kind": "thermal",
+     "mw": 3000.0,
+     "seq": 0,
+     "tech": "gas_cc",
+     "zone": "North"
+    },
+    {
+     "cod_year": 2024,
+     "decision_year": 2022,
+     "event": "commissioned",
+     "kind": "thermal",
+     "mw": 1571.0,
+     "seq": 1,
+     "tech": "gas_ct",
+     "zone": "North"
+    },
+    {
+     "cod_year": 2024,
+     "decision_year": 2022,
+     "event": "commissioned",
+     "kind": "vre",
+     "mw": 4946.6,
+     "seq": 2,
+     "tech": "solar",
+     "zone": "West"
+    },
+    {
+     "cod_year": 2024,
+     "decision_year": 2022,
+     "event": "commissioned",
+     "kind": "thermal",
+     "mw": 2000.0,
+     "seq": 3,
+     "tech": "nuclear_smr",
+     "zone": "North"
+    },
+    {
+     "cod_year": 2024,
+     "decision_year": 2022,
+     "event": "commissioned",
+     "kind": "vre",
+     "mw": 482.39999999999964,
+     "seq": 4,
+     "tech": "wind",
+     "zone": "West"
+    }
+   ],
+   "entry_decided_mw_by_tech": {
+    "gas_cc": 3000.0,
+    "gas_ct": 1571.0,
+    "nuclear_smr": 2000.0,
+    "solar": 4946.6,
+    "wind": 482.39999999999964
+   },
+   "storage_additions": [
+    {
+     "duration_h": 100.0,
+     "mw": 448.2,
+     "tech": "iron_air",
+     "unit_id": "West_iron_air_new_2024_0",
+     "zone": "West"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 919.2,
+     "tech": "iron_air",
+     "unit_id": "North_iron_air_new_2024_0",
+     "zone": "North"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 105.3,
+     "tech": "iron_air",
+     "unit_id": "Northeast_iron_air_new_2024_0",
+     "zone": "Northeast"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 794.7,
+     "tech": "iron_air",
+     "unit_id": "Houston_iron_air_new_2024_0",
+     "zone": "Houston"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 492.6,
+     "tech": "iron_air",
+     "unit_id": "South_Central_iron_air_new_2024_0",
+     "zone": "South_Central"
+    },
+    {
+     "duration_h": 100.0,
+     "mw": 240.0,
+     "tech": "iron_air",
+     "unit_id": "South_iron_air_new_2024_0",
+     "zone": "South"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 298.8,
+     "tech": "flow_battery",
+     "unit_id": "West_flow_battery_new_2024_1",
+     "zone": "West"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 612.8,
+     "tech": "flow_battery",
+     "unit_id": "North_flow_battery_new_2024_1",
+     "zone": "North"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 70.2,
+     "tech": "flow_battery",
+     "unit_id": "Northeast_flow_battery_new_2024_1",
+     "zone": "Northeast"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 529.8000000000001,
+     "tech": "flow_battery",
+     "unit_id": "Houston_flow_battery_new_2024_1",
+     "zone": "Houston"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 328.40000000000003,
+     "tech": "flow_battery",
+     "unit_id": "South_Central_flow_battery_new_2024_1",
+     "zone": "South_Central"
+    },
+    {
+     "duration_h": 10.0,
+     "mw": 160.0,
+     "tech": "flow_battery",
+     "unit_id": "South_flow_battery_new_2024_1",
+     "zone": "South"
+    }
+   ],
+   "rps_dual": 0.0,
+   "bridge": false
+  },
+  "2025": {
+   "entry_pipeline": [
+    {
+     "cod_year": 2027,
+     "decision_year": 2025,
+     "event": "decided",
+     "kind": "vre",
+     "mw": 53.399999999999636,
+     "seq": 0,
+     "tech": "solar",
+     "zone": "West"
+    },
+    {
+     "cod_year": 2025,
+     "decision_year": 2023,
+     "event": "commissioned",
+     "kind": "thermal",
+     "mw": 1429.0,
+     "seq": 1,
+     "tech": "gas_ct",
+     "zone": "North"
+    },
+    {
+     "cod_year": 2025,
+     "decision_year": 2023,
+     "event": "commissioned",
+     "kind": "vre",
+     "mw": 53.399999999999636,
+     "seq": 3,
+     "tech": "solar",
+     "zone": "West"
+    },
+    {
+     "cod_year": 2025,
+     "decision_year": 2023,
+     "event": "commissioned",
+     "kind": "vre",
+     "mw": 4517.6,
+     "seq": 4,
+     "tech": "wind",
+     "zone": "West"
+    }
+   ],
+   "entry_decided_mw_by_tech": {
+    "solar": 53.399999999999636
+   },
+   "storage_additions": [],
+   "rps_dual": 0.0,
+   "bridge": false
+  }
+ }
+}
