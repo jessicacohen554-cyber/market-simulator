@@ -1,0 +1,173 @@
+{
+ "probe": "ercot181_positiontail_seamproof",
+ "precommit": "docs/PRECOMMIT-ercot181-quantity-position-2026-08-09.md \u00a76",
+ "bundle": "results/calibration/ercot176_control_A",
+ "years": {
+  "2023": {
+   "SP3_control_sha": "25a4ba697e5902616dff9528c124a6f600d73d3530044087536f38ac7a579567",
+   "SP3_matches_ercot178": true,
+   "ARM_sha": "ea1ad4a7a40b3c379091b57e9b1cb559db7fc67e3851c07f8582fe692f4e9926",
+   "ARM_differs": true,
+   "SP1_mask_identical": true,
+   "SP1_diff_row_hours": 263966,
+   "SP1_diff_outside_candidates": 0,
+   "SP1_confined": true,
+   "SP6_no_markdown": true,
+   "SP2_null_byte_identical": true,
+   "SP4_non_ercot_none": true,
+   "SP7_guards": [
+    {
+     "combo": "positiontail + continuous",
+     "raises": true,
+     "msg": "ercot_offer_surface_position_tail: ercot_offer_surface_position_tail cannot be armed together with a conditioning-grain gate (ercot_offer_su"
+    },
+    {
+     "combo": "positiontail + top_scoped",
+     "raises": true,
+     "msg": "ercot_offer_surface: ercot_offer_surface_top_scoped is armed but offer_curve_dam_hrmults_topscoped.json does not exist \u2014 derive it (scripts/"
+    },
+    {
+     "combo": "positiontail x stepped RT artifact",
+     "raises": true,
+     "msg": "ercot_offer_surface_cleared_share_rt: surface vintage mismatch \u2014 the JSON is conditioned 'stepped-netload-bins' but ercot_offer_surface_posi"
+    },
+    {
+     "combo": "gate-off x positiontail RT artifact",
+     "raises": true,
+     "msg": "ercot_offer_surface_cleared_share_rt: surface vintage mismatch \u2014 the JSON is the 'positiontail-netload-bins' vintage but ercot_offer_surface"
+    },
+    {
+     "combo": "gate-off x positiontail pool artifact",
+     "raises": true,
+     "msg": "ercot_faststart_pool_offer: surface vintage mismatch \u2014 the JSON is the 'positiontail-netload-bins' vintage but ercot_offer_surface_position_"
+    },
+    {
+     "combo": "positiontail + min_bin != 0",
+     "raises": true,
+     "msg": "ercot_offer_surface_position_tail: ercot_offer_surface_position_tail carries no migrated refined-grain geometry for: ercot_offer_surface_min"
+    },
+    {
+     "combo": "positiontail without RT leg",
+     "raises": true,
+     "msg": "ercot_offer_surface_position_tail completes the RT/SCED ladder's position axis \u2014 arm ercot_offer_surface_cleared_share_rt too (the DAM ladde"
+    },
+    {
+     "combo": "positiontail + ercot_offer_surface_cleared_share_state",
+     "raises": true,
+     "msg": "ercot_offer_surface_position_tail: ercot_offer_surface_position_tail carries no migrated refined-grain geometry for: ercot_offer_surface_cle"
+    },
+    {
+     "combo": "positiontail + ercot_offer_surface_cleared_share_steam",
+     "raises": true,
+     "msg": "ercot_offer_surface_position_tail: ercot_offer_surface_position_tail carries no migrated refined-grain geometry for: ercot_offer_surface_cle"
+    },
+    {
+     "combo": "positiontail + ercot_shoulder_online_span",
+     "raises": true,
+     "msg": "ercot_offer_surface_position_tail: ercot_offer_surface_position_tail carries no migrated refined-grain geometry for: ercot_shoulder_online_s"
+    },
+    {
+     "combo": "positiontail + ercot_offer_surface_lowcurve",
+     "raises": true,
+     "msg": "ercot_offer_surface_position_tail: ercot_offer_surface_position_tail carries no migrated refined-grain geometry for: ercot_offer_surface_low"
+    },
+    {
+     "combo": "positiontail + ercot_offer_surface_midcurve_conditional",
+     "raises": true,
+     "msg": "ercot_offer_surface_position_tail: ercot_offer_surface_position_tail carries no migrated refined-grain geometry for: ercot_offer_surface_mid"
+    },
+    {
+     "combo": "positiontail + ercot_offline_commit_offer",
+     "raises": true,
+     "msg": "ercot_offer_surface_position_tail: ercot_offer_surface_position_tail carries no migrated refined-grain geometry for: ercot_offline_commit_of"
+    }
+   ],
+   "SP7_all_raise": true,
+   "SP7_default_key": "6c99cc06a4c4ee79",
+   "SP7_armed_key_distinct": true,
+   "SP7_matrix_check_exit0": true
+  },
+  "2024": {
+   "SP3_control_sha": "4dfdad090e2ef7f77333c2029b2007029c43ad00084f40c924de5a2ed7d87a76",
+   "SP3_matches_ercot178": true,
+   "ARM_sha": "4dfdad090e2ef7f77333c2029b2007029c43ad00084f40c924de5a2ed7d87a76",
+   "ARM_differs": false,
+   "SP1_mask_identical": true,
+   "SP1_diff_row_hours": 0,
+   "SP1_diff_outside_candidates": 0,
+   "SP1_confined": true,
+   "SP6_no_markdown": true,
+   "SP2_null_byte_identical": true
+  },
+  "2025": {
+   "SP3_control_sha": "c9caf9dedb193ae5ef6fb8b0287ef6f48d57fac2257d5ebdf9e20710e9e44656",
+   "SP3_matches_ercot178": true,
+   "ARM_sha": "c9caf9dedb193ae5ef6fb8b0287ef6f48d57fac2257d5ebdf9e20710e9e44656",
+   "ARM_differs": false,
+   "SP1_mask_identical": true,
+   "SP1_diff_row_hours": 0,
+   "SP1_diff_outside_candidates": 0,
+   "SP1_confined": true,
+   "SP6_no_markdown": true,
+   "SP2_null_byte_identical": true
+  }
+ },
+ "SP5_frozen_artifacts": {
+  "ercot_sced_offer_wall_condbinned.json": "IDENTICAL",
+  "ercot_dam_cleared_share_condbinned.json": "IDENTICAL",
+  "ercot_faststart_pool_condbinned.json": "IDENTICAL",
+  "offer_curve_dam_hrmults_condbinned.json": "IDENTICAL",
+  "ercot_sced_offer_wall_steam_condbinned.json": "IDENTICAL",
+  "ercot_dam_cleared_share_contpct.json": "IDENTICAL",
+  "ercot_faststart_pool_contpct.json": "IDENTICAL"
+ },
+ "SP8_artifact_conformance": {
+  "ercot_sced_offer_wall_positiontail.json": {
+   "vintage_tag": "positiontail-netload-bins",
+   "tag_ok": true,
+   "tail_prov_disclosed": true,
+   "sub_p90_byte_equal_frozen": true,
+   "tail_x_strictly_increasing_in_(0.9,1]": true,
+   "tail_points_per_bin": {
+    "CC:2023": [
+     3018,
+     2257,
+     1563,
+     864,
+     712,
+     355,
+     158
+    ],
+    "CT:2023": [
+     69,
+     145,
+     132,
+     112,
+     166,
+     289,
+     92
+    ]
+   }
+  },
+  "ercot_faststart_pool_positiontail.json": {
+   "vintage_tag": "positiontail-netload-bins",
+   "tag_ok": true,
+   "tail_prov_disclosed": true,
+   "sub_p90_byte_equal_frozen": true,
+   "tail_x_strictly_increasing_in_(0.9,1]": true,
+   "tail_points_per_bin": {
+    "CT:2023": [
+     416,
+     415,
+     415,
+     366,
+     315,
+     278,
+     84
+    ]
+   }
+  }
+ },
+ "ARM_differs_2023": true,
+ "ALL_ASSERTIONS_PASS": true
+}
