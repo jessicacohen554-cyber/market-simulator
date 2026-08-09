@@ -56,6 +56,28 @@ dashboard actually loads) is generated *from* the sidecars by
 `scripts/build_manifest.py` and should never be hand-edited or trusted as
 primary.
 
+A touchpoint run — a held-out year solved on an ISO's frozen keeper recipe
+(rule 22) — carries one more block, written from committed artifacts by
+`scripts/stamp_touchpoint_holdout.py`:
+
+```json
+  "holdout": {
+    "tier": "validation",
+    "year": 2022,
+    "keeper": "2026-08-06-neiso-87-control",
+    "holdoutDetermination": "CALIBRATED-WITH-CAVEATS",
+    "criteria": [{"key": "price_mean", "inSample": "PASS", "holdout": "PASS", "verdict": "held"}]
+  }
+```
+
+`holdout.keeper` is the **link that lets the keeper's own year dropdown offer
+that year**: the Run Explorer lists it under "Held out (rule 22)", loads it
+from this run, and labels its tier and provenance. `build_manifest.py` passes
+the block through to `manifest.js` (it did not before 2026-08-09, which is why
+the Validation Touchpoint panel never rendered on the deployed site). A
+touchpoint with no stamped block is still offered, but the link is *inferred*
+from the run registry and the banner says so — stamp it to make it explicit.
+
 The displayed chart/table data itself lives in `runs/<run-id>.js`
 (`frontend/data/backcast/runs/<run-id>.js`) as a gzip+base64 blob the browser
 inflates with `DecompressionStream` — it is a rendering of the bundle, not an
@@ -153,7 +175,8 @@ determination the Calibration Status page shows.
 
 | You have | You want | Read this |
 |---|---|---|
-| A number on a dashboard chart | Which run produced it | The Run Explorer URL's `run=<id>` fragment, or the ISO's entry in `keepers.json` |
+| A number on a dashboard chart | Which run produced it | The Run Explorer URL's `run=<id>` fragment, or the ISO's entry in `keepers.json` — **except on a held-out year** (see the row below) |
+| A number on a **held-out** year (2022, …) while a keeper is selected | Which run produced it | **NOT `run=<id>`.** A keeper does not solve its held-out years; the Run Explorer offers them under the year dropdown's "Held out (rule 22)" group and draws them from a companion run, named in the provenance banner above the content and in each panel's own sub-line. The link is the companion sidecar's `holdout.keeper` field |
 | A run id | The run's definition + bundle location | `frontend/data/backcast/registry/<id>.json` |
 | A bundle path | The exact solve configuration | `results/calibration/<bundle>/run_config.json` |
 | A configuration | An independently re-solved bundle | `python scripts/run_calibration_full.py` with the translated flags |

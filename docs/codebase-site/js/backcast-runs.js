@@ -41,6 +41,11 @@
       iso: null, runId: null, view: 'report', year: null,
       klass: null, zones: new Set(), plant: 'agg',
       runData: null, benchData: null, runMeta: null,
+      // Rule-22 holdout years offered alongside a KEEPER's own solve years.
+      // holdoutRuns: year -> {runId, tier, definition} (the companion run that
+      // solved that year on this keeper's frozen recipe); holdoutData: year ->
+      // that run's payload for the year, loaded lazily on first selection.
+      holdoutRuns: {}, holdoutData: {},
     };
 
     // Per-ISO keeper map ({ ERCOT: '<id>', ... }) from keepers.json, loaded in
@@ -180,9 +185,103 @@
     /* ================================================================
        DATA ACCESSORS — operate on st.runData / st.benchData
        ================================================================ */
-    function RUN(yr) { return st.runData?.years?.[yr] || st.runData?.[yr] || st.runData?.[String(yr)] || {}; }
+    /* The selected run's payload for a year, falling back to a loaded HOLDOUT
+       companion (see holdoutCompanions) when the run itself did not solve the
+       year. Every year-scoped reader on the page goes through here, so the
+       fallback is the single seam that makes a keeper's held-out year — NEISO
+       2022, say — render real data instead of an empty section. */
+    function RUN(yr) {
+      return st.runData?.years?.[yr] || st.runData?.[yr] || st.runData?.[String(yr)]
+        || st.holdoutData?.[yr] || st.holdoutData?.[String(yr)] || {};
+    }
     function BENCH(yr) { return st.benchData?.[yr] || st.benchData?.[String(yr)] || {}; }
     function META() { return getMeta()?.[st.iso] || {}; }
+
+    /* ================================================================
+       YEAR SETS — the run's own years vs. its rule-22 holdout years
+       ================================================================ */
+    /* The years the SELECTED RUN actually solved.
+
+       NOT META().years, which is the union of every committed BENCH part for
+       the ISO and therefore offers years no individual run carries: NEISO and
+       PJM both ship a 2022 bench part, so before 2026-08-09 every keeper of
+       those two ISOs rendered a 2022 selector entry, defaulted `st.year` to it
+       (the list is ascending), and drew an empty 2022 report off `RUN(2022) ==
+       {}`. The registry's own `years` is the ordering source; the payload is
+       the authority on what is actually there. */
+    function runYears() {
+      const payload = Object.keys(st.runData?.years || {}).map(Number).filter(Number.isFinite);
+      const reg = (st.runMeta?.years || []).map(Number).filter(Number.isFinite);
+      const have = payload.length ? new Set(payload) : null;
+      const years = (reg.length ? reg : payload).filter(y => !have || have.has(y));
+      return [...new Set(years)].sort((a, b) => a - b);
+    }
+
+    /* Rule-22 tier of a year, read from the GENERATED holdout policy
+       (window.BC.rubricConsts.holdoutTiers <- scripts/lib/holdout_policy.py).
+       Fails CLOSED to 'locked_test' for a year in none of the three sets,
+       exactly as holdout_policy.tier_for_year does — an unanticipated year is
+       never labelled as the weaker validation tier. */
+    function yearTier(y) {
+      const tiers = getRubricConsts()?.holdoutTiers || {};
+      const n = Number(y);
+      if ((tiers.train || []).includes(n)) return 'train';
+      if ((tiers.validation || []).includes(n)) return 'validation';
+      return 'locked_test';
+    }
+
+    const TIER_LABEL = { train: 'training', validation: 'validation holdout', locked_test: 'locked test' };
+
+    /* Holdout-year companions of the SELECTED run — offered ONLY when it is the
+       ISO's designated keeper, because a holdout year is by construction the
+       keeper's own FROZEN recipe replayed on a year never tuned against, and
+       attaching it to any other run would misrepresent whose result it is.
+
+       Preferred link is explicit and machine-written: a companion sidecar's
+       `holdout.keeper` naming this run (scripts/stamp_touchpoint_holdout.py).
+       Falling back to any same-ISO run whose years are out-of-training keeps
+       a companion visible when its block has not been stamped yet — the NEISO
+       2026-08-06-neiso-2022-corrected-basis case. Newest run wins per year, and
+       a year the keeper solved itself is never taken from a companion. */
+    function holdoutCompanions() {
+      if (!isKeeperRun()) return {};
+      const own = new Set(runYears());
+      const out = {};
+      const runs = (window.BC.manifest || [])
+        .filter(r => r.iso === st.iso && r.id !== st.runId)
+        .sort((a, b) => String(a.id).localeCompare(String(b.id)));  // oldest first: newest overwrites
+      for (const r of runs) {
+        const linked = r.holdout?.keeper === st.runId;
+        for (const y of (r.years || []).map(Number)) {
+          if (!Number.isFinite(y) || own.has(y) || yearTier(y) === 'train') continue;
+          if (!linked && r.holdout?.keeper) continue;  // linked to a DIFFERENT keeper
+          out[y] = { runId: r.id, tier: r.holdout?.tier || yearTier(y), definition: r.definition || '', linked };
+        }
+      }
+      return out;
+    }
+
+    function holdoutYears() { return Object.keys(st.holdoutRuns).map(Number).sort((a, b) => a - b); }
+    function isHoldoutYear(y) { return Object.prototype.hasOwnProperty.call(st.holdoutRuns, String(y)); }
+    /* Which run a YEAR's numbers actually came from — the selected run for its
+       own years, the companion for a held-out one. Any per-year label that
+       names a run must use this, never st.runId, or a held-out year's table
+       reads as the keeper's own result. */
+    function yearRunId(y) { return st.holdoutRuns[y]?.runId || st.runId; }
+    /* Every year the selector may offer: solved-here first, then held-out. */
+    function selectableYears() { return [...runYears(), ...holdoutYears()]; }
+
+    /* Load a holdout year's payload from its companion run. Idempotent. */
+    async function ensureHoldoutYear(y) {
+      if (st.holdoutData[y]) return true;
+      const src = st.holdoutRuns[y];
+      if (!src) return false;
+      const data = await loadRun(src.runId);
+      const yd = data?.years?.[y] || data?.years?.[String(y)] || data?.[y] || data?.[String(y)];
+      if (!yd) return false;
+      st.holdoutData[y] = yd;
+      return true;
+    }
 
     /* Decode base64-encoded Float32 CF/dispatch arrays. */
     function dec(b) {
@@ -241,7 +340,7 @@
        — a panel missing in one year renders its own note instead of vanishing. */
     function nfGroups() {
       const seen = new Map();
-      for (const yr of (META().years || [])) {
+      for (const yr of selectableYears()) {
         for (const k of Object.keys(nfPanels(yr))) {
           if (!seen.has(k)) seen.set(k, nfPanels(yr)[k].label || k);
         }
@@ -262,7 +361,7 @@
        the payload panel). */
     function grpLabel(grp) {
       if (isNF(grp)) {
-        for (const yr of (META().years || [])) {
+        for (const yr of selectableYears()) {
           const e = nfPanels(yr)[nfKey(grp)];
           if (e) return e.label || nfKey(grp);
         }
@@ -822,16 +921,24 @@
         $('#bcTop').style.display = '';
 
         const meta = META();
-        const years = meta.years || [];
+        // Holdout companions are resolved BEFORE the year is chosen, so a
+        // deep-linked #year=2022 on a keeper resolves instead of falling back.
+        st.holdoutRuns = holdoutCompanions();
+        st.holdoutData = {};
+        const own = runYears();
+        const years = selectableYears();
         if (!st.year || !years.includes(parseInt(st.year))) {
-          st.year = years[0] || 2024;
+          // Default to a year the run solved ITSELF — never silently open on
+          // someone else's held-out year.
+          st.year = own[0] || years[0] || 2024;
         }
         st.year = Number(st.year);
+        if (isHoldoutYear(st.year)) await ensureHoldoutYear(st.year).catch(() => false);
 
         // Init zones
         if (!st.zones.size) st.zones = new Set(meta.zones || []);
 
-        buildYearSelector(years);
+        buildYearSelector();
         buildClassSelector();
         buildZoneChips();
         syncTopbar();
@@ -845,19 +952,71 @@
     /* ================================================================
        YEAR / CLASS / ZONE / VIEW SELECTORS
        ================================================================ */
-    function buildYearSelector(years) {
+    /* Year control — a DROPDOWN (2026-08-09; it was a seg-ctrl button row).
+       Two optgroups keep the rule-22 provenance visible in the control itself
+       rather than only in the banner below it: the years this run solved, and
+       the held-out years that were solved on this keeper's frozen recipe by a
+       companion run. A holdout entry names its tier, so no one can pick 2022
+       without seeing that it is not a tuned year. */
+    function buildYearSelector() {
       const sel = $('#yearSel');
-      sel.innerHTML = years.map(y =>
-        `<button data-y="${y}" class="${Number(y) === Number(st.year) ? 'active' : ''}">${y}</button>`
-      ).join('');
-      sel.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => {
-          st.year = Number(btn.dataset.y);
-          hashState.update('year', st.year);
-          sel.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
-          clearAggCache(); render();
-        });
-      });
+      const own = runYears();
+      const held = holdoutYears();
+      const opt = y => `<option value="${y}"${Number(y) === Number(st.year) ? ' selected' : ''}>${y}</option>`;
+      let html = '';
+      if (own.length && held.length) {
+        html += `<optgroup label="Solved in this run">${own.map(opt).join('')}</optgroup>`;
+        html += `<optgroup label="Held out (rule 22)">` + held.map(y =>
+          `<option value="${y}"${Number(y) === Number(st.year) ? ' selected' : ''}>${y} — ${esc(TIER_LABEL[st.holdoutRuns[y].tier] || st.holdoutRuns[y].tier)}</option>`
+        ).join('') + `</optgroup>`;
+      } else {
+        html = (own.length ? own : held).map(opt).join('');
+      }
+      sel.innerHTML = html;
+      sel.value = String(st.year);
+      sel.onchange = async () => {
+        const y = Number(sel.value);
+        if (isHoldoutYear(y)) {
+          const ok = await ensureHoldoutYear(y).catch(() => false);
+          if (!ok) {
+            // Keep the control truthful rather than rendering an empty year.
+            sel.value = String(st.year);
+            const diag = $('#diag');
+            diag.textContent = `Holdout year ${y} could not be loaded from ${st.holdoutRuns[y]?.runId || 'its companion run'}.`;
+            diag.style.display = '';
+            return;
+          }
+          $('#diag').style.display = 'none';
+        }
+        st.year = y;
+        hashState.update('year', st.year);
+        clearAggCache(); render();
+      };
+    }
+
+    /* Banner shown whenever the selected year is NOT one this run solved. It
+       names the companion run the data came from and carries rule 22's own
+       reading of the tier, because the single most misusable number on this
+       dashboard is a held-out result quoted as a certified skill number. */
+    function holdoutYearBanner() {
+      if (!isHoldoutYear(st.year)) return '';
+      const src = st.holdoutRuns[st.year];
+      const caveat = src.tier === 'validation'
+        ? 'Validation tier: ITERABLE model-SELECTION evidence — a miss may send the lane back to re-tune 2023–2025 and re-solve. This is NOT a certified out-of-sample skill number and must never be quoted as one.'
+        : src.tier === 'locked_test'
+          ? 'Locked-test tier: TOUCH-ONCE. Scored exactly once with the frozen keeper config and recorded whatever it is; no calibration change may respond to it.'
+          : 'Out-of-training year.';
+      const tierCls = src.tier === 'locked_test' ? 'tier-locked_test' : 'tier-validation';
+      return `<div class="bc-panel holdout-year-note ${tierCls}">
+        <h2>${esc(String(st.year))} is a held-out year <span class="keeper-badge tier-badge">${esc(TIER_LABEL[src.tier] || src.tier)}</span></h2>
+        <p class="bc-narration" style="margin-top:0;border-top:0;padding-top:0"><span class="ndef">
+          The keeper <span class="run-id-link">${esc(st.runId)}</span> did not solve ${esc(String(st.year))}.
+          The year-scoped views (Charts, Tables) draw it from <span class="run-id-link">${esc(src.runId)}</span> —
+          the same frozen recipe replayed on a year never tuned against${src.linked ? '' : ' (link inferred from the run registry: that run carries no stamped <code>holdout.keeper</code> block)'}.
+          The Report view above stays on the keeper's own solve years by design, so the two are never mixed.
+          <strong>${esc(caveat)}</strong>
+        </span></p>
+      </div>`;
     }
 
     function buildClassSelector() {
@@ -931,6 +1090,9 @@
         case 'charts': renderCharts(content); break;
         case 'tables': renderTables(content); break;
       }
+      // Provenance first: a held-out year is labelled above whatever it drew.
+      const banner = holdoutYearBanner();
+      if (banner) content.insertAdjacentHTML('afterbegin', banner);
     }
 
     /* ================================================================
@@ -1051,7 +1213,11 @@
 
     function renderReport(el) {
       const meta = META();
-      const years = meta.years || [];
+      // The run's OWN years only. The Report is the run's whole-run summary, so
+      // a held-out year is never folded into it silently — it is reachable from
+      // the year dropdown (Charts / Tables) behind its own provenance banner,
+      // and summarised by the Validation Touchpoint panel below.
+      const years = runYears();
       const reg = st.runMeta || {};
       let html = '';
 
@@ -2006,7 +2172,7 @@
       const volBand = Math.min(SUM_TOL_LOAD_FRAC * totalLoad(yr), SUM_TOL_LOAD_CAP);
 
       let h = `<div class="bc-panel"><h2>Generation mix <span class="panel-sub">(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 &minus; BTM); CHP shown separately, as C1 gates it; BTM excluded — grid-delivered only)</span></h2>`;
-      h += `<p class="panel-sub">${esc(RUN(yr).label || st.runId)} generation ${mGen.toFixed(1)} TWh &middot; actual ${aGen.toFixed(1)} TWh`
+      h += `<p class="panel-sub">${esc(RUN(yr).label || yearRunId(yr))} generation ${mGen.toFixed(1)} TWh &middot; actual ${aGen.toFixed(1)} TWh`
         + (mImp != null ? ` &middot; + net imports ${mImp.toFixed(1)} (actual ${aImp == null ? '—' : aImp.toFixed(1)}) &rarr; supply ${(mGen + mImp).toFixed(1)} TWh vs load ${load.toFixed(1)} TWh` : '') + `</p>`;
       if (prelim) h += '<p class="panel-sub" style="color:#9a5b12"><b>Preliminary EIA-923 vintage:</b> only <span class="badge-923 ok">&#10003; 923</span> classes are verified-complete and gate the C1 fuel-mix test; <span class="badge-923 inc">&#9888; 923</span> (incomplete) and <span class="badge-923 imm">&mdash; 923</span> (immaterial) classes are shown for reference but not gated.</p>';
       h += `<div class="bc-table-wrap"><table>
