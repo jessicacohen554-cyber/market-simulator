@@ -240,6 +240,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # Found by FFR-8A Phase 3's pin-test run and repaired 2026-08-08
     # (single-field drop scan blamed exactly this field).
     "unit_outage_lp_capacity_basis",
+    # caiso-186 published seasonal capability basis for combined cycles (GATED
+    # default-off; every consumer reads it via getattr, and it additionally
+    # requires cc_nameplate_summer_derate, so the off path is byte-inert).
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline) —
+    # caiso-184's omission of exactly this step, which moved the pinned
+    # default key and needed an FFR-8A backfill, is why it is done here.
+    "cc_winter_capability_basis",
     # FFR-5E near-term VRE procurement channel (GATED default-off): dropped
     # from the hash at its default so every pre-existing cache key is
     # byte-stable; an armed run injects committed EIA-860 pipeline MW into the
@@ -884,6 +891,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # above: caiso-184 landed the field unregistered, moving the pinned
     # default key (nyiso-128 pattern, third occurrence).
     "unit_outage_lp_capacity_basis": "False",
+    # Added by caiso-186 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "cc_winter_capability_basis": "False",
     "vre_procurement_additions_enabled": "False",
     # Backfilled at FFR-7B alongside the field's (missing) registration above:
     # nyiso-128 landed the field unregistered, moving the pinned default key.
@@ -9160,6 +9170,82 @@ class ScenarioConfig:
     # EXACTLY on every EIA-sourced CC bin (median ratio 1.000 vs 1.072 unraised).
     # Per-ISO adoptable and byte-inert while off; no other ISO moves.
     unit_outage_lp_capacity_basis: bool = False
+
+    # PUBLISHED seasonal capability basis for combined cycles
+    # (cc_winter_capability_basis, off by default; caiso-186). Acts ONLY
+    # alongside cc_nameplate_summer_derate — the two are one seasonal-capability
+    # statement, and with the parent off it is a documented no-op.
+    #
+    # THE DEFECT IT REPAIRS. cc_nameplate_summer_derate is a ONE-SEASON
+    # instrument applied to a TWO-SEASON published record. It raises the CC bin
+    # to full EIA-860 NAMEPLATE and derates Jun-Sep by the published
+    # net_summer / nameplate ratio, which leaves the OFF-summer capability
+    # resting on nameplate — a premise cc_summer_capacity's own docstring states
+    # ("full nameplate in winter") and that EIA-860 never publishes. EIA-860's
+    # Operable sheet carries THREE ratings per generator (Nameplate, Summer and
+    # WINTER capacity); the model consumed the first two. The CEMS record
+    # corroborates the published winter rating and refutes nameplate: across the
+    # 7 CAISO CC plants of the reconcile table, off-summer p999 / published
+    # winter = 0.906-1.001 while / nameplate = 0.73-0.89
+    # (FINDING-caiso185 §5). Plant 358 Mountainview is the mirror image — its
+    # published winter capacity (1110.0 MW) EXCEEDS nameplate (1036.8 MW) and its
+    # demonstrated off-summer peak is 1111.0 MW — so this is a two-directional
+    # basis change, not a haircut: across the 67 California CC plants
+    # winter / nameplate spans 0.571-1.089 (55 below 1, 8 above).
+    #
+    # THE MECHANISM. The capacity basis becomes the PUBLISHED seasonal envelope
+    # B = max(net_summer, winter) (fleet.cc_seasonal_capability_ratios), and each
+    # season's availability carries its OWN published rating:
+    #   summer      mean capability = B x (net_summer / B) = net_summer
+    #   off-summer  mean capability = B x (winter      / B) = winter
+    # Nameplate — the one rating no season's capability equals — leaves the
+    # capacity basis entirely. Under temp_dependent_derate the temperature curve
+    # is anchored TWICE (its summer mean to net_summer / B, exactly as today, and
+    # its off-summer mean to winter / B) instead of once; that is the only
+    # symmetric completion of the incumbent's own choice of statistic, and it
+    # replaces an off-summer level which today is an incidental by-product of the
+    # summer-mean rescale being applied to all 8760 hours.
+    #
+    # A BASIS SWAP, NOT A SECOND DERATE (rule 19 [R-ONE-MECH]). ZERO fitted
+    # scalars and ZERO DOF: every quantity is an EIA-860 PUBLISHED rating or the
+    # ratio of two of them, both availability-EXCLUSIVE — which is what makes
+    # them admissible in the capacity slot where a realized CEMS output is not
+    # (the caiso-185 refusal: a demonstrated peak is availability-INCLUSIVE, so
+    # writing it into capacity_mw applies every multiplier a second time). The
+    # CEMS record enters this mechanism ONLY as a check, never as an input.
+    # Consequence declared, not hidden: because availability is clipped to
+    # [0, 1], moving pmax from nameplate to B also bounds SUMMER capability at
+    # the published envelope for plants whose nameplate materially exceeds both
+    # published ratings. Reaches only CC_REGULAR / CC_CHP; a plant absent from
+    # either EIA-860 map falls back to the incumbent treatment in BOTH
+    # fleet_to_bins and the availability builder, so the two can never disagree.
+    # outages._iso_plant_capacity is deliberately UNCHANGED: the unit-outage
+    # numerator is EIA-860 nameplate, so its denominator stays nameplate and the
+    # derate remains the dimensionless share unit_nameplate / plant_nameplate
+    # applied to whatever capacity the LP carries (caiso-184's identity intact).
+    #
+    # *** REFUSED AT CAISO — ARMED BY NO KEEPER, DO NOT ARM WITHOUT READING THIS.
+    # *** caiso-186 killed it BEFORE SOLVE on its own pre-registered G-NOCONTRA
+    # bar (results/calibration/FINDING-caiso186-seasonal-capability-2026-08-09.md).
+    # The basis is sound and the arithmetic is exact — but it composes with a
+    # SECOND mechanism that the incumbent nameplate basis was silently absorbing.
+    # In a historic backcast a CC unit's availability starts at 1 - WEFOR, and on
+    # the CAISO keeper wefor_residual is None so the FULL statistical CC WEFOR
+    # (3.5 %) applies ON TOP of the CAMPD outage overlay that already carries
+    # every real outage. Peak capability is therefore 0.965 x the capacity basis,
+    # measured at exactly 0.965 on every violated plant-season. Nameplate supplies
+    # 1.4-37.1 % of headroom over the published rating, which absorbs that 3.5 %;
+    # the published basis removes the headroom, and the model then asserts an
+    # incapability the CEMS record refutes at 4 of 27 commensurable CAISO CC
+    # plants (1.3-3.9 % below demonstrated output) — the caiso-185 failure mode
+    # reached from the opposite direction. Rule 19 [R-ONE-MECH]: the rating
+    # headroom and the statistical WEFOR are two mechanisms doing one job, and
+    # they must be reconciled BEFORE any published-rating capacity basis is
+    # admissible. Retained (not deleted) because it carries zero fitted content —
+    # there is no answer to key, so rule 26 [R-DELETE]'s re-armable-answer-key
+    # hazard does not apply — and because the named successor reuses this exact
+    # code once the WEFOR double count is resolved.
+    cc_winter_capability_basis: bool = False
 
     # COAL net-summer capacity derate (coal_nameplate_summer_derate, off by
     # default). The exact coal analogue of cc_nameplate_summer_derate above: a

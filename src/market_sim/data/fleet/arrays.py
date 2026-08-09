@@ -424,6 +424,29 @@ def _availability_matrix(
         # derate are also dropped for CC — the CAMPD outage overlay already
         # carries every real outage, so the statistical model double-counts.
         cc_np_derate = getattr(config, "cc_nameplate_summer_derate", False)
+        # PUBLISHED seasonal capability basis (config.cc_winter_capability_basis,
+        # caiso-186). Acts ONLY alongside cc_nameplate_summer_derate — the two
+        # are one seasonal-capability statement, and with the parent off the
+        # fleet carries net-summer capacity to which a winter rating cannot be
+        # applied without a basis change fleet_to_bins did not make.
+        cc_winter_basis = cc_np_derate and getattr(
+            config, "cc_winter_capability_basis", False
+        )
+
+        def _cc_seasonal_pair(gen: "Generator") -> tuple[float, float] | None:
+            """``(summer_ratio, winter_ratio)`` for a CC gen, or ``None``.
+
+            ``None`` whenever the flag is off, the generator is not a CC group,
+            or the plant is absent from either EIA-860 map — in every one of
+            those cases the caller falls back to the incumbent
+            ``cc_summer_derate_ratio`` treatment, which is EXACTLY the fallback
+            ``fleet_to_bins`` takes for the same plant, so the capacity basis
+            and the availability legs can never disagree.
+            """
+            if not cc_winter_basis or gen.plant_group not in ("CC_REGULAR", "CC_CHP"):
+                return None
+            return _pkg_ns().cc_seasonal_capability_ratios(int(gen.plant_code))
+
         cc_np_derate_backcast = (
             cc_np_derate
             and getattr(config, "outage_source", "statistical") == "historic"
@@ -736,9 +759,25 @@ def _availability_matrix(
             # that is a reshape, not a level change).
             if not _td_covers(gen):
                 if is_cc_np:
-                    ratio = _pkg_ns().cc_summer_derate_ratio(int(gen.plant_code))
-                    if ratio is not None and ratio < 1.0:
-                        availability[g_idx, summer] *= ratio
+                    _pair = _cc_seasonal_pair(gen)
+                    if _pair is None:
+                        ratio = _pkg_ns().cc_summer_derate_ratio(int(gen.plant_code))
+                        if ratio is not None and ratio < 1.0:
+                            availability[g_idx, summer] *= ratio
+                    else:
+                        # config.cc_winter_capability_basis (caiso-186): the bin
+                        # is carried at the PUBLISHED seasonal envelope
+                        # B = max(net_summer, winter), so each season takes its
+                        # OWN published rating. The off-summer leg is the exact
+                        # mirror of the summer leg — the same block, the same
+                        # guard, the same source sheet — replacing the
+                        # unpublished "full nameplate off-summer" premise, not
+                        # stacking a second derate on it (rule 19 [R-ONE-MECH]).
+                        _sr, _wr = _pair
+                        if _sr < 1.0:
+                            availability[g_idx, summer] *= _sr
+                        if _wr < 1.0:
+                            availability[g_idx, ~summer] *= _wr
                 else:
                     summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
                     if summer_derate:
@@ -852,8 +891,25 @@ def _availability_matrix(
                 # was never removed and the curve is already annual-mean 1.0 —
                 # re-anchoring it on the summer mean there would re-introduce the
                 # level move the mode exists to avoid.
+                _cc_pair = None if _td_anchored else _cc_seasonal_pair(gen)
                 if _td_anchored:
                     _anchor = None
+                elif _cc_pair is not None:
+                    # config.cc_winter_capability_basis: the SAME summer anchor,
+                    # expressed against the published seasonal envelope B the
+                    # bin is now carried at (net_summer / B, not
+                    # net_summer / nameplate), so B x anchor is the published
+                    # summer rating exactly as nameplate x (ns/np) was.
+                    # Applied UNCONDITIONALLY, including at a ratio of exactly
+                    # 1.0 — unlike the incumbent branch below, whose `< 1.0`
+                    # skip leaves the curve UNANCHORED for a plant whose summer
+                    # rating equals its nameplate, so that plant's summer mean
+                    # lands at _sm x the rating instead of at the rating. This
+                    # flag's identity is "each season's mean IS its published
+                    # rating", for every plant or none; a per-plant exemption
+                    # would be exactly the subsetting PRECHECK-caiso186 §6.4
+                    # forbids.
+                    _anchor = _cc_pair[0]
                 elif cc_np_derate and gen.plant_group in ("CC_REGULAR", "CC_CHP"):
                     _r = _pkg_ns().cc_summer_derate_ratio(int(gen.plant_code))
                     _anchor = _r if (_r is not None and _r < 1.0) else None
@@ -865,6 +921,23 @@ def _availability_matrix(
                     _sm = float(np.mean(raw[summer]))
                     if _sm > 0.0:
                         raw = raw * (_anchor / _sm)
+                if _cc_pair is not None:
+                    # The OFF-SUMMER anchor — the mirror of the summer one above
+                    # and the whole point of the flag. Today the curve is
+                    # anchored on ONE season, and its summer-mean rescale is
+                    # applied to all 8760 hours, so the off-summer LEVEL is an
+                    # incidental by-product of a summer statistic that no
+                    # published quantity asserts (PRECHECK-caiso186 §1a).
+                    # Re-anchor the off-summer block so its own mean is the
+                    # published winter ratio: B x (winter / B) = the published
+                    # WINTER rating. The block is rescaled AFTER the summer
+                    # rescale and about its own mean, so the result is
+                    # independent of the summer leg and the summer block is
+                    # untouched.
+                    _osm = float(np.mean(raw[~summer]))
+                    if _osm > 0.0:
+                        raw = raw.copy()
+                        raw[~summer] = raw[~summer] * (_cc_pair[1] / _osm)
                 if _td_anchored:
                     # The mean-anchored curve is >1 on cold hours BY DESIGN (a
                     # gas turbine makes more than its rating point when the air
@@ -873,6 +946,20 @@ def _availability_matrix(
                     # into a net level cut; the trailing clip on availability
                     # still bounds the result at the pmax basis.
                     availability[g_idx, :] *= np.maximum(raw, 0.0)
+                elif _cc_pair is not None:
+                    # H-CLIP (PRECHECK-caiso186 §3b). The off-summer re-anchor
+                    # can push the curve above 1 on the coldest hours; clipping
+                    # it here would keep only the downward half and land the
+                    # off-summer mean BELOW the published winter rating the
+                    # anchor just set — the same asymmetry the mean-anchored
+                    # branch above documents. The off-summer block therefore
+                    # takes the lower bound only; the trailing clip on
+                    # availability still bounds capability at the pmax basis B,
+                    # so no capacity is invented above the published envelope.
+                    # The SUMMER block keeps the incumbent clip unchanged.
+                    _rawc = np.clip(raw, 0.0, 1.0)
+                    _rawc[~summer] = np.maximum(raw[~summer], 0.0)
+                    availability[g_idx, :] *= _rawc
                 else:
                     availability[g_idx, :] *= np.clip(raw, 0.0, 1.0)
             np.clip(availability, 0.0, 1.0, out=availability)
