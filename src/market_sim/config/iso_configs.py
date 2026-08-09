@@ -1420,3 +1420,41 @@ def apply_reliability_floor_overrides(
         changes = {f: ov[f] for f in ("enabled", "floor_pct", "threshold") if f in ov}
         out.append(_dc.replace(spec, **changes) if changes else spec)
     return out
+
+
+def apply_iso_scenario_defaults(config, iso: str):
+    """Return ``config`` with the ISO's ``default_scenario_overrides`` applied.
+
+    An ISO-level default only fills a field the CALLER left at the
+    :class:`~market_sim.config.scenarios.ScenarioConfig` default — an explicit
+    caller value always wins. That is the rule this function exists to state
+    once (rule 19 ``[R-ONE-MECH]``): it was inlined in
+    ``runner.run_scenario_iso``, so every OTHER reader of a pre-solve config
+    saw the UNRESOLVED posture. Concretely, MISO's overrides arm
+    ``miso_rps_compliance_regions`` (owner D-26) and
+    ``entry_vre_capacity_revenue``, so a leg that passes no flag still SOLVES
+    the K-row grain — and a run record built from the caller's own config
+    reported it as OFF, which is the FFR-2E defect (a record must report the
+    posture it solved, not assert one). ARM3-MEASURE hit exactly that.
+
+    Args:
+        config: The pre-resolution ``ScenarioConfig``.
+        iso: ISO code whose ``ISOConfig.default_scenario_overrides`` to apply.
+
+    Returns:
+        The config with the ISO's defaults applied — the SAME object when the
+        ISO declares no overrides or the caller has set every one of them, so
+        callers that already resolved stay byte-identical.
+    """
+    from market_sim.config.scenarios import ScenarioConfig
+
+    overrides = get_iso_config(iso).default_scenario_overrides
+    if not overrides:
+        return config
+    defaults = ScenarioConfig()
+    to_apply = {
+        k: v
+        for k, v in overrides.items()
+        if getattr(config, k) == getattr(defaults, k)
+    }
+    return config.with_overrides(**to_apply) if to_apply else config
