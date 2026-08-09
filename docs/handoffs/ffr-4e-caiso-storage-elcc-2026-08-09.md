@@ -322,3 +322,274 @@ base-year gap    +1,036.4 MW -> -1,708.1 MW
 
 So the arithmetic predicts the base-year adequacy deficit **closes**. Whether
 that collapses row 4's numerator is what the solve answers.
+
+---
+
+## 5. FC-2 row 4, re-read at this head — **STILL FAIL. That is the finding.**
+
+Both arms solved cold at this head, 2026–2030, five years sequential in each
+invocation, separate `--out-dir`s, concurrent invocations (rule 12).
+
+```
+control  scripts/run_full_horizon.py --iso CAISO --start-year 2026 --end-year 2030 \
+           --out-dir results/ffr4e/caiso-control
+treated  ... --caiso-storage-nqc-accreditation --out-dir results/ffr4e/caiso-treated
+```
+
+Runtime cache keys **`3d3e836a176ac9cd`** (control) / **`bf9b4d739a6b3ab8`**
+(treated) — distinct in the real run, so the two arms could not have shared a
+bundle. `caiso_storage_nqc_accreditation` is recorded `False` / `True` in each
+arm's own `run_config.json` (rule 24).
+
+### 5.1 The control re-establishes, and P-3's prediction is confirmed
+
+| | backstop MW | total additions MW | **row 4** |
+|---|--:|--:|--:|
+| **control** | **8,186.3** | 15,590.7 | **52.51 % FAIL** |
+| **treated** | **5,292.3** | 12,696.7 | **41.68 % FAIL** |
+
+The control reproduces FFR-4D's **treated** arm to the megawatt and to the digit
+(8,186.3 / 52.51 %), exactly as P-3 predicted it would — confirming that FFR-4D's
+fleet fix is merged and live at this head, and that this session's control is the
+right same-head baseline. Scored by `scripts/forecast_verdict.py --tier t1f`, not
+by hand: *"row4: backstop share 52.5 % > 30 % (administrative over-build)"* →
+*"row4: backstop share 41.7 % > 30 %"*.
+
+### 5.2 The accreditation chain reproduces the solve-free projection exactly
+
+| | control | treated | Δ |
+|---|--:|--:|--:|
+| `storage_firm_mw` 2026 (battery + PS) | 12,554.043 | 15,298.552 | **+2,744.509** |
+| accredited firm 2026 | 56,270 | **59,014** | +2,744 |
+| requirement 2026 | 57,306 | 57,306 | — |
+| reserve margin 2026 | 12.92 % | **18.43 %** | +5.5 pp |
+
+§4.3's projection (+2,744.5 MW; 56,269.6 → 59,014.1) is reproduced **to the
+megawatt** by the solve, and pumped storage is unmoved in both arms.
+
+### 5.3 What DID clear — real structural gains, reported at full magnitude
+
+| invariant | control | treated |
+|---|---|---|
+| **I7** (accredited firm ≥ requirement) | **FAIL** — 2026 (56,270 < 57,306), 2027 (54,969 < 58,671), 2028 (57,621 < 60,082) | **FAIL — 2027 only** (57,713 < 58,671, short 958 MW) |
+| **I12** (reserve-margin band) | **FAIL** — 2026 12.9 %, 2027 7.7 %, 2028 10.3 % | **WARN** — 2027 13.1 % only |
+| I3 (unserved/dump) | PASS | PASS |
+| I13 (cobweb) | PASS | PASS |
+
+**The base-year adequacy deficit CLOSES.** Two of three short years disappear and
+I12 is downgraded FAIL → WARN. The base-year gap that FFR-4D left at 1,036.4 MW
+short is gone.
+
+### 5.4 Why row 4 nonetheless stays FAIL — and it is not the accreditation
+
+The numerator falls **35.4 %** (8,186.3 → 5,292.3 MW) but the share falls only
+**10.8 pp**, because *the backstop builds are most of the denominator too*: when
+the administrative channel builds less, total additions fall with it.
+
+The decisive observation is what did **not** move:
+
+| channel | control | treated |
+|---|--:|--:|
+| renewable builds | 5,404.4 MW (4,702.2 in 2029 + 702.2 in 2030) | **5,404.4 MW — identical** |
+| **economic** thermal entry | 2,000.0 MW (2029, one block) | **2,000.0 MW — identical** |
+| reserve-backstop thermal | 8,186.3 MW | 5,292.3 MW |
+| storage builds | 0.0 | 0.0 |
+
+**Every megawatt of the move is backstop; the economic entry screen is completely
+unresponsive to a 2.7 GW improvement in the accredited ledger.** Across a
+five-year horizon in which the requirement grows ~1.3 GW/yr, economic entry
+supplies exactly one 2,000 MW block, in both arms, and storage entry supplies
+nothing at all. Adequacy is therefore met administratively no matter how correct
+the accreditation ledger becomes — which is precisely the behaviour row 4 exists
+to surface.
+
+**So the pre-registered FINDING branch (P-4) fires.** With the fleet right
+(FFR-4D) *and* the accreditation right (this session), row 4 is still FAIL. The
+two fleet/accreditation causes together took it 65.48 % → 52.51 % → 41.68 %, a
+23.8 pp improvement that is real, structurally grounded and still **11.7 pp above
+the CAVEAT line and 31.7 pp above PASS**. The residual is not an accreditation
+quantity. It is an **entry-economics** object: the screen that decides whether a
+merchant unit builds prices new capacity through the capacity-price seam.
+
+**That object is NOT this lane's, and nothing in it was read, changed or quoted.**
+No further lever was pulled after this result, per P-4. It may be chartered later,
+by someone else, on its own rule-14 merits — and if it is, it must be justified as
+a correct market representation, never as the thing that turns row 4 green.
+
+### 5.5 Nothing was tuned to the result
+
+The registry value was fixed in §3 **before** either arm was solved, from two
+published/measured megawatt quantities, and was not revisited after the row-4
+read. The construction that makes row 4 look *worse* than FFR-4D's routed
+estimate — the nameplate basis, which cuts the credit from 0.9458 to 0.8651 and
+the effect from +3,990.6 to +2,744.5 MW — is the one adopted (rule 14: the
+accurate value is kept even when it is adverse to the residual; rule 1: the
+mechanism is judged on faithfulness, not on the fit).
+
+---
+
+## 6. D-4 — CAISO storage ELCC portfolio dilution: **HOLD 1.0, assumption stated**
+
+Per P-5. No published CAISO/CPUC portfolio-dilution object exists at citation
+quality:
+
+* the committed **E3/Astrapé Incremental ELCC Study** publishes **marginal**
+  tranche ELCCs, not a fleet-average; its 4-hour series is **non-monotone** in
+  penetration (96.3 → 90.7 → 75.1 @1,759 MW → 76.6 @4,123 → 74.0 @6,553 → 76.5);
+  and its axis is **cumulative MW *added* since a baseline**, a different
+  quantity from the `existing_storage_mw` the dilution is indexed on. Fitting a
+  portfolio line through that would be inventing a curve (rules 5 and 14). The
+  intake's own README already records why the marginal study cannot serve as a
+  whole-fleet ledger credit; this is the same finding for the same reason;
+* CAISO's SLRA Table 1.1 publishes **one realized point**, not a curve.
+
+So CAISO stays absent from both dilution registries and the factor stays **1.0**,
+which is **exactly right at the reference fleet** — 0.8651 *is* CAISO's realized,
+already-diluted fleet-average at 15,448 MW installed, so any further dilution
+there would double-derate it.
+
+**The stated caveat, written into the registry comment rather than left implicit:**
+above ~15.4 GW a forecast credits new CAISO storage at the accreditation its 2026
+fleet realized, with no penetration compression. That assumption runs **in favour
+of** accredited capacity — i.e. it makes adequacy look better, and it makes row 4
+look better — so it is disclosed here as an assumption that flatters the treated
+arm, not one that excuses it. A published CAISO/CPUC portfolio-ELCC-vs-penetration
+series would close it.
+
+---
+
+## 7. Open items, routed not fixed
+
+| id | item | why not here |
+|---|---|---|
+| **E-1** | **FC-2 row 4's residual is an ENTRY-ECONOMICS object** — economic thermal entry is a single invariant 2,000 MW block and storage entry is 0.0 MW across the whole horizon, in BOTH arms. Adequacy is met administratively regardless of the accreditation ledger. | §5.4. The capacity-price anchor route is **owner-declined in D-15's charter** and was refused here. Any successor must justify it on its own rule-14 merits, never as the thing that turns row 4 green. |
+| **E-2** | **`caiso_storage_nqc_accreditation` arming posture is an OWNER decision.** The mechanism is built, measured, and default-OFF; it is CAISO's own published accreditation and rule 14 favours it over the generic curve, but arming it MOVES THE DESIGNATED BACKCAST KEEPER (§4.2: +2,450.5 / +3,558.6 / +4,979.0 MW). | Arming would require a CAISO keeper re-solve + re-gate under rules 15/16 — its own session in the CAISO lane, exactly like its VRE sibling `caiso_nqc_accreditation` (owner decision D.1). |
+| **E-3** | **The forecast lane's synthetic 70/25/5 duration mix is measurably wrong for CAISO** (real mix: mean 3.43 h, 72.9 % at ~4 h, 21.3 % under 2.5 h). This session did NOT fix it, because on the whole-class rung it is inert for CAISO accreditation. | It still drives `STORAGE_TECHS` economics elsewhere (degradation, entry). A separate, CAISO-scoped question; touching it here would have been an unchartered second mechanism. |
+| **E-4** | **ERCOT's storage row (FFR-4D D-3) is untouched.** | Rule 25 `[R-ISO-SCOPE]` — ERCOT's lane. |
+| **E-5** | **The whole-class rung is CAISO-only.** Other ISOs that accredit dispatchable storage at demonstrated capability may have the same shape defect, unmeasured. | Each needs its own lane and its own published source; a verdict never transfers (rule 28(d)). |
+
+**CLOSED by this session:** FFR-4D **D-1** (the rate is intaken and reconciled),
+**D-4** (adjudicated, held at 1.0 with the assumption stated), and **D-7**
+(Table 1.1 is digitized first-party for every class, no longer FFR-3P's
+transcription).
+
+---
+
+## 8. Governance
+
+* **THE ANCHOR REFUSAL — honoured, formally.** No CAISO capacity-price anchor,
+  net-CONE, CPM soft-offer cap or entry-screen price term was read, changed, or
+  quoted. `data/raw/capacity-market/demand-curve/caiso/` was not opened. **No
+  row-4 improvement via that route is claimed anywhere**, and §5.4 reports row 4
+  *not clearing* rather than reaching for the route that might clear it. §7 E-1
+  restates that the object belongs to a future, separately-chartered lane.
+* **Rule 1 `[R-STRUCT]` / rule 11.** Nothing is tuned to a residual. The registry
+  value was fixed before either arm solved. The basis correction is **adverse**
+  to the treated arm (it cuts the effect from +3,990.6 to +2,744.5 MW) and is
+  adopted anyway; the still-FAIL result is written as the finding rather than
+  chased.
+* **Rule 5 `[R-NO-MAGIC]`.** Every value is a published MW or a ratio of two of
+  them, cited to a committed source. The one place a number could have been
+  invented — the dilution curve — is where the session declined to invent it.
+* **Rule 13 `[R-MEASURED]`.** Both terms of the ratio regenerate for a forward
+  year from annual publications and respond to changed conditions. It is an
+  accreditation *rule*, not a measured outcome; nothing is pinned to actuals.
+* **Rule 14 `[R-ACCURATE]`.** The published accreditation replaces a generic
+  estimate. The three misalignments (§3) are **reconciled and documented**, not
+  buried: the duration-mix question is answered with a measurement that resolves
+  *against* the by-duration route, the NDC↔nameplate basis is corrected rather
+  than substituted, and the deliverability and hybrid boundaries are stated.
+* **Rule 19 `[R-ONE-MECH]`.** Rung 1 **replaces** rung 2; it never multiplies it
+  (pinned by test). One resolver, `storage_accreditation_credit`, so an ISO's
+  basis cannot be applied on one consumer and not another.
+* **Rule 20 `[R-DOF]`.** **Zero new free parameters.** The registry value is a
+  ratio of two published/measured quantities with no fitted term; no DOF ledger
+  entry is added, and no keeper's ledger changes (no keeper moved).
+* **Rule 22 `[R-HOLDOUT]`.** Forecast-mode **2026–2030 only**, plus in-sample
+  2023–2025 read solve-free for the keeper guard. **No out-of-training year was
+  solved, scored, read or approached.** CAISO holds no `complete` and no `final`
+  marker; both are respected and neither was written. Data intake is unrestricted
+  under the 2026-08-06 clarification (what is held out is the *score*, never the
+  *data*) — and this intake is applied consistently, not year-scoped.
+* **Rule 23 `[R-FROZEN-DERIVE]`.** The re-derivation licence is the source-data
+  vintage (CAISO's CY2026 publication), never a residual, and the deriver says so.
+  A committed test reconciles the registry literal against the digitized artifact
+  so it cannot drift silently.
+* **Rule 24 `[R-REGISTRY]`.** One `ScenarioConfig` field, one CLI flag, recorded
+  in both arms' `run_config.json`. No env var, no per-plant dict, no `getattr`
+  fallback literal.
+* **Rule 25 `[R-ISO-SCOPE]`.** CAISO only — the registry holds one ISO and the
+  gate resolves per ISO; **measured**: arming CAISO leaves ERCOT/PJM/MISO/NYISO/
+  NEISO byte-identical. ERCOT's parallel question is routed, not fixed. No
+  cross-ISO parameter or verdict was imported.
+* **Rule 27 `[R-PUSH]`.** Opus. No file ≥300 lines was rewritten from generated
+  content; every change is a local `Edit` of on-disk bytes, pushed via `git push`
+  on a freshly-rebased base, and **every pushed file ≥300 lines was blob-verified
+  against the remote** (line count + object hash) before the next commit.
+* **Rule 28 `[R-MECH-MATRIX]`.** Row `caiso_storage_nqc_accreditation` minted in
+  the same commit as its field (duty c) and its verdict updated in this session
+  from the solve (duty b).
+* **Cache.** Registered in `_CACHE_KEY_OPTIONAL_FIELDS` at `False`; the pinned
+  default key **`603c2498bf71d21d` is unmoved (measured)**, the armed config keys
+  distinctly, and the two solved arms took distinct runtime keys. Byte-identical
+  at its default, so — unlike FFR-4D's sibling field — this is **not** a same-key
+  invalidation and carries **no cache epoch**. No cached bundle in any ISO is
+  orphaned.
+* **Rules 15/16.** No *backcast* calibration run was produced, so there is nothing
+  for the backcast dashboard and no keeper changed. The two forecast-lane arms ARE
+  registered on the **forecast** dashboard via the single
+  `scripts/register_forecast_run.py` path (`--kind adequacy`), ids
+  `caiso-2026-2030-2026-08-09-ffr4e-caiso-{control,treated}` — the canonical
+  `frontend/data/hindcast/<id>.json` sidecars are committed; the
+  `frontend/data/forecast/` namespace is generated and gitignored, rebuilt by the
+  Pages deploy. *(This is a deliberate step beyond FFR-4D, whose identical two-arm
+  A/B was left unregistered.)* The dispatch parquets are **not** committed — the
+  slim artifacts (summaries, `run_config.json`, evolution ledgers, floor-retention
+  logs) are, per the pack-size rule.
+
+---
+
+## 9. Reproduction
+
+```bash
+uv sync                                    # ~2 min
+uv run python scripts/regenerate_clean.py  # ~50 min
+
+# the intake, first-party from the committed PDF
+uv run --with pypdf python scripts/data/derive_caiso_slra_class_accreditation.py --report
+
+# the reconciliation + the keeper guard, no solve
+uv run python -m pytest \
+  tests/unit/data/test_caiso_slra_class_accreditation.py \
+  tests/unit/model/test_storage_whole_class_accreditation.py -q
+
+# the real CAISO duration mix (§3.2)
+uv run python -c "
+import pandas as pd
+from market_sim.model.storage import _elcc_for_duration
+plant = pd.read_parquet('data/raw/eia-860/eia860_plant.parquet')
+ba = plant.set_index('Plant Code')['Balancing Authority Code']
+op = pd.read_parquet('data/raw/eia-860/eia860_energy_storage_operable.parquet')
+c = op[(op['Plant Code'].map(ba)=='CISO') & (op['Status']=='OP')].copy()
+c['pw'] = pd.to_numeric(c['Nameplate Capacity (MW)'], errors='coerce')
+c['en'] = pd.to_numeric(c['Nameplate Energy Capacity (MWh)'], errors='coerce')
+c = c[c['pw']>0]; tot = c['pw'].sum()
+print('nameplate', round(tot,1), 'mean duration', round(c['en'].sum()/tot,3))
+print('generic table on the REAL mix',
+      round(float((c['pw']*(c['en']/c['pw']).map(lambda d: _elcc_for_duration(d))).sum()/tot), 4))
+"
+
+# the two row-4 arms (concurrent invocations, years sequential within each)
+uv run python scripts/run_full_horizon.py --iso CAISO --start-year 2026 --end-year 2030 \
+  --out-dir results/ffr4e/caiso-control &
+uv run python scripts/run_full_horizon.py --iso CAISO --start-year 2026 --end-year 2030 \
+  --caiso-storage-nqc-accreditation --out-dir results/ffr4e/caiso-treated &
+wait
+
+# the row-4 verdict, from committed artifacts only
+for a in control treated; do
+  uv run python scripts/forecast_verdict.py --tier t1f \
+    --summary results/ffr4e/caiso-$a/full_horizon_summary.json \
+    --run-config results/ffr4e/caiso-$a/run_config.json | grep row4
+done
+```
