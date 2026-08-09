@@ -86,7 +86,13 @@ BELLY_HODS = (10, 11, 12, 13, 14, 15)
 # FINDING-caiso140 §C, the committed λ(S) walkdown (2025 defect hours, upper
 # bounds by that finding's own statement). S MW of ADDED PRICE-TAKING supply
 # in the Sep–Dec belly → annual C3a move in $/MWh.
-CAISO140_WALKDOWN_BELLY = {500: -0.048, 1000: -0.157, 1500: -0.313, 2000: -0.511, 3000: -0.731}
+CAISO140_WALKDOWN_BELLY = {
+    500: -0.048,
+    1000: -0.157,
+    1500: -0.313,
+    2000: -0.511,
+    3000: -0.731,
+}
 # the C3a-2025 gap the walkdown was measured against (FINDING-caiso140 §A)
 CAISO140_GAP_2025 = 2.904
 # FINDING-caiso140 §B: the Sep-Dec belly WATER wedge (model vs measured, both
@@ -148,7 +154,9 @@ def bench_rt_lw(year: int) -> float:
 
 def month_of_hour(year: int) -> np.ndarray:
     """Month (1–12) per hour-of-year on the non-leap 8760 calendar."""
-    stamps = pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(np.arange(HOURS + 24), unit="h")
+    stamps = pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(
+        np.arange(HOURS + 24), unit="h"
+    )
     stamps = stamps[~((stamps.month == 2) & (stamps.day == 29))][:HOURS]
     return stamps.month.to_numpy()
 
@@ -185,7 +193,9 @@ def main() -> None:
     }
 
     print("=" * 78)
-    print("caiso-186 owner sitting — BOUNDED C3a movement of the walled PS water-state intake")
+    print(
+        "caiso-186 owner sitting — BOUNDED C3a movement of the walled PS water-state intake"
+    )
     print("keeper 2026-08-09-caiso-184-c1-lpbasis · committed sidecars only · NO LP")
     print("=" * 78)
 
@@ -235,8 +245,12 @@ def main() -> None:
         # paired removal would tighten.
         chg_w = chg  # MW of load the correction could remove, per hour
         dis_w = dis  # MW of supply the correction is OBLIGED to remove
-        lam_chg = float((lam * chg_w).sum() / chg_w.sum()) if chg_w.sum() else float("nan")
-        lam_dis = float((lam * dis_w).sum() / dis_w.sum()) if dis_w.sum() else float("nan")
+        lam_chg = (
+            float((lam * chg_w).sum() / chg_w.sum()) if chg_w.sum() else float("nan")
+        )
+        lam_dis = (
+            float((lam * dis_w).sum() / dis_w.sum()) if dis_w.sum() else float("nan")
+        )
         act_ok = ~np.isnan(act)
         a_chg = (
             float((act[act_ok] * chg_w[act_ok]).sum() / chg_w[act_ok].sum())
