@@ -5383,3 +5383,168 @@ table incl. the two exclusions and the FR-22 treatments, the consumer map for it
 its fix-or-escalate outcome, the updated §4 table) — and the sentence the manager waits
 on: whether the fast tier is GREEN on main modulo the two excluded ercot_thermal items.
 ```
+
+## §0ad — THE LIFT IS CONDITIONALLY GRANTED; FFR-9A (storage trajectory) + FH-4-ERCOT dispatched (2026-08-09 @ `b367f02`)
+
+State delta since §0ac (full detail: Addendum AG): FFR-8B COMPLETE and clean — the
+re-based record flips the determination: **α MET, β MET (the gas_st false wave GONE
+ENTIRELY), γ satisfied in the information-gate sense, the price object REPAIRED with the
+residual attributed to the model's own fleet trajectory. THE FH-4/FH-5 LIFT IS
+CONDITIONALLY GRANTED** — FH-4 opens with the FH-1 §3.3 re-probe as a hard step-0 gate;
+ERCOT legs arm unified+restoration BY INVOCATION (no shipped-default flip); FFR-9A
+(the dominant-error storage-trajectory repair) is recommended to LAND FIRST. Also:
+FFR-5E-H DEFER (clean), HOUSE-2 GREEN tier, FFR-4E intake landed gated, rubric v3.2
+owner-amended (keepers unchanged — AA.2 stands), NEISO re-key verified, caiso-187 filed
+its own owner card, ARM3-MEASURE still solving. FH-5 dispatches next cycle (charter text
+to be located, not guessed).
+
+### FFR-9A [FABLE] — the T1-FF storage-fleet trajectory repair (the dominant input error)
+
+```
+[FABLE] FFR-9A — Repair the T1-FF hindcast posture's STORAGE-FLEET TRAJECTORY: the base
+fleet seeds from a present-day scalar instead of the run's own vintage-measured fleet
+(the FFR-3V leak's storage sibling), inflating the arm's storage power to ~30 GW by the
+2024 solve against ~10 GW actual — the measured DOMINANT remaining input error on the
+forward price object (FFR-8B §3-§4: +7.3-8.8 GW at p1 on E1's reserve quantity; E2's AS
+withholding held inert by the same over-build). NO tuning, NO arming beyond the
+measurement arm, NO keeper contact, NO backcast-registry touch.
+
+Repo /home/user/market-simulator. Model FABLE (rule 27: capacity-evolution core). Branch
+claude/ffr-9a-storage-vintage-seed-<suffix> off fresh origin/main. Authority: manager
+dispatch Addendum AG.2 rider 2, under the owner-re-opened D-21(a) completion mandate.
+Evidence (cite, never re-derive): docs/handoffs/ffr-8b-rebase-dispersion-2026-08-09.md
+§2.3 (additions METRIC passes at -5.0% — the BASE seeding is the error), §3 (the B~->B
+storage-term step), §4 (the de-prioritization evidence); docs/handoffs/ffr-3v-fix-
+2026-08-08.md (the pattern to mirror); docs/handoffs/ffr-4d-caiso-fleet-vintage-
+2026-08-04.md §7 D-3 (ERCOT's storage row hand-entered: 17,000 shipped vs 13,709.3 by
+the registry's own EIA-860 construction — flagged for ERCOT's lane to judge; you are
+that judgment for the HINDCAST posture) and D-5 (five ISOs take a forecast scalar for
+their backcast storage fleet; FFR-4D built storage_measured_base_fleet for CAISO —
+REUSE its machinery, do not parallel-build).
+
+=== PREREQUISITES (cold container) ===
+uv sync FIRST, then uv run python scripts/regenerate_clean.py (~63-65 min). Cold solves.
+
+=== THE FIX ===
+In hindcast runs, seed the storage base fleet from the RUN'S OWN VINTAGE EIA-860
+measured storage fleet (the 3V pattern verbatim: rule 13 — the vintage sheet is what a
+run at that vintage may know; rule 14 — measured beats the scalar), respecting the
+existing storage_measured_base_fleet and active_eia860_dir machinery. All later growth
+stays endogenous (the storage entry value stack — spec §5.5 — is NOT this lane's object;
+if the entry stack itself proves defective, that is a FINDING to record, not a repair to
+improvise). Plain forecast (non-hindcast) runs and every backcast keeper are UNTOUCHED —
+prove by test (the 3V and FFR-4D proofs are the template). Gate-or-ungated per the 3V
+precedent: prefer UNGATED if the only affected artifacts are hindcast runs; state the
+choice. If the fix cannot be built without inventing a parameter: STOP and escalate.
+
+=== THE MEASUREMENT (pre-register reads BEFORE solving) ===
+Paired ERCOT T1-FF arms at THIS head, <=5 solve-years each, years sequential, <=2
+concurrent (rule 12):
+  control: the ffr8b-base recipe VERBATIM (--iso ERCOT --vintage 2020 --start-year 2021
+    --end-year 2025 --forward-from-base --arm realized --capacity-screen-unified-lookahead
+    --capacity-screen-scarcity-restoration) -> results/hindcast/ercot-2021-2025-t1ff-armr-ffr9a-control
+    (expected to REPRODUCE FFR-8B §2 — its read set is the reproduction gate, BY CONTENT)
+  treated: + the storage vintage seed fix -> ...-ffr9a-storageseed
+PRE-REGISTERED READS: (R1) the storage fleet trajectory by solve year vs ~10 GW actual
+(2024) — base + additions, power and energy; (R2) the E1 storage-term step (FFR-8B §3's
+B~ vs B: does the +7.3-8.8 GW p1 inflation collapse toward the measured storage-AS
+series?); (R3) E2's as_hold — does the AS withholding come ALIVE once the storage AS
+share stops swallowing the responsive requirement?; (R4) the §2.1 price-side read set
+re-run verbatim (per-screen h>$100/h>$1000/mean/max + per-fuel replica margins vs
+measured — into-2025's 8-vs-217 undershoot is the number to watch; report at full
+magnitude, never target); (R5) the exit/entry census (in-window economic executions must
+stay ~0 — FFR-7C; the additions decision basis vs 55.4 GW). Register BOTH arms in the
+HINDCAST namespace (ids ercot-2021-2025-t1ff-armr-ffr9a-{control,storageseed}) — NEVER
+the backcast registry. Commit prereg -> results -> handoff AS THEY EXIST. EPOCH NOTE:
+this fix, if ungated, re-bases every ERCOT hindcast at your head — state it in the
+handoff (FH-4-ERCOT is HELD for exactly this landing; the manager tracks).
+
+=== GUARDS ===
+Matrix duty: new field -> row + _CACHE_KEY_OPTIONAL_FIELDS + defaults ledger SAME COMMIT
++ WAIT for the cache-key-pin verdict; ungated data-path fix -> update the relevant cell
+citations. Bar re-levels, signal scaling, tuning toward any residual: REFUSED. The
+FFR-8B Phase-2 escalation (commitment dispersion) stays escalated — not yours.
+
+=== TRAPS ===
+HOUSE-1 merged (reflow trap dead). Evolution ledgers at <out-dir>/<ISO>/<runtime-key>/;
+runtime cache_key= line is the recorded key; the D-13 hazard (identical key does not
+imply byte-identity across an epoch). Push: fetch+rebase fresh origin/main; never
+push_files a >=300-line file; no new workflows. Budget: prereqs ~65 min + two cold
+4-LP-year ERCOT invocations — a full session; if only one arm fits, land control +
+prereg and hand off the treated arm.
+
+Deliverable: the PR + docs/handoffs/ffr-9a-storage-vintage-seed-<date>.md (the seed gap
+table by vintage, the fix + gating choice, R1-R5 at full magnitude, the epoch statement)
++ registered sidecars + matrix updates.
+```
+
+### FH-4-ERCOT [FABLE] — the gate re-probe + the ERCOT leg of the forward-skill battery (RECOMMENDED: paste after FFR-9A lands)
+
+```
+[FABLE] FH-4-ERCOT — Open Wave FH Phase A: run the FH-1 §3.3 harness-defect RE-PROBE as
+a hard step-0 gate, then (on PASS only) the ERCOT leg of the FH-4 forward-skill battery.
+The FH-4/FH-5 lift is CONDITIONALLY GRANTED (manager determination, Addendum AG.2, on
+the FFR-8B re-based record: α met, β met — the gas_st false wave GONE — γ information-
+gate-consistent, the price object repaired); the CONDITION is this step-0 gate passing.
+A step-0 FAIL stops the lane and returns to the manager. NO lift-adjacent claims beyond
+the gate verdict; NO arming beyond what this prompt names; NO keeper contact.
+
+Repo /home/user/market-simulator. Model FABLE (rule 27: runner/model core). Branch
+claude/fh-4-ercot-leg-<suffix> off fresh origin/main. Authority + record:
+docs/handoffs/fh-1-full-forward-harness-2026-08.md (§3.3 THE GATE — read its numeric
+criterion and probe recipe from the handoff itself and apply them AS WRITTEN; §9 what
+FH-4 inherits: arm NOTHING beyond the two arms), fh-2/fh-3 handoffs (the as-of driver
+plumbing and as-known vintages — Arm K at base 2023 requires FH-3's
+hindcast_asknown_aeo2023), pack §0d-§0e (the block genealogy),
+docs/handoffs/ffr-8b-rebase-dispersion-2026-08-09.md §2 (the re-based baseline).
+
+=== PREREQUISITES (cold container) ===
+uv sync FIRST, then scripts/regenerate_clean.py (~63-65 min). Cold. Holdout freeze read
+at launch; no out-of-training backcast year; no measured H1-2026 contact anywhere.
+
+=== STEP 0 — THE GATE (blocking; nothing else starts until its verdict is committed) ===
+Re-run the FH-1 §3.3 over-retirement probe AT THE DETERMINED POSTURE: ERCOT, the
+handoff's own probe recipe, with capacity_screen_unified_lookahead +
+capacity_screen_scarcity_restoration ARMED BY INVOCATION (the manager's arming
+determination, AG.2 ruling 1 — this is NOT a ScenarioConfig default flip; defaults are
+untouched). Apply the §3.3 criterion AS WRITTEN in the FH-1 handoff (the I6
+over-retirement measure whose FAIL reference was 26.8 % at the pre-fix posture). Commit
+the gate verdict + its numbers BEFORE proceeding. FAIL -> STOP the lane, hand the record
+to the manager, run nothing further. PASS -> proceed.
+
+=== THE ERCOT LEG (on gate PASS only) ===
+FH-4's design: TWO ARMS, 3 solve-years each — Arm R (realized drivers) and Arm K
+(as-known drivers, base 2023 via hindcast_asknown_aeo2023), the ERCOT instantiation of
+"3 solve-yr x 6 ISOs x 2 arms". Read the exact arm invocations from the FH-1/FH-2/FH-3
+handoffs (the T1-FF --forward-from-base surface); both arms carry the step-0 arming
+(unified + restoration, by invocation). <=5 solve-years per invocation, years sequential,
+<=2 concurrent (rule 12). Register both arms in the HINDCAST namespace
+(meta.kind="full_forward", ids per the FH program's naming) — NEVER the backcast
+registry. Skill reads: the FH program's §2.1b metric set (price gaps, fuel-mix gaps vs
+the current ERCOT keeper reference) — quoted as T1-FF skill ONLY if the gate passed and
+the arm ran the determined posture; plus the RIDER read: the instrument-date split of
+the window's 2.294 GW actual exits (how much had instruments dated <= the vintage
+cutoff), so the exit-side skill number is never mis-attributed (Addendum AG.2 γ rider).
+Commit prereg -> gate verdict -> results -> handoff AS THEY EXIST.
+
+=== WHAT THIS SESSION DOES NOT DO ===
+The five sibling ISO legs (PJM/MISO/CAISO/NYISO/NEISO) — dispatched by the manager only
+after this gate's PASS is committed. FH-5 — not chartered here. No shipped-default flip
+of any flag; no promotion; no matrix cell verdict beyond the gate/measurement citations;
+no re-litigation of the lift (the determination is the manager's record, not this
+lane's). Bar re-levels, signal scaling, tuning toward any residual: REFUSED BY NAME.
+
+=== TRAPS ===
+HOUSE-1 merged (reflow trap dead; cache-key-pin check live — a red is your own
+registration miss until proven otherwise). Evolution ledgers at
+<out-dir>/<ISO>/<runtime-key>/; runtime cache_key= line; the D-13 hazard. Push:
+fetch+rebase fresh origin/main; never push_files a >=300-line file; no new workflows.
+Budget: prereqs ~65 min + the step-0 probe + up to two 3-LP-year arms — a full session.
+If the container cannot finish both arms after the gate, land gate + Arm R + prereg and
+hand off Arm K explicitly.
+
+Deliverable: the PR + docs/handoffs/fh-4-ercot-leg-<date>.md (the step-0 gate verdict
+with its numbers FIRST, then the two arms' skill reads + the instrument-date split) +
+registered sidecars. The manager takes the gate verdict + skill reads from there; the
+five sibling dispatches and any default promotion are the manager's.
+```
