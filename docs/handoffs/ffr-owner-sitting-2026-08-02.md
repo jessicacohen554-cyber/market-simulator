@@ -3579,3 +3579,77 @@ across two years; three owner options filed in its handoff; wefor_residual matri
 CAISO=O) — a calibration-lane card, surfaced to the owner here, not adjudicated by this
 program. **ARM3-MEASURE: still in flight** (prereg + gitignore only; the 2031–2035 armed
 solve burning).
+
+## Addendum AH — FFR-9A/ARM3/FFR-4E adjudicated; the VRE-entry error is the last named input defect; four dispatches
+
+**Written 2026-08-09 by the workstream manager at `origin/main` `c96f64f`.**
+
+### AH.1 FFR-9A: CLEAN — E2 closed-as-attributed; the error ladder bottoms out at VRE entry
+
+The fix (the storage sibling of the 3V leak: the hindcast seam fell through to the
+present-day `STORAGE_BASE_FLEET_MW` scalar) landed UNGATED with every no-op half pinned by
+a truth table (backcast branch unchanged, plain forecast keeps the scalar); the control
+arm reproduced FFR-8B §2 BY CONTENT (0 diffs on both probes) before the treated arm ran;
+the checkout-swap arm construction (code-state delta, same tree — the 3V design note)
+avoided the REPO_ROOT hash trap. Results at full magnitude: **E2's conditional inertness
+is CLOSED AS ATTRIBUTED** (as_hold 0 → ~2.1–2.8 GW mean at the early screens; it dies
+again exactly where the endogenous build re-swallows the requirement — one cause, two
+symptoms); the **into-2025 forward-edge screen moves onto the measured level** (mean 31.20
+vs 32.49; 8 → 112 h > $100 vs 217); the **mid-window screens now overshoot hard** (into-
+2024 mean $309.69 vs $26.82; margins ~26× replica) because the corrected seed removed the
+phantom flexible capacity that had been ABSORBING the model's VRE build shortfall
+(treated additions 45.1 vs 55.4 GW actual; **solar 10.0 vs 25.1, wind 5.5 vs 12.7**).
+EPOCH: every capacity hindcast in every ISO re-based; FFR-8B §2 superseded as baseline by
+the ffr9a pair. **The input-defect ladder (phantom VRE seed → phantom storage seed) is
+now EXHAUSTED; the one remaining named error is the VRE ENTRY TRAJECTORY — a model
+economics object, not a harness defect.** FFR-9B (diagnose-only) dispatched; the
+FH-4-ERCOT hold is RELEASED (§0ae re-delivery with the superseded citation fixed).
+
+### AH.2 ARM3-MEASURE: CLEAN — the quiet rows were a ZONE-MASK DEFECT, not market structure
+
+Both clean rows slack through 2035 including MI's first obligated year — and the lane
+proved WHY instead of reporting quiet: `_build_rps_region_rows` zone-masks wind/solar but
+resolves `region_gen_idx` by FUEL ALONE fleet-wide, so Michigan's East-only row is
+satisfied by MISO-South nuclear — the "Iowa surplus pays Michigan's bill" defect
+reappearing in the clean family, defeating the row's own MCL 460.1029 basis. Corrected
+offline, MI-2035 BINDS (53.324 TWh in-mask vs 95.771 obligation; leaks 85.788/49.056
+TWh-yr). Blast radius Arm-3 ONLY (Arm 2 passes no region_gen_idx; the D-26 armed RPS
+default proven bit-stable). Correctly NOT fixed mid-measurement. R1's missed expectation
+reported as a miss. **The D-28 step-3 arming card CANNOT be put on this evidence — the
+measurement found a defect where evidence was expected. ARM3-FIX dispatched** (the LP fix
++ the re-measurement that produces the card's real evidence).
+
+### AH.3 FFR-4E closed; ercot-181 promotion R.1 CLEAN; two calibration-lane owner cards now waiting
+
+**FFR-4E**: row 4 re-read 52.51 % → 41.68 %, **STILL FAIL — the finding branch fired
+again**; with the fleet (FFR-4D) and the accreditation (FFR-4E) both right, the residual
+is isolated to ENTRY ECONOMICS — the capacity-price anchor object whose merits-charter
+FFR-4D's own text licenses ("may be chartered later, on its own rule-14 merits, by
+someone else, stating it is not a row-4 fix"). **FFR-4F dispatched under exactly that
+license.** A push-transport incident + a verification-method defect are recorded in its
+handoff. **ercot-181 → keeper 2026-08-09-run181-position-tail, R.1 CLEAN**: control + ONE
+delta (`ercot_offer_surface_position_tail`), zero fitted scalars, measured
+inert-on-the-object (+$0.0004/MWh lw), promoted on structural fidelity — a rule-1/14
+exemplar; determination NOT-YET {C3a, C3b} unchanged; shipped default unmoved (keeper
+recipe arms it). Keeper-auditor launched (worktree, --iso ERCOT). **Owner cards now
+waiting in calibration-lane handoffs: ercot-182's C3a-2023 reachability card and
+caiso-187's overlay card (AG.3)** — surfaced again; both are sitting items, not manager
+program items. Q.2: ERCOT keeper moved TODAY — the battery hold stands.
+
+### AH.4 The dispatch set (§0ae)
+
+**FH-4-ERCOT** (RELEASED — re-delivered with FFR-9A as baseline citation; the ungated
+seed fix rides automatically at head), **ARM3-FIX** [FABLE, LP core], **FFR-9B** [FABLE,
+diagnose-only — no repair, no epoch, explicitly parallel-safe with FH-4-ERCOT], **FFR-4F**
+[OPUS, the licensed anchor merits-charter, hard non-row-4 framing]. All four disjoint
+surfaces; FH-5's charter text still to be located (not guessed).
+
+### AH.5 The ercot-181 keeper audit returned: PASS, zero drift
+
+The worktree-isolated auditor pass (--iso ERCOT) against origin/main: audit_keepers.py
+clean (0 fail / 0 warn, E1–E7/M1a-b/S1); a fresh LIVE re-verification
+(`calibration_verdict.py --run-id 2026-08-09-run181-position-tail`) independently returns
+NOT-YET with the exact shard fail set {C3a mean LMP 2023 −32.4 %; C3b NRMSE 0.602/0.205}
+and C3c ledgered ×3 under rubric v3.2 — keeper shard, registry definition and status
+shard all agree with the live scorer, magnitudes included; the promoting session's own
+status-shard regeneration was verified merged, not stale. No repairs, nothing committed.

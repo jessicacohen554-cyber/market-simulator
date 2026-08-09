@@ -5548,3 +5548,179 @@ with its numbers FIRST, then the two arms' skill reads + the instrument-date spl
 registered sidecars. The manager takes the gate verdict + skill reads from there; the
 five sibling dispatches and any default promotion are the manager's.
 ```
+
+## §0ae — FFR-9A landed (error ladder exhausted); FH-4-ERCOT RELEASED; ARM3-FIX, FFR-9B, FFR-4F dispatched (2026-08-09 @ `c96f64f`)
+
+State delta since §0ad (full detail: Addendum AH): FFR-9A COMPLETE and clean (UNGATED,
+control reproduced FFR-8B by content, E2 closed-as-attributed, into-2025 half-closed onto
+measured, mid-window overshoots now track the VRE build shortfall — solar 10.0 vs 25.1 GW,
+wind 5.5 vs 12.7). **The input-defect ladder is EXHAUSTED; the last named error is the
+VRE ENTRY TRAJECTORY** (a model-economics object). ARM3-MEASURE found the clean rows
+inert via an LP ZONE-MASK DEFECT (region_gen_idx resolved by fuel alone, fleet-wide; MI's
+row satisfied by MISO-South nuclear; corrected offline MI-2035 BINDS) — the D-28 step-3
+card waits on ARM3-FIX. FFR-4E closed: row 4 STILL FAIL, residual isolated to the anchor
+object — FFR-4F dispatched under FFR-4D's own merits-charter license. ercot-181 promoted
+(run181-position-tail, R.1 clean); ercot-182's C3a-2023 card + caiso-187's overlay card
+wait at the owner. Four prompts below; all surfaces disjoint. (FH-4-ERCOT is the §0ad
+block re-delivered with ONE change: FFR-9A's handoff supersedes FFR-8B §2 as the ERCOT
+hindcast baseline citation, and the ungated seed fix rides automatically at head.)
+
+### ARM3-FIX [FABLE] — the clean-row zone-mask LP fix + the re-measurement
+
+```
+[FABLE] ARM3-FIX — Fix the clean-tier row zone-mask defect ARM3-MEASURE found, then
+re-run the pre-registered 2031-2035 measurement so the D-28 step-3 arming card gets real
+evidence. NO arming (miso_clean_tier_rows stays default-OFF), NO keeper contact, NO
+backcast-registry touch; the card is the manager's to put and the owner's to sign.
+
+Repo /home/user/market-simulator. Model FABLE (rule 27: LP core). Branch
+claude/arm3-fix-zone-mask-<suffix> off fresh origin/main. Authority + evidence:
+docs/handoffs/arm3-clean-row-horizon-2026-08-09.md (THE FINDING: model/lp/rows.py::
+_build_rps_region_rows zone-masks a region's WIND/SOLAR columns but appends its
+region_gen_idx columns with no zone filter — _resolve_clean_region_gen_idx resolves by
+FUEL ALONE across the whole fleet, so MI's East-only row is satisfied by MISO-South
+nuclear, defeating its own cited basis, MCL 460.1029; corrected offline, MI-2035 BINDS:
+53.324 TWh in-mask vs 95.771 TWh obligation; leaks 85.788 (MI) / 49.056 (MN) TWh-yr;
+Arm-2 RPS rows UNAFFECTED — no region_gen_idx passed — with RPS duals bit-stable
+[0,30,0,30,0]).
+
+=== THE FIX ===
+Pass the region's zone mask through to _resolve_clean_region_gen_idx so a clean row's
+non-VRE qualifying columns are in-mask, exactly as its VRE columns already are. Rule 3
+[R-RENEW-VAR]/rule 2 [R-VECTOR] respected (mask at index-construction, no hour loops).
+TESTS pin: (a) the handoff's corrected-offline numbers (MI-2035 in-mask supply 53.324
+TWh; the row BINDS); (b) Arm-2 non-regression (RPS rows byte-identical; duals
+[0,30,0,30,0] on the D-26 armed MISO forecast default — a keeper-adjacent default, so
+this is the stop-the-line guard); (c) the default path (rows OFF) byte-inert — pinned
+default cache key UNMOVED (the fix touches row construction reached only when
+miso_clean_tier_rows=True; prove it). No new ScenarioConfig field expected; if one
+becomes unavoidable: matrix row + _CACHE_KEY_OPTIONAL_FIELDS + defaults ledger SAME
+COMMIT + WAIT for the cache-key-pin verdict. Matrix duty: the miso_clean_tier_rows cell
+citation gains the fix + re-measurement in THIS session.
+
+=== THE RE-MEASUREMENT ===
+Re-run the ARM3-MEASURE prereg on the fixed LP (its committed prereg + probes are the
+protocol — reuse, do not re-derive): MISO forecast 2031-2035 armed
+(miso_clean_tier_rows=True) + the paired unarmed control, <=5 solve-years per
+invocation, years sequential, <=2 concurrent (rule 12). Prereqs first: uv sync, then
+regenerate_clean.py (~63-65 min); cold. Register in the FORECAST namespace via
+register_forecast_run.py — NEVER the backcast registry. Reads: the original R1-R5
+(row duals by region-year with onset + ACP-ceiling binding; composed nuclear revenue at
+the F-2 seam; qualifying-supply vs target decomposition; arm-vs-control ledger deltas;
+E-1 no-build-limb check) — now on rows that can actually bind. Deliver the card-ready
+evidence table. Commit prereg -> results -> handoff AS THEY EXIST.
+
+=== TRAPS ===
+HOUSE-1 merged. Forecast namespace registry/manifest are GENERATED (gitignored) —
+commit the sidecar inputs per rule 15. Evolution ledgers at
+<out-dir>/<ISO>/<runtime-key>/. Push: fetch+rebase fresh origin/main; never push_files
+a >=300-line file; no new workflows.
+
+Deliverable: the PR + docs/handoffs/arm3-fix-zone-mask-<date>.md (the fix diff walk,
+the three-way test evidence, R1-R5 on the fixed rows, the card-ready table) +
+forecast-namespace registration + matrix stamp.
+```
+
+### FFR-9B [FABLE] — DIAGNOSE-ONLY: why the model builds half the VRE reality built
+
+```
+[FABLE] FFR-9B — Diagnose the VRE entry under-build in the ERCOT T1-FF posture: treated
+additions 45.1 GW vs 55.4 actual with solar 10.0 vs 25.1 and wind 5.5 vs 12.7 GW
+(FFR-9A §3.5), gas_cc over-entering (6.0 vs 0.244, FFR-8B §2.3), under screens whose
+margins reach ~26x the replica columns. DIAGNOSE-ONLY: NO repair, NO code change to any
+solve path, NO new ScenarioConfig field, NO epoch — FH-4-ERCOT runs in parallel and
+this lane must not re-base it. The repair charter is the manager's next dispatch, built
+on your decomposition.
+
+Repo /home/user/market-simulator. Model FABLE (rule 27-adjacent; capacity-evolution
+reading). Branch claude/ffr-9b-vre-entry-diagnosis-<suffix> off fresh origin/main.
+Authority: manager dispatch Addendum AH.4 under the D-21(a) completion mandate.
+Evidence: docs/handoffs/ffr-9a-storage-vintage-seed-2026-08-09.md §3.4-§3.5 (the
+overshoot + the per-tech shortfall), ffr-8b-rebase-dispersion-2026-08-09.md §2.3,
+model-methodology-spec.md §5.4 (economic new entry) + §5.5 (storage entry), the
+entry-screen code (model/capacity_evolution/), and the ffr9a registered arms.
+
+=== THE QUESTION, decomposed per tech per year ===
+For solar, wind, gas_cc, storage, each ledger year 2021-2025: WHAT BINDS the entry
+decision — (a) an entry CAP (which one, at what value, cited); (b) the entry ECONOMICS
+(cost/revenue assumptions — which cost input, PTC/ITC treatment, the screen's price
+signal timing vs the 26x margins); (c) an eligibility/pipeline representation gate;
+(d) something else. The gas_cc over-entry gets the same decomposition (why does the
+screen prefer CC at 26x margins everywhere?). Name the binding constraint with the
+config field / constants citation and the megawatts it holds back, per tech per year.
+
+=== METHOD ===
+Prereqs: uv sync (~2 min). Prefer OFFLINE reads of the committed ffr9a artifacts; the
+evolution ledgers live at <out-dir>/<ISO>/<runtime-key>/ and are NOT all committed —
+results/ died with that container. You are licensed ONE bounded re-solve to regenerate
+ledgers/dumps if the committed artifacts cannot answer: the ffr9a-storageseed recipe
+VERBATIM at your head (regenerate_clean.py ~63-65 min first; 4 LP years sequential;
+rule 12) — an identical-recipe regeneration, NOT a new arm; do NOT register it (the
+ffr9a registration stands; note the regeneration in the handoff). Pre-register the
+decomposition method before reading. Rule 1 discipline: the actual build (55.4 GW) is
+the reality benchmark, never a target — if the diagnosis concludes the model's entry
+economics are RIGHT and reality over-built on drivers the model lacks (IRA vintages,
+interconnection queue dynamics, load-growth expectations), THAT is the finding; write
+it with the rule-13 admissibility pre-assessment of each candidate repair input.
+
+=== DELIVERABLE ===
+The PR + docs/handoffs/ffr-9b-vre-entry-diagnosis-<date>.md: the per-tech-per-year
+binding-constraint table (megawatts attributed), the gas_cc over-entry attribution, the
+named repair candidate(s) each with its rule-13 test sketch (reproducible forward?
+responds to conditions?), and an explicit NO-REPAIR-PERFORMED statement. Matrix: no
+cell verdict moves (diagnosis, not a mechanism test); cite the handoff on any cell the
+evidence directly informs.
+
+=== TRAPS ===
+HOUSE-1 merged. The D-13 hazard; runtime cache_key= line; verify ledger paths before
+believing a zero. Push: fetch+rebase; no push_files >=300 lines; no new workflows.
+```
+
+### FFR-4F [OPUS] — the CAISO capacity-price anchor, on its own rule-14 merits (NOT a row-4 fix)
+
+```
+[OPUS] FFR-4F — Charter the CAISO capacity-price anchor correction on its own rule-14
+merits, under FFR-4D's explicit license ("it may be chartered LATER on its own rule-14
+merits, by someone else, with a charter stating it is not a row-4 fix"). THE FRAMING IS
+BINDING: this is NOT a row-4 fix. FC-2 row 4's movement is REPORTED as a side effect,
+NEVER claimed as the objective or quoted as the lane's success metric. The owner
+declined the anchor AS A ROUTE to row 4 (D-15's charter); this lane exists because two
+completed lanes (FFR-4D fleet, FFR-4E accreditation) isolated the residual to the
+anchor and the anchor is mis-specified ON ITS OWN TERMS.
+
+Repo /home/user/market-simulator. Rule 27: OPUS ok. Branch
+claude/ffr-4f-caiso-anchor-merits-<suffix> off fresh origin/main. Authority + evidence:
+docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md (the license, verbatim, and the
+measured mis-specification: >=94% of a $40k/MW-yr gap — a 550 MW COMBINED-CYCLE
+retention cost used as the entry price for a new COMBUSTION TURBINE);
+docs/handoffs/ffr-4e-caiso-storage-elcc-2026-08-09.md (row 4 STILL FAIL at 41.68% with
+fleet + accreditation right; residual = entry economics); docs/handoffs/ffr-3w-caiso-
+entry-screen-2026-08-04.md (the original measurement).
+
+=== THE WORK ===
+1. INTAKE the correct published CAISO entry-price object first-party: what CAISO/CPUC
+   actually publish for new-entry capacity pricing (CPM soft-offer cap structure,
+   published net-CONE by technology if it exists, the PD/CPM compensation design).
+   Committed under data/raw/ with the data-dictionary contract; rule 5 citations on
+   every number. If the published design does not map to our anchor's representation,
+   rule 14's misalignment clause: document and RECONCILE, never guess.
+2. LAND the corrected anchor GATED default-OFF (new ScenarioConfig field: matrix row +
+   _CACHE_KEY_OPTIONAL_FIELDS + defaults ledger SAME COMMIT; WAIT for the cache-key-pin
+   verdict). Keeper guard: enumerate consumers; prove the CAISO backcast keeper
+   byte-inert or keep the gate; a keeper metric moving is stop-the-line.
+3. MEASURE with a bounded paired FC-2 read (control vs anchor-corrected; <=5
+   solve-years, sequential, rule 12; prereqs uv sync then regenerate_clean.py first;
+   pre-register the reads): ALL FC-2 rows at full magnitude, the entry-build
+   composition (does the 14 GW CT build the old anchor manufactured dissolve?), and
+   row 4 REPORTED among them without emphasis. If the corrected anchor makes row 4
+   WORSE, that is reported identically.
+4. Rule 25: CAISO's lane; nothing crosses ISOs. Matrix cell + citation THIS session.
+
+=== TRAPS ===
+HOUSE-1 merged. Push: fetch+rebase; no push_files >=300 lines; no new workflows.
+Evolution ledgers at <out-dir>/<ISO>/<runtime-key>/; runtime cache_key= line.
+
+Deliverable: the PR + docs/handoffs/ffr-4f-caiso-anchor-merits-<date>.md (the published
+design as intaken, the reconciliation, the keeper-guard evidence, the paired FC-2 table
+with the anchor-route framing statement) + matrix stamp.
+```
