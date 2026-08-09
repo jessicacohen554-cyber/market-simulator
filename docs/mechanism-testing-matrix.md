@@ -3716,13 +3716,19 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**
+### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-09-miso-148-basis-aware`, **NOT-YET**
 
 > **LIVE QUEUE AS OF miso-148 (2026-08-09) — ITEM 11 (the CC
 > CAPABILITY-AND-AVAILABILITY LANE, the miso-147 successor) SET, L1 AND L2
 > EXECUTED, L3 LEFT AS OBSERVATION. A NEW MECHANISM IS BUILT, SOLVED,
-> REGISTERED AND *NOT PROMOTED* — THE VERDICT IS AN OWNER DECISION.** Keeper
-> UNCHANGED at `2026-08-05-miso-132b-cc-committed`. PREREG
+> REGISTERED AND — ON AN EXPLICIT OWNER DECISION — *PROMOTED*.** Keeper
+> `2026-08-05-miso-132b-cc-committed` → **`2026-08-09-miso-148-basis-aware`**.
+> The SESSION did not promote: its PREREG §9(1) conditioned promotion on the
+> fail set staying ⊆ {C3a}, which it did not, so it escalated. The owner took
+> the call under the standing 2026-08-09 structural-integrity guidance, on rules
+> 1 [R-STRUCT] / 14 [R-ACCURATE] — an accurate measured input that makes the
+> backcast WORSE is a discovered bug, kept rather than buried back inside an
+> inaccurate one — with the C3b regression quoted at full magnitude. PREREG
 > `results/calibration/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md`
 > pushed at `456b376` (blob verified against the FETCHED remote ref) before any
 > adjudicating statistic; FINDING
