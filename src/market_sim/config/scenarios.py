@@ -247,6 +247,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # caiso-184's omission of exactly this step, which moved the pinned
     # default key and needed an FFR-8A backfill, is why it is done here.
     "cc_winter_capability_basis",
+    # miso-148 basis-aware flat summer derate (GATED default-off): the flat
+    # _SUMMER_CLASS_DERATE is suppressed only for units whose pmax already IS a
+    # measured summer capability, and the consumer reads it via getattr, so the
+    # off path is byte-inert and every pre-existing cache key stays byte-stable.
+    # An ARMED run changes the availability matrix for four gas classes in the
+    # summer months, so it is a different scenario and gets a distinct key.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 / caiso-186
+    # discipline — caiso-184 skipped this step, moved the pinned default key and
+    # needed an FFR-8A backfill).
+    "summer_derate_basis_aware",
     # FFR-5E near-term VRE procurement channel (GATED default-off): dropped
     # from the hash at its default so every pre-existing cache key is
     # byte-stable; an armed run injects committed EIA-860 pipeline MW into the
@@ -914,6 +924,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-186 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "cc_winter_capability_basis": "False",
+    # Added by miso-148 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "summer_derate_basis_aware": "False",
     "vre_procurement_additions_enabled": "False",
     # Backfilled at FFR-7B alongside the field's (missing) registration above:
     # nyiso-128 landed the field unregistered, moving the pinned default key.
@@ -9288,6 +9301,44 @@ class ScenarioConfig:
     # Coal/CT/ST and ERCOT (CAMPD-bin nameplate capacity) are unaffected. Off by
     # default.
     cc_nameplate_summer_derate: bool = False
+
+    # BASIS-AWARE flat summer derate (summer_derate_basis_aware, off by
+    # default; miso-148). The flat class haircut _SUMMER_CLASS_DERATE
+    # (CC 10%, CT 12.5%) represents the NAMEPLATE -> SUMMER-PEAK AMBIENT loss,
+    # so it is applicable only to a unit whose LP capacity is carried on a
+    # NAMEPLATE basis. On the per-plant EIA-860 path (plant_level_fleet) pmax
+    # IS the published net-summer rating, which already embeds that loss —
+    # applying the flat derate again is a DOUBLE COUNT. miso-141 measured it on
+    # MISO: pmax is net-summer for 100% of matched CT_PEAKER / CT_CHP / CC_CHP
+    # capacity, against a measured nameplate->net-summer gap of 11.40 / 14.34 /
+    # 16.35 / 15.25% by class — the same size as the flat derate re-applied on
+    # top, removing 5,933 / 5,853 / 5,686 MW of summer h12-17 capability
+    # (2023/24/25). The "incremental ambient loss below the rating point"
+    # reading was refuted on MISO's own slopes and weather: the honest
+    # incremental is an UPRATE of ~2% (CC) / ~3.7% (CT) because the mean summer
+    # hour sits 8.3-11.9 C BELOW the summer-peak condition the rating is set at,
+    # in 18 of 18 zone-years.
+    #
+    # When True the flat derate is applied ONLY to units still on a nameplate
+    # basis and suppressed for units already carrying a measured summer
+    # capability, per plant, via fleet.summer_basis_measured_plants(iso) —
+    # which excludes plants the always-on CC guard clipped onto
+    # max(nameplate, demonstrated_peak) and plants absent from EIA-860 (both
+    # KEEP the derate). Requires plant_level_fleet: on a nameplate-basis fleet
+    # (ERCOT's CAMPD-bin path) there is no double count and suppressing the
+    # derate would be a real under-derate, so the flag is inert there.
+    #
+    # Class-agnostic by design (CC_REGULAR, CC_CHP, CT_PEAKER, CT_CHP): a
+    # repair reaching only the CC half would leave two classes competing on the
+    # same margin with inconsistent capacity bases (miso-141 §9/§11.2(a)).
+    # A PURE basis correction — unlike cc_nameplate_summer_derate it does NOT
+    # drop the statistical POF, the age/performance derate or the WEFOR, and
+    # does not rescale any capacity (rule 19 [R-ONE-MECH]); and it carries no
+    # off-summer leg, which is a separate defect with its own mechanism
+    # (cc_winter_capability_basis) and no evidence asking for it in MISO, whose
+    # measured Oct-Mar CC availability headroom is POSITIVE (miso-147 §4).
+    # ZERO continuous degrees of freedom: a boolean over a data predicate.
+    summer_derate_basis_aware: bool = False
 
     # Unit-outage derate DENOMINATOR on the LP's own capacity basis
     # (unit_outage_lp_capacity_basis, off by default). A consistency repair, not

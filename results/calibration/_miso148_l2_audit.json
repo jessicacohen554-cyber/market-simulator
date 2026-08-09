@@ -1,0 +1,505 @@
+{
+ "session": "miso-148",
+ "prereg": "results/calibration/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md",
+ "gate": "G-L2 CC fleet/rating audit (runs BEFORE the L1 arm, PREREG \u00a73)",
+ "years": {
+  "2023": {
+   "G_L2a_population": {
+    "model": {
+     "year": 2023,
+     "n_lp_tranches": 409,
+     "n_plants": 70,
+     "pmax_gw": 32.374,
+     "universe": "keeper fleet_state (fleet_only, no LP), plant_group in CC_REGULAR/CC_CHP; NET basis"
+    },
+    "campd": {
+     "year": 2023,
+     "n_cc_units": 150,
+     "n_cc_plants": 60,
+     "p99_gross_gw": 34.807,
+     "campd_universe": {
+      "year": 2023,
+      "n_units": 692,
+      "n_plants": 244,
+      "unresolved_gross_mwh_by_state": {},
+      "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup"
+     },
+     "basis": "GROSS, Sum unit p99 of hourly grossLoad (the miso-147 G-F3 construction)"
+    },
+    "n_plants_both": 56,
+    "absent_from_fleet": {
+     "n_plants": 1,
+     "p99_gross_mw": 484.0,
+     "detail": [
+      {
+       "plant_code": 55120,
+       "campd_p99_gross_mw": 484.0,
+       "model_klasses": [],
+       "model_pmax_mw": 0.0
+      }
+     ]
+    },
+    "cc_classified_elsewhere": {
+     "n_plants": 3,
+     "p99_gross_mw": 982.0,
+     "detail": [
+      {
+       "plant_code": 1391,
+       "campd_p99_gross_mw": 115.0,
+       "model_klasses": [
+        "CT_CHP"
+       ],
+       "model_pmax_mw": 76.3
+      },
+      {
+       "plant_code": 1404,
+       "campd_p99_gross_mw": 0.0,
+       "model_klasses": [
+        "CT_PEAKER"
+       ],
+       "model_pmax_mw": 45.5
+      },
+      {
+       "plant_code": 50625,
+       "campd_p99_gross_mw": 867.0,
+       "model_klasses": [
+        "CT_CHP",
+        "ST_CHP"
+       ],
+       "model_pmax_mw": 181.7
+      }
+     ]
+    },
+    "model_only": {
+     "n_plants": 14,
+     "pmax_mw": 2050.1,
+     "plants": [
+      2059,
+      10789,
+      10819,
+      50152,
+      50431,
+      50973,
+      52006,
+      56309,
+      57953,
+      58161,
+      62289,
+      64020,
+      65405,
+      67005
+     ]
+    },
+    "bar_mw": 1000.0,
+    "population_defect": false,
+    "note": "B-2 is scored on absent_from_fleet ONLY (the gate's own wording: 'no model counterpart'). cc_classified_elsewhere is the industrial-CHP / BTM boundary miso-147 \u00a71 already named, not missing capacity. campd_only MW is GROSS (its own basis)."
+   },
+   "G_L2b_basis": {
+    "matched_plants": 56,
+    "split_merchant_vs_chp": {
+     "merchant_cc": {
+      "n_plants": 42,
+      "model_pmax_gw": 27.091,
+      "campd_p99_net_gw": 27.15,
+      "gap_gw": -0.058,
+      "gap_pct": -0.21
+     },
+     "chp_boundary": {
+      "n_plants": 14,
+      "model_pmax_gw": 3.232,
+      "campd_p99_net_gw": 6.009,
+      "gap_gw": -2.777,
+      "gap_pct": -46.21
+     }
+    },
+    "campd_p99_gross_gw": 33.341,
+    "campd_p99_net_gw": 33.159,
+    "model_pmax_gw": 30.324,
+    "cap_weighted_parasitic_factor": 0.9945,
+    "gap_vs_gross_gw": -3.017,
+    "gap_vs_net_gw": -2.835,
+    "gap_vs_net_pct": -8.55,
+    "eia860_on_matched": {
+     "nameplate_gw": 32.3,
+     "net_summer_gw": 32.158,
+     "net_winter_gw": 33.683,
+     "ns_over_np_all": 0.9956,
+     "ns_over_np_clean": 0.8728,
+     "clean_gap_pct": 12.72,
+     "n_plants_corrupt_ns_gt_np": 13,
+     "corrupt_np_mw": 7357.1,
+     "corrupt_ns_mw": 10388.2
+    },
+    "note": "TRAP T5 discharged: CAMPD p99 is GROSS, model pmax is NET. Both bases are quoted side by side and the pipeline's own per-plant parasitic factor supplies the conversion."
+   },
+   "G_L2c_vintage": {
+    "solve_year": 2023,
+    "canonical_dir": "data/raw/eia-860",
+    "resolves_to": "data/raw/eia-860/vintage_2023",
+    "year_matched_vintage_exists": true,
+    "vintages_on_disk": [
+     "vintage_2018",
+     "vintage_2019",
+     "vintage_2020",
+     "vintage_2021",
+     "vintage_2022",
+     "vintage_2023",
+     "vintage_2024"
+    ],
+    "newest_vintage_on_disk": "vintage_2024",
+    "note": "set_eia860_vintage(year) is the loader's own resolver; a year with no committed vintage_<year>/ falls back to the canonical release."
+   }
+  },
+  "2024": {
+   "G_L2a_population": {
+    "model": {
+     "year": 2024,
+     "n_lp_tranches": 413,
+     "n_plants": 70,
+     "pmax_gw": 32.504,
+     "universe": "keeper fleet_state (fleet_only, no LP), plant_group in CC_REGULAR/CC_CHP; NET basis"
+    },
+    "campd": {
+     "year": 2024,
+     "n_cc_units": 150,
+     "n_cc_plants": 60,
+     "p99_gross_gw": 35.423,
+     "campd_universe": {
+      "year": 2024,
+      "n_units": 676,
+      "n_plants": 240,
+      "unresolved_gross_mwh_by_state": {},
+      "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup"
+     },
+     "basis": "GROSS, Sum unit p99 of hourly grossLoad (the miso-147 G-F3 construction)"
+    },
+    "n_plants_both": 56,
+    "absent_from_fleet": {
+     "n_plants": 1,
+     "p99_gross_mw": 488.0,
+     "detail": [
+      {
+       "plant_code": 55120,
+       "campd_p99_gross_mw": 488.0,
+       "model_klasses": [],
+       "model_pmax_mw": 0.0
+      }
+     ]
+    },
+    "cc_classified_elsewhere": {
+     "n_plants": 3,
+     "p99_gross_mw": 1054.0,
+     "detail": [
+      {
+       "plant_code": 1391,
+       "campd_p99_gross_mw": 117.0,
+       "model_klasses": [
+        "CT_CHP"
+       ],
+       "model_pmax_mw": 76.3
+      },
+      {
+       "plant_code": 1404,
+       "campd_p99_gross_mw": 0.0,
+       "model_klasses": [
+        "CT_PEAKER"
+       ],
+       "model_pmax_mw": 45.5
+      },
+      {
+       "plant_code": 50625,
+       "campd_p99_gross_mw": 937.0,
+       "model_klasses": [
+        "CT_CHP",
+        "ST_CHP"
+       ],
+       "model_pmax_mw": 181.7
+      }
+     ]
+    },
+    "model_only": {
+     "n_plants": 14,
+     "pmax_mw": 2184.5,
+     "plants": [
+      2059,
+      10789,
+      10819,
+      50152,
+      50431,
+      50973,
+      52006,
+      56309,
+      57953,
+      58161,
+      62289,
+      64020,
+      65405,
+      67005
+     ]
+    },
+    "bar_mw": 1000.0,
+    "population_defect": false,
+    "note": "B-2 is scored on absent_from_fleet ONLY (the gate's own wording: 'no model counterpart'). cc_classified_elsewhere is the industrial-CHP / BTM boundary miso-147 \u00a71 already named, not missing capacity. campd_only MW is GROSS (its own basis)."
+   },
+   "G_L2b_basis": {
+    "matched_plants": 56,
+    "split_merchant_vs_chp": {
+     "merchant_cc": {
+      "n_plants": 42,
+      "model_pmax_gw": 27.087,
+      "campd_p99_net_gw": 27.628,
+      "gap_gw": -0.541,
+      "gap_pct": -1.96
+     },
+     "chp_boundary": {
+      "n_plants": 14,
+      "model_pmax_gw": 3.232,
+      "campd_p99_net_gw": 6.066,
+      "gap_gw": -2.834,
+      "gap_pct": -46.71
+     }
+    },
+    "campd_p99_gross_gw": 33.881,
+    "campd_p99_net_gw": 33.694,
+    "model_pmax_gw": 30.32,
+    "cap_weighted_parasitic_factor": 0.9945,
+    "gap_vs_gross_gw": -3.561,
+    "gap_vs_net_gw": -3.375,
+    "gap_vs_net_pct": -10.02,
+    "eia860_on_matched": {
+     "nameplate_gw": 32.3,
+     "net_summer_gw": 32.158,
+     "net_winter_gw": 33.683,
+     "ns_over_np_all": 0.9956,
+     "ns_over_np_clean": 0.8728,
+     "clean_gap_pct": 12.72,
+     "n_plants_corrupt_ns_gt_np": 13,
+     "corrupt_np_mw": 7357.1,
+     "corrupt_ns_mw": 10388.2
+    },
+    "note": "TRAP T5 discharged: CAMPD p99 is GROSS, model pmax is NET. Both bases are quoted side by side and the pipeline's own per-plant parasitic factor supplies the conversion."
+   },
+   "G_L2c_vintage": {
+    "solve_year": 2024,
+    "canonical_dir": "data/raw/eia-860",
+    "resolves_to": "data/raw/eia-860/vintage_2024",
+    "year_matched_vintage_exists": true,
+    "vintages_on_disk": [
+     "vintage_2018",
+     "vintage_2019",
+     "vintage_2020",
+     "vintage_2021",
+     "vintage_2022",
+     "vintage_2023",
+     "vintage_2024"
+    ],
+    "newest_vintage_on_disk": "vintage_2024",
+    "note": "set_eia860_vintage(year) is the loader's own resolver; a year with no committed vintage_<year>/ falls back to the canonical release."
+   }
+  },
+  "2025": {
+   "G_L2a_population": {
+    "model": {
+     "year": 2025,
+     "n_lp_tranches": 413,
+     "n_plants": 70,
+     "pmax_gw": 31.936,
+     "universe": "keeper fleet_state (fleet_only, no LP), plant_group in CC_REGULAR/CC_CHP; NET basis"
+    },
+    "campd": {
+     "year": 2025,
+     "n_cc_units": 148,
+     "n_cc_plants": 59,
+     "p99_gross_gw": 35.431,
+     "campd_universe": {
+      "year": 2025,
+      "n_units": 665,
+      "n_plants": 237,
+      "unresolved_gross_mwh_by_state": {},
+      "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup"
+     },
+     "basis": "GROSS, Sum unit p99 of hourly grossLoad (the miso-147 G-F3 construction)"
+    },
+    "n_plants_both": 55,
+    "absent_from_fleet": {
+     "n_plants": 1,
+     "p99_gross_mw": 490.0,
+     "detail": [
+      {
+       "plant_code": 55120,
+       "campd_p99_gross_mw": 490.0,
+       "model_klasses": [],
+       "model_pmax_mw": 0.0
+      }
+     ]
+    },
+    "cc_classified_elsewhere": {
+     "n_plants": 3,
+     "p99_gross_mw": 1031.0,
+     "detail": [
+      {
+       "plant_code": 1391,
+       "campd_p99_gross_mw": 120.0,
+       "model_klasses": [
+        "CT_CHP"
+       ],
+       "model_pmax_mw": 76.3
+      },
+      {
+       "plant_code": 1404,
+       "campd_p99_gross_mw": 0.0,
+       "model_klasses": [
+        "CT_PEAKER"
+       ],
+       "model_pmax_mw": 45.5
+      },
+      {
+       "plant_code": 50625,
+       "campd_p99_gross_mw": 911.0,
+       "model_klasses": [
+        "CT_CHP",
+        "ST_CHP"
+       ],
+       "model_pmax_mw": 181.7
+      }
+     ]
+    },
+    "model_only": {
+     "n_plants": 15,
+     "pmax_mw": 2695.5,
+     "plants": [
+      862,
+      2059,
+      10789,
+      10819,
+      50152,
+      50431,
+      50973,
+      52006,
+      56309,
+      57953,
+      58161,
+      62289,
+      64020,
+      65405,
+      67005
+     ]
+    },
+    "bar_mw": 1000.0,
+    "population_defect": false,
+    "note": "B-2 is scored on absent_from_fleet ONLY (the gate's own wording: 'no model counterpart'). cc_classified_elsewhere is the industrial-CHP / BTM boundary miso-147 \u00a71 already named, not missing capacity. campd_only MW is GROSS (its own basis)."
+   },
+   "G_L2b_basis": {
+    "matched_plants": 55,
+    "split_merchant_vs_chp": {
+     "merchant_cc": {
+      "n_plants": 41,
+      "model_pmax_gw": 26.008,
+      "campd_p99_net_gw": 27.668,
+      "gap_gw": -1.66,
+      "gap_pct": -6.0
+     },
+     "chp_boundary": {
+      "n_plants": 14,
+      "model_pmax_gw": 3.232,
+      "campd_p99_net_gw": 6.053,
+      "gap_gw": -2.82,
+      "gap_pct": -46.59
+     }
+    },
+    "campd_p99_gross_gw": 33.91,
+    "campd_p99_net_gw": 33.72,
+    "model_pmax_gw": 29.24,
+    "cap_weighted_parasitic_factor": 0.9944,
+    "gap_vs_gross_gw": -4.67,
+    "gap_vs_net_gw": -4.48,
+    "gap_vs_net_pct": -13.29,
+    "eia860_on_matched": {
+     "nameplate_gw": 32.3,
+     "net_summer_gw": 32.158,
+     "net_winter_gw": 33.683,
+     "ns_over_np_all": 0.9956,
+     "ns_over_np_clean": 0.8728,
+     "clean_gap_pct": 12.72,
+     "n_plants_corrupt_ns_gt_np": 12,
+     "corrupt_np_mw": 7357.1,
+     "corrupt_ns_mw": 10388.2
+    },
+    "note": "TRAP T5 discharged: CAMPD p99 is GROSS, model pmax is NET. Both bases are quoted side by side and the pipeline's own per-plant parasitic factor supplies the conversion."
+   },
+   "G_L2c_vintage": {
+    "solve_year": 2025,
+    "canonical_dir": "data/raw/eia-860",
+    "resolves_to": "data/raw/eia-860",
+    "year_matched_vintage_exists": false,
+    "vintages_on_disk": [
+     "vintage_2018",
+     "vintage_2019",
+     "vintage_2020",
+     "vintage_2021",
+     "vintage_2022",
+     "vintage_2023",
+     "vintage_2024"
+    ],
+    "newest_vintage_on_disk": "vintage_2024",
+    "note": "set_eia860_vintage(year) is the loader's own resolver; a year with no committed vintage_<year>/ falls back to the canonical release."
+   }
+  }
+ },
+ "G_L2d_reconcile": {
+  "exists": true,
+  "path": "data/raw/_processed-legacy/cc_capacity_reconcile_MISO.csv",
+  "n_rows": 23,
+  "n_capped": 7,
+  "current_mw_total": 19688.0,
+  "reconciled_mw_total": 17553.4,
+  "mw_removed": 2713.8,
+  "modes": [
+   "cap",
+   "raise"
+  ],
+  "sources": [
+   "campd_demonstrated_peak"
+  ],
+  "top5_by_mw_removed": [
+   {
+    "plant_code": 55380,
+    "name": "Union Power Station",
+    "current_mw": 3456.6,
+    "reconciled_mw": 2317.7,
+    "delta_pct": -32.9
+   },
+   {
+    "plant_code": 55467,
+    "name": "Ouachita",
+    "current_mw": 1257.2,
+    "reconciled_mw": 841.4,
+    "delta_pct": -33.1
+   },
+   {
+    "plant_code": 55418,
+    "name": "Hot Spring Generating Facility",
+    "current_mw": 957.0,
+    "reconciled_mw": 582.1,
+    "delta_pct": -39.2
+   },
+   {
+    "plant_code": 55220,
+    "name": "Attala",
+    "current_mw": 811.9,
+    "reconciled_mw": 516.8,
+    "delta_pct": -36.4
+   },
+   {
+    "plant_code": 55218,
+    "name": "Hinds Energy Facility",
+    "current_mw": 810.9,
+    "reconciled_mw": 532.1,
+    "delta_pct": -34.4
+   }
+  ],
+  "note": "TRAP T6 discharged: this is a DELIBERATE measured cap to CAMPD demonstrated peak (rule 13 admissible input), never counted into a 'missing capacity' total."
+ },
+ "branch": "B-1 basis_explained",
+ "L1_proceeds": true
+}

@@ -432,6 +432,69 @@ def _availability_matrix(
         cc_winter_basis = cc_np_derate and getattr(
             config, "cc_winter_capability_basis", False
         )
+        # BASIS-AWARE flat summer derate (config.summer_derate_basis_aware,
+        # miso-148). The flat _SUMMER_CLASS_DERATE is the nameplate->summer
+        # ambient loss, so it belongs only on a NAMEPLATE-basis capacity. On
+        # the per-plant EIA-860 path pmax already IS the published net-summer
+        # rating, so re-applying it double counts (miso-141). Gated on
+        # plant_level_fleet: a nameplate-basis fleet (ERCOT's CAMPD-bin path)
+        # has no double count and must keep the derate. See the ScenarioConfig
+        # field for the measured basis and the refuted alternative reading.
+        _basis_aware = bool(
+            getattr(config, "summer_derate_basis_aware", False)
+        ) and bool(getattr(config, "plant_level_fleet", False))
+        _measured_basis_plants: frozenset[int] = (
+            _pkg_ns().summer_basis_measured_plants(_iso)
+            if (_basis_aware and _iso)
+            else frozenset()
+        )
+
+        def _basis_aware_suppresses(gen: "Generator") -> bool:
+            """True when ``gen``'s pmax already IS a measured summer capability.
+
+            False for every generator when the flag is off, so the off path is
+            byte-inert. Plants the CC guard clipped onto a nameplate-like bound,
+            and plants absent from EIA-860, are absent from the set and so KEEP
+            the flat derate.
+            """
+            if not _basis_aware:
+                return False
+            try:
+                return int(gen.plant_code) in _measured_basis_plants
+            except (TypeError, ValueError):
+                return False
+
+        if _basis_aware:
+            _kept = sorted(
+                {
+                    int(g.plant_code)
+                    for g in generators
+                    if g.plant_group in _SUMMER_CLASS_DERATE
+                    and not _basis_aware_suppresses(g)
+                }
+            )
+            logger.info(
+                "basis-aware summer derate (%s): flat _SUMMER_CLASS_DERATE "
+                "SUPPRESSED for %d of %d flat-derate units (pmax already the "
+                "published net-summer rating); KEPT for %d unit(s) across %d "
+                "plant(s) still on a nameplate-like basis %s",
+                _iso,
+                sum(
+                    1
+                    for g in generators
+                    if g.plant_group in _SUMMER_CLASS_DERATE
+                    and _basis_aware_suppresses(g)
+                ),
+                sum(1 for g in generators if g.plant_group in _SUMMER_CLASS_DERATE),
+                sum(
+                    1
+                    for g in generators
+                    if g.plant_group in _SUMMER_CLASS_DERATE
+                    and not _basis_aware_suppresses(g)
+                ),
+                len(_kept),
+                _kept[:20],
+            )
 
         def _cc_seasonal_pair(gen: "Generator") -> tuple[float, float] | None:
             """``(summer_ratio, winter_ratio)`` for a CC gen, or ``None``.
@@ -780,7 +843,7 @@ def _availability_matrix(
                             availability[g_idx, ~summer] *= _wr
                 else:
                     summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
-                    if summer_derate:
+                    if summer_derate and not _basis_aware_suppresses(gen):
                         availability[g_idx, summer] *= 1.0 - summer_derate
             # Per-plant coal max-CF ceilings: cap availability so the unit
             # cannot dispatch above its sustained operating limit.
@@ -914,7 +977,19 @@ def _availability_matrix(
                     _r = _pkg_ns().cc_summer_derate_ratio(int(gen.plant_code))
                     _anchor = _r if (_r is not None and _r < 1.0) else None
                 elif gen.plant_group in _SUMMER_CLASS_DERATE:
-                    _anchor = 1.0 - _SUMMER_CLASS_DERATE[gen.plant_group]
+                    # Basis-aware (miso-148): when the flat derate is suppressed
+                    # for this plant the unit's summer capability IS its carried
+                    # rating, so the curve's summer mean anchors at 1.0 — not at
+                    # None, which would leave it unanchored and re-introduce an
+                    # implicit derate through the back door. Inert on the MISO
+                    # keeper, whose temp curve is mean-anchored (_anchor=None
+                    # above), and kept consistent so the two read sites of the
+                    # flat derate can never disagree in another configuration.
+                    _anchor = (
+                        1.0
+                        if _basis_aware_suppresses(gen)
+                        else 1.0 - _SUMMER_CLASS_DERATE[gen.plant_group]
+                    )
                 else:
                     _anchor = None
                 if _anchor is not None:
