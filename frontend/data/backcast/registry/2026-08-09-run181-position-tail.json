@@ -1,0 +1,16 @@
+{
+ "id": "2026-08-09-run181-position-tail",
+ "label": "run181 position tail",
+ "date": "2026-08-09",
+ "shorthand": "run181-position-tail",
+ "definition": "ercot-181 ARM, PROMOTED KEEPER: control + ONE delta, ercot_offer_surface_position_tail=true \u2014 the pre-registered position-tail completion of the wall/pool ladders' p90-truncated position axes (matrix \u00a75.1 item 23; zero fitted scalars; 2023-only tails, 2024/2025 byte-identical to control by the zero-support rule). MEASURED INERT-ON-THE-OBJECT: 22 spring hours +$0.006..+$0.57, annual lw +$0.0004/MWh; tails 61/25/3, shed 4/2/0 and every scored criterion IDENTICAL to control. NOT-YET {C3a, C3b}, all pre-registered gates PASS; promoted on structural fidelity (rule 1/14): the measured top decile of submitted conduct replaces a silent truncation, at zero gate cost. The C3a-2023 reachability question is ESCALATED to an owner sitting (see FINDING-ercot181-position-tail-2026-08-09.md).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-08-09-run181-position-tail.js",
+ "bundle": "results/calibration/ercot181_positiontail_B",
+ "market_story": "The completed tails price the class curves' last increments at measured cliff-face conduct (CC 202x->HCAP, CT 596x->HCAP, pool 570x->HCAP above the p90 position): in reality the top-hour marginal price forms far up the marginal resource's own submitted curve (q_act p50 0.9976; actual RT inside the position band in 94/100 top-gap hours), and reality's ON merchant-gas fleet holds only ~0.3-0.9 GW of sub-HCAP spare there (ercot181 I-3) \u2014 the model's supply-curve top now carries that measured conduct instead of a p90 end-clamp. The completion is supramarginal in today's backcast top hours (the LP's clearing position sits below the completed decile \u2014 the quantity-position wedge, escalated to the owner sitting); it binds only where a class position crosses p90 of its within-plant span, today 22 cheap spring hours, forward wherever load growth pushes class positions into the measured cliff."
+}
