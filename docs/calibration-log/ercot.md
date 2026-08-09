@@ -6543,3 +6543,78 @@ gating the p = 0.017 re-identification. Records:
 `results/calibration/ercot180_edge_identification.json`,
 `results/calibration/ercot180_marginal_position.json`,
 `docs/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md`. Next: ercot-181.
+
+## 2026-08-09 — ercot-181: the QUANTITY-POSITION lane — the position-tail completion BUILT, PROVEN, and PROMOTED AS KEEPER with the honest verdict INERT-ON-THE-OBJECT; the offer-side mechanism space for C3a-2023 is EXHAUSTED and the reachability question is ESCALATED to an owner sitting
+
+**Charter:** FINDING-ercot180 §4/§5 (matrix §5.1 item 22's `==>` clause) — the
+quantity-position phenomenon: reality's marginal price forms at q_act p50
+0.9976 of the marginal resource's own cliff-shaped submitted curve, inside the
+position band in 94/100 top-gap hours. **Precommit pushed BEFORE any
+measurement** (`docs/PRECOMMIT-ercot181-quantity-position-2026-08-09.md`):
+the interior price-at-BP instrument with bars fixed ex ante, form α (the
+position-tail completion) elected over THREE ex-ante refusals (comonotone
+re-aggregation, outcome-position pins, friction re-opens), the build-free
+M-0/M-1 inertness tree, kill gates verbatim (G-SHED PRIMARY), and the
+FILED-REFUSED terminus. Pre-solve Amendment 1: tails 2023-ONLY (the frozen
+2024/2025 RT-wall anchors' source corpus was purged 2026-07-22 and cannot be
+reproduced — zero-support at year grain).
+
+**The structural seat:** all three armed interp geometries END-CLAMP at their
+p90 rung (`LADDER_QUANTILES` 0.1..0.9), so the measured populations' top
+decile — CC 202× delivered gas rising to HCAP, CT 596×, pool 570×, exactly
+where 2023's real top-hour lambda (727×) forms — mapped to NO model row's bid
+at any position. The completion appends the SAME MW-weighted quantile
+statistic on each population's own measured support above p90
+(`scripts/lib/positiontail.py`), rows reading at their own `rel`; zero fitted
+scalars, sub-p90 byte-identical, frozen-ladder reproduction asserted before
+any tail is appended.
+
+**Execution:** M-1 read LIVE (598/528/48 candidate row-hours at/below control
+price — P-2's provably-inert expectation falsified at the formal criterion),
+so Route B built, seam-proved (SP-α1..α8 ALL PASS; null encoding
+byte-identical — position, never level), and solved the A/B (control + arm,
+strictly sequential, same HEAD). **The control reproduces the run176 keeper
+ARRAY-EQUAL in all three years. The arm moves 22 spring 2023 hours by
++$0.006..+$0.57 — annual lw +$0.0004/MWh — and NOTHING else:** tails 61/25/3,
+shed 4/2/0, and every scored criterion IDENTICAL; 2024/2025 byte-identical
+(Amendment-1 zero-support, G-BIT in substance). Determination NOT-YET
+{C3a, C3b} unchanged. **Every pre-registered gate PASSES** (G-OWNER max
+class-energy delta 0.0017 % vs the 0.5 % cap; G-COAL148 +0.0005 TWh; G-DOF
+one measured entry at n_scalars 0, n_residual 6 unchanged); LOYO trivial
+(zero identified parameters; held-out years byte-identical).
+
+**PROMOTED** (owner structural standard; keeper →
+`2026-08-09-run181-position-tail`): the completion replaces a silent
+truncation of measured conduct with the measured distribution itself, at zero
+gate cost — supramarginal at backcast loads, reachable wherever forward load
+growth pushes class positions into the measured cliff. Keeper auditor PASS,
+zero repairs. Runs `2026-08-09-run181-control-positiontail-pair` +
+`2026-08-09-run181-position-tail` registered; the two 2026-08-04-159 runs
+evicted at the 15-cap as pre-registered.
+
+**The instrument refusal IS the measurement:** interior price-at-BP
+clustering passed coverage (0.999) and tightness (rel-IQR 0.0) but FAILED
+I-B3 at full magnitude — λ̂ p50 $5,000 vs actual RT $144: the step-lookup
+convention reads the piecewise-LINEAR cliff segment's upper breakpoint, a
+perfect cluster at the wall. The saturation is the phenomenon: the marginal
+resources sit ON the near-vertical cliff face where lambda is the
+interpolated height. REFUSED-AS-MEASURED, no post-hoc redesign (rule 20/23).
+**I-3 sizes the wedge corpus-side: reality's ON merchant-gas fleet held only
+269/555/926 MW (p25/p50/p75) of unaccepted sub-λ̂ spare at the top-bin hours
+(fleet position p50 0.884)** — the model's several-GW of p90-clamped headroom
+in the object hours does not exist in real conduct.
+
+**THE LANE'S CONCLUSION — ESCALATED:** with items 21–23 the offer-side
+mechanism space for C3a-2023 is EXHAUSTED (grain forms R×2 on the hour axis;
+the position completion K-but-inert on the position axis; quantity faces
+closed on measurement; outcome pins rule-13-forbidden). The C3a-2023 miss is
+a model-class limitation of an hourly class-aggregate LP against a 5-minute
+cliff-face price formation — the same object the C3c ledger accepts for the
+tail COUNT, now measured to own the tail LEVEL. **Owner sitting requested on
+C3a-2023 reachability within this model class** (the C3c-caveat path; note
+C3a is LOAD-BEARING tier where model-class ledgering is v3.0-refused — the
+sitting must amend the rubric, accept NOT-YET as standing, or authorize a
+model-class change such as sub-hourly/cliff-resolving price formation). Until
+then: NO further offer-side C3a-2023 lever (DO-NOT-REDO items 21–23).
+Records: `results/calibration/FINDING-ercot181-position-tail-2026-08-09.md`
++ the reach/seam/instrument JSONs. Next: ercot-182 (after the sitting).
