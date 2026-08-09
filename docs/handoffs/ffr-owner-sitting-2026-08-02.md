@@ -3330,3 +3330,113 @@ byte-identical (same 4,328 rows/tuples/order), five other ISOs byte-inert per it
 CAISO holds no `complete` marker (withdrawn), so no re-key duty. Keeper-auditor launched
 scoped `--iso CAISO`; result recorded when it returns. Keeper churn count for Q.2: CAISO
 moved TODAY — the battery hold stands with no settle window yet open.
+
+## Addendum AF — FFR-8A Phase 3 adjudicated; THE FH-4/FH-5 LIFT DETERMINATION (HOLD #6, with the re-base named); D-28 steps 1–2 closed; the parallel dispatch set
+
+**Written 2026-08-09 by the workstream manager at `origin/main` `9febedf`.**
+
+### AF.1 FFR-8A Phase 3 adjudication: CLEAN — the record the determination consumes
+
+Everything pre-registered ran verbatim: control reproduction gate PASSED on all six content
+legs (runtime key byte-identical to FFR-5D-M after the caiso-184 backfill); repair arm
+distinct (`816031a3308cccde`); both arms registered HINDCAST-namespace only; §2–§5 filled;
+the §3.4 honest-expectation scorecard published with its misses (§4.4 — expectation 4
+MISSED HIGH in 2025, expectation 5's reasoning wrong with direction held, expectation 1
+SPLIT); matrix cell recorded as measured-not-adjudicated (stays `O`); E3 formally escalated
+to the manager. Zero tuning; refusals held. Exemplary lane.
+
+### AF.2 THE DETERMINATION (Addendum I.1 authority): the FH-4/FH-5 lift is REFUSED — HOLD #6
+
+Adjudicated against V.3's α/β/γ as sharpened by FFR-7C, plus the price-side test, on the
+§4 record:
+
+- **(α) MET on its own terms.** In-window economic executions = 0 in BOTH arms — the
+  FFR-7C bound holds; vacancy is the expected correct answer (bind 3 read through 7C).
+- **(β) FAILED.** The false gas_st wave is NOT gone: 27 units / 6,500.6 MW survive the
+  repaired into-2022 screen (−41 % vs control's 10,942.9 MW; net $24.85 vs bar $35.00).
+- **(γ) FAILED.** Scored exits err +183 % vs the corrected 2.294 GW target (control
+  +377 %) — the model still manufactures a pre-window economic wave that did not happen.
+- **Price side: FAILED.** into-2024 repair INERT (0 h > $100, adder mean $0.005 — the
+  control zero reproduced); into-2025 partial and real (13 h > $100 / 7 h > $1000 vs
+  measured 217; mean 44 % of measured) via the CORRECT mechanism (phys-headroom scarcity
+  through the published curve), not tuning.
+- **G.2 binds:** no violation — the control did not flip (distinct keys, gate passed
+  pre-repair), directions honest, the §4.2.4 non-monotone cap interaction recorded as a
+  measurement caveat (no price-side repair may be judged by exit totals alone).
+
+**TWO STANDING FACTS the refusal carries forward, so the next gate evidence is already
+defined:**
+
+1. **The §4 record is ALREADY SUPERSEDED as a forward baseline by the FFR-3V epoch.**
+   The ungated vintage-seed fix (`d1965d6`, merged AFTER both arms solved) re-bases the
+   ERCOT hindcast VRE pool massively (wind 42,000 → 27,541 MW; solar 38,000 → 4,864 MW at
+   vintage 2020 — the leak's largest gap, 7.8×). FFR-8A's arms priced screens over an
+   over-built VRE pool: corrected inputs RAISE net load, SHRINK headroom, and can only
+   INCREASE the object's scarcity content at every screen. The §4 numbers are therefore a
+   LOWER BOUND on the repaired object at true inputs, and the FFR-5D-M §1.3 reproduction
+   numbers are STALE for any future ERCOT hindcast run (3V handoff §6.1 — tracked here as
+   promised). **The re-based repair arm at the post-3V head is the next lift evidence**,
+   and FFR-8B (dispatched, AF.4) produces it as its Phase 0.
+2. **The λ-led share of the price gap is out of every admissible object's reach by
+   construction** (FFR-8A §5 finding (a): the ~150–200 measured hours where SCED's energy
+   price cleared >$100 on an un-pinned system are real-time offer conduct, not
+   fundamentals+design). If that share dominates the measured 161/217 h, the price-side
+   condition as written may be unsatisfiable by any rule-13 repair — the same shape as the
+   C3c model-class ledger. **OWNER QUESTION, put in prose this sitting:** whether the
+   price-side condition re-bases to the design-scarcity component (with the conduct share
+   measured and stated), or the program accepts an indefinite block, or a conduct lane is
+   chartered (the manager recommends AGAINST the third: FFR-6A refused signal scaling by
+   name and no published-design forward identification for conduct exists). The
+   determination itself does NOT wait on this — β/γ fail regardless.
+
+E3 disposition (escalated to the manager, §5): the shipped flat fallback STAYS (unchanged
+configuration, no parameter invented); the NP6-576-ER question re-opens only if FFR-8B's
+Phase-1 evidence bears on it. DO-NOT-REDO applies.
+
+### AF.3 D-28 steps 1–2 CLOSED; caiso-184 promotion R.1 CLEAN
+
+**F2-45U (step 2) landed and adjudicates CLEAN** (PR #3755): §45U left the attribute
+max(); branch assignment made PER INSTRUMENT — LSE-paid certificates (clean/CES/RPS)
+branch (i) in the gross-receipts base, `eac_price_nuclear` (documented NY-ZEC/IL-CMC
+netting design) branch (iii) — a faithful refinement the memo's own §5 card flattened,
+grounded in the memo's §1.3/§3.2(d) text, zero DOF; composition worth $0.00 at the $30 ACP
+and ≤$2.07/MWh anywhere; D=0 default path IDENTICAL to HEAD; stage 2 skipped (no bar
+crossing, settled in CF space). The retirements.py "owner call pending" annotation is
+retired. **Step 3 (Arm-3 arming) now lacks only evidence — ARM3-MEASURE dispatched
+(AF.4).** caiso-184's CAISO promotion (`2026-08-09-caiso-184-c1-lpbasis`): one kwarg over
+caiso-183-b1-hour (`unit_outage_lp_capacity_basis=True`), same-basis invariant repair,
+zero DOF, monotone, paired control registered; the SHIPPED default stays False so nothing
+crosses ISO lines — R.1 CLEAN. CAISO churn: three promotions in ~30 h → Q.2's battery hold
+STANDS. A fresh keeper-audit pass for caiso-184 is launched (worktree-isolated — the
+caiso-183-scoped auditor shared this session's working tree and is superseded by the new
+promotion; result recorded when it returns).
+
+### AF.4 The dispatch set (this sitting) and the explicit non-dispatches
+
+Dispatched in parallel, each in its own container, no shared namespaces, no downstream
+duplication (pack §0ab): **FFR-8B** [FABLE] (ERCOT hindcast lane: Phase-0 post-3V re-base
+of the repair arm = the new baseline AND the next lift evidence; then the E1
+committed-capability dispersion diagnosis — §5 finding (c), p1 13.3 vs 7.9 GW — and repair
+only if admissible); **FFR-5E-H** [OPUS] (the MISO hindcast arm of the VRE procurement
+channel, unblocked by FFR-3V-FIX §6, both arms at/after the 3V epoch, the base-year
+under-count carried into the score); **ARM3-MEASURE** [OPUS] (the longer-horizon MISO
+clean-row measurement that feeds the D-28 step-3 arming card — the 2026–2030 window
+showed the rows quiet; the ramp years are the open evidence). NOT dispatched, with
+reasons: **FH-4/FH-5** (lift REFUSED, AF.2); **the T1 battery** (Q.2 — CAISO churned
+three times in 30 h; keepers not settled); **HOUSE-2** (the pinned-baseline failures
+overlap surfaces active in ercot-181 and miso-145 — held to avoid collisions, queued).
+HOUSE-1 is MERGED: the constants.py reflow trap is DEAD; prompts now carry the
+cache-key-pin wait line instead.
+
+### AF.5 The caiso-184 keeper audit returned: PASS, zero drift (recorded per AF.3)
+
+The worktree-isolated `calibration-keeper-auditor` pass scoped `--iso CAISO` completed
+against `origin/main` `960b38a`: `audit_keepers.py` E1–E9/H1/M1/S1 all OK (0 fail /
+0 warn), `build_status.py --check --iso CAISO` in sync, the keeper shard / status page /
+registry sidecars all consistent with `2026-08-09-caiso-184-c1-lpbasis` — the
+two-promotions-in-12-hours sequence left no drift, and the prior sidecars (caiso-183,
+caiso-175) each describe only their own arm. Nothing was modified; no audit branch was
+needed. Noted for the record: the current CAISO keeper's live determination is **NOT-YET**
+(C3a mean LMP the sole load-bearing FAIL; the C3c ledgered caveat carried verbatim from
+the prior keeper) — consistent with CAISO's withdrawn `complete` marker; the auditor also
+manually confirmed no CAISO registry entry postdates the keeper.
