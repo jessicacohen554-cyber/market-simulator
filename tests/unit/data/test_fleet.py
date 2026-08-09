@@ -1542,6 +1542,53 @@ class TestCcCapacityReconcile(unittest.TestCase):
         self.assertTrue(np.allclose(off, on))
 
 
+class TestCcCapacityReconcilePathIsoScope(unittest.TestCase):
+    """``cc_capacity_reconcile_path`` resolves per-ISO — rule 25 ``[R-ISO-SCOPE]``.
+
+    The field defaults to ``None`` and is resolved in
+    ``ScenarioConfig.__post_init__`` to ``cc_capacity_reconcile_<ISO>.csv``. That
+    default is load-bearing: a shared or ERCOT-shaped default would feed one
+    ISO's demonstrated peaks to any other ISO that flipped the boolean without
+    overriding the path, which is exactly the cross-ISO leak rule 25 closes.
+
+    Asserted rather than merely observed (caiso-185 P0-4 / BE-2; the caiso-184
+    ``G-CONSIST`` discipline — a scope property that only a probe checks is a
+    property nothing defends).
+    """
+
+    _ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
+
+    def test_each_iso_resolves_to_its_own_table(self):
+        from market_sim.config.paths import cc_capacity_reconcile_path
+
+        for iso in self._ISOS:
+            with self.subTest(iso=iso):
+                resolved = Path(ScenarioConfig(iso=iso).cc_capacity_reconcile_path)
+                self.assertEqual(resolved, cc_capacity_reconcile_path(iso))
+                self.assertIn(iso, resolved.name)
+
+    def test_paths_are_pairwise_distinct(self):
+        paths = {
+            ScenarioConfig(iso=iso).cc_capacity_reconcile_path for iso in self._ISOS
+        }
+        self.assertEqual(len(paths), len(self._ISOS))
+
+    def test_arming_one_iso_does_not_move_another(self):
+        armed = ScenarioConfig(iso="CAISO", cc_capacity_reconcile=True)
+        self.assertIn("CAISO", Path(armed.cc_capacity_reconcile_path).name)
+        for iso in self._ISOS:
+            if iso == "CAISO":
+                continue
+            with self.subTest(iso=iso):
+                self.assertIn(
+                    iso, Path(ScenarioConfig(iso=iso).cc_capacity_reconcile_path).name
+                )
+
+    def test_explicit_path_still_wins(self):
+        cfg = ScenarioConfig(iso="CAISO", cc_capacity_reconcile_path="/tmp/custom.csv")
+        self.assertEqual(cfg.cc_capacity_reconcile_path, "/tmp/custom.csv")
+
+
 class TestCcSummerCapacityGuard(unittest.TestCase):
     """``_reconcile_cc_pmax_to_nameplate`` clamps double-filed CC summer rows.
 

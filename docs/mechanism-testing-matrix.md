@@ -891,7 +891,81 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-09-caiso-184-c1-lpbasis`** — caiso-184, the outage-derate DENOMINATOR repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY with **EVERY pre-registered gate PASSING**; **NOT-YET**, 8 criteria scored, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.5 / +13.1 %** having narrowed in all three years against a **ZERO** same-head noise floor)
+### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-09-caiso-184-c1-lpbasis`** — caiso-184, the outage-derate DENOMINATOR repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY with **EVERY pre-registered gate PASSING**; **NOT-YET**, 8 criteria scored, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.5 / +13.1 %** having narrowed in all three years against a **ZERO** same-head noise floor). **QUEUE RE-CONFIRMED EMPTY 2026-08-09 by caiso-185: `cc_capacity_reconcile` — the last named un-adjudicated in-model cell — is **REJECTED EX ANTE, NO LP SPENT**, and the open question is now an OWNER SITTING, not a tenth lever.**
+
+> **caiso-185 (2026-08-09) — THE CC DEMONSTRATED-CAPABILITY RECONCILE IS *REFUSED*
+> ON A MEASURED BASIS DEFECT. KILL-BEFORE-SOLVE: **ZERO LP SPENT, NOTHING REGISTERED,
+> KEEPER UNCHANGED.** THE CAISO IN-MODEL QUEUE IS NOW EMPTY WITH EVERY CELL ADJUDICATED.**
+> **KEEPER UNCHANGED: `2026-08-09-caiso-184-c1-lpbasis`.** DOF **11 / 8**, untouched.
+> **No `ScenarioConfig` field added, no file under `src/` modified, no data byte changed**
+> (BE-3 sha256 ledger). `calibration-complete.json` / `holdout-freeze.json` untouched
+> (owner acts). **C3a WAS NEVER READ** — no arm was solved, so no fit outcome could
+> influence the verdict (rule 1 `[R-STRUCT]` in its strongest form).
+> **THE TABLE IS CLEAN — the refusal is NOT about the data.** All 7 committed rows
+> (6 `cap` + 1 `raise`) **re-emit at the current CAMPD / EIA-860 vintage in the same
+> mode with `reconciled_mw` identical** (max rel delta 7.9e-05), `current_mw` drift
+> **0.0**, CT-only exclusion set unchanged — so **no source-data change is citable and
+> NO re-derive was licensed** (rule 23 `[R-FROZEN-DERIVE]`); none was made. The charter's
+> premise that the table sits in "cap-ish mode" is **corrected**: a `raise` row can only
+> be emitted under `--mode both`, so it is already on the recommended mode.
+> **G-OVERCARRY PASSES** — every cap row is a genuine ambient-rating gap, not a
+> fleet-loading defect: `current_mw` / EIA-860 CC nameplate = **1.0000 on all six**, so
+> rule 11 does not bite. **G-XGROUP PASSES** — exactly **7 of 258 bins move, all
+> CC_REGULAR, zero non-CC**, net **−871.5 MW**. **G-358 PASSES** — the raise row removes
+> **99.9 / 98.1 / 99.9 %** of plant 358 Mountainview's `f_CEMS > 1` excess on caiso-184's
+> own `X(N2,D2)` basis. **BE-1 / BE-2 / BE-3 PASS**; the per-ISO path resolution is now
+> **enforced by a test**, not merely observed.
+> **THE REFUSAL — A BASIS DEFECT, DISCOVERED IN P0 AND DECLARED AS *NOT* PRE-REGISTERED.**
+> The demonstrated peak is a **REALIZED OUTPUT**: it sits on the availability-**INCLUSIVE**
+> side of `pmax x availability`. `capacity_mw` is the availability-**EXCLUSIVE** slot the
+> hook writes it into. Since `availability <= 1` everywhere, setting `capacity :=
+> demonstrated peak` makes `max_t(pmax x availability) < peak` **BY CONSTRUCTION** — so the
+> `cc_nameplate_summer_derate` seasonal ratio, WEFOR/POF, the temperature curve and the
+> outage overlay are each applied a **SECOND** time to a quantity that already embodies
+> them (rule 19 `[R-ONE-MECH]`). **This is caiso-184's disease in a different organ:**
+> numerator and denominator on different bases.
+> **MEASURED THROUGH THE SHIPPED PATH** (`load_or_synthesize_bins` -> `bins_to_fleet` ->
+> `generators_to_fleet_arrays`), never asserted: arming drops effective **summer**
+> capability to **0.76 / 0.84 / 0.91 / 0.95 / 0.965 / 0.979** of each capped plant's OWN
+> CEMS-demonstrated summer output, and to **0.79-0.97** off-summer. Moss Landing (260):
+> **768.3 MW armed against 1011.1 MW demonstrated** — the model would deny **243 MW the
+> plant is recorded as having produced**, in the highest-price season. Unarmed, only
+> 55151 is marginally below (0.985). **Arming makes the model LESS faithful to measured
+> data**, which rules 13 `[R-MEASURED]` / 14 `[R-ACCURATE]` forbid: rule 14 prefers
+> accurate data, it does **not** license an input whose APPLICATION contradicts the
+> measurement. Rejected **whole** — PRECHECK §5 item 4 forbids partial arming and rule 24
+> forbids hand-editing the table.
+> **THE ROOT CAUSE OPENED (rule 14's requirement), NOT TAKEN AS A LEVER.** The phantom the
+> caps target **is real and is OFF-SUMMER**: unarmed off-summer capability sits **8-13 %
+> above** demonstrated off-summer output, because `cc_nameplate_summer_derate` uses
+> **unpublished NAMEPLATE** as the off-summer capacity while EIA-860 publishes a **WINTER**
+> rating that CEMS corroborates (off-summer p999 / published winter = **0.906-1.001**;
+> / nameplate = **0.73-0.89**). The named repair is a **SEASONAL, availability-aware
+> capability basis** — a different mechanism, needing its own pre-registration. Per the
+> charter it is **FILED, NOT BUILT**: no tenth lever was invented.
+> **RULE 28(c) GAP CLOSED** — `cc_capacity_reconcile` (the boolean) now has its own
+> verdict-bearing row; CAISO **`R`** from this session's evidence alone. **PJM `K` and
+> MISO `K` are read from THOSE ISOs' own committed keeper configs** (registration, not
+> adjudication; no verdict transfers, rule 25 / 28(d)). **PJM CARRIES A LIVE UNMEASURED
+> EXPOSURE**: it arms this flag **together with** `cc_nameplate_summer_derate` — exactly
+> the composition measured inadmissible here. **Observed, not edited (rule 25):** the
+> sibling `cc_capacity_reconcile_path` row's NYISO `K` is stale — NYISO's current keeper
+> `2026-08-08-nyiso-132-cf-arm` carries the flag `False`; that lane's cell is that lane's
+> to correct.
+> **THE OWNER QUESTION, PUT.** The CAISO in-model queue is empty with every cell
+> adjudicated. The remaining named routes are both owner acts: (a) fund the **hourly
+> pumped-storage water-state intake** (walled input, `FINDING-caiso140` §B / caiso-141 A2,
+> still C3a's first named contributor), and (b) rule on whether CAISO may be declared
+> `CALIBRATED-WITH-CAVEATS` on a **C3a** ledger entry — which **rubric v3.1 currently
+> FORBIDS**, C3c being the only ledgerable criterion and C3a load-bearing.
+> `results/calibration/PRECHECK-caiso185-cc-reconcile-2026-08-09.md` (pushed +
+> blob-verified **before any measurement**, sha256 `890c023c...`) ·
+> `FINDING-caiso185-cc-reconcile-2026-08-09.md` ·
+> `scripts/probes/_caiso185_table_provenance.py` · `_caiso185_seasonal_stack.py` ·
+> `_caiso185_arm_capability.py` · `_caiso185_g358.py` · `_caiso185_be_proof.py` ·
+> records `_caiso185_table_provenance.json` · `_caiso185_seasonal_stack.json` ·
+> `_caiso185_arm_capability.json` · `_caiso185_g358.json` · `_caiso185_be_proof.json`.
+
 
 > **caiso-184 (2026-08-09) — THE CHARTERED OBJECT IS *REFUTED* AND A LARGER, DIFFERENT
 > DEFECT IS FOUND IN ITS PLACE. THE OUTAGE-DERATE **DENOMINATOR** REPAIR IS BUILT,
