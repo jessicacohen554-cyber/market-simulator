@@ -6314,3 +6314,132 @@ percentile off the *real* curve, which makes the LEVEL term identically zero by
 construction; the circular version appears in no result. Concurrent-session
 check at open and close: no MISO PR or live MISO branch on this charter.
 **Next number: miso-146.**
+
+## 2026-08-09 — miso-146: §5.4 QUEUE ITEM 7 SET AND DISCHARGED — an intermittent-resource screen for the offer corpus IS buildable and DOES separate a real population on a held-out attribute, and it does NOT clean the universe, because MISO's book carries only a minority of the ISO's VRE and its cheap mass is mostly DECLARED MUST-RUN, not renewables. Branch `BRANCH-SCREEN-BOUNDED`. Phase 0, NO LP, no arm, no run, no cell verdict, keeper UNCHANGED
+
+**Session** miso-146, branch `claude/miso-146-offer-surface-14kwww`, off
+`origin/main` at `e9f99e6`. Lane **(A)** of the miso-145 successor charter,
+written into §5.4 as **item 7**. **NO LP SOLVED. NO KEEPER MOVED. NO MECHANISM
+ARMED. NO RUN REGISTERED. NO `ScenarioConfig` FIELD ADDED. NO PARAMETER
+DERIVED. NO CELL VERDICT MINTED.** Keeper unchanged at
+`2026-08-05-miso-132b-cc-committed`; fail set unchanged at **{C3a}**.
+
+**§0 re-verified from committed artifacts** (`calibration_verdict.py --run-id`,
+no re-solve, all three years in one invocation): **NOT-YET**, sole FAIL **C3a
+`price_mean` 2025 −14.1 %**; C3c the sole ledgered caveat, budget **1 of 1**,
+SPENT; C1/C2/C3b/C4/C6/C8 PASS, C8 ST_GAS grounded above budget at
+**31.9 / 33.1 / 45.1 %** with all binding mechanisms clearing D-4; C1 skipping
+all eight classes and C2 both families in 2025 on the preliminary EIA-923
+vintage.
+
+**PREREG** `results/calibration/PREREG-miso146-intermittent-screen-2026-08-09.md`,
+pushed at **`fc162d54`** before any adjudicating statistic — two-sided prior,
+five numerically falsifiable predictions with **gating status and
+interpretation fixed, with reasons, before measurement**, five pre-committed
+branches, eight traps with counter-measurements, full disclosure.
+
+**Footing.** G-F0 reproduces miso-145's committed 2025 JJA h12–17 universe
+readings on their own constructions (unweighted totals **106.140 / 131.871 GW**,
+unweighted ≤ $0 mass **19.945 / 17.654**, load-weighted totals **107.007 /
+131.969**) — worst |Δ| **0.0004 GW** against 0.05. G-F1 reproduces the six
+committed window deficits to **0.0003** on the single C3a weight.
+
+**The screen.** Declaration dynamics only — an intermittent resource's declared
+`ecomax` is a *forecast*, a thermal unit's is a *rating* — two features
+(`interior_frac`, `step_frac`), both thresholds fixed a priori at the neutral
+midpoint **0.50**, **offer price excluded from the feature set by construction**
+and held out as the sole validation attribute.
+
+**P-3b PASSES decisively (gating):** of the identified INTERMITTENT population's
+offered MW in 2025 JJA h12–17, **79.5 % (DA) / 97.7 % (RT)** is priced ≤ $0,
+against **11.5 % / 12.6 %** for everything else (bars ≥ 60 / ≤ 15 %).
+**P-3 PASSES (gating):** non-intermittent Σ C **155.7 / 154.6 / 159.9 GW**
+inside the EIA-860 non-VRE bracket — thermal is not eaten.
+
+**P-4 FAILS (gating), and the failure is the session's most useful output.**
+The intermittent population carries only **2.981 GW (DA) / 7.577 (RT)** of the
+committed **17.654 / 19.945 GW** of ≤ $0 offers — **16.9 % / 38.0 %** against a
+70 % bar. Of the remainder, **7.10 / 7.15 GW is declared must-run** and
+1.7 / 1.2 GW self-scheduled: a price-taking population **the model DOES carry as
+fleet rows**, so it is not a universe crossing at all. miso-145's attribution of
+that whole block to "the renewables' weight in the corpus's body" is corrected.
+(`must_run_flag` / `self_scheduled_mw` are DECLARATIONS; no fuel or technology
+claim is made — TRAP 5, the non-intermittent population is never partitioned.)
+
+**P-2 FAILS LOW in all three years, and the reason is the book.** Identified
+Σ C **9,978 / 10,932 / 10,898 MW (DA)** against EIA-860 brackets
+[23,751 , 47,294] / [26,724 , 53,032] / [32,839 , 64,671]; the population offers
+**3.751 GW (DA) / 7.755 (RT)** against the keeper's own **16.286 GW** of
+wind + solar dispatch in the same hours — a target independently corroborated by
+EIA-860 at summer-afternoon CFs (≈ 16 GW). **MISO's commercial-offer book
+carries only a minority of the ISO's VRE fleet as forecast-like rows.** The
+DA/RT asymmetry is itself an instrument result: RT yields **2.5–2.6×** the DA
+book's intermittent capability on a book that is a strict subset in unit count.
+
+**Reported against interest and led with: P-1 FAILS — the threshold is
+LOAD-BEARING.** No bimodal valley (midband share **0.240–0.413** vs a < 0.20
+bar); the pre-registered sweep shows a DA cliff between 0.40 (**29,663 MW**,
+2025) and 0.50 (**10,898**). **At 0.40 the DA leg would clear P-2. The threshold
+was NOT moved** — TRAP 6 fired as a temptation and was refused; a threshold
+chosen so a control passes is a fitted input (rules 1/13/24). The RT leg is
+stable across 0.30–0.60; the DA leg is not.
+
+**G-C ran under the pre-committed BOUNDED branch and is `NOT-LICENSING`** — no
+verdict fires and miso-145's standing rule STANDS. With that bound attached:
+the correction the screen can make moves the LEVEL term **−14.376 → −13.530**
+(RT 2025 JJA h12–17), **+$0.85**, in the direction that would favour the
+offer-level hypothesis, against a **+$18** reinstatement bar; pro-rated to a
+screen removing *all* the RT cheap mass, ≈ **+$2.2**. The one named
+contamination cannot plausibly account for the sign of miso-145's result —
+**which is not a licence to call that refutation clean, and is not offered as
+one.**
+
+**A published number corrected by reproduce-before-extend.** miso-145's FINDING
+§6.1 prints the 2024 DA LEVEL as **−4.996**; its own committed artifact
+`_miso145_offer_conduct.json` and this session both read **−2.401**, with the
+table's five other LEVEL cells and all six segment counts matching to the last
+digit. Artifact authoritative; verdict unaffected (−2.401 is *further* from the
+≥ +$18 bar, not nearer). A pointer footnote was added to that finding and its
+body left unedited as the record of that session.
+
+**The queue, written forward.** Item 7 DISCHARGED. Two items stand, both NAMED
+AND NOT OPENED: **(8)** fix the universe on the **MODEL** side — add the
+model's own wind/solar (LP decision variables at MC = 0) to its supply curve
+rather than subtracting VRE from a book that mostly does not contain it; needs
+no new data, and must state its own residual asymmetry (the model's 17.2 GW of
+import tranches, priced in the *body* of the curve, with no corpus analogue).
+**(9)** the miso-145 shape object — *the missing offer wall* — and its named
+successor, a MISO `measured_offer_surface`, position-conditioned, **UNCHANGED
+AND UNAFFECTED** by this session (it rests only on band-restricted
+price-identified statistics, which a population far below the band cannot move),
+still carrying its two hard constraints (cannot be class-conditioned, miso-138
+REFUTED; must **replace or subsume** `gas_offer_margin`, armed, cell `K`, rule
+19 `[R-ONE-MECH]`) and still an **OWNER DECISION** (rules 19/24). A third route
+exists only if the level question is to be answered *from* this corpus rather
+than *around* it: an identification of MISO's intermittent population that does
+not depend on declaration dynamics — **a DATA-intake charter, not a calibration
+one.**
+
+**Governance carried.** C1/C2 SKIPPED for 2025 (preliminary EIA-923) — the
+blocker year's fuel mix stays UNGATED and is never read as 2025 safety. Kill
+gates **not reached because nothing ran** (not "passing"): C3b-2025's 0.009
+headroom, the 2023/2024 C3a PASSes, C8's forced shares and D-4 windows, and the
+SPENT C3c ledger are all untouched.
+
+**Rule duties.** Rule 15 — no LP, no run to register (the miso-131…145
+precedent). Rule 28(b) — no cell verdict minted (no mechanism armed, refused or
+proposed); **§5.4 queue stamp written and item 7 written into the queue as
+discharged**. Rule 28(c) — no new `ScenarioConfig` field, so no new matrix row.
+Rule 22 — 2023–2025 only; MISO holds no marker. Rules 13/14/19/21/23/24/25
+throughout; probe hygiene via `_miso143_stack.hygiene()` reuse; the miso-145
+constructions (`load_real_segments`, `price_at_pctl`, `curve_readings`,
+`model_block`) reused verbatim, extended only by an **additive**
+`with_meta=True` whose default path is byte-unchanged. DO-NOT-REDO honoured —
+`gas_offer_margin` was not read, re-derived or referenced by any computation;
+the class bridge was not re-tested; no `*_lw` re-derivation; no floor, quantity,
+merit-order or dispatch family re-opened. Concurrent-session check at open and
+close: no other MISO PR or live MISO branch on this charter. **The branch's
+PREREG commit merged mid-session (PR #3769) and the branch was deleted by
+automation; it was restarted from `origin/main` under the same name by merging
+main in, never rebasing past the pushed PREREG.**
+**Next number: miso-147.**
