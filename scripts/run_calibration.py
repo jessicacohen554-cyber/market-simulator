@@ -507,6 +507,7 @@ def run_year(
     caiso_asymmetric_path_ratings: bool | None = None,
     caiso_zonal_loss_surface: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
+    unit_outage_lp_capacity_basis: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
@@ -1272,6 +1273,10 @@ def run_year(
     if capacity_deliverability_limits is not None:
         config = config.with_overrides(
             capacity_deliverability_limits=capacity_deliverability_limits
+        )
+    if unit_outage_lp_capacity_basis is not None:
+        config = config.with_overrides(
+            unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis
         )
     if ramp_limits is not None:
         config = config.with_overrides(ramp_limits=ramp_limits)
