@@ -712,6 +712,16 @@ class MarketDesign:
         """
         if not self.capacity_market:
             return 0.0
+        # FFR-4F: CAISO's RA-MPB anchor, gated default-OFF. Resolved BEFORE the
+        # curve branch because it replaces CAISO's capacity PRICE outright
+        # (rule 19 -- it does not stack on, or re-anchor, a curve). It cannot
+        # shadow a sloped curve today: CAISO publishes none, so this ISO always
+        # reaches the flat branch below; the placement is so that stays true if
+        # a curve is ever added without someone reconciling the two mechanisms.
+        # Every other ISO resolves ``None`` here and is byte-identical.
+        _caiso_anchor = resolve_caiso_ra_mpb_anchor(config, iso)
+        if _caiso_anchor is not None:
+            return _caiso_anchor * 1000.0
         if (
             reserve_position is not None
             and (self.demand_curve or self.seasonal_rbdc)
@@ -1061,6 +1071,121 @@ _MISO_VERTICAL_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
     CapacityDemandCurvePoint(1.0 + _MISO_VERTICAL_STEP, 0.0),  # just long: zero
 )
 
+# FFR-4F (2026-08-09) — CAISO's RA capacity-price anchor, on its own rule 14
+# [R-ACCURATE] merits. GATED default-OFF behind
+# ``ScenarioConfig.caiso_ra_mpb_capacity_anchor``; see
+# docs/handoffs/ffr-4f-caiso-anchor-merits-2026-08-09.md.
+#
+# THIS IS NOT A ROW-4 FIX. FC-2 row 4's movement is a reported side effect of
+# this correction, never its objective and never its success metric. The owner
+# DECLINED the anchor as a ROUTE to row 4 (D-15's charter), and FFR-3W §5.3
+# stated the trap before anyone measured it: closing row 4 through the entry
+# screen still builds the CTs California does not need, just through the
+# economic channel instead of the administrative one. This mechanism exists
+# because the shipped anchor is mis-specified ON ITS OWN TERMS, which is a
+# rule 14 defect whatever it does to any gate.
+#
+# WHAT THE SHIPPED ANCHOR IS. ``net_cone_per_kw_yr=88.08`` for CAISO is the CPM
+# SOFT-OFFER CAP: FERC ER24-1225 (187 FERC P 61,032, eff. 2024-06-01) derives it
+# as "$73.41/kW-yr GOING-FORWARD FIXED COST of a 550 MW CC reference unit x
+# 1.20". Three independent category errors, each established from the source
+# document's own words and none of them a residual argument (FFR-3W §2.3):
+#   (a) a GOING-FORWARD cost (FOM + sustaining capital for an EXISTING unit,
+#       containing no capex annuity by construction) used against a NEW-ENTRY
+#       gross fixed cost that is 78.2 % capex annuity;
+#   (b) a 550 MW COMBINED-CYCLE reference unit used to price a frame
+#       COMBUSTION TURBINE — different capex/kW, FOM/kW and duty cycle;
+#   (c) an administrative CEILING on backstop OFFERS, not a price any resource
+#       is paid. All five 2023 CPM designations cleared exactly AT the cap
+#       (data/raw/capacity-market/auction-price/caiso/), i.e. it binds as a
+#       regulatory ceiling on ~256 MW of last-resort procurement.
+# The above-cap path confirms (a) at the DESIGN level rather than merely in this
+# vintage's arithmetic: a resource may offer above the cap only by cost-
+# justifying to FERC on ITS OWN going-forward fixed costs, "using the same cost
+# categories used to establish the CPM soft offer cap". CPM compensation is a
+# RETENTION price structure end to end.
+#
+# WHAT REPLACES IT, AND THE RULE 14 MISALIGNMENT RECONCILIATION. CAISO publishes
+# NO net-CONE and no new-entry capacity price -- it runs no centralized capacity
+# auction and no demand curve, so the object our registry slot is named after
+# does not exist for this ISO (structurally absent, not un-fetched). The slot is
+# not really "net-CONE" for CAISO; it is "the price a firm MW of CAISO RA is
+# paid", which is what all three screens multiply by their accreditation. The
+# published object that IS that quantity is the CPUC PCIA **Resource Adequacy
+# Market Price Benchmark**: the volume-weighted average of ALL IOU/CCA/ESP RA
+# transactions for a stated DELIVERY year, unified to a single RA value by
+# D.25-06-049 OP 1 and issued every October under D.22-01-023.
+#
+#   2026 Forecast (delivery 2026) 11.53 $/kW-mo x 12 = 138.36 $/kW-yr  <- adopted
+#   2025 Final    (delivery 2025) 11.21 $/kW-mo x 12 = 134.52 $/kW-yr
+#
+# The 2026 Forecast vintage is adopted because the model's forecast base year is
+# 2026 and that row is the published FORWARD-delivery price. It is corroborated
+# by three independent CPUC values already committed for this ISO: the RA Report
+# transacted series 11.10 (2023), 11.87 (2025) and the 11.21 Final above -- four
+# published numbers inside 11.10-11.87 $/kW-mo, against the 7.34 the cap sets.
+#
+# The two misalignments FFR-3W §4 filed against this replacement, RECONCILED
+# rather than guessed (rule 14's own misalignment clause):
+#   1. "A whole-market average dominated by EXISTING resources is not a
+#      new-entrant price." Real property, but not a defect for THIS slot. CAISO
+#      RA is a fungible bilateral product: a System RA MW from a new CT and one
+#      from an existing CC are the same product at the same price, and CAISO has
+#      no vintage-differentiated RA price because it has no auction in which new
+#      entry sets a clearing price. So the transacted average IS what a new
+#      entrant is paid. That this price may be too low to call forth merchant
+#      entry is a MARKET OUTCOME the screen must be free to report -- grossing
+#      it up so entry turns profitable would be tuning an input to a desired
+#      output (rules 1/13). It is deliberately not done, and the screen may well
+#      still return `unprofitable` at this anchor (FFR-3W §2.1 puts the CT
+#      break-even at 10.88-11.36 $/kW-mo, i.e. astride this value).
+#   2. "The price is per NQC kW; the screens apply a UCAP accreditation." The
+#      residual is small and measurable rather than assumed: CAISO's own
+#      published gas-class ratio is NQC/NDC = 25,866/26,958 = 0.9595 (2026 SLRA
+#      Table 1.1, data/raw/capacity-market/loads-resources/caiso/), against the
+#      model's 1 - EFORd of 0.9400 for gas_ct and 0.9500 for gas_cc. Pairing an
+#      NQC-basis price with the model's UCAP fraction therefore UNDER-credits
+#      thermal capacity revenue by ~2.0 % (CT) / ~1.0 % (CC) -- conservative,
+#      two orders below the 57 % price error being corrected, and left
+#      UNCORRECTED here on purpose: inventing a gross-up would be a second,
+#      unmeasured mechanism (rule 19) fitted to nothing.
+#
+# Rule 13 [R-MEASURED] admissibility: the MPB is a measured market input, not a
+# measured OUTCOME. CPUC Energy Division publishes it every October for the next
+# delivery year under a standing decision, so the same quantity regenerates for
+# a forward year and responds to changed market conditions -- the test rule 13
+# sets. Nothing here is pinned to a model residual.
+#
+# Rule 25 [R-ISO-SCOPE]: CAISO only, by construction -- the resolver returns
+# ``None`` for every other ISO, so no other market's anchor can move.
+CAISO_RA_MPB_ANCHOR_PER_KW_YR: float = 138.36  # 11.53 $/kW-mo x 12
+
+
+def resolve_caiso_ra_mpb_anchor(
+    config: "object | None", iso: "str | None" = None
+) -> float | None:
+    """Return CAISO's RA-MPB capacity anchor in $/kW-yr, or ``None`` if unarmed.
+
+    The one seam the FFR-4F anchor correction resolves through, so all five
+    capacity-price consumers (retirement screen, thermal entry, VRE entry,
+    storage entry, plant-financials reporting) move together or not at all
+    (rule 19 ``[R-ONE-MECH]``) -- every one of them threads ``iso`` into
+    :meth:`MarketDesign.capacity_price_per_firm_mw_yr`, so the gate cannot fire
+    for some screens and not others.
+
+    Returns ``None`` -- meaning "registry anchor governs, byte-identically" --
+    unless ``iso`` is CAISO **and** ``config.caiso_ra_mpb_capacity_anchor`` is
+    armed. ``config`` is duck-typed via ``getattr`` so the config layer needs no
+    import of :class:`ScenarioConfig`, and a ``None`` config or a config
+    predating the field resolves unarmed.
+    """
+    if iso != "CAISO" or config is None:
+        return None
+    if not getattr(config, "caiso_ra_mpb_capacity_anchor", False):
+        return None
+    return CAISO_RA_MPB_ANCHOR_PER_KW_YR
+
+
 # Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARKET_DESIGN``
 # (energy-only) so a new ISO is conservative until its capacity rules are added.
 MARKET_DESIGN: dict[str, MarketDesign] = {
@@ -1078,6 +1203,16 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
     # demand_curve ⇒ capacity_price_per_firm_mw_yr returns the fixed anchor even
     # when capacity_market_clearing is on. Source: CPUC 2023 Resource Adequacy
     # Report; CAISO CPM soft-offer-cap tariff (P-0B caiso.csv).
+    #
+    # FFR-4F 2026-08-09: this 88.08 anchor is MIS-SPECIFIED ON ITS OWN TERMS —
+    # it is the CPM soft-offer cap, i.e. an administrative ceiling on backstop
+    # offers built from an EXISTING 550 MW COMBINED-CYCLE's going-forward fixed
+    # cost, used as the entry price for a new COMBUSTION TURBINE. The corrected
+    # anchor (CPUC unified RA Market Price Benchmark, 138.36 $/kW-yr) is built
+    # and GATED default-OFF behind ``caiso_ra_mpb_capacity_anchor``; see
+    # CAISO_RA_MPB_ANCHOR_PER_KW_YR above for the full derivation and the rule
+    # 14 misalignment reconciliation. The shipped value stays here as the
+    # default until the arming posture is an owner decision (rules 5/24/28).
     "CAISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=88.08),
     # Capacity markets. FF-2C R4 (owner sign-off 2026-07-19, accreditation-basis
     # memo §4.3-R4): the legacy fixed-mode net_cone_per_kw_yr anchor is
