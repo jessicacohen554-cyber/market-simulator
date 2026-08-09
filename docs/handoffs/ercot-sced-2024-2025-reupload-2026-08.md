@@ -137,9 +137,56 @@ have historically been owner-side).
    manifest + on-disk months make the next session's resume exact
    (`--manifest` re-run skips covered delivery days).
 
-## 6. RESULTS — shard counts by delivery month (filled after the fetch)
+## 6. RESULTS — the landed corpus (fetch 2026-08-09, forensics clean)
 
-*Pending — filled by the fetch + forensics steps below.*
+**708/708 listed ordinary publication days landed** (window pubs
+2024-03-24..2026-03-01; 4 docs initially served non-zip error bodies and were
+recovered on a retry pass). All 7 supplemental docs opened; the 245 MB
+2024-10-04 catch-up bundle contributed nothing new (all 32 displaced delivery
+days were also republished ordinarily and already covered). One delivery day
+is written exactly once — the full-corpus scan shows **zero duplicate
+delivery days, zero part-sequence holes, zero unreadable shards**.
+
+**Post-intake consumable corpus** (`data/raw/ercot/SCED/*.part*.parquet`):
+996 parts, 117.60M rows, 1,056 delivery days (2022-12-31..2025-12-04), median
+110,208 rows/day, no light days. All parts carry the pre-RTC+B 187/188-column
+schema (`HASL` present; the 188th column is `Ancillary Service ECRS`,
+appearing when the product launched mid-2023). New parts are written
+`string`-typed as before (Arrow physical type `large_string` vs the older
+uploads' `string` — immaterial: every consumer reads per-file via pandas).
+
+| delivery window | days | rows | note |
+|---|---|---|---|
+| 2024 | **352/366** | 40.12M | complete EXCEPT Jan 10–23 (pubs 2024-03-10..23 aged out of free MIS retention — pre-registered §2 gap; Jan 1–9 are the 2023 re-upload's bleed parts, Jan 24–31 fetched at the retention edge) |
+| 2025 | **365/365 fetched; 338 consumable** | 44.53M consumable | Jan-01..Dec-04 in the readable format, INCLUDING complete Nov (the purged original had Nov partial/Dec absent); Dec-05..31 (27 parts, 8.66M rows) QUARANTINED — see below |
+| 2024-05 | 31/31 | 3.38M | the purged original's "2024-05 sparse (109k rows)" gap does NOT recur — the MIS now serves the full month |
+
+**The RTC+B disclosure-format break (new finding, disclosed at full
+magnitude).** Publications 2026-02-02 onward (deliveries **2025-12-05..31**)
+carry ERCOT's RTC+B-era Gen member format: `HASL`/`LASL` REMOVED,
+`Telemetered Net Output ` renamed (trailing space dropped), `Ancillary
+Service *` responsibilities replaced by `AS Awards */AS Capability *`, `Ramp
+Rate Up/Down` added (193/195-column variants; daily rows triple to ~320k as
+the disclosure's resource scope widens). `HASL` is a required read column of
+every corpus consumer, so these shards CRASH the derives — the identical
+defect ercot-95/97 quarantined in the Dec-3-9-2025 out-of-band upload. The 27
+parts are preserved byte-intact in `data/raw/ercot/SCED/rtcb-format-2026/`,
+invisible to the consumers' non-recursive globs. Consuming the RTC+B era
+needs its own owner-authorized format adapter; nothing frozen measures those
+days (the purged original's 2025 population ended at Nov-partial/Dec-absent).
+
+**Staging record (task §2 discharged).** The corpus landed in **19 verified
+pushes** interleaved with the fetch: probe ladder 2.6 MB → 13 MB → 116 MB,
+then manifest-complete batches of 16–290 MB, every push confirmed by
+`ls-remote` sha match before the next (content-addressed identity of every
+blob). Two mid-session branch deletions occurred when the owner-side
+automation merged in-flight PRs (#3806, #3813); both recovered by rebasing
+onto the new `origin/main` and re-pushing, exactly per the standing
+instruction — no bytes lost, no history rewrite, no force-overwrite of
+another session's work. One in-flight push was killed by a 2-minute tool
+timeout and taught the staging loop to carry a 10-minute ceiling; the largest
+verified single pack was 290 MB (this remote's gateway comfortably exceeds
+the 2026-08-03 session's ~1.3 MB pathology, which does not reproduce here).
 
 ## 7. RESULTS — §3 acceptance outcomes (filled after the runs)
 
