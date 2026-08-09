@@ -207,6 +207,7 @@ def reference_config(
     electrification_path: str = "off",
     entry_screen_diagnostics: bool = False,
     caiso_nqc_accreditation: bool = False,
+    caiso_storage_nqc_accreditation: bool = False,
     miso_rps_compliance_regions: bool = False,
     miso_clean_tier_rows: bool = False,
 ) -> ScenarioConfig:
@@ -314,6 +315,7 @@ def reference_config(
         electrification_path=electrification_path,
         entry_screen_diagnostics=entry_screen_diagnostics,
         caiso_nqc_accreditation=caiso_nqc_accreditation,
+        caiso_storage_nqc_accreditation=caiso_storage_nqc_accreditation,
         miso_rps_compliance_regions=miso_rps_compliance_regions,
         miso_clean_tier_rows=miso_clean_tier_rows,
         # Owner decision D-10 (2026-08-04, sitting Addendum K.3): forecast
@@ -833,6 +835,22 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     ap.add_argument(
+        "--caiso-storage-nqc-accreditation",
+        action="store_true",
+        help=(
+            "FFR-4E arm (CAISO only, DEFAULT OFF pending an owner decision): "
+            "accredit CAISO STORAGE at the ISO's OWN published whole-class "
+            "ratio (13,365 MW September NQC / 15,448.4 MW EIA-860 nameplate = "
+            "0.865138, the 2026 SLRA Table 1.1 battery row) instead of the "
+            "generic NREL/E3 duration curve. CAISO publishes no storage "
+            "duration table, so this REPLACES the by-duration lookup rather "
+            "than overriding a row in it (rule 19); pumped storage is excluded "
+            "(CAISO books it on the Hydro row). Solve-affecting: it raises the "
+            "accredited-firm ledger, so pair it with an unarmed control. No-op "
+            "in every other ISO (rule 25)."
+        ),
+    )
+    ap.add_argument(
         "--miso-rps-compliance-regions",
         action="store_true",
         help=(
@@ -882,6 +900,7 @@ def main(argv: list[str] | None = None) -> int:
         electrification_path=args.electrification_path,
         entry_screen_diagnostics=args.entry_screen_diagnostics,
         caiso_nqc_accreditation=args.caiso_nqc_accreditation,
+        caiso_storage_nqc_accreditation=args.caiso_storage_nqc_accreditation,
         miso_rps_compliance_regions=args.miso_rps_compliance_regions,
         miso_clean_tier_rows=args.miso_clean_tier_rows,
     )
