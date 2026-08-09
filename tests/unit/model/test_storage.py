@@ -28,6 +28,7 @@ from market_sim.model.storage import (
     estimate_storage_revenue,
     load_eia860_pumped_storage,
     load_eia860_storage,
+    measured_storage_base_fleet_active,
     resolve_pumped_storage_dispatch_adder,
     storage_cap_profiles,
     storage_units_to_arrays,
@@ -1660,4 +1661,121 @@ class TestMeasuredBackcastStorageBaseFleet(unittest.TestCase):
                 sum(1 for u in units if u.unit_id == unit_id),
                 1,
                 f"pumped-storage unit {unit_id} appears more than once",
+            )
+
+
+class TestHindcastStorageVintageSeed(unittest.TestCase):
+    """FFR-9A: a capacity hindcast seeds storage from its own vintage fleet.
+
+    A hindcast is ``mode="forecast"`` + ``hindcast=True``, so it does not take
+    the backcast branch of the FFR-4D seam; before FFR-9A it fell through to
+    the present-day forward scalar (``STORAGE_BASE_FLEET_MW``) and a
+    vintage-2020 ERCOT run held 17,000 MW of storage against the 223 MW that
+    existed at its own cutoff — the FFR-3V renewable-pool leak's storage
+    sibling. These tests pin the predicate's full truth table (the fix AND all
+    three no-op halves: plain forecast, backcast scope, no-vintage hindcast)
+    and the seed's content at the vintage.
+    """
+
+    @staticmethod
+    def _hindcast_cfg(iso: str = "ERCOT", vintage: "int | None" = 2020, **kw):
+        return ScenarioConfig(
+            iso=iso,
+            mode="forecast",
+            hindcast=True,
+            eia860_vintage_year=vintage,
+            start_year=2021,
+            end_year=2021,
+            **kw,
+        )
+
+    def test_hindcast_activates_the_measured_seed_in_every_iso(self):
+        # The hindcast leg is deliberately NOT scoped by
+        # STORAGE_MEASURED_BASE_FLEET_ISOS: no keeper is affected, so the
+        # rule-25 keeper-byte-identity rationale behind the backcast frozenset
+        # does not reach it (the FFR-3V precedent — the renewable vintage seed
+        # is likewise all-ISO).
+        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"):
+            self.assertTrue(
+                measured_storage_base_fleet_active(self._hindcast_cfg(iso=iso), iso),
+                f"{iso}: hindcast with a vintage must seed measured storage",
+            )
+
+    def test_plain_forecast_keeps_the_scalar_even_with_a_vintage(self):
+        # The "prove by test" half for the forecast path: a non-hindcast
+        # forecast keeps the scenario ladder even when an eia860_vintage_year
+        # is set, mirroring the runner's vintage-arming predicate (which arms
+        # the vintage dir only for a backcast or a hindcast).
+        cfg = ScenarioConfig(
+            iso="ERCOT", mode="forecast", hindcast=False, eia860_vintage_year=2020
+        )
+        self.assertFalse(measured_storage_base_fleet_active(cfg, "ERCOT"))
+
+    def test_backcast_scope_is_unchanged(self):
+        # The backcast leg still resolves through the frozenset: CAISO in,
+        # the other five out — their keepers stay byte-identical (FFR-4D).
+        self.assertTrue(
+            measured_storage_base_fleet_active(
+                ScenarioConfig(iso="CAISO", mode="backcast"), "CAISO"
+            )
+        )
+        for iso in ("ERCOT", "PJM", "MISO", "NYISO", "NEISO"):
+            self.assertFalse(
+                measured_storage_base_fleet_active(
+                    ScenarioConfig(iso=iso, mode="backcast"), iso
+                ),
+                f"{iso}: backcast scope must stay CAISO-only",
+            )
+
+    def test_hindcast_without_a_vintage_keeps_the_scalar(self):
+        # No vintage, nothing measured to seed from — the constant stands
+        # (the FFR-3V precedent).
+        cfg = self._hindcast_cfg(vintage=None)
+        self.assertFalse(measured_storage_base_fleet_active(cfg, "ERCOT"))
+
+    def test_off_switch_reproduces_the_scalar_hindcast(self):
+        # storage_measured_base_fleet=False is the documented reproduction
+        # escape for a pre-FFR-9A hindcast (and pre-FFR-4D backcast) — never a
+        # tuning knob.
+        cfg = self._hindcast_cfg(storage_measured_base_fleet=False)
+        self.assertFalse(measured_storage_base_fleet_active(cfg, "ERCOT"))
+
+    def test_hindcast_seed_is_the_vintage_fleet_not_the_scalar(self):
+        # Seed content at the vintage the T1-FF ERCOT lane runs (2020), read
+        # exactly as the runner reads it: vintage dir armed, loader called at
+        # start_year. The measured vintage-2020 ERCOT fleet is 223.1 MW
+        # against the 17,000 MW forward scalar (76x) — the base the endogenous
+        # entry screen then ADDS to (FFR-8B §2.3: ~30 GW by the 2024 solve vs
+        # ~10 GW actual).
+        from market_sim.config.paths import set_eia860_vintage
+
+        cfg = self._hindcast_cfg()
+        set_eia860_vintage(2020)
+        try:
+            units = load_eia860_storage("ERCOT", cfg.start_year, cfg)
+        finally:
+            set_eia860_vintage(None)
+        total = sum(u.power_cap_mw for u in units)
+        np.testing.assert_allclose(total, 223.1, rtol=1e-3)
+        self.assertLess(total, STORAGE_BASE_FLEET_MW["ERCOT"]["mid"] / 10.0)
+
+    def test_hindcast_seed_carries_no_intra_year_ramp(self):
+        # The FFR-3V third-leg hazard, storage edition: every unit in the
+        # vintage sheet has a pre-start_year COD, so the seed read at
+        # start_year must be static (no monthly profile that would de-rate,
+        # in every solve year, a fleet fully in service before the window) —
+        # even with the ramp flag armed, as the keepers arm it.
+        from market_sim.config.paths import set_eia860_vintage
+
+        cfg = self._hindcast_cfg(storage_vintage_ramp=True)
+        set_eia860_vintage(2020)
+        try:
+            units = load_eia860_storage("ERCOT", cfg.start_year, cfg)
+        finally:
+            set_eia860_vintage(None)
+        self.assertGreater(len(units), 0)
+        for u in units:
+            self.assertIsNone(
+                u.monthly_power_mw,
+                f"{u.unit_id}: vintage base fleet must not carry a COD ramp",
             )

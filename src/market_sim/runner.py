@@ -23,7 +23,6 @@ from market_sim.config.constants import (
     ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC,
     HISTORIC_OUTAGE_OVERLAY_BY_ISO,
     START_YEAR,
-    STORAGE_MEASURED_BASE_FLEET_ISOS,
     resolve_capacity_market_clearing,
 )
 from market_sim.config.entry_config import (
@@ -109,6 +108,7 @@ from market_sim.model.storage import (
     build_default_storage,
     load_eia860_pumped_storage,
     load_eia860_storage,
+    measured_storage_base_fleet_active,
     storage_accreditation_credit,
     storage_cap_profiles,
     storage_units_to_arrays,
@@ -1210,14 +1210,28 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # dead-flag lesson). It matters most where the fleet moved fastest: CAISO's
     # measured battery fleet is 7,492 / 11,131 / 15,448 MW at year-end
     # 2023 / 2024 / 2025 against the flat 8,000 MW the scalar supplied.
-    # Rule 25 [R-ISO-SCOPE]: scoped to the ISOs in
+    # Rule 25 [R-ISO-SCOPE]: the backcast leg is scoped to the ISOs in
     # ``STORAGE_MEASURED_BASE_FLEET_ISOS`` so the other five keepers stay
     # byte-identical; the loader already appends pumped storage itself.
-    measured_storage = (
-        config.storage_measured_base_fleet
-        and config.mode == "backcast"
-        and iso in STORAGE_MEASURED_BASE_FLEET_ISOS
-    )
+    #
+    # A capacity HINDCAST (mode="forecast" + hindcast=True) has the same
+    # vintage/as-of misalignment one notch worse: it fell through to the
+    # forward scalar even though set_eia860_vintage above already pointed
+    # every EIA-860 loader at the run's vintage_<year>/ snapshot — the
+    # FFR-3V renewable-pool leak's storage sibling (FFR-9A). ERCOT's
+    # vintage-2020 measured storage fleet is 223 MW against the 17,000 MW
+    # scalar, a base the endogenous entry screen then ADDS to (~30 GW by the
+    # 2024 solve vs ~10 GW actual — FFR-8B §2.3/§3, the dominant remaining
+    # input error on the forward price object). A hindcast therefore seeds
+    # from the vintage EIA-860 measured fleet in EVERY ISO — the vintage
+    # sheet is precisely what a run at that cutoff may know (rule 13
+    # [R-MEASURED]) and measured beats the scalar (rule 14 [R-ACCURATE]);
+    # no keeper is affected, so the backcast leg's per-ISO enrollment does
+    # not apply. Both legs and their scoping rationale live in
+    # ``measured_storage_base_fleet_active``; called at start_year, the
+    # vintage sheet's units are all pre-start_year CODs, so the seed carries
+    # no intra-year ramp profile (the FFR-3V third-leg hazard).
+    measured_storage = measured_storage_base_fleet_active(config, iso)
     if measured_storage:
         storage_units = load_eia860_storage(iso, start_year, config)
         logger.info(

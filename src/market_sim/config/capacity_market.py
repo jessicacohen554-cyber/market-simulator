@@ -495,6 +495,12 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
 # year's EIA-860 month-end capacity and only a forecast reads the scenario
 # constant (FFR-4D, rule 14 [R-ACCURATE]).
 #
+# SCOPES THE BACKCAST LEG ONLY. The capacity-hindcast leg of the same seam
+# (FFR-9A, model.storage.measured_storage_base_fleet_active) seeds from the
+# run's own EIA-860 vintage in EVERY ISO without consulting this registry: a
+# hindcast is not a keeper, so the keeper-byte-identity rationale below does
+# not reach it (the FFR-3V renewable-seed precedent).
+#
 # CAISO only, deliberately (rule 25 [R-ISO-SCOPE]). CAISO is where the vintage
 # error is first-order: its measured battery fleet doubles across the
 # calibration window (7,492 / 11,131 / 15,448 MW at year-end 2023 / 2024 / 2025)
