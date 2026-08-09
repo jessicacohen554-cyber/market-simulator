@@ -3642,7 +3642,91 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**
 
-> **LIVE QUEUE AS OF miso-146 (2026-08-09) — ITEM 7 (the INTERMITTENT-RESOURCE
+> **LIVE QUEUE AS OF miso-147 (2026-08-09) — ITEM 10 (the HIGH-PRICE-HOUR
+> DISPATCH-COMPOSITION DIAGNOSIS, owner charter 2026-08-09) SET AND DISCHARGED.
+> THE COMPOSITION GAP IS REAL, CC-LED AND STANDING; ITS IDENTITY IS AN
+> AVAILABILITY DEFICIT. Branch `BRANCH-AVAILABILITY-OBJECT`.** Phase 0,
+> diagnosis-first. **NO LP, no arm, no `ScenarioConfig` field, no run, NO CELL
+> VERDICT MINTED** (nothing armed, refused or proposed for arming — the
+> miso-143…146 precedent), keeper UNCHANGED at
+> `2026-08-05-miso-132b-cc-committed`, fail set UNCHANGED at {C3a}. PREREG
+> `results/calibration/PREREG-miso147-highprice-dispatch-composition-2026-08-09.md`
+> pushed at `13ece35` (PR #3785) before any adjudicating statistic; the ONE
+> licensed keeper replay was NOT SPENT (its pre-committed trigger did not fire).
+>
+> **FOOTING FIRST.** G-F0 reproduces the charter's 2025 monthly deficit table
+> (all-hours AND ordinary columns, ≤ $0.005 every month; the 12 monthly >$200
+> counts exact, summing to the ledger's **88**); G-F1 the six committed window
+> deficits to ≤ $0.0003; G-F3 registers every universe before any subtraction
+> (strata thresholds $43.34/$44.91/$61.05; the model's 17.2 GW / 32 import
+> tranches; CAMPD 563–582 MISO units, no month excluded).
+>
+> **P-1 PASS — the S1-2025 gap is material on BOTH instruments and it is
+> CC-LED:** Pair A (vs EIA-930, full universe) gas_total **−7,539 MW** — the
+> only fossil delta above the stratum noise floor besides coal +1,977; Pair B
+> (vs CAMPD families) **CC −5,616 MW** (144 real units ON), CT −421. The coal
+> substitution is Pair-A-only (Pair B reads ST_COAL immaterial) and is quoted
+> nowhere as load-bearing. **P-4 FAIL, reported against interest and led with:
+> the gap is STANDING — CC −4,959 / −4,743 / −5,616 across 2023/24/25 — and
+> 2023 carries nearly the same gap while C3a-2023 PASSES at −0.4 %, so the
+> composition defect alone does NOT predict closing the 2025 −14.1 %.**
+>
+> **P-2 = `availability_deficit` (the pre-registered negative-Δ rule; the
+> prior's coal-over-dispatch direction did not obtain):** in S1-2025 the
+> model's available CC capability (AV = 22.3 GW) sits **2.6 GW BELOW reality's
+> realized CC output** (24.9 GW net; AV−A −1.2/−1.6/−2.6 GW by year) — no
+> outage statistic can justify availability below observed generation. Fleet
+> scale: model CC pmax 31.9 GW vs 35.4 GW CAMPD demonstrated p99 ratings.
+> Month-resolved, the hole is **summer-concentrated** (AV−A Jun–Sep 2025:
+> −2.5/−2.6/−2.4/−1.8 GW) — the dispatch-side expression of the miso-141
+> `SUMMER_CLASS_DERATE` double-count (cited, not re-derived) — while M−A is
+> negative in EVERY month (−2.0 to −7.3 GW), so the non-summer half is
+> commitment/displacement, not availability.
+>
+> **JANUARY 2025 OPENED (Q3) AND DISSOLVED:** in the 16 tail hours reality
+> surged 143 CC units to 26.9 GW; the model dispatched 19.1 of its 24.7 GW
+> available while its winter reserve held 5.4 GW at dual 0.000/shortfall 0.
+> The four cold-snap candidates all fail on the data: citygate overlay ARMED
+> and repricing (tail gas mc p90 $167), dual-fuel unused in reality (0 gas+oil
+> units ON), model outage take inside reality's bounds (27.8 GW ∈ [22.1,
+> 32.4+]), winter reserve never binds. January is the same CC object plus the
+> SPENT C3c tail. **THE MAY REVERSAL (Q4) IS THE SAME OBJECT WITH THE EXPENSIVE
+> SUBSTITUTE:** S0 CC −3,414 with **CT +1,374 MATERIAL** (leg i — the model
+> recalls peakers reality kept OFF); May AV_CC−A_CC flipped +1,074 → −50 →
+> **−1,201** exactly as May flipped to overpriced; May-2025 ordinary clear sits
+> +$6.29 above actual (May-2023 control −$1.11). One object, both signs.
+>
+> **P-8 PASS in all nine stratum-years** (median |p̂−P1| $0.90–$2.27, r
+> 0.886–0.995, the miso-144 corrected construction). **P-3 is VACUOUS — zero
+> quantity-agree hours in any elevated stratum, any year** (CC agrees with
+> reality in only 127/8,760 hours of 2025): composition disagreement is
+> universal where prices are high. Descriptive census note, not a P-3 verdict:
+> the model is marginal on gas in 76 % of S1-2025 hours yet clears $40.7 below
+> actual — item 9's offer-surface object seen from a new instrument.
+>
+> **THE QUEUE, WRITTEN FORWARD. Item 10 is DISCHARGED. Items 8 and 9 STAND
+> UNMODIFIED** (this session strengthens item 9's motivation and adds nothing
+> to it). The named successor — **OWNER DECISION, not armed: a MISO CC
+> capability-and-availability lane** (rule 14 measured-input correction with a
+> forward story; rule 13 line held — an availability INPUT, never a dispatch
+> pin): (1) the summer availability hole = the miso-141 double-count repair,
+> which miso-141 already ruled needs a NEW mechanism; (2) the CC fleet/rating
+> audit (31.9 vs 35.4 GW, EIA-860-side); (3) the all-months commitment residual
+> (imports/hydro/reserve-holding displacement at AV−A ≥ 0) — OPEN OBSERVATION.
+> Kill-gate discipline restated for that lane: May 2025 must not worsen, C3b
+> headroom 0.009, and the against-interest 2023 fact bounds any effect claim.
+>
+> **GOVERNANCE, carried forward unchanged:** C1/C2 both SKIPPED for 2025
+> (preliminary EIA-923) — never read as 2025 safety; kill gates **not reached,
+> because nothing ran** (untouched, not "passing"); C3c ledger 1/1 SPENT, the
+> 88 used as footing only, S3 read as composition only; rule 22 — 2023–2025
+> only, MISO holds no marker. Evidence:
+> `results/calibration/FINDING-miso147-cc-availability-hole-2026-08-09.md`,
+> `PREREG-miso147-highprice-dispatch-composition-2026-08-09.md`,
+> `_miso147_{footing,composition,headroom,marginal,january}.json`, probes
+> `scripts/probes/_miso147_{strata,footing,composition,headroom,marginal,january}.py`.
+
+> *(Prior state, unedited.)* > **LIVE QUEUE AS OF miso-146 (2026-08-09) — ITEM 7 (the INTERMITTENT-RESOURCE
 > SCREEN for the offer corpus, lane (A) of the miso-145 successor) SET AND
 > DISCHARGED. A SCREEN IS BUILDABLE AND SEPARATES A REAL POPULATION; IT DOES
 > NOT CLEAN THE UNIVERSE. Branch `BRANCH-SCREEN-BOUNDED`.** Phase 0,

@@ -1,0 +1,452 @@
+{
+ "session": "miso-147",
+ "years": {
+  "2023": {
+   "quantity_agree_hours_per_family": {
+    "CC": 221,
+    "CT": 2152,
+    "ST_GAS": 2086,
+    "ST_COAL": 2186
+   },
+   "S1": {
+    "n_hours": 873,
+    "P8": {
+     "median_abs_err": 0.942,
+     "r": 0.8945,
+     "pass": true,
+     "construction": "miso-144 corrected: THERMAL_FLEET rows vs THERMAL_COLS need - INJECTED + rbdc held (v2), lo"
+    },
+    "census": {
+     "lo": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0378,
+       "CC_REGULAR": 0.0882,
+       "COAL": 0.2749,
+       "CT_CHP": 0.0023,
+       "CT_PEAKER": 0.4124,
+       "ST_CHP": 0.0069,
+       "ST_GAS": 0.173,
+       "oil": 0.0046
+      },
+      "clear_minus_actual_rt_wmean": -27.849,
+      "clear_minus_p1_wmean": 2.321
+     },
+     "hi": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0389,
+       "CC_REGULAR": 0.0882,
+       "COAL": 0.2589,
+       "CT_CHP": 0.016,
+       "CT_PEAKER": 0.3952,
+       "ST_CHP": 0.0103,
+       "ST_GAS": 0.1879,
+       "oil": 0.0046
+      },
+      "clear_minus_actual_rt_wmean": -27.158,
+      "clear_minus_p1_wmean": 3.012
+     }
+    },
+    "deficit_split": {
+     "deficit_all": -30.17,
+     "deficit_quantity_agree": null,
+     "n_agree": 0,
+     "agree_share_of_hours": 0.0,
+     "persistence_ratio": null
+    }
+   },
+   "S2": {
+    "n_hours": 120,
+    "P8": {
+     "median_abs_err": 0.901,
+     "r": 0.9555,
+     "pass": true,
+     "construction": "miso-144 corrected: THERMAL_FLEET rows vs THERMAL_COLS need - INJECTED + rbdc held (v2), lo"
+    },
+    "census": {
+     "lo": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0167,
+       "CC_REGULAR": 0.1083,
+       "COAL": 0.2583,
+       "CT_PEAKER": 0.3917,
+       "ST_GAS": 0.2,
+       "oil": 0.025
+      },
+      "clear_minus_actual_rt_wmean": -79.017,
+      "clear_minus_p1_wmean": 7.075
+     },
+     "hi": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0333,
+       "CC_REGULAR": 0.05,
+       "COAL": 0.2417,
+       "CT_CHP": 0.0333,
+       "CT_PEAKER": 0.35,
+       "ST_CHP": 0.0167,
+       "ST_GAS": 0.25,
+       "oil": 0.025
+      },
+      "clear_minus_actual_rt_wmean": -78.413,
+      "clear_minus_p1_wmean": 7.679
+     }
+    },
+    "deficit_split": {
+     "deficit_all": -86.092,
+     "deficit_quantity_agree": null,
+     "n_agree": 0,
+     "agree_share_of_hours": 0.0,
+     "persistence_ratio": null
+    }
+   },
+   "MAYCTRL": {
+    "n_hours": 744,
+    "P8": {
+     "median_abs_err": 1.016,
+     "r": 0.988,
+     "pass": true,
+     "construction": "miso-144 corrected: THERMAL_FLEET rows vs THERMAL_COLS need - INJECTED + rbdc held (v2), lo"
+    },
+    "census": {
+     "lo": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0444,
+       "CC_REGULAR": 0.0995,
+       "COAL": 0.2218,
+       "CT_CHP": 0.0148,
+       "CT_PEAKER": 0.3589,
+       "ST_CHP": 0.0121,
+       "ST_GAS": 0.2487
+      },
+      "clear_minus_actual_rt_wmean": -1.93,
+      "clear_minus_p1_wmean": 1.058
+     },
+     "hi": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0363,
+       "CC_REGULAR": 0.1438,
+       "COAL": 0.2446,
+       "CT_CHP": 0.0215,
+       "CT_PEAKER": 0.3118,
+       "ST_CHP": 0.0094,
+       "ST_GAS": 0.2325
+      },
+      "clear_minus_actual_rt_wmean": -1.37,
+      "clear_minus_p1_wmean": 1.618
+     }
+    },
+    "deficit_split": {
+     "deficit_all": -2.988,
+     "deficit_quantity_agree": 10.02,
+     "n_agree": 2,
+     "agree_share_of_hours": 0.0027,
+     "persistence_ratio": -3.3535
+    },
+    "P6a_ordinary": {
+     "clear_lo_minus_actual_rt_wmean": -1.105,
+     "p1_minus_actual_rt_wmean": -2.167,
+     "n_hours": 741
+    }
+   }
+  },
+  "2024": {
+   "quantity_agree_hours_per_family": {
+    "CC": 538,
+    "CT": 1893,
+    "ST_GAS": 2100,
+    "ST_COAL": 2233
+   },
+   "S1": {
+    "n_hours": 873,
+    "P8": {
+     "median_abs_err": 1.23,
+     "r": 0.9895,
+     "pass": true,
+     "construction": "miso-144 corrected: THERMAL_FLEET rows vs THERMAL_COLS need - INJECTED + rbdc held (v2), lo"
+    },
+    "census": {
+     "lo": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0275,
+       "CC_REGULAR": 0.1088,
+       "COAL": 0.2646,
+       "CT_CHP": 0.0092,
+       "CT_PEAKER": 0.4032,
+       "ST_CHP": 0.008,
+       "ST_GAS": 0.173,
+       "UNREACHED": 0.0046,
+       "oil": 0.0011
+      },
+      "clear_minus_actual_rt_wmean": -29.147,
+      "clear_minus_p1_wmean": 3.08
+     },
+     "hi": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0286,
+       "CC_REGULAR": 0.0962,
+       "COAL": 0.2749,
+       "CT_CHP": 0.0069,
+       "CT_PEAKER": 0.4112,
+       "ST_CHP": 0.0023,
+       "ST_GAS": 0.173,
+       "UNREACHED": 0.0046,
+       "oil": 0.0023
+      },
+      "clear_minus_actual_rt_wmean": -28.376,
+      "clear_minus_p1_wmean": 3.852
+     }
+    },
+    "deficit_split": {
+     "deficit_all": -32.228,
+     "deficit_quantity_agree": null,
+     "n_agree": 0,
+     "agree_share_of_hours": 0.0,
+     "persistence_ratio": null
+    }
+   },
+   "S2": {
+    "n_hours": 149,
+    "P8": {
+     "median_abs_err": 1.501,
+     "r": 0.9947,
+     "pass": true,
+     "construction": "miso-144 corrected: THERMAL_FLEET rows vs THERMAL_COLS need - INJECTED + rbdc held (v2), lo"
+    },
+    "census": {
+     "lo": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0268,
+       "CC_REGULAR": 0.1074,
+       "COAL": 0.2215,
+       "CT_PEAKER": 0.3691,
+       "ST_GAS": 0.2483,
+       "UNREACHED": 0.0268
+      },
+      "clear_minus_actual_rt_wmean": -64.431,
+      "clear_minus_p1_wmean": 5.972
+     },
+     "hi": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0268,
+       "CC_REGULAR": 0.0805,
+       "COAL": 0.2215,
+       "CT_CHP": 0.0067,
+       "CT_PEAKER": 0.4228,
+       "ST_GAS": 0.2148,
+       "UNREACHED": 0.0268
+      },
+      "clear_minus_actual_rt_wmean": -63.604,
+      "clear_minus_p1_wmean": 6.798
+     }
+    },
+    "deficit_split": {
+     "deficit_all": -70.402,
+     "deficit_quantity_agree": null,
+     "n_agree": 0,
+     "agree_share_of_hours": 0.0,
+     "persistence_ratio": null
+    }
+   },
+   "MAYCTRL": {
+    "n_hours": 744,
+    "P8": {
+     "median_abs_err": 1.585,
+     "r": 0.972,
+     "pass": true,
+     "construction": "miso-144 corrected: THERMAL_FLEET rows vs THERMAL_COLS need - INJECTED + rbdc held (v2), lo"
+    },
+    "census": {
+     "lo": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0524,
+       "CC_REGULAR": 0.0578,
+       "COAL": 0.254,
+       "CT_CHP": 0.0134,
+       "CT_PEAKER": 0.4032,
+       "ST_CHP": 0.0054,
+       "ST_GAS": 0.2137
+      },
+      "clear_minus_actual_rt_wmean": -5.105,
+      "clear_minus_p1_wmean": 1.373
+     },
+     "hi": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.043,
+       "CC_REGULAR": 0.0551,
+       "COAL": 0.2594,
+       "CT_CHP": 0.0134,
+       "CT_PEAKER": 0.4046,
+       "ST_CHP": 0.0027,
+       "ST_GAS": 0.2218
+      },
+      "clear_minus_actual_rt_wmean": -4.383,
+      "clear_minus_p1_wmean": 2.096
+     }
+    },
+    "deficit_split": {
+     "deficit_all": -6.478,
+     "deficit_quantity_agree": 3.64,
+     "n_agree": 2,
+     "agree_share_of_hours": 0.0027,
+     "persistence_ratio": -0.5619
+    },
+    "P6a_ordinary": {
+     "clear_lo_minus_actual_rt_wmean": -1.791,
+     "p1_minus_actual_rt_wmean": -3.164,
+     "n_hours": 738
+    }
+   }
+  },
+  "2025": {
+   "quantity_agree_hours_per_family": {
+    "CC": 127,
+    "CT": 1936,
+    "ST_GAS": 2318,
+    "ST_COAL": 3053
+   },
+   "S1": {
+    "n_hours": 869,
+    "P8": {
+     "median_abs_err": 2.163,
+     "r": 0.9277,
+     "pass": true,
+     "construction": "miso-144 corrected: THERMAL_FLEET rows vs THERMAL_COLS need - INJECTED + rbdc held (v2), lo"
+    },
+    "census": {
+     "lo": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0633,
+       "CC_REGULAR": 0.1162,
+       "COAL": 0.0495,
+       "CT_CHP": 0.015,
+       "CT_PEAKER": 0.5236,
+       "ST_CHP": 0.0081,
+       "ST_GAS": 0.2232,
+       "oil": 0.0012
+      },
+      "clear_minus_actual_rt_wmean": -40.663,
+      "clear_minus_p1_wmean": 3.438
+     },
+     "hi": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.061,
+       "CC_REGULAR": 0.107,
+       "COAL": 0.0529,
+       "CT_CHP": 0.0092,
+       "CT_PEAKER": 0.5305,
+       "ST_CHP": 0.0127,
+       "ST_GAS": 0.2221,
+       "oil": 0.0046
+      },
+      "clear_minus_actual_rt_wmean": -39.663,
+      "clear_minus_p1_wmean": 4.438
+     }
+    },
+    "deficit_split": {
+     "deficit_all": -44.101,
+     "deficit_quantity_agree": null,
+     "n_agree": 0,
+     "agree_share_of_hours": 0.0,
+     "persistence_ratio": null
+    }
+   },
+   "S2": {
+    "n_hours": 256,
+    "P8": {
+     "median_abs_err": 2.269,
+     "r": 0.8858,
+     "pass": true,
+     "construction": "miso-144 corrected: THERMAL_FLEET rows vs THERMAL_COLS need - INJECTED + rbdc held (v2), lo"
+    },
+    "census": {
+     "lo": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0547,
+       "CC_REGULAR": 0.1367,
+       "COAL": 0.0703,
+       "CT_CHP": 0.0156,
+       "CT_PEAKER": 0.5039,
+       "ST_CHP": 0.0117,
+       "ST_GAS": 0.2031,
+       "oil": 0.0039
+      },
+      "clear_minus_actual_rt_wmean": -78.508,
+      "clear_minus_p1_wmean": 5.408
+     },
+     "hi": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0586,
+       "CC_REGULAR": 0.1094,
+       "COAL": 0.0508,
+       "CT_CHP": 0.0039,
+       "CT_PEAKER": 0.5469,
+       "ST_CHP": 0.0156,
+       "ST_GAS": 0.2031,
+       "oil": 0.0117
+      },
+      "clear_minus_actual_rt_wmean": -77.507,
+      "clear_minus_p1_wmean": 6.409
+     }
+    },
+    "deficit_split": {
+     "deficit_all": -83.916,
+     "deficit_quantity_agree": null,
+     "n_agree": 0,
+     "agree_share_of_hours": 0.0,
+     "persistence_ratio": null
+    }
+   },
+   "S0": {
+    "n_hours": 744,
+    "P8": {
+     "median_abs_err": 1.58,
+     "r": 0.965,
+     "pass": true,
+     "construction": "miso-144 corrected: THERMAL_FLEET rows vs THERMAL_COLS need - INJECTED + rbdc held (v2), lo"
+    },
+    "census": {
+     "lo": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0457,
+       "CC_REGULAR": 0.0457,
+       "COAL": 0.211,
+       "CT_CHP": 0.0121,
+       "CT_PEAKER": 0.4315,
+       "ST_CHP": 0.0081,
+       "ST_GAS": 0.246
+      },
+      "clear_minus_actual_rt_wmean": 5.108,
+      "clear_minus_p1_wmean": 0.883
+     },
+     "hi": {
+      "marginal_class_share_of_hours": {
+       "CC_CHP": 0.0403,
+       "CC_REGULAR": 0.043,
+       "COAL": 0.1895,
+       "CT_CHP": 0.0242,
+       "CT_PEAKER": 0.4651,
+       "ST_CHP": 0.0108,
+       "ST_GAS": 0.2272
+      },
+      "clear_minus_actual_rt_wmean": 5.867,
+      "clear_minus_p1_wmean": 1.643
+     }
+    },
+    "deficit_split": {
+     "deficit_all": 4.224,
+     "deficit_quantity_agree": 7.589,
+     "n_agree": 1,
+     "agree_share_of_hours": 0.0013,
+     "persistence_ratio": 1.7964
+    },
+    "P6a_ordinary": {
+     "clear_lo_minus_actual_rt_wmean": 6.285,
+     "p1_minus_actual_rt_wmean": 5.395,
+     "n_hours": 741
+    }
+   }
+  }
+ },
+ "P3": {
+  "verdict": "NOT_COMPUTABLE (P-8 failed or no agree hours)"
+ }
+}
