@@ -376,6 +376,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # ercot-174 unit-scoped successor: same treatment (default-off,
     # byte-identical at its default, so dropped from the hash there).
     "ercot_dam_availability_event_cap_unit_scoped",
+    # ercot-185 fault-3 partial-layer construction repair: same treatment
+    # (default-off, byte-identical at its default because the loader then reads
+    # the unchanged flat extract, so dropped from the hash there).
+    "ercot_partial_outage_shaped_derate",
     # ERCOT-111 measured incremental-heat-rate floor on the COAL econ ramp.
     # Default-off and byte-identical for every existing config (with the gate
     # off no offer-curve band is touched), so it is dropped from the hash at its
@@ -983,6 +987,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # a flip of it was undetectable).
     "ercot_dam_availability_event_cap_reconciliation": "False",
     "ercot_dam_availability_event_cap_unit_scoped": "False",
+    "ercot_partial_outage_shaped_derate": "False",
     "coal_econ_marginal_hr_bound": "False",
     "ercot_wind_zone_shape": "False",
     "gas_offer_net_revenue_margin": "False",
@@ -1124,6 +1129,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     # FFR-W1X lesson recorded on the gas entry directly above).
     "ercot_dam_availability_event_cap_reconciliation": "measured DAM-award event-cap reconciliation",
     "ercot_dam_availability_event_cap_unit_scoped": "measured unit-scoped event-cap composition",
+    "ercot_partial_outage_shaped_derate": "measured day-shaped partial-outage plateau derate",
     "pjm_dam_availability": "measured PJM DAM availability record",
     "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
     # --- measured per-plant operating conduct ---
@@ -8796,6 +8802,36 @@ class ScenarioConfig:
     # docs/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md
     ercot_dam_availability_event_cap_unit_scoped: bool = False
 
+    # ercot-185 FAULT-3 PARTIAL-LAYER CONSTRUCTION REPAIR (default off, ERCOT
+    # backcast). NOT a composition change — the f_window x f_partial product is
+    # untouched and the ERCOT-148/149 precedence is not disturbed. What changes
+    # is how ONE layer is CONSTRUCTED: the partial-outage plateau stops imposing
+    # a multi-week MEDIAN of daily maxima as an HOURLY ceiling (FINDING-ercot172
+    # §4 fault 3 — W A Parish's single derate_factor 0.363 spanning 2024-03-04 ->
+    # 05-04 caps h2827 at 0.36 against the plant's own same-hour CEMS of 0.78,
+    # the residual defect no composition rule reaches: ercot-173 and ercot-174
+    # both adjudicated the composition family dead, the latter stopping pre-solve
+    # at rho 0.94-0.96). Armed, the loader reads the DAY-SHAPED extract
+    # (data/raw/campd-partial-outages-shaped.csv, derive_partial_outages.py
+    # --emit-shaped): the SAME plateaus over the SAME day spans, split into
+    # consecutive day sub-windows whose derate is
+    #     shaped(d) = clip(f0 * sm[d] / median(sm[i:j]), 0, 1)
+    # with f0 the incumbent's own flat factor and sm the detector's own centered
+    # _SMOOTH_DAYS rolling median of daily-max CF. Both are medians of the SAME
+    # daily-maximum series differing only in the median's window, so this is a
+    # grain refinement IN TIME of one measured statistic — the temporal analogue
+    # of the ercot-174 unit-grain refinement — and zero new scalars enter (rule
+    # 23 [R-DOF]). Because scaling commutes with the median, median(shaped) == f0
+    # exactly: a PROVABLE pure re-shaping, never a net lift or cut, which is what
+    # separates it from the restore-only composition arms. Covered hours are
+    # identical (SP-2) and the flat extract is byte-unchanged (SP-1), both
+    # asserted inside the deriver. Fail-safe: with the shaped file absent the
+    # loader reads the flat extract, so the gate degrades to the incumbent.
+    # Backcast-only by construction (the extracts are measured CAMPD overlays);
+    # forecast untouched.
+    # docs/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md
+    ercot_partial_outage_shaped_derate: bool = False
+
     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
     # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
     # from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von
@@ -12875,6 +12911,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_dam_availability_gas_event_cap": 3,
     "ercot_dam_availability_event_cap_reconciliation": 3,
     "ercot_dam_availability_event_cap_unit_scoped": 3,
+    "ercot_partial_outage_shaped_derate": 3,
     "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
 }

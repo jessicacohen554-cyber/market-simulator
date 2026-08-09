@@ -1,0 +1,133 @@
+{
+ "object": "ercot-185 fault-3 partial-layer construction repair",
+ "precommit": "docs/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md",
+ "flat_extract": "data/raw/campd-partial-outages.csv",
+ "shaped_extract": "data/raw/campd-partial-outages-shaped.csv",
+ "years": {
+  "2023": {
+   "SP_2L_covered_hour_identity": {
+    "PASS": true,
+    "mismatched_plants": []
+   },
+   "loader_matches_file": true,
+   "P_2_two_sided": {
+    "changed_plant_hours": 18455,
+    "share_above_incumbent": 0.498,
+    "share_below_incumbent": 0.502,
+    "unchanged_plant_hours": 130465
+   },
+   "S5_bound": {
+    "coal_ceiling_lift_TWh": 0.5255,
+    "coal_ceiling_cut_TWh": 0.215,
+    "pass_by_construction_bar": 0.5,
+    "stop_bar": 2.0,
+    "PASSES_G_COAL148_BY_CONSTRUCTION": false,
+    "STOP": false,
+    "per_plant_TWh": {
+     "298": 0.085,
+     "3470": 0.2145,
+     "6146": 0.0583,
+     "6179": 0.0373,
+     "6183": 0.0001,
+     "7030": 0.0006,
+     "7097": 0.1068,
+     "56611": 0.023
+    }
+   },
+   "rho_shaped_vs_ercot173_blanket": 0.125,
+   "P_3_ercot172_object": null
+  },
+  "2024": {
+   "SP_2L_covered_hour_identity": {
+    "PASS": true,
+    "mismatched_plants": []
+   },
+   "loader_matches_file": true,
+   "P_2_two_sided": {
+    "changed_plant_hours": 24166,
+    "share_above_incumbent": 0.5114,
+    "share_below_incumbent": 0.4886,
+    "unchanged_plant_hours": 151034
+   },
+   "S5_bound": {
+    "coal_ceiling_lift_TWh": 0.4715,
+    "coal_ceiling_cut_TWh": 0.2575,
+    "pass_by_construction_bar": 0.5,
+    "stop_bar": 2.0,
+    "PASSES_G_COAL148_BY_CONSTRUCTION": true,
+    "STOP": false,
+    "per_plant_TWh": {
+     "298": 0.0511,
+     "3470": 0.2235,
+     "6146": 0.1375,
+     "6179": 0.0147,
+     "6180": 0.0032,
+     "6183": 0.0013,
+     "7030": 0.0007,
+     "7097": 0.0283,
+     "56611": 0.0113
+    }
+   },
+   "rho_shaped_vs_ercot173_blanket": 0.0852,
+   "P_3_ercot172_object": {
+    "hour": 2827,
+    "timestamp": "2024-04-28 19:00 CST",
+    "plant": 3470,
+    "incumbent_f_partial": 0.363,
+    "shaped_f_partial": 0.578,
+    "cems_same_hour": 0.7843,
+    "bar": 0.5,
+    "PASS": true
+   }
+  },
+  "2025": {
+   "SP_2L_covered_hour_identity": {
+    "PASS": true,
+    "mismatched_plants": []
+   },
+   "loader_matches_file": true,
+   "P_2_two_sided": {
+    "changed_plant_hours": 20781,
+    "share_above_incumbent": 0.508,
+    "share_below_incumbent": 0.492,
+    "unchanged_plant_hours": 145659
+   },
+   "S5_bound": {
+    "coal_ceiling_lift_TWh": 0.2165,
+    "coal_ceiling_cut_TWh": 0.1607,
+    "pass_by_construction_bar": 0.5,
+    "stop_bar": 2.0,
+    "PASSES_G_COAL148_BY_CONSTRUCTION": true,
+    "STOP": false,
+    "per_plant_TWh": {
+     "298": 0.0273,
+     "3470": 0.1105,
+     "6146": 0.0179,
+     "6179": 0.0204,
+     "6180": 0.0065,
+     "7030": 0.0012,
+     "7097": 0.0326
+    }
+   },
+   "rho_shaped_vs_ercot173_blanket": 0.0421,
+   "P_3_ercot172_object": null
+  }
+ },
+ "variant_RAW_reported_only": {
+  "2023": {
+   "coal_ceiling_lift_TWh": 0.6144,
+   "coal_ceiling_cut_TWh": 0.1929,
+   "mean_signed_level_shift_on_plateau_hours": 0.0148
+  },
+  "2024": {
+   "coal_ceiling_lift_TWh": 0.5188,
+   "coal_ceiling_cut_TWh": 0.246,
+   "mean_signed_level_shift_on_plateau_hours": 0.0009
+  },
+  "2025": {
+   "coal_ceiling_lift_TWh": 0.264,
+   "coal_ceiling_cut_TWh": 0.1459,
+   "mean_signed_level_shift_on_plateau_hours": 0.0036
+  }
+ }
+}
