@@ -6874,3 +6874,109 @@ fetch, quarantined at rest); rule 25 ERCOT-only; rule 28 NO matrix cell
 `docs/handoffs/ercot-sced-2024-2025-reupload-2026-08.md`.
 
 Next shorthand: ercot-184.
+
+---
+
+## ercot-184 (2026-08-09) — D5: THE (c2) CLIFF-RESOLUTION COSTING MEMO — COSTED, MEASURED, AND REFUSED ON REACH. No build, no field, no solve, no registered run, no matrix cell; keeper untouched.
+
+**Authorization:** owner sitting 2026-08-09, cards **D1(c) + D5**, SIGNED
+(`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §5/§10). D1
+refused the C3a ledger carve-out and authorized the model-class lane to fix the
+2023 object on the merits; D5 scoped its first step to a **costing memo with no
+build authorization**. Record: `docs/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md`;
+measurement `results/calibration/ercot184_cliff_resolution.json`, probe
+`scripts/probes/ercot184_cliff_resolution_costing.py`.
+
+**The object.** `offer_curves._econ_curve_steps` slices each plant's economic
+ramp into `offer_curve_smoothing_n = 6` **equal-width** MW blocks
+(`slice_cap = curve_cap / n`, verified: within-plant relative capacity spread
+**0.000e+00** across 144 plant-groups × 6 slices). (c2) = non-uniform slicing
+that refines the TOP of each curve, preserving total curve MW.
+
+**The G-SHED falsifier was written and PUSHED BEFORE any reach measurement**
+(memo §2, commit at HEAD `51d4e98e`), with G-SHED-A/B, the net-of-shed verdict
+rule, the **G-REACH build bar of +$5.00/MWh** (~35 % of the +$14.44 bar) and
+predictions P-1..P-4 all fixed ex ante.
+
+**Validation.** V-0 the gate-off compose sha reproduces the ercot-178 record
+(`25a4ba69…`) at this HEAD; **V-1 the priced row geometry reproduces the
+builders' own `_compose` BYTE-IDENTICALLY** (`max|err| = 0.000e+00`, 490 priced
+rows); **R0, the identity re-slicing, returns Δ = +0.0000/MWh with 0 hours
+moved** — so every number below is mechanism, not machinery. (Two defects the R0
+control caught and killed before anything was believed: an ulp gap between
+`0.5*(x[k]+x[k+1])` and `(k+0.5)/n`, and zero-available-capacity rows flattening
+the cumulative-capacity curve so the read landed one row low — a one-sided
+**negative** bias over 339 hours.)
+
+**THE RESULT — (c2) resolves the cliff completely and the LP still does not clear
+there.** Measured by invariant-quantity repricing on the keeper's own 2023 fleet
+(no LP), over the top-100 Aug–Sep gap hours (68.1 % of the annual positive gap):
+
+* **It reaches the cliff.** Refinement takes the model from **33** econ rows above
+  ladder position 0.9 to **3,663**, quoting up to **3,026× delivered gas** at
+  `rel` 0.9993 — into the HCAP wall item 23 completed. *(This falsified the
+  memo's own structural hypothesis, that the peak tranche sitting above the econ
+  ramp would keep `rel` away from 1; reported at full magnitude.)*
+* **And the clearing position does not follow.** The marginal row moves from
+  `rel` p50 **0.643 → 0.699**, ceiling **0.833**, against reality's q_act
+  **0.9976** — and **0 of 100 object hours have a marginal row above `rel` 0.9 in
+  ANY scheme.** The object-hour median price *falls* ($155.64 → $143.59) against
+  an actual of $910.66.
+* **The reach SATURATES and then DECLINES**: R1 (11 slices) **+$1.9862/MWh**,
+  R3 (24, top slice 0.19 % of ramp) +$1.7897, R2 (uniform 60) +$1.7686,
+  R4 (65) +$1.6565. Across a 6× range in slice count and a **90× range in
+  top-slice fineness** the answer never leaves ±$0.17 of +$1.8. **A ceiling, not
+  an under-resolved parameterization** — "try more slices" is measured, and it is
+  worse.
+* **G-SHED does NOT fire — ZERO shed-exposed hours in every scheme, every hour of
+  2023** (clamp displacement max ~180 MW against tens of GW of headroom). Where
+  item 21's +$8.18 headline was 67.5 % manufactured VOLL shortage, **100 % of
+  (c2)'s +$1.99 is genuine offer formation.** The mechanism is honest; it is
+  simply too small.
+
+**Reachability, stated as the card demanded.** (c2)'s ceiling is **+$1.99/MWh =
+13.8 %** of the +$14.44 bar; **G-REACH FAILS by 2.5×**. It does not work a
+different channel from the conditioning family — it works the SAME one from the
+position axis instead of the hour axis, and lands slightly BELOW that family's
+measured ~$2.6/MWh budget. A successful build would move C3a-2023 from −32.4 %
+to ≈ **−29 %**, still 2.9× outside the band, with ERCOT's determination
+**unchanged**.
+
+**Cost (memo §3).** ×1.39–5.64 LP columns (16,057,080 today; R3 alone ≈ 16 GB
+against a measured 6.6 GB / 20 min-per-year baseline — over this box's 15 GB
+budget, and rule 12's two-run cap forfeited at every level). **Nothing
+re-derives** — the measured ladders are keyed on (class, bin, position), not
+slice count. But the expensive part is verification: `_econ_curve_steps` writes
+heat rates into `mc_base`, which IS the P0 objective, so **the offer-surface
+family's P1-only seam is breached** — P0 moves, and with it the startup
+amortization of **122 committed rows carrying 16,545 MW of gas CC/CT/ST**. Four
+of the ercot-181 seam proof's eight assertions (SP-α1/α2/α3/α5) are byte-identity
+claims and **none is available to (c2)**. Also recorded: a latent hard ceiling of
+99 slices/plant (`legacy_bins._coal_tranche_rank` maps `econcNN` → `2.0+NN/100`,
+colliding with `econhi`'s 3.0 at NN ≥ 100).
+
+**Rule 25 — this is NOT ERCOT-gated.** `_econ_curve_steps` sits on the
+ISO-agnostic assembly path with no ISO gate, and **all six keepers run
+`offer_curve_smoothing_n = 6`, `exp = 1.0`** (ERCOT and PJM additionally
+`mid = 0.35`; all six `committed_ramp_spread = 0.0`, so the committed-band
+coupling is dormant but live in code). A default change would move all six
+keepers at once; any build must enter as a NEW default-off field armed per-ISO,
+with each ISO deriving its own breakpoints and entering the matrix as `U`.
+
+**RECOMMENDATION TO THE OWNER: CLOSE THE LANE.** The 2023 miss is not a
+resolution defect. You cannot reach a price by adding rows above where the market
+clears — now measured three independent ways: item 21 (hour axis), item 23
+(position axis, level), and this memo (position axis, resolution). The memo does
+NOT claim C3a-2023 is unreachable in principle, only that offer-curve resolution
+cannot reach it, which was the chartered question. The program's live returns
+remain **D2** (fault-3 partial-layer re-charter — the only lane that can move
+C3b-2024), **D3** (rule-18 grain defect) and **D4** (NP3-965 re-upload).
+
+**Governance.** Rules 15/16: nothing solved, nothing to register. Rule 22: 2023
+only; ERCOT holds no `complete` and no `final`; no out-of-training year touched.
+Rules 23/24: zero scalars, zero fields, no derive, frozen artifacts read-only.
+Rule 25: ERCOT only (§6 reads other ISOs' configs solely to scope blast radius,
+which the rule requires). Rule 28: **no cell minted** — nothing was armed or
+tested as a mechanism. Keeper `2026-08-09-run181-position-tail` untouched.
+
+**Next shorthand: ercot-186.** *(ercot-185 is the concurrently-running D2 fault-3 lane.)*
