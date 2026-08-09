@@ -3676,3 +3676,49 @@ lanes continue independently (ercot-183's owner-authorized NP3-965 corpus intake
 row; miso-148 chartered on miso-147's availability object; the caiso-186 owner-sitting
 packet and the ercot-182/C3a-cliff memo add to the owner-card queue). Nothing new to
 dispatch this cycle; nothing of mine landed results yet.
+
+## Addendum AI — THE GATE PASSED; the program's first T1-FF skill numbers; the sibling wave + FFR-9C dispatched
+
+**Written 2026-08-09 by the workstream manager at `origin/main` `839de3f0`.**
+
+### AI.1 FH-4-ERCOT: CLEAN — gate PASS at 0.0 %, and the skill table is quotable
+
+The step-0 gate ran the FH-1 §3.3 criterion AS WRITTEN (I6: single-year economic
+retirement ≤ 20 % of prior thermal; FAIL reference 26.8 %): **PASS at 0.0 % / 0.0 % /
+0.0 %**, probe registered. The condition of the AG.2 conditional grant is DISCHARGED —
+**the FH-4 lift is now UNCONDITIONAL and the five sibling ISO legs are RELEASED**
+(§0ag). Both arms ran the determined posture (unified+restoration by invocation; the
+Arm-K `demand_growth_vintage` wiring committed with the prereg); the three-way table is
+the program's FIRST quotable T1-FF skill: price_mean errs — keeper 0.325/0.025/0.080 vs
+Arm R −0.651/−0.149/−0.136 vs Arm K −0.292/+0.185/−0.092 (overlay value = keeper→R
+spread; driver-forecast error = R→K spread; full table + fuel-mix in the handoff). The
+γ-rider instrument-date split landed as a solve-independent read. Matrix citations
+stamped. Adjudication: CLEAN.
+
+### AI.2 FFR-9B: CLEAN — the binding-constraint table is decisive and the candidates are admissible
+
+Diagnose-only honoured (no-repair statement; identical-recipe regeneration,
+unregistered, zero epoch). The mechanism inventory + per-tech-per-year table attribute
+the under-build to named layers (the four-cap allocator; the F-1 netting-in-the-flow-cap
+defect halving per-tech rates; phantom SMR crowding the budget; the pre-vintage
+committed cohort invisible without the procurement channel). Candidates, each with a
+rule-13 pre-assessment: **R-a** arm `entry_pipeline_aware_signal` (FFR-5C, built+gated,
+zero new parameters — the first-order fix), **R-b** SMR availability-year gate (ATB
+2030; new field ⇒ matrix row), **R-d** arm the FFR-5E procurement channel at vintage
+(the ONLY admissible instrument for the 18.4 GW pre-vintage cohort; the FFR-5E-H DEFER
+caveat does not carry to ERCOT, where the netting is exercised), **R-c** solar queue-cap
+re-derivation ONLY after R-a and only from source data (rule 23), **R-e** gas_cc needs
+NO lever (symptom of screen level; rule 19). **FFR-9C dispatched on exactly this menu**
+(§0ag), all arms gated/by-invocation, leave-one-year-out before any promotion.
+
+### AI.3 The rest: FFR-4F landed (adjudication next cycle), ARM3-FIX solves burning
+
+FFR-4F completed its chain (CPUC RA-MPB anchor intaken GATED default-off; its predicted
+control CORRECTED pre-solve — 52.51 %, the FFR-4E number, honest; the paired FC-2 read
+ran and "the trap fired, reported as such"; F-6, a pre-existing LMP backend-parity
+defect, recorded). Full adjudication next cycle after reading the trap and F-6 —
+nothing in it blocks the wave. ARM3-FIX: fixed-row expectations pre-stated (MI-2035
+expected to BIND, likely ACP-pinned; MN slack; R4 now a real read); the 2031–2035 legs
+were solving at this writing — **the D-28 step-3 card goes up when §4 fills**. ercot-183
+completed its owner-authorized corpus (708/708 days; RTC+B format break quarantined).
+Keepers: unchanged this window (verified in the sweep; ERCOT/CAISO now ~1 day stable).
