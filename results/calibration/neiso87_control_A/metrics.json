@@ -16,8 +16,7 @@
   "rubric_version": 3.1,
   "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "1 ledgered caveat(s) (measured-input or model-class): C3c price tail / scarcity (RT hourly)",
-    "unscored PROTECTIVE criteria: forced_share"
+    "1 ledgered caveat(s) (measured-input or model-class): C3c price tail / scarcity (RT hourly)"
   ],
   "notes": [],
   "criteria": {
@@ -60,7 +59,7 @@
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -75,8 +74,8 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 6,
+    "scored": 8,
+    "target_grade": 7,
     "commercial_grade": 0,
     "ledgered": 1,
     "fails": 0

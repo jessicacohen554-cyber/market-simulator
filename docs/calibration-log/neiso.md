@@ -1925,3 +1925,114 @@ stays EMPTY, the freeze stays ACTIVE, and `enforce_holdout_year_gate` was verifi
 refusing NEISO 2019/2020/2022 while allowing 2023-2025. Carried forward for the owner,
 unwritten: `holdout-freeze.json`'s 2026-08-06 **`history`** entry still repeats the false SPENT
 claim that its own `lift_scope` field already corrects.
+
+## 2026-08-09 — KEEPER RE-KEYED to `2026-08-06-neiso-87-control` on owner instruction (reproducibility re-key; the stated rationale did NOT hold and is recorded)
+
+**Session:** neiso-keeper-87-control · **Branch:** `claude/neiso-keeper-87-control-sed8d2`
+**Keeper:** `2026-08-05-neiso-83-ca1-reclass` → **`2026-08-06-neiso-87-control`**
+**NO SOLVE. NO LP CONSTRUCTED. NO MECHANISM TESTED, no lever opened, no matrix cell verdict
+minted (rule 28d), no holdout year of either tier touched.** Every number below is computed
+from committed artifacts — the two bundles' own `hourly/` sidecars, their run payloads, and
+`calibration_verdict.py --run-id`.
+
+**1. WHAT WAS ASKED, AND WHY ITS STATED REASON DOES NOT HOLD.** The instruction was to switch
+the NEISO keeper to the neiso-87 control because "its fleet r is significantly better than the
+current keeper". Measured from the two committed run payloads' `fuelRows` — the exact values
+C4 scores:
+
+| year | keeper gas r / NRMSE | 87-control gas r / NRMSE | coal r |
+|---|---|---|---|
+| 2023 | 0.919 / 0.118 | 0.919 / 0.118 | 0.383 → 0.383 |
+| 2024 | 0.930 / 0.110 | 0.930 / 0.110 | 0.481 → 0.481 |
+| 2025 | 0.880 / 0.160 | **0.882 / 0.158** | 0.245 → 0.246 |
+
+2023 and 2024 are **bit-identical**. 2025 moves **+0.002 in r**, against a `DISP_R_FLOOR` of
+0.70 both runs clear with room, and inside the **0.918–0.931** band spanned by *every* NEISO
+run ever registered. There is no material fleet-r difference, and the promotion is **not**
+made on one. (The genuinely large fleet-r move in this lane belongs to a different pair: the
+2022 touchpoint, where the neiso-86 gas-basis repair took gas r 0.809 → 0.880. That is
+validation tier and can never be a keeper, rule 16.)
+
+**2. THE REASON THAT DOES HOLD — reproducibility.** The superseded bundle is a
+**NON-REPRODUCIBLE OUTLIER**, established by the neiso-91 bisect (owner decision D-88.3) and
+recorded in the entry immediately above: four independent solves across three code versions,
+two chain lengths and both warm-start settings agree **to the bit** and all differ from the
+committed `neiso83_ca1reclass_B` bundle by the same 731-hour January-2025 pattern. This keeper
+is on the reproducible side of that split. Measured here directly from the two bundles'
+`hourly/system_<year>.parquet` (scored pass P2; P1 identical in direction and magnitude):
+
+| year | zone-hours differing | keeper mean λ | 87-control mean λ | Δ | max abs Δλ |
+|---|---|---|---|---|---|
+| 2023 | **0 of 43,800** | 38.4902 | 38.4902 | 0.0000 | 0.0000 |
+| 2024 | **0 of 43,800** | 43.7081 | 43.7081 | 0.0000 | 0.0000 |
+| 2025 | 3,655 of 43,800 | 70.0868 | 69.7524 | −0.3344 | 25.5244 |
+
+Per-class energy moves in 2025 only: `oil` −0.0773 TWh against `CC_REGULAR` +0.0710 /
+`CT_PEAKER` +0.0044 TWh, total generation conserved to +0.0007 TWh; 2023 and 2024 have **zero**
+classes moving. On the scored criteria the 2025 row moves **C3a +3.0 % → +2.5 %**, **C2 gas
++2.6 % → +2.8 %**, **C4 gas r 0.880 → 0.882**. Both directions are reported: C3a and C4 improve
+marginally, C2 degrades marginally, and **no criterion changes status**.
+
+**3. DETERMINATION RE-VERIFIED, RULE 22 D-5(b) SATISFIED.**
+`calibration_verdict.py --run-id 2026-08-06-neiso-87-control` (committed artifacts only, no
+solve) → **CALIBRATED-WITH-CAVEATS**, 0 FAILs, 1 ledgered caveat (C3c price tail / scarcity, RT
+hourly), C1 all 12/12 · free 8/8, grade summary scored 8 / target-grade 7 / commercial-grade 0
+/ ledgered 1 — **criterion for criterion identical** to the superseded keeper. The re-verified
+determination is **not worse**, so the promotion proceeds without an owner escalation and
+`calibration-complete.json`'s NEISO entry is re-keyed in the same commit (`audit_keepers --iso
+NEISO` M1a: FAIL → PASS, 0 failures / 0 warnings). C3c is bit-unchanged (model 0 hours >
+$300/MWh in both runs, all three years), so **no new caveat slot is spent** and the 2026-07-11
+frontier declaration carries forward untouched — re-checked on the new keeper's own
+`reserve_family_<year>.parquet`: `shortfall_mw` = 0.0 and `held_mw` ≥ requirement in every one
+of 157,680 family-hours at the published static requirements, RCPF co-optimization still
+**dormant**.
+
+**4. TWO DEFECTS IN THE PROMOTED RUN, DISCLOSED HERE RATHER THAN LEFT TO BE FOUND.**
+
+- **(a) It carries a SUPERSEDED measured input — rule 14 `[R-ACCURATE]`, bounded to one month
+  of one year.** This run was solved as **arm A** of the neiso-87 Aug-2025 basis A/B, i.e.
+  deliberately on the stale `NEISO,2025,8` interpolation **+0.04**, while HEAD carries the
+  measured **−0.38** (ISO-NE Massachusetts gas index, August-2025 recap published 2025-10-02,
+  $2.53/MMBtu in both table and narrative) — committed by neiso-87 itself. The size is
+  measured, not estimated, from that A/B's own record: arm B gives August-2025 mean λ 43.7004
+  against this run's 47.4254 (−3.7250) and 2025 annual mean λ **69.3990** against **69.7149**.
+  **So a fully-current re-solve is the run that should hold this slot** — exactly the entry
+  above's standing recommendation (expected 2025 mean λ 69.399). Arm B was never committed or
+  registered and reproducing it needs a solve, which this session did not run. **OPEN ITEM for
+  the next NEISO session that solves:** re-solve this recipe at HEAD, `--year 2023 2024 2025`,
+  register it, re-key this shard to it.
+- **(b) Its C8 evidence was produced at promotion, not at registration.** The bundle was
+  registered without `legitimacy_diagnostics.json`, so **C8 forced-energy share scored
+  SKIPPED** — an unscored *protective* criterion, which would have been a determination
+  regression against the superseded keeper's C8 PASS. It was generated in this session
+  (`scripts/legitimacy_diagnostics.py --bundle results/calibration/neiso87_control_A --iso
+  NEISO --years 2023 2024 2025`), reading this bundle's own committed artifacts and run
+  payload with floors reconstructed via `run_year(fleet_only=True)` — **no LP solve**. C8 then
+  **PASSES** on its own data: every *material* class inside its rule 20 `[R-FORCED-BUDGET]`
+  cap in every year (largest material forced share CC_REGULAR 0.0039 / 0.0082 / 0.0074 against
+  a 0.30 limit), and the three over-cap rows (COAL 0.337 in 2023, CT_PEAKER 0.224 in 2023,
+  ST_GAS 0.245 in 2025) are all immaterial classes below the 2 %-of-load gating floor. **D-4
+  off-window binding PASSES on every floor-year row** (`offwindow_twh` 0.0 throughout); D-5
+  parity, D-9 overlay quarantine and D-10 free-class rescore all PASS. The bundle's
+  `metrics.json` was rewritten from the same scorer (`--write-metrics`) so the committed
+  artifact and the live verdict agree. **D-1 diurnal shape carries the same class-level gate
+  failures the lane has carried throughout** (COAL_BIT off-peak CV all three years, 2023 ST_GAS
+  profile r, 2025 CT_PEAKER off-peak CV); the standalone C7 gate that scored them was RETIRED
+  at rubric v3.1, and they do not reach C8's grounded-above-budget escalation because no
+  material class is above its cap.
+
+**5. CARRIED FORWARD UNCHANGED, because the recipe is unchanged.** `cc_steam_part_reclass`,
+`measured_chp_heat_rates`, the neiso-caiso156 CT heat-rate meter screen, the neiso-71
+per-reactor nuclear availability overlay and the neiso-72 hydro window all carry forward —
+a programmatic diff of the two `run_config` scenario blocks returns **no differing key**. So
+does the neiso-83 open root-cause issue (`campd-unit-outages-NEISO.csv` routing plant 6081's
+DIESEL peakers to `plant_group=CC_REGULAR` because `oil` carries no plant_group at all), the
+CC_CHP under-production residual, and the 2025 C1 CC rows SKIPPED on the preliminary EIA-923
+vintage. **And so does the neiso-84 escalation:** this bundle carries `meta.json`
+`commitment=true`, persists passes P1 and P2 and is **scored on P2**, exactly as the superseded
+keeper was — NEISO remains the only ISO of six running the archived P2 pass. Neither resolved
+nor worsened here; it needs a re-solve and should be settled in the same session that closes
+(4a).
+
+**6. Holdout posture unchanged.** `final` stays EMPTY, the freeze stays ACTIVE, the 2022
+validation touchpoint block is untouched, and this session solved nothing at all.
