@@ -2425,6 +2425,21 @@ def load_renewable_profiles(
                 installed_mw = float(seed_monthly[:, -1].sum())
                 hindcast_seeded = True
             else:
+                if hindcast_vintage is not None:
+                    # The weather-year read resolved but the vintage-year read
+                    # did not (no operable capacity for this ISO-fuel at the
+                    # cutoff). Nothing measured to seed from, so the constant
+                    # stands — the pre-FFR-3V-FIX behaviour — but say so, because
+                    # an unnoticed fall-back here is the original defect.
+                    logger.warning(
+                        "%s %s: hindcast vintage %d has no operable EIA-860 "
+                        "capacity; seeding from RENEWABLE_INSTALLED_MW "
+                        "(%.0f MW) — a PRESENT-DAY base in a vintage run",
+                        iso,
+                        fuel,
+                        hindcast_vintage,
+                        RENEWABLE_INSTALLED_MW[iso][fuel],
+                    )
                 installed_mw = RENEWABLE_INSTALLED_MW[iso][fuel]
             # A backcast prefers a measured hourly profile on the
             # calibration's chronological clock: an uncurtailed HSL-style

@@ -606,8 +606,20 @@ def evolve_fleet(
     # the object §2.3(c) requires, never a cumulative pipeline stock. Rows
     # whose effective year falls at or before the run's base year are not
     # injected: the base year does not evolve, and its pools are already
-    # seeded from RENEWABLE_INSTALLED_MW. That leaves them out (an
-    # UNDER-count, the safe direction), never double-counted.
+    # seeded from the base fleet. That leaves them out (an UNDER-count, the
+    # safe direction), never double-counted.
+    #
+    # WHAT THAT SEED IS, since this reasoning depends on it (FFR-3V-FIX,
+    # 2026-08-08): in a HINDCAST the base pools are the run's own
+    # ``eia860_vintage_year`` EIA-860 measured year-end fleet
+    # (``data.renewables.load_renewable_profiles``), so a procured row is
+    # additive to the vintage fleet and the "at or before the base year"
+    # exclusion is exactly right. It used to be the PRESENT-DAY
+    # RENEWABLE_INSTALLED_MW constant — up to 7.8x the vintage fleet (ERCOT
+    # solar 2020) — against which every injected MW double-counted invisibly,
+    # which is why the hindcast arm of this channel was blocked. A plain
+    # FORECAST still seeds from RENEWABLE_INSTALLED_MW, which is correct
+    # there: it is the current fleet the projection starts from.
     _procured_flow_mw: dict[str, float] = {}
     if procured_vre:
         for _r in procured_vre:
