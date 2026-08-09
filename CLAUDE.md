@@ -178,22 +178,41 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       genealogy in `docs/governance/rule-history.md` §4.)* Tier
       membership and the block mapping live in `scripts/lib/holdout_policy.py`; the
       **holdout spend freeze** (`holdout-freeze.json`) outranks both blocks and is checked first.
-    - **C3c STANDING RULE (owner, 2026-08-06): a LONE C3c failure on an out-of-training year is
-      an AUTO-LEDGERED `CALIBRATED-WITH-CAVEATS`, in every ISO, going forward.** When C3c
-      (price tail / scarcity, RT hourly) is the **only** failing criterion and the governance
-      gate passes, `calibration_verdict.py::_apply_c3c_standing_rule` reclassifies it to a
-      CAVEAT (`ACCEPTED MODEL-CLASS LIMITATION`) instead of failing the run to `NOT-YET`. It is
-      deliberately narrow and **cannot become a general escape hatch**: (a) **lone failure
-      only** — if any other criterion fails, the rule stays silent and *every* failure stands,
-      C3c's included; (b) **governance must PASS** — a failing or unattested C6 blocks it;
-      (c) **out-of-training ONLY** (validation + locked tiers) — in-sample 2023–2025 keepers
-      still need an explicit, session-justified ledger entry, so the training-window discipline
-      is untouched; (d) it is **never a PASS** — the miss is reported at full magnitude and the
-      run can never read `CALIBRATED`. Admissible because C3c is SUPPORTING tier; the v3.0
-      fail-closed guard still refuses `model-class` on load-bearing (C1/C2/C3a/C3b) and
-      protective (C6/C8) criteria — and since rubric v3.1 (owner amendment 2026-08-06) C3c is
-      the ONLY ledgerable criterion at all, so this rule and the explicit ledger now reach
-      exactly the same one criterion by two routes.
+    - **C3c STANDING RULE (owner, 2026-08-06; EXTENDED TO EVERY YEAR 2026-08-09): a LONE C3c
+      failure in ANY year — training, validation or locked test — is an AUTO-LEDGERED
+      `CALIBRATED-WITH-CAVEATS`, in every ISO, going forward.** When C3c (price tail /
+      scarcity, RT hourly) is the **only** failing criterion and the governance gate passes,
+      `calibration_verdict.py::_apply_c3c_standing_rule` reclassifies it to a CAVEAT
+      (`ACCEPTED MODEL-CLASS LIMITATION`) instead of failing the run to `NOT-YET`. It
+      **cannot become a general escape hatch**, and the guards that stop it are unchanged:
+      (a) **lone failure only** — if any other criterion fails, the rule stays silent and
+      *every* failure stands, C3c's included. This is the real guard: it fires only on a model
+      that is otherwise clean, so it can never mask a second defect; (b) **governance must
+      PASS** — a failing or unattested C6 blocks it; (c) **supporting tier only, fail-closed**
+      — it classifies `model-class`, which the v3.0 guard admits only for a SUPPORTING-tier
+      criterion, so it can never reach load-bearing (C1/C2/C3a/C3b) or protective (C6/C8);
+      (d) it is **never a PASS** — the miss is reported at full magnitude, the run can never
+      read `CALIBRATED`, and the caveat still spends the single ledgerable slot.
+      **Why extending it to in-sample years is not a loosening.** The former clause (c),
+      *out-of-training ONLY*, was never a statement about C3c's severity — band, tier and
+      reported magnitude are identical in every year. In-sample the SAME reclassification was
+      already reachable through an explicit exceptions-ledger entry, and that is the route
+      every current keeper carrying a C3c caveat actually used; the split governed only who
+      typed the justification, not what a run could claim. Since rubric v3.1 C3c is the ONLY
+      ledgerable criterion at all, so the two routes had already collapsed onto one criterion —
+      2026-08-09 collapses them onto one *rule*.
+      **A defect fixed in the same amendment (rubric v3.2), which was suppressing the rule as
+      originally declared:** "lone" was measured over EVERY scored record, including the
+      REPORTED-ONLY streams the rubric has demoted out of the determination (C5a `co2`, removed
+      at v2.9). A `co2` FAIL silenced the rule even though co2 contributes no status, no caveat
+      budget and no reason line. It is now measured over `CRITERIA` membership. This
+      under-fired **out-of-training years too**, so it is a correction rather than part of the
+      widening. **Effect at amendment, measured over all 66 registered runs against a
+      pre-change snapshot:** 2 determinations change, both NYISO **non-keeper** probes
+      (`2026-08-06-nyiso-130-control`, `-n11-tsl`: `NOT-YET → CALIBRATED-WITH-CAVEATS`), both
+      unlocked by the defect fix rather than by the widening; **every keeper of all six ISOs is
+      unchanged**. `2026-08-06-pjm-158-novirtual-disarmed` is a lone C3c failure and still does
+      not reclassify — its C6 is UNATTESTED, i.e. guard (b) working.
     - **Crossover window = 2024–H1 2026** is scored in BOTH modes — backcast (measured overlays)
       and forecast (forward drivers) — against the same actuals, to measure the backcast→forecast
       input gap. Diagnostic, not a locked test; its forecast side uses no measured actuals so it is

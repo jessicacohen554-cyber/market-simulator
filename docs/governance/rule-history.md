@@ -121,6 +121,40 @@ genealogy is owned by** `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(
   train (2023–2025) / validation (2022, iterable) / locked-test (2019 + H1-2026,
   touch-once) split, with the quarantine machinery carried over unchanged. This
   is also what supersedes the audit's original D-6/rule-21 wording.
+- **2026-08-06 — the C3c standing rule** (session neiso-86, owner, verbatim: *"a
+  c3c failure with all other gates passing should always be treated as a ledgered
+  calibrated with caveats across all ISOs for holdout years and testing years
+  going forward as a rule"*). A **lone** C3c failure with governance passing
+  stopped failing a run to `NOT-YET` and became an auto-ledgered
+  `CALIBRATED-WITH-CAVEATS`. Implemented as
+  `calibration_verdict._apply_c3c_standing_rule` and scoped, at implementation
+  time, to **out-of-training years only** — in-sample keepers kept needing an
+  explicit exceptions-ledger entry.
+- **2026-08-09 — extended to every year; rubric v3.2** (session
+  neiso-keeper-87-control, owner, verbatim: *"make sure c3c is an acceptable
+  caveat for any holdout or training year"*). Two parts:
+  **(a)** the out-of-training restriction is removed, so the rule fires on
+  2023–2025 as well. This resolves an ambiguity in the 2026-08-06 directive,
+  whose own wording said "holdout years **and testing years**" while the
+  implementation read it as validation + locked tiers only. It is not a
+  loosening of the band: in-sample the identical reclassification was already
+  reachable through an explicit ledger entry — the route every current keeper
+  carrying a C3c caveat used — so the split governed who typed the
+  justification, not what a run could claim, and since v3.1 C3c is the only
+  ledgerable criterion at all.
+  **(b)** a defect that had been suppressing the rule *as originally declared*
+  is fixed: "lone" was measured over every scored record, including the
+  REPORTED-ONLY streams the rubric demoted out of the determination (C5a `co2`,
+  removed at v2.9), so an unrelated `co2` FAIL silenced it. It is now measured
+  over `CRITERIA` membership. This under-fired the out-of-training years too, so
+  (b) is a correction rather than part of (a).
+  **Effect, measured over all 66 registered runs against a pre-change
+  snapshot:** 2 determinations change, both NYISO **non-keeper** probes
+  (`2026-08-06-nyiso-130-control`, `-n11-tsl`), both unlocked by (b); every
+  keeper of all six ISOs is unchanged. The guards are untouched — lone failure
+  only, governance must PASS, supporting-tier-only fail-closed, never
+  `CALIBRATED`, single ledgerable slot still spent. Detail:
+  `docs/calibration-determination-rubric.md` §9 (v3.2).
 
 ## 5. Rule 27 `[R-PUSH]` — the 2026-07-15 `constants.py` truncation incident
 
