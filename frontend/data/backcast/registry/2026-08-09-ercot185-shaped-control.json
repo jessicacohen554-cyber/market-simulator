@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-09-ercot185-shaped-control",
+  "label": "ercot185 shaped control",
+  "date": "2026-08-09",
+  "shorthand": "ercot185-shaped-control",
+  "definition": "ercot-185 A/B CONTROL: same-HEAD replay of the run181 keeper recipe with ercot_partial_outage_shaped_derate at its default (off). Pairs with ercot185_shapedarm_B.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-09-ercot185-shaped-control.js",
+  "bundle": "results/calibration/ercot185_shapedcontrol_A"
+}
