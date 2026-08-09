@@ -3440,3 +3440,21 @@ needed. Noted for the record: the current CAISO keeper's live determination is *
 (C3a mean LMP the sole load-bearing FAIL; the C3c ledgered caveat carried verbatim from
 the prior keeper) — consistent with CAISO's withdrawn `complete` marker; the auditor also
 manually confirmed no CAISO registry entry postdates the keeper.
+
+### AF.6 Paste confirmation for the §0ab dispatch set (refresh, 2026-08-09 @ `6784a0c`)
+
+All three §0ab prompts were pasted within the hour and are MID-FLIGHT, each with its
+prereg committed BEFORE any solve output existed, exactly as chartered: **FFR-8B**
+(`76d79b2` prereg fixing the re-base read set + E1 decomposition method; `797426c` the
+Phase-0/1 read probes; PR #3767) — its Phase-0 re-base is the next lift evidence;
+**FFR-5E-H** (`bdfd46b` the channel's hindcast CLI arm + prereg; `b1bb23b` the R1–R4
+extraction probe; PR #3766); **ARM3-MEASURE** (`3080be6` the 2031–2035 prereg; `5ecb2c2`
+both MISO row-family gates recorded in the full-horizon summary; PR #3765). No
+hindcast/forecast sidecars yet — solves burning. Keepers UNCHANGED this refresh (no
+promotion in the window — the first quiet keeper interval in ~48 h; Q.2 still requires a
+longer settle). Parallel calibration lanes advanced independently (caiso-185 REFUSED its
+reconcile on a measured basis defect; caiso-186 pre-registered+built the seasonal CC
+capability basis; miso-146 discharged §5.4 item 7 BRANCH-SCREEN-BOUNDED; ercot-181 built
+the position-tail mechanism Route B with its matrix row, I-1 REFUSED-AS-MEASURED — none
+moved a keeper). The two owner questions (λ-led price-side condition re-base; branch
+protection) remain OPEN.
