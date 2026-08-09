@@ -1,0 +1,237 @@
+{
+ "probe": "_caiso186os_dof_repair",
+ "session": "caiso-186 owner sitting (dispatched label)",
+ "lp_solved": false,
+ "network": false,
+ "r1_census": {
+  "CAISO": {
+   "keeper": "2026-08-09-caiso-184-c1-lpbasis",
+   "n_entries": 11,
+   "n_residual_declared": 8,
+   "n_residual_counted": 8,
+   "n_core_residual": 5,
+   "n_iso_specific_residual": 3,
+   "iso_specific": [
+    "battery_dispatch_adder",
+    "WECC_import_simultaneous.cap_mw",
+    "IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]"
+   ],
+   "holds_complete_marker": false
+  },
+  "ERCOT": {
+   "keeper": "2026-08-09-run181-position-tail",
+   "n_entries": 14,
+   "n_residual_declared": 6,
+   "n_residual_counted": 6,
+   "n_core_residual": 3,
+   "n_iso_specific_residual": 3,
+   "iso_specific": [
+    "wefor_residual",
+    "battery_dispatch_adder",
+    "CHP_BTM_PCT_BY_SECTOR['merchant']"
+   ],
+   "holds_complete_marker": false
+  },
+  "MISO": {
+   "keeper": "2026-08-05-miso-132b-cc-committed",
+   "n_entries": 29,
+   "n_residual_declared": 2,
+   "n_residual_counted": 2,
+   "n_core_residual": 2,
+   "n_iso_specific_residual": 0,
+   "iso_specific": [],
+   "holds_complete_marker": false
+  },
+  "NEISO": {
+   "keeper": "2026-08-06-neiso-87-control",
+   "n_entries": 14,
+   "n_residual_declared": 5,
+   "n_residual_counted": 5,
+   "n_core_residual": 5,
+   "n_iso_specific_residual": 0,
+   "iso_specific": [],
+   "holds_complete_marker": true
+  },
+  "NYISO": {
+   "keeper": "2026-08-08-nyiso-132-cf-arm",
+   "n_entries": 36,
+   "n_residual_declared": 6,
+   "n_residual_counted": 6,
+   "n_core_residual": 4,
+   "n_iso_specific_residual": 2,
+   "iso_specific": [
+    "NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island']",
+    "IMPORT_TRANCHES/EXPORT_TRANCHES[NYISO]"
+   ],
+   "holds_complete_marker": true
+  },
+  "PJM": {
+   "keeper": "2026-08-04-pjm-152-collapse",
+   "n_entries": 19,
+   "n_residual_declared": 6,
+   "n_residual_counted": 6,
+   "n_core_residual": 5,
+   "n_iso_specific_residual": 1,
+   "iso_specific": [
+    "wefor_residual"
+   ],
+   "holds_complete_marker": true
+  }
+ },
+ "r2_wiring": {
+  "keeper_flags": {
+   "capacity_deliverability_limits": true,
+   "caiso_per_hub_intertie": true,
+   "caiso_perhub_firm_base": true,
+   "caiso_per_year_import_caps": true,
+   "caiso_firm_import_selfschedule": true,
+   "caiso_firm_import_selfsched_clip": true,
+   "caiso_firm_import_shape": true,
+   "caiso_firm_import_envelope_clip": true,
+   "caiso_import_hub_prices": false,
+   "caiso_bidir_intertie": false,
+   "battery_dispatch_adder": 5.0,
+   "pumped_storage_dispatch_adder": null
+  },
+  "rows": {
+   "WECC_import_simultaneous.cap_mw": {
+    "ledger_says": "fitted aggregate WECC import cap \u2014 SUPERSEDED in the caiso-51 keeper by the published branch-group MIC sum (16,055/16,452/16,148 MW 2023/24/25) + measured p95 c",
+    "decided_by": "capacity_deliverability_limits",
+    "keeper_value": true,
+    "on_backcast_binding_path": false,
+    "verdict": "SUPERSEDED on the keeper's binding path \u2014 the published branch-group MIC seam limit replaces it; the row survives as a FORECAST-PATH residual only (capacity_deliverability_limits is GATED default-off, issue #1373). The ledger text already says this and it CHECKS OUT."
+   },
+   "battery_dispatch_adder": {
+    "ledger_says": "reduced-form stand-in for cycling degradation + AS opportunity cost; forward-valid replacement is the measured AS power reservation (storage_as_commitment) + an ATB-derived degradation cost \u2014 open ite",
+    "keeper_value": 5.0,
+    "on_backcast_binding_path": true,
+    "verdict": "LIVE and residual. The ledger's NAMED forward-valid replacement is SPENT on both halves \u2014 the measured AS power reservation was probe-adjudicated INERT (caiso-74) and refuted by arithmetic (caiso-127/129); the ATB degradation cost was built, A/B-solved and REJECTED on a pre-registered throughput guard (caiso-100/101), and on today's constants the same formula returns $22.63 rather than $14.25, i.e. FURTHER in the rejected direction. The ledger's root_cause therefore points at a closed route and is STALE. NEW identification evidence exists and is not in the ledger: FINDING-caiso176 read CAISO's OWN Daily Energy Storage Report bid_stack and bounded the fleet discharge reservation price at <= $15/MWh in all three years \u2014 a model-free UPPER bound that refutes $22.63 and admits $5.00. It BOUNDS but does not IDENTIFY: every value in (0, 15] survives, so the row stays residual."
+   },
+   "IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]": {
+    "ledger_says": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback; NEISO closed this item (see the NEI",
+    "decided_by": {
+     "caiso_per_hub_intertie": true,
+     "caiso_perhub_firm_base": true,
+     "caiso_firm_import_selfschedule": true,
+     "caiso_firm_import_selfsched_clip": true,
+     "caiso_per_year_import_caps": true
+    },
+    "verdict": "THE LEDGER TEXT DOES NOT CHECK OUT. It reads 'CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback', which is true of ONE of the row's four limbs. inject_caiso_per_hub_intertie_prices writes mc[row, :] ONLY \u2014 it repriced nothing else \u2014 and its firm_base branch EXPLICITLY skips CAISO_FIRM_IMPORT_TRANCHES ('keeps its static ladder price'). See R3 for the limb split: two limbs are closed, TWO ARE LIVE AND FITTED, and one of the two live limbs is the object FINDING-caiso140 \u00a7C measures as the thing pinning the belly lambda."
+   }
+  }
+ },
+ "r3_limb_split": {
+  "firm_capacity": {
+   "tranches": [
+    "DSW_solar_PV",
+    "PNW_hydro_base"
+   ],
+   "values_by_year": {
+    "DSW_solar_PV": {
+     "2023": 1251.0,
+     "2024": 1813.0,
+     "2025": 1805.0
+    },
+    "PNW_hydro_base": {
+     "2023": 1072.0,
+     "2024": 1558.0,
+     "2025": 1566.0
+    }
+   },
+   "varies_by_year": true,
+   "identification": "MEASURED",
+   "source": "DMM Annual Report system RA capacity 'Imports' row (2023 2,323 MW; 2024 3,371 MW; 2025 carries 2024 \u2014 OPEN DATA GAP until the DMM 2025 annual report lands) x the published Maximum Import Capability per branch group (data/raw/capacity-deliverability/caiso/caiso.csv), north/south of Path 15.",
+   "verdict": "CLOSED \u2014 measured, per-year, cited to two published primary sources."
+  },
+  "firm_price": {
+   "tranches": [
+    "DSW_solar_PV",
+    "PNW_hydro_base"
+   ],
+   "values_by_year": {
+    "DSW_solar_PV": {
+     "2023": 48.0,
+     "2024": 48.0,
+     "2025": 48.0
+    },
+    "PNW_hydro_base": {
+     "2023": 28.0,
+     "2024": 28.0,
+     "2025": 28.0
+    }
+   },
+   "varies_by_year": false,
+   "identification": "RESIDUAL (static-fitted-pending-measured, audit C-6 / issue #1350)",
+   "source": "Tier-3 contract-cost proxies, identical in all three years, labelled STATIC-FITTED-PENDING-MEASURED in interchange spec.py itself.",
+   "verdict": "LIVE ON THE BINDING PATH, and NOT for the reason the ledger gives. The per-hub injector's firm_base branch deliberately does NOT reprice these two. caiso-77's retirement argument was that caiso_firm_import_selfschedule sets pmin = pmax so 'the tranche can never set the margin' and 'the two G-26 static-fitted-pending-measured firm prices stop influencing dispatch'. THAT ARGUMENT NO LONGER HOLDS IN FULL: caiso-151's caiso_firm_import_selfsched_clip \u2014 ARMED in this keeper \u2014 caps the FLOOR at CAISO's measured price-insensitive intertie ceiling, so above the ceiling the block is offered to the LP as ECONOMIC capability at exactly these static prices. FINDING-caiso150 \u00a7C/\u00a7F measures the un-floored volume at 0.969 / 4.634 / 5.705 TWh in 23.9 / 47.2 / 48.9 % of hours (2023/24/25). The exposure GROWS with the DMM RA level."
+  },
+  "spot_capacity": {
+   "tranches": [
+    "DSW_CCGT",
+    "DSW_CT",
+    "PNW_midC",
+    "WECC_scarcity"
+   ],
+   "values_by_year": {
+    "PNW_midC": {
+     "2023": 1800.0,
+     "2024": 1800.0,
+     "2025": 1800.0
+    },
+    "DSW_CCGT": {
+     "2023": 1800.0,
+     "2024": 1800.0,
+     "2025": 1800.0
+    },
+    "DSW_CT": {
+     "2023": 2200.0,
+     "2024": 2200.0,
+     "2025": 2200.0
+    },
+    "WECC_scarcity": {
+     "2023": 3000.0,
+     "2024": 3000.0,
+     "2025": 3000.0
+    }
+   },
+   "varies_by_year": false,
+   "identification": "RESIDUAL (static, no cited primary source)",
+   "source": "No primary source is cited for these four depths anywhere in the IMPORT_TRANCHES provenance block; the by-year comment states plainly that 'only the two firm-block capacities vary by year. Spot tranches and all prices are identical to the static ladder.'",
+   "verdict": "LIVE, FITTED, AND ON THE BINDING PATH \u2014 and this is the limb that matters most. The hub-price injector never touches a capacity. FINDING-caiso140 \u00a7C measures the Sep-Dec belly lambda as PINNED by a 2.7-3.0 GW economic-import plateau on which 51-61 % of defect hours never move; economic (non-firm) import in those hours is mean 2,705 MW / p50 3,038 MW. That plateau IS this depth ladder. A fitted scalar sitting exactly where the load-bearing criterion's residual is pinned is the single most consequential unclosed DOF CAISO carries."
+  },
+  "spot_price": {
+   "tranches": [
+    "DSW_CCGT",
+    "DSW_CT",
+    "PNW_midC",
+    "WECC_scarcity"
+   ],
+   "values_by_year": {
+    "PNW_midC": {
+     "2023": 36.0,
+     "2024": 36.0,
+     "2025": 36.0
+    },
+    "DSW_CCGT": {
+     "2023": 68.0,
+     "2024": 68.0,
+     "2025": 68.0
+    },
+    "DSW_CT": {
+     "2023": 110.0,
+     "2024": 110.0,
+     "2025": 110.0
+    },
+    "WECC_scarcity": {
+     "2023": 180.0,
+     "2024": 180.0,
+     "2025": 180.0
+    }
+   },
+   "varies_by_year": false,
+   "identification": "SUPERSEDED on the backcast binding path",
+   "source": "inject_caiso_per_hub_intertie_prices overwrites each spot leg's mc row with its OWN measured hub series (Malin / Palo Verde) + the OATT wheel + the CARB border adder, hour by hour.",
+   "verdict": "CLOSED on the backcast binding path (this is the limb the ledger text describes) \u2014 with two disclosed conditions: the injector returns False and leaves the static placeholders in place when CAISO has NO measured hub series for the year (e.g. the 2023 OASIS gap), and the forecast path has no measured hub series at all, so the fitted prices are live there."
+  }
+ }
+}
