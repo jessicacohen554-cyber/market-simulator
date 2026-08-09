@@ -611,6 +611,24 @@ canvas.heat {
 
 .run-opt.is-keeper .run-label { font-weight: 600; }
 
+/* Held-out-year provenance note (CLAUDE.md rule 22) — Run Explorer. Raised
+   whenever the selected year is NOT one the selected run solved, so a
+   validation- or locked-tier number can never be read as the keeper's own
+   in-sample result. Tier hues match the holdout-tier explainer
+   (js/viz-holdout-tiers.js) but are DARKENED for the badge, which is 0.6rem
+   uppercase — small text, so it needs >=4.5:1 against white, and the
+   explainer's #B45309 / #6366F1 pair only clears that on the amber. */
+.holdout-year-note {
+  border-left: 4px solid var(--ho-tier, #B45309);
+}
+
+.holdout-year-note .tier-badge {
+  background: var(--ho-tier, #B45309);
+}
+
+.holdout-year-note.tier-validation { --ho-tier: #B45309; }  /* 4.9:1 on #fff */
+.holdout-year-note.tier-locked_test { --ho-tier: #4338CA; }  /* 8.3:1 on #fff */
+
 /* ---------------------------------------------------------------------------
    10. Narration
    --------------------------------------------------------------------------- */

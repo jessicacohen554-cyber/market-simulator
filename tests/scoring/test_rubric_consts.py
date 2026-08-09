@@ -54,3 +54,45 @@ def test_write_creates_the_frozen_filename(tmp_path):
     out = rubric_consts.write_rubric_consts_js(tmp_path)
     assert out.name == "rubric-consts.js"
     assert _payload(out.read_text())["source"] == "scripts/calibration_verdict.py"
+
+
+def test_holdout_tiers_come_from_the_policy_module():
+    """The rule-22 tier map is the policy module's, not a JS-side copy.
+
+    The Run Explorer labels a held-out year's tier in its year dropdown
+    (``2022 — validation holdout``) and picks the banner caveat from it. Before
+    2026-08-09 there was no way to do that without typing 2019/2022/2026 into
+    JavaScript — the same drift trap the C1 bands above were moved out of. The
+    payload must therefore stay bound to ``scripts.lib.holdout_policy``.
+    """
+    from scripts.lib import holdout_policy as hp
+
+    tiers = rubric_consts.rubric_consts()["holdoutTiers"]
+    assert tiers[hp.TIER_TRAIN] == sorted(hp.CALIBRATION_YEARS)
+    assert tiers[hp.TIER_VALIDATION] == sorted(hp.VALIDATION_YEARS)
+    assert tiers[hp.TIER_LOCKED] == sorted(hp.LOCKED_TEST_YEARS)
+    # Sorted lists, not sets: iteration order is not a wire format.
+    for years in tiers.values():
+        assert years == sorted(years)
+
+
+def test_holdout_tiers_agree_with_tier_for_year():
+    """The JS consumer reproduces ``tier_for_year`` on every enumerated year.
+
+    The page's ``yearTier()`` tests the three lists in train -> validation ->
+    locked order and falls through to ``locked_test``. That is only equivalent
+    to the Python gate if the lists are disjoint, so pin it here rather than in
+    a comment.
+    """
+    from scripts.lib import holdout_policy as hp
+
+    tiers = rubric_consts.rubric_consts()["holdoutTiers"]
+    seen: set[int] = set()
+    for tier, years in tiers.items():
+        assert not (seen & set(years)), f"{tier} overlaps an earlier tier"
+        seen |= set(years)
+        for y in years:
+            assert hp.tier_for_year(y) == tier
+    # Fail-closed default: an unenumerated year is locked-test on both sides.
+    assert hp.tier_for_year(1999) == hp.TIER_LOCKED
+    assert 1999 not in seen
