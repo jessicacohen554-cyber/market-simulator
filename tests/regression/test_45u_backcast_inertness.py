@@ -63,18 +63,31 @@ def _call_sites(symbol: str, roots: tuple[str, ...]) -> list[str]:
 class TestSection45UBackcastInertness(unittest.TestCase):
     """The §45U -> evolve_fleet -> runner chain has no backcast branch."""
 
-    def test_45u_has_exactly_one_production_call_site(self):
+    def test_45u_is_called_from_exactly_one_production_module(self):
         # scripts/probes is the calibration record, not production, and the
         # F1-45U stage-1 probe calls the function directly by design.
-        sites = [
+        #
+        # DISTINCT MODULES, not raw call count (F2-45U). The reachability
+        # argument in this module's docstring is about which MODULE can reach
+        # §45U -- link 1 fails only if some OTHER module gains a call, which is
+        # exactly what a set of files pins. Owner decision D-28 gave the
+        # retirement screen TWO calls inside the one function
+        # ``apply_economic_retirements``: §45U(b)(2)(B) has two branches with
+        # two different gross-receipts bases (the state-contract branch (iii)
+        # excludes the attribute payment, the compliance-certificate branch (i)
+        # includes it), so both are evaluated and the unit takes the better
+        # route. Two calls in the same already-forecast-only function weaken
+        # nothing -- link 2 (only ``evolve_fleet`` runs it) and link 3 (only
+        # ``runner.py`` calls that) are untouched, and link 3 is pinned below.
+        sites = {
             s
             for s in _call_sites("section_45u_credit_per_mwh", ("src",))
             if "probes/" not in s
-        ]
+        }
         self.assertEqual(
             sites,
-            ["src/market_sim/model/capacity_evolution/retirements.py"],
-            "§45U gained a call site -- re-verify backcast inertness",
+            {"src/market_sim/model/capacity_evolution/retirements.py"},
+            "§45U gained a call site in a new module -- re-verify backcast inertness",
         )
 
     def test_evolve_fleet_is_called_only_from_the_forecast_runner(self):

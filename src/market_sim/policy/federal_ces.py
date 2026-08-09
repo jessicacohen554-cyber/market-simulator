@@ -421,6 +421,51 @@ def effective_eac_price_for_tech(
     return max(legacy, federal)
 
 
+def eac_price_components_for_unit(
+    config: ScenarioConfig,
+    fuel_type: str,
+    emission_rate_t_per_mwh: float,
+    year: int | None,
+) -> tuple[float, float]:
+    """Return one unit's ``(legacy state contract, federal CES)`` EAC legs.
+
+    The two competing attribute buyers behind
+    :func:`effective_eac_price_for_unit`, returned SEPARATELY rather than
+    already folded by ``max()``. Both are real prices for the same single
+    certificate — the fold is still the doctrine and this function changes
+    no price — but the §45U gross-receipts seam (F-2 / owner decision
+    D-28, ``model/capacity_evolution/retirements.py``) has to know WHICH
+    buyer won, because the two legs sit on opposite branches of
+    26 U.S.C. §45U(b)(2)(B):
+
+    * the legacy ``eac_price_*`` scalar models a NY-ZEC / IL-CMC style
+      contract whose payment is set net of the unit's other revenue —
+      a branch-(iii) program, excluded from gross receipts;
+    * the federal CES premium is a compliance-certificate price with no
+      federal-credit offset in it — branch (i), inside gross receipts.
+
+    Collapsing them before that test is what would make one ``max()``
+    silently do two different statutory jobs (memo §5).
+
+    Args:
+        config: Scenario config supplying legacy and federal CES fields.
+        fuel_type: The unit's fleet fuel type.
+        emission_rate_t_per_mwh: The unit's CO2 rate in tCO2/MWh at the
+            LP boundary (``Generator.emission_rate_co2``).
+        year: Simulation year (premium path resolution). ``None`` is
+            legal only while the CES is disabled (see
+            :func:`premium_for_year`).
+
+    Returns:
+        ``(legacy_price, federal_ces_price)`` in real 2026$/MWh.
+    """
+    legacy = get_eac_price_for_new_entry(fuel_type, config)
+    federal = premium_for_year(config, year) * unit_credit_fraction(
+        config, fuel_type, emission_rate_t_per_mwh
+    )
+    return legacy, federal
+
+
 def effective_eac_price_for_unit(
     config: ScenarioConfig,
     fuel_type: str,
@@ -434,8 +479,14 @@ def effective_eac_price_for_unit(
     :func:`unit_credit_fraction` — unit-level rather than tech-level so
     that under ``cesa_ci`` a credited unabated ``gas_cc`` (or an abated
     unit's actual residual CI) earns its own fraction. The caller's
-    further ``max()`` folds (§45U, RPS dual) are unchanged. With the CES
+    further ``max()`` fold (the RPS/clean dual) is unchanged. With the CES
     disabled this is exactly the legacy value.
+
+    §45U is NO LONGER one of those folds (owner decision D-28, F-2): it is
+    a production tax credit, not an attribute buyer, so it composes with
+    the winner of this ``max()`` rather than competing inside it. Callers
+    that need the two legs apart use
+    :func:`eac_price_components_for_unit`, of which this is the fold.
 
     Args:
         config: Scenario config supplying legacy and federal CES fields.
@@ -449,11 +500,9 @@ def effective_eac_price_for_unit(
     Returns:
         The effective EAC price in real 2026$/MWh.
     """
-    legacy = get_eac_price_for_new_entry(fuel_type, config)
-    federal = premium_for_year(config, year) * unit_credit_fraction(
-        config, fuel_type, emission_rate_t_per_mwh
+    return max(
+        eac_price_components_for_unit(config, fuel_type, emission_rate_t_per_mwh, year)
     )
-    return max(legacy, federal)
 
 
 def federal_ces_suppresses_state_rps(config: ScenarioConfig) -> bool:
