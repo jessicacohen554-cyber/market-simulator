@@ -532,3 +532,107 @@ rewrite.
 * **GitHub Actions:** nothing offloaded.
 
 **Next shorthand: ercot-183.**
+
+---
+
+## 10. RESOLUTIONS — ALL FIVE SIGNED BY THE OWNER, 2026-08-09
+
+The sitting was held and every card is signed. Recorded verbatim; where the
+owner departed from the card's recommendation the departure is stated as such,
+not smoothed over.
+
+| # | Decision | **SIGNED** | vs. recommendation |
+|---|---|---|---|
+| **D1** | May C3a-2023 join the accepted-limitation ledger? | **(c) NO — go at the root: the model-class lane is AUTHORIZED** | Departs from the card's (b). See D1 note |
+| **D2** | The frozen ERCOT-148/149 ceiling lane | **C — re-charter the partial layer (fault 3)** | As recommended |
+| **D3** | The rule-18 grain defect round | **(ii) authorized, sequenced after D2** | As recommended |
+| **D4** | The 2024/2025 NP3-965 full-year re-upload | **AUTHORIZED** | As recommended |
+| **D5** | How far the cliff-resolving work goes now | **Costing memo ONLY — no build authorization** | As recommended |
+
+### D1 — the ledger question is answered NO, and the object is not parked
+
+**The carve-out is refused.** No rubric text changes: `LEDGERABLE_CRITERIA`
+stays `{"price_tail"}`, `MAX_LEDGERED_CAVEATS` stays 1, the v3.0 tier guard is
+untouched, and C3a-2023 stands as a **MODEL MISS at full magnitude (−32.4 %)**.
+ERCOT's determination remains **NOT-YET {C3a, C3b}**. Nothing about CAISO, MISO
+or any other ISO's rubric position moves.
+
+**What the owner chose beyond that.** The card recommended (b) — accept and
+redirect. The owner took **(c)**, which is (b)'s rubric posture *plus* an active
+root-cause lane: C3a-2023 is to be treated as a real open defect to be **fixed**,
+not parked. The owner's stated reason, recorded because it governs the lane's
+scope: *"I want to actually fix the 2023 pricing."*
+
+**The distinction that decided it.** (a) changes what the rubric excuses and
+produces byte-identical prices; (c2) is the only remaining candidate that can
+change the price. The model class is the hourly, class-aggregate,
+frictionless-within-the-hour LP; C3a-2023 is a property of those three
+structural facts, which is why fourteen levers inside the class failed — the
+last of them (the position-tail, item 23) added the correct measured cliff
+conduct and moved the answer **+$0.0004/MWh**, because the LP's clearing
+position sits at q_mod 0.912 while reality's price forms at q_act 0.9976. The
+model can now *quote* the cliff; it does not *reach* it.
+
+### D5 — the lane's first step, and the question the memo must answer
+
+D1(c) authorizes the lane; D5 scopes its first step to a **costing memo, no
+build**. (c1) sub-hourly is refused on scale (12× the LP columns against a
+measured ~6.6 GB / ~20 min per per-plant year and a rule-12 two-run cap; a
+spec-level program, not a calibration lane). (c2) — non-uniform slicing that
+refines the top of each plant's econ ramp, against today's
+`offer_curve_smoothing_n = 6` **equal-width** blocks — is the chartered object.
+
+**The memo's load-bearing question, stated here so the lane cannot drift off
+it:** can a resolution change **move the LP's clearing position up the curve**,
+or does it merely price the top of the curve more accurately? Item 23 already
+proved the second is inert. If (c2) cannot move the clearing position it is
+another inert completion, and the memo must say so before any build is
+authorized.
+
+Deliverables unchanged from §5: (1) feasibility and cost under the current LP
+layout, what moves in P0, what re-derives; (2) **G-SHED as the ex-ante primary
+falsifier** — the ercot-48/49 manufactured-shortage signature has killed this
+object twice, most recently ercot-178 at 67.5 % of its apparent gain; (3) an
+honest reachability statement, including that the family's measured
+offer-formation budget is ~$2.6/MWh against a $14.44/MWh bar and that (c2) may
+land short; (4) rule-25 cross-ISO scope, since fleet representation is not
+ERCOT-gated by construction.
+
+### The path to a clean determination, now that both halves have a lane
+
+ERCOT needs **both** halves closed on the merits — no ledger action can
+substitute for either:
+
+* **the 2024 half** — C3b-2024 (0.205) → **D2**, the fault-3 partial-layer
+  re-charter;
+* **the 2023 half** — C3a-2023 (−32.4 %) and C3b-2023 (0.602), one object
+  (ercot-177 §7: C3b-2023 is a shape metric over the same hours and moves with
+  it) → **D1(c)/D5**.
+
+Only if both land does C3c become the lone failing criterion, at which point the
+standing rule reads the run **CALIBRATED-WITH-CAVEATS** — never CALIBRATED.
+
+### Execution order
+
+1. **D4 — the NP3-965 re-upload.** Independent of everything and the longest
+   lead time, so it starts first. Staged against the blob-size limit that caused
+   the 2026-07-22 purge.
+2. **D2 — the fault-3 re-charter.** The determination-moving lane. Own precommit,
+   own gates, G-COAL148 carried live.
+3. **D5 — the (c2) costing memo.** Cheap and parallel to D2; it is decision
+   support, not a build.
+4. **D3 — the rule-18 grain defect round.** After D2, per its own signature.
+
+### What these five signatures do NOT do
+
+* **No rubric amendment of any kind was signed.** D1 refused the carve-out; the
+  scorer is byte-unchanged.
+* **No build was authorized.** D5 is a memo; D2 and D3 each still require their
+  own pre-registered round before any solve.
+* **ERCOT-148/149 is not repealed.** The product cap stays armed until a
+  re-chartered arm passes its own gates (D2's ruling text is explicit).
+* **No holdout marker was granted or spent.** ERCOT still holds no `complete`
+  and no `final`; the D4 intake is a data-preparation action, which rule 22
+  places outside the spend gate.
+* **The keeper did not move.** `2026-08-09-run181-position-tail` stands
+  unchanged, NOT-YET {C3a, C3b}.
