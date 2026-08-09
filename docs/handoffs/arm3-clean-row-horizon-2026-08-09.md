@@ -149,5 +149,336 @@ No read is a target. Each expectation below is stated so that a miss is visible 
 
 ---
 
-*(Sections 1–6 — the R1–R5 results, the onset/ceiling table and the card-ready summary block —
-follow the solves.)*
+## 1. Headline
+
+* **THE MEASUREMENT FOUND A DEFECT, AND THE DEFECT IS THE RESULT.** Both clean rows are slack
+  (dual `0.0`) in every year 2031–2035 — including 2035, MI's first obligated year. That is
+  **not** market structure: `model/lp/rows.py` zone-masks each clean row's **wind and solar**
+  columns but appends its **generator** columns (nuclear/hydro/biomass/CCS) with **no zone
+  filter at all**, so Michigan's East-only row is satisfied by MISO-**South** nuclear. Corrected,
+  **MI's 2035 row BINDS** (53.324 TWh of in-mask supply against a 95.771 TWh obligation).
+  §3 is the evidence.
+* **This is exactly the defect Arm 2 exists to eliminate — "Iowa's surplus paying Michigan's
+  bill" — reappearing in the clean family through the generator seam**, and it defeats the
+  cited statutory basis of the row (MCL 460.1029 restricts Michigan credits to in-state systems).
+* **Blast radius is Arm-3 ONLY. The owner-armed Arm-2 MISO forecast default (D-26) is NOT
+  affected** — the RPS call passes no `region_gen_idx`, so its rows are wind/solar only and
+  correctly masked (§3.3). Nothing about the standing forecast posture is in question.
+* **My pre-registered R1 expectation MISSED and is reported as a miss:** I predicted MI would
+  bind at 2035. It did not. The prediction was right about the *statute* and wrong about the
+  *code* — which is what the pre-registration was for.
+* **The §45U composition seam — the thing D-28 option A steps 1–2 landed — is INERT for Arm 3
+  across the whole ramp window, under every mask reading** (§2). §45U terminates after 2032
+  (26 U.S.C. §45U(e)); MI cannot bind before 2035; so MI's dual can never coexist with a live
+  credit. **The arming question is composition-independent** — a stronger and more robust
+  result than the memo's "all compositions coincide at the $30 ceiling."
+* **The MN eligibility-mask question the owner left open is DECISIVE for MN** (§4): under the
+  shipped 5-zone Midwest mask MN is covered in every ramp year; under the in-state (West-only)
+  reading it is short **27.1–42.4 TWh in all five years** and would pin at its $30 ACP.
+
+**Bottom line for the card: Arm 3 must not be armed in its current form.** Its MI row — the one
+FFR-6B §2.2 sized as materially binding — is inert for a wiring reason, not a market reason, so
+arming it today would ship a mechanism that prices nothing where the statute says it should
+price, and the measured "quiet" is not evidence about Michigan's clean market.
+
+## 2. R1 — the duals, and R2 — the composition seam
+
+### 2.1 R1: both clean rows slack in every ramp year
+
+Read from each year parquet's `market_sim` schema metadata (`clean_region_duals` /
+`rps_region_duals`) — the authoritative record. All five solves `Optimal`.
+
+| year | MN oblig. | MI oblig. | **MN clean dual** | **MI clean dual** | RPS duals (MN,MI,WI,IL,MO) |
+|---|---|---|---|---|---|
+| 2031 | .6314 | .0000 | **0.00** | **0.00** | 0, **30**, 0, **30**, 0 |
+| 2032 | .6468 | .0000 | **0.00** | **0.00** | 0, **30**, 0, **30**, 0 |
+| 2033 | .6622 | .0000 | **0.00** | **0.00** | 0, **30**, 0, **30**, 0 |
+| 2034 | .6776 | .0000 | **0.00** | **0.00** | 0, **30**, 0, **30**, 0 |
+| 2035 | .6930 | **.4560** | **0.00** | **0.00** | 0, **30**, 0, **30**, 0 |
+
+* **Onset: NONE.** Neither row has a first-nonzero year in 2031–2035. The $30 ACP ceiling is
+  never reached because neither row is ever binding.
+* MI's obligation being *exactly* zero in 2031–2034 is the arithmetic certainty pre-registered
+  in §0.4 (zero-before-first-knot ⇒ RHS 0), and it held. **2035 is the year that carried the
+  question, and it answered SLACK.**
+* **The two families co-exist correctly**: the Arm-2 RPS duals are bit-stable at
+  `[0, 30, 0, 30, 0]` in every year — MI and IL pinned at ACP, the delivery-based MN/WI/MO rows
+  slack — extending FFR-7B-2 §3.1's 2026–2030 pattern into the ramp years unchanged.
+
+### 2.2 R2: the §45U seam is inert here, for a reason nobody had noticed
+
+`ira_45u_last_year = 2032` (`config/scenarios.py`, cited **26 U.S.C. §45U(e)**: the credit
+terminates for electricity produced after 31 Dec 2032). Measured on the **landed F-1/F-3/F-2
+code at HEAD**, not on the memo's curve:
+
+| year | max &#124;branch(i) − branch(iii)&#124; over P∈[20,80], D∈[0,30] |
+|---|---|
+| 2031 | 7.80 $/MWh (61.46 $/kW-yr) — at P=20, D=15 (interior) |
+| 2032 | 7.80 $/MWh |
+| **2033** | **0.0000 — exactly zero at every (P, D): §45U expired** |
+| **2034** | **0.0000** |
+| **2035** | **0.0000** |
+
+Composing this with R1's statutory timing gives the result:
+
+* **MI's row cannot bind before 2035**, and §45U is dead from 2033. **MI's dual and a live
+  §45U can never coexist — in any year, under any mask reading.**
+* The only overlap window is **2031–2032**, which needs *MN* to bind. Under the shipped mask MN
+  is covered (§4). Under the in-state reading MN binds — **but pinned at its $30 ACP ceiling,
+  where all defensible compositions coincide to the cent** (the delta above is reached only at
+  an *interior* dual).
+* ⇒ **The composition choice is worth $0.00 to the Arm-3 arming decision across the entire ramp
+  window.** F-2's seam is correct and consumed unmodified; it simply has no purchase here.
+
+**R2 fleet (D-28 §2.1), verified against the shipped masks rather than transcribed** — MN's
+mask is the 5-zone `MISO_RPS_MIDWEST_FOOTPRINT_ZONES` (`[True,True,True,True,True,False]`),
+MI's is East-only (`[False,False,False,False,True,False]`). **The cross-state flag the charter
+asked for is confirmed: a WI (Point Beach), IL (Clinton) or MO (Callaway) reactor earns
+MINNESOTA's dual**, and MI's row nominally reaches only Fermi 2. *Nominally* is doing real work
+in that sentence — see §3, which is the finding that supersedes it.
+
+## 3. R3 — qualifying supply vs target, and the defect it exposed
+
+### 3.1 The defect
+
+`model/lp/rows.py::_build_rps_region_rows`, one loop, two treatments:
+
+```python
+zones_r    = np.flatnonzero(mask[r])                          # eligible zones for region r
+wind_cols  = (hours * vph + layout._w_off + zones_r).ravel()  # ZONE-MASKED  ✓
+solar_cols = (hours * vph + layout._s_off + zones_r).ravel()  # ZONE-MASKED  ✓
+gidx = region_gen_idx[r]
+groups_r.append((hours * vph + layout._p_off + gidx).ravel()) # NO ZONE FILTER  ✗
+```
+
+and the producer of `gidx`, `_resolve_clean_region_gen_idx(fleet, region_fuels)`, **is never
+given the mask** — it filters by fuel alone over the whole fleet
+(`np.flatnonzero(np.isin(fuel_idx, codes))`). So every clean row's nuclear / hydro / biomass /
+hydrogen / `gas_cc_ccs` credit is **ISO-wide**, while its VRE credit is in-mask.
+
+### 3.2 What it is worth (armed leg, per year, TWh)
+
+| year | row | RHS | **as built** | **as intended** | leaked | verdict built/intended |
+|---|---|---:|---:|---:|---:|---|
+| 2031 | MN | 73.336 | 214.163 | 165.156 | 49.008 | SLACK / SLACK |
+| 2031 | MI | 0.000 | 129.438 | 42.734 | 86.704 | SLACK / SLACK |
+| 2032 | MN | 76.629 | 210.284 | 161.227 | 49.056 | SLACK / SLACK |
+| 2032 | MI | 0.000 | 138.551 | 52.970 | 85.581 | SLACK / SLACK |
+| 2033 | MN | 80.025 | 210.326 | 161.270 | 49.056 | SLACK / SLACK |
+| 2033 | MI | 0.000 | 140.411 | 54.309 | 86.102 | SLACK / SLACK |
+| 2034 | MN | 83.527 | 210.264 | 161.207 | 49.056 | SLACK / SLACK |
+| 2034 | MI | 0.000 | 138.943 | 53.349 | 85.593 | SLACK / SLACK |
+| **2035** | **MI** | **95.771** | **139.112** | **53.324** | **85.788** | **SLACK / BINDS ⟵ FLIPS** |
+| 2035 | MN | 87.136 | 222.567 | 173.510 | 49.056 | SLACK / SLACK |
+
+The flip lands on exactly the row-year the whole charter was aimed at. MN leaks ~49 TWh/yr too,
+but its 5-zone mask is broad enough that its verdict is unchanged.
+
+### 3.3 Scope — Arm 2 is NOT affected
+
+The Arm-2 call site passes **no** `region_gen_idx`:
+
+```python
+region_block, region_rhs = _build_rps_region_rows(
+    layout, rps_region_zone_mask, rps_region_obligation_frac, demand,
+)   # -> region_gen_idx defaults to None: wind/solar only, correctly masked
+```
+
+Only the clean-family call passes it. **The landed, owner-armed Arm-2 MISO forecast default
+(D-26) is untouched by this finding**, and R1's stable `[0,30,0,30,0]` RPS duals are consistent
+with that.
+
+### 3.4 Why this reads as a defect rather than a design choice — evidence, not assertion
+
+I am not adjudicating intent; the owner is. The record points one way:
+
+1. **The cited statute is a locational restriction.** `MISO_CLEAN_TIER_REGIONS["MI"]` carries
+   `eligible_zones=("MISO-East",)` with the comment "East ONLY — MCL 460.1029", the Michigan
+   provision restricting credits to in-state systems. Under the as-built row that mask governs
+   only VRE, i.e. **~28 % of the row's own qualifying energy** at 2035 (39.8 of 139.1 TWh).
+2. **FFR-6B §6.2 sized the row by measuring IN-ZONE clean supply** and predicted MISO-East short
+   21.7 pp by 2035 — the sizing that justified building the row at all. As built, the row cannot
+   reproduce that sizing by construction.
+3. **FFR-7B-2 §3.2 explains the 2026–2030 quiet window as MN being covered by "Midwest-wide
+   clean generation (VRE + nuclear + hydro + biomass)" under its footprint mask** — i.e. the
+   implementing session believed nuclear/hydro/biomass *were* mask-governed. They are not. **That
+   handoff's stated mechanism for the established quiet window is therefore itself incorrect**,
+   and the 2026–2030 result should be re-read in this light.
+4. Arm 2 exists *because* unrestricted intra-ISO attribute trade is false in MISO. Reintroducing
+   it for the clean family, silently, contradicts the programme's own premise.
+
+## 4. The MN eligibility-mask question is DECISIVE for MN
+
+FFR-7B-2 §3.2 recorded MN's mask as an OPEN statutory-reading question and noted that flipping
+`MISO_CLEAN_TIER_REGIONS["MN"]["eligible_zones"]` to `("MISO-West",)` is a one-line data change.
+Scored off the **same** armed dispatch (a supply-vs-target accounting screen, NOT a re-solved
+dual — a narrower mask would shift dispatch, so this bounds the question rather than settling it):
+
+| year | MN target (TWh) | shipped 5-zone mask | in-state (West-only) | in-state verdict |
+|---|---:|---:|---:|---|
+| 2031 | 73.336 | 165.156 covered | 46.269 | **SHORT 27.067** |
+| 2032 | 76.629 | 161.227 covered | 41.640 | **SHORT 34.989** |
+| 2033 | 80.025 | 161.270 covered | 41.663 | **SHORT 38.362** |
+| 2034 | 83.527 | 161.207 covered | 41.630 | **SHORT 41.897** |
+| 2035 | 87.136 | 173.510 covered | 53.930 | **SHORT 33.206** |
+
+**The owner's reading decides whether MN's row exists economically at all**: shipped ⇒ inert in
+every ramp year; in-state ⇒ binding at its $30 ACP in every ramp year. Note this is computed on
+the *zone-masked* accounting, i.e. it already assumes the §3 defect is fixed; without that fix
+the mask question is moot because the generator term ignores the mask either way.
+
+## 5. R5 — E-1 discipline: no build limb (PASSES)
+
+`policy/clean_tiers.py` exposes exactly four public entry points —
+`_clean_tier_target`, `build_clean_region_arrays`, `clean_credit_by_fuel`,
+`clean_credit_for_zone`: a target, an LP row builder, and two price resolvers. **There is no
+build or procurement entry point.** Its only consumers are `retirements.py` and `new_entry.py`,
+both taking the dual as a **revenue** term on the same seam the RPS dual already uses — never a
+forced build (FFR-7B-2 §1 step 9 / FFR-6B §5.3). Behavioural confirmation is §6's ledger
+comparison. **E-1's charter — the mechanism's only output is a price — holds.**
+
+## 6. R4 — what arming CHANGES: nothing
+
+Paired legs, one flag apart, identically seeded. **ARMED** `9337e00504e1e72a` (56.7 min),
+**CONTROL** `cd2403cc031515db` (54.9 min), both `exit=0`, all ten year-solves `Optimal`.
+
+| year | retire MW A/C | thermal add MW A/C | renewable add MW A/C | `fleet_by_fuel_after` equal |
+|---|---|---|---|---|
+| 2031 | 0.0 / 0.0 | 0.0 / 0.0 | 0.0 / 0.0 | **YES** |
+| 2032 | 633.0 / 633.0 | 0.0 / 0.0 | 0.0 / 0.0 | **YES** |
+| 2033 | 1426.2 / 1426.2 | 1306.0 / 1306.0 | 0.0 / 0.0 | **YES** |
+| 2034 | 0.0 / 0.0 | 7384.2 / 7384.2 | 5921.8 / 5921.8 | **YES** |
+| 2035 | 0.0 / 0.0 | 8714.1 / 8714.1 | 4078.2 / 4078.2 | **YES** |
+
+* **Every capacity event is identical to the digit, and the 2035 end-fleet differs by NOTHING.**
+* The control carries **no clean family at all** (`clean_region_duals = null`) while the armed
+  leg carries it built-and-slack (`[-0.0, -0.0]`) — the pair is a clean A/B of the family's
+  presence.
+* **The Arm-2 RPS duals are identical across the pair in all five years** (`[0,30,0,30,0]`): the
+  second row family does not perturb the first, reproducing FFR-7B-2's co-existence result in the
+  ramp years.
+* System cost differs by **≤ 0.001 %** with the sign flipping across years (+150,066 / +88,537 /
+  +11,566 / −38,244 / −222,840 on a $20.8–24.5 bn objective) — the signature of alternate optima
+  on a degenerate LP, not a systematic effect. A slack row adds no cost; it perturbs only which
+  vertex of the same optimal face the solver lands on.
+
+**Read correctly, R4 says nothing about the mechanism's merit.** Arming changes nothing *because*
+the rows never bind (§3), and they never bind because of the mask defect. This is the R4 of an
+inert mechanism, not evidence that a correctly-wired clean tier would be inert.
+
+## 6a. Card-ready summary
+
+> **Arm 3 (`miso_clean_tier_rows`) is NOT ready to arm, and the ramp-year measurement is why.**
+> Across 2031–2035 — the window containing MI's first statutory knot — both clean rows are slack
+> in every year and arming changes no price, no retirement and no build. That quiet is **not** a
+> market finding: the LP zone-masks each clean row's wind/solar columns but not its
+> nuclear/hydro/biomass/CCS columns, so Michigan's East-only row is satisfied by MISO-South
+> nuclear. Corrected, **MI's 2035 row binds at its $30 ACP** (53.3 TWh in-mask supply vs a 95.8
+> TWh obligation), which is what FFR-6B §2.2 sized it to do.
+>
+> **Three consequences for the card.** (1) The defect is **Arm-3 exclusive** — the owner-armed
+> Arm-2 MISO forecast default (D-26) is untouched, so nothing about the standing posture is in
+> question. (2) The **§45U composition question is moot** for this decision under every mask
+> reading: §45U dies after 2032, MI cannot bind before 2035, so a clean dual and a live credit
+> never coexist — D-28's steps 1–2 are correct and simply have no purchase here. (3) The **MN
+> mask reading the owner left open is decisive for MN**: shipped ⇒ inert every year; in-state ⇒
+> binding at $30 every year.
+>
+> **Recommended sequencing (owner's call, not this session's):** fix the generator-column zone
+> mask under its own charter, settle the MN eligibility reading, then re-run this exact pair
+> before any arming decision. Arming today would ship a row that prices nothing precisely where
+> its statute says it should price.
+
+## 7. Scope guards discharged
+
+* `miso_clean_tier_rows` remains **DEFAULT-OFF**; the armed run IS the measurement. **No
+  `ScenarioConfig` field added**, no RPS/ACP config value changed, no cache-key surface moved.
+* **The F-2 composition seam was consumed, not modified** — §2.2 measures it at HEAD.
+* **No arming decision, no keeper contact, no backcast-registry touch.** Everything registers to
+  the forecast namespace.
+* **The defect found in §3 was NOT fixed in this session.** It is an LP-structural change
+  needing its own charter, tests, cache-key adjudication and a re-run of this measurement; and
+  fixing it mid-measurement would have destroyed the measurement. Reported, quantified, and
+  handed up.
+* Rule 22: every solve forecast-mode 2026+; no measured actual read or scored.
+* Rule 28(b): the `miso_clean_tier_rows` cell citation is updated in THIS session with this
+  measurement. **The verdict STAYS `O`, deliberately not `I`** — "inert" would assert the
+  mechanism is a no-op in MISO, when what was measured is that it is mis-wired; it has not yet
+  been validly tested. The row's anchor was repaired digits-only (`:1914` → `:1933`), and its
+  evidence was re-keyed `ev.C` → `ev.M` (the header schema is `E/C/P/M/N/Q`; this MISO-only row
+  had been filing MISO evidence under CAISO's letter). The sibling `miso_rps_compliance_regions`
+  row has the same mis-key and was **left alone** — it is Arm 2's cell, not this session's.
+
+## 8. Registration
+
+Forecast namespace ONLY (rule 15's forecast clause); the backcast registry was never touched.
+
+| leg | run id | cache key | committed sidecar |
+|---|---|---|---|
+| ARMED | `miso-2031-2035-arm3-clean-armed` | `9337e00504e1e72a` | `frontend/data/hindcast/miso-2031-2035-arm3-clean-armed.json` |
+| CONTROL | `miso-2031-2035-arm3-clean-ctrl` | `cd2403cc031515db` | `frontend/data/hindcast/miso-2031-2035-arm3-clean-ctrl.json` |
+
+`registry/`, `runs/`, `manifest.js` and `program-status.js` are GENERATED and gitignored — the
+Pages deploy is their single writer, and both runs appear on the live forecast dashboard once it
+runs. The out-dir bundles are gitignored under the new `/results/arm3/` entry, matching the
+`/results/ffr7b2/` precedent this lane continues.
+
+Both sidecars record `miso_rps_compliance_regions: true` and the correct per-leg
+`miso_clean_tier_rows`, and those are **machine-verified, not asserted**: `--extra-meta` keys
+naming config fields are auto-declared `FromConfig()` by
+`register_forecast_baseline._extra_meta_spec` and checked against each run's own resolved
+`run_config.json`.
+
+## 9. Two defects found in the instruments themselves
+
+Recorded because both were silent, and one was mine.
+
+1. **`SUMMARY_RECORD_SPEC` recorded the UNRESOLVED posture (fixed here).** I added the two MISO
+   gates to the summary earlier in this lane so a paired registration would be self-describing —
+   and they recorded `miso_rps_compliance_regions: false` for legs that demonstrably solved it
+   `true` (the resolved `config.yaml` says `true`, and the observed cache keys are the
+   with-override keys; without the override they would have been `5084dee7c4cd2e84` /
+   `ffb8dfdf30720d48`). Cause: the runner applies `ISOConfig.default_scenario_overrides` on its
+   OWN copy inside `run_scenario_iso`, so every reader of a pre-solve config saw the unresolved
+   posture — the FFR-2E defect reproduced one layer up, by the very commit meant to prevent it.
+   **Fix:** the rule now lives in one place, `config.iso_configs.apply_iso_scenario_defaults`
+   (rule 19); `runner.run_scenario_iso` calls it instead of inlining it, and the two summary keys
+   became `Derived` over it — exactly the treatment `capacity_market_clearing` already had.
+   Verified: both MISO legs now record `rps=True`, ERCOT still records `False/False`, and
+   `tests/regression/test_run_record_provenance.py` + `test_miso_rps_region_arming.py` pass
+   (34 tests, 67 subtests). The already-written summaries keep the wrong value; **the committed
+   sidecars are correct** because the registrar reads the resolved `run_config.json`.
+2. **The runner's per-year dual logging is unreachable through this entry point.** FFR-7B-2 §1
+   step 4 records the per-region duals as "logged per year so an armed measurement can quote the
+   per-region duals without replaying the solve". `scripts/run_full_horizon.py` configures no
+   logging, so the root logger sits at WARNING and every `logger.info` — including both dual
+   lines and the `cache_key=` line — is suppressed. The no-replay route works only via the year
+   parquet's `market_sim` schema metadata, which is what this lane's probe reads. Not fixed here
+   (a logging change to a core runner is not this charter), but it should not be discovered again.
+
+## 10. Operational notes
+
+* `regenerate_clean.py` completed **50/50 datatypes, 0 errors** (~60 min). Completeness was
+  verified against the PARTIAL-TREE TRAP properly — not by `ls`, but by
+  `tests/scoring/test_ff_readiness_battery.py::test_resolve_report_no_hard_fail_full_horizon`,
+  which resolves every exogenous forward input for every ISO across 2026–2050 and passes with
+  0 hard fails.
+* **Legs ran SERIALLY**, not concurrently: 15 GB box, ~5.5–7.1 GB peak RSS per leg (FFR-7B-2
+  measured 9.6 GB), so two at once would OOM. ARMED ran first, per the charter's
+  if-time-runs-short instruction.
+* **PRE-EXISTING TEST FAILURE, NOT INTRODUCED HERE**:
+  `tests/regression/test_fleet_arrays_golden.py::test_generators_to_fleet_arrays_ercot_2023_golden`
+  fails on `availability` and `min_gen` field hashes. Confirmed pre-existing by stashing every
+  change in this lane and re-running at HEAD — it fails identically. It is an ERCOT golden
+  captured against a different `data/clean` vintage than this container regenerates; it belongs
+  to whoever owns that golden. The rest of `tests/unit/config` + `tests/regression` is green
+  (853 passed, 4 skipped, 107 subtests).
+* The probe carried two real bugs of its own, both caught by validating it against the FIRST year
+  parquet instead of after both legs: the parquet metadata keys are `market_sim` /
+  `market_sim_fleet` (not a `*metadata` suffix), and **`FleetContext` must be read PER YEAR** —
+  the fleet evolves 2193 → 1340 generators across this window, and a run-level context zipped
+  against a later year's dispatch silently truncates and mis-attributes MW to the wrong units
+  (it booked 111 TWh of MISO-East generation to `oil`). The probe now asserts the axis instead of
+  zipping, and reads the Arrow value buffer rather than `to_pylist()` so it peaks at 0.44 GB
+  while the paired leg is still solving.
+

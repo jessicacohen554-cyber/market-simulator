@@ -33,7 +33,10 @@ from market_sim.config.retirement_config import (
     EXIT_THROUGHPUT_LIMIT_MULTIPLE,
     EXIT_THROUGHPUT_WINDOW_YEARS,
 )
-from market_sim.config.iso_configs import get_iso_config
+from market_sim.config.iso_configs import (
+    apply_iso_scenario_defaults,
+    get_iso_config,
+)
 from market_sim.config.scenarios import (
     ScenarioConfig,
     SweepDefinition,
@@ -1011,16 +1014,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
     iso_config = get_iso_config(iso)
     # Apply ISO-level scenario defaults (e.g. CAISO negative_renewable_offers)
-    # for fields the caller has not explicitly set.
-    if iso_config.default_scenario_overrides:
-        defaults = ScenarioConfig()
-        overrides_to_apply = {
-            k: v
-            for k, v in iso_config.default_scenario_overrides.items()
-            if getattr(config, k) == getattr(defaults, k)
-        }
-        if overrides_to_apply:
-            config = config.with_overrides(**overrides_to_apply)
+    # for fields the caller has not explicitly set. The rule lives in ONE place
+    # (config.iso_configs.apply_iso_scenario_defaults, rule 19) so a run record
+    # built OUTSIDE this function can resolve the same posture instead of
+    # reporting the caller's unresolved config — the FFR-2E defect class.
+    config = apply_iso_scenario_defaults(config, iso)
 
     cache_key = config.cache_key()
 

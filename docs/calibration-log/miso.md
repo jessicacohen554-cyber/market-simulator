@@ -6443,3 +6443,157 @@ PREREG commit merged mid-session (PR #3769) and the branch was deleted by
 automation; it was restarted from `origin/main` under the same name by merging
 main in, never rebasing past the pushed PREREG.**
 **Next number: miso-147.**
+
+---
+
+## 2026-08-09 — miso-147: OWNER CHARTER (§5.4 item 10, SET BY THIS SESSION) — THE HIGH-PRICE-HOUR DISPATCH-COMPOSITION DIAGNOSIS. THE GAP IS REAL, CC-LED AND STANDING (~5–6 GW, ALL THREE YEARS, BOTH INSTRUMENTS); ITS IDENTITY IS AN AVAILABILITY DEFICIT — THE MODEL'S AVAILABLE CC CAPABILITY SITS BELOW WHAT THE REAL FLEET DEMONSTRABLY GENERATED. JANUARY OPENED AND DISSOLVED INTO THE SAME OBJECT; THE MAY REVERSAL IS THE SAME OBJECT WITH THE EXPENSIVE SUBSTITUTE. Phase 0, NO LP, no arm, no run, no cell verdict, keeper UNCHANGED
+
+**Session** miso-147, branch `claude/miso-147-dispatch-diagnosis-6in9hz`, off
+`origin/main` at `772110b`. Owner charter 2026-08-09 (diagnosis-first: what the
+model dispatches in high-price hours vs what MISO's units actually did); §5.4
+item 10, set and discharged by this session; items 8/9 stand unmodified. **NO
+LP SOLVED. NO KEEPER MOVED. NO MECHANISM ARMED. NO RUN REGISTERED. NO
+ScenarioConfig FIELD ADDED. NO PARAMETER DERIVED. NO CELL VERDICT MINTED. The
+one licensed keeper replay was NOT SPENT** (pre-committed trigger — P-2
+indeterminate — did not fire; the license lapsed and the FINDING says so).
+Keeper `2026-08-05-miso-132b-cc-committed`; fail set unchanged {C3a}.
+
+**§0 re-verified from committed artifacts** (`calibration_verdict.py --run-id
+2026-08-05-miso-132b-cc-committed`, one invocation, all three years, no
+re-solve): NOT-YET, rubric 3.1; sole FAIL C3a price_mean — 2023 −0.4 % PASS
+(32.72/32.85), 2024 −6.0 % PASS (30.37/32.30), 2025 **−14.1 % FAIL MODEL MISS**
+(39.05/45.46); C3b PASS 0.075/0.112/0.191; C3c the sole ledgered caveat (1/1
+SPENT, 30/37/88 h); C1/C2/C4/C6/C8 PASS, C8 ST_GAS grounded 31.9/33.1/45.1 %;
+C1×8 classes and C2×2 families SKIPPED for 2025 (preliminary EIA-923 — the
+blocker year's fuel mix UNGATED; scored descriptively vs EIA-930 throughout).
+Bundle `metrics.json` stale (rubric 3.0) — scorer authoritative, per charter.
+
+**PREREG**
+`results/calibration/PREREG-miso147-highprice-dispatch-composition-2026-08-09.md`,
+pushed at `13ece35` (blob `7089dbd8`, verified against the remote; merged as PR
+#3785) BEFORE any adjudicating statistic: four strata fixed from the actual RT
+series only (S0 May-2025 reversal control / S1 top-decile-≤$200 PRIMARY / S2
+$100–200 / S3 >$200 reported-never-gating, plus MAYCTRL 2023/24), one weight
+(C3a's own) everywhere, eight predictions with bars and gating status fixed
+with reasons before measurement (P-1/P-2/P-3/P-8 gating), two-sided prior with
+the other side named as more likely, five pre-committed branches including the
+charter-mandated close, all eight charter traps with counter-measurements,
+rule-13 adjudication in advance, full disclosure (§10) of everything read or
+computed at registration.
+
+**Footing.** G-F0 — the charter's 2025 monthly table (committed nowhere in the
+repo; the charter's numbers ARE the target) reproduced from the keeper P1
+sidecar + the miso-137 hourly actual on the C3a weight: all 24 $-cells ≤ $0.005
+(max |err| $0.0046), all 12 monthly >$200 counts exact, sum **88** = the C3c
+ledger footing (G-F2). G-F1 — the six committed window deficits −4.750 /
+−8.333 / −10.676 / −10.671 / −30.999 / −30.435 reproduced to ≤ $0.0003. G-F3 —
+universes registered before any subtraction: S1 thresholds $43.34/$44.91/$61.05
+(S2 ⊂ S1 structurally, strata never pooled); model fleet incl. **17.2 GW / 32
+import tranches**; CAMPD 563–582 MISO units via `build_zone_lookup` (str→int
+`facilityId` cast), reporting coverage complete — **no month excluded**, the
+Q4-2025 vintage risk is dead.
+
+**P-1 PASS (gating).** The S1-2025 composition gap is material on both
+instruments and CC-led: Pair A (model vs EIA-930, full universe, NET)
+gas_total **−7,539 MW** vs a 1,964 MW BA-identity noise floor, substitutes coal
++1,977 (material) / imports +1,568 / hydro-PS +1,048; Pair B (model vs CAMPD
+families, NET) **CC −5,616 MW** (floor 1,245; 144 real units ON in-stratum),
+CT −421. Cross-instrument closure ~1.2 GW (BTM-CHP + non-CAMPD gas, named).
+The coal substitution is Pair-A-only (Pair B ST_COAL −357 immaterial) and is
+quoted nowhere as load-bearing.
+
+**P-4 FAIL (gating, scope).** **Reported against interest and led with: the
+gap is STANDING** — S1 CC −4,959 / −4,743 / −5,616 (2023/24/25) — **and 2023
+carries nearly the same gap while C3a-2023 PASSES at −0.4 %**, so the
+composition defect alone does not predict closing the 2025 −14.1 %. What 2025
+adds: the deeper summer availability hole, the coal substitution at material
+size, the May flip, and 2025's higher price level amplifying the same MW hole.
+
+**P-2 (gating) = `availability_deficit`** by the pre-registered negative-Δ rule
+(the prior's coal-over-dispatch direction did not obtain). S1-2025 CC: model
+available capability AV **22,276 MW** vs reality's realized output A **24,890
+MW net** — **AV−A = −2,614 MW**, same sign every year (−1,226/−1,608/−2,614);
+real committed headroom ~3.6 GW on top (demonstrated real CC capability ≈ 28.6
+GW). Fleet scale: model CC pmax 31.9 GW vs CAMPD demonstrated p99 ratings 35.4
+GW. Month-resolved: the availability hole is **summer-concentrated** (AV−A
+Jun–Sep 2025: −2.5/−2.6/−2.4/−1.8 GW) — the dispatch-side expression of the
+miso-141 `SUMMER_CLASS_DERATE` double-count (cited, never re-derived) — while
+M−A is negative in EVERY month of every year (−2.0 to −7.3 GW): the non-summer
+half is commitment/displacement (E−M ≈ 2.1 GW in-merit-undispatched in
+S1-2025), not availability. ST_COAL 2023/24 S1 (−2.3/−2.6 GW, E ≈ AV ≥ A) is
+displaced-in-merit, stated as such.
+
+**P-8 PASS in all nine stratum-years** (median |p̂−P1| $0.90–$2.27, r
+0.886–0.995; the miso-144 corrected same-universe construction reused
+verbatim, v2 + rbdc held, lo endpoint). **P-3 VACUOUS — zero quantity-agree
+hours in any elevated stratum of any year** (CC agrees with reality in only
+127/8,760 hours of 2025): composition disagreement is universal where prices
+are high; neither P-3 verdict fires and the vacuity is itself the reading.
+Descriptive census note (not a P-3 verdict, no offer-corpus statistic): the
+model is marginal on gas in 76 % of S1-2025 hours yet clears $40.7 below
+actual RT — queue item 9's offer-surface object seen from a new instrument.
+
+**Q3 — January 2025 opened for the first time, and it dissolves.** In the 16
+tail hours reality surged 143 CC units to 26.9 GW gross (+4.2 GW over ordinary
+January), CT +2.4, ST_GAS +2.3, coal +3.4; the model dispatched CC 19.1 GW of
+its 24.7 GW available while its winter reserve families held 5.4 GW at dual
+0.000 / shortfall 0. All four charter cold-snap candidates fail on the data:
+gas deliverability — the winter-citygate overlay is ARMED in the keeper
+(override channel) and repricing (tail gas mc p50 $55 / p90 $167 / cap-wtd $73
+vs $43 annual); dual-fuel — reality used none (0 CAMPD gas+oil units ON, 67 MW
+oil-primary; proxy limit stated); forced outage — model take 27.8 GW sits
+INSIDE reality's [22.1 forced+unplanned, 32.4 all-cause] band (P-5 prior
+refuted, reported); winter reserve — never binds. January = the standing CC
+object (M−A −6.0 GW in Jan-2025; −7.3 in Jan-2023) + the SPENT C3c tail.
+
+**Q4 — the May reversal is the same object with the expensive substitute.** S0
+CC −3,414 persists while the substitute flips to **CT +1,374 MATERIAL** (leg i
+— fully coverable by reality's recallable capacity: the model runs peakers the
+real market kept OFF). May AV_CC−A_CC ran +1,074 / −50 / **−1,201** across
+2023/24/25 — May flipped to overpriced exactly when the model's May CC
+availability fell below reality. P-6 split honestly: leg 1 PASS (May-2025
+ordinary clear +$6.29 above actual; May-2023 control −$1.11; census: COAL
+marginal 21 % of S0 hours vs 5 % in S1), leg 2 FAIL (model May thermal take is
+0.75× reality's all-cause take, not ≤ 0.5× — the aggregate spring-maintenance
+hypothesis refuted; the CC-specific availability is the supported driver).
+One object, both signs — the charter's validation demand met.
+
+**Branch: `BRANCH-AVAILABILITY-OBJECT`.** Successor NAMED, not armed (OWNER
+DECISION, rules 14/24): a MISO **CC capability-and-availability lane** — (1)
+the summer availability hole = the miso-141 double-count repair (which miso-141
+already ruled needs a NEW mechanism; `cc_nameplate_summer_derate` without one
+stays DO-NOT-REDO), identified against multi-year demonstrated capability,
+regenerable forward; (2) the CC fleet/rating audit (31.9 vs 35.4 GW,
+EIA-860-side); (3) the all-months commitment residual
+(imports/hydro/reserve-holding displacement at AV−A ≥ 0) as an open
+observation. Rule-13 line held throughout: an availability INPUT with a
+forward story, never a dispatch pin; CEMS/dispatch bridging refused in the
+PREREG before any candidate was named. Kill-gate discipline for the lane
+restated: May 2025 must not worsen, C3b-2025 headroom 0.009, fail set ⊆ {C3a},
+and the against-interest 2023 fact bounds any effect claim in advance.
+
+**Governance carried.** Kill gates not reached because nothing ran (untouched,
+not "passing"): C3b-2025 headroom 0.009, C3a 2023/2024 PASSes, May 2025
++12.4 %, C8 forced shares and D-4 windows, the SPENT C3c ledger. The 88 used as
+footing only; S3 read as composition only; no level statistic from the offer
+corpus (not read). 2025 fuel-mix statements descriptive vs EIA-930 and
+labelled.
+
+**Rule duties.** Rule 15 — no LP, no run to register (the miso-131…146
+precedent). Rule 28(b) — no cell verdict minted (nothing armed, refused or
+proposed); **§5.4 queue stamp written and item 10 written into the queue as
+discharged; items 8/9 preserved verbatim**. Rule 28(c) — no new
+`ScenarioConfig` field, so no new matrix row. Rule 22 — 2023–2025 only; MISO
+holds no marker. Rules 13/14/19/21/23/24/25 throughout; probe hygiene via
+`_miso143_stack.hygiene()` in every entry point; `_miso137` comparator and
+`_miso144` corrected construction reused verbatim; CAMPD read at unit grain
+directly (never `load_campd_hourly` — the IL/TX facility-level shadow named in
+the PREREG). DO-NOT-REDO honoured — the 88-hour arithmetic (footing only), the
+`*_lw` comparator (consumed, never re-derived), miso-141's derate number
+(cited), the offer corpus (not read), the CC committed band (not re-measured),
+CEMS/dispatch bridging (refused in advance). Concurrent-session check at open
+and close: zero MISO PRs, no other live MISO branch. **The branch's PREREG
+commit merged mid-session (PR #3785) and the branch was deleted by automation;
+it was restarted from `origin/main` under the same name (the miso-146
+precedent), never rebasing past the pushed PREREG.**
+**Next number: miso-148.**
