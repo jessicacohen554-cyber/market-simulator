@@ -203,6 +203,38 @@ def price_at_cum(sorted_price: np.ndarray, cum: np.ndarray, x: float) -> float:
     return float(sorted_price[j])
 
 
+#: Percentiles of a curve's OWN capability at which both sides are compared.
+PCTL_GRID = (0.50, 0.70, 0.80, 0.85, 0.90, 0.95, 0.98)
+
+
+def price_at_pctl(
+    hours: np.ndarray,
+    seg_h: np.ndarray,
+    seg_p: np.ndarray,
+    seg_mw: np.ndarray,
+    pctl: np.ndarray,
+) -> np.ndarray:
+    """Offer price at a per-hour percentile of the curve's OWN total MW.
+
+    ``pctl`` is one fraction per hour (a scalar grid point broadcast, or the
+    other side's measured clearing percentile).  This is the universe-
+    normalising comparison device of PREREG §4: each side is positioned
+    against its own stack, so a universe that is larger on one side cannot
+    manufacture a level difference.
+    """
+    order = np.lexsort((seg_p, seg_h))
+    h_s, p_s, m_s = seg_h[order], seg_p[order], seg_mw[order]
+    i0s = np.searchsorted(h_s, hours, side="left")
+    i1s = np.searchsorted(h_s, hours, side="right")
+    out = np.full(hours.size, np.nan)
+    for k, (i0, i1) in enumerate(zip(i0s, i1s)):
+        if i1 <= i0:
+            continue
+        cum = np.cumsum(m_s[i0:i1])
+        out[k] = price_at_cum(p_s[i0:i1], cum, float(pctl[k]) * float(cum[-1]))
+    return out
+
+
 def curve_readings(
     hours: np.ndarray,
     seg_h: np.ndarray,
@@ -272,6 +304,18 @@ def model_curve_readings(mb: dict, hours: np.ndarray, bracket: str, anchor: np.n
     seg_mw = cap.T.reshape(-1)
     ok = seg_mw > 0
     return curve_readings(hours, seg_h[ok], seg_p[ok], seg_mw[ok], anchor)
+
+
+def model_price_at_pctl(mb: dict, hours, bracket: str, pctl: np.ndarray) -> np.ndarray:
+    """:func:`price_at_pctl` over the model's per-generator stack."""
+    offer = mb["offer"][bracket][:, hours]
+    cap = mb["cap"][:, hours]
+    n_gen = offer.shape[0]
+    seg_h = np.repeat(hours, n_gen)
+    seg_p = offer.T.reshape(-1)
+    seg_mw = cap.T.reshape(-1)
+    ok = seg_mw > 0
+    return price_at_pctl(hours, seg_h[ok], seg_p[ok], seg_mw[ok], pctl)
 
 
 def model_mw_between(mb: dict, hours, bracket: str, lo: np.ndarray, hi: np.ndarray):
@@ -348,9 +392,22 @@ def run(markets=("RT", "DA"), out_path: Path | None = None) -> dict:
             }
 
             blk["real"] = {}
+            # ---- model side: ladder, walk, clearing percentile, pctl grid ----
+            m_pctl_clear: dict[str, np.ndarray] = {}
             for bracket in ("lo", "hi"):
                 mcr = model_curve_readings(mb, hours, bracket, anchor)
                 m_between = model_mw_between(mb, hours, bracket, anchor, target)
+                pc = np.clip(
+                    mcr["mw_below_anchor"] / np.maximum(1e-9, mcr["mw_total"]), 0.0, 1.0
+                )
+                m_pctl_clear[bracket] = pc
+                # miso-143's construction, reproduced for comparability: the
+                # walk target there is the WINDOW-MEAN actual, not the hour's
+                # own actual.  Both are reported; they are different statistics
+                # and the finding says which is which.
+                m_between_wm = model_mw_between(
+                    mb, hours, bracket, anchor, np.full(hours.size, actual_lw)
+                )
                 mrec: dict = {
                     "model_ladder_slope_usd_per_gw": {
                         f"+{g:g}GW": round(
@@ -358,16 +415,30 @@ def run(markets=("RT", "DA"), out_path: Path | None = None) -> dict:
                         )
                         for g in LADDER_GW
                     },
-                    "model_gw_anchor_to_actual": round(
+                    "model_gw_anchor_to_hour_actual": round(
                         float((m_between * wgt).sum()) / 1000.0, 4
                     ),
-                    "model_capability_gw": round(float((mcr["mw_total"] * wgt).sum()) / 1000.0, 3),
-                    "model_clearing_percentile": round(
-                        float(
-                            (mcr["mw_below_anchor"] / np.maximum(1e-9, mcr["mw_total"]) * wgt).sum()
-                        ),
-                        4,
+                    "model_gw_anchor_to_window_mean_actual": round(
+                        float((m_between_wm * wgt).sum()) / 1000.0, 4
                     ),
+                    "model_capability_gw": round(
+                        float((mcr["mw_total"] * wgt).sum()) / 1000.0, 3
+                    ),
+                    "model_clearing_percentile": round(float((pc * wgt).sum()), 4),
+                    "model_price_at_pctl": {
+                        f"p{int(q * 100)}": round(
+                            float(
+                                (
+                                    model_price_at_pctl(
+                                        mb, hours, bracket, np.full(hours.size, q)
+                                    )
+                                    * wgt
+                                ).sum()
+                            ),
+                            3,
+                        )
+                        for q in PCTL_GRID
+                    },
                 }
                 blk[bracket] = {"model": mrec}
 
@@ -375,8 +446,12 @@ def run(markets=("RT", "DA"), out_path: Path | None = None) -> dict:
             for market in markets:
                 segs_all = seg_cache[market]
                 segs = segs_all[segs_all["hour"].isin(hours)]
-                for uni in ("all", "conventional"):
-                    s = segs if uni == "all" else segs[segs["is_conventional"]]
+                universes = {
+                    "all": segs,
+                    "conventional": segs[segs["is_conventional"]],
+                    "available": segs[segs["available"]],
+                }
+                for uni, s in universes.items():
                     seg_h = s["hour"].to_numpy()
                     seg_p = s["seg_price"].to_numpy(float)
                     seg_mw = s["seg_mw"].to_numpy(float)
@@ -384,63 +459,87 @@ def run(markets=("RT", "DA"), out_path: Path | None = None) -> dict:
                     rcr_actual = curve_readings(hours, seg_h, seg_p, seg_mw, target)
                     rcr_model = curve_readings(hours, seg_h, seg_p, seg_mw, anchor)
                     total = np.maximum(1e-9, rcr_actual["mw_total"])
+                    p_real = np.clip(rcr_actual["mw_below_anchor"] / total, 0.0, 1.0)
 
                     # GW between the model's clearing price and the actual price,
                     # on the REAL curve -- the like-for-like against the model's
-                    # own committed walk.  Price-identified, no need matching.
-                    gw_real = (rcr_actual["mw_below_anchor"] - rcr_model["mw_below_anchor"]) / 1000.0
-
-                    # Percentile-of-own-capability level decomposition.
-                    p_model = np.clip(rcr_model["mw_below_anchor"] / total, 0.0, 1.0)
-                    p_real = np.clip(rcr_actual["mw_below_anchor"] / total, 0.0, 1.0)
-                    order = np.lexsort((seg_p, seg_h))
-                    h_s, p_s, m_s = seg_h[order], seg_p[order], seg_mw[order]
-                    i0s = np.searchsorted(h_s, hours, side="left")
-                    i1s = np.searchsorted(h_s, hours, side="right")
-                    real_at_pmodel = np.full(hours.size, np.nan)
-                    for k, (i0, i1) in enumerate(zip(i0s, i1s)):
-                        if i1 <= i0:
-                            continue
-                        cum = np.cumsum(m_s[i0:i1])
-                        real_at_pmodel[k] = price_at_cum(
-                            p_s[i0:i1], cum, p_model[k] * float(cum[-1])
-                        )
-                    fin = np.isfinite(real_at_pmodel)
-                    wl = wgt * fin
-                    wl = wl / max(1e-9, wl.sum())
-                    level = float(((real_at_pmodel[fin] - anchor[fin]) * wl[fin]).sum())
-                    position = float(((target[fin] - real_at_pmodel[fin]) * wl[fin]).sum())
+                    # own walk.  Price-identified, no need matching (TRAP 3).
+                    gw_real = (
+                        rcr_actual["mw_below_anchor"] - rcr_model["mw_below_anchor"]
+                    ) / 1000.0
 
                     rec = {
-                        "real_capability_gw": round(float((rcr_actual["mw_total"] * wgt).sum()) / 1000.0, 3),
+                        "real_capability_gw": round(
+                            float((rcr_actual["mw_total"] * wgt).sum()) / 1000.0, 3
+                        ),
                         "real_clearing_percentile": round(float((p_real * wgt).sum()), 4),
-                        "real_at_model_percentile_usd": round(
-                            float((real_at_pmodel[fin] * wl[fin]).sum()), 3
+                        "real_gw_model_price_to_actual": round(
+                            float((gw_real * wgt).sum()), 4
                         ),
-                        "LEVEL_term_usd_per_mwh": round(level, 3),
-                        "POSITION_term_usd_per_mwh": round(position, 3),
-                        "level_share_of_deficit": round(
-                            level / max(1e-9, actual_lw - model_lw), 4
-                        ),
-                        "real_gw_model_price_to_actual": round(float((gw_real * wgt).sum()), 4),
                         "real_ladder_slope_usd_per_gw": {
                             f"+{g:g}GW": round(
-                                float(((rcr_actual[f"p_plus_{g:g}gw"] - target) / g * wgt).sum()), 4
+                                float(
+                                    ((rcr_actual[f"p_plus_{g:g}gw"] - target) / g * wgt).sum()
+                                ),
+                                4,
                             )
                             for g in LADDER_GW
                         },
+                        "real_price_at_pctl": {
+                            f"p{int(q * 100)}": round(
+                                float(
+                                    (
+                                        price_at_pctl(
+                                            hours,
+                                            seg_h,
+                                            seg_p,
+                                            seg_mw,
+                                            np.full(hours.size, q),
+                                        )
+                                        * wgt
+                                    ).sum()
+                                ),
+                                3,
+                            )
+                            for q in PCTL_GRID
+                        },
                         "n_segments": int(s.shape[0]),
+                        "level_decomposition": {},
                     }
-                    # ordinary-hours (<= $200 actual) restatement, TRAP 5
-                    wo = wgt * ordinary
-                    wo = wo / max(1e-9, wo.sum())
+
+                    # PREREG §4 identity, at the MODEL's OWN clearing percentile
+                    # (never the real curve's -- reading it off the real curve
+                    # would make the level term identically zero by construction).
+                    for bracket in ("lo", "hi"):
+                        rp = price_at_pctl(
+                            hours, seg_h, seg_p, seg_mw, m_pctl_clear[bracket]
+                        )
+                        fin = np.isfinite(rp)
+                        wl = wgt * fin
+                        wl = wl / max(1e-9, wl.sum())
+                        level = float(((rp - anchor) * wl)[fin].sum())
+                        position = float(((target - rp) * wl)[fin].sum())
+                        wo = wgt * ordinary * fin
+                        wo = wo / max(1e-9, wo.sum())
+                        rec["level_decomposition"][bracket] = {
+                            "real_at_model_percentile_usd": round(
+                                float((rp * wl)[fin].sum()), 3
+                            ),
+                            "LEVEL_term_usd_per_mwh": round(level, 3),
+                            "POSITION_term_usd_per_mwh": round(position, 3),
+                            "level_share_of_deficit": round(
+                                level / max(1e-9, actual_lw - model_lw), 4
+                            ),
+                            "ordinary_LEVEL_term_usd_per_mwh": round(
+                                float(((rp - anchor) * wo)[fin].sum()), 3
+                            ),
+                            "n_finite_hours": int(fin.sum()),
+                        }
                     rec["ordinary_hours"] = {
-                        "LEVEL_term_usd_per_mwh": round(
-                            float(((real_at_pmodel - anchor) * wo)[fin & ordinary].sum()), 3
-                        ),
                         "real_gw_model_price_to_actual": round(
-                            float((gw_real * wo)[ordinary].sum()), 4
-                        ),
+                            float((gw_real * (wgt * ordinary / max(1e-9, (wgt * ordinary).sum()))).sum()),
+                            4,
+                        )
                     }
                     blk["real"].setdefault(market, {})[uni] = rec
 
