@@ -3718,6 +3718,74 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**
 
+> **LIVE QUEUE AS OF miso-148 (2026-08-09) — ITEM 11 (the CC
+> CAPABILITY-AND-AVAILABILITY LANE, the miso-147 successor) SET, L1 AND L2
+> EXECUTED, L3 LEFT AS OBSERVATION. A NEW MECHANISM IS BUILT, SOLVED,
+> REGISTERED AND *NOT PROMOTED* — THE VERDICT IS AN OWNER DECISION.** Keeper
+> UNCHANGED at `2026-08-05-miso-132b-cc-committed`. PREREG
+> `results/calibration/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md`
+> pushed at `456b376` (blob verified against the FETCHED remote ref) before any
+> adjudicating statistic; FINDING
+> `results/calibration/FINDING-miso148-summer-basis-repair-2026-08-09.md`.
+> Runs registered (rule 15, BOTH arms): `2026-08-09-miso-148-control`
+> (`miso148_basis_A`, NOT-YET, fail set {C3a}) and
+> `2026-08-09-miso-148-basis-aware` (`miso148_basis_B`, NOT-YET, fail set
+> **{C3a, C3b}**), `--year 2023 2024 2025` in ONE invocation each.
+>
+> * **L1 — the summer availability repair. DONE, and it works.** New
+>   `ScenarioConfig.summer_derate_basis_aware` (matrix row added in the same PR,
+>   rule 28(c)): the flat `_SUMMER_CLASS_DERATE` is applied ONLY to units still
+>   carried on a NAMEPLATE basis and suppressed where `pmax` already IS a
+>   measured summer capability. Class-agnostic (all four flat-derate classes —
+>   **CT_PEAKER is the largest single contributor, 2,551 MW in 2025**, the half
+>   miso-141 measured as having NO mechanism at all), a PURE basis correction
+>   (no POF/age/WEFOR drop, no capacity rescale, no off-summer leg), **ZERO
+>   continuous DOF**. This is the successor miso-141 §11.2 specified and refused
+>   to build; `cc_nameplate_summer_derate` stays DO-NOT-REDO. **The summer hole
+>   closes**: monthly `AV_CC − A_CC` Jun–Sep 2025 −2,296/−2,451/−2,157/−1,560 MW
+>   → −373/−369/−77/+419 MW. **The cost, at full magnitude**: C3a
+>   −0.49/−6.01/−14.15 % → −1.98/−8.03/−15.58 % (worse in EVERY year), C3b-2025
+>   0.192 → **0.212**, through its 0.200 gate; ST_GAS forced share +2.4/+2.8/+3.7
+>   pp (C8 still PASSES, all grounded). Fail set {C3a} → {C3a, C3b}, so the
+>   session's own pre-registered rule does not authorise promotion — **escalated
+>   under the owner's 2026-08-09 structural-integrity guidance**.
+> * **L2 — the CC fleet/rating audit. DONE, branch B-1 `basis_explained`.**
+>   Merchant CC population/rating sound (`pmax` vs CAMPD p99 net −0.21 % 2023,
+>   −1.96 % 2024, **−6.0 % 2025**); the −2.8 GW CHP gap is the BTM boundary, by
+>   design. **A NAMED DATA DEFECT IS REPORTED AND NOT REPAIRED because it is
+>   CROSS-ISO**: 2025 has no `vintage_2025/` EIA-860 directory, so the fleet
+>   falls back to the canonical release which re-flags rows `OA`; the operable
+>   loader carries `OP` only and `load_mothballed_but_operating` (armed here via
+>   `carry_operating_mothballs`) returns `[]` for want of its `vintage_<year>`
+>   precondition. **9 rows / 594.7 MW dropped from the 2025 MISO fleet**, 576.2
+>   MW of it Cottonwood Energy — which CAMPD shows generating **4.70 TWh at p99
+>   1,140 MW** that year. By construction this is live for **EVERY ISO's 2025+
+>   fleet**. Needs its own lane.
+> * **L3 — the all-months commitment residual: OBSERVATION ONLY, not armed**, as
+>   chartered. The S1 stratum deficit closes only −2,614 → −1,755 MW because S1
+>   spans all twelve months and its non-summer half is this object.
+> * **A CORRECTION TO miso-147 §6 THAT ANY SUCCESSOR MUST CARRY.** The mechanism
+>   moves prices in **Jun–Sep and nowhere else** (2025 monthly Δ
+>   `0,0,0,0,−0.006,−1.836,−2.448,−1.403,−1.276,−0.003,0,0` $/MWh), so **May is
+>   NOT reachable by it**: May-2025 +12.43 % → +12.41 %. May's CC availability
+>   deficit and the summer deficit are the **same symptom with different
+>   causes**; "one object, both signs" describes the symptom, not the cause, and
+>   **the May half remains unexplained**.
+> * **K0 FAILED AS WRITTEN AND IS REPORTED, NOT REDEFINED** — the zero-delta
+>   control does not reproduce the committed keeper's sidecars (max |Δ| 912.5 MW;
+>   ~0.1 % of annual dispatch, scorecard essentially unchanged). Cause: HEAD
+>   drift since the keeper's own solve, PROVEN not to be this session's edits
+>   (full-magnitude drift in non-summer hours of non-gas classes, outside the
+>   mechanism's reach even when armed). **MISO's designated keeper is not
+>   bit-reproducible at HEAD** — a governance fact for the owner. Every quoted
+>   delta is arm-vs-CONTROL; no arm-vs-keeper delta is quoted anywhere.
+> * **A HEAD BUG WAS FIXED TO UNBLOCK THE LANE** (reported separately, not a MISO
+>   mechanism): caiso-186 passed `cc_winter_capability_basis` into `run_year`
+>   without adding the parameter, unconditionally — so **every calibration solve
+>   at HEAD, for every ISO**, raised `TypeError` before its first LP.
+>
+> *(The miso-147 stamp follows.)*
+>
 > **LIVE QUEUE AS OF miso-147 (2026-08-09) — ITEM 10 (the HIGH-PRICE-HOUR
 > DISPATCH-COMPOSITION DIAGNOSIS, owner charter 2026-08-09) SET AND DISCHARGED.
 > THE COMPOSITION GAP IS REAL, CC-LED AND STANDING; ITS IDENTITY IS AN
