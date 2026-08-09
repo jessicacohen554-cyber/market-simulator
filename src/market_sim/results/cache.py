@@ -46,6 +46,48 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-08-09 — FFR-9A hindcast storage-fleet vintage seed. NO KEY MOVES
+ANYWHERE; EVERY CAPACITY-HINDCAST BUNDLE IS INVALIDATED (AGAIN).** The
+FFR-3V-FIX epoch below corrected the hindcast wind/solar pools; the storage
+base fleet had the SAME leak one seam over: a capacity hindcast
+(``mode="forecast"`` + ``hindcast=True``) failed the runner's
+``mode == "backcast"`` test and seeded its storage base fleet from the
+present-day forward scalar (``STORAGE_BASE_FLEET_MW``, ERCOT mid 17,000 MW)
+even though ``set_eia860_vintage`` had already pointed every EIA-860 loader at
+the run's vintage snapshot. ``run_scenario`` now resolves the seam through
+``model.storage.measured_storage_base_fleet_active``: a hindcast with a
+committed ``eia860_vintage_year`` seeds from the vintage EIA-860 measured
+storage fleet (``load_eia860_storage`` at start_year, battery + pumped
+storage), in every ISO. Vintage-2020 seed change (MW, battery + PS): ERCOT
+17,000 → 223; CAISO 16,994 → 2,022; PJM 5,603 → 5,358; MISO 2,887 → 2,142;
+NYISO 1,490 → 1,308; NEISO 2,569 → 1,924. **No ``ScenarioConfig`` field was
+added, removed or re-defaulted** — the governing field is the existing
+``storage_measured_base_fleet`` (default on, already
+``_CACHE_KEY_OPTIONAL_FIELDS``-registered) and the switch is the existing
+``hindcast`` × ``eia860_vintage_year`` pair — so no key moves and the pinned
+default key is unchanged. See
+``docs/handoffs/ffr-9a-storage-vintage-seed-2026-08-09.md``.
+
+*Invalidated:* **every cached bundle with ``hindcast=True`` and a committed
+``eia860_vintage_year``** — T1-H plain hindcasts, T1-X crossovers, T1-FF
+full-forward legs, in every ISO — at any commit before this epoch. Their base
+storage fleet, and therefore the storage-AS term of every ERCOT screen's E1
+reserve quantity, the entry/retirement margins and every ledger row
+downstream, were formed on the inflated seed (FFR-8B §3: +7.3–8.8 GW at p1 on
+E1's reserve quantity; §2.3: ~30 GW of storage power by the 2024 solve vs
+~10 GW actual). The committed ``frontend/data/hindcast/`` sidecars — the
+FFR-8B re-base ``ercot-2021-2025-t1ff-armr-ffr8b-base`` included — are
+pre-epoch evidence: the historical record of what the harness did, not
+re-runnable results.
+
+*NOT invalidated:* **every backcast bundle, every keeper, and every plain
+forecast bundle.** The backcast leg of the seam is byte-identical (same field,
+same frozenset scope, same loader call), and a plain forecast
+(``hindcast=False``) keeps the scenario scalar even when an
+``eia860_vintage_year`` is set, mirroring the runner's vintage-arming
+predicate. All three no-op halves are pinned by test
+(``tests/unit/model/test_storage.py::TestHindcastStorageVintageSeed``).
+
 **Epoch 2026-08-08 — FFR-3V-FIX hindcast renewable-pool vintage seed. NO KEY
 MOVES ANYWHERE; EVERY CAPACITY-HINDCAST BUNDLE IS INVALIDATED.** A capacity
 hindcast is ``mode="forecast"`` + ``hindcast=True``, so ``data.renewables``
