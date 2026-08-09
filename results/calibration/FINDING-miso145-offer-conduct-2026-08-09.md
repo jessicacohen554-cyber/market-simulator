@@ -255,6 +255,16 @@ version appears in no result):
 | 2025 | −30.435 | RT (all) | **−14.376** | +44.811 | −0.47 |
 | 2025 | −30.435 | DA (all) | **−8.298** | +38.733 | −0.27 |
 
+> **CORRECTION (miso-146, 2026-08-09) — the 2024 DA row above is a
+> transcription error.** This table prints **−4.996** (and a −0.47 share); this
+> session's own committed artifact `_miso145_offer_conduct.json` records
+> **−2.401** (share −0.225), and miso-146 reproduced −2.401 independently, with
+> the table's five other LEVEL cells and all six segment counts matching to the
+> last digit. **The artifact is authoritative.** The verdict is unaffected — the
+> pre-registered bar was ≥ +$18 and −2.401 is further from it, not nearer — so
+> the body of this finding is left unedited as the record of that session. See
+> `FINDING-miso146-intermittent-screen-2026-08-09.md` §5.1.
+
 Every variant is negative; the `conventional` and `available` universes move it
 by at most $2 (2025 RT: −14.376 / −14.621 / −14.685), and the ordinary-hours
 (≤ $200) restatement moves it by less than $1.3 anywhere. **P-B2's bar was
