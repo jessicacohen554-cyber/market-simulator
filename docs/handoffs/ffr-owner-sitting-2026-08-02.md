@@ -3458,3 +3458,28 @@ capability basis; miso-146 discharged §5.4 item 7 BRANCH-SCREEN-BOUNDED; ercot-
 the position-tail mechanism Route B with its matrix row, I-1 REFUSED-AS-MEASURED — none
 moved a keeper). The two owner questions (λ-led price-side condition re-base; branch
 protection) remain OPEN.
+
+### AF.7 The owner's "no new prompts?" — queue re-examined, two items surfaced and dispatched
+
+The re-check corrected two of the manager's own filings. (1) **"FFR-4D row-4" in the
+unowned queue is NOT an unexecuted charter** — FFR-4D ran 2026-08-04, honoured its anchor
+refusal formally, and its finding branch FIRED (the fleet fix recovers +5,540.3 MW of the
+11,711 and row 4 does NOT clear; CAISO remains 1.8 % short). What the queue phrase names
+is FFR-4D's ROUTED TOP SUCCESSOR: the CAISO storage accreditation-rate intake — D-1
+(CAISO absent from `STORAGE_ELCC_BY_DURATION_BY_ISO` while CAISO publishes
+13,365/14,131 = 0.9458; +3,990.6 MW, the largest remaining term) plus D-4 (CAISO's
+portfolio dilution a hard 1.0), under the §6.1 reconciliation warning (the published
+number is a realized WHOLE-CLASS ratio over CAISO's real duration mix — dropping it onto
+the model's synthetic 70/25/5 mix is substitution, not reconciliation). FFR-4D's D-2
+(the pre-epoch caiso-172 keeper owed a re-solve) is MOOT — three subsequent CAISO
+promotions solved at post-epoch heads. **FFR-4E dispatched** (pack §0ac); no active CAISO
+lane, no collision. (2) **HOUSE-2's collision hold narrowed**: miso-145/146 closed;
+only ercot-181 remains live, so the wave dispatches NOW with the two
+`ercot_thermal_as_endogenous` baseline failures EXCLUDED (report-only) and the
+`assign_zone_by_coords` PJM/MISO zone-rule finding folded in behind a consumer-enumeration
+stop rule (if any KEEPER path consumes the function, the fix escalates to the calibration
+lanes instead of landing as housekeeping). **HOUSE-2 dispatched** (pack §0ac). Still
+correctly NOT dispatched: FH-4/FH-5 (lift refused — FFR-8B Phase 0 is the evidence), the
+T1 battery (Q.2), the FFR-8A §5(b) storage over-build lane (same ERCOT hindcast surface as
+in-flight FFR-8B — next-after), the NEISO taxonomy tail and MISO AA.2 (calibration-lane
+items actively riding their own queues).
