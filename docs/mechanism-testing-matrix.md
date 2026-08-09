@@ -3641,7 +3641,12 @@ loss.
 > against 6.63 / 16.10 GW.** The DA book and the model reach nearly the same
 > place at the top (p95 98.03 vs 87.46; p98 213.79 vs 211.34); **the difference
 > is where each one clears.** The model stops short of its own wall and prices
-> in the ramp below it; MISO prices on the wall.
+> in the ramp below it; MISO prices on the wall. **Two labelling limits carried:**
+> the slopes are load-weighted MEANS (the smallest reading anywhere is 10.44
+> against a 3.0 bar, so the verdict does not rest on the mean's exact value), and
+> ONE price basis is used on both sides (TRAP 4) — the measured RT actual — so
+> the DA percentile is evaluated AT that level and is **not** the DA book's own
+> clearing point.
 >
 > **ITEM 6 IS DISCHARGED. THE SUCCESSOR IS NAMED AND NOT OPENED (rules 19/24,
 > an owner decision): a MISO `measured_offer_surface`, POSITION-conditioned,
