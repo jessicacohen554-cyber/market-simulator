@@ -649,8 +649,22 @@ def main() -> None:
         "condition-binned peak surface (offer_curve_dam_hrmults_contpct.json) "
         "— the frozen stepped artifact is never touched by this mode",
     )
+    ap.add_argument(
+        "--top-scoped",
+        action="store_true",
+        help="ERCOT-180: write the top-scoped vintage of the condition-binned "
+        "peak surface (offer_curve_dam_hrmults_topscoped.json) — frozen "
+        "stepped values below p97, conduct-identified stepped sub-bins above, "
+        "ULP-pair step-encoded (PRECOMMIT-ercot180 §3); neither frozen "
+        "artifact is touched",
+    )
     args = ap.parse_args()
 
+    if args.continuous and args.top_scoped:
+        raise SystemExit("--continuous and --top-scoped are mutually exclusive")
+    if args.top_scoped:
+        derive_condition_topscoped(args.out_json)
+        return
     if args.continuous:
         derive_condition_continuous(args.out_json)
         return
@@ -1017,6 +1031,115 @@ def derive_condition_continuous(out_json: str | None) -> None:
     )
     out_path.write_text(json.dumps(payload, indent=1) + "\n")
     print(f"\nWrote {out_path}  (groups {sorted(CONDBINNED_GROUPS)})")
+
+
+def derive_condition_topscoped(out_json: str | None) -> None:
+    """Write the ercot-180 TOP-SCOPED vintage of the conditional peak surface.
+
+    PRECOMMIT-ercot180 §1/§3: below p97 the FROZEN condbinned artifact's own
+    per-bin peak ladders (and ``base_hr``/``peak_p50``) are byte-copied; the
+    former p97-p100 top bin is split at the conduct-identified edges, each
+    sub-bin's ladder computed by the IDENTICAL stepped statistic
+    (:func:`derive_condition_binned` run with the EXTENDED edge vector to a
+    throwaway path — the frozen artifact is never touched); zero-support
+    sub-bins inherit the frozen parent ladder. Emitted in the ``cont`` node
+    schema (ULP-pair step-encoded) for the merged interpolation machinery.
+    """
+    import tempfile
+
+    if str(REPO_ROOT) not in sys.path:
+        sys.path.insert(0, str(REPO_ROOT))
+    from scripts.lib.topscoped_encode import (
+        TOPSCOPED_TAG,
+        encode_step_nodes,
+        load_identified_edges,
+        rows_from_pairs,
+        split_top_bin,
+    )
+
+    frozen = json.loads(OUT_JSON_CONDBINNED.read_text())
+    legacy_edges = [float(x) for x in frozen["_provenance"]["netload_pct_edges"]]
+    new_edges = load_identified_edges()
+    edges_ext = tuple(legacy_edges + new_edges)
+    n_legacy = len(legacy_edges)
+    n_sub = len(new_edges) + 1
+    n_rungs = len(PEAK_LADDER_QUANTILES)
+
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td) / "condbinned_ext.json"
+        derive_condition_binned(edges_ext, str(tmp))
+        ext = json.loads(tmp.read_text())
+
+    payload: dict = {
+        "_provenance": {
+            "source": frozen["_provenance"].get("source"),
+            "method": (
+                "TOP-SCOPED (ercot-180, form b): frozen condbinned per-bin "
+                "peak ladders byte-copied below p97; the p97-p100 bin split "
+                "at the conduct-identified edges with the IDENTICAL mode-B "
+                "per-resource top-of-curve statistic per sub-bin "
+                "(derive_condition_binned on the extended edge vector); "
+                "zero-support sub-bins inherit the frozen parent ladder; "
+                "ULP-pair step-encoded (PRECOMMIT-ercot180 §1/§3, zero "
+                "fitted scalars)"
+            ),
+            "driver": frozen["_provenance"].get("driver"),
+            "conditioning": TOPSCOPED_TAG,
+            "netload_pct_edges": list(edges_ext),
+            "new_edges": list(new_edges),
+            "edge_identification": "results/calibration/"
+            "ercot180_edge_identification.json",
+            "peak_ladder_quantiles": list(PEAK_LADDER_QUANTILES),
+            "hcap_usd_mwh": HCAP_USD_MWH,
+            "iso": "ERCOT",
+        }
+    }
+    coverage: dict[str, list[dict]] = {}
+    for group, fro in frozen.items():
+        if group.startswith("_") or group not in ext:
+            continue
+        fro_lads = fro.get("binned_ladder") or []
+        if len(fro_lads) != n_legacy + 1:
+            continue
+        ext_lads = ext[group].get("binned_ladder") or []
+        legacy_rows = rows_from_pairs(fro_lads)
+        sub_rows: list = []
+        disc: list[dict] = []
+        for k in range(n_sub):
+            b = n_legacy + k
+            lad = (
+                rows_from_pairs([ext_lads[b]])[0]
+                if b < len(ext_lads) and ext_lads[b]
+                else [float("nan")] * n_rungs
+            )
+            ok = len(lad) == n_rungs and all(np.isfinite(v) for v in lad)
+            sub_rows.append(lad if ok else None)
+            disc.append({"computed": ok, "inherited_parent": not ok})
+        edges_all, rows_all = split_top_bin(
+            legacy_edges, legacy_rows, new_edges, sub_rows
+        )
+        xs, ys = encode_step_nodes(edges_all, rows_all)
+        payload[group] = {
+            "base_hr": fro.get("base_hr"),
+            "peak_p50": fro.get("peak_p50"),
+            "cont": {
+                "pct": xs,
+                "mult": ys,
+                "n_rungs": n_rungs,
+                "n_nodes": len(xs),
+            },
+        }
+        coverage[group] = disc
+        print(f"  {group:11s} topscoped sub-bins {[d['computed'] for d in disc]}")
+    payload["_provenance"]["topscoped_sub_bin_coverage"] = coverage
+
+    out_path = (
+        Path(out_json)
+        if out_json
+        else paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_topscoped.json"
+    )
+    out_path.write_text(json.dumps(payload, indent=1) + "\n")
+    print(f"\nWrote {out_path}  (groups {sorted(coverage)})")
 
 
 def _lowcurve_p50(per_res: pd.DataFrame) -> float | None:
