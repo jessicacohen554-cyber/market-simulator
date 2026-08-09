@@ -239,7 +239,41 @@ Arm R skill read (§4).
 
 ## 5. The γ rider — instrument-date split
 
-*(pending)*
+Computed by `scripts/probes/fh4_instrument_date_split.py` from the committed
+artifacts only (§1.5 method), solve-independent; the probe and its numbers
+were committed before either arm ran.
+
+**First, what the scorer's "2.294 GW actual" actually spans** — verified in
+`score_capacity_hindcast.score_retirements`: the target set is the ENTIRE
+committed `capacity_actuals_ercot.csv` (2021–2025, thermal + biomass =
+2,293.9 MW), **never filtered to the bundle's window**. A 2023–2025 leg's
+exit-side row (`sc.retirements.total_gw: model 0.0 vs actual 2.294, FAIL`)
+therefore counts 2021–2022 exits its vintage-2023 fleet basis predates. The
+leg's own window (2023–2025) holds 1,939.8 MW of actual exits, 1,772.6 MW
+thermal (1,782.2 MW on the scorer's thermal+biomass family set).
+
+**The instrument-date split at the vintage cutoff 2023-12-31:**
+
+| Window | Actual exits (all) | Instrumented ≤ cutoff | Instrumented after | No instrument in registry |
+|---|---|---|---|---|
+| 2023–2025 (the leg's) | 1,939.8 MW | **0.0 MW** | 477.0 MW | 1,462.8 MW |
+| 2021–2025 (the scorer's / the "2.294 GW" referent) | 2,680.3 MW | **0.0 MW** | 477.0 MW | 2,203.3 MW |
+
+The 477 MW is V H Braunig 1/2 (gas_st, exited 2025), instrument dated
+**2024-03-13** (ERCOT NSO suspension-retirement acceptance) — after the
+cutoff. Every other window exit (Coleto Creek coal 1,008 MW included)
+carries no enforceable instrument in the confirmed-exit registry at all.
+
+**Attribution (the AG.2 γ rider's point).** ZERO MW of the window's actual
+exits were knowable-as-confirmed at the vintage cutoff: the T1-FF
+confirmed-exit channel (`confirmed_registry_as_of = 2023-12-31`) could not
+carry ANY of them, by the information gate's own design. The exit-side FAIL
+row on these arms is therefore an **economic/announced-channel miss measured
+against exits that were not confirmed-knowable at the base date** — it must
+not be read as the confirmed-exit mechanism failing, and equally must not be
+excused: whether the economic screen *should* anticipate unconfirmed exits
+of this kind is precisely the FFR retirement-lane question (FFR-8B §2.2
+recorded the same 0.0-vs-actual under-side FAIL), untouched here.
 
 ## 6. Governance close-out
 
