@@ -116,6 +116,33 @@ def _write_part(df: pd.DataFrame, out_dir: Path, month: str) -> Path:
     return path
 
 
+def _download_zip(doc: dict, tries: int = 3) -> bytes | None:
+    """Download a document, re-requesting when the body is not a zip.
+
+    The MIS occasionally serves an HTML error page with HTTP 200, which
+    surfaces as ``BadZipFile`` only when the archive is opened — one bad body
+    must not kill a multi-hour publication sweep. Returns ``None`` after
+    ``tries`` bad bodies so the caller can record the document and continue.
+    """
+    import time
+    import zipfile
+
+    for attempt in range(tries):
+        content = _get_with_retries(DOWNLOAD_URL, {"doclookupId": doc["DocID"]}).content
+        try:
+            _gen_member_names(content)
+            return content
+        except zipfile.BadZipFile:
+            wait = 5 * (attempt + 1)
+            print(
+                f"    doc {doc['DocID']}: body is not a zip "
+                f"({len(content)} bytes); retry in {wait}s",
+                flush=True,
+            )
+            time.sleep(wait)
+    return None
+
+
 def fetch_corpus(
     pub_start: date,
     pub_end: date,
@@ -178,9 +205,19 @@ def fetch_corpus(
     def _harvest(pub: date, doc: dict, zip_bytes: bytes | None = None) -> None:
         """Write each wanted Gen member of one document as a month part."""
         if zip_bytes is None:
-            zip_bytes = _get_with_retries(
-                DOWNLOAD_URL, {"doclookupId": doc["DocID"]}
-            ).content
+            zip_bytes = _download_zip(doc)
+        if zip_bytes is None:
+            manifest["skipped"].append(
+                {
+                    "doc": doc["DocID"],
+                    "member": None,
+                    "delivery": None,
+                    "why": f"pub {pub}: persistently non-zip body (MIS error page)",
+                }
+            )
+            print(f"  pub {pub}: SKIP doc {doc['DocID']} — persistently non-zip")
+            _save()
+            return
         names = _gen_member_names(zip_bytes)
         month = f"{pub.year:04d}-{pub.month:02d}"
         for name in sorted(names):
@@ -237,9 +274,18 @@ def fetch_corpus(
     for pub, doc in sorted(supplemental, key=lambda t: t[0]):
         if any(s.get("doc") == doc["DocID"] for s in manifest["skipped"]):
             continue  # resumed run: this bundle already adjudicated memberless
-        zip_bytes = _get_with_retries(
-            DOWNLOAD_URL, {"doclookupId": doc["DocID"]}
-        ).content
+        zip_bytes = _download_zip(doc)
+        if zip_bytes is None:
+            manifest["skipped"].append(
+                {
+                    "doc": doc["DocID"],
+                    "member": None,
+                    "delivery": None,
+                    "why": f"supplemental pub {pub}: persistently non-zip body",
+                }
+            )
+            _save()
+            continue
         names = _gen_member_names(zip_bytes)
         if not names:
             manifest["skipped"].append(
