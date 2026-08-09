@@ -3483,3 +3483,99 @@ correctly NOT dispatched: FH-4/FH-5 (lift refused — FFR-8B Phase 0 is the evid
 T1 battery (Q.2), the FFR-8A §5(b) storage over-build lane (same ERCOT hindcast surface as
 in-flight FFR-8B — next-after), the NEISO taxonomy tail and MISO AA.2 (calibration-lane
 items actively riding their own queues).
+
+## Addendum AG — FFR-8B adjudicated CLEAN; THE LIFT DETERMINATION REVISED: CONDITIONALLY GRANTED; FFR-9A + FH-4-ERCOT dispatched
+
+**Written 2026-08-09 by the workstream manager at `origin/main` `b367f02`.**
+
+### AG.1 FFR-8B adjudication: CLEAN — and the evidence quality is the program's best
+
+Prereg and both probes committed before invocation 1; the Phase-1 method fixed before any
+dump existed; the identity self-check exact; the Phase-2 admissibility test applied
+verbatim and the repair correctly ESCALATED rather than parameterized (the measured
+RTOLCAP conduct sources may validate, never parameterize — no admissible identification
+exists for the commitment-realization dispersion, so Phases 0–1 landed alone). One arm
+registered, hindcast namespace only. The session incident (server-side branch deletion +
+HTTP 500 window, recovered by API re-create + force-with-lease, artifacts verified) is
+recorded and content-verified. E3 stays ESCALATED/HELD, untouched, as chartered.
+
+### AG.2 THE FH-4/FH-5 LIFT DETERMINATION, REVISED ON THE RE-BASED RECORD: **CONDITIONALLY GRANTED**
+
+The AF.2 refusal (hold #6) was measured on the pre-epoch record and named the re-base as
+the next gate evidence. That evidence (FFR-8B §2) now reads, against V.3's α/β/γ as
+sharpened by FFR-7C plus the price-side test:
+
+- **(α) MET.** In-window economic executions = 0 (no executed events exist at all).
+- **(β) MET — fully.** The false gas_st wave is GONE ENTIRELY (zero pipeline events in
+  any ledger; pre-epoch 27 units / 6.5 GW; the FFR-5A/7C chartered defect has vanished).
+- **(γ) REFRAMED, and satisfied in the only sense available to this posture.** The model
+  now misses the real 2.294 GW (err −100 %, under-side) instead of manufacturing 6.5–10.9
+  GW of phantoms. The real exits are instrument/fleet-plan/host-driven (FFR-7C), and the
+  confirmed-exit channel's information gate (instrument_date ≤ vintage cutoff) is
+  DESIGNED to exclude post-2020 instruments from a vintage-2020 run — the honest answer
+  for unforecastable owner acts is exactly the miss observed. RIDER: FH-4 reports the
+  instrument-date split of the target's exits so scoring never mis-attributes this as
+  economic-screen failure.
+- **Price side: the object is REPAIRED; the residual error is the FLEET, not the price.**
+  The tight screens now bracket measured content (into-2024: 0 → 174 h > $100 vs 161
+  measured, with a 2× margin overshoot; into-2023 rich at 413 h); the long screens
+  undershoot (into-2025: 8 vs 217) — and FFR-8B's decomposition ATTRIBUTES both residuals
+  to the model's own evolved-fleet trajectory (gas_cc over-entry 6.0 vs 0.244 GW, wind
+  under-entry 5.0 vs 12.663, the storage base ~30 GW power by the 2024 solve vs ~10
+  actual), no longer to a phantom seed or a structurally-empty tail. The λ-led conduct
+  share stays out of admissible reach (FFR-8A §5(a)) and the owner question on the
+  condition's wording stays open — but it no longer gates: the design-scarcity component
+  demonstrably responds.
+
+**The grant is CONDITIONAL on FH-1's own gate procedure** ("the block lifts only when a
+retirement-lane fix lands AND a re-probe passes — not by re-reading the evidence"): FH-4
+opens with the §3.3 over-retirement re-probe as its HARD STEP 0, at the posture this
+determination sets, and a re-probe FAIL stops the lane and returns here. Two further
+rulings bundled into the determination (the FFR-8A §5 question, reserved to the manager):
+
+1. **Arming.** The ERCOT FH/T1-FF legs arm `capacity_screen_unified_lookahead` +
+   `capacity_screen_scarcity_restoration` BY INVOCATION (E1/E4 + the OBDRR048
+   entering-year date gate; E2 rides, currently inert; E3's fallback held). This is NOT a
+   shipped-default flip — no ScenarioConfig default moves; promotion of the flag into the
+   shipped ERCOT forward default awaits FH-4's own skill evidence. The restoration is
+   ERCOT-only by construction (`__post_init__`), so the five other ISOs' legs run their
+   shipped defaults — rule 25 is structural here.
+2. **Sequencing (the manager's recommendation, owner's choice).** FFR-8B §4's
+   de-prioritization evidence names the STORAGE-FLEET TRAJECTORY as the dominant
+   remaining input error on the very arm FH-4 measures (the E1 storage term +7.3–8.8 GW
+   at p1; E2's inertness; the base-fleet seeding, the 3V leak's storage sibling).
+   **FFR-9A is chartered for it (§0ad) and should land FIRST; FH-4-ERCOT is written and
+   delivered but recommended HELD until FFR-9A lands** — measuring a 36-solve-year
+   battery against a known dominant input defect produces numbers the program would
+   discard (the FH-1 probe's own lesson). The owner may paste both at once, accepting one
+   re-base of the ERCOT leg.
+
+FH-5 is NOT yet dispatched: its charter text is not in the pack's table row and the
+manager will not author a prompt from a guessed spec — located and dispatched next cycle.
+
+### AG.3 The rest of the landing burst, adjudicated compactly
+
+**FFR-5E-H: DEFER, adjudicated CLEAN and correctly NOT marked inert** — the channel fired
+and propagated; the netting it exists to prove safe was VACUOUS (`entry_decided_mw_by_tech`
+empty in both arms at this vintage), so the run has no power to discriminate. The
+forecast-arming question stays open pending a posture with a live entry contrast.
+**HOUSE-2: the fast tier is GREEN on main** modulo the two excluded ercot_thermal items
+(7 baseline failures cleared); the PJM coords-only zone rule fixed; the consumer map put
+the keeper-riding seam (`_eia860_ba_zones` → `build_zone_lookup`) on record. The
+branch-protection ladder can now extend past cache-key-pin — the standing owner question
+gains force. **FFR-4E: the intake landed gated default-OFF**
+(`caiso_storage_nqc_accreditation`, whole-class NAMEPLATE ratio 13,365 / 15,448.4 =
+0.8651 — CAISO publishes no storage duration table; batteries are accredited at
+demonstrated capability, so minting a by-duration entry would invent an unpublished
+object; FFR-4D §6.1 honoured). Row-4 disposition per its handoff. **Rubric v3.2:
+owner-amended** (directive quoted verbatim in-commit), scorer-only, blast radius measured
+over all 66 runs (2 NYISO non-keeper probes reclassify; EVERY keeper unchanged) — so
+**AA.2 STANDS: MISO stays NOT-YET and the taxgs promotion stays deferred**; the
+un-suppression defect fix (reported-only co2 silencing the rule) is quality work.
+**NEISO re-key to 2026-08-06-neiso-87-control: D-5(b) VERIFIED** (marker keeper field ==
+shard). **caiso-187 filed a BRANCH C owner escalation** in its own lane (the CAISO outage
+overlay removes 24–35 % of CC capacity-hours vs ~10 % published expectation, +48 % growth
+across two years; three owner options filed in its handoff; wefor_residual matrix row
+CAISO=O) — a calibration-lane card, surfaced to the owner here, not adjudicated by this
+program. **ARM3-MEASURE: still in flight** (prereg + gitignore only; the 2031–2035 armed
+solve burning).

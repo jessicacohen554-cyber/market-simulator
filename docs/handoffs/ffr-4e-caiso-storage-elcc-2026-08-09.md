@@ -103,3 +103,222 @@ purpose, and it qualifies only if it is a *portfolio/fleet-average* object on a
 
 Prerequisites ran in the briefed order: `uv sync` first, then
 `scripts/regenerate_clean.py`.
+
+---
+
+## 2. The intake — first-party, and it CLOSES D-7
+
+FFR-4D §7 D-7 flagged that Table 1.1's cells were carried from FFR-3P's
+transcription with the source PDF uncommitted. That is now closed for **every
+class, not just battery**.
+
+Committed under `data/raw/capacity-market/loads-resources/caiso/` on the sibling
+`nqc/caiso/` intake's contract (immutable source + reviewable derived CSV +
+README; raw-only, no `data/clean/` schema, because these enter as cited registry
+constants rather than a solve-time series):
+
+| file | |
+|---|---|
+| `2026-summer-loads-and-resources-assessment-technical-appendix.pdf` | CAISO, May 2026. sha256 `609e77b53dcbb65901dc93c6adbe0be16ebe57f7bebf916476e1b909a5654be3` |
+| `caiso_slra_class_accreditation.csv` | Table 1.1 digitized by `scripts/data/derive_caiso_slra_class_accreditation.py` |
+
+**FFR-3P's transcription is CONFIRMED, not merely re-quoted.** The battery row
+reads NDC **14,131** / NQC **13,365** first-party, and 13,365/14,131 = 0.945793.
+
+Two closure checks the deriver runs on every re-derivation:
+
+* the NQC column's fuel rows foot **exactly** to the published Total, 59,069 MW
+  — which is the parse's own proof, and independently re-confirms the 59,069
+  figure FFR-3P's §1.1 ledger is built on;
+* the NDC column's rows sum to 83,923 against a published 83,922 — a **1 MW
+  per-row rounding artifact in CAISO's own table**, tolerated at ±2 MW and
+  logged, never silently absorbed.
+
+Provenance the table's own footnotes carry, and which the registry comment now
+records: **September** NQC values; **NDC as of April 1, 2026** from the CAISO
+Master File; source is the **March 2026** NQC list; the table **excludes**
+tie-generators, pseudo-tie/dynamic imports outside the BAA (~9,200 MW), SRR gas
+units, participating loads and demand response.
+
+---
+
+## 3. The reconciliation — three misalignments, not one
+
+FFR-4D §6.1 routed this with one warning (the synthetic duration mix). Measuring
+it surfaced **three** distinct misalignments, and the largest is not the one that
+was flagged.
+
+### 3.1 CAISO publishes NO storage duration table — so no by-duration row is minted
+
+The CY2026 NQC report's `2026 Tech Factors` tab carries factors for Solar Fixed /
+Tracking / Thermal, Wind (Norcal/Socal/AZ/NM/WA-OR), non-dispatchable Hydro,
+Geothermal, Cogeneration and Biomass — and **no battery row at all**. Batteries
+are *dispatchable* and are accredited at demonstrated capability. The assessment
+says so in terms (§1.1.1):
+
+> *"For dispatchable resources like battery and natural gas plants, the NQC value
+> is typically near its NDC or installed capacity."*
+
+So a CAISO entry in `STORAGE_ELCC_BY_DURATION_BY_ISO` would be an **invented
+object**. The publishable object is a whole-class ratio, and the registry gains a
+whole-class rung (`STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO`) that **replaces**
+the by-duration lookup rather than overriding a row inside it — the charter's
+option (b), taken because the registry structure genuinely supports it more
+honestly than a by-duration fudge.
+
+### 3.2 The duration-mix question, MEASURED — and it resolves against the mix route
+
+The charter asked for the real CAISO duration mix from the measured EIA-860
+fleet. Derived (BA `CISO`, `Status = "OP"`, MW-weighted on nameplate; 273 units,
+15,448.4 MW, zero units missing energy capacity):
+
+| duration band | MW | share |
+|---|--:|--:|
+| < 1.5 h | 2,335.5 | 15.1 % |
+| ~2 h | 963.9 | 6.2 % |
+| ~3 h | 308.5 | 2.0 % |
+| **~4 h** | **11,267.1** | **72.9 %** |
+| ~5 h | 381.4 | 2.5 % |
+| ~6 h | 146.1 | 0.9 % |
+| 7–8 h | 45.9 | 0.3 % |
+| **fleet energy-weighted mean** | | **3.428 h** |
+
+Now the measurement that settles the route:
+
+```
+generic NREL/E3 table on the REAL measured mix   = 0.5589
+generic NREL/E3 table on the SYNTHETIC 70/25/5   = 0.6875   (what the model does today)
+CAISO's own realized whole-class accreditation   = 0.8651   (nameplate basis, §3.3)
+```
+
+**Using the real mix makes the by-duration path WORSE, not better.** The real
+CAISO fleet is *shorter*-duration than the synthetic mix (which carries 25 % at
+8 h and 5 % iron-air at 100 h), so re-weighting the generic curve onto it moves
+the credit *away* from CAISO's realized value, by a further 12.9 pp. The gap to
+0.8651 is therefore **not a duration-mix artifact at all** — it is CAISO's
+accreditation *methodology*, which derates a dispatchable resource by
+demonstrated capability and not by duration in any degree. A 1-hour CAISO battery
+earns near-full NQC; the NREL/E3 curve gives it 0.40.
+
+That is the substantive answer to §6.1's warning: the mix is the *evidence that
+the by-duration object is the wrong shape*, not a weighting to apply.
+
+### 3.3 The basis correction — the largest term, and the one FFR-4D's number missed
+
+The published ratio is NQC/**NDC**. The model multiplies a storage unit's
+**EIA-860 nameplate** `power_cap_mw`. CAISO's NDC is materially below nameplate:
+
+```
+NDC / nameplate = 14,131   / 15,448.4 = 0.914723
+NQC / NDC       = 13,365   / 14,131   = 0.945793   <- the published ratio
+NQC / nameplate = 13,365   / 15,448.4 = 0.865138   <- THE REGISTRY VALUE
+```
+
+Both terms of the adopted ratio are measured, and they describe **one fleet**:
+the denominator is the same EIA-860 2025 Early Release object
+`STORAGE_BASE_FLEET_MW["CAISO"]` was re-vintaged from at FFR-4D (15,448.4 →
+15,450).
+
+**Consequence for the routed number.** FFR-4D D-1 quoted **+3,990.6 MW** by
+applying 0.9458 to a nameplate quantity. On the corrected basis the forecast
+effect is **+2,744.5 MW** — the routed figure was **overstated by 1,246.1 MW**.
+This is precisely the substitution §6.1 refused to perform blind, now quantified.
+
+### 3.4 Deliverability — kept, and why
+
+The published whole-class ratio embeds a deliverability haircut:
+
+| tranche | NDC | NQC | ratio |
+|---|--:|--:|--:|
+| Full Capacity Deliverable | 8,864 | 8,764 | 0.98872 |
+| Interim Deliverability | 4,131 | 3,977 | 0.96272 |
+| Partial Deliverability | 1,059 | 624 | 0.58924 |
+| Energy Only | 78 | 0 | 0.00000 |
+| **Total** | **14,131** | **13,365** | **0.94579** |
+
+The haircut is **kept**, on two grounds. First, the model has **no per-resource
+deliverability status for storage** — `capacity_deliverability_limits` prices a
+zonal/seam quantity, not a queue outcome — so excluding it would credit MW
+CAISO's own ledger does not count, and there is no second mechanism removing
+them. Second, and decisively, **the deliverability-clean alternative is not
+constructible on this basis**: its numerator is published per tranche but its
+nameplate denominator is not, and no CAISO-resource-ID → EIA-860 crosswalk
+exists in this repo. The whole-class ratio is the only construction *both* of
+whose terms are measured.
+
+Stated as the residual assumption: forward builds inherit the 2026 fleet's
+deliverability mix. That runs slightly **against** accredited capacity (it is a
+haircut), so it is the conservative direction.
+
+### 3.5 The class boundary — pumped storage excluded
+
+The ratio is Table 1.1's **Battery** row. CAISO books pumped storage on its
+**Hydro** row — FFR-4D §2 proved that two independent ways and this session takes
+it as settled — so `storage_accreditation_credit` excludes `pumped_storage` from
+rung 1 by `tech_name` and leaves it on the by-duration table, where its long
+duration is already credited correctly. Measured: PS firm capacity is **1,932.2
+MW armed and unarmed alike**, in every year.
+
+---
+
+## 4. The keeper guard — a live consumer chain, so the gate ships default-OFF
+
+### 4.1 What consumes the CAISO accreditation entries (enumerated BEFORE landing)
+
+`storage_firm_mw` is computed in `runner.py` for **every solve year in both
+modes**, flows into `prior_results`, and from there into **four** consumers —
+all of them reachable on a CAISO *backcast*, because `evolve_fleet` runs for
+every year after the first regardless of mode:
+
+| # | consumer | armed on the keeper? |
+|---|---|---|
+| 1 | `accredited_firm_capacity_mw` → the evolution ledger's `firm_mw` | always |
+| 2 | economic-retirement **reliability floor** (`evolve.py` step 3) | always |
+| 3 | **reserve-margin backstop** (`resolve_reserve_margin_build_enabled`; capacity-market ISOs default-on) | resolves per market design |
+| 4 | **locational-deliverability headroom** (`deliverability_headroom_by_zone`) | **YES** — `capacity_deliverability_limits: true` |
+
+The keeper's own `run_config.json` (`2026-08-09-caiso-184-c1-lpbasis`) shows
+`capacity_deliverability_limits: true`, `storage_capacity_value: true`,
+`renewable_elcc_curves: true`, `storage_measured_base_fleet: true`. So
+byte-inertness was **not** available by inspection, and the keeper's evolution
+ledger is not committed (bundles are slim; `<out-dir>/<ISO>/<runtime-key>/` died
+with FFR-4D's container), so it could not be re-read without a re-solve.
+
+### 4.2 The charter's second branch, taken — and it is load-bearing
+
+The gate ships **default-OFF**, which makes the keeper inert **by construction**.
+This is not precautionary: had the entry landed unconditionally it **would** have
+moved the keeper. Measured on the keeper's own recipe and its own measured fleet:
+
+| year | fleet MW | `storage_firm_mw` HEAD | gate-off | **Δ** | gate-ON (what was avoided) |
+|---|--:|--:|--:|--:|--:|
+| 2023 | 9,570.0 | 5,963.6680 | 5,963.6680 | **0.0e+00** | 8,414.1 (+2,450.5) |
+| 2024 | 13,208.9 | 8,003.6980 | 8,003.6980 | **0.0e+00** | 11,562.3 (+3,558.6) |
+| 2025 | 17,526.0 | 10,318.1680 | 10,318.1680 | **0.0e+00** | 15,297.2 (+4,979.0) |
+
+**G-INERT PASSES**: gate-off is exactly equal to the pre-FFR-4E value in all
+three keeper years — not "within tolerance", equal. Pinned by
+`tests/unit/model/test_storage_whole_class_accreditation.py::KeeperInertnessTest`
+so it cannot regress silently.
+
+**Cache.** Registered in `_CACHE_KEY_OPTIONAL_FIELDS` at `False`. The pinned
+default key **`603c2498bf71d21d` is UNMOVED** (measured), and the armed config
+keys distinctly. Unlike its FFR-4D sibling this is byte-identical at its default,
+so it is **not** a same-key invalidation and carries **no cache epoch** — no
+cached bundle in any ISO is orphaned.
+
+### 4.3 Solve-free projection, recorded BEFORE the arms were solved
+
+On FFR-4D §4.3's post-fleet-fix ledger at this head:
+
+```
+battery firm     10,621.9 -> 13,366.4   (+2,744.5)
+pumped storage    1,932.2 ->  1,932.2   (unchanged -- Hydro row)
+accredited firm  56,269.6 -> 59,014.1
+requirement      57,306.0
+reserve position   0.9819 ->   1.0298   (1.8 % SHORT -> 3.0 % LONG)
+base-year gap    +1,036.4 MW -> -1,708.1 MW
+```
+
+So the arithmetic predicts the base-year adequacy deficit **closes**. Whether
+that collapses row 4's numerator is what the solve answers.

@@ -1,0 +1,185 @@
+{
+ "iso": "CAISO",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "keeper": "caiso184_c1_lpbasis",
+ "formula": "residual_c = max(0, W_c - X_c); value = capacity-weighted mean over eligible classes present in the CAISO fleet, rounded to 4 dp (PRECHECK-caiso187 \u00a72, frozen at f7ea03e)",
+ "keeper_wefor_multiplier": 0.7,
+ "keeper_wefor_residual": null,
+ "eligible_classes": [
+  "CC_CHP",
+  "CC_REGULAR",
+  "ST_GAS"
+ ],
+ "ineligible_classes_present_in_fleet": [
+  "COAL",
+  "CT_CHP",
+  "CT_PEAKER"
+ ],
+ "per_year": {
+  "2023": {
+   "CC_CHP": {
+    "W_unfitted_statistical": 0.04,
+    "class_capacity_mw": 1689.3,
+    "overlay_covered_capacity_mw": 1070.5,
+    "mean_availability_multiplier": 0.836561,
+    "X_measured_removal": 0.163439,
+    "plants": 21,
+    "plants_with_overlay": 6,
+    "residual_c": 0.0,
+    "keeper_effective_wefor": 0.028,
+    "keeper_total_removal": 0.191439,
+    "arm_total_removal": 0.163439
+   },
+   "CC_REGULAR": {
+    "W_unfitted_statistical": 0.05,
+    "class_capacity_mw": 15284.8,
+    "overlay_covered_capacity_mw": 14237.9,
+    "mean_availability_multiplier": 0.784309,
+    "X_measured_removal": 0.215691,
+    "plants": 28,
+    "plants_with_overlay": 24,
+    "residual_c": 0.0,
+    "keeper_effective_wefor": 0.035,
+    "keeper_total_removal": 0.250691,
+    "arm_total_removal": 0.215691
+   },
+   "ST_GAS": {
+    "W_unfitted_statistical": 0.21,
+    "class_capacity_mw": 2858.8,
+    "overlay_covered_capacity_mw": 0.0,
+    "mean_availability_multiplier": 1.0,
+    "X_measured_removal": 0.0,
+    "plants": 3,
+    "plants_with_overlay": 0,
+    "residual_c": 0.21,
+    "keeper_effective_wefor": 0.147,
+    "keeper_total_removal": 0.147,
+    "arm_total_removal": 0.21
+   }
+  },
+  "2024": {
+   "CC_CHP": {
+    "W_unfitted_statistical": 0.04,
+    "class_capacity_mw": 1689.3,
+    "overlay_covered_capacity_mw": 1050.3,
+    "mean_availability_multiplier": 0.792098,
+    "X_measured_removal": 0.207902,
+    "plants": 21,
+    "plants_with_overlay": 5,
+    "residual_c": 0.0,
+    "keeper_effective_wefor": 0.028,
+    "keeper_total_removal": 0.235902,
+    "arm_total_removal": 0.207902
+   },
+   "CC_REGULAR": {
+    "W_unfitted_statistical": 0.05,
+    "class_capacity_mw": 15284.8,
+    "overlay_covered_capacity_mw": 14150.9,
+    "mean_availability_multiplier": 0.737946,
+    "X_measured_removal": 0.262054,
+    "plants": 28,
+    "plants_with_overlay": 23,
+    "residual_c": 0.0,
+    "keeper_effective_wefor": 0.035,
+    "keeper_total_removal": 0.297054,
+    "arm_total_removal": 0.262054
+   },
+   "ST_GAS": {
+    "W_unfitted_statistical": 0.21,
+    "class_capacity_mw": 2858.8,
+    "overlay_covered_capacity_mw": 0.0,
+    "mean_availability_multiplier": 1.0,
+    "X_measured_removal": 0.0,
+    "plants": 3,
+    "plants_with_overlay": 0,
+    "residual_c": 0.21,
+    "keeper_effective_wefor": 0.147,
+    "keeper_total_removal": 0.147,
+    "arm_total_removal": 0.21
+   }
+  },
+  "2025": {
+   "CC_CHP": {
+    "W_unfitted_statistical": 0.04,
+    "class_capacity_mw": 1689.3,
+    "overlay_covered_capacity_mw": 1145.9,
+    "mean_availability_multiplier": 0.727764,
+    "X_measured_removal": 0.272236,
+    "plants": 21,
+    "plants_with_overlay": 9,
+    "residual_c": 0.0,
+    "keeper_effective_wefor": 0.028,
+    "keeper_total_removal": 0.300236,
+    "arm_total_removal": 0.272236
+   },
+   "CC_REGULAR": {
+    "W_unfitted_statistical": 0.05,
+    "class_capacity_mw": 15284.8,
+    "overlay_covered_capacity_mw": 14377.3,
+    "mean_availability_multiplier": 0.681387,
+    "X_measured_removal": 0.318613,
+    "plants": 28,
+    "plants_with_overlay": 26,
+    "residual_c": 0.0,
+    "keeper_effective_wefor": 0.035,
+    "keeper_total_removal": 0.353613,
+    "arm_total_removal": 0.318613
+   },
+   "ST_GAS": {
+    "W_unfitted_statistical": 0.21,
+    "class_capacity_mw": 2858.8,
+    "overlay_covered_capacity_mw": 0.0,
+    "mean_availability_multiplier": 1.0,
+    "X_measured_removal": 0.0,
+    "plants": 3,
+    "plants_with_overlay": 0,
+    "residual_c": 0.21,
+    "keeper_effective_wefor": 0.147,
+    "keeper_total_removal": 0.147,
+    "arm_total_removal": 0.21
+   }
+  }
+ },
+ "pooled": {
+  "CC_CHP": {
+   "class_capacity_mw": 1689.3,
+   "W_unfitted_statistical": 0.04,
+   "X_measured_removal": 0.214526,
+   "residual_c": 0.0,
+   "keeper_total_removal": 0.242526,
+   "arm_total_removal": 0.214526
+  },
+  "CC_REGULAR": {
+   "class_capacity_mw": 15284.8,
+   "W_unfitted_statistical": 0.05,
+   "X_measured_removal": 0.265453,
+   "residual_c": 0.0,
+   "keeper_total_removal": 0.300453,
+   "arm_total_removal": 0.265453
+  },
+  "ST_GAS": {
+   "class_capacity_mw": 2858.8,
+   "W_unfitted_statistical": 0.21,
+   "X_measured_removal": 0.0,
+   "residual_c": 0.21,
+   "keeper_total_removal": 0.147,
+   "arm_total_removal": 0.21
+  }
+ },
+ "g_nodouble_per_class": {
+  "CC_CHP": true,
+  "CC_REGULAR": true,
+  "ST_GAS": false
+ },
+ "g_nodouble_pass": false,
+ "WEFOR_RESIDUAL_VALUE": 0.0303,
+ "WEFOR_RESIDUAL_GROUPS": [
+  "CC_CHP",
+  "CC_REGULAR",
+  "ST_GAS"
+ ]
+}
