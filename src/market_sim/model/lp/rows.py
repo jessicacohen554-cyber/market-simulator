@@ -145,6 +145,7 @@ def _resolve_rps_eligible_gen_idx(
 def _resolve_clean_region_gen_idx(
     fleet: FleetArrays,
     region_fuels: "tuple[tuple[str, ...], ...]",
+    eligible_zone_mask: np.ndarray,
 ) -> "list[np.ndarray | None]":
     """Resolve each clean-tier region's qualifying fuels to generator indices.
 
@@ -159,12 +160,35 @@ def _resolve_clean_region_gen_idx(
     biomass, MI admits qualified CCS gas). An unknown fuel name is a hard
     error, never a silent drop.
 
-    Returns one index array (or ``None`` when no such generator exists in
-    the fleet) per region, aligned with ``region_fuels``.
+    ``eligible_zone_mask`` is the SAME ``(K, n_zones)`` bool mask the row
+    builder applies to each region's wind/solar columns: a generator resolves
+    into region ``r``'s index set only when its fuel qualifies AND its zone is
+    in ``mask[r]``. The mask is mandatory — resolving by fuel alone across the
+    whole fleet let Michigan's East-only row (MCL 460.1029, in-state systems
+    only) be satisfied by MISO-South nuclear, defeating the row's own cited
+    statutory basis (ARM3-FIX; the finding is
+    ``docs/handoffs/arm3-clean-row-horizon-2026-08-09.md`` §3). Filtering
+    happens here, at index construction, so the row builder stays a pure
+    column-append (rule 2 [R-VECTOR] — no hour loops, no per-hour masking).
+
+    Returns one index array (or ``None`` when no such in-mask generator
+    exists in the fleet) per region, aligned with ``region_fuels``.
     """
     fuel_idx = np.asarray(fleet.fuel_type_idx)
+    zone_idx = np.asarray(fleet.zone_idx, dtype=int)
+    mask = np.asarray(eligible_zone_mask, dtype=bool)
+    if mask.shape[0] != len(region_fuels):
+        raise ValueError(
+            f"clean-tier region axis mismatch: eligible_zone_mask has "
+            f"{mask.shape[0]} region rows but region_fuels has "
+            f"{len(region_fuels)} entries — the qualifying sets and the zone "
+            "mask must describe the same regions in the same order"
+        )
+    # (K, n_gen): generator g is zone-eligible for region r. One gather, no
+    # per-region zone loop.
+    gen_in_mask = mask[:, zone_idx]
     out: "list[np.ndarray | None]" = []
-    for fuels in region_fuels:
+    for r, fuels in enumerate(region_fuels):
         extra = [f for f in fuels if f not in _RPS_ROW_BASE_FUELS]
         unknown = sorted(f for f in extra if f not in FUEL_TYPE_MAP)
         if unknown:
@@ -173,7 +197,7 @@ def _resolve_clean_region_gen_idx(
                 "entry must resolve against FUEL_TYPE_MAP"
             )
         codes = np.array([FUEL_TYPE_MAP[f] for f in extra], dtype=int)
-        gidx = np.flatnonzero(np.isin(fuel_idx, codes))
+        gidx = np.flatnonzero(np.isin(fuel_idx, codes) & gen_in_mask[r])
         out.append(gidx if gidx.size else None)
     return out
 
@@ -220,8 +244,13 @@ def _build_rps_region_rows(
             renewable family; the clean-tier family stacks after it).
         region_gen_idx: Optional per-region thermal-block generator index
             arrays (statute-qualifying non-W/S classes — the clean-tier
-            family's nuclear/hydro/etc. columns). ``None`` entries add no
-            generator columns for that region.
+            family's nuclear/hydro/etc. columns). Each region's indices must
+            already be restricted to its eligible zones — the resolver
+            (:func:`_resolve_clean_region_gen_idx`) takes the same
+            ``eligible_zone_mask`` this builder applies to the W/S columns,
+            so a row's generator credit is in-mask exactly as its VRE credit
+            is (ARM3-FIX). ``None`` entries add no generator columns for
+            that region.
 
     Returns:
         Tuple ``(rows, rhs)``: a ``(K, total_columns)`` CSR block and the
@@ -1318,8 +1347,10 @@ def build_constraints(
             RHS weights.
         clean_region_fuels: Per-region statutory qualifying fuel-name
             tuples resolved to generator columns via
-            :func:`_resolve_clean_region_gen_idx` (nuclear ADMITTED —
-            FFR-6B §6.3; unknown names hard-error).
+            :func:`_resolve_clean_region_gen_idx` under the region's
+            ``clean_region_zone_mask`` (nuclear ADMITTED — FFR-6B §6.3;
+            unknown names hard-error; out-of-mask generators excluded,
+            ARM3-FIX).
         hydro_monthly_energy: Monthly hydro energy budget in MWh, shape
             ``(n_hydro, n_months)``. When ``None`` the hydro family is
             omitted (identical LP); otherwise one budget row per hydro
@@ -1821,7 +1852,14 @@ def build_constraints(
                 clean_region_obligation_frac,
                 demand,
                 acp_k0=k_regions,
-                region_gen_idx=_resolve_clean_region_gen_idx(fleet, clean_region_fuels),
+                # The resolver gets the SAME zone mask the builder applies to
+                # the W/S columns: a clean row's nuclear/hydro/biomass/CCS
+                # credit is in-mask, never ISO-wide (ARM3-FIX — fuel-only
+                # resolution let MISO-South nuclear satisfy MI's East-only
+                # row, defeating MCL 460.1029).
+                region_gen_idx=_resolve_clean_region_gen_idx(
+                    fleet, clean_region_fuels, clean_region_zone_mask
+                ),
             )
             k_clean = clean_block.shape[0]
             blocks.append(clean_block)
