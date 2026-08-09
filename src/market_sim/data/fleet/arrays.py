@@ -1405,8 +1405,13 @@ def _apply_outage_overlays(
             _pgrain = getattr(
                 config, "ercot_dam_availability_event_cap_reconciliation", False
             ) or getattr(config, "ercot_dam_availability_event_cap_unit_scoped", False)
+            # ercot-185 fault-3 repair: the DAY-SHAPED plateau extract replaces
+            # the flat multi-week factor. Same plateaus, same covered hours,
+            # day-resolved profile — so this consumer and the event-cap ceiling
+            # block below both see ONE repaired layer (rule 19 [R-ONE-MECH]).
+            _pshaped = getattr(config, "ercot_partial_outage_shaped_derate", False)
             pfac = partial_outage_derate_factors(
-                config.weather_year, hours, class_grain=_pgrain
+                config.weather_year, hours, class_grain=_pgrain, shaped=_pshaped
             )
             if pfac:
                 applied_p = 0
@@ -1816,7 +1821,13 @@ def _apply_outage_overlays(
                 and not _unit_scoped
             )
             _plant_partial = partial_outage_derate_factors(
-                int(_yr), hours, class_grain=_reconc or _unit_scoped
+                int(_yr),
+                hours,
+                class_grain=_reconc or _unit_scoped,
+                # ercot-185: the same repaired layer this block's sibling
+                # consumer reads (arrays.py ~1333) — one construction, one
+                # layer, both seams.
+                shaped=getattr(config, "ercot_partial_outage_shaped_derate", False),
             )
             _w_units = (
                 unit_outage_active_units(int(_yr), hours, iso="ERCOT")

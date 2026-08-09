@@ -3653,3 +3653,26 @@ NOT-YET with the exact shard fail set {C3a mean LMP 2023 −32.4 %; C3b NRMSE 0.
 and C3c ledgered ×3 under rubric v3.2 — keeper shard, registry definition and status
 shard all agree with the live scorer, magnitudes included; the promoting session's own
 status-shard regeneration was verified merged, not stale. No repairs, nothing committed.
+
+### AH.6 Refresh 2026-08-09 @ `aacbd0f`: all four §0ae lanes pasted and mid-flight; FH-5 charter LOCATED
+
+Paste confirmation with the prereg discipline holding in all four: **FH-4-ERCOT**
+(prereg `9572283` — gate criterion + arm invocations committed pre-solve, with the Arm-K
+`demand_growth_vintage` wiring from FH-2 §7; the γ-rider instrument-date-split probe
+`5d1914c`; gate probe/arms solving); **ARM3-FIX** (the zone-mask fix `c23c9ab` + the
+re-measurement expectations pre-registered `644bc45`; PR #3809 merged; re-measurement
+solving); **FFR-9B** (prereg `8bf3b8e` — mechanism inventory + derived per-tech-per-year
+hypothesis table + regeneration protocol before the solve; two probes pre-committed, one
+reproducing the ffr9a runtime key; regeneration solving); **FFR-4F** (branch live,
+early). **FH-5's charter is LOCATED, not guessed:
+`docs/hindcast-forward-plan-2026-07.md` §"FH-5 [OPUS] — Phase B: base-2021 horizon
+extension"** — base 2021 / window 2021–2025 (2021 unscored seed, 2022 bridged) / Arms
+R+K / score 2023–2025 only / the horizon-degradation table / Uri + thin-2021-hydro
+caveats up front; its REQUIRES is "FH-4 complete and its results read", per-ISO
+conditional on a clean Phase A — so FH-5 dispatches only after the full battery, not
+after the ERCOT leg. Keepers UNCHANGED this window (all six verified). The calibration
+lanes continue independently (ercot-183's owner-authorized NP3-965 corpus intake staging
+~100+ MB; ercot-184/185 preregs + the fault-3 partial-outage derate with same-PR matrix
+row; miso-148 chartered on miso-147's availability object; the caiso-186 owner-sitting
+packet and the ercot-182/C3a-cliff memo add to the owner-card queue). Nothing new to
+dispatch this cycle; nothing of mine landed results yet.

@@ -473,6 +473,10 @@ META_RECORD_SPEC = RecordSpec(
             ),
             "not applicable (recorded null) when the leg has no forward boundary",
         ),
+        # Arm K's as-of demand-growth vintage (FH-2 §7 wiring, landed FH-4).
+        # FromConfig so the record reads the SOLVED posture: an Arm K leg
+        # carries its base year here, every other leg records null.
+        "demand_growth_vintage": FromConfig(),
         # T1-FF weather posture (FH-1 plan §2.1). Config-derived, and nulled
         # outside a full-forward leg where the arm concept does not apply.
         "weather_posture": Derived(
@@ -603,9 +607,20 @@ def build_config(
         fwd_gas_path = _ff_gas
         weather_year = start_year
         solve_year_weather = arm == "realized"
+        # Arm K grows demand on the rates PUBLISHED as of its base year
+        # (FH-2 handoff §7: "--arm asknown should set demand_growth_vintage =
+        # base_year alongside its gas path"; values FH-3, plan §4 row 6).
+        # Selected exactly like the gas path — by the arm, not a new flag —
+        # and fail-closed: a base year with no intaken vintage table raises at
+        # config build (rule 13, the §4-row-7 refusal one channel over).
+        # Arm R stays on the default table: its growth spans are zero-year by
+        # construction (per-solve-year weather), so the table never binds, and
+        # None keeps its cache key exactly the FH-1 gate-probe surface.
+        demand_growth_vintage = start_year if arm == "asknown" else None
     else:
         gas_path = FUEL_VARIANT_GAS_PATH[variant]
         fwd_gas_path = crossover_forward_gas_path
+        demand_growth_vintage = None
         # T1-X: pin the weather year to the last realized year (boundary − 1 =
         # 2025) so "growth-scaled demand from the last realized year" (plan
         # §2.2) is exactly what the forward years see. A plain hindcast keeps
@@ -647,6 +662,9 @@ def build_config(
         crossover_forward_gas_path=fwd_gas_path,
         weather_year=weather_year,
         crossover_solve_year_weather=solve_year_weather,
+        # As-of demand growth (Arm K only; None everywhere else, which is the
+        # registered cache-neutral default — no existing posture's key moves).
+        demand_growth_vintage=demand_growth_vintage,
         # Production scarcity footing (see docstring): ERCOT → ORDC overlay,
         # PJM → capacity-market (no-op). Harness default, not a model default.
         scarcity_pricing_enabled=True,

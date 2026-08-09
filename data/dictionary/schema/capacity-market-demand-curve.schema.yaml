@@ -88,7 +88,7 @@ columns:
       Canonical metric: net_cone | gross_cone | irm |
       forecast_pool_requirement | icap_ucap_translation_factor | price_cap |
       curve_point | soft_offer_cap |
-      ra_report_price | reliability_requirement |
+      ra_report_price | ra_mpb | reliability_requirement |
       reliability_requirement_frr_adj | ee_addback | curve_point_ucap.
       net_cone is the Net
       Cost of New Entry anchor (CONE minus inframarginal energy/AS rents);
@@ -111,8 +111,22 @@ columns:
       price_floor are the curve's price ceiling/floor (as a multiple of
       net_cone or an absolute price, e.g. PJM's ICAP-basis cap/floor before
       UCAP conversion); curve_point is one (x,y) point on the sloped demand
-      curve; soft_offer_cap and ra_report_price are CAISO's documented
-      fixed-proxy inputs (no centralized auction/curve);
+      curve; soft_offer_cap, ra_report_price and ra_mpb are CAISO's documented
+      fixed-proxy inputs (no centralized auction/curve) and they are three
+      DIFFERENT KINDS of object, never interchangeable: soft_offer_cap is an
+      administrative CEILING on what a CPM-designated resource may OFFER into
+      CAISO's backstop, constructed from an EXISTING unit's going-forward fixed
+      cost (so it contains no capex annuity by design and is not a price anyone
+      is paid); ra_report_price is the CPUC RA Report's retrospective
+      transacted weighted-average by RA product; ra_mpb is the CPUC's PCIA
+      Resource Adequacy Market Price Benchmark — the volume-weighted average of
+      ALL IOU/CCA/ESP RA transactions for a stated delivery year, issued every
+      October under D.22-01-023 and unified into a SINGLE RA value (no
+      system/local/flexible split) by D.25-06-049. ra_mpb is the only one of
+      the three published on a FORWARD delivery year, which is what makes it
+      rule-13-admissible as a forecast capacity-price anchor (it regenerates
+      annually and responds to market conditions). CAISO tags the RA product
+      segment in ``area`` (system | local | flexible | unified);
       reliability_requirement / reliability_requirement_frr_adj are PJM's
       published RTO Reliability Requirement (UCAP MW) unadjusted and adjusted
       for FRR (the RPM-market requirement the VRR curve is drawn against);
