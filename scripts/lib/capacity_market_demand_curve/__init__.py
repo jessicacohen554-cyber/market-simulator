@@ -92,6 +92,16 @@ METRIC_VOCAB: frozenset[str] = frozenset(
         "curve_point_ucap",
         "soft_offer_cap",
         "ra_report_price",
+        # CPUC PCIA Resource Adequacy Market Price Benchmark (FFR-4F): the
+        # volume-weighted average of ALL IOU/CCA/ESP RA transactions for a
+        # stated DELIVERY year, unified to a single RA value by D.25-06-049 and
+        # issued each October under D.22-01-023. A THIRD distinct CAISO object,
+        # never interchangeable with the two above -- soft_offer_cap is an
+        # administrative ceiling on backstop OFFERS built from an EXISTING
+        # unit's going-forward fixed cost, ra_report_price is retrospective by
+        # RA product, and ra_mpb is the only one published on a FORWARD
+        # delivery year. See data/raw/capacity-market/demand-curve/caiso/.
+        "ra_mpb",
         "reliability_requirement",
         "reliability_requirement_frr_adj",
         "ee_addback",

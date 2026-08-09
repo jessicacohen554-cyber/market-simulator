@@ -386,6 +386,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # ercot-174 unit-scoped successor: same treatment (default-off,
     # byte-identical at its default, so dropped from the hash there).
     "ercot_dam_availability_event_cap_unit_scoped",
+    # ercot-185 fault-3 partial-layer construction repair: same treatment
+    # (default-off, byte-identical at its default because the loader then reads
+    # the unchanged flat extract, so dropped from the hash there).
+    "ercot_partial_outage_shaped_derate",
     # ERCOT-111 measured incremental-heat-rate floor on the COAL econ ramp.
     # Default-off and byte-identical for every existing config (with the gate
     # off no offer-curve band is touched), so it is dropped from the hash at its
@@ -727,6 +731,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # same-key invalidation and it needs no cache epoch); an armed run changes
     # the accredited storage ledger and so keys distinctly.
     "caiso_storage_nqc_accreditation",
+    # CAISO RA-MPB capacity-price anchor (FFR-4F, default off): dropped from the
+    # hash at its default so every pre-existing key in every ISO stays
+    # byte-stable -- unarmed, resolve_caiso_ra_mpb_anchor returns None before
+    # any branch of the price seam is taken, so the arm is byte-identical off
+    # (like its FFR-4E sibling above, and unlike the FFR-4D one below, this is
+    # NOT a same-key invalidation and needs no cache epoch); an armed run prices
+    # CAISO capacity at 138.36 instead of 88.08 $/kW-yr and so keys distinctly.
+    "caiso_ra_mpb_capacity_anchor",
     # CAISO measured backcast storage base fleet (FFR-4D, default ON): dropped
     # from the hash at its default so every pre-existing key stays byte-stable
     # (the pinned default 603c2498bf71d21d holds). UNLIKE every sibling above
@@ -988,6 +1000,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # a flip of it was undetectable).
     "ercot_dam_availability_event_cap_reconciliation": "False",
     "ercot_dam_availability_event_cap_unit_scoped": "False",
+    "ercot_partial_outage_shaped_derate": "False",
     "coal_econ_marginal_hr_bound": "False",
     "ercot_wind_zone_shape": "False",
     "gas_offer_net_revenue_margin": "False",
@@ -1051,6 +1064,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_energy_online_capability_cap_path": "None",
     "caiso_nqc_accreditation": "False",
     "caiso_storage_nqc_accreditation": "False",
+    "caiso_ra_mpb_capacity_anchor": "False",
     "ercot_wtx_curtail_unpooled": "False",
     "ercot_wtx_panhandle_owner": '"tie"',
     "ercot_offer_surface_continuous": "False",
@@ -1128,6 +1142,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     # FFR-W1X lesson recorded on the gas entry directly above).
     "ercot_dam_availability_event_cap_reconciliation": "measured DAM-award event-cap reconciliation",
     "ercot_dam_availability_event_cap_unit_scoped": "measured unit-scoped event-cap composition",
+    "ercot_partial_outage_shaped_derate": "measured day-shaped partial-outage plateau derate",
     "pjm_dam_availability": "measured PJM DAM availability record",
     "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
     # --- measured per-plant operating conduct ---
@@ -3192,6 +3207,54 @@ class ScenarioConfig:
     # SCOPE. CAISO-only by construction (the registry holds one ISO and the
     # gate resolves per ISO) — rule 25 [R-ISO-SCOPE]. ERCOT's parallel storage
     # question (FFR-4D D-3) is ERCOT's lane and nothing here transfers to it.
+    caiso_ra_mpb_capacity_anchor: bool = False  # GATED default-OFF (FFR-4F
+    # 2026-08-09, docs/handoffs/ffr-4f-caiso-anchor-merits-2026-08-09.md).
+    # Replaces CAISO's capacity-price anchor — the CPM SOFT-OFFER CAP
+    # (88.08 $/kW-yr) — with the CPUC unified Resource Adequacy Market Price
+    # Benchmark (138.36 $/kW-yr), at the ONE shared capacity-price seam
+    # (capacity_market.capacity_price_per_firm_mw_yr via
+    # resolve_caiso_ra_mpb_anchor, rule 19 [R-ONE-MECH]: it REPLACES the
+    # anchor, never stacks on it), so all five consumers move together — the
+    # retirement screen, thermal entry, VRE entry, storage entry and the
+    # plant-financials report.
+    #
+    # THIS IS NOT A ROW-4 FIX. FC-2 row 4's movement is REPORTED as a side
+    # effect of this correction and is never its objective or its success
+    # metric. The owner declined the anchor AS A ROUTE to row 4 (D-15's
+    # charter) and FFR-3W §5.3 named the trap in advance: closing row 4 through
+    # the entry screen still builds ~14 GW of CTs California does not need,
+    # merely through the economic channel instead of the administrative one.
+    # This field exists because the shipped anchor is mis-specified ON ITS OWN
+    # TERMS — a rule 14 [R-ACCURATE] defect whatever it does to any gate.
+    #
+    # WHY IT EXISTS. The shipped 88.08 is FERC ER24-1225's "$73.41/kW-yr
+    # GOING-FORWARD FIXED COST of a 550 MW CC reference unit x 1.20": a
+    # RETENTION cost for an EXISTING COMBINED-CYCLE, used as the entry price
+    # for a new COMBUSTION TURBINE, and in any case a CEILING on backstop
+    # OFFERS rather than a price anyone is paid (FFR-3W §2.3's three category
+    # errors, each from the source document's own words). CAISO publishes no
+    # net-CONE and no new-entry capacity price at all — it runs no centralized
+    # auction — so the corrected object is the published price CAISO RA
+    # actually transacts at: the CPUC PCIA RA MPB, volume-weighted over ALL
+    # IOU/CCA/ESP RA transactions with delivery in 2026, unified by
+    # D.25-06-049. Derivation, the corroborating CPUC series and the rule 14
+    # misalignment reconciliation (NQC-vs-UCAP basis; whole-market-average vs
+    # new-entrant price) live on CAISO_RA_MPB_ANCHOR_PER_KW_YR.
+    #
+    # WHY DEFAULT-OFF. The CAISO BACKCAST keeper reaches this seam (the
+    # retirement screen and the plant-financials capacity-revenue report both
+    # price through it), so byte-inertness is NOT available by inspection.
+    # Default-OFF makes it hold BY CONSTRUCTION rather than by measurement —
+    # the charter's stop-the-line keeper guard, honoured structurally, exactly
+    # as its FFR-4E sibling above. Arming posture is an OWNER decision
+    # (rules 5/24/28); this field is the switch that decision flips.
+    # Registered in _CACHE_KEY_OPTIONAL_FIELDS at False, so an unarmed run's
+    # cache key is byte-stable (the pinned default 603c2498bf71d21d holds) and
+    # an armed run keys distinctly.
+    #
+    # SCOPE. CAISO-only by construction — resolve_caiso_ra_mpb_anchor returns
+    # None for every other ISO, so no other market's anchor can move (rule 25
+    # [R-ISO-SCOPE]). No PJM/NYISO/ISO-NE/MISO net-CONE is read or changed.
     ramp_limits: bool = False  # GATED, default-OFF plant-group hourly ramp
     # envelopes in the dispatch LP (model/dispatch._build_ramp_rows). One
     # two-sided row per ramp-constrained plant group per hour transition,
@@ -8752,6 +8815,36 @@ class ScenarioConfig:
     # docs/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md
     ercot_dam_availability_event_cap_unit_scoped: bool = False
 
+    # ercot-185 FAULT-3 PARTIAL-LAYER CONSTRUCTION REPAIR (default off, ERCOT
+    # backcast). NOT a composition change — the f_window x f_partial product is
+    # untouched and the ERCOT-148/149 precedence is not disturbed. What changes
+    # is how ONE layer is CONSTRUCTED: the partial-outage plateau stops imposing
+    # a multi-week MEDIAN of daily maxima as an HOURLY ceiling (FINDING-ercot172
+    # §4 fault 3 — W A Parish's single derate_factor 0.363 spanning 2024-03-04 ->
+    # 05-04 caps h2827 at 0.36 against the plant's own same-hour CEMS of 0.78,
+    # the residual defect no composition rule reaches: ercot-173 and ercot-174
+    # both adjudicated the composition family dead, the latter stopping pre-solve
+    # at rho 0.94-0.96). Armed, the loader reads the DAY-SHAPED extract
+    # (data/raw/campd-partial-outages-shaped.csv, derive_partial_outages.py
+    # --emit-shaped): the SAME plateaus over the SAME day spans, split into
+    # consecutive day sub-windows whose derate is
+    #     shaped(d) = clip(f0 * sm[d] / median(sm[i:j]), 0, 1)
+    # with f0 the incumbent's own flat factor and sm the detector's own centered
+    # _SMOOTH_DAYS rolling median of daily-max CF. Both are medians of the SAME
+    # daily-maximum series differing only in the median's window, so this is a
+    # grain refinement IN TIME of one measured statistic — the temporal analogue
+    # of the ercot-174 unit-grain refinement — and zero new scalars enter (rule
+    # 23 [R-DOF]). Because scaling commutes with the median, median(shaped) == f0
+    # exactly: a PROVABLE pure re-shaping, never a net lift or cut, which is what
+    # separates it from the restore-only composition arms. Covered hours are
+    # identical (SP-2) and the flat extract is byte-unchanged (SP-1), both
+    # asserted inside the deriver. Fail-safe: with the shaped file absent the
+    # loader reads the flat extract, so the gate degrades to the incumbent.
+    # Backcast-only by construction (the extracts are measured CAMPD overlays);
+    # forecast untouched.
+    # docs/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md
+    ercot_partial_outage_shaped_derate: bool = False
+
     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
     # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
     # from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von
@@ -12869,6 +12962,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_dam_availability_gas_event_cap": 3,
     "ercot_dam_availability_event_cap_reconciliation": 3,
     "ercot_dam_availability_event_cap_unit_scoped": 3,
+    "ercot_partial_outage_shaped_derate": 3,
     "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
 }

@@ -825,6 +825,17 @@ def unit_outage_maxgen_derate_factors(
 # factor per plant: 1.0 outside detected windows, derate_factor within.
 PARTIAL_OUTAGE_CSV: Path = RAW_DATA_DIR / "campd-partial-outages.csv"
 
+# DAY-SHAPED partial-outage plateaus (ercot-185, the fault-3 construction
+# repair): the SAME plateaus over the SAME day spans as PARTIAL_OUTAGE_CSV,
+# emitted as consecutive day sub-windows carrying a day-resolved derate profile
+# instead of one flat multi-week factor (scripts/data/derive_partial_outages.py
+# --emit-shaped, whose in-deriver SP-2/SP-6 assertions prove the covered hour
+# set is identical and the profile is median-preserving — only the WITHIN-window
+# SHAPE changes, rule 23 [R-FROZEN-DERIVE]). Identical 7-column schema, so this
+# file is consumed by the same loader and needs no separate accumulator.
+# Raw-only, like campd-partial-outages-units.csv: no curated datatype is minted.
+PARTIAL_OUTAGE_SHAPED_CSV: Path = RAW_DATA_DIR / "campd-partial-outages-shaped.csv"
+
 
 @lru_cache(maxsize=None)
 def partial_outage_derate_factors(
@@ -832,6 +843,7 @@ def partial_outage_derate_factors(
     hours: int = HOURS_PER_YEAR,
     iso: str = "ERCOT",
     class_grain: bool = False,
+    shaped: bool = False,
 ) -> dict[int, np.ndarray] | dict[tuple[int, str], np.ndarray]:
     """Return the CAMPD-derived partial-outage plateau availability multipliers.
 
@@ -847,6 +859,18 @@ def partial_outage_derate_factors(
     identical per-bin factors today; the repair is wiring correctness, asserted
     inert by the ercot-173 seam proof.
 
+    With ``shaped=True`` (the ercot-185 fault-3 construction repair, gated by
+    ``ScenarioConfig.ercot_partial_outage_shaped_derate``) reads
+    :data:`PARTIAL_OUTAGE_SHAPED_CSV` instead — the same plateaus over the same
+    day spans, split into consecutive day sub-windows carrying a day-resolved
+    derate profile, so a multi-week MEDIAN of daily maxima is no longer imposed
+    as an HOURLY ceiling (`FINDING-ercot172` §4 fault 3). No accumulator change
+    is needed: the per-row ``np.minimum`` below already composes many windows
+    per plant, and the shaped sub-windows tile their plateau exactly. Falls back
+    to the flat extract when the shaped file is absent, so the gate is
+    fail-safe. The curated ``partial-outages`` clean partition carries the FLAT
+    extract only, so the shaped path deliberately does not read it.
+
     When ``MARKET_SIM_USE_CLEAN`` is set and the ISO's curated
     ``partial-outages`` clean partition exists (written by
     ``scripts/data/curate_partial_outages.py``), reads from there; otherwise reads
@@ -857,7 +881,9 @@ def partial_outage_derate_factors(
     cols = ["plant_id", "year", "outage_start", "outage_stop", "derate_factor"]
     if class_grain:
         cols.insert(1, "plant_group")
-    if _use_clean():
+    if shaped and PARTIAL_OUTAGE_SHAPED_CSV.exists():
+        df = pd.read_csv(PARTIAL_OUTAGE_SHAPED_CSV)
+    if df is None and _use_clean():
         clean_io = _clean_io()
         if clean_io.clean_exists("partial-outages", iso=iso):
             df = clean_io.read_clean(

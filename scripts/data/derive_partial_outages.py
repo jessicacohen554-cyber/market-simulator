@@ -60,6 +60,8 @@ from scripts.lib.outage_detect import (  # noqa: E402
     _CEILING_FRAC,
     _RUN_FLOOR_CF,
     _detect,
+    detect_shaped,
+    detect_shaped_raw,
 )
 
 # Unit-attribution (--emit-units) reuses the unit-level deriver's CEMS loader,
@@ -190,6 +192,132 @@ def _carrying_units(
     return carried
 
 
+def _shaped_rows(
+    row: dict,
+    full: pd.DatetimeIndex,
+    s_day: int,
+    e_day: int,
+    profile: np.ndarray,
+) -> list[dict]:
+    """Split one plateau into consecutive day sub-windows of constant derate.
+
+    ``row`` is the plant-grain plateau row exactly as emitted; ``profile`` is
+    :func:`scripts.lib.outage_detect.detect_shaped`'s per-day derate over
+    ``[s_day, e_day)``. Consecutive days carrying the same (already 3-dp
+    rounded) factor are merged into one row, so the shaped extract stays a
+    compact list of ``(start, stop, factor)`` windows in the **identical
+    7-column schema** and needs no loader change.
+
+    The covered hour set is identical to the plateau's own by construction
+    (the ercot-185 SP-2 property): sub-windows tile ``[s_day, e_day)`` with no
+    gap and no overlap under the half-open ``[start, stop)`` semantics of
+    :func:`market_sim.data.outages.outage_hour_mask`, and the LAST sub-window
+    inherits the plateau's own ``outage_stop`` verbatim — including the
+    end-of-horizon clamp the plant-grain emission applies when a plateau runs
+    past the CAMPD publication horizon.
+    """
+    stop_of_plateau = row["outage_stop"]
+
+    def _ts(day: int) -> str:
+        return full[day * 24].strftime("%Y-%m-%d %H:00:00")
+
+    out: list[dict] = []
+    d = s_day
+    while d < e_day:
+        fac = float(profile[d - s_day])
+        k = d + 1
+        while k < e_day and float(profile[k - s_day]) == fac:
+            k += 1
+        out.append(
+            {
+                **row,
+                "outage_start": _ts(d),
+                # Interior sub-windows close on the next day boundary; the last
+                # one reproduces the plateau's own (possibly clamped) stop.
+                "outage_stop": stop_of_plateau if k >= e_day else _ts(k),
+                "derate_factor": fac,
+            }
+        )
+        d = k
+    return out
+
+
+def _write_shaped(
+    plant: pd.DataFrame, shaped_rows: list[dict], path: str, raw: bool
+) -> None:
+    """Write the day-shaped extract, asserting SP-2 and SP-6 in the deriver.
+
+    Both proofs are stop-the-line inside the derive rather than checks a later
+    session might forget to run (the ercot-174 BE-3 precedent):
+
+    * **SP-2 — covered-hour-set identity.** Per plateau, the shaped
+      sub-windows must tile exactly the plant-grain window's ``[start, stop)``
+      with no gap and no overlap. This is what makes the change a *re-shaping*
+      rather than a change to the detected event-window POPULATION (which
+      would reach G-NEUT; precommit §2c).
+    * **SP-6 — median preservation.** Per plateau, the DAY-weighted median of
+      the shaped profile must equal the incumbent flat factor to within 3-dp
+      rounding, i.e. the arm is neither a net lift nor a net cut (precommit
+      §2a-bis). Skipped for the reported-only RAW variant, which by design
+      does not preserve the level.
+    """
+    shaped = pd.DataFrame(shaped_rows, columns=_PLANT_COLUMNS).sort_values(
+        [*_SORT_KEY, "outage_start"]
+    )
+    key = ["oris_code", "plant_group", "year"]
+    max_med_dev = 0.0
+    for k, grp in plant.groupby(key, observed=True):
+        sub = shaped[
+            (shaped["oris_code"] == k[0])
+            & (shaped["plant_group"] == k[1])
+            & (shaped["year"] == k[2])
+        ]
+        for r in grp.itertuples(index=False):
+            seg = sub[
+                (sub["outage_start"] >= r.outage_start)
+                & (sub["outage_start"] < r.outage_stop)
+            ].sort_values("outage_start")
+            if seg.empty:
+                raise SystemExit(f"SP-2 FAILED: plateau {k} {r.outage_start} unshaped")
+            starts = pd.to_datetime(seg["outage_start"]).tolist()
+            stops = pd.to_datetime(seg["outage_stop"]).tolist()
+            # Tiling: first start and last stop match the plateau exactly, and
+            # every interior boundary is shared (no gap, no overlap).
+            if (
+                starts[0] != pd.Timestamp(r.outage_start)
+                or stops[-1] != pd.Timestamp(r.outage_stop)
+                or any(st != sp for st, sp in zip(starts[1:], stops[:-1]))
+            ):
+                raise SystemExit(
+                    f"SP-2 FAILED: shaped sub-windows do not tile plateau "
+                    f"{k} {r.outage_start} -> {r.outage_stop}"
+                )
+            if raw:
+                continue
+            # Day-weighted median of the profile == the incumbent flat factor.
+            days = [
+                max(1, int((sp - st) / pd.Timedelta(days=1)))
+                for st, sp in zip(starts, stops)
+            ]
+            prof = np.repeat(seg["derate_factor"].to_numpy(dtype=float), days)
+            max_med_dev = max(
+                max_med_dev, abs(float(np.median(prof)) - r.derate_factor)
+            )
+    if not raw and max_med_dev > 0.002:
+        raise SystemExit(
+            f"SP-6 FAILED: shaped profile is not median-preserving "
+            f"(max deviation {max_med_dev:.4f} > 0.002) — the arm is a level "
+            f"change, not a re-shaping"
+        )
+    shaped.to_csv(path, index=False)
+    variant = "RAW (reported-only)" if raw else "NORMALIZED"
+    print(
+        f"wrote {len(shaped)} day-shaped sub-windows to {path} [{variant}] "
+        f"(SP-2 PASS: {len(plant)} plateaus tile exactly; "
+        f"SP-6 {'skipped for RAW' if raw else f'PASS: max median dev {max_med_dev:.4f}'})"
+    )
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
@@ -218,6 +346,30 @@ def main() -> None:
         default=str(EIA_860_DIR / "eia860_generators.parquet"),
         help="EIA-860 generator parquet backing the unit-capacity ladder.",
     )
+    ap.add_argument(
+        "--emit-shaped",
+        action="store_true",
+        help=(
+            "also write the DAY-SHAPED companion (ercot-185 fault-3 repair): "
+            "the same plateaus over the same day spans, carrying a day-resolved "
+            "derate profile instead of one flat multi-week factor. Identical "
+            "7-column schema, identical covered hours. The plant-grain --out "
+            "file is unchanged."
+        ),
+    )
+    ap.add_argument(
+        "--out-shaped",
+        default=str(RAW_DATA_DIR / "campd-partial-outages-shaped.csv"),
+    )
+    ap.add_argument(
+        "--shaped-raw",
+        action="store_true",
+        help=(
+            "emit the REPORTED-ONLY variant RAW (min(1, sm/ref) per day) into "
+            "--out-shaped instead of the armed NORMALIZED construction. For "
+            "seam measurement only; never the mechanism (precommit §2a-bis)."
+        ),
+    )
     args = ap.parse_args()
 
     bins = load_campd_bins("data/raw/reference/custom-bin-assignments.csv")
@@ -236,6 +388,7 @@ def main() -> None:
 
     rows = []
     unit_rows: list[dict] = []
+    shaped_rows: list[dict] = []
     for yr in args.years:
         df = campd.load_campd_hourly(campd.states_for_iso(args.iso), [yr])
         if df.empty:
@@ -275,6 +428,14 @@ def main() -> None:
             # depressed ceilings are only trustworthy on baseload units.
             if group.get(code) == "CC_REGULAR" and cf.mean() < _BASELOAD_CF:
                 continue
+            # Day-shaped profiles for this plant-year, keyed by the plateau's
+            # own day span. detect_shaped reads its spans from the SAME
+            # _plateau_spans as _detect, so the keys always line up and a
+            # missing key is impossible (asserted below rather than assumed).
+            shaped_index: dict[tuple[int, int], np.ndarray] = {}
+            if args.emit_shaped:
+                _fn = detect_shaped_raw if args.shaped_raw else detect_shaped
+                shaped_index = {(s, e): p for s, e, p in _fn(cf)}
             for s, e, factor in _detect(cf):
                 row = {
                     "oris_code": code,
@@ -288,6 +449,14 @@ def main() -> None:
                     "derate_factor": factor,
                 }
                 rows.append(row)
+                if args.emit_shaped:
+                    prof = shaped_index.get((s, e))
+                    if prof is None:
+                        raise SystemExit(
+                            f"shaped detector lost plateau {code} {yr} "
+                            f"[{s},{e}) — the two plateau populations diverged"
+                        )
+                    shaped_rows.extend(_shaped_rows(row, full, s, e, prof))
                 if not args.emit_units:
                     continue
                 # Attribute this plateau to the units that carry it. The
@@ -335,6 +504,9 @@ def main() -> None:
             f"  {yr}: {(out['year'] == yr).sum()} windows, "
             f"{out[out['year'] == yr]['oris_code'].nunique()} plants"
         )
+    if args.emit_shaped:
+        _write_shaped(out, shaped_rows, args.out_shaped, raw=args.shaped_raw)
+
     if not args.emit_units:
         return
 

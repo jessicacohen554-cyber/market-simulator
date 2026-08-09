@@ -508,6 +508,10 @@ def run_year(
     caiso_zonal_loss_surface: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
     unit_outage_lp_capacity_basis: bool | None = None,
+    # caiso-186 published seasonal CC capability basis. run_calibration_full
+    # .solve_and_persist has threaded this to run_year since the caiso-186
+    # merge, but the parameter was never added here, so EVERY solve through
+    # the orchestrator raised TypeError (see the ercot-185 FINDING §disclosed).
     cc_winter_capability_basis: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
