@@ -23,6 +23,7 @@ import pandas as pd
 import pytest
 
 from market_sim import runner
+from market_sim.config.scenario_resolvers import resolve_demand_growth_rate
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.emission_rates import (
     QUARANTINE_RATE_BASIS_FROM,
@@ -181,6 +182,55 @@ class TestHarness(unittest.TestCase):
         # hindcast solves it (rule-22 bridge), so no AEO2022 path exists.
         with pytest.raises(SystemExit, match="hindcast_asknown_aeo2022"):
             H.full_forward_gas_path("asknown", 2022)
+
+    def test_arm_k_sets_demand_growth_vintage(self):
+        # FH-2 §7 wiring, landed by FH-4: --arm asknown carries the as-of
+        # demand-growth vintage exactly like its gas path — by the arm, no new
+        # flag. FH-3's table makes (2023, ERCOT) resolvable; the resolved rate
+        # is the cited 2023 LTLF near CAGR, not the live table's.
+        c = H.build_config(
+            "ERCOT",
+            2023,
+            2025,
+            "realized",
+            vintage=2023,
+            forward_from_base=True,
+            arm="asknown",
+        )
+        self.assertEqual(c.demand_growth_vintage, 2023)
+        self.assertEqual(resolve_demand_growth_rate(c, 2024), 0.0243)
+
+    def test_arm_k_base_2021_sets_vintage_2021(self):
+        c = H.build_config(
+            "ERCOT",
+            2021,
+            2025,
+            "realized",
+            vintage=2020,
+            forward_from_base=True,
+            arm="asknown",
+        )
+        self.assertEqual(c.demand_growth_vintage, 2021)
+
+    def test_demand_growth_vintage_none_everywhere_else(self):
+        # Arm R (zero-year growth spans — the table never binds) and both
+        # non-T1-FF modes stay on the default table, keeping their cache keys
+        # exactly the pre-wiring surface (the field is cache-neutral at None).
+        arm_r = H.build_config(
+            "ERCOT",
+            2023,
+            2025,
+            "realized",
+            vintage=2023,
+            forward_from_base=True,
+            arm="realized",
+        )
+        plain = H.build_config("ERCOT", 2021, 2025, "realized", vintage=2020)
+        cross = H.build_config(
+            "ERCOT", 2023, 2027, "realized", vintage=2023, crossover=True
+        )
+        for c in (arm_r, plain, cross):
+            self.assertIsNone(c.demand_growth_vintage)
 
     def test_policy_parity(self):
         self.assertEqual(

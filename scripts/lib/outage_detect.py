@@ -354,20 +354,36 @@ _CEILING_FRAC = 0.65  # daily max below this fraction of the normal ceiling
 _RUN_FLOOR_CF = 0.06  # daily mean above this = running (not a full outage)
 
 
-def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
-    """Return ``[(start_day, end_day_excl, derate_factor), ...]`` plateaus."""
+def _plateau_state(
+    cf: np.ndarray,
+) -> tuple[np.ndarray, float, np.ndarray, np.ndarray] | None:
+    """Return ``(dmax, ref, sm, partial)`` — the plateau detector's statistics.
+
+    The single definition of the detector's own quantities, shared by
+    :func:`_detect` (the incumbent flat-plateau factor) and
+    :func:`detect_shaped` (the ercot-185 day-shaped profile) so the two can
+    never drift apart. ``None`` when the series carries no usable day grid or
+    the plant never runs (``ref <= 0``), which both callers treat as "no
+    plateaus".
+
+    * ``dmax`` — per-day maximum capacity factor (the plant's revealed daily
+      ceiling); ``ref`` — its 90th percentile over RUNNING days
+      (``dmean > _RUN_FLOOR_CF``), i.e. the plant's normal ceiling.
+    * ``sm`` — the centered ``_SMOOTH_DAYS`` rolling median of ``dmax``, so
+      brief recovery blips (a unit cycling back for a day or two) don't break
+      an otherwise sustained partial outage.
+    * ``partial`` — the plateau membership mask, ``running & (sm <
+      _CEILING_FRAC * ref)``.
+    """
     nd = cf.shape[0] // 24
     if nd == 0:
-        return []
+        return None
     day = cf[: nd * 24].reshape(nd, 24)
     dmax, dmean = day.max(1), day.mean(1)
     running = dmean > _RUN_FLOOR_CF
     ref = float(np.percentile(dmax[running], 90)) if running.any() else 0.0
     if ref <= 0.0:
-        return []
-    # Smooth the daily-max ceiling with a centered rolling median so brief
-    # recovery blips (a unit cycling back for a day or two) don't break an
-    # otherwise sustained partial outage.
+        return None
     sm = (
         pd.Series(dmax)
         .rolling(_SMOOTH_DAYS, center=True, min_periods=4)
@@ -375,20 +391,124 @@ def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
         .to_numpy()
     )
     partial = running & (sm < _CEILING_FRAC * ref)
-    out, i = [], 0
+    return dmax, ref, sm, partial
+
+
+def _plateau_spans(partial: np.ndarray) -> list[tuple[int, int]]:
+    """Return the ``[(start_day, end_day_excl), ...]`` sustained plateaus.
+
+    Maximal runs of :func:`_plateau_state`'s membership mask lasting at least
+    the frozen :data:`_MIN_DAYS`. Both plateau consumers read their spans from
+    here, so the detected population is one object by construction (the
+    ercot-185 SP-2 covered-hour-set identity is a consequence of this, not an
+    accident of two parallel loops).
+    """
+    nd = int(partial.shape[0])
+    out: list[tuple[int, int]] = []
+    i = 0
     while i < nd:
         if partial[i]:
             j = i
             while j < nd and partial[j]:
                 j += 1
             if j - i >= _MIN_DAYS:
-                # Typical depressed ceiling over the window (median ignores the
-                # blips, so the derate reflects the sustained reduced capacity).
-                ceiling = float(np.median(dmax[i:j]))
-                out.append((i, j, round(min(1.0, ceiling / ref), 3)))
+                out.append((i, j))
             i = j
         else:
             i += 1
+    return out
+
+
+def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
+    """Return ``[(start_day, end_day_excl, derate_factor), ...]`` plateaus."""
+    st = _plateau_state(cf)
+    if st is None:
+        return []
+    dmax, ref, _sm, partial = st
+    out: list[tuple[int, int, float]] = []
+    for i, j in _plateau_spans(partial):
+        # Typical depressed ceiling over the window (median ignores the blips,
+        # so the derate reflects the sustained reduced capacity).
+        ceiling = float(np.median(dmax[i:j]))
+        out.append((i, j, round(min(1.0, ceiling / ref), 3)))
+    return out
+
+
+def detect_shaped(cf: np.ndarray) -> list[tuple[int, int, np.ndarray]]:
+    """Return ``[(start_day, end_day_excl, per-day derate), ...]`` plateaus.
+
+    The ercot-185 fault-3 repair: the SAME plateaus as :func:`_detect`, over the
+    SAME day spans, but carrying a **day-resolved** derate profile instead of a
+    single flat factor. `FINDING-ercot172` §4 fault 3 measured the defect this
+    fixes — a multi-week MEDIAN of daily maxima imposed as an HOURLY ceiling, so
+    a plant averaging 40 % over three weeks is forbidden the 80 % afternoons its
+    own CEMS record shows it ran (W A Parish h2827: ceiling 0.36 vs measured
+    0.78).
+
+    Construction (``docs/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md``
+    §2a, amendment A-1), per plateau ``[i, j)``::
+
+        f0        = round(min(1, median(dmax[i:j]) / ref), 3)   # the incumbent factor
+        shaped(d) = clip(f0 * sm[d] / median(sm[i:j]), 0, 1)    # for each day d in [i, j)
+
+    ``f0`` and ``sm`` are medians of the SAME daily-maximum series, differing
+    only in the window the median is taken over — the whole plateau versus a
+    centered ``_SMOOTH_DAYS`` band — so this is a **grain refinement in time** of
+    one measured statistic, the temporal analogue of the ercot-174 unit-grain
+    refinement. Because scaling commutes with the median, ``median(shaped[i:j])
+    == f0`` exactly (before clipping/rounding): the profile is a **pure
+    re-shaping of the incumbent plateau, never a net lift or cut** (the ercot-185
+    SP-6 property). Every input is the frozen detector's own — ``_MIN_DAYS``,
+    ``_SMOOTH_DAYS``, ``_CEILING_FRAC``, ``_RUN_FLOOR_CF``, ``ref`` — so **zero**
+    new scalars enter (rule 23 `[R-DOF]`).
+
+    Fail-safe: a plateau whose ``median(sm[i:j])`` is non-positive cannot be
+    normalised, so it falls back to the incumbent flat ``f0`` on every day.
+
+    ``detect_shaped_raw`` is the reported-only variant that skips the
+    normalisation; it is NOT the mechanism (see the precommit §2a-bis).
+    """
+    return _detect_shaped(cf, normalize=True)
+
+
+def detect_shaped_raw(cf: np.ndarray) -> list[tuple[int, int, np.ndarray]]:
+    """Variant RAW of :func:`detect_shaped`: ``min(1, sm[d] / ref)`` per day.
+
+    REPORTED ONLY — measured at the seam as the evidence for the precommit
+    §2a-bis argument and never armed, because it changes the plateau's LEVEL as
+    well as its shape: plateau membership already guarantees ``sm[d] <
+    _CEILING_FRAC * ref`` on every day inside a plateau, so this form is bounded
+    above by ``_CEILING_FRAC`` while the incumbent factor (a median of the raw,
+    upward-tailed ``dmax``) is not.
+    """
+    return _detect_shaped(cf, normalize=False)
+
+
+def _detect_shaped(
+    cf: np.ndarray, normalize: bool
+) -> list[tuple[int, int, np.ndarray]]:
+    """Shared body of :func:`detect_shaped` / :func:`detect_shaped_raw`."""
+    st = _plateau_state(cf)
+    if st is None:
+        return []
+    dmax, ref, sm, partial = st
+    out: list[tuple[int, int, np.ndarray]] = []
+    for i, j in _plateau_spans(partial):
+        f0 = round(min(1.0, float(np.median(dmax[i:j])) / ref), 3)
+        win = np.asarray(sm[i:j], dtype=float)
+        if not normalize:
+            prof = np.minimum(1.0, win / ref)
+        else:
+            mid = float(np.median(win))
+            # Fail-safe: an unnormalisable plateau keeps the incumbent flat
+            # factor, so the shaped extract can never be worse-identified than
+            # the file it refines.
+            prof = (
+                np.full(win.shape, f0, dtype=float)
+                if not mid > 0.0
+                else np.clip(f0 * win / mid, 0.0, 1.0)
+            )
+        out.append((i, j, np.round(prof, 3)))
     return out
 
 
