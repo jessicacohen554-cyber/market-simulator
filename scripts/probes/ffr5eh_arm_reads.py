@@ -66,11 +66,16 @@ def ledgers(rd: Path) -> dict[int, dict]:
 
 
 def procured_rows(led: dict) -> list[dict]:
-    """Return a ledger year's ``source == "procured"`` renewable additions."""
+    """Return a ledger year's ``source == "procured"`` VRE additions.
+
+    The attribution rows live under ``vre_additions`` — the source-tagged,
+    per-generator record ``evolve_fleet`` step 4b emits (design §3.5, the rule
+    13 attribution requirement). ``renewable_additions`` in the same ledger is
+    the AGGREGATED pool delta (zone/tech/mw only, no ``source`` and no EIA-860
+    ids), so reading it for provenance silently finds nothing.
+    """
     return [
-        r
-        for r in (led.get("renewable_additions") or [])
-        if r.get("source") == "procured"
+        r for r in (led.get("vre_additions") or []) if r.get("source") == "procured"
     ]
 
 
