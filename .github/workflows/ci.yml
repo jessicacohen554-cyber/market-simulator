@@ -213,6 +213,48 @@ jobs:
         if: always()
         run: python3 scripts/check_cache_key_registration.py
 
+  cache-key-pin:
+    name: Pinned default cache key
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: uv sync
+      # HOUSE-1 (X.2, the red-main CI gap). These same tests were ALREADY in
+      # two job-level-blocking places when nyiso-128's unregistered field
+      # landed (PR #3624): test_persisted_identity.py in refactor-guards, both
+      # files collected by fast-tests — and both jobs correctly FAILED, as did
+      # cache-key-guard. None of it stopped the merge, for two reasons this
+      # job addresses one of and names the other:
+      #
+      # 1. SIGNAL ISOLATION (addressed here). Every job those tests ride is
+      #    also red for unrelated reasons whenever main carries baseline
+      #    failures (it did then; it does today), so a moved pinned key is
+      #    indistinguishable from ambient red without opening logs. THIS check
+      #    is red if and only if the persisted-identity / pinned-cache-key
+      #    contract is broken: red cache-key-pin = a moved default key, no log
+      #    forensics needed.
+      # 2. ENFORCEMENT (not addressable from inside a workflow file). PR #3624
+      #    was merged 86 s after creation — before ANY check completed. A
+      #    GitHub check, "blocking" or not, only gates a merge when the branch
+      #    is protected by required status checks and the merge waits for
+      #    them. That is a repo-settings act (owner): mark THIS check name
+      #    ("Pinned default cache key") required on main. Until then this job,
+      #    like every job in this file, is advisory in effect.
+      #
+      # Runs the two pin/guard files only (~2 s of pytest after uv sync), so
+      # its verdict lands minutes before the tiers that need the full suite.
+      - name: Pinned-key + declared-default guard tests
+        run: >-
+          uv run python -m pytest -q
+          tests/regression/test_persisted_identity.py
+          tests/unit/config/test_cache_key_default_flip_guard.py
+
   lint:
     name: Ruff lint + format
     runs-on: ubuntu-latest
