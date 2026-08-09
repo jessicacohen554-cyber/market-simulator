@@ -892,7 +892,83 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-09-caiso-184-c1-lpbasis`** — caiso-184, the outage-derate DENOMINATOR repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY with **EVERY pre-registered gate PASSING**; **NOT-YET**, 8 criteria scored, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.5 / +13.1 %** having narrowed in all three years against a **ZERO** same-head noise floor). **QUEUE RE-CONFIRMED EMPTY 2026-08-09 by caiso-185: `cc_capacity_reconcile` — the last named un-adjudicated in-model cell — is **REJECTED EX ANTE, NO LP SPENT**, and the open question is now an OWNER SITTING, not a tenth lever.**
+### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-09-caiso-184-c1-lpbasis`** — caiso-184, the outage-derate DENOMINATOR repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY with **EVERY pre-registered gate PASSING**; **NOT-YET**, 8 criteria scored, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.5 / +13.1 %** having narrowed in all three years against a **ZERO** same-head noise floor). **QUEUE RE-CONFIRMED EMPTY 2026-08-09 by caiso-185: `cc_capacity_reconcile` — the last named un-adjudicated in-model cell — is **REJECTED EX ANTE, NO LP SPENT**, and the open question is now an OWNER SITTING, not a tenth lever.** **THE SITTING IS NOW PREPARED (owner-sitting session, 2026-08-09, `docs/handoffs/caiso-186-owner-sitting-2026-08-09.md`): both owner questions are DECIDABLE from committed artifacts, and BOTH ANSWER **NO** — the walled PS water-state intake covers only **62.1 % / 10.4 %** of 2024/2025's required C3a move at its most favourable bound, and a C3a ledger amendment would take TWO rubric changes, inherit to ERCOT (−32.4 %) and MISO (−14.1 %), and flip MISO for free. **THE NON-LEVER WORK IS RE-STATED AND IT IS LARGER THAN THE LEDGER SAYS:** CAISO's ISO-specific residual DOF census is **3, not 4** (the TAC-weights row CLOSED at caiso-172) and CAISO is **TIED WITH ERCOT**, not "the most of any ISO" — but the `IMPORT_TRANCHES[CAISO]` row's "superseded on the binding path" text **DOES NOT CHECK OUT**: split into limbs, **the four spot CAPACITIES (8,800 MW, uncited, and the object FINDING-caiso140 §C measures as pinning the belly λ) and the two firm PRICES (re-armed onto the margin by `caiso_firm_import_selfsched_clip`, 0.97/4.63/5.71 TWh/yr) are LIVE AND FITTED** — 7 live fitted scalars on the backcast binding path where the ledger implies ~1.**
+
+> **caiso-186 OWNER SITTING (2026-08-09) — THE SITTING IS PREPARED, NOT A LEVER.
+> NO CELL VERDICT MOVES: no mechanism was proposed, tested or adjudicated, no
+> `ScenarioConfig` field was added, and rule 28 duty (b) does not fire.**
+> **KEEPER UNCHANGED: `2026-08-09-caiso-184-c1-lpbasis`. ZERO LP SPENT.** Nothing
+> registered; DOF ledger untouched in the committed attestation (11 / 8);
+> `calibration-complete.json` and `holdout-freeze.json` untouched (owner acts);
+> 2023–2025 only. **C3a is REPORTED and BOUNDED as a decision input, never targeted.**
+> *(Session-number note: the dispatched label collides with the LANDED `caiso-186`
+> seasonal-capability session; this sitting's artifacts carry the distinct
+> `_caiso186os_` prefix and the next free CAISO number is 188.)*
+> * **OWNER Q1 — fund the walled hourly PS water-state intake? ANSWER: NO as a C3a
+>   purchase.** The caiso-141 A2 wall was **RE-VERIFIED LIVE at this head: 5/5
+>   unchanged** (CISO `PS` rows 0; Outlook hydro = the same PS-NET feed, corr 0.950 /
+>   287 MW; `storage.csv` battery-only; CDEC **CTG 0 / WSN 0 / SHV 0** so Helms +
+>   Eastwood = **60.3 %** uninstrumented; sub-BA demand-only). The BOUND, built on the
+>   keeper's own committed hourlies and reproducing the scored C3a to two decimals
+>   (+3.70 / +10.53 / +13.12 %): required fall to the ±10 % band is **0.000 / 0.184 /
+>   1.074 $/MWh**; the most favourable branch (max of model belly PS pumping 644/669/688
+>   MW and the caiso-140 §B water wedge 769/803/793 MW) priced on the caiso-140 §C λ(S)
+>   curve — itself an UPPER bound, measured against a SMALLER gap — gives **−0.107 /
+>   −0.114 / −0.112 $/MWh = 62.1 % of 2024's move and 10.4 % of 2025's. IT DOES NOT
+>   CLOSE.** Two further legs both cut against it: the walkdown priced *free* supply
+>   while PS is **energy-neutral** (cyclic SOC, implied RTE 0.800), so relief at
+>   λ = $1.76–14.62 charge hours is paired with an obliged removal at λ = $38.60–56.23
+>   discharge hours — **sign not guaranteed favourable**; and **71.3 %** of the 2025 gap
+>   sits in hours with **no model PS activity at all**. The intake may still be bought on
+>   rule-1 STRUCTURAL FIDELITY grounds — but then C3a must not be its acceptance test.
+> * **OWNER Q2 — may CAISO be declared on a C3a ledger entry? ANSWER: NO, do not amend.**
+>   Rubric v3.1 restricts ledgering to C3c (`LEDGERABLE_CRITERIA`, fail-closed) and the
+>   amendment that did it, three days ago, **names C3a-at-CAISO as its forcing case**. Making
+>   it effective needs **TWO** changes — widen the set AND raise `MAX_LEDGERED_CAVEATS`
+>   1 → 2, because all three NOT-YET ISOs have already spent their one slot on C3c — which
+>   **doubles every ISO's excuse capacity including the three already declared**. Live
+>   cross-ISO board at HEAD (scored this session, committed artifacts, no solve): **ERCOT
+>   NOT-YET C3a −32.4 %**, **MISO NOT-YET C3a −14.1 % (its ONLY FAIL — it flips for free)**,
+>   NEISO/NYISO CALIBRATED-WITH-CAVEATS, PJM CALIBRATED. Recommended disposition: **stay
+>   NOT-YET** and spend the next session on the DOF repair; second choice a NARROWED claim,
+>   never a widened excuse.
+> * **THIRD AGENDA ITEM (FFR-4E E-2), FOLDED IN, NOT ARMED:**
+>   `caiso_storage_nqc_accreditation` arming is an OWNER decision — arming moves the keeper
+>   **+2,450.5 / +3,558.6 / +4,979.0 MW** and costs a full A/B re-solve + re-gate under rules
+>   15/16 in the CAISO lane. Gate-off is **EXACTLY** inert (pinned by `KeeperInertnessTest`,
+>   default cache key `603c2498bf71d21d` unmoved, no cache epoch), so deferring costs nothing.
+>   **E-1 and the owner-declined (D-15) capacity-price anchor are NOT re-opened.**
+> * **DOF REPAIR — two stale numbers RETIRED (do not re-quote `ASSESSMENT-caiso171` §3):**
+>   ISO-specific residual count **4 → 3** (`CAISO_TAC_ZONE_WEIGHTS['PGE-TAC']` CLOSED and
+>   MEASURED at caiso-172), and **CAISO is TIED WITH ERCOT at 3**, not the most of any ISO
+>   (caiso-171's table omitted ERCOT). Of the three survivors:
+>   `WECC_import_simultaneous.cap_mw` **checks out** (forecast-path residual only,
+>   `capacity_deliverability_limits=True` on the keeper); `battery_dispatch_adder`'s
+>   `root_cause` is **STALE** (both named halves spent — caiso-74/127/129 and caiso-100/101,
+>   ATB now $22.63, further in the rejected direction) and **omits** caiso-176's model-free
+>   ≤ $15/MWh bid-stack bound, which BOUNDS but does not IDENTIFY; and
+>   `IMPORT_TRANCHES[CAISO]` **DOES NOT CHECK OUT** — 4 limbs, 2 closed (firm capacity
+>   MEASURED; spot price superseded at runtime by the measured hub injector) and **2 LIVE**
+>   (spot capacities 1800/1800/2200/3000 MW, named VERBATIM as the open C-6 gap by
+>   FINDING-caiso82 §3 and never derived by any script; firm prices $28/$48, re-armed onto
+>   the margin by caiso-151's `caiso_firm_import_selfsched_clip` for 0.969/4.634/5.705 TWh in
+>   23.9/47.2/48.9 % of hours per FINDING-caiso150 §C/§F). **DO-NOT-REDO the measured-ladder
+>   PRICE lane** — `derive_caiso_import_tranches.py` was run and FAILED LOYO at 30.5 % vs a
+>   25 % bar (caiso-86/86b). The open route is the **spot-capacity** limb, and it is rule-14
+>   `[R-ACCURATE]` DOF-closure work, **never a C3a lever** (rule 1: if it worsens C3a the
+>   measured input stays).
+> * **CONTEXT, not adjudicated here:** `caiso-186` (seasonal capability, REFUSED before solve)
+>   and `caiso-187` (WEFOR overlay, Branch C → escalate) both landed 2026-08-09 and both
+>   ESCALATED to the owner; neither stamped a §5.2 block. caiso-187's measurement — the CAMPD
+>   outage overlay removes **24–35 %** of CAISO CC capacity-hours against a **~10 %** published
+>   planned-plus-forced expectation, **growing 45 % in two years** — is a supply-side
+>   over-removal pointing the same way as C3a's price-level over-shoot. Flagged so the sitting
+>   is not held on stale information; nothing here tests it.
+> `docs/handoffs/caiso-186-owner-sitting-2026-08-09.md` ·
+> `scripts/probes/_caiso186os_ps_intake_bound.py` · `_caiso186os_dof_repair.py` ·
+> records `results/calibration/_caiso186os_ps_intake_bound.json` ·
+> `_caiso186os_dof_repair.json`.
+
 
 > **caiso-185 (2026-08-09) — THE CC DEMONSTRATED-CAPABILITY RECONCILE IS *REFUSED*
 > ON A MEASURED BASIS DEFECT. KILL-BEFORE-SOLVE: **ZERO LP SPENT, NOTHING REGISTERED,
