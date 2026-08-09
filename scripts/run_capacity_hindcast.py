@@ -456,6 +456,10 @@ META_RECORD_SPEC = RecordSpec(
         "exit_rate_limits": FromConfig(cast=bool),
         "capacity_screen_unified_lookahead": FromConfig(cast=bool),
         "capacity_screen_scarcity_restoration": FromConfig(cast=bool),
+        # FFR-5E procurement channel (owner decision D-18(a)). Declared
+        # FromConfig, never FromArgs: the record reads the SOLVED gate, so a
+        # meta can never claim an arming the solve did not carry (FFR-3R).
+        "vre_procurement_additions_enabled": FromConfig(cast=bool),
         "renewable_elcc_curves": FromConfig(cast=bool),
         "gas_price_path": FromConfig(),
         "crossover_forward_year": FromConfig(),
@@ -548,6 +552,7 @@ def build_config(
     exit_rate_limits: "bool | None" = None,
     capacity_screen_unified_lookahead: "bool | None" = None,
     capacity_screen_scarcity_restoration: "bool | None" = None,
+    vre_procurement_additions: "bool | None" = None,
     ptc_window: "int | str | None" = None,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
@@ -756,6 +761,16 @@ def build_config(
                 # so in-year ORDC can form scarcity (the G-31 question).
                 # Measured frozen curves (constants.CORRELATED_OUTAGE_CURVE).
                 "correlated_forced_outage": correlated_forced_outage,
+                # FFR-5E near-term VRE procurement limb (owner decision
+                # D-18(a)), measured on its HINDCAST arm here — the arm
+                # FFR-3V-FIX §6 unblocked by re-seeding the hindcast renewable
+                # pools from the run's own EIA-860 vintage, so an injected row
+                # with online_year > base_year names capacity demonstrably
+                # absent from the base pool instead of double-counting against
+                # a present-day constant. Rides the None-drop dict so OMIT
+                # inherits the shipped GATED-OFF default and the control arm's
+                # cache key is the untouched shipped one.
+                "vre_procurement_additions_enabled": vre_procurement_additions,
             }.items()
             if v is not None
         },
@@ -1349,6 +1364,25 @@ def main(argv: list[str] | None = None) -> int:
             "ERCOT-only. OMIT to inherit the shipped default (OFF)."
         ),
     )
+    parser.add_argument(
+        "--vre-procurement-additions",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "FFR-5E near-term VRE procurement channel MEASUREMENT arm (owner "
+            "decision D-18(a); channel landed by FFR-5E, hindcast arm "
+            "unblocked by FFR-3V-FIX §6): step 4's wind/solar limb reads the "
+            "run's OWN EIA-860 vintage proposed sheet at construction-"
+            "committed status (U/V/TS) and commissions each row in its "
+            "Effective Year as a per-year FLOW into the zonal pools tagged "
+            "source='procured', netting that flow from the economic screen's "
+            "queue/group budgets so one physical queue is spent once. Zero "
+            "free parameters. OMIT to inherit the shipped ScenarioConfig "
+            "default (GATED OFF — this is a measurement, not an arming); "
+            "--vre-procurement-additions arms the treatment and "
+            "--no-vre-procurement-additions forces the control explicitly."
+        ),
+    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
@@ -1499,6 +1533,7 @@ def main(argv: list[str] | None = None) -> int:
         capacity_screen_scarcity_restoration=(
             args.capacity_screen_scarcity_restoration
         ),
+        vre_procurement_additions=args.vre_procurement_additions,
         ptc_window=args.ptc_window,
     )
 
