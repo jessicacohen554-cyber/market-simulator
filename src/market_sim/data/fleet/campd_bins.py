@@ -1538,6 +1538,72 @@ def cc_summer_capacity() -> dict[int, tuple[float, float]]:
     return out
 
 
+def summer_basis_measured_plants(iso: str) -> frozenset[int]:
+    """Plant codes whose LP capacity already IS a measured summer capability.
+
+    Consumed under ``config.summer_derate_basis_aware`` (miso-148) to decide,
+    per plant, whether the flat class ambient haircut
+    ``_SUMMER_CLASS_DERATE`` may be applied on top of the carried capacity.
+
+    **Why the question is per-plant.** The flat derate represents the
+    *nameplate -> summer-peak ambient* loss. On the per-plant EIA-860 path
+    (``plant_level_fleet``) a generator's ``pmax`` is the published NET SUMMER
+    rating (``eia860.py`` ``pmax = net_summer_capacity_mw``), which already
+    embeds that loss — so applying the flat derate again is a double count
+    (miso-141 measured it: the flat 10 % / 12.5 % against a measured
+    nameplate->net-summer gap of 11.40 / 14.34 / 16.35 / 15.25 % by class).
+    But NOT every plant is carried on that basis: a plant filing a summed
+    net-summer ABOVE its summed nameplate (EIA-860's schema forbids it —
+    component/total double-filing) is clipped by
+    :func:`~market_sim.data.fleet.eia860._reconcile_cc_pmax_to_nameplate` to
+    ``max(nameplate, demonstrated_peak)``, i.e. onto a NAMEPLATE-like basis,
+    where the ambient derate is legitimate and must be kept.
+
+    The predicate is therefore: **present in EIA-860 Operable, and NOT clipped
+    by the CC guard** — read from the guard's own recorded decision
+    (:func:`~market_sim.data.fleet.eia860.cc_pmax_reconciled_plants`), never
+    re-derived from the raw sheet. That distinction is load-bearing, not
+    stylistic: the plant-total-on-one-row pattern hides behind NaN component
+    rows the loader nameplate-fills, so a raw ``net_summer`` vs ``nameplate``
+    audit does NOT see the corrupt plants (55380 and 55467 both read "clean" on
+    the raw sheet while the loader clips them by 1,028.6 and 353.3 MW). Plants
+    absent from EIA-860 are absent from the set, so callers KEEP the flat
+    derate — absence of evidence for a measured basis is not evidence of one.
+
+    Class-agnostic by construction (all technologies, not just combined cycle),
+    because the flat derate covers CC_REGULAR, CC_CHP, CT_PEAKER and CT_CHP and
+    a repair reaching only the CC half would leave two classes competing on the
+    same margin with inconsistent capacity bases (miso-141 §9/§11.2(a)).
+
+    Rule 13/14 basis: derived entirely from published EIA-860 ratings and the
+    ISO's committed CAMPD demonstrated-peak table — it regenerates for any
+    forward vintage and responds to re-rates. No residual is consulted.
+
+    Deliberately NOT ``lru_cache``d: both inputs are vintage-dependent
+    (``active_eia860_dir()`` is re-pointed per solve year by
+    ``set_eia860_vintage``, and the clip set is rewritten on every fleet load),
+    so a cache keyed on ``iso`` alone would freeze year 1's answer onto year 2.
+    """
+    from market_sim.data.fleet.eia860 import cc_pmax_reconciled_plants
+
+    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_parquet(path, columns=["Plant Code", "Summer Capacity (MW)"])
+    df = df[pd.to_numeric(df["Plant Code"], errors="coerce").notna()].copy()
+    if df.empty:
+        return frozenset()
+    df["plant_code"] = df["Plant Code"].astype(float).astype(int)
+    df["ns"] = pd.to_numeric(df["Summer Capacity (MW)"], errors="coerce")
+    rated = df.groupby("plant_code")["ns"].sum()
+    clipped = cc_pmax_reconciled_plants(iso)
+    return frozenset(
+        int(code)
+        for code, ns_sum in rated.items()
+        if float(ns_sum) > 0.0 and int(code) not in clipped
+    )
+
+
 def cc_summer_derate_ratio(plant_code: int) -> float | None:
     """Return a CC plant's measured summer availability multiplier.
 
