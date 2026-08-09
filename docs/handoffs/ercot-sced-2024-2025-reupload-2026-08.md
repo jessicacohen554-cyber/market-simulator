@@ -137,13 +137,119 @@ have historically been owner-side).
    manifest + on-disk months make the next session's resume exact
    (`--manifest` re-run skips covered delivery days).
 
-## 6. RESULTS — shard counts by delivery month (filled after the fetch)
+## 6. RESULTS — the landed corpus (fetch 2026-08-09, forensics clean)
 
-*Pending — filled by the fetch + forensics steps below.*
+**708/708 listed ordinary publication days landed** (window pubs
+2024-03-24..2026-03-01; 4 docs initially served non-zip error bodies and were
+recovered on a retry pass). All 7 supplemental docs opened; the 245 MB
+2024-10-04 catch-up bundle contributed nothing new (all 32 displaced delivery
+days were also republished ordinarily and already covered). One delivery day
+is written exactly once — the full-corpus scan shows **zero duplicate
+delivery days, zero part-sequence holes, zero unreadable shards**.
 
-## 7. RESULTS — §3 acceptance outcomes (filled after the runs)
+**Post-intake consumable corpus** (`data/raw/ercot/SCED/*.part*.parquet`):
+996 parts, 117.60M rows, 1,056 delivery days (2022-12-31..2025-12-04), median
+110,208 rows/day, no light days. All parts carry the pre-RTC+B 187/188-column
+schema (`HASL` present; the 188th column is `Ancillary Service ECRS`,
+appearing when the product launched mid-2023). New parts are written
+`string`-typed as before (Arrow physical type `large_string` vs the older
+uploads' `string` — immaterial: every consumer reads per-file via pandas).
 
-*Pending.*
+| delivery window | days | rows | note |
+|---|---|---|---|
+| 2024 | **352/366** | 40.12M | complete EXCEPT Jan 10–23 (pubs 2024-03-10..23 aged out of free MIS retention — pre-registered §2 gap; Jan 1–9 are the 2023 re-upload's bleed parts, Jan 24–31 fetched at the retention edge) |
+| 2025 | **365/365 fetched; 338 consumable** | 44.53M consumable | Jan-01..Dec-04 in the readable format, INCLUDING complete Nov (the purged original had Nov partial/Dec absent); Dec-05..31 (27 parts, 8.66M rows) QUARANTINED — see below |
+| 2024-05 | 31/31 | 3.38M | the purged original's "2024-05 sparse (109k rows)" gap does NOT recur — the MIS now serves the full month |
+
+**The RTC+B disclosure-format break (new finding, disclosed at full
+magnitude).** Publications 2026-02-02 onward (deliveries **2025-12-05..31**)
+carry ERCOT's RTC+B-era Gen member format: `HASL`/`LASL` REMOVED,
+`Telemetered Net Output ` renamed (trailing space dropped), `Ancillary
+Service *` responsibilities replaced by `AS Awards */AS Capability *`, `Ramp
+Rate Up/Down` added (193/195-column variants; daily rows triple to ~320k as
+the disclosure's resource scope widens). `HASL` is a required read column of
+every corpus consumer, so these shards CRASH the derives — the identical
+defect ercot-95/97 quarantined in the Dec-3-9-2025 out-of-band upload. The 27
+parts are preserved byte-intact in `data/raw/ercot/SCED/rtcb-format-2026/`,
+invisible to the consumers' non-recursive globs. Consuming the RTC+B era
+needs its own owner-authorized format adapter; nothing frozen measures those
+days (the purged original's 2025 population ended at Nov-partial/Dec-absent).
+
+**Staging record (task §2 discharged).** The corpus landed in **19 verified
+pushes** interleaved with the fetch: probe ladder 2.6 MB → 13 MB → 116 MB,
+then manifest-complete batches of 16–290 MB, every push confirmed by
+`ls-remote` sha match before the next (content-addressed identity of every
+blob). Two mid-session branch deletions occurred when the owner-side
+automation merged in-flight PRs (#3806, #3813); both recovered by rebasing
+onto the new `origin/main` and re-pushing, exactly per the standing
+instruction — no bytes lost, no history rewrite, no force-overwrite of
+another session's work. One in-flight push was killed by a 2-minute tool
+timeout and taught the staging loop to carry a 10-minute ceiling; the largest
+verified single pack was 290 MB (this remote's gateway comfortably exceeds
+the 2026-08-03 session's ~1.3 MB pathology, which does not reproduce here).
+
+## 7. RESULTS — §3 acceptance outcomes (run post-intake, per year, out to scratch)
+
+| run | outcome |
+|---|---|
+| wall `--position-tail --years 2023` | **PASS** — frozen ladders reproduced byte-identically; tails re-derived (CC [3018, 2257, 1563, 864, 712, 355, 158], CT [69, 145, 132, 112, 166, 289, 92] points/bin) |
+| pool `--position-tail --years 2023` | **PASS** — ladder + pool_frac reproduced; tails [416, 415, 415, 366, 315, 278, 84] |
+| wall `--position-tail --years 2024` | **FAIL (assert STOP)** — "re-derived CC 2024 ladder does not reproduce the frozen artifact's" |
+| pool `--position-tail --years 2024` | **CRASH (IndexError)** — a NEW latent defect, see below |
+| wall `--position-tail --years 2025` | **FAIL (assert STOP)** — CC 2025 ladder does not reproduce |
+| pool `--position-tail --years 2025` | **FAIL (assert STOP)** — CT 2025 ladder/pool_frac do not reproduce |
+
+**The 2023 control is fully intact, beyond the assert:** the scratch
+position-tail vintages produced by both runs are **IDENTICAL to the committed
+keeper artifacts in every class/year block** — the 2023 tails regenerate
+exactly, and the 2024/2025 (and 2022) frozen 5-point ladders are carried
+byte-verbatim. The intake did not move the keeper's anchor chain (2023's
+publication window gained only the `2024-03.part0009-0016` Jan-2024-bleed
+parts, whose rows the delivery-year filter drops for 2023).
+
+**The 2024/2025 failures are exactly the §4 pre-registered outcome, not a
+surprise.** Post-intake, the corpus majority-covers both delivery years, so
+`_sced_source_files` supersedes the sample-day extracts (the ERCOT-157
+design) — and the §4 baseline established that the frozen 2024/2025 blocks
+are SAMPLE-DAY-based (their committed coverage equals the sample-day
+derivation exactly; Amendment 1's premise that their population was the
+purged corpus is falsified by the artifacts' own coverage rows). A
+corpus-population ladder cannot and should not byte-match a sample-day
+ladder. The failures therefore measure the BASIS FLIP this intake
+deliberately performs, not corpus drift within a fixed population.
+
+**NEW FINDING — the pool derive carries a latent leap-day defect.**
+`derive_ercot_faststart_pool._prep_clock_gas` drops Feb-29 rows via a mask
+computed on the pre-filter frame, then re-parses `SCED Time Stamp` on the
+POST-filter frame and indexes it with the stale mask
+(`pd.to_datetime(df["SCED Time Stamp"]).to_numpy()[np.asarray(ok)]`) —
+IndexError: 6,509,857 vs 6,492,097 (the 17,760-row delta = Feb-29-2024's
+CT-class rows, ~62 resources × 288 intervals). The path is reachable ONLY
+when a leap-year corpus containing Feb-29 is the year's basis — impossible
+before this intake (2023/2025 have no Feb-29; 2024's sample-day extracts
+carried none). NOT fixed here: §3 forbids adjusting the derives, rule 23
+freezes them, and the run's verdict is already determined by the basis flip
+(pool 2025, crash-free, fails the same assert). Any future authorized
+2024-corpus pool re-derive must repair this first, under its own review.
+
+**Consequences for the D4 purposes (decision card §8):**
+1. *2024/2025 position-tails derivable* — the corpora now exist; deriving
+   tails requires first RE-DERIVING the frozen stepped anchors on the corpus
+   basis. This intake IS the rule-23 source-data update that licenses that
+   re-derive, but executing it needs its own authorization (it moves keeper
+   inputs), plus the leap-day repair for the pool.
+2. *The ercot-180 grain reopen evidence* — now on disk (403,007-row corpus →
+   full-year 2024/2025); the reopen still requires its own NEW precommit
+   (FINDING-ercot180's condition), never a re-run of the old instrument.
+3. *"Frozen anchors become reproducible again"* — REFRAMED by the §4
+   baseline: the frozen wall 2024/2025 anchors were never corpus-based, and
+   their populations (the sample-day extracts) never left the disk. What was
+   irreproducible pre-intake was 8 ladder rungs at the 0.001–0.136 mult
+   scale on an identical population (numeric/tie-break drift vs the
+   ERCOT-86-era derive). Post-intake, the sample-day basis itself is
+   superseded for 2024/2025, so the honest path to reproducible anchors is
+   the authorized corpus-basis re-derive of item 1 — not this assert ever
+   passing against the sample-day blocks.
 
 ---
 

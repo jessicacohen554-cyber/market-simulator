@@ -41,6 +41,24 @@ LDL, Base Point, statuses) and AS responsibilities.
   `docs/handoffs/ercot-sced-2024-2025-reupload-2026-08.md` for the staging
   plan, per-month shard counts and acceptance results.
 
+## `rtcb-format-2026/` — the RTC+B disclosure-format break (quarantined, bytes kept)
+
+ERCOT's Real-Time Co-optimization (RTC+B) go-live changed the NP3-965 Gen
+Resource member format at publications 2026-02-02 onward (deliveries
+**2025-12-05..31**): `HASL`/`LASL` are REMOVED, `Telemetered Net Output `
+lost its trailing space, the `Ancillary Service *` responsibility columns
+became `AS Awards */AS Capability *`, and `Ramp Rate Up/Down` appeared
+(193/195-column variants). `HASL` is a required read column of every corpus
+consumer (`derive_ercot_sced_offer_wall` / `derive_ercot_faststart_pool` /
+`sced_corpus_instruments`), so these shards CRASH the derives — the exact
+defect ercot-95/97 quarantined in the Dec-3-9-2025 out-of-band upload.
+Those 27 parts (`2026-02.part0002-0027`, `2026-03.part0000`) live in this
+subdirectory, INVISIBLE to the consumers' non-recursive globs, bytes intact
+for a future owner-authorized RTC+B-era consumer. Deliveries 2025-12-01..04
+(pubs 2026-01-30..2026-02-01) remain in the readable pre-RTC+B format at the
+top level, so delivery-2025 is complete through Dec-04 plus the quarantined
+tail.
+
 ## DATA NEEDED
 
 * Deliveries **2024-01-10..23** (publications 2024-03-10..23): aged out of the
