@@ -251,7 +251,11 @@ def r3_limb_split() -> dict:
                 "the ceiling the block is offered to the LP as ECONOMIC capability at exactly "
                 "these static prices. FINDING-caiso150 §C/§F measures the un-floored volume at "
                 "0.969 / 4.634 / 5.705 TWh in 23.9 / 47.2 / 48.9 % of hours (2023/24/25). "
-                "The exposure GROWS with the DMM RA level."
+                "The exposure GROWS with the DMM RA level. PRIOR ART: a measured Q-Q price "
+                "derivation WAS attempted for this rung (derive_caiso_import_tranches.py, "
+                "caiso-83) and FAILED its pre-registered LOYO honesty gate at 30.5 % against "
+                "a 25 % bar (caiso-86b), so there is no currently-viable named replacement — "
+                "which is precisely what rule 20 calls an open root-cause issue."
             ),
         },
         "spot_capacity": {
@@ -263,7 +267,13 @@ def r3_limb_split() -> dict:
                 "No primary source is cited for these four depths anywhere in the "
                 "IMPORT_TRANCHES provenance block; the by-year comment states plainly that "
                 "'only the two firm-block capacities vary by year. Spot tranches and all prices "
-                "are identical to the static ladder.'"
+                "are identical to the static ladder.' FINDING-caiso82 §3 names these four MW "
+                "VERBATIM as the registered G-26 / issue #1350 / audit C-6 gap "
+                "('STATIC-FITTED-PENDING-MEASURED'); the measured south-corridor "
+                "depth-in-surplus p95 4.7/5.4/5.5 GW banked there is SUPPORTING STABILITY "
+                "evidence, not the derivation. No derive script has ever produced these "
+                "numbers: derive_caiso_import_tranches.py re-derives PRICES ONLY, by its own "
+                "docstring."
             ),
             "verdict": (
                 "LIVE, FITTED, AND ON THE BINDING PATH — and this is the limb that matters most. "
