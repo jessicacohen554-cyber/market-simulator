@@ -1554,6 +1554,92 @@ def cc_summer_derate_ratio(plant_code: int) -> float | None:
     return min(1.0, net_summer / nameplate)
 
 
+@lru_cache(maxsize=1)
+def cc_winter_capacity() -> dict[int, float]:
+    """Return ``{plant_code: winter_mw}`` for every CC plant.
+
+    EIA-860 Generator_Y Operable ``Winter Capacity (MW)``, summed over each
+    plant's combined-cycle generators — the exact companion of the nameplate /
+    net-summer pair :func:`cc_summer_capacity` returns, read from the same sheet,
+    the same technology filter and the same per-plant grouping.
+
+    **Deliberately NOT clamped to nameplate.** The net-summer clamp in
+    :func:`cc_summer_capacity` exists because a summed summer capability above
+    the summed nameplate is component/total double-filing (EIA-860's schema
+    caps summer capability at nameplate). No such schema bound exists for
+    winter: a combustion turbine makes MORE than its plate rating in dense cold
+    air, so a published winter capability above nameplate is a physical fact,
+    not a filing error — 8 of the 67 California CC plants file one (plant 358
+    Mountainview 1110.0 MW winter against 1036.8 MW nameplate, whose demonstrated
+    off-summer peak is 1111.0 MW). Clamping here would silently delete the
+    upward half of the seasonal basis (caiso-186).
+    """
+    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(
+        path,
+        columns=["Plant Code", "Technology", "Winter Capacity (MW)"],
+    )
+    df = df[pd.to_numeric(df["Plant Code"], errors="coerce").notna()]
+    cc = df[df["Technology"] == "Natural Gas Fired Combined Cycle"].copy()
+    if cc.empty:
+        return {}
+    cc["plant_code"] = cc["Plant Code"].astype(float).astype(int)
+    cc["win"] = pd.to_numeric(cc["Winter Capacity (MW)"], errors="coerce")
+    out: dict[int, float] = {}
+    for code, grp in cc.groupby("plant_code"):
+        win_sum = float(grp["win"].sum())
+        if win_sum > 0.0:
+            out[int(code)] = win_sum
+    return out
+
+
+def cc_seasonal_capability_ratios(plant_code: int) -> tuple[float, float] | None:
+    """Return a CC plant's ``(summer_ratio, winter_ratio)`` on the PUBLISHED basis.
+
+    ``ScenarioConfig.cc_winter_capability_basis`` (caiso-186). The incumbent
+    ``cc_nameplate_summer_derate`` carries the LP capacity at EIA-860
+    **nameplate** and derates the summer months to the published net-summer
+    rating, which leaves the OFF-summer capability resting on nameplate — a
+    premise EIA-860 never publishes and the CEMS record refutes (off-summer p999
+    is 0.73-0.89 of nameplate but 0.906-1.001 of the published WINTER rating,
+    FINDING-caiso185 §5). This puts the capacity basis on the published seasonal
+    envelope instead::
+
+        B             = max(net_summer, winter)      # both EIA-860-published
+        summer_ratio  = net_summer / B
+        winter_ratio  = winter      / B
+
+    so a bin carried at ``B`` reproduces the published summer rating in the
+    summer months and the published **winter** rating off-summer. Nameplate — the
+    one rating no season's capability equals — leaves the capacity basis
+    entirely. **ZERO fitted scalars:** every quantity is an EIA-860 published
+    rating or the ratio of two of them, and both are availability-EXCLUSIVE (a
+    rating states what the machine does when it is available), which is what
+    makes them admissible in the ``capacity_mw`` slot where a realized CEMS
+    output is not (caiso-185 §4a; PRECHECK-caiso186 §2).
+
+    ``net_summer`` carries :func:`cc_summer_capacity`'s double-file clamp
+    unchanged; ``winter`` is deliberately unclamped (see
+    :func:`cc_winter_capacity`). Both ratios are in ``(0, 1]`` by construction
+    since ``B`` is the max of the pair. ``None`` when the plant is absent from
+    either EIA-860 map, so callers fall back to the incumbent treatment exactly
+    as they already do for an absent ``cc_summer_derate_ratio``.
+    """
+    cap = cc_summer_capacity().get(int(plant_code))
+    winter = cc_winter_capacity().get(int(plant_code))
+    if cap is None or winter is None or winter <= 0.0:
+        return None
+    _nameplate, net_summer = cap
+    if net_summer <= 0.0:
+        return None
+    basis = max(net_summer, winter)
+    if basis <= 0.0:
+        return None
+    return (net_summer / basis, winter / basis)
+
+
 # EIA-860 Operable technology strings for a coal steam unit (the coal analogue
 # of the CC "Natural Gas Fired Combined Cycle" filter above).
 _COAL_SUMMER_TECH: frozenset[str] = frozenset(
@@ -1690,7 +1776,23 @@ def fleet_to_bins(
         if group in ("CC_REGULAR", "CC_CHP") and getattr(
             config, "cc_nameplate_summer_derate", False
         ):
-            _ratio = _pkg_ns().cc_summer_derate_ratio(code)
+            # config.cc_winter_capability_basis (caiso-186) replaces the
+            # nameplate target with the PUBLISHED seasonal envelope
+            # B = max(net_summer, winter), so the rescale lands on B and the
+            # availability builder carries each season's own published rating
+            # (net_summer/B in summer, winter/B off-summer) instead of leaving
+            # off-summer on an unpublished nameplate premise. A basis swap, not
+            # a second derate (rule 19 [R-ONE-MECH]); the two ratios are read
+            # from ONE helper so this rescale and the availability legs can
+            # never drift apart. Absent-plant fallback is identical on both
+            # paths (the plant keeps net-summer).
+            _ratio = None
+            if getattr(config, "cc_winter_capability_basis", False):
+                _pair = _pkg_ns().cc_seasonal_capability_ratios(code)
+                if _pair is not None:
+                    _ratio = _pair[0]
+            if _ratio is None:
+                _ratio = _pkg_ns().cc_summer_derate_ratio(code)
             if _ratio is not None and _ratio > 0.0:
                 cap = cap / _ratio
         d_mr, d_mc, d_peak = _DEFAULT_TRANCHE_PCT_BY_GROUP.get(group, (0.0, 30.0, 8.0))

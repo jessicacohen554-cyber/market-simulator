@@ -2290,5 +2290,140 @@ class TestStGasP25LevelFloor(unittest.TestCase):
         np.testing.assert_allclose(fa_lsl.min_gen[1, window], 50.0)
 
 
+class TestCcWinterCapabilityBasis(unittest.TestCase):
+    """``cc_winter_capability_basis`` — the published seasonal capability basis.
+
+    caiso-186 (BE-4). The mechanism was **REFUSED at CAISO on measured evidence**
+    (G-NOCONTRA, ``FINDING-caiso186-seasonal-capability-2026-08-09.md``) and is
+    armed by no keeper; these tests pin the properties that make the refusal
+    reproducible and keep the default path byte-inert for every ISO:
+
+    * the field is **default-off** everywhere;
+    * with the PARENT flag ``cc_nameplate_summer_derate`` off, arming it is a
+      **no-op** by construction (the fleet carries net-summer capacity to which a
+      winter rating cannot be applied without a basis change ``fleet_to_bins``
+      did not make);
+    * the published-pair arithmetic is exactly ``B = max(net_summer, winter)``
+      with ratios ``net_summer / B`` and ``winter / B``, both in ``(0, 1]``, the
+      net-summer double-file clamp preserved and the winter rating deliberately
+      **unclamped** (8 of 67 California CC plants publish a winter capability
+      above nameplate — deleting that half would delete the upward direction).
+    """
+
+    def test_defaults_off_for_every_iso(self) -> None:
+        """No ISO gets the basis by default (rule 25 ``[R-ISO-SCOPE]``)."""
+        from market_sim.config.scenarios import ScenarioConfig
+
+        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"):
+            with self.subTest(iso=iso):
+                self.assertFalse(ScenarioConfig(iso=iso).cc_winter_capability_basis)
+
+    def test_arming_hashes_distinctly(self) -> None:
+        """An armed config is a different scenario and must not reuse a bundle."""
+        from market_sim.config.scenarios import ScenarioConfig
+
+        base = ScenarioConfig(iso="CAISO", cc_nameplate_summer_derate=True)
+        armed = base.with_overrides(cc_winter_capability_basis=True)
+        self.assertNotEqual(base.cache_key(), armed.cache_key())
+
+    def test_registered_in_cache_key_optional_fields(self) -> None:
+        """Registered WITH its declared default, in the field's own commit."""
+        from market_sim.config.scenarios import (
+            _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS,
+            _CACHE_KEY_OPTIONAL_FIELDS,
+        )
+
+        self.assertIn("cc_winter_capability_basis", _CACHE_KEY_OPTIONAL_FIELDS)
+        self.assertEqual(
+            _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["cc_winter_capability_basis"], "False"
+        )
+
+    def test_ratios_are_published_pair_over_their_own_max(self) -> None:
+        """``B = max(ns, winter)``; both ratios published, in ``(0, 1]``."""
+        from market_sim.data.fleet import campd_bins as cb
+
+        pairs = {
+            # (nameplate, net_summer) as cc_summer_capacity returns them, with
+            # the double-file clamp already applied.
+            10: (1398.0, 1020.0),  # winter == net summer -> B = ns, both ratios 1
+            20: (1036.8, 1018.0),  # winter ABOVE nameplate -> B = winter
+            30: (710.7, 592.72),  # winter between ns and nameplate -> B = winter
+        }
+        winters = {10: 1020.0, 20: 1110.0, 30: 602.53}
+        with (
+            unittest.mock.patch.object(cb, "cc_summer_capacity", return_value=pairs),
+            unittest.mock.patch.object(cb, "cc_winter_capacity", return_value=winters),
+        ):
+            for code, (nameplate, ns) in pairs.items():
+                with self.subTest(plant=code):
+                    sr, wr = cb.cc_seasonal_capability_ratios(code)
+                    basis = max(ns, winters[code])
+                    self.assertAlmostEqual(sr, ns / basis)
+                    self.assertAlmostEqual(wr, winters[code] / basis)
+                    self.assertGreater(sr, 0.0)
+                    self.assertLessEqual(sr, 1.0)
+                    self.assertGreater(wr, 0.0)
+                    self.assertLessEqual(wr, 1.0)
+                    # The basis is a PUBLISHED rating, never nameplate, except
+                    # where a published rating happens to equal it.
+                    self.assertLessEqual(basis, max(nameplate, winters[code]))
+            # Plant 20 is the upward direction: B exceeds nameplate, so the bin
+            # RISES. Deleting the unclamped winter would silently lose this.
+            self.assertGreater(max(pairs[20][1], winters[20]), pairs[20][0])
+
+    def test_absent_plant_falls_back(self) -> None:
+        """A plant missing from either EIA-860 map returns ``None``.
+
+        The caller then keeps the incumbent ``cc_summer_derate_ratio`` treatment
+        — the identical fallback ``fleet_to_bins`` takes — so the capacity basis
+        and the availability legs can never disagree.
+        """
+        from market_sim.data.fleet import campd_bins as cb
+
+        with (
+            unittest.mock.patch.object(
+                cb, "cc_summer_capacity", return_value={7: (100.0, 90.0)}
+            ),
+            unittest.mock.patch.object(cb, "cc_winter_capacity", return_value={}),
+        ):
+            self.assertIsNone(cb.cc_seasonal_capability_ratios(7))
+        with (
+            unittest.mock.patch.object(cb, "cc_summer_capacity", return_value={}),
+            unittest.mock.patch.object(cb, "cc_winter_capacity", return_value={7: 95.0}),
+        ):
+            self.assertIsNone(cb.cc_seasonal_capability_ratios(7))
+
+    def test_parent_off_is_a_noop(self) -> None:
+        """With ``cc_nameplate_summer_derate`` off the flag changes nothing."""
+        gens = [
+            Generator(
+                unit_id="999902_1",
+                name="Test CC",
+                zone="Z",
+                fuel_type="gas_cc",
+                pmax_mw=400.0,
+                heat_rate=7.0,
+                plant_group="CC_REGULAR",
+                plant_code=999902,
+            )
+        ]
+        from market_sim.config.scenarios import ScenarioConfig
+
+        avails = []
+        for arm in (False, True):
+            cfg = ScenarioConfig(
+                iso="CAISO",
+                mode="backcast",
+                weather_year=2024,
+                cc_nameplate_summer_derate=False,
+                cc_winter_capability_basis=arm,
+            )
+            fa = generators_to_fleet_arrays(
+                gens, ["Z"], hours=48, iso="CAISO", config=cfg, year=2024
+            )
+            avails.append(fa.availability.copy())
+        np.testing.assert_array_equal(avails[0], avails[1])
+
+
 if __name__ == "__main__":
     unittest.main()
