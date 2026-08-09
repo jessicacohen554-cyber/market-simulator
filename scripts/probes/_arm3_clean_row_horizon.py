@@ -39,6 +39,10 @@ for _p in (str(_SRC), str(_ROOT)):
 
 ACP_CEILING = 30.0  # STATE_RPS_ACP["MISO"], config/capacity_market.py
 
+# Parquet schema-metadata keys written by results/outputs.py::to_parquet.
+_MD_KEY = b"market_sim"
+_FLEET_MD_KEY = b"market_sim_fleet"
+
 
 def run_key_dir(out_dir: Path, iso: str = "MISO") -> Path | None:
     """Return the ``<out-dir>/<ISO>/<runtime-key>/`` ledger directory."""
@@ -57,17 +61,18 @@ def duals_from_parquet(key_dir: Path) -> dict[int, dict]:
     for p in sorted(key_dir.glob("year_*.parquet")):
         year = int(re.search(r"year_(\d{4})", p.name).group(1))
         md = pq.read_schema(p).metadata or {}
-        for k, v in md.items():
-            if k.decode(errors="ignore").endswith("metadata"):
-                try:
-                    blob = json.loads(v.decode())
-                except Exception:
-                    continue
-                if "clean_region_duals" in blob or "rps_region_duals" in blob:
-                    out[year] = {
-                        "rps": blob.get("rps_region_duals"),
-                        "clean": blob.get("clean_region_duals"),
-                    }
+        blob_bytes = md.get(_MD_KEY)
+        if blob_bytes is None:
+            continue
+        try:
+            blob = json.loads(blob_bytes.decode())
+        except Exception:
+            continue
+        out[year] = {
+            "rps": blob.get("rps_region_duals"),
+            "clean": blob.get("clean_region_duals"),
+            "status": blob.get("status"),
+        }
     return out
 
 
@@ -107,19 +112,27 @@ def load_ledgers(key_dir: Path) -> dict[int, dict]:
     return out
 
 
-def fleet_context(key_dir: Path) -> dict | None:
-    """Return the ``FleetContext`` dict stored in a year parquet's metadata."""
+def fleet_context(pq_path: Path) -> dict | None:
+    """Return the ``FleetContext`` stored in ONE year parquet's metadata.
+
+    Deliberately per-YEAR, not per-run. The fleet EVOLVES across a forecast
+    horizon — the armed leg carries 2193 generators in 2031 and 1340 in 2035 —
+    so a context read from the run's first year and zipped against a later
+    year's dispatch silently truncates to the shorter axis and pairs each MW
+    with the WRONG unit's fuel and zone. That misalignment is not subtle in its
+    effect (it attributed 111 TWh of MISO-East generation to `oil`) but it is
+    silent, because ``zip`` simply stops. One year, one context.
+    """
     import pyarrow.parquet as pq
 
-    for p in sorted(key_dir.glob("year_*.parquet")):
-        md = pq.read_schema(p).metadata or {}
-        for k, v in md.items():
-            if b"fleet" in k.lower():
-                try:
-                    return json.loads(v.decode())
-                except Exception:
-                    continue
-    return None
+    md = pq.read_schema(pq_path).metadata or {}
+    blob = md.get(_FLEET_MD_KEY)
+    if blob is None:
+        return None
+    try:
+        return json.loads(blob.decode())
+    except Exception:
+        return None
 
 
 def qualifying_supply(
@@ -136,17 +149,34 @@ def qualifying_supply(
     import numpy as np
     import pyarrow.parquet as pq
 
-    tbl = pq.read_table(pq_path)
-    cols = set(tbl.column_names)
+    cols = set(pq.read_schema(pq_path).names)
 
     def stack(name: str) -> "np.ndarray":
-        # list<double> column, one row per hour, n_entity per cell -> (n, T)
-        arr = np.vstack([np.asarray(r) for r in tbl.column(name).to_pylist()])
-        return arr.T
+        """Read one list<double> column as an ``(n_entity, T)`` array.
+
+        Reads the column ALONE (never the whole table) and goes through the
+        Arrow value buffer rather than ``to_pylist()`` — the list form would
+        materialize T x n_entity Python floats, hundreds of MB for a per-plant
+        MISO year, on a box that may still be running the paired leg.
+        """
+        col = pq.read_table(pq_path, columns=[name]).column(name).combine_chunks()
+        n_rows = len(col)  # T: one row per hour
+        flat = col.flatten().to_numpy(zero_copy_only=False)
+        return flat.reshape(n_rows, -1).T
 
     dispatch = stack("dispatch")  # (n_gen, T)
-    gen_zone = ctx["zones"]
-    gen_fuel = ctx["fuel_types"]
+    # ALWAYS this year's own context (see fleet_context's docstring), and
+    # asserted rather than zipped: a length mismatch here is a wrong answer,
+    # not a short loop.
+    year_ctx = fleet_context(pq_path) or ctx
+    gen_zone = year_ctx["zones"]
+    gen_fuel = year_ctx["fuel_types"]
+    if not (len(gen_zone) == len(gen_fuel) == dispatch.shape[0]):
+        raise ValueError(
+            f"{pq_path.name}: FleetContext axis {len(gen_zone)} != dispatch "
+            f"axis {dispatch.shape[0]} — refusing to attribute MW to the "
+            f"wrong units (the fleet evolves; read the context per year)"
+        )
     gen_mwh = dispatch.sum(axis=1)
 
     wind = stack("wind") if "wind" in cols else None  # (n_zone, T)
@@ -188,6 +218,75 @@ def qualifying_supply(
                 if zn in elig and zi < arr.shape[0]:
                     total += float(arr[zi].sum())
         out[key] = total
+    return out
+
+
+def mask_leak(pq_path: Path, reg: dict, zones: list[str], year: int) -> dict:
+    """Measure each clean row's out-of-mask generator credit (the E-2 defect).
+
+    ``model/lp/rows.py::_build_rps_region_rows`` zone-masks a region's WIND and
+    SOLAR columns (``zones_r = np.flatnonzero(mask[r])``) but appends its
+    ``region_gen_idx`` columns with NO zone filter, and
+    ``_resolve_clean_region_gen_idx(fleet, region_fuels)`` resolves those
+    indices by FUEL ALONE across the whole fleet — it is never given the mask.
+    So a clean row's nuclear/hydro/biomass/CCS credit is ISO-WIDE while its
+    VRE credit is in-mask. Arm-3 exclusive: the Arm-2 RPS call passes no
+    ``region_gen_idx``.
+
+    Returns per row: the RHS, the AS-BUILT LHS (gen ISO-wide + W/S masked),
+    the AS-INTENDED LHS (everything masked), and the leaked difference.
+    """
+    import numpy as np
+    import pyarrow.parquet as pq
+
+    from market_sim.model.lp.rows import _RPS_ROW_BASE_FUELS
+    from market_sim.policy.clean_tiers import _clean_tier_target
+
+    ctx = fleet_context(pq_path)
+
+    def stack(name: str) -> "np.ndarray":
+        col = pq.read_table(pq_path, columns=[name]).column(name).combine_chunks()
+        n_rows = len(col)
+        return col.flatten().to_numpy(zero_copy_only=False).reshape(n_rows, -1).T
+
+    gen = stack("dispatch").sum(axis=1)
+    wind, solar = stack("wind"), stack("solar")
+    zone_demand = stack("demand").sum(axis=1)
+    if len(ctx["zones"]) != gen.shape[0]:
+        raise ValueError("FleetContext/dispatch axis mismatch — see fleet_context")
+
+    out: dict = {}
+    for key, spec in reg.items():
+        elig = set(spec["eligible_zones"])
+        extra = [f for f in spec["qualifying_fuels"] if f not in _RPS_ROW_BASE_FUELS]
+        iso_wide = float(
+            sum(m for m, f in zip(gen, ctx["fuel_types"]) if f in extra)
+        )
+        masked = float(
+            sum(
+                m
+                for m, z, f in zip(gen, ctx["zones"], ctx["fuel_types"])
+                if f in extra and z in elig
+            )
+        )
+        ws = float(
+            sum(
+                wind[zones.index(z)].sum() + solar[zones.index(z)].sum()
+                for z in elig
+                if z in zones
+            )
+        )
+        rhs = (
+            _clean_tier_target(spec["floors"], year)
+            * spec["obligated_load_share"]
+            * zone_demand[zones.index(spec["obligated_zone"])]
+        )
+        out[key] = {
+            "rhs": rhs,
+            "as_built": iso_wide + ws,
+            "as_intended": masked + ws,
+            "leaked": iso_wide - masked,
+        }
     return out
 
 

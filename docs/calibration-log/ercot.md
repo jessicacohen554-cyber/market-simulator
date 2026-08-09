@@ -6543,3 +6543,204 @@ gating the p = 0.017 re-identification. Records:
 `results/calibration/ercot180_edge_identification.json`,
 `results/calibration/ercot180_marginal_position.json`,
 `docs/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md`. Next: ercot-181.
+
+## 2026-08-09 — ercot-181: the QUANTITY-POSITION lane — the position-tail completion BUILT, PROVEN, and PROMOTED AS KEEPER with the honest verdict INERT-ON-THE-OBJECT; the offer-side mechanism space for C3a-2023 is EXHAUSTED and the reachability question is ESCALATED to an owner sitting
+
+**Charter:** FINDING-ercot180 §4/§5 (matrix §5.1 item 22's `==>` clause) — the
+quantity-position phenomenon: reality's marginal price forms at q_act p50
+0.9976 of the marginal resource's own cliff-shaped submitted curve, inside the
+position band in 94/100 top-gap hours. **Precommit pushed BEFORE any
+measurement** (`docs/PRECOMMIT-ercot181-quantity-position-2026-08-09.md`):
+the interior price-at-BP instrument with bars fixed ex ante, form α (the
+position-tail completion) elected over THREE ex-ante refusals (comonotone
+re-aggregation, outcome-position pins, friction re-opens), the build-free
+M-0/M-1 inertness tree, kill gates verbatim (G-SHED PRIMARY), and the
+FILED-REFUSED terminus. Pre-solve Amendment 1: tails 2023-ONLY (the frozen
+2024/2025 RT-wall anchors' source corpus was purged 2026-07-22 and cannot be
+reproduced — zero-support at year grain).
+
+**The structural seat:** all three armed interp geometries END-CLAMP at their
+p90 rung (`LADDER_QUANTILES` 0.1..0.9), so the measured populations' top
+decile — CC 202× delivered gas rising to HCAP, CT 596×, pool 570×, exactly
+where 2023's real top-hour lambda (727×) forms — mapped to NO model row's bid
+at any position. The completion appends the SAME MW-weighted quantile
+statistic on each population's own measured support above p90
+(`scripts/lib/positiontail.py`), rows reading at their own `rel`; zero fitted
+scalars, sub-p90 byte-identical, frozen-ladder reproduction asserted before
+any tail is appended.
+
+**Execution:** M-1 read LIVE (598/528/48 candidate row-hours at/below control
+price — P-2's provably-inert expectation falsified at the formal criterion),
+so Route B built, seam-proved (SP-α1..α8 ALL PASS; null encoding
+byte-identical — position, never level), and solved the A/B (control + arm,
+strictly sequential, same HEAD). **The control reproduces the run176 keeper
+ARRAY-EQUAL in all three years. The arm moves 22 spring 2023 hours by
++$0.006..+$0.57 — annual lw +$0.0004/MWh — and NOTHING else:** tails 61/25/3,
+shed 4/2/0, and every scored criterion IDENTICAL; 2024/2025 byte-identical
+(Amendment-1 zero-support, G-BIT in substance). Determination NOT-YET
+{C3a, C3b} unchanged. **Every pre-registered gate PASSES** (G-OWNER max
+class-energy delta 0.0017 % vs the 0.5 % cap; G-COAL148 +0.0005 TWh; G-DOF
+one measured entry at n_scalars 0, n_residual 6 unchanged); LOYO trivial
+(zero identified parameters; held-out years byte-identical).
+
+**PROMOTED** (owner structural standard; keeper →
+`2026-08-09-run181-position-tail`): the completion replaces a silent
+truncation of measured conduct with the measured distribution itself, at zero
+gate cost — supramarginal at backcast loads, reachable wherever forward load
+growth pushes class positions into the measured cliff. Keeper auditor PASS,
+zero repairs. Runs `2026-08-09-run181-control-positiontail-pair` +
+`2026-08-09-run181-position-tail` registered; the two 2026-08-04-159 runs
+evicted at the 15-cap as pre-registered.
+
+**The instrument refusal IS the measurement:** interior price-at-BP
+clustering passed coverage (0.999) and tightness (rel-IQR 0.0) but FAILED
+I-B3 at full magnitude — λ̂ p50 $5,000 vs actual RT $144: the step-lookup
+convention reads the piecewise-LINEAR cliff segment's upper breakpoint, a
+perfect cluster at the wall. The saturation is the phenomenon: the marginal
+resources sit ON the near-vertical cliff face where lambda is the
+interpolated height. REFUSED-AS-MEASURED, no post-hoc redesign (rule 20/23).
+**I-3 sizes the wedge corpus-side: reality's ON merchant-gas fleet held only
+269/555/926 MW (p25/p50/p75) of unaccepted sub-λ̂ spare at the top-bin hours
+(fleet position p50 0.884)** — the model's several-GW of p90-clamped headroom
+in the object hours does not exist in real conduct.
+
+**THE LANE'S CONCLUSION — ESCALATED:** with items 21–23 the offer-side
+mechanism space for C3a-2023 is EXHAUSTED (grain forms R×2 on the hour axis;
+the position completion K-but-inert on the position axis; quantity faces
+closed on measurement; outcome pins rule-13-forbidden). The C3a-2023 miss is
+a model-class limitation of an hourly class-aggregate LP against a 5-minute
+cliff-face price formation — the same object the C3c ledger accepts for the
+tail COUNT, now measured to own the tail LEVEL. **Owner sitting requested on
+C3a-2023 reachability within this model class** (the C3c-caveat path; note
+C3a is LOAD-BEARING tier where model-class ledgering is v3.0-refused — the
+sitting must amend the rubric, accept NOT-YET as standing, or authorize a
+model-class change such as sub-hourly/cliff-resolving price formation). Until
+then: NO further offer-side C3a-2023 lever (DO-NOT-REDO items 21–23).
+Records: `results/calibration/FINDING-ercot181-position-tail-2026-08-09.md`
++ the reach/seam/instrument JSONs. Next: ercot-182 (after the sitting).
+
+## 2026-08-09 — ercot-182: the OWNER SITTING on C3a-2023 reachability — the decision card assembled from committed artifacts; the decisive finding is that NO C3a ledgering option changes ERCOT's determination at all; NO lever, NO precommit, NO derive, NO LP, no run registered, no matrix cell minted, keeper UNCHANGED
+
+**Task.** The terminus pre-registered by PRECOMMIT-ercot181 §5 and escalated by
+FINDING-ercot181 §9. Deliverable:
+`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` — the question,
+the three options §9 names, each priced with the rubric text it would require,
+plus the evidence appendix and the data blocker. Governance sitting, not a
+mechanism test. Keeper `2026-08-09-run181-position-tail`: NOT-YET, fail set
+{C3a, C3b}; C3a-2023 −32.4 % (2024/2025 PASS), C3b-2023 0.602, C3b-2024 0.205,
+C3c ledgered CAVEAT ×3 (61/181, 25/53, 3/31), shed 4/2/0.
+
+*(Provenance: this session opened at `ae7bd5e`, before the ercot-181 registration
+had landed; PR #3792 (`e63559f`) merged mid-session and the card was rebased onto
+it and re-checked. Nothing in the analysis turns on the change — the run181 arm is
+inert-on-the-object and every scored criterion is identical to its run176
+control.)*
+
+**THE QUESTION and its two independent refusals.** May C3a-2023 join the
+accepted-limitation ledger? C3a is LOAD-BEARING, and the scorer refuses twice
+over: the **v3.0 tier guard** (`_apply_ledger` — `model-class` is
+supporting-tier-only, fail-closed) and the **v3.1(a) owner amendment of
+2026-08-06**, which narrowed `LEDGERABLE_CRITERIA` to `{"price_tail"}` and named
+this exact case in its own rationale — *"C3a mean LMP most of all: a mean-LMP
+miss beyond ±10 % is a MODEL MISS, and ledgering it certified a price level the
+model does not reproduce."* The miss is 3.2× the band; closing it means
++$14.44/MWh, 69 % of the annual $-gap, in ~50–180 summer-afternoon hours.
+
+**THE DECISIVE ARITHMETIC (card §2) — a C3a carve-out is determination-neutral
+for ERCOT, and this should be settled before the options are debated on their
+merits.** The fail set is {C3a, C3b} and status aggregates over years. C3a fails
+2023 only; **C3b fails 2023 (0.602) AND 2024 (0.205)**. So carving out C3a-2023
+leaves NOT-YET; carving out the whole 2023 object (C3a+C3b 2023) still leaves
+C3b-2024, whose root is a *different* object — the two 2024 shed hours the model
+over-amplifies to VOLL, FROZEN behind
+`docs/handoffs/DECISION-MEMO-ercot-148149-doublecount-2026-08-07.md`, i.e. an
+adjudicated mechanism collision awaiting a ruling, not a model-class limit.
+**Option (a) therefore spends a rubric amendment with three ISOs downstream of it
+for ZERO ERCOT gain.** Second, independent objection: ercot-177 §7 establishes
+that C3a-2023 and C3c-2023 are THE SAME OBJECT, so the C3c model-class entry has
+already absorbed that limitation and already spent the single ledgerable slot
+(`MAX_LEDGERED_CAVEATS = 1`) — ledgering it again on a load-bearing criterion
+counts one accepted limit twice across two tiers, which is what the tier split
+exists to prevent.
+
+**The three options as priced.** **(a) scoped C3a carve-out — REFUSE**: requires
+`LEDGERABLE_CRITERIA ∪ {"price_mean"}`, `MAX_LEDGERED_CAVEATS` → 2, and an
+explicit hole in the v3.0 tier guard (drafted verbatim in the card); it repeals
+v3.1(a) on the amendment's own grounds, undermines the C3c standing rule's stated
+safety argument (which rests on that guard), and re-opens the CAISO/MISO
+determinations v3.1(a) itself moved to NOT-YET. **(b) accept NOT-YET and redirect
+— ADOPT**: requires NO rubric text. Two live targets: **(b1) rule on the frozen
+148/149 memo** — the highest-leverage owner action available and the only failing
+criterion-year with a live unexplored structural route (memo option C, the
+ercot-172 fault-3 partial-layer re-charter); its sequencing precondition is now
+met, both ERCOT-151 §4 asks being discharged (ercot-157, ercot-176) — and **(b2)
+schedule the rule-18 grain defect** (`econ*`/`peak*` rows read
+`min_down = min_run = 0`, so the ARMED keeper mechanism
+`ercot_faststart_pool_offer`'s physics gate is vacuous and its effective scope is
+the `CT_PEAKER` class map; a legitimacy item independent of any residual, raised
+at ercot-176 and carried un-acted through 178/180/181). **(c) model-class
+workstream — (c1) sub-hourly REFUSE** (12× the LP columns against a measured
+~6.6 GB / ~20 min per per-plant year and a rule-12 2-run cap; a spec-level
+program, not a calibration lane); **(c2) cliff-resolving hourly price formation —
+charter the COSTING MEMO ONLY, no build.** (c2) is the better-aimed variant: the
+model's per-plant econ ramp is `offer_curve_smoothing_n = 6` **equal-width**
+slices (`_econ_curve_steps`: `slice_cap = curve_cap / n`), so its finest
+within-plant position is ~1/6 of the ramp, against reality forming price inside
+the top 0.24 % of the marginal resource's curve — roughly two orders of magnitude
+of resolution gap. Its known cost, identified ex ante at PRECOMMIT-ercot181 §2:
+row-count changes move P0, breaching the offer-surface family's P1-only seam.
+
+**Evidence appendix (committed artifacts, no re-derivation).** ercot-177 §3: on
+the top-50 Aug–Sep gap hours the **ENERGY-STACK term is 100.2 % of the $1,454
+mean miss and the SCARCITY-ADDER term is −0.2 %** (ERCOT's published adder
+$104.82 vs the model's $107.92; model holds 5,902 MW against measured PRC
+5,471 MW) — ORDC/RTORPA and reserve level CLOSED by measurement. The sizing
+statistic is the **94/100 containment** (`ercot180_marginal_position.json`).
+**The I-B3 refusal is now explained mechanically**:
+`ercot181_interior_lambda.json` reads I-B1 0.9990 PASS, I-B2 0.0000 PASS
+*degenerately*, **I-B3 27.24 FAIL**, `INSTRUMENT_ADMISSIBLE false`, λ̂
+hour-median **$5,000** vs RT **$144.05** — because `_price_at` is a **step
+lookup** returning the bracketing segment's upper endpoint, so any Base Point
+interior to a cliff's final segment reads the HCAP wall (which is also why the
+IQR is exactly 0, i.e. I-B2 passed on degenerate agreement rather than on
+clustering at λ). I-2 therefore **reproduced** the ercot-180 envelope instead of
+de-saturating it (q_act 0.99769 vs 0.99765; share-of-gap p50 6.014, identical) —
+precommit P-1's second half FAILED, reported at full magnitude. The
+**piecewise-linear re-instrument** (read the submitted curve as linear between
+its (MW,$) points rather than as a step) is NAMED in the card as an admissible
+FUTURE precommit and explicitly NOT authorized: it needs a Nodal-Protocols
+citation that SCED interpolates within a segment, a re-measurement of all three
+bars, and a read convention the whole ERCOT derive family lacks. **I-3**: fleet
+loading p50 **0.884** (p25–p75 0.730–0.977); unaccepted-below-λ̂ MW
+**269/555/926** at p25/p50/p75 — but since λ̂ saturated, that mass is an **UPPER
+BOUND**, so reality's ON merchant-gas fleet held **≲0.5 GW** of cheap unaccepted
+online headroom in the tightest 263 hours. P-7's refutation branch is not met,
+but the wedge is bounded SMALL — a third independent corroboration (with
+ercot-175 and ercot-177 §3) that **this is not a quantity story**.
+
+**DATA BLOCKER put to the owner.** `data/raw/ercot/SCED/` holds 315 shards
+spanning publication `2023-03`…`2024-03`, i.e. delivery-2023 complete and
+**delivery 2024/2025 absent** (sample-day only, 561/500 nodes vs 7,917) — the
+2026-07-21 full-corpus intake was PURGED by the 2026-07-22 large-blob history
+rewrite, which is why the `--position-tail` derive's reproduction assert stopped
+on 2024 and the keeper's tails are 2023-only. A full-year re-upload would (1)
+make 2024/2025 position-tails derivable, (2) supply the *named* new evidence for
+an ercot-180 grain re-identification under a NEW precommit (p = 0.017 vs a 0.01
+bar on 263 hours; scaffolding already merged default-off), and (3) **restore
+reproducibility of the frozen 2024/2025 RT-wall anchors, which are armed keeper
+artifacts resting on a population no longer on disk** — the most serious of the
+three. Unrestricted under rule 22's data-intake clause; must be staged so it does
+not repeat the blob-size purge.
+
+**Recommendation on the card:** (a) REFUSE, (b) ADOPT, (c1) refuse / (c2) charter
+the costing memo only.
+
+**Governance.** No lever, no `ScenarioConfig` field, no derive, no LP, no run
+registered, **no matrix cell minted** (rule 28 — governance sitting, not a
+mechanism test; item 23's `O → K` was stamped by ercot-181, the session holding
+the A/B evidence, and this card only cites it), keeper UNCHANGED at
+`2026-08-09-run181-position-tail` (no promotion, no re-key, no keeper-shard
+edit). Rule 22: ERCOT holds no `complete` and no `final` marker and no
+out-of-training year was solved, scored, read or registered. Rules 23/24: zero
+scalars, zero fields. Rule 25: ERCOT only. Nothing offloaded to CI. Record:
+`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md`. Next: ercot-183.

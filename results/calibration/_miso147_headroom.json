@@ -1,0 +1,1152 @@
+{
+ "session": "miso-147",
+ "years": {
+  "2023": {
+   "campd_meta": {
+    "year": 2023,
+    "n_units": 692,
+    "n_plants": 244,
+    "unresolved_gross_mwh_by_state": {},
+    "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup"
+   },
+   "S1": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 19906.5,
+      "campd_net_A": 24865.0,
+      "delta": -4958.6,
+      "floor": 1243.3,
+      "material": true,
+      "model_capability_AV": 23638.8,
+      "model_inmerit_at_actual_E": 22661.3,
+      "model_units": 409,
+      "campd_ON_gross": 25024.4,
+      "campd_HR_gross": 3360.1,
+      "campd_HR95_gross": 2522.4,
+      "campd_OFFcyc_gross": 1775.3,
+      "campd_OFFdark_gross": 880.8,
+      "family_pf": 0.9935,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -1226.3,
+       "E_minus_A": -2203.7,
+       "E_share_of_A": 0.9114,
+       "undispatched_inmerit_capability": 2754.8
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 4176.8,
+      "campd_net_A": 4694.2,
+      "delta": -517.4,
+      "floor": 300.0,
+      "material": true,
+      "model_capability_AV": 19117.8,
+      "model_inmerit_at_actual_E": 12921.3,
+      "model_units": 855,
+      "campd_ON_gross": 4740.6,
+      "campd_HR_gross": 804.9,
+      "campd_HR95_gross": 377.3,
+      "campd_OFFcyc_gross": 3339.9,
+      "campd_OFFdark_gross": 1919.0,
+      "family_pf": 0.9914,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 14423.6,
+       "E_minus_A": 8227.1,
+       "E_share_of_A": 2.7526,
+       "undispatched_inmerit_capability": 8744.5
+      }
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 4107.0,
+      "campd_net_A": 3739.5,
+      "delta": 367.5,
+      "floor": 300.0,
+      "material": true,
+      "model_capability_AV": 6559.0,
+      "model_inmerit_at_actual_E": 5845.8,
+      "model_units": 213,
+      "campd_ON_gross": 3802.9,
+      "campd_HR_gross": 1446.1,
+      "campd_HR95_gross": 1115.4,
+      "campd_OFFcyc_gross": 506.6,
+      "campd_OFFdark_gross": 2248.0,
+      "family_pf": 0.9827,
+      "legs": {
+       "verdict": "i_available_undispatched",
+       "share_coverable_by_HR_OFFcyc": 1.0,
+       "share_needing_OFFdark": 0.0
+      }
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 24353.4,
+      "campd_net_A": 26681.6,
+      "delta": -2328.2,
+      "floor": 1334.1,
+      "material": true,
+      "model_capability_AV": 27703.8,
+      "model_inmerit_at_actual_E": 27420.5,
+      "model_units": 481,
+      "campd_ON_gross": 27431.2,
+      "campd_HR_gross": 5850.3,
+      "campd_HR95_gross": 5150.5,
+      "campd_OFFcyc_gross": 2098.3,
+      "campd_OFFdark_gross": 4457.2,
+      "family_pf": 0.9715,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 1022.2,
+       "E_minus_A": 738.9,
+       "E_share_of_A": 1.0277,
+       "undispatched_inmerit_capability": 3067.1
+      }
+     }
+    },
+    "n_hours": 873,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 14775.0,
+     "derated_mean": 7223.3,
+     "planned_mean": 21315.0,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   },
+   "S2": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 20084.0,
+      "campd_net_A": 24618.3,
+      "delta": -4534.3,
+      "floor": 1230.9,
+      "material": true,
+      "model_capability_AV": 23443.5,
+      "model_inmerit_at_actual_E": 23403.4,
+      "model_units": 409,
+      "campd_ON_gross": 24774.9,
+      "campd_HR_gross": 3401.6,
+      "campd_HR95_gross": 2572.0,
+      "campd_OFFcyc_gross": 1731.5,
+      "campd_OFFdark_gross": 1005.2,
+      "family_pf": 0.9935,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -1174.8,
+       "E_minus_A": -1214.9,
+       "E_share_of_A": 0.9507,
+       "undispatched_inmerit_capability": 3319.4
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 4582.5,
+      "campd_net_A": 4697.8,
+      "delta": -115.3,
+      "floor": 300.0,
+      "material": false,
+      "model_capability_AV": 18968.5,
+      "model_inmerit_at_actual_E": 17164.1,
+      "model_units": 855,
+      "campd_ON_gross": 4745.1,
+      "campd_HR_gross": 749.8,
+      "campd_HR95_gross": 366.7,
+      "campd_OFFcyc_gross": 3730.9,
+      "campd_OFFdark_gross": 1808.7,
+      "family_pf": 0.9914
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 4024.6,
+      "campd_net_A": 3674.8,
+      "delta": 349.7,
+      "floor": 300.0,
+      "material": true,
+      "model_capability_AV": 6319.4,
+      "model_inmerit_at_actual_E": 6274.0,
+      "model_units": 213,
+      "campd_ON_gross": 3740.1,
+      "campd_HR_gross": 1468.1,
+      "campd_HR95_gross": 1157.7,
+      "campd_OFFcyc_gross": 536.7,
+      "campd_OFFdark_gross": 2223.4,
+      "family_pf": 0.9827,
+      "legs": {
+       "verdict": "i_available_undispatched",
+       "share_coverable_by_HR_OFFcyc": 1.0,
+       "share_needing_OFFdark": 0.0
+      }
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 23296.6,
+      "campd_net_A": 25822.7,
+      "delta": -2526.1,
+      "floor": 1291.1,
+      "material": true,
+      "model_capability_AV": 26769.8,
+      "model_inmerit_at_actual_E": 26769.8,
+      "model_units": 481,
+      "campd_ON_gross": 26576.5,
+      "campd_HR_gross": 6050.7,
+      "campd_HR95_gross": 5374.3,
+      "campd_OFFcyc_gross": 2038.4,
+      "campd_OFFdark_gross": 4806.4,
+      "family_pf": 0.9715,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 947.1,
+       "E_minus_A": 947.1,
+       "E_share_of_A": 1.0367,
+       "undispatched_inmerit_capability": 3473.2
+      }
+     }
+    },
+    "n_hours": 120,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 14996.7,
+     "derated_mean": 7240.2,
+     "planned_mean": 22920.0,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   },
+   "S3": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 20244.0,
+      "campd_net_A": 25474.7,
+      "delta": -5230.6,
+      "floor": 1273.7,
+      "material": true,
+      "model_capability_AV": 23524.8,
+      "model_inmerit_at_actual_E": 23524.8,
+      "model_units": 409,
+      "campd_ON_gross": 25636.4,
+      "campd_HR_gross": 3129.0,
+      "campd_HR95_gross": 2298.8,
+      "campd_OFFcyc_gross": 1299.6,
+      "campd_OFFdark_gross": 1095.1,
+      "family_pf": 0.9935,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -1949.9,
+       "E_minus_A": -1949.9,
+       "E_share_of_A": 0.9235,
+       "undispatched_inmerit_capability": 3280.7
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 4667.0,
+      "campd_net_A": 4449.2,
+      "delta": 217.8,
+      "floor": 300.0,
+      "material": false,
+      "model_capability_AV": 18955.6,
+      "model_inmerit_at_actual_E": 18610.5,
+      "model_units": 855,
+      "campd_ON_gross": 4497.4,
+      "campd_HR_gross": 818.9,
+      "campd_HR95_gross": 388.4,
+      "campd_OFFcyc_gross": 3372.2,
+      "campd_OFFdark_gross": 1562.9,
+      "family_pf": 0.9914
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 4171.8,
+      "campd_net_A": 3879.0,
+      "delta": 292.8,
+      "floor": 300.0,
+      "material": false,
+      "model_capability_AV": 6533.2,
+      "model_inmerit_at_actual_E": 6532.9,
+      "model_units": 213,
+      "campd_ON_gross": 3940.2,
+      "campd_HR_gross": 1421.4,
+      "campd_HR95_gross": 1126.3,
+      "campd_OFFcyc_gross": 312.8,
+      "campd_OFFdark_gross": 2014.9,
+      "family_pf": 0.9827
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 24967.3,
+      "campd_net_A": 27955.8,
+      "delta": -2988.5,
+      "floor": 1397.8,
+      "material": true,
+      "model_capability_AV": 27790.1,
+      "model_inmerit_at_actual_E": 27790.1,
+      "model_units": 481,
+      "campd_ON_gross": 28754.6,
+      "campd_HR_gross": 5025.0,
+      "campd_HR95_gross": 4341.8,
+      "campd_OFFcyc_gross": 1809.2,
+      "campd_OFFdark_gross": 4083.7,
+      "family_pf": 0.9715,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -165.7,
+       "E_minus_A": -165.7,
+       "E_share_of_A": 0.9941,
+       "undispatched_inmerit_capability": 2822.8
+      }
+     }
+    },
+    "n_hours": 30,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 15184.1,
+     "derated_mean": 7863.4,
+     "planned_mean": 19014.7,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   },
+   "MAYCTRL": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 18840.1,
+      "campd_net_A": 20790.4,
+      "delta": -1950.3,
+      "floor": 1039.5,
+      "material": true,
+      "model_capability_AV": 21864.5,
+      "model_inmerit_at_actual_E": 14891.9,
+      "model_units": 409,
+      "campd_ON_gross": 20916.8,
+      "campd_HR_gross": 4184.9,
+      "campd_HR95_gross": 3377.3,
+      "campd_OFFcyc_gross": 2851.4,
+      "campd_OFFdark_gross": 789.0,
+      "family_pf": 0.9935,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 1074.1,
+       "E_minus_A": -5898.5,
+       "E_share_of_A": 0.7163,
+       "undispatched_inmerit_capability": 0.0
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 2812.3,
+      "campd_net_A": 3118.4,
+      "delta": -306.1,
+      "floor": 300.0,
+      "material": true,
+      "model_capability_AV": 18777.1,
+      "model_inmerit_at_actual_E": 4270.5,
+      "model_units": 855,
+      "campd_ON_gross": 3136.1,
+      "campd_HR_gross": 682.9,
+      "campd_HR95_gross": 393.9,
+      "campd_OFFcyc_gross": 4342.7,
+      "campd_OFFdark_gross": 516.4,
+      "family_pf": 0.9914,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 15658.7,
+       "E_minus_A": 1152.1,
+       "E_share_of_A": 1.3695,
+       "undispatched_inmerit_capability": 1458.2
+      }
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 2948.3,
+      "campd_net_A": 3202.4,
+      "delta": -254.1,
+      "floor": 300.0,
+      "material": false,
+      "model_capability_AV": 5664.3,
+      "model_inmerit_at_actual_E": 2230.1,
+      "model_units": 213,
+      "campd_ON_gross": 3267.3,
+      "campd_HR_gross": 1991.2,
+      "campd_HR95_gross": 1611.4,
+      "campd_OFFcyc_gross": 561.2,
+      "campd_OFFdark_gross": 2282.6,
+      "family_pf": 0.9827
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 17031.3,
+      "campd_net_A": 17895.2,
+      "delta": -863.9,
+      "floor": 894.8,
+      "material": false,
+      "model_capability_AV": 21322.4,
+      "model_inmerit_at_actual_E": 16533.9,
+      "model_units": 481,
+      "campd_ON_gross": 18457.1,
+      "campd_HR_gross": 8462.7,
+      "campd_HR95_gross": 7834.0,
+      "campd_OFFcyc_gross": 2209.5,
+      "campd_OFFdark_gross": 7181.0,
+      "family_pf": 0.9715
+     }
+    },
+    "n_hours": 744,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 15855.6,
+     "derated_mean": 6765.7,
+     "planned_mean": 31980.1,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   }
+  },
+  "2024": {
+   "campd_meta": {
+    "year": 2024,
+    "n_units": 676,
+    "n_plants": 240,
+    "unresolved_gross_mwh_by_state": {},
+    "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup"
+   },
+   "S1": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 20741.5,
+      "campd_net_A": 25484.9,
+      "delta": -4743.4,
+      "floor": 1274.2,
+      "material": true,
+      "model_capability_AV": 23876.7,
+      "model_inmerit_at_actual_E": 22197.0,
+      "model_units": 413,
+      "campd_ON_gross": 25648.3,
+      "campd_HR_gross": 3787.0,
+      "campd_HR95_gross": 2930.0,
+      "campd_OFFcyc_gross": 1783.3,
+      "campd_OFFdark_gross": 501.3,
+      "family_pf": 0.9933,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -1608.2,
+       "E_minus_A": -3288.0,
+       "E_share_of_A": 0.871,
+       "undispatched_inmerit_capability": 1455.5
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 5093.9,
+      "campd_net_A": 5168.8,
+      "delta": -74.9,
+      "floor": 300.0,
+      "material": false,
+      "model_capability_AV": 19298.0,
+      "model_inmerit_at_actual_E": 14146.2,
+      "model_units": 855,
+      "campd_ON_gross": 5229.0,
+      "campd_HR_gross": 890.3,
+      "campd_HR95_gross": 451.9,
+      "campd_OFFcyc_gross": 3553.4,
+      "campd_OFFdark_gross": 1531.9,
+      "family_pf": 0.9903
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 4018.0,
+      "campd_net_A": 4159.2,
+      "delta": -141.2,
+      "floor": 300.0,
+      "material": false,
+      "model_capability_AV": 7139.3,
+      "model_inmerit_at_actual_E": 5925.0,
+      "model_units": 213,
+      "campd_ON_gross": 4252.3,
+      "campd_HR_gross": 1822.7,
+      "campd_HR95_gross": 1494.9,
+      "campd_OFFcyc_gross": 711.8,
+      "campd_OFFdark_gross": 1480.3,
+      "family_pf": 0.9786
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 24855.2,
+      "campd_net_A": 27460.0,
+      "delta": -2604.8,
+      "floor": 1373.0,
+      "material": true,
+      "model_capability_AV": 28996.5,
+      "model_inmerit_at_actual_E": 28843.5,
+      "model_units": 481,
+      "campd_ON_gross": 28268.9,
+      "campd_HR_gross": 5345.9,
+      "campd_HR95_gross": 4521.9,
+      "campd_OFFcyc_gross": 2152.5,
+      "campd_OFFdark_gross": 3703.5,
+      "family_pf": 0.9717,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 1536.5,
+       "E_minus_A": 1383.5,
+       "E_share_of_A": 1.0504,
+       "undispatched_inmerit_capability": 3988.3
+      }
+     }
+    },
+    "n_hours": 873,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 16148.8,
+     "derated_mean": 8104.1,
+     "planned_mean": 17973.2,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   },
+   "S2": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 20937.4,
+      "campd_net_A": 26159.7,
+      "delta": -5222.3,
+      "floor": 1308.0,
+      "material": true,
+      "model_capability_AV": 24382.3,
+      "model_inmerit_at_actual_E": 22509.6,
+      "model_units": 413,
+      "campd_ON_gross": 26325.5,
+      "campd_HR_gross": 4019.8,
+      "campd_HR95_gross": 3153.9,
+      "campd_OFFcyc_gross": 1489.6,
+      "campd_OFFdark_gross": 389.2,
+      "family_pf": 0.9933,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -1777.4,
+       "E_minus_A": -3650.1,
+       "E_share_of_A": 0.8605,
+       "undispatched_inmerit_capability": 1572.2
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 6267.6,
+      "campd_net_A": 6088.5,
+      "delta": 179.1,
+      "floor": 304.4,
+      "material": false,
+      "model_capability_AV": 19334.5,
+      "model_inmerit_at_actual_E": 15579.6,
+      "model_units": 855,
+      "campd_ON_gross": 6158.2,
+      "campd_HR_gross": 960.4,
+      "campd_HR95_gross": 483.7,
+      "campd_OFFcyc_gross": 3394.2,
+      "campd_OFFdark_gross": 1251.7,
+      "family_pf": 0.9903
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 4328.8,
+      "campd_net_A": 4385.8,
+      "delta": -57.0,
+      "floor": 300.0,
+      "material": false,
+      "model_capability_AV": 7289.1,
+      "model_inmerit_at_actual_E": 6056.6,
+      "model_units": 213,
+      "campd_ON_gross": 4479.5,
+      "campd_HR_gross": 1995.0,
+      "campd_HR95_gross": 1586.9,
+      "campd_OFFcyc_gross": 817.5,
+      "campd_OFFdark_gross": 1260.8,
+      "family_pf": 0.9786
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 26898.0,
+      "campd_net_A": 29707.9,
+      "delta": -2809.9,
+      "floor": 1485.4,
+      "material": true,
+      "model_capability_AV": 30142.0,
+      "model_inmerit_at_actual_E": 30142.0,
+      "model_units": 481,
+      "campd_ON_gross": 30594.4,
+      "campd_HR_gross": 4555.8,
+      "campd_HR95_gross": 3739.2,
+      "campd_OFFcyc_gross": 2181.5,
+      "campd_OFFdark_gross": 2832.9,
+      "family_pf": 0.9717,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 434.0,
+       "E_minus_A": 434.0,
+       "E_share_of_A": 1.0146,
+       "undispatched_inmerit_capability": 3244.0
+      }
+     }
+    },
+    "n_hours": 149,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 16171.1,
+     "derated_mean": 8658.2,
+     "planned_mean": 15901.1,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   },
+   "S3": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 21378.1,
+      "campd_net_A": 25459.0,
+      "delta": -4080.9,
+      "floor": 1272.9,
+      "material": true,
+      "model_capability_AV": 23334.6,
+      "model_inmerit_at_actual_E": 23334.6,
+      "model_units": 413,
+      "campd_ON_gross": 25623.1,
+      "campd_HR_gross": 3324.8,
+      "campd_HR95_gross": 2473.9,
+      "campd_OFFcyc_gross": 1534.8,
+      "campd_OFFdark_gross": 704.4,
+      "family_pf": 0.9933,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -2124.3,
+       "E_minus_A": -2124.3,
+       "E_share_of_A": 0.9166,
+       "undispatched_inmerit_capability": 1956.5
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 6359.0,
+      "campd_net_A": 6539.7,
+      "delta": -180.7,
+      "floor": 327.0,
+      "material": false,
+      "model_capability_AV": 19050.7,
+      "model_inmerit_at_actual_E": 18953.9,
+      "model_units": 855,
+      "campd_ON_gross": 6622.4,
+      "campd_HR_gross": 911.1,
+      "campd_HR95_gross": 458.2,
+      "campd_OFFcyc_gross": 3043.9,
+      "campd_OFFdark_gross": 1940.3,
+      "family_pf": 0.9903
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 4360.3,
+      "campd_net_A": 4569.9,
+      "delta": -209.5,
+      "floor": 300.0,
+      "material": false,
+      "model_capability_AV": 7048.1,
+      "model_inmerit_at_actual_E": 7009.5,
+      "model_units": 213,
+      "campd_ON_gross": 4669.2,
+      "campd_HR_gross": 1458.4,
+      "campd_HR95_gross": 1159.3,
+      "campd_OFFcyc_gross": 558.5,
+      "campd_OFFdark_gross": 1764.3,
+      "family_pf": 0.9786
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 24807.2,
+      "campd_net_A": 27589.5,
+      "delta": -2782.3,
+      "floor": 1379.5,
+      "material": true,
+      "model_capability_AV": 28050.2,
+      "model_inmerit_at_actual_E": 28050.2,
+      "model_units": 481,
+      "campd_ON_gross": 28384.0,
+      "campd_HR_gross": 4511.5,
+      "campd_HR95_gross": 3745.4,
+      "campd_OFFcyc_gross": 1940.5,
+      "campd_OFFdark_gross": 4230.4,
+      "family_pf": 0.9717,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 460.7,
+       "E_minus_A": 460.7,
+       "E_share_of_A": 1.0167,
+       "undispatched_inmerit_capability": 3243.0
+      }
+     }
+    },
+    "n_hours": 37,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 16044.8,
+     "derated_mean": 8522.5,
+     "planned_mean": 17626.2,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   },
+   "MAYCTRL": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 20146.0,
+      "campd_net_A": 22320.5,
+      "delta": -2174.5,
+      "floor": 1116.0,
+      "material": true,
+      "model_capability_AV": 22270.8,
+      "model_inmerit_at_actual_E": 17233.3,
+      "model_units": 413,
+      "campd_ON_gross": 22460.0,
+      "campd_HR_gross": 4072.9,
+      "campd_HR95_gross": 3265.1,
+      "campd_OFFcyc_gross": 2545.4,
+      "campd_OFFdark_gross": 43.0,
+      "family_pf": 0.9933,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -49.6,
+       "E_minus_A": -5087.2,
+       "E_share_of_A": 0.7721,
+       "undispatched_inmerit_capability": 0.0
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 3165.8,
+      "campd_net_A": 2514.1,
+      "delta": 651.7,
+      "floor": 300.0,
+      "material": true,
+      "model_capability_AV": 18856.9,
+      "model_inmerit_at_actual_E": 4768.3,
+      "model_units": 855,
+      "campd_ON_gross": 2544.3,
+      "campd_HR_gross": 605.0,
+      "campd_HR95_gross": 363.7,
+      "campd_OFFcyc_gross": 4065.5,
+      "campd_OFFdark_gross": 1347.2,
+      "family_pf": 0.9903,
+      "legs": {
+       "verdict": "i_available_undispatched",
+       "share_coverable_by_HR_OFFcyc": 1.0,
+       "share_needing_OFFdark": 0.0
+      }
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 2860.8,
+      "campd_net_A": 4163.5,
+      "delta": -1302.7,
+      "floor": 300.0,
+      "material": true,
+      "model_capability_AV": 6486.7,
+      "model_inmerit_at_actual_E": 1979.7,
+      "model_units": 213,
+      "campd_ON_gross": 4258.4,
+      "campd_HR_gross": 2409.5,
+      "campd_HR95_gross": 1973.7,
+      "campd_OFFcyc_gross": 652.6,
+      "campd_OFFdark_gross": 350.4,
+      "family_pf": 0.9786,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 2323.2,
+       "E_minus_A": -2183.8,
+       "E_share_of_A": 0.4755,
+       "undispatched_inmerit_capability": 0.0
+      }
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 15478.0,
+      "campd_net_A": 18229.5,
+      "delta": -2751.5,
+      "floor": 911.5,
+      "material": true,
+      "model_capability_AV": 21305.0,
+      "model_inmerit_at_actual_E": 15814.9,
+      "model_units": 481,
+      "campd_ON_gross": 18792.5,
+      "campd_HR_gross": 8027.0,
+      "campd_HR95_gross": 7349.8,
+      "campd_OFFcyc_gross": 2228.8,
+      "campd_OFFdark_gross": 6094.8,
+      "family_pf": 0.9717,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 3075.5,
+       "E_minus_A": -2414.6,
+       "E_share_of_A": 0.8675,
+       "undispatched_inmerit_capability": 336.9
+      }
+     }
+    },
+    "n_hours": 744,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 18645.3,
+     "derated_mean": 8809.0,
+     "planned_mean": 23534.0,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   }
+  },
+  "2025": {
+   "campd_meta": {
+    "year": 2025,
+    "n_units": 665,
+    "n_plants": 237,
+    "unresolved_gross_mwh_by_state": {},
+    "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup"
+   },
+   "S1": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 19274.1,
+      "campd_net_A": 24889.9,
+      "delta": -5615.8,
+      "floor": 1244.5,
+      "material": true,
+      "model_capability_AV": 22276.4,
+      "model_inmerit_at_actual_E": 21405.6,
+      "model_units": 413,
+      "campd_ON_gross": 25050.7,
+      "campd_HR_gross": 3579.7,
+      "campd_HR95_gross": 2558.4,
+      "campd_OFFcyc_gross": 1744.2,
+      "campd_OFFdark_gross": 1849.7,
+      "family_pf": 0.9931,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -2613.6,
+       "E_minus_A": -3484.3,
+       "E_share_of_A": 0.86,
+       "undispatched_inmerit_capability": 2131.5
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 5290.5,
+      "campd_net_A": 5711.6,
+      "delta": -421.0,
+      "floor": 300.0,
+      "material": true,
+      "model_capability_AV": 19295.5,
+      "model_inmerit_at_actual_E": 14988.8,
+      "model_units": 853,
+      "campd_ON_gross": 5774.0,
+      "campd_HR_gross": 1138.6,
+      "campd_HR95_gross": 565.1,
+      "campd_OFFcyc_gross": 3941.8,
+      "campd_OFFdark_gross": 2512.3,
+      "family_pf": 0.9901,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 13583.9,
+       "E_minus_A": 9277.2,
+       "E_share_of_A": 2.6243,
+       "undispatched_inmerit_capability": 9698.3
+      }
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 3838.6,
+      "campd_net_A": 4088.8,
+      "delta": -250.3,
+      "floor": 300.0,
+      "material": false,
+      "model_capability_AV": 7477.9,
+      "model_inmerit_at_actual_E": 6214.5,
+      "model_units": 213,
+      "campd_ON_gross": 4181.2,
+      "campd_HR_gross": 2028.9,
+      "campd_HR95_gross": 1500.2,
+      "campd_OFFcyc_gross": 578.4,
+      "campd_OFFdark_gross": 1624.3,
+      "family_pf": 0.9775
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 28829.8,
+      "campd_net_A": 29186.5,
+      "delta": -356.7,
+      "floor": 1459.3,
+      "material": false,
+      "model_capability_AV": 29633.0,
+      "model_inmerit_at_actual_E": 29606.8,
+      "model_units": 481,
+      "campd_ON_gross": 30016.5,
+      "campd_HR_gross": 4611.4,
+      "campd_HR95_gross": 4063.5,
+      "campd_OFFcyc_gross": 1989.9,
+      "campd_OFFdark_gross": 2414.6,
+      "family_pf": 0.9729
+     }
+    },
+    "n_hours": 869,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 18967.0,
+     "derated_mean": 9260.2,
+     "planned_mean": 20438.1,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   },
+   "S2": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 19622.4,
+      "campd_net_A": 25322.5,
+      "delta": -5700.0,
+      "floor": 1266.1,
+      "material": true,
+      "model_capability_AV": 22752.6,
+      "model_inmerit_at_actual_E": 22548.9,
+      "model_units": 413,
+      "campd_ON_gross": 25485.8,
+      "campd_HR_gross": 3714.3,
+      "campd_HR95_gross": 2690.1,
+      "campd_OFFcyc_gross": 1736.2,
+      "campd_OFFdark_gross": 1567.3,
+      "family_pf": 0.9931,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -2569.9,
+       "E_minus_A": -2773.6,
+       "E_share_of_A": 0.8905,
+       "undispatched_inmerit_capability": 2926.5
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 5879.6,
+      "campd_net_A": 6197.1,
+      "delta": -317.5,
+      "floor": 309.9,
+      "material": true,
+      "model_capability_AV": 19299.5,
+      "model_inmerit_at_actual_E": 16985.6,
+      "model_units": 853,
+      "campd_ON_gross": 6266.9,
+      "campd_HR_gross": 1106.3,
+      "campd_HR95_gross": 534.0,
+      "campd_OFFcyc_gross": 3857.0,
+      "campd_OFFdark_gross": 2419.6,
+      "family_pf": 0.9901,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 13102.4,
+       "E_minus_A": 10788.5,
+       "E_share_of_A": 2.7409,
+       "undispatched_inmerit_capability": 11106.0
+      }
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 4177.8,
+      "campd_net_A": 4453.3,
+      "delta": -275.5,
+      "floor": 300.0,
+      "material": false,
+      "model_capability_AV": 7592.0,
+      "model_inmerit_at_actual_E": 7103.2,
+      "model_units": 213,
+      "campd_ON_gross": 4545.5,
+      "campd_HR_gross": 1970.5,
+      "campd_HR95_gross": 1440.0,
+      "campd_OFFcyc_gross": 560.0,
+      "campd_OFFdark_gross": 1511.3,
+      "family_pf": 0.9775
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 29520.7,
+      "campd_net_A": 30005.2,
+      "delta": -484.5,
+      "floor": 1500.3,
+      "material": false,
+      "model_capability_AV": 30298.8,
+      "model_inmerit_at_actual_E": 30298.8,
+      "model_units": 481,
+      "campd_ON_gross": 30860.1,
+      "campd_HR_gross": 4626.8,
+      "campd_HR95_gross": 4068.2,
+      "campd_OFFcyc_gross": 2013.2,
+      "campd_OFFdark_gross": 1968.8,
+      "family_pf": 0.9729
+     }
+    },
+    "n_hours": 256,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 19178.6,
+     "derated_mean": 9623.9,
+     "planned_mean": 18529.4,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   },
+   "S3": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 20087.4,
+      "campd_net_A": 25684.2,
+      "delta": -5596.8,
+      "floor": 1284.2,
+      "material": true,
+      "model_capability_AV": 22355.1,
+      "model_inmerit_at_actual_E": 22353.1,
+      "model_units": 413,
+      "campd_ON_gross": 25847.6,
+      "campd_HR_gross": 3573.1,
+      "campd_HR95_gross": 2554.4,
+      "campd_OFFcyc_gross": 1475.2,
+      "campd_OFFdark_gross": 1612.2,
+      "family_pf": 0.9931,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -3329.1,
+       "E_minus_A": -3331.1,
+       "E_share_of_A": 0.8703,
+       "undispatched_inmerit_capability": 2265.7
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 8536.5,
+      "campd_net_A": 8753.3,
+      "delta": -216.8,
+      "floor": 437.7,
+      "material": false,
+      "model_capability_AV": 18908.3,
+      "model_inmerit_at_actual_E": 18664.9,
+      "model_units": 853,
+      "campd_ON_gross": 8852.7,
+      "campd_HR_gross": 1196.8,
+      "campd_HR95_gross": 518.6,
+      "campd_OFFcyc_gross": 2565.8,
+      "campd_OFFdark_gross": 2058.6,
+      "family_pf": 0.9901
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 5188.2,
+      "campd_net_A": 5204.2,
+      "delta": -16.0,
+      "floor": 300.0,
+      "material": false,
+      "model_capability_AV": 7722.7,
+      "model_inmerit_at_actual_E": 7715.5,
+      "model_units": 213,
+      "campd_ON_gross": 5314.2,
+      "campd_HR_gross": 1725.7,
+      "campd_HR95_gross": 1199.3,
+      "campd_OFFcyc_gross": 519.1,
+      "campd_OFFdark_gross": 1272.6,
+      "family_pf": 0.9775
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 30068.5,
+      "campd_net_A": 30598.2,
+      "delta": -529.7,
+      "floor": 1529.9,
+      "material": false,
+      "model_capability_AV": 30474.8,
+      "model_inmerit_at_actual_E": 30474.8,
+      "model_units": 481,
+      "campd_ON_gross": 31464.9,
+      "campd_HR_gross": 3825.2,
+      "campd_HR95_gross": 3303.7,
+      "campd_OFFcyc_gross": 1995.4,
+      "campd_OFFdark_gross": 2156.7,
+      "family_pf": 0.9729
+     }
+    },
+    "n_hours": 88,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 19322.8,
+     "derated_mean": 9847.8,
+     "planned_mean": 17785.8,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   },
+   "S0": {
+    "rows": {
+     "CC": {
+      "model_dispatch_M": 15606.8,
+      "campd_net_A": 19020.7,
+      "delta": -3413.9,
+      "floor": 951.0,
+      "material": true,
+      "model_capability_AV": 17819.3,
+      "model_inmerit_at_actual_E": 10274.6,
+      "model_units": 413,
+      "campd_ON_gross": 19144.6,
+      "campd_HR_gross": 3494.9,
+      "campd_HR95_gross": 2608.0,
+      "campd_OFFcyc_gross": 2449.9,
+      "campd_OFFdark_gross": 3044.4,
+      "family_pf": 0.9931,
+      "legs": {
+       "verdict": "availability_deficit",
+       "AV_minus_A": -1201.4,
+       "E_minus_A": -8746.1,
+       "E_share_of_A": 0.5402,
+       "undispatched_inmerit_capability": 0.0
+      }
+     },
+     "CT": {
+      "model_dispatch_M": 3036.8,
+      "campd_net_A": 1663.0,
+      "delta": 1373.8,
+      "floor": 300.0,
+      "material": true,
+      "model_capability_AV": 18798.9,
+      "model_inmerit_at_actual_E": 2698.1,
+      "model_units": 853,
+      "campd_ON_gross": 1681.4,
+      "campd_HR_gross": 578.8,
+      "campd_HR95_gross": 366.4,
+      "campd_OFFcyc_gross": 4260.8,
+      "campd_OFFdark_gross": 2819.5,
+      "family_pf": 0.9901,
+      "legs": {
+       "verdict": "i_available_undispatched",
+       "share_coverable_by_HR_OFFcyc": 1.0,
+       "share_needing_OFFdark": 0.0
+      }
+     },
+     "ST_GAS": {
+      "model_dispatch_M": 2632.2,
+      "campd_net_A": 2991.6,
+      "delta": -359.3,
+      "floor": 300.0,
+      "material": true,
+      "model_capability_AV": 6240.9,
+      "model_inmerit_at_actual_E": 904.6,
+      "model_units": 213,
+      "campd_ON_gross": 3070.1,
+      "campd_HR_gross": 2783.6,
+      "campd_HR95_gross": 2252.3,
+      "campd_OFFcyc_gross": 753.8,
+      "campd_OFFdark_gross": 1569.2,
+      "family_pf": 0.9775,
+      "legs": {
+       "verdict": "priced_out",
+       "AV_minus_A": 3249.4,
+       "E_minus_A": -2086.9,
+       "E_share_of_A": 0.3024,
+       "undispatched_inmerit_capability": 0.0
+      }
+     },
+     "ST_COAL": {
+      "model_dispatch_M": 19266.9,
+      "campd_net_A": 19893.4,
+      "delta": -626.5,
+      "floor": 994.7,
+      "material": false,
+      "model_capability_AV": 21564.1,
+      "model_inmerit_at_actual_E": 16628.8,
+      "model_units": 481,
+      "campd_ON_gross": 20416.4,
+      "campd_HR_gross": 6779.5,
+      "campd_HR95_gross": 6275.0,
+      "campd_OFFcyc_gross": 2047.6,
+      "campd_OFFdark_gross": 5735.8,
+      "family_pf": 0.9729
+     }
+    },
+    "n_hours": 744,
+    "outage_bound_mw_on_stratum_days": {
+     "forced_plus_unplanned_mean": 24176.0,
+     "derated_mean": 7633.8,
+     "planned_mean": 31228.4,
+     "grain": "MISO system daily; aggregate only, never class-attributed"
+    },
+    "basis_note": "M/A/delta NET; AV/E model-side NET-equivalent capability; ON/HR/OFF_* CAMPD GROSS state readings, pf-scaled only inside leg tests"
+   }
+  }
+ },
+ "P2": {
+  "largest_gap_family_S1_2025": "CC",
+  "delta": -5615.8,
+  "legs": {
+   "verdict": "availability_deficit",
+   "AV_minus_A": -2613.6,
+   "E_minus_A": -3484.3,
+   "E_share_of_A": 0.86,
+   "undispatched_inmerit_capability": 2131.5
+  },
+  "verdict": "availability_deficit",
+  "note": "negative-delta branch (PREREG \u00a74.3): the prior's positive direction did not obtain; adjudicated by the pre-registered negative-delta rule"
+ }
+}
