@@ -89,6 +89,12 @@ BELLY_HODS = (10, 11, 12, 13, 14, 15)
 CAISO140_WALKDOWN_BELLY = {500: -0.048, 1000: -0.157, 1500: -0.313, 2000: -0.511, 3000: -0.731}
 # the C3a-2025 gap the walkdown was measured against (FINDING-caiso140 §A)
 CAISO140_GAP_2025 = 2.904
+# FINDING-caiso140 §B: the Sep-Dec belly WATER wedge (model vs measured, both
+# sides net of PS), near-constant across the three years. This is the branch-B
+# ceiling: if the wedge is entirely CONVENTIONAL-HYDRO under-allocation rather
+# than PS over-pumping, the correctable supply is the whole wedge, not just the
+# model's own pumping.
+CAISO140_WATER_WEDGE_BELLY_MW = {2023: 769.0, 2024: 803.0, 2025: 793.0}
 
 
 def actual_rt(year: int) -> np.ndarray:
@@ -282,9 +288,19 @@ def main() -> None:
         }
 
         # ---- the composed bound ---------------------------------------------
-        s_belly = l2["belly_mean_charge_mw"]
+        # Branch A ceiling: the whole wedge is model PS OVER-pumping, so the
+        # correctable supply is the model's OWN belly pumping (it cannot pump
+        # less than zero). Branch B ceiling: the whole wedge is CONVENTIONAL-
+        # HYDRO under-allocation, so the correctable supply is the whole
+        # measured wedge. The bound takes the LARGER of the two — the most
+        # favourable resolution the intake could possibly return.
+        s_a = l2["belly_mean_charge_mw"]
+        s_b = float(CAISO140_WATER_WEDGE_BELLY_MW[year])
+        s_belly = max(s_a, s_b)
         dlam_upper = interp_walkdown(s_belly)
         bound = {
+            "S_branchA_model_ps_belly_pumping_mw": s_a,
+            "S_branchB_caiso140_water_wedge_mw": s_b,
             "S_belly_mw_max": s_belly,
             "walkdown_dlambda_upper_usd_per_mwh": dlam_upper,
             "required_usd_per_mwh": required,
@@ -344,7 +360,8 @@ def main() -> None:
             f"{l4['gap_in_no_ps_activity_hours']:+7.3f}"
         )
         print(
-            f"BND S={s_belly:6.1f} MW -> caiso-140 λ(S) upper bound {dlam_upper:+7.3f} $/MWh"
+            f"BND S=max(A {s_a:6.1f}, B {s_b:6.1f})={s_belly:6.1f} MW -> "
+            f"caiso-140 λ(S) upper bound {dlam_upper:+7.3f} $/MWh"
             f"  vs required {required:7.3f}  -> "
             f"{'CLOSES' if bound['closes_band'] else 'DOES NOT CLOSE'}"
             + (

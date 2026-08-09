@@ -48,8 +48,10 @@
     "coverage_hours_actual": 8712
    },
    "bound": {
-    "S_belly_mw_max": 644.3673095703125,
-    "walkdown_dlambda_upper_usd_per_mwh": -0.07947207348632812,
+    "S_branchA_model_ps_belly_pumping_mw": 644.3673095703125,
+    "S_branchB_caiso140_water_wedge_mw": 769.0,
+    "S_belly_mw_max": 769.0,
+    "walkdown_dlambda_upper_usd_per_mwh": -0.10664200000000001,
     "required_usd_per_mwh": 0.0,
     "closes_band": true,
     "coverage_of_required_pct": null,
@@ -99,11 +101,13 @@
     "coverage_hours_actual": 8760
    },
    "bound": {
-    "S_belly_mw_max": 668.5338745117188,
-    "walkdown_dlambda_upper_usd_per_mwh": -0.08474038464355468,
+    "S_branchA_model_ps_belly_pumping_mw": 668.5338745117188,
+    "S_branchB_caiso140_water_wedge_mw": 803.0,
+    "S_belly_mw_max": 803.0,
+    "walkdown_dlambda_upper_usd_per_mwh": -0.114054,
     "required_usd_per_mwh": 0.18371178164588287,
     "closes_band": false,
-    "coverage_of_required_pct": 46.12681009588031,
+    "coverage_of_required_pct": 62.08311681383993,
     "walkdown_staleness_note": "the caiso-140 \u00a7C curve was measured against a C3a-2025 gap of +2.904 $/MWh; this keeper's gap is +3.649 $/MWh, so the quoted curve OVERSTATES the intake's sufficiency."
    },
    "context_battery_mean_charge_mw": 1011.8602905273438
@@ -150,11 +154,13 @@
     "coverage_hours_actual": 8760
    },
    "bound": {
-    "S_belly_mw_max": 687.8041381835938,
-    "walkdown_dlambda_upper_usd_per_mwh": -0.08894130212402344,
+    "S_branchA_model_ps_belly_pumping_mw": 687.8041381835938,
+    "S_branchB_caiso140_water_wedge_mw": 793.0,
+    "S_belly_mw_max": 793.0,
+    "walkdown_dlambda_upper_usd_per_mwh": -0.111874,
     "required_usd_per_mwh": 1.0737818551780336,
     "closes_band": false,
-    "coverage_of_required_pct": 8.282995442242497,
+    "coverage_of_required_pct": 10.41868974228953,
     "walkdown_staleness_note": "the caiso-140 \u00a7C curve was measured against a C3a-2025 gap of +2.904 $/MWh; this keeper's gap is +4.516 $/MWh, so the quoted curve OVERSTATES the intake's sufficiency."
    },
    "context_battery_mean_charge_mw": 1496.447509765625
