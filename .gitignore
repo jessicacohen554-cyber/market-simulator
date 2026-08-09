@@ -275,6 +275,15 @@ frontend/data/forecast/program-status.js
 # registered record is the frontend/data/hindcast sidecar, and the readout
 # lives in docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md.
 /results/ffr7b2/
+# FFR-4E CAISO storage-accreditation row-4 A/B (run_full_horizon --out-dir).
+# The heavy per-year DISPATCH PARQUETS only: unlike the transient families
+# above, this pair's SLIM artifacts ARE committed and cited by
+# docs/handoffs/ffr-4e-caiso-storage-elcc-2026-08-09.md — the two
+# full_horizon_summary.json + run_config.json (which carry the row-4 numerator/
+# denominator and the armed flag) and the per-year evolution ledgers, which are
+# the accreditation trail §5.2 reads. Only the regenerable ~24 MB of dispatch
+# parquet is excluded, per the pack-size rule in CLAUDE.md's Git & Pushing.
+/results/ffr4e/*/*/*/*.parquet
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
 # D-28 option A step 3). Same class as /results/ffr7b2/ above, of which this is
