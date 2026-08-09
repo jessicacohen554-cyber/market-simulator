@@ -66,7 +66,16 @@ ENTRY_FIELDS = (
 # Optional fields passed through to the manifest entry when a sidecar carries
 # them (never required, so old sidecars are unaffected). The D-3 ablation-twin
 # link + its market story (CLAUDE.md rule 20) and the twin's own back-reference.
-OPTIONAL_ENTRY_FIELDS = ("ablation_twin", "market_story", "ablation_of")
+#
+# ``holdout`` is the rule-22 validation-touchpoint block written by
+# scripts/stamp_touchpoint_holdout.py. It was MISSING from this tuple until
+# 2026-08-09, so the Run Explorer's Validation Touchpoint panel — which reads
+# ``st.runMeta.holdout`` — could never render on the deployed dashboard: the
+# block was committed on the sidecar and then dropped here on the way to the
+# manifest. The same block is what links a holdout run back to the keeper whose
+# frozen recipe produced it (``holdout.keeper``), which is how the year selector
+# offers a keeper its own held-out years.
+OPTIONAL_ENTRY_FIELDS = ("ablation_twin", "market_story", "ablation_of", "holdout")
 
 
 def _load_entries() -> list[dict]:
