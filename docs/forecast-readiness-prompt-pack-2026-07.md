@@ -5011,3 +5011,248 @@ uv sync before tests; no regenerate_clean.py needed (no solve).
 Deliverable: the PR + docs/handoffs/f2-45u-composition-<date>.md (the seam diff walk,
 the three-way no-op proof at defaults, the pinned (c) table, the branch-(iii) note).
 ```
+
+## §0ab — LIFT REFUSED (HOLD #6); the post-3V re-base named as next gate evidence; three parallel dispatches (2026-08-09 @ `9febedf`)
+
+State delta since §0aa (full detail: sitting record Addendum AF): FFR-8A Phase 3 COMPLETE
+and adjudicated clean; **the FH-4/FH-5 lift is REFUSED (HOLD #6)** — α met (0 in-window
+economic executions, the 7C-expected vacancy), β FAILED (gas_st wave −41 % but 6.5 GW
+survives), γ FAILED (+183 % vs the 2.294 GW corrected target), price side FAILED
+(into-2024 inert at zero; into-2025 real but partial, 13 vs 217 h > $100, correct
+mechanism). TWO standing facts travel with the refusal: the §4 record is a LOWER BOUND
+(the FFR-3V epoch re-based the ERCOT hindcast VRE pool 80 GW → 32.4 GW AFTER the arms
+solved — corrected inputs can only raise scarcity content; FFR-5D-M §1.3 reproduction
+numbers are STALE), and the λ-led conduct share of the measured tail is out of every
+admissible object's reach by construction (owner question in prose, does not gate β/γ).
+F2-45U landed (per-instrument branch assignment; D-28 step 2 CLOSED; step 3 needs only
+ARM3-MEASURE's evidence). FFR-3V-FIX complete: FFR-5E's hindcast arm UNBLOCKED. HOUSE-1
+MERGED — the constants.py reflow trap is DEAD (hook scoped + excluded); prompts carry the
+cache-key-pin wait line instead. CAISO keeper churned to 2026-08-09-caiso-184-c1-lpbasis
+(R.1 clean); Q.2 battery hold stands. NOT dispatched: FH-4/FH-5 (refused), the battery
+(Q.2), HOUSE-2 (surface collisions with active ercot-181/miso-145 — queued). The three
+prompts below are the dispatch set — all parallel-safe, separate containers, disjoint
+namespaces.
+
+### FFR-8B [FABLE] — re-base the repaired object at the post-3V head; diagnose+repair the E1 dispersion gap
+
+```
+[FABLE] FFR-8B — Re-base the repaired forward price object on the corrected renewable
+vintage seed (the FFR-3V epoch), then diagnose — and repair ONLY if admissible — the E1
+committed-capability dispersion gap (FFR-8A §5 finding (c)). NO tuning, NO arming, NO
+keeper contact, NO lift recommendation (the determination is the manager's; your Phase-0
+re-base IS the next lift evidence — Addendum AF.2).
+
+Repo /home/user/market-simulator. Model FABLE (rule 27: runner/model core). Branch
+claude/ffr-8b-rebase-dispersion-<suffix> off fresh origin/main. Authority: owner-re-opened
+D-21(a) (Addendum AC.1) via Addendum AF.4; the record you extend:
+docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md (§4 the superseded measurement,
+§5 findings (a)-(d)); docs/handoffs/ffr-3v-fix-2026-08-08.md §6.1 (the epoch: ERCOT
+hindcast wind pool 42,000 -> 27,541 MW, solar 38,000 -> 4,864 MW at vintage 2020; the
+FFR-5D-M reproduction numbers are STALE BY DESIGN for any run at your head).
+
+=== PREREQUISITES (cold container) ===
+uv sync FIRST, then uv run python scripts/regenerate_clean.py (~63-65 min). results/ is
+gitignored — COLD solves; "expect cache hits" is never a budget.
+
+=== PHASE 0 — THE RE-BASE (pre-register its reads BEFORE solving) ===
+Invocation 1: the FFR-8A repair-arm recipe VERBATIM at THIS head:
+  uv run python scripts/run_capacity_hindcast.py \
+    --iso ERCOT --vintage 2020 --start-year 2021 --end-year 2025 \
+    --forward-from-base --arm realized --capacity-screen-unified-lookahead \
+    --capacity-screen-scarcity-restoration \
+    --out-dir results/hindcast/ercot-2021-2025-t1ff-armr-ffr8b-base
+Cold, 4 LP years (2022 bridged), years SEQUENTIAL (rule 12). Do NOT attempt the FFR-5D-M
+§1.3 reproduction gate — those numbers are pre-epoch by construction; instead your
+prereg FIXES the read set and invocation 1's outputs BECOME the new recorded baseline.
+Reads (the FFR-8A §1.5 set, re-run verbatim): (i) per-screen h>$100 / h>$1000 / mean /
+max vs measured (2024: 161 h, mean $26.82, max $3,060; 2025: 217 h, $32.49, $1,570) +
+per-fuel replica margins; (ii) the gas_st 2022-bridge wave (pre-epoch: 27 units /
+6,500.6 MW — does the corrected seed shrink it further?); in-window economic executions
+(must stay ~0 — any execution is a FALSIFICATION signal per FFR-7C); entry_capped census;
+the coal-cohort event sequence incl. the §4.2.4 non-monotone cap interaction; (iii)
+additions vs 55.4 GW actual (reported, not targeted). Also dump the lookahead stack
+internals (the FFR-8A dump machinery) — Phase 1 consumes them. Report every delta vs the
+pre-epoch §4 record at full magnitude; the expected DIRECTION (recorded in advance by the
+manager: corrected seed -> higher net load -> more scarcity content) is an expectation to
+test, never a target.
+
+=== PHASE 1 — THE E1 DISPERSION DIAGNOSIS (offline, no solve) ===
+FFR-8A §5(c): the E1 committed-capability formula under-disperses vs the measured RTOLCAP
+low tail (p1 13.3 vs 7.9 GW). On invocation 1's dumps + the committed NP6-905-CD
+telemetry, decompose the dispersion gap into: (1) the commitment share (installed vs
+online — what the E1 share tables cannot see), (2) the net-load realization share
+(forecast-error dips the point evaluation cannot see; NOTE the published curve's own
+sigma is intra-hour and composes orthogonally — do not double-count), (3) the outage
+share E4 ALREADY carries (Gauss-Hermite over the WEFOR variance). Pre-register the
+decomposition method before computing. E3 (NP6-576-ER vs fallback) stays ESCALATED/HELD
+(the fallback is the unchanged shipped config) — re-open ONLY if your decomposition
+produces direct evidence on it, and record whatever you find either way.
+
+=== PHASE 2 — REPAIR, ONLY IF ADMISSIBLE ===
+Rule-13 test VERBATIM: reproducible for a forward year from forward drivers, responds to
+changed conditions. Admissible sources: the model's own commitment machinery (P0 run
+patterns), the forward AS model, published methodology quantities, the model's own outage
+machinery. The measured RTOLCAP distribution itself is an OUTCOME of commitment — it may
+VALIDATE a repair, never parameterize one. If the repair cannot be built without
+inventing a parameter: STOP, record the escalation, and land Phases 0-1 alone — that is a
+successful session, not a failure. If a repair lands: gate it (default-off, composing
+with capacity_screen_scarcity_restoration), matrix row + _CACHE_KEY_OPTIONAL_FIELDS +
+defaults ledger SAME COMMIT, WAIT for the cache-key-pin check verdict before merging.
+
+=== PHASE 3 — THE PAIRED READ (only if Phase 2 landed) ===
+Invocation 2: invocation 1's recipe + the new flag, --out-dir ...-ffr8b-e1disp. The
+FFR-8A §1.5 read set re-run, arm-vs-Phase-0-control, pre-registered before invocation 2,
+honest-expectation committed first (the prereg-2 pattern; hash recorded in the doc).
+Register BOTH arms HINDCAST namespace only (register_hindcast.py,
+meta.kind="full_forward", ids ercot-2021-2025-t1ff-armr-ffr8b-{base,e1disp}) — NEVER the
+backcast registry. Matrix: the capacity_screen_scarcity_restoration cell citation gains
+the re-base; a new field gets its own row. Commit prereg -> results -> handoff AS THEY
+EXIST, in order, as produced.
+
+=== HARD REFUSALS ===
+The lambda-led real-time conduct content is OUT OF SCOPE by construction (FFR-8A §5(a));
+bar re-levels and signal scaling stay REFUSED BY NAME (FFR-6A rows 3-4); nothing tunes
+toward 2.294 GW, the measured curve, or any residual; no measured-outcome input enters a
+solve path (rule 13). A Phase-0 read that surprises is a finding to record, never a
+license to adjust.
+
+=== TRAPS ===
+HOUSE-1 is merged (the constants.py reflow trap is dead; the hook formats only the file
+you edit). Evolution ledgers at <out-dir>/<ISO>/<runtime-key>/ — verify the path before
+believing a zero; the recorded key is the runtime cache_key= log line. Push: fetch+rebase
+fresh origin/main first; never push_files a >=300-line file; no new workflows. Shallow
+clone: check content, not ancestry. Budget honesty: prereqs ~65 min + one (possibly two)
+cold 4-LP-year invocations + offline diagnosis. If the container cannot finish Phase 3,
+land Phases 0-1 + the Phase-2 design and hand off explicitly.
+
+Deliverable: the PR(s) + docs/handoffs/ffr-8b-rebase-dispersion-<date>.md (the re-based
+baseline table vs the pre-epoch §4 record, the dispersion decomposition, the repair or
+its escalation, the paired read if run) + the registered sidecars + matrix updates.
+```
+
+### FFR-5E-H [OPUS] — the VRE procurement channel's hindcast arm (unblocked by FFR-3V-FIX)
+
+```
+[OPUS] FFR-5E-H — Measure the near-term VRE procurement channel
+(vre_procurement_additions_enabled, GATED default-off, landed by FFR-5E) on its hindcast
+arm — the arm FFR-3V-FIX just unblocked. Owner decision D-18(a) lineage; manager dispatch
+Addendum AF.4. NO arming beyond the measurement arm, NO keeper contact, NO backcast-
+registry touch.
+
+Repo /home/user/market-simulator. Rule 27: OPUS ok. Branch
+claude/ffr-5e-hindcast-arm-<suffix> off fresh origin/main. Authority + design record:
+docs/handoffs/ffr-5e-vre-procurement-channel-2026-08-05.md (the channel as landed),
+docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md (the design),
+docs/handoffs/ffr-3v-fix-2026-08-08.md §6 (the unblock, and the TWO CONDITIONS you carry).
+
+=== PREREQUISITES (cold container) ===
+uv sync FIRST, then scripts/regenerate_clean.py (~63-65 min). Cold solves.
+
+=== THE MEASUREMENT ===
+Paired MISO capacity-hindcast arms at THIS head (both AT/AFTER the 3V epoch — condition 2:
+no pre-epoch bundle may serve as either side; same key, different output):
+  control: --iso MISO --vintage 2020 --start-year 2021 --end-year 2025 \
+           --forward-from-base --arm realized --out-dir results/hindcast/miso-2021-2025-t1ff-armr-ffr5eh-control
+  armed:   + --vre-procurement-additions (or the channel's landed CLI arm; read the FFR-5E
+           handoff for the exact flag surface and use ITS documented invocation)
+<=5 solve-years each, years SEQUENTIAL within each invocation, the two invocations
+sequential or <=2 concurrent (rule 12; both MISO — never co-run PJM alongside).
+PRE-REGISTER the reads before solving: (R1) pool reconciliation — the armed run's per-year
+injected MW named against EIA-860 rows with online_year > 2020, additive and auditable on
+the vintage seed (the 3V §6 promise made concrete); (R2) the base-year UNDER-COUNT stated
+in the score, not absorbed (condition 1: MISO solar 1,160 MW / wind 2,945 MW commissioned
+during 2021 are in neither seed nor injection — the safe direction, ~4x smaller than the
+over-count it replaced); (R3) the T1-FF posture reads arm-vs-control: renewable
+generation/curtailment by year, prices, the capacity-evolution ledger deltas (what the
+corrected near-term VRE supply changes downstream); (R4) in-window exit/entry deltas
+REPORTED (the FFR-3V handoff explicitly did NOT test R4 — you are the first read; report,
+never target). Register BOTH arms in the HINDCAST namespace
+(meta.kind="full_forward", ids miso-2021-2025-t1ff-armr-ffr5eh-{control,armed}) — NEVER
+the backcast registry. Commit prereg -> results -> handoff as they exist.
+
+=== SCOPE GUARDS ===
+The channel stays DEFAULT-OFF (this is a measurement, not an arming); no ScenarioConfig
+field is added (the field exists and is registered); matrix duty: update the
+vre_procurement cell citation with the hindcast verdict in THIS session (rule 28(b));
+if any solve-affecting flag surface must be added, matrix row + cache-key registration
+SAME COMMIT and WAIT for the cache-key-pin verdict before merging.
+
+=== TRAPS ===
+HOUSE-1 merged (reflow trap dead). Holdout: solve years are 2021-2025 hindcast windows —
+the T1-FF carve-out; the freeze is ACTIVE; touch no out-of-training backcast year.
+Evolution ledgers at <out-dir>/<ISO>/<runtime-key>/; runtime cache_key= line is the
+recorded key. Push: fetch+rebase first; no push_files on >=300-line files; no new
+workflows. Budget: prereqs ~65 min + two cold <=5-LP-year MISO invocations — plan a full
+session; if only one arm fits, land control + prereg and hand off the armed arm.
+
+Deliverable: the PR + docs/handoffs/ffr-5e-hindcast-arm-<date>.md (R1-R4 at full
+magnitude, the under-count statement, the matrix stamp) + registered sidecars. The
+sentence the manager waits on: whether the procurement channel's hindcast behaviour
+supports, refutes, or defers its FORECAST-default arming question (that arming is a
+future owner card, not yours).
+```
+
+### ARM3-MEASURE [OPUS] — the longer-horizon clean-row evidence for the D-28 step-3 arming card
+
+```
+[OPUS] ARM3-MEASURE — Produce the evidence for the Arm-3 (miso_clean_tier_rows) arming
+card: the longer-horizon MISO forecast measurement of the MN/MI clean-tier rows. Owner
+decision D-28 option A step 3 needs evidence, not opinion (Addendum AF.3); the 2026-2030
+window already showed the rows QUIET in-window — the open question is the RAMP YEARS. NO
+arming decision, NO keeper contact, NO backcast-registry touch; the deliverable is the
+card's evidence table, delivered to the manager.
+
+Repo /home/user/market-simulator. Rule 27: OPUS ok. Branch
+claude/arm3-clean-row-horizon-<suffix> off fresh origin/main. Authority + record:
+docs/handoffs/d28-45u-composition-memo-2026-08-08.md §2.1 (the fleet the rows pay; the MN
+row's five-zone eligibility mask — a WI/IL/MO reactor earns Minnesota's dual: flag it),
+docs/handoffs/f2-45u-composition-2026-08-09.md (the landed seam: the clean dual now joins
+§45U's gross-receipts base per branch (i)), docs/handoffs/ffr-7b2-rps-krow-clean-rows-
+2026-08-06.md (the rows as landed, default-OFF), config/capacity_market.py
+MISO_CLEAN_TIER_REGIONS + STATE_RPS_ACP["MISO"] ($30 ceiling).
+
+=== PREREQUISITES (cold container) ===
+uv sync FIRST, then scripts/regenerate_clean.py (~63-65 min). Cold solves.
+
+=== THE MEASUREMENT (pre-register reads BEFORE solving) ===
+Forecast-mode MISO (ScenarioConfig.mode="forecast" — unrestricted per rule 22's 2026+
+clause), the standing MISO forecast posture with ONE delta: miso_clean_tier_rows=True.
+Horizon: the ramp years — 2031-2035 in ONE <=5-year invocation (the 2026-2030 quiet
+window is ALREADY ESTABLISHED evidence; cite it, do not re-solve it unless your prereg
+finds the standing 2026-2030 artifact insufficient to seed 2031's fleet state, in which
+case run 2026-2030 armed as invocation 1 and 2031-2035 as invocation 2 — <=5 solve-years
+each, years sequential within each, <=2 concurrent, rule 12). A paired unarmed CONTROL at
+the same horizon: reuse a standing MISO T1-F artifact if one covers the window; otherwise
+solve the control as its own invocation. Register EVERYTHING in the FORECAST namespace
+via scripts/register_forecast_run.py — NEVER the backcast registry (rule 15).
+PRE-REGISTERED READS: (R1) the MN and MI row duals by year — onset year (first nonzero),
+level, and whether the $30 ACP ceiling binds (the D-28 memo showed all compositions
+coincide at the ceiling — a ceiling-bound dual makes the arming question composition-
+independent; an interior dual makes the F-2 seam live); (R2) the composed nuclear revenue
+at the landed F-2 seam for the §2.1 fleet (which reactors earn which row; the cross-state
+mask flagged); (R3) qualifying-supply vs target by region-year (WHY the row binds when it
+does — new clean build, retirement of qualifying supply, load growth); (R4) arm-vs-
+control deltas in retirement/entry ledgers and system cost (what arming CHANGES); (R5)
+E-1 discipline check: the rows acquire no build limb (cite FFR-7B). Report at full
+magnitude; no read is a target.
+
+=== SCOPE GUARDS ===
+miso_clean_tier_rows stays DEFAULT-OFF in the shipped config (the armed run is the
+measurement); no new ScenarioConfig field expected — if unavoidable: matrix row +
+cache-key registration SAME COMMIT + WAIT for the cache-key-pin verdict. Matrix duty:
+the miso_clean_tier_rows cell citation gains this measurement in THIS session. No RPS/ACP
+config value changes. The composition seam is LANDED — consume it, do not modify it.
+
+=== TRAPS ===
+HOUSE-1 merged (reflow trap dead). Forecast namespace registry/manifest files are
+GENERATED (gitignored) — commit the SIDECAR inputs + ff-verdicts/program-status seeds per
+rule 15; --reindex only for local preview. Evolution ledgers at
+<out-dir>/<ISO>/<runtime-key>/. Push: fetch+rebase first; no push_files >=300-line files;
+no new workflows. Budget: prereqs ~65 min + 1-3 cold <=5-year MISO forecast invocations;
+if time runs short, the ARMED 2031-2035 invocation is the one that must land.
+
+Deliverable: the PR + docs/handoffs/arm3-clean-row-horizon-<date>.md (R1-R5, the onset/
+ceiling table, the card-ready summary block) + forecast-namespace registration. The
+manager takes it from there — the arming card is the MANAGER'S to put and the OWNER'S to
+sign.
+```
