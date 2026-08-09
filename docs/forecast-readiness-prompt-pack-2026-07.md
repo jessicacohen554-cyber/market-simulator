@@ -5256,3 +5256,130 @@ ceiling table, the card-ready summary block) + forecast-namespace registration. 
 manager takes it from there — the arming card is the MANAGER'S to put and the OWNER'S to
 sign.
 ```
+
+## §0ac — Two more dispatches from the queue re-check: FFR-4E and HOUSE-2 (2026-08-09 @ `6784a0c`)
+
+The owner's "no new prompts?" surfaced two mis-filed dispatchables (sitting record AF.7):
+the FFR-4D routed successor (the CAISO storage accreditation intake) and the narrowed
+HOUSE-2 wave. Both parallel-safe with everything in flight (FFR-8B ERCOT hindcast,
+FFR-5E-H MISO hindcast, ARM3-MEASURE MISO forecast, ercot-181 ERCOT backcast).
+
+### FFR-4E [OPUS] — the CAISO storage accreditation-rate intake (FFR-4D successor D-1 + D-4)
+
+```
+[OPUS] FFR-4E — Intake CAISO's published storage accreditation rate and portfolio
+dilution (the FFR-4D routed top successor, handoff §6.1 + §7 items D-1/D-4), RECONCILED
+per rule 14's misalignment clause — then re-read FC-2 row 4 through the FFR-4D read
+protocol. The capacity-price ANCHOR route remains REFUSED (owner-declined in D-15's
+charter): no anchor, net-CONE, or CPM soft-offer value is read, changed, or quoted, and
+no row-4 improvement via that route may be claimed.
+
+Repo /home/user/market-simulator. Rule 27: OPUS ok. Branch
+claude/ffr-4e-caiso-storage-elcc-<suffix> off fresh origin/main. Authority + evidence
+(cite, do not re-derive): docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md — §0
+finding 2 (row 4 does NOT clear on the fleet fix; 1.8 % short remains), §6.1 (the
+reconciliation warning), §7 (D-1: CAISO absent from STORAGE_ELCC_BY_DURATION_BY_ISO,
+published 13,365/14,131 = 0.9458, +3,990.6 MW the largest remaining term; D-4: CAISO
+dilution a hard 1.0 at 15,450 MW; D-7: Table 1.1 cells are FFR-3P transcription).
+
+=== THE WORK ===
+1. INTAKE the published CAISO storage accreditation source first-party (do not re-quote
+   FFR-3P's transcription — D-7's caveat; commit the source under data/raw/ with the
+   data-dictionary contract if it is a new datatype). The published number is a realized
+   WHOLE-CLASS ratio over CAISO's real duration mix; the model registry is by-duration
+   with a synthetic 70/25/5 mix. §6.1's warning is binding: dropping 0.9458 onto the
+   synthetic mix is substitution, not reconciliation. Reconcile properly — prefer:
+   (a) derive the REAL CAISO duration mix from the measured EIA-860 storage fleet
+   (FFR-4D put CAISO on storage_measured_base_fleet), and (b) enter the published
+   whole-class ratio consistently with that mix (a per-ISO whole-class path is
+   acceptable if the registry structure supports it more honestly than a by-duration
+   fudge). State the chosen construction and why.
+2. D-4: CAISO's dilution registry entry — intake a PUBLISHED CAISO/CPUC marginal-ELCC/
+   dilution source if one exists at citation quality; if none does, HOLD the 1.0 with the
+   caveat documented in the registry comment (a stated assumption beats an invented
+   curve; rule 5 citations either way).
+3. KEEPER GUARD (stop-the-line): enumerate what consumes the CAISO accreditation entries
+   BEFORE landing — if any CAISO BACKCAST keeper path consumes them, prove byte-inertness
+   on the keeper recipe or gate the intake default-off; a keeper metric moving under this
+   change is a finding to STOP on, not absorb. (CAISO keeper
+   2026-08-09-caiso-184-c1-lpbasis at dispatch; re-verify at your head.)
+4. RE-READ FC-2 row 4 via the FFR-4D protocol (same-head control vs treated; FFR-4D D-8
+   closed its control at 14,043.6 / 21,448.0 / 65.48 % — re-establish at your head, cold).
+   Bounded solves only (<=5 years, sequential, rule 12); prereqs uv sync FIRST then
+   regenerate_clean.py (~63-65 min); results/ dies with the container — commit prereg ->
+   results -> handoff as they exist. If row 4 STILL does not clear with the fleet AND the
+   accreditation right, THAT IS THE FINDING (rule 11) — write it; the residual then
+   points at the anchor object, which is NOT yours (it may be chartered later, by someone
+   else, on its own rule-14 merits — restate this in the handoff).
+5. Matrix cell + citation THIS session (rule 28); any new ScenarioConfig field: matrix
+   row + _CACHE_KEY_OPTIONAL_FIELDS + defaults ledger SAME COMMIT; WAIT for the
+   cache-key-pin check verdict before merging. Rule 25: CAISO's lane — no cross-ISO
+   parameter import; the ERCOT storage-row question (FFR-4D D-3) stays ERCOT's.
+
+=== TRAPS ===
+HOUSE-1 merged (reflow trap dead). Push: fetch+rebase fresh origin/main; never push_files
+a >=300-line file; no new workflows. Evolution ledgers at <out-dir>/<ISO>/<runtime-key>/;
+the runtime cache_key= line is the recorded key. Shallow clone: content, not ancestry.
+
+Deliverable: the PR + docs/handoffs/ffr-4e-caiso-storage-elcc-<date>.md (the intake with
+first-party citations, the reconciliation construction, the keeper-guard evidence, row
+4's position after, the anchor-refusal statement) + matrix stamp.
+```
+
+### HOUSE-2 [OPUS] — the baseline-failure wave + the zone-rule finding (narrowed scope)
+
+```
+[OPUS] HOUSE-2 — Clear the pinned fast-tier baseline (HOUSE-1 handoff §4, the 9-item
+table) and the assign_zone_by_coords finding, under a hard no-model-behavior-change rule
+with one gated exception (item 2). Manager dispatch AF.7; the purpose is a GREEN fast
+tier on main, which is what lets the branch-protection ladder extend past cache-key-pin
+(HOUSE-1 §3.5).
+
+Repo /home/user/market-simulator. Rule 27: OPUS ok. Branch
+claude/house-2-baseline-wave-<suffix> off fresh origin/main. Authority:
+docs/handoffs/house-1-lint-ci-2026-08-08.md §4 (THE baseline table — a fast-tier red
+whose failures are a subset is baseline; anything outside is the PR's own), §3.5;
+sitting record T.2 (the assign_zone_by_coords finding: incomplete PJM/MISO zone rules,
+every PJM row falls back to PJM_AEP_Ohio — pre-existing, measured not introduced).
+
+=== SCOPE, item by item ===
+1. THE BASELINE TABLE (uv sync first; run the fast tier to confirm the set at your head):
+   - FIX: neiso_bins committed-artifact determinism (#3); outages unknown-iso
+     degrade (#6); the three data-dictionary sync subtests (#7-9: capacity-deliverability,
+     som-competitive-conduct, unit-outage-events) — mechanical repairs, tests or the
+     dictionary regeneration, never solve-path behavior.
+   - EXCLUDED (report-only, do NOT touch): the two ercot_thermal_as_endogenous failures
+     (#1-2) — ercot-181 is LIVE on that exact surface; note their status and leave them.
+   - THE TWO FR-22-ROOTED PARITY FAILURES (#4-5, test_forecast_parity on
+     ercot_storage_as_soc_reserve + nyiso_seam_deliverability_envelope): these assert
+     against FILED parity gaps — do NOT build the missing forecast mechanisms (those are
+     forecast-program lanes). If the failure is genuinely mechanical, fix it; otherwise
+     convert to xfail WITH the FR-22 citation in the marker reason so the gap stays
+     visible in the report without reddening the tier. State which treatment each got
+     and why.
+2. assign_zone_by_coords (the ONE item allowed to touch data-layer behavior, gated):
+   FIRST enumerate every consumer of the function. If ANY backcast-keeper fleet path
+   consumes it, STOP on that half — report the consumer map and hand the fix to the
+   calibration lanes (a keeper-moving change is not housekeeping). If consumers are
+   confined to the FFR-5E procurement/hindcast-seed limbs and other non-keeper paths:
+   implement real PJM/MISO coordinate zone rules (rule 14, cited boundaries), prove
+   keeper byte-inertness by the consumer map + a regression test, and NOTE the epoch
+   effect: the in-flight FFR-5E-H / ARM3-MEASURE artifacts predate the fix (the 3V
+   precedent — the manager tracks the re-base; state it in the handoff, do nothing else).
+3. UPDATE the HOUSE-1 §4 baseline table in place (below its header, addendum-style) to
+   the post-wave state — the table is the standing reference; a stale table is worse
+   than none.
+
+=== GUARDS ===
+No ScenarioConfig field expected; if unavoidable: matrix row + cache-key registration
+SAME COMMIT + WAIT for the cache-key-pin verdict before merging. No solve. No keeper
+contact. No new workflows. Push: fetch+rebase fresh origin/main; never push_files a
+>=300-line file. HOUSE-1 is merged — the reflow trap is dead, but the pinned-key CI
+check is live: a red cache-key-pin on your PR is YOUR field-registration miss until
+proven otherwise.
+
+Deliverable: the PR + docs/handoffs/house-2-baseline-wave-<date>.md (per-item disposition
+table incl. the two exclusions and the FR-22 treatments, the consumer map for item 2 with
+its fix-or-escalate outcome, the updated §4 table) — and the sentence the manager waits
+on: whether the fast tier is GREEN on main modulo the two excluded ercot_thermal items.
+```
