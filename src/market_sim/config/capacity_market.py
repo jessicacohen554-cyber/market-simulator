@@ -2678,6 +2678,74 @@ STORAGE_ELCC_BY_DURATION_BY_ISO: dict[str, list[tuple[float, float]]] = {
     ],
 }
 
+# Published WHOLE-CLASS storage accreditation — the realized firm fraction of
+# NAMEPLATE an ISO's own resource-adequacy ledger counts for its entire storage
+# class, for the ISOs that accredit storage WITHOUT publishing a duration ->
+# credit table. Consulted (per ISO, behind that ISO's own default-OFF gate) by
+# `model.storage.storage_accreditation_credit`, where it REPLACES the
+# by-duration lookup outright rather than multiplying it (rule 19
+# [R-ONE-MECH]: one storage-accreditation mechanism per ISO, never a stack).
+#
+# WHY A WHOLE-CLASS OBJECT RATHER THAN A CAISO ROW IN THE TABLE ABOVE (FFR-4E,
+# and the reconciliation FFR-4D §6.1 routed rather than guessed at):
+#   * CAISO PUBLISHES NO STORAGE DURATION TABLE. The CY2026 NQC report's
+#     "2026 Tech Factors" tab carries technology factors for solar (fixed /
+#     tracking / thermal), wind, non-dispatchable hydro, geothermal,
+#     cogeneration and biomass -- and NO battery row, because batteries are
+#     DISPATCHABLE and are accredited at demonstrated capability. The
+#     assessment says so in terms (2026 SLRA Technical Appendix §1.1.1): "For
+#     dispatchable resources like battery and natural gas plants, the NQC value
+#     is typically near its NDC or installed capacity." A CAISO entry in the
+#     by-duration registry would be an INVENTED object, so none is minted.
+#   * THE BASIS HAD TO BE CORRECTED, and this is the whole substance of the
+#     reconciliation. CAISO's published ratio is NQC/NDC = 13,365/14,131 =
+#     0.9458. The model multiplies a storage unit's EIA-860 NAMEPLATE
+#     `power_cap_mw`, and CAISO's NDC is only 91.47 % of that nameplate
+#     (14,131 / 15,448.4). Quoting 0.9458 against nameplate would over-credit
+#     the class by 8.1 pp -- exactly the substitution rule 14
+#     [R-ACCURATE]'s misalignment clause forbids. The registry value is
+#     therefore NQC / NAMEPLATE, both terms measured:
+#         13,365 MW  published September NQC, 2026 SLRA Technical Appendix
+#                    Table 1.1 Battery row, digitized first-party by
+#                    scripts/data/derive_caiso_slra_class_accreditation.py
+#                    into data/raw/capacity-market/loads-resources/caiso/
+#                    (that table's NQC column foots EXACTLY to its own
+#                    published 59,069 MW total, which is the parse's proof)
+#         15,448.4 MW EIA-860 2025 Early Release, BA CISO, Status "OP"
+#                    nameplate -- the SAME object STORAGE_BASE_FLEET_MW
+#                    ["CAISO"] is built from, so numerator and denominator
+#                    describe one fleet.
+#     -> 13,365 / 15,448.4 = 0.865138.
+#   * IT DELIBERATELY KEEPS THE DELIVERABILITY HAIRCUT the published ratio
+#     embeds (Table 1.1's battery row is 0.98872 full-capacity-deliverable /
+#     0.96272 interim / 0.58924 partial / 0.0 energy-only). The model has NO
+#     per-resource deliverability status for storage -- `capacity_deliverability
+#     _limits` prices a zonal/seam quantity, not a resource's queue outcome --
+#     so excluding it would credit MW CAISO's own ledger does not count. The
+#     deliverability-clean alternative is also NOT CONSTRUCTIBLE on this basis:
+#     its numerator is published per tranche but its nameplate denominator is
+#     not, and no CAISO-resource-ID -> EIA-860 crosswalk exists in this repo.
+#     The whole-class ratio is the only construction both of whose terms are
+#     measured, which is why it is the one adopted.
+#   * FORWARD ADMISSIBILITY (rule 13 [R-MEASURED]): both terms regenerate for a
+#     forward year from published sources on annual cycles, and the ratio
+#     responds to changed conditions (it moves as the fleet's duration mix,
+#     degradation and deliverability resolution move). It is an accreditation
+#     RULE, not a model outcome, and nothing in it is fitted to a residual.
+#
+# MEASURED CONTEXT FOR THE MAGNITUDE, so the number is not read as a fudge: the
+# CAISO battery fleet's REAL duration mix (EIA-860, MW-weighted: 72.9 % at ~4 h,
+# 21.3 % under 2.5 h, energy-weighted mean 3.43 h) puts the GENERIC NREL/E3
+# table at 0.5589 -- BELOW the 0.6875 the synthetic 70/25/5 forecast mix
+# produces. The gap to CAISO's realized 0.8651 is therefore NOT a duration-mix
+# artifact; it is CAISO's accreditation METHODOLOGY, which derates a
+# dispatchable resource by demonstrated capability and not by duration at all.
+# Using the real mix in a by-duration table would have made the error WORSE,
+# which is the measurement that settles the §6.1 reconciliation question.
+STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO: dict[str, float] = {
+    "CAISO": 13_365.0 / 15_448.4,  # = 0.865138; see the derivation above.
+}
+
 # Marginal ELCC saturation. As cumulative storage power approaches the
 # deployment ceiling (≈ half the system peak), each additional MW of storage
 # adds less firm capacity — the well-documented decline in marginal storage
@@ -2701,6 +2769,36 @@ STORAGE_ELCC_SATURATION_EXPONENT: float = 1.5
 # penetration it is the CDR's own ratio, 46/60.2 (below); in between it is
 # a straight line between those two real data points. ISOs absent from
 # either registry get no dilution (byte-identical).
+#
+# CAISO IS DELIBERATELY ABSENT, AND THE ASSUMPTION IS STATED RATHER THAN
+# INVENTED (FFR-4E, adjudicating FFR-4D §7 D-4: "CAISO's storage ELCC portfolio
+# dilution is a hard 1.0 -- a much larger assumption at 15,450 MW than at
+# 8,000"). The published CAISO/CPUC sources were examined for a portfolio
+# dilution object at citation quality and NONE qualifies:
+#   * The committed E3/Astrape "Incremental ELCC Study"
+#     (data/raw/capacity-market/elcc/caiso/caiso.csv) publishes MARGINAL
+#     tranche ELCCs, not a fleet-average. Its 4-hour series is also NON-
+#     MONOTONE in penetration (96.3 -> 90.7 -> 75.1 @1,759 MW -> 76.6 @4,123
+#     -> 74.0 @6,553 -> 76.5) and its axis is CUMULATIVE MW *ADDED SINCE A
+#     BASELINE*, not total installed MW -- a different quantity from the
+#     `existing_storage_mw` this dilution is indexed on. Fitting a portfolio
+#     line through a non-monotone marginal series on an incompatible axis
+#     would be inventing a curve, which rule 5 [R-NO-MAGIC] and rule 14's
+#     misalignment clause both refuse. The README on that intake already
+#     records why the marginal study cannot serve as a whole-fleet ledger
+#     credit; this is the same finding for the same reason.
+#   * CAISO's SLRA Table 1.1 publishes ONE realized point, not a curve.
+# So the factor stays 1.0 for CAISO, which is EXACTLY RIGHT AT THE REFERENCE
+# FLEET and increasingly generous above it: the whole-class ratio in
+# STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO is CAISO's REALIZED, ALREADY-DILUTED
+# fleet-average at 15,448 MW installed, so applying any further dilution at that
+# fleet size would DOUBLE-DERATE it. THE STATED CAVEAT: above ~15.4 GW a
+# forecast credits new CAISO storage at the accreditation its 2026 fleet
+# realized, with no penetration compression. That assumption runs IN FAVOUR of
+# accredited capacity (it makes adequacy look better, not worse), and it is a
+# named open item rather than a modeled effect. A published CAISO/CPUC
+# portfolio-ELCC-vs-penetration series would close it; until one exists, a
+# stated assumption beats an invented curve.
 STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO: dict[str, float] = {
     "ERCOT": 20_438.0,  # Dec 2025 CDR: operational + CDR-eligible planned BESS
     # nameplate MW, the installed base the audit's 60.2% portfolio ELCC is

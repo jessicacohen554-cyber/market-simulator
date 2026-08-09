@@ -105,11 +105,11 @@ from market_sim.model.ancillary import (
     realized_thermal_as_revenue_per_mw_yr_by_fuel,
 )
 from market_sim.model.storage import (
-    _elcc_for_duration,
     apply_storage_new_entry,
     build_default_storage,
     load_eia860_pumped_storage,
     load_eia860_storage,
+    storage_accreditation_credit,
     storage_cap_profiles,
     storage_units_to_arrays,
 )
@@ -3559,14 +3559,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # year's reserve-margin adequacy backstop.
             wind_cap_mw=float(np.sum(wind_cap)),
             solar_cap_mw=float(np.sum(solar_cap)),
+            # One storage-accreditation resolver (rule 19): the ISO's published
+            # whole-class ratio where it has one and its gate is armed, else the
+            # by-duration ELCC table. Unarmed this is byte-identical to the
+            # pre-FFR-4E `_elcc_for_duration` call it replaces.
             storage_firm_mw=float(
                 sum(
                     u.power_cap_mw
-                    * _elcc_for_duration(
+                    * storage_accreditation_credit(
                         u.energy_cap_mwh / u.power_cap_mw
                         if u.power_cap_mw > 0
                         else 0.0,
                         iso,
+                        config,
+                        u.tech_name,
                     )
                     for u in storage_units
                 )

@@ -709,6 +709,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # is byte-identical off; an armed run changes the accredited ledger and so
     # gets a distinct key.
     "caiso_nqc_accreditation",
+    # CAISO published whole-class STORAGE accreditation (FFR-4E, default off):
+    # dropped from the hash at its default so every pre-existing key in every
+    # ISO stays byte-stable -- unarmed, storage_accreditation_credit never
+    # reaches STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO, so the arm is
+    # byte-identical off (unlike its FFR-4D sibling below, this is NOT a
+    # same-key invalidation and it needs no cache epoch); an armed run changes
+    # the accredited storage ledger and so keys distinctly.
+    "caiso_storage_nqc_accreditation",
     # CAISO measured backcast storage base fleet (FFR-4D, default ON): dropped
     # from the hash at its default so every pre-existing key stays byte-stable
     # (the pinned default 603c2498bf71d21d holds). UNLIKE every sibling above
@@ -1029,6 +1037,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_energy_online_capability_cap": "False",
     "ercot_energy_online_capability_cap_path": "None",
     "caiso_nqc_accreditation": "False",
+    "caiso_storage_nqc_accreditation": "False",
     "ercot_wtx_curtail_unpooled": "False",
     "ercot_wtx_panhandle_owner": '"tie"',
     "ercot_offer_surface_continuous": "False",
@@ -3128,6 +3137,41 @@ class ScenarioConfig:
     # [R-ISO-SCOPE]: nothing here transfers, and no other ISO's curve is
     # touched. Forecast-lane mechanism: capacity evolution and the CR-1
     # position are forecast-only, so no backcast keeper can move.
+    caiso_storage_nqc_accreditation: bool = False  # GATED default-OFF (FFR-4E
+    # 2026-08-09, docs/handoffs/ffr-4e-caiso-storage-elcc-2026-08-09.md).
+    # Admits CAISO's OWN published whole-class STORAGE accreditation
+    # (constants.STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO — the 2026 Summer
+    # Loads and Resources Assessment Table 1.1 battery row's September NQC over
+    # the EIA-860 CISO nameplate the model actually multiplies) at rung 1 of the
+    # ONE storage-accreditation resolver (storage.storage_accreditation_credit,
+    # rule 19), where it REPLACES the by-duration ELCC table rather than
+    # stacking on it.
+    #
+    # WHY IT EXISTS. Unarmed, CAISO accredits storage on the GENERIC NREL/E3
+    # duration curve, because CAISO is absent from
+    # STORAGE_ELCC_BY_DURATION_BY_ISO (which holds PJM alone) — and CAISO
+    # publishes no duration table to add, since it accredits DISPATCHABLE
+    # resources at demonstrated capability. On the 2026 forecast base fleet the
+    # generic path credits 0.6875 of nameplate against CAISO's own realized
+    # 0.8651, i.e. it is too STINGY, so arming RAISES the accredited ledger
+    # (+2,744.5 MW on the 15,450 MW base fleet).
+    #
+    # WHY DEFAULT-OFF. Unlike its VRE sibling above, this field is NOT
+    # forecast-only: the CAISO BACKCAST keeper consumes the storage
+    # accreditation through four live paths (the accredited-firm ledger, the
+    # retirement reliability floor, the reserve-margin backstop, and the
+    # locational-deliverability headroom the keeper arms via
+    # `capacity_deliverability_limits`). Default-OFF is what makes the keeper
+    # byte-inert BY CONSTRUCTION rather than by measurement — the charter's
+    # stop-the-line guard, honoured structurally. Arming posture is an OWNER
+    # decision (rules 5/24/28); this field is the switch that decision flips.
+    # Registered in _CACHE_KEY_OPTIONAL_FIELDS at False, so an unarmed run's
+    # cache key is byte-stable (the pinned default 603c2498bf71d21d holds) and
+    # an armed run keys distinctly.
+    #
+    # SCOPE. CAISO-only by construction (the registry holds one ISO and the
+    # gate resolves per ISO) — rule 25 [R-ISO-SCOPE]. ERCOT's parallel storage
+    # question (FFR-4D D-3) is ERCOT's lane and nothing here transfers to it.
     ramp_limits: bool = False  # GATED, default-OFF plant-group hourly ramp
     # envelopes in the dispatch LP (model/dispatch._build_ramp_rows). One
     # two-sided row per ramp-constrained plant group per hour transition,

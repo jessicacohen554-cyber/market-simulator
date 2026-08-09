@@ -1,0 +1,15 @@
+iso,compliance_year,fuel_type,total_ndc_mw,total_nqc_mw,full_capacity_ndc_mw,full_capacity_nqc_mw,interim_ndc_mw,interim_nqc_mw,partial_ndc_mw,partial_nqc_mw,energy_only_ndc_mw,energy_only_nqc_mw
+CAISO,2026,Battery,14131,13365,8864,8764,4131,3977,1059,624,78,0
+CAISO,2026,Biogas,247,160,,,,,,,,
+CAISO,2026,Biomass,429,332,,,,,,,,
+CAISO,2026,Distillate,110,110,,,,,,,,
+CAISO,2026,Geothermal,1354,1208,,,,,,,,
+CAISO,2026,Hybrid,2043,1484,,,,,,,,
+CAISO,2026,Hydro,9076,6295,,,,,,,,
+CAISO,2026,Natural Gas,26958,25866,25782,24780,417,411,755,675,4,0
+CAISO,2026,Nuclear,2300,2280,,,,,,,,
+CAISO,2026,Other,451,42,,,,,,,,
+CAISO,2026,Solar,20459,6503,11612,4611,3296,1189,3127,703,2424,0
+CAISO,2026,Waste Heat,35,23,,,,,,,,
+CAISO,2026,Wind,6330,1401,,,,,,,,
+CAISO,2026,Total,83922,59069,66694,50279,9285,6495,5388,2295,2556,0
