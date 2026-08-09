@@ -128,7 +128,10 @@ def r1_census() -> dict:
 def r2_wiring() -> dict:
     cfg = run_config(KEEPERS["CAISO"][1])
     flags = {k: cfg.get(k, "<absent>") for k in WIRING_FLAGS}
-    ledger = {e["name"]: e for e in attestation(KEEPERS["CAISO"][1])["free_parameters"]["entries"]}
+    ledger = {
+        e["name"]: e
+        for e in attestation(KEEPERS["CAISO"][1])["free_parameters"]["entries"]
+    }
 
     verdicts = {}
 
@@ -203,7 +206,10 @@ def r3_limb_split() -> dict:
     import sys
 
     sys.path.insert(0, str(REPO / "src"))
-    from market_sim.model.interchange.spec import IMPORT_TRANCHES, IMPORT_TRANCHES_BY_YEAR
+    from market_sim.model.interchange.spec import (
+        IMPORT_TRANCHES,
+        IMPORT_TRANCHES_BY_YEAR,
+    )
     from market_sim.model.interchange.caiso import CAISO_FIRM_IMPORT_TRANCHES
 
     firm = set(CAISO_FIRM_IMPORT_TRANCHES)
@@ -319,9 +325,13 @@ def main() -> None:
     }
 
     print("=" * 92)
-    print("R1  ISO-specific residual DOF census, recomputed at HEAD on today's six keepers")
+    print(
+        "R1  ISO-specific residual DOF census, recomputed at HEAD on today's six keepers"
+    )
     print("=" * 92)
-    print(f"{'ISO':7}{'entries':>8}{'resid':>7}{'core':>6}{'ISO-SPEC':>9}  marker  entries")
+    print(
+        f"{'ISO':7}{'entries':>8}{'resid':>7}{'core':>6}{'ISO-SPEC':>9}  marker  entries"
+    )
     for iso, r in rec["r1_census"].items():
         mark = "yes" if r["holds_complete_marker"] else "NO "
         print(
