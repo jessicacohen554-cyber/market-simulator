@@ -781,11 +781,12 @@ objects, reported here, not targeted.
   vs the measured RTOLCAP low tail (p1 13.3 vs 7.9 GW) — the remaining candidate repair
   surface inside this object's charter; (d) the exit side responds to the price object
   through the adequacy cap NON-monotonically (§4.2.4), so no price-side repair should be
-  judged by the exit totals alone. * **Session-found infrastructure repairs** (pushed
-  before any arm ran, `7c14d11`): the Phase-2 missing import (a merged-code crash bug on
-  every armed unified run) and the caiso-184 unregistered cache-key field (third
-  nyiso-128 occurrence; the pinned default key was silently moved at HEAD for ~1 day).
-  Both are lane-blocking integrity fixes, not mechanism changes; the control's
-  reproduction gate passing on all six content legs is the proof they changed nothing.
+  judged by the exit totals alone.
+* **Session-found infrastructure repairs** (pushed before any arm ran, `7c14d11`): the
+  Phase-2 missing import (a merged-code crash bug on every armed unified run) and the
+  caiso-184 unregistered cache-key field (third nyiso-128 occurrence; the pinned default
+  key was silently moved at HEAD for ~1 day). Both are lane-blocking integrity fixes, not
+  mechanism changes; the control's reproduction gate passing on all six content legs is
+  the proof they changed nothing.
 * **Matrix**: the `capacity_screen_scarcity_restoration` cell moves `O` → measured verdict
   this session (§8 duty b), citing this §4. No other cell moves.
