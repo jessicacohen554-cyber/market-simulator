@@ -5875,3 +5875,240 @@ inert change is stop-the-line; a charter whose premise is refuted is the system 
 6. Re-put nothing the owner has already declined; the open items list above is the
    complete ask set.
 ```
+
+## §0ag — GATE PASSED (lift now unconditional); the FIVE SIBLING LEGS + FFR-9C (2026-08-09 @ `839de3f0`)
+
+State delta since §0af (full detail: Addendum AI): FH-4-ERCOT's step-0 gate PASSED at
+I6 = 0.0 %/0.0 %/0.0 % vs the 26.8 % FAIL reference; both arms complete; the three-way
+skill table is the program's first quotable T1-FF skill. FFR-9B's diagnosis landed with
+admissible repair candidates. The five sibling legs below are RELEASED; FFR-9C carries
+the repair menu. FFR-4F landed (adjudication next cycle); ARM3-FIX's legs still solving
+(the D-28 step-3 card follows). Six prompts; all parallel-safe in separate containers
+(PJM and MISO are separate SESSIONS, satisfying the never-co-run rule).
+
+SHARED PROTOCOL FOR THE FIVE SIBLING LEGS (each block below is self-contained; this
+paragraph is the design authority they cite): the executed FH-4-ERCOT protocol —
+docs/handoffs/fh-4-ercot-leg-2026-08-09.md — is the PROTOCOL OF RECORD: Arms R
+(realized drivers) and K (as-known drivers, base 2023, hindcast_asknown_aeo2023 +
+demand_growth_vintage per FH-2 §7), window 2023-2025 (3 solve-years/arm), T1-FF
+--forward-from-base surface, SHIPPED DEFAULTS (the ERCOT-only scarcity restoration
+cannot and does not arm — rule 25 structural), hindcast-namespace registration
+(meta.kind="full_forward"), the three-way skill read (keeper err -> Arm R err -> Arm K
+err; overlay value and driver-forecast error) scored against the ISO's CURRENT keeper
+at the session's own head. I6 RIDER on every leg: the run's invariant battery must read
+I6 PASS; an I6 FAIL is a stop-the-line report to the manager, never a skill number.
+
+### FH-4-PJM [FABLE]
+
+```
+[FABLE] FH-4-PJM — The PJM leg of the FH-4 forward-skill battery (Wave FH Phase A;
+lift UNCONDITIONAL per Addendum AI.1 — the ERCOT step-0 gate PASSED at 0.0% vs the
+26.8% reference). Execute the PROTOCOL OF RECORD (docs/handoffs/fh-4-ercot-leg-
+2026-08-09.md, §1 prereg design + §4 read design) for PJM, SHIPPED DEFAULTS (no
+restoration — ERCOT-only by construction). NO keeper contact, NO arming, NO tuning.
+
+Repo /home/user/market-simulator. Branch claude/fh-4-pjm-leg-<suffix> off fresh
+origin/main. Prereqs IN ORDER: uv sync (~2 min), then scripts/regenerate_clean.py
+(~63-65 min). COLD solves; holdout freeze read at launch; window 2023-2025 only.
+
+1. PREREG FIRST (commit before any solve): the two arm invocations (Arm R realized;
+   Arm K as-known base 2023 — hindcast_asknown_aeo2023 + demand_growth_vintage per the
+   protocol of record §1.3), the three-way read design vs the CURRENT PJM keeper
+   (2026-08-04-pjm-152-collapse at dispatch; RE-VERIFY at your head), and the
+   pre-registered directions (directions to test, never targets).
+2. SOLVE Arm R then Arm K (<=5 solve-years per invocation; years sequential; <=2
+   concurrent — rule 12; do NOT co-run a MISO session's solves in this container).
+3. I6 RIDER: check_forecast_invariants on both arms; I6 must PASS; a FAIL stops the
+   lane and reports to the manager (no skill numbers quoted from a failed-I6 leg).
+4. REGISTER both arms HINDCAST namespace (meta.kind="full_forward", FH program naming)
+   — NEVER the backcast registry. Commit prereg -> results -> handoff AS THEY EXIST.
+5. SKILL READS: the three-way table (price_mean, fuel-mix, the §2.1b metric set) vs
+   the PJM keeper; overlay value and driver-forecast error reported at full magnitude.
+   If PJM carries a scored exit target in this window, add the instrument-date split
+   (the γ-rider pattern); if not, state so.
+Matrix: citation updates only (no cell verdict — measurement). Traps: HOUSE-1 merged;
+cache-key-pin check live; evolution ledgers at <out-dir>/<ISO>/<runtime-key>/; push
+fetch+rebase first, never push_files >=300-line files, no new workflows. Budget:
+prereqs ~65 min + two 3-LP-year PJM arms — a full session; if only Arm R fits, land
+it + prereg and hand off Arm K explicitly.
+Deliverable: the PR + docs/handoffs/fh-4-pjm-leg-<date>.md (gate-rider verdicts, the
+three-way table, the narrative) + registered sidecars.
+```
+
+### FH-4-MISO [FABLE]
+
+```
+[FABLE] FH-4-MISO — The MISO leg of the FH-4 forward-skill battery (lift UNCONDITIONAL
+per Addendum AI.1). Execute the PROTOCOL OF RECORD (docs/handoffs/fh-4-ercot-leg-
+2026-08-09.md) for MISO, SHIPPED DEFAULTS. NO keeper contact, NO arming, NO tuning.
+NOTE: MISO's keeper re-scores NOT-YET at HEAD (the AA.2 drift) — the keeper is still
+the comparator; report its determination status alongside, never "fix" it here.
+
+Repo /home/user/market-simulator. Branch claude/fh-4-miso-leg-<suffix> off fresh
+origin/main. Prereqs IN ORDER: uv sync, then regenerate_clean.py (~63-65 min). COLD.
+Memory note: MISO T1-FF arms peaked ~5.9 GB RSS each (FFR-5E-H) — run the two arm
+invocations SEQUENTIALLY if the container is ~10 GB.
+
+1. PREREG FIRST: the two arm invocations (Arm R; Arm K base 2023 per protocol §1.3),
+   the three-way read vs the CURRENT MISO keeper (2026-08-05-miso-132b-cc-committed at
+   dispatch; RE-VERIFY), pre-registered directions.
+2. SOLVE Arm R then Arm K (years sequential; rule 12; NEVER co-run PJM solves in this
+   container).
+3. I6 RIDER: both arms; FAIL = stop-the-line report, no skill numbers.
+4. REGISTER both arms HINDCAST namespace — NEVER the backcast registry. Commit prereg
+   -> results -> handoff as they exist.
+5. SKILL READS: the three-way table vs the MISO keeper at full magnitude; exit-target
+   instrument-date split if MISO carries one in-window, else state so.
+Matrix: citations only. Traps: HOUSE-1 merged; cache-key-pin live; ledgers at
+<out-dir>/<ISO>/<runtime-key>/; fetch+rebase before push; no push_files >=300 lines;
+no new workflows. Budget: a full session; Arm R first if time runs short.
+Deliverable: the PR + docs/handoffs/fh-4-miso-leg-<date>.md + registered sidecars.
+```
+
+### FH-4-CAISO [FABLE]
+
+```
+[FABLE] FH-4-CAISO — The CAISO leg of the FH-4 forward-skill battery (lift
+UNCONDITIONAL per Addendum AI.1). Execute the PROTOCOL OF RECORD
+(docs/handoffs/fh-4-ercot-leg-2026-08-09.md) for CAISO, SHIPPED DEFAULTS. NO keeper
+contact, NO arming, NO tuning. NOTE: the CAISO keeper recipe arms
+unit_outage_lp_capacity_basis and the hour-grain outage envelope as KEEPER-RECIPE
+flags — your T1-FF arms run SHIPPED DEFAULTS, not the keeper recipe; the keeper is
+the skill COMPARATOR only.
+
+Repo /home/user/market-simulator. Branch claude/fh-4-caiso-leg-<suffix> off fresh
+origin/main. Prereqs IN ORDER: uv sync, then regenerate_clean.py (~63-65 min). COLD.
+
+1. PREREG FIRST: the two arm invocations (Arm R; Arm K base 2023 per protocol §1.3),
+   the three-way read vs the CURRENT CAISO keeper (2026-08-09-caiso-184-c1-lpbasis at
+   dispatch; RE-VERIFY — CAISO moved twice on 08-08/09), pre-registered directions.
+2. SOLVE Arm R then Arm K (years sequential; rule 12).
+3. I6 RIDER: both arms; FAIL = stop-the-line report.
+4. REGISTER both arms HINDCAST namespace — NEVER the backcast registry. Commit as
+   produced.
+5. SKILL READS: the three-way table at full magnitude; exit-target instrument-date
+   split if applicable, else state so.
+Matrix: citations only. Traps: HOUSE-1 merged; cache-key-pin live; ledgers path;
+fetch+rebase; no push_files >=300 lines; no new workflows. Budget: full session.
+Deliverable: the PR + docs/handoffs/fh-4-caiso-leg-<date>.md + registered sidecars.
+```
+
+### FH-4-NYISO [FABLE]
+
+```
+[FABLE] FH-4-NYISO — The NYISO leg of the FH-4 forward-skill battery (lift
+UNCONDITIONAL per Addendum AI.1). Execute the PROTOCOL OF RECORD
+(docs/handoffs/fh-4-ercot-leg-2026-08-09.md) for NYISO, SHIPPED DEFAULTS. NO keeper
+contact, NO arming, NO tuning.
+
+Repo /home/user/market-simulator. Branch claude/fh-4-nyiso-leg-<suffix> off fresh
+origin/main. Prereqs IN ORDER: uv sync, then regenerate_clean.py (~63-65 min). COLD.
+
+1. PREREG FIRST: the two arm invocations (Arm R; Arm K base 2023 per protocol §1.3),
+   the three-way read vs the CURRENT NYISO keeper (2026-08-08-nyiso-132-cf-arm at
+   dispatch; RE-VERIFY), pre-registered directions.
+2. SOLVE Arm R then Arm K (years sequential; rule 12).
+3. I6 RIDER: both arms; FAIL = stop-the-line report.
+4. REGISTER both arms HINDCAST namespace — NEVER the backcast registry. Commit as
+   produced.
+5. SKILL READS: the three-way table at full magnitude; exit-target instrument-date
+   split if applicable, else state so.
+Matrix: citations only. Traps: HOUSE-1 merged; cache-key-pin live; ledgers path;
+fetch+rebase; no push_files >=300 lines; no new workflows. Budget: full session.
+Deliverable: the PR + docs/handoffs/fh-4-nyiso-leg-<date>.md + registered sidecars.
+```
+
+### FH-4-NEISO [FABLE]
+
+```
+[FABLE] FH-4-NEISO — The NEISO leg of the FH-4 forward-skill battery (lift
+UNCONDITIONAL per Addendum AI.1). Execute the PROTOCOL OF RECORD
+(docs/handoffs/fh-4-ercot-leg-2026-08-09.md) for NEISO, SHIPPED DEFAULTS. NO keeper
+contact, NO arming, NO tuning. NOTE the standing NEISO gas-basis facts (neiso-86):
+nothing here re-opens the 2018-era basis — the window is 2023-2025.
+
+Repo /home/user/market-simulator. Branch claude/fh-4-neiso-leg-<suffix> off fresh
+origin/main. Prereqs IN ORDER: uv sync, then regenerate_clean.py (~63-65 min). COLD.
+
+1. PREREG FIRST: the two arm invocations (Arm R; Arm K base 2023 per protocol §1.3),
+   the three-way read vs the CURRENT NEISO keeper (2026-08-06-neiso-87-control at
+   dispatch; RE-VERIFY), pre-registered directions.
+2. SOLVE Arm R then Arm K (years sequential; rule 12).
+3. I6 RIDER: both arms; FAIL = stop-the-line report.
+4. REGISTER both arms HINDCAST namespace — NEVER the backcast registry. Commit as
+   produced.
+5. SKILL READS: the three-way table at full magnitude; exit-target instrument-date
+   split if applicable, else state so.
+Matrix: citations only. Traps: HOUSE-1 merged; cache-key-pin live; ledgers path;
+fetch+rebase; no push_files >=300 lines; no new workflows. Budget: full session.
+Deliverable: the PR + docs/handoffs/fh-4-neiso-leg-<date>.md + registered sidecars.
+```
+
+### FFR-9C [FABLE] — the VRE-entry repair program (R-a / R-b / R-d staged; R-c conditional)
+
+```
+[FABLE] FFR-9C — Execute the VRE-entry repair menu FFR-9B named, as a STAGED paired-arm
+program on the ffr9a-storageseed posture. Owner-re-opened D-21(a) completion mandate;
+manager dispatch Addendum AI.2. NO promotion into any shipped default this session —
+every repair is armed BY INVOCATION in measurement arms; promotion is a later manager/
+owner act on this lane's evidence. NO tuning toward 55.4 GW or any actual.
+
+Repo /home/user/market-simulator. Model FABLE (rule 27: capacity-evolution core).
+Branch claude/ffr-9c-vre-entry-repair-<suffix> off fresh origin/main. Authority +
+evidence: docs/handoffs/ffr-9b-vre-entry-diagnosis-2026-08-09.md §3 (the binding
+table), §4 (the candidates + rule-13 pre-assessments — THE MENU, verbatim); the
+ffr9a-storageseed recipe is the control posture of record.
+
+=== PREREQUISITES ===
+uv sync FIRST, then regenerate_clean.py (~63-65 min). COLD. Prereg + probes BEFORE
+solves, per the program bar.
+
+=== THE STAGES (each a paired read vs the same control; pre-register all reads) ===
+CONTROL (invocation 1): the ffr9a-storageseed recipe VERBATIM at your head ->
+results/hindcast/ercot-2021-2025-t1ff-armr-ffr9c-control (reproduction gate BY CONTENT
+vs the FFR-9A registered reads).
+STAGE A (invocation 2): control + entry_pipeline_aware_signal=True (R-a — the FFR-5C
+flag, built+gated; zero new parameters). Expected signatures pre-registered from 9B §4:
+solar ~5/5/5 with the 53-MW crumbs gone; the alternation killed; the into-2024-class
+screens deflate; gas_cc entry falls WITH the deflation (R-e: no CC lever).
+STAGE B (invocation 3): stage A + the R-b SMR availability-year gate (new field or
+constants entry, ATB-cited 2030, GATED default-off, armed here by invocation; matrix
+row + _CACHE_KEY_OPTIONAL_FIELDS + defaults ledger SAME COMMIT; WAIT for the
+cache-key-pin verdict) + the R-d procurement channel armed at vintage 2020
+(vre_procurement_additions_enabled=True — D-18(a) adjudicated; the FFR-5E-H DEFER
+caveat does not carry to ERCOT per 9B §4; the netting IS exercised here and its
+behaviour is a FIRST-READ, reported at full magnitude).
+R-c (solar queue cap): NOT this session's to change. If stage A's measured solar
+throughput still caps below the EIA-860 2025 demonstrated record, WRITE THE RE-DERIVATION
+CASE (rule 23: from source data only) for the manager — do not touch the constant.
+Rule 12: <=5 solve-years per invocation (each is 4 LP years); <=2 concurrent; years
+sequential within each. Register ALL arms HINDCAST namespace
+(ercot-2021-2025-t1ff-armr-ffr9c-{control,pipeline,full}) — NEVER the backcast
+registry. Commit prereg -> results -> handoff AS THEY EXIST, stage by stage.
+
+=== READS (pre-register before invocation 1) ===
+Per stage vs control: (R1) additions decision basis per tech per year vs 55.4 GW actual
+(reported, never targeted); (R2) the FFR-9B binding-layer census re-run (which cap
+binds now); (R3) the price-side read set (per-screen h>$100/mean/max + replica margins
+— the into-2024-class overshoot is expected to DEFLATE via the pipeline-priced
+pro-forma); (R4) exits (in-window economic executions must stay ~0 — FFR-7C); (R5) the
+E1/E2 reserve-quantity reads (the FFR-9A probes re-run). LEAVE-ONE-YEAR-OUT within
+2023-2025 on any stage proposed for promotion (rule 22) — scored in the handoff, no
+promotion performed.
+
+=== GUARDS ===
+The epoch question: stages arm flags by invocation — NO shipped default moves, so NO
+epoch on other lanes (the FH-4 sibling legs run concurrently on other ISOs). Bar
+re-levels, signal scaling, residual tuning: REFUSED BY NAME. If a stage cannot be
+built without inventing a parameter: STOP, record, land the prior stages.
+
+=== TRAPS ===
+HOUSE-1 merged; cache-key-pin live; ledgers at <out-dir>/<ISO>/<runtime-key>/; runtime
+cache_key= line; the D-13 hazard; fetch+rebase before push; no push_files >=300 lines;
+no new workflows. Budget: prereqs + three cold 4-LP-year invocations — a LONG session
+(possibly phased; if so land control+stage A complete and hand off stage B explicitly).
+
+Deliverable: the PR(s) + docs/handoffs/ffr-9c-vre-entry-repair-<date>.md (per-stage
+R1-R5 vs control, the leave-one-year-out table, the R-c case if written, the promotion
+recommendation LEFT TO THE MANAGER) + registered sidecars + matrix updates.
+```
