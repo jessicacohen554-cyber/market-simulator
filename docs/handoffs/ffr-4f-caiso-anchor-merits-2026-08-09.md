@@ -344,4 +344,243 @@ third arm nobody has run.
 
 ## 5. Results
 
-*(appended after the arms completed — see below)*
+Both arms cold at this head, 2026–2030, 5 years sequential, exit 0.
+`results/ffr4f/{caiso-control,caiso-treated}`.
+
+| arm | runtime key | armed flag in `config.yaml` |
+|---|---|---|
+| control | **`3d3e836a176ac9cd`** | `caiso_ra_mpb_capacity_anchor: false` |
+| treated | **`da19509d457988e5`** | `caiso_ra_mpb_capacity_anchor: true` |
+
+**The control is verified by key identity, not just by matching numbers.**
+`3d3e836a176ac9cd` is **exactly FFR-4E's control runtime key** — the resolved
+configs are identical, so this *is* that baseline, and P-1's prediction
+(8,186.3 MW / 52.51 %) is confirmed to the digit. The treated key differs, so
+the flag demonstrably took effect.
+
+### 5.1 R-1 — ALL FC-2 (and every other FC) row, both arms, at full magnitude
+
+Scored by `scripts/forecast_verdict.py --tier t1f`, **not by hand**.
+**Determination: HOLD in BOTH arms.**
+
+| category / row | control | treated |
+|---|---|---|
+| **FC-1** structural integrity (I1–I14) | **FAIL** `['I12','I7']` | **FAIL** `['I12','I7']` — **worse** |
+| **FC-2 row1** reserve-margin band (I12) | **FAIL** 2026 12.9 %, 2027 **7.7 %**, 2028 **10.3 %** | **FAIL** 2026 12.9 %, 2027 **5.9 %**, 2028 **8.5 %** — **worse** |
+| **FC-2 row4** backstop share | **FAIL** **52.5 %** | **FAIL** **46.1 %** — better |
+| FC-2 rows 2/3/5/6 | not applicable at t1f (T2/T3 drift; curve-ON; ERCOT-only) | same |
+| FC-3 / FC-4 | n/a | n/a |
+| FC-5 external corridor | SKIPPED (no committed corridor table) | SKIPPED |
+| FC-6 driver response | SKIPPED | SKIPPED |
+| FC-7 provenance & DOF | **FAIL** `run_config` + CAVEAT dof ledger | identical |
+| FC-8 runtime feasibility | **PASS** | **PASS** |
+
+*FC-7's `run_config.json absent` is a scorer path artifact, not a lane finding:
+the file exists at `results/ffr4f/<arm>/run_config.json` and the scorer looks
+elsewhere. It is identical in both arms and cancels from the comparison.*
+
+**I7 shortfall deepens in the treated arm:** 2027 accredited firm
+54,969 → **54,019** MW, 2028 57,621 → **56,671** MW (requirement unchanged at
+58,671 / 60,082).
+
+### 5.2 R-2/R-3/R-4 — the entry-build composition, and **the trap test**
+
+Cumulative over 2026–2030 (MW):
+
+| arm | thermal | ├ backstop | └ economic | renewable | storage | **TOTAL ADD** | retirements |
+|---|--:|--:|--:|--:|--:|--:|--:|
+| control | **10,186.3** | 8,186.3 | 2,000.0 | 5,404.4 | 0.0 | **15,590.7** | 2,615.3 |
+| treated | **10,186.3** | 7,186.3 | 3,000.0 | 5,404.4 | 0.0 | **15,590.7** | 2,615.3 |
+| **Δ** | **+0.0** | **−1,000.0** | **+1,000.0** | +0.0 | +0.0 | **+0.0** | +0.0 |
+
+> ### **R-4, THE TRAP TEST: D-2 FIRES. The answer to the charter's question is NO.**
+>
+> **Does the CT build the old anchor manufactured dissolve? Not one megawatt.**
+> Total thermal built is **identical to the megawatt** — 10,186.3 MW in both
+> arms — as are total additions (15,590.7), renewables (5,404.4), storage (0.0)
+> and retirements (2,615.3). **The only thing that changed is the label on
+> 1,000 MW**: backstop −1,000.0, economic +1,000.0, a 1:1 substitution.
+>
+> Row 4 improves 52.51 % → 46.09 % **solely because 1,000 MW moved from the
+> numerator's channel to a channel the numerator does not count.** The
+> denominator is untouched. This is exactly, and only, the channel substitution
+> **FFR-3W §5.3 predicted**, and per pre-registered **D-2** it is reported as
+> such and is **NOT presented as a success of this lane**.
+
+**Per-year — and the substitution is also a two-year DELAY:**
+
+| year | control thermal | treated thermal | Δ | control RM | treated RM |
+|---|--:|--:|--:|--:|--:|
+| 2026 | 0.0 | 0.0 | — | 12.92 % | 12.92 % |
+| **2027** | **1,396.4** | **396.4** | **−1,000.0** | **7.74 %** | **5.88 %** |
+| 2028 | 2,792.8 | 2,792.8 | — | **10.29 %** | **8.47 %** |
+| **2029** | **4,146.5** | **5,146.5** | **+1,000.0** | 16.60 % | 16.60 % |
+| 2030 | 1,850.5 | 1,850.5 | — | 15.24 % | 15.24 % |
+
+The 1,000 MW that the administrative channel delivered in **2027** is delivered
+by the economic channel in **2029** — the arms re-converge exactly from 2029
+(total capacity 93,589 MW in both at 2030). Corroborated in the evolution
+ledgers: 2029 `entry_decided_mw_by_tech['gas_ct']` is 2,146.5 (control) vs
+**3,146.5** (treated).
+
+**So the treated arm buys row 4's 6.4 pp by making adequacy WORSE**: the same
+capacity, two years later, deepening the 2027–28 trough (row1 and I7 above).
+Per **D-3** that is reported at the same magnitude and prominence as the row-4
+improvement — and it is the more decision-relevant half.
+
+**R-3, the retirement channel, is inert here.** The anchor also feeds the
+retirement screen, but retirements are **identical** in both arms (1,492.5 MW
+in 2027, 0.8 in 2028, 1,122.0 in 2030). No CAISO unit's retirement decision
+flips between $88.08 and $138.36/kW-yr in this window, so the whole effect
+above runs through entry alone.
+
+### 5.3 What this does and does not say about the mechanism
+
+**It does not impeach the correction.** Per pre-registered **D-1**, the lane's
+claim is that the CPM soft-offer cap is the wrong *kind* of object and the RA
+MPB is the published price of the quantity the slot needs. That rests on §§1–3
+— published market design, first-party intake, and the rule 14 reconciliation —
+and **no solve outcome can validate or invalidate it**. §5 measures
+*consequences*, not faithfulness. Per **D-3** the mechanism therefore **stays
+merged**: rule 1 `[R-STRUCT]` forbids reverting a structurally-correct
+published input because it moved a residual the wrong way, and rule 14 forbids
+reverting to the estimate because the estimate scored better.
+
+**What it does say — and this is the finding worth carrying forward.**
+The corrected anchor makes exactly **one** additional 1,000 MW block of
+merchant `gas_ct` viable across five years, and then stops. That is the
+**self-limiting behaviour FFR-3W §2.1/§5.2 predicted**: the adopted anchor
+(**11.53 $/kW-mo**) sits *astride* the CT's break-even band
+(**10.88–11.36 $/kW-mo**), and the energy-margin ratchet lifts break-even as
+CTs enter, so entry clears once and closes. §2.1's pre-registered consequence —
+"the corrected anchor does not guarantee the CT flips profitable" — is what
+actually happened, at the smallest non-zero scale the rate ladder permits.
+
+**And it sharpens FFR-4E's E-1 rather than answering it.** With the fleet right
+(FFR-4D), the accreditation right (FFR-4E) *and* the capacity price right
+(here), CAISO adequacy in 2026–2030 is **still met administratively**:
+economic entry supplies 3,000 of 10,186.3 thermal MW, storage entry supplies
+**0.0 MW in both arms across the whole horizon**, and the backstop still
+carries 7,186.3 MW. Correcting the price moved 1,000 MW; it did not change the
+regime. **The residual is not the anchor's level either** — three corrections
+have now each been isolated and none dissolves the over-build.
+
+### 5.4 Nothing was tuned to the result
+
+The anchor value was fixed in §1.3 from two published CPUC figures and
+committed **before** either arm was solved (commit
+`ffr-4f: intake CAISO's published RA capacity-price objects`, which precedes
+both solves), and was not revisited afterwards. The NQC-vs-UCAP residual
+(§2.2) is left uncorrected in the adverse-to-nothing direction. No parameter
+was re-picked after the read, and per **D-4** no further lever was pulled.
+
+### 5.5 Registration
+
+Rule 15: forecast-family runs go on the **forecast** dashboard, never the
+backcast registry. Both arms registered via `scripts/register_forecast_run.py`
+(the single registration path) as
+**`caiso-2026-2030-ffr4f-caiso-control`** and
+**`caiso-2026-2030-ffr4f-caiso-treated`**. The slim artifacts
+(`full_horizon_summary.json`, `run_config.json`, per-year evolution ledgers)
+are committed so §5's table is auditable without a re-solve; only the
+regenerable per-year dispatch parquet is gitignored, exactly as its FFR-4E
+sibling.
+
+---
+
+## 6. Open items, routed not fixed
+
+| id | item | why not here |
+|---|---|---|
+| **F-1** | **The over-build regime survives all three corrections.** Fleet (FFR-4D), accreditation (FFR-4E) and capacity price (here) have each been isolated; row 4 is 52.51 % at HEAD and no single correction takes it below 46 %. Storage entry is **0.0 MW across the whole horizon in every arm anyone has run**, which is the loudest unexplained signal left. | Not this lane's object. A storage-entry lane (why the value stack never clears in CAISO) is the natural successor and is a *different* mechanism from the three now measured. |
+| **F-2** | **Economic entry and the backstop deliver on different timelines**, so substituting one for the other moves capacity two years later and deepens the near-term adequacy trough (§5.2). Whether that lag is the right representation of a merchant CT's development time vs a backstop procurement is unexamined. | A commissioning-lag question (`entry_commissioning_lag`), not an anchor question. It would change every ISO's forecast, so it needs its own charter and cannot be judged from one CAISO pair. |
+| **F-3** | **Arming posture for `caiso_ra_mpb_capacity_anchor` is an OWNER decision** (rules 5/24/28). The mechanism is built, measured, default-OFF and keeper-inert by construction. Arming it in the forecast lane costs 1.9 pp of 2027 reserve margin and buys 6.4 pp of row 4; arming it in the backcast lane would move the designated keeper and needs a re-solve + re-gate. | Exactly its FFR-4E sibling's posture (E-2), for the same reason. |
+| **F-4** | **The NQC-vs-UCAP ~2 % under-credit (§2.2) is documented, not corrected.** | Correcting it needs its own measured basis-conversion, not a gross-up invented here (rule 19). |
+| **F-5** | **FC-7 `run_config.json absent`** — the scorer looks for it somewhere other than `results/ffr4f/<arm>/run_config.json`, where `run_full_horizon.py` writes it. Identical in both arms, so it cancels from this comparison, but it means **every** `run_full_horizon` pair scores a spurious FC-7 FAIL. | A scorer/runner path mismatch affecting all ISOs and all forecast pairs — not CAISO's lane, and fixing it here would be an unchartered change to shared scoring infrastructure. |
+
+---
+
+## 7. Governance
+
+* **The framing the charter made binding — honoured.** §0 states it, §4 D-2
+  pre-registers it, and §5.2 executes it: row 4's 6.4 pp improvement is
+  reported as **channel substitution**, explicitly **not** claimed as this
+  lane's objective, success metric or justification. The mechanism's case is
+  made in §§1–3 from published market design alone. The owner's refusal of the
+  anchor *as a route to row 4* is intact: this document reaches the opposite of
+  the conclusion that route was declined for — it reports that the route
+  **does not work**, and would have been a rule 1 `[R-STRUCT]` trap if it had.
+* **Rule 1 `[R-STRUCT]` / rule 11.** Nothing is tuned to a residual. The
+  correction makes I12/I7 **worse** and is adopted anyway; the mechanism stays
+  merged on faithfulness, not fit.
+* **Rule 5 `[R-NO-MAGIC]`.** Every number traces to a committed primary. The
+  legacy per-IOU MPBs were **not** transcribed because their merged-cell
+  alignment is ambiguous — a refusal to guess, recorded in the README.
+* **Rule 13 `[R-MEASURED]`.** The MPB is a measured market **input** published
+  annually for a forward delivery year under a standing CPUC decision, not a
+  measured outcome. No model output is pinned to anything (§1.4).
+* **Rule 14 `[R-ACCURATE]`.** The whole charter. The accurate published input
+  replaces the estimate; both of FFR-3W §4's objections are **reconciled**
+  (§2), and the residual basis mismatch is documented rather than buried.
+* **Rule 19 `[R-ONE-MECH]`.** The anchor **replaces**; it does not stack. Five
+  consumers, one seam, all threading `iso` (§3.2).
+* **Rule 22 `[R-HOLDOUT]`.** Forecast-mode 2026–2030 only. No out-of-training
+  year was solved, scored, read or approached; CAISO holds no marker and none
+  was written.
+* **Rule 24 `[R-REGISTRY]`.** A `ScenarioConfig` field landing in
+  `run_config.json`. No env var, no per-plant dict, no `getattr` fallback
+  literal.
+* **Rule 25 `[R-ISO-SCOPE]`.** CAISO only. The resolver returns `None` for
+  every other ISO, pinned by tests measuring all five as byte-identical at both
+  the seam and the retirement screen. No other ISO's anchor or verdict was
+  read, changed or transferred.
+* **Rule 27 `[R-PUSH]`.** Opus. Every change is a local `Edit` of on-disk
+  bytes; no file ≥300 lines was rewritten from generated content. All three
+  ≥300-line files were blob-verified against local after push
+  (`capacity_market.py`, `scenarios.py`, `mechanism-matrix.js` — all MATCH).
+* **Rule 28 `[R-MECH-MATRIX]`.** Row minted with its field (duty c) and its
+  forecast cell adjudicated by solve in the same session (duty b).
+* **Cache.** Pinned default `603c2498bf71d21d` **unmoved**; armed
+  `bb8050a8368985df`. Byte-identical at default ⇒ **no cache epoch**.
+* **Rules 15/16.** Forecast-family runs, registered on the **forecast**
+  dashboard only (§5.5). No backcast run was produced, and the backcast
+  registry is untouched.
+
+---
+
+## 8. Reproduction
+
+```bash
+uv sync                                    # ~2 min
+uv run python scripts/regenerate_clean.py  # ~55 min, 50 datatypes, 1.6 GB
+
+# the mechanism, solve-free
+uv run python -m pytest tests/unit/config/test_caiso_ra_mpb_anchor.py -q
+uv run python scripts/check_cache_key_registration.py
+uv run python scripts/check_mechanism_matrix.py
+
+# the anchor's effect at the seam, no solve
+uv run python -c "
+from market_sim.config.scenarios import ScenarioConfig
+from market_sim.config.constants import EFORD
+from market_sim.model.capacity_evolution.retirements import capacity_revenue_per_mw_yr
+for arm, cfg in [('off', ScenarioConfig()),
+                 ('on', ScenarioConfig(caiso_ra_mpb_capacity_anchor=True))]:
+    print(arm, capacity_revenue_per_mw_yr('CAISO','gas_ct',EFORD['gas_ct'],cfg,None))
+"
+
+# the paired arms (5 years each, sequential; run the two concurrently — rule 12)
+MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1 \
+  uv run python scripts/run_full_horizon.py --iso CAISO \
+    --start-year 2026 --end-year 2030 --out-dir results/ffr4f/caiso-control
+MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1 \
+  uv run python scripts/run_full_horizon.py --iso CAISO \
+    --start-year 2026 --end-year 2030 --caiso-ra-mpb-capacity-anchor \
+    --out-dir results/ffr4f/caiso-treated
+
+# the scored reads
+for arm in control treated; do
+  uv run python scripts/forecast_verdict.py \
+    --summary results/ffr4f/caiso-$arm/full_horizon_summary.json --tier t1f
+done
+```
