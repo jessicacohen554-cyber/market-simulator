@@ -120,6 +120,17 @@ SUMMARY_RECORD_SPEC = RecordSpec(
             "empty/None normalized to null",
         ),
         "weather_year": FromConfig(),
+        # The two MISO row-family gates, read off the RESOLVED config rather
+        # than the CLI args — MISO's ISOConfig.default_scenario_overrides arms
+        # miso_rps_compliance_regions (owner D-26) for a leg that passes no
+        # flag at all, so an args-sourced value would record the standing
+        # forecast posture as unarmed. Same FFR-2E/FFR-3R defect class as the
+        # flag-sourced clearing gate: a sidecar must REPORT the posture it
+        # solved, not assert one. Declared here so a paired arm/control
+        # registration is self-describing on the dashboard (ARM3-MEASURE,
+        # docs/handoffs/arm3-clean-row-horizon-2026-08-09.md).
+        "miso_rps_compliance_regions": FromConfig(),
+        "miso_clean_tier_rows": FromConfig(),
     },
     name="full_horizon_summary.json",
 )
