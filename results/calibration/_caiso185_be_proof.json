@@ -1,0 +1,101 @@
+{
+ "be1_src_diff_empty": true,
+ "be1_src_diff": "",
+ "be1_per_iso": {
+  "ERCOT": {
+   "default_cc_capacity_reconcile": false,
+   "cache_key_default": "603c2498bf71d21d",
+   "cache_key_armed": "af40b76ffd88b3e8",
+   "key_moves_when_armed": true
+  },
+  "CAISO": {
+   "default_cc_capacity_reconcile": false,
+   "cache_key_default": "51b2892ed6f0d742",
+   "cache_key_armed": "3c4c24ff762b45af",
+   "key_moves_when_armed": true
+  },
+  "PJM": {
+   "default_cc_capacity_reconcile": false,
+   "cache_key_default": "5cfabdff9bfd6de6",
+   "cache_key_armed": "88a14fb54d922471",
+   "key_moves_when_armed": true
+  },
+  "MISO": {
+   "default_cc_capacity_reconcile": false,
+   "cache_key_default": "ea1c7983d5c54ec4",
+   "cache_key_armed": "3a02cbdb80ba0762",
+   "key_moves_when_armed": true
+  },
+  "NYISO": {
+   "default_cc_capacity_reconcile": false,
+   "cache_key_default": "1462c74e6775a24b",
+   "cache_key_armed": "6680c48e8bddc059",
+   "key_moves_when_armed": true
+  },
+  "NEISO": {
+   "default_cc_capacity_reconcile": false,
+   "cache_key_default": "62923af03d1c9bac",
+   "cache_key_armed": "eb649fd817d69ff9",
+   "key_moves_when_armed": true
+  }
+ },
+ "be1_pass": true,
+ "be2_per_iso": {
+  "ERCOT": {
+   "resolved_path": "data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+   "basename": "cc_capacity_reconcile_ERCOT.csv",
+   "carries_own_iso_name": true,
+   "exists": true,
+   "matches_paths_helper": true
+  },
+  "CAISO": {
+   "resolved_path": "data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv",
+   "basename": "cc_capacity_reconcile_CAISO.csv",
+   "carries_own_iso_name": true,
+   "exists": true,
+   "matches_paths_helper": true
+  },
+  "PJM": {
+   "resolved_path": "data/raw/_processed-legacy/cc_capacity_reconcile_PJM.csv",
+   "basename": "cc_capacity_reconcile_PJM.csv",
+   "carries_own_iso_name": true,
+   "exists": true,
+   "matches_paths_helper": true
+  },
+  "MISO": {
+   "resolved_path": "data/raw/_processed-legacy/cc_capacity_reconcile_MISO.csv",
+   "basename": "cc_capacity_reconcile_MISO.csv",
+   "carries_own_iso_name": true,
+   "exists": true,
+   "matches_paths_helper": true
+  },
+  "NYISO": {
+   "resolved_path": "data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
+   "basename": "cc_capacity_reconcile_NYISO.csv",
+   "carries_own_iso_name": true,
+   "exists": true,
+   "matches_paths_helper": true
+  },
+  "NEISO": {
+   "resolved_path": "data/raw/_processed-legacy/cc_capacity_reconcile_NEISO.csv",
+   "basename": "cc_capacity_reconcile_NEISO.csv",
+   "carries_own_iso_name": true,
+   "exists": true,
+   "matches_paths_helper": true
+  }
+ },
+ "be2_caiso_armed_path": "data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv",
+ "be2_other_isos_paths_stable": true,
+ "be2_paths_distinct": true,
+ "be2_pass": true,
+ "be3_sha256": {
+  "cc_capacity_reconcile_ERCOT.csv": "8c886ba4fe04df6b206bb8c995d6cec7c888a9055ac5918ab7fc034d9a8b9b5b",
+  "cc_capacity_reconcile_CAISO.csv": "1140562bd07f4fb57ba623f6fc0f5b863d7b176bc5397382ddc014dbc381ce11",
+  "cc_capacity_reconcile_PJM.csv": "a4eea44eca3b139ac816f94ef3fd1754c4d4de31f7cd7f5584af11201cdff742",
+  "cc_capacity_reconcile_MISO.csv": "b936a247f5014199f70146ec8cbb867f9479125633d9e0694da97c78b2f16d51",
+  "cc_capacity_reconcile_NYISO.csv": "b3b7088765c728eca951237aea7ecefd0237d6e6cbd95046150cc45e9f52ef47",
+  "cc_capacity_reconcile_NEISO.csv": "92ba627d705493385a410416a3a3e4997b228ee00f03c28a66f7f581a0a4b191",
+  "campd_unit_outages_CAISO": "25360e90a9d11f32c293edf3224047da0d6fab447b551fac81b983e2da1166c6",
+  "eia860_generator_operable.parquet": "b6703157c00fb1d1f487b9c07e6c366c3ed0d559da4b4a378dcd30c131643bdb"
+ }
+}
