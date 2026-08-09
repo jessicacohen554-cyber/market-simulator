@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-09-caiso-184-c0-control",
+  "label": "caiso 184 c0 control",
+  "date": "2026-08-09",
+  "shorthand": "caiso-184-c0-control",
+  "definition": "caiso-184 ARM C0 CONTROL: the caiso-183-b1-hour keeper recipe replayed at THIS head with no config delta. Establishes the same-head noise floor before any treated delta is read (PRECHECK \u00a78 CONTROL). Recipe rebuilt from the keeper bundle's own meta.json via replay_keeper.build_kwargs \u2014 never a remembered CLI string.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-09-caiso-184-c0-control.js",
+  "bundle": "results/calibration/caiso184_c0_control"
+}
