@@ -275,6 +275,13 @@ frontend/data/forecast/program-status.js
 # registered record is the frontend/data/hindcast sidecar, and the readout
 # lives in docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md.
 /results/ffr7b2/
+# ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
+# MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
+# D-28 option A step 3). Same class as /results/ffr7b2/ above, of which this is
+# the direct continuation — transient full-horizon forecast solves; the
+# registered record is the frontend/data/hindcast sidecar, and the readout
+# lives in docs/handoffs/arm3-clean-row-horizon-2026-08-09.md.
+/results/arm3/
 # D-9 forecast warm-start A/B arms (scripts/probes/_d9_forecast_warmstart_ab.py
 # --out-dir). Same class as /results/full-horizon/ — it IS a full-horizon
 # forecast solve, one per arm, and nothing here is dashboard-registered. The
