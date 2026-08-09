@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-09-miso-148-basis-aware",
+  "label": "miso 148 basis aware",
+  "date": "2026-08-09",
+  "shorthand": "miso-148-basis-aware",
+  "definition": "miso-148 ARM: single delta summer_derate_basis_aware=true \u2014 the flat SUMMER_CLASS_DERATE applied only on a nameplate capacity basis (miso-141 double-count repair, class-agnostic, zero continuous DOF)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-09-miso-148-basis-aware.js",
+  "bundle": "results/calibration/miso148_basis_B"
+}
