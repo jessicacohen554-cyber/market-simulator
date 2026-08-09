@@ -72,7 +72,7 @@ from market_sim.data.fleet import (
 )
 from market_sim.model.dispatch import DispatchResult
 from market_sim.policy.clean_tiers import clean_credit_for_zone
-from market_sim.policy.federal_ces import effective_eac_price_for_unit
+from market_sim.policy.federal_ces import eac_price_components_for_unit
 from market_sim.policy.ira import section_45u_credit_per_mwh
 from market_sim.policy.rps import rps_credit_for_zone
 
@@ -1927,22 +1927,79 @@ def apply_economic_retirements(
         # unit-level so that under cesa_ci a credited unabated gas_cc (or an
         # abated unit's actual residual CI) earns its own fraction on its
         # own CO2 rate. Exactly the legacy value when the CES is disabled.
-        eac_price = effective_eac_price_for_unit(
+        # Taken as its two LEGS rather than the fold, because §45U's
+        # gross-receipts test below puts them on opposite branches of
+        # §45U(b)(2)(B) (D-28; see the §45U block). The fold itself — and so
+        # every attribute price this screen credits — is unchanged.
+        state_eac_price, federal_ces_price = eac_price_components_for_unit(
             config, g.fuel_type, g.emission_rate_co2, year
         )
-        # IRA §45U existing-nuclear PTC: a per-MWh production credit on the
-        # unit's realized output that supports nuclear retention exactly like
-        # eac_price_nuclear (ZEC/CES) — so it enters the SAME attribute-revenue
-        # seam, NEVER stacked with it (rule 19, one mechanism per phenomenon).
-        # We fold it into eac_price via max(), then compute_attribute_revenue's
-        # own max(eac_price, rps) yields max(§45U, eac_price_nuclear) for the
-        # (nuclear, rps=0) case. The credit's gross-receipts phase-down keys on
-        # the unit's own average energy price, and it expires after
-        # config.ira_45u_last_year. Nuclear only; needs a simulation year to
-        # evaluate the expiry (None on legacy callers -> no §45U). Source:
-        # 26 U.S.C. §45U; see policy.ira.section_45u_credit_per_mwh.
+        eac_price = max(state_eac_price, federal_ces_price)
+        # RPS credit resolved at the UNIT's zone under the K-row
+        # compliance-region grain (FFR-7B Arm 2 / FFR-6B §3.2): a scalar
+        # passes through; a per-zone vector indexes by the unit's own zone,
+        # so a unit outside every region's eligibility geography earns 0 —
+        # never a broadcast of another region's dual.
+        rps_for_unit = (
+            rps_credit_for_zone(rps_shadow_price, zone)
+            if g.fuel_type in _RPS_ELIGIBLE_FUELS
+            else 0.0
+        )
+        # Clean-tier credit (FFR-7B Arm 3, FFR-6B §6.4): the clean row's
+        # dual enters the EXISTING max() attribute doctrine — for nuclear
+        # and hydro this is the first LP row that pays them at all — never
+        # a sum: one certificate, sold to whichever attribute market clears
+        # higher. Fuel- AND zone-resolved (a gas_cc_ccs unit in MISO-West
+        # earns nothing from MN's row, whose carbon-free definition
+        # excludes CCS gas). §45U COMPOSITION IS SETTLED (owner decision
+        # D-28 option A, docs/handoffs/d28-45u-composition-memo-2026-08-08.md
+        # §5): §45U left this max() and now composes with its winner below,
+        # so the clean dual's §45U arming blocker is CLOSED. FFR-6B §6.4
+        # row 3 is discharged; arming miso_clean_tier_rows is a separate
+        # charter on its own per-ISO evidence (rule 25).
+        clean_for_unit = clean_credit_for_zone(
+            clean_attribute_price_by_fuel, g.fuel_type, zone
+        )
+        attribute_revenue_usd = compute_attribute_revenue(
+            g.fuel_type, annual_gen_mwh, eac_price, max(rps_for_unit, clean_for_unit)
+        )
+        net_revenue += attribute_revenue_usd
+
+        # IRA §45U existing-nuclear PTC (26 U.S.C. §45U; owner decision D-28
+        # option A, memo §1.3/§3.2/§5). §45U is NOT an attribute buyer, so it
+        # no longer competes inside the max() above. There are two distinct
+        # phenomena, and rule 19 [R-ONE-MECH] wants one mechanism for each:
+        #   1. "who buys this MWh's clean attribute" — one certificate, several
+        #      competing buyers (state EAC contract, federal CES premium, RPS
+        #      row, clean-tier row), resolved by the max() above, UNCHANGED;
+        #   2. "what does Treasury pay this reactor for a zero-emission MWh" —
+        #      §45U, which carries its OWN statutory anti-double-dip keyed to
+        #      phenomenon 1's outcome. That is §45U(b)(2)(B), and it has two
+        #      branches, both of which cap total support:
+        #      (i)   default — a zero-emission-credit-program payment is INSIDE
+        #            the gross-receipts base, so each $1 of attribute costs
+        #            0.80 $ of credit (16 % x the (d)(1) 5x). Pays D + §45U(P+D).
+        #      (iii) exclusion — where the state program itself nets the full
+        #            federal credit out of its own payment, the payment leaves
+        #            the base and the state tops the unit up to its own target.
+        #            Pays max(D, §45U(P)).
+        # Branch assignment, per instrument (memo §1.3, §5):
+        #   * state_eac_price (eac_price_nuclear, documented as the NY ZEC /
+        #     IL carbon-mitigation-credit design — a target net of the unit's
+        #     other revenue) is a genuine branch-(iii) netting contract;
+        #   * the federal CES premium, the RPS dual and the Arm-3 clean-tier
+        #     dual are LSE-paid compliance certificates with no federal-credit
+        #     offset anywhere in them — branch (i).
+        # The unit sells ONE certificate, so it takes whichever route pays more;
+        # each route's total is monotone in its own price, so the winner within
+        # branch (i) is still that branch's max(). Both route totals are >= the
+        # attribute price already credited above, so the increment added here is
+        # the credit net of any branch-(iii) clawback, never a second attribute.
+        # Nuclear only; needs a simulation year to evaluate the expiry after
+        # config.ira_45u_last_year (None on legacy callers -> no §45U). See
+        # policy.ira.section_45u_credit_per_mwh.
         #
-        # Backlog-#4 adjudication — the phase-down basis moves to ATTAINABLE on
+        # Backlog-#4 adjudication — the phase-down basis is ATTAINABLE on
         # BOTH sides of the ratio, not just the denominator:
         #  (a) Tie-invariance is NOT provable for the realized ratio. A ratio of
         #      two realized quantities can be tie-invariant, but this one is not:
@@ -1961,44 +2018,31 @@ def apply_economic_retirements(
         #      quantity keeps the ratio a true $/MWh average price; mixing bases
         #      (realized receipts over attainable MWh) would be a meaningless
         #      ratio, understating the price and overpaying the credit.
+        # The attribute price added to gross receipts under branch (i) rides the
+        # SAME attainable MWh (it is a per-MWh certificate price on exactly the
+        # output the ratio's denominator counts), so the basis stays one notion
+        # of quantity throughout.
         if g.fuel_type == "nuclear" and year is not None and annual_gen_mwh > 0.0:
             gross_energy_revenue = float(
                 sum(np.dot(prices[zone], row_mw) for row_mw in credited_mw_rows)
             )
             avg_energy_price = gross_energy_revenue / annual_gen_mwh
-            eac_price = max(
-                eac_price,
+            # Branch (i): certificate price inside the gross-receipts base.
+            branch_i_price = max(federal_ces_price, rps_for_unit, clean_for_unit)
+            branch_i_total = branch_i_price + section_45u_credit_per_mwh(
+                year, avg_energy_price + branch_i_price, config
+            )
+            # Branch (iii): the state contract nets the credit out, so the pair
+            # pays the contract, topped up only where the credit is worth more.
+            branch_iii_total = max(
+                state_eac_price,
                 section_45u_credit_per_mwh(year, avg_energy_price, config),
             )
-        # RPS credit resolved at the UNIT's zone under the K-row
-        # compliance-region grain (FFR-7B Arm 2 / FFR-6B §3.2): a scalar
-        # passes through; a per-zone vector indexes by the unit's own zone,
-        # so a unit outside every region's eligibility geography earns 0 —
-        # never a broadcast of another region's dual.
-        rps_for_unit = (
-            rps_credit_for_zone(rps_shadow_price, zone)
-            if g.fuel_type in _RPS_ELIGIBLE_FUELS
-            else 0.0
-        )
-        # Clean-tier credit (FFR-7B Arm 3, FFR-6B §6.4): the clean row's
-        # dual enters the EXISTING max() attribute doctrine — for nuclear
-        # and hydro this is the first LP row that pays them at all — never
-        # a sum: one certificate, sold to whichever attribute market clears
-        # higher. Fuel- AND zone-resolved (a gas_cc_ccs unit in MISO-West
-        # earns nothing from MN's row, whose carbon-free definition
-        # excludes CCS gas). §45U COMPOSITION IS OPEN AND BLOCKS ARM 3's
-        # ARMING ONLY (FFR-6B §6.4, carried verbatim): §45U is folded into
-        # eac_price by max() above, so the clean dual composes as
-        # max(max(eac, §45U), clean) — but §45U(b)(2)'s gross-receipts
-        # phase-down implies phase-down-then-add, not max(); unresolved,
-        # owner call pending. See the miso_clean_tier_rows field comment.
-        clean_for_unit = clean_credit_for_zone(
-            clean_attribute_price_by_fuel, g.fuel_type, zone
-        )
-        attribute_revenue_usd = compute_attribute_revenue(
-            g.fuel_type, annual_gen_mwh, eac_price, max(rps_for_unit, clean_for_unit)
-        )
-        net_revenue += attribute_revenue_usd
+            attribute_price = max(eac_price, rps_for_unit, clean_for_unit)
+            section_45u_usd = (
+                max(branch_i_total, branch_iii_total) - attribute_price
+            ) * annual_gen_mwh
+            net_revenue += section_45u_usd
 
         # Resource-adequacy capacity payment (Module M1): in PJM/NYISO/
         # ISO-NE/CAISO a unit earns a capacity revenue stream that can cover
