@@ -221,6 +221,7 @@ def reference_config(
     entry_screen_diagnostics: bool = False,
     caiso_nqc_accreditation: bool = False,
     caiso_storage_nqc_accreditation: bool = False,
+    caiso_ra_mpb_capacity_anchor: bool = False,
     miso_rps_compliance_regions: bool = False,
     miso_clean_tier_rows: bool = False,
 ) -> ScenarioConfig:
@@ -329,6 +330,7 @@ def reference_config(
         entry_screen_diagnostics=entry_screen_diagnostics,
         caiso_nqc_accreditation=caiso_nqc_accreditation,
         caiso_storage_nqc_accreditation=caiso_storage_nqc_accreditation,
+        caiso_ra_mpb_capacity_anchor=caiso_ra_mpb_capacity_anchor,
         miso_rps_compliance_regions=miso_rps_compliance_regions,
         miso_clean_tier_rows=miso_clean_tier_rows,
         # Owner decision D-10 (2026-08-04, sitting Addendum K.3): forecast
@@ -864,6 +866,27 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     ap.add_argument(
+        "--caiso-ra-mpb-capacity-anchor",
+        action="store_true",
+        help=(
+            "FFR-4F arm (CAISO only, DEFAULT OFF pending an owner decision): "
+            "price CAISO capacity at the CPUC unified Resource Adequacy Market "
+            "Price Benchmark (11.53 $/kW-month x 12 = 138.36 $/kW-yr, the 2026 "
+            "Forecast delivery-year value) instead of the CPM SOFT-OFFER CAP "
+            "(88.08 $/kW-yr) the registry ships. The shipped anchor is a "
+            "GOING-FORWARD fixed cost of an EXISTING 550 MW COMBINED-CYCLE x "
+            "1.20 (FERC ER24-1225) used as the entry price for a new "
+            "COMBUSTION TURBINE, and is in any case a ceiling on backstop "
+            "OFFERS rather than a price anyone is paid. REPLACES the anchor at "
+            "the one shared capacity-price seam (rule 19), so all five "
+            "consumers move together. NOT A ROW-4 FIX: row 4's movement is a "
+            "reported side effect, never the objective. Solve-affecting: it "
+            "raises capacity revenue in the retirement, entry and storage "
+            "screens, so pair it with an unarmed control. No-op in every other "
+            "ISO (rule 25)."
+        ),
+    )
+    ap.add_argument(
         "--miso-rps-compliance-regions",
         action="store_true",
         help=(
@@ -914,6 +937,7 @@ def main(argv: list[str] | None = None) -> int:
         entry_screen_diagnostics=args.entry_screen_diagnostics,
         caiso_nqc_accreditation=args.caiso_nqc_accreditation,
         caiso_storage_nqc_accreditation=args.caiso_storage_nqc_accreditation,
+        caiso_ra_mpb_capacity_anchor=args.caiso_ra_mpb_capacity_anchor,
         miso_rps_compliance_regions=args.miso_rps_compliance_regions,
         miso_clean_tier_rows=args.miso_clean_tier_rows,
     )
