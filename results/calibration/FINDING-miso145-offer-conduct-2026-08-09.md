@@ -322,6 +322,17 @@ miso-143's construction. PASSES by 12× to 49×; the bar was ≥ 3.0 $/MWh/GW.**
 Both hold on the `conventional` and `available` universes (2025 RT: 55.94 /
 56.25) and in the W1 window (2025: real RT 73.65, DA 19.26, model 1.582).
 
+**Two labelling limits, stated rather than left to be discovered.** (i) These
+are load-weighted **means** over the window's hours, so hours in which the wall
+sits immediately above the clearing pull them up; the verdict does not rest on
+the mean's exact value — the bar is 3.0 and the smallest reading anywhere is
+10.44. (ii) **One price basis is used on both sides (TRAP 4): the measured RT
+actual.** For the DA book that means every DA row above is evaluated *at the RT
+actual price level*, which is what a band comparison requires — it is **not** a
+claim that the DA book clears there. The DA book's own clearing against the DA
+hub price was not located, and no DA percentile below should be read as a DA
+clearing point.
+
 ### 6.3 The percentile grid — what the two curves actually look like
 
 Load-weighted offer price at percentiles of each side's **own** capability,
@@ -336,7 +347,11 @@ Load-weighted offer price at percentiles of each side's **own** capability,
 | p90 | 55.29 | 35.14 | 47.56 |
 | p95 | 87.46 | 46.96 | 98.03 |
 | p98 | 211.34 | 75.30 | 213.79 |
-| **clears at** | **p79.11 → $44.245** | **p93.80 → $74.68** | **p87.80 → $74.68** |
+| **percentile at its own clearing price ($44.245 model)** | **p79.11** | — | — |
+| **percentile at the measured RT actual ($74.68)** | — | **p93.80** | **p87.80** ‡ |
+
+‡ The DA column is evaluated at the **RT** actual price for basis consistency
+(TRAP 4) and is **not** the DA book's own clearing point (§6.2, limit ii).
 
 The DA book and the model reach almost the same place at the top (p95 98.03 vs
 87.46; p98 213.79 vs 211.34) — **the difference is where each one clears.** The
