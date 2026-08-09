@@ -6808,3 +6808,69 @@ no `complete` and no `final`, and the D4 intake is data preparation, which rule 
 places outside the spend gate); and the keeper did NOT move —
 `2026-08-09-run181-position-tail`, NOT-YET {C3a, C3b}, unchanged. Record:
 `docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §10.
+
+## 2026-08-09 — ERCOT-183 (owner card D4 EXECUTED: the 2024/2025 NP3-965 full-year re-upload; data intake only — no LP, no mechanism, no matrix cell, keeper UNCHANGED at run181-position-tail)
+
+**The intake.** `scripts/data/fetch_ercot_sced_corpus_shards.py` (new, additive)
+rebuilt the delivery-2024/2025 windows of the NP3-965 60-Day SCED Gen Resource
+corpus from the free MIS path into `data/raw/ercot/SCED/` in the existing
+convention (publication-month `YYYY-MM.partNNNN.parquet`, one part per
+publication day, raw 187/188-column all-string copy, delivery days read from
+member stamps, one-write-per-delivery-day dedupe, `--max-delivery-date
+2025-12-31` at the locked-test boundary). **708/708 listed ordinary publication
+days landed** (pubs 2024-03-24..2026-03-01; 4 MIS non-zip error bodies recovered
+on retry; the 245 MB 2024-10-04 supplemental contributed nothing — its 32
+displaced days were republished ordinarily). Forensics: 996 consumable parts,
+117.60M rows, 1,056 delivery days, median 110,208 rows/day, ZERO duplicate
+days/part holes/unreadable shards. Delivery-2024: 352/366 days (Jan 10–23
+permanently out of free retention — pubs 2024-03-10..23; owner archive is the
+only source). Delivery-2025: all 365 fetched, 338 consumable — INCLUDING
+complete Nov (the purged 2026-07-21 original had Nov partial/Dec absent).
+Staged against the blob limit per the pre-registered plan (handoff §5): 19
+verified pushes, probe ladder 2.6→13→116 MB then 16–290 MB batches, every push
+`ls-remote`-sha-verified; two owner-side mid-session PR merges (#3806, #3813)
+absorbed in-flight batches and were recovered by rebase onto fresh main. No
+history rewrite, nothing purged.
+
+**RTC+B format break (quarantined, bytes kept).** Publications 2026-02-02+
+(deliveries 2025-12-05..31, 27 parts, 8.66M rows) carry ERCOT's RTC+B-era Gen
+member: `HASL`/`LASL` REMOVED, netout trailing-space spelling dropped, AS
+responsibilities → `AS Awards/Capability`, rows ~3× as the disclosure scope
+widens. `HASL` is a required read column of every corpus consumer, so these
+crash the derives — the exact ercot-95/97 defect. They live in
+`data/raw/ercot/SCED/rtcb-format-2026/`, invisible to the consumers'
+non-recursive globs, awaiting an owner-authorized RTC+B adapter.
+
+**The §3 acceptance (the session's real deliverable), at full magnitude.**
+2023 control: BOTH `--position-tail` asserts PASS and the scratch vintages are
+IDENTICAL to the committed keeper artifacts in every class/year block — the
+keeper's anchor chain did not move. 2024/2025: wall FAILS the assert both
+years, pool FAILS 2025 and CRASHES 2024 — all three failures are the
+PRE-REGISTERED outcome (handoff §4, measured BEFORE the fetch): the frozen
+2024/2025 blocks are SAMPLE-DAY-based — their committed coverage rows equal
+today's sample-day derivation exactly, falsifying PRECOMMIT-ercot181
+Amendment 1's premise that they derive from the purged corpus (a full-corpus
+year carries ~8,751 bin-0 intervals; the frozen blocks carry 356). Pre-intake
+the sample-day re-derive already missed 8 rungs at the 0.001–0.136 mult scale
+(numeric/tie-break drift vs the ERCOT-86-era derive); post-intake the corpus
+majority-covers both years, so `_sced_source_files` supersedes the sample-day
+basis (the ERCOT-157 design) and a byte-match is structurally impossible. The
+pool-2024 crash is a NEW latent leap-day defect (`_prep_clock_gas` applies the
+pre-filter Feb-29 mask to a post-filter re-parse; reachable only with a
+leap-year corpus on disk — first possible today). Per §3 discipline nothing
+was fixed by adjusting a derive; the frozen artifacts, the positiontail
+vintages and the keeper are byte-untouched.
+
+**What D4 unblocked / what it did not.** The ercot-180 grain-reopen evidence
+(FINDING-ercot180's named condition) now exists on disk — the reopen still
+needs its OWN precommit. 2024/2025 position-tails become derivable only after
+an authorized corpus-basis re-derive of the frozen stepped anchors (this
+intake IS the rule-23 source-data update that licenses it; it also requires
+the pool leap-day repair first). Governance: rule 22 data-intake clause (no
+spend — no out-of-training year solved/scored/registered; 2026 rows refused at
+fetch, quarantined at rest); rule 25 ERCOT-only; rule 28 NO matrix cell
+(nothing tested); rule 15 N/A (no run produced). Keeper
+`2026-08-09-run181-position-tail` UNCHANGED. Full record:
+`docs/handoffs/ercot-sced-2024-2025-reupload-2026-08.md`.
+
+Next shorthand: ercot-184.

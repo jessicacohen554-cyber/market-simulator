@@ -188,9 +188,68 @@ timeout and taught the staging loop to carry a 10-minute ceiling; the largest
 verified single pack was 290 MB (this remote's gateway comfortably exceeds
 the 2026-08-03 session's ~1.3 MB pathology, which does not reproduce here).
 
-## 7. RESULTS — §3 acceptance outcomes (filled after the runs)
+## 7. RESULTS — §3 acceptance outcomes (run post-intake, per year, out to scratch)
 
-*Pending.*
+| run | outcome |
+|---|---|
+| wall `--position-tail --years 2023` | **PASS** — frozen ladders reproduced byte-identically; tails re-derived (CC [3018, 2257, 1563, 864, 712, 355, 158], CT [69, 145, 132, 112, 166, 289, 92] points/bin) |
+| pool `--position-tail --years 2023` | **PASS** — ladder + pool_frac reproduced; tails [416, 415, 415, 366, 315, 278, 84] |
+| wall `--position-tail --years 2024` | **FAIL (assert STOP)** — "re-derived CC 2024 ladder does not reproduce the frozen artifact's" |
+| pool `--position-tail --years 2024` | **CRASH (IndexError)** — a NEW latent defect, see below |
+| wall `--position-tail --years 2025` | **FAIL (assert STOP)** — CC 2025 ladder does not reproduce |
+| pool `--position-tail --years 2025` | **FAIL (assert STOP)** — CT 2025 ladder/pool_frac do not reproduce |
+
+**The 2023 control is fully intact, beyond the assert:** the scratch
+position-tail vintages produced by both runs are **IDENTICAL to the committed
+keeper artifacts in every class/year block** — the 2023 tails regenerate
+exactly, and the 2024/2025 (and 2022) frozen 5-point ladders are carried
+byte-verbatim. The intake did not move the keeper's anchor chain (2023's
+publication window gained only the `2024-03.part0009-0016` Jan-2024-bleed
+parts, whose rows the delivery-year filter drops for 2023).
+
+**The 2024/2025 failures are exactly the §4 pre-registered outcome, not a
+surprise.** Post-intake, the corpus majority-covers both delivery years, so
+`_sced_source_files` supersedes the sample-day extracts (the ERCOT-157
+design) — and the §4 baseline established that the frozen 2024/2025 blocks
+are SAMPLE-DAY-based (their committed coverage equals the sample-day
+derivation exactly; Amendment 1's premise that their population was the
+purged corpus is falsified by the artifacts' own coverage rows). A
+corpus-population ladder cannot and should not byte-match a sample-day
+ladder. The failures therefore measure the BASIS FLIP this intake
+deliberately performs, not corpus drift within a fixed population.
+
+**NEW FINDING — the pool derive carries a latent leap-day defect.**
+`derive_ercot_faststart_pool._prep_clock_gas` drops Feb-29 rows via a mask
+computed on the pre-filter frame, then re-parses `SCED Time Stamp` on the
+POST-filter frame and indexes it with the stale mask
+(`pd.to_datetime(df["SCED Time Stamp"]).to_numpy()[np.asarray(ok)]`) —
+IndexError: 6,509,857 vs 6,492,097 (the 17,760-row delta = Feb-29-2024's
+CT-class rows, ~62 resources × 288 intervals). The path is reachable ONLY
+when a leap-year corpus containing Feb-29 is the year's basis — impossible
+before this intake (2023/2025 have no Feb-29; 2024's sample-day extracts
+carried none). NOT fixed here: §3 forbids adjusting the derives, rule 23
+freezes them, and the run's verdict is already determined by the basis flip
+(pool 2025, crash-free, fails the same assert). Any future authorized
+2024-corpus pool re-derive must repair this first, under its own review.
+
+**Consequences for the D4 purposes (decision card §8):**
+1. *2024/2025 position-tails derivable* — the corpora now exist; deriving
+   tails requires first RE-DERIVING the frozen stepped anchors on the corpus
+   basis. This intake IS the rule-23 source-data update that licenses that
+   re-derive, but executing it needs its own authorization (it moves keeper
+   inputs), plus the leap-day repair for the pool.
+2. *The ercot-180 grain reopen evidence* — now on disk (403,007-row corpus →
+   full-year 2024/2025); the reopen still requires its own NEW precommit
+   (FINDING-ercot180's condition), never a re-run of the old instrument.
+3. *"Frozen anchors become reproducible again"* — REFRAMED by the §4
+   baseline: the frozen wall 2024/2025 anchors were never corpus-based, and
+   their populations (the sample-day extracts) never left the disk. What was
+   irreproducible pre-intake was 8 ladder rungs at the 0.001–0.136 mult
+   scale on an identical population (numeric/tie-break drift vs the
+   ERCOT-86-era derive). Post-intake, the sample-day basis itself is
+   superseded for 2024/2025, so the honest path to reproducible anchors is
+   the authorized corpus-basis re-derive of item 1 — not this assert ever
+   passing against the sample-day blocks.
 
 ---
 
