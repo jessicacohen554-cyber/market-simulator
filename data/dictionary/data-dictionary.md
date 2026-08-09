@@ -108,7 +108,7 @@ snapshot).
 | wecc-west-supply | — | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
 | weather | per-ISO via directory partitioning | n/a |
-| egrid | national (EPA eGRID, by vintage year) | n/a |
+| egrid | national (EPA eGRID, by vintage year) | 2023 |
 | pjm-outages | — | n/a |
 | rggi-co2-budgets | — | n/a |
 | carb-cap-schedule | — | n/a |
