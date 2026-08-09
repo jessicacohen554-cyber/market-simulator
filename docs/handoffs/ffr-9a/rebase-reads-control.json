@@ -1,0 +1,610 @@
+{
+ "additions_decision_basis": {
+  "actual_total_gw": 55.436,
+  "basis": "decision",
+  "by_tech": {
+   "gas_cc": {
+    "actual_gw": 0.244,
+    "band": "FAIL",
+    "err_frac": 23.59,
+    "model_gw": 6.0
+   },
+   "gas_ct": {
+    "actual_gw": 3.692,
+    "band": "FAIL",
+    "err_frac": 0.238,
+    "model_gw": 4.571
+   },
+   "solar": {
+    "actual_gw": 25.08,
+    "band": "FAIL",
+    "err_frac": -0.704,
+    "model_gw": 7.429
+   },
+   "storage": {
+    "actual_gw": 13.691,
+    "band": "PASS",
+    "err_frac": -0.05,
+    "model_gw": 13.0
+   },
+   "wind": {
+    "actual_gw": 12.663,
+    "band": "FAIL",
+    "err_frac": -0.605,
+    "model_gw": 5.0
+   }
+  },
+  "model_total_gw": 38.0,
+  "shares": {
+   "gas_cc": {
+    "actual_share": 0.004,
+    "band": "FAIL",
+    "delta_pp": 0.153,
+    "model_share": 0.158
+   },
+   "gas_ct": {
+    "actual_share": 0.067,
+    "band": "FAIL",
+    "delta_pp": 0.054,
+    "model_share": 0.12
+   },
+   "solar": {
+    "actual_share": 0.452,
+    "band": "FAIL",
+    "delta_pp": -0.257,
+    "model_share": 0.196
+   },
+   "storage": {
+    "actual_share": 0.247,
+    "band": "FAIL",
+    "delta_pp": 0.095,
+    "model_share": 0.342
+   },
+   "wind": {
+    "actual_share": 0.228,
+    "band": "FAIL",
+    "delta_pp": -0.097,
+    "model_share": 0.132
+   }
+  }
+ },
+ "cache_dir": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9a-control/ERCOT/816031a3308cccde",
+ "exit_side": {
+  "bridged_years": [
+   2022
+  ],
+  "entry_capped": {
+   "2025": {
+    "by_fuel": {
+     "coal": {
+      "mw": 5906.3,
+      "n": 14
+     },
+     "gas_cc": {
+      "mw": 34738.1,
+      "n": 145
+     },
+     "gas_ct": {
+      "mw": 12653.6,
+      "n": 350
+     },
+     "gas_st": {
+      "mw": 11296.4,
+      "n": 50
+     }
+    },
+    "total": {
+     "mw": 64594.5,
+     "n": 559
+    }
+   }
+  },
+  "pipeline_sequence": {
+   "2025": {
+    "decided": {
+     "all": {
+      "bar_usd_per_kw_yr": {
+       "as_annual_credit": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "energy_margin": 4.66,
+       "going_forward_cost": 58.5,
+       "net_revenue": 4.66,
+       "reserve_uplift": 0.0
+      },
+      "basis": {
+       "availability_mean": 0.787,
+       "mc_mean_usd_mwh": 23.668,
+       "reserve_signal_mean_usd_mwh": 0.0,
+       "screen_price_max_usd_mwh": 1376.088,
+       "screen_price_mean_usd_mwh": 15.992
+      },
+      "decided_years": [
+       2024
+      ],
+      "execute_years": [
+       2027
+      ],
+      "mw": 8057.6,
+      "n": 26
+     },
+     "coal": {
+      "bar_usd_per_kw_yr": {
+       "as_annual_credit": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "energy_margin": 4.66,
+       "going_forward_cost": 58.5,
+       "net_revenue": 4.66,
+       "reserve_uplift": 0.0
+      },
+      "basis": {
+       "availability_mean": 0.787,
+       "mc_mean_usd_mwh": 23.668,
+       "reserve_signal_mean_usd_mwh": 0.0,
+       "screen_price_max_usd_mwh": 1376.088,
+       "screen_price_mean_usd_mwh": 15.992
+      },
+      "decided_years": [
+       2024
+      ],
+      "execute_years": [
+       2027
+      ],
+      "mw": 8057.6,
+      "n": 26
+     }
+    }
+   }
+  },
+  "reserve_margins": {
+   "2021": 0.349371,
+   "2022": null,
+   "2023": 0.245634,
+   "2024": 0.360975,
+   "2025": 0.43157
+  },
+  "thermal_exits": {},
+  "years": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ]
+ },
+ "price_side": {
+  "solve_2021_entering_2022": {
+   "adder_mean": 36.348,
+   "as_hold_q_mw": {
+    "mean": 0.0,
+    "min": 0.0,
+    "p1": 0.0,
+    "p10": 0.0,
+    "p25": 0.0,
+    "p5": 0.0,
+    "p50": 0.0
+   },
+   "base_mean": 31.585,
+   "h_gt_100": 92,
+   "h_gt_1000": 72,
+   "installed_headroom_mw": {
+    "mean": 29602.4,
+    "min": -13040.2,
+    "p1": 8053.2,
+    "p10": 18075.8,
+    "p25": 23036.4,
+    "p5": 14720.3,
+    "p50": 29995.2
+   },
+   "margins": {
+    "coal": 301.2,
+    "gas_cc": 391.98,
+    "gas_ct": 362.14,
+    "gas_st": 283.26,
+    "nuclear": 471.97
+   },
+   "max": 5000.0,
+   "mean": 67.933,
+   "net_load_system_mw": {
+    "mean": 37515.3,
+    "min": 14198.8,
+    "p1": 18293.1,
+    "p10": 23662.1,
+    "p25": 28618.9,
+    "p5": 21144.3,
+    "p50": 35564.4
+   },
+   "r_full_q_mw": {
+    "mean": 25408.1,
+    "min": -13040.2,
+    "p1": 8053.2,
+    "p10": 17442.7,
+    "p25": 22042.1,
+    "p5": 14720.3,
+    "p50": 26995.6
+   },
+   "r_online_q_mw": {
+    "mean": 20055.0,
+    "min": -13040.2,
+    "p1": 8053.2,
+    "p10": 14606.6,
+    "p25": 17838.1,
+    "p5": 14467.9,
+    "p50": 20841.9
+   },
+   "sigma_r_q_mw": {
+    "mean": 2614.1,
+    "min": 1700.9,
+    "p1": 1700.9,
+    "p10": 1700.9,
+    "p25": 1700.9,
+    "p5": 1700.9,
+    "p50": 2781.0
+   },
+   "storage_as_mw": 5950.0,
+   "storage_power_mw": 17000.0
+  },
+  "solve_2021_entering_2023": {
+   "adder_mean": 75.993,
+   "as_hold_q_mw": {
+    "mean": 0.0,
+    "min": 0.0,
+    "p1": 0.0,
+    "p10": 0.0,
+    "p25": 0.0,
+    "p5": 0.0,
+    "p50": 0.0
+   },
+   "base_mean": 34.08,
+   "h_gt_100": 413,
+   "h_gt_1000": 170,
+   "installed_headroom_mw": {
+    "mean": 25287.2,
+    "min": -18948.1,
+    "p1": 1515.1,
+    "p10": 12848.8,
+    "p25": 17904.5,
+    "p5": 9120.7,
+    "p50": 25951.3
+   },
+   "margins": {
+    "coal": 592.83,
+    "gas_cc": 713.14,
+    "gas_ct": 694.37,
+    "gas_st": 576.98,
+    "nuclear": 815.28
+   },
+   "max": 5000.0,
+   "mean": 110.073,
+   "net_load_system_mw": {
+    "mean": 41634.6,
+    "min": 16984.7,
+    "p1": 21256.5,
+    "p10": 26957.9,
+    "p25": 32123.8,
+    "p5": 24306.9,
+    "p50": 39402.1
+   },
+   "r_full_q_mw": {
+    "mean": 23131.1,
+    "min": -18948.1,
+    "p1": 1515.1,
+    "p10": 12848.8,
+    "p25": 17860.1,
+    "p5": 9120.7,
+    "p50": 24900.2
+   },
+   "r_online_q_mw": {
+    "mean": 19068.6,
+    "min": -18948.1,
+    "p1": 1515.1,
+    "p10": 12848.8,
+    "p25": 17093.9,
+    "p5": 9120.7,
+    "p50": 20579.5
+   },
+   "sigma_r_q_mw": {
+    "mean": 2614.1,
+    "min": 1700.9,
+    "p1": 1700.9,
+    "p10": 1700.9,
+    "p25": 1700.9,
+    "p5": 1700.9,
+    "p50": 2781.0
+   },
+   "storage_as_mw": 5950.0,
+   "storage_power_mw": 17000.0
+  },
+  "solve_2023_entering_2024": {
+   "adder_mean": 21.174,
+   "as_hold_q_mw": {
+    "mean": 0.0,
+    "min": 0.0,
+    "p1": 0.0,
+    "p10": 0.0,
+    "p25": 0.0,
+    "p5": 0.0,
+    "p50": 0.0
+   },
+   "base_mean": 19.684,
+   "h_gt_100": 174,
+   "h_gt_1000": 68,
+   "installed_headroom_mw": {
+    "mean": 36154.6,
+    "min": 430.5,
+    "p1": 6276.7,
+    "p10": 17861.3,
+    "p25": 28889.1,
+    "p5": 12683.5,
+    "p50": 37774.2
+   },
+   "margins": {
+    "coal": 148.68,
+    "gas_cc": 186.83,
+    "gas_ct": 173.54,
+    "gas_st": 148.54,
+    "nuclear": 251.59
+   },
+   "max": 4798.2,
+   "mean": 40.858,
+   "net_load_system_mw": {
+    "mean": 44291.4,
+    "min": 20364.1,
+    "p1": 22438.6,
+    "p10": 29071.6,
+    "p25": 34329.5,
+    "p5": 26139.2,
+    "p50": 41617.8
+   },
+   "r_full_q_mw": {
+    "mean": 28087.4,
+    "min": 430.5,
+    "p1": 6276.7,
+    "p10": 17861.3,
+    "p25": 26794.4,
+    "p5": 12683.5,
+    "p50": 30341.1
+   },
+   "r_online_q_mw": {
+    "mean": 22604.1,
+    "min": 430.5,
+    "p1": 6276.7,
+    "p10": 17206.3,
+    "p25": 21171.0,
+    "p5": 12683.5,
+    "p50": 23905.4
+   },
+   "sigma_r_q_mw": {
+    "mean": 2639.5,
+    "min": 1726.1,
+    "p1": 1726.1,
+    "p10": 1726.1,
+    "p25": 1726.1,
+    "p5": 1726.1,
+    "p50": 2809.4
+   },
+   "storage_as_mw": 8750.0,
+   "storage_power_mw": 25000.0
+  },
+  "solve_2024_entering_2025": {
+   "adder_mean": 0.66,
+   "as_hold_q_mw": {
+    "mean": 0.0,
+    "min": 0.0,
+    "p1": 0.0,
+    "p10": 0.0,
+    "p25": 0.0,
+    "p5": 0.0,
+    "p50": 0.0
+   },
+   "base_mean": 15.333,
+   "h_gt_100": 8,
+   "h_gt_1000": 1,
+   "installed_headroom_mw": {
+    "mean": 43833.6,
+    "min": 5716.3,
+    "p1": 14871.2,
+    "p10": 27103.5,
+    "p25": 36276.5,
+    "p5": 22462.7,
+    "p50": 45122.5
+   },
+   "margins": {
+    "coal": 4.52,
+    "gas_cc": 12.6,
+    "gas_ct": 5.53,
+    "gas_st": 4.47,
+    "nuclear": 51.35
+   },
+   "max": 1376.1,
+   "mean": 15.992,
+   "net_load_system_mw": {
+    "mean": 43967.0,
+    "min": 17202.2,
+    "p1": 20966.5,
+    "p10": 28303.4,
+    "p25": 34516.1,
+    "p5": 25093.1,
+    "p50": 42229.1
+   },
+   "r_full_q_mw": {
+    "mean": 30739.6,
+    "min": 5716.3,
+    "p1": 14871.2,
+    "p10": 21826.9,
+    "p25": 28724.1,
+    "p5": 21749.7,
+    "p50": 32091.1
+   },
+   "r_online_q_mw": {
+    "mean": 24846.4,
+    "min": 5716.3,
+    "p1": 14871.2,
+    "p10": 20862.6,
+    "p25": 22921.0,
+    "p5": 18956.3,
+    "p50": 25655.4
+   },
+   "sigma_r_q_mw": {
+    "mean": 2765.4,
+    "min": 1889.3,
+    "p1": 1889.3,
+    "p10": 1889.3,
+    "p25": 1889.3,
+    "p5": 1889.3,
+    "p50": 2924.5
+   },
+   "storage_as_mw": 10500.0,
+   "storage_power_mw": 30000.0
+  }
+ },
+ "probe": "ffr8b_rebase_reads phase 0",
+ "retirements_score": {
+  "false_retire": {
+   "band": "PASS",
+   "false_gw": 0.0,
+   "frac_of_model": 0.0,
+   "grain": "per-fuel-excess"
+  },
+  "per_fuel": {
+   "biomass": {
+    "actual_gw": 0.019,
+    "err_frac": -1.0,
+    "model_gw": 0.0
+   },
+   "coal": {
+    "actual_gw": 1.008,
+    "err_frac": -1.0,
+    "model_gw": 0.0
+   },
+   "gas_cc": {
+    "actual_gw": 0.271,
+    "err_frac": -1.0,
+    "model_gw": 0.0
+   },
+   "gas_ct": {
+    "actual_gw": 0.102,
+    "err_frac": -1.0,
+    "model_gw": 0.0
+   },
+   "gas_st": {
+    "actual_gw": 0.888,
+    "err_frac": -1.0,
+    "model_gw": 0.0
+   },
+   "oil": {
+    "actual_gw": 0.005,
+    "err_frac": -1.0,
+    "model_gw": 0.0
+   }
+  },
+  "reachability": {
+   "applicability": {
+    "economic_evidence_applied": true,
+    "fleet_evidence_applied": true,
+    "forecast_fossil_retirement_economic": true,
+    "use_campd_bins": true
+   },
+   "applied": true,
+   "decision": "D-24, signed 2026-08-06 (sitting Addendum X.6)",
+   "evidence": {
+    "confirmed_registry": "data/raw/confirmed-retirements/ercot.csv",
+    "exit_decode": "docs/handoffs/ffr-7c/exit-decode-2026-08-06.json",
+    "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+    "target": "data/raw/_validation-source/capacity_actuals_ercot.csv"
+   },
+   "excluded": [
+    {
+     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+     "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+     "exit_year": 2025,
+     "fuel": "coal",
+     "gated": true,
+     "mw": 1008.0,
+     "reason": "no_instrument",
+     "unit_id": "56611_S01",
+     "unit_name": "Sandy Creek 1",
+     "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 73.41 vs bar 58.5 $/kW-yr in 2024 (unit_net), bar-invariant), and no confirmed-registry instrument exists"
+    },
+    {
+     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+     "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+     "exit_year": 2022,
+     "fuel": "gas_st",
+     "gated": true,
+     "mw": 405.0,
+     "reason": "not_in_fleet_basis",
+     "unit_id": "3548_2",
+     "unit_name": "Decker Creek 2",
+     "why": "ABSENT (3548 carries only CT8, CT_PEAKER 206.0 MW) \u2014 no screen can retire capacity the run's fleet never carried"
+    },
+    {
+     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+     "driver": "confirmed instrument ercot-nso-braunig-2 (rto_deactivation, instrument_date 2024-03-13)",
+     "exit_year": 2025,
+     "fuel": "gas_st",
+     "gated": false,
+     "mw": 252.0,
+     "reason": "post_vintage_instrument",
+     "unit_id": "3612_2",
+     "unit_name": "V H Braunig 2",
+     "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 63.35 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-2, 2024-03-13) post-dates the vintage cutoff 2020-12-31"
+    },
+    {
+     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+     "driver": "confirmed instrument ercot-nso-braunig-1 (rto_deactivation, instrument_date 2024-03-13)",
+     "exit_year": 2025,
+     "fuel": "gas_st",
+     "gated": false,
+     "mw": 225.0,
+     "reason": "post_vintage_instrument",
+     "unit_id": "3612_1",
+     "unit_name": "V H Braunig 1",
+     "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 69.74 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-1, 2024-03-13) post-dates the vintage cutoff 2020-12-31"
+    },
+    {
+     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+     "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+     "exit_year": 2023,
+     "fuel": "gas_cc",
+     "gated": false,
+     "mw": 119.0,
+     "reason": "no_instrument",
+     "unit_id": "52120_G-66",
+     "unit_name": "Freeport Energy G-66",
+     "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 176.44 vs bar 30.0 $/kW-yr in 2022 (class_proxy), bar-invariant), and no confirmed-registry instrument exists"
+    }
+   ],
+   "fail_closed": "excludes only on positive, cited evidence; a unit with no evidence either way stays IN the member set",
+   "large_unit_mw": 300.0,
+   "members": [],
+   "n_excluded_gated": 2,
+   "n_members": 0,
+   "n_target_large": 2,
+   "note": "NON-GATED diagnostic. Rows here left the recall denominator (or were never in it, below the size threshold); nothing in this block bands, and no verdict reads off it.",
+   "rule": "a target exit gates the >=300 MW recall metric only if the unit exists in the run's fleet basis AND its exit is reachable by an admissible channel \u2014 economic (no exclusion recorded) or instrument-driven with instrument_date <= the run's vintage cutoff. Unreachable exits leave the denominator and are reported here, NON-GATED.",
+   "vintage_cutoff": "2020-12-31"
+  },
+  "total_gw": {
+   "actual": 2.294,
+   "band": "FAIL",
+   "err_frac": -1.0,
+   "model": 0.0
+  },
+  "unit_recall_gt300": {
+   "band": "SKIP",
+   "grain": "fuel-mw-coverage",
+   "matched": 0,
+   "member_rule": "reachable-set (D-24)",
+   "n_a": true,
+   "n_a_reason": "no target exit >= 300 MW is reachable by an admissible channel on this run's fleet basis \u2014 reported n/a, never 0/N (D-24)",
+   "n_big_actual": 0,
+   "n_excluded_unreachable": 2,
+   "n_target_large": 2,
+   "plant_matched": 0,
+   "plant_recall_frac": null,
+   "recall": null
+  }
+ }
+}

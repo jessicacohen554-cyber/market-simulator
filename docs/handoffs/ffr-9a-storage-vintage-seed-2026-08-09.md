@@ -273,4 +273,238 @@ the instruction was STOP and escalate; none did.
 ---
 
 *(Sections below this line are filled AFTER the pre-registered work runs, in
-order, as produced.)*
+order, as produced. Prereg commits: `9780bae` (this doc's §1), `2581bf9` (the
+R1 probe) — both BEFORE either arm launched; the fix itself is `57cb3e7`,
+before the prereg.)*
+
+## 2. The arms — both solved clean, contracts identical, keys identical
+
+Both arms: solved `[2021, 2023, 2024, 2025]`, bridged `[2022]`,
+`leakage_violations: []`, exit 0, holdout freeze ACTIVE and read at launch, no
+marker spent. **Both arms at runtime `cache_key=816031a3308cccde`, exactly as
+pre-registered** — materially different output under a byte-identical key,
+which is the cache-epoch hazard doing its job (epoch 2026-08-09 records it).
+The treated arm's startup log carries the seed line the fix installs:
+`ERCOT 2021: 5 measured EIA-860 storage units (223 MW incl. pumped storage)`.
+The arms ran sequentially in the same tree with `git checkout` swapping only
+`runner.py` + `model/storage.py` (§1.3's construction, as pre-registered).
+12/14 forecast invariants PASS in each arm (I3 FAIL on 2021 slack in both —
+0.03 % control / 0.06 % treated — and I12 WARN on the scalar reserve-margin
+band; not pre-registered, reported because they are in the committed sidecars).
+
+**Reproduction gate: PASSED, BY CONTENT, EXACTLY.** The control's two probe
+records reproduce the committed FFR-8B reads with **zero field diffs** in both
+files (`rebase-reads-control.json` vs `ffr-8b/rebase-reads-2026-08-09.json`;
+`e1-dispersion-control.json` vs `ffr-8b/e1-dispersion-2026-08-09.json`, deep
+compare over every key except `cache_dir`). Every FFR-8B §2–§3 number quoted
+below as "control" is therefore also the re-verified baseline.
+
+Registered: `ercot-2021-2025-t1ff-armr-ffr9a-control` and
+`ercot-2021-2025-t1ff-armr-ffr9a-storageseed` (hindcast namespace,
+`meta.kind="full_forward"`). Probe records:
+`docs/handoffs/ffr-9a/{storage-trajectory,rebase-reads,e1-dispersion}-{control,treated}.json`.
+
+## 3. The pre-registered reads
+
+### 3.1 R1 — the storage-fleet trajectory (the falsification read: PASSED exactly)
+
+| | control | treated | measured actual (year-end) |
+|---|---:|---:|---:|
+| base (2021 solve) | 17,000.0 MW / 166,600 MWh | **223.1 MW / 231.6 MWh** | 223.1 MW (vintage-2020) |
+| +2022 evolution | +3,000 → 20,000 | +5,000 → 5,223 | 2,086.9 (YE 2022) |
+| +2023 evolution | +5,000 → 25,000 | +5,000 → 10,223 | 3,973.5 (YE 2023) |
+| +2024 evolution | +5,000 → **30,000** | +5,000 → **15,223** | **8,093.8 (YE 2024)** |
+| 2025 solve fleet | 30,000 | 15,223 | 13,709.3 (YE 2025) |
+
+The treated base is the pre-registered vintage-2020 fleet TO THE DECIMAL
+(223.1 MW / 231.6 MWh) — the falsification condition does not fire. The
+charter's headline error is measured on both sides: the 2024 solve ran
+**30.0 GW of storage power in the control against ~8.1–10 GW actual (3.7×)**;
+the treated arm runs **15.2 GW (1.9×)**. The energy side is larger still:
+the control's base alone carried 166.6 GWh (the scalar's tech-mix durations)
+against 0.23 GWh actually installed at the vintage.
+
+**The remaining overshoot is the ENTRY STACK's, and it is a FINDING, not a
+repair** (per §1.4 R1's pre-commitment): the endogenous screen builds the
+5 GW/yr `STORAGE_ANNUAL_BUILD_CAP_MW` **saturated in every build year of the
+treated arm** (5/5/5 vs the control's 3/5/5) — the additions decision basis
+is 15.0 GW vs 13.691 actual (still inside the score band, +9.6 %), but the
+TIMING runs ahead of reality (10.2 GW by the 2023 solve vs 4.0 actual;
+15.2 by 2024 vs 8.1). The value stack (spec §5.5) prices arbitrage +
+capacity value off screens that §3.4 shows now OVERSHOOT scarcity mid-window,
+so the cap — not the economics — is the binding object every year. Routed to
+the FFR-4/5 storage-entry lane; nothing here was tuned.
+
+### 3.2 R2 — the E1 storage-term step (B̃ vs B): the dominant inflator COLLAPSES
+
+Re-run verbatim per arm (`ffr8b_e1_dispersion.py`; identity self-check
+`C == min(C″, phys)` exact in both arms, max |Δ| = 0.0):
+
+| year | read | control | treated | measured |
+|---|---|---:|---:|---:|
+| 2024 | arm storage-AS term (flat, MW) | 8,750.0 | **3,578.1** | mean 2,148, p1 ~0 |
+| 2024 | B̃ vs B step at p1 (MW) | **+7,289.1** | **+2,117.1** | — |
+| 2025 | arm storage-AS term (flat, MW) | 10,500.0 | **5,328.1** | mean 2,716 |
+| 2025 | B̃ vs B step at p1 (MW) | **+8,805.0** | **+3,633.1** | — |
+
+The FFR-8B §4 de-prioritization claim is CONFIRMED by the paired solve: fixing
+the storage fleet trajectory removed **~71 % (2024) / ~59 % (2025) of the
+single largest model-side inflator of E1's reserve quantity with zero changes
+to E1 itself.** The residual step (+2.1/+3.6 GW) is exactly 0.35 × the
+still-over-built endogenous fleet (§3.1's finding) — it shrinks further only
+through the entry stack, not through E1.
+
+E1's full reserve quantity now tracks the measured series where the fleet is
+close to right: 2024 mean **16,703 vs 16,679 measured** (control 22,604);
+2025 p1 **8,619 vs 8,955 measured** (control 14,871). At the re-based tight
+2024 screen the treated low tail runs BELOW measured (p1 −3,328, min −9,175 —
+the phys-headroom `min()` on a fleet that is now VRE-short mid-window, §3.4),
+the same screen-asymmetric energy-shortage mechanism FFR-8B §3 identified,
+now with the storage term no longer masking it.
+
+### 3.3 R3 — E2's `as_hold` comes ALIVE, and its inertness is now attributed
+
+| screen | control as_hold (mean MW) | treated as_hold (mean MW) | treated storage-AS share (MW) |
+|---|---:|---:|---:|
+| into-2022 | 0.0 (identically) | **2,129.9** (p1 1,839, never 0) | 78.1 |
+| into-2023 | 0.0 | **2,777.9** | 78.1 |
+| into-2024 | 0.0 | 25.8 (p50 0) | 3,578.1 |
+| into-2025 | 0.0 | 0.0 | 5,328.1 |
+
+The FFR-8A/8B conditional-inertness finding is CLOSED AS ATTRIBUTED: E2's AS
+withholding was never inert by construction — it was held inert by the
+storage over-build swallowing the ~4.6 GW responsive requirement. At the
+corrected seed (storage-AS share 78 MW) it binds in EVERY hour of the early
+screens; it dies again exactly where the endogenous build pushes the
+storage-AS share back over the requirement (into-2024/2025). E2's remaining
+inertness is the same entry-stack object as §3.1's finding — one cause, two
+symptoms.
+
+### 3.4 R4 — the price side, at full magnitude (expectations tested, not targets)
+
+| screen | read | control | treated | measured |
+|---|---|---:|---:|---:|
+| into-2022 | mean / h>$100 / h>$1000 | 67.93 / 92 / 72 | 192.83 / 666 / 372 | — |
+| into-2023 | mean / h>$100 / h>$1000 | 110.07 / 413 / 170 | 431.54 / 1,278 / 876 | — |
+| into-2024 | mean / h>$100 / h>$1000 | 40.86 / 174 / 68 | **309.69 / 960 / 623** | 26.82 / 161 / — |
+| into-2024 | max | 4,798.2 | 5,000.0 | 3,060 |
+| into-2025 | mean / h>$100 / h>$1000 | 15.99 / 8 / 1 | **31.20 / 112 / 37** | 32.49 / 217 / — |
+| into-2025 | max | 1,376.1 | 4,936.0 | 1,570 |
+
+Per-fuel replica margins ($/kW-yr; replica-at-measured-prices 2024:
+75.4/86.7/65.6/65.6, 2025: 97.2/76.4/47.0/47.0; bars 58.5/30/21/35):
+
+| screen | arm | coal | gas_cc | gas_ct | gas_st |
+|---|---|---:|---:|---:|---:|
+| into-2024 | control | 148.68 | 186.83 | 173.54 | 148.54 |
+| into-2024 | treated | **1,993.66** | **2,234.45** | **2,279.17** | **2,013.95** |
+| into-2025 | control | 4.52 | 12.60 | 5.53 | 4.47 |
+| into-2025 | treated | **93.27** | **117.95** | **107.62** | **93.67** |
+
+Both pre-registered directions realized, and both reported at full magnitude:
+
+* **The into-2025 watch number moves onto the measured level.** Mean
+  31.20 vs 32.49 measured (control 15.99); the 8-vs-217 h>$100 undershoot
+  becomes **112-vs-217**; max 4,936 vs 1,570 (overshot). The deep-tail
+  starvation of the forward-edge screen — the FFR-8B asymmetry — is half
+  closed by the storage seed alone.
+* **The mid-window screens now OVERSHOOT hard.** into-2024 mean $309.69
+  against $26.82 measured (960 h > $100 vs 161; margins ~26× the
+  replica-at-measured columns). This is the same one-mechanism story as
+  §3.1/§3.2: the model's evolved fleet is short the VRE reality built
+  (treated additions 45.1 GW vs 55.4 actual — §3.5 — with solar 10.0 vs
+  25.1 and wind 5.5 vs 12.7 GW missing), and the corrected storage seed
+  removes the 17–25 GW of phantom flexible capacity that was previously
+  ABSORBING that error at the screens. The error term the price object now
+  tracks is the VRE/storage build trajectory — no longer a phantom seed. A
+  measurement, not a target; the VRE entry economics are FFR-4/5 lanes'
+  objects.
+
+### 3.5 R5 — the exit/entry census
+
+* **In-window economic executions: 0 in both arms** — the FFR-7C
+  falsification bound HOLDS. (Executed events of any kind: none.)
+* **The gas_st false wave stays GONE in both arms** (FFR-8B §2.2's headline,
+  re-confirmed at this head). Model in-window thermal retirements remain
+  **0.0 GW vs 2.294 actual** (FAIL on the UNDER side, unchanged) — the
+  missing real, confirmed-channel exits are a different defect, untouched
+  here, exactly as FFR-8B recorded.
+* **The treated arm's exit/entry pipeline is EMPTY** — no decided, no
+  entry_capped, no floor-retained rows anywhere in its ledgers. The
+  control's 2025-ledger coal decision (26 units / 8,057.6 MW at net $4.66 vs
+  bar $58.5, decided 2024, exe 2027) and its 559-unit / 64.6 GW
+  `entry_capped` census both VANISH: the treated into-2025 screen's coal
+  margin is $93.27 vs the $58.5 bar, so the always-failing cohort clears its
+  bar for the first time in this posture's record. The §4.2.4 non-monotone
+  adequacy-cap interaction is therefore not exercised on this arm (nothing
+  fails to be capped).
+* **Reserve margins**: control 34.9 / 24.6 / 36.1 / 43.2 % (2021/23/24/25) →
+  treated **19.0 / 13.7 / 28.0 / 33.0 %** — the corrected fleet brings the
+  I12 scalar-floor band reading from 3 years out to 2 (2021/2024 move INTO
+  band; 2023 sits 0.1 pp under; sidecar-recorded, not pre-registered).
+* **Additions decision basis**: 38.0 → **45.1 GW** vs 55.4 actual. Solar
+  10.0 (was 7.4) vs 25.1; wind 5.5 (was 5.0) vs 12.7; storage 15.0 vs 13.691
+  (PASS, +9.6 %); gas_cc 6.0 vs 0.244 and gas_ct 4.571 vs 3.692 unchanged.
+  Reported, never targeted.
+
+## 4. What this measurement establishes, in one paragraph
+
+The scalar seed was the dominant remaining input error on the forward price
+object, and it is gone: the base is now the measured vintage fleet to the
+decimal, E1's largest model-side inflator collapses by ~60–70 % with E1
+untouched, E2 is proven conditionally live (its inertness was the over-build,
+not the mechanism), and the forward-edge screen's price level lands on the
+measured mean. What the fix does NOT do — stated at full magnitude — is make
+the mid-window screens right: with the phantom storage gone, the model's
+missing VRE build (solar 10 vs 25, wind 5.5 vs 12.7 GW) is exposed as the
+binding error, the into-2024 screen overshoots ~11× on the mean, and the
+storage entry stack saturates its 5 GW/yr cap into that overshoot (15.2 GW by
+the 2024 solve vs 8.1 actual). One mechanism, three symptoms, all now
+attributed to the FFR-4/5 entry lanes' objects. Nothing was tuned toward any
+of these numbers.
+
+## 5. Governance
+
+* **Rule-1/13 posture kept.** No tuning toward the ~10 GW actual, the 217 h,
+  the measured RTOLCAP distribution, or any residual. The overshoots
+  (into-2024 mean $309.69 vs $26.82; margins 26× replica) are reported at
+  full magnitude and left standing. The prereg (§1, `9780bae`) and the R1
+  probe (`2581bf9`) were committed before either arm launched; the two
+  FFR-8B probes were reused verbatim, unmodified.
+* **The FFR-8B §2–§3 record is superseded AS BASELINE by §2–§3 of this doc**
+  for any run at or after the 2026-08-09 epoch; it remains the valid record
+  of the pre-epoch harness, and this session's control arm reproduces it by
+  content with zero diffs.
+* **EPOCH (restated for the manager; FH-4-ERCOT is HELD for this landing).**
+  The fix is UNGATED: every capacity hindcast in every ISO re-bases at this
+  head. Cache epoch 2026-08-09 (`results/cache.py`) records the same-key
+  invalidation; every pre-epoch `frontend/data/hindcast/` sidecar is
+  historical evidence, not a re-runnable result.
+* **No keeper contact, no backcast-registry touch, no arming beyond the
+  measurement arm, no bar re-levels, no signal scaling.** Both arms live in
+  the hindcast namespace only. The FFR-8B Phase-2 escalation (commitment
+  dispersion) stays escalated, untouched.
+* **Rule 22.** Solves were {2021, 2023, 2024, 2025} + the 2022 bridge in
+  both arms; the freeze was ACTIVE and read at launch; no marker spent, no
+  out-of-training year approached.
+* **Rule 28.** No `ScenarioConfig` field added → no new matrix row (duty c
+  not triggered). Duty (b): the `storage_measured_base_fleet` row's def/note/
+  evidence updated in this PR with the hindcast leg and this A/B; cells
+  unchanged (the backcast-lane CAISO `I` verdict is caiso-174's and is not
+  disturbed; no forecast-default cell is claimed).
+* **Rule 27.** Fable. All edits were local `Edit`s of on-disk bytes; no
+  ≥300-line file was pushed from regenerated content. **Push-transport
+  incident, recorded:** the remote branch was deleted server-side TWICE
+  mid-session by an actor outside this session (the FFR-8B §5 incident
+  pattern; the second deletion swallowed by a stale push advertisement that
+  reported "Everything up-to-date" while `ls-remote` showed the branch
+  gone). Both times the branch was re-created via the API and the history
+  force-with-lease-pushed over the placeholder, then verified by
+  `ls-remote` SHA comparison against local HEAD. No content was lost or
+  rewritten; every artifact commit was re-verified present on the remote
+  afterward.
+* **FFR-4D §7 D-3 and D-5 are ANSWERED for the hindcast posture** (§1.1):
+  the scalar is the wrong object in a vintage-seeded run under either value,
+  so the hindcast bypasses it in every ISO; the forecast-lane row value
+  stays untouched and routed to ERCOT's forecast lane. D-5's five-ISO
+  exposure is closed for hindcasts by the same seam.
