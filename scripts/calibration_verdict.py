@@ -57,7 +57,6 @@ from scripts.lib.backcast_artifacts import (  # noqa: E402
     resolve_run_id,
 )
 from scripts.lib.bundle_io import bundle_meta  # noqa: E402  (stdlib-only helpers)
-from scripts.lib.holdout_policy import TIER_TRAIN, tier_for_year  # noqa: E402
 
 DATA_DIR = ba.DATA
 REGISTRY_DIR = ba.REGISTRY
@@ -216,7 +215,41 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       SKIPPED on NEISO and FAIL on MISO (COAL_PRB 2025) — so only MISO's
 #       reported basis changes, and its NOT-YET label is unaffected because C3a
 #       fails it independently under (a).
-RUBRIC_VERSION = 3.1
+# v3.2 — 2026-08-09 owner amendment, session neiso-keeper-87-control, verbatim:
+#       "make sure c3c is an acceptable caveat for any holdout or training
+#       year". The C3c standing rule declared at v3.1-time for out-of-training
+#       years only (`_apply_c3c_standing_rule`) now fires in EVERY year: a LONE
+#       C3c failure with governance passing auto-ledgers to CALIBRATED-WITH-
+#       CAVEATS on 2023-2025 exactly as it already did on 2020-2022/2019/2026.
+#       NOT a loosening of the band: the scope split governed only whether the
+#       justification had to be typed into an exceptions-ledger entry by hand —
+#       in-sample the SAME reclassification was already reachable that way, and
+#       is the route every current keeper carrying a C3c caveat used. The real
+#       guard is untouched: LONE failure only, governance must pass, supporting
+#       tier only (fail-closed), never CALIBRATED, and it still spends the one
+#       ledgerable slot.
+#       (b) A DEFECT IN THE LONE-FAILURE TEST IS FIXED IN THE SAME AMENDMENT,
+#       and it was suppressing the rule as originally declared. "Lone" was
+#       measured over EVERY record, including the REPORTED-ONLY streams the
+#       rubric has demoted out of the determination -- C5a `co2`, removed at
+#       v2.9. A `co2` FAIL therefore silenced the rule even though co2
+#       contributes no status, no caveat budget and no reason line. It is now
+#       measured over CRITERIA membership, i.e. the criteria that actually
+#       constitute the determination. This under-fired out-of-training years
+#       too, so (b) is a correction, not part of the widening.
+#       EFFECT AT AMENDMENT, MEASURED over all 66 registered runs against a
+#       pre-change snapshot rather than asserted: 2 determinations change, both
+#       NYISO NON-KEEPER probes from the nyiso-130 `nyiso_li_tsl_n11_security`
+#       pair (2026-08-06-nyiso-130-control and -n11-tsl, NOT-YET ->
+#       CALIBRATED-WITH-CAVEATS; C3c FAIL -> CAVEAT, nothing else moves) and
+#       both unlocked by (b) rather than by the widening. EVERY KEEPER OF ALL
+#       SIX ISOs IS UNCHANGED: each either has no C3c failure at all, already
+#       carries an explicit ledger entry for it, or fails a second criterion so
+#       the lone-failure guard keeps the rule silent. PJM
+#       2026-08-06-pjm-158-novirtual-disarmed is a lone C3c failure and still
+#       does NOT reclassify -- its C6 is UNATTESTED, which is the governance
+#       guard working.
+RUBRIC_VERSION = 3.2
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -733,53 +766,85 @@ C3C_STANDING_RULE_REASON = (
     'OWNER STANDING RULE, declared 2026-08-06 (session neiso-86), verbatim: "a c3c '
     "failure with all other gates passing should always be treated as a ledgered "
     "calibrated with caveats across all ISOs for holdout years and testing years going "
-    'forward as a rule". Auto-applied: C3c (price tail / scarcity) is the ONLY failing '
-    "criterion, the governance gate passes, and this year is out-of-training "
-    "(validation or locked-test tier). Classified ACCEPTED MODEL-CLASS LIMITATION -- "
-    "admissible because C3c is SUPPORTING tier; the v3.0 fail-closed guard still "
-    "refuses model-class on load-bearing and protective criteria, so this rule can "
+    'forward as a rule"; EXTENDED TO EVERY YEAR 2026-08-09 (session '
+    'neiso-keeper-87-control), verbatim: "make sure c3c is an acceptable caveat for any '
+    'holdout or training year". Auto-applied: C3c (price tail / scarcity) is the ONLY '
+    "failing criterion and the governance gate passes. Classified ACCEPTED MODEL-CLASS "
+    "LIMITATION -- admissible because C3c is SUPPORTING tier; the v3.0 fail-closed guard "
+    "still refuses model-class on load-bearing and protective criteria, so this rule can "
     "never wave through C1/C2/C3a/C3b or C6/C8. IT IS NOT A PASS: the miss is "
     "reported at full magnitude and the run reads CALIBRATED-WITH-CAVEATS, never "
-    "CALIBRATED. Scope is deliberately out-of-training ONLY -- in-sample 2023-2025 "
-    "keepers still require their own explicit ledger entry, so the training-window "
-    "discipline is untouched."
+    "CALIBRATED. THE LONE-FAILURE CONDITION IS WHAT KEEPS IT FROM BEING AN ESCAPE HATCH: "
+    "it fires only when the model is otherwise clean on every criterion, so it can never "
+    "mask a second defect, and the caveat still consumes the single ledgerable slot."
 )
 
 
 def _apply_c3c_standing_rule(records: list[dict], gov: dict) -> None:
-    """Reclassify a LONE out-of-training C3c failure to a ledgered CAVEAT.
+    """Reclassify a LONE C3c failure to a ledgered CAVEAT, in ANY year.
 
-    The owner's standing rule of 2026-08-06. C3c (scarcity price tail) is a
+    The owner's standing rule of 2026-08-06, EXTENDED 2026-08-09 to every year
+    rather than out-of-training years only. C3c (scarcity price tail) is a
     known, declared frontier in several ISOs; when it is the *only* thing
-    failing on a holdout or locked-test year, the run is a
-    CALIBRATED-WITH-CAVEATS reading rather than a NOT-YET.
+    failing, the run is a CALIBRATED-WITH-CAVEATS reading rather than a
+    NOT-YET, and that is now true on a training year exactly as it already was
+    on a validation or locked-test one.
 
-    Deliberately narrow, so it cannot become a general escape hatch:
+    Why extending it is admissible rather than a loosening of the gate. The
+    scope split it removes was never a statement about C3c's *severity* — the
+    band, the tier and the reported magnitude are identical in every year. It
+    was a procedural asymmetry: in-sample the same reclassification was
+    available all along through an explicit exceptions-ledger entry (the route
+    every current keeper carrying a C3c caveat actually used), so the split
+    governed *who typed the justification*, not what the run was allowed to
+    claim. Collapsing it removes a difference between years that the rubric
+    could not otherwise defend, and it takes nothing off the model: a run whose
+    C3c misses still reads CALIBRATED-WITH-CAVEATS, never CALIBRATED, and still
+    spends the single ledgerable slot.
+
+    What still stops it from being a general escape hatch — unchanged:
 
     * **Lone failure only.** If ANY other criterion fails, the rule does not
-      fire and every failure stands -- including C3c's.
+      fire and every failure stands -- including C3c's. This is the real guard:
+      it fires only on a model that is otherwise clean, so it can never mask a
+      second defect.
     * **Governance must pass.** A failing or unattested C6 blocks it.
-    * **Out-of-training only.** In-sample years keep needing an explicit
-      ledger entry written by a session that justified it.
-    * **Never upgrades to CALIBRATED.** It produces a CAVEAT, and the
-      magnitude is still reported in full.
+    * **Supporting tier only, fail-closed.** It classifies MODEL_LIMIT, which
+      :func:`_apply_ledger`'s v3.0 guard admits only for a SUPPORTING-tier
+      criterion, so the rule can never reach C1/C2/C3a/C3b or C6/C8.
+    * **Never upgrades to CALIBRATED.** It produces a CAVEAT, the magnitude is
+      reported in full, and it consumes the one ledgerable caveat slot.
+
+    "Lone" is measured over the criteria that CONSTITUTE the determination, i.e.
+    :data:`CRITERIA` membership. ``records`` also carries REPORTED-ONLY streams
+    that the rubric has demoted out of the determination -- C5a ``co2``, removed
+    at v2.9 because eGRID's latest released vintage is 2024 and a 2025 "actual"
+    would be the 2024 intensities standing in. Those contribute no status, no
+    caveat budget and no reason line, so they must not silence this rule either.
+    Measured 2026-08-09 on the committed artifacts: NYISO
+    ``2026-08-06-nyiso-130-control`` fails C3c on 2023 and 2024 and NOTHING else
+    -- its own determination basis reads "undocumented out-of-tolerance (FAIL)
+    criteria: price_tail" -- yet an unrelated ``('co2', 2025)`` FAIL record was
+    making the pre-2026-08-09 test see a non-C3c failure and keep silent. That
+    was under-firing the rule as declared, on out-of-training years too, not
+    only on the training years this amendment adds.
 
     Args:
         records: Scored criterion records, mutated in place.
         gov: The governance-gate record from :func:`score_governance`.
     """
-    fails = [r for r in records if r["status"] == FAIL]
+    fails = [
+        r for r in records if r["status"] == FAIL and r.get("criterion") in CRITERIA
+    ]
     if not fails or any(r["criterion"] != "price_tail" for r in fails):
         return  # nothing failing, or something OTHER than C3c is -- rule silent
     if str(gov.get("status", "")).upper() != PASS:
         return  # governance failing/unattested -- never waved through
     for rec in fails:
-        if tier_for_year(int(rec["year"])) == TIER_TRAIN:
-            continue  # in-sample keeps its explicit-ledger discipline
         rec["status"] = CAVEAT
         rec["classification"] = MODEL_LIMIT
         rec["ledger_reason"] = C3C_STANDING_RULE_REASON
-        rec["standing_rule"] = "c3c-out-of-training-2026-08-06"
+        rec["standing_rule"] = "c3c-any-year-2026-08-09"
 
 
 def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:

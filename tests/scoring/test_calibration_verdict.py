@@ -1905,3 +1905,91 @@ class AggStatusTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class C3cStandingRuleTest(unittest.TestCase):
+    """The C3c standing rule (rubric v3.2, owner amendment 2026-08-09).
+
+    A LONE C3c failure with governance passing auto-ledgers to a CAVEAT in
+    ANY year -- training, validation or locked test alike. These tests drive
+    ``_apply_c3c_standing_rule`` directly on synthetic record sets, because the
+    behaviour under test is the reclassification predicate itself, not the
+    scoring that produces the records.
+    """
+
+    @staticmethod
+    def _rec(criterion, year, status):
+        return {"criterion": criterion, "year": year, "status": status}
+
+    @staticmethod
+    def _gov(status="PASS"):
+        return {"criterion": "governance", "status": status}
+
+    def _apply(self, records, gov_status="PASS"):
+        cv._apply_c3c_standing_rule(records, self._gov(gov_status))
+        return records
+
+    def test_fires_on_a_training_year(self):
+        """v3.2's widening: 2023-2025 are no longer excluded."""
+        recs = self._apply([self._rec("price_tail", 2024, cv.FAIL)])
+        self.assertEqual(recs[0]["status"], cv.CAVEAT)
+        self.assertEqual(recs[0]["classification"], cv.MODEL_LIMIT)
+        self.assertEqual(recs[0]["standing_rule"], "c3c-any-year-2026-08-09")
+
+    def test_fires_on_every_tier_including_locked(self):
+        for year in (2019, 2022, 2023, 2026):
+            with self.subTest(year=year):
+                recs = self._apply([self._rec("price_tail", year, cv.FAIL)])
+                self.assertEqual(recs[0]["status"], cv.CAVEAT, f"year {year}")
+
+    def test_a_second_failing_criterion_keeps_the_rule_silent(self):
+        """The real guard: it can never mask a second defect."""
+        recs = self._apply([
+            self._rec("price_tail", 2024, cv.FAIL),
+            self._rec("price_mean", 2024, cv.FAIL),
+        ])
+        self.assertEqual([r["status"] for r in recs], [cv.FAIL, cv.FAIL])
+
+    def test_failing_governance_blocks_it(self):
+        for gov in ("FAIL", "UNATTESTED"):
+            with self.subTest(gov=gov):
+                recs = self._apply([self._rec("price_tail", 2024, cv.FAIL)], gov)
+                self.assertEqual(recs[0]["status"], cv.FAIL)
+
+    def test_reported_only_co2_fail_does_not_silence_it(self):
+        """v3.2(b): the defect that was suppressing the rule as declared.
+
+        C5a ``co2`` was demoted to REPORTED-ONLY at v2.9 -- it is not in
+        ``CRITERIA``, contributes no status, no caveat budget and no reason
+        line. A ``co2`` FAIL record must therefore not count toward "lone".
+        Measured live on 2026-08-09: NYISO ``2026-08-06-nyiso-130-control``
+        failed C3c and nothing else, yet an unrelated ``('co2', 2025)`` FAIL
+        kept the rule silent.
+        """
+        self.assertNotIn("co2", cv.CRITERIA, "co2 is reported-only since v2.9")
+        recs = self._apply([
+            self._rec("price_tail", 2023, cv.FAIL),
+            self._rec("co2", 2025, cv.FAIL),
+        ])
+        self.assertEqual(recs[0]["status"], cv.CAVEAT)
+        self.assertEqual(recs[1]["status"], cv.FAIL, "co2 itself is untouched")
+
+    def test_nothing_failing_is_a_no_op(self):
+        recs = self._apply([self._rec("price_tail", 2024, cv.PASS)])
+        self.assertEqual(recs[0]["status"], cv.PASS)
+        self.assertNotIn("standing_rule", recs[0])
+
+    def test_it_is_never_a_pass_and_carries_its_reason(self):
+        recs = self._apply([self._rec("price_tail", 2025, cv.FAIL)])
+        self.assertNotEqual(recs[0]["status"], cv.PASS)
+        self.assertIn("NOT A PASS", recs[0]["ledger_reason"])
+        self.assertIn("any holdout or training year", recs[0]["ledger_reason"])
+
+    def test_model_class_stays_supporting_tier_only(self):
+        """The rule classifies MODEL_LIMIT; that kind is supporting-tier-only.
+
+        Pins the fail-closed guard the rule depends on: were C3c ever promoted
+        out of SUPPORTING, `_apply_ledger` would refuse a model-class entry for
+        it, and this rule must not be the thing that quietly widens it.
+        """
+        self.assertEqual(cv.CRITERIA["price_tail"][1], cv.TIER_SUPPORT)

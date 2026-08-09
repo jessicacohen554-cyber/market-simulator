@@ -1301,3 +1301,60 @@ the mechanism matrix's NYISO gate cell still describes the nyiso-109 basis and
 calls the determination CALIBRATED-WITH-CAVEATS though nyiso-125 scores
 NOT-YET; and its NEISO cell still calls NEISO the "only calibration-complete
 ISO", untrue since NYISO and PJM were declared on 2026-07-31.
+
+## 2026-08-09 — Rubric v3.2: the C3c standing rule fires in EVERY year (+ a defect that was suppressing it)
+
+**Session:** neiso-keeper-87-control · **Owner amendment**, verbatim: *"make sure c3c is an
+acceptable caveat for any holdout or training year"*. Cross-ISO, scorer-only: **no solve, no
+bundle regeneration, no keeper change, no mechanism tested, no matrix cell moved.** Every run
+re-scores in place from its committed artifacts.
+
+**(a) The widening.** `calibration_verdict._apply_c3c_standing_rule` was declared 2026-08-06 for
+**out-of-training years only**; it now fires on 2023–2025 as well. A **lone** C3c failure with the
+governance gate passing reclassifies to a ledgered CAVEAT (`ACCEPTED MODEL-CLASS LIMITATION`) and
+the run reads CALIBRATED-WITH-CAVEATS instead of NOT-YET.
+
+This resolves an ambiguity in the original directive, which itself said *"holdout years **and
+testing years**"* while the implementation read it as validation + locked tiers. **It is not a
+loosening of the band.** Band, tier and reported magnitude are identical in every year; in-sample
+the same reclassification was already reachable through an explicit exceptions-ledger entry — and
+that is the route **every current keeper carrying a C3c caveat actually used**. The split governed
+who typed the justification, not what a run could claim, and since v3.1 C3c is the only ledgerable
+criterion at all. The guards are untouched: **lone failure only** (any second failing criterion and
+the rule is silent and every failure stands, C3c's included — so it can only fire on an
+otherwise-clean model), **governance must PASS**, **supporting-tier-only fail-closed**, **never
+CALIBRATED**, and the caveat still spends the single ledgerable slot.
+
+**(b) A defect found while verifying (a), which was suppressing the rule as originally declared.**
+"Lone" was measured over **every** scored record — including the REPORTED-ONLY streams the rubric
+has demoted out of the determination, i.e. C5a `co2`, removed at v2.9 because eGRID's latest
+released vintage is 2024. An unrelated `co2` FAIL therefore silenced the rule even though co2
+contributes no status, no caveat budget and no reason line. Caught by measurement, not inspection:
+the first blast-radius pass returned **0 changed runs**, which was wrong for
+`2026-08-06-nyiso-130-control` — a run whose own determination basis reads *"undocumented
+out-of-tolerance (FAIL) criteria: price_tail"* and nothing else. Instrumenting the predicate showed
+it seeing `[('co2', 2025), ('price_tail', 2023), ('price_tail', 2024)]`. "Lone" is now measured over
+`CRITERIA` membership. **This under-fired out-of-training years too, so (b) is a correction, not
+part of (a).**
+
+**Effect, measured over all 66 registered runs against a pre-change snapshot rather than asserted:**
+
+| | |
+|---|---|
+| determinations changed | **2**, both NYISO **non-keeper** probes |
+| which | `2026-08-06-nyiso-130-control`, `2026-08-06-nyiso-130-n11-tsl` — NOT-YET → CALIBRATED-WITH-CAVEATS (C3c FAIL → CAVEAT; nothing else moves) |
+| unlocked by | **(b)**, the defect fix — not by the widening |
+| keepers changed | **none**, all six ISOs (ERCOT NOT-YET, CAISO NOT-YET, MISO NOT-YET, PJM CALIBRATED, NYISO CALIBRATED-WITH-CAVEATS, NEISO CALIBRATED-WITH-CAVEATS) |
+
+Every keeper is unchanged because each either has no C3c failure, already carries an explicit
+ledger entry for it, or fails a second criterion so the lone-failure guard keeps the rule silent.
+**`2026-08-06-pjm-158-novirtual-disarmed` is a lone C3c failure and still does NOT reclassify** —
+its C6 is UNATTESTED, which is guard (b) doing its job.
+
+`RUBRIC_VERSION` 3.1 → **3.2**. Committed per-bundle `metrics.json` files are deliberately NOT
+bulk-regenerated: they are already spread across versions 2.5–3.1 by convention, being the snapshot
+taken when each run was registered. The live verdict is always `calibration_verdict.py --run-id`,
+and `build_status.py` regenerates the dashboard's per-ISO status shards from that same scorer (done
+this session, all six). `audit_keepers` 0 failures / 0 warnings. Eight new tests pin the rule:
+`tests/scoring/test_calibration_verdict.py::C3cStandingRuleTest`, including one that pins the
+reported-only-`co2` case directly.
