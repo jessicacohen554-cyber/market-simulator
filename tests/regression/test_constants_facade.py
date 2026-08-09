@@ -135,6 +135,10 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "STORAGE_TECHS",
         "STORAGE_TECH_BUILD_SHARE_CAP",
         "STORAGE_TECH_POWER_SHARE",
+        # FFR-4E: CAISO's published whole-class storage accreditation, the
+        # rung that replaces the by-duration table for an ISO that accredits
+        # storage at demonstrated capability instead of by duration.
+        "STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO",
         "SeasonalRBDC",
         "THERMAL_ACCREDITATION_BASIS_BY_ISO",
         "THERMAL_ELCC_CLASS_RATING_BY_ISO",
