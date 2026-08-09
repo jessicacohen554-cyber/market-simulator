@@ -269,6 +269,33 @@ absent from the stale base, not a real deletion; rebasing cleared it.)
 
 ## 4 The pinned fast-tier baseline on main (report-only)
 
+> **ADDENDUM 2026-08-09 (HOUSE-2) — THIS TABLE IS SUPERSEDED. The current
+> baseline is rows 1 and 2 only.**
+>
+> HOUSE-2 (`docs/handoffs/house-2-baseline-wave-2026-08-09.md`) cleared the
+> table. Measured on `origin/main` @ `b5b88de` + that branch, the fast tier
+> went **7 failed → 2 failed** (6,534 → 6,541 passed). Per-row:
+>
+> | # | test | status |
+> |---|---|---|
+> | 1 | `test_ercot_thermal_as_endogenous.py::TestScreenMutualExclusion::test_derived_map_suppresses_exogenous_credit` | **STILL RED** — chartered exclusion, ercot-181 live on that surface |
+> | 2 | `…::test_exogenous_credit_keeps_unit_profitable` | **STILL RED** — same |
+> | 3 | `test_neiso_bins.py::…::test_committed_artifact_is_deterministic` | CLEARED — artifact regenerated (stale since the D-25 gas_st taxonomy fix, PR #3697) |
+> | 4 | `test_forecast_parity.py::test_all_six_keepers_resolve` | CLEARED — the two open UNACCOUNTED fields pinned as an exact set; a *third* still reds the tier |
+> | 5 | `test_forecast_parity.py::test_check_exits_zero_on_the_current_keepers` | CLEARED — `xfail(strict=True)` with the FR-22 citation |
+> | 6 | `test_outages.py::…::test_unknown_iso_degrades_to_empty` | CLEARED — asserted a coverage accident (NEISO gained a nuclear extract), re-pinned to the contract |
+> | 7–9 | `test_data_dictionary_sync.py` × 3 subtests | CLEARED **on main itself**, between this doc's head and `b5b88de` — no HOUSE-2 edit |
+> | 10 | `test_integration.py::TestFullYearPerformance::test_full_year` | **NOT IN THE ORIGINAL TABLE.** Pre-existing; a full-8760 LP with wall-clock budget assertions that flakes under `-n 2` contention. CLEARED by adding it to the `tests/conftest.py` `slow` autotag list, where its two siblings already live |
+>
+> **The rule of the table is unchanged, the set is not: a fast-tier red on a PR
+> whose failures are a subset of {1, 2} is baseline; anything else is the PR's
+> own.**
+>
+> Still red on main outside the fast tier, untouched and re-verified by
+> HOUSE-2: the `lint` job (3 items, all in other lanes' files — see that doc
+> §3), `forecast-parity-guard` (red on the two §4-row-4/5 fields **by design**;
+> that is where the signal lives), and `Forecast-invariant artifact audit`.
+
 Chartered as: write down the pre-existing failures on main's fast tier
 (`pytest -n 2 -m "not slow and not integration and not fulldata"`). FFR-5E
 counted 13 "environmental" at its head; the current set is **9** (6 test

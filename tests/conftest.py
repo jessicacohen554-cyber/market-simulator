@@ -23,6 +23,18 @@ from tests.helpers import REPO_ROOT
 _SLOW_NODEID_SUBSTRINGS = (
     "test_soundness.py::TestEndToEnd",
     "test_soundness.py::TestPerformance",
+    # HOUSE-2: same class of test, same reason. TestFullYearPerformance builds
+    # and solves the 8760 x (200 gen + 7 zone + 5 storage) ERCOT LP and then
+    # asserts WALL-CLOCK budgets on it (build < 3 s, build + solve < 30 s).
+    # Serial it passes (~27 s of the 30 s budget); under the fast lane's
+    # ``-n 2`` xdist contention the co-scheduled worker pushes it past the
+    # budget and it fails intermittently. Both the marker taxonomy and the
+    # lane definition already say where it belongs: ``slow`` is "runs the
+    # model / full-8760 LP" and the fast lane is "hermetic unit tests only"
+    # (docs/testing.md). Timing assertions are meaningless under contention
+    # anyway — the full (serial) lane is the only place this budget means
+    # anything, and it still runs there.
+    "test_integration.py::TestFullYearPerformance",
 )
 
 
