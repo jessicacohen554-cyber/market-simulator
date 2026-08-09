@@ -419,6 +419,24 @@ the industrial-CHP boundary.
 * **Rule 27 `[R-PUSH]`** — the PREREG blob was verified against the **fetched**
   remote ref (the ffr-4e lesson); no file ≥300 lines was rewritten from
   regenerated content.
+* **Cache-key hygiene, done the documented way.** A new `ScenarioConfig` field
+  enters the cache-key hash and moved both pinned keys, which would have
+  orphaned every on-disk cache and every keeper's addressed bundle.
+  `summer_derate_basis_aware` is therefore registered in
+  `_CACHE_KEY_OPTIONAL_FIELDS` with its declared default, making it
+  **cache-neutral at its default** so both pins hold **unchanged** — the
+  nyiso-119 / caiso-186 discipline, and the step caiso-184 skipped. The
+  literals were **not** re-baselined.
+* **A second, independent corroboration of the K0 HEAD drift, measured.** In the
+  `fleet / arrays / scenario / availability / derate` selection, HEAD carries
+  **6 failing tests** — `test_fleet_arrays_golden` (ERCOT 2023, *availability*
+  and *min_gen* hashes), `test_soundness` capacity-evolution, and 4
+  `test_export` cases. They fail **identically at the pre-session base
+  `51d4e98`** with none of this session's changes applied, so **this session
+  adds ZERO new failures** — and the ERCOT golden moving on exactly the two
+  arrays this lane touches is the same drift that failed K0, seen from a second
+  instrument. **Main's regression suite is red independently of MISO**; filed
+  for the owner alongside §8(3).
 * **A HEAD bug fixed to unblock the lane**, reported separately: caiso-186 added
   `cc_winter_capability_basis` to `run_calibration_full`'s `run_year(...)` call
   without adding the parameter to `run_year`, and the kwarg is passed
