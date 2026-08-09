@@ -1,15 +1,15 @@
 {
-  "id": "2026-08-06-neiso-87-control",
-  "label": "neiso 87 control",
-  "date": "2026-08-06",
-  "shorthand": "neiso-87-control",
-  "definition": "neiso-87 arm A: same-HEAD zero-delta control of the 2026-08-05-neiso-83-ca1-reclass keeper recipe, current committed gas basis (NEISO,2025,8 = +0.04 interpolation). Baseline for the Aug-2025 measured-basis A/B.",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "NEISO",
-  "file": "frontend/data/backcast/runs/2026-08-06-neiso-87-control.js",
-  "bundle": "results/calibration/neiso87_control_A"
+ "id": "2026-08-06-neiso-87-control",
+ "label": "neiso 87 control",
+ "date": "2026-08-06",
+ "shorthand": "neiso-87-control",
+ "definition": "NEISO KEEPER (promoted 2026-08-09, session neiso-keeper-87-control). Same-HEAD re-solve of the 2026-08-05-neiso-83-ca1-reclass keeper recipe, zero mechanism delta -- no ScenarioConfig field differs, no lever armed, no cell verdict moved. Determination CALIBRATED-WITH-CAVEATS, criterion for criterion IDENTICAL to the superseded keeper (0 FAILs, 1 ledgered C3c caveat, C1 all 12/12 / free 8/8), so rule 22 D-5(b) is satisfied. WHAT IT FIXES: the superseded bundle is a NON-REPRODUCIBLE OUTLIER -- the neiso-91 bisect (owner decision D-88.3) showed four independent HEAD solves agreeing to the bit and all differing from it by the same 731-hour January-2025 pattern; this run is on that reproducible side. 2023 and 2024 are BIT-IDENTICAL to the superseded keeper (0 of 43,800 zone-hours differ, 0 classes move); 2025 differs in 3,655 zone-hours, mean lambda 70.0493 -> 69.7149 (-0.3344), max |dlambda| 25.5244. TWO DEFECTS DISCLOSED, NOT BURIED (see keepers/NEISO.json): (1) it was solved as arm A of the neiso-87 Aug-2025 basis A/B, so it carries the SUPERSEDED NEISO,2025,8 interpolation (+0.04) rather than the measured -0.38 now committed at HEAD -- a rule 14 [R-ACCURATE] regression on one month of one year, worth 2025 mean lambda 69.7149 against the 69.399 a fully-current re-solve would give; (2) its legitimacy_diagnostics.json was NOT written at registration -- it was generated in the promotion session from this bundle's own committed artifacts (no re-solve), which is what turned C8 from SKIPPED to PASS. Registered 2026-08-06 as the A/B baseline; promoted on owner instruction 2026-08-09. Bundle results/calibration/neiso87_control_A; provenance results/calibration/PREREG-neiso87-aug2025-basis-refresh-2026-08-06.md + ASSESSMENT-neiso87-declaration-2026-08-06.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NEISO",
+ "file": "frontend/data/backcast/runs/2026-08-06-neiso-87-control.js",
+ "bundle": "results/calibration/neiso87_control_A"
 }
