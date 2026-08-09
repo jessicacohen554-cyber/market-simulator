@@ -18,6 +18,7 @@ import logging
 import os
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from market_sim.config.paths import CAMPD_BINS_CSV, EIA_860_DIR, FLEET_DIR
@@ -248,6 +249,30 @@ _PJM_PA_WEST_LON: float = -79.0
 # DC, plus the eastern-shore DPL) is SWMAAC.
 _PJM_MD_WEST_LON: float = -78.5
 
+# Coords-only PJM fallback: a caller holding latitude/longitude but no eGRID
+# FIPS codes. Before this rule EVERY such row fell through
+# ``_PJM_STATE_ZONES.get(None, ...)`` into the largest-load-share zone — all
+# 371 EIA-860 PJM proposed rows (PA 93, IL 78, VA 42, KY 37, OH 37, WV 21,
+# NJ 21, IN 15, DE 11, MD 10, NC 4, DC 1, MI 1) landed in PJM_AEP_Ohio.
+#
+# PJM's footprint spans those 13 states with jagged, non-rectangular borders,
+# so unlike the 1-to-6-state ISOs above it cannot be expressed as a lat/lon
+# box ladder. Rather than invent boundary constants, a coords-only query
+# borrows the FIPS state/county of the NEAREST eGRID PJM plant and re-enters
+# the cited state/county/lat-lon rules — eGRID's own authoritative geography,
+# with no hand-drawn line added (rule 14 [R-ACCURATE]: prefer the measured
+# datum over an estimate). Measured leave-one-out over the 1,727 eGRID PJM
+# plants (hold a plant out, zone it from its nearest neighbour's FIPS):
+# 1,697/1,727 = 98.3 % agreement, against 12.0 % for the PJM_AEP_Ohio
+# fallback it replaces.
+#
+# Search cap in degrees, so a coordinate outside the footprint cannot silently
+# borrow a distant plant's state. Measured nearest-neighbour spacing in that
+# same eGRID cohort: p50 0.028°, p90 0.129°, p99 0.329° — 1.0° (~111 km
+# north-south, ~85 km east-west at 40°N) clears p99 threefold while still
+# refusing an out-of-region point, which keeps the old fallback.
+_PJM_COORDS_NEIGHBOR_MAX_DEG: float = 1.0
+
 # MISO model zone by FIPS state code. The six model zones are drawn as whole
 # EIA-930 sub-BA (LRZ) unions so the fleet and load partitions share identical
 # boundaries (see eia_loader._MISO_SUBBA_ZONE_GROUPS): West = LRZ 1
@@ -406,6 +431,12 @@ _PLNT23_CACHE: pd.DataFrame | None = None
 _ORIS_TO_LOCATION: (
     dict[int, tuple[float | None, float | None, int | None, int | None]] | None
 ) = None
+
+# Cached (lat, lon, fips_state, fips_county) arrays for eGRID's PJM plants,
+# backing the coords-only PJM nearest-plant rule (_PJM_COORDS_NEIGHBOR_MAX_DEG).
+_PJM_EGRID_GEOGRAPHY: tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray] | None = (
+    None
+)
 
 
 def _to_float(value: object) -> float | None:
@@ -676,6 +707,71 @@ def _nyiso_zone_from_latlon(lat: float | None, lon: float | None) -> str:
     return "NYC"
 
 
+def _pjm_egrid_geography() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Return ``(lat, lon, fips_state, fips_county)`` arrays for eGRID's PJM plants.
+
+    Parsed from the same PLNT23 sheet every other lookup in this module reads
+    and cached process-wide (the module's ``_PLNT23_CACHE`` idiom). Rows with
+    no usable coordinate or no FIPS state are dropped — they cannot serve as a
+    geographic reference. Counties are carried as ``-1`` where absent, so the
+    array stays integral; :func:`_pjm_fips_from_coords` maps that back to
+    ``None``.
+    """
+    global _PJM_EGRID_GEOGRAPHY
+    if _PJM_EGRID_GEOGRAPHY is None:
+        df = _plnt23()
+        ba = df["BACODE"].astype(str).str.strip()
+        subset = df[ba == _ISO_TO_BA_CODE["PJM"]]
+
+        lats: list[float] = []
+        lons: list[float] = []
+        states: list[int] = []
+        counties: list[int] = []
+        for row in subset.itertuples(index=False):
+            lat = _to_float(row.LAT)
+            lon = _to_float(row.LON)
+            state = _to_int(row.FIPSST)
+            if lat is None or lon is None or state is None:
+                continue
+            county = _to_int(row.FIPSCNTY)
+            lats.append(lat)
+            lons.append(lon)
+            states.append(state)
+            counties.append(-1 if county is None else county)
+
+        _PJM_EGRID_GEOGRAPHY = (
+            np.asarray(lats, dtype=float),
+            np.asarray(lons, dtype=float),
+            np.asarray(states, dtype=int),
+            np.asarray(counties, dtype=int),
+        )
+    return _PJM_EGRID_GEOGRAPHY
+
+
+def _pjm_fips_from_coords(lat: float, lon: float) -> tuple[int, int | None] | None:
+    """Return the nearest eGRID PJM plant's ``(fips_state, fips_county)``.
+
+    The coords-only PJM rule (see :data:`_PJM_COORDS_NEIGHBOR_MAX_DEG`).
+    Distance is equirectangular with the longitude degree cos-corrected at the
+    query latitude — exact enough for a nearest-neighbour argmin over a
+    ~10°-wide footprint, and it avoids a haversine per query. Returns ``None``
+    when eGRID is unavailable, holds no PJM row, or the nearest plant is
+    farther than the cap, so the caller keeps its existing fallback.
+    """
+    lats, lons, states, counties = _pjm_egrid_geography()
+    if lats.size == 0:
+        return None
+
+    coslat = np.cos(np.radians(lat))
+    d2 = (lats - lat) ** 2 + ((lons - lon) * coslat) ** 2
+    idx = int(np.argmin(d2))
+    if float(d2[idx]) > _PJM_COORDS_NEIGHBOR_MAX_DEG**2:
+        return None
+
+    county = int(counties[idx])
+    return int(states[idx]), (None if county < 0 else county)
+
+
 def _pjm_zone(
     lat: float | None,
     lon: float | None,
@@ -698,10 +794,22 @@ def _pjm_zone(
       ``PJM_West_APS``; the rest (BGE/PEPCO) is ``PJM_SWMAAC``.
 
     These lat/lon/county cuts approximate the real utility-territory
-    boundaries (Tier 3 — verify against a PJM zone-county crosswalk). A plant
-    with no usable location falls back to the largest-load-share zone
-    (``PJM_AEP_Ohio``).
+    boundaries (Tier 3 — verify against a PJM zone-county crosswalk).
+
+    A **coords-only** caller (latitude/longitude, no FIPS — the forecast-only
+    EIA-860 planned/procured-additions limbs) borrows the FIPS state/county of
+    the nearest eGRID PJM plant and re-enters these same rules; see
+    :data:`_PJM_COORDS_NEIGHBOR_MAX_DEG` for the rationale and the measured
+    98.3 % leave-one-out agreement. A plant with no usable location at all —
+    and a coordinate with no eGRID PJM plant inside the cap — still falls back
+    to the largest-load-share zone (``PJM_AEP_Ohio``).
     """
+    if fips_state is None and lat is not None and lon is not None:
+        nearest = _pjm_fips_from_coords(lat, lon)
+        if nearest is not None:
+            # One level only: ``nearest[0]`` is never None, so the re-entry
+            # cannot take this branch again.
+            return _pjm_zone(lat, lon, nearest[0], nearest[1])
     if fips_state == _OHIO_FIPS:
         if lat is not None and lat >= _PJM_OH_ATSI_LAT:
             return "PJM_ATSI"

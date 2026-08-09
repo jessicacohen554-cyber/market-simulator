@@ -106,7 +106,7 @@ Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_M
 66152,Connecticut College,CT_PEAKER,Connecticut,1.2,9.0,0.0,0.0,93.0,7.0,none,class_default,class_default,
 66455,Yale New Haven - New London,CT_PEAKER,Connecticut,1.8,9.0,0.0,0.0,93.0,7.0,none,class_default,class_default,
 68586,Stamford Health Tully Health Center,CT_PEAKER,Connecticut,0.7,9.0,0.0,0.0,93.0,7.0,none,class_default,class_default,
-10417,Indian Orchard Plant 1,ST_CHP,Central,3.2,11.5,70.0,30.0,0.0,0.0,chp_eia923_cf,class_default,class_default,
+10417,Indian Orchard Plant 1,ST_CHP,Central,3.2,10.3,70.0,30.0,0.0,0.0,chp_eia923_cf,class_default,class_default,
 10883,Medical Area Total Energy Plant,ST_CHP,Boston,22.0,5.357,65.0,30.0,0.0,5.0,chp_eia923_cf,class_default,class_default,CT+ST
 50087,Univ of Massachusetts Medical Center,ST_CHP,Central,6.0,6.44,65.0,30.0,0.0,5.0,chp_eia923_cf,class_default,class_default,CT+ST
 52024,Rhode Island Hospital,ST_CHP,Central,10.4,5.646,65.0,30.0,0.0,5.0,chp_eia923_cf,class_default,class_default,
@@ -115,5 +115,5 @@ Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_M
 54236,Pfizer Groton Plant,ST_CHP,Connecticut,22.5,5.422,70.0,30.0,0.0,0.0,chp_eia923_cf,class_default,class_default,CT+ST
 58160,Williams College - Campus CHP,ST_CHP,Central,3.0,5.695,65.0,30.0,0.0,5.0,chp_eia923_cf,class_default,class_default,
 61703,Sikorsky Aircraft CHP,ST_CHP,Connecticut,0.6,9.54,70.0,30.0,0.0,0.0,chp_eia923_cf,class_default,class_default,CT+ST
-68493,Central Heating Plant,ST_CHP,Central,6.1,9.984,65.0,30.0,0.0,5.0,chp_eia923_cf,class_default,class_default,CT+ST
+68493,Central Heating Plant,ST_CHP,Central,6.1,10.3,65.0,30.0,0.0,5.0,chp_eia923_cf,class_default,class_default,CT+ST
 546,Montville Station,ST_GAS,Connecticut,81.0,12.755,0.0,70.0,15.0,15.0,none,campd,class_default,
