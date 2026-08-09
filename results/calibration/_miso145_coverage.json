@@ -1,0 +1,492 @@
+{
+ "prereg": "results/calibration/PREREG-miso145-summer-offer-conduct-2026-08-09.md",
+ "gate": "G-A intake coverage (P-A1..P-A5); structural checks only",
+ "source": "https://docs.misoenergy.org/marketreports/YYYYMMDD_<market>_co.zip",
+ "span": "Jun 1 - Aug 31, 2023/2024/2025, both markets (rule 22: no year outside 2023-2025)",
+ "P_A1_availability": {
+  "n_requested": 552,
+  "n_ok": 552,
+  "frac_ok": 1.0,
+  "n_members_not_1": 0,
+  "total_mb": 429.6,
+  "bad": [],
+  "PASS": true
+ },
+ "P_A2_grain": {
+  "per_day": [
+   {
+    "market": "da",
+    "day": "20230601",
+    "n_rows": 32136,
+    "n_units": 1319,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 8034,
+    "dup_unit_hour_rows": 480,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "da",
+    "day": "20230715",
+    "n_rows": 32136,
+    "n_units": 1319,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 8034,
+    "dup_unit_hour_rows": 480,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "da",
+    "day": "20230831",
+    "n_rows": 31704,
+    "n_units": 1321,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 7926,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "da",
+    "day": "20240601",
+    "n_rows": 32472,
+    "n_units": 1353,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 8118,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "da",
+    "day": "20240715",
+    "n_rows": 32424,
+    "n_units": 1351,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 8106,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "da",
+    "day": "20240831",
+    "n_rows": 32472,
+    "n_units": 1353,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 8118,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "da",
+    "day": "20250601",
+    "n_rows": 33768,
+    "n_units": 1407,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 8442,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "da",
+    "day": "20250715",
+    "n_rows": 33720,
+    "n_units": 1405,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 8430,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "da",
+    "day": "20250831",
+    "n_rows": 33720,
+    "n_units": 1405,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 8430,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "rt",
+    "day": "20230601",
+    "n_rows": 20656,
+    "n_units": 964,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 5615,
+    "dup_unit_hour_rows": 96,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "rt",
+    "day": "20230715",
+    "n_rows": 19718,
+    "n_units": 874,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 5168,
+    "dup_unit_hour_rows": 252,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "rt",
+    "day": "20230831",
+    "n_rows": 18751,
+    "n_units": 852,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 4799,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "rt",
+    "day": "20240601",
+    "n_rows": 19321,
+    "n_units": 858,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 4931,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "rt",
+    "day": "20240715",
+    "n_rows": 23771,
+    "n_units": 1114,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 6434,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "rt",
+    "day": "20240831",
+    "n_rows": 20965,
+    "n_units": 923,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 5355,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "rt",
+    "day": "20250601",
+    "n_rows": 20664,
+    "n_units": 943,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 5226,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "rt",
+    "day": "20250715",
+    "n_rows": 23909,
+    "n_units": 1115,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 6419,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   },
+   {
+    "market": "rt",
+    "day": "20250831",
+    "n_rows": 20122,
+    "n_units": 891,
+    "n_hours": 24,
+    "regions": [
+     " ",
+     "Central",
+     "North",
+     "South"
+    ],
+    "n_h12_17_rows": 5087,
+    "dup_unit_hour_rows": 0,
+    "dup_are_exact_copies": true,
+    "mw_monotone_frac": 1.0,
+    "price_monotone_frac": 1.0
+   }
+  ],
+  "units_min": 852,
+  "units_max": 1407,
+  "rows_min": 18751,
+  "rows_max": 33768,
+  "all_24_hours": true,
+  "h12_17_populated_everywhere": true,
+  "PASS": false
+ },
+ "P_A3_no_fuel_attribute": {
+  "n_files_scanned": 552,
+  "files_with_fuel_like_column": {},
+  "da_header": [
+   "Region",
+   "Unit Code",
+   "Date/Time Beginning (EST)",
+   "Date/Time End (EST)",
+   "Economic Max",
+   "Economic Min",
+   "Emergency Max",
+   "Emergency Min",
+   "Economic Flag",
+   "Emergency Flag",
+   "Must Run Flag",
+   "Unit Available Flag",
+   "Self Scheduled MW",
+   "Target MW Reduction",
+   "MW",
+   "Curtailment Offer Price",
+   "Price1",
+   "MW1",
+   "Price2",
+   "MW2",
+   "Price3",
+   "MW3",
+   "Price4",
+   "MW4",
+   "Price5",
+   "MW5",
+   "Price6",
+   "MW6",
+   "Price7",
+   "MW7",
+   "Price8",
+   "MW8",
+   "Price9",
+   "MW9",
+   "Price10",
+   "MW10",
+   "Slope",
+   "MinEnergyStorageLevel",
+   "MaxEnergyStorageLevel",
+   "EmerMinEnergyStorageLevel",
+   "EmerMaxEnergyStorageLevel"
+  ],
+  "rt_header": [
+   "Region",
+   "Unit Code",
+   "Mkthour Begin (EST)",
+   "Cleared MW1",
+   "Cleared MW2",
+   "Cleared MW3",
+   "Cleared MW4",
+   "Cleared MW5",
+   "Cleared MW6",
+   "Cleared MW7",
+   "Cleared MW8",
+   "Cleared MW9",
+   "Cleared MW10",
+   "Cleared MW11",
+   "Cleared MW12",
+   "Economic Max",
+   "Economic Min",
+   "Emergency Max",
+   "Emergency Min",
+   "Economic Flag",
+   "Emergency Flag",
+   "Must Run Flag",
+   "Unit Available Flag",
+   "Self Scheduled MW",
+   "Target MW Reduction",
+   "Curtailment Offer Price",
+   "Price1",
+   "MW1",
+   "Price2",
+   "MW2",
+   "Price3",
+   "MW3",
+   "Price4",
+   "MW4",
+   "Price5",
+   "MW5",
+   "Price6",
+   "MW6",
+   "Price7",
+   "MW7",
+   "Price8",
+   "MW8",
+   "Price9",
+   "MW9",
+   "Price10",
+   "MW10",
+   "Slope",
+   "MinEnergyStorageLevel",
+   "MaxEnergyStorageLevel",
+   "EmerMinEnergyStorageLevel",
+   "EmerMaxEnergyStorageLevel"
+  ],
+  "PASS": true
+ },
+ "P_A4_id_persistence": {
+  "per_market_year": {
+   "da|2023": {
+    "n_jun01": 1319,
+    "n_aug31": 1321,
+    "overlap_frac_of_jun01": 1.0
+   },
+   "da|2024": {
+    "n_jun01": 1353,
+    "n_aug31": 1353,
+    "overlap_frac_of_jun01": 0.9985
+   },
+   "da|2025": {
+    "n_jun01": 1407,
+    "n_aug31": 1405,
+    "overlap_frac_of_jun01": 0.9986
+   },
+   "rt|2023": {
+    "n_jun01": 964,
+    "n_aug31": 852,
+    "overlap_frac_of_jun01": 0.8154
+   },
+   "rt|2024": {
+    "n_jun01": 858,
+    "n_aug31": 923,
+    "overlap_frac_of_jun01": 0.9301
+   },
+   "rt|2025": {
+    "n_jun01": 943,
+    "n_aug31": 891,
+    "overlap_frac_of_jun01": 0.8664
+   }
+  },
+  "min_overlap": 0.8154,
+  "PASS": false
+ },
+ "P_A5_curve_monotonicity": {
+  "mw_monotone_frac_min": 1.0,
+  "price_monotone_frac_min": 1.0,
+  "PASS": true
+ }
+}

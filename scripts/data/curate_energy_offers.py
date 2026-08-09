@@ -70,6 +70,8 @@ from scripts.lib.clean_io import load_schema, validate_df  # noqa: E402
 
 RAW_DIR = paths.PJM_ENERGY_OFFERS_DIR
 ISO = "PJM"
+# schema v2 key column -- the DataMiner2 feed is the RT effective offer set.
+MARKET = "RT"
 EPT_TZ = "America/New_York"
 
 # Number of MW/bid breakpoints in the wide format.
@@ -80,6 +82,7 @@ SCHEMA_COLS: tuple[str, ...] = (
     "interval_start_utc",
     "interval_start_local",
     "iso",
+    "market",
     "unit_code",
     "bid_slope_flag",
     "step_idx",
@@ -184,6 +187,10 @@ def _transform_month(wide: pd.DataFrame) -> pd.DataFrame:
 
     # --- Static columns ---
     wide["iso"] = ISO
+    # schema v2 key column: this DataMiner2 feed is the RT *effective* offer
+    # set (the last version in force after the DA market closed), so every PJM
+    # row is RT.  MISO publishes DA and RT as separate books.
+    wide["market"] = MARKET
 
     # --- Rename non-pivot columns ---
     rename = {

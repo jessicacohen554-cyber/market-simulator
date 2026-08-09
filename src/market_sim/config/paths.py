@@ -142,6 +142,11 @@ PJM_ENERGY_OFFERS_DIR: Path = RAW_DATA_DIR / "pjm-energy-offers"
 # Gitignored (pjm-energy-offers precedent); re-fetch with
 # scripts/data/fetch_caiso_public_bids.py.
 CAISO_PUBLIC_BIDS_DIR: Path = RAW_DATA_DIR / "caiso-public-bids"
+# MISO masked submitted energy-offer corpus (Market Reports *_da_co / *_rt_co,
+# ~90-day lag): daily zips under <market>/, <YYYYMMDD>_<market>_co.zip, plus a
+# manifest.json of per-file sha256/size.  Gitignored (pjm-energy-offers
+# precedent); re-fetch with scripts/data/fetch_miso_energy_offers.py.
+MISO_ENERGY_OFFERS_DIR: Path = RAW_DATA_DIR / "miso-energy-offers"
 PJM_DA_VIRTUALS_DIR: Path = RAW_DATA_DIR / "pjm-da-virtuals"
 # PJM ancillary-services / reserve-market DataMiner2 exports (reserve_market_
 # results, da_reserve_market_results, ancillary_services, da_ancillary_services,

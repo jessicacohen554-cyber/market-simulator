@@ -3567,7 +3567,115 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**
 
-> **LIVE QUEUE AS OF miso-144 (2026-08-08) — ITEM 5 (the IN-MERIT IDLE BLOCK)
+> **LIVE QUEUE AS OF miso-145 (2026-08-09) — ITEM 6 (the SUMMER-AFTERNOON
+> OFFER-CONDUCT IDENTIFICATION, owner-opened 2026-08-08) EXECUTED AND
+> DISCHARGED. THE OFFER ARCHIVE IS INTAKEN; THE OFFER-LEVEL HYPOTHESIS IS
+> REFUTED; A NEW CURVE-SHAPE OBJECT IS FILED.** Phase 0, diagnosis-first, per
+> the charter. **NO LP, no arm, no `ScenarioConfig` field, no run, NO CELL
+> VERDICT MINTED** (no mechanism armed, refused, or proposed for arming — the
+> miso-143/144 precedent), keeper UNCHANGED at
+> `2026-08-05-miso-132b-cc-committed`, fail set UNCHANGED at {C3a}.
+>
+> **G-A — THE INTAKE IS DONE, AND IT IS A DATATYPE, NOT A PROBE FIXTURE.** MISO's
+> masked submitted-offer corpus (`YYYYMMDD_{da,rt}_co.zip`, ~90-day lag) is
+> landed for **Jun 1 – Aug 31 of 2023/2024/2025, both markets — 552/552 files,
+> 429.6 MB, P-A1 100 %** — as immutable raw (`data/raw/miso-energy-offers/`,
+> gitignored, README + `manifest.json` with per-file sha256) plus clean parquet
+> through `write_clean`. The `energy-offers` schema is generalised **v1 → v2**
+> (ISO-generic, `market` DA/RT joins the key, MISO columns nullable, PJM's
+> writer gains only `market="RT"`). **Rule 13 is enforced at the curation seam,
+> not by convention**: the source's dispatch AWARDS (RT `Cleared MW1..12`, DA
+> `MW`, `Target MW Reduction`) are dropped in `_transform_day`, their absence
+> asserted, and they have **no column in the schema**. Coverage verdicts as
+> pre-registered: **P-A3 PASS on all 552 files** (zero `fuel|type|technolog`
+> columns — miso-136's absence re-verified on the full span, not a sample),
+> **P-A5 PASS** (monotonicity 1.00000), **P-A2/P-A4 FAIL on their RT lower
+> bounds, bars not moved** — because **the RT book is a genuine SUBSET of the
+> DA book** (RT 852–1,115 units, 0.815–0.930 within-summer persistence; DA
+> 1,319–1,407 units, ≥ 0.9985). No class crosswalk is attempted: miso-138
+> REFUTED the offer-side bridge and P-A3 confirms there is no fuel attribute,
+> so **every statistic is FLEET grain**, declared in the PREREG before any
+> number was seen.
+>
+> **G-F1 FOOTING PASSES EXACTLY** — miso-142/143's six committed window deficits
+> reproduced to the last digit (−4.750 / −8.333 / −10.676 / −10.671 / −30.999 /
+> −30.435), and miso-143's window-mean walk reproduced to 0.021/0.746/0.025 GW
+> (the 2024 residual is band-count vs cumulative-walk construction, disclosed).
+>
+> **THE PRE-COMMITTED BRANCH IS `BRANCH-CONDUCT-ABSENT`: MISO'S REAL OFFERS ARE
+> NOT ABOVE THE MODEL'S.** At the model's own clearing percentile the real book
+> is **CHEAPER** on every instrument, universe, year and hour-subset — 2025 JJA
+> h12–17 LEVEL **−$14.376 (RT) / −$8.298 (DA)** against a pre-registered bar of
+> **≥ +$18**; 2023 −11.823/−7.329, 2024 −8.072/−4.996; ordinary-hours (≤ $200)
+> restatements move it < $1.3. **P-B2 and P-B4 FALSIFIED; P-B1 and P-B5 NOT
+> SCORED** (P-B1's need-matched construction requires the very universe
+> alignment G-F2 shows cannot be made). **No offer-level lever is licensed and
+> none is proposed.**
+>
+> **REPORTED AGAINST INTEREST: that level leg is universe-contaminated, in the
+> direction the refutation went, and the contamination is MEASURED.** G-F2
+> passes its ±25 % bar (model 107.519 GW vs corpus 107.007 RT / 131.969 DA) **by
+> cancellation**: the corpus offers **19.945 GW (RT) / 17.654 GW (DA) at or
+> below $0/MWh** while the keeper dispatches **16.286 GW of wind+solar** with no
+> fleet row behind it, and the model carries 17.2 GW of import tranches the
+> corpus has no analogue for. The pre-registered declaration screen was meant to
+> remove the intermittent population and **removes 0.459 of 107.007 GW** — MISO's
+> `Curtailment Offer Price` does not mark the DIR fleet. So the refutation is
+> recorded as **fired by the pre-committed rule on the number as measured, NOT
+> independently established**, and **no level statistic from this corpus should
+> be quoted by any lane until an intermittent screen exists.** (TRAP 3 fired and
+> was caught by its own guard — the miso-144 lesson, applied in advance.)
+>
+> **WHAT SURVIVES THE UNIVERSE CRITIQUE IS A DIFFERENT AND LARGE OBJECT —
+> *THE MISSING OFFER WALL* (labelled post-hoc, NOT pre-registered).** Both
+> readings are band-restricted, so a population far below the band cannot move
+> them. **P-B3b PASSES**: in 2025 JJA h12–17 the model carries **5.698 GW (`lo`)
+> / 6.038 (`hi`)** of capability priced between its own clearing price ($44.245)
+> and the hour's actual RT price, where the real book carries **−0.056 GW (RT) /
+> −0.234 (DA)** — essentially nothing. **P-B3 PASSES by 12×–49×**: immediately
+> above its own clearing the real curve rises **$73.46/MWh per GW (RT)** and
+> **$17.90 (DA)** against the model's **$1.496**; same sign and order in all
+> three years and both windows (2023 51.70/10.44 vs 1.767; 2024 56.06/14.29 vs
+> 1.246). The model clears at **p79.11** of its own capability where MISO clears
+> at **p93.80 (RT) / p87.80 (DA)** — **22.46 GW of capability above its margin
+> against 6.63 / 16.10 GW.** The DA book and the model reach nearly the same
+> place at the top (p95 98.03 vs 87.46; p98 213.79 vs 211.34); **the difference
+> is where each one clears.** The model stops short of its own wall and prices
+> in the ramp below it; MISO prices on the wall.
+>
+> **ITEM 6 IS DISCHARGED. THE SUCCESSOR IS NAMED AND NOT OPENED (rules 19/24,
+> an owner decision): a MISO `measured_offer_surface`, POSITION-conditioned,
+> built from the corpus this session landed.** It carries two hard constraints
+> that must be settled before it is chartered: (i) it **cannot** be
+> class-conditioned as every other ISO's surface is — miso-138 refuted the
+> bridge and P-A3 re-confirms the absent attribute, so a fleet-level shape must
+> be mapped onto per-unit offers without inventing a class, which is a design
+> question and not a detail; (ii) it must **replace or subsume**
+> `gas_offer_margin` (armed, cell `K`, same offer path) per rule 19
+> `[R-ONE-MECH]`, never stack. A cheaper prerequisite is now visible and should
+> precede it: **an intermittent-resource screen for this corpus**, without which
+> the level question stays unanswerable. TRAP 1 did not fire — nothing was
+> re-identified, and the counter-measurement is reported: `gas_offer_margin`'s
+> price-relevant haircut is **$0.33** (miso-143 B-1), a LEVEL device; the object
+> here is a **$73/GW slope**, different in kind.
+>
+> **GOVERNANCE, carried forward unchanged:** C1/C2 both SKIPPED for 2025
+> (preliminary EIA-923 vintage) — the blocker year's fuel mix stays ungated;
+> nothing here reads C1/C2 PASS as 2025 safety. Kill gates were not reached (no
+> solve): C3b-2025's 0.009 headroom, the 2023/2024 C3a PASSes, C8 and the SPENT
+> C3c ledger are all untouched.
+> `results/calibration/PREREG-miso145-summer-offer-conduct-2026-08-09.md`
+> (`083222bf`);
+> `results/calibration/FINDING-miso145-offer-conduct-2026-08-09.md`;
+> `_miso145_coverage.json` · `_miso145_offer_conduct.json` ·
+> `_miso145_cheap_mass.json`; probes `scripts/probes/_miso145_coverage.py`,
+> `_miso145_offer_conduct.py`, `_miso145_cheap_mass.py`; intake
+> `scripts/data/fetch_miso_energy_offers.py`,
+> `scripts/data/curate_miso_energy_offers.py`,
+> `data/dictionary/schema/energy-offers.schema.yaml` (v2),
+> `data/raw/miso-energy-offers/README.md`.
+>
+> *(Prior state, unedited.)* > **LIVE QUEUE AS OF miso-144 (2026-08-08) — ITEM 5 (the IN-MERIT IDLE BLOCK)
 > SET AND DISCHARGED IN THE SAME SESSION, WITH THE OBJECT DISSOLVED. QUEUE
 > EMPTY AGAIN — AND FOR THE FIRST TIME EVERY MODEL-SIDE FAMILY IS CLOSED BY
 > MEASUREMENT.** Phase 0, diagnosis-first, per the charter. **NO LP, no arm,
