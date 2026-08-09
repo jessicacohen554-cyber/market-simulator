@@ -1,0 +1,622 @@
+{
+ "session": "miso-147",
+ "prereg": "results/calibration/PREREG-miso147-highprice-dispatch-composition-2026-08-09.md",
+ "G_F0": {
+  "pass": true,
+  "counts_sum": 88,
+  "pct_denominator_notes": [],
+  "tolerances": {
+   "usd": 0.005,
+   "pct": 0.05,
+   "disambig_usd": 0.02
+  },
+  "months": [
+   {
+    "month": 1,
+    "deficit_all": -9.4422,
+    "charter_all": -9.44,
+    "err_all": -0.0022,
+    "deficit_ordinary": -3.8178,
+    "charter_ordinary": -3.82,
+    "err_ordinary": 0.0022,
+    "n_gt200": 16,
+    "charter_n_gt200": 16,
+    "pct_actual_den": -18.33,
+    "charter_pct": -18.3,
+    "pct_err": -0.026,
+    "pct_model_den": -22.44,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   },
+   {
+    "month": 2,
+    "deficit_all": -2.9924,
+    "charter_all": -2.99,
+    "err_all": -0.0024,
+    "deficit_ordinary": 0.1206,
+    "charter_ordinary": 0.12,
+    "err_ordinary": 0.0006,
+    "n_gt200": 4,
+    "charter_n_gt200": 4,
+    "pct_actual_den": -6.44,
+    "charter_pct": -6.4,
+    "pct_err": -0.035,
+    "pct_model_den": -6.88,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   },
+   {
+    "month": 3,
+    "deficit_all": -1.7305,
+    "charter_all": -1.73,
+    "err_all": -0.0005,
+    "deficit_ordinary": 0.0422,
+    "charter_ordinary": 0.04,
+    "err_ordinary": 0.0022,
+    "n_gt200": 4,
+    "charter_n_gt200": 4,
+    "pct_actual_den": -4.56,
+    "charter_pct": -4.6,
+    "pct_err": 0.037,
+    "pct_model_den": -4.78,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   },
+   {
+    "month": 4,
+    "deficit_all": -2.2375,
+    "charter_all": -2.24,
+    "err_all": 0.0025,
+    "deficit_ordinary": -0.28,
+    "charter_ordinary": -0.28,
+    "err_ordinary": -0.0,
+    "n_gt200": 4,
+    "charter_n_gt200": 4,
+    "pct_actual_den": -5.94,
+    "charter_pct": -5.9,
+    "pct_err": -0.035,
+    "pct_model_den": -6.31,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   },
+   {
+    "month": 5,
+    "deficit_all": 4.2245,
+    "charter_all": 4.22,
+    "err_all": 0.0045,
+    "deficit_ordinary": 5.3946,
+    "charter_ordinary": 5.39,
+    "err_ordinary": 0.0046,
+    "n_gt200": 3,
+    "charter_n_gt200": 3,
+    "pct_actual_den": 12.45,
+    "charter_pct": 12.4,
+    "pct_err": 0.05,
+    "pct_model_den": 11.07,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   },
+   {
+    "month": 6,
+    "deficit_all": -17.3602,
+    "charter_all": -17.36,
+    "err_all": -0.0002,
+    "deficit_ordinary": -3.3054,
+    "charter_ordinary": -3.31,
+    "err_ordinary": 0.0046,
+    "n_gt200": 21,
+    "charter_n_gt200": 21,
+    "pct_actual_den": -30.25,
+    "charter_pct": -30.2,
+    "pct_err": -0.048,
+    "pct_model_den": -43.37,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   },
+   {
+    "month": 7,
+    "deficit_all": -17.8762,
+    "charter_all": -17.88,
+    "err_all": 0.0038,
+    "deficit_ordinary": -8.6056,
+    "charter_ordinary": -8.61,
+    "err_ordinary": 0.0044,
+    "n_gt200": 13,
+    "charter_n_gt200": 13,
+    "pct_actual_den": -30.07,
+    "charter_pct": -30.1,
+    "pct_err": 0.031,
+    "pct_model_den": -43.0,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   },
+   {
+    "month": 8,
+    "deficit_all": -3.4889,
+    "charter_all": -3.49,
+    "err_all": 0.0011,
+    "deficit_ordinary": -1.4718,
+    "charter_ordinary": -1.47,
+    "err_ordinary": -0.0018,
+    "n_gt200": 5,
+    "charter_n_gt200": 5,
+    "pct_actual_den": -8.63,
+    "charter_pct": -8.6,
+    "pct_err": -0.027,
+    "pct_model_den": -9.44,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   },
+   {
+    "month": 9,
+    "deficit_all": -8.8146,
+    "charter_all": -8.81,
+    "err_all": -0.0046,
+    "deficit_ordinary": -1.3478,
+    "charter_ordinary": -1.35,
+    "err_ordinary": 0.0022,
+    "n_gt200": 8,
+    "charter_n_gt200": 8,
+    "pct_actual_den": -19.01,
+    "charter_pct": -19.0,
+    "pct_err": -0.008,
+    "pct_model_den": -23.47,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   },
+   {
+    "month": 10,
+    "deficit_all": -2.7024,
+    "charter_all": -2.7,
+    "err_all": -0.0024,
+    "deficit_ordinary": -1.7377,
+    "charter_ordinary": -1.74,
+    "err_ordinary": 0.0023,
+    "n_gt200": 2,
+    "charter_n_gt200": 2,
+    "pct_actual_den": -6.98,
+    "charter_pct": -7.0,
+    "pct_err": 0.017,
+    "pct_model_den": -7.51,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   },
+   {
+    "month": 11,
+    "deficit_all": -3.1515,
+    "charter_all": -3.15,
+    "err_all": -0.0015,
+    "deficit_ordinary": -2.0464,
+    "charter_ordinary": -2.05,
+    "err_ordinary": 0.0036,
+    "n_gt200": 3,
+    "charter_n_gt200": 3,
+    "pct_actual_den": -7.76,
+    "charter_pct": -7.8,
+    "pct_err": 0.041,
+    "pct_model_den": -8.41,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   },
+   {
+    "month": 12,
+    "deficit_all": -5.5014,
+    "charter_all": -5.5,
+    "err_all": -0.0014,
+    "deficit_ordinary": -3.6872,
+    "charter_ordinary": -3.69,
+    "err_ordinary": 0.0028,
+    "n_gt200": 5,
+    "charter_n_gt200": 5,
+    "pct_actual_den": -11.61,
+    "charter_pct": -11.6,
+    "pct_err": -0.007,
+    "pct_model_den": -13.13,
+    "row_ok": true,
+    "disambig_boundary_recheck": false
+   }
+  ]
+ },
+ "G_F1": {
+  "pass": true,
+  "tol_usd": 0.01,
+  "windows": {
+   "2023|W1_jun_jul_h8_20": {
+    "deficit": -4.7502,
+    "committed": -4.75,
+    "err": -0.0002
+   },
+   "2023|JJA_h12_17": {
+    "deficit": -8.3327,
+    "committed": -8.333,
+    "err": 0.0003
+   },
+   "2024|W1_jun_jul_h8_20": {
+    "deficit": -10.6761,
+    "committed": -10.676,
+    "err": -0.0001
+   },
+   "2024|JJA_h12_17": {
+    "deficit": -10.6713,
+    "committed": -10.671,
+    "err": -0.0003
+   },
+   "2025|W1_jun_jul_h8_20": {
+    "deficit": -30.9988,
+    "committed": -30.999,
+    "err": 0.0002
+   },
+   "2025|JJA_h12_17": {
+    "deficit": -30.4349,
+    "committed": -30.435,
+    "err": 0.0001
+   }
+  }
+ },
+ "G_F2": {
+  "pass": true,
+  "n_gt200_2025": 88,
+  "ledger": 88
+ },
+ "G_F3": {
+  "strata": {
+   "2023": {
+    "S1_thr_usd": 43.342,
+    "counts": {
+     "S1": 873,
+     "S2": 120,
+     "S3": 30,
+     "MAYCTRL": 744
+    },
+    "overlap_S1_S2": 120,
+    "n_valid": 8760
+   },
+   "2024": {
+    "S1_thr_usd": 44.906,
+    "counts": {
+     "S1": 873,
+     "S2": 149,
+     "S3": 37,
+     "MAYCTRL": 744
+    },
+    "overlap_S1_S2": 149,
+    "n_valid": 8760
+   },
+   "2025": {
+    "S1_thr_usd": 61.05,
+    "counts": {
+     "S1": 869,
+     "S2": 256,
+     "S3": 88,
+     "S0": 744
+    },
+    "overlap_S1_S2": 256,
+    "n_valid": 8759
+   }
+  },
+  "model_fleet": {
+   "2023": {
+    "by_klass": {
+     "CC_CHP": {
+      "n_units": 68,
+      "pmax_gw": 3.87,
+      "avail_cap_gw_annual_mean": 3.364
+     },
+     "CC_REGULAR": {
+      "n_units": 341,
+      "pmax_gw": 28.504,
+      "avail_cap_gw_annual_mean": 19.895
+     },
+     "COAL": {
+      "n_units": 481,
+      "pmax_gw": 44.377,
+      "avail_cap_gw_annual_mean": 26.186
+     },
+     "CT_CHP": {
+      "n_units": 114,
+      "pmax_gw": 0.896,
+      "avail_cap_gw_annual_mean": 0.777
+     },
+     "CT_PEAKER": {
+      "n_units": 741,
+      "pmax_gw": 22.387,
+      "avail_cap_gw_annual_mean": 18.454
+     },
+     "ST_CHP": {
+      "n_units": 86,
+      "pmax_gw": 0.702,
+      "avail_cap_gw_annual_mean": 0.477
+     },
+     "ST_GAS": {
+      "n_units": 127,
+      "pmax_gw": 11.607,
+      "avail_cap_gw_annual_mean": 5.843
+     },
+     "biomass": {
+      "n_units": 305,
+      "pmax_gw": 1.953,
+      "avail_cap_gw_annual_mean": 1.797
+     },
+     "hydro": {
+      "n_units": 163,
+      "pmax_gw": 2.465,
+      "avail_cap_gw_annual_mean": 2.465
+     },
+     "import": {
+      "n_units": 64,
+      "pmax_gw": 17.2,
+      "avail_cap_gw_annual_mean": 8.024
+     },
+     "nuclear": {
+      "n_units": 13,
+      "pmax_gw": 11.519,
+      "avail_cap_gw_annual_mean": 9.949
+     },
+     "oil": {
+      "n_units": 589,
+      "pmax_gw": 3.339,
+      "avail_cap_gw_annual_mean": 2.993
+     }
+    },
+    "import_tranches_gw": 17.2,
+    "universe": "keeper fleet_state (fleet_only, no LP), incl. import tranches"
+   },
+   "2024": {
+    "by_klass": {
+     "CC_CHP": {
+      "n_units": 64,
+      "pmax_gw": 3.621,
+      "avail_cap_gw_annual_mean": 3.133
+     },
+     "CC_REGULAR": {
+      "n_units": 349,
+      "pmax_gw": 28.884,
+      "avail_cap_gw_annual_mean": 19.605
+     },
+     "COAL": {
+      "n_units": 481,
+      "pmax_gw": 44.377,
+      "avail_cap_gw_annual_mean": 26.403
+     },
+     "CT_CHP": {
+      "n_units": 114,
+      "pmax_gw": 0.896,
+      "avail_cap_gw_annual_mean": 0.777
+     },
+     "CT_PEAKER": {
+      "n_units": 741,
+      "pmax_gw": 22.387,
+      "avail_cap_gw_annual_mean": 18.449
+     },
+     "ST_CHP": {
+      "n_units": 86,
+      "pmax_gw": 0.702,
+      "avail_cap_gw_annual_mean": 0.482
+     },
+     "ST_GAS": {
+      "n_units": 127,
+      "pmax_gw": 11.61,
+      "avail_cap_gw_annual_mean": 6.152
+     },
+     "biomass": {
+      "n_units": 304,
+      "pmax_gw": 1.937,
+      "avail_cap_gw_annual_mean": 1.77
+     },
+     "hydro": {
+      "n_units": 160,
+      "pmax_gw": 2.372,
+      "avail_cap_gw_annual_mean": 2.372
+     },
+     "import": {
+      "n_units": 64,
+      "pmax_gw": 17.2,
+      "avail_cap_gw_annual_mean": 6.621
+     },
+     "nuclear": {
+      "n_units": 13,
+      "pmax_gw": 11.519,
+      "avail_cap_gw_annual_mean": 10.297
+     },
+     "oil": {
+      "n_units": 589,
+      "pmax_gw": 3.339,
+      "avail_cap_gw_annual_mean": 2.962
+     }
+    },
+    "import_tranches_gw": 17.2,
+    "universe": "keeper fleet_state (fleet_only, no LP), incl. import tranches"
+   },
+   "2025": {
+    "by_klass": {
+     "CC_CHP": {
+      "n_units": 64,
+      "pmax_gw": 3.621,
+      "avail_cap_gw_annual_mean": 3.068
+     },
+     "CC_REGULAR": {
+      "n_units": 349,
+      "pmax_gw": 28.315,
+      "avail_cap_gw_annual_mean": 17.922
+     },
+     "COAL": {
+      "n_units": 481,
+      "pmax_gw": 44.377,
+      "avail_cap_gw_annual_mean": 27.365
+     },
+     "CT_CHP": {
+      "n_units": 114,
+      "pmax_gw": 0.896,
+      "avail_cap_gw_annual_mean": 0.776
+     },
+     "CT_PEAKER": {
+      "n_units": 739,
+      "pmax_gw": 22.385,
+      "avail_cap_gw_annual_mean": 18.412
+     },
+     "ST_CHP": {
+      "n_units": 86,
+      "pmax_gw": 0.698,
+      "avail_cap_gw_annual_mean": 0.384
+     },
+     "ST_GAS": {
+      "n_units": 127,
+      "pmax_gw": 11.61,
+      "avail_cap_gw_annual_mean": 6.501
+     },
+     "biomass": {
+      "n_units": 302,
+      "pmax_gw": 1.935,
+      "avail_cap_gw_annual_mean": 1.716
+     },
+     "hydro": {
+      "n_units": 160,
+      "pmax_gw": 2.372,
+      "avail_cap_gw_annual_mean": 2.372
+     },
+     "import": {
+      "n_units": 64,
+      "pmax_gw": 17.2,
+      "avail_cap_gw_annual_mean": 6.039
+     },
+     "nuclear": {
+      "n_units": 13,
+      "pmax_gw": 11.519,
+      "avail_cap_gw_annual_mean": 10.341
+     },
+     "oil": {
+      "n_units": 589,
+      "pmax_gw": 3.339,
+      "avail_cap_gw_annual_mean": 2.951
+     }
+    },
+    "import_tranches_gw": 17.2,
+    "universe": "keeper fleet_state (fleet_only, no LP), incl. import tranches"
+   }
+  },
+  "campd": {
+   "2023": {
+    "year": 2023,
+    "n_units": 692,
+    "n_plants": 244,
+    "unresolved_gross_mwh_by_state": {},
+    "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup",
+    "by_family": {
+     "CC": {
+      "n_units": 150,
+      "sum_p99_gross_gw": 34.807
+     },
+     "CT": {
+      "n_units": 316,
+      "sum_p99_gross_gw": 16.938
+     },
+     "ST_GAS": {
+      "n_units": 111,
+      "sum_p99_gross_gw": 10.228
+     },
+     "ST_COAL": {
+      "n_units": 115,
+      "sum_p99_gross_gw": 48.206
+     }
+    },
+    "reporting_units_by_month": {
+     "1": 668,
+     "2": 668,
+     "3": 668,
+     "4": 689,
+     "5": 689,
+     "6": 689,
+     "7": 678,
+     "8": 678,
+     "9": 678,
+     "10": 652,
+     "11": 652,
+     "12": 652
+    },
+    "basis": "GROSS (state readings); NET via parasitic factors for cross-side"
+   },
+   "2024": {
+    "year": 2024,
+    "n_units": 676,
+    "n_plants": 240,
+    "unresolved_gross_mwh_by_state": {},
+    "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup",
+    "by_family": {
+     "CC": {
+      "n_units": 150,
+      "sum_p99_gross_gw": 35.423
+     },
+     "CT": {
+      "n_units": 313,
+      "sum_p99_gross_gw": 17.218
+     },
+     "ST_GAS": {
+      "n_units": 107,
+      "sum_p99_gross_gw": 10.545
+     },
+     "ST_COAL": {
+      "n_units": 106,
+      "sum_p99_gross_gw": 45.762
+     }
+    },
+    "reporting_units_by_month": {
+     "1": 651,
+     "2": 651,
+     "3": 651,
+     "4": 673,
+     "5": 673,
+     "6": 673,
+     "7": 665,
+     "8": 665,
+     "9": 665,
+     "10": 641,
+     "11": 641,
+     "12": 641
+    },
+    "basis": "GROSS (state readings); NET via parasitic factors for cross-side"
+   },
+   "2025": {
+    "year": 2025,
+    "n_units": 665,
+    "n_plants": 237,
+    "unresolved_gross_mwh_by_state": {},
+    "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup",
+    "by_family": {
+     "CC": {
+      "n_units": 148,
+      "sum_p99_gross_gw": 35.431
+     },
+     "CT": {
+      "n_units": 312,
+      "sum_p99_gross_gw": 18.217
+     },
+     "ST_GAS": {
+      "n_units": 106,
+      "sum_p99_gross_gw": 10.331
+     },
+     "ST_COAL": {
+      "n_units": 99,
+      "sum_p99_gross_gw": 44.118
+     }
+    },
+    "reporting_units_by_month": {
+     "1": 639,
+     "2": 639,
+     "3": 639,
+     "4": 660,
+     "5": 660,
+     "6": 660,
+     "7": 653,
+     "8": 653,
+     "9": 653,
+     "10": 630,
+     "11": 630,
+     "12": 630
+    },
+    "basis": "GROSS (state readings); NET via parasitic factors for cross-side"
+   }
+  }
+ },
+ "footing_pass": true,
+ "branch_on_fail": null
+}
