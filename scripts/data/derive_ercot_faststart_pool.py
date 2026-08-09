@@ -280,6 +280,7 @@ def derive_year(
     gas_day: pd.Series,
     restypes: tuple[str, ...] = CT_RESTYPES,
     edges_override: "tuple[float, ...] | None" = None,
+    position_tail: bool = False,
 ) -> tuple[dict, list[dict], list[str]]:
     """Return ``({"pool_frac": [...], "ladder": [...]}, coverage, files)``.
 
@@ -334,6 +335,7 @@ def derive_year(
     ladders: list[list[list[float]]] = []
     pool_frac: list[float] = []
     coverage: list[dict] = []
+    tails: list[list[list[float]]] = []
     for b in range(n_bins):
         gb = segments[segments["bin"] == b] if len(segments) else segments
         n_iv = int(gb["ts"].nunique()) if len(gb) else 0
@@ -347,6 +349,12 @@ def derive_year(
             if len(gb)
             else [float("nan")] * len(LADDER_QUANTILES)
         )
+        if position_tail:
+            tails.append(
+                tail_support(gb["mult"].to_numpy(float), gb["mw"].to_numpy(float))
+                if len(gb)
+                else []
+            )
         ladders.append([[float(q), round(m, 3)] for q, m in zip(LADDER_QUANTILES, qs)])
         fb = frac_iv[frac_bin_of == b] if len(frac_iv) else frac_iv
         pool_frac.append(round(float(fb.mean()), 4) if len(fb) else float("nan"))
@@ -359,7 +367,10 @@ def derive_year(
                 else 0.0,
             }
         )
-    return {"pool_frac": pool_frac, "ladder": ladders}, coverage, files
+    out = {"pool_frac": pool_frac, "ladder": ladders}
+    if position_tail:
+        out["tail"] = tails
+    return out, coverage, files
 
 
 def derive_year_continuous(
@@ -444,6 +455,74 @@ def derive_year_continuous(
     return out, coverage, files
 
 
+def _main_position_tail(args) -> None:
+    """ERCOT-181: write the position-tail vintage (PRECOMMIT-ercot181 §3).
+
+    The frozen stepped artifact is loaded and COPIED VERBATIM; the CT pool's
+    per (year, bin) tail is derived fresh with the identical population
+    construction, and the re-computed ladder + pool_frac must REPRODUCE the
+    frozen artifact's exactly — a corpus drifted since the frozen derive
+    would make the appended tail inconsistent with its p90 anchor, so a
+    mismatch is stop-the-line. CC blocks are copied untouched (the archived
+    slow-start tier's scope; the positiontail vintage arms the CT pool only).
+    """
+    frozen = json.loads(DEFAULT_OUT.read_text())
+    gas_day = _gas_day_series()
+    result = json.loads(json.dumps(frozen))  # deep copy via round-trip
+    tail_cov: dict[str, list[int]] = {}
+    for y in args.years:
+        per_year, _cov, _files = derive_year(
+            y, gas_day, CT_RESTYPES, position_tail=True
+        )
+        frozen_tbl = frozen.get("CT", {}).get("years", {}).get(str(y))
+        if not frozen_tbl:
+            raise SystemExit(
+                f"--position-tail: frozen pool artifact has no CT year {y} "
+                "block to anchor a tail on"
+            )
+        if not per_year:
+            raise SystemExit(f"--position-tail: no CT pool rows derived for {y}")
+        if (
+            per_year["ladder"] != frozen_tbl["ladder"]
+            or per_year["pool_frac"] != frozen_tbl["pool_frac"]
+        ):
+            raise SystemExit(
+                f"--position-tail: re-derived CT {y} ladder/pool_frac does "
+                "not reproduce the frozen artifact's — the corpus has "
+                "drifted since the frozen derive; STOP (rule 23)"
+            )
+        result["CT"]["years"][str(y)]["tail"] = per_year["tail"]
+        tail_cov[str(y)] = [len(t) for t in per_year["tail"]]
+        print(f"{y} CT pool: tail points by bin = {[len(t) for t in per_year['tail']]}")
+    prov = result.setdefault("_provenance", {})
+    prov["conditioning"] = POSITIONTAIL_TAG
+    prov["positiontail"] = {
+        "precommit": "docs/PRECOMMIT-ercot181-quantity-position-2026-08-09.md",
+        "statistic": (
+            "per (CT, year, bin): the MW-weighted empirical quantile "
+            "function of the SAME offline above-LSL startable segment "
+            "population the frozen ladder measured, at its own distinct "
+            "step points above the p90 grid point "
+            "(lib/positiontail.tail_support; multipliers HCAP-clipped by "
+            "the parent segment construction, round(3); x = cumulative-MW "
+            "fraction, round(6), strictly increasing). Sub-p90 ladders and "
+            "pool_frac are the frozen artifact's blocks byte-verbatim; an "
+            "empty tail keeps the frozen p90 end-clamp byte-identical "
+            "(zero-support rule). CC blocks copied untouched (not armed)"
+        ),
+        "tail_years": [int(y) for y in args.years],
+        "tail_points_per_bin": tail_cov,
+        "frozen_source": DEFAULT_OUT.name,
+    }
+    out = (
+        args.out
+        if args.out != DEFAULT_OUT
+        else CALIBRATION_DIR / "ercot_faststart_pool_positiontail.json"
+    )
+    out.write_text(json.dumps(result, indent=1))
+    print(f"wrote {out} (frozen artifact untouched)")
+
+
 def main() -> None:
     """Derive and write the fast-start pool ladder + share JSON."""
     ap = argparse.ArgumentParser(description=__doc__)
@@ -473,9 +552,23 @@ def main() -> None:
         "step-encoded (PRECOMMIT-ercot180 §3); neither frozen artifact is "
         "touched",
     )
+    ap.add_argument(
+        "--position-tail",
+        action="store_true",
+        help="ERCOT-181: write the position-tail vintage "
+        "(ercot_faststart_pool_positiontail.json) — the frozen stepped "
+        "ladders byte-verbatim plus the CT pool's measured tail step points "
+        "above p90 per (year, bin) (PRECOMMIT-ercot181 §3); the frozen "
+        "artifact is never touched",
+    )
     args = ap.parse_args()
-    if args.continuous and args.top_scoped:
-        raise SystemExit("--continuous and --top-scoped are mutually exclusive")
+    if sum([args.continuous, args.top_scoped, args.position_tail]) > 1:
+        raise SystemExit(
+            "--continuous, --top-scoped and --position-tail are mutually exclusive"
+        )
+    if args.position_tail:
+        _main_position_tail(args)
+        return
     if args.top_scoped:
         _main_topscoped(args)
         return
