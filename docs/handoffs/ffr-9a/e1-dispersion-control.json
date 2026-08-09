@@ -1,0 +1,351 @@
+{
+ "2024": {
+  "commitment_residual_A_minus_B": {
+   "overall_mean": 603.4,
+   "overall_std": 5186.1,
+   "pooled_within_cell_std": 4514.8,
+   "top_decile_cells": {
+    "9": {
+     "mean": 1312.9,
+     "n": 96,
+     "std": 4302.3
+    },
+    "109": {
+     "mean": -4348.8,
+     "n": 30,
+     "std": 3127.6
+    },
+    "209": {
+     "mean": 1586.0,
+     "n": 571,
+     "std": 3751.7
+    },
+    "309": {
+     "mean": 2298.2,
+     "n": 179,
+     "std": 3634.0
+    }
+   }
+  },
+  "identity_check_max_abs_C_vs_min(C2,phys)": 0.0,
+  "knee_visits_h": {
+   "A": {
+    "$10": 48,
+    "$100": 8,
+    "$1000": 0
+   },
+   "B": {
+    "$10": 0,
+    "$100": 0,
+    "$1000": 0
+   },
+   "Btilde": {
+    "$10": 0,
+    "$100": 0,
+    "$1000": 0
+   },
+   "C": {
+    "$10": 133,
+    "$100": 83,
+    "$1000": 39
+   },
+   "C2": {
+    "$10": 0,
+    "$100": 0,
+    "$1000": 0
+   },
+   "Cprime": {
+    "$10": 0,
+    "$100": 0,
+    "$1000": 0
+   }
+  },
+  "outage_share_already_carried": {
+   "A_p1": 7873.8,
+   "C_minus_2sigma_p1": 2804.6,
+   "sigma_r_mw_q": {
+    "mean": 2639.5,
+    "min": 1726.1,
+    "n": 8760,
+    "p1": 1726.1,
+    "p10": 1726.1,
+    "p25": 1726.1,
+    "p5": 1726.1,
+    "p50": 2809.4
+   },
+   "sigma_r_over_within_cell_std": 0.585
+  },
+  "series_quantiles_mw": {
+   "A_measured_rtolcap": {
+    "mean": 16679.3,
+    "min": 5093.6,
+    "n": 8760,
+    "p1": 7873.8,
+    "p10": 10328.3,
+    "p25": 12567.5,
+    "p5": 9298.2,
+    "p50": 16196.9
+   },
+   "B_formula_measured_nl_measured_storage": {
+    "mean": 16075.9,
+    "min": 8966.3,
+    "n": 8760,
+    "p1": 9555.3,
+    "p10": 11964.0,
+    "p25": 14014.4,
+    "p5": 11102.5,
+    "p50": 16641.5
+   },
+   "Btilde_formula_measured_nl_arm_storage": {
+    "mean": 22677.9,
+    "min": 16844.3,
+    "n": 8760,
+    "p1": 16844.3,
+    "p10": 19302.6,
+    "p25": 20735.8,
+    "p5": 16844.3,
+    "p50": 23381.9
+   },
+   "C2_formula_arm_nl_evolved_fleet": {
+    "mean": 23206.3,
+    "min": 17206.3,
+    "n": 8760,
+    "p1": 17206.3,
+    "p10": 19770.2,
+    "p25": 21335.4,
+    "p5": 17206.3,
+    "p50": 23905.4
+   },
+   "C_arm_r_online_phys_bounded": {
+    "mean": 22604.1,
+    "min": 430.5,
+    "n": 8760,
+    "p1": 6276.7,
+    "p10": 17206.3,
+    "p25": 21171.0,
+    "p5": 12683.5,
+    "p50": 23905.4
+   },
+   "Cprime_formula_arm_nl_actual_fleet": {
+    "mean": 22634.9,
+    "min": 16844.3,
+    "n": 8760,
+    "p1": 16844.3,
+    "p10": 19248.9,
+    "p25": 20738.2,
+    "p5": 16844.3,
+    "p50": 23270.5
+   }
+  },
+  "steps_p1_p5_gaps_mw": {
+   "commitment_B_vs_A": {
+    "p1_delta": 1681.4,
+    "p50_delta": 444.6,
+    "p5_delta": 1804.3
+   },
+   "fleet_length_C2_vs_Cprime": {
+    "p1_delta": 362.0,
+    "p5_delta": 362.0
+   },
+   "net_load_realization_Cprime_vs_Btilde": {
+    "p1_delta": 0.0,
+    "p5_delta": 0.0
+   },
+   "phys_bind_C_vs_C2": {
+    "h_bound": 1070,
+    "p1_delta": -10929.7,
+    "p5_delta": -4522.9
+   },
+   "storage_basis_Btilde_vs_B": {
+    "arm_storage_as_mw": 8750.0,
+    "measured_storage_as_q": {
+     "mean": 2148.0,
+     "min": 718.3,
+     "n": 8760,
+     "p1": 900.6,
+     "p10": 1178.2,
+     "p25": 1518.9,
+     "p5": 1053.9,
+     "p50": 2055.8
+    },
+    "p1_delta": 7289.1
+   }
+  }
+ },
+ "2025": {
+  "commitment_residual_A_minus_B": {
+   "overall_mean": 2375.2,
+   "overall_std": 5427.5,
+   "pooled_within_cell_std": 4727.1,
+   "top_decile_cells": {
+    "9": {
+     "mean": 2436.6,
+     "n": 183,
+     "std": 3683.4
+    },
+    "109": {
+     "mean": -1152.1,
+     "n": 31,
+     "std": 3763.0
+    },
+    "209": {
+     "mean": 3642.9,
+     "n": 449,
+     "std": 3472.9
+    },
+    "309": {
+     "mean": 4016.7,
+     "n": 196,
+     "std": 4052.8
+    }
+   }
+  },
+  "identity_check_max_abs_C_vs_min(C2,phys)": 0.0,
+  "knee_visits_h": {
+   "A": {
+    "$10": 5,
+    "$100": 0,
+    "$1000": 0
+   },
+   "B": {
+    "$10": 0,
+    "$100": 0,
+    "$1000": 0
+   },
+   "Btilde": {
+    "$10": 0,
+    "$100": 0,
+    "$1000": 0
+   },
+   "C": {
+    "$10": 5,
+    "$100": 1,
+    "$1000": 0
+   },
+   "C2": {
+    "$10": 0,
+    "$100": 0,
+    "$1000": 0
+   },
+   "Cprime": {
+    "$10": 0,
+    "$100": 0,
+    "$1000": 0
+   }
+  },
+  "outage_share_already_carried": {
+   "A_p1": 8955.0,
+   "C_minus_2sigma_p1": 10470.8,
+   "sigma_r_mw_q": {
+    "mean": 2765.4,
+    "min": 1889.3,
+    "n": 8760,
+    "p1": 1889.3,
+    "p10": 1889.3,
+    "p25": 1889.3,
+    "p5": 1889.3,
+    "p50": 2924.5
+   },
+   "sigma_r_over_within_cell_std": 0.585
+  },
+  "series_quantiles_mw": {
+   "A_measured_rtolcap": {
+    "mean": 19124.0,
+    "min": 7060.2,
+    "n": 8112,
+    "p1": 8955.0,
+    "p10": 12473.6,
+    "p25": 15086.3,
+    "p5": 10974.5,
+    "p50": 18550.8
+   },
+   "B_formula_measured_nl_measured_storage": {
+    "mean": 16748.8,
+    "min": 8639.6,
+    "n": 8112,
+    "p1": 9789.3,
+    "p10": 12377.1,
+    "p25": 14504.9,
+    "p5": 11016.6,
+    "p50": 17286.8
+   },
+   "Btilde_formula_measured_nl_arm_storage": {
+    "mean": 24497.2,
+    "min": 18594.3,
+    "n": 8760,
+    "p1": 18594.3,
+    "p10": 21052.6,
+    "p25": 22488.2,
+    "p5": 18594.3,
+    "p50": 25131.9
+   },
+   "C2_formula_arm_nl_evolved_fleet": {
+    "mean": 24977.7,
+    "min": 18956.3,
+    "n": 8760,
+    "p1": 18956.3,
+    "p10": 21593.8,
+    "p25": 22921.0,
+    "p5": 18956.3,
+    "p50": 25655.4
+   },
+   "C_arm_r_online_phys_bounded": {
+    "mean": 24846.4,
+    "min": 5716.3,
+    "n": 8760,
+    "p1": 14871.2,
+    "p10": 20862.6,
+    "p25": 22921.0,
+    "p5": 18956.3,
+    "p50": 25655.4
+   },
+   "Cprime_formula_arm_nl_actual_fleet": {
+    "mean": 24406.7,
+    "min": 18594.3,
+    "n": 8760,
+    "p1": 18594.3,
+    "p10": 21052.6,
+    "p25": 22488.2,
+    "p5": 18594.3,
+    "p50": 25131.9
+   }
+  },
+  "steps_p1_p5_gaps_mw": {
+   "commitment_B_vs_A": {
+    "p1_delta": 834.3,
+    "p50_delta": -1263.9,
+    "p5_delta": 42.1
+   },
+   "fleet_length_C2_vs_Cprime": {
+    "p1_delta": 362.0,
+    "p5_delta": 362.0
+   },
+   "net_load_realization_Cprime_vs_Btilde": {
+    "p1_delta": 0.0,
+    "p5_delta": 0.0
+   },
+   "phys_bind_C_vs_C2": {
+    "h_bound": 334,
+    "p1_delta": -4085.1,
+    "p5_delta": 0.0
+   },
+   "storage_basis_Btilde_vs_B": {
+    "arm_storage_as_mw": 10500.0,
+    "measured_storage_as_q": {
+     "mean": 2715.7,
+     "min": 0.0,
+     "n": 8112,
+     "p1": 0.0,
+     "p10": 1372.8,
+     "p25": 1850.5,
+     "p5": 0.0,
+     "p50": 2651.4
+    },
+    "p1_delta": 8805.0
+   }
+  }
+ },
+ "actual_fleet_note": "vintage-2020 classes minus FFR-7C corrected exits ({'COAL': 1008.0, 'ST_GAS': 882.0, 'CC_REGULAR': 119.0}), the ffr8a term-(c) construction",
+ "cache_dir": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9a-control/ERCOT/816031a3308cccde",
+ "probe": "ffr8b_e1_dispersion phase 1"
+}
