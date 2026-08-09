@@ -1,0 +1,514 @@
+{
+ "session": "miso-148",
+ "prereg": "results/calibration/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md",
+ "gate": "G-L1a/b/c-precheck \u2014 basis-aware admission on the real fleet, no LP",
+ "years": {
+  "2023": {
+   "G_L1a_admission": {
+    "CC_REGULAR": {
+     "n_units": 341,
+     "pmax_mw": 28503.7,
+     "suppressed": {
+      "n_units": 281,
+      "pmax_mw": 21915.2
+     },
+     "kept": {
+      "n_units": 60,
+      "pmax_mw": 6588.5,
+      "plants": [
+       862,
+       1403,
+       55218,
+       55220,
+       55380,
+       55418,
+       55467,
+       55620
+      ]
+     }
+    },
+    "CC_CHP": {
+     "n_units": 68,
+     "pmax_mw": 3870.2,
+     "suppressed": {
+      "n_units": 64,
+      "pmax_mw": 3620.6
+     },
+     "kept": {
+      "n_units": 4,
+      "pmax_mw": 249.6,
+      "plants": [
+       52006
+      ]
+     }
+    },
+    "CT_PEAKER": {
+     "n_units": 741,
+     "pmax_mw": 22387.4,
+     "suppressed": {
+      "n_units": 729,
+      "pmax_mw": 22104.5
+     },
+     "kept": {
+      "n_units": 12,
+      "pmax_mw": 282.9,
+      "plants": [
+       7842,
+       54748,
+       55218,
+       55620
+      ]
+     }
+    },
+    "CT_CHP": {
+     "n_units": 114,
+     "pmax_mw": 896.0,
+     "suppressed": {
+      "n_units": 114,
+      "pmax_mw": 896.0
+     },
+     "kept": {
+      "n_units": 0,
+      "pmax_mw": 0.0,
+      "plants": []
+     }
+    },
+    "_TOTAL": {
+     "flat_derate_pmax_mw": 55657.3,
+     "suppressed_pmax_mw": 48536.3,
+     "suppressed_share": 0.8721,
+     "measured_basis_plants_in_eia860": 14179
+    }
+   },
+   "G_L1b_restored": {
+    "restored_summer_h12_17_mw": 4936.8,
+    "by_class": {
+     "CC_REGULAR": 1939.6,
+     "CC_CHP": 337.5,
+     "CT_PEAKER": 2555.0,
+     "CT_CHP": 104.7
+    },
+    "miso141_g4_committed_mw": 5933.0,
+    "ratio_vs_miso141": 0.8321,
+    "within_10pct": false,
+    "note": "A LOWER figure than miso-141 G-4 is the EXPECTED consequence of the explicit corrupt-filing treatment (PREREG \u00a74: CC-guard-clipped and EIA-860-absent plants KEEP the derate), not a miss. miso-141's figure zeroed the derate for every unit."
+   },
+   "G_L1c_precheck": {
+    "S1": {
+     "AV_off": 23638.8,
+     "AV_arm": 24647.9,
+     "A": 24865.0,
+     "AV_minus_A_off": -1226.3,
+     "AV_minus_A_arm": -217.1
+    },
+    "monthly_AV_minus_A_off": [
+     2035.0,
+     1531.0,
+     203.8,
+     974.1,
+     1341.0,
+     824.3,
+     82.1,
+     -315.4,
+     489.7,
+     -238.5,
+     260.1,
+     923.2
+    ],
+    "monthly_AV_minus_A_arm": [
+     2035.0,
+     1531.0,
+     203.8,
+     974.1,
+     1341.0,
+     3126.1,
+     2454.4,
+     1996.0,
+     2611.0,
+     -238.5,
+     260.1,
+     923.2
+    ],
+    "verdict": "RISES",
+    "sign_flipped_nonneg": false
+   },
+   "T3_construction": {
+    "off_summer_hours_byte_identical": true,
+    "non_admitted_units_byte_identical": true,
+    "per_class_ratio": {
+     "CC_REGULAR": {
+      "median_ratio": 1.111111,
+      "expected": 1.111111,
+      "ok": true
+     },
+     "CC_CHP": {
+      "median_ratio": 1.111111,
+      "expected": 1.111111,
+      "ok": true
+     },
+     "CT_PEAKER": {
+      "median_ratio": 1.142857,
+      "expected": 1.142857,
+      "ok": true
+     },
+     "CT_CHP": {
+      "median_ratio": 1.142857,
+      "expected": 1.142857,
+      "ok": true
+     }
+    },
+    "pass": true
+   }
+  },
+  "2024": {
+   "G_L1a_admission": {
+    "CC_REGULAR": {
+     "n_units": 349,
+     "pmax_mw": 28883.8,
+     "suppressed": {
+      "n_units": 281,
+      "pmax_mw": 21911.3
+     },
+     "kept": {
+      "n_units": 68,
+      "pmax_mw": 6972.5,
+      "plants": [
+       862,
+       1403,
+       52006,
+       55218,
+       55220,
+       55380,
+       55418,
+       55467,
+       55620
+      ]
+     }
+    },
+    "CC_CHP": {
+     "n_units": 64,
+     "pmax_mw": 3620.6,
+     "suppressed": {
+      "n_units": 64,
+      "pmax_mw": 3620.6
+     },
+     "kept": {
+      "n_units": 0,
+      "pmax_mw": 0.0,
+      "plants": []
+     }
+    },
+    "CT_PEAKER": {
+     "n_units": 741,
+     "pmax_mw": 22387.4,
+     "suppressed": {
+      "n_units": 729,
+      "pmax_mw": 22104.5
+     },
+     "kept": {
+      "n_units": 12,
+      "pmax_mw": 282.9,
+      "plants": [
+       7842,
+       54748,
+       55218,
+       55620
+      ]
+     }
+    },
+    "CT_CHP": {
+     "n_units": 114,
+     "pmax_mw": 896.0,
+     "suppressed": {
+      "n_units": 114,
+      "pmax_mw": 896.0
+     },
+     "kept": {
+      "n_units": 0,
+      "pmax_mw": 0.0,
+      "plants": []
+     }
+    },
+    "_TOTAL": {
+     "flat_derate_pmax_mw": 55787.8,
+     "suppressed_pmax_mw": 48532.4,
+     "suppressed_share": 0.8699,
+     "measured_basis_plants_in_eia860": 14179
+    }
+   },
+   "G_L1b_restored": {
+    "restored_summer_h12_17_mw": 4867.5,
+    "by_class": {
+     "CC_REGULAR": 1861.6,
+     "CC_CHP": 342.0,
+     "CT_PEAKER": 2559.1,
+     "CT_CHP": 104.8
+    },
+    "miso141_g4_committed_mw": 5853.0,
+    "ratio_vs_miso141": 0.8316,
+    "within_10pct": false,
+    "note": "A LOWER figure than miso-141 G-4 is the EXPECTED consequence of the explicit corrupt-filing treatment (PREREG \u00a74: CC-guard-clipped and EIA-860-absent plants KEEP the derate), not a miss. miso-141's figure zeroed the derate for every unit."
+   },
+   "G_L1c_precheck": {
+    "S1": {
+     "AV_off": 23876.7,
+     "AV_arm": 24847.9,
+     "A": 25484.9,
+     "AV_minus_A_off": -1608.2,
+     "AV_minus_A_arm": -637.0
+    },
+    "monthly_AV_minus_A_off": [
+     762.4,
+     1817.2,
+     887.9,
+     1286.2,
+     29.1,
+     151.0,
+     -2192.9,
+     -2037.9,
+     -1450.2,
+     -149.8,
+     -98.6,
+     -203.0
+    ],
+    "monthly_AV_minus_A_arm": [
+     762.4,
+     1817.2,
+     887.9,
+     1286.2,
+     29.1,
+     2332.5,
+     58.1,
+     304.2,
+     586.2,
+     -149.8,
+     -98.6,
+     -203.0
+    ],
+    "verdict": "RISES",
+    "sign_flipped_nonneg": false
+   },
+   "T3_construction": {
+    "off_summer_hours_byte_identical": true,
+    "non_admitted_units_byte_identical": true,
+    "per_class_ratio": {
+     "CC_REGULAR": {
+      "median_ratio": 1.111111,
+      "expected": 1.111111,
+      "ok": true
+     },
+     "CC_CHP": {
+      "median_ratio": 1.111111,
+      "expected": 1.111111,
+      "ok": true
+     },
+     "CT_PEAKER": {
+      "median_ratio": 1.142857,
+      "expected": 1.142857,
+      "ok": true
+     },
+     "CT_CHP": {
+      "median_ratio": 1.142857,
+      "expected": 1.142857,
+      "ok": true
+     }
+    },
+    "pass": true
+   }
+  },
+  "2025": {
+   "G_L1a_admission": {
+    "CC_REGULAR": {
+     "n_units": 349,
+     "pmax_mw": 28315.1,
+     "suppressed": {
+      "n_units": 281,
+      "pmax_mw": 21342.6
+     },
+     "kept": {
+      "n_units": 68,
+      "pmax_mw": 6972.5,
+      "plants": [
+       862,
+       1403,
+       52006,
+       55218,
+       55220,
+       55380,
+       55418,
+       55467,
+       55620
+      ]
+     }
+    },
+    "CC_CHP": {
+     "n_units": 64,
+     "pmax_mw": 3620.6,
+     "suppressed": {
+      "n_units": 64,
+      "pmax_mw": 3620.6
+     },
+     "kept": {
+      "n_units": 0,
+      "pmax_mw": 0.0,
+      "plants": []
+     }
+    },
+    "CT_PEAKER": {
+     "n_units": 739,
+     "pmax_mw": 22384.8,
+     "suppressed": {
+      "n_units": 727,
+      "pmax_mw": 22101.9
+     },
+     "kept": {
+      "n_units": 12,
+      "pmax_mw": 282.9,
+      "plants": [
+       7842,
+       54748,
+       55218,
+       55620
+      ]
+     }
+    },
+    "CT_CHP": {
+     "n_units": 114,
+     "pmax_mw": 896.0,
+     "suppressed": {
+      "n_units": 114,
+      "pmax_mw": 896.0
+     },
+     "kept": {
+      "n_units": 0,
+      "pmax_mw": 0.0,
+      "plants": []
+     }
+    },
+    "_TOTAL": {
+     "flat_derate_pmax_mw": 55216.5,
+     "suppressed_pmax_mw": 47961.1,
+     "suppressed_share": 0.8686,
+     "measured_basis_plants_in_eia860": 14179
+    }
+   },
+   "G_L1b_restored": {
+    "restored_summer_h12_17_mw": 4671.4,
+    "by_class": {
+     "CC_REGULAR": 1696.6,
+     "CC_CHP": 319.6,
+     "CT_PEAKER": 2550.8,
+     "CT_CHP": 104.3
+    },
+    "miso141_g4_committed_mw": 5686.0,
+    "ratio_vs_miso141": 0.8216,
+    "within_10pct": false,
+    "note": "A LOWER figure than miso-141 G-4 is the EXPECTED consequence of the explicit corrupt-filing treatment (PREREG \u00a74: CC-guard-clipped and EIA-860-absent plants KEEP the derate), not a miss. miso-141's figure zeroed the derate for every unit."
+   },
+   "G_L1c_precheck": {
+    "S1": {
+     "AV_off": 22276.4,
+     "AV_arm": 23135.2,
+     "A": 24889.9,
+     "AV_minus_A_off": -2613.6,
+     "AV_minus_A_arm": -1754.8
+    },
+    "monthly_AV_minus_A_off": [
+     1524.5,
+     258.0,
+     1498.1,
+     -400.3,
+     -1075.8,
+     -2295.7,
+     -2450.9,
+     -2157.0,
+     -1559.6,
+     -440.4,
+     -121.4,
+     1131.4
+    ],
+    "monthly_AV_minus_A_arm": [
+     1524.5,
+     258.0,
+     1498.1,
+     -400.3,
+     -1075.8,
+     -373.4,
+     -369.3,
+     -76.5,
+     418.8,
+     -440.4,
+     -121.4,
+     1131.4
+    ],
+    "verdict": "RISES",
+    "sign_flipped_nonneg": false
+   },
+   "T3_construction": {
+    "off_summer_hours_byte_identical": true,
+    "non_admitted_units_byte_identical": true,
+    "per_class_ratio": {
+     "CC_REGULAR": {
+      "median_ratio": 1.111111,
+      "expected": 1.111111,
+      "ok": true
+     },
+     "CC_CHP": {
+      "median_ratio": 1.111111,
+      "expected": 1.111111,
+      "ok": true
+     },
+     "CT_PEAKER": {
+      "median_ratio": 1.142857,
+      "expected": 1.142857,
+      "ok": true
+     },
+     "CT_CHP": {
+      "median_ratio": 1.142857,
+      "expected": 1.142857,
+      "ok": true
+     }
+    },
+    "pass": true
+   }
+  }
+ },
+ "L2_residual_oa_census": {
+  "n_OA_rows_in_fleet_plants": 18,
+  "n_dropped_but_OP_in_2024": 9,
+  "mw_dropped": 594.7,
+  "by_plant": [
+   {
+    "plant_code": 941,
+    "plant_name": "Farmer City",
+    "mw": 2.8,
+    "n_rows": 1
+   },
+   {
+    "plant_code": 7474,
+    "plant_name": "Upper Sterling",
+    "mw": 2.0,
+    "n_rows": 2
+   },
+   {
+    "plant_code": 10234,
+    "plant_name": "Biron Mill",
+    "mw": 12.5,
+    "n_rows": 1
+   },
+   {
+    "plant_code": 55358,
+    "plant_name": "Cottonwood Energy Company LP",
+    "mw": 576.2,
+    "n_rows": 4
+   },
+   {
+    "plant_code": 58330,
+    "plant_name": "The Andersons Albion Ethanol LLC",
+    "mw": 1.2,
+    "n_rows": 1
+   }
+  ],
+  "note": "2025 has no vintage_2025/ directory, so the fleet falls back to the canonical (2025 Early Release) EIA-860, which re-flags these rows OA (standby). The operable loader carries OP only, and the designed rescue load_mothballed_but_operating returns [] because its vintage_<year> precondition is unmet. REPORTED, NOT REPAIRED \u2014 the fix is cross-ISO (every ISO's 2025+ fleet) and needs its own lane."
+ }
+}
