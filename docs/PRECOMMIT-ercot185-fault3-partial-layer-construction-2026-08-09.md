@@ -76,13 +76,27 @@ disturbing 2023 or 2025.
 
 ### 2a. What it is
 
+> **AMENDMENT A-1, made BEFORE any measurement of the arm (see §2a-bis).** The
+> construction below is the **normalized** form. The form first pre-registered
+> in this document — `derate(d) = min(1, sm[d]/ref)` — is retained as the named
+> variant **RAW** and is reported at the seam, never solved. The reason for the
+> amendment is a structural defect in RAW discovered by reading the frozen
+> detector, **not** by looking at any residual, metric or arm effect; no
+> measurement of either variant had been taken when this amendment was written.
+
 Replace the plateau's single flat `derate_factor` with a **day-resolved derate
-series over the same plateau**, taken from the detector's **own** smoothed
-daily-ceiling statistic:
+series over the same plateau**, whose **level stays the incumbent's own measured
+plateau statistic** and whose **within-window shape** comes from the detector's
+own smoothed daily-ceiling series:
 
 ```
-incumbent :  derate(d) = median(dmax[i:j]) / ref            for every day d in [i, j)
-SHAPED    :  derate(d) = min(1.0, sm[d] / ref)              for each day d in [i, j)
+incumbent :  derate(d) = f0 = median(dmax[i:j]) / ref       for every day d in [i, j)
+
+SHAPED (the arm, "NORMALIZED"):
+             derate(d) = clip( f0 × sm[d] / median(sm[i:j]),  0, 1 )   for each day d
+
+variant RAW (reported at the seam, NOT solved):
+             derate(d) = min(1.0, sm[d] / ref)
 ```
 
 where, **imported verbatim from the frozen detector and never re-valued**:
@@ -96,10 +110,42 @@ where, **imported verbatim from the frozen detector and never re-valued**:
 * `ref` — the detector's own normal ceiling, the 90th percentile of `dmax` over
   running days (`dmean > _RUN_FLOOR_CF`).
 
-The incumbent is the **window-median coarsening of exactly this series**. The
-change is therefore a **grain refinement of one measured statistic**, formally
-the same class of change as the ercot-174 unit-attribution (proved grain-only
-by BE-1/2/3) — one grain finer in **time** rather than in **unit**.
+`f0` is the incumbent's own emitted `derate_factor`, unchanged. Both `f0` and
+`sm` are medians of the SAME daily-maximum series `dmax`, differing only in the
+window the median is taken over — the whole plateau (`f0`) versus a centered
+7-day band (`sm`). The change is therefore a **grain refinement of one measured
+statistic**, formally the same class of change as the ercot-174
+unit-attribution (proved grain-only by BE-1/2/3) — one grain finer in **time**
+rather than in **unit**.
+
+### 2a-bis. Why NORMALIZED and not RAW — the defect, and why this is not a
+post-hoc swap
+
+Reading `_detect` closely: the plateau **membership** test thresholds the
+smoothed series (`partial = running & (sm < _CEILING_FRAC × ref)`), but the
+emitted **factor** is `median(dmax[i:j])/ref` — the median of the *raw* daily
+maxima. The two statistics sit at systematically different levels: inside a
+plateau every day satisfies `sm[d] < 0.65 × ref` **by the membership test
+itself**, so RAW is bounded above by 0.65 everywhere, while `median(dmax)` is
+computed on the noisier, upward-tailed raw series and carries no such bound.
+
+RAW therefore changes the plateau's **level** as well as its **shape**, and in
+the restrictive direction — it would confound the fault-3 shape repair with an
+unlegislated downward level shift, i.e. remove *more* capability, which is the
+opposite of the chartered object and would make any measured result
+uninterpretable (rule 19 `[R-ONE-MECH]`: one mechanism, one phenomenon).
+
+NORMALIZED isolates the defect being repaired. Because scaling commutes with the
+median, `median(shaped[i:j]) = f0` **exactly** (before clipping/rounding): the
+arm is a **provable pure re-shaping of the incumbent plateau**, not a lift and
+not a cut. It is also the literal reading of the charter's own words —
+*"plateau-window CEMS-shaped"*: the plateau's window level stays measured where
+it was, the within-window profile becomes CEMS-shaped.
+
+**Zero DOF is unaffected**: `f0`, `sm`, `ref` and the four frozen constants are
+all pre-existing quantities; the normalization introduces no scalar. Fail-safe:
+when `median(sm[i:j]) ≤ 0` the plateau falls back to the incumbent flat `f0`
+(counted and reported).
 
 ### 2b. Why `sm[d]` and not `dmax[d]` — stated before measurement
 
@@ -208,11 +254,18 @@ family and §5 is the binding response.
 | **SP-2** | per plant-year, the shaped extract's **covered hour set** is identical to the incumbent's (`outage_hour_mask` union, all three years) | any hour added or dropped ⇒ this is a population change, not a re-shaping ⇒ G-NEUT is reached ⇒ stop |
 | **SP-3** | the gate at its **default (off)** reproduces the incumbent availability array exactly, at BOTH consumers | max abs Δ > 0 ⇒ the gate is not inert at default; stop |
 | **SP-4** | with the gate ON and every event-cap gate OFF, the composed availability differs from control **only** on plateau hours | any out-of-plateau Δ ⇒ leakage; stop |
-| **SP-5** | the shaped derate is **two-valued nowhere by construction**: within each plateau the emitted sub-window factors reproduce `min(1, sm[d]/ref)` for every day, max abs dev ≤ 1e-9 | dev above tolerance ⇒ the emitted extract is not the stated construction |
+| **SP-5** | within each plateau the emitted sub-window factors reproduce `clip(f0 × sm[d]/median(sm[i:j]), 0, 1)` for every day, max abs dev ≤ 1e-9 (after the incumbent's own 3-dp rounding) | dev above tolerance ⇒ the emitted extract is not the stated construction |
+| **SP-6** | **median preservation** (the §2a-bis property): per plateau, `median(shaped[i:j]) == f0` to within 3-dp rounding + any 1.0-clip. Clip events and fail-safe fallbacks counted and reported | a systematic signed deviation ⇒ the arm is a net lift or cut, not a re-shaping ⇒ report and stop |
 
-SP-2 is the load-bearing one: it is the formal statement that this is a
-**re-shaping and not a population change**, which is what keeps G-NEUT out of
-scope (§2c).
+SP-2 and SP-6 are the load-bearing ones. SP-2 is the formal statement that this
+is a **re-shaping and not a population change** (which keeps G-NEUT out of
+scope, §2c); SP-6 is the formal statement that it is a **re-shaping and not a
+level change** (which is what separates it from the restore-only rejected
+family, §3).
+
+**Variant RAW is measured at the seam and REPORTED, never solved**: its §5
+BOUND and its signed level shift vs the incumbent are recorded as the evidence
+for §2a-bis's structural argument.
 
 ---
 
@@ -291,8 +344,9 @@ renegotiated after the solve.**
   directions; the share of changed plant-hours with shaped > incumbent lies
   strictly between 5 % and 95 % in each year. *Falsifier: ≥95 % (restore-only,
   i.e. the rejected family's signature) or ≤5 %.* REPORTED; §5 binds.
-* **P-3 (the ercot-172 object).** At h2827 (2024-04-28 19:00) the shaped partial
-  factor for (3470, COAL) is **≥ 0.50**, against the incumbent **0.363** and the
+* **P-3 (the ercot-172 object).** At h2827 (2024-04-28 19:00) the ARM's
+  (NORMALIZED) shaped partial factor for (3470, COAL) is **≥ 0.50**, against the
+  incumbent **0.363** and the
   plant's same-hour CEMS-implied **0.7843**. *Falsifier: < 0.50.*
   **If P-3 fails**, the construction is still correct but the W A Parish plateau
   is genuinely flat — i.e. **fault 3 is not the driver at that plant**, which
@@ -310,7 +364,7 @@ renegotiated after the solve.**
 
 ## 8. DECISION RULE
 
-1. **SP-0 … SP-5 all PASS** — else stop, report, register nothing.
+1. **SP-0 … SP-6 all PASS** — else stop, report, register nothing.
 2. **§5 screen** — `≥2.0 TWh` ⇒ STOP pre-solve. Else proceed.
 3. **A/B pair**, `scripts/replay_keeper.py` on `ercot181_positiontail_B`,
    control and arm **STRICTLY SEQUENTIAL** (~6.6 GB RSS, ~20 min/year each; two
