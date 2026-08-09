@@ -273,6 +273,16 @@ def _zone_price(year: int, hours: int, zones: list[str]) -> dict[str, np.ndarray
     return out
 
 
+# Control-path integrity reference: the ercot-178 seam proof's recorded
+# gate-off compose shas (ercot178_contpct_seamproof.json, SP2), re-verified
+# by ercot-180 at its HEAD. A mismatch at THIS HEAD is stop-the-line.
+CONTROL_COMPOSE_SHA = {
+    2023: "25a4ba697e5902616dff9528c124a6f600d73d3530044087536f38ac7a579567",
+    2024: "4dfdad090e2ef7f77333c2029b2007029c43ad00084f40c924de5a2ed7d87a76",
+    2025: "c9caf9dedb193ae5ef6fb8b0287ef6f48d57fac2257d5ebdf9e20710e9e44656",
+}
+
+
 def run_year(year: int) -> dict:
     from scripts.lib.bundle_fleet import reconstruct_bundle_fleet
 
@@ -284,6 +294,10 @@ def run_year(year: int) -> dict:
     geo = _year_geometry(state, year)
 
     rec: dict = {"year": year}
+    rec["control_composed_sha"] = sp._sha(composed)
+    rec["control_sha_matches_ercot178"] = (
+        rec["control_composed_sha"] == CONTROL_COMPOSE_SHA.get(year)
+    )
     # ---- validation: byte-identical member reproduction (stop-the-line) ----
     wall_ok = (
         parts["wall"] is None and not geo["wall_markup"].any()
