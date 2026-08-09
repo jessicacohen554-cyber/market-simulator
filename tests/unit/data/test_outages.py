@@ -1909,5 +1909,135 @@ class UnitOutageLpCapacityBasisTest(unittest.TestCase):
         self.assertLess(removed_fix, removed_now)
 
 
+class ShapedPartialOutageDerateTest(unittest.TestCase):
+    """The ercot-185 fault-3 day-shaped partial-outage plateau construction.
+
+    The repair replaces a plateau's single flat multi-week factor with a
+    day-resolved profile over the SAME days. What must hold is (a) the
+    construction is what it says it is, (b) it is median-preserving — a pure
+    re-shaping, never a net lift or cut, which is what separates it from the
+    adjudicated-dead restore-only composition arms — (c) the two plateau
+    populations cannot drift apart, and (d) the loader gate is fail-safe.
+    """
+
+    @staticmethod
+    def _cf_with_plateau() -> np.ndarray:
+        """A synthetic baseload year: full output, then a SHAPED 20-day dip.
+
+        The dip's daily ceiling ramps 0.30 -> 0.60 across the window, so a flat
+        window-median ceiling provably forbids output the plant demonstrably
+        reached on the window's later days — the fault-3 defect in miniature.
+        """
+        nd = 120
+        daily = np.full(nd, 0.95)
+        daily[50:70] = np.linspace(0.30, 0.60, 20)
+        cf = np.repeat(daily, 24)
+        # A within-day shape so daily MAX is the ceiling and daily MEAN stays
+        # above _RUN_FLOOR_CF (the plant is running, not out).
+        cf *= np.tile(np.linspace(0.8, 1.0, 24), nd)
+        return cf
+
+    def test_shaped_profile_is_the_stated_construction(self):
+        from scripts.lib.outage_detect import (
+            _plateau_state,
+            _detect,
+            detect_shaped,
+        )
+
+        cf = self._cf_with_plateau()
+        flat, shaped = _detect(cf), detect_shaped(cf)
+        self.assertTrue(flat, "the synthetic plateau must be detected at all")
+        self.assertEqual(len(flat), len(shaped))
+        dmax, ref, sm, _partial = _plateau_state(cf)
+        for (i, j, f0), (si, sj, prof) in zip(flat, shaped):
+            self.assertEqual((i, j), (si, sj))  # same days, no population change
+            self.assertEqual(len(prof), j - i)
+            want = np.round(np.clip(f0 * sm[i:j] / float(np.median(sm[i:j])), 0, 1), 3)
+            np.testing.assert_allclose(prof, want, atol=1e-9)
+
+    def test_shaped_profile_is_median_preserving(self):
+        """SP-6: median(shaped) == the incumbent flat factor (rounding aside).
+
+        This is the property that makes the repair a RE-SHAPING rather than a
+        level change, so it can never be the restore-only rejected arm.
+        """
+        from scripts.lib.outage_detect import _detect, detect_shaped
+
+        cf = self._cf_with_plateau()
+        for (_i, _j, f0), (_si, _sj, prof) in zip(_detect(cf), detect_shaped(cf)):
+            self.assertAlmostEqual(float(np.median(prof)), f0, delta=0.002)
+            # Genuinely two-sided: the profile straddles the flat factor.
+            self.assertGreater(prof.max(), f0)
+            self.assertLess(prof.min(), f0)
+
+    def test_shaped_detector_shares_the_plateau_population(self):
+        """The flat and shaped detectors read spans from one _plateau_spans."""
+        from scripts.lib.outage_detect import _detect, detect_shaped, detect_shaped_raw
+
+        for cf in (self._cf_with_plateau(), np.zeros(24 * 60), np.full(24 * 60, 0.9)):
+            spans = [(i, j) for i, j, _ in _detect(cf)]
+            for fn in (detect_shaped, detect_shaped_raw):
+                self.assertEqual([(i, j) for i, j, _ in fn(cf)], spans)
+
+    def test_variant_raw_is_capped_by_the_membership_test(self):
+        """Precommit §2a-bis: RAW is bounded by _CEILING_FRAC, the flat factor is not.
+
+        This is why RAW changes the plateau LEVEL as well as its shape and is
+        reported-only rather than armed.
+        """
+        from scripts.lib.outage_detect import _CEILING_FRAC, detect_shaped_raw
+
+        for _i, _j, prof in detect_shaped_raw(self._cf_with_plateau()):
+            self.assertLessEqual(float(prof.max()), _CEILING_FRAC + 1e-9)
+
+    def test_loader_gate_is_fail_safe_when_the_extract_is_absent(self):
+        """An absent shaped extract degrades to the incumbent flat factors."""
+        from unittest.mock import patch
+
+        from market_sim.data import outages
+
+        outages.partial_outage_derate_factors.cache_clear()
+        try:
+            flat = outages.partial_outage_derate_factors(2024, HOURS_PER_YEAR)
+            outages.partial_outage_derate_factors.cache_clear()
+            with patch.object(
+                outages, "PARTIAL_OUTAGE_SHAPED_CSV", Path("/nonexistent/shaped.csv")
+            ):
+                degraded = outages.partial_outage_derate_factors(
+                    2024, HOURS_PER_YEAR, shaped=True
+                )
+            self.assertEqual(set(flat), set(degraded))
+            for k in flat:
+                np.testing.assert_array_equal(flat[k], degraded[k])
+        finally:
+            outages.partial_outage_derate_factors.cache_clear()
+
+    def test_committed_shaped_extract_tiles_the_committed_flat_extract(self):
+        """The shipped pair: same covered hours, same plateau spans, per year."""
+        from market_sim.data.outages import (
+            PARTIAL_OUTAGE_CSV,
+            PARTIAL_OUTAGE_SHAPED_CSV,
+        )
+
+        if not PARTIAL_OUTAGE_SHAPED_CSV.exists():
+            self.skipTest("shaped extract not present")
+        flat = pd.read_csv(PARTIAL_OUTAGE_CSV)
+        shaped = pd.read_csv(PARTIAL_OUTAGE_SHAPED_CSV)
+        for year in (2023, 2024, 2025):
+            for code in sorted(flat[flat["year"] == year]["oris_code"].unique()):
+                def _cover(df):
+                    m = np.zeros(HOURS_PER_YEAR, dtype=bool)
+                    sub = df[(df["year"] == year) & (df["oris_code"] == code)]
+                    for r in sub.itertuples(index=False):
+                        m |= outage_hour_mask(
+                            r.outage_start, r.outage_stop, year, HOURS_PER_YEAR
+                        )
+                    return m
+
+                np.testing.assert_array_equal(
+                    _cover(flat), _cover(shaped), f"{code} {year} covered hours differ"
+                )
+
+
 if __name__ == "__main__":
     unittest.main()
