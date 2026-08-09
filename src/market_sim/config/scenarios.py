@@ -247,6 +247,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # caiso-184's omission of exactly this step, which moved the pinned
     # default key and needed an FFR-8A backfill, is why it is done here.
     "cc_winter_capability_basis",
+    # miso-148 basis-aware flat summer derate (GATED default-off): the flat
+    # _SUMMER_CLASS_DERATE is suppressed only for units whose pmax already IS a
+    # measured summer capability, and the consumer reads it via getattr, so the
+    # off path is byte-inert and every pre-existing cache key stays byte-stable.
+    # An ARMED run changes the availability matrix for four gas classes in the
+    # summer months, so it is a different scenario and gets a distinct key.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 / caiso-186
+    # discipline — caiso-184 skipped this step, moved the pinned default key and
+    # needed an FFR-8A backfill).
+    "summer_derate_basis_aware",
     # FFR-5E near-term VRE procurement channel (GATED default-off): dropped
     # from the hash at its default so every pre-existing cache key is
     # byte-stable; an armed run injects committed EIA-860 pipeline MW into the
@@ -902,6 +912,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-186 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "cc_winter_capability_basis": "False",
+    # Added by miso-148 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "summer_derate_basis_aware": "False",
     "vre_procurement_additions_enabled": "False",
     # Backfilled at FFR-7B alongside the field's (missing) registration above:
     # nyiso-128 landed the field unregistered, moving the pinned default key.
