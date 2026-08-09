@@ -3427,3 +3427,16 @@ three times in 30 h; keepers not settled); **HOUSE-2** (the pinned-baseline fail
 overlap surfaces active in ercot-181 and miso-145 — held to avoid collisions, queued).
 HOUSE-1 is MERGED: the constants.py reflow trap is DEAD; prompts now carry the
 cache-key-pin wait line instead.
+
+### AF.5 The caiso-184 keeper audit returned: PASS, zero drift (recorded per AF.3)
+
+The worktree-isolated `calibration-keeper-auditor` pass scoped `--iso CAISO` completed
+against `origin/main` `960b38a`: `audit_keepers.py` E1–E9/H1/M1/S1 all OK (0 fail /
+0 warn), `build_status.py --check --iso CAISO` in sync, the keeper shard / status page /
+registry sidecars all consistent with `2026-08-09-caiso-184-c1-lpbasis` — the
+two-promotions-in-12-hours sequence left no drift, and the prior sidecars (caiso-183,
+caiso-175) each describe only their own arm. Nothing was modified; no audit branch was
+needed. Noted for the record: the current CAISO keeper's live determination is **NOT-YET**
+(C3a mean LMP the sole load-bearing FAIL; the C3c ledgered caveat carried verbatim from
+the prior keeper) — consistent with CAISO's withdrawn `complete` marker; the auditor also
+manually confirmed no CAISO registry entry postdates the keeper.
