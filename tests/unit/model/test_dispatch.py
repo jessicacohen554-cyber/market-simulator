@@ -1483,6 +1483,200 @@ class TestCleanTierRegionRows(unittest.TestCase):
                 **self._no_renewables(1),
             )
 
+    # ----------------------------------------------------------------- #
+    # ARM3-FIX — the generator-column zone mask
+    # (docs/handoffs/arm3-clean-row-horizon-2026-08-09.md §3: fuel-only
+    # resolution let MISO-South nuclear satisfy MI's East-only row).
+    # ----------------------------------------------------------------- #
+
+    def _two_zone_nuclear_fleet(self, nuclear_zone, gas_zone, zone_names):
+        """One nuclear + one gas unit, each placed in a named zone."""
+        generators = [
+            Generator(
+                unit_id="N0",
+                name="N0",
+                zone=nuclear_zone,
+                fuel_type="nuclear",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="G0",
+                name="G0",
+                zone=gas_zone,
+                fuel_type="gas_cc",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+        ]
+        return generators_to_fleet_arrays(generators, zone_names, hours=self.T)
+
+    def test_clean_row_generator_columns_are_zone_masked(self):
+        # THE ARM3-FIX structural pin: a clean row's generator columns obey
+        # the SAME eligible-zone mask its wind/solar columns always obeyed.
+        # Zones [E, S], nuclear in each, mask E-only: the row carries +1 on
+        # the E reactor's P columns and NOTHING on the S reactor's — in
+        # every hour — while the VRE treatment is unchanged (E wind counted,
+        # S wind not).
+        zone_names = ["E", "S"]
+        generators = [
+            Generator(
+                unit_id=f"N-{z}",
+                name=f"N-{z}",
+                zone=z,
+                fuel_type="nuclear",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            )
+            for z in zone_names
+        ]
+        fleet = generators_to_fleet_arrays(generators, zone_names, hours=self.T)
+        layout = VariableLayout(
+            n_gen=2, n_zones=2, n_storage=0, n_links=0, T=self.T, n_rec_acp=2
+        )
+        demand = np.full((2, self.T), 80.0)
+        A = build_constraints(
+            layout,
+            fleet,
+            demand,
+            rps_region_zone_mask=np.ones((1, 2), dtype=bool),
+            rps_region_obligation_frac=np.zeros((1, 2)),
+            clean_region_zone_mask=np.array([[True, False]]),
+            clean_region_obligation_frac=np.array([[0.8, 0.0]]),
+            clean_region_fuels=(("nuclear", "wind", "solar"),),
+        )[0]
+        clean_row = A.shape[0] - 1
+        for t in (0, self.T - 1):  # first and last hour — the pattern is per-hour
+            self.assertEqual(A[clean_row, layout.p_col(0, t)], 1.0)  # E reactor
+            self.assertEqual(A[clean_row, layout.p_col(1, t)], 0.0)  # S reactor
+            self.assertEqual(A[clean_row, layout.w_col(0, t)], 1.0)  # E wind
+            self.assertEqual(A[clean_row, layout.w_col(1, t)], 0.0)  # S wind
+
+    def test_out_of_mask_nuclear_cannot_satisfy_clean_row(self):
+        # The MI-2035 flip in miniature (finding §3.2 last row): an
+        # East-only clean row whose ONLY qualifying generator sits in the
+        # other zone is certificate-short and escapes at its $30 ACP —
+        # out-of-zone nuclear buys it nothing (MCL 460.1029 semantics).
+        # Relocate the reactor in-mask and the same row is covered, dual 0.
+        # Under the pre-fix fuel-only resolution both variants read dual 0,
+        # which is exactly the defect ARM3-MEASURE found.
+        zone_names = ["E", "S"]
+        demand = np.full((2, self.T), 80.0)
+        mc = np.vstack([np.full(self.T, 10.0), np.full(self.T, 50.0)])
+        common = dict(
+            mc=mc,
+            T=self.T,
+            **self._rps_carrier(2),
+            clean_region_zone_mask=np.array([[True, False]]),
+            clean_region_obligation_frac=np.array([[0.8, 0.0]]),
+            clean_region_acp_price=np.array([30.0]),
+            clean_region_fuels=(("nuclear", "wind", "solar"),),
+            **self._no_renewables(2),
+        )
+        out_of_mask = solve_dispatch(
+            self._two_zone_nuclear_fleet("S", "E", zone_names),
+            demand,
+            **common,
+        )
+        self.assertEqual(out_of_mask.status, "Optimal")
+        np.testing.assert_allclose(out_of_mask.clean_region_duals, [30.0], atol=1e-3)
+        in_mask = solve_dispatch(
+            self._two_zone_nuclear_fleet("E", "S", zone_names),
+            demand,
+            **common,
+        )
+        self.assertEqual(in_mask.status, "Optimal")
+        np.testing.assert_allclose(in_mask.clean_region_duals, [0.0], atol=1e-3)
+
+    def test_arming_clean_family_only_appends_rows(self):
+        # Arm-2 non-regression at the matrix level: on ONE layout, the build
+        # WITH the clean family equals the build WITHOUT it in every shared
+        # row — matrix and bounds — with the clean rows purely appended at
+        # the end. The RPS family (which passes no region_gen_idx) is
+        # byte-identical across the two, so the zone-masked resolver cannot
+        # have touched it.
+        zone_names = ["E", "S"]
+        fleet = self._two_zone_nuclear_fleet("S", "E", zone_names)
+        layout = VariableLayout(
+            n_gen=2, n_zones=2, n_storage=0, n_links=0, T=self.T, n_rec_acp=2
+        )
+        demand = np.full((2, self.T), 80.0)
+        rps_kwargs = dict(
+            rps_region_zone_mask=np.ones((1, 2), dtype=bool),
+            rps_region_obligation_frac=np.full((1, 2), 0.3),
+        )
+        A_off, lo_off, up_off = build_constraints(layout, fleet, demand, **rps_kwargs)[
+            :3
+        ]
+        A_on, lo_on, up_on = build_constraints(
+            layout,
+            fleet,
+            demand,
+            **rps_kwargs,
+            clean_region_zone_mask=np.array([[True, False]]),
+            clean_region_obligation_frac=np.array([[0.8, 0.0]]),
+            clean_region_fuels=(("nuclear", "wind", "solar"),),
+        )[:3]
+        self.assertEqual(A_on.shape[0], A_off.shape[0] + 1)
+        self.assertEqual((A_on[: A_off.shape[0]] != A_off).nnz, 0)
+        np.testing.assert_array_equal(lo_on[: lo_off.size], lo_off)
+        np.testing.assert_array_equal(up_on[: up_off.size], up_off)
+
+    def test_default_path_never_reaches_the_resolver(self):
+        # The ARM3-FIX byte-inertness proof: with the clean family OFF (the
+        # shipped default — ``miso_clean_tier_rows=False``), constraint
+        # assembly never calls the changed resolver, on either RPS grain.
+        # With the family ON the same sentinel fires — so the probe is
+        # proven able to detect the call, and the fix's blast radius is
+        # exactly the armed path.
+        from unittest import mock
+
+        fleet = self._two_zone_nuclear_fleet("S", "E", ["E", "S"])
+        demand = np.full((2, self.T), 80.0)
+        with mock.patch(
+            "market_sim.model.lp.rows._resolve_clean_region_gen_idx",
+            side_effect=AssertionError("resolver reached on default path"),
+        ):
+            layout1 = VariableLayout(
+                n_gen=2, n_zones=2, n_storage=0, n_links=0, T=self.T, n_rec_acp=1
+            )
+            build_constraints(layout1, fleet, demand, rps_target=0.3)
+            build_constraints(
+                layout1,
+                fleet,
+                demand,
+                rps_region_zone_mask=np.ones((1, 2), dtype=bool),
+                rps_region_obligation_frac=np.full((1, 2), 0.3),
+            )
+            layout2 = VariableLayout(
+                n_gen=2, n_zones=2, n_storage=0, n_links=0, T=self.T, n_rec_acp=2
+            )
+            with self.assertRaises(AssertionError):
+                build_constraints(
+                    layout2,
+                    fleet,
+                    demand,
+                    rps_region_zone_mask=np.ones((1, 2), dtype=bool),
+                    rps_region_obligation_frac=np.full((1, 2), 0.3),
+                    clean_region_zone_mask=np.array([[True, False]]),
+                    clean_region_obligation_frac=np.array([[0.8, 0.0]]),
+                    clean_region_fuels=(("nuclear", "wind", "solar"),),
+                )
+
+    def test_clean_mask_fuels_axis_mismatch_refused(self):
+        # The resolver refuses a mask/fuels region-axis mismatch — a wiring
+        # error, never a silent broadcast.
+        from market_sim.model.lp.rows import _resolve_clean_region_gen_idx
+
+        fleet = self._two_zone_nuclear_fleet("S", "E", ["E", "S"])
+        with self.assertRaises(ValueError):
+            _resolve_clean_region_gen_idx(
+                fleet, (("nuclear",),), np.ones((2, 2), dtype=bool)
+            )
+
 
 class TestMassCapConstraint(unittest.TestCase):
     """The emissions mass-cap row, its endogenous dual, and membership."""
