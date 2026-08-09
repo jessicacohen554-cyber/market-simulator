@@ -1,0 +1,186 @@
+{
+ "be1_default_off_and_keys_unmoved": {
+  "rows": {
+   "ERCOT": {
+    "default_value": false,
+    "default_cache_key": "603c2498bf71d21d",
+    "baseline_cache_key": "603c2498bf71d21d",
+    "key_unmoved": true
+   },
+   "CAISO": {
+    "default_value": false,
+    "default_cache_key": "51b2892ed6f0d742",
+    "baseline_cache_key": "51b2892ed6f0d742",
+    "key_unmoved": true
+   },
+   "PJM": {
+    "default_value": false,
+    "default_cache_key": "5cfabdff9bfd6de6",
+    "baseline_cache_key": "5cfabdff9bfd6de6",
+    "key_unmoved": true
+   },
+   "MISO": {
+    "default_value": false,
+    "default_cache_key": "ea1c7983d5c54ec4",
+    "baseline_cache_key": "ea1c7983d5c54ec4",
+    "key_unmoved": true
+   },
+   "NYISO": {
+    "default_value": false,
+    "default_cache_key": "1462c74e6775a24b",
+    "baseline_cache_key": "1462c74e6775a24b",
+    "key_unmoved": true
+   },
+   "NEISO": {
+    "default_value": false,
+    "default_cache_key": "62923af03d1c9bac",
+    "baseline_cache_key": "62923af03d1c9bac",
+    "key_unmoved": true
+   }
+  },
+  "pass": true
+ },
+ "be3_parent_off_noop": [
+  {
+   "iso": "ERCOT",
+   "bins": 304,
+   "capacity_identical": true,
+   "availability_identical": true,
+   "max_abs_availability_delta": 0.0
+  },
+  {
+   "iso": "MISO",
+   "bins": 423,
+   "capacity_identical": true,
+   "availability_identical": true,
+   "max_abs_availability_delta": 0.0
+  }
+ ],
+ "be5_data_sha256": {
+  "cc_capacity_reconcile_CAISO.csv": "1140562bd07f4fb57ba623f6fc0f5b863d7b176bc5397382ddc014dbc381ce11",
+  "cc_capacity_reconcile_ERCOT.csv": "8c886ba4fe04df6b206bb8c995d6cec7c888a9055ac5918ab7fc034d9a8b9b5b",
+  "cc_capacity_reconcile_MISO.csv": "b936a247f5014199f70146ec8cbb867f9479125633d9e0694da97c78b2f16d51",
+  "cc_capacity_reconcile_NEISO.csv": "92ba627d705493385a410416a3a3e4997b228ee00f03c28a66f7f581a0a4b191",
+  "cc_capacity_reconcile_NYISO.csv": "b3b7088765c728eca951237aea7ecefd0237d6e6cbd95046150cc45e9f52ef47",
+  "cc_capacity_reconcile_PJM.csv": "a4eea44eca3b139ac816f94ef3fd1754c4d4de31f7cd7f5584af11201cdff742",
+  "eia860_generator_operable.parquet": "b6703157c00fb1d1f487b9c07e6c366c3ed0d559da4b4a378dcd30c131643bdb"
+ },
+ "decomposition": {
+  "available": true,
+  "violations": [
+   {
+    "plant_code": 260,
+    "season": "summer",
+    "eia860_nameplate_mw": 1398.0,
+    "eia860_net_summer_mw": 1020.0,
+    "eia860_winter_mw": 1020.0,
+    "published_basis_B_mw": 1020.0,
+    "cems_p999_mw": 1011.1,
+    "cems_over_published_basis": 0.9913,
+    "keeper_max_mw": 1049.6,
+    "arm_max_mw": 984.3,
+    "arm_over_cems": 0.9735,
+    "arm_implied_max_availability": 0.965,
+    "keeper_implied_max_availability": 0.7508,
+    "nameplate_headroom_over_basis": 1.3706
+   },
+   {
+    "plant_code": 55345,
+    "season": "offsummer",
+    "eia860_nameplate_mw": 710.7,
+    "eia860_net_summer_mw": 592.7,
+    "eia860_winter_mw": 602.5,
+    "published_basis_B_mw": 602.5,
+    "cems_p999_mw": 603.5,
+    "cems_over_published_basis": 1.0017,
+    "keeper_max_mw": 685.8,
+    "arm_max_mw": 581.4,
+    "arm_over_cems": 0.9634,
+    "arm_implied_max_availability": 0.965,
+    "keeper_implied_max_availability": 0.965,
+    "nameplate_headroom_over_basis": 1.1796
+   },
+   {
+    "plant_code": 55345,
+    "season": "summer",
+    "eia860_nameplate_mw": 710.7,
+    "eia860_net_summer_mw": 592.7,
+    "eia860_winter_mw": 602.5,
+    "published_basis_B_mw": 602.5,
+    "cems_p999_mw": 591.8,
+    "cems_over_published_basis": 0.9822,
+    "keeper_max_mw": 685.8,
+    "arm_max_mw": 581.4,
+    "arm_over_cems": 0.9824,
+    "arm_implied_max_availability": 0.965,
+    "keeper_implied_max_availability": 0.965,
+    "nameplate_headroom_over_basis": 1.1796
+   },
+   {
+    "plant_code": 56026,
+    "season": "summer",
+    "eia860_nameplate_mw": 154.0,
+    "eia860_net_summer_mw": 147.8,
+    "eia860_winter_mw": 147.8,
+    "published_basis_B_mw": 147.8,
+    "cems_p999_mw": 145.3,
+    "cems_over_published_basis": 0.9831,
+    "keeper_max_mw": 148.6,
+    "arm_max_mw": 142.6,
+    "arm_over_cems": 0.9814,
+    "arm_implied_max_availability": 0.9648,
+    "keeper_implied_max_availability": 0.9649,
+    "nameplate_headroom_over_basis": 1.0419
+   },
+   {
+    "plant_code": 62116,
+    "season": "offsummer",
+    "eia860_nameplate_mw": 699.2,
+    "eia860_net_summer_mw": 630.0,
+    "eia860_winter_mw": 690.0,
+    "published_basis_B_mw": 690.0,
+    "cems_p999_mw": 673.7,
+    "cems_over_published_basis": 0.9764,
+    "keeper_max_mw": 674.7,
+    "arm_max_mw": 665.9,
+    "arm_over_cems": 0.9884,
+    "arm_implied_max_availability": 0.9651,
+    "keeper_implied_max_availability": 0.965,
+    "nameplate_headroom_over_basis": 1.0133
+   },
+   {
+    "plant_code": 62116,
+    "season": "summer",
+    "eia860_nameplate_mw": 699.2,
+    "eia860_net_summer_mw": 630.0,
+    "eia860_winter_mw": 690.0,
+    "published_basis_B_mw": 690.0,
+    "cems_p999_mw": 674.7,
+    "cems_over_published_basis": 0.9778,
+    "keeper_max_mw": 674.7,
+    "arm_max_mw": 665.9,
+    "arm_over_cems": 0.987,
+    "arm_implied_max_availability": 0.9651,
+    "keeper_implied_max_availability": 0.965,
+    "nameplate_headroom_over_basis": 1.0133
+   },
+   {
+    "plant_code": 55748,
+    "season": "summer",
+    "eia860_nameplate_mw": 306.1,
+    "eia860_net_summer_mw": 300.0,
+    "eia860_winter_mw": 300.0,
+    "published_basis_B_mw": 300.0,
+    "cems_p999_mw": 301.3,
+    "cems_over_published_basis": 1.0043,
+    "keeper_max_mw": 295.4,
+    "arm_max_mw": 289.5,
+    "arm_over_cems": 0.9608,
+    "arm_implied_max_availability": 0.965,
+    "keeper_implied_max_availability": 0.965,
+    "nameplate_headroom_over_basis": 1.0203
+   }
+  ]
+ },
+ "be3_pass": true
+}
