@@ -692,3 +692,10 @@ results/calibration/caiso154_slopes_PJM.csv
 # breach artifact rather than the finding.
 /results/hindcast/ercot-2021-2025-t1ff-armr-ffr3q/
 /results/hindcast/ercot-2021-2025-t1ff-armr-ffr3q-legacy/
+
+# MISO masked submitted energy-offer corpus (Market Reports *_da_co / *_rt_co).
+# ~470 MB of daily zips for JJA 2023-2025; same non-member redistribution
+# posture as pjm-energy-offers/caiso-public-bids. Refetch with
+# scripts/data/fetch_miso_energy_offers.py (see the raw README).
+data/raw/miso-energy-offers/*
+!data/raw/miso-energy-offers/README.md
