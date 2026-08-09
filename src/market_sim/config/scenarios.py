@@ -717,6 +717,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # same-key invalidation and it needs no cache epoch); an armed run changes
     # the accredited storage ledger and so keys distinctly.
     "caiso_storage_nqc_accreditation",
+    # CAISO RA-MPB capacity-price anchor (FFR-4F, default off): dropped from the
+    # hash at its default so every pre-existing key in every ISO stays
+    # byte-stable -- unarmed, resolve_caiso_ra_mpb_anchor returns None before
+    # any branch of the price seam is taken, so the arm is byte-identical off
+    # (like its FFR-4E sibling above, and unlike the FFR-4D one below, this is
+    # NOT a same-key invalidation and needs no cache epoch); an armed run prices
+    # CAISO capacity at 138.36 instead of 88.08 $/kW-yr and so keys distinctly.
+    "caiso_ra_mpb_capacity_anchor",
     # CAISO measured backcast storage base fleet (FFR-4D, default ON): dropped
     # from the hash at its default so every pre-existing key stays byte-stable
     # (the pinned default 603c2498bf71d21d holds). UNLIKE every sibling above
@@ -1038,6 +1046,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_energy_online_capability_cap_path": "None",
     "caiso_nqc_accreditation": "False",
     "caiso_storage_nqc_accreditation": "False",
+    "caiso_ra_mpb_capacity_anchor": "False",
     "ercot_wtx_curtail_unpooled": "False",
     "ercot_wtx_panhandle_owner": '"tie"',
     "ercot_offer_surface_continuous": "False",
@@ -3179,6 +3188,54 @@ class ScenarioConfig:
     # SCOPE. CAISO-only by construction (the registry holds one ISO and the
     # gate resolves per ISO) — rule 25 [R-ISO-SCOPE]. ERCOT's parallel storage
     # question (FFR-4D D-3) is ERCOT's lane and nothing here transfers to it.
+    caiso_ra_mpb_capacity_anchor: bool = False  # GATED default-OFF (FFR-4F
+    # 2026-08-09, docs/handoffs/ffr-4f-caiso-anchor-merits-2026-08-09.md).
+    # Replaces CAISO's capacity-price anchor — the CPM SOFT-OFFER CAP
+    # (88.08 $/kW-yr) — with the CPUC unified Resource Adequacy Market Price
+    # Benchmark (138.36 $/kW-yr), at the ONE shared capacity-price seam
+    # (capacity_market.capacity_price_per_firm_mw_yr via
+    # resolve_caiso_ra_mpb_anchor, rule 19 [R-ONE-MECH]: it REPLACES the
+    # anchor, never stacks on it), so all five consumers move together — the
+    # retirement screen, thermal entry, VRE entry, storage entry and the
+    # plant-financials report.
+    #
+    # THIS IS NOT A ROW-4 FIX. FC-2 row 4's movement is REPORTED as a side
+    # effect of this correction and is never its objective or its success
+    # metric. The owner declined the anchor AS A ROUTE to row 4 (D-15's
+    # charter) and FFR-3W §5.3 named the trap in advance: closing row 4 through
+    # the entry screen still builds ~14 GW of CTs California does not need,
+    # merely through the economic channel instead of the administrative one.
+    # This field exists because the shipped anchor is mis-specified ON ITS OWN
+    # TERMS — a rule 14 [R-ACCURATE] defect whatever it does to any gate.
+    #
+    # WHY IT EXISTS. The shipped 88.08 is FERC ER24-1225's "$73.41/kW-yr
+    # GOING-FORWARD FIXED COST of a 550 MW CC reference unit x 1.20": a
+    # RETENTION cost for an EXISTING COMBINED-CYCLE, used as the entry price
+    # for a new COMBUSTION TURBINE, and in any case a CEILING on backstop
+    # OFFERS rather than a price anyone is paid (FFR-3W §2.3's three category
+    # errors, each from the source document's own words). CAISO publishes no
+    # net-CONE and no new-entry capacity price at all — it runs no centralized
+    # auction — so the corrected object is the published price CAISO RA
+    # actually transacts at: the CPUC PCIA RA MPB, volume-weighted over ALL
+    # IOU/CCA/ESP RA transactions with delivery in 2026, unified by
+    # D.25-06-049. Derivation, the corroborating CPUC series and the rule 14
+    # misalignment reconciliation (NQC-vs-UCAP basis; whole-market-average vs
+    # new-entrant price) live on CAISO_RA_MPB_ANCHOR_PER_KW_YR.
+    #
+    # WHY DEFAULT-OFF. The CAISO BACKCAST keeper reaches this seam (the
+    # retirement screen and the plant-financials capacity-revenue report both
+    # price through it), so byte-inertness is NOT available by inspection.
+    # Default-OFF makes it hold BY CONSTRUCTION rather than by measurement —
+    # the charter's stop-the-line keeper guard, honoured structurally, exactly
+    # as its FFR-4E sibling above. Arming posture is an OWNER decision
+    # (rules 5/24/28); this field is the switch that decision flips.
+    # Registered in _CACHE_KEY_OPTIONAL_FIELDS at False, so an unarmed run's
+    # cache key is byte-stable (the pinned default 603c2498bf71d21d holds) and
+    # an armed run keys distinctly.
+    #
+    # SCOPE. CAISO-only by construction — resolve_caiso_ra_mpb_anchor returns
+    # None for every other ISO, so no other market's anchor can move (rule 25
+    # [R-ISO-SCOPE]). No PJM/NYISO/ISO-NE/MISO net-CONE is read or changed.
     ramp_limits: bool = False  # GATED, default-OFF plant-group hourly ramp
     # envelopes in the dispatch LP (model/dispatch._build_ramp_rows). One
     # two-sided row per ramp-constrained plant group per hour transition,
