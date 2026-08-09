@@ -1,0 +1,1038 @@
+{
+ "probe": "_caiso188_import_tranche_census",
+ "session": "caiso-188 (IMPORT_TRANCHES[CAISO] DOF integrity)",
+ "keeper": "2026-08-09-caiso-184-c1-lpbasis",
+ "lp_solved": false,
+ "network": false,
+ "c1_limb_census": {
+  "static": {
+   "PNW_hydro_base": [
+    1566.0,
+    28.0
+   ],
+   "PNW_midC": [
+    1800.0,
+    36.0
+   ],
+   "DSW_solar_PV": [
+    1805.0,
+    48.0
+   ],
+   "DSW_CCGT": [
+    1800.0,
+    68.0
+   ],
+   "DSW_CT": [
+    2200.0,
+    110.0
+   ],
+   "WECC_scarcity": [
+    3000.0,
+    180.0
+   ]
+  },
+  "by_year": {
+   "2023": {
+    "PNW_hydro_base": [
+     1072.0,
+     28.0
+    ],
+    "PNW_midC": [
+     1800.0,
+     36.0
+    ],
+    "DSW_solar_PV": [
+     1251.0,
+     48.0
+    ],
+    "DSW_CCGT": [
+     1800.0,
+     68.0
+    ],
+    "DSW_CT": [
+     2200.0,
+     110.0
+    ],
+    "WECC_scarcity": [
+     3000.0,
+     180.0
+    ]
+   },
+   "2024": {
+    "PNW_hydro_base": [
+     1558.0,
+     28.0
+    ],
+    "PNW_midC": [
+     1800.0,
+     36.0
+    ],
+    "DSW_solar_PV": [
+     1813.0,
+     48.0
+    ],
+    "DSW_CCGT": [
+     1800.0,
+     68.0
+    ],
+    "DSW_CT": [
+     2200.0,
+     110.0
+    ],
+    "WECC_scarcity": [
+     3000.0,
+     180.0
+    ]
+   },
+   "2025": {
+    "PNW_hydro_base": [
+     1566.0,
+     28.0
+    ],
+    "PNW_midC": [
+     1800.0,
+     36.0
+    ],
+    "DSW_solar_PV": [
+     1805.0,
+     48.0
+    ],
+    "DSW_CCGT": [
+     1800.0,
+     68.0
+    ],
+    "DSW_CT": [
+     2200.0,
+     110.0
+    ],
+    "WECC_scarcity": [
+     3000.0,
+     180.0
+    ]
+   }
+  },
+  "limbs": {
+   "firm_capacity": {
+    "tranches": [
+     "DSW_solar_PV",
+     "PNW_hydro_base"
+    ],
+    "values_by_year": {
+     "PNW_hydro_base": {
+      "2023": 1072.0,
+      "2024": 1558.0,
+      "2025": 1566.0
+     },
+     "DSW_solar_PV": {
+      "2023": 1251.0,
+      "2024": 1813.0,
+      "2025": 1805.0
+     }
+    },
+    "varies_by_year": true,
+    "static_total_mw": 3371.0
+   },
+   "firm_price": {
+    "tranches": [
+     "DSW_solar_PV",
+     "PNW_hydro_base"
+    ],
+    "values_by_year": {
+     "PNW_hydro_base": {
+      "2023": 28.0,
+      "2024": 28.0,
+      "2025": 28.0
+     },
+     "DSW_solar_PV": {
+      "2023": 48.0,
+      "2024": 48.0,
+      "2025": 48.0
+     }
+    },
+    "varies_by_year": false
+   },
+   "spot_capacity": {
+    "tranches": [
+     "DSW_CCGT",
+     "DSW_CT",
+     "PNW_midC",
+     "WECC_scarcity"
+    ],
+    "values_by_year": {
+     "PNW_midC": {
+      "2023": 1800.0,
+      "2024": 1800.0,
+      "2025": 1800.0
+     },
+     "DSW_CCGT": {
+      "2023": 1800.0,
+      "2024": 1800.0,
+      "2025": 1800.0
+     },
+     "DSW_CT": {
+      "2023": 2200.0,
+      "2024": 2200.0,
+      "2025": 2200.0
+     },
+     "WECC_scarcity": {
+      "2023": 3000.0,
+      "2024": 3000.0,
+      "2025": 3000.0
+     }
+    },
+    "varies_by_year": false,
+    "static_total_mw": 8800.0
+   },
+   "spot_price": {
+    "tranches": [
+     "DSW_CCGT",
+     "DSW_CT",
+     "PNW_midC",
+     "WECC_scarcity"
+    ],
+    "values_by_year": {
+     "PNW_midC": {
+      "2023": 36.0,
+      "2024": 36.0,
+      "2025": 36.0
+     },
+     "DSW_CCGT": {
+      "2023": 68.0,
+      "2024": 68.0,
+      "2025": 68.0
+     },
+     "DSW_CT": {
+      "2023": 110.0,
+      "2024": 110.0,
+      "2025": 110.0
+     },
+     "WECC_scarcity": {
+      "2023": 180.0,
+      "2024": 180.0,
+      "2025": 180.0
+     }
+    },
+    "varies_by_year": false
+   }
+  }
+ },
+ "c2_liveness": {
+  "2023": {
+   "year": 2023,
+   "rows": {
+    "WECC_PNW::PNW_hydro_base": {
+     "corridor": "WECC_PNW",
+     "tranche": "PNW_hydro_base",
+     "pmax_mw": 2482.2476317990245,
+     "capability_mean_mw": 926.5690160366852,
+     "capability_max_mw": 2432.602679163044,
+     "capability_hours_positive": 7007,
+     "min_gen_mean_mw": 878.4903131191132,
+     "mc_mean": 28.0,
+     "mc_min": 28.0,
+     "mc_max": 28.0,
+     "mc_is_constant": true,
+     "price_limb_verdict": "STATIC LADDER PRICE SURVIVES ON THE BINDING PATH"
+    },
+    "WECC_PNW::PNW_midC": {
+     "corridor": "WECC_PNW",
+     "tranche": "PNW_midC",
+     "pmax_mw": 1800.0,
+     "capability_mean_mw": 1764.0,
+     "capability_max_mw": 1764.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 51.0170154294955,
+     "mc_min": -13.556700000000001,
+     "mc_max": 1097.5879,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_solar_PV": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_solar_PV",
+     "pmax_mw": 2896.727413601287,
+     "capability_mean_mw": 1225.98,
+     "capability_max_mw": 2838.792865329261,
+     "capability_hours_positive": 7693,
+     "min_gen_mean_mw": 1169.2063782305947,
+     "mc_mean": 48.0,
+     "mc_min": 48.0,
+     "mc_max": 48.0,
+     "mc_is_constant": true,
+     "price_limb_verdict": "STATIC LADDER PRICE SURVIVES ON THE BINDING PATH"
+    },
+    "WECC_DSW::DSW_CCGT": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_CCGT",
+     "pmax_mw": 1800.0,
+     "capability_mean_mw": 1764.0,
+     "capability_max_mw": 1764.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 61.62341529237456,
+     "mc_min": -2.250999999999999,
+     "mc_max": 1260.5221999999999,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_CT": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_CT",
+     "pmax_mw": 2200.0,
+     "capability_mean_mw": 2156.0,
+     "capability_max_mw": 2156.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 67.56881529237457,
+     "mc_min": 3.6944000000000004,
+     "mc_max": 1266.4676,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::WECC_scarcity": {
+     "corridor": "WECC_DSW",
+     "tranche": "WECC_scarcity",
+     "pmax_mw": 3000.0,
+     "capability_mean_mw": 2940.0,
+     "capability_max_mw": 2940.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 65.53915529237456,
+     "mc_min": 1.6647400000000006,
+     "mc_max": 1264.4379399999998,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_surplus_clean": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_surplus_clean",
+     "pmax_mw": 5312.0,
+     "capability_mean_mw": 1324.6256604713983,
+     "capability_max_mw": 5205.76,
+     "capability_hours_positive": 2529,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 49.40231529237455,
+     "mc_min": -14.4721,
+     "mc_max": 1248.3011,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_overnight_clean": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_overnight_clean",
+     "pmax_mw": 5870.0,
+     "capability_mean_mw": 587.0483435947102,
+     "capability_max_mw": 4687.617343767161,
+     "capability_hours_positive": 1680,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 45.40231529237455,
+     "mc_min": -18.472099999999998,
+     "mc_max": 1244.3011,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_daytime_clean": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_daytime_clean",
+     "pmax_mw": 4994.0,
+     "capability_mean_mw": 632.8036336221738,
+     "capability_max_mw": 4894.12,
+     "capability_hours_positive": 1348,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 45.40231529237455,
+     "mc_min": -18.472099999999998,
+     "mc_max": 1244.3011,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_PNW::export_MALIN": {
+     "corridor": "WECC_PNW",
+     "tranche": "export_MALIN",
+     "pmax_mw": 0.0,
+     "capability_mean_mw": 0.0,
+     "capability_max_mw": 0.0,
+     "capability_hours_positive": 0,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 46.015015429495506,
+     "mc_min": -18.5587,
+     "mc_max": 1092.5859,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::export_PALOVRDE": {
+     "corridor": "WECC_DSW",
+     "tranche": "export_PALOVRDE",
+     "pmax_mw": 0.0,
+     "capability_mean_mw": 0.0,
+     "capability_max_mw": 0.0,
+     "capability_hours_positive": 0,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 45.40031529237456,
+     "mc_min": -18.4741,
+     "mc_max": 1244.2991000000002,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    }
+   }
+  },
+  "2024": {
+   "year": 2024,
+   "rows": {
+    "WECC_PNW::PNW_hydro_base": {
+     "corridor": "WECC_PNW",
+     "tranche": "PNW_hydro_base",
+     "pmax_mw": 3100.8114277977393,
+     "capability_mean_mw": 1331.9889974512564,
+     "capability_max_mw": 2784.60009765625,
+     "capability_hours_positive": 7725,
+     "min_gen_mean_mw": 1111.6001821867633,
+     "mc_mean": 28.0,
+     "mc_min": 28.0,
+     "mc_max": 28.0,
+     "mc_is_constant": true,
+     "price_limb_verdict": "STATIC LADDER PRICE SURVIVES ON THE BINDING PATH"
+    },
+    "WECC_PNW::PNW_midC": {
+     "corridor": "WECC_PNW",
+     "tranche": "PNW_midC",
+     "pmax_mw": 1800.0,
+     "capability_mean_mw": 1764.0,
+     "capability_max_mw": 1764.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 45.07698115867579,
+     "mc_min": -29.693299999999997,
+     "mc_max": 556.0484,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_solar_PV": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_solar_PV",
+     "pmax_mw": 3608.3254933230432,
+     "capability_mean_mw": 1776.7400000000002,
+     "capability_max_mw": 3536.1589834565825,
+     "capability_hours_positive": 7994,
+     "min_gen_mean_mw": 1477.9164013245068,
+     "mc_mean": 48.0,
+     "mc_min": 48.0,
+     "mc_max": 48.0,
+     "mc_is_constant": true,
+     "price_limb_verdict": "STATIC LADDER PRICE SURVIVES ON THE BINDING PATH"
+    },
+    "WECC_DSW::DSW_CCGT": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_CCGT",
+     "pmax_mw": 1800.0,
+     "capability_mean_mw": 1764.0,
+     "capability_max_mw": 1764.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 50.38056696917808,
+     "mc_min": -41.2036,
+     "mc_max": 653.0561,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_CT": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_CT",
+     "pmax_mw": 2200.0,
+     "capability_mean_mw": 2156.0,
+     "capability_max_mw": 2156.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 56.721966969178084,
+     "mc_min": -34.8622,
+     "mc_max": 659.3974999999999,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::WECC_scarcity": {
+     "corridor": "WECC_DSW",
+     "tranche": "WECC_scarcity",
+     "pmax_mw": 3000.0,
+     "capability_mean_mw": 2940.0,
+     "capability_max_mw": 2940.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 54.42390696917808,
+     "mc_min": -37.16026,
+     "mc_max": 657.09944,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_surplus_clean": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_surplus_clean",
+     "pmax_mw": 4792.0,
+     "capability_mean_mw": 967.4170182347221,
+     "capability_max_mw": 4696.16,
+     "capability_hours_positive": 2098,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 37.34546696917808,
+     "mc_min": -54.2387,
+     "mc_max": 640.021,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_overnight_clean": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_overnight_clean",
+     "pmax_mw": 6205.0,
+     "capability_mean_mw": 887.6904514820064,
+     "capability_max_mw": 4951.876500485768,
+     "capability_hours_positive": 2190,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 33.34546696917808,
+     "mc_min": -58.2387,
+     "mc_max": 636.021,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_daytime_clean": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_daytime_clean",
+     "pmax_mw": 5563.0,
+     "capability_mean_mw": 1071.1917431252093,
+     "capability_max_mw": 5451.74,
+     "capability_hours_positive": 2315,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 33.34546696917808,
+     "mc_min": -58.2387,
+     "mc_max": 636.021,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_PNW::export_MALIN": {
+     "corridor": "WECC_PNW",
+     "tranche": "export_MALIN",
+     "pmax_mw": 0.0,
+     "capability_mean_mw": 0.0,
+     "capability_max_mw": 0.0,
+     "capability_hours_positive": 0,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 40.0749811586758,
+     "mc_min": -34.695299999999996,
+     "mc_max": 551.0464000000001,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::export_PALOVRDE": {
+     "corridor": "WECC_DSW",
+     "tranche": "export_PALOVRDE",
+     "pmax_mw": 0.0,
+     "capability_mean_mw": 0.0,
+     "capability_max_mw": 0.0,
+     "capability_hours_positive": 0,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 33.34346696917808,
+     "mc_min": -58.24069999999998,
+     "mc_max": 636.0189999999999,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    }
+   }
+  },
+  "2025": {
+   "year": 2025,
+   "rows": {
+    "WECC_PNW::PNW_hydro_base": {
+     "corridor": "WECC_PNW",
+     "tranche": "PNW_hydro_base",
+     "pmax_mw": 3234.5417302824426,
+     "capability_mean_mw": 1426.168595947624,
+     "capability_max_mw": 3158.8444689556945,
+     "capability_hours_positive": 7977,
+     "min_gen_mean_mw": 1140.604871876819,
+     "mc_mean": 28.0,
+     "mc_min": 28.0,
+     "mc_max": 28.0,
+     "mc_is_constant": true,
+     "price_limb_verdict": "STATIC LADDER PRICE SURVIVES ON THE BINDING PATH"
+    },
+    "WECC_PNW::PNW_midC": {
+     "corridor": "WECC_PNW",
+     "tranche": "PNW_midC",
+     "pmax_mw": 1800.0,
+     "capability_mean_mw": 1764.0,
+     "capability_max_mw": 1764.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 43.0004467237443,
+     "mc_min": -31.4372,
+     "mc_max": 111.1628,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_solar_PV": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_solar_PV",
+     "pmax_mw": 3728.1914579564555,
+     "capability_mean_mw": 1768.8999999999999,
+     "capability_max_mw": 3653.6276287973265,
+     "capability_hours_positive": 8151,
+     "min_gen_mean_mw": 1427.2042289470048,
+     "mc_mean": 48.0,
+     "mc_min": 48.0,
+     "mc_max": 48.0,
+     "mc_is_constant": true,
+     "price_limb_verdict": "STATIC LADDER PRICE SURVIVES ON THE BINDING PATH"
+    },
+    "WECC_DSW::DSW_CCGT": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_CCGT",
+     "pmax_mw": 1800.0,
+     "capability_mean_mw": 1764.0,
+     "capability_max_mw": 1764.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 46.85402831050228,
+     "mc_min": -21.878600000000002,
+     "mc_max": 128.47320000000002,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_CT": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_CT",
+     "pmax_mw": 2200.0,
+     "capability_mean_mw": 2156.0,
+     "capability_max_mw": 2156.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 51.90482831050228,
+     "mc_min": -16.8278,
+     "mc_max": 133.524,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::WECC_scarcity": {
+     "corridor": "WECC_DSW",
+     "tranche": "WECC_scarcity",
+     "pmax_mw": 3000.0,
+     "capability_mean_mw": 2940.0,
+     "capability_max_mw": 2940.0,
+     "capability_hours_positive": 8760,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 50.481508310502285,
+     "mc_min": -18.25112,
+     "mc_max": 132.10068,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_surplus_clean": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_surplus_clean",
+     "pmax_mw": 5472.0,
+     "capability_mean_mw": 1526.5609653736358,
+     "capability_max_mw": 5362.5599999999995,
+     "capability_hours_positive": 2966,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 36.471828310502275,
+     "mc_min": -32.2608,
+     "mc_max": 118.09100000000001,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_overnight_clean": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_overnight_clean",
+     "pmax_mw": 6487.0,
+     "capability_mean_mw": 952.3129006503189,
+     "capability_max_mw": 4434.783727014933,
+     "capability_hours_positive": 2190,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 32.47182831050228,
+     "mc_min": -36.2608,
+     "mc_max": 114.09100000000001,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::DSW_daytime_clean": {
+     "corridor": "WECC_DSW",
+     "tranche": "DSW_daytime_clean",
+     "pmax_mw": 5770.0,
+     "capability_mean_mw": 699.6900431165669,
+     "capability_max_mw": 5654.599999999999,
+     "capability_hours_positive": 1528,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 32.47182831050228,
+     "mc_min": -36.2608,
+     "mc_max": 114.09100000000001,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_PNW::export_MALIN": {
+     "corridor": "WECC_PNW",
+     "tranche": "export_MALIN",
+     "pmax_mw": 0.0,
+     "capability_mean_mw": 0.0,
+     "capability_max_mw": 0.0,
+     "capability_hours_positive": 0,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 37.998446723744294,
+     "mc_min": -36.4392,
+     "mc_max": 106.1608,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    },
+    "WECC_DSW::export_PALOVRDE": {
+     "corridor": "WECC_DSW",
+     "tranche": "export_PALOVRDE",
+     "pmax_mw": 0.0,
+     "capability_mean_mw": 0.0,
+     "capability_max_mw": 0.0,
+     "capability_hours_positive": 0,
+     "min_gen_mean_mw": 0.0,
+     "mc_mean": 32.46982831050228,
+     "mc_min": -36.2628,
+     "mc_max": 114.08900000000001,
+     "mc_is_constant": false,
+     "price_limb_verdict": "SUPERSEDED by an hourly measured series"
+    }
+   }
+  }
+ },
+ "c3_ceiling_stack": {
+  "2023": {
+   "year": 2023,
+   "corridors": {
+    "WECC_DSW": {
+     "capability_mean_mw": {
+      "firm": 1225.98,
+      "spot": 6860.0,
+      "clean": 2544.4776376882824
+     },
+     "ladder_ceiling_mean_mw": 10630.457637688281,
+     "envelope_mean_mw": 4739.109990423891,
+     "path_rating_mw": 10623.0,
+     "tightest_ceiling_hours": {
+      "ladder": 0,
+      "measured_envelope": 8760,
+      "path_rating": 0
+     },
+     "ladder_is_binding_ceiling_hours": 0,
+     "ladder_is_binding_ceiling_pct": 0.0,
+     "ladder_binding_by_hod_band": {
+      "night_0_5": 0.0,
+      "belly_10_15": 0.0,
+      "evening_17_21": 0.0,
+      "late_22_23": 0.0
+     },
+     "spot_depth_headroom_mean_mw": 968.6523527356081,
+     "spot_removal_would_tighten_hours": 4775
+    },
+    "WECC_PNW": {
+     "capability_mean_mw": {
+      "firm": 926.5690160366852,
+      "spot": 1764.0,
+      "clean": 0.0
+     },
+     "ladder_ceiling_mean_mw": 2690.5690160366853,
+     "envelope_mean_mw": 1341.49457771789,
+     "path_rating_mw": 4800.0,
+     "tightest_ceiling_hours": {
+      "ladder": 62,
+      "measured_envelope": 8698,
+      "path_rating": 0
+     },
+     "ladder_is_binding_ceiling_hours": 62,
+     "ladder_is_binding_ceiling_pct": 0.7077625570776256,
+     "ladder_binding_by_hod_band": {
+      "night_0_5": 0.0,
+      "belly_10_15": 0.0,
+      "evening_17_21": 1.6986301369863015,
+      "late_22_23": 0.0
+     },
+     "spot_depth_headroom_mean_mw": 414.92556168120467,
+     "spot_removal_would_tighten_hours": 5289
+    }
+   }
+  },
+  "2024": {
+   "year": 2024,
+   "corridors": {
+    "WECC_DSW": {
+     "capability_mean_mw": {
+      "firm": 1776.7400000000002,
+      "spot": 6860.0,
+      "clean": 2926.299212841938
+     },
+     "ladder_ceiling_mean_mw": 11563.039212841939,
+     "envelope_mean_mw": 4724.923157957591,
+     "path_rating_mw": 10623.0,
+     "tightest_ceiling_hours": {
+      "ladder": 0,
+      "measured_envelope": 8760,
+      "path_rating": 0
+     },
+     "ladder_is_binding_ceiling_hours": 0,
+     "ladder_is_binding_ceiling_pct": 0.0,
+     "ladder_binding_by_hod_band": {
+      "night_0_5": 0.0,
+      "belly_10_15": 0.0,
+      "evening_17_21": 0.0,
+      "late_22_23": 0.0
+     },
+     "spot_depth_headroom_mean_mw": 21.88394511565311,
+     "spot_removal_would_tighten_hours": 4028
+    },
+    "WECC_PNW": {
+     "capability_mean_mw": {
+      "firm": 1331.9889974512564,
+      "spot": 1764.0,
+      "clean": 0.0
+     },
+     "ladder_ceiling_mean_mw": 3095.9889974512566,
+     "envelope_mean_mw": 1588.9852544523264,
+     "path_rating_mw": 4800.0,
+     "tightest_ceiling_hours": {
+      "ladder": 152,
+      "measured_envelope": 8608,
+      "path_rating": 0
+     },
+     "ladder_is_binding_ceiling_hours": 152,
+     "ladder_is_binding_ceiling_pct": 1.7351598173515983,
+     "ladder_binding_by_hod_band": {
+      "night_0_5": 0.0,
+      "belly_10_15": 5.525114155251141,
+      "evening_17_21": 1.6986301369863015,
+      "late_22_23": 0.0
+     },
+     "spot_depth_headroom_mean_mw": 256.99625700107003,
+     "spot_removal_would_tighten_hours": 4096
+    }
+   }
+  },
+  "2025": {
+   "year": 2025,
+   "corridors": {
+    "WECC_DSW": {
+     "capability_mean_mw": {
+      "firm": 1768.8999999999999,
+      "spot": 6860.0,
+      "clean": 3178.563909140522
+     },
+     "ladder_ceiling_mean_mw": 11807.46390914052,
+     "envelope_mean_mw": 4885.169150964745,
+     "path_rating_mw": 10623.0,
+     "tightest_ceiling_hours": {
+      "ladder": 0,
+      "measured_envelope": 8760,
+      "path_rating": 0
+     },
+     "ladder_is_binding_ceiling_hours": 0,
+     "ladder_is_binding_ceiling_pct": 0.0,
+     "ladder_binding_by_hod_band": {
+      "night_0_5": 0.0,
+      "belly_10_15": 0.0,
+      "evening_17_21": 0.0,
+      "late_22_23": 0.0
+     },
+     "spot_depth_headroom_mean_mw": -62.29475817577578,
+     "spot_removal_would_tighten_hours": 3177
+    },
+    "WECC_PNW": {
+     "capability_mean_mw": {
+      "firm": 1426.168595947624,
+      "spot": 1764.0,
+      "clean": 0.0
+     },
+     "ladder_ceiling_mean_mw": 3190.1685959476235,
+     "envelope_mean_mw": 1713.5218935692146,
+     "path_rating_mw": 4800.0,
+     "tightest_ceiling_hours": {
+      "ladder": 0,
+      "measured_envelope": 8760,
+      "path_rating": 0
+     },
+     "ladder_is_binding_ceiling_hours": 0,
+     "ladder_is_binding_ceiling_pct": 0.0,
+     "ladder_binding_by_hod_band": {
+      "night_0_5": 0.0,
+      "belly_10_15": 0.0,
+      "evening_17_21": 0.0,
+      "late_22_23": 0.0
+     },
+     "spot_depth_headroom_mean_mw": 287.35329762159074,
+     "spot_removal_would_tighten_hours": 5991
+    }
+   }
+  }
+ },
+ "c4_realized_headroom": {
+  "2023": {
+   "year": 2023,
+   "net_import_mean_mw": 4156.72247213649,
+   "net_import_p95_mw": 7500.0,
+   "net_import_max_mw": 7500.0,
+   "system_ladder_capability_mean_mw": 13321.026653724966,
+   "system_effective_ceiling_mean_mw": 6080.604568141781,
+   "note": "class 'import' is the NET of the corridor import tranches and the per-hub export legs, so it is a lower bound on gross import; the comparison is a headroom scale check, not a per-corridor binding test."
+  },
+  "2024": {
+   "year": 2024,
+   "net_import_mean_mw": 4529.9881274471,
+   "net_import_p95_mw": 7500.0,
+   "net_import_max_mw": 7500.0,
+   "system_ladder_capability_mean_mw": 14659.028210293196,
+   "system_effective_ceiling_mean_mw": 6313.908412409917,
+   "note": "class 'import' is the NET of the corridor import tranches and the per-hub export legs, so it is a lower bound on gross import; the comparison is a headroom scale check, not a per-corridor binding test."
+  },
+  "2025": {
+   "year": 2025,
+   "net_import_mean_mw": 4698.268362243453,
+   "net_import_p95_mw": 7500.0,
+   "net_import_max_mw": 7500.0,
+   "system_ladder_capability_mean_mw": 14997.632505088144,
+   "system_effective_ceiling_mean_mw": 6598.69104453396,
+   "note": "class 'import' is the NET of the corridor import tranches and the per-hub export legs, so it is a lower bound on gross import; the comparison is a headroom scale check, not a per-corridor binding test."
+  }
+ },
+ "c5_published_objects": {
+  "mic_by_year": {
+   "2018": {
+    "total_mw": 11724.0,
+    "north_matched_mw": 4082.0,
+    "south_residual_mw": 7642.0,
+    "n_branch_groups": 32,
+    "unmatched_north_names": [
+     "Lake",
+     "Malin 500",
+     "Northwest 230",
+     "Rancho Seco",
+     "Summit",
+     "Tracy 230",
+     "Westley-Wilson"
+    ]
+   },
+   "2019": {
+    "total_mw": 12154.0,
+    "north_matched_mw": 4236.0,
+    "south_residual_mw": 7918.0,
+    "n_branch_groups": 35,
+    "unmatched_north_names": [
+     "Lake",
+     "Malin 500",
+     "Rancho Seco",
+     "Westley-Wilson"
+    ]
+   },
+   "2020": {
+    "total_mw": 12394.0,
+    "north_matched_mw": 4247.0,
+    "south_residual_mw": 8147.0,
+    "n_branch_groups": 35,
+    "unmatched_north_names": [
+     "Lake",
+     "Malin 500",
+     "Rancho Seco",
+     "Westley-Wilson"
+    ]
+   },
+   "2021": {
+    "total_mw": 15820.0,
+    "north_matched_mw": 7429.0,
+    "south_residual_mw": 8391.0,
+    "n_branch_groups": 36,
+    "unmatched_north_names": [
+     "Lake",
+     "Rancho Seco",
+     "Westley-Wilson"
+    ]
+   },
+   "2022": {
+    "total_mw": 15780.0,
+    "north_matched_mw": 7389.0,
+    "south_residual_mw": 8391.0,
+    "n_branch_groups": 36,
+    "unmatched_north_names": [
+     "Lake",
+     "Rancho Seco",
+     "Westley-Wilson"
+    ]
+   },
+   "2023": {
+    "total_mw": 16055.0,
+    "north_matched_mw": 7389.0,
+    "south_residual_mw": 8666.0,
+    "n_branch_groups": 36,
+    "unmatched_north_names": [
+     "Lake",
+     "Rancho Seco",
+     "Westley-Wilson"
+    ]
+   },
+   "2024": {
+    "total_mw": 16452.0,
+    "north_matched_mw": 7581.0,
+    "south_residual_mw": 8871.0,
+    "n_branch_groups": 36,
+    "unmatched_north_names": [
+     "Lake",
+     "Northwest 230",
+     "Rancho Seco",
+     "Westley-Wilson"
+    ]
+   },
+   "2025": {
+    "total_mw": 16148.0,
+    "north_matched_mw": 7478.0,
+    "south_residual_mw": 8670.0,
+    "n_branch_groups": 33,
+    "unmatched_north_names": [
+     "Lake",
+     "Northwest 230",
+     "Rancho Seco",
+     "Westley-Wilson"
+    ]
+   }
+  },
+  "ladder_vs_objects": {
+   "2023": {
+    "WECC_PNW": {
+     "ladder_total_mw": 2872.0,
+     "ladder_spot_mw": 1800.0,
+     "path_rating_mw": 4800.0,
+     "mic_north_mw": 7389.0
+    },
+    "WECC_DSW": {
+     "ladder_total_mw": 8251.0,
+     "ladder_spot_mw": 7000.0,
+     "path_rating_mw": 10623.0,
+     "mic_south_mw": 8666.0
+    }
+   },
+   "2024": {
+    "WECC_PNW": {
+     "ladder_total_mw": 3358.0,
+     "ladder_spot_mw": 1800.0,
+     "path_rating_mw": 4800.0,
+     "mic_north_mw": 7581.0
+    },
+    "WECC_DSW": {
+     "ladder_total_mw": 8813.0,
+     "ladder_spot_mw": 7000.0,
+     "path_rating_mw": 10623.0,
+     "mic_south_mw": 8871.0
+    }
+   },
+   "2025": {
+    "WECC_PNW": {
+     "ladder_total_mw": 3366.0,
+     "ladder_spot_mw": 1800.0,
+     "path_rating_mw": 4800.0,
+     "mic_north_mw": 7478.0
+    },
+    "WECC_DSW": {
+     "ladder_total_mw": 8805.0,
+     "ladder_spot_mw": 7000.0,
+     "path_rating_mw": 10623.0,
+     "mic_south_mw": 8670.0
+    }
+   }
+  }
+ }
+}

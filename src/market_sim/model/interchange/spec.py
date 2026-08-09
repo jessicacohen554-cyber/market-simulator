@@ -2126,6 +2126,42 @@ def apply_interchange_topology(
                 _seam_mw,
                 _dy,
             )
+        else:
+            # caiso-188: Part A resolves the published seam limit through the
+            # GITIGNORED, disposable clean partition
+            # (data/clean/capacity-deliverability/), which no solve auto-builds.
+            # Absent, this branch used to pass silently while run_config.json
+            # still recorded the flag as True — so a bundle could claim the
+            # published MIC seam limit and solve against the baked fitted
+            # scalar instead. That is what happened to every CAISO run from
+            # caiso-175 onward, the designated keeper included: total import
+            # pinned at the fitted 7,500 MW WECC_import_simultaneous cap in
+            # 764/477/809 hours of 2023/24/25
+            # (FINDING-caiso188-import-tranche-dof-2026-08-09.md §4). Warn
+            # loudly and name the fallback the LP will actually solve against
+            # (rule 24 [R-REGISTRY]: no unrecorded channel may decide a limit).
+            _baked = next(
+                (
+                    lim.cap_mw
+                    for lim in iso_config.interface_limits
+                    if lim.links
+                    and all(pair[0] == IMPORT_ZONE.get(iso) for pair in lim.links)
+                ),
+                None,
+            )
+            logger.warning(
+                "%s %d: capacity_deliverability_limits is ON but Part A did "
+                "NOT apply — no published per-area import_limit resolved for "
+                "delivery year %s (run scripts/data/curate_capacity_"
+                "deliverability.py to materialise the clean partition). The "
+                "solve keeps the BAKED simultaneous-import cap (%s MW), which "
+                "is a fitted scalar, and run_config.json will still record "
+                "the flag as True — see FINDING-caiso188 §4",
+                iso,
+                year,
+                _dy,
+                "none" if _baked is None else f"{_baked:.0f}",
+            )
     if spec.use_corridors:
         iso_config = split_caiso_import_node_per_hub(iso_config)
     # 4. ``config.caiso_asymmetric_path_ratings`` — cap the internal Path 15 /

@@ -108,6 +108,7 @@ from market_sim.data.renewables import (  # noqa: E402
     load_hsl_hourly,
     load_renewable_profiles,
 )
+from market_sim.data.input_completeness import check_clean_partitions  # noqa: E402
 from market_sim.pipeline import (  # noqa: E402
     DispatchSpec,
     apply_ercot_commitment_posture,
@@ -4544,6 +4545,23 @@ def run_year(
             "mc_base": mc_base,
             "fuel_prices": fuel_prices,
         }
+
+    # caiso-157's fail-fast guard, WIRED (caiso-188). An armed mechanism whose
+    # derived CLEAN partition is absent silently no-ops, and the bundle then
+    # advertises in its meta/run_config a mechanism that never ran — which is
+    # how the RETIRED fitted 7,500 MW WECC_import_simultaneous scalar re-became
+    # CAISO's binding seam limit across five keeper promotions (caiso-157) and
+    # then AGAIN across every promotion from caiso-175 onward, the designated
+    # keeper included (FINDING-caiso188-import-tranche-dof-2026-08-09.md §4).
+    # caiso-157 wrote the guard but its only call site was
+    # pipeline/year.py::run_year_solve, which NOTHING calls — the backcast
+    # orchestrator reaches the LP through run_energy_solve directly, so the
+    # guard has never once run in a solve and the defect recurred. Wire it on
+    # the solve path, AFTER the fleet_only exit so fleet-reconstruction probes
+    # (caiso-131/134/140/150/151/188) still run against whatever is on disk.
+    # No config field, no threshold, no tunable: a pure config-vs-disk
+    # assertion, and a no-op for every flag left at its default.
+    check_clean_partitions(config, iso)
 
     # Oil-burn inventory budget (NEISO-gated). When the budget binds in a
     # cold-snap month, its dual is the scarcity rent that lifts the persisted P1

@@ -493,16 +493,37 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "residual",
                 iso,
                 value=7500.0,
-                source="fitted aggregate WECC import cap — SUPERSEDED in the "
-                "caiso-51 keeper by the published branch-group MIC sum "
-                "(16,055/16,452/16,148 MW 2023/24/25) + measured p95 corridor "
-                "envelopes (docs/caiso-c5-wecc-cap-closeout-2026-07-03.md). "
-                "Not in the keeper binding path; governs the forecast / "
-                "non-deliverability path only.",
-                root_cause="O-1 forecast/backcast parity: the fitted 7,500 still "
-                "caps forecast-mode imports — re-ground the default on the "
-                "published MIC/SIL or enable deliverability part-A in forecast; "
-                "open: " + _ISSUE_C5_C14_SEAM_FALLBACKS,
+                source="fitted aggregate WECC import cap. Its supersession by "
+                "the published branch-group MIC sum (16,055/16,452/16,148 MW "
+                "2023/24/25; docs/caiso-c5-wecc-cap-closeout-2026-07-03.md) is "
+                "CONDITIONAL on capacity_deliverability_limits Part A actually "
+                "resolving, which happens through the GITIGNORED, disposable "
+                "clean partition data/clean/capacity-deliverability/ that no "
+                "solve auto-builds. caiso-188 MEASURED the condition failing: "
+                "every CAISO bundle from caiso-175 (2026-08-06) onward — the "
+                "designated keeper caiso184_c1_lpbasis included — pins total "
+                "net import at exactly 7,500.0 MW in 764/477/809 hours of "
+                "2023/24/25 and never exceeds it, while run_config.json "
+                "records capacity_deliverability_limits: true. So this scalar "
+                "IS on the keeper's backcast binding path, and the earlier "
+                "'not in the keeper binding path' text was an assertion, not a "
+                "measurement (FINDING-caiso188-import-tranche-dof-2026-08-09.md "
+                "§4; FINDING-caiso133 §3/§4 remain correct for the MIC cap they "
+                "assumed and do not cover the value that actually bound). "
+                "Rule 14 [R-ACCURATE]: the measured EIA-930 record falsifies "
+                "7,500 as a physical bound — the real CAISO system exceeded it "
+                "in 271/293/681 hours, reaching 13,136/13,312/15,080 MW, all "
+                "of which the published MIC envelopes.",
+                root_cause="TWO open items. (1) caiso-188: Part A must not be "
+                "able to no-op silently — the LP now WARNs and names the baked "
+                "fallback it will solve against (interchange/spec.py), but "
+                "nothing COMMITTED yet records which cap a bundle solved "
+                "against; the durable fix is to persist the resolved seam cap "
+                "into run_config.json (or make the clean partition a build "
+                "dependency of the flag). (2) O-1 forecast/backcast parity: "
+                "the fitted 7,500 also caps forecast-mode imports — re-ground "
+                "the default on the published MIC/SIL; open: "
+                + _ISSUE_C5_C14_SEAM_FALLBACKS,
             )
         )
         # C-14 (audit): the aggregate WECC export cap. Re-derived in B-CAI-1
@@ -1474,6 +1495,65 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
         or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))
         or (iso == "PJM" and not sc.get("pjm_seam_measured_ladder"))
     ):
+        # CAISO carries the caiso-188 LIMB CENSUS instead of the generic text:
+        # the single row covers four limbs with different identifications, and
+        # a one-verdict-for-all row understates the keeper's own free
+        # parameters (rule 21 [R-DOF]). Every other ISO's text is unchanged
+        # (rule 25 [R-ISO-SCOPE] — a CAISO measurement fills no other ISO's
+        # row).
+        if iso == "CAISO":
+            out.append(
+                _entry(
+                    "IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]",
+                    "interchange_config.py CAISO seam supply-curve ladder",
+                    "residual",
+                    iso,
+                    n_scalars=6,
+                    source="FOUR LIMBS, measured on the keeper's own built "
+                    "fleet by scripts/probes/_caiso188_import_tranche_census.py "
+                    "(FINDING-caiso188-import-tranche-dof-2026-08-09.md §1-§3), "
+                    "not asserted. CLOSED: (a) firm CAPACITY — PNW_hydro_base / "
+                    "DSW_solar_PV at 1,072/1,558/1,566 and 1,251/1,813/1,805 MW, "
+                    "measured per year from the DMM annual RA-import capacity x "
+                    "the published branch-group MIC north/south split, two cited "
+                    "primary sources; (b) spot PRICE — the per-hub injector "
+                    "overwrites all four spot mc rows with their own measured "
+                    "hub series hour by hour (measured as HOURLY on the built "
+                    "fleet in all three years). LIVE AND FITTED, 6 scalars: "
+                    "(c) firm PRICE — $28.00/$48.00, measured as CONSTANT mc "
+                    "rows on the built fleet, identical in all three years; the "
+                    "injector's firm_base branch deliberately skips them and "
+                    "caiso-151's caiso_firm_import_selfsched_clip re-arms the "
+                    "un-floored capability onto the margin at exactly these two "
+                    "prices (0.969/4.634/5.705 TWh, FINDING-caiso150 §C/§F); "
+                    "(d) spot CAPACITY — 1,800/1,800/2,200/3,000 = 8,800 MW, no "
+                    "primary source anywhere. The spot depths are NOT the "
+                    "operative corridor ceiling: the measured p95 deliverability "
+                    "envelope is the tightest per-corridor bound in 25,866 of "
+                    "26,280 corridor-hours (the ladder in 214, all north, all "
+                    "2023-24), so their live roles are filling the band between "
+                    "the firm + measured-clean depth and that envelope, and "
+                    "placing the CARB-EF price breakpoints. EXPORT_TRANCHES"
+                    "[CAISO] is NOT on this keeper's binding path at all — the "
+                    "per-hub export legs are bounded by the published corridor "
+                    "link ratings (COI 4,800 / Path-46 10,623 MW).",
+                    root_cause="audit C-6/#1350, NARROWED by caiso-188 to the "
+                    "two live limbs. No published object maps onto either: MIC "
+                    "is an annual RA-showing allocation already spent twice in "
+                    "this model (firm split + seam limit), so a third use would "
+                    "be a rule 19 [R-ONE-MECH] double-count on a category "
+                    "error; the path ratings map only to the ceiling role the "
+                    "measured envelope already owns. The measured route is a "
+                    "Q-Q revealed supply curve, whose PRICE side failed its "
+                    "pre-registered LOYO gate at 30.5 % against a 25 % bar "
+                    "(derive_caiso_import_tranches.py, caiso-83/86/86b, "
+                    "DO-NOT-REDO) — and the CAPACITY side is the same estimator "
+                    "with the axes swapped, so it must be derived and gated on "
+                    "its own before anything is armed. Open root-cause issue, "
+                    "never a value to re-fit (rule 20 [R-DOF]); " + _HOLDOUT_ROOT_CAUSE,
+                )
+            )
+            return out
         out.append(
             _entry(
                 f"IMPORT_TRANCHES/EXPORT_TRANCHES[{iso}]",

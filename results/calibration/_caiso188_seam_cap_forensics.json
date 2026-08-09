@@ -1,0 +1,508 @@
+{
+ "probe": "_caiso188_seam_cap_forensics",
+ "session": "caiso-188 (IMPORT_TRANCHES[CAISO] DOF integrity)",
+ "lp_solved": false,
+ "network": false,
+ "fitted_seam_mw": 7500.0,
+ "published_mic_seam_mw": {
+  "2023": 16055.0,
+  "2024": 16452.0,
+  "2025": 16148.0
+ },
+ "f1_f2_pin_census": {
+  "caiso119_base_A": {
+   "2023": {
+    "import_max_mw": 8089.1,
+    "hours_pinned_at_fitted_cap": 676,
+    "pinned_pct": 7.72,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2024": {
+    "import_max_mw": 11625.0,
+    "hours_pinned_at_fitted_cap": 219,
+    "pinned_pct": 2.5,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2025": {
+    "import_max_mw": 8391.4,
+    "hours_pinned_at_fitted_cap": 724,
+    "pinned_pct": 8.26,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   }
+  },
+  "caiso124_control_A": {
+   "2023": {
+    "import_max_mw": 9497.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2024": {
+    "import_max_mw": 11625.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2025": {
+    "import_max_mw": 10777.5,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   }
+  },
+  "caiso126_control_A": {
+   "2023": {
+    "import_max_mw": 9497.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2024": {
+    "import_max_mw": 11625.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2025": {
+    "import_max_mw": 10777.5,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   }
+  },
+  "caiso162_peryear_import_caps": {
+   "2023": {
+    "import_max_mw": 9497.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2024": {
+    "import_max_mw": 9169.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2025": {
+    "import_max_mw": 10451.5,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   }
+  },
+  "caiso164_control_lossless": {
+   "2023": {
+    "import_max_mw": 9497.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2024": {
+    "import_max_mw": 9169.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2025": {
+    "import_max_mw": 10451.5,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   }
+  },
+  "caiso164_zonal_loss_surface": {
+   "2023": {
+    "import_max_mw": 9497.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2024": {
+    "import_max_mw": 9169.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2025": {
+    "import_max_mw": 10545.5,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   }
+  },
+  "caiso172_measured_path15_split": {
+   "2023": {
+    "import_max_mw": 9497.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2024": {
+    "import_max_mw": 9169.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2025": {
+    "import_max_mw": 10545.5,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   }
+  },
+  "caiso174_control_flatfleet": {
+   "2023": {
+    "import_max_mw": 9497.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2024": {
+    "import_max_mw": 9169.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2025": {
+    "import_max_mw": 10545.5,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   }
+  },
+  "caiso174_measured_fleet": {
+   "2023": {
+    "import_max_mw": 9497.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2024": {
+    "import_max_mw": 9169.0,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2025": {
+    "import_max_mw": 10545.5,
+    "hours_pinned_at_fitted_cap": 0,
+    "pinned_pct": 0.0,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   }
+  },
+  "caiso175_control": {
+   "2023": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 770,
+    "pinned_pct": 8.79,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2024": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 508,
+    "pinned_pct": 5.8,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2025": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 895,
+    "pinned_pct": 10.22,
+    "regime": "FITTED 7,500 IN FORCE"
+   }
+  },
+  "caiso175_tac_intake": {
+   "2023": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 767,
+    "pinned_pct": 8.76,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2024": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 508,
+    "pinned_pct": 5.8,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2025": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 895,
+    "pinned_pct": 10.22,
+    "regime": "FITTED 7,500 IN FORCE"
+   }
+  },
+  "caiso180_a0_control": {
+   "2023": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 767,
+    "pinned_pct": 8.76,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2024": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 508,
+    "pinned_pct": 5.8,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2025": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 895,
+    "pinned_pct": 10.22,
+    "regime": "FITTED 7,500 IN FORCE"
+   }
+  },
+  "caiso180_a1_pre": {
+   "2023": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 765,
+    "pinned_pct": 8.73,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2024": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 456,
+    "pinned_pct": 5.21,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2025": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 775,
+    "pinned_pct": 8.85,
+    "regime": "FITTED 7,500 IN FORCE"
+   }
+  },
+  "caiso180_a2_regen": {
+   "2023": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 767,
+    "pinned_pct": 8.76,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2024": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 509,
+    "pinned_pct": 5.81,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2025": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 905,
+    "pinned_pct": 10.33,
+    "regime": "FITTED 7,500 IN FORCE"
+   }
+  },
+  "caiso183_b0_control": {
+   "2023": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 767,
+    "pinned_pct": 8.76,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2024": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 508,
+    "pinned_pct": 5.8,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2025": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 895,
+    "pinned_pct": 10.22,
+    "regime": "FITTED 7,500 IN FORCE"
+   }
+  },
+  "caiso183_b1_hourgrain": {
+   "2023": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 765,
+    "pinned_pct": 8.73,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2024": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 493,
+    "pinned_pct": 5.63,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2025": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 853,
+    "pinned_pct": 9.74,
+    "regime": "FITTED 7,500 IN FORCE"
+   }
+  },
+  "caiso184_c0_control": {
+   "2023": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 765,
+    "pinned_pct": 8.73,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2024": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 493,
+    "pinned_pct": 5.63,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2025": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 853,
+    "pinned_pct": 9.74,
+    "regime": "FITTED 7,500 IN FORCE"
+   }
+  },
+  "caiso184_c1_lpbasis": {
+   "2023": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 764,
+    "pinned_pct": 8.72,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2024": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 477,
+    "pinned_pct": 5.45,
+    "regime": "FITTED 7,500 IN FORCE"
+   },
+   "2025": {
+    "import_max_mw": 7500.0,
+    "hours_pinned_at_fitted_cap": 809,
+    "pinned_pct": 9.24,
+    "regime": "FITTED 7,500 IN FORCE"
+   }
+  },
+  "caiso_netrev_base": {
+   "2023": {
+    "import_max_mw": 8089.1,
+    "hours_pinned_at_fitted_cap": 673,
+    "pinned_pct": 7.68,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2024": {
+    "import_max_mw": 11625.0,
+    "hours_pinned_at_fitted_cap": 158,
+    "pinned_pct": 1.8,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   },
+   "2025": {
+    "import_max_mw": 8391.4,
+    "hours_pinned_at_fitted_cap": 611,
+    "pinned_pct": 6.97,
+    "regime": "cap above 7,500 (MIC in force or unreached)"
+   }
+  }
+ },
+ "f3_reachability": {
+  "2023": {
+   "corridor_envelope_sum_max_mw": 9631.0,
+   "vs_MIC": {
+    "cap_mw": 16055.0,
+    "hours_envelope_sum_ge_cap": 0,
+    "verdict": "UNREACHABLE \u2014 caiso-133 \u00a73 reproduces"
+   },
+   "vs_fitted": {
+    "cap_mw": 7500.0,
+    "hours_envelope_sum_ge_cap": 2608,
+    "verdict": "REACHABLE \u2014 the caiso-133 \u00a73 conclusion does NOT carry over to the value that actually bound"
+   }
+  },
+  "2024": {
+   "corridor_envelope_sum_max_mw": 9557.0,
+   "vs_MIC": {
+    "cap_mw": 16452.0,
+    "hours_envelope_sum_ge_cap": 0,
+    "verdict": "UNREACHABLE \u2014 caiso-133 \u00a73 reproduces"
+   },
+   "vs_fitted": {
+    "cap_mw": 7500.0,
+    "hours_envelope_sum_ge_cap": 2982,
+    "verdict": "REACHABLE \u2014 the caiso-133 \u00a73 conclusion does NOT carry over to the value that actually bound"
+   }
+  },
+  "2025": {
+   "corridor_envelope_sum_max_mw": 10777.5,
+   "vs_MIC": {
+    "cap_mw": 16148.0,
+    "hours_envelope_sum_ge_cap": 0,
+    "verdict": "UNREACHABLE \u2014 caiso-133 \u00a73 reproduces"
+   },
+   "vs_fitted": {
+    "cap_mw": 7500.0,
+    "hours_envelope_sum_ge_cap": 3802,
+    "verdict": "REACHABLE \u2014 the caiso-133 \u00a73 conclusion does NOT carry over to the value that actually bound"
+   }
+  }
+ },
+ "f4_rule14_falsification": {
+  "2023": {
+   "measured_hours": 8759,
+   "measured_mean_mw": 3292.0,
+   "measured_p95_mw": 7125.0,
+   "measured_p99_mw": 8446.0,
+   "measured_max_mw": 13136.0,
+   "hours_above_fitted_cap": 271,
+   "hours_above_MIC": 0,
+   "verdict": "the FITTED cap is falsified as a physical bound (the real system exceeds it); the published MIC envelopes the measured maximum"
+  },
+  "2024": {
+   "measured_hours": 8783,
+   "measured_mean_mw": 3579.0,
+   "measured_p95_mw": 7215.0,
+   "measured_p99_mw": 8156.0,
+   "measured_max_mw": 13312.0,
+   "hours_above_fitted_cap": 293,
+   "hours_above_MIC": 0,
+   "verdict": "the FITTED cap is falsified as a physical bound (the real system exceeds it); the published MIC envelopes the measured maximum"
+  },
+  "2025": {
+   "measured_hours": 8759,
+   "measured_mean_mw": 4102.0,
+   "measured_p95_mw": 8037.0,
+   "measured_p99_mw": 9337.0,
+   "measured_max_mw": 15080.0,
+   "hours_above_fitted_cap": 681,
+   "hours_above_MIC": 0,
+   "verdict": "the FITTED cap is falsified as a physical bound (the real system exceeds it); the published MIC envelopes the measured maximum"
+  }
+ },
+ "f5_pin_alignment": {
+  "2023": {
+   "pinned_hours": 764,
+   "pinned_hours_where_envelope_sum_exceeds_cap": 764,
+   "max_import_in_unpinned_hours_mw": 7492.0,
+   "pinned_share_by_hod_band": {
+    "night_0_5": 15.9,
+    "belly_10_15": 0.0,
+    "evening_17_21": 13.3,
+    "late_22_23": 15.2
+   },
+   "measured_net_import_in_pinned_hours_mean_mw": 6012.0,
+   "model_minus_measured_in_pinned_hours_mw": 1488.0
+  },
+  "2024": {
+   "pinned_hours": 477,
+   "pinned_hours_where_envelope_sum_exceeds_cap": 477,
+   "max_import_in_unpinned_hours_mw": 7499.9,
+   "pinned_share_by_hod_band": {
+    "night_0_5": 16.6,
+    "belly_10_15": 1.4,
+    "evening_17_21": 1.2,
+    "late_22_23": 0.0
+   },
+   "measured_net_import_in_pinned_hours_mean_mw": 5896.0,
+   "model_minus_measured_in_pinned_hours_mw": 1604.0
+  },
+  "2025": {
+   "pinned_hours": 809,
+   "pinned_hours_where_envelope_sum_exceeds_cap": 809,
+   "max_import_in_unpinned_hours_mw": 7493.0,
+   "pinned_share_by_hod_band": {
+    "night_0_5": 31.6,
+    "belly_10_15": 1.4,
+    "evening_17_21": 2.1,
+    "late_22_23": 1.0
+   },
+   "measured_net_import_in_pinned_hours_mean_mw": 6737.0,
+   "model_minus_measured_in_pinned_hours_mw": 763.0
+  }
+ }
+}
