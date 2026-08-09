@@ -1,0 +1,494 @@
+{
+ "session": "miso-148",
+ "prereg": "results/calibration/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md",
+ "control_run_id": "2026-08-09-miso-148-control",
+ "arm_run_id": "2026-08-09-miso-148-basis-aware",
+ "comparator_note": "EVERY delta is arm-vs-CONTROL at ONE HEAD. K0 failed as written (HEAD drift since the keeper's own solve), so the committed keeper is not a valid comparator and no arm-vs-keeper delta is quoted.",
+ "years": {
+  "2023": {
+   "price": {
+    "annual": {
+     "actual": 32.847,
+     "control": 32.687,
+     "arm": 32.195,
+     "control_pct": -0.49,
+     "arm_pct": -1.98,
+     "delta_pp": -1.49,
+     "delta_usd": -0.492
+    },
+    "monthly": [
+     {
+      "month": 1,
+      "actual": 38.047,
+      "control": 36.947,
+      "arm": 36.947,
+      "control_pct": -2.89,
+      "arm_pct": -2.89,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 2,
+      "actual": 26.815,
+      "control": 31.305,
+      "arm": 31.305,
+      "control_pct": 16.75,
+      "arm_pct": 16.75,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 3,
+      "actual": 29.726,
+      "control": 30.978,
+      "arm": 30.978,
+      "control_pct": 4.21,
+      "arm_pct": 4.21,
+      "delta_usd": -0.0
+     },
+     {
+      "month": 4,
+      "actual": 30.84,
+      "control": 30.038,
+      "arm": 30.038,
+      "control_pct": -2.6,
+      "arm_pct": -2.6,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 5,
+      "actual": 33.949,
+      "control": 30.942,
+      "arm": 30.943,
+      "control_pct": -8.86,
+      "arm_pct": -8.85,
+      "delta_usd": 0.001
+     },
+     {
+      "month": 6,
+      "actual": 31.182,
+      "control": 32.024,
+      "arm": 30.898,
+      "control_pct": 2.7,
+      "arm_pct": -0.91,
+      "delta_usd": -1.127
+     },
+     {
+      "month": 7,
+      "actual": 35.444,
+      "control": 34.135,
+      "arm": 32.954,
+      "control_pct": -3.69,
+      "arm_pct": -7.02,
+      "delta_usd": -1.181
+     },
+     {
+      "month": 8,
+      "actual": 36.019,
+      "control": 35.317,
+      "arm": 33.349,
+      "control_pct": -1.95,
+      "arm_pct": -7.41,
+      "delta_usd": -1.968
+     },
+     {
+      "month": 9,
+      "actual": 33.651,
+      "control": 32.327,
+      "arm": 31.378,
+      "control_pct": -3.93,
+      "arm_pct": -6.75,
+      "delta_usd": -0.949
+     },
+     {
+      "month": 10,
+      "actual": 36.5,
+      "control": 32.735,
+      "arm": 32.735,
+      "control_pct": -10.32,
+      "arm_pct": -10.32,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 11,
+      "actual": 32.89,
+      "control": 32.301,
+      "arm": 32.301,
+      "control_pct": -1.79,
+      "arm_pct": -1.79,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 12,
+      "actual": 27.294,
+      "control": 31.745,
+      "arm": 31.745,
+      "control_pct": 16.31,
+      "arm_pct": 16.31,
+      "delta_usd": 0.0
+     }
+    ],
+    "demand_identity_max_abs_diff_mw": 0.0
+   },
+   "class_energy": {
+    "twh_delta": {
+     "CC_REGULAR": 3.1645,
+     "COAL_PRB": -1.2406,
+     "import": -1.0454,
+     "ST_GAS": -0.8138,
+     "CC_CHP": 0.4586,
+     "COAL_BIT": -0.3549,
+     "CT_PEAKER": -0.3276,
+     "CT_CHP": 0.2257,
+     "ST_CHP": -0.0498,
+     "COAL_LIGNITE": -0.0358
+    },
+    "control_twh": {
+     "CC_CHP": 21.2,
+     "CC_REGULAR": 138.783,
+     "COAL_BIT": 52.045,
+     "COAL_LIGNITE": 6.742,
+     "COAL_PRB": 122.422,
+     "CT_CHP": 5.527,
+     "CT_PEAKER": 14.407,
+     "OTHER": 10.325,
+     "ST_CHP": 2.402,
+     "ST_GAS": 21.486,
+     "biomass": 8.128,
+     "hydro": 8.775,
+     "import": 39.491,
+     "nuclear": 87.152,
+     "oil": 0.0,
+     "solar": 6.348,
+     "wind": 96.435
+    },
+    "net_twh": -0.0193
+   }
+  },
+  "2024": {
+   "price": {
+    "annual": {
+     "actual": 32.301,
+     "control": 30.361,
+     "arm": 29.706,
+     "control_pct": -6.01,
+     "arm_pct": -8.03,
+     "delta_pp": -2.02,
+     "delta_usd": -0.655
+    },
+    "monthly": [
+     {
+      "month": 1,
+      "actual": 42.253,
+      "control": 37.549,
+      "arm": 37.549,
+      "control_pct": -11.13,
+      "arm_pct": -11.13,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 2,
+      "actual": 26.989,
+      "control": 28.517,
+      "arm": 28.517,
+      "control_pct": 5.66,
+      "arm_pct": 5.66,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 3,
+      "actual": 23.729,
+      "control": 25.91,
+      "arm": 25.91,
+      "control_pct": 9.19,
+      "arm_pct": 9.19,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 4,
+      "actual": 28.832,
+      "control": 25.017,
+      "arm": 25.017,
+      "control_pct": -13.23,
+      "arm_pct": -13.23,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 5,
+      "actual": 35.803,
+      "control": 29.321,
+      "arm": 29.321,
+      "control_pct": -18.1,
+      "arm_pct": -18.1,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 6,
+      "actual": 33.795,
+      "control": 29.309,
+      "arm": 28.238,
+      "control_pct": -13.27,
+      "arm_pct": -16.44,
+      "delta_usd": -1.071
+     },
+     {
+      "month": 7,
+      "actual": 36.839,
+      "control": 31.524,
+      "arm": 29.949,
+      "control_pct": -14.43,
+      "arm_pct": -18.7,
+      "delta_usd": -1.575
+     },
+     {
+      "month": 8,
+      "actual": 32.529,
+      "control": 34.295,
+      "arm": 31.088,
+      "control_pct": 5.43,
+      "arm_pct": -4.43,
+      "delta_usd": -3.207
+     },
+     {
+      "month": 9,
+      "actual": 32.908,
+      "control": 29.297,
+      "arm": 28.214,
+      "control_pct": -10.97,
+      "arm_pct": -14.26,
+      "delta_usd": -1.082
+     },
+     {
+      "month": 10,
+      "actual": 28.23,
+      "control": 27.582,
+      "arm": 27.579,
+      "control_pct": -2.3,
+      "arm_pct": -2.31,
+      "delta_usd": -0.003
+     },
+     {
+      "month": 11,
+      "actual": 26.881,
+      "control": 28.73,
+      "arm": 28.73,
+      "control_pct": 6.88,
+      "arm_pct": 6.88,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 12,
+      "actual": 34.421,
+      "control": 34.077,
+      "arm": 34.077,
+      "control_pct": -1.0,
+      "arm_pct": -1.0,
+      "delta_usd": 0.0
+     }
+    ],
+    "demand_identity_max_abs_diff_mw": 0.0
+   },
+   "class_energy": {
+    "twh_delta": {
+     "CC_REGULAR": 3.7373,
+     "COAL_PRB": -1.5675,
+     "import": -1.1169,
+     "ST_GAS": -0.7139,
+     "CT_PEAKER": -0.46,
+     "COAL_BIT": -0.3962,
+     "CC_CHP": 0.3878,
+     "CT_CHP": 0.2223,
+     "ST_CHP": -0.0469,
+     "COAL_LIGNITE": -0.0389
+    },
+    "control_twh": {
+     "CC_CHP": 21.23,
+     "CC_REGULAR": 146.355,
+     "COAL_BIT": 49.846,
+     "COAL_LIGNITE": 6.021,
+     "COAL_PRB": 116.429,
+     "CT_CHP": 5.678,
+     "CT_PEAKER": 19.039,
+     "OTHER": 8.282,
+     "ST_CHP": 2.827,
+     "ST_GAS": 21.499,
+     "biomass": 7.24,
+     "hydro": 9.029,
+     "import": 23.989,
+     "nuclear": 90.199,
+     "oil": 0.007,
+     "solar": 14.385,
+     "wind": 103.308
+    },
+    "net_twh": 0.0066
+   }
+  },
+  "2025": {
+   "price": {
+    "annual": {
+     "actual": 45.455,
+     "control": 39.024,
+     "arm": 38.373,
+     "control_pct": -14.15,
+     "arm_pct": -15.58,
+     "delta_pp": -1.43,
+     "delta_usd": -0.651
+    },
+    "monthly": [
+     {
+      "month": 1,
+      "actual": 51.523,
+      "control": 42.05,
+      "arm": 42.05,
+      "control_pct": -18.39,
+      "arm_pct": -18.39,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 2,
+      "actual": 46.502,
+      "control": 43.48,
+      "arm": 43.48,
+      "control_pct": -6.5,
+      "arm_pct": -6.5,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 3,
+      "actual": 37.921,
+      "control": 36.167,
+      "arm": 36.167,
+      "control_pct": -4.62,
+      "arm_pct": -4.62,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 4,
+      "actual": 37.699,
+      "control": 35.442,
+      "arm": 35.442,
+      "control_pct": -5.99,
+      "arm_pct": -5.99,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 5,
+      "actual": 33.932,
+      "control": 38.149,
+      "arm": 38.143,
+      "control_pct": 12.43,
+      "arm_pct": 12.41,
+      "delta_usd": -0.006
+     },
+     {
+      "month": 6,
+      "actual": 57.393,
+      "control": 40.007,
+      "arm": 38.171,
+      "control_pct": -30.29,
+      "arm_pct": -33.49,
+      "delta_usd": -1.836
+     },
+     {
+      "month": 7,
+      "actual": 59.451,
+      "control": 41.545,
+      "arm": 39.097,
+      "control_pct": -30.12,
+      "arm_pct": -34.24,
+      "delta_usd": -2.448
+     },
+     {
+      "month": 8,
+      "actual": 40.44,
+      "control": 36.929,
+      "arm": 35.526,
+      "control_pct": -8.68,
+      "arm_pct": -12.15,
+      "delta_usd": -1.403
+     },
+     {
+      "month": 9,
+      "actual": 46.374,
+      "control": 37.536,
+      "arm": 36.261,
+      "control_pct": -19.06,
+      "arm_pct": -21.81,
+      "delta_usd": -1.276
+     },
+     {
+      "month": 10,
+      "actual": 38.7,
+      "control": 35.983,
+      "arm": 35.979,
+      "control_pct": -7.02,
+      "arm_pct": -7.03,
+      "delta_usd": -0.003
+     },
+     {
+      "month": 11,
+      "actual": 40.616,
+      "control": 37.447,
+      "arm": 37.447,
+      "control_pct": -7.8,
+      "arm_pct": -7.8,
+      "delta_usd": 0.0
+     },
+     {
+      "month": 12,
+      "actual": 47.398,
+      "control": 41.862,
+      "arm": 41.862,
+      "control_pct": -11.68,
+      "arm_pct": -11.68,
+      "delta_usd": 0.0
+     }
+    ],
+    "demand_identity_max_abs_diff_mw": 0.0
+   },
+   "class_energy": {
+    "twh_delta": {
+     "CC_REGULAR": 3.6388,
+     "COAL_PRB": -1.0777,
+     "import": -1.0492,
+     "ST_GAS": -0.7965,
+     "CT_PEAKER": -0.776,
+     "COAL_BIT": -0.5172,
+     "CC_CHP": 0.3918,
+     "CT_CHP": 0.2359,
+     "ST_CHP": -0.0465,
+     "COAL_LIGNITE": -0.0346,
+     "oil": -0.0007
+    },
+    "control_twh": {
+     "CC_CHP": 18.311,
+     "CC_REGULAR": 128.667,
+     "COAL_BIT": 59.451,
+     "COAL_LIGNITE": 5.674,
+     "COAL_PRB": 147.109,
+     "CT_CHP": 5.658,
+     "CT_PEAKER": 17.424,
+     "OTHER": 5.833,
+     "ST_CHP": 1.912,
+     "ST_GAS": 20.493,
+     "biomass": 2.928,
+     "hydro": 9.064,
+     "import": 17.627,
+     "nuclear": 90.591,
+     "oil": 0.001,
+     "solar": 29.751,
+     "wind": 104.034
+    },
+    "net_twh": -0.0318
+   }
+  }
+ },
+ "C8": {
+  "control": {
+   "d2_rows": 0,
+   "shares": {}
+  },
+  "arm": {
+   "d2_rows": 0,
+   "shares": {}
+  }
+ }
+}
