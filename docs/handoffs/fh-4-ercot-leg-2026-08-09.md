@@ -188,9 +188,46 @@ artifacts.)
 *(Sections below this line are filled AFTER the pre-registered work runs, in
 order, as produced.)*
 
-## 2. STEP-0 GATE VERDICT
+## 2. STEP-0 GATE VERDICT — **PASS**
 
-*(pending — nothing below §1 was written before the probe ran)*
+Probe run exactly as pre-registered (§1.1): registered
+`ercot-2023-2025-t1ff-armr-fh4gate` (hindcast namespace,
+`kind="full_forward"`), solved `[2023, 2024, 2025]`, bridged `[]`,
+`leakage_violations: []`, holdout freeze ACTIVE and read at launch, runtime
+`cache_key=e1714e3d41d0b979`, meta records the solved arming
+(`capacity_screen_unified_lookahead=True`,
+`capacity_screen_scarcity_restoration=True`, `retirement_rule="pipeline"` via
+the shipped default, `demand_growth_vintage=null` — Arm R).
+
+**The I6 criterion, applied as written — PASS in every year:**
+
+| Year | Prior thermal | Econ retired | I6 fraction | FH-1 reference (pre-fix) |
+|---|---|---|---|---|
+| 2023 | 78.2 GW | 0.00 GW | **0.0 %** | 0.0 % |
+| 2024 | 78.2 GW | 0.00 GW | **0.0 %** | 0.0 % |
+| 2025 | 78.5 GW | 0.00 GW | **0.0 %** | **26.8 % — I6 FAIL** (21.05 GW) |
+
+The registered invariant battery reads **I6 PASS** (cap 20 %, no year
+exceeds it), and the wave is gone ENTIRELY, not reclassified: total
+retirements of ANY reason are 0.00 GW in all three ledgers. **I7 PASS** (the
+reliability floor held — the FH-1 signature's second FAIL leg also clears).
+**I12 WARN remains**, now on the LOW side: reserve margin 2023 7.8 % and
+2024 13.3 % sit under the scalar floor band [13.8 %, 28.7 %] (the FH-1 probe
+was out on the high side, 2024 30.2 %); reported at full magnitude, not the
+criterion. 14 checks: 0 FAIL, 1 WARN.
+
+Screen context (ledger/log record, not tuned): the 2025 unified-lookahead
+screen prices the thermal cohorts' net revenue far above their going-forward
+bars (coal $514.0 vs $58.5/kW-yr bar; gas_cc $549.8 vs $30.0; gas_ct $463.0
+vs $21.0; gas_st $390.2 vs $35.0), so the two-consecutive-loss counters never
+mature — the s3/G-31 defect signature does not form at the determined
+posture. In-window economic executions are 0 (the FFR-7C falsification bound
+HOLDS).
+
+**Consequence.** The AG.2 condition is met at base 2023 / vintage 2023 — the
+posture the FH-1 FAIL was measured on. Phase A's ERCOT leg proceeds; per
+§1.2 this probe IS Arm R, so its `crossover_score.json` is quotable as the
+Arm R skill read (§4).
 
 ## 3. Arm K
 
