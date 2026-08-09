@@ -191,5 +191,54 @@ class TestSeamImportOverride(unittest.TestCase):
         self.assertEqual(caps.get("PJM_simultaneous_import"), 12345.0)
 
 
+class TestSeamOverrideUnresolvedWarns(unittest.TestCase):
+    """caiso-188: an unresolvable Part A must WARN and name the fitted fallback.
+
+    Part A resolves the published seam limit through the gitignored, disposable
+    clean partition, which no solve auto-builds. When it is absent the topology
+    step keeps the baked ``WECC_import_simultaneous`` scalar — a fitted value —
+    while ``run_config.json`` still records the flag as True. That combination
+    silently governed every CAISO run from caiso-175 onward, the designated
+    keeper included (total import pinned at exactly 7,500.0 MW in 764/477/809
+    hours of 2023/24/25; FINDING-caiso188-import-tranche-dof-2026-08-09.md §4).
+    The fallback stays — hard-failing would break every ISO whose partition is
+    not materialised — but it may never again be silent.
+    """
+
+    def test_unresolved_part_a_warns_and_names_the_baked_cap(self) -> None:
+        from market_sim.model.interchange.spec import (
+            apply_interchange_topology,
+            get_interchange_spec,
+        )
+
+        config = ScenarioConfig().with_overrides(
+            capacity_deliverability_limits=True, caiso_per_hub_intertie=True
+        )
+        orig = clean_io.paths.CLEAN_DIR
+        with TemporaryDirectory() as tmp:
+            # Empty CLEAN_DIR → no published import_limit resolves for any ISO.
+            clean_io.paths.CLEAN_DIR = Path(tmp) / "clean"
+            try:
+                with self.assertLogs(
+                    "market_sim.model.interchange.spec", level="WARNING"
+                ) as logged:
+                    updated = apply_interchange_topology(
+                        get_iso_config("CAISO"),
+                        get_interchange_spec(config, "CAISO", 2025),
+                        config,
+                        year=2025,
+                        extend_node=True,
+                    )
+            finally:
+                clean_io.paths.CLEAN_DIR = orig
+        message = "\n".join(logged.output)
+        self.assertIn("Part A did NOT apply", message)
+        self.assertIn("7500", message)
+        self.assertIn("fitted scalar", message)
+        # The baked scalar survives, re-homed onto the per-hub corridor links.
+        caps = {lim.name: lim.cap_mw for lim in updated.interface_limits}
+        self.assertEqual(caps.get("WECC_import_simultaneous"), 7500.0)
+
+
 if __name__ == "__main__":
     unittest.main()
