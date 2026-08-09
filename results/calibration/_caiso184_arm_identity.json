@@ -1,0 +1,91 @@
+{
+ "session": "caiso-184",
+ "precheck": "results/calibration/PRECHECK-caiso184-capacity-basis-2026-08-08.md",
+ "reused_instruments": [
+  "scripts/probes/_caiso180_arm_identity.py (DOF ledger)",
+  "scripts/probes/_caiso183_arm_identity.py (check_arms_distinct, hourly signature)"
+ ],
+ "delta": "ScenarioConfig.unit_outage_lp_capacity_basis False -> True. NO data file changed; both arms read campd-unit-outages-CAISO.csv sha256 25360e90a9d11f32c293edf3224047da0d6fab447b551fac81b983e2da1166c6.",
+ "config_identity_note": "The caiso-180/183 config-IDENTITY leg is deliberately NOT run: this session's delta IS a ScenarioConfig field, so identity would fail by construction. It is replaced by the STRICTER single-key predicate below, which additionally proves no second lever moved.",
+ "arms_present": [
+  "B0",
+  "B1"
+ ],
+ "partial_audit": false,
+ "single_key_delta": {
+  "n_keys_compared": 705,
+  "differing_keys": [
+   "unit_outage_lp_capacity_basis"
+  ],
+  "control_value": false,
+  "treated_value": true,
+  "verdict": "PASS \u2014 exactly one key, and it is the pre-registered delta"
+ },
+ "dof_ledger": {
+  "B0": {
+   "n_entries": 11,
+   "n_residual": 8,
+   "unchanged": true
+  },
+  "B1": {
+   "n_entries": 11,
+   "n_residual": 8,
+   "unchanged": true
+  }
+ },
+ "arm_distinctness": {
+  "hourly_signature": {
+   "B0": {
+    "2023": 3108601.218525,
+    "2024": 2157215.850414,
+    "2025": 2227423.601637
+   },
+   "B1": {
+    "2023": 3098406.911075,
+    "2024": 2151114.419236,
+    "2025": 2213366.102177
+   }
+  },
+  "arms_distinct": true
+ },
+ "control_noise_floor": {
+  "comparison": "keeper -> C0 CONTROL (same-head noise floor)",
+  "years": {
+   "2023": {
+    "zone_hours_total": 61320,
+    "zone_hours_differing": 0,
+    "max_abs_delta_any_zone": 0.0
+   },
+   "2024": {
+    "zone_hours_total": 61320,
+    "zone_hours_differing": 0,
+    "max_abs_delta_any_zone": 0.0
+   },
+   "2025": {
+    "zone_hours_total": 61320,
+    "zone_hours_differing": 0,
+    "max_abs_delta_any_zone": 0.0
+   }
+  }
+ },
+ "treated_delta": {
+  "comparison": "C0 CONTROL -> C1 TREATED",
+  "years": {
+   "2023": {
+    "zone_hours_total": 61320,
+    "zone_hours_differing": 25390,
+    "max_abs_delta_any_zone": 81.0066077052605
+   },
+   "2024": {
+    "zone_hours_total": 61320,
+    "zone_hours_differing": 31200,
+    "max_abs_delta_any_zone": 148.66240763725676
+   },
+   "2025": {
+    "zone_hours_total": 61320,
+    "zone_hours_differing": 37395,
+    "max_abs_delta_any_zone": 59.668499999999995
+   }
+  }
+ }
+}
