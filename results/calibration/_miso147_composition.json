@@ -1,0 +1,1925 @@
+{
+ "session": "miso-147",
+ "pair_A": {
+  "2023": {
+   "S1": {
+    "rows": {
+     "coal": {
+      "model_mw": 24353.4,
+      "actual_mw": 24638.1,
+      "delta_mw": -284.7,
+      "model_share": 0.2908,
+      "actual_share": 0.2877,
+      "floor_mw": 1231.9,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "gas_total": {
+      "model_mw": 28190.2,
+      "actual_mw": 34322.0,
+      "delta_mw": -6131.8,
+      "model_share": 0.3366,
+      "actual_share": 0.4008,
+      "floor_mw": 1716.1,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 10143.1,
+      "actual_mw": 10231.5,
+      "delta_mw": -88.4,
+      "model_share": 0.1211,
+      "actual_share": 0.1195,
+      "floor_mw": 511.6,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 9159.0,
+      "actual_mw": 8710.6,
+      "delta_mw": 448.3,
+      "model_share": 0.1094,
+      "actual_share": 0.1017,
+      "floor_mw": 435.5,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 1126.3,
+      "actual_mw": 1126.3,
+      "delta_mw": 0.0,
+      "model_share": 0.0135,
+      "actual_share": 0.0132,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 2594.1,
+      "actual_mw": 1748.2,
+      "delta_mw": 845.9,
+      "model_share": 0.031,
+      "actual_share": 0.0204,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 2139.9,
+      "actual_mw": 596.5,
+      "delta_mw": 1543.4,
+      "model_share": 0.0256,
+      "actual_share": 0.007,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "net_import": {
+      "model_mw": 6016.5,
+      "actual_mw": 4269.8,
+      "delta_mw": 1746.7,
+      "model_share": 0.0718,
+      "actual_share": 0.0499,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "battery": {
+      "model_mw": 14.9,
+      "actual_mw": null,
+      "note": "no EIA-930 series for this BA-year"
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 24493.3
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3696.9
+     }
+    },
+    "model_total_mw": 83737.6,
+    "actual_total_mw": 85643.1,
+    "demand_control": {
+     "model_sidecar_demand_mw": 81430.8,
+     "e930_demand_mw": 83737.6
+    },
+    "ba_identity_noise_floor_mw": 1905.3,
+    "n_hours": 873,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "S2": {
+    "rows": {
+     "coal": {
+      "model_mw": 23296.6,
+      "actual_mw": 23805.8,
+      "delta_mw": -509.2,
+      "model_share": 0.2804,
+      "actual_share": 0.2806,
+      "floor_mw": 1190.3,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "gas_total": {
+      "model_mw": 28691.1,
+      "actual_mw": 34123.0,
+      "delta_mw": -5432.0,
+      "model_share": 0.3453,
+      "actual_share": 0.4022,
+      "floor_mw": 1706.2,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 9868.0,
+      "actual_mw": 10038.3,
+      "delta_mw": -170.2,
+      "model_share": 0.1188,
+      "actual_share": 0.1183,
+      "floor_mw": 501.9,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 9687.2,
+      "actual_mw": 9213.0,
+      "delta_mw": 474.2,
+      "model_share": 0.1166,
+      "actual_share": 0.1086,
+      "floor_mw": 460.7,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 1100.1,
+      "actual_mw": 1100.1,
+      "delta_mw": 0.0,
+      "model_share": 0.0132,
+      "actual_share": 0.013,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 2555.7,
+      "actual_mw": 1717.0,
+      "delta_mw": 838.7,
+      "model_share": 0.0308,
+      "actual_share": 0.0202,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 2115.2,
+      "actual_mw": 573.2,
+      "delta_mw": 1541.9,
+      "model_share": 0.0255,
+      "actual_share": 0.0068,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "net_import": {
+      "model_mw": 5749.8,
+      "actual_mw": 4279.9,
+      "delta_mw": 1469.9,
+      "model_share": 0.0692,
+      "actual_share": 0.0504,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "battery": {
+      "model_mw": 17.4,
+      "actual_mw": null,
+      "note": "no EIA-930 series for this BA-year"
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 24901.4
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3789.7
+     }
+    },
+    "model_total_mw": 83081.0,
+    "actual_total_mw": 84850.3,
+    "demand_control": {
+     "model_sidecar_demand_mw": 80691.8,
+     "e930_demand_mw": 83081.0
+    },
+    "ba_identity_noise_floor_mw": 1768.8,
+    "n_hours": 120,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "S3": {
+    "rows": {
+     "coal": {
+      "model_mw": 24967.3,
+      "actual_mw": 25950.0,
+      "delta_mw": -982.8,
+      "model_share": 0.2981,
+      "actual_share": 0.3036,
+      "floor_mw": 1297.5,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "gas_total": {
+      "model_mw": 29082.8,
+      "actual_mw": 34946.9,
+      "delta_mw": -5864.1,
+      "model_share": 0.3472,
+      "actual_share": 0.4089,
+      "floor_mw": 1747.3,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 9915.3,
+      "actual_mw": 9954.0,
+      "delta_mw": -38.7,
+      "model_share": 0.1184,
+      "actual_share": 0.1165,
+      "floor_mw": 497.7,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 7209.5,
+      "actual_mw": 6856.6,
+      "delta_mw": 352.9,
+      "model_share": 0.0861,
+      "actual_share": 0.0802,
+      "floor_mw": 342.8,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 1130.7,
+      "actual_mw": 1130.7,
+      "delta_mw": 0.0,
+      "model_share": 0.0135,
+      "actual_share": 0.0132,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 2894.5,
+      "actual_mw": 1794.2,
+      "delta_mw": 1100.3,
+      "model_share": 0.0346,
+      "actual_share": 0.021,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 2180.0,
+      "actual_mw": 665.3,
+      "delta_mw": 1514.7,
+      "model_share": 0.026,
+      "actual_share": 0.0078,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "net_import": {
+      "model_mw": 6360.2,
+      "actual_mw": 4166.6,
+      "delta_mw": 2193.5,
+      "model_share": 0.0759,
+      "actual_share": 0.0488,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "battery": {
+      "model_mw": 13.0,
+      "actual_mw": null,
+      "note": "no EIA-930 series for this BA-year"
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 25255.8
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3827.0
+     }
+    },
+    "model_total_mw": 83753.2,
+    "actual_total_mw": 85464.4,
+    "demand_control": {
+     "model_sidecar_demand_mw": 81284.8,
+     "e930_demand_mw": 83753.2
+    },
+    "ba_identity_noise_floor_mw": 1710.8,
+    "n_hours": 30,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "MAYCTRL": {
+    "rows": {
+     "coal": {
+      "model_mw": 17031.3,
+      "actual_mw": 15881.0,
+      "delta_mw": 1150.3,
+      "model_share": 0.2446,
+      "actual_share": 0.2252,
+      "floor_mw": 794.0,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "gas_total": {
+      "model_mw": 24600.7,
+      "actual_mw": 26998.4,
+      "delta_mw": -2397.7,
+      "model_share": 0.3533,
+      "actual_share": 0.3828,
+      "floor_mw": 1349.9,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 8754.7,
+      "actual_mw": 8839.5,
+      "delta_mw": -84.8,
+      "model_share": 0.1257,
+      "actual_share": 0.1253,
+      "floor_mw": 442.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 10304.9,
+      "actual_mw": 9800.5,
+      "delta_mw": 504.4,
+      "model_share": 0.148,
+      "actual_share": 0.139,
+      "floor_mw": 490.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 1017.0,
+      "actual_mw": 1017.0,
+      "delta_mw": 0.0,
+      "model_share": 0.0146,
+      "actual_share": 0.0144,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 1553.3,
+      "actual_mw": 1458.3,
+      "delta_mw": 95.0,
+      "model_share": 0.0223,
+      "actual_share": 0.0207,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 1965.4,
+      "actual_mw": 332.8,
+      "delta_mw": 1632.6,
+      "model_share": 0.0282,
+      "actual_share": 0.0047,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "net_import": {
+      "model_mw": 4408.8,
+      "actual_mw": 6199.1,
+      "delta_mw": -1790.3,
+      "model_share": 0.0633,
+      "actual_share": 0.0879,
+      "floor_mw": 310.0,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "battery": {
+      "model_mw": 0.7,
+      "actual_mw": null,
+      "note": "no EIA-930 series for this BA-year"
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 20951.7
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3649.0
+     }
+    },
+    "model_total_mw": 69636.8,
+    "actual_total_mw": 70526.5,
+    "demand_control": {
+     "model_sidecar_demand_mw": 68563.1,
+     "e930_demand_mw": 69636.8
+    },
+    "ba_identity_noise_floor_mw": 889.5,
+    "n_hours": 744,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "S1_thr_usd": 43.342
+  },
+  "2024": {
+   "S1": {
+    "rows": {
+     "coal": {
+      "model_mw": 24855.2,
+      "actual_mw": 25243.2,
+      "delta_mw": -388.0,
+      "model_share": 0.2874,
+      "actual_share": 0.2856,
+      "floor_mw": 1262.2,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "gas_total": {
+      "model_mw": 29853.4,
+      "actual_mw": 36035.9,
+      "delta_mw": -6182.5,
+      "model_share": 0.3452,
+      "actual_share": 0.4077,
+      "floor_mw": 1801.8,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 10360.7,
+      "actual_mw": 10391.0,
+      "delta_mw": -30.2,
+      "model_share": 0.1198,
+      "actual_share": 0.1176,
+      "floor_mw": 519.5,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 10159.2,
+      "actual_mw": 9661.9,
+      "delta_mw": 497.3,
+      "model_share": 0.1175,
+      "actual_share": 0.1093,
+      "floor_mw": 483.1,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 2133.4,
+      "actual_mw": 2133.4,
+      "delta_mw": -0.0,
+      "model_share": 0.0247,
+      "actual_share": 0.0241,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 2773.2,
+      "actual_mw": 1872.2,
+      "delta_mw": 901.0,
+      "model_share": 0.0321,
+      "actual_share": 0.0212,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 1841.3,
+      "actual_mw": 389.0,
+      "delta_mw": 1452.3,
+      "model_share": 0.0213,
+      "actual_share": 0.0044,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "net_import": {
+      "model_mw": 4473.8,
+      "actual_mw": 2662.2,
+      "delta_mw": 1811.7,
+      "model_share": 0.0517,
+      "actual_share": 0.0301,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "battery": {
+      "model_mw": 28.8,
+      "actual_mw": null,
+      "note": "no EIA-930 series for this BA-year"
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 26139.2
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3714.2
+     }
+    },
+    "model_total_mw": 86478.9,
+    "actual_total_mw": 88388.7,
+    "demand_control": {
+     "model_sidecar_demand_mw": 84507.9,
+     "e930_demand_mw": 86502.1
+    },
+    "ba_identity_noise_floor_mw": 1898.1,
+    "n_hours": 873,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "S2": {
+    "rows": {
+     "coal": {
+      "model_mw": 26898.0,
+      "actual_mw": 27355.0,
+      "delta_mw": -457.0,
+      "model_share": 0.2968,
+      "actual_share": 0.2953,
+      "floor_mw": 1367.8,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "gas_total": {
+      "model_mw": 31533.8,
+      "actual_mw": 38051.9,
+      "delta_mw": -6518.1,
+      "model_share": 0.348,
+      "actual_share": 0.4108,
+      "floor_mw": 1902.6,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 10295.0,
+      "actual_mw": 10453.7,
+      "delta_mw": -158.7,
+      "model_share": 0.1136,
+      "actual_share": 0.1129,
+      "floor_mw": 522.7,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 9574.4,
+      "actual_mw": 9105.7,
+      "delta_mw": 468.6,
+      "model_share": 0.1057,
+      "actual_share": 0.0983,
+      "floor_mw": 455.3,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 1994.0,
+      "actual_mw": 1994.0,
+      "delta_mw": 0.0,
+      "model_share": 0.022,
+      "actual_share": 0.0215,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 3249.9,
+      "actual_mw": 2064.6,
+      "delta_mw": 1185.3,
+      "model_share": 0.0359,
+      "actual_share": 0.0223,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 1905.8,
+      "actual_mw": 455.0,
+      "delta_mw": 1450.8,
+      "model_share": 0.021,
+      "actual_share": 0.0049,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "net_import": {
+      "model_mw": 5120.8,
+      "actual_mw": 3139.8,
+      "delta_mw": 1981.0,
+      "model_share": 0.0565,
+      "actual_share": 0.0339,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "battery": {
+      "model_mw": 41.6,
+      "actual_mw": null,
+      "note": "no EIA-930 series for this BA-year"
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 27866.1
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3667.7
+     }
+    },
+    "model_total_mw": 90613.3,
+    "actual_total_mw": 92619.8,
+    "demand_control": {
+     "model_sidecar_demand_mw": 88614.8,
+     "e930_demand_mw": 90730.9
+    },
+    "ba_identity_noise_floor_mw": 1911.8,
+    "n_hours": 149,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "S3": {
+    "rows": {
+     "coal": {
+      "model_mw": 24807.2,
+      "actual_mw": 25315.4,
+      "delta_mw": -508.2,
+      "model_share": 0.285,
+      "actual_share": 0.2843,
+      "floor_mw": 1265.8,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "gas_total": {
+      "model_mw": 32097.4,
+      "actual_mw": 38027.5,
+      "delta_mw": -5930.1,
+      "model_share": 0.3688,
+      "actual_share": 0.4271,
+      "floor_mw": 1901.4,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 10425.7,
+      "actual_mw": 10504.9,
+      "delta_mw": -79.3,
+      "model_share": 0.1198,
+      "actual_share": 0.118,
+      "floor_mw": 525.2,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 7771.8,
+      "actual_mw": 7391.4,
+      "delta_mw": 380.4,
+      "model_share": 0.0893,
+      "actual_share": 0.083,
+      "floor_mw": 369.6,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 1764.9,
+      "actual_mw": 1764.9,
+      "delta_mw": 0.0,
+      "model_share": 0.0203,
+      "actual_share": 0.0198,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 3658.8,
+      "actual_mw": 2266.5,
+      "delta_mw": 1392.3,
+      "model_share": 0.042,
+      "actual_share": 0.0255,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 1826.4,
+      "actual_mw": 391.2,
+      "delta_mw": 1435.3,
+      "model_share": 0.021,
+      "actual_share": 0.0044,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "net_import": {
+      "model_mw": 4614.5,
+      "actual_mw": 3368.3,
+      "delta_mw": 1246.2,
+      "model_share": 0.053,
+      "actual_share": 0.0378,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "battery": {
+      "model_mw": 62.1,
+      "actual_mw": null,
+      "note": "no EIA-930 series for this BA-year"
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 28191.7
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3905.7
+     }
+    },
+    "model_total_mw": 87028.9,
+    "actual_total_mw": 89030.1,
+    "demand_control": {
+     "model_sidecar_demand_mw": 84509.1,
+     "e930_demand_mw": 87180.7
+    },
+    "ba_identity_noise_floor_mw": 1849.1,
+    "n_hours": 37,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "MAYCTRL": {
+    "rows": {
+     "coal": {
+      "model_mw": 15478.0,
+      "actual_mw": 16401.3,
+      "delta_mw": -923.4,
+      "model_share": 0.2184,
+      "actual_share": 0.2266,
+      "floor_mw": 820.1,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "gas_total": {
+      "model_mw": 26172.6,
+      "actual_mw": 29321.2,
+      "delta_mw": -3148.6,
+      "model_share": 0.3694,
+      "actual_share": 0.4051,
+      "floor_mw": 1466.1,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 9561.0,
+      "actual_mw": 9650.3,
+      "delta_mw": -89.2,
+      "model_share": 0.1349,
+      "actual_share": 0.1333,
+      "floor_mw": 482.5,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 11118.6,
+      "actual_mw": 10574.4,
+      "delta_mw": 544.2,
+      "model_share": 0.1569,
+      "actual_share": 0.1461,
+      "floor_mw": 528.7,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 2089.6,
+      "actual_mw": 2089.6,
+      "delta_mw": -0.0,
+      "model_share": 0.0295,
+      "actual_share": 0.0289,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 1521.9,
+      "actual_mw": 1631.6,
+      "delta_mw": -109.7,
+      "model_share": 0.0215,
+      "actual_share": 0.0225,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 1759.2,
+      "actual_mw": 295.7,
+      "delta_mw": 1463.5,
+      "model_share": 0.0248,
+      "actual_share": 0.0041,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "net_import": {
+      "model_mw": 3159.0,
+      "actual_mw": 2420.3,
+      "delta_mw": 738.7,
+      "model_share": 0.0446,
+      "actual_share": 0.0334,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "battery": {
+      "model_mw": 1.0,
+      "actual_mw": null,
+      "note": "no EIA-930 series for this BA-year"
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 22453.9
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3718.7
+     }
+    },
+    "model_total_mw": 70860.9,
+    "actual_total_mw": 72384.3,
+    "demand_control": {
+     "model_sidecar_demand_mw": 69900.6,
+     "e930_demand_mw": 70860.9
+    },
+    "ba_identity_noise_floor_mw": 1523.1,
+    "n_hours": 744,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "S1_thr_usd": 44.906
+  },
+  "2025": {
+   "S1": {
+    "rows": {
+     "coal": {
+      "model_mw": 28829.8,
+      "actual_mw": 26853.0,
+      "delta_mw": 1976.9,
+      "model_share": 0.3241,
+      "actual_share": 0.2954,
+      "floor_mw": 1342.6,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "gas_total": {
+      "model_mw": 28403.2,
+      "actual_mw": 35942.0,
+      "delta_mw": -7538.8,
+      "model_share": 0.3193,
+      "actual_share": 0.3954,
+      "floor_mw": 1797.1,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 10652.3,
+      "actual_mw": 10758.6,
+      "delta_mw": -106.3,
+      "model_share": 0.1198,
+      "actual_share": 0.1184,
+      "floor_mw": 537.9,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 9865.6,
+      "actual_mw": 9382.7,
+      "delta_mw": 482.9,
+      "model_share": 0.1109,
+      "actual_share": 0.1032,
+      "floor_mw": 469.1,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 3584.0,
+      "actual_mw": 3584.0,
+      "delta_mw": 0.0,
+      "model_share": 0.0403,
+      "actual_share": 0.0394,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 2623.0,
+      "actual_mw": 1574.9,
+      "delta_mw": 1048.1,
+      "model_share": 0.0295,
+      "actual_share": 0.0173,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 1041.0,
+      "actual_mw": 545.4,
+      "delta_mw": 495.7,
+      "model_share": 0.0117,
+      "actual_share": 0.006,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "net_import": {
+      "model_mw": 3748.4,
+      "actual_mw": 2180.9,
+      "delta_mw": 1567.5,
+      "model_share": 0.0421,
+      "actual_share": 0.024,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "battery": {
+      "model_mw": 196.3,
+      "actual_mw": 70.8,
+      "delta_mw": 125.5,
+      "model_share": 0.0022,
+      "actual_share": 0.0008,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 25022.2
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3381.0
+     }
+    },
+    "model_total_mw": 88943.7,
+    "actual_total_mw": 90892.3,
+    "demand_control": {
+     "model_sidecar_demand_mw": 86837.8,
+     "e930_demand_mw": 88943.7
+    },
+    "ba_identity_noise_floor_mw": 1964.2,
+    "n_hours": 869,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "S2": {
+    "rows": {
+     "coal": {
+      "model_mw": 29520.7,
+      "actual_mw": 27609.9,
+      "delta_mw": 1910.8,
+      "model_share": 0.3197,
+      "actual_share": 0.2925,
+      "floor_mw": 1380.5,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "gas_total": {
+      "model_mw": 29679.9,
+      "actual_mw": 37412.5,
+      "delta_mw": -7732.6,
+      "model_share": 0.3214,
+      "actual_share": 0.3964,
+      "floor_mw": 1870.6,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 10688.9,
+      "actual_mw": 10888.8,
+      "delta_mw": -200.0,
+      "model_share": 0.1158,
+      "actual_share": 0.1154,
+      "floor_mw": 544.4,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 10570.9,
+      "actual_mw": 10053.5,
+      "delta_mw": 517.4,
+      "model_share": 0.1145,
+      "actual_share": 0.1065,
+      "floor_mw": 502.7,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 3729.9,
+      "actual_mw": 3729.9,
+      "delta_mw": 0.0,
+      "model_share": 0.0404,
+      "actual_share": 0.0395,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 2838.4,
+      "actual_mw": 1727.7,
+      "delta_mw": 1110.7,
+      "model_share": 0.0307,
+      "actual_share": 0.0183,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 1082.5,
+      "actual_mw": 633.1,
+      "delta_mw": 449.4,
+      "model_share": 0.0117,
+      "actual_share": 0.0067,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "net_import": {
+      "model_mw": 3998.7,
+      "actual_mw": 2232.4,
+      "delta_mw": 1766.3,
+      "model_share": 0.0433,
+      "actual_share": 0.0237,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "battery": {
+      "model_mw": 227.1,
+      "actual_mw": 92.5,
+      "delta_mw": 134.6,
+      "model_share": 0.0025,
+      "actual_share": 0.001,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 26285.3
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3394.6
+     }
+    },
+    "model_total_mw": 92336.9,
+    "actual_total_mw": 94380.2,
+    "demand_control": {
+     "model_sidecar_demand_mw": 90037.3,
+     "e930_demand_mw": 92336.9
+    },
+    "ba_identity_noise_floor_mw": 2043.2,
+    "n_hours": 256,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "S3": {
+    "rows": {
+     "coal": {
+      "model_mw": 30068.5,
+      "actual_mw": 28203.4,
+      "delta_mw": 1865.1,
+      "model_share": 0.311,
+      "actual_share": 0.2854,
+      "floor_mw": 1410.2,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "gas_total": {
+      "model_mw": 33812.1,
+      "actual_mw": 41322.3,
+      "delta_mw": -7510.2,
+      "model_share": 0.3497,
+      "actual_share": 0.4181,
+      "floor_mw": 2066.1,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 10523.1,
+      "actual_mw": 10755.4,
+      "delta_mw": -232.4,
+      "model_share": 0.1088,
+      "actual_share": 0.1088,
+      "floor_mw": 537.8,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 8927.2,
+      "actual_mw": 8490.2,
+      "delta_mw": 437.0,
+      "model_share": 0.0923,
+      "actual_share": 0.0859,
+      "floor_mw": 424.5,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 3480.9,
+      "actual_mw": 3480.9,
+      "delta_mw": 0.0,
+      "model_share": 0.036,
+      "actual_share": 0.0352,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 3599.7,
+      "actual_mw": 2270.5,
+      "delta_mw": 1329.2,
+      "model_share": 0.0372,
+      "actual_share": 0.023,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 1101.9,
+      "actual_mw": 801.8,
+      "delta_mw": 300.1,
+      "model_share": 0.0114,
+      "actual_share": 0.0081,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "net_import": {
+      "model_mw": 4728.0,
+      "actual_mw": 3360.2,
+      "delta_mw": 1367.8,
+      "model_share": 0.0489,
+      "actual_share": 0.034,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "battery": {
+      "model_mw": 457.4,
+      "actual_mw": 148.1,
+      "delta_mw": 309.3,
+      "model_share": 0.0047,
+      "actual_share": 0.0015,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 30244.7
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3567.4
+     }
+    },
+    "model_total_mw": 96698.6,
+    "actual_total_mw": 98832.7,
+    "demand_control": {
+     "model_sidecar_demand_mw": 94348.4,
+     "e930_demand_mw": 96698.6
+    },
+    "ba_identity_noise_floor_mw": 2133.7,
+    "n_hours": 88,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "S0": {
+    "rows": {
+     "coal": {
+      "model_mw": 19266.9,
+      "actual_mw": 17812.7,
+      "delta_mw": 1454.2,
+      "model_share": 0.2797,
+      "actual_share": 0.254,
+      "floor_mw": 890.6,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "gas_total": {
+      "model_mw": 21275.8,
+      "actual_mw": 22888.9,
+      "delta_mw": -1613.1,
+      "model_share": 0.3089,
+      "actual_share": 0.3264,
+      "floor_mw": 1144.4,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "nuclear": {
+      "model_mw": 8639.5,
+      "actual_mw": 8680.8,
+      "delta_mw": -41.3,
+      "model_share": 0.1254,
+      "actual_share": 0.1238,
+      "floor_mw": 434.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "wind": {
+      "model_mw": 10746.8,
+      "actual_mw": 10220.8,
+      "delta_mw": 526.0,
+      "model_share": 0.156,
+      "actual_share": 0.1458,
+      "floor_mw": 511.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "solar": {
+      "model_mw": 4126.9,
+      "actual_mw": 4126.9,
+      "delta_mw": 0.0,
+      "model_share": 0.0599,
+      "actual_share": 0.0589,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "hydro_ps": {
+      "model_mw": 1512.8,
+      "actual_mw": 1481.1,
+      "delta_mw": 31.7,
+      "model_share": 0.022,
+      "actual_share": 0.0211,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "other_oil_bio": {
+      "model_mw": 878.3,
+      "actual_mw": 261.4,
+      "delta_mw": 616.9,
+      "model_share": 0.0128,
+      "actual_share": 0.0037,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": true
+     },
+     "net_import": {
+      "model_mw": 2427.9,
+      "actual_mw": 4649.2,
+      "delta_mw": -2221.3,
+      "model_share": 0.0352,
+      "actual_share": 0.0663,
+      "floor_mw": 300.0,
+      "material": true,
+      "below_noise_floor": false
+     },
+     "battery": {
+      "model_mw": 4.9,
+      "actual_mw": -6.2,
+      "delta_mw": 11.2,
+      "model_share": 0.0001,
+      "actual_share": -0.0001,
+      "floor_mw": 300.0,
+      "material": false,
+      "below_noise_floor": true
+     },
+     "gas_merchant_model_only": {
+      "model_mw": 17852.1
+     },
+     "gas_chp_model_only": {
+      "model_mw": 3423.7
+     }
+    },
+    "model_total_mw": 68879.8,
+    "actual_total_mw": 70115.7,
+    "demand_control": {
+     "model_sidecar_demand_mw": 68002.5,
+     "e930_demand_mw": 68879.8
+    },
+    "ba_identity_noise_floor_mw": 1235.5,
+    "n_hours": 744,
+    "universe": "model: keeper P1 all klasses incl. import tranches + storage (NET) | actual: EIA-930 MISO BA net gen by fuel + (-interchange) (NET)"
+   },
+   "S1_thr_usd": 61.05
+  }
+ },
+ "pair_B": {
+  "2023": {
+   "campd_meta": {
+    "year": 2023,
+    "n_units": 692,
+    "n_plants": 244,
+    "unresolved_gross_mwh_by_state": {},
+    "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup"
+   },
+   "family_parasitic_factor": {
+    "CC": 0.9935,
+    "CT": 0.9914,
+    "ST_GAS": 0.9827,
+    "ST_COAL": 0.9715
+   },
+   "S1": {
+    "rows": {
+     "CC": {
+      "model_mw": 19906.5,
+      "campd_net_mw": 24865.0,
+      "delta_mw": -4958.6,
+      "floor_mw": 1243.3,
+      "material": true,
+      "campd_units_on_in_stratum": 146,
+      "campd_sum_p99_gross_gw": 34.807,
+      "coverage_vs_930_fuel": 0.7245
+     },
+     "CT": {
+      "model_mw": 4176.8,
+      "campd_net_mw": 4694.2,
+      "delta_mw": -517.4,
+      "floor_mw": 300.0,
+      "material": true,
+      "campd_units_on_in_stratum": 294,
+      "campd_sum_p99_gross_gw": 16.938,
+      "coverage_vs_930_fuel": 0.1368
+     },
+     "ST_GAS": {
+      "model_mw": 4107.0,
+      "campd_net_mw": 3739.5,
+      "delta_mw": 367.5,
+      "floor_mw": 300.0,
+      "material": true,
+      "campd_units_on_in_stratum": 42,
+      "campd_sum_p99_gross_gw": 10.228,
+      "coverage_vs_930_fuel": 0.109
+     },
+     "ST_COAL": {
+      "model_mw": 24353.4,
+      "campd_net_mw": 26681.6,
+      "delta_mw": -2328.2,
+      "floor_mw": 1334.1,
+      "material": true,
+      "campd_units_on_in_stratum": 91,
+      "campd_sum_p99_gross_gw": 48.206,
+      "coverage_vs_930_fuel": 1.0829
+     }
+    },
+    "n_hours": 873,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   },
+   "S2": {
+    "rows": {
+     "CC": {
+      "model_mw": 20084.0,
+      "campd_net_mw": 24618.3,
+      "delta_mw": -4534.3,
+      "floor_mw": 1230.9,
+      "material": true,
+      "campd_units_on_in_stratum": 146,
+      "campd_sum_p99_gross_gw": 34.807,
+      "coverage_vs_930_fuel": 0.7215
+     },
+     "CT": {
+      "model_mw": 4582.5,
+      "campd_net_mw": 4697.8,
+      "delta_mw": -115.3,
+      "floor_mw": 300.0,
+      "material": false,
+      "campd_units_on_in_stratum": 278,
+      "campd_sum_p99_gross_gw": 16.938,
+      "coverage_vs_930_fuel": 0.1377
+     },
+     "ST_GAS": {
+      "model_mw": 4024.6,
+      "campd_net_mw": 3674.8,
+      "delta_mw": 349.7,
+      "floor_mw": 300.0,
+      "material": true,
+      "campd_units_on_in_stratum": 40,
+      "campd_sum_p99_gross_gw": 10.228,
+      "coverage_vs_930_fuel": 0.1077
+     },
+     "ST_COAL": {
+      "model_mw": 23296.6,
+      "campd_net_mw": 25822.7,
+      "delta_mw": -2526.1,
+      "floor_mw": 1291.1,
+      "material": true,
+      "campd_units_on_in_stratum": 91,
+      "campd_sum_p99_gross_gw": 48.206,
+      "coverage_vs_930_fuel": 1.0847
+     }
+    },
+    "n_hours": 120,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   },
+   "S3": {
+    "rows": {
+     "CC": {
+      "model_mw": 20244.0,
+      "campd_net_mw": 25474.7,
+      "delta_mw": -5230.6,
+      "floor_mw": 1273.7,
+      "material": true,
+      "campd_units_on_in_stratum": 146,
+      "campd_sum_p99_gross_gw": 34.807,
+      "coverage_vs_930_fuel": 0.729
+     },
+     "CT": {
+      "model_mw": 4667.0,
+      "campd_net_mw": 4449.2,
+      "delta_mw": 217.8,
+      "floor_mw": 300.0,
+      "material": false,
+      "campd_units_on_in_stratum": 267,
+      "campd_sum_p99_gross_gw": 16.938,
+      "coverage_vs_930_fuel": 0.1273
+     },
+     "ST_GAS": {
+      "model_mw": 4171.8,
+      "campd_net_mw": 3879.0,
+      "delta_mw": 292.8,
+      "floor_mw": 300.0,
+      "material": false,
+      "campd_units_on_in_stratum": 40,
+      "campd_sum_p99_gross_gw": 10.228,
+      "coverage_vs_930_fuel": 0.111
+     },
+     "ST_COAL": {
+      "model_mw": 24967.3,
+      "campd_net_mw": 27955.8,
+      "delta_mw": -2988.5,
+      "floor_mw": 1397.8,
+      "material": true,
+      "campd_units_on_in_stratum": 91,
+      "campd_sum_p99_gross_gw": 48.206,
+      "coverage_vs_930_fuel": 1.0773
+     }
+    },
+    "n_hours": 30,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   },
+   "MAYCTRL": {
+    "rows": {
+     "CC": {
+      "model_mw": 18840.1,
+      "campd_net_mw": 20790.4,
+      "delta_mw": -1950.3,
+      "floor_mw": 1039.5,
+      "material": true,
+      "campd_units_on_in_stratum": 141,
+      "campd_sum_p99_gross_gw": 34.807,
+      "coverage_vs_930_fuel": 0.7701
+     },
+     "CT": {
+      "model_mw": 2812.3,
+      "campd_net_mw": 3118.4,
+      "delta_mw": -306.1,
+      "floor_mw": 300.0,
+      "material": true,
+      "campd_units_on_in_stratum": 255,
+      "campd_sum_p99_gross_gw": 16.938,
+      "coverage_vs_930_fuel": 0.1155
+     },
+     "ST_GAS": {
+      "model_mw": 2948.3,
+      "campd_net_mw": 3202.4,
+      "delta_mw": -254.1,
+      "floor_mw": 300.0,
+      "material": false,
+      "campd_units_on_in_stratum": 32,
+      "campd_sum_p99_gross_gw": 10.228,
+      "coverage_vs_930_fuel": 0.1186
+     },
+     "ST_COAL": {
+      "model_mw": 17031.3,
+      "campd_net_mw": 17895.2,
+      "delta_mw": -863.9,
+      "floor_mw": 894.8,
+      "material": false,
+      "campd_units_on_in_stratum": 77,
+      "campd_sum_p99_gross_gw": 48.206,
+      "coverage_vs_930_fuel": 1.1268
+     }
+    },
+    "n_hours": 744,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   }
+  },
+  "2024": {
+   "campd_meta": {
+    "year": 2024,
+    "n_units": 676,
+    "n_plants": 240,
+    "unresolved_gross_mwh_by_state": {},
+    "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup"
+   },
+   "family_parasitic_factor": {
+    "CC": 0.9933,
+    "CT": 0.9903,
+    "ST_GAS": 0.9786,
+    "ST_COAL": 0.9717
+   },
+   "S1": {
+    "rows": {
+     "CC": {
+      "model_mw": 20741.5,
+      "campd_net_mw": 25484.9,
+      "delta_mw": -4743.4,
+      "floor_mw": 1274.2,
+      "material": true,
+      "campd_units_on_in_stratum": 146,
+      "campd_sum_p99_gross_gw": 35.423,
+      "coverage_vs_930_fuel": 0.7072
+     },
+     "CT": {
+      "model_mw": 5093.9,
+      "campd_net_mw": 5168.8,
+      "delta_mw": -74.9,
+      "floor_mw": 300.0,
+      "material": false,
+      "campd_units_on_in_stratum": 290,
+      "campd_sum_p99_gross_gw": 17.218,
+      "coverage_vs_930_fuel": 0.1434
+     },
+     "ST_GAS": {
+      "model_mw": 4018.0,
+      "campd_net_mw": 4159.2,
+      "delta_mw": -141.2,
+      "floor_mw": 300.0,
+      "material": false,
+      "campd_units_on_in_stratum": 42,
+      "campd_sum_p99_gross_gw": 10.545,
+      "coverage_vs_930_fuel": 0.1154
+     },
+     "ST_COAL": {
+      "model_mw": 24855.2,
+      "campd_net_mw": 27460.0,
+      "delta_mw": -2604.8,
+      "floor_mw": 1373.0,
+      "material": true,
+      "campd_units_on_in_stratum": 85,
+      "campd_sum_p99_gross_gw": 45.762,
+      "coverage_vs_930_fuel": 1.0878
+     }
+    },
+    "n_hours": 873,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   },
+   "S2": {
+    "rows": {
+     "CC": {
+      "model_mw": 20937.4,
+      "campd_net_mw": 26159.7,
+      "delta_mw": -5222.3,
+      "floor_mw": 1308.0,
+      "material": true,
+      "campd_units_on_in_stratum": 146,
+      "campd_sum_p99_gross_gw": 35.423,
+      "coverage_vs_930_fuel": 0.6875
+     },
+     "CT": {
+      "model_mw": 6267.6,
+      "campd_net_mw": 6088.5,
+      "delta_mw": 179.1,
+      "floor_mw": 304.4,
+      "material": false,
+      "campd_units_on_in_stratum": 277,
+      "campd_sum_p99_gross_gw": 17.218,
+      "coverage_vs_930_fuel": 0.16
+     },
+     "ST_GAS": {
+      "model_mw": 4328.8,
+      "campd_net_mw": 4385.8,
+      "delta_mw": -57.0,
+      "floor_mw": 300.0,
+      "material": false,
+      "campd_units_on_in_stratum": 42,
+      "campd_sum_p99_gross_gw": 10.545,
+      "coverage_vs_930_fuel": 0.1153
+     },
+     "ST_COAL": {
+      "model_mw": 26898.0,
+      "campd_net_mw": 29707.9,
+      "delta_mw": -2809.9,
+      "floor_mw": 1485.4,
+      "material": true,
+      "campd_units_on_in_stratum": 85,
+      "campd_sum_p99_gross_gw": 45.762,
+      "coverage_vs_930_fuel": 1.086
+     }
+    },
+    "n_hours": 149,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   },
+   "S3": {
+    "rows": {
+     "CC": {
+      "model_mw": 21378.1,
+      "campd_net_mw": 25459.0,
+      "delta_mw": -4080.9,
+      "floor_mw": 1272.9,
+      "material": true,
+      "campd_units_on_in_stratum": 146,
+      "campd_sum_p99_gross_gw": 35.423,
+      "coverage_vs_930_fuel": 0.6695
+     },
+     "CT": {
+      "model_mw": 6359.0,
+      "campd_net_mw": 6539.7,
+      "delta_mw": -180.7,
+      "floor_mw": 327.0,
+      "material": false,
+      "campd_units_on_in_stratum": 273,
+      "campd_sum_p99_gross_gw": 17.218,
+      "coverage_vs_930_fuel": 0.172
+     },
+     "ST_GAS": {
+      "model_mw": 4360.3,
+      "campd_net_mw": 4569.9,
+      "delta_mw": -209.5,
+      "floor_mw": 300.0,
+      "material": false,
+      "campd_units_on_in_stratum": 41,
+      "campd_sum_p99_gross_gw": 10.545,
+      "coverage_vs_930_fuel": 0.1202
+     },
+     "ST_COAL": {
+      "model_mw": 24807.2,
+      "campd_net_mw": 27589.5,
+      "delta_mw": -2782.3,
+      "floor_mw": 1379.5,
+      "material": true,
+      "campd_units_on_in_stratum": 85,
+      "campd_sum_p99_gross_gw": 45.762,
+      "coverage_vs_930_fuel": 1.0898
+     }
+    },
+    "n_hours": 37,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   },
+   "MAYCTRL": {
+    "rows": {
+     "CC": {
+      "model_mw": 20146.0,
+      "campd_net_mw": 22320.5,
+      "delta_mw": -2174.5,
+      "floor_mw": 1116.0,
+      "material": true,
+      "campd_units_on_in_stratum": 144,
+      "campd_sum_p99_gross_gw": 35.423,
+      "coverage_vs_930_fuel": 0.7612
+     },
+     "CT": {
+      "model_mw": 3165.8,
+      "campd_net_mw": 2514.1,
+      "delta_mw": 651.7,
+      "floor_mw": 300.0,
+      "material": true,
+      "campd_units_on_in_stratum": 226,
+      "campd_sum_p99_gross_gw": 17.218,
+      "coverage_vs_930_fuel": 0.0857
+     },
+     "ST_GAS": {
+      "model_mw": 2860.8,
+      "campd_net_mw": 4163.5,
+      "delta_mw": -1302.7,
+      "floor_mw": 300.0,
+      "material": true,
+      "campd_units_on_in_stratum": 39,
+      "campd_sum_p99_gross_gw": 10.545,
+      "coverage_vs_930_fuel": 0.142
+     },
+     "ST_COAL": {
+      "model_mw": 15478.0,
+      "campd_net_mw": 18229.5,
+      "delta_mw": -2751.5,
+      "floor_mw": 911.5,
+      "material": true,
+      "campd_units_on_in_stratum": 71,
+      "campd_sum_p99_gross_gw": 45.762,
+      "coverage_vs_930_fuel": 1.1115
+     }
+    },
+    "n_hours": 744,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   }
+  },
+  "2025": {
+   "campd_meta": {
+    "year": 2025,
+    "n_units": 665,
+    "n_plants": 237,
+    "unresolved_gross_mwh_by_state": {},
+    "universe": "CAMPD fossil-only, GROSS, MISO via build_zone_lookup"
+   },
+   "family_parasitic_factor": {
+    "CC": 0.9931,
+    "CT": 0.9901,
+    "ST_GAS": 0.9775,
+    "ST_COAL": 0.9729
+   },
+   "S1": {
+    "rows": {
+     "CC": {
+      "model_mw": 19274.1,
+      "campd_net_mw": 24889.9,
+      "delta_mw": -5615.8,
+      "floor_mw": 1244.5,
+      "material": true,
+      "campd_units_on_in_stratum": 144,
+      "campd_sum_p99_gross_gw": 35.431,
+      "coverage_vs_930_fuel": 0.6925
+     },
+     "CT": {
+      "model_mw": 5290.5,
+      "campd_net_mw": 5711.6,
+      "delta_mw": -421.0,
+      "floor_mw": 300.0,
+      "material": true,
+      "campd_units_on_in_stratum": 292,
+      "campd_sum_p99_gross_gw": 18.217,
+      "coverage_vs_930_fuel": 0.1589
+     },
+     "ST_GAS": {
+      "model_mw": 3838.6,
+      "campd_net_mw": 4088.8,
+      "delta_mw": -250.3,
+      "floor_mw": 300.0,
+      "material": false,
+      "campd_units_on_in_stratum": 41,
+      "campd_sum_p99_gross_gw": 10.331,
+      "coverage_vs_930_fuel": 0.1138
+     },
+     "ST_COAL": {
+      "model_mw": 28829.8,
+      "campd_net_mw": 29186.5,
+      "delta_mw": -356.7,
+      "floor_mw": 1459.3,
+      "material": false,
+      "campd_units_on_in_stratum": 80,
+      "campd_sum_p99_gross_gw": 44.118,
+      "coverage_vs_930_fuel": 1.0869
+     }
+    },
+    "n_hours": 869,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   },
+   "S2": {
+    "rows": {
+     "CC": {
+      "model_mw": 19622.4,
+      "campd_net_mw": 25322.5,
+      "delta_mw": -5700.0,
+      "floor_mw": 1266.1,
+      "material": true,
+      "campd_units_on_in_stratum": 144,
+      "campd_sum_p99_gross_gw": 35.431,
+      "coverage_vs_930_fuel": 0.6768
+     },
+     "CT": {
+      "model_mw": 5879.6,
+      "campd_net_mw": 6197.1,
+      "delta_mw": -317.5,
+      "floor_mw": 309.9,
+      "material": true,
+      "campd_units_on_in_stratum": 289,
+      "campd_sum_p99_gross_gw": 18.217,
+      "coverage_vs_930_fuel": 0.1656
+     },
+     "ST_GAS": {
+      "model_mw": 4177.8,
+      "campd_net_mw": 4453.3,
+      "delta_mw": -275.5,
+      "floor_mw": 300.0,
+      "material": false,
+      "campd_units_on_in_stratum": 41,
+      "campd_sum_p99_gross_gw": 10.331,
+      "coverage_vs_930_fuel": 0.119
+     },
+     "ST_COAL": {
+      "model_mw": 29520.7,
+      "campd_net_mw": 30005.2,
+      "delta_mw": -484.5,
+      "floor_mw": 1500.3,
+      "material": false,
+      "campd_units_on_in_stratum": 80,
+      "campd_sum_p99_gross_gw": 44.118,
+      "coverage_vs_930_fuel": 1.0868
+     }
+    },
+    "n_hours": 256,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   },
+   "S3": {
+    "rows": {
+     "CC": {
+      "model_mw": 20087.4,
+      "campd_net_mw": 25684.2,
+      "delta_mw": -5596.8,
+      "floor_mw": 1284.2,
+      "material": true,
+      "campd_units_on_in_stratum": 144,
+      "campd_sum_p99_gross_gw": 35.431,
+      "coverage_vs_930_fuel": 0.6216
+     },
+     "CT": {
+      "model_mw": 8536.5,
+      "campd_net_mw": 8753.3,
+      "delta_mw": -216.8,
+      "floor_mw": 437.7,
+      "material": false,
+      "campd_units_on_in_stratum": 287,
+      "campd_sum_p99_gross_gw": 18.217,
+      "coverage_vs_930_fuel": 0.2118
+     },
+     "ST_GAS": {
+      "model_mw": 5188.2,
+      "campd_net_mw": 5204.2,
+      "delta_mw": -16.0,
+      "floor_mw": 300.0,
+      "material": false,
+      "campd_units_on_in_stratum": 41,
+      "campd_sum_p99_gross_gw": 10.331,
+      "coverage_vs_930_fuel": 0.1259
+     },
+     "ST_COAL": {
+      "model_mw": 30068.5,
+      "campd_net_mw": 30598.2,
+      "delta_mw": -529.7,
+      "floor_mw": 1529.9,
+      "material": false,
+      "campd_units_on_in_stratum": 80,
+      "campd_sum_p99_gross_gw": 44.118,
+      "coverage_vs_930_fuel": 1.0849
+     }
+    },
+    "n_hours": 88,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   },
+   "S0": {
+    "rows": {
+     "CC": {
+      "model_mw": 15606.8,
+      "campd_net_mw": 19020.7,
+      "delta_mw": -3413.9,
+      "floor_mw": 951.0,
+      "material": true,
+      "campd_units_on_in_stratum": 133,
+      "campd_sum_p99_gross_gw": 35.431,
+      "coverage_vs_930_fuel": 0.831
+     },
+     "CT": {
+      "model_mw": 3036.8,
+      "campd_net_mw": 1663.0,
+      "delta_mw": 1373.8,
+      "floor_mw": 300.0,
+      "material": true,
+      "campd_units_on_in_stratum": 220,
+      "campd_sum_p99_gross_gw": 18.217,
+      "coverage_vs_930_fuel": 0.0727
+     },
+     "ST_GAS": {
+      "model_mw": 2632.2,
+      "campd_net_mw": 2991.6,
+      "delta_mw": -359.3,
+      "floor_mw": 300.0,
+      "material": true,
+      "campd_units_on_in_stratum": 36,
+      "campd_sum_p99_gross_gw": 10.331,
+      "coverage_vs_930_fuel": 0.1307
+     },
+     "ST_COAL": {
+      "model_mw": 19266.9,
+      "campd_net_mw": 19893.4,
+      "delta_mw": -626.5,
+      "floor_mw": 994.7,
+      "material": false,
+      "campd_units_on_in_stratum": 69,
+      "campd_sum_p99_gross_gw": 44.118,
+      "coverage_vs_930_fuel": 1.1168
+     }
+    },
+    "n_hours": 744,
+    "universe": "model: keeper P1 fossil klasses (NET) | actual: CAMPD MISO fossil units (GROSS x parasitic -> NET); imports/non-fossil OUTSIDE this universe"
+   }
+  }
+ },
+ "adjudication": {
+  "P1": {
+   "pass": true,
+   "material_families_S1_2025": {
+    "CC": -5615.8,
+    "CT": -421.0
+   },
+   "material_buckets_pairA_S1_2025": {
+    "coal": 1976.9,
+    "gas_total": -7538.8
+   },
+   "largest_gap_family": "CC",
+   "any_material_any_stratum": true
+  },
+  "P4": {
+   "per_family": {
+    "CC": {
+     "abs_delta_2023": 4958.6,
+     "abs_delta_2024": 4743.4,
+     "abs_delta_2025": 5615.8,
+     "pass": false
+    },
+    "CT": {
+     "abs_delta_2023": 517.4,
+     "abs_delta_2024": 74.9,
+     "abs_delta_2025": 421.0,
+     "pass": false
+    }
+   },
+   "pass": false
+  },
+  "P7_reported_only": {
+   "CC": {
+    "s1_delta": -5615.8,
+    "s3_delta": -5596.8,
+    "sign_match": true
+   },
+   "CT": {
+    "s1_delta": -421.0,
+    "s3_delta": -216.8,
+    "sign_match": true
+   }
+  }
+ }
+}

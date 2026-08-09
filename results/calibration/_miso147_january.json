@@ -1,0 +1,451 @@
+{
+ "session": "miso-147",
+ "monthly_tables": {
+  "2023": {
+   "AV_CC_minus_A_CC": [
+    1886.4,
+    1390.9,
+    122.8,
+    856.6,
+    1074.1,
+    478.0,
+    -223.9,
+    -635.7,
+    205.5,
+    -333.0,
+    146.4,
+    761.7
+   ],
+   "M_CC_minus_A_CC": [
+    -7337.3,
+    -6481.0,
+    -4183.1,
+    -3482.3,
+    -1950.3,
+    -3876.1,
+    -4238.3,
+    -4724.1,
+    -4450.2,
+    -3266.6,
+    -4130.2,
+    -4678.3
+   ],
+   "model_implied_thermal_outage": [
+    34344.4,
+    38354.0,
+    44951.7,
+    51554.8,
+    44715.7,
+    28838.5,
+    24607.3,
+    24134.8,
+    32403.0,
+    43956.4,
+    43780.8,
+    35678.8
+   ],
+   "real_forced_plus_unplanned": [
+    13713.2,
+    11371.1,
+    10765.7,
+    12146.9,
+    16002.6,
+    13694.4,
+    14765.7,
+    15053.9,
+    16642.8,
+    18750.7,
+    16644.6,
+    16409.5
+   ],
+   "real_derated": [
+    7321.5,
+    6617.0,
+    4911.2,
+    4970.3,
+    6803.6,
+    8861.9,
+    9106.4,
+    10081.6,
+    7902.2,
+    6735.6,
+    5359.6,
+    6616.7
+   ],
+   "real_planned": [
+    12489.6,
+    14677.2,
+    30039.6,
+    42536.3,
+    31790.8,
+    15926.8,
+    7852.3,
+    7724.7,
+    14488.8,
+    28038.9,
+    26509.2,
+    14264.0
+   ],
+   "outage_gap_model_minus_real_forced": [
+    20631.2,
+    26982.9,
+    34185.9,
+    39407.9,
+    28713.1,
+    15144.1,
+    9841.6,
+    9081.0,
+    15760.2,
+    25205.7,
+    27136.2,
+    19269.3
+   ],
+   "demand_control_sidecar_minus_930": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -0.0
+   ],
+   "note": "columns Jan..Dec; C3a-weighted month means; model_implied_thermal_outage = sum pmax*(1-availability) over fossil rows; real_* from the MISO outage CSV (system grain, ALL fuel incl. non-fossil \u2014 an upper bound, never class-attributed)"
+  },
+  "2024": {
+   "AV_CC_minus_A_CC": [
+    768.4,
+    1722.6,
+    777.4,
+    1211.6,
+    -49.6,
+    -178.9,
+    -2431.6,
+    -2328.0,
+    -1705.2,
+    -269.1,
+    -185.9,
+    -319.2
+   ],
+   "M_CC_minus_A_CC": [
+    -4432.8,
+    -3372.3,
+    -2658.2,
+    -1962.0,
+    -2174.5,
+    -3653.6,
+    -4873.7,
+    -4851.0,
+    -4680.4,
+    -3544.6,
+    -3943.7,
+    -5260.3
+   ],
+   "model_implied_thermal_outage": [
+    29023.4,
+    40101.3,
+    48953.0,
+    49676.3,
+    43558.2,
+    28150.2,
+    26017.6,
+    23948.3,
+    33769.4,
+    43933.0,
+    44921.8,
+    36880.2
+   ],
+   "real_forced_plus_unplanned": [
+    18467.9,
+    17062.9,
+    14565.5,
+    15630.1,
+    18695.6,
+    14540.9,
+    13679.1,
+    12535.6,
+    12671.9,
+    21875.6,
+    16752.1,
+    16956.8
+   ],
+   "real_derated": [
+    8158.2,
+    6726.4,
+    6170.3,
+    6321.6,
+    8859.4,
+    9320.4,
+    10375.3,
+    10951.4,
+    9555.4,
+    6589.6,
+    5774.1,
+    8359.4
+   ],
+   "real_planned": [
+    9803.0,
+    12291.9,
+    23169.0,
+    29868.4,
+    23422.0,
+    11689.5,
+    7193.4,
+    6664.2,
+    15807.2,
+    32514.5,
+    24773.6,
+    14120.9
+   ],
+   "outage_gap_model_minus_real_forced": [
+    10555.5,
+    23038.4,
+    34387.4,
+    34046.2,
+    24862.6,
+    13609.4,
+    12338.5,
+    11412.7,
+    21097.6,
+    22057.3,
+    28169.7,
+    19923.4
+   ],
+   "demand_control_sidecar_minus_930": [
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "note": "columns Jan..Dec; C3a-weighted month means; model_implied_thermal_outage = sum pmax*(1-availability) over fossil rows; real_* from the MISO outage CSV (system grain, ALL fuel incl. non-fossil \u2014 an upper bound, never class-attributed)"
+  },
+  "2025": {
+   "AV_CC_minus_A_CC": [
+    1317.6,
+    49.3,
+    1398.6,
+    -495.3,
+    -1201.4,
+    -2506.3,
+    -2646.9,
+    -2374.3,
+    -1783.0,
+    -605.2,
+    -225.7,
+    946.9
+   ],
+   "M_CC_minus_A_CC": [
+    -6045.3,
+    -5953.7,
+    -4643.0,
+    -4060.9,
+    -3413.9,
+    -4525.9,
+    -4997.4,
+    -5044.2,
+    -4379.1,
+    -3694.1,
+    -5204.1,
+    -5507.9
+   ],
+   "model_implied_thermal_outage": [
+    28841.8,
+    34436.3,
+    47235.2,
+    49793.8,
+    47479.3,
+    34106.6,
+    26156.3,
+    27278.5,
+    34681.3,
+    43711.1,
+    41728.9,
+    32975.4
+   ],
+   "real_forced_plus_unplanned": [
+    16659.1,
+    14530.2,
+    16019.8,
+    19421.8,
+    24264.1,
+    23881.4,
+    19705.0,
+    19379.9,
+    19012.5,
+    19513.1,
+    17956.5,
+    18358.8
+   ],
+   "real_derated": [
+    9359.6,
+    8886.2,
+    6998.2,
+    7632.4,
+    7649.4,
+    9818.1,
+    11986.9,
+    10786.5,
+    9831.1,
+    8395.9,
+    7428.3,
+    9424.9
+   ],
+   "real_planned": [
+    9056.5,
+    15152.4,
+    31285.3,
+    36529.4,
+    31173.0,
+    16901.8,
+    8753.1,
+    9730.1,
+    18930.2,
+    30510.3,
+    26089.1,
+    13076.6
+   ],
+   "outage_gap_model_minus_real_forced": [
+    12182.8,
+    19906.2,
+    31215.4,
+    30372.0,
+    23215.3,
+    10225.2,
+    6451.3,
+    7898.6,
+    15668.8,
+    24198.0,
+    23772.4,
+    14616.6
+   ],
+   "demand_control_sidecar_minus_930": [
+    -0.0,
+    0.0,
+    -0.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "note": "columns Jan..Dec; C3a-weighted month means; model_implied_thermal_outage = sum pmax*(1-availability) over fossil rows; real_* from the MISO outage CSV (system grain, ALL fuel incl. non-fossil \u2014 an upper bound, never class-attributed)"
+  }
+ },
+ "january_2025": {
+  "n_tail_hours": 16,
+  "operating_states": {
+   "CC": {
+    "campd_ON_gross_tail": 26876.7,
+    "campd_ON_gross_jan_nontail": 22640.3,
+    "campd_units_on_tail": 143,
+    "model_M_tail": 19087.1,
+    "model_AV_tail": 24688.4,
+    "campd_A_net_tail": 26688.4
+   },
+   "CT": {
+    "campd_ON_gross_tail": 3660.7,
+    "campd_ON_gross_jan_nontail": 1253.2,
+    "campd_units_on_tail": 164,
+    "model_M_tail": 5559.0,
+    "model_AV_tail": 20413.7,
+    "campd_A_net_tail": 3624.1
+   },
+   "ST_GAS": {
+    "campd_ON_gross_tail": 3994.0,
+    "campd_ON_gross_jan_nontail": 1738.9,
+    "campd_units_on_tail": 33,
+    "model_M_tail": 4307.5,
+    "model_AV_tail": 7691.5,
+    "campd_A_net_tail": 3935.6
+   },
+   "ST_COAL": {
+    "campd_ON_gross_tail": 34169.1,
+    "campd_ON_gross_jan_nontail": 30779.0,
+    "campd_units_on_tail": 79,
+    "model_M_tail": 30660.1,
+    "model_AV_tail": 31337.5,
+    "campd_A_net_tail": 33190.1
+   }
+  },
+  "outage_vs_availability_tail": {
+   "real_forced_plus_unplanned": 22071.3,
+   "real_derated": 10309.6,
+   "model_implied_thermal_outage": 27771.5,
+   "gap_model_minus_real_forced": 5700.2
+  },
+  "gas_mc_in_tail_hours": {
+   "p10_p50_p90": [
+    27.75,
+    55.27,
+    166.84
+   ],
+   "capacity_weighted_mean": 73.48,
+   "annual_gas_mc_p50_all_hours": 43.14,
+   "note": "keeper mc_base (P0 objective) \u2014 winter citygate + dual-fuel overlays ARMED"
+  },
+  "dual_fuel_proxy": {
+   "oil_capable_gas": {
+    "mean_on_gross_mw": 0.0,
+    "n_units_on": 0
+   },
+   "gas_only": {
+    "mean_on_gross_mw": 33062.5,
+    "n_units_on": 328
+   },
+   "oil_primary": {
+    "mean_on_gross_mw": 66.9,
+    "n_units_on": 5
+   },
+   "note": "proxy \u2014 CAMPD has no hourly fuel-switch field (PREREG \u00a74.5.4)"
+  },
+  "winter_reserve_tail": {
+   "miso_rbdc": {
+    "dual_mean": 0.0,
+    "dual_max": -0.0,
+    "shortfall_mw_max": 0.0,
+    "held_mw_mean": 2725.7
+   },
+   "miso_subregional_or_midwest": {
+    "dual_mean": 0.0,
+    "dual_max": -0.0,
+    "shortfall_mw_max": 0.0,
+    "held_mw_mean": 2292.7
+   },
+   "miso_zonal_or_miso_south": {
+    "dual_mean": 0.0,
+    "dual_max": -0.0,
+    "shortfall_mw_max": 0.0,
+    "held_mw_mean": 433.0
+   }
+  }
+ },
+ "S0_drivers": {
+  "may_model_implied_thermal_outage": 47479.3,
+  "may_real_forced_plus_unplanned": 24264.1,
+  "may_real_planned": 31173.0,
+  "may_real_derated": 7649.4,
+  "may_AV_CC_minus_A_CC": -1201.4,
+  "note": "May = column 5 of the x12 tables; the spring-maintenance comparison"
+ },
+ "P5_reported": {
+  "real_forced_exceeds_model_by": -5700.2,
+  "bar_2000mw": false,
+  "caveat": "real side is ALL-fuel system grain (upper bound); model side fossil-only"
+ }
+}
