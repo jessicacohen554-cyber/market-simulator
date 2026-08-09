@@ -49,7 +49,7 @@ for the market split.
 | load | — | — | — | — | — | — |
 | demand-profile | — | — | — | — | — | — |
 | ancillary-services | — | — | — | — | — | — |
-| energy-offers | — | — | — | — | — | — |
+| energy-offers | — | — | — | 2023–2025 | — | — |
 | dam-public-bids | — | — | — | — | — | — |
 | generation | — | — | — | — | — | — |
 | renewables | — | — | — | — | — | — |
@@ -108,7 +108,7 @@ snapshot).
 | wecc-west-supply | — | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
 | weather | per-ISO via directory partitioning | n/a |
-| egrid | national (EPA eGRID, by vintage year) | 2023 |
+| egrid | national (EPA eGRID, by vintage year) | n/a |
 | pjm-outages | — | n/a |
 | rggi-co2-budgets | — | n/a |
 | carb-cap-schedule | — | n/a |
@@ -250,7 +250,7 @@ AS clearing prices and cleared quantities. Schema:
 PJM Real-Time effective energy offer curves (long step form). Schema:
 [`schema/energy-offers.schema.yaml`](schema/energy-offers.schema.yaml).
 
-- **Keys:** `iso`, `unit_code`, `interval_start_utc`, `step_idx`
+- **Keys:** `iso`, `market`, `unit_code`, `interval_start_utc`, `step_idx`
 - **Reconciles:** PJM DataMiner2 `energy_market_offers` wide
   `mw1..mw20`/`bid1..bid20` breakpoints (plus daily `avg_ecomin`/`avg_ecomax`,
   no-load and hot/cold/inter start costs) — pivoted to one row per (`unit_code`
@@ -262,8 +262,9 @@ PJM Real-Time effective energy offer curves (long step form). Schema:
 |---|---|---|---|---|
 | `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC start of the operating hour the offer applies to (hour-beginning; maps to DataMiner2 ``bid_datetime_beginning_utc``). |
 | `interval_start_local` | `datetime64[ns]` | `local_timestamp` | yes | Wall-clock EPT (Eastern Prevailing Time) equivalent of ``interval_start_utc`` — informational; UTC is authoritative for joins. Maps to DataMiner2 ``bid_datetime_beginning_ept``. |
-| `iso` | `string` | `none` | no | Always "PJM" for this feed. |
-| `unit_code` | `string` | `none` | no | Anonymised, base64-encoded unit identifier assigned by PJM (DataMiner2 ``unit_code``). Rotated annually — codes are NOT comparable across calendar years. |
+| `iso` | `string` | `none` | no | ISO the offer was submitted into — "PJM" or "MISO". |
+| `market` | `string` | `none` | no | Market the offer set belongs to — "DA" (day-ahead) or "RT" (real-time). PJM's DataMiner2 feed is the RT effective offer set, so PJM rows are always "RT"; MISO publishes both books as separate daily files. DA and RT are SEPARATE INSTRUMENTS and must never be averaged together. |
+| `unit_code` | `string` | `none` | no | Anonymised unit identifier assigned by the ISO. PJM: base64-encoded, ROTATED ANNUALLY — codes are NOT comparable across calendar years. MISO: the masked ``Unit Code``, PERSISTENT across days and years (miso-136 measured 92–99 % overlap across 2023↔2024↔2025), so per-unit longitudinal statistics are meaningful for MISO but not for PJM. |
 | `bid_slope_flag` | `bool` | `none` | yes | True: bid curve is piecewise-linear (MW/price breakpoints connected by straight lines; MC rises continuously between steps). False: bid curve is a step function (constant $/MWh across each MW block). DataMiner2 ``bid_slope_flag``. |
 | `step_idx` | `int64` | `none` | no | 1-based index of this MW/price breakpoint in the unit's offer curve for this hour. Derived by the curate script from the wide API columns ``mw1``/``bid1`` through ``mw20``/``bid20``; null breakpoints are dropped so ``step_idx`` may not be contiguous. |
 | `step_mw` | `float64` | `mw` | no | MW breakpoint value for this step — the MW level at which the corresponding ``step_price_usd_per_mwh`` applies. Maps to DataMiner2 ``mwN`` columns (N = step_idx). |
@@ -276,6 +277,17 @@ PJM Real-Time effective energy offer curves (long step form). Schema:
 | `inter_start_cost_usd` | `float64` | `usd` | yes | Intermediate start cost ($) — between hot and cold. DataMiner2 ``inter_start_cost``. |
 | `max_daily_starts` | `float64` | `none` | yes | Maximum number of starts the unit can make in a day. DataMiner2 ``max_daily_starts``. |
 | `min_runtime_h` | `float64` | `h` | yes | Minimum continuous runtime (hours) once the unit is committed. DataMiner2 ``min_runtime``. |
+| `region` | `string` | `none` | yes | MISO market Region the unit sits in — "North", "Central" or "South" (MISO ``Region``). The only locational attribute the masked corpus publishes; it is a market region, NOT a model zone, and no zone crosswalk is asserted from it. |
+| `economic_flag` | `bool` | `none` | yes | MISO ``Economic Flag`` — the unit declared itself economically dispatchable for the hour. |
+| `emergency_flag` | `bool` | `none` | yes | MISO ``Emergency Flag`` — emergency range offered for the hour. |
+| `must_run_flag` | `bool` | `none` | yes | MISO ``Must Run Flag`` — the unit declared a must-run commitment status for the hour. A declaration, not an outcome. |
+| `unit_available_flag` | `bool` | `none` | yes | MISO ``Unit Available Flag`` — the unit declared itself available to the market for the hour. |
+| `self_scheduled_mw` | `float64` | `mw` | yes | MISO ``Self Scheduled MW`` — MW the participant self-scheduled (price taker) for the hour. A submitted quantity, not an award. |
+| `emergency_max_mw` | `float64` | `mw` | yes | MISO ``Emergency Max`` — declared emergency upper limit (MW). |
+| `emergency_min_mw` | `float64` | `mw` | yes | MISO ``Emergency Min`` — declared emergency lower limit (MW). |
+| `curtailment_offer_price_usd_per_mwh` | `float64` | `usd_per_mwh` | yes | MISO ``Curtailment Offer Price`` — the price at which a dispatchable intermittent / demand resource offers curtailment ($/MWh). |
+| `min_energy_storage_level_mwh` | `float64` | `mwh` | yes | MISO ``MinEnergyStorageLevel`` — declared minimum state-of-charge for an electric storage resource (MWh). Populated for storage rows only, and therefore also serves as the storage-row screen. |
+| `max_energy_storage_level_mwh` | `float64` | `mwh` | yes | MISO ``MaxEnergyStorageLevel`` — declared maximum SOC (MWh). |
 
 ## dam-public-bids
 
@@ -722,6 +734,8 @@ Per-unit CAMPD outage events (one row per detected window). Schema:
 | `capacity_source` | `string` | `none` | yes | Provenance of unit_capacity_mw (e.g. eia_exact, plant_share). |
 | `outage_start` | `datetime64[ns]` | `local_timestamp` | no | Outage window start (tz-naive, CAMPD local reporting clock). |
 | `outage_end` | `datetime64[ns]` | `local_timestamp` | no | Outage window end (tz-naive, CAMPD local reporting clock). |
+| `outage_start_hour` | `int64` | `none` | yes | OPTIONAL (caiso-183). Hour-of-day 0-23 of the window's first DETECTED outage hour. The detector works in hours but outage_start stores a date, so without this column a consumer must re-expand the window from 00:00 and asserts up to 23 h it never detected. Present only in extracts derived with derive_campd_unit_outages.py --hour-grain; consumers fall back to the day-granular reconstruction when it is absent, which is why it is nullable/optional rather than required. |
+| `outage_end_hour` | `int64` | `none` | yes | OPTIONAL (caiso-183). Hour-of-day 0-23 of the window's LAST detected outage hour, inclusive — so the return-to-service instant is outage_end + (outage_end_hour + 1) hours. Absent means 23, i.e. the incumbent outage_end + 1 day. |
 | `duration_days` | `float64` | `days` | yes | Detected outage span in days. |
 | `peer_units_online` | `int64` | `none` | yes | Count of the plant's other units still online during the outage. |
 | `total_units_at_plant` | `int64` | `none` | yes | Total unit count at the plant. |
@@ -795,7 +809,7 @@ limits by delivery period. Schema:
 | `area_type` | `string` | `none` | no | Kind of area: one of lda \| lrz \| locality \| capacity_zone \| local_area \| branch_group \| rto \| zone (a model/transmission-zone aggregate row, e.g. the CAISO SP26 zonal peak_load that denominates the local-capacity area load share). |
 | `delivery_year` | `string` | `none` | no | Delivery/planning/capability/commitment year the value governs, as a label. Planning-year ISOs use "2025/2026" (June/May, May/April, or June/May per ISO); CAISO uses the calendar study year, e.g. "2025". |
 | `season` | `string` | `none` | no | Season the value applies to: annual \| summer \| fall \| winter \| spring. Only MISO (seasonal since PY2023-24) uses the four seasons; all other ISOs use "annual". |
-| `metric` | `string` | `none` | no | Canonical metric: requirement \| local_clearing_requirement \| import_limit \| export_limit \| import_ability \| system_requirement \| peak_load. (requirement is the CETO analog; import_limit is the CETL analog; peak_load is the area/zone peak-demand forecast published in the same study as the requirement — CAISO LCT "Load+Losses+Pumps" and Table 3.2-1 — pairing with requirement so import_cap = peak_load - requirement sits on one consistent boundary.) |
+| `metric` | `string` | `none` | no | Canonical metric: requirement \| local_clearing_requirement \| import_limit \| export_limit \| import_ability \| system_requirement \| peak_load \| transfer_security_limit. (requirement is the CETO analog; import_limit is the CETL analog; peak_load is the area/zone peak-demand forecast published in the same study as the requirement — CAISO LCT "Load+Losses+Pumps" and Table 3.2-1 — pairing with requirement so import_cap = peak_load - requirement sits on one consistent boundary. transfer_security_limit is the area boundary's N-1-1 transmission transfer capability BEFORE any capacity-market loss-of-source deduction: where an ISO publishes both, import_limit is the capacity-adequacy accounting term that a locational requirement is computed against, while transfer_security_limit is the transfer capability itself and is the one an hourly energy bound needs. NYISO Zone K is the reference case — import_limit 275 MW = transfer_security_limit 940 MW - 660 MW Neptune HVDC loss-of-source, from one table and its own footnote; see the nyiso raw README.) |
 | `value_mw` | `float64` | `mw` | yes | The value in MW. Null when the ISO publishes this metric only as a ratio. |
 | `value_pu` | `float64` | `ratio` | yes | Ratio-form value as a decimal fraction (e.g. 0.810 for an 81.0% LCR or a 1.148 LRR per-unit-of-peak). Null for pure-MW metrics. |
 | `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
@@ -1444,10 +1458,10 @@ the Potomac Economics SOM reports and IMM quarterlies. Schema:
 | `iso` | `string` | `none` | no | ISO identifier (MISO seeded; NYISO/ERCOT/NEISO extend). |
 | `year` | `int64` | `none` | no | Market year the statistic describes (not the publication year). |
 | `period` | `string` | `none` | no | Aggregation window within the year: "annual" for SOM full-year values, or the IMM quarterly-report season ("spring", "summer", "fall", "winter") for quarterly values. |
-| `fleet_segment` | `string` | `none` | no | Fleet the metric describes: "system" (all suppliers), "coal_regulated" (SOM Table 7 "Regulated Utilities" coal rows) or "coal_merchant" (SOM Table 7 "Merchants" coal rows). |
-| `metric` | `string` | `none` | no | Metric code: "price_cost_markup" (simulated actual-offer vs reference-level SMP difference, fraction), "output_gap_share_of_load" (low-threshold monthly-average output gap as a fraction of load), "output_gap_low_threshold_mw" (low-threshold output gap, MW/hr), "starts" (coal unit commitments in the year), "starts_econ_offered_share" (fraction of starts offered economically / scheduled day-ahead), "starts_mustrun_profitable_share" / "starts_mustrun_unprofitable_share" (fraction of starts with must-run [self-commit] status, split by whether market revenues covered commitment + variable cost by the first full day), "net_revenue_usd_per_mwh" (net operating revenue of the segment's starts). |
+| `fleet_segment` | `string` | `none` | no | Fleet the metric describes: "system" (all suppliers), "coal_regulated" (SOM Table 7 "Regulated Utilities" coal rows), "coal_merchant" (SOM Table 7 "Merchants" coal rows), "new_gas_ct" / "new_gas_cc" (the ERCOT SOM Net Revenue Analysis hypothetical new-entrant proxies: CT 10.5 / CC 7.0 MMBtu/MWh heat rate, $4/MWh VOM, 10% outage rate), or "coal_existing" / "nuclear_existing" (the SOM existing-unit profitability discussions' cost benchmarks). |
+| `metric` | `string` | `none` | no | Metric code: "price_cost_markup" (simulated actual-offer vs reference-level SMP difference, fraction), "output_gap_share_of_load" (low-threshold monthly-average output gap as a fraction of load), "output_gap_low_threshold_mw" (low-threshold output gap, MW/hr), "starts" (coal unit commitments in the year), "starts_econ_offered_share" (fraction of starts offered economically / scheduled day-ahead), "starts_mustrun_profitable_share" / "starts_mustrun_unprofitable_share" (fraction of starts with must-run [self-commit] status, split by whether market revenues covered commitment + variable cost by the first full day), "net_revenue_usd_per_mwh" (net operating revenue of the segment's starts). ERCOT SOM net-revenue rows add: "net_revenue_usd_per_kw_yr" (single published value; "_min"/"_max" variants for locational ranges; "_houston"/"_west" variants for the named-zone values), "ecrs_effect_share_of_net_revenue" (share of 2023 net revenue the monitor attributes to ECRS price effects), "cone_usd_per_kw_yr_min"/"_max" (Potomac CONE estimates), "cone_planning_usd_per_kw_yr" / "cone_pnm_threshold_usd_per_kw_yr" (PUCT planning CONE vs legacy PNM-threshold CONE), "peaker_net_margin_usd_per_kw_yr", and existing-unit cost benchmarks "fixed_om_usd_per_kw_yr", "vom_usd_per_mwh", "fuel_cost_usd_per_mwh", "marginal_cost_usd_per_mwh", "total_generating_cost_usd_per_mwh". |
 | `value` | `float64` | `mixed` | no | Metric value; unit given by the unit column. |
-| `unit` | `string` | `none` | no | One of "fraction", "count", "usd_per_mwh", "mw". |
+| `unit` | `string` | `none` | no | One of "fraction", "count", "usd_per_mwh", "usd_per_kw_yr", "mw". |
 | `source_doc` | `string` | `none` | no | Source report PDF filename under data/raw/MISO/ (or the ISO's raw dir). |
 | `source_page` | `int64` | `none` | no | PDF page number (1-based, PDF pagination) the value was read from. |
 | `note` | `string` | `none` | yes | Restatements, definitions, and caveats as printed in the source. |

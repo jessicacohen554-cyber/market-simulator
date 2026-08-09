@@ -6282,6 +6282,10 @@ against the model's **$1.496**; 2023 51.70/10.44 vs 1.767; 2024 56.06/14.29 vs
 **p93.80 (RT) / p87.80 (DA)** — **22.46 GW above its margin vs 6.63 / 16.10**.
 The DA book and the model reach nearly the same place at the top (p95 98.03 vs
 87.46; p98 213.79 vs 211.34); the difference is **where each one clears**.
+Two labelling limits carried: the slopes are load-weighted MEANS (smallest
+reading anywhere 10.44 vs a 3.0 bar), and ONE price basis is used on both sides
+(TRAP 4) — the measured RT actual — so the DA percentile is evaluated at that
+level and is **not** the DA book's own clearing point.
 
 **Successor, NAMED and NOT OPENED (rules 19/24, an owner decision):** a MISO
 `measured_offer_surface`, **position-conditioned**, from the corpus this session
