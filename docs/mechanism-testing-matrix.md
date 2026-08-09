@@ -3641,6 +3641,121 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**
 
+> **LIVE QUEUE AS OF miso-146 (2026-08-09) — ITEM 7 (the INTERMITTENT-RESOURCE
+> SCREEN for the offer corpus, lane (A) of the miso-145 successor) SET AND
+> DISCHARGED. A SCREEN IS BUILDABLE AND SEPARATES A REAL POPULATION; IT DOES
+> NOT CLEAN THE UNIVERSE. Branch `BRANCH-SCREEN-BOUNDED`.** Phase 0,
+> diagnosis-first. **NO LP, no arm, no `ScenarioConfig` field, no run, NO CELL
+> VERDICT MINTED** (no mechanism armed, refused or proposed for arming — the
+> miso-143/144/145 precedent), keeper UNCHANGED at
+> `2026-08-05-miso-132b-cc-committed`, fail set UNCHANGED at {C3a}. PREREG
+> `results/calibration/PREREG-miso146-intermittent-screen-2026-08-09.md` pushed
+> at `fc162d54` before any adjudicating statistic, with the **gating status of
+> every prediction fixed, with reasons, before measurement**.
+>
+> **FOOTING FIRST.** G-F0 reproduces miso-145's committed 2025 JJA h12–17
+> universe readings on their own constructions — unweighted totals **106.140 GW
+> (RT) / 131.871 (DA)**, unweighted ≤ $0 mass **19.945 / 17.654**, load-weighted
+> totals **107.007 / 131.969** — worst |Δ| **0.0004 GW** against a 0.05 bar.
+> G-F1 reproduces the six committed miso-142/143 window deficits to **0.0003**.
+>
+> **THE IDENTIFICATION WORKS, AND ITS VALIDATION IS GENUINELY HELD OUT.** The
+> screen is declaration-dynamics only — an intermittent resource's declared
+> `ecomax` is a *forecast*, a thermal unit's is a *rating* — on two features
+> (`interior_frac`, `step_frac`) with both thresholds fixed a priori at the
+> neutral midpoint **0.50**. **Offer price is excluded from the feature set by
+> construction** and is the sole validation attribute: of the identified
+> INTERMITTENT population's offered MW in 2025 JJA h12–17, **79.5 % (DA) /
+> 97.7 % (RT)** is priced ≤ $0 against **11.5 % / 12.6 %** for everything else
+> (**P-3b PASS**, bars ≥ 60 % / ≤ 15 %). **P-3 PASSES** — non-intermittent Σ C
+> **155.7 / 154.6 / 159.9 GW** inside the EIA-860 non-VRE bracket, so **thermal
+> is not being eaten**.
+>
+> **AND IT DOES NOT CLEAN THE UNIVERSE, BECAUSE miso-145's ATTRIBUTION OF THE
+> CHEAP MASS TO RENEWABLES IS MOSTLY WRONG — the correction is the session's
+> most useful output.** The intermittent population carries only **2.981 GW
+> (DA) / 7.577 (RT)** of the committed **17.654 / 19.945 GW** of ≤ $0 offers
+> (**16.9 % / 38.0 %** against a 70 % bar — **P-4 FAIL**). Of the remainder,
+> **7.10 / 7.15 GW is declared must-run** and 1.7 / 1.2 GW self-scheduled — a
+> price-taking population **the model DOES carry as fleet rows**, i.e. not a
+> universe crossing at all. (`must_run_flag` / `self_scheduled_mw` are
+> DECLARATIONS; no fuel or technology claim is made — TRAP 5, the
+> non-intermittent population is never partitioned.)
+>
+> **THE SCREEN FINDS LITTLE BECAUSE OF THE BOOK, NOT THE METHOD. P-2 FAILS LOW
+> in all three years**: identified Σ C **9,978 / 10,932 / 10,898 MW (DA)**
+> against EIA-860 brackets [23,751 , 47,294] / [26,724 , 53,032] / [32,839 ,
+> 64,671]; the identified population offers **3.751 GW (DA) / 7.755 (RT)** in
+> 2025 JJA h12–17 against the keeper's own **16.286 GW** of wind + solar
+> dispatch — a figure independently corroborated by EIA-860 at
+> summer-afternoon CFs (32.7 GW wind × ≈0.20 + 17.1 GW solar × ≈0.55 ≈ 16 GW).
+> **MISO's commercial-offer book carries only a minority of the ISO's VRE fleet
+> as forecast-like rows.** The **DA/RT asymmetry is a result about the
+> instrument**: RT yields **2.5–2.6×** the DA book's intermittent capability on
+> a book that is a strict subset in unit count, because an RT offer is
+> re-submitted against a live forecast and a DA offer need not be.
+>
+> **REPORTED AGAINST INTEREST, AND LED WITH: P-1 FAILS — the threshold is
+> LOAD-BEARING.** No bimodal valley (midband share **0.240–0.413** against a
+> < 0.20 bar), and the pre-registered sweep shows a DA cliff between 0.40
+> (**29,663 MW** in 2025) and 0.50 (**10,898**). **At 0.40 the DA leg would
+> clear P-2. THAT MOVE WAS NOT MADE AND MUST NOT BE** (TRAP 6 fired as a
+> temptation and was refused) — a threshold chosen so a control passes is a
+> fitted input. The RT leg is stable across 0.30–0.60; the DA leg is not, which
+> is the sharpest statement of the screen's limit.
+>
+> **THE LEVEL LEG RAN UNDER THE PRE-COMMITTED BOUNDED BRANCH AND IS
+> `NOT-LICENSING` — no verdict fires, miso-145's STANDING RULE STANDS.** With
+> that bound attached: the correction the screen can make moves the LEVEL term
+> **−14.376 → −13.530** (RT 2025 JJA h12–17), **+$0.85**, in the direction that
+> would favour the offer-level hypothesis, against a **+$18** reinstatement bar;
+> pro-rated to a screen removing *all* the RT cheap mass, ≈ **+$2.2**. The one
+> named contamination cannot plausibly account for the sign of miso-145's
+> result — **which is NOT a licence to call that refutation clean and is not
+> offered as one.**
+>
+> **A PUBLISHED NUMBER IS CORRECTED BY REPRODUCE-BEFORE-EXTEND:** miso-145's
+> FINDING §6.1 prints the 2024 DA LEVEL as **−4.996**; its own committed
+> artifact and this session both read **−2.401** (five other cells and all six
+> segment counts match to the last digit). Artifact authoritative; verdict
+> unaffected (−2.401 is *further* from the ≥ +$18 bar); a pointer footnote is
+> added to that finding and its body left as the record.
+>
+> **THE QUEUE, WRITTEN FORWARD. Item 7 is DISCHARGED. Two items stand, both
+> NAMED AND NOT OPENED:** **(8)** *fix the universe on the MODEL side, not the
+> corpus side* — the crossing is not closed by subtracting VRE from a book that
+> mostly does not contain it, but by adding the model's own wind/solar (LP
+> decision variables at MC = 0) to the model's supply curve; it needs no new
+> data and dissolves the blocker the screen could not, and its own residual
+> asymmetry (the model's **17.2 GW of import tranches**, priced in the *body* of
+> the curve, with no analogue in a book of MISO-internal resources) must be
+> stated when it is built. **(9)** the miso-145 shape object — *the missing
+> offer wall* — and its named successor, a MISO `measured_offer_surface`,
+> position-conditioned, **UNCHANGED AND UNAFFECTED** by this session (it rests
+> only on band-restricted price-identified statistics, which a population far
+> below the band cannot move), still carrying its two hard constraints (it
+> cannot be class-conditioned — miso-138 REFUTED, P-A3 re-confirmed; it must
+> **replace or subsume** `gas_offer_margin`, armed, cell `K`, rule 19
+> `[R-ONE-MECH]`) and still an **OWNER DECISION** (rules 19/24). A third route
+> exists only if the level question is to be answered *from* this corpus rather
+> than *around* it: an identification of MISO's intermittent population that does
+> not depend on declaration dynamics (a registry, a resource-type posting, or an
+> hourly VRE forecast artifact joinable to the masked codes) — **a DATA intake
+> charter, not a calibration one.**
+>
+> **TRAP 2 did not fire:** **no parameter of any kind was derived**, and
+> `gas_offer_margin` was not read, re-derived or referenced by any computation.
+> **GOVERNANCE, carried forward unchanged:** C1/C2 both SKIPPED for 2025
+> (preliminary EIA-923) — the blocker year's fuel mix stays UNGATED and is never
+> read as 2025 safety. Kill gates **not reached, because nothing ran** (not
+> "passing"): C3b-2025's 0.009 headroom, the 2023/2024 C3a PASSes, C8's forced
+> shares and D-4 windows, and the SPENT C3c ledger are all untouched. Rule 22 —
+> 2023–2025 only; MISO holds no marker. Evidence:
+> `results/calibration/FINDING-miso146-intermittent-screen-2026-08-09.md`,
+> `PREREG-miso146-intermittent-screen-2026-08-09.md`,
+> `_miso146_intermittent_screen.json`, probe
+> `scripts/probes/_miso146_intermittent_screen.py`.
+
 > **LIVE QUEUE AS OF miso-145 (2026-08-09) — ITEM 6 (the SUMMER-AFTERNOON
 > OFFER-CONDUCT IDENTIFICATION, owner-opened 2026-08-08) EXECUTED AND
 > DISCHARGED. THE OFFER ARCHIVE IS INTAKEN; THE OFFER-LEVEL HYPOTHESIS IS
