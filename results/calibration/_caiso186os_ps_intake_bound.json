@@ -1,0 +1,169 @@
+{
+ "probe": "_caiso186os_ps_intake_bound",
+ "session": "caiso-186 owner sitting (dispatched label; see handoff \u00a70 on the session-number collision with the landed caiso-186 seasonal-capability session)",
+ "keeper": "2026-08-09-caiso-184-c1-lpbasis",
+ "bundle": "results/calibration/caiso184_c1_lpbasis",
+ "lp_solved": false,
+ "network": false,
+ "years": {
+  "2023": {
+   "L0": {
+    "model_lw_usd_per_mwh": 56.17551650075269,
+    "bench_rt_lw_usd_per_mwh": 54.17,
+    "c3a_pct": 3.7022641697483705,
+    "gap_usd_per_mwh": 2.005516500752691
+   },
+   "L1_required_move_usd_per_mwh": 0.0,
+   "L2_size": {
+    "annual_mean_charge_mw": 271.1600036621094,
+    "annual_mean_discharge_mw": 216.92800903320312,
+    "implied_rte": 0.800000011920929,
+    "sepdec_mean_charge_mw": 198.06495666503906,
+    "belly_mean_charge_mw": 644.3673095703125,
+    "belly_mean_charge_over_pumping_hours_mw": 1660.833984375,
+    "belly_hours": 732,
+    "belly_pumping_hours": 284,
+    "annual_pumping_hours": 1394,
+    "fleet_mw_eia860": 2077.6
+   },
+   "L3_energy_neutrality": {
+    "ps_charge_mwh": 2375361.75,
+    "ps_discharge_mwh": 1900289.375,
+    "model_lambda_at_ps_charge": 14.62266076817249,
+    "model_lambda_at_ps_discharge": 56.22633597581658,
+    "actual_rt_at_ps_charge": 9.96230697631836,
+    "actual_rt_at_ps_discharge": 59.04587173461914,
+    "model_spread_dis_minus_chg": 41.60367520764409,
+    "note": "SOC is cyclic: removing X MWh of pumping obliges removing ~eta*X MWh of discharge. The charge-side relief lands on LOW-price hours; the obliged discharge-side removal lands on HIGH-price hours and pushes them UP. The caiso-140 walkdown priced only the charge side."
+   },
+   "L4_addressable": {
+    "weights": "rubric rt_lw (measured system load), common to both sides",
+    "gap_reconstructed_hourly": 1.2243354022929391,
+    "gap_from_annual_means": 2.005516500752691,
+    "gap_in_ps_pumping_hours": 0.8609869521044778,
+    "gap_in_ps_discharge_hours": -0.3598117043181074,
+    "gap_in_belly": 0.5613398732163659,
+    "gap_in_sepdec": 0.6610832125023131,
+    "gap_in_no_ps_activity_hours": 0.7231601545065686,
+    "coverage_hours_actual": 8712
+   },
+   "bound": {
+    "S_branchA_model_ps_belly_pumping_mw": 644.3673095703125,
+    "S_branchB_caiso140_water_wedge_mw": 769.0,
+    "S_belly_mw_max": 769.0,
+    "walkdown_dlambda_upper_usd_per_mwh": -0.10664200000000001,
+    "required_usd_per_mwh": 0.0,
+    "closes_band": true,
+    "coverage_of_required_pct": null,
+    "walkdown_staleness_note": "the caiso-140 \u00a7C curve was measured against a C3a-2025 gap of +2.904 $/MWh; this keeper's gap is +2.006 $/MWh, so the quoted curve OVERSTATES the intake's sufficiency."
+   },
+   "context_battery_mean_charge_mw": 532.564697265625
+  },
+  "2024": {
+   "L0": {
+    "model_lw_usd_per_mwh": 38.298711781645885,
+    "bench_rt_lw_usd_per_mwh": 34.65,
+    "c3a_pct": 10.530192732022758,
+    "gap_usd_per_mwh": 3.6487117816458863
+   },
+   "L1_required_move_usd_per_mwh": 0.18371178164588287,
+   "L2_size": {
+    "annual_mean_charge_mw": 300.0634765625,
+    "annual_mean_discharge_mw": 240.05076599121094,
+    "implied_rte": 0.7999999523162842,
+    "sepdec_mean_charge_mw": 213.05520629882812,
+    "belly_mean_charge_mw": 668.5338745117188,
+    "belly_mean_charge_over_pumping_hours_mw": 1699.1903076171875,
+    "belly_hours": 732,
+    "belly_pumping_hours": 288,
+    "annual_pumping_hours": 1507,
+    "fleet_mw_eia860": 2077.6
+   },
+   "L3_energy_neutrality": {
+    "ps_charge_mwh": 2628556.0,
+    "ps_discharge_mwh": 2102844.75,
+    "model_lambda_at_ps_charge": 1.7566392567380669,
+    "model_lambda_at_ps_discharge": 38.60077585626884,
+    "actual_rt_at_ps_charge": -4.419406890869141,
+    "actual_rt_at_ps_discharge": 36.49872589111328,
+    "model_spread_dis_minus_chg": 36.84413659953077,
+    "note": "SOC is cyclic: removing X MWh of pumping obliges removing ~eta*X MWh of discharge. The charge-side relief lands on LOW-price hours; the obliged discharge-side removal lands on HIGH-price hours and pushes them UP. The caiso-140 walkdown priced only the charge side."
+   },
+   "L4_addressable": {
+    "weights": "rubric rt_lw (measured system load), common to both sides",
+    "gap_reconstructed_hourly": 3.163820759470446,
+    "gap_from_annual_means": 3.6487117816458863,
+    "gap_in_ps_pumping_hours": 1.0900705085802638,
+    "gap_in_ps_discharge_hours": 0.3982430920568405,
+    "gap_in_belly": 0.5173792734291928,
+    "gap_in_sepdec": 0.971187338024484,
+    "gap_in_no_ps_activity_hours": 1.6755071588333421,
+    "coverage_hours_actual": 8760
+   },
+   "bound": {
+    "S_branchA_model_ps_belly_pumping_mw": 668.5338745117188,
+    "S_branchB_caiso140_water_wedge_mw": 803.0,
+    "S_belly_mw_max": 803.0,
+    "walkdown_dlambda_upper_usd_per_mwh": -0.114054,
+    "required_usd_per_mwh": 0.18371178164588287,
+    "closes_band": false,
+    "coverage_of_required_pct": 62.08311681383993,
+    "walkdown_staleness_note": "the caiso-140 \u00a7C curve was measured against a C3a-2025 gap of +2.904 $/MWh; this keeper's gap is +3.649 $/MWh, so the quoted curve OVERSTATES the intake's sufficiency."
+   },
+   "context_battery_mean_charge_mw": 1011.8602905273438
+  },
+  "2025": {
+   "L0": {
+    "model_lw_usd_per_mwh": 38.935781855178035,
+    "bench_rt_lw_usd_per_mwh": 34.42,
+    "c3a_pct": 13.119645134160463,
+    "gap_usd_per_mwh": 4.515781855178034
+   },
+   "L1_required_move_usd_per_mwh": 1.0737818551780336,
+   "L2_size": {
+    "annual_mean_charge_mw": 295.27215576171875,
+    "annual_mean_discharge_mw": 236.2177276611328,
+    "implied_rte": 0.800000011920929,
+    "sepdec_mean_charge_mw": 214.86842346191406,
+    "belly_mean_charge_mw": 687.8041381835938,
+    "belly_mean_charge_over_pumping_hours_mw": 1724.22119140625,
+    "belly_hours": 732,
+    "belly_pumping_hours": 292,
+    "annual_pumping_hours": 1499,
+    "fleet_mw_eia860": 2077.6
+   },
+   "L3_energy_neutrality": {
+    "ps_charge_mwh": 2586584.0,
+    "ps_discharge_mwh": 2069267.25,
+    "model_lambda_at_ps_charge": 6.86748538967687,
+    "model_lambda_at_ps_discharge": 42.41366667799773,
+    "actual_rt_at_ps_charge": 2.5529048442840576,
+    "actual_rt_at_ps_discharge": 40.41691970825195,
+    "model_spread_dis_minus_chg": 35.54618128832086,
+    "note": "SOC is cyclic: removing X MWh of pumping obliges removing ~eta*X MWh of discharge. The charge-side relief lands on LOW-price hours; the obliged discharge-side removal lands on HIGH-price hours and pushes them UP. The caiso-140 walkdown priced only the charge side."
+   },
+   "L4_addressable": {
+    "weights": "rubric rt_lw (measured system load), common to both sides",
+    "gap_reconstructed_hourly": 3.7050101583306594,
+    "gap_from_annual_means": 4.515781855178034,
+    "gap_in_ps_pumping_hours": 0.8228372396796237,
+    "gap_in_ps_discharge_hours": 0.24145967092125942,
+    "gap_in_belly": 0.8401500477855496,
+    "gap_in_sepdec": 2.6461742883125217,
+    "gap_in_no_ps_activity_hours": 2.6407132477297766,
+    "coverage_hours_actual": 8760
+   },
+   "bound": {
+    "S_branchA_model_ps_belly_pumping_mw": 687.8041381835938,
+    "S_branchB_caiso140_water_wedge_mw": 793.0,
+    "S_belly_mw_max": 793.0,
+    "walkdown_dlambda_upper_usd_per_mwh": -0.111874,
+    "required_usd_per_mwh": 1.0737818551780336,
+    "closes_band": false,
+    "coverage_of_required_pct": 10.41868974228953,
+    "walkdown_staleness_note": "the caiso-140 \u00a7C curve was measured against a C3a-2025 gap of +2.904 $/MWh; this keeper's gap is +4.516 $/MWh, so the quoted curve OVERSTATES the intake's sufficiency."
+   },
+   "context_battery_mean_charge_mw": 1496.447509765625
+  }
+ }
+}
