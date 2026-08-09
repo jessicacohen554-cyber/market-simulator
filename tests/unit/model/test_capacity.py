@@ -4221,17 +4221,29 @@ class TestIRANuclear45UAndCleanPhaseout(unittest.TestCase):
     T = 10
 
     def _run_nuclear_screen(
-        self, year, loss_counter, *, fixed_om, eac_price=0.0, price=20.0
+        self,
+        year,
+        loss_counter,
+        *,
+        fixed_om,
+        eac_price=0.0,
+        price=20.0,
+        clean_price=None,
     ):
         """Screen one 100-MW nuclear unit; return (survivor_ids, loss_year).
 
-        Scales are hand-chosen so §45U (max $15/MWh while ``price`` <= the
-        $25/MWh gross-receipts threshold) is the pivotal revenue: energy
-        margin = price x 100 MW x T; §45U revenue = credit x 100 MW x T;
+        Scales are hand-chosen so §45U (max $15/MWh while the gross-receipts
+        basis is at or under the $26/MWh threshold) is the pivotal revenue:
+        energy margin = price x 100 MW x T; §45U revenue = credit x 100 MW x T;
         going-forward cost = ``fixed_om`` $/kW-yr x 100 MW x 1000. ERCOT
         default => no capacity or AS revenue for nuclear, so energy + the
         attribute payment is the whole stack; ``eford=0`` makes the pro-forma
         margin basis the full 100 MW.
+
+        ``clean_price`` supplies the FFR-7B Arm-3 clean-tier row dual for the
+        unit's zone in $/MWh — a branch-(i) compliance certificate, as against
+        ``eac_price`` (``eac_price_nuclear``), which is the branch-(iii)
+        NY-ZEC/IL-CMC netting contract (D-28).
         """
         config = ScenarioConfig(
             retirement_rule="legacy",
@@ -4243,6 +4255,9 @@ class TestIRANuclear45UAndCleanPhaseout(unittest.TestCase):
         dispatch = SimpleNamespace(dispatch=np.full((1, self.T), 100.0))
         prices = np.full((1, self.T), price)
         mc = np.zeros((1, self.T))
+        clean_by_fuel = (
+            None if clean_price is None else {"nuclear": np.array([clean_price])}
+        )
         survivors, losses, _ = apply_economic_retirements(
             fleet,
             arrays,
@@ -4253,6 +4268,7 @@ class TestIRANuclear45UAndCleanPhaseout(unittest.TestCase):
             peak_demand=0.0,
             mc=mc,
             year=year,
+            clean_attribute_price_by_fuel=clean_by_fuel,
         )
         return [g.unit_id for g in survivors], losses.get("N0")
 
@@ -4299,6 +4315,74 @@ class TestIRANuclear45UAndCleanPhaseout(unittest.TestCase):
         self.assertEqual(both, [])
         self.assertEqual(eac_only, [])
         self.assertEqual(u45_only, [])
+
+    def test_eac_nuclear_stays_out_of_the_45u_gross_receipts_base(self):
+        # D-28 branch adjudication, the other half of the test above.
+        # eac_price_nuclear models the NY-ZEC / IL-CMC design: a state payment
+        # set net of the unit's other revenue, i.e. 26 U.S.C. §45U(b)(2)(B)(iii)
+        # -- the contract is EXCLUDED from gross receipts and the state instead
+        # reduces its own payment by the federal credit, so the pair pays
+        # max(contract, §45U(P_energy)) and never contract + §45U.
+        #
+        # price=20, eac=15 => branch (iii) pays max(15, §45U(20) = 15) = 15
+        # => 20_000 energy + 15_000 attribute = 35_000 < 40_000 -> retire.
+        # Had the contract been mis-classified into branch (i) it would sit
+        # INSIDE the base: 15 + §45U(35) = 15 + 7.8 = 22.8 $/MWh => 42_800
+        # => 20_000 + 22_800 = 42_800 >= 40_000 -> survive. The retirement is
+        # what pins the exclusion.
+        survivors, _ = self._run_nuclear_screen(2030, 2, fixed_om=0.40, eac_price=15.0)
+        self.assertEqual(survivors, [])
+
+    def test_45u_tops_up_a_state_contract_worth_less_than_the_credit(self):
+        # Branch (iii)'s max() has two sides. A $5/MWh contract is worth less
+        # than the $15/MWh credit at price=20, so the netting program pays
+        # nothing and the unit keeps §45U alone -- the SAME outcome as no
+        # contract at all. Both configs must land identically at a bar the
+        # credit alone clears (20_000 + 15_000 = 35_000 >= 34_000).
+        with_contract, _ = self._run_nuclear_screen(
+            2030, 2, fixed_om=0.34, eac_price=5.0
+        )
+        without, _ = self._run_nuclear_screen(2030, 2, fixed_om=0.34, eac_price=0.0)
+        self.assertEqual(with_contract, ["N0"])
+        self.assertEqual(without, ["N0"])
+
+    def test_clean_tier_dual_enters_the_45u_gross_receipts_base(self):
+        # D-28 composition (c) / §45U(b)(2)(B)(i): the Arm-3 clean-tier dual is
+        # an LSE-paid compliance certificate with no federal-credit offset in
+        # it, so it sits INSIDE gross receipts and each $1 of dual costs $0.80
+        # of credit. price=20, D=10 => 10 + §45U(30) = 10 + 11.8 = 21.8 $/MWh
+        # => 20_000 energy + 21_800 = 41_800.
+        #
+        # The two bars below bracket that number and refute both rejected
+        # compositions in one pass:
+        #   * bar 40_000 -- the old max() fold would credit only
+        #     max(§45U(20) = 15, 10) = 15 => 35_000 < 40_000 -> retire. The
+        #     unit SURVIVING here is what rules the max() out.
+        #   * bar 43_000 -- naive phase-down-then-add on an energy-only basis
+        #     would credit 10 + §45U(20) = 25 => 45_000 >= 43_000 -> survive.
+        #     The unit RETIRING here is what rules the naive add out.
+        survives, _ = self._run_nuclear_screen(2030, 2, fixed_om=0.40, clean_price=10.0)
+        retires, _ = self._run_nuclear_screen(2030, 2, fixed_om=0.43, clean_price=10.0)
+        self.assertEqual(survives, ["N0"])
+        self.assertEqual(retires, [])
+
+    def test_nuclear_takes_the_better_of_the_two_45u_branches(self):
+        # One certificate, two statutory routes, and the unit sells it into
+        # whichever pays more. eac (branch iii) = 10, clean dual (branch i) =
+        # 20, price = 20:
+        #   branch (i)   -> 20 + §45U(40) = 20 + 3.8 = 23.8 $/MWh  (WINS)
+        #   branch (iii) -> max(10, §45U(20) = 15)    = 15   $/MWh
+        # => 20_000 energy + 23_800 = 43_800, which clears a 43_000 bar and
+        # misses a 44_000 one. Taking the losing route at either bar, or
+        # stacking the two, changes both answers.
+        survives, _ = self._run_nuclear_screen(
+            2030, 2, fixed_om=0.43, eac_price=10.0, clean_price=20.0
+        )
+        retires, _ = self._run_nuclear_screen(
+            2030, 2, fixed_om=0.44, eac_price=10.0, clean_price=20.0
+        )
+        self.assertEqual(survives, ["N0"])
+        self.assertEqual(retires, [])
 
     def test_storage_entry_cost_steps_across_45y48e_transition(self):
         # §45Y/§48E storage ITC phases down 100/75/50/0% across the 2033->2036
