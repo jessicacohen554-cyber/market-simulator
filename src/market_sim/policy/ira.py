@@ -189,11 +189,15 @@ def section_45u_credit_per_mwh(
     zero at $43.75/MWh.
 
     This is the nuclear retirement screen's revenue input, not a
-    dispatch-cost adder — §45U is a per-MWh production credit paid on
-    realized output, so it enters the same attribute-revenue seam as
-    ``eac_price_nuclear``/the RPS shadow price (the caller takes ``max()``;
-    see ``model.capacity.apply_economic_retirements``). The credit expires
-    after ``config.ira_45u_last_year``.
+    dispatch-cost adder. §45U is NOT an attribute buyer and does not
+    compete inside the screen's ``max(eac, rps/clean)`` fold: it is a
+    production tax credit carrying its own statutory anti-double-dip,
+    §45U(b)(2)(B), which the caller applies to whichever attribute buyer
+    won that fold (owner decision D-28; see the §45U block in
+    ``model.capacity.apply_economic_retirements``). ``avg_price_per_mwh``
+    is that gross-receipts basis, so a caller passing a branch-(i)
+    attribute price adds it to the energy price BEFORE calling here. The
+    credit expires after ``config.ira_45u_last_year``.
 
     Args:
         year: Simulation year. Compared against the §45U expiry year, and

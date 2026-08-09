@@ -1889,14 +1889,20 @@ class ScenarioConfig:
     # suppresses these rows too; a wind MWh satisfying both its renewable
     # row and its clean row is CORRECT (two constraints, one MWh) with
     # generator credit = max(), never sum (FFR-6B §6.4).
-    # *** ARMING IS BLOCKED (owner): "The §45U-vs-clean-dual composition
-    # for nuclear is OPEN and blocks ARM 3's ARMING ONLY, not its
-    # implementation" (FFR-6B §6.4/§11) — §45U(b)(2)'s gross-receipts
-    # phase-down implies phase-down-then-add, not max(); as implemented the
-    # clean dual composes max(max(eac, §45U), clean) at the retirement
-    # screen, which is the existing doctrine and provisional. Do not arm
-    # this flag in a keeper or forecast default until the owner resolves
-    # the composition; bounded default-off probe pairs are its only use. ***
+    # *** THE §45U ARMING BLOCKER IS CLOSED (F2-45U, owner decision D-28
+    # option A, 2026-08-09). FFR-6B §6.4/§11 held that "the §45U-vs-clean-
+    # dual composition for nuclear is OPEN and blocks ARM 3's ARMING ONLY,
+    # not its implementation"; it is now decided. §45U left the attribute
+    # max() — it is a production tax credit, not an attribute buyer — and
+    # composes with that max()'s WINNER under 26 U.S.C. §45U(b)(2)(B). The
+    # clean dual is an LSE-paid compliance certificate with no federal-
+    # credit offset in it, so it is a branch-(i) instrument: INSIDE the
+    # gross-receipts base, paying D + §45U(P + D), self-limiting at
+    # 0.80 $/$. See model/capacity_evolution/retirements.py's §45U block
+    # and docs/handoffs/f2-45u-composition-2026-08-09.md. ARMING ITSELF is
+    # still an open charter on this ISO's own evidence (rule 25): the flag
+    # stays default-off, and bounded default-off probe pairs remain its
+    # only use until that charter runs. ***
     # Registered in _CACHE_KEY_OPTIONAL_FIELDS (off runs keep their key).
     miso_clean_tier_rows: bool = False
     electrolyzer_type: str = "pem"  # "pem" or "alkaline" — sets H2 fuel cost
