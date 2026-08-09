@@ -337,6 +337,7 @@ def derive_year(
     year: int,
     gas_day: pd.Series,
     edges_override: "tuple[float, ...] | None" = None,
+    position_tail: bool = False,
 ) -> tuple[dict, dict, list[str]]:
     """Return ``({cls: {"ladder": [...]}}, coverage, source_files)`` for one year.
 
@@ -346,6 +347,10 @@ def derive_year(
     (the non-streaming build OOM'd at ~12 GB on a full year).
     ``edges_override`` (ercot-180 ``--top-scoped``) refines the bin grid with
     the IDENTICAL statistic; default None keeps the frozen stepped geometry.
+    ``position_tail`` (ercot-181 ``--position-tail``) additionally emits each
+    (class, bin)'s measured tail step points above the p90 grid point
+    (``lib.positiontail.tail_support`` — the same population, its own
+    support); the ladders themselves are byte-unchanged.
     """
     files = _sced_source_files(year)
     pct = _netload_pct(year)
@@ -384,6 +389,7 @@ def derive_year(
     for cls in sorted({c for (c, _b) in mult_acc}):
         ladders: list[list[list[float]]] = []
         cov: list[dict] = []
+        tails: list[list[list[float]]] = []
         for b in range(n_bins):
             key = (cls, b)
             if key in mult_acc:
@@ -395,10 +401,14 @@ def derive_year(
                 n_iv = len(ts_seen[key])
                 n_days = len(day_seen[key])
                 mw_sum = float(mw.sum())
+                if position_tail:
+                    tails.append(tail_support(mult, mw))
             else:
                 qs = [float("nan")] * len(LADDER_QUANTILES)
                 n_iv = n_days = 0
                 mw_sum = 0.0
+                if position_tail:
+                    tails.append([])
             ladders.append(
                 [[float(q), round(m, 3)] for q, m in zip(LADDER_QUANTILES, qs)]
             )
@@ -410,6 +420,8 @@ def derive_year(
                 }
             )
         out[cls] = {"ladder": ladders}
+        if position_tail:
+            out[cls]["tail"] = tails
         coverage[cls] = cov
     return out, coverage, [p.name for p in files]
 
@@ -489,6 +501,70 @@ def derive_year_continuous(
     return out, coverage, [p.name for p in files]
 
 
+def _main_position_tail(args) -> None:
+    """ERCOT-181: write the position-tail vintage (PRECOMMIT-ercot181 §3).
+
+    The frozen stepped artifact is loaded and COPIED VERBATIM (its ladder
+    blocks are the sub-p90 truth the seam proof asserts byte-identity
+    against); each requested year's (class, bin) tail is derived fresh from
+    the corpus with the identical population construction, and the
+    re-computed 5-rung ladder must REPRODUCE the frozen artifact's exactly —
+    a corpus drifted since the frozen derive would make the appended tail
+    inconsistent with its p90 anchor, so a mismatch is stop-the-line, never
+    papered over.
+    """
+    frozen = json.loads(DEFAULT_OUT.read_text())
+    gas_day = _gas_day_series()
+    result = json.loads(json.dumps(frozen))  # deep copy via round-trip
+    tail_cov: dict[str, dict] = {}
+    for y in args.years:
+        per_cls, cov, _files = derive_year(y, gas_day, position_tail=True)
+        for cls, entry in per_cls.items():
+            frozen_tbl = frozen.get(cls, {}).get("years", {}).get(str(y))
+            if not frozen_tbl:
+                raise SystemExit(
+                    f"--position-tail: frozen artifact has no {cls} year "
+                    f"{y} block to anchor a tail on"
+                )
+            if entry["ladder"] != frozen_tbl["ladder"]:
+                raise SystemExit(
+                    f"--position-tail: re-derived {cls} {y} ladder does not "
+                    "reproduce the frozen artifact's — the corpus has "
+                    "drifted since the frozen derive; STOP (rule 23: "
+                    "re-derive only on a source-data update, and then the "
+                    "frozen artifact first)"
+                )
+            result[cls]["years"][str(y)]["tail"] = entry["tail"]
+            tail_cov.setdefault(str(y), {})[cls] = [len(t) for t in entry["tail"]]
+            print(f"{y} {cls}: tail points by bin = {[len(t) for t in entry['tail']]}")
+    prov = result.setdefault("_provenance", {})
+    prov["conditioning"] = POSITIONTAIL_TAG
+    prov["positiontail"] = {
+        "precommit": "docs/PRECOMMIT-ercot181-quantity-position-2026-08-09.md",
+        "statistic": (
+            "per (class, year, bin): the MW-weighted empirical quantile "
+            "function of the SAME spare-segment multiplier population the "
+            "frozen ladder measured, at its own distinct step points above "
+            "the p90 grid point (lib/positiontail.tail_support; multipliers "
+            "HCAP-clipped by the parent segment construction, round(3); x = "
+            "cumulative-MW fraction, round(6), strictly increasing). "
+            "Sub-p90 ladders are the frozen artifact's blocks byte-verbatim; "
+            "an empty tail keeps the frozen p90 end-clamp byte-identical "
+            "(zero-support rule)"
+        ),
+        "tail_years": [int(y) for y in args.years],
+        "tail_points_per_bin": tail_cov,
+        "frozen_source": DEFAULT_OUT.name,
+    }
+    out = (
+        args.out
+        if args.out != DEFAULT_OUT
+        else CALIBRATION_DIR / "ercot_sced_offer_wall_positiontail.json"
+    )
+    out.write_text(json.dumps(result, indent=1))
+    print(f"wrote {out} (frozen artifact untouched)")
+
+
 def main() -> None:
     """Derive and write the RT (SCED) spare-offer wall ladder JSON."""
     ap = argparse.ArgumentParser(description=__doc__)
@@ -509,9 +585,23 @@ def main() -> None:
         "p97, conduct-identified stepped sub-bins above, ULP-pair step-encoded "
         "(PRECOMMIT-ercot180 §3); neither frozen artifact is touched",
     )
+    ap.add_argument(
+        "--position-tail",
+        action="store_true",
+        help="ERCOT-181: write the position-tail vintage "
+        "(ercot_sced_offer_wall_positiontail.json) — the frozen stepped "
+        "ladders byte-verbatim plus each (class, year, bin)'s measured tail "
+        "step points above p90 (PRECOMMIT-ercot181 §3); the frozen artifact "
+        "is never touched",
+    )
     args = ap.parse_args()
-    if args.continuous and args.top_scoped:
-        raise SystemExit("--continuous and --top-scoped are mutually exclusive")
+    if sum([args.continuous, args.top_scoped, args.position_tail]) > 1:
+        raise SystemExit(
+            "--continuous, --top-scoped and --position-tail are mutually exclusive"
+        )
+    if args.position_tail:
+        _main_position_tail(args)
+        return
     if args.top_scoped:
         _main_topscoped(args)
         return

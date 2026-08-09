@@ -350,6 +350,11 @@ _STEPPED_TAG = "stepped-netload-bins"
 #: frozen stepped values below p97, conduct-identified stepped sub-bins above,
 #: ULP-pair step-encoded for the same interpolation machinery.
 _TOPSCOPED_TAG = "topscoped-netload-bins"
+#: Provenance tag of the ERCOT-181 POSITION-TAIL vintage (PRECOMMIT-ercot181
+#: §3): the frozen stepped ladders byte-identical at and below p90, plus each
+#: class-year-bin's measured MW-weighted empirical quantile function above
+#: p90 on its own support — the position axis completed, never the level.
+_POSITIONTAIL_TAG = "positiontail-netload-bins"
 
 #: Refined-conditioning grain modes: gate field -> (vintage tag, artifact
 #: filename suffix replacing "_condbinned.json", derive CLI flag). One gate,
@@ -380,6 +385,79 @@ def _contpct_mode(config: ScenarioConfig) -> "str | None":
     if top:
         return "topscoped"
     return None
+
+
+def _positiontail_armed(config: ScenarioConfig, err_name: str) -> bool:
+    """Whether the ERCOT-181 position-tail completion is armed, guard-checked.
+
+    Arming it together with either conditioning-grain gate is a hard error
+    (PRECOMMIT-ercot181 §3: the grain gates re-condition the hour axis, this
+    gate completes the position axis — mixing vintages inside one family is
+    the half-migrated state the vintage guards exist to prevent), and the
+    form-(a)/(b) unmigrated-member compat guard is SHARED, not weakened.
+    """
+    if not bool(getattr(config, "ercot_offer_surface_position_tail", False)):
+        return False
+    if _contpct_mode(config) is not None:
+        raise ValueError(
+            f"{err_name}: ercot_offer_surface_position_tail cannot be armed "
+            "together with a conditioning-grain gate "
+            "(ercot_offer_surface_continuous / ercot_offer_surface_top_scoped)"
+            " — one vintage per family (PRECOMMIT-ercot181 §3)."
+        )
+    _assert_contpct_compat(config, err_name, mode="positiontail")
+    return True
+
+
+def _assert_positiontail_vintage(
+    surface: dict, err_name: str, rederive_hint: str, *, armed: bool
+) -> None:
+    """Hard-fail when the artifact vintage disagrees with the position-tail gate.
+
+    Both directions (PRECOMMIT-ercot181 §3): the armed gate must consume a
+    ``positiontail-netload-bins`` artifact, and every other path must refuse
+    one — the PJM within-season / ERCOT-178/180 vintage-guard pattern.
+    """
+    tag = str(surface.get("_provenance", {}).get("conditioning", _STEPPED_TAG))
+    if armed and tag != _POSITIONTAIL_TAG:
+        raise ValueError(
+            f"{err_name}: surface vintage mismatch — the JSON is conditioned "
+            f"{tag!r} but ercot_offer_surface_position_tail wants "
+            f"{_POSITIONTAIL_TAG!r}. {rederive_hint}"
+        )
+    if not armed and tag == _POSITIONTAIL_TAG:
+        raise ValueError(
+            f"{err_name}: surface vintage mismatch — the JSON is the "
+            f"{_POSITIONTAIL_TAG!r} vintage but "
+            "ercot_offer_surface_position_tail is not armed. "
+            f"{rederive_hint}"
+        )
+
+
+def _positiontail_xy(
+    ladder_q: np.ndarray,
+    base_vals: np.ndarray,
+    tail_pts: "list | None",
+) -> "tuple[np.ndarray, np.ndarray]":
+    """Extend one bin's (x, y) interp vectors with its measured tail points.
+
+    ``tail_pts`` is the artifact's per-bin list of ``[x, mult]`` step points
+    with x strictly above the frozen grid's top (0.9). An empty/absent tail
+    returns the frozen vectors unchanged — the zero-support rule (today's
+    end-clamp behavior, byte-identical). np.interp below the appended region
+    is unaffected by construction, so the sub-p90 read never moves.
+    """
+    if not tail_pts:
+        return ladder_q, base_vals
+    tx = np.asarray([p[0] for p in tail_pts], dtype=float)
+    ty = np.asarray([p[1] for p in tail_pts], dtype=float)
+    keep = tx > float(ladder_q[-1])
+    if not keep.any():
+        return ladder_q, base_vals
+    return (
+        np.concatenate([ladder_q, tx[keep]]),
+        np.concatenate([base_vals, ty[keep]]),
+    )
 
 
 def _netload_rank_pct(net_load: np.ndarray) -> np.ndarray:
@@ -434,11 +512,11 @@ def _assert_contpct_compat(
     one family — loud, never silent. Shared by both grain modes; this guard
     is intentional and is never weakened to get a run through.
     """
-    gate = (
-        "ercot_offer_surface_continuous"
-        if mode == "continuous"
-        else "ercot_offer_surface_top_scoped"
-    )
+    gate = {
+        "continuous": "ercot_offer_surface_continuous",
+        "topscoped": "ercot_offer_surface_top_scoped",
+        "positiontail": "ercot_offer_surface_position_tail",
+    }[mode]
     unmigrated = [
         f
         for f in (
@@ -1734,6 +1812,16 @@ def build_ercot_offer_surface_cleared_share_markup(
                 "share too (the span has no wall geometry to re-anchor on "
                 "its own)."
             )
+        if (
+            getattr(config, "ercot_offer_surface_position_tail", False)
+            and config.iso == "ERCOT"
+        ):
+            raise ValueError(
+                "ercot_offer_surface_position_tail completes the cleared-"
+                "share wall's RT ladder position axis — arm "
+                "ercot_offer_surface_cleared_share too (there is no ladder "
+                "to complete on its own)."
+            )
         return None
     if config.iso != "ERCOT":
         return None
@@ -1744,6 +1832,16 @@ def build_ercot_offer_surface_cleared_share_markup(
         raise ValueError(
             "ercot_offer_surface_cleared_share_rt_mode must be 'replace' "
             f"(composition A) or 'tier' (composition B), got {rt_mode!r}"
+        )
+    # ERCOT-181 position-tail completion (PRECOMMIT-ercot181 §3): the wall's
+    # tail extends the RT/SCED ladder — the measured population whose top
+    # decile the p90 end-clamp truncates — so the RT leg must be armed.
+    pt_armed = _positiontail_armed(config, "ercot_offer_surface_position_tail")
+    if pt_armed and not rt_flag:
+        raise ValueError(
+            "ercot_offer_surface_position_tail completes the RT/SCED "
+            "ladder's position axis — arm ercot_offer_surface_cleared_share_"
+            "rt too (the DAM ladder is not extended; PRECOMMIT-ercot181 §3)."
         )
     # Effective class scope: the base merchant CC/CT map, plus the ST_GAS ->
     # "ST" extension when the ERCOT-77 steam flag is armed.
@@ -1881,15 +1979,27 @@ def build_ercot_offer_surface_cleared_share_markup(
     # fallback, so a 2024/2025-derived surface can never reach 2023's
     # conservative-ops regime; absent years keep the DAM basis byte-identical.
     rt_walls: dict[str, np.ndarray] = {}
+    rt_tails: dict[str, list] = {}
     if rt_flag:
         rt_path = getattr(config, "ercot_offer_surface_cleared_share_rt_path", None)
         if not rt_path:
             from market_sim.config import paths as _paths
 
             rt_path = str(
-                _paths.CALIBRATION_DIR / "ercot_sced_offer_wall_condbinned.json"
+                _paths.CALIBRATION_DIR
+                / (
+                    "ercot_sced_offer_wall_positiontail.json"
+                    if pt_armed
+                    else "ercot_sced_offer_wall_condbinned.json"
+                )
             )
         rt_surface = json.loads(Path(rt_path).read_text())
+        _assert_positiontail_vintage(
+            rt_surface,
+            "ercot_offer_surface_cleared_share_rt",
+            "re-derive scripts/data/derive_ercot_sced_offer_wall.py --position-tail",
+            armed=pt_armed,
+        )
         rt_prov = rt_surface.get("_provenance", {})
         rt_edges = tuple(float(x) for x in rt_prov.get("netload_pct_edges", ()))
         rt_q = np.asarray(rt_prov.get("ladder_quantiles", ()), dtype=float)
@@ -1914,6 +2024,13 @@ def build_ercot_offer_surface_cleared_share_markup(
             rt_walls[cls_key] = np.array(
                 [[float(pt[1]) for pt in lad_b] for lad_b in lad], dtype=float
             )  # (n_bins, n_q)
+            if pt_armed:
+                # ERCOT-181: the bin's measured tail step points above the
+                # frozen p90 grid point (empty list per bin = zero-support,
+                # byte-identical end-clamp behavior).
+                tails = tbl.get("tail", ())
+                if len(tails) == n_bins:
+                    rt_tails[cls_key] = tails
         if not rt_walls:
             logger.info(
                 "ERCOT cleared-share RT basis: year %s absent from the RT "
@@ -2014,6 +2131,7 @@ def build_ercot_offer_surface_cleared_share_markup(
             bnd = boundaries[cls_key]  # (n_bins,)
             wall = walls[cls_key]  # (n_bins, n_q)
             rtw = rt_walls.get(cls_key)
+            rtl = rt_tails.get(cls_key) if pt_armed else None
             sp = span_h.get(cls_key) if span_flag else None
             if sp is None:
                 # Per-bin target multiplier: 0 (no floor) at/below the
@@ -2039,7 +2157,14 @@ def build_ercot_offer_surface_cleared_share_markup(
                         if not np.isfinite(rtw[b]).all():
                             continue
                         rel = (s_g - bnd[b]) / (1.0 - bnd[b])
-                        rt_mult_b[b] = float(np.interp(rel, ladder_q, rtw[b]))
+                        if rtl is not None:
+                            # ERCOT-181 position-tail: same interp, the bin's
+                            # own measured support appended above p90 —
+                            # rel <= 0.9 reads are unaffected by construction.
+                            xs, ys = _positiontail_xy(ladder_q, rtw[b], rtl[b])
+                            rt_mult_b[b] = float(np.interp(rel, xs, ys))
+                        else:
+                            rt_mult_b[b] = float(np.interp(rel, ladder_q, rtw[b]))
                         rt_has[b] = True
                 mult_h = mult_b[hour_bin]  # (T,); 0 where no floor
                 rt_mult_h = rt_mult_b[hour_bin]
@@ -2557,12 +2682,29 @@ def build_ercot_faststart_pool_markup(
         )
     from market_sim.config.constants import FASTSTART_POOL_MIN_DOWN_HOURS
 
+    # ERCOT-181 position-tail completion (PRECOMMIT-ercot181 §3): armed, the
+    # pool ladder's position axis is completed above p90 from the offline
+    # pool's own measured population, via the positiontail artifact vintage.
+    pt_armed = _positiontail_armed(config, "ercot_faststart_pool_offer")
     pool_path = getattr(config, "ercot_faststart_pool_offer_path", None)
     if not pool_path:
         from market_sim.config import paths as _paths
 
-        pool_path = str(_paths.CALIBRATION_DIR / "ercot_faststart_pool_condbinned.json")
+        pool_path = str(
+            _paths.CALIBRATION_DIR
+            / (
+                "ercot_faststart_pool_positiontail.json"
+                if pt_armed
+                else "ercot_faststart_pool_condbinned.json"
+            )
+        )
     pool_surface = json.loads(Path(pool_path).read_text())
+    _assert_positiontail_vintage(
+        pool_surface,
+        "ercot_faststart_pool_offer",
+        "re-derive scripts/data/derive_ercot_faststart_pool.py --position-tail",
+        armed=pt_armed,
+    )
     prov = pool_surface.get("_provenance", {})
     edges = tuple(float(x) for x in prov.get("netload_pct_edges", ()))
     ladder_q = np.asarray(prov.get("ladder_quantiles", ()), dtype=float)
@@ -2607,6 +2749,13 @@ def build_ercot_faststart_pool_markup(
     pool_wall = np.array(
         [[float(pt[1]) for pt in lad_b] for lad_b in lad], dtype=float
     )  # (n_bins, n_q)
+    # ERCOT-181: per-bin measured tail step points above the frozen p90 grid
+    # point (empty per-bin list = zero-support, byte-identical end-clamp).
+    pool_tails = None
+    if pt_armed:
+        tails = tbl.get("tail", ())
+        if len(tails) == n_bins:
+            pool_tails = tails
 
     hours = int(mc_base.shape[1])
     net_load = np.asarray(net_load_mw, dtype=float)[:hours]
@@ -2708,7 +2857,14 @@ def build_ercot_faststart_pool_markup(
                     if not np.isfinite(pool_wall[b]).all():
                         continue
                     rel = (s_g - pb) / (1.0 - pb)
-                    mult_b[b] = float(np.interp(rel, ladder_q, pool_wall[b]))
+                    if pool_tails is not None:
+                        # ERCOT-181 position-tail: same interp, the bin's own
+                        # measured support appended above p90 — rel <= 0.9
+                        # reads are unaffected by construction.
+                        xs, ys = _positiontail_xy(ladder_q, pool_wall[b], pool_tails[b])
+                        mult_b[b] = float(np.interp(rel, xs, ys))
+                    else:
+                        mult_b[b] = float(np.interp(rel, ladder_q, pool_wall[b]))
                     has_b[b] = True
                 if not has_b.any():
                     continue
