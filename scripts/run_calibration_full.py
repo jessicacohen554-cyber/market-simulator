@@ -3199,6 +3199,7 @@ def solve_and_persist(
     caiso_zonal_loss_surface: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
     unit_outage_lp_capacity_basis: bool | None = None,
+    cc_winter_capability_basis: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
@@ -4417,6 +4418,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis
             )
+        if cc_winter_capability_basis is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                cc_winter_capability_basis=cc_winter_capability_basis
+            )
         if ramp_limits is not None:
             recorded_cfg = recorded_cfg.with_overrides(ramp_limits=ramp_limits)
         if local_capacity_constraints is not None:
@@ -4820,6 +4825,7 @@ def solve_and_persist(
             caiso_zonal_loss_surface=caiso_zonal_loss_surface,
             capacity_deliverability_limits=capacity_deliverability_limits,
             unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis,
+            cc_winter_capability_basis=cc_winter_capability_basis,
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
@@ -5629,6 +5635,7 @@ def solve_and_persist(
         "caiso_zonal_loss_surface": caiso_zonal_loss_surface,
         "capacity_deliverability_limits": capacity_deliverability_limits,
         "unit_outage_lp_capacity_basis": unit_outage_lp_capacity_basis,
+        "cc_winter_capability_basis": cc_winter_capability_basis,
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
@@ -10281,6 +10288,27 @@ def main() -> None:
         "keeps the base config value (off).",
     )
     parser.add_argument(
+        "--cc-winter-capability-basis",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Carry combined cycles on the PUBLISHED seasonal capability "
+        "envelope B = max(net_summer, winter) instead of nameplate, with each "
+        "season's availability taking its OWN EIA-860 published rating "
+        "(ScenarioConfig.cc_winter_capability_basis; requires "
+        "cc_nameplate_summer_derate). That flag is a ONE-season instrument on a "
+        "TWO-season published record: it derates Jun-Sep to the published "
+        "net-summer rating but leaves OFF-summer capability on nameplate, a "
+        "premise EIA-860 never publishes and CEMS refutes (off-summer p999 is "
+        "0.73-0.89 of nameplate but 0.906-1.001 of the published WINTER "
+        "rating). Two-directional, not a haircut: 8 of the 67 California CC "
+        "plants publish a winter rating ABOVE nameplate (358 Mountainview "
+        "1110.0 vs 1036.8, demonstrated off-summer peak 1111.0). A basis swap, "
+        "not a second derate; ZERO fitted scalars and zero DOF (every value is "
+        "an EIA-860 published rating or a ratio of two of them, and the CEMS "
+        "record enters only as a check). caiso-186. Default (unset) keeps the "
+        "base config value (off).",
+    )
+    parser.add_argument(
         "--ramp-limits",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -11421,6 +11449,7 @@ def main() -> None:
         caiso_zonal_loss_surface=args.caiso_zonal_loss_surface,
         capacity_deliverability_limits=args.capacity_deliverability_limits,
         unit_outage_lp_capacity_basis=args.unit_outage_lp_capacity_basis,
+        cc_winter_capability_basis=args.cc_winter_capability_basis,
         ramp_limits=args.ramp_limits,
         local_capacity_constraints=args.local_capacity_constraints,
         ct_netload_drag=args.ct_netload_drag,
