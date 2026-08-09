@@ -69,6 +69,9 @@ if str(_ROOT) not in sys.path:
 from market_sim.config.capacity_market import (  # noqa: E402
     resolve_capacity_market_clearing,
 )
+from market_sim.config.iso_configs import (  # noqa: E402
+    apply_iso_scenario_defaults,
+)
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
 from scripts.golden_forecast_bands import WEATHER_POSTURE  # noqa: E402
@@ -129,8 +132,18 @@ SUMMARY_RECORD_SPEC = RecordSpec(
         # solved, not assert one. Declared here so a paired arm/control
         # registration is self-describing on the dashboard (ARM3-MEASURE,
         # docs/handoffs/arm3-clean-row-horizon-2026-08-09.md).
-        "miso_rps_compliance_regions": FromConfig(),
-        "miso_clean_tier_rows": FromConfig(),
+        "miso_rps_compliance_regions": Derived(
+            lambda cfg, ctx: bool(
+                apply_iso_scenario_defaults(cfg, ctx["iso"]).miso_rps_compliance_regions
+            ),
+            "the RESOLVED posture after ISO default_scenario_overrides",
+        ),
+        "miso_clean_tier_rows": Derived(
+            lambda cfg, ctx: bool(
+                apply_iso_scenario_defaults(cfg, ctx["iso"]).miso_clean_tier_rows
+            ),
+            "the RESOLVED posture after ISO default_scenario_overrides",
+        ),
     },
     name="full_horizon_summary.json",
 )
