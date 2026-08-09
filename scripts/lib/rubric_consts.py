@@ -62,6 +62,7 @@ def rubric_consts() -> dict:
     ones. Keys are the JS spellings used by ``window.BC.rubricConsts``.
     """
     from scripts import calibration_verdict as cv  # lazy: see module docstring
+    from scripts.lib import holdout_policy as hp  # stdlib-only, safe at deploy
 
     return {
         # Provenance, for the page's own diagnostics (never a gate).
@@ -81,6 +82,17 @@ def rubric_consts() -> dict:
         "fuelmixExcluded": sorted(cv.FUELMIX_EXCLUDED),
         # Non-fossil fuels whose actual comes from EIA-930, not 923.
         "nonfossilFuels": list(cv.NONFOSSIL_FUELS),
+        # Rule-22 holdout tiers, straight from scripts/lib/holdout_policy.py.
+        # The Run Explorer labels a held-out year's tier (and its caveat) in the
+        # year selector; without this it would need the year lists typed into
+        # JS, which is the same drift trap the C1 bands above were moved out of.
+        # Consumers MUST fail closed to "locked_test" for a year in none of the
+        # three sets, exactly as holdout_policy.tier_for_year does.
+        "holdoutTiers": {
+            hp.TIER_TRAIN: sorted(hp.CALIBRATION_YEARS),
+            hp.TIER_VALIDATION: sorted(hp.VALIDATION_YEARS),
+            hp.TIER_LOCKED: sorted(hp.LOCKED_TEST_YEARS),
+        },
     }
 
 
