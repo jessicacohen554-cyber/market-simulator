@@ -7182,3 +7182,78 @@ held**, both owner acts. Record:
 `results/calibration/FINDING-caiso181-envelope-depth-2026-08-07.md`,
 `scripts/probes/_caiso181_cems_confrontation.py`,
 `results/calibration/_caiso181_cems_confrontation.json`.
+
+## 2026-08-09 — CAISO — caiso-186: the PUBLISHED SEASONAL CC CAPABILITY BASIS is built, exact on every other gate, and **REFUSED BEFORE SOLVE** by its own pre-registered `G-NOCONTRA` bar — the incumbent NAMEPLATE headroom is silently absorbing a live WEFOR/overlay double count (rule 19)
+
+**Runs:** NONE. **Zero LP spent, nothing registered on the dashboard, keeper UNCHANGED at
+`2026-08-09-caiso-184-c1-lpbasis`, C3a NEVER READ.** DOF ledger **11 / 8**, untouched. Freeze
+**ACTIVE**, `complete` **not held**, both owner acts, both markers untouched. Pre-registration
+`PRECHECK-caiso186-seasonal-capability-2026-08-09.md` (433 lines, sha256 `d97aec25…`, commit
+`7fb3bee1`) pushed and blob-verified **before any measurement and before any line of the
+instrument was written**.
+
+**THE OBJECT** — the root cause caiso-185 §5 opened and was charter-barred from building.
+`cc_nameplate_summer_derate` is a ONE-season instrument on a TWO-season published record: it
+raises the CC bin to EIA-860 **nameplate** and derates Jun–Sep to the published net-summer
+rating, leaving OFF-summer capability on nameplate — a premise `cc_summer_capacity`'s own
+docstring states and EIA-860 never publishes. Under `temp_dependent_derate` the incumbent
+off-summer level is not even nameplate: it is an incidental by-product of the summer-mean
+anchor being rescaled across all 8760 hours.
+
+**THE INSTRUMENT** — `cc_winter_capability_basis` (new `ScenarioConfig` bool, default off,
+requires the parent): capacity basis `B = max(net_summer, winter)`, each season's availability
+taking its own published rating, the temperature curve anchored **twice** instead of once.
+**Zero fitted scalars, zero DOF.** Cache-key registered in `_CACHE_KEY_OPTIONAL_FIELDS` **and**
+`_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` in the field's own commit (the caiso-184 omission, avoided).
+
+**SIZED, NO LP:** 45 of 258 bins move, **0 non-CC**, net −1191.9 MW; off-summer capability
+**−3.18 / −3.30 / −2.93 %** (−2264 / −2069 / −1725 GWh) and summer **invariant** to
++0.036 / +0.005 / +0.106 % — the identity `B × (ns/B) ≡ nameplate × (ns/nameplate)` holding as a
+measurement. Two-directional by construction: 55 of the 67 California CC plants publish
+`winter < nameplate`, **8 publish it ABOVE** (358 Mountainview 1110.0 vs 1036.8, demonstrated
+off-summer peak 1111.0).
+
+**GATES THAT PASS, EXACTLY:** G-MONO-A **0 / 45** capacity violations to machine precision
+(ratio = `B / nameplate`, so the sign rule is *proved* per plant); G-MONO-B 33 moves, **0**
+against their own published pair; G-DENOM `outages.py` untouched and caiso-184's
+numerator/denominator identity preserved bit-for-bit (median raised ÷ nameplate **1.000** vs
+0.910 unraised); G-SIXISO all six ISOs' default cache keys **unmoved**, ERCOT/MISO bit-identical,
+plus a test (`TestCcWinterCapabilityBasis`, 6 tests / 9 subtests).
+
+**WHY REFUSED — one number.** `G-NOCONTRA` fails: **14 new + 3 deepened** measured
+contradictions across **4 of the 27 commensurable** CAISO CC plants (260 Moss Landing summer
+984.3 MW against 1011.1 demonstrated; 55345 Otay Mesa off-summer 581.4 against 603.5; 56026,
+62116, 55748 the same, 1.3–3.9 % below). The arm's peak capability is **exactly 0.965 × B on
+every violated plant-season**: in a historic backcast CC availability starts at `1 − WEFOR`, and
+`wefor_residual` is **`None`** on this keeper, so the FULL statistical CC WEFOR (~3.5 %) applies
+on top of the CAMPD outage overlay that already carries every real outage — while these plants
+demonstrably deliver **97.6–100.4 %** of their published seasonal rating. **Nameplate supplies
+1.4–37.1 % of headroom that had been silently absorbing that 3.5 %.** Rule 19 `[R-ONE-MECH]`:
+rating headroom and statistical WEFOR are two mechanisms doing one job.
+
+**The repair half works and is reported:** 358 Mountainview's off-summer capability goes from
+denying 110 MW it is recorded as producing to denying 40 MW (0.9005 → 0.9641 of CEMS); 55933 /
+55985 / 56041 all cross above 1.0. **Arming only those plants was available and was refused**
+(PRECHECK §6.4 — a subset chosen for its direction is a residual-fitted mechanism). The
+pre-registered **mean**-anchoring statistic was **not re-selected** after the measurement,
+though a rating-point alternative exists and would have changed the numbers; it is filed as a
+successor instead.
+
+**STATE AFTER THIS SESSION.** The CAISO in-model queue is empty with every cell adjudicated, and
+the honest next step is **not** an eleventh lever. Three owner routes, one of them new:
+**(a)** fund the hourly PS water-state intake (walled, `FINDING-caiso140` §B — independently
+corroborated this session: the keeper's hydro matches measured EIA-930 `NG:WAT` at r = 0.994–1.000
+monthly and 0.964–0.981 on the mean diurnal profile but only **0.785–0.805 hourly**, and adding
+the model's own PS discharge back — which the CISO `NG:WAT` series contains and the model routes
+through the storage block — lifts it to **0.877–0.894**, so roughly half the apparent hydro
+decorrelation is the missing PS seam); **(b)** rule on a C3a `CALIBRATED-WITH-CAVEATS` ledger
+entry, which **rubric v3.1 currently FORBIDS**; **(c) NEW — authorise the WEFOR-vs-overlay
+reconciliation** (`wefor_residual` / `wefor_residual_groups`), a live double count on the sitting
+keeper, the gate on re-testing this basis, and — unlike (a) — **not data-blocked**.
+
+Matrix: new `cc_winter_capability_basis` row, **CAISO = `R`** from this session's own evidence,
+every other ISO `U` with **no verdict transferred**; PJM/NYISO/NEISO flagged as carrying the same
+unmeasured exposure since they arm the parent. Record:
+`results/calibration/FINDING-caiso186-seasonal-capability-2026-08-09.md`,
+`scripts/probes/_caiso186_seasonal_capability.py`, `_caiso186_be_proof.py`,
+`results/calibration/_caiso186_seasonal_capability.json`, `_caiso186_be_proof.json`.
