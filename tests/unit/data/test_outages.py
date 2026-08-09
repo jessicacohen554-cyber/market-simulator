@@ -1806,7 +1806,10 @@ class UnitOutageLpCapacityBasisTest(unittest.TestCase):
     def test_repair_reaches_only_the_cc_groups(self):
         # fleet_to_bins raises CC_REGULAR / CC_CHP and nothing else, so the
         # denominator repair must move exactly those bins and no others.
-        from market_sim.data.outages import _CC_NAMEPLATE_BASIS_GROUPS, _iso_plant_capacity
+        from market_sim.data.outages import (
+            _CC_NAMEPLATE_BASIS_GROUPS,
+            _iso_plant_capacity,
+        )
 
         for iso in self.ISOS:
             off = _iso_plant_capacity(iso)
@@ -1835,7 +1838,10 @@ class UnitOutageLpCapacityBasisTest(unittest.TestCase):
         # fleet_to_bins puts in the LP -- `cap / cc_summer_derate_ratio` on the
         # same published ratio, with the same absent-plant fallback.
         from market_sim.data.fleet.campd_bins import cc_summer_derate_ratio
-        from market_sim.data.outages import _CC_NAMEPLATE_BASIS_GROUPS, _iso_plant_capacity
+        from market_sim.data.outages import (
+            _CC_NAMEPLATE_BASIS_GROUPS,
+            _iso_plant_capacity,
+        )
 
         off = _iso_plant_capacity("CAISO")
         on = _iso_plant_capacity("CAISO", False, True)

@@ -64,7 +64,30 @@ target-version = "py311"
 # passing by FFR-1D 2026-07-31; the E402s are in a committed scratch file, not
 # in any module). Same rationale as the probe/archive exemptions above: it is
 # the calibration record, not code under maintenance.
-extend-exclude = ["scripts/archive", "scripts/probes", "results"]
+extend-exclude = [
+    "scripts/archive",
+    "scripts/probes",
+    "results",
+    # HOUSE-1 charter 2026-08-08 (incident: sitting Addendum T.1,
+    # docs/handoffs/ffr-owner-sitting-2026-08-02.md): ruff format must never
+    # reflow this ~4,100-line hand-formatted core file. On 2026-08-05 the
+    # ruff-autofix hook's whole-tree format reflowed it 3,960 → 9,508 lines on
+    # an unrelated .py edit — rule 27 [R-PUSH]'s forbidden full-file rewrite
+    # even when AST-identical, trapped manually by every session since. At the
+    # charter's HEAD (a445fce) the file happens to PASS `ruff format --check`
+    # (the charter's "other core files failing --check" enumeration came back
+    # EMPTY — evidence in docs/handoffs/house-1-lint-ci-2026-08-08.md), so this
+    # entry is prophylactic: it pins the protection against ruff version drift
+    # and future hand edits instead of leaving it to per-session vigilance.
+    # Do NOT "fix" by reformatting the file; the exclusion is the fix. Note
+    # this also removes the file from `ruff check` scope — acceptable because
+    # its F401 surface was already per-file-ignored below, compileall
+    # (refactor-guards) still catches syntax breaks, and
+    # tests/regression/test_constants_facade.py still asserts the re-export
+    # surface. The hook passes --force-exclude so this holds even when
+    # constants.py is the file being edited.
+    "src/market_sim/config/constants.py",
+]
 
 [tool.ruff.lint]
 # Pin ruff's historical default ruleset (pyflakes F + pycodestyle E4/E7/E9) so
