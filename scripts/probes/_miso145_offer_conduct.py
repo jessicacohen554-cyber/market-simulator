@@ -110,7 +110,9 @@ def _hour_of_year(local: pd.Series) -> np.ndarray:
     return doy * 24 + local.dt.hour.to_numpy()
 
 
-def load_real_segments(year: int, market: str, hours: np.ndarray) -> pd.DataFrame:
+def load_real_segments(
+    year: int, market: str, hours: np.ndarray, with_meta: bool = False
+) -> pd.DataFrame:
     """Return INCREMENTAL offer segments for ``hours`` from the clean datatype.
 
     The source curve is cumulative: ``MW1..MW10`` are output levels and
@@ -130,6 +132,12 @@ def load_real_segments(year: int, market: str, hours: np.ndarray) -> pd.DataFram
     Also returned per row: ``is_conventional`` — the declaration-based screen
     (no curtailment-offer price, no storage SOC bounds).  It is NOT a fuel
     classification and no class is claimed from it (miso-138).
+
+    ``with_meta`` (miso-146, ADDITIVE — the default path is byte-unchanged)
+    additionally returns the masked ``unit_code`` (so a per-unit label can be
+    attached to each segment) and the two per-unit-hour DECLARATIONS
+    ``must_run`` and ``self_sched_mw``.  No caller of the default signature
+    sees any difference.  These are declarations, never fuel labels (miso-138).
     """
     path = paths.clean_path("energy-offers", iso="MISO", year=year, market=market)
     df = pd.read_parquet(
@@ -182,6 +190,10 @@ def load_real_segments(year: int, market: str, hours: np.ndarray) -> pd.DataFram
             "available": df["unit_available_flag"].to_numpy(bool),
         }
     )
+    if with_meta:
+        out["unit_code"] = df["unit_code"].to_numpy()
+        out["must_run"] = df["must_run_flag"].to_numpy(bool)
+        out["self_sched_mw"] = df["self_scheduled_mw"].to_numpy(float)
     return out[out["seg_mw"] > 0.0].reset_index(drop=True)
 
 
