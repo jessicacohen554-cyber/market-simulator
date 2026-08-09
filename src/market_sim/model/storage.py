@@ -29,6 +29,7 @@ from market_sim.config.constants import (
     STORAGE_ELCC_BY_DURATION,
     STORAGE_ELCC_BY_DURATION_BY_ISO,
     STORAGE_ELCC_SATURATION_EXPONENT,
+    STORAGE_MEASURED_BASE_FLEET_ISOS,
     STORAGE_TECH_BUILD_SHARE_CAP,
     STORAGE_TECH_POWER_SHARE,
     STORAGE_TECHS,
@@ -208,6 +209,45 @@ def build_default_storage(
     """
     pace = _resolve_pace(config)
     return _distribute_storage(iso, config, STORAGE_BASE_FLEET_MW[config.iso][pace])
+
+
+def measured_storage_base_fleet_active(config: ScenarioConfig, iso: str) -> bool:
+    """Return True when the storage base fleet seeds from measured EIA-860.
+
+    ``STORAGE_BASE_FLEET_MW`` is a FORECAST object (its own docstring calls it
+    "the base year (2026)"), so any run whose base year is historical must seed
+    from the EIA-860 fleet that actually existed instead
+    (:func:`load_eia860_storage`). Two legs, both governed by
+    ``config.storage_measured_base_fleet`` (default on) and both resolving
+    through the process-global EIA-860 vintage dir the runner arms
+    (``config.paths.set_eia860_vintage``):
+
+    * **Backcast** (FFR-4D): the fleet as of the solve year. Scoped to
+      :data:`STORAGE_MEASURED_BASE_FLEET_ISOS` (CAISO only today) because
+      enrolling an ISO moves that ISO's designated keeper, which must be
+      re-solved and re-gated in its own lane (rule 25 [R-ISO-SCOPE]).
+    * **Capacity hindcast** (FFR-9A; ``mode="forecast"`` + ``hindcast=True`` +
+      ``eia860_vintage_year``): the run's own vintage EIA-860 measured fleet —
+      the FFR-3V renewable-pool pattern's storage sibling. EVERY ISO,
+      deliberately un-scoped: a hindcast is not a keeper, the vintage sheet is
+      measured data rather than a tuned curve (rule 13 [R-MEASURED] — it is
+      exactly what a run at that vintage cutoff may know, and it regenerates
+      for any vintage), and rule 14 [R-ACCURATE] does not gate an accurate
+      input behind a per-ISO enrollment where no keeper byte-identity is at
+      stake. A hindcast without a vintage keeps the scenario scalar — nothing
+      measured to seed from (the FFR-3V precedent). A plain forecast
+      (``hindcast=False``) always keeps the scalar, even when an
+      ``eia860_vintage_year`` is set, mirroring the runner's vintage-arming
+      predicate.
+    """
+    if not config.storage_measured_base_fleet:
+        return False
+    if config.mode == "backcast":
+        return iso in STORAGE_MEASURED_BASE_FLEET_ISOS
+    return (
+        bool(getattr(config, "hindcast", False))
+        and config.eia860_vintage_year is not None
+    )
 
 
 # Duration (hours) assumed for an EIA-860 storage unit whose energy

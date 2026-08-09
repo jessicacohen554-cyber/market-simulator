@@ -1643,17 +1643,24 @@ class ScenarioConfig:
     # off 0.5.
     renewable_buildout_pace: str = "mid"  # "slow", "mid", "aggressive"
     storage_deployment: str = "mid"
-    # Resolve a BACKCAST's storage base fleet as of its solve year from EIA-860
+    # Resolve a historical base year's storage fleet from measured EIA-860
     # (model.storage.load_eia860_storage) instead of the forward-looking
     # STORAGE_BASE_FLEET_MW ladder that `storage_deployment` selects. Default
     # ON: it is the measured input, and rule 14 [R-ACCURATE] does not gate an
-    # accurate input behind a flag that an estimate wins by default. Scoped to
-    # capacity_market.STORAGE_MEASURED_BASE_FLEET_ISOS (CAISO only today) so the
-    # other five ISOs' keepers stay byte-identical; FORECAST mode is untouched
-    # in every ISO and keeps reading the scenario ladder, exactly as
-    # data.renewables already treats wind/solar. Set False to reproduce a
-    # pre-FFR-4D CAISO backcast (the flat 8,000 MW scalar). See
-    # docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md.
+    # accurate input behind a flag that an estimate wins by default. Two legs
+    # (model.storage.measured_storage_base_fleet_active): a BACKCAST resolves
+    # the fleet as of its solve year, scoped to
+    # capacity_market.STORAGE_MEASURED_BASE_FLEET_ISOS (CAISO only today) so
+    # the other five ISOs' keepers stay byte-identical (FFR-4D); a CAPACITY
+    # HINDCAST (mode="forecast" + hindcast=True + eia860_vintage_year) seeds
+    # from the run's own vintage EIA-860 measured fleet in EVERY ISO — the
+    # FFR-3V renewable-pool pattern's storage sibling (FFR-9A; no keeper is
+    # affected, so the per-ISO enrollment does not apply). A PLAIN FORECAST is
+    # untouched in every ISO and keeps reading the scenario ladder, exactly as
+    # data.renewables treats wind/solar. Set False to reproduce a pre-FFR-4D
+    # CAISO backcast or a pre-FFR-9A hindcast (the flat scalar). See
+    # docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md and
+    # docs/handoffs/ffr-9a-storage-vintage-seed-2026-08-09.md.
     storage_measured_base_fleet: bool = True
     retirement_aggressiveness: str = "mid"
     hydro_year: str = "normal"  # "dry" | "normal" | "wet" — forecast wet/dry
