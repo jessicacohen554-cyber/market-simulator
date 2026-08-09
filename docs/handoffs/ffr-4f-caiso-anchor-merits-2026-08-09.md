@@ -281,11 +281,26 @@ Both cold at this head, `scripts/run_full_horizon.py --iso CAISO --start-year
 | **control** | HEAD default (gate off) |
 | **treated** | `--caiso-ra-mpb-capacity-anchor`, nothing else changed |
 
-**Predicted control:** FFR-4E's *treated* arm — **5,292.3 MW backstop /
-41.68 % row 4** — since FFR-4E is merged at this head. Stated before solving;
-§5 reports what actually came back. A control that does *not* reproduce it
-means the baseline moved and the comparison is re-based before anything is
-concluded.
+**Predicted control: FFR-4E's CONTROL arm — 8,186.3 MW backstop / 52.51 %
+row 4.** Stated before solving; §5 reports what actually came back. A control
+that does *not* reproduce it means the baseline moved, and the comparison is
+re-based before anything is concluded.
+
+**Why the control is 52.51 % and not FFR-4E's headline 41.68 %** — worth
+stating precisely, because the charter quotes the latter. FFR-4E's 41.68 % was
+measured with `caiso_storage_nqc_accreditation` **ARMED**, and that flag ships
+**default-OFF** with its arming posture explicitly reserved as an OWNER
+decision (FFR-4E §7 E-2, because arming it moves the designated backcast
+keeper). So HEAD defaults reproduce FFR-4E's **control**, not its treated arm.
+
+This lane therefore does **not** arm it: doing so would (i) arm a mechanism
+whose posture is owner-pending, and (ii) confound two variables in one A/B.
+The arms isolate the anchor **alone**, which is the only way the measurement
+attributes anything to the anchor. The consequence for reading §5 is stated
+here rather than discovered later: **this lane's control sits 10.8 pp above the
+one the charter quotes**, so row-4 numbers here are not directly comparable to
+FFR-4E's treated arm, and the two corrections are **not** additive without a
+third arm nobody has run.
 
 ### P-2. The reads, all reported at full magnitude
 
