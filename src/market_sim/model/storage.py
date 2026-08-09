@@ -32,6 +32,7 @@ from market_sim.config.constants import (
     STORAGE_TECH_BUILD_SHARE_CAP,
     STORAGE_TECH_POWER_SHARE,
     STORAGE_TECHS,
+    STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO,
     WRIGHT_REFERENCE_GW,
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
@@ -1323,6 +1324,67 @@ def _elcc_for_duration(duration_hr: float, iso: str | None = None) -> float:
     return float(np.interp(duration_hr, durations, credits))
 
 
+def storage_accreditation_credit(
+    duration_hr: float,
+    iso: str | None,
+    config: ScenarioConfig,
+    tech_name: str | None = None,
+) -> float:
+    """Return the storage capacity credit for a unit, on the ISO's own basis.
+
+    The ONE storage-accreditation resolver (rule 19 [R-ONE-MECH]) -- every
+    consumer of a storage capacity credit calls this, so an ISO's basis can
+    never be applied on one path and not another. Two rungs, in preference
+    order, and the first REPLACES the second rather than multiplying it:
+
+    1. **Published whole-class accreditation** --
+       :data:`STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO`, for an ISO that
+       accredits storage without publishing a duration -> credit table (CAISO
+       accredits dispatchable resources at demonstrated capability). Consulted
+       ONLY behind that ISO's own default-OFF gate, so an unarmed run never
+       reaches the registry and is byte-identical to the pre-FFR-4E path.
+       Duration-independent by construction: this is a whole-class ratio and
+       applying it per-unit is what makes the class total come out at CAISO's
+       published number.
+    2. **By-duration ELCC** -- :func:`_elcc_for_duration`, the ISO's published
+       class-rating table when it has one, else the generic NREL/E3 curve.
+
+    ``tech_name`` carries the unit's technology so rung 1 is applied on the
+    SAME class boundary its published row is drawn on. CAISO's whole-class ratio
+    is Table 1.1's **Battery** row, and CAISO books pumped storage on the Hydro
+    row instead (FFR-4D §2 proved this two independent ways), so a
+    ``pumped_storage`` unit must NOT take the battery ratio -- it stays on rung
+    2, where the by-duration table already credits its long duration correctly.
+    ``tech_name=None`` (a caller with no unit in hand, e.g. the technology-level
+    entry screen) is treated as battery, which is what every rung-1 ISO's
+    registry row describes.
+
+    The marginal-ELCC saturation derate in :func:`estimate_capacity_value` and
+    the portfolio dilution in ``capacity_evolution`` apply on top of whichever
+    rung returns, exactly as they did before -- with the caveat that no ISO on
+    rung 1 currently carries a dilution entry (see that registry's comment).
+    """
+    if tech_name != "pumped_storage" and _whole_class_accreditation_armed(iso, config):
+        return float(STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO[str(iso)])
+    return _elcc_for_duration(duration_hr, iso)
+
+
+def _whole_class_accreditation_armed(iso: str | None, config: ScenarioConfig) -> bool:
+    """Return whether ``iso``'s published whole-class storage credit is armed.
+
+    Per-ISO gate resolution (rule 25 [R-ISO-SCOPE]): each ISO's whole-class
+    entry is admitted by its OWN ``ScenarioConfig`` field, so arming one ISO
+    can never move another. An ISO absent from
+    :data:`STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO`, or whose gate is off,
+    returns False and keeps the by-duration path byte-identically.
+    """
+    if iso not in STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO:
+        return False
+    if iso == "CAISO":
+        return bool(getattr(config, "caiso_storage_nqc_accreditation", False))
+    return False
+
+
 def _degradation_cost_per_mwh(tech_name: str, config: ScenarioConfig) -> float:
     """Per-MWh-discharged cycling-degradation cost for a storage tech.
 
@@ -1389,7 +1451,7 @@ def estimate_capacity_value(
         return 0.0
 
     duration_hr = float(STORAGE_TECHS[tech_name]["duration_hr"])
-    elcc = _elcc_for_duration(duration_hr, iso)
+    elcc = storage_accreditation_credit(duration_hr, iso, config, tech_name)
 
     ceiling = STORAGE_DEPLOYMENT_CEILING_MW.get(iso, 0.0)
     penetration = 0.0 if ceiling <= 0.0 else min(1.0, existing_mw / ceiling)
