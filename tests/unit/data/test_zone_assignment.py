@@ -134,6 +134,69 @@ def test_pjm_known_plants_resolve_to_expected_zones():
         assert assign_zone(oris, "PJM") == expected, f"ORIS {oris}"
 
 
+def test_pjm_coords_only_resolves_all_eight_zones():
+    """A coords-only PJM caller lands in the real zone, not the fallback.
+
+    HOUSE-2 / sitting record T.2. ``assign_zone_by_coords`` passes
+    ``fips_state=None``, so before the nearest-eGRID-plant rule EVERY PJM
+    coordinate fell through ``_PJM_STATE_ZONES.get(None, ...)`` into
+    ``PJM_AEP_Ohio`` — all 371 EIA-860 PJM proposed rows across 13 states.
+    Each case below is the plant's own eGRID coordinate, so the coords-only
+    answer must match the FIPS-fed answer of
+    ``test_pjm_known_plants_resolve_to_expected_zones``.
+    """
+    cases = {
+        (42.07, -89.28): "PJM_ComEd",  # Byron nuclear (IL)
+        (41.60, -83.09): "PJM_ATSI",  # Davis-Besse (northern OH)
+        (40.62, -80.43): "PJM_West_APS",  # Beaver Valley (western PA)
+        (41.09, -76.15): "PJM_Central_PA",  # Susquehanna (central PA, PPL)
+        (40.23, -75.59): "PJM_EMAAC",  # Limerick (Montgomery County PA)
+        (39.46, -75.54): "PJM_EMAAC",  # Salem (NJ, PSEG)
+        (39.20, -76.53): "PJM_SWMAAC",  # Brandon Shores (Anne Arundel MD)
+        (38.06, -77.79): "PJM_Dominion",  # North Anna (VA)
+    }
+    for (lat, lon), expected in cases.items():
+        assert assign_zone_by_coords(lat, lon, "PJM") == expected, (lat, lon)
+    # All eight zones are reachable from coordinates alone.
+    assert len(set(cases.values())) == 7  # EMAAC appears twice
+    assert assign_zone_by_coords(38.93, -82.12, "PJM") == "PJM_AEP_Ohio"  # Gavin, OH
+
+
+def test_pjm_coords_outside_the_footprint_keeps_the_fallback():
+    """Beyond the neighbour cap the old largest-load-share fallback stands.
+
+    The cap (:data:`_PJM_COORDS_NEIGHBOR_MAX_DEG`, 1.0°) is what stops a
+    stray coordinate from silently borrowing a distant plant's state.
+    """
+    # Mid-Pacific: no eGRID PJM plant within 1.0°.
+    assert assign_zone_by_coords(20.0, -160.0, "PJM") == "PJM_AEP_Ohio"
+
+
+def test_pjm_coords_rule_leaves_every_iso_zone_lookup_byte_identical():
+    """Keeper byte-inertness: the rule fires only where FIPS is absent.
+
+    ``build_zone_lookup`` — the fleet-zoning seam every backcast keeper rides
+    — feeds eGRID's own FIPS state/county for all 1,727 PJM rows, so the
+    coords-only branch is unreachable from it. PJM is additionally absent from
+    ``_EIA860_SUPPLEMENT_ISOS``, the one place a *keeper* path zones from
+    coordinates alone. This pins both facts, so a future edit to either cannot
+    reroute a keeper through the new rule unnoticed.
+    """
+    from market_sim.data import zone_assignment as za
+
+    assert "PJM" not in za._EIA860_SUPPLEMENT_ISOS
+    df = za._plnt23()
+    ba = df["BACODE"].astype(str).str.strip()
+    subset = df[ba == za._ISO_TO_BA_CODE["PJM"]]
+    assert len(subset) > 1000
+    missing = [
+        za._to_int(r.ORISPL)
+        for r in subset.itertuples(index=False)
+        if za._to_int(r.FIPSST) is None
+    ]
+    assert missing == [], f"PJM eGRID rows with no FIPS state: {missing}"
+
+
 def test_pjm_every_plant_resolves():
     """Every PJM plant resolves to one of the four zones; none are dropped."""
     config = get_iso_config("PJM")

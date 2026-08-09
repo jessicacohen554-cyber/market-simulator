@@ -613,9 +613,28 @@ class NuclearUnitAvailabilityTest(unittest.TestCase):
         self.assertTrue((d3[finite] <= 1.0).all())
 
     def test_unknown_iso_degrades_to_empty(self):
+        """No extract -> {}, so the caller keeps its monthly smear.
+
+        Asserted against a synthetic ISO name rather than a real one: the
+        derived extracts (``nuclear-availability-<ISO>.csv``) are an
+        intake-by-intake growing set — CAISO, NEISO, NYISO and PJM all carry
+        one now — so pinning this contract to whichever ISO happens to be
+        uncovered today re-breaks the moment that ISO's extract lands (which
+        is exactly what happened when NEISO's did). A name no intake will ever
+        produce tests the degradation path itself.
+        """
         from market_sim.data.outages import nuclear_unit_availability_series
 
-        self.assertEqual(nuclear_unit_availability_series("NEISO", 2024), {})
+        self.assertEqual(nuclear_unit_availability_series("NO_SUCH_ISO", 2024), {})
+
+    def test_covered_iso_without_rows_for_the_year_degrades_to_empty(self):
+        """The second empty-dict leg: extract present, no rows for ``year``."""
+        from market_sim.data.outages import nuclear_unit_availability_series
+
+        # NEISO has an extract (Millstone 2 & 3, Seabrook) but its coverage
+        # window does not reach 1990 — the year filter empties the frame.
+        self.assertTrue(nuclear_unit_availability_series("NEISO", 2024))
+        self.assertEqual(nuclear_unit_availability_series("NEISO", 1990), {})
 
     def test_fleet_application_gated_pjm_scoped_and_min_gen_tracks(self):
         """Flag off -> smear untouched; flag on -> windows land, floor follows,
