@@ -441,3 +441,31 @@ solves, clean partitions regenerated first:
 **Adjudication order: §0 (done) → push this precommit → M-0/M-1 (§5) → §1
 instrument → Route A finding OR Route B build/prove/solve → bookkeeping.
 Next shorthand: ercot-182.**
+
+---
+
+## Amendment 1 (pre-solve, 2026-08-09) — tail years are 2023-ONLY, by the zero-support rule at year grain
+
+Written AFTER M-0/M-1 (LIVE → Route B) and the first derive attempt, BEFORE
+any seam proof or solve. The `--position-tail` derives' frozen-ladder
+reproduction assert STOPPED on 2024: the frozen RT-wall 2024/2025 blocks were
+derived from the 2026-07-21 full-corpus intake that the 2026-07-22
+large-blob history rewrite PURGED from the repo, so today's disk cannot
+reconstruct those blocks' populations (2023 reproduces exactly — its corpus
+is the intact 2026-08-03 re-upload under `data/raw/ercot/SCED/`). A tail
+appended to an anchor whose population cannot be reproduced would be
+inconsistent by construction, and §2's zero-support rule already forces the
+outcome at bin grain: **a population that does not exist on disk supports no
+tail.** Composed at year grain: **the positiontail artifacts carry tails for
+2023 only; every 2024/2025 (and 2022 data-only) block keeps its frozen
+5-point ladder byte-identical** — the RT wall's own year-scoping pattern
+(rule 13: an absent year keeps its basis byte-identical), applied to both
+members coherently (no mixed tail-year state between wall and pool).
+Consequences, stated before solving: (a) the ARM is expected BYTE-IDENTICAL
+to control in 2024 and 2025 — G-BIT is re-armed in substance for the
+out-of-object years (stronger than §7's G-SPAN′ replacement, and verified at
+scoring as array-equal prices); (b) the M-0 LIVE row-hours in 2024 (528) and
+2025 (48) are moot — Route B stands on 2023's 598 alone; (c) the ercot-178
+sample-day-bridging disturbance channel is structurally absent. No
+instrument, bar, gate, or statistic changes; nothing here responds to a
+solve or a residual (no solve has run).
