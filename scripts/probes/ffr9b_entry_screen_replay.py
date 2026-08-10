@@ -19,6 +19,15 @@ entering screen's own dumped adder (upper bound: a same-magnitude scarcity
 series) — and reports a cell as ROBUST only when the identity check (replayed
 build MW == ledger decided MW, per tech) passes under BOTH bounds.
 
+FFR-9C extension (additive; defaults reproduce the FFR-9B construction
+byte-for-byte): optional ``--entry-pipeline-aware-signal`` /
+``--smr-available-year`` / ``--vre-procurement-additions`` passthrough flags
+mirror the harness so each staged arm's replay runs under the SAME gates its
+solve carried (the identity check is meaningless otherwise), and the FFR-5E
+procured commissioning flow is reconstructed per step from the arm's own
+ledger (``vre_additions`` rows tagged ``source: "procured"``) and handed to
+the screen's §2.3(b) budget netting.
+
 Usage:
     uv run python scripts/probes/ffr9b_entry_screen_replay.py \
         --bundle results/hindcast/ercot-2021-2025-t1ff-armr-ffr9b-regen/ERCOT/<key> \
@@ -115,6 +124,22 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--bundle", required=True)
     ap.add_argument("--out", required=True)
+    # FFR-9C staged-arm passthrough (additive; every default reproduces the
+    # FFR-9B control construction byte-for-byte). The replay must re-invoke
+    # the screens under the SAME gates the arm solved with, or the identity
+    # check is meaningless — each flag mirrors the run_capacity_hindcast
+    # harness flag of the same name and flows through build_config.
+    ap.add_argument(
+        "--entry-pipeline-aware-signal",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+    )
+    ap.add_argument("--smr-available-year", type=int, default=None)
+    ap.add_argument(
+        "--vre-procurement-additions",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+    )
     args = ap.parse_args()
     bundle = (REPO / args.bundle) if not Path(args.bundle).is_absolute() else Path(args.bundle)
 
@@ -128,6 +153,9 @@ def main() -> None:
         arm="realized",
         capacity_screen_unified_lookahead=True,
         capacity_screen_scarcity_restoration=True,
+        entry_pipeline_aware_signal=args.entry_pipeline_aware_signal,
+        smr_available_year=args.smr_available_year,
+        vre_procurement_additions=args.vre_procurement_additions,
     )
     # The runner's own config resolution (run_scenario_iso lines ~1013-1022):
     # policy bundle, then the ISO scenario defaults (ERCOT arms
@@ -218,6 +246,17 @@ def main() -> None:
             if r.get("event") == "decided" and int(r["decision_year"]) == step:
                 truth[r["tech"]] = truth.get(r["tech"], 0.0) + float(r["mw"])
 
+        # FFR-5E procurement flow commissioning THIS step (FFR-9C stage B):
+        # reconstructed from the arm's own ledger (vre_additions rows tagged
+        # source == "procured"), exactly the flow evolve hands the screen for
+        # its §2.3(b) budget netting. Empty in un-armed arms.
+        procured_flow: dict[str, float] = {}
+        for r in led.get("vre_additions", []) or []:
+            if r.get("source") == "procured":
+                procured_flow[r["tech"]] = procured_flow.get(r["tech"], 0.0) + float(
+                    r["mw"]
+                )
+
         arms = {}
         for leg, r_sig in (("r_none", None), ("r_dump_adder", adder)):
             ledger_sink: list[dict] = []
@@ -242,6 +281,7 @@ def main() -> None:
                 screen_ledger=ledger_sink,
                 entry_rate_caps_mw=dict(rate_caps_mw),
                 entry_pipeline=copy.deepcopy(pipeline_state),
+                procured_flow_mw=dict(procured_flow) or None,
             )
             rows = {}
             for row in ledger_sink:
@@ -323,6 +363,9 @@ def main() -> None:
                 "carbon_price": float(carbon_price),
                 "rate_caps_mw": {k: round(v, 1) for k, v in sorted(rate_caps_mw.items())},
                 "pending_mw_by_tech": _sum_by_tech(pipeline_state),
+                "procured_flow_mw": {
+                    k: round(v, 1) for k, v in sorted(procured_flow.items())
+                },
                 "ledger_decided_mw": {k: round(v, 1) for k, v in sorted(truth.items())},
                 "merchant": arms,
                 "storage": {
