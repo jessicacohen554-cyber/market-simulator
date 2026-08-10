@@ -7257,3 +7257,59 @@ unmeasured exposure since they arm the parent. Record:
 `results/calibration/FINDING-caiso186-seasonal-capability-2026-08-09.md`,
 `scripts/probes/_caiso186_seasonal_capability.py`, `_caiso186_be_proof.py`,
 `results/calibration/_caiso186_seasonal_capability.json`, `_caiso186_be_proof.json`.
+
+---
+
+## caiso-188 (2026-08-09) — the `IMPORT_TRANCHES[CAISO]` DOF census, and the fitted 7,500 MW seam cap it caught next door
+
+**Keeper `2026-08-09-caiso-184-c1-lpbasis` UNCHANGED; no promotion proposed;
+`calibration-complete.json` / `holdout-freeze.json` untouched (the owner sitting
+is pending); 2023–2025 only.**
+
+**The chartered object — the census — is settled at 6 live fitted scalars, not 7.**
+Measured on the keeper's own built fleet rather than read off the source: firm
+capacity CLOSED (measured per year), spot price CLOSED (all four `mc` rows
+hourly, the measured hub series), firm price LIVE (both `mc` rows CONSTANT at
+$28.00/$48.00 in all three years) and spot capacity LIVE (8,800 MW, uncited).
+The matrix §5.2 block and the caiso-186 sitting memo both printed "7" over the
+same 4 + 2 enumeration; corrected, and the DOF ledger now carries `n_scalars: 6`.
+
+**The 8,800 MW is not the operative ceiling**, and `_caiso186os`'s attribution of
+the caiso-140 §C belly plateau to it is corrected: the measured p95 corridor
+envelope is the tightest per-corridor bound in **25,866 of 26,280** corridor-hours
+(0 of 8,760 DSW hours in every year). No published object maps onto the limb's
+live roles — MIC is an annual RA-showing allocation already spent twice in this
+model, and the Q-Q capacity route is the inverse of the estimator whose price
+axis failed LOYO at 30.5 % vs a 25 % bar. **Nothing was guessed and no scalar was
+re-fitted**; the limb stays an open root-cause issue, now honestly described.
+
+**What the ceiling stack caught.** The keeper pins total net import at exactly
+**7,500.0 MW in 764/477/809 hours** — the fitted `WECC_import_simultaneous`
+scalar the ledger declares *superseded*. `capacity_deliverability_limits` Part A
+resolves the published MIC through a gitignored partition no solve auto-builds;
+absent, it no-ops while `run_config.json` still records the flag `true`. **caiso-157
+found this exact defect and installed a fail-fast guard that has never run** —
+`check_clean_partitions`'s only call site is `pipeline/year.py::run_year_solve`,
+which has no production caller.
+
+**The A/B** (`2026-08-09-caiso-188-d0-control` / `-d1-micseam`, full span, single
+delta). **G-CTRL:** the control reproduces the committed keeper **exactly**
+(max |Δ| 0.00 MW, every class/hour/year), proving the keeper solved with this flag
+inert — and with `hydro_ror_split` inert too. **G-SEAM:** control binding
+764/477/807 h, mean dual −2.903/−0.223/−0.368, rent −$190.7M/−$14.7M/−$24.2M; arm
+binding 0 h, dual exactly 0.000, rent $0.0M — reproducing `FINDING-caiso133` §4 and
+caiso-157's own magnitudes seven sessions later. **Rule 14:** the fitted cap is
+falsified — the real system exceeded it in 271/293/681 hours, reaching
+13,136/13,312/15,080 MW, all inside the published MIC. **Cost, published:** in the
+pinned hours the arm takes +586/+333/+422 MW more, widening model-over-measured to
++2,075/+1,937/+1,184 MW; the standing over-import is the named root cause.
+**Rubric, reported never targeted:** zero gate flips, C3a +10.5→+10.4 % (2024) and
++13.1→+12.9 % (2025), both arms NOT-YET.
+
+**Fixed here:** the guard is wired on the backcast solve path and the
+unresolved-Part-A branch WARNs naming the fitted fallback. **Still owed:** the
+forecast orchestrator has no guard call; nothing committed records which seam cap
+a bundle solved against; the dormant `hydro_ror_split` is its own A/B. Record:
+`results/calibration/FINDING-caiso188-import-tranche-dof-2026-08-09.md`,
+`PRECHECK-caiso188-mic-seam-2026-08-09.md`,
+`scripts/probes/_caiso188_import_tranche_census.py`, `_caiso188_seam_cap_forensics.py`.
