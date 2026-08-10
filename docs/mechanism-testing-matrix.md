@@ -3796,6 +3796,115 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-09-miso-148-basis-aware`, **NOT-YET**
 
+> **LIVE QUEUE AS OF miso-149 (2026-08-10) — BOTH QUEUE-HEAD OBJECTS ARE
+> REFUTED AS INDEPENDENT OBJECTS, AND THE LANE'S NEXT QUESTION IS NOT THE ONE
+> THE QUEUE WAS POINTING AT.** Phase 0, diagnosis-first: **NO LP, no arm, no
+> `ScenarioConfig` field, no run registered, no year outside 2023–2025 touched**
+> (MISO holds NO marker, re-verified from `calibration-complete.json`). Keeper
+> **UNCHANGED** at `2026-08-09-miso-148-basis-aware`; fail set **UNCHANGED** at
+> `{C3a, C3b}`; determination **UNCHANGED** at `NOT-YET` (re-verified from
+> committed artifacts, rubric 3.2: C3a-2025 −15.6 %, C3b-2025 NRMSE 0.212, C3c
+> ledgered 1/1 SPENT, C8 PASS with ST_GAS grounded 34.1/35.8/48.4 % and
+> CT_PEAKER-2023 at 16.8 %). PREREG
+> `results/calibration/PREREG-miso149-overlay-contradiction-2026-08-10.md` pushed
+> at `318c0542` (424 lines, blob verified against the **FETCHED** remote ref)
+> before any adjudicating statistic; FINDING
+> `results/calibration/FINDING-miso149-the-object-is-the-price-level-2026-08-10.md`.
+> **ONE CELL MINTED: `wefor_residual` MISO `U → I`** (rule 28(b)); no other cell
+> moved. Concurrent-session check at open and close: zero open MISO PRs, zero
+> other remote MISO branches.
+>
+> **FOOTING FIRST, and stronger than the gate asked.** G-F re-ran miso-147's
+> three committed probes at HEAD: **1,680 fields, ZERO diffs**, and the
+> regenerated files are **byte-identical** to the committed blobs.
+>
+> * **OBJECT A (item 11 L3, the all-months CC commitment/displacement residual)
+>   IS CLOSED — IT IS THE PRICE LEVEL.** The pre-registered, **against-interest**
+>   G-3 test splits miso-147's `E − M` (S1-2025 **2,273 MW**) on the keeper's own
+>   committed sidecars into a telescoping sum that closes exactly:
+>   **95.4 %** is capability simply **out of merit at the model's own price**
+>   (leg-1 share **0.891 / 0.948 / 0.954** across 2023/24/25, and it is a **LOWER**
+>   bound because `markup_ceiling` bounds the P1 markup from below); congestion is
+>   **−200 MW** (it HELPS CC); reserve-holding plus all else is **304 MW / 13.4 %**
+>   with the reserve dual at **0.000** on 5,336.9 MW held. Corroborated on ST_COAL
+>   (0.981/0.976/0.796) and ST_GAS (>1, its residual leg NEGATIVE — the floored
+>   energy C8 already tracks, from an independent instrument). **Any successor that
+>   re-opens L3 as a commitment object is re-opening a measured negative.**
+> * **OBJECT B (the May object) IS CLOSED AS A SEPARATE OBJECT — it is the same
+>   price-level object with the sign REVERSED.** May `U` is **negative** every
+>   year (−3,944 / −2,913 / **−5,327**) — the model dispatches MORE CC than is
+>   in-merit at the actual price, because in May its price sits ABOVE actual —
+>   with leg-1 share **1.051 / 0.994 / 0.973**. miso-147's "one object, both
+>   signs" is **vindicated as a description**, and the object is the **price
+>   level**. Largest separable NAMED contributor: the **2025 EIA-860 vintage
+>   under-carry at 37.2 %** (the 5 dropped plants generated **447 MW** mean in
+>   May-2025 CEMS against the 1,201 MW deficit) — just under the 40 % bar, and it
+>   belongs to the CROSS-ISO lane, not to a MISO arm (rule 25).
+> * **THE ASSUMED AVAILABILITY DOUBLE COUNT DOES NOT EXIST AT MISO.** caiso-187's
+>   frozen `residual_c = max(0, W_c − X_c)` on MISO's OWN fleet returns **0 for
+>   every material class** (CC_REGULAR W 0.179 / X 0.240; ST_GAS 0.235/0.298; COAL
+>   0.165/0.274; ST_CHP 0.289/0.370); only CC_CHP is positive at 0.0136 ≈ **49 MW**.
+>   The bound is declared in the finding's own disfavour (this `W_c` folds in the
+>   summer derate and COD mask, so it is an UPPER bound that still lands at zero).
+> * **THE CENSUS FIRED B-1 AND ITS OWN PRE-REGISTERED TRAPS REFUTED IT.**
+>   `Kcc` = **3,674 MW** (CC family 2025; 6,523 MW all-fossil plant-total), flat
+>   across all twelve months, **54 of 55 CC plants contradicted** — but the trap-2/
+>   trap-3 counter-measurement the PREREG required BEFORE B-1 could be quoted puts
+>   **92.1 % of it on rating/population/CHP-boundary**, leaving a clean scope of
+>   **515.4 MW (2025)**, 412.0/461.0 in 2023/2024. The head is the **industrial-CHP/
+>   BTM boundary** (Plaquemine, ExxonMobil Beaumont, Louisiana 1, R S Cogen, Taft,
+>   Midland Cogeneration — miso-148 §3 already adjudicated these are NOT missing
+>   capacity) and **plant-code/family splits inside MATCHED plants** (Riverside
+>   55641 vs its co-located 64020; Ninemile Point and Perryville both carry MORE
+>   total model capacity than their own CAMPD total p99). **G-2: NO LAYER reaches
+>   the 60 % ownership bar** (clean scope — all three overlays together 45.7 %,
+>   statistical layer 54.3 %, `ufac` 43.7 %, `mgfac` 0.8 %, `sfac` 0.0 % and
+>   coal-only BY CONSTRUCTION: all 987 short-extract rows are `plant_group=COAL`),
+>   which is what **DENIED the arm** under the session's own §7(3).
+> * **A DEFECT IN miso-149's OWN PRE-REGISTERED ARITHMETIC IS DECLARED, NOT
+>   BURIED:** G-4 attributed shares of a family-grain NET deficit using a
+>   plant-grain ONE-SIDED census and returned `share_b = 3.415` — a part 3.4× its
+>   whole. The branch label it produced (`M-2`) is **WITHDRAWN as unsupported by
+>   its own arithmetic**; the corrected branch is **`M-3 open`**. The pre-registered
+>   number stays on the record.
+> * **NEW OBJECT, SIZED AND FILED — NOT OPENED: PLANT-GRAIN FOSSIL RATING.** 86
+>   plants carry model total fossil capacity BELOW their own CAMPD total p99:
+>   **7,915 MW (2025)**, of which 4,090 MW is the adjudicated CHP boundary and
+>   **3,825 MW is non-CHP**; a parasitic-fallback sensitivity (0.97 for the plants
+>   MISO's 463-plant parasitic map does not cover) removes **16.5 %** (7,915 →
+>   6,610). Standing, not 2025-specific (9,281/7,924/7,915). **It is invisible to
+>   miso-148's L2 audit because that audit NETS** — merchant CC `pmax` vs CAMPD p99
+>   reads −0.21/−1.96/−6.0 % at fleet aggregate while plants over-rated cancel
+>   plants under-rated. The two largest non-CHP entries are an instrument artifact
+>   (Riverside, 774.6 MW, the co-located plant-code split eGRID's own PLHTIAN
+>   warning names) and a defect already owned by another lane (Cottonwood, 525.8
+>   MW). **NO claim is made that this gap is missing capacity**, and none of it is
+>   offered as progress against the level miss.
+> * **NOT ADJUDICATED, recorded so it is not later misread as settled:** MISO's
+>   measured `X_cc = 0.240` — the overlay removes **24.0 % of CC capacity-hours** —
+>   sits inside the 23–46 % band the `campd_outage_windows` row already records as
+>   a STANDING CROSS-ISO defect on which **MISO is flagged RE-TUNE REQUIRED and has
+>   not been re-tuned**. This session corroborates the magnitude at MISO and
+>   adjudicates NOTHING about it (a contradiction census structurally cannot —
+>   caiso-181: zero interior contradiction establishes the units WERE down, never
+>   WHY), so that cell is deliberately **untouched at K**.
+> * **ITEMS 8 AND 9 STAND UNMODIFIED, and item 9 is now much better motivated** —
+>   three independent instruments converge on it (G-3 across three years and three
+>   families, the May sign flip, and miso-147's "marginal on gas in 76 % of S1-2025
+>   hours yet clearing $40.7 below actual"). **This session adds NOTHING to item
+>   9's specification**; what to do about it remains the standing OWNER DECISION.
+> * **PRIOR SCORED, four of nine WRONG:** P2 (`Kcc` ∈ [300, 2500]) and P3 (a single
+>   layer owns ≥ 60 %) both badly wrong; P7 wrong at 0.372 vs a 0.40 bar. The two
+>   staked AGAINST the lane's interest — P5 (relief immaterial) and P6 (Object A
+>   dissolves) — both came in.
+> * **KILL GATES UNTOUCHED, NOT PASSING** (nothing ran): C3b-2025 ≤ 0.212, C3b/C3a
+>   2023-24 PASS margins, C1/C2 gated years, C8 shares and D-4 windows, C3c 1/1
+>   SPENT. **No mechanism was armed, so there is no May EFFECT to report** — the May
+>   MEASUREMENTS are above. The against-interest bound is carried and never
+>   breached: 2023 carries nearly the same CC gap and C3a-2023 PASSES.
+>
+> *(The miso-148 stamp follows.)*
+>
 > **LIVE QUEUE AS OF miso-148 (2026-08-09) — ITEM 11 (the CC
 > CAPABILITY-AND-AVAILABILITY LANE, the miso-147 successor) SET, L1 AND L2
 > EXECUTED, L3 LEFT AS OBSERVATION. A NEW MECHANISM IS BUILT, SOLVED,
