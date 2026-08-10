@@ -1,0 +1,74 @@
+{
+ "probe": "ffr9a_storage_trajectory (R1)",
+ "arm": "treated",
+ "cache_dir": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9c-pipeline/ERCOT/3301180d9f501bcd",
+ "base_fleet": {
+  "basis": "load_eia860_storage @ vintage_2020, start_year 2021 (FFR-9A seed)",
+  "n_units": 5,
+  "power_mw": 223.1,
+  "energy_mwh": 231.6
+ },
+ "per_year": [
+  {
+   "ledger_year": 2021,
+   "n_addition_rows": 0,
+   "added_power_mw": 0,
+   "added_energy_mwh": 0,
+   "cumulative_power_mw": 223.1,
+   "cumulative_energy_mwh": 231.6
+  },
+  {
+   "ledger_year": 2022,
+   "n_addition_rows": 12,
+   "added_power_mw": 5000.0,
+   "added_energy_mwh": 316000.0,
+   "cumulative_power_mw": 5223.1,
+   "cumulative_energy_mwh": 316231.6
+  },
+  {
+   "ledger_year": 2023,
+   "n_addition_rows": 12,
+   "added_power_mw": 5000.0,
+   "added_energy_mwh": 320000.0,
+   "cumulative_power_mw": 10223.1,
+   "cumulative_energy_mwh": 636231.6
+  },
+  {
+   "ledger_year": 2024,
+   "n_addition_rows": 0,
+   "added_power_mw": 0,
+   "added_energy_mwh": 0,
+   "cumulative_power_mw": 10223.1,
+   "cumulative_energy_mwh": 636231.6
+  },
+  {
+   "ledger_year": 2025,
+   "n_addition_rows": 0,
+   "added_power_mw": 0,
+   "added_energy_mwh": 0,
+   "cumulative_power_mw": 10223.1,
+   "cumulative_energy_mwh": 636231.6
+  }
+ ],
+ "measured_actual_year_end": [
+  {
+   "year": 2023,
+   "n_units": 5,
+   "power_mw": 3973.5,
+   "energy_mwh": 5650.8
+  },
+  {
+   "year": 2024,
+   "n_units": 7,
+   "power_mw": 8093.8,
+   "energy_mwh": 11569.6
+  },
+  {
+   "year": 2025,
+   "n_units": 7,
+   "power_mw": 13709.3,
+   "energy_mwh": 21253.8
+  }
+ ],
+ "note": "measured_actual is the canonical-sheet EIA-860 year-end fleet (battery + PS), the R1 comparator \u2014 reported, never targeted"
+}
