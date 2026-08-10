@@ -168,6 +168,20 @@ shape of the problem.** Under CI's own expression
 `test_fleet_arrays_golden` 1 deselected, `TestEndToEnd` 6 deselected,
 `TestExportScenarioJson` 4 deselected.
 
+**(c) MEASURED, after this session's changes: the fast tier is 6,620 passed /
+2 failed, and neither failure is any of the six.** Full serial run at this
+branch (`-m "not slow and not integration and not fulldata"`, 18 m 35 s):
+6,620 passed, 20 skipped, 49 deselected, 2 xfailed, 432 subtests passed, **2
+failed** — both `tests/iso/ercot/test_ercot_thermal_as_endogenous.py::TestScreenMutualExclusion`,
+on `ValueError: retirement_rule='pipeline' requires a simulation year`. That is
+the **pre-existing** failure `ffr-3d` §6 already triaged as "REAL — D-1 fallout
+… a test not updated for the flip → retirement lane (FFR-3C owns
+`retirement_rule`)", it is **outside this branch's entire change surface** (six
+files: the derive + its new test, the golden JSON + its fixture docstring, this
+FINDING and the calibration log — nothing under `model/` or `tests/iso/`), and
+it is **not touched here** (rule 25 — it is another lane's cell). **This
+session adds ZERO fast-tier failures.**
+
 **The hole that follows, filed for the owner (not fixed here — it is CI-policy
 scope).** These guards live in tiers **CI never runs**: the `fast-tests` job
 deselects them by mark, and a CI runner has neither `data/raw` nor `data/clean`
