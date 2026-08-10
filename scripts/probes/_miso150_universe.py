@@ -231,16 +231,19 @@ def model_block150(year: int, keeper: Path | None) -> dict:
     }
 
 
-def _dense_parts(hours, price_2d, mw_2d):
-    """(seg_h, seg_p, seg_mw) from a (n_rows, T) offer/capability pair.
+def _dense_parts_sliced(hours, p, m):
+    """(seg_h, seg_p, seg_mw) from ALREADY-hour-sliced (n_rows, n_hours) arrays.
 
     Row-major over hours exactly as ``_miso145_offer_conduct.model_curve_readings``
     builds it, so U0 is byte-for-byte that construction.
     """
-    p = price_2d[:, hours]
-    m = mw_2d[:, hours]
     n = p.shape[0]
     return np.repeat(hours, n), p.T.reshape(-1), m.T.reshape(-1)
+
+
+def _dense_parts(hours, price_2d, mw_2d):
+    """:func:`_dense_parts_sliced` over full-length ``(n_rows, T)`` arrays."""
+    return _dense_parts_sliced(hours, price_2d[:, hours], mw_2d[:, hours])
 
 
 def universe_segments(
@@ -252,10 +255,14 @@ def universe_segments(
 
     if universe != "U0":
         for tech in ("wind", "solar"):
-            mw = mb[f"{tech}_mw"]
+            # Slice to the window FIRST: ``vre_scale`` is the U2 locator's
+            # per-WINDOW-hour truncation factor, not a full-year vector.
+            mw = mb[f"{tech}_mw"][:, hours]
             if vre_scale is not None:
                 mw = mw * vre_scale[None, :]
-            parts.append(_dense_parts(hours, mb[f"{tech}_mc"], mw))
+            parts.append(
+                _dense_parts_sliced(hours, mb[f"{tech}_mc"][:, hours], mw)
+            )
     if universe == "U1S":
         st_mw = mb["storage_mw"]
         parts.append(
