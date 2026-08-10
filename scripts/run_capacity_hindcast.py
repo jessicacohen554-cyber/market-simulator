@@ -456,6 +456,12 @@ META_RECORD_SPEC = RecordSpec(
         "exit_rate_limits": FromConfig(cast=bool),
         "capacity_screen_unified_lookahead": FromConfig(cast=bool),
         "capacity_screen_scarcity_restoration": FromConfig(cast=bool),
+        # FFR-5C anti-cobweb guard relocation, armed per-invocation by the
+        # FFR-9C measurement lane. FromConfig so the record reads the SOLVED
+        # gate (FFR-3R: a meta may never claim an arming the solve lacked).
+        "entry_pipeline_aware_signal": FromConfig(cast=bool),
+        # FFR-9C R-b SMR availability-year gate (None = shipped ungated).
+        "smr_available_year": FromConfig(),
         # FFR-5E procurement channel (owner decision D-18(a)). Declared
         # FromConfig, never FromArgs: the record reads the SOLVED gate, so a
         # meta can never claim an arming the solve did not carry (FFR-3R).
@@ -557,6 +563,8 @@ def build_config(
     capacity_screen_unified_lookahead: "bool | None" = None,
     capacity_screen_scarcity_restoration: "bool | None" = None,
     vre_procurement_additions: "bool | None" = None,
+    entry_pipeline_aware_signal: "bool | None" = None,
+    smr_available_year: "int | None" = None,
     ptc_window: "int | str | None" = None,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
@@ -789,6 +797,18 @@ def build_config(
                 # inherits the shipped GATED-OFF default and the control arm's
                 # cache key is the untouched shipped one.
                 "vre_procurement_additions_enabled": vre_procurement_additions,
+                # FFR-5C anti-cobweb guard relocation (owner decision D-17(a)),
+                # armed per-invocation by the FFR-9C staged repair lane: the
+                # pending-pipeline stock leaves BOTH annual flow caps and the
+                # pro-forma prices its own committed pipeline instead. GATED
+                # default-off in ScenarioConfig; OMIT inherits that shipped
+                # default so the control arm's cache key is untouched.
+                "entry_pipeline_aware_signal": entry_pipeline_aware_signal,
+                # FFR-9C R-b SMR availability-year gate: when set, nuclear_smr
+                # joins the entry candidate pool only from this year (ATB
+                # costs new nuclear from 2030 only). OMIT inherits the shipped
+                # ungated default (None) — measurement arms pass 2030.
+                "smr_available_year": smr_available_year,
             }.items()
             if v is not None
         },
@@ -1401,6 +1421,36 @@ def main(argv: list[str] | None = None) -> int:
             "--no-vre-procurement-additions forces the control explicitly."
         ),
     )
+    parser.add_argument(
+        "--entry-pipeline-aware-signal",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "FFR-5C anti-cobweb guard relocation MEASUREMENT arm (owner "
+            "decision D-17(a); named repair candidate R-a by FFR-9B §4, "
+            "staged by the FFR-9C lane): the pending-pipeline STOCK stops "
+            "netting against the annual FLOW caps (growth ladder + per-tech "
+            "queue cap bind as their citations define) and the entry "
+            "pro-forma prices its own committed pipeline instead. Zero new "
+            "parameters. OMIT to inherit the shipped ScenarioConfig default "
+            "(GATED OFF); --entry-pipeline-aware-signal arms the treatment "
+            "and --no-entry-pipeline-aware-signal forces the control "
+            "explicitly."
+        ),
+    )
+    parser.add_argument(
+        "--smr-available-year",
+        type=int,
+        default=None,
+        help=(
+            "FFR-9C R-b SMR availability-year gate MEASUREMENT arm (FFR-9B "
+            "§4): nuclear_smr joins the economic-entry candidate pool only "
+            "from this calendar year. ATB 2024 costs new nuclear from 2030 "
+            "only (NEW_ENTRY_COSTS), so the measurement arm passes 2030. "
+            "OMIT to inherit the shipped ScenarioConfig default (None = the "
+            "ungated always-eligible posture)."
+        ),
+    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
@@ -1552,6 +1602,8 @@ def main(argv: list[str] | None = None) -> int:
             args.capacity_screen_scarcity_restoration
         ),
         vre_procurement_additions=args.vre_procurement_additions,
+        entry_pipeline_aware_signal=args.entry_pipeline_aware_signal,
+        smr_available_year=args.smr_available_year,
         ptc_window=args.ptc_window,
     )
 
