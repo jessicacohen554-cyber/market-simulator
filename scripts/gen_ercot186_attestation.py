@@ -7,6 +7,11 @@ carried verbatim, which is itself the G-DOF evidence. Only
 `governance.attested_by` and the carried C3c `exceptions` magnitudes are
 re-written per run.
 
+AUTHORED BUT NEVER RUN at ercot-186: the session's pre-registered seam-proof
+stop rule fired (SP-1), so no A/B was solved and neither bundle exists. It is
+committed for the ercot-187 successor round, which solves the pair — the same
+disposition as the authored-never-run ercot-180 seam probe.
+
 Usage::
 
     python scripts/gen_ercot186_attestation.py \
