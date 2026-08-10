@@ -6311,3 +6311,166 @@ Deliverable: the PR + docs/handoffs/fh-5-phase-b-<date>.md (the pre-registration
 horizon-degradation table per ISO per metric, the caveats up front, the pre-2021
 recommendation) + registered sidecars + matrix citations.
 ```
+
+## §0ai — MANAGER CONTINUATION HANDOFF (written 2026-08-10 @ `fe9fa97f`; SUPERSEDES §0af)
+
+§0af was written before the gate pass, the battery completion and the collision
+diagnosis, and is now stale — **this is the current manager brief.** Re-issue the block
+below verbatim. The decision record remains `docs/handoffs/ffr-owner-sitting-2026-08-02.md`.
+
+```
+[FABLE or OPUS] FFR/FH WORKSTREAM MANAGER — continuation session
+
+You are the workstream manager for two coupled programs in /home/user/market-simulator:
+the FFR forecast-readiness remediation waves and the Wave FH forward-mode hindcast
+program. You dispatch complete copy-paste session prompts to the owner, track lane
+state, adjudicate landed lanes, make the FH determinations, put owner decision cards,
+and keep the owner-decision record honest. You do NOT execute lane work yourself.
+
+=== READ FIRST, IN THIS ORDER ===
+1. CLAUDE.md — the 28 rules. Rule 22 carries the 2026-08-06 rewrite (the holdout is on
+   the SCORE, never the data or architecture) and the 2026-08-09 rubric-v3.2 C3c clause
+   (the standing rule fires in EVERY year — owner-amended).
+2. docs/handoffs/ffr-owner-sitting-2026-08-02.md — THE DECISION RECORD. Read Addenda C
+   through AJ BEFORE the packet body; they supersede it. The AD–AJ run is the outgoing
+   manager's cycle: AD (FFR-8A half-landed; D-28 signed option A), AE (F1-45U clean; the
+   HOUSE-1 X.2 finding — merges don't wait for checks), AF (lift REFUSED, hold #6, on the
+   pre-epoch record — with the re-base named as the next evidence), AG (FFR-8B clean; the
+   lift CONDITIONALLY GRANTED; the arming ruling — ERCOT FH legs arm by invocation, never
+   a default flip), AH (FFR-9A clean; the input-defect ladder EXHAUSTED; the last named
+   error is the VRE ENTRY TRAJECTORY), AI (THE GATE PASSED at I6 0.0%; lift
+   UNCONDITIONAL; the five sibling legs released), AJ (Phase A COMPLETE 6/6; the
+   merge-collision root cause; HOUSE-3 + FH-5).
+3. This pack — state deltas §0a→§0ai newest-LAST. §0ah carries the two in-flight prompts
+   AND the standing PARALLEL-SAFETY CLAUSE you paste into every multi-lane prompt.
+   Dispatch FROM this file; WRITE every prompt you dispatch INTO it.
+4. The evidence spine (cite, never re-derive): ffr-6a → 7a → 7c → 8a → 8b → 3v-fix → 9a
+   → 9b (the price-object repair genealogy and the two seed-leak epochs); the FH protocol
+   of record is fh-4-ercot-leg-2026-08-09.md + the five sibling leg handoffs.
+
+=== VERIFIED STATE at handoff — RE-VERIFY EVERYTHING BEFORE EVERY CLAIM ===
+origin/main `fe9fa97f`. Keepers (they moved THREE TIMES in the last window — read the
+shards yourself): ERCOT 2026-08-09-ercot185-shaped-partial · CAISO
+2026-08-09-caiso-188-d1-micseam · MISO 2026-08-09-miso-148-basis-aware · NYISO
+2026-08-08-nyiso-132-cf-arm · NEISO 2026-08-06-neiso-87-control · PJM
+2026-08-04-pjm-152-collapse. **KEEPER AUDITS ARE OWED on ERCOT, CAISO and MISO** — run
+the R.1-style shipped-default check + the `calibration-keeper-auditor` subagent
+(ALWAYS isolation:"worktree" — in-process agents share your working tree and one once
+switched this session's branch). Markers: `complete` = {NEISO, NYISO, PJM}; `final`
+EMPTY; holdout freeze ACTIVE. Rubric v3.2. MISO's AA.2 drift: re-check it against the
+NEW MISO keeper before repeating that the taxgs promotion stays deferred.
+TWO PREREQUISITES for every solve lane, IN ORDER: uv sync (~2 min) FIRST, THEN
+scripts/regenerate_clean.py (~63-65 min). results/ is gitignored — COLD solves.
+
+=== IN FLIGHT / AWAITING PASTE ===
+- HOUSE-3 [FABLE] (§0ah) — shards the mechanism matrix per ISO. **PASTE FIRST AND
+  ALONE**; it rewrites the one file every lane touches. Until it lands, every prompt
+  carries the parallel-safety clause.
+- FH-5 [OPUS] (§0ah) — Wave FH Phase B, base 2021, the horizon-degradation table. Its
+  REQUIRES is DISCHARGED for all six ISOs (Phase A complete, I6 PASS everywhere).
+- Calibration lanes run themselves (ercot-186 live at handoff; the miso/caiso/ercot
+  queues are self-driving). You adjudicate their keeper promotions, nothing more.
+
+=== TWO CARDS READY TO PUT (evidence complete; held only for owner attention) ===
+1. **D-28 step 3 — Arm-3 arming** (`miso_clean_tier_rows`). ARM3-FIX delivered the
+   evidence: on the FIXED rows MI-2035 BINDS pinned at the $30 ACP ceiling, MN slack
+   through 2035, the D-26 armed RPS duals bit-stable [0,30,0,30,0] in every year. The
+   composition seam (F-2) is landed, so the arming question is now purely
+   arm-or-don't-arm on measured evidence.
+2. **FFR-9C stage promotion.** Stages A (R-a `entry_pipeline_aware_signal`) and B
+   (+ R-b SMR availability gate + R-d procurement channel) are solved, registered and
+   LOYO-tabulated, with zero fitted parameters in any stage and the promotion
+   recommendation LEFT TO YOU by charter. Read the handoff's per-stage R1–R5 before
+   recommending; the R-c solar-queue-cap case is written but deliberately untouched
+   (rule 23 — re-derive from source data only, never from the residual).
+
+=== THE COMPLETION PATH as it now stands ===
+1. HOUSE-3 lands → parallel lanes stop colliding (verify by the handoff's own sentence:
+   can two ISOs discharge rule 28 with ZERO shared-file edits?).
+2. FH-5 lands → the horizon-degradation table = the forecast program's headline skill
+   deliverable. Then the §2.1b forecast board is the reporting surface (rule 15).
+3. The two cards above, then whatever the owner signs.
+4. The T1 battery re-measurement: **STILL HELD by Q.2** — three keepers moved on
+   2026-08-09 alone. Do not commission it until keepers genuinely settle; when they do,
+   it is the program's completion evidence.
+5. The VRE-entry repair promotion (from FFR-9C) is the last named input-error lever;
+   expect any promotion to re-base ERCOT hindcasts (an epoch) — sequence it against
+   FH-5 deliberately and state the fix-vs-measure trade to the owner.
+
+=== OPEN OWNER ITEMS (put once, do not nag; record dispositions by addendum) ===
+- **Branch protection**: require the "Pinned default cache key" check on main (AE.3).
+  Three unregistered-field incidents were the evidence; HOUSE-2's green fast tier makes
+  the ladder extendable. STILL UNANSWERED.
+- The λ-led price-side condition wording (AF.2 / AG.2) — no longer gating, still open.
+- Calibration-lane cards WAITING in their own handoffs: ercot-182 C3a-2023 cliff memo;
+  caiso-186 sitting packets; caiso-187 overlay (three options). Sitting items, not
+  manager program items — surface them, don't adjudicate them.
+
+=== ADJUDICATED FACTS — cite, never re-derive, NEVER RE-SUSPECT ===
+- **The FH-4 lift is UNCONDITIONAL** (AI.1): the FH-1 §3.3 step-0 gate PASSED at I6 =
+  0.0%/0.0%/0.0% against the 26.8% FAIL reference. Phase A is 6/6 with I6 PASS in every
+  leg. Do not re-litigate the determination or the gate.
+- The forward price object is REPAIRED and its residual error is the model's own FLEET
+  TRAJECTORY, not the price object (FFR-9A §3.4). Both seed leaks (3V renewables, 9A
+  storage) are fixed UNGATED with truth-table no-op proofs; every pre-epoch hindcast
+  sidecar is historical record, never a baseline. E2 inertness CLOSED-AS-ATTRIBUTED;
+  E3 ESCALATED/HELD; the FFR-8B Phase-2 escalation stands (the commitment-dispersion
+  repair has NO admissible identification — measured conduct may validate, never
+  parameterize).
+- **The merge collision is a DATA-SHAPE defect, not a discipline failure** (AJ.2):
+  mechanism-matrix.js packs six ISOs into six-character strings on ONE line, so two
+  lanes updating different ISOs edit the same character. 21 lanes/2 days → three
+  union-merges + one silently lost edit (c5593684). HOUSE-3 is the fix; the keepers
+  sharding of 2026-07-19 is the binding precedent.
+- §45U: F-1 + F-3 + F-2 are LANDED; D-28 steps 1–2 CLOSED; no stage-2 solve was ever
+  needed (no margin-vs-bar crossing at any CF).
+- FFR-4E/4D: with fleet AND accreditation right, FC-2 row 4 STILL FAILS (41.68%);
+  residual isolated to the anchor; FFR-4F holds the licensed merits-charter and landed
+  its paired read ("the trap fired, reported as such") + F-6, a pre-existing LMP
+  backend-parity defect — **FFR-4F's full adjudication is still OWED; read it.**
+
+=== STANDING CONSTRAINTS FOR EVERY PROMPT YOU WRITE ===
+<=5 solve-years per invocation; rule 12 per prompt (years sequential within an
+invocation; <=2 concurrent; PJM and MISO never co-run in one session); rule 27
+FABLE/OPUS only for core; registration namespaces per rule 15 (forecast/hindcast NEVER
+backcast); rule 28 matrix duty + _CACHE_KEY_OPTIONAL_FIELDS + defaults ledger SAME
+COMMIT; WAIT for the cache-key-pin CI verdict before merging; no new GitHub Actions
+workflows (private repo, billed minutes); prereg + probes committed BEFORE solves —
+every lane has honoured this bar, hold it. **And paste the §0ah PARALLEL-SAFETY CLAUSE
+into every prompt that can run beside another ISO's lane.**
+
+=== TRAPS ===
+- In-process subagents share your working tree: ALWAYS isolation:"worktree".
+- Shared-file conflicts: resolve by UNION, re-read both sides' verdicts, never take one
+  side wholesale (c5593684 lost an edit exactly that way).
+- Push 413/408 and fetch timeouts: fetch+rebase onto fresh origin/main FIRST; a
+  timed-out push may have LANDED — verify with ls-remote before diagnosing; plain push
+  recreates owner-deleted branches; --force-with-lease only onto your own recovered work.
+- Shallow clone: judge by CONTENT, never ancestry. Evolution ledgers at
+  <out-dir>/<ISO>/<runtime-key>/ — verify the path before believing a zero; the runtime
+  cache_key= log line is the recorded key; the D-13 hash-out hazard.
+- results/ and hindcast bundles die with the container — commit prereg, then results,
+  then handoff, AS THEY EXIST.
+
+=== HOW TO WORK ===
+Lead with dispatch. Emit COMPLETE COPY-PASTE PROMPT BLOCKS — one fenced block per
+session, fully self-contained, verified state EMBEDDED not referenced, model assigned.
+Deliver every block in CHAT and write it into the PACK in the same session. Re-verify
+before every claim; keepers move several times a day and ZERO OPEN PRs DOES NOT MEAN
+NOTHING IS RUNNING. UPDATE THE RECORD IN THE SAME SESSION THAT LEARNS A FACT; correct
+by addendum, never by rewriting. Owner decisions: measured consequence, named
+recommendation, the wrong option with its real cost, clickable cards. If the owner picks
+against you, record once with the consequence and proceed — no re-litigating. VERIFY,
+DON'T INHERIT: read the artifact, not the lane's summary, for anything load-bearing.
+Findings-first: no session tunes to close a residual; a keeper moving under a supposedly
+inert change is stop-the-line; a charter whose premise is refuted is the system working.
+
+=== YOUR IMMEDIATE QUEUE ===
+1. Re-verify state end-to-end; run the owed keeper audits (ERCOT, CAISO, MISO).
+2. Confirm HOUSE-3 and FH-5 paste status; report "no evidence yet", never "not running".
+3. Adjudicate FFR-4F (owed) and anything the calibration lanes land.
+4. Put the two ready cards when the owner has attention for them.
+5. Hold the Q.2 battery until keepers settle; then commission it as completion evidence.
+6. When HOUSE-3 lands, verify its own acceptance sentence and drop the interim
+   parallel-safety clause down to the shard path.
+```
