@@ -618,12 +618,41 @@ def measure(markets=("RT", "DA"), u2_thresholds=(0.30, 0.50, 0.70)) -> dict:
                         - oc.price_at_pctl(hours, sh, sp, sm, q)
                     )
                 )
+                # The charter's STANDING measurement, restated on the current
+                # keeper. Both legs are REAL-side and the real segment set is
+                # untouched by any model-side universe, so they are identical
+                # under U0/U1/U1S/U4 BY CONSTRUCTION -- reported once per cell,
+                # not per universe. They still move with the KEEPER, because
+                # the model's anchor price positions them.
+                below_act = packs[market].mw_at_or_below(target)
+                below_anc = packs[market].mw_at_or_below(anchor)
                 blk["real"][market] = {
                     "real_capability_gw": round(
                         float((packs[market].total * wgt).sum()) / 1000.0, 3
                     ),
                     "n_segments": int(s.shape[0]),
                     "G_F0c_pack_vs_miso145_price_at_pctl_max_abs": round(float(d), 8),
+                    "real_gw_model_price_to_actual": round(
+                        float(((below_act - below_anc) / 1000.0 * wgt).sum()), 4
+                    ),
+                    "real_ladder_slope_usd_per_gw": {
+                        f"+{g:g}GW": round(
+                            float(
+                                (
+                                    (
+                                        packs[market].price_at_cum(
+                                            below_act + g * 1000.0
+                                        )
+                                        - target
+                                    )
+                                    / g
+                                    * wgt
+                                ).sum()
+                            ),
+                            4,
+                        )
+                        for g in oc.LADDER_GW
+                    },
                 }
 
             for bracket in ("lo", "hi"):
