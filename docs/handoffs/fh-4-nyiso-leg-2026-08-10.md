@@ -229,3 +229,211 @@ FFR retirement lane's question, untouched here.
 
 *(Sections below this line are filled AFTER the pre-registered work runs, in
 order, as produced.)*
+
+## 2. THE I6 RIDER — **PASS on both arms**; the lane proceeds
+
+Both arms ran exactly as pre-registered, at shipped defaults, on the full
+clean regeneration (50/50 datatypes, zero failures). Both runtime cache keys
+equal their prereg-measured config keys — no config drift between prereg and
+solve: Arm R `90c7a76c8e25ee61`, Arm K `30eedfd2d38e5b92`. Both metas record
+solved `[2023, 2024, 2025]`, bridged `[]`, `leakage_violations: []`, freeze
+ACTIVE and read at launch, both screen fields `false` (shipped),
+`retirement_rule="pipeline"` via the shipped default,
+`capacity_clearing_posture="shipped"` (NYISO resolves curve-OFF). Arm K's
+meta additionally records the full as-known posture: gas
+`hindcast_asknown_aeo2023`, `weather_posture="base_year"`,
+`demand_growth_vintage: 2023` — the FH-2 §7 wiring's first NYISO-armed solve
+(2024/25 demand grown at the cited as-of-2023 Gold Book 0.54 %/yr).
+
+**The I6 criterion, applied as written — PASS in every year, on both arms:**
+
+| Year | Prior thermal | Econ retired (R) | Econ retired (K) | I6 fraction |
+|---|---|---|---|---|
+| 2023 | 30.24 GW | 0.00 GW | 0.00 GW | **0.0 %** |
+| 2024 | 30.24 GW | 0.00 GW | 0.00 GW | **0.0 %** |
+| 2025 | 30.24 GW (R) / 30.52 GW (K) | 0.00 GW | 0.00 GW | **0.0 %** |
+
+Total exits of ANY reason are 8.0 MW in both arms (one announced biomass
+plant, 54782, 2025) — no economic wave forms in NYISO at shipped defaults,
+without the ERCOT leg's unified-lookahead/scarcity-restoration arming. The
+stop-the-line rider does not fire; both arms' reads are quotable (§1.4
+quoting rule).
+
+**Reported alongside at full magnitude (not the criterion):**
+
+* **I7 FAIL on both arms** — the reliability-floor invariant finds the
+  accredited firm fleet short of the requirement: Arm R 2023 32,441 vs
+  32,612 MW (−171 MW) and 2025 32,729 vs 34,395 MW (−1,666 MW, the realized
+  2025 peak 31,857 MW); Arm K 2023 −171 MW and 2024 32,702 vs 32,789 MW
+  (−87 MW). This is a SHORTFALL invariant, not an over-retirement one — the
+  vintage-2023 fleet plus the pipeline is simply short of the requirement in
+  those years, and the model's reserve-margin backstop responds (below).
+* **I12 WARN on both arms**, low side: Arm R reserve margin 2023 7.4 % /
+  2025 2.7 % vs the requirement-implied floor band [8.0 %, 23.0 %]; Arm K
+  2023 7.4 % / 2024 7.7 % (its 2025 sits at the band edge — base-2023
+  weather and 0.54 %/yr growth give Arm K a much lower 2025 peak, 30,533 vs
+  Arm R's realized 31,857 MW).
+* The reserve-margin backstop (step 6) built gas_ct: Arm R 274.8 MW in
+  2025; Arm K 274.8 MW in 2024 + 251.9 MW in 2025 — the arms' different
+  demand paths shift its timing. Planned additions: 36.0 MW gas_ct (2025,
+  vintage-2023 proposed sheet) in both arms.
+* 14 checks per arm: 1 FAIL (I7), 1 WARN (I12), all else PASS — I1 energy
+  balance closes to 1e-9 MW, I8 planned-additions gating clean, I13 no
+  cobweb.
+
+Both runs registered regardless of reads: **`nyiso-2023-2025-t1ff-armr-fh4`**
++ **`nyiso-2023-2025-t1ff-armk-fh4`**, hindcast namespace
+(`frontend/data/hindcast/<id>.json`, `meta.kind="full_forward"`), never the
+backcast registry.
+
+## 3. Skill reads — the three-way table
+
+Scored by `score_crossover.py` verbatim against the committed bench and the
+CURRENT keeper **`2026-08-08-nyiso-132-cf-arm`**, per the prereg (§1.4).
+Quotable as T1-FF skill: the lift is unconditional and both arms ran the
+shipped posture with I6 PASS. Errors at full magnitude; `gap` = input_gap =
+|arm err| / |keeper err|. Keeper → Arm R spread = **overlay value**; Arm R →
+Arm K spread = **driver-forecast error**.
+
+**price_mean** (fraction of actual, signed = model − actual; keeper signed
+values are its C3a record +8.8 % / +0.8 % / −3.4 %):
+
+| Year | Keeper err | Arm R err (gap) | Arm K err (gap) |
+|---|---|---|---|
+| 2023 | 0.088 | **+0.134** (1.52) | **+0.800** (9.12) |
+| 2024 | 0.007 | **−0.092** (12.97) | **+0.305** (43.0) |
+| 2025 | 0.035 | **−0.328** (9.50) | **−0.312** (9.04) |
+
+**price_shape** (monthly NRMSE): keeper 0.130 / 0.172 / 0.155; Arm R 0.214
+(1.65) / 0.285 (1.66) / 0.467 (3.01); Arm K 0.817 (6.29) / 0.413 (2.40) /
+0.467 (3.01). (The two arms' 2025 NRMSE coincide at the artifact's stored
+3-dp precision on genuinely different solves — their 2025 mean-LMP errors
+differ, −32.8 % vs −31.2 %.)
+
+**fuelmix** (TWh Σ|Δ| over scoreable classes): keeper 7.68 / 3.30; Arm R
+27.26 (3.55) / 26.07 (7.89); Arm K 32.38 (4.22) / 34.44 (10.43). **2025 is
+UNSCOREABLE for NYISO fuel-mix** (the preliminary EIA-923 vintage leaves all
+five gas classes incomplete, so the scorer skips the year and the gas_twh
+family row is reported-not-banded — unlike ERCOT, where the coal classes
+remained scoreable).
+
+**co2** (fraction, reported — keeper record carries no comparable): Arm R
+−16.3 / −13.5 / −24.8 %; Arm K −29.2 / −31.2 / −30.6 %.
+
+**Reading, honestly:**
+
+1. **The overlay value is largest exactly where the market was tightest —
+   2025 is the headline.** The keeper holds 2025 to −3.4 % on its armed
+   conduct/scarcity content; the shipped forward stack reads **−32.8 %**
+   (Arm R). 2024: −9.2 % vs +0.7 %. The keeper→R spread is ~10–30 pp of
+   price level, and it is the measured price of everything the forecast
+   stack does not carry: the measured delivered-fuel overlays AND the
+   default-off NYISO conduct/scarcity recipe (gas-offer anchors, RCPF,
+   measured ORDC span, commitment content).
+2. **One pre-registered direction is REFUTED, on the record: Arm R
+   OVERSHOOTS 2023 (+13.4 %), against the registered
+   undershoot-in-all-years direction.** The 2024/2025 undershoots and the
+   shape direction held. The overshoot year is the mild one — the forward
+   stack's flat annual delivered-gas construction (HH + $0.55) and its
+   missing conduct content push in opposite directions, and in 2023 the net
+   sign is positive; the residual attribution (basis-year vs conduct) is a
+   diagnosis for the fuel/conduct lanes, not this leg's, and nothing here
+   was tuned (rule 1).
+3. **The ERCOT error-compensation artifact did NOT materialize in NYISO —
+   the as-known driver error passes straight through.** Arm K is worse than
+   Arm R on every 2023/2024 read: +116 % as-known gas takes the 2023 price
+   from +13.4 % to **+80.0 %** and 2024 from −9.2 % to +30.5 %. Because Arm
+   R's 2023 error is already positive, the expensive as-known vintage
+   amplifies rather than masks — there is no NYISO analogue of the ERCOT
+   2023 gap-below-1 artifact, and no gap below 1 anywhere in this table.
+   The pre-registered K-higher-in-2023/24 direction held; the 2025
+   driver-spread near-convergence held too (−31.2 vs −32.8 % — the +7.6 %
+   gas vintage moves the year less than 2 pp), which isolates the 2025 miss
+   as structural (overlay side), not driver side.
+4. **The dominant structural mix finding (the NYISO analogue of the ERCOT
+   coal-zero): ST_GAS collapse + CC_CHP over-run — an intra-gas allocation
+   failure, not a cross-fuel one.** In both arms the downstate steam-gas
+   fleet barely runs (Arm R 1.49 / 1.94 TWh vs actual 8.70 / 11.07 in
+   2023/2024) while CC_CHP over-runs ~2× its actual (21.0 / 21.7 vs 11.3 /
+   13.5) and CC_REGULAR sits under (27.2 / 31.2 vs 35.3 / 38.0). Total
+   gas-fired energy is much closer (Arm R 2023: 50.7 vs 58.5 TWh) than its
+   allocation. In the keeper, ST_GAS is carried by the reliability floor +
+   commitment/conduct content — all default-off here; nothing was armed to
+   fix it (rule 1; the mechanisms exist and are the keeper lane's, their
+   forecast-default adjudication is not this leg's).
+5. **Fuel-mix moved WITH the as-known gas error as pre-registered, and that
+   worsened it**: Arm K's expensive gas pushes every gas class down
+   (CC_REGULAR 27.2 → 20.6 TWh in 2023), but CC_REGULAR was already under
+   its actual, so Σ|Δ| rises (26.1 → 34.4 in 2024). A correctly-signed
+   driver response over a mis-allocated base is still a worse forecast —
+   reported as such.
+6. **Exit side (with §4's rider attached):** both arms retire 8 MW
+   (announced biomass) against the scorer's window-unfiltered 1.711 GW
+   actual (2021–2025, thermal+biomass; the leg's own 2023–2025 window holds
+   0.535 GW on that family set) — the under-side FAIL row
+   (`err_frac −0.995`), with `false_retire` 0.0 GW PASS on both arms. Zero
+   MW of the actual exits were confirmed-knowable at the vintage cutoff
+   (§4), and 1.012 GW of the 1.711 is Indian Point 3, which exited in April
+   2021 — before this leg's vintage-2023 fleet basis even begins.
+7. **Entry side (reported; the FFR-4/5/9 lanes' object):** decision-basis
+   additions Arm R 3.59 GW / Arm K 3.84 GW vs 3.375 GW actual — the total
+   is close but the composition is not: solar 1.275 vs 2.197 GW (−42 %, the
+   FFR-9B under-build signature in NYISO), a phantom 1.0 GW gas_cc (actual
+   0.0), storage 0.0 vs 0.184 GW, wind 1.00 vs 0.89 GW (PASS), gas_ct
+   0.31 (R) / 0.56 (K) vs 0.072 GW — the gas_ct excess including the
+   reserve-margin backstop builds.
+
+## 4. The γ rider — instrument-date split
+
+Computed by `scripts/probes/fh4_nyiso_instrument_date_split.py` from the
+committed artifacts only (§1.5 method), solve-independent; the probe and its
+numbers were committed with the prereg, before either arm ran.
+
+| Window | Actual exits (all) | Instrumented ≤ 2023-12-31 | Instrumented after | No instrument in registry |
+|---|---|---|---|---|
+| 2023–2025 (the leg's) | 578.9 MW | **0.0 MW** | 0.0 MW | 578.9 MW |
+| 2021–2025 (the scorer's referent) | 1,757.2 MW | **0.0 MW** | 0.0 MW | 1,757.2 MW |
+
+The registry is an audited zero (0 rows), so the split is degenerate exactly
+as pre-stated: unlike ERCOT (where 477 MW acquired a post-cutoff
+instrument), NOT ONE MW of NYISO's window exits ever acquired an enforceable
+instrument — every candidate deactivation was reversed, withdrawn, or
+retained by a reliability determination. **Attribution:** the exit-side FAIL
+rows on these arms measure the economic/announced channel against exits that
+were not confirmed-knowable at the base date (or, for Indian Point 3,
+pre-date the fleet basis); they must not be read as the confirmed-exit
+mechanism failing, and equally must not be excused — whether the economic
+screen should anticipate unconfirmed exits remains the FFR retirement lane's
+question, untouched here.
+
+## 5. Governance close-out
+
+* **Rule 22.** Solves were {2023, 2024, 2025} in both arms — training tier
+  only; freeze ACTIVE and read at launch (recorded in both metas); no
+  out-of-training year solved/scored/registered; no measured H1-2026
+  contact; the scorer's bounds refused nothing because nothing out-of-bounds
+  was asked.
+* **Rules 1/13/14.** Nothing tuned toward any residual: the 2023 overshoot
+  (a refuted prereg direction), the ST_GAS/CC_CHP allocation finding, the
+  I7 FAILs, the exit-side under-miss, and the solar entry shortfall are all
+  reported at full magnitude and left standing. No bar re-level, no signal
+  scaling, no default flip, no keeper contact, no arming.
+* **Rule 28, duty (b) — citations only.** The `demand_growth_vintage`
+  fc-NYISO cell moves U → O with the Arm K measurement citation
+  (measured-not-adjudicated; no shipped default reads the vintage table).
+  The two capacity-screen rows are NOT touched — this leg ran them at their
+  shipped OFF defaults and measured nothing about them (unlike the ERCOT
+  leg, whose arming was by that leg's manager determination). No verdict
+  cell moved anywhere.
+* **Rule 27.** Fable; all edits local on-disk bytes; blob verification after
+  any push touching a ≥300-line file; no new workflows; no `push_files` for
+  ≥300-line files.
+* **Registration.** Both runs registered regardless of reads:
+  `nyiso-2023-2025-t1ff-armr-fh4` + `nyiso-2023-2025-t1ff-armk-fh4`,
+  hindcast namespace only; the backcast registry and
+  `frontend/data/forecast/` committed inputs are untouched (the register's
+  reindex writes only the gitignored generated namespace).
+* **Cost note for the remaining sibling legs** (manager's planning): each
+  3-solve-year NYISO arm ran ~6–7 min wall on this 15 GB / 4-core container
+  (P0 ~80–110 s, P1 ~25–56 s per year), cold at the 2026-08-10 head after a
+  ~66-min `regenerate_clean.py`.
