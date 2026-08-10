@@ -214,3 +214,179 @@ magnitude; they are not the criterion.
 
 *(Sections below this line are filled AFTER the pre-registered work runs, in
 order, as produced.)*
+
+## 2. Both arms solved clean at the pre-registered posture — I6 rider PASS on both
+
+**Arm R** registered `caiso-2023-2025-t1ff-armr-fh4` (hindcast namespace,
+`kind="full_forward"`), solved `[2023, 2024, 2025]`, bridged `[]`,
+`leakage_violations: []`, freeze ACTIVE and read at launch, runtime
+`cache_key=c407117093ad472e`. Meta records the shipped-defaults posture
+exactly as pre-registered: `capacity_screen_unified_lookahead=False`,
+`capacity_screen_scarcity_restoration=False`, `retirement_rule="pipeline"`,
+`demand_growth_vintage=null`, `weather_posture="solve_year"`, shipped
+capacity-clearing posture.
+
+**Arm K** registered `caiso-2023-2025-t1ff-armk-fh4` (same namespace/kind),
+solved `[2023, 2024, 2025]`, bridged `[]`, `leakage_violations: []`, freeze
+ACTIVE, runtime `cache_key=9759385a44a5ad77`. Meta records the full as-known
+posture: gas `hindcast_asknown_aeo2023`, `weather_posture="base_year"`,
+`demand_growth_vintage: 2023` — **the CAISO vintage row's first armed solve**:
+2024/2025 demand grown at the cited as-of-2023 CEC CEDU 2022 rate
+1.30 %/yr instead of the live table's 2.8 %/yr.
+
+*(The prereg §1.2/§1.3 cache keys `cdffce8d15657343` / `0419354e425baa41` are
+the built-config keys measured before launch; the runtime keys above differ
+because `run_scenario_iso` applies the ISO's default scenario overrides —
+the same prereg-vs-runtime relation the protocol of record recorded.)*
+
+**The I6 rider, applied as written — PASS on BOTH registered batteries** (no
+year's economic retirement approaches the 20 % cap: total retirements are
+0.03 GW in 2024 and 1.12 GW in 2025 against ~50 GW fleets, and none exceed
+the cap's fraction). The non-criterion legs stand in both sidecars at full
+magnitude:
+
+* **I7 FAIL (both arms)** — accredited firm short of the requirement in
+  2023 (49,076 < 50,608 MW) and 2024 (Arm R: 50,377 < 54,707; Arm K:
+  50,377 < 51,266 — the as-known demand vintage lowers the requirement).
+* **I9 FAIL (both arms)** — simultaneous charge+discharge 0.15–0.27 % of
+  storage throughput.
+* **I12 WARN (both arms)** — reserve margin under the [15 %, 30 %] band:
+  Arm R 11.5 % / **5.9 %** (2023/2024), Arm K 11.5 % / 13.0 %; both recover
+  to 15.0 % in 2025 via the reserve backstop (Arm R builds 1.4 + 1.2 GW
+  gas_ct in 2024/2025; Arm K 1.4 + 2.8 GW).
+
+Wall clock: ~12.1 min (Arm R) and ~11.3 min (Arm K) on this 15 GB / 4-core
+container, cold at the 2026-08-10 epoch (per-year P0 ~100–110 s, P1
+~30–60 s) — the sibling-leg cost note for the manager.
+
+## 3. Skill reads — the three-way table
+
+Scored by `score_crossover.py` verbatim against the committed bench and the
+CURRENT keeper **`2026-08-09-caiso-188-d1-micseam`**, per the prereg (§1.4).
+Quotable as T1-FF skill: the lift is unconditional, both arms ran the
+pre-registered shipped-defaults posture, and the I6 rider PASSED on both.
+Errors at full magnitude, signed = model − actual; `gap` = input_gap =
+|arm err| / |keeper err|. Keeper → Arm R spread = **overlay value**;
+Arm R → Arm K spread = **driver-forecast error**.
+
+**price_mean** (fraction of actual):
+
+| Year | Keeper err | Arm R err (gap) | Arm K err (gap) |
+|---|---|---|---|
+| 2023 | +0.034 | **−0.177** (5.16) | **+0.222** (6.49) |
+| 2024 | +0.105 | **+0.237** (2.27) | **+0.686** (6.56) |
+| 2025 | +0.129 | **+0.556** (4.30) | **+0.634** (4.90) |
+
+**price_shape** (monthly NRMSE): keeper 0.075 / 0.145 / 0.164; Arm R 0.477
+(6.36) / 0.423 (2.92) / 0.585 (3.57); Arm K 0.460 (6.13) / 0.778 (5.37) /
+0.662 (4.04).
+
+**fuelmix** (TWh Σ|Δ| over scoreable classes): keeper 7.81 / 5.80 / n/a;
+Arm R 27.38 (3.50) / 37.20 (6.41) / n/a; Arm K 18.66 (2.39) / 28.99 (5.00) /
+n/a. 2025 is unscoreable in BOTH arms: the preliminary EIA-923 vintage
+leaves **no** complete CAISO class actual (unlike ERCOT, where the coal
+classes remained) — reported, never banded, in both sidecars.
+
+**co2** (fraction, signed; reported — the keeper record carries no
+comparable): Arm R +16.6 / +44.5 / +63.5 %; Arm K +4.6 / +25.6 / +62.8 %.
+
+**Reading, honestly:**
+
+1. **The dominant structural finding is the ENTRY-SIDE UNDER-BUILD, and in
+   CAISO it inverts the error sign relative to ERCOT.** Both arms land
+   essentially ZERO renewable/storage MW inside the window — the 2024
+   decision round decides 6.7 GW of VRE but every COD falls ≥ 2026, so the
+   only capacity that actually arrives is the reserve backstop's gas_ct
+   (Arm R 2.6 GW, Arm K 4.2 GW across 2024–2025) — against CAISO's actual
+   2023–2025 solar/storage build. The fleet tightens (Arm R 2024 reserve
+   margin 5.9 %), gas CCs fill the missing VRE energy (2024: model CC
+   classes 88.0 TWh vs 52.8 actual in Arm R), and prices overshoot,
+   GROWING with distance from base (+23.7 % → +55.6 % in Arm R). Where
+   ERCOT's T1-FF signature was coal-zero + price UNDERSHOOT, CAISO's is
+   VRE-zero + gas-over + price OVERSHOOT — the FFR-9B VRE-entry shortfall
+   extended to CAISO in a more extreme form. Root cause belongs to the
+   entry lanes (the FFR-9C menu); nothing here was tuned (rule 1).
+2. **2023 (the vintage-true year) realized the pre-registered undershoot
+   direction:** Arm R −17.7 % vs the keeper's +3.4 %. The magnitude is far
+   smaller than the lost crisis-gas basis alone implies (+$7.06 measured →
+   +$1.20 scalar, ~2.6× marginal-fuel understatement): the missing fuel
+   cost (−) nets against the same over-tight/over-gas dynamic that
+   overshoots 2024/2025 (+) — two opposite-signed structural errors inside
+   one signed number. Stated as observed; the decomposition is the lanes'
+   work, not this leg's.
+3. **Arm K realized all three pre-registered directions**: 2023 higher than
+   Arm R (crossing sign: −17.7 % → +22.2 %); 2024 far above (+68.6 % vs
+   +23.7 %, the +98 % gas vintage); 2025 near-converged in spread (+7.8 pp
+   on the +7.6 % vintage remnant). The K−R spread — the driver-forecast
+   error — is **+39.9 / +44.9 / +7.8 pp**, tracking the AEO2023 gas error
+   almost one-for-one. Unlike ERCOT (where expensive as-known gas partially
+   MASKED a conduct undershoot and printed a deceptively low 2023 gap),
+   in CAISO the as-known gas error COMPOUNDS the standing overshoot —
+   Arm K is worse than Arm R on price in every year, and no
+   error-compensation reading is available on the price level.
+4. **Fuel-mix prints Arm K better than Arm R** (18.7 vs 27.4 TWh in 2023,
+   29.0 vs 37.2 in 2024) — this IS the error-compensation artifact here:
+   the 2.2× as-known gas price suppresses exactly the CC over-dispatch the
+   under-built fleet causes. The protocol §4(4) lens applies: an artifact
+   of one error masking another, NOT driver skill.
+5. **Overlay value (keeper → Arm R):** gaps 2.3–6.4 across price level,
+   shape and mix. Two things are bundled in that spread and this leg cannot
+   split them: the keeper's measured overlays (monthly delivered gas
+   including the 2023 crisis basis, CAMPD outage windows, same-year CEMS
+   rates, measured demand) AND the keeper's measured fleet — the backcast
+   dispatches the fleet that actually existed, while T1-FF dispatches what
+   its own evolution built from the 2023 vintage. The forward-stack price
+   of losing both is what the table measures.
+6. **co2 overshoots in both arms** (gas-over signature), opposite in sign to
+   ERCOT's coal-zero-driven undershoot; Arm K's 2023 +4.6 % is the same
+   compensation artifact as (4), not accuracy.
+7. **Harness observation (reported for the FH lane, not repaired here):**
+   the hydro budget loads the 2023 weather base in EVERY solve year of both
+   arms (`data.hydro` log: "CAISO 2023 hydro budget pinned … 17.89 TWh" at
+   each year's LP build) — Arm R's "solve-year weather" posture is
+   therefore PARTIAL for hydro. Shared by both arms, so the R→K spread is
+   unaffected; it does sit inside the keeper→R overlay-value spread.
+
+## 4. The γ rider — not applicable, restated from the artifact record
+
+As pre-registered (§1.5): CAISO has **no scored exit target** —
+`data/raw/_validation-source/` carries no `capacity_actuals_caiso.csv`, so
+there is no window exit set to split by instrument date, and the exit/
+addition skill rows are unscorable for CAISO altogether. The registered
+sidecars record that absence explicitly
+(`capacity_events_note: "capacity events not scored — no committed
+exit/addition target exists for CAISO …"`) via the §1.6 degrade — reported
+as absent, never fabricated. The confirmed-exit registry
+(`data/raw/confirmed-retirements/caiso.csv`) rode both solves as the step-0
+channel input, unaffected by this. **Per the dispatch: stated — not
+applicable.**
+
+## 5. Governance close-out
+
+* **Rule 22.** Solves were {2023, 2024, 2025} in both arms — training tier
+  only; freeze ACTIVE and read at launch (recorded in both metas); no
+  out-of-training year solved/scored/registered; no measured H1-2026
+  contact; the scorer's bounds refused nothing because nothing
+  out-of-bounds was asked. CAISO's absent `complete` marker was never
+  needed — the leg never leaves the training window.
+* **Rules 1/13/14.** Nothing tuned toward any residual: the entry-side
+  under-build, the growing price overshoot, the I7/I9 FAILs and I12 WARNs,
+  the co2 overshoot and the partial-hydro observation are all reported at
+  full magnitude and left standing. No bar re-level, no signal scaling, no
+  default flip, no keeper contact — the keeper was the comparator only,
+  and its recipe flags stayed OFF in both arms as the dispatch ordered.
+* **Rule 28 duty (b).** The FH-4-CAISO measurement citation added to the
+  `demand_growth_vintage` matrix row (fc-CAISO U→O, measured in the Arm-K
+  instrument, not adjudicated); **no verdict cell moved**. The screen-flag
+  rows are untouched — this leg never armed them.
+* **Rule 27.** Fable; all edits local on-disk bytes; blob verification run
+  after every push touching a ≥300-line file (all MATCH).
+* **Registration.** Both runs registered regardless of reads:
+  `caiso-2023-2025-t1ff-armr-fh4` + `caiso-2023-2025-t1ff-armk-fh4`,
+  hindcast namespace only; the backcast registry and the committed
+  `frontend/data/forecast/` inputs are untouched.
+* **The §1.6 degrade in production:** exercised end-to-end by both scores;
+  one seam gap found and fixed in the same session (the driver's selective
+  merge initially dropped `capacity_events_note` from the top level —
+  caught on the first real scoring run, fixed before Arm K scored, both
+  committed sidecars carry the note).
