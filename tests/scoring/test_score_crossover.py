@@ -368,6 +368,62 @@ def test_model_co2_physical_prefers_emissions_array():
 # --------------------------------------------------------------------------- #
 # (b) capacity-events reuse — synthetic ledger through score_retirements
 # --------------------------------------------------------------------------- #
+def test_capacity_events_degrade_without_actuals_target(monkeypatch, tmp_path):
+    """FH-4-CAISO contract: an ISO with no committed capacity-actuals target
+    degrades explicitly instead of crashing the whole crossover score.
+
+    ``CH.load_actuals`` SystemExits for an ISO whose
+    ``capacity_actuals_<iso>.csv`` was never built (CAISO today).
+    ``score_capacity_events`` must mirror the missing-keeper degrade in
+    ``score_dispatch_skill``: record the absence in ``capacity_events_note``,
+    carry ``None`` event blocks (never a fabricated table), and keep the co2
+    block scored — its actual comes from the bench, not the capacity target.
+    """
+
+    def _no_target(iso):
+        raise SystemExit(f"actuals not found: capacity_actuals_{iso.lower()}.csv")
+
+    monkeypatch.setattr(X, "load_ledgers_for_run", lambda p: {})
+    monkeypatch.setattr(X.CH, "load_actuals", _no_target)
+    monkeypatch.setattr(X.CH, "model_co2_by_year", lambda p: {2023: 1.0})
+    monkeypatch.setattr(X, "crossover_actual_co2", lambda iso, years: {2023: 2.0})
+    out = X.score_capacity_events(tmp_path, "CAISO", None)
+    assert out["retirements"] is None
+    assert out["additions"] is None
+    assert out["additions_cod_basis"] is None
+    assert out["additions_basis"] is None
+    assert "no committed exit/addition target" in out["capacity_events_note"]
+    assert "CAISO" in out["capacity_events_note"]
+    assert out["co2"] == {"model": {"2023": 1.0}, "actual": {"2023": 2.0}}
+
+
+def test_report_renders_capacity_events_degrade(tmp_path):
+    """The (b) section renders the absence note, not a fabricated table."""
+    score = {
+        "run_id": "caiso-test",
+        "iso": "CAISO",
+        "vintage_year": 2023,
+        "crossover_forward_year": 2023,
+        "dispatch_skill": {
+            "keeper_run_id": "k",
+            "keeper_note": None,
+            "metrics": {},
+            "family_volume": {},
+            "deferred": {},
+        },
+        "capacity_events_note": "capacity events not scored — no committed "
+        "exit/addition target exists for CAISO",
+        "retirements": None,
+        "additions": None,
+        "forward_invariants": {"note": "n/a", "per_year": {}},
+    }
+    path = tmp_path / "report.md"
+    X.write_report(score, path)
+    text = path.read_text()
+    assert "no committed exit/addition target exists for CAISO" in text
+    assert "thermal GW retired" not in text
+
+
 def test_capacity_reuse_score_retirements_passthrough():
     actuals = pd.DataFrame(
         [{"kind": "retirement", "fuel": "coal", "mw": 1000, "year": 2023}]
