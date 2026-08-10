@@ -6980,3 +6980,71 @@ which the rule requires). Rule 28: **no cell minted** — nothing was armed or
 tested as a mechanism. Keeper `2026-08-09-run181-position-tail` untouched.
 
 **Next shorthand: ercot-186.** *(ercot-185 is the concurrently-running D2 fault-3 lane.)*
+
+---
+
+## ercot-185 (2026-08-09) — the fault-3 partial-layer construction repair: KEEPER
+
+**Keeper: `2026-08-09-run181-position-tail` → `2026-08-09-ercot185-shaped-partial`.**
+Determination **NOT-YET** (unchanged); fail set narrows **{C3a-2023, C3b-2023,
+C3b-2024} → {C3a-2023, C3b-2023}**.
+
+Charter: the SIGNED owner ruling of the 2026-08-09 sitting, card D2 option C —
+*"The ceiling lane stays frozen for composition-rule work; a fault-3
+partial-layer construction re-charter is authorized as its successor, with
+G-COAL148 carried live."* Precommit pushed before any measurement or derive
+(`docs/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md`),
+plus a pre-measurement amendment A-1 electing the NORMALIZED construction.
+
+**Mechanism** (`ercot_partial_outage_shaped_derate`, default off, zero new
+scalars). NOT a composition change — the `f_window × f_partial` product is
+untouched and ERCOT-148/149 is not repealed. The CAMPD partial-outage plateau
+stops imposing a multi-week MEDIAN OF DAILY MAXIMA as an HOURLY ceiling
+(`FINDING-ercot172` §4 fault 3); the same plateaus over the same day spans
+carry `shaped(d) = clip(f0·sm[d]/median(sm[i:j]), 0, 1)`. `f0` and `sm` are
+medians of the SAME daily-maximum series differing only in the median's window
+— a grain refinement IN TIME, the temporal analogue of ercot-174's unit-grain
+refinement. Scaling commutes with the median, so `median(shaped) = f0` exactly:
+a provable pure re-shaping, never a net lift or cut.
+
+**Measured.** C3b-2024 **0.205 → 0.160 (PASS)**; C3a-2024 +2.7 → +1.4 %;
+NRMSE-2024 3.007 → 2.794. 2023 and 2025 inert (C3a −32.4 → −32.5 and −7.9 →
+−7.9; C3b 0.602 / 0.101 unchanged; tail 61/3, shed 4/0 unchanged). ρ vs the
+REJECTED ercot-173 blanket lift 0.125/0.085/0.042 (unit-scoped was
+0.938/0.959/0.961); two-sidedness ~50/50 every year vs the composition family's
+100 %-above signature.
+
+**Gates: 7 PASS, 2 FAIL ⇒ pre-registered verdict REJECTED-AS-ARMED**, carried
+openly and not re-scored. PASS: G-SPAN, G-SPUR, **G-COAL148 (max rise 0.182 TWh
+vs the 0.5 bar — the blanket arm failed at +0.98/+1.95/+2.73)**, G-DOF, G-D2,
+G-OWNER; G-BIT N/A declared pre-solve. FAIL: G-SHED (2024 shed 2 → 2, had to
+fall; no year rose) and G-C3c (2024 tail 25 → 23 vs actual 53).
+**PROMOTED OVER THAT VERDICT** under the owner's standing structural standard
+given in-session (*"if structural integrity improves but gates regress that may
+still be a keeper"*). LOYO N/A — parameter-free rule; the gain is 2024-only and
+no year degrades materially.
+
+**The structural result.** The arm still sheds at exactly h2827/h3067: the
+repair lifts W A Parish 0.363 → 0.578 there, but the composed ceiling is
+0.6995 × 0.578 = **0.404** against a same-hour CEMS of **0.7843** — the residual
+at the object is **fault 1, the double-count**, which this charter fences off.
+That refutes G-SHED's founding hypothesis rather than showing a regression, and
+separates the two faults on measurement for the first time.
+
+**What it unblocks, NOT taken here.** With the repaired layer armed G-COAL148
+uses only 0.182 of its 0.5 TWh headroom — the first measured evidence for
+`DECISION-MEMO-ercot-148149-doublecount-2026-08-07.md` §5's claim that removing
+the double-count against a REPAIRED partial layer may no longer flood
+2023/2025. A separate later adjudication; ERCOT-148/149 stays armed.
+
+**Disclosed.** A pre-existing breakage at HEAD blocked EVERY ISO's calibration
+path: `solve_and_persist` had forwarded `cc_winter_capability_basis` to
+`run_year` since the caiso-186 merge without the parameter existing there, so
+every orchestrated solve raised `TypeError` before the LP. Repaired; all 255
+forwarded kwargs audited, no other gaps.
+
+Records: `results/calibration/FINDING-ercot185-fault3-partial-layer-2026-08-09.md`,
+`ercot185_ab.json`, `ercot185_coal148.json`, `ercot185_shaped_seam_proof.json`;
+runs `2026-08-09-ercot185-shaped-control` + `2026-08-09-ercot185-shaped-partial`.
+ERCOT holds no `complete`/`final` marker, so no `calibration-complete.json`
+re-key applies.
