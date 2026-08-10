@@ -126,8 +126,11 @@ class CurvePack:
 
     ``price_at_pctl`` re-``lexsort``s its whole segment set on every call, which
     the G-4 bisection would pay ~30 times per cell.  This packs the same
-    construction — and :meth:`price_at_pctl` is asserted against
-    ``_miso145_offer_conduct.price_at_pctl`` before any reading is taken.
+    construction — and gate **G-F0c** measures :meth:`price_at_pctl` against
+    ``_miso145_offer_conduct.price_at_pctl`` on the real curve of every
+    year x window x market cell, so the speed-up is verified rather than
+    asserted (PREREG TRAP-1: machinery that tests an identity must itself be
+    checked against the construction it replaces).
     """
 
     def __init__(self, hours, seg_h, seg_p, seg_mw) -> None:
@@ -357,24 +360,38 @@ def ceiling_v_star(real: CurvePack, below, total, anchor, wgt, bar=REINSTATEMENT
 # ----------------------------------------------------------- the U2 locator
 
 
-def book_intermittent_mw(year: int, market: str, hours: np.ndarray, thr: float) -> np.ndarray:
-    """Per-hour MW the miso-146 screen labels intermittent, at threshold ``thr``.
+def book_screen_pack(year: int, market: str, hours: np.ndarray) -> dict:
+    """The miso-146 screen's per-unit features plus this window's meta segments.
 
     The screen is miso-146's verbatim (``load_declarations`` / ``unit_features``
-    / ``classify``); only the symmetric threshold is swept.  miso-146's P-1
-    found the threshold load-bearing, which is exactly why U2 is reported as a
-    BAND and is never load-bearing on any verdict here (PREREG §3).
+    / ``classify``); only the symmetric threshold is swept, and the expensive
+    halves (the corpus read and the feature build) are done ONCE per
+    year x market rather than once per threshold.
     """
     import _miso146_intermittent_screen as scr
 
-    decl = scr.load_declarations(year, market)
-    feat = scr.unit_features(decl)
-    lab = scr.classify(feat, thr, thr)
+    feat = scr.unit_features(scr.load_declarations(year, market))
     segs = oc.load_real_segments(year, market, hours, with_meta=True)
-    is_int = segs["unit_code"].map(lab).fillna(False).to_numpy(bool)
-    idx = np.searchsorted(hours, segs["hour"].to_numpy()[is_int])
+    return {
+        "feat": feat,
+        "unit": segs["unit_code"],
+        "idx": np.searchsorted(hours, segs["hour"].to_numpy()),
+        "mw": segs["seg_mw"].to_numpy(float),
+    }
+
+
+def book_intermittent_mw(pack: dict, hours: np.ndarray, thr: float) -> np.ndarray:
+    """Per-hour MW the miso-146 screen labels intermittent, at threshold ``thr``.
+
+    miso-146's P-1 found the threshold load-bearing, which is exactly why U2 is
+    reported as a BAND and is never load-bearing on any verdict here (PREREG §3).
+    """
+    import _miso146_intermittent_screen as scr
+
+    lab = scr.classify(pack["feat"], thr, thr)
+    is_int = pack["unit"].map(lab).fillna(False).to_numpy(bool)
     return np.bincount(
-        idx, weights=segs["seg_mw"].to_numpy(float)[is_int], minlength=hours.size
+        pack["idx"][is_int], weights=pack["mw"][is_int], minlength=hours.size
     )
 
 
@@ -582,17 +599,24 @@ def measure(markets=("RT", "DA"), u2_thresholds=(0.30, 0.50, 0.70)) -> dict:
             for market in markets:
                 s = seg_cache[market]
                 s = s[s["hour"].isin(hours)]
-                packs[market] = CurvePack(
-                    hours,
-                    s["hour"].to_numpy(),
-                    s["seg_price"].to_numpy(float),
-                    s["seg_mw"].to_numpy(float),
+                sh = s["hour"].to_numpy()
+                sp = s["seg_price"].to_numpy(float)
+                sm = s["seg_mw"].to_numpy(float)
+                packs[market] = CurvePack(hours, sh, sp, sm)
+                # G-F0c -- the packed reader against miso-145's own primitive.
+                q = np.full(hours.size, 0.85)
+                d = np.nanmax(
+                    np.abs(
+                        packs[market].price_at_pctl(q)
+                        - oc.price_at_pctl(hours, sh, sp, sm, q)
+                    )
                 )
                 blk["real"][market] = {
                     "real_capability_gw": round(
                         float((packs[market].total * wgt).sum()) / 1000.0, 3
                     ),
                     "n_segments": int(s.shape[0]),
+                    "G_F0c_pack_vs_miso145_price_at_pctl_max_abs": round(float(d), 8),
                 }
 
             for bracket in ("lo", "hi"):
@@ -673,8 +697,9 @@ def measure(markets=("RT", "DA"), u2_thresholds=(0.30, 0.50, 0.70)) -> dict:
             if wname == "JJA_h12_17":
                 u2: dict = {}
                 for market in markets:
+                    spack = book_screen_pack(year, market, hours)
                     for thr in u2_thresholds:
-                        cap_h = book_intermittent_mw(year, market, hours, thr)
+                        cap_h = book_intermittent_mw(spack, hours, thr)
                         scale = np.clip(
                             cap_h / np.maximum(1e-9, vre_h), 0.0, 1.0
                         )
