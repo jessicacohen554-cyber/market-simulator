@@ -257,6 +257,12 @@ def _prep_clock_gas(df: pd.DataFrame, gas_day: pd.Series) -> pd.DataFrame:
     gasless days — the exact row-level prep the pool construction has always
     applied, factored out so the light live frame and the full-column pool
     frame are prepped identically (the streaming split of ``_load_year``).
+
+    Every derived column is taken from the PRE-filter clock arrays
+    (``ts``/``cst``/``mo``/``dy``/``hh``) masked by ``ok``, never re-read off
+    the already-filtered frame: mixing the two indexes the post-filter frame
+    with the pre-filter mask and raises ``IndexError`` the moment a leap-year
+    basis actually carries Feb-29 rows (ERCOT-187 / ERCOT-183).
     """
     ts = pd.to_datetime(df["SCED Time Stamp"])
     cst = ts.dt.tz_localize(
@@ -266,10 +272,11 @@ def _prep_clock_gas(df: pd.DataFrame, gas_day: pd.Series) -> pd.DataFrame:
     dy = cst.dt.day.to_numpy()
     hh = cst.dt.hour.to_numpy()
     ok = ~((mo == 2) & (dy == 29))
+    ts_pre = ts.to_numpy()
     df = df.loc[np.asarray(ok)].copy()
     df["hoy"] = _MONTH_START_HOUR[mo[ok] - 1] + (dy[ok] - 1) * 24 + hh[ok]
     df["_date"] = cst.dt.normalize().dt.tz_localize(None)[np.asarray(ok)].to_numpy()
-    df["_ts"] = pd.to_datetime(df["SCED Time Stamp"]).to_numpy()[np.asarray(ok)]
+    df["_ts"] = ts_pre[np.asarray(ok)]
     df["stat"] = df["Telemetered Resource Status"].astype(str).str.strip()
     df["gas_day"] = gas_day.reindex(pd.DatetimeIndex(df["_date"])).to_numpy(float)
     return df[df["gas_day"] > 0].copy()
