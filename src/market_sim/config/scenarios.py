@@ -268,6 +268,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # bounds the deactivation queue and so gets a distinct key. Owner decision
     # D-8 (ffr-owner-sitting-2026-08-02.md Addendum F.1).
     "exit_rate_limits",
+    # FFR-9C R-b SMR availability-year gate (GATED default-off): dropped from
+    # the hash at its default (None = the shipped always-eligible posture) so
+    # every pre-existing cache key is byte-stable; an armed run removes
+    # nuclear_smr from the entry candidate pool before the gate year — a
+    # different scenario — and gets a distinct key. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 / caiso-186 discipline).
+    "smr_available_year",
     # National CES federal EAC premium (W1-A, national-ces-eac-premium-plan
     # §5.1): default-off block, dropped from the hash at defaults so
     # cache_key(ScenarioConfig()) is byte-identical before/after the fields
@@ -928,6 +935,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "summer_derate_basis_aware": "False",
     "vre_procurement_additions_enabled": "False",
+    # Added by FFR-9C WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "smr_available_year": "None",
     # Backfilled at FFR-7B alongside the field's (missing) registration above:
     # nyiso-128 landed the field unregistered, moving the pinned default key.
     "nyiso_solar_market_generator_basis": "False",
@@ -1976,6 +1986,24 @@ class ScenarioConfig:
     egs_available_year: int = 2030  # year EGS enters the candidate pool
     offshore_wind_available_year: int = 2030
     offshore_wind_eligible_isos: list[str] = field(default_factory=lambda: ["CAISO"])
+    smr_available_year: "int | None" = None  # GATED default-off (FFR-9C R-b,
+    # manager dispatch Addendum AI.2 on FFR-9B §4). ``nuclear_smr`` sits in the
+    # always-eligible _NEW_ENTRY_TECHS tuple with NO availability-year gate,
+    # unlike every _EMERGING_AVAILABLE_YEAR tech — so a 2022-decided,
+    # 2024-commissioned ERCOT SMR "builds" 2.0 GW/yr at hot screens (FFR-9B §3:
+    # 4.0 GW of phantom SMR, crowding wind out of the shared ISO budget) even
+    # though ATB itself costs SMR from 2030 only (constants.NEW_ENTRY_COSTS
+    # ["nuclear_smr"]: "ATB costs new nuclear from 2030 only, so the base
+    # snapshot is ATB's 2030 projection (its earliest year)"). When set,
+    # _new_entry_candidates drops nuclear_smr for years < the gate — the same
+    # mechanism the emerging techs carry, kept as a separate optional field so
+    # the default (None) is byte-identical to the shipped always-eligible
+    # posture (no keeper or registered arm moves). ARMED BY INVOCATION with
+    # the ATB-cited 2030 in measurement arms; promotion into the shipped
+    # default is a later manager/owner act on that lane's evidence (rule 22
+    # LOYO first). Rule 13: a published availability year, forward-
+    # reproducible, condition-responsive — the ccs_available_year family.
+    # Registered in _CACHE_KEY_OPTIONAL_FIELDS (off runs keep their key).
 
     # Tier 2 (expert/sensitivity)
     gas_seasonality: bool = True  # Apply monthly Henry Hub seasonality shape
@@ -12528,6 +12556,7 @@ TIER_TAGS: dict[str, int] = {
     "ccs_available_year": 1,
     "egs_available_year": 1,
     "offshore_wind_available_year": 1,
+    "smr_available_year": 1,
     "offshore_wind_eligible_isos": 1,
     "gas_seasonality": 2,
     "storage_rte_4hr": 2,
