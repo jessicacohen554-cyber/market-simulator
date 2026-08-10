@@ -892,7 +892,85 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-09-caiso-184-c1-lpbasis`** — caiso-184, the outage-derate DENOMINATOR repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY with **EVERY pre-registered gate PASSING**; **NOT-YET**, 8 criteria scored, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.5 / +13.1 %** having narrowed in all three years against a **ZERO** same-head noise floor). **QUEUE RE-CONFIRMED EMPTY 2026-08-09 by caiso-185: `cc_capacity_reconcile` — the last named un-adjudicated in-model cell — is **REJECTED EX ANTE, NO LP SPENT**, and the open question is now an OWNER SITTING, not a tenth lever.** **THE SITTING IS NOW PREPARED (owner-sitting session, 2026-08-09, `docs/handoffs/caiso-186-owner-sitting-2026-08-09.md`): both owner questions are DECIDABLE from committed artifacts, and BOTH ANSWER **NO** — the walled PS water-state intake covers only **62.1 % / 10.4 %** of 2024/2025's required C3a move at its most favourable bound, and a C3a ledger amendment would take TWO rubric changes, inherit to ERCOT (−32.4 %) and MISO (−14.1 %), and flip MISO for free. **THE NON-LEVER WORK IS RE-STATED AND IT IS LARGER THAN THE LEDGER SAYS:** CAISO's ISO-specific residual DOF census is **3, not 4** (the TAC-weights row CLOSED at caiso-172) and CAISO is **TIED WITH ERCOT**, not "the most of any ISO" — but the `IMPORT_TRANCHES[CAISO]` row's "superseded on the binding path" text **DOES NOT CHECK OUT**: split into limbs, **the four spot CAPACITIES (8,800 MW, uncited, and the object FINDING-caiso140 §C measures as pinning the belly λ) and the two firm PRICES (re-armed onto the margin by `caiso_firm_import_selfsched_clip`, 0.97/4.63/5.71 TWh/yr) are LIVE AND FITTED** — 7 live fitted scalars on the backcast binding path where the ledger implies ~1.**
+### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-09-caiso-188-d1-micseam`** — caiso-188, the SEAM-CAP PROVENANCE repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY under rule 14 with **ZERO gate flips either way**: the fitted 7,500 MW `WECC_import_simultaneous` cap the ledger called *superseded* had been binding 764/477/807 h since caiso-175, and the published branch-group MIC (16,055/16,452/16,148 MW) retires it — seam dual now EXACTLY 0.000 in every hour. **NOT-YET**, 8 criteria, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.4 / +12.9 %**. Superseding **`2026-08-09-caiso-184-c1-lpbasis`** — caiso-184, the outage-derate DENOMINATOR repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY with **EVERY pre-registered gate PASSING**; **NOT-YET**, 8 criteria scored, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.5 / +13.1 %** having narrowed in all three years against a **ZERO** same-head noise floor). **QUEUE RE-CONFIRMED EMPTY 2026-08-09 by caiso-185: `cc_capacity_reconcile` — the last named un-adjudicated in-model cell — is **REJECTED EX ANTE, NO LP SPENT**, and the open question is now an OWNER SITTING, not a tenth lever.** **THE SITTING IS NOW PREPARED (owner-sitting session, 2026-08-09, `docs/handoffs/caiso-186-owner-sitting-2026-08-09.md`): both owner questions are DECIDABLE from committed artifacts, and BOTH ANSWER **NO** — the walled PS water-state intake covers only **62.1 % / 10.4 %** of 2024/2025's required C3a move at its most favourable bound, and a C3a ledger amendment would take TWO rubric changes, inherit to ERCOT (−32.4 %) and MISO (−14.1 %), and flip MISO for free. **THE NON-LEVER WORK IS RE-STATED AND IT IS LARGER THAN THE LEDGER SAYS:** CAISO's ISO-specific residual DOF census is **3, not 4** (the TAC-weights row CLOSED at caiso-172) and CAISO is **TIED WITH ERCOT**, not "the most of any ISO" — but the `IMPORT_TRANCHES[CAISO]` row's "superseded on the binding path" text **DOES NOT CHECK OUT**: split into limbs, **the four spot CAPACITIES (8,800 MW, uncited, and the object FINDING-caiso140 §C measures as pinning the belly λ) and the two firm PRICES (re-armed onto the margin by `caiso_firm_import_selfsched_clip`, 0.97/4.63/5.71 TWh/yr) are LIVE AND FITTED** — 7 live fitted scalars on the backcast binding path where the ledger implies ~1.**
+
+> **caiso-188 (2026-08-09) — THE `IMPORT_TRANCHES[CAISO]` DOF CENSUS, AND WHAT
+> IT CAUGHT NEXT DOOR: THE FITTED **7,500 MW** `WECC_import_simultaneous` CAP —
+> WHICH THE LEDGER AND `_caiso186os` BOTH CERTIFY AS *SUPERSEDED* — HAS BEEN THE
+> BINDING AGGREGATE IMPORT LIMIT IN **EVERY CAISO KEEPER SINCE caiso-175**,
+> THE DESIGNATED ONE INCLUDED.** **KEEPER PROMOTED, OWNER-DIRECTED IN THE SAME
+> SESSION, TO `2026-08-09-caiso-188-d1-micseam` (the MIC-seam arm), superseding
+> `2026-08-09-caiso-184-c1-lpbasis`; `calibration-complete.json` /
+> `holdout-freeze.json` UNTOUCHED — CAISO holds no `complete` marker, so rule 22
+> D-5(b) re-keying does not fire; 2023–2025 only.**
+> * **THE CENSUS (the chartered object).** Four limbs, measured on the keeper's own
+>   BUILT fleet, not read off the source. CLOSED: firm **capacity** (measured per year,
+>   DMM RA-import × published MIC split) and spot **price** (all four `mc` rows measured
+>   as HOURLY — the per-hub injector's measured hub series). LIVE AND FITTED: firm
+>   **price** ($28.00/$48.00, measured as CONSTANT `mc` rows in all three years) and spot
+>   **capacity** (8,800 MW, uncited). **The count is 6, not 7** — this block's own earlier
+>   text and the caiso-186 sitting memo both print "7 live fitted scalars" over the same
+>   enumeration (4 + 2); corrected here and in the DOF ledger, which now carries
+>   `n_scalars: 6`.
+> * **THE 8,800 MW IS NOT THE OPERATIVE CEILING, and `_caiso186os`'s attribution of the
+>   caiso-140 §C belly plateau to it is CORRECTED.** The measured p95 corridor
+>   deliverability envelope is the tightest per-corridor bound in **25,866 of 26,280**
+>   corridor-hours (the ladder in 214, all north, all 2023–24; **0 of 8,760 DSW hours in
+>   every year**). The limb's live roles are filling the band between firm + measured-clean
+>   depth and that envelope, and placing the CARB-EF price breakpoints (the built rows
+>   invert to a $12.01/MWh border adder). **No published object maps**: MIC is an annual
+>   RA-showing allocation already spent twice in this model (firm split + seam limit), so
+>   a third use is a rule 19 `[R-ONE-MECH]` double-count on a category error; the path
+>   ratings map only to the ceiling role the measured envelope already owns; and the Q-Q
+>   capacity route is the **inverse of the same estimator whose price axis failed LOYO at
+>   30.5 % vs a 25 % bar** (caiso-83/86/86b, DO-NOT-REDO). **Nothing was guessed and no
+>   scalar was re-fitted** — the limb stays an open root-cause issue (rule 20 `[R-DOF]`),
+>   now honestly described.
+> * **WHAT THE CEILING STACK CAUGHT.** The keeper's committed sidecars pin total net
+>   import at **exactly 7,500.0 MW in 764/477/809 h** of 2023/24/25 and never above.
+>   `capacity_deliverability_limits` Part A resolves the published MIC through a
+>   **gitignored clean partition no solve auto-builds**; absent, it no-ops while
+>   `run_config.json` still records the flag `true`. **caiso-157 found this exact defect
+>   (caiso-146…153, 757/472/857 h) and installed a fail-fast guard — which has NEVER RUN:
+>   `check_clean_partitions`'s only call site is `pipeline/year.py::run_year_solve`, a
+>   function with no production caller.** Its unit tests call it directly, so it passed CI
+>   while dead on the solve path.
+> * **THE A/B (full span, single delta, both registered).** **G-CTRL:** the control
+>   (flag OFF) reproduces the committed keeper **EXACTLY — max |Δ| 0.00 MW, every class,
+>   every hour, all three years** — through 22 changed `src/` files and a different solver
+>   build; that *proves* the keeper solved with this flag inert, **and with
+>   `hydro_ror_split` inert too** (the control had no `hydro-plant-modes` partition
+>   either — two armed mechanisms advertised in `meta.json` and absent from the LP).
+>   **G-SEAM:** seam-group dual off each arm's network sidecar — control binding
+>   **764/477/807 h**, mean dual **−2.903/−0.223/−0.368**, rent
+>   **−$190.7M/−$14.7M/−$24.2M**; arm binding **0 h, dual EXACTLY 0.000 every hour, rent
+>   $0.0M**, reproducing `FINDING-caiso133` §4 *and* caiso-157's own magnitudes seven
+>   sessions later. Arm import maxima return to the pre-caiso-175 values to the decimal.
+>   **RULE 14:** the fitted cap is **falsified** — the real system exceeded it in
+>   **271/293/681 h**, reaching **13,136/13,312/15,080 MW**, all inside the published MIC
+>   (the `retire_misattributed_sil` / nyiso-100 pattern). **COST, PUBLISHED:** in the
+>   pinned hours the arm takes **+586/+333/+422 MW** more, widening model-over-measured
+>   from +1,488/+1,604/+763 to +2,075/+1,937/+1,184 MW; the standing over-import
+>   (caiso-121/135/140 §B) is the named root cause. **RUBRIC, REPORTED NEVER TARGETED:**
+>   **zero gate flips**, C3a **+10.5→+10.4 %** (2024) / **+13.1→+12.9 %** (2025), both
+>   arms **NOT-YET**; G-LOYO not triggered.
+> * **PROMOTION (owner-directed, this session).** The arm is the keeper: it removes a
+>   measurement-falsified fitted scalar from the binding path and installs a published,
+>   per-year, forward-reproducible object already crosswalked in the repo — **zero DOF
+>   added, zero gate flips, C3a reported never targeted**. Rule 14 governs: the accurate
+>   input would have stayed even had the fit worsened.
+> * **FIXED HERE:** the guard is **wired** on the backcast solve path (after the
+>   `fleet_only` exit, so reconstruction probes still run) and the unresolved-Part-A
+>   branch now WARNs naming the fitted fallback (pinned by a test). **STILL OWED:** the
+>   forecast orchestrator has no guard call; nothing committed records which seam cap a
+>   bundle solved against; and the dormant `hydro_ror_split` is its own A/B, filed not
+>   absorbed (rule 19).
+> Cells touched: `capacity_deliverability` CAISO backcast note + evidence (duty b). No
+> new `ScenarioConfig` field. Record:
+> `results/calibration/FINDING-caiso188-import-tranche-dof-2026-08-09.md`,
+> `PRECHECK-caiso188-mic-seam-2026-08-09.md`,
+> `scripts/probes/_caiso188_import_tranche_census.py`, `_caiso188_seam_cap_forensics.py`,
+> runs `2026-08-09-caiso-188-d0-control` / `2026-08-09-caiso-188-d1-micseam`.
 
 > **caiso-186 OWNER SITTING (2026-08-09) — THE SITTING IS PREPARED, NOT A LEVER.
 > NO CELL VERDICT MOVES: no mechanism was proposed, tested or adjudicated, no
