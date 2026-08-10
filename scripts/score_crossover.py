@@ -747,7 +747,34 @@ def score_capacity_events(
             is checked against. ``None`` records the gate as unverifiable.
     """
     ledgers = load_ledgers_for_run(cache_dir)
-    actuals = CH.load_actuals(iso)
+    try:
+        actuals = CH.load_actuals(iso)
+    except SystemExit as exc:
+        # No committed capacity-actuals target for this ISO (FH-4-CAISO:
+        # capacity_actuals_caiso.csv has never been built — data/raw/
+        # _validation-source carries ERCOT/MISO/NEISO/NYISO/PJM only). Degrade
+        # exactly like the missing-keeper path in score_dispatch_skill: record
+        # the absence explicitly and score nothing against a target that does
+        # not exist. The co2 block stays scored — its actual comes from the
+        # bench, not this file. Downstream readers already tolerate the None
+        # blocks (forecast_verdict._collect_hindcast_bands isinstance-guards;
+        # write_report and the register_hindcast page branch on the note).
+        model_co2 = {str(k): v for k, v in CH.model_co2_by_year(cache_dir).items()}
+        actual_co2 = {
+            str(k): v for k, v in crossover_actual_co2(iso, SCORED_YEARS).items()
+        }
+        return {
+            "capacity_events_note": (
+                f"capacity events not scored — no committed exit/addition "
+                f"target exists for {iso} ({exc}); reported as absent, never "
+                "fabricated"
+            ),
+            "retirements": None,
+            "additions": None,
+            "additions_cod_basis": None,
+            "additions_basis": None,
+            "co2": {"model": model_co2, "actual": actual_co2},
+        }
     mret = CH.model_retirements(ledgers)
     madd = CH.model_additions(ledgers, basis=CH.ADDITIONS_BASIS_DECISION)
     madd_cod = CH.model_additions(ledgers, basis=CH.ADDITIONS_BASIS_COD)
@@ -947,26 +974,32 @@ def write_report(score: dict, report_path: Path) -> None:
     # (b) capacity events
     L.append("## (b) Capacity events 2023-2025 vs registry actuals")
     L.append("")
-    tg = score["retirements"]["total_gw"]
-    rr = score["retirements"]["unit_recall_gt300"]
-    L.append("| metric | actual | model | err | band |")
-    L.append("|---|--:|--:|--:|:--|")
-    L.append(
-        f"| thermal GW retired | {tg['actual']} | {tg['model']} | "
-        f"{_fmt(tg['err_frac'], '+.0%')} | {tg['band']} |"
-    )
-    L.append(
-        f"| unit recall >300MW | {rr['n_big_actual']} units | {rr['matched']} matched | "
-        f"{'n/a' if rr.get('n_a') else _fmt(rr['recall'], '.0%')} | {rr['band']} |"
-    )
-    L.append(
-        f"| total additions | — | {score['additions']['model_total_gw']} GW | "
-        f"(actual {score['additions']['actual_total_gw']} GW) | — |"
-    )
-    L.append("")
-    L.extend(
-        CH.render_reachability_section(score["retirements"].get("reachability"), rr)
-    )
+    if score.get("capacity_events_note"):
+        # ISO with no committed capacity-actuals target (FH-4-CAISO degrade):
+        # the absence is the record — no table is fabricated.
+        L.append(f"> {score['capacity_events_note']}")
+        L.append("")
+    else:
+        tg = score["retirements"]["total_gw"]
+        rr = score["retirements"]["unit_recall_gt300"]
+        L.append("| metric | actual | model | err | band |")
+        L.append("|---|--:|--:|--:|:--|")
+        L.append(
+            f"| thermal GW retired | {tg['actual']} | {tg['model']} | "
+            f"{_fmt(tg['err_frac'], '+.0%')} | {tg['band']} |"
+        )
+        L.append(
+            f"| unit recall >300MW | {rr['n_big_actual']} units | {rr['matched']} matched | "
+            f"{'n/a' if rr.get('n_a') else _fmt(rr['recall'], '.0%')} | {rr['band']} |"
+        )
+        L.append(
+            f"| total additions | — | {score['additions']['model_total_gw']} GW | "
+            f"(actual {score['additions']['actual_total_gw']} GW) | — |"
+        )
+        L.append("")
+        L.extend(
+            CH.render_reachability_section(score["retirements"].get("reachability"), rr)
+        )
     # (c) forward invariants
     fi = score["forward_invariants"]
     L.append("## (c) Forward years (>= 2026) — invariants / plausibility only")
