@@ -1,0 +1,843 @@
+{
+ "session": "miso-149",
+ "prereg": "results/calibration/PREREG-miso149-overlay-contradiction-2026-08-10.md",
+ "prereg_commit": "318c0542",
+ "gate": "G-1/G-2 CLEAN SCOPE (PREREG \u00a75 traps 2+3 counter-measurements)",
+ "construction": "PLANT TOTAL over all four fossil families on BOTH sides, so a family-crosswalk split inside a matched plant cancels; CHP-bearing plants reported separately (the adjudicated BTM boundary); and the rating question separated from the availability question by conditioning on model total pmax >= plant CAMPD total p99.",
+ "years": {
+  "2023": {
+   "n_plants_both": 216,
+   "variants": {
+    "keeper": {
+     "ALL": 6654.1,
+     "NO_CHP": 3972.1,
+     "ADEQUATELY_RATED": 586.4,
+     "NO_CHP_AND_ADEQUATELY_RATED": 578.9,
+     "NO_CHP_ADEQ_EXCL_OA": 412.0
+    },
+    "no_ufac": {
+     "ALL": 5178.4,
+     "NO_CHP": 2550.9,
+     "ADEQUATELY_RATED": 282.1,
+     "NO_CHP_AND_ADEQUATELY_RATED": 274.6,
+     "NO_CHP_ADEQ_EXCL_OA": 198.7
+    },
+    "no_mgfac": {
+     "ALL": 6650.4,
+     "NO_CHP": 3968.6,
+     "ADEQUATELY_RATED": 585.5,
+     "NO_CHP_AND_ADEQUATELY_RATED": 578.0,
+     "NO_CHP_ADEQ_EXCL_OA": 411.1
+    },
+    "no_overlay": {
+     "ALL": 5068.8,
+     "NO_CHP": 2441.6,
+     "ADEQUATELY_RATED": 276.0,
+     "NO_CHP_AND_ADEQUATELY_RATED": 268.6,
+     "NO_CHP_ADEQ_EXCL_OA": 192.6
+    },
+    "at_rating": {
+     "ALL": 3331.9,
+     "NO_CHP": 861.4,
+     "ADEQUATELY_RATED": 2.0,
+     "NO_CHP_AND_ADEQUATELY_RATED": 2.0,
+     "NO_CHP_ADEQ_EXCL_OA": 1.9
+    }
+   },
+   "buckets": {
+    "ALL": {
+     "n_plants": 216,
+     "model_pmax_mw": 106942.5,
+     "contradiction_mean_mw": 6654.1,
+     "contradiction_S1_mw": 8098.2,
+     "monthly_mw": [
+      8247.4,
+      6482.1,
+      6997.7,
+      5775.0,
+      6615.0,
+      5628.5,
+      6144.4,
+      6004.2,
+      5755.0,
+      7483.7,
+      7253.2,
+      7375.5
+     ],
+     "may_mw": 6615.0
+    },
+    "NO_CHP": {
+     "n_plants": 189,
+     "model_pmax_mw": 102324.2,
+     "contradiction_mean_mw": 3972.1,
+     "contradiction_S1_mw": 5243.2,
+     "monthly_mw": [
+      5367.7,
+      3818.5,
+      4507.8,
+      3264.2,
+      4149.7,
+      3041.2,
+      3598.8,
+      3398.4,
+      3094.0,
+      4819.9,
+      4247.9,
+      4269.4
+     ],
+     "may_mw": 4149.7
+    },
+    "ADEQUATELY_RATED": {
+     "n_plants": 130,
+     "model_pmax_mw": 57578.5,
+     "contradiction_mean_mw": 586.4,
+     "contradiction_S1_mw": 931.4,
+     "monthly_mw": [
+      707.0,
+      621.4,
+      794.2,
+      793.2,
+      864.5,
+      240.5,
+      297.4,
+      496.7,
+      546.5,
+      800.4,
+      577.9,
+      294.2
+     ],
+     "may_mw": 864.5
+    },
+    "NO_CHP_AND_ADEQUATELY_RATED": {
+     "n_plants": 121,
+     "model_pmax_mw": 56580.4,
+     "contradiction_mean_mw": 578.9,
+     "contradiction_S1_mw": 912.5,
+     "monthly_mw": [
+      690.5,
+      619.5,
+      788.3,
+      793.2,
+      849.8,
+      233.3,
+      294.6,
+      495.6,
+      540.1,
+      780.3,
+      577.9,
+      282.3
+     ],
+     "may_mw": 849.8
+    },
+    "NO_CHP_ADEQ_EXCL_OA": {
+     "n_plants": 120,
+     "model_pmax_mw": 55427.4,
+     "contradiction_mean_mw": 412.0,
+     "contradiction_S1_mw": 716.1,
+     "monthly_mw": [
+      656.5,
+      395.1,
+      469.6,
+      491.4,
+      570.9,
+      230.7,
+      292.2,
+      365.8,
+      305.5,
+      434.9,
+      444.0,
+      279.6
+     ],
+     "may_mw": 570.9
+    }
+   },
+   "rating_question": {
+    "n_plants_under_rated": 86,
+    "total_gap_mw": 9280.7,
+    "gap_mw_chp_plants": 4077.9,
+    "gap_mw_non_chp_plants": 5202.8,
+    "top": [
+     {
+      "plant": 55419,
+      "model_pmax": 267.2,
+      "campd_p99": 1394.4,
+      "ratio": 0.192,
+      "has_chp": true,
+      "gap_mw": 1127.2
+     },
+     {
+      "plant": 55641,
+      "model_pmax": 534.8,
+      "campd_p99": 1312.0,
+      "ratio": 0.408,
+      "has_chp": false,
+      "gap_mw": 777.2
+     },
+     {
+      "plant": 50625,
+      "model_pmax": 181.7,
+      "campd_p99": 817.7,
+      "ratio": 0.222,
+      "has_chp": true,
+      "gap_mw": 636.0
+     },
+     {
+      "plant": 1391,
+      "model_pmax": 76.3,
+      "campd_p99": 676.0,
+      "ratio": 0.113,
+      "has_chp": true,
+      "gap_mw": 599.7
+     },
+     {
+      "plant": 6009,
+      "model_pmax": 1252.9,
+      "campd_p99": 1709.0,
+      "ratio": 0.733,
+      "has_chp": false,
+      "gap_mw": 456.1
+     },
+     {
+      "plant": 4041,
+      "model_pmax": 616.0,
+      "campd_p99": 1070.0,
+      "ratio": 0.576,
+      "has_chp": false,
+      "gap_mw": 454.0
+     },
+     {
+      "plant": 6090,
+      "model_pmax": 1556.0,
+      "campd_p99": 1897.0,
+      "ratio": 0.82,
+      "has_chp": false,
+      "gap_mw": 341.0
+     },
+     {
+      "plant": 6190,
+      "model_pmax": 916.6,
+      "campd_p99": 1255.0,
+      "ratio": 0.73,
+      "has_chp": false,
+      "gap_mw": 338.4
+     },
+     {
+      "plant": 55089,
+      "model_pmax": 221.7,
+      "campd_p99": 533.0,
+      "ratio": 0.416,
+      "has_chp": true,
+      "gap_mw": 311.3
+     },
+     {
+      "plant": 55117,
+      "model_pmax": 124.6,
+      "campd_p99": 435.0,
+      "ratio": 0.286,
+      "has_chp": true,
+      "gap_mw": 310.4
+     },
+     {
+      "plant": 994,
+      "model_pmax": 1057.2,
+      "campd_p99": 1356.8,
+      "ratio": 0.779,
+      "has_chp": false,
+      "gap_mw": 299.6
+     },
+     {
+      "plant": 10745,
+      "model_pmax": 961.6,
+      "campd_p99": 1205.0,
+      "ratio": 0.798,
+      "has_chp": true,
+      "gap_mw": 243.4
+     },
+     {
+      "plant": 1400,
+      "model_pmax": 33.6,
+      "campd_p99": 256.0,
+      "ratio": 0.131,
+      "has_chp": false,
+      "gap_mw": 222.4
+     },
+     {
+      "plant": 2103,
+      "model_pmax": 2372.0,
+      "campd_p99": 2574.0,
+      "ratio": 0.922,
+      "has_chp": false,
+      "gap_mw": 202.0
+     },
+     {
+      "plant": 55404,
+      "model_pmax": 338.7,
+      "campd_p99": 506.0,
+      "ratio": 0.669,
+      "has_chp": true,
+      "gap_mw": 167.3
+     }
+    ]
+   }
+  },
+  "2024": {
+   "n_plants_both": 214,
+   "variants": {
+    "keeper": {
+     "ALL": 6241.3,
+     "NO_CHP": 3536.5,
+     "ADEQUATELY_RATED": 708.0,
+     "NO_CHP_AND_ADEQUATELY_RATED": 699.3,
+     "NO_CHP_ADEQ_EXCL_OA": 461.0
+    },
+    "no_ufac": {
+     "ALL": 5074.8,
+     "NO_CHP": 2434.7,
+     "ADEQUATELY_RATED": 400.7,
+     "NO_CHP_AND_ADEQUATELY_RATED": 391.9,
+     "NO_CHP_ADEQ_EXCL_OA": 257.8
+    },
+    "no_mgfac": {
+     "ALL": 6239.5,
+     "NO_CHP": 3534.9,
+     "ADEQUATELY_RATED": 707.5,
+     "NO_CHP_AND_ADEQUATELY_RATED": 698.8,
+     "NO_CHP_ADEQ_EXCL_OA": 460.5
+    },
+    "no_overlay": {
+     "ALL": 5024.7,
+     "NO_CHP": 2384.9,
+     "ADEQUATELY_RATED": 394.0,
+     "NO_CHP_AND_ADEQUATELY_RATED": 385.3,
+     "NO_CHP_ADEQ_EXCL_OA": 251.2
+    },
+    "at_rating": {
+     "ALL": 3291.4,
+     "NO_CHP": 820.2,
+     "ADEQUATELY_RATED": 2.8,
+     "NO_CHP_AND_ADEQUATELY_RATED": 2.8,
+     "NO_CHP_ADEQ_EXCL_OA": 2.7
+    }
+   },
+   "buckets": {
+    "ALL": {
+     "n_plants": 214,
+     "model_pmax_mw": 106050.5,
+     "contradiction_mean_mw": 6241.3,
+     "contradiction_S1_mw": 7732.2,
+     "monthly_mw": [
+      8509.0,
+      6047.5,
+      6774.5,
+      5777.1,
+      6762.6,
+      5125.5,
+      5282.6,
+      5309.5,
+      5166.1,
+      6271.3,
+      6494.7,
+      7279.4
+     ],
+     "may_mw": 6762.6
+    },
+    "NO_CHP": {
+     "n_plants": 187,
+     "model_pmax_mw": 101432.3,
+     "contradiction_mean_mw": 3536.5,
+     "contradiction_S1_mw": 4870.8,
+     "monthly_mw": [
+      5419.3,
+      3234.6,
+      3857.1,
+      2799.9,
+      3898.8,
+      2750.4,
+      2730.2,
+      2649.2,
+      2679.4,
+      3744.0,
+      4097.9,
+      4488.9
+     ],
+     "may_mw": 3898.8
+    },
+    "ADEQUATELY_RATED": {
+     "n_plants": 128,
+     "model_pmax_mw": 57121.3,
+     "contradiction_mean_mw": 708.0,
+     "contradiction_S1_mw": 1146.6,
+     "monthly_mw": [
+      711.5,
+      385.4,
+      1127.7,
+      668.0,
+      855.3,
+      844.6,
+      738.4,
+      457.3,
+      644.2,
+      739.0,
+      810.2,
+      488.0
+     ],
+     "may_mw": 855.3
+    },
+    "NO_CHP_AND_ADEQUATELY_RATED": {
+     "n_plants": 119,
+     "model_pmax_mw": 56123.2,
+     "contradiction_mean_mw": 699.3,
+     "contradiction_S1_mw": 1126.7,
+     "monthly_mw": [
+      676.2,
+      382.8,
+      1126.7,
+      663.3,
+      850.7,
+      844.4,
+      725.9,
+      454.3,
+      644.1,
+      732.0,
+      802.6,
+      462.5
+     ],
+     "may_mw": 850.7
+    },
+    "NO_CHP_ADEQ_EXCL_OA": {
+     "n_plants": 118,
+     "model_pmax_mw": 54974.1,
+     "contradiction_mean_mw": 461.0,
+     "contradiction_S1_mw": 847.9,
+     "monthly_mw": [
+      522.5,
+      304.9,
+      743.4,
+      652.6,
+      728.0,
+      378.1,
+      290.3,
+      337.7,
+      336.2,
+      350.4,
+      481.7,
+      391.3
+     ],
+     "may_mw": 728.0
+    }
+   },
+   "rating_question": {
+    "n_plants_under_rated": 86,
+    "total_gap_mw": 7923.5,
+    "gap_mw_chp_plants": 4135.6,
+    "gap_mw_non_chp_plants": 3787.9,
+    "top": [
+     {
+      "plant": 55419,
+      "model_pmax": 267.2,
+      "campd_p99": 1410.4,
+      "ratio": 0.189,
+      "has_chp": true,
+      "gap_mw": 1143.2
+     },
+     {
+      "plant": 55641,
+      "model_pmax": 534.8,
+      "campd_p99": 1313.0,
+      "ratio": 0.407,
+      "has_chp": false,
+      "gap_mw": 778.2
+     },
+     {
+      "plant": 50625,
+      "model_pmax": 181.7,
+      "campd_p99": 856.5,
+      "ratio": 0.212,
+      "has_chp": true,
+      "gap_mw": 674.8
+     },
+     {
+      "plant": 1391,
+      "model_pmax": 76.3,
+      "campd_p99": 694.0,
+      "ratio": 0.11,
+      "has_chp": true,
+      "gap_mw": 617.7
+     },
+     {
+      "plant": 4041,
+      "model_pmax": 616.0,
+      "campd_p99": 1067.0,
+      "ratio": 0.577,
+      "has_chp": false,
+      "gap_mw": 451.0
+     },
+     {
+      "plant": 55117,
+      "model_pmax": 124.6,
+      "campd_p99": 440.0,
+      "ratio": 0.283,
+      "has_chp": true,
+      "gap_mw": 315.4
+     },
+     {
+      "plant": 55089,
+      "model_pmax": 221.7,
+      "campd_p99": 531.0,
+      "ratio": 0.417,
+      "has_chp": true,
+      "gap_mw": 309.3
+     },
+     {
+      "plant": 10745,
+      "model_pmax": 961.6,
+      "campd_p99": 1178.0,
+      "ratio": 0.816,
+      "has_chp": true,
+      "gap_mw": 216.4
+     },
+     {
+      "plant": 2103,
+      "model_pmax": 2372.0,
+      "campd_p99": 2579.0,
+      "ratio": 0.92,
+      "has_chp": false,
+      "gap_mw": 207.0
+     },
+     {
+      "plant": 55714,
+      "model_pmax": 641.5,
+      "campd_p99": 820.0,
+      "ratio": 0.782,
+      "has_chp": false,
+      "gap_mw": 178.5
+     },
+     {
+      "plant": 55404,
+      "model_pmax": 338.7,
+      "campd_p99": 508.0,
+      "ratio": 0.667,
+      "has_chp": true,
+      "gap_mw": 169.3
+     },
+     {
+      "plant": 55075,
+      "model_pmax": 116.4,
+      "campd_p99": 282.0,
+      "ratio": 0.413,
+      "has_chp": true,
+      "gap_mw": 165.6
+     },
+     {
+      "plant": 1710,
+      "model_pmax": 1330.5,
+      "campd_p99": 1471.0,
+      "ratio": 0.904,
+      "has_chp": false,
+      "gap_mw": 140.5
+     },
+     {
+      "plant": 55087,
+      "model_pmax": 842.7,
+      "campd_p99": 951.0,
+      "ratio": 0.886,
+      "has_chp": false,
+      "gap_mw": 108.3
+     },
+     {
+      "plant": 55010,
+      "model_pmax": 163.2,
+      "campd_p99": 263.0,
+      "ratio": 0.62,
+      "has_chp": true,
+      "gap_mw": 99.8
+     }
+    ]
+   }
+  },
+  "2025": {
+   "n_plants_both": 211,
+   "variants": {
+    "keeper": {
+     "ALL": 6523.4,
+     "NO_CHP": 3755.2,
+     "ADEQUATELY_RATED": 515.8,
+     "NO_CHP_AND_ADEQUATELY_RATED": 515.4,
+     "NO_CHP_ADEQ_EXCL_OA": 515.4
+    },
+    "no_ufac": {
+     "ALL": 5500.2,
+     "NO_CHP": 2768.1,
+     "ADEQUATELY_RATED": 290.5,
+     "NO_CHP_AND_ADEQUATELY_RATED": 290.2,
+     "NO_CHP_ADEQ_EXCL_OA": 290.2
+    },
+    "no_mgfac": {
+     "ALL": 6505.5,
+     "NO_CHP": 3739.5,
+     "ADEQUATELY_RATED": 511.7,
+     "NO_CHP_AND_ADEQUATELY_RATED": 511.3,
+     "NO_CHP_ADEQ_EXCL_OA": 511.3
+    },
+    "no_overlay": {
+     "ALL": 5392.9,
+     "NO_CHP": 2662.9,
+     "ADEQUATELY_RATED": 280.2,
+     "NO_CHP_AND_ADEQUATELY_RATED": 279.9,
+     "NO_CHP_ADEQ_EXCL_OA": 279.9
+    },
+    "at_rating": {
+     "ALL": 3390.8,
+     "NO_CHP": 815.3,
+     "ADEQUATELY_RATED": 4.2,
+     "NO_CHP_AND_ADEQUATELY_RATED": 4.1,
+     "NO_CHP_ADEQ_EXCL_OA": 4.1
+    }
+   },
+   "buckets": {
+    "ALL": {
+     "n_plants": 211,
+     "model_pmax_mw": 103721.8,
+     "contradiction_mean_mw": 6523.4,
+     "contradiction_S1_mw": 8273.9,
+     "monthly_mw": [
+      7701.1,
+      7677.8,
+      5903.1,
+      6644.3,
+      6757.2,
+      5707.0,
+      5785.3,
+      5112.9,
+      5830.5,
+      6523.4,
+      7236.5,
+      7491.3
+     ],
+     "may_mw": 6757.2
+    },
+    "NO_CHP": {
+     "n_plants": 184,
+     "model_pmax_mw": 99103.6,
+     "contradiction_mean_mw": 3755.2,
+     "contradiction_S1_mw": 5306.5,
+     "monthly_mw": [
+      4799.8,
+      4828.9,
+      3121.0,
+      3847.2,
+      3868.4,
+      3061.8,
+      3256.7,
+      2563.7,
+      3092.4,
+      3758.0,
+      4454.4,
+      4495.7
+     ],
+     "may_mw": 3868.4
+    },
+    "ADEQUATELY_RATED": {
+     "n_plants": 125,
+     "model_pmax_mw": 55290.2,
+     "contradiction_mean_mw": 515.8,
+     "contradiction_S1_mw": 937.2,
+     "monthly_mw": [
+      517.0,
+      534.2,
+      348.8,
+      766.3,
+      611.8,
+      466.4,
+      583.6,
+      261.0,
+      379.8,
+      668.8,
+      584.7,
+      473.4
+     ],
+     "may_mw": 611.8
+    },
+    "NO_CHP_AND_ADEQUATELY_RATED": {
+     "n_plants": 117,
+     "model_pmax_mw": 54848.1,
+     "contradiction_mean_mw": 515.4,
+     "contradiction_S1_mw": 936.7,
+     "monthly_mw": [
+      517.0,
+      534.2,
+      348.8,
+      765.8,
+      609.4,
+      466.0,
+      582.7,
+      260.8,
+      379.6,
+      668.7,
+      584.6,
+      473.3
+     ],
+     "may_mw": 609.4
+    },
+    "NO_CHP_ADEQ_EXCL_OA": {
+     "n_plants": 117,
+     "model_pmax_mw": 54848.1,
+     "contradiction_mean_mw": 515.4,
+     "contradiction_S1_mw": 936.7,
+     "monthly_mw": [
+      517.0,
+      534.2,
+      348.8,
+      765.8,
+      609.4,
+      466.0,
+      582.7,
+      260.8,
+      379.6,
+      668.7,
+      584.6,
+      473.3
+     ],
+     "may_mw": 609.4
+    }
+   },
+   "rating_question": {
+    "n_plants_under_rated": 86,
+    "total_gap_mw": 7915.0,
+    "gap_mw_chp_plants": 4090.4,
+    "gap_mw_non_chp_plants": 3824.6,
+    "top": [
+     {
+      "plant": 55419,
+      "model_pmax": 267.2,
+      "campd_p99": 1429.4,
+      "ratio": 0.187,
+      "has_chp": true,
+      "gap_mw": 1162.2
+     },
+     {
+      "plant": 55641,
+      "model_pmax": 534.8,
+      "campd_p99": 1309.4,
+      "ratio": 0.408,
+      "has_chp": false,
+      "gap_mw": 774.6
+     },
+     {
+      "plant": 50625,
+      "model_pmax": 181.7,
+      "campd_p99": 867.2,
+      "ratio": 0.21,
+      "has_chp": true,
+      "gap_mw": 685.5
+     },
+     {
+      "plant": 55358,
+      "model_pmax": 580.4,
+      "campd_p99": 1106.2,
+      "ratio": 0.525,
+      "has_chp": false,
+      "gap_mw": 525.8
+     },
+     {
+      "plant": 1391,
+      "model_pmax": 76.3,
+      "campd_p99": 557.0,
+      "ratio": 0.137,
+      "has_chp": true,
+      "gap_mw": 480.7
+     },
+     {
+      "plant": 55117,
+      "model_pmax": 124.6,
+      "campd_p99": 449.0,
+      "ratio": 0.278,
+      "has_chp": true,
+      "gap_mw": 324.4
+     },
+     {
+      "plant": 55089,
+      "model_pmax": 221.7,
+      "campd_p99": 540.0,
+      "ratio": 0.411,
+      "has_chp": true,
+      "gap_mw": 318.3
+     },
+     {
+      "plant": 10745,
+      "model_pmax": 961.6,
+      "campd_p99": 1215.0,
+      "ratio": 0.791,
+      "has_chp": true,
+      "gap_mw": 253.4
+     },
+     {
+      "plant": 2103,
+      "model_pmax": 2372.0,
+      "campd_p99": 2568.0,
+      "ratio": 0.924,
+      "has_chp": false,
+      "gap_mw": 196.0
+     },
+     {
+      "plant": 55714,
+      "model_pmax": 641.5,
+      "campd_p99": 826.0,
+      "ratio": 0.777,
+      "has_chp": false,
+      "gap_mw": 184.5
+     },
+     {
+      "plant": 55404,
+      "model_pmax": 338.7,
+      "campd_p99": 515.4,
+      "ratio": 0.657,
+      "has_chp": true,
+      "gap_mw": 176.8
+     },
+     {
+      "plant": 55075,
+      "model_pmax": 116.4,
+      "campd_p99": 281.0,
+      "ratio": 0.414,
+      "has_chp": true,
+      "gap_mw": 164.6
+     },
+     {
+      "plant": 1733,
+      "model_pmax": 3066.0,
+      "campd_p99": 3217.4,
+      "ratio": 0.953,
+      "has_chp": false,
+      "gap_mw": 151.4
+     },
+     {
+      "plant": 55087,
+      "model_pmax": 842.7,
+      "campd_p99": 993.0,
+      "ratio": 0.849,
+      "has_chp": false,
+      "gap_mw": 150.3
+     },
+     {
+      "plant": 6090,
+      "model_pmax": 1556.0,
+      "campd_p99": 1657.0,
+      "ratio": 0.939,
+      "has_chp": false,
+      "gap_mw": 101.0
+     }
+    ]
+   }
+  }
+ },
+ "CLEAN_VERDICT": {
+  "Kcc_as_preregistered_2025_mw": 6523.4,
+  "clean_scope_2025_mw": 515.4,
+  "clean_share_of_preregistered": 0.079,
+  "share_of_clean_removable_by_dropping_ALL_overlays": 0.457,
+  "bar_mw": 500.0,
+  "branch_on_clean_scope": "B-1 overlay_over_removal",
+  "note": "The pre-registered census is reported at full magnitude and is NOT withdrawn; this is its trap-2/trap-3 counter-measurement, which the PREREG required before B-1 could be quoted."
+ }
+}
