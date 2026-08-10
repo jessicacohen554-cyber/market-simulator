@@ -621,7 +621,6 @@ def _main_topscoped(args) -> None:
     edges_ext = tuple(legacy_edges + new_edges)
     n_legacy = len(legacy_edges)
     n_sub = len(new_edges) + 1
-    n_q = len(LADDER_QUANTILES)
 
     def _tbl_from(
         fro_shares: list, fro_ladder: list, sub_sh: list, sub_ld: list

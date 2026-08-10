@@ -2025,6 +2025,7 @@ class ShapedPartialOutageDerateTest(unittest.TestCase):
         shaped = pd.read_csv(PARTIAL_OUTAGE_SHAPED_CSV)
         for year in (2023, 2024, 2025):
             for code in sorted(flat[flat["year"] == year]["oris_code"].unique()):
+
                 def _cover(df):
                     m = np.zeros(HOURS_PER_YEAR, dtype=bool)
                     sub = df[(df["year"] == year) & (df["oris_code"] == code)]

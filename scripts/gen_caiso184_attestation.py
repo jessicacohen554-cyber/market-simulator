@@ -212,9 +212,7 @@ def main() -> int:
         )
     print(
         "OK: G-BASIS — f_CEMS > 1 down "
-        + "/".join(
-            f"{gb['reduction'][str(y)]['reduction'] * 100:.1f} %" for y in YEARS
-        )
+        + "/".join(f"{gb['reduction'][str(y)]['reduction'] * 100:.1f} %" for y in YEARS)
         + f", over-correction median {over}"
     )
 
