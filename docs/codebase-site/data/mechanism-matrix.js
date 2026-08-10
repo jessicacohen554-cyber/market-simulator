@@ -1454,7 +1454,7 @@ window.MECH_MATRIX = {
   isos: ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"],
   keepers: {
     ERCOT: "2026-08-09-run181-position-tail",
-    CAISO: "2026-08-09-caiso-184-c1-lpbasis",
+    CAISO: "2026-08-09-caiso-188-d1-micseam",
     PJM: "2026-08-04-pjm-152-collapse",
     MISO: "2026-08-09-miso-148-basis-aware",
     NYISO: "2026-08-08-nyiso-132-cf-arm",
