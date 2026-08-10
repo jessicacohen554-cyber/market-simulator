@@ -4530,6 +4530,13 @@ def run_year(
         # coal tranches, all pricing overlays applied) so post-solve offer-
         # stack diagnostics read the SAME offer prices the LP solved on —
         # never a re-derivation that could drift (G-22 idle-supply audit).
+        # ``wind_mc`` / ``solar_mc`` complete that contract on the RENEWABLE
+        # side: the fully assembled dispatch offers the LP is handed (IRA/PTC
+        # dispatch credits, the PTC vintage blend where armed, exogenous EACs,
+        # and the negative-renewable-offer floor), so a curve that has to place
+        # the model's wind and solar alongside its generator rows reads the
+        # SAME offer prices rather than re-deriving the credit sequence
+        # outside the orchestrator (miso-150, the model-side universe fix).
         return {
             "config": config,
             "fleet": fleet,
@@ -4541,6 +4548,8 @@ def run_year(
             "wind_cap": wind_cap,
             "solar_cf": solar_cf,
             "solar_cap": solar_cap,
+            "wind_mc": wind_mc,
+            "solar_mc": solar_mc,
             "demand": demand,
             "mc_base": mc_base,
             "fuel_prices": fuel_prices,
