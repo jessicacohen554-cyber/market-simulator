@@ -1,0 +1,728 @@
+{
+ "probe": "ffr9b_entry_screen_replay (R2/R3)",
+ "bundle": "/home/user/market-simulator/results/hindcast/ercot-2021-2025-t1ff-armr-ffr9c-full/ERCOT/d6bc5469694eeedb",
+ "ladder_seed_gw": {
+  "coal": 1.008,
+  "gas_cc": 2.5698,
+  "gas_ct": 0.7855,
+  "gas_st": 0.31,
+  "oil": 0.0014,
+  "solar": 2.4733,
+  "wind": 3.4717
+ },
+ "steps": [
+  {
+   "step_year": 2022,
+   "screen": "2021_for_2022",
+   "signal_mean_usd_mwh": 192.833,
+   "storage_power_entering_mw": 223.1,
+   "gas_price_per_mmbtu": 3.41,
+   "carbon_price": 0.0,
+   "rate_caps_mw": {
+    "coal": 2016.0,
+    "gas_cc": 5139.6,
+    "gas_ct": 1571.0,
+    "gas_st": 620.0,
+    "oil": 2.8,
+    "solar": 4946.6,
+    "wind": 6943.4
+   },
+   "pending_mw_by_tech": {},
+   "procured_flow_mw": {
+    "solar": 1040.0,
+    "wind": 350.2
+   },
+   "ledger_decided_mw": {
+    "gas_cc": 3000.0,
+    "gas_ct": 1571.0,
+    "solar": 3960.0,
+    "wind": 2078.8
+   },
+   "merchant": {
+    "r_none": {
+     "candidates": {
+      "gas_cc": {
+       "margin_per_kw_yr": 1336.402,
+       "profitable": true,
+       "build_mw": 3000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 1483.5,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 147.1
+      },
+      "gas_ct": {
+       "margin_per_kw_yr": 1289.964,
+       "profitable": true,
+       "build_mw": 1571.0,
+       "binding_cap": "growth_ladder",
+       "energy_rev_per_kw_yr": 1418.08,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 128.11
+      },
+      "solar": {
+       "margin_per_kw_yr": 908.115,
+       "profitable": true,
+       "build_mw": 3960.0,
+       "binding_cap": "iso_budget",
+       "energy_rev_per_kw_yr": 1002.32,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 94.2
+      },
+      "wind": {
+       "margin_per_kw_yr": 165.78,
+       "profitable": true,
+       "build_mw": 2078.8,
+       "binding_cap": "iso_budget",
+       "energy_rev_per_kw_yr": 269.4,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 103.62
+      }
+     },
+     "margin_order": [
+      "gas_cc",
+      "gas_ct",
+      "solar",
+      "wind"
+     ],
+     "identity": {
+      "gas_cc": {
+       "replay_mw": 3000.0,
+       "ledger_mw": 3000.0,
+       "match": true
+      },
+      "gas_ct": {
+       "replay_mw": 1571.0,
+       "ledger_mw": 1571.0,
+       "match": true
+      },
+      "solar": {
+       "replay_mw": 3960.0,
+       "ledger_mw": 3960.0,
+       "match": true
+      },
+      "wind": {
+       "replay_mw": 2078.8,
+       "ledger_mw": 2078.8,
+       "match": true
+      }
+     },
+     "identity_all": true
+    },
+    "r_dump_adder": {
+     "candidates": {
+      "gas_cc": {
+       "margin_per_kw_yr": 1336.402,
+       "profitable": true,
+       "build_mw": 3000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 1483.5,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 147.1
+      },
+      "gas_ct": {
+       "margin_per_kw_yr": 1291.727,
+       "profitable": true,
+       "build_mw": 1571.0,
+       "binding_cap": "growth_ladder",
+       "energy_rev_per_kw_yr": 1419.84,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 128.11
+      },
+      "solar": {
+       "margin_per_kw_yr": 908.115,
+       "profitable": true,
+       "build_mw": 3960.0,
+       "binding_cap": "iso_budget",
+       "energy_rev_per_kw_yr": 1002.32,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 94.2
+      },
+      "wind": {
+       "margin_per_kw_yr": 165.78,
+       "profitable": true,
+       "build_mw": 2078.8,
+       "binding_cap": "iso_budget",
+       "energy_rev_per_kw_yr": 269.4,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 103.62
+      }
+     },
+     "margin_order": [
+      "gas_cc",
+      "gas_ct",
+      "solar",
+      "wind"
+     ],
+     "identity": {
+      "gas_cc": {
+       "replay_mw": 3000.0,
+       "ledger_mw": 3000.0,
+       "match": true
+      },
+      "gas_ct": {
+       "replay_mw": 1571.0,
+       "ledger_mw": 1571.0,
+       "match": true
+      },
+      "solar": {
+       "replay_mw": 3960.0,
+       "ledger_mw": 3960.0,
+       "match": true
+      },
+      "wind": {
+       "replay_mw": 2078.8,
+       "ledger_mw": 2078.8,
+       "match": true
+      }
+     },
+     "identity_all": true
+    }
+   },
+   "storage": {
+    "replay_built_mw": 5000.0,
+    "ledger_built_mw": 5000.0,
+    "match": true
+   }
+  },
+  {
+   "step_year": 2023,
+   "screen": "2021_for_2023",
+   "signal_mean_usd_mwh": 431.538,
+   "storage_power_entering_mw": 5223.1,
+   "gas_price_per_mmbtu": 2.04,
+   "carbon_price": 0.0,
+   "rate_caps_mw": {
+    "coal": 2016.0,
+    "gas_cc": 6000.0,
+    "gas_ct": 3142.0,
+    "gas_st": 620.0,
+    "oil": 2.8,
+    "solar": 7920.0,
+    "wind": 6943.4
+   },
+   "pending_mw_by_tech": {
+    "gas_cc": 3000.0,
+    "gas_ct": 1571.0,
+    "solar": 3960.0,
+    "wind": 2078.8
+   },
+   "procured_flow_mw": {
+    "solar": 450.0
+   },
+   "ledger_decided_mw": {
+    "gas_cc": 3000.0,
+    "gas_ct": 3000.0,
+    "solar": 4550.0,
+    "wind": 1000.0
+   },
+   "merchant": {
+    "r_none": {
+     "candidates": {
+      "gas_cc": {
+       "margin_per_kw_yr": 3503.119,
+       "profitable": true,
+       "build_mw": 3000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 3650.17,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 147.05
+      },
+      "gas_ct": {
+       "margin_per_kw_yr": 3460.669,
+       "profitable": true,
+       "build_mw": 3000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 3588.78,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 128.11
+      },
+      "solar": {
+       "margin_per_kw_yr": 2420.439,
+       "profitable": true,
+       "build_mw": 4550.0,
+       "binding_cap": "iso_budget",
+       "energy_rev_per_kw_yr": 2510.88,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 90.44
+      },
+      "wind": {
+       "margin_per_kw_yr": 556.484,
+       "profitable": true,
+       "build_mw": 1000.0,
+       "binding_cap": "iso_budget",
+       "energy_rev_per_kw_yr": 658.07,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 101.58
+      }
+     },
+     "margin_order": [
+      "gas_cc",
+      "gas_ct",
+      "solar",
+      "wind"
+     ],
+     "identity": {
+      "gas_cc": {
+       "replay_mw": 3000.0,
+       "ledger_mw": 3000.0,
+       "match": true
+      },
+      "gas_ct": {
+       "replay_mw": 3000.0,
+       "ledger_mw": 3000.0,
+       "match": true
+      },
+      "solar": {
+       "replay_mw": 4550.0,
+       "ledger_mw": 4550.0,
+       "match": true
+      },
+      "wind": {
+       "replay_mw": 1000.0,
+       "ledger_mw": 1000.0,
+       "match": true
+      }
+     },
+     "identity_all": true
+    },
+    "r_dump_adder": {
+     "candidates": {
+      "gas_cc": {
+       "margin_per_kw_yr": 3503.119,
+       "profitable": true,
+       "build_mw": 3000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 3650.17,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 147.05
+      },
+      "gas_ct": {
+       "margin_per_kw_yr": 3460.669,
+       "profitable": true,
+       "build_mw": 3000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 3588.78,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 128.11
+      },
+      "solar": {
+       "margin_per_kw_yr": 2420.439,
+       "profitable": true,
+       "build_mw": 4550.0,
+       "binding_cap": "iso_budget",
+       "energy_rev_per_kw_yr": 2510.88,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 90.44
+      },
+      "wind": {
+       "margin_per_kw_yr": 556.484,
+       "profitable": true,
+       "build_mw": 1000.0,
+       "binding_cap": "iso_budget",
+       "energy_rev_per_kw_yr": 658.07,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 101.58
+      }
+     },
+     "margin_order": [
+      "gas_cc",
+      "gas_ct",
+      "solar",
+      "wind"
+     ],
+     "identity": {
+      "gas_cc": {
+       "replay_mw": 3000.0,
+       "ledger_mw": 3000.0,
+       "match": true
+      },
+      "gas_ct": {
+       "replay_mw": 3000.0,
+       "ledger_mw": 3000.0,
+       "match": true
+      },
+      "solar": {
+       "replay_mw": 4550.0,
+       "ledger_mw": 4550.0,
+       "match": true
+      },
+      "wind": {
+       "replay_mw": 1000.0,
+       "ledger_mw": 1000.0,
+       "match": true
+      }
+     },
+     "identity_all": true
+    }
+   },
+   "storage": {
+    "replay_built_mw": 5000.0,
+    "ledger_built_mw": 5000.0,
+    "match": true
+   }
+  },
+  {
+   "step_year": 2024,
+   "screen": "2023_for_2024",
+   "signal_mean_usd_mwh": 40.101,
+   "storage_power_entering_mw": 10223.1,
+   "gas_price_per_mmbtu": 1.69,
+   "carbon_price": 0.0,
+   "rate_caps_mw": {
+    "coal": 2016.0,
+    "gas_cc": 6000.0,
+    "gas_ct": 6000.0,
+    "gas_st": 620.0,
+    "oil": 2.8,
+    "solar": 9100.0,
+    "wind": 6943.4
+   },
+   "pending_mw_by_tech": {
+    "gas_cc": 3000.0,
+    "gas_ct": 3000.0,
+    "solar": 4550.0,
+    "wind": 1000.0
+   },
+   "procured_flow_mw": {},
+   "ledger_decided_mw": {
+    "gas_cc": 3000.0,
+    "gas_ct": 3000.0,
+    "solar": 5000.0
+   },
+   "merchant": {
+    "r_none": {
+     "candidates": {
+      "solar": {
+       "margin_per_kw_yr": 119.877,
+       "profitable": true,
+       "build_mw": 5000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 207.25,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 87.37
+      },
+      "gas_cc": {
+       "margin_per_kw_yr": 93.5,
+       "profitable": true,
+       "build_mw": 3000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 240.5,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 147.0
+      },
+      "gas_ct": {
+       "margin_per_kw_yr": 63.796,
+       "profitable": true,
+       "build_mw": 3000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 191.91,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 128.11
+      },
+      "wind": {
+       "margin_per_kw_yr": -12.862,
+       "profitable": false,
+       "build_mw": 0.0,
+       "binding_cap": "unprofitable",
+       "energy_rev_per_kw_yr": 86.9,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 99.76
+      }
+     },
+     "margin_order": [
+      "solar",
+      "gas_cc",
+      "gas_ct"
+     ],
+     "identity": {
+      "gas_cc": {
+       "replay_mw": 3000.0,
+       "ledger_mw": 3000.0,
+       "match": true
+      },
+      "gas_ct": {
+       "replay_mw": 3000.0,
+       "ledger_mw": 3000.0,
+       "match": true
+      },
+      "solar": {
+       "replay_mw": 5000.0,
+       "ledger_mw": 5000.0,
+       "match": true
+      },
+      "wind": {
+       "replay_mw": 0.0,
+       "ledger_mw": 0.0,
+       "match": true
+      }
+     },
+     "identity_all": true
+    },
+    "r_dump_adder": {
+     "candidates": {
+      "solar": {
+       "margin_per_kw_yr": 119.877,
+       "profitable": true,
+       "build_mw": 5000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 207.25,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 87.37
+      },
+      "gas_cc": {
+       "margin_per_kw_yr": 93.5,
+       "profitable": true,
+       "build_mw": 3000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 240.5,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 147.0
+      },
+      "gas_ct": {
+       "margin_per_kw_yr": 63.799,
+       "profitable": true,
+       "build_mw": 3000.0,
+       "binding_cap": "per_tech_cap",
+       "energy_rev_per_kw_yr": 191.91,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 128.11
+      },
+      "wind": {
+       "margin_per_kw_yr": -12.862,
+       "profitable": false,
+       "build_mw": 0.0,
+       "binding_cap": "unprofitable",
+       "energy_rev_per_kw_yr": 86.9,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 99.76
+      }
+     },
+     "margin_order": [
+      "solar",
+      "gas_cc",
+      "gas_ct"
+     ],
+     "identity": {
+      "gas_cc": {
+       "replay_mw": 3000.0,
+       "ledger_mw": 3000.0,
+       "match": true
+      },
+      "gas_ct": {
+       "replay_mw": 3000.0,
+       "ledger_mw": 3000.0,
+       "match": true
+      },
+      "solar": {
+       "replay_mw": 5000.0,
+       "ledger_mw": 5000.0,
+       "match": true
+      },
+      "wind": {
+       "replay_mw": 0.0,
+       "ledger_mw": 0.0,
+       "match": true
+      }
+     },
+     "identity_all": true
+    }
+   },
+   "storage": {
+    "replay_built_mw": 5000.0,
+    "ledger_built_mw": 5000.0,
+    "match": true
+   }
+  },
+  {
+   "step_year": 2025,
+   "screen": "2024_for_2025",
+   "signal_mean_usd_mwh": 19.442,
+   "storage_power_entering_mw": 15223.1,
+   "gas_price_per_mmbtu": 3.03,
+   "carbon_price": 0.0,
+   "rate_caps_mw": {
+    "coal": 2016.0,
+    "gas_cc": 6000.0,
+    "gas_ct": 6000.0,
+    "gas_st": 620.0,
+    "oil": 2.8,
+    "solar": 10000.0,
+    "wind": 6943.4
+   },
+   "pending_mw_by_tech": {
+    "gas_cc": 3000.0,
+    "gas_ct": 3000.0,
+    "solar": 5000.0
+   },
+   "procured_flow_mw": {},
+   "ledger_decided_mw": {},
+   "merchant": {
+    "r_none": {
+     "candidates": {
+      "wind": {
+       "margin_per_kw_yr": -45.067,
+       "profitable": false,
+       "build_mw": 0.0,
+       "binding_cap": "unprofitable",
+       "energy_rev_per_kw_yr": 53.01,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 98.08
+      },
+      "solar": {
+       "margin_per_kw_yr": -41.541,
+       "profitable": false,
+       "build_mw": 0.0,
+       "binding_cap": "unprofitable",
+       "energy_rev_per_kw_yr": 43.24,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 84.78
+      },
+      "gas_cc": {
+       "margin_per_kw_yr": -122.061,
+       "profitable": false,
+       "build_mw": 0.0,
+       "binding_cap": "unprofitable",
+       "energy_rev_per_kw_yr": 24.88,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 146.94
+      },
+      "gas_ct": {
+       "margin_per_kw_yr": -104.292,
+       "profitable": false,
+       "build_mw": 0.0,
+       "binding_cap": "unprofitable",
+       "energy_rev_per_kw_yr": 23.82,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 128.11
+      }
+     },
+     "margin_order": [],
+     "identity": {
+      "gas_cc": {
+       "replay_mw": 0.0,
+       "ledger_mw": 0.0,
+       "match": true
+      },
+      "gas_ct": {
+       "replay_mw": 0.0,
+       "ledger_mw": 0.0,
+       "match": true
+      },
+      "solar": {
+       "replay_mw": 0.0,
+       "ledger_mw": 0.0,
+       "match": true
+      },
+      "wind": {
+       "replay_mw": 0.0,
+       "ledger_mw": 0.0,
+       "match": true
+      }
+     },
+     "identity_all": true
+    },
+    "r_dump_adder": {
+     "candidates": {
+      "wind": {
+       "margin_per_kw_yr": -45.067,
+       "profitable": false,
+       "build_mw": 0.0,
+       "binding_cap": "unprofitable",
+       "energy_rev_per_kw_yr": 53.01,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 98.08
+      },
+      "solar": {
+       "margin_per_kw_yr": -41.541,
+       "profitable": false,
+       "build_mw": 0.0,
+       "binding_cap": "unprofitable",
+       "energy_rev_per_kw_yr": 43.24,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 84.78
+      },
+      "gas_cc": {
+       "margin_per_kw_yr": -122.027,
+       "profitable": false,
+       "build_mw": 0.0,
+       "binding_cap": "unprofitable",
+       "energy_rev_per_kw_yr": 24.92,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 146.94
+      },
+      "gas_ct": {
+       "margin_per_kw_yr": -103.991,
+       "profitable": false,
+       "build_mw": 0.0,
+       "binding_cap": "unprofitable",
+       "energy_rev_per_kw_yr": 24.12,
+       "attr_rev_per_kw_yr": 0.0,
+       "as_credit_per_kw_yr": 0.0,
+       "annual_cost_per_kw_yr": 128.11
+      }
+     },
+     "margin_order": [],
+     "identity": {
+      "gas_cc": {
+       "replay_mw": 0.0,
+       "ledger_mw": 0.0,
+       "match": true
+      },
+      "gas_ct": {
+       "replay_mw": 0.0,
+       "ledger_mw": 0.0,
+       "match": true
+      },
+      "solar": {
+       "replay_mw": 0.0,
+       "ledger_mw": 0.0,
+       "match": true
+      },
+      "wind": {
+       "replay_mw": 0.0,
+       "ledger_mw": 0.0,
+       "match": true
+      }
+     },
+     "identity_all": true
+    }
+   },
+   "storage": {
+    "replay_built_mw": 0.0,
+    "ledger_built_mw": 0,
+    "match": true
+   }
+  }
+ ]
+}
