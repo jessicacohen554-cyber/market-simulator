@@ -1453,8 +1453,6 @@ def apply_iso_scenario_defaults(config, iso: str):
         return config
     defaults = ScenarioConfig()
     to_apply = {
-        k: v
-        for k, v in overrides.items()
-        if getattr(config, k) == getattr(defaults, k)
+        k: v for k, v in overrides.items() if getattr(config, k) == getattr(defaults, k)
     }
     return config.with_overrides(**to_apply) if to_apply else config
