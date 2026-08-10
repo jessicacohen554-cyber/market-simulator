@@ -1944,10 +1944,12 @@ class C3cStandingRuleTest(unittest.TestCase):
 
     def test_a_second_failing_criterion_keeps_the_rule_silent(self):
         """The real guard: it can never mask a second defect."""
-        recs = self._apply([
-            self._rec("price_tail", 2024, cv.FAIL),
-            self._rec("price_mean", 2024, cv.FAIL),
-        ])
+        recs = self._apply(
+            [
+                self._rec("price_tail", 2024, cv.FAIL),
+                self._rec("price_mean", 2024, cv.FAIL),
+            ]
+        )
         self.assertEqual([r["status"] for r in recs], [cv.FAIL, cv.FAIL])
 
     def test_failing_governance_blocks_it(self):
@@ -1967,10 +1969,12 @@ class C3cStandingRuleTest(unittest.TestCase):
         kept the rule silent.
         """
         self.assertNotIn("co2", cv.CRITERIA, "co2 is reported-only since v2.9")
-        recs = self._apply([
-            self._rec("price_tail", 2023, cv.FAIL),
-            self._rec("co2", 2025, cv.FAIL),
-        ])
+        recs = self._apply(
+            [
+                self._rec("price_tail", 2023, cv.FAIL),
+                self._rec("co2", 2025, cv.FAIL),
+            ]
+        )
         self.assertEqual(recs[0]["status"], cv.CAVEAT)
         self.assertEqual(recs[1]["status"], cv.FAIL, "co2 itself is untouched")
 

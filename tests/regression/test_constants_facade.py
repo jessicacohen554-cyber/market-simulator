@@ -67,6 +67,13 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "ADEQUACY_EXTERNAL_TIE_FIRM_MW",
         "AS_REVENUE_PER_KW_YR_BY_ISO",
         "AS_SATURATION_REF_GW_BY_ISO",
+        # FFR-4F (2026-08-09, commit 675b9782) added the CAISO RA-MPB capacity
+        # anchor and its resolver to capacity_market.py without re-exporting
+        # either from the constants facade or registering them here — the same
+        # omission as FFR-1C and FFR-4D below, and it turned the BLOCKING
+        # refactor-guards job red on main for every branch cut after it.
+        # Registered (and re-exported) 2026-08-10.
+        "CAISO_RA_MPB_ANCHOR_PER_KW_YR",
         "CAMPD_BINNING_ISOS",
         "CAPACITY_CURVE_ELIGIBLE_BY_ISO",
         "CAP_AND_TRADE_PROGRAMS",
@@ -163,6 +170,7 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "evaluate_demand_curve",
         "evaluate_renewable_elcc_curve",
         "forward_net_cone_anchor",
+        "resolve_caiso_ra_mpb_anchor",  # FFR-4F, see the note above.
         "resolve_capacity_curve_eligible",
         "resolve_capacity_market_clearing",
         "resolve_demand_curve_vintage",

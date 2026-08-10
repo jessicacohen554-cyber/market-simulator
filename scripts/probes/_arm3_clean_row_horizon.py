@@ -382,7 +382,12 @@ def report(armed: Path, ctrl: Path) -> int:
     # the D-28 §2.1 table is VERIFIED against what actually solved rather than
     # transcribed.
     kd = legs["ARMED"]["key_dir"]
-    ctx = fleet_context(kd) if kd else None
+    # fleet_context takes ONE year parquet (its documented contract); passing
+    # the key DIRECTORY relied on a pyarrow leniency the ARM3-FIX container's
+    # pyarrow no longer has. First year — R2's fleet listing is a run-intro
+    # table; R3 still reads its context PER YEAR via qualifying_supply.
+    first_pq = sorted(kd.glob("year_*.parquet")) if kd else []
+    ctx = fleet_context(first_pq[0]) if first_pq else None
     if ctx:
         print("\n  MODEL nuclear fleet (from the armed run's FleetContext):")
         nuke = [

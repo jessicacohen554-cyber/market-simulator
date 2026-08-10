@@ -2389,7 +2389,9 @@ class TestCcWinterCapabilityBasis(unittest.TestCase):
             self.assertIsNone(cb.cc_seasonal_capability_ratios(7))
         with (
             unittest.mock.patch.object(cb, "cc_summer_capacity", return_value={}),
-            unittest.mock.patch.object(cb, "cc_winter_capacity", return_value={7: 95.0}),
+            unittest.mock.patch.object(
+                cb, "cc_winter_capacity", return_value={7: 95.0}
+            ),
         ):
             self.assertIsNone(cb.cc_seasonal_capability_ratios(7))
 
