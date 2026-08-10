@@ -7193,6 +7193,13 @@ all of them, and a CI runner has neither `data/raw` nor `data/clean`. **Filed fo
 the owner**: this golden went red on 2026-07-26 and was carried as incidental
 noise by seven later sessions (caiso-143, ffr-1b, ffr-3d, ffr-3u, ffr-5c,
 f2-45u, miso-148) because nothing schedules the tier it lives in.
+Measured after this session's changes, the fast tier is **6,620 passed / 2
+failed** (18 m 35 s serial), and neither failure is one of the six: both are
+`test_ercot_thermal_as_endogenous::TestScreenMutualExclusion` on the
+`retirement_rule='pipeline' requires a simulation year` flip — ffr-3d §6's
+already-triaged D-1 fallout, owned by the retirement lane, outside this
+branch's six-file change surface and untouched here (rule 25). **Zero
+fast-tier failures added.**
 `test_soundness::TestPerformance::test_full_ercot_8760_timing` (31.13 s vs a 30 s
 budget on a 4-core box) is a machine-speed artifact, deliberately untouched.
 
