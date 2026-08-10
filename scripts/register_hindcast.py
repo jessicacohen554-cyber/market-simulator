@@ -224,15 +224,20 @@ def render_page(sidecars: list[dict]) -> str:
       const m=d.meta||{{}}, sc=d.score||null;
       let body='';
       if(sc){{
-        const tg=sc.retirements.total_gw, rr=sc.retirements.unit_recall_gt300;
-        body += '<div class="fv-grid">'+
-          metric(tg.model+' GW','thermal retired ('+cls2(tg.band)+')')+
-          metric(tg.actual+' GW','actual retired')+
-          metric((rr.n_a?'n/a':(rr.recall==null?'—':(rr.recall*100).toFixed(0)+'%')),'unit recall &gt;300MW ('+(rr.n_a?'no reachable member — D-24':cls2(rr.band))+')')+
-          metric(sc.additions.model_total_gw+' GW','total additions')+
-        '</div>';
-        body += is2020Block(sc);
-        body += addTable(sc.additions);
+        if(sc.retirements){{
+          const tg=sc.retirements.total_gw, rr=sc.retirements.unit_recall_gt300;
+          body += '<div class="fv-grid">'+
+            metric(tg.model+' GW','thermal retired ('+cls2(tg.band)+')')+
+            metric(tg.actual+' GW','actual retired')+
+            metric((rr.n_a?'n/a':(rr.recall==null?'—':(rr.recall*100).toFixed(0)+'%')),'unit recall &gt;300MW ('+(rr.n_a?'no reachable member — D-24':cls2(rr.band))+')')+
+            metric(sc.additions.model_total_gw+' GW','total additions')+
+          '</div>';
+          body += is2020Block(sc);
+          body += addTable(sc.additions);
+        }} else if(sc.capacity_events_note){{
+          // ISO with no committed capacity-actuals target (FH-4-CAISO degrade).
+          body += '<p class="skip">'+esc(sc.capacity_events_note)+'</p>';
+        }}
         body += co2Table(sc.co2);
       }} else {{ body += '<p class="skip">score.json not found — run score_capacity_hindcast.py.</p>'; }}
       body += '<div class="fv-inv">'+ (d.invariants||[]).map(function(i){{
