@@ -3722,3 +3722,72 @@ expected to BIND, likely ACP-pinned; MN slack; R4 now a real read); the 2031–2
 were solving at this writing — **the D-28 step-3 card goes up when §4 fills**. ercot-183
 completed its owner-authorized corpus (708/708 days; RTC+B format break quarantined).
 Keepers: unchanged this window (verified in the sweep; ERCOT/CAISO now ~1 day stable).
+
+## Addendum AJ — FH-4 BATTERY COMPLETE; the parallel-merge collision diagnosed at its root; HOUSE-3 + FH-5 dispatched
+
+**Written 2026-08-10 by the workstream manager at `origin/main` `fe9fa97f`.**
+
+### AJ.1 All six §0ag lanes landed — the FH-4 battery is COMPLETE
+
+Every sibling leg ran the protocol of record at shipped defaults, both arms, **I6 rider
+PASS in all five** (NYISO 0.0 % every year; NEISO 17.9 % peak under the 20 % cap; PJM
+14/14 battery; CAISO PASS both arms; MISO complete), each registered to the hindcast
+namespace with its three-way skill table and matrix citation. **With FH-4-ERCOT (gate
+PASS, AI.1) that is six of six ISOs — Wave FH Phase A is COMPLETE and every leg is
+clean, so FH-5's `REQUIRES` ("FH-4 complete and its results read"; per-ISO conditional
+on a clean Phase A) is DISCHARGED FOR ALL SIX. FH-5 dispatched** (§0ah), from its
+located charter, unchanged.
+**ARM3-FIX: CLEAN, and the card is now puttable.** On the fixed rows every pre-stated
+expectation hit: MI dual exactly 0 in 2031–2034 (zero obligation) and **MI-2035 BINDS,
+pinned at the $30 ACP ceiling**; MN slack through 2035 under the shipped 5-zone mask;
+the D-26 armed RPS duals bit-stable [0,30,0,30,0] in every year (the stop-the-line
+guard held). Registered to the forecast namespace; cell verdict correctly stays `O`.
+**FFR-9C: CLEAN** — stages A and B solved and registered, LOYO tabulated within
+2023–2025 with the honest framing (no stage carries a fitted parameter, so LOYO is a
+robustness demonstration, not fit-selection), the R-c re-derivation case written without
+touching the constant, and the promotion recommendation correctly LEFT TO THE MANAGER.
+Both cards (D-28 step-3 Arm-3 arming; FFR-9C stage promotion) are ready to put and are
+held only for the owner's attention, not for evidence.
+
+### AJ.2 THE COLLISION, DIAGNOSED AT ITS ROOT — and it is a data-shape defect, not a process failure
+
+The owner reports multi-ISO lanes clashing at merge. Measured over 2026-08-08→10:
+**`docs/codebase-site/data/mechanism-matrix.js` was touched by 21 distinct lanes in two
+days** and produced three successive union-merges in the MISO leg alone (`b9232406`,
+`bb1d8e32`, `afc706b4` — "fill the MISO union-merge slot", "fc union OOOOOO") plus one
+edit **silently LOST and later restored** (`c5593684`, FFR-9A).
+
+**The root cause is the row shape, and it makes per-ISO parallelism structurally
+impossible.** Each mechanism row packs all six ISOs' verdicts into two six-character
+strings on ONE line: `cells: "KKKKKK", fc: "OOOOOO"` — position = ISO. So a PJM lane and
+a MISO lane updating *different* ISOs' verdicts for the same mechanism edit **the same
+character of the same line of the same file**. Git cannot auto-merge that; every
+concurrent pair is a hand resolution, and a resolution that takes either side wholesale
+**silently discards the other ISO's verdict** — which is exactly the failure that
+happened. No prompt discipline can fix this: the lanes are obeying rule 28 correctly and
+the file shape defeats them.
+
+**The repo already solved this identical class of problem, and the precedent is
+binding.** `frontend/data/backcast/keepers/README.md` records the 2026-07-19 sharding in
+so many words: "Keeper promotions used to rewrite one shared `keepers.json` … so two
+sessions promoting keepers for *different* ISOs always collided and forced rebases. Now
+a promotion touches only its own lane." The matrix needs the same treatment: per-ISO
+verdict shards, with the mechanism-level fields (id/cat/name/def/mode) staying in the
+base file where they are edited once, by the single PR that adds the field.
+
+**Two smaller surfaces, same session.** (a) `frontend/data/backcast/manifest.js` (+
+benchmark/completeness) is touched by four lanes and is a **generated preview-only**
+artifact — the Pages deploy regenerates it and is its single writer (CLAUDE.md Git &
+Pushing §3), while the **forecast namespace already gitignores its equivalents**
+(`.gitignore` 238–247). The backcast side is paying merge cost for an artifact the
+deploy overwrites; mirroring the proven forecast pattern removes the surface. (b)
+`src/market_sim/config/scenarios.py`'s registration lists (9 lanes) genuinely need to be
+shared, but a stable insertion convention keeps two field-adding lanes off the same line.
+
+**HOUSE-3 dispatched (§0ah)** with one binding sequencing instruction: it rewrites the
+file every lane touches, so it lands **alone and first** — the owner pastes it before
+the next wave and lets it merge. Its migration must be byte-faithful (the assembled
+matrix identical to today's) and the CI guard must move with it, so no lane's rule-28
+duty changes except *where* it writes. Until it lands, the standing clause added to
+every prompt is: **a shared-file conflict is resolved by UNION, never by taking one
+side — and the resolver re-reads both sides' verdicts before committing.**
