@@ -1104,6 +1104,14 @@ def score_crossover(bundle: Path, report_dir: Path) -> dict:
         "additions_cod_basis": capacity["additions_cod_basis"],
         "additions_basis": capacity["additions_basis"],
         "co2": capacity["co2"],
+        # Present only on the missing-capacity-target degrade (FH-4-CAISO):
+        # carried to the top level so write_report / the registered sidecar /
+        # the forecast-validation page all read one address.
+        **(
+            {"capacity_events_note": capacity["capacity_events_note"]}
+            if capacity.get("capacity_events_note")
+            else {}
+        ),
         "bands": CH.BANDS,
         # (c)
         "forward_invariants": forward,
