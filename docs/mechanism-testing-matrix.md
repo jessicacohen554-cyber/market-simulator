@@ -3797,6 +3797,101 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-09-miso-148-basis-aware`, **NOT-YET**
 
+> **ITEM 8 CLOSES AT miso-150 (2026-08-10) — THE MODEL-SIDE UNIVERSE FIX WORKS
+> EXACTLY AS miso-146 NAMED IT, AND THE ASYMMETRY IT CORRECTS WAS NEVER
+> LOAD-BEARING. NO LP SOLVE, NO MECHANISM, NO `ScenarioConfig` FIELD, NO CELL
+> VERDICT MOVES, KEEPER UNCHANGED** at `2026-08-09-miso-148-basis-aware`
+> (**NOT-YET**, fail set {C3a, C3b}, re-verified from committed artifacts at
+> session open; C3c ledgered 1/1 SPENT). Branch **`BRANCH-NULL`** of
+> `PREREG-miso150-model-side-universe-2026-08-10.md` (pushed at `79f2e90c`,
+> blob-verified, **before the probe was written**).
+>
+> * **THE FIX WAS BUILT.** miso-146 §8(a) refuted subtracting VRE from the
+>   corpus and named the model-side cure: add the model's own wind and solar to
+>   the model's curve at their own offer price. Built here from `run_year`'s own
+>   `fleet_only` exit — **wind at −$26.00/MWh (the IRA PTC dispatch credit),
+>   solar at $0.00** — never a re-derivation outside the orchestrator. Model VRE
+>   capability added, JJA h12–17: **8.158 / 12.376 / 16.357 GW** (2025 = wind
+>   7.039 + solar 9.318, just above miso-146's committed 16.286 GW of model VRE
+>   *dispatch*, the expected ordering since MISO's CF path is
+>   `_forecast_uncurtailed_cf`).
+> * **G-1 / G-2 — THE CHARTER'S STANDING MEASUREMENT IS EXACTLY INVARIANT.**
+>   The ladder slope and the missing offer wall move by **0.0000 $/GW and
+>   0.0000 GW in ALL 24 CELLS** (3 years × 2 windows × 2 brackets × 2 markets),
+>   against 0.05 bars. **TRAP-2, the ONE legitimate breach channel, is EMPTY —
+>   0 of 552 (JJA) and 0 of 793 (W1) hours in every year have an anchor at or
+>   below the model's own VRE offer**, which is why the reading is exactly zero
+>   rather than merely small. The wall is **algebraically untouched** by the
+>   largest model-side foot correction that exists.
+> * **G-3 — THE LEVEL MOVE IS AN ORDER OF MAGNITUDE SHORT.** ΔLEVEL(U1)
+>   **+0.582 … +2.156**; ΔLEVEL(**U1S**, the model's COMPLETE offerable universe
+>   — VRE *plus* storage, with nothing left to add) tops out at **+2.594**
+>   (2025 JJA `lo` DA), against the pre-registered +$5 branch bar and
+>   miso-145's **+$18** reinstatement bar. Every cell carries the predicted
+>   positive sign. **The ex-ante prior held tightly**: +$1.4 band [+0.9, +2.2]
+>   predicted for 2025 JJA RT `lo` from committed artifacts alone, **measured
+>   +1.533**. On a window deficit of **−$33.05** the fix closes at most **8 %**.
+> * **G-4 — THE CEILING, in units of MISO's own fleet.** Reaching the +$18 bar
+>   by universe correction alone needs **V\* = 612.0 GW (RT) / 184.0 GW (DA)**
+>   in 2025 — **12.3× / 3.7× MISO's ENTIRE VRE NAMEPLATE** (49.747 GW); 2023
+>   reads 24.1× / 8.0×. Bisected on the measured real curves, not the
+>   linearised prior.
+> * **THE STANDING MEASUREMENT IS STRONGER ON THE CURRENT KEEPER, NOT WEAKER.**
+>   Restated on `miso148_basis_B` (JJA h12–17, `lo`, symmetrised universe U1):
+>   model wall **8.3024 GW** against a real book carrying **0.7081 GW**, and the
+>   real curve rises **$73.4591/GW** against the model's **$0.7197** — a
+>   **102×** ratio where the charter's superseded-keeper figures gave 49×
+>   (5.698–6.038 GW, $73.46 vs $1.496). The charter's committed $73.46
+>   reproduces to four significant figures on a *different* keeper.
+> * **G-5 / TRAP-5 FIRED, and a committed description is CORRECTED.** The fleet
+>   carries **64** `fuel_type == "import"` rows, not the 32 miso-146 quotes:
+>   **32 `refimp` tranches at exactly 17,200.0 MW** (reconciling to miso-146's
+>   committed MW to the last digit) **plus 32 `refexp` rows at 0.0 MW** that the
+>   `seg_mw > 0` filter drops from every curve. The MW is right; "32 import
+>   tranches" describes a fleet carrying 64 rows under that fuel type. miso-146's
+>   characterisation is otherwise **confirmed** — the tranches price in the
+>   curve's **BODY** (JJA h12–17 mean offer **$172.61**, min $21.82, max
+>   $433.12, against a $41.63 anchor). **U4** (U1 minus the tranches) is
+>   correctly NOT invariant and bounds the import share of the wall at
+>   **9–12 %** (wall 8.3024 → 7.3206 GW in 2025) — **NAMED, NOT OPENED**; it is
+>   not a VRE question and needs its own charter.
+> * **FOOTING EXACTLY ZERO ON FOUR GATES**, which is what makes the invariance
+>   result a result rather than a harness artifact: **G-F0** miso-145's whole
+>   committed artifact reproduces (**0** fields out of tolerance), **G-F0b**
+>   this probe's segment path vs miso-145's dense path (**0.0**, 12 cells),
+>   **G-F1** the six committed window deficits (**0.0**), **G-F0c** the packed
+>   curve reader vs miso-145's own primitive (**0**, every cell). G-F0c exists
+>   because the probe's docstring **asserted** that cross-check without coding
+>   it — converted to a measured gate before any reading was taken (TRAP-1).
+> * **THE U2 LOCATOR reconciles miso-146 cleanly** and is banded as declared:
+>   at miso-146's own primary threshold (0.50) the book's identified
+>   intermittent capability reads **7.78 GW** for RT-2025 against its committed
+>   **7.755 GW**. It sits monotonically inside U0 ≤ U2 ≤ U1 in every cell and
+>   the sweep spans nearly the whole bracket (miso-146's P-1 threshold
+>   dependence, reproduced) — **which changes nothing, because the entire
+>   bracket is ≤ +$2.6.**
+> * **ONE ADDITIVE CORE CHANGE**, declared in PREREG §10 before it was made:
+>   `run_calibration.py`'s `fleet_only` exit now also returns `wind_mc` /
+>   `solar_mc` (**+9 lines, 5695 → 5704**; no solve path touched, no existing
+>   key changed, no behaviour changed). Rule 27 `[R-PUSH]`: pushed blob verified
+>   against the fetched remote ref — **5704 lines both sides, identical
+>   sha256**.
+> * **ITEM 8 IS CLOSED; ITEM 9 IS UNCHANGED AND STILL AN OWNER DECISION.** What
+>   this discharges is item 9's **stated prerequisite** — miso-145's missing
+>   offer wall is now a measurement on a *symmetrised* universe — and nothing
+>   more. A MISO `measured_offer_surface` (position-conditioned, replacing or
+>   subsuming `gas_offer_margin` per rule 19 `[R-ONE-MECH]`) is **NOT chartered
+>   by this session.** DO-NOT-REDO additions: the model-side VRE universe fix
+>   (built, measured, NULL) and any further attempt to move the LEVEL term by
+>   re-defining the comparison universe (G-4 bounds it at 3.7–24× nameplate).
+> * Rule 15 `[R-DASHBOARD]`: **no run produced, nothing to register** (the
+>   miso-149 Phase-0 precedent). Rule 22: 2023–2025 only, MISO holds no marker,
+>   no solve so no year spent. Evidence:
+>   `results/calibration/FINDING-miso150-the-universe-was-never-load-bearing-2026-08-10.md`,
+>   `PREREG-miso150-model-side-universe-2026-08-10.md`,
+>   `_miso150_universe.json`, probe `scripts/probes/_miso150_universe.py`.
+
+
 > **LIVE QUEUE AS OF miso-149 (2026-08-10) — BOTH QUEUE-HEAD OBJECTS ARE
 > REFUTED AS INDEPENDENT OBJECTS, AND THE LANE'S NEXT QUESTION IS NOT THE ONE
 > THE QUEUE WAS POINTING AT.** Phase 0, diagnosis-first: **NO LP, no arm, no
