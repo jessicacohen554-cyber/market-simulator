@@ -172,8 +172,9 @@ shape of the problem.** Under CI's own expression
 scope).** These guards live in tiers **CI never runs**: the `fast-tests` job
 deselects them by mark, and a CI runner has neither `data/raw` nor `data/clean`
 to run them with. So the one gate that watches the ERCOT availability envelope
-went red on 2026-07-26 and was seen only as incidental noise in five subsequent
-sessions' triage tables (ffr-1b, ffr-3d, ffr-3u, ffr-5c, f2-45u, miso-148) —
+went red on 2026-07-26 and was seen only as incidental noise in seven subsequent
+sessions' triage tables (caiso-143, ffr-1b, ffr-3d, ffr-3u, ffr-5c, f2-45u,
+miso-148) —
 each correctly noting it was pre-existing, none owning it. **A golden nothing
 schedules is not a guard.** Two candidate closures, both cheap, neither taken
 unilaterally: a data-provisioned scheduled lane, or a committed staleness

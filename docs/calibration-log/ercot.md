@@ -7191,7 +7191,8 @@ after `curate_confirmed_retirements.py`), and **none of the six is in the fast
 tier** — CI's own `-m "not slow and not integration and not fulldata"` deselects
 all of them, and a CI runner has neither `data/raw` nor `data/clean`. **Filed for
 the owner**: this golden went red on 2026-07-26 and was carried as incidental
-noise by six later sessions because nothing schedules the tier it lives in.
+noise by seven later sessions (caiso-143, ffr-1b, ffr-3d, ffr-3u, ffr-5c,
+f2-45u, miso-148) because nothing schedules the tier it lives in.
 `test_soundness::TestPerformance::test_full_ercot_8760_timing` (31.13 s vs a 30 s
 budget on a 4-core box) is a machine-speed artifact, deliberately untouched.
 
