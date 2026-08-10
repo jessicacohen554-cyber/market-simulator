@@ -243,8 +243,18 @@ def _new_entry_candidates(year: int, config: ScenarioConfig, iso: str) -> list[s
     technology joins the pool only once the simulation year reaches its
     configured availability year; offshore wind additionally enters only
     in ISOs listed in ``config.offshore_wind_eligible_isos``.
+
+    ``nuclear_smr`` stays in the classic tuple (its costing/queue-group
+    plumbing is the classic path), but when ``config.smr_available_year``
+    is set (FFR-9C R-b; GATED default-off = ``None`` = the shipped
+    always-eligible posture) it joins the pool only from that year — the
+    ``_EMERGING_AVAILABLE_YEAR`` gate, applied to a classic tech without
+    relocating its costing. ATB costs new nuclear from 2030 only
+    (constants.NEW_ENTRY_COSTS), so an armed run passes the ATB-cited 2030.
     """
     candidates = list(_NEW_ENTRY_TECHS)
+    if config.smr_available_year is not None and year < config.smr_available_year:
+        candidates.remove("nuclear_smr")
     for tech, year_field in _EMERGING_AVAILABLE_YEAR.items():
         if year < getattr(config, year_field):
             continue
