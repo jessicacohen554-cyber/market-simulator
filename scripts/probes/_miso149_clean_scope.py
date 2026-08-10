@@ -45,7 +45,6 @@ os.environ.setdefault("MISO149_CACHE", str(Path("/tmp") / "_miso149_cache"))
 import _miso143_stack as stack  # noqa: E402
 from _miso143_stack import hygiene, month_of_hour  # noqa: E402
 from _miso147_strata import (  # noqa: E402
-    FAMILY_TO_KLASSES,
     HOURS,
     YEARS,
     campd_units,
@@ -200,7 +199,7 @@ def run() -> dict:
             "top": under[:15],
         }
         res["years"][str(year)] = yr
-        del pack, lay, avail, prod, obs, series_by_variant
+        pack = lay = avail = prod = obs = series_by_variant = None
 
     # --- verdict ----------------------------------------------------------- #
     y = res["years"]["2025"]

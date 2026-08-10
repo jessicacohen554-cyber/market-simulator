@@ -45,7 +45,6 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 for _i, _p in enumerate((REPO, REPO / "src", REPO / "scripts", REPO / "scripts" / "probes")):
@@ -417,7 +416,6 @@ def run() -> dict:
             for s in (-1, 0, 1)
         }
         # TRAP 3 — CC_REGULAR alone (the CHP boundary held out)
-        fmap = fam_of_klass()
         reg_model: dict[str, dict[int, np.ndarray]] = {"CC": {}}
         keep = np.flatnonzero(np.array([str(k) == "CC_REGULAR" for k in pack["klass"]]))
         for g in keep:
@@ -469,7 +467,9 @@ def run() -> dict:
             "oa_rows_nameplate_mw": round(sum(OA_DROPPED_PLANTS.values()), 1),
         }
         res["years"][str(year)] = yr
-        del pack, lay, stat, variants, obs, base_model
+        # release the (n_gen, 8760) arrays; rebound rather than `del`ed so the
+        # closures above stay statically resolvable.
+        pack = lay = stat = variants = obs = base_model = keeper_cap = None
 
     # --- verdicts ---------------------------------------------------------- #
     cc25 = res["years"]["2025"]["families"]["CC"]
