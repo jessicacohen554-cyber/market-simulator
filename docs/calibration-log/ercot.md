@@ -7258,10 +7258,21 @@ channel is **measured, not inferred**: the gas commitment bridge, which detects
 its floors from the P0 run pattern, moves in **every** year — floored unit-hours
 **12,375 → 12,309** (2023), **6,164 → 6,160** (2024), **13,326 → 13,287** (2025).
 
-> **(c2) is not merely too small. At solve grain its ladder gain is CONSUMED by
-> the commitment channel its own seam breach opens.** MEMO §8's reading is
-> reinforced rather than overturned: you cannot reach a price by adding rows
-> above where the market clears.
+> **(c2) is not merely too small: at solve grain the ladder gain does not
+> survive to the annual level, and the P0 channel its own seam breach opens is
+> demonstrably live.** The P0 decomposition (`ercot188_p0_delta.json` — the
+> A/B's own P0, captured at the markup seam) finds **73 of 132 committed rows,
+> 12,474 MW**, carrying a DIFFERENT P0 commitment pattern (−8 starts, +96
+> committed on-hours) while P0 total energy is conserved to 2.8e-05 TWh.
+> **What it does NOT support, and is not claimed:** the start-amortization
+> arithmetic is small (cap-weighted markup −$0.0020/MWh, mean absolute
+> $0.0150/MWh), roughly two orders of magnitude short of the −$0.21 annual
+> move, and **nothing here apportions the ≈ $2.2/MWh between ladder and
+> commitment** — no counterfactual separates them, because they are the same
+> code change. **That inability is exactly the cost MEMO §3.3 priced, now
+> measured rather than predicted.** MEMO §8's reading is reinforced rather
+> than overturned: you cannot reach a price by adding rows above where the
+> market clears.
 
 The mechanism itself works exactly as specified: the model's supply-curve top
 goes from a 6-block equal-width approximation carrying **33** econ rows in the
