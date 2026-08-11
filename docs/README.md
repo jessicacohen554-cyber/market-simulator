@@ -97,7 +97,7 @@ produced is L3.)
 | [`forecasting-entry-exit-assessment.md`](forecasting-entry-exit-assessment.md) | ACTIVE | Forecast — entry/exit verdict (updated by FF-2C/FF-4B) | — |
 | [`forecast-invariant-findings.md`](forecast-invariant-findings.md) | ACTIVE | Forecast — invariant findings (validation base) | — |
 | [`model-legitimacy-audit-2026-07.md`](model-legitimacy-audit-2026-07.md) | ACTIVE | Governance — audit that CLAUDE.md rules 17–26 derive from | — |
-| [`mechanism-testing-matrix.md`](mechanism-testing-matrix.md) | ACTIVE | Governance/calibration — cross-ISO mechanism testing matrix: protocol, ISO-similarity analysis, per-ISO lever queues (rule 28; canonical data `codebase-site/data/mechanism-matrix.js`, rendered at the Mechanism Matrix page) | — |
+| [`mechanism-testing-matrix.md`](mechanism-testing-matrix.md) | ACTIVE | Governance/calibration — cross-ISO mechanism testing matrix: protocol, ISO-similarity analysis, per-ISO lever queues (rule 28; canonical data sharded per ISO since 2026-08-11: base `codebase-site/data/mechanism-matrix.js` + per-ISO `codebase-site/data/mechanism-matrix/<ISO>.js`, rendered at the Mechanism Matrix page) | — |
 | [`forecast-validation-plan.md`](forecast-validation-plan.md) | SUPERSEDED | Forecast | [`forecast-development-plan-2026-07.md`](forecast-development-plan-2026-07.md) |
 | [`forecast-methodology-gaps-2026-06.md`](forecast-methodology-gaps-2026-06.md) | SUPERSEDED | Forecast | [`gap-register-2026-07.md`](gap-register-2026-07.md) |
 | [`forecast-methodology-gaps-prompts-2026-06.md`](forecast-methodology-gaps-prompts-2026-06.md) | SUPERSEDED | Forecast (STALE — do not execute) | [`forecast-development-plan-2026-07.md`](forecast-development-plan-2026-07.md) |
