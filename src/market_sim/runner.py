@@ -66,6 +66,7 @@ from market_sim.data.build_throughput import max_annual_build_gw_by_tech
 from market_sim.data.offer_curves import (
     apply_cc_committed_offer_margin,
     apply_gas_offer_margin,
+    apply_miso_offer_surface,
 )
 from market_sim.data.confirmed_retirements import (
     ConfirmedExit,
@@ -2079,6 +2080,28 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # mc_cost (the retirement screen's full variable cost above —
             # margins are offer components, not costs).
             apply_gas_offer_margin(mc_base, dispatch_fleet, fuel_prices, config)
+            # MISO measured offer surface (miso_offer_surface_measured, default
+            # off, MISO-gated — miso-151): forecast parity with the backcast
+            # seam. SUBSUMES the margin the call above sets on MISO's above-base
+            # gas tranches (rule 19 [R-ONE-MECH]) — never stacks. Its three
+            # conditioning drivers (own-curve position, net-load percentile,
+            # delivered gas) all exist forward, which is what makes the surface
+            # rule-13 admissible rather than a backcast overlay.
+            if getattr(config, "miso_offer_surface_measured", False) and iso == "MISO":
+                from market_sim.data.fuel.trajectories import _gas_series
+
+                _miso_surface_net_load = (
+                    year_demand.sum(axis=0)
+                    - (solar_cap[:, None] * solar_cf).sum(axis=0)
+                    - (wind_cap[:, None] * wind_cf).sum(axis=0)
+                )
+                apply_miso_offer_surface(
+                    mc_base,
+                    dispatch_fleet,
+                    _miso_surface_net_load,
+                    _gas_series(config, year, mc_base.shape[1]),
+                    config,
+                )
             # CC committed-block measured offer level (cc_committed_offer_margin,
             # default off — ERCOT-139): the CC_REGULAR `_committed` tranche is
             # repriced from its band multiplier to the measured RT SCED curve

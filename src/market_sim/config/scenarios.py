@@ -425,6 +425,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario.
     "gas_offer_margin_zonal_anchor",
     "gas_offer_margin_anchor_by_zone",
+    # MISO POSITION-conditioned measured offer surface (miso-151): the gate,
+    # its artifact path and its two frozen bin geometries. All default-off
+    # (False / None) or at the registered cross-ISO geometry, and byte-identical
+    # for every config that does not arm the mechanism; registered here at their
+    # defaults so every pre-existing cache key stays byte-stable. An armed run
+    # enters the key as a distinct scenario.
+    "miso_offer_surface_measured",
+    "miso_offer_surface_path",
+    "miso_offer_surface_netload_pcts",
+    "miso_offer_surface_position_bins",
     # Coal-offer net-revenue margin form (ERCOT-137): the gate plus its two
     # identification constants (delivered-coal anchor $/MMBtu + measured RT
     # curve-bottom level $/MWh). All three default-off (False / None / None)
@@ -1025,6 +1035,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "gas_offer_margin_anchor": "None",
     "gas_offer_margin_zonal_anchor": "False",
     "gas_offer_margin_anchor_by_zone": "None",
+    "miso_offer_surface_measured": "False",
+    "miso_offer_surface_path": "None",
+    "miso_offer_surface_netload_pcts": "(0.80, 0.90, 0.97)",
+    "miso_offer_surface_position_bins": "(\n0.0,\n0.2,\n0.4,\n0.6,\n0.8,\n0.9,\n1.0,\n)",
     "coal_offer_net_revenue_margin": "False",
     "coal_offer_margin_anchor": "None",
     "coal_offer_margin_level": "None",
@@ -9827,6 +9841,55 @@ class ScenarioConfig:
     # run_config.json records the resolved values rather than a lookup
     # indirection (rule 21 [R-REGISTRY]).
     gas_offer_margin_anchor_by_zone: dict[str, float] | None = None
+
+    # MISO POSITION-conditioned MEASURED offer surface (miso-151) — default OFF.
+    # SUBSUMES ``gas_offer_net_revenue_margin`` on MISO gas tranches above the
+    # base band (rule 19 [R-ONE-MECH] — replace, never stack): that mechanism's
+    # fuel-invariant $/MWh margin, ``offer_markup_hr × anchor``, is sourced from
+    # the FITTED ``offer_curve_by_group`` multipliers; when this gate is armed
+    # the same quantity is instead read from MISO's own submitted-offer book.
+    # The form survives (the fuel-invariance is what the 2022 NEISO validation
+    # rotation kept when it rejected the multiplicative form, neiso-45/46/47);
+    # only the SOURCE changes, fitted -> measured.
+    #
+    # The measured object is a within-unit, within-hour price RISE
+    # (``Δ = price_j − price_1``) conditioned on the unit's own-curve POSITION,
+    # the hour's net-load percentile and the delivered gas price — never on
+    # class, because MISO's masked corpus carries no fuel attribute and
+    # miso-138 built and REFUTED the offer-side class bridge. Because Δ is a
+    # within-unit difference it transfers SHAPE and cancels LEVEL exactly, which
+    # is the whole design constraint: miso-145 measured MISO's real book as
+    # $8–15/MWh CHEAPER than the model at matched position, so a level transfer
+    # would move C3a the WRONG WAY.
+    #
+    # Rule 13 [R-MEASURED]: the surface is estimated by POOLING 2023–2025 and is
+    # applied identically to every year — never a per-year surface, which would
+    # be the same-year measured OUTCOME pin forbidden as methodology
+    # (PREREG-miso146 §9). Its three conditioning drivers all exist in a
+    # forecast year, so it regenerates forward and responds to changed
+    # conditions. Zero fitted parameters; both bin geometries are frozen
+    # (rule 23) and the artifact re-derives only when the corpus updates.
+    # Derive: ``scripts/data/derive_miso_offer_surface.py``. Applied in
+    # ``data.offer_curves.apply_miso_offer_surface``.
+    miso_offer_surface_measured: bool = False
+    # Path to the derived artifact; None resolves to the frozen
+    # ``data/raw/_validation-source/miso_offer_surface_positioned.json``.
+    miso_offer_surface_path: str | None = None
+    # Net-load percentile bin edges — the REGISTERED cross-ISO geometry shared
+    # with the ERCOT/CAISO/PJM/NEISO surfaces. Rule 23: never re-binned against
+    # a residual.
+    miso_offer_surface_netload_pcts: tuple[float, ...] = (0.80, 0.90, 0.97)
+    # Own-curve position bin edges (fraction of the unit's own economic max).
+    # Frozen at PREREG time, before any measurement was taken.
+    miso_offer_surface_position_bins: tuple[float, ...] = (
+        0.0,
+        0.2,
+        0.4,
+        0.6,
+        0.8,
+        0.9,
+        1.0,
+    )
 
     # Coal-offer NET-REVENUE MARGIN form (the gas form's coal analogue,
     # ERCOT-137; owner ruling 2026-07-29: coal offers move to a measured

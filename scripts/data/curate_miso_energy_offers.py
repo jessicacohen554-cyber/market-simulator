@@ -4,7 +4,7 @@ Reads the immutable daily zips landed by
 ``scripts/data/fetch_miso_energy_offers.py`` under
 ``data/raw/miso-energy-offers/<market>/`` and writes one clean long-format
 Parquet per (market, year) to ``data/clean/energy-offers/MISO/<MARKET>/``
-through the frozen :func:`scripts.lib.clean_io.write_clean` seam.
+through the frozen :func:`scripts.lib.clean_io.write_clean_iter` seam.
 
 Wide -> long transform
 ----------------------
@@ -74,7 +74,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config import paths  # noqa: E402
-from scripts.lib.clean_io import write_clean  # noqa: E402
+from scripts.lib.clean_io import write_clean_iter  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 log = logging.getLogger("curate_miso_energy_offers")
@@ -215,17 +215,40 @@ def _transform_day(df: pd.DataFrame, market: str) -> pd.DataFrame:
 
 
 def curate(market: str, year: int, days: list[Path]) -> Path:
-    """Curate one (market, year) slice and return the written clean path."""
-    frames = [_transform_day(read_day(p), market.upper()) for p in sorted(days)]
-    long = pd.concat(frames, ignore_index=True)
-    # Duplicate keys would silently double-count MW in any aggregation.
+    """Curate one (market, year) slice and return the written clean path.
+
+    STREAMING (miso-151): the day frames are handed to
+    :func:`scripts.lib.clean_io.write_clean_iter` one at a time instead of being
+    concatenated.  ``write_clean``'s materialise-then-copy pair puts a 365-day
+    MISO year (~44 M rows x 2 markets) past this host's 15 GB ceiling — the
+    exact failure ``write_clean_iter``'s own docstring was written for — while
+    its output is **data-byte identical** to the concatenated write, so the
+    JJA-only corpus every prior MISO session curated re-curates unchanged.
+
+    Duplicate-key handling is per-day rather than per-year, and that is
+    EQUIVALENT here rather than a weakening: MISO publishes these reports on
+    fixed **EST (UTC-5) year-round**, 24 rows per unit-day with no localisation
+    (``data/raw/miso-energy-offers/README.md``), so each operating day occupies
+    its own disjoint 24-hour UTC block and two different days cannot collide on
+    ``interval_start_utc``.  A cross-day duplicate key is therefore impossible
+    by construction; only within-day repeats can occur, and those are dropped
+    exactly as before.
+    """
     key = ["iso", "market", "unit_code", "interval_start_utc", "step_idx"]
-    dup = int(long.duplicated(subset=key).sum())
-    if dup:
-        log.warning("%s %d: dropping %d duplicate key rows", market, year, dup)
-        long = long.drop_duplicates(subset=key, keep="first")
-    out = write_clean(
-        long,
+    stats = {"rows": 0, "dup": 0}
+
+    def _chunks():
+        for path in sorted(days):
+            frame = _transform_day(read_day(path), market.upper())
+            dup = int(frame.duplicated(subset=key).sum())
+            if dup:
+                stats["dup"] += dup
+                frame = frame.drop_duplicates(subset=key, keep="first")
+            stats["rows"] += int(len(frame))
+            yield frame
+
+    out = write_clean_iter(
+        _chunks(),
         DATATYPE,
         iso=ISO,
         year=year,
@@ -235,7 +258,11 @@ def curate(market: str, year: int, days: list[Path]) -> Path:
             f"({len(days)} operating days); awards excluded (rule 13)"
         ),
     )
-    log.info("%s %d: %d days -> %d rows -> %s", market, year, len(days), len(long), out)
+    if stats["dup"]:
+        log.warning("%s %d: dropped %d duplicate key rows", market, year, stats["dup"])
+    log.info(
+        "%s %d: %d days -> %d rows -> %s", market, year, len(days), stats["rows"], out
+    )
     return out
 
 
