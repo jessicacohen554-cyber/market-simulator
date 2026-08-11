@@ -1,0 +1,1630 @@
+{
+  "g_cover": {
+    "bar_pct": 90.0,
+    "coverage_pct": 99.9407,
+    "covered_mw": 6736.3,
+    "denominator_locked_in_precheck_mw": 6740.3,
+    "denominator_mw": 6740.3,
+    "eia860_absent_top20_plant_mw": [
+      [
+        332,
+        3.0
+      ],
+      [
+        60466,
+        1.0
+      ]
+    ],
+    "eia860_plants_absent_from_partition": 2,
+    "partition_plants_absent_from_eia860": [
+      229,
+      253,
+      255,
+      56615,
+      65033
+    ],
+    "verdict": "PASS"
+  },
+  "g_det": {
+    "bar": "two consecutive curator runs produce byte-identical partitions",
+    "data_bytes_identical": true,
+    "data_content_sha256": "ce299ccb558fe65ff7ef1fe19741a47d67037834eedc0f42434b43ca16ca5aa1",
+    "file_bytes_identical": false,
+    "note": "File-byte identity is unsatisfiable by construction for ANY clean partition: scripts/lib/clean_io.py stamps market_sim.created_utc on every write and documents (lines 388-394) that its own determinism standard is 'data-byte identical ... only the provenance metadata differs, and only in the fields that are timestamps by construction (created_utc)'. Measured here: the ONLY differing bytes between the two runs are that timestamp; the classification is identical.",
+    "run1_file_sha256": "e04fcf6aab03e8ba714c51fa7f3f351f2ced63856e2492f4edcceacb0e83bfe8",
+    "run2_file_sha256": "28b6a0972bc26d0251d712468157493f9c6cc10d91faeda704d185d7a9f2cc57"
+  },
+  "g_share": {
+    "admissible_band_pct": [
+      14.4621,
+      34.4621
+    ],
+    "delta_pp": -10.9665,
+    "full_population_share_pct": 13.4956,
+    "labeled_subset_share_pct": 24.4621,
+    "tolerance_pp": 10.0,
+    "verdict": "FAIL"
+  },
+  "gatespec": "GATESPEC-caiso194-hydro-ror-split-2026-08-11.md",
+  "partition": {
+    "method_ch_mw": {
+      "corps_dam": 201.8,
+      "eha_mode": 2046.125,
+      "hilarri_no_reservoir": 202.3,
+      "hilarri_reservoir": 4252.9
+    },
+    "method_counts": {
+      "corps_dam": 7,
+      "eha_mode": 97,
+      "hilarri_no_reservoir": 13,
+      "hilarri_reservoir": 78
+    },
+    "non_shapeable": 84,
+    "rows": 195,
+    "shapeable": 111,
+    "total_ch_mw": 6703.125
+  },
+  "plants": [
+    {
+      "ch_mw": 12.1,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 34,
+      "plant_name": "Rollins",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 10.1,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 72,
+      "plant_name": "Venice",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.0,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 180,
+      "plant_name": "Volta 2",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 1.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 214,
+      "plant_name": "Alta",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 1.4,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 215,
+      "plant_name": "Angels",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 31.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 217,
+      "plant_name": "Balch 1",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 97.2,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 218,
+      "plant_name": "Balch 2",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 117.9,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 219,
+      "plant_name": "Belden",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 66.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 220,
+      "plant_name": "Bucks Creek",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 40.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 221,
+      "plant_name": "Butt Valley",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 73.8,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 222,
+      "plant_name": "Caribou 1",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 117.9,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 223,
+      "plant_name": "Caribou 2",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 6.4,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 224,
+      "plant_name": "Centerville",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 8.3,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 225,
+      "plant_name": "Chili Bar",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 12.1,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 227,
+      "plant_name": "Coleman",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 1.4,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 229,
+      "plant_name": "Cow Creek",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 73.8,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 231,
+      "plant_name": "Cresta",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 18.4,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 232,
+      "plant_name": "De Sabla",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 5.5,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 233,
+      "plant_name": "Deer Creek",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 49.2,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 235,
+      "plant_name": "Drum 1",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 53.1,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 236,
+      "plant_name": "Drum 2",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 22.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 237,
+      "plant_name": "Dutch Flat",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 20.0,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 238,
+      "plant_name": "El Dorado",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 102.5,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 239,
+      "plant_name": "Electra",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 135.0,
+      "method": "eha_mode",
+      "mode": "Intermediate Peaking",
+      "plant_id": 240,
+      "plant_name": "Haas",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 13.6,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 241,
+      "plant_name": "Halsey",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 5.3,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 242,
+      "plant_name": "Hamilton Branch",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 10.0,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 243,
+      "plant_name": "Hat Creek 1",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 10.0,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 244,
+      "plant_name": "Hat Creek 2",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 7.6,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 248,
+      "plant_name": "Inskip",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 168.6,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 249,
+      "plant_name": "James B Black",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 22.6,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 250,
+      "plant_name": "Kerckhoff",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 1.5,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 253,
+      "plant_name": "Kilarc",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 48.6,
+      "method": "eha_mode",
+      "mode": "Intermediate Peaking",
+      "plant_id": 254,
+      "plant_name": "Kings River",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 2.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 255,
+      "plant_name": "Lime Saddle",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 3.4,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 258,
+      "plant_name": "Merced Falls",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 3.6,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 261,
+      "plant_name": "Murphys",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 10.2,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 262,
+      "plant_name": "Narrows",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.6,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 264,
+      "plant_name": "Phoenix",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 69.2,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 265,
+      "plant_name": "Pit 1",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 80.1,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 266,
+      "plant_name": "Pit 3",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 103.4,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 267,
+      "plant_name": "Pit 4",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 141.6,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 268,
+      "plant_name": "Pit 5",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 79.2,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 269,
+      "plant_name": "Pit 6",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 109.8,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 270,
+      "plant_name": "Pit 7",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 142.8,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 272,
+      "plant_name": "Poe",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 9.4,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 274,
+      "plant_name": "Potter Valley",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 126.0,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 275,
+      "plant_name": "Rock Creek",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 2.8,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 276,
+      "plant_name": "San Joaquin 2",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 4.0,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 277,
+      "plant_name": "San Joaquin 3",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 42.0,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 279,
+      "plant_name": "Salt Springs",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 6.7,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 280,
+      "plant_name": "South",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 7.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 281,
+      "plant_name": "Spaulding 1",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 3.7,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 282,
+      "plant_name": "Spaulding 2",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 6.6,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 283,
+      "plant_name": "Spaulding 3",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 6.0,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 284,
+      "plant_name": "Spring Gap",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 81.9,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 285,
+      "plant_name": "Stanislaus",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 52.2,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 287,
+      "plant_name": "Tiger Creek",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 8.4,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 289,
+      "plant_name": "Tule River",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 8.5,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 290,
+      "plant_name": "Volta 1",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 13.6,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 291,
+      "plant_name": "West Point",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 16.4,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 292,
+      "plant_name": "Wise",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 12.8,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 293,
+      "plant_name": "A G Wishon",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 88.4,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 317,
+      "plant_name": "Big Creek 1",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 66.6,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 318,
+      "plant_name": "Big Creek 2",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 174.5,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 319,
+      "plant_name": "Big Creek 3",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 100.0,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 320,
+      "plant_name": "Big Creek 4",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 75.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 321,
+      "plant_name": "Big Creek 8",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 110.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 322,
+      "plant_name": "Big Creek 2A",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 7.3,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 323,
+      "plant_name": "Bishop Creek 2",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 8.4,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 324,
+      "plant_name": "Bishop Creek 3",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 8.2,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 325,
+      "plant_name": "Bishop Creek 4",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 4.5,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 326,
+      "plant_name": "Bishop Creek 5",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.6,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 327,
+      "plant_name": "Bishop Creek 6",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.8,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 336,
+      "plant_name": "Kaweah 2",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 2.3,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 337,
+      "plant_name": "Kaweah 1",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 4.8,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 338,
+      "plant_name": "Kaweah 3",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 40.3,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 339,
+      "plant_name": "Kern River No. 3",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 26.4,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 340,
+      "plant_name": "Kern River No. 1",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 3.0,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 342,
+      "plant_name": "Lundy",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 190.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 344,
+      "plant_name": "Mammoth Pool",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 11.3,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 353,
+      "plant_name": "Poole",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 10.8,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 354,
+      "plant_name": "Portal",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 13.1,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 357,
+      "plant_name": "Rush Creek",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 3.2,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 361,
+      "plant_name": "Santa Ana 1",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 3.1,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 363,
+      "plant_name": "Santa Ana 3",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 2.6,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 365,
+      "plant_name": "Lower Tule",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 23.6,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 376,
+      "plant_name": "Pardee",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 156.8,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 380,
+      "plant_name": "Dion R Holm",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 100.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 381,
+      "plant_name": "Moccasin",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 115.5,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 382,
+      "plant_name": "R C Kirkwood",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 94.5,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 409,
+      "plant_name": "Exchequer",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 9.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 410,
+      "plant_name": "McSwain",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 44.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 412,
+      "plant_name": "Chicago Park",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 27.3,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 413,
+      "plant_name": "Dutch Flat 2",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 10.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 414,
+      "plant_name": "Beardsley",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 72.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 415,
+      "plant_name": "Donnells",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 29.9,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 416,
+      "plant_name": "Tulloch",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 41.9,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 417,
+      "plant_name": "Forbestown",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 10.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 418,
+      "plant_name": "Kelly Ridge",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 67.2,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 419,
+      "plant_name": "Woodleaf",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 15.3,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 424,
+      "plant_name": "French Meadows",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 122.4,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 425,
+      "plant_name": "Middle Fork",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 6.1,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 426,
+      "plant_name": "Oxbow",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 79.2,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 427,
+      "plant_name": "Ralston",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 2.7,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 428,
+      "plant_name": "Parker",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 276.2,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 436,
+      "plant_name": "Devil Canyon",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 351.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 437,
+      "plant_name": "Edward C Hyatt",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 32.6,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 438,
+      "plant_name": "Thermalito",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 315.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 454,
+      "plant_name": "Colgate",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 46.7,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 455,
+      "plant_name": "Narrows 2",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 1.4,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 457,
+      "plant_name": "Bear Valley",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 2.9,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 479,
+      "plant_name": "Temescal",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 2.9,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 480,
+      "plant_name": "Corona",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 7.9,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 481,
+      "plant_name": "Perris",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.9,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 482,
+      "plant_name": "Rio Hondo",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 3.1,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 483,
+      "plant_name": "Coyote Creek",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 5.9,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 484,
+      "plant_name": "Red Mountain",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 4.1,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 487,
+      "plant_name": "Valley View",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 7.2,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 531,
+      "plant_name": "Camp Far West",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 10.8,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 537,
+      "plant_name": "Camanche",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 1.4,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 626,
+      "plant_name": "Oak Flat",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 12.7,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 632,
+      "plant_name": "Newcastle",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 139.5,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 682,
+      "plant_name": "Kerckhoff 2",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 1.8,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 714,
+      "plant_name": "Toadtown",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 23.9,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 745,
+      "plant_name": "Etiwanda",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 2.9,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 751,
+      "plant_name": "Moccasin Low Head Hydro Project",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 12.1,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 776,
+      "plant_name": "Sly Creek",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 1.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 839,
+      "plant_name": "Scott Flat",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 1.5,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 846,
+      "plant_name": "Combie South",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 19.6,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 905,
+      "plant_name": "Alamo",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 74.2,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 6196,
+      "plant_name": "W E Warne",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 3.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 6449,
+      "plant_name": "Azusa",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 4.9,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 6644,
+      "plant_name": "Lake Mathews",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 9.0,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 6645,
+      "plant_name": "Foothill Feeder",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 9.9,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 6646,
+      "plant_name": "San Dimas",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 5.1,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 6647,
+      "plant_name": "Yorba Linda",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 32.7,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 7072,
+      "plant_name": "Mojave Siphon",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 3.4,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 7129,
+      "plant_name": "Thermalito Diverson Dam",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 3.0,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 7147,
+      "plant_name": "Mill Creek 3",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 4.9,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 7151,
+      "plant_name": "Stony Gorge",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 6.1,
+      "method": "corps_dam",
+      "mode": NaN,
+      "plant_id": 7229,
+      "plant_name": "Black Butte",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 22.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 7338,
+      "plant_name": "Grizzly",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 3.5,
+      "method": "corps_dam",
+      "mode": NaN,
+      "plant_id": 7489,
+      "plant_name": "Lake Mendocino",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 2.0,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 7507,
+      "plant_name": "Deadwood Creek",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 11.5,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 7646,
+      "plant_name": "Monticello",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 165.0,
+      "method": "corps_dam",
+      "mode": NaN,
+      "plant_id": 7907,
+      "plant_name": "Pine Flat",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 11.5,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 7911,
+      "plant_name": "Kern Canyon",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 29.7,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 7942,
+      "plant_name": "Diamond Valley Lake",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 2.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 10128,
+      "plant_name": "R.W. Matthews",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 11.8,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 10139,
+      "plant_name": "Isabella Hydro Project",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.3,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 10162,
+      "plant_name": "Whitewater Hydro Plant",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.4,
+      "method": "corps_dam",
+      "mode": NaN,
+      "plant_id": 10222,
+      "plant_name": "Success",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 10.0,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 10253,
+      "plant_name": "Lower Haypress Creek",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 5.0,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 10282,
+      "plant_name": "Big Creek Water Works",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 29.9,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 10458,
+      "plant_name": "Muck Valley Hydroelectric",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 3.0,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 10706,
+      "plant_name": "Burney Creek",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 5.0,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 10707,
+      "plant_name": "Cove Hydroelectric",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.1,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 10708,
+      "plant_name": "Lost Creek I",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.1,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 10709,
+      "plant_name": "Ponderosa Bailey Creek",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.8,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 10880,
+      "plant_name": "Bidwell Ditch Project",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 2.0,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 10881,
+      "plant_name": "Roaring Creek Water Power",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 6.8,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 10882,
+      "plant_name": "Hatchet Creek Project",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 14.0,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 50037,
+      "plant_name": "Rio Bravo Hydro Project",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.3,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 50076,
+      "plant_name": "Santa Felicia Dam",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 2.5,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 50128,
+      "plant_name": "Clear Lake Hydro Project",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 2.9,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 50129,
+      "plant_name": "Indian Valley Dam Hydro Project",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 1.4,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 50147,
+      "plant_name": "R E Badger Filtration Plant",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 3.2,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 50156,
+      "plant_name": "Nichols",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 5.0,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 50180,
+      "plant_name": "Olsen",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 5.3,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 50219,
+      "plant_name": "Frankenheimer Power Plant",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.2,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 50223,
+      "plant_name": "Nelson Creek",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.0,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 50233,
+      "plant_name": "San Dimas Wash Generating Station",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 2.125,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 50322,
+      "plant_name": "Madera Canal (Site 980 65)",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 14.5,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 50350,
+      "plant_name": "Forks of Butte Hydro Project",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 4.4,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 50352,
+      "plant_name": "Nacimiento Hydro Project",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 1.2,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 50375,
+      "plant_name": "East Portal Generator",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 37.5,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 50393,
+      "plant_name": "Friant Hydro Facility",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 16.2,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 50400,
+      "plant_name": "Sand Bar Power Plant",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.5,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 50492,
+      "plant_name": "Point Loma",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 4.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 50546,
+      "plant_name": "Bowman",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 3.0,
+      "method": "corps_dam",
+      "mode": NaN,
+      "plant_id": 50755,
+      "plant_name": "New Hogan",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 3.0,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 50892,
+      "plant_name": "Rock Creek LP",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 5.0,
+      "method": "hilarri_reservoir",
+      "mode": NaN,
+      "plant_id": 54017,
+      "plant_name": "San Gabriel Hydro Project",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 2.7,
+      "method": "corps_dam",
+      "mode": NaN,
+      "plant_id": 54261,
+      "plant_name": "Warm Springs",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.3,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 54308,
+      "plant_name": "Three Forks Water Power Project",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 20.1,
+      "method": "corps_dam",
+      "mode": NaN,
+      "plant_id": 54343,
+      "plant_name": "Terminus Hydroelectric Project",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 5.9,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 54554,
+      "plant_name": "Spicer Meadow Project",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 253.0,
+      "method": "eha_mode",
+      "mode": "Peaking",
+      "plant_id": 54555,
+      "plant_name": "Collierville Powerhouse",
+      "shapeable": true
+    },
+    {
+      "ch_mw": 4.9,
+      "method": "eha_mode",
+      "mode": "Run-of-river",
+      "plant_id": 54654,
+      "plant_name": "Kekawaka Power House",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 2.6,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 55009,
+      "plant_name": "Montgomery Creek Hydro",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.0,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 56125,
+      "plant_name": "Springville Hydroelectric",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 4.6,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 56615,
+      "plant_name": "Rancho Penasquitos",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.5,
+      "method": "hilarri_no_reservoir",
+      "mode": NaN,
+      "plant_id": 59428,
+      "plant_name": "Baker Creek Diversion",
+      "shapeable": false
+    },
+    {
+      "ch_mw": 1.3,
+      "method": "eha_mode",
+      "mode": "Canal/Conduit",
+      "plant_id": 65033,
+      "plant_name": "Kings River Syphon",
+      "shapeable": false
+    }
+  ],
+  "precheck": "PRECHECK-caiso194-hydro-ror-split-2026-08-11.md"
+}
