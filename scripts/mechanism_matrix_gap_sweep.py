@@ -46,9 +46,16 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO))
+from scripts.lib import mech_matrix  # noqa: E402  (after sys.path insert)
+
+# The BASE file of the sharded store (2026-08-11); per-ISO cells/ev live in
+# docs/codebase-site/data/mechanism-matrix/<ISO>.js and are read through
+# scripts.lib.mech_matrix.
 MATRIX = REPO / "docs/codebase-site/data/mechanism-matrix.js"
 KEEPER_SHARD_DIR = REPO / "frontend/data/backcast/keepers"
 CALIB_DIR = REPO / "results/calibration"
@@ -112,15 +119,33 @@ def scenario_defaults() -> dict[str, object]:
 
 
 def matrix_rows() -> list[dict]:
-    """Every matrix row as ``{id, cells, blob}`` — blob is the row's source."""
+    """Every matrix row as ``{id, cells, blob}`` — blob is the row's text.
+
+    Sharded store (2026-08-11): the row's mechanism-level source chunk comes
+    from the BASE file, the six-char ``cells`` string is reassembled from the
+    per-ISO shards (``scripts.lib.mech_matrix.load_merged``), and ``blob``
+    appends the shards' per-ISO ev/note text for the row so a field named only
+    in an ISO's citation still counts as mentioned — the same reach the old
+    monolith blob had. The ``note:``-split "own_row" head in :func:`coverage`
+    keeps seeing only the base chunk's pre-note region, as before.
+    """
     src = MATRIX.read_text()
     chunks = re.split(r'\n\s*\{\s*id:\s*"', src)[1:]
+    base_blobs = {ch.split('"', 1)[0]: ch.split('"', 1)[1] for ch in chunks}
+    merged = mech_matrix.load_merged(REPO)
     rows = []
-    for ch in chunks:
-        rid = ch.split('"', 1)[0]
-        body = ch.split('"', 1)[1]
-        m = re.search(r'cells:\s*"([KRIGOU.]{6})"', body)
-        rows.append({"id": rid, "cells": m.group(1) if m else None, "blob": body})
+    for row in merged["rows"]:
+        rid = row["id"]
+        shard_bits = [str(v) for v in (row.get("ev") or {}).values()] + [
+            str(v) for v in (row.get("iso_notes") or {}).values()
+        ]
+        rows.append(
+            {
+                "id": rid,
+                "cells": row.get("cells"),
+                "blob": "\n".join([base_blobs.get(rid, "")] + shard_bits),
+            }
+        )
     return rows
 
 
@@ -421,7 +446,11 @@ def main() -> None:
 
     defaults = scenario_defaults()
     rows = matrix_rows()
-    blob = MATRIX.read_text().lower()
+    # Whole-store mention blob: base + every ISO shard (a field named only in
+    # a shard's ev/note is still "mentioned in the matrix").
+    blob = "\n".join(
+        p.read_text() for p in mech_matrix.all_matrix_paths(REPO) if p.is_file()
+    ).lower()
     print(f"ScenarioConfig fields : {len(defaults)}")
     print(f"matrix rows           : {len(rows)}")
 

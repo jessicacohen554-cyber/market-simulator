@@ -48,15 +48,21 @@ GOVERNANCE_FILES = [
     DATA / "calibration-complete.json",
     DATA / "keepers",  # directory — every <ISO>.json shard
 ]
-# Reported, never blocking (see module docstring).
-ADVISORY_FILES = [REPO / "docs" / "codebase-site" / "data" / "mechanism-matrix.js"]
+# Reported, never blocking (see module docstring). Base + the per-ISO shard
+# directory (run-id citations live in the shards' `ev` since 2026-08-11).
+ADVISORY_FILES = [
+    REPO / "docs" / "codebase-site" / "data" / "mechanism-matrix.js",
+    REPO / "docs" / "codebase-site" / "data" / "mechanism-matrix",
+]
 
 
 def _texts(paths: list[Path]) -> dict[str, str]:
     out: dict[str, str] = {}
     for p in paths:
         if p.is_dir():
-            for f in sorted(p.glob("*.json")):
+            # keepers/ holds <ISO>.json shards; mechanism-matrix/ holds
+            # <ISO>.js shards — scan both shard shapes.
+            for f in sorted(list(p.glob("*.json")) + list(p.glob("*.js"))):
                 out[str(f.relative_to(REPO))] = f.read_text()
         elif p.exists():
             out[str(p.relative_to(REPO))] = p.read_text()
