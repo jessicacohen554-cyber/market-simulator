@@ -31,7 +31,7 @@ the way.
 | **D** | RTC+B adapter authorization (27 quarantined parts) | soft — caps future corpus work | **Authorize, scoped to a read adapter** |
 | **E** | ercot-188 — promote SCHEME R1 on structural fidelity? | no | **DO NOT PROMOTE** |
 | **F** | Nothing schedules the tier the ERCOT golden lives in | no | Schedule it |
-| **G** | Rulings #2, #3, #5 — dead or alive? | no | **One line from you; I could not verify** |
+| **G** | Rulings #2, #3, #5 — **INVESTIGATED 2026-08-11** | no | **#2 spent · #3 delete · #5 mis-titled, re-open the real object** |
 
 ---
 
@@ -252,28 +252,103 @@ ERCOT session to run it (weakest — it is what already failed seven times);
 
 ---
 
-## G. RULINGS #2, #3, #5 — dead or alive?
+## G. RULINGS #2, #3, #5 — INVESTIGATED, 2026-08-11
 
-**I could not verify these and will not assert them.** The ercot-149 register
-carried ten rulings. Verified since: **#7** closed (owner-promoted,
-`ercot_dam_availability_gas_event_cap` cell `K`); **#6** closed (refused on data
-2026-08-04, no paid daily gas licence); **#1** and **#4** discharged by the
-rule-28(c) ERCOT column closure at ercot-156 (census debt **0/0/0**).
+**Owner asked ercot-188 to explore rather than leave these unverified. Done —
+all three now have an evidenced answer.** Nothing below is a decision; each still
+needs your signature, but none is a guess any more.
 
-**Not verified either way:**
+### G.2 — Ruling #2: per-gate dispositions of the attributed gates · **SPENT**
 
-| # | Subject |
+The ruling asked for a disposition on each attributed gate, named at ercot-147 as
+**C3a / C3b / C3c tail** and **C7-2023 non-offer-surface**. Every one has since
+been dispositioned by a named, signed decision — the ruling was overtaken and
+nobody closed the register entry:
+
+| gate | disposition | where |
+|---|---|---|
+| **C7-2023** (lignite cv-leg) | **CLOSED** — cv 0.331 → 1.193, r 0.976, on the year's own measured curves | ercot-168 promotion |
+| **C3c** ×3 years | **LEDGERED** `ACCEPTED MODEL-CLASS LIMITATION`, then generalized | owner decision 2026-08-05; C3c standing rule, extended to every year 2026-08-09 |
+| **C3a-2023 / C3b-2023** | **REFUSED the ledger carve-out**; C3a stands a MODEL MISS at full magnitude; the model-class lane authorized instead | ercot-182 sitting, card **D1 SIGNED** |
+
+That lane then ran to its end: ercot-184 costed (c2), ercot-188 built and measured
+it, and the offer-curve **resolution** face is now closed alongside level, grain
+and position. **There is no undispositioned gate left under #2.**
+
+> **Recommendation: close #2 as SPENT** — not as answered-by-this-card, but as
+> answered by D1 + the 2026-08-05 C3c decision + ercot-168, none of which
+> back-referenced it.
+
+### G.3 — Ruling #3: `split_coal_tranches` delete-vs-inert · **DEAD ON ALL SIX KEEPERS**
+
+Measured at HEAD, not inferred. `build_dispatch_fleet` branches on
+`campd_bins is not None`, and `split_coal_tranches` lives **only in the `else`
+limb**. Read from each keeper's own `run_config.json` scenario dump:
+
+| ISO | `use_campd_bins` | reaches `split_coal_tranches`? |
+|---|---|---|
+| ERCOT / CAISO / PJM / MISO / NYISO / NEISO | **True** (all six) | **No — dead limb** |
+
+Every keeper nonetheless carries **six registered scalars** that reach nothing:
+`coal_tranche_{1,2,3}_frac` and `coal_tranche_{1,2,3}_fuel_passthrough`
+(`coal_tranche_1_frac = 0.3` on all six). miso-128 §4 already proved the
+inertness the hard way at MISO — assembling the real fleet twice under the
+keeper's config, once with the committed fractions and once materially
+perturbed, and measuring **zero** difference in `pmax_mw` and `fuel_fracs`.
+
+**Rule 26 `[R-DELETE]` is squarely on point:** *"Deprecated fitted knobs are
+removed, not zeroed — a deprecated parameter that still parses is a re-armable
+answer key."* Six such parameters currently parse.
+
+> **Recommendation: DELETE.** Not "mark inert" — delete the function and the six
+> scalars, in a lane that first proves the legacy limb is unreachable for every
+> registered bundle, not just the six current keepers.
+
+### G.5 — Ruling #5: Martin Lake lignite class composition · **MIS-STATED; the real object is ONE-CLASS-PER-PLANT**
+
+**The narrow question is already answered in code, and the answer is that Martin
+Lake is NOT in the lignite class.** Resolved live at HEAD via
+`data.coal._coal_class_for`:
+
+| plant | scoring class |
 |---|---|
-| **#2** | per-gate dispositions of the attributed gates |
-| **#3** | `split_coal_tranches` delete-vs-inert (note rule 26 `[R-DELETE]`: a deprecated knob that still parses is a re-armable answer key) |
-| **#5** | Martin Lake lignite class composition |
+| Martin Lake (6146) | **`COAL_PRB`** |
+| Limestone (298), W A Parish (3470) | `COAL_PRB` |
+| Oak Grove (6180), Major Oak (7030), San Miguel (6183) | `COAL_LIGNITE` |
 
-I found **no carry-forward and no explicit closure** for any of the three after
-ercot-149, and the current matrix header lists only #9/#10 as open. They are
-therefore either silently discharged or silently dropped. **One line from you
-settles it; my asserting it would be a guess.**
+It is curated in `COAL_PLANT_SUPPLY` with its reason on the line —
+*"now PRB by rail (was East Texas lignite)"* — and ercot-143 §7.3 corroborates
+behaviourally: the fleet's disputed 31.3 pp mid-band segment is carried by
+**Martin Lake 0.535, Parish 0.539, Limestone 0.455** (all PRB), while the true
+lignite plants Oak Grove and Major Oak — **84 % of the lignite class** —
+contribute **0.016 / 0.018 / 0.001 / 0.000**.
 
----
+**But the ruling's real object is bigger than Martin Lake,** and ERCOT-146 §3 is
+what enlarged it: the curated bin sheet is **one class per plant**, so a
+physically mixed facility gets one label. **Nine plants carrying 1,708 MW of
+EIA-860 CT capacity** — T H Wharton, V H Braunig, R W Miller, Decordova, Sand
+Hill, Colorado Bend, C R Wing, Dansby, Ray Olinger — have **no `CT_PEAKER` row at
+all**; the sheet carries them as `CC_REGULAR` / `ST_GAS` / `CC_CHP`. ERCOT-146
+recorded their measured CT rates in the artifact expressly as *"evidence-in-waiting
+for the class-composition question (same family as the open Martin Lake ruling)."*
+
+So #5 is not a plant question. It is: **does the one-class-per-plant bin sheet
+need to become multi-class per plant?** That is a fleet-representation change with
+real scope — it moves C1 class denominators and every per-class gate.
+
+> **Recommendation: close #5 as stated (the Martin Lake assignment is correct and
+> evidenced) and re-open its real object under an accurate title** — *"one-class-
+> per-plant bin sheet vs mixed facilities"* — carrying the ERCOT-146 nine-plant
+> evidence. Do not leave it filed under a plant name that resolves the other way.
+
+### G.0 — the register's own defect
+
+Three rulings sat open for eleven days across at least four sessions, and **all
+three were already decidable from committed artifacts** — one spent, one dead
+code, one mis-titled. The register carries no closure discipline: #2 was
+overtaken by decisions that never back-referenced it, and #5 kept a title its own
+evidence contradicts. Worth a standing rule that a signed decision names the
+rulings it discharges.
 
 ## H. WHAT THIS CARD DOES NOT ASK FOR
 
