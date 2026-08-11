@@ -189,6 +189,19 @@ class Generator(BaseModel):
     bin_label: str = ""  # human-readable bin id, e.g. H_CC1
     min_run_hours: int = 0  # minimum committed run length
     min_down_hours: int = 0  # minimum downtime between runs
+    # The PLANT's unit physics, stamped by assembly on EVERY tranche row
+    # (ercot-186, rule 18 [R-PHYSICS] grain repair). The two fields above are
+    # the UC-COUPLING anchor tags and are carried by the committed anchor slice
+    # ALONE — deliberately, so a bid tranche acquires no commitment coupling
+    # ("min-run / min-down stay 0 (bid markup only, no new UC coupling)",
+    # assembly.py) — which left every econ*/peak* row reading 0 and made any
+    # rule-18 physics gate at bid-row grain VACUOUS in both directions. These
+    # two carry the SAME assembled values at PLANT grain so a licensing gate on
+    # a bid row can read the physics that row's plant actually has. They are
+    # read-only provenance: no LP column, no FleetArrays field, no commitment
+    # consumer. 0 on fleets whose bin sheet records no physics.
+    plant_min_run_hours: int = 0  # the plant's min-run, on every tranche row
+    plant_min_down_hours: int = 0  # the plant's min-down, on every tranche row
     startup_cost_per_mw: float = 0.0  # $/MW per start, for the bid markup
     must_run_pct: float = 0.0  # MR% of the bin's nameplate (CHP steam)
     bin_nameplate_mw: float = 0.0  # bin total nameplate, for MR reconstruction

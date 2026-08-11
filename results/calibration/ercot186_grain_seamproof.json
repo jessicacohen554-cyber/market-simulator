@@ -1,0 +1,229 @@
+{
+  "_provenance": {
+    "probe": "scripts/probes/ercot186_grain_seamproof.py",
+    "precommit": "docs/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md",
+    "bundle": "results/calibration/ercot185_shapedarm_B",
+    "note": "SP-3 is a MEASUREMENT reported at full magnitude, not an assertion; SP-4 adjudicates inertness (prediction P-2). No bound moves in response to either."
+  },
+  "years": {
+    "2023": {
+      "year": 2023,
+      "n_gen": 1780,
+      "SP1_stamp_equals_ercot176_read": false,
+      "SP1_n_plant_prefixes": 219,
+      "SP1_n_prefixes_with_nonzero_physics": 172,
+      "SP1_n_mismatches": 40,
+      "SP1_mismatch_by_group": {
+        "CC_CHP": 19,
+        "CC_REGULAR": 1,
+        "CT_CHP": 17,
+        "CT_PEAKER": 1,
+        "ST_CHP": 2
+      },
+      "SP1_n_mismatches_with_a_committed_tranche": 0,
+      "SP1_mismatches": [
+        "CC_CHP_Houston_p56152: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p50043: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p52120: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p52132: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p54676: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55047: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55327: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55299: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55187: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p52088: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55464: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p50815: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55470: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_p55313: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_p10554: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_p55206: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_Central_p50118: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_Central_p58151: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_REGULAR_South_Central_p55154: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_West_p52176: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)"
+      ],
+      "SP2_n_ct_bid_rows": 486,
+      "SP2_n_rejected_by_row_grain_gate": 0,
+      "SP2_row_gate_is_vacuous": true,
+      "SP3_n_ct_plants": 65,
+      "SP3_n_plants_eligible": 64,
+      "SP3_n_plants_excluded": 1,
+      "SP3_excluded_plants": [
+        {
+          "prefix": "CT_PEAKER_South_Central_p6243",
+          "min_down_h": 8.0,
+          "min_run_h": 8.0
+        }
+      ],
+      "SP3_plant_min_down_histogram": {
+        "1.0": 63,
+        "2.0": 1,
+        "8.0": 1
+      },
+      "SP3_n_bid_rows_eligible": 475,
+      "SP3b_ct_prefixes_where_reads_differ": [
+        "CT_PEAKER_Houston_p7325"
+      ],
+      "SP3b_same_eligibility_set": true,
+      "SP3b_n_eligible_rowread": 64,
+      "SP4_control_is_none": false,
+      "SP4_armed_is_none": false,
+      "SP4_arrays_equal": false,
+      "SP4_n_rowhours_changed": 76845,
+      "SP4_max_abs_markup_delta": 1709.6209376377399,
+      "SP4_n_rows_priced_control": 173,
+      "SP4_n_rows_priced_armed": 168,
+      "SP5_fleetarrays_has_no_such_field": true,
+      "SP5_source_readers": [
+        "src/market_sim/data/fleet/__init__.py",
+        "src/market_sim/data/fleet/assembly.py",
+        "src/market_sim/data/fleet/offer_surfaces.py"
+      ],
+      "SP5_readers_as_declared": true,
+      "SP5_fleetarrays_unmoved": true
+    },
+    "2024": {
+      "year": 2024,
+      "n_gen": 1778,
+      "SP1_stamp_equals_ercot176_read": false,
+      "SP1_n_plant_prefixes": 217,
+      "SP1_n_prefixes_with_nonzero_physics": 172,
+      "SP1_n_mismatches": 40,
+      "SP1_mismatch_by_group": {
+        "CC_CHP": 19,
+        "CC_REGULAR": 1,
+        "CT_CHP": 17,
+        "CT_PEAKER": 1,
+        "ST_CHP": 2
+      },
+      "SP1_n_mismatches_with_a_committed_tranche": 0,
+      "SP1_mismatches": [
+        "CC_CHP_Houston_p56152: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p50043: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p52120: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p52132: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p54676: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55047: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55327: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55299: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55187: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p52088: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55464: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p50815: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55470: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_p55313: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_p10554: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_p55206: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_Central_p50118: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_Central_p58151: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_REGULAR_South_Central_p55154: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_West_p52176: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)"
+      ],
+      "SP2_n_ct_bid_rows": 486,
+      "SP2_n_rejected_by_row_grain_gate": 0,
+      "SP2_row_gate_is_vacuous": true,
+      "SP3_n_ct_plants": 65,
+      "SP3_n_plants_eligible": 65,
+      "SP3_n_plants_excluded": 0,
+      "SP3_excluded_plants": [],
+      "SP3_plant_min_down_histogram": {
+        "1.0": 64,
+        "2.0": 1
+      },
+      "SP3_n_bid_rows_eligible": 486,
+      "SP3b_ct_prefixes_where_reads_differ": [
+        "CT_PEAKER_Houston_p7325"
+      ],
+      "SP3b_same_eligibility_set": true,
+      "SP3b_n_eligible_rowread": 65,
+      "SP4_control_is_none": false,
+      "SP4_armed_is_none": false,
+      "SP4_arrays_equal": true,
+      "SP4_n_rowhours_changed": 0,
+      "SP4_max_abs_markup_delta": 0.0,
+      "SP4_n_rows_priced_control": 173,
+      "SP4_n_rows_priced_armed": 173,
+      "SP5_fleetarrays_has_no_such_field": true,
+      "SP5_source_readers": [
+        "src/market_sim/data/fleet/__init__.py",
+        "src/market_sim/data/fleet/assembly.py",
+        "src/market_sim/data/fleet/offer_surfaces.py"
+      ],
+      "SP5_readers_as_declared": true,
+      "SP5_fleetarrays_unmoved": true
+    },
+    "2025": {
+      "year": 2025,
+      "n_gen": 1767,
+      "SP1_stamp_equals_ercot176_read": false,
+      "SP1_n_plant_prefixes": 206,
+      "SP1_n_prefixes_with_nonzero_physics": 172,
+      "SP1_n_mismatches": 40,
+      "SP1_mismatch_by_group": {
+        "CC_CHP": 19,
+        "CC_REGULAR": 1,
+        "CT_CHP": 17,
+        "CT_PEAKER": 1,
+        "ST_CHP": 2
+      },
+      "SP1_n_mismatches_with_a_committed_tranche": 0,
+      "SP1_mismatches": [
+        "CC_CHP_Houston_p56152: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p50043: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p52120: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p52132: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p54676: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55047: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55327: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55299: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55187: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p52088: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55464: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p50815: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_Houston_p55470: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_p55313: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_p10554: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_p55206: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_Central_p50118: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_South_Central_p58151: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_REGULAR_South_Central_p55154: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)",
+        "CC_CHP_West_p52176: stamped (4.0, 24.0) != max-over-rows (0.0, 0.0)"
+      ],
+      "SP2_n_ct_bid_rows": 497,
+      "SP2_n_rejected_by_row_grain_gate": 0,
+      "SP2_row_gate_is_vacuous": true,
+      "SP3_n_ct_plants": 66,
+      "SP3_n_plants_eligible": 66,
+      "SP3_n_plants_excluded": 0,
+      "SP3_excluded_plants": [],
+      "SP3_plant_min_down_histogram": {
+        "1.0": 65,
+        "2.0": 1
+      },
+      "SP3_n_bid_rows_eligible": 497,
+      "SP3b_ct_prefixes_where_reads_differ": [
+        "CT_PEAKER_Houston_p7325"
+      ],
+      "SP3b_same_eligibility_set": true,
+      "SP3b_n_eligible_rowread": 66,
+      "SP4_control_is_none": false,
+      "SP4_armed_is_none": false,
+      "SP4_arrays_equal": true,
+      "SP4_n_rowhours_changed": 0,
+      "SP4_max_abs_markup_delta": 0.0,
+      "SP4_n_rows_priced_control": 91,
+      "SP4_n_rows_priced_armed": 91,
+      "SP5_fleetarrays_has_no_such_field": true,
+      "SP5_source_readers": [
+        "src/market_sim/data/fleet/__init__.py",
+        "src/market_sim/data/fleet/assembly.py",
+        "src/market_sim/data/fleet/offer_surfaces.py"
+      ],
+      "SP5_readers_as_declared": true,
+      "SP5_fleetarrays_unmoved": true
+    }
+  },
+  "ALL_ASSERTIONS_PASS": false,
+  "ARM_IS_INERT": false
+}
