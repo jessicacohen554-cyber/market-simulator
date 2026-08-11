@@ -219,7 +219,13 @@ It is an optional tightening, not a blocker.
 * **Rule 22 `[R-HOLDOUT]`** — no year solved, scored or registered. Data prep is unrestricted by
   the 2026-08-06 clarification; the freeze and both markers are untouched.
 * **Rule 27 `[R-PUSH]`** — `constants.py` (4,172 → 4,218 lines) edited on disk with `Edit`, never
-  regenerated; blob-verified after push.
+  regenerated, and pushed with `git push` (137 KB pack; `push_files` is barred for a ≥300-line
+  file). Blob-verified against the pushed ref: remote and local both
+  `466fd8c9658977f298163aab5b24a1332a5a409b`, 4,218 lines, sha256
+  `04fd408d…6ceb56d1` — identical. *(The first push attempts failed with transient remote HTTP
+  500/408s and did NOT land, confirmed by `git ls-remote` before diagnosing. The branch was then
+  created via the GitHub API, the commit rebased onto the meanwhile-advanced `origin/main`
+  `a3a7cd1`, re-tested, and pushed clean.)*
 * **Rule 28 `[R-MECH-MATRIX]`** — no mechanism added or tested; the `demand_growth_vintage` row
   already exists. No matrix edit due. `check_mechanism_matrix.py` clean.
 * **Rules 12 / 15 / 16** — n/a, no solve and no dashboard-eligible run.
