@@ -1,7 +1,9 @@
 # DECISION CARD — the ERCOT open-ruling backlog, assembled at ercot-188
 
 **For the owner sitting. Assembled 2026-08-11 at HEAD `ce4d05e` (origin/main) by
-session ercot-188. NOTHING IS DECIDED HERE.** No lever proposed, no
+session ercot-188. ALL SEVEN CARDS ARE NOW SIGNED — see RESOLUTIONS at the foot.**
+The card bodies below are preserved AS PUT TO THE OWNER, unedited by the outcome,
+so the recommendation each decision was taken against stays legible. No lever proposed, no
 `ScenarioConfig` field added, no derive run, no LP solved, no run registered, no
 matrix cell minted by this card. Every figure is read off **committed artifacts**
 — no re-derivation, no replay, no new measurement.
@@ -11,8 +13,10 @@ matrix cell minted by this card. Every figure is read off **committed artifacts*
 own. ERCOT holds **no `complete` and no `final` marker**, so every year
 referenced is inside {2023, 2024, 2025} (rule 22).
 
-**Keeper: `2026-08-09-ercot185-shaped-partial`** — determination **NOT-YET**,
-fail set **{C3a-2023, C3b-2023}**. Untouched by ercot-188.
+**Keeper at assembly: `2026-08-09-ercot185-shaped-partial`** — determination
+**NOT-YET**, fail set **{C3a-2023, C3b-2023}**. *Superseded by card E's signature:
+the keeper is now `2026-08-11-run188-arm-topfine-cliff`, same determination and
+same fail set.*
 
 **Why now.** ercot-188 closed the last offer-side face of C3a-2023 (§6), which
 moves the program's critical path onto a lane that is **blocked behind three of
@@ -29,9 +33,9 @@ the way.
 | **B** | Item 13 — the two COAL limbs' 2023 application | no | Re-adjudicate before any arm |
 | **C** | ercot-165 — the daytime curtailment mode successor | no | **Decline the DOF; re-point the object** |
 | **D** | RTC+B adapter authorization (27 quarantined parts) | soft — caps future corpus work | **Authorize, scoped to a read adapter** |
-| **E** | ercot-188 — promote SCHEME R1 on structural fidelity? | no | **DO NOT PROMOTE** |
+| **E** | ercot-188 — promote SCHEME R1 on structural fidelity? | no | **DO NOT PROMOTE** — *owner signed **E2, PROMOTE**; see RESOLUTIONS* |
 | **F** | Nothing schedules the tier the ERCOT golden lives in | no | Schedule it |
-| **G** | Rulings #2, #3, #5 — dead or alive? | no | **One line from you; I could not verify** |
+| **G** | Rulings #2, #3, #5 — **INVESTIGATED 2026-08-11** | no | **#2 spent · #3 delete · #5 mis-titled, re-open the real object** |
 
 ---
 
@@ -252,28 +256,103 @@ ERCOT session to run it (weakest — it is what already failed seven times);
 
 ---
 
-## G. RULINGS #2, #3, #5 — dead or alive?
+## G. RULINGS #2, #3, #5 — INVESTIGATED, 2026-08-11
 
-**I could not verify these and will not assert them.** The ercot-149 register
-carried ten rulings. Verified since: **#7** closed (owner-promoted,
-`ercot_dam_availability_gas_event_cap` cell `K`); **#6** closed (refused on data
-2026-08-04, no paid daily gas licence); **#1** and **#4** discharged by the
-rule-28(c) ERCOT column closure at ercot-156 (census debt **0/0/0**).
+**Owner asked ercot-188 to explore rather than leave these unverified. Done —
+all three now have an evidenced answer.** Nothing below is a decision; each still
+needs your signature, but none is a guess any more.
 
-**Not verified either way:**
+### G.2 — Ruling #2: per-gate dispositions of the attributed gates · **SPENT**
 
-| # | Subject |
+The ruling asked for a disposition on each attributed gate, named at ercot-147 as
+**C3a / C3b / C3c tail** and **C7-2023 non-offer-surface**. Every one has since
+been dispositioned by a named, signed decision — the ruling was overtaken and
+nobody closed the register entry:
+
+| gate | disposition | where |
+|---|---|---|
+| **C7-2023** (lignite cv-leg) | **CLOSED** — cv 0.331 → 1.193, r 0.976, on the year's own measured curves | ercot-168 promotion |
+| **C3c** ×3 years | **LEDGERED** `ACCEPTED MODEL-CLASS LIMITATION`, then generalized | owner decision 2026-08-05; C3c standing rule, extended to every year 2026-08-09 |
+| **C3a-2023 / C3b-2023** | **REFUSED the ledger carve-out**; C3a stands a MODEL MISS at full magnitude; the model-class lane authorized instead | ercot-182 sitting, card **D1 SIGNED** |
+
+That lane then ran to its end: ercot-184 costed (c2), ercot-188 built and measured
+it, and the offer-curve **resolution** face is now closed alongside level, grain
+and position. **There is no undispositioned gate left under #2.**
+
+> **Recommendation: close #2 as SPENT** — not as answered-by-this-card, but as
+> answered by D1 + the 2026-08-05 C3c decision + ercot-168, none of which
+> back-referenced it.
+
+### G.3 — Ruling #3: `split_coal_tranches` delete-vs-inert · **DEAD ON ALL SIX KEEPERS**
+
+Measured at HEAD, not inferred. `build_dispatch_fleet` branches on
+`campd_bins is not None`, and `split_coal_tranches` lives **only in the `else`
+limb**. Read from each keeper's own `run_config.json` scenario dump:
+
+| ISO | `use_campd_bins` | reaches `split_coal_tranches`? |
+|---|---|---|
+| ERCOT / CAISO / PJM / MISO / NYISO / NEISO | **True** (all six) | **No — dead limb** |
+
+Every keeper nonetheless carries **six registered scalars** that reach nothing:
+`coal_tranche_{1,2,3}_frac` and `coal_tranche_{1,2,3}_fuel_passthrough`
+(`coal_tranche_1_frac = 0.3` on all six). miso-128 §4 already proved the
+inertness the hard way at MISO — assembling the real fleet twice under the
+keeper's config, once with the committed fractions and once materially
+perturbed, and measuring **zero** difference in `pmax_mw` and `fuel_fracs`.
+
+**Rule 26 `[R-DELETE]` is squarely on point:** *"Deprecated fitted knobs are
+removed, not zeroed — a deprecated parameter that still parses is a re-armable
+answer key."* Six such parameters currently parse.
+
+> **Recommendation: DELETE.** Not "mark inert" — delete the function and the six
+> scalars, in a lane that first proves the legacy limb is unreachable for every
+> registered bundle, not just the six current keepers.
+
+### G.5 — Ruling #5: Martin Lake lignite class composition · **MIS-STATED; the real object is ONE-CLASS-PER-PLANT**
+
+**The narrow question is already answered in code, and the answer is that Martin
+Lake is NOT in the lignite class.** Resolved live at HEAD via
+`data.coal._coal_class_for`:
+
+| plant | scoring class |
 |---|---|
-| **#2** | per-gate dispositions of the attributed gates |
-| **#3** | `split_coal_tranches` delete-vs-inert (note rule 26 `[R-DELETE]`: a deprecated knob that still parses is a re-armable answer key) |
-| **#5** | Martin Lake lignite class composition |
+| Martin Lake (6146) | **`COAL_PRB`** |
+| Limestone (298), W A Parish (3470) | `COAL_PRB` |
+| Oak Grove (6180), Major Oak (7030), San Miguel (6183) | `COAL_LIGNITE` |
 
-I found **no carry-forward and no explicit closure** for any of the three after
-ercot-149, and the current matrix header lists only #9/#10 as open. They are
-therefore either silently discharged or silently dropped. **One line from you
-settles it; my asserting it would be a guess.**
+It is curated in `COAL_PLANT_SUPPLY` with its reason on the line —
+*"now PRB by rail (was East Texas lignite)"* — and ercot-143 §7.3 corroborates
+behaviourally: the fleet's disputed 31.3 pp mid-band segment is carried by
+**Martin Lake 0.535, Parish 0.539, Limestone 0.455** (all PRB), while the true
+lignite plants Oak Grove and Major Oak — **84 % of the lignite class** —
+contribute **0.016 / 0.018 / 0.001 / 0.000**.
 
----
+**But the ruling's real object is bigger than Martin Lake,** and ERCOT-146 §3 is
+what enlarged it: the curated bin sheet is **one class per plant**, so a
+physically mixed facility gets one label. **Nine plants carrying 1,708 MW of
+EIA-860 CT capacity** — T H Wharton, V H Braunig, R W Miller, Decordova, Sand
+Hill, Colorado Bend, C R Wing, Dansby, Ray Olinger — have **no `CT_PEAKER` row at
+all**; the sheet carries them as `CC_REGULAR` / `ST_GAS` / `CC_CHP`. ERCOT-146
+recorded their measured CT rates in the artifact expressly as *"evidence-in-waiting
+for the class-composition question (same family as the open Martin Lake ruling)."*
+
+So #5 is not a plant question. It is: **does the one-class-per-plant bin sheet
+need to become multi-class per plant?** That is a fleet-representation change with
+real scope — it moves C1 class denominators and every per-class gate.
+
+> **Recommendation: close #5 as stated (the Martin Lake assignment is correct and
+> evidenced) and re-open its real object under an accurate title** — *"one-class-
+> per-plant bin sheet vs mixed facilities"* — carrying the ERCOT-146 nine-plant
+> evidence. Do not leave it filed under a plant name that resolves the other way.
+
+### G.0 — the register's own defect
+
+Three rulings sat open for eleven days across at least four sessions, and **all
+three were already decidable from committed artifacts** — one spent, one dead
+code, one mis-titled. The register carries no closure discipline: #2 was
+overtaken by decisions that never back-referenced it, and #5 kept a title its own
+evidence contradicts. Worth a standing rule that a signed decision names the
+rulings it discharges.
 
 ## H. WHAT THIS CARD DOES NOT ASK FOR
 
@@ -307,17 +386,63 @@ beyond it** (rule 25).
 
 ---
 
-## RESOLUTIONS — to be signed
+## RESOLUTIONS — ALL SEVEN SIGNED BY THE OWNER, 2026-08-11
 
-| card | decision | signed | vs. recommendation |
+Recorded verbatim. Where the owner departed from the card's recommendation the
+departure is stated as such, not smoothed over.
+
+| card | decision | **SIGNED** | vs. recommendation |
 |---|---|---|---|
-| **A** | DAM-deriver lane #8/#9/#10 | | |
-| **B** | Item 13 COAL limbs, 2023 application | | |
-| **C** | ercot-165 daytime curtailment mode | | |
-| **D** | RTC+B adapter | | |
-| **E** | ercot-188 SCHEME R1 promotion | | |
-| **F** | Golden test-tier scheduling | | |
-| **G** | Rulings #2 / #3 / #5 status | | |
+| **A** | DAM-deriver lane #8/#9/#10 | **A1 — authorize as ONE lane, #9 first** | as recommended |
+| **B** | Item 13 COAL limbs, 2023 application | **B1 — re-adjudicate under a fresh precommit** | as recommended |
+| **C** | ercot-165 daytime curtailment mode | **C1 — decline the DOF, re-point the object** | as recommended |
+| **D** | RTC+B adapter | **D1 — authorize, scoped to a read adapter** | as recommended |
+| **E** | ercot-188 SCHEME R1 promotion | **E2 — PROMOTE on the standing structural standard** | **DEPARTS — the card recommended E1, do not promote** |
+| **F** | Golden test-tier scheduling | **F1 — schedule the data-provisioned tier** | as recommended |
+| **G** | Rulings #2 / #3 / #5 | **#2 close as SPENT · #3 DELETE the function and the six scalars · #5 close as stated and re-open the real object** | as recommended, on all three |
+
+### E — the departure, recorded as the owner's
+
+The card recommended **E1 (do not promote)** on three grounds, none of which the
+owner disputed: the added rows are measured never to be cleared on, the residual
+moves the wrong way in all three years, and the price is a permanent forfeiture
+of the offer-surface family's P0 bit-identity proof. **The owner took E2**, under
+the standing standard that *structural integrity outranks gate regression*.
+
+**What that does and does not change.** The keeper moves to
+`2026-08-11-run188-arm-topfine-cliff`. **The pre-registered mechanical verdict
+stays REJECTED-AS-ARMED and is NOT rewritten** — G-C3c still fails at full
+magnitude, and the promotion is the owner's standard applied *on top of* that
+verdict, never a re-score of it (the ercot-185 posture). The determination is
+**NOT-YET {C3a-2023, C3b-2023}, unchanged** — the promotion buys structural
+fidelity, not a better public claim. **The forfeited P0 bit-identity proof is
+carried as a named permanent limitation** on the keeper, in the matrix cell, in
+the §5.1 header and in the FINDING; it does not expire when a later gate passes.
+
+### What these seven signatures do NOT do
+
+* **No rubric amendment.** `LEDGERABLE_CRITERIA`, `MAX_LEDGERED_CAVEATS` and the
+  v3.0 tier guard are byte-unchanged.
+* **No holdout marker granted or spent.** ERCOT still holds no `complete` and no
+  `final`; no out-of-training year was solved, scored or registered, so no
+  `calibration-complete.json` re-key applies (rule 22 / D-5(b)).
+* **No determination change.** ERCOT remains NOT-YET on both load-bearing 2023
+  criteria.
+* **No lane authorized beyond card A.** B/C/D/F/G are dispositions, not charters;
+  each still needs its own pre-registered round before any solve.
+
+### Execution order implied by the signatures
+
+1. **A1** — the DAM-deriver lane (#9 → #8 → #10), one precommit, one re-derive,
+   one re-gate sweep. It is the only blocking item and it unblocks ercot-189's CC
+   headroom object.
+2. **G#3** — delete `split_coal_tranches` and its six scalars, after proving the
+   legacy limb unreachable for every registered bundle.
+3. **G#5** — re-file the one-class-per-plant object under an accurate title with
+   the ERCOT-146 nine-plant evidence.
+4. **D1** — the RTC+B read adapter (independent; unblocks forward corpus work).
+5. **B1 / C1 / F1 / G#2** — dispositions to record; B1 needs a precommit before
+   any arm.
 
 **Evidence appendix — every figure above is read off these committed artifacts,
 with no re-derivation:** `docs/PRECOMMIT-ercot149-dam-gas-event-cap-2026-08-01.md`
