@@ -1,0 +1,47 @@
+{
+  "engaged_all_years": true,
+  "note": "Object-level engagement evidence for hydro_ror_split at CAISO. No LP, no scoring, no comparison against measured hydro/PS output (caiso-141 wall, GATESPEC-caiso194 section 2).",
+  "years": [
+    {
+      "engaged": true,
+      "fleet_pmax_mw": 6432.659,
+      "monthly_budget_identical_off_vs_on": true,
+      "stamped_pmax_mw": 802.259,
+      "stamped_pmax_share_pct": 12.4716,
+      "units_built": 166,
+      "units_stamped_off": 0,
+      "units_stamped_on": 67,
+      "year": 2023
+    },
+    {
+      "engaged": true,
+      "fleet_pmax_mw": 6568.396,
+      "monthly_budget_identical_off_vs_on": true,
+      "stamped_pmax_mw": 796.996,
+      "stamped_pmax_share_pct": 12.1338,
+      "units_built": 160,
+      "units_stamped_off": 0,
+      "units_stamped_on": 61,
+      "year": 2024
+    },
+    {
+      "engaged": true,
+      "fleet_pmax_mw": 3916.3,
+      "monthly_budget_identical_off_vs_on": true,
+      "stamped_pmax_mw": 312.8,
+      "stamped_pmax_share_pct": 7.9871,
+      "units_built": 26,
+      "units_stamped_off": 0,
+      "units_stamped_on": 3,
+      "year": 2025
+    }
+  ],
+  "zones": [
+    "NP15",
+    "ZP26",
+    "LA_BASIN",
+    "SDGE",
+    "SP15_rest",
+    "WECC_import"
+  ]
+}
