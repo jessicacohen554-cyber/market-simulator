@@ -6474,3 +6474,174 @@ inert change is stop-the-line; a charter whose premise is refuted is the system 
 6. When HOUSE-3 lands, verify its own acceptance sentence and drop the interim
    parallel-safety clause down to the shard path.
 ```
+
+## §0aj — state re-verified; audits CLEAN; FFR-4F accepted; F6-DIAG dispatched; cards D-29/D-30 (2026-08-11 @ `d542a28`)
+
+Sitting record: **Addendum AK** of `docs/handoffs/ffr-owner-sitting-2026-08-02.md`.
+
+**What changed since §0ai.** `origin/main` `fe9fa97f` → **`d542a28`** (15 commits, no keeper
+move: ercot-186, ercot-187, miso-151). All six keepers unmoved. `complete` =
+{NEISO, NYISO, PJM}; `final` EMPTY; holdout freeze **ACTIVE**. Rubric v3.2.
+`audit_keepers.py` over all six + holdout/marker/status: **PASS, 0 failures, 0 warnings**.
+R.1 checks: ERCOT and MISO CLEAN; **CAISO caiso-188 shipped a cross-ISO solve-path guard**
+(AK.3) that now goes in every prompt. **HOUSE-3 and FH-5: NO EVIDENCE YET** — `git
+ls-remote --heads origin` returns `main` only, and the mechanism matrix is still the
+2,556-line monolith. Both stay paste-ready in §0ah, unchanged; **HOUSE-3 still pastes
+FIRST AND ALONE.**
+
+### §0aj-clauses — PASTE THESE INTO EVERY PROMPT UNTIL HOUSE-3 LANDS
+
+> **PARALLEL-SAFETY CLAUSE (interim, until HOUSE-3 shards the matrix).** Another ISO's
+> lane may be editing `docs/codebase-site/data/mechanism-matrix.js` and
+> `src/market_sim/config/scenarios.py` at the same time as you. Resolve any conflict in
+> these files **by UNION, never by taking one side wholesale** — re-read BOTH sides'
+> verdicts and keep both — because a six-ISO row packs into a six-character string on one
+> line, so two lanes touching different ISOs edit the same character (root cause,
+> Addendum AJ.2; one edit was silently lost this way at `c5593684`). Before you commit a
+> matrix edit, re-read the cell you changed and confirm the other five ISOs' characters
+> are what `origin/main` has.
+
+> **CLEAN-PARTITION GUARD (new, shipped by caiso-188).**
+> `scripts/run_calibration.py` now calls `check_clean_partitions(config, iso)`, which
+> **raises `DegradedInputError`** when an armed flag's derived CLEAN partition is absent.
+> It is a no-op at defaults and fires for exactly two flags —
+> `capacity_deliverability_limits` and `hydro_ror_split`. If your recipe arms either,
+> `scripts/regenerate_clean.py` (or the named curate script) MUST have run first, or your
+> solve dies at the starting line. This is the correct behaviour (rule 24): it replaced a
+> silent no-op that let a bundle advertise a mechanism that never ran.
+
+> **DISK / WORKTREE (AK.6).** `data/raw` is 9.6 GB and `.git` 7.5 GB against ~13 GB
+> writable. **Do not launch concurrent `isolation:"worktree"` agents** — three at once
+> exhausted the disk mid-checkout this sitting and all three failed. Run
+> `scripts/audit_keepers.py` inline; at most ONE worktree agent at a time, only when it
+> must write.
+
+### §0aj-1 — F6-DIAG [OPUS] — the LMP backend-parity defect: MEASURE IT, FIX NOTHING
+
+Dispatched this sitting on FFR-4F's F-6. Diagnosis-only, no solve, no holdout exposure, no
+mechanism — so it needs no owner card to start, and its *fix* becomes a card with evidence.
+
+```
+[OPUS] F6-DIAG — the neighbour-LMP backend parity defect: measure which backend is wrong
+
+You are a diagnosis-only lane in /home/user/market-simulator. You MEASURE and REPORT.
+You CHANGE NO PRODUCTION BEHAVIOUR — no tolerance edit, no backend switch, no data
+regeneration commit, no mechanism. Findings-first: if the evidence refutes the premise
+below, say so plainly and stop; that is a successful outcome, not a failure.
+
+=== VERIFIED STATE (embedded; re-verify before any load-bearing claim) ===
+origin/main `d542a28`. Branch: create `claude/f6-diag-lmp-backend-parity` from a FRESHLY
+FETCHED origin/main. Keepers (do not touch any): ERCOT 2026-08-09-ercot185-shaped-partial ·
+CAISO 2026-08-09-caiso-188-d1-micseam · MISO 2026-08-09-miso-148-basis-aware · NYISO
+2026-08-08-nyiso-132-cf-arm · NEISO 2026-08-06-neiso-87-control · PJM
+2026-08-04-pjm-152-collapse. Markers: `complete` = {NEISO, NYISO, PJM}; `final` EMPTY;
+holdout freeze ACTIVE. Rubric v3.2. This lane solves NOTHING, so rule 12 and rule 22 do
+not bind — and you must not make them bind by solving anything.
+
+=== THE OBJECT (FFR-4F §6 F-6; independently verified 2026-08-11, Addendum AK.5) ===
+`tests/curation/test_consume_lmp.py::test_clean_backed_lmp_matches_raw_loader` compares the
+committed realized-LMP product (raw loader) against the curated `data/clean` tree, and is
+reported to FAIL at `max abs(raw-clean) = 408.704` on PJM 2024 RTM against `_TOL = 1e-2`
+(line 36). The line-35 docstring asserts "float32 storage in the realized product is the
+only source of disagreement" — a claim a 408 $/MWh gap plainly refutes. The test is
+guarded by `_clean_available()` (lines 39/45), so it SKIPS on any container that has not
+built `data/clean` — i.e. it is green exactly where it cannot fire, and fires only after
+`regenerate_clean.py`, which is prerequisite #2 of every solve lane.
+
+=== PREREQUISITES, IN ORDER (both mandatory — the test skips without the second) ===
+1. `uv sync` (~2 min)
+2. `python scripts/regenerate_clean.py` (~63–65 min) — this is what un-skips the test.
+   results/ and data/clean are gitignored; this container is COLD.
+
+=== WHAT TO MEASURE (pre-register ALL of it, committed, BEFORE you run anything) ===
+R1. REPRODUCE. Run the test. Record the exact max abs diff, the ISO/year/market, the
+    hour index of the max, and how many hours exceed 1e-2. Confirm or refute 408.704.
+R2. WHICH BACKEND IS WRONG. For the worst hours, compare BOTH backends against the
+    first-party source in data/raw (the published PJM LMP for those timestamps). One of
+    three verdicts, stated plainly: raw is right / clean is right / both wrong. This is
+    the whole point of the lane — a parity test cannot tell you which side is broken,
+    and nobody has asked.
+R3. SHAPE OF THE DISAGREEMENT. Is it (a) a handful of outlier hours, (b) a DST/leap or
+    timestamp-alignment shift (ercot-187 just found exactly this class of defect in a
+    different derive — read commit `9568611` first, it may be the same bug), (c) a
+    unit/sign convention, or (d) a genuine float32 precision story that the tolerance
+    simply mis-sizes? Name it with evidence.
+R4. BLAST RADIUS. Which consumers read the clean-backed neighbour-price path, and does
+    any keeper or registered forecast run depend on it? If a keeper does, say so LOUDLY
+    and STOP before drawing conclusions about it — a keeper moving under a supposedly
+    inert path is a stop-the-line event, not a finding to write up quietly.
+R5. WHY IT WAS INVISIBLE. Confirm the skip-guard mechanism and state how long the test
+    has been effectively unrunnable in CI (check whether CI builds data/clean at all).
+
+=== DELIVERABLE ===
+`docs/FINDING-f6-lmp-backend-parity-2026-08-11.md`: the five reads at full magnitude, the
+named verdict from R2, and a CARD-READY recommendation with options and their real costs
+(e.g. "fix the clean curation" vs "fix the raw product" vs "re-size the tolerance and
+correct the docstring" vs "make CI build clean so this can never hide again"). Recommend
+one and say what the wrong choice costs. Do NOT implement it.
+
+=== CONSTRAINTS ===
+- Rule 25 [R-ISO-SCOPE]: the defect is on PJM data and shared curation infrastructure.
+  Measure across ISOs to establish scope, but transfer NO verdict between ISOs.
+- Rule 27 [R-PUSH]: Opus. Never rewrite a ≥300-line file from generated content; edit
+  on-disk bytes and blob-verify after any push touching one.
+- Rule 28: no mechanism is added here, so no matrix row is due. If your recommendation
+  would add a `ScenarioConfig` field, say so — the field lands in the FIX lane with its
+  matrix row, `_CACHE_KEY_OPTIONAL_FIELDS` entry and defaults-ledger line in ONE commit.
+- No new GitHub Actions workflows (private repo, billed minutes). If R5 concludes CI
+  should build clean, that is a RECOMMENDATION in the finding, not a workflow you write.
+- Commit the prereg BEFORE measuring; commit the finding as it exists. data/clean and
+  results/ die with the container.
+- [PASTE §0aj-clauses HERE: PARALLEL-SAFETY + CLEAN-PARTITION GUARD + DISK/WORKTREE]
+```
+
+### §0aj-2 — CARD D-29: arm Arm-3 (`miso_clean_tier_rows`)?
+
+Evidence complete and **verified at the artifact this sitting** (not inherited):
+`docs/handoffs/arm3-fix-zone-mask-2026-08-09.md` §4 — on the FIXED rows **MI-2035 flips
+SLACK → BINDS, pinned at the $30 ACP ceiling** (in-mask supply 57.351 TWh vs 95.771
+required, −38.420 TWh short ⇒ ~$1.15 bn of ACP), MN stays slack through 2035, and the
+**D-26 armed MISO forecast default's RPS duals are bit-stable at [0, 30, 0, 30, 0] in
+every year of BOTH legs** — i.e. the fix does not disturb the shipped default. The
+composition seam (F-2) is landed and D-28 steps 1–2 are CLOSED, so this is now a clean
+arm-or-don't-arm call on measured evidence, with no sequencing dependency left.
+
+### §0aj-3 — CARD D-30: promote FFR-9C's stages — and WHEN
+
+`docs/handoffs/ffr-9c-vre-entry-repair-2026-08-10.md` §4.3, read in full. Zero fitted
+parameters in any stage; LOYO shows no single-year concentration; **no promotion performed
+— the recommendation is left to the manager by charter.**
+
+**Manager recommendation: promote STAGE B (R-a + R-b + R-d) as the unit — but NOT until
+FH-5 has landed.**
+
+*Why stage B and not stage A.* Each leg is independently structural: R-a
+(`entry_pipeline_aware_signal`) repairs a real double-count (rule 19) and its case does not
+rest on the residual; R-b (`smr_available_year=2030`) removes a non-real object — 4 GW of
+2022-vintage ERCOT SMR — behind a published zero-parameter gate, with "no structural
+argument against it in any read"; R-d nets exactly and its caveat is discharged for ERCOT.
+But the lane is explicit that R-a **alone is not a candidate posture** (it worsens wind
+−96 %, gas_cc +3 GW and the forward-edge screen), so the promotable unit is stage B, which
+also puts the mid-window price and reserve objects onto their measured levels for the first
+time in this posture's record. **Reported against interest:** stage B leaves wind WORSE
+than control (−57 % → −73 %) and CC worse (GW error +5.8 → +8.8). Under rule 1 those are
+not grounds to reject a structurally-correct repair — they are the named successor object.
+
+*Why the timing is the real decision.* A VRE-entry promotion **re-bases every ERCOT
+hindcast — an epoch.** FH-4 Phase A is COMPLETE 6/6 on the current base. FH-5 Phase B is
+the other half of one horizon-degradation table, and **a table that compares skill across
+horizons is worthless if the code base moves between its halves** — the comparison would
+confound horizon with model version. So the sequencing is not a preference:
+**FH-5 must run on the same base Phase A ran on, therefore FH-5 lands FIRST and the
+promotion follows.** The cost of that order, stated plainly: the program's headline skill
+number is measured on a base we already know carries a named input error (the VRE entry
+trajectory, AH). The cost of the other order is worse — an incomparable table, i.e. no
+headline deliverable at all.
+
+*R-c (solar queue cap) rides separately.* The §1.3 condition FIRES: the model is stopped
+only by `QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"] = 5.0` while EIA-860 records actual ERCOT
+solar CODs of **7.29 GW (2024) and 7.74 GW (2025)** — the measured throughput exceeds the
+constant by ~1.5×. Re-deriving it from the post-2020 EIA-860 demonstrated-throughput record
+is rule-23 admissible (same source, same construction, NOT the residual), and the lane
+correctly touched nothing. It re-bases ERCOT too, so it inherits the same FH-5-first
+ordering.

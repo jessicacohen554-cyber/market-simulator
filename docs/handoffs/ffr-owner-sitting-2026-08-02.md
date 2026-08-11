@@ -3791,3 +3791,153 @@ matrix identical to today's) and the CI guard must move with it, so no lane's ru
 duty changes except *where* it writes. Until it lands, the standing clause added to
 every prompt is: **a shared-file conflict is resolved by UNION, never by taking one
 side — and the resolver re-reads both sides' verdicts before committing.**
+
+## Addendum AK — successor sitting: state re-verified, three owed keeper audits CLEAN, AA.2 dissolved-but-worse, FFR-4F adjudicated; the FH-5-vs-promotion sequencing call
+
+### AK.1 State re-verification — main moved, keepers did not
+
+`origin/main` **`fe9fa97f` → `d542a28`** (15 commits, none a keeper move): ercot-186 (the
+rule-18 grain repair + its pre-registered STOP), ercot-187 (fast-start pool leap-day
+row-alignment defect fixed; golden hashes attributed and regenerated; measured fast tier
+6,620 passed / 2 failed), miso-151 (item-9 decision package, a position-conditioned MISO
+measured offer surface). All six keepers read **exactly** as §0ai stated — ERCOT
+`2026-08-09-ercot185-shaped-partial`, CAISO `2026-08-09-caiso-188-d1-micseam`, MISO
+`2026-08-09-miso-148-basis-aware`, NYISO `2026-08-08-nyiso-132-cf-arm`, NEISO
+`2026-08-06-neiso-87-control`, PJM `2026-08-04-pjm-152-collapse`. `complete` =
+{NEISO, NYISO, PJM}; `final` EMPTY; holdout freeze **ACTIVE** (declared 2026-07-25,
+lifted-and-rearmed 2026-08-06 after the narrow NEISO-2022 lift). Rubric v3.2.
+
+### AK.2 The three owed keeper audits: CLEAN, and so are the other three
+
+`scripts/audit_keepers.py` — the deterministic core the `calibration-keeper-auditor`
+subagent runs — over all six ISOs plus the holdout, marker and status cross-checks:
+**PASS, 0 failures, 0 warnings.** The three owed lanes (ERCOT, CAISO, MISO) each pass
+E1–E3 and the status-part freshness check.
+
+### AK.3 R.1 shipped-default checks — two CLEAN, and ONE cross-ISO change that belongs in every prompt
+
+* **ERCOT `ercot-185` — R.1 CLEAN.** The delta is one new field,
+  `ercot_partial_outage_shaped_derate: bool = False` (`scenarios.py`, commit `228de7c`):
+  gated, default-off, ERCOT-prefixed, backcast-only by construction, registered in
+  `_CACHE_KEY_OPTIONAL_FIELDS` and the defaults ledger in the same commit (rule 28), and
+  byte-identical at its default. No shipped default moved.
+* **MISO `miso-148` — R.1 CLEAN on the shipped-default test, with one naming note.**
+  `summer_derate_basis_aware` is default-off, read via `getattr`, requires
+  `cc_nameplate_summer_derate`, so the off path is byte-inert. It is **not** ISO-prefixed
+  even though it was identified entirely on MISO data — no rule-25 violation (rule 25
+  governs tuned curves, and this is a default-off boolean over a data predicate with zero
+  continuous DOF), but the name does not warn a future lane that its identification is
+  MISO's. Recorded, not actioned.
+* **CAISO `caiso-188` — the values are CAISO-only, but the commit SHIPPED A CROSS-ISO
+  SOLVE-PATH GUARD.** `1e1879a` wired caiso-157's previously-dead
+  `check_clean_partitions(config, iso)` into `scripts/run_calibration.py` (its only prior
+  call site was `pipeline/year.py::run_year_solve`, which nothing calls — which is *why*
+  the retired fitted 7,500 MW WECC seam scalar re-armed itself across five keeper
+  promotions and then again from caiso-175 onward, the designated keeper included). The
+  guard **raises `DegradedInputError`**. It is a no-op at defaults and fires only when an
+  armed flag's derived CLEAN partition is absent. **Blast radius, read from
+  `_PARTITION_REQUIREMENTS`: exactly two flags — `capacity_deliverability_limits` and
+  `hydro_ror_split`.** Consequence every lane must know: arming either in a cold container
+  without its curate script now **hard-fails at solve start** (loudly, naming the
+  copy-pasteable rebuild) where it previously no-oped silently while `run_config.json`
+  still advertised the mechanism. This is correct (rule 24) and is an improvement — but it
+  is a shipped cross-ISO behaviour change and goes into every dispatched prompt.
+
+### AK.4 AA.2 re-checked against the NEW MISO keeper: the DRIFT is DISSOLVED, the DETERMINATION is WORSE, and D-27(b) is SUPERSEDED rather than discharged
+
+AA.2 (2026-08-07) recorded a **dispute**: the then-keeper `miso-132b` re-scored NOT-YET at
+HEAD (C3a 2025 −14.1 % FAIL) where its own committed `metrics.json` recorded a ledgered
+CAVEAT. Re-measured this sitting on the current keeper —
+`calibration_verdict.py --run-id 2026-08-09-miso-148-basis-aware`:
+
+> **CALIBRATION DETERMINATION: NOT-YET.** Fail set **{C3a 2025 −15.6 %, C3b 2025 NRMSE
+> 0.212}**. C3c a ledgered CAVEAT; C1, C2, C4, C6, C8 all PASS.
+
+**That NOT-YET is not drift.** The miso-148 promotion note declares it in advance, against
+interest and at full magnitude — "C3a −0.49 / −6.01 / −14.15 % → −1.98 / −8.03 / −15.58 %,
+WORSE IN EVERY YEAR; C3b-2025 NRMSE 0.192 → 0.212, THROUGH its 0.200 gate … the fail set
+grows {C3a} → {C3a, C3b}. Determination is NOT-YET in BOTH arms." The committed record and
+HEAD's scorer **agree**, which is exactly why `audit_keepers` passes. So AA.2's *dispute*
+is dissolved by the keeper move rather than adjudicated; its *substance* — MISO's
+designated keeper is NOT-YET — is live and one criterion worse than when AA.2 was written.
+The C3c standing rule cannot reach it: guard (a) is lone-failure-only and the fail set has
+two load-bearing members. MISO is not in `complete`, so D-5(b) never bound.
+
+**D-27(b) (MISO taxgs deferral) — SUPERSEDED, NOT DISCHARGED.** Its stated condition was
+"until the AA.2 v3.1 re-score question is adjudicated by its own lane", on the rationale
+that "promoting into a disputed determination would entangle two changes". The
+determination is no longer disputed — but the deferral must not simply lapse, because the
+taxgs pair is **`2026-08-07-miso-133-taxgs-arm` / `-control`, solved on the pre-miso-148
+base**, and the keeper has since moved to a different fleet-capacity basis. Promoting that
+pair now would promote an **un-scored combination**. If taxgs is still wanted it needs a
+re-solve on the miso-148 base; it is not a paper promotion.
+
+### AK.5 FFR-4F adjudicated — ACCEPT, no remediation; the trap fired and the lane said so
+
+The owed FFR-4F adjudication, read at the artifact rather than the summary:
+
+* **The binding framing held end to end.** §0 states "THIS IS NOT A ROW-4 FIX", §4 D-2
+  pre-registers the trap, §5.2 executes it. The mechanism's case is made in §§1–3 from
+  published CPUC/CAISO market design and rule 14 alone, before any arm was solved.
+* **R-4, the trap test: D-2 FIRED, and the answer to the charter's question is NO.** Control
+  vs treated, cumulative 2026–2030: thermal build **identical to the megawatt** (10,186.3
+  MW both), total additions identical (15,590.7), renewables identical (5,404.4), storage
+  0.0 in both, retirements identical (2,615.3). The only change is **the label on 1,000
+  MW** — backstop −1,000.0, economic +1,000.0. Row 4's 52.51 % → 46.09 % is **channel
+  substitution and nothing else**, and the lane reports it in those words and refuses it as
+  a win. This is precisely what FFR-3W §5.3 predicted and what D-15's refusal was about.
+* **And it costs adequacy.** The same 1,000 MW arrives 2029 instead of 2027: 2027 reserve
+  margin 7.74 % → 5.88 %, 2028 10.29 % → 8.47 %, arms re-converging exactly from 2029.
+  Reported at equal prominence per pre-registered D-3 and named the more decision-relevant
+  half — correctly.
+* **Merits, not fit.** The mechanism stays merged under rules 1/14 (it makes I12/I7 worse
+  and is kept anyway), is default-OFF and keeper-inert, and the **pinned default cache key
+  `603c2498bf71d21d` is UNMOVED ⇒ no cache epoch**. The control is verified by *runtime-key
+  identity* with FFR-4E's control (`3d3e836a176ac9cd`), not by matching numbers — the right
+  standard, and the one this manager wants copied.
+* **Manager verdict: ACCEPT. Nothing to remediate.** The lane's own conclusion is the
+  correct one, and the carried-forward finding is F-1: **fleet (4D), accreditation (4E) and
+  capacity price (4F) have now each been isolated and none dissolves the CAISO over-build**,
+  with **storage entry 0.0 MW across the whole horizon in every arm anyone has run** as the
+  loudest unexplained signal left. That is the natural CAISO successor lane, and it is a
+  different mechanism from all three measured.
+
+**F-6 verified independently, by content, not inherited.**
+`tests/curation/test_consume_lmp.py::test_clean_backed_lmp_matches_raw_loader` exists
+(line 48); `_TOL = 1e-2` (line 36); the line-35 docstring does assert "float32 storage in
+the realized product is the only source of disagreement"; the test is guarded by
+`_clean_available()` (lines 39/45). `data/clean` is absent in this container, so it
+**skips here** — exactly as FFR-4F describes. The 408.704 $/MWh magnitude rides FFR-4F's
+measurement; re-measuring it needs the 63–65 min clean rebuild and was not worth a
+manager's re-derivation. **Why this is a manager-level item and not a footnote:**
+prerequisite #2 of *every* solve lane is `regenerate_clean.py`, which builds `data/clean`
+and therefore **un-skips this test** — so every lane that runs the suite after its
+prereqs meets a FAIL that is not its own. It is a parity guard that is green exactly
+where it cannot fire. Routed as card D-31 below, not fixed here.
+
+### AK.6 Operational finding — worktree isolation is DISK-INFEASIBLE in this container
+
+The standing trap-list instruction (`ALWAYS isolation:"worktree"` for in-process agents)
+**could not be honoured this sitting, and successors should not assume it can be.**
+`data/raw/` is **9.6 GB** and `.git` **7.5 GB** against a writable allowance of ~13 GB.
+Three concurrent `calibration-keeper-auditor` agents at `isolation:"worktree"` each began a
+full checkout, exhausted the disk mid-write and **all three failed** ("No space left on
+device"); the worktrees rolled back cleanly, leaving three stray `worktree-agent-*`
+branches (deleted, `git worktree prune` clean, session branch never switched). The audits
+were then run **directly** — which is faithful, because the subagent's deterministic core
+*is* `scripts/audit_keepers.py` plus artifact reads. Successor guidance: **run
+`audit_keepers.py` inline; reserve worktree agents for at most ONE at a time**, and only
+when an agent must actually write. The trap the original instruction guards against
+(an in-process agent switching the session branch) is real — it is the *remedy* that does
+not fit on this disk.
+
+### AK.7 Paste status — HOUSE-3 and FH-5: NO EVIDENCE YET
+
+Reported as the pack requires, "no evidence yet", never "not running". `git ls-remote
+--heads origin` returns **`main` only** — no branch pushed for either lane. The mechanism
+matrix is still the monolith (`docs/codebase-site/data/mechanism-matrix.js`, 2,556 lines,
+no shard directory), so **HOUSE-3 has not landed** and the interim parallel-safety clause
+stays in every prompt. No FH-5 commit, branch or handoff exists; the only repo mention of
+either lane is the dispatch commit `b4f840e` itself. (The forecast `registry/` namespace is
+generated-and-gitignored per rule 15, so its emptiness is *not* evidence either way — the
+branch check is what settles it.) Both remain paste-ready in §0ah, unchanged.
