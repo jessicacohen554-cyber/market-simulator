@@ -87,12 +87,12 @@ class TestCheckerIsNeverStricterThanTheSweep:
     """The invariant whose violation made the nyiso-114 baseline unsatisfiable."""
 
     def test_shared_ratchet_is_satisfied_by_the_committed_baseline(self, checker):
-        matrix = (REPO / checker.MATRIX_PATH).read_text("utf-8")
+        matrix = checker.matrix_all_text()  # base + every ISO shard (2026-08-11)
         source = (REPO / checker.SCENARIOS_PATH).read_text("utf-8")
         assert checker.shared_gap_ratchet(matrix, source) == []
 
     def test_iso_scoped_ratchet_is_satisfied_by_the_committed_baseline(self, checker):
-        matrix = (REPO / checker.MATRIX_PATH).read_text("utf-8")
+        matrix = checker.matrix_all_text()  # base + every ISO shard (2026-08-11)
         source = (REPO / checker.SCENARIOS_PATH).read_text("utf-8")
         assert checker.gap_ratchet(matrix, source) == []
 
@@ -129,7 +129,7 @@ class TestRatchetActuallyBites:
     def test_an_unregistered_keeper_armed_shared_field_fails(self, checker, tmp_path):
         # Strip one genuinely-armed shared field from BOTH the matrix text and
         # the baseline and the gate must fire for the ISO whose keeper arms it.
-        matrix = (REPO / checker.MATRIX_PATH).read_text("utf-8")
+        matrix = checker.matrix_all_text()  # base + every ISO shard (2026-08-11)
         source = (REPO / checker.SCENARIOS_PATH).read_text("utf-8")
         field = "cc_nameplate_summer_derate"
         assert field in matrix, "fixture field must start registered"
@@ -139,7 +139,7 @@ class TestRatchetActuallyBites:
     def test_an_excluded_field_never_fires(self, checker, sweep):
         # weather_year is non-default on essentially every backcast bundle by
         # construction; it must stay silent even though it is never registered.
-        matrix = (REPO / checker.MATRIX_PATH).read_text("utf-8")
+        matrix = checker.matrix_all_text()  # base + every ISO shard (2026-08-11)
         source = (REPO / checker.SCENARIOS_PATH).read_text("utf-8")
         assert "weather_year" in sweep.SHARED_CENSUS_EXCLUSIONS
         assert not any(

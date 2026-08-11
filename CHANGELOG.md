@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-08-11 — HOUSE-3: mechanism matrix SHARDED PER ISO; backcast generated preview files un-tracked (no model change, no verdict change)
+
+The cross-ISO mechanism matrix's one-file shape (six-char `cells: "KKKKKK"`
+strings, position = ISO) made every parallel lane edit the same line — 21 lanes
+in three days, three union-merges and one silently-lost edit on the MISO leg
+alone. Mirroring the 2026-07-19 keeper sharding: mechanism-level rows stay in
+`docs/codebase-site/data/mechanism-matrix.js` (base, edited only by the
+rule-28(c) PR that adds a mechanism); each ISO's cell verdicts / fc / `ev`
+citations / keeper+gates stamps move to `docs/codebase-site/data/`
+`mechanism-matrix/<ISO>.js` — **a lane's rule-28 duty is now a one-file edit
+and two ISOs discharge it concurrently with zero shared-file edits.** The page
+assembles base + shards client-side (`mechanism-matrix-assemble.js`); Python
+readers use the new stdlib `scripts/lib/mech_matrix.py::load_merged` (legacy
+monolith shape). Migration proven mechanical: the pre-shard file is frozen as a
+fixture and `tests/unit/config/test_mechanism_matrix_shard_migration.py`
+asserts split∘assemble reproduces it exactly per mechanism × ISO (cells, fc,
+citations; 1,266 cells, zero verdict changes — Node-verified on the real page
+path too). `check_mechanism_matrix.py` validates the sharded store (full
+coverage per shard, errors name the ISO shard file) with the 28(c) enforced
+gate intact; hook/docs/CLAUDE.md rule 28 re-point WHERE (duties unchanged).
+Also: `frontend/data/backcast/{manifest,benchmark,completeness}.js` are now
+gitignored (deploy regenerates them into `_site` from committed sidecars and
+never read the committed copies — local `file://` preview needs
+`python scripts/build_manifest.py`, as the forecast side already does), and
+the `scenarios.py` cache-key ledgers document a per-ISO-cluster insertion
+convention (comments only). Handoff:
+`docs/handoffs/house-3-matrix-shard-2026-08-11.md`.
+
 ## 2026-08-05 — ercot-167: the storage AS SOC reservation built, 2023-probed, A/B-tested, and OWNER-PROMOTED TO ERCOT KEEPER (2026-08-05-run167b-soc-reserve) — the session's REJECTED-AS-ARMED precommit verdict carried openly
 
 Matrix §5.1 item 10 executed (owner-directed, separate-2023-first per the distinct 2023 scarcity

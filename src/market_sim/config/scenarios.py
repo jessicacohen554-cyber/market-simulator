@@ -65,6 +65,22 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
 # Config fields introduced after the results cache existed. ``cache_key`` omits
 # each from its hash while it holds its default value, keeping every historical
 # cache key byte-stable; a non-default value still enters the key.
+#
+# INSERTION CONVENTION (HOUSE-3, 2026-08-11 — collision hygiene, 9 lanes hit
+# this tuple in two days). Tuple ORDER is semantically irrelevant (the hash
+# sorts by field name), so position exists only to keep parallel PRs off the
+# same line. New entries are added by ISO CLUSTER, never blindly at the end:
+#   * an ISO-prefixed field (``ercot_*``, ``caiso_*``, ``pjm_*``, ``miso_*``,
+#     ``nyiso_*``/``nysdec_*``, ``neiso_*``) goes at the END of its ISO's
+#     existing run of entries (its cluster). No cluster yet? Start one at the
+#     end of the tuple.
+#   * a SHARED (non-ISO-prefixed) field goes at the very end of the tuple.
+# Two per-ISO lanes then insert into different clusters — different lines, no
+# conflict; only two same-ISO lanes serialize, as they already do everywhere
+# else. Legacy entries above predate the convention: leave them where they
+# are (do NOT reorder — pointless churn on a heavily-crossed file). Apply the
+# SAME position discipline to the ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS``
+# ledger below, in the same commit (the guard enforces membership parity).
 _CACHE_KEY_OPTIONAL_FIELDS = (
     "start_year",
     "end_year",
@@ -887,6 +903,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
 # a ``field(default_factory=...)``, an expression) is expressible. Adding a field
 # to ``_CACHE_KEY_OPTIONAL_FIELDS`` means adding it here in the same commit; the
 # guard enforces both directions.
+#
+# INSERTION CONVENTION: same as ``_CACHE_KEY_OPTIONAL_FIELDS`` above (HOUSE-3,
+# 2026-08-11) — dict order is semantically irrelevant, so new entries land by
+# ISO cluster (end of your ISO's run of keys; shared fields at the very end),
+# keeping parallel per-ISO lanes on different lines. Leave legacy entries
+# where they are.
 _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "start_year": "None",
     "storage_measured_base_fleet": "True",
