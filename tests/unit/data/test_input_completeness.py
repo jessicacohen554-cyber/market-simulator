@@ -1,12 +1,24 @@
-"""The armed-mechanism / missing-CLEAN-partition guard (caiso-157).
+"""The armed-mechanism / missing-input guard (caiso-157, widened at caiso-190).
 
 Trivial case first: a config with everything at its default must never raise,
 whatever is on disk. Then each armed flag against an EMPTY tmp CLEAN_DIR (the
 degraded state caiso-157 found in the CAISO keeper lineage) and against a
 partition that exists.
+
+caiso-190 adds the severity axis below the original cases: a mechanism with no
+declared fallback is fatal on every lane, one with a declared fallback is fatal
+only in **strict** mode (the calibration lane keepers are promoted from), and a
+probe that RAISES is treated as degraded rather than healthy. The fixtures also
+moved to ``write_clean`` — written as bare parquet they had no embedded
+datatype metadata, so both probes raised ``SchemaError``, the guard swallowed
+it, and ``test_present_partitions_pass`` passed without ever reading a
+partition.
 """
 
 from __future__ import annotations
+
+import dataclasses
+import logging
 
 import pandas as pd
 import pytest
@@ -19,13 +31,14 @@ from market_sim.data.input_completeness import (
 
 
 class _Config:
-    """Minimal stand-in for the two ScenarioConfig fields the guard reads."""
+    """Minimal stand-in for the ScenarioConfig fields the guard reads."""
 
     def __init__(self, **flags):
         self.capacity_deliverability_limits = flags.get(
             "capacity_deliverability_limits", False
         )
         self.hydro_ror_split = flags.get("hydro_ror_split", False)
+        self.outage_source = flags.get("outage_source", "statistical")
 
 
 @pytest.fixture()
@@ -40,10 +53,19 @@ def empty_clean(tmp_path, monkeypatch):
 
 
 def _write_capdel(clean, iso="CAISO"):
-    """Write a one-row capacity-deliverability partition for ``iso``."""
-    part = clean / "capacity-deliverability" / iso
-    part.mkdir(parents=True)
-    pd.DataFrame(
+    """Write a one-row capacity-deliverability partition for ``iso``.
+
+    Through ``write_clean`` (caiso-190). These fixtures previously wrote a
+    bare ``to_parquet``, which the reader rejects for having no embedded
+    ``market_sim.datatype`` metadata — so the probes raised ``SchemaError``,
+    the guard swallowed it, and ``test_present_partitions_pass`` passed
+    without ever reading a partition. The partition-present leg was therefore
+    untested, and a malformed partition was silently tolerated on the solve
+    path; both are fixed here.
+    """
+    from scripts.lib.clean_io import write_clean
+
+    df = pd.DataFrame(
         [
             {
                 "iso": iso,
@@ -58,16 +80,34 @@ def _write_capdel(clean, iso="CAISO"):
                 "source_page": "1",
             }
         ]
-    ).to_parquet(part / "capacity-deliverability.parquet")
+    )
+    df["value_mw"] = df["value_mw"].astype("float64")
+    df["value_pu"] = df["value_pu"].astype("float64")
+    write_clean(df, "capacity-deliverability", iso=iso)
 
 
 def _write_hydro_modes(clean, iso="CAISO"):
     """Write a one-row hydro-plant-modes partition for ``iso``."""
-    part = clean / "hydro-plant-modes" / iso
-    part.mkdir(parents=True)
-    pd.DataFrame([{"iso": iso, "plant_id": 1, "shapeable": True}]).to_parquet(
-        part / "hydro-plant-modes.parquet"
+    from scripts.lib.clean_io import write_clean
+
+    df = pd.DataFrame(
+        [
+            {
+                "iso": iso,
+                "plant_id": 1,
+                "eha_ptid": "1",
+                "plant_name": "fixture",
+                "ch_mw": 10.0,
+                "mode": "Peaking",
+                "shapeable": True,
+                "method": "eha_mode",
+            }
+        ]
     )
+    df["plant_id"] = df["plant_id"].astype("int64")
+    df["ch_mw"] = df["ch_mw"].astype("float64")
+    df["shapeable"] = df["shapeable"].astype("bool")
+    write_clean(df, "hydro-plant-modes", iso=iso)
 
 
 def test_all_defaults_never_raise(empty_clean):
@@ -130,3 +170,113 @@ def test_neiso_alias_resolves_to_isone(empty_clean):
         check_clean_partitions(_Config(capacity_deliverability_limits=True), "NEISO")
     _write_capdel(empty_clean, iso="ISONE")
     check_clean_partitions(_Config(capacity_deliverability_limits=True), "NEISO")
+
+
+# ---------------------------------------------------------------------------
+# caiso-190: per-requirement severity, and the strict/non-strict lane split
+# ---------------------------------------------------------------------------
+# A mechanism with NO declared fallback is fatal everywhere; one WITH a
+# declared fallback is fatal only on the lane keepers are promoted from. The
+# asymmetry exists because a forecast run that degrades to a declared fallback
+# is recoverable from run_config.json's resolved_inputs block, whereas a
+# KEEPER that did so is the caiso-188 defect — it ships a bundle advertising a
+# mechanism its LP never ran.
+
+
+def test_strict_is_the_default(empty_clean):
+    """Fail-closed: a caller must opt OUT of strictness deliberately."""
+    with pytest.raises(DegradedInputError):
+        check_clean_partitions(_Config(capacity_deliverability_limits=True), "CAISO")
+
+
+def test_declared_fallback_warns_instead_of_raising_when_not_strict(
+    empty_clean, caplog
+):
+    """capacity_deliverability_limits has a declared fallback -> WARN + record."""
+    with caplog.at_level(logging.WARNING, logger="market_sim.data.input_completeness"):
+        check_clean_partitions(
+            _Config(capacity_deliverability_limits=True), "CAISO", strict=False
+        )
+    message = caplog.text
+    assert "capacity_deliverability_limits" in message
+    assert "ARMED" in message
+    assert "curate_capacity_deliverability.py" in message
+    # The warning must name what the LP will actually solve against.
+    assert "fitted scalar" in message
+
+
+def test_no_fallback_mechanism_raises_even_when_not_strict(empty_clean):
+    """hydro_ror_split has NO fallback — the classifier IS the mechanism."""
+    with pytest.raises(DegradedInputError) as excinfo:
+        check_clean_partitions(_Config(hydro_ror_split=True), "CAISO", strict=False)
+    assert "NO fallback" in str(excinfo.value)
+
+
+def test_strict_names_the_lane_in_the_failure(empty_clean):
+    """A strict-only failure explains why it is fatal here and not elsewhere."""
+    with pytest.raises(DegradedInputError) as excinfo:
+        check_clean_partitions(
+            _Config(capacity_deliverability_limits=True), "CAISO", strict=True
+        )
+    assert "STRICT mode" in str(excinfo.value)
+
+
+def test_campd_extract_is_registered(empty_clean, monkeypatch, tmp_path):
+    """The third requirement: the measured CAMPD unit-outage overlay.
+
+    ``outage_source`` is a STRING axis, so this entry exercises the registry's
+    per-requirement ``armed`` callable rather than flag truthiness.
+    """
+    from market_sim.data import outages
+
+    missing = tmp_path / "nonexistent-campd.csv"
+    monkeypatch.setattr(outages, "unit_outage_csv_for_iso", lambda iso: missing)
+
+    # Not armed (the default statistical source) -> never reached.
+    check_clean_partitions(_Config(), "CAISO", strict=True)
+
+    # Armed + absent -> fatal on the calibration lane...
+    with pytest.raises(DegradedInputError) as excinfo:
+        check_clean_partitions(_Config(outage_source="historic"), "CAISO", strict=True)
+    assert "outage_source" in str(excinfo.value)
+    assert "derive_campd_unit_outages.py" in str(excinfo.value)
+
+    # ...and a loud warning on the forecast lane (declared fallback).
+    check_clean_partitions(_Config(outage_source="historic"), "CAISO", strict=False)
+
+
+def test_unreadable_partition_is_degraded_not_healthy(empty_clean, monkeypatch):
+    """caiso-190: a probe that RAISES is not evidence of health.
+
+    A partition that exists but cannot be parsed no-ops the mechanism exactly
+    as an absent one does. Before this, the probe's exception was swallowed
+    and the solve proceeded — the same silent-no-op class the guard exists to
+    kill, and the reason this module's own partition-present test passed while
+    both its fixtures raised SchemaError.
+    """
+    import market_sim.data.input_completeness as ic
+
+    def _boom(iso):
+        raise RuntimeError("truncated parquet")
+
+    monkeypatch.setattr(ic, "_hydro_plant_modes_absent", _boom)
+    monkeypatch.setattr(
+        ic,
+        "_PARTITION_REQUIREMENTS",
+        tuple(
+            (
+                req
+                if req.flag != "hydro_ror_split"
+                else dataclasses.replace(req, absent=_boom)
+            )
+            for req in ic._PARTITION_REQUIREMENTS
+        ),
+    )
+
+    # Strict (the calibration lane) fails closed on an unverifiable input.
+    with pytest.raises(DegradedInputError) as excinfo:
+        check_clean_partitions(_Config(hydro_ror_split=True), "CAISO", strict=True)
+    assert "UNREADABLE" in str(excinfo.value)
+
+    # Non-strict stays loud but survives.
+    check_clean_partitions(_Config(hydro_ror_split=True), "CAISO", strict=False)

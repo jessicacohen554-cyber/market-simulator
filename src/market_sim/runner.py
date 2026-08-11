@@ -46,6 +46,7 @@ from market_sim.config.scenarios import (
 )
 from market_sim.data.datacenter import add_load_layers
 from market_sim.data.eia_loader import load_demand
+from market_sim.data.input_completeness import check_clean_partitions
 from market_sim.data.fleet import (
     Generator,
     apply_coal_tranches,
@@ -1020,6 +1021,24 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # built OUTSIDE this function can resolve the same posture instead of
     # reporting the caller's unresolved config — the FFR-2E defect class.
     config = apply_iso_scenario_defaults(config, iso)
+
+    # caiso-190: the input-completeness guard on the FORECAST solve path.
+    # caiso-157 built it, caiso-188 wired the backcast lane and filed this half
+    # as still owed (FINDING-caiso188-import-tranche-dof-2026-08-09.md §6a) —
+    # the same silent-degradation surface exists here and had no guard call at
+    # all. Runs on the RESOLVED config (after apply_iso_scenario_defaults, so
+    # an ISO default that arms a mechanism is checked too) and before any LP
+    # input is built.
+    #
+    # strict=False is the deliberate asymmetry between the lanes: a mechanism
+    # with NO declared fallback (hydro_ror_split) still fails fast here, but a
+    # DECLARED fallback (capacity_deliverability_limits -> the baked
+    # simultaneous-import scalar) warns loudly and records the outcome it
+    # produced rather than killing the run. No keeper is promoted from the
+    # forecast lane, and the resolved value is now recoverable from
+    # run_config.json's resolved_inputs block either way. The calibration lane
+    # keeps strict=True, where even a declared fallback is fatal.
+    check_clean_partitions(config, iso, strict=False)
 
     cache_key = config.cache_key()
 

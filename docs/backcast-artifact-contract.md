@@ -117,11 +117,57 @@ C6 governance gate, D-9 quarantine (`legitimacy_diagnostics.run_d9`), and
 | `ablation_of` | string \| null | D-3: base keeper this bundle ablates (historical; new twins no longer produced, rule 20 amended) |
 | `calibration_flags` | dict | the subset of `meta` the scorer reads (iso/years/hours/passes/overrides/`git_sha`/…) |
 | `scenario_config` | dict | **`dataclasses.asdict(cfg)`** — the entire resolved `ScenarioConfig` (D-9 reads its forbidden-flag keys) |
+| `environment` | dict | runtime mirror (python/platform/solver-stack versions), also in `meta.json` |
+| `resolved_inputs` | dict | **caiso-190** — what the run's DISPOSABLE inputs actually resolved to (below) |
 | `reuse` | dict (optional) | mirrors `meta.reuse` on a mixed reuse bundle |
 
 `scenario_config` is a flat dump of the frozen `ScenarioConfig` dataclass;
 loaders tolerate schema drift by keeping only fields the current dataclass
 still defines (`render_calibration_html._tranche_bands_for_bundle`).
+
+#### 2.2.1 `resolved_inputs` — what was DELIVERED, not what was asked for
+
+`scenario_config` records the config's *claims*. Several gated mechanisms
+resolve through derived-and-disposable (gitignored) partitions that no solve
+auto-builds, so an armed flag can silently no-op: the loader warns, the LP is
+unchanged, and `scenario_config` still reads `true`. Every CAISO bundle from
+caiso-175 onward advertised `capacity_deliverability_limits: true` while the LP
+solved on the baked 7,500 MW fitted `WECC_import_simultaneous` scalar, and **no
+committed artifact distinguished those runs from ones that solved on the
+published MIC** (`FINDING-caiso188-import-tranche-dof-2026-08-09.md` §4/§6b).
+This block is the durable fix that FINDING names.
+
+Built by `market_sim.data.resolved_inputs.resolved_inputs_block`. **Additive
+and top-level** — outside `scenario_config`, so the `--reuse-solved` comparator
+(which diffs only `scenario_config`) and every cache key are untouched.
+
+| Key | Role |
+|---|---|
+| `schema_version` | int; `1`. Bumped only on a breaking shape change — adding a key does not move it |
+| `iso` | the ISO the block describes |
+| `seam_import_cap.status` | `recorded` \| `unrecorded`. `unrecorded` means no solve in the writing process resolved a seam (a meta-only writer, or a `--reuse-solved` bundle whose years were copied) |
+| `seam_import_cap.by_year.<year>` | `{cap_mw, source, delivery_year, season, import_zone, flag_armed}` |
+| `hydro_plant_modes` | `{flag_armed, partition_present, classified_plants, shapeable_plants}` — makes `hydro_ror_split`'s engagement checkable from the bundle (caiso-188 §6c) |
+| `campd_unit_outages` | `{armed, path, present, sha256, bytes}` — identity of the measured overlay's bytes (rule 13 `[R-MEASURED]`) |
+
+`seam_import_cap.by_year.<year>.source` is the load-bearing field, and its three
+values are the whole point of the block:
+
+- **`mic_partition`** — Part A resolved; the LP solved against the published
+  per-area MIC sum. `cap_mw` is that sum.
+- **`baked_fallback`** — the flag was **ARMED** but the partition did not
+  resolve, so the baked fitted scalar governed. **This is the caiso-188 defect
+  state**, and it is now self-identifying in the bundle.
+- **`flag_off`** — the mechanism was never armed, so the baked value is the
+  intended, declared limit rather than a degradation.
+
+The value is **recorded at resolution time** by
+`model.interchange.spec.apply_interchange_topology` — the one place the cap is
+decided — rather than re-derived when the record is written. A second
+derivation could drift from what the LP was handed, which is exactly the defect
+class the block exists to close (caiso-188 §7 item 5: *check the DATA the gate
+resolves through*). `tests/unit/data/test_resolved_inputs.py` statically pins
+the topology step to the shared resolver so a future re-inlining fails loudly.
 
 ### 2.3 `metrics.json` — condensed verdict sidecar
 
