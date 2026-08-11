@@ -32,6 +32,7 @@ on:
       - "frontend/data/forecast/**"
       - "tests/golden/**"
       - "docs/codebase-site/data/mechanism-matrix.js"
+      - "docs/codebase-site/data/mechanism-matrix/**"
       - "CLAUDE.md"
       - ".github/workflows/ci.yml"
 
