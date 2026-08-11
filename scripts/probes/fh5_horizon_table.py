@@ -173,11 +173,29 @@ def render(data: dict) -> str:
         if not have:
             continue
         lines.append(f"\n### {iso}\n")
-        keeper = next(
-            (phases[p][a]["keeper"] for (p, a) in sorted(have) if phases[p][a]),
-            None,
-        )
-        lines.append(f"Keeper comparator: `{keeper}`\n")
+        # The keeper comparator is read at SCORING time, so a promotion between
+        # the two phases gives them different denominators. That never touches
+        # `forecast_err` (the horizon claim's quantity, keeper-independent) but
+        # it does make the two phases' `input_gap` columns non-comparable — so
+        # both comparators are named whenever they differ.
+        keepers = {
+            p: next(
+                (phases[p][a]["keeper"] for a in ("R", "K") if phases[p][a]),
+                None,
+            )
+            for p in ("A", "B")
+        }
+        if keepers["A"] and keepers["B"] and keepers["A"] != keepers["B"]:
+            lines.append(
+                f"Keeper comparator: Phase A `{keepers['A']}` → "
+                f"Phase B `{keepers['B']}` (**promoted between phases** — "
+                "`forecast_err` below is keeper-independent; input_gap is not "
+                "comparable across the two phases)\n"
+            )
+        else:
+            lines.append(
+                f"Keeper comparator: `{keepers['B'] or keepers['A']}`\n"
+            )
         for metric in METRICS:
             lines.append(f"\n**{metric}**\n")
             lines.append(
@@ -210,6 +228,65 @@ def render(data: dict) -> str:
     return "\n".join(lines) if lines else "(no scored arms found on disk)"
 
 
+def summarise(data: dict) -> str:
+    """Render the horizon-effect vs year-effect decomposition (Arm R).
+
+    Two quantities, both read off the same paired design:
+
+    * **horizon effect** — mean over the three scored years of
+      ``|err(Phase B, year) − err(Phase A, year)|``. The calendar year is held
+      fixed, so this is the cost of adding two evolution steps (h → h+2).
+    * **year effect** — ``|err(Phase A, 2025) − err(Phase B, 2023)|``, the
+      pre-registered h=2 control. Both legs sit at the SAME horizon, so this is
+      the cost of moving to a different calendar year.
+
+    Arm R only: Arm K's two phases price gas on different AEO editions
+    (AEO2023 vs AEO2021), whose ex-ante errors differ by roughly 5x, so a
+    K-vs-K comparison across phases confounds horizon with edition luck.
+
+    Args:
+        data: The nested read from :func:`collect`.
+
+    Returns:
+        A markdown table, one row per ISO per metric.
+    """
+    lines = [
+        "\n### Horizon effect vs year effect (Arm R)\n",
+        "| ISO | Metric | Horizon effect (h→h+2, year fixed) | Year effect "
+        "(h=2 control) | Dominant |",
+        "|---|---|---|---|---|",
+    ]
+    for iso, phases in data.items():
+        if phases["B"]["R"] is None or phases["A"]["R"] is None:
+            continue
+        for metric in METRICS:
+            deltas = []
+            for year in SCORED_YEARS:
+                a = _cell(phases["A"]["R"], metric, year)
+                b = _cell(phases["B"]["R"], metric, year)
+                if not a or not b:
+                    continue
+                ae, be = a.get("forecast_err"), b.get("forecast_err")
+                if ae is None or be is None:
+                    continue
+                deltas.append(abs(float(be) - float(ae)))
+            ctl_a = _cell(phases["A"]["R"], metric, 2025)
+            ctl_b = _cell(phases["B"]["R"], metric, 2023)
+            year_eff = None
+            if ctl_a and ctl_b:
+                ae, be = ctl_a.get("forecast_err"), ctl_b.get("forecast_err")
+                if ae is not None and be is not None:
+                    year_eff = abs(float(ae) - float(be))
+            if not deltas or year_eff is None:
+                continue
+            hor = sum(deltas) / len(deltas)
+            dom = "YEAR" if year_eff > hor else "horizon"
+            lines.append(
+                f"| {iso} | {metric} | {hor:.3f} | {year_eff:.3f} | {dom} |"
+            )
+    return "\n".join(lines)
+
+
 def main(argv: "list[str] | None" = None) -> int:
     """CLI entry point.
 
@@ -224,6 +301,7 @@ def main(argv: "list[str] | None" = None) -> int:
     args = parser.parse_args(argv)
     data = collect()
     print(render(data))
+    print(summarise(data))
     if args.json:
         args.json.write_text(json.dumps(data, indent=1))
         print(f"\n[wrote {args.json}]")
