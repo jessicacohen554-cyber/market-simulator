@@ -3876,6 +3876,57 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-09-miso-148-basis-aware`, **NOT-YET**
 
+> **QUEUE STAMP miso-151 (2026-08-11) — ITEM 9 WAS OWNER-CHARTERED, BUILT, SOLVED,
+> REGISTERED AND **REJECTED**. `measured_offer_surface` MISO **`U` → `R`**. Keeper
+> UNCHANGED at `2026-08-09-miso-148-basis-aware`.**
+>
+> **The arm improved BOTH failing gates and was refused anyway.** C3a-2025 **−15.6 →
+> −14.9 %**, C3b-2025 NRMSE **0.212 → 0.207**, C3c and C1/C2/C4 unchanged, kill gates
+> K1/K2/K3 all silent. It is rejected because its **identification** is refuted by this
+> session's own measurements — rule 1 `[R-STRUCT]`'s second half, *never reach the right
+> number through a mechanism that isn't real*. The owner's structure-over-gates standard
+> covers the INVERSE case (structure improves, gates regress) and does not reach this one.
+> **Do not re-open the object on the gate movement.**
+>
+> **(a) G-1 — the prior is refuted ~25×, SIGN REVERSED.** MISO's measured within-unit
+> own-curve rise is **$0.47–$4.53/MWh** (top **$3.7599**) against a model above-base rise of
+> **$1.60** (CC econ) to **$95.25** (CT_PEAKER peak) — ratio **0.0395** against a
+> pre-registered **3.0×, band [1.2, 12]**. MISO's real units bid nearly **flat** within
+> their own output range; the model is the steep one.
+>
+> **(b) G-5 — THE DURABLE RESULT, and the reconciliation with miso-145.** That session's
+> wall (**$73.4591/GW**, fleet-cumulative) and the within-unit rise are **DIFFERENT
+> OBJECTS**. Real DA book Jul-2025, capacity-weighted: **ACROSS-unit** base-level dispersion
+> p10 **0.17** / p50 **19.58** / p90 **48.01** / p95 91.44 / p99 298.03 — a p90−p10 spread of
+> **$47.84/MWh** — against a **within-unit** top-rise median of **$2.70**. **Ratio 17.7×.**
+> The wall is an **ACROSS-UNIT LEVEL-DISPERSION** object, so any surface emitting one value
+> per position bin destroys it by construction and **cannot reproduce it even in
+> principle**.
+>
+> **(c) G-4 — reported against the mechanism.** The pre-registered capacity-weighted
+> **median** is mis-specified for this distribution: **38.0 %** of unit-hours submit ONE
+> flat price, parking **22.9 %** of capacity weight at Δ exactly 0; at p>0.8 the spread runs
+> p50 4.34 / p90 13.49 / p95 24.37 / p99 **350** / mean **13.42**. The estimator was **NOT**
+> swapped after seeing which way it cut.
+>
+> **(d) UNEXPLAINED AND FILED — the cheapest open thread on this lane.** The model's
+> above-base bands price **BELOW their own plant base** (median rise replaced
+> **−0.87…−1.12 $/MWh**; `CC_REGULAR` `econ_low` **0.95** vs `committed` **1.005**), so the
+> model's rising offer curve **dips below its committed block before rising**. Nobody
+> chartered it and it needs no owner decision to investigate.
+>
+> **LEVER QUEUE — item 9 CLOSED-with-rejection. Named successor, NOT OPENED and NOT
+> chartered by this session (a NEW object and an OWNER DECISION, never a re-pointing of
+> item 9): the ACROSS-UNIT dispersion object.** Second, non-gated: the (d) base-band
+> inversion. Unchanged and still not this lane's: MISO's un-re-tuned outage extract
+> (X_cc = 0.240) and the 2025 EIA-860 vintage under-carry, both cross-ISO.
+>
+> Runs `2026-08-11-miso-151-control` / `2026-08-11-miso-151-offer-surface`. Evidence:
+> `results/calibration/FINDING-miso151-the-wall-is-across-unit-2026-08-11.md`,
+> `PREREG-miso151-measured-offer-surface-2026-08-11.md` (+ dated §4.2 amendment),
+> `_miso151_surface.json`, `data/raw/_validation-source/miso_offer_surface_positioned.json`.
+
+
 > **ITEM 8 CLOSES AT miso-150 (2026-08-10) — THE MODEL-SIDE UNIVERSE FIX WORKS
 > EXACTLY AS miso-146 NAMED IT, AND THE ASYMMETRY IT CORRECTS WAS NEVER
 > LOAD-BEARING. NO LP SOLVE, NO MECHANISM, NO `ScenarioConfig` FIELD, NO CELL

@@ -6,6 +6,66 @@ newest at the BOTTOM. Only this lane's sessions append here, so parallel
 per-ISO calibration sessions never conflict (the per-ISO lane convention,
 2026-07-19; see `frontend/data/backcast/keepers/README.md`).
 
+## miso-151 (2026-08-11) — item 9 chartered, built, solved, REGISTERED and REJECTED; the wall is an ACROSS-UNIT object
+
+**Keeper UNCHANGED: `2026-08-09-miso-148-basis-aware`.** Nothing promoted.
+`measured_offer_surface` MISO **`U` → `R`**.
+
+The owner chartered queue item 9 — a MISO `measured_offer_surface`,
+POSITION-conditioned, SHAPE-only, subsuming `gas_offer_margin` — after miso-150
+discharged its prerequisite. It was built (4 `ScenarioConfig` fields, all
+default-off), derived from a full-year corpus refetch (2,192 files, 1,652.5 MB,
+**202,734,819** curated rows), solved against a same-HEAD zero-delta control, and
+registered.
+
+**The arm improved both failing gates and was refused anyway**: C3a-2025
+−15.6 → **−14.9 %**, C3b-2025 NRMSE 0.212 → **0.207**, C3c and C1/C2/C4
+unchanged, K1/K2/K3 silent. Rejected because its identification is refuted by
+this session's own measurements — rule 1 `[R-STRUCT]`'s second half. The control
+reproduces the keeper **exactly** on every gated number, so the pair is a clean
+A/B despite the miso-148 K0 caveat.
+
+* **G-1** — measured within-unit top-of-own-curve rise **$3.7599/MWh** vs a model
+  above-base rise of $1.60 (CC econ) to **$95.25** (CT_PEAKER peak): ratio
+  **0.0395** against a pre-registered 3.0× band [1.2, 12]. Refuted ~25×, **sign
+  reversed** — MISO's real units bid nearly flat within their own range.
+* **G-5, the durable result** — miso-145's wall ($73.4591/GW, fleet-cumulative)
+  and the within-unit rise are **different objects**. Real DA book Jul-2025,
+  cap-weighted: across-unit base-level dispersion p10 0.17 / p50 19.58 / p90
+  **48.01** / p95 91.44 / p99 298.03 (**p90−p10 = $47.84/MWh**) against a
+  within-unit top-rise median of **$2.70**. **Ratio 17.7×.** The wall is an
+  **across-unit level-dispersion** object; a one-value-per-position surface
+  destroys it by construction.
+* **G-4, against the mechanism** — the pre-registered capacity-weighted median is
+  mis-specified: 38.0 % of unit-hours submit one flat price (22.9 % of capacity
+  weight at Δ = 0); p>0.8 runs p50 4.34 / p90 13.49 / p95 24.37 / p99 350 / mean
+  13.42. **Not** swapped after the fact.
+* **Unexplained and filed** — the model's above-base bands price **below their own
+  plant base** (`CC_REGULAR` econ_low 0.95 vs committed 1.005); its rising offer
+  curve dips before it rises. Cheapest open thread on the lane.
+
+**Footing.** miso-150's footing block reproduced **byte-identically** and every
+committed window deficit at Δ 0.0, which is what proves the full-year refetch and
+the streaming curator rewrite left the JJA corpus miso-145/150 measured unchanged.
+Rule-13 census: **0** award columns across 6 partitions.
+
+**Five defects created and caught in-session**, all before anything was promoted:
+the PREREG's own §4.2 formula double-counted the physical rise (amended, dated,
+pre-derive); the curator would have OOM'd on a full year (rewritten to stream,
+data-byte identical); `_miso150_universe.py --footing` **destroys** the artifact it
+checks (committed file restored; footing now called in process); a
+`getattr(g, "pmax", 0.0)` on a field named `pmax_mw` silently collapsed every
+tranche position to 0 and the first arm ran it looking healthy (killed, unregistered,
+guarded, and now covered by `tests/test_miso_offer_surface.py` built from real
+`Generator` rows — the old `SimpleNamespace` fixture encoded the same wrong name and
+could not have failed); and an OOM cost a control solve run alongside a probe.
+G-F3's own bar ("bit-identical") was unsatisfiable in floating point and was
+corrected to 1e-9, disclosed prominently — it rescues nothing.
+
+**Runs:** `2026-08-11-miso-151-control`, `2026-08-11-miso-151-offer-surface`.
+**Successor, named and NOT opened** (a new object and an owner decision, never a
+re-pointing of item 9): the across-unit dispersion object.
+
 ## 2026-07-19 — MISO keeper advanced: miso-75 recipe on the gas_daily_shape §3.7 true-date fix (the lane's own follow-up; NOT a miso-N session)
 
 Cross-ISO session (full entry: `docs/calibration-log/governance.md` 2026-07-19
