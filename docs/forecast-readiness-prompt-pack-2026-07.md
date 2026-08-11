@@ -6802,3 +6802,55 @@ mid-window price/reserve objects onto measured levels for the first time in this
   historical record and NEVER a baseline for post-epoch comparison.
 [PASTE §0aj-clauses HERE]
 ```
+
+## §0al — HOUSE-3 LANDED; the parallel-safety clause DROPS to the shard path (2026-08-11 @ `ce4d05e`)
+
+Record: **Addendum AL**. `origin/main` `d542a28` → **`ce4d05e`** (25 commits; HOUSE-3, the
+manager's AK/§0aj/§0ak, caiso-189, miso-151's continuation). **All six keepers unmoved.**
+HOUSE-3's acceptance sentence is **verified empirically** (AL.2): a simulated two-ISO
+concurrent edit changed exactly two disjoint shard files with the CI checker green
+throughout — so two ISOs CAN now discharge rule 28 with zero shared-file edits, for cell
+verdicts and promotion stamps alike.
+
+**§0aj-clauses are SUPERSEDED by the block below. Use this one in every prompt from now on.**
+
+```
+> RULE-28 WRITE PATH (post-HOUSE-3). The mechanism matrix is SHARDED. A session that tests
+> a mechanism in <ISO> edits ONLY docs/codebase-site/data/mechanism-matrix/<ISO>.js — the
+> cell verdict, the forecast-lane posture (fc), the evidence citation (ev), any ISO note,
+> and the keeper/gates stamps on promotion. NEVER another ISO's shard (rule 25). The base
+> docs/codebase-site/data/mechanism-matrix.js is edited ONLY to add a NEW MECHANISM ROW
+> (id/cat/name/def/mode); its visible keeper stamps are the FROZEN pre-2026-08-11 log —
+> do not "update" them. Run scripts/check_mechanism_matrix.py before you push.
+
+> SCENARIOS.PY IS STILL SHARED — follow the insertion convention. src/market_sim/config/
+> scenarios.py's registration lists are genuinely common (9 lanes hit them in two days).
+> Tuple order is semantically irrelevant, so position exists only to keep parallel PRs off
+> the same line: an ISO-prefixed field (ercot_*, caiso_*, pjm_*, miso_*, nyiso_*/nysdec_*,
+> neiso_*) goes at the END OF ITS OWN ISO'S CLUSTER; a shared field goes at the very end of
+> the tuple; apply the SAME position discipline to _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS in
+> the SAME commit. Do NOT reorder legacy entries. If you still hit a conflict, resolve it
+> BY UNION — never take one side wholesale (one edit was lost that way at c5593684).
+
+> CLEAN-PARTITION GUARD (shipped by caiso-188). scripts/run_calibration.py calls
+> check_clean_partitions(config, iso), which RAISES DegradedInputError when an armed flag's
+> derived CLEAN partition is absent. No-op at defaults; fires for exactly two flags —
+> capacity_deliverability_limits and hydro_ror_split. If your recipe arms either,
+> scripts/regenerate_clean.py MUST have run first or your solve dies at the starting line.
+
+> ATTESTATION COMPLETENESS (E10, new — caiso-189). audit_keepers.py now checks attestation
+> completeness, after caiso-188 was found to have been PROMOTED WITH NO C6 GOVERNANCE
+> ATTESTATION AT ALL. If your lane promotes, write the attestation and include
+> "schema": "calibration-attestation/v1". ERCOT's current attestation lacks that tag —
+> the next ERCOT lane to regenerate one adds it.
+
+> DISK / WORKTREE. data/raw is 9.6 GB and .git 7.5 GB against ~13 GB writable. Do NOT launch
+> concurrent isolation:"worktree" agents — three at once exhausted the disk and all failed.
+> Run scripts/audit_keepers.py inline; at most ONE worktree agent at a time.
+```
+
+**Dispatch status, unchanged and still paste-ready:** HOUSE-3 is DONE and comes off the
+queue. **FH-5 (§0ah) now pastes FIRST** — it is the blocker for FFR-9C-PROMOTE (§0ak-3) and
+nothing else waits on it. F6-DIAG (§0aj-1), ARM-3-ARM (§0ak-1) and RC-DERIVE (§0ak-2) are
+parallel-safe with each other and with FH-5. **FFR-9C-PROMOTE stays BLOCKED** — its
+pre-flight #1 stops it until FH-5 is on main.
