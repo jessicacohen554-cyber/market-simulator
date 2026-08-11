@@ -57,6 +57,39 @@ OUTCOME_COLS = {
 }
 
 
+def g_f0_footing() -> dict:
+    """Re-run miso-150's footing IN PROCESS and compare to its committed block.
+
+    Deliberately calls :func:`_miso150_universe.footing` directly rather than
+    the ``--footing`` CLI: that CLI writes ``_miso150_universe.json`` containing
+    ONLY the footing block, which DESTROYS miso-150's committed ``measurement``
+    block.  A footing check must never damage the artifact it is checking.
+
+    The bar is stronger than "PASS": this session's re-run must reproduce the
+    committed footing block **byte-identically**, which is what certifies that
+    the full-year refetch and the streaming curator rewrite left the JJA corpus
+    miso-145/150 measured completely unchanged (PREREG G-F0/G-F1).
+    """
+    from scripts.probes._miso150_universe import footing
+
+    fresh = footing()
+    committed = json.loads(
+        (REPO / "results" / "calibration" / "_miso150_universe.json").read_text()
+    )["footing"]
+    identical = json.dumps(fresh, sort_keys=True) == json.dumps(
+        committed, sort_keys=True
+    )
+    return {
+        "bar": "byte-identical to the committed footing block",
+        "verdict_self": fresh.get("verdict"),
+        "n_out_of_tolerance": fresh.get("G_F0_miso145_reproduction", {}).get(
+            "n_out_of_tolerance"
+        ),
+        "byte_identical_to_committed": identical,
+        "verdict": "PASS" if (identical and fresh.get("verdict") == "PASS") else "HARD STOP",
+    }
+
+
 def g_f2_outcome_census() -> dict:
     """Census the written partitions for any dispatch-award column."""
     from market_sim.config import paths
@@ -196,6 +229,11 @@ def g1_p1_measured_vs_model() -> dict:
 def main() -> None:
     """Run every Phase-0 gate and write the record."""
     rec: dict = {"session": "miso-151", "keeper": "2026-08-09-miso-148-basis-aware"}
+    rec["G_F0_footing"] = g_f0_footing()
+    log.info("G-F0 %s", rec["G_F0_footing"]["verdict"])
+    if rec["G_F0_footing"]["verdict"] != "PASS":
+        OUT.write_text(json.dumps(rec, indent=1))
+        raise SystemExit("G-F0 footing FAILED — HARD STOP (PREREG §2)")
     rec["G_F2_outcome_census"] = g_f2_outcome_census()
     log.info("G-F2 %s", rec["G_F2_outcome_census"]["verdict"])
     rec["G_F3_level_invariance"] = g_f3_level_invariance()
