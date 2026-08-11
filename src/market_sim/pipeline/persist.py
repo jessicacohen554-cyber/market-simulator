@@ -279,6 +279,20 @@ def write_run_config(
     ablation twin, the base keeper bundle name it ablates is recorded at the top
     level so the twin is self-identifying and the calibration-report skill can
     link it from the keeper's sidecar ``ablation_twin`` field.
+
+    ``resolved_inputs`` (caiso-190): what the run's DISPOSABLE inputs actually
+    resolved to — the seam import cap and whether it came from the published
+    MIC partition or the baked fitted fallback, the hydro-plant-modes
+    partition's presence and classified-plant count, and the CAMPD unit-outage
+    extract's identity. ADDITIVE and top-level, outside ``scenario_config``, so
+    the ``--reuse-solved`` comparator (which diffs only ``scenario_config``) and
+    every cache key are untouched. It exists because ``scenario_config`` records
+    what was *asked for* and, before this block, nothing committed recorded what
+    was *delivered*: every CAISO bundle from caiso-175 onward advertised
+    ``capacity_deliverability_limits: true`` while solving on the 7,500 MW
+    fitted scalar, and no artifact distinguished them from a bundle that solved
+    on the published cap (FINDING-caiso188 §4/§6b — "the durable fix is to
+    persist the resolved seam cap into run_config.json").
     """
     import dataclasses
 
@@ -334,6 +348,16 @@ def write_run_config(
         # diffs scenario_config — is unaffected.
         "environment": meta.get("environment") or environment_block(),
     }
+    # caiso-190 provenance. Wrapped: a record-writer must never be the reason a
+    # finished solve loses its bundle, so a probe failure degrades to an
+    # explicit error marker rather than an exception.
+    try:
+        from market_sim.data.resolved_inputs import resolved_inputs_block
+
+        payload["resolved_inputs"] = resolved_inputs_block(cfg, str(meta.get("iso")))
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.warning("resolved_inputs block could not be built", exc_info=True)
+        payload["resolved_inputs"] = {"error": repr(exc)}
     if "reuse" in meta:
         # Mixed --reuse-solved bundle: mirror the reuse labeling into the
         # self-contained run record. Absent the flag this key never exists

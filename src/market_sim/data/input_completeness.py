@@ -29,16 +29,46 @@ partition the flag requires is absent *and* the ISO is one for which that
 partition is expected; a flag left at its default never reaches it, so the
 whole default-off surface is untouched.
 
-Scope is deliberately narrow: the two mechanisms caiso-157 proves. Widening it
-to other armed-flag/partition pairs is filed, not absorbed — each addition owes
-a check that "partition absent" is genuinely distinguishable from a legitimate
-ISO-level no-op (as it is for both entries here).
+Each addition owes a check that "partition absent" is genuinely
+distinguishable from a legitimate ISO-level no-op (as it is for every entry
+here).
+
+**caiso-190 widened the guard in three ways**, after caiso-188 measured the
+same defect class recurring on the designated CAISO keeper
+(``FINDING-caiso188-import-tranche-dof-2026-08-09.md`` §4-§7):
+
+1. **Both solve paths call it.** caiso-157 wrote the guard but its only call
+   site was ``pipeline/year.py::run_year_solve``, a function with no
+   production caller — so it had never once run in a solve while its unit
+   tests kept it green in CI. caiso-188 wired the backcast lane
+   (``scripts/run_calibration.py``); caiso-190 wires the forecast orchestrator
+   (``src/market_sim/runner.py``), which had the same silent-degradation
+   surface and no guard call.
+2. **Per-requirement severity.** A mechanism with **no defined fallback**
+   (``hydro_ror_split`` — the classifier *is* the mechanism) fails fast in
+   every mode. A mechanism with a **declared fallback**
+   (``capacity_deliverability_limits`` falls back to the baked
+   ``WECC_import_simultaneous`` scalar) fails fast in **strict** mode and
+   otherwise warns loudly — and either way the resolved outcome is persisted
+   by :mod:`market_sim.data.resolved_inputs`, so "which cap did this bundle
+   solve against?" is answerable from committed artifacts alone.
+3. **Strict is the DEFAULT**, so the calibration lane keeps caiso-188's
+   fail-fast behaviour unchanged and a caller must opt *out* deliberately. The
+   forecast orchestrator is the one caller that does: a forecast run that
+   degrades to a declared fallback is loud but not fatal, because it is not
+   the lane a keeper is promoted from.
+
+The guard still carries **no ScenarioConfig field, no threshold and no
+tunable** — ``strict`` is a call-site property of the lane, not a knob a
+scenario can set — so it remains a pure consistency assertion between what a
+config claims and what is on disk.
 """
 
 from __future__ import annotations
 
 import logging
-from typing import Callable
+from dataclasses import dataclass
+from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -75,69 +105,235 @@ def _hydro_plant_modes_absent(iso: str) -> bool:
     return load_hydro_shapeable(iso) is None
 
 
-#: ``config`` flag -> (clean datatype, curate script, absence probe). The probe
-#: takes the model ISO name and returns True when the partition the armed flag
-#: requires is missing from ``data/clean``.
-_PARTITION_REQUIREMENTS: dict[str, tuple[str, str, Callable[[str], bool]]] = {
-    "capacity_deliverability_limits": (
-        "capacity-deliverability",
-        "scripts/data/curate_capacity_deliverability.py",
-        _capacity_deliverability_absent,
-    ),
-    "hydro_ror_split": (
-        "hydro-plant-modes",
-        "scripts/data/curate_hydro_plant_modes.py",
-        _hydro_plant_modes_absent,
-    ),
-}
+def _campd_unit_outages_absent(iso: str) -> bool:
+    """Return whether the ISO's CAMPD unit-outage extract is missing.
+
+    Unlike the two clean partitions this extract is COMMITTED under
+    ``data/raw``, so its absence is an environment condition (a sparse
+    checkout that excluded ``data/raw``) rather than the caiso-157 "no solve
+    builds it" class. The degradation is identical, though:
+    ``_load_unit_outage_events`` returns ``None``, ``unit_outage_derate_
+    factors`` returns ``{}``, and the historic overlay the config asked for
+    silently becomes no overlay at all.
+    """
+    from market_sim.data.outages import unit_outage_csv_for_iso
+
+    return not unit_outage_csv_for_iso(iso).exists()
 
 
-def check_clean_partitions(config, iso: str) -> None:
-    """Raise when an armed mechanism's required CLEAN partition is absent.
+def _historic_outages_armed(config) -> bool:
+    """Return whether the run asked for the measured CAMPD outage overlay.
+
+    ``outage_source`` is a STRING axis rather than a bool flag, so this
+    requirement cannot key off ``getattr(config, flag)`` truthiness the way the
+    other two do — hence the per-requirement ``armed`` callable.
+    """
+    return str(getattr(config, "outage_source", "") or "").lower() == "historic"
+
+
+@dataclass(frozen=True)
+class PartitionRequirement:
+    """One armed-mechanism / required-data pair, and what absence means.
+
+    Attributes:
+        flag: The ``ScenarioConfig`` field that arms the mechanism. Also the
+            name used in the failure message, so it is copy-pasteable into a
+            config.
+        datatype: The on-disk datatype the mechanism resolves through.
+        location: Human-readable path template naming where it should be.
+        build_command: The copy-pasteable command that materialises it.
+        armed: ``config -> bool``. Defaults to the truthiness of ``flag``.
+        absent: ``iso -> bool``. True when the data the armed mechanism needs
+            is missing. Must distinguish "absent" from a legitimate ISO-level
+            no-op (e.g. energy-only ERCOT publishes no locational RA
+            construct, so an empty read there is the permanent right answer).
+        fallback: What the LP silently falls back to when the data is absent,
+            or ``None`` when the mechanism has **no defined fallback**. This
+            is the severity switch: ``None`` fails fast in every mode, a
+            declared fallback fails fast only in strict mode.
+    """
+
+    flag: str
+    datatype: str
+    location: str
+    build_command: str
+    absent: Callable[[str], bool]
+    fallback: str | None = None
+    armed: Callable[[Any], bool] | None = None
+
+    def is_armed(self, config) -> bool:
+        """Return whether ``config`` arms this mechanism."""
+        if self.armed is not None:
+            return bool(self.armed(config))
+        return bool(getattr(config, self.flag, False))
+
+
+#: The flag -> required-data registry. ADDITIVE by design: a new mechanism that
+#: resolves through disposable data appends one entry here and inherits the
+#: whole guard, on both solve paths, with no call-site change.
+_PARTITION_REQUIREMENTS: tuple[PartitionRequirement, ...] = (
+    PartitionRequirement(
+        flag="capacity_deliverability_limits",
+        datatype="capacity-deliverability",
+        location="data/clean/capacity-deliverability/<ISO>",
+        build_command="PYTHONPATH=. python scripts/data/curate_capacity_deliverability.py",
+        absent=_capacity_deliverability_absent,
+        # The baked WECC_import_simultaneous scalar (7,500 MW for CAISO) — a
+        # RESIDUAL-IDENTIFIED fitted value that governs whenever Part A does
+        # not resolve. Declared, so a non-strict lane warns; strict refuses,
+        # because a keeper that solved on it while advertising the published
+        # MIC is precisely the caiso-188 defect.
+        fallback="the baked simultaneous-import cap (a fitted scalar)",
+    ),
+    PartitionRequirement(
+        flag="hydro_ror_split",
+        datatype="hydro-plant-modes",
+        location="data/clean/hydro-plant-modes/<ISO>",
+        build_command="PYTHONPATH=. python scripts/data/curate_hydro_plant_modes.py",
+        absent=_hydro_plant_modes_absent,
+        # NO fallback: the classifier IS the mechanism, so an absent partition
+        # leaves the LP simply unchanged. Fails fast in every mode.
+        fallback=None,
+    ),
+    PartitionRequirement(
+        flag="outage_source",
+        datatype="campd-unit-outages",
+        location="data/raw/campd-unit-outages-<ISO>.csv",
+        build_command=(
+            "PYTHONPATH=. python scripts/data/derive_campd_unit_outages.py --iso <ISO>"
+        ),
+        absent=_campd_unit_outages_absent,
+        armed=_historic_outages_armed,
+        # Declared: an absent extract degrades to the statistical availability
+        # the model uses when no measured overlay is supplied.
+        fallback="statistical availability (no measured outage overlay)",
+    ),
+)
+
+
+def check_clean_partitions(config, iso: str, *, strict: bool = True) -> None:
+    """Refuse (or warn about) an armed mechanism whose required data is absent.
+
+    Called before the LP is built on **both** solve paths — the backcast
+    orchestrator (``scripts/run_calibration.py::run_year``, wired at
+    caiso-188) and the forecast orchestrator
+    (``market_sim.runner.run_scenario_iso``, wired at caiso-190).
 
     Args:
         config: The resolved ``ScenarioConfig`` for the run.
         iso: Model ISO name (e.g. ``"CAISO"``, ``"NEISO"``).
+        strict: When ``True`` (the default, and what the calibration lane
+            uses), a missing partition is fatal even where a fallback is
+            declared — no keeper may solve on the wrong cap. When ``False``,
+            only mechanisms with **no** defined fallback are fatal; a declared
+            fallback warns loudly instead, and the outcome it produced is
+            recorded by :mod:`market_sim.data.resolved_inputs`.
 
     Raises:
-        DegradedInputError: One or more armed mechanisms have no data. The
-            message names every offender and the curate script that rebuilds
-            it, so the fix is a copy-pasteable command rather than a hunt.
+        DegradedInputError: One or more armed mechanisms have no data, at a
+            severity this mode treats as fatal. The message names every
+            offender and the command that rebuilds it, so the fix is
+            copy-pasteable rather than a hunt.
     """
-    missing: list[tuple[str, str, str]] = []
-    for flag, (datatype, script, absent) in _PARTITION_REQUIREMENTS.items():
-        if not bool(getattr(config, flag, False)):
+    fatal: list[PartitionRequirement] = []
+    degraded_with_fallback: list[PartitionRequirement] = []
+    unverifiable: list[tuple[PartitionRequirement, Exception]] = []
+    for req in _PARTITION_REQUIREMENTS:
+        if not req.is_armed(config):
             continue
         try:
-            degraded = absent(iso)
-        except Exception:  # a probe must never be the reason a solve dies
-            logger.warning(
-                "input-completeness probe for %s failed; not treating as degraded",
-                flag,
-                exc_info=True,
-            )
+            degraded = req.absent(iso)
+        except Exception as exc:
+            # caiso-190: a probe that RAISES is not evidence of health. A
+            # partition present but unreadable (wrong schema, truncated
+            # parquet, missing datatype metadata) degrades the mechanism
+            # exactly as absence does — the loader returns nothing and the LP
+            # is unchanged. Treating that as "fine" was itself an instance of
+            # the silent-no-op class: it is how
+            # test_input_completeness.py::test_present_partitions_pass came to
+            # pass while BOTH its fixtures raised SchemaError, so the
+            # partition-present leg of the guard was never actually exercised.
+            # Fail CLOSED in strict mode (the same discipline rule 22 applies
+            # to an unrecognised holdout year); stay loud but non-fatal on a
+            # lane no keeper is promoted from.
+            unverifiable.append((req, exc))
             continue
-        if degraded:
-            missing.append((flag, datatype, script))
+        if not degraded:
+            continue
+        if req.fallback is None or strict:
+            fatal.append(req)
+        else:
+            degraded_with_fallback.append(req)
 
-    if not missing:
+    for req, exc in unverifiable:
+        logger.warning(
+            "%s: %s is ARMED but its %s probe FAILED (%r) — the mechanism's "
+            "data could not be verified, and an unreadable partition no-ops "
+            "the mechanism exactly as an absent one does. Rebuild with `%s`.",
+            iso,
+            req.flag,
+            req.datatype,
+            exc,
+            req.build_command.replace("<ISO>", iso.upper()),
+            exc_info=not strict,
+        )
+
+    for req in degraded_with_fallback:
+        logger.warning(
+            "%s: %s is ARMED but %s is absent (%s) — the solve will fall back "
+            "to %s and the mechanism will NOT run. Rebuild with `%s`. The "
+            "resolved outcome is recorded in run_config.json's resolved_inputs "
+            "block (caiso-190); a calibration run would refuse this outright.",
+            iso,
+            req.flag,
+            req.datatype,
+            req.location.replace("<ISO>", iso.upper()),
+            req.fallback,
+            req.build_command.replace("<ISO>", iso.upper()),
+        )
+
+    if not fatal and not (strict and unverifiable):
         return
 
     lines = [
-        f"{iso}: {len(missing)} armed mechanism(s) have no derived CLEAN data, "
-        "so they would silently no-op and the run would advertise a mechanism "
-        "that never ran:",
+        f"{iso}: {len(fatal) + len(unverifiable) * bool(strict)} armed "
+        "mechanism(s) have no usable input data, so they would silently no-op "
+        "and the run would advertise a mechanism that never ran:",
     ]
-    lines += [
-        f"  - {flag} needs data/clean/{datatype}/{iso.upper()} — rebuild with "
-        f"`PYTHONPATH=. python {script}`"
-        for flag, datatype, script in missing
-    ]
+    if strict:
+        for req, exc in unverifiable:
+            lines.append(
+                f"  - {req.flag} needs "
+                f"{req.location.replace('<ISO>', iso.upper())}, which is "
+                f"present but UNREADABLE ({exc!r}) — rebuild with "
+                f"`{req.build_command.replace('<ISO>', iso.upper())}`"
+            )
+    for req in fatal:
+        detail = (
+            f"falls back to {req.fallback}"
+            if req.fallback is not None
+            else "has NO fallback — the mechanism simply would not run"
+        )
+        lines.append(
+            f"  - {req.flag} needs {req.location.replace('<ISO>', iso.upper())} "
+            f"({detail}) — rebuild with "
+            f"`{req.build_command.replace('<ISO>', iso.upper())}`"
+        )
+    if strict and any(req.fallback is not None for req in fatal):
+        lines.append(
+            "STRICT mode (the calibration lane): a DECLARED fallback is fatal "
+            "here too, because a keeper that solved on the fallback while its "
+            "run_config advertised the published input is the caiso-188 "
+            "defect. Pass strict=False only on a lane no keeper is promoted "
+            "from."
+        )
     lines.append(
         "data/clean is derived and gitignored, so a fresh container starts "
         "empty; regenerate the partitions this recipe consumes before solving "
         "(`python scripts/regenerate_clean.py` rebuilds the whole tree). "
         "(caiso-157: an absent partition re-armed a retired fitted import "
-        "scalar across five keeper promotions — rules 20/24.)"
+        "scalar across five keeper promotions — rules 20/24. caiso-188: it "
+        "recurred on the designated keeper because the guard was never wired "
+        "to a solve path.)"
     )
     raise DegradedInputError("\n".join(lines))

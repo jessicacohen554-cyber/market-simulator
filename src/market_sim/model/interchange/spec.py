@@ -2104,17 +2104,22 @@ def apply_interchange_topology(
             iso,
             year,
         )
-    if getattr(config, "capacity_deliverability_limits", False):
-        from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
-        from market_sim.data import capacity_deliverability as capdel
+    # caiso-190: the seam cap is resolved through the SHARED derivation in
+    # market_sim.data.resolved_inputs and the outcome is recorded there, so the
+    # value persisted into run_config.json is the value this function hands the
+    # LP rather than a re-derivation that could drift from it. The resolution
+    # itself is unchanged statement-for-statement (same delivery year/season,
+    # same per-area aggregation, same truthiness test); only its home moved.
+    from market_sim.data.resolved_inputs import (
+        record_seam_resolution,
+        resolve_seam_import_cap,
+    )
 
-        _dy = capdel.resolve_delivery_year(iso, year)
-        _season = capdel.resolve_season(iso)
-        _imp_area = capdel.import_limit_by_area(iso, _dy, _season)
-        _imp_types = capdel.area_types_by_area(iso, _dy, _season, "import_limit")
-        _imp_by_zone, _ = aggregate_by_zone(iso, _imp_area, _imp_types)
-        _import_zone = IMPORT_ZONE.get(iso)
-        _seam_mw = _imp_by_zone.get(_import_zone) if _import_zone else None
+    _seam = resolve_seam_import_cap(config, iso, year, iso_config)
+    record_seam_resolution(_seam)
+    if getattr(config, "capacity_deliverability_limits", False):
+        _dy = _seam.delivery_year
+        _seam_mw = _seam.cap_mw if _seam.source == "mic_partition" else None
         if _seam_mw:
             iso_config = apply_deliverability_seam_limit(iso_config, iso, _seam_mw)
             logger.info(
@@ -2140,23 +2145,21 @@ def apply_interchange_topology(
             # (FINDING-caiso188-import-tranche-dof-2026-08-09.md §4). Warn
             # loudly and name the fallback the LP will actually solve against
             # (rule 24 [R-REGISTRY]: no unrecorded channel may decide a limit).
-            _baked = next(
-                (
-                    lim.cap_mw
-                    for lim in iso_config.interface_limits
-                    if lim.links
-                    and all(pair[0] == IMPORT_ZONE.get(iso) for pair in lim.links)
-                ),
-                None,
-            )
+            # caiso-190: the resolution is ALSO persisted — run_config.json's
+            # resolved_inputs.seam_import_cap now carries this cap and
+            # source="baked_fallback", so a later session can tell a bundle
+            # that solved on the published MIC from one that solved on the
+            # fitted scalar without re-deriving anything.
+            _baked = _seam.cap_mw
             logger.warning(
                 "%s %d: capacity_deliverability_limits is ON but Part A did "
                 "NOT apply — no published per-area import_limit resolved for "
                 "delivery year %s (run scripts/data/curate_capacity_"
                 "deliverability.py to materialise the clean partition). The "
                 "solve keeps the BAKED simultaneous-import cap (%s MW), which "
-                "is a fitted scalar, and run_config.json will still record "
-                "the flag as True — see FINDING-caiso188 §4",
+                "is a fitted scalar; run_config.json still records the flag as "
+                "True and now also records resolved_inputs.seam_import_cap "
+                "source=baked_fallback — see FINDING-caiso188 §4, caiso-190",
                 iso,
                 year,
                 _dy,
