@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-11-miso-151-control",
+  "label": "miso 151 control",
+  "date": "2026-08-11",
+  "shorthand": "miso-151-control",
+  "definition": "miso-151 same-HEAD zero-delta control for the measured offer surface arm",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-11-miso-151-control.js",
+  "bundle": "results/calibration/miso151_surface_A"
+}

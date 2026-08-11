@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-03T21:13:29",
+  "timestamp": "2026-08-11T06:40:43",
   "iso": "MISO",
   "years": [
     2023,
@@ -27,7 +27,7 @@
   "ct_mustrun_per_plant": false,
   "ct_mustrun_floor_frac": 1.0,
   "coal_drop_pof": true,
-  "coal_mustrun_online_pmin": false,
+  "coal_mustrun_online_pmin": true,
   "coal_sync_srmc_tranche": false,
   "ct_intermediate_split": true,
   "ct_intermediate_cf_threshold": null,
@@ -42,7 +42,10 @@
   "cc_committed_offer_margin": false,
   "coal_peak_offer_margin": false,
   "coal_perplant_offer_level": false,
+  "coal_perplant_offer_yearly": false,
   "nysdec_peaker_rule_availability": false,
+  "nyiso_solar_market_generator_basis": false,
+  "nyiso_solar_registry_cod_dates": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": true,
   "st_gas_intermediate_cf_threshold": null,
@@ -74,7 +77,132 @@
     ],
     "temp_derate_slope_st_chp": 0.00141,
     "temp_derate_slope_ct_chp": 0.00141,
-    "measured_ct_heat_rates": true
+    "measured_ct_heat_rates": true,
+    "dual_fuel_switching": true,
+    "cc_steam_part_capacity": true,
+    "coal_mustrun_online_pmin": true,
+    "offer_curve_by_group": {
+      "CC_REGULAR": {
+        "committed": 1.005,
+        "econ_low": 0.95,
+        "econ_high": 1.08,
+        "peak": 2.25,
+        "econ_low_share": 0.5,
+        "pct_peaking": 8.0,
+        "phys_committed": 1.005,
+        "phys_econ_low": 0.887,
+        "phys_econ_high": 1.008,
+        "phys_peak": 2.25
+      },
+      "CC_INTERMEDIATE": {
+        "committed": 1.005,
+        "econ_low": 0.95,
+        "econ_high": 1.08,
+        "peak": 2.25,
+        "econ_low_share": 0.5,
+        "pct_peaking": 8.0
+      },
+      "CC_CHP": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 2.25,
+        "econ_low_share": 0.5,
+        "pct_peaking": 8.0,
+        "phys_committed": 1.508,
+        "phys_econ_low": 0.995,
+        "phys_econ_high": 1.017,
+        "phys_peak": 2.25
+      },
+      "CT_CHP": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 1.0,
+        "econ_low_share": 0.5,
+        "phys_committed": 0.857,
+        "phys_econ_low": 0.785,
+        "phys_econ_high": 0.825,
+        "phys_peak": 1.0
+      },
+      "CT_PEAKER": {
+        "committed": 1.025,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 4.0,
+        "econ_low_share": 0.526,
+        "pct_peaking": 7.0,
+        "phys_committed": 1.025,
+        "phys_econ_low": 0.687,
+        "phys_econ_high": 0.691,
+        "phys_peak": 1.0
+      },
+      "CT_INTERMEDIATE": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.2,
+        "peak": 3.0,
+        "econ_low_share": 0.5,
+        "pct_peaking": 5.0
+      },
+      "ST_GAS": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 1.0,
+        "econ_low_share": 0.5,
+        "pct_peaking": 15.0,
+        "phys_committed": 1.079,
+        "phys_econ_low": 0.812,
+        "phys_econ_high": 0.849,
+        "phys_peak": 1.0
+      },
+      "ST_GAS_INTERMEDIATE": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.15,
+        "peak": 2.2,
+        "econ_low_share": 0.5,
+        "pct_peaking": 6.0
+      },
+      "COAL_LIGNITE": {
+        "committed": 1.0,
+        "econ_low": 1.14,
+        "econ_high": 1.15,
+        "peak": 1.55,
+        "econ_low_share": 0.556
+      },
+      "COAL_PRB": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.19,
+        "peak": 1.48,
+        "econ_low_share": 0.556
+      },
+      "COAL_BIT": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.1,
+        "peak": 1.45,
+        "econ_low_share": 0.55
+      },
+      "COAL_WC": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.02,
+        "peak": 1.2,
+        "econ_low_share": 0.55
+      },
+      "COAL": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.1,
+        "peak": 1.45,
+        "econ_low_share": 0.55
+      }
+    },
+    "summer_derate_basis_aware": true,
+    "miso_offer_surface_measured": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -241,7 +369,11 @@
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
   "caiso_per_year_import_caps": null,
+  "caiso_asymmetric_path_ratings": null,
+  "caiso_zonal_loss_surface": null,
   "capacity_deliverability_limits": null,
+  "unit_outage_lp_capacity_basis": null,
+  "cc_winter_capability_basis": null,
   "ramp_limits": null,
   "local_capacity_constraints": null,
   "nyiso_local_selfsupply": null,
@@ -276,6 +408,8 @@
   "miso_seam_flow_percentile": null,
   "miso_seam_export_limit": true,
   "miso_seam_envelope_merit_cap": false,
+  "nyiso_seam_deliverability_envelope": false,
+  "nyiso_seam_par_attribution": false,
   "miso_pjm_border_anchor": true,
   "miso_cc_coal_rebalance": false,
   "miso_firm_import_floor": false,
@@ -303,14 +437,15 @@
     "unit_outages_short": "../_shared/MISO/unit_outages_short-ee95f581732c.parquet",
     "unit_outages_maxgen": "../_shared/MISO/unit_outages_maxgen-1244687d16cc.parquet",
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
-    "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
+    "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet",
+    "capacity_deliverability": "../_shared/MISO/capacity_deliverability-8949cf5d0c5b.parquet"
   },
-  "git_sha": "eed3693",
-  "basis_sha": "ccb331aa53d50e6ee81da1d89735206b7006c3b1",
+  "git_sha": "6aeb66d",
+  "basis_sha": "ce4d05ecf3a89806cd34b75368a77cd91ea5c70a",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v20-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",
