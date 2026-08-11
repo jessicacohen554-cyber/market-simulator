@@ -1,0 +1,279 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [
+    {
+      "from_fuel": "gas_cc",
+      "mw": 485.2432,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p10745_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 900.9546,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p10745_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 37.376000000000005,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p54915_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 1.024,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p54915_peak"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 176.05,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p55088_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 162.04999999999998,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p55088_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 11.9,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p55088_peak"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 305.9046,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-South_p55089_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 402.7005000000001,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-South_p55089_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 193.914,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-Indiana_p55259_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 293.43600000000004,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-Indiana_p55259_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 13.4421,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p55558_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 3.2956000000000008,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p58427_peak"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 12.642999999999999,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p62289_econ"
+    }
+  ],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 2976.2,
+    "gas_ct": 1102.0,
+    "solar": 5921.8
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2034,
+      "decision_year": 2032,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 2976.2,
+      "seq": 0,
+      "tech": "gas_cc",
+      "zone": "MISO-Illinois"
+    },
+    {
+      "cod_year": 2034,
+      "decision_year": 2032,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 1102.0,
+      "seq": 1,
+      "tech": "gas_ct",
+      "zone": "MISO-Illinois"
+    },
+    {
+      "cod_year": 2034,
+      "decision_year": 2032,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 5921.8,
+      "seq": 3,
+      "tech": "solar",
+      "zone": "MISO-South"
+    }
+  ],
+  "firm_clean_accredited_mw": 1470.336,
+  "firm_clean_mw": 2371.51,
+  "fleet_by_fuel_after": {
+    "biomass": 1849.7,
+    "coal": 41157.908,
+    "gas_cc": 33327.0664,
+    "gas_cc_ccs": 2999.9336,
+    "gas_ct": 24935.663,
+    "gas_st": 12918.385,
+    "nuclear": 10902.3,
+    "oil": 3295.8
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1865.7,
+    "coal": 41157.908,
+    "gas_cc": 36327.0,
+    "gas_ct": 24935.663,
+    "gas_st": 12918.385,
+    "nuclear": 11519.3,
+    "oil": 3295.8
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "MISO",
+  "ledger_version": 1,
+  "mode": "forecast",
+  "peak_demand_mw": 141273.236,
+  "pipeline_events": [],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.3875,
+    "wind": 0.166
+  },
+  "reserve_margin": -0.014978,
+  "retirements": [
+    {
+      "fuel": "nuclear",
+      "mw": 617.0,
+      "reason": "announced",
+      "unit_id": "1922_1"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 9.0,
+      "reason": "announced",
+      "unit_id": "4005_1"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 7.0,
+      "reason": "announced",
+      "unit_id": "4005_2"
+    }
+  ],
+  "rps_dual": 30.0,
+  "solar_cap_mw": 7000.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [
+    {
+      "duration_h": 100.0,
+      "mw": 351.84000000000003,
+      "tech": "iron_air",
+      "unit_id": "MISO-West_iron_air_new_2032_0",
+      "zone": "MISO-West"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 332.40000000000003,
+      "tech": "iron_air",
+      "unit_id": "MISO-Plains_iron_air_new_2032_0",
+      "zone": "MISO-Plains"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 162.23999999999998,
+      "tech": "iron_air",
+      "unit_id": "MISO-Illinois_iron_air_new_2032_0",
+      "zone": "MISO-Illinois"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 321.6,
+      "tech": "iron_air",
+      "unit_id": "MISO-Indiana_iron_air_new_2032_0",
+      "zone": "MISO-Indiana"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 581.28,
+      "tech": "iron_air",
+      "unit_id": "MISO-East_iron_air_new_2032_0",
+      "zone": "MISO-East"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 650.64,
+      "tech": "iron_air",
+      "unit_id": "MISO-South_iron_air_new_2032_0",
+      "zone": "MISO-South"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 234.56,
+      "tech": "compressed_air",
+      "unit_id": "MISO-West_compressed_air_new_2032_1",
+      "zone": "MISO-West"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 221.60000000000002,
+      "tech": "compressed_air",
+      "unit_id": "MISO-Plains_compressed_air_new_2032_1",
+      "zone": "MISO-Plains"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 108.16,
+      "tech": "compressed_air",
+      "unit_id": "MISO-Illinois_compressed_air_new_2032_1",
+      "zone": "MISO-Illinois"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 214.4,
+      "tech": "compressed_air",
+      "unit_id": "MISO-Indiana_compressed_air_new_2032_1",
+      "zone": "MISO-Indiana"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 387.52,
+      "tech": "compressed_air",
+      "unit_id": "MISO-East_compressed_air_new_2032_1",
+      "zone": "MISO-East"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 433.76,
+      "tech": "compressed_air",
+      "unit_id": "MISO-South_compressed_air_new_2032_1",
+      "zone": "MISO-South"
+    }
+  ],
+  "storage_firm_mw": 6589.624,
+  "storage_power_mw": 7216.8,
+  "thermal_additions": [],
+  "wind_cap_mw": 32000.0,
+  "year": 2032
+}
