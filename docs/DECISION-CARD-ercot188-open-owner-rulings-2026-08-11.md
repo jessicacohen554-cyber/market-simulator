@@ -1,7 +1,9 @@
 # DECISION CARD — the ERCOT open-ruling backlog, assembled at ercot-188
 
 **For the owner sitting. Assembled 2026-08-11 at HEAD `ce4d05e` (origin/main) by
-session ercot-188. NOTHING IS DECIDED HERE.** No lever proposed, no
+session ercot-188. ALL SEVEN CARDS ARE NOW SIGNED — see RESOLUTIONS at the foot.**
+The card bodies below are preserved AS PUT TO THE OWNER, unedited by the outcome,
+so the recommendation each decision was taken against stays legible. No lever proposed, no
 `ScenarioConfig` field added, no derive run, no LP solved, no run registered, no
 matrix cell minted by this card. Every figure is read off **committed artifacts**
 — no re-derivation, no replay, no new measurement.
@@ -11,8 +13,10 @@ matrix cell minted by this card. Every figure is read off **committed artifacts*
 own. ERCOT holds **no `complete` and no `final` marker**, so every year
 referenced is inside {2023, 2024, 2025} (rule 22).
 
-**Keeper: `2026-08-09-ercot185-shaped-partial`** — determination **NOT-YET**,
-fail set **{C3a-2023, C3b-2023}**. Untouched by ercot-188.
+**Keeper at assembly: `2026-08-09-ercot185-shaped-partial`** — determination
+**NOT-YET**, fail set **{C3a-2023, C3b-2023}**. *Superseded by card E's signature:
+the keeper is now `2026-08-11-run188-arm-topfine-cliff`, same determination and
+same fail set.*
 
 **Why now.** ercot-188 closed the last offer-side face of C3a-2023 (§6), which
 moves the program's critical path onto a lane that is **blocked behind three of
@@ -29,7 +33,7 @@ the way.
 | **B** | Item 13 — the two COAL limbs' 2023 application | no | Re-adjudicate before any arm |
 | **C** | ercot-165 — the daytime curtailment mode successor | no | **Decline the DOF; re-point the object** |
 | **D** | RTC+B adapter authorization (27 quarantined parts) | soft — caps future corpus work | **Authorize, scoped to a read adapter** |
-| **E** | ercot-188 — promote SCHEME R1 on structural fidelity? | no | **DO NOT PROMOTE** |
+| **E** | ercot-188 — promote SCHEME R1 on structural fidelity? | no | **DO NOT PROMOTE** — *owner signed **E2, PROMOTE**; see RESOLUTIONS* |
 | **F** | Nothing schedules the tier the ERCOT golden lives in | no | Schedule it |
 | **G** | Rulings #2, #3, #5 — **INVESTIGATED 2026-08-11** | no | **#2 spent · #3 delete · #5 mis-titled, re-open the real object** |
 
@@ -382,17 +386,63 @@ beyond it** (rule 25).
 
 ---
 
-## RESOLUTIONS — to be signed
+## RESOLUTIONS — ALL SEVEN SIGNED BY THE OWNER, 2026-08-11
 
-| card | decision | signed | vs. recommendation |
+Recorded verbatim. Where the owner departed from the card's recommendation the
+departure is stated as such, not smoothed over.
+
+| card | decision | **SIGNED** | vs. recommendation |
 |---|---|---|---|
-| **A** | DAM-deriver lane #8/#9/#10 | | |
-| **B** | Item 13 COAL limbs, 2023 application | | |
-| **C** | ercot-165 daytime curtailment mode | | |
-| **D** | RTC+B adapter | | |
-| **E** | ercot-188 SCHEME R1 promotion | | |
-| **F** | Golden test-tier scheduling | | |
-| **G** | Rulings #2 / #3 / #5 status | | |
+| **A** | DAM-deriver lane #8/#9/#10 | **A1 — authorize as ONE lane, #9 first** | as recommended |
+| **B** | Item 13 COAL limbs, 2023 application | **B1 — re-adjudicate under a fresh precommit** | as recommended |
+| **C** | ercot-165 daytime curtailment mode | **C1 — decline the DOF, re-point the object** | as recommended |
+| **D** | RTC+B adapter | **D1 — authorize, scoped to a read adapter** | as recommended |
+| **E** | ercot-188 SCHEME R1 promotion | **E2 — PROMOTE on the standing structural standard** | **DEPARTS — the card recommended E1, do not promote** |
+| **F** | Golden test-tier scheduling | **F1 — schedule the data-provisioned tier** | as recommended |
+| **G** | Rulings #2 / #3 / #5 | **#2 close as SPENT · #3 DELETE the function and the six scalars · #5 close as stated and re-open the real object** | as recommended, on all three |
+
+### E — the departure, recorded as the owner's
+
+The card recommended **E1 (do not promote)** on three grounds, none of which the
+owner disputed: the added rows are measured never to be cleared on, the residual
+moves the wrong way in all three years, and the price is a permanent forfeiture
+of the offer-surface family's P0 bit-identity proof. **The owner took E2**, under
+the standing standard that *structural integrity outranks gate regression*.
+
+**What that does and does not change.** The keeper moves to
+`2026-08-11-run188-arm-topfine-cliff`. **The pre-registered mechanical verdict
+stays REJECTED-AS-ARMED and is NOT rewritten** — G-C3c still fails at full
+magnitude, and the promotion is the owner's standard applied *on top of* that
+verdict, never a re-score of it (the ercot-185 posture). The determination is
+**NOT-YET {C3a-2023, C3b-2023}, unchanged** — the promotion buys structural
+fidelity, not a better public claim. **The forfeited P0 bit-identity proof is
+carried as a named permanent limitation** on the keeper, in the matrix cell, in
+the §5.1 header and in the FINDING; it does not expire when a later gate passes.
+
+### What these seven signatures do NOT do
+
+* **No rubric amendment.** `LEDGERABLE_CRITERIA`, `MAX_LEDGERED_CAVEATS` and the
+  v3.0 tier guard are byte-unchanged.
+* **No holdout marker granted or spent.** ERCOT still holds no `complete` and no
+  `final`; no out-of-training year was solved, scored or registered, so no
+  `calibration-complete.json` re-key applies (rule 22 / D-5(b)).
+* **No determination change.** ERCOT remains NOT-YET on both load-bearing 2023
+  criteria.
+* **No lane authorized beyond card A.** B/C/D/F/G are dispositions, not charters;
+  each still needs its own pre-registered round before any solve.
+
+### Execution order implied by the signatures
+
+1. **A1** — the DAM-deriver lane (#9 → #8 → #10), one precommit, one re-derive,
+   one re-gate sweep. It is the only blocking item and it unblocks ercot-189's CC
+   headroom object.
+2. **G#3** — delete `split_coal_tranches` and its six scalars, after proving the
+   legacy limb unreachable for every registered bundle.
+3. **G#5** — re-file the one-class-per-plant object under an accurate title with
+   the ERCOT-146 nine-plant evidence.
+4. **D1** — the RTC+B read adapter (independent; unblocks forward corpus work).
+5. **B1 / C1 / F1 / G#2** — dispositions to record; B1 needs a precommit before
+   any arm.
 
 **Evidence appendix — every figure above is read off these committed artifacts,
 with no re-derivation:** `docs/PRECOMMIT-ercot149-dam-gas-event-cap-2026-08-01.md`
