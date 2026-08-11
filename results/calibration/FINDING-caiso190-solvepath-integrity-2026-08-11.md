@@ -282,7 +282,57 @@ STATUS: COMPLETE — orchestration/provenance only; no LP change, no solve, no c
 GUARD WIRED: backcast? **already wired at caiso-188 (contradiction C-1)** — now `strict=True` explicitly, behaviour unchanged · forecast? **YES, new** (`runner.py::run_scenario_iso`, `strict=False`, on the resolved config before any LP input) · strict mode? **YES, and it is the DEFAULT** (callers opt out); declared fallback ⇒ fatal in strict, loud WARN + recorded otherwise; no-fallback mechanism (`hydro_ror_split`) ⇒ fatal on every lane; registry additive and now covers capacity-deliverability + hydro-plant-modes + the CAMPD unit-outage extract
 PROVENANCE: `run_config.resolved_inputs` = `{schema_version, iso, seam_import_cap{status, by_year.<year>{cap_mw, source∈{mic_partition, baked_fallback, flag_off}, delivery_year, season, import_zone, flag_armed}}, hydro_plant_modes{flag_armed, partition_present, classified_plants, shapeable_plants}, campd_unit_outages{armed, path, present, sha256, bytes}}` — top-level, additive; recorded at resolution time by `apply_interchange_topology`, never re-derived; `docs/backcast-artifact-contract.md` §2.2.1. Cache-key/registry-parity unaffected (zero `scenarios.py` diff; `check_mechanism_matrix.py` clean; reuse comparator reads only `scenario_config`)
 TESTS: **23 added, all passing** (17 `test_resolved_inputs.py` incl. two static wiring guards, 6 `test_input_completeness.py`). Fast lane in-container both arms: baseline 669F/5,863P/53E → with changes 669F/**5,886P**/53E = **+23 passed, +0 failed, +0 errors**. The 669/53 are pre-existing sparse-checkout `FileNotFoundError`s (cone mode omits every `data/raw/` subdirectory); the brief's 6,620/2 is not reproducible under the campaign's own checkout recipe — see §5. ruff check + format clean
-FILES PUSHED + PR: see §8
+FILES PUSHED + PR: **PR [#3866](https://github.com/jessicacohen554-cyber/market-simulator/pull/3866)**, branch `claude/caiso-190-solvepath-guard-04tey0`, on `origin/main` at `6ba7c72` — see §8 for the file list and the blob verification
 CONTRADICTIONS: **six** — C-0 base commit `767b29c3`→`6b87c9d`; **C-1 the backcast guard was already wired (caiso-188), so the brief's "never run in a solve" is the pre-caiso-188 state**; C-2 the CAMPD extract is committed, not a gitignored partition; C-3 `outage_detect.py` is `scripts/lib/`; C-4 the caiso-189 sentinel was already on main; C-5 caiso-191 merged first and already cites this work; **C-6 NEW — the partitions-present test passed only because both probes raised `SchemaError` and the guard swallowed them, so a malformed partition was silently treated as healthy on the solve path** (§4)
 LOGDRAFT: **not included, and not owed** — the caiso-189 sentinel is on `origin/main`, so the real `docs/calibration-log/caiso.md` entry and the matrix §5.2 note are in this PR
 OPEN ITEMS / HANDOFF: (1) **`hydro_ror_split` is still unproven as a mechanism** — this session makes its engagement *observable* (`classified_plants` in the bundle) but arms nothing; the A/B is caiso-194's, gated by `GATESPEC-caiso194-hydro-ror-split-2026-08-11.md`, and its four-leg engagement proof can now read the committed block instead of re-deriving. (2) **No CAISO bundle carries `resolved_inputs` yet** — the block appears on the next solve; the caiso-175→188 lineage stays diagnosable only via `hourly/` pins. (3) The **forecast** run-record writer (`scripts/lib/run_record.py::write_run_config`) does **not** carry the block — only the backcast writer does; filed, not absorbed. (4) `pipeline/year.py::run_year_solve` remains dead code with a live guard call (§1, DO-NOT-REDO 1). (5) The campaign's sparse-checkout recipe cannot run the documented fast lane — either the recipe or the 6,620/2 baseline needs updating for future sessions.
+
+---
+
+## §8 — PR, files, and the rule-27 blob verification
+
+**PR [#3866](https://github.com/jessicacohen554-cyber/market-simulator/pull/3866)** —
+*caiso-190: wire partition guard into solve paths + resolved-input provenance*, branch
+`claude/caiso-190-solvepath-guard-04tey0`.
+
+**Base.** The branch was cut at `6b87c9d`, then `origin/main` advanced to **`6ba7c72`**
+mid-session. `git rebase origin/main` **cannot** work on the campaign's `--depth=1`
+clone — with no common ancestry in the shallow graph, git tries to replay the *old
+main merge commit* onto the new head and conflicts on unrelated files
+(`FINDING-ercot188-cliff-offer-curve-2026-08-11.md`, an add/add). Resolved by
+`git checkout -B <branch> origin/main && git cherry-pick <commit>`, which replays only
+this session's own objects. Recorded because every campaign session on this recipe will
+hit it. The shared-file appends were made **after** that reset, at the new tail.
+
+**Two commits, both over `git push` (small text/code packs, no 413):**
+
+1. `ee9f895` — code + tests + FINDING + artifact contract
+2. `9a64794` — `docs/calibration-log/caiso.md` + `docs/mechanism-testing-matrix.md` §5.2
+   (one commit, as the shared-file rule requires)
+
+| file | lines | change |
+|---|---|---|
+| `src/market_sim/data/resolved_inputs.py` | 337 | **NEW** — shared seam resolver, recorder, provenance block |
+| `src/market_sim/data/input_completeness.py` | 339 | typed additive registry, per-entry severity, `strict`, unverifiable-probe handling |
+| `src/market_sim/model/interchange/spec.py` | 2,281 | resolve + record through the shared helper (behaviour-preserving) |
+| `src/market_sim/runner.py` | 4,038 | **the forecast guard call** (caiso-188 §6a) |
+| `src/market_sim/pipeline/persist.py` | 372 | `resolved_inputs` into `run_config.json` |
+| `scripts/run_calibration.py` | 5,740 | `strict=True` stated explicitly at the calibration call site |
+| `tests/unit/data/test_resolved_inputs.py` | 463 | **NEW** — 17 tests incl. two static wiring guards |
+| `tests/unit/data/test_input_completeness.py` | 282 | +6 tests; fixtures moved to `write_clean` |
+| `docs/backcast-artifact-contract.md` | 649 | §2.2.1, the `resolved_inputs` contract |
+| `docs/calibration-log/caiso.md` | 7,739 | session entry, appended at tail |
+| `docs/mechanism-testing-matrix.md` | 9,637 | §5.2 note, newest-first order; **no cell changes** |
+| `results/calibration/FINDING-caiso190-…md` | — | **NEW** — this file |
+
+**Rule 27 `[R-PUSH]` verification — PASS on all eleven.** Every file above is ≥300 lines,
+so each was edited **locally** (Edit tool) and pushed as the exact on-disk bytes; no file
+was rewritten from regenerated response content. After the push, each blob was fetched
+back from `origin/claude/caiso-190-solvepath-guard-04tey0` and compared to local on both
+`git hash-object` **and** line count: **11/11 byte-identical**. No file shrank, so the
+`file-integrity-guard` shrink threshold is not approached and no `intentional-shrink`
+label is needed.
+
+**CI** was queued at PR-open time (11 checks). Its outcome is not asserted here; the
+in-container measurements in §5 stand on their own, and CLAUDE.md's "never offload work
+to CI" applies — nothing in this session was left for a runner to determine.
