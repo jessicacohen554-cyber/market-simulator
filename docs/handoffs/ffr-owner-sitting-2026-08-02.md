@@ -4091,3 +4091,55 @@ land mid-session; if it does, your matrix duty moves to your ISO's shard"). HOUS
 landed and is verified (AL.2), so that conditional is resolved to the flat shard-path rule
 from §0al — one fewer branch for the lane to reason about. **FFR-9C-PROMOTE remains
 correctly blocked** on FH-5 and was NOT re-issued.
+
+## Addendum AN — refresh: FH-5 landed SCAFFOLDING-ONLY, so FFR-9C-PROMOTE stays blocked; ERCOT keeper moved; F6-DIAG and RC-DERIVE both landed
+
+### AN.1 State — 29 commits, and the ERCOT keeper MOVED
+
+`origin/main` **`37ba2fc` → `6a37611`**. **ERCOT keeper → `2026-08-11-run188-arm-topfine-cliff`**
+(`026b1c4`, ercot-188 SCHEME R1, promoted on **owner decision E2 over the lane's own rejected
+verdict** — the same standing structural standard used at ercot-185/nyiso-132). The other five
+are unmoved. `audit_keepers.py --iso ERCOT`: **0 failures, 1 warning** — the run-report header
+was already repaired in-lane by the `calibration-keeper-auditor` (`204e3ac`), and the only
+warning is the standing E10 `schema` tag. Also landed: **caiso-190** (extends caiso-188's
+partition guard onto the solve paths + resolved-input provenance), **caiso-191** (campaign
+adjudication, gate specs authored before measurement, lane 5 GO-with-restrictions, lane 6
+desk-refused), **miso-151** (matrix cell U→R).
+
+### AN.2 FH-5 landed SCAFFOLDING-ONLY — the FFR-9C-PROMOTE gate is NOT satisfied
+
+PR #3862 landed exactly three files: `docs/handoffs/fh-5-phase-b-2026-08-11.md`,
+`scripts/probes/fh5_horizon_table.py` and `scripts/probes/fh5_run_leg.sh`. The handoff runs
+§0 caveats → §1 pre-registration → §2 one solve-independent finding, **and stops there.**
+Verified against the artifacts, not the summary: **no hindcast registration file was touched
+in any of the 29 commits**, and no Phase-B sidecar exists in `frontend/data/hindcast/` (the
+`2021-2025` entries there are earlier waves — ffr2e, asknown, ff1b/ff2a). **Zero solves, and
+no horizon-degradation table with numbers in it.**
+
+**Therefore FFR-9C-PROMOTE remains BLOCKED and must not be pasted.** Its pre-flight #1 would
+stop it at step one, which is the pre-flight working: the artifact the D-30 ordering exists to
+protect — a horizon table whose halves share one code base — does not yet exist. The lane
+honoured its scoping commitment (§1.7: "a partial Phase B that is honestly scoped is worth
+more than six rushed legs") and left a per-ISO leg driver behind, so the continuation is
+mechanical rather than a re-charter.
+
+**A real finding it landed before any solve (§1.4): CAISO Arm K is BLOCKED.**
+`resolve_demand_growth_rate` refuses CAISO at `demand_growth_vintage=2021` — the vintage
+table has rows for the other five ISOs and no CAISO cell, the gap FH-3 recorded when it
+landed 11 of 12. The seam is **fail-closed by design** so a 2021-base run cannot silently
+grow CAISO load on a rate published later, and **the lane refused to substitute a number**
+(rule 13/14). CAISO Arm R still runs. Unblocking it is a data-intake task — one manual
+as-of-2021 CAISO IEPR download — not a modelling decision.
+
+### AN.3 F6-DIAG and RC-DERIVE both landed; RC-DERIVE returns as its promised card
+
+* **F6-DIAG — adjudicated `RAW IS RIGHT`** (`c39cc9a`, prereg first at `2ad07e2`). The R2
+  verdict the lane existed to produce is delivered: the parity test's two backends disagree
+  and the **raw loader is the correct one**. Its fix recommendation is a card for the owner,
+  routed through this manager rather than self-adopted — as chartered.
+* **RC-DERIVE — the ERCOT solar queue cap re-derives to 8.0 GW, and 5.0 was RIGHT for its
+  own 2021-vintage record** (`6e6e50b`, prereg at `d938f29`). This is the outcome the card's
+  measurement-only posture was designed to surface: the constant was not wrong when it was
+  set; the *record moved*. That makes adoption a clean rule-23 re-derivation on a data
+  change, with no implication that anyone mis-derived anything. **Returns as card D-31**
+  (§0an), exactly as R-c promised — "adoption returns as a card with the number."
