@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-11-run188-arm-topfine-cliff",
+  "label": "run188 arm topfine cliff",
+  "date": "2026-08-11",
+  "shorthand": "run188-arm-topfine-cliff",
+  "definition": "ercot-188 A/B ARM: the control plus ONE delta, ercot_econ_curve_top_refine=true -- SCHEME R1 of the (c2) cliff-resolving offer-curve refinement, built under the OWNER'S option (B) BUILD ANYWAY on the MEMO-ercot184 s8 card as a structural-fidelity purchase (rule 1 [R-STRUCT]); the memo's own recommendation (A) CLOSE is recorded as overridden, not rewritten, and its +$1.99/MWh measured ceiling is this lane's EXPECTED outcome. Each plant's econ ramp keeps its body's n-1 equal-width blocks expression-for-expression identical and re-slices its TOP block n ways (2n-1 = 11 slices at n = 6, top sliver 2.778% of the ramp), so the supply-curve top can express a cliff instead of a 6-block approximation. Zero new scalars: the split point 1-1/n and the sub-count n are both the registered offer_curve_smoothing_n. Applies where every sub-slice clears the assembly's pre-existing minimum tranche capacity (precommit Amendment 1): 108 of 144 plant-groups = 99.331% of econ MW; MW preserved to 1.5e-11. NOTE THE ACCEPTED COST: this writes heat rates into the BASE fleet, so it BREACHES the offer-surface family's P1-only mc_bid_adjust seam and permanently forfeits its P0 bit-identity proof. docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-11-run188-arm-topfine-cliff.js",
+  "bundle": "results/calibration/ercot188_topfine_arm_B"
+}
