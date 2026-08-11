@@ -30,7 +30,8 @@ No backcast-registry touch. No new `ScenarioConfig` field, no new tunable, no CI
 > statutory obligation year, pinned at the $30 ACP ceiling; MN slack in all five years.**
 > The arming is a declared **cache epoch for the MISO forecast lane**
 > (`cd2403cc031515db` → `9337e00504e1e72a`); the global pinned default key
-> `603c2498bf71d21d` is **unmoved**.
+> `603c2498bf71d21d` is **unmoved**. Registered
+> `miso-2031-2035-arm3arm-clean-armed-default` (forecast namespace only).
 
 ## 2. The arming: which seam, and why it is forced
 
@@ -98,22 +99,97 @@ scalar. Reproducing with `cmc=True` yields different keys, which on first measur
 looked like HEAD drift and was **not** — verified by re-measuring against the ARM3-FIX-era
 config, which produced the same mismatched keys. The probe's docstring carries the note.
 
-## 4. THE BINDING PRE-FLIGHT GUARD — result
+## 4. THE BINDING PRE-FLIGHT GUARD — **PASS**
 
-> **PENDING — the armed-default solve is still running as of this commit.** This
-> section is committed empty, per the card's "commit prereg, then results, then handoff,
-> AS THEY EXIST". The criterion is fixed and cannot move now that the prereg is pushed:
-> **PASS iff the per-region RPS duals read exactly `[0, 30, 0, 30, 0]` (MN, MI, WI, IL,
-> MO) in EVERY year 2031–2035 of the armed-default solve.** Any dual that moves — any
-> year, any region — is a **STOP-THE-LINE event**: the measurement is committed, the
-> owner is escalated, nothing is promoted, and `90bbacf` is not merged.
+**The Arm-2 RPS duals are `[0, 30, 0, 30, 0]` (MN, MI, WI, IL, MO) in EVERY year
+2031–2035 of the armed-default solve.** The stop-the-line condition did not fire; no
+escalation was required.
+
+| year | LP status | **Arm-2 RPS duals** | guard |
+|---|---|---|---|
+| 2031 | Optimal | `[0, 30, 0, 30, 0]` | PASS |
+| 2032 | Optimal | `[0, 30, 0, 30, 0]` | PASS |
+| 2033 | Optimal | `[0, 30, 0, 30, 0]` | PASS |
+| 2034 | Optimal | `[0, 30, 0, 30, 0]` | PASS |
+| 2035 | Optimal | `[0, 30, 0, 30, 0]` | PASS |
+
+**2035 is the year that carries the guard**, and it is worth saying why the other four
+are near-free. Arm 3 can only disturb Arm 2 where Arm 3 is *doing* something, and MI's
+clean row is at RHS 0 until 2035. So 2031–2034 test that arming is inert while the rows
+are slack; **2035 tests that a clean row can bind at its $30 ACP ceiling without moving
+the RPS grain it rides on**. That is the case that passed.
+
+**Reported precisely, not normalised:** the LP returns IEEE **negative zero** (`-0.0`)
+for a slack row's dual. `-0.0 == 0.0` is `True` but the sign bit differs, so "bit-stable"
+is asserted here on **numeric equality**, which is the correct standard for a dual, and
+the raw values are printed in the reader's output rather than rounded away.
+
+**Instrument.** The committed ARM3-MEASURE probe
+(`scripts/probes/_arm3_clean_row_horizon.py`) requires an armed/control **pair** for its
+R4 delta table, and this lane has only the armed leg (§6). Its own extractors —
+`run_key_dir`, `duals_from_parquet` — were therefore imported and used **byte-identical**
+(the committed-prereg discipline: reuse, do not re-derive); no dual is re-computed here.
 
 ## 5. The armed-default solve
 
-> **PENDING — see §4.** Protocol fixed in the prereg §4: one leg,
-> `--iso MISO --start-year 2031 --end-year 2035 --golden-posture`, **no clean-tier flag
-> passed** (the leg must arm itself from the ISO default), 5 years sequential, 1
-> concurrent. Expected key `9337e00504e1e72a`; expected reads E1–E5 in prereg §5.
+```
+uv run python scripts/run_full_horizon.py --iso MISO --start-year 2031 --end-year 2035 \
+    --golden-posture --out-dir results/arm3arm/miso-2031-2035-armed-default
+```
+
+**No clean-tier flag was passed** — that is the whole point of the demonstration. 5 years
+sequential, 1 concurrent, 3,727.5 s wall, peak RSS 9,877.4 MB, all five year-solves
+`Optimal`, exit 0. Registered `miso-2031-2035-arm3arm-clean-armed-default` (forecast
+namespace only).
+
+### 5.1 E2 — the leg armed itself, and the record proves it three ways
+
+* The run's **own** `config.yaml` records `miso_clean_tier_rows: true` and
+  `miso_rps_compliance_regions: true`, `mode: forecast`.
+* It landed in cache-key directory **`9337e00504e1e72a`** — the post-arm pole of the
+  declared epoch (§3), now confirmed by a solve rather than only by config arithmetic,
+  and byte-identical to the signed ARM3-FIX armed leg's key.
+* The sidecar's `miso_clean_tier_rows: true` is **machine-verified, not asserted**:
+  `register_forecast_baseline._extra_meta_spec` auto-declares config-named `--extra-meta`
+  keys as `FromConfig`, so the registrar refuses a record that disagrees with the solved
+  config. **Falsifier run:** re-registering with `{"miso_clean_tier_rows": false}` is
+  REFUSED — *"record says False but config.miso_clean_tier_rows is True"* — and writes
+  nothing. The check bites, so the `true` in the committed sidecar means something.
+
+### 5.2 E1 / E3 — the clean duals reproduce the signed evidence exactly
+
+| year | MI obligation | **MN clean dual** | **MI clean dual** |
+|---|---|---|---|
+| 2031–2034 | .0000 | 0.00 | **0.00** (RHS-0 arithmetic certainty) |
+| **2035** | **.4560** | 0.00 — SLACK | **30.00 — BINDS @ the $30 ACP ceiling** |
+
+Every pre-registered expectation hit: MI's onset is **2035, its first statutory
+obligation year**, pinned at the ACP ceiling; MI is exactly 0.0000 in the four
+zero-obligation years; **MN is slack in all five** under the shipped 5-zone delivery mask.
+
+### 5.3 E4/E5 — and in fact the whole trajectory reproduces
+
+Compared against the committed signed armed leg
+(`miso-2031-2035-arm3fix-clean-armed`) at that sidecar's own stored precision:
+**every comparable field is identical in every year** — `retire_mw`,
+`builds_thermal_mw`, `builds_renew_mw`, `builds_storage_mw`, `reserve_margin`,
+`lw_price`, `co2_mt`, `max_hourly_price`, `hours_ge_500`. So E4 holds in its strong
+form — **capacity events identical to the digit in every year**, the behavioural check
+that E-1 acquires no build limb — and E5's price-only discipline with it.
+
+*(Method note, against interest: a first comparison reported spurious diffs because it
+compared this leg's RAW trajectory against the sidecar's ROUNDED values —
+`1426.1999999999996` vs `1426.2`, `8714.055974661725` vs `8714.1`. Re-run at the
+sidecar's own precision, nothing differs. The artifact was in the comparison, not the
+solve.)*
+
+**All 14 forecast invariants are identical to the signed leg in status AND detail text**,
+including the three failures: **I3 / I7 / I12** (unserved-slack, reliability floor,
+reserve-margin band) fail in 2031–2034 in both. That is the known **cold-2031 seeding**
+limitation the ARM3-MEASURE prereg §0.2 declared in advance, not an arming effect — and
+its pre-stated bias direction still holds: understated qualifying supply biases the rows
+toward binding MORE and EARLIER, so MN's slack is strong evidence, while MI's bind rests
+on a ~38 TWh structural gap far beyond what seeding could manufacture.
 
 ## 6. The control leg: unreachable by construction, and why that is a finding
 
