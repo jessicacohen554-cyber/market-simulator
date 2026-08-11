@@ -3941,3 +3941,34 @@ stays in every prompt. No FH-5 commit, branch or handoff exists; the only repo m
 either lane is the dispatch commit `b4f840e` itself. (The forecast `registry/` namespace is
 generated-and-gitignored per rule 15, so its emptiness is *not* evidence either way — the
 branch check is what settles it.) Both remain paste-ready in §0ah, unchanged.
+
+### AK.8 Owner signature (this sitting, 2026-08-11) — three cards, all AS RECOMMENDED
+
+* **D-29 — ARM Arm-3 (`miso_clean_tier_rows`).** SIGNED. Rules 14/1: the shipped 5-zone
+  mask lets out-of-mask nuclear satisfy an in-mask clean row, defeating its own cited
+  statutory basis. Verified inert on every hindcast horizon before dispatch — MI's clean
+  obligation is **exactly 0.0000 in 2031–2034** (the RHS-0 arithmetic certainty), onset
+  **2035** — so it carries **no FH-5 collision**, and the stop-the-line guard passes
+  (D-26's armed default RPS duals bit-stable `[0,30,0,30,0]` in both legs). Accepted cost:
+  ~$1.15 bn/yr of MI ACP compliance entering the MISO forecast from 2035.
+* **D-30 — FFR-9C promotes STAGE B (R-a + R-b + R-d), sequenced AFTER FH-5.** SIGNED.
+  Accepted cost, recorded because it was disclosed against interest: stage B leaves wind
+  worse than control (−57 % → −73 %) and CC worse (GW error +5.8 → +8.8); the headline
+  skill number will be measured on a base still carrying the VRE-entry error.
+* **R-c — DISPATCH MEASUREMENT ONLY.** SIGNED. Re-derive
+  `QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"]` from the post-2020 EIA-860 demonstrated
+  throughput (rule 23: same source, same construction, never the residual), change nothing;
+  adoption returns as a card with the number.
+
+**A coherence point the D-30 signature surfaces, which does NOT change the decision but
+changes what "promote" means.** FFR-9C's stages were all measured **on top of** a control
+recipe that itself arms `capacity_screen_unified_lookahead` +
+`capacity_screen_scarcity_restoration` **by invocation** — and AG.1 ruled explicitly that
+those two are *not* a shipped-default flip, with "promotion of the flag into the shipped
+ERCOT forward default awaits FH-4's own skill evidence". So a naive default flip of stage
+B's three flags alone would ship a combination **nobody has ever solved** (stage B minus
+its own base recipe). The promote lane must therefore move the posture as ONE coherent
+unit, not a partial default flip. This is a second, independent reason the FH-5-first
+ordering is right: **FH-5 is precisely the skill evidence AG.1 parked that promotion on**,
+so the whole forward posture becomes promotable exactly when D-30 fires. Built into the
+dispatch (§0ak-3) as a binding pre-flight.

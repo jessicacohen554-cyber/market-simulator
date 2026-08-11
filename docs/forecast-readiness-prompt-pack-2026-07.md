@@ -6645,3 +6645,160 @@ constant by ~1.5×. Re-deriving it from the post-2020 EIA-860 demonstrated-throu
 is rule-23 admissible (same source, same construction, NOT the residual), and the lane
 correctly touched nothing. It re-bases ERCOT too, so it inherits the same FH-5-first
 ordering.
+
+## §0ak — D-29 / D-30 / R-c SIGNED; three lanes dispatched (2026-08-11 @ `d542a28`)
+
+Signatures recorded in Addendum AK.8. **Paste order: HOUSE-3 (alone, first) → FH-5 →
+then §0ak-1 and §0ak-2 in any order/parallel → §0ak-3 ONLY after FH-5 has landed.**
+Every prompt below embeds the §0aj clauses by reference — **paste §0aj-clauses into each
+one** (PARALLEL-SAFETY + CLEAN-PARTITION GUARD + DISK/WORKTREE).
+
+### §0ak-1 — ARM-3-ARM [OPUS or FABLE] — arm `miso_clean_tier_rows` as the MISO forecast default
+
+```
+[OPUS or FABLE] ARM-3-ARM — arm the corrected MISO clean-tier rows as the shipped forecast default
+
+Owner card D-29 is SIGNED (2026-08-11, Addendum AK.8): arm it. You are executing a
+signed decision, not re-deciding it. If your own measurement CONTRADICTS the evidence
+below, STOP and escalate — do not proceed and do not "fix" the discrepancy.
+
+=== VERIFIED STATE (embedded; re-verify before any load-bearing claim) ===
+origin/main `d542a28`. Branch `claude/arm3-arm-miso-clean-tier` from a FRESHLY FETCHED
+origin/main. Keepers: ERCOT 2026-08-09-ercot185-shaped-partial · CAISO
+2026-08-09-caiso-188-d1-micseam · MISO 2026-08-09-miso-148-basis-aware · NYISO
+2026-08-08-nyiso-132-cf-arm · NEISO 2026-08-06-neiso-87-control · PJM
+2026-08-04-pjm-152-collapse. Markers: `complete` = {NEISO, NYISO, PJM}; `final` EMPTY;
+holdout freeze ACTIVE. Rubric v3.2. NOTE: MISO's keeper scores NOT-YET at HEAD with fail
+set {C3a 2025 −15.6 %, C3b 2025 NRMSE 0.212} — that is the promotion's own declared
+result, NOT drift (AK.4). You are in FORECAST mode and do not touch it.
+
+=== THE DECISION AND ITS EVIDENCE (docs/handoffs/arm3-fix-zone-mask-2026-08-09.md §4) ===
+The shipped 5-zone mask lets OUT-OF-MASK nuclear satisfy an IN-MASK clean row, defeating
+its own cited statutory basis. On the fixed rows: MI clean obligation is exactly 0.0000 in
+2031–2034 (RHS-0 arithmetic certainty) and 0.4560 in 2035, where MI's dual flips
+SLACK → BINDS pinned at the $30 ACP ceiling (in-mask supply 57.351 TWh vs 95.771 required,
+−38.420 TWh ⇒ ~$1.15 bn). MN slack in all five years.
+
+=== BINDING PRE-FLIGHT — THE STOP-THE-LINE GUARD ===
+D-26's armed MISO forecast default's RPS duals MUST stay bit-stable at [0, 30, 0, 30, 0]
+in EVERY year of BOTH legs. Re-measure this on YOUR solve. If any dual moves, that is a
+STOP-THE-LINE event: commit the measurement, escalate, promote NOTHING.
+
+=== WHAT TO DO ===
+1. Flip `miso_clean_tier_rows` to armed as the MISO forecast default in ScenarioConfig.
+2. RULE 28, ONE COMMIT: the mechanism-matrix cell (verdict O → its solved verdict, with
+   citation), the `_CACHE_KEY_OPTIONAL_FIELDS` entry, and the defaults-ledger line land
+   together. A default flip MOVES the pinned default cache key — this IS a cache epoch for
+   the MISO forecast lane. State it explicitly in the handoff and in the matrix citation.
+3. WAIT for the cache-key-pin CI verdict before merging. Do not merge on a pending check
+   (HOUSE-1 X.2: merges do not wait for checks on their own).
+4. Solve to demonstrate the armed default behaves as measured. Rule 12: ≤5 solve-years per
+   invocation, years SEQUENTIAL, ≤2 concurrent invocations. MISO and PJM never co-run.
+5. Rule 15: this is a FORECAST-family run — register via scripts/register_forecast_run.py
+   into the forecast namespace ONLY. NEVER the backcast registry.
+6. Rule 22: forecast mode only. Solve NO out-of-training backcast year. The freeze is
+   ACTIVE and MISO holds no marker.
+7. Rule 25: MISO only. Touch no other ISO's rows, verdicts or defaults.
+8. Rule 27: Opus/Fable. Edit on-disk bytes; blob-verify after any push touching a
+   ≥300-line file (scenarios.py and mechanism-matrix.js both qualify).
+
+=== DELIVERABLE ===
+A handoff recording the pre-flight guard result, the armed-default solve, the cache-epoch
+declaration, and the matrix cell. Prereqs first: `uv sync` (~2 min), then
+`scripts/regenerate_clean.py` (~63–65 min) — this container is COLD and results/ is
+gitignored. Commit prereg, then results, then handoff, AS THEY EXIST.
+[PASTE §0aj-clauses HERE]
+```
+
+### §0ak-2 — RC-DERIVE [OPUS] — re-derive the ERCOT solar queue cap, change nothing
+
+```
+[OPUS] RC-DERIVE — re-derive QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"] from source, adopt nothing
+
+Owner card R-c is SIGNED (2026-08-11, Addendum AK.8): MEASUREMENT ONLY. You re-derive the
+constant and REPORT it. You do NOT change it, do not solve with a changed value, and do
+not touch any other cap. Adoption returns to the owner as a card with your number.
+
+=== VERIFIED STATE (embedded) ===
+origin/main `d542a28`. Branch `claude/rc-derive-ercot-solar-queue-cap` from a FRESHLY
+FETCHED origin/main. ERCOT keeper 2026-08-09-ercot185-shaped-partial (do not touch).
+`final` EMPTY; holdout freeze ACTIVE; rubric v3.2. This lane solves nothing.
+
+=== THE OBJECT (FFR-9C §4.2, which wrote the case and deliberately touched nothing) ===
+`QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"] = 5.0` is the ONLY thing stopping the model from
+building more 2024 solar — it binds at into-2024 in BOTH staged arms with margin
+comfortably clear (+$50.9 stage A / +$119.9 stage B), and the binding is
+margin-INDEPENDENT (it binds across $51–$2,420). Meanwhile EIA-860 records actual ERCOT
+solar CODs of 7.29 GW (2024) and 7.74 GW (2025) — measured throughput ~1.5× the constant.
+CONTRAST THAT MUST SURVIVE YOUR WORK: wind's cap never binds after stage B, so there is
+no wind-cap case. Do not create one.
+
+=== WHAT TO MEASURE (pre-register, committed, BEFORE deriving) ===
+D1. Recompute the cap from the post-2020 EIA-860 demonstrated-throughput record — THE SAME
+    SOURCE AND CONSTRUCTION THAT SEEDED THE CONSTANT (rule 23 [R-FROZEN-DERIVE]: the
+    trigger is the data record, NEVER the residual; cite the data, not a gate).
+D2. Recover and state the ORIGINAL derivation: what window, what statistic, what vintage
+    produced 5.0? If it cannot be recovered from the repo, say so plainly — an
+    unreconstructable constant is itself the finding.
+D3. Report the derived value with its window sensitivity (how much does it move on
+    reasonable window choices?) and say whether 5.0 was ever right for its own vintage.
+D4. Scope: is this ERCOT-solar-specific, or does the same construction mis-size other
+    (ISO, tech) caps? Report what you SEE, transfer NOTHING between ISOs (rule 25).
+
+=== DELIVERABLE ===
+`docs/FINDING-rc-ercot-solar-queue-cap-2026-08-11.md` with the four reads and a card-ready
+recommendation. NO constant is edited, NO solve is run, NO matrix cell changes (no
+mechanism is added). If your derivation lands ON 5.0, say so — that refutes the case and
+is a fully successful outcome.
+[PASTE §0aj-clauses HERE]
+```
+
+### §0ak-3 — FFR-9C-PROMOTE [OPUS or FABLE] — **BLOCKED ON FH-5. DO NOT PASTE UNTIL FH-5 HAS LANDED.**
+
+```
+[OPUS or FABLE] FFR-9C-PROMOTE — promote stage B as one coherent forward posture
+
+Owner card D-30 is SIGNED (2026-08-11, Addendum AK.8): promote STAGE B (R-a + R-b + R-d),
+sequenced AFTER FH-5. This re-bases every ERCOT hindcast — it IS an epoch, and you declare
+it as one.
+
+=== BINDING PRE-FLIGHT #1 — THE BLOCK ===
+VERIFY FH-5 HAS LANDED ON origin/main BEFORE ANY OTHER STEP. If it has not, STOP and say
+so; do not proceed. The reason is not scheduling: FH-4 Phase A is complete 6/6 on the
+CURRENT base, and a horizon-degradation table whose halves run on different code confounds
+horizon with model version. Promoting before FH-5 destroys the forecast program's headline
+deliverable.
+
+=== BINDING PRE-FLIGHT #2 — WHAT "PROMOTE" MEANS HERE (Addendum AK.8) ===
+FFR-9C's stages were measured ON TOP OF a control recipe that itself arms
+`capacity_screen_unified_lookahead` + `capacity_screen_scarcity_restoration` BY INVOCATION.
+Addendum AG.1 ruled those are NOT a shipped-default flip and parked their promotion on
+"FH-4's own skill evidence" — which is exactly what FH-5 supplies. So:
+**a naive default flip of stage B's three flags ALONE would ship a combination nobody has
+ever solved** (stage B minus its own base recipe). Move the posture as ONE coherent unit,
+or state in writing why a partial promotion is solved-and-sound. Decide this explicitly and
+record the reasoning BEFORE editing any default.
+
+=== THE POSTURE (FFR-9C §1.1) ===
+Stage B = control recipe + `--entry-pipeline-aware-signal --smr-available-year 2030
+--vre-procurement-additions`. R-a repairs a real double-count (rule 19); R-b removes 4 GW
+of 2022-vintage ERCOT SMR — a non-real object — behind a published zero-parameter gate;
+R-d nets exactly, bounded to 1.84 GW at this vintage. Zero fitted parameters in any stage.
+
+=== REPORT AT FULL MAGNITUDE, AS ACCEPTED COST (do not soften; it was signed WITH these) ===
+wind −57 % → −73 % vs control; CC GW error +5.8 → +8.8; CO2 2023 −11.28 → −12.84. Against
+that: additions basis 45.05 → 50.0 GW vs 55.4 actual, solar −60 % → −40 %, and the
+mid-window price/reserve objects onto measured levels for the first time in this posture.
+
+=== CONSTRAINTS ===
+- Rule 28 ONE COMMIT: matrix cells + `_CACHE_KEY_OPTIONAL_FIELDS` + defaults ledger.
+- The pinned default cache key MOVES. Declare the epoch; WAIT for the cache-key-pin CI
+  verdict before merging.
+- Rule 15: forecast namespace only, via scripts/register_forecast_run.py.
+- Rule 22: forecast/hindcast years only; freeze ACTIVE; ERCOT holds no marker.
+- Rule 12: ≤5 solve-years per invocation, sequential; ≤2 concurrent.
+- Rule 25: ERCOT only. Rule 27: Opus/Fable, blob-verify ≥300-line pushes.
+- State plainly in the handoff that every pre-epoch ERCOT hindcast sidecar is now
+  historical record and NEVER a baseline for post-epoch comparison.
+[PASTE §0aj-clauses HERE]
+```
