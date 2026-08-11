@@ -1,0 +1,1006 @@
+{
+ "years": {
+  "2023": {
+   "year": 2023,
+   "n_tranches": 2929,
+   "G2": {
+    "CC_CHP": {
+     "committed>econ": {
+      "plant_hours": 280320,
+      "inverted_hours": 63168,
+      "plants": 32,
+      "inverted_plants": 16,
+      "gap_n": 63168,
+      "inverted_hour_share": 0.22534246575342465,
+      "mean_gap_per_mwh": 0.047523990289679914
+     },
+     "committed>peak": {
+      "plant_hours": 61320,
+      "inverted_hours": 0,
+      "plants": 7,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 105120,
+      "inverted_hours": 0,
+      "plants": 12,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "CC_REGULAR": {
+     "committed>econ": {
+      "plant_hours": 2312640,
+      "inverted_hours": 1119168,
+      "plants": 264,
+      "inverted_plants": 134,
+      "gap_n": 1119168,
+      "inverted_hour_share": 0.4839352428393524,
+      "mean_gap_per_mwh": 0.5891766607700755
+     },
+     "committed>peak": {
+      "plant_hours": 219000,
+      "inverted_hours": 0,
+      "plants": 25,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 1314000,
+      "inverted_hours": 0,
+      "plants": 150,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "COAL": {
+     "mustrun>committed": {
+      "plant_hours": 446760,
+      "inverted_hours": 0,
+      "plants": 51,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "mustrun>econ": {
+      "plant_hours": 2522880,
+      "inverted_hours": 0,
+      "plants": 288,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "mustrun>peak": {
+      "plant_hours": 438000,
+      "inverted_hours": 0,
+      "plants": 50,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "committed>econ": {
+      "plant_hours": 2365200,
+      "inverted_hours": 0,
+      "plants": 270,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "committed>peak": {
+      "plant_hours": 438000,
+      "inverted_hours": 0,
+      "plants": 50,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 2312640,
+      "inverted_hours": 0,
+      "plants": 264,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "CT_CHP": {
+     "committed>econ": {
+      "plant_hours": 455520,
+      "inverted_hours": 144384,
+      "plants": 52,
+      "inverted_plants": 52,
+      "gap_n": 144384,
+      "inverted_hour_share": 0.3169652265542677,
+      "mean_gap_per_mwh": 0.44803644859349706
+     },
+     "committed>peak": {
+      "plant_hours": 87600,
+      "inverted_hours": 42096,
+      "plants": 10,
+      "inverted_plants": 8,
+      "gap_n": 42096,
+      "inverted_hour_share": 0.48054794520547944,
+      "mean_gap_per_mwh": 0.44129996850121467
+     },
+     "econ>peak": {
+      "plant_hours": 105120,
+      "inverted_hours": 37824,
+      "plants": 12,
+      "inverted_plants": 8,
+      "gap_n": 37824,
+      "inverted_hour_share": 0.3598173515981735,
+      "mean_gap_per_mwh": 0.6873744189080173
+     }
+    },
+    "CT_PEAKER": {
+     "econ>peak": {
+      "plant_hours": 4117200,
+      "inverted_hours": 0,
+      "plants": 470,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "committed>econ": {
+      "plant_hours": 2925840,
+      "inverted_hours": 422400,
+      "plants": 334,
+      "inverted_plants": 70,
+      "gap_n": 422400,
+      "inverted_hour_share": 0.1443687966532688,
+      "mean_gap_per_mwh": 25.892568682514618
+     },
+     "committed>peak": {
+      "plant_hours": 692040,
+      "inverted_hours": 0,
+      "plants": 79,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "ST_CHP": {
+     "committed>econ": {
+      "plant_hours": 227760,
+      "inverted_hours": 227760,
+      "plants": 26,
+      "inverted_plants": 26,
+      "gap_n": 227760,
+      "inverted_hour_share": 1.0,
+      "mean_gap_per_mwh": 2.318784213337178
+     },
+     "committed>peak": {
+      "plant_hours": 113880,
+      "inverted_hours": 0,
+      "plants": 13,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 96360,
+      "inverted_hours": 0,
+      "plants": 11,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "ST_GAS": {
+     "committed>econ": {
+      "plant_hours": 630720,
+      "inverted_hours": 120240,
+      "plants": 72,
+      "inverted_plants": 36,
+      "gap_n": 120240,
+      "inverted_hour_share": 0.1906392694063927,
+      "mean_gap_per_mwh": 4.026358303880879
+     },
+     "committed>peak": {
+      "plant_hours": 201480,
+      "inverted_hours": 0,
+      "plants": 23,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 613200,
+      "inverted_hours": 179568,
+      "plants": 70,
+      "inverted_plants": 34,
+      "gap_n": 179568,
+      "inverted_hour_share": 0.2928375733855186,
+      "mean_gap_per_mwh": 0.9944507882795245
+     }
+    },
+    "_cc_tranche_count": 333
+   },
+   "T6": {
+    "CC_pre_registered": {
+     "CC_REGULAR": {
+      "recon_twh": 139.3454402058227,
+      "keeper_twh": 141.94779748974608,
+      "rel_err": -0.018333199457436843
+     },
+     "_total": {
+      "recon_twh": 139.3454402058227,
+      "keeper_twh": 141.94779748974608,
+      "rel_err": -0.018333199457436843,
+      "tolerance": 0.1,
+      "passes": true
+     }
+    },
+    "CT_PEAKER": {
+     "CT_PEAKER": {
+      "recon_twh": 19.54126863104375,
+      "keeper_twh": 14.079184005657195,
+      "rel_err": 0.387954630267764
+     },
+     "_total": {
+      "recon_twh": 19.54126863104375,
+      "keeper_twh": 14.079184005657195,
+      "rel_err": 0.387954630267764,
+      "tolerance": 0.1,
+      "passes": false
+     }
+    },
+    "ST_GAS": {
+     "ST_GAS": {
+      "recon_twh": 12.811908243313637,
+      "keeper_twh": 20.672392940942764,
+      "rel_err": -0.38024067751058577
+     },
+     "_total": {
+      "recon_twh": 12.811908243313637,
+      "keeper_twh": 20.672392940942764,
+      "rel_err": -0.38024067751058577,
+      "tolerance": 0.1,
+      "passes": false
+     }
+    }
+   },
+   "G4_G5": {
+    "CC_pre_registered": {
+     "G4": {
+      "out_of_order_mwh": 506633.02349199983,
+      "total_mwh": 139345440.20582268,
+      "out_of_order_share": 0.0036358062577696725,
+      "out_of_order_plant_hours": 7118,
+      "plants_affected": 39,
+      "plants": 44
+     },
+     "G5": {
+      "supply_free_mwh": 139345440.20582268,
+      "repair_a_pin_mwh": 140827756.959365,
+      "repair_b_gate_mwh": 138838807.18233076,
+      "delta_pin_share": 0.010637712661087807,
+      "delta_gate_share": -0.003635806257769093
+     }
+    },
+    "CT_PEAKER": {
+     "G4": {
+      "out_of_order_mwh": 170180.63888279285,
+      "total_mwh": 14181136.186454706,
+      "out_of_order_share": 0.012000493941052697,
+      "out_of_order_plant_hours": 1428,
+      "plants_affected": 26,
+      "plants": 166
+     },
+     "G5": {
+      "supply_free_mwh": 14181136.186454706,
+      "repair_a_pin_mwh": 14209456.143802106,
+      "repair_b_gate_mwh": 14010955.547571912,
+      "delta_pin_share": 0.00199701610470751,
+      "delta_gate_share": -0.012000493941052742
+     }
+    },
+    "ST_GAS": {
+     "G4": {
+      "out_of_order_mwh": 25820.407547437906,
+      "total_mwh": 12811908.24331364,
+      "out_of_order_share": 0.002015344401245866,
+      "out_of_order_plant_hours": 171,
+      "plants_affected": 10,
+      "plants": 24
+     },
+     "G5": {
+      "supply_free_mwh": 12811908.24331364,
+      "repair_a_pin_mwh": 12824069.530665416,
+      "repair_b_gate_mwh": 12786087.8357662,
+      "delta_pin_share": 0.0009492174874201682,
+      "delta_gate_share": -0.0020153444012460595
+     }
+    }
+   }
+  },
+  "2024": {
+   "year": 2024,
+   "n_tranches": 2923,
+   "G2": {
+    "CC_CHP": {
+     "committed>econ": {
+      "plant_hours": 280320,
+      "inverted_hours": 27048,
+      "plants": 32,
+      "inverted_plants": 16,
+      "gap_n": 27048,
+      "inverted_hour_share": 0.09648972602739726,
+      "mean_gap_per_mwh": 0.04976052059474529
+     },
+     "committed>peak": {
+      "plant_hours": 61320,
+      "inverted_hours": 0,
+      "plants": 7,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 105120,
+      "inverted_hours": 0,
+      "plants": 12,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "CC_REGULAR": {
+     "committed>econ": {
+      "plant_hours": 2312640,
+      "inverted_hours": 1100280,
+      "plants": 264,
+      "inverted_plants": 143,
+      "gap_n": 1100280,
+      "inverted_hour_share": 0.47576795350767953,
+      "mean_gap_per_mwh": 0.51521719110528
+     },
+     "committed>peak": {
+      "plant_hours": 219000,
+      "inverted_hours": 0,
+      "plants": 25,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 1314000,
+      "inverted_hours": 0,
+      "plants": 150,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "COAL": {
+     "mustrun>committed": {
+      "plant_hours": 446760,
+      "inverted_hours": 0,
+      "plants": 51,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "mustrun>econ": {
+      "plant_hours": 2522880,
+      "inverted_hours": 0,
+      "plants": 288,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "mustrun>peak": {
+      "plant_hours": 438000,
+      "inverted_hours": 0,
+      "plants": 50,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "committed>econ": {
+      "plant_hours": 2365200,
+      "inverted_hours": 0,
+      "plants": 270,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "committed>peak": {
+      "plant_hours": 438000,
+      "inverted_hours": 0,
+      "plants": 50,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 2312640,
+      "inverted_hours": 0,
+      "plants": 264,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "CT_CHP": {
+     "committed>econ": {
+      "plant_hours": 455520,
+      "inverted_hours": 73056,
+      "plants": 52,
+      "inverted_plants": 52,
+      "gap_n": 73056,
+      "inverted_hour_share": 0.16037934668071654,
+      "mean_gap_per_mwh": 0.43702995911952325
+     },
+     "committed>peak": {
+      "plant_hours": 87600,
+      "inverted_hours": 71832,
+      "plants": 10,
+      "inverted_plants": 10,
+      "gap_n": 71832,
+      "inverted_hour_share": 0.82,
+      "mean_gap_per_mwh": 0.8033265182930908
+     },
+     "econ>peak": {
+      "plant_hours": 105120,
+      "inverted_hours": 82464,
+      "plants": 12,
+      "inverted_plants": 12,
+      "gap_n": 82464,
+      "inverted_hour_share": 0.7844748858447489,
+      "mean_gap_per_mwh": 1.087483553298993
+     }
+    },
+    "CT_PEAKER": {
+     "econ>peak": {
+      "plant_hours": 4117200,
+      "inverted_hours": 0,
+      "plants": 470,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "committed>econ": {
+      "plant_hours": 2925840,
+      "inverted_hours": 323088,
+      "plants": 334,
+      "inverted_plants": 70,
+      "gap_n": 323088,
+      "inverted_hour_share": 0.1104257238946764,
+      "mean_gap_per_mwh": 21.95479865048383
+     },
+     "committed>peak": {
+      "plant_hours": 692040,
+      "inverted_hours": 0,
+      "plants": 79,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "ST_CHP": {
+     "committed>econ": {
+      "plant_hours": 227760,
+      "inverted_hours": 227760,
+      "plants": 26,
+      "inverted_plants": 26,
+      "gap_n": 227760,
+      "inverted_hour_share": 1.0,
+      "mean_gap_per_mwh": 2.0804691804916136
+     },
+     "committed>peak": {
+      "plant_hours": 113880,
+      "inverted_hours": 0,
+      "plants": 13,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 96360,
+      "inverted_hours": 0,
+      "plants": 11,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "ST_GAS": {
+     "committed>econ": {
+      "plant_hours": 613200,
+      "inverted_hours": 116400,
+      "plants": 70,
+      "inverted_plants": 34,
+      "gap_n": 116400,
+      "inverted_hour_share": 0.1898238747553816,
+      "mean_gap_per_mwh": 8.452844298828488
+     },
+     "committed>peak": {
+      "plant_hours": 192720,
+      "inverted_hours": 0,
+      "plants": 22,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 595680,
+      "inverted_hours": 167472,
+      "plants": 68,
+      "inverted_plants": 32,
+      "gap_n": 167472,
+      "inverted_hour_share": 0.28114423851732473,
+      "mean_gap_per_mwh": 1.6643395747907066
+     }
+    },
+    "_cc_tranche_count": 333
+   },
+   "T6": {
+    "CC_pre_registered": {
+     "CC_REGULAR": {
+      "recon_twh": 148.5718957950776,
+      "keeper_twh": 150.09239211254882,
+      "rel_err": -0.01013040232133184
+     },
+     "_total": {
+      "recon_twh": 148.5718957950776,
+      "keeper_twh": 150.09239211254882,
+      "rel_err": -0.01013040232133184,
+      "tolerance": 0.1,
+      "passes": true
+     }
+    },
+    "CT_PEAKER": {
+     "CT_PEAKER": {
+      "recon_twh": 25.62277578703726,
+      "keeper_twh": 18.57911190503645,
+      "rel_err": 0.3791173613681397
+     },
+     "_total": {
+      "recon_twh": 25.62277578703726,
+      "keeper_twh": 18.57911190503645,
+      "rel_err": 0.3791173613681397,
+      "tolerance": 0.1,
+      "passes": false
+     }
+    },
+    "ST_GAS": {
+     "ST_GAS": {
+      "recon_twh": 12.63269498076861,
+      "keeper_twh": 20.78503790616989,
+      "rel_err": -0.39222170111998284
+     },
+     "_total": {
+      "recon_twh": 12.63269498076861,
+      "keeper_twh": 20.78503790616989,
+      "rel_err": -0.39222170111998284,
+      "tolerance": 0.1,
+      "passes": false
+     }
+    }
+   },
+   "G4_G5": {
+    "CC_pre_registered": {
+     "G4": {
+      "out_of_order_mwh": 454712.36846373416,
+      "total_mwh": 148571895.79507762,
+      "out_of_order_share": 0.0030605543937523034,
+      "out_of_order_plant_hours": 7200,
+      "plants_affected": 43,
+      "plants": 44
+     },
+     "G5": {
+      "supply_free_mwh": 148571895.79507762,
+      "repair_a_pin_mwh": 149867082.27509972,
+      "repair_b_gate_mwh": 148117183.4266139,
+      "delta_pin_share": 0.008717573893036464,
+      "delta_gate_share": -0.0030605543937522405
+     }
+    },
+    "CT_PEAKER": {
+     "G4": {
+      "out_of_order_mwh": 105870.35381574336,
+      "total_mwh": 19744418.387075827,
+      "out_of_order_share": 0.005362039627616648,
+      "out_of_order_plant_hours": 796,
+      "plants_affected": 28,
+      "plants": 166
+     },
+     "G5": {
+      "supply_free_mwh": 19744418.387075827,
+      "repair_a_pin_mwh": 19763429.04262923,
+      "repair_b_gate_mwh": 19638548.03326009,
+      "delta_pin_share": 0.000962836948686628,
+      "delta_gate_share": -0.005362039627616382
+     }
+    },
+    "ST_GAS": {
+     "G4": {
+      "out_of_order_mwh": 16944.901241163396,
+      "total_mwh": 12632694.980768608,
+      "out_of_order_share": 0.0013413528361889112,
+      "out_of_order_plant_hours": 147,
+      "plants_affected": 10,
+      "plants": 23
+     },
+     "G5": {
+      "supply_free_mwh": 12632694.980768608,
+      "repair_a_pin_mwh": 12639539.8116204,
+      "repair_b_gate_mwh": 12615750.079527449,
+      "delta_pin_share": 0.0005418345699165269,
+      "delta_gate_share": -0.0013413528361885686
+     }
+    }
+   }
+  },
+  "2025": {
+   "year": 2025,
+   "n_tranches": 2923,
+   "G2": {
+    "CC_CHP": {
+     "committed>econ": {
+      "plant_hours": 280320,
+      "inverted_hours": 117600,
+      "plants": 32,
+      "inverted_plants": 16,
+      "gap_n": 117600,
+      "inverted_hour_share": 0.4195205479452055,
+      "mean_gap_per_mwh": 0.03817165845400361
+     },
+     "committed>peak": {
+      "plant_hours": 61320,
+      "inverted_hours": 0,
+      "plants": 7,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 105120,
+      "inverted_hours": 0,
+      "plants": 12,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "CC_REGULAR": {
+     "committed>econ": {
+      "plant_hours": 2312640,
+      "inverted_hours": 1167048,
+      "plants": 264,
+      "inverted_plants": 142,
+      "gap_n": 1167048,
+      "inverted_hour_share": 0.5046388542963886,
+      "mean_gap_per_mwh": 0.8328896037477043
+     },
+     "committed>peak": {
+      "plant_hours": 219000,
+      "inverted_hours": 0,
+      "plants": 25,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 1314000,
+      "inverted_hours": 0,
+      "plants": 150,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "COAL": {
+     "mustrun>committed": {
+      "plant_hours": 446760,
+      "inverted_hours": 0,
+      "plants": 51,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "mustrun>econ": {
+      "plant_hours": 2522880,
+      "inverted_hours": 0,
+      "plants": 288,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "mustrun>peak": {
+      "plant_hours": 438000,
+      "inverted_hours": 0,
+      "plants": 50,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "committed>econ": {
+      "plant_hours": 2365200,
+      "inverted_hours": 0,
+      "plants": 270,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "committed>peak": {
+      "plant_hours": 438000,
+      "inverted_hours": 0,
+      "plants": 50,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 2312640,
+      "inverted_hours": 0,
+      "plants": 264,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "CT_CHP": {
+     "committed>econ": {
+      "plant_hours": 455520,
+      "inverted_hours": 411408,
+      "plants": 52,
+      "inverted_plants": 52,
+      "gap_n": 411408,
+      "inverted_hour_share": 0.9031612223393045,
+      "mean_gap_per_mwh": 0.33008848910794225
+     },
+     "committed>peak": {
+      "plant_hours": 87600,
+      "inverted_hours": 27456,
+      "plants": 10,
+      "inverted_plants": 10,
+      "gap_n": 27456,
+      "inverted_hour_share": 0.3134246575342466,
+      "mean_gap_per_mwh": 0.5736422838330106
+     },
+     "econ>peak": {
+      "plant_hours": 105120,
+      "inverted_hours": 36960,
+      "plants": 12,
+      "inverted_plants": 12,
+      "gap_n": 36960,
+      "inverted_hour_share": 0.3515981735159817,
+      "mean_gap_per_mwh": 0.808322692848481
+     }
+    },
+    "CT_PEAKER": {
+     "econ>peak": {
+      "plant_hours": 4117200,
+      "inverted_hours": 0,
+      "plants": 470,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "committed>econ": {
+      "plant_hours": 2925840,
+      "inverted_hours": 530088,
+      "plants": 334,
+      "inverted_plants": 70,
+      "gap_n": 530088,
+      "inverted_hour_share": 0.18117463702731523,
+      "mean_gap_per_mwh": 12.495146970823784
+     },
+     "committed>peak": {
+      "plant_hours": 692040,
+      "inverted_hours": 0,
+      "plants": 79,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "ST_CHP": {
+     "committed>econ": {
+      "plant_hours": 227760,
+      "inverted_hours": 227760,
+      "plants": 26,
+      "inverted_plants": 26,
+      "gap_n": 227760,
+      "inverted_hour_share": 1.0,
+      "mean_gap_per_mwh": 2.657282660050492
+     },
+     "committed>peak": {
+      "plant_hours": 113880,
+      "inverted_hours": 0,
+      "plants": 13,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 96360,
+      "inverted_hours": 0,
+      "plants": 11,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     }
+    },
+    "ST_GAS": {
+     "committed>econ": {
+      "plant_hours": 613200,
+      "inverted_hours": 267648,
+      "plants": 70,
+      "inverted_plants": 34,
+      "gap_n": 267648,
+      "inverted_hour_share": 0.4364774951076321,
+      "mean_gap_per_mwh": 3.7938193035243293
+     },
+     "committed>peak": {
+      "plant_hours": 192720,
+      "inverted_hours": 0,
+      "plants": 22,
+      "inverted_plants": 0,
+      "gap_n": 0,
+      "inverted_hour_share": 0.0,
+      "mean_gap_per_mwh": 0.0
+     },
+     "econ>peak": {
+      "plant_hours": 595680,
+      "inverted_hours": 29952,
+      "plants": 68,
+      "inverted_plants": 30,
+      "gap_n": 29952,
+      "inverted_hour_share": 0.05028203062046736,
+      "mean_gap_per_mwh": 1.28414972704057
+     }
+    },
+    "_cc_tranche_count": 333
+   },
+   "T6": {
+    "CC_pre_registered": {
+     "CC_REGULAR": {
+      "recon_twh": 144.77531424878737,
+      "keeper_twh": 132.3058454334717,
+      "rel_err": 0.09424730082380066
+     },
+     "_total": {
+      "recon_twh": 144.77531424878737,
+      "keeper_twh": 132.3058454334717,
+      "rel_err": 0.09424730082380066,
+      "tolerance": 0.1,
+      "passes": true
+     }
+    },
+    "CT_PEAKER": {
+     "CT_PEAKER": {
+      "recon_twh": 23.3173945059716,
+      "keeper_twh": 16.64750880539417,
+      "rel_err": 0.40065368209423824
+     },
+     "_total": {
+      "recon_twh": 23.3173945059716,
+      "keeper_twh": 16.64750880539417,
+      "rel_err": 0.40065368209423824,
+      "tolerance": 0.1,
+      "passes": false
+     }
+    },
+    "ST_GAS": {
+     "ST_GAS": {
+      "recon_twh": 8.014312633413278,
+      "keeper_twh": 19.696246966172932,
+      "rel_err": -0.5931045824528217
+     },
+     "_total": {
+      "recon_twh": 8.014312633413278,
+      "keeper_twh": 19.696246966172932,
+      "rel_err": -0.5931045824528217,
+      "tolerance": 0.1,
+      "passes": false
+     }
+    }
+   },
+   "G4_G5": {
+    "CC_pre_registered": {
+     "G4": {
+      "out_of_order_mwh": 656800.4565006306,
+      "total_mwh": 144775314.24878734,
+      "out_of_order_share": 0.004536688177184406,
+      "out_of_order_plant_hours": 10693,
+      "plants_affected": 41,
+      "plants": 44
+     },
+     "G5": {
+      "supply_free_mwh": 144775314.24878734,
+      "repair_a_pin_mwh": 146936515.78766504,
+      "repair_b_gate_mwh": 144118513.79228675,
+      "delta_pin_share": 0.01492796993805039,
+      "delta_gate_share": -0.004536688177184125
+     }
+    },
+    "CT_PEAKER": {
+     "G4": {
+      "out_of_order_mwh": 1079885.0183715068,
+      "total_mwh": 16702166.006364929,
+      "out_of_order_share": 0.06465538768803877,
+      "out_of_order_plant_hours": 7589,
+      "plants_affected": 31,
+      "plants": 166
+     },
+     "G5": {
+      "supply_free_mwh": 16702166.006364929,
+      "repair_a_pin_mwh": 16922799.82770219,
+      "repair_b_gate_mwh": 15622280.987993421,
+      "delta_pin_share": 0.013209892732067335,
+      "delta_gate_share": -0.06465538768803882
+     }
+    },
+    "ST_GAS": {
+     "G4": {
+      "out_of_order_mwh": 255064.7030207876,
+      "total_mwh": 8014312.633413279,
+      "out_of_order_share": 0.031826148378261615,
+      "out_of_order_plant_hours": 2180,
+      "plants_affected": 14,
+      "plants": 23
+     },
+     "G5": {
+      "supply_free_mwh": 8014312.633413279,
+      "repair_a_pin_mwh": 8132618.644052187,
+      "repair_b_gate_mwh": 7759247.930392492,
+      "delta_pin_share": 0.014761841227114852,
+      "delta_gate_share": -0.031826148378261636
+     }
+    }
+   }
+  }
+ }
+}
