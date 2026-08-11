@@ -4597,7 +4597,16 @@ def run_year(
     # (caiso-131/134/140/150/151/188) still run against whatever is on disk.
     # No config field, no threshold, no tunable: a pure config-vs-disk
     # assertion, and a no-op for every flag left at its default.
-    check_clean_partitions(config, iso)
+    #
+    # caiso-190: strict=True is stated explicitly (it is also the default) —
+    # THIS is the lane keepers are promoted from, so even a mechanism with a
+    # DECLARED fallback is fatal here. A CAISO run that arms
+    # capacity_deliverability_limits without the MIC partition would otherwise
+    # solve on the baked 7,500 MW fitted scalar and register a bundle claiming
+    # the published cap, which is exactly what happened from caiso-175 onward
+    # (FINDING-caiso188 §4). The forecast orchestrator passes strict=False;
+    # the asymmetry is deliberate and documented in input_completeness.
+    check_clean_partitions(config, iso, strict=True)
 
     # Oil-burn inventory budget (NEISO-gated). When the budget binds in a
     # cold-snap month, its dual is the scarcity rent that lifts the persisted P1
