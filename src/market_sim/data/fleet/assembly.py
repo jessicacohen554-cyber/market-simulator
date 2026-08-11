@@ -91,6 +91,48 @@ from market_sim.data.fleet.models import _pkg_ns
 # Pre-split logger name: records keep the historical module path.
 logger = logging.getLogger("market_sim.data.fleet")
 
+#: Minimum capacity (MW) a stepped tranche must carry to become an LP row.
+#: Long-standing assembly behaviour — a tranche at or below this is DROPPED, so
+#: rounding dust never becomes a generator. Named at ercot-188 (rule 5
+#: ``[R-NO-MAGIC]``) because the ercot-188 top-refinement has to reason about it
+#: rather than trip over it: re-slicing the econ ramp's top block ``n`` ways
+#: makes each sub-slice ``curve_cap / n**2``, which falls under this floor for a
+#: small enough plant and would then delete real capacity instead of refining
+#: it. See :func:`_top_refine_ok`.
+MIN_TRANCHE_CAPACITY_MW = 0.5
+
+
+def _top_refine_ok(curve_cap: float, n: int, enabled: bool) -> bool:
+    """Return whether SCHEME R1 can be applied to a ramp of ``curve_cap`` MW.
+
+    ercot-188 Amendment 1, a **feasibility precondition, not a scheme variant**
+    (``docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md``
+    Amendment 1). ``_econ_curve_steps(top_refine=True)`` cuts the ramp's top
+    block into ``n`` sub-slices of ``curve_cap / n**2`` each. Where that lands
+    at or below :data:`MIN_TRANCHE_CAPACITY_MW` the assembly's own tranche
+    filter drops **every one of them**, so the plant silently loses the whole
+    top sixth of its econ ramp — measured on the real ERCOT fleet before this
+    guard existed: 36 of 144 plant-groups truncated (``slice_counts`` ``[5, 11]``,
+    max per-group deviation exactly 1/6) and **40.27 MW of capacity deleted** in
+    every year. Refining a curve must never delete capacity from it.
+
+    The guard adds **no free parameter** (rule 23 ``[R-DOF]``): the threshold is
+    the assembly's own pre-existing minimum-tranche capacity, and the scheme
+    itself is untouched — a plant either carries R1 exactly, or keeps the coarse
+    equal-width form byte-identically.
+
+    Args:
+        curve_cap: The econ ramp's total capacity for this plant (MW).
+        n: ``offer_curve_smoothing_n``, the coarse slice count.
+        enabled: The resolved ERCOT-gated ``ercot_econ_curve_top_refine``.
+
+    Returns:
+        True when every R1 sub-slice would clear the minimum tranche capacity.
+    """
+    if not enabled or n <= 1:
+        return False
+    return curve_cap / float(n * n) > MIN_TRANCHE_CAPACITY_MW
+
 
 def bins_to_fleet(
     bins: pd.DataFrame,
@@ -662,6 +704,17 @@ def bins_to_fleet(
         curve_exp = float(getattr(config, "offer_curve_smoothing_exp", 1.0))
         _mid = getattr(config, "offer_curve_smoothing_mid", None)
         curve_mid = float(_mid) if _mid is not None else None
+        # ercot-188 (c2) SCHEME R1: re-slice the econ ramp's TOP block n ways so
+        # the supply curve can express a cliff (docs/PRECOMMIT-ercot188-cliff-
+        # offer-curve-refinement-2026-08-11.md §2). GATED HERE, not inside
+        # _econ_curve_steps, because that slicer is ISO-AGNOSTIC and every one of
+        # the six keepers runs n = 6 — an ungated arm would silently re-slice all
+        # six fleets at once (rule 25 [R-ISO-SCOPE]; MEMO-ercot184 §6). The
+        # committed-band call site below deliberately does NOT read this.
+        curve_top_refine = (
+            bool(getattr(config, "ercot_econ_curve_top_refine", False))
+            and getattr(config, "iso", None) == "ERCOT"
+        )
         if ov is not None:
             # Per-plant sheet: the econ ramp spans econ-low to econ-high; the
             # sheet's peaking band stays a separate tranche below.
@@ -676,6 +729,9 @@ def bins_to_fleet(
                     n_curve,
                     curve_exp,
                     curve_mid,
+                    top_refine=_top_refine_ok(
+                        nameplate * curve_pct / 100.0, n_curve, curve_top_refine
+                    ),
                 )
             else:
                 econ_steps = [
@@ -710,6 +766,7 @@ def bins_to_fleet(
                     n_curve,
                     curve_exp,
                     curve_mid,
+                    top_refine=_top_refine_ok(econ_cap, n_curve, curve_top_refine),
                 )
             else:
                 share = float(offer["econ_low_share"])
@@ -736,6 +793,7 @@ def bins_to_fleet(
                     n_curve,
                     curve_exp,
                     curve_mid,
+                    top_refine=_top_refine_ok(econ_cap, n_curve, curve_top_refine),
                 )
             else:
                 econ_steps = [
@@ -823,6 +881,13 @@ def bins_to_fleet(
                 n_curve,
                 curve_exp,
                 curve_mid,
+                # NEVER curve_top_refine: the ercot-188 refinement is scoped to
+                # the ECON ramp. This is the same slicer re-used for the
+                # committed band, and MEMO-ercot184 §6 item 3 named the coupling
+                # as a dormant hazard — every keeper runs committed_ramp_spread
+                # 0.0 today, so an ISO that later arms it must not silently
+                # inherit a slice count identified for a different band.
+                top_refine=False,
             )
             committed_tranches = [
                 (
@@ -1051,7 +1116,9 @@ def bins_to_fleet(
                 min_config_by_suffix[_suffix] = _take
                 _mc_rem -= _take
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in tranches:
-            if cap <= 0.5:
+            # Value unchanged; named at ercot-188 so the econ ramp's slicing can
+            # reason about the floor it must clear (see _top_refine_ok).
+            if cap <= MIN_TRANCHE_CAPACITY_MW:
                 continue
             # Gas-offer net-revenue margin (config.gas_offer_net_revenue_margin):
             # the tranche's markup heat rate ABOVE its measured physical basis
