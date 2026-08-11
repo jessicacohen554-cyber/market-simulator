@@ -1097,3 +1097,228 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
             }
         )
     return bands
+
+
+#: Tranche-name prefixes that constitute a plant's BASE band — the block whose
+#: offer level is set by the plant's own physical basis and is therefore NOT
+#: repriced by the measured surface (:func:`apply_miso_offer_surface`). Every
+#: other tranche of the same plant sits ABOVE the base in fill order.
+_MISO_SURFACE_BASE_PREFIXES: tuple[str, ...] = (
+    "committed",
+    "commitcyc",
+    "mustrun",
+    "sync",
+)
+
+#: Parsed surface artifacts, keyed by resolved path (a solve reads one file).
+_MISO_SURFACE_CACHE: dict[str, dict] = {}
+
+
+def _load_miso_offer_surface(config: ScenarioConfig) -> dict:
+    """Load and cache the derived MISO position-conditioned offer surface.
+
+    Raises:
+        ValueError: the gate is armed but the artifact is missing or malformed
+            (rule 21 — no silent fallback in the offer path).
+    """
+    import json
+    from pathlib import Path
+
+    from market_sim.config import paths
+
+    raw = getattr(config, "miso_offer_surface_path", None)
+    path = (
+        Path(raw)
+        if raw
+        else paths.REPO_ROOT
+        / "data"
+        / "raw"
+        / "_validation-source"
+        / "miso_offer_surface_positioned.json"
+    )
+    key = str(path)
+    if key in _MISO_SURFACE_CACHE:
+        return _MISO_SURFACE_CACHE[key]
+    if not path.is_file():
+        raise ValueError(
+            f"miso_offer_surface_measured is armed but no artifact at {path} — "
+            "derive it with scripts/data/derive_miso_offer_surface.py (rule 21: "
+            "the offer path never falls back silently)"
+        )
+    art = json.loads(path.read_text())
+    if "markets" not in art or "DA" not in art.get("markets", {}):
+        raise ValueError(f"{path} is not a MISO offer-surface artifact")
+    _MISO_SURFACE_CACHE[key] = art
+    return art
+
+
+def miso_surface_positions(generators: list) -> "np.ndarray":
+    """Return each tranche's OWN-CURVE position midpoint, ``(n_gen,)`` in (0, 1].
+
+    A plant's tranche rows are appended in FILL order (mustrun -> sync ->
+    committed -> econ -> peak, ``data.fleet.assembly``), which is exactly the
+    order they stack in that plant's own offer curve.  Position is the midpoint
+    of each tranche's own MW span over the plant's total, so it is the same
+    unit-relative coordinate the corpus side measures
+    (``step_mw / ecomax_mw``) and it needs no class attribute — which is what
+    makes a class-free surface constructible at MISO at all (miso-138 refuted
+    the offer-side class bridge).
+
+    Rows that carry no plant identity return 0.0 and are never repriced.
+    """
+    n = len(generators)
+    pos = np.zeros(n, dtype=float)
+    groups: dict[tuple, list[int]] = {}
+    for i, g in enumerate(generators):
+        code = getattr(g, "plant_code", None)
+        if code is None:
+            continue
+        groups.setdefault((code, getattr(g, "plant_group", "")), []).append(i)
+    for idx in groups.values():
+        caps = np.array([float(getattr(generators[i], "pmax", 0.0)) for i in idx])
+        total = float(caps.sum())
+        if total <= 0.0:
+            continue
+        cum_before = np.concatenate(([0.0], np.cumsum(caps)[:-1]))
+        pos[idx] = (cum_before + 0.5 * caps) / total
+    return np.clip(pos, 0.0, 1.0)
+
+
+def apply_miso_offer_surface(
+    mc: "np.ndarray",
+    generators: list,
+    net_load: "np.ndarray",
+    gas_series: "np.ndarray",
+    config: ScenarioConfig,
+) -> None:
+    """Reprice MISO above-base gas tranches to the MEASURED own-curve rise.
+
+    The miso-151 mechanism (``config.miso_offer_surface_measured``), chartered
+    by the owner as queue item 9 and pre-registered in
+    ``results/calibration/PREREG-miso151-measured-offer-surface-2026-08-11.md``.
+
+    **SUBSUMES, never stacks** (rule 19 ``[R-ONE-MECH]``).  The rows it touches
+    are exactly the rows :func:`apply_gas_offer_margin` gives a margin to —
+    ``offer_markup_hr > 0`` — minus each plant's base band.  For those rows the
+    fuel-invariant margin ``offer_markup_hr × anchor`` is REMOVED and the
+    measured own-curve rise put in its place::
+
+        mc[g, t]  +=  Δ(p̄_g, state_bin(t), gas_bin(t))  −  offer_markup_hr[g] × anchor_g
+
+    so a tranche is never priced by both mechanisms.  The row gate is the
+    incumbent mechanism's own tag, not a class tuple (rule 18 ``[R-PHYSICS]``).
+
+    **SHAPE, never LEVEL.**  Δ is a within-unit, within-hour price DIFFERENCE
+    measured on MISO's submitted book, so a constant shift of a real unit's
+    whole curve cancels exactly; the model's price LEVEL stays on its own
+    physical/fuel basis.  This is load-bearing: miso-145 measured MISO's real
+    book as $8–15/MWh CHEAPER than the model at matched position, so a level
+    transfer would move C3a the WRONG WAY.
+
+    **Conditioning.**  The hour's state bin is the percentile rank of ``net_load``
+    WITHIN THE SOLVE'S OWN YEAR at the artifact's percentile cut points — a
+    relative, unit-free coordinate, so it transfers to a forecast year whose
+    load level differs from the training window.  The gas bin uses the
+    artifact's ABSOLUTE $/MMBtu edges, because a delivered gas price is directly
+    comparable across years in a way a load level is not.
+
+    Vectorized over the whole ``(n_gen, T)`` block (rule 2 ``[R-VECTOR]``);
+    applied to the BASE marginal cost so P0 and P1 see the same curve, exactly
+    like the mechanism it replaces.  Mutates ``mc`` in place; no-op when the
+    gate is off or no row qualifies.
+
+    Args:
+        mc: ``(n_gen, T)`` marginal-cost array, modified in place.
+        generators: Generator list aligned row-for-row with ``mc``.
+        net_load: ``(T,)`` LP-served net load (demand − wind − solar), MW.
+        gas_series: ``(T,)`` delivered gas price, $/MMBtu.
+        config: Scenario configuration supplying the gate, the artifact path
+            and the frozen bin geometries.
+
+    Raises:
+        ValueError: gate armed with a missing/malformed artifact, or with an
+            anchor unset while a repriced row still carries a markup.
+    """
+    if not getattr(config, "miso_offer_surface_measured", False):
+        return
+    if str(getattr(config, "iso", "")).upper() != "MISO":
+        return  # rule 25 [R-ISO-SCOPE]: this surface is MISO's and never transfers
+
+    art = _load_miso_offer_surface(config)
+    ladder = np.asarray(art["markets"]["DA"]["ladder"], dtype=float)  # (gas, state, pos, 3)
+    delta_grid = ladder[..., 1]
+    gas_edges = np.asarray(
+        art["_provenance"]["gas_bin_edges_usd_per_mmbtu"], dtype=float
+    )
+    pcts = np.asarray(config.miso_offer_surface_netload_pcts, dtype=float)
+    pos_edges = np.asarray(config.miso_offer_surface_position_bins, dtype=float)
+    if delta_grid.shape != (gas_edges.size + 1, pcts.size + 1, pos_edges.size - 1):
+        raise ValueError(
+            f"MISO offer surface geometry {delta_grid.shape} does not match the "
+            f"configured bins (gas {gas_edges.size + 1}, state {pcts.size + 1}, "
+            f"position {pos_edges.size - 1}) — re-derive the artifact"
+        )
+
+    markup_hr = np.fromiter(
+        (float(getattr(g, "offer_markup_hr", 0.0)) for g in generators),
+        dtype=float,
+        count=len(generators),
+    )
+    is_base = np.fromiter(
+        (
+            str(getattr(g, "bin_label", "")).rsplit("_", 1)[-1].startswith(
+                _MISO_SURFACE_BASE_PREFIXES
+            )
+            for g in generators
+        ),
+        dtype=bool,
+        count=len(generators),
+    )
+    rows = np.nonzero((markup_hr > 0.0) & (~is_base))[0]
+    if rows.size == 0:
+        logger.info("MISO measured offer surface: no above-base markup rows; inert")
+        return
+
+    anchor = getattr(config, "gas_offer_margin_anchor", None)
+    if anchor is None:
+        raise ValueError(
+            "miso_offer_surface_measured is armed but gas_offer_margin_anchor is "
+            "unset; the surface REPLACES that margin and must know what it is "
+            "removing (rule 19 — replace, never stack)"
+        )
+    anchors = np.fromiter(
+        (
+            float(
+                a
+                if (a := getattr(g, "offer_margin_anchor", None)) is not None
+                else anchor
+            )
+            for g in generators
+        ),
+        dtype=float,
+        count=len(generators),
+    )
+
+    pos = miso_surface_positions(generators)[rows]
+    pos_bin = np.clip(
+        np.searchsorted(pos_edges[1:-1], pos, side="right"), 0, pos_edges.size - 2
+    )
+
+    nl = np.asarray(net_load, dtype=float)
+    state_edges = np.quantile(nl, pcts)
+    state_bin = np.searchsorted(state_edges, nl, side="right")
+    gas_bin = np.searchsorted(gas_edges, np.asarray(gas_series, dtype=float), side="right")
+
+    # (n_rows, T) measured rise, then swap it for the fitted margin.
+    measured = delta_grid[gas_bin[None, :], state_bin[None, :], pos_bin[:, None]]
+    replaced = markup_hr[rows, None] * anchors[rows, None]
+    mc[rows, :] += measured - replaced
+
+    logger.info(
+        "MISO measured offer surface: %d above-base tranches repriced "
+        "(median measured %.2f $/MWh vs replaced %.2f; position p50 %.3f)",
+        rows.size,
+        float(np.median(measured)),
+        float(np.median(replaced)),
+        float(np.median(pos)),
+    )
