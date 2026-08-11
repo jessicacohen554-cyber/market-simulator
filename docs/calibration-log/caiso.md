@@ -7183,6 +7183,147 @@ held**, both owner acts. Record:
 `scripts/probes/_caiso181_cems_confrontation.py`,
 `results/calibration/_caiso181_cems_confrontation.json`.
 
+## 2026-08-08 — CAISO — caiso-182: the measured offer surface **CANNOT** be extended to the three uncovered classes — both pre-registered identification tests FAIL and **ARM A IS REFUSED**; no LP spent
+
+*[backfilled 2026-08-11 by caiso-189 from `results/calibration/FINDING-caiso182-offer-coverage-2026-08-08.md`
+and `PRECHECK-caiso182-offer-coverage-2026-08-08.md`; the session wrote no log entry.]*
+
+**Runs:** NONE. Zero LP spent, nothing registered, keeper **UNCHANGED** at
+`2026-08-06-caiso-175-tac-intake` (NOT-YET, rubric v3.1, C3a the sole FAIL). DOF ledger
+**11 / 8**, untouched. No `ScenarioConfig` field added, removed or re-valued; no frozen
+identification constant touched. **C3a was never scored or reported against** — no arm
+existed. `calibration-complete.json` / `holdout-freeze.json` untouched (owner acts).
+
+**The object was real and is confirmed:** 26.0 % of CAISO's thermal fleet — 7,527.4 MW
+across `CC_CHP`, `CT_CHP` and `ST_GAS` — prices on 100 % fitted, ERCOT-inherited
+multipliers, while the measured surface covers only `CC_REGULAR` and `CT_PEAKER`
+(`_CAISO_OFFER_CURVE`'s own comment concedes those three "are NOT CAISO-grounded …
+preserved verbatim"). **Both routes to covering them are refused by measurement:** IT-2
+separability FAILS for every boundary that would extend coverage, and the masked corpus
+does not identify a CHP/steamer split. The charter's directed outcome fired — *"a clean
+blocked verdict is worth more than a fitted close."*
+
+**BE-1 passes exactly** (the corpus was ABSENT, was re-fetched in full, and reproduces),
+so the corpus blocker is closed. Two corrections to the session's own instrument were
+reported rather than quietly applied, and a **G-DOF granularity defect** was filed at P0
+and stands. Record: `FINDING-caiso182-offer-coverage-2026-08-08.md`,
+`PRECHECK-caiso182-offer-coverage-2026-08-08.md`,
+`scripts/probes/_caiso182_curate_stream_be.py`, `_caiso182_offer_coverage_census.py`,
+`_caiso182_be1.json`, `_caiso182_stale_csv.json`.
+
+---
+
+## 2026-08-08 — CAISO — caiso-183: the H-EDGE grain repair — in-window CEMS contradiction to **ZERO**, TWO pre-registered gates FAIL, and the arm is **PROMOTED on the owner's ruling** (keeper `2026-08-08-caiso-183-b1-hour`)
+
+*[backfilled 2026-08-11 by caiso-189 from `results/calibration/FINDING-caiso183-hedge-grain-2026-08-08.md`
+(including its own promotion addendum) and `PRECHECK-caiso183-hedge-grain-2026-08-08.md`;
+the session wrote no log entry.]*
+
+**KEEPER PROMOTED** to `2026-08-08-caiso-183-b1-hour` (was `2026-08-06-caiso-175-tac-intake`),
+full 2023–2025 span, one bundle per arm. DOF ledger **11 / 8** on both arms; no
+`ScenarioConfig` field added, removed or re-valued. `data/raw/campd-unit-outages-CAISO.csv`
+is **ADOPTED at the hour grain** (sha256 `25360e90…`).
+
+**The repair.** The CAMPD unit-outage detector has always worked in **hours**
+(`start = clock[s]`, `last = clock[e-1]`) while the extract stored **days**, so
+`market_sim.data.outages` re-expanded every window to 00:00 → 23:00 and asserted up to
+**23 h at each edge the detector never detected** — exactly where the event-based contract
+guarantees the neighbouring hour was running. A rule 14 `[R-ACCURATE]` / rule 1
+`[R-STRUCT]` correction with **zero free parameters**: optional `outage_start_hour` /
+`outage_end_hour` carried deriver → schema → curate → loader, proven **byte-inert for the
+five ISOs that do not opt in**.
+
+**Measured:** in-window hours the model's own CEMS contradicts fall 3.36 / 3.25 / 3.55 %
+→ **exactly ZERO**. C3a narrows in all three years, +4.2 → **+3.9 %**, +11.5 → **+10.9 %**,
++14.7 → **+13.9 %** — the pre-registered direction prediction confirmed — but **2024 and
+2025 remain FAIL, the determination stays NOT-YET, and the residual does not close.**
+
+**TWO pre-registered gates FIRED — `G-DEPTH′` (2023) and `G-CAISO180` (5/9 cells).** Both
+are reported at full magnitude, **neither bar was moved**, and the session explicitly
+declined to adjudicate its own gates. **The owner ruled** (2026-08-08): *"if structural
+integrity improves but gates regress that may still be a keeper."* That, not the session,
+supplied the adjudication; §8's "not adopted" disposition is **superseded by the finding's
+own addendum, not retracted**. A governance attestation was generated for the promoted arm
+(`scripts/gen_caiso183_attestation.py`, four fail-closed legs), so **C6 reads PASS** and
+C3c returns to its inherited **ledgered CAVEAT**. Record:
+`FINDING-caiso183-hedge-grain-2026-08-08.md`, `PRECHECK-caiso183-hedge-grain-2026-08-08.md`,
+`_caiso183_gcontract.json`, `_caiso183_hedge_grain.json`, `_caiso183_sha_ledger.json`,
+`_caiso183_arm_identity.json`, `_caiso183_control_identity.json`.
+
+---
+
+## 2026-08-09 — CAISO — caiso-184: the chartered object is **REFUTED** (caiso-181's `f_CEMS > 1` term is 96–97 % a diagnostic-basis artifact); the outage-derate **DENOMINATOR** defect it found instead is repaired at zero DOF and **PROMOTED with EVERY gate PASSING** (keeper `2026-08-09-caiso-184-c1-lpbasis`)
+
+*[backfilled 2026-08-11 by caiso-189 from `results/calibration/FINDING-caiso184-capacity-basis-2026-08-09.md`
+and `PRECHECK-caiso184-capacity-basis-2026-08-08.md`; the session wrote no log entry.]*
+
+**KEEPER PROMOTED** to `2026-08-09-caiso-184-c1-lpbasis` (was `2026-08-08-caiso-183-b1-hour`),
+2023–2025, one bundle per arm. DOF ledger **11 / 8** on both arms. **ONE** new
+`ScenarioConfig` field (`unit_outage_lp_capacity_basis`, default **off**), its matrix row
+landed in the same PR (rule 28(c)). **NO data file re-derived** — both arms read caiso-183's
+adopted hour-grain extract `25360e90…`.
+
+**THE CHARTERED OBJECT WAS REFUTED AND REPORTED AS SUCH.** caiso-181 §2a's BASIS term
+(CEMS gross above the bin's entire capacity, `f_CEMS` to 1.146) measures as
+**96.2 / 96.5 / 97.4 % a DIAGNOSTIC-basis artifact** — 46.3 / 37.1 / 39.7 % gross-vs-net
+(CAMPD reports GROSS; every model capacity is NET) plus 49.9 / 59.4 / 57.7 %
+net-summer-vs-nameplate. Against the LP's **own** capacity the residual is 3.8 / 3.5 / 2.6 %
+of that term, so the pre-registered **B-ARTIFACT** branch fired: no capacity-basis lever is
+licensed.
+
+**The defect the census DID find is the derate DENOMINATOR (H-DENOM).** The extract's
+`unit_capacity_mw` numerator is EIA-860 **nameplate**; the denominator it divides into,
+`outages._iso_plant_capacity`, is the fleet's **net-summer** `pmax` sum — and with
+`cc_nameplate_summer_derate` armed `fleet_to_bins` carries the CC bin at full nameplate for
+the LP. The removed fraction is inflated by nameplate/net_summer, so **the model removes
+more MW than went out** — the identical arithmetic `_iso_plant_capacity` already forwards
+`cc_steam_part_reclass` to prevent, never forwarded for this flag. Measured over-removal:
+**4.50 / 5.63 / 7.02 %** of committed envelope depth, computed exactly.
+
+**The fix** raises the denominator's CC bins by the same published `cc_summer_derate_ratio`
+`fleet_to_bins` uses — zero DOF, monotone by construction, reaching only
+`CC_REGULAR`/`CC_CHP`. **G-BASIS:** measured `f_CEMS > 1` capacity-year falls
+**90.3 / 89.3 / 91.9 %** against a 50 % bar with no over-correction. **BE-1 / G-SIXISO:**
+all six ISOs' capacity maps byte-identical with the gate absent. C3a narrows
++3.9 → **+3.7 %**, +10.9 → **+10.5 %**, +13.9 → **+13.1 %** against a same-head control
+noise floor of **EXACTLY ZERO** (0 of 61,320 zone-hours differ) — reported as a consequence,
+never a target. **2024 and 2025 remain FAIL; determination NOT-YET.** Unlike caiso-183 **no
+gate fired and no bar was moved**. Record:
+`FINDING-caiso184-capacity-basis-2026-08-09.md`,
+`PRECHECK-caiso184-capacity-basis-2026-08-08.md`, `scripts/gen_caiso184_attestation.py`,
+`_caiso184_capacity_basis_census.json`, `_caiso184_be_proof.json`, `_caiso184_gbasis.json`.
+
+---
+
+## 2026-08-09 — CAISO — caiso-185: the CC demonstrated-capability reconcile is **REJECTED EX ANTE** on a measured basis defect — **KILL-BEFORE-SOLVE, zero LP spent**; the in-model lever queue is now EMPTY WITH EVERY CELL ADJUDICATED
+
+*[backfilled 2026-08-11 by caiso-189 from `results/calibration/FINDING-caiso185-cc-reconcile-2026-08-09.md`
+and `PRECHECK-caiso185-cc-reconcile-2026-08-09.md`; the session wrote no log entry.]*
+
+**Runs:** NONE. Zero LP spent, nothing registered, keeper **UNCHANGED** at
+`2026-08-09-caiso-184-c1-lpbasis`. DOF ledger **11 / 8**, untouched. No `ScenarioConfig`
+field added, **no file under `src/` modified, no data byte changed**. **C3a WAS NEVER
+READ** — no arm was solved, so no fit outcome could have influenced the verdict; rule 1
+`[R-STRUCT]` in its strongest available form. Markers untouched (owner acts).
+
+**The table is clean — the refusal is not about the data.**
+`data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv` (7 rows) is
+provenance-clean and exactly reproducible at the CAMPD / EIA-860 vintage on disk, and
+**both gates the charter named as its stop rules PASS**. **The refusal rests on a defect
+none of them was pointed at**, discovered in P0 and declared as **NOT pre-registered**: the
+hook that reads the table writes an availability-**inclusive** realized output into the
+LP's availability-**exclusive** capacity slot, so arming it would deny six plants output
+the CEMS record shows they produced. The root cause was **filed, not built** (rule 14).
+
+**Consequence for the programme:** the CAISO in-model lever queue is **EMPTY with every
+cell adjudicated**, and the remaining named routes are both **owner acts** — which is what
+set up the caiso-186 owner sitting. Record:
+`FINDING-caiso185-cc-reconcile-2026-08-09.md`, `PRECHECK-caiso185-cc-reconcile-2026-08-09.md`,
+`_caiso185_table_provenance.json`, `_caiso185_seasonal_stack.json`,
+`_caiso185_arm_capability.json`, `_caiso185_g358.json`, `_caiso185_be_proof.json`.
+
+---
+
 ## 2026-08-09 — CAISO — caiso-186: the PUBLISHED SEASONAL CC CAPABILITY BASIS is built, exact on every other gate, and **REFUSED BEFORE SOLVE** by its own pre-registered `G-NOCONTRA` bar — the incumbent NAMEPLATE headroom is silently absorbing a live WEFOR/overlay double count (rule 19)
 
 **Runs:** NONE. **Zero LP spent, nothing registered on the dashboard, keeper UNCHANGED at
@@ -7260,7 +7401,59 @@ unmeasured exposure since they arm the parent. Record:
 
 ---
 
+## 2026-08-09 — CAISO — caiso-187: the WEFOR-vs-overlay charter's premise is **INVERTED BY MEASUREMENT** — there is no CC double count to relieve, because the overlay removes 24–35 % of CC capacity-hours against a ~10 % published expectation. **BRANCH C fires: no LP, escalate to the owner**
+
+*[backfilled 2026-08-11 by caiso-189 from `results/calibration/FINDING-caiso187-wefor-overlay-2026-08-09.md`
+and `PRECHECK-caiso187-wefor-overlay-2026-08-09.md`; the session wrote no log entry.]*
+
+**Runs:** NONE. Zero LP spent, nothing registered, keeper **UNCHANGED** at
+`2026-08-09-caiso-184-c1-lpbasis`. DOF ledger **11 / 8**, untouched. No data byte written,
+no derive re-run, `THERMAL_AVAILABILITY` **not** re-derived. **C3a never read.** Both
+holdout markers untouched (owner acts).
+
+**The frozen formula returned the opposite of the charter's premise.** PRECHECK §2 fixed
+`residual_c = max(0, W_c − X_c)` before any value existed, with `W_c` the model's own
+**unfitted** `THERMAL_AVAILABILITY` rate (multiplier held at 1.0) and `X_c` the CAMPD
+overlay's measured removal taken through the shipped `outages.unit_outage_derate_factor`.
+The statistical term (**3.5 %**) is dwarfed by the overlay, so `X_c ≥ W_c` on both material
+classes and the residual is identically zero: **there is no double count to relieve**, and
+the pre-registered Branch C — *"a finding about the **overlay**, not a licence to zero the
+statistical term. Report and escalate"* — fires without ambiguity.
+
+**What the measurement found instead is much larger and differently located:** the overlay
+removes **24–35 % of CAISO's combined-cycle capacity-hours** against a **~10 %** published
+planned-plus-forced expectation, and that removal is **growing 45 % in two years**. A
+defect in the session's own pre-registration was declared rather than absorbed. Three
+concrete owner options were tabled in order of evidential support. Transport caveat,
+declared by the session: the git remote was unreachable throughout (alternating HTTP
+408/500), so the PRECHECK commit `f7ea03e` is verified by the immutable local parent chain
+rather than a remote round trip; **no LP was run**, so the `G-FROZEN` precondition on
+solving was never reached. Record:
+`FINDING-caiso187-wefor-overlay-2026-08-09.md`, `PRECHECK-caiso187-wefor-overlay-2026-08-09.md`,
+`scripts/probes/_caiso187_residual_identification.py`,
+`_caiso187_residual_identification.json`.
+
+---
+
 ## caiso-188 (2026-08-09) — the `IMPORT_TRANCHES[CAISO]` DOF census, and the fitted 7,500 MW seam cap it caught next door
+
+> **CORRECTION — 2026-08-11, caiso-189.** The bolded line immediately below
+> ("Keeper … UNCHANGED; no promotion proposed") is **SUPERSEDED and must not be read as
+> the record of what happened.** It states the position as of the moment the entry was
+> written; **the owner then promoted `2026-08-09-caiso-188-d1-micseam` to CAISO keeper in
+> the SAME session**, superseding `2026-08-09-caiso-184-c1-lpbasis`. The promotion is
+> recorded in `docs/handoffs/caiso-186-owner-sitting-2026-08-09.md`
+> ("**KEEPER PROMOTED, OWNER-DIRECTED IN THE SAME SESSION**"), in
+> `frontend/data/backcast/keepers/CAISO.json`, and in the mechanism matrix §5.2 header.
+> The rest of this entry — the census, the seam forensics, the A/B and every gate — is
+> unaffected and stands as written. `calibration-complete.json` / `holdout-freeze.json`
+> **were** left untouched, correctly: CAISO holds no `complete` marker, so rule 22 D-5(b)
+> re-keying does not fire. **Because no generator was written for the promotion, the
+> promoted bundle shipped with no C6 governance attestation and an empty exceptions
+> ledger; caiso-189 (2026-08-11) repaired that post-hoc** —
+> `results/calibration/FINDING-caiso189-c6-attestation-2026-08-11.md`,
+> `scripts/gen_caiso189_attestation.py`. The same addendum is appended to
+> `FINDING-caiso188-import-tranche-dof-2026-08-09.md` §8.
 
 **Keeper `2026-08-09-caiso-184-c1-lpbasis` UNCHANGED; no promotion proposed;
 `calibration-complete.json` / `holdout-freeze.json` untouched (the owner sitting
@@ -7313,3 +7506,80 @@ a bundle solved against; the dormant `hydro_ror_split` is its own A/B. Record:
 `results/calibration/FINDING-caiso188-import-tranche-dof-2026-08-09.md`,
 `PRECHECK-caiso188-mic-seam-2026-08-09.md`,
 `scripts/probes/_caiso188_import_tranche_census.py`, `_caiso188_seam_cap_forensics.py`.
+
+---
+
+## caiso-189 (2026-08-11) — the keeper's **C6 UNATTESTED** and its **empty C3c ledger** were ONE missing file. Repaired post-hoc: **C6 → PASS, C3c → ledgered CAVEAT, fails 2 → 1**; C3a still the sole FAIL, determination still **NOT-YET**
+
+**Runs:** NONE. **Zero LP spent, nothing registered, keeper UNCHANGED at
+`2026-08-09-caiso-188-d1-micseam`.** DOF ledger **11 / 8**, carried **byte-identical**. No
+edit to solver code, `ScenarioConfig` defaults, `configs/` or any data file. Markers
+untouched (owner acts; CAISO holds neither `complete` nor `final`, so rule 22 D-5(b)
+re-keying does not fire). **2023–2025 only.** **No PRECHECK, and none is owed** — this
+session measures nothing about the market, so there is no identification a result could
+have steered. **Off-queue by design** (rule 28): the CAISO lever queue is **EMPTY with
+every cell adjudicated**, and this is governance/record repair — **no lever, no mechanism,
+no solve, no matrix cell changed**.
+
+**The cause, singular.** The caiso-188 promotion was owner-directed in the same session
+that wrote its FINDING, so the bespoke `gen_caisoNNN_attestation.py` every CAISO promotion
+ships was never written — **the series stops at caiso-184** — and the keeper bundle carried
+**only** the `free_parameters` DOF ledger `build_dof_ledger.py` writes. From that one
+absence: `score_governance` read **C6 UNATTESTED** (which alone forces NOT-YET), and
+`determine_from_artifacts` found no `exceptions`, so the incumbent's C3c ledger never
+carried and its two failing years read as **undocumented** FAILs. The C3c standing rule
+could not cover them either — it needs a passing governance gate **and** a lone failure,
+and C3a fails. `audit_keepers` **E8 validates `free_parameters` alone**, so it reported
+"0/0" — green — on an attestation nobody had signed.
+
+**The repair.** `scripts/gen_caiso189_attestation.py`, on the pjm-153 precedent
+(`gen_pjm153_collapse_attestation.py`, for `pjm152_collapse_A`, which shipped the same way).
+Every premise **computed, not typed**, aborting on any failure: **G-DELTA** (arms differ on
+exactly `capacity_deliverability_limits`, False → True, across 710 keys); **G-SEAM** — the
+one that matters — Part A **actually resolved**, read off each arm's own
+`hourly/network_<year>.parquet`: control at the fitted **7,500.0 MW** limit binding
+**764/477/807 h**, keeper at the published MIC **16,055/16,452/16,148 MW** with its dual
+**exactly 0.0 in every hour of every year**; **G-MACHINE** (the machine half of C6, using
+the scorer's own constants); **G-DOF** (ledger 11/8, `n_scalars` 6, and the rendered
+`free_parameters` block **byte-identical** to the on-disk one); **G-EXC**.
+
+**Exceptions carried, magnitudes refreshed.** All four come from
+`2026-08-09-caiso-184-c1-lpbasis` with `classification`/`reason` **byte-identical** — no
+new caveat, no new slot. Three of four `magnitude` fields had been measured on bundles two
+or three promotions old, which is its own governance defect, so each was re-measured on
+this bundle with the carried text quoted verbatim beside it: **C3c-2024 moved 0 h → 1 h**;
+both C3a magnitudes were carried from `caiso166_measured_loss_zones` and now read 38.27
+(+10.4 %) and 38.87 (+12.9 %). **C3c-2025 PASSES** here (0 h vs RT 8 h) and caiso-184
+carries no 2025 entry, so none was invented. Under rubric v3.1 `LEDGERABLE_CRITERIA` is
+`price_tail` alone, so the two carried C3a entries **reclassify nothing**.
+
+**Verdict delta**, committed artifacts only, no solve: **C6 `UNATTESTED → PASS`**, **C3c
+`FAIL → ledgered CAVEAT`**, fails **2 → 1**, scored **7 → 8**, ledgered **0 → 1/1**. **C3a
+is unchanged at +3.4 / +10.4 / +12.9 % and is now the SOLE load-bearing FAIL** — the only
+barrier to `CALIBRATED-WITH-CAVEATS` — with its root cause unchanged and owner-level (the
+walled hourly pumped-storage water state, `FINDING-caiso140` §B / caiso-141 A2).
+**Determination unchanged at NOT-YET.**
+
+**Also closed.** `audit_keepers` check **E10** (attestation completeness: `schema` /
+`governance` four booleans, boolean-typed and true / `exceptions` list), so this can never
+audit green again — FAIL on anything that moves a determination, WARN on the documentary
+`schema` tag alone; 11 unit tests, including the exact caiso-188 shape. Five un-logged CAISO
+sessions **backfilled above** (182, 183, 184, 185, 187 — two of them keeper promotions with
+no entry at all). The caiso-188 entry and `FINDING-caiso188` both carry dated corrections
+recording the promotion. Two false clauses in `keepers/CAISO.json`'s `disposition_note`
+rewritten with the superseded wording quoted. `audit_keepers --check` over all ISOs: **PASS,
+0 failures, 1 warning** (ERCOT `2026-08-09-ercot185-shaped-partial` has no `schema` tag —
+another lane's, no determination effect, reported not fixed under rule 25).
+
+**Three contradictions found against the charter, reported not silently resolved.**
+(1) caiso-184's attestation holds **2 `price_tail` + 2 `price_mean`** entries, not "4 C3c
+price_tail". (2) The 7 → 6 scalar correction lived in the **matrix**, not the owner-sitting
+memo — the reverse of what the charter said — and the matrix's own §5.2 **header** was the
+stale one. (3) The memo's "7" is **not stale at all**: it is a cross-row total
+(1 + 2 + 4) whose own table sums to 7, a different scope from the ledger's row-level
+`n_scalars: 6`. Renumbering it would have falsified a correct record, so it was
+**annotated**; this also corrects `FINDING-caiso188` §1's mis-attribution. Record:
+`results/calibration/FINDING-caiso189-c6-attestation-2026-08-11.md`,
+`results/calibration/FINDING-caiso188-import-tranche-dof-2026-08-09.md` §8 addendum,
+`scripts/gen_caiso189_attestation.py`,
+`tests/scoring/test_audit_keepers_attestation_shape.py`.
