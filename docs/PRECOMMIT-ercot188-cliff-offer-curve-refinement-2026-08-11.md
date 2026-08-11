@@ -430,3 +430,84 @@ and the position axis at **level**; this is the position axis at **width**.
   re-keyed or edited by this session on its own authority** (§4).
 
 **Next shorthand: ercot-189.**
+
+---
+
+## AMENDMENT 1 (PRE-SOLVE, 2026-08-11) — the minimum-tranche feasibility guard
+
+**Written and pushed AFTER the seam proof and BEFORE any LP is solved.** It
+records a defect the pre-registered seam proof CAUGHT in the first build, and
+the guard added in response. Nothing about §4's gates, §5's band or §2.3's
+no-sweep rule changes.
+
+### A1.1 What the seam proof found
+
+The first build's SP-3 / SP-3b / SP-5 **FAILED in all three years**, identically:
+
+| | measured |
+|---|---|
+| rows | 1,780 → **2,284**, not the predicted 2,500 (×1.275, not ×1.39) |
+| per-plant slice counts, armed | **`[5, 11]`** — not `[11]` |
+| max per-group MW deviation | **exactly 1/6** |
+| fleet capacity deleted | **40.27 MW**, every year (80,744.61 → 80,704.34) |
+| CHP steam floor deleted | **2.75 MW** of 3,539.95 |
+
+**The cause, and it is not the scheme.** `bins_to_fleet` has long dropped any
+stepped tranche of **≤ 0.5 MW**, so rounding dust never becomes an LP row. R1's
+sub-slices are `curve_cap / n²`, so a plant whose econ ramp is under
+`0.5 × n² = 18 MW` has **every one of its six sub-slices dropped** — losing not
+the refinement but **the entire top sixth of its ramp**. On the real ERCOT fleet
+that is **36 of 144 plant-groups**, and it is why the counts read `5`.
+
+**This is real deleted capacity, and it contradicts this precommit's own §2.2
+construction ("total curve MW preserved").** A build that silently deletes
+capacity while claiming to refine a curve is not the mechanism that was costed,
+and shipping it would have made every downstream number un-interpretable.
+
+### A1.2 The guard, and why it is NOT a scheme substitution
+
+`assembly._top_refine_ok(curve_cap, n, enabled)`: apply R1 to a plant **only
+when every sub-slice would clear the assembly's own minimum tranche capacity**;
+otherwise that plant keeps the coarse equal-width form **byte-identically**. So
+a plant either carries R1 **exactly as §2.2 specifies it**, or is untouched —
+the admissible slice counts become **exactly `{6, 11}`**, and MW is conserved.
+
+* **It is NOT §2.3's forbidden sweep.** The slice count and split point are
+  unchanged and unswept. This is a *feasibility precondition* on where an
+  unchanged scheme can be applied, discovered by a pre-registered falsifier —
+  not a variant chosen because it scored better. **Nothing has been solved yet,
+  so nothing here could have been chosen against a residual.**
+* **It adds NO free parameter (rule 23 `[R-DOF]`).** The threshold is
+  `MIN_TRANCHE_CAPACITY_MW = 0.5`, the assembly's **pre-existing** tranche
+  floor — named as a constant in this commit (rule 5 `[R-NO-MAGIC]`) with its
+  value unchanged, and now referenced by both the filter and the guard so the
+  two cannot drift. `n_residual` does not grow. **G-DOF still binds and is still
+  expected to pass.**
+* **§2.5's containment is unaffected** — the guard sits inside the same
+  ERCOT-gated path.
+
+### A1.3 What it costs, stated plainly
+
+R1 now reaches **fewer plants than the memo's costing assumed**, and the FINDING
+must report the coverage — how many plant-groups and **what share of econ MW**
+are refined — rather than implying the whole ramp was. The affected plants are
+small by construction (econ ramp < 18 MW), so the **column cost falls** relative
+to the memo's ×1.39 estimate; G-COST is reported against the measured factor
+with this explained, not silently re-baselined.
+
+**Expected reach is unchanged at ≈ +$1.99/MWh** and §5's reconciliation band is
+NOT widened: the excluded plants are too small to be marginal in the object
+hours, so the memo's measurement remains the right comparison. If the measured
+reach lands outside `[−$1.00, +$4.00]`, §5's STOP fires exactly as written.
+
+### A1.4 Seam-proof status at amendment
+
+**SP-1, SP-2 and SP-4 PASSED on the first build and are not re-litigated by the
+guard**: gate-off ERCOT byte-identical to pre-edit HEAD in all three years;
+**all five non-ERCOT ISOs byte-identical with the gate ARMED** (CAISO, PJM,
+NYISO, NEISO, MISO — each on its own committed bundle, each carrying real
+`econc` rows, so the assertion is not vacuous); the body's `n-1` slices
+byte-identical in cap and heat rate. SP-7 passed independently: the pinned
+default cache key **`603c2498bf71d21d` is unmoved** and the armed key
+`613cd5243fd84f20` is distinct. SP-3/SP-3b/SP-5 are re-run under the guard and
+their result is reported in the FINDING **whatever it is**.
