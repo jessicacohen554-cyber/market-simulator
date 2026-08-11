@@ -1,0 +1,226 @@
+{
+ "session": "caiso-192",
+ "lane": 1,
+ "iso": "CAISO",
+ "gate_years": [
+  2023,
+  2024,
+  2025
+ ],
+ "keeper": "caiso188_d1_micseam",
+ "gatespec": "GATESPEC-caiso192-overlay-identification-2026-08-11.md",
+ "precheck": "PRECHECK-caiso192-overlay-identification-2026-08-11.md",
+ "constants_as_shipped": true,
+ "new_thresholds_introduced": [],
+ "price_series_read": "NONE (GATESPEC \u00a72 closure honoured)",
+ "A_reproduction": {
+  "committed_extract_sha256": "25360e90a9d11f32c293edf3224047da0d6fab447b551fac81b983e2da1166c6",
+  "rederived_WITHOUT_guard_sha256": "64502f67268523a33835868ac078cddd26ee5c1b519505805f7dad7206472e0c",
+  "rederived_WITH_guard_sha256": "25360e90a9d11f32c293edf3224047da0d6fab447b551fac81b983e2da1166c6",
+  "GUARD_ALREADY_APPLIED": true,
+  "unguarded_reproduces_committed": false,
+  "rows_unguarded": 5138,
+  "rows_committed": 4328,
+  "rows_layup_companion": 810,
+  "rows_only_in_unguarded": 810,
+  "rows_only_in_committed": 0,
+  "unguarded_minus_committed_equals_layup": true,
+  "derive_years": [
+   2018,
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025,
+   2026
+  ]
+ },
+ "B_removal_rates": {
+  "2023": {
+   "CC_REGULAR": {
+    "POST_guard_X": 0.215691,
+    "PRE_guard_X": 0.230307,
+    "guard_already_removes_pp": 1.4616,
+    "class_capacity_mw": 15284.8
+   },
+   "CC_CHP": {
+    "POST_guard_X": 0.163439,
+    "PRE_guard_X": 0.176757,
+    "guard_already_removes_pp": 1.3318,
+    "class_capacity_mw": 1689.3
+   }
+  },
+  "2024": {
+   "CC_REGULAR": {
+    "POST_guard_X": 0.262054,
+    "PRE_guard_X": 0.279544,
+    "guard_already_removes_pp": 1.749,
+    "class_capacity_mw": 15284.8
+   },
+   "CC_CHP": {
+    "POST_guard_X": 0.207902,
+    "PRE_guard_X": 0.246236,
+    "guard_already_removes_pp": 3.8334,
+    "class_capacity_mw": 1689.3
+   }
+  },
+  "2025": {
+   "CC_REGULAR": {
+    "POST_guard_X": 0.318613,
+    "PRE_guard_X": 0.338549,
+    "guard_already_removes_pp": 1.9936,
+    "class_capacity_mw": 15284.8
+   },
+   "CC_CHP": {
+    "POST_guard_X": 0.272236,
+    "PRE_guard_X": 0.291796,
+    "guard_already_removes_pp": 1.956,
+    "class_capacity_mw": 1689.3
+   }
+  }
+ },
+ "C_separation": {
+  "2023": {
+   "panel_priced_units": 234,
+   "retained_mechanical": {
+    "spans": 451,
+    "spans_scored": 436,
+    "spans_unidentified_failsafe": 15,
+    "cap_weighted_mean_oom_share": 0.061144,
+    "mar_may_share_of_span_hours": 0.458246
+   },
+   "reclassified_layup": {
+    "spans": 54,
+    "spans_scored": 54,
+    "spans_unidentified_failsafe": 0,
+    "cap_weighted_mean_oom_share": 0.965738,
+    "mar_may_share_of_span_hours": 0.311899
+   },
+   "separation_pp": 90.4594
+  },
+  "2024": {
+   "panel_priced_units": 231,
+   "retained_mechanical": {
+    "spans": 431,
+    "spans_scored": 403,
+    "spans_unidentified_failsafe": 28,
+    "cap_weighted_mean_oom_share": 0.04403,
+    "mar_may_share_of_span_hours": 0.470953
+   },
+   "reclassified_layup": {
+    "spans": 102,
+    "spans_scored": 102,
+    "spans_unidentified_failsafe": 0,
+    "cap_weighted_mean_oom_share": 0.987168,
+    "mar_may_share_of_span_hours": 0.352202
+   },
+   "separation_pp": 94.3138
+  },
+  "2025": {
+   "panel_priced_units": 231,
+   "retained_mechanical": {
+    "spans": 567,
+    "spans_scored": 403,
+    "spans_unidentified_failsafe": 164,
+    "cap_weighted_mean_oom_share": 0.044935,
+    "mar_may_share_of_span_hours": 0.373358
+   },
+   "reclassified_layup": {
+    "spans": 63,
+    "spans_scored": 63,
+    "spans_unidentified_failsafe": 0,
+    "cap_weighted_mean_oom_share": 0.974228,
+    "mar_may_share_of_span_hours": 0.25011
+   },
+   "separation_pp": 92.9293
+  }
+ },
+ "D_gate_tally": {
+  "G_RATE": {
+   "band": [
+    0.07,
+    0.15
+   ],
+   "per_year": {
+    "2023": {
+     "rate": 0.215691,
+     "in_band": false
+    },
+    "2024": {
+     "rate": 0.262054,
+     "in_band": false
+    },
+    "2025": {
+     "rate": 0.318613,
+     "in_band": false
+    }
+   },
+   "pass": false
+  },
+  "G_STAB": {
+   "yoy_change_pp": {
+    "2023->2024": 4.6363,
+    "2024->2025": 5.6559
+   },
+   "yoy_within_3pp": false,
+   "ratio_2025_over_2023": 1.477173,
+   "ratio_within_1.5x": true,
+   "pass": false
+  },
+  "G_SEP": {
+   "per_year": {
+    "2023": {
+     "a_layup_oom_ge_0.80": true,
+     "b_separation_ge_30pp": true,
+     "c_spring_signature": false
+    },
+    "2024": {
+     "a_layup_oom_ge_0.80": true,
+     "b_separation_ge_30pp": true,
+     "c_spring_signature": false
+    },
+    "2025": {
+     "a_layup_oom_ge_0.80": true,
+     "b_separation_ge_30pp": true,
+     "c_spring_signature": false
+    }
+   },
+   "pass": false
+  },
+  "G_LOYO": {
+   "new_thresholds": [],
+   "pass": true,
+   "basis": "vacuous - no new threshold or parameter introduced; shipped constants used AS SHIPPED (GATESPEC \u00a73 G-LOYO, PRECHECK \u00a73 declaration)"
+  },
+  "ALL_GATES_PASS": false
+ },
+ "ADOPTED": false,
+ "E_cross_checks": {
+  "caiso183_published_extract_sha256": "25360e90",
+  "measured_extract_sha256_prefix": "25360e90",
+  "sha_matches_caiso183": true,
+  "caiso183_published_recipe": "derive_campd_unit_outages.py --iso CAISO --years 2018 \u2026 2026 --merit-order-guard --hour-grain",
+  "caiso180_published_layup_counts_2023_2024_2025": [
+   93,
+   164,
+   98
+  ],
+  "measured_layup_counts_2023_2024_2025": [
+   93,
+   164,
+   98
+  ],
+  "caiso187_published_X_CC_REGULAR": [
+   0.2157,
+   0.2621,
+   0.3186
+  ],
+  "measured_X_CC_REGULAR": [
+   0.215691,
+   0.262054,
+   0.318613
+  ]
+ }
+}
