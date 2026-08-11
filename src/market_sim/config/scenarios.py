@@ -820,12 +820,21 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # LP layout) and hashes distinctly. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline — never the nyiso-128/nyiso-115 miss).
     "miso_rps_compliance_regions",
-    # MISO clean/carbon-free tier rows (FFR-7B Arm 3, default off; ARMING
-    # BLOCKED pending the §45U composition — see the field comment): dropped
-    # from the hash at its default so every pre-existing cache key stays
-    # byte-stable; an armed run adds the second row family (a different LP
-    # layout) and hashes distinctly. Registered IN THE SAME COMMIT as the
-    # field (the nyiso-119 discipline).
+    # MISO clean/carbon-free tier rows (FFR-7B Arm 3; FIELD default off, ARMED
+    # FOR THE MISO FORECAST LANE by owner D-29 via ISOConfig
+    # .default_scenario_overrides — see the field comment): dropped from the
+    # hash at its FIELD default so every pre-existing non-MISO-forecast cache
+    # key stays byte-stable; an armed run adds the second row family (a
+    # different LP layout) and hashes distinctly. Registered IN THE SAME COMMIT
+    # as the field (the nyiso-119 discipline).
+    # THE D-29 ARMING IS A CACHE EPOCH FOR THE MISO FORECAST LANE, and this
+    # registration is what makes it a clean one: because the armed value
+    # differs from the field default declared below, every armed MISO forecast
+    # run ENTERS the digest and keys distinctly (measured
+    # cd2403cc031515db -> 9337e00504e1e72a on the 2031-2035 golden posture), so
+    # no pre-arm bundle is silently re-used. The GLOBAL pinned default key
+    # 603c2498bf71d21d is unmoved: the pin is computed on ScenarioConfig() with
+    # no ISO override applied, where this field is still False.
     "miso_clean_tier_rows",
     # ERCOT-178 continuous offer-surface conditioning grain (default off):
     # dropped from the hash at its default so every pre-existing cache key
@@ -995,6 +1004,16 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by FFR-7B-2 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_rps_compliance_regions": "False",
+    # STAYS "False" through the D-29 arming, and must: this ledger declares the
+    # SCENARIOCONFIG FIELD default that cache_key() drops against, not the
+    # resolved per-ISO posture. D-29 arms Arm 3 through MISO's
+    # ISOConfig.default_scenario_overrides (the D-26 seam), leaving the field
+    # default False — which is exactly what keeps the armed MISO forecast runs
+    # hashing distinctly (the declared cache epoch) instead of colliding with
+    # their pre-arm predecessors, and keeps the global pin 603c2498bf71d21d
+    # unmoved. Flipping this line to "True" would do the opposite of arming: it
+    # would make every armed run drop the field and silently re-use pre-arm
+    # bundles. Do not "sync" it to the ISO override.
     "miso_clean_tier_rows": "False",
     "exit_rate_limits": "False",
     "federal_ces_enabled": "False",
@@ -2024,11 +2043,28 @@ class ScenarioConfig:
     # credit offset in it, so it is a branch-(i) instrument: INSIDE the
     # gross-receipts base, paying D + §45U(P + D), self-limiting at
     # 0.80 $/$. See model/capacity_evolution/retirements.py's §45U block
-    # and docs/handoffs/f2-45u-composition-2026-08-09.md. ARMING ITSELF is
-    # still an open charter on this ISO's own evidence (rule 25): the flag
-    # stays default-off, and bounded default-off probe pairs remain its
-    # only use until that charter runs. ***
-    # Registered in _CACHE_KEY_OPTIONAL_FIELDS (off runs keep their key).
+    # and docs/handoffs/f2-45u-composition-2026-08-09.md. ***
+    # *** ARMED FOR THE MISO FORECAST LANE — owner decision D-29 (sitting
+    # Addendum AK.8, signed 2026-08-11; lane ARM-3-ARM). THE FIELD DEFAULT
+    # STAYS False AND MUST: the arming seam is MISO's
+    # ISOConfig.default_scenario_overrides (the same seam D-26 used for
+    # Arm 2), which is MISO-scoped (rule 25 — no other ISO has a
+    # MISO_CLEAN_TIER_REGIONS member or can satisfy the strict Arm-2
+    # dependency) and forecast-scoped at CONSUMPTION (runner.py requires
+    # mode == "forecast"; run_calibration_full.py never applies ISO
+    # overrides, so the backcast lane is doubly insulated). Flipping THIS
+    # literal would arm the family for all six ISOs and break the
+    # dependency for the five that never carry the K-row grain.
+    # Measured basis (ARM3-FIX §4, docs/handoffs/arm3-fix-zone-mask-
+    # 2026-08-09.md, on the zone-mask-corrected rows): MI exactly 0.0000 in
+    # 2031-2034 (RHS 0) and BINDING at the $30 ACP in 2035, its first
+    # statutory obligation year (in-mask 57.351 TWh vs 95.771 required);
+    # MN slack all five years under the shipped 5-zone mask; capacity
+    # events identical to the digit — the rows' only output is a price. ***
+    # Registered in _CACHE_KEY_OPTIONAL_FIELDS (off runs keep their key; the
+    # D-29 arming is therefore a declared CACHE EPOCH for the MISO forecast
+    # lane, cd2403cc031515db -> 9337e00504e1e72a, with the global pin
+    # 603c2498bf71d21d unmoved).
     miso_clean_tier_rows: bool = False
     electrolyzer_type: str = "pem"  # "pem" or "alkaline" — sets H2 fuel cost
     h2_available_year: int = 2035  # was 2032.

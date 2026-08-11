@@ -2258,8 +2258,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # counterfactual no state row of either grain is built.
             # Clean-tier family (FFR-7B Arm 3): rides the Arm-2 machinery —
             # arming it without the compliance-region grain is a wiring
-            # error, refused loudly. §45U-vs-clean-dual composition is OPEN
-            # and blocks ARMING (see the ScenarioConfig field comment).
+            # error, refused loudly. ARMED FOR THE MISO FORECAST LANE by
+            # owner decision D-29 (sitting Addendum AK.8, 2026-08-11) through
+            # MISO's ISOConfig.default_scenario_overrides, exactly as D-26
+            # armed Arm 2 above — so a MISO forecast leg that passes no flag
+            # builds BOTH families. Both former blockers are closed: the
+            # §45U-vs-clean-dual composition by D-28 option A (and measured
+            # moot — §45U dies after 2032 while MI cannot bind before 2035),
+            # and the generator-column zone-mask defect by ARM3-FIX. The
+            # forecast-mode leg of the gate is what keeps the armed override
+            # off the backcast lane (see _rps_region_grain_active).
             rps_region_arrays = None
             clean_region_arrays = None
             if getattr(config, "miso_clean_tier_rows", False) and not getattr(
