@@ -2,9 +2,17 @@
 
 # Cross-ISO mechanism testing matrix — methodology, lever queues, glossary
 
-**The canonical data lives in ONE place:**
-`docs/codebase-site/data/mechanism-matrix.js` (rendered at
-`docs/codebase-site/mechanism-matrix.html`, nav → Backcast → Mechanism Matrix).
+**The canonical data is SHARDED PER ISO** (2026-08-11, HOUSE-3 — mirroring the
+2026-07-19 keeper sharding, `frontend/data/backcast/keepers/README.md`):
+`docs/codebase-site/data/mechanism-matrix.js` is the mechanism-level **base**
+(one row per mechanism: id/cat/name/def/mode/note + genuinely cross-ISO
+evidence), and `docs/codebase-site/data/mechanism-matrix/<ISO>.js` is that
+ISO's **shard** — its cell verdicts, forecast (`fc`) postures, `ev` evidence
+citations and `keeper`/`gates` stamps. **A lane's rule-28 duty is a one-file
+edit: its own ISO's shard.** Two ISOs discharge rule 28 concurrently with zero
+shared-file edits. Rendered at `docs/codebase-site/mechanism-matrix.html`
+(nav → Backcast → Mechanism Matrix), which assembles base + shards
+client-side; Python readers use `scripts/lib/mech_matrix.py::load_merged`.
 This doc is the methodology and the *actionable* layer on top of it: how the
 matrix is maintained, how similar the six ISO configs actually are, and the
 per-ISO **lever queues** — ranked untested candidates tied to each ISO's
@@ -20,9 +28,9 @@ miso-88 / nyiso-89 / neiso-61.
 
 > **That keeper list is the 2026-07-27 BUILD SNAPSHOT — a historical record of
 > what the matrix was first audited against, not the current keeper set.** All
-> six ISOs have promoted since. The LIVE keeper set is the `keepers:` object in
-> `docs/codebase-site/data/mechanism-matrix.js`, which the promoting session
-> re-stamps under rule 28; read it there, never from this paragraph. (Header
+> six ISOs have promoted since. The LIVE keeper set is the per-ISO `keeper:`
+> stamps in `docs/codebase-site/data/mechanism-matrix/<ISO>.js`, which the
+> promoting session re-stamps under rule 28; read it there, never from this paragraph. (Header
 > hygiene, FFR-3B 2026-08-02 — audit FR-21 bookkeeping desync. No cell verdict
 > was touched.)
 
@@ -51,26 +59,36 @@ The matrix answers three questions no single doc answered before:
   marked `R`/`I`/`G` without new evidence (the DO-NOT-REDO discipline —
   e.g. caiso-129's explicit list, ERCOT-122…126's exhausted coal enumeration).
 - **(b) Test ⇒ update the cell, same session.** Probe, candidate, or keeper —
-  the session that produces a verdict edits the mechanism's row in
-  `mechanism-matrix.js` (cell char + `ev` citation + note if the story
-  changed), in the same commit series as its rule-15 dashboard registration.
+  the session that produces a verdict edits the mechanism's entry **in its own
+  ISO's shard** `docs/codebase-site/data/mechanism-matrix/<ISO>.js` (`cell`
+  char + `ev` citation + per-ISO `note` if the story changed; bump the shard's
+  `updated:`), in the same commit series as its rule-15 dashboard
+  registration. This is a ONE-file edit — never touch another ISO's shard, and
+  touch the base file only when the mechanism-level story itself changes.
   Rejected probes update the matrix too; a rejection that isn't recorded will
   be re-run by someone else.
 - **(c) New mechanism ⇒ new row, same PR.** A PR that adds a solve-affecting
-  `ScenarioConfig` field/flag adds its matrix row (all six cells — mostly `U`
-  and `·` at birth). A mechanism absent from the matrix is an off-registry
+  `ScenarioConfig` field/flag adds its row in the base file **plus one cell
+  line in every ISO shard** (mostly `U` and `·` at birth — the CI guard
+  requires full coverage). This is the single non-parallel edit by design: it
+  happens once, in the PR that adds the field, not in per-ISO lanes. A
+  mechanism absent from the matrix is an off-registry
   tuning channel in spirit (rule 24).
 - **(d) Verdicts are per-ISO** (rule 25). `K` in PJM says *nothing* about
   MISO. Transfers enter the target ISO as `U`, and the target session derives
   its own parameters from its own fleet/market data — never imports the source
   ISO's fitted values.
-- **(e) Keeper swaps re-stamp the header.** When a keeper changes, refresh the
-  `keepers`/`gates` header block and re-check that ISO's column (a promotion
-  usually flips 1–2 cells).
+- **(e) Keeper swaps re-stamp the shard.** When a keeper changes, refresh the
+  promoted ISO's `keeper:`/`gates:` stamps in its matrix shard and re-check
+  that ISO's column (a promotion usually flips 1–2 cells) — all inside the
+  one shard file.
 
-**Mechanical enforcement.** `scripts/check_mechanism_matrix.py` (stdlib-only)
-runs as the `mechanism-matrix-guard` CI job on every PR: it validates matrix
-integrity (unique ids, well-formed 6-char cells), **fails** a PR that adds a
+**Mechanical enforcement.** `scripts/check_mechanism_matrix.py` (stdlib-only,
+shared IO in `scripts/lib/mech_matrix.py`)
+runs as the `mechanism-matrix-guard` CI job on every PR: it validates store
+integrity (base rows parse with unique ids; every shard parses, covers exactly
+the base's mechanism-id set, and carries one-char `cell`/`fc` verdicts —
+failures name the base or ISO-shard file to fix), **fails** a PR that adds a
 new `ScenarioConfig` field not mentioned anywhere in the matrix (duty c —
 mention-anywhere is the escape hatch for sub-scalars that belong on an
 existing family's row), and **warns** when a new backcast registry sidecar or

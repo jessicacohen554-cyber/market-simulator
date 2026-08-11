@@ -322,7 +322,10 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       incident).
 1. `[R-MECH-MATRIX]` **The cross-ISO mechanism matrix is the single test ledger — check it before
     proposing a lever, update it in the session that tests one.** The matrix
-    (`docs/codebase-site/data/mechanism-matrix.js`, rendered at
+    (SHARDED PER ISO since 2026-08-11: mechanism-level rows in
+    `docs/codebase-site/data/mechanism-matrix.js`, each ISO's cell verdicts / fc / evidence /
+    keeper+gates stamps in `docs/codebase-site/data/mechanism-matrix/<ISO>.js` — a lane edits
+    ONLY its own ISO's shard; rendered at
     `docs/codebase-site/mechanism-matrix.html`; protocol, ISO-similarity analysis, per-ISO lever
     queues and glossary: `docs/mechanism-testing-matrix.md`) records, per mechanism × ISO ×
     lane (backcast keeper / forecast default), whether the mechanism is armed and its tested
@@ -332,14 +335,16 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     queue**; the session picks its lever from the queue or states why it goes off-queue, and
     never re-tests a cell already adjudicated `R`/`I`/`G` without new evidence (the
     DO-NOT-REDO discipline). (b) **The session that tests a mechanism — probe, candidate, or
-    keeper — updates that mechanism's cell (status + citation) in the same session**, rejected
+    keeper — updates that mechanism's cell (status + citation) in its own ISO's shard in the
+    same session**, rejected
     outcomes included, alongside the rule-15 dashboard registration. (c) **A PR that adds a new
-    solve-affecting mechanism adds its matrix row in the same PR** — a mechanism missing from
+    solve-affecting mechanism adds its matrix row in the same PR** (base row + a cell line in
+    every ISO shard — the one deliberately non-parallel edit) — a mechanism missing from
     the matrix is an unregistered tuning channel in spirit (rule 24). (d) Verdicts are strictly
     per-ISO (rule 25): a verdict in one ISO never fills another ISO's cell — transfer candidates
     enter the target ISO as `U`, and the target session derives its own parameters from its own
-    market's data. When a keeper changes, the promoting session re-stamps the matrix header
-    (keeper ids + open gates) and re-checks that ISO's column. Enforcement: CI
+    market's data. When a keeper changes, the promoting session re-stamps its ISO's matrix shard
+    (keeper id + open gates) and re-checks that ISO's column. Enforcement: CI
     (`.github/workflows/ci.yml`, `mechanism-matrix-guard` job → `scripts/check_mechanism_matrix.py`)
     validates matrix integrity and FAILS any PR that adds a `ScenarioConfig` field absent from the
     matrix (duty c); it WARNS on new run registrations or calibration CLI flags with no matrix
