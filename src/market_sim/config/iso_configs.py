@@ -757,12 +757,69 @@ def _miso_config() -> ISOConfig:
         # (FFR-6B §2.1) and stays byte-identical; PJM/NEISO zonal rows were
         # REFUSED ON STRUCTURE (FFR-6B §7).
         #
-        # miso_clean_tier_rows (Arm 3) is deliberately NOT armed here: its
-        # arming is BLOCKED on the open §45U-vs-clean-dual composition for
-        # nuclear (owner D-22/X.2), which is not this lane's decision.
+        # miso_clean_tier_rows — ARMED FOR MISO by owner decision D-29 (sitting
+        # Addendum AK.8, signed 2026-08-11; lane ARM-3-ARM, measured basis
+        # ARM3-FIX §4, docs/handoffs/arm3-fix-zone-mask-2026-08-09.md). Arm 3
+        # rides the Arm-2 K-row machinery above (the dependency is strict and
+        # one-directional, FFR-6B §6.2 — runner.py refuses the clean family
+        # without the compliance-region grain), and adds a SECOND independent
+        # row family: MN carbon-free (Minn. Stat. §216B.1691 subd. 2g) and MI
+        # clean (2023 PA 235 / MCL 460.1029), each with its statute's
+        # eligibility mask, its obligated-load RHS and its own $30 ACP escape.
+        # ZERO fitted parameters — every obligation is copied from the cited
+        # MISO_CLEAN_TIER_REGIONS derivation.
+        #
+        # THE BLOCKERS ARE BOTH CLOSED, in this order:
+        #   1. The §45U-vs-clean-dual composition (the D-22/X.2 blocker) —
+        #      decided by owner D-28 option A (F2-45U, 2026-08-09): §45U left
+        #      the attribute max() and composes with that max()'s winner under
+        #      26 U.S.C. §45U(b)(2)(B). Measured MOOT here besides: §45U dies
+        #      after 2032 (§45U(e)) and MI cannot bind before 2035, and at the
+        #      $30 ACP every defensible composition coincides to the cent.
+        #   2. The zone-mask defect ARM3-MEASURE found — fixed by ARM3-FIX:
+        #      _resolve_clean_region_gen_idx now takes the region's
+        #      eligible_zone_mask, so a clean row's GENERATOR columns obey the
+        #      same mask its wind/solar columns always did. Before the fix,
+        #      MISO-South nuclear satisfied Michigan's East-only row, defeating
+        #      the row's own cited statutory basis.
+        #
+        # Measured on the fixed rows, ARM3-FIX's pre-registered 2031-2035
+        # --golden-posture pair (control cd2403cc031515db vs armed
+        # 9337e00504e1e72a, registered miso-2031-2035-arm3fix-clean-{ctrl,armed}):
+        # MI's row is exactly 0.0000 in 2031-2034 (RHS 0 — its obligation starts
+        # at 2035) and BINDS in 2035, its first statutory obligation year, pinned
+        # at the $30 ACP ceiling (in-mask supply 57.351 TWh vs a 95.771 TWh
+        # obligation, -38.420 TWh => ~$1.15 bn of ACP); MN stays SLACK in all
+        # five years under the shipped 5-zone delivery mask. Capacity events are
+        # identical to the digit in every year — the row's ONLY output is a
+        # price (E-1 never acquires a build limb, FFR-6B §5.3).
+        #
+        # CACHE EPOCH (rule 24 [R-REGISTRY], declared by ARM-3-ARM): this arming
+        # moves the MISO forecast lane's resolved default key
+        # cd2403cc031515db -> 9337e00504e1e72a. Every MISO forecast bundle under
+        # the pre-arm key is superseded and NONE is silently re-used, because the
+        # armed value differs from the registered _CACHE_KEY_OPTIONAL_FIELDS
+        # default and so enters the digest. The GLOBAL pinned default key
+        # 603c2498bf71d21d is UNMOVED — the field default stays False and the pin
+        # is computed with no ISO override applied.
+        #
+        # FORECAST-LANE ONLY, gated at CONSUMPTION exactly as Arm 2 is:
+        # runner.py requires config.mode == "forecast" before the region/clean
+        # arrays are built, and run_calibration_full.py never applies
+        # default_scenario_overrides at all. Rule 25 [R-ISO-SCOPE]: MISO ONLY —
+        # MISO_CLEAN_TIER_REGIONS has no member outside MISO, and the flag
+        # carries the strict Arm-2 dependency no other ISO can satisfy.
+        #
+        # CAVEAT, the same one the two overrides above carry: because the runner
+        # applies an override to any field still EQUAL to the ScenarioConfig
+        # default, and --miso-clean-tier-rows is store_true with no negative
+        # form, NO CLI invocation can reach a clean-tier-OFF MISO forecast leg
+        # once this is armed. The arm-off pole is the COMMITTED ARM3-FIX control
+        # bundle (key cd2403cc031515db), not a re-solve.
         default_scenario_overrides={
             "entry_vre_capacity_revenue": True,
             "miso_rps_compliance_regions": True,
+            "miso_clean_tier_rows": True,
         },
     )
 

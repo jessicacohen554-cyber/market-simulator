@@ -286,9 +286,12 @@ def reference_config(
     ``miso_clean_tier_rows`` (FFR-7B Arm 3 / FFR-6B E-2) adds the MN
     carbon-free + MI clean tier row family on the Arm-2 machinery (REQUIRES
     ``miso_rps_compliance_regions`` — the runner fails loud otherwise).
-    Registered cache-optional at ``False``. ARMING AS A DEFAULT IS BLOCKED
-    pending the §45U-vs-clean-dual composition (see the ScenarioConfig
-    field comment); bounded default-off probe pairs are its only use.
+    Registered cache-optional at ``False``. **ARMED FOR THE MISO FORECAST LANE**
+    by owner decision D-29 (2026-08-11) through
+    ``ISOConfig.default_scenario_overrides``, so a MISO leg that passes no flag
+    still SOLVES the clean family — read the posture off the RESOLVED config
+    (``apply_iso_scenario_defaults``), never off ``args``, which is why both MISO
+    row-family gates are ``Derived`` in the sidecar spec above.
     """
     cmc_by_iso = None
     if golden_posture:
@@ -903,13 +906,15 @@ def main(argv: list[str] | None = None) -> int:
         "--miso-clean-tier-rows",
         action="store_true",
         help=(
-            "FFR-7B Arm 3 arm (MISO only, DEFAULT OFF; requires "
+            "FFR-7B Arm 3 arm (MISO only; requires "
             "--miso-rps-compliance-regions): add the MN carbon-free + MI "
             "clean tier row family (MISO_CLEAN_TIER_REGIONS, cited) on the "
             "Arm-2 K-row machinery, each row with its own $30 feasibility "
-            "escape. ARMING AS A DEFAULT IS BLOCKED pending the "
-            "§45U-vs-clean-dual composition (owner); bounded default-off "
-            "probe pairs only. Solve-affecting, distinct cache key."
+            "escape. REDUNDANT FOR MISO since owner decision D-29 "
+            "(2026-08-11) armed it as the MISO forecast default via the ISO "
+            "override — a MISO leg builds the family with or without this "
+            "flag, and there is no negative form that can turn it back off. "
+            "Solve-affecting, distinct cache key."
         ),
     )
     args = ap.parse_args(argv)
