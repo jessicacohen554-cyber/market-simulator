@@ -3972,3 +3972,82 @@ unit, not a partial default flip. This is a second, independent reason the FH-5-
 ordering is right: **FH-5 is precisely the skill evidence AG.1 parked that promotion on**,
 so the whole forward posture becomes promotable exactly when D-30 fires. Built into the
 dispatch (§0ak-3) as a binding pre-flight.
+
+## Addendum AL — refresh sweep: HOUSE-3 LANDED and its acceptance sentence VERIFIED; a correction to AK.2's CAISO audit
+
+### AL.1 State — 25 commits, no keeper move
+
+`origin/main` **`d542a28` → `ce4d05e`**. Landed: **HOUSE-3** (PR #3850), this manager's
+AK/§0aj/§0ak (PR #3852), **caiso-189** (PR #3854), miso-151's G-5/G-F3 continuation (PRs
+#3851, #3855). **All six keepers UNMOVED** — ERCOT `ercot185-shaped-partial`, CAISO
+`caiso-188-d1-micseam`, MISO `miso-148-basis-aware`, NYISO `nyiso-132-cf-arm`, NEISO
+`neiso-87-control`, PJM `pjm-152-collapse`. Markers, freeze and rubric unchanged.
+
+### AL.2 HOUSE-3's acceptance sentence — VERIFIED EMPIRICALLY, and it PASSES
+
+Not accepted on its docstring. The matrix is now a base
+(`mechanism-matrix.js`, `window.MECH_MATRIX_BASE`: row ids/cat/name/def/mode) plus six
+shards (`mechanism-matrix/<ISO>.js`) and a browser-side assembler, with a Python twin
+(`scripts/lib/mech_matrix.py::assemble`). **The live `keeper:` and gates stamps are IN THE
+SHARDS** — the copy still visible in the base is the frozen pre-2026-08-11 mixed-ISO stamp
+log, deliberately preserved. So a promotion re-stamp, which was the highest-collision event
+we had (three keepers moved on 08-09 alone), is now a per-ISO edit too.
+
+**The test, run this sitting:** simulate two ISOs updating concurrently (ERCOT and MISO
+shard `updated` stamps). Result — `git status` shows **exactly two changed files, disjoint**
+(`mechanism-matrix/ERCOT.js`, `mechanism-matrix/MISO.js`), and
+`check_mechanism_matrix.py` stays green through the edit: *integrity OK · anchors checked
+(191 field + 48 row + 142 path) — 0 unresolvable beyond the ratchet · keeper stamps match
+every keepers/<ISO>.json · §5.x prose headers match*. Edits reverted; tree clean.
+**Answer to "can two ISOs discharge rule 28 with ZERO shared-file edits?" — YES, for both
+cell verdicts and promotion stamps.**
+
+**The residual, stated because it is not eliminated:**
+`src/market_sim/config/scenarios.py`'s registration lists stay genuinely shared. HOUSE-3
+mitigates rather than removes them with an **ISO-cluster insertion convention** (`bd4fa86`):
+an ISO-prefixed field is appended to the END OF ITS OWN ISO'S CLUSTER, a shared field to the
+end of the tuple, and the same discipline applies to
+`_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` in the same commit. Two per-ISO lanes then land on
+different lines; only two SAME-ISO lanes serialize. So the interim parallel-safety clause
+**drops to the shard path**, keeping a scenarios.py note (pack §0al).
+
+### AL.3 CORRECTION to AK.2 — my CAISO "CLEAN" was true-as-checked, not true-in-fact
+
+AK.2 reported the CAISO keeper audit CLEAN. That was accurate against the checks that
+existed and is **incomplete as a statement about the keeper**. caiso-189 found, in the same
+window, that **caiso-188 shipped with NO C6 governance attestation at all**, and that three
+clauses in `keepers/CAISO.json`'s disposition_note were **false in bytes at promotion**:
+"C3c … the single ledgered caveat, carried VERBATIM" (nothing was carried — `ledger_entries`
+was empty), "C8/C6 as the incumbent" (caiso-184 has a governance block; this bundle did
+not), and "8 criteria scored" (it was 7). `audit_keepers.py` had **no attestation check**
+when I ran it, so the audit could not have caught any of this; caiso-189 wrote the missing
+attestation, corrected the note with the superseded wording preserved, and **added the
+check as E10**. All three clauses are true now, and only because caiso-189 made them so.
+**The lesson worth keeping: an audit is only as strong as its check set, and "0 failures"
+means "nothing the checks can see", never "nothing wrong".** A parallel lane found what my
+audit was structurally blind to — that is the system working, and it is why the R.1 pass I
+recorded alongside it (which reads the *diff*, not the check set) stays load-bearing.
+
+### AL.4 Re-audit at HEAD with E10 live: 0 failures, 1 warning
+
+CAISO now passes E10. The one warning is **ERCOT**: its attestation carries no `schema`
+version tag — flagged by the check itself as non-determination-affecting ("governance and
+exceptions are complete, and `calibration_verdict` never reads schema"), to be fixed by
+adding `"schema": "calibration-attestation/v1"` **on the next regeneration**. Booked as a
+duty for the next ERCOT lane, not a standalone fix.
+
+### AL.5 CAISO's keeper verdict at HEAD, now that it has an attestation
+
+`2026-08-09-caiso-188-d1-micseam` → **NOT-YET**, with a **single load-bearing FAIL, C3a
+mean LMP** (`price_mean`), C3c a ledgered CAVEAT and the rest passing. The C3c standing
+rule cannot reach this: it reclassifies **C3c only**, and C3a is load-bearing. Recorded so
+no successor mistakes a lone-FAIL CAISO for a standing-rule candidate.
+
+### AL.6 Paste status — four lanes out, no evidence on any; one new calibration lane live
+
+`git ls-remote --heads origin` returns `main` and **`claude/ercot-cliff-offer-curve-g39kmd`**
+only. So: **FH-5, F6-DIAG, ARM-3-ARM and RC-DERIVE all show NO EVIDENCE YET** (no branch,
+no commit). The one live branch is a calibration lane that appears to have picked up the
+ercot-182 C3a-2023 cliff card — a lane the manager adjudicates on landing, does not drive.
+**FFR-9C-PROMOTE stays correctly blocked**: FH-5 has not landed, so its pre-flight #1 would
+stop it at the first step.
