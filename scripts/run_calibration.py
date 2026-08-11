@@ -83,6 +83,7 @@ from market_sim.data.fleet import (  # noqa: E402
 from market_sim.data.offer_curves import (  # noqa: E402
     apply_cc_committed_offer_margin,
     apply_gas_offer_margin,
+    apply_miso_offer_surface,
 )
 from market_sim.data.fuel import (  # noqa: E402
     apply_caiso_zonal_gas_basis,
@@ -3657,6 +3658,32 @@ def run_year(
     # discovery and the P1 bid see the same offer curve — exactly like the
     # multiplier form it reprices. Byte-identical when off (no-op return).
     apply_gas_offer_margin(mc_base, fleet, fuel_prices, config)
+    # MISO POSITION-conditioned MEASURED offer surface (miso_offer_surface_
+    # measured, default off, MISO-gated — miso-151 queue item 9, owner-chartered).
+    # SUBSUMES the margin the call above just set on MISO's ABOVE-BASE gas
+    # tranches (rule 19 [R-ONE-MECH]): those rows have `offer_markup_hr × anchor`
+    # removed and MISO's own measured own-curve RISE put in its place, so no row
+    # is ever priced by both. Runs immediately after, on the BASE cost, so P0 run
+    # discovery and the P1 bid see the same curve. SHAPE only — the measured
+    # object is a within-unit price DIFFERENCE, so the model's level stays on its
+    # own physical basis (miso-145 measured the real book CHEAPER at matched
+    # position; a level transfer would move C3a the wrong way). Byte-identical
+    # when off (no-op return).
+    if getattr(config, "miso_offer_surface_measured", False) and iso == "MISO":
+        from market_sim.data.fuel.trajectories import _gas_series
+
+        _surface_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        apply_miso_offer_surface(
+            mc_base,
+            fleet,
+            _surface_net_load,
+            _gas_series(config, year, mc_base.shape[1]),
+            config,
+        )
     # CC committed-block measured offer level (cc_committed_offer_margin,
     # default off — ERCOT-139): reprice the CC_REGULAR `_committed` tranche from
     # its band multiplier to the measured RT SCED curve bottom, expressed as a
