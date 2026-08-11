@@ -295,3 +295,46 @@ VERDICT DELTA: C6 UNATTESTED→PASS · C3c unledgered→ledgered CAVEAT (2023+20
 FILES PUSHED: `scripts/gen_caiso189_attestation.py`, `results/calibration/caiso188_d1_micseam/calibration_attestation.json`, `frontend/data/backcast/status/CAISO.js`, `scripts/audit_keepers.py`, `tests/scoring/test_audit_keepers_attestation_shape.py`, `docs/calibration-log/caiso.md`, `results/calibration/FINDING-caiso188-import-tranche-dof-2026-08-09.md`, `frontend/data/backcast/keepers/CAISO.json`, `docs/mechanism-testing-matrix.md`, `docs/handoffs/caiso-186-owner-sitting-2026-08-09.md`, `results/calibration/FINDING-caiso189-c6-attestation-2026-08-11.md`
 CONTRADICTIONS FOUND: (1) the charter states caiso-184's attestation holds "4 C3c price_tail entries" — in bytes it holds **2 `price_tail` (2023, 2024) + 2 `price_mean` (2025, 2024)**, and the 4th carries `ledgered_by` instead of `carried_from`. All four were carried; the two `price_mean` entries are INERT under rubric v3.1. (2) the charter states `docs/handoffs/caiso-186-owner-sitting-2026-08-09.md` "already carries the 7→6 correction" — it does **not**; the correction lives in the **matrix**'s caiso-188 block, while the matrix's own §5.2 **header** was still stale. Reversed from the charter. (3) NEW — the memo's "7" is **not** stale: it is a CROSS-ROW total (`battery_dispatch_adder` 1 + firm prices 2 + spot capacities 4 = 7) whose own §3.3 table sums to 7, a different scope from the ledger's row-level `n_scalars: 6`. Renumbering it would have falsified a correct record, so it was annotated instead — and this also corrects `FINDING-caiso188` §1, which mis-attributes the row-level 4+2 print to that memo.
 OPEN ITEMS / HANDOFF: C3a (+10.4 / +12.9 %) is now the SOLE load-bearing FAIL and the only barrier to `CALIBRATED-WITH-CAVEATS`; its root cause is the owner-funded walled hourly PS water-state intake, unchanged and untouched. `caiso188_d0_control` keeps the same attestation gap (control, no registered determination — known, not fixed). ERCOT keeper `2026-08-09-ercot185-shaped-partial` lacks a `schema` tag (WARN, no determination effect, another lane's under rule 25). caiso-188's own still-owed items are untouched: the forecast orchestrator's missing guard call, no committed record of which seam cap a bundle solved against, and the dormant `hydro_ror_split` A/B.
+
+---
+
+## §8 — ADDENDUM (same session): PR number, and the CI outage the PR landed into
+
+**PR [#3854](https://github.com/jessicacohen554-cyber/market-simulator/pull/3854)** — *caiso-189: C6 attestation repair + record truth-up*, branch
+`claude/caiso-189-c6-attestation-re30va`, rebased onto `origin/main` at `74e9a47`.
+
+**CI could not run, for reasons that have nothing to do with this branch, and this is
+recorded rather than glossed.** Every check failed at the **`git checkout` step**, before
+any check body executed. The single log that survived (`Structural refactor guards`,
+attempt 1) gives the mechanism:
+
+```
+error: unable to write file data/raw/ercot/SCED/2025-10.part0025.parquet
+##[error]No space left on device : '.../actions-runner/cached/2.336.0/_diag/pages/...'
+```
+
+The runner cannot fit the 11.5 GiB working tree — the same constraint `docs/fast-clone.md`
+already documents for local clones. It then cannot write its own `_diag` files either,
+which is why **every other job's log download returns HTTP 404** instead of a real failure.
+
+**It is repo-wide and predates this branch.** Over the 30 most recent `ci.yml` runs:
+**`cancelled` × 30, `success` × 0, across 17 distinct branches**, from 2026-08-10T05:38Z
+onward — roughly 22½ hours before this PR was opened. This PR's run is simply the newest of
+the seventeen. The branch cannot plausibly be the cause: 11 text files, **+1505 / −5**, no
+data files, and `git diff origin/main..HEAD -- src/` is **empty**.
+
+Both workflows were re-run once (attempt 2) and failed identically with the same 404
+signature. **No further re-runs were spent** — this is a private repo and runner minutes are
+billed, so retrying a disk-exhaustion failure only costs money. The blocker is posted once
+on the PR ([comment 5249009793](https://github.com/jessicacohen554-cyber/market-simulator/pull/3854#issuecomment-5249009793)).
+The fix belongs in `.github/workflows/*.yml` (sparse or `--filter=blob:none` checkout) or in
+runner disk provisioning — **core infrastructure affecting all 17 branches, out of scope for
+a bookkeeping session** and, under rule 27 `[R-PUSH]`, work for a session scoped to it.
+Filed as a carried-forward item, not silently absorbed.
+
+**What stands in place of CI**, all run in-session on this branch and reported in §3 and §5
+above: `audit_keepers --check` all-ISO **PASS** (0 failures, 1 pre-existing ERCOT warning);
+the verdict re-score (**C6 PASS**, C3c **ledgered CAVEAT**, fails **1**, **NOT-YET**);
+`ruff check .` clean; `check_mechanism_matrix.py` clean; legitimacy **D-6/D-9 PASS**; and
+`pytest -n auto -m "not slow and not integration and not fulldata"` at **6,632 passed /
+5 failed**, with **all 5 re-run at `origin/main` and all 5 reproducing there**.
