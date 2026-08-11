@@ -335,35 +335,78 @@ def _econ_curve_steps(
     n: int,
     exp: float,
     mid: float | None = None,
+    top_refine: bool = False,
 ) -> list[tuple[str, float, float, float, int, int, float]]:
-    """Slice a rising economic ramp into ``n`` flat sub-tranches.
+    """Slice a rising economic ramp into flat sub-tranches.
 
     Returns ``(suffix, cap, heat_rate, vom_mult, min_run, min_down, startup)``
-    tuples — ``n`` equal-capacity slices whose heat-rate multiplier rises from
-    ``lo_mult`` toward ``pk_mult`` along ``mult(t) = lo + (pk - lo) * t**exp``,
-    ``t = (k + 0.5)/n``. ``exp == 1`` is a straight (linear) ramp matching a
-    thermal unit's gently-rising incremental heat rate; ``exp > 1`` is convex
-    (cheap-bottom). When ``mid`` is given it replaces the power shape with a
-    two-segment piecewise-linear ramp anchored at the capacity midpoint:
-    ``f(0) = 0``, ``f(0.5) = mid``, ``f(1) = 1`` (fraction of the lo->pk
-    rise), so ``mid < 0.5`` keeps the middle of the curve cheap and
-    concentrates the rise in the top slices — an independent shape control
-    the single ``exp`` exponent cannot express. The slices carry no min-run
-    or start cost — they are incremental output of an already-committed
-    unit. Suffixes start with ``econ`` (``econc00`` …) so
+    tuples — by default ``n`` equal-capacity slices whose heat-rate multiplier
+    rises from ``lo_mult`` toward ``pk_mult`` along
+    ``mult(t) = lo + (pk - lo) * t**exp``, ``t = (k + 0.5)/n``. ``exp == 1`` is
+    a straight (linear) ramp matching a thermal unit's gently-rising
+    incremental heat rate; ``exp > 1`` is convex (cheap-bottom). When ``mid``
+    is given it replaces the power shape with a two-segment piecewise-linear
+    ramp anchored at the capacity midpoint: ``f(0) = 0``, ``f(0.5) = mid``,
+    ``f(1) = 1`` (fraction of the lo->pk rise), so ``mid < 0.5`` keeps the
+    middle of the curve cheap and concentrates the rise in the top slices — an
+    independent shape control the single ``exp`` exponent cannot express. The
+    slices carry no min-run or start cost — they are incremental output of an
+    already-committed unit. Suffixes start with ``econ`` (``econc00`` …) so
     :func:`apply_commitment_with_coal_pin` couples them to the bin's
     committed tranche and shuts them down together.
+
+    ``top_refine`` — SCHEME R1, the ercot-188 (c2) cliff-resolving refinement
+    (``ScenarioConfig.ercot_econ_curve_top_refine``, default off and
+    ERCOT-gated by its caller). ``mid`` shapes the ramp's PRICE axis; this
+    refines its WIDTH axis. The equal-width form's finest expressible
+    within-plant position is ``1/n`` of the ramp, so the model's supply-curve
+    top is a 6-block approximation that CANNOT express a cliff — while
+    reality's marginal price forms inside the top 0.24 % of the marginal
+    resource's own submitted curve (``q_act`` p50 0.9976, ercot-180). Armed,
+    the ramp's **top block is re-sliced ``n`` ways** and the body's ``n - 1``
+    blocks are left expression-for-expression identical, giving ``2n - 1``
+    slices and preserving total curve MW: at ``n = 6``, 11 slices whose top
+    spans 2.778 % of the ramp.
+
+    Rule 23 ``[R-DOF]``: the scheme adds **no numeric parameter**. Its split
+    point is ``1 - 1/n``, the boundary the ramp is already sliced at, and its
+    sub-slice count is the same ``n`` — both the registered
+    ``offer_curve_smoothing_n``, so the shape follows ``n`` rather than
+    carrying a free value of its own. Structural grounding, from measurements
+    that predate the build and never from a residual
+    (``docs/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md`` §4.2/§4.3):
+    the top block is the marginal one in 14 of the 33 econ-marginal object
+    hours, more than any other slice, and is the ONLY block reaching the
+    measured ladders' top decile — the econ ramp spans a median 61.8 % of its
+    plant's stack, so its top slice reaches ladder position 0.9427 while every
+    lower block sits below 0.9 by construction and can carry no cliff at all.
+
+    **This is the one econ-curve control that moves P0**: the heat rates below
+    are written into the BASE fleet, i.e. into the P0 objective, so a
+    row-count change breaches the offer-surface family's P1-only
+    ``mc_bid_adjust`` seam and forfeits its bit-identity proof. That cost was
+    costed (memo §3.3) and accepted by the owner as the price of the
+    structural fidelity; see
+    ``docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`` §3.
     """
     slice_cap = curve_cap / n
+    # Slice geometry as (capacity, ramp-position midpoint) pairs. The default
+    # branch reproduces the equal-width form expression for expression, so an
+    # unarmed fleet is byte-identical rather than merely equal.
+    if top_refine and n > 1:
+        sub_cap = slice_cap / n
+        geom = [(slice_cap, (k + 0.5) / n) for k in range(n - 1)]
+        geom += [(sub_cap, (n - 1) / n + (j + 0.5) / (n * n)) for j in range(n)]
+    else:
+        geom = [(slice_cap, (k + 0.5) / n) for k in range(n)]
     steps: list[tuple[str, float, float, float, int, int, float]] = []
-    for k in range(n):
-        t = (k + 0.5) / n
+    for k, (cap, t) in enumerate(geom):
         if mid is not None:
             f = 2.0 * mid * t if t <= 0.5 else mid + (1.0 - mid) * (2.0 * t - 1.0)
         else:
             f = t**exp
         mult = lo_mult + (pk_mult - lo_mult) * f
-        steps.append((f"econc{k:02d}", slice_cap, base_hr * mult, 1.0, 0, 0, 0.0))
+        steps.append((f"econc{k:02d}", cap, base_hr * mult, 1.0, 0, 0, 0.0))
     return steps
 
 

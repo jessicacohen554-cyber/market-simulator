@@ -100,6 +100,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     energy_online_capability_cap: { cell: "." },
     offer_curve_by_group: { cell: "K" },
     ercot_faststart_pool_plant_physics: { cell: "." },
+    ercot_econ_curve_top_refine: { cell: "." },
     ercot_faststart_pool_offer: { cell: "." },
     ercot_offer_surface_continuous: { cell: "." },
     ercot_offer_surface_top_scoped: { cell: "." },

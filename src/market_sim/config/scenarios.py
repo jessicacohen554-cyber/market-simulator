@@ -854,6 +854,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hashes distinctly. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "ercot_faststart_pool_plant_physics",
+    # ercot-188 (c2) top-refined econ-curve slicing, SCHEME R1 (default off):
+    # dropped from the hash at its default so every pre-existing cache key
+    # stays byte-stable (the gate-off branch reproduces the equal-width form
+    # expression for expression, SP-1); an armed run builds a DIFFERENT LP
+    # layout — 2n-1 econ slices per plant instead of n, so n_gen itself moves —
+    # and hashes distinctly. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "ercot_econ_curve_top_refine",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1125,6 +1133,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_offer_surface_top_scoped": "False",
     "ercot_offer_surface_position_tail": "False",
     "ercot_faststart_pool_plant_physics": "False",
+    "ercot_econ_curve_top_refine": "False",
 }
 
 
@@ -8310,6 +8319,57 @@ class ScenarioConfig:
     # position; the tail regenerates from the same derive on any year's
     # corpus.
     ercot_offer_surface_position_tail: bool = False
+
+    # ERCOT-188 (c2) CLIFF-RESOLVING OFFER-CURVE REFINEMENT — SCHEME R1
+    # (default off, ERCOT-gated at its call site; docs/PRECOMMIT-ercot188-
+    # cliff-offer-curve-refinement-2026-08-11.md §2). Owner decision option (B)
+    # BUILD ANYWAY on the MEMO-ercot184 §8 card, taken as a STRUCTURAL-FIDELITY
+    # purchase under rule 1 [R-STRUCT] over the memo's own recommendation (A)
+    # CLOSE — which is recorded as OVERRIDDEN, not rewritten: the memo measured
+    # (c2)'s reach at +$1.99/MWh against a +$14.44 bar (13.8 %), failing its
+    # pre-registered G-REACH bar of +$5.00 by 2.5x.
+    #
+    # WHAT IT BUYS. `offer_curves._econ_curve_steps` slices each plant's econ
+    # ramp into `offer_curve_smoothing_n` EQUAL-WIDTH MW blocks, so the finest
+    # within-plant position the model can express is 1/n of the ramp and only
+    # 33 econ rows in the whole 2023 ERCOT fleet reach the measured ladders'
+    # top decile — a supply-curve top that CANNOT express a cliff, while
+    # reality's marginal price forms inside the top 0.24 % of the marginal
+    # resource's own submitted curve (q_act p50 0.9976, ercot-180). Armed, the
+    # ramp's TOP block is re-sliced n ways with the body's n-1 blocks left
+    # expression-for-expression identical (2n-1 = 11 slices at n = 6, top
+    # sliver 2.778 % of the ramp, total curve MW preserved), taking the fleet
+    # to 382 rows above ladder rel 0.9 quoting up to 145x delivered gas.
+    #
+    # ZERO NEW SCALARS (rule 23 [R-DOF]): the split point is 1 - 1/n, the
+    # boundary the ramp is ALREADY sliced at, and the sub-slice count is the
+    # same n — both the registered `offer_curve_smoothing_n`, so the scheme's
+    # shape follows n rather than carrying a free value of its own. Grounded in
+    # measurements that predate the build and never in a residual (MEMO §4.2:
+    # the top block is the marginal one in 14 of 33 econ-marginal object hours,
+    # more than any other slice; §4.3: it is the ONLY block reaching the
+    # measured ladders' top decile).
+    #
+    # ERCOT-GATED BECAUSE THE SLICER IS NOT (rule 25 [R-ISO-SCOPE], MEMO §6):
+    # `_econ_curve_steps` sits on the ISO-agnostic `fleet/assembly.py` path and
+    # ALL SIX keepers share n = 6, so an ungated arm would silently re-slice
+    # every ISO's fleet. `bins_to_fleet` therefore ANDs this field with
+    # `config.iso == "ERCOT"`, and passes top_refine=False at the committed-band
+    # call site so an ISO that later arms `committed_ramp_spread` cannot
+    # inherit the refinement (MEMO §6 item 3, the dormant coupling).
+    #
+    # IT MOVES P0, AND THAT COST IS ACCEPTED, NOT HIDDEN. The slicer writes
+    # heat rates into the BASE fleet, i.e. into the P0 objective, so unlike
+    # every ERCOT offer-surface mechanism since ERCOT-86 this is NOT applied at
+    # the P1-only `mc_bid_adjust` seam: it breaches that seam, FORFEITS the
+    # family's P0 bit-identity proof, and reprices ~16.5 GW of committed gas
+    # through the P1 startup-amortization channel. Precommit §3 carries it as a
+    # named permanent limitation.
+    #
+    # Forward-native (rule 13): a slicing rule is pure construction — no
+    # measured data enters, and a forecast year re-slices its own ramp
+    # identically.
+    ercot_econ_curve_top_refine: bool = False
 
     # ERCOT G-22 conditional-offer-distribution LOW leg (default off, ERCOT-gated):
     # the trough-price-formation MIRROR of ``ercot_offer_surface_conditional`` above.
