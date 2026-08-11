@@ -173,6 +173,45 @@ plant's `pmax`. Applied after `apply_gas_offer_margin`, on the BASE marginal
 cost so P0 and P1 see the same curve, vectorized over the full `(n_gen, T)`
 block (rule 2 — no hour loop).
 
+> ### AMENDMENT 2026-08-11 — §4.2's formula above is WRONG and is corrected here, BEFORE any adjudicating statistic
+>
+> **The defect.** `Δ_measured` is the real unit's **total** own-curve offer
+> rise — physical heat-rate rise *and* conduct rise, inseparably, because the
+> corpus publishes no heat rates. The formula above removes only the
+> **conduct** half of the model's own rise over its base band
+> (`offer_markup_hr × anchor`) while adding that **total** measured rise, so
+> the model's physical rise above base is counted **twice**.
+>
+> **The correction, and it is a like-for-like comparison rather than a
+> workaround.** Each above-base tranche is re-priced onto its own plant's base
+> row plus the measured rise:
+>
+> ```
+> mc[g, t]  :=  mc[base(g), t]  +  Δ_measured(p̄_g, state(t), gas(t))
+> ```
+>
+> where `base(g)` is that plant's FIRST tranche in fill order — the model-side
+> analogue of the corpus's `price_1`. Offer-rise is transferred onto
+> offer-rise: both sides' physical component sits inside their own rise, and
+> the model's base LEVEL, which carries its physical/fuel basis, is untouched.
+> The alternative — transferring conduct alone — would require separating the
+> real units' physical rise from their conduct rise, which **this corpus cannot
+> identify**, so it is not available at any price.
+>
+> **What this changes about the claim.** The mechanism now replaces the model's
+> `phys_*`-driven rise above base as well as its fitted markup, so its scope is
+> larger than §4.2 first stated: the above-base offer curve's **shape** is
+> measured end to end, not merely its markup. The DOF consequence in §10 item 4
+> is unchanged (the retired *fitted* scalars are still the 24 above-base price
+> multipliers; `phys_*` are measured, not free).
+>
+> **Status.** Found by inspection while wiring the mechanism, **before the
+> derive was run and before any solve**; no measurement informed it. The
+> corrected algebra is verified by a unit check (base row untouched, above-base
+> = base + measured rise, positions 0.167/0.500/0.833 on a synthetic 3-tranche
+> plant). Gates, priors, branches and traps in §§5–8 are **unchanged** — P-2's
+> prior was never conditioned on the formula's algebra.
+
 **Untouched:** every `committed` base tranche (the level anchor), all coal
 (rule 19 — coal has its own gas-keyed supply sigmoid; MISO-53 adjudicated the
 deep-discount premise on a different mechanism), every non-MISO ISO (rule 25).
