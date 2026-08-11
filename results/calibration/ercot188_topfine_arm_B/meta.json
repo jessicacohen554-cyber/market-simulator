@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-11T03:54:46",
+  "timestamp": "2026-08-11T04:29:54",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -97,7 +97,8 @@
     "ercot_storage_as_soc_reserve": true,
     "coal_perplant_offer_yearly": true,
     "ercot_offer_surface_position_tail": true,
-    "ercot_partial_outage_shaped_derate": true
+    "ercot_partial_outage_shaped_derate": true,
+    "ercot_econ_curve_top_refine": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -378,7 +379,7 @@
     "unit_outages": "../_shared/ERCOT/unit_outages-b33eb9c5dd84.parquet",
     "unit_outages_layup": "../_shared/ERCOT/unit_outages_layup-f26daaceaab4.parquet"
   },
-  "git_sha": "8288db1",
+  "git_sha": "191cb84",
   "basis_sha": "d542a2822020ba064530241cd7437931523489cf",
   "highspy_version": "1.15.1",
   "environment": {
