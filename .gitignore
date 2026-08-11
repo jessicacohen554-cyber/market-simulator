@@ -222,16 +222,25 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 /data/clean/
 
 # -----------------------------------------------------------------------------
-# 6. Dashboard / codebase-site generated data. frontend/data/backcast/*.js
-#    (manifest/benchmark/completeness) ARE committed (raw-checkout preview via
-#    the bc-data.js fallback); the "Deploy site to GitHub Pages" workflow is
-#    their single writer on main. The codebase-site subset below is generated at
+# 6. Dashboard / codebase-site generated data. The backcast namespace's
+#    generated manifest/benchmark/completeness.js are GITIGNORED since
+#    2026-08-11 (HOUSE-3), mirroring the forecast namespace below: they are
+#    fully DERIVED from the committed registry sidecars + bench parts, and the
+#    Pages deploy regenerates them into _site (scripts/build_manifest.py
+#    --site-dir) on every deploy — the deploy never reads the committed copies,
+#    so committing them only paid merge cost (four lanes collided on them
+#    2026-08-08..10). Local file:// preview now requires running
+#    `python scripts/build_manifest.py` first, exactly as the forecast side
+#    already does. The codebase-site subset below is generated at
 #    deploy time by scripts/build_codebase_site_backcast.py and never committed.
 #    The RETIRED keeper/status monoliths (sharded per-ISO 2026-07-19 into
 #    keepers/<ISO>.json + status/<ISO>.js so parallel promotions never collide)
 #    are ignored so a stale tool can't resurrect them into a commit.
 # -----------------------------------------------------------------------------
 docs/codebase-site/data/backcast/
+frontend/data/backcast/manifest.js
+frontend/data/backcast/benchmark.js
+frontend/data/backcast/completeness.js
 frontend/data/backcast/keepers.json
 frontend/data/backcast/status.js
 
