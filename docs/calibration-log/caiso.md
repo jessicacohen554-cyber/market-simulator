@@ -7803,3 +7803,79 @@ the next solving lane. Environment: this container's working tree arrived broken
 index, checkout aborted partway through `data/`, stale `index.lock`) and was restored from
 `HEAD` before any measurement. Record:
 `results/calibration/FINDING-caiso192-overlay-identification-2026-08-11.md`.
+
+## 2026-08-11 — caiso-194 (close-out campaign LANE 4): the `hydro_ror_split` classification is **REFUSED at G-SHARE** (−10.9665 pp vs ±10 pp) — killed before LP, keeper untouched. But the mechanism is **proven to ENGAGE**, closing caiso-188's open question in the other direction
+
+Lane 4 set out to make the keeper's advertised-but-inert `hydro_ror_split` genuinely
+effective and A/B it. It does not get that far: the partition builds and provably
+engages, but its **classification fails the pre-registered provenance gate**, so
+GATESPEC §5 fires — *"the classification is refused; no arm registered as a keeper
+candidate"*. **No arm solved, no bundle, no registration, no promotion; keeper
+`2026-08-09-caiso-188-d1-micseam` untouched.** Gate spec
+`GATESPEC-caiso194-hydro-ror-split-2026-08-11.md` (caiso-191, pre-measurement) was
+applied as written — no band edited or reinterpreted.
+
+**Gates.** G-COVER **PASS** at 99.9407 % of 6,740.300 MW. G-DET **PASS** on the repo's
+own determinism standard — two consecutive curator runs are *data*-byte identical
+(content sha256 `af3b82ac…`), their only differing bytes being `clean_io`'s
+`created_utc` stamp, which `scripts/lib/clean_io.py:388-394` documents as differing by
+construction; `tests/test_curate_hydro_plant_modes.py` 4/4 green. G-SIXISO **PASS**
+(CAISO-only). **G-SHARE FAIL**: full-population capacity-weighted non-shapeable share
+**13.4956 %** against the labeled-subset anchor **24.4621 %** — **−10.9665 pp**, a
+0.9665 pp miss. The anchor was computed with curator rule 1 alone and **committed in
+`PRECHECK-caiso194-hydro-ror-split-2026-08-11.md` (`2df253f`) before the completion
+rules ran on the unlabeled remainder**, so it could not be steered by the measurement
+it gates. Verified by independent recomputation from source, with no grain confound
+(zero EIA plants carry both a labeled and an unlabeled EHA row).
+
+**The confrontation, and why it indicts the gate's premise rather than the classifier.**
+The rules are **not** biased toward shapeable: audited against the labels they lean
+**+6.07 pp the other way** (30.5370 % predicted vs 24.4621 % truth on the labeled
+subset; 8 false-shapeable at 93.9 MW against 3 false-non-shapeable at 218.2 MW). The
+gap is **population composition** — EHA labels the small plants (n=97, mean 21.1 MW,
+median 5.9) and leaves the large reservoir projects unlabeled (n=99, mean 47.0 MW,
+median 12.1, 59.5 % of capacity in >100 MW units), headed by Edward C Hyatt/Oroville
+351.0, Colgate 315.0, Devil Canyon 276.2, Mammoth Pool 190.0, Big Creek 3 174.5 —
+canonical shapeable reservoir plants whose classification is *physically* right. So
+G-SHARE's transfer premise (labeled share ⇒ full-population expectation) is what the
+evidence indicts. **Escalated to the owner, and explicitly NOT used to rescue the arm**
+— the band is binding, it failed, the classification is refused.
+
+**Side result — caiso-188 §6 CLOSED, in the other direction.** With the partition
+present the mechanism **does** engage: the classifier is read and RoR units are stamped
+flat at `budget[g,m]/hours[m]`, **67/61/3 units in 2023/24/25** (802.3/797.0/312.8 MW =
+12.47/12.13/7.99 % of fleet pmax) against **0** with the flag off, and the monthly
+energy budget is **bit-identical off vs on in all three years** — it redistributes
+*when* the water runs, never *how much*. caiso-188's inertness was the **absent
+partition, not dead wiring**. Object-level, no LP, no scoring
+(`scripts/probes/_caiso194_engagement.py` → `_caiso194_engagement.json`);
+`TestHydroRoRSplit::test_split_stamps_ror_at_its_own_flat_budget` and
+`::test_split_off_is_inert` pass independently once the fleet's data dependencies are
+materialised.
+
+**C3a was never measured or quoted** — no arm solved, and the direction-hazard clause
+makes it inadmissible in either direction regardless. **caiso-141 wall respected**: no
+gate, probe, or diagnostic scored hydro or pumped-storage output against actuals; every
+input is a published source attribute (EHA `Mode`, HILARRI, Corps ownership), a
+nameplate census (EIA-860), or model-side fleet construction. Cell
+`hydro_ror_split` **K → R** (provenance refusal, **not** a dispatch-level refutation —
+a re-anchored classifier is a new charter, not a DO-NOT-REDO-frozen cell).
+
+**Escalations owed to the owner:** (1) G-DET's literal "byte-identical partitions" band
+is unsatisfiable for *any* clean partition, since `clean_io` timestamps every write;
+(2) the G-SHARE transfer premise above; (3) two handoff contradictions — "PRECHECK is
+already discharged by the GATESPEC" (it was not; written and committed this session),
+and `main@6a37611` where `origin/main` was **`a3a7cd1`** at session start and still is.
+
+**Environment — the recurring CAISO clone failure is ROOT-CAUSED.** caiso-192 recorded
+the same broken tree; the cause is that the campaign clone recipe's `--filter=blob:none`
+had not taken effect (no `promisor`, no `partialclonefilter` in `.git/config`) while the
+fetch refspec stayed `+refs/heads/*` — so every fetch attempted a full-blob, all-branch
+transfer of a multi-GB history, timed out, and left a 2.4 GB **unindexed** `tmp_pack_*`
+(0 usable objects) plus a stale `.git/shallow.lock` for the next session to trip over.
+Fixed with `--depth=1 --single-branch --branch main --filter=blob:none` (397 KB indexed
+pack, `promisor=true`), then `git sparse-checkout`. **The recipe's `data/` cone is also
+too narrow** — beyond the documented `_processed-legacy` gap, `data/raw/fleet-egrid/`
+is required or `build_zone_lookup` throws, every hydro unit is dropped for a blank zone,
+and the fleet builds **0 units** while still printing a healthy-looking budget line.
+Record: `results/calibration/FINDING-caiso194-hydro-ror-split-2026-08-11.md`.
