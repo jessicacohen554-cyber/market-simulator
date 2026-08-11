@@ -7737,3 +7737,69 @@ stays diagnosable only via `hourly/` pins); the **forecast** run-record writer
 remains dead code (re-verified: no production caller) with a live guard call, documented
 rather than deleted because the façade-shim regression guard asserts its re-export.
 Record: `results/calibration/FINDING-caiso190-solvepath-integrity-2026-08-11.md`.
+
+## 2026-08-11 — caiso-192 (close-out campaign LANE 1): the outage-overlay mechanical-vs-economic split is ALREADY MADE — killed before solve, keeper unchanged
+
+**Zero LP. Nothing registered. No data byte written. DOF 11/8 untouched. C3a never read.**
+Keeper UNCHANGED at `2026-08-09-caiso-188-d1-micseam`. 2023–2025 only; both holdout
+markers untouched (owner acts).
+
+`GATESPEC-caiso192-overlay-identification-2026-08-11.md` (authored by caiso-191 under
+owner ruling 1) chartered separating mechanical unavailability from economic layup in the
+CAMPD CC overlay with the shipped merit-order guard, "so that only MECHANICAL spans derate
+the LP". The lane's first check refutes its premise: **the guard is already applied to the
+extract the LP derates from.** Re-deriving with `--merit-order-guard` reproduces the
+committed `data/raw/campd-unit-outages-CAISO.csv` **byte-identically** (sha256
+`25360e90…1166c6`); re-deriving without it yields a strict **superset** whose +810-row
+surplus is **set-equal** to the committed layup companion (0 rows lost). So the
+pre-registered ARM's extract **is** the CONTROL's, the A/B delta is empty by construction,
+and no LP was spent measuring a guaranteed zero.
+
+**Gates 3 FAIL / 4 PASS.** G-RATE **FAIL** — post-guard CC_REGULAR `X` through the shipped
+loader is 0.2157 / 0.2621 / 0.3186 against the [0.07, 0.15] band, 1.4–2.1× the ceiling in
+every year. G-STAB **FAIL** — YoY +4.64 / +5.66 pp against ≤3 pp (the ratio leg 1.4772 ≤ 1.5
+passes and does not rescue it). G-SEP **FAIL on leg (c) only** — legs (a) layup OOM
+0.966/0.987/0.974 ≥ 0.80 and (b) separation 90.5/94.3/92.9 pp ≥ 30 pp pass emphatically,
+but the spring signature runs **opposite** the prediction (layup Mar–May 0.312/0.352/0.250
+< retained 0.458/0.471/0.373), putting the planned-maintenance shape on the **mechanical**
+spans — evidence against the residual being economic displacement. G-LOYO **PASS
+(vacuous)**: no new threshold, shipped constants used as shipped. G-CONS **PASS**: the
+fail-safe was verified live and not weakened (15/28/**164** unidentified retained spans stay
+mechanical; the 2025 jump is the fail-safe doing more work in the conservative direction in
+the highest-removal year). DOF and instrument closure both PASS — no LMP/price series is
+read anywhere in the classifier path.
+
+**What the guard actually does**, measured against a counterfactual PRE-guard extract
+(committed ∪ layup, temp path only — `data/raw` byte-unchanged): CC_REGULAR
+0.2303/0.2795/0.3385 → 0.2157/0.2621/0.3186, i.e. only **−1.46 / −1.75 / −1.99 pp**, against
+a band that needs a further **7–17 pp**. **The caiso-187 §3 object therefore survives the
+instrument intact** and its published 24–35 % removal is a **post-guard** figure.
+
+**The contradiction, recorded.** `FINDING-caiso187` §6 option 1 and the GATESPEC both
+charter the lane as if the guard were an available **un-applied** fix. Two committed records
+already said otherwise — the matrix `campd_outage_windows` caiso-183 note (which prints both
+the `--merit-order-guard` recipe and the sha256 `25360e90`) and the `outage_artifact_provenance`
+xiso-2 row ("ERCOT, **CAISO**, PJM, NYISO, NEISO all BYTE-IDENTICAL") — and caiso-180 had
+already measured this mechanism's LP effect as **INERT** (−0.10 pp/yr). It is the mirror image
+of caiso-188 §7 item 5: a flag recorded as armed does not prove a mechanism ran, and machinery
+sitting un-called in a module does not prove it is un-applied; a byte-level re-derivation
+discriminates in both directions in minutes. Disclosed against interest: a defect in this
+session's own probe (`unit_outage_derate_factors` is `@lru_cache`d and the extract path is not
+among its arguments, so the first counterfactual silently returned the cached committed-extract
+result and printed a spurious 0.0 pp) — caught, fixed, reported.
+
+Three independent cross-checks reproduce exactly: sha256 `25360e90` (caiso-183), layup counts
+93/164/98 (caiso-180), `X_c` 0.2157/0.2621/0.3186 (caiso-187, matched to six decimals).
+
+**Still open:** the caiso-187 §3 object (21.6/26.2/31.9 % CC_REGULAR removal, +48 % in two
+years) is unexplained and is **not** merit-order economic layup; integration-protocol **RUNG 1
+is EMPTY** and Wave 2 starts from the caiso-188 control with lane 2, no backfill (protocol §2);
+lane 2's `X_c^filtered ≥ W_c` obligation is **satisfied by identity** (caiso-187's `X_c` was
+already post-guard) and lane 2's value is not recomputed; no promotion occurs so the caiso-189
+§8.3 C3c re-measurement does not fire. **CONTROL-ε was NOT measured** — no arm solved, so the
+ratified tolerance and the control recipe's two environment conditions (materialised
+capacity-deliverability partition; `hydro_ror_split` False) were never exercised and are owed by
+the next solving lane. Environment: this container's working tree arrived broken (empty git
+index, checkout aborted partway through `data/`, stale `index.lock`) and was restored from
+`HEAD` before any measurement. Record:
+`results/calibration/FINDING-caiso192-overlay-identification-2026-08-11.md`.
