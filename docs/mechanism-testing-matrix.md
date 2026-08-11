@@ -953,6 +953,44 @@ rule-13-admissible mechanism available to carry it.
 > is the control's) — both PASS, no verdict effect, not fixed here. Record:
 > `results/calibration/FINDING-caiso191-campaign-adjudication-2026-08-11.md`.
 
+> **caiso-190 (2026-08-11) — SOLVE-PATH INTEGRITY (Wave 0B), NO LEVER, NO SOLVE, NO CELL
+> VERDICT.** The CAISO lever queue stays EMPTY (caiso-185/188/191); this session is
+> **off-queue by design** — rule-14 / rule-20 provenance-integrity work on the solve path
+> — and tested, armed and adjudicated **nothing**. **No matrix cell changes.** It closes
+> the silent-partition no-op class caiso-188 §4–§7 measured, on **both** lanes. (a) The
+> `check_clean_partitions` registry becomes a typed, additive `PartitionRequirement` list
+> with **per-entry severity**: no declared fallback (`hydro_ror_split`) ⇒ fail fast
+> everywhere; declared fallback (`capacity_deliverability_limits` → the fitted 7,500 MW
+> `WECC_import_simultaneous` scalar; `outage_source == "historic"` → statistical
+> availability) ⇒ fail fast in **strict** mode, loud WARN otherwise. **`strict` defaults
+> to True**, so the calibration lane keeps caiso-188's behaviour byte-for-byte and a
+> caller must opt *out*; nothing is loosened. (b) The **forecast orchestrator**
+> (`runner.py::run_scenario_iso`) — caiso-188 §6a's still-owed half, which had no guard
+> call at all — now calls it at `strict=False`. (c) `run_config.json` gains a top-level
+> additive **`resolved_inputs`** block (caiso-188 §6b's named durable fix): the resolved
+> seam cap with `source` ∈ {`mic_partition`, `baked_fallback`, `flag_off`} per year, the
+> hydro-plant-modes **classified-plant count** (making `hydro_ror_split`'s engagement
+> checkable from committed artifacts — §6c, and the input lane 4's four-leg proof can now
+> read it), and the CAMPD extract sha. **Recorded at resolution time** by
+> `apply_interchange_topology` through one shared resolver, never re-derived at record
+> time — the drift this closes; resolution moved statement-for-statement, so
+> partition-present behaviour is unchanged. Outside `scenario_config`: `scenarios.py`
+> diff empty, `check_mechanism_matrix.py` clean, no cache key moves. **+23 tests**
+> including two static wiring guards (every `run_energy_solve` module must also call
+> `check_clean_partitions`; `spec.py` must resolve through the shared helper) — a unit
+> test of a guard cannot catch a guard with **no call site**, which is why caiso-157
+> recurred. Fast lane, same container both arms: 669F/5,863P → 669F/**5,886P**, **+23
+> passed / +0 failed**. **Second defect found and fixed:** the guard swallowed a raising
+> probe, so a partition present-but-**unreadable** counted as healthy — and
+> `test_present_partitions_pass` had itself been passing only because both its
+> bare-`to_parquet` fixtures raised `SchemaError`, leaving that leg never exercised.
+> Contradictions reported: the brief's "guard has NEVER run in a solve" is the
+> **pre-caiso-188** state (the backcast call site existed at HEAD); the CAMPD extract is
+> **committed**, not gitignored; `outage_detect.py` is under `scripts/lib/`; and the
+> campaign's cone-mode sparse checkout materialises no `data/raw/` subdirectory, so the
+> documented 6,620/2 fast-lane baseline is not reproducible under it. Record:
+> `results/calibration/FINDING-caiso190-solvepath-integrity-2026-08-11.md`.
+
 > **caiso-189 (2026-08-11) — GOVERNANCE / RECORD REPAIR, NO LEVER, NO SOLVE, NO MECHANISM.**
 > The CAISO lever queue is **EMPTY with every cell adjudicated** (caiso-185, re-confirmed
 > caiso-188); this session was **off-queue by design** and tested, armed and adjudicated
