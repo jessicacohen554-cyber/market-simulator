@@ -7129,3 +7129,80 @@ Records: `results/calibration/FINDING-ercot186-rule18-grain-2026-08-10.md`,
 stays `K`, its ercot-176 annotation replaced by the measured record; ERCOT
 lever-queue item 25. ERCOT holds no `complete`/`final` marker, so no
 `calibration-complete.json` re-key applies.
+
+---
+
+## ercot-187 (2026-08-10) — HYGIENE: the leap-day derive defect, and the golden-hash drift ATTRIBUTED (no solve, no keeper movement)
+
+**Keeper unchanged: `2026-08-09-ercot185-shaped-partial`.** No mechanism armed,
+no `ScenarioConfig` field, no LP solved, no run registered, no matrix cell
+minted, no year outside {2023, 2024, 2025}.
+
+**Item 1 — the ercot-183 leap-day defect, fixed.**
+`scripts/data/derive_ercot_faststart_pool.py::_prep_clock_gas` computed the
+Feb-29 drop mask on the pre-filter frame and then indexed a *post*-filter
+re-parse of `SCED Time Stamp` with it, so any leap-year basis carrying Feb-29
+rows died with `IndexError` (6,509,857 vs 6,492,097 — the 17,760-row delta is
+Feb-29-2024's CT rows). Unreachable before the ercot-183 delivery-2024 corpus
+intake, which is why it sat latent; it blocked any 2024 corpus-basis pool
+derive. `_ts` now comes from the pre-filter parse already in hand. **No
+committed artifact went through the buggy path, and the defect is fail-closed
+so none could have**: with zero Feb-29 rows the mask is all-True and the two
+expressions are the same array; with any, the derive raises before writing.
+Measured on both artifacts' own `source_files` — 2023 is the 315-shard
+publication-month corpus of a **non-leap** year, and all four 2024/2025
+sample-day extracts carry **feb29 = 0** rows — so
+`ercot_faststart_pool_condbinned.json` / `_contpct.json` are byte-identical
+across the fix and were **not** regenerated. Hermetic regression test added
+(`tests/curation/test_derive_ercot_faststart_pool_clock.py`): Feb-29 rows sit
+mid-frame so a truncate-instead-of-mask regression fails on `_ts`/`_date`
+alignment, not merely on the row count. The identical pattern survives in
+`scripts/probes/ercot89_shoulder_online_measure.py::_clock` (the ancestor it was
+factored from) — **reported, not edited**, as `scripts/probes/` is the frozen
+calibration record.
+
+**Item 2 — the ERCOT golden-hash drift: ATTRIBUTED, and ERCOT-185 EXONERATED.**
+`test_fleet_arrays_golden`'s `availability` + `min_gen` drift is **outcome (a)**,
+but not on the hypothesis the lane was opened on. Both hashes are
+**byte-identical at `776bbf6b` (before the ercot-185 lane) and at HEAD (after it
+landed and was promoted)** — ERCOT-185 is refuted by direct measurement. The
+cause is **`6a8f285c` "neiso-65: adopt guard-corrected CAMPD extracts, all six
+ISOs" (2026-07-26)**, the merge of the merit-order guard the owner **ADOPTED** in
+`campd-economic-layup-fix-charter-2026-07.md` §8, reaching the fixture through
+exactly one file, `data/raw/campd-unit-outages.csv`. Attribution is **byte-exact**:
+HEAD code with that file at its pre-guard blob reproduces the ORIGINAL golden
+hashes on both fields, so model code is **provably inert** across the whole drift
+and the authorized correction owns **100 %**. Direction matches the commit's own
+disclosure (ERCOT 1,352 windows / 3,986 GW-days of economic layup leave the
+mechanical extract ⇒ mean 2023 availability **0.7364 → 0.7615, +2.51 pp**).
+Killed and not to be re-opened: environment/lock drift (identical under
+`pip` pandas 3.0.5 and `uv sync` pandas 3.0.3; `uv.lock` unchanged across the
+span) and the `data/clean` "data-lane" guess of ffr-3d §6 (the fixture makes
+**zero** clean-store probes at default — `_use_clean()` is `MARKET_SIM_USE_CLEAN`-gated).
+**Golden regenerated** on that authorization, exactly two of 18 field hashes
+moving, `n_gen` 1,166 unchanged. **No keeper is affected** — the ERCOT keeper was
+solved two weeks after the guard landed, so the fixture moves *onto* its input
+basis.
+
+**Two brief premises corrected.** The reported "6 fast-tier failures" are **one**
+real failure (the golden) plus **five** unprovisioned-`data/clean` failures
+(1 × `test_soundness` E2E + 4 × `test_export::TestExportScenarioJson`, all green
+after `curate_confirmed_retirements.py`), and **none of the six is in the fast
+tier** — CI's own `-m "not slow and not integration and not fulldata"` deselects
+all of them, and a CI runner has neither `data/raw` nor `data/clean`. **Filed for
+the owner**: this golden went red on 2026-07-26 and was carried as incidental
+noise by seven later sessions (caiso-143, ffr-1b, ffr-3d, ffr-3u, ffr-5c,
+f2-45u, miso-148) because nothing schedules the tier it lives in.
+Measured after this session's changes, the fast tier is **6,620 passed / 2
+failed** (18 m 35 s serial), and neither failure is one of the six: both are
+`test_ercot_thermal_as_endogenous::TestScreenMutualExclusion` on the
+`retirement_rule='pipeline' requires a simulation year` flip — ffr-3d §6's
+already-triaged D-1 fallout, owned by the retirement lane, outside this
+branch's six-file change surface and untouched here (rule 25). **Zero
+fast-tier failures added.**
+`test_soundness::TestPerformance::test_full_ercot_8760_timing` (31.13 s vs a 30 s
+budget on a 4-core box) is a machine-speed artifact, deliberately untouched.
+
+Records: `results/calibration/FINDING-ercot187-golden-hash-attribution-2026-08-10.md`.
+ERCOT holds no `complete`/`final` marker, so no `calibration-complete.json`
+re-key applies.
