@@ -99,9 +99,14 @@ def capture_p0(year: int, armed: bool) -> dict:
     import market_sim.pipeline.solve as solve_mod
 
     meta = json.loads((KEEPER / "meta.json").read_text())
+    # Mirror replay_keeper.main()'s own assembly exactly (its build_kwargs
+    # deliberately omits the three it fills in itself), so the P0 measured here
+    # is the A/B's P0 and not a differently-configured one.
     kwargs = rk.build_kwargs(meta)
     kwargs["years"] = [year]
     kwargs["iso"] = meta["iso"]
+    kwargs["hours"] = int(meta.get("hours", 8760))
+    kwargs["reference"] = rcf._load_reference()
     if armed:
         kwargs.setdefault("prb_overrides", {})
         kwargs["prb_overrides"] = {**kwargs["prb_overrides"], FIELD: True}
@@ -120,7 +125,7 @@ def capture_p0(year: int, armed: bool) -> dict:
     solve_mod.compute_monthly_markup = _spy
     try:
         with tempfile.TemporaryDirectory() as td:
-            kwargs["out_dir"] = Path(td) / "p0probe"
+            kwargs["run_dir"] = Path(td) / "p0probe"
             try:
                 rcf.solve_and_persist(**kwargs)
             except _StopAfterP0:
