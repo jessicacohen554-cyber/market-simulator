@@ -2311,7 +2311,11 @@ DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 # The registry SHIPPED EMPTY at FH-2 (mechanism only) and is POPULATED by FH-3
 # (2026-08-02) with per-ISO near/long rates read off the ERCOT LTLF / PJM LTLF /
 # NYISO Gold Book / ISO-NE CELT / MISO LTLF / CEC IEPR editions published in the
-# base year, each cited to its edition and table (rule 5 [R-NO-MAGIC]).
+# base year, each cited to its edition and table (rule 5 [R-NO-MAGIC]). FH-3
+# landed 11 of 12 (ISO, vintage) cells and left CAISO 2021 as a MANUAL DOWNLOAD,
+# which is what blocked FH-5's CAISO Arm K; the CEDU 2020 intake (2026-08-11,
+# docs/handoffs/caiso-vintage-2021-intake-2026-08-11.md) closes it, so both
+# vintages now cover all six registered ISOs — 12/12, no cell outstanding.
 #
 #   * ``ScenarioConfig.demand_growth_vintage = None`` (the default) resolves
 #     DEMAND_GROWTH_RATES — byte-identical to every existing run; and
@@ -2340,8 +2344,14 @@ DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 #     which the NEISO block above already flags. Both T1-FF arms read THIS
 #     table, so no arm-vs-arm comparison is affected — see the findings doc
 #     §3 for the disclosure.)
-#   * near = CAGR from the edition's first forecast year to
-#     DEMAND_GROWTH_TRANSITION_YEAR (2030).
+#   * near = CAGR from the VINTAGE's base year (the as_of key) to
+#     DEMAND_GROWTH_TRANSITION_YEAR (2030) — the base year is where
+#     runner._scale_demand starts compounding. In 11 of the 12 cells the base
+#     year IS the edition's first forecast year, so the two readings coincide;
+#     they part company only for CAISO 2021, whose CEDU 2020 edition opens at
+#     2020, and there the BASE year governs. That reading is not a choice made
+#     for this cell: the CAISO 2023 cell already anchors at 2023 inside a
+#     2022-2035 edition, and reproduces its stored 0.0130/0.0132 exactly.
 #   * long = CAGR from 2031 to the edition's last forecast year, but ONLY when
 #     the edition carries >= 3 post-2030 forecast years; otherwise long is
 #     EDGE-HELD to near and marked "(long edge-held)" below. An edge-held long
@@ -2391,11 +2401,47 @@ DEMAND_GROWTH_RATES_VINTAGES: dict[int, dict[str, dict[str, dict[str, float]]]] 
         # AS-OF CAVEAT: published November 2021, i.e. inside the base year.
         # See findings doc §3.4.
         "MISO": {"mid": {"near": 0.0117, "long": 0.0096}},
-        # CAISO: MISSING — the 2020/2021-vintage CEC California Energy Demand
-        # STATE baseline forms are not reachable from the CEC's current
-        # planning-library pages. MANUAL DOWNLOAD (findings doc §4). Left absent
-        # rather than back-filled from the CEDU 2022 vintage below, which would
-        # be a post-base-year leak.
+        # CAISO — CEC "California Energy Demand Forecast Update, 2020-2030
+        # Baseline Forecast" (CEDU 2020, the 2020 IEPR Update demand forecast,
+        # docket 20-IEPR-03), STATE Planning Area forms, ADOPTED 2021-01-26 by
+        # CEC Resolution 21-0125-2 (TN 236455; Notice of Availability TN 236333,
+        # 2021-01-14). Form 1.2 Total_Energy_For_Load, GWh, off the "Corrected -
+        # February 2021" STATE workbooks — Low TN 236984 / Mid TN 236983 / High
+        # TN 236985, each retrievable at
+        # https://efiling.energy.ca.gov/GetDocument.aspx?tn=236983 (swap the tn).
+        #   low  256,568.979 (2021) -> 258,557.502 (2030)  => +0.0858 %/yr
+        #   mid  262,562.244 (2021) -> 284,825.953 (2030)  => +0.9084 %/yr
+        #   high 268,824.268 (2021) -> 309,599.149 (2030)  => +1.5815 %/yr
+        # Horizon ends 2030, i.e. ZERO post-2030 forecast years => long
+        # EDGE-HELD to near, same as ERCOT/NEISO above.
+        # EDITION CHOICE: CEDU 2020 is the LATEST CEC demand forecast adopted at
+        # or before the 2021 base year — earlier in the base year (January) than
+        # MISO's November-2021 edition above. Its successor, CED 2021 ("Demand
+        # Forecast Update, 2021-2035", Resolution 22-0126-02, TN 241296), was
+        # adopted 2022-01-26 and is therefore a post-base-year leak, refused on
+        # the same ground FH-3 refused CEDU 2022 for this cell.
+        # ALL THREE CASES are edition-published here (three separate STATE
+        # workbooks), unlike the 2023 cell below where CEDU 2022 publishes a
+        # single Baseline. They are an ECONOMIC/DEMOGRAPHIC band — Form 2.2
+        # varies personal income, commercial employment, floorspace and
+        # households across the cases — i.e. the same kind of band as NYISO's
+        # Gold Book Low/Baseline/High above, NOT the weather spread FH-3 §4 M3
+        # ruled out for ERCOT/PJM.
+        # The "Corrected" filing (which fixed peak and sector energy totals) is
+        # IMMATERIAL to Form 1.2: it moves 2021 and 2030 by <0.1 GWh on ~262,562
+        # and leaves the CAGR unchanged to 6 dp, so the cell does not depend on
+        # the original-vs-corrected choice; the corrected form is cited per
+        # rule 14 [R-ACCURATE].
+        # FOOTPRINT CAVEAT: the CEC forecast is STATEWIDE, while the model's
+        # CAISO carries ~80 % of California load; the statewide growth RATE is
+        # used as the CAISO proxy — the same footprint approximation the 2023
+        # cell below and the live CAISO block above both make.
+        # Closes the one MANUAL DOWNLOAD FH-3 left open (findings doc §4 M1).
+        "CAISO": {
+            "low": {"near": 0.0009, "long": 0.0009},
+            "mid": {"near": 0.0091, "long": 0.0091},
+            "high": {"near": 0.0158, "long": 0.0158},
+        },
     },
     # ===== as-of 2023 (Phase A base; plan §3.1) =====
     2023: {

@@ -250,6 +250,82 @@ class TestDemandGrowthVintageMechanism(unittest.TestCase):
             vintaged = ScenarioConfig(iso="ERCOT", demand_growth_vintage=2021)
             self.assertNotEqual(base.cache_key(), vintaged.cache_key())
 
+    def test_every_landed_vintage_covers_every_registered_iso(self):
+        # FH-3 landed 11 of 12 cells; (2021, CAISO) was the MANUAL DOWNLOAD it
+        # refused to guess, and the refusal is what blocked FH-5's CAISO Arm K.
+        # The CEDU 2020 intake closes it, so BOTH vintages are now complete
+        # across the registry. A new ISO added to MARKET_DESIGN without its
+        # vintage rows fails here rather than at a solve.
+        for as_of in DEMAND_GROWTH_RATES_VINTAGES:
+            for iso in MARKET_DESIGN:
+                config = ScenarioConfig(iso=iso, demand_growth_vintage=as_of)
+                rate = resolve_demand_growth_rate(config, 2023)
+                self.assertIsInstance(rate, float, f"{as_of}/{iso}")
+
+    def test_caiso_2021_is_the_cedu_2020_edition(self):
+        # CEC "California Energy Demand Forecast Update, 2020-2030" (CEDU 2020),
+        # STATE Form 1.2 Total_Energy_For_Load, adopted 2021-01-26 — the latest
+        # CEC edition published at or before the 2021 base year. Values pinned so
+        # a later re-derivation has to cite a source-data change (rule 23).
+        cell = DEMAND_GROWTH_RATES_VINTAGES[2021]["CAISO"]
+        self.assertEqual(
+            cell,
+            {
+                "low": {"near": 0.0009, "long": 0.0009},
+                "mid": {"near": 0.0091, "long": 0.0091},
+                "high": {"near": 0.0158, "long": 0.0158},
+            },
+        )
+        # The edition's horizon ends 2030 => long is EDGE-HELD to near, the same
+        # construction ERCOT and NEISO carry in this vintage.
+        for case, eras in cell.items():
+            self.assertAlmostEqual(eras["long"], eras["near"], msg=case)
+        # CEDU 2020 publishes three STATE workbooks whose Form 2.2 economic and
+        # demographic drivers differ, so the band is edition-published, not
+        # invented (rule 5) — and it orders low < mid < high.
+        rates = {
+            p: resolve_demand_growth_rate(
+                ScenarioConfig(
+                    iso="CAISO", demand_growth_vintage=2021, demand_growth_path=p
+                ),
+                2023,
+            )
+            for p in ("low", "mid", "high")
+        }
+        self.assertLess(rates["low"], rates["mid"])
+        self.assertLess(rates["mid"], rates["high"])
+        # ...and it is genuinely as-of: well under the live 2.8 %/yr CAISO rate,
+        # which encodes a data-center boom no 2021 edition had seen.
+        self.assertLess(rates["high"], DEMAND_GROWTH_RATES["CAISO"]["mid"]["near"])
+
+    def test_fh3_cells_are_undisturbed_by_the_caiso_intake(self):
+        # The CEDU 2020 row is PURELY ADDITIVE: every cell FH-3 landed still
+        # resolves to its own edition's rate. Guards a neighbouring-row slip in
+        # the same dict literal.
+        for iso, near in (
+            ("ERCOT", 0.0200),
+            ("PJM", 0.0034),
+            ("NYISO", -0.0038),
+            ("NEISO", 0.0107),
+            ("MISO", 0.0117),
+        ):
+            config = ScenarioConfig(iso=iso, demand_growth_vintage=2021)
+            self.assertAlmostEqual(
+                resolve_demand_growth_rate(config, 2023), near, msg=iso
+            )
+
+    def test_a_vintage_with_no_row_still_fails_closed_for_every_iso(self):
+        # Landing (2021, CAISO) must NOT soften the seam. 2020 and 2022 are
+        # genuinely unregistered vintages: they raise for CAISO exactly as for
+        # every other ISO, and the message names the registry rather than
+        # quietly handing back the current (2025/26-edition) table.
+        for as_of in (2020, 2022):
+            self.assertNotIn(as_of, DEMAND_GROWTH_RATES_VINTAGES)
+            for iso in MARKET_DESIGN:
+                with self.assertRaises(ValueError, msg=f"{as_of}/{iso}") as ctx:
+                    ScenarioConfig(iso=iso, demand_growth_vintage=as_of)
+                self.assertIn("DEMAND_GROWTH_RATES_VINTAGES", str(ctx.exception))
+
 
 class TestScaleDemandBothDirections(unittest.TestCase):
     """Plan §4 row 6 compounding defect — the silent backward 1.0."""
