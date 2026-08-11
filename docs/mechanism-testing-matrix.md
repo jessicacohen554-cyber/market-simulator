@@ -915,6 +915,44 @@ rule-13-admissible mechanism available to carry it.
 
 ### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-09-caiso-188-d1-micseam`** — caiso-188, the SEAM-CAP PROVENANCE repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY under rule 14 with **ZERO gate flips either way**: the fitted 7,500 MW `WECC_import_simultaneous` cap the ledger called *superseded* had been binding 764/477/807 h since caiso-175, and the published branch-group MIC (16,055/16,452/16,148 MW) retires it — seam dual now EXACTLY 0.000 in every hour. **NOT-YET**, 8 criteria, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.4 / +12.9 %**. Superseding **`2026-08-09-caiso-184-c1-lpbasis`** — caiso-184, the outage-derate DENOMINATOR repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY with **EVERY pre-registered gate PASSING**; **NOT-YET**, 8 criteria scored, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.5 / +13.1 %** having narrowed in all three years against a **ZERO** same-head noise floor). **QUEUE RE-CONFIRMED EMPTY 2026-08-09 by caiso-185: `cc_capacity_reconcile` — the last named un-adjudicated in-model cell — is **REJECTED EX ANTE, NO LP SPENT**, and the open question is now an OWNER SITTING, not a tenth lever.** **THE SITTING IS NOW PREPARED (owner-sitting session, 2026-08-09, `docs/handoffs/caiso-186-owner-sitting-2026-08-09.md`): both owner questions are DECIDABLE from committed artifacts, and BOTH ANSWER **NO** — the walled PS water-state intake covers only **62.1 % / 10.4 %** of 2024/2025's required C3a move at its most favourable bound, and a C3a ledger amendment would take TWO rubric changes, inherit to ERCOT (−32.4 %) and MISO (−14.1 %), and flip MISO for free. **THE NON-LEVER WORK IS RE-STATED AND IT IS LARGER THAN THE LEDGER SAYS:** CAISO's ISO-specific residual DOF census is **3, not 4** (the TAC-weights row CLOSED at caiso-172) and CAISO is **TIED WITH ERCOT**, not "the most of any ISO" — but the `IMPORT_TRANCHES[CAISO]` row's "superseded on the binding path" text **DOES NOT CHECK OUT**: split into limbs, **the four spot CAPACITIES (8,800 MW, uncited, and the object FINDING-caiso140 §C measures as pinning the belly λ) and the two firm PRICES (re-armed onto the margin by `caiso_firm_import_selfsched_clip`, 0.97/4.63/5.71 TWh/yr) are LIVE AND FITTED** — ~~7~~ **6 live fitted scalars** on the backcast binding path where the ledger implies ~1 *(count CORRECTED 7 → 6, 2026-08-11 by caiso-189, re-stamping this header to the caiso-188 census block below: 4 spot capacities + 2 firm prices is **6**, and the committed DOF ledger on the keeper bundle carries `n_scalars: 6` on the `IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]` row — `results/calibration/caiso188_d1_micseam/calibration_attestation.json`, `FINDING-caiso188` §1–§2)*.**
 
+> **caiso-191 (2026-08-11) — CAMPAIGN ADJUDICATION (Wave 0C), NO LEVER, NO SOLVE, NO
+> CELL VERDICT.** The CAISO lever queue stays EMPTY (caiso-185/188); this session is the
+> close-out campaign's governance keystone — it RECORDS the owner's seven 2026-08-11
+> rulings (`results/calibration/caiso191-owner-rulings-2026-08-11.md`: caiso-187 options
+> 1 AND 2 both GRANTED, independent; storage-NQC arming DEFERRED; the PS water-state
+> intake purchase DECLINED — the caiso-141 wall stands; a C3a rubric amendment DECLINED —
+> NOT-YET is the honest fallback; C3c stays the ledgered caveat; lane 5 conditionally
+> authorized) and AUTHORS the acceptance gates for every measurement lane BEFORE anyone
+> measures: `GATESPEC-caiso192-overlay-identification-2026-08-11.md` (lane 1),
+> `GATESPEC-caiso193-wefor-residual-2026-08-11.md` (lane 2, carrying the cure of the
+> caiso-187 §4 pre-registration defect), `GATESPEC-caiso193-stgas-wefor-2026-08-11.md`
+> (lane 3), `GATESPEC-caiso194-hydro-ror-split-2026-08-11.md` (lane 4),
+> `GATESPEC-caiso195-ps-physical-2026-08-11.md` (lane 5 — adjudicated **GO WITH SCOPE
+> RESTRICTIONS**: zero MW added + C3a-blind acceptance discharges the caiso-140 §G
+> fence; Hyatt-in-storage-block as a static cited bound discharges caiso-141 §G). Every
+> spec embeds the campaign direction-hazard clause verbatim (C3a inadmissible as
+> acceptance evidence in either direction), closes its instruments against every
+> LMP/price series, anchors every band to published expectations / physical
+> stationarity / pre-existing repo measurements — never to the values under
+> adjudication — and biases classifier ambiguity AGAINST the C3a-favorable direction.
+> **Lane 6 (the 8,800 MW uncited spot capacities) is desk-adjudicated NO** — every
+> derivation axis fenced (caiso-188 §7), spent, or unpublished; stays a declared
+> residual, no build session reserved. **Wave 2 is pre-committed before any Wave-1
+> result exists** (`caiso191-integration-protocol-2026-08-11.md`): ladder
+> control→+L1→+L2→+L3→+L4(→+L5), inclusion by structural verdicts only, one mechanism
+> per rung, all three years per bundle, deterministic skip on composition failure,
+> criteria flips to the flip protocol (never silent rejection), promotion C3a-BLIND
+> (caiso-183 precedent) with C3c exceptions RE-MEASURED (caiso-189 §8.3), zero
+> survivors ⇒ null-FINDING; **control tolerance RATIFIED at per-year |ΔC3a| ≤ 0.1pp /
+> |ΔC3b| ≤ 0.005**, control recipe fixed (capacity-deliverability partition
+> materialized + `hydro_ror_split` explicitly False, both disclosed). The lane
+> inventory is CLOSED — post-ladder failure yields an exhaustion memo, and any new lane
+> needs a fresh adjudication session + owner authorization. Contradiction reported for
+> this matrix's own lane: this §5.2 header prints the keeper's 2023 C3a as +3.7 % where
+> the caiso-189 attestation and calibration log carry **+3.4 %** (the arm's value; +3.7
+> is the control's) — both PASS, no verdict effect, not fixed here. Record:
+> `results/calibration/FINDING-caiso191-campaign-adjudication-2026-08-11.md`.
+
 > **caiso-189 (2026-08-11) — GOVERNANCE / RECORD REPAIR, NO LEVER, NO SOLVE, NO MECHANISM.**
 > The CAISO lever queue is **EMPTY with every cell adjudicated** (caiso-185, re-confirmed
 > caiso-188); this session was **off-queue by design** and tested, armed and adjudicated

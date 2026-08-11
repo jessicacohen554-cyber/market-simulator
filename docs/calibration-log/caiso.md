@@ -7583,3 +7583,76 @@ stale one. (3) The memo's "7" is **not stale at all**: it is a cross-row total
 `results/calibration/FINDING-caiso188-import-tranche-dof-2026-08-09.md` §8 addendum,
 `scripts/gen_caiso189_attestation.py`,
 `tests/scoring/test_audit_keepers_attestation_shape.py`.
+
+## 2026-08-11 — CAISO — caiso-191: campaign adjudication (Wave 0C) — seven owner rulings recorded, gate specs authored for all five measurement lanes BEFORE any measurement, lane 5 GO-with-restrictions, lane 6 desk-refused, Wave-2 integration protocol pre-committed. DOCS-ONLY: no code, no config, no solve, no cell verdict
+
+**Runs: NONE. Keeper unchanged** at `2026-08-09-caiso-188-d1-micseam` (NOT-YET; C3a
+sole load-bearing FAIL +3.4/+10.4/+12.9 %; DOF 11/8). This session is the campaign's
+governance keystone: it records the owner's 2026-08-11 rulings and authors every
+lane's acceptance gates before any lane measures, so no downstream session shapes its
+own gates.
+
+**Rulings recorded (7/7)** — `results/calibration/caiso191-owner-rulings-2026-08-11.md`:
+caiso-187 option 1 (overlay identification) GRANTED; option 2 (narrow arm
+`wefor_residual=0.0` scoped {CC_REGULAR, CC_CHP}, `wefor_multiplier`→1.0) GRANTED,
+independent; `caiso_storage_nqc_accreditation` DEFERRED (gate-off, inert, out of
+campaign); the hourly PS water-state intake purchase DECLINED (the caiso-141 wall
+stands; fabricated shapes stay forbidden); a C3a rubric amendment DECLINED (NOT-YET
+is the honest fallback); C3c stays the accepted ledgered caveat (re-measured on any
+new bundle per caiso-189 §8.3); lane 5 conditionally authorized subject to this
+session's adjudication. **The lane inventory is CLOSED** — post-ladder failure yields
+an exhaustion memo, never an improvised lane.
+
+**Gate specs authored** (each: objective, exogenous closure with NO LMP/price series
+anywhere, anchored numeric gates — never anchored to the values under adjudication —
+conservative defaults biased AGAINST the C3a-favorable direction, kill criteria, the
+direction-hazard clause verbatim, the A/B protocol, required artifacts):
+`GATESPEC-caiso192-overlay-identification-2026-08-11.md` (post-filter CC rate
+[0.07,0.15] anchored to POF 0.05 + WEFOR 0.05; YoY ≤3pp and 2025 ≤1.5×2023 on
+physical stationarity; ≥80 % out-of-merit with ≥30pp separation + spring signature;
+shipped merit-guard constants as frozen; ambiguous spans STAY mechanical);
+`GATESPEC-caiso193-wefor-residual-2026-08-11.md` (carries the CURE of caiso-187 §4:
+clean re-pre-registration, scoped-groups form only, protective gate dominant, values
+frozen from `_caiso187_residual_identification.json`; coverage ≥95 % anchored to
+40 CFR Part 75; DOF 11/8→11/7 by arithmetic);
+`GATESPEC-caiso193-stgas-wefor-2026-08-11.md` (value committed in PRECHECK before any
+solve; EIA-860→GADS-class citation chain; band [0.03,0.21]; position vs MISO's 0.10
+explained by census, never chosen; rule 25 absolute);
+`GATESPEC-caiso194-hydro-ror-split-2026-08-11.md` (deterministic EHA+HILARRI build,
+tests green; ≥90 % nameplate classified; four-leg engagement proof — the caiso-188
+inert-mechanism lesson; RoR share within ±10pp of the EHA-labeled-subset share
+committed pre-completion; the caiso-141 wall: NO gate/probe/diagnostic scores hydro/PS
+output against actuals; C3b watch → criteria-flip protocol, never silent rejection);
+`GATESPEC-caiso195-ps-physical-2026-08-11.md` (lane 5 adjudicated **GO WITH SCOPE
+RESTRICTIONS**: zero MW added + C3a-blind acceptance discharges the caiso-140 §G
+fence; Hyatt stays in the storage block as a static cited bound — no re-allocation,
+no shape — discharging caiso-141 §G; ambiguities resolve toward MORE pumping).
+
+**Lane 6 (8,800 MW uncited spot capacities): desk-adjudicated NO** — every candidate
+axis is fenced (MIC: rule-19 double-count; Q-Q capacity: inherits the 30.5 %-vs-25 %
+LOYO failure; plateau: 0/26,280 DSW corridor-hours), already spent (EIA-930 flows =
+the envelope), or unpublished (the live CARB-EF breakpoint role). Stays a declared
+residual; open root-cause issue stands; no build session reserved.
+
+**Wave 2 pre-committed** — `caiso191-integration-protocol-2026-08-11.md`: ladder
+control→+L1→+L2→+L3→+L4(→+L5); inclusion strictly by Wave-1 structural verdicts, C3a
+never consulted; one mechanism per rung, all three years per bundle; per-rung
+re-verification = engagement + ledger arithmetic (+ the lane-2 premise recheck
+`X_c^filtered ≥ W_c`); composition failure ⇒ deterministic skip on the previous base;
+criteria flips ⇒ input-side re-examination, ACCEPT-WITH-FLIP + escalate if the input
+survives (rule 14); promotion C3a-blind (caiso-183); promotion attestation
+RE-MEASURES C3c exceptions; zero survivors ⇒ null-FINDING to closeout. **Control
+tolerance RATIFIED: per-year |ΔC3a| ≤ 0.1pp, |ΔC3b| ≤ 0.005** — bit-zero expected
+(caiso-184/188 G-CTRL) but byte-identity deliberately not the gate (ercot-173 head
+drift); control recipe fixed: `--replay-bundle` the caiso-188 bundle,
+capacity-deliverability partition MATERIALIZED (log-verified, caiso-188 §7 item 5)
+and `hydro_ror_split` explicitly False (the keeper's proven-effective configuration),
+both disclosed.
+
+**Contradictions reported, not resolved:** matrix §5.2 header prints the keeper's
+2023 C3a as +3.7 % where the caiso-189 attestation/log carry +3.4 % (both PASS, no
+verdict effect — left to the matrix lane); the keeper bundle's `metrics.json` is a
+pre-caiso-189 scorer snapshot (still "C6 UNATTESTED"); caiso-190's `resolved_inputs`
+is not on origin/main (lane-4 engagement binds on its fallback proof); the C3b 2025
+watch margin (0.164/0.20) is an orchestrating-session figure the lane-4 session must
+re-derive. Record: `results/calibration/FINDING-caiso191-campaign-adjudication-2026-08-11.md`.
