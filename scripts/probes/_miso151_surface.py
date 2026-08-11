@@ -49,6 +49,29 @@ ARTIFACT = (
     REPO / "data" / "raw" / "_validation-source" / "miso_offer_surface_positioned.json"
 )
 
+#: G-F3 tolerance ($/MWh).  The PREREG wrote this gate's bar as "Delta
+#: bit-identical", which is arithmetically UNSATISFIABLE for floating-point
+#: data: ``(p + c) - (q + c)`` is not bit-identical to ``p - q`` in IEEE754, so
+#: the gate as written could only ever fail.  It did, and the correction is
+#: recorded rather than quietly applied.  Measured on the real July-2025 DA
+#: book: worst discrepancy **5.68e-14** against an ULP of 1.14e-13 at the
+#: largest Delta present ($555) -- i.e. HALF AN ULP, with zero segments above
+#: 1e-9.  The tolerance below sits ~4 orders above the observed worst case and
+#: ~7 orders below any economically meaningful $/MWh, so it tests the property
+#: (level cancels) rather than the arithmetic.
+#:
+#: DISCLOSURE, because relaxing a failed gate is the move that needs the most
+#: light: this correction does NOT help the mechanism's case. G-1 refutes the
+#: pre-registered prior by a factor of ~25 in the WRONG direction whatever
+#: G-F3 says; a passing G-F3 only records that the shape-only design cancels
+#: level as intended. There is no outcome this relaxation rescues.
+G_F3_TOL: float = 1e-9
+TOL_NOTE: str = (
+    "max |Delta - Delta'| <= 1e-9 $/MWh under a constant curve shift "
+    "(PREREG said 'bit-identical'; unsatisfiable in floating point -- see "
+    "G_F3_TOL)"
+)
+
 #: Dispatch AWARDS that must never reach the clean datatype (rule 13).
 OUTCOME_COLS = {
     "MW",
@@ -139,14 +162,26 @@ def g_f3_level_invariance(market: str = "DA", year: int = 2025, month: int = 7) 
     shifted, _ = _prepare_frame(df2)
 
     a, b = base["delta"].to_numpy(), shifted["delta"].to_numpy()
-    identical = bool(a.shape == b.shape and np.array_equal(a, b))
+    if a.shape != b.shape:
+        return {
+            "bar": TOL_NOTE,
+            "verdict": "HARD STOP",
+            "reason": f"shape changed under a price shift: {a.shape} vs {b.shape}",
+        }
+    diff = np.abs(a - b)
+    worst = float(diff.max())
+    scale = float(np.abs(a).max())
     return {
-        "bar": "Delta bit-identical under a constant curve shift",
+        "bar": TOL_NOTE,
+        "tolerance": G_F3_TOL,
         "population": f"{market}-{year}-{month:02d}, {len(a):,} segments",
         "shift_usd_per_mwh": shift,
-        "max_abs_delta_of_delta": float(np.max(np.abs(a - b))) if identical else None,
-        "bit_identical": identical,
-        "verdict": "PASS" if identical else "HARD STOP",
+        "max_abs_delta_of_delta": worst,
+        "largest_delta_present": scale,
+        "ulp_at_that_scale": float(np.spacing(scale)),
+        "n_exceeding_tolerance": int((diff > G_F3_TOL).sum()),
+        "share_bit_identical": round(float((diff == 0).mean()), 6),
+        "verdict": "PASS" if worst <= G_F3_TOL else "HARD STOP",
     }
 
 
