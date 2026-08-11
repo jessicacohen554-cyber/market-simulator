@@ -6898,3 +6898,85 @@ the number under the measurement-only posture and adopted nothing. Note for the 
 CORRECT for its 2021-vintage record, so this is a data-record update under rule 23, not a
 correction of a bad derivation — and adoption re-bases ERCOT, inheriting the same
 FH-5-first ordering as D-30.
+
+## §0ao — the next parallel round @ `f6381c5`: FFR-9C-PROMOTE (unblocked) + ARM-3-ARM + CAISO-VINTAGE-INTAKE
+
+Record: **Addendum AO**. FH-5 is COMPLETE (11/12 arms, I6 PASS on every one), so
+FFR-9C-PROMOTE's pre-flight #1 is satisfied.
+
+**These three run genuinely in parallel — no sequencing between them.** Two solve
+(FFR-9C-PROMOTE = ERCOT, ARM-3-ARM = MISO), which is exactly rule 12's ≤2-concurrent cap;
+they are different ISOs, write different matrix shards, and their `scenarios.py` entries
+land in different ISO clusters under the HOUSE-3 insertion convention. CAISO-VINTAGE-INTAKE
+solves nothing. **Correction to AO.5**, which said ARM-3-ARM and FFR-9C-PROMOTE must be
+serialized "because both solve": that was over-cautious. Two concurrent solving invocations
+are permitted; the FH-5 non-overlap was specific to FH-5 spanning all six ISOs (so a MISO
+default flip mid-flight would trip its stop), and neither of these reads the other's ISO.
+MISO+PJM never co-run, and neither lane touches PJM.
+
+**HELD OUT of this round deliberately:** the caiso-190 behaviour-neutrality control (AO.3)
+would be a THIRD solving lane and breach the cap — it goes in the next round. F6-DIAG's fix
+and card D-31 (the 8.0 GW cap) both need an owner decision before anything is runnable.
+
+### §0ao-clauses — the standing block, with one NEW trap from FH-5
+
+```
+> MID-LANE src/ CHANGE (NEW — this bit FH-5, see fh-5-phase-b-2026-08-11.md §3). If your
+> branch is merged and deleted while you are mid-lane, the REQUIRED response (restart from
+> latest main) also moves src/ underneath a running solve. FH-5 lost a leg to this. If it
+> happens to you: KILL the in-flight run and DELETE its partial bundle (its code provenance
+> is ambiguous by construction — discard it, do not reason about it), pin src/ back to the
+> head your earlier legs solved on (`git restore --worktree --source=<sha> -- src/`,
+> verify `git diff <sha> -- src/` is empty, remove files added since, clear stale bytecode),
+> and re-solve so every arm in the comparison shares one code version. Then REPORT it as its
+> own section. A multi-arm comparison whose arms ran different code is not a comparison.
+
+> RULE-28 WRITE PATH (post-HOUSE-3, verified 2026-08-11). The mechanism matrix is SHARDED. A
+> session that tests a mechanism in <ISO> edits ONLY
+> docs/codebase-site/data/mechanism-matrix/<ISO>.js — cell verdict, forecast posture (fc),
+> evidence citation (ev), ISO note, and the keeper/gates stamps on promotion. NEVER another
+> ISO's shard (rule 25). The base docs/codebase-site/data/mechanism-matrix.js is edited ONLY
+> to add a NEW MECHANISM ROW; its visible keeper stamps are the FROZEN pre-2026-08-11 log —
+> do not "update" them. Run scripts/check_mechanism_matrix.py before you push.
+
+> SCENARIOS.PY IS STILL SHARED — follow the insertion convention. Tuple order is semantically
+> irrelevant, so position exists only to keep parallel PRs off the same line: an ISO-prefixed
+> field (ercot_*, caiso_*, pjm_*, miso_*, nyiso_*/nysdec_*, neiso_*) goes at the END OF ITS
+> OWN ISO'S CLUSTER; a shared field at the very end of the tuple; same discipline for
+> _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS in the SAME commit. Do NOT reorder legacy entries. On
+> conflict, resolve BY UNION — never take one side wholesale (an edit was lost that way at
+> c5593684).
+
+> CLEAN-PARTITION GUARD (caiso-188, extended onto the solve paths by caiso-190).
+> check_clean_partitions(config, iso) RAISES DegradedInputError when an armed flag's derived
+> CLEAN partition is absent. No-op at defaults; fires for capacity_deliverability_limits and
+> hydro_ror_split. If your recipe arms either, scripts/regenerate_clean.py MUST have run
+> first or your solve dies at the starting line.
+
+> ATTESTATION COMPLETENESS (E10 — caiso-189). audit_keepers.py checks attestation
+> completeness, after caiso-188 was found PROMOTED WITH NO C6 GOVERNANCE ATTESTATION AT ALL.
+> If your lane promotes, write the attestation and include
+> "schema": "calibration-attestation/v1".
+
+> PUSH. A timed-out push may have LANDED — verify with `git ls-remote` BEFORE diagnosing
+> (this manager hit exactly that). If your branch was merged and deleted, restart it from
+> latest main rather than stacking on merged history — and see the MID-LANE clause above.
+> Never push_files a >=300-line file. No new GitHub Actions workflows (private repo, billed).
+
+> DISK / WORKTREE. data/raw is 9.6 GB and .git 7.5 GB against ~13 GB writable. Do NOT launch
+> concurrent isolation:"worktree" agents — three at once exhausted the disk and all failed.
+> Run scripts/audit_keepers.py inline; at most ONE worktree agent at a time.
+```
+
+The three prompts were delivered to the owner with this block inlined verbatim at the end of
+each (the §0am convention). Their bodies are FFR-9C-PROMOTE (§0ak-3, refreshed: pre-flight #1
+discharged, the FH-5 pre-epoch note added), ARM-3-ARM (§0ak-1 verbatim at `f6381c5`), and
+CAISO-VINTAGE-INTAKE (new, below).
+
+### §0ao-3 — CAISO-VINTAGE-INTAKE [OPUS] — unblock FH-5's missing 12th arm
+
+Target: `constants.DEMAND_GROWTH_RATES_VINTAGES` has no CAISO row at vintage 2021, so
+`resolve_demand_growth_rate` fail-closes and CAISO Arm K cannot run (FH-5 §1.4; the gap FH-3
+recorded when it landed 11 of 12 ISO-vintage cells). Purely additive — no existing run reads
+the missing key, so nothing that solves today changes. `constants.py` is a >=300-line core
+file, so rule 27 binds: Opus/Fable, on-disk edits, blob-verify after push.
