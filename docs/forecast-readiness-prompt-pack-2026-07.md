@@ -6854,3 +6854,17 @@ queue. **FH-5 (§0ah) now pastes FIRST** — it is the blocker for FFR-9C-PROMOT
 nothing else waits on it. F6-DIAG (§0aj-1), ARM-3-ARM (§0ak-1) and RC-DERIVE (§0ak-2) are
 parallel-safe with each other and with FH-5. **FFR-9C-PROMOTE stays BLOCKED** — its
 pre-flight #1 stops it until FH-5 is on main.
+
+## §0am — refresh @ `2e18a17`; the four open lanes re-issued as runnable
+
+Record: **Addendum AM**. `ce4d05e` → **`2e18a17`** (18 commits: ercot-188 REJECTED-as-armed
+with a self-correction of record, the manager's AL/§0al, miso-151's control bundle). **Six
+keepers unmoved, second consecutive sweep.** Audit: 0 failures, 1 warning (ERCOT
+attestation `schema` tag).
+
+**Re-issued to the owner as runnable, in paste order:** FH-5 (§0ah, with its conditional
+parallel-safety placeholder RESOLVED to the flat §0al shard-path rule now that HOUSE-3 has
+landed and is verified), F6-DIAG (§0aj-1), ARM-3-ARM (§0ak-1), RC-DERIVE (§0ak-2). All four
+carry the §0al clause block. **FFR-9C-PROMOTE (§0ak-3) is NOT re-issued** — its pre-flight
+#1 blocks it until FH-5 is on main, and issuing it now would invite exactly the ordering
+mistake that pre-flight exists to prevent.

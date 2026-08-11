@@ -4051,3 +4051,43 @@ no commit). The one live branch is a calibration lane that appears to have picke
 ercot-182 C3a-2023 cliff card — a lane the manager adjudicates on landing, does not drive.
 **FFR-9C-PROMOTE stays correctly blocked**: FH-5 has not landed, so its pre-flight #1 would
 stop it at the first step.
+
+## Addendum AM — refresh: ercot-188 landed REJECTED with a self-correction; four lanes re-issued as runnable
+
+### AM.1 State — 18 commits, no keeper move, audit unchanged
+
+`origin/main` **`ce4d05e` → `2e18a17`**. Landed: **ercot-188** (PR #3853 — the (c2)
+cliff-resolving offer-curve refinement), this manager's AL/§0al (PR #3856), miso-151's
+control bundle + position-coordinate fix (PR #3857). **All six keepers UNMOVED** for a
+second consecutive sweep. `audit_keepers.py`: **0 failures, 1 warning** (the same ERCOT
+attestation `schema` tag, booked for the next ERCOT regeneration). Markers, freeze and
+rubric unchanged.
+
+### AM.2 ercot-188 adjudicated — REJECTED as armed, and the self-correction is the point
+
+The lane built SCHEME R1, solved its A/B, stamped the matrix cell **R** with lever-queue
+item 26, and took the owner's option (B) over its own memo's recommended (A). What earns
+the note is `fa686bb`: the mandatory P0-decomposition probe **refuted the lane's own
+earlier claim**. It had written that the ladder gain is "CONSUMED by the commitment
+channel"; the decomposition shows the seam breach is real and large in pattern (73 of 132
+committed rows, 12,474 MW, 8 fewer starts, 96 more committed on-hours) but that **P0 total
+energy is conserved to 2.8e-05 TWh on 303 TWh** and the start-amortization arithmetic is
+**two orders of magnitude too small** (capacity-weighted −$0.0020/MWh) to carry the
+−$0.21/MWh annual move. The over-attribution was corrected **in all four places it was
+written** rather than left standing, and the honest residual is recorded: nothing
+apportions the ~$2.2/MWh between ladder and commitment **because no counterfactual
+separates them — they are the same code change**. That inability was priced in advance by
+the precommit and the memo; the probe converted a prediction into a measured fact. **No
+manager action: the verdict is R, the matrix is stamped, and the correction discipline is
+exactly what rule 1 asks for.** ercot-188 also left a signable ERCOT owner-ruling backlog
+card set (`694d555`) — a calibration-lane sitting item, surfaced here, not adjudicated.
+
+### AM.3 Four lanes re-issued as runnable; FH-5's clause placeholder resolved
+
+FH-5, F6-DIAG, ARM-3-ARM and RC-DERIVE still show **no evidence** (remote is `main` only).
+All four re-issued to the owner this sitting against HEAD `2e18a17`. The one substantive
+edit: **FH-5's prompt carried a conditional parallel-safety placeholder** ("HOUSE-3 may
+land mid-session; if it does, your matrix duty moves to your ISO's shard"). HOUSE-3 HAS
+landed and is verified (AL.2), so that conditional is resolved to the flat shard-path rule
+from §0al — one fewer branch for the lane to reason about. **FFR-9C-PROMOTE remains
+correctly blocked** on FH-5 and was NOT re-issued.
