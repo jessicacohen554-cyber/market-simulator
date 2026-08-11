@@ -7396,3 +7396,48 @@ Amendment 1), `ercot188_topfine_seamproof.json`, `ercot188_coal148.json`,
 `2026-08-11-run188-ctl-topfine-control` + `2026-08-11-run188-arm-topfine-cliff`
 (retention evicted the two 2026-08-04 run162 storage-rt runs, exactly as the
 precommit named in advance).
+
+**ADDENDUM — 2026-08-11, THE OWNER PROMOTED IT (card E, option E2).** The
+signable open-ruling board this session assembled put the promotion question to
+the owner as card E; **this session recommended E1, do not promote**, on three
+grounds — the added rows are measured never to be cleared on, the residual moves
+the wrong way in all three years, and the price is a permanent forfeiture of the
+offer-surface family's P0 bit-identity proof. **The owner signed E2**, under the
+standing standard that structural integrity outranks gate regression. The
+session's contrary recommendation is recorded alongside it and is not retracted.
+
+**Keeper `2026-08-09-ercot185-shaped-partial` → `2026-08-11-run188-arm-topfine-cliff`.**
+**The mechanical verdict stays REJECTED-AS-ARMED and is NOT rewritten** (G-C3c
+fails, 2023 tail 61 → 58 vs actual 181); the measured C3a-2023 move stays stated
+at **−$0.21/MWh** against ercot-184's +$1.99 ceiling; the determination stays
+**NOT-YET {C3a-2023, C3b-2023}**. ERCOT holds no `complete`/`final` marker, so no
+`calibration-complete.json` re-key applies.
+
+**The keeper now carries a NAMED PERMANENT LIMITATION:** ERCOT's designated
+keeper is the first since ERCOT-86 whose offer-side mechanism does not ride the
+P1-only `mc_bid_adjust` seam, so the family's **P0 bit-identity proof is
+forfeited on this base** — every future control-vs-arm difference measured
+against it is confounded with commitment-side motion and can be isolated only by
+argument, never by proof. A future offer-side ERCOT precommit must say so and
+state what it will argue instead. Bookkeeping: matrix ERCOT shard cell
+`ercot_econ_curve_top_refine` `R → K`, keeper + gates stamps re-cut, §5.1 header
+re-stamped (which also restored the matrix's §5.x prose-header check, silently
+absent beforehand); `check_mechanism_matrix.py` exit 0. Record:
+`results/calibration/FINDING-ercot188-cliff-offer-curve-2026-08-11.md` §9 +
+`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` RESOLUTIONS.
+
+**The other six cards signed the same sitting:** A1 authorize the DAM-deriver
+lane (#9 → #8 → #10, one precommit, one re-derive, one re-gate sweep — the only
+blocking item, and it unblocks ercot-189's CC headroom object); B1 re-adjudicate
+the item-13 COAL limbs under a fresh precommit; C1 decline the ercot-165
+per-family weight and re-point the object; D1 authorize the RTC+B **read
+adapter**; F1 schedule the data-provisioned test tier the ERCOT golden lives in;
+and G — **#2 closed as SPENT** (every gate it named was dispositioned by
+ercot-168 / the 2026-08-05 C3c decision / the ercot-182 D1 signature, none of
+which back-referenced it), **#3 DELETE `split_coal_tranches` and its six scalars**
+(dead on all six keepers, which all run `use_campd_bins=True`; rule 26
+`[R-DELETE]` — six re-armable scalars currently parse), and **#5 closed as stated
+and re-filed under its real object** (Martin Lake resolves to `COAL_PRB`, not
+lignite; the actual question is the one-class-per-plant bin sheet vs mixed
+facilities, ERCOT-146's nine plants carrying 1,708 MW of CT capacity with no
+`CT_PEAKER` row at all).

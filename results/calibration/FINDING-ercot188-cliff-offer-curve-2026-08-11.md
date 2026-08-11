@@ -53,7 +53,7 @@ owner-adopted 2026-07-26 CAMPD guard correction, exonerating ERCOT-185.
 | **A/B verdict** | **REJECTED-AS-ARMED** on the pre-registered **G-C3c** kill (7 of 8 gates PASS); both members registered (rules 15/16) |
 | **The result** | **C3a-2023 −$0.21/MWh — a SIGN FLIP against the memo's +$1.99 ceiling**, inside the pre-registered band, and it localizes the cause |
 | **Determination** | **NOT-YET {C3a-2023, C3b-2023}** in both members — UNCHANGED |
-| **Keeper** | **`2026-08-09-ercot185-shaped-partial`, NOT moved by this session** (§7) |
+| **Keeper** | §7 recommended NOT moving it; the **OWNER then signed E2 and PROMOTED** the arm — keeper is now **`2026-08-11-run188-arm-topfine-cliff`**, determination unchanged (§9) |
 
 ---
 
@@ -512,3 +512,76 @@ and it is the owner's call, not this session's.**
 * **Keeper** — `2026-08-09-ercot185-shaped-partial`, untouched.
 
 **Next shorthand: ercot-189.**
+
+---
+
+## 9. ADDENDUM — THE OWNER PROMOTED IT (2026-08-11, after §7 was written)
+
+**§7.3 above is preserved exactly as this session wrote it, before the decision.**
+It recommended **against** promotion and said the call was the owner's. The owner
+made it, the other way.
+
+**Signed: card E, option E2 — "promote on the standing structural standard"** —
+on the signable open-ruling board assembled by this session
+(`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`, RESOLUTIONS),
+under the standing owner standard that *structural integrity outranks gate
+regression*. The session's contrary recommendation is recorded alongside it and
+is **not retracted**; both belong in the record.
+
+**Keeper: `2026-08-09-ercot185-shaped-partial` → `2026-08-11-run188-arm-topfine-cliff`.**
+
+### 9.1 What the promotion does NOT do — the discipline this lane was chartered on
+
+* **The mechanical verdict stays REJECTED-AS-ARMED and is NOT rewritten.** G-C3c
+  still fails at full magnitude: 2023 model tail **61 → 58** against an actual
+  **181**. The promotion is the owner's standard applied *on top of* that
+  verdict, never a re-scoring of it — the ercot-185 posture, applied again.
+* **The measured outcome stays stated in the wrong direction.** C3a-2023
+  **−$0.21/MWh** against ercot-184's **+$1.99/MWh** ceiling. Nothing in this
+  addendum re-opens, re-derives or widens the memo's measurement, and the memo's
+  own recommendation to CLOSE the lane remains on the record as overridden, not
+  rewritten.
+* **The determination does not move.** **NOT-YET {C3a-2023, C3b-2023}**,
+  identical to the superseded keeper. The promotion buys structural fidelity, not
+  a better public claim.
+* **No holdout marker is granted or spent.** ERCOT holds no `complete` and no
+  `final`, so no `calibration-complete.json` re-key applies (rule 22 / D-5(b)).
+
+### 9.2 The limitation the keeper now carries, permanently
+
+**ERCOT's designated keeper is now the first one since ERCOT-86 whose offer-side
+mechanism does not ride the P1-only `mc_bid_adjust` seam.** The consequence is
+inherited by every future ERCOT offer-side lane, not just this one:
+
+> The offer-surface family's **P0 bit-identity proof is forfeited on this
+> keeper**. Every control-vs-arm difference measured against it is confounded
+> with commitment-side motion, so a mechanism can be isolated here **only by
+> argument, never by proof** — the ercot-181 seam proof's byte-identity
+> assertions (SP-α1/α2/α3/α5) have no analogue against this base.
+
+Measured, not asserted: **73 of 132 committed rows (12,474 MW)** carry a
+different P0 commitment pattern, and the gas commitment bridge's floored
+unit-hours move in all three years (12,375→12,309 / 6,164→6,160 /
+13,326→13,287). **What the P0 decomposition does NOT support, and is not
+claimed:** P0 energy is conserved to 2.8e-05 TWh on 303 TWh, and the
+start-amortization arithmetic is two orders of magnitude too small to carry the
+annual price move. **Nothing apportions the residual between the ladder and
+commitment channels, because no counterfactual separates them — they are the
+same code change.** That inability *is* the forfeited proof, now measured rather
+than predicted.
+
+**This limitation does not expire when a later gate passes.** A future session
+proposing an offer-side ERCOT mechanism against this keeper must state, in its
+own precommit, that it cannot claim P0 bit-identity and say what it will argue
+instead.
+
+### 9.3 Bookkeeping done under the promotion
+
+Keeper shard `frontend/data/backcast/keepers/ERCOT.json` re-pointed with the full
+promotion note; `frontend/data/backcast/status/ERCOT.js` rebuilt via
+`build_status.py --iso ERCOT` (reads `NOT-YET`); matrix ERCOT shard cell
+`ercot_econ_curve_top_refine` **R → K** with the keeper and gates stamps re-cut;
+`docs/mechanism-testing-matrix.md` §5.1 ERCOT header re-stamped — which also
+restored the matrix's **§5.x prose-header check**, silently absent from the
+check's output beforehand. `check_mechanism_matrix.py` exits 0 on all four
+checks. No other ISO's shard, keeper file or status part was touched (rule 25).
