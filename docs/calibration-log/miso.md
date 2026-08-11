@@ -6830,3 +6830,73 @@ is flagged RE-TUNE REQUIRED — a contradiction census cannot settle it, so
 **Kill gates untouched, not passing** (nothing ran). Against-interest bound
 carried and never breached: 2023 carries nearly the same CC gap and C3a-2023
 PASSES; nothing here is offered as progress against 2025's −15.6 %.
+
+## miso-152 (2026-08-11) — the base-band inversion is DELIBERATE; its dispatch consequence is REAL, near-universal and IMMATERIAL
+
+**Keeper UNCHANGED: `2026-08-09-miso-148-basis-aware`.** Nothing promoted, and
+**nothing solved** — charter (B) was Phase 0 by construction, so **no run exists
+and none is registered** (rule 15 not engaged). Fail set unchanged {C3a, C3b}.
+`gas_offer_curve_tranches` MISO **stays `K`**, with a measured fill-order caveat
+added to its evidence — the mechanism is not refuted.
+
+**The question (miso-151 §8B): why do MISO's `econ_low` bands price below their
+own committed block? Answer: on purpose.** `_MISO_OFFER_CURVE` grounds the
+committed band in the measured CAMPD part-load premium, and the source comment
+records the *previous* state (committed 0.92 < econ_low 0.95) as the defect it
+was fixing. So the inversion is not itself a bug.
+
+**What it opens is.** The LP fills a plant's tranches in COST order; physics
+fills them in OUTPUT-POSITION order. There is **no same-plant fill-order
+constraint anywhere in the LP** (`lp/bounds.py` sets `col_lower = min_gen` else
+`pmin` per independent column; the only group row in `lp/rows.py` is the hydro
+envelope), and MISO floors **nothing** on the CC committed tranche — `pmin`
+**and** `min_gen` are 0.0 on all 44 CC_REGULAR committed rows, all 8760 hours.
+Real plant p991: committed **515.97 MW @ $26.184**, with `econc00-02` at
+**36.85 MW each @ $25.122 / $25.643 / $26.164**, all three cheaper than the
+min-load block they physically sit on. Confirmed at three independent levels —
+source (G-1), effective mc through the real offer path (G-2: committed dearer
+than an econ sub in **1,167,048 of 2,312,640** plant-band-hours = **50.5 %**,
+mean gap **$0.833/MWh**, ~3 of the 6 smoothed subs per plant), and a live
+`solve_dispatch` (G-3, 4/4 tests in `tests/test_miso152_fillorder.py`).
+
+**And it is immaterial.** Out-of-order energy is **0.36 / 0.31 / 0.45 %** of CC
+energy (2023/24/25) against a pre-registered prior of **25 %, band [5, 60]** —
+**refuted ~55×, below the band floor** → pre-committed branch **B-2
+IMMATERIAL**. The object is **wide but thin**: 39–43 of 44 plants and 7,118 /
+7,200 / 10,693 plant-hours, but each econ sub is 7 % of the min-load block and
+the price window is only ~$1/MWh wide. T-6 (reconstruction vs the committed
+`class_hourly`) **PASSES** on CC: −1.83 / −1.01 / **+9.42 %** (2025 narrowly,
+reported not rounded).
+
+**NO LEVER PROPOSED — the sign is repair-dependent.** R-a PIN (min-load
+must-take whenever the plant runs; the ERCOT-141 `floor_online_hours` form):
+**+1.06 / +0.87 / +1.49 %** CC supply → price **DOWN**, the *wrong* way for the
+−15.6 % miss. R-b GATE (no upper band unless the min-load block clears):
+**−0.36 / −0.31 / −0.45 %** → price **UP**, and tiny. PREREG P-2 was registered
+with a band **spanning zero**, and §7 disclosed this session's own prior
+expectation of "UP" *before* measuring. Picking a limb to get a sign would be
+fitting the repair to the residual (rule 1 `[R-STRUCT]`, second half).
+
+**NAMED SUCCESSOR, NOT OPENED.** `CT_PEAKER` carries the same inversion with the
+**largest gap in the fleet** ($12.50–25.89/MWh, 15–30× CC's) and its **79
+committed rows are as unfloored as CC's** — but the extended scope was **not
+pre-registered** and its **T-6 FAILS** (+38.8 / +37.9 / +40.1 %; ST_GAS
+−38.0 / −39.2 / −59.3 %), so its reconstructed **1.20 / 0.54 / 6.47 %**
+out-of-order share is **DESCRIPTIVE ONLY and no verdict rests on it**. The 2025
+CT figure is the only number in the session that would clear the 5 % floor, and
+it is exactly the one T-6 says is untrustworthy; measuring it needs an
+instrument that reproduces CT commitment.
+
+**Defect created and caught:** the probe's first result was a spurious exact
+`0.0` — collapsing the six smoothed econ sub-tranches into one dict entry per
+band kept only the *dearest* (`econc05` $38.38 > committed $36.27), so
+"committed off ⟹ upper off" held by construction on a run that otherwise looked
+healthy. **The miso-151 pattern precisely.** Caught by disbelieving a clean zero
+and dumping the real suffix inventory. Also caught: the reused miso-134 chain is
+hard-wired to the **miso-132** bundle and would have screened the wrong keeper;
+`BUNDLE` is repointed and asserted.
+
+Rule 22 `[R-HOLDOUT]`: 2023/2024/2025 only, MISO holds no marker, no holdout
+spend. `FINDING-miso152-the-inversion-is-real-and-immaterial-2026-08-11.md`;
+`PREREG-miso152-tranche-fill-order-2026-08-11.md`;
+`results/calibration/_miso152_fillorder.json`.
