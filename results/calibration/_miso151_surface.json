@@ -164,5 +164,21 @@
    }
   },
   "reading": "The pre-registered median and the capacity-weighted mean disagree by roughly 3x at the top of the curve. Any single-number-per-position surface collapses a distribution whose spread IS the object of interest, which is the substantive finding this gate surfaces."
+ },
+ "G_5_across_vs_within_unit": {
+  "across_unit_base_level_quantiles_usd_per_mwh": {
+   "p10": 0.16928763440860214,
+   "p50": 19.582540322580645,
+   "p90": 48.00663978494624,
+   "p95": 91.4448252688172,
+   "p99": 298.0264919354839
+  },
+  "across_unit_p90_minus_p10": 47.83735215053763,
+  "across_unit_p99_minus_p50": 278.4439516129032,
+  "within_unit_rise_p_gt_0p8_median": 2.6999999999999993,
+  "within_unit_rise_p_gt_0p8_capwtd_mean": 13.42362596486904,
+  "hours": 744,
+  "population": "DA-2025-07",
+  "reading": "NOT PRE-REGISTERED. The reconciliation with miso-145: that session's aggregate wall ($73.4591/GW on the fleet-cumulative curve) and this session's within-unit rise are DIFFERENT OBJECTS. MISO's real offer curve gets its steepness from WHICH UNIT you are on (p90-p10 across-unit spread $47.84/MWh) and almost none from WHERE YOU ARE INSIDE a unit (median top-of-own-curve rise $2.70). Ratio 17.7x. Item 9 as chartered conditions on POSITION and collapses to one Delta per position bin, which destroys exactly the across-unit spread that constitutes the wall -- so it cannot reproduce the wall even in principle, independently of any solve result."
  }
 }
