@@ -258,16 +258,20 @@ not see, and said so, is that a row-count change **also moves P0**, because the
 slicer writes heat rates into `mc_base`, which *is* the P0 objective. The real
 LP carries both channels at once.
 
-**The commitment channel is measured, not inferred** (§6): the gas commitment
-bridge — which detects its floors from the **P0** run pattern — moves in **every
-year**, floored unit-hours 12,375 → 12,309 (2023), 6,164 → 6,160 (2024),
-13,326 → 13,287 (2025).
+**The P0 channel is measured, not inferred** (§6): **73 of the 132 committed
+rows — 12,474 MW — carry a different P0 commitment pattern under the arm**, with
+8 fewer starts and 96 more committed on-hours, and the gas commitment bridge
+(which detects its floors from the P0 run pattern) moves in **every** year.
 
-> **So (c2) is not merely too small. At solve grain its ladder gain is CONSUMED
-> by the commitment channel that its own seam breach opens** — which is the
-> concrete form of the risk the memo priced and recommended against paying.
-> MEMO §8's reading is reinforced, not overturned: you cannot reach a price by
-> adding rows above where the market clears.
+> **So (c2) is not merely too small: at solve grain the ladder gain does not
+> survive to the annual level, and the P0 channel its own seam breach opens is
+> demonstrably live across half the committed fleet.** §6.2 is careful about how
+> far that can be pushed — the start-amortization *arithmetic* is measured and
+> far too small to carry the offset, and nothing here apportions the ≈ $2.2/MWh
+> between ladder and commitment, because **no counterfactual separates them.**
+> That inability is precisely the cost MEMO §3.3 priced. MEMO §8's reading is
+> reinforced, not overturned: you cannot reach a price by adding rows above
+> where the market clears.
 
 ### 5.2 What the mechanism DID do, stated plainly
 
@@ -281,13 +285,80 @@ merit-order mirror.
 
 ---
 
-## 6. The P0 seam — a PERMANENT, NAMED LIMITATION
+## 6. The P0 seam — measured, and a PERMANENT NAMED LIMITATION
 
-> **PENDING the pair.** Measured by `scripts/probes/ercot188_p0_delta.py`
-> (committed at `18102c2`) once both bundles carry their
-> `dispatch/<year>_P0.parquet`.
+`scripts/probes/ercot188_p0_delta.py` → `ercot188_p0_delta.json`. Because a
+bundle persists only the **P1** dispatch frame, the probe replays each member
+through the **same entry point the A/B used** with `compute_monthly_markup`
+spied, capturing the real `r0.dispatch` and the real markup array and aborting
+before P1. What follows is the A/B's own P0, 2023.
 
-What is **already settled**, and does not depend on the measurement:
+| | control | arm | Δ |
+|---|---|---|---|
+| LP rows | 1,780 | 2,320 | +540 |
+| **P0 total energy** | 303.47655 TWh | 303.47657 TWh | **+2.8e-05 TWh** |
+| P0 econ-ramp energy | 130.2676 TWh | 130.2564 TWh | −0.0111 TWh |
+| P0 committed energy | 82.3717 TWh | 82.3891 TWh | +0.0174 TWh |
+| **committed rows whose commitment MOVED** | — | — | **73 of 132 (55.3 %) — 12,474 MW** |
+| committed starts | 10,949 | 10,941 | **−8** (max per row 4) |
+| committed on-hours | 494,683 | 494,779 | **+96** (max per row 13) |
+| P1 startup markup, cap-wtd mean | $3.7789/MWh | $3.7769/MWh | **−$0.0020/MWh** |
+| …cap-wtd mean **absolute** per-row move | — | — | **$0.0150/MWh** (max row $0.845) |
+
+### 6.1 What this establishes, and what it does NOT
+
+**The seam breach is real, and it is large in the dimension that matters.**
+**73 of 132 committed rows — 12,474 MW, over half the committed fleet and the
+same order as the 16.5 GW MEMO §3.3 sized — have a DIFFERENT P0 commitment
+pattern under the arm.** Eight starts disappear and 96 committed on-hours
+appear. This is not a residual effect at the edge of the fleet; the commitment
+state of the capacity sitting directly beneath the object hours' marginal rows
+is genuinely different. Confirmed independently at solve grain in all three
+years by the gas commitment bridge, which detects its floors from the P0 run
+pattern: floored unit-hours **12,375 → 12,309** (2023), **6,164 → 6,160**
+(2024), **13,326 → 13,287** (2025).
+
+**Two things the numbers do NOT support, stated so they are not over-read:**
+
+1. **P0 energy is conserved** — total P0 generation moves by 2.8e-05 TWh on 303
+   TWh. The refinement redistributes ~0.011 TWh from the econ ramp into the
+   committed band; it does not change how much the thermal stack produces. What
+   moved is *which units are on when*, not *how much runs*.
+2. **The startup-amortization sub-channel is SMALL.** The capacity-weighted mean
+   P1 startup markup on the committed rows moves **−$0.0020/MWh**, and even the
+   mean *absolute* per-row move is **$0.0150/MWh** (largest single row $0.845).
+   **That is roughly two orders of magnitude too small to account for the
+   −$0.21/MWh annual price delta on its own.** The arithmetic of the start
+   amortization is therefore *not* the explanation, and this FINDING does not
+   claim it is.
+
+### 6.2 The honest attribution — and why the inability IS the finding
+
+Chaining what is measured: ercot-184's invariant-quantity mirror priced the
+**ladder** channel at **+$1.99/MWh** *holding cleared quantity fixed*; the real
+LP delivers **−$0.21/MWh**. The ≈ $2.2/MWh difference is, by construction, the
+part the IQR could not see — the LP re-optimizing quantity and commitment. §6's
+measurement localizes that to the **merit-order/clearing side** (which row is
+marginal, given a materially different commitment state across 12.5 GW) rather
+than to the **bid-level** start-cost arithmetic, which is measured and small.
+
+**But it does not go further than that, and it cannot.** There is no
+counterfactual in which the ladder moves and the commitment does not: they are
+the same code change. Every control-vs-arm difference here is confounded with
+commitment-side motion, so **the mechanism is isolated by argument, never by
+proof** — which is exactly what §3 of the precommit said would be the largest
+cost of this build, and this probe is what turns that from a prediction into a
+measured fact.
+
+> **Correction of record.** Before this decomposition landed, this session's
+> matrix cell, lever-queue item and calibration-log entry each stated that the
+> ladder gain is *"CONSUMED by the commitment channel."* That over-attributed:
+> the commitment channel is demonstrably live, but the startup-markup sub-channel
+> is too small to carry the offset, and no measurement here apportions the
+> ≈ $2.2/MWh between the two. All three records are corrected to the statement
+> above rather than left standing.
+
+### 6.3 What is settled independently of any measurement
 
 **This lane BREACHES the offer-surface family's P1-only seam and PERMANENTLY
 FORFEITS its bit-identity proof.** Every ERCOT offer-surface mechanism since

@@ -1,0 +1,47 @@
+{
+ "year": 2023,
+ "what_this_measures": "The P0 motion the (c2) row-count change causes BY CONSTRUCTION. The offer-surface family's P1-only mc_bid_adjust seam does not apply here and its P0 bit-identity proof is FORFEITED (precommit \u00a73 / MEMO-ercot184 \u00a73.3); this is the honest statement of what moved, not a defence.",
+ "control": {
+  "n_gen": 1780,
+  "p0_total_twh": 303.4765452248003,
+  "p0_econ_twh": 130.26755063721873,
+  "p0_committed_twh": 82.37170802038908,
+  "committed_rows": 132,
+  "committed_capacity_mw": 19293.9815,
+  "committed_total_starts": 10949,
+  "committed_on_hours": 494683,
+  "markup_committed_mean": 7.79734768780009,
+  "markup_committed_capwtd_mean": 3.7788749630069804
+ },
+ "arm": {
+  "n_gen": 2320,
+  "p0_total_twh": 303.4765729853881,
+  "p0_econ_twh": 130.25641057621334,
+  "p0_committed_twh": 82.38908827402142,
+  "committed_rows": 132,
+  "committed_capacity_mw": 19293.9815,
+  "committed_total_starts": 10941,
+  "committed_on_hours": 494779,
+  "markup_committed_mean": 7.79642013404365,
+  "markup_committed_capwtd_mean": 3.7768744778524788
+ },
+ "delta": {
+  "n_gen": 540,
+  "p0_total_twh": 2.7760587784086965e-05,
+  "p0_econ_twh": -0.011140061005391999,
+  "p0_committed_twh": 0.017380253632339304,
+  "committed_starts": -8,
+  "committed_on_hours": 96,
+  "markup_committed_capwtd_mean": -0.0020004851545016855
+ },
+ "commitment_channel": {
+  "committed_rows_shared": 132,
+  "rows_with_moved_commitment": 73,
+  "share_rows_moved": 0.553030303030303,
+  "capacity_mw_with_moved_commitment": 12474.313699999999,
+  "max_abs_row_start_delta": 4,
+  "max_abs_row_on_hour_delta": 13,
+  "max_abs_row_markup_delta_usd_mwh": 0.844968387776607,
+  "capwtd_mean_abs_markup_delta_usd_mwh": 0.01497673428461713
+ }
+}
