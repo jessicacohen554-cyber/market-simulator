@@ -40,6 +40,15 @@ parsed as a fallback) it verifies:
       forcing-legitimacy rests on the DOF ledger + ``legitimacy_diagnostics``).
       Absence of a twin is OK; only a dangling link — a sidecar naming a twin
       with no registry payload — FAILs, as a data-integrity check.
+  E10 the bundle attestation is STRUCTURALLY COMPLETE — ``schema``,
+      ``governance`` (all four assertions present, boolean-typed and true) and
+      an ``exceptions`` LIST — not just the ``free_parameters`` block E8 checks.
+      Added by caiso-189 (2026-08-11) after the caiso-188 promotion shipped an
+      attestation ``scripts/build_dof_ledger.py`` had written alone: E8 passed it
+      ("0/0" on a bundle nobody had attested) while ``calibration_verdict``
+      scored C6 UNATTESTED and forced NOT-YET, and the incumbent's C3c exceptions
+      never carried forward. E8 alone can never catch that, because the missing
+      blocks are exactly the ones it does not look at.
   M1  ``complete``-marker currency + determination re-verification (owner
       decision D-5(b), signed 2026-08-02): every ISO holding a ``complete``
       entry in ``calibration-complete.json`` has that entry's ``keeper`` field
@@ -260,6 +269,92 @@ def ablation_twin_finding(
     )
 
 
+#: The four C6 assertions ``calibration_verdict.score_governance`` requires. Kept
+#: as a literal here rather than imported so this check keeps working (and keeps
+#: failing closed) even if the scorer's own list is refactored — a keeper whose
+#: attestation omits one is unattestable either way.
+GOVERNANCE_ASSERTIONS = (
+    "levers_trace_to_measured_input",
+    "no_fit_to_price_residuals",
+    "no_pinning_to_actuals",
+    "outage_filter_exogenous_net_load",
+)
+
+
+def attestation_shape_finding(att: dict | None) -> tuple[str, str]:
+    """Return the E10 (attestation completeness) finding: ``(level, message)``.
+
+    E8 validates the ``free_parameters`` DOF ledger and NOTHING else, so a
+    bundle carrying only the block ``scripts/build_dof_ledger.py`` writes audits
+    green while ``calibration_verdict`` scores C6 **UNATTESTED** and forces
+    NOT-YET. That is exactly what happened to the caiso-188 keeper
+    (``2026-08-09-caiso-188-d1-micseam``): its promotion shipped without the
+    bespoke ``gen_caisoNNN_attestation.py`` every other CAISO promotion ships,
+    E8 reported "0/0", and the governance gate and the whole C3c exceptions
+    ledger were silently absent. This check closes that hole.
+
+    Legs are graded by what they actually cost the verdict, so the check can
+    never be green on a defect that moves a determination:
+
+    * **FAIL** — no attestation file; no ``governance`` mapping (C6 reads
+      UNATTESTED, which alone forces NOT-YET); any of the four assertions
+      missing, non-boolean or false (C6 reads FAIL); or no ``exceptions``
+      **list** (every ledgered caveat silently vanishes). Truthy non-booleans
+      (``"yes"``, ``1``) are rejected: an assertion is a signed claim, not a
+      coercion. An EMPTY ``exceptions`` list is fine — most keepers ledger
+      nothing; what is not fine is the key being ABSENT, because then nobody has
+      said whether there are exceptions at all.
+    * **WARN** — everything load-bearing is present but the documentary
+      ``schema`` version tag is missing. ``calibration_verdict`` never reads
+      ``schema``, so this changes no determination; it is surfaced on every run
+      rather than failing a lane whose governance is genuinely complete.
+
+    Pure over its input so it is unit-testable without a bundle on disk.
+    """
+    if att is None:
+        return "FAIL", "no calibration_attestation.json in bundle (CLAUDE.md rule 20)"
+    problems: list[str] = []
+    gov = att.get("governance")
+    if not isinstance(gov, dict):
+        problems.append(
+            'no "governance" block — calibration_verdict scores C6 UNATTESTED, '
+            "which alone forces NOT-YET"
+        )
+    else:
+        for a in GOVERNANCE_ASSERTIONS:
+            if a not in gov:
+                problems.append(f"governance.{a} missing")
+            elif not isinstance(gov[a], bool):
+                problems.append(f"governance.{a} is {gov[a]!r}, not a bool")
+            elif not gov[a]:
+                problems.append(f"governance.{a} is false")
+    if not isinstance(att.get("exceptions"), list):
+        problems.append('no "exceptions" list (use [] when nothing is ledgered)')
+    if problems:
+        return (
+            "FAIL",
+            "attestation incomplete — "
+            + "; ".join(problems)
+            + ". Generate it with the promotion's scripts/gen_<run>_attestation.py "
+            "(post-hoc precedents: gen_pjm153_collapse_attestation.py, "
+            "gen_caiso189_attestation.py).",
+        )
+    if not str(att.get("schema", "")).strip():
+        return (
+            "WARN",
+            'attestation has no "schema" version tag (governance and exceptions '
+            "are complete, and calibration_verdict never reads schema, so no "
+            "determination is affected) — add "
+            '"schema": "calibration-attestation/v1" on the next regeneration',
+        )
+    n_exc = len(att["exceptions"])
+    return (
+        "OK",
+        f"attestation complete (schema, 4/4 governance assertions true, "
+        f"{n_exc} exception(s))",
+    )
+
+
 def _load_json(path: Path) -> dict | None:
     try:
         return json.loads(path.read_text())
@@ -331,7 +426,7 @@ class Report:
 
 
 def audit_keeper(run_id: str, rep: Report) -> None:
-    """Run every per-keeper check (E1–E9) for one run id, recording findings."""
+    """Run every per-keeper check (E1–E10) for one run id, recording findings."""
     side_path = cv.REGISTRY_DIR / f"{run_id}.json"
     side = _load_json(side_path)
     if side is None:
@@ -473,6 +568,16 @@ def audit_keeper(run_id: str, rep: Report) -> None:
                     f"DOF ledger present ({len(ledger.get('entries', []))} "
                     f"entries, {n_res} residual, all with root causes)",
                 )
+
+        # E10: attestation completeness — the blocks E8 does NOT look at
+        # (schema / governance / exceptions). Added by caiso-189 (2026-08-11):
+        # the caiso-188 promotion shipped a free_parameters-only attestation,
+        # which E8 passed while C6 read UNATTESTED and the C3c exceptions ledger
+        # was silently empty. Evaluated on the SAME `att` E8 loaded.
+        level, msg = attestation_shape_finding(att)
+        {"OK": rep.ok, "WARN": rep.warn, "FAIL": rep.fail}[level](
+            run_id, iso, "E10", msg
+        )
 
     # E9: ablation-twin link integrity (CLAUDE.md rule 20, owner amendment
     # 2026-07-14). The twin itself is optional — absence is OK; only a DECLARED

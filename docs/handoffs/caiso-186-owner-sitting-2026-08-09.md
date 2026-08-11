@@ -476,6 +476,28 @@ unclosed DOF CAISO carries — and the ledger currently describes the row it liv
 binding path is 7, not the ~1 the ledger currently implies.** The census got better and the
 substance got worse, and both halves of that belong in front of the owner.
 
+> **SCOPE CLARIFICATION — 2026-08-11, caiso-189. The 7 above is CORRECT AND IS NOT
+> CORRECTED; it is a DIFFERENT SCOPE from the ledger's `n_scalars: 6`, and the two do not
+> contradict.** This table's 7 is the **cross-row** total for CAISO's whole backcast
+> binding path and its own rows sum to exactly that: `battery_dispatch_adder` **1** + firm
+> prices **2** + spot capacities **4** = **7**. The committed DOF ledger's
+> `n_scalars: 6` is the **`IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]` ROW ALONE** — the same
+> 2 + 4, without `battery_dispatch_adder`, which is its own separate ledger row
+> (`results/calibration/caiso188_d1_micseam/calibration_attestation.json`).
+>
+> **What WAS wrong is a third statement, in a third place, and it has been fixed.** The
+> mechanism-matrix §5.2 header printed "7 live fitted scalars" for the **row-level**
+> enumeration it had just given (4 spot capacities + 2 firm prices = 6) — an arithmetic
+> slip at the row scope, corrected 7 → 6 by caiso-189 on 2026-08-11.
+>
+> **A correction to `FINDING-caiso188` §1, recorded here rather than silently applied**
+> (that finding is addendum-only): it states that "this block's own earlier text **and the
+> caiso-186 sitting memo** both print '7 live fitted scalars' over the same enumeration
+> (4 + 2)". The first half is right; **the second half is not** — this memo prints 7 over a
+> 1 + 2 + 4 enumeration across three rows, at a scope the ledger row does not cover, and
+> its own §3.3 arithmetic is sound. Only the matrix header needed the fix. Cited in
+> `results/calibration/FINDING-caiso189-c6-attestation-2026-08-11.md` §4.
+
 ## §3.4 What this licenses, and what it does NOT
 
 **It does not license a lever, and this session builds nothing.** No `ScenarioConfig` field,
@@ -586,7 +608,7 @@ improvement via that route is claimed.
 | **1** | Fund the walled hourly PS water-state intake? | **NO as a C3a purchase.** YES only if justified on rule-1 structural fidelity, with C3a explicitly **not** the acceptance test | upper bound covers **62.1 %** of 2024's required move and **10.4 %** of 2025's — before the energy-neutrality offset, which may reverse the sign |
 | **2** | May CAISO be declared `CALIBRATED-WITH-CAVEATS` on a **C3a** ledger entry? | **NO — do not amend.** Stay NOT-YET and spend the next session on §3. Second choice (ii) narrowed claim; never (iii) | it would take **two** amendments (`LEDGERABLE_CRITERIA` **and** the budget 1 → 2), inherit to **ERCOT −32.4 %** and **MISO −14.1 %**, flip MISO for free, and reverse a 3-day-old amendment made about this exact criterion at this exact ISO |
 | **3** | Arm `caiso_storage_nqc_accreditation`? | **Owner's call — no session recommendation.** Not armed here | arming moves the keeper **+2,450.5 / +3,558.6 / +4,979.0 MW** and costs a full A/B re-solve + re-gate; gate-off is **exactly** inert, so there is no cost to deferring |
-| **4** | *(for information)* the repaired DOF ledger | census **4 → 3** rows; but **7** live fitted scalars on the backcast binding path, where the ledger implies ~1. Two rows describe their own state incorrectly | `battery_dispatch_adder` 1 · firm prices 2 (0.97 / 4.63 / 5.71 TWh/yr re-armed by the clip) · spot capacities 4 (**8,800 MW uncited**, co-located with C3a's pinned 2.7–3.0 GW plateau) |
+| **4** | *(for information)* the repaired DOF ledger | census **4 → 3** rows; but **7** live fitted scalars on the backcast binding path, where the ledger implies ~1. Two rows describe their own state incorrectly *(scope note, caiso-189 2026-08-11: this 7 is the CROSS-ROW total 1+2+4 and is correct; the ledger's `n_scalars: 6` is the IMPORT_TRANCHES row alone — see the §3.3 clarification)* | `battery_dispatch_adder` 1 · firm prices 2 (0.97 / 4.63 / 5.71 TWh/yr re-armed by the clip) · spot capacities 4 (**8,800 MW uncited**, co-located with C3a's pinned 2.7–3.0 GW plateau) |
 | **5** | *(for information)* caiso-186 and caiso-187 both escalated | not in scope; flagged so the sitting is not held on stale information | caiso-187: the outage overlay removes **24–35 %** of CC capacity-hours vs a **~10 %** published expectation, **growing 45 % in two years** |
 
 ---
