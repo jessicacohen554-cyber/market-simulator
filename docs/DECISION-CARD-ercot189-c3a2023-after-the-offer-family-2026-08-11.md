@@ -206,7 +206,7 @@ few points, and the additivity identity closes to zero.
 
 1. **By dollars, C3a-2023 is two-thirds the accepted C3c object.** The 181 tail hours —
    2.1% of the year — carry **$14.27 of the $21.08** miss.
-2. **By distance to the gate, it is ~97% of it.** Pricing the tail exactly as reality
+2. **By distance to the gate, it is 97.4% of it.** Pricing the tail exactly as reality
    did moves C3a-2023 from −32.8% to **−10.6%** — **$14.28 of the $14.66 bar** — and
    collapses C3b-2023 (0.608 → 0.152 PASS) and C3c-2023 (the ledgered entry goes inert
    exactly as its own OPEN RESIDUAL LANE clause provides: *"a mechanism that lands there
