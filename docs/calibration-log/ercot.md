@@ -7441,3 +7441,63 @@ and re-filed under its real object** (Martin Lake resolves to `COAL_PRB`, not
 lignite; the actual question is the one-class-per-plant bin sheet vs mixed
 facilities, ERCOT-146's nine plants carrying 1,708 MW of CT capacity with no
 `CT_PEAKER` row at all).
+
+## ercot-189 (2026-08-11) — THE OWNER'S QUESTION ("How have we still seen no improvement?") ANSWERED WITH A MEASUREMENT: C3a-2023 is two-thirds the accepted C3c object by dollars and ~97% of it by distance-to-gate — the decision card on continuing vs stopping after the offer family; ONE read-only counterfactual re-scoring of the run188 keeper, NO lever, NO derive, NO LP, NO run registered, NO matrix cell, keeper UNCHANGED
+
+**Task.** Planning/synthesis sitting (Fable). Deliverable:
+`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`, with
+the session's single new measurement in
+`scripts/probes/ercot189_c3a_c3c_overlap.py` →
+`results/calibration/ercot189_c3a_c3c_overlap.json` — a read-only counterfactual
+re-scoring of the keeper `2026-08-11-run188-arm-topfine-cliff` built by
+rebuilding the payload `lmp` aggregates from the committed
+`hourly/system_2023.parquet` (dict-for-dict equal to the committed payload
+before anything is emitted; CF-0 full-substitution seam −$0.01/MWh vs the bench
+`rt_lw`) and re-scoring counterfactual price series with
+`calibration_verdict`'s own functions. Actuals enter counterfactual SCORING
+only — no model input, no solve (rule 13 clean).
+
+**THE ANSWER TO THE OWNER'S QUESTION (card §1).** No improvement because every
+admissible lever worked the offer/conditioning channel whose whole measured
+budget is ~18% of the +$14.66 bar ($2.62 real, item 21; (c2) family ceiling
++$1.99, delivered −$0.21 at solve grain — a sign flip), while the miss lives in
+181 tail hours whose price is equilibrium conduct the accepted C3c entry
+already declares un-formable by a competitive-offer LP; the only face that
+could move the clearing position (quantity/capability) is killed twice at
+aggregate grain (ERCOT-159 four gates; ERCOT-107/108 bistable 963-vs-69) and
+unlicensed at unit grain (ercot-170, L1 0.3375 vs 0.90).
+
+**THE MEASUREMENT (card §2).** H_tail = the 181 committed rt_gt hours (actual
+hub RT > $200): carries **$14.27 of the $21.08** in-frame miss = **67.7% of the
+net gap**. **CF-1** (all 181 hours priced exactly as reality): C3a-2023 −32.8%
+→ **−10.6%** ($57.51 — $14.28 of the $14.66 bar, 97.4%), C3b-2023 0.608 →
+**0.152 PASS**, C3c 135/181 PASS (the ledgered entry goes inert per its own
+OPEN RESIDUAL LANE clause) — and the determination **still reads NOT-YET on
+C3a alone**: a **$0.38/MWh** diffuse non-tail residual beyond the band edge
+remains (non-tail hours carry $6.81 of gap; the band absorbs $6.43). **CF-3**:
+flooring the tail at $200 (full C3c-count inertness) buys **+$2.01 (13.7% of
+the bar)**; the uniform tail level that exactly reaches the band edge is
+**X\* = $709/MWh** against a model tail lw mean of $474 and reality's $945 —
+the requirement is conduct-level, not threshold-level. Frame reconciliations:
+Aug+Sep share 80.7% (ercot-177: 81.3%), top-100-Aug–Sep positive share 66.3%
+(MEMO-184: 68.1%), lmpDeltaHr top-181 share 0.8012 (committed 0.801, exact);
+additivity closes to zero. ercot-177 §7's same-object claim is CONFIRMED WITH
+A MEASURED REFINEMENT: the C3c object plus a ~$0.4 sliver.
+
+**THE OPTIONS PUT (card §4, card Q).** (Q-A) continue behind A1 with a
+pre-registered licence-re-test checkpoint and §2.3's reach bar; (Q-B) STOP —
+stand at NOT-YET, C3a-2023 at full magnitude, spend redirected (argued fairly:
+the fix lane was granted, costed, built anyway, and measured a sign flip);
+(Q-C) sign the checkpoint decision rule now (licence PASS → phase-0; FAIL →
+(Q-B) automatic). **Recommendation: (Q-C) with the rule's weight on (Q-B)** —
+the branch logic was fixed before the probe ran. §5 states the forecast
+consequences per option (gate (a) is marker-keyed; ceiling
+CALIBRATED-WITH-CAVEATS; the measured transferable statement — a 2023-like
+forward year carries up to −$14/MWh (−22% of level) annual bias in ~2% of
+hours; the C3c limitation is propagated NOWHERE in the forecast namespace and
+a `readiness_limits` price-tail disclaimer is proposed under every option).
+
+Governance: rules 22/25 clean ({2023–2025}, ERCOT only); rule 28 — no cell, a
+governance sitting with a read (ercot-182 precedent); rule 15 — no run, probe
+JSON committed as the evidence artifact (ercot-184 precedent). Next shorthand:
+**ercot-190**.

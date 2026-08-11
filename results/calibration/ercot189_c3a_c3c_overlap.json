@@ -1,0 +1,596 @@
+{
+ "probe": "ercot189_c3a_c3c_overlap",
+ "generated": "2026-08-11T14:23:20+00:00",
+ "run_id": "2026-08-11-run188-arm-topfine-cliff",
+ "bundle": "results/calibration/ercot188_topfine_arm_B",
+ "inputs": {
+  "system_parquet_rows": 61320,
+  "zonal_actual_nan_cells": {
+   "Houston": 1,
+   "North": 1,
+   "Northeast": 1,
+   "Panhandle": 1,
+   "South": 1,
+   "South_Central": 1,
+   "West": 1
+  },
+  "zonal_actual_nan_cells_in_h_tail": 0
+ },
+ "definitions": {
+  "h_tail_rule": "actual hub RT (HB_HUBAVG) > $200/MWh strict \u2014 the committed rt_gt set",
+  "n_tail": 181,
+  "n_tail_aug_sep": 132,
+  "weighting_note": "C3a weights zones by demand (two-stage, rounded); C3c counts model max-across-zones vs the actual hub series; H_tail is pinned to the actual-hub rt_gt definition and joined by hour index",
+  "crosswalk": {
+   "Houston": [
+    "LZ_HOUSTON"
+   ],
+   "North": [
+    "LZ_NORTH"
+   ],
+   "Northeast": [
+    "LZ_RAYBN"
+   ],
+   "South": [
+    "LZ_SOUTH"
+   ],
+   "South_Central": [
+    "LZ_AEN",
+    "LZ_CPS",
+    "LZ_LCRA"
+   ],
+   "West": [
+    "LZ_WEST"
+   ],
+   "Panhandle": [
+    "LZ_WEST"
+   ]
+  },
+  "crosswalk_drift_guard": "PASS"
+ },
+ "baseline_gate": {
+  "lmp_dict_equal": true,
+  "hours_gt200_model_rebuilt": 58,
+  "overlay_key_absent": true,
+  "c3a": {
+   "model": 43.23,
+   "actual": 64.32,
+   "magnitude": "-32.8%",
+   "status": "FAIL"
+  },
+  "c3b": {
+   "nrmse": 0.608,
+   "magnitude": "NRMSE 0.608",
+   "status": "FAIL"
+  },
+  "c3c": {
+   "model": 58.0,
+   "actual": 181.0,
+   "status": "FAIL"
+  },
+  "determination_replay": {
+   "determination": "NOT-YET",
+   "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+   ],
+   "criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "FAIL",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "forced_share": "PASS"
+   },
+   "c3c_2023_record": {
+    "status": "CAVEAT",
+    "classification": "ACCEPTED MODEL-CLASS LIMITATION"
+   }
+  },
+  "flat_model_lw_inframe": 43.234294571642366,
+  "bar": {
+   "actual_rt_lw": 64.32,
+   "lower_band_edge": 57.888,
+   "gap_to_bar_scorer": 14.658,
+   "gap_to_bar_inframe": 14.653705428357632,
+   "vintage_bar_dollars": 14.44,
+   "miss_dollars": -21.089999999999996
+  },
+  "guards_2024_2025": {
+   "2024": {
+    "magnitude": "+1.2%",
+    "status": "PASS"
+   },
+   "2025": {
+    "magnitude": "-8.0%",
+    "status": "PASS"
+   }
+  },
+  "lmp_delta_hr": {
+   "mean": -11.614269406392694,
+   "neg181_share_of_neg_mass": 0.8011678870777664,
+   "n_neg_hours": 2000
+  }
+ },
+ "seam": {
+  "cf0_c3a_model": 64.31,
+  "bench_rt_lw": 64.32,
+  "seam_dollars": -0.009999999999990905,
+  "note": "full-substitution reconciliation of the crosswalk/nanmean frame + LP demand weights + payload rounding against the bench rt_lw actual; bounds the precision of every CF row"
+ },
+ "counterfactuals": {
+  "cf1_actual_in_tail": {
+   "c3a": {
+    "model": 57.51,
+    "actual": 64.32,
+    "magnitude": "-10.6%",
+    "status": "FAIL"
+   },
+   "c3b": {
+    "nrmse": 0.152,
+    "magnitude": "NRMSE 0.152",
+    "status": "PASS"
+   },
+   "c3b_model_mon": [
+    25.521198669483358,
+    21.011889893639786,
+    25.01442560462671,
+    23.537215121832755,
+    28.517184689978624,
+    67.61417761382671,
+    40.8554618716865,
+    196.90779646582502,
+    97.24982465527789,
+    27.989167554799433,
+    30.5158255967222,
+    23.10176056949908
+   ],
+   "tail_count_model": 135,
+   "c3c": {
+    "model": 135.0,
+    "actual": 181.0,
+    "status": "PASS"
+   },
+   "determination_replay": {
+    "determination": "NOT-YET",
+    "reasons": [
+     "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+    ],
+    "criteria": {
+     "fuelmix": "PASS",
+     "sysvol": "PASS",
+     "price_mean": "FAIL",
+     "price_shape": "PASS",
+     "price_tail": "CAVEAT",
+     "dispatch_corr": "PASS",
+     "governance": "PASS",
+     "forced_share": "PASS"
+    },
+    "c3c_2023_record": {
+     "status": "PASS",
+     "classification": null
+    }
+   },
+   "clears_c3a_band": false,
+   "clears_c3b_band": true
+  },
+  "cf1_aug_sep_tail_only": {
+   "c3a": {
+    "model": 56.23,
+    "actual": 64.32,
+    "magnitude": "-12.6%",
+    "status": "FAIL"
+   },
+   "c3b": {
+    "nrmse": 0.168,
+    "magnitude": "NRMSE 0.168",
+    "status": "PASS"
+   },
+   "c3b_model_mon": [
+    24.820912336619475,
+    21.011889893639786,
+    23.02889301987882,
+    23.33783323888934,
+    27.18883616943353,
+    64.57957658261708,
+    36.51262959410606,
+    196.90779646582502,
+    97.24982465527789,
+    27.80163792303474,
+    28.72089424955137,
+    22.250691979734366
+   ],
+   "tail_count_model": 112,
+   "c3c": {
+    "model": 112.0,
+    "actual": 181.0,
+    "status": "PASS"
+   },
+   "determination_replay": {
+    "determination": "NOT-YET",
+    "reasons": [
+     "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+    ],
+    "criteria": {
+     "fuelmix": "PASS",
+     "sysvol": "PASS",
+     "price_mean": "FAIL",
+     "price_shape": "PASS",
+     "price_tail": "CAVEAT",
+     "dispatch_corr": "PASS",
+     "governance": "PASS",
+     "forced_share": "PASS"
+    },
+    "c3c_2023_record": {
+     "status": "PASS",
+     "classification": null
+    }
+   },
+   "clears_c3a_band": false,
+   "clears_c3b_band": true
+  },
+  "cf2_actual_except_tail": {
+   "c3a": {
+    "model": 50.04,
+    "actual": 64.32,
+    "magnitude": "-22.2%",
+    "status": "FAIL"
+   },
+   "c3b": {
+    "nrmse": 0.458,
+    "magnitude": "NRMSE 0.458",
+    "status": "FAIL"
+   },
+   "c3b_model_mon": [
+    25.863161706569812,
+    21.908664752994778,
+    28.607663768714634,
+    23.918173140127905,
+    30.940813194562118,
+    71.69609735983234,
+    44.17315960664861,
+    142.18254400765872,
+    67.76290471548648,
+    31.637073914204972,
+    29.735441502961777,
+    22.80207294310103
+   ],
+   "tail_count_model": 242,
+   "c3c": {
+    "model": 242.0,
+    "actual": 181.0,
+    "status": "PASS"
+   },
+   "determination_replay": {
+    "determination": "NOT-YET",
+    "reasons": [
+     "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+    ],
+    "criteria": {
+     "fuelmix": "PASS",
+     "sysvol": "PASS",
+     "price_mean": "FAIL",
+     "price_shape": "FAIL",
+     "price_tail": "CAVEAT",
+     "dispatch_corr": "PASS",
+     "governance": "PASS",
+     "forced_share": "PASS"
+    },
+    "c3c_2023_record": {
+     "status": "PASS",
+     "classification": null
+    }
+   },
+   "clears_c3a_band": false,
+   "clears_c3b_band": false
+  },
+  "cf3_doorstep": {
+   "200": {
+    "c3a": {
+     "model": 45.24,
+     "actual": 64.32,
+     "magnitude": "-29.7%",
+     "status": "FAIL"
+    },
+    "c3b": {
+     "nrmse": 0.563,
+     "magnitude": "NRMSE 0.563",
+     "status": "FAIL"
+    },
+    "c3b_model_mon": [
+     25.388336236503346,
+     21.011889893639786,
+     24.293666566521456,
+     23.52321839229337,
+     28.610066579570237,
+     66.3746870510068,
+     38.92613792594622,
+     124.99223921498238,
+     58.378984061474185,
+     28.65142657087018,
+     29.432588575330723,
+     22.700597722363206
+    ],
+    "tail_count_model": 58,
+    "c3c": {
+     "model": 58.0,
+     "actual": 181.0,
+     "status": "FAIL"
+    },
+    "determination_replay": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+     ],
+     "criteria": {
+      "fuelmix": "PASS",
+      "sysvol": "PASS",
+      "price_mean": "FAIL",
+      "price_shape": "FAIL",
+      "price_tail": "CAVEAT",
+      "dispatch_corr": "PASS",
+      "governance": "PASS",
+      "forced_share": "PASS"
+     },
+     "c3c_2023_record": {
+      "status": "CAVEAT",
+      "classification": "ACCEPTED MODEL-CLASS LIMITATION"
+     }
+    },
+    "clears_c3a_band": false,
+    "clears_c3b_band": false
+   },
+   "500": {
+    "c3a": {
+     "model": 52.58,
+     "actual": 64.32,
+     "magnitude": "-18.3%",
+     "status": "FAIL"
+    },
+    "c3b": {
+     "nrmse": 0.358,
+     "magnitude": "NRMSE 0.358",
+     "status": "FAIL"
+    },
+    "c3b_model_mon": [
+     26.446510698490354,
+     21.011889893639786,
+     26.816409512543185,
+     23.96070101189994,
+     31.32448911932393,
+     70.42815090143233,
+     44.376369257038064,
+     162.33608356768187,
+     72.34718261953894,
+     30.502970600227773,
+     30.847235306261812,
+     23.52561277777611
+    ],
+    "tail_count_model": 183,
+    "c3c": {
+     "model": 183.0,
+     "actual": 181.0,
+     "status": "PASS"
+    },
+    "determination_replay": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+     ],
+     "criteria": {
+      "fuelmix": "PASS",
+      "sysvol": "PASS",
+      "price_mean": "FAIL",
+      "price_shape": "FAIL",
+      "price_tail": "CAVEAT",
+      "dispatch_corr": "PASS",
+      "governance": "PASS",
+      "forced_share": "PASS"
+     },
+     "c3c_2023_record": {
+      "status": "PASS",
+      "classification": null
+     }
+    },
+    "clears_c3a_band": false,
+    "clears_c3b_band": false
+   },
+   "1000": {
+    "c3a": {
+     "model": 65.61,
+     "actual": 64.32,
+     "magnitude": "+2.0%",
+     "status": "PASS"
+    },
+    "c3b": {
+     "nrmse": 0.082,
+     "magnitude": "NRMSE 0.082",
+     "status": "PASS"
+    },
+    "c3b_model_mon": [
+     28.21365799421837,
+     21.011889893639786,
+     31.02475545791397,
+     24.69482350845948,
+     35.85205669649446,
+     77.1923149184307,
+     53.458240543018846,
+     229.05797423163605,
+     98.76867059526938,
+     33.58646392868692,
+     33.21142295415205,
+     24.900152291868277
+    ],
+    "tail_count_model": 183,
+    "c3c": {
+     "model": 183.0,
+     "actual": 181.0,
+     "status": "PASS"
+    },
+    "determination_replay": {
+     "determination": "CALIBRATED-WITH-CAVEATS",
+     "reasons": [
+      "1 ledgered caveat(s) (measured-input or model-class): C3c price tail / scarcity (RT hourly)"
+     ],
+     "criteria": {
+      "fuelmix": "PASS",
+      "sysvol": "PASS",
+      "price_mean": "PASS",
+      "price_shape": "PASS",
+      "price_tail": "CAVEAT",
+      "dispatch_corr": "PASS",
+      "governance": "PASS",
+      "forced_share": "PASS"
+     },
+     "c3c_2023_record": {
+      "status": "PASS",
+      "classification": null
+     }
+    },
+    "clears_c3a_band": true,
+    "clears_c3b_band": true
+   }
+  },
+  "cf3_200_aug_sep_tail_only": {
+   "c3a": {
+    "model": 44.4,
+    "actual": 64.32,
+    "magnitude": "-31.0%",
+    "status": "FAIL"
+   },
+   "c3b": {
+    "nrmse": 0.566,
+    "magnitude": "NRMSE 0.566",
+    "status": "FAIL"
+   },
+   "c3b_model_mon": [
+    24.820912336619475,
+    21.011889893639786,
+    23.02889301987882,
+    23.33783323888934,
+    27.18883616943353,
+    64.57957658261708,
+    36.51262959410606,
+    124.99223921498238,
+    58.378984061474185,
+    27.80163792303474,
+    28.72089424955137,
+    22.250691979734366
+   ],
+   "tail_count_model": 58,
+   "c3c": {
+    "model": 58.0,
+    "actual": 181.0,
+    "status": "FAIL"
+   },
+   "determination_replay": {
+    "determination": "NOT-YET",
+    "reasons": [
+     "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+    ],
+    "criteria": {
+     "fuelmix": "PASS",
+     "sysvol": "PASS",
+     "price_mean": "FAIL",
+     "price_shape": "FAIL",
+     "price_tail": "CAVEAT",
+     "dispatch_corr": "PASS",
+     "governance": "PASS",
+     "forced_share": "PASS"
+    },
+    "c3c_2023_record": {
+     "status": "CAVEAT",
+     "classification": "ACCEPTED MODEL-CLASS LIMITATION"
+    }
+   },
+   "clears_c3a_band": false,
+   "clears_c3b_band": false
+  },
+  "x_star_uniform_tail_level_to_bar": {
+   "level_dollars": 708.78766124198,
+   "inframe_model_at_level": 57.887999999999984,
+   "scorer_check_at_level_plus_50c": {
+    "model": 57.9,
+    "actual": 64.32,
+    "magnitude": "-10.0%",
+    "status": "PASS"
+   }
+  },
+  "tail_price_means": {
+   "model_lw": 474.3184656024277,
+   "actual_lw": 945.2536549307275,
+   "hub_actual_mean_unweighted": 1100.8097325952015
+  }
+ },
+ "decomposition": {
+  "frame": "unrounded flat demand-weighted zonal frame (NaN actual cells -> zero gap)",
+  "total_gap_dollars_per_mwh": 21.078084959230786,
+  "positive_gap_dollars_per_mwh": 28.388638504566618,
+  "sets": {
+   "h_tail_181": {
+    "n_hours": 181,
+    "contrib_dollars_per_mwh": 14.273124874319592,
+    "share_of_net_gap": 0.6771547273828081,
+    "share_of_positive_gap": 0.5971000120673783
+   },
+   "h_tail_aug_sep": {
+    "n_hours": 132,
+    "contrib_dollars_per_mwh": 12.998589843306824,
+    "share_of_net_gap": 0.6166874205341085,
+    "share_of_positive_gap": 0.537701405554535
+   },
+   "top100_aug_sep_lw": {
+    "n_hours": 100,
+    "contrib_dollars_per_mwh": 18.825657886651243,
+    "share_of_net_gap": 0.8931389129071172,
+    "share_of_positive_gap": 0.6631405688449248
+   },
+   "top100_unrestricted_lw": {
+    "n_hours": 100,
+    "contrib_dollars_per_mwh": 20.865388519962572,
+    "share_of_net_gap": 0.9899091193683102,
+    "share_of_positive_gap": 0.7349908138992347
+   },
+   "aug_sep_months": {
+    "n_hours": 1464,
+    "contrib_dollars_per_mwh": 17.00214956457252,
+    "share_of_net_gap": 0.8066268637524738,
+    "share_of_positive_gap": 0.7197811517145842
+   },
+   "actual_gt500": {
+    "n_hours": 104,
+    "contrib_dollars_per_mwh": 11.17838535946732,
+    "share_of_net_gap": 0.530332114188198,
+    "share_of_positive_gap": 0.4824254855416871
+   },
+   "actual_gt1000": {
+    "n_hours": 61,
+    "contrib_dollars_per_mwh": 7.062888047115614,
+    "share_of_net_gap": 0.33508205611547,
+    "share_of_positive_gap": 0.3348518685869313
+   },
+   "complement_of_h_tail": {
+    "n_hours": 8579,
+    "contrib_dollars_per_mwh": 6.804960084911195,
+    "share_of_net_gap": 0.32284527261719187,
+    "share_of_positive_gap": 0.4028999879326215
+   }
+  },
+  "additivity_check_dollars": 0.0,
+  "reconciliation_vs_committed": {
+   "memo184_top100_aug_sep_share_of_positive_gap": 0.681,
+   "this_frame_top100_aug_sep": 0.6631405688449248,
+   "ercot177_aug_sep_share_of_gap": 0.813,
+   "this_frame_aug_sep_share_of_net": 0.8066268637524738,
+   "lmpdeltahr_neg181_share": 0.801,
+   "this_probe_lmpdeltahr_neg181_share": 0.8011678870777664,
+   "note": "committed instruments differ by weighting (lw vs unweighted), series (zonal vs hub) and hour-set rule; expect close, not identical"
+  }
+ },
+ "notes": [
+  "READ-ONLY: no solve, no model input touched; actuals enter only counterfactual scoring",
+  "CF-3 is the C3c-inertness doorstep, NOT the ceiling of quantity mechanisms \u2014 ERCOT-159's forced set reached mean $813 on measured $500-3,000 offers",
+  "per-zone p rounded to 2dp before cross-zone weighting floors sub-cent CF resolution"
+ ]
+}
