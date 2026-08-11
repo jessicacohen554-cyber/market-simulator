@@ -173,11 +173,29 @@ def render(data: dict) -> str:
         if not have:
             continue
         lines.append(f"\n### {iso}\n")
-        keeper = next(
-            (phases[p][a]["keeper"] for (p, a) in sorted(have) if phases[p][a]),
-            None,
-        )
-        lines.append(f"Keeper comparator: `{keeper}`\n")
+        # The keeper comparator is read at SCORING time, so a promotion between
+        # the two phases gives them different denominators. That never touches
+        # `forecast_err` (the horizon claim's quantity, keeper-independent) but
+        # it does make the two phases' `input_gap` columns non-comparable — so
+        # both comparators are named whenever they differ.
+        keepers = {
+            p: next(
+                (phases[p][a]["keeper"] for a in ("R", "K") if phases[p][a]),
+                None,
+            )
+            for p in ("A", "B")
+        }
+        if keepers["A"] and keepers["B"] and keepers["A"] != keepers["B"]:
+            lines.append(
+                f"Keeper comparator: Phase A `{keepers['A']}` → "
+                f"Phase B `{keepers['B']}` (**promoted between phases** — "
+                "`forecast_err` below is keeper-independent; input_gap is not "
+                "comparable across the two phases)\n"
+            )
+        else:
+            lines.append(
+                f"Keeper comparator: `{keepers['B'] or keepers['A']}`\n"
+            )
         for metric in METRICS:
             lines.append(f"\n**{metric}**\n")
             lines.append(
