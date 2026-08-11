@@ -7206,3 +7206,182 @@ budget on a 4-core box) is a machine-speed artifact, deliberately untouched.
 Records: `results/calibration/FINDING-ercot187-golden-hash-attribution-2026-08-10.md`.
 ERCOT holds no `complete`/`final` marker, so no `calibration-complete.json`
 re-key applies.
+
+## ercot-188 (2026-08-11) — OWNER OPTION (B): THE (c2) CLIFF-RESOLVING OFFER-CURVE REFINEMENT IS BUILT, SEAM-PROVEN AND SOLVED — REJECTED-AS-ARMED on G-C3c, and the measured reach is NEGATIVE. Keeper UNCHANGED.
+
+**Authorization: OWNER DECISION — option (B) BUILD ANYWAY** on the
+`docs/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md` §8 card, taken as a
+**structural-fidelity purchase under rule 1 `[R-STRUCT]`**.
+
+> **THE MEMO'S OWN RECOMMENDATION WAS (A) CLOSE THE LANE, AND IT IS RECORDED
+> HERE AS OVERRIDDEN BY THE OWNER, NOT REWRITTEN.** ercot-184 measured (c2)'s
+> reach **across the entire family of MW-preserving re-slicings** at
+> **+$1.99/MWh against a +$14.44 bar (13.8 %)**, failing its own pre-registered
+> G-REACH bar of +$5.00 by 2.5×, and recommended against paying 1.4–5.6× LP
+> columns and the P0 bit-identity proof for it. The owner weighed that costing
+> and elected (B). This lane is the owner's purchase of structural fidelity over
+> the memo's mechanical recommendation — the ercot-185 pattern, where the
+> mechanical verdict stood unrewritten and the promotion rested openly on the
+> owner's standing structural standard.
+
+Pre-registration `docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`
+pushed at `b73e383` **BEFORE any measurement, derive, build or solve**, plus a
+**pre-solve Amendment 1**. Preconditions verified at session open: **ercot-186
+HAS LANDED** (PR #3847 — it honoured its own pre-registered STOP, so no A/B and
+no keeper movement) and **ercot-187 HAS LANDED** (PR #3848 — hygiene; a
+fail-closed leap-day derive fix that regenerated no committed artifact, and the
+golden-hash drift attributed 100 % to the owner-adopted 2026-07-26 CAMPD guard
+correction, exonerating ERCOT-185).
+
+### The result — a SIGN FLIP against the memo's ceiling, and that is the finding
+
+| | control | arm | Δ |
+|---|---|---|---|
+| **C3a-2023** | −32.5 % ($43.44 vs actual $64.32) | **−32.8 %** ($43.23) | **−$0.21/MWh** |
+| C3a-2024 / C3a-2025 | +1.4 % / −7.9 % | +1.2 % / −8.0 % | −0.08 / −0.03 $/MWh |
+| **C3b-2023** | 0.602 | 0.608 | +0.006 |
+| C3b-2024 / C3b-2025 | 0.160 / 0.101 | **0.158** / 0.102 | −0.002 / +0.001 |
+| C3c tail (actual 181/53/31) | 61 / 23 / 3 | **58** / 23 / 3 | −3 h in 2023 |
+| shed | 4 / 2 / 0 | 4 / 2 / 0 | **0** |
+| determination | NOT-YET {C3a, C3b} | NOT-YET {C3a, C3b} | **unchanged** |
+
+ercot-184's **invariant-quantity** measurement put R1's ceiling at
+**+$1.99/MWh**; the real LP delivers **−$0.21/MWh**. That is **inside** the
+precommit's pre-registered reconciliation band **[−$1.00, +$4.00]**, so the STOP
+did not fire — and the sign flip **isolates exactly the channel MEMO §3.3 said
+it could not measure and named as the real cost of the build.** The IQR
+instrument held the cleared quantity **FIXED** and priced only the **ladder**;
+the real LP also carries the **P0** channel, because the slicer writes heat rates
+into `mc_base`, which *is* the P0 objective. So the memo's ladder number is not
+overturned — it is joined by a second channel it could not see. The commitment
+channel is **measured, not inferred**: the gas commitment bridge, which detects
+its floors from the P0 run pattern, moves in **every** year — floored unit-hours
+**12,375 → 12,309** (2023), **6,164 → 6,160** (2024), **13,326 → 13,287** (2025).
+
+> **(c2) is not merely too small. At solve grain its ladder gain is CONSUMED by
+> the commitment channel its own seam breach opens.** MEMO §8's reading is
+> reinforced rather than overturned: you cannot reach a price by adding rows
+> above where the market clears.
+
+The mechanism itself works exactly as specified: the model's supply-curve top
+goes from a 6-block equal-width approximation carrying **33** econ rows in the
+measured top decile to **382 rows above ladder `rel` 0.9**, quoting up to **145×
+delivered gas**, with capacity conserved to 1.5e-11 MW. **The model can now
+express a cliff; it still does not clear on one** — item 23's conclusion
+reproduced from the opposite direction by a real LP rather than a merit-order
+mirror.
+
+### Gates — seven PASS, one FAIL ⇒ REJECTED-AS-ARMED, both members registered
+
+**PASS** — **G-SHED** (PRIMARY: 4/2/0 → 4/2/0, no year rose), **G-OWNER**
+(C3a-2024 keeps PASS; C3b-2024 0.160 → 0.158, still under 0.20; C3a-2025 −8.0 %
+vs the −9.1 % bound), **G-SPUR** (10→9, 11→11, 1→1), **G-COAL148** (max rise
+−0.0 TWh vs the +0.5 bar — the gate that killed the composition family twice at
++0.98/+1.95/+2.73), **G-DOF** (zero new scalars), **G-COST** (LP columns
+**×1.295**, *under* the memo's ×1.39 estimate; peak RSS **12.71 GB** vs the
+control's 10.20, inside the 15 GB box; **no year dropped**).
+
+**FAIL** — **G-C3c**: the 2023 model tail moves **61 → 58** against an actual
+**181**, i.e. **3 hours further from actual** on the already-ledgered
+model-class caveat (2024/2025 unchanged at 23/3). Small, still a fail, and
+directionally coherent with a −$0.21/MWh level move rather than anomalous.
+
+**G-SHED deserves its own line**, because it was the PRIMARY falsifier: the
+ercot-48/49 manufactured-shortage signature has killed this object **twice**,
+ercot-184 §4.6 measured **zero** shed-exposed hours build-free, and that is now
+**confirmed at SOLVE grain** — not one shed hour added in any year. (c2)'s motion
+is 100 % genuine offer formation, the one thing it does better than every prior
+candidate in this lane, **and it still does not save the mechanism.**
+
+**LOYO (rule 22):** R1 identifies no parameter, so leave-one-year-out is N/A and
+per-year deltas stand in its place (the ercot-173 precedent) — C3a
+**−0.21 / −0.08 / −0.03 $/MWh**, *uniformly* slightly negative, so there is no
+in-sample gain bought with held-out degradation.
+
+### The build, and the seam proof
+
+One `ScenarioConfig` field `ercot_econ_curve_top_refine`, **default off**,
+**ERCOT-gated** in `bins_to_fleet` — because `offer_curves._econ_curve_steps` is
+on the **ISO-AGNOSTIC** assembly path and **all six keepers share `n = 6`**, so
+an ungated arm would silently re-slice every ISO's fleet (MEMO §6). Cache-key
+registered dropped-at-default in **both** registries in the same commit; matrix
+row in the same PR; `top_refine=False` passed **explicitly** at the
+committed-band call site so an ISO that later arms `committed_ramp_spread`
+cannot inherit it.
+
+**SCHEME R1** = the econ ramp's **top block re-sliced `n` ways**, body left
+expression-for-expression identical (2n−1 = 11 slices, top sliver 2.778 % of the
+ramp). **ZERO NEW NUMERIC PARAMETERS (rule 23 `[R-DOF]`)**: the split point is
+`1 − 1/n` — the boundary the ramp is **already** sliced at — and the sub-count is
+the same `n`, both the registered `offer_curve_smoothing_n`, so the shape
+*follows* `n`. Structural grounding is two MEMO §4 measurements that **predate
+the build**: the top block is the marginal one in **14 of 33** econ-marginal
+object hours (more than any other slice), and it is the **only** block reaching
+the measured ladders' top decile.
+
+`ercot188_topfine_seamproof.json` — **ALL_ASSERTIONS_PASS**: **SP-1** gate-off
+ERCOT byte-identical to pre-edit HEAD ×3 years; **SP-2 (the charter's mandatory
+assertion)** all five non-ERCOT ISOs byte-identical with the gate **ARMED**, each
+on its own committed bundle carrying real `econc` rows (CAISO 128 / PJM 227 /
+NYISO 45 / NEISO 38 / MISO 147 plant-groups — so not vacuous); **SP-3** fleet MW
+deviation 1.5e-11; **SP-3b** CHP steam floor redistributed, never created or
+destroyed; **SP-4** body byte-identical in cap and heat rate; **SP-5** slice
+counts exactly {6, 11}; **SP-6** committed band unrefined; **SP-7** pinned
+default key `603c2498bf71d21d` **unmoved**, armed key `613cd5243fd84f20`
+distinct. The control's own 2023 census — 1,780 rows / 80,744.6 MW / 144 econ
+plant-groups / 36,115.0 MW econ ramp — **reproduces MEMO §3.1 exactly**, which is
+independent evidence this build re-slices the object the memo costed.
+
+### AMENDMENT 1 — the pre-registered falsifier CAUGHT A REAL DEFECT
+
+The **first** build FAILED its own SP-3/SP-3b/SP-5 in all three years.
+`bins_to_fleet` has long dropped any tranche **≤ 0.5 MW**, and R1's sub-slices
+are `curve_cap / n²`, so a plant with an econ ramp under **18 MW** had *every*
+sub-slice dropped and lost **the entire top sixth of its ramp** — **36 of 144
+plant-groups**, slice counts `[5, 11]`, and **40.27 MW of capacity plus 2.75 MW
+of CHP steam floor DELETED per year**. A build that silently deletes capacity
+while claiming to refine a curve is not what was costed. The guard
+(`assembly._top_refine_ok`) applies R1 only where every sub-slice clears that
+**pre-existing** floor — **108/144 groups = 99.331 % of econ MW**, the excluded
+36 holding 241.6 MW (0.669 %). **Not a scheme substitution and not the forbidden
+sweep**: the slice count and split point are unchanged, nothing had been solved
+when it was written, and the threshold is the assembly's own constant (named as
+`MIN_TRANCHE_CAPACITY_MW`, value unchanged, rule 5), so no free parameter is
+added.
+
+### The permanent limitation
+
+This is the **first offer-side ERCOT mechanism since ERCOT-86 that does NOT ride
+the P1-only `mc_bid_adjust` seam.** It writes heat rates into the **base** fleet,
+so it **BREACHES that seam and PERMANENTLY FORFEITS the offer-surface family's P0
+bit-identity proof**: the ercot-181 seam proof's byte-identity assertions have no
+analogue here, every control-vs-arm difference is confounded with commitment-side
+motion, and **the mechanism can be isolated only by argument, never by proof.**
+It also reprices ~16.5 GW of committed gas through the P1 startup-amortization
+channel. That cost was costed (MEMO §3.3) and accepted by the owner as the price
+of the structural fidelity; it is **not time-limited and does not expire when a
+later gate passes.**
+
+### Keeper, and what is left to the owner
+
+**`2026-08-09-ercot185-shaped-partial` is NOT moved by this session** — no
+promotion, no demotion, no re-key, no keeper-shard edit. ERCOT holds no
+`complete`/`final` marker, so no `calibration-complete.json` re-key applies.
+A structural-fidelity promotion over this rejected verdict **remains available to
+the owner and is expressly not assumed here**; §7.3 of the FINDING states the
+trade plainly — unlike item 23 (free, bit-identical P0) and ercot-185
+(residual-improving), this costs ×1.295 columns, forfeits the bit-identity proof
+permanently, and moves the residual slightly the wrong way.
+
+**==> WITH (c2) NOW MEASURED AT SOLVE GRAIN, THE OFFER-CURVE *RESOLUTION* FACE OF
+C3a-2023 IS CLOSED** (items 21–23 closed the level and grain faces; this closes
+the width one). Matrix cell `ercot_econ_curve_top_refine` ERCOT `O → R`, §5.1
+item 26; the other five ISOs stay `U` (rule 25).
+
+Records: `results/calibration/FINDING-ercot188-cliff-offer-curve-2026-08-11.md`,
+`docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md` (incl.
+Amendment 1), `ercot188_topfine_seamproof.json`, `ercot188_coal148.json`,
+`ercot188_p0_delta.json`. Runs
+`2026-08-11-run188-ctl-topfine-control` + `2026-08-11-run188-arm-topfine-cliff`
+(retention evicted the two 2026-08-04 run162 storage-rt runs, exactly as the
+precommit named in advance).
