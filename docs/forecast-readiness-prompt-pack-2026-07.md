@@ -6875,3 +6875,26 @@ with the §0al clause block **inlined verbatim at the end of each**, rather than
 the prompt bodies (§0aj-1, §0ak-1, §0ak-2, and FH-5 at §0ah); the operative copies are the
 inlined ones. Any future re-issue inlines it the same way: a prompt that needs assembling
 before it can be pasted is a prompt that will be pasted wrong.
+
+## §0an — refresh @ `6a37611`: FH-5 is scaffolding-only; FFR-9C-PROMOTE STAYS BLOCKED
+
+Record: **Addendum AN**. ERCOT keeper moved to **`2026-08-11-run188-arm-topfine-cliff`**
+(owner decision E2, over the lane's rejected verdict); audit 0 failures / 1 warning. F6-DIAG
+landed (**RAW IS RIGHT**) and RC-DERIVE landed (**cap re-derives to 8.0 GW; 5.0 was right for
+its 2021-vintage record**).
+
+**FH-5 landed PR #3862 with three files and no solves** — prereg, caveats, tooling, one
+solve-independent finding. No hindcast sidecar was registered. **FFR-9C-PROMOTE (§0ak-3) must
+NOT be pasted**: its pre-flight #1 stops it, correctly, because the horizon-degradation table
+it is sequenced behind does not exist yet.
+
+**Runnable now:** (1) **FH-5 CONTINUATION** — the solve legs, using the lane's own
+`scripts/probes/fh5_run_leg.sh` + `fh5_horizon_table.py`; this is the critical path.
+(2) **ARM-3-ARM** (§0ak-1) — never run, still valid. Same non-overlap rule as before: both
+solve, so run one at a time. (3) Nothing else is outstanding.
+
+**New card D-31 — adopt the re-derived 8.0 GW ERCOT solar queue cap?** RC-DERIVE delivered
+the number under the measurement-only posture and adopted nothing. Note for the card: 5.0 was
+CORRECT for its 2021-vintage record, so this is a data-record update under rule 23, not a
+correction of a bad derivation — and adoption re-bases ERCOT, inheriting the same
+FH-5-first ordering as D-30.
