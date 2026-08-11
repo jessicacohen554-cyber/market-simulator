@@ -70,7 +70,9 @@
   <div class="bc-page-header"><h1>Cross-ISO Mechanism Matrix</h1></div>
   <p class="bc-page-sub">Every model mechanism × every ISO: is it armed in the ISO's current backcast keeper
     (or forecast default), has it been tested there, and what was the verdict. This page renders the canonical
-    ledger in <code>data/mechanism-matrix.js</code> — sessions that test a mechanism update that file in the same
+    sharded ledger: mechanism-level rows in <code>data/mechanism-matrix.js</code> plus one per-ISO shard
+    <code>data/mechanism-matrix/&lt;ISO&gt;.js</code> holding that ISO's verdicts, evidence and keeper/gates stamps —
+    a session that tests a mechanism in an ISO updates ONLY its own ISO's shard, in the same
     session (CLAUDE.md rule 28 <code>[R-MECH-MATRIX]</code>). Methodology, per-ISO lever queues and update
     protocol: <code>docs/mechanism-testing-matrix.md</code>. Click a row for its note and evidence citations.</p>
 
@@ -90,9 +92,10 @@
 
   <div class="mm-table-wrap"><table class="mm" id="mmGrid"></table></div>
 
-  <p class="mm-note-foot">Source of truth: <code>docs/codebase-site/data/mechanism-matrix.js</code> (this page is a
-    pure renderer — edit the data file, not this page). Keeper snapshot and failing gates are stamped in the data
-    header. A verdict in one ISO never fills another ISO's cell (rule 25): transfer candidates appear as
+  <p class="mm-note-foot">Source of truth: <code>docs/codebase-site/data/mechanism-matrix.js</code> (mechanism-level
+    base) + <code>docs/codebase-site/data/mechanism-matrix/&lt;ISO&gt;.js</code> (per-ISO verdicts/evidence/stamps;
+    this page is a pure renderer — edit the data files, not this page). Keeper snapshot and failing gates are
+    stamped per ISO in that ISO's shard. A verdict in one ISO never fills another ISO's cell (rule 25): transfer candidates appear as
     <b>U</b> in the target ISO. "Untested" does not mean "recommended" — check the per-ISO lever queue in
     <code>docs/mechanism-testing-matrix.md</code> §5 for ranked candidates tied to each ISO's failing gates.</p>
 
@@ -102,7 +105,18 @@
   <div id="glBody"></div>
 </div>
 
+<!-- Sharded store (2026-08-11): base (mechanism-level rows) + one shard per
+     ISO (that ISO's cells/fc/ev + keeper/gates stamps), assembled client-side
+     into the legacy window.MECH_MATRIX shape by mechanism-matrix-assemble.js.
+     Shard list must match the base file's isos[]. -->
 <script src="data/mechanism-matrix.js"></script>
+<script src="data/mechanism-matrix/ERCOT.js"></script>
+<script src="data/mechanism-matrix/CAISO.js"></script>
+<script src="data/mechanism-matrix/PJM.js"></script>
+<script src="data/mechanism-matrix/MISO.js"></script>
+<script src="data/mechanism-matrix/NYISO.js"></script>
+<script src="data/mechanism-matrix/NEISO.js"></script>
+<script src="data/mechanism-matrix-assemble.js"></script>
 <script src="js/nav.js"></script>
 <script src="js/shared.js"></script>
 <script>
@@ -192,6 +206,7 @@
           '<div class="mm-note">'+esc(r.note||'') +
           (r.fc ? '<br><b>Forecast lane:</b> '+r.fc.split('').map(function(ch,i){return M.isos[i]+':'+ch;}).join(' ') : '') +
           (r.ev ? '<br><b>Evidence:</b> '+esc(Object.keys(r.ev).map(function(k){return k+'='+r.ev[k];}).join(' | ')) : '') +
+          (r.iso_notes ? '<br><b>Per-ISO notes:</b> '+esc(Object.keys(r.iso_notes).map(function(k){return k+': '+r.iso_notes[k];}).join(' | ')) : '') +
           '</div></td>' +
           r.cells.split('').map(function(ch,i){
             var cls = ch==='.' ? 'c-N' : 'c-'+ch;

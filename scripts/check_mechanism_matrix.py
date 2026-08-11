@@ -1,23 +1,33 @@
 """Rule-28 [R-MECH-MATRIX] mechanism-matrix guard (CI + local).
 
-Two layers, both stdlib-only (no repo deps, runnable with bare python3):
+THE MATRIX IS SHARDED PER ISO since 2026-08-11 (HOUSE-3, mirroring the
+2026-07-19 keeper sharding): `docs/codebase-site/data/mechanism-matrix.js` is
+the mechanism-level BASE (rows: id/cat/name/def/mode/note + cross-ISO ev) and
+`docs/codebase-site/data/mechanism-matrix/<ISO>.js` carries that ISO's cell
+verdicts, fc postures, ev citations and keeper/gates stamps. A lane's rule-28
+duty is a ONE-FILE edit — its own ISO's shard. Shared IO lives in
+`scripts/lib/mech_matrix.py` (stdlib-only, like this script; bare python3
+still runs both).
 
-1. **Integrity validation** (always): `docs/codebase-site/data/mechanism-matrix.js`
-   parses to well-formed rows — unique ids, 6-char cell strings over the
-   `K R I G O U .` vocabulary, categories resolved, `fc` strings well-formed.
-   A malformed matrix silently breaks the explorer page AND the ledger, so it
-   hard-fails.
+Two layers:
+
+1. **Integrity validation** (always): the base parses to well-formed rows —
+   unique ids, categories resolved — and every shard parses, matches its
+   filename's ISO, covers EXACTLY the base's mechanism-id set, and carries
+   single-char `cell`/`fc` values over the `K R I G O U .` vocabulary. A
+   malformed store silently breaks the explorer page AND the ledger, so it
+   hard-fails, naming the file (base or ISO shard) to fix.
 
 2. **Keeper-stamp drift** (always advisory, escalating in the diff gate):
-   `MECH_MATRIX.keepers[ISO]` must equal the id in
+   each matrix shard's `keeper:` stamp must equal the id in
    `frontend/data/backcast/keepers/<ISO>.json`. Rule 28 requires the promoting
-   session to re-stamp the matrix header when a keeper changes, but nothing
+   session to re-stamp the matrix when a keeper changes, but nothing
    checked it, so three ISOs drifted silently at once (nyiso-105 missed its
    stamp; ERCOT and CAISO were still on 2026-07-29 ids after 2026-07-31
    promotions). Pre-existing drift only WARNS — it belongs to the owning ISO's
    lane, not to whichever PR happens to run next — but a PR that itself moves
-   an ISO's keeper shard without re-stamping the header FAILS, which is
-   exactly the duty rule 28 states.
+   an ISO's keeper shard without re-stamping that ISO's matrix shard FAILS,
+   which is exactly the duty rule 28 states.
 
 3. **Diff gate** (`--base <ref>`): enforces the mechanical half of rule 28(c) —
    a PR that adds a NEW `ScenarioConfig` field must mention that field in the
@@ -48,7 +58,12 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-MATRIX_PATH = "docs/codebase-site/data/mechanism-matrix.js"
+sys.path.insert(0, str(REPO))
+
+from scripts.lib import mech_matrix as mm  # noqa: E402  (after sys.path insert)
+
+MATRIX_PATH = "docs/codebase-site/data/mechanism-matrix.js"  # the BASE file
+SHARD_PATH = "docs/codebase-site/data/mechanism-matrix/{iso}.js"
 MATRIX_DOC_PATH = "docs/mechanism-testing-matrix.md"
 SCENARIOS_PATH = "src/market_sim/config/scenarios.py"
 CALIB_CLI_PATH = "scripts/run_calibration_full.py"
@@ -101,9 +116,11 @@ def unbalanced_strings(text: str) -> list[str]:
     `,` `}` `]`. A truncated string lands mid-prose instead, so the next
     character is a letter, digit or punctuation that JS cannot accept there.
 
-    Scanning starts at the `window.MECH_MATRIX` assignment: everything above it
-    is the file's block-comment header, whose prose legitimately contains
-    `word: "quoted"` shapes that are not string literals at all.
+    Scanning starts at the `window.MECH_MATRIX` assignment (a prefix — it also
+    anchors `window.MECH_MATRIX_BASE` and `window.MECH_MATRIX_SHARDS`):
+    everything above it is the file's block-comment header, whose prose
+    legitimately contains `word: "quoted"` shapes that are not string literals
+    at all.
     """
     errors: list[str] = []
     start = text.index("window.MECH_MATRIX")
@@ -130,51 +147,158 @@ def unbalanced_strings(text: str) -> list[str]:
     return errors
 
 
-def validate_matrix(text: str) -> list[str]:
-    """Return a list of integrity-error strings for the matrix file text."""
-    errors: list[str] = []
-    if "window.MECH_MATRIX" not in text:
-        return ["missing `window.MECH_MATRIX` assignment"]
-    errors += unbalanced_strings(text)
-
-    cats = set(re.findall(r'\{\s*id:\s*"([a-z]+)",\s*name:', text))
-    ids = re.findall(r'\{\s*id:\s*"([a-z0-9_]+)",\s*cat:\s*"([a-z]+)"', text)
-    cells = re.findall(r'cells:\s*"([^"]*)"', text)
-    fcs = re.findall(r'fc:\s*"([^"]*)"', text)
-
-    if not ids:
-        errors.append("no rows found (id/cat pattern matched nothing)")
-    if len(ids) != len(cells):
-        errors.append(f"{len(ids)} rows but {len(cells)} `cells:` strings")
-
-    seen: set[str] = set()
-    for row_id, cat in ids:
-        if row_id in seen:
-            errors.append(f"duplicate row id `{row_id}`")
-        seen.add(row_id)
-        if cat not in cats:
-            errors.append(f"row `{row_id}` references unknown category `{cat}`")
-
-    for s in cells + fcs:
-        if len(s) != N_ISOS or not set(s) <= CELL_CHARS:
-            errors.append(
-                f"bad cell string `{s}` (need {N_ISOS} chars of K/R/I/G/O/U/.)"
-            )
-    return errors
+def _read(path: Path) -> str | None:
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError:
+        return None
 
 
-def matrix_isos(text: str) -> list[str]:
-    """Return the matrix's `isos:` list, in cell order."""
-    m = re.search(r"isos:\s*\[([^\]]*)\]", text)
+def matrix_isos(base_text: str) -> list[str]:
+    """Return the base file's `isos:` list, in display/cell order."""
+    m = re.search(r"isos:\s*\[([^\]]*)\]", base_text)
     return re.findall(r'"([A-Z]+)"', m.group(1)) if m else []
 
 
-def matrix_keepers(text: str) -> dict[str, str]:
-    """Return the matrix header's `keepers:` map, `{ISO: keeper_id}`."""
-    m = re.search(r"keepers:\s*\{([^}]*)\}", text)
-    if not m:
-        return {}
-    return dict(re.findall(r'([A-Z]+):\s*"([^"]*)"', m.group(1)))
+def load_store() -> tuple[dict | None, dict[str, dict], list[str]]:
+    """Parse base + every ISO shard. Returns (base_doc, shard_docs, errors).
+
+    Every error string is prefixed `<file>: ` so a failing lane knows which
+    file — the base, or which ISO's shard — it must fix.
+    """
+    errors: list[str] = []
+    base_text = _read(REPO / MATRIX_PATH)
+    if base_text is None:
+        return None, {}, [f"{MATRIX_PATH}: missing or unreadable"]
+    errors += [f"{MATRIX_PATH}: {e}" for e in unbalanced_strings(base_text)]
+    base_doc: dict | None = None
+    try:
+        base_doc = mm.parse_assignment(base_text, "window.MECH_MATRIX").value
+    except ValueError as exc:
+        errors.append(f"{MATRIX_PATH}: {exc}")
+    shards: dict[str, dict] = {}
+    isos = matrix_isos(base_text) or list(mm.ISO_ORDER)
+    for iso in isos:
+        rel = SHARD_PATH.format(iso=iso)
+        text = _read(REPO / rel)
+        if text is None:
+            errors.append(f"{rel}: missing shard file for ISO {iso}")
+            continue
+        errors += [f"{rel}: {e}" for e in unbalanced_strings(text)]
+        try:
+            shards[iso] = mm.parse_assignment(
+                text, f"window.MECH_MATRIX_SHARDS.{iso}"
+            ).value
+        except ValueError as exc:
+            errors.append(f"{rel}: {exc}")
+    return base_doc, shards, errors
+
+
+def validate_store(base_doc: dict | None, shards: dict[str, dict]) -> list[str]:
+    """Integrity errors for the parsed sharded store (see module docstring)."""
+    errors: list[str] = []
+    if base_doc is None:
+        return errors  # parse errors already reported by load_store
+    rows = base_doc.get("rows") or []
+    isos = list(base_doc.get("isos") or mm.ISO_ORDER)
+    cats = {c.get("id") for c in base_doc.get("categories", [])}
+    seen: set[str] = set()
+    for row in rows:
+        rid = str(row.get("id", "<missing id>"))
+        if rid in seen:
+            errors.append(f"{MATRIX_PATH}: duplicate row id `{rid}`")
+        seen.add(rid)
+        if row.get("cat") not in cats:
+            errors.append(
+                f"{MATRIX_PATH}: row `{rid}` references unknown category "
+                f"`{row.get('cat')}`"
+            )
+        for key in ("cells", "fc"):
+            if key in row:
+                errors.append(
+                    f"{MATRIX_PATH}: row `{rid}` carries a `{key}:` string — "
+                    f"per-ISO verdicts live in mechanism-matrix/<ISO>.js "
+                    f"(one `cell`/`fc` char per shard), not in the base"
+                )
+        per_iso = set(row.get("ev") or {}) & mm.PER_ISO_EV_KEYS
+        if per_iso:
+            errors.append(
+                f"{MATRIX_PATH}: row `{rid}` base ev carries per-ISO key(s) "
+                f"{sorted(per_iso)} — per-ISO citations live in the owning "
+                f"ISO's shard `ev`; only cross-ISO keys (e.g. `All`) stay here"
+            )
+    if not rows:
+        errors.append(f"{MATRIX_PATH}: no rows found")
+    for iso in isos:
+        if iso not in shards:
+            continue  # missing/unparseable: load_store already reported it
+        rel = SHARD_PATH.format(iso=iso)
+        doc = shards[iso]
+        if doc.get("iso") != iso:
+            errors.append(f"{rel}: `iso:` field reads `{doc.get('iso')}`")
+        cells = doc.get("cells")
+        if not isinstance(cells, dict):
+            errors.append(f"{rel}: no `cells:` map")
+            continue
+        missing = sorted(seen - set(cells))
+        extra = sorted(set(cells) - seen)
+        if missing:
+            errors.append(
+                f"{rel}: missing cell(s) for {len(missing)} mechanism(s): "
+                + ", ".join(missing[:6])
+                + (", …" if len(missing) > 6 else "")
+                + " (every base row id needs a line in every shard; use "
+                '`cell: "."` for n/a and `cell: "U"` for untested)'
+            )
+        if extra:
+            errors.append(
+                f"{rel}: cell(s) for unknown mechanism id(s): "
+                + ", ".join(extra[:6])
+                + (", …" if len(extra) > 6 else "")
+                + f" (no such row in {MATRIX_PATH})"
+            )
+        for rid, entry in cells.items():
+            if not isinstance(entry, dict):
+                errors.append(f"{rel}: `{rid}` entry is not an object")
+                continue
+            for key in ("cell", "fc"):
+                if key == "cell" and key not in entry:
+                    errors.append(f"{rel}: `{rid}` has no `cell:`")
+                elif key in entry and (
+                    len(str(entry[key])) != 1 or str(entry[key]) not in CELL_CHARS
+                ):
+                    errors.append(
+                        f"{rel}: `{rid}` bad `{key}` value `{entry[key]}` "
+                        f"(need one char of K/R/I/G/O/U/.)"
+                    )
+    return errors
+
+
+def matrix_all_text() -> str:
+    """Base + every shard, concatenated — the full rule-28 text surface.
+
+    Mention-style checks (the gap ratchets, the new-field diff gate, the CLI
+    advisory) search this: a field registered in a row's def/note (base) or in
+    an ISO shard's ev/note counts either way.
+    """
+    parts = []
+    for path in matrix_paths():
+        text = _read(REPO / path)
+        if text is not None:
+            parts.append(text)
+    return "\n".join(parts)
+
+
+def matrix_paths() -> list[str]:
+    """Repo-relative base + shard paths (shards in base `isos:` order)."""
+    base_text = _read(REPO / MATRIX_PATH) or ""
+    isos = matrix_isos(base_text) or list(mm.ISO_ORDER)
+    return [MATRIX_PATH] + [SHARD_PATH.format(iso=iso) for iso in isos]
+
+
+def matrix_keepers(shards: dict[str, dict]) -> dict[str, str]:
+    """The per-ISO matrix shards' `keeper:` stamps, `{ISO: keeper_id}`."""
+    return {iso: str(doc.get("keeper") or "") for iso, doc in shards.items()}
 
 
 def shard_keeper(iso: str) -> str | None:
@@ -186,16 +310,19 @@ def shard_keeper(iso: str) -> str | None:
         return None
 
 
-def keeper_drift(text: str) -> list[tuple[str, str, str]]:
-    """Return `(iso, header_id, shard_id)` for every ISO whose stamp disagrees."""
-    header = matrix_keepers(text)
+def keeper_drift(stamps: dict[str, str]) -> list[tuple[str, str, str]]:
+    """Return `(iso, matrix_stamp, keeper_shard_id)` per disagreeing ISO.
+
+    `stamps` is the matrix shards' keeper map (see :func:`matrix_keepers`);
+    the authority is `frontend/data/backcast/keepers/<ISO>.json`.
+    """
     drift: list[tuple[str, str, str]] = []
-    for iso in matrix_isos(text):
+    for iso, stamp in stamps.items():
         shard = shard_keeper(iso)
         if shard is None:
-            continue  # no shard on disk: not this guard's business
-        if header.get(iso, "") != shard:
-            drift.append((iso, header.get(iso, "<missing>"), shard))
+            continue  # no keeper shard on disk: not this guard's business
+        if stamp != shard:
+            drift.append((iso, stamp or "<missing>", shard))
     return drift
 
 
@@ -322,8 +449,9 @@ def gap_ratchet(matrix_text: str, source: str) -> list[str]:
             named = f in matrix_text or (stem and stem in matrix_text)
             if not named and f not in allow:
                 out.append(
-                    f"{iso}-scoped field `{f}` is in neither {MATRIX_PATH} nor "
-                    f"the {GAPS_BASELINE_PATH} ratchet (rule 28c). Add its row "
+                    f"{iso}-scoped field `{f}` is in neither the mechanism "
+                    f"matrix (base {MATRIX_PATH} + ISO shards) nor the "
+                    f"{GAPS_BASELINE_PATH} ratchet (rule 28c). Add its row "
                     f"(or name it in the owning family row's def/note)."
                 )
     return out
@@ -433,8 +561,9 @@ def shared_gap_ratchet(matrix_text: str, source: str) -> list[str]:
                 continue
             out.append(
                 f"shared field `{field}` is ARMED on the {iso} keeper "
-                f"({default!r} -> {value!r}) but is in neither {MATRIX_PATH} nor "
-                f"the {GAPS_BASELINE_PATH} shared ratchet (rule 28c). Add its "
+                f"({default!r} -> {value!r}) but is in neither the mechanism "
+                f"matrix (base {MATRIX_PATH} + ISO shards) nor the "
+                f"{GAPS_BASELINE_PATH} shared ratchet (rule 28c). Add its "
                 f"row, or name it in the owning family row's def/note."
             )
     return out
@@ -591,6 +720,23 @@ def anchor_findings(matrix_text: str, source: str) -> tuple[list[dict], dict[str
     return out, tally
 
 
+def _anchor_findings_all(scen_src: str) -> tuple[list[dict], dict[str, int]]:
+    """Anchor findings across base + every shard, each tagged with `path`."""
+    findings: list[dict] = []
+    tally: dict[str, int] = {}
+    for rel in matrix_paths():
+        text = _read(REPO / rel)
+        if text is None:
+            continue
+        found, t = anchor_findings(text, scen_src)
+        for f in found:
+            f["path"] = rel
+        findings += found
+        for k, v in t.items():
+            tally[k] = tally.get(k, 0) + v
+    return findings, tally
+
+
 def anchor_ratchet(findings: list[dict]) -> list[dict]:
     """Unresolvable anchors that the committed baseline does not already allow.
 
@@ -661,21 +807,35 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    matrix_text = (REPO / MATRIX_PATH).read_text(encoding="utf-8")
-    errors = validate_matrix(matrix_text)
+    base_doc, shard_docs, errors = load_store()
+    errors += validate_store(base_doc, shard_docs)
     for e in errors:
-        print(f"::error file={MATRIX_PATH}::mechanism-matrix integrity: {e}")
+        # Each error string is `<file>: <detail>` — surface the file to fix.
+        rel, _, detail = e.partition(": ")
+        print(f"::error file={rel}::mechanism-matrix integrity: {detail}")
     if errors:
         return 1
-    print(f"mechanism-matrix: integrity OK ({MATRIX_PATH})")
+    print(
+        f"mechanism-matrix: integrity OK ({MATRIX_PATH} + {len(shard_docs)} ISO shards)"
+    )
+    matrix_text = matrix_all_text()
 
     # --- rule 28: line anchors must resolve (the nyiso-121 decay) ------------
     scen_src = (REPO / SCENARIOS_PATH).read_text(encoding="utf-8")
-    findings, tally = anchor_findings(matrix_text, scen_src)
+    findings, tally = _anchor_findings_all(scen_src)
     if args.fix_anchors:
-        matrix_text, n_fixed = fix_anchors(matrix_text, findings)
-        (REPO / MATRIX_PATH).write_text(matrix_text, encoding="utf-8")
-        findings, tally = anchor_findings(matrix_text, scen_src)
+        n_fixed = 0
+        for rel in matrix_paths():
+            per_file = [f for f in findings if f["path"] == rel]
+            if not per_file:
+                continue
+            text = (REPO / rel).read_text(encoding="utf-8")
+            text, fixed = fix_anchors(text, per_file)
+            if fixed:
+                (REPO / rel).write_text(text, encoding="utf-8")
+                n_fixed += fixed
+        matrix_text = matrix_all_text()
+        findings, tally = _anchor_findings_all(scen_src)
         (REPO / ANCHORS_BASELINE_PATH).write_text(
             json.dumps(
                 {
@@ -714,7 +874,7 @@ def main() -> int:
     )
 
     # --- rule 28: header keeper stamp vs the per-ISO keeper shard -------------
-    drift = keeper_drift(matrix_text)
+    drift = keeper_drift(matrix_keepers(shard_docs))
     if not drift:
         print("mechanism-matrix: keeper stamps match every keepers/<ISO>.json")
 
@@ -727,14 +887,15 @@ def main() -> int:
     if not args.base:
         for f in anchor_errs:
             print(
-                f"::warning file={MATRIX_PATH}::mechanism-matrix anchor: "
-                f"{_anchor_message(f)}"
+                f"::warning file={f.get('path', MATRIX_PATH)}::mechanism-matrix "
+                f"anchor: {_anchor_message(f)}"
             )
         for iso, header, shard in drift:
             print(
-                f"::warning file={MATRIX_PATH}::{iso} keeper stamp drift: header "
-                f"`{header}` != keepers/{iso}.json `{shard}` (rule 28). The "
-                f"promoting session re-stamps the header in the same session."
+                f"::warning file={SHARD_PATH.format(iso=iso)}::{iso} keeper stamp "
+                f"drift: matrix shard `{header}` != keepers/{iso}.json `{shard}` "
+                f"(rule 28). The promoting session re-stamps its ISO's matrix "
+                f"shard in the same session."
             )
         for iso, reason, shard in doc_drift:
             print(
@@ -745,7 +906,8 @@ def main() -> int:
         return 0
 
     changed = _git("diff", "--name-only", args.base, "HEAD").splitlines()
-    matrix_touched = MATRIX_PATH in changed
+    matrix_files = set(matrix_paths())
+    matrix_touched = any(p in matrix_files for p in changed)
 
     # --- rule 28(c): new ScenarioConfig fields must be registered ------------
     failed = False
@@ -760,42 +922,49 @@ def main() -> int:
     # gone red for lanes that touched nothing.)
     base_stale: set[str] = set()
     try:
-        base_findings, _ = anchor_findings(
-            _git("show", f"{args.base}:{MATRIX_PATH}"),
-            _git("show", f"{args.base}:{SCENARIOS_PATH}"),
-        )
-        base_stale = {f["key"] for f in base_findings}
+        base_scen = _git("show", f"{args.base}:{SCENARIOS_PATH}")
+        # The pre-shard monolith AND the sharded files both live under these
+        # paths across the migration boundary — collect whatever the base ref
+        # actually has, so blame stays correct on either side.
+        for rel in matrix_paths():
+            old = _git("show", f"{args.base}:{rel}")
+            if not old:
+                continue
+            base_findings, _ = anchor_findings(old, base_scen)
+            base_stale |= {f["key"] for f in base_findings}
     except (subprocess.CalledProcessError, OSError):
         base_stale = set()  # base blobs unreachable: fail closed, blame nobody
     for f in anchor_errs:
         if f["key"] in base_stale:
             print(
-                f"::warning file={MATRIX_PATH}::mechanism-matrix anchor "
-                f"(pre-existing, not this PR): {_anchor_message(f)}"
+                f"::warning file={f.get('path', MATRIX_PATH)}::mechanism-matrix "
+                f"anchor (pre-existing, not this PR): {_anchor_message(f)}"
             )
         else:
             failed = True
             print(
-                f"::error file={MATRIX_PATH}::mechanism-matrix anchor: "
-                f"{_anchor_message(f)}"
+                f"::error file={f.get('path', MATRIX_PATH)}::mechanism-matrix "
+                f"anchor: {_anchor_message(f)}"
             )
 
-    # A PR that MOVES a keeper shard owns that ISO's header stamp: fail. Drift
+    # A PR that MOVES a keeper shard owns that ISO's matrix stamp: fail. Drift
     # this PR did not create only warns — it belongs to the owning ISO's lane.
     for iso, header, shard in drift:
+        matrix_shard = SHARD_PATH.format(iso=iso)
         if KEEPER_SHARD.format(iso=iso) in changed:
             failed = True
             print(
-                f"::error file={MATRIX_PATH}::{iso} keeper promoted to `{shard}` in "
-                f"this PR but the matrix header still reads `{header}`. Rule 28 "
-                f"[R-MECH-MATRIX]: the promoting session re-stamps the header (and "
-                f"re-checks that ISO's column) in the SAME session."
+                f"::error file={matrix_shard}::{iso} keeper promoted to `{shard}` "
+                f"in this PR but {matrix_shard} still stamps `{header}`. Rule 28 "
+                f"[R-MECH-MATRIX]: the promoting session re-stamps its ISO's "
+                f"matrix shard (keeper + gates, and re-checks that ISO's column) "
+                f"in the SAME session."
             )
         else:
             print(
-                f"::warning file={MATRIX_PATH}::{iso} keeper stamp drift (pre-existing, "
-                f"not this PR): header `{header}` != keepers/{iso}.json `{shard}`. "
-                f"Belongs to the {iso} lane."
+                f"::warning file={matrix_shard}::{iso} keeper stamp drift "
+                f"(pre-existing, not this PR): matrix shard `{header}` != "
+                f"keepers/{iso}.json `{shard}`. Belongs to the {iso} lane."
             )
 
     # Prose half, same escalation: a PR that MOVES a keeper shard owns that
@@ -825,9 +994,10 @@ def main() -> int:
                 failed = True
                 print(
                     f"::error file={SCENARIOS_PATH}::new ScenarioConfig field "
-                    f"`{field}` is not registered in {MATRIX_PATH} (rule 28c "
-                    f"[R-MECH-MATRIX]). Add a row for the mechanism, or name the "
-                    f"field in the owning row's def/note."
+                    f"`{field}` is not registered in the mechanism matrix (rule "
+                    f"28c [R-MECH-MATRIX]). Add its row in {MATRIX_PATH} (plus a "
+                    f"cell line in each mechanism-matrix/<ISO>.js shard), or "
+                    f"name the field in the owning row's def/note."
                 )
         if new_fields and not failed:
             print(f"mechanism-matrix: {len(new_fields)} new field(s) all registered")
@@ -857,12 +1027,24 @@ def main() -> int:
     ).splitlines()
     new_runs = [p for p in added if p.startswith(REGISTRY_PREFIX)]
     if new_runs and not matrix_touched:
+        isos_hit = sorted(
+            {
+                iso
+                for p in new_runs
+                for iso in shard_docs
+                if iso.lower() in Path(p).name.lower()
+            }
+        )
+        hint = (
+            " or ".join(SHARD_PATH.format(iso=i) for i in isos_hit)
+            or "its ISO's mechanism-matrix/<ISO>.js shard"
+        )
         print(
             f"::warning::PR registers {len(new_runs)} new backcast run(s) but does "
-            f"not touch {MATRIX_PATH}. If this run tested a mechanism (probe, "
-            f"candidate, or keeper), rule 28b requires its cell verdict updated in "
-            f"the same session. Ignore if the run re-exercises an already-recorded "
-            f"recipe."
+            f"not touch the mechanism matrix. If this run tested a mechanism "
+            f"(probe, candidate, or keeper), rule 28b requires its cell verdict "
+            f"updated in the same session — edit {hint}. Ignore if the run "
+            f"re-exercises an already-recorded recipe."
         )
     if CALIB_CLI_PATH in changed:
         base_cli = _git("show", f"{args.base}:{CALIB_CLI_PATH}")
@@ -872,8 +1054,9 @@ def main() -> int:
             if not re.search(rf"\b{re.escape(token)}\b", matrix_text):
                 print(
                     f"::warning::new calibration CLI flag `{flag}` is not mentioned "
-                    f"in {MATRIX_PATH}. If it arms a solve-affecting mechanism, add "
-                    f"or extend its row (rule 28c)."
+                    f"in the mechanism matrix (base {MATRIX_PATH} or any ISO "
+                    f"shard). If it arms a solve-affecting mechanism, add or "
+                    f"extend its row (rule 28c)."
                 )
 
     return 1 if failed else 0
