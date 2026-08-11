@@ -226,6 +226,76 @@ def g1_p1_measured_vs_model() -> dict:
     }
 
 
+def g4_estimator_sensitivity(
+    market: str = "DA", year: int = 2025, month: int = 7
+) -> dict:
+    """NOT PRE-REGISTERED — the estimator's own robustness, reported anyway.
+
+    The PREREG fixed the estimator as a capacity-weighted MEDIAN, citing the
+    caiso-153 attenuation defect and the PJM/NEISO derive convention.  That
+    reasoning is about avoiding an attenuating RATIO estimator; it was imported
+    without checking whether this object's distribution is one a median
+    represents.  It is not: a large share of MISO unit-hours submit a single
+    flat price, which parks a large share of the capacity weight at Δ exactly
+    zero and drags the median toward the flat bidder rather than toward the
+    price at which the marginal MW is actually offered.
+
+    This function measures that, at full magnitude, so the arm's result can be
+    read against the right caveat.  **The estimator is NOT changed** — swapping
+    it after seeing that the pre-registered one is unfavourable is exactly the
+    move rules 1 and 23 forbid.  The arm runs on the surface as pre-registered.
+    """
+    from market_sim.config import paths
+
+    from scripts.data.derive_miso_offer_surface import _READ_COLS, _prepare_frame
+
+    path = paths.clean_path("energy-offers", iso="MISO", year=year, market=market)
+    lo = pd.Timestamp(year=year, month=month, day=1, tz="UTC")
+    hi = lo + pd.offsets.MonthBegin(1)
+    df = pd.read_parquet(
+        path,
+        columns=_READ_COLS,
+        filters=[("interval_start_utc", ">=", lo), ("interval_start_utc", "<", hi)],
+    )
+    nuniq = df.groupby(["unit_code", "interval_start_utc"])[
+        "step_price_usd_per_mwh"
+    ].nunique()
+    prep, _ = _prepare_frame(df)
+
+    out: dict = {
+        "population": f"{market}-{year}-{month:02d}",
+        "unit_hours": int(len(nuniq)),
+        "share_unit_hours_single_flat_price": round(float((nuniq == 1).mean()), 4),
+        "share_unit_hours_ge4_distinct_prices": round(float((nuniq >= 4).mean()), 4),
+        "by_position": {},
+    }
+    for lo_p, label in ((0.8, "p>0.8"), (0.0, "all positions")):
+        sub = prep[prep["p"] > lo_p]
+        d, w = sub["delta"].to_numpy(), sub["w"].to_numpy()
+        order = np.argsort(d)
+        d_s, cum = d[order], np.cumsum(w[order]) / w.sum()
+        q = {
+            f"p{int(x * 100)}": round(float(d_s[np.searchsorted(cum, x)]), 2)
+            for x in (0.5, 0.75, 0.90, 0.95, 0.99)
+        }
+        out["by_position"][label] = {
+            "n_segments": int(len(d)),
+            "weight_mw": round(float(w.sum()), 1),
+            "quantiles_usd_per_mwh": q,
+            "cap_weighted_mean": round(float(np.average(d, weights=w)), 2),
+            "max": round(float(d.max()), 2),
+            "weight_share_delta_zero": round(float(w[d == 0].sum() / w.sum()), 4),
+            "weight_share_delta_gt_10": round(float(w[d > 10].sum() / w.sum()), 4),
+        }
+    out["reading"] = (
+        "The pre-registered median and the capacity-weighted mean disagree by "
+        "roughly 3x at the top of the curve. Any single-number-per-position "
+        "surface collapses a distribution whose spread IS the object of "
+        "interest, which is the substantive finding this gate surfaces."
+    )
+    return out
+
+
 def main() -> None:
     """Run every Phase-0 gate and write the record."""
     rec: dict = {"session": "miso-151", "keeper": "2026-08-09-miso-148-basis-aware"}
@@ -243,6 +313,8 @@ def main() -> None:
         log.info("G-1 %s", rec["G_1_P1"]["verdict"])
     else:
         rec["G_1_P1"] = {"verdict": "SKIPPED", "reason": f"no artifact at {ARTIFACT}"}
+    rec["G_4_estimator_sensitivity"] = g4_estimator_sensitivity()
+    log.info("G-4 estimator sensitivity recorded (not pre-registered)")
     OUT.write_text(json.dumps(rec, indent=1))
     log.info("wrote %s", OUT)
 
