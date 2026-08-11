@@ -1218,7 +1218,14 @@ def miso_surface_positions(generators: list) -> "np.ndarray":
             continue
         groups.setdefault((code, getattr(g, "plant_group", "")), []).append(i)
     for idx in groups.values():
-        caps = np.array([float(getattr(generators[i], "pmax", 0.0)) for i in idx])
+        # NO SILENT DEFAULT (rule 21 [R-REGISTRY]). The tranche capacity field
+        # is ``pmax_mw``; an earlier revision read ``pmax`` with a 0.0 fallback,
+        # which made EVERY position 0.0 and silently collapsed the whole surface
+        # onto its lowest position bin. A missing attribute is a wiring error
+        # and must say so.
+        caps = np.array(
+            [float(getattr(generators[i], "pmax_mw")) for i in idx], dtype=float
+        )
         total = float(caps.sum())
         if total <= 0.0:
             continue
@@ -1379,6 +1386,19 @@ def apply_miso_offer_surface(
         return
 
     pos = miso_surface_positions(generators)[rows]
+    # A POSITION-conditioned surface whose positions are all identical is not
+    # position-conditioned at all — it silently collapses onto one bin and
+    # reprices the whole fleet at that bin's value. That is exactly what a
+    # wrong capacity-attribute name did before this guard existed, and the run
+    # LOOKED healthy: 552 tranches repriced, plausible $/MWh in the log, and
+    # only ``position p50 0.000`` betrayed it. Fail loudly instead.
+    if float(np.ptp(pos)) <= 0.0:
+        raise ValueError(
+            f"MISO offer surface: all {rows.size} target tranches resolved to "
+            f"position {float(pos[0]):.4f} — the position coordinate is not "
+            "varying, so the surface would apply one bin to the whole fleet. "
+            "This is a wiring error, not a degenerate fleet."
+        )
     pos_bin = np.clip(
         np.searchsorted(pos_edges[1:-1], pos, side="right"), 0, pos_edges.size - 2
     )
