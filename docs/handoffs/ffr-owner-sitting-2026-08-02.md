@@ -4143,3 +4143,82 @@ as-of-2021 CAISO IEPR download — not a modelling decision.
   set; the *record moved*. That makes adoption a clean rule-23 re-derivation on a data
   change, with no implication that anyone mis-derived anything. **Returns as card D-31**
   (§0an), exactly as R-c promised — "adoption returns as a card with the number."
+
+## Addendum AO — FH-5 COMPLETE: the program's headline skill number is in, and FFR-9C-PROMOTE IS UNBLOCKED
+
+### AO.1 State
+
+`origin/main` **`6a37611` → `f6381c5`** (18 commits: FH-5's six legs + reads, miso-152's
+base-band inversion prereg/finding, this manager's AN). **All six keepers UNMOVED**
+(ERCOT stays `2026-08-11-run188-arm-topfine-cliff`). `audit_keepers.py`: **0 failures,
+1 warning** (the standing ERCOT E10 `schema` tag).
+
+### AO.2 FH-5 delivered — 11 of 12 arms, I6 PASS on every one
+
+Every ISO solved `[2021, 2023, 2024, 2025]`, bridged `[2022]`, `leakage_violations: []`,
+freeze ACTIVE and read at launch, registered to the **hindcast** namespace with
+`meta.kind="full_forward"`. **The I6 rider PASSED on all 11 arms — no leg was stopped, so
+every read is quotable.** CAISO Arm K is the single missing arm: **BLOCKED, not failed**
+(§1.4, the absent as-of-2021 CAISO demand-growth cell; the seam is fail-closed and the lane
+refused to invent a rate).
+
+**THE HEADLINE, which is the forecast program's first real skill statement:**
+
+> Across five of six ISOs and **12 of 13 ISO×metric cells, forward skill in this model is
+> governed by WHICH YEAR is being forecast, not by HOW FAR AHEAD.** Adding two evolution
+> steps at a fixed calendar year moves the error far less than moving to a different
+> calendar year at a fixed horizon.
+
+Measured against the pre-registered h=2 control, so the two effects are separable rather
+than asserted: ERCOT price_mean 0.096 horizon vs **0.479** year; ERCOT fuelmix 20.152 vs
+**67.263**; PJM price_mean 0.016 vs **0.179**; MISO 0.009 vs **0.130**. The single dissent
+— NEISO price_mean, 0.070 vs 0.051 — is reported by the lane as "the closest cell in the
+table and not a counter-example so much as a tie", which is the right way to carry it.
+
+### AO.3 The D-30 event — handled exactly as the card intended, and worth recording as precedent
+
+A `src/` change landed **mid-lane** (main advanced `3ae7465` → `6a37611`, PRs #3866
+caiso-190 + #3867 miso-151) after ERCOT had solved and while NEISO was mid-solve — pulled in
+by the *required* response to a merged-and-deleted branch, which moves the working tree's
+code underneath a running solve. No forecast default flipped, so D-30's literal trigger did
+not fire; but **its purpose did**. The lane's response, in order: **killed the in-flight
+NEISO run and deleted its partial bundle** (ambiguous code provenance by construction —
+discarded rather than reasoned about), **pinned `src/` and `run_calibration.py` back to
+`3ae7465`** worktree-only and verified byte-identical, and re-solved so that **every
+Phase-B leg, ERCOT included, ran one code version byte-identical to the code Phase A ran.**
+That is precisely the property the horizon claim depends on, and it is now established
+rather than assumed.
+
+**Reproduction caveat the lane states and this manager endorses:** Phase-B artifacts are
+produced at `src/ == 3ae7465` while the branch sits on later main. A reproducing session
+must **pin `src/`**, not check out the branch head and re-solve.
+
+**Left explicitly un-adjudicated (correctly):** whether the caiso-190 refactor is in fact
+behaviour-neutral for the forecast path. It was **routed around, never tested**. The named
+test is a reproduction control — re-solve one arm at both heads and compare
+`crossover_score.json` — which this lane declined to spend budget on. **Booked as an open
+item**, because "describes itself as unchanged statement-for-statement" is an argument, not
+a measurement.
+
+### AO.4 FFR-9C-PROMOTE IS UNBLOCKED
+
+Its pre-flight #1 required FH-5 on main; FH-5 is on main, complete, with I6 clean and its
+halves provably on one code version. **The gate is satisfied and the lane may be pasted.**
+Pre-flight #2 (promote the posture as ONE coherent unit, never a partial default flip of
+stage B's three flags alone) is UNCHANGED and still binding — and AG.1's parked condition,
+"promotion of the flag into the shipped ERCOT forward default awaits FH-4's own skill
+evidence", is now discharged by AO.2. A promotion re-bases ERCOT hindcasts, so the FH-5
+artifacts above become the pre-epoch record the moment it lands — which is fine, because
+they are complete and committed first. That was the whole point of the ordering.
+
+### AO.5 The open queue
+
+- **ARM-3-ARM** (D-29, signed) — still never run. No longer conflicts with FH-5; it does
+  conflict with FFR-9C-PROMOTE (both solve), so one at a time.
+- **Card D-31** — adopt the re-derived **8.0 GW** ERCOT solar queue cap (5.0 was right for
+  its own 2021-vintage record; the record moved). Re-bases ERCOT.
+- **F6-DIAG's fix recommendation** — `RAW IS RIGHT` is adjudicated; the fix itself is a card.
+- **CAISO Arm K** — one manual as-of-2021 CAISO IEPR download unblocks the missing 12th arm.
+- **caiso-190 behaviour-neutrality** — untested, per AO.3.
+- **Q.2 battery** — ERCOT moved once this window (ercot-188) and has been stable one sweep.
+  Hold stands; re-evaluate after another quiet sweep.
