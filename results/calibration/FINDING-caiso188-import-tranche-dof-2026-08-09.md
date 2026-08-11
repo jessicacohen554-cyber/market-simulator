@@ -394,3 +394,88 @@ value into `run_config.json`, which is why the ledger's `root_cause` names it.
    a call site exists on the lane being solved) now gain a third: **check the
    DATA the gate resolves through**. All three failure modes have now been
    measured on this one ISO.
+
+---
+
+## §8 — ADDENDUM (2026-08-11, caiso-189): the keeper WAS promoted, and its attestation was written post-hoc
+
+*Appended by caiso-189. **Nothing in §§1–§7 above is altered** — this section records
+what happened after the body was written, in the same way caiso-183's finding carries its
+own promotion addendum.*
+
+### 8.1 The promotion
+
+The body opens "**Keeper `2026-08-09-caiso-184-c1-lpbasis` UNCHANGED; no promotion is
+proposed**". That was true when it was written and is **SUPERSEDED**: the **owner promoted
+`2026-08-09-caiso-188-d1-micseam` in the SAME session**, superseding
+`2026-08-09-caiso-184-c1-lpbasis`. The promotion record is
+`docs/handoffs/caiso-186-owner-sitting-2026-08-09.md` — "**KEEPER PROMOTED,
+OWNER-DIRECTED IN THE SAME SESSION**" — and it is reflected in
+`frontend/data/backcast/keepers/CAISO.json` and the mechanism matrix §5.2 header.
+
+The finding's other governance statements survive the promotion intact:
+`calibration-complete.json` / `holdout-freeze.json` **were** correctly left untouched,
+because CAISO holds no `complete` marker and rule 22 D-5(b) re-keying therefore does not
+fire. The A/B, the census, the seam forensics and every gate stand exactly as measured.
+
+### 8.2 What the promotion shipped without, and what caiso-189 did about it
+
+Every CAISO promotion ships a bespoke `scripts/gen_caisoNNN_attestation.py` that writes
+the bundle's `schema` / `governance` / `exceptions` blocks. **The series stops at
+caiso-184**: because this promotion was owner-directed after the body was written, no
+generator was written for it, and `caiso188_d1_micseam/calibration_attestation.json`
+carried **only** the `free_parameters` DOF ledger `scripts/build_dof_ledger.py` writes.
+
+One missing block, two rubric consequences — both mechanical, neither a model defect:
+
+* `calibration_verdict.score_governance` read **C6 UNATTESTED** ("a bundle whose
+  attestation carries no governance block is exactly as unattested as one with no file"),
+  which **alone** forces `NOT-YET`;
+* the incumbent's C3c exceptions never carried forward, so `ledger_entries` was `[]` and
+  the two failing C3c years read as **undocumented** FAILs. The owner's C3c standing rule
+  could not cover them either — it requires a passing governance gate **and** a lone
+  failure, and C3a fails here.
+
+`scripts/audit_keepers.py` check **E8** validates only `free_parameters`, so it reported
+"0/0" — green — on an attestation nobody had signed. That is why the gap survived every
+audit.
+
+caiso-189 (2026-08-11) wrote `scripts/gen_caiso189_attestation.py` on the pjm-153
+precedent (`gen_pjm153_collapse_attestation.py`, for the `pjm152_collapse_A` bundle, which
+likewise shipped without its attestation). It computes rather than types every premise —
+**G-DELTA** (the arms differ on exactly `capacity_deliverability_limits`, False → True),
+**G-SEAM** (Part A actually resolved: control at the fitted 7,500.0 MW limit binding
+764/477/807 h vs this bundle at the published MIC 16,055/16,452/16,148 MW with its dual
+**exactly 0.0** in every hour of every year), **G-MACHINE** (the machine half of C6, using
+the scorer's own constants), **G-DOF** (the `free_parameters` block carried
+**byte-identical**, 11 / 8, `n_scalars` 6) and **G-EXC**.
+
+**The verdict delta is bookkeeping only, on committed artifacts, with no solve:**
+C6 `UNATTESTED → PASS`; C3c `FAIL → ledgered CAVEAT`; failing criteria `2 → 1`; scored
+criteria `7 → 8`. **C3a mean LMP remains the sole load-bearing FAIL** at
++3.4 / +10.4 / +12.9 % against a ±10 % band, and **the determination remains `NOT-YET`.**
+
+### 8.3 Two magnitudes were stale and were refreshed
+
+The four exceptions are the incumbent caiso-184's, carried with `classification` and
+`reason` **byte-identical**; this session created no caveat and spent no ledger slot. Their
+`magnitude` fields were re-measured on **this** bundle, because a carried magnitude
+measured on a superseded bundle is its own governance defect. Two had moved:
+
+| entry | carried magnitude | measured on `caiso188_d1_micseam` |
+|---|---|---|
+| C3c 2023 | model 0 h > $200 (on `caiso163_asym_path_ratings`) | model 0 h vs RT 47 h — **unchanged** |
+| C3c 2024 | model 0 h > $200 (on `caiso163_asym_path_ratings`) | **model 1 h** vs RT 35 h — **refreshed** |
+| C3a 2025 | λ 39.3543 $/MWh (on `caiso166_measured_loss_zones`) | **38.87** vs RT 34.42 (+12.9 %) — **refreshed** |
+| C3a 2024 | λ 38.5678 $/MWh, +11.5 % (on `caiso166_measured_loss_zones`) | **38.27** vs RT 34.65 (+10.4 %) — **refreshed** |
+
+Each refreshed field quotes the carried text verbatim alongside the new measurement, so
+nothing is overwritten. Note that C3c **2025 PASSES** on this bundle (model 0 h vs RT 8 h,
+small-count |Δ| ≤ 10 h) and caiso-184's ledger carries no 2025 C3c entry, so none was
+invented. Under rubric v3.1 `LEDGERABLE_CRITERIA` is `price_tail` alone, so the two C3a
+entries **reclassify nothing** — they are carried as the historical record and C3a's FAIL
+stands at full magnitude.
+
+Record: `results/calibration/FINDING-caiso189-c6-attestation-2026-08-11.md`,
+`scripts/gen_caiso189_attestation.py`, `scripts/audit_keepers.py` (new check **E10**,
+which closes the E8 blind spot), `tests/scoring/test_audit_keepers_attestation_shape.py`.
