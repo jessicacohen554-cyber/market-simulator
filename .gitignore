@@ -309,6 +309,18 @@ frontend/data/forecast/program-status.js
 # registered record is the frontend/data/hindcast sidecar, and the readout
 # lives in docs/handoffs/arm3-clean-row-horizon-2026-08-09.md.
 /results/arm3/
+# ARM-3-ARM armed-default leg (run_full_horizon --out-dir; owner decision D-29,
+# arming miso_clean_tier_rows as the MISO forecast default). The FFR-4E/FFR-4F
+# class, NOT the /results/arm3/ class above: the heavy per-year DISPATCH
+# PARQUETS are excluded, but this leg's SLIM artifacts ARE committed, because
+# they are the arming's own evidence — run_config.json and
+# full_horizon_summary.json carry the RESOLVED miso_clean_tier_rows: true and
+# the cache key 9337e00504e1e72a on a leg that passed NO clean-tier flag, which
+# is precisely the claim "the ISO override arms it" reduces to. Readout:
+# docs/handoffs/arm3-arm-miso-clean-tier-2026-08-11.md.
+/results/arm3arm/*/*/*/*.parquet
+/results/arm3arm/*/*/*/*.npz
+/results/arm3arm/*/*/*/hourly/
 # D-9 forecast warm-start A/B arms (scripts/probes/_d9_forecast_warmstart_ab.py
 # --out-dir). Same class as /results/full-horizon/ — it IS a full-horizon
 # forecast solve, one per arm, and nothing here is dashboard-registered. The
