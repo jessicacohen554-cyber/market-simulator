@@ -49,6 +49,29 @@ ARTIFACT = (
     REPO / "data" / "raw" / "_validation-source" / "miso_offer_surface_positioned.json"
 )
 
+#: G-F3 tolerance ($/MWh).  The PREREG wrote this gate's bar as "Delta
+#: bit-identical", which is arithmetically UNSATISFIABLE for floating-point
+#: data: ``(p + c) - (q + c)`` is not bit-identical to ``p - q`` in IEEE754, so
+#: the gate as written could only ever fail.  It did, and the correction is
+#: recorded rather than quietly applied.  Measured on the real July-2025 DA
+#: book: worst discrepancy **5.68e-14** against an ULP of 1.14e-13 at the
+#: largest Delta present ($555) -- i.e. HALF AN ULP, with zero segments above
+#: 1e-9.  The tolerance below sits ~4 orders above the observed worst case and
+#: ~7 orders below any economically meaningful $/MWh, so it tests the property
+#: (level cancels) rather than the arithmetic.
+#:
+#: DISCLOSURE, because relaxing a failed gate is the move that needs the most
+#: light: this correction does NOT help the mechanism's case. G-1 refutes the
+#: pre-registered prior by a factor of ~25 in the WRONG direction whatever
+#: G-F3 says; a passing G-F3 only records that the shape-only design cancels
+#: level as intended. There is no outcome this relaxation rescues.
+G_F3_TOL: float = 1e-9
+TOL_NOTE: str = (
+    "max |Delta - Delta'| <= 1e-9 $/MWh under a constant curve shift "
+    "(PREREG said 'bit-identical'; unsatisfiable in floating point -- see "
+    "G_F3_TOL)"
+)
+
 #: Dispatch AWARDS that must never reach the clean datatype (rule 13).
 OUTCOME_COLS = {
     "MW",
@@ -139,14 +162,26 @@ def g_f3_level_invariance(market: str = "DA", year: int = 2025, month: int = 7) 
     shifted, _ = _prepare_frame(df2)
 
     a, b = base["delta"].to_numpy(), shifted["delta"].to_numpy()
-    identical = bool(a.shape == b.shape and np.array_equal(a, b))
+    if a.shape != b.shape:
+        return {
+            "bar": TOL_NOTE,
+            "verdict": "HARD STOP",
+            "reason": f"shape changed under a price shift: {a.shape} vs {b.shape}",
+        }
+    diff = np.abs(a - b)
+    worst = float(diff.max())
+    scale = float(np.abs(a).max())
     return {
-        "bar": "Delta bit-identical under a constant curve shift",
+        "bar": TOL_NOTE,
+        "tolerance": G_F3_TOL,
         "population": f"{market}-{year}-{month:02d}, {len(a):,} segments",
         "shift_usd_per_mwh": shift,
-        "max_abs_delta_of_delta": float(np.max(np.abs(a - b))) if identical else None,
-        "bit_identical": identical,
-        "verdict": "PASS" if identical else "HARD STOP",
+        "max_abs_delta_of_delta": worst,
+        "largest_delta_present": scale,
+        "ulp_at_that_scale": float(np.spacing(scale)),
+        "n_exceeding_tolerance": int((diff > G_F3_TOL).sum()),
+        "share_bit_identical": round(float((diff == 0).mean()), 6),
+        "verdict": "PASS" if worst <= G_F3_TOL else "HARD STOP",
     }
 
 
@@ -226,6 +261,76 @@ def g1_p1_measured_vs_model() -> dict:
     }
 
 
+def g4_estimator_sensitivity(
+    market: str = "DA", year: int = 2025, month: int = 7
+) -> dict:
+    """NOT PRE-REGISTERED — the estimator's own robustness, reported anyway.
+
+    The PREREG fixed the estimator as a capacity-weighted MEDIAN, citing the
+    caiso-153 attenuation defect and the PJM/NEISO derive convention.  That
+    reasoning is about avoiding an attenuating RATIO estimator; it was imported
+    without checking whether this object's distribution is one a median
+    represents.  It is not: a large share of MISO unit-hours submit a single
+    flat price, which parks a large share of the capacity weight at Δ exactly
+    zero and drags the median toward the flat bidder rather than toward the
+    price at which the marginal MW is actually offered.
+
+    This function measures that, at full magnitude, so the arm's result can be
+    read against the right caveat.  **The estimator is NOT changed** — swapping
+    it after seeing that the pre-registered one is unfavourable is exactly the
+    move rules 1 and 23 forbid.  The arm runs on the surface as pre-registered.
+    """
+    from market_sim.config import paths
+
+    from scripts.data.derive_miso_offer_surface import _READ_COLS, _prepare_frame
+
+    path = paths.clean_path("energy-offers", iso="MISO", year=year, market=market)
+    lo = pd.Timestamp(year=year, month=month, day=1, tz="UTC")
+    hi = lo + pd.offsets.MonthBegin(1)
+    df = pd.read_parquet(
+        path,
+        columns=_READ_COLS,
+        filters=[("interval_start_utc", ">=", lo), ("interval_start_utc", "<", hi)],
+    )
+    nuniq = df.groupby(["unit_code", "interval_start_utc"])[
+        "step_price_usd_per_mwh"
+    ].nunique()
+    prep, _ = _prepare_frame(df)
+
+    out: dict = {
+        "population": f"{market}-{year}-{month:02d}",
+        "unit_hours": int(len(nuniq)),
+        "share_unit_hours_single_flat_price": round(float((nuniq == 1).mean()), 4),
+        "share_unit_hours_ge4_distinct_prices": round(float((nuniq >= 4).mean()), 4),
+        "by_position": {},
+    }
+    for lo_p, label in ((0.8, "p>0.8"), (0.0, "all positions")):
+        sub = prep[prep["p"] > lo_p]
+        d, w = sub["delta"].to_numpy(), sub["w"].to_numpy()
+        order = np.argsort(d)
+        d_s, cum = d[order], np.cumsum(w[order]) / w.sum()
+        q = {
+            f"p{int(x * 100)}": round(float(d_s[np.searchsorted(cum, x)]), 2)
+            for x in (0.5, 0.75, 0.90, 0.95, 0.99)
+        }
+        out["by_position"][label] = {
+            "n_segments": int(len(d)),
+            "weight_mw": round(float(w.sum()), 1),
+            "quantiles_usd_per_mwh": q,
+            "cap_weighted_mean": round(float(np.average(d, weights=w)), 2),
+            "max": round(float(d.max()), 2),
+            "weight_share_delta_zero": round(float(w[d == 0].sum() / w.sum()), 4),
+            "weight_share_delta_gt_10": round(float(w[d > 10].sum() / w.sum()), 4),
+        }
+    out["reading"] = (
+        "The pre-registered median and the capacity-weighted mean disagree by "
+        "roughly 3x at the top of the curve. Any single-number-per-position "
+        "surface collapses a distribution whose spread IS the object of "
+        "interest, which is the substantive finding this gate surfaces."
+    )
+    return out
+
+
 def main() -> None:
     """Run every Phase-0 gate and write the record."""
     rec: dict = {"session": "miso-151", "keeper": "2026-08-09-miso-148-basis-aware"}
@@ -243,6 +348,8 @@ def main() -> None:
         log.info("G-1 %s", rec["G_1_P1"]["verdict"])
     else:
         rec["G_1_P1"] = {"verdict": "SKIPPED", "reason": f"no artifact at {ARTIFACT}"}
+    rec["G_4_estimator_sensitivity"] = g4_estimator_sensitivity()
+    log.info("G-4 estimator sensitivity recorded (not pre-registered)")
     OUT.write_text(json.dumps(rec, indent=1))
     log.info("wrote %s", OUT)
 
