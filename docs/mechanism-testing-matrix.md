@@ -3914,6 +3914,44 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-09-miso-148-basis-aware`, **NOT-YET**
 
+> **QUEUE STAMP miso-152 (2026-08-11) — CHARTER (B), THE BASE-BAND INVERSION, IS
+> **CLOSED**. Branch **B-2 IMMATERIAL**. Keeper UNCHANGED at
+> `2026-08-09-miso-148-basis-aware`; **no solve, no run registered** (Phase 0 charter,
+> declared in the PREREG and honoured). Matrix: `gas_offer_curve_tranches` MISO **stays
+> `K`** with a measured fill-order caveat added — the mechanism is NOT refuted.**
+>
+> **Why the bands invert: deliberately.** `_MISO_OFFER_CURVE` grounds the committed band
+> in the measured CAMPD part-load premium, and the source comment records the *previous*
+> state (committed 0.92 < econ_low 0.95) as the defect it was fixing. **What it opens is a
+> real one:** the LP fills tranches in COST order while physics fills them in
+> OUTPUT-POSITION order, there is **no same-plant fill-order constraint anywhere in the
+> LP**, and MISO floors **nothing** on the CC committed tranche (`pmin` **and** `min_gen`
+> are 0.0 on all 44 CC_REGULAR committed rows, all 8760 h). Real plant p991: committed
+> **515.97 MW @ $26.184** with `econc00-02` at **36.85 MW each @ $25.122/$25.643/$26.164**
+> — all three cheaper than the block they physically sit on. Confirmed at three levels:
+> source (G-1), effective mc through the real offer path (G-2: **50.5 %** of plant-band-hours
+> inverted, mean gap **$0.833/MWh**), and a live `solve_dispatch` (G-3, 4/4 tests).
+>
+> **And it is immaterial: 0.36 / 0.31 / 0.45 %** of CC energy (2023/24/25) against a
+> pre-registered prior of 25 % band [5, 60] — **refuted ~55×, below the band floor**. The
+> object is **wide but thin**: 39–43 of 44 plants, but each econ sub is 7 % of the min-load
+> block and the price window is ~$1/MWh wide. T-6 PASSES on CC (−1.83/−1.01/+9.42 %).
+> **NO LEVER PROPOSED** — the sign is **repair-dependent**: R-a PIN (the ERCOT-141
+> `floor_online_hours` form) gives **+1.06/+0.87/+1.49 %** CC supply → price **DOWN**, the
+> WRONG way for the −15.6 % miss; R-b GATE gives **−0.36/−0.31/−0.45 %** → price **UP** and
+> tiny. P-2 was pre-registered with a band spanning zero and the author's prior expectation
+> of UP was disclosed *before* measuring; picking a limb to get a sign would be fitting the
+> repair to the residual.
+>
+> **NAMED SUCCESSOR, NOT OPENED — needs its own instrument.** `CT_PEAKER` carries the SAME
+> inversion with the **largest gap in the fleet** ($12.50–25.89/MWh, 15–30× CC's) and its
+> **79 committed rows are as unfloored as CC's** — but its **T-6 FAILS** (+38.8/+37.9/+40.1 %;
+> ST_GAS −38.0/−39.2/−59.3 %), so its reconstructed **1.20/0.54/6.47 %** out-of-order share
+> is **DESCRIPTIVE ONLY and no verdict rests on it**. The 2025 CT figure is the only number
+> here that would clear the 5 % floor, and it is exactly the one T-6 says is untrustworthy;
+> measuring it needs an instrument that reproduces CT commitment.
+> `FINDING-miso152-the-inversion-is-real-and-immaterial-2026-08-11.md`.
+
 > **QUEUE STAMP miso-151 (2026-08-11) — ITEM 9 WAS OWNER-CHARTERED, BUILT, SOLVED,
 > REGISTERED AND **REJECTED**. `measured_offer_surface` MISO **`U` → `R`**. Keeper
 > UNCHANGED at `2026-08-09-miso-148-basis-aware`.**
