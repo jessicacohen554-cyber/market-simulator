@@ -6868,3 +6868,10 @@ landed and is verified), F6-DIAG (§0aj-1), ARM-3-ARM (§0ak-1), RC-DERIVE (§0a
 carry the §0al clause block. **FFR-9C-PROMOTE (§0ak-3) is NOT re-issued** — its pre-flight
 #1 blocks it until FH-5 is on main, and issuing it now would invite exactly the ordering
 mistake that pre-flight exists to prevent.
+
+**§0am addendum (same sitting).** The four re-issued prompts were delivered to the owner
+with the §0al clause block **inlined verbatim at the end of each**, rather than referenced
+— one-click copyable, no assembly step. The pack keeps the clause block once (§0al) plus
+the prompt bodies (§0aj-1, §0ak-1, §0ak-2, and FH-5 at §0ah); the operative copies are the
+inlined ones. Any future re-issue inlines it the same way: a prompt that needs assembling
+before it can be pasted is a prompt that will be pasted wrong.
