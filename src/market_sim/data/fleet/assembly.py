@@ -1139,6 +1139,23 @@ def bins_to_fleet(
                     bin_label=label,
                     min_run_hours=min_run,
                     min_down_hours=min_down,
+                    # ercot-186 rule-18 [R-PHYSICS] GRAIN REPAIR. The two tags
+                    # above are per-TRANCHE and, by the deliberate design
+                    # recorded above, are non-zero on the committed anchor
+                    # slice ONLY — a bid tranche must acquire no UC coupling.
+                    # The consequence was that a licensing gate reading
+                    # ``min_down_hours`` on an econ*/peak* row read 0 for every
+                    # row it could ever reach, so the test was vacuous in both
+                    # directions (``<= 2`` admitted everything, ``>= 4``
+                    # rejected everything) and its effective scope collapsed
+                    # onto the caller's class map — the hard-coded class tuple
+                    # rule 18 forbids. Stamp the PLANT's own assembled physics
+                    # on every one of its rows so the gate can be evaluated at
+                    # the grain the physics actually lives at. Same values, one
+                    # grain coarser; nothing in the LP, FleetArrays or the
+                    # commitment path reads these fields.
+                    plant_min_run_hours=bin_min_run,
+                    plant_min_down_hours=bin_min_down,
                     startup_cost_per_mw=tr_startup,
                     must_run_pct=pct_mr if suffix == "committed" else 0.0,
                     bin_nameplate_mw=(nameplate if suffix == "committed" else 0.0),

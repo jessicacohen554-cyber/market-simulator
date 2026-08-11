@@ -7048,3 +7048,84 @@ Records: `results/calibration/FINDING-ercot185-fault3-partial-layer-2026-08-09.m
 runs `2026-08-09-ercot185-shaped-control` + `2026-08-09-ercot185-shaped-partial`.
 ERCOT holds no `complete`/`final` marker, so no `calibration-complete.json`
 re-key applies.
+
+## ercot-186 (2026-08-10) — D3: THE RULE-18 GRAIN DEFECT. Confirmed, measured, and WORSE than the card said; the repair is NOT inert — and the session's own pre-registered stop rule fired. No A/B solved, NO run registered, keeper UNCHANGED.
+
+**Authorization:** owner sitting 2026-08-09, card **D3 option (ii)**, sequenced
+after D2 — which landed as the current keeper. Precommit
+`docs/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md` pushed at `2e8f879e`
+**before any measurement**. Keeper at start and at end:
+`2026-08-09-ercot185-shaped-partial`, **NOT-YET {C3a-2023, C3b-2023}**.
+
+**Nothing was solved, so nothing was registered.** Stated plainly so the absence
+is not read as a skipped registration (rules 15/16, the ercot-175 §0 /
+ercot-176 Amendment-3 precedent).
+
+**The defect is real (SP-2).** The armed keeper mechanism
+`ercot_faststart_pool_offer` gates on `min_down_hours <= 2 h` read on rows that
+all carry 0, so it rejects **0 of 486 / 486 / 497** CT bid rows in
+2023/2024/2025. Its only real filter is its `CT_PEAKER` row universe — the
+hard-coded class tuple rule 18 `[R-PHYSICS]` forbids. Card D3 verified.
+
+**The defect is worse than the card describes (SP-1, FAILED, reported at full
+magnitude).** The pre-registered equivalence to the ercot-176 Amendment-2
+per-plant read fired its falsifier on **40 of 219** plant prefixes, and the
+cause is mechanical and single: **all 40 lack a committed tranche** (assembly's
+`if cap <= 0.5: continue` guard drops it), so their physics is recorded on **no
+row at all** and even the ercot-176 read returns 0 for them — 19 CC_CHP,
+17 CT_CHP, 2 ST_CHP, 1 CC_REGULAR, 1 CT_PEAKER. A **second, deeper facet** of
+the same grain defect.
+
+**The repair is NOT inert (SP-4), and the standing prior is FALSIFIED.** 2023
+moves **76,845 row-hours**, **173 → 168** rows priced, max markup delta
+**$1,709.62/MWh**; 2024/2025 array-equal. The pool row's annotation carried
+since 2026-08-07 — *"CT physics is uniform at min-down 1 h"* — is wrong: 2023
+carries `CT_PEAKER_South_Central_p6243` at min-down **8 h** / min-run 8 h. This
+was a real **mis-scoping**, not only a lost protection. **The bound was not
+moved to recapture that plant** (the ercot-176 17-CC-plant discipline). No
+direction of price effect is claimed: composition is replace-by-mask, so the
+sign is not fixed by construction and nothing was solved.
+
+**Why it stopped.** The precommit's §3/§7 rule is *"any SP falsifier fires ⇒
+stop, report, register nothing"*. SP-1 fired. The ercot-176 Amendment-2 route
+(amend pre-solve when a seam proof surfaces a code fact) was closed by timing —
+SP-4 landed in the same probe run, so any amendment would have been authored
+with the arm's effect already known. And the arm moves **only 2023**, the year
+carrying both of ERCOT's failing criteria, so a 2023 price number produced under
+a fired contract is one nobody should rely on. Fixing a gate that does not bind
+by reasoning past a gate of my own that did bind would be self-refuting.
+
+**Merged anyway, default-off and inert (SP-5).** `Generator.plant_min_{run,
+down}_hours` stamped by `assembly.py` on every tranche row (the UC-coupling tags
+untouched); `offer_surfaces._plant_unit_physics`, the ercot-176 read generalized
+to a shared helper; both fast-start pool bodies gated on the **same unchanged**
+`FASTSTART_POOL_MIN_DOWN_HOURS = 2.0` at plant grain under
+`ercot_faststart_pool_plant_physics`. Zero new fitted scalars, no min-run bound
+added, no artifact re-derived (rule 23 not engaged), cache-key registered
+dropped-at-default (default `603c2498bf71d21d` unmoved, armed
+`7ae1afee3aa73a63`), 4 new trivial-case tests. The flag is **transitional** —
+delete it and the pre-repair branch once a keeper carries it armed (rule 26).
+
+**Disclosed.** Six tests fail in the fleet/offer/scenario sweep and **all six
+reproduce at clean HEAD `fe9fa97f` with this session's changes stashed**: the
+ERCOT-2023 `FleetArrays` golden (the keeper-reproduction drift ercot-173 §5
+recorded — which is exactly why the successor's A/B must be a same-HEAD pair),
+and five on a `confirmed_retirements.py:168` RuntimeError unrelated to this
+scope. Reported, not adopted, not fixed here.
+
+**Successor: ercot-187** — re-register the same construction with SP-1's premise
+corrected (equality holds on the 179 prefixes that have a committed tranche),
+the inertness prior replaced by the measured scope, every kill gate verbatim,
+and branch (iii) of the honest-outcome clause — *a worse fit is not grounds to
+revert*, rule 1 `[R-STRUCT]` — now the branch most likely to fire. It should
+also settle whether p6243's 8 h min-down is correct or a CAMPD artifact on a
+CT-classified plant (rule 14 `[R-ACCURATE]`).
+
+Records: `results/calibration/FINDING-ercot186-rule18-grain-2026-08-10.md`,
+`results/calibration/ercot186_grain_seamproof.json`, probe
+`scripts/probes/ercot186_grain_seamproof.py`, precommit
+`docs/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md`. Matrix: new row
+`ercot_faststart_pool_plant_physics` cell `O`; `ercot_faststart_pool_offer`
+stays `K`, its ercot-176 annotation replaced by the measured record; ERCOT
+lever-queue item 25. ERCOT holds no `complete`/`final` marker, so no
+`calibration-complete.json` re-key applies.
