@@ -7656,3 +7656,84 @@ pre-caiso-189 scorer snapshot (still "C6 UNATTESTED"); caiso-190's `resolved_inp
 is not on origin/main (lane-4 engagement binds on its fallback proof); the C3b 2025
 watch margin (0.164/0.20) is an orchestrating-session figure the lane-4 session must
 re-derive. Record: `results/calibration/FINDING-caiso191-campaign-adjudication-2026-08-11.md`.
+
+## 2026-08-11 — CAISO — caiso-190: the silent-partition no-op class is closed on **BOTH** solve paths, and `run_config.json` now records **which seam cap the LP actually solved against**. ORCHESTRATION/PROVENANCE ONLY: no LP change, no solve, no calibration edit, keeper untouched
+
+**Wave 0B of the close-out campaign.** Off-queue by design (rule 28: the CAISO lever
+queue is EMPTY with every cell adjudicated, caiso-185/188/191) — this is rule-14 /
+rule-20 provenance-integrity work on the solve path, **not a lever**. No matrix cell
+changes. No PRECHECK owed: nothing about the market is measured, so there is no arm,
+band or number that could have been steered. **C3a was never read.**
+
+**The defect class**, from `FINDING-caiso188` §4–§7: an ARMED mechanism whose data
+resolves through a gitignored, disposable partition silently no-ops while
+`run_config.json` still records the flag as `true`. Every CAISO bundle from caiso-175
+onward advertised `capacity_deliverability_limits` while the LP solved on the baked
+7,500 MW fitted `WECC_import_simultaneous` scalar, and **nothing committed
+distinguished those runs from ones that solved on the published MIC**.
+
+**The guard, now on the lanes that actually solve.** `check_clean_partitions`'s registry
+becomes a typed, additive `PartitionRequirement` list carrying a per-entry **severity**:
+a mechanism with **no declared fallback** (`hydro_ror_split` — the classifier *is* the
+mechanism) fails fast on every lane; one with a **declared fallback**
+(`capacity_deliverability_limits` → the fitted scalar; `outage_source == "historic"` →
+statistical availability) fails fast in **strict** mode and warns loudly otherwise.
+**`strict` defaults to True**, so the calibration lane — the only lane keepers are
+promoted from — keeps caiso-188's fail-fast behaviour **byte-for-byte**, and a caller
+must opt *out* deliberately. The **forecast orchestrator** (`runner.py::
+run_scenario_iso`), which caiso-188 §6a filed as still owed and which had **no guard
+call at all**, now calls it at `strict=False` on the resolved config before any LP input
+is built. Nothing is loosened anywhere.
+
+**`resolved_inputs`, the durable fix caiso-188 §6b named.** `run_config.json` gains a
+top-level additive block (schema 1, new module `market_sim.data.resolved_inputs`,
+contract at `docs/backcast-artifact-contract.md` §2.2.1): the resolved seam cap with its
+**`source` ∈ {`mic_partition`, `baked_fallback`, `flag_off`}** per year, the
+hydro-plant-modes partition's presence and **classified-plant count** (making
+`hydro_ror_split`'s engagement checkable from the bundle — caiso-188 §6c), and the CAMPD
+extract's sha256. The cap is **recorded at resolution time** by
+`apply_interchange_topology` through one shared resolver, never re-derived when the
+record is written: a second derivation is exactly the drift this closes. The resolution
+moved statement-for-statement, truthiness test included, so behaviour with the partition
+present is unchanged. Outside `scenario_config`, so the `--reuse-solved` comparator and
+every cache key are untouched (`scenarios.py` diff **empty**;
+`check_mechanism_matrix.py` clean).
+
+**A second defect, found while testing (§4 of the FINDING).** The guard wrapped each
+probe in `except Exception: continue`, so a partition **present but unreadable** — which
+degrades the mechanism exactly as an absent one does — was treated as healthy. It was
+not hypothetical: `test_present_partitions_pass`, the *only* test of the
+partitions-present path, passed because its bare-`to_parquet` fixtures had no embedded
+datatype metadata, **both** probes raised `SchemaError`, and both were swallowed. That
+leg had never been exercised. Fixtures moved to `write_clean`; a raising probe now fails
+closed in strict mode.
+
+**Tests +23, all passing.** Including two **static wiring guards** — every module that
+calls `run_energy_solve` must also call `check_clean_partitions`, and `spec.py` must
+resolve through the shared helper. A unit test of a guard cannot catch a guard with *no
+call site*, which is precisely why the caiso-157 defect recurred; this makes that lesson
+mechanical. Fast lane in-container, both arms: baseline 669F/5,863P/53E → 669F/**5,886P**
+/53E = **+23 passed, +0 failed, +0 errors**. ruff clean.
+
+**Contradictions reported, not resolved:** (1) the brief's "the guard HAS NEVER RUN IN A
+SOLVE" is the **pre-caiso-188** state — `scripts/run_calibration.py:4600` already called
+it at HEAD, as `FINDING-caiso188` §6 itself records; only the forecast half was genuinely
+unwired, and that half is fixed here; (2) the CAMPD unit-outage extract is **committed**
+under `data/raw`, not a gitignored partition, so its absence is an environment condition
+— registered as asked, with a declared fallback; (3) `outage_detect.py` lives at
+`scripts/lib/`, not `src/market_sim/data/`; (4) base commit `767b29c3` → `6b87c9d` (main
+had advanced; `--depth=1` cannot resolve the cited sha); (5) the campaign's own
+sparse-checkout recipe is cone-mode and materialises **no** `data/raw/` subdirectory, so
+the documented **6,620/2** fast-lane baseline is not reproducible under it — hence the
+stashed same-container delta above. **caiso-191 merged first and already cites this
+work** ("caiso-190's `resolved_inputs` is not on origin/main"); this entry is appended at
+the tail after it, and its Wave-2 control recipe now has the interface it asked for.
+
+**Still open:** `hydro_ror_split` is made *observable*, not armed — the A/B stays
+caiso-194's under `GATESPEC-caiso194-hydro-ror-split-2026-08-11.md`; no existing bundle
+carries `resolved_inputs` (it appears on the next solve, and the caiso-175→188 lineage
+stays diagnosable only via `hourly/` pins); the **forecast** run-record writer
+(`scripts/lib/run_record.py`) does not carry the block; `pipeline/year.py::run_year_solve`
+remains dead code (re-verified: no production caller) with a live guard call, documented
+rather than deleted because the façade-shim regression guard asserts its re-export.
+Record: `results/calibration/FINDING-caiso190-solvepath-integrity-2026-08-11.md`.
