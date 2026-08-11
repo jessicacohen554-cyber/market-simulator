@@ -1184,6 +1184,28 @@ def miso_surface_positions(generators: list) -> "np.ndarray":
     return np.clip(pos, 0.0, 1.0)
 
 
+def _miso_plant_base_row(generators: list) -> dict[int, int]:
+    """Map each tranche row index -> its plant's BASE row index.
+
+    The base row is the plant's FIRST tranche in fill order (``mustrun`` ->
+    ``sync`` -> ``committed`` -> ...), which is the model-side analogue of the
+    corpus's ``price_1``: the price at the bottom of that unit's own submitted
+    curve.  Rows whose plant has no identifiable base are absent from the map
+    and are never repriced.
+    """
+    order: dict[tuple, int] = {}
+    out: dict[int, int] = {}
+    for i, g in enumerate(generators):
+        code = getattr(g, "plant_code", None)
+        if code is None:
+            continue
+        key = (code, getattr(g, "plant_group", ""))
+        if key not in order:
+            order[key] = i
+        out[i] = order[key]
+    return out
+
+
 def apply_miso_offer_surface(
     mc: "np.ndarray",
     generators: list,
@@ -1199,14 +1221,25 @@ def apply_miso_offer_surface(
 
     **SUBSUMES, never stacks** (rule 19 ``[R-ONE-MECH]``).  The rows it touches
     are exactly the rows :func:`apply_gas_offer_margin` gives a margin to —
-    ``offer_markup_hr > 0`` — minus each plant's base band.  For those rows the
-    fuel-invariant margin ``offer_markup_hr × anchor`` is REMOVED and the
-    measured own-curve rise put in its place::
+    ``offer_markup_hr > 0`` — minus each plant's base band.  Each such tranche
+    is re-priced onto its OWN plant's base row plus the measured rise::
 
-        mc[g, t]  +=  Δ(p̄_g, state_bin(t), gas_bin(t))  −  offer_markup_hr[g] × anchor_g
+        mc[g, t]  :=  mc[base(g), t]  +  Δ(p̄_g, state_bin(t), gas_bin(t))
 
     so a tranche is never priced by both mechanisms.  The row gate is the
     incumbent mechanism's own tag, not a class tuple (rule 18 ``[R-PHYSICS]``).
+
+    **Why the whole rise is replaced, not just the fitted margin.**  The
+    PREREG's first formula was ``mc += Δ − offer_markup_hr × anchor``, which
+    removes only the CONDUCT half of the model's own rise over its base band
+    while adding the real book's TOTAL rise — double-counting the model's
+    physical heat-rate rise.  The corpus cannot separate a real unit's physical
+    rise from its conduct rise (it publishes no heat rates), so the identifiable
+    quantity is the total OFFER rise, and the like-for-like transfer is
+    offer-rise onto offer-rise.  Both sides' physical component sits inside
+    their own rise, and the model's base level — the part that carries its
+    physical/fuel basis — is untouched.  Corrected before any adjudicating
+    statistic; see the PREREG's dated §4.2 amendment.
 
     **SHAPE, never LEVEL.**  Δ is a within-unit, within-hour price DIFFERENCE
     measured on MISO's submitted book, so a constant shift of a real unit's
@@ -1245,7 +1278,9 @@ def apply_miso_offer_surface(
         return  # rule 25 [R-ISO-SCOPE]: this surface is MISO's and never transfers
 
     art = _load_miso_offer_surface(config)
-    ladder = np.asarray(art["markets"]["DA"]["ladder"], dtype=float)  # (gas, state, pos, 3)
+    ladder = np.asarray(
+        art["markets"]["DA"]["ladder"], dtype=float
+    )  # (gas, state, pos, 3)
     delta_grid = ladder[..., 1]
     gas_edges = np.asarray(
         art["_provenance"]["gas_bin_edges_usd_per_mmbtu"], dtype=float
@@ -1266,9 +1301,9 @@ def apply_miso_offer_surface(
     )
     is_base = np.fromiter(
         (
-            str(getattr(g, "bin_label", "")).rsplit("_", 1)[-1].startswith(
-                _MISO_SURFACE_BASE_PREFIXES
-            )
+            str(getattr(g, "bin_label", ""))
+            .rsplit("_", 1)[-1]
+            .startswith(_MISO_SURFACE_BASE_PREFIXES)
             for g in generators
         ),
         dtype=bool,
@@ -1279,25 +1314,26 @@ def apply_miso_offer_surface(
         logger.info("MISO measured offer surface: no above-base markup rows; inert")
         return
 
-    anchor = getattr(config, "gas_offer_margin_anchor", None)
-    if anchor is None:
+    # The surface SUBSUMES gas_offer_net_revenue_margin, so that mechanism must
+    # actually be the one setting these rows' margins — otherwise "replace" has
+    # no defined referent and the two could silently be describing different
+    # scopes (rule 19 [R-ONE-MECH], rule 21 [R-REGISTRY]: no silent fallback).
+    if getattr(config, "gas_offer_margin_anchor", None) is None:
         raise ValueError(
             "miso_offer_surface_measured is armed but gas_offer_margin_anchor is "
-            "unset; the surface REPLACES that margin and must know what it is "
-            "removing (rule 19 — replace, never stack)"
+            "unset; the surface REPLACES that mechanism's margin on exactly the "
+            "rows it tags, so it must be armed (rule 19 — replace, never stack)"
         )
-    anchors = np.fromiter(
-        (
-            float(
-                a
-                if (a := getattr(g, "offer_margin_anchor", None)) is not None
-                else anchor
-            )
-            for g in generators
-        ),
-        dtype=float,
-        count=len(generators),
-    )
+
+    # Each target's own plant base row (the plant's FIRST tranche in fill
+    # order) — the model-side analogue of the corpus's ``price_1``.
+    base_of = _miso_plant_base_row(generators)
+    base_rows = np.array([base_of.get(int(i), -1) for i in rows], dtype=int)
+    ok = base_rows >= 0
+    rows, base_rows = rows[ok], base_rows[ok]
+    if rows.size == 0:
+        logger.info("MISO measured offer surface: no target has a base row; inert")
+        return
 
     pos = miso_surface_positions(generators)[rows]
     pos_bin = np.clip(
@@ -1307,18 +1343,24 @@ def apply_miso_offer_surface(
     nl = np.asarray(net_load, dtype=float)
     state_edges = np.quantile(nl, pcts)
     state_bin = np.searchsorted(state_edges, nl, side="right")
-    gas_bin = np.searchsorted(gas_edges, np.asarray(gas_series, dtype=float), side="right")
+    gas_bin = np.searchsorted(
+        gas_edges, np.asarray(gas_series, dtype=float), side="right"
+    )
 
-    # (n_rows, T) measured rise, then swap it for the fitted margin.
+    # (n_rows, T) measured own-curve rise.
     measured = delta_grid[gas_bin[None, :], state_bin[None, :], pos_bin[:, None]]
-    replaced = markup_hr[rows, None] * anchors[rows, None]
-    mc[rows, :] += measured - replaced
+    # RHS fancy-indexing copies before the write, and no base row is ever a
+    # target, so this cannot read a partially-updated column.
+    was = mc[rows, :]
+    mc[rows, :] = mc[base_rows, :] + measured
 
     logger.info(
-        "MISO measured offer surface: %d above-base tranches repriced "
-        "(median measured %.2f $/MWh vs replaced %.2f; position p50 %.3f)",
+        "MISO measured offer surface: %d above-base tranches repriced onto their "
+        "own plant base (median measured rise %.2f $/MWh; median model rise "
+        "replaced %.2f; median net mc move %+.2f; position p50 %.3f)",
         rows.size,
         float(np.median(measured)),
-        float(np.median(replaced)),
+        float(np.median(was - mc[base_rows, :])),
+        float(np.median(mc[rows, :] - was)),
         float(np.median(pos)),
     )
