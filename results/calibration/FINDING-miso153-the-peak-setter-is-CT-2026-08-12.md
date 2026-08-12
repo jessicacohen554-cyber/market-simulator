@@ -442,6 +442,78 @@ recorded as the most specific open thread this lane has.
 
 ---
 
+## 13. ADDENDUM — the §12 compression thread is **CLOSED**: the narrowing is REAL in the measured data and the model reproduces it faithfully
+
+§12 left one open thread: CT's across-plant offer spread narrows **40.09 →
+38.68 → 26.45** $/MWh as C3a worsens, *against* the fuel move that should widen
+it. Three candidate causes were put up and **all three are refuted**, in order,
+each before anything was built on it. Probe
+`scripts/probes/_miso153_fuel_dispersion.py`, record
+`results/calibration/_miso153_fuel_dispersion.json`, plus a direct read of the
+F923 source table.
+
+**Candidate A — "the 2025 preliminary EIA-923 vintage strips per-plant
+delivered prices from most CT plants."** This was my hypothesis, and it was
+motivated: the C1 scorer reports `CT_PEAKER` 2025 at **71/96 prior plants
+missing, 26 % reporting**, and the keeper arms
+`gas_plant_monthly_fuel_pricing = True`, so a coverage collapse *would* push
+plants onto one shared trajectory. **REFUTED.** The CT fallback share — the
+fraction of plants carrying no plant-specific series — is **flat**:
+
+| year | CT fallback share | distinct CT price series | CT plants |
+|---|---|---|---|
+| 2023 | **21.7 %** | 63 | 166 |
+| 2024 | **22.3 %** | 65 | 166 |
+| 2025 | **22.3 %** | 62 | 166 |
+
+**78 % of CT plants still carry a plant-specific series in 2025, the same as in
+2023.** The C1 note describes the EIA-923 *generation* vintage used to score the
+fuel-mix benchmark; it does **not** carry over to the *receipts* table the fuel
+overlay reads.
+
+**Candidate B — "plant-level coverage holds but MONTH-level coverage falls, so
+annual means are pulled toward the trajectory."** **REFUTED, and in the
+opposite direction** — 2025 is the *best*-covered year on record:
+
+| year | gas plants | months per plant | share with all 12 months |
+|---|---|---|---|
+| 2023 | 452 | 11.37 | 73.7 % |
+| 2024 | 452 | 11.49 | 76.8 % |
+| 2025 | 440 | **11.48** | **79.1 %** |
+
+**Candidate C — "it is a model artifact."** **REFUTED.** The compression is
+present in the **raw F923 source table itself**, and the model tracks it almost
+exactly:
+
+| year | F923 source, across-plant gas price p90−p10 | model CT, same statistic |
+|---|---|---|
+| 2023 | **5.657** $/MMBtu | 5.321 |
+| 2024 | **3.748** | 3.593 |
+| 2025 | **3.679** | 3.413 |
+
+**Conclusion: across-plant delivered-gas dispersion genuinely narrowed by ~35 %
+between 2023 and 2025, and the model reproduces that faithfully.** The CT
+offer-spread compression is not a defect — it is the model being *right* about
+its measured input. **The thread is closed and the across-unit dispersion object
+is closed with it.**
+
+### What this leaves
+
+The chartered dispersion lever is now closed on three independent grounds — the
+measured side cannot be class-scoped (§12 Ground 1, miso-138), the model's CT
+spread is already the widest in the fleet (§12 Ground 2), and the one anomaly in
+it is a faithful reproduction of real data (§13). **No solve was spent on any of
+them.**
+
+D-3 stands: **`CT_PEAKER` sets MISO's summer peak price**, and its *dispersion*
+is right. What has not been tested is its **LEVEL** — the miso-152 named
+successor — and the blocking dependency for that is unchanged and now
+independently re-confirmed by this session's T-6b (CT reconstruction runs
+**+22–24 %** hot in every year): **it needs an instrument that reproduces CT
+commitment.** That is the lane's next dependency, and it is an owner decision.
+
+---
+
 **Artifacts.** Probe `scripts/probes/_miso153_summer_cushion.py` (ruff clean).
 Record `results/calibration/_miso153_summer_cushion.json`; pre-repair record
 `results/calibration/_miso153_summer_cushion_PREREPAIR.json`.
