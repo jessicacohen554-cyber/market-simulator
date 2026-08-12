@@ -1,0 +1,355 @@
+{
+  "probe": "ercot192_coal_peak_structure_phase0a",
+  "charter": "DECISION-CARD-ercot188 card B / signature B1 (2026-08-11)",
+  "scope": "instrument-structure only \u2014 NO price level is read here",
+  "licence_floor": 0.9876,
+  "matched_hours": [
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22
+  ],
+  "delivery_2023": {
+    "matched_window": {
+      "res_hours": 366494,
+      "resources": 26,
+      "curve_share": 0.9702205220276457,
+      "a_offered": 0.9477532725429902,
+      "h_rt_MW_total": 101210266.25777741,
+      "h_rt_share_in_nocurve_rows": 0.051745700918733734,
+      "hsl_share_in_nocurve_rows": 0.0477254966309874,
+      "mean_h_rt_MW_curve_rows": 269.9057036112747,
+      "mean_h_rt_MW_nocurve_rows": 479.8603782005093,
+      "nocurve_ss_share_of_own_h_rt": 0.987866147618452,
+      "nocurve_res_share_of_own_h_rt": 0.012133852381548169,
+      "loading_curve_rows": 0.76102378814652,
+      "loading_nocurve_rows": 0.9804747239828485
+    },
+    "full_day": {
+      "res_hours": 731947,
+      "resources": 26,
+      "curve_share": 0.9794247397694096,
+      "a_offered": 0.9641175078654602,
+      "h_rt_MW_total": 200204023.43138963,
+      "h_rt_share_in_nocurve_rows": 0.035387187799855155,
+      "hsl_share_in_nocurve_rows": 0.032834648922114705,
+      "mean_h_rt_MW_curve_rows": 269.38606231656655,
+      "mean_h_rt_MW_nocurve_rows": 470.42877659051703,
+      "nocurve_ss_share_of_own_h_rt": 0.9820226804767389,
+      "nocurve_res_share_of_own_h_rt": 0.01797731952326107,
+      "loading_curve_rows": 0.6950025026854205,
+      "loading_nocurve_rows": 0.9710726115746244
+    },
+    "per_resource_matched": [
+      {
+        "resource": "MLSES_UNIT1",
+        "res_hours": 15315,
+        "curve_share": 0.7571661769507019,
+        "hsl_mean_MW": 790.0116225922299,
+        "h_rt_MW_nocurve": 1874872.7999267578,
+        "h_rt_MW_total": 7311650.706176758,
+        "below_floor": true
+      },
+      {
+        "resource": "MLSES_UNIT2",
+        "res_hours": 16269,
+        "curve_share": 0.7611408199643493,
+        "hsl_mean_MW": 752.6878111746266,
+        "h_rt_MW_nocurve": 1817165.5,
+        "h_rt_MW_total": 7563943.7099609375,
+        "below_floor": true
+      },
+      {
+        "resource": "MLSES_UNIT3",
+        "res_hours": 13455,
+        "curve_share": 0.7970271274619101,
+        "hsl_mean_MW": 782.8437755481234,
+        "h_rt_MW_nocurve": 1405410.099975586,
+        "h_rt_MW_total": 6707026.9755859375,
+        "below_floor": true
+      },
+      {
+        "resource": "WAP_WAP_G8",
+        "res_hours": 5653,
+        "curve_share": 0.9488767026357686,
+        "hsl_mean_MW": 543.7518485759774,
+        "h_rt_MW_nocurve": 28954.568536376955,
+        "h_rt_MW_total": 1263047.394281006,
+        "below_floor": true
+      },
+      {
+        "resource": "CALAVERS_JKS2",
+        "res_hours": 11249,
+        "curve_share": 0.982665125788959,
+        "hsl_mean_MW": 728.4656413903458,
+        "h_rt_MW_nocurve": 87995.0,
+        "h_rt_MW_total": 4731940.3670043945,
+        "below_floor": true
+      },
+      {
+        "resource": "FPPYD1_FPP_G1_J02",
+        "res_hours": 16776,
+        "curve_share": 0.9983905579399142,
+        "hsl_mean_MW": 294.00631855030997,
+        "h_rt_MW_nocurve": 5886.0,
+        "h_rt_MW_total": 3405820.7338256836,
+        "below_floor": false
+      },
+      {
+        "resource": "FPPYD1_FPP_G2_J02",
+        "res_hours": 16874,
+        "curve_share": 0.9988740073485837,
+        "hsl_mean_MW": 294.71950930425504,
+        "h_rt_MW_nocurve": 4154.0,
+        "h_rt_MW_total": 3438810.6335601807,
+        "below_floor": false
+      },
+      {
+        "resource": "LEG_LEG_G2",
+        "res_hours": 11421,
+        "curve_share": 0.9997373259784608,
+        "hsl_mean_MW": 675.588109622625,
+        "h_rt_MW_nocurve": 711.0,
+        "h_rt_MW_total": 3397598.5925720213,
+        "below_floor": false
+      },
+      {
+        "resource": "COLETO_COLETOG1",
+        "res_hours": 11544,
+        "curve_share": 0.9997401247401247,
+        "hsl_mean_MW": 617.8051801801802,
+        "h_rt_MW_nocurve": 1380.0,
+        "h_rt_MW_total": 4761233.778549194,
+        "below_floor": false
+      },
+      {
+        "resource": "LEG_LEG_G1",
+        "res_hours": 12555,
+        "curve_share": 0.9997610513739545,
+        "hsl_mean_MW": 718.8018637992831,
+        "h_rt_MW_nocurve": 1320.0,
+        "h_rt_MW_total": 4244060.429022217,
+        "below_floor": false
+      },
+      {
+        "resource": "SCES_UNIT1_J01",
+        "res_hours": 14047,
+        "curve_share": 0.9997864312664626,
+        "hsl_mean_MW": 425.45455969246115,
+        "h_rt_MW_nocurve": 749.9999633789068,
+        "h_rt_MW_total": 3443636.9582733177,
+        "below_floor": false
+      },
+      {
+        "resource": "SCES_UNIT1_J02",
+        "res_hours": 14047,
+        "curve_share": 0.9997864312664626,
+        "hsl_mean_MW": 225.59162810564527,
+        "h_rt_MW_nocurve": 429.599990844726,
+        "h_rt_MW_total": 1901929.559985349,
+        "below_floor": false
+      },
+      {
+        "resource": "SCES_UNIT1_J03",
+        "res_hours": 14047,
+        "curve_share": 0.9997864312664626,
+        "hsl_mean_MW": 150.72027479177046,
+        "h_rt_MW_nocurve": 286.8,
+        "h_rt_MW_total": 1239214.426426697,
+        "below_floor": false
+      },
+      {
+        "resource": "SCES_UNIT1_J04",
+        "res_hours": 14056,
+        "curve_share": 0.9997865680136596,
+        "hsl_mean_MW": 100.3261809903244,
+        "h_rt_MW_nocurve": 158.3951370239254,
+        "h_rt_MW_total": 779765.6722412136,
+        "below_floor": false
+      },
+      {
+        "resource": "WAP_WAP_G6",
+        "res_hours": 14529,
+        "curve_share": 0.999793516415445,
+        "hsl_mean_MW": 627.677961318742,
+        "h_rt_MW_nocurve": 1400.7000732421889,
+        "h_rt_MW_total": 5486266.54586792,
+        "below_floor": false
+      },
+      {
+        "resource": "WAP_WAP_G5",
+        "res_hours": 14955,
+        "curve_share": 0.9997993981945837,
+        "hsl_mean_MW": 657.3426412571046,
+        "h_rt_MW_nocurve": 1497.0,
+        "h_rt_MW_total": 6186022.608361816,
+        "below_floor": false
+      },
+      {
+        "resource": "WAP_WAP_G7",
+        "res_hours": 15024,
+        "curve_share": 0.9998003194888179,
+        "hsl_mean_MW": 562.8687100638978,
+        "h_rt_MW_nocurve": 1038.0,
+        "h_rt_MW_total": 4475210.7440338135,
+        "below_floor": false
+      },
+      {
+        "resource": "TNP_ONE_TNP_O_1",
+        "res_hours": 15836,
+        "curve_share": 0.9998105582217732,
+        "hsl_mean_MW": 153.68527405910584,
+        "h_rt_MW_nocurve": 225.0,
+        "h_rt_MW_total": 1170364.0,
+        "below_floor": false
+      },
+      {
+        "resource": "OGSES_UNIT2",
+        "res_hours": 15982,
+        "curve_share": 0.999812288824928,
+        "hsl_mean_MW": 800.6782004755349,
+        "h_rt_MW_nocurve": 915.0,
+        "h_rt_MW_total": 5329442.0,
+        "below_floor": false
+      },
+      {
+        "resource": "OGSES_UNIT1A",
+        "res_hours": 16208,
+        "curve_share": 0.999814906219151,
+        "hsl_mean_MW": 811.4707551826259,
+        "h_rt_MW_nocurve": 1215.0,
+        "h_rt_MW_total": 7312434.743652344,
+        "below_floor": false
+      },
+      {
+        "resource": "FPPYD1_FPP_G1_J01",
+        "res_hours": 16781,
+        "curve_share": 0.9998212263869852,
+        "hsl_mean_MW": 294.1185507419105,
+        "h_rt_MW_nocurve": 565.4319580078119,
+        "h_rt_MW_total": 3527888.177413942,
+        "below_floor": false
+      },
+      {
+        "resource": "FPPYD1_FPP_G2_J01",
+        "res_hours": 16864,
+        "curve_share": 0.9998221062618596,
+        "hsl_mean_MW": 294.485009487666,
+        "h_rt_MW_nocurve": 641.2721191406259,
+        "h_rt_MW_total": 3570700.982040406,
+        "below_floor": false
+      },
+      {
+        "resource": "TNP_ONE_TNP_O_2",
+        "res_hours": 17089,
+        "curve_share": 0.9998244484756276,
+        "hsl_mean_MW": 154.83808297735385,
+        "h_rt_MW_nocurve": 225.0,
+        "h_rt_MW_total": 1277882.0,
+        "below_floor": false
+      },
+      {
+        "resource": "CALAVERS_JKS1",
+        "res_hours": 12404,
+        "curve_share": 1.0,
+        "hsl_mean_MW": 558.9261528539181,
+        "h_rt_MW_nocurve": 0.0,
+        "h_rt_MW_total": 4526767.087249756,
+        "below_floor": false
+      },
+      {
+        "resource": "FPPYD2_FPP_G3",
+        "res_hours": 12620,
+        "curve_share": 1.0,
+        "hsl_mean_MW": 424.81541996830424,
+        "h_rt_MW_nocurve": 0.0,
+        "h_rt_MW_total": 2970644.7318023676,
+        "below_floor": false
+      },
+      {
+        "resource": "SANMIGL_G1",
+        "res_hours": 10894,
+        "curve_share": 1.0,
+        "hsl_mean_MW": 342.4611712869469,
+        "h_rt_MW_nocurve": 0.0,
+        "h_rt_MW_total": 1186962.6998901367,
+        "below_floor": false
+      }
+    ]
+  },
+  "identification_subsets": {
+    "2024_ercot74_tail_days": {
+      "res_hours": 23021,
+      "resources": 26,
+      "curve_share": 0.9968724208331523,
+      "a_offered": 0.9944521878660139,
+      "h_rt_MW_total": 5907680.220717622,
+      "h_rt_share_in_nocurve_rows": 0.005446249426191637,
+      "hsl_share_in_nocurve_rows": 0.005267783356633741,
+      "mean_h_rt_MW_curve_rows": 256.02446819928605,
+      "mean_h_rt_MW_nocurve_rows": 446.8708335028754,
+      "nocurve_ss_share_of_own_h_rt": 1.0,
+      "nocurve_res_share_of_own_h_rt": 0.0,
+      "loading_curve_rows": 0.83688604963184,
+      "loading_nocurve_rows": 0.8931566502505616
+    },
+    "2024_ercot75_control_days": {
+      "res_hours": 20807,
+      "resources": 26,
+      "curve_share": 1.0,
+      "a_offered": 0.9998110976403168,
+      "h_rt_MW_total": 5716180.580332947,
+      "h_rt_share_in_nocurve_rows": 0.0,
+      "hsl_share_in_nocurve_rows": 0.0,
+      "mean_h_rt_MW_curve_rows": 274.7239188894577,
+      "mean_h_rt_MW_nocurve_rows": NaN,
+      "nocurve_ss_share_of_own_h_rt": NaN,
+      "nocurve_res_share_of_own_h_rt": NaN,
+      "loading_curve_rows": 0.7200541156217132,
+      "loading_nocurve_rows": NaN
+    },
+    "2025_ercot75_control_days": {
+      "res_hours": 19265,
+      "resources": 25,
+      "curve_share": 0.9962626524785881,
+      "a_offered": 0.9978873288959778,
+      "h_rt_MW_total": 5341579.187841797,
+      "h_rt_share_in_nocurve_rows": 0.0019258349709416818,
+      "hsl_share_in_nocurve_rows": 0.003708061805326129,
+      "mean_h_rt_MW_curve_rows": 277.7727394280101,
+      "mean_h_rt_MW_nocurve_rows": 142.875,
+      "nocurve_ss_share_of_own_h_rt": 0.9876341226791094,
+      "nocurve_res_share_of_own_h_rt": 0.01236587732089044,
+      "loading_curve_rows": 0.8289316313975941,
+      "loading_nocurve_rows": 0.9844544702004794
+    },
+    "2025_ercot86_tail_days": {
+      "res_hours": 9006,
+      "resources": 25,
+      "curve_share": 0.9857872529424828,
+      "a_offered": 0.9929163614762164,
+      "h_rt_MW_total": 2366961.5454681395,
+      "h_rt_share_in_nocurve_rows": 0.006959893378637365,
+      "hsl_share_in_nocurve_rows": 0.013478340936963741,
+      "mean_h_rt_MW_curve_rows": 264.7541952557273,
+      "mean_h_rt_MW_nocurve_rows": 128.70156240463257,
+      "nocurve_ss_share_of_own_h_rt": 0.9917492837049912,
+      "nocurve_res_share_of_own_h_rt": 0.008250716295008849,
+      "loading_curve_rows": 0.8966875684858031,
+      "loading_nocurve_rows": 0.9544990050671734
+    }
+  },
+  "identification_subsets_pooled": {
+    "curve_share": 0.9962274095341128,
+    "a_offered": 0.9967247460866503
+  },
+  "elapsed_s": 92.7
+}
