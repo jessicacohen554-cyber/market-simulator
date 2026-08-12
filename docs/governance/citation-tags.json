@@ -1,0 +1,2185 @@
+[
+ {
+  "tag": "cite/mx-close-ffr-3a-3-instrument-debt",
+  "oid": "00b0637cdefaca3693d76165706110c5abf9676c",
+  "tokens": [
+   "00b0637c"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-04",
+  "subject": "Close FFR-3A-3 instrument debt; pre-register MISO T1-X",
+  "n_citations": 4,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix/MISO.js:208",
+   "docs/handoffs/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md:39",
+   "docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md:289"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-repair-the-benchmark-minuend-whenever-the",
+  "oid": "03e105fb9ded656dad30c725bc649fd5923bc2b6",
+  "tokens": [
+   "03e105f"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-27",
+  "subject": "Repair the benchmark minuend whenever the BTM subtrahend is repaired",
+  "n_citations": 3,
+  "files": [
+   "docs/calibration-log/pjm.md:993",
+   "docs/handoffs/pjm-130-retune-charter-2026-07.md:91",
+   "docs/handoffs/pjm-frontier-path-2026-07.md:383"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-d-7-ii-weather-conditional-label",
+  "oid": "05a367e175eb9df37119944e2203b73b7e39d2e1",
+  "tokens": [
+   "05a367e"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-03",
+  "subject": "D-7(ii): weather-conditional label; and record the RESOLVED curve arm in T1-F",
+  "n_citations": 7,
+  "files": [
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:172",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:182",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:201",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:203",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:210",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:130",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:33"
+  ],
+  "n_files": 7
+ },
+ {
+  "tag": "cite/mx-miso-134-prereg",
+  "oid": "06918ca1e004b476cba83164f8ffd6cb81966419",
+  "tokens": [
+   "06918ca1"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-05",
+  "subject": "miso-134 PREREG: CT_PEAKER July-night ORDER screen, pushed before any adjudicating statistic",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/miso.md:4753",
+   "docs/codebase-site/data/mechanism-matrix.js:1783",
+   "docs/mechanism-testing-matrix.md:5719"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-neiso-70-heat-rate-provenance",
+  "oid": "0852d5be676bc24894871dc9cc10b8cb38d1696a",
+  "tokens": [
+   "0852d5b"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-31",
+  "subject": "Merge pull request #3196 from jessicacohen554-cyber/claude/neiso-70-heat-rate-provenance-xg9qge",
+  "n_citations": 1,
+  "files": [
+   "docs/calibration-log/nyiso.md:3126"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/gov-pjm-ramp10-deliverability-precheck",
+  "oid": "10c239bfa271eb74852468458ddcbc20ea19d58b",
+  "tokens": [
+   "10c239bf"
+  ],
+  "reasons": [
+   "LB-2"
+  ],
+  "date": "2026-07-26",
+  "subject": "Merge pull request #2936 from jessicacohen554-cyber/claude/pjm-ramp10-deliverability-precheck-1qzbd4",
+  "n_citations": 2,
+  "files": [
+   "docs/governance/rule-history.md:235",
+   "docs/handoffs/fast-tier-triage-2026-07-26.md:8"
+  ],
+  "n_files": 2
+ },
+ {
+  "tag": "cite/repro-neiso-72-adjudicate-the-approximate-ps",
+  "oid": "10c624e30f64243cbf3d872dda29fd40e4951afb",
+  "tokens": [
+   "10c624e"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-31",
+  "subject": "neiso-72: adjudicate the approximate-PS design; re-base onto the neiso-71 keeper",
+  "n_citations": 1,
+  "files": [
+   "docs/calibration-log/neiso.md:847"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/mx-close-neiso-s-rule-28-c",
+  "oid": "12cca41d4484769359e48383aa78b30fb2c1eb79",
+  "tokens": [
+   "12cca41d"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "Close NEISO's rule-28(c) matrix column; file an inert armed mechanism",
+  "n_citations": 2,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix.js:1552"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-ercot-c3a-2023-analysis",
+  "oid": "15261093ea5015b323ec68029fcfa1505c5d4638",
+  "tokens": [
+   "15261093"
+  ],
+  "reasons": [
+   "LB-5"
+  ],
+  "date": "2026-08-11",
+  "subject": "Merge pull request #3878 from jessicacohen554-cyber/claude/ercot-c3a-2023-analysis-6xqc5r",
+  "n_citations": 6,
+  "files": [
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:11",
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:18",
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:19",
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:22",
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:23",
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:4"
+  ],
+  "n_files": 6
+ },
+ {
+  "tag": "cite/mx-miso-141-prereg",
+  "oid": "15de62eaa6e387c91addc2a328aed5f4b4083153",
+  "tokens": [
+   "15de62ea"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-3"
+  ],
+  "date": "2026-08-07",
+  "subject": "miso-141 PREREG: the flat SUMMER_CLASS_DERATE against a net-summer pmax basis",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/miso.md:5759",
+   "docs/codebase-site/data/mechanism-matrix/MISO.js:84",
+   "docs/mechanism-testing-matrix.md:5120"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-neiso-73-cc-chp-capacity",
+  "oid": "1aad56aedf55f7bb23af520d94fc28c16b002e02",
+  "tokens": [
+   "1aad56a"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-31",
+  "subject": "Merge pull request #3249 from jessicacohen554-cyber/claude/neiso-73-cc-chp-capacity-rw3r8x",
+  "n_citations": 1,
+  "files": [
+   "docs/calibration-log/nyiso.md:3584"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/mx-xiso-1-diurnal-audit",
+  "oid": "1d3ec21d9f3f431ab8bf74481de21baaa54a7e21",
+  "tokens": [
+   "1d3ec21"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-01",
+  "subject": "Merge pull request #3259 from jessicacohen554-cyber/claude/xiso-1-diurnal-audit-v0hnr8",
+  "n_citations": 2,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix.js:1675"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/mx-pjm-147-correction-the-ct-artifact",
+  "oid": "217e5b19c40afd0241d5c109e74775d75f87ded8",
+  "tokens": [
+   "217e5b1"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "pjm-147: CORRECTION \u2014 the CT artifact change was chartered; withdraw the breach framing",
+  "n_citations": 6,
+  "files": [
+   "docs/calibration-log/pjm.md:2613",
+   "docs/calibration-log/pjm.md:2614",
+   "docs/codebase-site/data/mechanism-matrix.js:1856"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-caiso173-frontier-recheck",
+  "oid": "243b4ab169d589329c21a949dd67e404c9f785c6",
+  "tokens": [
+   "243b4ab1"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-04",
+  "subject": "Merge pull request #3566 from jessicacohen554-cyber/claude/caiso173-frontier-recheck-mlfszw",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/neiso.md:1884",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:2693",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:2779",
+   "docs/mechanism-testing-matrix.md:8467"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/repro-ffr-1d-ci-guards-config",
+  "oid": "24665ee44786de12e7f354925163dfe577053c8c",
+  "tokens": [
+   "24665ee"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-01",
+  "subject": "Merge pull request #3245 from jessicacohen554-cyber/claude/ffr-1d-ci-guards-config-21sid9",
+  "n_citations": 6,
+  "files": [
+   "docs/forecast-readiness-prompt-pack-2026-07.md:206",
+   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:107",
+   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:29",
+   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:55"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/mx-miso-113-add-the-night-level",
+  "oid": "247e795e1e4dfadbc619144666e303eae9c72c19",
+  "tokens": [
+   "247e795"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-01",
+  "subject": "miso-113: add the night-level structural test probe",
+  "n_citations": 2,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix.js:1675"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/mx-d-1-flip-retirement-rule-default",
+  "oid": "24b16026750c77f6f7070249e2839e0ee0072d26",
+  "tokens": [
+   "24b1602"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "D-1: flip retirement_rule default legacy -> pipeline",
+  "n_citations": 12,
+  "files": [
+   "docs/calibration-log/nyiso.md:4310",
+   "docs/calibration-log/pjm.md:2639",
+   "docs/codebase-site/data/mechanism-matrix.js:1317",
+   "docs/codebase-site/data/mechanism-matrix.js:1856",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:350",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:959",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:960",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:961",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:29",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:318"
+  ],
+  "n_files": 10
+ },
+ {
+  "tag": "cite/mx-add-eia-860-cc-summer-capacity",
+  "oid": "2541f647536073f4b19e8ff0318410b900c6693d",
+  "tokens": [
+   "2541f647"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-3"
+  ],
+  "date": "2026-07-14",
+  "subject": "Add EIA-860 CC summer-capacity consistency guard (pjm-110 leg A)",
+  "n_citations": 2,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix/MISO.js:84"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-ffr-1b-thermal-forecast",
+  "oid": "255c015fac8145f6c4d6dc474e072e4d0d59b11e",
+  "tokens": [
+   "255c015"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-31",
+  "subject": "Merge pull request #3239 from jessicacohen554-cyber/claude/ffr-1b-thermal-forecast-qxdv4y",
+  "n_citations": 9,
+  "files": [
+   "docs/forecast-readiness-prompt-pack-2026-07.md:162",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:206",
+   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:104",
+   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:119",
+   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:123",
+   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:29",
+   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:53"
+  ],
+  "n_files": 7
+ },
+ {
+  "tag": "cite/repro-pre-register-the-caiso-130-nameplate",
+  "oid": "26259a270a034ae6f50e4c9bfa31d12ac859608c",
+  "tokens": [
+   "26259a2"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-27",
+  "subject": "Pre-register the caiso-130 nameplate-aware hydro budget A/B",
+  "n_citations": 1,
+  "files": [
+   "docs/calibration-log/caiso.md:2344"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-add-per-class-model-minus-actual",
+  "oid": "2668ae0b2d5e42b6f40b7ae224e415c636f766f6",
+  "tokens": [
+   "2668ae0"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-24",
+  "subject": "Add per-class model-minus-actual delta heatmap + non-fossil hourly panels",
+  "n_citations": 5,
+  "files": [
+   "docs/calibration-log/miso.md:830",
+   "docs/calibration-log/miso.md:922",
+   "docs/calibration-log/miso.md:924",
+   "docs/handoffs/miso-89-session-findings-2026-07.md:134",
+   "docs/handoffs/miso-89-session-findings-2026-07.md:139"
+  ],
+  "n_files": 5
+ },
+ {
+  "tag": "cite/repro-caiso-vintage-2021-intake",
+  "oid": "2738d5de567bacd08ba4cba71a7ae0d3d5aac43e",
+  "tokens": [
+   "2738d5de"
+  ],
+  "reasons": [
+   "LB-5"
+  ],
+  "date": "2026-08-11",
+  "subject": "Merge pull request #3877 from jessicacohen554-cyber/claude/caiso-vintage-2021-intake-hdbyvi",
+  "n_citations": 5,
+  "files": [
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:10",
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:18",
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:19",
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:24",
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:33"
+  ],
+  "n_files": 5
+ },
+ {
+  "tag": "cite/mx-test-the-pipeline-admission-cap-at",
+  "oid": "2adfb49f977275bf2871b1f74be5d4d2a1d20044",
+  "tokens": [
+   "2adfb49"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "Test the pipeline admission cap at its execution horizon, not the decision year",
+  "n_citations": 24,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix.js:2242",
+   "docs/codebase-site/data/mechanism-matrix/MISO.js:208",
+   "docs/codebase-site/data/mechanism-matrix/NYISO.js:208",
+   "docs/codebase-site/data/mechanism-matrix/PJM.js:208",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:26",
+   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:204",
+   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:30",
+   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:62",
+   "docs/handoffs/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md:69",
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:17",
+   "docs/handoffs/ffr-3l-ercot-t1x-attribution-2026-08-04.md:187",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:904"
+  ],
+  "n_files": 20
+ },
+ {
+  "tag": "cite/mx-caiso-194",
+  "oid": "2df253f0be91692047bf39d7e899036eaa292605",
+  "tokens": [
+   "2df253f"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-11",
+  "subject": "caiso-194: PRECHECK pre-registering G-SHARE anchor and G-COVER denominator",
+  "n_citations": 3,
+  "files": [
+   "docs/calibration-log/caiso.md:7826",
+   "docs/codebase-site/data/mechanism-matrix/CAISO.js:159"
+  ],
+  "n_files": 2
+ },
+ {
+  "tag": "cite/mx-precommit-ercot-186",
+  "oid": "2e8f879e455eab03781b21cbf73ff17d94f99e78",
+  "tokens": [
+   "2e8f879e"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-10",
+  "subject": "PRECOMMIT ercot-186: pre-register the rule-18 grain-defect repair (card D3(ii))",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/ercot.md:7056",
+   "docs/codebase-site/data/mechanism-matrix.js:1786",
+   "docs/mechanism-testing-matrix.md:280"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/mx-miso-149-prereg-overlay-vs-cems",
+  "oid": "318c05420d20dcaf109fac0320c99783941599f9",
+  "tokens": [
+   "318c0542"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-3"
+  ],
+  "date": "2026-08-10",
+  "subject": "miso-149: PREREG \u2014 overlay-vs-CEMS contradiction census for the all-months CC residual and the May object",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/miso.md:6776",
+   "docs/codebase-site/data/mechanism-matrix/MISO.js:88",
+   "docs/mechanism-testing-matrix.md:4112"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-execute-owner-decision-c-4-c",
+  "oid": "36ef1a1d46a7bbf4d09ffa7c490d19fe94e77a23",
+  "tokens": [
+   "36ef1a1"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-03",
+  "subject": "Execute owner decision C.4(c): un-pin the hindcast harness to production",
+  "n_citations": 10,
+  "files": [
+   "docs/forecast-readiness-prompt-pack-2026-07.md:353",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:359",
+   "docs/handoffs/ff-t1-gate-2026-07.md:194",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:336",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:353",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:354",
+   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:20",
+   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:37",
+   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:70",
+   "docs/handoffs/ffr-3l-ercot-t1x-attribution-2026-08-04.md:182"
+  ],
+  "n_files": 10
+ },
+ {
+  "tag": "cite/fh5-src-pin",
+  "oid": "3ae7465d8d94d6927c4762e4195e55f7a34f7d95",
+  "tokens": [
+   "3ae7465"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-5"
+  ],
+  "date": "2026-08-10",
+  "subject": "Merge pull request #3860 from jessicacohen554-cyber/claude/miso-calibration-151-a5djd6",
+  "n_citations": 19,
+  "files": [
+   "docs/FINDING-f6-lmp-backend-parity-2026-08-11.md:3",
+   "docs/PREREG-f6-lmp-backend-parity-2026-08-11.md:4",
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:183",
+   "docs/handoffs/caiso-vintage-2021-intake-2026-08-11.md:241",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4180",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4187",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4193",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:104",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:105",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:357",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:362",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:379"
+  ],
+  "n_files": 18
+ },
+ {
+  "tag": "cite/repro-reconcile-egrid-plant-heat-rates-double",
+  "oid": "3babe5f8a7ead9397dec93bcacbc9c87502a8190",
+  "tokens": [
+   "3babe5f"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-25",
+  "subject": "Reconcile eGRID plant heat rates double-counted across co-located CEMS facilities",
+  "n_citations": 6,
+  "files": [
+   "docs/calibration-log/miso.md:1275",
+   "docs/calibration-log/miso.md:1283",
+   "docs/calibration-log/miso.md:1354",
+   "docs/handoffs/miso-89-session-findings-2026-07.md:134",
+   "docs/handoffs/miso-93-keeper-reaudit-charter-2026-07.md:45",
+   "docs/handoffs/miso-93-keeper-reaudit-charter-2026-07.md:56"
+  ],
+  "n_files": 6
+ },
+ {
+  "tag": "cite/mx-d-2-arm-entry-rate-limits",
+  "oid": "3e33f15524dc0434e5f682bb3c896e539bb23b72",
+  "tokens": [
+   "3e33f15"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "D-2: arm entry_rate_limits + entry_commissioning_lag",
+  "n_citations": 14,
+  "files": [
+   "docs/calibration-log/nyiso.md:4310",
+   "docs/calibration-log/pjm.md:2640",
+   "docs/codebase-site/data/mechanism-matrix.js:1317",
+   "docs/codebase-site/data/mechanism-matrix.js:1856",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:351",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:352",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:959",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:960",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:961",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:105",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:30",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:319"
+  ],
+  "n_files": 12
+ },
+ {
+  "tag": "cite/repro-caiso-126-ror-split",
+  "oid": "3e7372faf0cd9bf1d13fcc1d939328e74ffd03e1",
+  "tokens": [
+   "3e7372f"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-5"
+  ],
+  "date": "2026-07-26",
+  "subject": "Merge pull request #2982 from jessicacohen554-cyber/claude/caiso-126-ror-split-scryws",
+  "n_citations": 6,
+  "files": [
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:184",
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:186",
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:188",
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:192",
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:94",
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:96"
+  ],
+  "n_files": 6
+ },
+ {
+  "tag": "cite/repro-nyiso-108-hydro-input",
+  "oid": "40ecb0aec296ed16e6f205e1a7d720e181c60173",
+  "tokens": [
+   "40ecb0a"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-31",
+  "subject": "Merge pull request #3235 from jessicacohen554-cyber/claude/nyiso-108-hydro-input-ijd76p",
+  "n_citations": 14,
+  "files": [
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:11",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:113",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:135",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:137",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:210",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:213",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:226",
+   "docs/handoffs/ffr-1b-solve-year-availability-2026-08-01.md:121",
+   "docs/handoffs/ffr-1b-solve-year-availability-2026-08-01.md:198",
+   "docs/handoffs/ffr-1b-solve-year-availability-2026-08-01.md:203",
+   "docs/handoffs/ffr-1b-solve-year-availability-2026-08-01.md:6",
+   "docs/handoffs/ffr-1d-enforcement-wave-2026-07-31.md:11"
+  ],
+  "n_files": 14
+ },
+ {
+  "tag": "cite/gov-miso-148-prereg",
+  "oid": "456b3762eb7c2782427295f52d678e98ba85ca87",
+  "tokens": [
+   "456b376"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-2",
+   "LB-3"
+  ],
+  "date": "2026-08-09",
+  "subject": "miso-148 PREREG: CC capability-and-availability lane \u2014 L2 fleet/rating audit then one summer-basis mechanism",
+  "n_citations": 5,
+  "files": [
+   "docs/calibration-log/miso.md:6665",
+   "docs/codebase-site/data/mechanism-matrix/MISO.js:85",
+   "docs/mechanism-testing-matrix.md:4222",
+   "frontend/data/backcast/keepers/MISO.json:4"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/mx-neiso-71-pre-register-nuclear-unit",
+  "oid": "464817e1368a03447cd1a081a542bcc7b6d3c121",
+  "tokens": [
+   "464817e"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-3"
+  ],
+  "date": "2026-07-31",
+  "subject": "neiso-71: pre-register nuclear_unit_availability arm; NEISO NRC crosswalk",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/neiso.md:723",
+   "docs/calibration-log/neiso.md:727",
+   "docs/codebase-site/data/mechanism-matrix.js:1949"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-ercot139-reprice-the-cc-committed-block",
+  "oid": "47e320bb8b48b39004d08565e9542b78dc29956c",
+  "tokens": [
+   "47e320b"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-30",
+  "subject": "ercot139: reprice the CC committed block to its MEASURED SCED TPO offer level",
+  "n_citations": 1,
+  "files": [
+   "docs/calibration-log/nyiso.md:2864"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-caiso171-frontier-assessment",
+  "oid": "49aac023ffa926e09d08f77420b25883c94031a5",
+  "tokens": [
+   "49aac023"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-04",
+  "subject": "Merge pull request #3540 from jessicacohen554-cyber/claude/caiso171-frontier-assessment-wjmcwg",
+  "n_citations": 8,
+  "files": [
+   "docs/calibration-log/nyiso.md:5357",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:1983",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:2001",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:2085",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:2164",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:2226",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:2301",
+   "frontend/data/backcast/registry/2026-08-06-nyiso-128-control.json:6"
+  ],
+  "n_files": 8
+ },
+ {
+  "tag": "cite/mx-campd-outage-backfill",
+  "oid": "49e85fb4ab7272a222d9640fbcc4abe27ad18fbb",
+  "tokens": [
+   "49e85fb4"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-3"
+  ],
+  "date": "2026-07-24",
+  "subject": "campd-outage-backfill: re-derive CAISO in full (owner instruction)",
+  "n_citations": 10,
+  "files": [
+   "docs/calibration-log/caiso.md:7008",
+   "docs/codebase-site/data/mechanism-matrix.js:1913",
+   "docs/mechanism-testing-matrix.md:1525",
+   "docs/mechanism-testing-matrix.md:1526",
+   "frontend/data/backcast/registry/2026-08-07-caiso-180-a1-pre.json:6",
+   "frontend/data/backcast/registry/2026-08-07-caiso-180-a2-regen.json:6"
+  ],
+  "n_files": 6
+ },
+ {
+  "tag": "cite/repro-stamp-the-c-4-c-commit",
+  "oid": "52435ad0779235acda816a604e561ba4f442b0f6",
+  "tokens": [
+   "52435ad"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-03",
+  "subject": "Stamp the C.4(c) commit sha into the T1-H legacy-evidence marker",
+  "n_citations": 1,
+  "files": [
+   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:20"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-ffr-1a-arm-2-fix",
+  "oid": "53a8f4dbec82c67e25762a8a5a1ca22556441567",
+  "tokens": [
+   "53a8f4d"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-31",
+  "subject": "ffr-1a arm 2 fix: cap effective-year removal at the plant's binned MW",
+  "n_citations": 10,
+  "files": [
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:107",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:159",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:212",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:215",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:217",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:9",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:96",
+   "frontend/data/hindcast/ercot-2026-2028-ffr1a-t0-arm2.json:83",
+   "frontend/data/hindcast/neiso-2026-2030-ffr1a-arm2.json:119",
+   "frontend/data/hindcast/pjm-2026-2030-ffr1a-arm2.json:119"
+  ],
+  "n_files": 10
+ },
+ {
+  "tag": "cite/mx-ercot-168-coal-2023-offer",
+  "oid": "57d4d66a2f506eb12096611fee3f2682c6ccd65e",
+  "tokens": [
+   "57d4d66a"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-05",
+  "subject": "Merge pull request #3598 from jessicacohen554-cyber/claude/ercot-168-coal-2023-offer-11c33m",
+  "n_citations": 5,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix.js:2261",
+   "docs/handoffs/ffr-5d-price-object-2026-08-05.md:5",
+   "docs/handoffs/ffr-5e-vre-procurement-channel-2026-08-05.md:139",
+   "docs/handoffs/ffr-5e-vre-procurement-channel-2026-08-05.md:8"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/gov-neiso-86-pre-register-the-neiso",
+  "oid": "5b27332fb22ff7e880f0adde4c54c8114844122e",
+  "tokens": [
+   "5b27332f"
+  ],
+  "reasons": [
+   "LB-2"
+  ],
+  "date": "2026-08-06",
+  "subject": "neiso-86: pre-register the NEISO gas-basis intake gates (V1-V5)",
+  "n_citations": 2,
+  "files": [
+   "docs/mechanism-testing-matrix.md:8591",
+   "frontend/data/backcast/calibration-complete.json:102"
+  ],
+  "n_files": 2
+ },
+ {
+  "tag": "cite/mx-eia-930-fill-the-ciso-miso",
+  "oid": "5cd9374079dc7533d6076c88a4b1e441c91a5e8c",
+  "tokens": [
+   "5cd937407"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-07-31",
+  "subject": "eia-930: fill the CISO/MISO 2022 wide-hourly hole (audit \u00a75.1)",
+  "n_citations": 11,
+  "files": [
+   "docs/calibration-log/governance.md:635",
+   "docs/calibration-log/governance.md:642",
+   "docs/codebase-site/data/mechanism-matrix.js:1917",
+   "docs/codebase-site/data/mechanism-matrix.js:985",
+   "docs/codebase-site/data/mechanism-matrix/MISO.js:135",
+   "docs/mechanism-testing-matrix.md:9489"
+  ],
+  "n_files": 6
+ },
+ {
+  "tag": "cite/mx-ffr-fh-workstream-manager",
+  "oid": "5eac75b05e226020593de77e54092a9b46e6647a",
+  "tokens": [
+   "5eac75b0"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-3"
+  ],
+  "date": "2026-08-04",
+  "subject": "Merge pull request #3548 from jessicacohen554-cyber/claude/ffr-fh-workstream-manager-8me2ha",
+  "n_citations": 18,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix.js:2257",
+   "docs/codebase-site/data/mechanism-matrix.js:2269",
+   "docs/codebase-site/data/mechanism-matrix.js:2314",
+   "docs/handoffs/ffr-3q3-gate-reprobe-2026-08-04.md:8",
+   "docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md:8",
+   "docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md:208",
+   "docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md:447",
+   "docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md:69",
+   "docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md:95",
+   "docs/handoffs/ffr-4c-wind-ptc-window-2026-08-04.md:114",
+   "docs/handoffs/ffr-4c-wind-ptc-window-2026-08-04.md:5",
+   "docs/handoffs/ffr-4c-wind-ptc-window-2026-08-04.md:83"
+  ],
+  "n_files": 15
+ },
+ {
+  "tag": "cite/repro-nyiso-monthly-ttc-neiso-status",
+  "oid": "626217ee2eb9e63541e3e07fab0f30465e8b1993",
+  "tokens": [
+   "626217e"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-30",
+  "subject": "Merge pull request #3169 from jessicacohen554-cyber/claude/nyiso-monthly-ttc-neiso-status-jlo4zh",
+  "n_citations": 1,
+  "files": [
+   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:203"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/mx-miso-139-prereg",
+  "oid": "6263f43d3e2b4d56de252c79630ae57e6617429b",
+  "tokens": [
+   "6263f43d"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-06",
+  "subject": "miso-139 PREREG: ambient-derate class scope \u2014 gates, conventions, traps, kills",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/miso.md:5367",
+   "docs/codebase-site/data/mechanism-matrix.js:1953",
+   "docs/mechanism-testing-matrix.md:5213"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-ffr-fh-workstream-mgr",
+  "oid": "63c48a401df71ae4b888e3098b2da93c8d87fbac",
+  "tokens": [
+   "63c48a4"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-5"
+  ],
+  "date": "2026-08-10",
+  "subject": "Merge pull request #3859 from jessicacohen554-cyber/claude/ffr-fh-workstream-mgr-5av0rj",
+  "n_citations": 5,
+  "files": [
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:106",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:4",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:91",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:98",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:99"
+  ],
+  "n_files": 5
+ },
+ {
+  "tag": "cite/mx-neiso-81-pre-register-the-measured",
+  "oid": "66d7b44abd823cfc6be1ae3cea2e3fa2e3f3ab3d",
+  "tokens": [
+   "66d7b44a"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-04",
+  "subject": "neiso-81: pre-register the measured_chp_heat_rates re-adjudication",
+  "n_citations": 2,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix.js:1860"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-miso-calibration-151",
+  "oid": "6a37611131a6c3ca93880ec0850230fc59aac50b",
+  "tokens": [
+   "6a37611"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-5"
+  ],
+  "date": "2026-08-11",
+  "subject": "Merge pull request #3867 from jessicacohen554-cyber/claude/miso-calibration-151-a5djd6",
+  "n_citations": 8,
+  "files": [
+   "docs/calibration-log/caiso.md:7868",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6879",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4099",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4151",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4180",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:357",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:363",
+   "docs/handoffs/fh-5-phase-b-2026-08-11.md:380"
+  ],
+  "n_files": 8
+ },
+ {
+  "tag": "cite/mx-neiso-65-adopt-guard-corrected-campd",
+  "oid": "6a8f285c5c7cc182c99618ec7cb5a6c31a0f1e2e",
+  "tokens": [
+   "6a8f285c",
+   "6a8f285c5"
+  ],
+  "reasons": [
+   "LB-3",
+   "LB-5"
+  ],
+  "date": "2026-07-26",
+  "subject": "neiso-65: adopt guard-corrected CAMPD extracts, all six ISOs + layup companions",
+  "n_citations": 14,
+  "files": [
+   "docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md:41",
+   "docs/calibration-log/caiso.md:1443",
+   "docs/calibration-log/caiso.md:7010",
+   "docs/calibration-log/ercot.md:7169",
+   "docs/calibration-log/governance.md:614",
+   "docs/calibration-log/neiso.md:1906",
+   "docs/codebase-site/data/mechanism-matrix.js:1913",
+   "docs/codebase-site/data/mechanism-matrix.js:1917",
+   "docs/holdout-data-equivalency-register-2026-07.md:481",
+   "docs/mechanism-testing-matrix.md:1527",
+   "docs/mechanism-testing-matrix.md:8507",
+   "docs/mechanism-testing-matrix.md:9475"
+  ],
+  "n_files": 12
+ },
+ {
+  "tag": "cite/gov-miso-132-b-arm-a",
+  "oid": "6b05f0587604665bac8c2b1139423616de83513e",
+  "tokens": [
+   "6b05f058"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-2"
+  ],
+  "date": "2026-08-05",
+  "subject": "miso-132(b) arm A: register same-HEAD zero-delta control 2026-08-05-miso-132b-control",
+  "n_citations": 2,
+  "files": [
+   "docs/calibration-log/miso.md:6750",
+   "frontend/data/backcast/keepers/MISO.json:4"
+  ],
+  "n_files": 2
+ },
+ {
+  "tag": "cite/mx-add-the-caiso-166-pre-registration",
+  "oid": "6c2dbfd5b700d50a8e73723ef84e365e8aefe466",
+  "tokens": [
+   "6c2dbfd5"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "Add the caiso-166 pre-registration document",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/caiso.md:5622",
+   "docs/calibration-log/caiso.md:5718",
+   "docs/codebase-site/data/mechanism-matrix/CAISO.js:182"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/mx-miso-131-prereg",
+  "oid": "6e3562a405851475465c9344102c6b83eba4e2fb",
+  "tokens": [
+   "6e3562a4"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-05",
+  "subject": "miso-131 prereg: granularity prerequisites screened by an infinite-granularity bound (no LP)",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/miso.md:4419",
+   "docs/codebase-site/data/mechanism-matrix.js:1783",
+   "docs/mechanism-testing-matrix.md:6040"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/gov-ffr-fh-workstream-manager",
+  "oid": "6fbd3f28eb9a2b6344bb592a8a82f293f42112ba",
+  "tokens": [
+   "6fbd3f28"
+  ],
+  "reasons": [
+   "LB-2"
+  ],
+  "date": "2026-08-04",
+  "subject": "Merge pull request #3505 from jessicacohen554-cyber/claude/ffr-fh-workstream-manager-8me2ha",
+  "n_citations": 3,
+  "files": [
+   "docs/calibration-log/pjm.md:2859",
+   "docs/mechanism-testing-matrix.md:3282",
+   "frontend/data/backcast/keepers/PJM.json:9"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-caiso-183-hedge-grain",
+  "oid": "776bbf6b30a57e7bbe51d5e1319cba166ec69314",
+  "tokens": [
+   "776bbf6b"
+  ],
+  "reasons": [
+   "LB-5"
+  ],
+  "date": "2026-08-08",
+  "subject": "Merge pull request #3731 from jessicacohen554-cyber/claude/caiso-183-hedge-grain-89bbuu",
+  "n_citations": 1,
+  "files": [
+   "docs/calibration-log/ercot.md:7167"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-caiso-172-phase-0",
+  "oid": "789e28b8ee636379af9d2159e0da72cd26ee0d1f",
+  "tokens": [
+   "789e28b8"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-04",
+  "subject": "caiso-172 Phase 0: CAISO DOES resolve sub-TAC load \u2014 survey, prereg, frozen derive",
+  "n_citations": 5,
+  "files": [
+   "docs/calibration-log/caiso.md:6305",
+   "docs/calibration-log/caiso.md:6402",
+   "docs/mechanism-testing-matrix.md:1808",
+   "docs/mechanism-testing-matrix.md:1857",
+   "frontend/data/backcast/registry/2026-08-05-caiso-174-control-flatfleet.json:6"
+  ],
+  "n_files": 5
+ },
+ {
+  "tag": "cite/mx-ffr-8a-p3",
+  "oid": "7c14d114cf83c69c7cf2949916b7cf1b01a14962",
+  "tokens": [
+   "7c14d11"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-08",
+  "subject": "FFR-8A P3: fix missing runner import of ercot_fleet_forced_outage_sigma_mw; backfill unit_outage_lp_capacity_basis cache-key registration",
+  "n_citations": 6,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix/ERCOT.js:220",
+   "docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md:650",
+   "docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md:785",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:3315",
+   "docs/handoffs/house-1-lint-ci-2026-08-08.md:237"
+  ],
+  "n_files": 5
+ },
+ {
+  "tag": "cite/mx-caiso-186",
+  "oid": "7fb3bee1980c55f16fbf6a3df0b3f2e376930fa8",
+  "tokens": [
+   "7fb3bee1"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-3"
+  ],
+  "date": "2026-08-09",
+  "subject": "caiso-186: pre-register the seasonal availability-aware CC capability basis",
+  "n_citations": 3,
+  "files": [
+   "docs/calibration-log/caiso.md:7333",
+   "docs/codebase-site/data/mechanism-matrix/CAISO.js:89"
+  ],
+  "n_files": 2
+ },
+ {
+  "tag": "cite/repro-miso-idle-block-attribution",
+  "oid": "7fd1c283a66b3ab73a651b6c2053f997c35dce2c",
+  "tokens": [
+   "7fd1c28"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-08",
+  "subject": "Merge pull request #3743 from jessicacohen554-cyber/claude/miso-idle-block-attribution-xw5g4c",
+  "n_citations": 5,
+  "files": [
+   "docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md:568",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:3318",
+   "docs/handoffs/house-1-lint-ci-2026-08-08.md:11",
+   "docs/handoffs/house-1-lint-ci-2026-08-08.md:216",
+   "docs/handoffs/house-1-lint-ci-2026-08-08.md:323"
+  ],
+  "n_files": 5
+ },
+ {
+  "tag": "cite/repro-ercot-173-lmp-calibration",
+  "oid": "82765525ce026710e5149140db7de3f56ce00740",
+  "tokens": [
+   "82765525"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-06",
+  "subject": "Merge pull request #3650 from jessicacohen554-cyber/claude/ercot-173-lmp-calibration-ngn8pg",
+  "n_citations": 5,
+  "files": [
+   "docs/forecast-readiness-prompt-pack-2026-07.md:3868",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:3889",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:2781",
+   "frontend/data/backcast/registry/2026-08-06-run173a-reconc-control.json:6"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/repro-caiso-overnight-hydro",
+  "oid": "874ff27144fe908353d61bd42ed148196c051e82",
+  "tokens": [
+   "874ff27"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-26",
+  "subject": "Merge pull request #2973 from jessicacohen554-cyber/claude/caiso-overnight-hydro-m94d33",
+  "n_citations": 5,
+  "files": [
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:158",
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:186",
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:6",
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:84",
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:94"
+  ],
+  "n_files": 5
+ },
+ {
+  "tag": "cite/repro-ffr-workstream-manager",
+  "oid": "87659ae414979cd2a119311d0de3cbbc7120bccd",
+  "tokens": [
+   "87659ae4"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-03",
+  "subject": "Merge pull request #3404 from jessicacohen554-cyber/claude/ffr-workstream-manager-to3voa",
+  "n_citations": 3,
+  "files": [
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:20",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:83",
+   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:62"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/mx-record-the-owner-s-caiso-166",
+  "oid": "89be655938fb96f078943cca0ab1e00468fdec1a",
+  "tokens": [
+   "89be6559"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-04",
+  "subject": "Record the OWNER's caiso-166 gate-S3 re-charter BEFORE re-running the generator",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/caiso.md:5811",
+   "docs/calibration-log/caiso.md:5944",
+   "docs/codebase-site/data/mechanism-matrix.js:2095"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-clear-the-ffr-2c-epoch-debt",
+  "oid": "89d0e54abdf8112cda6c3f3514bf30b8de052fe9",
+  "tokens": [
+   "89d0e54"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-03",
+  "subject": "Clear the FFR-2C epoch debt: new cache-epoch ledger entry 2026-08-03",
+  "n_citations": 4,
+  "files": [
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:172",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:32",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:443",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:82"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/repro-pjm-130-retune",
+  "oid": "8e5053e139ebe13cf936f856d12bafb6d5566cc1",
+  "tokens": [
+   "8e5053e"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-26",
+  "subject": "Merge pull request #2980 from jessicacohen554-cyber/claude/pjm-130-retune-1tdbjv",
+  "n_citations": 2,
+  "files": [
+   "docs/calibration-log/pjm.md:1090",
+   "docs/handoffs/pjm-frontier-path-2026-07.md:420"
+  ],
+  "n_files": 2
+ },
+ {
+  "tag": "cite/mx-nyiso-seny-level-step-119",
+  "oid": "941f4983990d2135d07e5dad23ca9779e42d6109",
+  "tokens": [
+   "941f4983"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "Merge pull request #3396 from jessicacohen554-cyber/claude/nyiso-seny-level-step-119-awvr5e",
+  "n_citations": 18,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix.js:2242",
+   "docs/codebase-site/data/mechanism-matrix/MISO.js:208",
+   "docs/codebase-site/data/mechanism-matrix/NEISO.js:208",
+   "docs/codebase-site/data/mechanism-matrix/PJM.js:208",
+   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:415",
+   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:62",
+   "docs/handoffs/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md:118",
+   "frontend/data/forecast/ff-verdicts.json:1914",
+   "frontend/data/forecast/ff-verdicts.json:2443",
+   "frontend/data/forecast/ff-verdicts.json:2979",
+   "frontend/data/forecast/ff-verdicts.json:3128",
+   "frontend/data/forecast/ff-verdicts.json:341"
+  ],
+  "n_files": 14
+ },
+ {
+  "tag": "cite/repro-emissions-r2-r3-assertion-tests-strip",
+  "oid": "968cead23f5bde5687a67615ade301ceb0e4fe55",
+  "tokens": [
+   "968cead"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-04",
+  "subject": "emissions: R2/R3 assertion tests, strip quarantined artifact rows, CLAUDE.md L21",
+  "n_citations": 5,
+  "files": [
+   "docs/fable-repo-audit-2026-07.md:131",
+   "docs/handoffs/co2-keeper-regate-2026-07-05.md:5",
+   "docs/handoffs/forecast-validation-program-2026-07.md:40",
+   "docs/probabilistic-emissions-methodology.md:199",
+   "docs/probabilistic-emissions-methodology.md:214"
+  ],
+  "n_files": 5
+ },
+ {
+  "tag": "cite/mx-miso-132-prereg",
+  "oid": "9a0033bb5e62cf3d0e226f1af6f56b890b5a8288",
+  "tokens": [
+   "9a0033bb"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-05",
+  "subject": "miso-132 PREREG: synchronized-reserve online-gating at MISO",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/miso.md:4488",
+   "docs/codebase-site/data/mechanism-matrix/MISO.js:55",
+   "docs/mechanism-testing-matrix.md:5985"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-fix-register-coal-committed-takeorpay-sunk",
+  "oid": "9df6be78e3f588d723b5d87385f0fcb1138d7879",
+  "tokens": [
+   "9df6be7"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-27",
+  "subject": "fix: register coal_committed_takeorpay_sunk_fixed as cache-key-optional",
+  "n_citations": 4,
+  "files": [
+   "docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:432",
+   "docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:437",
+   "docs/calibration-log/ercot.md:2203",
+   "docs/calibration-log/ercot.md:2295"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/mx-cross-iso-matrix-gap-census-ratchet",
+  "oid": "a0fc302c144b074a3c2047296d9b20826ea30bda",
+  "tokens": [
+   "a0fc302"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "Cross-ISO matrix-gap census + ratchet; delete the dead CT_CHP override triple",
+  "n_citations": 7,
+  "files": [
+   "docs/calibration-log/nyiso.md:4310",
+   "docs/calibration-log/pjm.md:2641",
+   "docs/calibration-log/pjm.md:2647",
+   "docs/codebase-site/data/mechanism-matrix.js:1317",
+   "docs/codebase-site/data/mechanism-matrix.js:1856"
+  ],
+  "n_files": 5
+ },
+ {
+  "tag": "cite/repro-ercot-60day-dam-availability",
+  "oid": "a2098369ba8360e3fe46393458c00c4be5246f46",
+  "tokens": [
+   "a209836"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-31",
+  "subject": "Merge pull request #3212 from jessicacohen554-cyber/claude/ercot-60day-dam-availability-ws2zcj",
+  "n_citations": 1,
+  "files": [
+   "docs/calibration-log/nyiso.md:3227"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-neiso-st-gas-netload-reliability-limb",
+  "oid": "a468fbfbb67f709b000279a3b24c81b416482234",
+  "tokens": [
+   "a468fbf"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-06",
+  "subject": "NEISO: ST_GAS netload reliability limb + NEISO-measured CAMPD offer bands",
+  "n_citations": 1,
+  "files": [
+   "docs/calibration-log.md:2444"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-ffr-1a-arm-1",
+  "oid": "a47a949988699ce40925d73304fe35c29e170087",
+  "tokens": [
+   "a47a949"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-31",
+  "subject": "ffr-1a arm 1: ledger confirmed-exit derates, split exogenous reasons, close I4 with derates",
+  "n_citations": 12,
+  "files": [
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:113",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:136",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:138",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:159",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:211",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:214",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:216",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:54",
+   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:8",
+   "frontend/data/hindcast/ercot-2026-2028-ffr1a-t0-arm1.json:83",
+   "frontend/data/hindcast/neiso-2026-2030-ffr1a-arm1.json:119",
+   "frontend/data/hindcast/pjm-2026-2030-ffr1a-arm1.json:119"
+  ],
+  "n_files": 12
+ },
+ {
+  "tag": "cite/gov-nyiso-123-downstate-boundary",
+  "oid": "a96f9743bd135bfe10a9394584bb36b98c5e8aec",
+  "tokens": [
+   "a96f9743"
+  ],
+  "reasons": [
+   "LB-2",
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "Merge pull request #3493 from jessicacohen554-cyber/claude/nyiso-123-downstate-boundary-ieqdm7",
+  "n_citations": 5,
+  "files": [
+   "docs/calibration-log/pjm.md:2859",
+   "docs/codebase-site/data/mechanism-matrix.js:2102",
+   "docs/mechanism-testing-matrix.md:3277",
+   "frontend/data/backcast/keepers/PJM.json:9"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/repro-miso-135-calibration",
+  "oid": "a9e1d084e4a0351edeaac8840795d2f8eb5a1968",
+  "tokens": [
+   "a9e1d084"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-5"
+  ],
+  "date": "2026-08-05",
+  "subject": "Merge pull request #3640 from jessicacohen554-cyber/claude/miso-135-calibration-zya3y5",
+  "n_citations": 7,
+  "files": [
+   "docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md:104",
+   "docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md:156",
+   "docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md:171",
+   "docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md:28",
+   "docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md:5",
+   "frontend/data/backcast/registry/2026-08-06-caiso-177-ffr7b-arm1.json:6",
+   "frontend/data/backcast/registry/2026-08-06-nyiso-129-ffr7b-arm1.json:6"
+  ],
+  "n_files": 7
+ },
+ {
+  "tag": "cite/repro-caiso-188-import-tranches-dof",
+  "oid": "aa61791ea9884272d4dbe6ffcfe639b13e8b08ff",
+  "tokens": [
+   "aa61791e"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-09",
+  "subject": "Merge pull request #3825 from jessicacohen554-cyber/claude/caiso-188-import-tranches-dof-asefu4",
+  "n_citations": 10,
+  "files": [
+   "docs/handoffs/ffr-9c-vre-entry-repair-2026-08-10.md:6",
+   "docs/handoffs/fh-4-caiso-leg-2026-08-10.md:101",
+   "docs/handoffs/fh-4-caiso-leg-2026-08-10.md:4",
+   "docs/handoffs/fh-4-miso-leg-2026-08-10.md:4",
+   "docs/handoffs/fh-4-miso-leg-2026-08-10.md:455",
+   "docs/handoffs/fh-4-neiso-leg-2026-08-10.md:5",
+   "docs/handoffs/fh-4-nyiso-leg-2026-08-10.md:13",
+   "docs/handoffs/fh-4-nyiso-leg-2026-08-10.md:6",
+   "docs/handoffs/fh-4-pjm-leg-2026-08-10.md:110",
+   "docs/handoffs/fh-4-pjm-leg-2026-08-10.md:4"
+  ],
+  "n_files": 10
+ },
+ {
+  "tag": "cite/repro-caiso-174",
+  "oid": "ae7658d03f48c15c63034de54f1f0d574027a7d9",
+  "tokens": [
+   "ae7658d0"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-05",
+  "subject": "caiso-174: Arm A solved and registered; the attestation generator with its own fail-closed checks",
+  "n_citations": 3,
+  "files": [
+   "docs/calibration-log/caiso.md:6523",
+   "docs/mechanism-testing-matrix.md:1750",
+   "frontend/data/backcast/registry/2026-08-06-caiso-175-control-tacbase.json:6"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-repair-degenerate-eia-930-solar-distribution",
+  "oid": "af749270611ed0e82849c3a103b54f38aa6c1e75",
+  "tokens": [
+   "af74927"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-26",
+  "subject": "Repair degenerate EIA-930 solar distribution rows from an adjacent BA",
+  "n_citations": 4,
+  "files": [
+   "docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md:146",
+   "docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md:21",
+   "docs/calibration-log/nyiso.md:817",
+   "docs/calibration-log/nyiso.md:831"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/repro-outages-apply-net-load-filter-cross",
+  "oid": "b0c41cb2b5d3ad8a5e6878517f5c0afd05d1536e",
+  "tokens": [
+   "b0c41cb"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-06-21",
+  "subject": "outages: apply net-load filter cross-ISO (PJM/CAISO/NYISO/NEISO/MISO)",
+  "n_citations": 15,
+  "files": [
+   "docs/ercot-outage-sensitivity-middle-ground-2026-06.md:11",
+   "docs/sessions/multi-iso/cross-iso-outage-regate-handoff-2026-06.md:116",
+   "docs/sessions/multi-iso/cross-iso-outage-regate-handoff-2026-06.md:138",
+   "docs/sessions/multi-iso/cross-iso-outage-regate-handoff-2026-06.md:162",
+   "docs/sessions/multi-iso/cross-iso-outage-regate-handoff-2026-06.md:185",
+   "docs/sessions/multi-iso/cross-iso-outage-regate-handoff-2026-06.md:208",
+   "docs/sessions/multi-iso/cross-iso-outage-regate-handoff-2026-06.md:5",
+   "docs/sessions/multi-iso/cross-iso-outage-regate-handoff-2026-06.md:57",
+   "docs/sessions/multi-iso/pjm-coal-offer-handoff-2026-06.md:32",
+   "docs/sessions/multi-iso/pjm-outage-regate-2026-06.md:106",
+   "docs/sessions/multi-iso/pjm-outage-regate-2026-06.md:107",
+   "docs/sessions/multi-iso/pjm-outage-regate-2026-06.md:38"
+  ],
+  "n_files": 15
+ },
+ {
+  "tag": "cite/repro-register-measured-ct-heat-rates-in",
+  "oid": "c45fed4a97188851f78aa15da4a7c7e3c70fc3f6",
+  "tokens": [
+   "c45fed4"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-27",
+  "subject": "Register measured_ct_heat_rates in _CACHE_KEY_OPTIONAL_FIELDS",
+  "n_citations": 4,
+  "files": [
+   "docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:432",
+   "docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:438",
+   "docs/calibration-log/ercot.md:2204",
+   "docs/calibration-log/ercot.md:2295"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/lost-edit-matrix-union",
+  "oid": "c5593684f89e8184ba5b63ffa589e657e9519440",
+  "tokens": [
+   "c5593684"
+  ],
+  "reasons": [
+   "LB-4"
+  ],
+  "date": "2026-08-09",
+  "subject": "FFR-9A: restore matrix row edit lost in merge resolution + merged-tree anchor re-fix",
+  "n_citations": 10,
+  "files": [
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6145",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6172",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6423",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6445",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6500",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6833",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6948",
+   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:214",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:3758",
+   "docs/handoffs/house-3-matrix-shard-2026-08-11.md:36"
+  ],
+  "n_files": 10
+ },
+ {
+  "tag": "cite/mx-neiso-83-stonybrook-ca1",
+  "oid": "c686beb178133fc9b15449e0f2f0aaf182db57c2",
+  "tokens": [
+   "c686beb1"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-3"
+  ],
+  "date": "2026-08-04",
+  "subject": "Merge pull request #3569 from jessicacohen554-cyber/claude/neiso-83-stonybrook-ca1-204vz4",
+  "n_citations": 6,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix.js:2209",
+   "docs/codebase-site/data/mechanism-matrix.js:2210",
+   "docs/handoffs/ffr-5a-soft-latch-2026-08-05.md:5",
+   "frontend/data/hindcast/ercot-2021-2025-t1ff-armr-ffr5a-pipeline.json:975"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/gov-ffr-fh-workstream-mgr",
+  "oid": "c710d17ecfbb5f9a4feb8340d44c24863735748e",
+  "tokens": [
+   "c710d17e"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-2"
+  ],
+  "date": "2026-08-06",
+  "subject": "Merge pull request #3686 from jessicacohen554-cyber/claude/ffr-fh-workstream-mgr-gguoqa",
+  "n_citations": 10,
+  "files": [
+   "docs/calibration-log/neiso.md:1881",
+   "docs/handoffs/arm-miso-rps-regions-2026-08-07.md:120",
+   "docs/handoffs/arm-miso-rps-regions-2026-08-07.md:138",
+   "docs/handoffs/arm-miso-rps-regions-2026-08-07.md:9",
+   "docs/handoffs/taxonomy-gas-st-2026-08-07.md:23",
+   "docs/handoffs/taxonomy-gas-st-2026-08-07.md:4",
+   "docs/mechanism-testing-matrix.md:8468",
+   "frontend/data/backcast/keepers/NEISO.json:11",
+   "frontend/data/backcast/registry/2026-08-07-miso-133-taxgs-control.json:6",
+   "frontend/data/backcast/registry/2026-08-07-nyiso-131-taxgs-control.json:6"
+  ],
+  "n_files": 10
+ },
+ {
+  "tag": "cite/mx-pjm-flat-offer-stack-precheck",
+  "oid": "db020710cadcf5c6dddd3117330c2d8472d58a07",
+  "tokens": [
+   "db02071"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-07-30",
+  "subject": "Merge pull request #3171 from jessicacohen554-cyber/claude/pjm-flat-offer-stack-precheck-j8ywfb",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/caiso.md:4059",
+   "docs/calibration-log/caiso.md:4093",
+   "docs/codebase-site/data/mechanism-matrix.js:565"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-add-the-measured-exit-throughput-cap",
+  "oid": "db5ff9121ef7b2fdc85070585fe37ecc3681136b",
+  "tokens": [
+   "db5ff91"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-03",
+  "subject": "Add the measured exit-throughput cap (default-off) under owner decision D-8",
+  "n_citations": 2,
+  "files": [
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:22",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:909"
+  ],
+  "n_files": 2
+ },
+ {
+  "tag": "cite/repro-nyiso-calibration-gates",
+  "oid": "dc10345c53349593af8e5ce102aef67037cbfd55",
+  "tokens": [
+   "dc10345c"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-05",
+  "subject": "Merge pull request #3642 from jessicacohen554-cyber/claude/nyiso-calibration-gates-4ki45a",
+  "n_citations": 2,
+  "files": [
+   "frontend/data/backcast/registry/2026-08-06-run173a-reconc-control.json:6"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-ff-1f-pin-dc-off-in",
+  "oid": "e0a2e2021f7c9b9529c0a04d45d0a88bff26fa5f",
+  "tokens": [
+   "e0a2e20"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-18",
+  "subject": "FF-1F: pin DC=off in runner tests that assume the legacy default",
+  "n_citations": 1,
+  "files": [
+   "docs/handoffs/fast-tier-triage-2026-07-26.md:399"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-nyiso-108-hydro-input-2",
+  "oid": "e1a4bc6a7f4796cd122a0691cc1b991a1ec020a6",
+  "tokens": [
+   "e1a4bc6"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-31",
+  "subject": "Merge pull request #3237 from jessicacohen554-cyber/claude/nyiso-108-hydro-input-ijd76p",
+  "n_citations": 1,
+  "files": [
+   "docs/calibration-log/nyiso.md:3500"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/repro-rubric-recalibration-fitness",
+  "oid": "e46ab11cab1486fc07988a71e21c925a225ad125",
+  "tokens": [
+   "e46ab11"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-06",
+  "subject": "Merge pull request #1504 from jessicacohen554-cyber/claude/rubric-recalibration-fitness-vu7i24",
+  "n_citations": 18,
+  "files": [
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1005",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1011",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1016",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1017",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1050",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1064",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1068",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1075",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1081",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1160",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1168",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1170"
+  ],
+  "n_files": 18
+ },
+ {
+  "tag": "cite/mx-execute-owner-decision-d-3a-net",
+  "oid": "e6f0cdb97bb514c8da10ac57e89440b7513d7cb4",
+  "tokens": [
+   "e6f0cdb"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "Execute owner decision D-3a: net-CONE forward mode -> reindex_gross",
+  "n_citations": 7,
+  "files": [
+   "docs/calibration-log/pjm.md:2640",
+   "docs/codebase-site/data/mechanism-matrix.js:1856",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:354",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:217",
+   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:123",
+   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:22"
+  ],
+  "n_files": 6
+ },
+ {
+  "tag": "cite/repro-pjm-burndown",
+  "oid": "e9daf7ef962be5241ea1465bfca25ee2aefea451",
+  "tokens": [
+   "e9daf7e"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-05",
+  "subject": "PJM burndown: reconcile CT reliability floor with net-load drag (rule 19)",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log.md:8108",
+   "docs/calibration-log.md:8120",
+   "docs/calibration-log.md:8137",
+   "docs/calibration-log.md:8154"
+  ],
+  "n_files": 4
+ },
+ {
+  "tag": "cite/mx-caiso-164-prereg",
+  "oid": "eda8ebe8dddd4e62cb77fe5582d3003cfaa4deb7",
+  "tokens": [
+   "eda8ebe8"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-04",
+  "subject": "caiso-164 PREREG: N-S basis diagnosed, CAISO zonal loss surface armed (pre-solve)",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/caiso.md:5417",
+   "docs/codebase-site/data/mechanism-matrix/CAISO.js:182",
+   "docs/mechanism-testing-matrix.md:2531"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/mx-caiso-asymmetric-path-ratings",
+  "oid": "edf5c5ae03e8435b2e29e7a97153851248529336",
+  "tokens": [
+   "edf5c5a"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "Merge pull request #3388 from jessicacohen554-cyber/claude/caiso-asymmetric-path-ratings-3qnzoh",
+  "n_citations": 17,
+  "files": [
+   "docs/codebase-site/data/mechanism-matrix.js:2209",
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:284",
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:288",
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:291",
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:294",
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:327",
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:333",
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:346",
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:383",
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:6",
+   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:7",
+   "docs/handoffs/ffr-sc-transmission-ab-2026-08-03.md:336"
+  ],
+  "n_files": 14
+ },
+ {
+  "tag": "cite/repro-register-neiso-head-re-gate-probe",
+  "oid": "eef45138a73c93254f2dce7514af535d34e4c6a7",
+  "tokens": [
+   "eef4513"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-06",
+  "subject": "Register NEISO HEAD re-gate probe (neiso-48 checklist item 1)",
+  "n_citations": 2,
+  "files": [
+   "docs/calibration-log.md:8318",
+   "docs/calibration-log.md:8359"
+  ],
+  "n_files": 2
+ },
+ {
+  "tag": "cite/repro-d-1-d-2-propagation",
+  "oid": "f5da701a4043295bf19267c11b21f640ac66ad53",
+  "tokens": [
+   "f5da701"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-03",
+  "subject": "D-1/D-2 propagation: the T1 runners must INHERIT the shipped defaults",
+  "n_citations": 5,
+  "files": [
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:172",
+   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:181",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:115",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:31",
+   "docs/handoffs/ffr-t1-regate-2026-08-02.md:319"
+  ],
+  "n_files": 5
+ },
+ {
+  "tag": "cite/mx-caiso-156-fix",
+  "oid": "f6238a509e59b67cd61a3a4ab58b370a598391f2",
+  "tokens": [
+   "f6238a5"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-08-03",
+  "subject": "caiso-156 fix: apply the CT heat-rate physical band at the HOUR, not only the plant aggregate",
+  "n_citations": 9,
+  "files": [
+   "docs/calibration-log/nyiso.md:4269",
+   "docs/calibration-log/pjm.md:2613",
+   "docs/codebase-site/data/mechanism-matrix.js:1856",
+   "docs/codebase-site/data/mechanism-matrix.js:1860",
+   "docs/mechanism-testing-matrix.md:8976"
+  ],
+  "n_files": 5
+ },
+ {
+  "tag": "cite/gov-c7-rubric",
+  "oid": "f68ffed94985c57946fabd18dc3708b78721c47b",
+  "tokens": [
+   "f68ffed"
+  ],
+  "reasons": [
+   "LB-2"
+  ],
+  "date": "2026-07-06",
+  "subject": "C7 rubric: gated classes under 2.5% of ISO total load no longer gate (owner decision)",
+  "n_citations": 2,
+  "files": [
+   "docs/calibration-determination-rubric.md:1459",
+   "docs/governance/rule-history.md:82"
+  ],
+  "n_files": 2
+ },
+ {
+  "tag": "cite/gov-neiso-83-cc-steam-part-reclass",
+  "oid": "f8f803dd5a67570dbc1b8547d27f4068da5e3f1f",
+  "tokens": [
+   "f8f803dd"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-2"
+  ],
+  "date": "2026-08-05",
+  "subject": "neiso-83: cc_steam_part_reclass mechanism + Phase-0 evidence + prereg",
+  "n_citations": 3,
+  "files": [
+   "docs/calibration-log/neiso.md:1881",
+   "docs/mechanism-testing-matrix.md:8468",
+   "frontend/data/backcast/keepers/NEISO.json:11"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-ercot-178",
+  "oid": "fa72e9218e33c0515e3b4d40dfa9f1f14a6c2530",
+  "tokens": [
+   "fa72e921"
+  ],
+  "reasons": [
+   "LB-1",
+   "LB-5"
+  ],
+  "date": "2026-08-08",
+  "subject": "ercot-178: seam proof PASSES \u2014 SP-3 legacy-encoding byte-identity in all three years",
+  "n_citations": 1,
+  "files": [
+   "frontend/data/backcast/registry/2026-08-08-run178-control.json:6"
+  ],
+  "n_files": 1
+ },
+ {
+  "tag": "cite/mx-caiso-138-pnw-firm-hydro",
+  "oid": "fa9971b8f792b3ca3829e6109562711c2082b7e2",
+  "tokens": [
+   "fa9971b"
+  ],
+  "reasons": [
+   "LB-3"
+  ],
+  "date": "2026-07-28",
+  "subject": "Merge pull request #3115 from jessicacohen554-cyber/claude/caiso-138-pnw-firm-hydro-97jtq0",
+  "n_citations": 4,
+  "files": [
+   "docs/calibration-log/caiso.md:4059",
+   "docs/calibration-log/caiso.md:4093",
+   "docs/codebase-site/data/mechanism-matrix.js:565"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-nyiso-83-in-city-j-k",
+  "oid": "fa9fc786e79f46a2d96ee33c1684a6acac0d2fc7",
+  "tokens": [
+   "fa9fc78"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-26",
+  "subject": "nyiso-83: in-city J/K commitment obligation + published Zone-K reserve ladder",
+  "n_citations": 8,
+  "files": [
+   "docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md:88",
+   "docs/calibration-log/nyiso.md:1106",
+   "docs/calibration-log/nyiso.md:984",
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:163",
+   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:85",
+   "docs/handoffs/fast-tier-triage-2026-07-26.md:607",
+   "docs/handoffs/nyiso-incity-instrument-survey-2026-07.md:49",
+   "docs/handoffs/nyiso-incity-mustrun-charter-2026-07.md:48"
+  ],
+  "n_files": 8
+ },
+ {
+  "tag": "cite/repro-dashboard-refresh-generated-data-files-skip",
+  "oid": "fab2254043e1ea88165da5ebb206d0c91550618c",
+  "tokens": [
+   "fab2254"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-08",
+  "subject": "dashboard: refresh generated data files [skip ci]",
+  "n_citations": 10,
+  "files": [
+   "docs/statistical-mode-results-2026-07.md:117",
+   "docs/statistical-mode-results-2026-07.md:147",
+   "docs/statistical-mode-results-2026-07.md:175",
+   "docs/statistical-mode-results-2026-07.md:278",
+   "docs/statistical-mode-results-2026-07.md:313",
+   "docs/statistical-mode-results-2026-07.md:314",
+   "docs/statistical-mode-results-2026-07.md:315",
+   "docs/statistical-mode-results-2026-07.md:316",
+   "docs/statistical-mode-results-2026-07.md:348",
+   "docs/statistical-mode-results-2026-07.md:42"
+  ],
+  "n_files": 10
+ },
+ {
+  "tag": "cite/repro-co2-emissions-plan-2026-wave2",
+  "oid": "fb44295ee1ee85e02cf7e0cbd22962c67ffa64f0",
+  "tokens": [
+   "fb44295"
+  ],
+  "reasons": [],
+  "date": "2026-07-05",
+  "subject": "Merge pull request #1409 from jessicacohen554-cyber/claude/co2-emissions-plan-2026-wave2",
+  "n_citations": 3,
+  "files": [
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:687",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:692",
+   "docs/handoffs/orchestrator-unification-plan-2026-07.md:721"
+  ],
+  "n_files": 3
+ },
+ {
+  "tag": "cite/repro-make-the-default-cache-key-path",
+  "oid": "fb8a34fd9fc32ee08cd44f450f5a8e49df5e08c7",
+  "tokens": [
+   "fb8a34f"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-07-27",
+  "subject": "Make the default cache key path-invariant (cache-epoch bump edbc1b1 -> 603c249)",
+  "n_citations": 2,
+  "files": [
+   "docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:431",
+   "docs/handoffs/fast-tier-triage-2026-07-26.md:704"
+  ],
+  "n_files": 2
+ },
+ {
+  "tag": "cite/repro-fh-4-miso-leg",
+  "oid": "fe9fa97fd6af815943d62b8fc072fcdb5f2b73ca",
+  "tokens": [
+   "fe9fa97f"
+  ],
+  "reasons": [
+   "LB-1"
+  ],
+  "date": "2026-08-10",
+  "subject": "Merge pull request #3839 from jessicacohen554-cyber/claude/fh-4-miso-leg-cmacdy",
+  "n_citations": 8,
+  "files": [
+   "docs/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md:8",
+   "docs/calibration-log/ercot.md:7110",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6116",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6315",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6352",
+   "docs/forecast-readiness-prompt-pack-2026-07.md:6482",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:3728",
+   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:3799"
+  ],
+  "n_files": 8
+ }
+]
