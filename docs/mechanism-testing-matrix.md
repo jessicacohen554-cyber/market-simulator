@@ -4016,10 +4016,57 @@ loss.
 > the probe's 14.3/14.6/15.4 TWh floor LEVEL exceeds D-2's 8.22/8.61/10.735 TWh
 > forced ENERGY because they measure different objects; every conclusion above
 > is a SHAPE ratio, invariant to that difference.)
+> **PHASE 1 WAS OWNER-CHARTERED (across-unit dispersion scoped to CT_PEAKER at
+> peak) AND IS **CLOSED BY MEASUREMENT ON THREE INDEPENDENT GROUNDS — NO SOLVE
+> SPENT, NO `ScenarioConfig` FIELD, NO RUN REGISTERED, NO CELL VERDICT MINTED.**
+> Identification was attempted first, per rule 1 `[R-STRUCT]`; it does not
+> survive. **DO-NOT-REDO.**
+>
+> **Ground 1 — the measured side cannot be class-scoped.** MISO's masked offer
+> corpus carries **no fuel/technology attribute** and the offer-side class
+> bridge was **built and REFUTED at miso-138**
+> (`data/raw/miso-energy-offers/README.md`), so miso-151's G-5 quantiles
+> (p10 0.169 / p50 19.583 / p90 48.007, **p90−p10 47.837**) are **FLEET-WIDE,
+> not CT**. There is no admissible route from that corpus to a CT-scoped target.
+>
+> **Ground 2 — the model's CT across-unit dispersion is NOT collapsed; it is the
+> WIDEST in the fleet.** Across-plant p90−p10 of effective mc at the top-200
+> demand hours, 166 plants: **$40.09 / $38.68 / $26.45** — against CC_REGULAR
+> **9.04/6.95/10.27**, COAL **14.78/12.93/14.22**, ST_GAS **17.37/27.52/22.56**.
+> Same order as the fleet-wide measured book. **Stated against the measurement:
+> the comparison is NOT like-for-like** (G-5's population includes near-zero
+> self-scheduled price-taker offers, its p10 = 0.169; the model represents
+> self-scheduling as must-run floors and this probe scopes to econ tranches), and
+> no like-for-like comparison exists — which is Ground 1 restated. X-3: holding
+> CT's heat rate flat moves the spread only 40.09→34.43 / 38.68→29.47 /
+> 26.45→22.69, so heat-rate dispersion is only **~14–24 %** of it and
+> `measured_ct_heat_rates` is already **K**.
+>
+> **Ground 3 — the one anomaly is the model being RIGHT.** CT's spread narrows
+> as C3a worsens, against the fuel move; three causes were put up and **all
+> three refuted**. (A) "2025's preliminary EIA-923 vintage strips per-plant
+> prices" — **REFUTED**, CT fallback share is flat **21.7/22.3/22.3 %**,
+> distinct series **63/65/62**; the C1 note is about the *generation* vintage,
+> not the *receipts* table. (B) "month-level coverage falls" — **REFUTED and
+> reversed**, share of gas plants with all 12 months **RISES 73.7→76.8→79.1 %**.
+> (C) "model artifact" — **REFUTED**: the compression is in the **raw F923
+> source** (across-plant p90−p10 **5.657→3.748→3.679 $/MMBtu**) and the model
+> tracks it (**5.321→3.593→3.413**). **Across-plant delivered-gas dispersion
+> genuinely narrowed ~35 % and the model reproduces it faithfully.**
+>
+> **WHAT THE LANE'S NEXT DEPENDENCY IS.** D-3 stands — `CT_PEAKER` sets the
+> summer peak price and its DISPERSION is right. Untested is its **LEVEL** (the
+> miso-152 named successor), and its blocker is re-confirmed independently here
+> by T-6b: the price-taking reconstruction runs **+22.0/+22.1/+23.7 %** hot on CT
+> in every year. **It needs an instrument that reproduces CT commitment.** Owner
+> decision; not self-authorized.
 > `results/calibration/FINDING-miso153-the-peak-setter-is-CT-2026-08-12.md`;
 > `PREREG-miso153-summer-peak-phase0-2026-08-12.md` (`857a434`, blob `c2c1df03`);
-> probe `scripts/probes/_miso153_summer_cushion.py`;
-> `_miso153_summer_cushion.json` + `_miso153_summer_cushion_PREREPAIR.json`.
+> probes `scripts/probes/_miso153_summer_cushion.py` ·
+> `_miso153_stgas_window.py` · `_miso153_ct_dispersion.py` ·
+> `_miso153_fuel_dispersion.py`; records `_miso153_summer_cushion.json` +
+> `_miso153_summer_cushion_PREREPAIR.json` + `_miso153_stgas_window.json` +
+> `_miso153_ct_dispersion.json` + `_miso153_fuel_dispersion.json`.
 
 > **QUEUE STAMP miso-152 (2026-08-11) — CHARTER (B), THE BASE-BAND INVERSION, IS
 > **CLOSED**. Branch **B-2 IMMATERIAL**. Keeper UNCHANGED at
