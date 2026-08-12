@@ -1,0 +1,167 @@
+{
+ "probe": "ercot-150 zonal-anchor derivation record (weights + decomposition)",
+ "weights_bundle": "results/calibration/ercot191_dam_rederive_regate",
+ "iso_anchor": 2.2494,
+ "scalar_basis_in_iso_anchor": -0.5,
+ "zone_anchor_table": {
+  "West": 1.9586,
+  "North": 2.7178,
+  "Northeast": 2.7178,
+  "Houston": 2.3111,
+  "South_Central": 2.7578,
+  "South": 3.2778
+ },
+ "table_reproduces_from_solve_array": true,
+ "table_reproduction_failures": [],
+ "per_year": {
+  "2023": {
+   "gas_capacity_mw_by_zone": {
+    "West": 2813.0,
+    "Panhandle": 0.0,
+    "North": 20418.7,
+    "Northeast": 1653.0,
+    "Houston": 17240.7,
+    "South_Central": 11923.3,
+    "South": 5840.8
+   },
+   "raw_basis_vs_hh": {
+    "West": -0.72,
+    "Panhandle": -0.72,
+    "North": 0.13,
+    "Northeast": 0.13,
+    "Houston": -0.15,
+    "South_Central": 0.56,
+    "South": 1.23
+   },
+   "capacity_weighted_mean_removed": 0.2024,
+   "unweighted_mean_basis": 0.0657,
+   "ep_basis_vs_hh": 0.0045,
+   "level_correction_added": 0.5045,
+   "n_gas_rows": 1824,
+   "n_marked_up_tranches": 1667,
+   "n_with_band_scoped_anchor": 1667,
+   "west_measured_collapse_freq": 0.03,
+   "realized_zone_mean_solve_array": {
+    "West": 1.9866,
+    "North": 2.4721,
+    "Northeast": 2.4721,
+    "Houston": 2.1921,
+    "South_Central": 2.9021,
+    "South": 3.5721
+   },
+   "post_basis_zone_mean_synthetic": {
+    "West": 1.6216,
+    "North": 2.4716,
+    "Northeast": 2.4716,
+    "Houston": 2.1916,
+    "South_Central": 2.9016,
+    "South": 3.5716
+   },
+   "west_netload_floor_lift": 0.365
+  },
+  "2024": {
+   "gas_capacity_mw_by_zone": {
+    "West": 2813.0,
+    "Panhandle": 0.0,
+    "North": 20418.7,
+    "Northeast": 1653.0,
+    "Houston": 17240.7,
+    "South_Central": 11923.3,
+    "South": 5840.8
+   },
+   "raw_basis_vs_hh": {
+    "West": -2.19,
+    "Panhandle": -2.19,
+    "North": 0.21,
+    "Northeast": 0.21,
+    "Houston": -0.15,
+    "South_Central": 0.45,
+    "South": 0.63
+   },
+   "capacity_weighted_mean_removed": 0.0824,
+   "unweighted_mean_basis": -0.4329,
+   "ep_basis_vs_hh": -0.0858,
+   "level_correction_added": 0.4142,
+   "n_gas_rows": 1824,
+   "n_marked_up_tranches": 1667,
+   "n_with_band_scoped_anchor": 1667,
+   "west_measured_collapse_freq": 0.42,
+   "realized_zone_mean_solve_array": {
+    "West": 1.1497,
+    "North": 2.2318,
+    "Northeast": 2.2318,
+    "Houston": 1.8718,
+    "South_Central": 2.4718,
+    "South": 2.6518
+   },
+   "post_basis_zone_mean_synthetic": {
+    "West": 0.1031,
+    "North": 2.2313,
+    "Northeast": 2.2313,
+    "Houston": 1.8713,
+    "South_Central": 2.4713,
+    "South": 2.6513
+   },
+   "west_netload_floor_lift": 1.0466
+  },
+  "2025": {
+   "gas_capacity_mw_by_zone": {
+    "West": 2813.0,
+    "Panhandle": 0.0,
+    "North": 20418.7,
+    "Northeast": 1653.0,
+    "Houston": 17240.7,
+    "South_Central": 11923.3,
+    "South": 5840.8
+   },
+   "raw_basis_vs_hh": {
+    "West": -2.38,
+    "Panhandle": -2.38,
+    "North": 0.43,
+    "Northeast": 0.43,
+    "Houston": -0.15,
+    "South_Central": -0.12,
+    "South": 0.59
+   },
+   "capacity_weighted_mean_removed": 0.0372,
+   "unweighted_mean_basis": -0.5114,
+   "ep_basis_vs_hh": -0.4634,
+   "level_correction_added": 0.0366,
+   "n_gas_rows": 1824,
+   "n_marked_up_tranches": 1670,
+   "n_with_band_scoped_anchor": 1670,
+   "west_measured_collapse_freq": 0.11,
+   "realized_zone_mean_solve_array": {
+    "West": 2.7396,
+    "North": 3.4494,
+    "Northeast": 3.4494,
+    "Houston": 2.8694,
+    "South_Central": 2.8994,
+    "South": 3.6094
+   },
+   "post_basis_zone_mean_synthetic": {
+    "West": 0.6386,
+    "North": 3.4486,
+    "Northeast": 3.4486,
+    "Houston": 2.8686,
+    "South_Central": 2.8986,
+    "South": 3.6086
+   },
+   "west_netload_floor_lift": 2.101
+  }
+ },
+ "window_mean_gas_capacity_mw_by_zone": {
+  "West": 2813.0,
+  "Panhandle": 0.0,
+  "North": 20418.7,
+  "Northeast": 1653.0,
+  "Houston": 17240.7,
+  "South_Central": 11923.3,
+  "South": 5840.8
+ },
+ "window_mean_level_correction": 0.3184,
+ "capw_mean_of_zone_anchors": 2.6276,
+ "iso_anchor_plus_level_corr": 2.5678,
+ "capw_minus_iso_plus_level": 0.0598,
+ "note": "The ERCOT anchors are read from the reconstruction's own resolved fuel_prices (SOLVE_FUEL_ARRAY_ISOS), so they include every keeper fuel-path stage: the mean-zero zonal spread, the flat EP level correction, the _GAS_PRICE_FLOOR hourly clip, and the West net-load two-regime shape whose burner-tip floor lifts the realized West mean above the post-basis level (west_netload_floor_lift per year). The consistency stat capw(zone anchors) vs ISO anchor + window-mean level correction therefore carries a small POSITIVE residual = the West lift weighted by West's gas-capacity share plus the hourly-clip asymmetry. The registered window anchors reproduce exactly from the per-year solve-array means (table_reproduces_from_solve_array)."
+}

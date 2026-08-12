@@ -246,8 +246,15 @@ def committed_pairs() -> tuple[dict, dict]:
     for _, r in xw[
         (xw["class"].astype(str).str.startswith("CC")) & (xw["accepted"] == 1)
     ].iterrows():
-        site_to_plant[str(r["site"])] = int(r["plant_code"])
-        why[str(r["site"])] = (
+        # Grain adapter (ercot-191, PRECOMMIT-ercot191 §1e): since the
+        # ruling-#9 repair the DAM crosswalk keys CC sites at TRAIN grain
+        # (GUADG_CC1); this probe's own site normalisation is the mnemonic
+        # (_site_of_train). Identity on every pre-repair key, so the old
+        # artifact reads unchanged; two trains of one plant collapse onto the
+        # same (site -> plant) pair.
+        s = _site_of_train(str(r["site"]))
+        site_to_plant[s] = int(r["plant_code"])
+        why[s] = (
             f"X1 ercot-dam-plant-crosswalk.csv accepted=1 "
             f"({r['match_method']}, score {r['match_score']})"
         )

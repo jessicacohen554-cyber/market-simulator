@@ -459,6 +459,7 @@ def _ercot_dam_plant_hourly_apply(
     plant_series: "dict[int, np.ndarray]",
     logger: "logging.Logger",
     ceil_full: "np.ndarray | None" = None,
+    plant_rating: "dict[int, np.ndarray] | None" = None,
 ) -> set:
     """Redistribute measured DAM availability to the PLANT grain (ERCOT-97).
 
@@ -479,6 +480,22 @@ def _ercot_dam_plant_hourly_apply(
     deliberately: a mapped plant saturating at its forced-derate ceiling must
     NOT push its destroyed capacity onto other plants — that would resurrect
     the loss elsewhere in the class.
+
+    ``plant_rating`` (owner ruling #10, signature A1; ercot-149 §6.3,
+    PRECOMMIT-ercot191 §1d) is ``{plant_code: (hours,) covered DAM rating
+    MW}``. When provided, the REMOVE direction (``pf`` below the plant's
+    current mean) is diluted to the plant's measured coverage::
+
+        pf_eff = pf·cov + cur·(1 − cov),  cov = clip(covered_MW / Σ pmax, 0, 1)
+
+    so the measured fraction governs exactly the share of the model plant the
+    accepted DAM sites measure and the UNMEASURED remainder keeps its
+    incumbent availability — V H Braunig 2025 must not be pinned to ~0.075 by
+    VHB3's own outage when VHB1/2's status is unmeasured. The RESTORE
+    direction is untouched (its collisions are owned by the armed event caps,
+    rule 19), ``cov = 1`` reproduces the prior arithmetic exactly, and the
+    residual accounting stays on the raw ``pf`` per the ERCOT-137 precedent
+    above (an unmeasured share must not push its removal onto other plants).
     """
     done: set = set()
     # plant_code -> class-local unit indices, for plants that actually have
@@ -525,14 +542,29 @@ def _ercot_dam_plant_hourly_apply(
             nanhit += int((covered & ~pf_fin).sum())
             gidx = idx[loc]
             cap_p = pmax[gidx]
+            cap_p_sum = float(cap_p.sum())
+            # Ruling #10 (see docstring): dilute the REMOVE direction to the
+            # plant's measured coverage; restore direction untouched.
+            pf_eff = pf
+            if plant_rating is not None and pc in plant_rating and cap_p_sum > 0.0:
+                cov = np.clip(plant_rating[pc][:hours] / cap_p_sum, 0.0, 1.0)
+                cur_p = (availability[gidx, :hours] * cap_p[:, None]).sum(
+                    axis=0
+                ) / cap_p_sum
+                rem = active & np.isfinite(cov) & (pf < cur_p)
+                if rem.any():
+                    pf_eff = pf.copy()
+                    pf_eff[rem] = pf[rem] * cov[rem] + cur_p[rem] * (1.0 - cov[rem])
             availability[gidx, :hours] = _dam_waterfill(
                 availability[gidx, :hours],
                 cap_p,
-                pf,
+                pf_eff,
                 active,
                 ceil=None if ceil_full is None else ceil_full[gidx],
             )
-            mapped_mw[active] += pf[active] * float(cap_p.sum())
+            # Raw-pf accounting, deliberately (docstring: the ERCOT-137
+            # precedent — an unmeasured share's removal is nobody else's).
+            mapped_mw[active] += pf[active] * cap_p_sum
 
         # Residual target so the class-hour total still equals the measured
         # class fraction: (t·cap_sum − mapped_mw) spread over the unmapped cap.

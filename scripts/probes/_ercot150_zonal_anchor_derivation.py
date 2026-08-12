@@ -38,7 +38,14 @@ from pathlib import Path
 import numpy as np
 
 REPO = Path(__file__).resolve().parents[2]
-BUNDLE = REPO / "results/calibration/ercot149_gas_event_cap_arm"
+# ercot-191 (signature A1, rule 23): the original weights bundle
+# ercot149_gas_event_cap_arm was retention-pruned from disk (top-15 rule), so
+# the record re-derives off the current keeper bundle — same recipe lineage
+# (every keeper since ercot-149 carries the identical gas fleet and fuel
+# path), and the ercot-191 re-derivation on the ruling-#9/#8/#10-repaired DAM
+# artifacts reproduced the registered table EXACTLY (all six zones, 4-dp),
+# which is the freeze clause's re-assertion.
+BUNDLE = REPO / "results/calibration/ercot191_dam_rederive_regate"
 OUT_PATH = REPO / "results/calibration/_ercot150_zonal_anchor_derivation.json"
 
 YEARS = (2023, 2024, 2025)
