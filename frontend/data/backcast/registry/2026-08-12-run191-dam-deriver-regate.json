@@ -1,0 +1,16 @@
+{
+ "id": "2026-08-12-run191-dam-deriver-regate",
+ "label": "run191 dam deriver regate",
+ "date": "2026-08-12",
+ "shorthand": "run191-dam-deriver-regate",
+ "definition": "ercot-191: A1 DAM-deriver lane re-gate — keeper recipe replayed unchanged on the #9/#8/#10-repaired DAM availability family (one re-derive, one re-gate; rule 23 citation = signature A1, card A 2026-08-11; PRECOMMIT-ercot191 §2)",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-08-12-run191-dam-deriver-regate.js",
+ "bundle": "results/calibration/ercot191_dam_rederive_regate",
+ "market_story": "No mechanism moved — the recipe is run188's verbatim; the delta is that the measured DAM availability input now says what the disclosure actually says. CC_REGULAR: a multi-train plant that loses one train is now genuinely short that train (the trains sum instead of aliasing onto one max), which is why the market carries less CC through single-train outage blocks like Guadalupe Oct-Dec 2024 — real plants lose real trains, and the class fraction reflects the fleet's registered capability (+5.0 GW truer rating denominator). COAL 2025: Martin Lake unit 1 was destroyed before the vintage; the fleet the market dispatched never had it, and now neither does the model's measured availability (live 0 at its last-operating rating). ST_GAS: V H Braunig / Sim Gideon / Ray Olinger are covered as whole plants, so one unit's outage no longer erases (or over-removes) its siblings — the pin removes exactly the MW the disclosure measures as missing. Prices: 2024/2025 hold PASS; the 2023 level miss deepens $0.60 to -33.7% because phantom availability had been silently propping the level — rule-14 territory, the root cause (2023 scarcity-tail formation) stands as the accepted model-class limitation."
+}

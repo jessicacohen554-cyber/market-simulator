@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-05T07:54:21",
+  "timestamp": "2026-08-12T06:36:53",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -42,8 +42,10 @@
   "cc_committed_offer_margin": true,
   "coal_peak_offer_margin": true,
   "coal_perplant_offer_level": true,
-  "coal_perplant_offer_yearly": false,
+  "coal_perplant_offer_yearly": true,
   "nysdec_peaker_rule_availability": false,
+  "nyiso_solar_market_generator_basis": false,
+  "nyiso_solar_registry_cod_dates": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": false,
   "st_gas_intermediate_cf_threshold": null,
@@ -92,7 +94,11 @@
     "ercot_wtx_panhandle_owner": "share",
     "ercot_wtx_curtail_depth_wind": 0.1354,
     "ercot_wtx_curtail_depth_solar": 0.1614,
-    "ercot_storage_as_soc_reserve": true
+    "ercot_storage_as_soc_reserve": true,
+    "coal_perplant_offer_yearly": true,
+    "ercot_offer_surface_position_tail": true,
+    "ercot_partial_outage_shaped_derate": true,
+    "ercot_econ_curve_top_refine": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -309,6 +315,8 @@
   "caiso_asymmetric_path_ratings": null,
   "caiso_zonal_loss_surface": null,
   "capacity_deliverability_limits": null,
+  "unit_outage_lp_capacity_basis": null,
+  "cc_winter_capability_basis": null,
   "ramp_limits": null,
   "local_capacity_constraints": null,
   "nyiso_local_selfsupply": null,
@@ -371,18 +379,18 @@
     "unit_outages": "../_shared/ERCOT/unit_outages-b33eb9c5dd84.parquet",
     "unit_outages_layup": "../_shared/ERCOT/unit_outages_layup-f26daaceaab4.parquet"
   },
-  "git_sha": "9a3c176b",
-  "basis_sha": "57d4d66a2f506eb12096611fee3f2682c6ccd65e",
+  "git_sha": "681feaf",
+  "basis_sha": "a69b73c1e6e6c41c1d76f117c36166711b7fc24a",
   "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v20-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
       "pandas": "3.0.5",
-      "pyarrow": "25.0.0",
+      "pyarrow": "25.0.1",
       "pydantic": "2.13.4"
     }
   }

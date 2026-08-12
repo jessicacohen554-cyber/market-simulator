@@ -1569,6 +1569,7 @@ def _apply_outage_overlays(
             # gets the plain class-HOUR treatment.
             if getattr(config, "ercot_thermal_dam_availability_plant", False):
                 from market_sim.data.outages import (
+                    ercot_thermal_dam_availability_plant_rating_series,
                     ercot_thermal_dam_availability_plant_series,
                 )
 
@@ -1586,6 +1587,14 @@ def _apply_outage_overlays(
                         _plant_series,
                         logger,
                         ceil_full=_dam_ceil,
+                        # Ruling #10 (signature A1): the pin's remove
+                        # direction is diluted to the plant's measured DAM
+                        # coverage — see _ercot_dam_plant_hourly_apply.
+                        plant_rating=(
+                            ercot_thermal_dam_availability_plant_rating_series(
+                                int(_yr), hours
+                            )
+                        ),
                     )
             for _cls, _t_h in _meas_h.items():
                 if _cls in _hourly_done:

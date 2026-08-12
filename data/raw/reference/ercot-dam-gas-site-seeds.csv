@@ -1,0 +1,2 @@
+site,plant_code,plant_name,qse,settlement_point,p98_rating_mw,confidence,note
+JCKCNTY2_CC1,55230,Jack County,QBRAZP;QEAGL3,JCKCNTY2_CC1,654.0,unambiguous,Jack County train 2 (ercot-149 s3.2; ruling #9 completion under signature A1 - PRECOMMIT-ercot191 s1b): same QSE pair as JACKCNTY (QBRAZP;QEAGL3); p98 654.0 + JACKCNTY 627.0 = 1281 MW vs EIA plant 55230 nameplate 1280.0 (ratio 1.001); no lexical bridge so the auto-matcher cannot reach it (its top candidate is the wrong plant at a coincidental capacity ratio)
