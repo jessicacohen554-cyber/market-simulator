@@ -83,6 +83,11 @@ FORENSIC = REFERENCE_DIR / "ercot_noncampd_dam_crosswalk.csv"
 # (not appended to FORENSIC) so the frozen ERCOT-71 non-CAMPD availability
 # derive, which reads every row of FORENSIC, keeps its exact plant scope.
 COAL_SEEDS = REFERENCE_DIR / "ercot-dam-coal-site-seeds.csv"
+# ercot-191 (owner ruling #9 companion, signature A1; PRECOMMIT-ercot191 §1b):
+# hand-adjudicated GAS sites the automated capacity+abbreviation path cannot
+# reach (JCKCNTY2 — Jack County's second train, no lexical bridge). Same
+# exact-site-keyed pattern and separate-file rationale as COAL_SEEDS.
+GAS_SEEDS = REFERENCE_DIR / "ercot-dam-gas-site-seeds.csv"
 DEFAULT_OUT = REFERENCE_DIR / "ercot-dam-plant-crosswalk.csv"
 
 # Covered classes (the DAM-availability scope; CHP/nuclear excluded — see
@@ -303,6 +308,10 @@ def _forensic_seeds() -> tuple[dict[str, int], dict[str, int]]:
       point. Indexed by STEM: ``_mnem_stem(_site(token, "CCGT90"))`` collapses
       a settlement point like ``KMCHI_CC1`` onto the train stem ``KMCHI``,
       which is the site key a CC resource carries.
+    * ``ercot-dam-gas-site-seeds.csv`` — ercot-191 (ruling #9 companion,
+      signature A1): hand-adjudicated gas sites with no lexical bridge
+      (JCKCNTY2_CC1 -> Jack County), keyed by exact **site** like the coal
+      file below.
     * ``ercot-dam-coal-site-seeds.csv`` — the ERCOT-110 coal fleet, keyed by
       DAM **site** (= Resource Name: ``_site`` returns the name unchanged for
       every non-CC type, so a coal site key needs no config-collapse). ERCOT
@@ -327,12 +336,13 @@ def _forensic_seeds() -> tuple[dict[str, int], dict[str, int]]:
                 stem = _mnem_stem(_site(sp.strip(), "CCGT90"))
                 if stem:
                     stems[stem] = code
-    if COAL_SEEDS.exists():
-        cdf = pd.read_csv(COAL_SEEDS)
-        for _, r in cdf.iterrows():
-            site = str(r["site"]).strip()
-            if site:
-                exact[site] = int(r["plant_code"])
+    for seeds_csv in (COAL_SEEDS, GAS_SEEDS):
+        if seeds_csv.exists():
+            cdf = pd.read_csv(seeds_csv)
+            for _, r in cdf.iterrows():
+                site = str(r["site"]).strip()
+                if site:
+                    exact[site] = int(r["plant_code"])
     return exact, stems
 
 
@@ -403,6 +413,46 @@ def build(years: list[int]) -> pd.DataFrame:
         )
 
     out = pd.DataFrame(rows)
+
+    # --- Sibling completion (ercot-191, owner ruling #9 companion, signature
+    # A1; ercot-149 §6.2, PRECOMMIT-ercot191 §1b). A rejected site whose TOP
+    # candidate is a plant that already has an accepted site in the same
+    # class, whose corroboration is STRONG (the existing _STRONG bar, read
+    # back off match_method) and unique (n_strong == 1), and which failed
+    # ONLY the capacity band from BELOW (a unit/train fraction < _CAP_LO)
+    # flips to accepted — the per-train band must not veto a plant the scorer
+    # has already identified (BRAUNIG_VHB1/2, GIDEON_GIDEONG1/2,
+    # OLINGR_OLING_2). Guard: the plant's total accepted p98 rating stays
+    # ≤ _CAP_HI × plant nameplate. Zero new thresholds; no bar moves.
+    strong_methods = {
+        "initialism_exact",
+        "token_prefix",
+        "consonant_skeleton",
+        "name_prefix",
+    }
+    acc_sum: dict[tuple[str, int], float] = (
+        out[out["accepted"] == 1]
+        .groupby(["class", "plant_code"])["p98_rating_mw"]
+        .sum()
+        .to_dict()
+    )
+    cand = out[
+        (out["accepted"] == 0)
+        & out["match_method"].isin(strong_methods)
+        & (out["n_strong_candidates"] == 1)
+        & (out["capacity_ratio"] < _CAP_LO)
+    ].sort_values("p98_rating_mw", ascending=False)
+    for i, r in cand.iterrows():
+        key = (str(r["class"]), int(r["plant_code"]))
+        if key not in acc_sum:
+            continue
+        if acc_sum[key] + float(r["p98_rating_mw"]) <= _CAP_HI * float(
+            r["plant_nameplate_mw"]
+        ):
+            out.loc[i, "accepted"] = 1
+            out.loc[i, "match_method"] = "sibling_completion"
+            acc_sum[key] += float(r["p98_rating_mw"])
+
     out = out.sort_values(
         ["accepted", "class", "p98_rating_mw"], ascending=[False, True, False]
     ).reset_index(drop=True)

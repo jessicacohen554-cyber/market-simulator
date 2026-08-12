@@ -115,6 +115,7 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -165,9 +166,19 @@ RESTYPE_TO_CLASS: dict[str, str] = {
     "CLLIG": "COAL",
 }
 
-# CC configuration suffixes: a resource name up to the config tag names the
-# physical train ("site"); alternates never run together (config-collapse —
-# the May-2024 outage-forensics recipe, DIAGNOSIS-ercot-may2024 §2).
+# CC resource-name grammar: ``<MNEMONIC>_<CCTAG><train#>_<config#>`` — one DAM
+# row per registered CONFIGURATION of a physical train; alternates of one train
+# never run together (config-collapse — the May-2024 outage-forensics recipe,
+# DIAGNOSIS-ercot-may2024 §2). The site key is the TRAIN (``GUADG_CC1``), never
+# the bare mnemonic: truncating at the config TAG aliased two physical trains
+# (``GUADG_CC1_*`` + ``GUADG_CC2_*`` -> ``GUADG``) onto one site whose max()
+# collapse made a single-train outage arithmetically invisible — owner ruling
+# #9, repaired 2026-08-12 under signature A1 (ercot-149 §3.1/§6.1;
+# docs/PRECOMMIT-ercot191-a1-dam-deriver-2026-08-12.md §1a). With train-grain
+# sites the existing site-summing aggregations become the SUM of per-train
+# maxes the diagnosis names. Verified against all 310 unique CC resource names
+# across both disclosure lanes: every one matches _CC_TRAIN_RE.
+_CC_TRAIN_RE = re.compile(r"^(?P<train>.+_(?:CC|CCU|GT|ST)\d*)_\d+$")
 _CC_CONFIG_TAGS = ("_CC", "_CCU", "_GT", "_ST")
 
 _RATING_QUANTILE = 0.98  # robust site rating: p98 of non-OUT, non-zero HSL
@@ -176,6 +187,11 @@ _RATING_QUANTILE = 0.98  # robust site rating: p98 of non-OUT, non-zero HSL
 def _site(name: str, rtype: str) -> str:
     """Collapse a CC config resource name to its physical-train site key."""
     if rtype in ("CCGT90", "CCLE90"):
+        m = _CC_TRAIN_RE.match(name)
+        if m:
+            return m.group("train")
+        # Fallback for a name outside the corpus grammar (none observed):
+        # the pre-ruling-#9 tag truncation.
         for tag in _CC_CONFIG_TAGS:
             i = name.rfind(tag)
             if i > 0:
@@ -220,7 +236,33 @@ def _load_year(year: int) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
-def derive_year(year: int) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def _load_prep(year: int) -> pd.DataFrame:
+    """:func:`_load_year` plus the derived ``cls``/``site``/``date``/``out`` columns."""
+    df = _load_year(year)
+    if df.empty:
+        return df
+    df["cls"] = df["Resource Type"].map(RESTYPE_TO_CLASS)
+    df["site"] = [_site(n, t) for n, t in zip(df["Resource Name"], df["Resource Type"])]
+    df["date"] = pd.to_datetime(df["Delivery Date"]).dt.normalize()
+    df["out"] = df["Resource Status"].eq("OUT")
+    return df
+
+
+def _inyear_rating(df: pd.DataFrame) -> pd.Series:
+    """Per-(cls, site) p98 rating over the year's non-OUT, non-zero rows.
+
+    Site rating: p98 of the site's config-collapsed hourly HSL (max config HSL
+    per site-hour first, so a small alternate config cannot drag the train's
+    rating down).
+    """
+    ok = df[~df["out"] & (df["HSL"] > 0.0)]
+    site_hour = ok.groupby(["cls", "site", "date", "Hour Ending"])["HSL"].max()
+    return site_hour.groupby(["cls", "site"]).quantile(_RATING_QUANTILE)
+
+
+def derive_year(
+    year: int, rating_fallback: "pd.Series | None" = None
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Return the (class-day, class-hour, site-hour) availability frames.
 
     All three grains come from the SAME config-collapsed site-hour live/rating
@@ -229,6 +271,17 @@ def derive_year(year: int) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     the day mean's numerator AND the hourly row entirely), and the site-hour
     frame is that intermediate itself — its per-(class, date, HE) live/rating
     sum over sites reproduces the class-hour fraction exactly.
+
+    ``rating_fallback`` is the ruling-#8 multi-year rating basis (signature
+    A1; ERCOT-148 §5.1/§6.2, PRECOMMIT-ercot191 §1c): a (cls, site) with NO
+    in-year rating — every row of the delivery year OUT or zero-HSL — takes
+    its rating from the fallback (built by :func:`derive_years` from the
+    nearest other derived year), so an all-year-OUT site enters BOTH sides of
+    every grain with live 0 instead of vanishing (Martin Lake U1 2025: COP
+    ``OUT`` all 8,760 h @ 815 MW was invisible to the COAL fraction and the
+    plant pin). In-year ratings always take precedence, so where the current
+    basis produced a number the output is unchanged; a site with no non-OUT
+    row in ANY derived year remains absent (nothing measurable to rate).
     """
     empty_day = pd.DataFrame(columns=["date", "class", "rating_mw", "live_mw", "avail"])
     empty_hr = pd.DataFrame(
@@ -237,20 +290,13 @@ def derive_year(year: int) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     empty_sh = pd.DataFrame(
         columns=["date", "class", "site", "he", "live_mw", "rating_mw"]
     )
-    df = _load_year(year)
+    df = _load_prep(year)
     if df.empty:
         return empty_day, empty_hr, empty_sh
-    df["cls"] = df["Resource Type"].map(RESTYPE_TO_CLASS)
-    df["site"] = [_site(n, t) for n, t in zip(df["Resource Name"], df["Resource Type"])]
-    df["date"] = pd.to_datetime(df["Delivery Date"]).dt.normalize()
-    df["out"] = df["Resource Status"].eq("OUT")
 
-    # Site rating: p98 of the site's config-collapsed hourly HSL over the
-    # year's non-OUT, non-zero rows (max config HSL per site-hour first, so a
-    # small alternate config cannot drag the train's rating down).
-    ok = df[~df["out"] & (df["HSL"] > 0.0)]
-    site_hour = ok.groupby(["cls", "site", "date", "Hour Ending"])["HSL"].max()
-    rating = site_hour.groupby(["cls", "site"]).quantile(_RATING_QUANTILE)
+    rating = _inyear_rating(df)
+    if rating_fallback is not None and not rating_fallback.empty:
+        rating = rating.combine_first(rating_fallback)
 
     # Live capability per site-hour: max HSL across non-OUT configs (an OUT
     # config contributes zero; a fully-OUT site has no non-OUT rows -> 0).
@@ -330,6 +376,35 @@ def derive_year(year: int) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     return day_frame, hour_frame, site_frame
 
 
+def derive_years(
+    years: list[int],
+) -> list[tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]]:
+    """Derive every year with the ruling-#8 cross-year rating fallback.
+
+    Pass 1 computes each year's in-year (cls, site) rating; pass 2 derives
+    each year with a fallback assembled from the OTHER years' in-year ratings,
+    nearest year first (tie -> the earlier year: a destroyed unit's
+    last-operating rating is the physical basis). In-year ratings always win
+    (:func:`derive_year`), so the fallback engages only where the in-year
+    basis is empty.
+    """
+    ratings: dict[int, pd.Series] = {}
+    for y in years:
+        df = _load_prep(y)
+        ratings[y] = _inyear_rating(df) if not df.empty else pd.Series(dtype=float)
+        del df
+    triples: list[tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]] = []
+    for y in years:
+        fb: "pd.Series | None" = None
+        for yy in sorted((o for o in years if o != y), key=lambda o: (abs(o - y), o)):
+            r = ratings[yy]
+            if r.empty:
+                continue
+            fb = r if fb is None else fb.combine_first(r)
+        triples.append(derive_year(y, rating_fallback=fb))
+    return triples
+
+
 def main() -> None:
     """Derive and write the class-day + class-hour availability CSVs."""
     ap = argparse.ArgumentParser(description=__doc__)
@@ -339,7 +414,7 @@ def main() -> None:
     ap.add_argument("--site-hourly-out", type=Path, default=DEFAULT_SITE_HOURLY_OUT)
     args = ap.parse_args()
 
-    triples = [derive_year(y) for y in args.years]
+    triples = derive_years(list(args.years))
     out = pd.concat([p[0] for p in triples], ignore_index=True).sort_values(
         ["date", "class"]
     )
