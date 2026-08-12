@@ -893,10 +893,12 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
         self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER", "ST_GAS", "COAL"})
         cc = s["CC_REGULAR"]
         self.assertEqual(cc.shape, (HOURS_PER_YEAR,))
-        # Jun 14 2023 (a June over-formation day): measured CC fraction ~0.834
+        # Jun 14 2023 (a June over-formation day): measured CC fraction ~0.828
         # — well above the model's statistical ~0.76 the forensics measured.
+        # (Re-pinned 0.834 -> 0.828 at the ercot-191 ruling-#9 train-grain
+        # re-derive, signature A1 — a committed-artifact re-pin, not tuning.)
         jun14 = _hour_of_year(6, 14, 19)
-        self.assertAlmostEqual(cc[jun14], 0.834, places=2)
+        self.assertAlmostEqual(cc[jun14], 0.828, places=2)
         # Oct-2023 disclosure publication hole -> NaN (statistical kept).
         oct15 = _hour_of_year(10, 15, 12)
         self.assertTrue(np.isnan(cc[oct15]))
