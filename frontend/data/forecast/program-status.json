@@ -526,6 +526,10 @@
   {
    "title": "Gated mechanisms",
    "detail": "capacity_deliverability_limits part (b) unvalidated in any keeper; legacy P2 economic-commitment archived; CES premium ladder CES-off in BAU (seam verified, campaign deferred, W4)."
+  },
+  {
+   "title": "Scarcity-tail price formation",
+   "detail": "An LP on competitive/measured-cost offers under-forms the RT scarcity tail (accepted model-class limitation, C3c ledgered). Measured on ERCOT 2023: a scarcity-concentration year carries up to \u2212$14/MWh (\u221222% of level) annual load-weighted price bias, concentrated in ~2% of hours; non-concentration years score within band. Citation: ercot189_c3a_c3c_overlap.json; owner authorization ercot-190 2026-08-12."
   }
  ],
  "refresh": {
