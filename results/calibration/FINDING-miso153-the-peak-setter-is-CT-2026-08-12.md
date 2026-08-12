@@ -258,15 +258,14 @@ column.
    any floor work"*. 2025 forced energy: `st_gas_mustrun_per_plant × ST_GAS`
    **10.735 TWh (47.0 %)**, `chp_steam` 7.09 TWh, `reliability_floor ×
    CT_PEAKER` 1.956 TWh (13.3 %), `nuclear_mustrun` 90.591 TWh (100 %).
-4. **A governance observation, reported not acted on.** `st_gas_mustrun_per_plant`
-   and `chp_steam` both declare their D-4 window as **`h0-23`** — all 24 hours —
-   so their off-window-binding test is **vacuous by construction**
-   (`offwindow_share = 0.0` cannot be otherwise). Under rule 20
-   `[R-FORCED-BUDGET]`, ST_GAS's grounded-above-budget pass at **34.1 / 35.8 /
-   48.4 %** rests on clearing D-4. This is **not** a claim that the floors are
-   wrong — ST_GAS must-run may well be genuinely round-the-clock — but the test
-   currently discriminates nothing for them. Flagged for the owner as a
-   governance item; **no cell verdict is changed and nothing is re-tuned here.**
+4. **A governance observation — RAISED, THEN INVESTIGATED, AND WITHDRAWN. See
+   §11.** The original flag read: `st_gas_mustrun_per_plant` and `chp_steam`
+   both declare their D-4 window as **`h0-23`**, so their off-window-binding
+   test is "vacuous by construction", while ST_GAS's grounded-above-budget pass
+   (**34.1 / 35.8 / 48.4 %**) rests on clearing D-4. **That flag was wrong on
+   the merits** and §11 records the measurement that refutes it. It is left
+   standing here, struck through rather than deleted, so the record shows what
+   was claimed before it was checked.
 
 ---
 
@@ -303,6 +302,67 @@ cushion is ordinary in size (§2).
 **Nothing further can be done in this lane without an owner charter.** The
 options are laid out in the session summary; this document takes no position
 between them beyond reporting what was measured.
+
+---
+
+## 11. ADDENDUM — the D-4 all-hours-window flag is **WITHDRAWN**. The ST_GAS floor self-windows, by measurement.
+
+**Owner decision 2026-08-12: investigate the §8(4) governance item in this
+lane.** Done, no LP. Probe `scripts/probes/_miso153_stgas_window.py`, record
+`results/calibration/_miso153_stgas_window.json`. **The flag does not survive
+its own investigation, and is withdrawn.**
+
+**First, the citation I had not read closely enough.** `D4_WINDOWS`
+(`scripts/legitimacy_diagnostics.py:362-376`) does **not** assert a flat
+all-hours floor. It asserts the mechanism is *"self-windowing by construction —
+each plant's committed tranche binds only in its top measured `online_frac`
+fraction of hours ranked by system load"*, with the **hour-of-day** window
+declared all-24 on the Entergy MISO-South VLR/self-commitment trace (Nine Mile
+synchronized **98.2 %** of all hours 2023-25, Sabine 85.6 %, Lewis Creek
+87.8 %). `chp_steam`'s entry is likewise *"ALL 24 hours **BY MEASUREMENT**"*
+(CAISO CC_CHP CEMS net flat 0.65–0.76 GW across every hour-of-day, hod max/min
+1.16) **and is D2-exempt** — it carries no C8 escalation path at all, so it was
+never load-bearing on the ST_GAS question.
+
+**Second, the D-4 machinery demonstrably bites.** The same registry records the
+sibling `cc_mustrun_per_plant` **CT_PEAKER leg** being probed under a declared
+`h7-22` window and **DROPPED for 12.8 % overnight off-window binding** — the
+exact check I claimed the registry could not perform.
+
+**Third, the measurement.** Reconstructing the floor through the production
+chain and attributing it by `MECH_ST_GAS_MUSTRUN_PER_PLANT`:
+
+| statistic | 2023 | 2024 | 2025 | reading |
+|---|---|---|---|---|
+| **W-2** floored MW, top load decile ÷ bottom | **3.04×** | **3.14×** | **3.28×** | **self-windowing is REAL** |
+| **W-1** floored MW, hour-of-day max ÷ min | 1.56× | 1.60× | 1.60× | mild, no off-hour — all-24 is right |
+| **W-3** per-plant bind frequency, median | **0.351** | **0.317** | **0.227** | **not an all-hours base** |
+| **W-3** rows bound ≥ 99.5 % of hours | **0** | **0** | **0** | no plant is floored everywhere |
+| **W-3** max per-plant bind frequency | 0.982 | 0.982 | 0.982 | **matches the cited Nine Mile 98.2 %** |
+
+2025 load deciles, low → high (MW): 763 · 1374 · 1632 · 1635 · 1655 · 1817 ·
+1908 · 2021 · 2238 · **2505** — **monotonic in system load**.
+
+**Conclusion.** The `h0-23` entry is an **hour-of-day** declaration for a
+mechanism that windows on **load rank**, and both legs hold by measurement: the
+load-rank self-windowing is real (3.0–3.3×, monotonic), the median plant is
+floored in only **23–35 %** of hours, no plant is floored in all of them, and
+the most-bound plant reproduces the cited evidence figure to three digits.
+**D-4 tests the hour-of-day claim, which is the correct test for what h0-23
+declares, and that claim is true.** The load-rank claim D-4 does not reach is
+now independently verified here. **There is no defect; the mechanism is
+grounded; ST_GAS's rule-20 grounded-above-budget pass stands.** No cell verdict
+changes, nothing is re-tuned, and no governance item is filed.
+
+**Reported against the instrument.** This probe's floored volume (14.3 / 14.6 /
+**15.4 TWh**) is larger than the committed D-2 attribution's forced energy
+(8.22 / 8.61 / **10.735 TWh**) because they measure different things: D-2 counts
+*dispatch at a binding non-exempt floor* (and its own note excludes the
+P1-dependent RA bridge, making it a lower bound), while W-* measures the
+*floor level itself* as composed. **Every conclusion above is about the floor's
+SHAPE** — its load-rank gradient, its hour-of-day flatness, its per-plant
+frequency — all of which are ratios invariant to that level difference. No
+level claim is made from this probe.
 
 ---
 
