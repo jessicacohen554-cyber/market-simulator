@@ -7517,3 +7517,55 @@ model-class limit. The next ERCOT action in the queue is unchanged by this
 sitting: A1's own lane (#9 → #8 → #10, signed at ercot-188). The authorized
 disclaimer is an open doc-only item for the forecast lane, not implemented
 here. Next shorthand: **ercot-191**.
+
+## ercot-191 (2026-08-12) — SIGNATURE A1 EXECUTED: the DAM-deriver lane (#9 → #8 → #10), one precommit, one re-derive, one re-gate sweep — KEEPER → `2026-08-12-run191-dam-deriver-regate` under the pre-registered direction-blind rule; THEN THE CARD-Q CHECKPOINT READ **FAIL** → (Q-B) AUTOMATIC AND FINAL: no further ERCOT C3a-2023 spend, item 11 CLOSED
+
+**Task.** Execute owner signature A1 (ercot-188 card A): repair the three
+open DAM-deriver rulings in sequence, re-derive the family once, re-gate
+every armed DAM keeper mechanism once; then run the signed ercot-190
+checkpoint. Precommit pushed before any derive/solve:
+`docs/PRECOMMIT-ercot191-a1-dam-deriver-2026-08-12.md`; full record
+`results/calibration/FINDING-ercot191-dam-deriver-lane-2026-08-12.md`.
+
+**The repairs.** #9: `_site()` now keys the PHYSICAL TRAIN (all 310 corpus
+CC names match the train grammar; site sums become the sum of per-train
+maxes; GUADG's Oct-2024 single-train outage reads ~0.47, was ~0.97; CC
+rating denominator +5.0 GW) + crosswalk completion (5 sibling completions
+VHB1/2 / GIDEONG1/2 / OLING_2, seeded `JCKCNTY2_CC1`; 48 → 56 accepted, no
+surviving site changed plant). #8: multi-year rating basis — Martin Lake U1
+2025 enters at live 0 @ 830 MW (N_COAL4 deliberately NOT retired: its
+TO-RETIRE names the outage derive and it still guards plant-pin-off
+configs). #10: the plant pin's REMOVE direction diluted to measured coverage
+(`pf·cov + cur·(1−cov)`); restore direction and raw-pf residual accounting
+untouched. Seam checks landed exactly as pre-registered (CT/ST byte-identical;
+COAL 2025-only; CC train-sum unwind). The ercot-150 zone-anchor re-trigger
+resolved as an EXACT re-assertion — all six registered values reproduced
+byte-for-byte, `constants.py` unchanged, derivation record re-pointed to the
+re-gate bundle and refreshed.
+
+**The re-gate.** run188 recipe replayed UNCHANGED, full span, years
+sequential; both event caps re-gated. Determination **NOT-YET {C3a-2023,
+C3b-2023} — unchanged**; C3c the single ledgered CAVEAT ×3, magnitudes
+re-measured 58/181, 22/53, 1/31. Moves at full magnitude (not the promotion
+basis): C3a-2023 −32.8 → **−33.7 %** ($43.23 → $42.63), C3b-2023 0.608 →
+0.610, C3a-2024 +1.2 → −0.8 % PASS, C3a-2025 −8.0 → −7.5 % PASS, C3b-2024
+0.158 → 0.135, G-SHED 4/2/0 → 4/1/0. The [7c] shape gate reports 15 cf_emd/r
+regressions (CC_CHP/CC_REGULAR/COAL) — un-targeted, root cause open
+(ERCOT-126 family). PROMOTED direction-blind per precommit §2 (rules 1/14:
+the prior keeper rests on an aggregation the record calls wrong); zero new
+scalars, DOF ledger verbatim, LOYO-exempt with the per-year guard table
+standing in; the ercot-188/E2 P0 bit-identity forfeiture inherited.
+
+**The checkpoint.** ercot-170 licence re-test on the repaired deriver, bars
+unchanged, phase-0, NO LP: **L1 0.3857 vs 0.90 FAIL** (defensible-only
+0.3560; X1 13 / X2 7 / X3-E3 2 = 22/58 sites), L2 0.0000 PASS, verdict
+FILED-UNLICENSED; identity error 0.0000 GW, A_capability 2.5869 GW = 102.6 %
+of the 2.5224 GW gap. **Per the signed rule: (Q-B) — no further ERCOT
+C3a-2023 spend; ERCOT stands at NOT-YET on C3a-2023 as a model-class limit.
+Recorded and stopped.** Item 11 CLOSED
+(`results/calibration/ercot191_cc_headroom_licence_retest.json`). Remaining
+ERCOT-C3a items are doc-grade only: the readiness_limits disclaimer (already
+implemented on the forecast lane at ercot-190) and the owner's
+`complete`-declaration question. Fences honoured: no other C3a-2023 work;
+card B untouched; no rubric/ledger/marker/field changes. Next shorthand:
+**ercot-192**.
