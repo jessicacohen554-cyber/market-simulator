@@ -6900,3 +6900,92 @@ Rule 22 `[R-HOLDOUT]`: 2023/2024/2025 only, MISO holds no marker, no holdout
 spend. `FINDING-miso152-the-inversion-is-real-and-immaterial-2026-08-11.md`;
 `PREREG-miso152-tranche-fill-order-2026-08-11.md`;
 `results/calibration/_miso152_fillorder.json`.
+
+## miso-153 (2026-08-12) — the summer peak price-setter is `CT_PEAKER`; the chartered dispersion object is CLOSED by measurement
+
+**Keeper UNCHANGED: `2026-08-09-miso-148-basis-aware`.** Nothing promoted, and
+**no run was produced** — **no solve, no registration, no `ScenarioConfig`
+field, no cell verdict minted** (no mechanism was tested; the miso-142
+precedent). Rule 15 is not engaged by a session with no run.
+
+**§0 re-verified from committed artifacts** (`scripts/calibration_verdict.py`,
+stdlib, pre-venv): **NOT-YET**, failing set **{C3a, C3b}**, C3a-2025 **−15.6 %**,
+C3b-2025 NRMSE **0.212**, C3c ledgered 1/1 SPENT, C8 PASS with ST_GAS grounded
+**34.1/35.8/48.4 %** and CT_PEAKER-2023 16.8 %.
+
+**PHASE 0 — the object is the MARGINAL IDENTITY, not a cushion.** At the
+top-200 model-demand hours (100 % summer, 110.4 GW in 2025) `CT_PEAKER` is the
+price-setting tranche in **40.0 / 42.6 / 66.0 %** of zone-hours — 2025 being
+`CT_PEAKER|econ` **55.0 %**. **Both pre-registered D-3 priors are refuted in the
+same direction**: CC_REGULAR was primed **45–75 %** and measures **6.4 / 5.4 /
+~3 %**; CT_PEAKER was primed **10–35 %** and exceeds it every year. D-1's idle
+headroom (**19.2 / 20.0 / 16.2 GW**, 20.6/21.6/18.2 %) landed **INSIDE** its
+pre-registered **12–28 GW / 12–25 %** prior — neither surprise fired — but
+**70–74 % of it is CT** (55.8–69.2 % of CT's own available). D-4: reserves bind
+**ZERO** Jun+Jul hours across all three families × three years. Imports are the
+wrong sign (fall 4,389 → 1,892 MW, lowest in the blocker year) with the headroom
+leg **UNMEASURED** (`MISO_external*` carry 0 MW of assembled fleet capacity).
+D-2's escalation **did not fire** — summer availability is *above* annual
+(CC +16.9/+14.8/+12.0 pp, COAL +15.7/+17.4/+11.6) and under the 0.93 no-derate
+threshold — so **the outage extract was NOT re-tuned**.
+
+**An instrument defect in the shared probe chain, found BY the pre-registered
+gate.** `_apply_outage_overlays` keys the unit-level CAMPD derate on
+`config.weather_year`, not the solve year (`data/fleet/arrays.py:1091-1092`),
+while the pipeline pins `weather_year = year`
+(`pipeline/backcast_config.py:1235`); `_miso134.build_year` passes ONE config
+for all years, so the keeper's `weather_year = 2023` applied **2023's outage
+windows to 2024 and 2025**. **Validated by its own control** — 2023
+bit-unchanged, T-6 2024 **9.71 %/19.30 % → 2.21 %/2.87 %** and 2025
+**7.57 %/11.86 % → PASS 0.43 %/0.00 %**. **Successors reusing `build_year` must
+apply the per-year `weather_year` replace.** A sub-hypothesis that this also
+explained miso-152's CT T-6 failure is **REFUTED by measurement** (T-6b CT
++22.0/+22.1/+23.7 % after vs +22.0/+23.2/+26.6 % before) — miso-152's verdict
+stands, and this **bounds D-3**: the 66.0 % share is upper-leaning and
+miso-143's independent 43.7 % does not itself clear the 50 % threshold.
+
+**THE OWNER-CHARTERED PHASE 1 (across-unit dispersion scoped to CT_PEAKER) IS
+CLOSED ON THREE INDEPENDENT MEASURED GROUNDS — NO SOLVE SPENT. DO-NOT-REDO.**
+**(1)** The measured side **cannot be class-scoped**: the offer corpus has no
+fuel/technology attribute and its class bridge was built and **REFUTED at
+miso-138**, so miso-151's G-5 **p90−p10 = 47.837** is FLEET-WIDE, not CT.
+**(2)** The model's CT across-plant spread is **the WIDEST in the fleet** —
+**$40.09 / $38.68 / $26.45** over 166 plants against CC_REGULAR 9.04/6.95/10.27
+and COAL 14.78/12.93/14.22 — so "the model collapses the spread" is false for
+CT; reported against the measurement, the comparison is **not** like-for-like
+(G-5's p10 = 0.169 reflects self-scheduled price-takers) and no like-for-like
+comparison exists, which is ground (1) restated. **(3)** The one anomaly — CT's
+spread narrowing as C3a worsens, against the fuel move — is **the model being
+right**: three causes were put up and all refuted (2025 vintage coverage flat at
+**21.7/22.3/22.3 %** fallback, 63/65/62 distinct series; month coverage
+**RISES** 73.7 → 79.1 % full-12; and the compression is in the **raw F923
+source**, across-plant p90−p10 **5.657 → 3.748 → 3.679 $/MMBtu**, which the
+model tracks at **5.321 → 3.593 → 3.413**).
+
+**A D-4 governance flag was RAISED, INVESTIGATED ON OWNER INSTRUCTION, AND
+WITHDRAWN.** The claim that `st_gas_mustrun_per_plant` / `chp_steam` all-hours
+`h0-23` windows make D-4 vacuous **was wrong on the merits**: the citation
+asserts self-windowing on **LOAD RANK** with all-24 declared for *hour-of-day*
+only; `chp_steam` is D2-**exempt**; the sibling `cc_mustrun_per_plant`
+CT_PEAKER leg was **DROPPED for 12.8 % overnight off-window binding**, proving
+the machinery bites; and measurement confirms the floor self-windows — floored
+MW rises **monotonically** with load, top/bottom decile **3.04/3.14/3.28×**,
+per-plant bind frequency median **0.351/0.317/0.227** with **ZERO** rows ≥99.5 %
+and max **0.982**, reproducing the cited Nine Mile 98.2 % to three digits.
+**ST_GAS's rule-20 grounded-above-budget pass stands.**
+
+**Also corrected:** MISO's own matrix shard `gates:` claimed C3a was "the SOLE
+failing criterion" at −14.0 %; the verified determination is **C3a −15.6 % AND
+C3b 0.212**, both failing.
+
+**THE LANE'S NEXT DEPENDENCY** is the CT offer **LEVEL** (the miso-152 named
+successor), blocked on **an instrument that reproduces CT commitment** —
+re-confirmed independently here by T-6b's +22–24 %. Owner decision; not
+self-authorized.
+
+Rule 22 `[R-HOLDOUT]`: 2023/2024/2025 only, MISO holds no marker, no holdout
+spend. `FINDING-miso153-the-peak-setter-is-CT-2026-08-12.md`;
+`PREREG-miso153-summer-peak-phase0-2026-08-12.md` (`857a434`, blob `c2c1df03`,
+verified against the fetched remote ref before any adjudicating statistic);
+probes `_miso153_summer_cushion.py` · `_miso153_stgas_window.py` ·
+`_miso153_ct_dispersion.py` · `_miso153_fuel_dispersion.py`.
