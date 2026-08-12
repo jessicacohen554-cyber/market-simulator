@@ -184,6 +184,15 @@ def merge_plant_curve(
     return out
 
 
+#: THE RTC+B BOUNDARY — this lane stops at delivery 2025-12-04. The
+#: ``glob("*.parquet")`` in :func:`load_corpus_coal` is NON-RECURSIVE on
+#: purpose: the RTC+B-format parts (deliveries 2025-12-05..31) sit in the
+#: ``rtcb-format-2026/`` subdirectory because RTC+B REMOVES ``HASL``, a required
+#: entry of :data:`_CORPUS_COLS`, and drops the trailing space from
+#: ``Telemetered Net Output ``. Never make that glob recursive — RTC+B
+#: deliveries are calendar-2025, so the delivery-year filter would keep them.
+#: They are readable only through ``scripts.lib.sced_rtcb_adapter`` (owner card
+#: D / signature D1, ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``).
 SCED_CORPUS_DIR = REPO / "data" / "raw" / "ercot" / "SCED"
 
 #: Columns the per-year mode reads from each corpus shard (the ercot-123
