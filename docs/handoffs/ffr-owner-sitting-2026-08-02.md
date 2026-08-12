@@ -4222,3 +4222,87 @@ they are complete and committed first. That was the whole point of the ordering.
 - **caiso-190 behaviour-neutrality** — untested, per AO.3.
 - **Q.2 battery** — ERCOT moved once this window (ercot-188) and has been stable one sweep.
   Hold stands; re-evaluate after another quiet sweep.
+
+## Addendum AP — D-30 HELD on a real seam defect; D-29 LANDED and is CARRYING it; rewrite verdict NO-GO
+
+### AP.1 State — 62 commits; ERCOT keeper moved again
+
+`origin/main` **`f6381c5` → `dc679f23`**. **ERCOT keeper → `2026-08-12-run191-dam-deriver-regate`**
+(ercot-191, the A1 DAM-deriver repair + re-gate sweep; card-Q checkpoint read FAIL, so (Q-B)
+was automatic and final). Other five unmoved. Also landed: **G#3** — `split_coal_tranches`
+and its six `coal_tranche_*` scalars DELETED under rule 26 after proving the legacy limb
+unreachable for every registered bundle; **the calibration-bundle prune** (`b60ff227`,
+keeper-or-newer only) — the rule-15 retention work REWRITE-PREP T7(a) scoped; **miso-153**
+(across-unit dispersion closed: the compression is REAL and the model faithful; the chartered
+lever BLOCKED on two measured grounds; the D-4 all-hours flag WITHDRAWN — the ST_GAS floor
+self-windows); **ercot-190** price-tail disclaimer; **f1-golden-tier**.
+
+### AP.2 THE HEADLINE — a promoted ISO-override flag cannot be turned OFF, and D-29 already shipped one
+
+FFR-9C-PROMOTE **did not promote**. It surfaced a defect in the promotion seam itself and
+**filed rather than fixed** — the correct call, and the reason to read this addendum first.
+
+`apply_iso_scenario_defaults` decides "the caller left this unset" by **comparing against the
+ScenarioConfig default, with no sentinel**. So a caller value that *equals* the default is
+indistinguishable from absence and is silently overwritten by the ISO override:
+
+```
+smr_available_year=2035 (non-default) -> 2035   caller wins
+smr_available_year=None  (== default) -> 2030   OVERRIDDEN
+entry_pipeline_aware_signal=True      -> True   caller wins
+entry_pipeline_aware_signal=False     -> True   OVERRIDDEN
+```
+
+Every promotable flag defaults `False`/`None`, so **the OFF value is exactly the value that
+cannot be requested.** Once a flag is promoted, a control arm for it is **inexpressible
+through the config path, silently.**
+
+**Verified at HEAD, and this is the part that needs owner attention: D-29 LANDED and is
+carrying the defect.** `iso_configs.py` holds `"miso_clean_tier_rows": True` under the MISO
+override (cited to D-29), while the dataclass default is still `False` — so **MISO can no
+longer express a `miso_clean_tier_rows=False` control arm.** D-30's ERCOT rows are NOT on
+main (I checked `iso_configs.py` directly, not the commit titles), so **stage B is HELD and
+ERCOT is not yet exposed.** The lane did verify the promotion clean at the same head — an
+ERCOT leg passing no stage-B flag resolves all five armed, pinned default cache key
+`062d440558103f81` → `8d9ef77edb3e44cb`, and the other five ISOs construct unchanged, so
+rule 25 holds. It simply declined to ship an irreversible posture.
+
+**This is a CLASS, not an incident** — the lane names two more instances: ERCOT's
+`scarcity_price_overlay` carries the same shape, and FH-5 §7.1 independently filed the same
+class against `full_forward_climatology_years` returning `()` silently. The house precedent
+for the correct shape is the FH-2 demand-growth resolver, which **fail-closes**.
+
+**Three remedies recorded, none applied:** (1) sentinel-based unset detection — most correct,
+largest blast radius; (2) **track explicitly-set fields** and consult that instead of
+comparing values — local to the seam, and the lane's own "likely the cheapest correct fix";
+(3) fail loud on a default-valued caller arg for an overridden field — smallest, but it makes
+control arms an *error* rather than *expressible*. **Manager decision: remedy 2**, dispatched
+as OVERRIDE-FIX (§0ap-1), with a STOP-and-escalate if the blast radius proves to exceed the
+seam. Remedy 3 is rejected as a destination because a model whose control arm is an error
+cannot run the A/B discipline every lane in this program depends on — though it is a
+reasonable *interim* guard and the lane may add it alongside 2.
+
+**Correction owed and recorded:** FFR-9C's own PREREG §1.5 says "an explicit caller value
+always wins." That is **wrong for default-valued arguments**, and the lane says so against
+itself. It must be restated as: callers passing a NON-default value stay byte-identical;
+callers passing the default value are overridden.
+
+### AP.3 REWRITE-PREP delivered — NO-GO on the rewrite, and it matches the diagnosis
+
+The lane verified the survival mechanism **empirically, through a bare remote and a fresh
+clone** rather than on my say-so: annotated tags DO survive a rewrite (`cite/code-pin` still
+resolved after the old SHA was gone), though "the naive application of them" does not — read
+its §3.1 before designing anything on top. Its verdict: **NO-GO on rewriting for size; GO on
+partial clone plus untracking `data/raw` going forward.** That is the recommendation I gave,
+now evidenced rather than asserted. One finding I did not anticipate and that materially
+lowers the risk: **1,269 `#NNNN` PR/issue references in docs/ are SAFE** — GitHub issue
+numbers are metadata independent of commit SHAs, so the repo's *dominant* cross-reference
+idiom survives a rewrite intact. The SHA exposure is real but much narrower than the raw
+2,851-token count suggested.
+
+### AP.4 CAISO-VINTAGE-INTAKE landed — FH-5's 12th arm is unblocked
+
+`DEMAND_GROWTH_RATES_VINTAGES[2021]` now carries all six ISOs (verified by import, not by
+commit title). **CAISO Arm K is no longer blocked**, so FH-5's one missing arm can run and
+complete the horizon table. Dispatched as §0ap-2 — and it MUST pin `src/` to `3ae7465` so it
+is comparable with its eleven siblings.
