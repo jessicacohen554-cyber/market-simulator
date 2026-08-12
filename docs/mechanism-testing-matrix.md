@@ -3914,6 +3914,96 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-09-miso-148-basis-aware`, **NOT-YET**
 
+> **QUEUE STAMP miso-153 (2026-08-12) — PHASE 0 COMPLETE. THE SUMMER PEAK
+> PRICE-SETTER IS **`CT_PEAKER`**, AND IT IS THE ONE OBJECT THIS LANE IS NOT
+> CHARTERED TO OPEN. BRANCHES **P-D + P-E** (both STOP) — **NO LEVER SELECTED,
+> NO SOLVE, NO RUN REGISTERED, NO `ScenarioConfig` FIELD, NO CELL VERDICT
+> MINTED** (no mechanism tested — the miso-142 precedent). Keeper UNCHANGED at
+> `2026-08-09-miso-148-basis-aware`.**
+>
+> **D-3, the headline.** At the top-200 model-demand hours (100 % summer;
+> 110.4 GW mean in 2025) the price-setting tranche is `CT_PEAKER` in
+> **40.0 / 42.6 / 66.0 %** of zone-hours — 2025 being `CT_PEAKER|econ` **55.0 %**
+> plus `|committed` 11.0 %. **Both pre-registered priors are refuted in the same
+> direction**: CC_REGULAR was primed at **45–75 %** and measures **6.4 / 5.4 /
+> ~3 %** (an order of magnitude), CT_PEAKER was primed at **10–35 %** and is
+> above the band in all three years. **So MISO's summer peak price level IS the
+> CT econ-band offer level** — the miso-152 named-not-chartered successor.
+>
+> **D-1: the cushion is ORDINARY and it is CT.** Idle headroom **19.2 / 20.0 /
+> 16.2 GW (20.6 / 21.6 / 18.2 %)** against a pre-registered **12–28 GW /
+> 12–25 %** — **inside the band every year, neither surprise fired**. But
+> **70–74 % of it is CT_PEAKER** (14.18 / 12.90 / 11.25 GW = **69.2 / 62.9 /
+> 55.8 %** of CT's own available), and **6.31 GW** of CT sits within **$20/MWh**
+> above the 2025 clearing price. Coal runs at **98.7 %** of capability at the
+> 2025 peak. **Independently corroborates miso-143's in-merit idle block**
+> (19.3 GW, CT 64.5 % idle) on a different window and denominator.
+>
+> **D-4: reserves are INERT at the summer peak — ZERO** binding hours, zero
+> shortfall, dual $0.00, in **all three families × all three years × 1,464
+> Jun+Jul hours** (requirement == held identically). The only binding anywhere
+> is 2024 rest-of-year `miso_subregional_or_midwest`, **4 h**, dual max $200,
+> shortfall max 773 MW. This is a fact about the peak, **not** a rejection:
+> `energy_reserve_coopt`/`reserve_pergen`/`dynamic_reserve_requirements` stay
+> **K**, unchanged.
+>
+> **D-2: the outage escalation does NOT fire, and nothing is re-tuned.** Jun+Jul
+> availability is **ABOVE** annual in every class/year (CC **+16.9/+14.8/+12.0
+> pp**, COAL **+15.7/+17.4/+11.6** — ~2× the +0–8 pp prior, reported as a
+> surprise; CT and ST_GAS inside it). **Neither trigger fires**: the sign is
+> opposite to the "5 pp below" trigger, and absolute Jun+Jul peaks at CC
+> **0.891** / COAL **0.790**, under the 0.93 no-derate threshold. The shoulder
+> months carry the maintenance (April CC 0.56, COAL 0.41) — the shape is right.
+> The un-re-tuned `X_cc = 0.240` concern is **neither confirmed nor refuted**;
+> it is simply not what D-2 found.
+>
+> **Imports: wrong sign, one leg UNMEASURED.** Peak/annual **1.67 / 1.94 /
+> 2.19×**, but imports FALL year-over-year (4,389 → 2,611 → **1,892 MW**) and
+> are lowest in the blocker year. The headroom leg could not be evaluated —
+> `MISO_external*` carry **0 MW of assembled fleet capacity** (imports are a
+> netted pseudo-class, not LP generators) — so **P-B was NOT fired on half a
+> trigger**.
+>
+> **AN INSTRUMENT DEFECT IN THE SHARED PROBE CHAIN, found BY the pre-registered
+> gate — successors inheriting `_miso134.build_year` MUST apply it.**
+> `_apply_outage_overlays` keys the unit-level CAMPD derate on
+> **`config.weather_year`**, not the solve year (`data/fleet/arrays.py:1091-1092`),
+> while the production pipeline pins `weather_year = year`
+> (`pipeline/backcast_config.py:1235`). `build_year` passes ONE config for every
+> year, so the keeper's `weather_year = 2023` applied **2023's outage windows to
+> 2024 and 2025**. **Validated by its own control**: 2023 is bit-unchanged
+> (its `weather_year` already *was* 2023) while T-6 moves **2024 9.71 %/19.30 %
+> → 2.21 %/2.87 %** and **2025 7.57 %/11.86 % → PASS 0.43 %/0.00 %**. The MISO
+> extract is materially year-varying (**120/121/153** derated keys, mean
+> multiplier **0.665/0.659/0.542**).
+>
+> **A SUB-HYPOTHESIS OF THIS SESSION, REFUTED BY ITS OWN MEASUREMENT.** The
+> repair does **NOT** explain miso-152's CT_PEAKER T-6 failure: on the T-6b
+> reconstruction bar CT runs **+22.0/+22.1/+23.7 %** hot *after* the repair vs
+> **+22.0/+23.2/+26.6 %** before — essentially unmoved. **miso-152's CT verdict
+> stands**, and its diagnosis is confirmed: measuring CT needs an instrument
+> that reproduces CT commitment. This also **bounds D-3**: the 66.0 % share is
+> **upper-leaning**, and miso-143's independent **43.7 %** (JJA h12–17) does not
+> itself clear the P-E 50 % threshold — a disagreement carried to the owner, not
+> resolved here.
+>
+> **GATING, disclosed rather than resolved favourably.** The PREREG did not say
+> whether T-6 is per-year or pooled. **Per-year**: 2025 (the blocker) clears and
+> its D-1/D-3 are gated-valid; 2023/2024 stay descriptive-only. **Pooled**: all
+> three descriptive-only. The conclusion is identical either way because it
+> rests on 2025.
+>
+> **A GOVERNANCE ITEM FOR THE OWNER, flagged not acted on.**
+> `st_gas_mustrun_per_plant` and `chp_steam` declare their D-4 window as
+> **`h0-23`** — all 24 hours — so their off-window-binding test is **vacuous by
+> construction**. Under rule 20 `[R-FORCED-BUDGET]` ST_GAS's grounded-above-budget
+> pass (**34.1/35.8/48.4 %**) rests on clearing D-4. Not a claim the floors are
+> wrong; a claim the test discriminates nothing for them.
+> `results/calibration/FINDING-miso153-the-peak-setter-is-CT-2026-08-12.md`;
+> `PREREG-miso153-summer-peak-phase0-2026-08-12.md` (`857a434`, blob `c2c1df03`);
+> probe `scripts/probes/_miso153_summer_cushion.py`;
+> `_miso153_summer_cushion.json` + `_miso153_summer_cushion_PREREPAIR.json`.
+
 > **QUEUE STAMP miso-152 (2026-08-11) — CHARTER (B), THE BASE-BAND INVERSION, IS
 > **CLOSED**. Branch **B-2 IMMATERIAL**. Keeper UNCHANGED at
 > `2026-08-09-miso-148-basis-aware`; **no solve, no run registered** (Phase 0 charter,
