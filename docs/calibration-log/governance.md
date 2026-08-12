@@ -1409,3 +1409,70 @@ claimed or imported. Rule 27 `[R-PUSH]`: the seed is edited in place (+4 lines);
 file ≥300 lines rewritten from regenerated content. Rule 28 `[R-MECH-MATRIX]`: no
 mechanism tested and no cell minted — a doc-grade governance follow-up (precedent: the
 ercot-182 / ercot-189 sittings, which touched only their card and the log).
+
+## 2026-08-12 — F1 EXECUTED: the data-provisioned test tier is SCHEDULED (card F; the golden's fifteen-day silence closed)
+
+**Session:** f1-golden-tier, branch `claude/f1-golden-tier-schedule-5c7nyf`. Cross-ISO CI
+infrastructure — **no lever, no `ScenarioConfig` field, no solve, no run registered, no keeper or
+matrix movement.**
+
+**Authority.** Decision card F, signature **F1 — "schedule the data-provisioned tier"**, owner-signed
+2026-08-11 (`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`). That signature is the
+explicit cron sign-off CLAUDE.md's GitHub-Actions rule requires on this private repo, and it is
+cited in the workflow header.
+
+**The gap closed.** `test_fleet_arrays_golden` went red 2026-07-26 and was carried as incidental
+noise by seven sessions because CI's fast tier deselects it
+(`-m "not slow and not integration and not fulldata"`) and a runner had neither `data/raw` nor
+`data/clean` (FINDING-ercot187 §5: "a golden nothing schedules is not a guard").
+
+**What landed.**
+
+* **`.github/workflows/golden-data-tier.yml`** — durable workflow: `workflow_dispatch` + weekly
+  cron (`37 5 * * 1` UTC). Runs the exact complement of the fast tier
+  (`-m "slow or integration or fulldata"`), serial per rule 12, minus three machine-speed
+  performance/benchmark classes deselected with reasons in the header (`TestPerformance`,
+  `TestFullYearPerformance`, `TestSolverBenchmark` — shared-runner speed is not a model property;
+  they stay in the local full lane, budgets untouched). Provisioning: non-cone sparse checkout of
+  the audited `data/raw` paths (~1.5 GB of the 7.5 GB tracked; measured by a process-tree
+  file-open audit over full local provisioning + tier runs, validated 419/419 tracked audited
+  paths in a sparse scratch worktree) plus in-job `regenerate_clean.py` of nine datatypes and a
+  year-scoped `curate_emissions.py --years 2023` (full-span is ~3.5 min/year × 9 years with a
+  ~6.5 GB RSS peak; the tier's only emissions consumer reads 2023).
+* **`scripts/check_data_tier_report.py`** (+ 7 hermetic tests, fast tier) — the loud-failure half
+  of the F1 contract: any test skipped for a missing `data/raw`/`data/clean` input FAILS the run,
+  and the golden must be present AND green in the junit report, so a future `-m`/marker drift that
+  deselects it (the exact card-F failure mode) is a red run, not silence.
+
+**The tier, run this session (locally, exact workflow command): 42 passed / 2 failed / 2 skipped
+(both benign env-gated: `RUN_SLOW_FORECAST`, `RUN_GOLDEN_FORECAST`), 3 m 28 s serial.
+`test_fleet_arrays_golden` is GREEN** (ercot-187's regeneration holds; nothing regenerated here).
+The guard verdict on the report: clean — no data-missing skips, golden ran and passed. The two
+reds are pre-existing HEAD failures the newly-provisioned tier SURFACED, both attributed, neither
+touched here (both are other lanes' cells; silent-green by narrowing the tier was refused):
+
+1. **`test_ff_readiness_battery::test_build_registration_scorecard_no_iso_gate_open`** — every
+   ISO's `config_green` is False on the `cache_key_stable_round_trip` check.
+   Attribution, measured not inferred: `ScenarioConfig.cache_key()`'s drop-if-default comparison
+   is type-strict (`scenarios.py:12319`, `payload_dict.get(name) == getattr(defaults, name)`), and
+   exactly two `_CACHE_KEY_OPTIONAL_FIELDS` members have tuple defaults —
+   `miso_offer_surface_netload_pcts` and `miso_offer_surface_position_bins`, registered 2026-08-11
+   by the MISO offer-surface lane. A yaml round-trip coerces them to lists, so a from-yaml config
+   at pure defaults hashes differently from a fresh one (02d559f6a00f24b7 vs 789aa8f81999a13e).
+   The four older `*_offer_surface_netload_pcts` tuple fields are NOT cache-key-registered, which
+   is why this was green at ercot-187's 2026-08-10 census. The fast-tier twin
+   (`test_config_completeness_cache_key_stable_round_trip`) fails at HEAD too — this is ambient
+   main red, owned by the MISO offer-surface / cache-key lane (the fix direction — normalizing the
+   comparison — moves no fresh-config keys, but it is cache-key infrastructure with its own
+   guard discipline, not this session's).
+2. **`test_consume_lmp::test_clean_backed_lmp_matches_raw_loader`** — PJM RTM 2024 clean-vs-raw
+   parity, max |raw−clean| = $408.70. Previously never ran (skipped for the absent clean slice —
+   nothing ever provisioned it; this is the tier doing its job on first light). Attribution: a
+   DST clock-basis disagreement — the 5,703 differing hours are exactly the 2024 DST window
+   (spring-forward through fall-back), and inside it the two series are equal modulo a one-hour
+   shift. The `data/dictionary` lmp schema (tz-aware UTC `interval_start`) is the contract to
+   adjudicate against; owned by the LMP data-contract lane.
+
+**Fences held:** no per-task workflow (this is the one durable tier card F scoped); no solve; no
+keeper/matrix movement; rule 27 (workflow files edited locally, pushed as on-disk bytes,
+governance-log blob verified after push).

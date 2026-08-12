@@ -1,0 +1,163 @@
+# Data-provisioned test tier — the tier `test_fleet_arrays_golden` lives in.
+#
+# OWNER SIGN-OFF (the explicit cron authorization CLAUDE.md's GitHub-Actions
+# rule requires on this private, billed-minutes repo): decision card F,
+# signature **F1 — "schedule the data-provisioned tier"**, signed 2026-08-11,
+# docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md. This is
+# durable CI infrastructure, not a per-task workflow.
+#
+# WHY THIS EXISTS. The ERCOT fleet-arrays golden went red on 2026-07-26 and was
+# carried as incidental noise by seven sessions (caiso-143, ffr-1b, ffr-3d,
+# ffr-3u, ffr-5c, f2-45u, miso-148), because the fast-tests job's
+# -m "not slow and not integration and not fulldata" deselects it and a CI
+# runner had neither data/raw nor data/clean. "A golden nothing schedules is
+# not a guard" (card F; FINDING-ercot187-golden-hash-attribution-2026-08-10.md
+# §5). This workflow is the schedule: it provisions the data the tier needs
+# and runs the deselected complement of the fast tier.
+#
+# WHAT RUNS: -m "slow or integration or fulldata" — the exact complement of
+# the fast-tests expression — MINUS three machine-speed performance/benchmark
+# classes (deselected below with reasons). Those stay in the local full lane
+# (`pytest` bare, docs/testing.md); they are NOT weakened here, just not
+# scored on shared-runner hardware whose speed is not a model property.
+# RUN_GOLDEN_FORECAST stays unset: the 15-year forecast-band solve keeps its
+# own seed/authorization gate (docs/testing.md, golden system 1) and is out of
+# card F's scope.
+#
+# DATA PROVISIONING. data/raw is 9.6 GB on disk / ~7.5 GB tracked — a full
+# checkout would exhaust a standard runner's disk. The sparse-checkout below
+# (non-cone: file-level globs are needed, e.g. 148 KB of 2_DAY_AS files out of
+# the 4.2 GB data/raw/ercot corpus) materializes every code/artifact tree plus
+# exactly the data/raw paths the tier + its clean-slice provisioning open,
+# measured by a process-tree file-open audit of a full local provisioning +
+# tier run (2026-08-12, this workflow's introduction session). data/clean is
+# derived and gitignored; the slices the tier reads from the real clean tree
+# are regenerated in-job by the two provisioning steps below.
+#
+# LOUD-FAILURE CONTRACT (card F execution brief: "provision the data the tier
+# needs or skip-with-loud-failure"). Two guards after pytest:
+#   1. any test skipped for missing data ("raw data input absent" /
+#      missing-clean-partition skips) FAILS the job — a sparse-checkout gap or
+#      a new data dependency must be added here, never silently skipped;
+#   2. the golden test itself must be present AND passed in the report — so a
+#      future -m/marker drift that deselects it (the exact card-F failure
+#      mode) is a red run, not silence.
+#
+# COST: one scheduled run per week + on-demand dispatch. Serial pytest (the
+# data-backed tests each hold several GB — CLAUDE.md rule 12; no xdist).
+name: Golden data tier
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly, Monday 05:37 UTC (off the on-the-hour load spike). LOW frequency
+    # by design — private repo, billed minutes; cadence authorized by card F
+    # signature F1 (2026-08-11).
+    - cron: "37 5 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: golden-data-tier
+  cancel-in-progress: false
+
+jobs:
+  data-tier:
+    name: Data-provisioned test tier
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Non-cone sparse checkout (gitignore-style patterns, audit-measured
+          # — see header): root files, every code/artifact tree, and only the
+          # data paths the provisioning + tier open (~1.5 GB of data/raw;
+          # validated against the audit in a sparse scratch worktree —
+          # 419/419 tracked audited paths materialize; the only audited paths
+          # not in the checkout are the six gitignored
+          # _processed-legacy/<iso>_fleet_binned.parquet caches, which
+          # load_or_synthesize_bins regenerates at runtime). A gap here
+          # surfaces as a data-missing skip, which the loud-failure guard
+          # turns into a red run — extend this list, never let the skip stand.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/*/
+            /.github/
+            /src/
+            /scripts/
+            /tests/
+            /configs/
+            /docs/
+            /frontend/
+            /results/
+            /data/dictionary/
+            /data/raw/*.csv
+            /data/raw/*.parquet
+            /data/raw/ISO-specific-gen-data/
+            /data/raw/NYISO/
+            /data/raw/NYISO-AS/
+            /data/raw/PJM-AS/
+            /data/raw/_processed-legacy/
+            /data/raw/_validation-source/
+            /data/raw/caiso-curtailment/
+            /data/raw/caiso-hsl/
+            /data/raw/campd-facility-level/
+            /data/raw/campd-unit-level/*_2023.parquet
+            /data/raw/confirmed-retirements/
+            /data/raw/eia-860/
+            /data/raw/eia-930/eia_generation_profiles.parquet
+            /data/raw/eia-930-hourly/
+            /data/raw/ercot/2_DAY_AS_DISCLOSURE_2d_Cleared_DAM_AS_*.parquet
+            /data/raw/ercot-AS/*60d_dam_as_only_awards*json.zip
+            /data/raw/ercot-AS/ercot_*_as_up_mw.parquet
+            /data/raw/ercot-hsl/ercot_*_hsl_hourly.parquet
+            /data/raw/ercot-weather/
+            /data/raw/ercot-wind-shape/
+            /data/raw/fleet-egrid/
+            /data/raw/gas-prices/
+            /data/raw/lmp-data/CAISO/CAISO_dam_hourly_*.csv
+            /data/raw/lmp-data/CAISO/CAISO_rtm_hourly_*.csv
+            /data/raw/lmp-data/NEISO/
+            /data/raw/lmp-data/NYISO/
+            /data/raw/lmp-data/PJM_*_rt_da_monthly_lmps.csv
+            /data/raw/miso-wind-shape/
+            /data/raw/reference/
+            /data/raw/zone-specific-demand/
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: uv sync
+      - name: Provision data/clean (the slices the tier reads)
+        # Several tier tests curate their OWN tmp CLEAN_DIR from data/raw, but
+        # these datatypes are read from the REAL clean tree (soundness/export:
+        # confirmed-retirements; zone-assignment parity: reference; consume
+        # parity preconditions: fleet, ancillary-services, lmp, load,
+        # generation, renewables; NYISO seam envelope: nyiso-interface-flows).
+        # A future test needing another slice fails the loud-failure guard
+        # below — add it here, never let it skip.
+        run: >-
+          uv run python scripts/regenerate_clean.py
+          confirmed-retirements reference fleet ancillary-services
+          lmp load generation renewables nyiso-interface-flows
+      - name: Provision data/clean emissions (2023 only)
+        # Deliberately year-scoped: full-span CAMPD emissions curation takes
+        # ~3.5 min/year x 9 years and peaks ~6.5 GB RSS — over a standard
+        # runner's budget — while the only tier consumers
+        # (test_consume_emissions) read the 2023 partition. If a test grows a
+        # dependency on another year, the loud-failure guard fails the run and
+        # the year is added here.
+        run: uv run python scripts/data/curate_emissions.py --years 2023
+      - name: Data-provisioned pytest tier (serial)
+        run: >-
+          uv run python -m pytest -m "slow or integration or fulldata"
+          -rs --junitxml=tier-report.xml
+          --deselect tests/regression/test_soundness.py::TestPerformance
+          --deselect tests/regression/test_integration.py::TestFullYearPerformance
+          --deselect tests/unit/model/test_dispatch.py::TestSolverBenchmark
+      - name: Loud-failure guard (no data-missing skips; golden ran and passed)
+        if: always()
+        run: python3 scripts/check_data_tier_report.py tier-report.xml
