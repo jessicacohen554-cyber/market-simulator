@@ -366,6 +366,82 @@ level claim is made from this probe.
 
 ---
 
+## 12. ADDENDUM — the chartered Phase-1 lever is **BLOCKED ON TWO GROUNDS**, both measured before any solve was spent
+
+**Owner charter 2026-08-12:** the miso-151 G-5 across-unit dispersion object,
+**scoped to CT_PEAKER at peak**. Identification was attempted first, as rule 1
+`[R-STRUCT]` requires. **It does not survive.** No `ScenarioConfig` field was
+added, no solve was run, no run was registered. Probe
+`scripts/probes/_miso153_ct_dispersion.py`, record
+`results/calibration/_miso153_ct_dispersion.json`.
+
+### Ground 1 — the measured side **cannot be scoped to CT_PEAKER**, and the attempt is already adjudicated
+
+MISO's masked energy-offer corpus carries **no fuel or technology attribute**,
+and the offer-side class bridge (coal vs CC vs CT) was **built and REFUTED at
+miso-138** (`data/raw/miso-energy-offers/README.md`). miso-151's G-5 quantiles
+are therefore **FLEET-WIDE**, not CT: cap-weighted p10 **0.169** / p50 **19.583**
+/ p90 **48.007** / p95 **91.445** / p99 **298.026** $/MWh, p90−p10 = **47.837**
+(DA-2025-07, 744 h). **There is no admissible route from this corpus to a
+CT-scoped measured target**, and re-attempting the bridge is a DO-NOT-REDO.
+
+### Ground 2 — the model's CT across-unit dispersion is **NOT collapsed**; it is the widest in the fleet
+
+Across-**plant** dispersion of effective mc at the top-200 model-demand hours,
+one observation per (plant, hour) at the plant's cheapest econ tranche,
+capacity-weighted:
+
+| class | n plants | 2023 p90−p10 | 2024 | 2025 |
+|---|---|---|---|---|
+| **CT_PEAKER** | **166** | **$40.09** | **$38.68** | **$26.45** |
+| ST_GAS | 23–24 | 17.37 | 27.52 | 22.56 |
+| ST_CHP | 27 | 32.86 | 10.15 | 19.62 |
+| CT_CHP | 28 | 16.54 | 15.09 | 17.57 |
+| COAL | 48 | 14.78 | 12.93 | 14.22 |
+| CC_CHP | 17 | 10.85 | 10.69 | 14.86 |
+| CC_REGULAR | 44 | 9.04 | 6.95 | 10.27 |
+
+CT_PEAKER 2025 levels: p10 **32.61** / p50 **42.62** / p90 **59.07**.
+
+**CT_PEAKER already carries the widest across-unit spread of any class, across
+166 plants, at the same order of magnitude as the fleet-wide measured book
+($26–40 vs $47.84).** The chartered premise — that the model collapses the
+across-unit spread — **is not true of CT_PEAKER at the peak.**
+
+**Stated against my own measurement, because the comparison is not
+like-for-like and I will not present it as one.** G-5's population is the whole
+DA book including near-zero self-scheduled price-taker offers (its p10 is
+**0.169**), which is what makes its fleet-wide spread large; the model
+represents self-scheduling as must-run *floors*, not as $0 offers, and this
+probe scopes to **econ** tranches only. A pooled thermal-only model spread
+would run roughly **$35–50** (bounded by the cheapest class p10 ≈ $18–20 and
+CT's p90 ≈ $59–71) — bracketing $47.84 — but that is a **bound, not a
+measurement**, and the populations still differ. **The honest statement is that
+no like-for-like comparison is available, which is Ground 1 restated.**
+
+### X-3 — the spread is broadly based, not a single-axis artifact
+
+Holding CT's heat rate at its capacity-weighted mean (12.52 MMBtu/MWh; p10 9.97,
+p90 14.81) and re-pricing moves p90−p10 only **40.09 → 34.43**, **38.68 →
+29.47**, **26.45 → 22.69**. **Heat-rate dispersion explains only ~14–24 % of
+CT's across-unit spread**; the remainder is delivered-fuel and adder dispersion.
+`measured_ct_heat_rates` is already armed (**K**, miso-117), so the axis a
+dispersion lever would most naturally reach is the one already measured.
+
+### The one thread that runs the other way, reported because it does
+
+The model's CT across-unit spread **narrows** 40.09 → 38.68 → **26.45** exactly
+as C3a worsens (**−1.98 → −8.03 → −15.58 %**), and it narrows *against* the fuel
+move: 2025 gas is materially higher than 2023, which for a heterogeneous
+heat-rate fleet should **widen** an absolute $/MWh spread, not compress it by
+34 %. The flat-heat-rate leg compresses too (34.43 → 22.69), so it is not a
+heat-rate composition effect. **Something compresses CT's across-plant offer
+spread in 2025 and this session did not identify it.** It is **n = 3**, it is
+**not** a measured identification, and **no lever is proposed on it** — it is
+recorded as the most specific open thread this lane has.
+
+---
+
 **Artifacts.** Probe `scripts/probes/_miso153_summer_cushion.py` (ruff clean).
 Record `results/calibration/_miso153_summer_cushion.json`; pre-repair record
 `results/calibration/_miso153_summer_cushion_PREREPAIR.json`.
