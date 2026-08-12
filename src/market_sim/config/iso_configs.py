@@ -275,8 +275,52 @@ def _ercot_config() -> ISOConfig:
         # requires scarcity_pricing_enabled (the master switch) to be set by
         # the caller — this default only preserves ERCOT's prior
         # `iso == "ERCOT"` behavior once that switch is on.
+        #
+        # FFR-9C STAGE B — ARMED FOR ERCOT by owner decision D-30 (sitting
+        # Addendum AK.8, signed 2026-08-11; lane FFR-9C-PROMOTE, pre-registration
+        # docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md). The five rows
+        # below move as ONE unit and must not be separated:
+        #
+        #   * capacity_screen_unified_lookahead + capacity_screen_scarcity_restoration
+        #     are the CONTROL RECIPE stage B was measured on top of. Addendum AG.1
+        #     parked their promotion on "FH-4's own skill evidence"; FH-5 supplied it
+        #     (AO.2, docs/handoffs/fh-5-phase-b-2026-08-11.md §4 — 11 of 12 arms, the
+        #     I6 rider PASSING on every one). They are also a pair by construction:
+        #     ScenarioConfig.__post_init__ REFUSES the restoration flag without the
+        #     lookahead.
+        #   * entry_pipeline_aware_signal (R-a) repairs a real double-count (rule 19).
+        #   * smr_available_year=2030 (R-b) removes 4 GW of 2022-vintage ERCOT SMR — a
+        #     non-real object — behind a published zero-parameter gate.
+        #   * vre_procurement_additions_enabled (R-d) nets exactly, bounded to 1.84 GW
+        #     at this vintage.
+        #
+        # Zero fitted parameters in any stage. Arming the three R-flags WITHOUT the
+        # two screen flags would ship "stage B minus its own base recipe" — a
+        # combination nobody has solved, and a posture whose only evidence measures a
+        # different one (rule 13 [R-MEASURED]).
+        #
+        # Rule 25 [R-ISO-SCOPE]: ERCOT ONLY, and necessarily so —
+        # capacity_screen_scarcity_restoration's committed-capability (RTOLCAP/
+        # RTOFFCAP) share tables are ERCOT-identified, so __post_init__ RAISES for any
+        # other ISO. A shipped-default flip on the ScenarioConfig scalar cannot express
+        # this posture at all; the per-ISO seam is the only vehicle that can. This
+        # follows the D-29 precedent from the same sitting (miso_clean_tier_rows, MISO
+        # block below), rather than inventing a second mechanism (rule 19 [R-ONE-MECH]).
+        #
+        # EPOCH: this re-bases every ERCOT hindcast. Every pre-epoch ERCOT sidecar is
+        # historical record and NEVER a baseline for post-epoch comparison — FH-5's own
+        # ERCOT legs included. FH-5 is not re-solved; its artifacts were produced at
+        # src/ == 3ae7465 (its §3 pin). The pinned default cache key MOVES.
+        #
+        # An explicit caller value always wins (apply_iso_scenario_defaults), so every
+        # invocation that already passes these flags stays byte-identical.
         default_scenario_overrides={
             "scarcity_price_overlay": True,
+            "capacity_screen_unified_lookahead": True,
+            "capacity_screen_scarcity_restoration": True,
+            "entry_pipeline_aware_signal": True,
+            "smr_available_year": 2030,
+            "vre_procurement_additions_enabled": True,
         },
     )
 
