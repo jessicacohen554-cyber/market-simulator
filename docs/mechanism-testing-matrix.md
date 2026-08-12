@@ -9862,6 +9862,24 @@ charter with a new measured identification** before a solve:
   decide arm-in-forecast vs G4 forward-analogue vs backcast-only, and record
   it in the row's `fc` field (start: CAISO `capacity_deliverability_limits`
   part (a)).
+- **ercot-188 G#3 EXECUTED — `split_coal_tranches` + the six
+  `coal_tranche_{1,2,3}_{frac,fuel_passthrough}` scalars DELETED, 2026-08-12
+  (rule 26 `[R-DELETE]`; owner ruling
+  `docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` §G.3).** The
+  lane first proved the legacy limb unreachable for EVERY registered bundle,
+  not just the six keepers: all 158 committed `run_config.json` under
+  `results/` and all 66 backcast registry sidecars carry
+  `use_campd_bins=True` with the per-ISO bin artifact present (probe
+  `scripts/probes/ercot188_g3_split_coal_tranches_unreachability.py`, proof
+  `results/calibration/ercot188_g3_unreachability_proof.json` — the
+  generalization of miso-128 §4's MISO-grain adjudication). Historical
+  defaults live on hash-only in `scenarios._CACHE_KEY_RETIRED_FIELDS`
+  (nyiso-114 pattern; every cache key and the golden fixture byte-stable);
+  the non-CAMPD else limb of `build_dispatch_fleet` now passes coal through
+  unsplit; issue #1336 (re-ground the step sizes) CLOSED BY DELETION and the
+  DOF-ledger `coal_take_or_pay_tranches` entry retired. NO solve, NO cell
+  moved, NO keeper touched — the record lives on the
+  `coal_takeorpay_committed` base row's def/note.
 
 ## 6. Glossary
 

@@ -1363,7 +1363,6 @@ inline comment and still need a dated primary source — search the table for
 | `ccus_params.gas_cc_ccs_90.vom_adder` | 8.0 | 2 | $/MWh — amine solvent, maintenance. NETL 2022 | 2022 | auto-generated |
 | `coal_perplant_offer_curve_by_iso.ERCOT` | {"298": [[518, 15], [720, 16], [721, … | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `coal_perplant_offer_curve_yearly_by_iso.ERCOT` | {"2023": {"298": [[[1], [0, 1, 2, 3, … | 2 | PER-YEAR windowed per-plant coal offer curves (ercot-168, matrix §5… | 2023 | auto-generated |
-| `coal_tranches` | [[0.3, 0.0], [0.25, 0.35], [0.45, 1.0]] | 2 | Coal take-or-pay supply-curve tranches: (capacity_fraction, fuel_pa… | 2023 | auto-generated |
 | `ct_commitment_params` | [[10.0, {"startup_per_mw": 12.3, "min… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `ct_startup_params` | [[10.0, 12.3], [11.0, 24.5], [99.0, 1… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `da_commitment_horizon_hours` | 24 | 2 | Day-ahead unit-commitment horizon (hours). CAISO's day-ahead market… |  | auto-generated, needs-citation |
@@ -1461,12 +1460,6 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.coal_perplant_offer_curves` | None | 2 | The resolved per-plant curve registry (plant_code -> ((cum_MW, pric… |  | auto-generated, needs-citation |
 | `scenario.coal_perplant_offer_curves_yearly` | None | 2 | The resolved year-keyed windowed registry (year -> plant_code -> ((… |  | auto-generated, needs-citation |
 | `scenario.coal_sync_srmc_tranche` | False | 2 | SRMC-priced synchronization tranche (rebuild step 3a). Completes th… | 2024 | auto-generated |
-| `scenario.coal_tranche_1_frac` | 0.3 | 3 | Take-or-pay capacity fraction |  | auto-generated, needs-citation |
-| `scenario.coal_tranche_1_fuel_passthrough` | 0.0 | 3 | VOM only — fuel sunk |  | auto-generated, needs-citation |
-| `scenario.coal_tranche_2_frac` | 0.25 | 3 | Partially contracted |  | auto-generated, needs-citation |
-| `scenario.coal_tranche_2_fuel_passthrough` | 0.35 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `scenario.coal_tranche_3_frac` | 0.45 | 3 | Economic dispatch |  | auto-generated, needs-citation |
-| `scenario.coal_tranche_3_fuel_passthrough` | 1.0 | 3 | Full fuel cost |  | auto-generated, needs-citation |
 | `scenario.commitment_enabled` | False | 2 | default off — opt-in for calibration. |  | auto-generated, needs-citation |
 | `scenario.commitment_irr_hurdle` | 0.07 | 2 | 7% return required on startup cost. |  | auto-generated, needs-citation |
 | `scenario.commitment_screen_coal` | True | 2 | When False, CAMPD coal is not |  | auto-generated, needs-citation |

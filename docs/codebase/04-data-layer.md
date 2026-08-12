@@ -78,8 +78,10 @@ per-plant artifact or the EIA-860 duct-burner gap.
 
 Non-ERCOT ISOs without a CAMPD artifact use `fleet_to_bins(...)` (line 5527) to
 synthesize equivalent per-plant bins from the EIA-860 fleet, or legacy equal-width
-heat-rate bins. The legacy coal/gas path uses `split_coal_tranches` /
-`split_gas_tranches`.
+heat-rate bins. The legacy (non-CAMPD) fallback passes coal through unsplit and
+optionally splits gas via `split_gas_tranches` (`split_coal_tranches` and its six
+`coal_tranche_*` scalars were deleted 2026-08-12, ercot-188 G#3 — dead limb for
+every registered bundle).
 
 ### Fleet loading
 
