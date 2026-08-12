@@ -7501,3 +7501,19 @@ Governance: rules 22/25 clean ({2023–2025}, ERCOT only); rule 28 — no cell, 
 governance sitting with a read (ercot-182 precedent); rule 15 — no run, probe
 JSON committed as the evidence artifact (ercot-184 precedent). Next shorthand:
 **ercot-190**.
+
+## ercot-190 (2026-08-12) — CARD Q SIGNED: (Q-C) THE CHECKPOINT RULE, as recommended — no ERCOT C3a-2023 spend until A1's #9 lands; then the ercot-170 licence re-test decides BY RULE (PASS → per-unit phase-0 authorized without a new sitting; FAIL → STOP automatic and final); the readiness_limits price-tail disclaimer AUTHORIZED as a named doc-only forecast-lane item; NO lever, NO solve, NO run registered, NO matrix cell, keeper UNCHANGED
+
+**Task.** Signing sitting, held with the owner on the ercot-189 card
+(`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`,
+merged to main via PR #3873). RESOLUTIONS filled; card body preserved AS PUT;
+status header flipped to RECORD. The standing conditional, verbatim scope:
+licence bars unchanged (L1 ≥ 0.90, L2 ≤ 0.10) on the repaired deriver, run as
+a phase-0 read; a PASS authorizes phase-0 identification ONLY — any build
+needs its own sitting with the §2.3 reach bar (tail lw mean ≥ $709 against
+model $474 / actual $945) and the ERCOT-159 kill gates pre-registered; a FAIL
+closes the C3a-2023 lane finally, ERCOT standing at NOT-YET on it as a
+model-class limit. The next ERCOT action in the queue is unchanged by this
+sitting: A1's own lane (#9 → #8 → #10, signed at ercot-188). The authorized
+disclaimer is an open doc-only item for the forecast lane, not implemented
+here. Next shorthand: **ercot-191**.
