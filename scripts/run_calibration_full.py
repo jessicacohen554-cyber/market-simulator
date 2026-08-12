@@ -3039,6 +3039,7 @@ def solve_and_persist(
     coal_offer_margin: bool = False,
     cc_committed_offer_margin: bool = False,
     coal_peak_offer_margin: bool = False,
+    coal_peak_offer_yearly_level: bool = False,
     coal_perplant_offer_level: bool = False,
     coal_perplant_offer_yearly: bool = False,
     nysdec_peaker_rule_availability: bool = False,
@@ -4370,6 +4371,20 @@ def solve_and_persist(
                     COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO[iso]
                 ),
             )
+        if coal_peak_offer_yearly_level:
+            # Per-year coal `_peak` LEVEL (ercot-192, matrix section 5.1 item
+            # 13): record the gate and the FULL year-keyed table the run used —
+            # exactly as scripts/run_calibration.py::run_year resolves it (rule
+            # 25: run_config records what the solve used; the consumer indexes
+            # the table by solve year, so the recorded value is year-invariant).
+            from market_sim.config.constants import (
+                COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO,
+            )
+
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_peak_offer_yearly_level=True,
+                coal_peak_offer_level_yearly=(COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO[iso]),
+            )
         if nysdec_peaker_rule_availability:
             recorded_cfg = recorded_cfg.with_overrides(
                 nysdec_peaker_rule_availability=True
@@ -4654,6 +4669,7 @@ def solve_and_persist(
             coal_offer_margin=coal_offer_margin,
             cc_committed_offer_margin=cc_committed_offer_margin,
             coal_peak_offer_margin=coal_peak_offer_margin,
+            coal_peak_offer_yearly_level=coal_peak_offer_yearly_level,
             coal_perplant_offer_level=coal_perplant_offer_level,
             coal_perplant_offer_yearly=coal_perplant_offer_yearly,
             nysdec_peaker_rule_availability=nysdec_peaker_rule_availability,
@@ -5403,6 +5419,7 @@ def solve_and_persist(
         "coal_offer_margin": coal_offer_margin,
         "cc_committed_offer_margin": cc_committed_offer_margin,
         "coal_peak_offer_margin": coal_peak_offer_margin,
+        "coal_peak_offer_yearly_level": coal_peak_offer_yearly_level,
         "coal_perplant_offer_level": coal_perplant_offer_level,
         "coal_perplant_offer_yearly": coal_perplant_offer_yearly,
         "nysdec_peaker_rule_availability": nysdec_peaker_rule_availability,
@@ -8221,6 +8238,29 @@ def main() -> None:
         "through to the static registry unchanged (2024/2025 "
         "byte-identical — the ercot-168 precommit's G-BIT kill gate). "
         "Identification: derive_coal_perplant_offer.py --year 2023. "
+        "Default OFF -> prior keepers byte-identical.",
+    )
+    parser.add_argument(
+        "--coal-peak-offer-yearly-level",
+        dest="coal_peak_offer_yearly_level",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="PER-YEAR coal `_peak`-tranche offer LEVEL (ercot-192, "
+        "ScenarioConfig.coal_peak_offer_yearly_level — matrix section 5.1 "
+        "item 13, owner signature B1 on DECISION-CARD-ercot188 card B: the "
+        "rule-23 re-derivation of the armed ERCOT-140 level from the "
+        "delivery-2023 NP3-965 corpus, replacing its declared 2024/25->2023 "
+        "extrapolation). Requires --coal-peak-offer-margin. For a solve year "
+        "PRESENT in constants.COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO (only 2023, "
+        "71.3378 $/MWh) the `_peak` bid is level_year + GAS_HR x (gas_cc(t) - "
+        "anchor); the SLOPE and the SHARED gas anchor are untouched (rule 19). "
+        "A year ABSENT from the table falls through to the static "
+        "COAL_PEAK_OFFER_LEVEL_BY_ISO unchanged (2024/2025 byte-identical — "
+        "the ercot-192 precommit's G-BIT kill gate). Identification: the "
+        "constant's own ERCOT-138 p90 instrument on the delivery-2023 rows "
+        "(75.00 $/MWh), whose coverage objection is closed by an exact "
+        "identification BOUND rather than any repair "
+        "(scripts/probes/ercot192_coal_limbs_bound_phase0.py). "
         "Default OFF -> prior keepers byte-identical.",
     )
     parser.add_argument(
@@ -11281,6 +11321,7 @@ def main() -> None:
         coal_offer_margin=args.coal_offer_margin,
         cc_committed_offer_margin=args.cc_committed_offer_margin,
         coal_peak_offer_margin=args.coal_peak_offer_margin,
+        coal_peak_offer_yearly_level=args.coal_peak_offer_yearly_level,
         coal_perplant_offer_level=args.coal_perplant_offer_level,
         coal_perplant_offer_yearly=args.coal_perplant_offer_yearly,
         nysdec_peaker_rule_availability=args.nysdec_peaker_rule_availability,

@@ -986,6 +986,93 @@ COAL_PEAK_OFFER_GAS_HR_BY_ISO: dict[str, float] = {
     "ERCOT": 10.4100,
 }
 
+# PER-YEAR measured coal `_peak`-tranche offer LEVEL ($/MWh) — the year-keyed
+# refinement of ``COAL_PEAK_OFFER_LEVEL_BY_ISO`` above (ercot-192, matrix §5.1
+# item 13; owner signature **B1** on
+# ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`` card B,
+# 2026-08-11: *"re-adjudicate under a fresh precommit before any arm"*).
+# Consumed under ``coal_peak_offer_yearly_level`` (requires
+# ``coal_peak_offer_margin``): for a solve year PRESENT here the `_peak` bid is
+# ``level_year + GAS_HR × (gas_cc(t) − anchor)``; a solve year ABSENT (2024,
+# 2025) falls through to the static constant **bit-identically**. The SLOPE and
+# the SHARED anchor are untouched — one year cannot identify a slope, and the
+# anchor is the whole gas offer surface's single identification point (rule 19
+# [R-ONE-MECH]). Same shape as the ercot-168 per-year precedent
+# (``COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO``), which likewise refines a level
+# and leaves tranche ownership alone.
+#
+# **Why 2023 is keyed, and how the value was identified.** ERCOT-140 declared
+# *"2023 application is a declared extrapolation (no 2023 SCED disclosure
+# exists)"*; the ercot-157 delivery-2023 NP3-965 corpus re-upload dissolved that
+# premise. The constant's OWN instrument (ERCOT-138 incremental-MW-weighted p90
+# of above-min-load submitted steps, same row filters, same cap-weighting,
+# CPT→CST at derivation) reads **p90 = 75.00 $/MWh** on the delivery-2023 COAL
+# rows — flat at $75 in 9 of 12 months, and the corpus's two most common
+# submitted TOP steps are $78.00 (21,677 intervals) and $75.01 (17,869), with
+# the 2024/25 level $34.82 only a distant tenth. Removing this form's own gas
+# response gives
+#   level₂₀₂₃ = 75.00 − 10.4100 × (2.6012 − 2.2494) = 75.00 − 3.6622 = 71.3378
+# i.e. **+36.1389 above the armed 35.1989 = 14.42× its ±7.12 % (±$2.5062)
+# band** — the armed constant is roughly HALF the measured 2023 top. The point
+# estimate is window-invariant (matched h11–22 CST and full-day both 71.3378).
+#
+# **The coverage objection is CLOSED BY BOUND, not by repair.** ercot-169 could
+# not license this read (COAL ``curve_share`` 0.9702 vs the 0.9876 floor — the
+# Martin Lake units 1–3 March–June no-curve block) and ercot-171 showed the
+# licensed-sub-population route cannot reach this limb (dropping 26.1 % of
+# HSL-cap moves a p90 of the curve TOP by +19.17 = 7.6× band; G-NEUT FAILED,
+# NOT-IDENTIFIABLE-2023 CONFIRMED), closing with *"an instrument that does not
+# select on the tail would need its own charter."* B1 chartered it, and it takes
+# the route that needs no repair at all: the missing rows contribute ZERO weight
+# to a weighted quantile, so give that weight the most extreme admissible price
+# in each direction and recompute the SAME statistic —
+#   append M at the bottom ⇒ q_low  = α + (α−1)·M/O
+#   append M at the top    ⇒ q_high = α·(1 + M/O)
+# The true α-quantile then lies in ``[Q(q_low), Q(q_high)]`` under **ANY
+# imputation of the missing rows whatsoever**. Measured, with M the no-curve
+# rows' full incremental range (the statistic's own denominator, hence maximal):
+# the delivery-2023 interval is **[71.3378, 81.3678]** (matched window),
+# **[71.3378, 71.3578]** (full day) and **[71.3378, 96.3378]** (raw-CPT clock) —
+# the LOWER edge is 71.3378 in every window, so the 2023 level is **at least
+# 14.42 band-widths above the armed constant no matter what the missing rows
+# would have said**. Card B's *"a 1.7 pp coverage shortfall cannot produce a 2×
+# level shift"* is thereby measured rather than asserted. Nothing is dropped,
+# nothing imputed, no licensing quantity swapped, and the 0.9876 floor is NOT
+# lowered. Two alternative repairs were REFUSED in the precommit BEFORE any
+# level was read, on the Phase-0a structure measurement: own-conduct imputation
+# (98.8 % of the missing headroom is ERCOT-123 bucket (b) price-taking at 98 %
+# loading, so imputing a curve would invent an offer that was never submitted —
+# rule 13 [R-MEASURED]) and re-expressing the licence on the exposure-matched
+# ``a_offered`` (measured 0.94775 on 2023, i.e. WORSE than ``curve_share``; and
+# a licensing quantity may never be chosen after seeing which one passes).
+#
+# **Neutrality gate (the ercot-171 lesson, applied to this instrument).** The
+# identical bound construction on the four committed 2024/25 identification
+# subsets: footing −0.0024 (limb A) / +2.6e-5 (this limb) against the armed
+# values, and the LOWER edge — the edge that carries the 2023 verdict direction
+# — displaces the pooled level by **0.065× / 0.000× band**. Reported, not buried:
+# the OPPOSITE edge displaces by 2.635× band on those same licensed subsets,
+# because a p90 of a steep curve top admits a large upward excursion from even
+# 0.3–0.7 % missing weight. That is the bound being honest; it is the lower edge
+# that this identification rests on.
+#
+# ZERO FITTED SCALARS (rule 23 [R-DOF]): the value is the constant's own
+# statistic on the constant's own window with the constant's own fuel response
+# removed — no residual is consulted anywhere in its derivation. Re-derives only
+# with its source disclosure (rule 23), via
+# ``scripts/data/derive_coal_peak_offer_margin.py`` and
+# ``scripts/probes/ercot192_coal_limbs_bound_phase0.py``; ISOs absent from the
+# registry fall through to the static constant, and an ARMED ISO with no year
+# table is a hard error (rule 24 — never a silent fallback); ERCOT-identified
+# from ERCOT conduct and never transferred (rule 25 [R-ISO-SCOPE]).
+# Record: docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md,
+# results/calibration/ercot192_coal_limbs_bound.json,
+# results/calibration/ercot192_coal_peak_structure.json,
+# results/calibration/FINDING-ercot192-coal-limbs-2023-2026-08-12.md.
+COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO: dict[str, dict[int, float]] = {
+    "ERCOT": {2023: 71.3378},
+}
+
 # PER-PLANT measured coal offer supply curves — the identification artifact of
 # the ``coal_perplant_offer_level`` mechanism (ERCOT-144, the DOF-retirement
 # lane ERCOT-143 §2 chartered; applied in

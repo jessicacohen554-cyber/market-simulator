@@ -889,6 +889,43 @@ def apply_coal_tranches(
             float(_pghr),
             float(_panchor),
         )
+        # Per-year LEVEL refinement (ercot-192, matrix §5.1 item 13): a solve
+        # year PRESENT in the resolved table swaps the level only — the slope
+        # and the shared anchor are untouched (rule 19). A year ABSENT falls
+        # through here unchanged, which is the G-BIT bit-identity kill for
+        # 2024/2025.
+        if getattr(config, "coal_peak_offer_yearly_level", False):
+            _pytab = getattr(config, "coal_peak_offer_level_yearly", None)
+            if not _pytab:
+                raise ValueError(
+                    "coal_peak_offer_yearly_level is armed but "
+                    "coal_peak_offer_level_yearly is unset; resolve it from "
+                    "constants.COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO at config "
+                    "build (rule 24 — the mechanism would silently do nothing)"
+                )
+            if year is None:
+                raise ValueError(
+                    "coal_peak_offer_yearly_level is armed but no solve year "
+                    "was passed to apply_coal_tranches — the year table cannot "
+                    "be indexed (rule 24)"
+                )
+            _pylevel = {int(k): float(v) for k, v in _pytab.items()}.get(int(year))
+            if _pylevel is not None:
+                logger.info(
+                    "coal peak-tranche offer YEAR level (ercot-192, year %d): "
+                    "%.4f -> %.4f $/MWh (slope and shared anchor unchanged)",
+                    int(year),
+                    peak_level,
+                    _pylevel,
+                )
+                peak_level = _pylevel
+            else:
+                logger.info(
+                    "coal peak-tranche offer YEAR level (ercot-192): solve year "
+                    "%d is NOT in the table %s — static level kept",
+                    int(year),
+                    sorted({int(k) for k in _pytab}),
+                )
         cc_rows = [
             g
             for g, gen in enumerate(generators)
