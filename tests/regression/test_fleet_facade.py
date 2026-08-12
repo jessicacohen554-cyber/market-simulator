@@ -341,7 +341,6 @@ HISTORICAL_SURFACE = (
     "re",
     "reliability_deployment_floor_for_year",
     "retiree_availability_caps",
-    "split_coal_tranches",
     "split_gas_tranches",
     "st_gas_intermediate_plants",
     "thermal_tranche_chp_steam_level",
@@ -643,7 +642,6 @@ PASSTHROUGHS: dict[str, tuple[str, ...]] = {
         "_econ_split_for_group",
         "_hr_override",
         "_offer_curve_for_group",
-        "split_coal_tranches",
         "split_gas_tranches",
     ),
     "market_sim.config.constants": (

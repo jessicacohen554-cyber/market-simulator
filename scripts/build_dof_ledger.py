@@ -68,9 +68,9 @@ _HOLDOUT_ROOT_CAUSE = (
 _ISSUE_C4_MERCHANT_CHP = (
     "https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
 )
-_ISSUE_C8_CORE_STEPS = (
-    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1336"
-)
+# _ISSUE_C8_CORE_STEPS (issue #1336, the coal_tranche_* re-grounding debt)
+# removed 2026-08-12 with its ledger entry: the scalars were deleted outright
+# (ercot-188 G#3), so the debt closed rather than re-grounded.
 _ISSUE_COMMITTED_BELOW_085 = (
     "https://github.com/jessicacohen554-cyber/market-simulator/issues/1302"
 )
@@ -398,35 +398,16 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
     # a false positive for those ISOs, since their plant codes never matched
     # the deleted dict's four ERCOT-specific keys). No replacement entry
     # needed: no residual scalar remains.
-    # coal_take_or_pay_tranches: the ScenarioConfig.coal_tranche_{1,2,3}_*
-    # values are consumed ONLY by the legacy (non-CAMPD)
-    # offer_curves.split_coal_tranches path — under use_campd_bins (the ERCOT
-    # keeper default since the per-plant binning promotion) every coal row is
-    # a CAMPD tranche priced by campd_tranche_fuel_frac and the fields never
-    # touch the solve. Verified at ERCOT-144 (the armed-capture spy shows
-    # only CAMPD suffixes in all three years; the sole consumer is
-    # offer_curves.py:72). Enumerating them for a CAMPD config was the same
-    # false-positive pattern the C-12 closure note above records — so the
-    # entry is scoped to configs that actually run the legacy path.
-    if iso == "ERCOT" and not sc.get("use_campd_bins"):
-        out.append(
-            _entry(
-                "coal_take_or_pay_tranches",
-                "scenarios.py ScenarioConfig.coal_tranche_{1,2,3}_{frac,"
-                "fuel_passthrough} (0.30/0.25/0.45 capacity fracs, 0.00/0.35/1.00 "
-                "fuel passthrough); the constants.py COAL_TRANCHES mirror of "
-                "these values was dead code (never read) and was deleted 2026-07",
-                "residual",
-                iso,
-                n_scalars=4,
-                source="core coal offer-curve step sizes (audit C-8) — "
-                "'Tier 3 (calibration)'; sanctioned mechanism, undisciplined "
-                "values",
-                root_cause="audit C-8: ground on contract-structure data "
-                "(EIA-923 fuel-cost dispersion) or freeze via rule 23; open: "
-                + _ISSUE_C8_CORE_STEPS,
-            )
-        )
+    # coal_take_or_pay_tranches CLOSED 2026-08-12 (rule 26, ercot-188 G#3
+    # owner ruling): the ScenarioConfig.coal_tranche_{1,2,3}_* sextet and its
+    # sole consumer, the legacy (non-CAMPD) offer_curves.split_coal_tranches
+    # path, were DELETED — dead in build_dispatch_fleet's else limb for every
+    # registered bundle of all six ISOs (use_campd_bins=True everywhere;
+    # proof: results/calibration/ercot188_g3_unreachability_proof.json;
+    # miso-128 §4 proved inertness dynamically). The former entry here was
+    # already scoped to `not use_campd_bins` configs, i.e. it never fired on
+    # a registered run. No replacement entry: the issue-#1336 re-grounding
+    # debt closes with the scalars — there is nothing left to re-ground.
     if iso == "ERCOT":
         out.append(
             _entry(

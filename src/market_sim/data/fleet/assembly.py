@@ -1525,10 +1525,11 @@ def build_dispatch_fleet(
 ) -> tuple[list[Generator], list[float], np.ndarray | None, np.ndarray | None]:
     """Assemble this year's LP-ready dispatch fleet from the persistent fleet.
 
-    Splits coal (and optionally gas) into take-or-pay / SRMC tranches --
-    CAMPD per-plant fuel fractions (:func:`campd_tranche_fuel_frac`) when
-    ``campd_bins`` is active, else the legacy :func:`split_coal_tranches` /
-    :func:`split_gas_tranches` -- then appends energy-limited hydro plants
+    Prices coal take-or-pay / SRMC tranches via the CAMPD per-plant fuel
+    fractions (:func:`campd_tranche_fuel_frac`) when ``campd_bins`` is
+    active; the non-CAMPD fallback passes coal through unsplit at full fuel
+    cost (optionally splitting gas via the legacy
+    :func:`split_gas_tranches`), then appends energy-limited hydro plants
     and overrides plant-specific CAMPD emission rates. Both branches start
     from the same ``fleet`` and end at the same shape: a list of
     :class:`Generator` ready for :func:`generators_to_fleet_arrays`.
@@ -1678,21 +1679,15 @@ def build_dispatch_fleet(
             for g in dispatch_fleet
         ]
     else:
-        # Non-CAMPD-binned ISOs split coal into take-or-pay tranches here.
-        # With coal_takeorpay_from_data the sunk first tranche uses each
-        # plant's MEASURED EIA-923 Schedule-5 contracted share (CLAUDE.md
-        # #11/#12) instead of the uniform 100%-sunk assumption.
-        split_takeorpay = None
-        if getattr(config, "coal_takeorpay_from_data", False):
-            split_takeorpay = {
-                int(g.plant_code): coal_takeorpay_share(int(g.plant_code))
-                for g in fleet
-                if g.fuel_type == "coal"
-                and coal_takeorpay_share(int(g.plant_code)) is not None
-            }
-        dispatch_fleet, fuel_fracs = _pkg_ns().split_coal_tranches(
-            fleet + inline_imports, config, split_takeorpay
-        )
+        # Non-CAMPD fallback (use_campd_bins off / no bin artifact): coal
+        # passes through unsplit at full fuel cost. The legacy coal
+        # take-or-pay split (split_coal_tranches + the six coal_tranche_*
+        # scalars) was DELETED 2026-08-12 (rule 26 [R-DELETE], ercot-188 G#3
+        # owner ruling) — every registered bundle of all six ISOs takes the
+        # CAMPD limb above, so this limb produced no registered result
+        # (proof: results/calibration/ercot188_g3_unreachability_proof.json).
+        dispatch_fleet = fleet + inline_imports
+        fuel_fracs = [1.0] * len(dispatch_fleet)
         if getattr(config, "gas_offer_curve", False):
             dispatch_fleet, fuel_fracs = split_gas_tranches(
                 dispatch_fleet, fuel_fracs, config

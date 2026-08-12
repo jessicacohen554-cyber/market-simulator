@@ -2722,10 +2722,10 @@ def generators_to_fleet_arrays(
     a month-varying availability instead, capturing refueling outages and
     planned maintenance. Other seasonal derates are applied later.
 
-    Coal carries no Pmin floor: each coal bin is split into take-or-pay
-    tranches (see :func:`split_coal_tranches`), each with ``pmin_mw = 0``,
-    so coal's baseload behavior emerges from tranche economics rather than a
-    hard minimum.
+    Coal carries no Pmin floor: each coal plant enters as CAMPD take-or-pay
+    tranches (see :func:`bins_to_fleet` / :func:`campd_tranche_fuel_frac`),
+    each with ``pmin_mw = 0``, so coal's baseload behavior emerges from
+    tranche economics rather than a hard minimum.
     """
     zone_to_idx = {name: i for i, name in enumerate(zone_names)}
 

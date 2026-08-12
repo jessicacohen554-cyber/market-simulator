@@ -644,7 +644,6 @@ from market_sim.data.offer_curves import (  # noqa: F401  (historical namespace 
     _econ_split_for_group,
     _hr_override,
     _offer_curve_for_group,
-    split_coal_tranches,
     split_gas_tranches,
 )
 from market_sim.data.fleet import models as models  # noqa: F401
