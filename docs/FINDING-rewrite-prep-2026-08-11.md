@@ -412,6 +412,65 @@ addresses the real symptom without spending the record.
 - Hand-check of the 16-char sample before any commit, which is what caught the
   float-mantissa subclass (§1.1).
 
+---
+
+## 10. ADDENDUM 2026-08-12 — the rewrite tooling already existed, and it was unsafe
+
+This finding was written as though a rewrite lane would be built from scratch. It
+would not have been: **`.github/workflows/cleanup-large-blobs.yml` already
+exists** — a `workflow_dispatch`-only history rewriter that strips superseded
+blob versions under `data/raw/` and `results/calibration/` while protecting
+everything live at `main`'s tip. It was missed by the original sweep because §5.1
+asked only whether `.github/` *pins* a SHA, not whether anything in `.github/`
+*rewrites* them.
+
+It carried the §3.3 defect exactly as predicted:
+
+```
+git filter-repo --strip-blobs-with-ids "$REMOVABLE_SHAS" --force
+```
+
+No prune flags, so filter-repo's `auto` defaults applied — and the workflow ends
+with `git push --force --tags origin`. It verified per-branch manifests rigorously
+and **recorded nothing whatsoever about tags**: they were counted at clone time
+and force-pushed at the end, with no check in between.
+
+Reproduced on the workflow's *own* operation (`--strip-blobs-with-ids`, which §3
+had not covered — §3.2–§3.3 tested `--invert-paths --path`). A data-intake PR adds
+`f.parquet` v1, a later commit supersedes it with v2, and a governance tag pins the
+intake merge:
+
+| Configuration | Result |
+|---|---|
+| Workflow as-was (default prune flags) | **FAIL — tag silently re-pointed to `base`**, an unrelated commit |
+| Workflow as patched | **PASS — tag still names the intake merge** |
+
+**Fixed in this lane** (`scratchpad/t4_stripblobs.sh` is the harness):
+
+1. The strip step now passes `--prune-empty never --prune-degenerate never`, with
+   a comment recording why they are load-bearing. Cost: emptied commits survive as
+   empty commits — commit objects only, so the blob savings are unchanged.
+2. The protect step records a **per-tag identity** (author/email/date/subject hash)
+   plus the target's out-of-scope tree hash.
+3. `Verify branch integrity` is now `Verify branch and tag integrity` and fails the
+   run — before any push — if a tag vanished, was re-pointed, or had out-of-scope
+   content change at its target.
+
+**This changes §8's arithmetic in one direction only.** Today's calibration prune
+(85 bundle dirs, 240 MB) makes those blobs *superseded*, so this workflow can now
+reclaim them from history — that is a genuine, targeted shrink that does **not**
+require the full untrack-`data/raw` rewrite this finding recommends against, and
+it never rewrites a blob that is live at tip. The NO-GO in §8 stands for the
+wholesale rewrite; this narrower tool is a different, smaller proposition.
+
+Two preconditions still bind before anyone dispatches it: it needs the
+`HISTORY_REWRITE_PAT` secret, and **§8 precondition 1 is unchanged** — the
+`cite/*` tags still do not exist on the remote (0 at time of writing), so the tag
+verification added here currently verifies an empty set. It protects the record
+only once the tags are published.
+
+---
+
 **Mid-lane base movement (reported per the charter's standing clause):**
 `origin/main` advanced from `f6381c5` (charter) to `1526109` (session start) to
 `17e9ad5` (fetched and fast-forwarded before any measurement). This lane ran no
