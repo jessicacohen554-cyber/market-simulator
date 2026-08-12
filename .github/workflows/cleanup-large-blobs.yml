@@ -14,6 +14,14 @@ name: Cleanup Large File Blobs from History (Protected)
 #   DEFAULT_BRANCH  — full file manifest must be byte-identical before/after.
 #   Other branches  — the out-of-scope portion of the manifest must be
 #                     byte-identical; the in-scope portion may shrink.
+#   Tags            — every tag must still name the SAME commit afterwards
+#                     (author/date/subject identity) with an unchanged
+#                     out-of-scope tree. Tags are citation handles here
+#                     (docs/governance/citation-tags.md), so a tag that is
+#                     silently moved to another commit is worse than one that
+#                     breaks: it still resolves, to the wrong thing. The
+#                     --prune-empty/--prune-degenerate flags on the strip step
+#                     prevent it; this check proves they did.
 #   Any out-of-scope change anywhere aborts before pushing.
 #
 # Runs against a --mirror (bare) clone. There is NO working tree at any point:
@@ -179,9 +187,37 @@ jobs:
           echo ""
           echo "Recorded $branch_count branch manifests"
 
+          # ---- Per-tag identity, so a silently re-pointed tag is detectable ----
+          # A tag is a CITATION handle here (docs/governance/citation-tags.md):
+          # the whole reason it exists is that its NAME survives a rewrite while a
+          # raw SHA does not. That guarantee is only worth anything if the tag
+          # still names the SAME commit afterwards, so record two invariants per
+          # tag and re-check both after the strip:
+          #   identity  — author, author date and subject of the target commit.
+          #               A tag moved to an ancestor changes all three.
+          #   outscope  — the target's out-of-scope tree manifest, which this
+          #               workflow must never alter (same invariant as branches).
+          TAG_HASHES=$(mktemp)
+          echo ""
+          echo "=== Recording per-tag identity ==="
+          tag_count=0
+          for tag in $(git for-each-ref --format='%(refname:short)' refs/tags/); do
+            target=$(git rev-parse "$tag^{commit}")
+            identity=$(git log -1 --format='%an|%ae|%ad|%s' --date=iso "$target" \
+              | sha256sum | awk '{print $1}')
+            outscope=$(git ls-tree -r "$target" | sort \
+              | awk -F'\t' -v re="$IN_SCOPE_RE" '$2 !~ re' \
+              | sha256sum | awk '{print $1}')
+            # tag  identity_hash  outscope_hash
+            echo "$tag $identity $outscope" >> "$TAG_HASHES"
+            tag_count=$((tag_count + 1))
+          done
+          echo "Recorded $tag_count tag identities"
+
           echo "manifest_dir=$MANIFEST_DIR" >> "$GITHUB_OUTPUT"
           echo "protected_blobs=$PROTECTED_BLOBS" >> "$GITHUB_OUTPUT"
           echo "branch_hashes=$BRANCH_HASHES" >> "$GITHUB_OUTPUT"
+          echo "tag_hashes=$TAG_HASHES" >> "$GITHUB_OUTPUT"
 
           echo ""
           echo "--- Live files in scope (${DEFAULT_BRANCH}) ---"
@@ -362,7 +398,26 @@ jobs:
           count=$(wc -l < "$REMOVABLE_SHAS")
           echo "Stripping $count older blobs from data/raw/ and results/calibration/..."
           echo "(Everything live at ${DEFAULT_BRANCH}'s tip is protected and untouched)"
-          git filter-repo --strip-blobs-with-ids "$REMOVABLE_SHAS" --force
+          # --prune-empty=never --prune-degenerate=never ARE LOAD-BEARING. Do not
+          # drop them for a "cleaner" history.
+          #
+          # filter-repo's defaults are `auto`, which prune a commit this strip
+          # empties and a merge whose parents collapse -- and then MOVE any ref
+          # pointing at the pruned commit to its nearest surviving ancestor. The
+          # ref still resolves; it resolves to the WRONG COMMIT, silently. For a
+          # tag that is a citation handle (docs/governance/citation-tags.md) that
+          # is strictly worse than breaking, and the step below force-pushes tags.
+          #
+          # Both failure modes were reproduced on synthetic repos -- a data-only
+          # commit AND a data-only PR merge, which is the common shape here since
+          # a data-intake PR touches only data/raw. Evidence:
+          # docs/FINDING-rewrite-prep-2026-08-11.md section 3.2-3.3.
+          #
+          # Cost of keeping them: emptied commits survive as empty commits. That
+          # is commit objects only (a few hundred bytes each) -- the blob savings,
+          # which is the entire point of this workflow, are unchanged.
+          git filter-repo --strip-blobs-with-ids "$REMOVABLE_SHAS" \
+            --prune-empty never --prune-degenerate never --force
           df -h /
 
       - name: Repack and garbage collect
@@ -376,12 +431,13 @@ jobs:
           echo "Repack complete."
           df -h /
 
-      - name: Verify branch integrity
+      - name: Verify branch and tag integrity
         if: ${{ inputs.dry_run == false && steps.check.outputs.skip != 'true' }}
         run: |
           set -euo pipefail
           MANIFEST_DIR="${{ steps.protect.outputs.manifest_dir }}"
           BRANCH_HASHES="${{ steps.protect.outputs.branch_hashes }}"
+          TAG_HASHES="${{ steps.protect.outputs.tag_hashes }}"
           IN_SCOPE_RE="^${SCOPE_REGEX}"
 
           echo "=== Verifying manifests ==="
@@ -433,12 +489,48 @@ jobs:
           done < "$BRANCH_HASHES"
 
           echo ""
+          echo "=== Verifying tag identity ==="
+          echo "  every tag must still name the SAME commit (author/date/subject)"
+          echo "  and carry an unchanged out-of-scope tree"
+          tags_checked=0
+          while IFS=' ' read -r tag identity_hash outscope_hash; do
+            [ -z "$tag" ] && continue
+            tags_checked=$((tags_checked + 1))
+
+            if ! git show-ref --verify --quiet "refs/tags/$tag"; then
+              echo "  FAIL  $tag — tag missing after filter-repo!"
+              failures=$((failures + 1))
+              continue
+            fi
+
+            target=$(git rev-parse "$tag^{commit}")
+            actual_identity=$(git log -1 --format='%an|%ae|%ad|%s' --date=iso "$target" \
+              | sha256sum | awk '{print $1}')
+            actual_outscope=$(git ls-tree -r "$target" | sort \
+              | awk -F'\t' -v re="$IN_SCOPE_RE" '$2 !~ re' \
+              | sha256sum | awk '{print $1}')
+
+            if [ "$identity_hash" != "$actual_identity" ]; then
+              # This is the silent-re-point failure the prune flags exist to
+              # prevent. If it fires, the flags were dropped or filter-repo
+              # changed behaviour -- do not push, the tags would be lying.
+              echo "  FAIL  $tag — RE-POINTED to a different commit!"
+              echo "        now: $(git log -1 --format='%h %ad %s' --date=short "$target")"
+              failures=$((failures + 1))
+            elif [ "$outscope_hash" != "$actual_outscope" ]; then
+              echo "  FAIL  $tag — OUT-OF-SCOPE files changed at its target!"
+              failures=$((failures + 1))
+            fi
+          done < "$TAG_HASHES"
+          echo "  $tags_checked tag(s) checked"
+
+          echo ""
           if [ "$failures" -gt 0 ]; then
-            echo "::error::$failures branch(es) failed integrity check! Aborting push."
+            echo "::error::$failures ref(s) failed integrity check! Aborting push."
             echo "No data was pushed. The remote is untouched."
             exit 1
           fi
-          echo "All branches verified."
+          echo "All branches and tags verified."
 
       - name: Repo size after
         if: ${{ inputs.dry_run == false && steps.check.outputs.skip != 'true' }}
