@@ -83,6 +83,16 @@ for _p in (str(REPO / "src"), str(REPO), str(REPO / "scripts" / "probes")):
 
 #: The NP3-965 full-year corpus root (ercot-157 re-upload), publication-month
 #: keyed: a ``YYYY-MM`` shard publishes delivery month ``YYYY-MM`` minus two.
+#:
+#: THE RTC+B BOUNDARY — this lane stops at delivery 2025-12-04. The
+#: ``glob("*.parquet")`` in :func:`load_corpus_year` is NON-RECURSIVE on
+#: purpose: the RTC+B-format parts (deliveries 2025-12-05..31) sit in the
+#: ``rtcb-format-2026/`` subdirectory because RTC+B REMOVES ``HASL``, which
+#: :func:`load_corpus_year` requires and filters on. Never make that glob
+#: recursive or point this constant at the subdirectory — RTC+B deliveries are
+#: calendar-2025, so the ``ts.dt.year == year`` filter would keep them. They are
+#: readable only through ``scripts.lib.sced_rtcb_adapter`` (owner card D /
+#: signature D1, ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``).
 SCED_CORPUS_DIR = REPO / "data" / "raw" / "ercot" / "SCED"
 
 #: Training window (rule 22 [R-HOLDOUT]). No other year may be loaded.

@@ -142,6 +142,17 @@ _PUB_SHARD_RE = re.compile(r"(\d{4})-(\d{2})\.part\d+\.parquet$")
 # 2026-08-03 owner re-upload of the delivery-2023 window, ERCOT-151 §4 ask 1).
 # Both are scanned; a filename present in both resolves to the LAST directory
 # listed (the re-upload wins over a stale top-level copy).
+#
+# THE RTC+B BOUNDARY — this lane stops at delivery 2025-12-04. Both globs below
+# are NON-RECURSIVE on purpose: the RTC+B-format parts (deliveries 2025-12-05..31)
+# are quarantined in ``SCED/rtcb-format-2026/`` because RTC+B REMOVES ``HASL``,
+# a required entry of ``_READ_COLS``. Do NOT add that subdirectory here, and do
+# not make these globs recursive. The row filter cannot save you: RTC+B
+# deliveries are calendar-2025, so ``_delivery_year_rows(df, 2025)`` KEEPS them
+# and publications 2026-02/03 fall inside delivery-2025's selection window — the
+# subdirectory is the only thing holding the line. RTC+B parts are readable only
+# through ``scripts.lib.sced_rtcb_adapter`` (owner card D / signature D1,
+# ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``).
 _CORPUS_DIRS: tuple[Path, ...] = (SCED_DIR, SCED_DIR / "SCED")
 
 # A publication-month corpus supersedes the legacy sample-day extracts for a

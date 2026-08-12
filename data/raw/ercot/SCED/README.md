@@ -53,11 +53,35 @@ consumer (`derive_ercot_sced_offer_wall` / `derive_ercot_faststart_pool` /
 `sced_corpus_instruments`), so these shards CRASH the derives — the exact
 defect ercot-95/97 quarantined in the Dec-3-9-2025 out-of-band upload.
 Those 27 parts (`2026-02.part0002-0027`, `2026-03.part0000`) live in this
-subdirectory, INVISIBLE to the consumers' non-recursive globs, bytes intact
-for a future owner-authorized RTC+B-era consumer. Deliveries 2025-12-01..04
-(pubs 2026-01-30..2026-02-01) remain in the readable pre-RTC+B format at the
-top level, so delivery-2025 is complete through Dec-04 plus the quarantined
-tail.
+subdirectory, INVISIBLE to the consumers' non-recursive globs, bytes intact.
+Deliveries 2025-12-01..04 (pubs 2026-01-30..2026-02-01) remain in the readable
+pre-RTC+B format at the top level, so delivery-2025 is complete through Dec-04
+plus the quarantined tail.
+
+**The parts are now readable — through the adapter, and only through it**
+(owner card D signature D1, 2026-08-11,
+`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`; built at
+`rtcb-adapter-1`). `scripts/lib/sced_rtcb_adapter.py` parses them into the
+same in-memory frame contract the existing readers produce: the verbatim
+all-string copy with `Telemetered Net Output` served under its canonical
+trailing-space spelling and a `sced_format` = `rtcb-2026` flag on every row.
+`HASL`/`LASL` are **explicitly absent, never NaN-filled** — requesting one
+raises rather than inventing a telemetered quantity (rule 13 `[R-MEASURED]`) —
+and the six `Ancillary Service <svc>` responsibility columns are refused under
+their legacy names too: RTC+B's `AS Awards`/`AS Capability` are differently
+defined (dense `0` vs sparse `''`, and RRS is disaggregated into PFR/UFR/FFR),
+so mapping them back would be a construction rather than a read. They are
+served under their RTC+B-native names instead.
+
+**The quarantine subdirectory stays load-bearing and must not be flattened.**
+RTC+B deliveries are calendar-**2025**, so the consumers' delivery-year row
+filter does NOT exclude them, and publications 2026-02/03 fall inside
+delivery-2025's shard-selection window. The non-recursive globs are the only
+thing keeping them out of the delivery-2023..2025 identification paths. Never
+add this subdirectory to a corpus-root tuple, and never make those globs
+recursive; `sced_rtcb_adapter.assert_pre_rtcb_files` /`.assert_no_rtcb_rows`
+assert the line positively, and `tests/curation/test_sced_rtcb_adapter.py`
+pins it. **Every existing SCED-corpus lane stops at delivery 2025-12-04.**
 
 ## DATA NEEDED
 
