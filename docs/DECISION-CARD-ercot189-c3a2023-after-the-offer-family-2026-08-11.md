@@ -1,4 +1,4 @@
-> Status: ACTIVE (awaiting owner signature on card Q; the measurement sections are RECORD)
+> Status: RECORD — card Q SIGNED (Q-C) at the owner sitting, 2026-08-12; the checkpoint rule is standing
 
 # DECISION CARD — ercot-189: "How have we still seen no improvement?" — C3a-2023 after the offer family
 
@@ -402,13 +402,38 @@ Per option:
 
 ---
 
-## RESOLUTIONS
+## RESOLUTIONS — CARD Q SIGNED BY THE OWNER, 2026-08-12
 
-*(placeholder — completed at the owner sitting; the card body above is preserved as put)*
+The sitting was held on 2026-08-12; the card body above is preserved AS PUT,
+unedited by the outcome.
 
 | card | decision | **SIGNED** | vs. recommendation |
 |---|---|---|---|
-| **Q** | C3a-2023 after the offer family | — | — |
+| **Q** | C3a-2023 after the offer family | **(Q-C) — the checkpoint rule** | As recommended |
+
+### Q — the checkpoint rule, now standing
+
+**Signed text.** No ERCOT C3a-2023 spend of any kind until A1's #9 (the DAM
+deriver `_site()` repair) lands. When the repaired deriver exists, run the
+ercot-170 coverage-licence re-test on it, bars unchanged (**L1 ≥ 0.90,
+L2 ≤ 0.10**), as a phase-0 read:
+
+* **licence PASSES → (Q-A)'s phase-0 identification is authorized without a
+  new sitting**, under item 11's charter and the ERCOT-163 constraint (a
+  rule-14 fleet-scope correction on the existing
+  `ercot_thermal_dam_availability_*` channel only); any BUILD still requires
+  its own sitting with §2.3's reach bar (tail lw mean ≥ **$709**) and the
+  ERCOT-159 kill gates pre-registered;
+* **licence FAILS → (Q-B) is automatic and final**: ERCOT stands at NOT-YET on
+  C3a-2023 as a model-class limit and the program stops spending on it, with
+  no further sitting required.
+
+**Addendum, signed the same sitting:** the §5 `readiness_limits` price-tail
+disclaimer follow-up is **AUTHORIZED** as a named, doc-only open item for the
+forecast lane — *"a 2023-like scarcity-concentration year carries up to
+−$14/MWh (−22% of level) annual load-weighted price bias, concentrated in ~2%
+of hours"* (quantified at `results/calibration/ercot189_c3a_c3c_overlap.json`).
+It is not implemented by this signature.
 
 ### What signing does NOT do
 
