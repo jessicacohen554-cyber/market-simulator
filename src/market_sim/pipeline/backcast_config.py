@@ -1664,9 +1664,9 @@ def backcast_config(
         coal_plant_monthly_pricing=True,  # plant-specific EIA-923 monthly coal
         #   cost where reported (Fayette/San Miguel/J K Spruce); the rest fall
         #   back to the flat lignite/PRB average.
-        coal_takeorpay_from_data=(iso.upper() == "MISO"),  # MISO is split-fleet
-        #   (not in CAMPD_BINNING_ISOS), so its coal take-or-pay depth comes from
-        #   split_coal_tranches, not offer_curve_by_group. Replace the uniform
+        coal_takeorpay_from_data=(iso.upper() == "MISO"),  # MISO's coal
+        #   take-or-pay depth is sized from measured contract shares (consumed
+        #   by campd_tranche_fuel_frac on the CAMPD limb). Replace the uniform
         #   assumed 100%-sunk first tranche with each plant's MEASURED EIA-923
         #   Schedule-5 contracted share (coal_takeorpay_MISO.csv; CLAUDE.md
         #   #11/#12 — measured > estimate, forward-reproducible). The measured

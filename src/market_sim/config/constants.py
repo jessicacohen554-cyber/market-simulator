@@ -504,12 +504,14 @@ CT_STARTUP_PARAMS: list[tuple[float, float]] = [
 # DELETED 2026-07 (rule 26, G-26/C-8/issue #1336): COAL_TRANCHES was a
 # documentation-only mirror of the coal take-or-pay supply-curve tranches —
 # never imported or read anywhere (confirmed by grep: zero references outside
-# an offer_curves.py docstring). The live, dispatch-affecting values are the
-# ScenarioConfig.coal_tranche_{1,2,3}_{frac,fuel_passthrough} fields
-# (scenarios.py), read directly by data.offer_curves._coal_tranches. A dead
-# duplicate of a tunable is exactly the "re-armable answer key" rule 26 warns
-# about (editing this list would silently do nothing), so it is removed
-# rather than kept in sync by hand.
+# an offer_curves.py docstring). A dead duplicate of a tunable is exactly the
+# "re-armable answer key" rule 26 warns about (editing this list would
+# silently do nothing), so it was removed rather than kept in sync by hand.
+# The ScenarioConfig.coal_tranche_{1,2,3}_{frac,fuel_passthrough} fields it
+# mirrored were themselves DELETED 2026-08-12 (ercot-188 G#3 owner ruling)
+# along with their sole consumer offer_curves.split_coal_tranches — dead in
+# build_dispatch_fleet's else limb for every registered bundle (proof:
+# results/calibration/ercot188_g3_unreachability_proof.json).
 
 # Legacy per-class heat-rate-override band defaults (econ/peak multipliers on the
 # plant's base heat rate) for the CC / gas-steam / CT_CHP supply-curve override

@@ -1880,9 +1880,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             year_base_demand = base_demand
 
         # Assemble this year's LP-ready dispatch fleet from the persistent
-        # ``fleet``: coal (and optionally gas) take-or-pay tranching --
-        # CAMPD per-plant fuel fractions when ``campd_bins`` is active, else
-        # the legacy split_coal_tranches/split_gas_tranches -- plus
+        # ``fleet``: coal take-or-pay pricing via CAMPD per-plant fuel
+        # fractions when ``campd_bins`` is active (the non-CAMPD fallback
+        # passes coal through unsplit, optionally gas-tranched) -- plus
         # energy-limited hydro and the CAMPD plant-specific emission-rate
         # overrides. dispatch_fleet is transient; the persistent ``fleet``
         # (un-split, no hydro) carries to next year.
