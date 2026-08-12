@@ -1526,4 +1526,11 @@ serialized keys in immutable run artifacts are the record of what those runs
 carried, and the canonical loaders filter to known fields. Pre-existing, unrelated
 at HEAD: `ci_refactor_guards.py` fails on `gen_caiso189_attestation.py`
 referencing `gen_caisoNNN_attestation.py` (fails identically with this session's
-changes stashed; belongs to the caiso-189 lane).
+changes stashed; belongs to the caiso-189 lane). Fast-tier result: **6694
+passed, 5 failed — all five reproduce byte-identically on `origin/main`**
+(verified in a worktree with main's own `src/` on `PYTHONPATH`):
+`test_ercot_thermal_as_endogenous.py::TestScreenMutualExclusion` (2),
+`test_ff_readiness_battery.py::test_config_completeness_*` (2),
+`test_cache.py::TestConfigSidecar::test_config_yaml_present_alongside_parquet`
+— environment-dependent at HEAD, not this lane's fallout; the cache-key
+round-trip reproduces CLEAN standalone against this branch's config layer.
