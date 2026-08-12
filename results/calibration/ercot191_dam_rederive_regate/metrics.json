@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-05-ercot168-control",
+  "run_id": "2026-08-12-run191-dam-deriver-regate",
   "iso": "ERCOT",
-  "label": "ercot168 control",
+  "label": "run191 dam deriver regate",
   "target_years": [
     2023,
     2024,
@@ -13,10 +13,10 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 3.0,
+  "rubric_version": 3.2,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
   ],
   "notes": [],
   "criteria": {
@@ -43,7 +43,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -53,12 +54,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
-    },
-    "shape": {
-      "label": "C7 diurnal shape (D-1)",
-      "tier": "protective",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -68,19 +64,21 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
-      "protective_max": 1,
-      "ledgered_max": 3
+      "protective_max": 0,
+      "ledgered_max": 1
     }
   },
   "grade_summary": {
     "scored": 8,
-    "target_grade": 4,
+    "target_grade": 5,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 4
+    "ledgered": 1,
+    "fails": 2
   },
   "free_class_score": {
     "iso": "ERCOT",

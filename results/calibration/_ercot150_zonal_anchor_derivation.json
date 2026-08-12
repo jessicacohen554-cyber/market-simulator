@@ -1,6 +1,6 @@
 {
  "probe": "ercot-150 zonal-anchor derivation record (weights + decomposition)",
- "weights_bundle": "results/calibration/ercot149_gas_event_cap_arm",
+ "weights_bundle": "results/calibration/ercot191_dam_rederive_regate",
  "iso_anchor": 2.2494,
  "scalar_basis_in_iso_anchor": -0.5,
  "zone_anchor_table": {
@@ -37,9 +37,9 @@
    "unweighted_mean_basis": 0.0657,
    "ep_basis_vs_hh": 0.0045,
    "level_correction_added": 0.5045,
-   "n_gas_rows": 1289,
-   "n_marked_up_tranches": 1132,
-   "n_with_band_scoped_anchor": 0,
+   "n_gas_rows": 1824,
+   "n_marked_up_tranches": 1667,
+   "n_with_band_scoped_anchor": 1667,
    "west_measured_collapse_freq": 0.03,
    "realized_zone_mean_solve_array": {
     "West": 1.9866,
@@ -82,9 +82,9 @@
    "unweighted_mean_basis": -0.4329,
    "ep_basis_vs_hh": -0.0858,
    "level_correction_added": 0.4142,
-   "n_gas_rows": 1289,
-   "n_marked_up_tranches": 1132,
-   "n_with_band_scoped_anchor": 0,
+   "n_gas_rows": 1824,
+   "n_marked_up_tranches": 1667,
+   "n_with_band_scoped_anchor": 1667,
    "west_measured_collapse_freq": 0.42,
    "realized_zone_mean_solve_array": {
     "West": 1.1497,
@@ -127,9 +127,9 @@
    "unweighted_mean_basis": -0.5114,
    "ep_basis_vs_hh": -0.4634,
    "level_correction_added": 0.0366,
-   "n_gas_rows": 1289,
-   "n_marked_up_tranches": 1135,
-   "n_with_band_scoped_anchor": 0,
+   "n_gas_rows": 1824,
+   "n_marked_up_tranches": 1670,
+   "n_with_band_scoped_anchor": 1670,
    "west_measured_collapse_freq": 0.11,
    "realized_zone_mean_solve_array": {
     "West": 2.7396,
