@@ -7569,3 +7569,95 @@ implemented on the forecast lane at ercot-190) and the owner's
 `complete`-declaration question. Fences honoured: no other C3a-2023 work;
 card B untouched; no rubric/ledger/marker/field changes. Next shorthand:
 **ercot-192**.
+## rtcb-adapter-1 (2026-08-12) — DATA INTAKE: the RTC+B SCED read adapter is BUILT (card D / D1, execution-order item 4). The 27 quarantined parts now parse into the existing frame contract with HASL/LASL EXPLICITLY ABSENT and a per-row format flag; the delivery-2025-12-04 lane boundary is documented in code at all three glob sites and pinned by test. NO derive re-run, NO solve, NO run registered, NO matrix cell, keeper UNCHANGED.
+
+**Task.** Execute signature **D1** of card D
+(`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`): *"authorize,
+scoped to a READ ADAPTER"*. Read scope only — no mechanism, no re-derive of
+frozen artifacts, no keeper movement. Data-intake session; it does **not**
+consume the ercot-N counter (next shorthand remains **ercot-192**, as
+ercot-191 left it).
+
+**The break, re-measured from the parts rather than taken from the card.** A
+pre-RTC+B shard carries 188 columns; the quarantined parts carry 193
+(`2026-02.part0002-0027`) or 195 (`2026-03.part0000`). The 195-variant delta is
+purely additive (`AS Capability RRSPF`/`RRSFF`), so both read into one contract.
+The ten columns that leave the pre-RTC+B set fall into three classes, and the
+distinction is the adapter's whole design:
+
+* **REMOVED, no successor — `HASL`, `LASL`.** Under RTC+B the AS reservation is
+  not netted into a telemetered limit, so there is nothing to map. `HASL` is a
+  required read column of every consumer, which is why these parts crash the
+  derives (the ercot-95/97 defect class).
+* **RENAMED, lossless — `Telemetered Net Output ` → `Telemetered Net Output`.**
+  Whitespace only; `ercot123.NETOUT_COLS` already coalesces the two spellings as
+  one quantity, so the adapter serves the canonical trailing-space name and the
+  frame contract is unchanged.
+* **SUPERSEDED, redefined — the six `Ancillary Service <svc>` columns.** RTC+B
+  replaces them with `AS Awards <svc>` + `AS Capability <svc>`. Measured on the
+  boundary parts, this is *not* a rename: the legacy responsibility block is
+  **dense** (100 % non-null, explicit `0`), the RTC+B award block is **sparse**
+  (0.0–6.7 % non-null, `''` for "no award"), and `Ancillary Service RRS` has no
+  1:1 successor at all — RTC+B disaggregates RRS into PFR/UFR/FFR.
+
+**What the adapter does** (`scripts/lib/sced_rtcb_adapter.py`). Parses the parts
+into the same in-memory frame the existing readers get from `pd.read_parquet` —
+the verbatim all-string copy, empty-string curve steps, CPT stamps, coercion and
+CPT→CST left to the consumer — with two contract promises. (1) **Removed and
+superseded columns are explicitly absent, never NaN-filled**: they are not in the
+frame, and requesting one raises `ScedFormatBreakError` naming the break, with
+the superseded message naming its RTC+B successors. A NaN-filled `HASL` would be
+an invented telemetered quantity entering an identification (rule 13
+`[R-MEASURED]`), and reconstituting `Ancillary Service RRS` from three award
+columns would be a *construction*, not a read — outside D1's scope. The
+RTC+B-native columns are served under their own names for whatever session is
+authorized to use them. (2) **Every row carries `sced_format` = `rtcb-2026`**,
+so a frame that has been through the adapter is self-identifying downstream.
+Verified on the real parts: 644,022 rows across both variants, delivery span
+2025-12-05 → 2025-12-31, flag on every row, `HASL` absent.
+
+**The boundary, and why the quarantine DIRECTORY is load-bearing.** The finding
+that shaped the guards: RTC+B deliveries are 2025-12-05..31, i.e. calendar
+**2025**, so the lanes' own row filter cannot see them —
+`_delivery_year_rows(rtcb, 2025)` keeps 100 % of them, and publications 2026-02
+/2026-03 fall *inside* delivery-2025's shard-selection window
+(`_sced_source_files`, lo=2025-02..hi=2026-03). Neither the year filter nor the
+window excludes them. The **only** thing holding the line is that the parts sit
+in a subdirectory the consumers' non-recursive globs never reach. That is now
+documented at all three glob sites — `derive_ercot_sced_offer_wall._CORPUS_DIRS`
+(the selector behind the wall, faststart, steam and shoulder-span derives),
+`sced_corpus_instruments.SCED_CORPUS_DIR` and
+`derive_coal_perplant_offer.SCED_CORPUS_DIR` — plus the corpus README, and the
+adapter exposes `assert_pre_rtcb_files` / `assert_no_rtcb_rows` so a lane can
+assert the line positively instead of relying on glob shape. **Every existing
+SCED-corpus lane stops at delivery 2025-12-04.**
+
+**Tests** — `tests/curation/test_sced_rtcb_adapter.py`, 28 passing, on **real
+part excerpts** (~70 rows each at full column inventory: the 193-col part, the
+195-col part, and the last pre-RTC+B delivery day 2025-12-04 as the readable
+side; selection rule and provenance in the module docstring). They pin the
+column-inventory tables against the data itself, both variants reading into one
+contract, absence-not-NaN for every removed/superseded column, the raise paths,
+the flag on every row, and the boundary: that the delivery-year filter would
+*keep* RTC+B rows, that neither consumer's glob reaches the quarantine, and that
+the guards separate the two sides.
+
+**Fences held, and proven.** No derive re-run, no solve, no run registered, no
+matrix cell (no mechanism, no `ScenarioConfig` field). Raw bytes untouched. The
+three consumer edits are **comment-only**, proven two ways: the scoped diff
+contains no non-comment changed line, and each module's **non-comment token
+stream is byte-identical to HEAD** (compiled bytecode differs only in line
+numbers, which comments shift). `tests/curation/` scores **28 failed / 680
+passed / 35 skipped / 8 errors both before and after** the edits — the failures
+are pre-existing `FileNotFoundError`s from this container's blob-filtered clone
+(1,780 unmaterialized raw paths), none naming a touched module. A dedicated test
+also reads the same pre-RTC+B corpus through the existing lane with and without
+the quarantine subdirectory present and asserts the selected file list, the
+frame and the round-tripped parquet **bytes** are identical.
+
+**What is NOT done, deliberately.** No consumer is switched onto the adapter and
+no derive gains post-2025-12-04 coverage — D1 authorized a reader, not a lane
+extension. Reconstituting `Ancillary Service RRS` from the PFR/UFR/FFR awards,
+and deciding whether AS *capability* can stand in for the removed `HASL`
+headroom, are the two open questions any future RTC+B-era consumer must answer;
+both are constructions and both need their own authorization.
