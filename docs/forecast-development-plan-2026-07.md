@@ -57,6 +57,14 @@ This is the whole schedulable program today. Phase A is DONE when, per ISO:
    close-out) — locational siting, forward-auction timing, and anything still gated
    stays labeled, not implied-solved — and the per-ISO §2.1b gate scorecard is
    delivered for the owner's gate-open decision.
+   *(These standing disclaimers live in `readiness_limits` in the committed board seed
+   `frontend/data/forecast/program-status.json`, rendered by `forecast-status.html`;
+   the **scarcity-tail price-formation** entry — the C3c model-class limitation, up to
+   −$14/MWh (−22% of level) in a 2023-like scarcity-concentration year, ~2% of hours —
+   was added by ercot-190 2026-08-12 under the
+   `docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md` §5
+   RESOLUTIONS addendum, evidence
+   `results/calibration/ercot189_c3a_c3c_overlap.json`.)*
 
 **Phase B — DEFERRED: the golden solves (opens ONLY through §2.1b, per ISO).** The
 original deliverable, unchanged in content but unscheduled: a **golden 2026–2050 BAU

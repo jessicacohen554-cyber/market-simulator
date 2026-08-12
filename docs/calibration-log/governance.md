@@ -1358,3 +1358,54 @@ and `build_status.py` regenerates the dashboard's per-ISO status shards from tha
 this session, all six). `audit_keepers` 0 failures / 0 warnings. Eight new tests pin the rule:
 `tests/scoring/test_calibration_verdict.py::C3cStandingRuleTest`, including one that pins the
 reported-only-`co2` case directly.
+
+## 2026-08-12 — ercot-190 addendum CLOSED: the C3c scarcity-tail limitation now carries into the forecast namespace (doc-only, NO solve)
+
+**Session:** FC-DISCLAIMER-1 · **Authority:**
+`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md` RESOLUTIONS
+addendum, signed with card Q on 2026-08-12: *"the §5 `readiness_limits` price-tail
+disclaimer follow-up is **AUTHORIZED** as a named, doc-only open item for the forecast
+lane … It is not implemented by this signature."* This session implements it, and the
+item is now **CLOSED**. Doc-only, forecast namespace: **no solve, no scorer change, no
+FC gate/verdict text, no rubric edit, no backcast file, no keeper movement, no matrix
+cell.**
+
+**What the addendum was for.** Card Q §5 fact 4 recorded that the C3c limitation is
+**propagated NOWHERE in the forecast namespace** — no forecast gate, caveat or disclaimer
+carried it, and `readiness_limits` (then five entries, none price-tail) was named as its
+natural home under *every* option the card put. So a consumer reading the §2.1b board
+could not learn that the model under-forms the RT scarcity tail, though the backcast side
+has ledgered it as an accepted model-class limitation since rubric v3.1/v3.2.
+
+**Landed.** A sixth `readiness_limits` entry — *"Scarcity-tail price formation"* — in the
+committed board seed `frontend/data/forecast/program-status.json`, rendered by
+`docs/codebase-site/forecast-status.html` under "Readiness limits (documented, not bugs)":
+an LP on competitive/measured-cost offers under-forms the RT scarcity tail (accepted
+model-class limitation, C3c ledgered); measured on ERCOT 2023, a scarcity-concentration
+year carries up to **−$14/MWh (−22% of level)** annual load-weighted price bias,
+concentrated in **~2% of hours**; non-concentration years score within band. A one-line
+cross-reference was added at forecast plan §0 item 4 — the "what remains unfit is
+**named**" clause, which is that plan's disclaimers home (it has no other limits section).
+
+**Every figure is read off the committed evidence, not re-derived** —
+`results/calibration/ercot189_c3a_c3c_overlap.json`: `decomposition.sets.h_tail_181`
+contributes **$14.273/MWh** of the 2023 gap over **181 hours** (181/8760 = 2.07% of hours;
+14.273 / 64.32 = 22.2% of the bench actual `rt_lw` of $64.32), and
+`baseline_gate.guards_2024_2025` reads 2024 **+1.2% PASS** / 2025 **−8.0% PASS** — the
+"non-concentration years score within band" half of the sentence.
+
+**Scope note.** The generated namespace files (`program-status.js`, `manifest.js`,
+`registry/`, `runs/`) are gitignored and rebuilt by the Pages deploy from this seed
+(forecast plan §8), so the disclaimer reaches the live board on the next deploy with
+nothing further committed. The seed's `generated` / `sources` / `refresh` provenance block
+is deliberately untouched: this session measured nothing and refreshed no board reading,
+so the FFR-3A-3 provenance stamp still describes exactly what produced the board.
+
+**Governance.** Rule 15 `[R-DASHBOARD]`: no run produced, so nothing registers — this is a
+board-seed edit, not a registration. Rule 22 `[R-HOLDOUT]`: no year solved, scored or
+registered. Rule 25 `[R-ISO-SCOPE]`: the limitation is stated as a model-class property
+and its magnitude explicitly labelled ERCOT-2023-measured; no other ISO's evidence is
+claimed or imported. Rule 27 `[R-PUSH]`: the seed is edited in place (+4 lines); no source
+file ≥300 lines rewritten from regenerated content. Rule 28 `[R-MECH-MATRIX]`: no
+mechanism tested and no cell minted — a doc-grade governance follow-up (precedent: the
+ercot-182 / ercot-189 sittings, which touched only their card and the log).
