@@ -306,6 +306,29 @@ D-5(b)).
   `ercot_wtx_curtailment_driver` (explicit kwarg stomped by `prb_overrides`) that
   is recorded identically on both arms and is therefore A/B-neutral.
 
+### 5.5 A defect this session introduced, caught by the keeper-text auditor
+
+`gen_ercot192_attestation.py::_tail_counts` originally re-derived the C3c tail
+count as a **demand-weighted** mean price > $200. The scorer's gated quantity
+(`calibration_verdict.score_price_tail` → `ordc.hoursGt200.model`) is the count
+of hours the **MAX ZONAL** dual exceeds the threshold. The two bases disagree —
+2023 reads 58 h on the scorer's basis but 57 h (arm) / 56 h (control) on the
+demand-weighted one — so the attestations' exceptions ledger quoted a magnitude
+its own bundle's scored record contradicted.
+
+The `calibration-keeper-auditor` caught it on the keeper and repaired the arm's
+2023 entry; the **root cause** and the **control's** identical error are fixed
+here: `_tail_counts` now reproduces the scorer's basis, both attestations
+regenerate to 58/22/1 matching 58/181, 22/53, 1/31 exactly, `build_status.py
+--iso ERCOT` was re-run and `audit_keepers.py --iso ERCOT` re-passes. No
+determination moves — the ledger magnitude is documentary; the CAVEAT
+classification always came from the scorer.
+
+**Filed, not fixed (out of this lane's scope):** the demand-weighted formula was
+inherited verbatim from `scripts/gen_ercot188_attestation.py`, which still
+carries it. Any session regenerating an attestation from that script should
+re-point it at the max-zonal basis first.
+
 ---
 
 ## 6. THE DOF LEDGER — card B's standing item, discharged

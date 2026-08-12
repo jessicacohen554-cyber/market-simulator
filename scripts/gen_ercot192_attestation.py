@@ -268,7 +268,21 @@ _CARRY = (
 
 
 def _tail_counts(bundle: Path) -> dict[int, int]:
-    """Model hours > $200 per year, on the standing demand-weighted P1 basis."""
+    """Model hours > $200 per year, on the SCORER'S OWN basis.
+
+    **This must reproduce ``ordc.hoursGt200.model``**, the quantity
+    ``calibration_verdict.score_price_tail`` gates C3c on: *"count of hours the
+    LP's MAX ZONAL DUAL exceeds the per-ISO threshold"* — the energy-only P1
+    dual, maxed across zones within the hour.
+
+    Written as a demand-weighted mean at ercot-192 and CAUGHT BY THE
+    KEEPER-TEXT AUDITOR: the two bases disagree (2023 max-zonal 58 h vs
+    demand-weighted 57 h on the arm, 56 h on the control), so the attestation's
+    exceptions ledger quoted a magnitude the scored record contradicted. An
+    attestation that re-derives a gated quantity on its own basis is a second
+    source of truth for a number that already has one; it re-derives the
+    scorer's basis here, and nothing else.
+    """
     out: dict[int, int] = {}
     for year in YEARS:
         p = bundle / "hourly" / f"system_{year}.parquet"
@@ -276,9 +290,7 @@ def _tail_counts(bundle: Path) -> dict[int, int]:
             continue
         df = pd.read_parquet(p)
         df = df[(df["year"] == year) & (df["pass"] == "P1")]
-        num = (df["price"] * df["demand"]).groupby(df["hour"]).sum()
-        den = df.groupby("hour")["demand"].sum()
-        out[year] = int(((num / den) > 200.0).sum())
+        out[year] = int((df.groupby("hour")["price"].max() > 200.0).sum())
     return out
 
 
