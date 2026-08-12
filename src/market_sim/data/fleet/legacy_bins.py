@@ -826,7 +826,7 @@ def apply_coal_tranches(
         generators: The generator list aligned row-for-row with ``mc``.
         fleet_arrays: The vectorized fleet, for per-generator heat rate.
         fuel_fracs: Per-generator fuel-cost passthrough from
-            :func:`split_coal_tranches`.
+            :func:`campd_tranche_fuel_frac`.
         fuel_prices: The ``(n_gen, T)`` delivered fuel price array used to
             assemble ``mc``.
         config: Scenario configuration supplying the coal net-revenue margin

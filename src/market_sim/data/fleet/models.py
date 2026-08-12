@@ -321,7 +321,7 @@ def _pkg_ns():
     ``coal_summer_derate_ratio``, ``thermal_tranche_p25_level``,
     ``thermal_tranche_online_frac``, ``load_campd_bins``,
     ``load_fleet_from_csv``, ``fleet_to_bins``, ``bins_to_fleet``,
-    ``aggregate_fleet``, ``campd_tranche_fuel_frac``, ``split_coal_tranches``,
+    ``aggregate_fleet``, ``campd_tranche_fuel_frac``,
     ``apply_plant_emission_rates``, ``_cache_binned_fleet``, ``EIA_860_DIR``,
     ``_cc_demonstrated_peaks``, ``COAL_MUSTRUN_BY_PLANT``,
     ``apply_plant_emission_rates_v2``.

@@ -499,10 +499,6 @@ def _trace_fleet_build(iso: str, *, historic_overlay: bool = True) -> dict:
             "market_sim.data.fleet.aggregate_fleet", side_effect=fake_aggregate_fleet
         ),
         patch("market_sim.data.fleet.campd_tranche_fuel_frac", return_value=1.0),
-        patch(
-            "market_sim.data.fleet.split_coal_tranches",
-            side_effect=lambda f, c, *_a, **_k: (list(f), [1.0] * len(f)),
-        ),
         patch("market_sim.data.fleet.apply_plant_emission_rates"),
         patch.object(
             runner, "generators_to_fleet_arrays", side_effect=fake_fleet_arrays
