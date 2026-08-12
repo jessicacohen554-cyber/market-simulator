@@ -1,0 +1,794 @@
+{
+  "bundle": "miso148_basis_B",
+  "t1_dropped": [
+    "coal_tranche_1_frac",
+    "coal_tranche_1_fuel_passthrough",
+    "coal_tranche_2_frac",
+    "coal_tranche_2_fuel_passthrough",
+    "coal_tranche_3_frac",
+    "coal_tranche_3_fuel_passthrough"
+  ],
+  "prereg": "PREREG-miso154-ct-commitment-instrument-2026-08-12.md",
+  "years": {
+    "2023": {
+      "n_gen": 2929,
+      "top200_demand_gw_mean": 107.574685,
+      "run_ratio_top200_mean": 0.6379999999999999,
+      "suffix_inventory_T3": {
+        "n_distinct_suffixes": 13,
+        "distinct_suffixes": [
+          "",
+          "committed",
+          "econ",
+          "econc00",
+          "econc01",
+          "econc02",
+          "econc03",
+          "econc04",
+          "econc05",
+          "econhi",
+          "econlo",
+          "mustrun",
+          "peak"
+        ],
+        "target_class": {
+          "committed": {
+            "n": 79,
+            "cap_mw": 2935.5
+          },
+          "econc00": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc01": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc02": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc03": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc04": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc05": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econhi": {
+            "n": 121,
+            "cap_mw": 5237.7
+          },
+          "econlo": {
+            "n": 122,
+            "cap_mw": 5812.9
+          },
+          "peak": {
+            "n": 147,
+            "cap_mw": 1368.4
+          }
+        }
+      },
+      "startup_basis": {
+        "n_tranches": 733,
+        "cap_mw": 22281.793098000002,
+        "cap_weighted_startup_per_mw": 20.0,
+        "cap_weighted_measured_run_h": 8.825104361894923,
+        "cap_weighted_min_run_h": 0.0,
+        "cap_share_with_startup_and_measured_run": 0.8682542734739112,
+        "cap_share_with_startup_no_measured_run": 0.13174572652608874
+      },
+      "markup_census_T7": {
+        "cap_weighted_mean_per_mwh": 4.7387560749225495,
+        "p10": 2.380952380952381,
+        "p50": 3.3333333333333335,
+        "p90": 6.666666666666667,
+        "max": 20.0,
+        "share_of_cap_with_zero_markup": 0.0
+      },
+      "BASELINE_pricetaking_mc_base": {
+        "top200": {
+          "recon_mwh": 1542915.2622674566,
+          "keeper_mwh": 1264788.1484375,
+          "resid": 0.21990015812019634,
+          "within_bar": false
+        },
+        "annual": {
+          "recon_mwh": 19541268.631043747,
+          "keeper_mwh": 14079184.005657196,
+          "resid": 0.3879546302677638
+        },
+        "bar": 0.1
+      },
+      "L1_pricetaking_mc_bid": {
+        "top200": {
+          "recon_mwh": 1097681.791861211,
+          "keeper_mwh": 1264788.1484375,
+          "resid": -0.13212201330533474,
+          "within_bar": false
+        },
+        "annual": {
+          "recon_mwh": 12788637.343843466,
+          "keeper_mwh": 14079184.005657196,
+          "resid": -0.0916634558718156
+        },
+        "bar": 0.1
+      },
+      "L2_meritorder": {
+        "top200": {
+          "recon_mwh": 1311449.272210897,
+          "keeper_mwh": 1264788.1484375,
+          "resid": 0.03689244228849028,
+          "within_bar": true
+        },
+        "annual": {
+          "recon_mwh": 11418050.492353292,
+          "keeper_mwh": 14079184.005657196,
+          "resid": -0.18901191377530305
+        },
+        "bar": 0.1
+      },
+      "T9_p0_never": {
+        "markup": {
+          "cap_weighted_mean_per_mwh": 5.852852508437078,
+          "p10": 2.2727272727272725,
+          "p50": 3.3333333333333335,
+          "p90": 20.0,
+          "max": 20.0,
+          "share_of_cap_with_zero_markup": 0.0
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 898311.1848475459,
+            "keeper_mwh": 1264788.1484375,
+            "resid": -0.28975363505951107,
+            "within_bar": false
+          },
+          "annual": {
+            "recon_mwh": 10098840.255718358,
+            "keeper_mwh": 14079184.005657196,
+            "resid": -0.2827112528921765
+          },
+          "bar": 0.1
+        }
+      },
+      "T9_p0_always": {
+        "markup": {
+          "cap_weighted_mean_per_mwh": 3.228666533462693,
+          "p10": 0.027777777777777776,
+          "p50": 3.3333333333333335,
+          "p90": 4.761904761904762,
+          "max": 20.0,
+          "share_of_cap_with_zero_markup": 0.0
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 1172736.6929381057,
+            "keeper_mwh": 1264788.1484375,
+            "resid": -0.0727801376168122,
+            "within_bar": true
+          },
+          "annual": {
+            "recon_mwh": 14508408.167798001,
+            "keeper_mwh": 14079184.005657196,
+            "resid": 0.03048643742196547
+          },
+          "bar": 0.1
+        }
+      },
+      "T10_v3_flat_ratio": {
+        "markup": {
+          "cap_weighted_mean_per_mwh": 3.875499321093836,
+          "p10": 1.8181818181818181,
+          "p50": 2.439024390243903,
+          "p90": 5.0,
+          "max": 20.0,
+          "share_of_cap_with_zero_markup": 0.0
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 1167368.4845447987,
+            "keeper_mwh": 1264788.1484375,
+            "resid": -0.07702449142415829,
+            "within_bar": true
+          },
+          "annual": {
+            "recon_mwh": 12989884.659054603,
+            "keeper_mwh": 14079184.005657196,
+            "resid": -0.07736949429490361
+          },
+          "bar": 0.1
+        }
+      },
+      "T11_min_run_enforced": {
+        "census": {
+          "units_with_min_run": 51,
+          "runs_extended": 678
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 1097681.791861211,
+            "keeper_mwh": 1264788.1484375,
+            "resid": -0.13212201330533474,
+            "within_bar": false
+          },
+          "annual": {
+            "recon_mwh": 12788637.343843466,
+            "keeper_mwh": 14079184.005657196,
+            "resid": -0.0916634558718156
+          },
+          "bar": 0.1
+        }
+      },
+      "per_class_L1": {
+        "CC_REGULAR": {
+          "recon_mwh": 4420360.5072004385,
+          "keeper_mwh": 4570194.8359375,
+          "resid": -0.03278510744418305,
+          "within_bar": true
+        },
+        "CC_CHP": {
+          "recon_mwh": 623622.0834687997,
+          "keeper_mwh": 663231.4482421875,
+          "resid": -0.05972178321514682,
+          "within_bar": true
+        },
+        "CT_PEAKER": {
+          "recon_mwh": 1097681.791861211,
+          "keeper_mwh": 1264788.1484375,
+          "resid": -0.13212201330533474,
+          "within_bar": false
+        },
+        "CT_CHP": {
+          "recon_mwh": 146883.09774812608,
+          "keeper_mwh": 149370.86834716797,
+          "resid": -0.01665499187739748,
+          "within_bar": true
+        },
+        "ST_GAS": {
+          "recon_mwh": 1071441.5337816074,
+          "keeper_mwh": 1214163.1879882812,
+          "resid": -0.11754734093293179,
+          "within_bar": false
+        },
+        "ST_CHP": {
+          "recon_mwh": 82600.78878911876,
+          "keeper_mwh": 83038.2658996582,
+          "resid": -0.005268379653641675,
+          "within_bar": true
+        },
+        "COAL_FAMILY": {
+          "recon_mwh": 6872757.598595924,
+          "keeper_mwh": 6866786.505126953,
+          "resid": 0.000869561543017599,
+          "within_bar": true
+        }
+      }
+    },
+    "2024": {
+      "n_gen": 2923,
+      "top200_demand_gw_mean": 106.32136,
+      "run_ratio_top200_mean": 0.6525,
+      "suffix_inventory_T3": {
+        "n_distinct_suffixes": 13,
+        "distinct_suffixes": [
+          "",
+          "committed",
+          "econ",
+          "econc00",
+          "econc01",
+          "econc02",
+          "econc03",
+          "econc04",
+          "econc05",
+          "econhi",
+          "econlo",
+          "mustrun",
+          "peak"
+        ],
+        "target_class": {
+          "committed": {
+            "n": 79,
+            "cap_mw": 2935.5
+          },
+          "econc00": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc01": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc02": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc03": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc04": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc05": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econhi": {
+            "n": 121,
+            "cap_mw": 5237.7
+          },
+          "econlo": {
+            "n": 122,
+            "cap_mw": 5812.9
+          },
+          "peak": {
+            "n": 147,
+            "cap_mw": 1368.4
+          }
+        }
+      },
+      "startup_basis": {
+        "n_tranches": 733,
+        "cap_mw": 22281.793098000002,
+        "cap_weighted_startup_per_mw": 20.0,
+        "cap_weighted_measured_run_h": 8.825104361894923,
+        "cap_weighted_min_run_h": 0.0,
+        "cap_share_with_startup_and_measured_run": 0.8682542734739112,
+        "cap_share_with_startup_no_measured_run": 0.13174572652608874
+      },
+      "markup_census_T7": {
+        "cap_weighted_mean_per_mwh": 4.153286220781691,
+        "p10": 2.0833333333333335,
+        "p50": 3.3333333333333335,
+        "p90": 5.555555555555556,
+        "max": 20.0,
+        "share_of_cap_with_zero_markup": 0.0
+      },
+      "BASELINE_pricetaking_mc_base": {
+        "top200": {
+          "recon_mwh": 1860311.0365720913,
+          "keeper_mwh": 1523102.1237792969,
+          "resid": 0.22139612802592168,
+          "within_bar": false
+        },
+        "annual": {
+          "recon_mwh": 25610828.778161824,
+          "keeper_mwh": 18579111.90503645,
+          "resid": 0.37847432692513183
+        },
+        "bar": 0.1
+      },
+      "L1_pricetaking_mc_bid": {
+        "top200": {
+          "recon_mwh": 1408375.4250296333,
+          "keeper_mwh": 1523102.1237792969,
+          "resid": -0.07532436397960657,
+          "within_bar": true
+        },
+        "annual": {
+          "recon_mwh": 17552446.89085488,
+          "keeper_mwh": 18579111.90503645,
+          "resid": -0.05525910061951129
+        },
+        "bar": 0.1
+      },
+      "L2_meritorder": {
+        "top200": {
+          "recon_mwh": 1381731.1452245554,
+          "keeper_mwh": 1523102.1237792969,
+          "resid": -0.09281779359873485,
+          "within_bar": true
+        },
+        "annual": {
+          "recon_mwh": 13861811.227845706,
+          "keeper_mwh": 18579111.90503645,
+          "resid": -0.2539034535828363
+        },
+        "bar": 0.1
+      },
+      "T9_p0_never": {
+        "markup": {
+          "cap_weighted_mean_per_mwh": 5.800256767208924,
+          "p10": 2.0833333333333335,
+          "p50": 3.3333333333333335,
+          "p90": 20.0,
+          "max": 20.0,
+          "share_of_cap_with_zero_markup": 0.0
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 1155905.7534320445,
+            "keeper_mwh": 1523102.1237792969,
+            "resid": -0.2410845370211436,
+            "within_bar": false
+          },
+          "annual": {
+            "recon_mwh": 13758942.344221283,
+            "keeper_mwh": 18579111.90503645,
+            "resid": -0.25944025664157333
+          },
+          "bar": 0.1
+        }
+      },
+      "T9_p0_always": {
+        "markup": {
+          "cap_weighted_mean_per_mwh": 3.176097600768754,
+          "p10": 0.027777777777777776,
+          "p50": 3.3333333333333335,
+          "p90": 4.761904761904762,
+          "max": 20.0,
+          "share_of_cap_with_zero_markup": 0.0
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 1474216.0652940047,
+            "keeper_mwh": 1523102.1237792969,
+            "resid": -0.032096376022370976,
+            "within_bar": true
+          },
+          "annual": {
+            "recon_mwh": 19652467.678387627,
+            "keeper_mwh": 18579111.90503645,
+            "resid": 0.05777217871539979
+          },
+          "bar": 0.1
+        }
+      },
+      "T10_v3_flat_ratio": {
+        "markup": {
+          "cap_weighted_mean_per_mwh": 3.3581554777443006,
+          "p10": 1.6666666666666667,
+          "p50": 2.5,
+          "p90": 5.0,
+          "max": 20.0,
+          "share_of_cap_with_zero_markup": 0.0
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 1482488.5906282044,
+            "keeper_mwh": 1523102.1237792969,
+            "resid": -0.026665009861792776,
+            "within_bar": true
+          },
+          "annual": {
+            "recon_mwh": 17778366.991378326,
+            "keeper_mwh": 18579111.90503645,
+            "resid": -0.04309920289790905
+          },
+          "bar": 0.1
+        }
+      },
+      "T11_min_run_enforced": {
+        "census": {
+          "units_with_min_run": 51,
+          "runs_extended": 919
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 1408375.4250296333,
+            "keeper_mwh": 1523102.1237792969,
+            "resid": -0.07532436397960657,
+            "within_bar": true
+          },
+          "annual": {
+            "recon_mwh": 17552446.89085488,
+            "keeper_mwh": 18579111.90503645,
+            "resid": -0.05525910061951129
+          },
+          "bar": 0.1
+        }
+      },
+      "per_class_L1": {
+        "CC_REGULAR": {
+          "recon_mwh": 4456724.993569842,
+          "keeper_mwh": 4548049.263671875,
+          "resid": -0.0200798770654262,
+          "within_bar": true
+        },
+        "CC_CHP": {
+          "recon_mwh": 648300.0299592,
+          "keeper_mwh": 648913.2473144531,
+          "resid": -0.000944991272394258,
+          "within_bar": true
+        },
+        "CT_PEAKER": {
+          "recon_mwh": 1408375.4250296333,
+          "keeper_mwh": 1523102.1237792969,
+          "resid": -0.07532436397960657,
+          "within_bar": true
+        },
+        "CT_CHP": {
+          "recon_mwh": 152150.86571889452,
+          "keeper_mwh": 156227.45721435547,
+          "resid": -0.026093950245042817,
+          "within_bar": true
+        },
+        "ST_GAS": {
+          "recon_mwh": 875400.1499722992,
+          "keeper_mwh": 1054154.025390625,
+          "resid": -0.16957092712527197,
+          "within_bar": false
+        },
+        "ST_CHP": {
+          "recon_mwh": 102285.77042498803,
+          "keeper_mwh": 102281.10137939453,
+          "resid": 4.564915248793806e-05,
+          "within_bar": true
+        },
+        "COAL_FAMILY": {
+          "recon_mwh": 6767140.109349426,
+          "keeper_mwh": 6454260.514221191,
+          "resid": 0.04847644349632955,
+          "within_bar": true
+        }
+      }
+    },
+    "2025": {
+      "n_gen": 2923,
+      "top200_demand_gw_mean": 110.393365,
+      "run_ratio_top200_mean": 0.6844999999999999,
+      "suffix_inventory_T3": {
+        "n_distinct_suffixes": 13,
+        "distinct_suffixes": [
+          "",
+          "committed",
+          "econ",
+          "econc00",
+          "econc01",
+          "econc02",
+          "econc03",
+          "econc04",
+          "econc05",
+          "econhi",
+          "econlo",
+          "mustrun",
+          "peak"
+        ],
+        "target_class": {
+          "committed": {
+            "n": 79,
+            "cap_mw": 2935.5
+          },
+          "econc00": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc01": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc02": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc03": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc04": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econc05": {
+            "n": 44,
+            "cap_mw": 1154.5
+          },
+          "econhi": {
+            "n": 121,
+            "cap_mw": 5237.7
+          },
+          "econlo": {
+            "n": 122,
+            "cap_mw": 5812.9
+          },
+          "peak": {
+            "n": 147,
+            "cap_mw": 1368.4
+          }
+        }
+      },
+      "startup_basis": {
+        "n_tranches": 733,
+        "cap_mw": 22281.793098000002,
+        "cap_weighted_startup_per_mw": 20.0,
+        "cap_weighted_measured_run_h": 8.825104361894923,
+        "cap_weighted_min_run_h": 0.0,
+        "cap_share_with_startup_and_measured_run": 0.8682542734739112,
+        "cap_share_with_startup_no_measured_run": 0.13174572652608874
+      },
+      "markup_census_T7": {
+        "cap_weighted_mean_per_mwh": 4.273608160772155,
+        "p10": 2.0833333333333335,
+        "p50": 3.3333333333333335,
+        "p90": 6.666666666666667,
+        "max": 20.0,
+        "share_of_cap_with_zero_markup": 0.0
+      },
+      "BASELINE_pricetaking_mc_base": {
+        "top200": {
+          "recon_mwh": 2204050.9669233845,
+          "keeper_mwh": 1781491.2370605469,
+          "resid": 0.23719439145828153,
+          "within_bar": false
+        },
+        "annual": {
+          "recon_mwh": 23240369.73159004,
+          "keeper_mwh": 16647508.805394173,
+          "resid": 0.3960268772502244
+        },
+        "bar": 0.1
+      },
+      "L1_pricetaking_mc_bid": {
+        "top200": {
+          "recon_mwh": 1701891.258705208,
+          "keeper_mwh": 1781491.2370605469,
+          "resid": -0.044681655850678466,
+          "within_bar": true
+        },
+        "annual": {
+          "recon_mwh": 15770770.581183672,
+          "keeper_mwh": 16647508.805394173,
+          "resid": -0.05266483018326547
+        },
+        "bar": 0.1
+      },
+      "L2_meritorder": {
+        "top200": {
+          "recon_mwh": 1750360.3958701813,
+          "keeper_mwh": 1781491.2370605469,
+          "resid": -0.017474596867358926,
+          "within_bar": true
+        },
+        "annual": {
+          "recon_mwh": 14517272.150137506,
+          "keeper_mwh": 16647508.805394173,
+          "resid": -0.1279612871906949
+        },
+        "bar": 0.1
+      },
+      "T9_p0_never": {
+        "markup": {
+          "cap_weighted_mean_per_mwh": 5.676637579796762,
+          "p10": 2.0833333333333335,
+          "p50": 3.3333333333333335,
+          "p90": 20.0,
+          "max": 20.0,
+          "share_of_cap_with_zero_markup": 0.0
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 1449206.988095025,
+            "keeper_mwh": 1781491.2370605469,
+            "resid": -0.1865202825885293,
+            "within_bar": false
+          },
+          "annual": {
+            "recon_mwh": 13514532.814505212,
+            "keeper_mwh": 16647508.805394173,
+            "resid": -0.1881948841422931
+          },
+          "bar": 0.1
+        }
+      },
+      "T9_p0_always": {
+        "markup": {
+          "cap_weighted_mean_per_mwh": 3.0525444177607546,
+          "p10": 0.027777777777777776,
+          "p50": 3.0303030303030303,
+          "p90": 4.761904761904762,
+          "max": 20.0,
+          "share_of_cap_with_zero_markup": 0.0
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 1777115.7872223845,
+            "keeper_mwh": 1781491.2370605469,
+            "resid": -0.002456060264086325,
+            "within_bar": true
+          },
+          "annual": {
+            "recon_mwh": 17909768.686313283,
+            "keeper_mwh": 16647508.805394173,
+            "resid": 0.07582274895749622
+          },
+          "bar": 0.1
+        }
+      },
+      "T10_v3_flat_ratio": {
+        "markup": {
+          "cap_weighted_mean_per_mwh": 3.597012947554213,
+          "p10": 1.8181818181818181,
+          "p50": 2.5,
+          "p90": 5.0,
+          "max": 20.0,
+          "share_of_cap_with_zero_markup": 0.0
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 1784958.2056605653,
+            "keeper_mwh": 1781491.2370605469,
+            "resid": 0.0019461047732903247,
+            "within_bar": true
+          },
+          "annual": {
+            "recon_mwh": 15967378.608711926,
+            "keeper_mwh": 16647508.805394173,
+            "resid": -0.04085477320557829
+          },
+          "bar": 0.1
+        }
+      },
+      "T11_min_run_enforced": {
+        "census": {
+          "units_with_min_run": 51,
+          "runs_extended": 237
+        },
+        "L1": {
+          "top200": {
+            "recon_mwh": 1701891.258705208,
+            "keeper_mwh": 1781491.2370605469,
+            "resid": -0.044681655850678466,
+            "within_bar": true
+          },
+          "annual": {
+            "recon_mwh": 15770770.581183672,
+            "keeper_mwh": 16647508.805394173,
+            "resid": -0.05266483018326547
+          },
+          "bar": 0.1
+        }
+      },
+      "per_class_L1": {
+        "CC_REGULAR": {
+          "recon_mwh": 4184546.021222454,
+          "keeper_mwh": 4182009.619140625,
+          "resid": 0.0006065031678119965,
+          "within_bar": true
+        },
+        "CC_CHP": {
+          "recon_mwh": 588203.836305902,
+          "keeper_mwh": 589450.1784667969,
+          "resid": -0.002114414765530671,
+          "within_bar": true
+        },
+        "CT_PEAKER": {
+          "recon_mwh": 1701891.258705208,
+          "keeper_mwh": 1781491.2370605469,
+          "resid": -0.044681655850678466,
+          "within_bar": true
+        },
+        "CT_CHP": {
+          "recon_mwh": 145640.03609537697,
+          "keeper_mwh": 149456.22631835938,
+          "resid": -0.025533832326620303,
+          "within_bar": true
+        },
+        "ST_GAS": {
+          "recon_mwh": 815646.9208889436,
+          "keeper_mwh": 1011507.2897949219,
+          "resid": -0.1936321872140813,
+          "within_bar": false
+        },
+        "ST_CHP": {
+          "recon_mwh": 77592.66690631157,
+          "keeper_mwh": 77610.11473083496,
+          "resid": -0.0002248137962932194,
+          "within_bar": true
+        },
+        "COAL_FAMILY": {
+          "recon_mwh": 6821201.176138395,
+          "keeper_mwh": 6783398.038635254,
+          "resid": 0.005572890944602024,
+          "within_bar": true
+        }
+      }
+    }
+  }
+}
