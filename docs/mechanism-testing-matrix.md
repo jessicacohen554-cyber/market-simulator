@@ -3993,12 +3993,29 @@ loss.
 > three descriptive-only. The conclusion is identical either way because it
 > rests on 2025.
 >
-> **A GOVERNANCE ITEM FOR THE OWNER, flagged not acted on.**
-> `st_gas_mustrun_per_plant` and `chp_steam` declare their D-4 window as
-> **`h0-23`** — all 24 hours — so their off-window-binding test is **vacuous by
-> construction**. Under rule 20 `[R-FORCED-BUDGET]` ST_GAS's grounded-above-budget
-> pass (**34.1/35.8/48.4 %**) rests on clearing D-4. Not a claim the floors are
-> wrong; a claim the test discriminates nothing for them.
+> **A GOVERNANCE ITEM RAISED, INVESTIGATED ON OWNER INSTRUCTION, AND
+> **WITHDRAWN** — DO NOT RE-OPEN.** The flag was that
+> `st_gas_mustrun_per_plant` / `chp_steam` declare D-4 window **`h0-23`**, making
+> their off-window test "vacuous", while ST_GAS's rule-20 grounded-above-budget
+> pass (**34.1/35.8/48.4 %**) rests on clearing D-4. **The flag was WRONG on the
+> merits.** (a) The `D4_WINDOWS` citation
+> (`scripts/legitimacy_diagnostics.py:362-376`) asserts **self-windowing on LOAD
+> RANK**, with all-24 declared for **hour-of-day** only, on the Entergy
+> MISO-South trace (Nine Mile 98.2 %, Sabine 85.6 %, Lewis Creek 87.8 %);
+> `chp_steam` is additionally **D2-EXEMPT** and carries no C8 escalation path.
+> (b) The machinery demonstrably bites — the sibling `cc_mustrun_per_plant`
+> **CT_PEAKER** leg was probed at `h7-22` and **DROPPED for 12.8 % overnight
+> off-window binding**. (c) **Measured this session** (no LP,
+> `scripts/probes/_miso153_stgas_window.py`): floored MW rises **monotonically**
+> with system load, top/bottom decile **3.04/3.14/3.28×** (2025 deciles
+> 763→2505 MW); hour-of-day max/min only **1.56/1.60/1.60**; per-plant bind
+> frequency median **0.351/0.317/0.227** with **ZERO** rows ≥99.5 % and a max of
+> **0.982**, reproducing the cited Nine Mile figure to three digits. **The floor
+> is not an all-hours base, the self-windowing is real, ST_GAS's rule-20 pass
+> stands, no cell verdict changes and nothing is re-tuned.** (Instrument note:
+> the probe's 14.3/14.6/15.4 TWh floor LEVEL exceeds D-2's 8.22/8.61/10.735 TWh
+> forced ENERGY because they measure different objects; every conclusion above
+> is a SHAPE ratio, invariant to that difference.)
 > `results/calibration/FINDING-miso153-the-peak-setter-is-CT-2026-08-12.md`;
 > `PREREG-miso153-summer-peak-phase0-2026-08-12.md` (`857a434`, blob `c2c1df03`);
 > probe `scripts/probes/_miso153_summer_cushion.py`;
