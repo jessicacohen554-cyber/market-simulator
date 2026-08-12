@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-12T17:22:42",
+  "timestamp": "2026-08-12T17:55:20",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -41,7 +41,7 @@
   "coal_offer_margin": false,
   "cc_committed_offer_margin": true,
   "coal_peak_offer_margin": true,
-  "coal_peak_offer_yearly_level": false,
+  "coal_peak_offer_yearly_level": true,
   "coal_perplant_offer_level": true,
   "coal_perplant_offer_yearly": true,
   "nysdec_peaker_rule_availability": false,
@@ -99,7 +99,8 @@
     "coal_perplant_offer_yearly": true,
     "ercot_offer_surface_position_tail": true,
     "ercot_partial_outage_shaped_derate": true,
-    "ercot_econ_curve_top_refine": true
+    "ercot_econ_curve_top_refine": true,
+    "coal_peak_offer_yearly_level": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -380,7 +381,7 @@
     "unit_outages": "../_shared/ERCOT/unit_outages-b33eb9c5dd84.parquet",
     "unit_outages_layup": "../_shared/ERCOT/unit_outages_layup-f26daaceaab4.parquet"
   },
-  "git_sha": "bca7b16",
+  "git_sha": "96efdf4",
   "basis_sha": "8efea8967779f85acb98744fe75e1dfbf1f25c19",
   "highspy_version": "1.15.1",
   "environment": {
