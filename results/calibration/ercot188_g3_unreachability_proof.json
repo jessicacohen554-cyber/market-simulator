@@ -1,0 +1,1515 @@
+{
+ "probe": "ercot188_g3_split_coal_tranches_unreachability",
+ "authority": "docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md SsG.3",
+ "date": "2026-08-12",
+ "campd_binning_isos": [
+  "CAISO",
+  "ERCOT",
+  "MISO",
+  "NEISO",
+  "NYISO",
+  "PJM"
+ ],
+ "bin_artifact_by_iso": {
+  "ERCOT": "data/raw/reference/custom-bin-assignments.csv",
+  "CAISO": "data/raw/_processed-legacy/thermal_tranches_CAISO.csv",
+  "MISO": "data/raw/_processed-legacy/thermal_tranches_MISO.csv",
+  "NEISO": "data/raw/_processed-legacy/thermal_tranches_NEISO.csv",
+  "NYISO": "data/raw/_processed-legacy/thermal_tranches_NYISO.csv",
+  "PJM": "data/raw/_processed-legacy/thermal_tranches_PJM.csv"
+ },
+ "bin_artifact_exists": {
+  "ERCOT": true,
+  "CAISO": true,
+  "MISO": true,
+  "NEISO": true,
+  "NYISO": true,
+  "PJM": true
+ },
+ "n_committed_run_configs": 158,
+ "n_use_campd_bins_true": 158,
+ "n_registry_sidecars": 66,
+ "n_reaching_legacy_limb": 0,
+ "reaching_legacy_limb": [],
+ "verdict": "DEAD LIMB EVERYWHERE: no committed run_config or registered bundle reaches the else limb of build_dispatch_fleet; split_coal_tranches and the six coal_tranche_* scalars are unreachable for every registered bundle of all six ISOs.",
+ "run_configs": [
+  {
+   "path": "results/arm3arm/miso-2031-2035-armed-default/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/_nyiso114_baseattrib_2024/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso124_control_A/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso126_control_A/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso162_peryear_import_caps/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso164_control_lossless/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso174_control_flatfleet/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso174_measured_fleet/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso175_control/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso175_tac_intake/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso180_a0_control/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso180_a1_pre/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso180_a2_regen/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso183_b0_control/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso183_b1_hourgrain/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso184_c0_control/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso184_c1_lpbasis/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso188_d0_control/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso188_d1_micseam/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso92_repro_A/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/caiso_netrev_base/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot167_control_A/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot167_socreserve_B/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot168_control_A/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot168_yearcurves_B/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot173_control_A/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot173_reconc_B/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot176_control_A/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot178_control_A/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot178_grain_B/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot181_control_A/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot181_positiontail_B/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot185_shapedarm_B/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot185_shapedcontrol_A/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot188_topfine_arm_B/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot188_topfine_ctl_A/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot71_availability_fullspan/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot73_state_wall_fullspan/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot76_ne_import_fullspan/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ercot86_rtwall_2025_A/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ffr7b_arm1_caiso_arm/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/ffr7b_arm1_nyiso_arm/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso106_control_A/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso122_control_A/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso122_scopegate_B/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso124_dualfuel_B/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso126_steampart_A/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso126_steampart_B/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso127_onlinepmin_A/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso127_onlinepmin_B/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso132_ccmin_A/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso132_ccmin_B/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso133_taxgs_arm/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso133_taxgs_control/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso148_basis_A/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso148_basis_B/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso151_surface_A/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso151_surface_B/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso65_outage_regen/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso66_coalconduct/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso67_stgas_vlr_level/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso71_midwest-base/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso71_midwest/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso72_winter_citygate-base/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso72_winter_citygate/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso73_seam_meritcap-base/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso73_seam_meritcap/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso74_manitoba_base/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso74_manitoba_seam/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso75_manitoba_meritcap/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso75_meritcap_base/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso76_loss_base/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso76_loss_surface/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso81_phantom_outage/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso_gasshape_interpfix_base/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/miso_gasshape_interpfix_main/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/neiso86_2022_corrected/run_config.json",
+   "iso": "NEISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/neiso87_control_A/run_config.json",
+   "iso": "NEISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso125_control/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso125_seam_A/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso127_control/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso127_par_B/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso128_control/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso128_treatment/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso130_control/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso130_n11tsl/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso131_taxgs_arm/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso131_taxgs_control/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso132_cf_arm/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso132_cf_control/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso133_cod_arm/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso133_cod_control/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso83_control_2024/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/nyiso83_control_2025/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/pjm152_collapse_A/run_config.json",
+   "iso": "PJM",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/pjm158_ctl_A/run_config.json",
+   "iso": "PJM",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/pjm158_novirt_B/run_config.json",
+   "iso": "PJM",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/calibration/pjm2022_touchpoint/run_config.json",
+   "iso": "PJM",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr-sa-smoke/pjm-mid/run_config.json",
+   "iso": "PJM",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr-sa-smoke/pjm-off/run_config.json",
+   "iso": "PJM",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr3p/caiso-control/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr3p/caiso-nqc-armed/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr3v/miso-entry-diag/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4b/both/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4b/ctl/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4b/gate/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4b/wire/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4c/miso-ptcwindow-control/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4c/miso-ptcwindow-treatment/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4d/caiso-control/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4d/caiso-treated/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4e/caiso-control/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4e/caiso-treated/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4f/caiso-control/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffr4f/caiso-treated/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffrsc/txexp-off/caiso/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/ffrsc/txexp-on/caiso/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/caiso-2021-2025-t1ff-armr-fh5/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/caiso-2023-2025-t1ff-armk-fh4/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/caiso-2023-2025-t1ff-armr-fh4/run_config.json",
+   "iso": "CAISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armk-fh5/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr3q3-legacy/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr3q3-pipeline/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr5a-pipeline/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr5d-shipped/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr5d-unified/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr8a-scarcity/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr8a-unified/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr8b-base/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9a-control/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9a-storageseed/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9b-regen/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9c-control/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9c-full/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9c-pipeline/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2021-2025-t1ff-armr-fh5/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2023-2025-t1ff-armk-fh4/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/ercot-2023-2025-t1ff-armr-fh4gate/run_config.json",
+   "iso": "ERCOT",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/miso-2021-2023-t1ff-armr-ffr3vfix-after/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/miso-2021-2023-t1ff-armr-ffr3vfix-before/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/miso-2021-2025-t1ff-armk-fh5/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/miso-2021-2025-t1ff-armr-ffr5eh-armed/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/miso-2021-2025-t1ff-armr-ffr5eh-control/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/miso-2021-2025-t1ff-armr-fh5/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/miso-2023-2025-t1ff-armk-fh4/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/miso-2023-2025-t1ff-armr-fh4/run_config.json",
+   "iso": "MISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/neiso-2021-2025-t1ff-armk-fh5/run_config.json",
+   "iso": "NEISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/neiso-2021-2025-t1ff-armr-fh5/run_config.json",
+   "iso": "NEISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/neiso-2023-2025-t1ff-armk-fh4/run_config.json",
+   "iso": "NEISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/neiso-2023-2025-t1ff-armr-fh4/run_config.json",
+   "iso": "NEISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/nyiso-2021-2025-t1ff-armk-fh5/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/nyiso-2021-2025-t1ff-armr-fh5/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/nyiso-2023-2025-t1ff-armk-fh4/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/nyiso-2023-2025-t1ff-armr-fh4/run_config.json",
+   "iso": "NYISO",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/pjm-2021-2025-t1ff-armk-fh5/run_config.json",
+   "iso": "PJM",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/pjm-2021-2025-t1ff-armr-fh5/run_config.json",
+   "iso": "PJM",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/pjm-2023-2025-t1ff-armk-fh4/run_config.json",
+   "iso": "PJM",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "path": "results/hindcast/pjm-2023-2025-t1ff-armr-fh4/run_config.json",
+   "iso": "PJM",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  }
+ ],
+ "registry_sidecars": [
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-04-control-flagoff-lossless-baseline.json",
+   "id": "2026-08-04-control-flagoff-lossless-baseline",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso164_control_lossless",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-04-miso-122a-control.json",
+   "id": "2026-08-04-miso-122a-control",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso122_control_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-04-miso-122b-scope-gate.json",
+   "id": "2026-08-04-miso-122b-scope-gate",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso122_scopegate_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-04-miso-124-dualfuel-rearm.json",
+   "id": "2026-08-04-miso-124-dualfuel-rearm",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso124_dualfuel_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-04-miso-126-steampart-b.json",
+   "id": "2026-08-04-miso-126-steampart-b",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso126_steampart_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-04-miso-126-steampart-control.json",
+   "id": "2026-08-04-miso-126-steampart-control",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso126_steampart_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-04-miso-127-onlinepmin-control.json",
+   "id": "2026-08-04-miso-127-onlinepmin-control",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso127_onlinepmin_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-04-miso-127-onlinepmin.json",
+   "id": "2026-08-04-miso-127-onlinepmin",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso127_onlinepmin_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-04-nyiso-125-control.json",
+   "id": "2026-08-04-nyiso-125-control",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso125_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-04-nyiso-125-seam-envelope.json",
+   "id": "2026-08-04-nyiso-125-seam-envelope",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso125_seam_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-04-pjm-152-collapse.json",
+   "id": "2026-08-04-pjm-152-collapse",
+   "iso": "PJM",
+   "bundle": "results/calibration/pjm152_collapse_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-05-caiso-174-control-flatfleet.json",
+   "id": "2026-08-05-caiso-174-control-flatfleet",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso174_control_flatfleet",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-05-caiso-174-measured-fleet.json",
+   "id": "2026-08-05-caiso-174-measured-fleet",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso174_measured_fleet",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-05-ercot168-control.json",
+   "id": "2026-08-05-ercot168-control",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot168_control_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-05-miso-132b-cc-committed.json",
+   "id": "2026-08-05-miso-132b-cc-committed",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso132_ccmin_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-05-miso-132b-control.json",
+   "id": "2026-08-05-miso-132b-control",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso132_ccmin_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-05-nyiso-127-control.json",
+   "id": "2026-08-05-nyiso-127-control",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso127_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-05-nyiso-127-par-attribution.json",
+   "id": "2026-08-05-nyiso-127-par-attribution",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso127_par_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-05-pjm-2022-touchpoint.json",
+   "id": "2026-08-05-pjm-2022-touchpoint",
+   "iso": "PJM",
+   "bundle": "results/calibration/pjm2022_touchpoint",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-05-run167a-soc-control.json",
+   "id": "2026-08-05-run167a-soc-control",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot167_control_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-05-run167b-soc-reserve.json",
+   "id": "2026-08-05-run167b-soc-reserve",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot167_socreserve_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-05-run168b-year-curves.json",
+   "id": "2026-08-05-run168b-year-curves",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot168_yearcurves_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-caiso-175-control-tacbase.json",
+   "id": "2026-08-06-caiso-175-control-tacbase",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso175_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-caiso-175-tac-intake.json",
+   "id": "2026-08-06-caiso-175-tac-intake",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso175_tac_intake",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-caiso-177-ffr7b-arm1.json",
+   "id": "2026-08-06-caiso-177-ffr7b-arm1",
+   "iso": "CAISO",
+   "bundle": "results/calibration/ffr7b_arm1_caiso_arm",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-neiso-2022-corrected-basis.json",
+   "id": "2026-08-06-neiso-2022-corrected-basis",
+   "iso": "NEISO",
+   "bundle": "results/calibration/neiso86_2022_corrected",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-neiso-87-control.json",
+   "id": "2026-08-06-neiso-87-control",
+   "iso": "NEISO",
+   "bundle": "results/calibration/neiso87_control_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-nyiso-128-control.json",
+   "id": "2026-08-06-nyiso-128-control",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso128_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-nyiso-128-solar-basis.json",
+   "id": "2026-08-06-nyiso-128-solar-basis",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso128_treatment",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-nyiso-129-ffr7b-arm1.json",
+   "id": "2026-08-06-nyiso-129-ffr7b-arm1",
+   "iso": "NYISO",
+   "bundle": "results/calibration/ffr7b_arm1_nyiso_arm",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-nyiso-130-control.json",
+   "id": "2026-08-06-nyiso-130-control",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso130_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-nyiso-130-n11-tsl.json",
+   "id": "2026-08-06-nyiso-130-n11-tsl",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso130_n11tsl",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-pjm-158-control-virtual.json",
+   "id": "2026-08-06-pjm-158-control-virtual",
+   "iso": "PJM",
+   "bundle": "results/calibration/pjm158_ctl_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-pjm-158-novirtual-disarmed.json",
+   "id": "2026-08-06-pjm-158-novirtual-disarmed",
+   "iso": "PJM",
+   "bundle": "results/calibration/pjm158_novirt_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-run173a-reconc-control.json",
+   "id": "2026-08-06-run173a-reconc-control",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot173_control_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-06-run173b-event-cap-reconc.json",
+   "id": "2026-08-06-run173b-event-cap-reconc",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot173_reconc_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-07-caiso-180-a0-control.json",
+   "id": "2026-08-07-caiso-180-a0-control",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso180_a0_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-07-caiso-180-a1-pre.json",
+   "id": "2026-08-07-caiso-180-a1-pre",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso180_a1_pre",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-07-caiso-180-a2-regen.json",
+   "id": "2026-08-07-caiso-180-a2-regen",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso180_a2_regen",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-07-miso-133-taxgs-arm.json",
+   "id": "2026-08-07-miso-133-taxgs-arm",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso133_taxgs_arm",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-07-miso-133-taxgs-control.json",
+   "id": "2026-08-07-miso-133-taxgs-control",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso133_taxgs_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-07-nyiso-131-taxgs-arm.json",
+   "id": "2026-08-07-nyiso-131-taxgs-arm",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso131_taxgs_arm",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-07-nyiso-131-taxgs-control.json",
+   "id": "2026-08-07-nyiso-131-taxgs-control",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso131_taxgs_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-07-run176-control-offline-increment.json",
+   "id": "2026-08-07-run176-control-offline-increment",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot176_control_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-08-caiso-183-b0-control.json",
+   "id": "2026-08-08-caiso-183-b0-control",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso183_b0_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-08-caiso-183-b1-hour.json",
+   "id": "2026-08-08-caiso-183-b1-hour",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso183_b1_hourgrain",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-08-nyiso-132-cf-arm.json",
+   "id": "2026-08-08-nyiso-132-cf-arm",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso132_cf_arm",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-08-nyiso-132-cf-control.json",
+   "id": "2026-08-08-nyiso-132-cf-control",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso132_cf_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-08-nyiso-133-cod-arm.json",
+   "id": "2026-08-08-nyiso-133-cod-arm",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso133_cod_arm",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-08-nyiso-133-cod-control.json",
+   "id": "2026-08-08-nyiso-133-cod-control",
+   "iso": "NYISO",
+   "bundle": "results/calibration/nyiso133_cod_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-08-run178-continuous-grain.json",
+   "id": "2026-08-08-run178-continuous-grain",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot178_grain_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-08-run178-control.json",
+   "id": "2026-08-08-run178-control",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot178_control_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-09-caiso-184-c0-control.json",
+   "id": "2026-08-09-caiso-184-c0-control",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso184_c0_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-09-caiso-184-c1-lpbasis.json",
+   "id": "2026-08-09-caiso-184-c1-lpbasis",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso184_c1_lpbasis",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-09-caiso-188-d0-control.json",
+   "id": "2026-08-09-caiso-188-d0-control",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso188_d0_control",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-09-caiso-188-d1-micseam.json",
+   "id": "2026-08-09-caiso-188-d1-micseam",
+   "iso": "CAISO",
+   "bundle": "results/calibration/caiso188_d1_micseam",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-09-ercot185-shaped-control.json",
+   "id": "2026-08-09-ercot185-shaped-control",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot185_shapedcontrol_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-09-ercot185-shaped-partial.json",
+   "id": "2026-08-09-ercot185-shaped-partial",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot185_shapedarm_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-09-miso-148-basis-aware.json",
+   "id": "2026-08-09-miso-148-basis-aware",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso148_basis_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-09-miso-148-control.json",
+   "id": "2026-08-09-miso-148-control",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso148_basis_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-09-run181-control-positiontail-pair.json",
+   "id": "2026-08-09-run181-control-positiontail-pair",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot181_control_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-09-run181-position-tail.json",
+   "id": "2026-08-09-run181-position-tail",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot181_positiontail_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-11-miso-151-control.json",
+   "id": "2026-08-11-miso-151-control",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso151_surface_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-11-miso-151-offer-surface.json",
+   "id": "2026-08-11-miso-151-offer-surface",
+   "iso": "MISO",
+   "bundle": "results/calibration/miso151_surface_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-11-run188-arm-topfine-cliff.json",
+   "id": "2026-08-11-run188-arm-topfine-cliff",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot188_topfine_arm_B",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  },
+  {
+   "sidecar": "frontend/data/backcast/registry/2026-08-11-run188-ctl-topfine-control.json",
+   "id": "2026-08-11-run188-ctl-topfine-control",
+   "iso": "ERCOT",
+   "bundle": "results/calibration/ercot188_topfine_ctl_A",
+   "use_campd_bins": true,
+   "reaches_legacy_limb": false
+  }
+ ]
+}

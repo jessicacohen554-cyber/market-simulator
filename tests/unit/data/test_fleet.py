@@ -36,7 +36,6 @@ from market_sim.data.fleet import (
     load_retired_within_window,
 )
 from market_sim.data.floor_mechanisms import MECH_ST_GAS_MUSTRUN_PER_PLANT
-from market_sim.data.offer_curves import split_coal_tranches
 
 
 def _sample_generators() -> list[Generator]:
@@ -1254,22 +1253,31 @@ class TestLoadRetiredWithinWindow(unittest.TestCase):
 
 
 class TestCoalTranches(unittest.TestCase):
-    """Tests for the coal take-or-pay supply-curve tranche split."""
+    """Fuel-fraction discounting of coal take-or-pay tranche marginal cost.
 
-    def _coal_and_cc(self) -> list[Generator]:
+    The legacy non-CAMPD tranche SPLIT (``split_coal_tranches`` and the six
+    ``coal_tranche_*`` scalars) was deleted 2026-08-12 (rule 26 [R-DELETE],
+    ercot-188 G#3 owner ruling) — the split tests went with it. What remains
+    under test is :func:`apply_coal_tranches`'s partial-passthrough arithmetic
+    on an explicit per-generator ``fuel_fracs`` vector, the CAMPD-path
+    contract (:func:`campd_tranche_fuel_frac` produces the fractions).
+    """
+
+    def _tranche_fleet(self) -> list[Generator]:
+        coal_kwargs = dict(
+            name="COAL",
+            zone="z",
+            fuel_type="coal",
+            pmin_mw=0.0,
+            heat_rate=10.0,
+            vom=4.5,
+            emission_rate_co2=1.0,
+            eford=0.08,
+        )
         return [
-            Generator(
-                unit_id="COAL",
-                name="COAL",
-                zone="z",
-                fuel_type="coal",
-                pmax_mw=1000.0,
-                pmin_mw=400.0,
-                heat_rate=10.0,
-                vom=4.5,
-                emission_rate_co2=1.0,
-                eford=0.08,
-            ),
+            Generator(unit_id="COAL_t1", pmax_mw=300.0, **coal_kwargs),
+            Generator(unit_id="COAL_t2", pmax_mw=250.0, **coal_kwargs),
+            Generator(unit_id="COAL_t3", pmax_mw=450.0, **coal_kwargs),
             Generator(
                 unit_id="CC",
                 name="CC",
@@ -1282,38 +1290,12 @@ class TestCoalTranches(unittest.TestCase):
             ),
         ]
 
-    def test_split_produces_three_tranches_per_coal_bin(self):
-        fleet, fuel_fracs = split_coal_tranches(self._coal_and_cc(), ScenarioConfig())
-        # 3 coal tranches + 1 unchanged CC.
-        self.assertEqual(len(fleet), 4)
-        self.assertEqual(len(fuel_fracs), 4)
-
-        coal = [g for g in fleet if g.fuel_type == "coal"]
-        self.assertEqual([g.unit_id for g in coal], ["COAL_t1", "COAL_t2", "COAL_t3"])
-        # Capacity fractions 0.30 / 0.25 / 0.45 of the 1000 MW bin.
-        np.testing.assert_allclose([g.pmax_mw for g in coal], [300.0, 250.0, 450.0])
-        # Tranches carry no Pmin floor.
-        self.assertTrue(all(g.pmin_mw == 0.0 for g in coal))
-        # Fuel passthrough: T1 none, T2 partial, T3 full; CC always full.
-        np.testing.assert_allclose(fuel_fracs, [0.0, 0.35, 1.0, 1.0])
-
-    def test_non_coal_passes_through_unchanged(self):
-        fleet, fuel_fracs = split_coal_tranches(self._coal_and_cc(), ScenarioConfig())
-        cc = fleet[-1]
-        self.assertEqual(cc.unit_id, "CC")
-        self.assertEqual(cc.fuel_type, "gas_cc")
-        self.assertEqual(fuel_fracs[-1], 1.0)
-
-    def test_tranche_capacity_sums_to_original_bin(self):
-        fleet, _ = split_coal_tranches(self._coal_and_cc(), ScenarioConfig())
-        coal_total = sum(g.pmax_mw for g in fleet if g.fuel_type == "coal")
-        self.assertAlmostEqual(coal_total, 1000.0)
-
     def test_apply_coal_tranches_discounts_only_fuel(self):
         # T1 bids at VOM only; T2 keeps 35% of its fuel cost; T3 unchanged.
         # Fuel cost = heat_rate (10) x fuel_price (2) = 20 $/MWh.
         # Coal MC before tranching = fuel 20 + VOM 4.5 + carbon 30 = 54.5.
-        fleet, fuel_fracs = split_coal_tranches(self._coal_and_cc(), ScenarioConfig())
+        fleet = self._tranche_fleet()
+        fuel_fracs = [0.0, 0.35, 1.0, 1.0]
         arrays = generators_to_fleet_arrays(fleet, ["z"], hours=4)
         fuel_prices = np.array([np.full(4, 2.0)] * len(fleet))
         mc = np.array(
@@ -1334,16 +1316,6 @@ class TestCoalTranches(unittest.TestCase):
         # T3: unchanged. CC: unchanged.
         np.testing.assert_allclose(mc[2], 54.5)
         np.testing.assert_allclose(mc[3], 25.0)
-
-    def test_tranche_fractions_follow_config(self):
-        config = ScenarioConfig(
-            coal_tranche_1_frac=0.50,
-            coal_tranche_2_frac=0.20,
-            coal_tranche_3_frac=0.30,
-        )
-        fleet, _ = split_coal_tranches(self._coal_and_cc(), config)
-        coal = [g for g in fleet if g.fuel_type == "coal"]
-        np.testing.assert_allclose([g.pmax_mw for g in coal], [500.0, 200.0, 300.0])
 
 
 class TestOilBiomassFuelTypes(unittest.TestCase):

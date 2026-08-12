@@ -1476,3 +1476,61 @@ touched here (both are other lanes' cells; silent-green by narrowing the tier wa
 **Fences held:** no per-task workflow (this is the one durable tier card F scoped); no solve; no
 keeper/matrix movement; rule 27 (workflow files edited locally, pushed as on-disk bytes,
 governance-log blob verified after push).
+
+## 2026-08-12 — g3-delete: `split_coal_tranches` + the six `coal_tranche_*` scalars DELETED (ercot-188 G#3 owner ruling executed; cross-ISO hygiene, NO LP)
+
+**What.** Rule 26 `[R-DELETE]` executed on the signed ercot-188 ruling
+(`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` §G.3): the legacy
+non-CAMPD coal take-or-pay split `offer_curves.split_coal_tranches` (and its
+`_coal_tranches` helper) is deleted, together with the six registered scalars
+`coal_tranche_{1,2,3}_frac` / `coal_tranche_{1,2,3}_fuel_passthrough` — deleted,
+not zeroed, exactly as the ruling orders ("a deprecated parameter that still
+parses is a re-armable answer key").
+
+**The proof came first, as the ruling requires — every registered bundle, not just
+the six keepers.** Probe
+`scripts/probes/ercot188_g3_split_coal_tranches_unreachability.py` (committed
+evidence `results/calibration/ercot188_g3_unreachability_proof.json`): all **158**
+committed `run_config.json` under `results/` (calibration, hindcast, ffr*
+experiments) and all **66** backcast registry sidecars carry
+`use_campd_bins=True`, every ISO is in `CAMPD_BINNING_ISOS`, and each ISO's bin
+artifact exists in-repo (ERCOT curated CSV; five `thermal_tranches_<ISO>.csv`) —
+so `build_dispatch_fleet` takes the CAMPD limb everywhere and the else limb that
+held the sole `split_coal_tranches` call site is dead for the entire registered
+corpus. This generalizes miso-128 §4's dynamic MISO adjudication (fleet assembled
+twice under perturbed fractions, zero delta).
+
+**Mechanics.** The six defaults (0.30/0.00, 0.25/0.35, 0.45/1.00) move HASH-ONLY
+into `scenarios._CACHE_KEY_RETIRED_FIELDS` (the nyiso-114 `ct_*_hr_override`
+pattern) — every historical cache key and the golden forecast fixture stay
+byte-stable (pin-guard tests green) and nothing can be re-armed. The non-CAMPD
+else limb now passes coal through unsplit at full fuel cost (gas split unchanged).
+TIER_TAGS entries, the `data.fleet` facade re-export, the facade-census test
+lists, the runner mock patch, and the split-specific unit tests are removed;
+`TestCoalTranches` keeps the `apply_coal_tranches` fuel-frac arithmetic test on a
+directly-built fixture (the CAMPD-path contract). The DOF-ledger
+`coal_take_or_pay_tranches` entry retires with a closure note — **issue #1336
+(re-ground the step sizes) is CLOSED BY DELETION**. Registry hygiene:
+`frontend/data/parameters.json` / `docs/parameter-citations.md` drop their seven
+stale entries (hand-pruned; the full registry regen carries 62 unrelated backlog
+entries and was NOT ridden along). Matrix duties (rule 28): the
+`coal_takeorpay_committed` base-row def/note record the execution,
+`--fix-anchors` repairs the line-anchor drift my `scenarios.py` edit caused, and
+§5.7 of `docs/mechanism-testing-matrix.md` carries the cross-ISO record.
+`check_mechanism_matrix.py` exits 0 with zero warnings.
+
+**Fences honored.** NO solve, NO keeper movement, NO cell verdict moved, no other
+cleanup. Historical records (probe scripts ercot135/136, _miso128/129, DIAGNOSIS/
+PRECOMMIT docs, committed `run_config.json` artifacts) are untouched — the
+serialized keys in immutable run artifacts are the record of what those runs
+carried, and the canonical loaders filter to known fields. Pre-existing, unrelated
+at HEAD: `ci_refactor_guards.py` fails on `gen_caiso189_attestation.py`
+referencing `gen_caisoNNN_attestation.py` (fails identically with this session's
+changes stashed; belongs to the caiso-189 lane). Fast-tier result: **6694
+passed, 5 failed — all five reproduce byte-identically on `origin/main`**
+(verified in a worktree with main's own `src/` on `PYTHONPATH`):
+`test_ercot_thermal_as_endogenous.py::TestScreenMutualExclusion` (2),
+`test_ff_readiness_battery.py::test_config_completeness_*` (2),
+`test_cache.py::TestConfigSidecar::test_config_yaml_present_alongside_parquet`
+— environment-dependent at HEAD, not this lane's fallout; the cache-key
+round-trip reproduces CLEAN standalone against this branch's config layer.

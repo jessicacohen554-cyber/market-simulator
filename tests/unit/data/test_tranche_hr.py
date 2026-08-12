@@ -15,13 +15,11 @@ import pandas as pd
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
-    Generator,
     assemble_mc,
     bins_to_fleet,
     generators_to_fleet_arrays,
     get_emission_rate,
 )
-from market_sim.data.offer_curves import split_coal_tranches
 from market_sim.model.commitment import apply_commitment_with_coal_pin
 from market_sim.model.dispatch import solve_dispatch
 
@@ -252,25 +250,10 @@ class TestCoalPaths(unittest.TestCase):
         self.assertEqual(committed.pmin_mw, 0.0)
         self.assertEqual(econ.pmin_mw, 0.0)
 
-    def test_legacy_coal_tranches_unchanged(self):
-        config = ScenarioConfig()
-        coal = Generator(
-            unit_id="legacy_coal",
-            name="legacy coal",
-            zone="Houston",
-            fuel_type="coal",
-            pmax_mw=1000.0,
-            pmin_mw=0.0,
-            heat_rate=10.0,
-        )
-        expanded, _ = split_coal_tranches([coal], config)
-        # Three take-or-pay tranches, every one at the unmodified heat rate
-        # and with no Pmin floor -- the committed/econ split does not apply.
-        self.assertEqual(len(expanded), 3)
-        for ti, g in enumerate(expanded):
-            self.assertTrue(g.unit_id.endswith(f"_t{ti + 1}"))
-            self.assertEqual(g.heat_rate, 10.0)
-            self.assertEqual(g.pmin_mw, 0.0)
+    # test_legacy_coal_tranches_unchanged deleted 2026-08-12 with
+    # split_coal_tranches itself (rule 26 [R-DELETE], ercot-188 G#3 owner
+    # ruling): the legacy non-CAMPD coal split no longer exists — the
+    # non-CAMPD fallback passes coal through unsplit.
 
 
 if __name__ == "__main__":

@@ -60,6 +60,16 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
     "ct_committed_hr_override": None,
     "ct_econ_hr_override": None,
     "ct_peak_hr_override": None,
+    # Legacy non-CAMPD coal take-or-pay tranche sextet (identical on every
+    # registered bundle, reachable on none — split_coal_tranches lived only in
+    # build_dispatch_fleet's dead else limb; deleted 2026-08-12, ercot-188 G#3
+    # owner ruling, proof results/calibration/ercot188_g3_unreachability_proof.json).
+    "coal_tranche_1_frac": 0.30,
+    "coal_tranche_1_fuel_passthrough": 0.00,
+    "coal_tranche_2_frac": 0.25,
+    "coal_tranche_2_fuel_passthrough": 0.35,
+    "coal_tranche_3_frac": 0.45,
+    "coal_tranche_3_fuel_passthrough": 1.00,
 }
 
 # Config fields introduced after the results cache existed. ``cache_key`` omits
@@ -7005,25 +7015,16 @@ class ScenarioConfig:
     # battery capability by 1.5-2 GW. Off by default: the ERCOT/PJM
     # backcasts were calibrated against flat year-end fleets and stay
     # unchanged until recalibrated (CAISO prompt pack E2).
-    # Tier 3 (calibration) — Coal take-or-pay supply-curve tranches
-    # Each coal bin is split into three tranches modeling its take-or-pay
-    # fuel contract: a fraction of capacity at a fraction of fuel passthrough.
-    # Tranche 1 (contracted volume) bids at VOM only — its fuel is sunk;
-    # higher tranches bid progressively more of full fuel cost. The fractions
-    # need not sum to 1.0 but normally do. The take-or-pay STRUCTURE is a real
-    # coal-contract mechanism (rule #1); the specific step sizes below were
-    # calibrated to EIA-930 2023-2024 hourly ERCOT coal dispatch and eGRID
-    # 2023/2024 actuals — R6 DOCUMENT-AND-KEEP (owner-sanctioned offer-curve
-    # scope; docs/handoffs/scalar-remediation-plan-2026-07.md C-8), tracked
-    # residual-identified in the DOF ledger (open: re-ground the step sizes on
-    # EIA-923 fuel-cost-dispersion/contract-share data instead of the
-    # backcast fit; issue #1336).
-    coal_tranche_1_frac: float = 0.30  # Take-or-pay capacity fraction
-    coal_tranche_1_fuel_passthrough: float = 0.00  # VOM only — fuel sunk
-    coal_tranche_2_frac: float = 0.25  # Partially contracted
-    coal_tranche_2_fuel_passthrough: float = 0.35
-    coal_tranche_3_frac: float = 0.45  # Economic dispatch
-    coal_tranche_3_fuel_passthrough: float = 1.00  # Full fuel cost
+    # DELETED 2026-08-12 (rule 26 [R-DELETE], ercot-188 G#3 owner ruling): the
+    # six coal_tranche_{1,2,3}_{frac,fuel_passthrough} scalars — the legacy
+    # non-CAMPD coal take-or-pay step sizes, read only by the deleted
+    # offer_curves.split_coal_tranches in build_dispatch_fleet's dead else
+    # limb (every registered bundle of all six ISOs carries
+    # use_campd_bins=True; proof:
+    # results/calibration/ercot188_g3_unreachability_proof.json). Their
+    # historical defaults live on hash-only in _CACHE_KEY_RETIRED_FIELDS.
+    # This also closes the issue-#1336 / DOF-ledger re-grounding debt for the
+    # step sizes: there is nothing left to re-ground.
 
     # Tier 3 (calibration) — CAMPD coal pricing. Plant-specific coal
     # delivered fuel cost is a per-year trajectory built in fuel.py
@@ -13067,12 +13068,6 @@ TIER_TAGS: dict[str, int] = {
     "caiso_storage_shape_anchor": 1,
     "caiso_charge_allocation_schedule": 1,
     "cod_ramp_enabled": 3,
-    "coal_tranche_1_frac": 3,
-    "coal_tranche_1_fuel_passthrough": 3,
-    "coal_tranche_2_frac": 3,
-    "coal_tranche_2_fuel_passthrough": 3,
-    "coal_tranche_3_frac": 3,
-    "coal_tranche_3_fuel_passthrough": 3,
     "coal_prb_contract_passthrough": 3,
     "coal_prb_passthrough": 3,
     "coal_prb_passthrough_sigmoid": 3,
