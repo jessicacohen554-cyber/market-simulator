@@ -1,6 +1,0 @@
-miso-83 gas-offer net-revenue margin A/B (2026-07-23) — REJECTED.
-BASE arm gas_offer_margin=off (reproduces miso-81-phantom-outage keeper).
-MARGIN arm gas_offer_margin=on, anchor 3.0492 $/MMBtu (resolved internally).
-C3b (dur-NRMSE) BASE->MARGIN: 2023 0.6009->0.6033, 2024 0.6243->0.6293, 2025 1.0634->1.0737 — worse every year.
-Mechanism stays default-off; no tuning (pre-registered refutation, rule 1).
-See docs/calibration-log/miso.md miso-83.
