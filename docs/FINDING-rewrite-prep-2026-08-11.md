@@ -463,11 +463,49 @@ require the full untrack-`data/raw` rewrite this finding recommends against, and
 it never rewrites a blob that is live at tip. The NO-GO in §8 stands for the
 wholesale rewrite; this narrower tool is a different, smaller proposition.
 
-Two preconditions still bind before anyone dispatches it: it needs the
-`HISTORY_REWRITE_PAT` secret, and **§8 precondition 1 is unchanged** — the
-`cite/*` tags still do not exist on the remote (0 at time of writing), so the tag
-verification added here currently verifies an empty set. It protects the record
-only once the tags are published.
+### 10.1 The tag check alone was not enough — it verified an empty set
+
+The fix above protects *tags*. **Zero `cite/*` tags are published**, so as first
+written it verified an empty set: the workflow would still have been free to
+prune the very commits the evidence record cites. And publishing the tags is not
+available to an agent lane — beyond the four transports in §5.2, the MCP GitHub
+server was checked and exposes **no tag- or ref-creation tool at all**
+(`create_branch` only branches from a branch tip, so it cannot pin 104 historical
+commits).
+
+So the protection was made **independent of whether any tag exists**, using the
+one artifact that is already committed and therefore always present:
+`docs/governance/citation-tags.json`.
+
+- **Protect step** — reads the manifest from `main` and records the
+  author/email/date/subject identity of all 104 load-bearing commits.
+- **Verify step** — resolves each through filter-repo's `commit-map`. Mapping to
+  all-zeros means *pruned*, which **fails the run before any push**; otherwise the
+  new commit's identity must match. Absent from the map means untouched.
+- It also writes **`citation-commit-map.txt`**, the old→new translation for the
+  load-bearing set — which discharges §8 precondition 3 in the only form that
+  survives the runner, and is the sole artifact that can turn a pre-rewrite
+  citation into a post-rewrite SHA.
+
+Verified on a synthetic repo **with zero tags present**
+(`scratchpad/t5_manifest.sh`), a load-bearing data-intake PR merge named in the
+manifest:
+
+| Configuration | Result |
+|---|---|
+| Pre-fix workflow | **DETECTED — load-bearing commit pruned; run aborts before push** |
+| Patched workflow | **PASS — survives with identity intact** |
+
+Note what the two halves now do. The **manifest** check is the safety net: it
+cannot make a citation resolve, but it guarantees no cited commit is silently
+destroyed, and it works today. The **tags** remain the only thing that makes a
+citation *resolvable by name* after a rewrite — so §8 precondition 1 still binds
+for the full rewrite, and `citation-tags.json` is now load-bearing for this
+workflow: deleting or emptying it silently removes the protection (the step warns,
+it does not fail).
+
+One precondition remains before anyone dispatches this workflow: the
+`HISTORY_REWRITE_PAT` secret.
 
 ---
 

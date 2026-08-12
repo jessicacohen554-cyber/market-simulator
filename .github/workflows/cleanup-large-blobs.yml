@@ -214,10 +214,50 @@ jobs:
           done
           echo "Recorded $tag_count tag identities"
 
+          # ---- Load-bearing commits, from the COMMITTED citation manifest ----
+          # The tag check above only protects tags that actually exist. Right now
+          # ZERO cite/* tags are published (the agent lane that computed them is
+          # refused on refs/tags/*, HTTP 403), so on its own that check verifies
+          # an empty set and this workflow would be free to prune the very commits
+          # the evidence record cites.
+          #
+          # docs/governance/citation-tags.json is committed, so it is available
+          # here regardless. It names every commit that carries a reproduction
+          # pin, a governance determination, a rule-28 matrix evidence citation,
+          # a named incident or a byte-identity proof. Record their identities
+          # now and re-check them after the strip via filter-repo's commit-map.
+          # This is the protection that does NOT depend on the tags existing.
+          CITED_HASHES=$(mktemp)
+          cited_count=0; cited_absent=0
+          if git cat-file -e "refs/heads/${DEFAULT_BRANCH}:docs/governance/citation-tags.json" 2>/dev/null; then
+            echo ""
+            echo "=== Recording load-bearing commits from the citation manifest ==="
+            git show "refs/heads/${DEFAULT_BRANCH}:docs/governance/citation-tags.json" \
+              > /tmp/citation-tags.json
+            while read -r oid; do
+              [ -z "$oid" ] && continue
+              if ! git cat-file -e "${oid}^{commit}" 2>/dev/null; then
+                echo "  WARN  $oid — named in the manifest but absent from this clone"
+                cited_absent=$((cited_absent + 1))
+                continue
+              fi
+              identity=$(git log -1 --format='%an|%ae|%ad|%s' --date=iso "$oid" \
+                | sha256sum | awk '{print $1}')
+              echo "$oid $identity" >> "$CITED_HASHES"
+              cited_count=$((cited_count + 1))
+            done < <(python3 -c "import json;[print(e['oid']) for e in json.load(open('/tmp/citation-tags.json'))]")
+            echo "Recorded $cited_count load-bearing commit identities ($cited_absent absent)"
+          else
+            echo ""
+            echo "::warning::No docs/governance/citation-tags.json on ${DEFAULT_BRANCH};"
+            echo "  load-bearing commits will NOT be protected beyond published tags."
+          fi
+
           echo "manifest_dir=$MANIFEST_DIR" >> "$GITHUB_OUTPUT"
           echo "protected_blobs=$PROTECTED_BLOBS" >> "$GITHUB_OUTPUT"
           echo "branch_hashes=$BRANCH_HASHES" >> "$GITHUB_OUTPUT"
           echo "tag_hashes=$TAG_HASHES" >> "$GITHUB_OUTPUT"
+          echo "cited_hashes=$CITED_HASHES" >> "$GITHUB_OUTPUT"
 
           echo ""
           echo "--- Live files in scope (${DEFAULT_BRANCH}) ---"
@@ -438,6 +478,7 @@ jobs:
           MANIFEST_DIR="${{ steps.protect.outputs.manifest_dir }}"
           BRANCH_HASHES="${{ steps.protect.outputs.branch_hashes }}"
           TAG_HASHES="${{ steps.protect.outputs.tag_hashes }}"
+          CITED_HASHES="${{ steps.protect.outputs.cited_hashes }}"
           IN_SCOPE_RE="^${SCOPE_REGEX}"
 
           echo "=== Verifying manifests ==="
@@ -523,6 +564,53 @@ jobs:
             fi
           done < "$TAG_HASHES"
           echo "  $tags_checked tag(s) checked"
+
+          echo ""
+          echo "=== Verifying load-bearing commits (citation manifest) ==="
+          COMMIT_MAP="$(git rev-parse --git-dir)/filter-repo/commit-map"
+          ZERO="0000000000000000000000000000000000000000"
+          CITE_TRANSLATION="$GITHUB_WORKSPACE/citation-commit-map.txt"
+          if [ ! -s "$CITED_HASHES" ]; then
+            echo "  (none recorded — see the protect step's warning)"
+          elif [ ! -f "$COMMIT_MAP" ]; then
+            echo "  FAIL  filter-repo wrote no commit-map at $COMMIT_MAP"
+            failures=$((failures + 1))
+          else
+            echo "# old_sha new_sha  (load-bearing commits, this rewrite)" > "$CITE_TRANSLATION"
+            cited_ok=0
+            while IFS=' ' read -r oid identity_hash; do
+              [ -z "$oid" ] && continue
+              new=$(awk -v o="$oid" '$1 == o {print $2; exit}' "$COMMIT_MAP")
+              # Absent from the map means filter-repo left the commit untouched.
+              [ -z "$new" ] && new="$oid"
+
+              if [ "$new" = "$ZERO" ]; then
+                # The §3.2/§3.3 failure mode, caught on the commit that matters.
+                echo "  FAIL  $oid — PRUNED by this rewrite, but it is cited as evidence"
+                failures=$((failures + 1))
+                continue
+              fi
+              if ! git cat-file -e "${new}^{commit}" 2>/dev/null; then
+                echo "  FAIL  $oid — maps to $new, which does not exist"
+                failures=$((failures + 1))
+                continue
+              fi
+              actual=$(git log -1 --format='%an|%ae|%ad|%s' --date=iso "$new" \
+                | sha256sum | awk '{print $1}')
+              if [ "$identity_hash" != "$actual" ]; then
+                echo "  FAIL  $oid — maps to $new, which is a DIFFERENT commit"
+                echo "        now: $(git log -1 --format='%h %ad %s' --date=short "$new")"
+                failures=$((failures + 1))
+                continue
+              fi
+              echo "$oid $new" >> "$CITE_TRANSLATION"
+              cited_ok=$((cited_ok + 1))
+            done < "$CITED_HASHES"
+            echo "  $cited_ok load-bearing commit(s) survived with identity intact"
+            echo "  old->new translation written to $CITE_TRANSLATION"
+            echo "  COMMIT THIS FILE after the run: it is the only artifact that"
+            echo "  can translate a pre-rewrite citation into a post-rewrite SHA."
+          fi
 
           echo ""
           if [ "$failures" -gt 0 ]; then

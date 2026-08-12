@@ -68,7 +68,17 @@ load-bearing under these criteria; the other **456** are narrative asides.
 
 `docs/governance/citation-tags.json` is the machine-readable tag set — one entry
 per commit with its full OID, proposed slug, LB reasons, and every citing
-file:line. Regenerate the underlying inventory with:
+file:line.
+
+> **This file is load-bearing — do not delete or empty it.**
+> `.github/workflows/cleanup-large-blobs.yml` reads it to protect every
+> load-bearing commit during a history rewrite, resolving each through
+> filter-repo's `commit-map` and **failing the run before any push** if one was
+> pruned. That protection works with zero tags published, which is the current
+> state. If the file goes missing the workflow only *warns*, so its absence
+> silently removes the safety net.
+
+Regenerate the underlying inventory with:
 
 ```
 python3 scripts/audit_citation_tokens.py
