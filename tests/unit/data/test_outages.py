@@ -1229,12 +1229,14 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
 
         real_xw = _o.ERCOT_DAM_PLANT_CROSSWALK_CSV
         try:
-            _o.ercot_thermal_dam_availability_plant_series.cache_clear()
+            # ercot-191: the cache lives on the shared _ercot_dam_plant_frames
+            # builder (frac + covered-rating series, ruling #10).
+            _o._ercot_dam_plant_frames.cache_clear()
             _o.ERCOT_DAM_PLANT_CROSSWALK_CSV = real_xw.parent / "does-not-exist.csv"
             self.assertEqual(_o.ercot_thermal_dam_availability_plant_series(2023), {})
         finally:
             _o.ERCOT_DAM_PLANT_CROSSWALK_CSV = real_xw
-            _o.ercot_thermal_dam_availability_plant_series.cache_clear()
+            _o._ercot_dam_plant_frames.cache_clear()
 
     def test_zeroed_tranches_stay_zero_and_cap_holds(self):
         """The rescale is multiplicative (zeros preserved) and caps at 1.0."""

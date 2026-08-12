@@ -1258,6 +1258,72 @@ ERCOT_DAM_PLANT_CROSSWALK_CSV: Path = REFERENCE_DIR / "ercot-dam-plant-crosswalk
 
 
 @lru_cache(maxsize=None)
+def _ercot_dam_plant_frames(
+    year: int, hours: int = HOURS_PER_YEAR
+) -> tuple[dict[int, np.ndarray], dict[int, np.ndarray]]:
+    """Shared builder for the plant-grain fraction AND covered-rating series.
+
+    Returns ``(frac, rating)`` — both keyed by EIA ``plant_code`` over the
+    ``accepted=1`` crosswalk rows: ``frac[pc][h]`` = Σ live / Σ rating over the
+    plant's mapped sites at that delivery hour, ``rating[pc][h]`` = that same
+    Σ rating (the plant's MEASURED covered MW at the hour — the ruling-#10
+    coverage denominator, PRECOMMIT-ercot191 §1d). One file read serves both
+    consumers; both dicts are empty under exactly the conditions the public
+    fraction loader documents.
+    """
+    if not (
+        ERCOT_THERMAL_DAM_AVAILABILITY_SITE_HOURLY.exists()
+        and ERCOT_DAM_PLANT_CROSSWALK_CSV.exists()
+    ):
+        return {}, {}
+    xw = pd.read_csv(ERCOT_DAM_PLANT_CROSSWALK_CSV)
+    xw = xw[xw["accepted"] == 1][["site", "plant_code"]]
+    if xw.empty:
+        return {}, {}
+    site2plant = {str(s): int(p) for s, p in zip(xw["site"], xw["plant_code"])}
+
+    sh = pd.read_parquet(
+        ERCOT_THERMAL_DAM_AVAILABILITY_SITE_HOURLY,
+        columns=["date", "site", "he", "live_mw", "rating_mw"],
+    )
+    sh = sh[sh["site"].isin(site2plant)].copy()
+    if sh.empty:
+        return {}, {}
+    sh["date"] = pd.to_datetime(sh["date"])
+    sh = sh[sh["date"].dt.year == int(year)]
+    if sh.empty:
+        return {}, {}
+    sh["plant_code"] = sh["site"].map(site2plant).astype(int)
+    # One crosswalked plant may aggregate several DAM sites (physical trains):
+    # sum live + rating over its mapped sites at each (date, HE) before dividing.
+    agg = sh.groupby(["plant_code", "date", "he"], as_index=False)[
+        ["live_mw", "rating_mw"]
+    ].sum()
+    agg["frac"] = np.where(
+        agg["rating_mw"] > 0.0,
+        np.clip(agg["live_mw"] / agg["rating_mw"], 0.0, 1.0),
+        np.nan,
+    )
+    frac: dict[int, np.ndarray] = {}
+    rating: dict[int, np.ndarray] = {}
+    for r in agg.itertuples(index=False):
+        mo, dy = int(r.date.month), int(r.date.day)
+        if mo == 2 and dy == 29:
+            continue  # non-leap model clock (ERCOT-54 convention)
+        he = int(r.he)
+        if he < 1 or he > 24:
+            continue
+        h = _hour_of_year(mo, dy, he - 1)
+        if h >= hours:
+            continue
+        pc = int(r.plant_code)
+        arr = frac.setdefault(pc, np.full(hours, np.nan))
+        arr[h] = float(r.frac)
+        rarr = rating.setdefault(pc, np.full(hours, np.nan))
+        rarr[h] = float(r.rating_mw)
+    return frac, rating
+
+
 def ercot_thermal_dam_availability_plant_series(
     year: int, hours: int = HOURS_PER_YEAR
 ) -> dict[int, np.ndarray]:
@@ -1273,53 +1339,23 @@ def ercot_thermal_dam_availability_plant_series(
     the crosswalk is absent, has no accepted rows, or the year has no rows — so
     callers degrade to the class-hour grain unchanged.
     """
-    if not (
-        ERCOT_THERMAL_DAM_AVAILABILITY_SITE_HOURLY.exists()
-        and ERCOT_DAM_PLANT_CROSSWALK_CSV.exists()
-    ):
-        return {}
-    xw = pd.read_csv(ERCOT_DAM_PLANT_CROSSWALK_CSV)
-    xw = xw[xw["accepted"] == 1][["site", "plant_code"]]
-    if xw.empty:
-        return {}
-    site2plant = {str(s): int(p) for s, p in zip(xw["site"], xw["plant_code"])}
+    return _ercot_dam_plant_frames(year, hours)[0]
 
-    sh = pd.read_parquet(
-        ERCOT_THERMAL_DAM_AVAILABILITY_SITE_HOURLY,
-        columns=["date", "site", "he", "live_mw", "rating_mw"],
-    )
-    sh = sh[sh["site"].isin(site2plant)].copy()
-    if sh.empty:
-        return {}
-    sh["date"] = pd.to_datetime(sh["date"])
-    sh = sh[sh["date"].dt.year == int(year)]
-    if sh.empty:
-        return {}
-    sh["plant_code"] = sh["site"].map(site2plant).astype(int)
-    # One crosswalked plant may aggregate several DAM sites (physical trains):
-    # sum live + rating over its mapped sites at each (date, HE) before dividing.
-    agg = sh.groupby(["plant_code", "date", "he"], as_index=False)[
-        ["live_mw", "rating_mw"]
-    ].sum()
-    agg["frac"] = np.where(
-        agg["rating_mw"] > 0.0,
-        np.clip(agg["live_mw"] / agg["rating_mw"], 0.0, 1.0),
-        np.nan,
-    )
-    out: dict[int, np.ndarray] = {}
-    for r in agg.itertuples(index=False):
-        mo, dy = int(r.date.month), int(r.date.day)
-        if mo == 2 and dy == 29:
-            continue  # non-leap model clock (ERCOT-54 convention)
-        he = int(r.he)
-        if he < 1 or he > 24:
-            continue
-        h = _hour_of_year(mo, dy, he - 1)
-        if h >= hours:
-            continue
-        arr = out.setdefault(int(r.plant_code), np.full(hours, np.nan))
-        arr[h] = float(r.frac)
-    return out
+
+def ercot_thermal_dam_availability_plant_rating_series(
+    year: int, hours: int = HOURS_PER_YEAR
+) -> dict[int, np.ndarray]:
+    """Return ``{plant_code: (hours,) covered DAM rating MW}`` (ruling #10).
+
+    The Σ ``rating_mw`` over a crosswalked plant's accepted sites with rows at
+    each hour — the MEASURED share of the plant the DAM disclosure actually
+    covers. The plant pin's REMOVE direction dilutes its target to this
+    coverage so an accepted-subset outage cannot drag the plant's unmeasured
+    remainder (ercot-149 §6.3, V H Braunig; signature A1,
+    PRECOMMIT-ercot191 §1d). Same keys/NaN semantics as
+    :func:`ercot_thermal_dam_availability_plant_series`.
+    """
+    return _ercot_dam_plant_frames(year, hours)[1]
 
 
 # ERCOT CAMPD-blind per-plant availability (EIA-923 zero-month outage windows;
