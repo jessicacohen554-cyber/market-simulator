@@ -220,7 +220,91 @@ per-year precedent):
 
 ## 5. THE A/B
 
-*(filled after the solves — see §5.1)*
+Both arms are the run191 keeper recipe replayed through the sanctioned
+`scripts/replay_keeper.py` channel (`build_kwargs` off the committed
+`meta.json`), full span `--year 2023 2024 2025`, years sequential inside each
+invocation and the two invocations run **one at a time** (rule 12 — a per-plant
+ERCOT year peaked at 12.7 GB RSS on this 15 GB box). Single delta:
+`--set coal_peak_offer_yearly_level=true`.
+
+* control `results/calibration/ercot192_ctl_A` → `2026-08-12-run192-ctl-coal-peak`
+* arm `results/calibration/ercot192_arm_B` → `2026-08-12-run192-arm-coal-peak`
+
+**Mechanism verified live before anything was scored** (the ercot-89 §4a check),
+from the arm's own solve log:
+
+```
+coal peak-tranche offer YEAR level (ercot-192, year 2023): 35.1989 -> 71.3378 $/MWh
+    (slope and shared anchor unchanged)
+coal peak-tranche offer margin: 10 _peak tranche(s) repriced at level 71.3378 $/MWh
+    / gas slope 10.4100 MMBtu/MWh / shared gas anchor 2.2494 $/MMBtu
+```
+
+### 5.1 The pre-registered gates
+
+| gate | kind | result |
+|---|---|---|
+| **G-BIT** | KILL | **PASS** — 2024 and 2025 **byte-identical** A→B: all 12 hourly-sidecar sha256s match and the per-year price/demand aggregates are equal to the last digit. |
+| **G-COAL148** | KILL (carried live, D2 lineage) | **PASS** — max rise **0.0 TWh** against the 0.5 TWh bar (2023 **−0.0033**, 2024 0.0, 2025 0.0). For scale, the ercot-173 rejected blanket arm ran +0.98/+1.95/+2.73. |
+| **G-SHED** | KILL | **PASS** — 4/1/0 → 4/1/0 shed hours, slack MWh identical to the milli-unit in every year; no new shed year. |
+| **G-DOF** | KILL | **PASS** — zero fitted scalars; `n_residual` **6, unchanged**. |
+| **G-OWNER** | report + escalate | **no escalation** — C3a-2024 −0.8 % PASS, C3b-2024 0.135, C3a-2025 −7.5 %; all three are bit-identical to control by G-BIT. |
+| **G-DET** | report | NOT-YET, fail set {C3a-2023, C3b-2023} — **UNCHANGED**; C3c the single ledgered CAVEAT ×3. |
+
+Legitimacy diagnostics are structurally identical across run191, control and arm:
+D1/D2/D5/D9/D10 pass, D4 carries the **pre-existing** `reliability_floor ×
+CT_PEAKER` h14-21 failure on all three. **The arm introduces no new legitimacy
+failure.**
+
+### 5.2 The residual moves — reported at full magnitude, never the basis
+
+Per §0 and card Q ruling Q-B (final at ercot-191), these were **not targeted**,
+are **not a gate**, and are **not the promotion basis**. No C3a-2023 improvement
+is claimed.
+
+| metric | control | arm |
+|---|---|---|
+| C3a-2023 | −33.7 % ($42.63 vs actual $64.32) | **−33.2 %** ($42.97) |
+| C3a-2024 | −0.8 % PASS ($30.74 vs $30.99) | −0.8 % PASS (bit-identical) |
+| C3a-2025 | −7.5 % PASS ($33.57 vs $36.29) | −7.5 % PASS (bit-identical) |
+| C3b-2023 (NRMSE) | 0.610 | **0.604** |
+| C3b-2024 / C3b-2025 | 0.135 / 0.096 | 0.135 / 0.096 (bit-identical) |
+| C3c tail h > $200 | 58/181, 22/53, 1/31 | 58/181, 22/53, 1/31 (unchanged) |
+| determination | NOT-YET {C3a-2023, C3b-2023} | NOT-YET {C3a-2023, C3b-2023} |
+| grade summary | scored 8, target 5, fails 2, ledgered 1 | identical |
+
+**LOYO (rule 22).** Structurally N/A: one measured constant applied to one year,
+with 2024 and 2025 **bit-identical** by G-BIT — which *is* the held-out evidence,
+because the change cannot buy in-sample gain anywhere but 2023. The per-year
+guard table above stands in its place (the ercot-173 / ercot-188 precedent).
+
+### 5.3 Adjudication against the pre-registered promotion rule (§7)
+
+The rule was fixed before any residual was seen and does not read one:
+
+1. Phase 0 returns **REFUTED** on limb C under G-NEUT + G-BOUND + G-WINDOW — ✅
+2. every **KILL** gate passes (G-BIT, G-COAL148, G-SHED, G-DOF) — ✅
+3. G-OWNER's per-year guards do not escalate — ✅
+
+**⇒ THE KEEPER MOVES to `2026-08-12-run192-arm-coal-peak`,** direction-blind,
+on the standing structural standard (rules 1 `[R-STRUCT]` / 14 `[R-ACCURATE]`):
+the prior keeper applied to 2023 a level its own instrument, on 2023's own
+disclosure, puts at 14.42 band-widths away. ERCOT holds no `complete` and no
+`final` marker, so no `calibration-complete.json` re-key applies (rule 22 /
+D-5(b)).
+
+### 5.4 Carried limitations
+
+* **Inherited, unexpired (ercot-188/E2):** `ercot_econ_curve_top_refine` writes
+  heat rates into the P0 objective, so the offer-surface family's **P0
+  bit-identity proof stays FORFEITED** on this keeper.
+* **This lane's own:** the 2023 level is identified on **one year**, so it has no
+  within-2023 dispersion band of its own; the ±$2.5062 band quoted throughout is
+  the 2024/25 identification's, used only to size the deviation.
+* **Pre-existing, unrelated:** the D-4 `reliability_floor × CT_PEAKER` h14-21
+  off-window failure, and a channel-conflict warning on
+  `ercot_wtx_curtailment_driver` (explicit kwarg stomped by `prb_overrides`) that
+  is recorded identically on both arms and is therefore A/B-neutral.
 
 ---
 
