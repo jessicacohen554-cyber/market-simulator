@@ -115,6 +115,35 @@ Also verified: `score_crossover`, `register_hindcast`, `register_forecast_run`,
    duplicate of the prereg commit with no PR. One `git push origin --delete
    tmp-transport-probe-armk` from a working client removes it.
 
+4. **`regenerate_clean.py` reported `1/50 datatype(s) failed`, and WHICH one is
+   not recoverable from this session's artifacts.** The prereq was run as
+   `regenerate_clean.py 2>&1 | tail -40`, so only the last 40 lines were ever
+   written and the `[fail]` line was discarded at the pipe. Stated plainly
+   because it is a gap in this session's record, not a resolved item.
+
+   **What bounds it.** All 50 known datatypes have non-empty clean output and no
+   clean directory is empty, so nothing failed before writing. The only three
+   datatypes with no clean directory at all (`benchmark-corridor`,
+   `dam-public-bids`, `reserve-requirements`) were each re-run individually and
+   all three exit **green** — they are documented no-raw-rows skips, not the
+   failure. The failing datatype therefore wrote output and returned non-zero
+   afterwards, most likely one ISO inside a per-ISO loop.
+
+   **Why it did not reach this arm.** The solve resolved every input it needed
+   and would have failed loudly otherwise: `check_clean_partitions` raises
+   `DegradedInputError` for an armed flag whose partition is absent, and neither
+   guarded flag (`capacity_deliverability_limits`, `hydro_ror_split`) is armed
+   here. All four years solved, all supported metrics scored, and 12 of 14
+   invariants pass with the two FAILs matching the Arm R sibling exactly — I7 to
+   the megawatt. A full re-run with an untruncated log was launched to identify
+   it; if this handoff carries no follow-up line, that re-run did not finish
+   inside the session.
+
+   **Process fix for the next solve lane: never pipe `regenerate_clean.py`
+   through `tail`.** Redirect the whole log to a file and grep it — the summary
+   line reports a failure count without naming the datatype, so the naming line
+   is the only record there is.
+
 ## 7. Governance close-out
 
 - **Rule 22.** Solve years `{2021, 2023, 2024, 2025}`; 2021 unscored seed, 2022
