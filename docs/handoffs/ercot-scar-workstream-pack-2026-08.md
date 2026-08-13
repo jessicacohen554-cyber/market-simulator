@@ -11,10 +11,12 @@
 
 ---
 
-## §0 STATE BOARD — cycle 1, 2026-08-13
+## §0 STATE BOARD — cycle 2, 2026-08-13
 
-**Recorded HEAD (origin/main): `cfb8127`** (merge of PR #3912; board seeded at
-`016b659` and updated in-cycle — see A2).
+**Recorded HEAD (origin/main): `5b05f84`** (merge of PR #3913 — the OWNER
+merged this pack's cycle-1 seed commit `4035ac7` to main; main's pack copy
+therefore lags this branch by the close-out commit `6c7c005` + this cycle's
+commit. The branch remains the live copy; merge again whenever convenient.)
 
 ### Signed rulings in force (the governance this workstream enforces)
 
@@ -46,7 +48,8 @@
 | **L-SCAR-SCREEN-2** (branch `claude/l-scar-screen-2-implement-lo897d`, PR #3912) | **STOPPED AT V0, per charter — V0 FAIL.** Intake succeeded (SOM anchors 3→7 vintages, 2019–2025, schema-validated, source_doc+source_page; 2018 SOM absent from Potomac library and outside working span). V0: best of eight candidate forms = 4/14 folds vs required 14/14; model-free identifiability bound proves NO function of any candidate tightness variable can pass (near-tied pairs carry $94–$330 irreducible error vs $15 tolerance); ex-Uri WORSE (2/14); monitor's own attribution: the 2019–2025 rent series is a REGIME series (Uri/$9k SWCAP; ORDC changes; ECRS = 50 % of 2023 net revenue), not a tightness series. Correctly built NOTHING: no ScenarioConfig field, no matrix row (28c not triggered — no field), no A/B, no registration, no promotion; screen-revenue movement $0.00/kW-yr, stated. | Duties verified cycle 1 against the branch: FINDING (`docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`) reports at full magnitude with Q-B/S1 citations; log entry present (+76 lines `docs/calibration-log/ercot.md`); rule 22 clean (data intake only, no year solved/scored — the stale quarantine notes in the som README/schema corrected to the 2026-08-06 clarification); deriver `scripts/data/derive_screen_scarcity_rent.py` committed as the standing re-derive test (rule 23 trigger = new SOM/telemetry vintage). LANDED on main at `cfb8127` (worker self-landed; content verified — A2). **Lane adjudication → OWNER (decision bullets, cycle-1 report).** |
 | **SOC-REGATE-EXEC** (branch `claude/ercot-193-c3b-ceiling-2xu9lg`, PRs #3906 + #3911, MERGED) | **LANDED — RG-PASS on every gate; ercot-167 standing expectation DISCHARGED; lane CLOSED-CLEAN.** G1 663.7→516.1 MW vs measured 423 (61 % of gap, no overshoot); G2 0.72 (≥0.70); G3 2023 2→2, 2024 6→5, 2025 1→1; G4 C3a-2024 Δ0.989 pp on the unrounded scorer basis (knife-edge disclosed), C3a-2025 Δ0.607 pp; G5 shed identical; G-COAL148 ≈ 0.0 of 0.5 TWh bar; G-REPRO keeper reproduces BYTE-IDENTICALLY (12/12 hourly-sidecar sha256, zero scored-value drift). Keeper UNCHANGED at `2026-08-12-run192-arm-coal-peak` (direction-blind rule honoured). | Duties verified cycle 1: both runs registered (`2026-08-13-ercot193-ctl-nosoc` / `-arm-soc`, backcast registry sidecars + run payloads); retention evictions exactly as pre-registered (run168b-year-curves, run173a-reconc-control; neither the keeper); keeper shard untouched (empty diff on `frontend/data/backcast/keepers/`); matrix ERCOT shard cell + `mechanism-testing-matrix.md` item-10 block updated in the same PR; `scripts/check_mechanism_matrix.py` **exit 0** at 016b659 (236 warnings, all cosmetic line-number anchor drift; 0 errors); calibration-log entry present (+90 lines); precommit pushed pre-solve (`5ad4975`); C3b-2023 side-effect reported with the card-R ceiling stated up front; Q-B/R-A citations present. No keeper-shard edit → no keeper-auditor spawn needed. |
 | **FIX-IT-1** (child session `session_01Ne18N4kQa3EPfZ7pCbN8FL`, dispatched cycle 1, 2026-08-13T05:29:33Z) | **MOOT AT DISPATCH; DID NOTHING; self-archived 05:31Z.** PR #3912 had merged at 05:28:59Z, 34 s before dispatch (manager read the PR state ~2 min stale). The session also could not clone the repo (child sessions do not inherit the repo attachment — pass `source_url` on `create_session`; A2). No push, no PR action, no artifact. Prompt kept verbatim at §2.1 for the record. | Manager unsubscribed from #3912 (merged). Two lessons appended as A2 duties. |
-| **HYGIENE-1** (child session `session_013ADXP9Kq5nGEAqsrB6WoKh`, dispatched cycle 1, 2026-08-13T05:47:57Z, repo source attached) | IN FLIGHT. Scope: root-fix the ercot-193-filed `dashboard_add_run` metrics-sidecar relative-path tooling defect + regression test; land by PUSH-AND-STOP on branch `claude/ercot-scar-hygiene-1-dashboard-sidecar` — NO PR, NO merge (the landing-convention question is with the owner). Prompt verbatim: §2.2. | Card-R (R-A) hygiene bandwidth; touches no solve path, no registry, no matrix (no mechanism). |
+| **HYGIENE-1** (child session `session_013ADXP9Kq5nGEAqsrB6WoKh`, dispatched cycle 1 with `source_url`) | **PROVISIONING FAILED — never started; archived cycle 2.** Init died at 05:58Z with `clone_timeout`, unrecoverable: a `source_url` dispatch makes the platform attempt a FULL clone, which stalls on this repo (7.37 GiB live at tip — the exact docs/fast-clone.md failure). No work performed, no branch created. | Postmortem in A3; re-dispatched as HYGIENE-1b with the add_repo + blobless provisioning preamble. |
+| **HYGIENE-1b** (child session `session_011sYFijAwLntGLjFM1do3vp`, dispatched cycle 2, 2026-08-13T07:53:52Z, NO source_url) | IN FLIGHT. Same task as HYGIENE-1 (root-fix the ercot-193-filed `dashboard_add_run` metrics-sidecar relative-path defect + regression test; PUSH-AND-STOP on `claude/ercot-scar-hygiene-1-dashboard-sidecar`, no PR, no merge) plus a PROVISIONING preamble: add_repo(access=push) → clone `--filter=blob:none` → register_repo_root; no data hydration; GIT_NO_LAZY_FETCH=1 on read-side git. Prompt verbatim: §2.3. | Card-R (R-A) hygiene bandwidth; touches no solve path, no registry, no matrix. If 1b ALSO fails at provisioning, worker provisioning becomes an owner escalation (how should this manager spawn workers?). |
 
 ### Dependencies tracked, not tasked (boundary: FFR-FH manager, addenda AP/AQ/AR)
 
@@ -60,7 +63,7 @@
 
 1. ~~FIX-IT-1 completes~~ — CLOSED IN-CYCLE: #3912 merged by its own worker;
    FIX-IT-1 moot (A2).
-2. **HYGIENE-1 completes (in flight)** → verify diff/test/blob-verify, then
+2. **HYGIENE-1b completes (in flight)** → verify diff/test/blob-verify, then
    carry the landing (PR-or-not) per the owner's answer to the
    landing-convention question below. Remaining hygiene backlog after it:
    (i) the replay path writes no `legitimacy_diagnostics.json`
@@ -181,6 +184,19 @@ FENCES AND DUTIES:
 - No new .github/workflows (private repo, billed minutes). No pushes to any other branch. If anything outside this scope looks necessary, STOP and report to the manager instead of doing it.
 ```
 
+### §2.3 HYGIENE-1b — re-dispatch with provisioning preamble (cycle 2, 2026-08-13; child session `session_011sYFijAwLntGLjFM1do3vp`)
+
+Identical to §2.2 in task, rulings, fences and landing (push-and-stop on
+`claude/ercot-scar-hygiene-1-dashboard-sidecar`), with this PROVISIONING
+preamble prepended and NO `source_url` on the dispatch:
+
+```
+PROVISIONING — DO THIS FIRST, exactly as written. Your session starts with NO repository checked out:
+1. Call the add_repo tool (from the claude-code-remote MCP server; load via ToolSearch "add_repo" if deferred) with owner="jessicacohen554-cyber", repo="market-simulator", access="push". Do NOT pre-check the repo with curl/ls-remote/gh — unauthenticated probes 404 on private repos; call add_repo directly. If it returns an authorization error, STOP and report the exact error text back to the manager; do not retry.
+2. Clone BLOBLESS using the clone command/URL add_repo returns, adding --filter=blob:none (a full or shallow clone of this repo stalls — 7.37 GiB is live at tip; see docs/fast-clone.md after checkout). Then call register_repo_root with the clone path.
+3. This task needs NO data/raw hydration (profile `code` semantics): do not run hydrate_data.py, and never resolve blobs under data/raw — run read-side git commands under GIT_NO_LAZY_FETCH=1.
+```
+
 ---
 
 ## §A ADDENDA (append-only; dated; old addenda are never rewritten)
@@ -241,3 +257,27 @@ Board seeded at origin/main `016b659`. Facts established this cycle:
    this small text file, `mcp__github__create_branch` once +
    `mcp__github__push_files` per cycle, then blob-verify (cycle 1 verified:
    local and remote blob both `b1c117b9`).
+
+### A3 — 2026-08-13, cycle 2 (self check-in, 07:51Z trigger)
+
+1. **PR #3913: the OWNER merged this pack's seed commit (`4035ac7`) to main**
+   (`5b05f84`). Read as: the pack belongs on main; the owner is reading it.
+   Main's copy lags the branch (it predates the A2 close-out corrections);
+   the branch stays the live copy — the owner can merge again at will. NOT
+   read as an answer to the landing-convention question (still flagged).
+2. **HYGIENE-1 postmortem — both create_session provisioning modes measured:**
+   (a) NO source_url → child has no repo and (FIX-IT-1's record) reports
+   access denied if it doesn't call add_repo; (b) WITH source_url → the
+   platform attempts a FULL clone and dies at `clone_timeout` on this repo
+   (7.37 GiB live at tip; the docs/fast-clone.md failure verbatim,
+   `recoverable: false`). HYGIENE-1 never started; archived.
+3. **HYGIENE-1b dispatched (§2.3)**: no source_url + an explicit provisioning
+   preamble — add_repo(access=push) → `--filter=blob:none` clone →
+   register_repo_root; no data hydration; GIT_NO_LAZY_FETCH=1. This is the
+   dispatch pattern under test. If 1b also fails at provisioning, worker
+   provisioning escalates to the owner (the workstream cannot spawn workers
+   any other way within its fences).
+4. Owner decisions L-SCAR V0-FAIL adjudication + landing convention: still
+   open, re-flagged in the cycle-2 report. No new ERCOT-lane branches or PRs
+   this cycle; other lanes' branches (caiso-arm-k, miso-156, neiso-2021,
+   iso-armed-flags-turnoff, model-audit) are out of scope and untouched.
