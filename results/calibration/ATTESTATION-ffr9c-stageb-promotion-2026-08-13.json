@@ -1,0 +1,19 @@
+{
+ "schema": "calibration-attestation/v1",
+ "scope": "D-30 forecast-default promotion (FFR-9C stage B, ERCOT) — not a backcast keeper bundle; written per PREREG-ffr-9c-promote-stageb-2026-08-12.md §4 (E10) so the promotion carries a complete governance attestation even though audit_keepers.py does not scan it",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "FFR-9C-PROMOTE continuation lane, 2026-08-13, at 9c52ea8",
+  "note": "The promotion arms five pre-existing, individually measured mechanisms as the ERCOT forecast default via ISOConfig.default_scenario_overrides (owner card D-30, sitting Addendum AK.8, signed 2026-08-11). ZERO fitted parameters in any stage: capacity_screen_unified_lookahead / capacity_screen_scarcity_restoration are structural repairs of the forward screen's price object (FFR-5D / FFR-8A, parameter-free constructions); entry_pipeline_aware_signal removes a real double-count (FFR-9C §3–§4, zero scalars); smr_available_year=2030 is a published availability gate, not a tuned value (FFR-9B §3/§4 R-b); vre_procurement_additions_enabled nets a committed procurement cohort measured from the pipeline data (FFR-9C §3.6, exact netting proven by replay identity). The accepted cost was signed WITH the promotion at full magnitude (wind -57% -> -73%; CC GW error +5.8 -> +8.8; CO2 2023 -11.28 -> -12.84; against additions basis 45.05 -> 50.0 GW vs 55.4 actual, solar -60% -> -40%, and mid-window price/reserve objects onto measured levels for the first time) and is not tuned away. The declared cache epoch (ERCOT resolved default key 062d440558103f81 -> 8d9ef77edb3e44cb; global pin 603c2498bf71d21d and all ERCOT backcast keys unmoved) is measured by scripts/probes/_ffr9c_stageb_cache_epoch.py and pinned by tests/unit/config/test_ercot_stageb_arming.py. The backcast lane never applies ISO scenario overrides, so no backcast keeper's config or cache identity is touched (rule 22).",
+  "provenance_caveat": "The arming rows landed on main as a71fc84d (PR #3888) despite the commit's own '[INCOMPLETE - do not push]' subject; sitting Addendum AQ records the premature merge. This attestation and the epoch declaration are the continuation commit's, completing the rule-28 registration the arming commit was merged without. KNOWN LIVE EXPOSURE, filed not fixed: apply_iso_scenario_defaults re-arms caller values equal to the field default, so an ERCOT control arm for the five flags is inexpressible through the config path (FINDING-ffr-9c-iso-override-precedence-2026-08-12.md); remedy owned by the dispatched OVERRIDE-FIX lane."
+ },
+ "exceptions": [],
+ "free_parameters": {
+  "n_entries": 0,
+  "n_residual": 0,
+  "note": "No parameter of any kind is introduced by the promotion; the five armed values are the signed D-30 card's, each identified in its own measuring lane's handoff (see governance.note). The stage-B evidence chain: PREREG §1.6 table; measured arm ercot-2021-2025-t1ff-armr-ffr9c-full (key d6bc5469694eeedb)."
+ }
+}

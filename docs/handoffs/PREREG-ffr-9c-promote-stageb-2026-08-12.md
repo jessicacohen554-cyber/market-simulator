@@ -109,8 +109,23 @@ The mechanism is `ISOConfig.default_scenario_overrides`, resolved by
 **before the run record is built**, so a sidecar reports the posture it actually
 solved rather than the caller's unresolved one (the FFR-2E defect; ARM3-MEASURE
 hit exactly that). An ISO-level default fills only a field the caller left at the
-`ScenarioConfig` default — **an explicit caller value always wins**, so every
-existing invocation that passes these flags explicitly stays byte-identical.
+`ScenarioConfig` default — ~~**an explicit caller value always wins**, so every
+existing invocation that passes these flags explicitly stays byte-identical~~.
+
+> **CORRECTED 2026-08-13** (owed by
+> `FINDING-ffr-9c-iso-override-precedence-2026-08-12.md` §5, discharged by the
+> promotion's continuation commit): the struck claim is **wrong for
+> default-valued arguments**. `apply_iso_scenario_defaults` has no unset
+> sentinel — it compares the caller's value against the `ScenarioConfig` field
+> default, so a caller value that *equals* the default is indistinguishable
+> from unset and is silently re-armed
+> (`entry_pipeline_aware_signal=False → True`, `smr_available_year=None →
+> 2030`). The guarantee restated correctly: **callers passing a NON-default
+> value stay byte-identical; callers passing the default value are
+> overridden.** Consequently an ERCOT control arm for any of the five promoted
+> flags is inexpressible through the config path; the pre-arm pole is
+> permanently the committed pre-epoch bundles, never a re-solve, until the
+> OVERRIDE-FIX lane (sitting §0ap-1 / Addendum AQ.2) lands the remedy.
 
 **Precedent, from the SAME owner sitting.** Owner decision **D-29 (sitting
 Addendum AK.8, signed 2026-08-11)** — the same sitting that signed our D-30 —
@@ -255,3 +270,50 @@ Neither is this lane's object and neither is fixed here (no silent infra change)
 
 *(Sections below are filled AFTER the pre-registered work runs, in order, as
 produced.)*
+
+---
+
+## 6. EXECUTION RECORD (filled 2026-08-13 by the continuation lane)
+
+**The one-commit plan of §4 was broken upstream of this lane, and that is the
+headline of the record.** The arming commit `a71fc84d` — whose own subject read
+"FFR-9C-PROMOTE: arm stage B for ERCOT (D-30) **[INCOMPLETE - do not push]**" —
+was merged to `main` as **PR #3888** before its author's session could complete
+the rule-28 registration, and the lane branch
+`claude/ffr-9c-promote-stageb-hlfnpg` was deleted. Sitting **Addendum AQ**
+recorded the consequences (stage B armed on main; the cache epoch fired
+undeclared; ERCOT joined MISO in the control-arm exposure) before this
+continuation lane opened. History is not rewritten; the breach is recorded, and
+the owed other half landed as one commit (branch
+`claude/ffr-9c-stage-b-commit-av87x7`).
+
+What that commit carries, all re-verified at its own head (`9c52ea8`, where the
+§1.6 evidence reproduces exactly — resolved key `8d9ef77edb3e44cb`, pre-arm pole
+`062d440558103f81`, global pin `603c2498bf71d21d`, five non-ERCOT ISOs
+`False/False`):
+
+1. **The epoch declaration** (§3's owed half): probe
+   `scripts/probes/_ffr9c_stageb_cache_epoch.py` (three reads, ALL PASS) +
+   pins `tests/unit/config/test_ercot_stageb_arming.py` (10 tests: the arming,
+   rule 25 at construction, the seam, both epoch poles as literals, the global
+   pin, and the backcast lane's byte-stability).
+2. **The ERCOT matrix shard's cell verdicts** — the five stage-B cells' `fc`
+   O → K with the D-30 execution record (full narrative on
+   `entry_pipeline_aware_signal`; tail stamp 2026-08-13), plus the header
+   keeper re-stamp run191 → **`2026-08-12-run192-arm-coal-peak`** (the ercot-192
+   promotion had updated its cell but the header stamp lagged).
+3. **The §1.5 correction** (above) and the same correction in the
+   `iso_configs.py` comment block, which had inherited the false claim.
+4. **The C6 attestation**:
+   `results/calibration/ATTESTATION-ffr9c-stageb-promotion-2026-08-13.json`
+   (`"schema": "calibration-attestation/v1"`, per §4 / E10).
+5. **The lane handoff**: `docs/handoffs/ffr-9c-promote-stageb-completion-2026-08-13.md`.
+
+The accepted cost stands exactly as §2 states it; nothing in the continuation
+re-measured or softened it. The keeper at completion is
+`2026-08-12-run192-arm-coal-peak` (two promotions after the `run188` this
+pre-registration recorded — keeper motion, not conflict). The §4 line item
+"`_CACHE_KEY_OPTIONAL_FIELDS` … in the SAME commit" was already satisfied at
+pre-registration time: all five fields were registered when FFR-9C built them
+(Addendum AQ.2 verified 3 hits each), so the arming commit correctly carried no
+ledger edit.
