@@ -3915,6 +3915,111 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-09-miso-148-basis-aware`, **NOT-YET**
 
+> **QUEUE STAMP miso-156 (2026-08-13) — PHASE 0 DECOMPOSED AND PHASE 1 ADJUDICATED
+> BOTH QUEUED LEVERS AGAINST. NO SOLVE, NO RUN REGISTERED, NO `ScenarioConfig`
+> FIELD; keeper UNCHANGED at `2026-08-09-miso-148-basis-aware`. TWO CELL VERDICTS
+> MINTED FROM MEASUREMENT: `gas_hub_basis_overlay` **`U` → `R`**,
+> `ramp_envelopes` **`U` → `I`**. Branch **B-IDENT**.**
+>
+> **THE DECOMPOSITION IS ON THE EXACT C3a GRAIN.** An exactly additive
+> per-zone-hour identity — `Δ₁ identity + Δ₂ delivered-fuel cost level +
+> Δ₃ above-cost ≡ P_act − P_mod`, verified elementwise to **2.3e−13** — whose
+> `gap` reproduces the registered C3a to the cent (**V1** −1.993 / −8.031 /
+> −15.590 % against the published −1.98 / −8.03 / −15.58, deltas −0.013 / −0.001
+> / −0.010 pp; **V1b** ties the measured side to the scorer's own `rt_lw` to
+> < 1e−4 relative, after T-22 caught the first construction reading 6–7 % low).
+>
+> **2025 ANNUAL, the adjudicating cell: gap +7.082 $/MWh = Δ₁ +11.966 (169.0 %)
+> + Δ₂ −6.156 (−86.9 %) + Δ₃ +1.272 (18.0 %).** Three results:
+> **(1) IDENTITY OWNS IT** and scales with the failure — Δ₁ = +1.294 / +2.037 /
+> +11.966, **9.2×** into the failing year. **(2) THE FUEL CHANNEL RUNS
+> BACKWARDS** — the model's delivered gas is **ABOVE** both measured comparators
+> in all three years (**+0.348 / +0.092 / +0.892 $/MMBtu** vs the hub-month spot,
+> **+1.543 / +1.005 / +1.010** vs EIA delivered-to-electric-power), so correcting
+> it makes C3a **worse**. **(3) THE CLASS IS RIGHT AND THE STACK POSITION IS
+> NOT** — `CT_PEAKER` is the model's marginal tranche in **74.1 %** of 2025
+> top-200 zone-hours against **69.0 %** implied by the market, at an implied heat
+> rate of **11.93** MMBtu/MWh against the market's **28.83**, with the two
+> *medians* nearly coincident (fleet percentile 0.463 vs 0.483). **The identity
+> gap is entirely in the upper tail of hours** — miso-152's "the model forms no
+> summer peak" measured in heat-rate units.
+>
+> **PHASE 1, both queue candidates closed on physics rather than on the
+> residual.** `gas_hub_basis_overlay` **R** on two grounds: its own measured input
+> points the wrong way (above), and rule 14 `[R-ACCURATE]` — it **replaces** every
+> gas unit's price with one ISO-wide hub series, *"superseding … the per-plant
+> F923 overwrite"* (`data/fuel/hubs.py:1268-1272`), which is right for NEISO and a
+> regression for MISO, whose per-plant dispersion the model reproduces faithfully
+> (miso-153 Ground 3). `ramp_envelopes` **I** on a pre-check whose kill rule was
+> fixed **before** the numbers were read: **it fires 0 of 3** — MISO's model
+> **UNDER**-ramps the measured EIA-930 fleet at every quantile of every year
+> (|1-h move| ratio p50/p90/p99 = 0.59/0.73/0.83, 0.63/0.72/0.83, 0.66/0.79/0.88;
+> Jun+Jul p99 0.84/0.81/0.87). **Rule 25 `[R-ISO-SCOPE]` working against this
+> lane's own interest:** pjm-140 armed `ramp_limits` because PJM's model
+> **out**-ramped its real fleet 1.4–1.7× at p99; MISO measures the reciprocal.
+> `measured_ramp_capability` stays **`U`** — deliberately not minted, since this
+> session measured *fleet* ramp and not the *per-asset reserve qualifier*; but a
+> successor must confront both the under-ramp above and miso-153's D-4 reserve
+> inertness at the summer peak (zero binding hours, all families × all years).
+>
+> **PRIORS SCORED — only one landed as stated.** (iii) above-cost **CONFIRMED**
+> (5–25 % registered, **18.0 %**); (i) identity direction-right but **ABOVE its
+> band** (45–80 %, **169.0 %** — the band wrongly assumed three non-negative
+> channels); (ii) cost level **REFUTED ON THE WRONG SIDE OF ZERO** (5–35 %,
+> **−86.9 %**) — **S-FUEL does not fire, S-SIGN does**. **P-4 confirmed.**
+>
+> **THREE SURPRISE TRIGGERS FIRED AND ALL THREE ARE HONOURED, NOT ABSORBED.**
+> **S-2023**: 2023's +0.668 gap is a cancellation of Δ₁ +1.294 against Δ₂ −0.637,
+> so the 2025 attribution is labelled **PROVISIONAL** per the trigger's own
+> instruction. **S-CEIL**: `HRmax` is owned by a tranche carrying **0.0025 %** of
+> gas capacity at 113.88 MMBtu/MWh, so the pre-registered p99-ceiling sensitivity
+> is reported **against the branch** — on that basis Δ₃ rises to **46.9 %**
+> annual and **52.9 %** top-200, crossing the 40 % B-ABOVE threshold, i.e. the
+> above-cost share is **basis-sensitive between 18 % and 47 %** and that upper
+> figure bounds what any identity lever can reach. That residue is C3c-adjacent;
+> **the C3c ledger is not touched and nothing is tuned to the tail.**
+> **S-FLOORBLIND**: the production-engine floor rebuild reproduces miso-155's
+> committed `FLOOR_source` **EXACTLY in 2025** (2.8677 TWh, 153/153 rows) and
+> misses by **+1.22 %** (160 vs 158 rows) in 2023 and **+0.22 %** (151 vs 150) in
+> 2024. Two hypotheses were put up and **both refuted by measurement, including
+> the session's own** (demand identical at 640.9927 TWh and 103 flagged net-load
+> days; the control-bundle demand leg returns the *identical* 2.8805 TWh / 160
+> rows), and **the cause is left open**. It provably cannot touch any number
+> here: the floors-OFF twin moves **all 27 channel cells by 0.0000 $/MWh**,
+> because `HRmax` is a headroom-masked max over ~1,450 gas tranches and `G_mod`
+> is capacity-weighted. **Reported against interest: the floors leg was the
+> PREREG's centrepiece and added nothing.**
+>
+> **A DURABLE SIDE RESULT a successor should not rediscover.**
+> `results/calibration/*/floors/` is **GITIGNORED** (`.gitignore:443`), so **no
+> committed bundle carries `floors/<year>_P1.npz`** and miso-155's
+> read-the-bundle correction is **not reproducible from a fresh checkout**. The
+> gated production-engine rebuild in `_miso156_c3a_decomposition.model_year` is
+> the reproducible substitute, and on 2025 it is exact.
+>
+> **THE AGAINST-INTEREST BOUND IS NOW COMPUTED, NOT MERELY RESTATED — and it is
+> on the record BEFORE any lever exists.** 2023's own identity gap is
+> **+$1.294/MWh on a model mean of $32.18 = +4.02 %**, so a lever closing **100 %**
+> of Δ₁ uniformly would **BREACH the +3 % regression bound by ~1.0 pp**. A
+> candidate must close **≤ 74 %** of 2023's Δ₁ or be scoped where 2023's Δ₁ is
+> not — and 2023's Jun+Jul Δ₁ is **negative** (−5.090), so a summer-scoped
+> mechanism has room the annual figure hides.
+>
+> **LEVER QUEUE: EMPTY of named, un-adjudicated candidates, and this session does
+> not invent one.** What is left is a **question, not a lever**: what makes the
+> model's CT stack stop climbing at ~12 MMBtu/MWh when 28.8 is inside its own
+> fleet's range? The two enumerated possibilities — miso-153 D-1's peak cushion
+> (16.2 GW idle, **55.8 %** of CT's own availability, **6.31 GW within $20/MWh**
+> of the clearing price) and the C3c-adjacent above-cost residue — are **NOT
+> adjudicated**, each needs its own charter and an owner decision, and rule 20
+> `[R-DOF]` forbids closing the remainder with a tuned value.
+> `results/calibration/FINDING-miso156-the-gap-is-identity-and-the-fuel-channel-runs-backwards-2026-08-13.md`;
+> `PREREG-miso156-c3a-three-channel-decomposition-2026-08-13.md` (`162a51d`, blob
+> `7f124d18`); probes `scripts/probes/_miso156_c3a_decomposition.py` ·
+> `_miso156_ramp_precheck.py`; records `_miso156_c3a_decomposition.json` ·
+> `_miso156_ramp_precheck.json`.
+
+
 > **QUEUE STAMP miso-153 (2026-08-12) — PHASE 0 COMPLETE. THE SUMMER PEAK
 > PRICE-SETTER IS **`CT_PEAKER`**, AND IT IS THE ONE OBJECT THIS LANE IS NOT
 > CHARTERED TO OPEN. BRANCHES **P-D + P-E** (both STOP) — **NO LEVER SELECTED,
