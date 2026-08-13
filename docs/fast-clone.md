@@ -1,37 +1,114 @@
 # Fast clone — avoiding the "cloning loop"
 
-**Problem.** This repo's git pack is ~11.5 GiB (≈97% of it is immutable
+**Problem.** This repo's git pack is **7.44 GiB** (≈97% of it is immutable
 `data/raw/` source data — parquet/xlsx/zip that git cannot compress further, see
 `docs/handoffs/repo-clone-bloat-audit-2026-07.md`). A **full-history clone** or a
 full `git fetch` has to transfer all of it, which through this environment's
 egress proxy is slow and frequently **stalls** — leaving sessions on a *stale or
-half-checked-out clone*. A subsequent full `git fetch` stalls the same way, and
-`git push` returns **HTTP 413** (pack too large). That is the "cloning loop."
+half-checked-out clone*, or failing outright with *"Cloning the git_repository
+source took longer than the allowed time and was stopped."* That is the
+"cloning loop."
 
-**The fix is the clone *method*, not the repo size.** The full commit/tree graph
-is tiny (~11 MiB); only the file *blobs* are heavy, and you rarely need all of
-them. A **blobless partial clone** downloads the whole graph instantly and fetches
-individual file blobs only when you actually check them out.
+**This is a tip problem, not a stale-history problem — so a history rewrite does
+not fix it.** Measured 2026-08-13 at HEAD:
+
+| | Size |
+|---|---:|
+| Packed history (what a clone transfers) | **7.44 GiB** |
+| Blobs **live at the tip of `main`** | **7.37 GiB** (10,642 blobs) |
+| Dead history — all a full rewrite could reclaim | **82.3 MB** (1,093 blobs, **1.1%**) |
+
+Almost every byte ever committed is still a live file at the tip, so stripping
+history buys ~1% and the clone still times out. See
+`docs/FINDING-rewrite-prep-2026-08-11.md` §8 for the standing **NO-GO on
+rewriting for size**, and the note on `.github/workflows/cleanup-large-blobs.yml`
+below.
+
+**The fix is the clone *method*.** The commit/tree graph is tiny; only the file
+*blobs* are heavy, and you rarely need all of them. A **blobless partial clone**
+downloads the whole graph instantly and fetches file blobs only when a path is
+actually checked out.
 
 ## Recipe — start every session with a partial clone
 
 ```bash
-ORIGIN=$(git -C "$PWD" remote get-url origin 2>/dev/null || echo \
-  "https://github.com/jessicacohen554-cyber/market-simulator.git")
+ORIGIN=https://github.com/jessicacohen554-cyber/market-simulator
 
-# Blobless partial clone: full history graph, NO file blobs until touched.
-# Completes in ~2s even though the repo is 11.5 GiB.
-git clone --filter=blob:none "$ORIGIN" market-simulator
+# Blobless partial clone + the whole codebase, WITHOUT data/raw.
+git clone --filter=blob:none --sparse --no-checkout "$ORIGIN" market-simulator
 cd market-simulator
-# Working tree checks out on demand; blobs for files you open are fetched lazily.
+git sparse-checkout set --no-cone '/*' '!/data/raw/'
+git checkout main
 ```
 
-Variants:
-- **Even lighter (analysis only, no working tree):** add `--no-checkout`.
-- **Only need the tip:** `git clone --depth 1 --filter=blob:none "$ORIGIN"`.
-- **Only need one subtree's files present:** after a `--no-checkout` blobless
-  clone, `git sparse-checkout set src scripts docs` then `git checkout` — blobs
-  are fetched only for those paths, so you never pull the 11.7 GiB `data/raw/`.
+Measured end to end, 2026-08-13:
+
+| Step | Time | Cumulative |
+|---|---:|---:|
+| `git clone --filter=blob:none --no-checkout` | **3 s** | 15 MB |
+| + checkout of everything except `data/raw` | **19 s** | **311 MB** |
+| + `hydrate_data.py --profile miso` (1,492 files) | **157 s** | 2.2 GB |
+
+That is a complete, working MISO calibration environment — all 2,261 Python
+files, tests, docs, dashboard — in about **3 minutes**, against a full clone that
+does not finish.
+
+**A shallow clone is NOT the fix here, despite what the timeout message
+suggests.** `--depth 1` still transfers the entire tip tree, which *is* the 7.37
+GiB. Shallow clones help repos bloated by many commits; this one is bloated by a
+single enormous tip. Use `--filter=blob:none`. (`--depth 1` may be *added* for
+speed, but it reproduces the shallow-clone limitation that cited SHAs no longer
+resolve — see `docs/FINDING-rewrite-prep-2026-08-11.md` §1.)
+
+## Then hydrate only the data this session needs
+
+`scripts/hydrate_data.py` pulls in `data/raw` subtrees on demand, per
+`configs/data-profiles.yaml`. Attribution is derived from the tree at HEAD, so
+new subtrees are picked up with no table to maintain.
+
+```bash
+python3 scripts/hydrate_data.py --list            # profiles and coverage
+python3 scripts/hydrate_data.py --profile miso    # shared + MISO only
+python3 scripts/hydrate_data.py --profile code    # drop data/raw again
+```
+
+| Profile | Files | Packed | Use |
+|---|---:|---:|---|
+| `code` | 0 | 0 | docs, governance, dashboard, code review, CI — anything that does not solve |
+| `shared` | 1,241 | ~1.2 GB | cross-ISO data work (EIA, CAMPD, eGRID, fuel prices) |
+| `miso` / `pjm` / `neiso` | ~1.3–1.4 k | ~1.3 GB | that ISO's calibration/forecast lane |
+| `nyiso` | 1,442 | ~1.4 GB | ” |
+| `caiso` | 2,610 | ~2.2 GB | ” |
+| `ercot` | 2,718 | ~5.9 GB | ERCOT is 4.7 GB of `data/raw` on its own |
+| `all` | 4,718 | ~7.2 GB | cross-ISO solves only |
+
+Budget ~1.5× on disk (files check out uncompressed): `miso` is 1.3 GB packed,
+1.9 GB on disk.
+
+### Why hydration is chunked — three measured traps
+
+Each cost a stalled run before it was understood; all three are guarded in the
+script, and none is obvious from the git docs:
+
+1. **Never read a blob you do not intend to download.** In a partial clone *any*
+   command that resolves a missing blob silently fetches it. An innocuous
+   `git cat-file --batch-check='%(objectsize:disk)'` over `data/raw` therefore
+   downloads all 7.4 GB — the exact outcome the partial clone exists to prevent.
+   The script reads **trees only** (`ls-tree` for paths,
+   `cat-file --batch-all-objects` for sizes of what is already local) and runs
+   every read-side git call under `GIT_NO_LAZY_FETCH=1` so a regression fails
+   loudly instead of quietly costing 7 GB.
+2. **Never follow `sparse-checkout` with `git checkout -- .`.** A pathspec
+   checkout materializes skip-worktree entries, force-fetching blobs *outside*
+   the profile — `.git` grew to 2.6 GB while hydrating a 1.3 GB profile.
+3. **Apply one pattern per call.** Handing git ~115 non-cone patterns in a single
+   `sparse-checkout set` degenerates into per-file fetches and did not finish in
+   10 minutes; the same data applied a directory at a time batches into one fetch
+   per call (29 MB in 2 s, 666 MB in 23 s).
+
+Cone mode (`--cone`) is *not* usable here: it cannot express "the loose files at
+`data/raw/` plus one ISO's subdirectory but not its siblings" — listing
+`data/raw` in cone mode pulls everything under it.
 
 ## Do NOT full-fetch; use the GitHub API for reads
 
@@ -54,12 +131,72 @@ Instead:
   ```
   or `mcp__github__get_file_contents` for a single file/dir.
 
-## Pushing — never `git push` (it 413s)
+## Pushing — choose the transport by PACK size
 
-Push via the GitHub API only (`mcp__github__push_files` to add/update,
-`mcp__github__delete_file` to remove). These commit server-side and bypass git's
-pack negotiation, so they never 413 regardless of payload size. This is already
-the standing rule in `CLAUDE.md` (Git & Pushing) and `docs/`.
+**Superseded 2026-07-25.** This doc previously said "never `git push` (it 413s)".
+That is no longer the rule: the remote rejects large *packs*, not large *blobs*,
+and a 434,784-byte single-blob dashboard commit pushed over `git push` with no
+413 (PR #2878). `CLAUDE.md` (Git & Pushing) is authoritative:
+
+- **`git push` is permitted** when the pack is small — start from a freshly
+  fetched `origin/main` so the pack carries only your own objects. It is the
+  only transport that can carry a dashboard run payload
+  (`frontend/data/backcast/runs/<id>.js`, ~400 KB–1 MB), which exceeds
+  `push_files`' ~457 KB payload cap. It is **not** licensed for a full bundle
+  directory (~120 MB of parquet) or a divergent branch.
+- **`mcp__github__push_files`** stays preferred for small multi-file commits —
+  atomic, server-side, no pack negotiation at all.
+
+A partial clone does not change this: pushes send only your new objects.
+
+## Handoff prompts declare their data profile
+
+**Every handoff prompt that opens a session states the profile that session
+needs**, on its own line near the top, so the session hydrates once and does not
+discover a missing subtree mid-solve:
+
+```
+DATA PROFILE: miso     # scripts/hydrate_data.py --profile miso
+```
+
+Choosing one:
+
+- **`code`** — the default, and correct for most sessions. Docs, governance,
+  dashboard/frontend, code review, refactors, CI, matrix updates. If the lane
+  never runs `run_calibration_full.py`, it does not need `data/raw`.
+- **`<iso>`** — a calibration or forecast lane for exactly one ISO. This is the
+  common solving case; per rule 12 `[R-PARALLEL]` concurrent invocations are
+  per-ISO anyway, so each session hydrates only its own.
+- **`shared`** — cross-ISO data-contract, curation or schema work.
+- **`all`** — genuinely cross-ISO solves only. Say why in the prompt.
+
+A prompt that omits the line is read as `code`. A session that finds it needs
+more can widen at any time (`--profile ercot`); hydration is incremental, so
+already-fetched blobs are not re-fetched.
+
+## Is it safe to run the history-rewrite action?
+
+`.github/workflows/cleanup-large-blobs.yml` (`workflow_dispatch`-only) strips
+*superseded* blob versions under `data/raw/` and `results/calibration/`. Two
+separate questions, with different answers:
+
+**Is it safe?** Yes, as of the 2026-08-12 patch. It protects every blob live at
+the tip of `main`, verifies per-branch manifests, and — since the defect found in
+`docs/FINDING-rewrite-prep-2026-08-11.md` §10 — passes
+`--prune-empty never --prune-degenerate never` and aborts before pushing if any
+load-bearing commit from `docs/governance/citation-tags.json` was pruned or
+re-pointed. It also needs the `HISTORY_REWRITE_PAT` secret, which is not set.
+
+**Will it fix the clone timeout?** **No** — and it cannot, by design. It protects
+what is live at tip, and *that is the 7.37 GiB*. Everything it may legitimately
+reclaim is the 82.3 MB of dead history, ~1.1% of the pack. A clone would still
+transfer ~7.36 GiB and still time out. Run it to reclaim superseded calibration
+bundles if you want them gone; do not run it expecting faster clones.
+
+The durable fix for clone time is the partial clone above. The *structural* fix
+— untracking `data/raw` going forward so the tip itself stops growing — is
+recommended by that finding's §8 but is an owner decision with real
+reproducibility consequences, and is **not** implemented here.
 
 ## Proposed environment change (NOT merged — owner decision)
 

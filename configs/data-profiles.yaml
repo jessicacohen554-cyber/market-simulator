@@ -1,0 +1,104 @@
+# Session data profiles — which `data/raw/` subtrees a lane needs hydrated.
+#
+# WHY THIS EXISTS
+#   The repo's git pack is ~7.4 GiB and ~99% of it is blobs that are LIVE at the
+#   tip of main (measured 2026-08-13: 7.37 GiB live / 7.44 GiB pack, leaving only
+#   82 MB of dead history). A full clone therefore transfers ~7.4 GiB and stalls
+#   through the environment's egress proxy — the "cloning loop" of
+#   docs/fast-clone.md. A blobless partial clone fixes it: 3s / 15 MB for the
+#   graph, 22s / 311 MB with the whole codebase checked out and `data/raw`
+#   excluded.
+#
+#   The remaining question is what a given session should then pull IN. This file
+#   is the answer: a lane declares a profile, and `scripts/hydrate_data.py`
+#   sparse-checkouts exactly that profile's subtrees on demand.
+#
+# THIS FILE IS NOT SOLVE-AFFECTING. It selects which files are present on disk,
+# never what the model does with them. It is session tooling, so it lives here
+# rather than in ScenarioConfig (rule 24 `[R-REGISTRY]` governs tunables that can
+# change a solve; a checkout selector cannot).
+#
+# HOW RESOLUTION WORKS (see scripts/hydrate_data.py)
+#   Every immediate child of `data/raw/` is classified by ISO token match:
+#     - matches an ISO's tokens  -> belongs to that ISO's profile
+#     - matches no ISO's tokens  -> `shared`, hydrated by every data profile
+#   Classification is DERIVED from the tree at HEAD, not enumerated here, so a
+#   newly-added `data/raw/` subtree is picked up automatically: an ISO-named one
+#   joins that ISO, an unnamed one joins `shared`. Nothing to maintain by hand.
+#
+#   *Split* directories are the exception: ones holding a per-ISO child each
+#   (`lmp-data/ERCOT`, `zone-specific-demand/NYISO`, `storage-as-awards/CAISO`,
+#   ...). There each entry is attributed on its own name instead of the parent's,
+#   so a profile takes only its ISO's child and the genuinely cross-ISO
+#   remainder. Split directories are DETECTED (any child holding an ISO-named
+#   subdirectory), never listed — one less table to keep in sync. As of
+#   2026-08-13 that detects: capacity-deliverability, lmp-data, maxgen-events,
+#   reference, storage-as-awards, transfer-constraint-binding,
+#   zone-specific-demand.
+
+version: 1
+
+# ISO token table. A `data/raw/` child belongs to an ISO when its name contains
+# one of that ISO's tokens (case-insensitive). Tokens include the EIA-930
+# balancing-authority code, which is how the per-BA `*_fueltype.parquet` /
+# `*_region.parquet` files at the `data/raw/` root are attributed.
+#
+# Tokens are checked for substring containment, which is safe for this set:
+# no token is a substring of a non-matching sibling ("ciso" is NOT a substring
+# of "caiso"; "erco" appears only in ercot*; "isne" only in ISNE_*).
+isos:
+  ERCOT:
+    tokens: [ercot, erco]
+  CAISO:
+    tokens: [caiso, ciso]
+  PJM:
+    tokens: [pjm]
+  MISO:
+    tokens: [miso]
+  NYISO:
+    tokens: [nyiso, nyis]
+  NEISO:
+    tokens: [neiso, isne]
+
+# `approx_gb` is the profile's PACKED size, measured 2026-08-13 at HEAD. It is
+# indicative only — `scripts/hydrate_data.py --list` prefers real sizes when the
+# objects are local, and falls back to these in a partial clone (where measuring
+# would mean downloading the very data the profile exists to avoid). Checked-out
+# files are uncompressed, so budget roughly 1.5x on disk: the `miso` profile is
+# 1.3 GB packed and 1.9 GB on disk.
+profiles:
+  # ---------------------------------------------------------------- no data --
+  code:
+    description: >-
+      Code, docs, tests, dashboard and results only — no data/raw at all.
+      The default for any lane that does not run a solve: docs, governance,
+      dashboard/frontend, code review, refactors, CI work.
+    data: none
+    approx_gb: 0
+
+  # -------------------------------------------------------- cross-ISO only --
+  shared:
+    description: >-
+      Cross-ISO sources only (EIA-860/930, eGRID, CAMPD, fuel prices, NRC,
+      reference crosswalks, validation sources). Enough for data-contract work,
+      schema/curation scripts and fleet-wide analysis that is not ISO-specific.
+    data: shared
+    approx_gb: 1.2
+
+  # ------------------------------------------------------------- per-ISO ----
+  # Each hydrates `shared` plus that ISO's own subtrees. This is the profile a
+  # calibration or forecast lane names.
+  ercot: {description: "Shared sources + all ERCOT subtrees. ERCOT calibration/forecast lanes.", data: iso, iso: ERCOT, approx_gb: 5.9}
+  caiso: {description: "Shared sources + all CAISO subtrees. CAISO calibration/forecast lanes.", data: iso, iso: CAISO, approx_gb: 2.2}
+  pjm:   {description: "Shared sources + all PJM subtrees. PJM calibration/forecast lanes.",     data: iso, iso: PJM,   approx_gb: 1.3}
+  miso:  {description: "Shared sources + all MISO subtrees. MISO calibration/forecast lanes.",   data: iso, iso: MISO,  approx_gb: 1.3}
+  nyiso: {description: "Shared sources + all NYISO subtrees. NYISO calibration/forecast lanes.", data: iso, iso: NYISO, approx_gb: 1.4}
+  neiso: {description: "Shared sources + all NEISO subtrees. NEISO calibration/forecast lanes.", data: iso, iso: NEISO, approx_gb: 1.3}
+
+  # ------------------------------------------------------------------ all ---
+  all:
+    description: >-
+      Everything under data/raw (~7.4 GB). Only for cross-ISO solve lanes that
+      genuinely need every ISO at once. Prefer a per-ISO profile.
+    data: all
+    approx_gb: 7.2
