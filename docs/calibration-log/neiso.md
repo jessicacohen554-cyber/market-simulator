@@ -2096,3 +2096,116 @@ which is the one thing rule 22 says a validation number must never become ("sele
 never a certified out-of-sample skill number"). Until then the site carries the two runs and the
 Run Explorer composes them into a single 2022–2025 year selector on the keeper, with the 2022
 entry labelled `validation holdout` and its provenance banner naming the source run.
+
+---
+
+## 2026-08-13 — neiso-92: the 2021 readiness proof comes back **NOT CLEAN** — nuclear availability is the blocker, and it is not on anyone's list
+
+**NO LP. NO SOLVE. NO SCORE. NO REGISTRATION.** Phase-1 data-readiness proof only — rule 22 channel 1,
+which the holdout spend freeze does not cover. The freeze was verified **ACTIVE** at HEAD `cfb8127`
+and was **not lifted and not modified**. 2019, H1-2026 and the `final` block were not touched.
+Full record: `results/calibration/ASSESSMENT-neiso92-2021-readiness-2026-08-13.md`.
+
+**Session shorthand corrected.** The prompt opened as "neiso-89"; that ordinal is taken
+(`ASSESSMENT-neiso89-final-prereqs-2026-08-07.md`, plus neiso-90 and neiso-91 are on the record), so
+this session is **neiso-92**. The prompt also anticipated a neiso-88 combined 2022–2025 keeper
+bundle: **it has not landed** — the registry still holds exactly two NEISO runs and the keeper shard
+still designates `2026-08-06-neiso-87-control`, so per the prompt's own fallback that is the recipe
+graded here.
+
+### Verdict: do not solve 2021 yet
+
+Four inputs grade **DEGRADED** against the 2022–2025 standard. One is severe enough on its own to
+reproduce the **neiso-85 failure mode** — a single absent measured input, month-concentrated and
+systematic in sign, that would dominate the residual so the spend measures a data gap rather than
+forecast skill.
+
+**The two inputs the prompt flagged as highest-risk both came back clean**, which is worth stating
+plainly because it is where the effort was expected to land:
+
+- **Demand is a dense, real 8760** — 0 NaN, 0 zeros, 0 duplicate hours, mean 13,377 MW, `normalized`
+  summing to 1.000119. Its one artifact hour (**2021-11-07 01:00 = 2,598 MW**, the DST fall-back
+  duplicate) is *smaller than what the training window carries*: tuned year **2024 has three
+  outright zero-MW hours**. Not partial, not backfilled.
+- **The gas basis is fully on the measured index** — 12/12 months of 2021 on the ISO-NE MA gas index,
+  each with its own newswire recap URL, zero proxy rows. Reproduced through the keeper's own config
+  (`scripts/probes/_neiso92_2021_gas_chain.py`, a re-point of the neiso-85 decomposition onto the
+  designated keeper since that probe's source bundle was pruned): **winter/summer 2.207**, in family
+  with 2020 2.030 / 2022 2.104 / 2023 2.390 / 2024 3.778 / 2025 4.808, and nothing like the **0.397
+  inversion** neiso-85 caught. EIA-923 12/12 receipts, hub overlay 100.0 % of hours — identical
+  coverage to every tuned year.
+
+Fourteen further inputs graded EQUIVALENT on measured evidence (outage windows from the uniform
+2018–2026 detector pass: 397 windows / 2.23M MW-days / median 12.2 d, inside the tuned band;
+emission rates 77.5 % measured vs 78.2–79.3 %; LMP actuals 8760 rows with the same single NaN 2023
+carries, and the **chronological clock verified** by load–price correlation 0.459 inside the tuned
+0.327–0.586 band with identical peak-hour alignment; CAMPD all six states; EIA-930 140,160 rows;
+weather 365 days × 4 zones 0 NaN; renewables byte-identical schema; eGRID2021 present; the
+year-invariant derived params).
+
+### The blocker: nuclear availability has **no measured layer at all** outside 2023–2025
+
+`data/raw/nuclear-availability-NEISO.csv` covers **2023-01-01 … 2025-12-31 only**, and its fallback
+anchor `NUCLEAR_MONTHLY_CF_BY_YEAR['NEISO']` covers **2023/2024/2025 only**. Both measured layers are
+absent for every validation-ladder year. `nuclear_unit_availability_series` returns `{}` and
+`data/fleet/arrays.py:248` falls through — **silently, with no warning** — to the static climatology
+`NUCLEAR_MONTHLY_CF['NEISO']`, mean 0.982.
+
+Sized against EIA-930 ISNE `NUC` on the 3,389 MW fleet (method validated: the committed anchor tracks
+that reconstruction to 0.007–0.016 in every year it exists):
+
+| year | actual mean CF | static fallback | phantom nuclear | worst month |
+|---|---|---|---|---|
+| 2020 | 0.858 | 0.942 | **+2.51 TWh** | Apr +1.18 |
+| **2021** | **0.911** | **0.942** | **+0.96 TWh** | **Oct +1.25** |
+| 2022 | 0.922 | 0.942 | **+0.61 TWh** | May +0.80 |
+
+**October 2021 is the problem.** Real nuclear CF was **0.425** — a deep refuelling outage — against a
+fallback holding the fleet near 0.92. That is **~1,900 MW of phantom baseload running all month**,
+≈ **1.25 TWh ≈ 14 % of October load**, displacing gas at the margin in exactly the month 2021's
+autumn gas ramp was building (Oct delivered gas $4.75/MMBtu, Oct RT LMP $55.9 → Dec $59.4).
+
+Three further DEGRADED rows: the **interchange seam tranches**
+(`IMPORT/EXPORT_TRANCHES_BY_YEAR['NEISO']` 2023–2025 only, so 2021 silently takes the pooled
+2023–2025 seam supply curve on a fleet where imports are a large share of supply),
+**`eia860_chp_by_year.parquet`** (2023–2025 only; 2021 classified on the latest vintage snapshot),
+and **parasitic load factors** (NEISO carries 2022–2025 rows but no 2021).
+
+### A prompt premise corrected
+
+`bench/NEISO/2021.json.gz` is indeed absent, and the prompt read that as a prerequisite to build.
+It is not: `render_backcast._write_bench_part` derives the part from **the registering bundle's own
+committed input snapshots**, so it is an **output of registration**, produced automatically when a
+2021 run is registered and then read by the scorer. Its rubric-v2.4 `_lw` fields live in
+`bench.avgLMP` and are computed at render time from the LMP actuals + demand, both of which 2021 has.
+**Nothing needed building, and nothing was built.**
+
+### What this says about the already-spent 2022 touchpoint
+
+Gaps 1, 2 and 4 **also applied to 2022**, spent twice and currently the designated
+`holdout_touchpoint` (`2026-08-06-neiso-2022-corrected-basis`): **+0.61 TWh of phantom nuclear**
+(Apr/May, against real refuelling at CF 0.700 / 0.625) and the pooled seam curve. The shard's
+**"AVAILABILITY-ENVELOPE PARITY IS VERIFIED"** claim is true *as scoped* — it is explicitly about the
+uniform CAMPD **fossil**-outage detector, and that verification stands — but it does not cover the
+nuclear envelope, and the nuclear gap is recorded nowhere in that block. **Nothing is retracted here
+and no committed artifact was edited.** 2022 is validation tier and therefore iterable: the right
+disposition is to re-spend it *after* the fix, alongside 2021 — not to re-interpret it now.
+
+### The fix path, and why no lift should be requested yet
+
+All four gaps are closable by **data prep alone**, and every upstream source is already on disk —
+`data/raw/nrc-reactor-status/2021PowerStatus.txt` exists (2018–2026 all present), and **NYISO already
+carries 2018–2025 from the same deriver**, so `derive_nuclear_availability.py` is proven over this
+span. Under rule 22 as amended 2026-08-06 — *"what is held out is the SCORE, never the DATA"* — that
+prep needs **no marker and no freeze lift**.
+
+Sequence, in order: (1) extend the nuclear anchor + per-reactor extract, the seam tranches, the CHP
+vintage table and the parasitic factors across **2019–2025 in one pass**, not for 2021 alone; (2)
+**re-solve the keeper at HEAD across 2023–2025** on the corrected envelope — this also closes the
+keeper's disclosed defect (i), the stale Aug-2025 basis row — and confirm the in-sample determination
+is not degraded; (3) only then request a lift naming **2021 + 2022** as one validation re-spend.
+Steps 1–2 change the availability envelope and therefore the in-sample result, so re-training must
+precede re-reading the touchpoint — rule 22's touchpoint loop, step 3.
+
+**Next shorthand: `neiso-93`** (the envelope-repair intake: gaps 1–4 across 2019–2025, no solve).
+
