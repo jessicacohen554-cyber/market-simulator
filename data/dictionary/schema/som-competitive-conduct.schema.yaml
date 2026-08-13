@@ -23,11 +23,25 @@
 # datatype with new iso rows; annual grain except where a monitor only
 # publishes seasonal/quarterly values.
 #
-# Quarantine note (CLAUDE.md rule 22): only train-window years
-# (2023-2025) are transcribed. The SOM tables also print 2018-2022
-# columns and the Winter-2026 quarterly covers Dec-2025..Feb-2026
-# (H1-2026 locked-test window) — those rows are deliberately NOT
-# transcribed pending owner authorization.
+# Holdout note (CLAUDE.md rule 22, as clarified by the owner 2026-08-06).
+# The former quarantine here read "only train-window years (2023-2025)
+# are transcribed … pending owner authorization". That is SUPERSEDED and
+# was backwards: "WHAT IS HELD OUT IS THE *SCORE*, NEVER THE *DATA*" —
+# data intake needs no per-ISO/per-window authorization and no marker,
+# and a measured input belongs in every year. Only SOLVING, SCORING or
+# REGISTERING an out-of-training year is the spend.
+#
+# ERCOT net-revenue anchors for 2019-2022 were therefore transcribed
+# 2026-08-13 (session ercot-195, L-SCAR-SCREEN-2) from each vintage's
+# OWN prose-stated Net Revenue Analysis values — the identification
+# source for the screen scarcity-rent lane
+# (docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md §2.2, whose V0
+# gate sets a >=5-anchor-vintage floor). No year was solved or scored to
+# produce them. NOTE the SOM prints its multi-year history only as BAR
+# CHARTS with no data labels, so a vintage's value is transcribable only
+# from the report that reports that year as its own subject year; the
+# 2018 ERCOT SOM is absent from the Potomac document library, and 2018
+# is outside the program's 2019-2025 working span in any case.
 #
 # Curated by scripts/data/curate_som_competitive_conduct.py from
 #   data/raw/som-competitive-conduct/som_competitive_conduct.csv
@@ -93,7 +107,11 @@ columns:
       the segment's starts). ERCOT SOM net-revenue rows add:
       "net_revenue_usd_per_kw_yr" (single published value; "_min"/"_max"
       variants for locational ranges; "_houston"/"_west" variants for the
-      named-zone values), "ecrs_effect_share_of_net_revenue" (share of
+      named-zone values), "net_revenue_ex_uri_usd_per_kw_yr_min"/"_max"
+      (the 2021 SOM's own published Winter-Storm-Uri counterfactual —
+      what the year's net revenue "would have ranged" absent Uri; the
+      monitor's number, not a derived one),
+      "ecrs_effect_share_of_net_revenue" (share of
       2023 net revenue the monitor attributes to ECRS price effects),
       "cone_usd_per_kw_yr_min"/"_max" (Potomac CONE estimates),
       "cone_planning_usd_per_kw_yr" / "cone_pnm_threshold_usd_per_kw_yr"

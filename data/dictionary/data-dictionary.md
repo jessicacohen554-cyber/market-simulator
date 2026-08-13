@@ -44,15 +44,15 @@ for the market split.
 
 | datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO |
 |---|---|---|---|---|---|---|
-| lmp | — | 2023–2026 | 2018–2025 | — | 2022–2025 | 2018–2025 |
+| lmp | — | — | — | — | — | — |
 | lmp-components | — | — | — | — | — | — |
-| load | 2015–2026 | 2018–2026 | 2018–2026 | 2018–2026 | 2018–2026 | 2015–2026 |
-| demand-profile | 2019–2025 | 2019–2025 | 2019–2025 | 2019–2025 | 2019–2025 | 2019–2025 |
-| ancillary-services | 2025–2026 | — | 2018–2026 | — | 2018–2026 | — |
+| load | — | — | — | — | — | — |
+| demand-profile | — | — | — | — | — | — |
+| ancillary-services | — | — | — | — | — | — |
 | energy-offers | — | — | — | — | — | — |
 | dam-public-bids | — | — | — | — | — | — |
-| generation | 2018–2026 | 2018–2026 | 2020–2026 | 2018–2026 | 2018–2026 | 2018–2026 |
-| renewables | 2023–2025 | 2019–2025 | — | — | — | — |
+| generation | — | — | — | — | — | — |
+| renewables | — | — | — | — | — | — |
 | validation | — | — | — | — | — | — |
 | fuel-basis | — | — | — | — | — | — |
 | fuel-zonal-hub | — | — | — | — | — | — |
@@ -95,7 +95,7 @@ snapshot).
 
 | datatype | scope | years |
 |---|---|---|
-| emissions | CAMPD/CEMS, by plant and unit | 2018–2023 |
+| emissions | CAMPD/CEMS, by plant and unit | n/a |
 | emissions-unit-annual | — | n/a |
 | outages | derived (CAMPD downtime + curated ERCOT lists) | n/a |
 | fleet | EIA-860 / eGRID / master registry | n/a |
@@ -108,7 +108,7 @@ snapshot).
 | wecc-west-supply | — | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
 | weather | per-ISO via directory partitioning | n/a |
-| egrid | national (EPA eGRID, by vintage year) | 2023 |
+| egrid | national (EPA eGRID, by vintage year) | n/a |
 | pjm-outages | — | n/a |
 | rggi-co2-budgets | — | n/a |
 | carb-cap-schedule | — | n/a |
@@ -1459,7 +1459,7 @@ the Potomac Economics SOM reports and IMM quarterlies. Schema:
 | `year` | `int64` | `none` | no | Market year the statistic describes (not the publication year). |
 | `period` | `string` | `none` | no | Aggregation window within the year: "annual" for SOM full-year values, or the IMM quarterly-report season ("spring", "summer", "fall", "winter") for quarterly values. |
 | `fleet_segment` | `string` | `none` | no | Fleet the metric describes: "system" (all suppliers), "coal_regulated" (SOM Table 7 "Regulated Utilities" coal rows), "coal_merchant" (SOM Table 7 "Merchants" coal rows), "new_gas_ct" / "new_gas_cc" (the ERCOT SOM Net Revenue Analysis hypothetical new-entrant proxies: CT 10.5 / CC 7.0 MMBtu/MWh heat rate, $4/MWh VOM, 10% outage rate), or "coal_existing" / "nuclear_existing" (the SOM existing-unit profitability discussions' cost benchmarks). |
-| `metric` | `string` | `none` | no | Metric code: "price_cost_markup" (simulated actual-offer vs reference-level SMP difference, fraction), "output_gap_share_of_load" (low-threshold monthly-average output gap as a fraction of load), "output_gap_low_threshold_mw" (low-threshold output gap, MW/hr), "starts" (coal unit commitments in the year), "starts_econ_offered_share" (fraction of starts offered economically / scheduled day-ahead), "starts_mustrun_profitable_share" / "starts_mustrun_unprofitable_share" (fraction of starts with must-run [self-commit] status, split by whether market revenues covered commitment + variable cost by the first full day), "net_revenue_usd_per_mwh" (net operating revenue of the segment's starts). ERCOT SOM net-revenue rows add: "net_revenue_usd_per_kw_yr" (single published value; "_min"/"_max" variants for locational ranges; "_houston"/"_west" variants for the named-zone values), "ecrs_effect_share_of_net_revenue" (share of 2023 net revenue the monitor attributes to ECRS price effects), "cone_usd_per_kw_yr_min"/"_max" (Potomac CONE estimates), "cone_planning_usd_per_kw_yr" / "cone_pnm_threshold_usd_per_kw_yr" (PUCT planning CONE vs legacy PNM-threshold CONE), "peaker_net_margin_usd_per_kw_yr", and existing-unit cost benchmarks "fixed_om_usd_per_kw_yr", "vom_usd_per_mwh", "fuel_cost_usd_per_mwh", "marginal_cost_usd_per_mwh", "total_generating_cost_usd_per_mwh". |
+| `metric` | `string` | `none` | no | Metric code: "price_cost_markup" (simulated actual-offer vs reference-level SMP difference, fraction), "output_gap_share_of_load" (low-threshold monthly-average output gap as a fraction of load), "output_gap_low_threshold_mw" (low-threshold output gap, MW/hr), "starts" (coal unit commitments in the year), "starts_econ_offered_share" (fraction of starts offered economically / scheduled day-ahead), "starts_mustrun_profitable_share" / "starts_mustrun_unprofitable_share" (fraction of starts with must-run [self-commit] status, split by whether market revenues covered commitment + variable cost by the first full day), "net_revenue_usd_per_mwh" (net operating revenue of the segment's starts). ERCOT SOM net-revenue rows add: "net_revenue_usd_per_kw_yr" (single published value; "_min"/"_max" variants for locational ranges; "_houston"/"_west" variants for the named-zone values), "net_revenue_ex_uri_usd_per_kw_yr_min"/"_max" (the 2021 SOM's own published Winter-Storm-Uri counterfactual — what the year's net revenue "would have ranged" absent Uri; the monitor's number, not a derived one), "ecrs_effect_share_of_net_revenue" (share of 2023 net revenue the monitor attributes to ECRS price effects), "cone_usd_per_kw_yr_min"/"_max" (Potomac CONE estimates), "cone_planning_usd_per_kw_yr" / "cone_pnm_threshold_usd_per_kw_yr" (PUCT planning CONE vs legacy PNM-threshold CONE), "peaker_net_margin_usd_per_kw_yr", and existing-unit cost benchmarks "fixed_om_usd_per_kw_yr", "vom_usd_per_mwh", "fuel_cost_usd_per_mwh", "marginal_cost_usd_per_mwh", "total_generating_cost_usd_per_mwh". |
 | `value` | `float64` | `mixed` | no | Metric value; unit given by the unit column. |
 | `unit` | `string` | `none` | no | One of "fraction", "count", "usd_per_mwh", "usd_per_kw_yr", "mw". |
 | `source_doc` | `string` | `none` | no | Source report PDF filename under data/raw/MISO/ (or the ISO's raw dir). |
