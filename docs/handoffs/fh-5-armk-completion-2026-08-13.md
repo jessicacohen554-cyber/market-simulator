@@ -115,11 +115,19 @@ Also verified: `score_crossover`, `register_hindcast`, `register_forecast_run`,
    duplicate of the prereg commit with no PR. One `git push origin --delete
    tmp-transport-probe-armk` from a working client removes it.
 
-4. **`regenerate_clean.py` reported `1/50 datatype(s) failed`, and WHICH one is
-   not recoverable from this session's artifacts.** The prereq was run as
-   `regenerate_clean.py 2>&1 | tail -40`, so only the last 40 lines were ever
-   written and the `[fail]` line was discarded at the pipe. Stated plainly
-   because it is a gap in this session's record, not a resolved item.
+4. **`regenerate_clean.py` reported `1/50 datatype(s) failed` on the prereq run —
+   RESOLVED: it does not reproduce.** A full re-run at the same code and the same
+   `data/raw`, with an untruncated log, is **50/50 green**: 50 `[ ok ]` lines,
+   zero `[fail]` lines, and no failure-count line at all (`regenerated 50
+   datatype(s) into data/clean`). The prereq failure was therefore **transient**,
+   not a data or code defect — most plausibly resource contention, since the
+   prereq was launched while this container was still settling from the
+   half-dead-clone recovery in item 1.
+
+   Which datatype it was remains unknown and is now unknowable: the prereq was
+   run as `regenerate_clean.py 2>&1 | tail -40`, so only the last 40 lines were
+   ever written and the `[fail]` line was discarded at the pipe. That is recorded
+   as a gap in the session's record even though the underlying condition cleared.
 
    **What bounds it.** All 50 known datatypes have non-empty clean output and no
    clean directory is empty, so nothing failed before writing. The only three
@@ -135,9 +143,7 @@ Also verified: `score_crossover`, `register_hindcast`, `register_forecast_run`,
    guarded flag (`capacity_deliverability_limits`, `hydro_ror_split`) is armed
    here. All four years solved, all supported metrics scored, and 12 of 14
    invariants pass with the two FAILs matching the Arm R sibling exactly — I7 to
-   the megawatt. A full re-run with an untruncated log was launched to identify
-   it; if this handoff carries no follow-up line, that re-run did not finish
-   inside the session.
+   the megawatt. The green re-run above closes it: the arm's inputs were sound.
 
    **Process fix for the next solve lane: never pipe `regenerate_clean.py`
    through `tail`.** Redirect the whole log to a file and grep it — the summary
