@@ -1,0 +1,80 @@
+iso,year,period,fleet_segment,metric,value,unit,source_doc,source_page,note
+MISO,2023,annual,coal_regulated,starts,1555,count,2023-MISO-SOM_Report_Body-Final.pdf,67,"Table 7 (printed p.43); 2024 SOM restates as 1549"
+MISO,2023,annual,coal_regulated,starts_econ_offered_share,0.44,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,"offered economically and scheduled day-ahead"
+MISO,2023,annual,coal_regulated,starts_mustrun_profitable_share,0.42,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,"must-run (self-commit) status; revenues cover commitment+variable cost by first full day (fn: startup amortized over 5 days)"
+MISO,2023,annual,coal_regulated,starts_mustrun_unprofitable_share,0.14,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,"must-run status and unprofitable — ran regardless of price"
+MISO,2023,annual,coal_regulated,net_revenue_usd_per_mwh,5.75,usd_per_mwh,2023-MISO-SOM_Report_Body-Final.pdf,67,"2024 SOM restates as 5.81"
+MISO,2023,annual,coal_merchant,starts,42,count,2023-MISO-SOM_Report_Body-Final.pdf,67,
+MISO,2023,annual,coal_merchant,starts_econ_offered_share,0.93,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,"unregulated generators offered economically 93 percent of hours in 2023"
+MISO,2023,annual,coal_merchant,starts_mustrun_profitable_share,0.05,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,
+MISO,2023,annual,coal_merchant,starts_mustrun_unprofitable_share,0.02,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,
+MISO,2023,annual,coal_merchant,net_revenue_usd_per_mwh,6.75,usd_per_mwh,2023-MISO-SOM_Report_Body-Final.pdf,67,"2024 SOM restates as 6.98"
+MISO,2023,annual,system,price_cost_markup,0.030,fraction,2023-MISO-SOM_Report_Body-Final.pdf,112,"average system marginal price-cost mark-up; 'very small, indicating the markets were highly competitive overall'"
+MISO,2023,annual,system,output_gap_share_of_load,0.001,fraction,2023-MISO-SOM_Report_Body-Final.pdf,112,"average monthly output gap 0.1 percent of load, 'effectively de minimis'"
+MISO,2024,annual,coal_regulated,starts,1428,count,2024-MISO-SOM_Report_Body_Final.pdf,71,"Table 7 (printed p.45)"
+MISO,2024,annual,coal_regulated,starts_econ_offered_share,0.47,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,"offered economically and scheduled day-ahead"
+MISO,2024,annual,coal_regulated,starts_mustrun_profitable_share,0.38,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,"must-run (self-commit) status; profitable by first full day"
+MISO,2024,annual,coal_regulated,starts_mustrun_unprofitable_share,0.15,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,"'regulated utilities often continue to operate their units as must-run, running them regardless of the price' (p.72)"
+MISO,2024,annual,coal_regulated,net_revenue_usd_per_mwh,8.01,usd_per_mwh,2024-MISO-SOM_Report_Body_Final.pdf,71,
+MISO,2024,annual,coal_merchant,starts,39,count,2024-MISO-SOM_Report_Body_Final.pdf,71,
+MISO,2024,annual,coal_merchant,starts_econ_offered_share,0.74,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,"unregulated generators offered economically 74 percent of hours in 2024"
+MISO,2024,annual,coal_merchant,starts_mustrun_profitable_share,0.15,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,
+MISO,2024,annual,coal_merchant,starts_mustrun_unprofitable_share,0.10,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,
+MISO,2024,annual,coal_merchant,net_revenue_usd_per_mwh,7.50,usd_per_mwh,2024-MISO-SOM_Report_Body_Final.pdf,71,
+MISO,2024,annual,system,price_cost_markup,-0.025,fraction,2024-MISO-SOM_Report_Body_Final.pdf,120,"body headline; appendix p.151 reports -5 percent average with monthly range +6.2 to -17 percent (methodology variant)"
+MISO,2024,annual,system,output_gap_share_of_load,0.0006,fraction,2024-MISO-SOM_Report_Body_Final.pdf,120,"average monthly output gap 0.06 percent of load, 'effectively de minimis and lower than in 2023'"
+MISO,2025,spring,system,output_gap_low_threshold_mw,22,mw,IMM-Quarterly-Report_Spring-2025-MSC.pdf,3,"IMM quarterly summary table, low-threshold output gap MW/hr"
+MISO,2025,summer,system,output_gap_low_threshold_mw,59,mw,IMM-Quarterly-Report_Summer-2025-MSC.pdf,3,"IMM quarterly summary table, low-threshold output gap MW/hr"
+MISO,2025,fall,system,output_gap_low_threshold_mw,71,mw,IMM-Quarterly-Report_Fall-2025_MSC.pdf,3,"IMM quarterly summary table, low-threshold output gap MW/hr; ~0.09% of 80.7 GW average load"
+ERCOT,2023,annual,new_gas_ct,net_revenue_usd_per_kw_yr_min,224,usd_per_kw_yr,2023-State-of-the-Market-Report_Final_060624.pdf,108,"Fig 45 (printed p.77); range across Houston/North/South/West settlement zones; stack = Reserves + Energy + ECRS Effects; new-unit proxy: HR 10.5 MMBtu/MWh, VOM $4/MWh, 10% outage rate, no start costs"
+ERCOT,2023,annual,new_gas_ct,net_revenue_usd_per_kw_yr_max,257,usd_per_kw_yr,2023-State-of-the-Market-Report_Final_060624.pdf,108,"see min row"
+ERCOT,2023,annual,new_gas_cc,net_revenue_usd_per_kw_yr_min,228,usd_per_kw_yr,2023-State-of-the-Market-Report_Final_060624.pdf,108,"Fig 46 (printed p.77); new-unit proxy: HR 7.0 MMBtu/MWh, VOM $4/MWh, 10% outage rate"
+ERCOT,2023,annual,new_gas_cc,net_revenue_usd_per_kw_yr_max,272,usd_per_kw_yr,2023-State-of-the-Market-Report_Final_060624.pdf,108,"see min row"
+ERCOT,2023,annual,new_gas_ct,ecrs_effect_share_of_net_revenue,0.5,fraction,2023-State-of-the-Market-Report_Final_060624.pdf,108,"'roughly half of the net revenues for the two hypothetical new resources were derived from the inefficient price effects of ERCOT's ECRS implementation'; absent ECRS, net revenues 'very close to their respective CONE values'"
+ERCOT,2023,annual,new_gas_cc,ecrs_effect_share_of_net_revenue,0.5,fraction,2023-State-of-the-Market-Report_Final_060624.pdf,108,"see new_gas_ct row"
+ERCOT,2023,annual,system,cone_usd_per_kw_yr_min,80,usd_per_kw_yr,2023-State-of-the-Market-Report_Final_060624.pdf,108,"'CONE for these resources ranging from roughly $80 to $130 per kW-year' (CT and CC, 2023 ~= 2022)"
+ERCOT,2023,annual,system,cone_usd_per_kw_yr_max,130,usd_per_kw_yr,2023-State-of-the-Market-Report_Final_060624.pdf,108,"see min row"
+ERCOT,2023,annual,nuclear_existing,total_generating_cost_usd_per_mwh,31.76,usd_per_mwh,2024-State-of-the-Market-Report.pdf,119,"NEI 'Nuclear Costs in Context' 2023 US average as cited by the 2024 SOM (printed p.81); 2023 SOM (PDF p.110) cites $30.92 for 2022 and concludes ERCOT nuclear 'highly profitable in 2023' vs $65/MWh average price"
+ERCOT,2024,annual,new_gas_ct,net_revenue_usd_per_kw_yr,68,usd_per_kw_yr,2024-State-of-the-Market-Report.pdf,119,"Fig 56 (PDF p.118, printed p.80); body text prints 'per MWh' but the figure axis and CONE context are $/kW-year; stack = Reserves + Energy Sales; same new-unit proxy assumptions as 2023"
+ERCOT,2024,annual,new_gas_cc,net_revenue_usd_per_kw_yr,89,usd_per_kw_yr,2024-State-of-the-Market-Report.pdf,119,"see new_gas_ct row"
+ERCOT,2024,annual,new_gas_ct,cone_usd_per_kw_yr_min,102,usd_per_kw_yr,2024-State-of-the-Market-Report.pdf,119,"Potomac CONE estimate for CTs (printed p.81)"
+ERCOT,2024,annual,new_gas_ct,cone_usd_per_kw_yr_max,106,usd_per_kw_yr,2024-State-of-the-Market-Report.pdf,119,"see min row"
+ERCOT,2024,annual,new_gas_cc,cone_usd_per_kw_yr_min,116,usd_per_kw_yr,2024-State-of-the-Market-Report.pdf,119,"Potomac CONE estimate for CCs (printed p.81)"
+ERCOT,2024,annual,new_gas_cc,cone_usd_per_kw_yr_max,121,usd_per_kw_yr,2024-State-of-the-Market-Report.pdf,119,"see min row"
+ERCOT,2024,annual,coal_existing,fixed_om_usd_per_kw_yr,61.60,usd_per_kw_yr,2024-State-of-the-Market-Report.pdf,120,"EIA Dec-2023 capital-cost report (AEO2025) fixed O&M for coal plants, as cited by the SOM coal-profitability discussion (printed p.82)"
+ERCOT,2024,annual,coal_existing,vom_usd_per_mwh,6.40,usd_per_mwh,2024-State-of-the-Market-Report.pdf,120,"EIA Dec-2023 report variable O&M ex-fuel, as cited by SOM"
+ERCOT,2024,annual,coal_existing,fuel_cost_usd_per_mwh,8.50,usd_per_mwh,2024-State-of-the-Market-Report.pdf,120,"ERCOT average coal fuel cost; PRB ~$0.80/MMBtu x 10.7 MMBtu/MWh heat rate (fn 51)"
+ERCOT,2024,annual,coal_existing,marginal_cost_usd_per_mwh,23.18,usd_per_mwh,2024-State-of-the-Market-Report.pdf,120,"SOM: 'marginal production cost of coal-fired units in ERCOT is around $23.18 per MWh ... coal resources would have been profitable to run in many hours' (2024 zonal avg prices $29.58-$35.33/MWh)"
+ERCOT,2025,annual,new_gas_ct,net_revenue_usd_per_kw_yr,52.59,usd_per_kw_yr,2025-State-of-the-Market-Report-for-ERCOT.pdf,125,"Fig 56 (PDF p.124, printed p.102); stack = Reserves + Energy + Real-Time On-Peak; same new-unit proxy assumptions"
+ERCOT,2025,annual,new_gas_cc,net_revenue_usd_per_kw_yr,82.96,usd_per_kw_yr,2025-State-of-the-Market-Report-for-ERCOT.pdf,125,"see new_gas_ct row"
+ERCOT,2025,annual,new_gas_ct,net_revenue_houston_usd_per_kw_yr,59,usd_per_kw_yr,2025-State-of-the-Market-Report-for-ERCOT.pdf,119,"summary bullet: 'roughly $59 per kW-year' for a Houston CT (printed p.97)"
+ERCOT,2025,annual,new_gas_ct,net_revenue_west_usd_per_kw_yr,177,usd_per_kw_yr,2025-State-of-the-Market-Report-for-ERCOT.pdf,119,"summary bullet: 'up to $177 per kW-year in the West zone' (Waha gas basis + Permian import congestion)"
+ERCOT,2025,annual,system,cone_planning_usd_per_kw_yr,140,usd_per_kw_yr,2025-State-of-the-Market-Report-for-ERCOT.pdf,125,"PUCT-approved planning CONE (July 2024); legacy $105/kW-yr retained for the PNM threshold; Brattle accelerated study could exceed $200 (printed p.101-103)"
+ERCOT,2025,annual,system,cone_pnm_threshold_usd_per_kw_yr,105,usd_per_kw_yr,2025-State-of-the-Market-Report-for-ERCOT.pdf,119,"legacy CONE retained for the peaker-net-margin threshold"
+ERCOT,2025,annual,system,peaker_net_margin_usd_per_kw_yr,79,usd_per_kw_yr,2025-State-of-the-Market-Report-for-ERCOT.pdf,119,"'peaker net margin ... reached almost $79 per kW in 2025, roughly 21% lower than in 2024'; PNM threshold (3x CONE = $315,000/MW-yr) reached only once ever (Feb 2021, Uri)"
+ERCOT,2019,annual,new_gas_ct,net_revenue_usd_per_kw_yr_min,125,usd_per_kw_yr,2019-State-of-the-Market-Report.pdf,97,"""Net revenues for combustion turbines ranged from $125 per kW-year in the South zone to more than $129 per kW-year in Houston""; new-unit proxy HR 10.5 MMBtu/MWh, VOM $4/MWh, 10% outage rate"
+ERCOT,2019,annual,new_gas_ct,net_revenue_usd_per_kw_yr_max,129,usd_per_kw_yr,2019-State-of-the-Market-Report.pdf,97,"see min row (""more than $129"" in Houston)"
+ERCOT,2019,annual,new_gas_cc,net_revenue_usd_per_kw_yr_min,149,usd_per_kw_yr,2019-State-of-the-Market-Report.pdf,97,"""Net revenues for combined-cycle units ranged from approximately $149 to $154 per kW-year, depending on the zone"""
+ERCOT,2019,annual,new_gas_cc,net_revenue_usd_per_kw_yr_max,154,usd_per_kw_yr,2019-State-of-the-Market-Report.pdf,97,see min row
+ERCOT,2019,annual,new_gas_ct,cone_usd_per_kw_yr_min,95,usd_per_kw_yr,2019-State-of-the-Market-Report.pdf,97,"""CONE values for natural gas combustion turbines ranging from $95 to $110 per kW-year"""
+ERCOT,2019,annual,new_gas_ct,cone_usd_per_kw_yr_max,110,usd_per_kw_yr,2019-State-of-the-Market-Report.pdf,97,see min row
+ERCOT,2019,annual,new_gas_cc,cone_usd_per_kw_yr_min,120,usd_per_kw_yr,2019-State-of-the-Market-Report.pdf,97,"""CONE values for natural gas-fired combined cycle units ranging from roughly $120 to $140 per kW-year"""
+ERCOT,2019,annual,new_gas_cc,cone_usd_per_kw_yr_max,140,usd_per_kw_yr,2019-State-of-the-Market-Report.pdf,97,see min row
+ERCOT,2020,annual,new_gas_ct,net_revenue_usd_per_kw_yr_min,37,usd_per_kw_yr,2020-ERCOT-State-of-the-Market-Report.pdf,93,"""Net revenues for combustion turbines fell to less than $37 per kW-year in the South zone to roughly $41 per kW-year in Houston"""
+ERCOT,2020,annual,new_gas_ct,net_revenue_usd_per_kw_yr_max,41,usd_per_kw_yr,2020-ERCOT-State-of-the-Market-Report.pdf,93,see min row
+ERCOT,2020,annual,new_gas_cc,net_revenue_usd_per_kw_yr_min,48,usd_per_kw_yr,2020-ERCOT-State-of-the-Market-Report.pdf,93,"""Net revenues for combined-cycle units ranged from approximately $48 to $54 per kW-year, depending on the zone"""
+ERCOT,2020,annual,new_gas_cc,net_revenue_usd_per_kw_yr_max,54,usd_per_kw_yr,2020-ERCOT-State-of-the-Market-Report.pdf,93,see min row
+ERCOT,2020,annual,new_gas_ct,cone_usd_per_kw_yr_min,70,usd_per_kw_yr,2020-ERCOT-State-of-the-Market-Report.pdf,93,"""CONE values for natural gas combustion turbines ranging from $70 to $117 per kW-year"""
+ERCOT,2020,annual,new_gas_ct,cone_usd_per_kw_yr_max,117,usd_per_kw_yr,2020-ERCOT-State-of-the-Market-Report.pdf,93,see min row
+ERCOT,2021,annual,new_gas_ct,net_revenue_usd_per_kw_yr,700,usd_per_kw_yr,2021-State-of-the-Market-Report.pdf,114,"""Net revenues for combustion turbines rose to almost $700 per kW-year across all zones"" — WINTER STORM URI year; approximate (""almost""), all-zone, under the then-$9,000/MWh SWCAP (since lowered to $5,000)"
+ERCOT,2021,annual,new_gas_ct,net_revenue_ex_uri_usd_per_kw_yr_min,60,usd_per_kw_yr,2021-State-of-the-Market-Report.pdf,114,"monitor-published Uri counterfactual: ""net revenues would have ranged from $60 per kW-year to $78 per kW-year but for Winter Storm Uri"""
+ERCOT,2021,annual,new_gas_ct,net_revenue_ex_uri_usd_per_kw_yr_max,78,usd_per_kw_yr,2021-State-of-the-Market-Report.pdf,114,see min row
+ERCOT,2021,annual,new_gas_cc,net_revenue_usd_per_kw_yr,800,usd_per_kw_yr,2021-State-of-the-Market-Report.pdf,114,"""Net revenues for combined-cycle units rose to almost $800 per kW-year across all zones"" — Uri year, approximate"
+ERCOT,2021,annual,new_gas_cc,net_revenue_ex_uri_usd_per_kw_yr_min,81,usd_per_kw_yr,2021-State-of-the-Market-Report.pdf,114,"monitor-published Uri counterfactual: ""$81 per kW-year to $105 per kW-year but for Winter Storm Uri"""
+ERCOT,2021,annual,new_gas_cc,net_revenue_ex_uri_usd_per_kw_yr_max,105,usd_per_kw_yr,2021-State-of-the-Market-Report.pdf,114,see min row
+ERCOT,2022,annual,new_gas_ct,net_revenue_usd_per_kw_yr_min,137,usd_per_kw_yr,2022-State-of-the-Market-Report_Final_060623.pdf,108,"""Combustion turbines ranged from $137 per kW-year to $1193 per kW-year""; the $1193 upper value is a TYPO in the report for $193 — the same report p.110 gives new-resource net revenue $150-$200/kW-yr at Waha vs $130-$180 at Katy, and the CC range is $173-$234"
+ERCOT,2022,annual,new_gas_ct,net_revenue_usd_per_kw_yr_max,193,usd_per_kw_yr,2022-State-of-the-Market-Report_Final_060623.pdf,108,"see min row: printed ""$1193"", transcribed as $193 per the p.110 cross-check; level attributed by the monitor to the ORDC changes implemented at the start of 2022"
+ERCOT,2022,annual,new_gas_cc,net_revenue_usd_per_kw_yr_min,173,usd_per_kw_yr,2022-State-of-the-Market-Report_Final_060623.pdf,108,"""Combined-cycle units ranged from $173 per kW-year to $234 per kW-year"""
+ERCOT,2022,annual,new_gas_cc,net_revenue_usd_per_kw_yr_max,234,usd_per_kw_yr,2022-State-of-the-Market-Report_Final_060623.pdf,108,see min row
+ERCOT,2022,annual,new_gas_ct,cone_usd_per_kw_yr_min,80,usd_per_kw_yr,2022-State-of-the-Market-Report_Final_060623.pdf,108,"""CONE values for natural gas combustion turbines ranging from $80 to $117 per kW-year"""
+ERCOT,2022,annual,new_gas_ct,cone_usd_per_kw_yr_max,117,usd_per_kw_yr,2022-State-of-the-Market-Report_Final_060623.pdf,108,see min row
