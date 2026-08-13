@@ -6989,3 +6989,96 @@ spend. `FINDING-miso153-the-peak-setter-is-CT-2026-08-12.md`;
 verified against the fetched remote ref before any adjudicating statistic);
 probes `_miso153_summer_cushion.py` · `_miso153_stgas_window.py` ·
 `_miso153_ct_dispersion.py` · `_miso153_fuel_dispersion.py`.
+
+## miso-155 (2026-08-13) — the P0 is READ, and the CT residual was THE MISSING FLOORS: branch C-FLOOR, the instrument clears 3 of 3, the lane's blocker is CLOSED
+
+**Keeper UNCHANGED: `2026-08-09-miso-148-basis-aware`.** Nothing promoted, no
+mechanism armed or tested, **no cell verdict minted** (the miso-142/153/154
+precedent). One run registered (rule 15): `2026-08-13-miso-155-control-p0`
+(`miso155_p0_C`, 2023–2025 in one bundle, rule 16).
+
+**The decision the miso-154 handoff put first was taken as (A)** — close the
+instrument gap rather than charter the CT offer level at a widened ±15 % bar.
+Reason, beyond rule 14 `[R-ACCURATE]`: (B)'s arithmetic does not hold, because
+2023's own T-9 interval **[−28.98 %, −7.28 %]** is not contained in
+[−15 %, +15 %], so a ±15 % bar would have certified 2023 on a point estimate
+its declared uncertainty did not support.
+
+**Built:** `--persist-p0-commitment` (opt-in, default OFF, additive-only;
+**412 KB + 53 KB per year**, smaller than `class_hourly`'s 644 KB) writing the
+bit-packed P0 on/off pattern — the complete input `compute_monthly_markup`
+draws from P0 — plus the `(T,)` conditional band series. A surrogate dispatch
+`pmax × unpacked` drives the PRODUCTION markup to a bit-identical array, so the
+markup is READ, not reconstructed. Write-only: the record is taken after both
+LPs and consumed by nothing downstream. Not a `ScenarioConfig` field (the
+`persist_p2_state` precedent), so rules 24 / 28(c) are not engaged. 11 tests.
+
+**THE FINDING, and a pre-registered trap is what caught it.** T-3
+("disbelieve clean zeros") refused the 0.000 L1F-admissibility share and the
+second derivation refuted it: **`_miso134.build_year` stops before the
+reliability-floor registry the production pipeline applies**, so every CT
+reconstruction built on that chain — miso-152's, miso-153's T-6b, miso-154's
+L1 — assembled a CT fleet with `min_gen` **exactly 0.0 on all 733 CT_PEAKER
+rows**, while the solve's own committed `floors/<year>_P1.npz` carries
+**2.8457 / 2.8773 / 2.8677 TWh over 158 / 150 / 153 floored CT rows** (max
+144.605 MW). **Any probe scoring a floored class against a keeper must read
+`floors/<year>_P1.npz`.**
+
+| year | published baseline | miso-154 PROXY | L1X exact P0+band | **L1F floors read** |
+|---|---|---|---|---|
+| 2023 | +21.99 % | −13.21 % | −13.91 % | **−0.89 %** |
+| 2024 | +22.14 % | −7.54 % | −8.66 % | **−0.26 %** |
+| 2025 | +23.72 % | −4.47 % | −5.53 % | **−0.52 %** |
+
+Admissibility (pre-registered ≥ 5 % in ≥ 2 of 3 years, threshold unchanged):
+**13.02 / 8.40 / 5.02 %**. It also fixes the class miso-154 flagged
+unreproducible — **ST_GAS −11.8 / −17.0 / −19.4 % → −1.9 / −1.3 / −0.7 %**.
+
+**AGAINST THIS SESSION'S OWN BUILD:** reading the exact P0 moved the residual
+only **−0.70 / −1.12 / −1.06 pp**. miso-154's 18–22 pp T-9 span was an artifact
+of its extreme bounds, not a measure of the proxy's error — **a bound is not an
+uncertainty**. **S-INERT fired for 2024/2025** (exact vs proxy markup +0.48 % /
++0.41 %); in 2023 the exact markup is 4.80 % **smaller** yet the residual went
+colder, so P-1's stated mechanism was partly wrong even where its direction
+held. T-10 also closed smaller than bounded: exact vs reconstructed band series
+agree to 0.001 at the top-200 hours.
+
+**Validity gates, both cleared BEFORE any adjudicating statistic.** V1: the
+baseline leg reproduced miso-153's published T-6b to **+0.000 / −0.000 /
++0.002 pp** on `n_gen` 2929 / 2923 / 2923. V2: the control reproduces the
+keeper — **2025 BIT-IDENTICAL** (0 of 70,080 zone-hour price cells), 2024 8
+cells, 2023 1,220 cells (mean LMP −0.0020 %).
+
+**NOT PRE-REGISTERED, disclosed:** a reconstruction-vs-solve fleet-size
+discrepancy (probe 2929/2923/2923 vs solve 2787/2788/2786; 296 probe-only rows,
+1,865.7 MW, all with an empty `plant_group`) — **immaterial here because
+`CT_PEAKER` matches 733/733 with 0.0 MW probe-only**, and the fleet-aligned
+legs are identical to every reported digit; the floor-source change (§2, forced
+by T-3); a `_REUSE_KWARG_EXEMPT` entry for the write-only flag; and V2 run as a
+direct bundle comparison rather than a re-score (strictly stronger).
+
+**Limitations.** The instrument is validated **on L1F, not L1X** — price-taking
+on the bid alone still reads −13.91 / −8.66 / −5.53 %. The control scores
+NOT-YET with **C6 UNATTESTED** (`replay_keeper` writes no governance
+attestation); it is a control reproduction, not a promotion candidate.
+
+**Where it leaves the lane.** CT volumes are measurable to **~1 %** (from
+±13 pp at miso-154, ±22–24 pp at miso-153) and the standing blocker is CLOSED.
+But with the markup exact and the floors read there is **no remaining
+unexplained CT volume residual**, so the named CT offer-LEVEL successor can no
+longer be motivated by a volume miss and must identify its target elsewhere —
+confronting the Potomac Economics MISO IMM datum that MISO's system price-cost
+mark-up is **+3.0 % (2023) / −2.5 % (2024)** with a de-minimis output gap, i.e.
+the real market clears essentially **at cost**. Owner decision left open and
+NOT taken here: whether the P0 sidecar becomes part of the committed bundle
+spec (default-on), which would cost **465 KB per ISO-year**.
+
+Rule 22 `[R-HOLDOUT]`: 2023/2024/2025 only, MISO holds no marker, no holdout
+spend. `FINDING-miso155-the-missing-floors-2026-08-13.md`;
+`PREREG-miso155-p0-exact-commitment-instrument-2026-08-13.md` (`a920c85`, blob
+`07b12e5a`, verified against the fetched remote ref before any adjudicating
+statistic); probe `_miso155_p0_exact_instrument.py`; record
+`_miso155_p0_exact_instrument.json`; tests
+`tests/test_miso155_p0_commitment_sidecar.py`.
+
+**Next number: miso-156.**
