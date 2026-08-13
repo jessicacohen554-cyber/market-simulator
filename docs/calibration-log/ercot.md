@@ -7909,3 +7909,79 @@ Records: `results/calibration/FINDING-ercot193-soc-regate-2026-08-13.md`;
 matrix ERCOT shard `storage_measured_anchors` cell + end-of-file re-stamp;
 §5.1 item 10 re-stamped. Next shorthand: **ercot-195** (ercot-194 was consumed
 by the signing sitting, recorded above).
+
+## ercot-195 (2026-08-13) — L-SCAR-SCREEN-2: V0 FAIL, the L-1 rent function is NOT IDENTIFIABLE from measured tightness; lane STOPS at V0. Intake done (anchors 3 → 7 vintages); NO ScenarioConfig field, NO wiring, NO A/B, NO registration, NO promotion; keeper UNCHANGED
+
+**Task.** Implement L-1 per the signed charter
+`docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md` (S1/S2/S3, owner,
+2026-08-13): the tightness-conditioned residual scarcity-rent term
+`term_f(y) = max(0, R_f(τ_model(y)) − S_f(y))` in the ERCOT retirement/entry
+screen. Full record: `docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`.
+
+**Intake — DONE, and it cleared the floor.** The charter's V0 sets a **≥5
+anchor-vintage floor** and only 2023–2025 were on disk. Fetched and committed
+the 2019/2020/2021/2022 ERCOT SOMs (+2017 for provenance) and transcribed each
+vintage's own prose-stated new-entrant CT/CC net revenue into
+`som-competitive-conduct` with `source_doc`/`source_page` per row: **7 vintages,
+floor cleared.** Rule 22: data intake, unrestricted under the 2026-08-06 owner
+clarification — **no year solved, scored or registered**; the stale
+"pending explicit owner authorization" quarantine notes in the datatype README
+and schema were corrected to match. Transcription limit now documented: the SOM
+prints its multi-year history **only as unlabelled bar charts**, so a vintage is
+transcribable only from the report whose own subject year it is; the **2018
+ERCOT SOM is absent from the Potomac library** (2017 and 2019 both present), and
+2018 is outside the 2019–2025 working span regardless.
+
+**V0 FAILED — 4/14 folds, bar required on 14/14.** τ measured from the committed
+NP6-905-CD telemetry via PRC, **MW quantity only** (`system_lambda`/`rtorpa`/
+`rtoffpa`/`rtordpa` never read — honesty gate enforced in code). Eight
+candidates (4 conditioning forms × {linear, log}) all failed; best was
+`prc_mean`/log at 4/14. The SOM's **own ex-Uri counterfactual makes it worse
+(2/14)** — Uri is not the cause.
+
+**Diagnosis: structural non-identifiability, proved model-free.** Rank
+inversion — by tightness 2021, 2019, **2020**, 2022, **2023**, 2024, 2025; by
+rent 2021, **2023**, 2022, 2019, 2024, 2025, **2020**: the 3rd-tightest year
+pays the LOWEST rent and the 3rd-loosest pays the 2nd-HIGHEST. Every candidate
+form has a near-tied pair whose rents differ hugely, so **any** `R_f` has an
+irreducible fold error far above tolerance: prc_mean/prc_p1 2020-vs-2021 (≥$330
+vs $15 tol), frac_below_x **2023-vs-2025** (≥$94), depth_below_x
+**2020-vs-2023** (≥$101) — two binding pairs don't involve 2021 at all.
+Cleanest instance: 2019 and 2020 are within **1.7 %** on `prc_mean` and pay
+**127 vs 39 $/kW-yr**. Cause is in the monitor's own attributions: 3 of 7
+vintages are design/event-determined — 2021 Uri under the since-lowered $9,000
+SWCAP, 2022 "primarily due to the ORDC changes", 2023 **ECRS = 50 % of net
+revenue** (already on disk). **The ERCOT merchant rent series is a REGIME series,
+not a tightness series** — the same fact the C3c ledger already signs from the
+other side.
+
+**Why the lane stopped rather than proceeding to the A/B.** S1 signs the term on
+the §2.6 distinction and says *"stay inside that distinction or stop"*; §2.6
+property 3 is that identification is measured-vs-measured, and **V0 is the test
+of property 3.** With no identified `R_f`, any level the term took would be a
+scalar uplift with no conditioning content — FFR-6A verdict **row 4's refused
+knob**, and rule 1's "fitted adder". So, deliberately: **no `ScenarioConfig`
+field** (an unidentified default-off field is a re-armable answer key, rules
+24/26); **no matrix row** (rule 28(c) attaches the row duty to adding a config
+field — the matrix header records this reading; `check_mechanism_matrix.py`
+exits **0**); no wiring, no A/B, no forecast-namespace registration, no
+promotion. **Screen-revenue movement this session = $0.00/kW-yr against the
+~50–70 $/kW-yr gap, and there is no retire/stay confusion matrix, because no
+A/B was run** — producing either would have required first choosing the refused
+knob.
+
+**Unchanged.** Card §4 must-nots all held: no dispatch price, LP object, scored
+series, backcast artifact, keeper, bench, or C3a/C3b/C3c contact; no ORDC /
+`screen_reserve_value` double-count. OVERRIDE-FIX / stage-B untouched (S3's
+promotion hold is moot — nothing to promote); L-2 untouched; card Q stays
+closed. **The defect is unchanged and frontier rank 2 stays OPEN**: the screen
+still under-reads merchant revenue by ~50–70 $/kW-yr with retention resting on
+the non-monotone admission cap (D-20(a)). This session established that L-1's
+chosen instrument cannot close it — and **sharpened** the owner's concern:
+2023's rent was half ECRS, so conditioning forecast merchant revenue on
+*tightness* misses high-revenue years for a second reason beyond the C3c tail.
+Routes left open, none taken here: L-2 (bounded by the same λ-led fact),
+conditioning on market DESIGN rather than tightness (a different mechanism —
+needs its own card, and has **zero** measured anchors post-RTC+B until the 2026
+SOM ~mid-2027), or L-0 with the second `readiness_limits` disclosure row — which
+the card is explicit **only the owner can sign**. Next shorthand: **ercot-196**.
