@@ -487,7 +487,12 @@ Workflow:
    logical change, **small commits** (a bundle's slim files + sidecar + run
    payload + bench in one commit, docs/code in another). A commit carrying a
    run payload goes over `git push`; small text-only commits may use either
-   path.
+   path. **If `git push` fails with HTTP 408/500, set
+   `git config http.version HTTP/1.1` and retry BEFORE concluding anything
+   about pack size** — the failure is HTTP/2 negotiation, reproduced on a
+   32 KB five-object pack (six consecutive failures, then first-try success
+   on HTTP/1.1; `fh-5-armk-completion-2026-08-13.md` §6). Falling back to
+   `push_files` on this misdiagnosis strands any ≥300-line file (rule 27).
 3. **The generated data files are rebuilt by the Pages deploy — committing them
    is preview-only.** The Pages deploy workflow
    (`.github/workflows/deploy-pages.yml`, restored 2026-07-14) regenerates

@@ -4521,3 +4521,130 @@ disk, ~2 minutes**, full manager capability except running the Python suite. The
 handoff §5 records the same class of death one variant earlier. Every future manager prompt
 should assume the primary clone may be half-dead and reach for the partial clone first
 rather than fighting the classifier.
+
+## Addendum AS — refresh @ `7c63c14`: BOTH DISPATCHED LANES LANDED AND ACCEPTED, card R and branch protection DISPOSED, two new programs on the board, RAW-UNTRACK WITHDRAWN, Q.2 pinned to G2
+
+*Written 2026-08-13 (second sitting of this manager), session
+claude/ffr-fh-workstream-handoff-w8w7dg. 16 PRs merged since AR landed (#3904–#3923,
+excluding my own #3908). Every claim below read from the artifact, not a lane summary.*
+
+### AS.1 OVERRIDE-FIX LANDED — adjudicated ACCEPTED (#3915, `docs/handoffs/override-fix-2026-08-13.md`)
+
+Remedy 2 exactly as dispatched: non-field `_explicitly_set_fields` record + seam consults
+it; strict narrowing (an untracked copy degrades to today's behaviour, never to a stripped
+posture — the `dataclasses.replace` all-fields trap was found and defended); 56 new seam
+tests; every acceptance row green; **all five cache-key poles unmoved** (global
+`603c2498bf71d21d`, ERCOT `8d9ef77edb3e44cb`/`062d440558103f81`, MISO
+`cd2403cc031515db`/`9337e00504e1e72a`); no ledger entry owed (no new field). **The
+dispatch's "expected: none" call-site prediction was WRONG and the lane's dynamic
+differential caught what the grep could not:** `scripts/run_full_horizon.py` forwarded
+`miso_rps_compliance_regions`/`miso_clean_tier_rows` literals unconditionally — post-fix
+they would have silently UN-ARMED owner decisions D-26/D-29 in the T1-F legs; fixed with
+None-sentinels in the same commit. That near-miss is the strongest justification the
+remedy-2 choice has produced: the differential harness now exists for the next seam
+change. **The two-ISO control-arm exposure (AQ.2) is CLOSED.** Consequence downstream: the
+ercot-194-signed L-SCAR L-1 charter gated its promotion "behind OVERRIDE-FIX" — that gate
+is now SATISFIED; the ERCOT-SCAR manager (AS.4) owns acting on it.
+
+### AS.2 FH-5-ARMK LANDED — adjudicated ACCEPTED; **Wave FH closes at 12/12** (#3921/#3923, `fh-5-armk-completion-2026-08-13.md`, fh-5 §8)
+
+`caiso-2021-2025-t1ff-armk-fh5`, runtime key `05289c2965f04734` (config-build key
+`4dcb08ecf9fecfc6` — the D-13 distinction observed, not tripped). I6 PASSES on all
+TWELVE arms. The pin executed per AR.5's sharpened instruction and the lane went further:
+additivity was MEASURED (Arm K config key identical with and without the vintage row —
+the key hashes the selector, not the table; `git diff 3ae7465 -- scripts/` empty, `src/`
+delta = the vintage registry alone). Two reads worth quoting exactly: (a) §4.1's headline
+"survives" is a NULL, not corroboration — the dominance table reads Arm R only, so Arm K
+had no power to move it, and the lane said so unprompted; (b) CAISO joins MISO as an ISO
+whose LESS-informed arm scores better in 2 of 3 years — compensation, never skill — and
+the §8.5 caveat (|K|−|R| understates the driver when bias crosses zero; CAISO 2023 signed
+move +0.3986 behind a +0.046 spread) is a genuine refinement of §5's metric. Also shipped:
+`fh5_rehydrate_scores.py`, making §4's table reproducible from committed sidecars in any
+container (validated cell-for-cell against the 23 prior sidecars). **The FH program's
+scoreboard is complete; no FH dispatch remains open.**
+
+### AS.3 Dispositions of AR.7's cards
+
+* **Card R — SIGNED R-A as recommended** (ercot-194 sitting, calibration log: "ALL FOUR
+  SIGNATURES AS RECOMMENDED"). ERCOT holds NOT-YET as the honest claim; C3b-2023 lever
+  rounds stop being chartered as determination work; R-B's reporting text NOT signed.
+  Also signed at the same sitting: L-SCAR S1/S2/S3 (L-1 residual scarcity-rent term
+  chartered for the SCREEN, A/B now, promotion behind OVERRIDE-FIX — now satisfied,
+  AS.1).
+* **Branch protection — DISPOSED: signed AT G2, not now** (release-plan §6 decision 3,
+  signed 2026-08-13: "At G2 the owner enables branch protection / required checks on
+  main"). The owner picked a later point than my re-put recommended; recorded once with
+  the consequence and proceeding: **the unguarded-merge exposure (four incidents,
+  sharpest #3888) remains open until the release program reaches FINAL MODEL STATE.** The
+  release plan itself documents ci.yml's last 30 runs as 28 cancelled / 2 in-progress /
+  ZERO completed — the check has still never gated anything. Not re-put; G2 is now the
+  named trigger and the release-program ledger owns it.
+* **D-31 (8.0 GW solar queue cap) and D-32 (F6-DIAG fix): STILL OPEN**, not in the
+  release plan's signed set. They remain this desk's cards. D-32's object sits adjacent
+  to the release program's DEBUG-A known-reds sweep — flagged to that lane rather than
+  double-dispatched.
+* **ercot-193's RG verdict landed: RG-PASS on the original gates verbatim**, run192
+  reproduces byte-identically at HEAD, the standing ercot-167 re-gate expectation is
+  DISCHARGED (#3911), both A/B runs registered per rule 15. The escalation path AR.6
+  reserved is moot.
+
+### AS.4 Two new programs on the board — scope boundaries for this desk
+
+* **Model Audit & Release-Finalization Program** (`docs/model-audit-release-plan-2026-08.md`,
+  ACTIVE at G0, its own PM session; six workstreams AUDIT/DEBUG/PERF/DOCS/SITE/BLOAT,
+  gates G1–G4). Owns: branch protection (at G2), repo slimming (BLOAT), known-reds
+  (DEBUG), docs/site finalization.
+* **ERCOT-SCAR workstream** (`docs/handoffs/ercot-scar-workstream-pack-2026-08.md`, its
+  own manager, cycles 1–6 so far; L-SCAR chartered/S-signed, ercot-195 V0 FAIL recorded,
+  ercot-196 card T assembled, HYGIENE-1/2 landed). Owns ERCOT scarcity-formation work,
+  including the L-1 lane whose promotion gate AS.1 cleared.
+* **This desk (FFR/FH) does not dispatch into either program's scope.** Cross-program
+  facts land by addendum here and by citation there.
+
+### AS.5 RAW-UNTRACK — WITHDRAWN, charter handed to BLOAT
+
+Still no paste evidence (no branch, no PR — third consecutive nil report), and its scope
+now collides head-on with the release program's BLOAT workstream (inventory → gated
+Wave-3 tip prunes with `intentional-shrink` labels and a post-prune `golden-data-tier`
+verification — a MORE governed path than the single-lane §0ar-3 prompt). Withdrawn to
+prevent two uncoordinated actors editing `.gitignore`/CLAUDE.md/repo-size state. The
+charter material BLOAT should inherit: `docs/FINDING-rewrite-prep-2026-08-11.md` §8 (GO:
+untrack `data/raw` going forward; NO-GO on history rewrite stands), AR.8 + `#3909`'s
+`docs/fast-clone.md` (partial clone + `hydrate_data.py` profiles — the recovery story
+untracking depends on), and §0ar-3's pre-merge check list (workflows, integrity guard,
+skip-when-absent tests). Recorded in the pack as §0as.
+
+### AS.6 Keepers held still through the ENTIRE 16-PR cycle — Q.2 pinned to G2
+
+All six keeper shards byte-unchanged across the cycle (first quiet cycle since the
+battery hold began), ercot-193's re-gate discharged with byte-identical reproduction, and
+both of this desk's programs are complete. Q.2's commissioning condition ("when keepers
+genuinely settle") is arguably met — but the release program's G2 is about to define
+FINAL MODEL STATE, and L-1's A/B (now unblocked) may yet move ERCOT. **Determination:
+hold Q.2 until G2 fires, then commission it as the completion evidence in the same
+window the release program freezes.** One quiet cycle after three-keepers-in-a-day is
+consistency, not yet settlement; G2 is the natural commissioning point and avoids
+running the battery twice.
+
+### AS.7 Environment items from the ARMK lane (§6), dispositioned
+
+1. Half-dead container 4th occurrence → root-cause-adjacent fix already landed as
+   `#3909`/`docs/fast-clone.md` (per-session data profiles, `hydrate_data.py`; prompts
+   declare `DATA PROFILE:` — this desk's future prompts will).
+2. **`git push` HTTP 408/500 is HTTP/2 negotiation, NOT pack size** (reproduced on a
+   32 KB pack; `git config http.version HTTP/1.1` fixes it, six-failure/first-try-after
+   evidence). Written into CLAUDE.md Git & Pushing THIS COMMIT — without it a lane
+   wrongly concludes "pack too large" and falls back to `push_files`, which cannot carry
+   a ≥300-line file (rule 27).
+3. Stray branch `tmp-transport-probe-armk` — already resolved (merged as #3923's head
+   and auto-deleted; remote heads show `main` only).
+
+### AS.8 Also on the record this cycle (not this desk's to drive; surfaced for the owner's map)
+
+miso-155: the CT residual was THE MISSING FLOORS, P0 now read/persisted (#3907/#3910);
+miso-156: the C3a miss is marginal-unit IDENTITY, the fuel channel runs backwards
+(#3922); neiso-92: NEISO 2021 touchpoint NOT CLEAN — nuclear availability blocks it
+(#3914) — the validation ladder's 2021 rung needs that repair before any spend;
+ercot-195: L-SCAR V0 FAIL, R_f non-identifiable from measured tightness (#3912);
+ercot-196: 2024/2025 shape object sized, card T assembled (#3916) — card T belongs to
+the ERCOT-SCAR desk.
