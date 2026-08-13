@@ -318,17 +318,19 @@ def _ercot_config() -> ISOConfig:
         # commit a71fc84d merged as PR #3888 before the declaration could land with
         # it; sitting Addendum AQ records the gap this closes).
         #
-        # PRECEDENCE — corrected 2026-08-13 (this comment previously claimed "an
-        # explicit caller value always wins", which is FALSE for default-valued
-        # arguments; docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md):
-        # apply_iso_scenario_defaults has no unset sentinel, so a caller value that
-        # EQUALS the ScenarioConfig field default is indistinguishable from unset and
-        # is silently re-armed. Callers passing a NON-default value stay
-        # byte-identical; callers passing the default value are overridden — which
-        # makes an ERCOT control arm for these five flags inexpressible through the
-        # config path. The pre-arm pole is permanently the committed pre-epoch
-        # bundles, never a re-solve, until the OVERRIDE-FIX lane (sitting §0ap-1 /
-        # Addendum AQ.2) lands the remedy at the seam.
+        # PRECEDENCE — an explicit caller value ALWAYS wins, including one equal to
+        # the ScenarioConfig field default. RESTORED 2026-08-13 by the OVERRIDE-FIX
+        # lane (FINDING-ffr-9c-iso-override-precedence-2026-08-12.md, §4 remedy 2 +
+        # its RESOLUTION ADDENDUM): between PR #3888 and that fix the seam had no
+        # unset sentinel, so a caller value EQUAL to the field default was
+        # indistinguishable from unset and was silently re-armed — which made an
+        # ERCOT control arm for these five flags inexpressible through the config
+        # path. apply_iso_scenario_defaults now consults the caller's own
+        # explicitly-set-field record (scenarios.explicitly_set_fields), so the
+        # control arm is expressible and a leg that passes nothing still resolves
+        # all five armed. NOTE the pair constraint: the two capacity-screen flags
+        # must be turned off TOGETHER — __post_init__ refuses restoration without
+        # the lookahead (FFR-8A), so switching off only one RAISES.
         default_scenario_overrides={
             "scarcity_price_overlay": True,
             "capacity_screen_unified_lookahead": True,
@@ -1541,9 +1543,16 @@ def apply_reliability_floor_overrides(
 def apply_iso_scenario_defaults(config, iso: str):
     """Return ``config`` with the ISO's ``default_scenario_overrides`` applied.
 
-    An ISO-level default only fills a field the CALLER left at the
-    :class:`~market_sim.config.scenarios.ScenarioConfig` default — an explicit
-    caller value always wins. That is the rule this function exists to state
+    An ISO-level default only fills a field the CALLER DID NOT PASS — an
+    explicit caller value always wins, **including one that happens to equal the
+    :class:`~market_sim.config.scenarios.ScenarioConfig` field default**. That
+    last clause is the OVERRIDE-FIX (2026-08-13): until then "unset" was
+    inferred by comparing values, so an explicit ``False``/``None`` was
+    indistinguishable from absence and was silently re-armed — which made a
+    control arm for any ISO-armed flag inexpressible. The caller's own
+    explicitly-set-field record
+    (:func:`~market_sim.config.scenarios.explicitly_set_fields`) is now
+    consulted first. That is the rule this function exists to state
     once (rule 19 ``[R-ONE-MECH]``): it was inlined in
     ``runner.run_scenario_iso``, so every OTHER reader of a pre-solve config
     saw the UNRESOLVED posture. Concretely, MISO's overrides arm
@@ -1562,13 +1571,29 @@ def apply_iso_scenario_defaults(config, iso: str):
         ISO declares no overrides or the caller has set every one of them, so
         callers that already resolved stay byte-identical.
     """
-    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.config.scenarios import ScenarioConfig, explicitly_set_fields
 
     overrides = get_iso_config(iso).default_scenario_overrides
     if not overrides:
         return config
     defaults = ScenarioConfig()
+    # OVERRIDE-FIX 2026-08-13: "unset" is read from the CALLER'S OWN RECORD
+    # first, and only then from the value. The value comparison alone cannot
+    # see an explicit ``False``/``None`` — it equals the field default, which is
+    # precisely the OFF value a control arm needs to request — so every
+    # ISO-armed flag was silently re-armed and a control arm was inexpressible.
+    set_fields = explicitly_set_fields(config)
     to_apply = {
-        k: v for k, v in overrides.items() if getattr(config, k) == getattr(defaults, k)
+        k: v
+        for k, v in overrides.items()
+        # ``set_fields is None`` = untracked provenance (a bare
+        # ``dataclasses.replace`` copy, an unpickled config): fall back to the
+        # value comparison alone, i.e. exactly the pre-fix behaviour.
+        if (set_fields is None or k not in set_fields)
+        # Retained, not replaced: a config MUTATED after construction carries no
+        # record of it, and this still catches that. Keeping both conditions
+        # makes the fix a strict NARROWING — it can only apply FEWER ISO
+        # defaults than before, never more, so no unset caller's posture moves.
+        and getattr(config, k) == getattr(defaults, k)
     }
     return config.with_overrides(**to_apply) if to_apply else config
