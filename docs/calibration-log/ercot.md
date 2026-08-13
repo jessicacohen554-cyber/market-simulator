@@ -7754,3 +7754,48 @@ extension. Reconstituting `Ancillary Service RRS` from the PFR/UFR/FFR awards,
 and deciding whether AS *capability* can stand in for the removed `HASL`
 headroom, are the two open questions any future RTC+B-era consumer must answer;
 both are constructions and both need their own authorization.
+
+## l-scar-screen-1 (2026-08-13) — CHARTER: the SCREEN-SIDE scarcity-revenue mechanism (frontier rank 2, L-SCAR / G-20/G-22) — DECISION CARD FOR THE OWNER, NO lever, NO derive, NO LP, NO run registered, NO matrix cell, keeper UNCHANGED
+
+**Session** l-scar-screen-1 `[FABLE]`, branch `claude/l-scar-screen-charter-wm882l`,
+HEAD `9c52ea8`. Planning only, per charter. Deliverable:
+`docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md` — three signatures (S1
+admissibility of the tightness-conditioned residual scarcity-rent term vs the
+FFR-6A row-4 refusal; S2 option selection incl. an honest do-nothing with its
+measured accepted bias; S3 sequencing: A/B now at the armed stage-B posture,
+promotion behind OVERRIDE-FIX).
+
+The chartered mechanism, one line: a default-off, ERCOT-only,
+forecast/hindcast-only revenue-stack term in the retirement/entry screen —
+`term_f = max(0, R_f(τ_model) − S_f)` — with `R_f` identified measured-vs-measured
+from multi-year Potomac SOM net-revenue anchors against measured tightness
+(rule 23 frozen; ≥5-vintage identification floor, V0 LOYO gate), `τ_model` the
+model's own simulated tightness (regenerates forward, rule 13), and `S_f` the
+subtraction of every scarcity channel the screen already forms
+(`screen_reserve_value_enabled` hourly signal / FFR-8A restored tail / in-year
+ORDC / any future co-opt — rule 19: the model's own formation always displaces
+the term). RTC+B 2026+ rides the existing `ercot_market_regime` seam with a
+named regime-transfer caveat and a rule-23 re-derive trigger on the first
+RTC+B-era SOM vintage. Never touches dispatch prices, LP objects, or any
+scored series; backcast-unreachable by validator; card Q / (Q-B) and the C3c
+ledger untouched.
+
+Defect sized from committed artifacts (card §1): residual ≈56–66 $/kW-yr to
+the SOM CT ≈68 anchor (FF-1B §2.2/§4; ~51 co-opt-on, RC-2A §C); FFR-6A replica
+margins at measured prices 47–97 $/kW-yr vs screen 0.05–20.5 (FFR-8A §4.1);
+convergent dispatch-side top-50 read ≈$73/kW-yr (ercot-177 §3 / ercot-189
+§1.2). Classes that flip at that error: gas_st 6.5–10.9 GW false decisions
+($17.90–24.85 vs bar $35; replica 47–65.6), coal 23/7,040 MW ($16.65 vs $58.5;
+replica 75.4–97.2), CT/CC entry_capped fleet-wide 56.5–67 GW — retention done
+entirely by the admission cap, measured non-monotone (FFR-8A §4.2.4, the
+D-20(a) defect). Pre-registered validation is NEVER the residual: unit-grain
+retire/stay vs FFR-7C-corrected actuals 2023–2025, LOYO ≥2/3 folds, plus
+byte-identity negative controls (card §3).
+
+Sequencing recorded, not fixed (card §5.3): stage B is armed on main via the
+`a71fc84d` "[INCOMPLETE — do not push]" commit (sitting addenda AP/AQ) — this
+lane's control re-solves at HEAD (pre-a71fc84 bundles are pre-epoch record),
+its own A/B is expressible (new flag default-off, not in the override table),
+and it repairs none of the a71fc84 gaps. This session consumed no backcast
+shorthand (ercot-193 was claimed on main by the C3b-ceiling lane while this
+session ran; the backcast counter is unaffected by this entry).
