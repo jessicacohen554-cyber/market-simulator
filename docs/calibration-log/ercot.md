@@ -7796,5 +7796,6 @@ Sequencing recorded, not fixed (card §5.3): stage B is armed on main via the
 `a71fc84d` "[INCOMPLETE — do not push]" commit (sitting addenda AP/AQ) — this
 lane's control re-solves at HEAD (pre-a71fc84 bundles are pre-epoch record),
 its own A/B is expressible (new flag default-off, not in the override table),
-and it repairs none of the a71fc84 gaps. Next shorthand: **ercot-193**
-(unchanged — this session consumed no backcast number).
+and it repairs none of the a71fc84 gaps. This session consumed no backcast
+shorthand (ercot-193 was claimed on main by the C3b-ceiling lane while this
+session ran; the backcast counter is unaffected by this entry).
