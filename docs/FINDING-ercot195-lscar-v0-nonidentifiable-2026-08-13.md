@@ -1,7 +1,13 @@
 # FINDING — ercot-195 / L-SCAR-SCREEN-2: the L-1 rent function is NOT IDENTIFIABLE from measured tightness; the lane STOPS at V0
 
 > Session `l-scar-screen-2`, 2026-08-13, branch
-> `claude/l-scar-screen-2-implement-lo897d`, HEAD `c9aeeb6`.
+> `claude/l-scar-screen-2-implement-lo897d`. Analysis run at HEAD `c9aeeb6`;
+> rebased onto `016b659` for merge, with every gate re-run green at that base
+> (V0 reproduces 4/14, `check_mechanism_matrix.py` exits 0, the datatype's 71
+> tests pass, the rendered data dictionary is current). The one rebase conflict
+> was `docs/calibration-log/ercot.md` — main appended the ercot-193 execution
+> entry while this session ran — resolved by keeping BOTH entries in order;
+> the ercot-195 shorthand was still free on main's tail.
 > **Outcome: V0 FAIL — 4/14 folds within a bar the charter requires on 14/14.**
 > The failure is **structural non-identifiability**, not a tuning miss: a
 > model-free bound shows *no* function of any candidate conditioning variable
