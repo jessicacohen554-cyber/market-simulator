@@ -584,6 +584,11 @@ results/hindcast/*/*/*/*.parquet
 results/hindcast/*/run_config.yaml
 results/hindcast/*.log
 results/hindcast/*/run.log
+# Per-leg solve logs written by scripts/probes/fh5_run_leg.sh into a shared
+# _fh5_logs/ directory — same transient class as the two rules above, which miss
+# it only because they match one level up. No FH-4/FH-5 leg ever committed its
+# log; the committed record is the slim set named above (FH-5-ARMK, 2026-08-13).
+results/hindcast/_fh5_logs/
 
 # FF-2B base-year adequacy solves (results/ff2b-after/<iso>, run via
 # run_full_horizon at T0 scale for the 2026 I7 check the *-ff-2b-adequacy
