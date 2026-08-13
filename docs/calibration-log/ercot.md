@@ -7819,3 +7819,93 @@ C3b-2023-targeted determination rounds; bandwidth re-points to hygiene, the
 re-gate precommit is STILL QUEUED — its runs are not yet executed or
 registered), and forecast readiness. R-B reporting text NOT signed; rubric
 and ledger untouched. Next shorthand: **ercot-195**.
+## ercot-193 (2026-08-13) — EXECUTION of the claimed ercot-193 lane (entered after ercot-194 in file order; the shorthand was claimed on main mid-session while the sittings ran): card R ASSEMBLED (signed R-A at ercot-194) + the STANDING ercot-167 SOC-RESERVE RE-GATE EXECUTED AND DISCHARGED — RG-PASS on the original gates verbatim; the run192 keeper reproduces BYTE-IDENTICALLY at HEAD; keeper UNCHANGED
+
+**Task (handoff):** (1) the determination-ceiling decision card, doc-grade, no
+solve; (2) the next lever targeting C3b-2023 under full precommit protocol;
+plus the two ercot-192-filed defects if convenient.
+
+**Task 1 — card R** (`docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`,
+signed R-A at the ercot-194 sitting). The new measurement
+(`scripts/probes/ercot193_c3b_decomposition.py`, read-only re-scoring of the
+keeper payload with the rubric's own `_wmean`/`_nrmse`): **C3b-2023's squared
+monthly residual is 96.2 % August+September 2023** (resid −103.3 / −51.1
+$/MWh); counterfactual perfect-Aug/Sep scores 0.118 (PASS) while
+perfect-everything-else still fails at 0.592 — so C3b-2023 is the SAME
+Q-B-closed model-class scarcity object as C3a-2023, counted twice, and with
+`LEDGERABLE_CRITERIA={price_tail}`, `MAX_LEDGERED_CAVEATS=1` (spent) and the
+v3.0 tier guard, no C3b-2023 work can move ERCOT off NOT-YET. Owner signed
+**R-A**: hold NOT-YET as the honest public claim; no further C3b-2023-targeted
+determination rounds (side-effect reporting only, ceiling stated up front).
+
+**Task 2 — lever adjudication.** Queue point (a) TAKEN: the standing ercot-167
+re-gate, whose reopen condition ("after the maintenance-season availability
+defect lands") is now met by the promoted ercot-185 fault-3 repair (ercot-174:
+"the only remaining structural route to the 2024 object") + the ercot-191 A1
+deriver repairs. (b) `diurnal_price_amplitude` REFUSED — audit row not a
+mechanism; ERCOT's named amplitude lever WAS item 10, already armed; C3b is
+monthly, and the card-R ceiling caps any non-Aug/Sep lever at ~0.59. (c) the
+outage-season monthly object REFUSED for this round — its named patterns are
+2024/2025, both C3b-PASS. Precommit
+`docs/PRECOMMIT-ercot193-soc-regate-2026-08-13.md` pushed at `5ad4975` BEFORE
+any solve: original ercot-167 G1–G5 verbatim, G-COAL148 carried live (D2
+lineage), DIRECTION-BLIND (the keeper cannot change in-session in any outcome —
+the arm is owner-promoted in the keeper and disarming is owner-only).
+
+**The A/B** (full span 2023–2025, years sequential, one invocation at a time):
+control `2026-08-13-ercot193-ctl-nosoc` (run192 recipe minus
+`ercot_storage_as_soc_reserve` via `replay_keeper.py --set`), arm
+`2026-08-13-ercot193-arm-soc` (the keeper recipe byte-faithful) — both
+registered (rule 15; retention evicted `2026-08-05-run168b-year-curves` and
+`2026-08-06-run173a-reconc-control`). Mechanism liveness verified both
+directions (SOC floor lines present per-year in the arm log, absent in the
+control log). **RG-PASS — every gate holds** (`ercot193_ab_gates.json`,
+`ercot193_coal148.json`):
+- **Both originally-fired kills CLEAR**: G4-2024 C3a −1.81 → −0.81 % (PASS;
+  Δ 0.989 pp on the unrounded scorer basis vs the ±1.0 band — the 2-decimal
+  display rounds it to a spurious 1.000, disclosed), with 2024 spurious hours
+  FALLING on the arm 6→5; G3-2025 spurious 1→1 (none introduced — the
+  2025-10-21 19h graze sits in BOTH arms, i.e. the surrounding recipe).
+- G1 target: 2023 scarcity-hour battery discharge 663.7 → 516.1 MW vs the
+  measured 423 (61 % of gap closed, no overshoot). G2: 0.72 ≥ 0.70. G5: shed
+  4/1/0 identical. G-COAL148: rise ≈ 0.0 TWh vs the 0.5 bar. G-DOF: ledger
+  unchanged (n_entries 18, n_residual 6) by construction.
+- **G-REPRO: ZERO drift** — determination, fail set, all scored C3 values
+  identical, and **all 12 committed hourly sidecars sha256-IDENTICAL** to
+  `ercot192_arm_B`. The K6-class non-reproduction condition is ABSENT for this
+  keeper at this HEAD.
+
+**Side-effect report (card-R ceiling honoured, never a basis):** the armed
+mechanism carries C3a-2023 +0.36 pp, C3b-2023 −0.007 (0.611 → 0.604), C3c-2023
++8 real tail hours (50 → 58 of actual 181), C3a-2024 +1.0 pp, C3a-2025 +0.6 pp
+— every row toward the measured market, zero fitted scalars. Determination
+NOT-YET {C3a-2023, C3b-2023} on BOTH arms — the fail set is recipe-level, not
+this mechanism's. **The ercot-167 lane is CLOSED-CLEAN** and the standing
+re-gate expectation is discharged from the cell, §5.1 item 10, and this log.
+
+**Hygiene (the ercot-192-filed defects):** (1)
+`gen_ercot188_attestation._tail_counts` re-pointed to the scorer's max-zonal
+basis, verified to reproduce the keeper's 58/22/1 — FIXED. (2) The ERCOT-137
+pooled-vs-anchored convention issue remains open in the DOF ledger (not
+touched — inside band, arming unchanged).
+
+**Disclosures.** First control launch OOM-killed mid-2023 (dmesg pid 4170; a
+concurrent `git push` pack build collided with the solve's ~9 GB peak) —
+relaunched solo, completed clean; no artifact of the killed attempt survives.
+`dashboard_add_run`'s metrics-sidecar write has a relative-path bug (worked
+around by calling `calibration_verdict.write_metrics_sidecar` on the resolved
+path) — filed here as a tooling defect. The replay path writes no
+`legitimacy_diagnostics.json`; generated for both bundles so C8 scores (PASS
+both). Mid-session merges into the branch (card-R signing, L-SCAR record,
+stage-B epoch declaration) verified comment/docs/test-only on the solve path;
+`ercot_storage_as_soc_reserve` is not among the five stage-B override-table
+flags, so the FINDING-ffr-9c precedence defect does not touch this pair.
+
+**Fences honoured.** No C3a-2023 spend (the object was the standing
+obligation; residuals reported at full magnitude, never gated on direction),
+no C3c ledger change, no rubric amendment, no marker granted or spent, frozen
+composition lane untouched, ercot-188/E2 P0 forfeiture inherited unexpired.
+Records: `results/calibration/FINDING-ercot193-soc-regate-2026-08-13.md`;
+matrix ERCOT shard `storage_measured_anchors` cell + end-of-file re-stamp;
+§5.1 item 10 re-stamped. Next shorthand: **ercot-195** (ercot-194 was consumed
+by the signing sitting, recorded above).

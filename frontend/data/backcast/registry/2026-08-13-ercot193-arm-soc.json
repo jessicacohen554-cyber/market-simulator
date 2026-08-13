@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-13-ercot193-arm-soc",
+  "label": "ercot193 arm soc",
+  "date": "2026-08-13",
+  "shorthand": "ercot193-arm-soc",
+  "definition": "ercot-193 SOC re-gate arm: run192 keeper recipe replayed at HEAD",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-13-ercot193-arm-soc.js",
+  "bundle": "results/calibration/ercot193_arm_soc"
+}

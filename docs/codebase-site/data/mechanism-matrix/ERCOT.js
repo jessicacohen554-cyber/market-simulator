@@ -166,7 +166,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     caiso_storage_nqc_accreditation: { cell: ".", fc: "." },
     caiso_ra_mpb_capacity_anchor: { cell: ".", fc: "." },
     storage_vintage_ramp: { cell: "K" },
-    storage_measured_anchors: { cell: "K", ev: "ERCOT-66" },
+    storage_measured_anchors: { cell: "K", ev: "ERCOT-66; ercot-193 (2026-08-13): the ercot_storage_as_soc_reserve leg's STANDING ercot-167 RE-GATE is DISCHARGED — RG-PASS on the original G1-G5 verbatim at HEAD (A/B 2026-08-13-ercot193-ctl-nosoc vs -arm-soc, both registered; precommit docs/PRECOMMIT-ercot193-soc-regate-2026-08-13.md pushed pre-solve): both originally-fired kills CLEAR (G4-2024 C3a -1.81 -> -0.81% PASS, delta 0.989pp on the unrounded scorer basis; G3-2025 spurious 1 -> 1, none introduced), G1 target 663.7 -> 516.1 MW vs measured 423 (61% of gap closed), G2 0.72, G5 shed 4/1/0 identical, G-COAL148 rise ~0.0 TWh; G-REPRO: the run192 keeper reproduces BYTE-IDENTICALLY (12/12 hourly-sidecar sha256s, zero scored-value drift). Keeper UNCHANGED (direction-blind rule). FINDING-ercot193-soc-regate-2026-08-13.md; ercot193_ab_gates.json; ercot193_coal148.json" },
     storage_daily_cycling: { cell: "K", ev: "ercot keeper (armed; not disturbed by the CAISO verdict)" },
     pumped_storage_cycling_depth: { cell: "." },
     caiso_da_rt_two_settlement: { cell: "." },
@@ -263,3 +263,16 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
  * (2026-08-12-run192-arm-coal-peak, ercot-192 / owner signature B1 — the promoting lane updated its
  * cell but the header stamp had lagged; gates text prepended from its keeper-shard record). No new
  * mechanism row (no new ScenarioConfig field). */
+
+/* ERCOT column re-stamp — 2026-08-13 (ercot-193, the C3b-ceiling + SOC re-gate session; NO promotion,
+ * keeper UNCHANGED at 2026-08-12-run192-arm-coal-peak). Two records land: (1) card R SIGNED (R-A) —
+ * DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md: C3b-2023 is measured 96.2% the same
+ * closed Aug/Sep-2023 model-class object as C3a-2023 (perfect-everything-but-Aug/Sep still fails at
+ * ~0.59 vs the 0.20 bar), so NOT-YET stands as the honest public claim and no further C3b-2023-targeted
+ * determination rounds are chartered (side-effect reporting only). (2) storage_measured_anchors cell:
+ * the ercot_storage_as_soc_reserve STANDING RE-GATE (carried since ercot-167, 2026-08-05) is
+ * DISCHARGED — RG-PASS on the original gates verbatim; the run192 keeper reproduces byte-identically
+ * at HEAD (12/12 sidecar sha256s). Runs 2026-08-13-ercot193-{ctl-nosoc,arm-soc} registered; retention
+ * evicted 2026-08-05-run168b-year-curves + 2026-08-06-run173a-reconc-control. Sibling hygiene fix:
+ * gen_ercot188_attestation._tail_counts re-pointed to the scorer's max-zonal basis (the ercot-192-filed
+ * defect). No new mechanism row (no new ScenarioConfig field). */
