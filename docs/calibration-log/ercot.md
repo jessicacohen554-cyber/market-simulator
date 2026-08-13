@@ -7799,3 +7799,23 @@ its own A/B is expressible (new flag default-off, not in the override table),
 and it repairs none of the a71fc84 gaps. This session consumed no backcast
 shorthand (ercot-193 was claimed on main by the C3b-ceiling lane while this
 session ran; the backcast counter is unaffected by this entry).
+
+## ercot-194 (2026-08-13) — TWO SITTINGS RECORDED, ALL FOUR SIGNATURES AS RECOMMENDED: L-SCAR-SCREEN-1 S1/S2/S3 (the §2.6 distinction OWNER-SIGNED; L-1 residual scarcity-rent term chartered for the SCREEN; A/B now, promotion behind OVERRIDE-FIX) and ercot-193 card R (R-A: hold NOT-YET, re-charter ERCOT off the 2023 price criteria); NO lever, NO solve, NO run, NO matrix cell, keeper UNCHANGED
+
+**Task.** Signing sitting, held with the owner on the two open cards.
+(1) `docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`: S1 ADMISSIBLE AS
+CHARTERED — the owner signs the §2.6 distinction (measured tightness-
+conditioned residual rent with sunset ≠ FFR-6A row 4's refused scalar
+uplift); S2 = L-1 (L-2 the named structural complement); S3 = A/B against a
+HEAD-re-solved control now, PROMOTION held behind OVERRIDE-FIX. The
+implementing session (L-SCAR-SCREEN-2) owns the new default-off
+`ScenarioConfig` field + full matrix row (rule 28c), the §3 pre-registered
+retire/stay 2023–2025 LOYO validation, and the §4 must-nots verbatim.
+(2) `docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`:
+**R-A** — NOT-YET stands as the honest public claim now that C3b-2023 is
+measured 96% the same closed model-class object as C3a-2023; no further
+C3b-2023-targeted determination rounds; bandwidth re-points to hygiene, the
+2024/2025 shape queue, the standing re-gates (the ercot-193 SOC-reserve
+re-gate precommit is STILL QUEUED — its runs are not yet executed or
+registered), and forecast readiness. R-B reporting text NOT signed; rubric
+and ledger untouched. Next shorthand: **ercot-195**.
