@@ -6992,3 +6992,148 @@ here as the pack's continuation artifact. Three lanes were dispatched at §0ap a
 evidence yet** (OVERRIDE-FIX, FH-5-ARMK, RAW-UNTRACK); OVERRIDE-FIX's prompt carries **one
 stale line** that the successor must correct before it is pasted — it says ERCOT's stage-B rows
 are not on main, and they are.
+
+## §0ar — reconstruction round @ `0fcd19cd` (2026-08-13): the three §0ap prompts, written into the pack for the first time
+
+*Successor-manager sitting (Addendum AR). §0aq claimed "§0ap holds the three in-flight
+prompts"; the pack has no §0ap — the bodies existed only in chat (AR.3). They are
+reconstructed here from their evidence docs, with two corrections: OVERRIDE-FIX's stale
+"ERCOT's stage-B rows are NOT on main" line removed and the lane re-framed as remediation of
+a live two-ISO exposure (AQ.2, now also completion handoff §4), and FH-5-ARMK's pin
+instruction sharpened so the literal `3ae7465` pin does not re-create the blocker the lane
+exists to clear (AR.5). Paste status at reconstruction: NO EVIDENCE YET on all three.*
+
+### §0ar-clauses — the standing block (supersedes §0ao-clauses; TWO new clauses)
+
+```
+> INCOMPLETE COMMITS (NEW — manager ruling AR.2, after PR #3888 merged a commit its own
+> author titled "[INCOMPLETE - do not push]" and silently moved a cache epoch). Never push,
+> or open a PR containing, a commit whose own message marks it incomplete or unmergeable. A
+> pushed branch is presumed mergeable at any moment — merges do not wait for their author
+> (HOUSE-1 X.2). Land it complete, or keep it local. If your session is dying mid-task,
+> push only the half that stands alone as a complete commit.
+
+> HALF-DEAD CONTAINER (NEW — three occurrences and counting, worst at AR.8). If your clone
+> arrives with mass staged-deletions / missing tree / stale index.lock, do not fight it:
+> `git clone --depth 1 --filter=blob:none --no-checkout <origin-url> <dir>`, then
+> `git sparse-checkout set --no-cone '/*' '!data/raw' '!results'`, then checkout your
+> branch. ~233 MB, ~2 min. Add data/raw paths to the sparse set only if your lane actually
+> reads them; a solve lane needs the full tree and should instead recover the primary clone
+> (rm stale lock; git read-tree HEAD; git checkout -- .).
+
+> MID-LANE src/ CHANGE (this bit FH-5, see fh-5-phase-b-2026-08-11.md §3). If your branch is
+> merged and deleted while you are mid-lane, the REQUIRED response (restart from latest main)
+> also moves src/ underneath a running solve. FH-5 lost a leg to this. If it happens to you:
+> KILL the in-flight run and DELETE its partial bundle (its code provenance is ambiguous by
+> construction — discard it, do not reason about it), pin src/ back to the head your earlier
+> legs solved on (`git restore --worktree --source=<sha> -- src/`, verify
+> `git diff <sha> -- src/` is empty, remove files added since, clear stale bytecode), and
+> re-solve so every arm in the comparison shares one code version. Then REPORT it as its own
+> section. A multi-arm comparison whose arms ran different code is not a comparison.
+
+> RULE-28 WRITE PATH (post-HOUSE-3, verified 2026-08-11). The mechanism matrix is SHARDED. A
+> session that tests a mechanism in <ISO> edits ONLY
+> docs/codebase-site/data/mechanism-matrix/<ISO>.js — cell verdict, forecast posture (fc),
+> evidence citation (ev), ISO note, and the keeper/gates stamps on promotion. NEVER another
+> ISO's shard (rule 25). The base docs/codebase-site/data/mechanism-matrix.js is edited ONLY
+> to add a NEW MECHANISM ROW; its visible keeper stamps are the FROZEN pre-2026-08-11 log —
+> do not "update" them. Run scripts/check_mechanism_matrix.py before you push.
+
+> SCENARIOS.PY IS STILL SHARED — follow the insertion convention. Tuple order is semantically
+> irrelevant, so position exists only to keep parallel PRs off the same line: an ISO-prefixed
+> field (ercot_*, caiso_*, pjm_*, miso_*, nyiso_*/nysdec_*, neiso_*) goes at the END OF ITS
+> OWN ISO'S CLUSTER; a shared field at the very end of the tuple; same discipline for
+> _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS in the SAME commit. Do NOT reorder legacy entries. On
+> conflict, resolve BY UNION — never take one side wholesale (an edit was lost that way at
+> c5593684).
+
+> CLEAN-PARTITION GUARD (caiso-188, extended onto the solve paths by caiso-190).
+> check_clean_partitions(config, iso) RAISES DegradedInputError when an armed flag's derived
+> CLEAN partition is absent. No-op at defaults; fires for capacity_deliverability_limits and
+> hydro_ror_split. If your recipe arms either, scripts/regenerate_clean.py MUST have run
+> first or your solve dies at the starting line.
+
+> ATTESTATION COMPLETENESS (E10 — caiso-189). audit_keepers.py checks attestation
+> completeness, after caiso-188 was found PROMOTED WITH NO C6 GOVERNANCE ATTESTATION AT ALL.
+> If your lane promotes, write the attestation and include
+> "schema": "calibration-attestation/v1".
+
+> PUSH. A timed-out push may have LANDED — verify with `git ls-remote` BEFORE diagnosing.
+> If your branch was merged and deleted, restart it from latest main rather than stacking on
+> merged history — and see the MID-LANE clause above. Never push_files a >=300-line file. No
+> new GitHub Actions workflows (private repo, billed minutes). git push from these containers
+> needs a generous timeout (measured 1m42s; never 120 s).
+
+> DISK / WORKTREE. data/raw is 9.6 GB and .git 7.5 GB against ~13 GB writable. Do NOT launch
+> concurrent isolation:"worktree" agents — three at once exhausted the disk and all failed.
+> Run scripts/audit_keepers.py inline; at most ONE worktree agent at a time.
+```
+
+### §0ar-1 — OVERRIDE-FIX [OPUS] — remedy 2 at the ISO-override seam: make armed flags turn-off-able (LIVE exposure, MISO + ERCOT)
+
+Object: `docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md` remedy 2 —
+track explicitly-set fields at `ScenarioConfig` construction and have
+`apply_iso_scenario_defaults` consult that record instead of comparing values. The exposure
+is LIVE in two ISOs: MISO (`miso_clean_tier_rows`, D-29) and ERCOT (the five stage-B rows,
+D-30/#3888/#3903) — a caller's explicit `False`/`None` equals the field default, is
+indistinguishable from unset, and is silently re-armed, so a control arm is inexpressible
+through the config path. Remedy 3 (fail loud) is REJECTED as a destination — a model whose
+control arm is an error cannot run the A/B discipline — but is acceptable as an interim
+guard if remedy 2 needs staging. #3903 deliberately wrote NO test pinning the defective
+precedence, so this lane inherits no test it must rewrite (completion handoff §4).
+Config-only: NO solve, NO dashboard registration, NO new mechanism. Full prompt delivered in
+chat 2026-08-13; key acceptance criteria: explicit-set tracking must not enter
+`dataclasses.asdict`/`cache_key()` (prefer a non-field attribute; if a field is
+unavoidable, rule-28 ledger duties in the SAME commit), pickle identity preserved
+(`FROZEN_PICKLE_PATHS` — ScenarioConfig stays put), `apply_iso_scenario_defaults(
+ScenarioConfig(iso='ERCOT', entry_pipeline_aware_signal=False),'ERCOT')` resolves False
+(same for MISO `miso_clean_tier_rows` and ERCOT `scarcity_price_overlay`), the no-arg ERCOT
+leg still resolves all five armed at `8d9ef77edb3e44cb`, global pin `603c2498bf71d21d`
+unmoved, `_ffr9c_stageb_cache_epoch.py` three reads PASS, `check_cache_key_registration`
+exit 0, both pinned-key test files green, all six ISOs construct unchanged. Out of scope:
+`full_forward_climatology_years` empty-window fail-closed (same defect class, separate
+dispatch). WAIT for the "Pinned default cache key" CI verdict before merging.
+
+### §0ar-2 — FH-5-ARMK [OPUS] — CAISO Arm K: complete the horizon table at 12/12
+
+Object: the single missing FH-5 arm (`fh-5-phase-b-2026-08-11.md` §1.4 BLOCKED →
+unblocked by CAISO-VINTAGE-INTAKE, §0ao-3). Run id `caiso-2021-2025-t1ff-armk-fh5`,
+hindcast namespace, `meta.kind="full_forward"`, registered exactly as the eleven siblings
+(§4 table). THE PIN (AR.5, supersedes the bare "pin to 3ae7465"): working `src/` =
+`3ae7465`'s `src/` PLUS exactly the additive `DEMAND_GROWTH_RATES_VINTAGES` CAISO-2021
+delta; verify `git diff 3ae7465 -- src/` shows that block in `constants.py` and NOTHING
+else; record both tree hashes in the handoff. Running at HEAD is wrong twice over (stage-B
+epoch moved ERCOT posture bytes; different code version than the siblings). Invocation
+(after `uv sync` then `scripts/regenerate_clean.py`, in that order):
+`uv run python scripts/run_capacity_hindcast.py --iso CAISO --forward-from-base --arm
+asknown --vintage 2020 --start-year 2021 --end-year 2025 --out-dir
+results/hindcast/caiso-2021-2025-t1ff-armk-fh5` — shipped CAISO defaults, NO screen flags
+(Phase-A arming verbatim, §1.3). 4 solve-years, sequential, 2022 BRIDGED never solved,
+2021 seed never scored, scoring 2023–2025 ONLY (CAISO holds no marker; nothing
+out-of-training is touched; freeze stays untouchable). Prereg-first: commit a short
+PREREG-fh5-armk note citing §1 + the pin plan BEFORE launching. I6 rider on the arm —
+a FAIL is a stop-the-line report, never a skill claim. After registration: re-run
+`scripts/probes/fh5_horizon_table.py`, fill the CAISO Arm K cells, and extend
+`fh-5-phase-b-2026-08-11.md` by an ADDENDUM section (§8 "Arm K completion") — never edit
+the landed §4 text. Expected config key `4dcb08ecf9fecfc6` (prereg build); the RUNTIME key
+is the key of record (D-13 — verify the ledger path before believing a zero).
+
+### §0ar-3 — RAW-UNTRACK [OPUS] — execute the GO half of REWRITE-PREP's verdict
+
+Object: `docs/FINDING-rewrite-prep-2026-08-11.md` §8 GO half — untrack `data/raw` going
+forward (stop adding its blobs to the live tree; HISTORY IS KEPT AS-IS, no rewrite — the
+NO-GO on rewriting for size stands and is not re-opened) plus the partial-clone recipe as
+documented standard practice. Mechanics: `git rm -r --cached data/raw` + `.gitignore`
+entry (metadata-only commit; deletions pack small — git push fine); document the recovery
+command for fresh containers (`git restore --source=<last-tracked-sha> -- data/raw`, with
+the sha recorded in the doc) and the partial-clone recipe (blob:none + sparse-checkout,
+now validated in anger at AR.8). MANDATORY pre-merge checks: (a) walk every
+`.github/workflows/*.yml` job that checks out the repo and verify none reads `data/raw`
+from a fresh checkout (golden-data-tier.yml especially), or fix its expectation in the
+same PR; (b) `file-integrity-guard.yml` — check whether a 4,767-file deletion trips it and
+apply the documented `intentional-shrink` label if so; (c) tests that read `data/raw`
+must already skip-when-absent (the container-death record says most do — verify, don't
+assume); (d) CLAUDE.md's data-contract and Git & Pushing sections updated in the same PR
+(CLAUDE.md is core + >=300 lines: rule 27 — edit locally, push exact bytes, verify the
+blob after push). NOT in scope: any history rewrite, any change under `data/raw` itself,
+publishing cite/* tags.

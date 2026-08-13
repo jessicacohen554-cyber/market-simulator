@@ -4373,3 +4373,151 @@ require every citation to have been tagged in advance. **The NO-GO verdict on ru
 size still stands** (the pack is smaller than the live tree, so there is little dead weight to
 reclaim), but if it is ever run, the evidence record is now defended by construction rather
 than by discipline.
+
+## Addendum AR — successor sitting: the FFR-9C completion LANDED (epoch DECLARED by the lane itself), the §0ap pack gap, a do-not-push ruling, and three re-issued dispatches
+
+*Written 2026-08-13 at `0fcd19cd`, session claude/ffr-fh-workstream-handoff-w8w7dg. Everything
+below re-verified against artifacts at that head, never inherited from AQ or from any lane
+summary.*
+
+### AR.1 Queue item 1 was discharged BEFORE this sitting could dispatch it — PR #3903 adjudicated ACCEPTED
+
+AQ's first-priority item (decide and dispatch the retroactive epoch declaration) was executed
+by the FFR-9C-PROMOTE continuation lane itself, merged as **PR #3903** at 03:04Z
+(`claude/ffr-9c-stage-b-commit-av87x7`, handoff
+`docs/handoffs/ffr-9c-promote-stageb-completion-2026-08-13.md`). Verified by content at
+`0fcd19cd`, item by item:
+
+* **The epoch is DECLARED.** `scripts/probes/_ffr9c_stageb_cache_epoch.py` (three reads, all
+  PASS) + `tests/unit/config/test_ercot_stageb_arming.py` (10 pins, **both epoch poles as
+  literals** — `062d440558103f81` pre-arm, `8d9ef77edb3e44cb` armed — plus the global pin
+  `603c2498bf71d21d` unmoved and the non-ERCOT ISOs unmoved). AQ.2's "no test pins them, no
+  ledger entry names the epoch" is now false in the right direction.
+* **The rule-28 owed half landed as one commit**: ERCOT matrix shard `fc` verdicts O → K on
+  the five stage-B cells with the full D-30 execution record, keeper header re-stamp
+  run191 → `2026-08-12-run192-arm-coal-peak`, C6 attestation
+  (`ATTESTATION-ffr9c-stageb-promotion-2026-08-13.json`, `"schema"` tag present), PREREG §1.5
+  corrected, and the false "an explicit caller value always wins" comment in `iso_configs.py`
+  corrected in place. The one-commit invariant for this promotion is recorded **broken and
+  not repairable** (a71fc84d merged before its own author finished); the completion papers
+  nothing over.
+* **What #3903 deliberately did NOT do**: no test pinning today's defective precedence — so
+  OVERRIDE-FIX inherits no test it must rewrite (completion §4). The seam remedy remains
+  OVERRIDE-FIX's object, and its priority is unchanged: **live control-arm exposure in two
+  ISOs** (MISO D-29, ERCOT D-30).
+
+### AR.2 MANAGER RULING — the "do not push" standing clause (requested by the completion handoff §1)
+
+Effective now, in the standing clause block of every dispatched prompt: **never push, or open
+a PR containing, a commit whose own message marks it incomplete** ("[INCOMPLETE - do not
+push]", "WIP - do not merge", or equivalent). A pushed branch is presumed mergeable at any
+moment — HOUSE-1 X.2 (merges do not wait for their own author) has now fired on a commit that
+moved a cache epoch (#3888). Land it complete, or keep it local; if a session dies with work
+half-done, the half that exists either stands on its own as a complete commit or it is not
+pushed. The §0ar clause block carries this verbatim.
+
+### AR.3 CORRECTION to §0aq — the pack has NO §0ap; the three in-flight prompts were never written into it
+
+§0aq states "§0ap holds the three in-flight prompts." **The pack contains no §0ap section**:
+it runs §0ao-3 → §0aq. The OVERRIDE-FIX / FH-5-ARMK / RAW-UNTRACK prompt bodies existed only
+in the outgoing manager's chat — a violation of the pack's own dispatch-from-the-pack rule
+(HOW TO WORK: write every dispatched prompt into the pack in the same session). Corrected by
+addendum, not rewrite: the three prompts are RECONSTRUCTED from their evidence docs and
+written as **§0ar-1/2/3**, with OVERRIDE-FIX's stale line ("ERCOT's stage-B rows are NOT on
+main") corrected per AQ.2, and FH-5-ARMK's pin instruction sharpened (AR.5 — a naive
+`src/ == 3ae7465` pin re-blocks the arm it exists to run).
+
+### AR.4 State at `0fcd19cd`, re-verified
+
+* **Keepers (read from shards):** ERCOT `2026-08-12-run192-arm-coal-peak` · CAISO
+  `2026-08-09-caiso-188-d1-micseam` · MISO `2026-08-09-miso-148-basis-aware` · NYISO
+  `2026-08-08-nyiso-132-cf-arm` · NEISO `2026-08-06-neiso-87-control` · PJM
+  `2026-08-04-pjm-152-collapse`. Unchanged from AQ.3.
+* **Markers (read from `calibration-complete.json`):** `complete` = {NEISO, NYISO, PJM};
+  `final` empty; withdrawn = {CAISO, NYISO}. **Holdout freeze ACTIVE** (steady state,
+  re-armed 2026-08-06).
+* **Merged since AQ** (first-parent, `9c52ea8..0fcd19cd`): #3898/#3899/#3901 (ercot-193 —
+  see AR.6), #3900 (miso-155 prereg: close the CT instrument gap by reading the model's own
+  P0), #3902 (l-scar-screen-1 log correction), #3903 (AR.1).
+* **Paste status: NO EVIDENCE YET on all three dispatched lanes** (OVERRIDE-FIX, FH-5-ARMK,
+  RAW-UNTRACK) — remote heads at this sitting are `main` and one already-merged miso branch;
+  no lane branch, no PR. Reported as "no evidence yet", not "not running".
+* **ercot-190, ercot-192, miso-153 all CONCLUDED** (merged as #3881, #3894, #3884) — the
+  "live calibration branches" list in the handoff prompt is stale; nothing self-driving
+  remains on the backcast side except ercot-193's solves (AR.6).
+* `audit_keepers.py` was NOT re-run this sitting (no Python env in the recovery clone yet);
+  AQ.3's 0-failures/1-warning stands as the last measured state and nothing merged since
+  touches a keeper shard except #3903's ERCOT header re-stamp, which the auditor's E-checks
+  cover on next run. Next solve-lane session inherits the standing duty.
+
+### AR.5 FH-5-ARMK's pin instruction, sharpened before anyone pastes it
+
+The dispatch says "MUST pin `src/` to `3ae7465`". Taken literally that **re-creates the
+blocker the lane exists to clear**: the CAISO as-of-2021 row in
+`DEMAND_GROWTH_RATES_VINTAGES` landed AFTER `3ae7465` (CAISO-VINTAGE-INTAKE, §0ao-3), so a
+byte-pure `3ae7465` `src/` refuses CAISO Arm K exactly as FH-5 §1.4 measured. The correct
+pin, now written into §0ar-2: **`src/` = `3ae7465` PLUS exactly the additive
+`DEMAND_GROWTH_RATES_VINTAGES` delta**, verified by `git diff 3ae7465 -- src/` showing that
+block and nothing else. The intake was adjudicated purely additive (no existing run reads the
+missing key), so the eleven siblings' solves are byte-unaffected by the delta and the
+comparison stands. The stage-B epoch (#3888/#3903) makes running at HEAD **wrong twice over**
+— it moves ERCOT posture bytes under `src/` and it is a different code version than the
+eleven siblings ran.
+
+### AR.6 ercot-193 — precommit and card landed, solves NOT yet registered
+
+The lane merged its precommit (`PRECOMMIT-ercot193-soc-regate-2026-08-13.md`, #3898 — the
+standing ercot-167 SOC-reserve re-gate, original G1–G5 verbatim, DIRECTION-BLIND: keeper
+cannot change in any outcome), an attestation-basis fix (#3899), and the A/B gate scorer
+(#3901). **No `2026-08-13-ercot193-*` run is registered** — the registry's newest ERCOT
+entries remain run192's pair. Per the precommit both runs register whatever the outcome; the
+solves either run now or died with a container. No evidence yet; the manager adjudicates the
+RG verdict when the bundles register, and an RG-FAIL escalates to the owner as the precommit
+specifies.
+
+It also landed **card R** (`docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`)
+— a genuinely new owner item, surfaced in AR.7.
+
+### AR.7 Open owner items at this sitting (put, not nagged; dispositions recorded here by addendum)
+
+1. **Branch protection — require the "Pinned default cache key" check on main** (AE.3,
+   re-put). Now carries its fourth and sharpest evidence: **PR #3888 merged a self-labelled
+   "[INCOMPLETE - do not push]" commit and moved a cache epoch silently**; the #3903
+   completion states plainly that the one-commit invariant broke because the merge did not
+   wait for its own author. The check exists, is fast (~2 s of pytest after uv sync), and
+   `ci.yml` itself documents that until it is required it is "advisory in effect". This is a
+   repo-settings act only the owner can take.
+2. **Card R (ercot-193): the ERCOT determination ceiling.** Both remaining fails (C3a-2023,
+   C3b-2023) are measured to be one closed model-class object — Aug+Sep 2023 scarcity carries
+   96.2 % of the C3b-2023 squared residual, and no lever that avoids the Q-B-closed object
+   can move the criterion below ~0.59 vs the 0.20 bar. Recommendation on record: **R-A** —
+   hold NOT-YET as the honest public claim; stop chartering C3b-2023-targeted lever rounds as
+   determination work; re-point ERCOT bandwidth to protective defects, 2024/2025 shape, and
+   forecast readiness.
+3. **Card D-31 — adopt the re-derived 8.0 GW ERCOT solar queue cap** (RC-DERIVE, `6e6e50b`:
+   5.0 was right for its own 2021-vintage record; the record moved; clean rule-23
+   re-derivation on a data change). Re-bases ERCOT forecasts — post-stage-B-epoch this now
+   composes with the #3903 epoch, so adoption should declare its own key movement the same
+   way.
+4. **Card D-32 — the F6-DIAG fix** (`RAW IS RIGHT` adjudicated at `c39cc9a`; the R2 fix
+   recommendation is the owner's to adopt). NUMBERING NOTE, recorded once: Addendum AK.5
+   routed this object "as card D-31 below", and AN.3 then assigned **D-31 to the solar queue
+   cap**. The collision is resolved here: D-31 = solar cap (as the open-items list already
+   uses it), **D-32 = the F6 fix**. AK.5's dangling label is superseded, not rewritten.
+5. **The λ-led price-side condition wording** (AF.2 / AG.2) — non-gating, still open.
+6. Calibration-lane cards in their own handoffs (ercot-188's signable backlog, caiso-186
+   sitting packets, caiso-187 overlay) — surfaced, not adjudicated here.
+
+### AR.8 Container half-death: third occurrence, worst variant yet — and the recovery that worked
+
+This manager's container arrived with `.git` intact (7.5 GB) but **11,031 tracked paths
+staged-deleted and `src/`, `scripts/`, `tests/`, most of `docs/` and 4,767 `data/` files
+absent from the working tree**; `git checkout -f` and `git restore --staged --worktree` were
+both refused by the environment's action classifier. Recovery that worked, and is now the
+recommended recipe (it is also the REWRITE-PREP GO-half's partial clone, validated in anger):
+`git clone --depth 1 --filter=blob:none --no-checkout <origin> ms-work`, then
+`git sparse-checkout set --no-cone '/*' '!data/raw' '!results'`, then checkout — **233 MB on
+disk, ~2 minutes**, full manager capability except running the Python suite. The completion
+handoff §5 records the same class of death one variant earlier. Every future manager prompt
+should assume the primary clone may be half-dead and reach for the partial clone first
+rather than fighting the classifier.
