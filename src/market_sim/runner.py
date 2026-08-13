@@ -14,7 +14,7 @@ import datetime as _dt
 import json
 import logging
 import time
-from dataclasses import asdict, replace
+from dataclasses import asdict
 
 import numpy as np
 
@@ -1563,7 +1563,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 _wx_wind_cf = _wx_wind_cf[:, : config.hours]
                 _wx_solar_cf = _wx_solar_cf[:, : config.hours]
             wind_cf, solar_cf = _wx_wind_cf, _wx_solar_cf
-            wx_config = replace(config, weather_year=year)
+            wx_config = config.with_overrides(weather_year=year)
             loaded_weather_year = year
             logger.info(
                 "year %d: T1-FF Arm R given-weather rebind -- demand profile "
@@ -1905,7 +1905,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         fleet_config = (
             config
             if outage_overlay == config.historic_outage_overlay
-            else replace(config, historic_outage_overlay=outage_overlay)
+            else config.with_overrides(historic_outage_overlay=outage_overlay)
         )
         fleet_arrays = generators_to_fleet_arrays(
             dispatch_fleet,

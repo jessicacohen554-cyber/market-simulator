@@ -12366,8 +12366,27 @@ class ScenarioConfig:
         return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
     def with_overrides(self, **kwargs) -> "ScenarioConfig":
-        """Return a copy of this config with the given fields replaced."""
-        return replace(self, **kwargs)
+        """Return a copy of this config with the given fields replaced.
+
+        Carries the explicitly-set-field record forward as the UNION of this
+        config's record and *kwargs* (OVERRIDE-FIX 2026-08-13, see
+        :func:`explicitly_set_fields`). Bare ``dataclasses.replace`` cannot do
+        this — it re-invokes ``__init__`` with EVERY field, which is
+        indistinguishable from a caller who set everything — so this method is
+        the supported copy path for a config that has not yet been resolved by
+        ``iso_configs.apply_iso_scenario_defaults``.
+        """
+        new = replace(self, **kwargs)
+        prior = explicitly_set_fields(self)
+        # ``prior is None`` = provenance unknown; a union would manufacture
+        # knowledge we do not have, so unknown stays unknown (fail-safe to the
+        # pre-fix value comparison).
+        object.__setattr__(
+            new,
+            _EXPLICIT_FIELDS_ATTR,
+            None if prior is None else prior | frozenset(kwargs),
+        )
+        return new
 
     def is_crossover_forward_year(self, year: int) -> bool:
         """True when ``year`` is a T1-X crossover FORWARD (pure-forecast) year.
@@ -12514,7 +12533,105 @@ class ScenarioConfig:
         overrides = {
             k: v for k, v in zero_forcing_field_overrides().items() if k in field_names
         }
-        return replace(cfg, **overrides)
+        # ``with_overrides`` (not bare ``replace``) so the ablated fields are
+        # recorded as EXPLICITLY set — they are, deliberately, and an ISO
+        # default must never re-arm a floor this transform just neutralized.
+        return cfg.with_overrides(**overrides)
+
+
+# ---------------------------------------------------------------------------
+# Explicitly-set-field tracking (OVERRIDE-FIX 2026-08-13)
+# ---------------------------------------------------------------------------
+# THE DEFECT this closes
+# (docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md):
+# ``iso_configs.apply_iso_scenario_defaults`` decided "the caller left this
+# field unset" by comparing the caller's value to the ``ScenarioConfig``
+# default. Every promotable flag defaults ``False``/``None``, so *the OFF value
+# was exactly the value that could not be requested* — an explicit
+# ``entry_pipeline_aware_signal=False`` was indistinguishable from unset and was
+# silently re-armed. That made a control arm INEXPRESSIBLE through the config
+# path for every ISO-armed flag (live in ERCOT via D-30 stage B and in MISO via
+# D-29), and it failed SILENTLY: no raise, no warning, so a lane could believe
+# it solved a control arm, register the bundle and quote the number. That is the
+# FFR-2E defect class (a record must report the posture it solved) one layer up.
+#
+# THE REMEDY is FINDING §4 remedy 2: record which fields the CALLER actually
+# passed and let the seam consult that instead of guessing from values. Remedy 1
+# (per-field sentinels) has the largest blast radius and is not chartered;
+# remedy 3 (raise) was REJECTED as a destination — a model whose control arm is
+# an error cannot run the A/B discipline.
+#
+# WHY A NON-FIELD ATTRIBUTE, not a dataclass field: ``cache_key()`` hashes
+# ``asdict(self)``, which walks dataclass FIELDS only. A field here would enter
+# every cache key, orphan every on-disk bundle and move the pinned global key
+# ``603c2498bf71d21d``. A plain instance attribute is invisible to ``asdict``,
+# ``fields()``, ``_non_default_values`` and ``to_yaml*``, so the digest is
+# untouched and rule 28's cache-key ledger duty does not arise.
+
+# Init-field names in declaration order, so positional construction is recorded
+# too. Every ``ScenarioConfig`` field is ``init=True`` (asserted in
+# tests/unit/config/test_iso_override_precedence.py).
+_INIT_FIELD_NAMES: tuple[str, ...] = tuple(f.name for f in fields(ScenarioConfig))
+
+# Instance-attribute name holding the record: a ``frozenset[str]`` of the field
+# names the caller passed, or ``None`` for "provenance unknown".
+_EXPLICIT_FIELDS_ATTR: str = "_explicitly_set_fields"
+
+# Class-level fallback, so an instance built WITHOUT ``__init__`` (unpickled,
+# ``copy``/``deepcopy`` of an older payload) reads ``None`` rather than raising.
+# No annotation ⇒ dataclasses never sees it as a field.
+ScenarioConfig._explicitly_set_fields = None
+
+_dataclass_init = ScenarioConfig.__init__
+
+
+def _scenario_config_init(self, *args, **kwargs) -> None:
+    """Dataclass ``__init__`` plus the explicitly-set-field record.
+
+    Wrapping the GENERATED ``__init__`` is the only place the caller's kwargs
+    are visible — ``__post_init__`` runs after binding and cannot tell a passed
+    default from an unpassed one, which is the whole defect.
+    """
+    _dataclass_init(self, *args, **kwargs)
+    passed = frozenset(_INIT_FIELD_NAMES[: len(args)]) | frozenset(kwargs)
+    # EVERY init field supplied ⇒ provenance is genuinely ambiguous: that is
+    # exactly what ``dataclasses.replace`` does (it re-passes all fields), and
+    # what ``from_yaml`` does on a ``to_yaml_full`` dump. Recording ``None``
+    # makes the seam fall back to the pre-fix value comparison, so an untracked
+    # copy degrades to TODAY's behaviour instead of losing its ISO defaults
+    # wholesale. ``with_overrides`` is the tracked copy path.
+    object.__setattr__(
+        self,
+        _EXPLICIT_FIELDS_ATTR,
+        None if len(passed) == len(_INIT_FIELD_NAMES) else passed,
+    )
+
+
+_scenario_config_init.__doc__ = _dataclass_init.__doc__
+_scenario_config_init.__qualname__ = "ScenarioConfig.__init__"
+_scenario_config_init.__module__ = ScenarioConfig.__module__
+ScenarioConfig.__init__ = _scenario_config_init
+
+
+def explicitly_set_fields(config: "ScenarioConfig") -> frozenset[str] | None:
+    """Return the field names *config*'s caller passed explicitly.
+
+    Returns ``None`` when the provenance is unknown — an instance built by
+    ``dataclasses.replace``/``from_yaml``-with-every-key (all fields supplied at
+    once), or restored by ``pickle``/``copy`` without running ``__init__``.
+    ``None`` means "do not claim knowledge": callers must fall back to their
+    pre-OVERRIDE-FIX behaviour rather than treating it as "nothing was set" (an
+    ISO default would then be re-applied over a caller's explicit value) or as
+    "everything was set" (ISO defaults would stop applying at all).
+
+    Args:
+        config: Any ``ScenarioConfig``, tracked or not.
+
+    Returns:
+        A ``frozenset`` of explicitly-passed field names, or ``None`` if the
+        record is unavailable.
+    """
+    return getattr(config, _EXPLICIT_FIELDS_ATTR, None)
 
 
 # --- PB-1 uncertainty-lever resolvers --------------------------------------
