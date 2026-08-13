@@ -2645,6 +2645,13 @@ _REUSE_KWARG_EXEMPT = frozenset(
         "note",
         "ablation_of",
         "reuse_solved",
+        # Write-only persistence: it is read after both LPs have run and is
+        # consumed by nothing downstream, so two runs differing only in this
+        # flag have BYTE-IDENTICAL solves and the prior year stays reusable.
+        # (Its sibling ``persist_p2_state`` has the same property and is not
+        # listed — left alone deliberately, since changing an ARCHIVED-P2 knob's
+        # reuse eligibility is another lane's call, not this one's.)
+        "persist_p0_commitment",
     }
 )
 
