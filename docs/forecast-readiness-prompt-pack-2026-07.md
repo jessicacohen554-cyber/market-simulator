@@ -7137,3 +7137,35 @@ assume); (d) CLAUDE.md's data-contract and Git & Pushing sections updated in the
 (CLAUDE.md is core + >=300 lines: rule 27 — edit locally, push exact bytes, verify the
 blob after push). NOT in scope: any history rewrite, any change under `data/raw` itself,
 publishing cite/* tags.
+
+## §0as — refresh @ `7c63c14` (2026-08-13, second sitting): both §0ar lanes LANDED, RAW-UNTRACK WITHDRAWN, the pack's dispatch queue is EMPTY
+
+*Full adjudication: sitting Addendum AS. The short form:*
+
+* **§0ar-1 OVERRIDE-FIX — LANDED, ACCEPTED** (#3915, `override-fix-2026-08-13.md`).
+  Remedy 2, non-field record, all cache-key poles unmoved, 56 new tests. Its dynamic
+  differential caught the `run_full_horizon.py` forwarded-literal near-miss (would have
+  silently un-armed D-26/D-29). The two-ISO control-arm exposure is CLOSED, and the
+  L-SCAR L-1 promotion gate ("behind OVERRIDE-FIX", ercot-194 signature) is now
+  SATISFIED — the ERCOT-SCAR desk owns acting on that.
+* **§0ar-2 FH-5-ARMK — LANDED, ACCEPTED** (#3921/#3923, `fh-5-armk-completion-2026-08-13.md`,
+  fh-5 §8). `caiso-2021-2025-t1ff-armk-fh5`, runtime key `05289c2965f04734`, I6 PASS —
+  twelve of twelve. Pin executed per AR.5 with additivity MEASURED. §4.1 re-test
+  correctly reported as a NULL (the table reads Arm R only). **Wave FH is COMPLETE; no
+  FH dispatch remains.**
+* **§0ar-3 RAW-UNTRACK — WITHDRAWN** (AS.5): no paste evidence after three reports, and
+  its scope now belongs to the Model Audit & Release-Finalization Program's BLOAT
+  workstream (`docs/model-audit-release-plan-2026-08.md`, ACTIVE), whose gated Wave-3
+  prune path supersedes the single-lane prompt. BLOAT inherits: FINDING-rewrite-prep §8,
+  `docs/fast-clone.md` (#3909), and §0ar-3's pre-merge check list. Do NOT re-dispatch
+  from this pack.
+* **Standing-clause deltas for any future prompt from this pack:** (1) every prompt
+  declares its `DATA PROFILE:` line per `docs/fast-clone.md` (#3909) — `code` unless it
+  solves; (2) the PUSH clause gains: HTTP 408/500 on push is HTTP/2 negotiation, not
+  pack size — `git config http.version HTTP/1.1` first (now also in CLAUDE.md Git &
+  Pushing); (3) the HALF-DEAD CONTAINER clause is superseded by the fast-clone
+  profiles doc for new sessions.
+* **Queue state: EMPTY.** This desk's two programs (FFR remediation, Wave FH) are both
+  complete. Open at this desk: cards D-31/D-32 (owner), Q.2's battery — pinned to the
+  release program's G2 (AS.6). Branch protection is DISPOSED to G2 (release-plan
+  decision 3); the λ wording (AF.2/AG.2) stays open, non-gating.
