@@ -11,12 +11,11 @@
 
 ---
 
-## §0 STATE BOARD — cycle 2, 2026-08-13
+## §0 STATE BOARD — cycle 3, 2026-08-13
 
-**Recorded HEAD (origin/main): `5b05f84`** (merge of PR #3913 — the OWNER
-merged this pack's cycle-1 seed commit `4035ac7` to main; main's pack copy
-therefore lags this branch by the close-out commit `6c7c005` + this cycle's
-commit. The branch remains the live copy; merge again whenever convenient.)
+**Recorded HEAD (origin/main): `5b05f84`** (unchanged through cycle 3; the
+owner merged this pack's cycle-1 seed via PR #3913 — main's pack copy lags
+this branch, which remains the live copy; merge again whenever convenient.)
 
 ### Signed rulings in force (the governance this workstream enforces)
 
@@ -49,7 +48,8 @@ commit. The branch remains the live copy; merge again whenever convenient.)
 | **SOC-REGATE-EXEC** (branch `claude/ercot-193-c3b-ceiling-2xu9lg`, PRs #3906 + #3911, MERGED) | **LANDED — RG-PASS on every gate; ercot-167 standing expectation DISCHARGED; lane CLOSED-CLEAN.** G1 663.7→516.1 MW vs measured 423 (61 % of gap, no overshoot); G2 0.72 (≥0.70); G3 2023 2→2, 2024 6→5, 2025 1→1; G4 C3a-2024 Δ0.989 pp on the unrounded scorer basis (knife-edge disclosed), C3a-2025 Δ0.607 pp; G5 shed identical; G-COAL148 ≈ 0.0 of 0.5 TWh bar; G-REPRO keeper reproduces BYTE-IDENTICALLY (12/12 hourly-sidecar sha256, zero scored-value drift). Keeper UNCHANGED at `2026-08-12-run192-arm-coal-peak` (direction-blind rule honoured). | Duties verified cycle 1: both runs registered (`2026-08-13-ercot193-ctl-nosoc` / `-arm-soc`, backcast registry sidecars + run payloads); retention evictions exactly as pre-registered (run168b-year-curves, run173a-reconc-control; neither the keeper); keeper shard untouched (empty diff on `frontend/data/backcast/keepers/`); matrix ERCOT shard cell + `mechanism-testing-matrix.md` item-10 block updated in the same PR; `scripts/check_mechanism_matrix.py` **exit 0** at 016b659 (236 warnings, all cosmetic line-number anchor drift; 0 errors); calibration-log entry present (+90 lines); precommit pushed pre-solve (`5ad4975`); C3b-2023 side-effect reported with the card-R ceiling stated up front; Q-B/R-A citations present. No keeper-shard edit → no keeper-auditor spawn needed. |
 | **FIX-IT-1** (child session `session_01Ne18N4kQa3EPfZ7pCbN8FL`, dispatched cycle 1, 2026-08-13T05:29:33Z) | **MOOT AT DISPATCH; DID NOTHING; self-archived 05:31Z.** PR #3912 had merged at 05:28:59Z, 34 s before dispatch (manager read the PR state ~2 min stale). The session also could not clone the repo (child sessions do not inherit the repo attachment — pass `source_url` on `create_session`; A2). No push, no PR action, no artifact. Prompt kept verbatim at §2.1 for the record. | Manager unsubscribed from #3912 (merged). Two lessons appended as A2 duties. |
 | **HYGIENE-1** (child session `session_013ADXP9Kq5nGEAqsrB6WoKh`, dispatched cycle 1 with `source_url`) | **PROVISIONING FAILED — never started; archived cycle 2.** Init died at 05:58Z with `clone_timeout`, unrecoverable: a `source_url` dispatch makes the platform attempt a FULL clone, which stalls on this repo (7.37 GiB live at tip — the exact docs/fast-clone.md failure). No work performed, no branch created. | Postmortem in A3; re-dispatched as HYGIENE-1b with the add_repo + blobless provisioning preamble. |
-| **HYGIENE-1b** (child session `session_011sYFijAwLntGLjFM1do3vp`, dispatched cycle 2, 2026-08-13T07:53:52Z, NO source_url) | IN FLIGHT. Same task as HYGIENE-1 (root-fix the ercot-193-filed `dashboard_add_run` metrics-sidecar relative-path defect + regression test; PUSH-AND-STOP on `claude/ercot-scar-hygiene-1-dashboard-sidecar`, no PR, no merge) plus a PROVISIONING preamble: add_repo(access=push) → clone `--filter=blob:none` → register_repo_root; no data hydration; GIT_NO_LAZY_FETCH=1 on read-side git. Prompt verbatim: §2.3. | Card-R (R-A) hygiene bandwidth; touches no solve path, no registry, no matrix. If 1b ALSO fails at provisioning, worker provisioning becomes an owner escalation (how should this manager spawn workers?). |
+| **HYGIENE-1b** (child session `session_011sYFijAwLntGLjFM1do3vp`, dispatched cycle 2, NO source_url + §2.3 provisioning preamble) | **LANDED, REVIEW-READY — verified cycle 3.** The provisioning pattern WORKED (add_repo → blobless clone). One commit `9e3a6c4` on `claude/ercot-scar-hygiene-1-dashboard-sidecar` off `5b05f84`, push-and-stop honored (no PR opened). Root fix: `resolve_bundle()` anchors a relative `--bundle` at the repo root once at the top of `main()`, making the meta.json guard, rendering, and the metrics-sidecar write CWD-independent; also explains the "determination: unavailable" mis-report disclosed at ercot-193. | Verified via commit stats + patch: exactly 2 files — `scripts/dashboard_add_run.py` +21/−1 (minimal) and NEW `tests/scoring/test_dashboard_add_run_sidecar.py` (126 lines, drives `main()` from a non-repo tmp CWD with a decoy tree, verified failing pre-fix). Citations to the ercot-193 filing + FINDING §4 present. **AWAITING LANDING** per the owner's landing-convention answer (merge `9e3a6c4` or authorize worker PRs). |
+| **SHAPE-CHARTER-1** (child session `session_018hZXhKv19qih79y62t1uPw`, dispatched cycle 3, 2026-08-13T10:00:40Z) | IN FLIGHT. Measure-first charter assembly for the 2024/2025 monthly-shape object (PRECOMMIT-ercot193 §0(c): outage-season/fuel-shape; 2024 shoulder −/summer +; 2025 worst Apr–May) — doc-only, NO solve, read-only re-scoring of the keeper's committed payload/sidecars, DO-NOT-REDO checks first, ceiling stated up front (2024 C3b 0.135 / 2025 0.096 both PASS; shape/forecast-readiness work, never determination work), ends at an owner-sitting option board. PUSH-AND-STOP on `claude/ercot-scar-shape-charter-1`. Prompt verbatim: §2.4. | Card-R (R-A) re-pointed bandwidth, the named "later charter" item. No field, no matrix edit (card = read, ercot-182/189 precedent), no keeper contact. |
 
 ### Dependencies tracked, not tasked (boundary: FFR-FH manager, addenda AP/AQ/AR)
 
@@ -63,22 +63,18 @@ commit. The branch remains the live copy; merge again whenever convenient.)
 
 1. ~~FIX-IT-1 completes~~ — CLOSED IN-CYCLE: #3912 merged by its own worker;
    FIX-IT-1 moot (A2).
-2. **HYGIENE-1b completes (in flight)** → verify diff/test/blob-verify, then
-   carry the landing (PR-or-not) per the owner's answer to the
-   landing-convention question below. Remaining hygiene backlog after it:
-   (i) the replay path writes no `legitimacy_diagnostics.json`
-   (ercot-193 disclosure — generated manually there); (ii) ERCOT-137
-   pooled-vs-anchored convention — OPEN in the DOF ledger, inside band,
-   NOT quick-dispatch material.
-3. **2024/2025 shape-queue charter candidate (dispatchable without owner):**
-   the outage-season/fuel-shape monthly object (2024 shoulder −/summer +;
-   2025 worst Apr–May) — named by PRECOMMIT-ercot193 §0(c) as "2024/2025 shape
-   work for a later charter"; both years' C3b PASS (0.135/0.096), so this is
-   shape work, never determination work; any prompt states the card-R ceiling
-   up front and checks matrix §5.1 + ERCOT shard first (DO-NOT-REDO).
-4. **L-SCAR lane** — BLOCKED ON OWNER (V0-FAIL adjudication; see decision
-   bullets in the cycle-1 report; the manager dispatches nothing here on its
-   own authority).
+2. ~~HYGIENE-1b completes~~ — DONE cycle 3: verified, review-ready at
+   `9e3a6c4`; **landing awaits the owner's convention answer.** Remaining
+   hygiene backlog: (i) the replay path writes no
+   `legitimacy_diagnostics.json` (ercot-193 disclosure — generated manually
+   there); (ii) ERCOT-137 pooled-vs-anchored convention — OPEN in the DOF
+   ledger, inside band, NOT quick-dispatch material.
+3. **SHAPE-CHARTER-1 completes (in flight)** → verify the card's method
+   (committed-artifacts-only, DO-NOT-REDO citations, ceiling sentence,
+   option board), then queue its owner sitting alongside the L-SCAR
+   adjudication.
+4. **L-SCAR lane** — BLOCKED ON OWNER (V0-FAIL adjudication; the manager
+   dispatches nothing here on its own authority).
 
 ### Owner decisions pending (also in the cycle-1 report)
 
@@ -197,6 +193,27 @@ PROVISIONING — DO THIS FIRST, exactly as written. Your session starts with NO 
 3. This task needs NO data/raw hydration (profile `code` semantics): do not run hydrate_data.py, and never resolve blobs under data/raw — run read-side git commands under GIT_NO_LAZY_FETCH=1.
 ```
 
+### §2.4 SHAPE-CHARTER-1 — 2024/2025 monthly-shape decision card (cycle 3, 2026-08-13; child session `session_018hZXhKv19qih79y62t1uPw`)
+
+```
+ERCOT-SCAR SHAPE-CHARTER-1 — dispatched by the ERCOT-SCAR workstream manager (cycle 3, 2026-08-13; pack docs/handoffs/ercot-scar-workstream-pack-2026-08.md §2.4).
+
+PROVISIONING — DO THIS FIRST, exactly as written. Your session starts with NO repository checked out:
+1. Call the add_repo tool (from the claude-code-remote MCP server; load via ToolSearch "add_repo" if deferred) with owner="jessicacohen554-cyber", repo="market-simulator", access="push". Do NOT pre-check the repo with curl/ls-remote/gh — call add_repo directly. If it returns an authorization error, STOP and report the exact error text to the manager.
+2. Clone BLOBLESS using the clone command add_repo returns, adding --filter=blob:none (a full or shallow clone stalls — 7.37 GiB live at tip; docs/fast-clone.md). Then call register_repo_root with the clone path.
+3. No data/raw hydration (profile `code` semantics); never resolve blobs under data/raw; run read-side git under GIT_NO_LAZY_FETCH=1. You WILL need the keeper's committed hourly sidecars and bench under results/calibration/ and frontend/data/backcast/ — those are regular tree paths, fetch only what you read.
+
+TASK — MEASURE-FIRST CHARTER ASSEMBLY, DOC-ONLY, NO SOLVE. Assemble the decision card for the 2024/2025 monthly-shape object that signed card R (R-A) re-pointed ERCOT bandwidth to, named by docs/PRECOMMIT-ercot193-soc-regate-2026-08-13.md §0(c) as "the outage-season/fuel-shape monthly object … 2024/2025 shape work for a later charter" (2024 shoulder-months negative / summer positive; 2025 worst April–May). Deliverable: a decision card at docs/DECISION-CARD-ercot<NNN>-shape-2024-2025-2026-08-13.md under the next free session shorthand (read the tail of docs/calibration-log/ercot.md for "Next shorthand" and claim it) + a calibration-log entry, landed PUSH-AND-STOP on branch claude/ercot-scar-shape-charter-1 off latest origin/main. NO PR, NO merge.
+
+METHOD (the ercot-189/ercot-193 read-only card precedent):
+1. DO-NOT-REDO FIRST: read docs/mechanism-testing-matrix.md §5.1 (the ERCOT queue) and the cell verdicts in docs/codebase-site/data/mechanism-matrix/ERCOT.js. Any lever the card proposes is checked against adjudicated R/I/G cells — never propose re-testing one without new evidence, and cite each cell checked. Also honor the PRECOMMIT §0(b) refusal: diurnal_price_amplitude is a cross-ISO audit row, stays U — do not re-adjudicate it.
+2. SIZE THE OBJECT FROM COMMITTED ARTIFACTS ONLY: the keeper 2026-08-12-run192-arm-coal-peak's registered dashboard payload + hourly sidecars (results/calibration/ercot192_arm_B or its byte-identical ercot193_arm_soc replay) + committed bench actuals, using the rubric's own C3b arithmetic (pattern: scripts/probes/ercot193_c3b_decomposition.py). You MAY add a read-only probe script under scripts/probes/ writing to results/calibration/. Report the 2024 and 2025 per-month model/actual/residual tables at FULL magnitude; identify which months carry the squared residual; attribute candidate physical objects (maintenance/outage-season shape, fuel-shape/basis months, hydro/renewable months, …) from the committed diagnostics (legitimacy_diagnostics.json D-1/D-2 rows, reserve_family/system hourlies) — measured attribution, not narrative.
+3. STATE THE CEILING UP FRONT (card R consequence, mandatory sentence): 2024 C3b = 0.135 and 2025 C3b = 0.096 both already PASS; this is SHAPE-QUALITY and forecast-readiness work, never determination work — ERCOT's determination stays NOT-YET regardless (rulings Q-B and R-A standing, cite both). The card must state concretely what the work buys (which reported numbers improve, which forecast-readiness properties strengthen).
+4. THE OPTION BOARD, ercot-189-style: do-nothing as the honest baseline (with the bias it accepts, stated measurably), plus named structural candidates — each with (a) its external driver, (b) rule-13 admissibility argued per option, (c) expected reach bounded from the measured record, (d) its cost row. End at an owner-sitting board with a recommendation. NO option is executed in this session.
+
+FENCES: rulings Q-B (NO C3a-2023 spend of any kind; docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md) and R-A (no C3b-2023-targeted rounds — 2023 appears ONLY in the ceiling citation; docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md); the L-SCAR lane is stopped at V0 and is NOT yours (docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md). No solve, no LP, no year solved; actuals enter counterfactual re-scoring of committed payloads only (rule 13 clean, the ercot-189 footing; rule 22: ERCOT holds no complete/final marker, artifacts referenced stay in {2023,2024,2025}). No ScenarioConfig field; no matrix cell or row edit (a card is a read, not a mechanism test — the ercot-182/189 precedent; record this in the card's governance section). No keeper/registry/bench edits. Rule 27: you are Opus/Fable; blob-verify any pushed file ≥300 lines (fetch the pushed blob, compare line count + hash to local). No new .github/workflows. Small-pack push (fresh fetch first). Report back: branch, commit SHA(s), the card's board table verbatim, and the log-entry text. If anything outside this scope looks necessary, STOP and report to the manager.
+```
+
 ---
 
 ## §A ADDENDA (append-only; dated; old addenda are never rewritten)
@@ -281,3 +298,29 @@ Board seeded at origin/main `016b659`. Facts established this cycle:
    open, re-flagged in the cycle-2 report. No new ERCOT-lane branches or PRs
    this cycle; other lanes' branches (caiso-arm-k, miso-156, neiso-2021,
    iso-armed-flags-turnoff, model-audit) are out of scope and untouched.
+
+### A4 — 2026-08-13, cycle 3 (self check-in, 09:56Z trigger)
+
+1. **HYGIENE-1b LANDED and verified** — the §2.3 provisioning pattern
+   (add_repo → `--filter=blob:none` clone → register_repo_root) WORKS and is
+   the standing dispatch recipe. Commit `9e3a6c4` on
+   `claude/ercot-scar-hygiene-1-dashboard-sidecar`, exactly 2 files
+   (`scripts/dashboard_add_run.py` +21/−1; new 126-line regression test that
+   was verified failing pre-fix), push-and-stop honored, no PR. Review-ready;
+   landing awaits the owner's convention answer.
+2. **Manager-session git credentials EXPIRED mid-day** (`could not read
+   Username for 'https://github.com'` on fetch/ls-remote; no credential
+   helper or askpass configured after idle). Cycle 3 ran entirely over the
+   GitHub MCP tools (list_commits/get_commit for inventory and verification;
+   push_files for this pack commit). Successor cycles: if local git auth is
+   dead, this is the fallback path — and blob-verify via the MCP
+   `get_file_contents` sha against local `git hash-object`.
+3. **SHAPE-CHARTER-1 dispatched** (§2.4): the card-R-named 2024/2025
+   monthly-shape charter assembly, doc-only, committed-artifacts-only,
+   DO-NOT-REDO first, ceiling sentence mandatory, owner-sitting option board
+   as the deliverable, push-and-stop on `claude/ercot-scar-shape-charter-1`.
+4. Main unchanged at `5b05f84` all cycle; no ERCOT-lane branches/PRs beyond
+   the two workstream branches; both owner decisions (L-SCAR V0-FAIL
+   adjudication; landing convention) remain OPEN and re-flagged. A THIRD
+   owner item added by cycle 3: `9e3a6c4` is ready to land — merging it is
+   itself an instance of the landing-convention answer.
