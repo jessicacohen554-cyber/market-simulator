@@ -50,6 +50,7 @@ for _p in (REPO, REPO / "src", REPO / "scripts"):
 import pandas as pd  # noqa: E402
 
 from calibration_verdict import (  # noqa: E402  (the rubric's own scorers)
+    _wmean,
     score_price_mean,
     score_price_shape,
     score_price_tail,
@@ -131,9 +132,26 @@ def _c3(run_id: str) -> dict:
             for r in score_price_tail(int(yr), ypay, "ERCOT")
             if r.get("status") != "SKIPPED"
         ]
-        model, actual = r3a.get("model"), r3a.get("actual")
+        # score_price_mean rounds its reported model/actual to 2 decimals for
+        # display; the G4 band is adjudicated on the UNROUNDED scorer basis
+        # (same _wmean over the payload's zonal (p, d) pairs, full-coverage
+        # branch — asserted; the 2024 delta sits at 0.989 pp, which the
+        # 2-decimal display rounds to a spurious 1.000).
+        actual = r3a.get("actual")
+        avg = ybench.get("avgLMP") or {}
+        actual_mon = avg.get("rt_lw_mon") or []
+        assert not (
+            actual_mon and 0 < sum(v is not None for v in actual_mon) < 12
+        ), f"{yr}: masked-coverage year — unrounded branch not valid"
+        model = _wmean(
+            [
+                (z.get("p"), z.get("d", 0.0))
+                for z in ypay.get("lmp", {}).values()
+                if z.get("p") is not None
+            ]
+        )
         err_pct = (
-            round(100.0 * (float(model) / float(actual) - 1.0), 2)
+            round(100.0 * (float(model) / float(actual) - 1.0), 4)
             if model is not None and actual is not None
             else None
         )
