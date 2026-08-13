@@ -26,14 +26,17 @@ defaults stay ``False``/``None`` (so an armed run ENTERS the digest rather than
 colliding with its pre-arm predecessor, and the global pin ``603c2498bf71d21d``
 cannot move), and no ERCOT backcast key shifts.
 
-KNOWN LIVE EXPOSURE, deliberately NOT pinned here:
-``apply_iso_scenario_defaults`` treats a caller value equal to the field
-default as "unset" and re-arms it, so an ERCOT control arm for any of the five
-flags is currently inexpressible through the config path
+FORMER LIVE EXPOSURE — **CLOSED 2026-08-13**, and deliberately never pinned
+here: ``apply_iso_scenario_defaults`` used to treat a caller value equal to the
+field default as "unset" and re-arm it, so an ERCOT control arm for any of the
+five flags was inexpressible through the config path
 (``docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md``). The
-OVERRIDE-FIX lane (sitting §0ap-1 / Addendum AQ.2) owns the remedy; a test
-pinning today's defective precedence would have to be rewritten by that lane,
-so this module pins only the behaviour both sides of the fix must preserve.
+OVERRIDE-FIX lane landed FINDING §4 remedy 2 (the caller's explicitly-set-field
+record, ``scenarios.explicitly_set_fields``); the fixed seam is pinned by
+``tests/unit/config/test_iso_override_precedence.py``. Because this module never
+pinned the defective precedence, none of its assertions moved across that fix —
+it pins only the behaviour both sides must preserve, which is exactly why it
+still passes unchanged.
 
 Pure config construction — no solve, no data root (the FFR-1D
 ``test_forecast_mode_guards`` discipline).

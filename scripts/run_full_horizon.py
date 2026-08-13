@@ -222,8 +222,8 @@ def reference_config(
     caiso_nqc_accreditation: bool = False,
     caiso_storage_nqc_accreditation: bool = False,
     caiso_ra_mpb_capacity_anchor: bool = False,
-    miso_rps_compliance_regions: bool = False,
-    miso_clean_tier_rows: bool = False,
+    miso_rps_compliance_regions: "bool | None" = None,
+    miso_clean_tier_rows: "bool | None" = None,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -281,12 +281,14 @@ def reference_config(
     (MISO only, forecast-mode; no-op in every other ISO, rule 25). It is
     registered in ``_CACHE_KEY_OPTIONAL_FIELDS`` at ``False``, so an unarmed
     leg keeps its historical key and an armed leg keys distinctly. Default
-    ``False``: the arming posture is an OWNER decision, not this runner's.
+    ``None`` = NOT PASSED: the arming posture is an OWNER decision (D-26,
+    carried by MISO's ``default_scenario_overrides``), not this runner's.
 
     ``miso_clean_tier_rows`` (FFR-7B Arm 3 / FFR-6B E-2) adds the MN
     carbon-free + MI clean tier row family on the Arm-2 machinery (REQUIRES
     ``miso_rps_compliance_regions`` — the runner fails loud otherwise).
-    Registered cache-optional at ``False``. **ARMED FOR THE MISO FORECAST LANE**
+    Registered cache-optional at ``False``; default ``None`` = NOT PASSED.
+    **ARMED FOR THE MISO FORECAST LANE**
     by owner decision D-29 (2026-08-11) through
     ``ISOConfig.default_scenario_overrides``, so a MISO leg that passes no flag
     still SOLVES the clean family — read the posture off the RESOLVED config
@@ -312,6 +314,17 @@ def reference_config(
         "entry_vre_capacity_revenue": entry_vre_capacity_revenue,
         "entry_rate_limits": entry_rate_limits,
         "entry_commissioning_lag": entry_commissioning_lag,
+        # OVERRIDE-FIX 2026-08-13: these two joined the None-sentinel set the
+        # moment ``apply_iso_scenario_defaults`` learned to honour an explicit
+        # default-valued argument. They were mirrored literals (``= False``)
+        # forwarded unconditionally, which the pre-fix seam silently re-armed
+        # for MISO; post-fix that literal WINS and would have made owner
+        # decision D-29 (and D-26's Arm-2 row grain) inert in exactly the T1-F
+        # legs this runner launches — the FFR-3A step-0 hazard the comment
+        # above describes, in its own mirror image. ``None`` = not passed =
+        # inherit the ISO/ScenarioConfig posture.
+        "miso_rps_compliance_regions": miso_rps_compliance_regions,
+        "miso_clean_tier_rows": miso_clean_tier_rows,
     }
     return ScenarioConfig(
         iso=iso.upper(),
@@ -334,8 +347,6 @@ def reference_config(
         caiso_nqc_accreditation=caiso_nqc_accreditation,
         caiso_storage_nqc_accreditation=caiso_storage_nqc_accreditation,
         caiso_ra_mpb_capacity_anchor=caiso_ra_mpb_capacity_anchor,
-        miso_rps_compliance_regions=miso_rps_compliance_regions,
-        miso_clean_tier_rows=miso_clean_tier_rows,
         # Owner decision D-10 (2026-08-04, sitting Addendum K.3): forecast
         # bundles run cross-year warm start OFF, so a killed-and-resumed
         # forecast reproduces from its own cache. Passed explicitly — and
@@ -892,6 +903,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--miso-rps-compliance-regions",
         action="store_true",
+        # default=None (not False) so "flag absent" is UNSET rather than an
+        # explicit off — post-OVERRIDE-FIX an explicit False wins over the ISO
+        # override, which would silently un-arm owner decision D-26 for MISO.
+        default=None,
         help=(
             "FFR-7B Arm 2 arm (MISO only, DEFAULT OFF pending an owner "
             "decision): replace the single MISO-wide RPS row with K per-state "
@@ -905,6 +920,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--miso-clean-tier-rows",
         action="store_true",
+        # default=None: see --miso-rps-compliance-regions (owner decision D-29).
+        default=None,
         help=(
             "FFR-7B Arm 3 arm (MISO only; requires "
             "--miso-rps-compliance-regions): add the MN carbon-free + MI "
@@ -913,7 +930,11 @@ def main(argv: list[str] | None = None) -> int:
             "escape. REDUNDANT FOR MISO since owner decision D-29 "
             "(2026-08-11) armed it as the MISO forecast default via the ISO "
             "override — a MISO leg builds the family with or without this "
-            "flag, and there is no negative form that can turn it back off. "
+            "flag. This CLI exposes no negative form, so the flag cannot turn "
+            "the family back off here; since the OVERRIDE-FIX (2026-08-13) "
+            "the CONFIG path can express the off arm (an explicit False now "
+            "beats the ISO override), which is why omitting the flag has to "
+            "leave the field UNSET rather than pass False. "
             "Solve-affecting, distinct cache key."
         ),
     )

@@ -18,7 +18,6 @@ moved off its neutral 0.5 midpoint, so the two axes never fight silently.
 
 from __future__ import annotations
 
-from dataclasses import replace
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -302,4 +301,10 @@ def resolve_policy_bundle(config: "ScenarioConfig") -> "ScenarioConfig":
             overrides[field_name] = getattr(config, field_name) + offset
     if not overrides:
         return config
-    return replace(config, **overrides)
+    # ``with_overrides``, not bare ``replace``: this runs BEFORE
+    # ``iso_configs.apply_iso_scenario_defaults`` in ``runner.run_scenario_iso``,
+    # and only the tracked copy path carries the caller's explicitly-set-field
+    # record across (OVERRIDE-FIX 2026-08-13). A bare ``replace`` would drop it
+    # to "provenance unknown" and silently restore the pre-fix precedence for
+    # every non-neutral policy bundle.
+    return config.with_overrides(**overrides)
