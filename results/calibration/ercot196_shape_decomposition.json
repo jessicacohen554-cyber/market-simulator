@@ -1,0 +1,1837 @@
+{
+  "run_id": "2026-08-12-run192-arm-coal-peak",
+  "years": {
+    "2024": {
+      "nrmse": 0.1352,
+      "months": [
+        {
+          "month": 1,
+          "model": 36.61,
+          "actual": 39.8,
+          "resid": -3.19,
+          "sq_share": 0.0505
+        },
+        {
+          "month": 2,
+          "model": 14.41,
+          "actual": 15.17,
+          "resid": -0.76,
+          "sq_share": 0.0029
+        },
+        {
+          "month": 3,
+          "model": 19.81,
+          "actual": 23.72,
+          "resid": -3.91,
+          "sq_share": 0.0763
+        },
+        {
+          "month": 4,
+          "model": 33.17,
+          "actual": 27.01,
+          "resid": 6.16,
+          "sq_share": 0.1889
+        },
+        {
+          "month": 5,
+          "model": 49.85,
+          "actual": 44.31,
+          "resid": 5.54,
+          "sq_share": 0.1529
+        },
+        {
+          "month": 6,
+          "model": 34.94,
+          "actual": 31.79,
+          "resid": 3.15,
+          "sq_share": 0.0494
+        },
+        {
+          "month": 7,
+          "model": 26.78,
+          "actual": 24.61,
+          "resid": 2.17,
+          "sq_share": 0.0235
+        },
+        {
+          "month": 8,
+          "model": 35.49,
+          "actual": 41.31,
+          "resid": -5.82,
+          "sq_share": 0.1683
+        },
+        {
+          "month": 9,
+          "model": 27.63,
+          "actual": 27.01,
+          "resid": 0.62,
+          "sq_share": 0.0019
+        },
+        {
+          "month": 10,
+          "model": 29.25,
+          "actual": 27.66,
+          "resid": 1.59,
+          "sq_share": 0.0126
+        },
+        {
+          "month": 11,
+          "model": 26.05,
+          "actual": 33.43,
+          "resid": -7.38,
+          "sq_share": 0.2711
+        },
+        {
+          "month": 12,
+          "model": 26.78,
+          "actual": 27.35,
+          "resid": -0.57,
+          "sq_share": 0.0016
+        }
+      ],
+      "counterfactuals": {
+        "top1_perfect": {
+          "months": [
+            11
+          ],
+          "nrmse": 0.1155
+        },
+        "top2_perfect": {
+          "months": [
+            4,
+            11
+          ],
+          "nrmse": 0.0994
+        },
+        "top3_perfect": {
+          "months": [
+            4,
+            8,
+            11
+          ],
+          "nrmse": 0.0824
+        },
+        "uniform_bias": -0.2,
+        "level_removed_nrmse": 0.1351
+      },
+      "tail": [
+        {
+          "month": 1,
+          "actual_rt_gt200_h": 10,
+          "actual_rt_gt100_h": 33,
+          "model_maxzonal_gt100_h": 39,
+          "actual_tail_wedge": 1.63,
+          "actual_rt_mean": 32.87,
+          "actual_da_minus_rt": 10.93,
+          "model_maxzonal_gt200_h": 7,
+          "model_overlay_dw": 0.65
+        },
+        {
+          "month": 2,
+          "actual_rt_gt200_h": 0,
+          "actual_rt_gt100_h": 1,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.0,
+          "actual_rt_mean": 13.96,
+          "actual_da_minus_rt": 0.35,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.06
+        },
+        {
+          "month": 3,
+          "actual_rt_gt200_h": 3,
+          "actual_rt_gt100_h": 8,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.76,
+          "actual_rt_mean": 21.02,
+          "actual_da_minus_rt": 0.77,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.31
+        },
+        {
+          "month": 4,
+          "actual_rt_gt200_h": 11,
+          "actual_rt_gt100_h": 20,
+          "model_maxzonal_gt100_h": 8,
+          "actual_tail_wedge": 4.77,
+          "actual_rt_mean": 24.38,
+          "actual_da_minus_rt": -1.26,
+          "model_maxzonal_gt200_h": 4,
+          "model_overlay_dw": 0.65
+        },
+        {
+          "month": 5,
+          "actual_rt_gt200_h": 7,
+          "actual_rt_gt100_h": 31,
+          "model_maxzonal_gt100_h": 6,
+          "actual_tail_wedge": 9.21,
+          "actual_rt_mean": 37.72,
+          "actual_da_minus_rt": 7.13,
+          "model_maxzonal_gt200_h": 5,
+          "model_overlay_dw": 0.14
+        },
+        {
+          "month": 6,
+          "actual_rt_gt200_h": 2,
+          "actual_rt_gt100_h": 9,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.32,
+          "actual_rt_mean": 28.0,
+          "actual_da_minus_rt": 2.48,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.08
+        },
+        {
+          "month": 7,
+          "actual_rt_gt200_h": 1,
+          "actual_rt_gt100_h": 4,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.03,
+          "actual_rt_mean": 22.55,
+          "actual_da_minus_rt": 0.41,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.05
+        },
+        {
+          "month": 8,
+          "actual_rt_gt200_h": 6,
+          "actual_rt_gt100_h": 13,
+          "model_maxzonal_gt100_h": 2,
+          "actual_tail_wedge": 7.39,
+          "actual_rt_mean": 36.06,
+          "actual_da_minus_rt": -0.2,
+          "model_maxzonal_gt200_h": 2,
+          "model_overlay_dw": 0.19
+        },
+        {
+          "month": 9,
+          "actual_rt_gt200_h": 0,
+          "actual_rt_gt100_h": 10,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.0,
+          "actual_rt_mean": 24.27,
+          "actual_da_minus_rt": -0.49,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.12
+        },
+        {
+          "month": 10,
+          "actual_rt_gt200_h": 4,
+          "actual_rt_gt100_h": 15,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.19,
+          "actual_rt_mean": 23.94,
+          "actual_da_minus_rt": 2.56,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.29
+        },
+        {
+          "month": 11,
+          "actual_rt_gt200_h": 8,
+          "actual_rt_gt100_h": 16,
+          "model_maxzonal_gt100_h": 4,
+          "actual_tail_wedge": 5.12,
+          "actual_rt_mean": 30.25,
+          "actual_da_minus_rt": -7.22,
+          "model_maxzonal_gt200_h": 4,
+          "model_overlay_dw": 0.24
+        },
+        {
+          "month": 12,
+          "actual_rt_gt200_h": 1,
+          "actual_rt_gt100_h": 1,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.33,
+          "actual_rt_mean": 25.61,
+          "actual_da_minus_rt": -0.51,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.21
+        }
+      ],
+      "gas": [
+        {
+          "month": 1,
+          "hh": 3.176,
+          "hh_shape": 1.449,
+          "generic_shape": 1.15,
+          "wedge_mmbtu_at_keeper_level": 0.654,
+          "tx_n3045tx3_mmbtu": 3.934,
+          "tx_shape": 1.869
+        },
+        {
+          "month": 2,
+          "hh": 1.722,
+          "hh_shape": 0.785,
+          "generic_shape": 1.1,
+          "wedge_mmbtu_at_keeper_level": -0.689,
+          "tx_n3045tx3_mmbtu": 1.861,
+          "tx_shape": 0.884
+        },
+        {
+          "month": 3,
+          "hh": 1.493,
+          "hh_shape": 0.681,
+          "generic_shape": 1.02,
+          "wedge_mmbtu_at_keeper_level": -0.742,
+          "tx_n3045tx3_mmbtu": 1.514,
+          "tx_shape": 0.719
+        },
+        {
+          "month": 4,
+          "hh": 1.599,
+          "hh_shape": 0.729,
+          "generic_shape": 0.92,
+          "wedge_mmbtu_at_keeper_level": -0.418,
+          "tx_n3045tx3_mmbtu": 1.446,
+          "tx_shape": 0.687
+        },
+        {
+          "month": 5,
+          "hh": 2.12,
+          "hh_shape": 0.967,
+          "generic_shape": 0.9,
+          "wedge_mmbtu_at_keeper_level": 0.147,
+          "tx_n3045tx3_mmbtu": 1.736,
+          "tx_shape": 0.825
+        },
+        {
+          "month": 6,
+          "hh": 2.536,
+          "hh_shape": 1.157,
+          "generic_shape": 0.93,
+          "wedge_mmbtu_at_keeper_level": 0.496,
+          "tx_n3045tx3_mmbtu": 2.199,
+          "tx_shape": 1.045
+        },
+        {
+          "month": 7,
+          "hh": 2.075,
+          "hh_shape": 0.947,
+          "generic_shape": 0.95,
+          "wedge_mmbtu_at_keeper_level": -0.007,
+          "tx_n3045tx3_mmbtu": 1.948,
+          "tx_shape": 0.926
+        },
+        {
+          "month": 8,
+          "hh": 1.99,
+          "hh_shape": 0.908,
+          "generic_shape": 0.95,
+          "wedge_mmbtu_at_keeper_level": -0.092,
+          "tx_n3045tx3_mmbtu": 1.707,
+          "tx_shape": 0.811
+        },
+        {
+          "month": 9,
+          "hh": 2.276,
+          "hh_shape": 1.038,
+          "generic_shape": 0.9,
+          "wedge_mmbtu_at_keeper_level": 0.302,
+          "tx_n3045tx3_mmbtu": 1.958,
+          "tx_shape": 0.93
+        },
+        {
+          "month": 10,
+          "hh": 2.199,
+          "hh_shape": 1.003,
+          "generic_shape": 0.95,
+          "wedge_mmbtu_at_keeper_level": 0.116,
+          "tx_n3045tx3_mmbtu": 2.044,
+          "tx_shape": 0.971
+        },
+        {
+          "month": 11,
+          "hh": 2.117,
+          "hh_shape": 0.966,
+          "generic_shape": 1.05,
+          "wedge_mmbtu_at_keeper_level": -0.185,
+          "tx_n3045tx3_mmbtu": 1.938,
+          "tx_shape": 0.921
+        },
+        {
+          "month": 12,
+          "hh": 3.006,
+          "hh_shape": 1.371,
+          "generic_shape": 1.18,
+          "wedge_mmbtu_at_keeper_level": 0.418,
+          "tx_n3045tx3_mmbtu": 2.97,
+          "tx_shape": 1.411
+        }
+      ],
+      "dam_availability_monthly": {
+        "CC_REGULAR": [
+          0.9078,
+          0.8716,
+          0.5858,
+          0.5642,
+          0.7163,
+          0.811,
+          0.8375,
+          0.8521,
+          0.84,
+          0.7225,
+          0.5878,
+          0.7568
+        ],
+        "COAL": [
+          0.9051,
+          0.8563,
+          0.6396,
+          0.6844,
+          0.6059,
+          0.7423,
+          0.908,
+          0.9027,
+          0.9148,
+          0.7426,
+          0.7273,
+          0.7519
+        ],
+        "CT_PEAKER": [
+          0.9238,
+          0.8961,
+          0.7604,
+          0.7199,
+          0.7612,
+          0.8291,
+          0.835,
+          0.8368,
+          0.822,
+          0.7454,
+          0.7784,
+          0.8605
+        ],
+        "ST_GAS": [
+          0.7357,
+          0.8592,
+          0.5552,
+          0.4349,
+          0.5253,
+          0.6886,
+          0.8072,
+          0.8037,
+          0.7632,
+          0.6546,
+          0.4846,
+          0.6689
+        ]
+      },
+      "class_gen_monthly": {
+        "COAL_PRB": {
+          "model": [
+            4.475,
+            0.858,
+            1.672,
+            1.691,
+            2.851,
+            3.82,
+            5.255,
+            5.861,
+            5.218,
+            3.527,
+            2.724,
+            3.598
+          ],
+          "actual": [
+            4.764,
+            2.047,
+            2.687,
+            2.62,
+            3.403,
+            4.153,
+            4.89,
+            5.327,
+            4.771,
+            3.955,
+            3.514,
+            4.073
+          ],
+          "delta": [
+            -0.289,
+            -1.189,
+            -1.014,
+            -0.929,
+            -0.552,
+            -0.333,
+            0.365,
+            0.535,
+            0.447,
+            -0.428,
+            -0.79,
+            -0.475
+          ]
+        },
+        "CT_PEAKER": {
+          "model": [
+            0.546,
+            0.122,
+            0.473,
+            0.575,
+            0.705,
+            1.01,
+            0.545,
+            1.386,
+            0.432,
+            0.738,
+            0.687,
+            0.428
+          ],
+          "actual": [
+            0.478,
+            0.267,
+            0.497,
+            0.525,
+            0.587,
+            0.764,
+            0.594,
+            1.053,
+            0.546,
+            0.692,
+            0.722,
+            0.461
+          ],
+          "delta": [
+            0.068,
+            -0.145,
+            -0.024,
+            0.05,
+            0.118,
+            0.246,
+            -0.049,
+            0.333,
+            -0.114,
+            0.046,
+            -0.035,
+            -0.033
+          ]
+        },
+        "CC_REGULAR": {
+          "model": [
+            12.623,
+            8.259,
+            9.511,
+            8.839,
+            13.037,
+            14.466,
+            15.485,
+            16.689,
+            14.582,
+            12.076,
+            9.096,
+            9.652
+          ],
+          "actual": [
+            13.572,
+            7.957,
+            8.928,
+            8.206,
+            12.653,
+            14.657,
+            16.138,
+            17.794,
+            15.136,
+            11.962,
+            9.098,
+            10.1
+          ],
+          "delta": [
+            -0.95,
+            0.302,
+            0.583,
+            0.634,
+            0.384,
+            -0.19,
+            -0.653,
+            -1.105,
+            -0.554,
+            0.114,
+            -0.002,
+            -0.448
+          ]
+        },
+        "ST_GAS": {
+          "model": [
+            1.406,
+            0.213,
+            0.981,
+            0.886,
+            1.712,
+            2.476,
+            2.393,
+            3.735,
+            2.13,
+            1.66,
+            1.148,
+            0.707
+          ],
+          "actual": [
+            0.886,
+            0.121,
+            0.77,
+            1.062,
+            1.685,
+            1.772,
+            1.669,
+            2.594,
+            1.457,
+            1.418,
+            1.214,
+            0.861
+          ],
+          "delta": [
+            0.52,
+            0.092,
+            0.211,
+            -0.176,
+            0.028,
+            0.705,
+            0.724,
+            1.14,
+            0.674,
+            0.242,
+            -0.066,
+            -0.154
+          ]
+        },
+        "COAL_LIGNITE": {
+          "model": [
+            1.624,
+            1.107,
+            0.247,
+            0.949,
+            1.369,
+            1.228,
+            1.42,
+            1.675,
+            1.553,
+            1.408,
+            1.134,
+            1.506
+          ],
+          "actual": [
+            1.406,
+            1.148,
+            0.367,
+            0.929,
+            1.187,
+            1.102,
+            1.344,
+            1.484,
+            1.441,
+            1.392,
+            1.119,
+            1.377
+          ],
+          "delta": [
+            0.217,
+            -0.041,
+            -0.12,
+            0.019,
+            0.182,
+            0.126,
+            0.076,
+            0.191,
+            0.111,
+            0.016,
+            0.015,
+            0.129
+          ]
+        },
+        "OTHER_FOSSIL": {
+          "model": [
+            0.025,
+            0.003,
+            0.013,
+            0.008,
+            0.017,
+            0.063,
+            0.051,
+            0.07,
+            0.043,
+            0.031,
+            0.007,
+            0.019
+          ],
+          "actual": [
+            0.017,
+            0.013,
+            0.007,
+            0.004,
+            0.007,
+            0.018,
+            0.017,
+            0.018,
+            0.015,
+            0.013,
+            0.007,
+            0.015
+          ],
+          "delta": [
+            0.008,
+            -0.01,
+            0.006,
+            0.004,
+            0.01,
+            0.045,
+            0.034,
+            0.052,
+            0.028,
+            0.018,
+            0.0,
+            0.004
+          ]
+        },
+        "CT_CHP": {
+          "model": [
+            0.459,
+            0.364,
+            0.424,
+            0.421,
+            0.451,
+            0.438,
+            0.429,
+            0.468,
+            0.414,
+            0.449,
+            0.421,
+            0.442
+          ],
+          "actual": [
+            0.383,
+            0.319,
+            0.378,
+            0.37,
+            0.414,
+            0.417,
+            0.5,
+            0.526,
+            0.489,
+            0.43,
+            0.403,
+            0.484
+          ],
+          "delta": [
+            0.076,
+            0.045,
+            0.046,
+            0.051,
+            0.036,
+            0.021,
+            -0.071,
+            -0.058,
+            -0.075,
+            0.019,
+            0.018,
+            -0.041
+          ]
+        },
+        "ST_CHP": {
+          "model": [
+            0.006,
+            0.005,
+            0.006,
+            0.005,
+            0.006,
+            0.006,
+            0.006,
+            0.006,
+            0.006,
+            0.006,
+            0.006,
+            0.006
+          ],
+          "actual": [
+            0.003,
+            0.003,
+            0.004,
+            0.003,
+            0.003,
+            0.004,
+            0.004,
+            0.002,
+            0.003,
+            0.003,
+            0.003,
+            0.003
+          ],
+          "delta": [
+            0.002,
+            0.002,
+            0.002,
+            0.003,
+            0.003,
+            0.002,
+            0.002,
+            0.004,
+            0.003,
+            0.003,
+            0.003,
+            0.003
+          ]
+        },
+        "CC_CHP": {
+          "model": [
+            2.584,
+            2.019,
+            2.241,
+            2.115,
+            2.583,
+            2.584,
+            2.539,
+            2.674,
+            2.34,
+            2.366,
+            2.106,
+            2.394
+          ],
+          "actual": [
+            2.779,
+            2.237,
+            2.315,
+            2.123,
+            2.584,
+            2.764,
+            2.775,
+            3.015,
+            2.702,
+            2.408,
+            2.127,
+            2.49
+          ],
+          "delta": [
+            -0.195,
+            -0.218,
+            -0.075,
+            -0.008,
+            -0.0,
+            -0.18,
+            -0.236,
+            -0.341,
+            -0.361,
+            -0.042,
+            -0.02,
+            -0.097
+          ]
+        },
+        "solar": {
+          "model": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "actual": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "delta": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "wind": {
+          "model": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "actual": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "delta": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "storage_monthly_net_gwh": [
+        65.63,
+        51.31,
+        58.49,
+        113.22,
+        112.56,
+        153.66,
+        115.24,
+        208.86,
+        181.92,
+        241.63,
+        209.87,
+        195.09
+      ]
+    },
+    "2025": {
+      "nrmse": 0.0957,
+      "months": [
+        {
+          "month": 1,
+          "model": 34.42,
+          "actual": 36.01,
+          "resid": -1.59,
+          "sq_share": 0.0175
+        },
+        {
+          "month": 2,
+          "model": 36.6,
+          "actual": 42.48,
+          "resid": -5.88,
+          "sq_share": 0.2393
+        },
+        {
+          "month": 3,
+          "model": 29.76,
+          "actual": 29.84,
+          "resid": -0.08,
+          "sq_share": 0.0
+        },
+        {
+          "month": 4,
+          "model": 30.79,
+          "actual": 34.94,
+          "resid": -4.15,
+          "sq_share": 0.1193
+        },
+        {
+          "month": 5,
+          "model": 32.39,
+          "actual": 39.67,
+          "resid": -7.28,
+          "sq_share": 0.3672
+        },
+        {
+          "month": 6,
+          "model": 30.73,
+          "actual": 31.29,
+          "resid": -0.56,
+          "sq_share": 0.0021
+        },
+        {
+          "month": 7,
+          "model": 34.83,
+          "actual": 36.07,
+          "resid": -1.24,
+          "sq_share": 0.0106
+        },
+        {
+          "month": 8,
+          "model": 38.53,
+          "actual": 39.3,
+          "resid": -0.77,
+          "sq_share": 0.0041
+        },
+        {
+          "month": 9,
+          "model": 32.35,
+          "actual": 35.0,
+          "resid": -2.65,
+          "sq_share": 0.0487
+        },
+        {
+          "month": 10,
+          "model": 32.74,
+          "actual": 36.01,
+          "resid": -3.27,
+          "sq_share": 0.0742
+        },
+        {
+          "month": 11,
+          "model": 34.17,
+          "actual": 36.44,
+          "resid": -2.27,
+          "sq_share": 0.0357
+        },
+        {
+          "month": 12,
+          "model": 34.47,
+          "actual": 37.9,
+          "resid": -3.43,
+          "sq_share": 0.0812
+        }
+      ],
+      "counterfactuals": {
+        "top1_perfect": {
+          "months": [
+            5
+          ],
+          "nrmse": 0.0762
+        },
+        "top2_perfect": {
+          "months": [
+            2,
+            5
+          ],
+          "nrmse": 0.0601
+        },
+        "top3_perfect": {
+          "months": [
+            2,
+            4,
+            5
+          ],
+          "nrmse": 0.0501
+        },
+        "uniform_bias": -2.76,
+        "level_removed_nrmse": 0.0579
+      },
+      "tail": [
+        {
+          "month": 1,
+          "actual_rt_gt200_h": 2,
+          "actual_rt_gt100_h": 8,
+          "model_maxzonal_gt100_h": 2,
+          "actual_tail_wedge": 1.41,
+          "actual_rt_mean": 31.69,
+          "actual_da_minus_rt": -1.15,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.76
+        },
+        {
+          "month": 2,
+          "actual_rt_gt200_h": 6,
+          "actual_rt_gt100_h": 19,
+          "model_maxzonal_gt100_h": 15,
+          "actual_tail_wedge": 0.51,
+          "actual_rt_mean": 31.39,
+          "actual_da_minus_rt": 1.43,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 1.5
+        },
+        {
+          "month": 3,
+          "actual_rt_gt200_h": 0,
+          "actual_rt_gt100_h": 15,
+          "model_maxzonal_gt100_h": 1,
+          "actual_tail_wedge": 0.0,
+          "actual_rt_mean": 26.63,
+          "actual_da_minus_rt": 3.29,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.7
+        },
+        {
+          "month": 4,
+          "actual_rt_gt200_h": 5,
+          "actual_rt_gt100_h": 25,
+          "model_maxzonal_gt100_h": 1,
+          "actual_tail_wedge": 1.98,
+          "actual_rt_mean": 31.16,
+          "actual_da_minus_rt": 0.65,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.25
+        },
+        {
+          "month": 5,
+          "actual_rt_gt200_h": 6,
+          "actual_rt_gt100_h": 27,
+          "model_maxzonal_gt100_h": 5,
+          "actual_tail_wedge": 2.77,
+          "actual_rt_mean": 36.38,
+          "actual_da_minus_rt": -0.61,
+          "model_maxzonal_gt200_h": 1,
+          "model_overlay_dw": 0.26
+        },
+        {
+          "month": 6,
+          "actual_rt_gt200_h": 0,
+          "actual_rt_gt100_h": 9,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.0,
+          "actual_rt_mean": 29.12,
+          "actual_da_minus_rt": 2.39,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.26
+        },
+        {
+          "month": 7,
+          "actual_rt_gt200_h": 4,
+          "actual_rt_gt100_h": 23,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.48,
+          "actual_rt_mean": 33.42,
+          "actual_da_minus_rt": 2.16,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.2
+        },
+        {
+          "month": 8,
+          "actual_rt_gt200_h": 0,
+          "actual_rt_gt100_h": 15,
+          "model_maxzonal_gt100_h": 8,
+          "actual_tail_wedge": 0.0,
+          "actual_rt_mean": 36.34,
+          "actual_da_minus_rt": 3.86,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.17
+        },
+        {
+          "month": 9,
+          "actual_rt_gt200_h": 0,
+          "actual_rt_gt100_h": 9,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.0,
+          "actual_rt_mean": 31.24,
+          "actual_da_minus_rt": 0.44,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.34
+        },
+        {
+          "month": 10,
+          "actual_rt_gt200_h": 2,
+          "actual_rt_gt100_h": 17,
+          "model_maxzonal_gt100_h": 3,
+          "actual_tail_wedge": 0.03,
+          "actual_rt_mean": 33.33,
+          "actual_da_minus_rt": 0.03,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.25
+        },
+        {
+          "month": 11,
+          "actual_rt_gt200_h": 0,
+          "actual_rt_gt100_h": 19,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.0,
+          "actual_rt_mean": 33.74,
+          "actual_da_minus_rt": 1.5,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.22
+        },
+        {
+          "month": 12,
+          "actual_rt_gt200_h": 6,
+          "actual_rt_gt100_h": 31,
+          "model_maxzonal_gt100_h": 0,
+          "actual_tail_wedge": 0.4,
+          "actual_rt_mean": 35.19,
+          "actual_da_minus_rt": -1.85,
+          "model_maxzonal_gt200_h": 0,
+          "model_overlay_dw": 0.1
+        }
+      ],
+      "gas": [
+        {
+          "month": 1,
+          "hh": 4.126,
+          "hh_shape": 1.169,
+          "generic_shape": 1.15,
+          "wedge_mmbtu_at_keeper_level": 0.068,
+          "tx_n3045tx3_mmbtu": 4.098,
+          "tx_shape": 1.338
+        },
+        {
+          "month": 2,
+          "hh": 4.189,
+          "hh_shape": 1.187,
+          "generic_shape": 1.1,
+          "wedge_mmbtu_at_keeper_level": 0.306,
+          "tx_n3045tx3_mmbtu": 3.549,
+          "tx_shape": 1.159
+        },
+        {
+          "month": 3,
+          "hh": 4.12,
+          "hh_shape": 1.168,
+          "generic_shape": 1.02,
+          "wedge_mmbtu_at_keeper_level": 0.519,
+          "tx_n3045tx3_mmbtu": 3.337,
+          "tx_shape": 1.089
+        },
+        {
+          "month": 4,
+          "hh": 3.423,
+          "hh_shape": 0.97,
+          "generic_shape": 0.92,
+          "wedge_mmbtu_at_keeper_level": 0.176,
+          "tx_n3045tx3_mmbtu": 2.951,
+          "tx_shape": 0.964
+        },
+        {
+          "month": 5,
+          "hh": 3.119,
+          "hh_shape": 0.884,
+          "generic_shape": 0.9,
+          "wedge_mmbtu_at_keeper_level": -0.057,
+          "tx_n3045tx3_mmbtu": 2.97,
+          "tx_shape": 0.97
+        },
+        {
+          "month": 6,
+          "hh": 3.024,
+          "hh_shape": 0.857,
+          "generic_shape": 0.93,
+          "wedge_mmbtu_at_keeper_level": -0.257,
+          "tx_n3045tx3_mmbtu": 2.797,
+          "tx_shape": 0.913
+        },
+        {
+          "month": 7,
+          "hh": 3.201,
+          "hh_shape": 0.907,
+          "generic_shape": 0.95,
+          "wedge_mmbtu_at_keeper_level": -0.151,
+          "tx_n3045tx3_mmbtu": 2.96,
+          "tx_shape": 0.967
+        },
+        {
+          "month": 8,
+          "hh": 2.913,
+          "hh_shape": 0.825,
+          "generic_shape": 0.95,
+          "wedge_mmbtu_at_keeper_level": -0.438,
+          "tx_n3045tx3_mmbtu": 2.662,
+          "tx_shape": 0.869
+        },
+        {
+          "month": 9,
+          "hh": 2.974,
+          "hh_shape": 0.843,
+          "generic_shape": 0.9,
+          "wedge_mmbtu_at_keeper_level": -0.201,
+          "tx_n3045tx3_mmbtu": 2.507,
+          "tx_shape": 0.819
+        },
+        {
+          "month": 10,
+          "hh": 3.199,
+          "hh_shape": 0.907,
+          "generic_shape": 0.95,
+          "wedge_mmbtu_at_keeper_level": -0.153,
+          "tx_n3045tx3_mmbtu": 2.613,
+          "tx_shape": 0.853
+        },
+        {
+          "month": 11,
+          "hh": 3.794,
+          "hh_shape": 1.075,
+          "generic_shape": 1.05,
+          "wedge_mmbtu_at_keeper_level": 0.089,
+          "tx_n3045tx3_mmbtu": 3.124,
+          "tx_shape": 1.02
+        },
+        {
+          "month": 12,
+          "hh": 4.264,
+          "hh_shape": 1.208,
+          "generic_shape": 1.18,
+          "wedge_mmbtu_at_keeper_level": 0.099,
+          "tx_n3045tx3_mmbtu": 3.182,
+          "tx_shape": 1.039
+        }
+      ],
+      "dam_availability_monthly": {
+        "CC_REGULAR": [
+          0.9142,
+          0.8755,
+          0.5598,
+          0.5484,
+          0.7475,
+          0.7733,
+          0.8449,
+          0.8647,
+          0.8576,
+          0.7014,
+          0.6033,
+          0.7964
+        ],
+        "COAL": [
+          0.8512,
+          0.7909,
+          0.5567,
+          0.6167,
+          0.6192,
+          0.7444,
+          0.7604,
+          0.7637,
+          0.7829,
+          0.6883,
+          0.6001,
+          0.6279
+        ],
+        "CT_PEAKER": [
+          0.9068,
+          0.8814,
+          0.7289,
+          0.6987,
+          0.7621,
+          0.7678,
+          0.7844,
+          0.7771,
+          0.7807,
+          0.7202,
+          0.7563,
+          0.8262
+        ],
+        "ST_GAS": [
+          0.7665,
+          0.8353,
+          0.6417,
+          0.4322,
+          0.4694,
+          0.5995,
+          0.6722,
+          0.6594,
+          0.6755,
+          0.6372,
+          0.5863,
+          0.641
+        ]
+      },
+      "class_gen_monthly": {
+        "COAL_PRB": {
+          "model": [
+            5.067,
+            3.514,
+            2.588,
+            3.047,
+            4.127,
+            4.566,
+            5.094,
+            5.178,
+            5.289,
+            4.005,
+            3.081,
+            3.086
+          ],
+          "actual": [
+            5.1,
+            3.728,
+            3.151,
+            3.244,
+            4.25,
+            4.372,
+            5.083,
+            5.273,
+            5.045,
+            4.238,
+            3.47,
+            3.413
+          ],
+          "delta": [
+            -0.034,
+            -0.214,
+            -0.564,
+            -0.197,
+            -0.123,
+            0.194,
+            0.011,
+            -0.095,
+            0.244,
+            -0.233,
+            -0.39,
+            -0.327
+          ]
+        },
+        "CT_PEAKER": {
+          "model": [
+            0.281,
+            0.296,
+            0.288,
+            0.422,
+            0.521,
+            0.404,
+            0.636,
+            1.196,
+            0.53,
+            0.562,
+            0.523,
+            0.415
+          ],
+          "actual": [
+            0.373,
+            0.397,
+            0.409,
+            0.531,
+            0.489,
+            0.411,
+            0.615,
+            0.926,
+            0.558,
+            0.657,
+            0.499,
+            0.44
+          ],
+          "delta": [
+            -0.092,
+            -0.101,
+            -0.121,
+            -0.109,
+            0.031,
+            -0.007,
+            0.021,
+            0.27,
+            -0.028,
+            -0.095,
+            0.024,
+            -0.026
+          ]
+        },
+        "CC_REGULAR": {
+          "model": [
+            12.528,
+            10.034,
+            6.201,
+            7.857,
+            12.798,
+            13.572,
+            15.77,
+            17.484,
+            15.262,
+            12.152,
+            8.77,
+            10.635
+          ],
+          "actual": [
+            12.851,
+            9.99,
+            6.106,
+            7.445,
+            12.698,
+            13.494,
+            15.573,
+            17.271,
+            15.457,
+            12.553,
+            8.845,
+            10.468
+          ],
+          "delta": [
+            -0.323,
+            0.044,
+            0.095,
+            0.413,
+            0.1,
+            0.078,
+            0.197,
+            0.213,
+            -0.195,
+            -0.401,
+            -0.075,
+            0.167
+          ]
+        },
+        "ST_GAS": {
+          "model": [
+            1.108,
+            0.744,
+            0.634,
+            0.746,
+            1.225,
+            1.403,
+            1.975,
+            2.808,
+            1.743,
+            1.612,
+            1.039,
+            0.71
+          ],
+          "actual": [
+            0.798,
+            0.632,
+            0.468,
+            0.931,
+            0.958,
+            1.206,
+            1.358,
+            1.859,
+            1.077,
+            1.122,
+            0.887,
+            0.868
+          ],
+          "delta": [
+            0.311,
+            0.112,
+            0.166,
+            -0.185,
+            0.267,
+            0.197,
+            0.617,
+            0.949,
+            0.666,
+            0.49,
+            0.152,
+            -0.158
+          ]
+        },
+        "OTHER_FOSSIL": {
+          "model": [
+            0.159,
+            0.124,
+            0.0,
+            0.02,
+            0.028,
+            0.028,
+            0.036,
+            0.037,
+            0.036,
+            0.033,
+            0.001,
+            0.001
+          ],
+          "actual": [
+            0.18,
+            0.148,
+            0.116,
+            0.014,
+            0.028,
+            0.016,
+            0.031,
+            0.05,
+            0.025,
+            0.04,
+            0.001,
+            0.002
+          ],
+          "delta": [
+            -0.02,
+            -0.024,
+            -0.116,
+            0.006,
+            -0.0,
+            0.011,
+            0.005,
+            -0.013,
+            0.011,
+            -0.006,
+            -0.0,
+            -0.001
+          ]
+        },
+        "COAL_LIGNITE": {
+          "model": [
+            1.559,
+            1.216,
+            1.261,
+            0.902,
+            0.516,
+            1.496,
+            1.537,
+            1.471,
+            1.127,
+            1.623,
+            1.379,
+            1.5
+          ],
+          "actual": [
+            1.496,
+            1.113,
+            1.135,
+            0.976,
+            0.639,
+            1.307,
+            1.398,
+            1.397,
+            1.211,
+            1.531,
+            1.153,
+            1.348
+          ],
+          "delta": [
+            0.063,
+            0.103,
+            0.126,
+            -0.073,
+            -0.123,
+            0.189,
+            0.139,
+            0.074,
+            -0.085,
+            0.092,
+            0.226,
+            0.152
+          ]
+        },
+        "CT_CHP": {
+          "model": [
+            0.407,
+            0.357,
+            0.366,
+            0.38,
+            0.41,
+            0.391,
+            0.418,
+            0.444,
+            0.399,
+            0.413,
+            0.388,
+            0.407
+          ],
+          "actual": [
+            0.342,
+            0.283,
+            0.325,
+            0.264,
+            0.255,
+            0.291,
+            0.321,
+            0.321,
+            0.307,
+            0.305,
+            0.311,
+            0.324
+          ],
+          "delta": [
+            0.065,
+            0.074,
+            0.04,
+            0.116,
+            0.156,
+            0.099,
+            0.097,
+            0.123,
+            0.092,
+            0.108,
+            0.077,
+            0.083
+          ]
+        },
+        "ST_CHP": {
+          "model": [
+            0.005,
+            0.004,
+            0.005,
+            0.005,
+            0.006,
+            0.006,
+            0.006,
+            0.006,
+            0.006,
+            0.006,
+            0.005,
+            0.005
+          ],
+          "actual": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "delta": [
+            0.005,
+            0.004,
+            0.005,
+            0.005,
+            0.006,
+            0.006,
+            0.006,
+            0.006,
+            0.006,
+            0.006,
+            0.005,
+            0.005
+          ]
+        },
+        "CC_CHP": {
+          "model": [
+            2.582,
+            2.285,
+            2.002,
+            2.068,
+            2.359,
+            2.271,
+            2.54,
+            2.627,
+            2.277,
+            2.139,
+            2.092,
+            2.459
+          ],
+          "actual": [
+            2.677,
+            2.271,
+            2.056,
+            2.094,
+            2.423,
+            2.435,
+            2.699,
+            2.916,
+            2.581,
+            2.28,
+            2.056,
+            2.38
+          ],
+          "delta": [
+            -0.095,
+            0.014,
+            -0.053,
+            -0.026,
+            -0.064,
+            -0.164,
+            -0.158,
+            -0.289,
+            -0.304,
+            -0.141,
+            0.036,
+            0.079
+          ]
+        },
+        "solar": {
+          "model": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "actual": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "delta": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "wind": {
+          "model": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "actual": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "delta": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "storage_monthly_net_gwh": [
+        184.5,
+        179.41,
+        279.55,
+        279.71,
+        293.82,
+        295.66,
+        353.25,
+        427.06,
+        421.77,
+        422.44,
+        419.41,
+        365.63
+      ]
+    }
+  }
+}
