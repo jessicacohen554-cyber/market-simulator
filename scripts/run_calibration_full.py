@@ -503,6 +503,71 @@ def _write_class_hourly_sidecar(run_dir: Path, year: int, labels: list[str]) -> 
     return out
 
 
+def _write_p0_commitment_sidecar(
+    run_dir: Path, year: int, p2_state: dict
+) -> "list[Path]":
+    """Write the OPT-IN P0 commitment sidecars for one year.
+
+    ``--persist-p0-commitment`` only. Writes, into ``hourly/``:
+
+    * ``p0_commitment_<year>.parquet`` — one row per generator,
+      ``(year, gen_index, unit_id, on_bits)``, where ``on_bits`` is the
+      bit-packed P0 on/off pattern from
+      :func:`scripts.run_calibration.p0_commitment_pattern`. That boolean is
+      the COMPLETE input ``compute_monthly_markup`` draws from the P0 pass, so
+      a later session can rebuild a surrogate dispatch and replay the
+      PRODUCTION markup bit-identically instead of reconstructing it.
+    * ``startup_run_ratio_<year>.parquet`` — ``(year, hour, run_ratio)``, the
+      ``(T,)`` conditional band series the markup was actually called with.
+      Omitted when the run is on the v3 basis (``run_ratio_t is None``).
+
+    Why this exists: committed ``hourly/`` sidecars carry ``pass == "P1"``
+    only, so the markup's run-length source had to be reconstructed from P1
+    prices — an unbounded-in-practice error that measured 18-22 pp on MISO's
+    CT_PEAKER, wider than the +/-10 % bar it was being judged against
+    (``FINDING-miso154-ct-commitment-instrument-2026-08-12.md`` section 4).
+
+    Write-only and solve-invariant: at default the flag is off, ``p2_state``
+    carries neither key, and this is never called. Returns the paths written
+    (empty when the state carries no record).
+    """
+    if "p0_commitment_bits" not in p2_state:
+        return []
+    hourly_dir = run_dir / "hourly"
+    hourly_dir.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+
+    bits = p2_state["p0_commitment_bits"]
+    # Direct access, never a 3-arg getattr (T-2): ``Generator.unit_id`` is a
+    # required field (``data/fleet/__init__.py:159``), so a default would only
+    # ever mask a renamed attribute behind a column of empty strings.
+    unit_ids = [str(g.unit_id) for g in p2_state["fleet"]]
+    out = hourly_dir / f"p0_commitment_{year}.parquet"
+    pd.DataFrame(
+        {
+            "year": np.int16(year),
+            "gen_index": np.arange(bits.shape[0], dtype=np.int32),
+            "unit_id": unit_ids,
+            "on_bits": [row.tobytes() for row in bits],
+        }
+    ).to_parquet(out, index=False)
+    written.append(out)
+
+    ratio = p2_state.get("startup_run_ratio_t")
+    if ratio is not None:
+        ratio = np.asarray(ratio, dtype=float)
+        out_r = hourly_dir / f"startup_run_ratio_{year}.parquet"
+        pd.DataFrame(
+            {
+                "year": np.int16(year),
+                "hour": np.arange(ratio.size, dtype=np.int32),
+                "run_ratio": ratio.astype(np.float64),
+            }
+        ).to_parquet(out_r, index=False)
+        written.append(out_r)
+    return written
+
+
 def _write_storage_hourly_sidecar(
     run_dir: Path, year: int, frames: "list[pd.DataFrame]"
 ) -> "Path | None":
@@ -3265,6 +3330,7 @@ def solve_and_persist(
     ablation_of: str | None = None,
     reuse_solved: "Path | None" = None,
     note: str = "",
+    persist_p0_commitment: bool = False,
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir.
 
@@ -3280,6 +3346,15 @@ def solve_and_persist(
     any check solve fresh; the mix is labeled in ``meta.json["reuse"]``.
     Reused years are NOT fresh evidence (see ``_REUSE_WARNING``). Default
     ``None`` keeps behavior byte-identical to a plain fresh run.
+
+    ``persist_p0_commitment`` (OPT-IN, ``--persist-p0-commitment``): also write
+    the per-year P0 commitment sidecars (see
+    :func:`_write_p0_commitment_sidecar`). WRITE-ONLY and additive-only — at
+    the ``False`` default no file is added, no file changes, and the committed
+    bundle spec is untouched, so it is a persistence parameter on the
+    ``persist_p2_state`` precedent rather than a ``ScenarioConfig`` field
+    (CLAUDE.md rule 24 ``[R-REGISTRY]`` scopes to tunables that can change a
+    solve; this one is read after both LPs have already run).
     """
     # Snapshot every solve-affecting keyword argument BEFORE any other local
     # is bound (locals() here is exactly the parameter set): plan_reuse_solved
@@ -4903,6 +4978,7 @@ def solve_and_persist(
             mass_cap_program=mass_cap_program,
             zero_forcing_ablation=zero_forcing_ablation,
             xyear_cache=xyear_cache,
+            persist_p0_commitment=persist_p0_commitment,
         )
         _t_post_solve = time.perf_counter()
         if persist_p2_state:
@@ -5180,6 +5256,7 @@ def solve_and_persist(
         # 3-year backcast past 16 GB and into the OOM killer. Only the compact
         # per-year frames accumulated above survive the loop.
         _write_class_hourly_sidecar(run_dir, year, [lbl for lbl, _ in labelled])
+        _write_p0_commitment_sidecar(run_dir, year, p2_state)
         _write_storage_hourly_sidecar(run_dir, year, storage_frames)
         _write_hourly_sidecar(run_dir, year, "unit_hourly", unit_frames)
         _write_hourly_sidecar(run_dir, year, "network", network_frames)
@@ -8403,6 +8480,17 @@ def main() -> None:
         help=argparse.SUPPRESS,
     )
     parser.add_argument(
+        "--persist-p0-commitment",
+        action="store_true",
+        help=(
+            "Also write hourly/p0_commitment_<year>.parquet (bit-packed P0 "
+            "on/off pattern) and hourly/startup_run_ratio_<year>.parquet. "
+            "WRITE-ONLY and additive — cannot change a solve. Lets a later "
+            "session replay the PRODUCTION P1 startup amortization "
+            "bit-identically instead of reconstructing it from P1 prices."
+        ),
+    )
+    parser.add_argument(
         "--run-p2",
         metavar="DIR",
         default=None,
@@ -11213,6 +11301,7 @@ def main() -> None:
         screen_coal=not args.no_coal_p2,
         run_dir=run_dir,
         persist_p2_state=args.persist_p2_state,
+        persist_p0_commitment=args.persist_p0_commitment,
         outage_source=args.outage_source,
         ct_mustrun_per_plant=args.ct_mustrun_per_plant,
         ct_mustrun_floor_frac=args.ct_mustrun_floor_frac,
