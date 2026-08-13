@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-12-run192-ctl-coal-peak",
+ "label": "run192 ctl coal peak",
+ "date": "2026-08-12",
+ "shorthand": "run192-ctl-coal-peak",
+ "definition": "ercot-192 A/B CONTROL (owner signature B1, DECISION-CARD-ercot188 card B): a same-HEAD byte-faithful replay of the run191 keeper recipe through scripts/replay_keeper.py, with coal_peak_offer_yearly_level at its default OFF \u2014 the coal `_peak` tranche priced at the static COAL_PEAK_OFFER_LEVEL_BY_ISO 35.1989 in every year. It exists because the ERCOT keeper is known not to reproduce byte-for-byte at current main (ercot-173 \u00a75, carried through ercot-174/185/186/188/191), so every ercot-192 gate is scored on a same-HEAD pair. Determination NOT-YET {C3a-2023, C3b-2023}; C3a \u221233.7 / \u22120.8 / \u22127.5 %, C3b-2023 0.610, C3c tails 58/181, 22/53, 1/31 (ledgered CAVEAT \u00d73). docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-08-12-run192-ctl-coal-peak.js",
+ "bundle": "results/calibration/ercot192_ctl_A"
+}

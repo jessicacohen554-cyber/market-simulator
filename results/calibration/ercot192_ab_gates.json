@@ -1,0 +1,229 @@
+{
+  "probe": "ercot192_ab_gates",
+  "precommit": "docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md",
+  "base": "results/calibration/ercot192_ctl_A",
+  "arm": "results/calibration/ercot192_arm_B",
+  "G_BIT": {
+    "years": {
+      "2024": {
+        "n_sidecars": 6,
+        "same_file_set": true,
+        "mismatched_sidecars": [],
+        "aggregates_identical": true,
+        "base_aggregates": {
+          "load_weighted_price_mean": 28.93870394,
+          "hours_gt_200": 22,
+          "price_sum": 1613611.74692,
+          "demand_sum": 462593218.5
+        },
+        "arm_aggregates": {
+          "load_weighted_price_mean": 28.93870394,
+          "hours_gt_200": 22,
+          "price_sum": 1613611.74692,
+          "demand_sum": 462593218.5
+        },
+        "verdict": "PASS"
+      },
+      "2025": {
+        "n_sidecars": 6,
+        "same_file_set": true,
+        "mismatched_sidecars": [],
+        "aggregates_identical": true,
+        "base_aggregates": {
+          "load_weighted_price_mean": 32.72648437,
+          "hours_gt_200": 1,
+          "price_sum": 1799090.900508,
+          "demand_sum": 487754388.0
+        },
+        "arm_aggregates": {
+          "load_weighted_price_mean": 32.72648437,
+          "hours_gt_200": 1,
+          "price_sum": 1799090.900508,
+          "demand_sum": 487754388.0
+        },
+        "verdict": "PASS"
+      }
+    },
+    "verdict": "PASS"
+  },
+  "G_DET": {
+    "base": {
+      "determination": "NOT-YET",
+      "reasons": [
+        "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+      ],
+      "caveats": {
+        "protective": [],
+        "ledgered": [
+          "C3c price tail / scarcity (RT hourly)"
+        ],
+        "commercial_band": [],
+        "budget": {
+          "protective_max": 0,
+          "ledgered_max": 1
+        }
+      }
+    },
+    "arm": {
+      "determination": "NOT-YET",
+      "reasons": [
+        "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+      ],
+      "caveats": {
+        "protective": [],
+        "ledgered": [
+          "C3c price tail / scarcity (RT hourly)"
+        ],
+        "commercial_band": [],
+        "budget": {
+          "protective_max": 0,
+          "ledgered_max": 1
+        }
+      }
+    },
+    "determination_changed": false
+  },
+  "reported": {
+    "criteria_status": {
+      "dispatch_corr": {
+        "base": "PASS",
+        "arm": "PASS",
+        "label": "C4 fleet hourly dispatch correlation"
+      },
+      "forced_share": {
+        "base": "PASS",
+        "arm": "PASS",
+        "label": "C8 forced-energy share (D-2)"
+      },
+      "fuelmix": {
+        "base": "PASS",
+        "arm": "PASS",
+        "label": "C1 fuel-mix by class (grid-delivered)"
+      },
+      "governance": {
+        "base": "PASS",
+        "arm": "PASS",
+        "label": "C6 governance gate"
+      },
+      "price_mean": {
+        "base": "FAIL",
+        "arm": "FAIL",
+        "label": "C3a mean LMP"
+      },
+      "price_shape": {
+        "base": "FAIL",
+        "arm": "FAIL",
+        "label": "C3b price duration/shape"
+      },
+      "price_tail": {
+        "base": "CAVEAT",
+        "arm": "CAVEAT",
+        "label": "C3c price tail / scarcity (RT hourly)"
+      },
+      "sysvol": {
+        "base": "PASS",
+        "arm": "PASS",
+        "label": "C2 system volume (gas/coal families)"
+      }
+    },
+    "load_weighted_price_by_year": {
+      "2023": {
+        "base": {
+          "load_weighted_price_mean": 36.32649376,
+          "hours_gt_200": 56,
+          "price_sum": 2079586.644674,
+          "demand_sum": 445968654.0
+        },
+        "arm": {
+          "load_weighted_price_mean": 36.56779879,
+          "hours_gt_200": 57,
+          "price_sum": 2095673.217863,
+          "demand_sum": 445968654.0
+        }
+      },
+      "2024": {
+        "base": {
+          "load_weighted_price_mean": 28.93870394,
+          "hours_gt_200": 22,
+          "price_sum": 1613611.74692,
+          "demand_sum": 462593218.5
+        },
+        "arm": {
+          "load_weighted_price_mean": 28.93870394,
+          "hours_gt_200": 22,
+          "price_sum": 1613611.74692,
+          "demand_sum": 462593218.5
+        }
+      },
+      "2025": {
+        "base": {
+          "load_weighted_price_mean": 32.72648437,
+          "hours_gt_200": 1,
+          "price_sum": 1799090.900508,
+          "demand_sum": 487754388.0
+        },
+        "arm": {
+          "load_weighted_price_mean": 32.72648437,
+          "hours_gt_200": 1,
+          "price_sum": 1799090.900508,
+          "demand_sum": 487754388.0
+        }
+      }
+    }
+  },
+  "grade_summary": {
+    "base": {
+      "scored": 8,
+      "target_grade": 5,
+      "commercial_grade": 0,
+      "ledgered": 1,
+      "fails": 2
+    },
+    "arm": {
+      "scored": 8,
+      "target_grade": 5,
+      "commercial_grade": 0,
+      "ledgered": 1,
+      "fails": 2
+    }
+  },
+  "reporting_note": "Per precommit \u00a70 and card Q ruling Q-B (final, ercot-191): this lane is NOT C3a-2023 spend. Every price movement here is reported at full magnitude, was never targeted, is not a gate and is not the promotion basis. No C3a-2023 improvement is claimed.",
+  "G_SHED": {
+    "years": {
+      "2023": {
+        "base": {
+          "slack_MWh": 3197.464275,
+          "shed_hours": 4
+        },
+        "arm": {
+          "slack_MWh": 3197.464275,
+          "shed_hours": 4
+        },
+        "new_shed_year": false
+      },
+      "2024": {
+        "base": {
+          "slack_MWh": 615.12145,
+          "shed_hours": 1
+        },
+        "arm": {
+          "slack_MWh": 615.12145,
+          "shed_hours": 1
+        },
+        "new_shed_year": false
+      },
+      "2025": {
+        "base": {
+          "slack_MWh": 0.0,
+          "shed_hours": 0
+        },
+        "arm": {
+          "slack_MWh": 0.0,
+          "shed_hours": 0
+        },
+        "new_shed_year": false
+      }
+    },
+    "verdict": "PASS"
+  }
+}

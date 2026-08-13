@@ -7569,6 +7569,99 @@ implemented on the forecast lane at ercot-190) and the owner's
 `complete`-declaration question. Fences honoured: no other C3a-2023 work;
 card B untouched; no rubric/ledger/marker/field changes. Next shorthand:
 **ercot-192**.
+## ercot-192 (2026-08-12) — SIGNATURE B1 EXECUTED: item 13's two COAL limbs re-adjudicated under a fresh precommit. Limb C **REFUTED** and replaced by a measured year-keyed 2023 level; limb A NOT-IDENTIFIABLE under the new instrument, ercot-171 untouched. KEEPER → `2026-08-12-run192-arm-coal-peak`
+
+**Task.** Execute owner signature **B1** (card B of
+`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`): *"re-adjudicate
+under a fresh precommit before any arm."* Mechanism-correctness lane (rules
+1/23), **NOT C3a-2023 spend** — card Q ruling **Q-B** is final, so every price
+movement below is reported at full magnitude, was never targeted and is not the
+promotion basis. Precommit pushed before any level was measured and before any
+solve: `docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md`;
+full record `results/calibration/FINDING-ercot192-coal-limbs-2023-2026-08-12.md`.
+
+**Phase 0a first — and it refused two repairs before any price was read.** A
+structure-only probe (`ercot192_coal_peak_structure.json`, coverage/headroom, no
+price of any kind) measured the delivery-2023 COAL no-curve rows: `curve_share`
+0.97022, `a_offered` **0.94775**, 5.175 % of RT headroom in no-curve rows of
+which **98.787 % is ERCOT-123 bucket (b) price-taking** at 98.0 % loading. On
+that read the precommit **refused own-conduct imputation** (a self-schedule made
+no offer; imputing one invents conduct — rule 13) **and refused re-expressing the
+licence on `a_offered`** (measured WORSE than `curve_share`; a licensing quantity
+may never be chosen after seeing which one passes). Both refusals are in the
+pushed precommit, so neither can be revived.
+
+**The instrument: a coverage BOUND, not a coverage repair.** ercot-171 closed
+with *"an instrument that does not select on the tail would need its own
+charter."* Both limbs are weighted quantiles in which a no-curve row contributes
+**zero weight**, so that weight is given the most extreme admissible price in
+each direction and the SAME statistic recomputed — `q_low = α + (α−1)·M/O`,
+`q_high = α·(1+M/O)` — bracketing the true quantile under **ANY imputation
+whatsoever**. Nothing dropped (S1), no month selected (S2), no licensing quantity
+swapped, the 0.9876 floor NOT lowered, and it is falsifiable: a straddling
+interval stops the lane.
+
+**Verdicts.** **G-FOOT PASS** — all eight committed subset reads reproduce
+exactly, fuel basis 2.2129/3.2324 vs 2.213/3.232 (reconstructed on the CURRENT
+keeper since `ercot168_yearcurves_B` is off disk — a substitution *gated* by
+G-FOOT, not assumed; the gate also caught a real error of this session's first,
+a matched-window restriction of the probe-day subsets that moved one `bot_p50`
+15.00 → 14.73). **G-NEUT PASS both limbs under AMENDMENT 1, recorded not quietly
+applied**: the measurement exposed that ERCOT-140 anchors per subset while
+ERCOT-137 pools the RAW `bot_p50` un-anchored (registered anchor 1.7387 is the
+three-year mean; the pool sits at the 2024/25 mean fuel ≈1.7040), so one
+arithmetic applied to both measured an **anchoring inconsistency in the committed
+ERCOT-137 derivation** (+0.38 = 0.41× band — inside the band, arming unchanged,
+now filed in the DOF ledger) rather than the bound. Split into its own sentence's
+two halves, neither weakened: footing −0.0024 / +2.6e-5; LOWER-edge displacement
+— the edge carrying the 2023 verdict — **0.065× / 0.000× band**. Reported not
+buried: the OPPOSITE edge displaces **2.635× band** on the licensed subsets.
+**LIMB C REFUTED on all three windows** — p90 = 75.00 $/MWh → level₂₀₂₃
+**71.3378**, and the LOWER bound is 71.3378 in every window (matched-CST
+[71.3378, 81.3678], full-day [71.3378, 71.3578], raw-CPT [71.3378, 96.3378]),
+i.e. **at least +36.14 = 14.42× the ±$2.5062 band above the armed 35.1989 no
+matter what the missing rows would have said.** Card B's *"a 1.7 pp coverage
+shortfall cannot produce a 2× level shift"* is now MEASURED, not asserted.
+**LIMB A NOT-IDENTIFIABLE** under this instrument (G-WINDOW: STRADDLES matched,
+REFUTED full-day) — the bound does not contradict ercot-171's CONFIRMED, cannot
+sharpen it, and **no arm and no change follow**.
+
+**The arm, and the A/B.** The only arm the precommit permits:
+`coal_peak_offer_yearly_level` → `COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO`
+{2023: 71.3378}, the ercot-168 per-year precedent — **LEVEL only**, slope 10.4100
+and the SHARED anchor 2.2494 untouched (rule 19), 2024/2025 falling through
+bit-identically, **zero fitted scalars**. A/B on the run191 keeper recipe through
+`replay_keeper.py`, full span, years sequential, one invocation at a time (rule
+12); both arms registered (rule 15). **ALL KILL GATES PASS** — G-BIT (2024+2025
+**byte-identical**, 12/12 sidecar sha256s + per-year aggregates), **G-COAL148
+carried live, max rise 0.0 TWh vs the 0.5 bar** (2023 −0.0033), G-SHED (4/1/0 →
+4/1/0), G-DOF (`n_residual` 6 unchanged); G-OWNER does not escalate. Legitimacy
+diagnostics structurally identical to run191 (D4's CT_PEAKER failure
+pre-existing) — no new legitimacy failure.
+
+**Reported at full magnitude, never the basis (card Q, Q-B).** C3a-2023 −33.7 →
+**−33.2 %** ($42.63 → $42.97 vs actual $64.32); C3b-2023 0.610 → **0.604**;
+C3a-2024 −0.8 % PASS and C3a-2025 −7.5 % PASS both bit-identical; C3c tails
+58/181, 22/53, 1/31 **unchanged**. Determination **NOT-YET {C3a-2023, C3b-2023} —
+UNCHANGED**; C3c stays the single ledgered CAVEAT ×3. **No C3a-2023 improvement
+is claimed.** PROMOTED direction-blind per precommit §7 (the rule does not read
+the residual); LOYO structurally N/A — one constant, one year, and the
+bit-identical 2024/25 *is* the held-out evidence.
+
+**Card B's standing DOF item DISCHARGED**, independently of the outcome: the
+three armed margin constants (ERCOT-137/139/140) carried **no** dedicated
+DOF-ledger entries. They now do, on **both** arms, carrying limb B's ercot-169
+verification (with its boundary-coverage caveat), limb A's ercot-171
+verification, and the newly measured ERCOT-137 anchoring inconsistency.
+`n_residual` unchanged at 6 — every entry added is measured-physical with zero
+fitted scalars.
+
+**Fences honoured.** No C3a-2023 spend, item 11 stays CLOSED, no C3c ledger
+change, no rubric amendment, no marker granted or spent, no
+`calibration-complete.json` re-key (ERCOT holds neither `complete` nor `final`).
+Limb B, `coal_perplant_offer_yearly` and `coal_perplant_offer_level` untouched.
+The ercot-188/E2 P0 bit-identity forfeiture is inherited unexpired.
+Next shorthand: **ercot-193**.
 ## rtcb-adapter-1 (2026-08-12) — DATA INTAKE: the RTC+B SCED read adapter is BUILT (card D / D1, execution-order item 4). The 27 quarantined parts now parse into the existing frame contract with HASL/LASL EXPLICITLY ABSENT and a per-row format flag; the delivery-2025-12-04 lane boundary is documented in code at all three glob sites and pinned by test. NO derive re-run, NO solve, NO run registered, NO matrix cell, keeper UNCHANGED.
 
 **Task.** Execute signature **D1** of card D

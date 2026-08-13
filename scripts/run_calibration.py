@@ -355,6 +355,7 @@ def run_year(
     coal_offer_margin: bool = False,
     cc_committed_offer_margin: bool = False,
     coal_peak_offer_margin: bool = False,
+    coal_peak_offer_yearly_level: bool = False,
     coal_perplant_offer_level: bool = False,
     coal_perplant_offer_yearly: bool = False,
     nysdec_peaker_rule_availability: bool = False,
@@ -1056,6 +1057,52 @@ def run_year(
             coal_peak_offer_level=COAL_PEAK_OFFER_LEVEL_BY_ISO[iso],
             coal_peak_offer_gas_hr=COAL_PEAK_OFFER_GAS_HR_BY_ISO[iso],
             gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
+        )
+    # PER-YEAR refinement of the coal `_peak` LEVEL (--coal-peak-offer-yearly-
+    # level; ScenarioConfig.coal_peak_offer_yearly_level, ercot-192 — matrix
+    # §5.1 item 13, owner signature B1 on DECISION-CARD-ercot188 card B).
+    # Refines the block above: the WIRING guard here enforces the dependency
+    # (the margin flag is a solve kwarg, so a construction-time config check
+    # cannot see it — the coal_perplant_offer_yearly precedent). The FULL
+    # year-keyed table resolves into the config (rule 25: run_config records
+    # what the solve used, year-invariantly); the consumer indexes it by the
+    # solve year, and a year absent from the table (2024/2025 — it carries only
+    # 2023) falls through to the static level unchanged (precommit G-BIT).
+    # Identification: scripts/probes/ercot192_coal_limbs_bound_phase0.py.
+    if coal_peak_offer_yearly_level:
+        from market_sim.config.constants import (
+            COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO,
+        )
+
+        if not coal_peak_offer_margin:
+            raise SystemExit(
+                "--coal-peak-offer-yearly-level requires "
+                "--coal-peak-offer-margin: the year table refines that "
+                "mechanism's level and has no meaning without it (rule 24)"
+            )
+        if iso not in COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO:
+            raise SystemExit(
+                f"--coal-peak-offer-yearly-level: no derived year-keyed coal "
+                f"peak level for {iso} in "
+                "constants.COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO — derive it "
+                "from that ISO's own SCED disclosure and register it (rule 25: "
+                "levels never cross ISO boundaries)"
+            )
+        config = config.with_overrides(
+            coal_peak_offer_yearly_level=True,
+            coal_peak_offer_level_yearly=COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO[iso],
+        )
+        logger.info(
+            "%s coal peak-tranche YEAR level (ercot-192): years %s; solve year "
+            "%d is %s the table",
+            iso,
+            sorted(COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO[iso]),
+            year,
+            (
+                "IN"
+                if year in COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO[iso]
+                else "NOT in (static fall-through)"
+            ),
         )
     if nysdec_peaker_rule_availability:
         # NYSDEC 6 NYCRR 227-3 peaker-rule availability overlay: curated

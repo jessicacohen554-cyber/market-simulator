@@ -493,6 +493,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "coal_peak_offer_margin",
     "coal_peak_offer_level",
     "coal_peak_offer_gas_hr",
+    # Per-year refinement of the same level (ercot-192): both default-off
+    # (False / None) and byte-identical for every config that does not arm it;
+    # registered at their defaults so every pre-existing cache key (and the
+    # pinned default 603c2498bf71d21d) stays byte-stable. An armed run enters
+    # the key as a distinct scenario.
+    "coal_peak_offer_yearly_level",
+    "coal_peak_offer_level_yearly",
     # Per-plant measured coal offer curves (ERCOT-144): the gate plus its
     # resolved curve registry. Both default-off (False / None) and
     # byte-identical for every config that does not arm the mechanism;
@@ -1106,6 +1113,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "coal_peak_offer_margin": "False",
     "coal_peak_offer_level": "None",
     "coal_peak_offer_gas_hr": "None",
+    "coal_peak_offer_yearly_level": "False",
+    "coal_peak_offer_level_yearly": "None",
     "coal_perplant_offer_level": "False",
     "coal_perplant_offer_curves": "None",
     "coal_perplant_offer_yearly": "False",
@@ -10166,6 +10175,30 @@ class ScenarioConfig:
     # heat rate and NOT fitted. Same resolution/freeze rules as the level
     # (constants.COAL_PEAK_OFFER_GAS_HR_BY_ISO).
     coal_peak_offer_gas_hr: float | None = None
+    # PER-YEAR refinement of the coal `_peak` LEVEL (ercot-192, matrix §5.1
+    # item 13 — owner signature B1 on DECISION-CARD-ercot188 card B). Refines
+    # coal_peak_offer_margin (REQUIRED armed — enforced at the wiring guard in
+    # run_calibration.py / run_calibration_full.py, the coal_perplant_offer_
+    # yearly precedent): for a solve year PRESENT in the resolved table the
+    # `_peak` bid is level_year + GAS_HR × (gas_cc(t) − anchor); a year ABSENT
+    # (2024, 2025 — the table carries only 2023) falls through to
+    # coal_peak_offer_level BIT-IDENTICALLY. The SLOPE and the SHARED gas
+    # anchor are untouched: one year cannot identify a slope, and the anchor is
+    # the gas offer surface's single identification point (rule 19). Zero
+    # fitted scalars — the 2023 level is the constant's OWN instrument on the
+    # delivery-2023 corpus (p90 75.00 → 71.3378 at the anchor), whose coverage
+    # objection is closed by an exact identification BOUND rather than by any
+    # repair (constants.COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO carries the full
+    # derivation; docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-
+    # 2026-08-12.md).
+    coal_peak_offer_yearly_level: bool = False
+    # The resolved year-keyed level registry (year -> level $/MWh). None + flag
+    # armed is a hard error (rule 25 — no silent fallback in the offer path);
+    # the harness resolves it from
+    # constants.COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO so run_config.json records
+    # the values the solve used. Rule-23 frozen — re-derives only when the
+    # source disclosure corpus changes (re-derive cite: ercot-157).
+    coal_peak_offer_level_yearly: dict[int, float] | None = None
 
     # PER-PLANT measured coal offer curves (ERCOT-144, the DOF-retirement
     # lane ERCOT-143 §2 chartered): every CAMPD coal `_committed`/`_econ*`
