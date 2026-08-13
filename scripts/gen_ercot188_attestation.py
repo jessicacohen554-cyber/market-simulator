@@ -85,7 +85,18 @@ _ARM_ATTEST = (
 
 
 def _tail_counts(bundle: Path) -> dict[int, int]:
-    """Model hours > $200 per year, on the standing demand-weighted P1 basis."""
+    """Model hours > $200 per year, on the SCORER'S OWN basis.
+
+    **This must reproduce ``ordc.hoursGt200.model``**, the quantity
+    ``calibration_verdict.score_price_tail`` gates C3c on: the energy-only P1
+    dual, maxed across zones within the hour. Originally written here as a
+    DEMAND-WEIGHTED mean — a basis the scorer never uses — which ercot-192
+    filed as an open defect (its own copy fixed, this one not): the two bases
+    disagree (2023 max-zonal 58 h vs demand-weighted 57 h on the ercot-192
+    arm), so an attestation regenerated from this script would quote a
+    magnitude the scored record contradicts. Re-pointed at ercot-193 to the
+    scorer's max-zonal basis, mirroring ``gen_ercot192_attestation.py``.
+    """
     out: dict[int, int] = {}
     for year in YEARS:
         p = bundle / "hourly" / f"system_{year}.parquet"
@@ -93,9 +104,7 @@ def _tail_counts(bundle: Path) -> dict[int, int]:
             continue
         df = pd.read_parquet(p)
         df = df[(df["year"] == year) & (df["pass"] == "P1")]
-        num = (df["price"] * df["demand"]).groupby(df["hour"]).sum()
-        den = df.groupby("hour")["demand"].sum()
-        out[year] = int(((num / den) > 200.0).sum())
+        out[year] = int((df.groupby("hour")["price"].max() > 200.0).sum())
     return out
 
 
