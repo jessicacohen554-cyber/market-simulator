@@ -1,4 +1,4 @@
-> Status: OPEN — for the owner sitting. Nothing here is decided in-session.
+> Status: RECORD — card R SIGNED (R-A) at the owner sitting, 2026-08-13 (see RESOLUTIONS at the foot).
 
 # DECISION CARD — ercot-193: the determination ceiling — why no amount of C3b-2023 work can move ERCOT off NOT-YET
 
@@ -144,3 +144,22 @@ wants the one-object finding surfaced on the public pages.
 re-scores committed artifacts; card Q / item 11 stay closed), no C3c ledger change,
 no rubric amendment, no holdout marker granted or spent, no keeper change. The
 ercot-188/E2 P0 bit-identity forfeiture is inherited unexpired and untouched.*
+
+---
+
+## RESOLUTIONS — CARD R SIGNED BY THE OWNER, 2026-08-13
+
+The card body above is preserved AS PUT, unedited by the outcome.
+
+| card | decision | **SIGNED** | vs. recommendation |
+|---|---|---|---|
+| **R** | ERCOT's public determination posture | **(R-A) — hold NOT-YET as the honest public claim; re-charter ERCOT sessions off the 2023 price criteria** | As recommended |
+
+Consequences adopted with the signature, per the card's own text: no further
+C3b-2023-targeted determination rounds (side-effect reporting only, with the
+~0.59 ceiling stated up front); ERCOT session bandwidth re-points to
+protective/hygiene defects, the 2024/2025 shape queue, standing re-gates
+(the ercot-193 SOC-reserve re-gate precommit remains queued for execution),
+and forecast-lane readiness; the dashboards keep reporting the misses at full
+magnitude. The R-B reporting-text variant was NOT signed; the rubric, the C3c
+ledger, and the determination are untouched.

@@ -1,6 +1,6 @@
 # DECISION CARD — L-SCAR-SCREEN-1: a screen-side scarcity-revenue mechanism for ERCOT retirement/entry
 
-> Status: FOR THE OWNER SITTING — nothing is decided here. Session
+> Status: RECORD — S1/S2/S3 SIGNED at the owner sitting, 2026-08-13 (see RESOLUTIONS at the foot). Assembled by session
 > l-scar-screen-1, 2026-08-13, HEAD `9c52ea8`. **PLANNING ONLY: no LP was
 > solved, no derive was run, no `ScenarioConfig` field was added, no matrix
 > cell was minted, no run was registered, and no default moved.** Every number
@@ -486,3 +486,28 @@ limit," which is itself a decision only the owner can sign.
 
 **Artifacts this session commits:** this card + a session entry in
 `docs/calibration-log/ercot.md`. Nothing else.
+
+---
+
+## RESOLUTIONS — ALL THREE SIGNED BY THE OWNER, 2026-08-13
+
+The sitting was held on 2026-08-13; the card body above is preserved AS PUT,
+unedited by the outcome.
+
+| card | decision | **SIGNED** | vs. recommendation |
+|---|---|---|---|
+| **S1** | rule-13 admissibility of the residual scarcity-rent term | **ADMISSIBLE AS CHARTERED — the §2.6 distinction is OWNER-SIGNED**: a measured, tightness-conditioned residual rent with the §2 sunset is not FFR-6A verdict row 4's refused scalar signal uplift | As recommended |
+| **S2** | which option runs | **L-1**, with L-2 named as follow-on structural complement — never its substitute | As recommended |
+| **S3** | timing vs OVERRIDE-FIX | **A/B NOW, against a control re-solved at HEAD; any PROMOTION waits behind OVERRIDE-FIX** (§5.3) | As recommended |
+
+### What these signatures do NOT do
+
+* No `ScenarioConfig` field exists yet — the implementing session adds it
+  default-off with its matrix row + a cell line in every shard (rule 28c).
+* No run, no registration, no promotion is performed by this signature; S3
+  explicitly holds promotion behind OVERRIDE-FIX.
+* No scored series, dispatch price, or backcast artifact is touched — the §4
+  must-nots bind the implementing session verbatim.
+* The L-0 fallback's second `readiness_limits` row is NOT entered — L-1 is
+  chartered instead.
+* Card Q (Q-B, final) and every closed dispatch-side face stay closed.
