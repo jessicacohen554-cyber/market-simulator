@@ -21,7 +21,7 @@
 window.MECH_MATRIX_SHARDS = window.MECH_MATRIX_SHARDS || {};
 window.MECH_MATRIX_SHARDS.NEISO = {
   iso: "NEISO",
-  updated: "2026-08-10",
+  updated: "2026-08-13",
   keeper: "2026-08-06-neiso-87-control",
   gates: "C3c ledgered caveat (frontier declared; only calibration-complete ISO). ITEM 1 IS SPENT as of neiso-76 (2026-08-02, NO LP): the neiso-75-chartered DA-bid lever is REFUTED ON BOTH LIMBS at Phase-0 — the submitted book does not move within the day (movement -1.926/-1.840/-2.274 $/MWh against +5/+5/+8 bars, 73 % of 227,033 paired asset-days bit-flat, band hod offer profile $2.20-3.67 TROUGHING at HE19-20) and the virtual book is net SHORT at the peak (-0.41/-0.25/-0.24 GW; arming it faithfully subtracts $2.76/$1.37/$1.60 of spread), so da_virtual_bids NEISO goes O -> R with NO solve spent and NO arm pre-registered. K3(i) passed — ISO-NE DOES publish a submitted priced demand/virtual book, so NEISO is the third such ISO — and K3(ii) did NOT fire; the limb died on materiality, which is the weaker basis and is flagged as such. diurnal_price_amplitude NEISO U -> O: a NEW route is named and unadjudicated (the stack-TRAVERSAL identification — the real book crossed at the real quantity traverses $17.03/$21.11/$24.06 of hod range, 66/73/54 % of DA, vs the keeper's $7.03/$6.82/$13.30 and correctly phased at HE20-21, while every constant-quantity read of the same book is INVERTED; depth-sensitive, halving at a flat 3 GW import allowance, so direction survives and magnitude does not) and it needs ITS OWN CHARTER, not opened. NEISO's amplitude does NOT decompose like NYISO's (rule 25 both ways): reserve owns 33/43/32 % of the missing RT swing, NEISO's RT reserve price is $0.00 at the median hour, ISO-NE cleared NO day-ahead reserve product before DASI 2025-03-01 (measured), and the energy-basis restatement puts the model's PEAK right to +-$3 with the overnight TROUGH $7.6-9.9 TOO DEAR. C3c-2023 stays routed to the owner (charter §5); C3c-2025 keeps its neiso-75 sizing and loses its route. Item 2 still needs its own owner charter. Keeper 2026-07-31-neiso-72-hy-window (neiso-72) — the neiso-71 recipe + the NG:PS TIME-SPLIT per-window hydro-level guard (EIA930_PS_SPLIT_COMPLETE_FROM, seam 2024-11-07: 2023/2024 levels on the units' own 923 HY filings, 2025 keeps the pin, bit-identical to control), every criterion IDENTICAL (CALIBRATED-WITH-CAVEATS, 0 FAILs, C1 all 12/12 free 8/8, C3c bit-identical, DOF residual count 5). OPEN at NEISO: measured_chp_heat_rates stays O — its fleet/nameplate prerequisite is ADJUDICATED at neiso-73 (NO LP): Kendall Square's ~90 MW gap is a CAMPD metering-basis ARTIFACT, not missing capacity — the EIA-860 basis (206.0 MW summer) is CORRECT, and the floor lane may reopen ONLY on a NET-basis identification (923-anchored; Kendall measures a genuine flat steam host at 89-96 % net loading-when-on, the non-Kendall cogens remain real cyclers) with its own prereg and the over-closing hazard stated. Storage-side PS cycling depth (measured 1.932 vs endogenous 0.497 TWh, 2025) queued; NG:WAT hourly envelope/min-flow still source-blocked pre-seam. (2026-08-09, session neiso-keeper-87-control) KEEPER -> 2026-08-06-neiso-87-control. NO MECHANISM WAS TESTED, NO LEVER OPENED, NO CELL VERDICT MOVED (rule 28d) AND THE OPEN-GATE SET IS UNCHANGED: the promoted run is a same-HEAD re-solve of the neiso-83 recipe with ZERO scenario deltas, determination CALIBRATED-WITH-CAVEATS with all criterion statuses identical (0 FAILs, C3c the sole ledgered caveat at budget 1 of 1, C1 all 12/12 free 8/8), re-verified on committed artifacts per rule 22 D-5(b) so the worse-determination stop does not fire. NO SOLVE WAS RUN IN THE PROMOTION SESSION. Promoted on OWNER INSTRUCTION after its stated rationale was CHECKED AND FOUND NOT TO HOLD, which is on the record rather than dropped: C4 fleet hourly r is bit-identical in 2023 (gas 0.919, coal 0.383) and 2024 (0.930 / 0.481) and moves gas 0.880 -> 0.882 / NRMSE 0.160 -> 0.158 in 2025 alone, inside the 0.918-0.931 band every NEISO run ever registered spans. The reason that DOES hold is reproducibility (neiso-91 bisect, owner decision D-88.3): the superseded bundle is a NON-REPRODUCIBLE OUTLIER that four independent HEAD solves all differ from by the same 731-hour January-2025 pattern, and this keeper is on the reproducible side (2023/2024 bit-identical to the superseded keeper, 2025 mean lambda 70.0868 -> 69.7524). TWO DEFECTS DISCLOSED, NOT BURIED: it carries the SUPERSEDED NEISO,2025,8 gas-basis interpolation (+0.04 vs the measured -0.38 now at HEAD) because it was arm A of the neiso-87 A/B -- a rule 14 [R-ACCURATE] regression worth 2025 mean lambda 69.7149 against 69.3990, with the standing recommendation to re-solve this recipe at HEAD across 2023-2025 and re-key; and its legitimacy_diagnostics.json was generated AT PROMOTION from the bundle's own committed artifacts (no LP solve), which is what turned C8 from SKIPPED to PASS. frontend/data/backcast/keepers/NEISO.json note + disposition_note",
   cells: {
@@ -140,7 +140,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     ercot_dam_availability_event_cap_unit_scoped: { cell: "." },
     ercot_partial_outage_shaped_derate: { cell: "." },
     unit_outage_short_windows: { cell: "R", ev: "neiso-69" },
-    nuclear_unit_availability: { cell: "K", ev: "neiso-71 (results/calibration/FINDING-neiso71-chp-floor-nuclear-2026-07-31.md; PREREG results/calibration/PREREG-neiso71-nuclear-availability-2026-07-31.md)" },
+    nuclear_unit_availability: { cell: "K", ev: "neiso-71 (results/calibration/FINDING-neiso71-chp-floor-nuclear-2026-07-31.md; PREREG results/calibration/PREREG-neiso71-nuclear-availability-2026-07-31.md). COVERAGE CAVEAT ADDED neiso-92 (2026-08-13, NO LP, NO SOLVE, NO MECHANISM TESTED — the K verdict is UNCHANGED and is NOT re-adjudicated, rule 28d): this mechanism is DATA-BOUND TO 2023-2025 AND DEGRADES SILENTLY OUTSIDE IT. data/raw/nuclear-availability-NEISO.csv covers 2023-01-01..2025-12-31 only (3,288 rows, 3 reactors), and its fallback anchor constants.NUCLEAR_MONTHLY_CF_BY_YEAR['NEISO'] covers 2023/2024/2025 only, so BOTH measured layers are absent for every validation-ladder year. outages.nuclear_unit_availability_series returns {} for an uncovered year and data/fleet/arrays.py:248 then falls through to the STATIC climatology NUCLEAR_MONTHLY_CF['NEISO'] (mean 0.982) with no warning. Sized against EIA-930 ISNE NUC on a 3,389 MW fleet (the committed anchor tracks that reconstruction to 0.007-0.016 in every year it exists, so the method is validated): a solve would carry +0.96 TWh of phantom nuclear in 2021 (+1.25 TWh in OCTOBER alone, ~14 % of October load, against a real refuelling outage at CF 0.425), +0.61 TWh in 2022 and +2.51 TWh in 2020. THIS APPLIES RETROSPECTIVELY to the registered 2022 touchpoint 2026-08-06-neiso-2022-corrected-basis, whose holdout block's 'AVAILABILITY-ENVELOPE PARITY IS VERIFIED' statement is true AS SCOPED (it is about the uniform CAMPD fossil-outage detector) but does NOT cover the nuclear envelope; that determination is NOT retracted here. Fix is pure data prep and needs no marker or freeze lift under rule 22 as amended 2026-08-06 ('what is held out is the SCORE, never the DATA'): data/raw/nrc-reactor-status/2021PowerStatus.txt exists (2018-2026 all present) and NYISO already carries 2018-2025 from the same deriver, so scripts/data/derive_nuclear_availability.py is proven over this span. Evidence: results/calibration/ASSESSMENT-neiso92-2021-readiness-2026-08-13.md §2.2/§3.4/§4." },
     temp_dependent_derate: { cell: "K" },
     gas_coldsnap_derate: { cell: "K" },
     nysdec_peaker_rule_availability: { cell: "." },
@@ -239,3 +239,50 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     startup_co2_reporting: { cell: "U" },
   },
 };
+
+/* NEISO column re-stamp history (append-only).
+ *
+ * 2026-08-13 — neiso-92 (session claude/neiso-2021-readiness-7pzqo9).
+ *   NO LP, NO SOLVE, NO SCORE, NO REGISTRATION, NO MECHANISM TESTED, NO LEVER
+ *   OPENED, NO CELL VERDICT MOVED (rule 28d). Keeper is UNCHANGED at
+ *   2026-08-06-neiso-87-control and the open-gate set is UNCHANGED. The only
+ *   edit is a COVERAGE CAVEAT appended to nuclear_unit_availability's `ev`,
+ *   which records a data-extent fact about an already-adjudicated mechanism
+ *   rather than re-adjudicating it.
+ *
+ *   WHAT THE SESSION WAS. A Phase-1 data-readiness proof for the 2021
+ *   validation touchpoint, gated ahead of any spend by the neiso-85 precedent
+ *   (a 2022 touchpoint burned against a seasonally-inverted gas input).
+ *   Rule 22 channel 1 — data readiness is unrestricted by the holdout spend
+ *   freeze, which was verified ACTIVE at HEAD cfb8127 and was NOT lifted and
+ *   NOT modified. 2019, H1-2026 and the `final` block were not touched.
+ *
+ *   VERDICT: NOT CLEAN — 2021 MUST NOT BE SOLVED YET. The two inputs the
+ *   session prompt flagged as highest-risk both came back EQUIVALENT: the 2021
+ *   demand profile is a dense real 8760 (0 NaN / 0 zeros / 0 duplicate hours;
+ *   its single DST-artifact hour at 2021-11-07 01:00 is smaller than the THREE
+ *   zero-MW hours the tuned year 2024 carries), and the gas basis is 12/12
+ *   months on the measured ISO-NE MA index with winter/summer 2.207, in family
+ *   with 2020 2.030 / 2022 2.104 / 2023 2.390 / 2024 3.778 / 2025 4.808 and
+ *   nothing like the 0.397 inversion neiso-85 caught. Fourteen further inputs
+ *   graded EQUIVALENT (outages, emission rates, LMP actuals + clock, EIA-923,
+ *   EIA-930, CAMPD, weather, renewables, eGRID, reference, year-invariant
+ *   derived params, static AS requirements, winter-fuel constants).
+ *
+ *   FOUR INPUTS GRADED DEGRADED, none of them on the prompt's risk list:
+ *   nuclear availability (BLOCKING — see the ev caveat above), the NEISO
+ *   interchange seam tranches (IMPORT/EXPORT_TRANCHES_BY_YEAR 2023-2025 only,
+ *   so 2021 silently takes the pooled 2023-2025 seam supply curve),
+ *   eia860_chp_by_year.parquet (2023-2025 only; falls back to the latest
+ *   vintage snapshot), and parasitic_load_factors (NEISO has 2022-2025 rows
+ *   but no 2021; falls back to the year-0 pooled default).
+ *
+ *   ONE PROMPT PREMISE CORRECTED: bench/NEISO/2021.json.gz is indeed absent,
+ *   but it is NOT a prerequisite — render_backcast._write_bench_part derives it
+ *   from the registering bundle's own committed input snapshots, so it is an
+ *   OUTPUT of registration, not something to build in advance.
+ *
+ *   Evidence: results/calibration/ASSESSMENT-neiso92-2021-readiness-2026-08-13.md;
+ *   probe scripts/probes/_neiso92_2021_gas_chain.py; record
+ *   results/calibration/_neiso92_gas_chain.json.
+ */
