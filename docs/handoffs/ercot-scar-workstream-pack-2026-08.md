@@ -11,11 +11,13 @@
 
 ---
 
-## §0 STATE BOARD — cycle 3, 2026-08-13
+## §0 STATE BOARD — cycle 4, 2026-08-13
 
-**Recorded HEAD (origin/main): `5b05f84`** (unchanged through cycle 3; the
-owner merged this pack's cycle-1 seed via PR #3913 — main's pack copy lags
-this branch, which remains the live copy; merge again whenever convenient.)
+**Recorded HEAD (origin/main): `5b05f84`** (unchanged through cycle 4; the
+owner has not been back since merging PR #3913 at 05:46Z. Main's pack copy
+lags this branch, which remains the live copy. THREE worker branches now sit
+review-ready awaiting the owner: the hygiene fix `9e3a6c4`, the ercot-196
+shape card `3395389`, and HYGIENE-2 in flight.)
 
 ### Signed rulings in force (the governance this workstream enforces)
 
@@ -49,7 +51,8 @@ this branch, which remains the live copy; merge again whenever convenient.)
 | **FIX-IT-1** (child session `session_01Ne18N4kQa3EPfZ7pCbN8FL`, dispatched cycle 1, 2026-08-13T05:29:33Z) | **MOOT AT DISPATCH; DID NOTHING; self-archived 05:31Z.** PR #3912 had merged at 05:28:59Z, 34 s before dispatch (manager read the PR state ~2 min stale). The session also could not clone the repo (child sessions do not inherit the repo attachment — pass `source_url` on `create_session`; A2). No push, no PR action, no artifact. Prompt kept verbatim at §2.1 for the record. | Manager unsubscribed from #3912 (merged). Two lessons appended as A2 duties. |
 | **HYGIENE-1** (child session `session_013ADXP9Kq5nGEAqsrB6WoKh`, dispatched cycle 1 with `source_url`) | **PROVISIONING FAILED — never started; archived cycle 2.** Init died at 05:58Z with `clone_timeout`, unrecoverable: a `source_url` dispatch makes the platform attempt a FULL clone, which stalls on this repo (7.37 GiB live at tip — the exact docs/fast-clone.md failure). No work performed, no branch created. | Postmortem in A3; re-dispatched as HYGIENE-1b with the add_repo + blobless provisioning preamble. |
 | **HYGIENE-1b** (child session `session_011sYFijAwLntGLjFM1do3vp`, dispatched cycle 2, NO source_url + §2.3 provisioning preamble) | **LANDED, REVIEW-READY — verified cycle 3.** The provisioning pattern WORKED (add_repo → blobless clone). One commit `9e3a6c4` on `claude/ercot-scar-hygiene-1-dashboard-sidecar` off `5b05f84`, push-and-stop honored (no PR opened). Root fix: `resolve_bundle()` anchors a relative `--bundle` at the repo root once at the top of `main()`, making the meta.json guard, rendering, and the metrics-sidecar write CWD-independent; also explains the "determination: unavailable" mis-report disclosed at ercot-193. | Verified via commit stats + patch: exactly 2 files — `scripts/dashboard_add_run.py` +21/−1 (minimal) and NEW `tests/scoring/test_dashboard_add_run_sidecar.py` (126 lines, drives `main()` from a non-repo tmp CWD with a decoy tree, verified failing pre-fix). Citations to the ercot-193 filing + FINDING §4 present. **AWAITING LANDING** per the owner's landing-convention answer (merge `9e3a6c4` or authorize worker PRs). |
-| **SHAPE-CHARTER-1** (child session `session_018hZXhKv19qih79y62t1uPw`, dispatched cycle 3, 2026-08-13T10:00:40Z) | IN FLIGHT. Measure-first charter assembly for the 2024/2025 monthly-shape object (PRECOMMIT-ercot193 §0(c): outage-season/fuel-shape; 2024 shoulder −/summer +; 2025 worst Apr–May) — doc-only, NO solve, read-only re-scoring of the keeper's committed payload/sidecars, DO-NOT-REDO checks first, ceiling stated up front (2024 C3b 0.135 / 2025 0.096 both PASS; shape/forecast-readiness work, never determination work), ends at an owner-sitting option board. PUSH-AND-STOP on `claude/ercot-scar-shape-charter-1`. Prompt verbatim: §2.4. | Card-R (R-A) re-pointed bandwidth, the named "later charter" item. No field, no matrix edit (card = read, ercot-182/189 precedent), no keeper contact. |
+| **SHAPE-CHARTER-1** (child session `session_018hZXhKv19qih79y62t1uPw`, dispatched cycle 3) | **LANDED, REVIEW-READY — verified cycle 4.** One commit `3395389` on `claude/ercot-scar-shape-charter-1` off `5b05f84`, push-and-stop honored (no PR). Deliverable: `docs/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` (324 lines, **card T**) + read-only probe `scripts/probes/ercot196_shape_decomposition.py` + its JSON + log entry. The object SIZED: 2024 NRMSE 0.1352 is pure shape (Nov+Apr+Aug+May = 78.1 % of squared residual; three-month ceiling 0.0824); 2025 0.0957 is LEVEL-dominated (uniform −2.76 $/MWh; May+Feb+Apr = 72.5 %; ceiling 0.0501). ATTRIBUTED measured: (a) sub-tail scarcity content the LP does not form (Nov/Aug-2024 tail wedges $5.12/$7.39; 2025's 217-vs-35 hours >$100) — the Q-B/R-A-closed model-class family at smaller amplitude; (b) Apr/May-2024 outage-season over-read remainder (every face governed: D2 freeze / ercot-174 R / ercot-185 K); (c) measured-HH monthly fuel-shape wedge (supports Jan/Apr-2024, Feb-2025; adverse H2-2025); (d) a scoring-basis wedge — the published-adder overlay is in bench `rt_lw_mon` but not scored `pMon` (+0.25/+0.42 $/MWh demand-weighted; Feb-2025 +1.50); (e) hydro/renewables/storage/2025-gas-level ruled OUT. **Board: T-0 do-nothing / T-1 `gas_hh_monthly_shape` input-correctness A/B (RECOMMENDED, ercot-145b posture: fit gain NOT predicted) + T-3b overlay-completeness audit companion / T-2 outage-remainder OWNER-GATED (D2) / T-3a C3b settlement-basis scoring = rubric change, owner-only / T-4 sub-tail formation REFUSED on Q-B/R-A.** | Verified cycle 4: 4 files, all new (no matrix edit, no field, no keeper/registry/bench touch); ceiling stated first with Q-B+R-A citations, 2023 only in the ceiling citation; probe validates against the C3c ledger counts (53/22, 31/1); §5 cites every matrix cell checked (G/K/R/U) with `diurnal_price_amplitude` untouched per PRECOMMIT §0(b); log entry +74 lines. **Card T → OWNER sitting.** |
+| **HYGIENE-2** (child session `session_01TWoByqhaqZE6MVwHJeNg5D`, dispatched cycle 4, 2026-08-13T12:22:49Z) | IN FLIGHT. Close the ercot-193-disclosed replay-path gap: `scripts/replay_keeper.py` writes no `legitimacy_diagnostics.json` (generated manually at ercot-193 so C8 could score). Diagnose-first (reuse the normal solve path's generation seam, no second mechanism), regression test, STOP conditions on scope-widening or missing solve-time state. PUSH-AND-STOP on `claude/ercot-scar-hygiene-2-replay-diagnostics`. Prompt verbatim: §2.5. | Card-R hygiene bandwidth; tooling only, no src/, no solve, no matrix. Last owner-independent dispatch in the queue — everything else on the board is owner-gated. |
 
 ### Dependencies tracked, not tasked (boundary: FFR-FH manager, addenda AP/AQ/AR)
 
@@ -69,12 +72,16 @@ this branch, which remains the live copy; merge again whenever convenient.)
    `legitimacy_diagnostics.json` (ercot-193 disclosure — generated manually
    there); (ii) ERCOT-137 pooled-vs-anchored convention — OPEN in the DOF
    ledger, inside band, NOT quick-dispatch material.
-3. **SHAPE-CHARTER-1 completes (in flight)** → verify the card's method
-   (committed-artifacts-only, DO-NOT-REDO citations, ceiling sentence,
-   option board), then queue its owner sitting alongside the L-SCAR
+3. ~~SHAPE-CHARTER-1 completes~~ — DONE cycle 4: verified, review-ready at
+   `3395389`; **card T queued for the owner sitting** alongside the L-SCAR
    adjudication.
 4. **L-SCAR lane** — BLOCKED ON OWNER (V0-FAIL adjudication; the manager
    dispatches nothing here on its own authority).
+5. **HYGIENE-2 completes (in flight)** → verify diff/test, add to the
+   review-ready pile. After it, the manager's owner-independent queue is
+   EMPTY: T-1/T-3b execution needs card T signed; T-2 needs a D2 unfreeze;
+   T-3a is rubric (owner-only); T-4 refused; L-SCAR routes all owner-gated.
+   Subsequent cycles are verify-and-flag only until the owner returns.
 
 ### Owner decisions pending (also in the cycle-1 report)
 
@@ -99,6 +106,19 @@ this branch, which remains the live copy; merge again whenever convenient.)
   to open+merge PRs for verified in-scope landings (the observed repo
   convention), or (b) owner merges manager-verified branches, or (c) another
   route. Until answered, every manager dispatch lands push-and-stop.
+- **Merge the two verified branches** (cycle 3–4): the hygiene fix
+  `claude/ercot-scar-hygiene-1-dashboard-sidecar` @ `9e3a6c4` and the
+  ercot-196 card `claude/ercot-scar-shape-charter-1` @ `3395389` — both
+  manager-verified, both off current main, zero conflict risk between them
+  (disjoint files). Acting on either also answers the convention question by
+  example.
+- **Card T signature** (`docs/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md`
+  §0/§4): recommendation **T-1** (`gas_hh_monthly_shape` input-correctness
+  A/B, ercot-145b posture, guards on every PASSing gate) **+ T-3b** (adder
+  overlay-completeness audit, read-only companion); T-0 meanwhile; T-2 stays
+  behind the D2 freeze unless the owner unfreezes; T-3a named as a rubric
+  question, not proposed; T-4 refused on Q-B/R-A. The manager executes
+  nothing from this card without the signature.
 
 ---
 
@@ -214,6 +234,20 @@ METHOD (the ercot-189/ercot-193 read-only card precedent):
 FENCES: rulings Q-B (NO C3a-2023 spend of any kind; docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md) and R-A (no C3b-2023-targeted rounds — 2023 appears ONLY in the ceiling citation; docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md); the L-SCAR lane is stopped at V0 and is NOT yours (docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md). No solve, no LP, no year solved; actuals enter counterfactual re-scoring of committed payloads only (rule 13 clean, the ercot-189 footing; rule 22: ERCOT holds no complete/final marker, artifacts referenced stay in {2023,2024,2025}). No ScenarioConfig field; no matrix cell or row edit (a card is a read, not a mechanism test — the ercot-182/189 precedent; record this in the card's governance section). No keeper/registry/bench edits. Rule 27: you are Opus/Fable; blob-verify any pushed file ≥300 lines (fetch the pushed blob, compare line count + hash to local). No new .github/workflows. Small-pack push (fresh fetch first). Report back: branch, commit SHA(s), the card's board table verbatim, and the log-entry text. If anything outside this scope looks necessary, STOP and report to the manager.
 ```
 
+### §2.5 HYGIENE-2 — replay-path legitimacy_diagnostics gap (cycle 4, 2026-08-13; child session `session_01TWoByqhaqZE6MVwHJeNg5D`)
+
+Provisioning preamble as §2.3. Task core (full prompt in the dispatch record):
+
+```
+ONE MECHANICAL TASK: close the ercot-193-disclosed replay-path tooling gap — "The replay path writes no legitimacy_diagnostics.json; generated for both bundles so C8 scores (PASS both)" (docs/calibration-log/ercot.md ercot-193 "Disclosures"; FINDING-ercot193-soc-regate-2026-08-13.md §4). Card-R (R-A) hygiene bandwidth.
+
+DIAGNOSE FIRST: read scripts/replay_keeper.py and find how the normal solve path (scripts/run_calibration_full.py) produces a bundle's legitimacy_diagnostics.json (inline write vs a post-step calling scripts/legitimacy_diagnostics.py). Make the replay path produce it the SAME way — reuse the existing generation seam, add no second mechanism (rule-19 spirit). If generation needs solve-time state a replay does not have, do NOT approximate — STOP and report. If the right change lands anywhere other than scripts/replay_keeper.py (plus a small shared-helper extraction), STOP and report before widening scope.
+
+Regression test: tmp-dir, exercises the diagnostics-write seam without an LP solve (fixture bundle; docs/testing.md patterns, trivial-first). Run existing replay_keeper / legitimacy_diagnostics tests (pytest -k, report verbatim).
+
+Rulings cited: Q-B final (no C3a-2023 spend), R-A (no C3b-2023 determination rounds) — tooling only, touches neither. FENCES: no LP solve, no run registered, no year solved/scored (rule 22); no ScenarioConfig field, no matrix edit; no keeper/registry/bench/dashboard-data edits; no src/market_sim/ edits (STOP if needed); rule 27 edit-local + blob-verify ≥300-line pushed files; rule 11 docstrings. LANDING: branch claude/ercot-scar-hygiene-2-replay-diagnostics off latest origin/main, push, STOP — NO PR, NO merge. Report: branch, SHA, diff summary, test output, blob-verify.
+```
+
 ---
 
 ## §A ADDENDA (append-only; dated; old addenda are never rewritten)
@@ -324,3 +358,28 @@ Board seeded at origin/main `016b659`. Facts established this cycle:
    adjudication; landing convention) remain OPEN and re-flagged. A THIRD
    owner item added by cycle 3: `9e3a6c4` is ready to land — merging it is
    itself an instance of the landing-convention answer.
+
+### A5 — 2026-08-13, cycle 4 (self check-in, 12:06Z trigger)
+
+1. **Local git auth RECOVERED** (fetch works again). The local manager branch
+   was reset onto the remote `dac1d8c` (the cycle-3 push_files commit); the
+   offline mirror commit `53ba6a9` (content-identical blob `de3f78af`,
+   built while auth was dead — see the cycle-3 stop-hook note) is discarded
+   unpushed, exactly as its own commit message instructed. No content
+   differed.
+2. **SHAPE-CHARTER-1 landed and verified** — ercot-196 / card T, review-ready
+   at `3395389` (board summary on §0; full verification in the worker table).
+   The card surfaces one latent duty for the T-1 executing session: the
+   existing default-off `gas_hh_monthly_shape` field carries NO matrix row
+   (the rule-28c gap ercot-145 §6 surfaced) — the session that arms the A/B
+   closes the row gap in the same PR.
+3. **HYGIENE-2 dispatched** (§2.5): the replay-path legitimacy_diagnostics
+   gap, diagnose-first, reuse-the-seam, push-and-stop on
+   `claude/ercot-scar-hygiene-2-replay-diagnostics`. After it lands, the
+   owner-independent queue is EMPTY — all remaining work is behind owner
+   signatures (card T, L-SCAR adjudication, landing convention, D2, T-3a).
+4. Owner state: absent since the 05:46Z #3913 merge; main unchanged at
+   `5b05f84` all day; no open PRs; hygiene fix `9e3a6c4` and card T
+   `3395389` both await merge. Owner items now FOUR (§0 list): two merges /
+   convention / L-SCAR adjudication / card T signature — the two sittings
+   (L-SCAR + card T) can be one sitting.
