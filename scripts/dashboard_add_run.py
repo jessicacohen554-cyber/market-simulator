@@ -109,6 +109,26 @@ def _bundle_dir(rec: dict) -> Path | None:
     return p
 
 
+def resolve_bundle(raw: str | Path) -> Path:
+    """Return ``raw`` as the absolute bundle directory, independent of the CWD.
+
+    An absolute path is taken as-is; a relative one is anchored at the repo
+    root — the documented ``results/calibration/<name>`` form, the same
+    convention ``_bundle_dir`` applies to the sidecar's repo-relative
+    ``bundle`` field. Anchoring once here keeps every downstream use of the
+    path (the ``meta.json`` guard, rendering, and the ``metrics.json``
+    sidecar write) pointed at the bundle dir. Previously ``main`` used the
+    raw CLI path, so a relative ``--bundle`` composed against the process
+    CWD: run from outside the repo root the metrics sidecar landed under the
+    CWD, and even from the repo root the relative path broke the
+    ``relative_to(REPO)`` completion message, which the best-effort handler
+    then misreported as a determination failure (the ercot-193 tooling
+    defect, docs/calibration-log/ercot.md ercot-193 Disclosures).
+    """
+    p = Path(raw)
+    return p if p.is_absolute() else REPO / p
+
+
 def prune_iso(
     iso: str, *, keep: int = KEEP_PER_ISO, dry_run: bool = False
 ) -> list[str]:
@@ -202,7 +222,7 @@ def main() -> None:
     )
     args = ap.parse_args()
 
-    bundle = Path(args.bundle)
+    bundle = resolve_bundle(args.bundle)
     if not (bundle / "meta.json").exists():
         sys.exit(f"bundle {bundle} is missing meta.json; nothing to register.")
 
