@@ -11,13 +11,14 @@
 
 ---
 
-## §0 STATE BOARD — cycle 4, 2026-08-13
+## §0 STATE BOARD — cycle 5, 2026-08-13
 
-**Recorded HEAD (origin/main): `5b05f84`** (unchanged through cycle 4; the
-owner has not been back since merging PR #3913 at 05:46Z. Main's pack copy
-lags this branch, which remains the live copy. THREE worker branches now sit
-review-ready awaiting the owner: the hygiene fix `9e3a6c4`, the ercot-196
-shape card `3395389`, and HYGIENE-2 in flight.)
+**Recorded HEAD (origin/main): `5b05f84`** (unchanged through cycle 5; the
+owner has not been back since merging PR #3913 at 05:46Z. THREE verified
+worker branches await the owner: hygiene fix `9e3a6c4`, ercot-196 card T
+`3395389`, replay-diagnostics fix `8653317`. The owner-independent dispatch
+queue is EMPTY — the manager is in verify-and-flag posture until the owner
+acts on the §0 decision list.)
 
 ### Signed rulings in force (the governance this workstream enforces)
 
@@ -52,7 +53,7 @@ shape card `3395389`, and HYGIENE-2 in flight.)
 | **HYGIENE-1** (child session `session_013ADXP9Kq5nGEAqsrB6WoKh`, dispatched cycle 1 with `source_url`) | **PROVISIONING FAILED — never started; archived cycle 2.** Init died at 05:58Z with `clone_timeout`, unrecoverable: a `source_url` dispatch makes the platform attempt a FULL clone, which stalls on this repo (7.37 GiB live at tip — the exact docs/fast-clone.md failure). No work performed, no branch created. | Postmortem in A3; re-dispatched as HYGIENE-1b with the add_repo + blobless provisioning preamble. |
 | **HYGIENE-1b** (child session `session_011sYFijAwLntGLjFM1do3vp`, dispatched cycle 2, NO source_url + §2.3 provisioning preamble) | **LANDED, REVIEW-READY — verified cycle 3.** The provisioning pattern WORKED (add_repo → blobless clone). One commit `9e3a6c4` on `claude/ercot-scar-hygiene-1-dashboard-sidecar` off `5b05f84`, push-and-stop honored (no PR opened). Root fix: `resolve_bundle()` anchors a relative `--bundle` at the repo root once at the top of `main()`, making the meta.json guard, rendering, and the metrics-sidecar write CWD-independent; also explains the "determination: unavailable" mis-report disclosed at ercot-193. | Verified via commit stats + patch: exactly 2 files — `scripts/dashboard_add_run.py` +21/−1 (minimal) and NEW `tests/scoring/test_dashboard_add_run_sidecar.py` (126 lines, drives `main()` from a non-repo tmp CWD with a decoy tree, verified failing pre-fix). Citations to the ercot-193 filing + FINDING §4 present. **AWAITING LANDING** per the owner's landing-convention answer (merge `9e3a6c4` or authorize worker PRs). |
 | **SHAPE-CHARTER-1** (child session `session_018hZXhKv19qih79y62t1uPw`, dispatched cycle 3) | **LANDED, REVIEW-READY — verified cycle 4.** One commit `3395389` on `claude/ercot-scar-shape-charter-1` off `5b05f84`, push-and-stop honored (no PR). Deliverable: `docs/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` (324 lines, **card T**) + read-only probe `scripts/probes/ercot196_shape_decomposition.py` + its JSON + log entry. The object SIZED: 2024 NRMSE 0.1352 is pure shape (Nov+Apr+Aug+May = 78.1 % of squared residual; three-month ceiling 0.0824); 2025 0.0957 is LEVEL-dominated (uniform −2.76 $/MWh; May+Feb+Apr = 72.5 %; ceiling 0.0501). ATTRIBUTED measured: (a) sub-tail scarcity content the LP does not form (Nov/Aug-2024 tail wedges $5.12/$7.39; 2025's 217-vs-35 hours >$100) — the Q-B/R-A-closed model-class family at smaller amplitude; (b) Apr/May-2024 outage-season over-read remainder (every face governed: D2 freeze / ercot-174 R / ercot-185 K); (c) measured-HH monthly fuel-shape wedge (supports Jan/Apr-2024, Feb-2025; adverse H2-2025); (d) a scoring-basis wedge — the published-adder overlay is in bench `rt_lw_mon` but not scored `pMon` (+0.25/+0.42 $/MWh demand-weighted; Feb-2025 +1.50); (e) hydro/renewables/storage/2025-gas-level ruled OUT. **Board: T-0 do-nothing / T-1 `gas_hh_monthly_shape` input-correctness A/B (RECOMMENDED, ercot-145b posture: fit gain NOT predicted) + T-3b overlay-completeness audit companion / T-2 outage-remainder OWNER-GATED (D2) / T-3a C3b settlement-basis scoring = rubric change, owner-only / T-4 sub-tail formation REFUSED on Q-B/R-A.** | Verified cycle 4: 4 files, all new (no matrix edit, no field, no keeper/registry/bench touch); ceiling stated first with Q-B+R-A citations, 2023 only in the ceiling citation; probe validates against the C3c ledger counts (53/22, 31/1); §5 cites every matrix cell checked (G/K/R/U) with `diurnal_price_amplitude` untouched per PRECOMMIT §0(b); log entry +74 lines. **Card T → OWNER sitting.** |
-| **HYGIENE-2** (child session `session_01TWoByqhaqZE6MVwHJeNg5D`, dispatched cycle 4, 2026-08-13T12:22:49Z) | IN FLIGHT. Close the ercot-193-disclosed replay-path gap: `scripts/replay_keeper.py` writes no `legitimacy_diagnostics.json` (generated manually at ercot-193 so C8 could score). Diagnose-first (reuse the normal solve path's generation seam, no second mechanism), regression test, STOP conditions on scope-widening or missing solve-time state. PUSH-AND-STOP on `claude/ercot-scar-hygiene-2-replay-diagnostics`. Prompt verbatim: §2.5. | Card-R hygiene bandwidth; tooling only, no src/, no solve, no matrix. Last owner-independent dispatch in the queue — everything else on the board is owner-gated. |
+| **HYGIENE-2** (child session `session_01TWoByqhaqZE6MVwHJeNg5D`, dispatched cycle 4) | **LANDED, REVIEW-READY — verified cycle 5.** One commit `8653317` on `claude/ercot-scar-hygiene-2-replay-diagnostics` off `5b05f84`, push-and-stop honored (no PR). The replay driver now invokes the SAME legitimacy-diagnostics post-step the normal calibration path uses (`legitimacy_diagnostics` main() with the `calibration_verdict._LEGIT_HOWTO` argv) on the output bundle after solve+date-restore — same suite, same CLI surface, no second implementation (the §2.5 seam-reuse requirement, met); a gate FAIL or suite crash is loud but never discards the completed solve. | Verified cycle 5: exactly 2 files — `scripts/replay_keeper.py` +58, new `tests/scoring/test_replay_keeper_diagnostics.py` (161 lines: argv contract in-place and --out-dir, artifact lands in the output bundle, error tolerance; solve stubbed, no LP). No src/market_sim edit, no matrix, no registry. Worker reports 92 tests pass, pushed blobs verified. **AWAITING LANDING** with the other two branches. |
 
 ### Dependencies tracked, not tasked (boundary: FFR-FH manager, addenda AP/AQ/AR)
 
@@ -77,11 +78,12 @@ shape card `3395389`, and HYGIENE-2 in flight.)
    adjudication.
 4. **L-SCAR lane** — BLOCKED ON OWNER (V0-FAIL adjudication; the manager
    dispatches nothing here on its own authority).
-5. **HYGIENE-2 completes (in flight)** → verify diff/test, add to the
-   review-ready pile. After it, the manager's owner-independent queue is
-   EMPTY: T-1/T-3b execution needs card T signed; T-2 needs a D2 unfreeze;
-   T-3a is rubric (owner-only); T-4 refused; L-SCAR routes all owner-gated.
-   Subsequent cycles are verify-and-flag only until the owner returns.
+5. ~~HYGIENE-2 completes~~ — DONE cycle 5: verified, review-ready at
+   `8653317`. **The owner-independent queue is now EMPTY**: T-1/T-3b
+   execution needs card T signed; T-2 needs a D2 unfreeze; T-3a is rubric
+   (owner-only); T-4 refused; L-SCAR routes all owner-gated. Cycles are
+   verify-and-flag only until the owner acts; check-in interval lengthens
+   after consecutive quiet cycles.
 
 ### Owner decisions pending (also in the cycle-1 report)
 
@@ -383,3 +385,23 @@ Board seeded at origin/main `016b659`. Facts established this cycle:
    `3395389` both await merge. Owner items now FOUR (§0 list): two merges /
    convention / L-SCAR adjudication / card T signature — the two sittings
    (L-SCAR + card T) can be one sitting.
+
+### A6 — 2026-08-13, cycle 5 (self check-in, 14:26Z trigger)
+
+1. **HYGIENE-2 landed and verified** (detail in the worker table): the
+   replay path now writes `legitimacy_diagnostics.json` through the exact
+   post-step the calibration path uses — seam reuse as specified, 2 files,
+   solve-stubbed regression test, no PR. Third branch on the review-ready
+   pile: `8653317`.
+2. **Quiet cycle otherwise**: main unchanged at `5b05f84` since 05:46Z; no
+   open PRs; no owner action on any of the four §0 decision items. The
+   owner-independent dispatch queue is EMPTY as forecast in A5.3 — this was
+   a verify-and-flag cycle and the next ones will be too, so the check-in
+   interval stretches (next at ~2h; if it is also fully quiet, subsequent
+   check-ins move to ~4h to stop burning cycles against an absent owner —
+   the pack and the three branches hold all state either way).
+3. For the owner, the entire actionable state in one line each:
+   **merge `9e3a6c4`** (dashboard sidecar fix), **merge `3395389` + sign
+   card T** (T-1+T-3b recommended), **merge `8653317`** (replay
+   diagnostics), **answer the landing convention**, **adjudicate L-SCAR
+   V0-FAIL** (L-0 / L-2 / regime card / park).
