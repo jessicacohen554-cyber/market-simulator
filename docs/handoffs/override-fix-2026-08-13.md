@@ -1,7 +1,9 @@
 # OVERRIDE-FIX — making an ISO-armed flag turn-off-able at the `apply_iso_scenario_defaults` seam
 
 **Lane.** OVERRIDE-FIX `[OPUS]`, branch `claude/iso-armed-flags-turnoff-e425y7`,
-off `origin/main` **`016b659`**. Dispatch: sitting §0ap-1 / Addendum AQ.2,
+developed off `origin/main` **`016b659`** and **rebased onto `5b05f84`** before
+pushing (main advanced mid-lane; see the push note in §6 — that rebase is also
+what unblocked the push). Dispatch: sitting §0ap-1 / Addendum AQ.2,
 upgraded from blocker to **live two-ISO exposure remediation** (MISO D-29 +
 ERCOT D-30).
 
@@ -153,11 +155,56 @@ Result: **identical**, every entry point × ISO, before vs after.
 `8d9ef77edb3e44cb`; ERCOT pre-arm pole `062d440558103f81`; MISO forecast poles
 `cd2403cc031515db` / `9337e00504e1e72a`.
 
+**Full sweep** (`tests/unit/` + `tests/iso/`, run twice independently):
+**4,637 passed, 7 failed** — all 7 verified pre-existing by re-running them on the
+parent commit (see below).
+
+### CI verdict — the "Pinned default cache key" check
+
+`.github/workflows/ci.yml` triggers on **`pull_request` only** (no `push:` key),
+so a branch push produces **zero** workflow runs and the check cannot report a
+verdict until a PR exists. No PR was opened — this lane was not asked for one.
+Every gating job was therefore run locally with **the exact command CI runs**:
+
+| CI job | Command | Result |
+|---|---|---|
+| Pinned default cache key | `pytest -q tests/regression/test_persisted_identity.py tests/unit/config/test_cache_key_default_flip_guard.py` | **22 passed**, exit 0 |
+| Ruff lint + format | `ruff check .` / `ruff format --check .` | clean; 1,281 files already formatted |
+| cache-key-guard | `check_cache_key_registration.py --base <main>` | exit 0 — "no new ScenarioConfig fields in this PR" |
+| mechanism-matrix-guard | `check_mechanism_matrix.py --base <main>` | exit 0; anchor warnings self-labelled "(pre-existing, not this PR)" |
+| Rule-22 quarantine gates | `audit_keepers.py --check`, `legitimacy_diagnostics.py --keepers --no-d2-recompute`, `check_registry_payload_parity.py` | all exit 0 |
+
+Opening a PR is the only way to obtain the check's own verdict; the local runs
+above are the same commands on the same commit.
+
+### Push note — HTTP 500/408 was a STALE BASE, not pack size
+
+Worth recording, because the symptom points the wrong way. `git push` failed
+**nine consecutive times** with `RPC failed; HTTP 500` (and once `408`), through a
+healthy proxy (`__agentproxy/status`: `recentRelayFailures: []`), on a pack of
+**20 objects / ~3 KB**. `--no-thin`, `http.version=HTTP/1.1`,
+`http.postBuffer=500M` and exponential-backoff retries all failed identically.
+The cause was that `origin/main` had advanced (`016b659` → `5b05f84`) while the
+lane worked, leaving the branch based on a superseded tip. `git fetch origin main`
++ `git rebase origin/main` and the **first** push succeeded. This is the Git &
+Pushing §1 rule ("start fresh on main — this is what keeps a pack small") showing
+up as a *server 500* rather than as a size error. **Diagnose a repeated 500 by
+re-checking the base before touching transport settings.**
+
+Rule-27 verification was done as a real round-trip: the branch was re-fetched
+into an independent 584 KB blobless clone and every file compared by line count
+and SHA-256. All nine byte-identical — `scenarios.py` 13,359 lines,
+`iso_configs.py` 1,599, `runner.py` 4,046, `run_full_horizon.py` 981.
+
 ### Pre-existing failures, verified on clean `main` by stash-and-rerun — NOT this lane's
 
 - `tests/unit/config/test_configs_yaml_roundtrip.py::…[data-profiles.yaml]` —
   `configs/data-profiles.yaml` matches no loader route (from the fast-clone
   data-profile work). Fails identically on `main`.
+- `tests/iso/ercot/test_ercot_thermal_as_endogenous.py::TestScreenMutualExclusion` (2 tests)
+  and `tests/unit/results/test_export.py` + `test_cache.py::TestConfigSidecar` (5 tests) —
+  all 7 fail identically on the parent commit (`retirement_rule='pipeline' requires a
+  simulation year`, and the missing CLEAN partition below).
 - `tests/regression/test_soundness.py::TestEndToEnd` (6 tests) — `data/clean` is
   derived and gitignored and this session runs the **`code` data profile**, so
   the confirmed-retirements CLEAN partition is absent. Fails identically on
