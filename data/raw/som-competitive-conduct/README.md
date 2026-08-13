@@ -53,13 +53,48 @@ All from potomaceconomics.com (MISO Independent Market Monitor):
   summary table PDF p.3): low-threshold output-gap MW/hr — the only free
   2025 conduct evidence until the 2025 SOM publishes (~June 2026).
 
-## Quarantine (CLAUDE.md rule 22)
+## Holdout posture (CLAUDE.md rule 22, owner clarification 2026-08-06)
 
-Only train-window years (2023-2025) are transcribed. The SOM tables also
-print 2018-2022 history and the Winter-2026 quarterly covers
-Dec-2025..Feb-2026 (H1-2026 locked-test window): those values are
-deliberately NOT transcribed and their PDFs (except the in-window ones
-above) not committed, pending explicit owner authorization.
+The former text here quarantined 2018-2022 "pending explicit owner
+authorization". That is SUPERSEDED and had it backwards: **what is held out
+is the SCORE, never the DATA.** Data intake needs no per-ISO/per-window
+authorization and no marker; only solving, scoring or registering an
+out-of-training year is the spend.
+
+**ERCOT net-revenue anchors 2019-2022 transcribed 2026-08-13** (session
+ercot-195, L-SCAR-SCREEN-2) as the identification source for the screen
+scarcity-rent lane (`docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`
+§2.2; its V0 gate needs >=5 anchor vintages). Their PDFs are committed under
+`data/raw/ERCOT/` alongside the 2023-2025 set. No year was solved or scored.
+
+- 2019 SOM: `2019-State-of-the-Market-Report.pdf`
+  (wp-content/uploads/2020/06/…) — Net Revenue Analysis, PDF p.97.
+- 2020 SOM: `2020-ERCOT-State-of-the-Market-Report.pdf`
+  (wp-content/uploads/2021/06/…) — PDF p.93.
+- 2021 SOM: `2021-State-of-the-Market-Report.pdf`
+  (wp-content/uploads/2022/05/…) — PDF p.114. Winter Storm Uri year; the
+  monitor's own ex-Uri counterfactual is transcribed alongside the headline.
+- 2022 SOM: `2022-State-of-the-Market-Report_Final_060623.pdf`
+  (wp-content/uploads/2023/05/…) — PDF p.108, cross-checked against the
+  Waha/Katy appendix values on p.110.
+The 2017 SOM (`.../uploads/2018/05/2017-State-of-the-Market-Report.pdf`) exists
+in the library but is deliberately NOT committed: outside the 2019-2025 working
+span and not transcribed. It is named here only because it is half the evidence
+that 2018 is genuinely missing rather than mis-named — 2017 and 2019 are both
+published, 2018 is not.
+
+**A transcription limit worth knowing before planning any similar intake:**
+the SOM prints its multi-year net-revenue *history* only as **bar charts
+with no data labels**. A year's value is therefore transcribable only from
+the vintage that reports that year as its own subject year (in prose), never
+read off a later report's history figure. The **2018** ERCOT SOM is absent
+from the Potomac document library (2017 and 2019 are both present), so 2018
+has no prose source; it is outside the program's 2019-2025 working span in
+any case.
+
+Still not transcribed: the Winter-2026 quarterly (Dec-2025..Feb-2026)
+conduct rows, and the ERCOT SOM *conduct* sections (price-cost mark-up,
+output gap) for every vintage.
 
 DATA NEEDED: 2025 MISO SOM (expected ~June 2026, not yet published as of
 2026-07-10) — will supply the 2025 annual coal Table-7 conduct shares and
