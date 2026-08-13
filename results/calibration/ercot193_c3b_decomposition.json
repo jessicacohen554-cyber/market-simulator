@@ -1,0 +1,293 @@
+{
+  "run_id": "2026-08-12-run192-arm-coal-peak",
+  "years": {
+    "2023": {
+      "nrmse": 0.6041,
+      "months": [
+        {
+          "month": 1,
+          "model": 25.0,
+          "actual": 26.39,
+          "resid": -1.39,
+          "sq_share": 0.0001
+        },
+        {
+          "month": 2,
+          "model": 21.21,
+          "actual": 21.86,
+          "resid": -0.65,
+          "sq_share": 0.0
+        },
+        {
+          "month": 3,
+          "model": 23.19,
+          "actual": 30.28,
+          "resid": -7.09,
+          "sq_share": 0.0036
+        },
+        {
+          "month": 4,
+          "model": 23.48,
+          "actual": 23.86,
+          "resid": -0.38,
+          "sq_share": 0.0
+        },
+        {
+          "month": 5,
+          "model": 27.35,
+          "actual": 32.23,
+          "resid": -4.88,
+          "sq_share": 0.0017
+        },
+        {
+          "month": 6,
+          "model": 57.02,
+          "actual": 74.55,
+          "resid": -17.53,
+          "sq_share": 0.0222
+        },
+        {
+          "month": 7,
+          "model": 37.2,
+          "actual": 48.38,
+          "resid": -11.18,
+          "sq_share": 0.009
+        },
+        {
+          "month": 8,
+          "model": 117.31,
+          "actual": 220.61,
+          "resid": -103.3,
+          "sq_share": 0.7723
+        },
+        {
+          "month": 9,
+          "model": 58.62,
+          "actual": 109.75,
+          "resid": -51.13,
+          "sq_share": 0.1892
+        },
+        {
+          "month": 10,
+          "model": 27.84,
+          "actual": 31.7,
+          "resid": -3.86,
+          "sq_share": 0.0011
+        },
+        {
+          "month": 11,
+          "model": 28.52,
+          "actual": 31.28,
+          "resid": -2.76,
+          "sq_share": 0.0006
+        },
+        {
+          "month": 12,
+          "model": 22.4,
+          "actual": 23.18,
+          "resid": -0.78,
+          "sq_share": 0.0
+        }
+      ],
+      "counterfactuals": {
+        "aug_sep_perfect": 0.1185,
+        "jun_jul_aug_sep_perfect": 0.0513,
+        "all_but_aug_sep_perfect": 0.5923,
+        "sq_share_aug_sep": 0.9615,
+        "sq_share_jun_jul_aug_sep": 0.9928
+      }
+    },
+    "2024": {
+      "nrmse": 0.1352,
+      "months": [
+        {
+          "month": 1,
+          "model": 36.61,
+          "actual": 39.8,
+          "resid": -3.19,
+          "sq_share": 0.0505
+        },
+        {
+          "month": 2,
+          "model": 14.41,
+          "actual": 15.17,
+          "resid": -0.76,
+          "sq_share": 0.0029
+        },
+        {
+          "month": 3,
+          "model": 19.81,
+          "actual": 23.72,
+          "resid": -3.91,
+          "sq_share": 0.0763
+        },
+        {
+          "month": 4,
+          "model": 33.17,
+          "actual": 27.01,
+          "resid": 6.16,
+          "sq_share": 0.1889
+        },
+        {
+          "month": 5,
+          "model": 49.85,
+          "actual": 44.31,
+          "resid": 5.54,
+          "sq_share": 0.1529
+        },
+        {
+          "month": 6,
+          "model": 34.94,
+          "actual": 31.79,
+          "resid": 3.15,
+          "sq_share": 0.0494
+        },
+        {
+          "month": 7,
+          "model": 26.78,
+          "actual": 24.61,
+          "resid": 2.17,
+          "sq_share": 0.0235
+        },
+        {
+          "month": 8,
+          "model": 35.49,
+          "actual": 41.31,
+          "resid": -5.82,
+          "sq_share": 0.1683
+        },
+        {
+          "month": 9,
+          "model": 27.63,
+          "actual": 27.01,
+          "resid": 0.62,
+          "sq_share": 0.0019
+        },
+        {
+          "month": 10,
+          "model": 29.25,
+          "actual": 27.66,
+          "resid": 1.59,
+          "sq_share": 0.0126
+        },
+        {
+          "month": 11,
+          "model": 26.05,
+          "actual": 33.43,
+          "resid": -7.38,
+          "sq_share": 0.2711
+        },
+        {
+          "month": 12,
+          "model": 26.78,
+          "actual": 27.35,
+          "resid": -0.57,
+          "sq_share": 0.0016
+        }
+      ],
+      "counterfactuals": {
+        "aug_sep_perfect": 0.1232,
+        "jun_jul_aug_sep_perfect": 0.1176,
+        "all_but_aug_sep_perfect": 0.0558,
+        "sq_share_aug_sep": 0.1702,
+        "sq_share_jun_jul_aug_sep": 0.2432
+      }
+    },
+    "2025": {
+      "nrmse": 0.0957,
+      "months": [
+        {
+          "month": 1,
+          "model": 34.42,
+          "actual": 36.01,
+          "resid": -1.59,
+          "sq_share": 0.0175
+        },
+        {
+          "month": 2,
+          "model": 36.6,
+          "actual": 42.48,
+          "resid": -5.88,
+          "sq_share": 0.2393
+        },
+        {
+          "month": 3,
+          "model": 29.76,
+          "actual": 29.84,
+          "resid": -0.08,
+          "sq_share": 0.0
+        },
+        {
+          "month": 4,
+          "model": 30.79,
+          "actual": 34.94,
+          "resid": -4.15,
+          "sq_share": 0.1193
+        },
+        {
+          "month": 5,
+          "model": 32.39,
+          "actual": 39.67,
+          "resid": -7.28,
+          "sq_share": 0.3672
+        },
+        {
+          "month": 6,
+          "model": 30.73,
+          "actual": 31.29,
+          "resid": -0.56,
+          "sq_share": 0.0021
+        },
+        {
+          "month": 7,
+          "model": 34.83,
+          "actual": 36.07,
+          "resid": -1.24,
+          "sq_share": 0.0106
+        },
+        {
+          "month": 8,
+          "model": 38.53,
+          "actual": 39.3,
+          "resid": -0.77,
+          "sq_share": 0.0041
+        },
+        {
+          "month": 9,
+          "model": 32.35,
+          "actual": 35.0,
+          "resid": -2.65,
+          "sq_share": 0.0487
+        },
+        {
+          "month": 10,
+          "model": 32.74,
+          "actual": 36.01,
+          "resid": -3.27,
+          "sq_share": 0.0742
+        },
+        {
+          "month": 11,
+          "model": 34.17,
+          "actual": 36.44,
+          "resid": -2.27,
+          "sq_share": 0.0357
+        },
+        {
+          "month": 12,
+          "model": 34.47,
+          "actual": 37.9,
+          "resid": -3.43,
+          "sq_share": 0.0812
+        }
+      ],
+      "counterfactuals": {
+        "aug_sep_perfect": 0.0932,
+        "jun_jul_aug_sep_perfect": 0.0925,
+        "all_but_aug_sep_perfect": 0.022,
+        "sq_share_aug_sep": 0.0529,
+        "sq_share_jun_jul_aug_sep": 0.0656
+      }
+    }
+  }
+}
