@@ -1,0 +1,108 @@
+{
+ "_provenance": {
+  "scorer": "scripts/probes/ercot185_coal148.py",
+  "base": "results/calibration/ercot193_ctl_nosoc",
+  "arm": "results/calibration/ercot193_arm_soc",
+  "gate": "G-COAL148 (PRECOMMIT-ercot172 \u00a75, carried LIVE by the 2026-08-09 owner ruling): coal dispatch above the incumbent PRODUCT ceiling may not rise more than 0.5 TWh in any year",
+  "reference": "ERCOT-148 quantification basis 4.36/4.98/5.01 TWh"
+ },
+ "years": {
+  "2023": {
+   "base_above_ceiling_TWh": 0.1213,
+   "arm_above_ceiling_TWh": 0.1213,
+   "rise_TWh": -0.0,
+   "bar_TWh": 0.5,
+   "PASS": true,
+   "base_per_plant_TWh": {
+    "298": 0.0201,
+    "3470": 0.0788,
+    "6146": 0.0137,
+    "6178": 0.0,
+    "7030": 0.0003,
+    "7097": 0.008,
+    "56611": 0.0004
+   },
+   "arm_per_plant_TWh": {
+    "298": 0.0201,
+    "3470": 0.0788,
+    "6146": 0.0137,
+    "6178": 0.0,
+    "7030": 0.0003,
+    "7097": 0.008,
+    "56611": 0.0004
+   }
+  },
+  "2024": {
+   "base_above_ceiling_TWh": 0.1839,
+   "arm_above_ceiling_TWh": 0.1838,
+   "rise_TWh": -0.0001,
+   "bar_TWh": 0.5,
+   "PASS": true,
+   "base_per_plant_TWh": {
+    "298": 0.0159,
+    "3470": 0.1247,
+    "6146": 0.0303,
+    "6178": 0.0,
+    "6179": 0.0,
+    "6180": 0.0011,
+    "6183": 0.0,
+    "7030": 0.0001,
+    "7097": 0.0117,
+    "56611": 0.0001
+   },
+   "arm_per_plant_TWh": {
+    "298": 0.016,
+    "3470": 0.1245,
+    "6146": 0.0304,
+    "6178": 0.0,
+    "6179": 0.0,
+    "6180": 0.0011,
+    "6183": 0.0,
+    "7030": 0.0001,
+    "7097": 0.0117,
+    "56611": 0.0002
+   }
+  },
+  "2025": {
+   "base_above_ceiling_TWh": 0.1098,
+   "arm_above_ceiling_TWh": 0.1095,
+   "rise_TWh": -0.0003,
+   "bar_TWh": 0.5,
+   "PASS": true,
+   "base_per_plant_TWh": {
+    "298": 0.0103,
+    "3470": 0.0718,
+    "6146": 0.0074,
+    "6178": 0.0,
+    "6179": 0.0002,
+    "6180": 0.0008,
+    "7030": 0.0009,
+    "7097": 0.0184
+   },
+   "arm_per_plant_TWh": {
+    "298": 0.0104,
+    "3470": 0.0712,
+    "6146": 0.0076,
+    "6178": 0.0,
+    "6179": 0.0001,
+    "6180": 0.0008,
+    "7030": 0.0009,
+    "7097": 0.0185
+   }
+  }
+ },
+ "G-COAL148": {
+  "PASS": true,
+  "max_rise_TWh": -0.0,
+  "by_year_rise_TWh": {
+   "2023": -0.0,
+   "2024": -0.0001,
+   "2025": -0.0003
+  },
+  "ercot173_rejected_arm_for_comparison_TWh": {
+   "2023": 0.98,
+   "2024": 1.95,
+   "2025": 2.73
+  }
+ }
+}

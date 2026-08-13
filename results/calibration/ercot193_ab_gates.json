@@ -1,0 +1,146 @@
+{
+  "base": "results/calibration/ercot193_ctl_nosoc",
+  "arm": "results/calibration/ercot193_arm_soc",
+  "G1": {
+    "hours_gt1000": 61,
+    "control_mw": 663.7,
+    "arm_mw": 516.1,
+    "actual_mw": 423.0,
+    "gap_closed_frac": 0.613,
+    "overshoot_flag": false,
+    "pass": true
+  },
+  "G2": {
+    "arm_2025_gwh": 3922.2,
+    "control_2025_gwh": 4468.5,
+    "measured_ng_bat_gwh": 5444.8,
+    "arm_ratio": 0.72,
+    "arm_2024_gwh": 1707.5,
+    "control_2024_gwh": 2085.9,
+    "pass": true
+  },
+  "G3": {
+    "2023": {
+      "control": 2,
+      "arm": 2,
+      "pass": true
+    },
+    "2024": {
+      "control": 6,
+      "arm": 5,
+      "pass": true
+    },
+    "2025": {
+      "control": 1,
+      "arm": 1,
+      "pass": true
+    },
+    "pass": true
+  },
+  "G4": {
+    "criteria_hold": {
+      "fuelmix": true,
+      "sysvol": true,
+      "dispatch_corr": true,
+      "forced_share": true
+    },
+    "bands": {
+      "2024": {
+        "c3a_control": -1.8065,
+        "c3a_arm": -0.8175,
+        "c3a_delta_pp": 0.989,
+        "c3a_pass": true,
+        "c3b_control": 0.139,
+        "c3b_arm": 0.135,
+        "c3b_delta": 0.004,
+        "c3b_pass": true
+      },
+      "2025": {
+        "c3a_control": -8.0938,
+        "c3a_arm": -7.4871,
+        "c3a_delta_pp": 0.607,
+        "c3a_pass": true,
+        "c3b_control": 0.102,
+        "c3b_arm": 0.096,
+        "c3b_delta": 0.006,
+        "c3b_pass": true
+      }
+    },
+    "pass": true
+  },
+  "G5": {
+    "2023": {
+      "control": 4,
+      "arm": 4,
+      "pass": true
+    },
+    "2024": {
+      "control": 1,
+      "arm": 1,
+      "pass": true
+    },
+    "2025": {
+      "control": 0,
+      "arm": 0,
+      "pass": true
+    },
+    "pass": true
+  },
+  "full_magnitude": {
+    "2023": {
+      "control": {
+        "c3a_err_pct": -33.5624,
+        "c3a_model": 42.73265539322724,
+        "c3a_actual": 64.32,
+        "c3b_nrmse": 0.611,
+        "c3c": "model 50h [energy-only LMP] vs RT actual 181h (0.28\u00d7, >$200)"
+      },
+      "arm": {
+        "c3a_err_pct": -33.196,
+        "c3a_model": 42.968304808903596,
+        "c3a_actual": 64.32,
+        "c3b_nrmse": 0.604,
+        "c3c": "model 58h [energy-only LMP] vs RT actual 181h (0.32\u00d7, >$200)"
+      }
+    },
+    "2024": {
+      "control": {
+        "c3a_err_pct": -1.8065,
+        "c3a_model": 30.4301537462821,
+        "c3a_actual": 30.99,
+        "c3b_nrmse": 0.139,
+        "c3c": "model 17h [energy-only LMP] vs RT actual 53h (0.32\u00d7, >$200)"
+      },
+      "arm": {
+        "c3a_err_pct": -0.8175,
+        "c3a_model": 30.736655857315704,
+        "c3a_actual": 30.99,
+        "c3b_nrmse": 0.135,
+        "c3c": "model 22h [energy-only LMP] vs RT actual 53h (0.42\u00d7, >$200)"
+      }
+    },
+    "2025": {
+      "control": {
+        "c3a_err_pct": -8.0938,
+        "c3a_model": 33.352751267287125,
+        "c3a_actual": 36.29,
+        "c3b_nrmse": 0.102,
+        "c3c": "model 1h [energy-only LMP] vs RT actual 31h (0.03\u00d7, >$200)"
+      },
+      "arm": {
+        "c3a_err_pct": -7.4871,
+        "c3a_model": 33.57293719278859,
+        "c3a_actual": 36.29,
+        "c3b_nrmse": 0.096,
+        "c3c": "model 1h [energy-only LMP] vs RT actual 31h (0.03\u00d7, >$200)"
+      }
+    }
+  },
+  "G_REPRO": {
+    "keeper_determination": "NOT-YET",
+    "arm_replay_determination": "NOT-YET",
+    "n_drifted_years": 0,
+    "drift": {}
+  },
+  "RG_VERDICT": "RG-PASS"
+}
