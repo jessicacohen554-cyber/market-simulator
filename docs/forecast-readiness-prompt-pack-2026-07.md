@@ -6980,3 +6980,15 @@ Target: `constants.DEMAND_GROWTH_RATES_VINTAGES` has no CAISO row at vintage 202
 recorded when it landed 11 of 12 ISO-vintage cells). Purely additive — no existing run reads
 the missing key, so nothing that solves today changes. `constants.py` is a >=300-line core
 file, so rule 27 binds: Opus/Fable, on-disk edits, blob-verify after push.
+
+## §0aq — MANAGER CONTINUATION HANDOFF (written 2026-08-12 @ `ac07b129`; SUPERSEDES §0ai)
+
+Record: **Addenda AK–AQ**. AQ carries the correction that matters most: **stage B IS armed on
+main**, landed by a commit marked "[INCOMPLETE - do not push]", so ERCOT joined MISO in
+carrying the un-turn-off-able-flag exposure, and the cache epoch fired undeclared.
+
+The successor handoff prompt was delivered to the owner in chat this sitting and is reproduced
+here as the pack's continuation artifact. Three lanes were dispatched at §0ap and show **no
+evidence yet** (OVERRIDE-FIX, FH-5-ARMK, RAW-UNTRACK); OVERRIDE-FIX's prompt carries **one
+stale line** that the successor must correct before it is pasted — it says ERCOT's stage-B rows
+are not on main, and they are.
