@@ -310,10 +310,25 @@ def _ercot_config() -> ISOConfig:
         # EPOCH: this re-bases every ERCOT hindcast. Every pre-epoch ERCOT sidecar is
         # historical record and NEVER a baseline for post-epoch comparison — FH-5's own
         # ERCOT legs included. FH-5 is not re-solved; its artifacts were produced at
-        # src/ == 3ae7465 (its §3 pin). The pinned default cache key MOVES.
+        # src/ == 3ae7465 (its §3 pin). The ERCOT forecast-lane RESOLVED default key
+        # moves 062d440558103f81 -> 8d9ef77edb3e44cb; the GLOBAL pinned default key
+        # 603c2498bf71d21d and every ERCOT backcast key are UNMOVED. Declared by
+        # scripts/probes/_ffr9c_stageb_cache_epoch.py and pinned by
+        # tests/unit/config/test_ercot_stageb_arming.py (2026-08-13 — the arming
+        # commit a71fc84d merged as PR #3888 before the declaration could land with
+        # it; sitting Addendum AQ records the gap this closes).
         #
-        # An explicit caller value always wins (apply_iso_scenario_defaults), so every
-        # invocation that already passes these flags stays byte-identical.
+        # PRECEDENCE — corrected 2026-08-13 (this comment previously claimed "an
+        # explicit caller value always wins", which is FALSE for default-valued
+        # arguments; docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md):
+        # apply_iso_scenario_defaults has no unset sentinel, so a caller value that
+        # EQUALS the ScenarioConfig field default is indistinguishable from unset and
+        # is silently re-armed. Callers passing a NON-default value stay
+        # byte-identical; callers passing the default value are overridden — which
+        # makes an ERCOT control arm for these five flags inexpressible through the
+        # config path. The pre-arm pole is permanently the committed pre-epoch
+        # bundles, never a re-solve, until the OVERRIDE-FIX lane (sitting §0ap-1 /
+        # Addendum AQ.2) lands the remedy at the seam.
         default_scenario_overrides={
             "scarcity_price_overlay": True,
             "capacity_screen_unified_lookahead": True,
