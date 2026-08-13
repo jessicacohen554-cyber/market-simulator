@@ -313,6 +313,43 @@ def _apply_caiso_solar_deliverability(
     return solar_cf
 
 
+def p0_commitment_pattern(
+    p0_dispatch: "np.ndarray", pmax: "np.ndarray"
+) -> "np.ndarray":
+    """Bit-pack the P0 on/off pattern — the markup's ONLY input from P0.
+
+    :func:`market_sim.model.commitment.compute_monthly_markup` touches the P0
+    dispatch through exactly one expression,
+    ``find_runs(dispatch[g, h0:h1] > threshold)`` with
+    ``threshold = 0.05 * pmax[g]``. The boolean this returns is therefore the
+    **complete and exact** P0 contribution to the P1 startup amortization:
+    nothing in the markup depends on the P0 dispatch *level*.
+
+    Persisting it lets a later session rebuild a surrogate dispatch
+    ``pmax[:, None] * unpacked`` and hand it to the PRODUCTION markup function,
+    which then returns the bit-identical array the solve itself used — so the
+    markup is READ rather than reconstructed. That closes the P0-proxy error
+    (18-22 pp on MISO's CT) which no committed bundle could bound, because
+    ``hourly/`` sidecars carry ``pass == "P1"`` only
+    (``results/calibration/FINDING-miso154-ct-commitment-instrument-2026-08-12.md``
+    section 4; the repair is pre-registered in
+    ``PREREG-miso155-p0-exact-commitment-instrument-2026-08-13.md``).
+
+    Args:
+        p0_dispatch: The P0 (base-cost) dispatch, shape ``(n_gen, T)``.
+        pmax: Per-generator Pmax, shape ``(n_gen,)``.
+
+    Returns:
+        ``np.packbits`` of the ``(n_gen, T)`` on/off boolean, shape
+        ``(n_gen, ceil(T / 8))`` of ``uint8``. Rows with ``pmax == 0`` pack as
+        all-off: their threshold is 0 and a zero dispatch is not ``> 0``, which
+        is what the markup itself sees.
+    """
+    return np.packbits(
+        np.asarray(p0_dispatch) > (0.05 * np.asarray(pmax))[:, None], axis=1
+    )
+
+
 def run_year(
     year: int,
     iso: str,
@@ -580,6 +617,7 @@ def run_year(
     fleet_only: bool = False,
     xyear_cache: "list | None" = None,
     demand: "np.ndarray | None" = None,
+    persist_p0_commitment: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -636,6 +674,15 @@ def run_year(
             ``include_interchange`` and ``caiso_demand_clock_realign``, and
             non-strict demand profile (this function never passes
             ``strict_demand_profile`` to :func:`load_demand`).
+        persist_p0_commitment: OPT-IN (default ``False``), WRITE-ONLY. When
+            set, stash the P0 commitment pattern and the startup run-ratio
+            series in ``p2_state`` so the caller can persist them as bundle
+            sidecars. Cannot change a solve — it is read after both LPs have
+            run and nothing downstream consumes it — so it is a persistence
+            parameter on the ``persist_p2_state`` precedent, NOT a
+            ``ScenarioConfig`` field (CLAUDE.md rule 24 ``[R-REGISTRY]``
+            governs tunables that can change a solve). See
+            :func:`p0_commitment_pattern`.
 
     Returns:
         A tuple ``(result, context, result_p1, p2_state)``. ``result`` is the
@@ -5133,6 +5180,17 @@ def run_year(
         startup_run_ratio_t=startup_run_ratio_t,
     )
     _t_solve_end = time.perf_counter()
+    # OPT-IN P0 commitment record, taken HERE and not below: ``fleet_arrays``
+    # is about to be rebound to ``energy_solve.p1_fleet_arrays``, and the
+    # markup was computed against the PRE-prep arrays. A P1 fleet hook only
+    # rewrites ``min_gen`` (never ``pmax``), so the two agree today on every
+    # armed path — but packing against the arrays the markup itself saw makes
+    # that an invariant of this code rather than of the hooks'.
+    _p0_commitment_bits = (
+        p0_commitment_pattern(energy_solve.r0.dispatch, fleet_arrays.pmax)
+        if persist_p0_commitment
+        else None
+    )
     result = energy_solve.p1
     mc_bid = energy_solve.mc_bid
     # The fleet P1 actually solved on — the RA-floored fleet when the bridge
@@ -5218,6 +5276,21 @@ def run_year(
         # positionally, (T, n_fam); only the design knows which column is
         # ``li_30min_total`` and what its hourly requirement was.
         "reserve_design": reserve_design,
+        # OPT-IN P0 commitment record (--persist-p0-commitment, default off).
+        # Read AFTER both LPs have run and consumed by nothing downstream, so
+        # it cannot perturb a solve; absent entirely at default, which is what
+        # keeps every existing bundle byte-identical. The pair is exactly what
+        # ``compute_monthly_markup`` needs to be replayed bit-identically: the
+        # P0 on/off pattern (its only P0 input) and the ``(T,)`` conditional
+        # band series (its only other non-fleet input).
+        **(
+            {
+                "p0_commitment_bits": _p0_commitment_bits,
+                "startup_run_ratio_t": startup_run_ratio_t,
+            }
+            if persist_p0_commitment
+            else {}
+        ),
         "_timing": {
             "energy_solve_s": _t_solve_end - _t_solve_start,
             "build_s": energy_solve.p1.build_time,
