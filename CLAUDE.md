@@ -416,6 +416,41 @@ ERCOT default is **CAMPD per-plant binning** (`use_campd_bins=True`): one LP uni
 - Single-letter vars only in LP construction: t=hour, g=generator, z=zone, s=storage, with comment.
 - Feature branches: phase-N/description. Commits: imperative present tense.
 
+## Cloning & session data (partial clone + a declared data profile)
+
+**The repo is cloned blobless, and each session hydrates only the `data/raw`
+subtrees it needs.** The pack is 7.44 GiB and **7.37 GiB of that is live at the
+tip of `main`** (measured 2026-08-13; only 82 MB is dead history), so a full
+clone stalls through the egress proxy — that is the "Cloning the git_repository
+source took longer than the allowed time" failure. **A history rewrite does not
+fix it** (it would reclaim ~1.1%) and **neither does `--depth 1`** (a shallow
+clone still transfers the whole tip tree). The fix is `--filter=blob:none` plus
+sparse-checkout. Recipe, measurements and the three partial-clone traps:
+`docs/fast-clone.md`.
+
+- **Every handoff prompt declares its profile** on its own line —
+  `DATA PROFILE: <code|shared|ercot|caiso|pjm|miso|nyiso|neiso|all>`. Omitted
+  means `code`. A session hydrates with
+  `python3 scripts/hydrate_data.py --profile <name>`, and may widen later at any
+  time; hydration is incremental.
+- **`code` is the default and is right for most sessions** — docs, governance,
+  dashboard, code review, refactors, CI, matrix updates. Only a lane that runs
+  `run_calibration_full.py` needs `data/raw`, and then only its own ISO's
+  profile (rule 12 `[R-PARALLEL]` already makes concurrent invocations per-ISO).
+- **Profiles are DERIVED, not enumerated** (`configs/data-profiles.yaml`): a
+  `data/raw` child is attributed to an ISO by name token, else to `shared`, and
+  per-ISO split directories (`lmp-data/MISO`, `storage-as-awards/CAISO`, …) are
+  detected. A newly-added subtree is picked up with no table to maintain.
+- **In a partial clone, never resolve a blob you do not intend to download** —
+  any git read of a missing blob silently fetches it, so a stray
+  `cat-file --batch-check` over `data/raw` pulls all 7.4 GB. Read trees only, and
+  run read-side git calls under `GIT_NO_LAZY_FETCH=1` so a regression fails loudly.
+
+`.github/workflows/cleanup-large-blobs.yml` is safe to run as of its 2026-08-12
+patch but **will not speed up clones** — it protects blobs live at tip, which are
+exactly the 7.37 GiB. Standing NO-GO on rewriting for size:
+`docs/FINDING-rewrite-prep-2026-08-11.md` §8.
+
 ## Git & Pushing (transport by PACK size — `git push` permitted for small packs)
 
 **Rule: choose the push transport by the size of the PACK the push would send —
