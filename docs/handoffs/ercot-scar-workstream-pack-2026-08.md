@@ -13,7 +13,8 @@
 
 ## §0 STATE BOARD — cycle 1, 2026-08-13
 
-**Recorded HEAD (origin/main): `016b659`** (merge of PR #3911).
+**Recorded HEAD (origin/main): `cfb8127`** (merge of PR #3912; board seeded at
+`016b659` and updated in-cycle — see A2).
 
 ### Signed rulings in force (the governance this workstream enforces)
 
@@ -28,17 +29,24 @@
 
 - **ercot-194 signing commit — RESOLVED.** `3bfd33a` merged to main via PR
   #3904 (`c9aeeb6`); verified ancestor of origin/main. Flag cleared cycle 1.
-- **PR #3912 (L-SCAR V0-stop deliverable) — CONFLICTED, FIX-IT-1 in flight**
-  (see worker table). Single conflict: `docs/calibration-log/ercot.md`
-  (both #3911 and #3912 append entries; #3911 merged 10 s earlier).
+- **PR #3912 (L-SCAR V0-stop deliverable) — RESOLVED: MERGED at `cfb8127`,
+  2026-08-13T05:28:59Z.** The original worker landed it itself (rebase onto
+  main + a provenance re-stamp confined to the FINDING, then merge) 34 s
+  before the manager's FIX-IT-1 dispatch. Landed content verified on main:
+  both `docs/calibration-log/ercot.md` entries (ercot-193, ercot-195) present
+  in order; `docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`
+  present; the re-stamp commit (`cfad808`) touched only the FINDING
+  provenance block (+7/−1). FIX-IT-1 was moot at dispatch and did nothing
+  (see A2).
 
 ### Workers
 
 | worker | state | verification |
 |---|---|---|
-| **L-SCAR-SCREEN-2** (branch `claude/l-scar-screen-2-implement-lo897d`, PR #3912) | **STOPPED AT V0, per charter — V0 FAIL.** Intake succeeded (SOM anchors 3→7 vintages, 2019–2025, schema-validated, source_doc+source_page; 2018 SOM absent from Potomac library and outside working span). V0: best of eight candidate forms = 4/14 folds vs required 14/14; model-free identifiability bound proves NO function of any candidate tightness variable can pass (near-tied pairs carry $94–$330 irreducible error vs $15 tolerance); ex-Uri WORSE (2/14); monitor's own attribution: the 2019–2025 rent series is a REGIME series (Uri/$9k SWCAP; ORDC changes; ECRS = 50 % of 2023 net revenue), not a tightness series. Correctly built NOTHING: no ScenarioConfig field, no matrix row (28c not triggered — no field), no A/B, no registration, no promotion; screen-revenue movement $0.00/kW-yr, stated. | Duties verified cycle 1 against the branch: FINDING (`docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`) reports at full magnitude with Q-B/S1 citations; log entry present (+76 lines `docs/calibration-log/ercot.md`); rule 22 clean (data intake only, no year solved/scored — the stale quarantine notes in the som README/schema corrected to the 2026-08-06 clarification); deriver `scripts/data/derive_screen_scarcity_rent.py` committed as the standing re-derive test (rule 23 trigger = new SOM/telemetry vintage). DEFECT: PR conflicted → FIX-IT-1 dispatched (§2.1). **Lane adjudication → OWNER (decision bullets, cycle-1 report).** |
+| **L-SCAR-SCREEN-2** (branch `claude/l-scar-screen-2-implement-lo897d`, PR #3912) | **STOPPED AT V0, per charter — V0 FAIL.** Intake succeeded (SOM anchors 3→7 vintages, 2019–2025, schema-validated, source_doc+source_page; 2018 SOM absent from Potomac library and outside working span). V0: best of eight candidate forms = 4/14 folds vs required 14/14; model-free identifiability bound proves NO function of any candidate tightness variable can pass (near-tied pairs carry $94–$330 irreducible error vs $15 tolerance); ex-Uri WORSE (2/14); monitor's own attribution: the 2019–2025 rent series is a REGIME series (Uri/$9k SWCAP; ORDC changes; ECRS = 50 % of 2023 net revenue), not a tightness series. Correctly built NOTHING: no ScenarioConfig field, no matrix row (28c not triggered — no field), no A/B, no registration, no promotion; screen-revenue movement $0.00/kW-yr, stated. | Duties verified cycle 1 against the branch: FINDING (`docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`) reports at full magnitude with Q-B/S1 citations; log entry present (+76 lines `docs/calibration-log/ercot.md`); rule 22 clean (data intake only, no year solved/scored — the stale quarantine notes in the som README/schema corrected to the 2026-08-06 clarification); deriver `scripts/data/derive_screen_scarcity_rent.py` committed as the standing re-derive test (rule 23 trigger = new SOM/telemetry vintage). LANDED on main at `cfb8127` (worker self-landed; content verified — A2). **Lane adjudication → OWNER (decision bullets, cycle-1 report).** |
 | **SOC-REGATE-EXEC** (branch `claude/ercot-193-c3b-ceiling-2xu9lg`, PRs #3906 + #3911, MERGED) | **LANDED — RG-PASS on every gate; ercot-167 standing expectation DISCHARGED; lane CLOSED-CLEAN.** G1 663.7→516.1 MW vs measured 423 (61 % of gap, no overshoot); G2 0.72 (≥0.70); G3 2023 2→2, 2024 6→5, 2025 1→1; G4 C3a-2024 Δ0.989 pp on the unrounded scorer basis (knife-edge disclosed), C3a-2025 Δ0.607 pp; G5 shed identical; G-COAL148 ≈ 0.0 of 0.5 TWh bar; G-REPRO keeper reproduces BYTE-IDENTICALLY (12/12 hourly-sidecar sha256, zero scored-value drift). Keeper UNCHANGED at `2026-08-12-run192-arm-coal-peak` (direction-blind rule honoured). | Duties verified cycle 1: both runs registered (`2026-08-13-ercot193-ctl-nosoc` / `-arm-soc`, backcast registry sidecars + run payloads); retention evictions exactly as pre-registered (run168b-year-curves, run173a-reconc-control; neither the keeper); keeper shard untouched (empty diff on `frontend/data/backcast/keepers/`); matrix ERCOT shard cell + `mechanism-testing-matrix.md` item-10 block updated in the same PR; `scripts/check_mechanism_matrix.py` **exit 0** at 016b659 (236 warnings, all cosmetic line-number anchor drift; 0 errors); calibration-log entry present (+90 lines); precommit pushed pre-solve (`5ad4975`); C3b-2023 side-effect reported with the card-R ceiling stated up front; Q-B/R-A citations present. No keeper-shard edit → no keeper-auditor spawn needed. |
-| **FIX-IT-1** (child session `session_01Ne18N4kQa3EPfZ7pCbN8FL`, dispatched cycle 1, 2026-08-13T05:29Z) | IN FLIGHT. Scope: merge main into the L-SCAR branch, resolve the single `docs/calibration-log/ercot.md` conflict both-keep, verify guards, push (rule-27 blob-verify), fix PR #3912 title/body to reflect the actual deliverable, merge on green. Prompt verbatim: §2.1. | Manager subscribed to PR #3912 activity. |
+| **FIX-IT-1** (child session `session_01Ne18N4kQa3EPfZ7pCbN8FL`, dispatched cycle 1, 2026-08-13T05:29:33Z) | **MOOT AT DISPATCH; DID NOTHING; self-archived 05:31Z.** PR #3912 had merged at 05:28:59Z, 34 s before dispatch (manager read the PR state ~2 min stale). The session also could not clone the repo (child sessions do not inherit the repo attachment — pass `source_url` on `create_session`; A2). No push, no PR action, no artifact. Prompt kept verbatim at §2.1 for the record. | Manager unsubscribed from #3912 (merged). Two lessons appended as A2 duties. |
+| **HYGIENE-1** (child session `session_013ADXP9Kq5nGEAqsrB6WoKh`, dispatched cycle 1, 2026-08-13T05:47:57Z, repo source attached) | IN FLIGHT. Scope: root-fix the ercot-193-filed `dashboard_add_run` metrics-sidecar relative-path tooling defect + regression test; land by PUSH-AND-STOP on branch `claude/ercot-scar-hygiene-1-dashboard-sidecar` — NO PR, NO merge (the landing-convention question is with the owner). Prompt verbatim: §2.2. | Card-R (R-A) hygiene bandwidth; touches no solve path, no registry, no matrix (no mechanism). |
 
 ### Dependencies tracked, not tasked (boundary: FFR-FH manager, addenda AP/AQ/AR)
 
@@ -50,12 +58,15 @@
 
 ### Next round (sequenced cycle 1; dispatch on later cycles as slots clear)
 
-1. **FIX-IT-1 completes** → verify merge, close the #3912 board item.
-2. **Hygiene candidate (dispatchable without owner, card R bandwidth):** the
-   `dashboard_add_run` metrics-sidecar relative-vs-absolute path bug —
-   worked around at ercot-193 (sidecar written directly via
-   `calibration_verdict.write_metrics_sidecar`); fix at root. Small,
-   Opus/Fable, no solve.
+1. ~~FIX-IT-1 completes~~ — CLOSED IN-CYCLE: #3912 merged by its own worker;
+   FIX-IT-1 moot (A2).
+2. **HYGIENE-1 completes (in flight)** → verify diff/test/blob-verify, then
+   carry the landing (PR-or-not) per the owner's answer to the
+   landing-convention question below. Remaining hygiene backlog after it:
+   (i) the replay path writes no `legitimacy_diagnostics.json`
+   (ercot-193 disclosure — generated manually there); (ii) ERCOT-137
+   pooled-vs-anchored convention — OPEN in the DOF ledger, inside band,
+   NOT quick-dispatch material.
 3. **2024/2025 shape-queue charter candidate (dispatchable without owner):**
    the outage-season/fuel-shape monthly object (2024 shoulder −/summer +;
    2025 worst Apr–May) — named by PRECOMMIT-ercot193 §0(c) as "2024/2025 shape
@@ -82,6 +93,13 @@
   exhibit; NOT authorized by S1/S2, and the forward regime has zero measured
   anchors until the 2026 SOM publishes ~mid-2027); (d) any combination,
   or park the lane.
+- **Worker landing convention** — the manager's §1 fence 6 reads "no PRs
+  unless the owner asked", yet every recent worker deliverable landed via a
+  self-merged PR (#3906/#3911/#3912). HYGIENE-1 is parked at push-and-stop
+  pending the owner's word: (a) authorize workers dispatched by this manager
+  to open+merge PRs for verified in-scope landings (the observed repo
+  convention), or (b) owner merges manager-verified branches, or (c) another
+  route. Until answered, every manager dispatch lands push-and-stop.
 
 ---
 
@@ -144,6 +162,25 @@ STEPS:
 FENCES (standing, non-negotiable): no src/ edits; no LP solve; no year solved or scored (rule 22 — ERCOT holds no complete/final marker; {2023,2024,2025} only, and nothing here solves anyway); no ScenarioConfig field; no matrix row/cell edit; no keeper/registry/bench file touched; no new .github/workflows (private repo, billed minutes); no other PRs; no push to any branch except claude/l-scar-screen-2-implement-lo897d; small-pack pushes only (fresh fetch first). If anything outside this scope looks necessary, STOP and report to the manager instead of doing it.
 ```
 
+### §2.2 HYGIENE-1 — dashboard_add_run sidecar path bug (cycle 1, 2026-08-13; child session `session_013ADXP9Kq5nGEAqsrB6WoKh`, repo source attached)
+
+```
+ERCOT-SCAR HYGIENE-1 — dispatched by the ERCOT-SCAR workstream manager (cycle 1, 2026-08-13; pack docs/handoffs/ercot-scar-workstream-pack-2026-08.md §2.2).
+
+ONE MECHANICAL TASK: fix the `dashboard_add_run` metrics-sidecar relative-path bug at root, with a regression test. This is card-R (R-A) re-pointed hygiene bandwidth (docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md, signed 2026-08-13: ERCOT bandwidth goes to protective/hygiene defects, the 2024/2025 shape queue, standing re-gates, forecast readiness — never the 2023 price criteria).
+
+THE DEFECT (filed at ercot-193: docs/calibration-log/ercot.md "Disclosures" block of the ercot-193 entry, and results/calibration/FINDING-ercot193-soc-regate-2026-08-13.md §4): `scripts/dashboard_add_run.py`'s metrics-sidecar write has a relative-vs-absolute path bug; the ercot-193 session worked around it by calling `calibration_verdict.write_metrics_sidecar` directly on the resolved path. Diagnose the actual defect in the script (where the sidecar path is composed against the CWD instead of resolved against the bundle/out dir), fix it minimally at root, and add a pytest that fails on the old behavior (invoke the write from a non-repo CWD against a tmp bundle dir and assert the sidecar lands in the bundle dir, not the CWD). If the true defect turns out to live in `calibration_verdict.write_metrics_sidecar` or another shared seam instead of `dashboard_add_run.py`, STOP and report to the manager rather than widening scope.
+
+STANDING RULINGS you inherit and cite, never re-litigate: card Q = (Q-B) FINAL (docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md; licence re-test FAILED at ercot-191) — NO ERCOT C3a-2023 spend of any kind; card R = (R-A) — NOT-YET stands, no C3b-2023-targeted determination rounds. This task touches neither: tooling only.
+
+FENCES AND DUTIES:
+- No LP solve, no run registered, no year solved/scored (rule 22: ERCOT holds no complete/final marker; {2023,2024,2025} only — and this task solves nothing). No ScenarioConfig field, no matrix row or cell (no mechanism — rule 28c not triggered). No keeper/registry/bench/dashboard-data edits — the fix is the SCRIPT plus its test, nothing else.
+- Rule 27: edit locally with the Edit tool, never regenerate a file wholesale; after pushing, blob-verify any touched file ≥300 lines (fetch the pushed blob, compare line count + content hash to local). Rule 11: docstrings on any new/changed public function.
+- Testing: tmp-dir test, no network, no real bundle; also run the existing tests covering dashboard_add_run / calibration_verdict (pytest -k, report the command and results verbatim).
+- LANDING: create branch claude/ercot-scar-hygiene-1-dashboard-sidecar off latest origin/main, commit, push (small pack — fresh fetch first), and STOP THERE. Do NOT open a PR and do NOT merge — the manager carries the landing question to the owner. Report back: branch name, commit SHA, the diff summary, test output, and blob-verification result.
+- No new .github/workflows (private repo, billed minutes). No pushes to any other branch. If anything outside this scope looks necessary, STOP and report to the manager instead of doing it.
+```
+
 ---
 
 ## §A ADDENDA (append-only; dated; old addenda are never rewritten)
@@ -173,3 +210,34 @@ Board seeded at origin/main `016b659`. Facts established this cycle:
    `git checkout origin/main -- <path>`, and commit the pack path-scoped
    (`git commit -- docs/handoffs/ercot-scar-workstream-pack-2026-08.md`) so
    the profile's staged deletions never enter a commit.
+
+### A2 — 2026-08-13, cycle 1 close-out corrections (same cycle, second commit)
+
+1. **PR #3912 was MERGED at 05:28:59Z — 34 s before FIX-IT-1 was dispatched
+   (05:29:33Z).** The original L-SCAR worker landed its own deliverable:
+   rebase onto main (the log conflict resolved in the rebase), a provenance
+   re-stamp confined to the FINDING (`cfad808`, +7/−1), merge at `cfb8127`.
+   Manager verified the landed content on main (both log entries in order,
+   FINDING present, PR counters 873/21/11 consistent with the branch +
+   re-stamp). FIX-IT-1 did nothing: it also failed to clone (see 2) and
+   self-archived at 05:31Z. Board corrected; manager unsubscribed from #3912.
+2. **Dispatch mechanics lessons (binding on future cycles):**
+   (a) re-read the target PR/branch state IMMEDIATELY before dispatching a
+   fix-it — the manager's `dirty` read was ~2 min stale and the window was
+   live; (b) child sessions created via `create_session` do NOT inherit the
+   repo attachment — pass `source_url` (+`source_revision`) or the child
+   cannot clone (FIX-IT-1's failure mode). HYGIENE-1 was dispatched with the
+   source attached and is the pattern to copy.
+3. **HYGIENE-1 dispatched** (§2.2): the ercot-193-filed `dashboard_add_run`
+   metrics-sidecar relative-path defect, root-fix + regression test,
+   push-and-stop landing on `claude/ercot-scar-hygiene-1-dashboard-sidecar`
+   (no PR, no merge) pending the owner's landing-convention answer (§0 owner
+   decisions). Card-R hygiene bandwidth; no solve path touched.
+4. **Transport note for this manager's own pack commits:** porcelain
+   `git commit`/`git push` hang on this data-profile clone (index scan /
+   partial-clone pack negotiation). Working recipe: plumbing commit
+   (`hash-object` → temp-index `read-tree`+`update-index --cacheinfo` →
+   `write-tree`/`commit-tree`/`update-ref`) — or, simpler and preferred for
+   this small text file, `mcp__github__create_branch` once +
+   `mcp__github__push_files` per cycle, then blob-verify (cycle 1 verified:
+   local and remote blob both `b1c117b9`).
