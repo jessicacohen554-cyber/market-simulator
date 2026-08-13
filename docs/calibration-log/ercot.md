@@ -7985,3 +7985,77 @@ conditioning on market DESIGN rather than tightness (a different mechanism —
 needs its own card, and has **zero** measured anchors post-RTC+B until the 2026
 SOM ~mid-2027), or L-0 with the second `readiness_limits` disclosure row — which
 the card is explicit **only the owner can sign**. Next shorthand: **ercot-196**.
+
+## ercot-196 (2026-08-13) — MEASURE-FIRST CHARTER ASSEMBLY: the 2024/2025 monthly-shape object SIZED AND ATTRIBUTED, decision card T assembled for the owner — NO lever, NO derive, NO LP, no year solved or scored, no run registered, NO matrix cell or row edit, keeper UNCHANGED
+
+**Task.** The 2024/2025 shape-queue charter candidate card R re-pointed ERCOT
+bandwidth to (R-A consequences; the object PRECOMMIT-ercot193 §0(c) named
+"2024/2025 shape work for a later charter"). Deliverable:
+`docs/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` + the read-only
+probe `scripts/probes/ercot196_shape_decomposition.py` (output
+`results/calibration/ercot196_shape_decomposition.json`), on the
+ercot-189/ercot-193 rule-13 footing — actuals enter counterfactual
+re-scoring/attribution of the run192 keeper's registered payload only.
+**Ceiling stated up front, both places:** 2024 C3b 0.135 and 2025 C3b 0.096
+both already PASS; shape-quality and forecast-readiness work only;
+determination stays NOT-YET regardless (Q-B, R-A standing).
+
+**The measurement** (probe reproduces the C3c ledger's year-grain tail
+counts exactly — 53/22 and 31/1 — validating its month mapping):
+- **2024 is pure shape** (uniform bias −0.20 $/MWh): Nov (−7.38, sq-share
+  .271) + Apr (+6.16, .189) + Aug (−5.82, .168) + May (+5.54, .153) carry
+  78.1 % of the squared residual; counterfactual C3b-2024 with Nov+Apr+Aug
+  perfect = 0.0824.
+- **2025 is level-dominated** (every month negative, uniform bias −2.76
+  $/MWh; removing it alone leaves 0.0579): May (.367) + Feb (.239) + Apr
+  (.119) carry 72.5 %; actual carried 217 hours > $100 vs the model's 35
+  (> $200: 31 vs 1) — a broad moderate-scarcity/elevated-hour under-read,
+  NOT a gas-level artifact (keeper 2025 gas 3.52 $/MMBtu sits ABOVE measured
+  HH 3.45 and N3045TX3 delivered ≈ 3.06). C3a-2025 −7.5 % has 75 % of its
+  ±10 % band spent — the least margin in ERCOT's PASS set.
+
+**The attribution** (committed artifacts only): (a) Nov-2024 is realized RT
+tail ($5.12/MWh of its −7.38 is > $200 wedge; RT ran $7.22 over DA) and
+Aug-2024 is entirely missing tail (wedge $7.39 > the residual) — the
+Q-B/R-A-closed model-class scarcity family at sub-tail scale, same object
+FFR-6A/FFR-8A measured forward and FINDING-ercot195 measured in rents;
+(b) Apr/May-2024 is the outage-season OVER-pricing remainder (over despite
+$4.77/$9.21 actual tail wedges; COAL_PRB −0.93 TWh model-under in Apr;
+post-ercot-185 remainder, fault-1 lane FROZEN by D2, fault-2 R at
+ercot-174); (c) fuel-shape months measured against the generic
+GAS_MONTHLY_SEASONALITY: the measured HH monthly shape never enters ERCOT
+(annual scalar × generic shape × armed mean-preserving daily factors) —
+wedge supports Jan-2024/Apr-2024/Feb-2025 at ≈ $2–4/MWh each but
+sign-agrees only 4/12 (2024) and 6/12 (2025) months, so input correctness,
+not a fit lever; (d) a measured scoring-basis wedge: scored pMon is
+energy-only to the cent while bench rt_lw_mon is settlement RTSPP — the
+keeper's own committed overlay is +0.25/+0.42 $/MWh (2024/2025)
+demand-weighted and +1.50 $/MWh in Feb-2025 alone; (e) ruled out as
+carriers: hydro/renewable months, the 2025 gas level, storage shape.
+
+**Card T option board** (owner sitting; NOTHING executed): T-0 do-nothing
+(honest baseline, biases stated); **T-1 RECOMMENDED — the
+`gas_hh_monthly_shape` input-correctness A/B** (built field, default-off,
+level-preserving, zero fitted scalars; the record's own admissible
+descendant of the Run-77 rejection — the G cells refused the LEVEL swap and
+per-plant sparsity, not the shape; carries the rule-26c row gap ercot-145
+§6 surfaced, closed by the executing session; ercot-145b posture verbatim —
+fit gain NOT predicted, gates protected, 2023 side-effect-reported under
+the card-R ceiling); T-3b companion audit (published-adder overlay
+completeness for the ECRS era; data ask filed on the card); T-2 the
+Apr/May-2024 outage-season remainder OWNER-GATED (D2 freeze; evidence
+supplied, no step taken); T-3a settlement-basis C3b scoring = rubric
+question, owner-only, recorded not proposed; T-4 the sub-tail scarcity
+content REFUSED on the standing rulings and recorded as the honest bound on
+every other option's reach.
+
+**Fences honoured.** DO-NOT-REDO: §5.1 + the ERCOT shard read first; the
+cells checked are listed in the card §5; no R/I/G cell proposed for re-test;
+`diurnal_price_amplitude` stays U untouched (PRECOMMIT-ercot193 §0(b)
+refusal honored). Not C3a-2023 spend (Q-B final) and not a C3b-2023 round
+(R-A; 2023 appears only in the ceiling citation). No ScenarioConfig field,
+no matrix cell/row edit (a card is a read — the ercot-182/189 precedent),
+no keeper/registry/bench touch, no C3c ledger change, no rubric amendment,
+no marker granted or spent; the L-SCAR lane (stopped at V0) and the frozen
+composition lane untouched; ercot-188/E2 P0 forfeiture inherited unexpired.
+Session consumed the ercot-196 shorthand. Next shorthand: **ercot-197**.
