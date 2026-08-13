@@ -10,6 +10,11 @@ write is solve-invariant (``btm_twh = EIA-923 class total − grid dispatch`` an
 held-out CHP plant's grid dispatch is ~0), so the re-solve reproduces the
 keeper's dispatch and only *adds* the BTM basis the original bundle lacked.
 
+After the solve the driver regenerates ``legitimacy_diagnostics.json`` for the
+output bundle through the same ``scripts/legitimacy_diagnostics.py`` post-step
+the normal calibration path uses, so C8 always has a fresh committed artifact
+to score (closes the ercot-193-disclosed replay-path gap).
+
 The original ``meta.timestamp`` date is preserved so the dashboard run id
 (``<date>-<shorthand>``) is unchanged — the re-solve fixes the keeper in place,
 it does not mint a new run.
@@ -197,6 +202,54 @@ def _warn_on_environment_mismatch(meta: dict) -> None:
         print(
             "WARNING: replay environment differs from the bundle's recorded "
             "environment — byte-identity is not guaranteed:\n  " + "\n  ".join(diffs),
+            file=sys.stderr,
+        )
+
+
+def _write_legitimacy_diagnostics(run_dir: Path, iso: str) -> None:
+    """Generate ``<run_dir>/legitimacy_diagnostics.json`` via the S1 suite.
+
+    The normal calibration path produces this artifact as a post-solve step:
+    the operator runs ``scripts/legitimacy_diagnostics.py --bundle <dir>
+    --iso <ISO> --json-out <dir>/legitimacy_diagnostics.json`` (the
+    ``calibration_verdict._LEGIT_HOWTO`` contract), and the rubric's C7/C8
+    score from the committed artifact without ever recomputing it. The replay
+    driver historically stopped at the solve, leaving a replayed bundle with
+    no artifact for C8 to score — the ercot-193-disclosed tooling gap
+    (calibration-log "Disclosures" block / FINDING-ercot193-soc-regate §4).
+    Close it by invoking the SAME entry point on the replayed bundle: same
+    suite, same CLI surface, no second implementation ([R-ONE-MECH] spirit).
+    A replayed bundle has everything the post-step needs — the solve just
+    rewrote ``floors/*.npz`` and the dispatch parquets — so nothing is
+    approximated.
+
+    A diagnostics gate FAIL does not fail the replay: ``--json-out`` is
+    written before the suite's exit code is decided, and the artifact's job
+    is disclosure (the rubric scores from its contents). Likewise a hard
+    error in the suite is reported loudly with the manual fallback command
+    rather than discarding a completed multi-hour solve at the finish line.
+    """
+    from scripts import legitimacy_diagnostics as ld
+
+    json_out = run_dir / "legitimacy_diagnostics.json"
+    argv = ["--bundle", str(run_dir), "--iso", iso, "--json-out", str(json_out)]
+    try:
+        rc = ld.main(argv)
+    except (Exception, SystemExit) as exc:
+        print(
+            "WARNING: legitimacy diagnostics generation failed "
+            f"({exc!r}) — the replayed bundle carries no fresh "
+            "legitimacy_diagnostics.json; run scripts/legitimacy_diagnostics.py "
+            f"--bundle {run_dir} --iso {iso} --json-out {json_out} manually",
+            file=sys.stderr,
+        )
+        return
+    print(f"legitimacy diagnostics written -> {json_out}")
+    if rc != 0:
+        print(
+            "WARNING: legitimacy diagnostics gate FAIL on the replayed bundle "
+            "(artifact still written; C7/C8 score from its contents — see the "
+            "report above)",
             file=sys.stderr,
         )
 
@@ -390,6 +443,11 @@ def main() -> None:
     ):
         _restore_display_date(run_dir, orig_ts)
         print(f"restored meta timestamp date -> {orig_ts[:10]}")
+
+    # Post-solve diagnostics artifact, exactly as the normal calibration path
+    # produces it (see _write_legitimacy_diagnostics). After the date restore
+    # so the suite reads the bundle in its final on-disk state.
+    _write_legitimacy_diagnostics(run_dir, meta["iso"])
 
 
 if __name__ == "__main__":
