@@ -4306,3 +4306,70 @@ idiom survives a rewrite intact. The SHA exposure is real but much narrower than
 commit title). **CAISO Arm K is no longer blocked**, so FH-5's one missing arm can run and
 complete the horizon table. Dispatched as §0ap-2 — and it MUST pin `src/` to `3ae7465` so it
 is comparable with its eleven siblings.
+
+## Addendum AQ — CORRECTION to AP.2: stage B IS armed on main, landed by a commit marked "do not push"
+
+### AQ.1 The correction, stated plainly
+
+AP.2 said: *"D-30's ERCOT rows are NOT on main, so stage B is HELD and ERCOT is not yet
+exposed."* **That was true when written (verified by grep at `dc679f23`) and is now FALSE.**
+At `ac07b129`, `src/market_sim/config/iso_configs.py:321-323` carries:
+
+```
+"entry_pipeline_aware_signal": True,
+"smr_available_year": 2030,
+"vre_procurement_additions_enabled": True,
+```
+
+**Stage B is ARMED for ERCOT.** It landed as `a71fc84d`, whose own subject line reads
+**"FFR-9C-PROMOTE: arm stage B for ERCOT (D-30) [INCOMPLETE - do not push]"**, merged as
+PR #3888. A commit its author explicitly marked *do not push* is on main. This is the
+HOUSE-1 X.2 pattern — merges do not wait for their own author — in its sharpest form yet.
+
+### AQ.2 What that means, measured rather than assumed
+
+* **ERCOT is now exposed to the AP.2 defect.** The three flags default `False`/`None` and the
+  ISO override sets them `True`/`2030`, so per the override-precedence finding an **ERCOT
+  control arm for any of them is inexpressible through the config path.** The exposure the
+  filing lane deliberately declined to create now exists anyway.
+* **The cache epoch fired, and was never declared.** The finding predicted the pinned default
+  key moves `062d440558103f81` → `8d9ef77edb3e44cb`. Those strings appear **only** in the
+  finding and in this sitting doc — no test pins them, no ledger entry names the epoch. So
+  every ERCOT forecast/hindcast is re-based, **including FH-5's ERCOT legs**, with nothing in
+  the record announcing it. That is what "[INCOMPLETE]" meant.
+* **Narrower than feared on rule 28, and I checked rather than assumed:** all three flags were
+  already present in the cache-key ledgers (3 hits each) and the ERCOT matrix shard already
+  carries three stage-B mentions — those duties were discharged when FFR-9C *built* the flags.
+  The arming commit needed only the override rows, and that is all it contains. **The gap is
+  the epoch declaration and the control-arm exposure, not ledger registration.**
+* **OVERRIDE-FIX is therefore no longer merely blocking — it is remediation.** It was
+  dispatched (§0ap-1) on the premise that ERCOT was not yet exposed. It now repairs a live
+  exposure in two ISOs, MISO (D-29) and ERCOT (D-30). Its priority rises accordingly, and its
+  prompt's line "ERCOT's stage-B rows are NOT on main … do not add them" is **stale and must
+  be corrected before it is pasted** — the rows are there; the lane's job is to make them
+  turn-off-able, not to add them.
+
+### AQ.3 State at `ac07b129` — 23 commits, ERCOT keeper moved AGAIN
+
+**ERCOT keeper → `2026-08-12-run192-arm-coal-peak`** (ercot-192, the B1 year-keyed coal `_peak`
+level arm; the lane also fixed an attestation tail-count basis defect its own auditor caught,
+and recorded the root cause). Other five unmoved. `audit_keepers.py`: **0 failures, 1 warning.**
+That is ERCOT's **third** keeper in roughly a day (ercot185 → run188 → run191 → run192), which
+keeps **Q.2's battery hold firmly in place**.
+
+Also landed: **miso-154** — the CT commitment instrument, with the finding that *"the +22-24 %
+was the instrument, not the fleet"* (an instrument artefact, not a physical result — exactly
+the class of finding the program exists to catch); **rtcb-adapter-1**, the RTC+B SCED read
+adapter (card D/D1); and **REWRITE-PREP's second half**, which is more consequential than its
+name suggests — see AQ.4.
+
+### AQ.4 The owner's blob-cleanup tool EXISTS, and REWRITE-PREP hardened it instead of deleting it
+
+`.github/workflows/cleanup-large-blobs.yml` is a real, pre-existing workflow. REWRITE-PREP
+did two things to it: **`9b569060` made it tag-safe**, and **`c2b179db` made it protect cited
+commits WITHOUT depending on published tags** — plus `docs/governance/citation-tags.md` as the
+documented convention. That is a better outcome than the tag-only plan I proposed: it does not
+require every citation to have been tagged in advance. **The NO-GO verdict on running it for
+size still stands** (the pack is smaller than the live tree, so there is little dead weight to
+reclaim), but if it is ever run, the evidence record is now defended by construction rather
+than by discipline.
