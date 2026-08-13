@@ -83,7 +83,7 @@ import _miso154_ct_commitment as _m154  # noqa: E402
 # importing _miso154 (which sets _m134.BUNDLE to the keeper at its own import),
 # else the prices/class_hourly would come from one solve and the P0 from
 # another (T-16).
-BUNDLE = REPO / "results/calibration/miso155_p0_A"
+BUNDLE = REPO / "results/calibration/miso155_p0_C"
 KEEPER = REPO / "results/calibration/miso148_basis_B"
 if not (BUNDLE / "run_config.json").is_file():
     raise SystemExit(f"control bundle missing: {BUNDLE}")
@@ -217,17 +217,71 @@ def read_run_ratio(year: int, basis: YearBasis) -> np.ndarray | None:
 # ---------------------------------------------------------------------------
 
 
+_FLOOR_CACHE: dict[int, tuple[np.ndarray, dict]] = {}
+
+
 def _floor_matrix(basis: YearBasis) -> np.ndarray:
-    """The control's own ``(n_gen, T)`` min-gen floor, clipped to availability."""
-    mg = basis.arrays.min_gen
-    if mg is None:
-        floor = np.broadcast_to(
-            np.asarray(basis.arrays.pmin, dtype=np.float64)[:, None],
-            basis.availcap.shape,
-        )
-    else:
-        floor = np.asarray(mg, dtype=np.float64)
+    """Return the SOLVE's own ``(n_gen, T)`` P1 min-gen floor, availability-clipped.
+
+    **CORRECTED, AND THE CORRECTION WAS FORCED BY TRAP T-3.** The PREREG wrote
+    this leg against ``basis.arrays.min_gen`` — the floor the probe's own
+    re-assembly produces. T-3's standing rule ("disbelieve clean zeros; any
+    exact 0.0 gets a second, different derivation") was applied to the
+    resulting 0.0 admissibility share, and the second derivation REFUTED it:
+    the probe's re-assembled ``min_gen`` is non-zero fleet-wide (2023: 113.0 M
+    MWh over 1,208,529 cells) but **exactly 0.0 on every one of the 733
+    CT_PEAKER rows**, while the solve's OWN committed floor array
+    (``floors/<year>_P1.npz``) carries **162 floored CT_PEAKER rows, max
+    144.605 MW, 2,888,908 MWh, 119,182 non-zero cells** in the same year.
+
+    ``_miso134.build_year`` stops before the reliability-floor registry that
+    the production pipeline applies (the solve logs "reliability floor — 12
+    enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY"), so the
+    reconstruction never saw MISO's CT floors at all. Reading the committed
+    array is the rule 14 ``[R-ACCURATE]`` move and the same principle as
+    reading the P0: take the model's own number, do not re-derive it.
+
+    This is an instrument-defect repair, NOT a basis substitution to buy a
+    pass: it was made because a pre-registered trap fired, before the
+    corrected L1F was evaluated, and the section 4.2 admissibility threshold
+    (5 %, >= 2 of 3 years) is UNCHANGED.
+    """
+    floor, _ = read_solve_floor(basis)
     return np.minimum(floor, basis.availcap)
+
+
+def read_solve_floor(basis: YearBasis) -> tuple[np.ndarray, dict]:
+    """Read ``floors/<year>_P1.npz`` and align it onto the probe fleet by id."""
+    if basis.year in _FLOOR_CACHE:
+        return _FLOOR_CACHE[basis.year]
+    z = np.load(BUNDLE / f"floors/{basis.year}_P1.npz", allow_pickle=True)
+    mg = np.asarray(z["min_gen"], dtype=np.float64)
+    row_of = {str(u): i for i, u in enumerate(z["unit_ids"])}
+    n_gen = len(basis.fleet)
+    floor = np.zeros((n_gen, basis.n_hours), dtype=np.float64)
+    matched = np.zeros(n_gen, dtype=bool)
+    for i, g in enumerate(basis.fleet):
+        j = row_of.get(str(g.unit_id))
+        if j is not None:
+            floor[i] = mg[j]
+            matched[i] = True
+    probe_mg = basis.arrays.min_gen
+    probe_mg = (
+        np.zeros_like(floor) if probe_mg is None else np.asarray(probe_mg, float)
+    )
+    ct = basis.labels == TARGET
+    diag = {
+        "solve_floor_rows_matched": int(matched.sum()),
+        "solve_floor_total_mwh": float(floor.sum()),
+        "solve_floor_ct_mwh": float(floor[ct].sum()),
+        "solve_floor_ct_rows_floored": int((floor[ct].sum(axis=1) > 0).sum()),
+        "solve_floor_ct_max_mw": float(floor[ct].max()),
+        # The refuted probe-side value, kept so the defect stays visible.
+        "probe_reassembled_floor_total_mwh": float(probe_mg.sum()),
+        "probe_reassembled_floor_ct_mwh": float(probe_mg[ct].sum()),
+    }
+    _FLOOR_CACHE[basis.year] = (floor, diag)
+    return floor, diag
 
 
 def reconstruct_p1_floorsfirst(basis: YearBasis, mc_bid: np.ndarray) -> np.ndarray:
@@ -373,6 +427,7 @@ def run_year(cfg, year: int) -> dict:
     rec["ALIGNED_per_class_L1X"] = _per_class(basis, l1x * mask)
 
     # --- L1F: conditionally gating, admissibility measured -----------------
+    rec["FLOOR_source"] = read_solve_floor(basis)[1]
     rec["L1F_admissibility"] = floored_out_of_merit_share(basis, mc_bid_exact)
     l1f = reconstruct_p1_floorsfirst(basis, mc_bid_exact)
     rec["L1F_floorsfirst"] = class_energy_residual(basis, l1f)
