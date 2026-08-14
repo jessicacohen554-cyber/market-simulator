@@ -30,10 +30,25 @@ derived by hand from these documents (Gold-Book zonal shares, etc.) live in
 `src/market_sim/config/iso_configs.py` and `config/scenarios.py`, not a
 regeneration script.
 
-**Exception — `ATC_TTC.zip` is DATA NEEDED.** `scripts/derive_nyiso_central_east_ttc.py`
-expects `data/raw/NYISO/ATC_TTC.zip` (NYISO's day-ahead Total Transfer
-Capability MIS export) and is **not currently present in this directory** —
-re-fetch from NYISO's MIS ATC_TTC report posting before running that script.
+**Exception — the ATC/TTC postings are DATA NEEDED (deliberately not committed).**
+`scripts/data/derive_nyiso_central_east_ttc.py` reads NYISO's day-ahead Total
+Transfer Capability export, either as `atc-ttc/` (the native MIS layout: one
+`<yyyymm>01atc_ttc_csv.zip` per month — gitignored, see `../.gitignore`) or the
+legacy single `ATC_TTC.zip`. Neither is committed: redistribution terms are
+unverified (§ below) and it is ~17 MB of raw zips whose only product is the
+small Central-East constants block. **Running the script with neither present
+prints the exact per-month re-fetch command** (`http://mis.nyiso.com/public/csv/
+atc_ttc/<yyyymm>01atc_ttc_csv.zip`), so the derivation is reproducible from a
+bare checkout. Refreshed 2026-08-14 (nyiso-134) to cover 2018-2025.
+
+**Gold Books 2018-2022 added 2026-08-14 (nyiso-134).** The older editions are
+hosted under *different* Liferay document IDs and filenames than 2023+
+(`<year>-Gold-Book-Final-Public.pdf` plus a UUID path segment for 2019-2022;
+`2018 Load & Capacity Data (Gold Book).pdf` under `20142/0` for 2018), so the
+`20142/2226333/<year>-Gold-Book-Public.pdf` pattern does **not** extrapolate
+backwards — it 404s for every one of them. Note also that the **2018 edition has
+no per-zone SCR/EDRP table**; it reports NYCA totals only (p.39 prose and Tables
+IV-1a/IV-1b), and the zonal projection table first appears in 2019.
 
 **Licensing note:** NYISO's redistribution terms are unclear/unverified —
 see `docs/data-licensing.md` §7.

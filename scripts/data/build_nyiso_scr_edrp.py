@@ -42,7 +42,31 @@ _ZONES: tuple[str, ...] = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"
 
 # Gold Book source per capability year: (source_doc, source_table, source_page).
 # The immutable PDFs live at data/raw/NYISO/{doc}.
+# 2019-2022 ADDED 2026-08-14 (nyiso-134). The loader clamps an out-of-range
+# solve year to the nearest available vintage, so with the table starting at
+# 2023 a 2022 solve silently used the 2023 Gold Book — ~1.23 GW of emergency DR
+# at a $500/MWh strike placed at the wrong vintage, inside the scarcity band C3c
+# measures (defect D-3 of
+# results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md).
+#
+# 2018 IS MEASURED-ABSENT, NOT SKIPPED: the 2018 edition carries NO per-zone
+# SCR/EDRP table. It reports only NYCA totals, in prose (p.39: summer SCR 1,219
+# MW / EDRP 18 MW; winter SCR 884 MW / EDRP 45 MW) and in the capability
+# summaries (Tables IV-1a/IV-1b, "Special Case Resources - SCR" 1,219.1 summer /
+# 884.4 winter). The zonal projection table first appears in the 2019 edition.
+# Splitting the 2018 NYCA total across zones with another year's shares would be
+# a fabricated input (rule 14 [R-ACCURATE]; the prompt's "never pad, proxy or
+# force"), so it is deliberately NOT landed. No practical loss: 2018 was dropped
+# from the program span on 2026-08-06 and falls through holdout_policy's
+# fail-closed default to LOCKED tier, so it is unsolvable regardless.
+#
+# NOTE the source's own formatting change: 2019-2021 report whole MW, 2022+
+# report one decimal. Transcribed as printed — no rounding is imposed either way.
 _SOURCES: dict[int, tuple[str, str, int]] = {
+    2019: ("2019-Gold-Book-Public.pdf", "I-14", 38),
+    2020: ("2020-Gold-Book-Public.pdf", "I-14", 50),
+    2021: ("2021-Gold-Book-Public.pdf", "I-14", 57),
+    2022: ("2022-Gold-Book-Public.pdf", "I-17", 66),
     2023: ("2023-Gold-Book-Public.pdf", "I-17", 67),
     2024: ("2024-Gold-Book-Public.pdf", "I-18", 71),
     2025: ("2025-Gold-Book-Public.pdf", "I-17", 69),
@@ -54,6 +78,58 @@ _SOURCES: dict[int, tuple[str, str, int]] = {
 # concentrated in Zone J / NYC); EDRP is the small voluntary program (<= ~13 MW
 # NYCA). Both are dispatched only in NYISO-declared reliability events.
 _ENROLLMENT: dict[int, dict[str, tuple[float, float, float, float]]] = {
+    2019: {
+        "A": (281.0, 127.0, 1.0, 35.0),
+        "B": (55.0, 35.0, 0.0, 0.0),
+        "C": (118.0, 85.0, 1.0, 2.0),
+        "D": (58.0, 60.0, 1.0, 1.0),
+        "E": (40.0, 35.0, 1.0, 1.0),
+        "F": (103.0, 74.0, 0.0, 0.0),
+        "G": (63.0, 42.0, 0.0, 0.0),
+        "H": (12.0, 10.0, 0.0, 0.0),
+        "I": (37.0, 23.0, 0.0, 0.0),
+        "J": (494.0, 330.0, 1.0, 1.0),
+        "K": (48.0, 32.0, 0.0, 0.0),
+    },
+    2020: {
+        "A": (260.0, 124.0, 1.0, 1.0),
+        "B": (51.0, 33.0, 0.0, 0.0),
+        "C": (116.0, 83.0, 1.0, 2.0),
+        "D": (68.0, 78.0, 1.0, 0.0),
+        "E": (35.0, 27.0, 1.0, 0.0),
+        "F": (99.0, 51.0, 0.0, 0.0),
+        "G": (74.0, 43.0, 0.0, 0.0),
+        "H": (12.0, 11.0, 0.0, 0.0),
+        "I": (40.0, 25.0, 0.0, 0.0),
+        "J": (479.0, 344.0, 2.0, 0.0),
+        "K": (48.0, 20.0, 0.0, 10.0),
+    },
+    2021: {
+        "A": (219.0, 68.0, 0.0, 0.0),
+        "B": (33.0, 8.0, 0.0, 0.0),
+        "C": (94.0, 53.0, 3.0, 1.0),
+        "D": (128.0, 64.0, 0.0, 0.0),
+        "E": (38.0, 15.0, 0.0, 0.0),
+        "F": (111.0, 53.0, 0.0, 0.0),
+        "G": (59.0, 18.0, 0.0, 0.0),
+        "H": (11.0, 3.0, 0.0, 0.0),
+        "I": (31.0, 15.0, 0.0, 0.0),
+        "J": (428.0, 320.0, 1.0, 0.0),
+        "K": (43.0, 13.0, 0.0, 0.0),
+    },
+    2022: {
+        "A": (223.3, 124.4, 0.0, 0.0),
+        "B": (28.1, 19.7, 0.0, 0.0),
+        "C": (83.9, 66.9, 0.0, 0.1),
+        "D": (188.3, 77.9, 0.0, 0.0),
+        "E": (33.0, 15.3, 0.1, 0.1),
+        "F": (79.4, 77.0, 0.0, 0.0),
+        "G": (44.5, 19.8, 0.0, 0.1),
+        "H": (11.4, 8.6, 0.0, 0.1),
+        "I": (29.0, 19.1, 0.2, 0.3),
+        "J": (406.4, 243.0, 5.4, 0.1),
+        "K": (36.8, 21.9, 0.0, 0.0),
+    },
     2023: {
         "A": (209.6, 147.5, 0.0, 0.0),
         "B": (29.7, 18.3, 0.0, 0.0),

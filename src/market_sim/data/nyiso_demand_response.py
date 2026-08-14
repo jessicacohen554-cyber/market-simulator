@@ -59,11 +59,39 @@ _ZONE_TO_MODEL: dict[str, str] = {
 # period is the balance of the year.
 _SUMMER_MONTHS: frozenset[int] = frozenset({5, 6, 7, 8, 9, 10})
 
-# Latest Gold Book year on disk; a solve year beyond it holds enrollment flat
-# (the Gold Book itself projects SCR constant forward), and a year before the
-# earliest uses the earliest.
-_MIN_GB_YEAR = 2023
-_MAX_GB_YEAR = 2025
+
+# Gold Book vintage span, DERIVED FROM THE CSV rather than hardcoded. A solve
+# year beyond the latest holds enrollment flat (the Gold Book itself projects
+# SCR constant forward); a year before the earliest uses the earliest.
+#
+# These were the literals ``2023`` / ``2025`` until 2026-08-14 (nyiso-134),
+# which silently defeated the intake it was paired with: landing the 2019-2022
+# vintages in the CSV changed nothing, because the clamp still floored every
+# year at 2023. Deriving the bounds means the clamp tracks the data — adding a
+# vintage is now a pure data change, and the D-3 defect of
+# results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md
+# (a 2022 solve silently using the 2023 vintage's ~1.23 GW of $500/MWh DR)
+# cannot recur for any year whose vintage is present.
+def _gb_year_bounds() -> tuple[int, int]:
+    """Return ``(earliest, latest)`` Gold Book vintage present in the CSV.
+
+    Falls back to the historical ``(2023, 2025)`` literals when the CSV is
+    absent or unreadable, so the clamp keeps its prior behavior rather than
+    raising here — the caller's own ``FileNotFoundError`` is the place a
+    missing CSV is reported.
+    """
+    path = _enrollment_path()
+    if not path.exists():
+        return (2023, 2025)
+    years: set[int] = set()
+    with path.open(newline="") as f:
+        for row in csv.DictReader(f):
+            try:
+                years.add(int(row["gold_book_year"]))
+            except (KeyError, TypeError, ValueError):
+                continue
+    return (min(years), max(years)) if years else (2023, 2025)
+
 
 _DAYS_PER_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
@@ -84,7 +112,8 @@ def load_scr_edrp_enrollment(year: int) -> dict[str, dict[str, float]]:
     non-zero registered capability. Raises ``FileNotFoundError`` if the CSV is
     absent (the flag must never silently solve without the measured input).
     """
-    gb_year = min(max(int(year), _MIN_GB_YEAR), _MAX_GB_YEAR)
+    lo, hi = _gb_year_bounds()
+    gb_year = min(max(int(year), lo), hi)
     path = _enrollment_path()
     if not path.exists():
         raise FileNotFoundError(
