@@ -6147,3 +6147,73 @@ fetch the 2022 Gold Book. Then the touchpoint needs only an owner lift.
 2018 / 2019 / H1-2026 were not touched. No mechanism was tested.
 
 * Next number: **nyiso-135**.
+
+### UPDATE, same session — owner said "go get the data": ALL THREE DEFECTS CLOSED
+
+Owner direction after the report above (*"Ok go get the data"*, then *"Get
+2018-2021 while you're at it"*). Every fix uses the SAME producer and SAME
+recipe as the incumbent years, and in each case **the recipe was verified
+against the committed 2023-2025 values BEFORE the new years were written**.
+ZERO free parameters. STILL NO LP SOLVED — the readiness objection is withdrawn,
+so the freeze is now the only thing between here and the touchpoint.
+
+* **D-1 RGGI — CLOSED 2018-2022.** Fetched RGGI, Inc.'s published prices/volumes
+  table (the source already cited for A59-A70) and landed auctions **A39-A58**
+  as per-auction rows. Recipe check: recomputing 2023/2024/2025 reproduces the
+  committed 13.49/20.71/22.09 (NYISO) and 14.87/22.83/24.35 (NEISO) EXACTLY.
+  New NYISO $/short ton: 2018 **4.41**, 2019 **5.42**, 2020 **6.41**,
+  2021 **9.47**, 2022 **13.46**; NEISO x1.10231. So the 2022 omission is
+  **$6.13/MWh** measured (the "~$13/tCO2" estimate was sound).
+  **A blocker inside the fix:** `curate_carbon_auction_results.py` hard-coded
+  `_QUARANTINED_YEARS = {2022, 2026}` and RAISED on those rows — the
+  PRE-2026-08-06 regime the owner explicitly replaced, and the reason the
+  constant had no 2022 key. Removed with the clarification quoted at the site;
+  spend gates untouched. NEISO extended too (same auctions) — **declared blast
+  radius: NEISO's registered 2026-08-06-neiso-2022-corrected-basis is now STALE
+  w.r.t. HEAD**, a NEISO-lane call, flagged not actioned. CAISO NOT extended
+  (CARB source blocks automated fetches; open CAISO-lane gap, rule 25).
+* **D-2 Central-East TTC — CLOSED 2018-2022, and the trap is SHUT.** Fetched 96
+  monthly MIS `atc_ttc` postings (2018-2025, 0 failures). Recipe check:
+  re-deriving 2023/2024/2025 reproduces the committed annuals 1750/2850/2850
+  **and every committed monthly value, exactly**. **THE FINDING WAS WORSE THAN
+  REPORTED:** measured 2022 annual is **1,825 MW** (not the 1,750 proxy), so the
+  silent static fallback overstated by **1,025 MW / +56 %** — and 2022 was
+  mid-construction, so the monthly detail is the real damage: **Nov-2022 measured
+  725 MW against a model 2,850 = 3.9x**, with Mar/Apr/May/Oct at 1.8-2.5x. New
+  annuals 2018 2475, 2019 2475, 2020 2400, 2021 2025, 2022 1825 — a coherent
+  decline into construction, then the post-upgrade step. **Structural half done:**
+  both appliers now FAIL LOUD instead of silently no-opping, scoped to years at
+  or beyond the table's span, so a year PAST the table still no-ops (there the
+  static value is correct — it IS the measured post-upgrade annual mean, forward
+  channel = the transmission-expansion registry). Forecasts unaffected; new test
+  pins it; the existing forward-edge no-op test still passes.
+* **D-3 SCR/EDRP — CLOSED 2019-2022; 2018 is a REAL SOURCE GAP.** The older Gold
+  Books are NOT at the `20142/2226333/<year>-Gold-Book-Public.pdf` pattern (all
+  404) — different Liferay document IDs and filenames. All five fetched and
+  committed. Recipe check: a table parser reproduces the committed 2023/2024/2025
+  transcriptions EXACTLY (33 zone-rows x 4 values, zero diffs) before being used
+  on new years. **2018 has NO per-zone table at all** — NYCA totals only (p.39
+  prose, Tables IV-1a/IV-1b); the zonal table first appears in 2019. Splitting the
+  2018 total by another year's shares would be fabrication (rule 14), so it was
+  NOT done; no practical loss since 2018 is locked-tier and unsolvable.
+  **A SECOND HIDDEN DEFECT found while fixing this:** landing the vintages changed
+  nothing, because `nyiso_demand_response` hard-coded `_MIN_GB_YEAR=2023` /
+  `_MAX_GB_YEAR=2025` and the clamp still floored every earlier year at 2023 EVEN
+  WITH THE DATA PRESENT. Bounds are now DERIVED from the CSV. Each year now
+  resolves to its own vintage; 2022 moves **1234.4 -> 1169.8 MW**, a 64.6 MW
+  correction inside the predicted 60-190 MW band, at a $500/MWh strike.
+
+**Verification.** ruff clean; format clean; mechanism-matrix guard exit 0. Full
+suite **6,849 passed / 21 failed**, and **all 21 are pre-existing or
+test-isolation artifacts, none from this work** — established by re-running them
+on a stashed pristine tree (18 reproduce identically, the 2 ERCOT
+`retirement_rule='pipeline'` failures reproduce untouched, and the 1
+`consume_phase3d` failure passes in isolation). New tests added for the TTC
+fail-loud guard and per-vintage SCR/EDRP resolution.
+
+**Still open:** the ACTIVE freeze (now the sole blocker); the import-tranche
+719 MW duration RMSE disclosure, still NOT re-measured; the Transco Dec-2022
+Elliott hole, unfixable from the free archive; CAISO's 2018-2022 CARB block; and
+NEISO's now-stale 2022 touchpoint. Raw ATC/TTC postings (~17 MB) are gitignored
+per the ATC_TTC.zip precedent, but the deriver prints the exact re-fetch command,
+so the derivation is reproducible from a bare checkout.

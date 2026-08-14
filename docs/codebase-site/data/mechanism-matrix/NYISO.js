@@ -232,7 +232,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     rps_lp_constraint: { cell: "K", fc: "K" },
     miso_rps_compliance_regions: { cell: ".", fc: "." },
     miso_clean_tier_rows: { cell: ".", fc: "." },
-    state_carbon_pricing: { cell: "K", note: "VERDICT UNCHANGED (K, armed on the keeper for 2023-2025). DATA-COVERAGE FLAG ONLY, nyiso-134 (2026-08-14): STATE_CARBON_PRICE_BY_ISO['NYISO'] carries 2023/2024/2025 ONLY, so any OUT-OF-TRAINING year silently charges $0/tCO2 — policy.carbon.state_carbon_price returns None and the keeper's carbon_price_path='zero' catches it, with no exception and no warning. Measured for 2022: $6.08/MWh omitted at ~$13/tCO2 on the fleet 0.4558 tCO2/MWh-net, 8.1% of the 2022 RT mean, and MERIT-ORDER distorting (CC $5.53 vs dry-bottom-wall steam $15.85, a 2.9x spread). Blocks the 2022 validation touchpoint until the four 2022 RGGI auction prices are transcribed by the recipe config/fuel_trajectories.py already documents (zero DOF). NEISO carries the identical 2023-2025-only shape and is NOT covered by this measurement (rule 25). Evidence: results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md §2 D-1." },
+    state_carbon_pricing: { cell: "K", note: "VERDICT UNCHANGED (K). RESOLVED 2026-08-14 (nyiso-134, same session): the coverage gap below is CLOSED — RGGI auctions A39-A58 landed, so STATE_CARBON_PRICE_BY_ISO now spans 2018-2025 for NYISO (2018 4.41 / 2019 5.42 / 2020 6.41 / 2021 9.47 / 2022 13.46 $/short ton) and for NEISO (x1.10231). Recipe verified first: recomputing 2023-2025 reproduces the committed constants EXACTLY. The intake-side blocker was removed too — curate_carbon_auction_results.py hard-coded _QUARANTINED_YEARS={2022,2026} and RAISED, the pre-2026-08-06 regime the owner replaced. CAISO's 2018-2022 CARB block is NOT covered (source blocks automated fetches; open CAISO-lane gap, rule 25), and NEISO's registered 2022 touchpoint is now stale w.r.t. HEAD. ORIGINAL FLAG, retained for the record: STATE_CARBON_PRICE_BY_ISO['NYISO'] carried 2023/2024/2025 ONLY, so any OUT-OF-TRAINING year silently charged $0/tCO2 — policy.carbon.state_carbon_price returns None and the keeper's carbon_price_path='zero' catches it, with no exception and no warning. Measured for 2022: $6.08/MWh omitted at ~$13/tCO2 on the fleet 0.4558 tCO2/MWh-net, 8.1% of the 2022 RT mean, and MERIT-ORDER distorting (CC $5.53 vs dry-bottom-wall steam $15.85, a 2.9x spread). Blocked the 2022 validation touchpoint; CLOSED the same session (see the RESOLVED note above), zero DOF. Evidence: results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md §2 D-1." },
     mass_cap_lp_row: { cell: "U" },
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: ".", fc: "U" },
@@ -284,4 +284,35 @@ window.MECH_MATRIX_SHARDS.NYISO = {
  *   NYISO stays ABSENT from `final`; 2018 / 2019 / H1-2026 not touched.
  *   Evidence: results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md,
  *   docs/calibration-log/nyiso.md 2026-08-14.
+ */
+
+/* 2026-08-14 (2nd stamp) — nyiso-134, owner directed "go get the data".
+ * STILL NO CELL VERDICT MOVED, keeper UNCHANGED, no mechanism tested, no LP
+ * solved. All three readiness defects are CLOSED with measured inputs spanning
+ * 2018/2019-2022 (not just 2022), each on the incumbent producer + recipe, and
+ * in every case the recipe was verified to reproduce the committed 2023-2025
+ * values BEFORE the new years were written. Zero free parameters.
+ *   D-1 RGGI  — auctions A39-A58 landed; STATE_CARBON_PRICE_BY_ISO now spans
+ *       2018-2025 (NYISO + NEISO). The intake-side quarantine that CAUSED the
+ *       gap (curate_carbon_auction_results _QUARANTINED_YEARS, the superseded
+ *       pre-2026-08-06 regime) was removed. Cell note updated above.
+ *   D-2 TTC   — 96 monthly MIS atc_ttc postings fetched; Central-East 2018-2022
+ *       landed. WORSE THAN FIRST REPORTED: measured 2022 annual 1,825 MW vs the
+ *       2,850 static fallback (+56 %), and Nov-2022 measured 725 MW = 3.9x. The
+ *       appliers now FAIL LOUD for a year at/below the table's span while a year
+ *       PAST it still no-ops (static == measured post-upgrade mean), so forecast
+ *       runs are unaffected. No matrix row governs the TTC year tables, so no
+ *       cell is stamped.
+ *   D-3 SCR/EDRP — 2019-2022 Gold Book vintages landed (older editions sit under
+ *       different Liferay doc IDs; the 2023+ URL pattern 404s). 2018 is
+ *       MEASURED-ABSENT — that edition has no per-zone table at all — and was
+ *       NOT fabricated from another year's shares (rule 14). A second hidden
+ *       defect was found and fixed: nyiso_demand_response hard-coded the Gold
+ *       Book bounds, so landing vintages changed nothing until they were derived
+ *       from the CSV. 2022 moves 1234.4 -> 1169.8 MW summer DR.
+ * Holdout posture UNCHANGED: the freeze is ACTIVE and is now the SOLE blocker on
+ * the 2022 touchpoint; `complete` untouched; NYISO still ABSENT from `final`;
+ * 2018/2019/H1-2026 not touched. Declared cross-lane effect: NEISO's registered
+ * 2026-08-06-neiso-2022-corrected-basis is now stale w.r.t. HEAD (NEISO's call).
+ * Evidence: results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md §7.
  */
