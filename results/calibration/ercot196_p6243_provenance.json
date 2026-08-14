@@ -1,0 +1,221 @@
+{
+ "_provenance": {
+  "probe": "scripts/probes/ercot196_p6243_provenance.py",
+  "precommit": "docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md",
+  "question": "FINDING-ercot186-rule18-grain \u00a75: is p6243's assembled 8 h min-down CORRECT, or a CAMPD Min_Down_Hours artifact on a CT-classified plant? Rule 14 [R-ACCURATE].",
+  "read_only": true
+ },
+ "plant_code": 6243,
+ "instrument_1_value_provenance": {
+  "source_file": "data/raw/reference/custom-bin-assignments.csv",
+  "n_rows_for_plant": 1,
+  "Plant_Name": "Dansby",
+  "curated_Plant_Group": "ST_GAS",
+  "ERCOT_Zone": "South_Central",
+  "Nameplate_MW": 203.2,
+  "Min_Run_Hours": 8.0,
+  "Min_Down_Hours": 8.0
+ },
+ "instrument_2_eia860_units": [
+  {
+   "generator_id": "1",
+   "technology": "Natural Gas Steam Turbine",
+   "prime_mover": "ST",
+   "nameplate_mw": 105.0,
+   "status": "OP",
+   "operating_year": 1978
+  },
+  {
+   "generator_id": "2",
+   "technology": "Natural Gas Fired Combustion Turbine",
+   "prime_mover": "GT",
+   "nameplate_mw": 49.1,
+   "status": "OP",
+   "operating_year": 2004
+  },
+  {
+   "generator_id": "3",
+   "technology": "Natural Gas Fired Combustion Turbine",
+   "prime_mover": "GT",
+   "nameplate_mw": 49.1,
+   "status": "OP",
+   "operating_year": 2010
+  }
+ ],
+ "instrument_3_campd_metered": {
+  "2023": {
+   "available": true,
+   "facility": "Roland C. Dansby Power Plant",
+   "units": [
+    {
+     "unit_id": "1",
+     "unit_type": "Dry bottom wall-fired boiler",
+     "gross_gwh": 114.729,
+     "operating_hours": 5573.26,
+     "share_of_plant_pct": 51.48
+    },
+    {
+     "unit_id": "2",
+     "unit_type": "Combustion turbine",
+     "gross_gwh": 54.099,
+     "operating_hours": 1118.19,
+     "share_of_plant_pct": 24.27
+    },
+    {
+     "unit_id": "3",
+     "unit_type": "Combustion turbine",
+     "gross_gwh": 54.049,
+     "operating_hours": 1100.2,
+     "share_of_plant_pct": 24.25
+    }
+   ],
+   "steam_share_of_plant_pct": 51.48
+  },
+  "2024": {
+   "available": true,
+   "facility": "Roland C. Dansby Power Plant",
+   "units": [
+    {
+     "unit_id": "1",
+     "unit_type": "Dry bottom wall-fired boiler",
+     "gross_gwh": 111.83,
+     "operating_hours": 6100.03,
+     "share_of_plant_pct": 61.45
+    },
+    {
+     "unit_id": "2",
+     "unit_type": "Combustion turbine",
+     "gross_gwh": 39.084,
+     "operating_hours": 797.51,
+     "share_of_plant_pct": 21.48
+    },
+    {
+     "unit_id": "3",
+     "unit_type": "Combustion turbine",
+     "gross_gwh": 31.081,
+     "operating_hours": 633.3,
+     "share_of_plant_pct": 17.08
+    }
+   ],
+   "steam_share_of_plant_pct": 61.45
+  },
+  "2025": {
+   "available": true,
+   "facility": "Roland C. Dansby Power Plant",
+   "units": [
+    {
+     "unit_id": "1",
+     "unit_type": "Dry bottom wall-fired boiler",
+     "gross_gwh": 147.186,
+     "operating_hours": 7198.43,
+     "share_of_plant_pct": 62.09
+    },
+    {
+     "unit_id": "2",
+     "unit_type": "Combustion turbine",
+     "gross_gwh": 46.158,
+     "operating_hours": 938.25,
+     "share_of_plant_pct": 19.47
+    },
+    {
+     "unit_id": "3",
+     "unit_type": "Combustion turbine",
+     "gross_gwh": 43.705,
+     "operating_hours": 872.36,
+     "share_of_plant_pct": 18.44
+    }
+   ],
+   "steam_share_of_plant_pct": 62.09
+  }
+ },
+ "instrument_4_eia923_class_override": {
+  "2023": {
+   "eia923_covers_year": true,
+   "n_plants_covered": 12308,
+   "dominant_class": "CT_PEAKER",
+   "class_shares_pct": {
+    "CT_PEAKER": 50.11,
+    "ST_GAS": 49.89
+   },
+   "top_minus_second_pp": 0.22,
+   "flagged_mixed_fossil": true,
+   "mixed_fossil_dominant_floor": 0.6,
+   "n_mixed_fossil_plants": 14
+  },
+  "2024": {
+   "eia923_covers_year": true,
+   "n_plants_covered": 13210,
+   "dominant_class": "ST_GAS",
+   "class_shares_pct": {
+    "ST_GAS": 59.97,
+    "CT_PEAKER": 40.03
+   },
+   "top_minus_second_pp": 19.94,
+   "flagged_mixed_fossil": true,
+   "mixed_fossil_dominant_floor": 0.6,
+   "n_mixed_fossil_plants": 14
+  },
+  "2025": {
+   "eia923_covers_year": true,
+   "n_plants_covered": 3427,
+   "dominant_class": null,
+   "class_shares_pct": {},
+   "top_minus_second_pp": null,
+   "flagged_mixed_fossil": false,
+   "mixed_fossil_dominant_floor": 0.6,
+   "n_mixed_fossil_plants": 8
+  }
+ },
+ "reclassification_census": {
+  "n_gas_bin_rows": 294,
+  "2023": {
+   "n_reclassified": 3,
+   "plants": [
+    {
+     "plant_code": 4195,
+     "plant_name": "Powerlane Plant",
+     "curated": "CT_PEAKER",
+     "eia923_derived": "ST_GAS",
+     "curated_min_down_h": 1.0
+    },
+    {
+     "plant_code": 3559,
+     "plant_name": "Silas Ray",
+     "curated": "CT_PEAKER",
+     "eia923_derived": "CC_REGULAR",
+     "curated_min_down_h": 1.0
+    },
+    {
+     "plant_code": 6243,
+     "plant_name": "Dansby",
+     "curated": "ST_GAS",
+     "eia923_derived": "CT_PEAKER",
+     "curated_min_down_h": 8.0
+    }
+   ]
+  },
+  "2024": {
+   "n_reclassified": 1,
+   "plants": [
+    {
+     "plant_code": 3559,
+     "plant_name": "Silas Ray",
+     "curated": "CT_PEAKER",
+     "eia923_derived": "CC_REGULAR",
+     "curated_min_down_h": 1.0
+    }
+   ]
+  },
+  "2025": {
+   "n_reclassified": 0,
+   "plants": []
+  }
+ },
+ "VERDICT": {
+  "min_down_is_campd_artifact": false,
+  "min_down_is_correct": true,
+  "value_source_is_campd": false,
+  "value_source": "data/raw/reference/custom-bin-assignments.csv",
+  "summary": "CORRECT, and not a CAMPD artifact \u2014 CAMPD is not even the value's source. Min_Down_Hours = 8 is the CURATED bin sheet's ST_GAS value for a plant the same sheet classes ST_GAS, and it is corroborated independently by EIA-860 (a 105 MW 1978 natural-gas STEAM turbine, 51.7 % of the plant's 203.2 MW nameplate) and by the CEMS metered record (the steam boiler is the plant's LARGEST generator in every year, 51.5 % of 2023 gross load). The exclusion is therefore right on the plant's own physics. SEPARATELY, and reported not fixed: the plant only enters the pool's CT row universe at all because _override_bin_class_from_eia923 flips its curated ST_GAS to CT_PEAKER for 2023 on an EIA-923 margin of 0.2 pp (50.1 vs 49.9) \u2014 the exact coin flip the codebase's own mixed_fossil_plants machinery already flags for this plant, and which it neutralizes on the SCORING side while dispatch keeps the flipped class."
+ }
+}
