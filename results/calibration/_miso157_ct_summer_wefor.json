@@ -1,0 +1,880 @@
+{
+  "prereg": "PREREG-miso157-ct-summer-wefor-share-2026-08-14.md",
+  "prereg_commit": "09b7c87",
+  "prereg_blob": "84091bdf",
+  "bundle": "miso148_basis_B",
+  "share_under_test": 0.3,
+  "summer_months": [
+    6,
+    7,
+    8,
+    9
+  ],
+  "shoulder_months": [
+    3,
+    4,
+    5,
+    10,
+    11
+  ],
+  "years": {
+    "2023": {
+      "V1": {
+        "ct_junjul_avail": 0.9234044007000632,
+        "ct_junjul_avail_published": 0.923,
+        "ct_junjul_abs_delta": 0.00040440070006320106,
+        "top200_avail_gw": 93.2757055414084,
+        "top200_avail_gw_ALL_FLEET_misscoped": 111.56092784441914,
+        "ct_availcap_top200_gw": 20.508908454666994,
+        "top200_avail_gw_published": 93.28,
+        "top200_rel_delta": 4.60383639751482e-05,
+        "pass_avail": true,
+        "pass_gw": true,
+        "pass": true
+      },
+      "V2": {
+        "n_gen": 2929,
+        "n_gen_published": 2929,
+        "carry_zones": 6,
+        "pass": true
+      },
+      "V3": {
+        "rows": 365,
+        "rows_expected": 365,
+        "max_abs_region_sum_mismatch_mw": 0.0,
+        "pass": true
+      },
+      "V4_weather_year": 2023,
+      "R_mod": {
+        "n_ct_rows": 733,
+        "n_floor_rows": 14,
+        "n_nonfloor_rows": 719,
+        "ct_pmax_gw": 22.281793098,
+        "floor_pmax_gw": 0.2269,
+        "floor_cap_share": 0.010183201998243416,
+        "nonfloor": {
+          "unavail_annual": 0.13526016870123142,
+          "unavail_summer_junsep": 0.07284420881560943,
+          "unavail_junjul": 0.07372620221251869,
+          "R_mod_junsep": 0.5385488537760951,
+          "R_mod_junjul": 0.5450695716295338,
+          "avail_summer_junsep": 0.9271557911843906,
+          "avail_annual": 0.8647398312987686
+        },
+        "floor": {
+          "unavail_annual": 0.34303272472334084,
+          "unavail_summer_junsep": 0.3555183735342315,
+          "unavail_junjul": 0.35550369105332896,
+          "R_mod_junsep": 1.036397835865253,
+          "R_mod_junjul": 1.0363550338821057,
+          "avail_summer_junsep": 0.6444816264657685,
+          "avail_annual": 0.6569672752766591
+        },
+        "wefor_capwt": 0.06999999999999999,
+        "age_capwt": 13.000000000000002,
+        "S_AGE_fires": true
+      },
+      "R_meas_MISO": {
+        "cause_types_composite": [
+          "Derated",
+          "Forced",
+          "Unplanned"
+        ],
+        "composite": {
+          "mw_annual": 21763.0,
+          "mw_summer_junsep": 24025.254098360656,
+          "mw_junjul": 23179.16393442623,
+          "mw_shoulder": 20574.41176470588,
+          "mw_winter": 20716.98888888889,
+          "R_junsep": 1.1039495519165858,
+          "R_junjul": 1.0650720918267806
+        },
+        "derated_only": {
+          "mw_annual": 7089.726027397261,
+          "mw_summer_junsep": 8939.319672131147,
+          "mw_junjul": 8942.819672131147,
+          "mw_shoulder": 5750.75816993464,
+          "mw_winter": 6858.7444444444445,
+          "R_junsep": 1.2608836558121412,
+          "R_junjul": 1.2613773279211162
+        },
+        "forced_only": {
+          "mw_annual": 8416.734246575343,
+          "mw_summer_junsep": 9010.254098360656,
+          "mw_junjul": 9420.0,
+          "mw_shoulder": 8443.830065359478,
+          "mw_winter": 7566.122222222222,
+          "R_junsep": 1.0705166439140938,
+          "R_junjul": 1.119198934412462
+        },
+        "unplanned_only": {
+          "mw_annual": 6256.539726027398,
+          "mw_summer_junsep": 6075.680327868852,
+          "mw_junjul": 4816.3442622950815,
+          "mw_shoulder": 6379.823529411765,
+          "mw_winter": 6292.122222222222,
+          "R_junsep": 0.9710927435805826,
+          "R_junjul": 0.7698095869604953
+        },
+        "planned_only": {
+          "mw_annual": 20590.408219178084,
+          "mw_summer_junsep": 11542.72131147541,
+          "mw_junjul": 11920.737704918032,
+          "mw_shoulder": 31810.58823529412,
+          "mw_winter": 13780.744444444445,
+          "R_junsep": 0.5605872981539249,
+          "R_junjul": 0.5789461567748304
+        }
+      },
+      "R_meas_CAMPD": {
+        "n_windows_total": 10445,
+        "CC_CHP": {
+          "mw_annual": 400.5050342465753,
+          "mw_summer_junsep": 301.9095286885245,
+          "mw_junjul": 330.47827868852454,
+          "R_junsep": 0.7538220568349976,
+          "R_junjul": 0.8251538693145665,
+          "n_windows": 374
+        },
+        "CC_REGULAR": {
+          "mw_annual": 5776.256643835617,
+          "mw_summer_junsep": 1540.1811816939892,
+          "mw_junjul": 800.6834016393443,
+          "R_junsep": 0.26664001907492463,
+          "R_junjul": 0.13861631347246808,
+          "n_windows": 3879
+        },
+        "COAL": {
+          "mw_annual": 15484.01843607306,
+          "mw_summer_junsep": 10308.729132513661,
+          "mw_junjul": 9892.056420765028,
+          "R_junsep": 0.6657657490575866,
+          "R_junjul": 0.6388558927131952,
+          "n_windows": 3482
+        },
+        "CT_CHP": {
+          "mw_annual": 212.91558219178083,
+          "mw_summer_junsep": 117.05327868852459,
+          "mw_junjul": 187.9610655737705,
+          "R_junsep": 0.5497637959775552,
+          "R_junjul": 0.8827961938664832,
+          "n_windows": 291
+        },
+        "ST_CHP": {
+          "mw_annual": 256.78019406392696,
+          "mw_summer_junsep": 227.8132172131148,
+          "mw_junjul": 198.38872950819672,
+          "R_junsep": 0.887191545452292,
+          "R_junjul": 0.7726013691648144,
+          "n_windows": 608
+        },
+        "ST_GAS": {
+          "mw_annual": 4730.41651826484,
+          "mw_summer_junsep": 4071.203415300546,
+          "mw_junjul": 4125.158469945355,
+          "R_junsep": 0.860643750836956,
+          "R_junjul": 0.8720497347363612,
+          "n_windows": 1811
+        },
+        "COVERED_AGGREGATE": {
+          "classes": [
+            "COAL",
+            "ST_GAS",
+            "CC_REGULAR",
+            "CC_CHP",
+            "ST_CHP"
+          ],
+          "mw_annual": 26647.97682648402,
+          "mw_summer_junsep": 16449.836475409833,
+          "mw_junjul": 15346.765300546447,
+          "R_junsep": 0.617301515327843,
+          "R_junjul": 0.5759073343719703
+        },
+        "T26_ct_campd_second_derivation": {
+          "n_ct_windows": 0,
+          "ct_mw_annual": 0.0,
+          "ct_mw_summer_junsep": 0.0,
+          "ct_max_mw_any_hour": 0.0,
+          "classes_present": [
+            "CC_CHP",
+            "CC_REGULAR",
+            "COAL",
+            "CT_CHP",
+            "ST_CHP",
+            "ST_GAS"
+          ]
+        }
+      },
+      "leg2": {
+        "r_star": 1.1039495519165858,
+        "share_current": 0.3,
+        "n_nonfloor_ct": 719,
+        "nonfloor_pmax_gw": 22.054893098,
+        "wefor_capwt_nonfloor": 0.07,
+        "delta_mw_summer_capability_gw": 1.241171499659371,
+        "top200_hours_in_junsep": 200,
+        "cushion_within_20_gw_published": 7.74,
+        "ct_idle_gw_published": 14.18,
+        "reach_vs_cushion": 0.1603580748913916,
+        "reach_vs_total_ct_idle": 0.08752972494071729,
+        "T27_annual_mean_avail_delta_max_abs": 3.2444873779000007e-18,
+        "T27_pass": true
+      },
+      "S_AGE_rederivation": {
+        "vintage_census_by_class": {
+          "(blank)": {
+            "rows": 872,
+            "cap_gw": 16.663800000000002,
+            "n_distinct_model_online_year": 84,
+            "model_online_year_min": 1932,
+            "model_online_year_max": 2024
+          },
+          "CC_CHP": {
+            "rows": 64,
+            "cap_gw": 3.620615000000001,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "CC_REGULAR": {
+            "rows": 333,
+            "cap_gw": 27.420099999999998,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "COAL": {
+            "rows": 446,
+            "cap_gw": 42.792764000000005,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "CT_CHP": {
+            "rows": 114,
+            "cap_gw": 0.8959840700000002,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "CT_PEAKER": {
+            "rows": 733,
+            "cap_gw": 22.281793098,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "ST_CHP": {
+            "rows": 85,
+            "cap_gw": 0.6976352300000002,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "ST_GAS": {
+            "rows": 119,
+            "cap_gw": 10.990995000000002,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "hydro": {
+            "rows": 163,
+            "cap_gw": 2.464872043010753,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2000,
+            "model_online_year_max": 2000
+          }
+        },
+        "registry_path": "/home/user/market-simulator/data/raw/reference/master-plant-registry.csv",
+        "eia860_cap_coverage": 1.0,
+        "true_capwt_online_year": 1998.730839159521,
+        "model_online_year": 2010,
+        "true_capwt_age": 24.26916084047889,
+        "model_age": 13,
+        "cap_past_onset_gw_true": 17.079172098,
+        "cap_past_onset_share_true": 0.7665079745998097,
+        "cap_past_onset_gw_model": 0.0,
+        "wefor_capwt_true": 0.0879964006104795,
+        "wefor_capwt_model": 0.07,
+        "wefor_ratio_true_over_model": 1.2570914372925641,
+        "derate_capwt_true": 0.06199760040698634,
+        "derate_capwt_model": 0.05,
+        "summer_capability_overstatement_gw": 0.38762567241437773,
+        "leg2_reach_scaled_by_true_wefor_gw": 1.560266064433366
+      }
+    },
+    "2024": {
+      "V1": {
+        "ct_junjul_avail": 0.9261028414447648,
+        "ct_junjul_avail_published": 0.926,
+        "ct_junjul_abs_delta": 0.00010284144476480073,
+        "top200_avail_gw": 92.40547401531175,
+        "top200_avail_gw_ALL_FLEET_misscoped": 110.76321191753401,
+        "ct_availcap_top200_gw": 20.518938581555954,
+        "top200_avail_gw_published": 92.41,
+        "top200_rel_delta": 4.8977217706341916e-05,
+        "pass_avail": true,
+        "pass_gw": true,
+        "pass": true
+      },
+      "V2": {
+        "n_gen": 2923,
+        "n_gen_published": 2923,
+        "carry_zones": 6,
+        "pass": true
+      },
+      "V3": {
+        "rows": 366,
+        "rows_expected": 366,
+        "max_abs_region_sum_mismatch_mw": 0.0,
+        "pass": true
+      },
+      "V4_weather_year": 2024,
+      "R_mod": {
+        "n_ct_rows": 733,
+        "n_floor_rows": 14,
+        "n_nonfloor_rows": 719,
+        "ct_pmax_gw": 22.281793098,
+        "floor_pmax_gw": 0.2269,
+        "floor_cap_share": 0.010183201998243416,
+        "nonfloor": {
+          "unavail_annual": 0.1326736039722101,
+          "unavail_summer_junsep": 0.07226178151869901,
+          "unavail_junjul": 0.07099999999999879,
+          "R_mod_junsep": 0.5446583145041799,
+          "R_mod_junjul": 0.5351478958457365,
+          "avail_summer_junsep": 0.927738218481301,
+          "avail_annual": 0.8673263960277899
+        },
+        "floor": {
+          "unavail_annual": 0.34302781715437985,
+          "unavail_summer_junsep": 0.3555163436440842,
+          "unavail_junjul": 0.35550369105332896,
+          "R_mod_junsep": 1.0364067456490966,
+          "R_mod_junjul": 1.0363698606207623,
+          "avail_summer_junsep": 0.6444836563559158,
+          "avail_annual": 0.6569721828456201
+        },
+        "wefor_capwt": 0.06999999999999999,
+        "age_capwt": 14.0,
+        "S_AGE_fires": true
+      },
+      "R_meas_MISO": {
+        "cause_types_composite": [
+          "Derated",
+          "Forced",
+          "Unplanned"
+        ],
+        "composite": {
+          "mw_annual": 24203.290410958904,
+          "mw_summer_junsep": 23406.713114754097,
+          "mw_junjul": 23977.114754098362,
+          "mw_shoulder": 24225.607843137255,
+          "mw_winter": 25245.155555555557,
+          "R_junsep": 0.967088057752506,
+          "R_junjul": 0.9906551690691555
+        },
+        "derated_only": {
+          "mw_annual": 8099.394520547945,
+          "mw_summer_junsep": 10016.959016393443,
+          "mw_junjul": 9940.508196721312,
+          "mw_shoulder": 6756.385620915033,
+          "mw_winter": 7783.144444444444,
+          "R_junsep": 1.2367540550075302,
+          "R_junjul": 1.2273149766322051
+        },
+        "forced_only": {
+          "mw_annual": 8419.25205479452,
+          "mw_summer_junsep": 6849.573770491803,
+          "mw_junjul": 6602.426229508197,
+          "mw_shoulder": 9043.35294117647,
+          "mw_winter": 9486.066666666668,
+          "R_junsep": 0.813560839598711,
+          "R_junjul": 0.7842057924549611
+        },
+        "unplanned_only": {
+          "mw_annual": 7684.643835616438,
+          "mw_summer_junsep": 6540.180327868852,
+          "mw_junjul": 7434.180327868852,
+          "mw_shoulder": 8425.869281045752,
+          "mw_winter": 7975.944444444444,
+          "R_junsep": 0.851071366190938,
+          "R_junjul": 0.9674072718130736
+        },
+        "planned_only": {
+          "mw_annual": 17619.964383561644,
+          "mw_summer_junsep": 10507.868852459016,
+          "mw_junjul": 9183.442622950819,
+          "mw_shoulder": 26641.549019607843,
+          "mw_winter": 11924.111111111111,
+          "R_junsep": 0.5963615262617794,
+          "R_junjul": 0.5211953000040348
+        }
+      },
+      "R_meas_CAMPD": {
+        "n_windows_total": 10445,
+        "CC_CHP": {
+          "mw_annual": 343.4192808219178,
+          "mw_summer_junsep": 182.1172131147541,
+          "mw_junjul": 273.4669398907103,
+          "R_junsep": 0.530305732045348,
+          "R_junjul": 0.796306308825212,
+          "n_windows": 374
+        },
+        "CC_REGULAR": {
+          "mw_annual": 6116.099497716895,
+          "mw_summer_junsep": 2652.125853825137,
+          "mw_junjul": 1905.9579918032787,
+          "R_junsep": 0.4336302662857529,
+          "R_junjul": 0.3116296575153432,
+          "n_windows": 3879
+        },
+        "COAL": {
+          "mw_annual": 15182.522899543379,
+          "mw_summer_junsep": 9515.8018784153,
+          "mw_junjul": 8768.419672131147,
+          "R_junsep": 0.6267602519935268,
+          "R_junjul": 0.5775337689360482,
+          "n_windows": 3482
+        },
+        "CT_CHP": {
+          "mw_annual": 218.01230593607303,
+          "mw_summer_junsep": 186.22609289617486,
+          "mw_junjul": 288.9873633879781,
+          "R_junsep": 0.8541999136084606,
+          "R_junjul": 1.3255552806854713,
+          "n_windows": 291
+        },
+        "ST_CHP": {
+          "mw_annual": 253.35311643835615,
+          "mw_summer_junsep": 198.46366120218582,
+          "mw_junjul": 159.58360655737707,
+          "R_junsep": 0.7833480163662183,
+          "R_junjul": 0.6298861004782851,
+          "n_windows": 608
+        },
+        "ST_GAS": {
+          "mw_annual": 4332.290799086758,
+          "mw_summer_junsep": 3752.812739071038,
+          "mw_junjul": 3974.1868852459015,
+          "R_junsep": 0.8662421137247127,
+          "R_junjul": 0.9173407487058938,
+          "n_windows": 1811
+        },
+        "COVERED_AGGREGATE": {
+          "classes": [
+            "COAL",
+            "ST_GAS",
+            "CC_REGULAR",
+            "CC_CHP",
+            "ST_CHP"
+          ],
+          "mw_annual": 26227.685593607304,
+          "mw_summer_junsep": 16301.321345628417,
+          "mw_junjul": 15081.615095628415,
+          "R_junsep": 0.6215310644718753,
+          "R_junjul": 0.5750265322421123
+        },
+        "T26_ct_campd_second_derivation": {
+          "n_ct_windows": 0,
+          "ct_mw_annual": 0.0,
+          "ct_mw_summer_junsep": 0.0,
+          "ct_max_mw_any_hour": 0.0,
+          "classes_present": [
+            "CC_CHP",
+            "CC_REGULAR",
+            "COAL",
+            "CT_CHP",
+            "ST_CHP",
+            "ST_GAS"
+          ]
+        }
+      },
+      "leg2": {
+        "r_star": 0.967088057752506,
+        "share_current": 0.3,
+        "n_nonfloor_ct": 719,
+        "nonfloor_pmax_gw": 22.054893098,
+        "wefor_capwt_nonfloor": 0.07,
+        "delta_mw_summer_capability_gw": 1.029878906047878,
+        "top200_hours_in_junsep": 196,
+        "cushion_within_20_gw_published": 7.56,
+        "ct_idle_gw_published": 12.9,
+        "reach_vs_cushion": 0.1362273685248516,
+        "reach_vs_total_ct_idle": 0.0798355741122386,
+        "T27_annual_mean_avail_delta_max_abs": 0.0,
+        "T27_pass": true
+      },
+      "S_AGE_rederivation": {
+        "vintage_census_by_class": {
+          "(blank)": {
+            "rows": 872,
+            "cap_gw": 16.663800000000002,
+            "n_distinct_model_online_year": 84,
+            "model_online_year_min": 1932,
+            "model_online_year_max": 2024
+          },
+          "CC_CHP": {
+            "rows": 64,
+            "cap_gw": 3.620615000000001,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "CC_REGULAR": {
+            "rows": 333,
+            "cap_gw": 27.420099999999998,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "COAL": {
+            "rows": 446,
+            "cap_gw": 42.792764000000005,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "CT_CHP": {
+            "rows": 114,
+            "cap_gw": 0.8959840700000002,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "CT_PEAKER": {
+            "rows": 733,
+            "cap_gw": 22.281793098,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "ST_CHP": {
+            "rows": 86,
+            "cap_gw": 0.6982775600000002,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "ST_GAS": {
+            "rows": 115,
+            "cap_gw": 10.987050000000004,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "hydro": {
+            "rows": 160,
+            "cap_gw": 2.371509722222222,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2000,
+            "model_online_year_max": 2000
+          }
+        },
+        "registry_path": "/home/user/market-simulator/data/raw/reference/master-plant-registry.csv",
+        "eia860_cap_coverage": 1.0,
+        "true_capwt_online_year": 1998.730839159521,
+        "model_online_year": 2010,
+        "true_capwt_age": 25.26916084047889,
+        "model_age": 14,
+        "cap_past_onset_gw_true": 18.080048098,
+        "cap_past_onset_share_true": 0.8114269806958603,
+        "cap_past_onset_gw_model": 0.0,
+        "wefor_capwt_true": 0.09040933569912347,
+        "wefor_capwt_model": 0.07,
+        "wefor_ratio_true_over_model": 1.2915619385589066,
+        "derate_capwt_true": 0.06360622379941565,
+        "derate_capwt_model": 0.05,
+        "summer_capability_overstatement_gw": 0.4395980421383112,
+        "leg2_reach_scaled_by_true_wefor_gw": 1.3301523963761233
+      }
+    },
+    "2025": {
+      "V1": {
+        "ct_junjul_avail": 0.9194614083949488,
+        "ct_junjul_avail_published": 0.919,
+        "ct_junjul_abs_delta": 0.0004614083949487924,
+        "top200_avail_gw": 89.08534508828241,
+        "top200_avail_gw_ALL_FLEET_misscoped": 106.94660116050464,
+        "ct_availcap_top200_gw": 20.161447358416996,
+        "top200_avail_gw_published": 89.09,
+        "top200_rel_delta": 5.224954223363167e-05,
+        "pass_avail": true,
+        "pass_gw": true,
+        "pass": true
+      },
+      "V2": {
+        "n_gen": 2923,
+        "n_gen_published": 2923,
+        "carry_zones": 6,
+        "pass": true
+      },
+      "V3": {
+        "rows": 365,
+        "rows_expected": 365,
+        "max_abs_region_sum_mismatch_mw": 0.0,
+        "pass": true
+      },
+      "V4_weather_year": 2025,
+      "R_mod": {
+        "n_ct_rows": 733,
+        "n_floor_rows": 14,
+        "n_nonfloor_rows": 719,
+        "ct_pmax_gw": 22.281793098,
+        "floor_pmax_gw": 0.2269,
+        "floor_cap_share": 0.010183201998243416,
+        "nonfloor": {
+          "unavail_annual": 0.13369594226450585,
+          "unavail_summer_junsep": 0.07435261415200345,
+          "unavail_junjul": 0.07770522830400886,
+          "R_mod_junsep": 0.5561321674587792,
+          "R_mod_junjul": 0.581208576624381,
+          "avail_summer_junsep": 0.9256473858479966,
+          "avail_annual": 0.8663040577354941
+        },
+        "floor": {
+          "unavail_annual": 0.29954726252809477,
+          "unavail_summer_junsep": 0.355723928266944,
+          "unavail_junjul": 0.3559441654805699,
+          "R_mod_junsep": 1.1875385715921218,
+          "R_mod_junjul": 1.1882738051968864,
+          "avail_summer_junsep": 0.644276071733056,
+          "avail_annual": 0.7004527374719052
+        },
+        "wefor_capwt": 0.06999999999999999,
+        "age_capwt": 15.0,
+        "S_AGE_fires": true
+      },
+      "R_meas_MISO": {
+        "cause_types_composite": [
+          "Derated",
+          "Forced",
+          "Unplanned"
+        ],
+        "composite": {
+          "mw_annual": 28055.04109589041,
+          "mw_summer_junsep": 31103.090163934427,
+          "mw_junjul": 32671.475409836065,
+          "mw_shoulder": 27023.640522875816,
+          "mw_winter": 25676.62222222222,
+          "R_junsep": 1.1086453253668733,
+          "R_junjul": 1.1645491909338848
+        },
+        "derated_only": {
+          "mw_annual": 8980.498630136986,
+          "mw_summer_junsep": 10545.737704918032,
+          "mw_junjul": 10840.83606557377,
+          "mw_shoulder": 7603.228758169935,
+          "mw_winter": 9200.08888888889,
+          "R_junsep": 1.174293114363202,
+          "R_junjul": 1.2071530225720224
+        },
+        "forced_only": {
+          "mw_annual": 10078.709589041096,
+          "mw_summer_junsep": 10812.188524590163,
+          "mw_junjul": 11064.131147540984,
+          "mw_shoulder": 9724.62091503268,
+          "mw_winter": 9686.388888888889,
+          "R_junsep": 1.0727750838605967,
+          "R_junjul": 1.0977725917979984
+        },
+        "unplanned_only": {
+          "mw_annual": 8995.83287671233,
+          "mw_summer_junsep": 9745.16393442623,
+          "mw_junjul": 10766.508196721312,
+          "mw_shoulder": 9695.790849673203,
+          "mw_winter": 6790.144444444444,
+          "R_junsep": 1.0832975743306332,
+          "R_junjul": 1.196832838523797
+        },
+        "planned_only": {
+          "mw_annual": 20634.254794520548,
+          "mw_summer_junsep": 13577.72950819672,
+          "mw_junjul": 12917.065573770491,
+          "mw_shoulder": 31165.503267973858,
+          "mw_winter": 12296.644444444444,
+          "R_junsep": 0.6580188935052941,
+          "R_junjul": 0.6260010696970086
+        }
+      },
+      "R_meas_CAMPD": {
+        "n_windows_total": 10445,
+        "CC_CHP": {
+          "mw_annual": 569.0586529680367,
+          "mw_summer_junsep": 689.0397882513661,
+          "mw_junjul": 717.6041666666666,
+          "R_junsep": 1.210841421455494,
+          "R_junjul": 1.261037263775644,
+          "n_windows": 374
+        },
+        "CC_REGULAR": {
+          "mw_annual": 7326.31656392694,
+          "mw_summer_junsep": 4089.270150273224,
+          "mw_junjul": 3941.3045081967216,
+          "R_junsep": 0.5581618149573045,
+          "R_junjul": 0.5379653573260509,
+          "n_windows": 3879
+        },
+        "COAL": {
+          "mw_annual": 11817.61438356164,
+          "mw_summer_junsep": 9414.083640710382,
+          "mw_junjul": 8637.574180327867,
+          "R_junsep": 0.7966145564713483,
+          "R_junjul": 0.730906754949017,
+          "n_windows": 3482
+        },
+        "CT_CHP": {
+          "mw_annual": 1263.0264383561641,
+          "mw_summer_junsep": 1109.751775956284,
+          "mw_junjul": 1182.0256830601093,
+          "R_junsep": 0.8786449295555777,
+          "R_junjul": 0.935867727835153,
+          "n_windows": 291
+        },
+        "ST_CHP": {
+          "mw_annual": 952.7670433789953,
+          "mw_summer_junsep": 894.3602800546446,
+          "mw_junjul": 850.2773907103824,
+          "R_junsep": 0.9386977501685925,
+          "R_junjul": 0.8924294733105665,
+          "n_windows": 608
+        },
+        "ST_GAS": {
+          "mw_annual": 3914.6156735159816,
+          "mw_summer_junsep": 3259.169706284153,
+          "mw_junjul": 3433.5315573770486,
+          "R_junsep": 0.8325644145180853,
+          "R_junjul": 0.8771056583169405,
+          "n_windows": 1811
+        },
+        "COVERED_AGGREGATE": {
+          "classes": [
+            "COAL",
+            "ST_GAS",
+            "CC_REGULAR",
+            "CC_CHP",
+            "ST_CHP"
+          ],
+          "mw_annual": 24580.372317351594,
+          "mw_summer_junsep": 18345.923565573772,
+          "mw_junjul": 17580.29180327869,
+          "R_junsep": 0.7463647551271285,
+          "R_junjul": 0.7152166605250541
+        },
+        "T26_ct_campd_second_derivation": {
+          "n_ct_windows": 0,
+          "ct_mw_annual": 0.0,
+          "ct_mw_summer_junsep": 0.0,
+          "ct_max_mw_any_hour": 0.0,
+          "classes_present": [
+            "CC_CHP",
+            "CC_REGULAR",
+            "COAL",
+            "CT_CHP",
+            "ST_CHP",
+            "ST_GAS"
+          ]
+        }
+      },
+      "leg2": {
+        "r_star": 1.1086453253668733,
+        "share_current": 0.3,
+        "n_nonfloor_ct": 719,
+        "nonfloor_pmax_gw": 22.054893098,
+        "wefor_capwt_nonfloor": 0.07,
+        "delta_mw_summer_capability_gw": 1.2484210343614675,
+        "top200_hours_in_junsep": 200,
+        "cushion_within_20_gw_published": 6.31,
+        "ct_idle_gw_published": 11.25,
+        "reach_vs_cushion": 0.1978480244629901,
+        "reach_vs_total_ct_idle": 0.11097075860990822,
+        "T27_annual_mean_avail_delta_max_abs": 3.2444873779000007e-18,
+        "T27_pass": true
+      },
+      "S_AGE_rederivation": {
+        "vintage_census_by_class": {
+          "(blank)": {
+            "rows": 872,
+            "cap_gw": 16.663800000000002,
+            "n_distinct_model_online_year": 84,
+            "model_online_year_min": 1932,
+            "model_online_year_max": 2024
+          },
+          "CC_CHP": {
+            "rows": 64,
+            "cap_gw": 3.620615000000001,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "CC_REGULAR": {
+            "rows": 333,
+            "cap_gw": 27.420099999999998,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "COAL": {
+            "rows": 446,
+            "cap_gw": 42.792764000000005,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "CT_CHP": {
+            "rows": 114,
+            "cap_gw": 0.8959840700000002,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "CT_PEAKER": {
+            "rows": 733,
+            "cap_gw": 22.281793098,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "ST_CHP": {
+            "rows": 86,
+            "cap_gw": 0.6982775600000002,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "ST_GAS": {
+            "rows": 115,
+            "cap_gw": 10.987050000000004,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2010,
+            "model_online_year_max": 2010
+          },
+          "hydro": {
+            "rows": 160,
+            "cap_gw": 2.371509722222222,
+            "n_distinct_model_online_year": 1,
+            "model_online_year_min": 2000,
+            "model_online_year_max": 2000
+          }
+        },
+        "registry_path": "/home/user/market-simulator/data/raw/reference/master-plant-registry.csv",
+        "eia860_cap_coverage": 1.0,
+        "true_capwt_online_year": 1998.730839159521,
+        "model_online_year": 2010,
+        "true_capwt_age": 26.26916084047889,
+        "model_age": 15,
+        "cap_past_onset_gw_true": 18.857108097999998,
+        "cap_past_onset_share_true": 0.846301193762211,
+        "cap_past_onset_gw_model": 0.0,
+        "wefor_capwt_true": 0.09290279314883129,
+        "wefor_capwt_model": 0.07,
+        "wefor_ratio_true_over_model": 1.3271827592690184,
+        "derate_capwt_true": 0.06526852876588754,
+        "derate_capwt_model": 0.05,
+        "summer_capability_overstatement_gw": 0.4933047883649326,
+        "leg2_reach_scaled_by_true_wefor_gw": 1.6568828731133345
+      }
+    }
+  }
+}
