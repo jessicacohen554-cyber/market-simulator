@@ -8095,6 +8095,44 @@ cards + this entry, nothing else — no lever, no solve, no year touched
 UNCHANGED at `2026-08-12-run192-arm-coal-peak`. Session consumed the
 ercot-197 shorthand. Next shorthand: **ercot-198**.
 
+## ercot-198 (2026-08-14) — T-3b EXECUTED: published-adder overlay-completeness audit — committed overlay INCOMPLETE in 2024 (missing published RTORPA, +0.24 $/MWh dw), near-complete in 2025 (+0.015); NO lever, NO solve, no year scored, NO matrix edit, keeper UNCHANGED
+
+**The signed card-T companion T-3b executed** (T3B-AUDIT lane; card
+`docs/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` §4 T-3b,
+RESOLUTIONS on main at `fb6d08d`). Probe
+`scripts/probes/ercot198_t3b_adder_overlay_audit.py` →
+`results/calibration/ercot198_t3b_adder_overlay_audit.json`; finding
+`docs/FINDING-ercot198-t3b-adder-overlay-audit-2026-08-14.md`. Question
+(card §2(d)): bench `rt_lw_mon` is settlement RTSPP = RTLMP + RTORPA +
+RTORDPA (the design's only two energy-settlement adders, retired at RTC+B
+go-live 2025-12-05); scored `pMon` is the energy-only dual; the committed
+overlay is sidecar `rtordpa_overlay` (= published RTORDPA, verified exact,
+max abs diff 0.0) + `ordc_adder` (the model's endogenous RTORPA analogue —
+measured ≈ ZERO in 2024/2025: 2 and 1 non-zero hours, max $0.15/$0.03).
+**Verdict: 2024 INCOMPLETE — committed 0.240 of 0.477 $/MWh dw settled
+published content (50 %); the missing component is the published RTORPA,
++0.237 dw, concentrated Apr +0.76 / Aug +0.64 / May +0.63 / Nov +0.27.
+2025 NEAR-COMPLETE — 0.395 of 0.410 (96 %), gap +0.015 (Oct +0.13);
+Feb-2025's +1.50 fully captured (gap 0.00).** Card §2(d) restated at full
+magnitude: the T-3a basis wedge is 0.48/0.43 $/MWh mean-of-months
+(2024/2025), not 0.25/0.42 — 2024 doubles, 2025 stands; the "~15 % of the
+2025 uniform bias / ~25 % of Feb-2025" reading stands. Sizes only — T-3a
+stays unsigned with the owner. Intake: the card's "one data ask" resolved
+as already-on-disk — NP6-905-CD curated hourly parquets (complete; 2025
+ends at go-live hour 8112) + recovered raw NP6-323 SCED-interval parquets
+(cross-check; its 2024 file is missing June) + SOM 2024/2025 all-hours
+averages ($0.25/$0.24 and <$0.02/$0.41), all agreeing within aggregation
+basis. One archive print rejected by the settlement-closure guard: 2025
+h4334 (Jun-30 14:00, archive RTORPA $414/h vs settled hub RTSPP $54.96) —
+price-corrected, never settled; it is the whole archive-vs-SOM 2025 RTORPA
+distance. Fences: Q-B/R-A honored (2023 untouched); rule 22/13 clean
+(measured-vs-measured); no mechanism, no ScenarioConfig field, no matrix
+cell/row edit (`ercot_rtordpa_overlay` stays K, read only), no
+keeper/registry/bench contact; keeper UNCHANGED at
+`2026-08-12-run192-arm-coal-peak`. New artifacts: probe + JSON + finding +
+this entry. Session consumed the ercot-198 shorthand. Next shorthand:
+**ercot-199**.
+
 ## ercot-201 (2026-08-14) — L2-BUILD PHASE-0 STOP: the chartered E1 dispersion surface is superseded on main (FFR-8B/FFR-9A), and its identification route is barred by an adjudicated prior stop — NOTHING built, NOTHING solved
 
 **Shorthand note (A9.4 race convention):** ercot-198 (T3B-AUDIT), ercot-199
