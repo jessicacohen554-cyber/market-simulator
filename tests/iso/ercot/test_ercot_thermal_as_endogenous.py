@@ -89,8 +89,17 @@ class TestScreenMutualExclusion(unittest.TestCase):
         # gas_cc on the retirement margin: energy revenue alone < going-forward
         # cost, but energy + the exogenous AS credit clears it. Fed the empty
         # derived map, the exogenous credit is suppressed and the year is a loss.
+        # The probe reads the LEGACY consecutive-loss counter as its
+        # margin-visibility instrument; the margin computation under test is
+        # shared by both decision rules, so the legacy pin (the same pattern as
+        # test_capacity.py's legacy-branch tests after the FF-1A default flip)
+        # loses no coverage of the mechanism.
         config = ScenarioConfig(
-            iso="ERCOT", weather_year=2025, hours=self.T, as_revenue_enabled=True
+            iso="ERCOT",
+            weather_year=2025,
+            hours=self.T,
+            as_revenue_enabled=True,
+            retirement_rule="legacy",
         )
         gens, fa = _fleet_arrays([("G0", "gas_cc", 100.0)], self.T)
         # going_forward_cost = fixed_om_gas_cc * pmax * 1000.

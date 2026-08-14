@@ -42,12 +42,16 @@ uv run market-sim sweep --sweep <sweep.yaml> [--workers N]
 
 > **Test status:** run `uv run python -m pytest -q` for the current suite; the
 > authoritative pass/fail signal is the CI test job (this README deliberately
-> does not track an exact count, which drifts). A handful of *known,
-> pre-existing* failures are tied to optional local data and are unrelated to
-> setup — the four `test_eia_loader` CAISO/NYISO zonal-share fallback cases,
-> plus a NEISO committed-artifact determinism check. A clean checkout reports
-> almost all passing / 2 skipped alongside these. Don't chase them as part of a
-> docs or environment change.
+> does not track an exact count, which drifts). The formerly known-failing
+> set (`test_eia_loader` zonal-share cases, the NEISO committed-artifact
+> determinism check) was cleared by the 2026-07/08 data completions and the
+> 2026-08 debug sweep — a clean **full** checkout now passes the fast tier
+> (`-m "not slow and not integration and not fulldata"`) with zero expected
+> failures. The fast tier hard-requires `data/raw` (see the ci.yml header);
+> on a data-less/partial checkout, `data/raw`-reading tests fail by design,
+> and `integration`-marked tests additionally need the derived `data/clean`
+> regenerated (`scripts/regenerate_clean.py`). If the fast tier is red on a
+> full checkout, that's a regression to fix, not ambient noise to ignore.
 
 > **Single-year runs are smoke tests only.** `--year 2024` above is for
 > quickly checking the environment works. Rule 16 (`CLAUDE.md`) requires
