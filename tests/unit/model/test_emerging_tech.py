@@ -6,6 +6,7 @@ credit treatment and electrolyzer-efficiency interpolation.
 """
 
 import unittest
+from unittest import mock
 
 import numpy as np
 
@@ -17,6 +18,7 @@ from market_sim.config.constants import (
     MMBTU_PER_MWH,
     OFFSHORE_WIND_MIN_CF,
     OFFSHORE_WIND_PARAMS,
+    QUEUE_CAP_PER_TECH_GW,
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
@@ -366,27 +368,41 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
         config = ScenarioConfig(
             iso="ERCOT", h2_available_year=2099, egs_available_year=2099
         )
-        # Year 2032 is the last year the §45Q credit is available (OBBBA).
-        cheap_carbon, _ = apply_economic_new_entry(
-            [],
-            np.full(8760, 110.0),
-            2032,
-            config,
-            "ERCOT",
-            gas_price_per_mmbtu=4.0,
-            carbon_price=0.0,
-        )
-        self.assertFalse(any(g.fuel_type == "gas_cc_ccs" for g in cheap_carbon))
-        dear_carbon, _ = apply_economic_new_entry(
-            [],
-            np.full(8760, 110.0),
-            2032,
-            config,
-            "ERCOT",
-            gas_price_per_mmbtu=4.0,
-            carbon_price=200.0,
-        )
-        self.assertTrue(any(g.fuel_type == "gas_cc_ccs" for g in dear_carbon))
+        # Wind and solar are zeroed for the same reason hydrogen and geothermal
+        # are: this test isolates CCS against UNABATED GAS, and VRE is neither.
+        # Without this they consume the whole ISO-total queue budget
+        # (QUEUE_CAP_GW["ERCOT"] = 12 GW) before any thermal candidate is
+        # reached, so the assertion below would turn on how much queue headroom
+        # VRE happens to leave rather than on the carbon price. That dependence
+        # was latent until D-31 raised the ERCOT solar cap 5.0 -> 8.0 GW/yr
+        # (wind 5 + solar 8 > 12 saturates the budget; at solar 5.0 exactly
+        # 2 GW of headroom happened to survive). Zeroing the two VRE caps
+        # states the isolation the docstring already claims, and does not
+        # re-encode the superseded 5.0.
+        with mock.patch.dict(
+            QUEUE_CAP_PER_TECH_GW["ERCOT"], {"wind": 0.0, "solar": 0.0}
+        ):
+            # Year 2032 is the last year the §45Q credit is available (OBBBA).
+            cheap_carbon, _ = apply_economic_new_entry(
+                [],
+                np.full(8760, 110.0),
+                2032,
+                config,
+                "ERCOT",
+                gas_price_per_mmbtu=4.0,
+                carbon_price=0.0,
+            )
+            self.assertFalse(any(g.fuel_type == "gas_cc_ccs" for g in cheap_carbon))
+            dear_carbon, _ = apply_economic_new_entry(
+                [],
+                np.full(8760, 110.0),
+                2032,
+                config,
+                "ERCOT",
+                gas_price_per_mmbtu=4.0,
+                carbon_price=200.0,
+            )
+            self.assertTrue(any(g.fuel_type == "gas_cc_ccs" for g in dear_carbon))
 
     def test_geothermal_absent_in_ercot_before_egs_year(self):
         config = ScenarioConfig(iso="ERCOT")  # egs_available_year = 2030
