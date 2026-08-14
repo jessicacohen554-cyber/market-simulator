@@ -2566,10 +2566,40 @@ def test_monthly_ttc_noop_for_other_isos_and_untabulated_years():
     out_pjm = _apply_iso_monthly_ttc(ttc, cfg, "PJM", 2023, 8760)
     assert np.asarray(out_pjm).ndim == 1
     np.testing.assert_array_equal(out_pjm, ttc)
-    # NYISO year with no table entry.
-    out_old = _apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2099, 8760)
-    assert np.asarray(out_old).ndim == 1
-    np.testing.assert_array_equal(out_old, ttc)
+    # NYISO year BEYOND the table -> forward edge, still a silent no-op. There
+    # the static value is the correct one (it is this series' own measured
+    # post-upgrade annual mean; the forward level channel is the
+    # transmission-expansion registry on top of it).
+    out_fwd = _apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2099, 8760)
+    assert np.asarray(out_fwd).ndim == 1
+    np.testing.assert_array_equal(out_fwd, ttc)
+
+
+def test_ttc_refuses_untabulated_historical_nyiso_year():
+    """A NYISO year at/below the table's span with no entry RAISES (nyiso-134 D-2).
+
+    The appliers used to no-op silently, which left the link on the STATIC
+    post-upgrade 2,850 MW Central-East limit — transmission that did not exist
+    before Dec-2023. 2022 solved that way would have run +56 % on the annual
+    mean and 3.9x in Nov-2022, relieving exactly the upstate->downstate
+    congestion that forms the downstate scarcity C3c measures.
+    """
+    import pytest
+
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.pipeline.ttc import apply_iso_monthly_ttc, apply_iso_year_ttc
+
+    cfg = get_iso_config("NYISO")
+    ttc = np.array([link.ttc_mw for link in cfg.links], dtype=float)
+    for call in (
+        lambda: apply_iso_year_ttc(cfg, "NYISO", 2016),
+        lambda: apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2016, 8760),
+    ):
+        with pytest.raises(ValueError, match="no NYISO_INTERFACE_TTC"):
+            call()
+    # Non-NYISO is untouched by the guard (early return before it).
+    caiso = get_iso_config("CAISO")
+    assert apply_iso_year_ttc(caiso, "CAISO", 2016) is caiso
 
 
 def test_west_oversupply_collapse_freq_counts_oversupply_hours():

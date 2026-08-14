@@ -118,6 +118,54 @@ def apply_ttc_overrides(
     return ttc
 
 
+def _refuse_missing_year(table: str, year: int, tabulated) -> None:
+    """Refuse a NYISO **historical** year with no measured Central-East entry.
+
+    Both appliers below used to ``return`` unchanged when their table had no
+    row for ``year``. That is a SILENT no-op, and its consequence is not
+    neutral: with no override the link keeps the ``iso_configs`` STATIC value,
+    which carries the **post-upgrade** 2,850 MW Central-East limit (the NY
+    Transco AC Transmission project, in service Dec 2023). Any pre-upgrade year
+    therefore solved with transmission that did not exist yet — for 2022,
+    2,850 MW against a measured annual mean of 1,825 MW (+56 %), and against a
+    measured 725 MW in Nov-2022 (3.9x). Central-East is the ISO's main
+    upstate->downstate congestion path, so the error relieves precisely the
+    congestion that forms downstate scarcity prices, i.e. it lands on the open
+    C3c caveat and makes any such run uninterpretable.
+
+    The refusal is scoped to years **at or before the last tabulated year**,
+    which is exactly the set where a measured envelope should exist and its
+    absence is a gap. A year *beyond* the table is the forward edge and stays a
+    silent no-op: there the static value is not a stale fallback but the
+    correct one — it IS this series' measured post-upgrade annual mean, and the
+    forecast level channel is the transmission-expansion registry on top of it
+    (see the ``NYISO_INTERFACE_TTC_BY_YEAR`` comment). That keeps forecast runs
+    and forward-edge probes working while closing the historical trap; these
+    helpers are backcast-only by construction anyway (module docstring).
+
+    Args:
+        table: Name of the constants table missing the year (for the message).
+        year: The year with no entry.
+        tabulated: The table's available years; the refusal window is
+            ``year <= max(tabulated)``. A no-op when the table is empty.
+
+    Raises:
+        ValueError: When ``year`` falls at or before the last tabulated year.
+    """
+    years = [int(y) for y in tabulated]
+    if not years or year > max(years):
+        return
+    raise ValueError(
+        f"NYISO backcast year {year} has no {table} entry. The measured "
+        "Central-East envelope must be derived before this year can be solved: "
+        "run scripts/data/derive_nyiso_central_east_ttc.py (it prints the MIS "
+        "re-fetch command) and add the year to market_sim.config.constants. "
+        "This refusal is deliberate — the previous silent fallback used the "
+        "STATIC post-upgrade 2,850 MW limit, which is wrong for every "
+        "pre-Dec-2023 year (nyiso-134 defect D-2)."
+    )
+
+
 def apply_iso_year_ttc(iso_config, iso: str, year: int):
     """Return ``iso_config`` with year-varying interface TTCs applied.
 
@@ -134,6 +182,9 @@ def apply_iso_year_ttc(iso_config, iso: str, year: int):
         return iso_config
     overrides = NYISO_INTERFACE_TTC_BY_YEAR.get(year)
     if not overrides:
+        _refuse_missing_year(
+            "NYISO_INTERFACE_TTC_BY_YEAR", year, NYISO_INTERFACE_TTC_BY_YEAR
+        )
         return iso_config
     links = []
     for link in iso_config.links:
@@ -180,6 +231,9 @@ def apply_iso_monthly_ttc(ttc, iso_config, iso: str, year: int, hours: int):
         return ttc
     monthly = NYISO_INTERFACE_TTC_BY_MONTH.get(year)
     if not monthly:
+        _refuse_missing_year(
+            "NYISO_INTERFACE_TTC_BY_MONTH", year, NYISO_INTERFACE_TTC_BY_MONTH
+        )
         return ttc
     leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
     days_per_month = [31, 29 if leap else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]

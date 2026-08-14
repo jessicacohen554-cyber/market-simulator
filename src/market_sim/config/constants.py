@@ -3840,7 +3840,30 @@ PJM_INTERFACE_LINK_MAP: dict[tuple[str, str], tuple[str, ...]] = {
 # (data/raw/transmission-expansion/nyiso.csv) over the static 2,850 MW, which is
 # itself this series' measured post-upgrade annual mean. See
 # scripts/probes/nyiso104_central_east_ttc_classification.py.
+# 2018-2022 ADDED 2026-08-14 (nyiso-134), same producer and same recipe: the
+# calendar-month mean of the posted CENT EAST "TTC (DAM)" column, rounded to
+# 25 MW. Verified before writing — re-deriving 2023/2024/2025 from the postings
+# reproduces the committed 1750/2850/2850 and every committed monthly value
+# EXACTLY, so the new years rest on the identical construction.
+#
+# WHY THE GAP MATTERED (defect D-2,
+# results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md): both
+# appliers in market_sim.pipeline.ttc used to return unchanged for a year with
+# no entry, so an out-of-training solve silently fell back to the STATIC
+# topology value — 2,850 MW, the POST-upgrade limit. 2022 is a PRE-upgrade year
+# (the NY Transco AC Transmission project entered service Dec 2023): its
+# measured annual mean is 1,825 MW, so the fallback overstated Central-East
+# transfer capability by 1,025 MW (+56 %), and in Nov-2022 — measured 725 MW —
+# by 3.9x. That is the ISO's main upstate->downstate congestion path, and
+# relieving it suppresses exactly the downstate scarcity C3c measures. The
+# appliers now FAIL LOUD rather than no-op, so a future missing year cannot
+# repeat this silently.
 NYISO_INTERFACE_TTC_BY_YEAR: dict[int, dict[tuple[str, str], float]] = {
+    2018: {("Upstate_West", "Capital_Hudson"): 2475.0},
+    2019: {("Upstate_West", "Capital_Hudson"): 2475.0},
+    2020: {("Upstate_West", "Capital_Hudson"): 2400.0},
+    2021: {("Upstate_West", "Capital_Hudson"): 2025.0},
+    2022: {("Upstate_West", "Capital_Hudson"): 1825.0},
     2023: {("Upstate_West", "Capital_Hudson"): 1750.0},
     2024: {("Upstate_West", "Capital_Hudson"): 2850.0},
     2025: {("Upstate_West", "Capital_Hudson"): 2850.0},
@@ -3854,6 +3877,86 @@ NYISO_INTERFACE_TTC_BY_YEAR: dict[int, dict[tuple[str, str], float]] = {
 # classification note on _BY_YEAR above). Regenerate with
 # scripts/data/derive_nyiso_central_east_ttc.py after refreshing the postings.
 NYISO_INTERFACE_TTC_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
+    2018: {
+        ("Upstate_West", "Capital_Hudson"): [
+            2700.0,
+            2625.0,
+            2575.0,
+            2500.0,
+            2350.0,
+            2375.0,
+            2425.0,
+            2400.0,
+            2350.0,
+            2175.0,
+            2575.0,
+            2575.0,
+        ]
+    },
+    2019: {
+        ("Upstate_West", "Capital_Hudson"): [
+            2650.0,
+            2650.0,
+            2600.0,
+            2325.0,
+            2300.0,
+            2500.0,
+            2675.0,
+            2650.0,
+            2475.0,
+            2225.0,
+            2175.0,
+            2450.0,
+        ]
+    },
+    2020: {
+        ("Upstate_West", "Capital_Hudson"): [
+            2400.0,
+            2400.0,
+            2275.0,
+            2350.0,
+            2400.0,
+            2500.0,
+            2625.0,
+            2575.0,
+            2375.0,
+            2400.0,
+            2150.0,
+            2450.0,
+        ]
+    },
+    2021: {
+        ("Upstate_West", "Capital_Hudson"): [
+            2550.0,
+            2400.0,
+            1750.0,
+            1225.0,
+            1475.0,
+            2225.0,
+            2450.0,
+            2625.0,
+            1950.0,
+            1475.0,
+            1550.0,
+            2500.0,
+        ]
+    },
+    2022: {
+        ("Upstate_West", "Capital_Hudson"): [
+            2625.0,
+            2575.0,
+            1575.0,
+            1275.0,
+            1125.0,
+            2200.0,
+            2475.0,
+            2425.0,
+            1700.0,
+            1175.0,
+            725.0,
+            1975.0,
+        ]
+    },
     2023: {
         ("Upstate_West", "Capital_Hudson"): [
             1950.0,
