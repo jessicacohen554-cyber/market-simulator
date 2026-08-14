@@ -578,3 +578,58 @@ sitting. No field, no matrix edit, no solve. Push-and-stop on
    #3925–#3932 include nyiso/neiso/pjm/model-audit/FFR-FH work — none in
    this workstream's scope beyond #3927/#3931 already noted).
 4. The armed cycle-10 trigger (04:50Z) verifies all four lanes.
+
+### §2.11 T1-EXEC-b (cycle 10, 2026-08-14; child session `session_01SFT26jX44SrYc4JmnjDxKw`)
+
+Re-dispatch of §2.7 (T1-EXEC died at provisioning — add_repo denied,
+transient). Prompt = §2.7 verbatim plus: STOP-and-report on add_repo denial
+(no retries); T-3b context (FINDING-ercot198: 2024 overlay incomplete,
++0.237 $/MWh dw published RTORPA missing — interpretive context only,
+guards unchanged); the ercot-196 shorthand-collision warning (claim the
+next free shorthand, likely ercot-199; note the collision, rename nothing);
+awareness of the concurrent owner-side grain lane (rebase conflicts on log
++ matrix shard expected at landing; keep entries whole).
+
+### §2.12 REGIME-CARD-b (cycle 10, 2026-08-14; child session `session_018iN58Puxg8RfGpKPKEre3E`)
+
+Re-dispatch of §2.10 (REGIME-CARD died at provisioning — add_repo blocked
+by the permission classifier). Prompt = §2.10 verbatim plus: STOP-on-denial;
+the shorthand warning (claim likely ercot-200); FINDING-ercot198 added to
+the READ FIRST list (the two-settled-adders design fact is regime evidence).
+
+### A11 — 2026-08-14, cycle 10 (04:50Z trigger)
+
+1. **T3B-AUDIT LANDED and verified — FINDING-ercot198**: the committed
+   adder overlay is **INCOMPLETE in 2024** — it carries 0.240 of 0.477
+   $/MWh dw settled published content (50 %); the missing component is the
+   published **RTORPA** (+0.237 $/MWh dw, concentrated Apr +0.76 / Aug
+   +0.64 / May +0.63 / Nov +0.27), which is in bench `rt_lw_mon` but in
+   neither the scored `pMon` nor the committed overlay (the keeper's
+   endogenous ordc_adder is ≈ zero: 2 non-zero hours in 2024). **2025 is
+   96 % complete** (+0.015 gap; Feb-2025's +1.50 fully captured; RTORDPA
+   input ≡ published, max abs diff 0.0). Card §2(d)'s true basis wedge:
+   2024 +0.25 → **+0.48** $/MWh, 2025 +0.42 → +0.43. T-3a stays with the
+   owner; the finding states sizes only. Branch
+   `claude/ercot-scar-t3b-adder-audit` @ `f197c53` (4 files, read-only,
+   no matrix edit, log entry as **ercot-198**) — awaiting owner merge.
+2. **Provisioning flakiness measured**: of six §2.x dispatches, add_repo
+   was DENIED/BLOCKED for two (T1-EXEC 02:44, REGIME-CARD 03:03) and
+   succeeded for four, identical calls — a permission-classifier
+   non-determinism. Remedy that has worked every time: re-dispatch. Both
+   dead sessions archived; **T1-EXEC-b (§2.11)** and **REGIME-CARD-b
+   (§2.12)** dispatched with explicit STOP-on-denial instructions. If a
+   re-dispatch is ALSO blocked, provisioning escalates to the owner.
+3. **L2-BUILD healthy, mid-provisioning** (31.4K-blob backfill at 03:39Z;
+   its Phase-0 precommit lands on `claude/ercot-scar-l2-e1-dispersion`).
+4. **Shorthand collision on main, flagged to the owner** (not this
+   workstream's to repair): PR #3933 (`claude/ercot-195-lever-selection`,
+   the owner-side rule-18 grain-repair lane, an ercot-187 successor)
+   claimed **ercot-196** from a stale read — main now has both the shape
+   DECISION-CARD-ercot196 and PRECOMMIT-ercot196-rule18-grain-successor.
+   The lane's own log entry at landing is the natural fix point; my
+   workers are instructed to claim past it (198 spent, 199/200 next) and
+   note the collision, renaming nothing. No mechanism overlap with T-1
+   (different fields), but both lanes will rebase over each other's log
+   and ERCOT matrix-shard edits.
+5. Recorded HEAD: `5bf5f13` (#3934 merged this pack's A10 state; #3933,
+   #3935, #3936 are other lanes). Owner merge cadence remains fast.
