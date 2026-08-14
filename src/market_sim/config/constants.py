@@ -2129,7 +2129,7 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
         2025: [0.98, 0.98, 0.89, 0.96, 1.00, 0.99, 0.97, 0.98, 0.98, 0.99, 0.97, 1.00],
     },
     # NEISO = Millstone units 2+3 (EIA 566, CT, 2,108 MW combined) + Seabrook
-    # (EIA 6115, NH, 1,247 MW) — fleet nameplate 3,355 MW. Pilgrim (EIA 6098,
+    # (EIA 6115, NH, 1,247 MW) — fleet nameplate 3,355 MW. Pilgrim (EIA 1590,
     # Plymouth MA) retired May 2019 and Vermont Yankee (EIA 7350) retired Dec
     # 2014; both are absent from the EIA-860 operable fleet. Monthly EIA-923
     # net generation / (fleet nameplate x hours in month), clipped at 1.0
@@ -2143,7 +2143,48 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     #   2025 Apr-May 0.75/0.77 — a Millstone unit refuel (0.59/0.64); Seabrook full year.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
     # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos NEISO.
+    #
+    # 2019-2022 added 2026-08-14 (neiso-93 envelope repair) from the SAME
+    # producer and the same EIA-923 source, after `--check` proved the
+    # committed 2023-2025 block re-derives EXACTLY (byte-unchanged). Data-change
+    # citation per rule 23 [R-FROZEN-DERIVE]: these are new YEARS of the
+    # measured series — a SOURCE-COVERAGE extension, not a re-tune of an
+    # existing one, and nothing here is identified against any year's residual.
+    # Before this block an out-of-training year fell through BOTH measured
+    # layers onto the static climatology NUCLEAR_MONTHLY_CF['NEISO'] (mean
+    # 0.982) with no warning — worth +0.96 TWh of phantom nuclear in 2021
+    # (+1.25 TWh in October alone), +0.61 TWh in 2022, +2.51 TWh in 2020
+    # (measured: ASSESSMENT-neiso92-2021-readiness-2026-08-13.md §3.4).
+    # Each dip is attributed to a single reactor, same standard as above:
+    #   2019 Apr-May 0.69/0.79 — a Millstone unit refuel (0.50/0.66); Seabrook full.
+    #   2020 Apr 0.43 — Seabrook refuel (plant CF 0.06) + a Millstone unit (0.65).
+    #   2020 Oct 0.64 — a Millstone unit (plant CF 0.42; Nov 0.75).
+    #   2021 Oct 0.43 — Seabrook refuel (plant CF 0.03; Nov 0.82) + Millstone (0.66).
+    #   2022 Apr-May 0.70/0.63 — a Millstone unit refuel (0.53/0.41); Seabrook full.
+    # CROSS-VALIDATED against EIA-930 ISNE `NUC` hourly telemetry — an
+    # independent collection from EIA-923 — on the same fleet pmax
+    # (scripts/probes/_neiso93_nuclear_crossval.py). |mean CF diff| 2020 0.002,
+    # 2021 0.003, 2022 0.001: TIGHTER than the committed tuned years (2023
+    # 0.001, 2024 0.004, 2025 0.007). Oct-2021 reads 0.43 (923) vs 0.426 (930),
+    # so the deep refuelling outage is confirmed by hourly telemetry.
+    #   CAVEAT (fleet vintage, material for 2019 ONLY): the CF is measured
+    #   against the MODEL fleet's pmax, and the model's NEISO nuclear fleet is
+    #   the current 2-plant EIA-860 snapshot. Pilgrim (EIA 1590, 677 MW) ran
+    #   Jan-May 2019 and generated 2.177 TWh before retiring 31 May 2019, but
+    #   is absent from that snapshot, so the 2019 row anchors the 3,355 MW
+    #   Millstone+Seabrook fleet only — it does NOT restore Pilgrim. The
+    #   EIA-930 cross-check shows this directly: Jan-May 2019 telemetry implies
+    #   a fleet CF of 1.18-1.20 (physically impossible for 3,355 MW) and the
+    #   923-930 gap collapses to 0.003-0.005 from June onward, exactly when
+    #   Pilgrim stops. A 2019 solve is short ~2.18 TWh of nuclear regardless of
+    #   this overlay. 2020-2022 are unaffected (Pilgrim absent from both).
+    #   2026 is deliberately ABSENT: EIA-923 carries only Jan-Apr 2026, so a
+    #   2026 anchor would post a false zero for H1's May-Jun.
     "NEISO": {
+        2019: [1.00, 1.00, 0.99, 0.69, 0.79, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.90],
+        2020: [0.99, 1.00, 0.99, 0.43, 0.71, 0.87, 0.99, 0.98, 0.99, 0.64, 0.84, 0.98],
+        2021: [0.93, 1.00, 1.00, 1.00, 1.00, 0.89, 0.99, 0.98, 0.99, 0.43, 0.86, 1.00],
+        2022: [0.94, 1.00, 0.99, 0.70, 0.63, 0.95, 0.99, 0.99, 0.99, 1.00, 1.00, 1.00],
         2023: [0.98, 0.98, 0.99, 0.41, 0.60, 0.38, 0.93, 0.93, 0.91, 0.84, 0.63, 0.87],
         2024: [0.88, 1.00, 1.00, 1.00, 0.99, 1.00, 0.99, 0.98, 0.81, 0.44, 0.76, 0.97],
         2025: [1.00, 1.00, 1.00, 0.75, 0.77, 1.00, 0.99, 0.93, 0.99, 0.86, 1.00, 1.00],
