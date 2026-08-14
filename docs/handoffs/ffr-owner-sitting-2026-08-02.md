@@ -4702,3 +4702,102 @@ the trigger; this desk (or its successor) executes on it.
 Queue: exactly two small lanes in flight (D-31-ADOPT, D-32-F6FIX — §0at). When both
 land and are adjudicated, this desk CLOSES: remaining residuals are Q.2-at-G2 (AT.4)
 and nothing else. No FFR or FH dispatch remains or is contemplated.
+
+## Addendum AU — refresh @ `8f83900`: D-32 LANDED and ACCEPTED (exemplary); D-31 still unpasted; the NYISO convention residual routed; Q.2's hold vindicated by an open keeper PR
+
+*Written 2026-08-14, session claude/ffr-fh-workstream-handoff-w8w7dg. Main moved TWICE
+during this sitting (`b48d4b1` → `f4d9888` → `8f83900`); every claim below is read from
+`8f83900` artifacts after the second fetch. Addendum AT is merged and on main.*
+
+### AU.1 D-32-F6FIX — LANDED, adjudicated ACCEPTED (#3949, `docs/handoffs/d32-f6fix-2026-08-13.md`)
+
+Option A exactly as signed, two files, nothing else touched. **All five acceptance rows
+met**, verified against the handoff's own measured tables:
+
+* **PJM 16 of 16 bit-exact** (0 hours over tolerance, max ≤9.8e-05 = float32 storage and
+  nothing else). **CAISO 7 of 8** (≤2.7e-05); the one miss, 2023 DAM at 48 h, is the raw
+  product's OASIS-retention NaN gap — **exactly what the finding predicted**, not a
+  reduction defect. **NEISO 2–45 h/yr** from ~8,500, mean ≤$0.058.
+* `_TOL` **unchanged at 1e-2**; the parity test passes **un-skipped** (2 passed on the
+  rebuilt clean tree). The false line-35 docstring claim is corrected rather than the
+  tolerance widened — option C stayed rejected in practice, not just on paper.
+* Raw product byte-untouched **verified, not asserted** (9 artifacts hashed before the
+  first edit, `sha256sum -c` 9× OK after). Both guards exit 0. Keeper risk none,
+  affirmatively argued: clean backend unreachable at defaults, `MARKET_SIM_USE_CLEAN`
+  set nowhere, NYISO keeper `2026-08-08-nyiso-132-cf-arm` does not move.
+* Rule 26 `[R-DELETE]` honoured without being asked: the prevailing-clock `_hour_of_year`
+  is **deleted, not left callable**. The new `_HUB_SPECS` table is **fail-closed** — an
+  ISO absent from it returns `None` rather than guessing a clock or a hub.
+
+**Two things make this better than compliance.** (a) The lane's own cross-check: the
+shipped reduction matches, on **all 44 partitions**, a candidate written independently in
+the *diagnosis* lane — so the code implements the recipe the finding measured, rather
+than a recipe that merely scores well. (b) The NYISO residual is reported at full
+magnitude with a **measured argument for why it is a third, separate defect**: "a clock
+or hub repair fixes hours wholesale, and this doesn't" — the hour count barely moves
+(8,739→8,570, 8,748→8,660) while maxima move only where dropping the external proxy
+buses happens to remove an outlier. That is the correct shape of an honest non-closure,
+and it is why no tolerance was widened and no per-ISO carve-out invented.
+
+### AU.2 The NYISO interval-convention residual — a NEW open item, routed so it cannot evaporate
+
+`derive_actual_lmp._nyiso_wide` bins RTD "Time Stamp" as interval-**beginning**;
+`curate_lmp.parse_nyiso_zip` as interval-**ending**. Each matches its own product exactly
+and the other not at all; one boundary sample in twelve swaps per hour, so the mean
+effect is small (~$0.62 for June 2024) and the max is large on a spiky RT series. **Which
+convention matches NYISO's published definition was deliberately NOT adjudicated** — it
+needs the NYISO data dictionary, and guessing would put a wrong answer into a committed
+product. Correct call by the lane.
+
+**The consequence that must not be lost** (d32 handoff §6, and this is why it is recorded
+here rather than left in a lane doc): `docs/iso-model-unification-plan.md` §3 plans to
+remove the `MARKET_SIM_USE_CLEAN` gating and make clean mandatory. Post-fix, PJM — the
+neighbour that seam actually prices against — is bit-exact, so the fix closes the forward
+exposure it was signed to close. **But NYISO's own partition is still off by this
+convention, so that migration must not be treated as unblocked for NYISO until the
+convention is adjudicated.** Routed as **card D-33** (§0au-1 carries a ready prompt): it
+is a data-contract/curation adjudication, not FFR/FH work; its natural owner is whichever
+desk drives the unification migration, or a NYISO data-intake lane. This desk wrote the
+prompt so the item survives the desk's closure.
+
+### AU.3 D-31-ADOPT — STILL NO EVIDENCE (third consecutive nil report on a dispatched lane)
+
+`QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"]` reads **5.0** at
+`src/market_sim/config/capacity_market.py:3555`; no branch, no PR, no handoff doc. The
+prompt stands as issued (§0at-1) and needs no correction. Not re-dispatched, not nagged.
+
+### AU.4 Q.2 — the hold is vindicated; ERCOT is about to move a FOURTH time
+
+**Open PR #3947 promotes `2026-08-14-ercot196-arm-plantphysics`** (the rule-18 grain
+repair, ercot-196 — an ERCOT-SCAR desk lane). All six keeper shards read unchanged at
+`8f83900`, but that is a snapshot with a promotion in flight. Had Q.2 been commissioned
+on AS.6's "one quiet cycle", it would have been invalidated within a day by a keeper the
+battery was supposed to be measuring. **The G2 pin stands and is now evidence-backed.**
+Also open: #3946 (ercot-200 regime card, doc-only). Both belong to the ERCOT-SCAR desk;
+this desk adjudicates neither.
+
+### AU.5 Cross-program: the AS handoff was ingested, and BLOAT inherited the withdrawal correctly
+
+The release program's ledger records, at its own `dbde0c2` refresh, exactly what AS
+handed it: **RAW-UNTRACK withdrawn INTO BLOAT** (charter added to its §3/WS6 + §7.5),
+**FFR Q.2 pinned to fire at G2** (noted in its §2), OVERRIDE-FIX's landing used to relax
+a DEBUG-A constraint to report-only, and the HTTP/1.1 push fix propagated. `BLOAT-A`
+landed (#3938) with `docs/bloat-removal-plan-2026-08.md` whose **§1 opens on the
+inherited question** — "does wholesale `data/raw` untracking subsume the per-corpus
+conversions" — and carries wholesale untrack as a **Stage 2 standing owner option**. That
+is a strictly better home than the single-lane §0ar-3 prompt, which is what the
+withdrawal was for. Separately, `#3936` landed a narrower adjacent win from the same
+space: **data/raw excluded from the nine CI jobs that never read it** (data/raw remains
+tracked — 4,727 files — so nothing about the untrack decision was pre-empted).
+
+Wave-1 status for the G2 clock this desk now depends on: **DEBUG-A** (#3937, fast tier
+6→0, D-5 closed, PJM clock defect chartered to DEBUG-B) and **BLOAT-A** (#3938) are in;
+AUDIT-A, PERF-A and DOCS-A are not yet on main, so **G1 has not passed** and G2 is at
+least two gates out.
+
+### AU.6 Desk state
+
+One dispatched lane outstanding (**D-31-ADOPT**, nil evidence) and one new card
+(**D-33**, the NYISO convention, prompt written and parked in §0au-1). On D-31's landing
+and adjudication, this desk CLOSES with exactly one residual: **Q.2 at G2**, whose
+trigger the release program's ledger already carries. No FFR or FH work remains.
