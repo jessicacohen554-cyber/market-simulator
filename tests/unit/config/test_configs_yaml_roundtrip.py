@@ -7,6 +7,7 @@ to exactly one loader by its location/name:
 * ``configs/scenarios/*.yaml``              -> ``ScenarioConfig.from_yaml``
 * ``configs/*matrix*.yaml``                 -> ``SweepDefinition.from_yaml``
 * ``configs/uncertainty_*.yaml``            -> ``UncertaintySpec.from_yaml``
+* ``configs/data-profiles.yaml``            -> ``scripts.hydrate_data.load_manifest``
 
 A new config file that matches none of these patterns fails the test on
 purpose — add it (and its loader) to the routing below.
@@ -27,6 +28,25 @@ _CONFIG_FILES = sorted(
 )
 
 
+def _load_data_profiles(path: str):
+    """Load the hydration manifest through its consumer, ``scripts.hydrate_data``.
+
+    ``load_manifest`` reads the fixed repo path, so first assert the
+    parametrized file IS that path, then check the keys profile resolution
+    relies on (``isos`` token table, ``profiles`` with the default ``code``).
+    """
+    from pathlib import Path
+
+    from scripts import hydrate_data
+
+    assert Path(path).resolve() == hydrate_data.MANIFEST.resolve()
+    manifest = hydrate_data.load_manifest()
+    assert manifest["version"] == 1
+    assert manifest["isos"] and all(t for t in manifest["isos"].values())
+    assert "code" in manifest["profiles"]
+    return manifest
+
+
 def _loader_for(path: str):
     name = path.replace("\\", "/")
     if "/configs/scenarios/" in name:
@@ -35,6 +55,8 @@ def _loader_for(path: str):
         return SweepDefinition.from_yaml
     if name.rsplit("/", 1)[-1].startswith("uncertainty_"):
         return UncertaintySpec.from_yaml
+    if name.rsplit("/", 1)[-1] == "data-profiles.yaml":
+        return _load_data_profiles
     return None
 
 

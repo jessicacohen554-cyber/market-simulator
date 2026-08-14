@@ -1,6 +1,35 @@
 # Changelog
 
-## 2026-08-11 — HOUSE-3: mechanism matrix SHARDED PER ISO; backcast generated preview files un-tracked (no model change, no verdict change)
+## 2026-08-14 — DEBUG-A: debug sweep (solve-neutral) — fast tier 6→0 ambient reds; D-5 closed, PJM input-clock defect confirmed and chartered to DEBUG-B
+
+WS2 of `docs/model-audit-release-plan-2026-08.md`. Every seed row
+dispositioned (triage table: `docs/handoffs/debug-sweep-2026-08.md`). Landed,
+all solve-neutral: the six ambient fast-tier reds fixed — a real
+config-serialization bug (YAML round-trip binds lists to tuple-typed
+`ScenarioConfig` fields, so a reloaded sidecar hashed to a different
+`cache_key` than its writer; fixed by `__post_init__` coercion, pinned default
+key `603c2498bf71d21d` proven unmoved), the FF-1A `retirement_rule` D-1
+fallout pair (probe pinned to `legacy` per the `test_capacity.py` pattern),
+and the unrouted `data-profiles.yaml` roundtrip case; the `gen_caisoNNN`
+placeholder allowlisted (un-reddening `refactor-guards`); `tools/launcher.py`
+baseline re-pointed keeper-shard→registry→bundle (was a guaranteed post-solve
+crash on the absent `run10_peak85`); the 10 unfiled top-level test files filed
+into the tiered layout; the sibling-import census re-measured 105/91 → 74/50
+and made re-runnable (`ci_refactor_guards.py --sibling-census`); the stale
+README known-failing note retired. **D-5 closed:** the PJM M-1 patch is
+archived (must not be applied verbatim — the committed parquet's region
+family was healed post-diagnosis, so the patch would double-shift it), and
+the still-live defect — `NG: *` fueltype family one hour early in BOTH 2023
+and 2024 (July solar centroid 10.91/10.94 vs [11.5, 12.3]; wind/solar/gas
+diff-lag +1) plus four live `datetime_beginning_ept` read sites — is
+chartered with an updated transform in
+`docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md` (full-span PJM
+re-solve + same-session registration). CI health: the wall-to-wall cancelled
+record explained (pull_request-only triggers + merge-fast branch deletion);
+`golden-data-tier.yml` cron "never fired" because its first Monday is
+2026-08-17 — its first-ever run manually dispatched per §6 decision 7;
+branch-protection memo (exact G2 ruleset, two by-design-red jobs excluded)
+at `docs/governance/branch-protection-memo-2026-08.md`.
 
 The cross-ISO mechanism matrix's one-file shape (six-char `cells: "KKKKKK"`
 strings, position = ISO) made every parallel lane edit the same line — 21 lanes
