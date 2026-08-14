@@ -5,7 +5,8 @@ Serves a small UI on localhost where you pick a per-plant tranche-config CSV
 and click Run. It shells out to scripts/run_calibration_full.py with
 ``--plant-tranche-config`` so the chosen sheet drives every plant's tranche
 shares + heat-rate multipliers, then regenerates the backcast data files
-(frontend/data/backcast/) against the run10 baseline and links you to the
+(frontend/data/backcast/) against the current ERCOT keeper baseline (resolved
+from the keeper shard + registry sidecar; skipped if absent) and links you to the
 codebase-site run explorer (docs/codebase-site/backcast-runs.html), which
 this server serves locally.
 
@@ -35,7 +36,31 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.paths import REFERENCE_DIR  # noqa: E402
 
 PORT = 8765
-BASELINE_BUNDLE = REPO / "results" / "calibration" / "run10_peak85"
+
+
+def _resolve_baseline() -> Path | None:
+    """Resolve the current ERCOT keeper's bundle directory, or None.
+
+    The former hardcoded ``run10_peak85`` baseline bundle no longer exists at
+    tip. The dashboard registry is the durable pointer: the per-ISO keeper
+    shard names the current keeper run id, and that run's registry sidecar
+    records its bundle path. Any missing link (shard, sidecar, bundle dir —
+    e.g. a clone without the bundle hydrated) degrades to None and the report
+    simply shows the user's run alone.
+    """
+    try:
+        shard = REPO / "frontend" / "data" / "backcast" / "keepers" / "ERCOT.json"
+        keeper_id = json.loads(shard.read_text())["keeper"]
+        sidecar = (
+            REPO / "frontend" / "data" / "backcast" / "registry" / f"{keeper_id}.json"
+        )
+        bundle = REPO / json.loads(sidecar.read_text())["bundle"]
+        return bundle if (bundle / "meta.json").is_file() else None
+    except (OSError, KeyError, ValueError):
+        return None
+
+
+BASELINE_BUNDLE = _resolve_baseline()
 
 # Single-run job state, shared between the request handler and the worker
 # thread. Only one run executes at a time (the LP is CPU-heavy).
@@ -113,7 +138,10 @@ def _run_job(csv_rel: str, years: list[int], label: str) -> None:
         render_cmd = [
             sys.executable,
             str(REPO / "scripts" / "render_backcast.py"),
-            f"run10 baseline={BASELINE_BUNDLE}",
+            # Baseline only when its bundle actually exists — render_backcast
+            # hard-fails on a missing bundle dir, and the UI already promises
+            # "the report will only show your run" in that case.
+            *([f"keeper baseline={BASELINE_BUNDLE}"] if BASELINE_BUNDLE else []),
             f"{label}={out_dir}",
             "--years",
             *yrs,
@@ -168,7 +196,7 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, PAGE.encode(), "text/html; charset=utf-8")
         elif path == "/api/configs":
             self._json(
-                {"configs": _list_configs(), "baseline": BASELINE_BUNDLE.is_dir()}
+                {"configs": _list_configs(), "baseline": BASELINE_BUNDLE is not None}
             )
         elif path == "/api/status":
             with _LOCK:
@@ -250,13 +278,13 @@ a.btn{display:inline-block;text-decoration:none;margin-top:12px}
   <div><label for=cfg>Tranche-config CSV</label><select id=cfg></select>
    <div class=hint id=cfgHint></div></div>
   <div><label for=label>Run label</label><input id=label value="my run" maxlength=40>
-   <div class=hint>Shown next to the run10 baseline on the results page.</div></div>
+   <div class=hint>Shown next to the keeper baseline on the results page.</div></div>
  </div>
  <div style="margin-top:14px"><label>Years</label>
   <div class=yrs>
    <label><input type=checkbox class=yr value=2023 checked> 2023</label>
    <label><input type=checkbox class=yr value=2024 checked> 2024</label>
-   <span class=hint>(2025 EIA data is incomplete.)</span>
+   <label><input type=checkbox class=yr value=2025 checked> 2025</label>
   </div></div>
  <div style="margin-top:18px;display:flex;align-items:center;gap:14px">
   <button id=run>Run backcast</button>
@@ -277,7 +305,7 @@ let polling=null;
 async function loadConfigs(){
  const r=await fetch('/api/configs');const d=await r.json();
  const sel=$('#cfg');sel.innerHTML=d.configs.map(c=>`<option value="${c.path}">${c.name} (${c.size_kb} KB)</option>`).join('')||'<option value="">— no tranche CSVs in data/raw/reference/ or configs/ —</option>';
- if(!d.baseline)$('#warn').textContent='Warning: results/calibration/run10_peak85 baseline bundle not found — the report will only show your run.';
+ if(!d.baseline)$('#warn').textContent='Warning: no ERCOT keeper baseline bundle on disk — the report will only show your run.';
  updHint();
 }
 function updHint(){const o=$('#cfg').selectedOptions[0];$('#cfgHint').textContent=o&&o.value?('Using '+o.value):'';}
