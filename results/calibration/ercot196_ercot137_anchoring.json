@@ -1,0 +1,134 @@
+{
+ "_provenance": {
+  "probe": "scripts/probes/ercot196_ercot137_anchoring.py",
+  "precommit": "docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md \u00a710",
+  "filed_at": "ercot-192 DOF ledger, coal_offer_margin_level entry",
+  "read_only": true,
+  "nothing_rederived": true
+ },
+ "mechanism_identity": {
+  "site": "src/market_sim/data/fleet/legacy_bins.py:1055-1059",
+  "applied": "mc[g,:] += coal_level - heat_rate[g]*coal_anchor - vom[g]",
+  "effective_offer": "offer(g,t) = coal_level + heat_rate[g] * (fuel[g,t] - coal_anchor)",
+  "implication": "at fuel == anchor the offer reduces EXACTLY to coal_level, and the fuel-response slope is the unit's OWN assembled heat rate \u2014 so the level is well-formed only if measured AT the anchor"
+ },
+ "armed": {
+  "coal_offer_margin_level": 15.8807,
+  "coal_offer_margin_anchor": 1.7387,
+  "band_usd_mwh": 0.93,
+  "corpus_res_hours_mean_fuel": 1.704,
+  "anchor_minus_corpus_fuel": 0.0347,
+  "ercot192_pooled_point_raw": 15.878317,
+  "ercot192_per_subset_point": {
+   "2024_ercot74_tail_days": 16.86,
+   "2024_ercot75_control_days": 16.37,
+   "2025_ercot75_control_days": 15.0,
+   "2025_ercot86_tail_days": 15.0
+  },
+  "ercot192_pool_arithmetic": "raw"
+ },
+ "sibling_convention": {
+  "ERCOT_137_coal_mustrun": "pools the four subsets' bot_p50 RAW (NO anchoring)",
+  "ERCOT_139_cc_committed": "removes the corpus's OWN measured fuel response",
+  "ERCOT_140_coal_peak": "anchored on the corpus's own measured GAS response",
+  "verdict": "ERCOT-137 is the ONLY one of the three armed margin identifications that does not anchor \u2014 a sibling inconsistency in the committed derivation, not an artifact of applying a foreign arithmetic to it"
+ },
+ "displacement": {
+  "capacity_weighted_hr_mmbtu_mwh": 10.3411,
+  "capacity_weighted_usd_mwh": 0.3588,
+  "capacity_weighted_over_band": 0.3858,
+  "min_usd_mwh": 0.3293,
+  "max_usd_mwh": 0.3904,
+  "all_inside_band": true,
+  "per_plant": [
+   {
+    "plant_code": 6180,
+    "plant_name": "Oak Grove (TX)",
+    "nameplate_mw": 1795.4,
+    "hr_mustrun_mmbtu_mwh": 9.49,
+    "displacement_usd_mwh": 0.3293,
+    "displacement_over_band": 0.3541
+   },
+   {
+    "plant_code": 56611,
+    "plant_name": "Sandy Creek Energy Station",
+    "nameplate_mw": 936.0,
+    "hr_mustrun_mmbtu_mwh": 9.5,
+    "displacement_usd_mwh": 0.3296,
+    "displacement_over_band": 0.3545
+   },
+   {
+    "plant_code": 7030,
+    "plant_name": "Major Oak Power",
+    "nameplate_mw": 349.2,
+    "hr_mustrun_mmbtu_mwh": 10.16,
+    "displacement_usd_mwh": 0.3526,
+    "displacement_over_band": 0.3791
+   },
+   {
+    "plant_code": 298,
+    "plant_name": "Limestone",
+    "nameplate_mw": 1849.8,
+    "hr_mustrun_mmbtu_mwh": 10.17,
+    "displacement_usd_mwh": 0.3529,
+    "displacement_over_band": 0.3795
+   },
+   {
+    "plant_code": 6178,
+    "plant_name": "Coleto Creek",
+    "nameplate_mw": 622.4,
+    "hr_mustrun_mmbtu_mwh": 10.24,
+    "displacement_usd_mwh": 0.3553,
+    "displacement_over_band": 0.3821
+   },
+   {
+    "plant_code": 6146,
+    "plant_name": "Martin Lake",
+    "nameplate_mw": 2379.6,
+    "hr_mustrun_mmbtu_mwh": 10.28,
+    "displacement_usd_mwh": 0.3567,
+    "displacement_over_band": 0.3836
+   },
+   {
+    "plant_code": 6179,
+    "plant_name": "Fayette Power Project",
+    "nameplate_mw": 1690.0,
+    "hr_mustrun_mmbtu_mwh": 10.67,
+    "displacement_usd_mwh": 0.3702,
+    "displacement_over_band": 0.3981
+   },
+   {
+    "plant_code": 3470,
+    "plant_name": "W A Parish [COAL]",
+    "nameplate_mw": 2443.0,
+    "hr_mustrun_mmbtu_mwh": 10.76,
+    "displacement_usd_mwh": 0.3734,
+    "displacement_over_band": 0.4015
+   },
+   {
+    "plant_code": 7097,
+    "plant_name": "J K Spruce",
+    "nameplate_mw": 1488.5,
+    "hr_mustrun_mmbtu_mwh": 10.98,
+    "displacement_usd_mwh": 0.381,
+    "displacement_over_band": 0.4097
+   },
+   {
+    "plant_code": 6183,
+    "plant_name": "San Miguel",
+    "nameplate_mw": 410.0,
+    "hr_mustrun_mmbtu_mwh": 11.25,
+    "displacement_usd_mwh": 0.3904,
+    "displacement_over_band": 0.4198
+   }
+  ]
+ },
+ "DISPOSITION": {
+  "arming_unchanged": true,
+  "rederived_here": false,
+  "status": "RE-FILED WITH A MEASUREMENT",
+  "why_not_repaired_here": "Correcting the level is SOLVE-AFFECTING \u2014 it raises every coal _mustrun row's offer by its own heat rate x 0.0347 $/MMBtu (+0.33 to +0.39 $/MWh) \u2014 so it needs its own precommit, its own A/B and its own kill gates. Folding it into the ercot-196 rule-18 grain A/B would make that a two-delta comparison.",
+  "successor": "a re-derivation of coal_offer_margin_level under the anchoring convention its two siblings already use, via scripts/data/derive_coal_offer_margin_anchor.py, with a single-delta A/B on the then-current keeper",
+  "OWNER_QUESTION": "Rule 23 [R-FROZEN-DERIVE] licenses a re-derivation when the SOURCE DATA updates, and forbids one because a residual moved. This trigger is NEITHER: it is a defect in the derivation's own convention, measured against the mechanism's own identity, with no residual consulted anywhere. Whether that is an admissible re-derivation trigger is an owner ruling, not a session call \u2014 so it is surfaced here rather than taken."
+ }
+}
