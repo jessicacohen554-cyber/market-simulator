@@ -1,0 +1,50 @@
+[
+ {
+  "year": 2022,
+  "annual_mean_MW": 32725.9649725275,
+  "top1pct_netload_MW": 12299.3329545455,
+  "top5pct_netload_MW": 16293.1473684211,
+  "bottom50pct_MW": 41408.7189331502,
+  "ratio_top1_over_annual": 0.3758279692,
+  "corr_out_vs_netload": -0.7010347938,
+  "event": "Elliott",
+  "event_mean_MW": 15555.334375,
+  "ratio_event_over_annual": 0.4753208771
+ },
+ {
+  "year": 2023,
+  "annual_mean_MW": 35850.9404282116,
+  "top1pct_netload_MW": 10985.3965909091,
+  "top5pct_netload_MW": 13997.1743707094,
+  "bottom50pct_MW": 43146.8933363865,
+  "ratio_top1_over_annual": 0.3064186451,
+  "corr_out_vs_netload": -0.679867978,
+  "event": "Feb cold snap",
+  "event_mean_MW": 20403.9229166667,
+  "ratio_event_over_annual": 0.5691321531
+ },
+ {
+  "year": 2024,
+  "annual_mean_MW": 31234.4192900354,
+  "top1pct_netload_MW": 6753.8375,
+  "top5pct_netload_MW": 9207.1890660592,
+  "bottom50pct_MW": 39631.9311643836,
+  "ratio_top1_over_annual": 0.2162306088,
+  "corr_out_vs_netload": -0.7137716503,
+  "event": "Heather",
+  "event_mean_MW": 13053.7430555556,
+  "ratio_event_over_annual": 0.4179281495
+ },
+ {
+  "year": 2025,
+  "annual_mean_MW": 29248.3298321726,
+  "top1pct_netload_MW": 7157.3375,
+  "top5pct_netload_MW": 8817.700456621,
+  "bottom50pct_MW": 39137.9158219178,
+  "ratio_top1_over_annual": 0.244709272,
+  "corr_out_vs_netload": -0.7716930214,
+  "event": "Enzo",
+  "event_mean_MW": 7204.7777777778,
+  "ratio_event_over_annual": 0.2463312544
+ }
+]

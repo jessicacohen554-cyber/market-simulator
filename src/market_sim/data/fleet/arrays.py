@@ -2068,6 +2068,86 @@ def _apply_outage_overlays(
             )
         np.clip(availability, 0.0, 1.0, out=availability)
 
+    # PJM measured-outage EVENT CAP (config.pjm_measured_outage_event_cap,
+    # backcast overlay, pjm-161). The ERCOT-148/149 event-cap shape: the
+    # incumbent CAMPD unit-grain envelope keeps sole ownership of WHICH units
+    # are out, and this only DEEPENS a class-day toward PJM's own published
+    # outage total where that total is deeper. Composition is min() on
+    # availability — the more-derated of two measured layers wins, because the
+    # CAMPD detector infers unavailability from zero generation and so cannot
+    # see an outage at a unit that would not have run anyway (a LOWER BOUND by
+    # construction, whose error is largest in scarcity: measured corr(derated
+    # MW, net load) = -0.68..-0.77 for PJM 2022-2025).
+    #
+    # Two deltas from the pjm_dam_availability block above, and they are what
+    # make this a different mechanism rather than a grain switch (rule 19 keeps
+    # them mutually exclusive; ScenarioConfig.__post_init__ refuses both):
+    #   * TOTAL outage types (forced + maintenance + planned) — the incumbent
+    #     envelope includes planned outages, so the comparison must too;
+    #   * REMOVE-ONLY — no restore leg at all, so a unit the finer measured
+    #     record holds at zero can never be revived (ad == 0 => new == 0, the
+    #     `_flat` branch is unreachable).
+    if (
+        config is not None
+        and _iso == "PJM"
+        and getattr(config, "pjm_measured_outage_event_cap", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        from market_sim.data.pjm_outages import (
+            PJM_OUTAGE_ALL_TYPES,
+            pjm_dam_availability_series,
+        )
+
+        _meas_cap = pjm_dam_availability_series(
+            int(_yr), outage_types=PJM_OUTAGE_ALL_TYPES
+        )
+        _n_days = hours // 24
+        for _cls, _target_h in _meas_cap.items():
+            _idx = np.array(
+                [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
+                dtype=int,
+            )
+            if _idx.size == 0:
+                continue
+            _cap = pmax[_idx]
+            _cap_sum = float(_cap.sum())
+            if _cap_sum <= 0.0:
+                continue
+            _a = availability[_idx, : _n_days * 24].reshape(_idx.size, _n_days, 24)
+            _ad = _a.mean(axis=2)  # (n, days) per-unit day-mean availability
+            _t = _target_h[: _n_days * 24].reshape(_n_days, 24).mean(axis=1)
+            _covered = np.isfinite(_t)
+            # Cap-weighted current class-day mean availability.
+            _cur = (_ad * _cap[:, None]).sum(axis=0) / _cap_sum  # (days,)
+            _bind = _covered & (_t < _cur)  # REMOVE-ONLY: no restore branch
+            if not _bind.any():
+                logger.info(
+                    "PJM measured-outage event cap (%d): %s — inert (0 of %d "
+                    "covered day(s) deeper than the model)",
+                    _yr,
+                    _cls,
+                    int(_covered.sum()),
+                )
+                continue
+            # Scale the class-day down by the ratio the published total implies,
+            # preserving each unit's intra-day shape and its zeros.
+            _mu = np.where(_bind, _t / np.maximum(_cur, 1e-9), 1.0)
+            _scaled = _a * _mu[None, :, None]
+            np.clip(_scaled, 0.0, 1.0, out=_scaled)
+            availability[_idx, : _n_days * 24] = _scaled.reshape(_idx.size, -1)
+            logger.info(
+                "PJM measured-outage event cap (%d): %s deepened on %d of %d "
+                "covered day(s), median cap ratio %.3f, %.0f MW-day removed",
+                _yr,
+                _cls,
+                int(_bind.sum()),
+                int(_covered.sum()),
+                float(np.median(_mu[_bind])),
+                float(((_cur - _t)[_bind] * _cap_sum).sum()),
+            )
+        np.clip(availability, 0.0, 1.0, out=availability)
+
     # Reallocate each CC_REGULAR plant's outage derate from pro-rata to
     # top-of-stack (config.cc_outage_derate_from_top): the plant's hourly
     # available MW is unchanged, but it now fills the tranches bottom-up in

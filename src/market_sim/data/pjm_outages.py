@@ -61,6 +61,15 @@ PJM_OUTAGE_DEFAULT_REGION: str = "PJM RTO"
 # against the fossil fleet). A cited default, not a tuned value.
 PJM_OUTAGE_DEFAULT_TYPES: tuple[str, ...] = ("forced", "maintenance")
 
+#: EVERY published outage subtotal. The basis the ``pjm_measured_outage_event
+#: _cap`` overlay compares on (pjm-161): the model's incumbent CAMPD envelope
+#: carries planned outages too, so a like-for-like comparison must include
+#: them. Using the UNPLANNED default against that envelope is a definitional
+#: mismatch that mechanically makes the measured target look LESS derated than
+#: the model on almost every day — which is what produced pjm-145's
+#: restore-on-364-of-365-days and, through it, its refusal.
+PJM_OUTAGE_ALL_TYPES: tuple[str, ...] = ("forced", "maintenance", "planned")
+
 # PJM fossil-thermal model classes the uniform availability derate covers. The
 # capacity denominator is the model fleet's nameplate in these groups; nuclear /
 # hydro / renewables / storage are excluded (own availability treatment).

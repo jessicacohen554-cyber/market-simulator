@@ -575,6 +575,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "miso_native_outage_source",
     "neiso_operable_capacity_availability",
     "pjm_dam_availability",
+    "pjm_measured_outage_event_cap",
     # PJM mid-curve LEVEL-form scope (pjm-121 §5, default None = floor-only).
     # Default-off and byte-identical for every config that does not arm it (the
     # level branch is unreachable with an empty scope), so it is dropped from
@@ -1130,6 +1131,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "miso_native_outage_source": "False",
     "neiso_operable_capacity_availability": "False",
     "pjm_dam_availability": "False",
+    "pjm_measured_outage_event_cap": "False",
     "pjm_offer_midcurve_level_segments": "None",
     "pjm_offer_midcurve_peak_segments": "None",
     "pjm_ct_measured_max_reprice": "False",
@@ -1246,6 +1248,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "ercot_dam_availability_event_cap_unit_scoped": "measured unit-scoped event-cap composition",
     "ercot_partial_outage_shaped_derate": "measured day-shaped partial-outage plateau derate",
     "pjm_dam_availability": "measured PJM DAM availability record",
+    "pjm_measured_outage_event_cap": "measured PJM published-outage event cap (remove-only)",
     "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
     # --- measured per-plant operating conduct ---
     "coal_mustrun_per_plant": "measured per-plant coal operating floors",
@@ -8799,6 +8802,57 @@ class ScenarioConfig:
     # (subject to the holdout discipline), not the data-intake session's.
     pjm_dam_availability: bool = False
 
+    # PJM measured-outage EVENT CAP (default off, PJM backcast-gated — pjm-161,
+    # 2026-08-13). The ERCOT-148/149 event-cap SHAPE applied to PJM, and a
+    # DIFFERENT construction from `pjm_dam_availability` above rather than a
+    # grain switch of it — the two are alternatives, never stacked (rule 19
+    # [R-ONE-MECH]); arming both is refused in __post_init__.
+    #
+    # WHY IT EXISTS. The CAMPD unit-outage detector infers unavailability from
+    # ZERO GENERATION, so it cannot see an outage at a unit that would not have
+    # run anyway, and a unit in economic layup RUNS when prices spike. The
+    # detected envelope is therefore a LOWER BOUND on unavailability whose error
+    # is largest exactly in scarcity. Measured on PJM (pjm-161 Phase 0,
+    # results/calibration/_pjm161_outage_inversion.json): corr(derated MW, net
+    # load) = -0.68 .. -0.77 in every year 2022-2025, and the top-1% net-load
+    # hours carry only 0.22-0.38x the annual-mean derate — the envelope hands
+    # the LP the MOST capacity in the TIGHTEST hours. During Winter Storm
+    # Elliott (23-26 Dec 2022) it asserts 15.6 GW out, its lowest level of the
+    # year, against PJM's own published 31.1/35.8/27.1 GW forced (40.7 GW total
+    # on 25 Dec). This falsifies, for PJM, the documented ground on which
+    # `correlated_forced_outage` is coerced off in backcast mode ("a backcast's
+    # measured CAMPD overlays carry the real cold events").
+    #
+    # WHAT IT DOES. Two deltas from `pjm_dam_availability`, both required, both
+    # answering a pjm-145 refusal ground:
+    #  1. TOTAL-outage basis (forced + maintenance + planned) instead of the
+    #     unplanned-only default, because the model's incumbent envelope
+    #     includes planned outages. The definitional mismatch is what
+    #     mechanically forced pjm-145's restore-on-364-of-365-days.
+    #  2. REMOVE-ONLY: the cap deepens a class-day's derate toward the measured
+    #     level and NEVER restores, so the water-fill's `_flat` branch — the
+    #     structural-zero resurrection that was 66-68% of pjm-145's measured
+    #     lift — is unreachable by construction.
+    # Composition with the incumbent is min() on availability, exactly as
+    # ercot_dam_availability_{coal,gas}_event_cap: the CAMPD unit-grain overlay
+    # stays the sole owner of WHICH units are out, and this only adds the
+    # residual class-day depth the operator's own record says is missing.
+    #
+    # ZERO fitted parameters (rule 20 [R-DOF]): the MW is PJM's published
+    # aggregate, the covered classes and denominator are
+    # data.pjm_outages.PJM_OUTAGE_COVERED_GROUPS as-shipped. Rule 13: the feed
+    # is an operator-published forward-looking outage forecast that regenerates
+    # for a forward day and responds to conditions.
+    #
+    # KNOWN, MEASURED, UNCORRECTED BOUNDARY (rule 14's document-the-misalignment
+    # clause): PJM publishes ONE whole-fleet aggregate, so any non-fossil outage
+    # MW inside it is charged to the fossil-thermal denominator. The size of
+    # that over-attribution is measured ex ante in
+    # results/calibration/_pjm161_removeonly_exante.json; it is NOT corrected by
+    # a scale factor, because a factor tuned to close it would be a fitted
+    # parameter (rules 13/21/24).
+    pjm_measured_outage_event_cap: bool = False
+
     # ERCOT measured class-HOUR thermal availability (default off, ERCOT
     # backcast-gated — ERCOT-96, 2026-07-22). The GRAIN switch of the mechanism
     # above, not a second overlay (rule 19): when armed on top of
@@ -11764,6 +11818,20 @@ class ScenarioConfig:
             raise ValueError(
                 "correlated_outage_sigma_scale must be positive, got "
                 f"{self.correlated_outage_sigma_scale!r}"
+            )
+
+        # The two PJM measured-outage overlays are ALTERNATIVES, never stacked
+        # (rule 19 [R-ONE-MECH]): both re-base the same class-day availability
+        # against the same published feed, so arming both would run one
+        # phenomenon through two owners — the exact composition failure
+        # pjm-145 refused `pjm_dam_availability` for. Refused, not silently
+        # ordered.
+        if self.pjm_dam_availability and self.pjm_measured_outage_event_cap:
+            raise ValueError(
+                "pjm_dam_availability and pjm_measured_outage_event_cap are "
+                "alternatives, not layers (rule 19): both re-base PJM class-day "
+                "availability from the same published gen_outages_by_type feed. "
+                "Arm exactly one."
             )
 
         # FFR-8A scarcity restoration extends the UNIFIED lookahead object's
