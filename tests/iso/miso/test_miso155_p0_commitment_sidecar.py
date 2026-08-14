@@ -27,7 +27,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-REPO = Path(__file__).resolve().parents[1]
+from tests.helpers import REPO_ROOT as REPO  # noqa: E402
+
 for _p in (str(REPO), str(REPO / "src")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
