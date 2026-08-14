@@ -53,15 +53,32 @@ prerequisite" blocker, still true).
   and their branches delete before the ~7–15 min run completes, which cancels
   the in-flight run. Nothing is wrong with the workflow itself.
 * **First completed run on record:** 31765772123 (2026-08-14, PR #3936 head).
-  Conclusion `failure` — job map: 6 green; red = `Fast test tier` (the six
-  ambient reds; fixed on this branch), `Structural refactor guards` (the
-  `gen_caisoNNN` dangling ref; fixed on this branch), `FR-22 parity` +
-  `Forecast-invariant artifact audit` (both red **by design** as other lanes'
-  live signals — HOUSE-2 §4; not touched by this sweep, per its own charter).
-  A fully-green ci.yml run is therefore **structurally unreachable until those
-  two lanes clear their content**; this sweep's PR run is the "completed,
-  everything-this-program-owns green" record, and the memo's required-check
-  set is drawn to exclude exactly those two until they clear.
+  Conclusion `failure` — job map: 6 green; red = `Fast test tier`,
+  `Structural refactor guards` (the `gen_caisoNNN` dangling ref; fixed on
+  this branch), `FR-22 parity` + `Forecast-invariant artifact audit` (both
+  red **by design** as other lanes' live signals — HOUSE-2 §4; not touched by
+  this sweep, per its own charter). This sweep's own PR #3937 produced the
+  second and third completed runs (31768130935 / 31768417379): 7 green + the
+  same two by-design reds + `Fast test tier`.
+* **Fast test tier cannot currently complete in CI at all — checkout-level
+  failure, not test failures.** On every completed run inspected (main's
+  31765772123 and both of #3937's), the fast-tests job died **inside its
+  `actions/checkout` step** after 6–7.5 min with pytest never invoked, while
+  the nine data-free-checkout jobs finished checkout in ~20 s on the same
+  runs. The tier's full checkout (it hard-requires `data/raw`, ~10 GB at tip)
+  no longer survives on GitHub runners. So the tier's CI red is
+  INFRASTRUCTURE — the branch's test content is green (6,836/0 locally on the
+  identical tree) — and the ci.yml header's "6 failures with data/raw"
+  empiricism was measured locally, not in CI. Disposition: **chartered to
+  PERF-A** (plan §3/WS3 item 5 owns per-job checkout strategy; ci.yml's own
+  header forbids the naive sparse "fix" for this job since the tier needs the
+  data), with the note that the data-provisioning approach
+  `golden-data-tier.yml` uses is the likely template. Until it lands,
+  requiring `Fast test tier` as a status check would block every merge on an
+  infra failure — the memo's required set is amended accordingly.
+* A fully-green ci.yml run is therefore **structurally unreachable** until
+  (a) the two by-design lanes clear their content and (b) PERF-A fixes the
+  fast-tier checkout; every job this program owns is green on #3937's runs.
 * **`golden-data-tier.yml` never-fired cron:** resolved trivially — the
   workflow landed on main 2026-08-12 (F1 signature) and its schedule is
   `37 5 * * 1` (Mondays 05:37 UTC); the first Monday since landing is

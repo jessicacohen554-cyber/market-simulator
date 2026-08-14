@@ -35,8 +35,13 @@ request this change; only the owner can perform it (repo settings).
    * `Rule-22 quarantine gates`
    * `Rule-28 mechanism-matrix guard`
    * `Ruff lint + format`
-   * `Fast test tier` — blocking tier; green on a clean full checkout as of
-     this sweep's branch (the six ambient reds are fixed there).
+   * `Fast test tier` — **defer this one until PERF-A fixes its checkout.**
+     The tier's content is green (six ambient reds fixed on the sweep branch;
+     6,836/0 locally), but the job currently dies inside `actions/checkout`
+     on every CI run (the ~10 GB full checkout it needs for `data/raw` no
+     longer survives on GitHub runners — debug-sweep handoff, CI-health
+     section). Requiring it today would block every merge on an
+     infrastructure failure. Add it the day PERF-A's checkout fix lands.
    * `Structural refactor guards` — green as of this sweep's branch (the
      `gen_caisoNNN` dangling-ref allowlist entry).
    * `File integrity guard` (from `file-integrity-guard.yml`) if it reports
