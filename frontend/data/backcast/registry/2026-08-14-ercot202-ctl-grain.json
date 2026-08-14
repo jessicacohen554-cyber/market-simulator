@@ -3,7 +3,7 @@
   "label": "ercot202 ctl grain",
   "date": "2026-08-14",
   "shorthand": "ercot202-ctl-grain",
-  "definition": "ercot-196 CONTROL of the rule-18 [R-PHYSICS] grain repair A/B (docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md \u00a77): the run192 keeper recipe replayed at HEAD with ZERO deltas. Separates HEAD drift from the mechanism.",
+  "definition": "ercot-202 CONTROL of the rule-18 [R-PHYSICS] grain repair A/B (docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md \u00a77): the run192 keeper recipe replayed at HEAD with ZERO deltas. Separates HEAD drift from the mechanism.",
   "years": [
     2023,
     2024,
