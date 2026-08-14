@@ -536,3 +536,45 @@ outcome. Landing: push-and-stop on `claude/ercot-scar-l2-e1-dispersion`.
    input) and L2-BUILD (forecast lane, screen-side) touch disjoint seams;
    both cite the sitting; neither promotes; log-tail shorthand races are
    expected and each worker is instructed to keep entries whole on rebase.
+
+### §2.9 T3B-AUDIT (2026-08-14; child session `session_01D2FpmCyyh721L9GfnrFYA5`)
+
+Executes signed T-3b ONLY (RESOLUTIONS on main at fb6d08d): intake the
+published month-grain RTORPA/RTORDPA adder series for 2024/2025 (series ends
+at RTC+B go-live 2025-12-05), compare month-by-month against the committed
+overlay's content and the bench construction, quantify the gap at full
+magnitude, verdict on overlay COMPLETENESS. Read-only: no mechanism, no
+field, no solve, no matrix edit (the K cell is read, not changed). FINDING
+doc + probe + JSON + log entry. Push-and-stop on
+`claude/ercot-scar-t3b-adder-audit`. STOP-and-report if the published series
+is unobtainable — no reconstruction substitute.
+
+### §2.10 REGIME-CARD (2026-08-14; child session `session_01CQzQReRNgNK5g571ir6Y2F`)
+
+Executes adjudication item (ii) (on main at fb6d08d): assemble the
+regime-conditioned identification decision card — doc-only, ercot-189/196
+method, committed artifacts only. Must confront identification thinness
+CENTRALLY (7 anchors across ~4 design regimes; ZERO RTC+B-era anchors until
+the 2026 SOM ~mid-2027; "wait-for-data" is an acceptable and honest
+recommendation), argue rule-13 admissibility both ways (§2.6 pattern), never
+re-argue the dead tightness instrument (V0 = DO-NOT-REDO), end at an owner
+sitting. No field, no matrix edit, no solve. Push-and-stop on
+`claude/ercot-scar-regime-card`.
+
+### A10 — 2026-08-14, stale-trigger wake (~03:00Z; the pre-sitting cycle-9 timer)
+
+1. The old cycle-9 check-in fired after the sitting had already happened —
+   used as a light status pass. **SITTING-RECORD-1 LANDED and the owner
+   MERGED it within ~15 minutes** (PR #3931, `fb6d08d`, shorthand
+   **ercot-197**). Verified on main: both card appends exactly as
+   instructed (+27 lines ercot-196 RESOLUTIONS, +32 lines L-SCAR V0-FAIL
+   ADJUDICATION, bodies AS PUT), one log entry (+35 lines). The signatures
+   now live on the governance docs; the pack is no longer the sole record.
+2. That landing was the staging condition → **T3B-AUDIT (§2.9) and
+   REGIME-CARD (§2.10) dispatched**, both citing fb6d08d on main. Four
+   lanes now in flight: T1-EXEC, L2-BUILD (long-running), T3B-AUDIT,
+   REGIME-CARD (fast, doc/data).
+3. Recorded HEAD advances to `f2de3b0` (other lanes continue merging:
+   #3925–#3932 include nyiso/neiso/pjm/model-audit/FFR-FH work — none in
+   this workstream's scope beyond #3927/#3931 already noted).
+4. The armed cycle-10 trigger (04:50Z) verifies all four lanes.
