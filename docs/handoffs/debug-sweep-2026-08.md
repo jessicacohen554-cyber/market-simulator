@@ -73,6 +73,18 @@ prerequisite" blocker, still true).
 * **Branch-protection memo:** `docs/governance/branch-protection-memo-2026-08.md`
   — exact ruleset steps, the 8-check required set, the two deliberate
   exclusions, bypass caveat. Executed at G2, not now (owner decision 3).
+* **New finding (found by this sweep's own PR #3937, fixed in it):**
+  `file-integrity-guard.yml`'s `shrink-guard` job failed at its **checkout
+  step** — the guard script never ran. Its `fetch-depth: 0` +
+  `filter: blob:none` checkout had no data/raw sparse exclusion (the separate
+  workflow was missed by ci.yml's 2026-08-14 data-free-checkout pass), so it
+  lazy-fetched the ~10 GB tip working tree and died. Rule-27's CI enforcement
+  was therefore red on infrastructure, not content — verified by replaying the
+  guard's own script locally under `bash -e` against the identical
+  BASE..HEAD: `scanned=3 expected=3 fail=0`. Fixed with the same non-cone
+  `!/data/raw/` sparse block ci.yml's nine jobs use; the guard needs no
+  working-tree data (tree-level diff scan + per-blob `cat-file`, which
+  lazy-fetches on demand).
 
 ### D-5 — `patches/pjm-m1-code.patch` (recommendation + closure)
 
