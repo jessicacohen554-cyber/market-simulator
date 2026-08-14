@@ -8059,3 +8059,38 @@ no keeper/registry/bench touch, no C3c ledger change, no rubric amendment,
 no marker granted or spent; the L-SCAR lane (stopped at V0) and the frozen
 composition lane untouched; ercot-188/E2 P0 forfeiture inherited unexpired.
 Session consumed the ercot-196 shorthand. Next shorthand: **ercot-197**.
+
+## ercot-197 (2026-08-14) — OWNER SITTING RECORD: card T SIGNED (T-1 + T-3b), L-SCAR V0-FAIL ADJUDICATED — docs only, NO lever, NO solve, keeper UNCHANGED
+
+**The sitting** (held 2026-08-14 in the ERCOT-SCAR workstream manager
+session, owner selections interactive; primary record:
+`docs/handoffs/ercot-scar-workstream-pack-2026-08.md` §0 cycle-9 board +
+addendum A9; this session appends the durable card records only). **Card T
+signed as recommended — T-1 + T-3b**: the `gas_hh_monthly_shape`
+input-correctness A/B chartered with the ercot-145b posture verbatim (armed
+on measured-input correctness, fit gain NOT predicted; promotion only on
+structural faithfulness + pre-registered guards protecting every PASSing
+gate), with the published-adder overlay-completeness audit as its read-only
+companion. What the signature does NOT do: T-2 stays behind the D2 freeze;
+T-3a NOT signed (no rubric change — the settlement-basis C3b question stays
+merely recorded); the T-4 refusal stands on Q-B/R-A; no keeper, matrix
+cell, or solve follows from the signature itself. **L-SCAR V0-FAIL
+adjudicated** (FINDING-ercot195: 4/14 folds vs 14/14; the rent series is a
+regime series): (i) **L-2 CHARTERED** — the E1 dispersion repair (card
+§6's structural complement; FFR-8A's candidate surface, forward
+committed-capability under-dispersion vs measured RTOLCAP p1 13.3 vs
+7.9 GW), reach honestly bounded single-digit-to-~20 of the ~50–70 $/kW-yr
+gap; (ii) **regime-conditioning decision card assembly AUTHORIZED**
+(doc-only, future sitting; zero measured forward-regime anchors until the
+2026 SOM ~mid-2027, and the card must say so); (iii) the L-0
+`readiness_limits` fallback row **NOT entered** — frontier rank 2 stays
+OPEN with the two lanes in flight; (iv) nothing else re-opens: Q-B stays
+final, the §4 must-nots and the §2.6 distinction bind every successor
+lane, no tightness-conditioned identification is re-attempted (V0 is the
+DO-NOT-REDO adjudication for that instrument). Executor lanes dispatched by
+the manager: T1-EXEC (pack §2.7), L2-BUILD (pack §2.8); T3B-AUDIT and the
+regime card staged next cycle. This session: appends to the two decision
+cards + this entry, nothing else — no lever, no solve, no year touched
+(rule 22 moot but binding), no matrix/keeper/registry/bench contact; keeper
+UNCHANGED at `2026-08-12-run192-arm-coal-peak`. Session consumed the
+ercot-197 shorthand. Next shorthand: **ercot-198**.

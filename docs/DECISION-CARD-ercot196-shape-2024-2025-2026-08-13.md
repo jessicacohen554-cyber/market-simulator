@@ -322,3 +322,30 @@ its finding is cited as evidence only. The frozen composition lane (D2) is
 not touched. The ercot-188/E2 P0 bit-identity forfeiture is inherited
 unexpired and untouched. New artifacts of this session: the probe, its JSON,
 this card, and the calibration-log entry — nothing else.
+
+---
+
+## RESOLUTIONS — CARD T SIGNED BY THE OWNER, 2026-08-14
+
+The sitting was held on 2026-08-14 in the ERCOT-SCAR workstream manager
+session (owner selections made interactively in-session; primary sitting
+record: `docs/handoffs/ercot-scar-workstream-pack-2026-08.md` §0 cycle-9
+board + addendum A9). The card body above is preserved AS PUT, unedited by
+the outcome.
+
+| card | decision | **SIGNED** | vs. recommendation |
+|---|---|---|---|
+| **T** | which (if any) of the named 2024/2025 shape options is chartered next | **T-1 + T-3b** — the `gas_hh_monthly_shape` input-correctness A/B, chartered with the ercot-145b posture verbatim (armed on measured-input correctness, fit gain NOT predicted; promotion only on structural faithfulness + pre-registered guards protecting every PASSing gate), **with T-3b**, the published-adder overlay-completeness audit, as its read-only companion | As recommended |
+
+### What this signature does NOT do
+
+* **T-2 stays behind the D2 freeze** — the Apr/May-2024 outage-season
+  remainder is NOT unfrozen.
+* **T-3a is NOT signed** — no rubric change; the settlement-basis C3b
+  scoring question remains merely recorded.
+* **The T-4 refusal stands** on the standing rulings Q-B/R-A.
+* **No keeper, matrix cell, or solve follows from the signature itself** —
+  the executing lanes carry their own duties.
+
+Executor lanes dispatched by the manager: **T1-EXEC** (pack §2.7) and
+**T3B-AUDIT** (staged next cycle).

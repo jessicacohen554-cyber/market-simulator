@@ -511,3 +511,35 @@ unedited by the outcome.
 * The L-0 fallback's second `readiness_limits` row is NOT entered — L-1 is
   chartered instead.
 * Card Q (Q-B, final) and every closed dispatch-side face stay closed.
+
+---
+
+## V0-FAIL ADJUDICATION — SIGNED BY THE OWNER, 2026-08-14
+
+The L-1 lane stopped at its pre-registered V0 identification gate
+(`docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`: 4/14 folds
+vs 14/14 required; model-free non-identifiability bound; the rent series is
+a REGIME series, not a tightness series). The adjudication was signed on
+2026-08-14 in the ERCOT-SCAR workstream manager session (owner selections
+made interactively in-session; primary sitting record:
+`docs/handoffs/ercot-scar-workstream-pack-2026-08.md` §0 cycle-9 board +
+addendum A9). The card body above, including the 2026-08-13 RESOLUTIONS,
+is preserved AS PUT, unedited by the outcome. The owner adjudicated:
+
+* **(i) L-2 IS CHARTERED.** The E1 dispersion repair (§6's named structural
+  complement; FFR-8A's candidate surface — the forward committed-capability
+  formula under-disperses vs measured RTOLCAP, p1 13.3 vs 7.9 GW) proceeds
+  as its own lane (executor: manager dispatch L2-BUILD, pack §2.8).
+  Expected reach honestly bounded: single-digit-to-~20 $/kW-yr of the
+  ~50–70 $/kW-yr gap.
+* **(ii) Assembly of a REGIME-CONDITIONING decision card IS AUTHORIZED** —
+  doc-only: it argues the admissibility of conditioning the rent on market
+  DESIGN (ORDC vintage / ECRS / SWCAP / RTC+B) for a FUTURE owner sitting;
+  it builds nothing; zero measured forward-regime anchors exist until the
+  2026 SOM (~mid-2027), and the card must say so.
+* **(iii) The L-0 `readiness_limits` fallback row is NOT entered** —
+  frontier rank 2 stays OPEN with the two lanes above in flight.
+* **(iv) Nothing else re-opens.** Q-B stays final; the §4 must-nots and the
+  §2.6 distinction bind every successor lane; and no tightness-conditioned
+  identification is re-attempted — the V0 record is the DO-NOT-REDO
+  adjudication for that instrument.
