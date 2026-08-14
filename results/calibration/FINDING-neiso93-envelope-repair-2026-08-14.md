@@ -286,3 +286,73 @@ deltas**, via `scripts/replay_keeper.py` — which reads the keeper's own `meta.
 so the recipe is reproduced from the committed artifact rather than retyped. The only things that
 differ are the corrected measured inputs above, plus the keeper's **disclosed defect (i)**: it was
 solved on the stale `NEISO,2025,8` gas-basis row (+0.04) while HEAD carries the measured −0.38.
+
+---
+
+## 9. Phase B — result
+
+**Run `2026-08-14-neiso-93-envelope`**, bundle `results/calibration/neiso93_envelope_A`, years
+**2023 2024 2025 in ONE invocation**, sequential (rules 12 / 16 [R-ALLYEARS]). Registered on the
+backcast dashboard with its hourly sidecars incl. `reserve_family_<year>.parquet` (rule 15).
+
+### Determination: **CALIBRATED-WITH-CAVEATS — criterion for criterion IDENTICAL to the incumbent**
+
+| criterion | tier | incumbent | neiso-93 |
+|---|---|---|---|
+| C1 fuel-mix by class | load-bearing | PASS | **PASS** |
+| C2 system volume | load-bearing | PASS | **PASS** |
+| C3a mean LMP | load-bearing | PASS | **PASS** |
+| C3b price duration/shape | load-bearing | PASS | **PASS** |
+| C3c price tail / scarcity | supporting | CAVEAT (ledgered) | **CAVEAT (ledgered)** |
+| C4 fleet hourly dispatch corr | supporting | PASS | **PASS** |
+| C6 governance gate | protective | PASS | **PASS** |
+| C8 forced-energy share | protective | PASS | **PASS** |
+
+**0 FAILs. D-10: C1 all 12/12 · free 8/8.** C3c remains the **sole** ledgered caveat, carried
+forward unchanged in substance. The rule 22 D-5(b) worse-determination stop **does not fire**.
+
+### Price effect — the incumbent's disclosed defect (i) is closed
+
+| year | incumbent mean λ | neiso-93 | Δ |
+|---|---|---|---|
+| 2023 | 38.4613 | 38.4502 | −0.011 |
+| 2024 | 43.7026 | 43.7025 | ~0 (essentially bit-identical) |
+| **2025** | **69.7337** | **69.4178** | **−0.316** |
+
+The 2025 move is the Aug-2025 gas-basis repair (stale `+0.04` interpolation → HEAD's measured
+`−0.38`), the direction and magnitude the prompt predicted. **That 2024 barely moves and 2023 moves
+a cent is the expected signature and worth stating explicitly:** the nuclear *anchor* is unchanged in
+the tuned years — only the per-reactor **timing** overlay and gaps 3/4 can move them there — so the
+in-sample sensitivity to this session's work is genuinely small, while the out-of-training years
+(which were falling through to a climatology worth up to **+2.51 TWh** of phantom nuclear) are where
+the repair actually bites. **Gap 4 is the one change that materially touches the tuned years**, since
+NEISO had no parasitic-load rows in any year.
+
+### Two things that needed doing and are disclosed rather than buried
+
+1. **C6 needed an attestation the replay path does not emit.** The first scoring run returned
+   `NOT-YET — governance gate UNATTESTED: no governance attestation in bundle`, i.e. a **missing
+   artifact, not a substantive regression**. `build_dof_ledger.py` wrote `free_parameters` (7
+   entries) and the `governance` / `disclosures` / `exceptions` sections were written for this run —
+   the governance flags attested to this session's actual conduct, the C3c exception carried forward
+   from the incumbent, and the disclosures recording every item in this document that cuts against
+   the result.
+2. **The raw D-1/D-2 diagnostics report gate FAILs on COAL_BIT / ST_GAS / CT_PEAKER.** These are
+   **below the rule 20 [R-FORCED-BUDGET] 2 %-of-load materiality floor** in every year (COAL
+   0.2–0.3 %, ST_GAS 0.1–0.3 %, CT_PEAKER 0.5–1.5 %) and the scorer skips them as immaterial, which
+   is why C8 passes. Reported here so the raw FAIL in the bundle's own artifact is not mistaken for
+   a gated failure.
+
+### Promotion
+
+Promoted to NEISO keeper. `frontend/data/backcast/keepers/NEISO.json` edited (NEISO only, rule 25),
+status rebuilt via `build_status.py --iso NEISO`, and `calibration-complete.json`'s NEISO entry
+**re-keyed with a determination RE-VERIFICATION on committed artifacts only** (rule 22 D-5(b), no
+solve). `keeper_at_declaration` preserved; **tier authorization unchanged (validation only)** — this
+grants, spends and re-arms nothing. `audit_keepers.py --iso NEISO`: **0 failures, 0 warnings**.
+
+### What this does NOT do
+
+**2021 is still not solved, and that is correct.** This session made it solvable. Spending it needs
+its own owner lift. And **2019 is now further from ready than the anchor extension alone suggests** —
+see §2's Pilgrim caveat, which is a fleet-vintage limitation this session did not fix.
