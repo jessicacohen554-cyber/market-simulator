@@ -115,6 +115,61 @@ KNOWN_DANGLING: dict[str, str] = {
 }
 
 
+def census_sibling_imports(verbose: bool = False) -> list[str]:
+    """ADVISORY census of bare sibling-import sites in live ``scripts/`` files.
+
+    A *bare sibling import* is ``import X`` / ``from X import …`` where ``X``
+    is another script of this repo rather than an installed package — it
+    resolves only through ``sys.path`` side effects (``sys.path[0]`` being the
+    running script's own directory, or an inserted ``scripts/`` path), and it
+    creates the second-module-copy hazard the header documents whenever the
+    canonical ``scripts.*`` name is also loaded in one process. The scripts/
+    README's sibling-import section carries the running count; this mode is
+    that census made re-runnable, so the number can never silently drift.
+
+    Advisory by design: the conversion of the residual web is chartered open
+    work (per-file, with both-paths attribute verification and a direct-run
+    ``sys.path`` bootstrap check), not a gate — this reports, never fails.
+    Returns the site list as ``file:line: stmt`` strings.
+    """
+    import ast
+
+    exclude = {"archive", "probes", "__pycache__"}
+    scripts_dir = REPO / "scripts"
+    live = [
+        p
+        for p in scripts_dir.rglob("*.py")
+        if not (set(p.relative_to(scripts_dir).parts[:-1]) & exclude)
+    ]
+    # Any stem living anywhere under scripts/ (frozen record included — a live
+    # file bare-importing a probe module is still a bare site).
+    script_stems = {p.stem for p in scripts_dir.rglob("*.py")}
+    sites: list[str] = []
+    for f in sorted(live):
+        try:
+            tree = ast.parse(f.read_text())
+        except SyntaxError:
+            continue
+        for node in ast.walk(tree):
+            stmts: list[tuple[str, str]] = []
+            if isinstance(node, ast.Import):
+                stmts = [(a.name.split(".")[0], f"import {a.name}") for a in node.names]
+            elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+                stmts = [(node.module.split(".")[0], f"from {node.module} import …")]
+            for top, stmt in stmts:
+                if top in ("scripts", "market_sim", "tests"):
+                    continue
+                if top in script_stems:
+                    rel = f.relative_to(REPO)
+                    sites.append(f"{rel}:{node.lineno}: {stmt}")
+    n_files = len({s.split(":", 1)[0] for s in sites})
+    print(f"sibling-census: {len(sites)} bare site(s) across {n_files} live file(s)")
+    if verbose:
+        for s in sites:
+            print(f"  {s}")
+    return sites
+
+
 def check_import_walk() -> list[str]:
     """Import every module under ``market_sim``; return a list of failures."""
     import market_sim  # noqa: F401  (import here so a total failure is a clear error)
@@ -159,7 +214,15 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--script-refs", action="store_true", help="only the script-ref lint"
     )
+    ap.add_argument(
+        "--sibling-census",
+        action="store_true",
+        help="ADVISORY: list bare sibling-import sites in live scripts/ (never fails)",
+    )
     args = ap.parse_args(argv)
+    if args.sibling_census:
+        census_sibling_imports(verbose=True)
+        return 0
     run_all = not (args.import_walk or args.script_refs)
 
     failures: list[str] = []

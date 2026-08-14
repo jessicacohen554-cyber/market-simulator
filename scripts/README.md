@@ -91,18 +91,27 @@ bare form went with them. One recorded side effect: the frozen probe
 `probes/pjm123_composite_precheck.py` bare-imports `run_calibration` itself
 while also calling the now-canonical `lib/bundle_fleet.py`, so a re-run of
 that probe would hold both names (identical code; frozen record, left as-is).
-The **residue is the wider sibling web, measured 2026-07-27 at 105 bare
-sites across 91 live files**: overwhelmingly `scripts/data/` derive/build/
-fetch helpers importing each other by bare name (resolvable only because
-`sys.path[0]` is the script's own directory), plus a few top-level clusters
-(`score_crossover.py`, the `register_hindcast.py` / `register_forecast_run.py`
-/ `check_forecast_invariants.py` trio, `dashboard_add_run.py`,
-`pb5_assemble.py`, `generate_parameter_registry.py`, the two
-`*_zonal_sufficiency.py`, `validate_ercot_online_capacity.py`,
-`diagnostics/scratchpad_diag_evening.py`). Converting that web is open work —
-per-file, with the same both-paths verification; note the deploy trio
-(`register_hindcast.py` et al.) runs on bare `python3` in a sparse checkout,
-so any conversion there must keep its stdlib bootstrap self-sufficient.
+The **residue is the wider sibling web, re-measured 2026-08-14 at 74 bare
+sites across 50 live files** (down from the 2026-07-27 census's 105/91 —
+the intervening lanes' conversions are real; the census is now re-runnable
+any time with `python scripts/ci_refactor_guards.py --sibling-census`, an
+advisory mode, so the recorded number can be re-derived instead of trusted).
+The web is overwhelmingly `scripts/data/` derive/build/fetch helpers
+importing each other by bare name (61 same-directory sites, resolvable only
+because `sys.path[0]` is the script's own directory), plus 13 cross-directory
+sites (`lib/sced_corpus_instruments.py` deferred-importing probe modules, the
+two `*_zonal_sufficiency.py`, `validate_ercot_online_capacity.py`,
+`diagnostics/scratchpad_diag_evening.py`, `gen_caiso166_attestation.py`) and
+a few top-level clusters (`dashboard_add_run.py`,
+`build_ffr3a3_scorecard.py`). Converting that web is open work —
+per-file, with the same both-paths verification, PLUS a direct-run check per
+converted file: the canonical `from scripts.… import` form needs the repo
+root on `sys.path`, where the bare form needed only the script's own
+directory, so any file meant to run as `python scripts/data/foo.py` must
+carry (or gain) the repo-root bootstrap before conversion. Note the deploy
+trio (`register_hindcast.py` et al.) runs on bare `python3` in a sparse
+checkout, so any conversion there must keep its stdlib bootstrap
+self-sufficient.
 
 ### `keeper_store.py`'s CLI — the sanctioned exception (adjudicated 2026-07-26)
 
