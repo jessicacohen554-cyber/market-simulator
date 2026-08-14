@@ -450,3 +450,44 @@ basis works. A derivation that splits the CAMPD-detected windows into
 maintenance-season planned versus event-driven forced would let the forced
 components be compared like with like — and would be the input a reshaping
 mechanism needs. Neither successor is opened here.
+
+### §7.5 — keeper adjudication against the owner's standing standard
+
+The standing standard is: *"if structural integrity improves but gates regress
+that may still be a keeper."* Applied here it does **not** rescue the arm, and
+the reason is worth stating exactly, because the arm's *numbers* look promotable.
+
+**The gate half of the test is not what fails.** No gate regresses. Both arms
+score C1 16/16 · free 12/12, C2 / C3a / C3b / C3c / C4 / C8 PASS, and several
+class errors move favourably (2025 `COAL_BIT` +5.357 → +3.477 is a 1.9 TWh
+improvement). On residuals alone this would read as a promotion.
+
+**The premise fails instead: structural integrity does not improve.** The
+decisive number is the LEVEL, and it was in the ex-ante record before the solve:
+
+| GW, annual mean | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| model's asserted **fossil-thermal** outage | **41.7** | **43.2** | **41.2** |
+| PJM's published **whole-fleet** outage total | 33.3 | 33.0 | 35.9 |
+
+**Even if every megawatt PJM reports out were fossil-thermal, the model already
+asserts more outage on the fossil fleet alone than the operator reports for the
+entire system** — the neiso-63 layup over-count, visible directly. A REMOVE-ONLY
+cap can only make that deeper. So on **level** the mechanism moves *away* from
+the operator's record, not toward it; and on **shape** it moves toward it only in
+the middle of the load distribution, leaving the top-1 % net-load unavailable MW
+unchanged to within 27 MW (§7.1 P6).
+
+**Therefore the favourable class errors are produced by an effect the
+mechanism's justification does not cover.** The justification is "the envelope
+is too shallow in scarcity"; the effect delivered is "the envelope is deepened
+in mid-load hours, on top of a level that is already too deep". Promoting on
+that is reaching the right number through a mechanism that is not doing the
+thing it is defended by — which is what rule 1 [R-STRUCT] forbids, independently
+of whether the residual improved.
+
+**Verdict: NOT a keeper candidate; not promoted; `R` stands.** Keeper remains
+`2026-08-04-pjm-152-collapse`. The Phase-0 finding that motivated it (§3.3) is
+untouched by this — the envelope's scarcity inversion is real, measured in every
+year, and still unrepaired. What is refuted is the *cap* as a repair for it, and
+§7.4 names the two successors the same measurement selects.

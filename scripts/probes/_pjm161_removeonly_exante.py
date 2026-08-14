@@ -174,6 +174,42 @@ def main() -> None:
                 "removed_MW_max": float(removed_mw.max()),
                 "would_restore_MW_mean": float(restore_mw.mean()),
             }
+        # ---- FLEET-GRAIN form (the one actually implemented) ----------------
+        # One scalar per day: mu = (cap_sum - published_out) / available_mw,
+        # armed only where published_out > the model's own fleet outage MW.
+        from market_sim.data.pjm_outages import pjm_outage_mw_series
+
+        pub_h = pjm_outage_mw_series(yr, 8760, outage_types=ALL_TYPES)
+        pub = pub_h[: n_days * 24].reshape(n_days, 24).mean(axis=1)
+        cov = np.isin(groups, sorted(PJM_OUTAGE_COVERED_GROUPS))
+        cap_f = pmax[cov]
+        cap_sum_f = float(cap_f.sum())
+        ad_f = av[cov, : n_days * 24].reshape(int(cov.sum()), n_days, 24).mean(axis=2)
+        avail_mw = (ad_f * cap_f[:, None]).sum(axis=0)
+        cur_out = cap_sum_f - avail_mw
+        covd = np.isfinite(pub)
+        bind = covd & (pub > cur_out)
+        mu = np.ones(n_days)
+        mu[bind] = np.clip(
+            (cap_sum_f - pub[bind]) / np.maximum(avail_mw[bind], 1e-9), 0.0, 1.0
+        )
+        removed = np.where(bind, avail_mw * (1.0 - mu), 0.0)
+        yr_out["FLEET(implemented)"] = {
+            "covered_days": int(covd.sum()),
+            "remove_days": int(bind.sum()),
+            "restore_days": 0,
+            "removed_MW_mean_over_year": float(removed.mean()),
+            "removed_MW_mean_on_binding_days": float(
+                removed[bind].mean() if bind.any() else 0.0
+            ),
+            "removed_MW_max": float(removed.max()),
+            "would_restore_MW_mean": 0.0,
+            "model_fleet_out_MW_mean": float(cur_out[covd].mean()),
+            "published_fleet_out_MW_mean": float(pub[covd].mean()),
+            "median_mu_on_binding_days": float(
+                np.median(mu[bind]) if bind.any() else 1.0
+            ),
+        }
         result["years"][yr] = yr_out
 
     print()
