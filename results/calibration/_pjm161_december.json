@@ -1,0 +1,21 @@
+{
+ "december": {
+  "model_mean": 67.86373094034039,
+  "rt_mean": 111.92962646484375,
+  "resid_mean": -44.06589733187001,
+  "elliott_share_of_month_gap": 1.1536950397326515
+ },
+ "elliott": {
+  "hours": 96,
+  "model_mean": 100.58367295800672,
+  "rt_mean": 494.5829162597656,
+  "gas_delta_twh": 1.099621295928955,
+  "coal_delta_twh": -0.15042352676391602
+ },
+ "year_gas_delta_twh": 19.06649398803711,
+ "virtual_net_twh": {
+  "year": 11.11609172821045,
+  "december": 0.27901986241340637,
+  "jan_nov": 10.837074279785156
+ }
+}

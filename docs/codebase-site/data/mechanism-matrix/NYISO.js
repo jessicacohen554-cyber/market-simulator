@@ -134,6 +134,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     campd_outage_windows: { cell: "K" },
     outage_artifact_provenance: { cell: "I", ev: "xiso-2 §3.1 row 3 (nyiso-81 post-guard) + §4" },
     dam_availability_rebasis: { cell: "." },
+    pjm_measured_outage_event_cap: { cell: "." },
     ercot_dam_availability_coal_event_cap: { cell: "." },
     ercot_dam_availability_gas_event_cap: { cell: "." },
     ercot_dam_availability_event_cap_reconciliation: { cell: "." },
