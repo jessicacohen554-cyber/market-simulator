@@ -3915,6 +3915,98 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-09-miso-148-basis-aware`, **NOT-YET**
 
+> **QUEUE STAMP miso-157 (2026-08-14) — OWNER-CHARTERED BRANCH (A), THE PEAK
+> CUSHION. BRANCH **B-DISAGREE**: NO LEVER, NO SOLVE, NO RUN REGISTERED, NO
+> `ScenarioConfig` FIELD, NO CELL VERDICT MINTED (no mechanism armed or tested —
+> the miso-142/153/155 precedent). Keeper UNCHANGED at
+> `2026-08-09-miso-148-basis-aware`.**
+>
+> **THE OBJECT.** `SUMMER_WEFOR_SHARE = 0.30` removes **70 %** of `CT_PEAKER`'s
+> forced-outage rate from Jun–Sep (`arrays.py:773-791`) and is the **sole**
+> channel setting CT summer availability on this keeper — CAMPD covers
+> `CT_PEAKER` at **0 windows**, re-derived independently here (T-26), which also
+> **CORRECTS miso-87**: `CT_CHP` *is* covered (291 windows, 1,263 MW), so the
+> hole is CT_PEAKER's **22.28 GW** alone, not the cited 25.0 GW. The share is a
+> **self-declared UNCITED heuristic** in the keeper's DOF ledger under
+> identification `residual` (`fuel_trajectories.py:894-900`). This picks up the
+> CT coverage hole **miso-87 named and left open** (*"own charter, own
+> evidence"*, 2026-07-24).
+>
+> **THE CHARTERED OBJECT IS UNRESOLVED — NEITHER REFUTED NOR CONFIRMED — AND THE
+> SESSION SAYS SO.** The Jun–Sep ÷ annual unavailability ratio measured two ways
+> **disagrees in all three years**: MISO's own published outage record
+> (unplanned-only) reads **1.104 / 0.967 / 1.109** while MISO's own CAMPD
+> per-unit extract reads **0.617 / 0.622 / 0.746** — |diff| **0.487 / 0.346 /
+> 0.362** against a pre-registered **0.25** bar. That is the **miso-87 Ground-1
+> signature, pre-registered AS A KILL GATE** so it could not be argued past.
+> **B-ARM also fails its own condition independently** (needs `R_CAMPD` ≥ 0.90).
+> **S-PHANTOM** fired 2023/2024 and its own clause — *"B-DISAGREE is evaluated on
+> that basis rather than waived"* — was honoured. `SUMMER_WEFOR_SHARE` therefore
+> **stays a rule 20 `[R-DOF]` open root cause**. Reported without being treated
+> as a resolution: CAMPD's phantom-outage bias predicts exactly this gradient
+> (CC_REGULAR **0.267/0.434/0.558**, the most-cycled class, against ST_GAS
+> **0.861/0.866/0.833**), and MISO's record separates planned from unplanned as
+> physics requires (2025 `Planned` **0.658** out of summer; `Derated` **1.174**,
+> `Forced` **1.073**, `Unplanned` **1.083** above annual).
+>
+> **THE DURABLE RESULT IS A DIFFERENT AND LARGER DEFECT**, found by trap T-3
+> (*disbelieve clean zeros*) for the **third consecutive MISO session**.
+> Cap-weighted CT WEFOR came back **exactly 0.0700** in all three years while the
+> fleet aged 13→14→15. Second derivation: `_commission_year`
+> (`data/fleet/assembly.py:280-285`) falls through to a **hardcoded
+> `return 2010`** when its registry misses, and `master-plant-registry.csv` is
+> **833 rows, `ba_code = 'ERCO'` for all 833** — MISO's 527 plant codes intersect
+> it at **ZERO**. **Every plant-group-tagged thermal row in MISO — 108.70 GW
+> across 7 classes — carries ONE `online_year`, 2010**, so the **entire
+> age-escalation limb of `THERMAL_AVAILABILITY` is IDENTICALLY INERT for MISO:
+> 0.000 GW past onset in every class, every year.** Measured against EIA-860
+> `vintage_2024` at **100.0 %** capacity coverage: CT true cap-wt vintage
+> **1998.7** (age 24.3/25.3/26.3) vs the model's 2010; capacity past the age-20
+> onset **17.08 / 18.08 / 18.86 GW (76.7 / 81.1 / 84.6 %)** vs **0.000 GW**;
+> cap-wt WEFOR **0.0880/0.0904/0.0929** vs 0.0700 (**×1.26–1.33**); cap-wt
+> performance DERATE **0.0620/0.0636/0.0653** vs 0.0500. The DERATE leg is **flat
+> year-round**, so unlike the chartered share it is **not** a seasonal
+> reallocation — it overstates summer CT capability by **0.388/0.440/0.493 GW**.
+> **Rule 25 `[R-ISO-SCOPE]` both ways:** the registry being ERCOT-only exposes
+> **all five other non-ERCOT ISOs on the same code path**, but the magnitude is
+> measured for **MISO only** and **no verdict transfers**. **NOT FIXED HERE** —
+> it writes `src/market_sim/`, it is a gated availability change and a different
+> mechanism (rule 19), so it is an **OWNER DECISION** with its own charter.
+>
+> **LEG 2**, reported although the branch stopped the lever: reach **+1.241 /
+> +1.030 / +1.248 GW** = **16.0 / 13.6 / 19.8 %** of miso-153 D-1's
+> within-$20/MWh cushion (**1.560/1.330/1.657 GW** re-priced on the true WEFOR),
+> so B-INERT stayed silent — and the PREREG's own against-interest registration
+> held: it stated **before** measuring that this lever *"closes on the order of a
+> tenth of the gap and CANNOT close C3a"*. **T-27 PASSES at 3.2e−18.**
+>
+> **VALIDITY GATES 4/4 PASS 3/3 — but S-V1 FIRED FIRST AND THE DEFECT WAS THE
+> SESSION'S OWN**, disclosed rather than quietly repaired: the top-200 GW leg
+> read **+19.6/+19.9/+20.0 %** high because the probe summed `availcap` over the
+> whole fleet where D-1 scopes to the `THERMAL_AVAILABILITY` classes; the
+> **uniformity** of the offset identified it as scope, not noise, and on the
+> corrected scope V1 reproduces D-1 **exactly 3/3 at +0.005 %**.
+>
+> **PRIORS:** P-1 **CONFIRMED** (0.539/0.545/0.556; the PREREG's derived 0.548
+> predicted 2025 to **0.008**), P-3 **CONFIRMED 3/3 in the direction pre-declared
+> as hostile**, P-2 **MISSED** in 2024 (0.967 below a 1.00 floor), P-4 inside but
+> at its **bottom**, P-5 **MISSED BELOW** (1.0 % vs 5–30 % — a miss that cuts
+> *for* the charter, stated as a miss anyway). S-DERATE-SPLIT silent but
+> **narrowly** (0.270 vs a 0.30 bar).
+>
+> **OWNER DECISION TAKEN THIS SESSION:** the gated production-engine floor
+> rebuild is **BLESSED as canonical**, closing miso-156's open governance item 2.
+>
+> **LEVER QUEUE: STILL EMPTY** of named, un-adjudicated candidates. The successor
+> is a **data-provenance question, not a lever**: which measured record is
+> admissible for a **forced-outage seasonal shape**. Until that is settled no
+> `SUMMER_WEFOR_SHARE` charter can clear its own kill gate.
+> `results/calibration/FINDING-miso157-the-ct-fleet-is-stamped-one-vintage-2026-08-14.md`;
+> `PREREG-miso157-ct-summer-wefor-share-2026-08-14.md` (`09b7c87`, blob
+> `84091bdf`); probe `scripts/probes/_miso157_ct_summer_wefor.py`; record
+> `_miso157_ct_summer_wefor.json`.
+
+
 > **QUEUE STAMP miso-156 (2026-08-13) — PHASE 0 DECOMPOSED AND PHASE 1 ADJUDICATED
 > BOTH QUEUED LEVERS AGAINST. NO SOLVE, NO RUN REGISTERED, NO `ScenarioConfig`
 > FIELD; keeper UNCHANGED at `2026-08-09-miso-148-basis-aware`. TWO CELL VERDICTS
