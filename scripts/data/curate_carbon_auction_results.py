@@ -16,9 +16,13 @@ so the whole datatype writes one partition
 (``year=None``). Reads only ``data/raw``; idempotent; skips cleanly when the
 CSV has not landed yet.
 
-HOLDOUT QUARANTINE (CLAUDE.md rule 22): rows for 2022 or any 2026 auction are
-rejected -- same restriction the sibling rggi-co2-budgets/carb-cap-schedule
-datatypes enforce. Run ``python scripts/data/curate_carbon_auction_results.py``.
+HOLDOUT (CLAUDE.md rule 22): intake is NOT year-gated. Under the owner
+clarification of 2026-08-06 the SCORE is held out, never the DATA, so every
+published auction year lands here and is applied consistently across the whole
+span. The former ``{2022, 2026}`` intake quarantine was the superseded regime
+and is removed -- see ``_QUARANTINED_YEARS`` for why it mattered. The spend
+gates (solve/score/register + the freeze) are untouched.
+Run ``python scripts/data/curate_carbon_auction_results.py``.
 """
 
 from __future__ import annotations
@@ -35,8 +39,25 @@ DATATYPE = "carbon-auction-results"
 
 _PROGRAMS = {"RGGI", "CARB"}
 _PRICE_UNITS = {"usd_per_short_ton", "usd_per_tonne"}
-# Years under full holdout quarantine -- never intaken (CLAUDE.md rule 22).
-_QUARANTINED_YEARS = frozenset({2022, 2026})
+# Intake is NOT year-gated (CLAUDE.md rule 22, owner clarification 2026-08-06:
+# "WHAT IS HELD OUT IS THE *SCORE*, NEVER THE *DATA* ... Data intake needs NO
+# per-ISO/per-window authorization and no marker ... What remains restricted is
+# exactly one thing: looking at the answer"). This module reads published
+# auction results and writes a clean partition; it neither solves nor scores,
+# so no year it lands can spend a holdout.
+#
+# It previously carried `_QUARANTINED_YEARS = {2022, 2026}` and RAISED on those
+# rows. That encoded the PRE-2026-08-06 regime the clarification explicitly
+# replaced ("this REPLACES the former per-window intake authorization regime,
+# which had it backwards"), and it was actively harmful: it is why
+# STATE_CARBON_PRICE_BY_ISO carried no 2022 key, which made a NYISO 2022 solve
+# charge $0/tCO2 RGGI silently -- the D-1 defect of
+# results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md.
+#
+# The spend gates are unchanged and live where they belong: the CLI year gate in
+# run_calibration_full, legitimacy_diagnostics.run_d6_quarantine, audit_keepers,
+# and the holdout freeze -- all of which gate SOLVE/SCORE/REGISTER, not intake.
+_QUARANTINED_YEARS: frozenset[int] = frozenset()
 
 _COLUMNS = [
     "program",
@@ -107,7 +128,7 @@ def parse(raw_root: Path) -> pd.DataFrame:
     if hit:
         raise ValueError(
             f"{_rel(csv)}: holdout-quarantined year(s) {sorted(hit)} -- "
-            "2022/2026 must not be intaken (CLAUDE.md rule 22)"
+            "must not be intaken (CLAUDE.md rule 22)"
         )
 
     dupes = df[df.duplicated(["program", "year", "quarter"], keep=False)]
