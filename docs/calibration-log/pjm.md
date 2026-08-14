@@ -4081,3 +4081,111 @@ clean, keeper re-verifies **CALIBRATED** and `audit_keepers --iso PJM` 0/0 (the 
 2023–2025 solve is untouched by construction).
 
 Next shorthand: **pjm-161.**
+
+### pjm-161 — the 2022 touchpoint fails for TWO separable reasons; the outage envelope INVERTS in scarcity; the event-cap lever is REFUTED as built (2026-08-14)
+
+**Nothing was spent.** The holdout freeze is ACTIVE and untouched, `final` is EMPTY, and
+**no out-of-training year was solved, scored or registered.** Both arms are
+`--year 2023 2024 2025`, one invocation, years sequential. Every 2022 number below is a READ
+of the already-committed `2026-08-05-pjm-2022-touchpoint` bundle or of raw measured inputs.
+
+**Phase 0 split the object in two, and neither half is a tuning residual.**
+
+* **C1 `CC_REGULAR` +18.28 TWh — the DA-virtual layer, and the in-sample reading was
+  incomplete.** The layer clears **+11.12 TWh of net virtual DEMAND** in 2022, and that is
+  **not a phantom**: the raw measured curve's own rule-13 anchor at actual 2022 DA prices is
+  **+12.25 TWh**, so the LP sits **1.13 TWh** from its admissibility reference — the
+  **smallest deviation of any year** (in-sample −6.70 / −4.93 / +0.70). PJM's real 2022 DA
+  market genuinely held ~12 TWh of net virtual demand; the model reproduces it faithfully and
+  then, carrying ONE price and ONE energy balance, **serves a financial position as physical
+  energy**. pjm-158's "the anchor is ≈ 0" is a property of the 2023–2025 window, not of the
+  curve. At pjm-158 §5.2's measured 80 % channel that is **≈ +8.9 TWh of the miss (49 %)**,
+  from a mechanism whose in-sample contribution to the same class has the OPPOSITE SIGN.
+  **Escalated, not levered** — this is the architecture question pjm-158 raised, now with the
+  out-of-sample measurement that makes it concrete. Nothing disarmed.
+* **C3b 0.206 — Winter Storm Elliott, 96 hours.** 74.9 % of the squared error is **December
+  alone** (drop it: 0.196 → 0.110, better than any in-sample year), and inside December the
+  **23–26 Dec window carries 115 %** of the monthly gap from 13 % of its hours — the other 648
+  hours are *over*-priced by +$7.78. The model prices the event **$100.58 vs $494.58**, runs
+  **+11.5 GW more gas than actual** (+16.8 GW at peak), takes **zero** unserved energy and
+  produces **zero** hours > $200 against an actual RT 34. Load in the window is EXACT.
+
+**THE FINDING — the CAMPD outage envelope is ANTI-CORRELATED WITH SCARCITY, in every year.**
+corr(derated MW, net load) = **−0.701 / −0.680 / −0.714 / −0.772** (2022–2025) and the
+top-1 % net-load hours carry only **0.376 / 0.306 / 0.216 / 0.245×** the annual-mean derate.
+During Elliott the envelope asserts **15,555 MW out — its lowest level of the year** —
+against PJM's own published **31.1 / 35.8 / 27.1 GW forced** (40.7 GW total on 25 Dec). Cause
+is the detector's construction: it infers unavailability from **zero generation**, so it
+cannot see an outage at a unit that would not have run anyway, and a unit in economic layup
+**runs** when prices spike. This is the **SHAPE** consequence of the neiso-63 layup finding
+the holdout freeze rests on, which had only ever been stated as a LEVEL defect — annual means
+in fact agree within ~7 %. It also **falsifies, for PJM, the documented ground on which
+`correlated_forced_outage` is coerced off in backcast mode** ("a backcast's measured CAMPD
+overlays carry the real cold events"). Measured for PJM only; no verdict transfers (rule 25),
+and the other five ISOs are worth a census.
+
+**The lever, pre-registered before either arm solved and REFUTED by its own predictions.**
+`pjm_measured_outage_event_cap` (new, default off, PJM+backcast gated) — a REMOVE-ONLY,
+TOTAL-outage-basis cap on the ERCOT-148/149 shape, taking pjm-145's own named re-open route
+(3), zero fitted parameters. **The ex-ante probe rejected my first design before any solve**
+(class grain degenerated into "every class ceilinged at the fleet mean": 282–305 of 364
+binding days for 4.8–6.3 GW); the implemented form is fleet grain, 99/61/110 binding days.
+Arms `2026-08-14-pjm-161-control` and `2026-08-14-pjm-161-event-cap`. **The control
+reproduces the pjm-152 keeper BYTE-IDENTICALLY (max |Δ| 0.000000 TWh)**, so the field is
+provably inert at default and the A/B is valid. Scorecard: **P1 PASS**, **P2 PASS exactly**
+(max(avail_arm − avail_ctl) = 0.000000000000 — the pjm-145 resurrection branch is unreachable
+by construction), **P5 PASS** (ΔCC_REGULAR −0.508 / −0.283 / −0.688), **P3 PARTIAL** (mean
+dual up in all three, +0.19/+0.08/+0.34, but hourly MAE worse in all three), **P4 FAILED
+OUTRIGHT** (C3c hours > $200 3→3, 10→10, 32→32; max price identical), **P6 passes on the
+letter and fails on the substance** (corr narrows in all three but the top-1 %-net-load
+unavailable MW is UNCHANGED: 23,160→23,160 / 25,403→25,403 / 24,222→24,249).
+
+**Why: the cap adds ~zero outage in the hours it was built for.** PJM's published TOTAL is
+dominated by **planned** outages, scheduled AWAY from peaks — 12.2 / 14.0 / 18.0 GW on the
+top-20 peak-net-load days against annual means 33.3 / 33.0 / 35.9 — so it does not bind there;
+and the **forced** component, which IS correctly signed (event/annual 1.30–2.84 every year),
+is trivially inert against a 41.6 / 43.2 / 41.2 GW model envelope that carries planned
+outages too. A remove-only rule cannot RESHAPE an envelope, only deepen it.
+
+**NOT PROMOTED, and the favourable residuals are the reason for care.** No gate regresses —
+both arms C1 16/16 · free 12/12, C2/C3a/C3b/C3c/C4/C8 PASS, NOT-YET only on C6 UNATTESTED
+(the ordinary replay state, as at pjm-158) — and class errors move mostly favourably (2025
+COAL_BIT +5.357→+3.477, 2024 CC_REGULAR +0.322→+0.039, 2025 CC_REGULAR +3.957→+3.268, against
+2023 CC_REGULAR −3.451→−3.959 and 2025 CT_PEAKER +3.555→+4.821). But the mechanism **failed
+its own targeting test**, and adopting it on a mixed sub-TWh residual gain after that failure
+is the trade rule 1 forbids. **Keeper UNCHANGED at `2026-08-04-pjm-152-collapse`.** LOYO:
+zero free parameters, so nothing is identified against any year; per-year consistency holds
+(P5 negative ×3, P6 narrowing ×3, P4 null ×3).
+
+**A third term, already repaired, that a 2022 re-spend would carry.** The registered
+touchpoint reads `pjm_seam_measured_ladder = True`, but on 2026-08-05 `PJM_SEAM_LADDER_BY_YEAR`
+carried only 2023–2025, so the gate `year in PJM_SEAM_LADDER_BY_YEAR` was False and the run
+fell through to `inject_reference_price_firm_export` — a DIFFERENT seam mechanism from the
+keeper's own years. pjm-160 landed the 2022 ladder **two days later**. So the −18.22 TWh
+export shortfall is partly a year-keying artifact HEAD has already fixed — **and repairing it
+makes C1 WORSE**, because exports are a sink and PJM's 2022 marginal class is `CC_REGULAR`
+(+5 to +7 TWh onto a class already +18.28 over). **There is no combination of the identified
+objects that makes 2022 pass, and a re-spend should not be requested as a route to one.**
+
+**Named successors, selected by measurement.** (1) pjm-145 route (1) — the restore ceiling
+composed with the structural-derate registry (port the ercot137 fix): the envelope's defect is
+SHAPE not level, fixing a shape needs a mechanism that moves capacity in BOTH directions, and
+route (1) is what makes restoring safe. (2) The model's envelope carries **no planned/forced
+split**, which is why neither basis works; splitting the CAMPD-detected windows into
+maintenance-season planned vs event-driven forced is the input a reshaping mechanism needs.
+(3) The DA-virtual architecture question, owner-level, unchanged from pjm-158 and now
+evidenced out of sample. Neither (1) nor (2) is opened here.
+
+`state_carbon_pricing` was adjudicated as the prompt required and left PENDING OWNER: it is
+sign-matched to 2022 and correctly year-varying (pjm-146's K3 audit already reproduces
+Virginia's 2024 RGGI exit exactly), but pjm-146 measured CC_REGULAR −16.06 / −13.84 TWh
+in-sample against keeper errors of −3.45 / +0.32, so arming it takes 2023 to roughly −19.5 TWh
+— four times outside the band. That is the textbook fixes-2022-breaks-training signature, and
+pjm-146 already named the real defect (the CC→coal substitution elasticity) as the successor.
+
+Evidence: `PREREG-pjm161-measured-outage-event-cap-2026-08-14.md`,
+`FINDING-pjm161-outage-inversion-and-da-virtual-energy-2026-08-14.md`, probes
+`_pjm161_{energy_balance,virtual_2022,c3b_months,december,outage_inversion,removeonly_exante,ab}.py`
+and their committed `_pjm161_*.json` records.
+
+Next shorthand: **pjm-162.**
