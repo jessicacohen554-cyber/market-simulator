@@ -1,0 +1,18 @@
+[
+ {
+  "year": 2022,
+  "anchor_DA_hubmean": 11.71037245,
+  "anchor_DA_canon": 12.24767015,
+  "anchor_RT_canon": 18.1460811,
+  "DA_minus_RT_basis": 5.89841095,
+  "at_model_syslevel": 10.22829395,
+  "at_model_zonal": 11.1702362412,
+  "OBSERVED": 11.1160926819,
+  "unexplained": -0.0541435593,
+  "dev_from_DA_anchor": -1.1315774681,
+  "gain_MW_per_dollar": -234.2209303653,
+  "mean_DA": 67.3046600333,
+  "mean_RT": 68.791931461,
+  "mean_model_dual": 66.6489743407
+ }
+]
