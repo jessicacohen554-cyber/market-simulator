@@ -70,11 +70,25 @@ class TestCurateCarbonAuctionResults(unittest.TestCase):
     def test_skips_when_no_raw_csv(self) -> None:
         self.assertEqual(curate_mod.curate(raw_root=self.raw_root), [])
 
-    def test_quarantined_year_rejected(self) -> None:
-        bad = _CSV + ("RGGI,2026,1,2026-03-11,71,24.99,usd_per_short_ton,,,doc,url\n")
-        _write_fixture(self.raw_root, bad)
-        with self.assertRaises(ValueError):
-            curate_mod.curate(raw_root=self.raw_root)
+    def test_out_of_training_year_is_intaken_not_rejected(self) -> None:
+        """Intake is NOT year-gated (rule 22, owner clarification 2026-08-06).
+
+        Replaces ``test_quarantined_year_rejected``, which asserted the module
+        RAISED on 2022/2026 rows. That was the superseded pre-2026-08-06 regime
+        ("what is held out is the SCORE, never the DATA"), and it is what left
+        ``STATE_CARBON_PRICE_BY_ISO`` with no 2022 key — the D-1 defect of
+        ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md, where a NYISO 2022
+        solve silently charged $0/tCO2. The spend gates are elsewhere and
+        untouched; this module neither solves nor scores.
+        """
+        extra = "RGGI,2026,1,2026-03-11,71,24.99,usd_per_short_ton,,,doc,url\n"
+        _write_fixture(self.raw_root, _CSV + extra)
+        paths = curate_mod.curate(raw_root=self.raw_root)
+        self.assertEqual(len(paths), 1)
+        df = pd.read_parquet(paths[0])
+        landed = df[(df["program"] == "RGGI") & (df["year"] == 2026)]
+        self.assertEqual(len(landed), 1)
+        self.assertEqual(landed["clearing_price"].iloc[0], 24.99)
 
     def test_unknown_program_rejected(self) -> None:
         bad = _HEADER

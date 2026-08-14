@@ -60,11 +60,42 @@ def test_enrollment_aggregates_to_model_zones():
 
 @_pytestmark_needs_csv
 def test_enrollment_year_clamps_to_on_disk_range():
-    """Years outside the Gold-Book range clamp to the nearest vintage."""
-    lo = load_scr_edrp_enrollment(2019)  # -> earliest (2023)
-    hi = load_scr_edrp_enrollment(2099)  # -> latest (2025)
-    assert lo == load_scr_edrp_enrollment(2023)
-    assert hi == load_scr_edrp_enrollment(2025)
+    """Years outside the Gold-Book range clamp to the nearest vintage.
+
+    The bounds are DERIVED from the CSV (nyiso-134): they were the literals
+    2023/2025, which silently floored every earlier solve year at the 2023
+    vintage even once earlier vintages were landed — defect D-3 of
+    ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md. This asserts the clamp
+    tracks the data rather than a hardcoded year.
+    """
+    from market_sim.data.nyiso_demand_response import _gb_year_bounds
+
+    lo_year, hi_year = _gb_year_bounds()
+    assert load_scr_edrp_enrollment(lo_year - 7) == load_scr_edrp_enrollment(lo_year)
+    assert load_scr_edrp_enrollment(2099) == load_scr_edrp_enrollment(hi_year)
+
+
+@_pytestmark_needs_csv
+def test_each_landed_vintage_resolves_to_itself():
+    """A solve year WITH its own Gold Book vintage uses it, not a neighbour's.
+
+    The regression D-3 actually caused: with the bounds hardcoded at 2023, a
+    2022 solve silently received the 2023 vintage — ~1.23 GW of emergency DR at
+    a $500/MWh strike placed at the wrong vintage, inside the scarcity band C3c
+    measures. Distinct totals per vintage are what proves the clamp is no longer
+    swallowing them.
+    """
+    from market_sim.data.nyiso_demand_response import _gb_year_bounds
+
+    lo_year, hi_year = _gb_year_bounds()
+    totals = {
+        y: sum(v["summer"] for v in load_scr_edrp_enrollment(y).values())
+        for y in range(lo_year, hi_year + 1)
+    }
+    assert all(t > 0.0 for t in totals.values()), totals
+    assert len(set(totals.values())) == len(totals), (
+        f"vintages are not resolving independently: {totals}"
+    )
 
 
 @_pytestmark_needs_csv

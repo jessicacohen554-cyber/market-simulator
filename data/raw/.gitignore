@@ -1,0 +1,14 @@
+# Gitignored: the API-only push path cannot commit binary blobs. This
+# parquet regenerates deterministically from the committed per-year CSVs in
+# pjm-outages/by-year/ (or the raw pull) via
+# scripts/data/derive_pjm_dam_availability.py.
+pjm-dam-availability.parquet
+
+# NYISO day-ahead ATC/TTC postings (nyiso-134, 2026-08-14). Not committed, for
+# the same reason the legacy ATC_TTC.zip never was: NYISO's redistribution terms
+# are unverified (docs/data-licensing.md §7), and it is ~17 MB of raw zips whose
+# only product is the small Central-East constants block in config/constants.py.
+# scripts/data/derive_nyiso_central_east_ttc.py reads this directory when present
+# and prints the exact per-month re-fetch command when it is absent, so the
+# derivation stays fully reproducible from a bare checkout.
+NYISO/atc-ttc/

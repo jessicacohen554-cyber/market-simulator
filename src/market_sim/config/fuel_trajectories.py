@@ -1151,12 +1151,27 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
 # cap-and-trade (doc-07 design decision 4). Source: RGGI, Inc. auction results
 # ("CO2 Allowances Sold for $X in the Nth RGGI Auction" press releases,
 # rggi.org/auctions/auction-results):
+#   2018: A39 (Mar) $3.79,  A40 (Jun) $4.02,  A41 (Sep) $4.50,
+#         A42 (Dec) $5.35  -> $4.41
+#   2019: A43 (Mar) $5.27,  A44 (Jun) $5.62,  A45 (Sep) $5.20,
+#         A46 (Dec) $5.61  -> $5.42
+#   2020: A47 (Mar) $5.65,  A48 (Jun) $5.75,  A49 (Sep) $6.82,
+#         A50 (Dec) $7.41  -> $6.41
+#   2021: A51 (Mar) $7.60,  A52 (Jun) $7.97,  A53 (Sep) $9.30,
+#         A54 (Dec) $13.00 -> $9.47
+#   2022: A55 (Mar) $13.50, A56 (Jun) $13.90, A57 (Sep) $13.45,
+#         A58 (Dec) $12.99 -> $13.46
 #   2023: A59 (Mar) $12.50, A60 (Jun) $12.73, A61 (Sep) $13.85,
 #         A62 (Dec) $14.88 -> $13.49
 #   2024: A63 (Mar) $16.00, A64 (Jun) $21.03, A65 (Sep) $25.75,
 #         A66 (Dec) $20.05 -> $20.71
 #   2025: A67 (Mar) $19.76, A68 (Jun) $19.63, A69 (Sep) $22.25,
 #         A70 (Dec) $26.73 -> $22.09
+# (A54 is the only pre-2023 auction that triggered the Cost Containment
+# Reserve: 3,919,482 CCR allowances sold on top of the 23,121,518 offered. The
+# CCR release is a quantity event, not a separate price -- the auction still
+# clears at ONE uniform price, $13.00 -- so the simple-mean recipe is unchanged
+# and no weighting adjustment is warranted.)
 # Caveat: RGGI allowances are denominated per *short* ton CO2 while the model's
 # emission_rate_co2 is per *metric* tonne, so charging these prices against the
 # metric-tonne rate understates the true allowance cost by ~10.2% (1 t = 1.1023
@@ -1170,6 +1185,11 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
 # members, so the allowance cost applies ISO-wide; doc-08 design decision
 # 3), but stored CONVERTED to the model's $/metric-tonne emission-rate
 # unit at 1 short ton = 0.907185 t (x 1.10231):
+#   2018: $4.41/short ton  -> $4.86/t
+#   2019: $5.42/short ton  -> $5.97/t
+#   2020: $6.41/short ton  -> $7.07/t
+#   2021: $9.47/short ton  -> $10.44/t
+#   2022: $13.46/short ton -> $14.84/t
 #   2023: $13.49/short ton -> $14.87/t
 #   2024: $20.71/short ton -> $22.83/t
 #   2025: $22.09/short ton -> $24.35/t
@@ -1181,10 +1201,54 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
 # NEISO stores the metric-converted values (unit-exact MC). The two RGGI
 # entries should be unified one way or the other in a joint NYISO/NEISO
 # calibration pass.
+# EXTENDED TO 2018-2022 on 2026-08-14 (nyiso-134). Same source, same recipe,
+# ZERO free parameters: the year's four quarterly RGGI clearing prices, simple
+# mean, from the same RGGI, Inc. "Allowance Prices and Volumes" table that
+# supplies A59-A70 (auctions A39-A58; per-auction rows land in
+# data/raw/policy/carbon-auction-results/carbon-auction-results.csv and curate
+# to the carbon-auction-results clean datatype). The recipe was VERIFIED against
+# the incumbent years before the new rows were written: recomputing 2023/2024/
+# 2025 from the published table reproduces 13.49 / 20.71 / 22.09 (NYISO) and
+# 14.87 / 22.83 / 24.35 (NEISO) EXACTLY.
+#
+# WHY THE GAP EXISTED AND WHY IT MATTERED: state_carbon_price() returns None for
+# a year absent here, and a backcast keeper ships carbon_price_path="zero", so an
+# out-of-training solve silently charged $0/tCO2 with no exception and no
+# warning. For NYISO 2022 that is $6.13/MWh on the fleet 0.4558 tCO2/MWh-net
+# (8.2 % of the 2022 RT mean) and MERIT-ORDER distorting, since the CC-to-steam
+# rate spread is 2.9x. Diagnosis: defect D-1 of
+# results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md.
+#
+# CAISO is deliberately NOT extended here: CARB rows come from a different
+# source that blocks automated fetches (see the carbon-auction-results raw
+# README), so its 2018-2022 block is a separate CAISO-lane intake (rule 25
+# [R-ISO-SCOPE]) and remains an open gap for any CAISO out-of-training year.
+#
+# NYISO stores the PUBLISHED short-ton clearing price; NEISO stores it
+# METRIC-CONVERTED (x 1.10231) — the harmonization asymmetry documented above is
+# preserved exactly for the new years.
 STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
     "CAISO": {2023: 33.03, 2024: 35.23, 2025: 28.06},
-    "NYISO": {2023: 13.49, 2024: 20.71, 2025: 22.09},
-    "NEISO": {2023: 14.87, 2024: 22.83, 2025: 24.35},
+    "NYISO": {
+        2018: 4.41,
+        2019: 5.42,
+        2020: 6.41,
+        2021: 9.47,
+        2022: 13.46,
+        2023: 13.49,
+        2024: 20.71,
+        2025: 22.09,
+    },
+    "NEISO": {
+        2018: 4.86,
+        2019: 5.97,
+        2020: 7.07,
+        2021: 10.44,
+        2022: 14.84,
+        2023: 14.87,
+        2024: 22.83,
+        2025: 24.35,
+    },
 }
 
 # PJM — the SAME RGGI auction clearing prices as the NYISO/NEISO blocks above
