@@ -71,6 +71,19 @@ moved `062d4405→8d9ef77e`, PR #3903). Main receives **multiple merges per hour
 during owner sittings — every lane branches off freshly-fetched `origin/main` and
 expects rebases.
 
+**Refresh (2026-08-13 late sitting, main @ `dbde0c2` after the #3904–#3924 burst;
+source: `ffr-owner-sitting-2026-08-02.md` Addendum AS):** OVERRIDE-FIX **LANDED and
+ACCEPTED** (#3915, `docs/handoffs/override-fix-2026-08-13.md`) — its surface is now
+settled, not off-limits; **L-1's promotion gate cleared** (AS.1), so the ERCOT keeper
+may still move before G2; miso-155 merged (#3907/#3910) and the miso branch is gone;
+**Wave FH is complete** and the FFR/FH desk explicitly does not dispatch into this
+program's scope (AS.4) — cross-program facts land by addendum there and citation here.
+The ERCOT-SCAR workstream runs under its own manager
+(`docs/handoffs/ercot-scar-workstream-pack-2026-08.md`) and owns ERCOT
+scarcity-formation work. Push transport note for every lane: `git push` HTTP 408/500
+is HTTP/2 negotiation, not pack size — `git config http.version HTTP/1.1` fixes it
+(now in CLAUDE.md Git & Pushing).
+
 **Governance rails that bind every lane** (CLAUDE.md, 28 rules, stable `[R-*]` IDs):
 
 - **[R-ALLYEARS] (rule 16):** any fix that changes a solve ⇒ full-span re-solve for
@@ -139,6 +152,11 @@ start of PERF-B; fast-tests green; keepers either untouched or fully re-register
 per [R-ALLYEARS]/[R-DASHBOARD]. From G2 onward the numbers the docs and site describe
 stop moving. **At G2 the owner enables branch protection / required checks on main**
 (signed 2026-08-13, decision 3 — DEBUG-A's memo supplies the exact steps).
+**Cross-program trigger:** the FFR desk pinned its **Q.2 supersession battery**
+("commission when keepers genuinely settle") to this gate — when G2 is declared, the
+PM notifies the owner so the FFR desk can commission Q.2 in the same freeze window
+(`ffr-owner-sitting-2026-08-02.md` AS.6). Not this program's work to run; G2 firing
+is its trigger.
 
 **G3 — Docs + prune merged.** Manual and finalized methodology on main with the
 CHANGELOG caught up; itemized tip-prune PRs merged (`intentional-shrink` labeled);
@@ -353,6 +371,20 @@ established gitignore+README+SHA256+fetch-script pattern; clone-size recovery vi
 `cleanup-large-blobs.yml` is dry-run-quantified only and left as a standing owner
 option.
 
+**Inherited charter — RAW-UNTRACK (2026-08-13).** The FFR desk withdrew its
+single-lane §0ar-3 RAW-UNTRACK prompt and handed the scope to this workstream
+(`ffr-owner-sitting-2026-08-02.md` AS.5; `forecast-readiness-prompt-pack-2026-07.md`
+§0as — "do NOT re-dispatch from this pack"), precisely so two uncoordinated actors
+never edit `.gitignore`/CLAUDE.md/repo-size state. BLOAT inherits and must reconcile:
+`docs/FINDING-rewrite-prep-2026-08-11.md` §8 (**GO**: untrack `data/raw` going
+forward — `git rm -r --cached` + gitignore, metadata-only commit, HISTORY KEPT AS-IS;
+the NO-GO on rewriting stands), `docs/fast-clone.md` (#3909 — partial clone +
+`hydrate_data.py` per-session data profiles, the recovery story untracking depends
+on), and §0ar-3's pre-merge checklist (workflows, file-integrity guard,
+skip-when-absent tests, CLAUDE.md data-contract + Git & Pushing updates in the same
+PR). BLOAT-A's plan must state whether wholesale untracking subsumes or sequences
+with the per-corpus conversions below.
+
 **BLOAT-A (inventory → itemized plan, now).** Classify every candidate with evidence:
 
 - *Prime data targets* (~4–5 GB, none in the golden-tier sparse list):
@@ -553,8 +585,10 @@ enable-after-G2, so the memo is executed at gate G2, not now.
 
 Hard rules: solve-neutral only — any fix that changes solve output gets chartered,
 not landed (rule 16 [R-ALLYEARS]: full-span re-solve; rule 15 [R-DASHBOARD]:
-same-session registration). DO NOT touch iso_configs override-precedence — the
-OVERRIDE-FIX lane owns it. Core files: never bulk-rewrite a ≥300-line file
+same-session registration). iso_configs override-precedence: the OVERRIDE-FIX lane
+LANDED and was accepted (#3915, docs/handoffs/override-fix-2026-08-13.md) — treat
+that surface as SETTLED: do not rework it; any residual defect you find there is a
+report-only finding routed to the owner. Core files: never bulk-rewrite a ≥300-line file
 ([R-PUSH]); run scripts/ci_refactor_guards.py --script-refs after any script move.
 Deliverables: fix commits on your branch + docs/handoffs/debug-sweep-2026-08.md
 (triage table: finding → disposition → evidence → follow-up charter if any) + the
@@ -665,6 +699,22 @@ Standing constraint: history rewrite is NO-GO (owner decision, REWRITE-PREP Adde
 AQ 2026-08-13). Scope = tip prune + corpus conversion only. cleanup-large-blobs.yml
 may be planned as a DRY RUN to quantify, never executed.
 
+INHERITED CHARTER (2026-08-13, read FIRST): the FFR desk WITHDREW its RAW-UNTRACK
+lane into this workstream (ffr-owner-sitting-2026-08-02.md AS.5; pack §0as — never
+re-dispatch it). You inherit three inputs and must reconcile them with the per-corpus
+candidates below: (1) docs/FINDING-rewrite-prep-2026-08-11.md §8 — the GO half:
+untrack data/raw GOING FORWARD (git rm -r --cached data/raw + .gitignore,
+metadata-only commit, history kept as-is; NO-GO on rewriting stands); (2)
+docs/fast-clone.md (#3909) — partial clone + scripts/hydrate_data.py per-session
+data profiles, the recovery story untracking depends on; (3) §0ar-3's pre-merge
+checklist in docs/forecast-readiness-prompt-pack-2026-07.md — workflows
+(golden-data-tier sparse checkout!), file-integrity guard, skip-when-absent tests,
+CLAUDE.md data-contract + Git & Pushing updates in the same PR. Your itemized plan's
+FIRST section must answer: does wholesale data/raw untracking SUBSUME the per-corpus
+conversions (one move instead of many), or do specific corpora need the
+conversion/slimming treatment anyway (e.g. golden-tier-listed paths that must stay
+fetchable, irreplaceable vintages needing committed copies)? Sequence accordingly.
+
 Measured starting point (2026-08-13, Trees API @ 066abeed — re-verify against fresh
 main): tip 10,531 MB / 11,011 files; data/ 10,222 MB; results/ 159 MB; 2,084 files
 >512 KB. OWNER PRE-APPROVAL (2026-08-13, plan §6 decision 4): the
@@ -769,3 +819,11 @@ your branch when done.
   carry the signed decisions. Owner launches Wave-1 sessions manually.
 - 2026-08-13 — Owner merged the plan to main (G0: program ADOPTED); plan branch
   auto-deleted and restarted from main to carry this signed-decisions revision.
+- 2026-08-13 — Signed-decisions revision merged (PR #3918). PM refresh at main
+  `dbde0c2`: no Wave-1 lane branches yet. Recorded cross-program facts from the FFR
+  desk's Addendum AS: RAW-UNTRACK withdrawn INTO BLOAT (inherited charter added to
+  §3/WS6 + §7.5); FFR Q.2 supersession battery pinned to fire at G2 (noted in §2);
+  OVERRIDE-FIX landed #3915 (DEBUG-A constraint relaxed to report-only in §7.2);
+  L-1 unblocked, ERCOT keeper may move pre-G2; HTTP/1.1 push fix now in CLAUDE.md.
+  Amended DEBUG-A + BLOAT-A prompts re-issued to the owner; AUDIT-A / PERF-A /
+  DOCS-A stand as issued.
