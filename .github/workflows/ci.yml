@@ -13,6 +13,31 @@ name: CI
 # parallel, so wall time is the slowest job (fast-tests). NO LP solves, no data
 # regeneration, no cron — heavy work runs in Claude sessions, per the repo CI
 # cost policy.
+#
+# SPARSE CHECKOUT — why nine of the ten jobs carry `DATA-FREE CHECKOUT`.
+# data/raw is ~7.5 GB tracked. Every job here used a plain unfiltered
+# actions/checkout, so a single PR run pulled it TEN times (~75 GB) — and only
+# fast-tests reads a byte of it. Each of the other nine now checks out the tree
+# MINUS data/raw, cutting per-PR transfer by ~90% at zero behavioural cost.
+#
+# Established empirically 2026-08-14, not by inspection: data/raw was moved
+# aside and every job's own commands were re-run against the resulting tree.
+# All nine pass identically with it absent. Three jobs were already red on main
+# for unrelated content reasons (forecast-parity-guard: two armed-but-undeclared
+# mechanisms; forecast-invariant-artifacts: three PJM runs with undeclared I7;
+# refactor-guards: a dangling script reference in gen_caiso189_attestation.py) —
+# each produced byte-identical output with and without data/raw, so those reds
+# are pre-existing and independent of this change.
+#
+# fast-tests is deliberately NOT sparse: removing data/raw takes it from 6
+# failures to 780 failures + 81 errors. It is a hard runtime dependency of that
+# tier, and the tier is BLOCKING. Do not "consistency-fix" this by adding the
+# sparse block to it.
+#
+# Non-cone mode is required — cone mode has no negation. The pattern set is the
+# same base pair scripts/hydrate_data.py applies (`/*` + `!/data/raw/`), so the
+# two stay in step. A job that later grows a data/raw dependency must DROP its
+# sparse block, never silently skip the input.
 
 on:
   pull_request:
@@ -46,6 +71,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/raw/
       - name: Set up uv + Python
         uses: astral-sh/setup-uv@v5
         with:
@@ -76,6 +107,12 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/raw/
       - name: Set up uv + Python
         uses: astral-sh/setup-uv@v5
         with:
@@ -111,6 +148,11 @@ jobs:
       # reads "(unknown)" — honestly reported, but useless as a signal.
       - uses: actions/checkout@v4
         with:
+          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/raw/
           fetch-depth: 0
       # FR-21: the T1 gate evidence went stale and NOTHING detected it. FF-2D
       # scored 2026-07-20; over the following ten days ~20 keeper promotions
@@ -139,6 +181,12 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/raw/
       # FR-22: a mechanism armed in an ISO's keeper posture must have a
       # forecast-orchestrator consumer or an explicit backcast-only-by-design
       # declaration (scripts/lib/forecast_parity_registry.py). The nyiso-102
@@ -165,6 +213,12 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/raw/
       - name: Fetch PR base
         run: git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
       # Rule 28 [R-MECH-MATRIX]: matrix integrity always; on the diff, a new
@@ -180,6 +234,12 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/raw/
       - name: Fetch PR base
         run: git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
       # A new ScenarioConfig field that is not listed in
@@ -220,6 +280,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/raw/
       - name: Set up uv + Python
         uses: astral-sh/setup-uv@v5
         with:
@@ -262,6 +328,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/raw/
       - name: Set up uv + Python
         uses: astral-sh/setup-uv@v5
         with:
@@ -304,6 +376,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/raw/
       - name: Set up uv + Python
         uses: astral-sh/setup-uv@v5
         with:
