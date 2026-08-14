@@ -7169,3 +7169,49 @@ publishing cite/* tags.
   complete. Open at this desk: cards D-31/D-32 (owner), Q.2's battery — pinned to the
   release program's G2 (AS.6). Branch protection is DISPOSED to G2 (release-plan
   decision 3); the λ wording (AF.2/AG.2) stays open, non-gating.
+
+## §0at — the two signed-card lanes @ `7c63c14` (2026-08-13): D-31-ADOPT and D-32-F6FIX
+
+*Both signed by the owner this sitting (Addendum AT). Both are small, solve-free,
+Opus-eligible core lanes (rule 27). Full prompts delivered in chat and recorded here.*
+
+### §0at-1 — D-31-ADOPT [OPUS] — adopt the 8.0 GW ERCOT solar queue cap (owner decision D-31)
+
+DATA PROFILE: code
+Object: `QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"]` 5.0 → 8.0 in
+`src/market_sim/config/capacity_market.py` (line ~3555), citing RC-DERIVE (`6e6e50b`,
+prereg `d938f29`) as the rule-23 re-derivation on a data change (post-2020 EIA-860
+demonstrated record). Duties: (a) the citation comment on the value states the source
+and the D-31 signature (rule 5); (b) THE KEY DOES NOT MOVE — this is a constant, not a
+ScenarioConfig field, so no ledger entries and no matrix row, BUT every cached/committed
+ERCOT forecast-lane artifact produced at 5.0 is re-based IN MEANING under an unchanged
+key (the D-13 hazard, worst form). The lane writes a RE-BASE NOTE (pre-change ERCOT
+forward sidecars are historical record, never a post-change baseline), checks how the
+hindcast/forecast cache distinguishes constants revisions, and follows house practice
+for invalidation — report what that practice is, do not invent one; (c) run the
+capacity-evolution unit lane + grep for tests pinning 5.0; (d) rule 27 on
+capacity_market.py (core, >=300 lines): edit locally, push exact bytes, blob-verify.
+No solve. WAIT for the cache-key-pin CI verdict on the PR before merging.
+
+### §0at-2 — D-32-F6FIX [OPUS] — the F6 LMP-backend parity fix, option A (owner decision D-32)
+
+DATA PROFILE: all (justification: re-measuring the §A parity effect spans the
+PJM/CAISO/NEISO/NYISO lmp partitions; hydrate then `regenerate_clean.py`)
+Object: `docs/FINDING-f6-lmp-backend-parity-2026-08-11.md` §A VERBATIM — in
+`src/market_sim/data/neighbor_price.py`, `_neighbor_lmp_clean` indexes
+`interval_start_utc` converted to the ISO's FIXED STANDARD offset (a standard-clock
+variant of `_hour_of_year`) plus a small per-ISO hub-definition table; fold in the
+docstring corrections (test line 35 + the two module docstrings). Options B and C are
+REJECTED in the finding — do not revisit. Acceptance: (a) reproduce the finding's
+measured effect — bit-parity on all 16 PJM partitions and 7 of 8 CAISO; NEISO to 2–45
+h/yr; state the NYISO interval-convention residual as OPEN if it remains (do not force
+it closed); (b) `tests/curation/test_consume_lmp.py` passes un-skipped on the rebuilt
+clean tree with `_TOL` UNCHANGED; (c) no ScenarioConfig field, no matrix row, no
+cache-key ledger entries (per the finding); keeper risk none — verify the raw product
+is byte-untouched; (d) rule 27 on any >=300-line file. No solve. WAIT for the
+cache-key-pin CI verdict before merging.
+
+*Clause block for both prompts: §0ar-clauses as amended by §0as (PUSH clause: HTTP
+408/500 → `git config http.version HTTP/1.1` first; DATA PROFILE line required;
+half-dead-container recovery per `docs/fast-clone.md`). Inlined in the chat-delivered
+prompts per §0am.*
