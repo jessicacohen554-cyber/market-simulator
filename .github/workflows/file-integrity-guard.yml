@@ -36,6 +36,19 @@ jobs:
         with:
           fetch-depth: 0
           filter: blob:none
+          # DATA-FREE CHECKOUT (the ci.yml 2026-08-14 pattern, missed here
+          # because this is a separate workflow file): without it, checking out
+          # the working tree lazy-fetches every tip blob INCLUDING the ~7.5 GB
+          # data/raw, and the checkout step itself dies before the guard script
+          # ever runs — rule-27 enforcement red on infrastructure, not content
+          # (first observed on PR #3937). The guard needs no working-tree data
+          # at all: the diff scan is tree-level and blob_lines() cat-files
+          # individual core-path blobs, which lazy-fetch on demand either way.
+          # Non-cone mode because cone mode cannot negate.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/raw/
 
       - name: Fail on >30% shrink or deletion of core files
         env:
