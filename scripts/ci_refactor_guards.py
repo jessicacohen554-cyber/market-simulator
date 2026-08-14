@@ -103,6 +103,15 @@ KNOWN_DANGLING: dict[str, str] = {
     # 2026-08-03 by FFR-3D — it had been failing refactor-guards on main since
     # d12b4a8, reddening the gate for every PR (nobody's PR caused it).
     "scripts/_ff2d_crossover_adapter.py": "deleted at FFR-2A d12b4a8; deletion-provenance comments only",
+    # Not a path at all: ``NNN`` is the run-number placeholder in
+    # gen_caiso189_attestation.py's description of the per-promotion series
+    # ("the bespoke gen_caisoNNN_attestation.py every CAISO promotion ships").
+    # It appears both in that script's docstring and inside the governance-note
+    # STRING the script writes into the caiso-189 attestation artifact, so
+    # rewording would change what the recorded attestation text regenerates to;
+    # allowlisted instead. Found reddening refactor-guards on main by the
+    # 2026-08-14 debug sweep (ci.yml header had flagged it pre-existing).
+    "scripts/gen_caisoNNN_attestation.py": "run-number placeholder in the caiso attestation-series prose, not a reference",
 }
 
 
