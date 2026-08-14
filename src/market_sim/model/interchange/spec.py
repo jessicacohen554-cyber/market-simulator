@@ -574,7 +574,56 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
     # premium over the anchor (+$0.1 / +$11.1 / +$51.9); the NYISO_CT rungs
     # bracket the measured NPX parity each year. 2024 has no scarcity rung —
     # the measured p99.9 total import sits within the per-seam p98 rungs.
+    #
+    # 2019-2022 added 2026-08-14 (neiso-93 envelope repair) from the SAME
+    # producer and the same three measured sources, after the deriver was
+    # proved to re-derive the committed 2023-2025 ladders (see below).
+    # Data-change citation per rule 23 [R-FROZEN-DERIVE]: a SOURCE-COVERAGE
+    # extension — both upstream extracts were widened from 2023-2025 to
+    # 2019-2025 this session — not a re-tune, and nothing is fitted to any
+    # year's residual. Before this block an out-of-training year silently took
+    # the POOLED static ladder, embedding late-period HQ water value and NY-NE
+    # arbitrage into an earlier year on a system where imports are a large
+    # share of supply.
+    # The year texture the pooled curve was erasing is large and physical: mean
+    # measured HQT import runs -1,576/-1,559/-1,532/-1,541 MW across 2019-2022
+    # against -1,204/-694/-315 MW in 2023-2025, i.e. HQ delivered roughly five
+    # times as much in 2019 as in 2025, and its measured opportunity cost
+    # (NYISO_HQ anchor) was $19.07 then vs $55.99 now. So the early years'
+    # HQ_PhaseII rungs price BELOW their anchor (-$3.2/-$1.0/-$5.5/-$8.6) where
+    # 2025's prices +$51.9 above it. 2019-2022 carry no import_scarcity rung
+    # (measured p99.9 total import sits inside the per-seam p98 rungs) and no
+    # export_HQ sink (no measurable HQT export depth — NEISO imported on that
+    # seam essentially every hour).
     "NEISO": {
+        2019: [
+            ("Highgate", 225.0, 9.95),
+            ("HQ_PhaseII", 1930.0, 15.86),
+            ("NB_north", 810.0, 27.22),
+            ("NYISO_CT_base", 835.0, 22.51),
+            ("NYISO_CT_peak", 835.0, 43.31),
+        ],
+        2020: [
+            ("Highgate", 225.0, 6.33),
+            ("HQ_PhaseII", 1885.0, 13.25),
+            ("NB_north", 805.0, 25.04),
+            ("NYISO_CT_base", 760.0, 15.18),
+            ("NYISO_CT_peak", 760.0, 25.71),
+        ],
+        2021: [
+            ("Highgate", 225.0, 11.52),
+            ("HQ_PhaseII", 1870.0, 20.25),
+            ("NB_north", 845.0, 47.33),
+            ("NYISO_CT_base", 805.0, 44.72),
+            ("NYISO_CT_peak", 805.0, 78.58),
+        ],
+        2022: [
+            ("Highgate", 225.0, 14.02),
+            ("HQ_PhaseII", 1880.0, 40.60),
+            ("NB_north", 765.0, 89.88),
+            ("NYISO_CT_base", 850.0, 90.26),
+            ("NYISO_CT_peak", 850.0, 162.69),
+        ],
         2023: [
             ("Highgate", 225.0, 17.00),
             ("HQ_PhaseII", 1595.0, 24.70),
@@ -594,7 +643,13 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
             ("Highgate", 225.0, 56.35),
             ("HQ_PhaseII", 1935.0, 107.89),
             ("NB_north", 655.0, 129.96),
-            ("NYISO_CT_base", 880.0, 44.48),
+            # 44.47, not the 44.48 committed 2026-07-06: the deriver emits
+            # 44.47 and always has. Verified this session by re-running it
+            # against the PRE-SESSION committed inputs, which also give 44.47,
+            # so this is a 1-cent hand-transcription slip in the original
+            # paste-in, NOT an effect of the 2019-2025 source widening. Set to
+            # the producer's own output so the whole block re-derives exactly.
+            ("NYISO_CT_base", 880.0, 44.47),
             ("NYISO_CT_peak", 880.0, 112.57),
             ("import_scarcity", 105.0, 299.86),
         ],
@@ -650,7 +705,29 @@ EXPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
     # no-wash ordering where the measured threshold crossed the year's
     # cheapest import rung (2023 export sinks at $16.99 = Highgate $17.00 −
     # $0.01; 2024 export_NB at $22.03 = Highgate $22.04 − $0.01).
+    # 2019-2022 added 2026-08-14 (neiso-93), same producer/sources/provenance
+    # as the import side above — a SOURCE-COVERAGE extension per rule 23, with
+    # the deriver first proved to re-derive the committed 2023-2025 sinks. None
+    # of the four early years has an export_HQ sink (no measurable HQT export
+    # depth), and BOTH sinks are no-wash clamped in every one of them, so each
+    # year's two sinks sit a cent below that year's Highgate rung.
     "NEISO": {
+        2019: [
+            ("export_NYISO", 515.0, 9.94),
+            ("export_NB", 130.0, 9.94),
+        ],
+        2020: [
+            ("export_NYISO", 310.0, 6.32),
+            ("export_NB", 175.0, 6.32),
+        ],
+        2021: [
+            ("export_NYISO", 860.0, 11.51),
+            ("export_NB", 280.0, 11.51),
+        ],
+        2022: [
+            ("export_NYISO", 910.0, 14.01),
+            ("export_NB", 295.0, 14.01),
+        ],
         2023: [
             ("export_NYISO", 950.0, 16.99),
             ("export_NB", 180.0, 16.99),
