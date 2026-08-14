@@ -6041,3 +6041,109 @@ Retention: the top-15-per-ISO sweep pruned `2026-08-04-nyiso-120a2-control-sameh
 and `2026-08-04-nyiso-120b-scope-gate`.
 
 * Next number: **nyiso-134**.
+
+## 2026-08-14 — nyiso-134: the 2022 validation touchpoint is REFUSED on DATA READINESS — three silent input defects (RGGI, Central-East TTC, SCR/EDRP vintage); no LP solved
+
+Phase-1-only session. Task: test the frozen keeper on the 2022 validation
+touchpoint, **gated on first proving in writing** that every measured input 2022
+needs is at the same standard as 2023-2025. The proof **failed**, so the solve
+was never attempted. Full assessment:
+`results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md`.
+
+**Gate state.** The holdout spend freeze is **ACTIVE** at HEAD
+(`holdout-freeze.json` `"active": true`, re-armed 2026-08-06; no lift in
+`history` names a NYISO spend), and independently blocks the spend. NYISO holds
+`complete` (validation only, keeper `2026-08-08-nyiso-132-cf-arm`) and stays
+**absent from `final`**. Baseline re-verified from committed artifacts with no
+solve — `calibration_verdict.py --run-id 2026-08-08-nyiso-132-cf-arm` →
+**CALIBRATED-WITH-CAVEATS**, C3c the lone ledgered caveat, matching the marker.
+All 15 registered NYISO runs are 2023-2025; NYISO has never solved 2022.
+**The freeze is NOT the reason for the verdict** — the defects below would block
+the solve even with a lift in hand.
+
+**Three BLOCKING defects, all silent (no exception, no warning, no log line):**
+
+* **D-1 — RGGI allowance cost is ZERO in 2022.**
+  `STATE_CARBON_PRICE_BY_ISO["NYISO"]` = {2023, 2024, 2025} only;
+  `state_carbon_price` returns `None` and the keeper's `carbon_price_path="zero"`
+  catches it, so 2022 prices every in-state fossil unit with **no** allowance
+  cost while each in-sample year carries one. From the model's own 2022
+  `plant_emission_rates_v2` rows: fleet **0.4558 tCO2/MWh** → **$6.08/MWh**
+  omitted at ~$13/tCO2, **8.1 % of the 2022 RT mean ($74.77)** — and **not a
+  level shift**, the CC-to-steam spread is **2.9x** (CC $5.53, CT $7.21,
+  tangential $8.04, dry-bottom wall $15.85), so it **re-orders the merit stack**.
+  Fix is a 4-number transcription (RGGI auctions A55-A58) by the recipe
+  `config/fuel_trajectories.py` already documents. Zero DOF.
+* **D-2 — the 2022 solve would run on a transmission line built a year later.**
+  `NYISO_INTERFACE_TTC_BY_YEAR` / `_BY_MONTH` cover 2023-2025 only and **both
+  appliers silently return unchanged** on a missing year. Central-East
+  (Upstate_West->Capital_Hudson) resolves to the **static 2,850 MW post-upgrade**
+  value for 2022 — against the model's own pre-upgrade 1,750 MW (2023), that is
+  **+1,100 MW / +63 %** of upstate->downstate capability that the NY Transco AC
+  Transmission project did not deliver until **December 2023** — and 2022 also
+  loses the monthly envelope entirely (flat, vs 2023's measured 1,450-2,725 MW).
+  Direction is the damaging one: extra Central-East capability **relieves** the
+  congestion that forms downstate scarcity, i.e. it lands directly on **C3c**,
+  NYISO's sole open caveat. A 2022 C3c result on this input is uninterpretable.
+  This is the precedent-(1) failure mode exactly.
+* **D-3 — SCR/EDRP clamps to the wrong Gold Book** (bounded). `gb_year =
+  min(max(year, _MIN_GB_YEAR), _MAX_GB_YEAR)` clamps 2022 **up** to the 2023
+  vintage; the 2022 Gold Book is not on disk. ~1.23 GW of emergency DR placed at
+  the wrong vintage, error bounded at ~60-190 MW by the observed drift
+  (+4.9 %/+14.9 %) — modest, but at a **$500/MWh strike**, i.e. inside the
+  scarcity band C3c measures.
+
+**The highest-risk input PASSED.** The 2026-07-19 stale-detector defect (the
+withdrawn marker; 1,598 vs 2,641 windows) **does not reproduce**. The extract is
+one blob over a continuous 2018-2026 span, and a full re-derivation at HEAD
+defaults proves the recipe exactly: `committed U layup == no-guard re-derivation`
+and `committed ^ layup == {}`, with **zero** only-in-committed orphans in **every**
+year. Per-year committed+layup == re-derived is exact 2018-2026 (2022:
+533+317=850). 2022 is envelope-comparable on windows (533 vs 464-540), median
+duration (14.30 vs 12.20-14.85 d) and units (92 vs 84-99).
+
+**Also EQUIVALENT** (measured, not assumed): the gas chain — 2022 is on the
+in-sample Iroquois-Z2-minus-HH construction, the **neiso-85 inversion does NOT
+reproduce** (W-S +3.650, between 2023's +1.380 and 2025's +5.199), and the
+SOM anchor ratio **0.944** sits inside the in-sample band 0.900-1.045; the LMP
+bench (8,760 x 2 markets, zero nulls, DA $72.73 matching the register's
+re-clocked value **exactly**, all five `_lw` fields at parity); emission rates v2
+(382 rows / 120 plants, 90.8 % measured, reproducing the register's quoted means
+exactly); reserve requirements (61,320 rows, **identical** to each in-sample
+year); capacity deliverability on the path the keeper actually uses
+(`import_limit`, since `nyiso_li_tsl_n11_security=False`); nuclear availability;
+demand/zonal load/CAMPD/weather/neighbour LMPs/interface flows; and the LDC
+transport rows, which are **real, not padded** — 24 rows each citing a distinct
+correctly-numbered statement `statnfdr-5-eff-01-01-22` .. `-16-eff-12-01-22`.
+
+**Two register statements CORRECTED by measurement:** the "firm-import floor
+missing 2022" item names a **MISO** constant — NYISO uses the year-invariant
+`NYISO_FIRM_IMPORT_FLOOR_FRAC`, so there is no gap; and the unit-outage "MISSING
+2022 + DEGRADED vintage" item is resolved (§3.1 above). D-1/D-2/D-3 are **new** —
+none appears in the register.
+
+**Disclosed, non-blocking:** the Transco **Dec-2022 Elliott hole** (prints stop
+2022-12-21) is EQUIVALENT on provenance and coverage — its 10-day trailing gap is
+the **smallest** of 2022/2023/2024 (vs 11 d / 13 d) and 2022 has the most
+December prints — but the same-sized hole *contains a real event* in 2022 where
+in-sample it contains nothing, so the December/winter-tail limit must be declared
+before quoting any such result. Import-tranche 2022 duration RMSE 719 MW vs
+<=328 in-sample is carried forward from the register, **not** re-measured here.
+`bench/NYISO/2022.json.gz` is **not independently buildable** — `build_payload`
+reads the bundle's own solve artifacts, so the bench part is a **by-product of
+registering a 2022 run**, not a prerequisite for one.
+
+**Fix path** (all zero-DOF intake or a fail-loud guard; none is a parameter, none
+touches the keeper recipe, and under the 2026-08-06 clarification — *what is held
+out is the SCORE, never the DATA* — all of it is unrestricted, marker-free, and
+must be applied consistently across 2019-2025): transcribe RGGI 2022 (and check
+NEISO, same gap); land the 2022 Central-East limit + envelope **and separately
+make both TTC appliers fail loud on a missing backcast year**, since a silent
+fallback to a *later* topology is a latent trap for every out-of-training year;
+fetch the 2022 Gold Book. Then the touchpoint needs only an owner lift.
+
+**Nothing was registered, promoted or spent.** Keeper, `complete` marker,
+`final` (still empty), the freeze, and every matrix cell verdict are unchanged;
+2018 / 2019 / H1-2026 were not touched. No mechanism was tested.
+
+* Next number: **nyiso-135**.
