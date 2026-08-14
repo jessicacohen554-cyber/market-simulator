@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-14-ercot196-ctl-grain",
+  "label": "ercot196 ctl grain",
+  "date": "2026-08-14",
+  "shorthand": "ercot196-ctl-grain",
+  "definition": "ercot-196 CONTROL of the rule-18 [R-PHYSICS] grain repair A/B (docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md \u00a77): the run192 keeper recipe replayed at HEAD with ZERO deltas. Separates HEAD drift from the mechanism.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-14-ercot196-ctl-grain.js",
+  "bundle": "results/calibration/ercot196_graincontrol_A"
+}
