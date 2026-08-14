@@ -8094,3 +8094,79 @@ cards + this entry, nothing else — no lever, no solve, no year touched
 (rule 22 moot but binding), no matrix/keeper/registry/bench contact; keeper
 UNCHANGED at `2026-08-12-run192-arm-coal-peak`. Session consumed the
 ercot-197 shorthand. Next shorthand: **ercot-198**.
+
+## ercot-201 (2026-08-14) — L2-BUILD PHASE-0 STOP: the chartered E1 dispersion surface is superseded on main (FFR-8B/FFR-9A), and its identification route is barred by an adjudicated prior stop — NOTHING built, NOTHING solved
+
+**Shorthand note (A9.4 race convention):** ercot-198 (T3B-AUDIT), ercot-199
+(T1-EXEC, presumed), and ercot-200 (REGIME-CARD) are consumed on in-flight
+sibling branches of the same cycle-9 dispatch wave; this session claims
+**ercot-201** (the regime-card branch's declared next) and keeps entries whole
+on rebase.
+
+**The dispatch** (pack §2.8, the owner-chartered L-2 from the 2026-08-14
+V0-FAIL adjudication): build the E1 dispersion repair — "the forward
+committed-capability formula under-disperses vs measured RTOLCAP, p1 13.3 vs
+7.9 GW" — precommit before build, identification from measured RTOLCAP
+telemetry only, A/B on the 2021→2025 T1-FF hindcast, forecast-namespace
+registration, no promotion. **Phase 0 STOPPED the lane at its first duty**
+("confirm the E1 surface as FFR-8A describes it"), under the dispatch's own
+named STOP conditions. Full record:
+`docs/FINDING-ercot201-l2-e1-dispersion-phase0-stop-2026-08-14.md`.
+
+**Ground 1 — surface mismatch.** The mechanical surface confirms (the
+conditional-median share tables of `ercot_rtolcap_forward_supply_cap_mw` do
+discard within-cell dispersion, exactly as FFR-8A §2.5 says), but the sized
+defect is a PRE-EPOCH artifact cited stale: FFR-8B (2026-08-09, on main
+before the charter was assembled) decomposed the gap — screen-asymmetric
+(2024 screen p1 6.3 GW BELOW measured 7.9 via the phys-headroom bound; 2025
+screen 14.9 vs 9.0); dominant inflator = the storage-AS term (+7.3–8.8 GW at
+p1, an FFR-4/5 object outside L-2 scope); in-scope commitment share +0.8–1.7
+GW at p1; E4's σ_R already covers 58.5 % of the within-cell residual — and
+FFR-9A's UNGATED storage-seed fix (in the harness for every hindcast at HEAD)
+then collapsed the inflator: E1 now TRACKS measured RTOLCAP (2024 mean 16,703
+vs 16,679; 2025 p1 8,619 vs 8,955), the tight screens' low tail runs BELOW
+measured, and the mid-window screens OVERSHOOT measured scarcity ~11–26× on
+the missing VRE build (FFR-9A §3.4, routed to the FFR-4/5 entry lanes; the
+FFR-9C stage-B arming is that route's landed increment). A dispersion-WIDENING
+term at HEAD would add tail mass to screens the committed record shows already
+overshooting.
+
+**Ground 2 — adjudicated-inadmissible identification.** The dispatch's
+pre-registered route ("dispersion target derives from MEASURED RTOLCAP
+telemetry only") is verbatim the route FFR-8B §4 pre-registered as barred
+("may VALIDATE a repair, never parameterize one"), applied, and STOPPED on —
+"no admissible identification exists for the commitment-realization
+dispersion" — adjudicated CLEAN by the FFR-FH manager (ffr-owner-sitting
+Addendum AG.1). No document in the L-2 chartering chain (charter §6, the
+V0-FAIL adjudication, pack §0/§2.8) cites FFR-8B or FFR-9A: the signature and
+the adjudicated stop were never in the same room. Resolving that is a
+§2.6-class owner signature (the S1 precedent), not a worker call; pack §1
+fences 8 (DO-NOT-REDO) and 9 (conflicts escalate to the owner) both point at
+this stop.
+
+**Routes left to the owner (FINDING §4, recommendation §5, none taken):**
+(a) re-charter L-2 with FFR-8B §4/AG.1 + FFR-9A §3.2 read into the card — an
+explicit signature on the measured-dispersion identification adjacency PLUS a
+live-posture Phase-0 re-size gate solved first; (b) route the screen's live
+price-object error where the committed record points — the FFR-4/5
+VRE/storage entry-lane objects (another workstream's lane, fence 9); (c) park
+L-2, leaving rank 2 carried by the in-flight regime-conditioning card.
+**Recommended: (b), with (a) only on a record-informed signature.** Honesty
+bound restated either way: the missing screen revenue is λ-led (149/184 of
+2024's λ>$100 hours carried adders ≤$10), so any E1-side repair stays bounded
+single-digit-to-~20 of the ~50–70 $/kW-yr gap — and the surviving in-scope
+component sits at the bottom of that range.
+
+**Fences honoured:** Q-B FINAL and R-A cited, untouched (this lane never
+approaches dispatch pricing); L-SCAR §4 must-nots honoured by construction —
+no ScenarioConfig field (rule 28c not triggered), no matrix cell/row edit (the
+`capacity_screen_scarcity_restoration` cell — whose standing evidence text
+carries the FFR-8B/9A stamps this stop cites — is read, not changed), no
+derive, no fit, no run registered (forecast namespace AND backcast registry
+untouched), no keeper/registry/bench contact, no year solved or scored (rule
+22), no promotion, no default flip, ERCOT only (rule 25). Screen-revenue
+movement produced: $0.00/kW-yr. Keeper UNCHANGED at
+`2026-08-12-run192-arm-coal-peak`. New artifacts: the FINDING + this entry,
+nothing else; landed push-and-stop on `claude/ercot-scar-l2-e1-dispersion`
+(no PR, no merge — the cycle-8 convention). Session consumed the ercot-201
+shorthand. Next shorthand: **ercot-202**.
