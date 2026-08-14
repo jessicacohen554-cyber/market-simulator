@@ -1,4 +1,4 @@
-"""ercot-196: is `p6243`'s assembled 8 h min-down CORRECT, or a CAMPD artifact?
+"""ercot-202: is `p6243`'s assembled 8 h min-down CORRECT, or a CAMPD artifact?
 
 The question the ercot-186 charter (``FINDING-ercot186-rule18-grain`` §5) left
 open and required its successor to settle, under rule 14 ``[R-ACCURATE]``:
@@ -19,11 +19,11 @@ independent instruments that decide the question, writing every number it reads:
    machinery already flags the plant as a coin flip.
 
 Read-only: no LP, no solve, no derive, no artifact re-derivation (rule 23 is not
-engaged). Writes ``results/calibration/ercot196_p6243_provenance.json``.
+engaged). Writes ``results/calibration/ercot202_p6243_provenance.json``.
 
 Usage::
 
-    PYTHONPATH=.:src python3 scripts/probes/ercot196_p6243_provenance.py
+    PYTHONPATH=.:src python3 scripts/probes/ercot202_p6243_provenance.py
 """
 
 from __future__ import annotations
@@ -44,7 +44,7 @@ YEARS = (2023, 2024, 2025)
 BIN_SHEET = REPO / "data/raw/reference/custom-bin-assignments.csv"
 EIA860_GEN = REPO / "data/raw/eia-860/eia860_generator_operable.parquet"
 CAMPD = REPO / "data/raw/campd-unit-level/TX_{year}.parquet"
-OUT = REPO / "results/calibration/ercot196_p6243_provenance.json"
+OUT = REPO / "results/calibration/ercot202_p6243_provenance.json"
 
 
 def _bin_sheet_row() -> dict:
@@ -195,9 +195,9 @@ def main() -> None:
     """Assemble every instrument and write the record."""
     rec = {
         "_provenance": {
-            "probe": "scripts/probes/ercot196_p6243_provenance.py",
+            "probe": "scripts/probes/ercot202_p6243_provenance.py",
             "precommit": (
-                "docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md"
+                "docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md"
             ),
             "question": (
                 "FINDING-ercot186-rule18-grain §5: is p6243's assembled 8 h "

@@ -8170,3 +8170,137 @@ movement produced: $0.00/kW-yr. Keeper UNCHANGED at
 nothing else; landed push-and-stop on `claude/ercot-scar-l2-e1-dispersion`
 (no PR, no merge — the cycle-8 convention). Session consumed the ercot-201
 shorthand. Next shorthand: **ercot-202**.
+
+## ercot-202 (2026-08-14) — THE CHARTERED ercot-187 SUCCESSOR EXECUTED: the rule-18 `[R-PHYSICS]` grain repair SOLVED, every kill gate PASSES, the arm is MEASURED INERT — **KEEPER → `2026-08-14-ercot202-arm-plantphysics`** on legitimacy alone; `p6243` SETTLED and the charter's fear REFUTED
+
+**Shorthand note.** The task prompt opened this lane as *ercot-195*; that
+shorthand was already spent on `main` by L-SCAR-SCREEN-2, whose own record
+closes *"Next shorthand: ercot-202."* This session is **ercot-202**; the
+assigned branch keeps its stale name (`claude/ercot-195-lever-selection-scssqc`).
+
+**SHORTHAND RE-KEY (recorded, not silently resolved).** This session ran as
+*ercot-196* and its artifacts, bundles and run ids therefore carry the
+`ercot202` / `ercot202`-mismatched stem. While it was solving, **another session
+claimed `ercot-196` on `main`** (the 2026-08-13 decision-card-T shape charter),
+so on rebase this entry was re-keyed to the next free shorthand, **ercot-202**.
+The artifact stems are re-keyed to `ercot202_*` in the same commit as this
+entry so the shorthand maps to exactly one session's artifacts; the two
+registered run ids are `2026-08-14-ercot202-ctl-grain` and
+`2026-08-14-ercot202-arm-plantphysics`. Same class of collision as the
+ercot-193/194 file-order note, handled the same way: openly.
+
+**Task.** The **ercot-187 successor**, open since 2026-08-10
+(`results/calibration/FINDING-ercot186-rule18-grain-2026-08-10.md` §5; owner
+sitting 2026-08-09 card **D3 option (ii)**) — ercot-187 was diverted to the
+leap-day derive defect and the golden-hash attribution, and ercot-186 stopped at
+its own pre-registered seam-proof rule, so **the A/B had never been run**. Full
+record: `results/calibration/FINDING-ercot202-rule18-grain-successor-2026-08-14.md`.
+Precommit `docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md`, pushed
+at `f73b9a1` **BEFORE** any measurement, derive or solve, with SP-1's premise
+corrected, the dead inertness prior replaced by measured scope, every kill gate
+re-based to run192, and a **DIRECTION-BLIND promotion rule** reading only gates
+and LOYO.
+
+**Admissible under card R-A**, and stated as such up front: a rule-18 licensing
+**correctness** repair, not a C3a-2023 spend (Q-B final) and not a
+C3b-2023-targeted round. The precommit stated the **~0.59 C3b-2023 ceiling** ex
+ante (Aug/Sep-2023 carries 96.15 % of the squared residual, so
+perfect-everything-else reads 0.5923 vs the 0.20 bar).
+
+**THE DEFECT, CONFIRMED ON THIS KEEPER.** The shipped gate rejects **0 of
+636 / 636 / 652** CT bid rows: assembly stamps `min_down` on the committed
+anchor alone, every `econ*`/`peak*` row reads 0, so the test is False for every
+row it can reach and the mechanism's effective scope had collapsed onto its
+hard-coded `{CT_PEAKER}` class map. Seam proof **`ALL_ASSERTIONS_PASS = true`**
+at this HEAD; the restated SP-1 holds with **zero** mismatches on the
+committed-tranche prefixes, and the 40 no-committed-tranche prefixes reproduce
+exactly as the defect's **second facet** (assembly's `cap <= 0.5` drop leaves
+their physics on no row at all). Cache key verified: default `603c2498bf71d21d`
+unmoved, armed `7ae1afee3aa73a63`.
+
+**THE ARM IS MEASURED INERT — pre-registered branch (i) — AND THAT IS THE
+RESULT, NOT A NULL.** Its entire effect across 26,280 solved hours is **1.2358
+MW** moving CT_PEAKER → CC_CHP in **one** hour (2023 h2659), summing to zero.
+`system_2023.parquet` is **BYTE-IDENTICAL** and 2024/2025 are byte-identical
+4/4 sidecars, so **C3a, C3b and C3c are numerically unchanged in every year** —
+not merely within tolerance. The seam proof moves **90,271 row-hours** at a max
+markup delta of **$1,709.62/MWh** and withdraws 6 priced pool rows, and it buys
+no price change because those rows are one plant's deep out-of-merit tranches
+(econ HR 13.18–21.55, five `peak*` at 130.97 MMBtu/MWh) that never clear at any
+price. **The repair makes a vacuous gate bind without disturbing the solution.**
+
+**ALL KILL GATES PASS.** G-REPRO (control vs keeper **12/12** sidecars
+byte-identical — HEAD drift excluded by measurement, and ercot-193's
+reproduction re-confirmed on a fresh solve); G-SHED **4/1/0 → 4/1/0** with
+identical hour lists; G-C3c max-zonal **58/22/1 → 58/22/1** (demand-weighted
+57/22/1 reported alongside); G-COAL148 carried live, rise **0.0/0.0/0.0 TWh** vs
+the 0.5 bar; G-SPUR **9/11/0 → 9/11/0**; G-SPAN max class energy move
+**2.2e-05 %**; G-OWNER byte-identical; G-DOF `n_entries` 18 / `n_residual` 6
+unchanged; G-D2 D-4 FAIL rows **identical A↔B** (the pre-existing
+`reliability_floor × CT_PEAKER` h14-21 condition the keeper already carries — no
+new row). LOYO: 2024/2025 byte-identical **is** the held-out evidence.
+Determination **NOT-YET {C3a-2023, C3b-2023}** on both arms — **UNCHANGED**, C3c
+the single ledgered CAVEAT ×3.
+
+**PROMOTED under the direction-blind rule — ON LEGITIMACY ALONE, no metric gain
+claimed and none exists.** A keeper carrying an armed mechanism whose licensing
+gate does not bind *is* the rule-18 defect, whatever the numbers say (card D3).
+Both arms registered (`2026-08-14-ercot202-ctl-grain`,
+`2026-08-14-ercot202-arm-plantphysics`), both stating they are numerically
+identical. Retention pruned exactly the two runs the precommit named ex ante
+(`run173b-event-cap-reconc`, `run176-control-offline-increment`).
+
+**`p6243` SETTLED — and the charter's fear is REFUTED (rule 14 `[R-ACCURATE]`).**
+The single excluded plant's 8 h min-down is **CORRECT** and is **NOT a CAMPD
+artifact — CAMPD is not even its source.** It is `custom-bin-assignments.csv`'s
+`ST_GAS` value, corroborated by **EIA-860** (Dansby = a 105 MW **1978 gas STEAM
+turbine** plus two 49.1 MW CTs, 203.2 MW total, matching the sheet exactly) and
+by **CEMS** (the boiler is the plant's LARGEST generator in every year:
+51.5 / 61.4 / 62.1 %). The plant enters the pool's CT universe **only** because
+`_override_bin_class_from_eia923` flips its curated `ST_GAS` to `CT_PEAKER` for
+2023 on a **0.2 pp** margin (CT 50.11 vs ST 49.89) — the exact coin flip
+`eia860.mixed_fossil_plants` already flags, its own source comment naming
+*"Dansby 50/50 ST/CT"*. **That single flip is the WHOLE of the 2023-only scope**
+(the only other reclassifications carry min-down 1 h). So the corrected gate is
+right twice over: it is the only thing standing between a 0.2 pp class coin-flip
+and a 1978 steam turbine being offered into a pool defined as
+SCED-startable-intra-hour. **The bound was NOT moved to recapture it** (the
+ercot-176 17-CC-plant discipline). NAMED NOT FIXED: `mixed_fossil_plants`
+neutralizes the coin flip on the **scoring** side while **dispatch keeps the
+flipped class**; and one LP unit aggregates two prime movers.
+
+**RULE 26 `[R-DELETE]` IS NOT DISCHARGED, for a measured reason.** The precommit
+bound the promoting commit to deleting the transitional flag and the pre-repair
+branch. `ScenarioConfig` is a **dataclass** whose `with_overrides` **raises on an
+unknown key**, and the promoted keeper's `meta.json` carries the flag as a
+`prb_override` — so deleting the field without a re-solve would make the keeper
+**UNREPLAYABLE** and break every future control, re-gate and G-REPRO check.
+Verified directly. **Named successor:** delete the field *and* the pre-repair
+branch, making the plant-grain read unconditional, **and re-solve**. The
+answer-key hazard rule 26 targets is materially absent here (zero DOF, no
+residual content) — a reason the deferral is safe, not a reason to skip it.
+
+**HYGIENE — the ERCOT-137 anchoring convention: RE-FILED WITH A MEASUREMENT.**
+Now grounded in the mechanism's **own identity** rather than a foreign
+arithmetic: `legacy_bins` applies `offer = level + HR × (fuel − anchor)`, so the
+level is well-formed only if measured **at** the anchor — and ERCOT-137 alone of
+the three armed margin identifications pools raw, while ERCOT-139 removes its
+corpus's own fuel response and ERCOT-140 anchors on its measured gas response.
+Resolved **per plant**: capacity-weighted **+0.3588 $/MWh = 0.386× band**, range
+**+0.3293** (Oak Grove) to **+0.3904** (San Miguel), **all ten coal plants
+inside the band**, so arming is unchanged and **nothing was re-derived**. An
+owner question is **surfaced, not taken**: rule 23 licenses a re-derivation on a
+**source-data** change and forbids one on a **residual**, and this trigger is
+**neither** — it is a defect in the derivation's own convention.
+
+**Environment note (not a model finding).** The container's initial clone died
+mid-`data/`, leaving no git index and **662 missing files** including
+`data/raw/reference/` (which the ERCOT per-plant fleet needs). Index rebuilt and
+all paths restored before any measurement; a first NUL-unsafe restore missed
+paths containing spaces and was redone. Also confirmed **not** a defect: the
+2025 `reserve-supply cap ... mean cap MW [73990312, ...]` log line is the
+documented RTC+B seam — `scarcity.ercot_rtolcap_supply_cap_mw` leaves hours with
+no measured RTOLCAP (the go-live tail after 2025-12-05) **uncapped**, and a
+sentinel over the final ~27 days averages to exactly the ~7.4e7 observed.
+
+**Next shorthand: ercot-203.**
