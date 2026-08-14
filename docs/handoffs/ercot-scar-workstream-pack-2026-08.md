@@ -11,14 +11,19 @@
 
 ---
 
-## §0 STATE BOARD — cycle 5, 2026-08-13
+## §0 STATE BOARD — cycle 8, 2026-08-14
 
-**Recorded HEAD (origin/main): `5b05f84`** (unchanged through cycle 5; the
-owner has not been back since merging PR #3913 at 05:46Z. THREE verified
-worker branches await the owner: hygiene fix `9e3a6c4`, ercot-196 card T
-`3395389`, replay-diagnostics fix `8653317`. The owner-independent dispatch
-queue is EMPTY — the manager is in verify-and-flag posture until the owner
-acts on the §0 decision list.)
+**Recorded HEAD (origin/main): `dbde0c2`.** The owner returned and
+batch-merged PRs #3914–#3924, including ALL THREE of this workstream's
+verified branches — hygiene fix `9e3a6c4` (#3917), ercot-196 card T
+`3395389` (#3916), replay-diagnostics fix `8653317` (#3920) — plus this
+pack's branch at its cycle-6 state (#3919). All merges were silent (no PR
+comments): the LANDING CONVENTION is thereby ANSWERED BY EXAMPLE — workers
+land push-and-stop on manager-verified branches, the OWNER opens and merges
+the PRs. That is now the standing convention (§1 fence 6 unchanged; the
+owner can override it any time). Card T was merged AS RECORD ONLY — no
+RESOLUTIONS block exists on main, so it is NOT signed. Remaining owner
+items: TWO (card T signature; L-SCAR V0-FAIL adjudication).
 
 ### Signed rulings in force (the governance this workstream enforces)
 
@@ -57,11 +62,12 @@ acts on the §0 decision list.)
 
 ### Dependencies tracked, not tasked (boundary: FFR-FH manager, addenda AP/AQ/AR)
 
-- **OVERRIDE-FIX / FFR-9C stage-B**: the stage-B epoch declaration landed
-  (PR #3903); addendum AR adjudicated FFR-9C completion + do-not-push ruling.
-  The AP.2 override-precedence defect remains on the FFR-FH board. The S3
-  promotion hold behind OVERRIDE-FIX is **MOOT for L-1** (V0 FAIL — nothing to
-  promote), but the boundary stands: this workstream never tasks that lane.
+- **OVERRIDE-FIX / FFR-9C stage-B — LANDED** (PR #3915,
+  "OVERRIDE-FIX: make an ISO-armed flag turn-off-able at the config seam";
+  FFR-FH pack addendum AS records both §0ar lanes landed and accepted). For
+  THIS workstream it changes nothing actionable: the S3 promotion hold it
+  once gated is MOOT (L-1 died at V0). The boundary stands — that lane was
+  and is the FFR-FH manager's; this row is now historical tracking only.
 
 ### Next round (sequenced cycle 1; dispatch on later cycles as slots clear)
 
@@ -85,7 +91,9 @@ acts on the §0 decision list.)
    verify-and-flag only until the owner acts; check-in interval lengthens
    after consecutive quiet cycles.
 
-### Owner decisions pending (also in the cycle-1 report)
+### Owner decisions pending — TWO remain as of cycle 8 (the merge items
+and the landing convention were discharged by the #3914–#3924 batch; see the
+§0 header). Historical text of the original five kept below unchanged:
 
 - **L-SCAR V0-FAIL adjudication** — L-1's pre-registered identification gate
   failed with a model-free non-identifiability proof; S1's instruction ("stay
@@ -412,3 +420,30 @@ Fully quiet: main unchanged at `5b05f84`; `9e3a6c4`/`3395389`/`8653317` all
 still unmerged; no open PRs; no owner action on any §0 item; no new lane
 branches. Nothing dispatched (queue empty by design). Check-in interval
 stretched to ~4 h per A6.2.
+
+### A8 — 2026-08-14, cycle 8 (00:49Z trigger) — the owner's batch merge
+
+1. **Quiet stretch A7→cycle 8 recorded**: cycle 7 (20:46Z) was fully quiet
+   and deliberately committed nothing (local git auth was down; a noop
+   commit would have required a full-file MCP resend to record nothing —
+   the deviation was reported in-chat at the time).
+2. **The owner batch-merged #3914–#3924** (main `5b05f84` → `dbde0c2`),
+   including all three workstream branches (#3917 hygiene-1, #3916 the
+   ercot-196 card, #3920 hygiene-2) and this pack at cycle-6 (#3919), all
+   without comment. Convention read: MANAGER-VERIFIED PUSH-AND-STOP
+   BRANCHES + OWNER-OPENED/MERGED PRs is the operating mode. Every future
+   dispatch keeps the push-and-stop landing.
+3. **Card T is merged but NOT signed** (no RESOLUTIONS on main) — T-1+T-3b
+   execution stays blocked on the signature. **L-SCAR adjudication** also
+   still open. These are the only two owner items.
+4. **OVERRIDE-FIX landed** (#3915, FFR-FH lane) — dependency row updated to
+   historical.
+5. **Transport correction (supersedes the A2.4/A4.2 diagnosis in part)**:
+   the FFR-FH lane reproduced the `git push` hang on a 32 KB five-object
+   pack and identified it as HTTP/2 negotiation failure, fixed by
+   `git config http.version HTTP/1.1` (now in CLAUDE.md Git & Pushing, via
+   71ea677). This manager's cycle-1 hang was likely the same object, not
+   pack size; the config is now set in this session's clone. Plumbing
+   commits + `git push` remain the pack transport, with push_files only as
+   the auth-outage fallback.
+6. Cadence: owner active again → check-ins tighten back to ~2 h.
