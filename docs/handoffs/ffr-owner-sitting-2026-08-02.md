@@ -4648,3 +4648,57 @@ miso-156: the C3a miss is marginal-unit IDENTITY, the fuel channel runs backward
 ercot-195: L-SCAR V0 FAIL, R_f non-identifiable from measured tightness (#3912);
 ercot-196: 2024/2025 shape object sized, card T assembled (#3916) — card T belongs to
 the ERCOT-SCAR desk.
+
+## Addendum AT — OWNER SIGNATURES: D-31 SIGNED (adopt 8.0 GW) and D-32 SIGNED (F6 fix A); λ wording CLOSED as answered by R-A; Q.2 explained and held at G2
+
+*Written 2026-08-13, session claude/ffr-fh-workstream-handoff-w8w7dg. Owner present in
+chat this sitting.*
+
+### AT.1 D-31 — SIGNED (owner, this sitting, in chat): adopt the re-derived 8.0 GW ERCOT solar queue cap
+
+`QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"]`: 5.0 → 8.0
+(`src/market_sim/config/capacity_market.py:3555`), per RC-DERIVE (`6e6e50b`, prereg
+`d938f29`): 5.0 was RIGHT for its own 2021-vintage record; the post-2020 EIA-860
+demonstrated record moved, so this is a clean rule-23 re-derivation on a data change —
+no residual is being chased. Dispatched as **D-31-ADOPT** (§0at-1). One correction to
+AS.3's phrasing, found while chartering: the cache key hashes ScenarioConfig, and this
+is a CONSTANT — **the key does NOT move**, which is the more dangerous case (same key,
+different results: the D-13 stale-cache-in-meaning hazard). The lane's declaration duty
+is therefore a RE-BASE NOTE plus whatever cache invalidation house practice requires,
+not an epoch-key pin; the prompt says so explicitly.
+
+### AT.2 D-32 — SIGNED (owner, this sitting, in chat): the F6 fix, option A as recommended
+
+Per `docs/FINDING-f6-lmp-backend-parity-2026-08-11.md` §A (RECOMMENDED there and
+adopted here): fix the CLEAN-backed consumer reduction — `_neighbor_lmp_clean` in
+`src/market_sim/data/neighbor_price.py` indexes `interval_start_utc` converted to the
+ISO's fixed standard offset, plus the per-ISO hub-definition table, plus the docstring
+corrections folded in. Options B (fix the raw product — measured wrong, would move the
+NYISO keeper) and C (re-size `_TOL` — disarms the only clock-shift detector) stay
+REJECTED as the finding recorded. No ScenarioConfig field → no matrix row, no
+cache-key ledger entries. Keeper risk none (raw untouched; clean path unreachable at
+defaults). Dispatched as **D-32-F6FIX** (§0at-2).
+
+### AT.3 The λ-led price-side condition wording — CLOSED, answered in substance by R-A
+
+The AF.2/AG.2 open question was whether the price-side condition re-bases to the
+design-scarcity component (conduct share measured and stated) or the program accepts an
+unsatisfiable clause. It has not gated anything since AH ("it no longer gates: the
+design-scarcity component demonstrably responds"), and the owner's R-A signature
+(ercot-194) adopts precisely the substance the re-base would have encoded: the
+conduct-led scarcity share is an accepted model-class limitation, reported at full
+magnitude, never chased by admissible levers. Closed editorially; no condition text is
+rewritten (correction-by-addendum discipline — this entry IS the closure).
+
+### AT.4 Q.2 — explained to the owner this sitting; determination AS.6 stands
+
+The T1 battery: one full six-ISO forward-mode scoring run against the final keepers,
+the program's closing evidence table. Held through keeper churn; commissioned ONCE when
+the release program's G2 declares FINAL MODEL STATE. The release-program ledger carries
+the trigger; this desk (or its successor) executes on it.
+
+### AT.5 Desk state after this sitting
+
+Queue: exactly two small lanes in flight (D-31-ADOPT, D-32-F6FIX — §0at). When both
+land and are adjudicated, this desk CLOSES: remaining residuals are Q.2-at-G2 (AT.4)
+and nothing else. No FFR or FH dispatch remains or is contemplated.
