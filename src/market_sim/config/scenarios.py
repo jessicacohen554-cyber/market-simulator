@@ -11692,6 +11692,21 @@ class ScenarioConfig:
     ercot_offer_hrmult_ep_rebasis_bands: list[str] | None = None
 
     def __post_init__(self) -> None:
+        # YAML round-trip type repair: YAML has no tuple type, so a config
+        # loaded back from a sidecar (``from_yaml`` over a ``to_yaml_full``
+        # dump) binds LIST values to tuple-typed fields. Every
+        # compare-against-default seam then sees ``[…] != (…)`` — the
+        # ``cache_key`` optional-field drop and the sparse ``to_yaml`` writer
+        # both misclassify the field as non-default — so a byte-faithful
+        # reload silently hashes to a different cache key than its writer
+        # (the ``TestConfigSidecar`` round-trip contract). Coerce here so
+        # every construction path (``from_yaml``, ``replace``, CLI kwargs)
+        # carries the declared tuple type. Values are unchanged, so no
+        # tuple-default key can move.
+        for _f in fields(self):
+            if "tuple[" in str(_f.type) and isinstance(getattr(self, _f.name), list):
+                setattr(self, _f.name, tuple(getattr(self, _f.name)))
+
         if self.mode not in ("forecast", "backcast"):
             raise ValueError(
                 f"ScenarioConfig.mode must be 'forecast' or 'backcast', "
