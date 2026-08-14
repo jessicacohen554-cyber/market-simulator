@@ -1,0 +1,467 @@
+{
+  "probe": "ercot200_regime_partition",
+  "authority": "L-SCAR V0-FAIL adjudication item (ii), on main at fb6d08d (docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md)",
+  "input": "data/raw/som-competitive-conduct/som_competitive_conduct.csv",
+  "v0_bar": {
+    "pct": 0.25,
+    "abs_usd_per_kw_yr": 15.0,
+    "rule": "max(pct*value, abs), every fold, CT and CC"
+  },
+  "anchor_midpoints_usd_per_kw_yr": {
+    "2019": {
+      "CT": 127.0,
+      "CC": 151.5
+    },
+    "2020": {
+      "CT": 39.0,
+      "CC": 51.0
+    },
+    "2021": {
+      "CT": 700.0,
+      "CC": 800.0
+    },
+    "2022": {
+      "CT": 165.0,
+      "CC": 203.5
+    },
+    "2023": {
+      "CT": 240.5,
+      "CC": 250.0
+    },
+    "2024": {
+      "CT": 68.0,
+      "CC": 89.0
+    },
+    "2025": {
+      "CT": 52.59,
+      "CC": 82.96
+    }
+  },
+  "monitor_counterfactuals": [
+    {
+      "year": 2023,
+      "class": "CT",
+      "metric": "ecrs_effect_share_of_net_revenue",
+      "value": 0.5,
+      "source": "2023-State-of-the-Market-Report_Final_060624.pdf p.108"
+    },
+    {
+      "year": 2023,
+      "class": "CC",
+      "metric": "ecrs_effect_share_of_net_revenue",
+      "value": 0.5,
+      "source": "2023-State-of-the-Market-Report_Final_060624.pdf p.108"
+    },
+    {
+      "year": 2021,
+      "class": "CT",
+      "metric": "net_revenue_ex_uri_usd_per_kw_yr_min",
+      "value": 60.0,
+      "source": "2021-State-of-the-Market-Report.pdf p.114"
+    },
+    {
+      "year": 2021,
+      "class": "CT",
+      "metric": "net_revenue_ex_uri_usd_per_kw_yr_max",
+      "value": 78.0,
+      "source": "2021-State-of-the-Market-Report.pdf p.114"
+    },
+    {
+      "year": 2021,
+      "class": "CC",
+      "metric": "net_revenue_ex_uri_usd_per_kw_yr_min",
+      "value": 81.0,
+      "source": "2021-State-of-the-Market-Report.pdf p.114"
+    },
+    {
+      "year": 2021,
+      "class": "CC",
+      "metric": "net_revenue_ex_uri_usd_per_kw_yr_max",
+      "value": 105.0,
+      "source": "2021-State-of-the-Market-Report.pdf p.114"
+    }
+  ],
+  "coarse_cut_4_regimes": {
+    "ordc_pre2022_swcap9000": {
+      "years": [
+        2019,
+        2020,
+        2021
+      ],
+      "n_anchors": 3,
+      "within_regime_pairs": [
+        {
+          "class": "CT",
+          "pair": [
+            2019,
+            2020
+          ],
+          "values": [
+            127.0,
+            39.0
+          ],
+          "rent_gap": 88.0,
+          "irreducible_error_regime_only": 44.0,
+          "tightest_fold_tolerance": 15.0,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CT",
+          "pair": [
+            2019,
+            2021
+          ],
+          "values": [
+            127.0,
+            700.0
+          ],
+          "rent_gap": 573.0,
+          "irreducible_error_regime_only": 286.5,
+          "tightest_fold_tolerance": 31.75,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CT",
+          "pair": [
+            2020,
+            2021
+          ],
+          "values": [
+            39.0,
+            700.0
+          ],
+          "rent_gap": 661.0,
+          "irreducible_error_regime_only": 330.5,
+          "tightest_fold_tolerance": 15.0,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CC",
+          "pair": [
+            2019,
+            2020
+          ],
+          "values": [
+            151.5,
+            51.0
+          ],
+          "rent_gap": 100.5,
+          "irreducible_error_regime_only": 50.25,
+          "tightest_fold_tolerance": 15.0,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CC",
+          "pair": [
+            2019,
+            2021
+          ],
+          "values": [
+            151.5,
+            800.0
+          ],
+          "rent_gap": 648.5,
+          "irreducible_error_regime_only": 324.25,
+          "tightest_fold_tolerance": 37.88,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CC",
+          "pair": [
+            2020,
+            2021
+          ],
+          "values": [
+            51.0,
+            800.0
+          ],
+          "rent_gap": 749.0,
+          "irreducible_error_regime_only": 374.5,
+          "tightest_fold_tolerance": 15.0,
+          "fold_passable_by_any_regime_only_fn": false
+        }
+      ],
+      "gate": "FAILS for ANY regime-only R_f"
+    },
+    "ordc_widened_2022_swcap5000": {
+      "years": [
+        2022
+      ],
+      "n_anchors": 1,
+      "gate": "UNTESTABLE \u2014 singleton regime: leave-one-out leaves zero same-regime anchors"
+    },
+    "ecrs_era_2023_2025": {
+      "years": [
+        2023,
+        2024,
+        2025
+      ],
+      "n_anchors": 3,
+      "within_regime_pairs": [
+        {
+          "class": "CT",
+          "pair": [
+            2023,
+            2024
+          ],
+          "values": [
+            240.5,
+            68.0
+          ],
+          "rent_gap": 172.5,
+          "irreducible_error_regime_only": 86.25,
+          "tightest_fold_tolerance": 17.0,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CT",
+          "pair": [
+            2023,
+            2025
+          ],
+          "values": [
+            240.5,
+            52.59
+          ],
+          "rent_gap": 187.91,
+          "irreducible_error_regime_only": 93.95,
+          "tightest_fold_tolerance": 15.0,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CT",
+          "pair": [
+            2024,
+            2025
+          ],
+          "values": [
+            68.0,
+            52.59
+          ],
+          "rent_gap": 15.41,
+          "irreducible_error_regime_only": 7.7,
+          "tightest_fold_tolerance": 15.0,
+          "fold_passable_by_any_regime_only_fn": true
+        },
+        {
+          "class": "CC",
+          "pair": [
+            2023,
+            2024
+          ],
+          "values": [
+            250.0,
+            89.0
+          ],
+          "rent_gap": 161.0,
+          "irreducible_error_regime_only": 80.5,
+          "tightest_fold_tolerance": 22.25,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CC",
+          "pair": [
+            2023,
+            2025
+          ],
+          "values": [
+            250.0,
+            82.96
+          ],
+          "rent_gap": 167.04,
+          "irreducible_error_regime_only": 83.52,
+          "tightest_fold_tolerance": 20.74,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CC",
+          "pair": [
+            2024,
+            2025
+          ],
+          "values": [
+            89.0,
+            82.96
+          ],
+          "rent_gap": 6.04,
+          "irreducible_error_regime_only": 3.02,
+          "tightest_fold_tolerance": 20.74,
+          "fold_passable_by_any_regime_only_fn": true
+        }
+      ],
+      "gate": "FAILS for ANY regime-only R_f"
+    },
+    "rtcb_2026_forward": {
+      "years": [],
+      "n_anchors": 0,
+      "gate": "NO ANCHORS \u2014 forward regime; nothing to fit or fold until the 2026 SOM (~mid-2027)"
+    }
+  },
+  "fine_cut_5_regimes": {
+    "ordc_pre2022_swcap9000": {
+      "years": [
+        2019,
+        2020,
+        2021
+      ],
+      "n_anchors": 3,
+      "within_regime_pairs": [
+        {
+          "class": "CT",
+          "pair": [
+            2019,
+            2020
+          ],
+          "values": [
+            127.0,
+            39.0
+          ],
+          "rent_gap": 88.0,
+          "irreducible_error_regime_only": 44.0,
+          "tightest_fold_tolerance": 15.0,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CT",
+          "pair": [
+            2019,
+            2021
+          ],
+          "values": [
+            127.0,
+            700.0
+          ],
+          "rent_gap": 573.0,
+          "irreducible_error_regime_only": 286.5,
+          "tightest_fold_tolerance": 31.75,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CT",
+          "pair": [
+            2020,
+            2021
+          ],
+          "values": [
+            39.0,
+            700.0
+          ],
+          "rent_gap": 661.0,
+          "irreducible_error_regime_only": 330.5,
+          "tightest_fold_tolerance": 15.0,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CC",
+          "pair": [
+            2019,
+            2020
+          ],
+          "values": [
+            151.5,
+            51.0
+          ],
+          "rent_gap": 100.5,
+          "irreducible_error_regime_only": 50.25,
+          "tightest_fold_tolerance": 15.0,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CC",
+          "pair": [
+            2019,
+            2021
+          ],
+          "values": [
+            151.5,
+            800.0
+          ],
+          "rent_gap": 648.5,
+          "irreducible_error_regime_only": 324.25,
+          "tightest_fold_tolerance": 37.88,
+          "fold_passable_by_any_regime_only_fn": false
+        },
+        {
+          "class": "CC",
+          "pair": [
+            2020,
+            2021
+          ],
+          "values": [
+            51.0,
+            800.0
+          ],
+          "rent_gap": 749.0,
+          "irreducible_error_regime_only": 374.5,
+          "tightest_fold_tolerance": 15.0,
+          "fold_passable_by_any_regime_only_fn": false
+        }
+      ],
+      "gate": "FAILS for ANY regime-only R_f"
+    },
+    "ordc_widened_2022_swcap5000": {
+      "years": [
+        2022
+      ],
+      "n_anchors": 1,
+      "gate": "UNTESTABLE \u2014 singleton regime: leave-one-out leaves zero same-regime anchors"
+    },
+    "ecrs_launch_2023": {
+      "years": [
+        2023
+      ],
+      "n_anchors": 1,
+      "gate": "UNTESTABLE \u2014 singleton regime: leave-one-out leaves zero same-regime anchors"
+    },
+    "ecrs_normalised_2024_2025": {
+      "years": [
+        2024,
+        2025
+      ],
+      "n_anchors": 2,
+      "within_regime_pairs": [
+        {
+          "class": "CT",
+          "pair": [
+            2024,
+            2025
+          ],
+          "values": [
+            68.0,
+            52.59
+          ],
+          "rent_gap": 15.41,
+          "irreducible_error_regime_only": 7.7,
+          "tightest_fold_tolerance": 15.0,
+          "fold_passable_by_any_regime_only_fn": true
+        },
+        {
+          "class": "CC",
+          "pair": [
+            2024,
+            2025
+          ],
+          "values": [
+            89.0,
+            82.96
+          ],
+          "rent_gap": 6.04,
+          "irreducible_error_regime_only": 3.02,
+          "tightest_fold_tolerance": 20.74,
+          "fold_passable_by_any_regime_only_fn": true
+        }
+      ],
+      "gate": "within-regime spread inside the V0 bar"
+    },
+    "rtcb_2026_forward": {
+      "years": [],
+      "n_anchors": 0,
+      "gate": "NO ANCHORS \u2014 forward regime; nothing to fit or fold until the 2026 SOM (~mid-2027)"
+    }
+  },
+  "notes": [
+    "Regime boundaries are documented analyst choices over published design facts; two defensible cuts are emitted to show the anchor-count consequence of the cut itself.",
+    "No tightness variable is read or fit anywhere in this probe (V0 DO-NOT-REDO honored).",
+    "2021 enters the pre-2022 regime as the Uri event year; the monitor's own ex-Uri counterfactual is carried alongside, not substituted."
+  ]
+}
