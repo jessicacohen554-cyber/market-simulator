@@ -1,4 +1,4 @@
-# PRECOMMIT — ercot-196: the RULE-18 GRAIN REPAIR, re-registered (the chartered ercot-187 successor)
+# PRECOMMIT — ercot-202: the RULE-18 GRAIN REPAIR, re-registered (the chartered ercot-187 successor)
 
 **Pre-registered and pushed BEFORE any measurement, any seam proof, any derive
 and any solve.** The construction, the eligibility read, the seam proofs, the
@@ -21,9 +21,9 @@ The task prompt opens this lane as **ERCOT-195** and the designated branch is
 `claude/ercot-195-lever-selection-scssqc`. **`ercot-195` is already spent on
 `main`**: the L-SCAR-SCREEN-2 session (2026-08-13) registered
 `## ercot-195 … L-SCAR-SCREEN-2: V0 FAIL` in `docs/calibration-log/ercot.md`
-and closed with *"Next shorthand: **ercot-196**."*
+and closed with *"Next shorthand: **ercot-202**."*
 
-This session is therefore **ercot-196** in every artifact, log entry, bundle and
+This session is therefore **ercot-202** in every artifact, log entry, bundle and
 run id. **The branch keeps its designated name** (`claude/ercot-195-…`) because
 the branch is assigned, not chosen. The prompt was authored before the L-SCAR
 session landed. Nothing else about the lane changes.
@@ -169,7 +169,7 @@ by any future re-banding of this tier.
 ## 3. SEAM PROOFS — re-run at THIS HEAD, on the run192 keeper fleet, before any solve
 
 `scripts/probes/ercot186_grain_seamproof.py`, all three years, no LP built,
-written to `results/calibration/ercot196_grain_seamproof.json`.
+written to `results/calibration/ercot202_grain_seamproof.json`.
 
 **They are re-measured rather than inherited**: ercot-186 measured on the
 `ercot185_shapedarm_B` fleet, and the fleet basis has moved twice since (run191's
@@ -341,9 +341,9 @@ unilaterally.**
 3. **A/B pair** via `scripts/replay_keeper.py` on `ercot192_arm_B`, control and
    arm **STRICTLY SEQUENTIAL, ONE invocation at a time** (rule 12; ~12.7 GB peak
    on a 15 GB box):
-   * control `results/calibration/ercot196_graincontrol_A` — **zero delta**, the
+   * control `results/calibration/ercot202_graincontrol_A` — **zero delta**, the
      same-HEAD reproduction that separates HEAD drift from the mechanism;
-   * arm `results/calibration/ercot196_plantphysics_B` —
+   * arm `results/calibration/ercot202_plantphysics_B` —
      `--set ercot_faststart_pool_plant_physics=true`, the single delta.
 4. **Legitimacy diagnostics + attestation + scoring**, both runs.
 5. **Both runs registered** on the dashboard whatever the outcome (rule 15),

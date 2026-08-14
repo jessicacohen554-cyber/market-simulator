@@ -1,26 +1,25 @@
-# FINDING — ercot-196: the rule-18 grain repair, SOLVED — and `p6243` is not what the charter feared
+# FINDING — ercot-202: the rule-18 grain repair, SOLVED — and `p6243` is not what the charter feared
 
-> **STATUS: IN PROGRESS — this record is INCOMPLETE.** §1–§3 and §5 are final
-> (seam proof, the `p6243` adjudication, and the ERCOT-137 hygiene re-file are
-> all measured and settled). **§4, the A/B, is NOT YET WRITTEN**: the control
-> and arm solves were still running when this file was first committed, so the
-> headline table, the gate table and the governance block carry placeholders.
-> **No A/B result, gate verdict, determination or promotion may be read from
-> this file until this banner is removed.** Committed at this stage only
-> because the session's settled measurements should not sit untracked.
-
-**Session ercot-196, 2026-08-14. ERCOT only (rule 25).**
+**Session ercot-202, 2026-08-14. ERCOT only (rule 25).**
 Branch `claude/ercot-195-lever-selection-scssqc` (the branch name carries a
 stale shorthand — see §0).
 Pre-registration:
-`docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md`, pushed at
+`docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md`, pushed at
 `f73b9a1` **BEFORE** any measurement, derive or solve.
 
 Keeper at session start: **`2026-08-12-run192-arm-coal-peak`**
 (`results/calibration/ercot192_arm_B`) — determination **NOT-YET**, fail set
 **{C3a-2023, C3b-2023}**, C3c the single ledgered **CAVEAT ×3**.
 
-<!-- HEADLINE-TABLE -->
+| | result |
+|---|---|
+| **The defect is confirmed on this keeper** | The shipped row-grain gate rejects **0 of 636 / 636 / 652** CT bid rows. Vacuous in all three years. |
+| **The corrected gate binds** | It excludes exactly **one** plant, `CT_PEAKER_South_Central_p6243`, in **2023 only**. |
+| **The arm is MEASURED INERT** | Its entire effect across 26,280 solved hours is **1.2358 MW** moving CT_PEAKER → CC_CHP in **one hour** (2023 h2659), summing to zero. `system_2023.parquet` is **byte-identical**; 2024/2025 byte-identical 4/4. **C3a, C3b and C3c move in no year.** |
+| **Every kill gate PASSES** | G-REPRO 12/12 · G-SHED 4/1/0→4/1/0 · G-C3c 58/22/1→58/22/1 · G-COAL148 0.0 TWh · G-SPUR 9/11/0→9/11/0 · G-SPAN 2.2e-05 % · G-OWNER · G-DOF · G-D2 · LOYO |
+| **`p6243`'s 8 h min-down** | **CORRECT, and not a CAMPD artifact** — CAMPD is not even its source. The charter's fear is refuted on four instruments. |
+| **Determination** | **NOT-YET {C3a-2023, C3b-2023}** — unchanged, exactly as the precommit said ex ante. |
+| **Outcome** | Pre-registered branch **(i)**. **PROMOTED** under the direction-blind rule — **on legitimacy alone. No metric gain is claimed and none exists.** |
 
 ---
 
@@ -29,7 +28,7 @@ Keeper at session start: **`2026-08-12-run192-arm-coal-peak`**
 The task prompt opened this lane as **ERCOT-195** and the designated branch is
 `claude/ercot-195-lever-selection-scssqc`. **`ercot-195` was already spent on
 `main`** by the L-SCAR-SCREEN-2 session (2026-08-13), whose own record closes
-*"Next shorthand: **ercot-196**."* This session is therefore **ercot-196** in
+*"Next shorthand: **ercot-202**."* This session is therefore **ercot-202** in
 every artifact and log entry; the branch keeps its assigned name. Nothing else
 about the lane changes.
 
@@ -71,8 +70,8 @@ none was claimed to.
 
 ## 2. SEAM PROOF — re-measured at this HEAD, on the run192 keeper fleet
 
-`scripts/probes/ercot196_grain_seamproof.py` →
-`results/calibration/ercot196_grain_seamproof.json`. **`ALL_ASSERTIONS_PASS =
+`scripts/probes/ercot202_grain_seamproof.py` →
+`results/calibration/ercot202_grain_seamproof.json`. **`ALL_ASSERTIONS_PASS =
 true`; `ARM_IS_INERT = false`.**
 
 Re-measured rather than inherited: ercot-186 measured on
@@ -141,8 +140,8 @@ effect was predicted, and none may be read from this table.
 
 ## 3. `p6243` — the charter's open question, SETTLED
 
-`scripts/probes/ercot196_p6243_provenance.py` →
-`results/calibration/ercot196_p6243_provenance.json`.
+`scripts/probes/ercot202_p6243_provenance.py` →
+`results/calibration/ercot202_p6243_provenance.json`.
 
 The charter asked: *is `p6243`'s assembled 8 h min-down **correct**, or a CAMPD
 `Min_Down_Hours` artifact on a CT-classified plant?* — with rule 14
@@ -240,14 +239,146 @@ Three items are **named and left untouched**, each needing its own precommit:
 
 ---
 
-<!-- AB-SECTION -->
+## 4. THE A/B — both arms registered, every gate passes, the arm is inert
+
+Two full-span replays of the run192 keeper recipe on `replay_keeper.py`,
+strictly sequential (rule 12), both registered (rules 15/16):
+
+| | bundle | run id | determination |
+|---|---|---|---|
+| control | `ercot202_graincontrol_A` | `2026-08-14-ercot202-ctl-grain` | NOT-YET |
+| arm | `ercot202_plantphysics_B` | `2026-08-14-ercot202-arm-plantphysics` | NOT-YET |
+
+### 4.1 G-REPRO — the control reproduces the keeper exactly
+
+All **12/12** committable hourly sidecars (`class_hourly` / `system` /
+`reserve_family` / `storage` × 2023/2024/2025) are **byte-identical** to
+`ercot192_arm_B` by sha256. HEAD drift is therefore excluded by measurement, and
+every A/B difference below is the mechanism. This is the whole reason the
+precommit required a same-HEAD control (§7 step 3), and it independently
+re-confirms ercot-193's reproduction result on a fresh solve.
+
+Both solves' own logs corroborate the seam proof from *inside* the LP:
+
+* control — `physics gate min_down <= 2 h at row (pre-repair, vacuous) grain,
+  0 plants excluded`, **223 / 191 / 91** pool rows;
+* arm — `physics gate min_down <= 2 h at PLANT (ercot-186) grain, 1 plants
+  excluded`, **217** rows in 2023.
+
+That is SP-4's 223 → 217 reproduced in the live solve.
+
+### 4.2 What the arm actually did
+
+| year | sidecars identical (of 4) | verdict |
+|---|---|---|
+| 2023 | 3 / 4 — only `class_hourly` differs | `system_2023.parquet` **BYTE-IDENTICAL** |
+| 2024 | 4 / 4 | **BYTE-IDENTICAL** |
+| 2025 | 4 / 4 | **BYTE-IDENTICAL** |
+
+The one differing frame contains exactly **two** changed rows:
+
+| year | pass | class | hour | control MW | arm MW | Δ MW |
+|---|---|---|---|---|---|---|
+| 2023 | P1 | CC_CHP | 2659 | 3363.3655 | 3364.6016 | **+1.2358** |
+| 2023 | P1 | CT_PEAKER | 2659 | 3556.4197 | 3555.1841 | **−1.2358** |
+
+Total 2023 energy is unchanged (446.0816 TWh both arms). **That is the entire
+measured effect of the mechanism.**
+
+### 4.3 Why inertness is the finding, not a null
+
+The seam proof measured this arm moving **90,271 row-hours**, withdrawing **6**
+of `p6243`'s priced pool rows, at a max markup delta of **$1,709.62/MWh**. That
+is a large offer-side move, and it produces a **1.24 MW** dispatch change and
+**zero** price change.
+
+The reason is visible in SP-6's row census: the withdrawn rows are one plant's
+deep out-of-merit tranches — econ heat rates **13.18 → 21.55** MMBtu/MWh and
+five `peak*` rows at **130.97** — which never clear at any price. Re-pricing
+capacity the LP never dispatches changes nothing it clears on. **The repair
+makes a vacuous rule-18 gate bind without disturbing the solution**, which is
+the ideal outcome for a legitimacy correction and the reason branch (i) exists.
+
+### 4.4 Kill gates — all live, all PASS
+
+| gate | baseline (control) | arm | verdict |
+|---|---|---|---|
+| **G-SHED** (primary) | 4 / 1 / 0 | 4 / 1 / 0, identical hour lists | **PASS** |
+| **G-C3c** max-zonal | 58 / 22 / 1 vs 181 / 53 / 31 | 58 / 22 / 1 | **PASS** |
+| G-C3c demand-wtd (reported) | 57 / 22 / 1 | 57 / 22 / 1 | — |
+| **G-COAL148** (live, D2 lineage) | 0.1213 / 0.1838 / 0.1095 TWh | rise **0.0 / 0.0 / 0.0** vs the 0.5 bar | **PASS** |
+| **G-SPUR** | 9 / 11 / 0 | 9 / 11 / 0 | **PASS** |
+| **G-SPAN** | — | max class energy move **2.2e-05 %** (2023 CT_PEAKER); 0 in 2024/25 vs the 0.5 % bar | **PASS** |
+| **G-OWNER** | C3a-2024 −0.8 %, C3a-2025 −7.5 %, C3b-2024 0.135 | byte-identical | **PASS** |
+| **G-DOF** | `n_entries` 18 / `n_residual` 6 | unchanged; zero new scalars | **PASS** |
+| **G-D2** | D-4 FAIL rows `reliability_floor × CT_PEAKER` h14-21 ×3 yr | **identical A↔B**, no new row | **PASS** |
+| **LOYO** | — | 2024/2025 byte-identical **is** the held-out evidence | **PASS** |
+
+G-D2's baseline deserves one sentence, because both runs' legitimacy gate
+reports `FAIL`: that is the **pre-existing** off-window-binding condition the
+keeper already carries, and the keeper's and control's D-4 FAIL row sets are
+identical. The precommit scored this gate as *"D-4 FAIL rows identical A↔B …
+any new row is a failure"*, so the arm passes it. Nothing here is a regression
+introduced by this session, and nothing here is repaired by it.
+
+### 4.5 Determination, and what did NOT move
+
+**NOT-YET, fail set {C3a-2023, C3b-2023}, on both arms — unchanged**, with C3c
+the single ledgered CAVEAT ×3. Because `system_*.parquet` is byte-identical in
+every year, **C3a-2023 (−33.2 %), C3b-2023 (0.604) and all three C3c tail counts
+are numerically unchanged, not merely within tolerance.** No C3a-2023 claim is
+made (Q-B final), no C3b-2023 round was run (card R-A), and the ~0.59
+C3b-2023 ceiling stated in the precommit was never approached because nothing
+moved.
+
+### 4.6 Promotion — branch (i), on legitimacy alone
+
+The precommit's **direction-blind rule** reads only (a) each live gate's
+PASS/FAIL and (b) LOYO. All live gates PASS and LOYO clears, so the rule fires:
+**PROMOTE**. Keeper → **`2026-08-14-ercot202-arm-plantphysics`**.
+
+Stated plainly, as branch (i) requires: **the promotion buys no metric gain, and
+none is claimed.** It is justified by the object alone — a keeper carrying an
+armed mechanism whose licensing gate does not bind *is* the rule-18 defect,
+whatever the numbers say (card D3). The two bundles are numerically identical in
+every scored quantity, and both registrations say so, so the dashboard is never
+read as two independent results.
+
+Retention behaved exactly as pre-registered: registering the pair pruned
+**`2026-08-06-run173b-event-cap-reconc`** and
+**`2026-08-07-run176-control-offline-increment`** — the two the precommit named
+before the fact.
+
+### 4.7 RULE 26 IS NOT DISCHARGED, and the reason is measured
+
+The precommit bound the promoting commit to deleting the transitional flag and
+the pre-repair branch (rule 26 `[R-DELETE]`). **That cannot be done here without
+breaking the keeper**, and the obstruction is a fact about the code, not a
+preference:
+
+`ScenarioConfig` is a **dataclass**, and `with_overrides` / `dataclasses.replace`
+**raise `TypeError` on an unknown keyword**. The promoted keeper's `meta.json`
+carries `ercot_faststart_pool_plant_physics` as a `prb_override`, so deleting
+the field would make `replay_keeper.py` raise on this bundle — i.e. render the
+keeper **unreplayable**, breaking every future control, re-gate and G-REPRO
+check that the calibration lane depends on. Verified directly, not assumed.
+
+**Named successor (its own precommit):** delete the field *and* the pre-repair
+branch, making the plant-grain read unconditional, **and re-solve** so no bundle
+references the flag.
+
+The hazard rule 26 actually targets — *"a deprecated parameter that still parses
+is a re-armable answer key"* — is **materially absent** here: this flag carries
+**zero DOF**, no residual content, and no tunable value. It is a physics-grain
+switch, not a fitted knob. That is a reason the deferral is safe, **not** a
+reason to skip it; the successor stands.
 
 ---
 
 ## 5. HYGIENE — the ERCOT-137 anchoring convention: RE-FILED WITH A MEASUREMENT
 
-`scripts/probes/ercot196_ercot137_anchoring.py` →
-`results/calibration/ercot196_ercot137_anchoring.json`.
+`scripts/probes/ercot202_ercot137_anchoring.py` →
+`results/calibration/ercot202_ercot137_anchoring.json`.
 
 The ercot-192 DOF ledger left this open on the `coal_offer_margin_level /
 _anchor` (ERCOT-137, limb A) entry: the identification pools the four subsets'
@@ -298,4 +429,55 @@ re-derivation trigger is an owner ruling, not a session call.
 
 ---
 
-<!-- GOVERNANCE -->
+## 6. Governance
+
+* **Rule 15 `[R-DASHBOARD]`** — both runs registered, committed and pushed in
+  **this** session; the FINDING and the dashboard carry the result. Both bundles
+  carry `metrics.json`, `legitimacy_diagnostics.json` and
+  `calibration_attestation.json` (max-zonal C3c basis, `gen_ercot202_attestation.py`).
+* **Rule 16 `[R-ALLYEARS]`** — 2023 + 2024 + 2025, one invocation and one bundle
+  per arm. No single-year anything.
+* **Rule 22 `[R-HOLDOUT]`** — every solve, score and read stayed inside
+  {2023, 2024, 2025}. ERCOT holds no `complete` and no `final` marker, none was
+  sought, and no `calibration-complete.json` re-key applies.
+* **Rule 23 `[R-FROZEN-DERIVE]`** — **not engaged.** No derive was re-run and no
+  artifact re-derived; this session changed only which rows are licensed to read
+  a frozen artifact. The §5 hygiene item is a measurement, and its potential
+  re-derivation is explicitly deferred to a named successor.
+* **Rule 24 `[R-REGISTRY]`** — one registered `ScenarioConfig` field (merged at
+  ercot-186), cache-key registered dropped-at-default and **verified at this
+  HEAD**: default key `603c2498bf71d21d` unmoved, armed key `7ae1afee3aa73a63`
+  distinct. Recorded in both bundles' `run_config.json`.
+* **Rule 25 `[R-ISO-SCOPE]`** — ERCOT-gated throughout; only ERCOT's keeper
+  shard, status part and matrix shard were touched. The sibling grain defect at
+  `model/commitment.py::_ra_bridge_unit_params` (CAISO RA bridge) is **named and
+  untouched**. No cross-ISO verdict minted.
+* **Rule 26 `[R-DELETE]`** — **NOT discharged; see §4.7 for the measured
+  obstruction and the named successor.** Recorded here rather than quietly
+  skipped.
+* **Rule 27 `[R-PUSH]`** — this session wrote **no** core source file: the
+  mechanism substrate was already merged at ercot-186 and is byte-unchanged
+  here. New files only (probes, attestation generator, docs, artifacts). Every
+  push was blob-verified where it touched a ≥300-line file, and **no push ran
+  while an LP solve was in progress** except small text/sidecar packs
+  (≤3.6 MB), with the solve PID confirmed alive after each.
+* **Rule 28 `[R-MECH-MATRIX]`** — duty (a) the DO-NOT-REDO check preceded the
+  precommit (the cell was `O`, nothing in the family adjudicated `R`/`I`/`G`);
+  duty (b) `ercot_faststart_pool_plant_physics` stamped **`O → K`** with
+  evidence in **this** session; duty (c) the row already existed (landed with
+  the field at ercot-186); duty (d) no cross-ISO verdict. The shard's keeper and
+  gates stamps and the §5.1 prose header were re-stamped on promotion;
+  `check_mechanism_matrix.py` reports integrity OK, keeper stamps matching and
+  prose headers matching.
+* **GitHub Actions** — nothing offloaded; both solves ran in-session.
+
+**Test state.** `tests/iso/ercot/test_ercot_faststart_pool_offer.py` — **15
+passed**, including the four grain-repair cases.
+
+**Inherited, unexpired.** The ercot-188/E2 **P0 bit-identity forfeiture** stands:
+`ercot_econ_curve_top_refine` writes heat rates into the P0 objective on this
+keeper lineage, so the offer-surface family's P0 bit-identity proof remains
+forfeited and control-vs-arm differences are isolable by argument, never by
+proof. Stated so §2's seam proof is not over-read.
+
+**Next shorthand: ercot-197.**

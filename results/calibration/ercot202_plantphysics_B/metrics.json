@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-14-ercot196-arm-plantphysics",
+  "run_id": "2026-08-14-ercot202-arm-plantphysics",
   "iso": "ERCOT",
-  "label": "ercot196 arm plantphysics",
+  "label": "ercot202 arm plantphysics",
   "target_years": [
     2023,
     2024,

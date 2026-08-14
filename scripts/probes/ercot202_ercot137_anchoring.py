@@ -1,4 +1,4 @@
-"""ercot-196 HYGIENE: the ERCOT-137 anchoring-convention issue, measured.
+"""ercot-202 HYGIENE: the ERCOT-137 anchoring-convention issue, measured.
 
 Filed as an OPEN item in the DOF ledger at ercot-192, on the
 ``coal_offer_margin_level / _anchor`` (ERCOT-137, limb A) entry:
@@ -43,7 +43,7 @@ repair is neither a data update nor a residual chase.
 
 Usage::
 
-    PYTHONPATH=.:src python3 scripts/probes/ercot196_ercot137_anchoring.py
+    PYTHONPATH=.:src python3 scripts/probes/ercot202_ercot137_anchoring.py
 """
 
 from __future__ import annotations
@@ -60,7 +60,7 @@ sys.path.insert(0, str(REPO / "src"))
 
 BIN_SHEET = REPO / "data/raw/reference/custom-bin-assignments.csv"
 BOUND = REPO / "results/calibration/ercot192_coal_limbs_bound.json"
-OUT = REPO / "results/calibration/ercot196_ercot137_anchoring.json"
+OUT = REPO / "results/calibration/ercot202_ercot137_anchoring.json"
 
 # The ledgered ERCOT-137 identification, as armed on the run192 keeper.
 ARMED_LEVEL = 15.8807
@@ -110,9 +110,9 @@ def main() -> None:
 
     rec = {
         "_provenance": {
-            "probe": "scripts/probes/ercot196_ercot137_anchoring.py",
+            "probe": "scripts/probes/ercot202_ercot137_anchoring.py",
             "precommit": (
-                "docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md §10"
+                "docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md §10"
             ),
             "filed_at": "ercot-192 DOF ledger, coal_offer_margin_level entry",
             "read_only": True,
@@ -170,7 +170,7 @@ def main() -> None:
                 "Correcting the level is SOLVE-AFFECTING — it raises every coal "
                 "_mustrun row's offer by its own heat rate x 0.0347 $/MMBtu "
                 "(+0.33 to +0.39 $/MWh) — so it needs its own precommit, its own "
-                "A/B and its own kill gates. Folding it into the ercot-196 "
+                "A/B and its own kill gates. Folding it into the ercot-202 "
                 "rule-18 grain A/B would make that a two-delta comparison."
             ),
             "successor": (

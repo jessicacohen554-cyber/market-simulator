@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-14-ercot196-ctl-grain",
+  "run_id": "2026-08-14-ercot202-ctl-grain",
   "iso": "ERCOT",
-  "label": "ercot196 ctl grain",
+  "label": "ercot202 ctl grain",
   "target_years": [
     2023,
     2024,

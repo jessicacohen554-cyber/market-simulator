@@ -1,7 +1,7 @@
-"""Write the ercot-196 A/B bundles' governance attestations from the keeper's.
+"""Write the ercot-202 A/B bundles' governance attestations from the keeper's.
 
-The ercot-196 rule-18 grain-repair pair
-(``docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md``) adds ZERO
+The ercot-202 rule-18 grain-repair pair
+(``docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md``) adds ZERO
 parameters: the control is the run192 keeper recipe replayed byte-faithfully at
 HEAD, and the arm is the same recipe plus the single boolean
 ``ercot_faststart_pool_plant_physics=true`` — a LICENSING-GATE grain correction
@@ -22,9 +22,9 @@ asserted equal to the keeper's, not edited.
 
 Usage::
 
-    PYTHONPATH=.:src python3 scripts/gen_ercot196_attestation.py \
-        --base results/calibration/ercot196_graincontrol_A \
-        --arm  results/calibration/ercot196_plantphysics_B
+    PYTHONPATH=.:src python3 scripts/gen_ercot202_attestation.py \
+        --base results/calibration/ercot202_graincontrol_A \
+        --arm  results/calibration/ercot202_plantphysics_B
 """
 
 from __future__ import annotations
@@ -45,27 +45,27 @@ YEARS = (2023, 2024, 2025)
 ACTUAL_TAIL = {2023: 181, 2024: 53, 2025: 31}
 
 _CONTROL_ATTEST = (
-    "ercot-196 session (2026-08-14): CONTROL of the rule-18 [R-PHYSICS] "
+    "ercot-202 session (2026-08-14): CONTROL of the rule-18 [R-PHYSICS] "
     "grain-repair A/B — the run192 keeper recipe replayed at HEAD with ZERO "
     "deltas, the same-HEAD reproduction that separates HEAD drift from the "
-    "mechanism, per docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md "
+    "mechanism, per docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md "
     "§7. Zero parameters added or changed; the free-parameter ledger is the "
     "keeper's unchanged."
 )
 _ARM_ATTEST = (
-    "ercot-196 session (2026-08-14): ARM of the rule-18 [R-PHYSICS] grain "
+    "ercot-202 session (2026-08-14): ARM of the rule-18 [R-PHYSICS] grain "
     "repair — the run192 keeper recipe plus ONE boolean, "
     "ercot_faststart_pool_plant_physics=true, which moves "
     "ercot_faststart_pool_offer's licensing gate from the (vacuous) bid-row "
     "grain to PLANT grain, per "
-    "docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md §2/§7. ZERO "
+    "docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md §2/§7. ZERO "
     "fitted scalars: the flag is a boolean, the bound is the existing constant "
     "FASTSTART_POOL_MIN_DOWN_HOURS = 2.0 (not moved), and the stamped values "
     "are fleet assembly's own bin_min_run / bin_min_down. The free-parameter "
     "ledger is the keeper's unchanged."
 )
 _CARRY = (
-    " CARRIED ONTO THE ercot-196 {TAG}: the A/B toggles only WHICH ROWS ARE "
+    " CARRIED ONTO THE ercot-202 {TAG}: the A/B toggles only WHICH ROWS ARE "
     "LICENSED to read a frozen offer artifact (a rule-18 physics-grain "
     "correction to an eligibility test, not a scarcity-formation mechanism) — "
     "the accepted model-class limitation is that an LP on competitive/measured "
@@ -104,10 +104,10 @@ def _write(bundle: Path, keeper_attest: dict, attested_by: str, tag: str) -> Non
         if exc.get("criterion") == "price_tail" and year in counts:
             exc["magnitude"] = (
                 f"model {counts[year]} h vs actual RT {ACTUAL_TAIL[year]} h "
-                f"> $200/MWh (re-measured on the ercot-196 {tag})"
+                f"> $200/MWh (re-measured on the ercot-202 {tag})"
             )
             exc["reason"] = re.sub(
-                r"\s*CARRIED ONTO THE ercot-196.*$", "", exc.get("reason", "")
+                r"\s*CARRIED ONTO THE ercot-202.*$", "", exc.get("reason", "")
             ) + _CARRY.replace("{TAG}", tag.upper())
 
     path = bundle / "calibration_attestation.json"

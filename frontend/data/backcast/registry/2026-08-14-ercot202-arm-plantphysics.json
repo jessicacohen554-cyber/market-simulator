@@ -1,8 +1,8 @@
 {
-  "id": "2026-08-14-ercot196-arm-plantphysics",
-  "label": "ercot196 arm plantphysics",
+  "id": "2026-08-14-ercot202-arm-plantphysics",
+  "label": "ercot202 arm plantphysics",
   "date": "2026-08-14",
-  "shorthand": "ercot196-arm-plantphysics",
+  "shorthand": "ercot202-arm-plantphysics",
   "definition": "ercot-196 ARM of the rule-18 [R-PHYSICS] grain repair A/B (docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md \u00a77): the run192 keeper recipe plus ONE boolean, ercot_faststart_pool_plant_physics=true \u2014 the fast-start pool's licensing gate moved from the vacuous bid-row grain to PLANT grain. Zero fitted scalars; FASTSTART_POOL_MIN_DOWN_HOURS=2.0 unchanged.",
   "years": [
     2023,
@@ -10,6 +10,6 @@
     2025
   ],
   "iso": "ERCOT",
-  "file": "frontend/data/backcast/runs/2026-08-14-ercot196-arm-plantphysics.js",
-  "bundle": "results/calibration/ercot196_plantphysics_B"
+  "file": "frontend/data/backcast/runs/2026-08-14-ercot202-arm-plantphysics.js",
+  "bundle": "results/calibration/ercot202_plantphysics_B"
 }
