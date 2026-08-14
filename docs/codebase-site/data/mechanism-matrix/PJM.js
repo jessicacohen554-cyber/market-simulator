@@ -134,6 +134,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     campd_outage_windows: { cell: "K" },
     outage_artifact_provenance: { cell: "I", ev: "xiso-2 §4 (byte-identical)" },
     dam_availability_rebasis: { cell: "G", ev: "pjm-145 (refused ex ante, no solve; FINDING-pjm145-dam-availability-2026-08-02.md; PREREG-pjm145-dam-availability-2026-08-02.md; _pjm145_damavail_exante.json + _pjm145_damavail_decompose.json)" },
+    pjm_measured_outage_event_cap: { cell: "O", ev: "pjm-161 Phase 0 (no LP): PREREG-pjm161-measured-outage-event-cap-2026-08-14.md; results/calibration/_pjm161_outage_inversion.json / _pjm161_december.json / _pjm161_c3b_months.json / _pjm161_energy_balance.json" },
     ercot_dam_availability_coal_event_cap: { cell: "." },
     ercot_dam_availability_gas_event_cap: { cell: "." },
     ercot_dam_availability_event_cap_reconciliation: { cell: "." },
