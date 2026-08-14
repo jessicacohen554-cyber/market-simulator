@@ -146,11 +146,35 @@ deleted).
 | `a168b73` | D-5 closure: patch archived + DEBUG-B charter |
 | (this)  | handoff + branch-protection memo + dispatch record |
 
-### Dispatch record — `golden-data-tier.yml`
+### Dispatch record — `golden-data-tier.yml` (first-ever run)
 
-Filled in the same session, after the dispatch completed (a red run is a
-finding, not a failure of the sweep — its loud-failure guard turns
-missing-data skips into reds by design):
+Dispatched from `main` @ 5bf5f13, 2026-08-14 03:46 UTC (owner authorization
+§6 decision 7). **Run 31767823203: completed FAILURE in 9 m 44 s** (well
+under the ≤ ~90-billed-min budget). A red run is a finding, and this one is
+precise:
 
-* Dispatched from `main`, 2026-08-14. Result: see the addendum at the end of
-  this file (written post-completion).
+| step | outcome | detail |
+|---|---|---|
+| checkout | ✅ 72 s | its checkout strategy works — the template the fast tier needs |
+| uv + deps | ✅ | |
+| `regenerate_clean.py` (9 datatypes) | ✅ 5 m | "regenerated 9 datatype(s) into data/clean" |
+| `curate_emissions.py --years 2023` | ❌ | **"The runner has received a shutdown signal … exit code 143"** — a runner-VM-level SIGTERM ~3 min into the curation, i.e. **resource exhaustion of the runner, not a script error**. The identical command succeeds on this session's container (26,534,489 rows → `emissions_2023.parquet`), so the data and code are fine; the workflow's own comment already flags the curation's multi-GB RSS. |
+| pytest tier + loud-failure guard | skipped (never reached) | |
+
+**Unifying observation:** the same runner-shutdown signature explains every
+infrastructure red seen today — the fast-tier and (pre-fix) shrink-guard
+jobs die mid-checkout of the ~10.5 GB tip (ubuntu-latest has ~14 GB free
+disk; their logs are not even downloadable, consistent with the runner dying
+before log finalization), and the golden tier dies in its one multi-GB
+curation step. **The repo's data mass has crossed what a standard GitHub
+runner can hold**, which converts the BLOAT workstream (data-corpus
+conversion, §6 decision 4) and PERF-A's checkout item from nice-to-haves
+into the prerequisites for any data-touching CI.
+
+Dispositions: the weekly cron stands (first opportunity 2026-08-17 — if it
+also reds on the emissions step, that is the same finding, not a new one);
+the emissions step needs either a larger runner, a lower-RSS curation path,
+or the post-BLOAT slimmer corpus — routed to the owner via this record, with
+BLOAT-B's re-dispatch (§6 decision 7) as the natural retest point. No
+workflow edit made here: the step's failure is capacity, and choosing the
+remedy (paid larger runner vs code change) is an owner cost decision.
