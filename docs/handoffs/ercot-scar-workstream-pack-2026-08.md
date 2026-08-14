@@ -11,7 +11,30 @@
 
 ---
 
-## §0 STATE BOARD — cycle 8, 2026-08-14
+## §0 STATE BOARD — cycle 9, 2026-08-14 — THE SITTING: both open decisions SIGNED
+
+**The owner sat in the manager session (2026-08-14, ~02:40Z, interactive
+selection) and signed BOTH pending items:**
+
+| decision | **SIGNED** | executor |
+|---|---|---|
+| **Card T** (ercot-196 §0/§4) | **T-1 + T-3b, as recommended** — the `gas_hh_monthly_shape` input-correctness A/B (ercot-145b posture: fit gain NOT predicted; guards on every PASSing gate) plus the read-only published-adder overlay-completeness audit. T-2 stays behind D2; T-3a NOT signed (no rubric change); T-4 refusal stands. | T1-EXEC (§2.7, in flight); T3B-AUDIT staged next cycle |
+| **L-SCAR V0-FAIL adjudication** | **L-2 CHARTERED + REGIME-CONDITIONING CARD ASSEMBLY AUTHORIZED; the L-0 `readiness_limits` row NOT entered** — frontier rank 2 stays OPEN with two lanes in flight. No tightness-conditioned identification is re-attempted (V0 is the DO-NOT-REDO adjudication for that instrument). | L2-BUILD (§2.8, in flight); REGIME-CARD assembly staged next cycle |
+
+Durable repo record: SITTING-RECORD-1 (§2.6, in flight) appends the
+RESOLUTIONS / ADJUDICATION blocks to both cards + one log entry. Until it
+merges, THIS PACK SECTION IS THE PRIMARY SITTING RECORD.
+
+**Owner decisions pending: NONE.** Next owner touchpoints (not blocking any
+current lane): merge the three landing branches as they arrive; the future
+sittings the lanes themselves produce (T-1 promotion read; L-2 promotion
+read; the regime card).
+
+---
+
+### Cycle-8 board (superseded, kept verbatim below)
+
+## §0-prev STATE BOARD — cycle 8, 2026-08-14
 
 **Recorded HEAD (origin/main): `dbde0c2`.** The owner returned and
 batch-merged PRs #3914–#3924, including ALL THREE of this workstream's
@@ -447,3 +470,69 @@ stretched to ~4 h per A6.2.
    commits + `git push` remain the pack transport, with push_files only as
    the auth-outage fallback.
 6. Cadence: owner active again → check-ins tighten back to ~2 h.
+
+### §2.6 SITTING-RECORD-1 (cycle 9, 2026-08-14; child session `session_01Age8GT4btV7ED1LFmX8aQP`)
+
+Docs-only: append "RESOLUTIONS — CARD T SIGNED BY THE OWNER, 2026-08-14"
+(T-1 + T-3b; T-2 stays D2-frozen; T-3a not signed; T-4 refusal stands) to the
+ercot-196 card, and "V0-FAIL ADJUDICATION — SIGNED BY THE OWNER, 2026-08-14"
+(L-2 CHARTERED; regime-conditioning card assembly AUTHORIZED; L-0 row NOT
+entered; rank 2 stays open; V0 = DO-NOT-REDO for tightness-conditioning) to
+the L-SCAR card; one calibration-log entry under the next shorthand. Appends
+only, bodies AS PUT; blob-verify both >300-line cards; push-and-stop on
+`claude/ercot-scar-sitting-record-1`.
+
+### §2.7 T1-EXEC (cycle 9, 2026-08-14; child session `session_0152uyrDFrYGx3FfPqdPyQd9`)
+
+Executes signed T-1 ONLY. Precommit BEFORE any solve (ercot-193 template):
+ercot-145b posture verbatim ("fit gain is NOT predicted"); A/B = keeper
+replay at HEAD (run192 recipe) vs single delta `gas_hh_monthly_shape=true`;
+years 2023–2025 sequential, one invocation at a time; guards direction-blind
+— G-A C3a-2024/2025 in ±10 % bands, G-B C3b-2024/2025 ≤ 0.20, G-C shed not
+increased A→B, G-D coal148 ≤ 0.5 TWh rise, G-E C1/C2/C4/C8 hold; 2023 moves
+side-effect-reported at full magnitude under the card-R ceiling, never a
+basis (Q-B phrasing per the ercot-193 precommit); both runs registered on
+the BACKCAST registry whatever the outcome, evictions named pre-solve;
+keeper CANNOT change in-session. Matrix: rule-28c row-gap closure for the
+field (row + cell line in every shard — the ercot-145 §6 gap) + the 28b
+ERCOT cell verdict post-A/B; matrix guard exit 0. Log entry. Landing:
+push-and-stop on `claude/ercot-scar-t1-gas-hh-shape`; report incl. promotion
+RECOMMENDATION only.
+
+### §2.8 L2-BUILD (cycle 9, 2026-08-14; child session `session_017mYAd1w2geiUyhvBtYPxC4`)
+
+Executes chartered L-2 (E1 dispersion repair; FFR-8A candidate surface —
+forward committed-capability under-dispersion vs measured RTOLCAP p1 13.3 vs
+7.9 GW; honesty bound single-digit-to-~20 $/kW-yr stated in the precommit).
+Phase 0: surface check + precommit pushed before any build/solve —
+identification from MEASURED RTOLCAP telemetry only (frozen derive, rule
+13/23; STOP if unidentifiable — the V0 discipline verbatim). Phase 1: NEW
+default-off ScenarioConfig field, screen-side only, unreachable in backcast
+(validator), charter §4 must-nots verbatim; 28c row + shards in the same
+commit. Phase 2: A/B on ERCOT 2021→2025 T1-FF hindcast, control re-solved
+cold at HEAD (FFR-2B one-tree), scored on the charter §3 V1 expectations +
+V3 responsiveness, LOYO scorer-side; both arms registered on the FORECAST
+namespace (never backcast); 28b cell verdict + log. NO promotion in any
+outcome. Landing: push-and-stop on `claude/ercot-scar-l2-e1-dispersion`.
+
+### A9 — 2026-08-14, cycle 9 — THE SITTING (both decisions signed in-session)
+
+1. The owner answered the two standing decisions interactively in the
+   manager session (~02:40Z): **card T = T-1 + T-3b as recommended**;
+   **L-SCAR = L-2 chartered + regime-conditioning card assembly authorized,
+   L-0 row NOT entered** (multi-select; Park not chosen). The §0 table is
+   the primary record until SITTING-RECORD-1's appends merge.
+2. Dispatched this cycle (prompts §2.6–§2.8 — §2.6/§2.7 full texts live in
+   the dispatch records; the pack carries their operative summaries):
+   SITTING-RECORD-1 (`session_01Age8GT4btV7ED1LFmX8aQP`), T1-EXEC
+   (`session_0152uyrDFrYGx3FfPqdPyQd9`), L2-BUILD
+   (`session_017mYAd1w2geiUyhvBtYPxC4`). All push-and-stop; the owner merges
+   (the cycle-8 convention).
+3. STAGED for next cycle (to serialize fast doc landings against the log):
+   **T3B-AUDIT** (the signed overlay-completeness audit) and **REGIME-CARD**
+   (the authorized doc-only assembly). Dispatch once SITTING-RECORD-1 lands
+   or next check-in, whichever first.
+4. Sequencing note honored: T1-EXEC (backcast lane, dispatch-side fuel
+   input) and L2-BUILD (forecast lane, screen-side) touch disjoint seams;
+   both cite the sitting; neither promotes; log-tail shorthand races are
+   expected and each worker is instructed to keep entries whole on rebase.
