@@ -1,0 +1,316 @@
+{
+  "iso": "NEISO",
+  "nuclear_fleet_pmax_mw": {
+    "566_2": 863.43,
+    "566_3": 1244.97,
+    "6115_1": 1247.0
+  },
+  "nuclear_fleet_total_mw": 3355.4,
+  "pilgrim_in_overlay": false,
+  "envelope_self_test": {
+    "rows": [
+      {
+        "year": 2019,
+        "model_overlay_twh": 27.698,
+        "eia930_actual_twh": 29.821,
+        "gap_twh": -2.123
+      },
+      {
+        "year": 2020,
+        "model_overlay_twh": 25.567,
+        "eia930_actual_twh": 25.537,
+        "gap_twh": 0.03
+      },
+      {
+        "year": 2021,
+        "model_overlay_twh": 27.092,
+        "eia930_actual_twh": 27.026,
+        "gap_twh": 0.066
+      },
+      {
+        "year": 2022,
+        "model_overlay_twh": 27.37,
+        "eia930_actual_twh": 27.37,
+        "gap_twh": -0.001
+      },
+      {
+        "year": 2023,
+        "model_overlay_twh": 23.159,
+        "eia930_actual_twh": 23.171,
+        "gap_twh": -0.012
+      },
+      {
+        "year": 2024,
+        "model_overlay_twh": 26.562,
+        "eia930_actual_twh": 26.487,
+        "gap_twh": 0.075
+      },
+      {
+        "year": 2025,
+        "model_overlay_twh": 27.611,
+        "eia930_actual_twh": 27.46,
+        "gap_twh": 0.151
+      }
+    ]
+  },
+  "monthly_2019": {
+    "rows": [
+      {
+        "month": 1,
+        "model_gwh": 2496.4,
+        "actual_gwh": 2937.5,
+        "gap_gwh": -441.1,
+        "gap_avg_mw": -593.0
+      },
+      {
+        "month": 2,
+        "model_gwh": 2254.8,
+        "actual_gwh": 2702.6,
+        "gap_gwh": -447.8,
+        "gap_avg_mw": -666.0
+      },
+      {
+        "month": 3,
+        "model_gwh": 2471.4,
+        "actual_gwh": 2970.1,
+        "gap_gwh": -498.7,
+        "gap_avg_mw": -670.0
+      },
+      {
+        "month": 4,
+        "model_gwh": 1667.0,
+        "actual_gwh": 2135.5,
+        "gap_gwh": -468.5,
+        "gap_avg_mw": -651.0
+      },
+      {
+        "month": 5,
+        "model_gwh": 1972.2,
+        "actual_gwh": 2262.1,
+        "gap_gwh": -289.9,
+        "gap_avg_mw": -390.0
+      },
+      {
+        "month": 6,
+        "model_gwh": 2391.7,
+        "actual_gwh": 2400.1,
+        "gap_gwh": -8.3,
+        "gap_avg_mw": -12.0
+      },
+      {
+        "month": 7,
+        "model_gwh": 2471.5,
+        "actual_gwh": 2464.3,
+        "gap_gwh": 7.2,
+        "gap_avg_mw": 10.0
+      },
+      {
+        "month": 8,
+        "model_gwh": 2471.5,
+        "actual_gwh": 2462.1,
+        "gap_gwh": 9.3,
+        "gap_avg_mw": 13.0
+      },
+      {
+        "month": 9,
+        "model_gwh": 2391.7,
+        "actual_gwh": 2381.2,
+        "gap_gwh": 10.6,
+        "gap_avg_mw": 15.0
+      },
+      {
+        "month": 10,
+        "model_gwh": 2471.4,
+        "actual_gwh": 2467.8,
+        "gap_gwh": 3.6,
+        "gap_avg_mw": 5.0
+      },
+      {
+        "month": 11,
+        "model_gwh": 2391.8,
+        "actual_gwh": 2385.4,
+        "gap_gwh": 6.4,
+        "gap_avg_mw": 9.0
+      },
+      {
+        "month": 12,
+        "model_gwh": 2246.7,
+        "actual_gwh": 2252.1,
+        "gap_gwh": -5.4,
+        "gap_avg_mw": -7.0
+      }
+    ],
+    "jan_may_twh": -2.146,
+    "jun_dec_twh": 0.023
+  },
+  "scoring_consequence": {
+    "rows": [
+      {
+        "year": 2019,
+        "net_generation_twh": 95.54,
+        "total_load_twh": 118.28,
+        "c1_volume_band_twh": 2.366,
+        "rt_max": 261.35,
+        "rt_hours_gt_300": 0
+      },
+      {
+        "year": 2020,
+        "net_generation_twh": 92.35,
+        "total_load_twh": 115.61,
+        "c1_volume_band_twh": 2.312,
+        "rt_max": 236.11,
+        "rt_hours_gt_300": 0
+      },
+      {
+        "year": 2021,
+        "net_generation_twh": 98.55,
+        "total_load_twh": 117.12,
+        "c1_volume_band_twh": 2.342,
+        "rt_max": 375.28,
+        "rt_hours_gt_300": 2
+      },
+      {
+        "year": 2022,
+        "net_generation_twh": 100.21,
+        "total_load_twh": 116.93,
+        "c1_volume_band_twh": 2.339,
+        "rt_max": 2254.35,
+        "rt_hours_gt_300": 117
+      },
+      {
+        "year": 2023,
+        "net_generation_twh": 96.86,
+        "total_load_twh": 112.0,
+        "c1_volume_band_twh": 2.24,
+        "rt_max": 1161.97,
+        "rt_hours_gt_300": 15
+      },
+      {
+        "year": 2024,
+        "net_generation_twh": 104.08,
+        "total_load_twh": 114.43,
+        "c1_volume_band_twh": 2.289,
+        "rt_max": 2112.77,
+        "rt_hours_gt_300": 8
+      },
+      {
+        "year": 2025,
+        "net_generation_twh": 107.11,
+        "total_load_twh": 115.23,
+        "c1_volume_band_twh": 2.305,
+        "rt_max": 1110.22,
+        "rt_hours_gt_300": 20
+      }
+    ],
+    "price_col": "rt"
+  },
+  "blast_radius": {
+    "window_start_now": 2023,
+    "window_start_proposed": 2019,
+    "by_iso": [
+      {
+        "iso": "CAISO",
+        "plants": 49,
+        "mw": 1361.7
+      },
+      {
+        "iso": "ERCOT",
+        "plants": 13,
+        "mw": 966.0
+      },
+      {
+        "iso": "MISO",
+        "plants": 83,
+        "mw": 6682.6
+      },
+      {
+        "iso": "NEISO",
+        "plants": 21,
+        "mw": 914.2
+      },
+      {
+        "iso": "NYISO",
+        "plants": 15,
+        "mw": 3417.6
+      },
+      {
+        "iso": "PJM",
+        "plants": 83,
+        "mw": 8125.4
+      }
+    ],
+    "total_plants": 264,
+    "total_mw": 21467.5,
+    "neiso_top": [
+      {
+        "plant_id": 1590.0,
+        "ret_year": 2019.0,
+        "ret_month": 5.0,
+        "mw": 670.0
+      },
+      {
+        "plant_id": 54945.0,
+        "ret_year": 2022.0,
+        "ret_month": 7.0,
+        "mw": 45.0
+      },
+      {
+        "plant_id": 50498.0,
+        "ret_year": 2021.0,
+        "ret_month": 3.0,
+        "mw": 30.7
+      },
+      {
+        "plant_id": 55830.0,
+        "ret_year": 2019.0,
+        "ret_month": 6.0,
+        "mw": 30.2
+      },
+      {
+        "plant_id": 54056.0,
+        "ret_year": 2021.0,
+        "ret_month": 3.0,
+        "mw": 27.0
+      },
+      {
+        "plant_id": 1631.0,
+        "ret_year": 2022.0,
+        "ret_month": 6.0,
+        "mw": 21.1
+      },
+      {
+        "plant_id": 1643.0,
+        "ret_year": 2022.0,
+        "ret_month": 6.0,
+        "mw": 20.4
+      },
+      {
+        "plant_id": 58595.0,
+        "ret_year": 2021.0,
+        "ret_month": 7.0,
+        "mw": 16.0
+      },
+      {
+        "plant_id": 1588.0,
+        "ret_year": 2021.0,
+        "ret_month": 6.0,
+        "mw": 14.2
+      },
+      {
+        "plant_id": 10491.0,
+        "ret_year": 2022.0,
+        "ret_month": 1.0,
+        "mw": 12.5
+      }
+    ],
+    "pilgrim_record": [
+      {
+        "plant_id": 1590.0,
+        "ret_year": 2019.0,
+        "ret_month": 5.0,
+        "mw": 670.0,
+        "iso": "NEISO"
+      }
+    ]
+  }
+}

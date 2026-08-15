@@ -226,15 +226,15 @@
  "parasitic_load_factors (pooled map)": {
   "2019": [
    "OK",
-   "pooled year==0 map: 463 plants (year-independent by construction)"
+   "pooled year==0 map: 544 plants (year-independent by construction)"
   ],
   "2020": [
    "OK",
-   "pooled year==0 map: 463 plants (year-independent by construction)"
+   "pooled year==0 map: 544 plants (year-independent by construction)"
   ],
   "2023": [
    "OK",
-   "pooled year==0 map: 463 plants (year-independent by construction)"
+   "pooled year==0 map: 544 plants (year-independent by construction)"
   ]
  },
  "plant_emission_rates_v2": {
