@@ -1,0 +1,108 @@
+{
+  "gate": "G-REPRO (PRIMARY)",
+  "precommit": "docs/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md Part B, prediction P-1",
+  "keeper_bundle": "results/calibration/ercot202_plantphysics_B",
+  "resolve_bundle": "results/calibration/ercot204_rule26_delete",
+  "sidecars_compared": 12,
+  "sidecars_identical": 12,
+  "sidecars_missing": 0,
+  "verdict": "PASS",
+  "rows": [
+    {
+      "sidecar": "hourly/class_hourly_2023.parquet",
+      "match": true,
+      "keeper_sha256": "5cb3af4c8201e89b004b019622fb55c567aba0d7d5bd3243469d1e08f8f3c537",
+      "resolve_sha256": "5cb3af4c8201e89b004b019622fb55c567aba0d7d5bd3243469d1e08f8f3c537",
+      "keeper_bytes": 528153,
+      "resolve_bytes": 528153
+    },
+    {
+      "sidecar": "hourly/system_2023.parquet",
+      "match": true,
+      "keeper_sha256": "c8b095cf1bbe5336c865e421eae6461f8223f30791164f3441907a4a19a1f4f4",
+      "resolve_sha256": "c8b095cf1bbe5336c865e421eae6461f8223f30791164f3441907a4a19a1f4f4",
+      "keeper_bytes": 807809,
+      "resolve_bytes": 807809
+    },
+    {
+      "sidecar": "hourly/storage_2023.parquet",
+      "match": true,
+      "keeper_sha256": "ad0ef7599b45ffc7e70b3e78d60843085a4befad2d0d336bf40cf1b8c8e31891",
+      "resolve_sha256": "ad0ef7599b45ffc7e70b3e78d60843085a4befad2d0d336bf40cf1b8c8e31891",
+      "keeper_bytes": 83706,
+      "resolve_bytes": 83706
+    },
+    {
+      "sidecar": "hourly/reserve_family_2023.parquet",
+      "match": true,
+      "keeper_sha256": "744570d732aa6dd10006bcfb92b277b311187df1077e346ec8a9fc71e9f19010",
+      "resolve_sha256": "744570d732aa6dd10006bcfb92b277b311187df1077e346ec8a9fc71e9f19010",
+      "keeper_bytes": 247517,
+      "resolve_bytes": 247517
+    },
+    {
+      "sidecar": "hourly/class_hourly_2024.parquet",
+      "match": true,
+      "keeper_sha256": "2ae59b36e648e9070cd9908e95b0aed63be1a13b9cb194f9c3f588d5ab481af2",
+      "resolve_sha256": "2ae59b36e648e9070cd9908e95b0aed63be1a13b9cb194f9c3f588d5ab481af2",
+      "keeper_bytes": 562552,
+      "resolve_bytes": 562552
+    },
+    {
+      "sidecar": "hourly/system_2024.parquet",
+      "match": true,
+      "keeper_sha256": "0e18e8aa79a0b4568e0711431168e9b2056af72d4630c9d0ea953a6b868f60cd",
+      "resolve_sha256": "0e18e8aa79a0b4568e0711431168e9b2056af72d4630c9d0ea953a6b868f60cd",
+      "keeper_bytes": 804619,
+      "resolve_bytes": 804619
+    },
+    {
+      "sidecar": "hourly/storage_2024.parquet",
+      "match": true,
+      "keeper_sha256": "379e88ff721777c993448b8a662cbed7167fc7461fc4ea1d8ee12f6436b065eb",
+      "resolve_sha256": "379e88ff721777c993448b8a662cbed7167fc7461fc4ea1d8ee12f6436b065eb",
+      "keeper_bytes": 84369,
+      "resolve_bytes": 84369
+    },
+    {
+      "sidecar": "hourly/reserve_family_2024.parquet",
+      "match": true,
+      "keeper_sha256": "2b07171d3a5402e0903009391e8156975f18b5e06f3fd788aab24ed9efadb65a",
+      "resolve_sha256": "2b07171d3a5402e0903009391e8156975f18b5e06f3fd788aab24ed9efadb65a",
+      "keeper_bytes": 291425,
+      "resolve_bytes": 291425
+    },
+    {
+      "sidecar": "hourly/class_hourly_2025.parquet",
+      "match": true,
+      "keeper_sha256": "6152569b6762d2caa95ddb885418884212ade8e615944d13e5d74683e6f52fdd",
+      "resolve_sha256": "6152569b6762d2caa95ddb885418884212ade8e615944d13e5d74683e6f52fdd",
+      "keeper_bytes": 532248,
+      "resolve_bytes": 532248
+    },
+    {
+      "sidecar": "hourly/system_2025.parquet",
+      "match": true,
+      "keeper_sha256": "92ecbfcb6bdbeab8fd84efb987f566817714be60f8d8427f7a0394e665437680",
+      "resolve_sha256": "92ecbfcb6bdbeab8fd84efb987f566817714be60f8d8427f7a0394e665437680",
+      "keeper_bytes": 828571,
+      "resolve_bytes": 828571
+    },
+    {
+      "sidecar": "hourly/storage_2025.parquet",
+      "match": true,
+      "keeper_sha256": "ea9dff0d94cb88110c87af81a3dd345b611bbc0f367c5b13290d7e2bbb93e264",
+      "resolve_sha256": "ea9dff0d94cb88110c87af81a3dd345b611bbc0f367c5b13290d7e2bbb93e264",
+      "keeper_bytes": 95675,
+      "resolve_bytes": 95675
+    },
+    {
+      "sidecar": "hourly/reserve_family_2025.parquet",
+      "match": true,
+      "keeper_sha256": "308f0dcceaef7ed0f312daec234fa6e696af92c0a36d63d3c0ee970274272a07",
+      "resolve_sha256": "308f0dcceaef7ed0f312daec234fa6e696af92c0a36d63d3c0ee970274272a07",
+      "keeper_bytes": 302602,
+      "resolve_bytes": 302602
+    }
+  ]
+}

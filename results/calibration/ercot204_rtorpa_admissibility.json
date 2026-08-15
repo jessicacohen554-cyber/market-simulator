@@ -1,0 +1,272 @@
+{
+  "session": "ercot-204",
+  "phase": "0 (admissibility gate) -- READ ONLY, no LP, no year solved or scored",
+  "keeper": "2026-08-14-ercot202-arm-plantphysics",
+  "keeper_bundle": "results/calibration/ercot202_plantphysics_B",
+  "keeper_git_sha": "fccb0d2",
+  "G1_armed_state": {
+    "ercot_ordc_total_reserve": true,
+    "energy_reserve_coopt": true,
+    "ordc_multistep_floor": true,
+    "ercot_ordc_only_scarcity": false,
+    "ercot_thermal_as_endogenous": false,
+    "ercot_multiproduct_as_coopt": true,
+    "ercot_rtordpa_overlay": true
+  },
+  "G1_rtorpa_overlay_channel_exists": false,
+  "G2_rule19_collision": "ercot_ordc_total_reserve=True AND energy_reserve_coopt=True are ARMED on the keeper: the LP enforces the published ORDC total-reserve demand curve and its dual IS the model's RTORPA. A published-RTORPA overlay would be a SECOND mechanism for the same phenomenon, stacked on the first's unexplained residual -- rule 19 [R-ONE-MECH] verbatim.",
+  "G3_rule13_forward_analogue": "RTORPA is not an independent market datum: it is a deterministic function of realized reserve levels through the published ORDC curve (adder = LOLP(R) x (VOLL - lambda), Nodal Protocols 6.5.7.3). Its forward analogue IS the endogenous computation the model already performs, so overlaying the measured series substitutes a measured OUTCOME for the mechanism under validation -- the forbidden half of rule 13 [R-MEASURED]. Contrast RTORDPA (armed as an overlay): it prices discretionary out-of-market RUC/ECRS DEPLOYMENTS, an operator action with no endogenous counterpart in the model. That asymmetry is why one is admissible as an overlay and the other is not.",
+  "years": {
+    "2023": {
+      "year": 2023,
+      "hours": 8760,
+      "published_rtorpa_dw": 1.2675179980559348,
+      "published_rtordpa_dw": 1.0071505475528058,
+      "published_total_dw": 2.2746685456087405,
+      "committed_rtordpa_overlay_dw": 1.0071505475528058,
+      "committed_ordc_adder_dw": 0.4066646108866479,
+      "committed_total_dw": 1.4138151584394538,
+      "rtordpa_overlay_max_abs_diff": 4.547473508864641e-13,
+      "ordc_adder_nonzero_hours": 42,
+      "ordc_adder_max": 1920.1983535581116,
+      "published_rtorpa_nonzero_hours": 1705,
+      "published_rtorpa_max": 650.8180111111111,
+      "fired_hours_model_held_mw_mean": 8122.392578125,
+      "fired_hours_published_rtolcap_mean": 8108.422516974256,
+      "fired_hours_model_shortfall_mw_mean": 183.33018493652344,
+      "fired_hours_model_shortfall_nonzero": 204,
+      "overlap_hours_both_nonzero": 42
+    },
+    "2024": {
+      "year": 2024,
+      "hours": 8760,
+      "published_rtorpa_dw": 0.23683946362854372,
+      "published_rtordpa_dw": 0.23975899157232017,
+      "published_total_dw": 0.47659845520086397,
+      "committed_rtordpa_overlay_dw": 0.23975899157232022,
+      "committed_ordc_adder_dw": 3.181799608934298e-05,
+      "committed_total_dw": 0.23979080956840954,
+      "rtordpa_overlay_max_abs_diff": 2.842170943040401e-14,
+      "ordc_adder_nonzero_hours": 2,
+      "ordc_adder_max": 0.14552837208164915,
+      "published_rtorpa_nonzero_hours": 560,
+      "published_rtorpa_max": 252.69167368421054,
+      "fired_hours_model_held_mw_mean": 6954.9228515625,
+      "fired_hours_published_rtolcap_mean": 8854.279454020687,
+      "fired_hours_model_shortfall_mw_mean": 130.48207092285156,
+      "fired_hours_model_shortfall_nonzero": 40,
+      "overlap_hours_both_nonzero": 2
+    },
+    "2025": {
+      "year": 2025,
+      "hours": 8760,
+      "published_rtorpa_dw": 0.07866870904024582,
+      "published_rtordpa_dw": 0.3948179069836591,
+      "published_total_dw": 0.4734866160239049,
+      "committed_rtordpa_overlay_dw": 0.39481790698365904,
+      "committed_ordc_adder_dw": 3.3144537218340775e-06,
+      "committed_total_dw": 0.39482122143738085,
+      "rtordpa_overlay_max_abs_diff": 1.4210854715202004e-14,
+      "ordc_adder_nonzero_hours": 1,
+      "ordc_adder_max": 0.02847900762159572,
+      "published_rtorpa_nonzero_hours": 253,
+      "published_rtorpa_max": 414.1157666666666,
+      "fired_hours_model_held_mw_mean": 6637.70458984375,
+      "fired_hours_published_rtolcap_mean": 9653.626023534793,
+      "fired_hours_model_shortfall_mw_mean": 9.461395263671875,
+      "fired_hours_model_shortfall_nonzero": 4,
+      "overlap_hours_both_nonzero": 1
+    }
+  },
+  "months": {
+    "2023": {
+      "1": {
+        "published": 0.46952151296387573,
+        "committed": 0.34680272425993053,
+        "gap": 0.12271878870394527
+      },
+      "2": {
+        "published": 0.9303826654151447,
+        "committed": 0.6421171907605059,
+        "gap": 0.28826547465463886
+      },
+      "3": {
+        "published": 1.0394761683711669,
+        "committed": 0.37793378093972063,
+        "gap": 0.6615423874314464
+      },
+      "4": {
+        "published": 1.074401700038333,
+        "committed": 0.291085701729169,
+        "gap": 0.7833159983091638
+      },
+      "5": {
+        "published": 2.317475321382011,
+        "committed": 0.7275447647397132,
+        "gap": 1.5899305566422979
+      },
+      "6": {
+        "published": 0.8616908795777886,
+        "committed": 0.3384687288338432,
+        "gap": 0.5232221507439453
+      },
+      "7": {
+        "published": 0.2840753607824783,
+        "committed": 0.22667283574265226,
+        "gap": 0.05740252503982606
+      },
+      "8": {
+        "published": 11.451460945826794,
+        "committed": 5.274849348771934,
+        "gap": 6.1766115970548565
+      },
+      "9": {
+        "published": 4.215848015681007,
+        "committed": 5.80798185805017,
+        "gap": -1.5921338423691629
+      },
+      "10": {
+        "published": 0.19995860249458888,
+        "committed": 0.19792425794540738,
+        "gap": 0.002034344549181492
+      },
+      "11": {
+        "published": 0.21619332044375428,
+        "committed": 0.17693581184087023,
+        "gap": 0.03925750860288404
+      },
+      "12": {
+        "published": 0.003685133919217313,
+        "committed": 0.00365389619198254,
+        "gap": 3.123772723477403e-05
+      }
+    },
+    "2024": {
+      "1": {
+        "published": 0.8442000839539582,
+        "committed": 0.652921421338649,
+        "gap": 0.191278662615309
+      },
+      "2": {
+        "published": 0.05376030484264412,
+        "committed": 0.05371529480063711,
+        "gap": 4.501004200701141e-05
+      },
+      "3": {
+        "published": 0.4145082896821123,
+        "committed": 0.31062269799369374,
+        "gap": 0.1038855916884184
+      },
+      "4": {
+        "published": 1.4028303433367872,
+        "committed": 0.6480747072301333,
+        "gap": 0.7547556361066541
+      },
+      "5": {
+        "published": 0.7656517739915687,
+        "committed": 0.14122754601832732,
+        "gap": 0.6244242279732414
+      },
+      "6": {
+        "published": 0.08103542618008867,
+        "committed": 0.07473184525794753,
+        "gap": 0.006303580922141148
+      },
+      "7": {
+        "published": 0.07497261814015699,
+        "committed": 0.04553417012744521,
+        "gap": 0.029438448012711775
+      },
+      "8": {
+        "published": 0.8305999160379196,
+        "committed": 0.1930898398573814,
+        "gap": 0.6375100761805381
+      },
+      "9": {
+        "published": 0.18518769676819882,
+        "committed": 0.11792955002249618,
+        "gap": 0.06725814674570262
+      },
+      "10": {
+        "published": 0.37637019355253787,
+        "committed": 0.29018811819791734,
+        "gap": 0.08618207535462051
+      },
+      "11": {
+        "published": 0.5147805363372241,
+        "committed": 0.2467087959366733,
+        "gap": 0.2680717404005509
+      },
+      "12": {
+        "published": 0.209962762017686,
+        "committed": 0.2099620411057457,
+        "gap": 7.209119403200601e-07
+      }
+    },
+    "2025": {
+      "1": {
+        "published": 0.7568817547579284,
+        "committed": 0.7555526029917143,
+        "gap": 0.0013291517662138773
+      },
+      "2": {
+        "published": 1.5044772132707886,
+        "committed": 1.504313827031602,
+        "gap": 0.00016338623918657157
+      },
+      "3": {
+        "published": 0.7228394336203515,
+        "committed": 0.7019981311293992,
+        "gap": 0.02084130249095227
+      },
+      "4": {
+        "published": 0.2472687929516183,
+        "committed": 0.24548849486528085,
+        "gap": 0.001780298086337417
+      },
+      "5": {
+        "published": 0.2654218655099689,
+        "committed": 0.2613483555760392,
+        "gap": 0.004073509933929664
+      },
+      "6": {
+        "published": 0.9476145525515861,
+        "committed": 0.258474561749818,
+        "gap": 0.6891399908017682
+      },
+      "7": {
+        "published": 0.20167386977387752,
+        "committed": 0.19663225400894327,
+        "gap": 0.005041615764934277
+      },
+      "8": {
+        "published": 0.17297986228684736,
+        "committed": 0.17001157433248115,
+        "gap": 0.0029682879543662436
+      },
+      "9": {
+        "published": 0.3526232007434171,
+        "committed": 0.3384804830982671,
+        "gap": 0.014142717645150002
+      },
+      "10": {
+        "published": 0.37483973538870974,
+        "committed": 0.24823029888028206,
+        "gap": 0.12660943650842754
+      },
+      "11": {
+        "published": 0.21781761867734176,
+        "committed": 0.21687821857711453,
+        "gap": 0.0009394001002272078
+      },
+      "12": {
+        "published": 0.09518993627390454,
+        "committed": 0.09518993627390454,
+        "gap": -3.3935354405927595e-20
+      }
+    }
+  },
+  "CAVEAT_settlement_closure_guard": "This probe reports the RAW NP6-905-CD archive. ercot-198 applied a settlement-closure guard that rejected ONE uncorrected archive print (2025 h4334, Jun-30 14:00: archive RTORPA $414.12/h against a settled hub RTSPP of $54.96 -- price-corrected, never settled). That single hour is the entire distance between this probe's 2025 published RTORPA (0.0787 dw) and ercot-198's guarded 0.015. The 2024 numbers are unaffected and reproduce ercot-198 exactly (0.2368 vs 0.237). Neither number changes the gate: the gate turns on admissibility, not on magnitude.",
+  "CAVEAT_tightness_basis": "fired_hours_model_held_mw_mean (the ercot_ordc_total family's held MW in the keeper's reserve_family sidecar) and fired_hours_published_rtolcap_mean (NP6-905-CD RTOLCAP) are CONSTRUCTED DIFFERENTLY and are not an identity: the model family is the LP's online reserve balance row, RTOLCAP is ERCOT's telemetered on-line reserve capacity. The comparison is INDICATIVE of where each system's reserve sits, not a like-for-like reconciliation, and no lever is derived from it here. It is reported because it falsifies the simplest explanation of the mechanism's silence (see STRUCTURAL_FINDING).",
+  "STRUCTURAL_FINDING": "The armed endogenous mechanism is NOT broken. In 2023 it fires in 42 hours at up to $1,920/h and ALL 42 fall inside the 1,705 hours the published RTORPA priced (overlap 42/42), with the model's held ORDC reserve within 0.2 % of published RTOLCAP (8,122 vs 8,108 MW). In 2024/2025 it reads ~zero across 560/253 published-fired hours -- and the simplest explanation, 'the model's system is comfortable in those hours', is FALSIFIED: the model holds materially LESS reserve than the real system did (2024 6,955 vs 8,854 MW; 2025 6,638 vs 9,654 MW) and still does not price, while its own ORDC-total row records non-zero shortfall in 40 (2024) and 4 (2025) of those hours. Where the ORDC pricing region sits relative to the model's reserve representation is therefore the open object -- a MECHANISM question about the co-optimized reserve dual, exactly as ercot-203b filed it. It is measured and handed to the owner here, NOT chartered: no lever is prepared, and the adjacent L-SCAR tightness identification is DO-NOT-REDO (V0 adjudication)."
+}
