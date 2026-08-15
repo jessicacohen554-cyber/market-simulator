@@ -38,6 +38,13 @@ ZONES = get_iso_config("CAISO").zone_names
 # files under the legacy boiler ORIS.
 _CAISO_ST_GAS_PEAKERS = {315, 335, 350}
 _AES_CC_CODES = {62115, 62116}
+# El Segundo Energy Center: CEMS files under the fully-retired legacy ORIS
+# 330 (units "5"/"7"); remapped to EIA 57901 (caiso-196, 2026-08-15). Kept
+# separate from _AES_CC_CODES because 330 is NOT an ST_GAS peaker (the
+# legacy plant retired 2015, so no live steamer shares its ORIS) and its
+# tranche coverage lags the outage extract (thermal_tranches_CAISO.csv has
+# no 57901 rows until its own cited re-derive).
+_EL_SEGUNDO_CC = 57901
 
 
 class TestCaisoSplitPlantRemap(unittest.TestCase):
@@ -54,6 +61,12 @@ class TestCaisoSplitPlantRemap(unittest.TestCase):
         self.assertLessEqual(_AES_CC_CODES, facilities)
         aes = df[df["facility_id"].isin(_AES_CC_CODES)]
         self.assertEqual(set(aes["plant_group"]), {"CC_REGULAR"})
+        # El Segundo (ORIS 330 -> EIA 57901, caiso-196): the legacy ORIS
+        # never appears, and the remapped plant carries CC_REGULAR rows.
+        self.assertNotIn(330, facilities)
+        self.assertIn(_EL_SEGUNDO_CC, facilities)
+        es = df[df["facility_id"] == _EL_SEGUNDO_CC]
+        self.assertEqual(set(es["plant_group"]), {"CC_REGULAR"})
 
     def test_tranche_artifact_covers_remapped_plants(self):
         """The AES CCGTs carry measured committed shares after the remap."""

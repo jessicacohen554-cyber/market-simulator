@@ -1,811 +1,811 @@
-facility_name,facility_id,unit_id,unit_capacity_mw,plant_capacity_mw,unit_pct_of_plant,plant_group,capacity_source,outage_start,outage_end,duration_days,peer_units_online,total_units_at_plant,out_of_merit_share
-AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-01-01,2018-03-31,89.5,3,4,1.0
-AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-04-01,2018-05-05,34.1,3,4,1.0
-AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-05-07,2018-05-23,16.2,3,4,1.0
-AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-06-01,2018-06-13,11.4,3,4,1.0
-AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-06-14,2018-06-21,6.2,3,4,1.0
-AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-08-20,2018-12-31,133.7,3,4,1.0
-AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-01-01,2019-05-06,125.6,3,4,1.0
-AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-05-09,2019-06-04,26.0,3,4,1.0
-AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-06-26,2019-07-12,15.8,3,4,1.0
-AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-07-13,2019-07-22,8.4,3,4,1.0
-AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-08-24,2019-08-30,6.1,3,4,1.0
-AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-09-04,2019-09-13,8.8,3,4,1.0
-AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-09-16,2019-09-22,6.3,3,4,1.0
-AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-09-26,2019-10-23,26.8,3,4,1.0
-AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-10-26,2019-11-04,9.2,3,4,1.0
-AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-11-05,2019-12-09,33.2,3,4,1.0
-AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-12-21,2019-12-31,10.9,3,4,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-01-01,2020-01-05,5.0,2,3,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-01-07,2020-01-13,5.5,2,3,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-01-16,2020-05-03,108.6,2,3,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-05-04,2020-05-20,16.2,2,3,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-05-25,2020-06-03,8.7,2,3,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-06-05,2020-06-23,18.8,2,3,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-06-25,2020-07-10,14.7,2,3,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-07-20,2020-07-27,7.2,2,3,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-07-30,2020-08-09,9.3,2,3,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-09-18,2020-09-25,6.5,2,3,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-10-06,2020-10-11,5.0,2,3,1.0
-AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-10-18,2020-12-31,74.4,2,3,1.0
-AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-06-03,2021-06-17,13.7,2,3,1.0
-AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-06-17,2021-06-25,8.3,2,3,1.0
-AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-06-30,2021-07-08,7.2,2,3,1.0
-AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-08-17,2021-08-27,9.6,2,3,1.0
-AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-08-30,2021-09-04,5.1,2,3,1.0
-AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-09-13,2021-09-22,8.1,2,3,1.0
-AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-09-23,2021-11-17,55.0,2,3,1.0
-AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-11-19,2021-12-19,31.0,2,3,1.0
-AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-12-21,2021-12-26,5.5,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-01-01,2022-03-07,65.7,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-03-09,2022-04-20,42.5,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-04-27,2022-05-24,27.0,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-05-25,2022-06-02,7.9,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-06-04,2022-06-10,5.6,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-06-11,2022-06-22,10.6,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-07-02,2022-07-11,8.7,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-09-11,2022-09-18,7.0,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-09-26,2022-10-04,7.5,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-10-12,2022-11-01,20.7,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-11-08,2022-12-22,43.5,2,3,1.0
-AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-12-23,2022-12-29,5.6,2,3,1.0
-AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-01-14,2023-02-24,40.1,2,3,1.0
-AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-03-07,2023-04-28,51.5,2,3,1.0
-AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-04-30,2023-06-29,60.3,2,3,1.0
-AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-07-04,2023-07-11,6.8,2,3,1.0
-AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-09-18,2023-09-25,6.8,2,3,1.0
-AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-10-04,2023-10-13,8.1,2,3,1.0
-AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-11-20,2023-11-30,9.1,2,3,1.0
-AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-11-30,2023-12-12,12.1,2,3,1.0
-AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-12-22,2023-12-31,9.0,2,3,1.0
-AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-01-01,2018-02-12,43.0,3,4,1.0
-AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-02-16,2018-03-14,26.0,3,4,1.0
-AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-03-20,2018-05-30,70.5,3,4,1.0
-AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-05-31,2018-06-11,10.7,3,4,1.0
-AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-06-14,2018-06-20,6.0,3,4,1.0
-AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-07-09,2018-07-17,7.2,3,4,1.0
-AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-08-14,2018-08-20,6.0,3,4,1.0
-AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-08-22,2018-09-04,12.9,3,4,1.0
-AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-09-12,2018-11-03,51.2,3,4,1.0
-AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-11-05,2018-12-31,56.1,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-01-01,2019-02-05,35.4,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-02-12,2019-03-13,28.9,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-03-31,2019-05-11,41.8,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-05-13,2019-06-04,21.5,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-07-02,2019-07-11,9.3,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-07-13,2019-07-22,9.2,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-07-27,2019-08-03,7.6,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-09-05,2019-09-11,5.8,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-09-16,2019-09-22,5.9,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-09-27,2019-10-23,26.0,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-10-25,2019-11-04,9.7,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-11-09,2019-11-17,8.2,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-11-22,2019-12-16,24.9,3,4,1.0
-AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-12-19,2019-12-31,13.0,3,4,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-01-01,2020-02-03,33.3,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-02-09,2020-03-11,31.6,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-03-31,2020-04-17,17.8,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-05-10,2020-05-20,10.6,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-05-28,2020-06-03,5.7,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-06-05,2020-06-10,5.6,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-06-12,2020-06-23,11.4,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-06-24,2020-07-10,16.2,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-09-08,2020-09-28,19.7,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-10-18,2020-10-26,7.7,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-10-27,2020-11-02,6.3,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-11-05,2020-11-26,20.9,2,3,1.0
-AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-11-27,2020-12-23,26.4,2,3,1.0
-AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-04-19,2021-06-11,52.9,2,3,1.0
-AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-08-17,2021-08-26,8.7,2,3,1.0
-AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-09-24,2021-10-02,8.0,2,3,1.0
-AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-10-05,2021-11-17,43.8,2,3,1.0
-AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-11-19,2021-12-19,30.9,2,3,1.0
-AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-12-21,2021-12-26,5.7,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-01-01,2022-01-31,30.7,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-02-03,2022-02-17,14.5,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-02-23,2022-03-02,6.8,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-03-09,2022-04-08,30.6,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-04-09,2022-05-17,38.0,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-05-19,2022-05-24,5.4,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-05-25,2022-06-10,15.6,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-06-11,2022-06-19,7.9,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-07-02,2022-07-09,7.0,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-07-23,2022-07-29,6.2,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-10-11,2022-10-16,5.9,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-10-20,2022-10-31,10.8,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-11-16,2022-11-25,9.0,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-12-03,2022-12-22,19.1,2,3,1.0
-AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-12-23,2022-12-29,6.0,2,3,1.0
-AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-01-01,2023-01-19,18.4,2,3,1.0
-AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-01-23,2023-01-30,6.2,2,3,1.0
-AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-02-02,2023-02-08,5.7,2,3,1.0
-AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-02-12,2023-02-22,10.9,2,3,1.0
-AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-03-14,2023-03-28,13.9,2,3,1.0
-AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-04-11,2023-04-18,7.5,2,3,1.0
-AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-04-19,2023-04-28,8.6,2,3,1.0
-AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-05-03,2023-06-05,32.5,2,3,1.0
-AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-06-07,2023-06-29,22.6,2,3,1.0
-AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-07-04,2023-07-10,6.6,2,3,1.0
-AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-12-23,2023-12-31,9.0,2,3,1.0
-AES Redondo Beach,356,7,467.0,1259.0,37.1,ST_GAS,observed_peak,2019-01-01,2019-05-07,126.9,3,4,0.971
-AES Redondo Beach,356,7,467.0,1259.0,37.1,ST_GAS,observed_peak,2019-09-14,2019-12-31,108.8,3,4,0.936
-AES Redondo Beach,356,8,449.0,1259.0,35.7,ST_GAS,observed_peak,2019-01-01,2019-06-12,162.2,3,4,0.95
-AES Redondo Beach,356,8,449.0,1259.0,35.7,ST_GAS,observed_peak,2019-09-27,2019-11-05,39.2,3,4,0.917
-AES Redondo Beach,356,8,449.0,1259.0,35.7,ST_GAS,observed_peak,2019-11-06,2019-12-31,55.3,3,4,0.992
-AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-01-01,2020-05-07,127.4,2,3,0.931
-AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-05-27,2020-07-11,45.4,2,3,0.982
-AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-07-14,2020-07-19,5.1,2,3,1.0
-AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-07-21,2020-07-29,8.5,2,3,1.0
-AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-08-07,2020-08-13,6.1,2,3,1.0
-AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-08-29,2020-09-04,6.0,2,3,1.0
-AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-09-09,2020-09-27,18.0,2,3,0.968
-AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-10-08,2020-10-15,7.1,2,3,0.912
-AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-10-18,2020-12-31,74.9,2,3,0.999
-AES Redondo Beach,356,8,432.0,783.0,55.2,ST_GAS,observed_peak,2021-06-04,2021-06-16,12.2,2,3,1.0
-AES Redondo Beach,356,8,432.0,783.0,55.2,ST_GAS,observed_peak,2021-06-18,2021-06-26,8.3,2,3,0.955
-AES Redondo Beach,356,8,432.0,783.0,55.2,ST_GAS,observed_peak,2021-06-30,2021-07-08,8.3,2,3,0.94
-AES Redondo Beach,356,8,432.0,783.0,55.2,ST_GAS,observed_peak,2021-07-14,2021-07-22,8.2,2,3,1.0
-AES Redondo Beach,356,8,432.0,783.0,55.2,ST_GAS,observed_peak,2021-08-17,2021-12-31,136.9,2,3,0.986
-AES Redondo Beach,356,8,465.0,827.0,56.2,ST_GAS,observed_peak,2022-01-01,2022-04-22,111.6,2,3,0.966
-AES Redondo Beach,356,8,465.0,827.0,56.2,ST_GAS,observed_peak,2022-04-23,2022-06-03,42.0,2,3,0.946
-AES Redondo Beach,356,8,465.0,827.0,56.2,ST_GAS,observed_peak,2022-09-28,2022-12-30,93.0,2,3,0.924
-AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-01-01,2023-02-01,31.5,2,3,0.975
-AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-02-03,2023-06-06,123.9,2,3,0.981
-AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-06-08,2023-07-16,38.0,2,3,0.971
-AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-08-03,2023-08-16,13.8,2,3,0.961
-AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-08-21,2023-08-28,6.6,2,3,1.0
-AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-09-01,2023-12-31,121.9,2,3,0.906
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-01-03,2018-01-13,9.9,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-10-08,2018-10-15,6.8,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-10-16,2018-10-29,12.3,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-10-29,2018-11-05,6.6,2,3,0.943
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-11-16,2018-11-29,12.8,2,3,0.919
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-12-05,2018-12-14,8.5,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-12-14,2018-12-26,11.8,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-01-01,2019-01-14,12.9,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-01-16,2019-01-29,12.5,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-01-30,2019-02-05,6.0,2,3,0.958
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-03-05,2019-03-10,5.4,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-10-04,2019-10-10,5.9,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-10-16,2019-10-22,5.8,2,3,0.935
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-11-26,2019-12-04,7.7,2,3,0.989
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-12-04,2019-12-11,6.8,2,3,0.914
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-12-20,2019-12-31,11.0,2,3,0.943
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-01-13,2020-01-21,9.0,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-01-24,2020-01-30,6.2,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-02-05,2020-02-16,11.2,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-03-21,2020-04-11,20.4,2,3,0.93
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-06-10,2020-06-16,6.0,2,3,0.93
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-07-14,2020-07-26,11.9,2,3,0.902
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-10-22,2020-10-28,5.9,2,3,0.915
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-12-01,2020-12-11,9.8,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-12-21,2020-12-29,8.4,2,3,0.931
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-03-10,2021-03-16,6.0,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-03-21,2021-03-29,8.0,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-10-16,2021-11-02,16.8,2,3,0.988
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-11-19,2021-12-03,14.4,2,3,0.957
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-12-06,2021-12-15,8.3,2,3,0.955
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-01-02,2022-01-14,12.0,2,3,0.979
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-01-14,2022-01-24,9.4,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-02-09,2022-02-19,9.9,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-02-23,2022-03-09,13.9,2,3,0.976
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-03-17,2022-03-27,9.9,2,3,0.958
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-05-06,2022-05-13,6.9,2,3,0.964
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-05-17,2022-05-23,5.9,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-06-13,2022-06-20,6.8,2,3,0.976
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-10-10,2022-10-17,7.0,2,3,0.935
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-12-09,2022-12-16,7.1,2,3,0.918
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2023-02-06,2023-02-14,7.9,2,3,0.968
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2023-06-09,2023-06-14,5.2,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-01-01,2024-01-14,13.0,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-01-19,2024-02-05,16.8,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-02-05,2024-02-20,14.4,1,3,0.988
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-02-20,2024-02-27,7.1,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-02-28,2024-04-19,51.8,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-04-20,2024-05-21,31.3,1,3,0.981
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-05-30,2024-06-06,7.2,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-06-15,2024-06-21,5.9,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-08-06,2024-08-13,6.5,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-08-20,2024-09-03,13.8,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-09-09,2024-10-01,21.5,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-10-31,2024-11-07,7.2,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-11-14,2024-11-21,7.4,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-11-22,2024-12-13,20.7,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-12-19,2024-12-31,12.5,1,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-01-01,2025-01-12,11.1,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-04-01,2025-04-08,6.9,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-05-13,2025-06-24,42.5,2,3,0.965
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-06-25,2025-08-11,46.9,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-08-11,2025-08-18,6.8,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-08-22,2025-09-04,13.2,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-11-24,2025-12-02,7.8,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-12-04,2025-12-11,6.7,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-12-11,2025-12-31,20.3,2,3,1.0
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2026-02-06,2026-02-22,16.4,2,3,0.987
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2026-03-11,2026-03-18,6.9,2,3,0.952
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2026-03-18,2026-03-24,6.5,2,3,0.903
-Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2026-03-25,2026-03-31,5.6,2,3,0.97
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-12-05,2018-12-31,25.8,2,3,0.947
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-01-15,2019-01-28,12.8,2,3,0.971
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-11-25,2019-12-04,9.6,2,3,0.965
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-12-20,2019-12-30,10.0,2,3,0.925
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-01-13,2020-01-24,10.5,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-01-24,2020-01-30,6.2,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-01-30,2020-02-16,16.9,2,3,0.98
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-04-01,2020-04-10,8.5,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-06-10,2020-06-16,6.0,2,3,0.909
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-11-15,2020-11-21,6.1,2,3,0.952
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-12-01,2020-12-11,10.0,2,3,0.988
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-03-21,2021-03-27,5.3,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-08-20,2021-08-25,5.2,2,3,0.992
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-09-27,2021-10-03,6.2,2,3,0.946
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-10-28,2021-11-02,5.2,2,3,0.992
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-11-17,2021-11-27,9.5,2,3,0.934
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-11-27,2021-12-03,6.2,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-12-03,2021-12-15,11.5,2,3,0.96
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-01-02,2022-01-16,13.2,2,3,0.981
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-01-16,2022-01-24,8.1,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-02-02,2022-02-19,16.8,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-02-24,2022-03-02,6.2,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-03-17,2022-03-27,9.9,2,3,0.958
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-05-06,2022-05-13,6.9,2,3,0.964
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-10-24,2022-10-30,6.0,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-12-09,2022-12-16,7.1,2,3,0.918
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2023-02-06,2023-03-12,33.9,2,3,0.902
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2023-06-09,2023-06-14,5.2,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2023-06-14,2023-06-20,5.9,2,3,0.915
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-01-01,2024-01-08,7.2,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-01-24,2024-02-05,12.1,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-02-05,2024-02-21,15.4,1,3,0.989
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-02-21,2024-05-21,89.3,1,3,0.995
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-05-31,2024-06-06,5.9,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-06-07,2024-06-15,7.8,1,3,0.995
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-06-15,2024-06-22,6.9,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-06-22,2024-06-27,5.0,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-06-28,2024-07-05,7.5,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-07-11,2024-07-19,7.8,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-07-25,2024-08-01,6.9,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-08-06,2024-08-22,15.5,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-08-22,2024-09-03,12.3,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-09-09,2024-09-19,10.1,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-09-20,2024-10-01,11.2,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-11-08,2024-11-18,10.0,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-11-22,2024-12-12,19.7,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-12-19,2024-12-31,12.4,1,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-01-01,2025-01-07,6.3,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-01-31,2025-02-09,9.6,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-02-25,2025-03-03,5.6,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-04-22,2025-05-05,13.0,2,3,0.933
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-05-17,2025-06-12,27.0,2,3,0.988
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-06-17,2025-08-19,62.6,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-08-19,2025-09-02,13.7,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-11-25,2025-12-12,16.9,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-12-12,2025-12-31,19.3,2,3,1.0
-Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2026-02-27,2026-03-20,21.1,2,3,0.984
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2018-12-16,2018-12-31,14.7,2,3,0.912
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2021-03-07,2021-03-16,8.8,2,3,0.967
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2021-03-20,2021-03-26,6.0,2,3,0.931
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2021-08-20,2021-08-25,5.3,2,3,0.961
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2021-11-18,2021-11-29,10.8,2,3,0.915
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2021-12-03,2021-12-18,15.1,2,3,0.912
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2022-02-10,2022-02-18,7.9,2,3,0.984
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2023-02-03,2023-02-14,11.3,2,3,0.904
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2025-01-01,2025-08-19,230.5,2,3,0.975
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2025-08-22,2025-08-29,6.5,2,3,1.0
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2025-11-25,2025-12-30,35.0,2,3,1.0
-Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2026-02-06,2026-02-22,16.4,2,3,0.962
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-08-10,2018-08-20,9.6,0,1,0.944
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-08-21,2018-09-27,36.4,0,1,0.921
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-09-27,2018-10-05,8.2,0,1,0.97
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-10-05,2018-10-15,9.9,0,1,1.0
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-10-15,2018-10-25,9.7,0,1,1.0
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-10-25,2018-11-14,19.4,0,1,0.97
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-11-15,2018-12-31,46.1,0,1,1.0
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-01-01,2019-02-17,47.5,0,1,0.996
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-02-21,2019-02-26,5.5,0,1,1.0
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-03-01,2019-03-11,10.6,0,1,1.0
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-03-12,2019-05-01,49.3,0,1,0.998
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-05-12,2019-06-07,26.0,0,1,0.968
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-09-26,2019-10-23,26.6,0,1,0.991
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-10-25,2019-11-14,19.8,0,1,0.973
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-11-15,2019-12-11,25.4,0,1,0.984
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-12-12,2019-12-31,19.3,0,1,1.0
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2020-11-12,2020-12-31,49.1,0,1,0.958
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2022-01-09,2022-01-24,14.5,0,1,0.948
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2022-01-26,2022-02-23,27.9,0,1,0.978
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2023-02-03,2023-02-14,10.8,0,1,0.985
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2023-05-09,2023-05-21,12.3,0,1,0.969
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2023-12-26,2023-12-31,5.5,0,1,0.962
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-01-01,2024-01-24,23.3,0,1,0.909
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-01-26,2024-02-05,9.5,0,1,0.974
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-02-05,2024-03-06,30.5,0,1,0.947
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-03-06,2024-03-14,8.0,0,1,0.963
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-03-14,2024-03-20,5.4,0,1,0.969
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-03-20,2024-03-29,9.3,0,1,0.973
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-03-29,2024-04-04,5.6,0,1,0.956
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-08-09,2024-09-05,26.9,0,1,0.901
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-09-25,2024-10-03,7.9,0,1,0.916
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-10-08,2024-10-16,8.2,0,1,0.929
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-12-10,2024-12-17,7.0,0,1,0.922
-"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-12-18,2024-12-31,13.7,0,1,0.954
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2021-09-14,2021-09-21,6.8,0,1,0.975
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2021-09-23,2021-12-31,99.1,0,1,0.975
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2022-01-01,2022-03-16,74.2,0,1,0.983
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2022-04-11,2022-05-24,42.9,0,1,0.964
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2024-01-01,2024-01-15,14.6,0,1,1.0
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2024-01-16,2024-02-27,41.6,0,1,0.994
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2024-02-28,2024-04-17,49.5,0,1,1.0
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2024-08-26,2024-12-31,127.2,0,1,0.978
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2025-01-01,2025-07-10,190.6,0,1,0.97
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2025-07-16,2025-08-16,31.5,0,1,1.0
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2025-08-21,2025-09-02,11.5,0,1,1.0
-Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2025-09-23,2025-12-31,99.1,0,1,1.0
-King City Power Plant,10294,2,47.0,47.0,100.0,CC_CHP,observed_peak,2018-12-11,2018-12-31,20.2,0,1,0.909
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-01-01,2024-01-08,7.2,1,2,1.0
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-01-22,2024-02-04,13.2,1,2,1.0
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-02-07,2024-02-13,5.6,1,2,1.0
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-02-13,2024-02-21,8.1,1,2,0.964
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-02-21,2024-04-04,42.9,1,2,1.0
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-04-04,2024-04-10,5.7,1,2,1.0
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-06-01,2024-06-21,19.7,1,2,0.989
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-06-25,2024-07-02,6.9,1,2,1.0
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-08-06,2024-09-03,27.8,1,2,0.997
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-10-08,2024-10-23,14.3,1,2,1.0
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-10-26,2024-11-03,8.0,1,2,0.964
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-12-01,2024-12-10,8.6,1,2,1.0
-King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-12-18,2024-12-31,13.5,1,2,1.0
-King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-01-01,2025-01-06,5.2,1,2,1.0
-King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-01-14,2025-01-21,6.9,1,2,0.97
-King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-07-10,2025-07-30,19.5,1,2,0.947
-King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-07-30,2025-08-21,21.8,1,2,0.954
-King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-08-25,2025-09-01,6.9,1,2,0.946
-King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-11-25,2025-12-31,36.4,1,2,0.985
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-01-01,2024-01-17,16.4,1,2,0.967
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-01-17,2024-02-08,21.5,1,2,0.981
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-02-08,2024-03-24,44.6,1,2,0.977
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-03-25,2024-04-04,9.6,1,2,0.978
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-04-12,2024-04-20,7.5,1,2,0.966
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-07-12,2024-07-22,9.7,1,2,0.901
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-07-25,2024-08-01,6.6,1,2,0.975
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-08-07,2024-08-26,18.3,1,2,0.966
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-08-26,2024-09-04,9.0,1,2,0.981
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-09-09,2024-09-24,14.6,1,2,0.963
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-09-24,2024-09-30,5.7,1,2,0.993
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-12-11,2024-12-17,5.2,1,2,1.0
-King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-12-17,2024-12-31,14.1,1,2,1.0
-King City Power Plant,10294,GTG,133.2,179.2,74.3,CC_CHP,eia_exact_cc,2025-09-24,2025-12-02,68.3,1,2,1.0
-Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2018-10-06,2018-10-13,6.9,0,1,0.94
-Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2018-12-15,2018-12-26,10.8,0,1,0.996
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2019-01-01,2019-01-07,6.2,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2019-01-07,2019-01-14,7.4,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2019-01-21,2019-02-01,10.7,0,1,1.0
-Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2020-02-14,2020-02-21,6.8,0,1,1.0
-Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2020-02-21,2020-02-26,5.1,0,1,1.0
-Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2020-03-03,2020-03-12,9.0,0,1,0.935
-Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2020-12-12,2020-12-19,6.5,0,1,0.943
-Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2020-12-19,2020-12-27,8.2,0,1,0.918
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2021-01-02,2021-01-12,9.5,0,1,0.987
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2021-11-21,2021-11-29,8.6,0,1,0.957
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2021-12-22,2021-12-27,5.7,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-01-10,2022-01-16,5.3,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-01-17,2022-01-23,6.2,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-02-03,2022-02-23,19.6,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-02-25,2022-03-03,6.0,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-03-09,2022-03-15,5.7,0,1,0.971
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-10-14,2022-10-19,5.1,0,1,0.926
-Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2023-05-07,2023-05-15,7.6,0,1,0.907
-Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2023-05-23,2023-05-31,7.9,0,1,0.911
-Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2023-07-05,2023-07-11,5.8,0,1,0.986
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-01-02,2024-01-08,6.2,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-01-19,2024-01-27,7.6,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-02-06,2024-02-17,11.1,0,1,0.929
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-02-19,2024-03-05,15.2,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-03-05,2024-03-14,9.0,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-03-20,2024-03-31,10.6,0,1,0.984
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-04-12,2024-04-20,8.1,0,1,0.974
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-04-22,2024-04-30,8.4,0,1,0.916
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-06-14,2024-06-22,7.8,0,1,0.989
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-08-08,2024-08-16,7.7,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-08-20,2024-08-28,7.9,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-08-29,2024-09-04,5.8,0,1,0.979
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-09-13,2024-09-23,9.9,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-09-24,2024-10-01,6.8,0,1,0.994
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-11-01,2024-11-18,17.4,0,1,0.902
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-11-19,2024-11-30,10.6,0,1,0.902
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-12-09,2024-12-31,22.6,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-01-01,2025-01-21,20.0,0,1,0.979
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-01-29,2025-02-03,5.2,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-02-19,2025-03-05,14.5,0,1,0.948
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-03-06,2025-03-14,8.2,0,1,0.939
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-03-19,2025-03-24,5.0,0,1,0.983
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-03-29,2025-04-07,9.0,0,1,0.977
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-04-09,2025-04-14,5.1,0,1,0.927
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-04-21,2025-04-29,8.3,0,1,0.945
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-05-10,2025-05-29,18.6,0,1,0.971
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-05-29,2025-06-10,11.9,0,1,0.993
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-06-19,2025-06-30,11.7,0,1,0.989
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-07-02,2025-07-07,5.0,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-07-16,2025-07-23,6.8,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-07-23,2025-08-08,16.0,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-08-11,2025-08-20,8.5,0,1,1.0
-Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-12-07,2025-12-17,9.5,0,1,1.0
-Yuba City Energy Center,10349,2,47.0,47.0,100.0,CT_CHP,observed_peak,2026-02-12,2026-02-24,12.3,0,1,0.983
-Yuba City Energy Center,10349,2,47.0,47.0,100.0,CT_CHP,observed_peak,2026-03-09,2026-03-17,7.8,0,1,0.957
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-01-01,2018-03-01,59.5,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-03-01,2018-03-07,5.6,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-03-08,2018-04-23,46.0,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-04-24,2018-06-12,48.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-06-13,2018-06-19,5.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-06-19,2018-06-26,6.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-06-26,2018-07-26,29.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-08-02,2018-08-10,7.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-08-10,2018-08-19,8.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-08-21,2018-09-05,14.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-09-05,2018-10-15,39.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-10-16,2018-10-23,6.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-11-01,2018-12-03,31.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-12-03,2018-12-15,11.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-12-17,2018-12-31,14.1,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-01-01,2019-02-17,47.6,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-02-19,2019-02-26,6.6,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-02-28,2019-03-06,5.3,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-03-07,2019-03-12,5.1,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-03-12,2019-05-08,56.3,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-05-08,2019-06-18,41.1,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-06-18,2019-07-24,35.7,0,1,0.994
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-07-25,2019-08-15,20.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-08-19,2019-08-27,8.0,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-08-27,2019-09-25,28.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-09-25,2019-10-23,27.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-10-25,2019-12-31,67.1,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-01-01,2020-03-04,63.3,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-03-05,2020-05-13,68.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-05-13,2020-05-27,14.1,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-05-27,2020-06-04,7.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-06-04,2020-06-23,18.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-06-23,2020-08-14,51.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-08-21,2020-09-28,37.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-10-02,2020-10-16,13.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-10-16,2020-12-31,76.1,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-03-10,2021-05-01,52.0,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-05-05,2021-05-11,5.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-06-02,2021-06-15,12.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-06-21,2021-07-06,15.0,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-07-29,2021-08-04,6.5,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-08-16,2021-08-27,10.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-08-30,2021-09-05,5.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-09-13,2021-10-04,20.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-10-04,2021-10-11,6.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-10-11,2021-12-31,81.1,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-01-01,2022-03-01,59.6,0,1,0.997
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-03-01,2022-03-10,8.3,0,1,0.97
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-03-14,2022-03-22,7.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-03-26,2022-04-06,10.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-04-18,2022-04-25,6.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-04-26,2022-05-04,7.8,0,1,0.946
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-05-04,2022-05-20,16.0,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-05-22,2022-06-09,18.6,0,1,0.964
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-06-10,2022-06-21,10.6,0,1,0.984
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-07-01,2022-07-11,9.7,0,1,0.996
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-09-13,2022-09-25,12.5,0,1,0.93
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-10-04,2022-12-31,88.1,0,1,0.983
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-01-01,2023-01-30,29.6,0,1,0.983
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-01-31,2023-03-15,42.9,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-03-16,2023-04-27,42.2,0,1,0.987
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-04-28,2023-06-15,47.4,0,1,0.972
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-06-15,2023-07-02,17.0,0,1,0.998
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-07-02,2023-07-14,11.8,0,1,0.993
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-07-27,2023-08-14,18.5,0,1,0.991
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-08-16,2023-08-28,11.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-08-28,2023-09-11,13.8,0,1,0.958
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-09-11,2023-11-09,58.7,0,1,0.906
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-11-09,2023-11-15,5.8,0,1,0.928
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-11-15,2023-12-04,18.8,0,1,0.929
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-12-05,2023-12-11,5.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-12-15,2023-12-31,16.2,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-01-01,2024-01-13,12.2,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-01-16,2024-02-28,42.3,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-02-29,2024-04-04,34.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-04-05,2024-07-01,87.7,0,1,0.995
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-07-13,2024-07-22,8.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-07-25,2024-08-01,6.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-08-07,2024-08-20,12.9,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-08-21,2024-09-03,13.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-09-09,2024-09-24,14.6,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-09-24,2024-09-30,5.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-10-10,2024-10-30,19.1,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-10-30,2024-11-05,6.4,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-11-07,2024-11-14,6.6,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-11-22,2024-12-31,39.3,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-01-01,2025-02-19,49.2,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-02-19,2025-02-27,7.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-02-27,2025-03-16,17.2,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-03-19,2025-04-30,41.2,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-05-07,2025-05-30,22.8,0,1,0.985
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-05-30,2025-07-08,39.0,0,1,0.97
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-07-09,2025-07-14,5.2,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-07-14,2025-08-08,24.7,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-08-11,2025-08-21,9.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-08-25,2025-09-01,6.8,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-09-23,2025-12-02,69.4,0,1,1.0
-Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-12-12,2025-12-31,19.6,0,1,1.0
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-10-03,2018-10-15,11.7,0,1,0.907
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-12-07,2018-12-31,25.0,0,1,0.937
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-01,2019-01-07,6.6,0,1,1.0
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-07,2019-02-06,29.2,0,1,0.981
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-13,2019-02-18,5.6,0,1,0.978
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-20,2019-02-25,5.6,0,1,0.941
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-26,2019-03-05,7.6,0,1,1.0
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-04-04,2019-04-12,7.7,0,1,1.0
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-04-18,2019-04-24,6.1,0,1,0.973
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-07,2019-10-14,6.6,0,1,0.937
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-16,2019-10-21,5.1,0,1,0.984
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-11-22,2019-12-31,40.0,0,1,0.951
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2020-01-15,2020-02-01,16.9,0,1,0.99
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2020-04-02,2020-04-10,8.0,0,1,0.969
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-01-01,2022-04-04,93.5,0,1,0.942
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-05-07,2022-05-16,8.8,0,1,0.938
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-01-01,2024-02-03,33.7,0,1,0.99
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-02-03,2024-03-13,38.9,0,1,0.98
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-03-15,2024-04-16,32.3,0,1,0.987
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-04-17,2024-04-23,5.9,0,1,0.915
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-04-24,2024-04-30,5.9,0,1,0.923
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-06-12,2024-06-22,9.8,0,1,0.992
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-06-23,2024-07-01,7.6,0,1,0.967
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-09-12,2024-09-26,13.8,0,1,0.955
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-10-08,2024-11-19,42.0,0,1,0.946
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-11-22,2024-12-31,39.9,0,1,0.998
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-14,2025-01-30,16.5,0,1,0.97
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-11-21,2025-12-15,23.9,0,1,0.986
-Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-12-19,2025-12-31,12.4,0,1,0.956
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-02-21,2018-02-28,7.3,0,1,1.0
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-08-09,2018-10-09,60.4,0,1,0.928
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-10-09,2018-10-26,17.1,0,1,1.0
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-10-26,2018-11-18,23.0,0,1,0.975
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-11-20,2018-12-03,13.6,0,1,1.0
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-12-04,2018-12-31,27.0,0,1,1.0
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-01,2019-02-06,36.7,0,1,0.973
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-10,2019-02-16,5.9,0,1,0.923
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-20,2019-02-25,5.6,0,1,0.941
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-28,2019-03-11,10.9,0,1,1.0
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-03-11,2019-04-17,36.3,0,1,0.932
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-15,2019-10-21,5.5,0,1,0.925
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-11-22,2019-12-31,40.0,0,1,0.951
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2020-01-10,2020-02-15,35.9,0,1,0.934
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2020-02-15,2020-02-26,10.8,0,1,0.919
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-01,2025-01-16,15.8,0,1,0.937
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-16,2025-02-19,33.8,0,1,0.991
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-05-30,2025-07-30,60.3,0,1,0.939
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-07-31,2025-08-11,11.7,0,1,0.982
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-08-11,2025-08-21,9.6,0,1,0.987
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-08-25,2025-09-02,7.6,0,1,0.979
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-09-24,2025-12-01,67.8,0,1,1.0
-Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-12-01,2025-12-31,30.1,0,1,0.999
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-12-04,2018-12-31,27.0,0,1,0.945
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-01,2019-01-07,6.3,0,1,1.0
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-08,2019-02-09,32.3,0,1,0.974
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-09,2019-02-19,9.9,0,1,0.941
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-26,2019-03-11,13.4,0,1,1.0
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-15,2019-10-21,5.6,0,1,0.97
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-11-12,2019-11-18,5.6,0,1,0.948
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-11-18,2019-12-31,43.0,0,1,0.933
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2020-01-01,2020-02-08,38.4,0,1,0.932
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-01-01,2022-02-11,41.8,0,1,0.966
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-02-11,2022-03-07,23.7,0,1,1.0
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-03-09,2022-03-23,14.7,0,1,0.974
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-04-07,2022-05-24,46.7,0,1,0.911
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2023-05-10,2023-06-05,25.7,0,1,0.921
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2023-07-03,2023-07-08,5.0,0,1,0.908
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-01-04,2024-01-30,26.7,0,1,1.0
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-01-31,2024-02-12,12.0,0,1,1.0
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-02-14,2024-03-18,33.4,0,1,0.991
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-07-12,2024-07-22,9.8,0,1,1.0
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-07-25,2024-07-31,5.3,0,1,1.0
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-08-07,2024-08-14,6.2,0,1,1.0
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-08-14,2024-09-03,20.4,0,1,1.0
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-09-09,2024-09-24,14.6,0,1,0.991
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-09-24,2024-10-01,6.7,0,1,1.0
-McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-10-07,2024-12-31,85.1,0,1,0.978
-Salinas River Cogeneration Facility,50865,1,39.0,39.0,100.0,CT_CHP,observed_peak,2020-05-24,2020-07-11,48.1,0,1,1.0
-Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2021-05-03,2021-05-11,8.3,0,1,1.0
-Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2022-09-06,2022-09-20,14.2,0,1,1.0
-Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2023-01-09,2023-02-01,22.8,0,1,1.0
-Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2023-03-10,2023-03-22,11.6,0,1,1.0
-Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2023-10-15,2023-11-14,30.0,0,1,1.0
-Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2023-12-03,2023-12-11,8.2,0,1,1.0
-Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2024-05-13,2024-06-03,21.6,0,1,0.996
-Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2024-11-23,2024-12-07,13.8,0,1,1.0
-Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2025-05-18,2025-05-29,11.0,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-10-02,2018-10-17,15.6,0,1,0.987
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-12-06,2018-12-31,25.2,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-01,2019-02-06,36.7,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-07,2019-02-19,12.7,0,1,0.977
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-20,2019-02-25,5.5,0,1,0.962
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-26,2019-03-11,13.6,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-03-11,2019-03-27,15.4,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-03-31,2019-04-08,7.9,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-09-26,2019-10-04,8.1,0,1,0.903
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-04,2019-10-14,9.9,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-15,2019-10-21,5.6,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-11-22,2019-12-31,40.0,0,1,0.996
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-01-01,2022-03-20,78.4,0,1,0.973
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-03-20,2022-03-28,8.0,0,1,0.901
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-04-26,2022-05-07,11.6,0,1,0.91
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-05-07,2022-05-13,5.8,0,1,0.928
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2023-07-03,2023-07-08,5.0,0,1,0.908
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-01-01,2024-02-10,40.8,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-02-10,2024-03-04,23.0,0,1,0.989
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-03-12,2024-04-09,27.7,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-04-09,2024-05-01,21.8,0,1,0.987
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-06-04,2024-07-03,29.1,0,1,0.993
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-07-12,2024-07-21,8.7,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-07-25,2024-08-01,6.6,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-08-07,2024-09-04,27.6,0,1,0.998
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-09-11,2024-10-01,19.8,0,1,0.992
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-10-07,2024-11-19,43.0,0,1,0.985
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-11-20,2024-12-31,41.8,0,1,0.988
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-01,2025-01-13,12.1,0,1,0.966
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-14,2025-02-26,43.7,0,1,0.995
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-02-26,2025-03-24,25.7,0,1,0.956
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-04-04,2025-05-30,56.4,0,1,0.927
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-05-30,2025-07-10,40.7,0,1,0.965
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-10-30,2025-12-04,34.4,0,1,1.0
-Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-12-04,2025-12-31,27.3,0,1,1.0
-La Paloma Generating Plant,55151,CTG-4,289.0,1156.0,25.0,CC_REGULAR,eia_digits,2018-08-17,2018-12-31,137.0,3,4,0.972
-Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2018-06-05,2018-06-11,5.4,1,2,0.915
-Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2018-10-01,2018-10-08,7.5,1,2,0.994
-Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2018-12-04,2018-12-12,7.9,1,2,1.0
-Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2019-02-04,2019-04-27,82.3,1,2,0.996
-Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2019-09-26,2019-10-06,10.1,1,2,0.934
-Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2019-10-13,2019-10-19,6.9,1,2,1.0
-Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2019-11-19,2019-12-06,17.2,1,2,0.981
-Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2019-12-21,2019-12-27,6.2,1,2,1.0
-Blythe Energy,55295,1,184.0,479.5,38.4,CC_REGULAR,observed_peak,2020-01-01,2020-03-02,61.5,1,2,0.991
-Blythe Energy,55295,1,184.0,479.5,38.4,CC_REGULAR,observed_peak,2020-03-24,2020-04-06,13.2,1,2,0.927
-Blythe Energy,55295,1,184.0,479.5,38.4,CC_REGULAR,observed_peak,2020-06-12,2020-06-18,6.4,1,2,1.0
-Blythe Energy,55295,1,184.0,479.5,38.4,CC_REGULAR,observed_peak,2020-06-28,2020-07-05,7.4,1,2,1.0
-Blythe Energy,55295,1,184.0,479.5,38.4,CC_REGULAR,observed_peak,2020-10-19,2020-10-24,5.0,1,2,1.0
-Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-01-17,2021-02-01,15.1,1,2,0.956
-Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-03-14,2021-03-31,16.5,1,2,1.0
-Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-05-20,2021-05-25,5.2,1,2,0.944
-Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-08-17,2021-08-22,5.3,1,2,1.0
-Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-09-16,2021-09-21,5.1,1,2,0.976
-Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-11-24,2021-12-07,12.9,1,2,1.0
-Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-12-22,2021-12-28,6.0,1,2,1.0
-Blythe Energy,55295,1,188.0,483.5,38.9,CC_REGULAR,observed_peak,2022-01-01,2022-02-24,54.6,1,2,0.991
-Blythe Energy,55295,1,188.0,483.5,38.9,CC_REGULAR,observed_peak,2022-03-12,2022-03-23,11.2,1,2,1.0
-Blythe Energy,55295,1,188.0,483.5,38.9,CC_REGULAR,observed_peak,2022-04-16,2022-04-23,7.5,1,2,1.0
-Blythe Energy,55295,1,188.0,483.5,38.9,CC_REGULAR,observed_peak,2022-05-05,2022-05-23,18.2,1,2,0.995
-Blythe Energy,55295,1,188.0,483.5,38.9,CC_REGULAR,observed_peak,2022-06-13,2022-06-21,8.3,1,2,1.0
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-02-01,2023-02-15,14.8,1,2,1.0
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-03-04,2023-03-15,10.6,1,2,1.0
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-03-16,2023-04-05,20.2,1,2,0.981
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-04-15,2023-04-26,11.6,1,2,0.978
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-04-29,2023-05-17,18.5,1,2,0.928
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-05-18,2023-06-11,24.5,1,2,1.0
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-06-14,2023-06-19,5.5,1,2,1.0
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-06-20,2023-07-19,29.5,1,2,0.963
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-08-04,2023-08-13,9.0,1,2,0.963
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-08-22,2023-08-27,5.3,1,2,1.0
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-09-04,2023-09-16,12.5,1,2,0.977
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-10-05,2023-10-14,9.1,1,2,1.0
-Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-11-17,2023-12-31,44.9,1,2,0.97
-Blythe Energy,55295,2,295.5,480.5,61.5,CC_REGULAR,eia_digits_cc,2018-06-05,2018-06-11,5.3,1,2,0.953
-Blythe Energy,55295,2,295.5,480.5,61.5,CC_REGULAR,eia_digits_cc,2018-10-01,2018-10-07,6.6,1,2,1.0
-Blythe Energy,55295,2,295.5,480.5,61.5,CC_REGULAR,eia_digits_cc,2019-01-03,2019-02-03,31.0,1,2,1.0
-Blythe Energy,55295,2,295.5,480.5,61.5,CC_REGULAR,eia_digits_cc,2019-02-04,2019-04-30,85.5,1,2,0.997
-Blythe Energy,55295,2,295.5,480.5,61.5,CC_REGULAR,eia_digits_cc,2019-11-25,2019-12-05,10.0,1,2,1.0
-Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-01-07,2020-02-18,42.2,1,2,1.0
-Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-02-18,2020-03-02,12.9,1,2,0.958
-Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-03-29,2020-04-05,7.4,1,2,0.949
-Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-04-07,2020-04-13,6.3,1,2,1.0
-Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-05-09,2020-05-26,17.3,1,2,0.904
-Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-06-12,2020-06-17,5.7,1,2,1.0
-Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-06-28,2020-07-05,7.3,1,2,1.0
-Blythe Energy,55295,2,295.5,482.5,61.2,CC_REGULAR,eia_digits_cc,2021-03-14,2021-03-30,16.1,1,2,1.0
-Blythe Energy,55295,2,295.5,482.5,61.2,CC_REGULAR,eia_digits_cc,2021-05-20,2021-05-25,5.3,1,2,0.945
-Blythe Energy,55295,2,295.5,482.5,61.2,CC_REGULAR,eia_digits_cc,2021-08-31,2021-09-05,5.6,1,2,0.91
-Blythe Energy,55295,2,295.5,482.5,61.2,CC_REGULAR,eia_digits_cc,2021-11-24,2021-12-06,12.7,1,2,1.0
-Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-01-07,2022-02-23,47.2,1,2,1.0
-Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-03-14,2022-03-22,8.2,1,2,1.0
-Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-04-16,2022-04-24,8.2,1,2,1.0
-Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-05-05,2022-06-10,36.1,1,2,0.964
-Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-06-11,2022-06-21,10.5,1,2,0.94
-Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-06-29,2022-07-10,11.4,1,2,0.963
-Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-10-27,2022-11-03,7.0,1,2,0.994
-Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-01-01,2023-01-22,21.6,1,2,0.919
-Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-01-23,2023-01-31,8.2,1,2,0.944
-Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-02-01,2023-02-15,14.7,1,2,0.997
-Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-04-05,2023-04-11,5.6,1,2,0.911
-Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-04-13,2023-04-23,10.3,1,2,0.927
-Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-05-25,2023-06-06,12.2,1,2,1.0
-Pastoria Energy Facility,55656,CT001,238.0,757.0,31.4,CC_REGULAR,observed_peak,2023-05-25,2023-05-30,5.9,2,3,0.929
-Pastoria Energy Facility,55656,CT001,238.0,744.0,32.0,CC_REGULAR,observed_peak,2024-03-16,2024-04-09,24.8,2,3,0.973
-Pastoria Energy Facility,55656,CT002,238.0,744.0,32.0,CC_REGULAR,observed_peak,2024-03-16,2024-04-09,25.0,2,3,0.963
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2019-01-24,2019-02-04,10.8,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2019-04-08,2019-04-18,9.8,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2019-04-18,2019-04-25,6.8,0,1,0.933
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2019-09-27,2019-10-02,5.0,0,1,0.959
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2019-11-19,2019-11-27,7.7,0,1,0.989
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-01-01,2020-01-06,5.6,0,1,0.985
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-01-06,2020-01-13,6.7,0,1,0.913
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-01-17,2020-01-29,11.8,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-01-29,2020-02-13,14.8,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-02-13,2020-03-05,20.8,0,1,0.968
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-03-05,2020-03-12,6.8,0,1,0.926
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-03-17,2020-04-03,16.8,0,1,0.913
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-06-11,2020-06-22,10.8,0,1,0.946
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-11-24,2020-12-10,15.3,0,1,0.913
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2021-03-10,2021-03-16,5.2,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2021-03-18,2021-03-30,12.3,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2021-11-22,2021-11-27,5.2,0,1,1.0
-Algonquin Power Sanger,57564,8,41.0,41.0,100.0,CC_REGULAR,observed_peak,2022-05-17,2022-05-24,6.8,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-01-01,2023-01-15,14.5,0,1,0.966
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-01-18,2023-01-25,7.3,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-03-01,2023-04-07,37.5,0,1,0.99
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-04-07,2023-04-26,19.0,0,1,0.991
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-05-03,2023-05-19,15.6,0,1,0.995
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-05-19,2023-05-25,5.7,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-05-26,2023-06-19,23.7,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-06-21,2023-07-17,25.9,0,1,0.995
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-07-17,2023-07-26,8.9,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-07-28,2023-08-14,16.8,0,1,0.99
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-08-16,2023-10-10,54.4,0,1,0.919
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-10-10,2023-12-20,70.8,0,1,0.952
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-12-20,2023-12-27,6.9,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-01-01,2024-03-15,74.7,0,1,0.997
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-03-15,2024-03-22,6.8,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-03-27,2024-04-05,8.9,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-06-12,2024-06-24,12.0,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-07-13,2024-07-22,9.8,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-07-25,2024-08-01,6.8,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-08-01,2024-08-07,5.8,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-08-07,2024-09-03,26.6,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-09-11,2024-09-20,8.8,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-09-20,2024-10-01,11.1,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-10-08,2024-11-19,41.7,0,1,0.988
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-11-19,2024-12-09,19.6,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-12-09,2024-12-18,9.0,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-12-18,2024-12-31,13.2,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-01-01,2025-01-07,6.3,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-01-07,2025-05-04,116.8,0,1,0.968
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-05-04,2025-06-27,54.2,0,1,0.963
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-07-02,2025-07-10,7.9,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-07-11,2025-08-09,28.9,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-08-13,2025-08-25,11.8,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-10-08,2025-12-16,68.9,0,1,1.0
-Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-12-16,2025-12-31,15.5,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2019-03-27,2019-04-30,33.7,0,1,0.964
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2019-11-21,2019-11-29,8.8,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2020-10-28,2020-11-04,8.0,0,1,0.964
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2021-12-01,2021-12-08,6.5,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2022-01-13,2022-01-19,5.6,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2022-01-26,2022-02-02,7.5,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2022-02-08,2022-02-22,14.5,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2022-02-28,2022-06-13,104.2,0,1,0.914
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2022-10-25,2022-11-03,8.5,0,1,0.912
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2023-12-23,2023-12-31,9.0,0,1,0.991
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-01-25,2024-02-04,10.9,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-02-21,2024-03-05,13.0,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-03-07,2024-04-29,53.7,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-06-26,2024-07-01,5.6,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-08-10,2024-08-16,6.5,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-08-17,2024-08-26,9.5,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-09-09,2024-09-23,13.5,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-09-25,2024-10-01,6.5,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-11-12,2024-11-19,7.2,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-02-14,2025-02-25,11.1,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-03-30,2025-05-04,34.8,0,1,0.957
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-05-12,2025-05-30,18.2,0,1,0.963
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-05-31,2025-06-21,21.4,0,1,0.944
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-06-21,2025-07-05,13.6,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-07-05,2025-07-11,5.7,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-07-12,2025-08-06,25.3,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-08-13,2025-08-21,8.3,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-08-31,2025-09-26,25.8,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-12-12,2025-12-25,12.2,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-12-25,2025-12-31,6.7,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2026-02-02,2026-02-08,6.3,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2026-02-28,2026-03-06,6.1,0,1,1.0
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2026-03-09,2026-03-20,11.3,0,1,0.97
-Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2026-03-21,2026-03-31,10.4,0,1,0.916
+facility_name,facility_id,unit_id,unit_capacity_mw,plant_capacity_mw,unit_pct_of_plant,plant_group,capacity_source,outage_start,outage_end,duration_days,peer_units_online,total_units_at_plant,outage_start_hour,outage_end_hour,out_of_merit_share
+AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-01-01,2018-03-31,89.5,3,4,0,10,1.0
+AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-04-01,2018-05-05,34.1,3,4,12,13,1.0
+AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-05-07,2018-05-23,16.2,3,4,11,14,1.0
+AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-06-01,2018-06-13,11.4,3,4,21,6,1.0
+AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-06-14,2018-06-21,6.2,3,4,21,0,1.0
+AES Redondo Beach,356,5,138.0,1265.0,10.9,ST_GAS,observed_peak,2018-08-20,2018-12-31,133.7,3,4,8,23,1.0
+AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-01-01,2019-05-06,125.6,3,4,0,13,1.0
+AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-05-09,2019-06-04,26.0,3,4,13,12,1.0
+AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-06-26,2019-07-12,15.8,3,4,7,1,1.0
+AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-07-13,2019-07-22,8.4,3,4,22,6,1.0
+AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-08-24,2019-08-30,6.1,3,4,21,23,1.0
+AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-09-04,2019-09-13,8.8,3,4,18,12,1.0
+AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-09-16,2019-09-22,6.3,3,4,17,23,1.0
+AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-09-26,2019-10-23,26.8,3,4,16,9,1.0
+AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-10-26,2019-11-04,9.2,3,4,1,4,1.0
+AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-11-05,2019-12-09,33.2,3,4,21,0,1.0
+AES Redondo Beach,356,5,177.0,1259.0,14.1,ST_GAS,observed_peak,2019-12-21,2019-12-31,10.9,3,4,2,23,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-01-01,2020-01-05,5.0,2,3,0,23,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-01-07,2020-01-13,5.5,2,3,16,2,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-01-16,2020-05-03,108.6,2,3,1,15,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-05-04,2020-05-20,16.2,2,3,18,22,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-05-25,2020-06-03,8.7,2,3,20,12,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-06-05,2020-06-23,18.8,2,3,5,23,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-06-25,2020-07-10,14.7,2,3,22,13,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-07-20,2020-07-27,7.2,2,3,4,7,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-07-30,2020-08-09,9.3,2,3,17,0,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-09-18,2020-09-25,6.5,2,3,21,8,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-10-06,2020-10-11,5.0,2,3,22,21,1.0
+AES Redondo Beach,356,5,125.0,742.0,16.8,ST_GAS,observed_peak,2020-10-18,2020-12-31,74.4,2,3,14,23,1.0
+AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-06-03,2021-06-17,13.7,2,3,17,9,1.0
+AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-06-17,2021-06-25,8.3,2,3,16,22,1.0
+AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-06-30,2021-07-08,7.2,2,3,23,3,1.0
+AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-08-17,2021-08-27,9.6,2,3,22,12,1.0
+AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-08-30,2021-09-04,5.1,2,3,22,23,1.0
+AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-09-13,2021-09-22,8.1,2,3,22,0,1.0
+AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-09-23,2021-11-17,55.0,2,3,23,23,1.0
+AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-11-19,2021-12-19,31.0,2,3,0,23,1.0
+AES Redondo Beach,356,5,169.0,783.0,21.6,ST_GAS,observed_peak,2021-12-21,2021-12-26,5.5,2,3,13,23,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-01-01,2022-03-07,65.7,2,3,0,16,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-03-09,2022-04-20,42.5,2,3,1,13,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-04-27,2022-05-24,27.0,2,3,15,14,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-05-25,2022-06-02,7.9,2,3,22,19,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-06-04,2022-06-10,5.6,2,3,21,11,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-06-11,2022-06-22,10.6,2,3,22,11,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-07-02,2022-07-11,8.7,2,3,16,7,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-09-11,2022-09-18,7.0,2,3,22,22,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-09-26,2022-10-04,7.5,2,3,23,11,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-10-12,2022-11-01,20.7,2,3,7,22,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-11-08,2022-12-22,43.5,2,3,17,3,1.0
+AES Redondo Beach,356,5,183.0,827.0,22.1,ST_GAS,observed_peak,2022-12-23,2022-12-29,5.6,2,3,12,2,1.0
+AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-01-14,2023-02-24,40.1,2,3,23,1,1.0
+AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-03-07,2023-04-28,51.5,2,3,23,11,1.0
+AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-04-30,2023-06-29,60.3,2,3,6,13,1.0
+AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-07-04,2023-07-11,6.8,2,3,7,0,1.0
+AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-09-18,2023-09-25,6.8,2,3,8,1,1.0
+AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-10-04,2023-10-13,8.1,2,3,23,0,1.0
+AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-11-20,2023-11-30,9.1,2,3,23,1,1.0
+AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-11-30,2023-12-12,12.1,2,3,9,10,1.0
+AES Redondo Beach,356,5,178.0,806.0,22.1,ST_GAS,observed_peak,2023-12-22,2023-12-31,9.0,2,3,23,23,1.0
+AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-01-01,2018-02-12,43.0,3,4,0,22,1.0
+AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-02-16,2018-03-14,26.0,3,4,22,20,1.0
+AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-03-20,2018-05-30,70.5,3,4,19,7,1.0
+AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-05-31,2018-06-11,10.7,3,4,20,12,1.0
+AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-06-14,2018-06-20,6.0,3,4,21,20,1.0
+AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-07-09,2018-07-17,7.2,3,4,22,1,1.0
+AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-08-14,2018-08-20,6.0,3,4,22,20,1.0
+AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-08-22,2018-09-04,12.9,3,4,23,20,1.0
+AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-09-12,2018-11-03,51.2,3,4,22,2,1.0
+AES Redondo Beach,356,6,155.0,1265.0,12.3,ST_GAS,observed_peak,2018-11-05,2018-12-31,56.1,3,4,22,23,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-01-01,2019-02-05,35.4,3,4,0,9,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-02-12,2019-03-13,28.9,3,4,6,2,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-03-31,2019-05-11,41.8,3,4,6,23,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-05-13,2019-06-04,21.5,3,4,23,11,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-07-02,2019-07-11,9.3,3,4,16,22,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-07-13,2019-07-22,9.2,3,4,2,7,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-07-27,2019-08-03,7.6,3,4,0,13,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-09-05,2019-09-11,5.8,3,4,23,18,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-09-16,2019-09-22,5.9,3,4,23,19,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-09-27,2019-10-23,26.0,3,4,2,2,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-10-25,2019-11-04,9.7,3,4,23,14,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-11-09,2019-11-17,8.2,3,4,17,22,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-11-22,2019-12-16,24.9,3,4,2,23,1.0
+AES Redondo Beach,356,6,166.0,1259.0,13.2,ST_GAS,observed_peak,2019-12-19,2019-12-31,13.0,3,4,1,23,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-01-01,2020-02-03,33.3,2,3,0,6,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-02-09,2020-03-11,31.6,2,3,7,20,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-03-31,2020-04-17,17.8,2,3,0,18,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-05-10,2020-05-20,10.6,2,3,6,20,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-05-28,2020-06-03,5.7,2,3,23,15,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-06-05,2020-06-10,5.6,2,3,7,21,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-06-12,2020-06-23,11.4,2,3,0,8,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-06-24,2020-07-10,16.2,2,3,10,15,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-09-08,2020-09-28,19.7,2,3,22,13,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-10-18,2020-10-26,7.7,2,3,14,6,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-10-27,2020-11-02,6.3,2,3,8,14,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-11-05,2020-11-26,20.9,2,3,13,10,1.0
+AES Redondo Beach,356,6,159.0,742.0,21.4,ST_GAS,observed_peak,2020-11-27,2020-12-23,26.4,2,3,12,21,1.0
+AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-04-19,2021-06-11,52.9,2,3,23,20,1.0
+AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-08-17,2021-08-26,8.7,2,3,22,13,1.0
+AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-09-24,2021-10-02,8.0,2,3,21,20,1.0
+AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-10-05,2021-11-17,43.8,2,3,3,21,1.0
+AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-11-19,2021-12-19,30.9,2,3,0,21,1.0
+AES Redondo Beach,356,6,182.0,783.0,23.2,ST_GAS,observed_peak,2021-12-21,2021-12-26,5.7,2,3,4,20,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-01-01,2022-01-31,30.7,2,3,5,21,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-02-03,2022-02-17,14.5,2,3,4,14,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-02-23,2022-03-02,6.8,2,3,22,15,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-03-09,2022-04-08,30.6,2,3,1,14,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-04-09,2022-05-17,38.0,2,3,22,20,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-05-19,2022-05-24,5.4,2,3,6,14,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-05-25,2022-06-10,15.6,2,3,22,12,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-06-11,2022-06-19,7.9,2,3,22,19,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-07-02,2022-07-09,7.0,2,3,16,14,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-07-23,2022-07-29,6.2,2,3,6,11,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-10-11,2022-10-16,5.9,2,3,0,20,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-10-20,2022-10-31,10.8,2,3,21,15,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-11-16,2022-11-25,9.0,2,3,1,0,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-12-03,2022-12-22,19.1,2,3,2,3,1.0
+AES Redondo Beach,356,6,179.0,827.0,21.6,ST_GAS,observed_peak,2022-12-23,2022-12-29,6.0,2,3,8,7,1.0
+AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-01-01,2023-01-19,18.4,2,3,0,8,1.0
+AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-01-23,2023-01-30,6.2,2,3,23,4,1.0
+AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-02-02,2023-02-08,5.7,2,3,22,13,1.0
+AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-02-12,2023-02-22,10.9,2,3,2,22,1.0
+AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-03-14,2023-03-28,13.9,2,3,23,20,1.0
+AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-04-11,2023-04-18,7.5,2,3,1,13,1.0
+AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-04-19,2023-04-28,8.6,2,3,23,13,1.0
+AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-05-03,2023-06-05,32.5,2,3,22,8,1.0
+AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-06-07,2023-06-29,22.6,2,3,6,20,1.0
+AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-07-04,2023-07-10,6.6,2,3,7,20,1.0
+AES Redondo Beach,356,6,169.0,806.0,21.0,ST_GAS,observed_peak,2023-12-23,2023-12-31,9.0,2,3,0,23,1.0
+AES Redondo Beach,356,7,467.0,1259.0,37.1,ST_GAS,observed_peak,2019-01-01,2019-05-07,126.9,3,4,0,20,0.971
+AES Redondo Beach,356,7,467.0,1259.0,37.1,ST_GAS,observed_peak,2019-09-14,2019-12-31,108.8,3,4,6,23,0.936
+AES Redondo Beach,356,8,449.0,1259.0,35.7,ST_GAS,observed_peak,2019-01-01,2019-06-12,162.2,3,4,0,5,0.95
+AES Redondo Beach,356,8,449.0,1259.0,35.7,ST_GAS,observed_peak,2019-09-27,2019-11-05,39.2,3,4,0,5,0.917
+AES Redondo Beach,356,8,449.0,1259.0,35.7,ST_GAS,observed_peak,2019-11-06,2019-12-31,55.3,3,4,16,23,0.992
+AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-01-01,2020-05-07,127.4,2,3,0,8,0.931
+AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-05-27,2020-07-11,45.4,2,3,11,20,0.982
+AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-07-14,2020-07-19,5.1,2,3,2,4,1.0
+AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-07-21,2020-07-29,8.5,2,3,2,12,1.0
+AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-08-07,2020-08-13,6.1,2,3,0,1,1.0
+AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-08-29,2020-09-04,6.0,2,3,13,12,1.0
+AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-09-09,2020-09-27,18.0,2,3,2,2,0.968
+AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-10-08,2020-10-15,7.1,2,3,4,6,0.912
+AES Redondo Beach,356,8,458.0,742.0,61.7,ST_GAS,observed_peak,2020-10-18,2020-12-31,74.9,2,3,2,23,0.999
+AES Redondo Beach,356,8,432.0,783.0,55.2,ST_GAS,observed_peak,2021-06-04,2021-06-16,12.2,2,3,13,18,1.0
+AES Redondo Beach,356,8,432.0,783.0,55.2,ST_GAS,observed_peak,2021-06-18,2021-06-26,8.3,2,3,15,22,0.955
+AES Redondo Beach,356,8,432.0,783.0,55.2,ST_GAS,observed_peak,2021-06-30,2021-07-08,8.3,2,3,2,8,0.94
+AES Redondo Beach,356,8,432.0,783.0,55.2,ST_GAS,observed_peak,2021-07-14,2021-07-22,8.2,2,3,2,7,1.0
+AES Redondo Beach,356,8,432.0,783.0,55.2,ST_GAS,observed_peak,2021-08-17,2021-12-31,136.9,2,3,3,23,0.986
+AES Redondo Beach,356,8,465.0,827.0,56.2,ST_GAS,observed_peak,2022-01-01,2022-04-22,111.6,2,3,0,14,0.966
+AES Redondo Beach,356,8,465.0,827.0,56.2,ST_GAS,observed_peak,2022-04-23,2022-06-03,42.0,2,3,0,23,0.946
+AES Redondo Beach,356,8,465.0,827.0,56.2,ST_GAS,observed_peak,2022-09-28,2022-12-30,93.0,2,3,16,15,0.924
+AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-01-01,2023-02-01,31.5,2,3,0,11,0.975
+AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-02-03,2023-06-06,123.9,2,3,1,21,0.981
+AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-06-08,2023-07-16,38.0,2,3,8,7,0.971
+AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-08-03,2023-08-16,13.8,2,3,2,21,0.961
+AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-08-21,2023-08-28,6.6,2,3,12,2,1.0
+AES Redondo Beach,356,8,459.0,806.0,56.9,ST_GAS,observed_peak,2023-09-01,2023-12-31,121.9,2,3,2,23,0.906
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-01-03,2018-01-13,9.9,2,3,21,18,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-10-08,2018-10-15,6.8,2,3,23,16,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-10-16,2018-10-29,12.3,2,3,21,4,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-10-29,2018-11-05,6.6,2,3,15,4,0.943
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-11-16,2018-11-29,12.8,2,3,20,15,0.919
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-12-05,2018-12-14,8.5,2,3,21,8,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-12-14,2018-12-26,11.8,2,3,22,17,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-01-01,2019-01-14,12.9,2,3,20,17,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-01-16,2019-01-29,12.5,2,3,19,5,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-01-30,2019-02-05,6.0,2,3,17,16,0.958
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-03-05,2019-03-10,5.4,2,3,9,17,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-10-04,2019-10-10,5.9,2,3,23,19,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-10-16,2019-10-22,5.8,2,3,20,13,0.935
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-11-26,2019-12-04,7.7,2,3,23,15,0.989
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-12-04,2019-12-11,6.8,2,3,19,13,0.914
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-12-20,2019-12-31,11.0,2,3,15,14,0.943
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-01-13,2020-01-21,9.0,2,3,0,22,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-01-24,2020-01-30,6.2,2,3,11,14,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-02-05,2020-02-16,11.2,2,3,10,15,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-03-21,2020-04-11,20.4,2,3,20,4,0.93
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-06-10,2020-06-16,6.0,2,3,20,18,0.93
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-07-14,2020-07-26,11.9,2,3,20,16,0.902
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-10-22,2020-10-28,5.9,2,3,14,10,0.915
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-12-01,2020-12-11,9.8,2,3,20,15,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-12-21,2020-12-29,8.4,2,3,3,12,0.931
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-03-10,2021-03-16,6.0,2,3,17,17,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-03-21,2021-03-29,8.0,2,3,21,19,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-10-16,2021-11-02,16.8,2,3,20,15,0.988
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-11-19,2021-12-03,14.4,2,3,7,16,0.957
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-12-06,2021-12-15,8.3,2,3,20,3,0.955
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-01-02,2022-01-14,12.0,2,3,19,19,0.979
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-01-14,2022-01-24,9.4,2,3,21,5,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-02-09,2022-02-19,9.9,2,3,20,16,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-02-23,2022-03-09,13.9,2,3,20,17,0.976
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-03-17,2022-03-27,9.9,2,3,20,16,0.958
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-05-06,2022-05-13,6.9,2,3,20,16,0.964
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-05-17,2022-05-23,5.9,2,3,21,18,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-06-13,2022-06-20,6.8,2,3,21,16,0.976
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-10-10,2022-10-17,7.0,2,3,16,15,0.935
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-12-09,2022-12-16,7.1,2,3,10,11,0.918
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2023-02-06,2023-02-14,7.9,2,3,20,17,0.968
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2023-06-09,2023-06-14,5.2,2,3,14,17,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-01-01,2024-01-14,13.0,1,3,22,21,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-01-19,2024-02-05,16.8,1,3,21,15,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-02-05,2024-02-20,14.4,1,3,20,5,0.988
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-02-20,2024-02-27,7.1,1,3,20,22,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-02-28,2024-04-19,51.8,1,3,2,21,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-04-20,2024-05-21,31.3,1,3,1,8,0.981
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-05-30,2024-06-06,7.2,1,3,12,17,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-06-15,2024-06-21,5.9,1,3,20,17,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-08-06,2024-08-13,6.5,1,3,21,7,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-08-20,2024-09-03,13.8,1,3,22,16,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-09-09,2024-10-01,21.5,1,3,19,5,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-10-31,2024-11-07,7.2,1,3,11,15,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-11-14,2024-11-21,7.4,1,3,12,21,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-11-22,2024-12-13,20.7,1,3,12,3,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-12-19,2024-12-31,12.5,1,3,12,23,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-01-01,2025-01-12,11.1,2,3,20,21,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-04-01,2025-04-08,6.9,2,3,23,20,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-05-13,2025-06-24,42.5,2,3,3,15,0.965
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-06-25,2025-08-11,46.9,2,3,9,5,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-08-11,2025-08-18,6.8,2,3,11,5,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-08-22,2025-09-04,13.2,2,3,16,19,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-11-24,2025-12-02,7.8,2,3,16,9,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-12-04,2025-12-11,6.7,2,3,12,4,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-12-11,2025-12-31,20.3,2,3,16,23,1.0
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2026-02-06,2026-02-22,16.4,2,3,10,19,0.987
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2026-03-11,2026-03-18,6.9,2,3,8,4,0.952
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2026-03-18,2026-03-24,6.5,2,3,8,18,0.903
+Glenarm,422,GT3,60.5,208.0,29.1,CC_REGULAR,eia_exact,2026-03-25,2026-03-31,5.6,2,3,16,5,0.97
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2018-12-05,2018-12-31,25.8,2,3,21,14,0.947
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-01-15,2019-01-28,12.8,2,3,22,16,0.971
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-11-25,2019-12-04,9.6,2,3,1,15,0.965
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2019-12-20,2019-12-30,10.0,2,3,15,13,0.925
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-01-13,2020-01-24,10.5,2,3,20,7,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-01-24,2020-01-30,6.2,2,3,11,14,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-01-30,2020-02-16,16.9,2,3,18,15,0.98
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-04-01,2020-04-10,8.5,2,3,16,4,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-06-10,2020-06-16,6.0,2,3,20,18,0.909
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-11-15,2020-11-21,6.1,2,3,14,15,0.952
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2020-12-01,2020-12-11,10.0,2,3,15,15,0.988
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-03-21,2021-03-27,5.3,2,3,21,4,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-08-20,2021-08-25,5.2,2,3,11,16,0.992
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-09-27,2021-10-03,6.2,2,3,11,15,0.946
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-10-28,2021-11-02,5.2,2,3,12,15,0.992
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-11-17,2021-11-27,9.5,2,3,20,6,0.934
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-11-27,2021-12-03,6.2,2,3,11,16,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2021-12-03,2021-12-15,11.5,2,3,20,6,0.96
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-01-02,2022-01-16,13.2,2,3,20,0,0.981
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-01-16,2022-01-24,8.1,2,3,4,5,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-02-02,2022-02-19,16.8,2,3,23,16,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-02-24,2022-03-02,6.2,2,3,12,17,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-03-17,2022-03-27,9.9,2,3,20,16,0.958
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-05-06,2022-05-13,6.9,2,3,20,16,0.964
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-10-24,2022-10-30,6.0,2,3,19,17,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2022-12-09,2022-12-16,7.1,2,3,10,11,0.918
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2023-02-06,2023-03-12,33.9,2,3,21,17,0.902
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2023-06-09,2023-06-14,5.2,2,3,14,17,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2023-06-14,2023-06-20,5.9,2,3,21,17,0.915
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-01-01,2024-01-08,7.2,1,3,0,3,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-01-24,2024-02-05,12.1,1,3,13,15,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-02-05,2024-02-21,15.4,1,3,20,5,0.989
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-02-21,2024-05-21,89.3,1,3,20,2,0.995
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-05-31,2024-06-06,5.9,1,3,21,17,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-06-07,2024-06-15,7.8,1,3,21,16,0.995
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-06-15,2024-06-22,6.9,1,3,20,17,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-06-22,2024-06-27,5.0,1,3,21,21,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-06-28,2024-07-05,7.5,1,3,7,17,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-07-11,2024-07-19,7.8,1,3,21,16,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-07-25,2024-08-01,6.9,1,3,20,16,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-08-06,2024-08-22,15.5,1,3,20,7,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-08-22,2024-09-03,12.3,1,3,9,16,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-09-09,2024-09-19,10.1,1,3,19,21,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-09-20,2024-10-01,11.2,1,3,2,5,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-11-08,2024-11-18,10.0,1,3,19,19,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-11-22,2024-12-12,19.7,1,3,14,5,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2024-12-19,2024-12-31,12.4,1,3,14,23,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-01-01,2025-01-07,6.3,2,3,0,7,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-01-31,2025-02-09,9.6,2,3,1,14,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-02-25,2025-03-03,5.6,2,3,12,2,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-04-22,2025-05-05,13.0,2,3,10,9,0.933
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-05-17,2025-06-12,27.0,2,3,0,22,0.988
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-06-17,2025-08-19,62.6,2,3,16,5,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-08-19,2025-09-02,13.7,2,3,21,12,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-11-25,2025-12-12,16.9,2,3,8,5,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2025-12-12,2025-12-31,19.3,2,3,16,23,1.0
+Glenarm,422,GT4,60.5,208.0,29.1,CC_REGULAR,eia_exact,2026-02-27,2026-03-20,21.1,2,3,15,16,0.984
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2018-12-16,2018-12-31,14.7,2,3,23,14,0.912
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2021-03-07,2021-03-16,8.8,2,3,23,18,0.967
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2021-03-20,2021-03-26,6.0,2,3,3,2,0.931
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2021-08-20,2021-08-25,5.3,2,3,9,16,0.961
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2021-11-18,2021-11-29,10.8,2,3,21,16,0.915
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2021-12-03,2021-12-18,15.1,2,3,22,23,0.912
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2022-02-10,2022-02-18,7.9,2,3,16,13,0.984
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2023-02-03,2023-02-14,11.3,2,3,11,17,0.904
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2025-01-01,2025-08-19,230.5,2,3,0,10,0.975
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2025-08-22,2025-08-29,6.5,2,3,21,7,1.0
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2025-11-25,2025-12-30,35.0,2,3,11,9,1.0
+Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2026-02-06,2026-02-22,16.4,2,3,11,19,0.962
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-08-10,2018-08-20,9.6,0,1,22,12,0.944
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-08-21,2018-09-27,36.4,0,1,22,7,0.921
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-09-27,2018-10-05,8.2,0,1,12,16,0.97
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-10-05,2018-10-15,9.9,0,1,18,14,1.0
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-10-15,2018-10-25,9.7,0,1,21,12,1.0
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-10-25,2018-11-14,19.4,0,1,22,6,0.97
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2018-11-15,2018-12-31,46.1,0,1,21,23,1.0
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-01-01,2019-02-17,47.5,0,1,0,12,0.996
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-02-21,2019-02-26,5.5,0,1,0,12,1.0
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-03-01,2019-03-11,10.6,0,1,0,13,1.0
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-03-12,2019-05-01,49.3,0,1,23,5,0.998
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-05-12,2019-06-07,26.0,0,1,15,13,0.968
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-09-26,2019-10-23,26.6,0,1,22,12,0.991
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-10-25,2019-11-14,19.8,0,1,22,17,0.973
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-11-15,2019-12-11,25.4,0,1,23,7,0.984
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2019-12-12,2019-12-31,19.3,0,1,16,23,1.0
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2020-11-12,2020-12-31,49.1,0,1,21,23,0.958
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2022-01-09,2022-01-24,14.5,0,1,19,5,0.948
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2022-01-26,2022-02-23,27.9,0,1,8,5,0.978
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2023-02-03,2023-02-14,10.8,0,1,11,6,0.985
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2023-05-09,2023-05-21,12.3,0,1,10,16,0.969
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2023-12-26,2023-12-31,5.5,0,1,11,23,0.962
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-01-01,2024-01-24,23.3,0,1,0,7,0.909
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-01-26,2024-02-05,9.5,0,1,14,2,0.974
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-02-05,2024-03-06,30.5,0,1,5,16,0.947
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-03-06,2024-03-14,8.0,0,1,19,17,0.963
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-03-14,2024-03-20,5.4,0,1,20,5,0.969
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-03-20,2024-03-29,9.3,0,1,7,13,0.973
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-03-29,2024-04-04,5.6,0,1,16,6,0.956
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-08-09,2024-09-05,26.9,0,1,11,7,0.901
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-09-25,2024-10-03,7.9,0,1,18,15,0.916
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-10-08,2024-10-16,8.2,0,1,6,9,0.929
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-12-10,2024-12-17,7.0,0,1,7,5,0.922
+"Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2024-12-18,2024-12-31,13.7,0,1,8,23,0.954
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2021-09-14,2021-09-21,6.8,0,1,21,14,0.975
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2021-09-23,2021-12-31,99.1,0,1,21,23,0.975
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2022-01-01,2022-03-16,74.2,0,1,0,5,0.983
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2022-04-11,2022-05-24,42.9,0,1,11,8,0.964
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2024-01-01,2024-01-15,14.6,0,1,0,14,1.0
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2024-01-16,2024-02-27,41.6,0,1,23,13,0.994
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2024-02-28,2024-04-17,49.5,0,1,4,14,1.0
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2024-08-26,2024-12-31,127.2,0,1,18,23,0.978
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2025-01-01,2025-07-10,190.6,0,1,0,14,0.97
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2025-07-16,2025-08-16,31.5,0,1,4,15,1.0
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2025-08-21,2025-09-02,11.5,0,1,23,11,1.0
+Carson Cogeneration Company,10169,D1,55.8,55.8,100.0,CC_REGULAR,eia_digits_cc,2025-09-23,2025-12-31,99.1,0,1,22,23,1.0
+King City Power Plant,10294,2,47.0,47.0,100.0,CC_CHP,observed_peak,2018-12-11,2018-12-31,20.2,0,1,18,23,0.909
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-01-01,2024-01-08,7.2,1,2,0,4,1.0
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-01-22,2024-02-04,13.2,1,2,19,22,1.0
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-02-07,2024-02-13,5.6,1,2,17,7,1.0
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-02-13,2024-02-21,8.1,1,2,10,12,0.964
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-02-21,2024-04-04,42.9,1,2,14,10,1.0
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-04-04,2024-04-10,5.7,1,2,13,5,1.0
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-06-01,2024-06-21,19.7,1,2,15,6,0.989
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-06-25,2024-07-02,6.9,1,2,22,18,1.0
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-08-06,2024-09-03,27.8,1,2,20,15,0.997
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-10-08,2024-10-23,14.3,1,2,22,4,1.0
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-10-26,2024-11-03,8.0,1,2,12,11,0.964
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-12-01,2024-12-10,8.6,1,2,15,5,1.0
+King City Power Plant,10294,2,47.0,180.2,26.1,CC_CHP,observed_peak,2024-12-18,2024-12-31,13.5,1,2,11,23,1.0
+King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-01-01,2025-01-06,5.2,1,2,0,3,1.0
+King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-01-14,2025-01-21,6.9,1,2,8,5,0.97
+King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-07-10,2025-07-30,19.5,1,2,17,5,0.947
+King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-07-30,2025-08-21,21.8,1,2,18,13,0.954
+King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-08-25,2025-09-01,6.9,1,2,19,16,0.946
+King City Power Plant,10294,2,46.0,179.2,25.7,CC_CHP,observed_peak,2025-11-25,2025-12-31,36.4,1,2,14,23,0.985
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-01-01,2024-01-17,16.4,1,2,0,8,0.967
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-01-17,2024-02-08,21.5,1,2,17,5,0.981
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-02-08,2024-03-24,44.6,1,2,17,6,0.977
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-03-25,2024-04-04,9.6,1,2,14,3,0.978
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-04-12,2024-04-20,7.5,1,2,18,4,0.966
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-07-12,2024-07-22,9.7,1,2,22,14,0.901
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-07-25,2024-08-01,6.6,1,2,22,12,0.975
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-08-07,2024-08-26,18.3,1,2,20,3,0.966
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-08-26,2024-09-04,9.0,1,2,14,12,0.981
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-09-09,2024-09-24,14.6,1,2,21,10,0.963
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-09-24,2024-09-30,5.7,1,2,21,13,0.993
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-12-11,2024-12-17,5.2,1,2,23,3,1.0
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-12-17,2024-12-31,14.1,1,2,21,23,1.0
+King City Power Plant,10294,GTG,133.2,179.2,74.3,CC_CHP,eia_exact_cc,2025-09-24,2025-12-02,68.3,1,2,21,4,1.0
+Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2018-10-06,2018-10-13,6.9,0,1,19,16,0.94
+Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2018-12-15,2018-12-26,10.8,0,1,7,2,0.996
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2019-01-01,2019-01-07,6.2,0,1,0,5,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2019-01-07,2019-01-14,7.4,0,1,8,16,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2019-01-21,2019-02-01,10.7,0,1,8,0,1.0
+Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2020-02-14,2020-02-21,6.8,0,1,19,13,1.0
+Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2020-02-21,2020-02-26,5.1,0,1,15,16,1.0
+Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2020-03-03,2020-03-12,9.0,0,1,13,12,0.935
+Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2020-12-12,2020-12-19,6.5,0,1,19,7,0.943
+Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2020-12-19,2020-12-27,8.2,0,1,12,15,0.918
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2021-01-02,2021-01-12,9.5,0,1,18,5,0.987
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2021-11-21,2021-11-29,8.6,0,1,0,14,0.957
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2021-12-22,2021-12-27,5.7,0,1,0,15,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-01-10,2022-01-16,5.3,0,1,19,1,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-01-17,2022-01-23,6.2,0,1,8,11,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-02-03,2022-02-23,19.6,0,1,15,4,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-02-25,2022-03-03,6.0,0,1,17,16,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-03-09,2022-03-15,5.7,0,1,20,12,0.971
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2022-10-14,2022-10-19,5.1,0,1,14,15,0.926
+Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2023-05-07,2023-05-15,7.6,0,1,16,5,0.907
+Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2023-05-23,2023-05-31,7.9,0,1,17,14,0.911
+Yuba City Energy Center,10349,2,48.0,48.0,100.0,CT_CHP,observed_peak,2023-07-05,2023-07-11,5.8,0,1,23,17,0.986
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-01-02,2024-01-08,6.2,0,1,1,5,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-01-19,2024-01-27,7.6,0,1,21,11,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-02-06,2024-02-17,11.1,0,1,21,22,0.929
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-02-19,2024-03-05,15.2,0,1,1,5,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-03-05,2024-03-14,9.0,0,1,15,13,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-03-20,2024-03-31,10.6,0,1,20,10,0.984
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-04-12,2024-04-20,8.1,0,1,8,9,0.974
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-04-22,2024-04-30,8.4,0,1,8,17,0.916
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-06-14,2024-06-22,7.8,0,1,21,16,0.989
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-08-08,2024-08-16,7.7,0,1,22,14,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-08-20,2024-08-28,7.9,0,1,19,16,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-08-29,2024-09-04,5.8,0,1,20,15,0.979
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-09-13,2024-09-23,9.9,0,1,18,15,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-09-24,2024-10-01,6.8,0,1,19,13,0.994
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-11-01,2024-11-18,17.4,0,1,6,14,0.902
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-11-19,2024-11-30,10.6,0,1,17,6,0.902
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2024-12-09,2024-12-31,22.6,0,1,10,23,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-01-01,2025-01-21,20.0,0,1,0,0,0.979
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-01-29,2025-02-03,5.2,0,1,10,15,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-02-19,2025-03-05,14.5,0,1,8,20,0.948
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-03-06,2025-03-14,8.2,0,1,3,7,0.939
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-03-19,2025-03-24,5.0,0,1,9,8,0.983
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-03-29,2025-04-07,9.0,0,1,18,17,0.977
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-04-09,2025-04-14,5.1,0,1,8,10,0.927
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-04-21,2025-04-29,8.3,0,1,8,14,0.945
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-05-10,2025-05-29,18.6,0,1,21,11,0.971
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-05-29,2025-06-10,11.9,0,1,13,10,0.993
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-06-19,2025-06-30,11.7,0,1,0,16,0.989
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-07-02,2025-07-07,5.0,0,1,18,17,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-07-16,2025-07-23,6.8,0,1,15,10,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-07-23,2025-08-08,16.0,0,1,15,15,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-08-11,2025-08-20,8.5,0,1,20,6,1.0
+Yuba City Energy Center,10349,2,49.0,49.0,100.0,CT_CHP,observed_peak,2025-12-07,2025-12-17,9.5,0,1,23,11,1.0
+Yuba City Energy Center,10349,2,47.0,47.0,100.0,CT_CHP,observed_peak,2026-02-12,2026-02-24,12.3,0,1,7,13,0.983
+Yuba City Energy Center,10349,2,47.0,47.0,100.0,CT_CHP,observed_peak,2026-03-09,2026-03-17,7.8,0,1,12,6,0.957
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-01-01,2018-03-01,59.5,0,1,0,12,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-03-01,2018-03-07,5.6,0,1,16,6,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-03-08,2018-04-23,46.0,0,1,13,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-04-24,2018-06-12,48.7,0,1,21,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-06-13,2018-06-19,5.8,0,1,21,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-06-19,2018-06-26,6.7,0,1,22,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-06-26,2018-07-26,29.7,0,1,22,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-08-02,2018-08-10,7.7,0,1,21,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-08-10,2018-08-19,8.8,0,1,21,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-08-21,2018-09-05,14.7,0,1,22,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-09-05,2018-10-15,39.7,0,1,21,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-10-16,2018-10-23,6.8,0,1,21,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-11-01,2018-12-03,31.7,0,1,21,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-12-03,2018-12-15,11.7,0,1,21,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2018-12-17,2018-12-31,14.1,0,1,22,23,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-01-01,2019-02-17,47.6,0,1,0,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-02-19,2019-02-26,6.6,0,1,23,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-02-28,2019-03-06,5.3,0,1,23,6,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-03-07,2019-03-12,5.1,0,1,13,15,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-03-12,2019-05-08,56.3,0,1,22,5,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-05-08,2019-06-18,41.1,0,1,12,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-06-18,2019-07-24,35.7,0,1,21,13,0.994
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-07-25,2019-08-15,20.7,0,1,21,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-08-19,2019-08-27,8.0,0,1,14,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-08-27,2019-09-25,28.8,0,1,21,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-09-25,2019-10-23,27.8,0,1,21,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2019-10-25,2019-12-31,67.1,0,1,21,23,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-01-01,2020-03-04,63.3,0,1,0,6,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-03-05,2020-05-13,68.8,0,1,13,6,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-05-13,2020-05-27,14.1,0,1,11,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-05-27,2020-06-04,7.7,0,1,21,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-06-04,2020-06-23,18.7,0,1,21,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-06-23,2020-08-14,51.7,0,1,21,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-08-21,2020-09-28,37.7,0,1,22,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-10-02,2020-10-16,13.8,0,1,20,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2020-10-16,2020-12-31,76.1,0,1,21,23,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-03-10,2021-05-01,52.0,0,1,15,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-05-05,2021-05-11,5.7,0,1,22,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-06-02,2021-06-15,12.7,0,1,21,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-06-21,2021-07-06,15.0,0,1,16,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-07-29,2021-08-04,6.5,0,1,4,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-08-16,2021-08-27,10.7,0,1,23,15,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-08-30,2021-09-05,5.8,0,1,21,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-09-13,2021-10-04,20.8,0,1,19,12,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-10-04,2021-10-11,6.7,0,1,23,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2021-10-11,2021-12-31,81.1,0,1,21,23,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-01-01,2022-03-01,59.6,0,1,0,14,0.997
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-03-01,2022-03-10,8.3,0,1,21,4,0.97
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-03-14,2022-03-22,7.7,0,1,23,15,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-03-26,2022-04-06,10.7,0,1,23,15,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-04-18,2022-04-25,6.8,0,1,21,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-04-26,2022-05-04,7.8,0,1,22,15,0.946
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-05-04,2022-05-20,16.0,0,1,22,21,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-05-22,2022-06-09,18.6,0,1,1,15,0.964
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-06-10,2022-06-21,10.6,0,1,23,13,0.984
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-07-01,2022-07-11,9.7,0,1,22,14,0.996
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-09-13,2022-09-25,12.5,0,1,1,13,0.93
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2022-10-04,2022-12-31,88.1,0,1,22,23,0.983
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-01-01,2023-01-30,29.6,0,1,0,14,0.983
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-01-31,2023-03-15,42.9,0,1,8,4,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-03-16,2023-04-27,42.2,0,1,11,15,0.987
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-04-28,2023-06-15,47.4,0,1,21,6,0.972
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-06-15,2023-07-02,17.0,0,1,13,13,0.998
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-07-02,2023-07-14,11.8,0,1,20,15,0.993
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-07-27,2023-08-14,18.5,0,1,0,12,0.991
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-08-16,2023-08-28,11.7,0,1,23,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-08-28,2023-09-11,13.8,0,1,21,15,0.958
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-09-11,2023-11-09,58.7,0,1,21,13,0.906
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-11-09,2023-11-15,5.8,0,1,19,13,0.928
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-11-15,2023-12-04,18.8,0,1,18,13,0.929
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-12-05,2023-12-11,5.8,0,1,19,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2023-12-15,2023-12-31,16.2,0,1,19,23,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-01-01,2024-01-13,12.2,0,1,0,5,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-01-16,2024-02-28,42.3,0,1,23,5,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-02-29,2024-04-04,34.8,0,1,12,5,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-04-05,2024-07-01,87.7,0,1,0,15,0.995
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-07-13,2024-07-22,8.8,0,1,22,16,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-07-25,2024-08-01,6.8,0,1,22,17,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-08-07,2024-08-20,12.9,0,1,21,18,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-08-21,2024-09-03,13.8,0,1,0,18,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-09-09,2024-09-24,14.6,0,1,21,11,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-09-24,2024-09-30,5.7,0,1,21,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-10-10,2024-10-30,19.1,0,1,23,1,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-10-30,2024-11-05,6.4,0,1,5,13,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-11-07,2024-11-14,6.6,0,1,20,10,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-11-22,2024-12-31,39.3,0,1,17,23,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-01-01,2025-02-19,49.2,0,1,0,4,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-02-19,2025-02-27,7.8,0,1,9,3,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-02-27,2025-03-16,17.2,0,1,12,16,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-03-19,2025-04-30,41.2,0,1,22,2,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-05-07,2025-05-30,22.8,0,1,19,14,0.985
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-05-30,2025-07-08,39.0,0,1,21,19,0.97
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-07-09,2025-07-14,5.2,0,1,13,16,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-07-14,2025-08-08,24.7,0,1,23,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-08-11,2025-08-21,9.8,0,1,21,15,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-08-25,2025-09-01,6.8,0,1,21,14,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-09-23,2025-12-02,69.4,0,1,21,6,1.0
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2025-12-12,2025-12-31,19.6,0,1,10,23,1.0
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-10-03,2018-10-15,11.7,0,1,23,14,0.907
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-12-07,2018-12-31,25.0,0,1,0,23,0.937
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-01,2019-01-07,6.6,0,1,0,14,1.0
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-07,2019-02-06,29.2,0,1,23,2,0.981
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-13,2019-02-18,5.6,0,1,2,15,0.978
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-20,2019-02-25,5.6,0,1,1,15,0.941
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-26,2019-03-05,7.6,0,1,1,14,1.0
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-04-04,2019-04-12,7.7,0,1,16,7,1.0
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-04-18,2019-04-24,6.1,0,1,10,11,0.973
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-07,2019-10-14,6.6,0,1,23,13,0.937
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-16,2019-10-21,5.1,0,1,0,2,0.984
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-11-22,2019-12-31,40.0,0,1,1,23,0.951
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2020-01-15,2020-02-01,16.9,0,1,12,8,0.99
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2020-04-02,2020-04-10,8.0,0,1,16,15,0.969
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-01-01,2022-04-04,93.5,0,1,0,10,0.942
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-05-07,2022-05-16,8.8,0,1,22,15,0.938
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-01-01,2024-02-03,33.7,0,1,0,15,0.99
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-02-03,2024-03-13,38.9,0,1,18,14,0.98
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-03-15,2024-04-16,32.3,0,1,9,16,0.987
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-04-17,2024-04-23,5.9,0,1,19,16,0.915
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-04-24,2024-04-30,5.9,0,1,19,16,0.923
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-06-12,2024-06-22,9.8,0,1,21,16,0.992
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-06-23,2024-07-01,7.6,0,1,23,13,0.967
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-09-12,2024-09-26,13.8,0,1,20,15,0.955
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-10-08,2024-11-19,42.0,0,1,19,19,0.946
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-11-22,2024-12-31,39.9,0,1,2,23,0.998
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-14,2025-01-30,16.5,0,1,2,13,0.97
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-11-21,2025-12-15,23.9,0,1,17,13,0.986
+Bear Mountain Limited,10649,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-12-19,2025-12-31,12.4,0,1,14,23,0.956
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-02-21,2018-02-28,7.3,0,1,2,8,1.0
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-08-09,2018-10-09,60.4,0,1,23,8,0.928
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-10-09,2018-10-26,17.1,0,1,11,12,1.0
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-10-26,2018-11-18,23.0,0,1,23,22,0.975
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-11-20,2018-12-03,13.6,0,1,1,14,1.0
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-12-04,2018-12-31,27.0,0,1,23,23,1.0
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-01,2019-02-06,36.7,0,1,0,16,0.973
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-10,2019-02-16,5.9,0,1,12,9,0.923
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-20,2019-02-25,5.6,0,1,1,15,0.941
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-28,2019-03-11,10.9,0,1,18,14,1.0
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-03-11,2019-04-17,36.3,0,1,23,6,0.932
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-15,2019-10-21,5.5,0,1,23,11,0.925
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-11-22,2019-12-31,40.0,0,1,1,23,0.951
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2020-01-10,2020-02-15,35.9,0,1,13,9,0.934
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2020-02-15,2020-02-26,10.8,0,1,13,6,0.919
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-01,2025-01-16,15.8,0,1,0,18,0.937
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-16,2025-02-19,33.8,0,1,21,15,0.991
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-05-30,2025-07-30,60.3,0,1,23,5,0.939
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-07-31,2025-08-11,11.7,0,1,0,15,0.982
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-08-11,2025-08-21,9.6,0,1,22,12,0.987
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-08-25,2025-09-02,7.6,0,1,22,11,0.979
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-09-24,2025-12-01,67.8,0,1,12,5,1.0
+Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-12-01,2025-12-31,30.1,0,1,22,23,0.999
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-12-04,2018-12-31,27.0,0,1,23,23,0.945
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-01,2019-01-07,6.3,0,1,0,6,1.0
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-08,2019-02-09,32.3,0,1,9,15,0.974
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-09,2019-02-19,9.9,0,1,18,15,0.941
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-26,2019-03-11,13.4,0,1,0,9,1.0
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-15,2019-10-21,5.6,0,1,23,12,0.97
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-11-12,2019-11-18,5.6,0,1,23,13,0.948
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-11-18,2019-12-31,43.0,0,1,23,23,0.933
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2020-01-01,2020-02-08,38.4,0,1,0,8,0.932
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-01-01,2022-02-11,41.8,0,1,0,17,0.966
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-02-11,2022-03-07,23.7,0,1,20,12,1.0
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-03-09,2022-03-23,14.7,0,1,0,15,0.974
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-04-07,2022-05-24,46.7,0,1,23,15,0.911
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2023-05-10,2023-06-05,25.7,0,1,22,14,0.921
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2023-07-03,2023-07-08,5.0,0,1,22,21,0.908
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-01-04,2024-01-30,26.7,0,1,2,17,1.0
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-01-31,2024-02-12,12.0,0,1,15,15,1.0
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-02-14,2024-03-18,33.4,0,1,6,14,0.991
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-07-12,2024-07-22,9.8,0,1,23,16,1.0
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-07-25,2024-07-31,5.3,0,1,22,4,1.0
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-08-07,2024-08-14,6.2,0,1,22,2,1.0
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-08-14,2024-09-03,20.4,0,1,10,18,1.0
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-09-09,2024-09-24,14.6,0,1,22,12,0.991
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-09-24,2024-10-01,6.7,0,1,22,13,1.0
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-10-07,2024-12-31,85.1,0,1,22,23,0.978
+Salinas River Cogeneration Facility,50865,1,39.0,39.0,100.0,CT_CHP,observed_peak,2020-05-24,2020-07-11,48.1,0,1,16,18,1.0
+Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2021-05-03,2021-05-11,8.3,0,1,0,6,1.0
+Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2022-09-06,2022-09-20,14.2,0,1,0,5,1.0
+Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2023-01-09,2023-02-01,22.8,0,1,12,6,1.0
+Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2023-03-10,2023-03-22,11.6,0,1,20,9,1.0
+Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2023-10-15,2023-11-14,30.0,0,1,12,10,1.0
+Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2023-12-03,2023-12-11,8.2,0,1,13,16,1.0
+Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2024-05-13,2024-06-03,21.6,0,1,0,13,0.996
+Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2024-11-23,2024-12-07,13.8,0,1,23,16,1.0
+Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2025-05-18,2025-05-29,11.0,0,1,12,12,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-10-02,2018-10-17,15.6,0,1,1,14,0.987
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2018-12-06,2018-12-31,25.2,0,1,19,23,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-01-01,2019-02-06,36.7,0,1,0,16,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-07,2019-02-19,12.7,0,1,0,15,0.977
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-20,2019-02-25,5.5,0,1,3,15,0.962
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-02-26,2019-03-11,13.6,0,1,0,14,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-03-11,2019-03-27,15.4,0,1,23,7,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-03-31,2019-04-08,7.9,0,1,12,8,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-09-26,2019-10-04,8.1,0,1,12,14,0.903
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-04,2019-10-14,9.9,0,1,17,14,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-10-15,2019-10-21,5.6,0,1,23,12,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2019-11-22,2019-12-31,40.0,0,1,1,23,0.996
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-01-01,2022-03-20,78.4,0,1,0,9,0.973
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-03-20,2022-03-28,8.0,0,1,12,10,0.901
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-04-26,2022-05-07,11.6,0,1,0,14,0.91
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2022-05-07,2022-05-13,5.8,0,1,22,15,0.928
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2023-07-03,2023-07-08,5.0,0,1,22,21,0.908
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-01-01,2024-02-10,40.8,0,1,0,17,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-02-10,2024-03-04,23.0,0,1,21,19,0.989
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-03-12,2024-04-09,27.7,0,1,23,15,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-04-09,2024-05-01,21.8,0,1,21,15,0.987
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-06-04,2024-07-03,29.1,0,1,12,13,0.993
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-07-12,2024-07-21,8.7,0,1,23,15,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-07-25,2024-08-01,6.6,0,1,23,12,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-08-07,2024-09-04,27.6,0,1,23,13,0.998
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-09-11,2024-10-01,19.8,0,1,20,13,0.992
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-10-07,2024-11-19,43.0,0,1,22,20,0.985
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-11-20,2024-12-31,41.8,0,1,4,23,0.988
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-01,2025-01-13,12.1,0,1,0,2,0.966
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-14,2025-02-26,43.7,0,1,1,16,0.995
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-02-26,2025-03-24,25.7,0,1,22,14,0.956
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-04-04,2025-05-30,56.4,0,1,6,14,0.927
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-05-30,2025-07-10,40.7,0,1,23,15,0.965
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-10-30,2025-12-04,34.4,0,1,21,5,1.0
+Live Oak Limited,54768,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-12-04,2025-12-31,27.3,0,1,16,23,1.0
+La Paloma Generating Plant,55151,CTG-4,289.0,1156.0,25.0,CC_REGULAR,eia_digits,2018-08-17,2018-12-31,137.0,3,4,0,23,0.972
+Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2018-06-05,2018-06-11,5.4,1,2,23,8,0.915
+Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2018-10-01,2018-10-08,7.5,1,2,0,12,0.994
+Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2018-12-04,2018-12-12,7.9,1,2,6,3,1.0
+Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2019-02-04,2019-04-27,82.3,1,2,1,8,0.996
+Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2019-09-26,2019-10-06,10.1,1,2,10,11,0.934
+Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2019-10-13,2019-10-19,6.9,1,2,0,20,1.0
+Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2019-11-19,2019-12-06,17.2,1,2,7,12,0.981
+Blythe Energy,55295,1,185.0,480.5,38.5,CC_REGULAR,observed_peak,2019-12-21,2019-12-27,6.2,1,2,9,13,1.0
+Blythe Energy,55295,1,184.0,479.5,38.4,CC_REGULAR,observed_peak,2020-01-01,2020-03-02,61.5,1,2,0,11,0.991
+Blythe Energy,55295,1,184.0,479.5,38.4,CC_REGULAR,observed_peak,2020-03-24,2020-04-06,13.2,1,2,9,12,0.927
+Blythe Energy,55295,1,184.0,479.5,38.4,CC_REGULAR,observed_peak,2020-06-12,2020-06-18,6.4,1,2,2,10,1.0
+Blythe Energy,55295,1,184.0,479.5,38.4,CC_REGULAR,observed_peak,2020-06-28,2020-07-05,7.4,1,2,7,15,1.0
+Blythe Energy,55295,1,184.0,479.5,38.4,CC_REGULAR,observed_peak,2020-10-19,2020-10-24,5.0,1,2,12,11,1.0
+Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-01-17,2021-02-01,15.1,1,2,12,14,0.956
+Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-03-14,2021-03-31,16.5,1,2,23,11,1.0
+Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-05-20,2021-05-25,5.2,1,2,5,10,0.944
+Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-08-17,2021-08-22,5.3,1,2,4,11,1.0
+Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-09-16,2021-09-21,5.1,1,2,8,10,0.976
+Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-11-24,2021-12-07,12.9,1,2,5,1,1.0
+Blythe Energy,55295,1,187.0,482.5,38.8,CC_REGULAR,observed_peak,2021-12-22,2021-12-28,6.0,1,2,5,3,1.0
+Blythe Energy,55295,1,188.0,483.5,38.9,CC_REGULAR,observed_peak,2022-01-01,2022-02-24,54.6,1,2,0,13,0.991
+Blythe Energy,55295,1,188.0,483.5,38.9,CC_REGULAR,observed_peak,2022-03-12,2022-03-23,11.2,1,2,8,12,1.0
+Blythe Energy,55295,1,188.0,483.5,38.9,CC_REGULAR,observed_peak,2022-04-16,2022-04-23,7.5,1,2,8,19,1.0
+Blythe Energy,55295,1,188.0,483.5,38.9,CC_REGULAR,observed_peak,2022-05-05,2022-05-23,18.2,1,2,8,13,0.995
+Blythe Energy,55295,1,188.0,483.5,38.9,CC_REGULAR,observed_peak,2022-06-13,2022-06-21,8.3,1,2,4,10,1.0
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-02-01,2023-02-15,14.8,1,2,1,20,1.0
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-03-04,2023-03-15,10.6,1,2,12,1,1.0
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-03-16,2023-04-05,20.2,1,2,8,11,0.981
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-04-15,2023-04-26,11.6,1,2,0,14,0.978
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-04-29,2023-05-17,18.5,1,2,7,17,0.928
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-05-18,2023-06-11,24.5,1,2,5,16,1.0
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-06-14,2023-06-19,5.5,1,2,4,15,1.0
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-06-20,2023-07-19,29.5,1,2,6,16,0.963
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-08-04,2023-08-13,9.0,1,2,11,10,0.963
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-08-22,2023-08-27,5.3,1,2,11,17,1.0
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-09-04,2023-09-16,12.5,1,2,1,11,0.977
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-10-05,2023-10-14,9.1,1,2,2,3,1.0
+Blythe Energy,55295,1,183.0,478.5,38.2,CC_REGULAR,observed_peak,2023-11-17,2023-12-31,44.9,1,2,2,23,0.97
+Blythe Energy,55295,2,295.5,480.5,61.5,CC_REGULAR,eia_digits_cc,2018-06-05,2018-06-11,5.3,1,2,23,6,0.953
+Blythe Energy,55295,2,295.5,480.5,61.5,CC_REGULAR,eia_digits_cc,2018-10-01,2018-10-07,6.6,1,2,0,14,1.0
+Blythe Energy,55295,2,295.5,480.5,61.5,CC_REGULAR,eia_digits_cc,2019-01-03,2019-02-03,31.0,1,2,8,6,1.0
+Blythe Energy,55295,2,295.5,480.5,61.5,CC_REGULAR,eia_digits_cc,2019-02-04,2019-04-30,85.5,1,2,1,13,0.997
+Blythe Energy,55295,2,295.5,480.5,61.5,CC_REGULAR,eia_digits_cc,2019-11-25,2019-12-05,10.0,1,2,11,10,1.0
+Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-01-07,2020-02-18,42.2,1,2,9,12,1.0
+Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-02-18,2020-03-02,12.9,1,2,22,19,0.958
+Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-03-29,2020-04-05,7.4,1,2,10,19,0.949
+Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-04-07,2020-04-13,6.3,1,2,9,16,1.0
+Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-05-09,2020-05-26,17.3,1,2,2,8,0.904
+Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-06-12,2020-06-17,5.7,1,2,2,18,1.0
+Blythe Energy,55295,2,295.5,479.5,61.6,CC_REGULAR,eia_digits_cc,2020-06-28,2020-07-05,7.3,1,2,7,13,1.0
+Blythe Energy,55295,2,295.5,482.5,61.2,CC_REGULAR,eia_digits_cc,2021-03-14,2021-03-30,16.1,1,2,15,17,1.0
+Blythe Energy,55295,2,295.5,482.5,61.2,CC_REGULAR,eia_digits_cc,2021-05-20,2021-05-25,5.3,1,2,5,12,0.945
+Blythe Energy,55295,2,295.5,482.5,61.2,CC_REGULAR,eia_digits_cc,2021-08-31,2021-09-05,5.6,1,2,0,13,0.91
+Blythe Energy,55295,2,295.5,482.5,61.2,CC_REGULAR,eia_digits_cc,2021-11-24,2021-12-06,12.7,1,2,5,20,1.0
+Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-01-07,2022-02-23,47.2,1,2,9,12,1.0
+Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-03-14,2022-03-22,8.2,1,2,8,11,1.0
+Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-04-16,2022-04-24,8.2,1,2,8,12,1.0
+Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-05-05,2022-06-10,36.1,1,2,8,9,0.964
+Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-06-11,2022-06-21,10.5,1,2,0,10,0.94
+Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-06-29,2022-07-10,11.4,1,2,1,9,0.963
+Blythe Energy,55295,2,295.5,483.5,61.1,CC_REGULAR,eia_digits_cc,2022-10-27,2022-11-03,7.0,1,2,9,7,0.994
+Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-01-01,2023-01-22,21.6,1,2,0,13,0.919
+Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-01-23,2023-01-31,8.2,1,2,9,13,0.944
+Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-02-01,2023-02-15,14.7,1,2,1,17,0.997
+Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-04-05,2023-04-11,5.6,1,2,10,0,0.911
+Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-04-13,2023-04-23,10.3,1,2,8,14,0.927
+Blythe Energy,55295,2,295.5,478.5,61.8,CC_REGULAR,eia_digits_cc,2023-05-25,2023-06-06,12.2,1,2,7,11,1.0
+Pastoria Energy Facility,55656,CT001,238.0,757.0,31.4,CC_REGULAR,observed_peak,2023-05-25,2023-05-30,5.9,2,3,0,20,0.929
+Pastoria Energy Facility,55656,CT001,238.0,744.0,32.0,CC_REGULAR,observed_peak,2024-03-16,2024-04-09,24.8,2,3,0,17,0.973
+Pastoria Energy Facility,55656,CT002,238.0,744.0,32.0,CC_REGULAR,observed_peak,2024-03-16,2024-04-09,25.0,2,3,0,23,0.963
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2019-01-24,2019-02-04,10.8,0,1,22,15,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2019-04-08,2019-04-18,9.8,0,1,21,14,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2019-04-18,2019-04-25,6.8,0,1,21,16,0.933
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2019-09-27,2019-10-02,5.0,0,1,14,14,0.959
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2019-11-19,2019-11-27,7.7,0,1,22,13,0.989
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-01-01,2020-01-06,5.6,0,1,0,13,0.985
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-01-06,2020-01-13,6.7,0,1,22,14,0.913
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-01-17,2020-01-29,11.8,0,1,20,15,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-01-29,2020-02-13,14.8,0,1,20,15,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-02-13,2020-03-05,20.8,0,1,20,15,0.968
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-03-05,2020-03-12,6.8,0,1,19,13,0.926
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-03-17,2020-04-03,16.8,0,1,22,17,0.913
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-06-11,2020-06-22,10.8,0,1,21,14,0.946
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2020-11-24,2020-12-10,15.3,0,1,22,4,0.913
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2021-03-10,2021-03-16,5.2,0,1,23,3,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2021-03-18,2021-03-30,12.3,0,1,8,15,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2021-11-22,2021-11-27,5.2,0,1,9,13,1.0
+Algonquin Power Sanger,57564,8,41.0,41.0,100.0,CC_REGULAR,observed_peak,2022-05-17,2022-05-24,6.8,0,1,7,0,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-01-01,2023-01-15,14.5,0,1,0,12,0.966
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-01-18,2023-01-25,7.3,0,1,8,15,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-03-01,2023-04-07,37.5,0,1,1,12,0.99
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-04-07,2023-04-26,19.0,0,1,16,16,0.991
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-05-03,2023-05-19,15.6,0,1,17,7,0.995
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-05-19,2023-05-25,5.7,0,1,18,9,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-05-26,2023-06-19,23.7,0,1,16,7,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-06-21,2023-07-17,25.9,0,1,21,17,0.995
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-07-17,2023-07-26,8.9,0,1,22,18,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-07-28,2023-08-14,16.8,0,1,21,16,0.99
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-08-16,2023-10-10,54.4,0,1,22,6,0.919
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-10-10,2023-12-20,70.8,0,1,19,12,0.952
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2023-12-20,2023-12-27,6.9,0,1,18,15,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-01-01,2024-03-15,74.7,0,1,0,15,0.997
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-03-15,2024-03-22,6.8,0,1,21,15,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-03-27,2024-04-05,8.9,0,1,21,17,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-06-12,2024-06-24,12.0,0,1,20,18,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-07-13,2024-07-22,9.8,0,1,0,17,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-07-25,2024-08-01,6.8,0,1,22,16,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-08-01,2024-08-07,5.8,0,1,20,14,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-08-07,2024-09-03,26.6,0,1,20,10,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-09-11,2024-09-20,8.8,0,1,14,7,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-09-20,2024-10-01,11.1,0,1,16,17,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-10-08,2024-11-19,41.7,0,1,23,15,0.988
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-11-19,2024-12-09,19.6,0,1,19,8,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-12-09,2024-12-18,9.0,0,1,14,14,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2024-12-18,2024-12-31,13.2,0,1,18,23,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-01-01,2025-01-07,6.3,0,1,0,7,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-01-07,2025-05-04,116.8,0,1,14,8,0.968
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-05-04,2025-06-27,54.2,0,1,12,16,0.963
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-07-02,2025-07-10,7.9,0,1,21,17,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-07-11,2025-08-09,28.9,0,1,20,17,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-08-13,2025-08-25,11.8,0,1,18,13,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-10-08,2025-12-16,68.9,0,1,11,7,1.0
+Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-12-16,2025-12-31,15.5,0,1,12,23,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2019-03-27,2019-04-30,33.7,0,1,23,14,0.964
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2019-11-21,2019-11-29,8.8,0,1,1,20,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2020-10-28,2020-11-04,8.0,0,1,0,23,0.964
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2021-12-01,2021-12-08,6.5,0,1,23,10,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2022-01-13,2022-01-19,5.6,0,1,23,12,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2022-01-26,2022-02-02,7.5,0,1,1,13,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2022-02-08,2022-02-22,14.5,0,1,0,12,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2022-02-28,2022-06-13,104.2,0,1,23,3,0.914
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2022-10-25,2022-11-03,8.5,0,1,23,11,0.912
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2023-12-23,2023-12-31,9.0,0,1,1,23,0.991
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-01-25,2024-02-04,10.9,0,1,1,22,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-02-21,2024-03-05,13.0,0,1,1,1,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-03-07,2024-04-29,53.7,0,1,0,15,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-06-26,2024-07-01,5.6,0,1,0,13,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-08-10,2024-08-16,6.5,0,1,0,12,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-08-17,2024-08-26,9.5,0,1,1,12,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-09-09,2024-09-23,13.5,0,1,23,11,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-09-25,2024-10-01,6.5,0,1,0,11,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2024-11-12,2024-11-19,7.2,0,1,8,13,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-02-14,2025-02-25,11.1,0,1,1,2,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-03-30,2025-05-04,34.8,0,1,7,0,0.957
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-05-12,2025-05-30,18.2,0,1,9,12,0.963
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-05-31,2025-06-21,21.4,0,1,1,10,0.944
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-06-21,2025-07-05,13.6,0,1,17,7,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-07-05,2025-07-11,5.7,0,1,20,12,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-07-12,2025-08-06,25.3,0,1,0,6,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-08-13,2025-08-21,8.3,0,1,0,7,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-08-31,2025-09-26,25.8,0,1,22,15,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-12-12,2025-12-25,12.2,0,1,20,0,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2025-12-25,2025-12-31,6.7,0,1,8,23,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2026-02-02,2026-02-08,6.3,0,1,8,14,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2026-02-28,2026-03-06,6.1,0,1,19,21,1.0
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2026-03-09,2026-03-20,11.3,0,1,8,14,0.97
+Lodi Energy Center,57978,CT1,288.9,288.9,100.0,CC_REGULAR,eia_exact_cc,2026-03-21,2026-03-31,10.4,0,1,4,13,0.916
