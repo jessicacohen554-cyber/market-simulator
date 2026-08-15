@@ -3623,6 +3623,49 @@ lever on the AMPLITUDE, never on the annual mean.**
    registry, and/or (2) a class-/unit-resolved or fuel-split outage numerator,
    or (3) the event-window-cap form (ERCOT-148/149 shape) identified from
    PJM's own record.
+   **▶▶ ALL THREE RE-OPEN ROUTES ARE NOW SPENT, AND THE FAMILY IS CLOSED.**
+   **Route (3) → `R` at pjm-161 (2026-08-14)**, on its own pre-registered
+   predictions: the remove-only TOTAL-basis cap (`pjm_measured_outage_event_cap`,
+   arms `2026-08-14-pjm-161-control` / `-event-cap`) FAILED P4 outright (C3c
+   hours > $200 unchanged 3→3 / 10→10 / 32→32, max price identical) and P6 in
+   substance (top-1 % net-load unavailable MW unchanged to within 27 MW).
+   **Route (1) → REFUSED EX ANTE at pjm-162 (2026-08-15), no solve spent**
+   (`results/calibration/FINDING-pjm162-outage-envelope-basis-closure-2026-08-15.md`;
+   `_pjm162_route1_phase0.json`). Its water-fill's **net direction is RESTORE in
+   every year, on BOTH candidate bases, in EVERY slice — 24 of 24 cells** —
+   including top-1 % net-load days (**+10.4 / +12.4 / +7.0 GW**) and the named
+   winter events (**+7.6 / +9.2 / +2.2 GW**): it hands capacity BACK exactly
+   where pjm-161 measured the envelope is too shallow. **A restore ceiling bounds
+   how much is restored; it cannot change the sign** — and it was measured to
+   remove only ~60 % of the lift (58.8 / 60.8 / 60.6 % structural-zero), leaving
+   **5.4–6.9 GW/day of living-unit restore** still pointed the wrong way.
+   **THE REFUSAL GENERALISES,** which is why the family closes rather than losing
+   one member: the cause is a **CAPACITY-BASE mismatch**, not an outage-type one.
+   **19.2–20.4 % of the model's fossil nameplate sits at HARD ZERO every day**
+   (layup, retiree CEMS caps, COD masks, full windows) — capacity PJM's
+   `gen_outages_by_type`, an operational report over units in commercial
+   operation, does not carry as "outage" at all. So the model asserts 30.3 /
+   31.4 / 29.9 % of fossil nameplate unavailable against PJM's published 24.2 /
+   24.0 / 26.0 % on the same denominator, and **on top-1 % net-load days 21.3 /
+   25.5 / 23.8 GW against a published TOTAL of 10.8 / 13.0 / 16.7 GW — roughly
+   TWICE the operator's whole-system figure.** That is a property of the
+   *comparison*, so **every** transform over it reads "restore", whatever the
+   outage-type basis. It also explains pjm-161's null result: the cap found
+   nothing to bind on because there was no room.
+   **Route (2) is the ONLY survivor and is DATA-BLOCKED** — it needs GADS-style
+   class/unit detail PJM does not publish. *(pjm-162 DID derive the
+   planned/forced split named as pjm-161's second successor, and it works: short
+   CAMPD windows track published FORCED and RISE 4.35–9.88× in every named winter
+   event, long windows track PLANNED+MAINTENANCE and fall. It is committed,
+   validated against PJM's own typed record, and CURRENTLY UNUSED — it does not
+   rescue route (1) because the base gap is ~2× the composition gap, and its
+   duration boundary is not sharply picked by the data (corr positive across
+   2–10 d), so any cut is a free parameter needing a DOF entry.)*
+   **REDIRECTION for the next PJM scarcity session:** PJM's scarcity defect is
+   **not** an availability defect — on the hours in question the model already
+   holds ~2× the operator's published unavailability, and three sessions have now
+   spent their lever on that hypothesis. Look to **price formation, imports, or
+   the demand side**.
 8. ~~**`st_gas_mustrun_p25_level`** (**U**, MISO form)~~ **▶ CLOSED AT pjm-153
    (2026-08-04) — PROVABLY INERT FOR PJM, CELL `U` → `I`, NO SOLVE SPENT.** PJM's
    committed `thermal_tranches_PJM.csv` carries `online_frac` for COAL 29/29,
