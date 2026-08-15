@@ -426,7 +426,10 @@ source took longer than the allowed time" failure. **A history rewrite does not
 fix it** (it would reclaim ~1.1%) and **neither does `--depth 1`** (a shallow
 clone still transfers the whole tip tree). The fix is `--filter=blob:none` plus
 sparse-checkout. Recipe, measurements and the three partial-clone traps:
-`docs/fast-clone.md`.
+`docs/fast-clone.md`. (Those figures are the 2026-08-13 measurement and are
+**pre-prune**; the BLOAT-B corpus conversions below shrink what is live at tip
+without touching pack size, since history is kept. BLOAT-B-2 alone took 361.8
+MiB off tip. Re-measure before quoting a current number.)
 
 - **Every handoff prompt declares its profile** on its own line —
   `DATA PROFILE: <code|shared|ercot|caiso|pjm|miso|nyiso|neiso|all>`. Omitted
@@ -445,6 +448,20 @@ sparse-checkout. Recipe, measurements and the three partial-clone traps:
   any git read of a missing blob silently fetches it, so a stray
   `cat-file --batch-check` over `data/raw` pulls all 7.4 GB. Read trees only, and
   run read-side git calls under `GIT_NO_LAZY_FETCH=1` so a regression fails loudly.
+- **Some corpus payloads are GITIGNORED, so hydrating a profile no longer
+  materializes them — and the profile is that much smaller.** The corpus
+  conversion class (`docs/bloat-removal-plan-2026-08.md` §4) untracks a corpus's
+  bulk payload at tip while keeping its `README.md` + `SHA256SUMS.txt` tracked;
+  history is never rewritten, so the bytes stay recoverable forever. **Every such
+  corpus README carries the same three things: the verified source-URL table, the
+  re-fetch command, and the pin sha with its
+  `git restore --source=<pin> -- <path>` recovery command** — read the corpus
+  README before concluding data is missing, and prefer restore-from-pin when you
+  need the exact bytes rather than a fresh download. Converted so far:
+  `pjm-energy-offers`, `caiso-public-bids`, `pjm-da-virtuals`, `pjm-zonal-lmp`,
+  `ercot/SCED-CT`, `miso-energy-offers`, `pjm-binding-constraints`, and (BLOAT-B-2)
+  `caiso-dam-outages/daily`, the publication PDFs under `ERCOT/` `MISO/` `NYISO/`
+  `PJM-AS/`, and `NYISO/nyiso load reports *.zip`.
 
 `.github/workflows/cleanup-large-blobs.yml` is safe to run as of its 2026-08-12
 patch but **will not speed up clones** — it protects blobs live at tip, which are
