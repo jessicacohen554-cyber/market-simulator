@@ -2285,3 +2285,125 @@ its own owner lift. Evidence:
 `results/calibration/FINDING-neiso93-envelope-repair-2026-08-14.md`.
 
 **Next shorthand: `neiso-94`.**
+
+---
+
+## 2026-08-15 — neiso-94: `final` stays **DO NOT GRANT**, and the 2019 Pilgrim gap is **repairable, cross-ISO, and disqualifying**
+
+**Session `neiso-94`** (the shorthand neiso-93 named). **Keeper unchanged: `2026-08-14-neiso-93-envelope`.**
+Freeze **VERIFIED ACTIVE at HEAD** and never engaged. **NO year was solved, scored or registered, in
+or out of sample**; no LP was constructed. `holdout-freeze.json`, `calibration-complete.json` and the
+`final` block are untouched. NEISO's locked test remains **NEVER GRANTED and NEVER SPENT** (D-23).
+
+Full record: `results/calibration/ASSESSMENT-neiso94-final-readiness-2026-08-15.md`.
+Charter opened: `docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md`.
+
+### The Pilgrim adjudication — answered on measurement, not restated
+
+neiso-93 sized the gap from EIA-923 at 2.177 TWh and left it as a caveat. This session re-derives it
+by an independent route — an **envelope self-test** that integrates the committed per-reactor nuclear
+overlay against the model fleet's own pmax and compares to EIA-930 ISNE `NUC` telemetry. Because the
+overlay is a *fraction applied to units already in the fleet*, this isolates fleet-membership error
+and tests neiso-93's whole extension in the same pass.
+
+| year | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| gap TWh | **−2.123** | +0.030 | +0.066 | −0.001 | −0.012 | +0.075 | +0.151 |
+
+**The repaired envelope reproduces actual nuclear to ±0.15 TWh in every year 2020–2025 and is short
+2.123 TWh in 2019 alone** — a 14–70× outlier against its own noise floor. It corroborates neiso-93's
+extension from a collection the anchor does not use and isolates 2019 in the same measurement.
+Monthly, the gap is **−593/−666/−670/−651/−390 MW** for Jan–May and **±15 MW** from June: a step
+function at Pilgrim's retirement month against a 670 MW nameplate. A CF mis-derivation cannot produce
+that shape; a missing generator can, and only that.
+
+**(a) REPAIRABLE — YES, with zero new mechanisms and zero free parameters.** `cod_ramp.monthly_online_mask`
+(`cod_ramp.py:326-357`) already handles `retirement_year == run_year` (online through the retirement
+month) and `< run_year` (all-off); the retiree-injection path (`process_eia860.build_within_window_retirees`
+→ `eia860_generator_retired_within_window.parquet` → `runner.py:1208-1212`, backcast-only) already
+exists and was built for Mystic — the identical shape of problem. **The single blocker is one
+constant**, `process_eia860.py:74 RETIREMENT_WINDOW_START = 2023`, whose own comment says "bump only
+if the supported window moves" — and the window moved to 2019–2025 by the 2026-08-06 rule-22
+amendment. Pilgrim's exact record is already on disk in `vintage_2019/eia860_generator_retired_and_canceled.parquet`
+(`1590`, ret. 2019-05, 670 MW, BA→NEISO), in a file no fleet code reads.
+
+**(b) ISO-AGNOSTIC — YES, and it decides the disposition.** The constant is global and the builder
+maps every plant through `BA_CODE_TO_ISO` in one pass; lowering it 2023→2019 adds **264 plants /
+21,467.5 MW across all six ISOs** (PJM 83/8,125; MISO 83/6,683; NYISO 15/3,418; CAISO 49/1,362;
+ERCOT 13/966; NEISO 21/914, of which **Pilgrim is 670 MW = 73 %**). **NYISO's Indian Point is
+confirmed the same defect with the same fix** — plants 2497 (IP2, 2020-04, 1,299 MW) and 8907 (IP3,
+2021-04, 1,012 MW) are in the added set, i.e. the `~2,060 MW` its `NUCLEAR_MONTHLY_CF_BY_YEAR`
+caveat calls permanent. **So it fails the "provably NEISO-local" test on measurement and NO PATCH
+WAS LANDED**; the charter's gate is proving bit-identical 2023–2025 dispatch for all six ISOs (the
+added units retire before 2023 so availability is zero, but the ramp leaves `pmax` intact, so
+capacity-denominated code — binning, heat-rate joins, class denominators — must be proven unmoved,
+not assumed).
+
+**(c) DISQUALIFYING for the locked test — YES.** NEISO 2019's C1 fuel-mix volume band is
+`min(2 % × 118.28 TWh load, 8) = ±2.366 TWh`, so **the gap is 91 % of the entire C1 error budget
+before the model makes its first mistake**. Worse than the size is where it lands: `nuclear` is a
+pinned class C1 never scores, and demand is a measured backcast input, so energy balance exports
+2.146 TWh of Jan–May energy onto the **C1-scored gas row and the seam imports**, where it is
+indistinguishable from model error. It also biases the *one* test 2019 could ever carry —
+neiso-90's specificity test, where at actual = 0 h the small-count guard FAILs any model tail
+> 10 h — toward manufacturing phantom scarcity. A disclosable limitation is one a reader can price;
+this one cannot be priced from the scored output, and the tier is touch-once.
+
+### The prerequisite audit at HEAD: exactly one row moved
+
+`scripts/probes/neiso90_final_prereq_audit.py` re-run at the post-neiso-93 HEAD differs from the
+committed neiso-90 output in **one row**: parasitic-load factors **463 → 544 plants** (gap 4). All 15
+other rows are byte-identical, **including both GAPs** (`actual_tail.json` 2019, still the
+self-healing tier gate and still the ordering hazard; `capacity_actuals_neiso.csv`, still not a
+prerequisite). That is the expected signature rather than a null result: gaps 1–3 changed inputs'
+*content*, not their *availability*, which is what the probe measures.
+
+**A neiso-90 conclusion is corrected by that one row.** neiso-90 §2 dismissed the parasitic gap as
+year-independent (correct — the only solve-path consumer reads the pooled `year == 0` map) and
+concluded *"Nothing is disadvantaged"* (wrong — the shared file held **zero NEISO plants in any
+year**, tuned years included). It is the one neiso-93 change that moves the in-sample result.
+
+**Exactly one neiso-90 reason survives and it is the load-bearing one — 2019 cannot exercise C3c** —
+plus both subordinate conditions (re-run `derive_actual_tail.py` first; H1-2026 independently
+hard-blocked, `actual_lmp_hourly_NEISO.parquet` still carrying **no 2026 rows**). **neiso-93's four
+closures retired none of it, and could not have**: all four are model-side inputs, while every
+surviving reason is a property of the actuals or of the tier gate.
+
+**What neiso-93 DID retire, verified on the keeper's own artifacts.** The prior keeper's disclosed
+defect (i) — the stale Aug-2025 gas-basis row — is **CLOSED**: `neiso93_envelope_A/hourly/system_2025.parquet`
+gives **2025 P1 mean λ 69.3989**, against the superseded keeper's 69.7149 and the **69.399** the old
+shard predicted for a fully-current re-solve, with gap 2's in-sample 44.48 → 44.47 seam correction
+carried in the same run. **So "the keeper is not current with HEAD" is retired as a precondition** —
+the one direction neiso-93 moved the `final` question favourably.
+
+### C3c discrimination: still holds, and the matter stops there
+
+Re-read from the committed actuals: 2019 RT max **$261.35**, **0** hours > $300 — a $38.65 miss on
+the whole year. C3c compares a model tail to an *actual* tail, so nothing neiso-93 landed could
+touch it. At HEAD the outcome is still the worse branch — a **SKIP** (no `actual_tail` 2019 row) —
+which caps the determination and names C3c unscored. Per the prompt's instruction no alternative
+route was manufactured; the Pilgrim finding is an *additional* disqualifier, not a substitute route.
+
+### Recommendation
+
+**DO NOT GRANT `final`.** Two independent reasons: the **permanent** one (2019 cannot exercise C3c,
+unchanged since neiso-87 and not addressable by any future work) and the **repairable** one (the
+Pilgrim gap). neiso-90's trigger carries forward unchanged — the C3c lane arming a tail-forming
+mechanism, at which point 2019 becomes a specificity test — plus **one added hard precondition**:
+close the Pilgrim gap first, else that specificity test runs on a fleet biased toward inventing the
+scarcity it tests for. Granting `final` is an owner act; nothing here declares, grants or prepares a
+grant.
+
+### Secondary finding, reported not fixed
+
+The keeper shard's **`disposition_note` is byte-unchanged across the neiso-93 promotion** while
+`keeper`, `prior_keeper_note` and `note` all changed. Under the current keeper it therefore still
+names the wrong superseded run (`2026-08-05-neiso-83-ca1-reclass` rather than
+`2026-08-06-neiso-87-control`) and still discloses defect (i) as live on "THIS KEEPER" — which the
+same keeper's own sidecars show is closed. Over-conservative rather than over-claiming, and the
+determination is unaffected, but a reader of the shard alone would draw a false conclusion. Left for
+the `calibration-keeper-auditor` / the next NEISO session, per the neiso-90 §6 posture.
+
+**Next shorthand: `neiso-95`.** The NEISO lane item is **gap 3's downstream check** and the
+`disposition_note` repair above; the fleet-vintage charter is **not** a NEISO lane item and should be
+assigned as its own cross-ISO session.
