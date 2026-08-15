@@ -1,8 +1,8 @@
-"""Seam proof for the ercot-196 rule-18 [R-PHYSICS] grain repair (ercot-187 successor).
+"""Seam proof for the ercot-202 rule-18 [R-PHYSICS] grain repair (ercot-187 successor).
 
 Re-executes, on the **run192 keeper's** solve inputs for every scored year, the
 assertions pre-registered in
-``docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md`` §3.
+``docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md`` §3.
 
 Why this is a NEW probe rather than a re-run of
 ``scripts/probes/ercot186_grain_seamproof.py``:
@@ -36,7 +36,7 @@ bundle with no LP built.
 
 Usage::
 
-    PYTHONPATH=.:src python3 scripts/probes/ercot196_grain_seamproof.py
+    PYTHONPATH=.:src python3 scripts/probes/ercot202_grain_seamproof.py
 """
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ sys.path.insert(0, str(REPO / "scripts"))
 
 BUNDLE = REPO / "results/calibration/ercot192_arm_B"
 YEARS = (2023, 2024, 2025)
-OUT = REPO / "results/calibration/ercot196_grain_seamproof.json"
+OUT = REPO / "results/calibration/ercot202_grain_seamproof.json"
 
 # The keeper's own armed gates, asserted on the reconstruction so the proof
 # measures the keeper's surface and not a drifted one (the miso-116 trap).
@@ -355,9 +355,9 @@ def main() -> None:
     )
     out = {
         "_provenance": {
-            "probe": "scripts/probes/ercot196_grain_seamproof.py",
+            "probe": "scripts/probes/ercot202_grain_seamproof.py",
             "precommit": (
-                "docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md"
+                "docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md"
             ),
             "bundle": str(BUNDLE.relative_to(REPO)),
             "predecessor": "scripts/probes/ercot186_grain_seamproof.py",
