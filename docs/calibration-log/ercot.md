@@ -8957,3 +8957,37 @@ start AND end: `2026-08-15-ercot204-rule26-delete`. No PR opened
 (push-and-stop; the owner merges).
 
 **Session consumed the ercot-206 shorthand. Next shorthand: ercot-207.**
+
+## ercot-207 (2026-08-15) — HYGIENE: discharge the `audit_keepers` **E10** warning on the ERCOT keeper's attestation (schema version tag) — no solve, no score, no mechanism, no keeper movement, no cell verdict
+
+**One line of governance metadata.** `scripts/audit_keepers.py` check **E10** warned
+that the ERCOT keeper's `calibration_attestation.json` carries no `schema` version
+tag — the check's own remedy being *"add `"schema": "calibration-attestation/v1"`
+on the next regeneration"*. `scripts/gen_ercot204_attestation.py` now stamps it and
+the keeper bundle's attestation was regenerated. **`audit_keepers.py --iso ERCOT`
+goes PASS 0 failures / 0 warnings** (it was PASS with this 1 warning).
+
+**Nothing else moves.** The tag is a provenance label: `calibration_verdict` never
+reads it, so **no determination is affected** — re-verified on the artifact, ERCOT
+still reads **NOT-YET**, fail set **{C3a-2023, C3b-2023}** (`price_mean`,
+`price_shape`), C3c the single ledgered CAVEAT ×3 with magnitudes 58/22/1 vs actual
+181/53/31 unchanged. `free_parameters` is asserted equal to the source keeper's, not
+edited (`n_entries` 18 / `n_residual` 6). The attestation's only delta against the
+version on main is **that single line**, verified by diff. No solve, no LP, no year
+scored, no run registered, no keeper/registry/bench change, no matrix cell or row
+edit (`check_mechanism_matrix.py` exits **0** with zero warnings).
+
+**Shorthand and supersession, recorded.** This session (the ercot-204 lane) had
+prepared its own promotion commits as `ercot-204b`; a **parallel lane promoted the
+same run first and landed as `ercot-205`** (PR #3970, keeper →
+`2026-08-15-ercot204-rule26-delete`), and `ercot-206` then built the frontier
+assessment on top of it. Those `ercot-204b` commits were therefore **DISCARDED
+rather than rebased** — the keeper shard, the matrix shard keeper stamp and the
+§5.1 prose header on main were already correct and identical in substance, so
+re-applying them would have duplicated a promotion record and deepened exactly the
+shorthand tangle `ercot-206`'s own hygiene commit was repairing (the ercot-197 →
+ercot-202 double-claim from a rebase re-key). **Only the genuinely additive E10 fix
+survives, under a fresh shorthand.** The promotion itself stands as recorded at
+**ercot-205** and is not re-narrated here.
+
+**Session consumed the ercot-207 shorthand. Next shorthand: ercot-208.**
