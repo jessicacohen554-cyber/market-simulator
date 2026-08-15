@@ -145,6 +145,12 @@ WAVE 1 (now, parallel)          GATE        WAVE 2            GATE      WAVE 3  
 
 **G1 — Wave-1 complete.** All five Wave-1 handoffs merged; owner has signed the
 decision queue (§6). Solve-neutral debug fixes are on main.
+**STATUS 2026-08-15: NOT DECLARED — 2 of 5 lanes delivered** (DEBUG-A, BLOAT-A).
+AUDIT-A, PERF-A and DOCS-A have never been dispatched; G1 cannot be declared until
+they land. BLOAT-B executed *ahead of* its G2 gate (see §8) — accepted post-hoc
+because its acceptance test is byte-identical consumer re-derivation, so it moved
+provenance and bytes-at-rest, never a solve input; it does **not** substitute for
+the missing Wave-1 lanes.
 
 **G2 — FINAL MODEL STATE.** PERF-B (and DEBUG-B if chartered) merged;
 `regression_gate.py --mode byte` green against the stage-0 goldens captured at the
@@ -162,6 +168,17 @@ is its trigger.
 CHANGELOG caught up; itemized tip-prune PRs merged (`intentional-shrink` labeled);
 `golden-data-tier.yml` manually dispatched once **post-prune** and green — proving the
 data-backed test tier survived the prune.
+**⚠ G3's proof mechanism is currently BROKEN (2026-08-15).** `golden-data-tier.yml`
+has never completed a run: both dispatches (DEBUG-A's `31767823203`, BLOAT-B-6's
+`31857842156`) were killed by **runner-VM shutdown (exit 143)** during
+`curate_emissions.py`, before any test executed — resource exhaustion, not a code or
+data fault (the identical command succeeds in-session). The same signature kills the
+`Fast test tier` job inside `actions/checkout` of the ~10 GB tip. So G3 has **no
+pre-prune green** to attribute a post-prune red against, and G2's "fast-tests green"
+leg is unverifiable in CI. **Both are chartered to PERF-A** (§3/WS3 item 5, which owns
+per-job checkout/provisioning strategy); until PERF-A lands, G2 and G3 are evidence-
+blocked and the G3 criterion falls back to a documented in-session equivalent the PM
+must accept explicitly.
 
 **G4 — Release.** Site update merged, Pages deploy green, truth-gate QA report +
 accessibility pass done; audit addendum (AUDIT-B) records what changed since AUDIT-A.
@@ -873,3 +890,33 @@ your branch when done.
   (decision 7's authorized BLOAT-B re-dispatch) — result to be appended here.
   A red on a data-missing skip means restoring that corpus, never widening the
   workflow's sparse list.
+- 2026-08-15 — **PM refresh at main `c447199`. Program state corrected; three
+  Wave-1 lanes are still unrun.**
+  * **DELIVERED:** DEBUG-A (`docs/handoffs/debug-sweep-2026-08.md`, PR #3937) —
+    all 6 real ambient reds fixed (the README's "known-failing" list was stale in
+    *both* directions), D-5 CLOSED (defect confirmed live in mutated form → patch
+    archived, `debug-b-pjm-input-clock-charter-2026-08.md` written), branch-
+    protection memo written for G2, `golden-data-tier` first-ever dispatch run.
+    BLOAT-A (`docs/bloat-removal-plan-2026-08.md`).
+  * **NEVER DISPATCHED: AUDIT-A, PERF-A, DOCS-A.** G1 stays undeclared.
+  * **BLOAT-B executed out of sequence** (its Wave-3 gate never fired): PR-1
+    #3958 SCED in-place slim (−739.8 MiB, ERCOT-157 acceptance 15/15 byte-
+    identical), PR-2 #3956 corpus conversions (−361.8 MiB), PR-4 #3955 script
+    rotation (86 scripts). ≈1,101 MiB recovered at tip. PR-3 (non-keeper hourly
+    prune — target grew 92.9 → 137.3 MiB across 30 bundles, re-derive at
+    execution) and PR-5 (signed items) remain. Accepted post-hoc; no re-litigation.
+  * **PR #3954 (BLOAT-B-6 close-out) is STALE — do not merge as written.** Measured
+    at `315a245` 02:03 and reports "BLOAT-B never executed / 0.0 MiB recovered";
+    the three BLOAT-B PRs merged at 05:38–05:39, four hours later. Its durable
+    parts (the two dispatch records, the golden-tier never-completed finding, the
+    D-3/D-4/D-8 closures, the keep-required re-verification) must be carried into
+    a re-measured close-out. PM action: supersede, don't merge.
+  * **CI infrastructure is the program's critical path** — see the G3 warning in
+    §2: neither `Fast test tier` nor `golden-data-tier.yml` can complete on a
+    GitHub runner at the current repo size, which evidence-blocks G2 and G3.
+    PERF-A owns it and is now the highest-priority dispatch.
+  * Keepers moved since the plan was drafted: **ERCOT
+    `2026-08-14-ercot202-arm-plantphysics`** (was run192), **NEISO
+    `2026-08-14-neiso-93-envelope`** (was neiso-87); CAISO/MISO/NYISO/PJM
+    unchanged. `complete` markers: NEISO, NYISO, PJM. Any lane quoting keeper
+    state re-reads `frontend/data/backcast/keepers/<ISO>.json`.
