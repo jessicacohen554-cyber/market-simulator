@@ -2096,55 +2096,62 @@ def _apply_outage_overlays(
     ):
         from market_sim.data.pjm_outages import (
             PJM_OUTAGE_ALL_TYPES,
-            pjm_dam_availability_series,
+            PJM_OUTAGE_COVERED_GROUPS,
+            pjm_outage_mw_series,
         )
 
-        _meas_cap = pjm_dam_availability_series(
-            int(_yr), outage_types=PJM_OUTAGE_ALL_TYPES
-        )
+        # FLEET grain, not class grain, and the ex-ante measurement is why
+        # (results/calibration/_pjm161_removeonly_exante.json). PJM publishes
+        # ONE fleet number; `pjm_dam_availability_series` spreads it into a
+        # single availability FRACTION handed to every covered class, which as
+        # a remove-only cap degenerates into "every class ceilinged at the
+        # fleet mean" — it bound on 282-305 of 364 days and removed 4.8-6.3 GW
+        # year-mean, a level bulldozer rather than an event cap, and it would
+        # have flattened the real availability differences BETWEEN classes.
+        # Comparing the published FLEET outage MW against the model's own
+        # FLEET outage MW instead preserves every class's relative
+        # availability and fires only when the operator's record says the
+        # fleet is more derated than the model believes.
         _n_days = hours // 24
-        for _cls, _target_h in _meas_cap.items():
-            _idx = np.array(
-                [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
-                dtype=int,
-            )
-            if _idx.size == 0:
-                continue
+        _pub_h = pjm_outage_mw_series(
+            int(_yr), hours, outage_types=PJM_OUTAGE_ALL_TYPES
+        )
+        _pub = _pub_h[: _n_days * 24].reshape(_n_days, 24).mean(axis=1)  # (days,)
+        _cov = np.array(
+            [g.plant_group in PJM_OUTAGE_COVERED_GROUPS for g in generators], dtype=bool
+        )
+        if _cov.any() and np.isfinite(_pub).any():
+            _idx = np.flatnonzero(_cov)
             _cap = pmax[_idx]
             _cap_sum = float(_cap.sum())
-            if _cap_sum <= 0.0:
-                continue
             _a = availability[_idx, : _n_days * 24].reshape(_idx.size, _n_days, 24)
-            _ad = _a.mean(axis=2)  # (n, days) per-unit day-mean availability
-            _t = _target_h[: _n_days * 24].reshape(_n_days, 24).mean(axis=1)
-            _covered = np.isfinite(_t)
-            # Cap-weighted current class-day mean availability.
-            _cur = (_ad * _cap[:, None]).sum(axis=0) / _cap_sum  # (days,)
-            _bind = _covered & (_t < _cur)  # REMOVE-ONLY: no restore branch
-            if not _bind.any():
-                logger.info(
-                    "PJM measured-outage event cap (%d): %s — inert (0 of %d "
-                    "covered day(s) deeper than the model)",
-                    _yr,
-                    _cls,
-                    int(_covered.sum()),
-                )
-                continue
-            # Scale the class-day down by the ratio the published total implies,
-            # preserving each unit's intra-day shape and its zeros.
-            _mu = np.where(_bind, _t / np.maximum(_cur, 1e-9), 1.0)
-            _scaled = _a * _mu[None, :, None]
-            np.clip(_scaled, 0.0, 1.0, out=_scaled)
-            availability[_idx, : _n_days * 24] = _scaled.reshape(_idx.size, -1)
+            _ad = _a.mean(axis=2)  # (n, days)
+            _avail_mw = (_ad * _cap[:, None]).sum(axis=0)  # (days,) available MW
+            _cur_out = _cap_sum - _avail_mw  # (days,) the model's own outage MW
+            _covered = np.isfinite(_pub)
+            _bind = _covered & (_pub > _cur_out)  # REMOVE-ONLY: never restores
+            # mu solves  cap_sum - mu * avail_mw = pub  =>  the fleet's outage MW
+            # rises exactly to the published total, with every unit's relative
+            # availability (and every zero) preserved.
+            _mu = np.ones(_n_days)
+            _mu[_bind] = np.clip(
+                (_cap_sum - _pub[_bind]) / np.maximum(_avail_mw[_bind], 1e-9), 0.0, 1.0
+            )
+            if _bind.any():
+                _scaled = _a * _mu[None, :, None]
+                np.clip(_scaled, 0.0, 1.0, out=_scaled)
+                availability[_idx, : _n_days * 24] = _scaled.reshape(_idx.size, -1)
             logger.info(
-                "PJM measured-outage event cap (%d): %s deepened on %d of %d "
-                "covered day(s), median cap ratio %.3f, %.0f MW-day removed",
+                "PJM measured-outage event cap (%d): fleet cap bound on %d of %d "
+                "covered day(s); model outage %.0f -> %.0f MW day-mean "
+                "(published %.0f), median bind ratio %.3f",
                 _yr,
-                _cls,
                 int(_bind.sum()),
                 int(_covered.sum()),
-                float(np.median(_mu[_bind])),
-                float(((_cur - _t)[_bind] * _cap_sum).sum()),
+                float(_cur_out[_covered].mean()),
+                float((_cap_sum - _mu * _avail_mw)[_covered].mean()),
+                float(_pub[_covered].mean()),
+                float(np.median(_mu[_bind])) if _bind.any() else 1.0,
             )
         np.clip(availability, 0.0, 1.0, out=availability)
 

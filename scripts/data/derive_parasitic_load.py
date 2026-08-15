@@ -81,6 +81,14 @@ def main() -> None:
         action="store_true",
         help="Skip back-filling parasitic_load_pct in the registry.",
     )
+    parser.add_argument(
+        "--merge",
+        action="store_true",
+        help="Back-fill the existing output instead of replacing it: every "
+        "committed (plant_id, year) row is kept and only plant-years the file "
+        "lacks are added. Required for a scoped back-fill — this output is "
+        "shared across ISOs, so a plain write would delete the rest.",
+    )
     args = parser.parse_args()
 
     states = args.states or list(campd.states_for_iso(args.iso or ""))
@@ -111,6 +119,41 @@ def main() -> None:
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     pq_path = PROCESSED_DIR / "parasitic_load_factors.parquet"
     csv_path = PROCESSED_DIR / "parasitic_load_factors.csv"
+
+    if args.merge and pq_path.exists():
+        # This file is SHARED across every ISO and every year, and the plain
+        # write replaces it wholesale with just the requested states/years —
+        # so a scoped back-fill without --merge would silently delete every
+        # other ISO's rows. Merge keeps every committed (plant_id, year) row
+        # byte-identical and adds only plant-years the file does not carry.
+        #
+        # The pooled `year == 0` row is the per-plant fallback averaged over
+        # whatever years were passed. It is kept ONLY for plants the file does
+        # not already carry one for: writing it for an existing plant would
+        # move an already-committed default on the strength of a narrower year
+        # set, while a plant new to the file has no default to move and needs
+        # one. Adding coverage must not move values the file already owns
+        # (rule 22 consistency clause).
+        existing = pd.read_parquet(pq_path)
+        have = set(map(tuple, existing[["plant_id", "year"]].to_numpy()))
+        have_plants = set(existing["plant_id"].to_numpy())
+        cand = parasitic[
+            (parasitic["year"] != 0) | (~parasitic["plant_id"].isin(have_plants))
+        ]
+        keys = map(tuple, cand[["plant_id", "year"]].to_numpy())
+        fresh = cand[[k not in have for k in keys]]
+        parasitic = (
+            pd.concat([existing, fresh], ignore_index=True)
+            .sort_values(["plant_id", "year"], kind="stable")
+            .reset_index(drop=True)
+        )
+        logger.info(
+            "merge: kept %d committed rows, added %d new plant-years, file now %d",
+            len(existing),
+            len(fresh),
+            len(parasitic),
+        )
+
     parasitic.to_parquet(pq_path, index=False)
     parasitic.to_csv(csv_path, index=False)
     logger.info("wrote %s and %s", pq_path, csv_path)

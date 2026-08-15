@@ -7,6 +7,14 @@ backends — the committed realized-LMP product under ``paths.CALIBRATION_DIR``
 selected by the ``MARKET_SIM_USE_CLEAN`` environment flag. This asserts the two
 backends return the same ``lmp_usd_per_mwh`` series within float tolerance.
 
+What it actually guards is that the clean-backed reduction still reproduces the
+realized product's **clock** (``interval_start_utc`` on the ISO's fixed standard
+offset, not the DST-prevailing ``interval_start_local``) and its **hub
+definition** (per-ISO node set and weights). It is the only instrument in the
+repo that can detect either drifting — a one-hour clock shift shows up here as a
+several-hundred-$/MWh disagreement, which is exactly how F6 was found
+(docs/FINDING-f6-lmp-backend-parity-2026-08-11.md).
+
 Marked slow/integration: it reads full-year data products rather than a
 synthetic fixture, and is skipped when either backend's inputs are absent (the
 raw realized product, or the clean partition — regenerate the latter with
@@ -32,7 +40,18 @@ _RUN = "rt"  # real-time -> clean RTM partition
 _MARKET = "RTM"
 _YEAR = 2024
 
-# float32 storage in the realized product is the only source of disagreement.
+# The two reductions agree on this partition to 1.4e-05 — float32 storage in the
+# realized product, and nothing else. The tolerance sits ~700x above that
+# deliberately: it is sized to CATCH a clock or
+# hub-definition mismatch, never to absorb one. A clock shift lands at
+# $408/MWh here, so anything that fails this test is a real defect — fix the
+# reduction, do not widen ``_TOL`` (F6 option C, rejected on that ground).
+#
+# It has not always read this way. Until 2026-08-13 the comment claimed float32
+# was "the only source of disagreement", which was true when written
+# (2026-06-19) and stopped being true on 2026-07-15 when the realized product
+# moved to the standard clock and this consumer did not — by then float32
+# accounted for 0.0000033% of the gap.
 _TOL = 1e-2
 
 
