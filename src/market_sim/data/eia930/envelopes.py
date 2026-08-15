@@ -42,6 +42,41 @@ def _calibration_dir() -> Path:
 _PJM_INTERCHANGE_DIR: Path = ISO_TRANSMISSION_DIR
 
 
+def _pjm_utc_hoy(utc_col: pd.Series, year: int) -> np.ndarray:
+    """Hour-of-year on the model's fixed-EST clock from a PJM ``datetime_beginning_utc``.
+
+    PJM's DataMiner exports carry both a prevailing (``datetime_beginning_ept``)
+    and an absolute (``datetime_beginning_utc``) stamp. The model's 8760 clock is
+    fixed standard time (EST, ``Etc/GMT+5``, no DST) — demand and the EIA-930
+    series all share it. Indexing a DataMiner export on its ``_ept`` wall clock
+    places the ~5,600 DST-months rows one hour late against that clock; taking
+    the ``_utc`` stamp, converting it to EST, and using its wall-clock
+    month/day/hour puts the row on the model clock — byte-identical to the old
+    ``_ept`` placement outside DST, exactly one hour earlier inside it. Feb 29
+    (standard-time, EST==EPT) is dropped; a row whose EST instant falls outside
+    ``year`` maps to ``-1`` for the caller to drop. See
+    ``docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md`` §3.
+    """
+    est = (
+        pd.to_datetime(utc_col, format="mixed", errors="coerce")
+        .dt.tz_localize("UTC")
+        .dt.tz_convert("Etc/GMT+5")
+        .dt.tz_localize(None)
+    )
+    month = est.dt.month.to_numpy()
+    day = est.dt.day.to_numpy()
+    hour = est.dt.hour.to_numpy()
+    yr = est.dt.year.to_numpy()
+    ok = est.notna().to_numpy() & (yr == year) & ~((month == 2) & (day == 29))
+    hoy = np.full(len(est), -1, dtype=np.int64)
+    hoy[ok] = (
+        np.array(_MONTH_START_HOUR)[month[ok].astype(int) - 1]
+        + (day[ok].astype(int) - 1) * 24
+        + hour[ok].astype(int)
+    )
+    return hoy
+
+
 def measured_monthly_hydro(iso: str, year: int) -> np.ndarray | None:
     """Return EIA-930 measured conventional-hydro net generation by month.
 
@@ -1048,15 +1083,8 @@ def pjm_net_interchange(year: int) -> np.ndarray | None:
     path = _PJM_INTERCHANGE_DIR / f"PJM_{year}_import_export_act_sch_interchange.csv"
     if not path.exists():
         return None
-    df = pd.read_csv(path, usecols=["datetime_beginning_ept", "actual_flow"])
-    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
-    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
-    df, ts = df[keep], ts[keep]
-    hoy = (
-        np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
-        + (ts.dt.day.to_numpy() - 1) * 24
-        + ts.dt.hour.to_numpy()
-    )
+    df = pd.read_csv(path, usecols=["datetime_beginning_utc", "actual_flow"])
+    hoy = _pjm_utc_hoy(df["datetime_beginning_utc"], year)
     # Sum actual flow across ties per hour-of-year; negate to export-positive.
     net = np.zeros(HOURS_PER_YEAR, dtype=float)
     counted = np.zeros(HOURS_PER_YEAR, dtype=bool)
@@ -1122,16 +1150,9 @@ def pjm_zonal_interchange(year: int, zone_names: list[str]) -> np.ndarray | None
     if not path.exists():
         return None
     df = pd.read_csv(
-        path, usecols=["datetime_beginning_ept", "tie_line", "actual_flow"]
+        path, usecols=["datetime_beginning_utc", "tie_line", "actual_flow"]
     )
-    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
-    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
-    df, ts = df[keep], ts[keep]
-    hoy = (
-        np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
-        + (ts.dt.day.to_numpy() - 1) * 24
-        + ts.dt.hour.to_numpy()
-    )
+    hoy = _pjm_utc_hoy(df["datetime_beginning_utc"], year)
     zone_idx = {z: i for i, z in enumerate(zone_names)}
     out = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
     flow = df["actual_flow"].to_numpy(dtype=float)
@@ -1231,16 +1252,9 @@ def pjm_neighbor_interchange(year: int, neighbor_names: list[str]) -> np.ndarray
     if not path.exists():
         return None
     df = pd.read_csv(
-        path, usecols=["datetime_beginning_ept", "tie_line", "actual_flow"]
+        path, usecols=["datetime_beginning_utc", "tie_line", "actual_flow"]
     )
-    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
-    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
-    df, ts = df[keep], ts[keep]
-    hoy = (
-        np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
-        + (ts.dt.day.to_numpy() - 1) * 24
-        + ts.dt.hour.to_numpy()
-    )
+    hoy = _pjm_utc_hoy(df["datetime_beginning_utc"], year)
     out = np.zeros((len(neighbor_names), HOURS_PER_YEAR), dtype=float)
     flow = df["actual_flow"].to_numpy(dtype=float)
     tie_nb = df["tie_line"].map(lambda t: PJM_TIE_NEIGHBOR.get(str(t))).to_numpy()

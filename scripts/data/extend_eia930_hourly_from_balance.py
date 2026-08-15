@@ -256,9 +256,143 @@ def extend_ba(
     return out_path
 
 
+# ---------------------------------------------------------------------------
+# PJM fueltype input-clock repair (DEBUG-B, 2026-08;
+# docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md §1/§3, chartered
+# under owner decision D-5).  The ``NG:`` fuel-type family of the committed
+# ``PJM hourly.parquet`` ran one hour EARLY at the EIA-930 source (fixed
+# upstream ~Feb-2025), so the 2023 and 2024 blocks sit one slot ahead of the
+# UTC hour they measure.  The repair is *value-preserving*: each affected cell
+# keeps its measured value and only moves to the UTC hour it actually belongs
+# to -- no re-pull, no interpolation, no tuning (rules 13/14).
+#
+# Measured on main @ c447199 with the repo's own instruments, both unchanged:
+#
+#   scripts/probes/_pjm2025_phase_drift.py
+#     * B. July ``NG: SUN`` generation-weighted centroid (astronomically fixed
+#       at ~11.9, gate [11.5, 12.3]):  2023 = 10.91, 2024 = 10.94, 2025 = 12.03
+#     * C. ``Demand`` vs PJM ``hrl_load_metered``: best lag 0 in every year and
+#       season -- the REGION family is already healed and is NOT touched here.
+#   scripts/probes/_pjm2025_wind_anchor.py (vs the PJM UTC-stamped feed)
+#     * WIND/SOLAR/GAS diff-series best lag: 2023 +1, 2024 +1, 2025 0.
+#
+# This supersedes the archived 2026-07 M-1 transform
+# (``patches/archive/pjm-m1-code.patch``, see
+# ``patches/archive/ARCHIVED-2026-08-14-pjm-m1.md``), whose *2023 region -1 h*
+# leg would now double-shift a correct family and whose *2023 fueltype kept*
+# leg would leave the defect in place: the parquet was replaced after the
+# 2026-07 diagnosis (last touch PR #3852's lane), healing the region family and
+# thereby exposing the source's 1 h-early fueltype clock in 2023 that the
+# offsetting construction error had been masking.
+#
+# 2025 is left untouched (the source was correct from ~Feb-2025); January-2025
+# straddles the upstream switch (centroid 11.15) and stays as measured --
+# correcting a sub-month straddle would require fabricating a switch hour
+# (rule 14), so it is documented, not shifted.  Years before 2023 are outside
+# this charter's scope; see the README section this repair updates.
+_PJM_INPUT_CLOCK_SHIFTS: tuple[tuple[int, str, int], ...] = (
+    # (local-date year, family, hours to move the CONTENT: +1 = later)
+    (2023, "fueltype", +1),
+    (2024, "fueltype", +1),
+)
+
+
+def _replace_family_by_utc_shift(
+    df: pd.DataFrame,
+    source: pd.DataFrame,
+    year: int,
+    cols: list[str],
+    content_shift_h: int,
+) -> pd.DataFrame:
+    """Move ``cols`` for local-year ``year`` rows by ``content_shift_h`` hours.
+
+    Value-preserving: the new value at a row whose UTC hour is ``T`` is the
+    value ``source`` holds at ``T - content_shift_h`` (so a ``+1`` shift pulls
+    each cell's content one hour LATER onto its row, correcting a series that
+    was stamped one hour early).  ``source`` spans 2018-2026 contiguously, so a
+    year-boundary row reads its immediate UTC neighbour and no NaN is
+    introduced inside ``year``.  The row grid, the time columns, and every cell
+    outside (``year``, ``cols``) are untouched.
+
+    ``source`` is read separately from ``df`` (the accumulating output) so that
+    every block is re-placed against the **pristine** committed values.  When
+    two shifted year-blocks are adjacent -- as 2023 and 2024 are -- sourcing
+    from the accumulating frame would make the second block's first row read a
+    slot the first block had already moved, double-shifting exactly that
+    boundary hour (the archived patch README's "a second run double-shifts"
+    warning, in a within-run form).
+
+    Args:
+        df: The accumulating output frame (UTC-unique, UTC-sorted).
+        source: The pristine committed extract every block is sourced from.
+        year: Local-date calendar year whose ``cols`` are re-placed.
+        cols: Value columns to move (the ``NG:`` fuel-type family list).
+        content_shift_h: Signed hours to move the content (+1 later / -1 earlier).
+
+    Returns:
+        A copy of ``df`` with only the (``year``, ``cols``) block re-placed.
+    """
+    out = df.sort_values("UTC time").reset_index(drop=True).copy()
+    utc = pd.DatetimeIndex(out["UTC time"])
+    by_utc = source.sort_values("UTC time").set_index("UTC time")
+    # Row T takes the pristine committed value at UTC (T - content_shift_h).
+    src_utc = utc - pd.Timedelta(hours=content_shift_h)
+    src = by_utc[cols].reindex(src_utc).reset_index(drop=True)
+    mask = (out["Local date"].dt.year == year).to_numpy()
+    for col in cols:
+        arr = out[col].to_numpy().copy()
+        arr[mask] = src[col].to_numpy()[mask]
+        out[col] = arr.astype(df[col].dtype)
+    return out
+
+
+def rebuild_pjm_input_clock(force: bool) -> Path:
+    """Apply the DEBUG-B fueltype input-clock re-placement to ``PJM hourly.parquet``.
+
+    Reads the committed wide extract, applies :data:`_PJM_INPUT_CLOCK_SHIFTS`
+    (2023 fueltype +1 h; 2024 fueltype +1 h) as value-preserving UTC-time
+    re-placements, and writes the corrected extract back in the identical
+    schema.  See the module-level notes above and
+    ``docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md`` §3.
+    """
+    out_path = OUT_DIR / "PJM hourly.parquet"
+    df = pd.read_parquet(out_path)
+    original_cols = list(df.columns)
+    fuel_cols = [c for c in df.columns if c.startswith("NG: ")]
+    # Every block is sourced from this pristine frame, never from the
+    # accumulating output -- see _replace_family_by_utc_shift on why adjacent
+    # shifted years would otherwise double-shift their shared boundary hour.
+    pristine = df.copy()
+    for year, family, shift in _PJM_INPUT_CLOCK_SHIFTS:
+        if family != "fueltype":
+            raise ValueError(f"unsupported family {family!r}")
+        df = _replace_family_by_utc_shift(df, pristine, year, fuel_cols, shift)
+        print(
+            f"  PJM {year} {family} family: content shifted {shift:+d} h "
+            f"({len(fuel_cols)} cols)"
+        )
+    df = df[original_cols]
+    if not force:
+        tmp = out_path.with_suffix(".parquet.new")
+        df.to_parquet(tmp, index=False)
+        tmp.replace(out_path)
+    else:
+        df.to_parquet(out_path, index=False)
+    print(f"  -> wrote {out_path}")
+    return out_path
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--ba", action="append", required=True, dest="bas")
+    ap.add_argument(
+        "--rebuild-pjm-input-clock",
+        action="store_true",
+        help="Apply the DEBUG-B fueltype clock re-placement to the committed "
+        "PJM hourly.parquet (2023 and 2024 fueltype +1h) and exit; "
+        "value-preserving, cites docs/handoffs/debug-b-pjm-input-clock-"
+        "charter-2026-08.md.",
+    )
+    ap.add_argument("--ba", action="append", dest="bas")
     ap.add_argument(
         "--year",
         action="append",
@@ -279,6 +413,11 @@ def main() -> None:
         help="unused placeholder for symmetry with sibling fetch scripts",
     )
     args = ap.parse_args()
+    if args.rebuild_pjm_input_clock:
+        rebuild_pjm_input_clock(args.force)
+        return
+    if not args.bas:
+        ap.error("--ba is required unless --rebuild-pjm-input-clock is given")
     years = tuple(args.years) if args.years else _DEFAULT_EXTEND_YEARS
     halves = tuple(args.halves) if args.halves else _DEFAULT_HALVES
     for ba in args.bas:
