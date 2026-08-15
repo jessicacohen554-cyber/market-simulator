@@ -86,6 +86,7 @@ jobs:
             /docs/
             /frontend/
             /results/
+            /scope2-lce-portfolio/
             /data/dictionary/
             /data/raw/*.csv
             /data/raw/*.parquet
@@ -206,8 +207,8 @@ jobs:
         run: uv sync
       - name: Hardware before
         run: free -h && df -h / && swapon --show || true
-      - name: curate_emissions 2023 with peak-RSS report
-        run: uv run python .github/probes/rss_wrap.py scripts/data/curate_emissions.py --years 2023
+      - name: curate_emissions 2023 (LOW-MEM prototype) with peak-RSS report
+        run: uv run python .github/probes/rss_wrap.py scripts/data/curate_emissions_lowmem.py --years 2023
       - name: Hardware after
         if: always()
         run: free -h && df -h /
