@@ -1,0 +1,185 @@
+{
+ "iso": "CAISO",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "keeper": "caiso188_d1_micseam",
+ "instrument": "REPAIRED (campd.CAMPD_UNIT_PLANT_REMAP + re-derived extract; PRECHECK-caiso196-elsegundo-remap-2026-08-15.md \u00a72)",
+ "remap_entries": [
+  "(315, 'CT1') -> 62115",
+  "(315, 'CT2') -> 62115",
+  "(330, '5') -> 57901",
+  "(330, '7') -> 57901",
+  "(335, 'CT1') -> 62116",
+  "(335, 'CT2') -> 62116"
+ ],
+ "per_class": {
+  "CC_CHP": {
+   "class_capacity_mw": 1689.3,
+   "plants": 21,
+   "pop_outage_extract": {
+    "covered_capacity_mw": 1145.9,
+    "share": 0.678375,
+    "uncovered_plants": [
+     [
+      10213,
+      54.0
+     ],
+     [
+      10262,
+      2.7
+     ],
+     [
+      10342,
+      73.8
+     ],
+     [
+      50061,
+      2.1
+     ],
+     [
+      50216,
+      141.8
+     ],
+     [
+      50849,
+      10.0
+     ],
+     [
+      52109,
+      54.5
+     ],
+     [
+      54912,
+      24.0
+     ],
+     [
+      55084,
+      160.6
+     ],
+     [
+      57122,
+      6.7
+     ],
+     [
+      57584,
+      11.5
+     ],
+     [
+      58198,
+      1.8
+     ]
+    ]
+   },
+   "pop_cems_unitlevel_remap_aware": {
+    "covered_capacity_mw": 1073.9,
+    "share": 0.635703,
+    "uncovered_plants": [
+     [
+      10213,
+      54.0
+     ],
+     [
+      10262,
+      2.7
+     ],
+     [
+      10342,
+      73.8
+     ],
+     [
+      50061,
+      2.1
+     ],
+     [
+      50216,
+      141.8
+     ],
+     [
+      50849,
+      10.0
+     ],
+     [
+      50850,
+      20.0
+     ],
+     [
+      50851,
+      20.2
+     ],
+     [
+      52109,
+      54.5
+     ],
+     [
+      54912,
+      24.0
+     ],
+     [
+      55084,
+      160.6
+     ],
+     [
+      56356,
+      31.8
+     ],
+     [
+      57122,
+      6.7
+     ],
+     [
+      57584,
+      11.5
+     ],
+     [
+      58198,
+      1.8
+     ]
+    ]
+   },
+   "strict_share": 0.635703,
+   "bar": 0.95,
+   "g_cov_pass": false
+  },
+  "CC_REGULAR": {
+   "class_capacity_mw": 15284.8,
+   "plants": 28,
+   "pop_outage_extract": {
+    "covered_capacity_mw": 14914.7,
+    "share": 0.975784,
+    "uncovered_plants": [
+     [
+      55077,
+      370.1
+     ]
+    ]
+   },
+   "pop_cems_unitlevel_remap_aware": {
+    "covered_capacity_mw": 14775.3,
+    "share": 0.966664,
+    "uncovered_plants": [
+     [
+      50541,
+      107.4
+     ],
+     [
+      50748,
+      32.0
+     ],
+     [
+      55077,
+      370.1
+     ]
+    ]
+   },
+   "strict_share": 0.966664,
+   "bar": 0.95,
+   "g_cov_pass": true
+  }
+ },
+ "g_cov_surviving_groups": [
+  "CC_REGULAR"
+ ]
+}

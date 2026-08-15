@@ -166,6 +166,17 @@ CAMPD_UNIT_PLANT_REMAP: dict[tuple[int, str], int] = {
     (315, "CT2"): 62115,
     (335, "CT1"): 62116,  # AES Huntington Beach Energy Project (CC_REGULAR)
     (335, "CT2"): 62116,
+    # El Segundo Energy Center (CC_REGULAR): the 2013 repower's two CTs file
+    # CEMS under the legacy El Segundo steam-plant ORIS 330 as units "5"/"7"
+    # (every CA extract 2018-2025), while EIA lists the plant as 57901 with
+    # the same generator IDs. Unlike 315/335, the legacy EIA plant (330)
+    # fully retired in 2015, so nothing remained in the fleet to collide
+    # with and the missing entry failed SILENTLY: facility 330 matched no
+    # fleet plant and the outage derivation skipped it before detection.
+    # [R-ACCURATE] FINDING-caiso193-wefor-residual-2026-08-15.md §2;
+    # PRECHECK-caiso196-elsegundo-remap-2026-08-15.md §1.
+    (330, "5"): 57901,
+    (330, "7"): 57901,
 }
 
 # Facilities with at least one remapped unit (split facilities).
