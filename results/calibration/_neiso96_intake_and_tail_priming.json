@@ -1,0 +1,151 @@
+{
+ "note": "NEISO H1-2026 actuals intake (neiso-96) and the C3c tail deriver's gate state. The 2026 row is PRESENT IN THE DATA and WITHHELD BY THE GATE at HEAD -- locked-test tier, `final` empty -- which is the correct behaviour and is what makes the neiso-90 ordering hazard now merely an ordering requirement rather than a data gap. The counterfactual row is computed against an in-memory marker; no marker file was written and NO GRANT IS IMPLIED. No year solved, scored or registered.",
+ "intake": {
+  "threshold": 300.0,
+  "years": {
+   "2018": {
+    "rows": 8760,
+    "rt_coverage": 0.9999,
+    "da_coverage": 0.9999,
+    "rt_mean": 43.55,
+    "rt_max": 2454.57,
+    "rt_gt_threshold": 32,
+    "da_gt_threshold": 4
+   },
+   "2019": {
+    "rows": 8760,
+    "rt_coverage": 0.9999,
+    "da_coverage": 0.9999,
+    "rt_mean": 30.67,
+    "rt_max": 261.35,
+    "rt_gt_threshold": 0,
+    "da_gt_threshold": 0
+   },
+   "2020": {
+    "rows": 8760,
+    "rt_coverage": 0.9999,
+    "da_coverage": 0.9999,
+    "rt_mean": 23.39,
+    "rt_max": 236.11,
+    "rt_gt_threshold": 0,
+    "da_gt_threshold": 0
+   },
+   "2021": {
+    "rows": 8760,
+    "rt_coverage": 0.9999,
+    "da_coverage": 0.9999,
+    "rt_mean": 44.84,
+    "rt_max": 375.28,
+    "rt_gt_threshold": 2,
+    "da_gt_threshold": 0
+   },
+   "2022": {
+    "rows": 8760,
+    "rt_coverage": 0.9999,
+    "da_coverage": 0.9999,
+    "rt_mean": 84.92,
+    "rt_max": 2254.35,
+    "rt_gt_threshold": 117,
+    "da_gt_threshold": 27
+   },
+   "2023": {
+    "rows": 8760,
+    "rt_coverage": 0.9999,
+    "da_coverage": 0.9999,
+    "rt_mean": 35.7,
+    "rt_max": 1161.97,
+    "rt_gt_threshold": 15,
+    "da_gt_threshold": 5
+   },
+   "2024": {
+    "rows": 8760,
+    "rt_coverage": 1.0,
+    "da_coverage": 1.0,
+    "rt_mean": 39.54,
+    "rt_max": 2112.77,
+    "rt_gt_threshold": 8,
+    "da_gt_threshold": 5
+   },
+   "2025": {
+    "rows": 8760,
+    "rt_coverage": 1.0,
+    "da_coverage": 1.0,
+    "rt_mean": 65.88,
+    "rt_max": 1110.22,
+    "rt_gt_threshold": 20,
+    "da_gt_threshold": 12
+   },
+   "2026": {
+    "rows": 8760,
+    "rt_coverage": 0.4958,
+    "da_coverage": 0.4958,
+    "rt_mean": 78.82,
+    "rt_max": 776.59,
+    "rt_gt_threshold": 126,
+    "da_gt_threshold": 140
+   }
+  }
+ },
+ "gate": {
+  "marker_final_block_present": true,
+  "marker_complete_has_neiso": true,
+  "years": {
+   "2018": {
+    "tier": "locked_test",
+    "emittable_at_head": false
+   },
+   "2019": {
+    "tier": "locked_test",
+    "emittable_at_head": false
+   },
+   "2020": {
+    "tier": "validation",
+    "emittable_at_head": true
+   },
+   "2021": {
+    "tier": "validation",
+    "emittable_at_head": true
+   },
+   "2022": {
+    "tier": "validation",
+    "emittable_at_head": true
+   },
+   "2023": {
+    "tier": "train",
+    "emittable_at_head": true
+   },
+   "2024": {
+    "tier": "train",
+    "emittable_at_head": true
+   },
+   "2025": {
+    "tier": "train",
+    "emittable_at_head": true
+   },
+   "2026": {
+    "tier": "locked_test",
+    "emittable_at_head": false
+   }
+  }
+ },
+ "counterfactual_2026": {
+  "emittable_at_head": false,
+  "emittable_under_final": true,
+  "row_that_would_be_emitted": {
+   "threshold": 300.0,
+   "da_gt": 140,
+   "rt_gt": 126,
+   "da_coverage": 0.496,
+   "rt_coverage": 0.496,
+   "hours": 8760
+  }
+ },
+ "committed_actual_tail_neiso_years": [
+  "2020",
+  "2021",
+  "2022",
+  "2023",
+  "2024",
+  "2025"
+ ]
+}
