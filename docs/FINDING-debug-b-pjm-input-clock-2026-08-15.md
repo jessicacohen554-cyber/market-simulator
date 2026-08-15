@@ -193,6 +193,36 @@ shares move only inside DST hours.
 Rule 14 governs the outcome: **if any criterion worsens at the corrected inputs, the accurate
 input stays and the root cause gets filed. The repair is not reverted to buy a residual back.**
 
-## 8. Re-solve and registration
+## 8. A reproducibility gap the charter does not mention
 
-See §8 below (appended after the full-span bundle completed).
+**Replaying the current PJM keeper recipe in a fresh clone needs two inputs that no
+`hydrate_data.py` profile can supply.** The charter's `DATA PROFILE: pjm` resolves to a
+sparse-checkout pattern set over *committed* `data/raw` paths; both of the following are
+gitignored, so `--profile pjm` cannot and does not fetch them. The first replay attempt died
+on each in turn, at input-load time:
+
+1. **`data/clean/` — the curated tree.** Gitignored as "DERIVED and disposable"
+   (`.gitignore` §5). `pjm_measured_interface_limits` raises rather than no-op, so the solve
+   aborts on `transfer-interface-limits` before any LP work. Fix:
+   `scripts/regenerate_clean.py` — 50 datatypes across all ISOs, ~2 h wall-clock on this box
+   (the only skips are absent non-PJM sources: CAISO public bids, the 2026 benchmark-corridor
+   forecast rows — neither reachable by a PJM 2023-2025 backcast).
+2. **`data/raw/pjm-da-virtuals/` — the DA virtual bid curves.** Gitignored for a *licensing*
+   reason, not a derivability one: PJM DataMiner2 data carries a non-member redistribution
+   restriction (`docs/data-licensing.md` §4, the `pjm-energy-offers` precedent), so only the
+   README is tracked. The keeper recipe has `pjm_da_virtual_bids` on and
+   `src/market_sim/data/virtual_bids.py` likewise refuses to silently no-op. Fix:
+   `scripts/data/fetch_pjm_da_virtuals.py --years 2023 2024 2025 --feeds hrl_da_incs_decs`
+   — a **live PJM API fetch**, 36 monthly files, which through this environment's egress proxy
+   returns intermittent `502 Bad Gateway` mid-pagination (the script backs off and resumes on
+   its own, so the files land intact, but the run is not hermetic).
+
+Neither is a defect in this lane's repair, and neither changes any measured result above.
+Both are worth folding into the charter template for PJM replay lanes: **a fresh-clone PJM
+re-solve is gated on a ~2 h clean-tier rebuild plus a live licensed-data fetch**, which is a
+material scheduling fact for any session that has to register a bundle in-session under rule
+15 `[R-DASHBOARD]`.
+
+## 9. Re-solve and registration
+
+See below (appended after the full-span bundle completed).
