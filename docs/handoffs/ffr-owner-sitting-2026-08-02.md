@@ -4801,3 +4801,96 @@ One dispatched lane outstanding (**D-31-ADOPT**, nil evidence) and one new card
 (**D-33**, the NYISO convention, prompt written and parked in §0au-1). On D-31's landing
 and adjudication, this desk CLOSES with exactly one residual: **Q.2 at G2**, whose
 trigger the release program's ledger already carries. No FFR or FH work remains.
+
+## Addendum AV — DESK CLOSED: D-31 landed and ACCEPTED, both signed cards discharged, two residuals re-homed
+
+*Written 2026-08-14 at `315a245`, session claude/ffr-fh-workstream-handoff-w8w7dg. This is
+the FFR/FH workstream desk's CLOSING entry. Addendum AU is merged and on main.*
+
+### AV.1 D-31-ADOPT — LANDED, adjudicated ACCEPTED (#3950, `docs/handoffs/d31-adopt-2026-08-13.md`)
+
+`QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"]` = **8.0** at
+`src/market_sim/config/capacity_market.py`. The citation block carries the full rule-23
+chain: demonstrated peak annual ERCOT solar COD 2021–2025 = **7.74 GW (2025)** (EIA-860
+2025 Early Release, BA code ERCO, nameplate AC; series 3.97 / 2.53 / 3.55 / 7.29 / 7.74),
+8.0 the smallest 0.5 GW step at or above it per this table's own documented convention;
+robustness **7.5–8.5 GW across five pre-registered windows × four identifications**, with
+nothing landing near 5.0; the vintage argument stated explicitly (5.0 WAS right — 1.26×
+above a 3.96–3.97 GW visible peak — and went stale when 2024–2025 throughput roughly
+doubled); rule 13 unchanged in kind. Owner signature and adoption doc both cited in the
+comment.
+
+**The two things that make this a clean adoption rather than a value edit:**
+
+* **It found the house cache practice instead of inventing one — the duty I was least
+  confident would be discharged well.** The epoch is deliberately not a code token; it
+  lives on two human-read surfaces, and the lane correctly identified that this is the
+  *same-key invalidation* case (not a key advance), recorded a dated entry **"Epoch
+  2026-08-14 — D-31 ERCOT solar queue-cap adoption"** in the cache-epoch ledger in
+  `results/cache.py`'s docstring, and named the closest precedent (**Epoch 2026-08-03b**,
+  the FFR-SC NYISO demand-anchor re-derive — likewise constants-level, one ISO, no key
+  movement). The AT.1 correction — that the key does NOT move, which is the more
+  dangerous case — was the right call and the lane executed against it.
+* **It re-derived wind and deliberately left it alone.** Measured in the same RC-DERIVE
+  pass: peak annual ERCOT wind COD 3.95 GW (2021), cap 1.26× above its own peak, and
+  throughput then FELL (1.46 / 1.73 / 1.67 GW in 2023–2025), so the cap does not bind.
+  Recorded in the comment as unchanged-and-still-correct. That is rule 20
+  `[R-FROZEN-DERIVE]` discipline applied to the value nobody asked about.
+
+**The re-base note is explicit and correctly scoped** (§3): the change is behavioral, not
+cosmetic — FFR-9C §4.2 established this cap as the sole constraint holding ERCOT forecast
+solar entry down, binding from into-2024 across $51–$2,420 — so **every pre-change ERCOT
+forward sidecar is historical record and never a post-change baseline; a re-based ERCOT
+forecast leg must be RE-SOLVED, not diffed.** Any future ERCOT forecast lane inherits that
+sentence.
+
+### AV.2 The desk's ledger, closed
+
+| Object | Disposition |
+|---|---|
+| FFR forecast-readiness remediation | **COMPLETE** — override-precedence exposure closed (#3915), stage-B epoch declared and pinned (#3903), ledgers verified intact |
+| Wave FH forward-mode hindcast | **COMPLETE at 12/12 arms**, I6 rider passing on every one (#3921/#3923) |
+| Card R (ERCOT determination ceiling) | SIGNED **R-A**, ercot-194 |
+| Card D-31 (8.0 GW solar cap) | SIGNED 2026-08-13 → **LANDED, ACCEPTED** (AV.1) |
+| Card D-32 (F6 parity fix) | SIGNED 2026-08-13 → **LANDED, ACCEPTED** (AU.1) |
+| λ-led price-side condition wording | **CLOSED** as answered in substance by R-A (AT.3) |
+| Branch protection | **DISPOSED to G2** by owner (release-plan decision 3) — recorded, not re-put |
+| RAW-UNTRACK | **WITHDRAWN into BLOAT** (AS.5); BLOAT-A's plan §1 carries it, wholesale untrack as a Stage 2 owner option |
+
+### AV.3 The two residuals, and who holds them — the ONLY things that outlive this desk
+
+1. **Q.2 supersession battery, at G2.** One six-ISO forward-mode scoring run against the
+   final keepers; the program's closing evidence table. Commissioned ONCE, when the Model
+   Audit & Release program's **G2 declares FINAL MODEL STATE**. The release program's
+   ledger already carries the trigger (AU.5) — **that ledger is the authoritative home,
+   not this doc.** G1 has not passed (AUDIT-A / PERF-A / DOCS-A not yet on main), so G2 is
+   at least two gates out. Whoever fires it should read AS.6 and AU.4 for why it was held:
+   ERCOT moved four times and NEISO once while this desk ran; a battery run on unsettled
+   keepers measures nothing.
+2. **Card D-33, the NYISO RTD interval convention** (AU.2). Prompt written and parked at
+   pack §0au-1. Data-contract work, not FFR/FH. **Load-bearing consequence:** the
+   `iso-model-unification-plan` §3 migration to a mandatory clean backend must not be
+   treated as unblocked for NYISO until this is adjudicated.
+
+### AV.4 Keeper state at closure, and one move this desk did not adjudicate
+
+CAISO `2026-08-09-caiso-188-d1-micseam` · ERCOT `2026-08-12-run192-arm-coal-peak` · MISO
+`2026-08-09-miso-148-basis-aware` · **NEISO `2026-08-14-neiso-93-envelope`** (moved this
+cycle — the envelope repair; a NEISO calibration-lane promotion, adjudicated by that lane,
+recorded here only as state) · NYISO `2026-08-08-nyiso-132-cf-arm` · PJM
+`2026-08-04-pjm-152-collapse`. Markers `complete` = {NEISO, NYISO, PJM}; `final` EMPTY;
+holdout freeze ACTIVE. **Open PR #3947 will move ERCOT again** (ercot-196
+plant-physics arm) — ERCOT-SCAR's, not this desk's.
+
+### AV.5 Closing note on method, for whoever reads this record next
+
+Three habits earned their keep and are worth carrying: **verify by artifact, never by lane
+summary** (AR found stage B armed on main by grep after a summary said otherwise; AU found
+main had moved twice mid-sitting); **correct by addendum, never by rewrite** (AL corrected
+AK, AQ corrected AP, AR corrected §0aq's own claim about itself, AT.1 corrected AS.3's
+cache-key reasoning — every correction is load-bearing history now); and **a dispatched
+lane that returns "no evidence yet" is not a failed lane** — D-31 sat nil for three
+consecutive reports and then landed clean. Nagging it would have bought nothing.
+
+**This desk is CLOSED.** No FFR or FH dispatch remains or is contemplated. If it is ever
+re-opened, pack §0av is the re-entry prompt.
