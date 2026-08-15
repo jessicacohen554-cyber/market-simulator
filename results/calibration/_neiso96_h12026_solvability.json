@@ -1,0 +1,185 @@
+{
+ "note": "What still blocks a NEISO H1-2026 solve after the neiso-96 actuals intake. The scoring TARGET now exists (actual_lmp row present, 126 actual RT hours over $300). The SOLVE does not: the demand path rejects any extract that is not a full HOURS_PER_YEAR series, and the fallback demand-profiles parquet has no 2026 row, so a half-year cannot be built. The gate is in shared code and every BA fails it for 2026 -- structural and six-ISO, not a NEISO data gap. No year solved, scored or registered.",
+ "input_walk_2026": {
+  "probe_actual_lmp": {
+   "2023": {
+    "status": "OK",
+    "note": "8760 h, cov 1.000, max $1,161.97, mean $35.70, >$300: 15h"
+   },
+   "2026": {
+    "status": "OK",
+    "note": "8760 h, cov 0.496, max $776.59, mean $78.82, >$300: 126h"
+   }
+  },
+  "probe_actual_tail": {
+   "2023": {
+    "status": "OK",
+    "note": "rt_gt 15h, da_gt 5h, cov 1.0"
+   },
+   "2026": {
+    "status": "GAP",
+    "note": "no row \u2014 C3c SKIPs for this year"
+   }
+  },
+  "probe_backcast_config": {
+   "2023": {
+    "status": "OK",
+    "note": "built; gas $2.54, campd_bins=True, plant_level=True, winter_fuel_mustrun=False"
+   },
+   "2026": {
+    "status": "ERR",
+    "note": "KeyError: 2026"
+   }
+  },
+  "probe_calibration_reference": {
+   "2023": {
+    "status": "OK",
+    "note": "isos.NEISO.2023: 4 keys (demand, generation_twh, henry_hub_actual, renewables); henry_hub present"
+   },
+   "2026": {
+    "status": "GAP",
+    "note": "no isos.NEISO.2026 block"
+   }
+  },
+  "probe_demand": {
+   "2023": {
+    "status": "OK",
+    "note": "shape (5, 8760), peak 20,347 MW, 96.86 TWh"
+   },
+   "2026": {
+    "status": "ERR",
+    "note": "ValueError: No EIA-930 data for ISO 'NEISO' in year 2026"
+   }
+  },
+  "probe_henry_hub": {
+   "2023": {
+    "status": "OK",
+    "note": "$2.54/MMBtu"
+   },
+   "2026": {
+    "status": "ERR",
+    "note": "KeyError: 2026"
+   }
+  },
+  "probe_hydro": {
+   "2023": {
+    "status": "OK",
+    "note": "168 plants, 8.55 TWh budget, max 1,882 MW"
+   },
+   "2026": {
+    "status": "OK",
+    "note": "5 plants, 0.04 TWh budget, max 30 MW"
+   }
+  },
+  "probe_parasitic": {
+   "2023": {
+    "status": "OK",
+    "note": "pooled year==0 map: 544 plants (year-independent by construction)"
+   },
+   "2026": {
+    "status": "OK",
+    "note": "pooled year==0 map: 544 plants (year-independent by construction)"
+   }
+  },
+  "probe_renewable_capacity": {
+   "2023": {
+    "status": "OK",
+    "note": "120 rows \u2014 data/raw/_validation-source/NEISO_2023_renewable_capacity.csv"
+   },
+   "2026": {
+    "status": "GAP",
+    "note": "file absent"
+   }
+  },
+  "probe_reserve_requirements": {
+   "2023": {
+    "status": "OK",
+    "note": "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+   },
+   "2026": {
+    "status": "OK",
+    "note": "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+   }
+  }
+ },
+ "full_year_gate": {
+  "hours_per_year_gate": 8760,
+  "bas": {
+   "CAISO (CISO)": {
+    "2025": null,
+    "2026": null
+   },
+   "ERCOT (ERCO)": {
+    "2025": 8760,
+    "2026": null
+   },
+   "MISO (MISO)": {
+    "2025": null,
+    "2026": null
+   },
+   "NEISO (ISNE)": {
+    "2025": 8760,
+    "2026": null
+   },
+   "NYISO (NYIS)": {
+    "2025": 8760,
+    "2026": null
+   },
+   "PJM (PJM)": {
+    "2025": 8760,
+    "2026": null
+   }
+  }
+ },
+ "demand_profiles_coverage": {
+  "CAISO": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "ERCOT": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "MISO": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "NEISO": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "NYISO": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "PJM": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "SPP": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ]
+ }
+}
