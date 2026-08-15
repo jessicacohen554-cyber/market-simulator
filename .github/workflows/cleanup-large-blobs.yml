@@ -22,6 +22,12 @@ name: Cleanup Large File Blobs from History (Protected)
 #                     breaks: it still resolves, to the wrong thing. The
 #                     --prune-empty/--prune-degenerate flags on the strip step
 #                     prevent it; this check proves they did.
+#   Cited commits  — every commit named in docs/governance/citation-tags.json
+#                     that is reachable from a branch or tag must still exist
+#                     with the same identity after the rewrite. Cited commits
+#                     that are reachable only from refs/pull/* are not part of
+#                     the rewritten history and are reported, not verified —
+#                     see the protect step for why.
 #   Any out-of-scope change anywhere aborts before pushing.
 #
 # Runs against a --mirror (bare) clone. There is NO working tree at any point:
@@ -228,10 +234,33 @@ jobs:
           # now and re-check them after the strip via filter-repo's commit-map.
           # This is the protection that does NOT depend on the tags existing.
           CITED_HASHES=$(mktemp)
-          cited_count=0; cited_absent=0
+          CITED_UNREACHABLE=$(mktemp)
+          cited_count=0; cited_absent=0; cited_unreachable=0
           if git cat-file -e "refs/heads/${DEFAULT_BRANCH}:docs/governance/citation-tags.json" 2>/dev/null; then
             echo ""
             echo "=== Recording load-bearing commits from the citation manifest ==="
+
+            # A cited commit is only checkable against filter-repo's commit-map if
+            # it is part of the history filter-repo actually rewrites, i.e. if it
+            # is reachable from refs/heads/* or refs/tags/*. Some are not: a commit
+            # on a merged PR whose branch was deleted is pinned ONLY by
+            # refs/pull/*, which the mirror step deletes so gc can reclaim space.
+            # In this clone such a commit is already unreachable garbage; the first
+            # gc drops it, it never reaches filter-repo, and it gets no commit-map
+            # entry. Checking it like a rewritten commit reports
+            # "maps to <itself>, which does not exist" — a failure about THIS
+            # clone's gc, not about the rewrite.
+            #
+            # On the remote those commits are untouched: GitHub keeps refs/pull/*
+            # indefinitely and this workflow never pushes them, so the citation
+            # still resolves at its original SHA. So split the manifest here and
+            # report the two groups differently: reachable commits are verified
+            # against the commit-map and can fail the run; unreachable ones are
+            # reported as unchanged, with a warning that their durability rests on
+            # GitHub's PR refs rather than on any ref in this repository.
+            REACHABLE=$(mktemp)
+            git rev-list --branches --tags | sort > "$REACHABLE"
+
             git show "refs/heads/${DEFAULT_BRANCH}:docs/governance/citation-tags.json" \
               > /tmp/citation-tags.json
             while read -r oid; do
@@ -243,10 +272,25 @@ jobs:
               fi
               identity=$(git log -1 --format='%an|%ae|%ad|%s' --date=iso "$oid" \
                 | sha256sum | awk '{print $1}')
-              echo "$oid $identity" >> "$CITED_HASHES"
-              cited_count=$((cited_count + 1))
+              if grep -qxF "$(git rev-parse "${oid}^{commit}")" "$REACHABLE"; then
+                echo "$oid $identity" >> "$CITED_HASHES"
+                cited_count=$((cited_count + 1))
+              else
+                echo "$oid $identity" >> "$CITED_UNREACHABLE"
+                cited_unreachable=$((cited_unreachable + 1))
+                printf "  NOTE  %s — not reachable from any branch or tag; %s\n" \
+                  "$oid" "$(git log -1 --format='%ad %s' --date=short "$oid")"
+              fi
             done < <(python3 -c "import json;[print(e['oid']) for e in json.load(open('/tmp/citation-tags.json'))]")
-            echo "Recorded $cited_count load-bearing commit identities ($cited_absent absent)"
+            echo "Recorded $cited_count load-bearing commit identities" \
+                 "($cited_unreachable outside the rewritten history, $cited_absent absent)"
+            if [ "$cited_unreachable" -gt 0 ]; then
+              echo "::warning::$cited_unreachable cited commit(s) are reachable only via"
+              echo "  GitHub's refs/pull/* refs, not from any branch or tag. This rewrite"
+              echo "  leaves them alone, but nothing in this repository pins them. Publish"
+              echo "  the cite/* tags from docs/governance/citation-tags.json to make them"
+              echo "  durable — the push step below has a token that can create tags."
+            fi
           else
             echo ""
             echo "::warning::No docs/governance/citation-tags.json on ${DEFAULT_BRANCH};"
@@ -258,6 +302,7 @@ jobs:
           echo "branch_hashes=$BRANCH_HASHES" >> "$GITHUB_OUTPUT"
           echo "tag_hashes=$TAG_HASHES" >> "$GITHUB_OUTPUT"
           echo "cited_hashes=$CITED_HASHES" >> "$GITHUB_OUTPUT"
+          echo "cited_unreachable=$CITED_UNREACHABLE" >> "$GITHUB_OUTPUT"
 
           echo ""
           echo "--- Live files in scope (${DEFAULT_BRANCH}) ---"
@@ -479,6 +524,7 @@ jobs:
           BRANCH_HASHES="${{ steps.protect.outputs.branch_hashes }}"
           TAG_HASHES="${{ steps.protect.outputs.tag_hashes }}"
           CITED_HASHES="${{ steps.protect.outputs.cited_hashes }}"
+          CITED_UNREACHABLE="${{ steps.protect.outputs.cited_unreachable }}"
           IN_SCOPE_RE="^${SCOPE_REGEX}"
 
           echo "=== Verifying manifests ==="
@@ -570,18 +616,21 @@ jobs:
           COMMIT_MAP="$(git rev-parse --git-dir)/filter-repo/commit-map"
           ZERO="0000000000000000000000000000000000000000"
           CITE_TRANSLATION="$GITHUB_WORKSPACE/citation-commit-map.txt"
+          echo "# old_sha new_sha  (load-bearing commits, this rewrite)" > "$CITE_TRANSLATION"
           if [ ! -s "$CITED_HASHES" ]; then
-            echo "  (none recorded — see the protect step's warning)"
+            echo "  (none reachable from a branch or tag — see the protect step)"
           elif [ ! -f "$COMMIT_MAP" ]; then
             echo "  FAIL  filter-repo wrote no commit-map at $COMMIT_MAP"
             failures=$((failures + 1))
           else
-            echo "# old_sha new_sha  (load-bearing commits, this rewrite)" > "$CITE_TRANSLATION"
             cited_ok=0
             while IFS=' ' read -r oid identity_hash; do
               [ -z "$oid" ] && continue
               new=$(awk -v o="$oid" '$1 == o {print $2; exit}' "$COMMIT_MAP")
-              # Absent from the map means filter-repo left the commit untouched.
+              # filter-repo maps every commit it processes, unchanged ones to
+              # themselves, so a reachable commit should always be present here.
+              # Fall back to the old SHA rather than guessing; if the commit is
+              # really gone, the existence check below reports it.
               [ -z "$new" ] && new="$oid"
 
               if [ "$new" = "$ZERO" ]; then
@@ -607,10 +656,36 @@ jobs:
               cited_ok=$((cited_ok + 1))
             done < "$CITED_HASHES"
             echo "  $cited_ok load-bearing commit(s) survived with identity intact"
-            echo "  old->new translation written to $CITE_TRANSLATION"
-            echo "  COMMIT THIS FILE after the run: it is the only artifact that"
-            echo "  can translate a pre-rewrite citation into a post-rewrite SHA."
           fi
+
+          # Cited commits that were never part of the rewritten history. They are
+          # unchanged by definition: this workflow pushes refs/heads/* and tags
+          # only, so their remote copies keep resolving at their original SHAs.
+          # Recorded as identity entries in the translation file so a consumer can
+          # look up any cited SHA there without special-casing.
+          if [ -s "$CITED_UNREACHABLE" ]; then
+            echo ""
+            echo "=== Cited commits outside the rewritten history ==="
+            echo "  reachable only via GitHub's refs/pull/*, which the mirror step"
+            echo "  drops locally and this workflow never pushes — so the rewrite"
+            echo "  neither renames nor removes them on the remote"
+            unreachable_n=0
+            while IFS=' ' read -r oid identity_hash; do
+              [ -z "$oid" ] && continue
+              echo "  KEEP  $oid — unchanged (not rewritten)"
+              echo "$oid $oid" >> "$CITE_TRANSLATION"
+              unreachable_n=$((unreachable_n + 1))
+            done < "$CITED_UNREACHABLE"
+            echo "  $unreachable_n cited commit(s) left untouched"
+            echo "::warning::$unreachable_n cited commit(s) survive only as GitHub"
+            echo "  pull-request refs. Publishing their cite/* tags would pin them to"
+            echo "  this repository instead of to GitHub's PR-ref retention."
+          fi
+
+          echo ""
+          echo "  old->new translation written to $CITE_TRANSLATION"
+          echo "  COMMIT THIS FILE after the run: it is the only artifact that"
+          echo "  can translate a pre-rewrite citation into a post-rewrite SHA."
 
           echo ""
           if [ "$failures" -gt 0 ]; then
