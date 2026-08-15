@@ -4266,7 +4266,7 @@ formation, imports or the demand side.
 **TASK B — `final` readiness: NOT YET**, on the merits, four independent grounds, any one
 sufficient (`ASSESSMENT-pjm162-final-readiness-2026-08-15.md`). Grants nothing; `final` untouched.
 
-* **(a) The keeper re-verifies CALIBRATED at HEAD rubric, 9/9, zero caveats, governance
+* **(a) The keeper re-verifies CALIBRATED at HEAD rubric, every criterion PASS, zero caveats, governance
   attested** (`calibration_verdict.py --run-id 2026-08-04-pjm-152-collapse`, no solve; C1 16/16
   free 12/12). `audit_keepers.py --iso PJM` **0 failures / 0 warnings**. Ground (a) is satisfied
   and is NOT what blocks. (The bundle's own `metrics.json` still reads NOT-YET — the frozen
