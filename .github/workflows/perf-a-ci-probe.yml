@@ -1,0 +1,206 @@
+# PERF-A CI-infrastructure probe — NOT-FOR-MERGE (branch-only test rig).
+#
+# Chartered by docs/model-audit-release-plan-2026-08.md §3/WS3 item 5 + the
+# DEBUG-A CI-health handoff (docs/handoffs/debug-sweep-2026-08.md §CI health):
+# the Fast test tier cannot complete on a GitHub runner (dies inside
+# actions/checkout; the tier hard-requires data/raw, 8.7 GiB at tip, against a
+# ~14 GB runner disk), which evidence-blocks gates G2/G3. This workflow exists
+# ONLY to test the per-job checkout/provisioning strategy on real runner
+# hardware from the PERF-A branch. It is workflow_dispatch-only, runs nothing
+# on a schedule, and MUST NOT be merged to main — the tested checkout block
+# lands in ci.yml via PERF-B instead.
+#
+# CI-cost note: dispatched manually a small number of times by the PERF-A
+# session under its charter ("deliver a concrete, TESTED strategy"); each
+# dispatch is minutes of billed runner time, bounded by the timeouts below.
+
+name: PERF-A CI probe (NOT-FOR-MERGE)
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_fast_tier:
+        description: "Run the sparse-checkout fast-tier probe job"
+        type: boolean
+        default: true
+      run_emissions:
+        description: "Run the curate_emissions RSS probe job"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  runner-facts:
+    name: Runner hardware facts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # No checkout at all — pure hardware/OS report, settles the private-repo
+      # runner tier question (2-core/7GB vs 4-core/16GB) with evidence.
+      - name: Hardware
+        run: |
+          echo "== nproc ==" && nproc
+          echo "== memory ==" && free -h
+          echo "== swap ==" && swapon --show || true
+          echo "== disk ==" && df -h
+          echo "== cpu ==" && grep "model name" /proc/cpuinfo | head -2
+          echo "== kernel ==" && uname -a
+
+  fast-tier-probe:
+    name: Fast tier with golden-list sparse checkout
+    if: ${{ inputs.run_fast_tier }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # CANDIDATE FIX under test for ci.yml's fast-tests job: the
+          # golden-data-tier.yml sparse list VERBATIM (first 43 patterns) PLUS
+          # the fast-tier extension measured by PERF-A (2026-08-15): the fast
+          # tier was run locally against exactly this restriction and converged
+          # to 0 failed / baseline skips (6,838 passed) — every added corpus
+          # was demanded by a named failing/skipping test. ~2.0 GiB of
+          # data/raw at tip + every code/artifact tree. actions/checkout adds
+          # --filter=blob:none automatically when sparse-checkout is set, so
+          # transfer/disk is bounded by the materialized set, not the 8.7 GiB
+          # tip. Full measurement record:
+          # docs/handoffs/perf-recheck-2026-08.md.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/*/
+            /.github/
+            /src/
+            /scripts/
+            /tests/
+            /configs/
+            /docs/
+            /frontend/
+            /results/
+            /data/dictionary/
+            /data/raw/*.csv
+            /data/raw/*.parquet
+            /data/raw/ISO-specific-gen-data/
+            /data/raw/NYISO/
+            /data/raw/NYISO-AS/
+            /data/raw/PJM-AS/
+            /data/raw/_processed-legacy/
+            /data/raw/_validation-source/
+            /data/raw/caiso-curtailment/
+            /data/raw/caiso-hsl/
+            /data/raw/campd-facility-level/
+            /data/raw/campd-unit-level/*_2023.parquet
+            /data/raw/confirmed-retirements/
+            /data/raw/eia-860/
+            /data/raw/eia-930/eia_generation_profiles.parquet
+            /data/raw/eia-930-hourly/
+            /data/raw/ercot/2_DAY_AS_DISCLOSURE_2d_Cleared_DAM_AS_*.parquet
+            /data/raw/ercot-AS/*60d_dam_as_only_awards*json.zip
+            /data/raw/ercot-AS/ercot_*_as_up_mw.parquet
+            /data/raw/ercot-hsl/ercot_*_hsl_hourly.parquet
+            /data/raw/ercot-weather/
+            /data/raw/ercot-wind-shape/
+            /data/raw/fleet-egrid/
+            /data/raw/gas-prices/
+            /data/raw/lmp-data/CAISO/CAISO_dam_hourly_*.csv
+            /data/raw/lmp-data/CAISO/CAISO_rtm_hourly_*.csv
+            /data/raw/lmp-data/NEISO/
+            /data/raw/lmp-data/NYISO/
+            /data/raw/lmp-data/PJM_*_rt_da_monthly_lmps.csv
+            /data/raw/miso-wind-shape/
+            /data/raw/reference/
+            /data/raw/zone-specific-demand/
+            /data/raw/MISO/
+            /data/raw/MISO-AS/
+            /data/raw/miso-hsl/
+            /data/raw/nyiso-demand-response/
+            /data/raw/nyiso-renewable-curtailment/
+            /data/raw/capacity-market/
+            /data/raw/capacity-deliverability/
+            /data/raw/ornl-eha/
+            /data/raw/hilarri/
+            /data/raw/coal-prices/
+            /data/raw/oil-prices/
+            /data/raw/policy/
+            /data/raw/som-competitive-conduct/
+            /data/raw/neiso-weather/
+            /data/raw/miso-weather/
+            /data/raw/pjm-weather/
+            /data/raw/nyiso-weather/
+            /data/raw/new-build-cost-benchmarks/
+            /data/raw/nrel-atb/
+            /data/raw/uranium-marketing/
+            /data/raw/eia-aeo/
+            /data/raw/caiso-dam-outages/
+            /data/raw/neiso-operable-capacity/
+            /data/raw/pjm-outages/
+            /data/raw/eia-930-interchange/
+            /data/raw/iso-specific-transmission/
+            /data/raw/miso-generation-outages/
+            /data/raw/maxgen-events/
+            /data/raw/eia-930/eia_demand_profiles.parquet
+            /data/raw/eia-930/eia_demand_meta.parquet
+            /data/raw/ercot-AS/ercot_*_as_by_restype_hourly.parquet
+            /data/raw/ercot/ASPLANNP433_*.parquet
+            /data/raw/ercot/ercot_2024_ordc_reserves_hourly.parquet
+            /data/raw/CAISO-AS/asreq_ALL_2023*.csv
+            /data/raw/CAISO-AS/asreq_ALL_2024*.csv
+            /data/raw/CAISO-AS/asreq_ALL_2025*.csv
+            /data/raw/CAISO-AS/asreq_ALL_20221231_20230101.csv
+      - name: Post-checkout disk + tree size
+        run: |
+          df -h /
+          du -sh data/raw .git || true
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: uv sync
+      - name: Fast pytest tier (timed)
+        run: |
+          start=$(date +%s)
+          uv run python -m pytest -n 2 -m "not slow and not integration and not fulldata" -q -rs
+          rc=$?
+          echo "fast-tier wall: $(( $(date +%s) - start )) s (exit $rc)"
+          exit $rc
+      - name: Post-run disk
+        if: always()
+        run: df -h /
+
+  emissions-probe:
+    name: curate_emissions RSS probe
+    if: ${{ inputs.run_emissions }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Minimal set for the emissions curation only: code trees + the two
+          # CAMPD grains for 2023 + the schema dictionary.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/*/
+            /.github/
+            /src/
+            /scripts/
+            /configs/
+            /data/dictionary/
+            /data/raw/campd-facility-level/
+            /data/raw/campd-unit-level/*_2023.parquet
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: uv sync
+      - name: Hardware before
+        run: free -h && df -h / && swapon --show || true
+      - name: curate_emissions 2023 with peak-RSS report
+        run: uv run python .github/probes/rss_wrap.py scripts/data/curate_emissions.py --years 2023
+      - name: Hardware after
+        if: always()
+        run: free -h && df -h /
