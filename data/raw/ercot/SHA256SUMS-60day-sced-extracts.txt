@@ -1,0 +1,8 @@
+# The four loose 60_DAY_SCED_DISCLOSURE Gen Resource probe-day extracts —
+# SHA256 manifest over PRE-SLIM bytes, captured 2026-08-15 at origin/main 315a245,
+# BEFORE the BLOAT-B-1 in-place slim (docs/bloat-removal-plan-2026-08.md §4.1
+# item B1a). Raw-bytes hashes the slim replaces; blobs recoverable from history.
+a9c06428857f7c10b5dca043b57e0c3b6a9953766d922224b7a0f767c57c056d  60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot74_tail_days.parquet
+7ec1d448b69e858e4d87c4b1af497c3ca2a68820d128032531bfcc9c21901fb4  60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot75_control_days.parquet
+e6780968feaf88bcf22061811f839a6dcf098bae844c3aa5d7b323ca7cfcd1f7  60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot75_control_days.parquet
+881fe839dd152d62c02ec85977ee82ad33ae385243cf4c019f04ae5a984b388d  60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot86_tail_days.parquet
