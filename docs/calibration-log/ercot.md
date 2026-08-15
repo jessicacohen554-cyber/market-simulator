@@ -8991,3 +8991,116 @@ survives, under a fresh shorthand.** The promotion itself stands as recorded at
 **ercot-205** and is not re-narrated here.
 
 **Session consumed the ercot-207 shorthand. Next shorthand: ercot-208.**
+
+
+
+## ercot-208 — `cc_nameplate_summer_derate` PHASE-0 STOP (2026-08-15; NO LP, no solve, no run, keeper UNCHANGED)
+
+**RE-KEYED FROM ercot-205, TWICE.** This session opened as ercot-205 on the
+then-current ledger; while it was open FOUR lanes landed on `main` ahead of it and
+took **205** (the owner-instructed promotion above), **206** (ERCOT-FRONTIER-1) and
+— during this branch's own first rebase — **207** (the audit_keepers E10 hygiene
+fix). Re-keyed 205 → 207 → **208** rather than filed as a duplicate heading: each
+collision was caught BEFORE merge, where the rename is free and rewrites no landed
+history (the ercot-202/203 "noted, nothing renamed" precedent applies to collisions
+found AFTER both sides land). Only this branch's own unmerged artifacts were
+renamed.
+
+**Branch `claude/ercot-scar-next-lever-ba5pso`, rebased onto `origin/main` `714ad11`.**
+Charter: pick the next ERCOT lever from the §5.1 queue + ERCOT shard `U` cells and run
+Phase 0 (read-only, committed artifacts, no LP) on (a) armed state, (b) measured object at
+full magnitude, (c) rule-13 identification, (d) DO-NOT-REDO — **stopping and reporting if
+any condition fails**. It failed at (c) and the session stopped. **No lever was
+substituted.** Full record: `docs/FINDING-ercot208-cc-nameplate-phase0-stop-2026-08-15.md`;
+probe `scripts/probes/ercot208_cc_nameplate_phase0.py`; artifact
+`results/calibration/ercot208_cc_nameplate_phase0.json`.
+
+**LEVER: `cc_nameplate_summer_derate`, the CC leg** (cell `U`), picked over seven other
+candidates. Board disposition, measured before selection: `historic_outage_overlay`
+**DISQUALIFIED at (a) — resolved `True` on the keeper** (a stale `U` cell, the ercot-202
+trap; reported, not fixed); `winter_citygate_daily` / `gas_coldsnap_derate` /
+`maxgen_emergency_tier_pricing` carry **no ERCOT field at all** (MISO/NEISO-scoped, and
+`data/raw/maxgen-events/` holds `miso/miso.csv` only); `winter_fuelsec_posture` has **no
+implementation in any ISO**; `dual_fuel_switching` cannot bind at ERCOT's 2.19–3.52
+$/MMBtu delivered gas; `gas_hub_basis_overlay` has 36 committed ERCOT basis rows but they
+are an **EIA N3050TX3 citygate proxy** (+2.93 $/MMBtu over HH in Jan-2023 — an LDC
+delivered price, not plant-gate) against an already-armed `ercot_zonal_gas_basis`.
+`diurnal_price_amplitude` **NOT touched** (PRECOMMIT-ercot193 §0(b)).
+
+**(a) THE ercot-202 CHECK — PASS.** Read from the keeper's own resolved
+`run_config.json -> scenario_config`, its `meta.json` kwarg snapshot AND the
+`prb_overrides` channel, never from `scenarios.py`: `cc_nameplate_summer_derate` is
+`False`/`False`/absent — genuinely unarmed. Its sibling `coal_nameplate_summer_derate` is
+`True`. **MEASURED AGAINST THE PROMOTED KEEPER `2026-08-15-ercot204-rule26-delete`**, not the
+one this session opened on: the ercot-205 promotion landed mid-session, so the probe was
+re-pointed and re-run in full. The promoting lane's byte-identity claim was re-verified
+rather than inherited — **all 6 sidecars this probe reads are sha256-identical** across
+the promotion and **all 18 flags this Phase 0 turns on are identical** on both resolved
+configs, so every MW, hour and $/MWh below is numerically unmoved.
+
+**(b) THE OBJECT — PASS, and it is real.** ERCOT is the CAMPD-bin path, so `fleet_to_bins`
+(the non-ERCOT nameplate rescale) never fires; the flag reaches `arrays.py` twice.
+Leg (i) `arrays.py:823-829` swaps the flat `_SUMMER_CLASS_DERATE` 0.10 — its own registry
+comment calls it an *"UNCITED FLAT APPROXIMATION"* — for each plant's measured EIA-860
+`net_summer/nameplate` in Jun–Sep: **CC_CHP 10,642.6 MW, cap-wtd ratio 0.858125 ⇒ −413.03
+MW; CC_REGULAR 33,349.4 MW, 0.91003 ⇒ +334.50 MW**, with per-plant moves to ±168 MW
+(Green Power 2 0.7247 → −107.08; Rio Nogales 0.7216 → −167.76; Temple 0.9836 → +134.24).
+**1,406 MW of CC_CHP loses its summer haircut outright** — Deer Park (ratio 1.0) and C R
+Wing (absent from the 860 CC sheet), because the code applies the measured ratio only when
+it exists and never falls back to the flat value. Upper-bounded reach off the keeper's own
+sidecars: CC_CHP **324 / 119 / 76** summer hours (Jul-Sep / Jun+Aug / Jun-Sep) at mean
+**$246.37 / $72.01 / $81.95 per MWh** against summer means of $60.86 / $30.27 / $33.58.
+
+**(c) IDENTIFICATION — FAIL, DISPOSITIVE.** Leg (i) is admissible (published ERCOT-own
+EIA-860 ratings, zero fitted scalars, regenerates from the next vintage, same instrument
+already armed for coal on this keeper). But the single boolean **also** fires leg (ii),
+`arrays.py:712`, dropping the statistical POF (0.05) and the age derate (**+2.147 pp
+CC_REGULAR / +2.289 pp CC_CHP, ~954 MW**) year-round, and **no flag separates them**.
+Leg (ii) has no ERCOT identification; its in-code premise (*"wefor is already capped to
+`wefor_residual` above for this overlay-covered class"*) is **measurably FALSE on this
+keeper** — `wefor_residual_groups` is `["ST_CHP","ST_GAS"]` and CC is absent; and that
+field's own registered comment says the relief *"is harmful where the class is already
+over (CC)"*. Arming the measured rating necessarily arms an unidentified, ERCOT-adverse
+availability increase alongside it.
+
+**SECOND, INDEPENDENT GROUND — rule 19 against two ARMED mechanisms.** (5a) The DAM
+extract covers `CC_REGULAR, COAL, CT_PEAKER, ST_GAS` and the family is armed
+(`_hourly` + `_plant`), so the ercot-177 §3 class-HOUR water-fill (`arrays.py:1616-1633`)
+**erases 76 % of the object by MW** — leg (i) is applied pre-overlay. (5b) The one
+surviving class, CC_CHP, is **44.94 / 44.53 / 36.73 %** force-dispatched by `chp_steam`,
+is **PINNED and excluded from the free-class score**, and `min_gen` is clipped to
+availability at `arrays.py:2798` — so the cut lands first on a forced leg, needing a
+`chp_steam` reconciliation no charter performs.
+
+**(d) DO-NOT-REDO — PASS.** Cell genuinely `U`; `temp_dependent_derate` (`R`, closed
+2026-07-09) is a **different row** and ercot-177 §5 explicitly left this row's cells
+`UUUUKU` unchanged. Cells cited: `cc_nameplate_summer_derate`, `coal_nameplate_summer_derate`,
+`temp_dependent_derate`, `summer_derate_basis_aware`, `cc_winter_capability_basis`,
+`historic_outage_overlay`, `wefor_residual`, `gas_hub_basis_overlay`,
+`winter_citygate_daily`, `dual_fuel_switching`, `gas_coldsnap_derate`,
+`winter_fuelsec_posture`, `maxgen_emergency_tier_pricing`, `diurnal_price_amplitude`.
+§5.1 items 0/0b/1/2/3/4 and 10–26 all checked; no `R`/`I`/`G` cell re-tested.
+
+**OWNER ASKS (nothing decided here):** (1) whether to charter a **new, separately-gated
+leg-(i)-only field** (a build + a matrix row, rule 28(c)); (2) if so, its scope, given
+rule 19 admits only DAM-uncovered classes — CC_CHP alone — where the `chp_steam`
+reconciliation is the real work; (3) making the unmatched-plant "no 860 row ⇒ no derate"
+fallback a declared choice; (4) whether `historic_outage_overlay`'s stale `U` cell is
+corrected now.
+
+**BOOKKEEPING.** Rule 15/16: nothing solved, so nothing to register or span. No precommit
+pushed — Phase 0 failed, so there is no A/B to pre-register. Rule 20: no field added,
+`n_residual` stays 6. Rule 22: ERCOT holds no `complete`/`final` marker; only
+{2023, 2024, 2025} artifacts read; nothing solved or scored; no marker sought, granted or
+spent. **Q-B (final) and R-A honoured** — no C3a-2023 spend and no C3b-2023 round; the
+lever was chartered as shape-quality/forecast-readiness work only. Rule 25: ERCOT only;
+the MISO/NEISO-scoped candidates were read solely to establish they carry no ERCOT field.
+Rule 27: all edits local (Edit tool), pushed as exact on-disk bytes. Rule 28: **no cell
+verdict edited in any shard** (no mechanism was tested — the ercot-202 ruling that a
+viability check cancelling the test is not one); no row added; the sole shard edit is an
+evidence-citation extension on the already-`U` cell; `check_mechanism_matrix.py` exits
+**0**. P2 stays archived. No new GitHub Actions workflow. **No PR opened** (push-and-stop;
+the owner merges). Inherited ercot-188/E2 permanent limitation carried unexpired.
+
+**Session consumed the ercot-208 shorthand. Next shorthand: ercot-209** (197/199/200
+remain unspent).
