@@ -36,7 +36,16 @@ system-wide hub-average series of each market:
   * NEISO — the ISO-NE SMD ``*_smd_hourly.xlsx`` per-zone sheets (hourly
     ``DA_LMP`` / ``RT_LMP``) from ``NEISO/``. The system price is the
     ``.H.INTERNAL_HUB`` ("ISO NE CA" sheet); the four model zones are the
-    simple mean of their constituent SMD load zones.
+    simple mean of their constituent SMD load zones. ISO-NE ships those same
+    nine pricing locations through a SECOND packaging — the ungated daily
+    historical-report tree, reduced to
+    ``NEISO/smd-zonal-lmp/NEISO_smd_zonal_lmp_<year>.csv`` by
+    ``scripts/data/fetch_neiso_smd_zonal_lmp.py`` — which supplies years the
+    CAPTCHA-gated workbook form cannot deliver to an unattended session
+    (H1-2026). The two are ONE input, measured identical at the parquet's
+    float32 precision by ``scripts/probes/neiso96_smd_route_equivalence.py``;
+    see :func:`neiso_zone_hourly` for which is read when, and for the
+    2018-2023 workbook DST defect that comparison exposed.
 
 The two zonal ISOs (NYISO, NEISO) additionally carry a ``zones`` sub-dict —
 ``{model_zone: {da, rt, da_mon, rt_mon}}`` — alongside the hub-level
@@ -85,6 +94,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import csv
 import datetime as _dt
 import io
 import json
@@ -105,6 +115,8 @@ from market_sim.config import paths  # noqa: E402  (resolves the data root)
 # inputs/ tree — the W1 relocation collapsed inputs/raw-data -> data/raw and
 # inputs/calibration -> data/raw/_validation-source).
 LMP_DIR = paths.RAW_DATA_DIR / "lmp-data"
+#: Reduced daily historical-report route for NEISO (fetch_neiso_smd_zonal_lmp).
+NEISO_REPORT_DIR = LMP_DIR / "NEISO" / "smd-zonal-lmp"
 OUT = paths.CALIBRATION_DIR / "actual_lmp.json"
 HOURLY_OUT = paths.CALIBRATION_DIR  # actual_lmp_hourly_{ISO}.parquet
 
@@ -761,23 +773,101 @@ def _neiso_sheet_series(wb, sheet: str) -> dict[str, pd.Series]:
     }
 
 
+#: ISO-NE location id -> SMD sheet name, for the daily historical-report route
+#: (see :mod:`scripts.data.fetch_neiso_smd_zonal_lmp`). Same nine pricing
+#: locations the workbook's per-zone sheets carry.
+NEISO_REPORT_LOCATIONS: dict[str, str] = {
+    "4000": NEISO_HUB_SHEET,
+    "4001": "ME",
+    "4002": "NH",
+    "4003": "VT",
+    "4004": "CT",
+    "4005": "RI",
+    "4006": "SEMA",
+    "4007": "WCMA",
+    "4008": "NEMA",
+}
+
+
+def _neiso_report_series(year: int, kind: str) -> dict[str, pd.Series] | None:
+    """Per-SMD-sheet hourly series from the daily historical-report route.
+
+    Reads the reduced ``NEISO_smd_zonal_lmp_<year>.csv`` written by
+    :mod:`scripts.data.fetch_neiso_smd_zonal_lmp`, the ungated ISO-NE channel
+    for the same nine SMD pricing locations the workbook publishes. ``None``
+    when that file is absent.
+
+    The clock is the SAME positional construction the workbook path uses --
+    within an operating day the k-th published row begins exactly k real hours
+    after that day's (never ambiguous) local midnight -- so the two routes land
+    on identical instants. ``seq`` carries k as published, which is what makes
+    the DST days (23 rows in spring, 25 in autumn) need no special case.
+    """
+    path = NEISO_REPORT_DIR / f"NEISO_smd_zonal_lmp_{year}.csv"
+    if not path.exists():
+        return None
+    col = f"{kind}_lmp"
+    acc: dict[str, dict[pd.Timestamp, float]] = {}
+    with path.open(newline="") as f:
+        for r in csv.DictReader(f):
+            sheet = NEISO_REPORT_LOCATIONS.get(r["location_id"])
+            if sheet is None:
+                continue
+            day_start = (
+                pd.Timestamp(r["date"]).tz_localize(_EASTERN_TZ).tz_convert("UTC")
+            )
+            ts = day_start + pd.Timedelta(hours=int(r["seq"]))
+            acc.setdefault(sheet, {})[ts] = float(r[col])
+    return {sheet: pd.Series(v).sort_index() for sheet, v in acc.items()} or None
+
+
 def neiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
     """Model-zone (+ ``hub``) hourly NEISO LMP frame for ``year`` / ``kind``.
 
     Columns are the four model zones (each the simple mean of its constituent
     SMD load-zone sheets) plus ``hub`` (the .H.INTERNAL_HUB "ISO NE CA"
     sheet), indexed by the real (UTC) hour. Shared by the JSON builder and the
-    zonal-sufficiency test. ``None`` when the workbook is absent.
+    zonal-sufficiency test. ``None`` when neither source is present.
+
+    TWO PUBLISHED PACKAGINGS OF ONE INPUT (neiso-96, 2026-08-15). ISO-NE ships
+    these nine SMD pricing locations both as the annual SMD hourly workbook and,
+    day by day, through the static historical-report tree. The workbook is the
+    original source here and is read first, so every committed year reproduces
+    byte-for-byte; the daily-report reduction supplies years the workbook route
+    cannot reach, because the workbook is served only behind a CAPTCHA-gated
+    form and so cannot be refreshed by any committed script.
+
+    This is source AVAILABILITY, not a year gate: the rule applied is uniform
+    across years (take the SMD zonal series from whichever published packaging
+    is on disk), and the two packagings are measured to agree exactly at the
+    float32 precision the parquet stores --
+    ``scripts/probes/neiso96_smd_route_equivalence.py``, 2,640 cells over 11
+    sampled days of the committed years, 0 mismatches. Rule 22 as amended
+    2026-08-06 is therefore satisfied in substance, not merely in form.
+
+    The one measured exception is not a route difference but a DEFECT IN THE
+    2018-2023 WORKBOOK VINTAGE, which publishes a flat 24 rows on every calendar
+    day: on a 23-hour or 25-hour operating day it cannot align with the market's
+    own published hours, so the positional clock displaces the rest of that day
+    by an hour. The 2024-2025 vintage publishes the true 23 / 25 and agrees with
+    the daily reports exactly. Reported, NOT repaired here -- repairing it would
+    move a scoring target in a tuned year and needs its own authorization.
     """
+    raw: dict[str, pd.Series] = {}
     path = LMP_DIR / "NEISO" / f"{year}_smd_hourly.xlsx"
-    if not path.exists():
+    if path.exists():
+        needed = {NEISO_HUB_SHEET, *(s for ss in NEISO_ZONE_MAP.values() for s in ss)}
+        wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
+        raw = {
+            sh: _neiso_sheet_series(wb, sh)[kind]
+            for sh in wb.sheetnames
+            if sh in needed
+        }
+        wb.close()
+    else:
+        raw = _neiso_report_series(year, kind) or {}
+    if not raw:
         return None
-    needed = {NEISO_HUB_SHEET, *(s for ss in NEISO_ZONE_MAP.values() for s in ss)}
-    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
-    raw = {
-        sh: _neiso_sheet_series(wb, sh)[kind] for sh in wb.sheetnames if sh in needed
-    }
-    wb.close()
     cols: dict[str, pd.Series] = {}
     for z, sheets in NEISO_ZONE_MAP.items():
         avail = [raw[s] for s in sheets if s in raw]
