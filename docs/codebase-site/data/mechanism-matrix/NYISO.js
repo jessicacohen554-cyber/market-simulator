@@ -566,3 +566,74 @@ window.MECH_MATRIX_SHARDS.NYISO = {
  * record results/calibration/_nyiso136_fleet_cf_composition.json,
  * docs/calibration-log/nyiso.md 2026-08-15.
  */
+
+/* 2026-08-15 (4th stamp) — nyiso-136 CARRIES FORWARD the NYISO-RTD-CLOCK
+ * DISCLOSURE onto the current keeper. NO CODE CHANGED, no product re-derived,
+ * no year re-scored, no cell verdict moved. This stamp exists because the
+ * disclosure was recorded in a handoff ADDENDUM and NOWHERE in this lane's
+ * governance — not in keepers/NYISO.json, not in calibration-complete.json, not
+ * in the calibration log, not in this shard — and because THIS session
+ * superseded the only keeper it named.
+ *
+ * THE DEFECT (adjudicated 2026-08-15, session nyiso-rtd-clock; ADDENDUM to
+ * docs/handoffs/d32-f6fix-2026-08-13.md). NYISO's P-24A 'Time Stamp' is
+ * interval-ENDING. scripts/data/derive_actual_lmp.py::_nyiso_wide bins it as
+ * interval-BEGINNING (plain .floor(h)) and is the producer of the committed
+ * data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet. The clean-side
+ * curate_lmp.parse_nyiso_zip is already CORRECT. Adjudicated not by prose —
+ * NYISO publishes no definition of the column — but by NYISO's OWN arithmetic:
+ * P-4A is published as the hourly integration of the P-24A 5-minute prices
+ * (Manual 12 p.136, Manual 14 §4, A536 §3.2.2), so binning P-24A under each
+ * candidate convention and comparing to P-4A DECIDES it. Over 11 zones and 9
+ * months spanning 2022-2025 including both DST transitions: ENDING max |d|
+ * 0.0050 with ZERO zone-hours outside 2-decimal rounding; BEGINNING mean 1.1575,
+ * max 151.67, 62,598 of 64,889 zone-hours WRONG. Corroborated three ways (the
+ * daily file spans 00:05..24:00; ex-post posting is incompatible with
+ * beginning-labels; a live 2026-08-14 fetch).
+ *
+ * WHY IT LANDS ON THIS LANE. The scorer
+ * (render_calibration_html._actual_lmp_hourly / _actual_rt_padded) loads that
+ * parquet and PREFERS THE `rt` COLUMN. That is the actual series C3a, the
+ * demand-weighted monthly MAE and THE C3c SCARCITY TAIL are scored against.
+ * Measured movement, read-only, input side only: 2022 97.8 % of hours move,
+ * mean |d| $1.98, max $257.21 — but annual mean RT moves only -$0.024 and the
+ * top-100-hour mean -$0.49. ALMOST EVERY HOUR MOVES AND THE LEVEL BARELY DOES:
+ * one sample in twelve swaps per hour, so LEVEL statistics are near-invariant
+ * and what moves is HOUR-BY-HOUR ALIGNMENT — correlation-sensitive metrics and
+ * ANY PER-HOUR TAIL COUNT.
+ *
+ * WHAT IS AND IS NOT AT RISK, stated rather than absorbed:
+ *   AT RISK — the ACTUAL side of the C3c ledgered caveat (10 / 12 / 42 h >$300)
+ *     is a per-hour tail count taken from this series.
+ *   AT RISK — the chartered JOINT Zone-K transfer-bound + downstate ST_GAS
+ *     min_gen reconciliation, the lane's remaining lever, is a C3c object whose
+ *     nyiso-130 kill gate K6 is itself a per-hour tail count. A future session
+ *     must NOT tune that lever against this series without saying so.
+ *   NOT AT RISK — the nyiso-133 A/B's C3c finding. It is BIT-UNCHANGED between
+ *     arm and control, and both arms score against the SAME actual, so the
+ *     comparison is invariant to the binning. The promotion's claim that no C3c
+ *     evidence moved stands.
+ *   NOT AT RISK — C3a levels (near-invariant, -$0.024 annual mean), and the DA
+ *     block, so the spec.py import ladder needs no re-derivation.
+ *   NOT AT RISK — nyiso-136's fleet-CF refutation, which is entirely input-side
+ *     (EIA-860 registry + EIA-923 metered energy) and touches no LMP series.
+ *
+ * KEEPER RE-POINTED. The addendum names 2026-08-08-nyiso-132-cf-arm as the
+ * keeper scored against the mis-binned series. THIS SESSION SUPERSEDED IT: the
+ * disclosure now attaches to 2026-08-08-nyiso-133-cod-arm, which is scored
+ * against the same parquet and inherits it unchanged.
+ *
+ * NOT REPAIRED, AND DELIBERATELY SO. The fix is a one-line change
+ * ((idx - 1s).floor(h)) but it is OWNER-GATED and DATA-BLOCKED: re-deriving
+ * actual_lmp_hourly_NYISO.parquet needs the NYISO RT source zips re-staged and
+ * only 22 monthly zips are on disk against a 2018-2026 parquet. Do NOT
+ * re-derive the parquet on partial coverage. The owner decision the addendum
+ * requests is unchanged and still outstanding: correct _nyiso_wide, re-derive,
+ * then re-score the NYISO keeper and re-verify its determination (rule 22 /
+ * D-5(b)). Rule 14 [R-ACCURATE] points at the repair: a worse fit after it
+ * would be a discovered bug, not a reason to keep a mis-binned series.
+ *
+ * Evidence: docs/handoffs/d32-f6fix-2026-08-13.md ADDENDUM §§A.1-A.7,
+ * instrument scripts/probes/nyiso_rtd_clock_adjudication.py (read-only),
+ * docs/calibration-log/nyiso.md 2026-08-15.
+ */
