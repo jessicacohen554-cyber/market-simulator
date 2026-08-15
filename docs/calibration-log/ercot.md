@@ -8492,3 +8492,132 @@ no measured RTOLCAP (the go-live tail after 2025-12-05) **uncapped**, and a
 sentinel over the final ~27 days averages to exactly the ~7.4e7 observed.
 
 **Next shorthand: ercot-204.**
+## ercot-203b (2026-08-15) — PHASE-0 PROTOCOL GATE RETURNS **NO**: RTOFFPA is NOT in RTSPP, so the committed adder overlay is **BASIS-COMPLETE** and the T-3b object is CLOSED — no mechanism chartered, no ScenarioConfig field, no LP, no year solved or scored, no run registered, no cell verdict changed, keeper untouched by this session
+
+**Shorthand note (collision, resolved as `203b`).** This session was dispatched as
+**ERCOT-203** — the (T-3b) successor lane — and ran concurrently with the entry
+immediately above, which was *also* opened as ercot-203 (itself re-labelled from
+ercot-195) and which landed first on main, promoting the keeper. Two independent lanes
+therefore consumed the same shorthand on the same object-space. This entry is filed as
+**`203b`** to keep the log unambiguous; the lane above already declared **ercot-204**, so
+the next free shorthand after both is **ercot-205**. Nothing in this entry contests that
+lane's work — the two touched disjoint files, and this session neither promoted nor
+evaluated any keeper.
+
+**The gate the ercot-202 (T-3b) audit named as its one open ask is discharged from
+primary sources, and it closes the object rather than opening a lever.** Dispatch:
+the (T-3b) successor prompt (Phase 0 protocol gate → charter-or-close);
+`docs/FINDING-ercot202-t1-nonviable-2026-08-14.md` §3 limit 1 / §4 item 3(a).
+Finding: `docs/FINDING-ercot203-rtoffpa-not-in-rtspp-2026-08-15.md`. Probe:
+`scripts/probes/ercot203_rtoffpa_basis.py` →
+`results/calibration/ercot203_rtoffpa_basis.json`.
+
+**DETERMINATION: RTOFFPA does not enter the Real-Time Settlement Point Price.** ERCOT
+Nodal Protocols §6.5.7.3(12), verbatim: *"The sum of the Real-Time Reliability
+Deployment Price Adder and the Real-Time On-Line Reserve Price Adder shall be averaged
+over the 15-minute Settlement Interval and added to the Real-Time LMPs to determine the
+Real-Time Settlement Point Prices."* The paragraph computes all THREE adders and routes
+exactly TWO into price. Confirmed by the formulas — §6.6.1.1(1) Resource Node
+`RTSPP = Max(-$251, RNWF*(RTLMP + RTORPA + RTORDPA))`, §6.6.1.2(1) Load Zone
+`… + RTRSVPOR + RTRDP` where `RTRSVPOR = RNWF*RTORPA`, `RTRDP = RNWF*RTORDPA` — and by
+§6.6.1(1)'s own prose. **RTOFFPA's only appearance in the whole of Section 6 is §6.7.5**
+(Real-Time Ancillary Service Imbalance), where `RTRSVPOFF = RNWF*RTOFFPA` multiplies an
+Off-Line reserve **capacity** imbalance (`RTOFFCAP` = OFF-status 30-min cold-start HSLs +
+OFFNS HSLs + non-controllable LR Non-Spin) — resources producing **no energy**. Exactly
+two occurrences section-wide, both in §6.7.5. **VERIFIED ACROSS THE FULL TRAINING SPAN**
+on the by-section archives: `06-070123` (2023-07-01), `06-120124` (2024-12-01),
+`06-080125` (2025-08-01) carry identical formulas and identical `RTOFFPA` counts;
+`06-120525` (RTC+B, 2025-12-05) deletes RTOFFPA from Section 6 outright and reduces RTSPP
+to `RTLMP + RTRDPA` — which independently validates the overlay's own gate, since
+`RTCB_GOLIVE_HOUR = 338*24 = 8112` is 2025-12-05 00:00 on the non-leap clock, the
+revision's effective date to the hour.
+
+**CONSEQUENCE — the ercot-202 result inverts.** Its unapplied-`rtoffpa` magnitudes (2023
+0.5843 = +77.9 % of the applied overlay, 2024 0.1522 = +66.3 %, 2025 0.0326 = +8.8 %,
+concentrated May-2024 +332 % / Aug-2024 +242 % / Nov-2024 +101 %) are **out-of-basis
+content — absent from the model price AND from the ERCOT settlement-point actuals
+alike** (the bench is `RTMLZHBSPP`, RTSPP itself). An RTOFFPA leg would not have
+completed the overlay; it would have **broken** it by inserting a component the benchmark
+does not contain. **PHASE 1 WAS NOT ENTERED**: no charter, no `ScenarioConfig` field, no
+precommit (there is no A/B to pre-register), no A/B, no registration — and per the
+prompt's standing instruction, **no substitute lever was sought, prepared or evaluated**
+after the NO (`energy_online_capability_cap` stays ERCOT `R`, untouched).
+
+**EMPIRICAL CORROBORATION (measured data, no LP).** Decomposing the measured `HB_HUBAVG`
+RTSPP (`data/raw/lmp-data/RTMLZHBSPP_<year>.zip`) onto NP6-905-CD's `system_lambda` and
+adders, all-hours MAE $/MWh: λ-only 4.953 / 2.862 / 2.853 → **+RTORPA+RTORDPA (protocol)
+3.971 / 2.744 / 2.763** → +RTOFFPA 4.277 / 2.820 / 2.797 (2023 / 2024 / 2025). The
+protocol pair improves the identity in all three years; adding RTOFFPA degrades it in all
+three. Stated with its limits: corroboration not proof (residual is non-zero under any
+reading — hub congestion + 15-min→hourly averaging); only MAE discriminates (the signed
+mean is mechanically monotone in non-negative adders); the scarcity-hour subsets are
+directionally consistent but noise-dominated, and the least-squares attribution is
+**uninformative and not cited** — `rtoffpa > 0` while `rtorpa = 0` in **0 hours** of all
+three years, with r = 0.948/0.993/0.996, so its loadings are collinearity artifacts. That
+zero-hour count is itself structural: an RTOFFPA leg could never have fired in an hour the
+endogenous reserve dual was not already active — a rule 19 `[R-ONE-MECH]` double-count on
+its face, which forecloses the Phase-1 reconciliation independently of the protocol.
+
+**RECORD CORRECTION — T-3b was executed TWICE, and this settles which stands.**
+`docs/FINDING-ercot198-t3b-adder-overlay-audit-2026-08-14.md` §1 had **already excluded**
+RTOFFPA a day earlier — *"there is no third settled adder; RTOFFPA (published in the same
+report) is not part of energy settlement and is excluded (measured anyway: 0.178 $/MWh dw
+2024, 0.010 2025)"* — on the 2024 SOM. **ercot-198 stands; ercot-202's contrary framing
+does not**, and the authority is upgraded from SOM summary to protocol text. ercot-202 was
+honest that it had not settled the question (its own §3 limit 1) and armed nothing, so a
+framing is corrected, not an action; its 0.1522 simple-mean vs ercot-198's 0.178
+demand-weighted is the expected weighting difference, not a disagreement. The two lanes
+appear not to have seen each other — the 198–203 shorthand ledger is interleaved across
+parallel branches, which is the likelier cause than any measurement error.
+**THE LIVE ITEM ON THIS OBJECT IS ercot-198's, AND IT IS NOT TOUCHED HERE:** the keeper's
+endogenous RTORPA stand-in (sidecar `ordc_adder`) measures **≈ zero** (2 non-zero hours in
+2024, max $0.15/h), so published RTORPA content (+0.237 $/MWh dw 2024) — which **IS** in
+basis per §6.6.1.1 — reaches neither the scored `pMon` nor the overlay. That is a
+**mechanism** question about the co-optimized reserve dual, not overlay completeness, and
+rule 19 bars overlaying the published series on top of the mechanism meant to produce it.
+Not investigated, not chartered; left where ercot-198 filed it. For the owner, recorded not
+acted on: ercot-202 §4 item 3 asks for a ruling on a gap that does not exist and can be
+closed as answered; ercot-198's RTORPA finding has had no ruling.
+
+**STAMPS.** `scripts/data/fetch_ercot_ordc_reserves.py` — the intake docstring's **silence
+on `rtoffpa` was the gate itself**; now filled, each adder's settlement role with its
+protocol section, so the same open question cannot be re-derived from the same silence.
+`src/market_sim/results/scarcity.py::ercot_rtordpa_overlay_series` — docstring records
+basis-completeness + the citation + the still-open RTORPA item. Matrix: the
+`ercot_rtordpa_overlay` base-row note carries the adjudication and DO-NOT-REDO, the ERCOT
+shard cell gains its `ev` citation — **cell verdict UNCHANGED at `K`**, since no mechanism
+was tested (rule 28(b) attaches to a mechanism test; a protocol gate that cancels the
+charter is not one) and **no row was minted** (no `ScenarioConfig` field ⇒ rule 28(c) not
+engaged); `scripts/check_mechanism_matrix.py` green. DO-NOT-REDO: "add measured RTOFFPA to
+the ERCOT model price" is now an adjudicated dead end with a primary-source citation; the
+only reopener is a protocol amendment, which could only apply forward.
+
+**FENCES.** Rule 1 `[R-STRUCT]`: decided entirely on market structure, no residual
+consulted — and none would have been admissible (ercot-202 §3 limit 3 already established
+the direction is not uniformly favourable). Rule 13 `[R-MEASURED]`: every series read for
+attribution only; the conclusion is that one of them must **not** become an input. Rule 15
+`[R-DASHBOARD]` / rule 16 `[R-ALLYEARS]`: no run produced, so nothing to register or span.
+Rule 20 `[R-DOF]`: no new field, `n_residual` untouched at **6**. Rule 22 `[R-HOLDOUT]`:
+ERCOT holds no `complete`/`final` marker — only {2023, 2024, 2025} read, nothing solved or
+scored, no `--holdout-authorized`, no marker granted or spent (the probe hard-fails any
+other year by construction). Rule 25 `[R-ISO-SCOPE]`: no ISO boundary crossed — the finding
+is a reading of the ERCOT protocols; no other shard, keeper, bench or registry touched.
+Rule 27 `[R-PUSH]`: no bulk rewrite; the two source edits are local docstring edits pushed
+as exact on-disk bytes and blob-verified. Q-B (2023 appears only as a verification and
+probe year, never a determination target) and R-A honoured; D2 freeze, T-0/T-2/T-3a/T-4,
+`diurnal_price_amplitude` (`U`) and `gas_hh_monthly_shape` (armed, correct) untouched;
+ercot-195 L-SCAR not re-tested. P2 stays archived. No new GitHub Actions workflow — all
+work in-session. **KEEPER NOT TOUCHED BY THIS SESSION** — no keeper, registry, bench or
+`keepers/ERCOT.json` file was read for edit or written. At HEAD the ERCOT keeper is
+`2026-08-14-ercot202-arm-plantphysics`, promoted by the concurrent lane in the entry above
+(this session assembled at `2026-08-12-run192-arm-coal-peak` and rebased onto the
+promotion; nothing here depends on which of the two is designated, since the determination
+is a protocol reading and no run was solved or scored). Determination stands at **NOT-YET**
+(fail set {C3a-2023, C3b-2023}), which no part of this session could have moved.
+
+**Session consumed the ercot-203 shorthand (as `203b`, per the collision note above).
+Next shorthand: ercot-205** — the concurrent lane already declared ercot-204. (The 198–205
+ledger is tangled: ercot-198's entry declares "next: ercot-199", ercot-202's finding §5
+declares "next: ercot-198" which was already consumed, its log entry declares ercot-203,
+and two lanes then took ercot-203 simultaneously. The duplicated T-3b execution recorded
+above is the visible cost of the same tangle.)

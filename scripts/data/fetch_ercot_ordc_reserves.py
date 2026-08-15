@@ -22,12 +22,36 @@ We curate the reserve-supply / price-adder subset the ERCOT scarcity model needs
     rtoffcap  Real-Time Off-Line Reserve Capability (MW).
     rtorpa    Real-Time On-Line Reserve Price Adder ($/MWh) — the ORDC on-line
               adder ERCOT folds into RTSPP.
-    rtoffpa   Real-Time Off-Line Reserve Price Adder ($/MWh).
+    rtoffpa   Real-Time Off-Line Reserve Price Adder ($/MWh) — **NOT a component
+              of RTSPP** (see the settlement-role note below).
     rtordpa   Real-Time ORDC + Reliability-Deployment Price Adder ($/MWh) — the
-              reliability-deployment component of the scarcity adder.
+              reliability-deployment component of the scarcity adder, and the
+              second of the two adders RTSPP carries.
     rtolhsl   Real-Time On-Line High Sustainable Limit (MW).
     prc       Physical Responsive Capability (MW).
     system_lambda  SCED system lambda ($/MWh).
+
+**Settlement role of the three adders — which of them RTSPP actually carries**
+(ercot-203, 2026-08-15; ``docs/FINDING-ercot203-rtoffpa-not-in-rtspp-2026-08-15.md``
+carries the verbatim citation). This note exists because this header's earlier
+silence on ``rtoffpa`` was itself read as an open question about overlay
+completeness (``docs/FINDING-ercot202-t1-nonviable-2026-08-14.md`` §3 limit 1):
+
+    RTSPP = RTLMP + RTORPA + RTORDPA          (Nodal Protocols §6.5.7.3(12),
+                                               §6.6.1(1), §6.6.1.1(1), §6.6.1.2(1))
+
+``rtoffpa`` is computed by the same SCED process off the same ORDC but is routed
+to a DIFFERENT settlement stream: §6.7.5, Real-Time Ancillary Service Imbalance
+Payment or Charge, where ``RTRSVPOFF = RNWF * RTOFFPA`` multiplies an Off-Line
+reserve *capacity* imbalance (``RTOFFCAP`` = telemetered HSLs of OFF-status
+30-minute cold-start units + OFFNS units + non-controllable LR Non-Spin) — i.e.
+resources producing no energy in the interval. It prices the option they hold,
+never electricity delivered, and it occurs exactly twice in the whole of
+Section 6, both inside §6.7.5. **Do not add it to a model energy price**: it is
+absent from the ERCOT settlement-point actuals too, so overlaying it would
+insert a component the scoring benchmark does not contain. Verified identical in
+the 2023, 2024 and pre-RTC 2025 Section 6 revisions; RTC+B (2025-12-05) removes
+``rtoffpa`` from Section 6 altogether.
 
 The report's SCED timestamps are Central *Prevailing* Time (CPT: CDT in
 summer), with the fall-back repeated hour disambiguated by the report's own

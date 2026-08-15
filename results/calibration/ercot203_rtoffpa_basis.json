@@ -1,0 +1,179 @@
+{
+  "settlement_point": "HB_HUBAVG",
+  "years": [
+    {
+      "year": 2023,
+      "n_valid_hours": 8760,
+      "all_hours_basis_identity": {
+        "lambda_only": {
+          "mae": 4.952572285342645,
+          "mean_signed": -1.5708660011724607
+        },
+        "protocol_RTLMP+RTORPA+RTORDPA": {
+          "mae": 3.9713852151085347,
+          "mean_signed": -3.2657644270689166
+        },
+        "alternative_+RTOFFPA": {
+          "mae": 4.277299546386358,
+          "mean_signed": -3.850045216822382
+        }
+      },
+      "discriminating_subsets": [
+        {
+          "subset": "rtoffpa > 0",
+          "n_hours": 902,
+          "mean_rtoffpa": 5.6743899315303326,
+          "mean_residual_after_protocol_terms": -10.383783692188205,
+          "median_residual_after_protocol_terms": -1.0479791666666678,
+          "mae_if_rtoffpa_excluded": 16.30229768845431,
+          "mae_if_rtoffpa_included": 19.273261703968426,
+          "corr_residual_vs_rtoffpa": 0.004633003303205628
+        },
+        {
+          "subset": "rtoffpa >= $5/MWh",
+          "n_hours": 94,
+          "mean_rtoffpa": 52.344081968575324,
+          "mean_residual_after_protocol_terms": -32.407534245030554,
+          "median_residual_after_protocol_terms": -7.594556730769227,
+          "mae_if_rtoffpa_excluded": 74.0536617120427,
+          "mae_if_rtoffpa_included": 101.37359364628837,
+          "corr_residual_vs_rtoffpa": 0.12403250703735756
+        },
+        {
+          "subset": "rtoffpa >= $25/MWh",
+          "n_hours": 46,
+          "mean_rtoffpa": 94.7171206439237,
+          "mean_residual_after_protocol_terms": -27.666564824032747,
+          "median_residual_after_protocol_terms": -6.566148611111316,
+          "mae_if_rtoffpa_excluded": 97.7725383887696,
+          "mae_if_rtoffpa_included": 146.57138877540982,
+          "corr_residual_vs_rtoffpa": 0.15650469641808046
+        }
+      ],
+      "basis_attribution_lstsq": {
+        "loading_rtorpa": 1.055516381768351,
+        "loading_rtordpa": 1.022088007426389,
+        "loading_rtoffpa": -0.1462274324119997,
+        "corr_rtorpa_rtoffpa": 0.9475451931895276,
+        "n_hours_rtoffpa_positive": 902,
+        "n_hours_rtoffpa_positive_and_rtorpa_zero": 0
+      }
+    },
+    {
+      "year": 2024,
+      "n_valid_hours": 8760,
+      "all_hours_basis_identity": {
+        "lambda_only": {
+          "mae": 2.861921317336137,
+          "mean_signed": -1.9606480042059486
+        },
+        "protocol_RTLMP+RTORPA+RTORDPA": {
+          "mae": 2.7435434495682802,
+          "mean_signed": -2.3928820144239555
+        },
+        "alternative_+RTOFFPA": {
+          "mae": 2.8195756795785574,
+          "mean_signed": -2.545048174922581
+        }
+      },
+      "discriminating_subsets": [
+        {
+          "subset": "rtoffpa > 0",
+          "n_hours": 409,
+          "mean_rtoffpa": 3.2591089632468435,
+          "mean_residual_after_protocol_terms": -6.751685700775735,
+          "median_residual_after_protocol_terms": -1.9452333333333343,
+          "mae_if_rtoffpa_excluded": 12.816557019553771,
+          "mae_if_rtoffpa_included": 14.445022386033061,
+          "corr_residual_vs_rtoffpa": 0.03462477556075113
+        },
+        {
+          "subset": "rtoffpa >= $5/MWh",
+          "n_hours": 31,
+          "mean_rtoffpa": 41.160250140516204,
+          "mean_residual_after_protocol_terms": -24.68767864336421,
+          "median_residual_after_protocol_terms": -2.663749999999993,
+          "mae_if_rtoffpa_excluded": 76.11002989614494,
+          "mae_if_rtoffpa_included": 96.03938712803301,
+          "corr_residual_vs_rtoffpa": 0.14354526358445666
+        },
+        {
+          "subset": "rtoffpa >= $25/MWh",
+          "n_hours": 12,
+          "mean_rtoffpa": 88.11487988691681,
+          "mean_residual_after_protocol_terms": -19.865187106393677,
+          "median_residual_after_protocol_terms": -2.0631192307692174,
+          "mae_if_rtoffpa_excluded": 128.32454407081397,
+          "mae_if_rtoffpa_included": 166.81157385605556,
+          "corr_residual_vs_rtoffpa": 0.1842435053274387
+        }
+      ],
+      "basis_attribution_lstsq": {
+        "loading_rtorpa": -2.7750326278798307,
+        "loading_rtordpa": 1.0109216620221853,
+        "loading_rtoffpa": 4.6401553377548765,
+        "corr_rtorpa_rtoffpa": 0.9930283671423573,
+        "n_hours_rtoffpa_positive": 409,
+        "n_hours_rtoffpa_positive_and_rtorpa_zero": 0
+      }
+    },
+    {
+      "year": 2025,
+      "n_valid_hours": 8112,
+      "all_hours_basis_identity": {
+        "lambda_only": {
+          "mae": 2.853116382715809,
+          "mean_signed": -2.14000521532539
+        },
+        "protocol_RTLMP+RTORPA+RTORDPA": {
+          "mae": 2.7630235991633216,
+          "mean_signed": -2.6059005352516103
+        },
+        "alternative_+RTOFFPA": {
+          "mae": 2.7966349416139185,
+          "mean_signed": -2.641130928876753
+        }
+      },
+      "discriminating_subsets": [
+        {
+          "subset": "rtoffpa > 0",
+          "n_hours": 214,
+          "mean_rtoffpa": 1.3354623976035416,
+          "mean_residual_after_protocol_terms": -6.91429057271225,
+          "median_residual_after_protocol_terms": 0.02787500000000165,
+          "mae_if_rtoffpa_excluded": 8.907687010076197,
+          "mae_if_rtoffpa_included": 10.18177677624087,
+          "corr_residual_vs_rtoffpa": -0.6022639465605056
+        },
+        {
+          "subset": "rtoffpa >= $5/MWh",
+          "n_hours": 4,
+          "mean_rtoffpa": 64.42691875,
+          "mean_residual_after_protocol_terms": -103.26349583333332,
+          "median_residual_after_protocol_terms": -6.171937500000027,
+          "mae_if_rtoffpa_excluded": 103.29054166666667,
+          "mae_if_rtoffpa_included": 167.69041458333334,
+          "corr_residual_vs_rtoffpa": -0.991878586308382
+        },
+        {
+          "subset": "rtoffpa >= $25/MWh",
+          "n_hours": 2,
+          "mean_rtoffpa": 121.06167916666665,
+          "mean_residual_after_protocol_terms": -203.40031666666667,
+          "median_residual_after_protocol_terms": -203.40031666666667,
+          "mae_if_rtoffpa_excluded": 203.40031666666667,
+          "mae_if_rtoffpa_included": 324.46199583333333,
+          "corr_residual_vs_rtoffpa": null
+        }
+      ],
+      "basis_attribution_lstsq": {
+        "loading_rtorpa": -0.5479607188751751,
+        "loading_rtordpa": 0.39065289316084173,
+        "loading_rtoffpa": 1.1711718302481564,
+        "corr_rtorpa_rtoffpa": 0.9959965398453677,
+        "n_hours_rtoffpa_positive": 214,
+        "n_hours_rtoffpa_positive_and_rtorpa_zero": 0
+      }
+    }
+  ]
+}

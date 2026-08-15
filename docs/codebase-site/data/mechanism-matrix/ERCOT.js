@@ -39,7 +39,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     diurnal_price_amplitude: { cell: "U", ev: "xiso-1 §2 (audit, no prior ISO-local finding)" },
     ordc_scarcity_overlay: { cell: "R", ev: "ERCOT-97" },
     dump_cost_full_offer_domain: { cell: "I", ev: "caiso-139 §E ex-ante census" },
-    ercot_rtordpa_overlay: { cell: "K" },
+    ercot_rtordpa_overlay: { cell: "K", ev: "ercot-203 (docs/FINDING-ercot203-rtoffpa-not-in-rtspp-2026-08-15.md; results/calibration/ercot203_rtoffpa_basis.json) — BASIS-COMPLETE: RTSPP = RTLMP + RTORPA + RTORDPA (Nodal Protocols §6.5.7.3(12)/§6.6.1.1/§6.6.1.2); RTOFFPA is out of basis (§6.7.5 AS-imbalance capacity stream only), so the ercot-202 (T-3b) 'incompleteness' is out-of-basis content and an RTOFFPA leg is a DO-NOT-REDO. Verdict UNCHANGED at K — protocol gate, no mechanism tested, no solve" },
     maxgen_emergency_tier_pricing: { cell: "U" },
     nyiso_rcpf_family: { cell: "." },
     reserve_family_dual_sidecar: { cell: "I" },
