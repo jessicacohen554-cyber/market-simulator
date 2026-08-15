@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-08-15 — GOLDEN-TIER-FIX: `curate_emissions.py` runner OOM fixed (peak RSS 10.05 → 5.17 GiB, output byte-equivalent); the deferred golden-tier dispatch SPENT and GREEN (run 31913648051) — G3's evidence gate reopens
+
+`curate_year()` held a full CAMPD year in pandas several times over (per-state
+frame list + `pd.concat` copies, a `drop_duplicates` hashtable, a
+`sort_values` whole-frame take, `write_clean`'s second full Arrow copy),
+peaking **10.05 GiB RSS from 119 MiB of input** — the OOM that killed the
+golden tier's standard runner in 2 of its 3 dispatches ever (report §4;
+perf-recheck §1.2/§1.5). The assembly is now Arrow-side and streaming
+(per-state cleaning unchanged; key-column-only stable sort +
+first-occurrence dedupe; one-row-group chunks through the existing
+`clean_io.write_clean_iter`; `validate_clean` untouched): **5.17 GiB peak on
+the tier's 2023 inputs, 4.71 GiB on 2024**, wall unchanged. A memory
+refactor, not a re-derivation — `[R-FROZEN-DERIVE]` output-equivalence
+verified for both years: data region **byte-identical** (every page and row
+group), row-group structural metadata equal,
+`assert_frame_equal(check_exact=True)` + dtype equality over all
+26,534,489 / 26,030,146 rows; the footer differs only in the `created_utc`
+provenance timestamp (and the `ARROW:schema` blob embedding it). The single
+authorized dispatch (decision 7; the B-1/B-2/B-5 duty deferred by the
+BLOAT-B-5 sitting) was spent on the fix branch, whose base carries every
+executed BLOAT-B prune: run `31913648051` — **GREEN in 11m33s** (emissions
+step 1m31s), loud-failure guard PASS, zero data-missing skips, no corpus
+restored, sparse list untouched.
+Ledger entries: release plan §8 (2026-08-15 GOLDEN-TIER-FIX) + bloat plan §8
+Close-out.
+
 ## 2026-08-15 — BLOAT-B-5 (PR-5, #3978): owner-signed batch executed — A2 + B1b + B3 untracked (−2,518.5 MiB at tip, 763 payloads), C touchpoints vetoed; golden-tier dispatch deferred by owner
 
 The owner answered the G1 item card in-session: **A2 / B1b / B3 SIGNED**, the
