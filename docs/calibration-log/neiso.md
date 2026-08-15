@@ -2407,3 +2407,120 @@ the `calibration-keeper-auditor` / the next NEISO session, per the neiso-90 §6 
 **Next shorthand: `neiso-95`.** The NEISO lane item is **gap 3's downstream check** and the
 `disposition_note` repair above; the fleet-vintage charter is **not** a NEISO lane item and should be
 assigned as its own cross-ISO session.
+
+---
+
+## 2026-08-15 — neiso-95: the `frontier` and `complete` declarations RE-VERIFIED on the current keeper, the stale `disposition_note` REPAIRED, and gap 3 confirmed **coverage-only**
+
+**Session `neiso-95`** (the shorthand neiso-94 named). **Keeper unchanged:
+`2026-08-14-neiso-93-envelope`** — no promotion, no re-key of `keeper`, **NO RUN PRODUCED**.
+Full record: `results/calibration/ASSESSMENT-neiso95-declaration-recheck-2026-08-15.md`.
+
+**Freeze VERIFIED ACTIVE at HEAD** (`active: true`, re-armed 2026-08-06, scope `isos: ALL`, tiers
+`[validation, locked_test]`) and never engaged. **No year of any tier was solved, scored or
+registered.** No LP was constructed. `holdout-freeze.json` and `calibration-complete.json` are
+**unedited**. The only 2019–2022 reads are of **inputs**, unrestricted under rule 22 as amended
+2026-08-06. NEISO's locked test remains **NEVER GRANTED and NEVER SPENT**.
+
+### `frontier` HOLDS — re-established on the current keeper's own sidecars, not carried forward
+
+The 2026-07-11 declaration had been made two keepers ago and `carried_forward_through` stopped at
+the neiso-87 keeper. Re-verified from `neiso93_envelope_A/hourly/` (`neiso95_declaration_recheck.py`):
+**C3c model tail = 0 hours > $300/MWh in 2023, 2024 and 2025 on BOTH passes**, recomputed under the
+pinned `render_calibration_html._tail_hours` definition and agreeing with the committed payload's
+`ordc.hoursGt200.model` (0/0/0 vs RT actuals 15/8/20). **It is not a near miss**: the whole-run
+maximum of the max-across-zones price is **248.97 / 218.24 / 280.85 $/MWh** on P1 — the model never
+reaches the threshold in any hour of any year, closest by $19.15. That is the dual-fuel oil-parity
+cap showing up directly in the price distribution, i.e. a **formation** gap, not a magnitude one.
+`reserve_family_<year>.parquet` — the only artifact in which a locational family's binding is
+observable — carries `shortfall_mw = 0.0`, `held_mw ≥ requirement` and `dual = 0.0` (max |·| 1.42e-14,
+floating-point noise) in **all 157,680 family-hours** at the published static 1,800 / 1,200 / 600 MW requirements, so the in-LP ISO-NE RCPF
+co-optimization is **DORMANT**. **No C3c evidence moved in either direction** — the superseded
+keeper's own sidecars recompute to the same 0 h on both passes, so neiso-93's envelope repair (which
+did move prices) left the frontier basis bit-unchanged. `frontier.carried_forward_through` re-stamped.
+
+### `complete` reproduces, and M1 passes
+
+`calibration_verdict.py --run-id 2026-08-14-neiso-93-envelope` (committed artifacts only, **no
+solve**) returns exactly the marker's recorded re-verification: **CALIBRATED-WITH-CAVEATS, 0 FAILs,
+1 ledgered caveat (C3c), C1 all 12/12 · free 8/8, grade summary `{scored 8, target 7, commercial 0,
+ledgered 1, fails 0}`**. So the D-5(b) re-key neiso-93 performed is **reproducible, not merely
+asserted**. `audit_keepers.py --iso NEISO`: **0 failures / 0 warnings**, check M1 included.
+
+**One stale clause reported and deliberately NOT edited.** The `complete` entry's `locked_test` field
+still argues "2019 is UNSOLVABLE at HEAD" as part of its reasoning — a claim **withdrawn** by
+neiso-88/neiso-90 and re-confirmed withdrawn by neiso-94 §3.2. The conclusion it supports is
+unaffected (neiso-94's two live reasons are elsewhere). Left alone because this session's authority
+over that file is the D-5(b) re-key verification, not a rewrite of the owner's `locked_test`
+reasoning. Flagged for the owner / a governance lane.
+
+### The stale `disposition_note` — REPAIRED (neiso-94 §6 closed)
+
+Confirmed byte-unchanged across the neiso-93 promotion while `keeper`, `prior_keeper_note` and
+`note` all changed, so under the current keeper it named the wrong superseded run
+(`2026-08-05-neiso-83-ca1-reclass` rather than `2026-08-06-neiso-87-control`) and disclosed defect (i)
+as live on "THIS KEEPER". Rewritten for the actual current keeper; **the superseded text is preserved
+verbatim in `prior_keeper_note`**, labelled with why it moved — it remains a correct description of
+`2026-08-06-neiso-87-control` as promoted. Exactly three fields changed (17 of 20 leaf fields
+byte-identical, key order preserved); `build_status.py --iso NEISO` rebuilt `status/NEISO.js`
+(`shared.js` unchanged). **The `calibration-keeper-auditor` re-checked the repair independently
+(`--iso NEISO`): PASS, 0 failures, 0 warnings, 0 repairs needed** — it reproduced every claim from the
+committed artifacts (including the un-rounded P1 maxima 248.9682 / 218.2412 / 280.8542) and confirmed
+at the JSON-value level that the shard diff touches exactly the three intended fields. Its one
+refinement is adopted: the reserve `dual` is zero to floating-point noise (max |·| 1.42e-14), stated
+that way rather than rounded. **Two of the four disclosed defects are now closed with measurement:**
+**(i)** the stale `NEISO,2025,8` gas-basis row — 2025 P1 mean λ **69.3989** vs the superseded
+**69.7149** and the **69.399** predicted (2023 38.4324 → 38.4215, 2024 essentially bit-identical);
+**(ii)** the C8 evidence gap — this bundle's `legitimacy_diagnostics.json` was committed in the
+**registration commit itself** (`2cf773c`), so C8 PASSes on artifacts that shipped with the run.
+**(iii)** and **(iv)** carry forward and were **re-checked at HEAD rather than assumed**:
+`campd-unit-outages-NEISO.csv` still routes plant **6081** Stony Brook units **004/005** (the DIESEL
+peakers) to `plant_group=CC_REGULAR`, 74 rows each; and this bundle's `meta.json` still carries
+`commitment: true` / `passes ["P1","P2"]` — **NEISO remains the only ISO of six on the archived P2
+pass**, neiso-84's escalation neither resolved nor worsened, **still open for the owner**. **(v)** the
+2019 Pilgrim gap is recorded as a 2019-only blocker that **does not touch 2023–2025**
+(`RETIREMENT_WINDOW_START = 2023` makes every affected plant availability-zero in the training
+window); it belongs to the six-ISO charter, not this lane.
+
+### Gap 3 downstream: **coverage changed, the tuned years did not**
+
+`neiso95_gap3_chp_downstream.py`, three legs. **(A)** The 2023/2024/2025 partitions of
+`eia860_chp_by_year.parquet` are **plant-for-plant byte-identical** to the pre-extension blob
+(12,477 / 13,371 / 14,189 plants; CHP=Y 879 / 861 / 848; index and values identical) — all 52,596 new
+rows land in 2018–2022. **(B)** `data.chp._chp_by_plant(dir, year)` returns that year's own row for
+all eight covered years, and differs from the 2025-era snapshot on 45/37/31/23/20/15/5/**0** plants
+for 2018→2025 — the monotone decay to exactly 0 at the snapshot vintage confirms the path is live,
+not silently falling back. **(C)** The classification the **solve path** consumes is vintage-correct
+per year: `run_calibration.py` passes the solve year at **both** fleet-sourcing branches (the
+per-plant bin synthesis at `year=year`, and `build_base_fleet(..., vintage_year=year)`). The
+extension is materially live where intended — **NEISO plant 10726 Masspower (3 CC units, 245 MW) is
+`chp=Y` through 2022 and `chp=N` from 2023**, so 2019–2022 now carry it as CC_CHP where the snapshot
+would have mis-classed it CC_REGULAR; it is the whole CC_CHP 739.0 → 494.0 MW step.
+
+**One latent seam found, reported, NOT fixed.** `fleet.eia860._dual_fuel_plant_groups` takes **no
+year parameter at all** and keys its `(plant_code, plant_group)` pairs off the un-yeared snapshot CHP
+flag, so a plant whose vintage flag differs from the snapshot can silently lose its dual-fuel pairing
+— which matters for an ISO whose winter price formation runs on dual-fuel oil parity. **It is
+provably inert for this keeper**: of the nationally-differing plants in the tuned years (15 / 5 / 0),
+**none is in the NEISO fleet** in any year, and NEISO's 47 / 49 / 49 matched dual-fuel pairs are all
+correctly keyed. In 2019–2022 it would reach exactly one plant — Masspower again. ISO-generic, needs
+its own scoped change plus a six-ISO in-sample proof.
+
+### No run, by design
+
+Items 1–4 left **no in-sample delta**, so the prompt's item-5 condition did not fire: no solve, no
+registration, rule 15 and rule 16 not engaged. The changes are text and stamps in a keeper shard and
+cannot change a solve.
+
+**Data blocker, recorded not chased:** the `final` grant's H1-2026 half stays hard-blocked —
+`data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet` carries 2018–2025 and **no 2026 rows**,
+`bench/NEISO/` holds 2022–2025. That intake is unrestricted under rule 22 but was not this session's
+task.
+
+**Next shorthand: `neiso-96`.** No NEISO tuning lever is open — the frontier is declared and the
+cross-ISO lever queue was cleared at neiso-80/81, so further C3c work needs a NEW measured
+identification and its own charter. The standing NEISO lane items are the two owner escalations
+(**the archived-P2 pass** and the **6081 outage plant_group routing**), both of which need a re-solve;
+the `_dual_fuel_plant_groups` vintage seam and the `complete`-entry stale clause above are reported
+and unowned. The **fleet-vintage/Pilgrim charter is NOT a NEISO lane item** and should be assigned as
+its own cross-ISO session.
