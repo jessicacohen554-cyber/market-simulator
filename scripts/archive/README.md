@@ -25,3 +25,14 @@ scripts, and dead CI-upload tooling from before the runner-minutes policy.
   superseded run's per-run attestation/driver/validate scripts rotate here,
   imports and repo-root path math mechanically fixed, content otherwise
   unchanged.
+- **2026-08-15 backlog rotation (BLOAT-B-4).** 86 scripts arrived in one pass —
+  79 `gen_*_attestation.py`, `gen_nyiso130_keeper_ledger.py`, the miso-72
+  lineage, the miso-74/75 probe drivers, `run_foresight_ab.py` and
+  `run_calibration_eia930.py`. Pure `git mv`: the only content edits are the
+  repo-root path math re-anchored one level deeper
+  (`Path(__file__).resolve().parents[1]` → `parents[2]`,
+  `.parent.parent` → `.parent.parent.parent`; 86 expressions, each re-verified
+  to resolve to the repo root at its new depth) and one sibling import in
+  `gen_caiso160_attestation.py` re-pointed to `scripts.archive.…`. See
+  `scripts/README.md` "Keeper rotation" for the keep-set derivation and
+  `docs/bloat-removal-plan-2026-08.md` §6.

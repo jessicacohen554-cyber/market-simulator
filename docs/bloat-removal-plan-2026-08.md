@@ -481,6 +481,70 @@ the same PR (flag verified present); `scripts/probes/` untouched (frozen
 record); `file-integrity-guard` treats renames at destination with content
 preserved, so **no `intentional-shrink` label is needed for pure moves**.
 
+### EXECUTED 2026-08-15 (PR-4) — what actually shipped, and the three deltas from the plan above
+
+**86 top-level scripts rotated** to `scripts/archive/` (194 → 108 top-level
+`.py`; 151 → 237 in `archive/`): 79 `gen_*_attestation.py`,
+`gen_nyiso130_keeper_ledger.py`, the miso-72 lineage
+(`gen_miso72_attestation.py`, `miso72_perzone_validate.py`,
+`run_miso72_winter_probe.py`), `run_miso74_manitoba_probe.py`,
+`run_miso75_composition_probe.py`, `run_foresight_ab.py`,
+`run_calibration_eia930.py`.
+
+**Delta 1 — the keep-set is 4, not 6.** Re-derived at execution from
+`keepers/<ISO>.json` + docstrings, as this section requires. Two of the six
+rotated because the lane state moved after 2026-08-14:
+
+- `gen_neiso87_attestation.py` — NEISO's keeper is now **neiso-93**
+  (`2026-08-14-neiso-93-envelope`, promoted 2026-08-14), a `replay_keeper`
+  zero-delta re-solve whose attestation was written by `build_dof_ledger.py`
+  plus hand-authored governance sections, not by any `gen_*` script (the
+  FINDING's own §"two things that needed doing" records this). neiso-87 is
+  therefore superseded lineage and rotates under the standing rule.
+- `gen_ercot193_attestation.py` — the in-flight hold **expired**. The ercot-193
+  SOC re-gate was executed and discharged (RG-PASS on the original gates, run192
+  reproduces byte-identically, keeper unchanged; `docs/calibration-log/ercot.md`
+  §ercot-193), and ERCOT has since run to ercot-202.
+
+Kept: `gen_ercot192_attestation.py`, `gen_miso148_attestation.py`,
+`gen_caiso189_attestation.py` (caiso-188 keeper), `gen_pjm153_collapse_attestation.py`
+(pjm-152 keeper arm). NYISO's keeper still has no top-level generator.
+
+**Delta 2 — `run_ces_leg.py` STAYS** (the "verify before moving" row resolves to
+keep). It has standing references, not zero: `tests/unit/policy/test_run_ces_leg.py`
+imports it, `tests/regression/test_run_record_provenance.py` lists it in its
+standing-entry-point set and imports it, and `run_full_horizon.py` re-exports
+`assert_schedulable` specifically for it. It is live FF-3F harness code.
+
+**Delta 3 — `scripts/data/regen_caiso_bench_cems.py` needed no action:** it was
+**already** at `scripts/archive/regen_caiso_bench_cems.py` at execution HEAD,
+which is why `scripts/data/derive_caiso_supply_consistent_demand.py` already
+cites the `archive/` path.
+
+**Mechanics as executed.** Pure `git mv`; the only content edits inside the moved
+files are 86 repo-root expressions re-anchored one level
+(`Path(__file__).resolve().parents[1]` → `parents[2]`, `.parent.parent` →
+`.parent.parent.parent`), each re-verified by evaluating it at the new path and
+asserting it equals the repo root, plus one sibling import in
+`gen_caiso160_attestation.py` re-pointed `scripts.gen_caiso159_attestation` →
+`scripts.archive.gen_caiso159_attestation`. Live references rewritten:
+`src/market_sim/model/capacity_evolution/evolve.py`,
+`src/market_sim/pipeline/reference.py`,
+`tests/regression/test_capacity_evolution_facade.py`,
+`docs/codebase-site/data/mechanism-matrix.js`, `scripts/README.md` (rotation
+record + the sibling census, 74/50 → 73/49), `scripts/archive/README.md`.
+`.github/workflows/` needed no edit (its only match names the KEPT
+`gen_caiso189_attestation.py`). **Not** rewritten, per the `scripts/README.md`
+frozen-record convention: `results/calibration/`, `docs/calibration-log/`,
+`docs/sessions/`, `frontend/data/`, `CHANGELOG.md`, dated `docs/handoffs/` /
+`FINDING-` / `PRECOMMIT-` records, and `scripts/probes/` (including the
+`artifacts/_miso7{2,4,5}_chain.sh` repro drivers — charter: probes untouched).
+Bare-name evidence citations inside the per-ISO mechanism-matrix shards were
+likewise left alone: they are historical `ev:` pointers, and rewriting them
+would mean a cross-ISO shard edit (rule 25 / 28d) for no live-path gain.
+`ci_refactor_guards.py --script-refs` green (11 known-dangling tolerated,
+unchanged); no `intentional-shrink` label (pure renames).
+
 ---
 
 ## 7. Class E — `frontend/data/backcast/runs` (70.1 MiB, 66 payloads)
@@ -556,8 +620,13 @@ Tip trajectory: 10,080 → **≈ 8.1 GiB** (class-approved only) → **≈ 6.1 G
   `audit_keepers.py`. No dashboard files change (payloads/sidecars untouched).
   Holds re-checked at execution date against lane state; sign-off rows only if
   signed at G1.
-- **PR-4 — "script rotation" (D1, D2).** `git mv` + reference rewrite +
-  `ci_refactor_guards.py --script-refs` green. No label needed (renames).
+- **PR-4 — "script rotation" (D1, D2). SHIPPED 2026-08-15**, PR
+  [#3951](https://github.com/jessicacohen554-cyber/market-simulator/pull/3951)
+  (branch `claude/bloat-b4-script-rotation-dmktqx`). `git mv` + reference rewrite
+  + `ci_refactor_guards.py --script-refs` green. No label needed (renames).
+  86 scripts rotated; keep-set re-derived to 4; `run_ces_leg.py` verified and
+  kept; `regen_caiso_bench_cems.py` already archived. Execution record and the
+  three deltas from the itemization: §6 "EXECUTED 2026-08-15".
 - **PR-5 — signed-item batch** (whichever of B3 / B1b / A2 / C-sign-offs the
   owner approves at G1), same mechanics as PR-2/PR-3.
 - **Close-out (per WS6):** `cleanup-large-blobs.yml` **DRY RUN** —

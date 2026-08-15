@@ -15,7 +15,7 @@ next year's entry screen; dispatch itself happens back in the runner).
 ``evolve_fleet`` resolves every step function through the package namespace
 at call time (:func:`_pkg_ns`), so the historical
 ``mock.patch("market_sim.model.capacity.<step>")`` targets and probe-style
-``capacity.<step> = wrapped`` instrumentation (run_foresight_ab.py, the
+``capacity.<step> = wrapped`` instrumentation (scripts/archive/run_foresight_ab.py, the
 confirmed-retirement probe, the FOM-scarcity grid) keep intercepting the
 steps, exactly as the pre-split module-global reads behaved. The full
 pre-split surface stays importable from ``market_sim.model.capacity`` (the
