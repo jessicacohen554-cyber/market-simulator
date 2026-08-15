@@ -144,3 +144,48 @@ pins it. **Every existing SCED-corpus lane stops at delivery 2025-12-04.**
   are permanently out of free retention.
 
 Immutable raw source root: never modified in place (repo data contract).
+
+## Untracked 2024+ payloads (BLOAT-B-5 item A2, 2026-08-15, owner-signed)
+
+The post-ERCOT-157 window — top-level publications **2024-04 .. 2026-02**
+(673 shards) plus the entire **`rtcb-format-2026/`** quarantine (27 parts) —
+is gitignored payloads as of 2026-08-15: 700 files, **1,846.9 MiB** of
+post-slim bytes, untracked at tip with **no history rewrite**. What stays
+tracked here:
+
+* the **ERCOT-157 window, publications 2023-03 .. 2024-03 (323 shards)** —
+  irreplaceable-from-source (restored by hand once already; see Provenance),
+  never converted;
+* `README.md`, `SHA256SUMS.txt` (whose post-slim hashes ARE the untracked
+  bytes' hashes — a restore verifies against it), `.gitkeep`, and
+  `rtcb-format-2026/README.md` (the quarantine layout stays load-bearing —
+  see the RTC+B section above; never flatten it).
+
+Recovery routes for the untracked window:
+
+1. **Git history (exact bytes, always available).** The pin sha is the last
+   commit tracking the full corpus:
+
+   ```
+   # whole window (top level + quarantine):
+   git restore --source=726f389d94c45141bac83eacfdaea5e18a465c56 -- data/raw/ercot/SCED
+   # single shard:
+   git restore --source=726f389d94c45141bac83eacfdaea5e18a465c56 -- 'data/raw/ercot/SCED/<YYYY-MM.partNNNN>.parquet'
+   ```
+
+   Verify with `sha256sum -c SHA256SUMS.txt` (from this directory). Pre-slim
+   raw bytes remain at `971eaa3` exactly as the In-place-slim section above
+   records.
+2. **Re-fetch from the free MIS path while retention lasts**
+   (`scripts/data/fetch_ercot_sced_corpus_shards.py`; publications
+   ≥ 2024-03-24 were servable as of 2026-08-09). The MIS window is a rolling
+   ~28 months that shrinks daily, so this route decays continuously — the
+   honest recovery story is history-as-archive, same as the Stage-2
+   conversions.
+
+Consumers are unaffected at solve/test time (derive-time only, per the
+Consumers note in `docs/bloat-removal-plan-2026-08.md` §3): a rule-23
+re-derivation session restores the window from the pin (or hydrates it under
+a partial clone — the fast-clone profiles derive from the tree at HEAD, so
+these payloads no longer weigh the `ercot` profile) and runs the derives
+against the restored bytes.
