@@ -11,7 +11,43 @@
 
 ---
 
-## §0 STATE BOARD — cycle 9, 2026-08-14 — THE SITTING: both open decisions SIGNED
+## §0 STATE BOARD — cycle 11, 2026-08-15 — **CARD T IS FULLY DISCHARGED AND SPENT; a KEEPER was PROMOTED on owner instruction; the owner-independent queue is EMPTY**
+
+**Recorded HEAD (origin/main): `633d12f`** — this cycle's own promotion merge.
+
+| item | state |
+|---|---|
+| **KEEPER → `2026-08-14-ercot202-arm-plantphysics`** | **PROMOTED THIS CYCLE.** PR #3947 (the owner-side rule-18 grain lane, log entry re-keyed to **ercot-203**) merged at `633d12f` by this manager **on direct owner instruction**, because the lane's own session is IDLE/BLOCKED at `add_repo` and could not land it. Verified before merge: keeper shard + `status/ERCOT.js` re-keyed, both arms registered full-span 2023–2025, both run payloads present (1.64 MB each), retention held at exactly **15** ERCOT runs with the two evictions named ex ante, matrix shard cell `ercot_faststart_pool_plant_physics` **O → K** with evidence, keeper-auditor PASS. Determination **NOT-YET {C3a-2023, C3b-2023} UNCHANGED**; C3c stays the single ledgered CAVEAT ×3. **Promotion basis is LEGITIMACY ALONE** — the arm is measured INERT (1.2358 MW CT_PEAKER→CC_CHP in one hour of 26,280; `system_2023.parquet` byte-identical; 2024/2025 byte-identical), so no metric gain is claimed and none exists. |
+| **Card T (T-1)** | **DEAD — NON-VIABLE ON PREMISE** (landed on main as `ercot-202`). `gas_hh_monthly_shape` is **already armed** on the run192 keeper (`meta.json`, resolved `run_config.json`, matrix census all agree); the card conflated the class default (`False`) with the keeper's value (`True`). The chartered A/B has **zero delta by construction** — cancelled before any solve, **no lever substituted**, keeper unchanged. Card T §3's "~$2–3/MWh in Feb from fuel shape" is **already spent, not reachable reach**. |
+| **Card T (T-3b)** | **DELIVERED, POSITIVE RESULT** (`ercot-198`). The committed adder overlay is **INCOMPLETE in 2024** — 0.240 of 0.477 $/MWh dw settled published content (**50 %**); the missing component is published **RTORPA** (+0.237 dw, concentrated Apr +0.76 / Aug +0.64 / May +0.63 / Nov +0.27). 2025 is **96 % complete**. **This is now the strongest live ERCOT lever** (rule 14 `[R-ACCURATE]`), and its data is already committed. |
+| **L-SCAR** | **CLOSED-OUT.** L-1 died at V0 (non-identifiable); L-2 Phase-0 **STOP** (`ercot-201`) — the E1 dispersion surface is superseded by FFR-8B/9A and its identification route barred by an adjudicated prior stop; the regime card (`ercot-200`, PR #3946) recommends **WAIT-FOR-DATA** (zero RTC+B-era anchors until the 2026 SOM, ~mid-2027). |
+
+**Owner decisions pending: NONE blocking.** Two items for the owner's attention,
+neither blocking a lane:
+
+1. **Merge PR #3946** (REGIME-CARD-b, `ercot-200`, doc-only) — rebased by its own
+   session this cycle and awaiting merge.
+2. **Shorthand disorder on main — FLAGGED, NOT REPAIRED.** The owner SITTING
+   RECORD entry carries an `## ercot-202` heading, so main holds a **duplicate
+   202** independent of this cycle's merge; **197 / 199 / 200 are unspent**.
+   Renumbering another lane's landed entry is an owner call, so this manager
+   recorded the collision openly (in both the merge commit and the ercot-203
+   entry) rather than resolving it silently. Artifact stems were deliberately
+   **not** renamed a second time — the mapping is stated explicitly instead:
+   **log ercot-203 ⇔ artifact stem `ercot202_*`**.
+
+**Systemic blocker, now measured across eight dispatches: `add_repo` permission
+non-determinism.** Identical calls are denied/blocked ~30 % of the time
+(T1-EXEC 02:44, REGIME-CARD 03:03, T1-EXEC-b, and the ercot-202 lane's own
+session, which is still stranded IDLE at it). Re-dispatch has worked every
+time, but a lane that lands its branch and *then* gets blocked cannot merge its
+own PR — which is exactly what required this manager to land the keeper.
+
+---
+
+### Cycle-9 board (superseded, kept verbatim below)
+
+## §0-prev STATE BOARD — cycle 9, 2026-08-14 — THE SITTING: both open decisions SIGNED
 
 **The owner sat in the manager session (2026-08-14, ~02:40Z, interactive
 selection) and signed BOTH pending items:**
@@ -633,3 +669,48 @@ the READ FIRST list (the two-settled-adders design fact is regime evidence).
    and ERCOT matrix-shard edits.
 5. Recorded HEAD: `5bf5f13` (#3934 merged this pack's A10 state; #3933,
    #3935, #3936 are other lanes). Owner merge cadence remains fast.
+
+### A12 — 2026-08-15, cycle 11 (owner-directed: promote, then hand off)
+
+1. **The owner instructed the manager to promote if a recommended keeper
+   candidate existed.** One did — not from this workstream's own lanes but from
+   the owner-side rule-18 grain lane (PR #3947), whose session had landed a
+   complete, gate-clean, auditor-verified branch and then been **stranded IDLE
+   at `add_repo`**. Assessed against the owner's own stated test ("structural
+   integrity improves but gates regress may still be a keeper"), it is the
+   *stronger* case: structural integrity improves **and no gate regresses** —
+   every kill gate PASSes and the arm is measured inert. **PROMOTED**
+   (`633d12f`).
+2. **The manager departed from its own §1 fence** ("sequences, dispatches,
+   verifies, escalates — never promotes") on explicit owner instruction. Noted
+   so the fence is understood as owner-overridable, not as having lapsed.
+3. **Merge conflict resolved at landing**, one file, an append collision on
+   `docs/calibration-log/ercot.md`: main's entries stand **unmodified**, this
+   lane's entry re-keys **202 → 203** behind main's own
+   "Next shorthand: ercot-203." Artifact stems were **not** renamed a second
+   time — they are registered and referenced by the keeper shard, status file
+   and matrix shard, so renaming would mean re-registering both bundles for
+   zero informational gain. Recorded in the entry as a SECOND SHORTHAND RE-KEY
+   note.
+4. **Card T is now fully spent**: T-1 dead on premise, T-3b delivered, T-2
+   still behind the D2 freeze, T-3a owner-only (rubric), T-4 refused. **The
+   L-SCAR branch is closed-out** (V0 fail → Phase-0 stop → wait-for-data).
+   **ERCOT's owner-independent lever queue is therefore EMPTY of chartered
+   work**, and the next lane must open a new object.
+5. **The successor this manager recommends, and why it is not a fitted knob:**
+   complete the 2024 published-adder overlay with the missing **RTORPA**
+   component (`ercot-198`). It is a **measured-input completeness repair** under
+   rule 14 `[R-ACCURATE]` and rule 13 `[R-MEASURED]` — the published series is a
+   real settled market quantity with a forward analogue, already committed at
+   `data/raw/ercot/ercot_{2024,2025}_ordc_reserves_hourly.parquet` and the
+   NP6323 adder report — **not** an offset tuned to a residual. It carries a
+   pre-stated risk that must be honoured direction-blind: the same finding sizes
+   the true C3b scoring-basis wedge at 2024 **+0.48** $/MWh, so completing the
+   overlay may move the *bench* rather than the *model* and could read adverse.
+   Rule 14 governs either way.
+6. **Second, lower-priority successor already named by the promoted keeper
+   itself**: the rule 26 `[R-DELETE]` discharge — delete
+   `ercot_faststart_pool_plant_physics` and its pre-repair branch, make plant
+   grain unconditional, and re-solve so no bundle references the flag. Deferred
+   for a **measured** reason (`with_overrides` raises on unknown keys, so the
+   keeper would become unreplayable without a re-solve), not a preferred one.
