@@ -2673,14 +2673,16 @@ def build_ercot_faststart_pool_markup(
       ``min_down_hours <= constants.FASTSTART_POOL_MIN_DOWN_HOURS`` — the
       SCED-startable-intra-hour inequality. CC rows fail by physics (4-8 h),
       ST_GAS by its 8-12 h min-down; no class tuple gates eligibility.
-      **Evaluated per PLANT under ``ercot_faststart_pool_plant_physics``
-      (ercot-186, card D3):** read on a bid ROW the test is vacuous — assembly
-      carries the UC-coupling tags on the committed anchor alone, so every
-      ``econ*``/``peak*`` row reads 0 and the inequality is False for every row
-      the builder can reach, leaving the class map as the only real filter.
-      Armed, the gate reads ``_plant_unit_physics`` and skips the whole plant,
-      which is what makes the rule-18 test bind. Default off replays the
-      pre-repair (vacuous) behaviour byte-identically for the A/B control.
+      **Evaluated per PLANT** (ercot-186, card D3; UNCONDITIONAL since
+      ercot-204): read on a bid ROW the test was vacuous — assembly carries the
+      UC-coupling tags on the committed anchor alone, so every
+      ``econ*``/``peak*`` row reads 0 and the inequality was False for every row
+      the builder can reach, leaving the class map as the only real filter. The
+      gate reads ``_plant_unit_physics`` and skips the whole plant, which is
+      what makes the rule-18 test bind. The pre-repair row-grain read and its
+      transitional ``ercot_faststart_pool_plant_physics`` flag were DELETED at
+      ercot-204 (rule 26 ``[R-DELETE]``) once a re-solve existed that no longer
+      referenced them.
     * **Replace composition, by mask** (rule 19 / charter §9.1): the returned
       ``own_mask`` (n_gen, T) marks the row-hours the pool owns; the caller
       REPLACES every other offer surface's markup there (conditional peak
@@ -2873,16 +2875,13 @@ def build_ercot_faststart_pool_markup(
             continue
         prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
 
-    # ercot-186 rule-18 [R-PHYSICS] GRAIN REPAIR (card D3): armed, the physics
-    # gate is evaluated on the PLANT and inherited by its bid rows; the
-    # row-grain read below is the pre-repair form, kept only so the A/B control
-    # replays byte-identically, and is vacuous by construction (see
-    # _plant_unit_physics).
-    plant_md = (
-        _plant_unit_physics(generators, prefixes)[0]
-        if getattr(config, "ercot_faststart_pool_plant_physics", False)
-        else None
-    )
+    # ercot-186 rule-18 [R-PHYSICS] GRAIN REPAIR (card D3), UNCONDITIONAL since
+    # ercot-204: the physics gate is evaluated on the PLANT and inherited by its
+    # bid rows. The pre-repair row-grain read is DELETED, not disabled (rule 26
+    # [R-DELETE]) — it was vacuous by construction, since assembly stamps
+    # min_down only on the committed anchor slice and every econ*/peak* bid row
+    # it could reach reads 0 (see _plant_unit_physics).
+    plant_md = _plant_unit_physics(generators, prefixes)[0]
     pmax = fleet_arrays.pmax
     voll_cap = float(
         getattr(config, "ercot_offer_surface_price_cap_frac", 0.95)
@@ -2894,7 +2893,7 @@ def build_ercot_faststart_pool_markup(
     mean_mc = mc_base.mean(axis=1)
     for pref, rows in prefixes.items():
         # Rule-18 physics gate at PLANT grain: SCED-startable intra-hour.
-        if plant_md is not None and plant_md[pref] > FASTSTART_POOL_MIN_DOWN_HOURS:
+        if plant_md[pref] > FASTSTART_POOL_MIN_DOWN_HOURS:
             n_plants_excluded += 1
             continue
         rows_arr = np.asarray(rows, dtype=int)
@@ -2907,14 +2906,9 @@ def build_ercot_faststart_pool_markup(
         mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
         for g, s_g in zip(order, mids):
             gen = generators[g]
-            # Pre-repair row-grain physics gate (see plant_md above). Committed
-            # and must-run blocks stay with their own floor structure (rule 19)
-            # — only the bid tranches (econ*/peak*) join the pool universe.
-            if plant_md is None and (
-                float(getattr(gen, "min_down_hours", 0) or 0)
-                > FASTSTART_POOL_MIN_DOWN_HOURS
-            ):
-                continue
+            # Committed and must-run blocks stay with their own floor structure
+            # (rule 19) — only the bid tranches (econ*/peak*) join the pool
+            # universe. The physics gate itself is applied at plant grain above.
             sfx = gen.unit_id.rpartition("_")[2]
             if not (sfx.startswith("econ") or sfx.startswith("peak")):
                 continue
@@ -2986,7 +2980,7 @@ def build_ercot_faststart_pool_markup(
         n_priced,
         year,
         FASTSTART_POOL_MIN_DOWN_HOURS,
-        "PLANT (ercot-186)" if plant_md is not None else "row (pre-repair, vacuous)",
+        "PLANT (ercot-186)",
         n_plants_excluded,
     )
     return markup, own_mask
@@ -3071,12 +3065,9 @@ def _faststart_pool_markup_contpct(
             continue
         prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
 
-    # ercot-186 rule-18 grain repair — the stepped builder's own construction.
-    plant_md = (
-        _plant_unit_physics(generators, prefixes)[0]
-        if getattr(config, "ercot_faststart_pool_plant_physics", False)
-        else None
-    )
+    # ercot-186 rule-18 grain repair — the stepped builder's own construction,
+    # unconditional since ercot-204 (rule 26 [R-DELETE]).
+    plant_md = _plant_unit_physics(generators, prefixes)[0]
     pmax = fleet_arrays.pmax
     voll_cap = float(
         getattr(config, "ercot_offer_surface_price_cap_frac", 0.95)
@@ -3087,7 +3078,7 @@ def _faststart_pool_markup_contpct(
     n_plants_excluded = 0
     mean_mc = mc_base.mean(axis=1)
     for pref, rows in prefixes.items():
-        if plant_md is not None and plant_md[pref] > FASTSTART_POOL_MIN_DOWN_HOURS:
+        if plant_md[pref] > FASTSTART_POOL_MIN_DOWN_HOURS:
             n_plants_excluded += 1
             continue
         rows_arr = np.asarray(rows, dtype=int)
@@ -3100,11 +3091,6 @@ def _faststart_pool_markup_contpct(
         mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
         for g, s_g in zip(order, mids):
             gen = generators[g]
-            if plant_md is None and (
-                float(getattr(gen, "min_down_hours", 0) or 0)
-                > FASTSTART_POOL_MIN_DOWN_HOURS
-            ):
-                continue
             sfx = gen.unit_id.rpartition("_")[2]
             if not (sfx.startswith("econ") or sfx.startswith("peak")):
                 continue
@@ -3135,7 +3121,7 @@ def _faststart_pool_markup_contpct(
         n_priced,
         year,
         FASTSTART_POOL_MIN_DOWN_HOURS,
-        "PLANT (ercot-186)" if plant_md is not None else "row (pre-repair, vacuous)",
+        "PLANT (ercot-186)",
         n_plants_excluded,
     )
     return markup, own_mask

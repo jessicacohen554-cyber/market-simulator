@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-15-ercot204-rule26-delete",
+  "label": "ercot204 rule26 delete",
+  "date": "2026-08-15",
+  "shorthand": "ercot204-rule26-delete",
+  "definition": "ercot-204 rule-26 [R-DELETE] successor: the ercot-202 keeper recipe re-solved with ercot_faststart_pool_plant_physics DELETED and the plant-grain rule-18 physics gate made UNCONDITIONAL, together with the pre-repair row-grain branch. Zero mechanism changes, zero fitted scalars, zero new fields - a field is REMOVED so no bundle references the transitional flag. Expected byte-identical to the keeper (precommit P-1).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-15-ercot204-rule26-delete.js",
+  "bundle": "results/calibration/ercot204_rule26_delete"
+}
