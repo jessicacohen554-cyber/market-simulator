@@ -38,10 +38,17 @@ coverage. This represents every plant exactly once and never double-counts a
 facility against its own units.
 
 Output is partitioned by year (``iso`` is null, so no ISO/market partition):
-``data/clean/emissions/emissions_{year}.parquet``. Every file is written
-through ``scripts.lib.clean_io.write_clean`` and round-trip checked with
-``validate_clean``. The script reads only ``data/raw`` and is idempotent —
-re-running regenerates each year's file in place.
+``data/clean/emissions/emissions_{year}.parquet``. Every file is streamed
+through ``scripts.lib.clean_io.write_clean_iter`` (row groups laid out
+identically to a single-shot ``write_clean`` — its documented data-byte
+identity) and round-trip checked with ``validate_clean``. Assembly is
+Arrow-side and per-file: a year is never materialized as one pandas frame.
+The previous whole-year ``pd.concat``/``drop_duplicates``/``sort_values``
+pipeline peaked ~10 GiB RSS on 119 MiB of input and OOM-killed standard
+7.8 GiB CI runners (``docs/bloat-removal-report-2026-08.md`` §4); the
+streaming assembly produces row/order/dtype-identical output within a
+standard runner's budget. The script reads only ``data/raw`` and is
+idempotent — re-running regenerates each year's file in place.
 
 Usage:
     python scripts/data/curate_emissions.py                 # all detected years
@@ -54,9 +61,13 @@ import argparse
 import logging
 import re
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+import pyarrow as pa
+import pyarrow.compute as pc
 
 from market_sim.config import paths
 from market_sim.data.campd import LB_TO_KG, SHORT_TON_TO_KG
@@ -244,6 +255,90 @@ def _detect_years(unit_dir: Path, fac_dir: Path) -> list[int]:
     return sorted(years)
 
 
+def _cleaned_arrow_tables(
+    unit_paths: list[Path], fac_paths: list[Path]
+) -> tuple[list[pa.Table], int, int]:
+    """Clean every extract into per-file Arrow tables, one file at a time.
+
+    Returns ``(tables, n_unit, n_fac)``: the cleaned tables in the canonical
+    reconciliation order — unit grain first (in sorted path order), then the
+    facility "ALL" rows for plants with no unit-level coverage — plus the
+    pre-dedupe row count per grain. Each per-state pandas frame is converted
+    to Arrow and released before the next file is read, so peak memory holds
+    one state's frame plus the (much smaller) Arrow accumulation, never the
+    year's frames simultaneously (the pre-2026-08 OOM,
+    ``docs/bloat-removal-report-2026-08.md`` §4).
+    """
+    tables: list[pa.Table] = []
+    covered: set[int] = set()
+    n_unit = 0
+    for p in unit_paths:
+        f = clean_campd_frame(pd.read_parquet(p), facility_level=False)
+        covered.update(f["plant_id"].unique())
+        n_unit += len(f)
+        tables.append(pa.Table.from_pandas(f, preserve_index=False))
+    n_fac = 0
+    for p in fac_paths:
+        f = clean_campd_frame(pd.read_parquet(p), facility_level=True)
+        f = f[~f["plant_id"].isin(covered)]  # unit-level wins where it exists
+        if len(f):
+            n_fac += len(f)
+            tables.append(pa.Table.from_pandas(f, preserve_index=False))
+    return tables, n_unit, n_fac
+
+
+def _first_occurrence_sorted_indices(table: pa.Table) -> pa.Array:
+    """Row indices that key-sort ``table``, keeping first duplicate-key rows.
+
+    Order-equivalent to what this script's pandas pipeline always did —
+    ``drop_duplicates(subset=_KEY_COLUMNS, keep="first")`` followed by
+    ``sort_values(_KEY_COLUMNS)`` — by construction: the multi-key sort is
+    made stable with an explicit original-row-order tiebreaker (rows with
+    equal keys stay in first-appearance order, so the first row of each
+    equal-key run is exactly the row pandas kept), nulls sort last (pandas
+    ``na_position="last"``), and adjacent-key comparison treats null == null
+    (pandas ``duplicated`` treats NaT as equal). Only the key columns plus
+    one int64 order column are materialized; payload columns are untouched.
+    """
+    n = table.num_rows
+    keys = table.select(_KEY_COLUMNS).append_column(
+        "__row", pa.array(np.arange(n, dtype=np.int64))
+    )
+    idx = pc.sort_indices(
+        keys,
+        sort_keys=[(c, "ascending") for c in _KEY_COLUMNS] + [("__row", "ascending")],
+    )
+    if n < 2:
+        return idx
+    sorted_keys = keys.take(idx)
+    dup = None
+    for c in _KEY_COLUMNS:
+        col = sorted_keys.column(c).combine_chunks()
+        cur, prev = col.slice(1), col.slice(0, n - 1)
+        col_eq = pc.or_(
+            pc.fill_null(pc.equal(cur, prev), False),
+            pc.and_(pc.is_null(cur), pc.is_null(prev)),
+        )
+        dup = col_eq if dup is None else pc.and_(dup, col_eq)
+    if not pc.any(dup).as_py():
+        return idx
+    keep = pc.invert(pa.concat_arrays([pa.array([False]), dup]))
+    return pc.filter(idx, keep)
+
+
+def _row_group_frames(table: pa.Table, row_idx: pa.Array) -> Iterator[pd.DataFrame]:
+    """Yield the selected rows as pandas frames of one row group each.
+
+    Chunks are cut to ``clean_io``'s row-group size so ``write_clean_iter``
+    flushes exactly the row groups a single-shot ``write_clean`` would have
+    laid out (its documented data-byte identity). The Arrow→pandas round trip
+    reconstructs the schema dtypes from the tables' pandas metadata, so each
+    chunk carries the same dtypes the whole-year frame always had.
+    """
+    for lo in range(0, len(row_idx), clean_io._ROW_GROUP_ROWS):
+        yield table.take(row_idx.slice(lo, clean_io._ROW_GROUP_ROWS)).to_pandas()
+
+
 def curate_year(
     year: int,
     *,
@@ -254,9 +349,14 @@ def curate_year(
 
     Reads every ``*_{year}.parquet`` under ``unit_dir`` (unit grain) and
     ``fac_dir`` (facility grain), reconciles them unit-first (facility "ALL"
-    rows only for plants with no unit-level coverage), writes the result via
-    :func:`clean_io.write_clean`, and round-trip validates it. Returns the
-    written path.
+    rows only for plants with no unit-level coverage), streams the result out
+    via :func:`clean_io.write_clean_iter`, and round-trip validates it.
+    Returns the written path.
+
+    The assembly is Arrow-side and streaming (see the module docstring): the
+    output rows, order, dtypes and parquet layout are identical to the
+    original whole-year pandas pipeline, but the year is never held as a
+    single pandas frame, bounding peak RSS to a standard CI runner's budget.
     """
     unit_paths = sorted(unit_dir.glob(f"*_{year}.parquet")) if unit_dir.is_dir() else []
     fac_paths = sorted(fac_dir.glob(f"*_{year}.parquet")) if fac_dir.is_dir() else []
@@ -265,48 +365,44 @@ def curate_year(
             f"no CAMPD extracts for {year} in {unit_dir} or {fac_dir}"
         )
 
-    unit_frames = [
-        clean_campd_frame(pd.read_parquet(p), facility_level=False) for p in unit_paths
-    ]
-    unit_df = (
-        pd.concat(unit_frames, ignore_index=True)
-        if unit_frames
-        else pd.DataFrame(columns=list(_SCHEMA_COLUMNS))
-    )
-    covered = set(unit_df["plant_id"].unique())
-
-    fac_frames = []
-    for p in fac_paths:
-        f = clean_campd_frame(pd.read_parquet(p), facility_level=True)
-        f = f[~f["plant_id"].isin(covered)]  # unit-level wins where it exists
-        if len(f):
-            fac_frames.append(f)
-    fac_df = (
-        pd.concat(fac_frames, ignore_index=True)
-        if fac_frames
-        else pd.DataFrame(columns=list(_SCHEMA_COLUMNS))
-    )
-
-    frames = [d for d in (unit_df, fac_df) if len(d)]
-    df = pd.concat(frames, ignore_index=True) if frames else unit_df
-    df = (
-        df.drop_duplicates(subset=_KEY_COLUMNS, keep="first")
-        .sort_values(_KEY_COLUMNS)
-        .reset_index(drop=True)
-    )
+    tables, n_unit, n_fac = _cleaned_arrow_tables(unit_paths, fac_paths)
+    table = pa.concat_tables(tables) if tables else None
+    tables.clear()
 
     source = (
         f"data/raw/campd-unit-level/*_{year}.parquet, "
         f"data/raw/campd-facility-level/*_{year}.parquet"
     )
-    path = clean_io.write_clean(df, "emissions", year=year, source=source)
+    if table is None or table.num_rows == 0:
+        # Zero cleaned rows: preserve the previous pipeline's exact behavior.
+        # Unit-level extracts present -> write the typed empty frame (as the
+        # old ``pd.concat`` produced); facility-only inputs that clean to
+        # nothing -> the untyped empty frame, which write_clean rejects
+        # loudly, exactly as before.
+        df = (
+            table.to_pandas()
+            if table is not None
+            else pd.DataFrame(columns=list(_SCHEMA_COLUMNS))
+        )
+        n_out = 0
+        path = clean_io.write_clean(df, "emissions", year=year, source=source)
+    else:
+        row_idx = _first_occurrence_sorted_indices(table)
+        n_out = len(row_idx)
+        path = clean_io.write_clean_iter(
+            _row_group_frames(table, row_idx), "emissions", year=year, source=source
+        )
+        del row_idx
+    # Release the year's Arrow buffers before the round-trip read-back so the
+    # validation read is the phase peak, not additive to the assembly.
+    del table
     clean_io.validate_clean(path)
     logger.info(
         "emissions %d: %d rows (%d unit-grain, %d facility-ALL) -> %s",
         year,
-        len(df),
-        len(unit_df),
-        len(fac_df),
+        n_out,
+        n_unit,
+        n_fac,
         path,
     )
     return path
