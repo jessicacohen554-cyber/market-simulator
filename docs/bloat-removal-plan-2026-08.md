@@ -443,6 +443,72 @@ applies — deleted means deleted.
 | `pjm2022_touchpoint` | 2.2 | **VETOED 2026-08-15 (owner) — keep** | same |
 | **subtotal — owner call: VETOED, kept** | **5.9** | | |
 
+### EXECUTED 2026-08-15 (PR-3) — re-derived at `11b59ee`, 24 bundles / 288 files / −117.01 MiB
+
+Shipped as PR #3982 (branch `claude/bloat-b3-hourly-prune-xt1i22`, label
+`intentional-shrink`), re-deriving the whole table at execution HEAD per the §8
+recipe. By execution the hourly corpus had grown to **34 dirs / 158.4 MiB**
+against the table's 19 rows (BLOAT-B-6's interim census: 30 / 137.3), keepers
+had moved in three ISOs, and main moved twice mid-session (`726f389` →
+`b26c13e` → `11b59ee`: the nyiso-135 promotion #3977 and BLOAT-B-5 #3978/#3979)
+— the list was re-derived after each move. `hourly/` only; every slim file,
+payload and sidecar untouched.
+
+**Pruned (24):** ERCOT ×9 — `ercot188_topfine_{arm_B,ctl_A}`,
+`ercot191_dam_rederive_regate`, `ercot192_{arm_B,ctl_A}`,
+`ercot193_{arm_soc,ctl_nosoc}`, `ercot202_{plantphysics_B,graincontrol_A}`
+(44.37 MiB) · CAISO ×3 — `caiso184_{c0_control,c1_lpbasis}`,
+`caiso188_d0_control` (12.80) · MISO ×4 — `miso148_basis_A`,
+`miso151_surface_{A,B}`, `miso155_p0_C` (20.45) · NEISO ×1 —
+`neiso87_control_A` (3.65) · NYISO ×3 — `nyiso132_{cf_arm,cf_control}`,
+`nyiso133_cod_control` (10.77) · PJM ×4 — `pjm158_{ctl_A,novirt_B}`,
+`pjm161_{ctl_A,evcap_B}` (24.97).
+
+**The three HOLDs all lifted on lane state:** `ercot193_*` — L-SCAR CLOSED-OUT
+(cycle-11 sitting record, PR #3960: L-1 dead at V0, L-2 Phase-0 STOP
+`ercot-201`, regime card WAIT-FOR-DATA, queue empty). `miso155_p0_C` — the
+committed test (now `tests/iso/miso/test_miso155_p0_commitment_sidecar.py`) is
+fully synthetic at HEAD and opens nothing under `results/calibration`; miso-155
+closed the lane's blocker with the P0 instrument "consumed by nothing
+downstream" (the open owner question — P0 sidecar in the committed bundle SPEC
+— concerns future bundles, not this bundle's retention; FINDING/PREREG/probe
+records all kept). `nyiso133_*` — nyiso-134 concluded (2022 touchpoint REFUSED
+on data readiness, no LP), then the nyiso-135 promotion made `nyiso133_cod_arm`
+the KEEPER: the arm KEEPS its hourly (rule 15) and only the control twin
+pruned.
+
+**Keeper churn absorbed (immunity test re-run per demotion):** executed keeper
+set = `ercot204_rule26_delete` / `caiso188_d1_micseam` / `miso148_basis_B` /
+`neiso93_envelope_A` / `nyiso133_cod_arm` / `pjm152_collapse_A`. Demoted and
+pruned: `ercot192_arm_B` and the `ercot202_*` pair (ERCOT holds no
+`complete`/`final` marker → no keeper_at_declaration immunity; ercot202's 12
+hourly sidecars are sha256-identical to the ercot-204 keeper's, G-REPRO 12/12,
+so no bytes left the tree), `neiso87_control_A` (twin of the superseded
+neiso-87), `nyiso132_cf_arm` (keeper_at_declaration is nyiso-100). The pjm161
+pair was adjudicated NOT-keeper by
+`_pjm161-KEEPER-ADJUDICATION-2026-08-14.md`.
+
+**NEW HOLD, not in the table:** `pjm_debugb_inputclock_A`
+(`2026-08-15-pjm-162-inputclock`, 6.32 MiB) — live KEEPER CANDIDATE pending the
+owner's promotion call (DEBUG-B input-clock charter §3.4); pruning it would
+force a re-solve at promotion. Falls to the ordinary non-keeper disposition if
+the owner declines.
+
+**Untouched, verified:** the 6 keeper hourlies (28.1 MiB); the two VETOED
+touchpoint rows above; `_nyiso114_baseattrib_2024` (§5.2); the 904+ loose
+records; `results/hindcast`; `results/regression-goldens`; `scripts/probes/`.
+keeper_at_declaration bundles (neiso-54 / nyiso-100 / pjm-140) no longer exist
+on disk, and zero `ablation_twin`/`ablation_of` references exist in the
+registry at HEAD — both immunity classes empty in practice.
+
+**Gates:** PERF-B verified NOT mid-golden-capture before deletion (no perf
+branch or PR; the release-plan ledger holds PERF-B ⛔ behind undeclared G1).
+Same-PR greens pre- and post-prune: `check_registry_payload_parity.py` (70 runs
+OK) and `audit_keepers.py --check` (PASS 0/0). No dashboard file changed. The
+`golden-data-tier.yml` dispatch stays deferred (owner decision 2026-08-15,
+pre-existing `curate_emissions` OOM, separate fix lane) — not part of this
+PR's close.
+
 ### 5.2 The four `_`-prefixed dirs — **citation check answers KEEP (all four)**
 
 The charter called them "the 4 unreferenced dirs"; line-level verification says
@@ -661,6 +727,14 @@ Tip trajectory: 10,080 → **≈ 8.1 GiB** (class-approved only) → **≈ 6.1 G
   `audit_keepers.py`. No dashboard files change (payloads/sidecars untouched).
   Holds re-checked at execution date against lane state; sign-off rows only if
   signed at G1.
+  **EXECUTED 2026-08-15**, PR #3982 (branch
+  `claude/bloat-b3-hourly-prune-xt1i22`): **24 bundles / 288 files /
+  −117.01 MiB** at tip, list re-derived at `11b59ee` (twice — main moved
+  mid-session). All three holds lifted on lane state, one NEW hold honoured
+  (`pjm_debugb_inputclock_A`, live keeper candidate pending the owner's
+  promotion call), the C-sign-off rows already VETOED-kept by B-5. Both greens
+  pre- and post-prune; zero dashboard files changed. Execution record and the
+  full disposition table: §5.1 "EXECUTED 2026-08-15".
 - **PR-4 — "script rotation" (D1, D2). SHIPPED 2026-08-15**, PR
   [#3955](https://github.com/jessicacohen554-cyber/market-simulator/pull/3955)
   (branch `claude/bloat-b4-script-rotation-dmktqx`). `git mv` + reference rewrite
