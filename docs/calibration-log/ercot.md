@@ -8060,7 +8060,7 @@ no marker granted or spent; the L-SCAR lane (stopped at V0) and the frozen
 composition lane untouched; ercot-188/E2 P0 forfeiture inherited unexpired.
 Session consumed the ercot-196 shorthand. Next shorthand: **ercot-202**.
 
-## ercot-202 (2026-08-14) — OWNER SITTING RECORD: card T SIGNED (T-1 + T-3b), L-SCAR V0-FAIL ADJUDICATED — docs only, NO lever, NO solve, keeper UNCHANGED
+## ercot-197 (2026-08-14) — OWNER SITTING RECORD: card T SIGNED (T-1 + T-3b), L-SCAR V0-FAIL ADJUDICATED — docs only, NO lever, NO solve, keeper UNCHANGED
 
 **The sitting** (held 2026-08-14 in the ERCOT-SCAR workstream manager
 session, owner selections interactive; primary record:
@@ -8093,7 +8093,7 @@ regime card staged next cycle. This session: appends to the two decision
 cards + this entry, nothing else — no lever, no solve, no year touched
 (rule 22 moot but binding), no matrix/keeper/registry/bench contact; keeper
 UNCHANGED at `2026-08-12-run192-arm-coal-peak`. Session consumed the
-ercot-202 shorthand. Next shorthand: **ercot-198**.
+ercot-197 shorthand. Next shorthand: **ercot-198**.
 
 ## ercot-198 (2026-08-14) — T-3b EXECUTED: published-adder overlay-completeness audit — committed overlay INCOMPLETE in 2024 (missing published RTORPA, +0.24 $/MWh dw), near-complete in 2025 (+0.015); NO lever, NO solve, no year scored, NO matrix edit, keeper UNCHANGED
 
@@ -8846,3 +8846,114 @@ and `ercot202_plantphysics_B`: control ≡ arm) — no solve was spent on it, no
 lever substituted, consistent with the cycle-11 board's CARD T DISCHARGED state.
 
 **Session consumed the ercot-205 shorthand. Next shorthand: ercot-206.**
+
+## ercot-206 (2026-08-15) — ERCOT-FRONTIER-1: the frontier/completeness ASSESSMENT (three answers, cited) + the E3 REOPEN STOPPED AT B0 BY ITS OWN PRE-REGISTERED RULE — the settled basis resolves FFR-8A's 2025 anomaly into a clean YEAR-KEYED split that validates NEITHER parameter set; NO lever, NO solve, no run registered, keeper UNTOUCHED
+
+**Shorthand note.** The dispatch opened this lane as *ercot-203* ("log tail says
+202"); main had consumed ercot-203/203b/204 before landing and **ercot-205 landed
+mid-session** (the owner-instructed promotion), whose entry closes "Next
+shorthand: ercot-206." This session is **ercot-206**, per the standing
+append-collision convention. The dispatch's landing branch
+(`claude/ercot-frontier-1-e3-reopen`) and the harness-assigned branch
+(`claude/ercot-frontier-assessment-l1jwi2`) both carry the same commits (same
+SHA); the owner merges whichever. The dispatch's "run192 recipe" baseline was
+stale two promotions over; every keeper read here is from the CURRENT keeper's
+committed record (rule 24).
+
+**Full record:** `docs/FINDING-ercot206-frontier-assessment-e3-b0-2026-08-15.md`.
+Precommit `docs/PRECOMMIT-ercot206-e3-reopen-b0-2026-08-15.md`, pushed BEFORE the
+probe ran, with the parameter-set verdict rule pre-registered mechanical and
+direction-blind. Probe `scripts/probes/ercot206_e3_settled_reproduction.py` →
+`results/calibration/ercot206_e3_settled_reproduction.json`.
+
+**PHASE A — the three answers.** (1) **The queue is cleared of chartered
+executable work** (pack §A12.4), and the dispatch's two expected residues are
+both stale as stated: item 2's "blocked on the 8 residual-identified DOF
+entries" predates ERCOT-144 (n_residual **8 → 6**, **C6 ATTESTED AND PASSES**)
+and the ercot-166 owner ledgering of C3c (CAVEAT ×3); the six remaining
+residual entries (offer_curve_by_group, offer_curve_smoothing, wefor_multiplier,
+wefor_residual, battery_dispatch_adder, CHP_BTM_PCT_BY_SECTOR['merchant']) are
+attested and block nothing. Item 7 was **executed to promotion** (ERCOT-160/164/
+165, keeper ercot165-unpooled-share), not un-chartered. Actually open, all
+owner-side or data-gated: item 8's un-run CME/NYMEX basis-swap reopen screen;
+the AUTHORIZED-but-never-assembled regime-conditioning card (lane died at
+provisioning; 199/200 unspent); the `gas_hh_monthly_shape` 26c row gap; the
+ercot-204 §A RTORPA mechanism question (sharpened below, still with the owner);
+T-3a. (2) **A complete declaration is UNREACHABLE by any rule-13-admissible
+mechanism**: fail set {C3a-2023 −33.2 %, C3b-2023 NRMSE 0.604} on the current
+keeper (C7 is RETIRED from the rubric at v3.1 — the dispatch-cited 0.769
+lignite cell is a closed matrix target, not a criterion); the cause is the
+Q-B-closed model-class Aug+Sep-2023 scarcity object (96.2 % of the squared C3b
+residual; ~0.59 ceiling for any lever that avoids it); ledgering cannot reach
+either fail (LEDGERABLE_CRITERIA={price_tail}, the one caveat slot spent, the
+v3.0 tier guard fail-closed); and the caveated-declaration route is REFUSED BY
+SIGNED RULING (R-B not signed, its reporting-text variant not signed, the
+ERCOT-144 4-fail ledger adoption owner-REVERSED). The terminal state is R-A's
+honest NOT-YET — already in force, not re-litigated. (3) **Frontier rank 2**:
+"open with the two lanes in flight" (adjudication item (iii)) is no longer a
+true description — L-1 died at V0 (ercot-195), L-2 stopped at Phase 0
+(ercot-201), and the regime-conditioning card was never assembled.
+RECOMMENDATION ONLY (owner-only re-classification, charter §6): re-point rank 2
+at the FFR-4/5 VRE/storage entry objects FFR-9A §3.4/§4 measures as the live
+error (solar 10.0 vs 25.1 GW, wind 5.5 vs 12.7; into-2024 overshoot ~11×),
+carrying the λ-led honesty bound (any ERCOT-side repair stays single-digit-to-
+~20 of the ~50–70 $/kW-yr gap) as accepted-limit text, and re-dispatch the
+regime card as the doc-only remainder — ercot-201's recommended (b).
+
+**PHASE B0 — the E3 reopen (FFR-8A §3.3), diagnose-first, and the STOP.** Surface
+confirmed from code + the CURRENT keeper's run_config (rule 24): the backcast
+`ordc_adder` sidecar is the lumped ORDC total-reserve family's balance dual
+(`run_calibration_full.py`, `ercot_ordc_total_reserve=True` branch), whose
+demand curve is `ercot_ordc_demand_steps` at ANNUAL-MEAN `resolve_lolp_params`
+— the keeper runs the FLAT FALLBACK (`ordc_lolp_params_path=None`, μ=0,
+σ=1400) — with reserve supply capped at measured RTOLCAP and the OBDRR048 floor
+unconditional in the steps (the 2023-11-01 `floor_active_mask` date gate lives
+in the post-solve path). The FFR-8A §1.1(b) reproduction test re-ran against
+the ercot-198 SETTLEMENT-CLOSED series (guard: archive RTORPA+RTORDPA > settled
+hub RTSPP + $50; exactly ONE hour trips it in three years — 2025 h4334, archive
+$414.12/h vs settled $54.96 — ercot-198's record reproduced precisely).
+**Result, full magnitude:** 2024 (unchanged by the guard): fallback REPRODUCES
+(48/18/6 h>$1/$10/$100, top-50 $31.5 vs measured 78/26/4, $33.9); table fails
+(11 h>$100 vs 4; top-50 $89.8 = 2.65×). 2025 settled (max 414.1 → 36.1, top-50
+10.6 → **2.32**): table REPRODUCES (15/3/0 vs 14/2/0, top-50 $2.23 = 0.96×);
+fallback fails (4/1/0, top-50 $0.44 = 0.19×). 2023 context (zero verdict
+weight, pre-declared): fallback 0.93–1.08× everywhere; table ~2.5× over.
+**REPRODUCES-BOTH: NEITHER → E3 STAYS ESCALATED and the lane STOPPED at B0**,
+per the precommit's own branch: no build, no `--set`, no LP, no year solved or
+scored, no run registered (the named evictions unconsumed), no matrix cell or
+row edit (rule 28(b) attaches to a mechanism test; none occurred),
+`check_mechanism_matrix.py` exit 0. **What B0 sharpens:** FFR-8A's "both
+under-produce the 2025 top-50" is FULLY attributed to the one unsettled print;
+the mixed result is now a clean YEAR-KEYED split (fallback ⇔ {2023, 2024},
+published table ⇔ {2025}) consistent with the published parameter vintage
+matching the 2025 operating year only; and the parameter set is NOT the
+dominant 2024 formation term — on the real telemetry even the fallback
+produces 48 h>$1 while the keeper's dual fires twice, so the senior object
+remains ercot-204 §A's reserve-basis question, un-chartered with the owner.
+Recommendation only: if E3 is ever to land, it is a YEAR-SCOPED parameter
+question needing its own rules-20/23 charter, never a blanket table arming
+(2023/2024 refute it at 2.5–2.6×). **Promotion recommendation: NONE.**
+
+**HYGIENE (dispatch item 3) EXECUTED:** the owner sitting record's claim
+restored to **ercot-197** — its original claim, recorded at pack §A10.1 as
+landed on PR #3931 — two tokens changed (the heading and the closing
+consumed-line), bodies otherwise byte-identical; T1-EXEC's ercot-202 entry
+untouched; the 198–205 ledger's duplicated-heading condition (ercot-204's
+record note) is resolved; 199/200 remain unspent.
+
+**Fences.** Q-B FINAL and R-A cited in the precommit and honoured — no
+C3a-2023 spend of any kind, no C3b-2023-targeted round; 2023 entered only as
+ceiling citations and the probe's pre-declared context row (measured-vs-
+measured, rule 13 clean). V0 and ercot-201 DO-NOT-REDO honoured (no
+tightness-conditioned identification, no E1 dispersion repair, no
+measured-RTOLCAP-distribution parameterization; RTOLCAP served only as the
+reproduction test's evaluation series — FFR-8B §4's validate-only role).
+L-SCAR §4 must-nots honoured by construction. Rule 22: nothing solved or
+scored, {2023, 2024, 2025} read only, 2022 untouched, no marker sought or
+spent. Rule 25: ERCOT only. Rule 27: Fable, edit-local, pushed files
+blob-verified (≥300-line files hash-checked against the remote). Rules 15/16:
+no run produced, nothing to register. No workflow, no cron. Keeper at session
+start AND end: `2026-08-15-ercot204-rule26-delete`. No PR opened
+(push-and-stop; the owner merges).
+
+**Session consumed the ercot-206 shorthand. Next shorthand: ercot-207.**
