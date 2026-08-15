@@ -750,3 +750,16 @@ results/calibration/caiso154_slopes_PJM.csv
 # scripts/data/fetch_miso_energy_offers.py (see the raw README).
 data/raw/miso-energy-offers/*
 !data/raw/miso-energy-offers/README.md
+
+# --- BLOAT-B-2 corpus conversions (docs/bloat-removal-plan-2026-08.md §4.4-§4.6)
+# Payloads untracked at tip, history kept: each corpus README carries the
+# source-URL table, the re-fetch command, the pin sha and the
+# `git restore --source=<pin> -- <path>` recovery command; SHA256SUMS.txt is the
+# committed provenance record for the removed bytes.
+
+# CAISO daily Curtailed-and-Non-Operational-Generator reports (1,094 xlsx,
+# 155.0 MiB). The DERIVED caiso-dam-outage-windows.parquet that every runtime
+# consumer reads stays tracked; only curate_caiso_dam_outages.py re-derivation
+# needs the dailies. Refetch with scripts/data/fetch_caiso_dam_outages.py (see
+# data/raw/caiso-dam-outages/README.md).
+data/raw/caiso-dam-outages/daily/*.xlsx
