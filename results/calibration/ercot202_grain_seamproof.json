@@ -1,0 +1,817 @@
+{
+  "_provenance": {
+    "probe": "scripts/probes/ercot196_grain_seamproof.py",
+    "precommit": "docs/PRECOMMIT-ercot196-rule18-grain-successor-2026-08-14.md",
+    "bundle": "results/calibration/ercot192_arm_B",
+    "predecessor": "scripts/probes/ercot186_grain_seamproof.py",
+    "note": "SP-1 is RESTATED per precommit \u00a73: the equality is asserted on the prefixes that HAVE a committed tranche; the no-committed-tranche prefixes are the defect's SECOND FACET and are reported, not gated. SP-3/SP-3b/SP-6 are MEASUREMENTS reported at full magnitude, not assertions; SP-4 adjudicates inertness. No bound moves in response to any of them."
+  },
+  "years": {
+    "2023": {
+      "year": 2023,
+      "n_gen": 2320,
+      "SP1_stamp_constant_across_rows": true,
+      "SP1_equals_ercot176_read_on_committed_prefixes": true,
+      "SP1_n_plant_prefixes": 219,
+      "SP1_n_prefixes_with_committed_tranche": 132,
+      "SP1_n_prefixes_without_committed_tranche": 87,
+      "SP1_n_prefixes_with_nonzero_physics": 172,
+      "SP1_committed_mismatches": [],
+      "SP1_not_constant": [],
+      "SP1c_nocommit_by_group": {
+        "?": 32,
+        "CC_CHP": 19,
+        "CC_REGULAR": 1,
+        "CT_CHP": 18,
+        "CT_PEAKER": 1,
+        "ST_CHP": 2,
+        "hydro": 14
+      },
+      "SP1c_n_nocommit_where_reads_diverge": 40,
+      "SP1c_nocommit_sample": [
+        {
+          "prefix": "3492",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "3504",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "3507",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "3631",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "4195",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "6145",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "6251",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "50121",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64770",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64938",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64952",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64954",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65535",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65536",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65537",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65538",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65539",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65540",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65541",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65542",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        }
+      ],
+      "SP2_n_ct_bid_rows": 636,
+      "SP2_n_rejected_by_row_grain_gate": 0,
+      "SP2_row_gate_is_vacuous": true,
+      "SP3_n_ct_plants": 65,
+      "SP3_n_plants_eligible": 64,
+      "SP3_n_plants_excluded": 1,
+      "SP3_excluded_plants": [
+        {
+          "prefix": "CT_PEAKER_South_Central_p6243",
+          "min_down_h": 8.0,
+          "min_run_h": 8.0
+        }
+      ],
+      "SP3_plant_min_down_histogram": {
+        "1.0": 63,
+        "2.0": 1,
+        "8.0": 1
+      },
+      "SP3_n_bid_rows_eligible": 620,
+      "SP3b_ct_prefixes_where_reads_differ": [
+        "CT_PEAKER_Houston_p7325"
+      ],
+      "SP3b_same_eligibility_set": true,
+      "SP3b_n_eligible_rowread": 64,
+      "SP4_control_is_none": false,
+      "SP4_armed_is_none": false,
+      "SP4_arrays_equal": false,
+      "SP4_n_rowhours_changed": 90271,
+      "SP4_max_abs_markup_delta": 1709.6209376377403,
+      "SP4_n_rows_priced_control": 223,
+      "SP4_n_rows_priced_armed": 217,
+      "SP5_fleetarrays_has_no_such_field": true,
+      "SP5_source_readers": [
+        "src/market_sim/data/fleet/__init__.py",
+        "src/market_sim/data/fleet/assembly.py",
+        "src/market_sim/data/fleet/offer_surfaces.py"
+      ],
+      "SP5_readers_as_declared": true,
+      "SP5_fleetarrays_unmoved": true,
+      "SP6_excluded_plant_detail": [
+        {
+          "prefix": "CT_PEAKER_South_Central_p6243",
+          "plant_group": "CT_PEAKER",
+          "min_down_h": 8.0,
+          "min_run_h": 8.0,
+          "has_committed_tranche": true,
+          "n_rows": 17,
+          "suffixes": [
+            "committed",
+            "econc00",
+            "econc01",
+            "econc02",
+            "econc03",
+            "econc04",
+            "econc05",
+            "econc06",
+            "econc07",
+            "econc08",
+            "econc09",
+            "econc10",
+            "peak",
+            "peak2",
+            "peak3",
+            "peak4",
+            "peak5"
+          ],
+          "pmax_mw_by_suffix": {
+            "committed": 60.96,
+            "econc00": 21.336,
+            "econc01": 21.336,
+            "econc02": 21.336,
+            "econc03": 21.336,
+            "econc04": 21.336,
+            "econc05": 3.556,
+            "econc06": 3.556,
+            "econc07": 3.556,
+            "econc08": 3.556,
+            "econc09": 3.556,
+            "econc10": 3.556,
+            "peak": 2.845,
+            "peak2": 2.845,
+            "peak3": 2.845,
+            "peak4": 2.845,
+            "peak5": 2.845
+          },
+          "heat_rate_by_suffix": {
+            "committed": 11.3544,
+            "econc00": 13.1779,
+            "econc01": 14.2353,
+            "econc02": 15.2928,
+            "econc03": 16.8034,
+            "econc04": 18.7671,
+            "econc05": 19.9127,
+            "econc06": 20.24,
+            "econc07": 20.5673,
+            "econc08": 20.8946,
+            "econc09": 21.2219,
+            "econc10": 21.5492,
+            "peak": 130.974,
+            "peak2": 130.974,
+            "peak3": 130.974,
+            "peak4": 130.974,
+            "peak5": 130.974
+          },
+          "startup_cost_by_suffix": {
+            "committed": 0.0,
+            "econc00": 0.0,
+            "econc01": 0.0,
+            "econc02": 0.0,
+            "econc03": 0.0,
+            "econc04": 0.0,
+            "econc05": 0.0,
+            "econc06": 0.0,
+            "econc07": 0.0,
+            "econc08": 0.0,
+            "econc09": 0.0,
+            "econc10": 0.0,
+            "peak": 0.0,
+            "peak2": 0.0,
+            "peak3": 0.0,
+            "peak4": 0.0,
+            "peak5": 0.0
+          },
+          "n_bid_rows_withdrawn": 16
+        }
+      ]
+    },
+    "2024": {
+      "year": 2024,
+      "n_gen": 2318,
+      "SP1_stamp_constant_across_rows": true,
+      "SP1_equals_ercot176_read_on_committed_prefixes": true,
+      "SP1_n_plant_prefixes": 217,
+      "SP1_n_prefixes_with_committed_tranche": 132,
+      "SP1_n_prefixes_without_committed_tranche": 85,
+      "SP1_n_prefixes_with_nonzero_physics": 172,
+      "SP1_committed_mismatches": [],
+      "SP1_not_constant": [],
+      "SP1c_nocommit_by_group": {
+        "?": 32,
+        "CC_CHP": 19,
+        "CC_REGULAR": 1,
+        "CT_CHP": 18,
+        "CT_PEAKER": 1,
+        "ST_CHP": 2,
+        "hydro": 12
+      },
+      "SP1c_n_nocommit_where_reads_diverge": 40,
+      "SP1c_nocommit_sample": [
+        {
+          "prefix": "3492",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "3504",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "3507",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "3631",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "4195",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "6145",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "6251",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "50121",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64770",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64938",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64952",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64954",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65535",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65536",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65537",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65538",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65539",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65540",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65541",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65542",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        }
+      ],
+      "SP2_n_ct_bid_rows": 636,
+      "SP2_n_rejected_by_row_grain_gate": 0,
+      "SP2_row_gate_is_vacuous": true,
+      "SP3_n_ct_plants": 65,
+      "SP3_n_plants_eligible": 65,
+      "SP3_n_plants_excluded": 0,
+      "SP3_excluded_plants": [],
+      "SP3_plant_min_down_histogram": {
+        "1.0": 64,
+        "2.0": 1
+      },
+      "SP3_n_bid_rows_eligible": 636,
+      "SP3b_ct_prefixes_where_reads_differ": [
+        "CT_PEAKER_Houston_p7325"
+      ],
+      "SP3b_same_eligibility_set": true,
+      "SP3b_n_eligible_rowread": 65,
+      "SP4_control_is_none": false,
+      "SP4_armed_is_none": false,
+      "SP4_arrays_equal": true,
+      "SP4_n_rowhours_changed": 0,
+      "SP4_max_abs_markup_delta": 0.0,
+      "SP4_n_rows_priced_control": 191,
+      "SP4_n_rows_priced_armed": 191,
+      "SP5_fleetarrays_has_no_such_field": true,
+      "SP5_source_readers": [
+        "src/market_sim/data/fleet/__init__.py",
+        "src/market_sim/data/fleet/assembly.py",
+        "src/market_sim/data/fleet/offer_surfaces.py"
+      ],
+      "SP5_readers_as_declared": true,
+      "SP5_fleetarrays_unmoved": true,
+      "SP6_excluded_plant_detail": []
+    },
+    "2025": {
+      "year": 2025,
+      "n_gen": 2307,
+      "SP1_stamp_constant_across_rows": true,
+      "SP1_equals_ercot176_read_on_committed_prefixes": true,
+      "SP1_n_plant_prefixes": 206,
+      "SP1_n_prefixes_with_committed_tranche": 132,
+      "SP1_n_prefixes_without_committed_tranche": 74,
+      "SP1_n_prefixes_with_nonzero_physics": 172,
+      "SP1_committed_mismatches": [],
+      "SP1_not_constant": [],
+      "SP1c_nocommit_by_group": {
+        "?": 32,
+        "CC_CHP": 19,
+        "CC_REGULAR": 1,
+        "CT_CHP": 18,
+        "CT_PEAKER": 1,
+        "ST_CHP": 2,
+        "hydro": 1
+      },
+      "SP1c_n_nocommit_where_reads_diverge": 40,
+      "SP1c_nocommit_sample": [
+        {
+          "prefix": "3492",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "3504",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "3507",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "3631",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "4195",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "6145",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "6251",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "50121",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64770",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64938",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64952",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "64954",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65535",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65536",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65537",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65538",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65539",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65540",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65541",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        },
+        {
+          "prefix": "65542",
+          "group": "?",
+          "stamped_min_down_h": 0.0,
+          "stamped_min_run_h": 0.0,
+          "rowread_min_down_h": 0.0,
+          "rowread_min_run_h": 0.0,
+          "reads_diverge": false
+        }
+      ],
+      "SP2_n_ct_bid_rows": 652,
+      "SP2_n_rejected_by_row_grain_gate": 0,
+      "SP2_row_gate_is_vacuous": true,
+      "SP3_n_ct_plants": 66,
+      "SP3_n_plants_eligible": 66,
+      "SP3_n_plants_excluded": 0,
+      "SP3_excluded_plants": [],
+      "SP3_plant_min_down_histogram": {
+        "1.0": 65,
+        "2.0": 1
+      },
+      "SP3_n_bid_rows_eligible": 652,
+      "SP3b_ct_prefixes_where_reads_differ": [
+        "CT_PEAKER_Houston_p7325"
+      ],
+      "SP3b_same_eligibility_set": true,
+      "SP3b_n_eligible_rowread": 66,
+      "SP4_control_is_none": false,
+      "SP4_armed_is_none": false,
+      "SP4_arrays_equal": true,
+      "SP4_n_rowhours_changed": 0,
+      "SP4_max_abs_markup_delta": 0.0,
+      "SP4_n_rows_priced_control": 91,
+      "SP4_n_rows_priced_armed": 91,
+      "SP5_fleetarrays_has_no_such_field": true,
+      "SP5_source_readers": [
+        "src/market_sim/data/fleet/__init__.py",
+        "src/market_sim/data/fleet/assembly.py",
+        "src/market_sim/data/fleet/offer_surfaces.py"
+      ],
+      "SP5_readers_as_declared": true,
+      "SP5_fleetarrays_unmoved": true,
+      "SP6_excluded_plant_detail": []
+    }
+  },
+  "ALL_ASSERTIONS_PASS": true,
+  "ARM_IS_INERT": false
+}
