@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-15-caiso-196-e0-control",
+  "label": "caiso 196 e0 control",
+  "date": "2026-08-15",
+  "shorthand": "caiso-196-e0-control",
+  "definition": "caiso-196 e0 CONTROL: the caiso-188 keeper recipe re-solved per integration-protocol \u00a73 (capacity-deliverability partition materialized; hydro_ror_split explicitly False, disclosed \u2014 the keeper's proven-effective configuration). Pre-registered at PRECHECK-caiso196-elsegundo-remap-2026-08-15.md; the paired arm is caiso196_e1_elsegundo (the ORIS-330->57901 CEMS-history remap repair). Direction-hazard: C3a reported, never consulted.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-15-caiso-196-e0-control.js",
+  "bundle": "results/calibration/caiso196_e0_control"
+}
