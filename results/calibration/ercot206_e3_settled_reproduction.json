@@ -1,0 +1,163 @@
+{
+ "probe": "ercot206_e3_settled_reproduction",
+ "precommit": "docs/PRECOMMIT-ercot206-e3-reopen-b0-2026-08-15.md",
+ "guard": "archive RTORPA+RTORDPA > settled hub RTSPP + $50",
+ "construction": "FFR-8A leg_ab (ordc_adder on measured RTOLCAP/RTOFFCAP)",
+ "verdict_years": [
+  2024,
+  2025
+ ],
+ "context_years_zero_verdict_weight": [
+  2023
+ ],
+ "years": {
+  "2023": {
+   "n_hours": 8760,
+   "n_flagged_unsettled": 0,
+   "flagged_hours": [],
+   "measured_settled": {
+    "mean": 0.9453,
+    "max": 650.82,
+    "h_gt_1": 294,
+    "h_gt_10": 108,
+    "h_gt_100": 17,
+    "top50_mean": 127.481
+   },
+   "fallback": {
+    "curve": {
+     "mean": 1.0317,
+     "max": 575.91,
+     "h_gt_1": 308,
+     "h_gt_10": 118,
+     "h_gt_100": 20,
+     "top50_mean": 137.521
+    }
+   },
+   "np6_576_er": {
+    "curve": {
+     "mean": 2.6387,
+     "max": 1082.67,
+     "h_gt_1": 463,
+     "h_gt_10": 229,
+     "h_gt_100": 53,
+     "top50_mean": 315.479
+    }
+   }
+  },
+  "2024": {
+   "n_hours": 8760,
+   "n_flagged_unsettled": 0,
+   "flagged_hours": [],
+   "measured_settled": {
+    "mean": 0.2029,
+    "max": 252.69,
+    "h_gt_1": 78,
+    "h_gt_10": 26,
+    "h_gt_100": 4,
+    "top50_mean": 33.903
+   },
+   "fallback": {
+    "curve": {
+     "mean": 0.1815,
+     "max": 279.02,
+     "h_gt_1": 48,
+     "h_gt_10": 18,
+     "h_gt_100": 6,
+     "top50_mean": 31.542
+    },
+    "rule": {
+     "a_top50": true,
+     "b_counts": {
+      "h_gt_1": true,
+      "h_gt_10": true
+     },
+     "c_deep_tail": true,
+     "reproduces": true
+    }
+   },
+   "np6_576_er": {
+    "curve": {
+     "mean": 0.5211,
+     "max": 639.47,
+     "h_gt_1": 77,
+     "h_gt_10": 37,
+     "h_gt_100": 11,
+     "top50_mean": 89.752
+    },
+    "rule": {
+     "a_top50": false,
+     "b_counts": {
+      "h_gt_1": true,
+      "h_gt_10": true
+     },
+     "c_deep_tail": false,
+     "reproduces": false
+    }
+   }
+  },
+  "2025": {
+   "n_hours": 8112,
+   "n_flagged_unsettled": 1,
+   "flagged_hours": [
+    {
+     "hour": 4334,
+     "archive_rtorpa": 414.12,
+     "archive_rtordpa": 0.0,
+     "settled_hub_rtspp": 54.96,
+     "system_lambda": 41.61
+    }
+   ],
+   "measured_settled": {
+    "mean": 0.0144,
+    "max": 36.07,
+    "h_gt_1": 14,
+    "h_gt_10": 2,
+    "h_gt_100": 0,
+    "top50_mean": 2.321
+   },
+   "fallback": {
+    "curve": {
+     "mean": 0.0027,
+     "max": 10.27,
+     "h_gt_1": 4,
+     "h_gt_10": 1,
+     "h_gt_100": 0,
+     "top50_mean": 0.435
+    },
+    "rule": {
+     "a_top50": false,
+     "b_counts": {
+      "h_gt_1": false,
+      "h_gt_10": true
+     },
+     "c_deep_tail": true,
+     "reproduces": false
+    }
+   },
+   "np6_576_er": {
+    "curve": {
+     "mean": 0.0138,
+     "max": 44.48,
+     "h_gt_1": 15,
+     "h_gt_10": 3,
+     "h_gt_100": 0,
+     "top50_mean": 2.227
+    },
+    "rule": {
+     "a_top50": true,
+     "b_counts": {
+      "h_gt_1": true,
+      "h_gt_10": true
+     },
+     "c_deep_tail": true,
+     "reproduces": true
+    }
+   }
+  }
+ },
+ "reproduces_both": {
+  "fallback": false,
+  "np6_576_er": false
+ },
+ "branch": "NEITHER \u2014 E3 stays escalated; lane STOPS at B0"
+}
