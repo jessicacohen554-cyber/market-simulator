@@ -46,6 +46,39 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-08-14 — D-31 ERCOT solar queue-cap adoption (ERCOT forecast only).**
+``capacity_market.QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"]`` is re-derived from
+the post-2020 EIA-860 demonstrated-COD record, ``5.0 → 8.0`` GW/yr (owner
+decision D-31, signed 2026-08-13; derivation
+``docs/FINDING-rc-ercot-solar-queue-cap-2026-08-11.md``, prereg ``d938f29`` /
+measurement ``6e6e50b``; adoption
+``docs/handoffs/d31-adopt-2026-08-13.md``). A **constants-level** change with no
+``ScenarioConfig`` field, so **no key moves** — measured: ``ScenarioConfig()``
+hashes to ``603c2498bf71d21d`` after the change, identical to the pinned default
+key, and the ERCOT forecast config hashes to the same value. **This is the
+worst form of the D-13 hazard**: an ERCOT forecast solved at 8.0 collides with a
+pre-change 5.0 bundle under a byte-identical key, and nothing in the path can
+tell them apart.
+
+*Invalidated:* cached **ERCOT forecast-mode** bundles — plain forecast,
+``hindcast=True``, and the T1-X crossover / T1-FF full-forward legs — solved
+before this commit, in every year the cap can bind. It **is** behavioral, not
+cosmetic: FFR-9C §4.2 established this cap binds from into-2024 in both staged
+arms, margin-independently across $51–$2,420, so it was the sole constraint
+holding ERCOT forecast solar entry down. Pre-change ERCOT forward sidecars under
+``frontend/data/forecast/`` are **historical record — the evidence of what the
+harness did at 5.0 — and must never be used as the baseline for a post-change
+comparison.** A re-based ERCOT forecast leg must be re-solved, not diffed
+against them.
+
+*NOT invalidated:* **every other ISO** (only the ERCOT solar cell moved; ERCOT
+wind and the ISO-total ``QUEUE_CAP_GW`` are untouched), and **every backcast
+bundle and every keeper in every ISO**. The backcast calibration lane does not
+read this constant at all: ``scripts/run_calibration.py::run_year`` builds each
+year's fleet with ``fleet.build_base_fleet`` and never calls ``evolve_fleet``
+or ``capacity_evolution.new_entry``, so no keeper — ERCOT's included — can have
+formed on the old value.
+
 **Epoch 2026-08-09 — FFR-9A hindcast storage-fleet vintage seed. NO KEY MOVES
 ANYWHERE; EVERY CAPACITY-HINDCAST BUNDLE IS INVALIDATED (AGAIN).** The
 FFR-3V-FIX epoch below corrected the hindcast wind/solar pools; the storage
