@@ -33,6 +33,34 @@ probe's scripts rotate as soon as the rejection is adjudicated. (First
 applied 2026-07-26: the miso-73 rejected-probe trio rotated; miso-72 — the
 standing keeper — and the in-flight miso-74 stayed.)
 
+**Backlog rotation, 2026-08-15 (BLOAT-B-4, `docs/bloat-removal-plan-2026-08.md`
+§6 items D1/D2).** The rule had accumulated a backlog: 83 top-level
+`gen_*_attestation.py` against 6 ISOs. 86 scripts rotated to `archive/` in one
+pass — 79 attestation generators, `gen_nyiso130_keeper_ledger.py` (superseded
+nyiso-128/130 lineage; NYISO's keeper is nyiso-132), the miso-72 lineage
+(`gen_miso72_attestation.py`, `miso72_perzone_validate.py`,
+`run_miso72_winter_probe.py`), the miso-74/75 probe drivers, `run_foresight_ab.py`
+and `run_calibration_eia930.py`. The **keep-set was re-derived at execution time**
+from `frontend/data/backcast/keepers/<ISO>.json` plus each generator's docstring
+and is **4**, one per ISO that has a top-level generator for its *current* keeper:
+`gen_ercot192_attestation.py`, `gen_miso148_attestation.py`,
+`gen_caiso189_attestation.py` (writes the **caiso-188** keeper's C6 attestation)
+and `gen_pjm153_collapse_attestation.py` (the **pjm-152** keeper arm's). NYISO's
+keeper has no top-level generator, and NEISO's keeper (neiso-93, promoted
+2026-08-14) is a `replay_keeper` re-solve whose attestation was written by
+`build_dof_ledger.py` plus hand-authored sections — so `gen_neiso87_attestation.py`
+rotated with the superseded neiso-87 lineage. `gen_ercot193_attestation.py`
+rotated because the in-flight hold expired: the ercot-193 SOC re-gate was
+**executed and discharged** (RG-PASS, keeper unchanged) and ERCOT has since run
+to ercot-202. `run_ces_leg.py` was checked and **stays at top level** — it is the
+standing FF-3F CES premium-ladder harness, imported by
+`tests/unit/policy/test_run_ces_leg.py` and listed as a standing entry point in
+`tests/regression/test_run_record_provenance.py`, with `run_full_horizon.py`
+re-exporting `assert_schedulable` for it. `scripts/data/regen_caiso_bench_cems.py`
+needed no action — it was already in `archive/`, which is why
+`scripts/data/derive_caiso_supply_consistent_demand.py` already cites the
+`archive/` path.
+
 ## Bootstrap & shared CLI helpers
 
 `market_sim` is always importable (editable install), but the `scripts`
@@ -91,17 +119,21 @@ bare form went with them. One recorded side effect: the frozen probe
 `probes/pjm123_composite_precheck.py` bare-imports `run_calibration` itself
 while also calling the now-canonical `lib/bundle_fleet.py`, so a re-run of
 that probe would hold both names (identical code; frozen record, left as-is).
-The **residue is the wider sibling web, re-measured 2026-08-14 at 74 bare
-sites across 50 live files** (down from the 2026-07-27 census's 105/91 —
+The **residue is the wider sibling web, re-measured 2026-08-15 at 73 bare
+sites across 49 live files** (down from the 2026-07-27 census's 105/91 —
 the intervening lanes' conversions are real; the census is now re-runnable
 any time with `python scripts/ci_refactor_guards.py --sibling-census`, an
 advisory mode, so the recorded number can be re-derived instead of trusted).
+The 2026-08-14 reading was 74/50; the single site that left is
+`gen_caiso166_attestation.py`, which rotated to `archive/` in the 2026-08-15
+keeper rotation above — the census counts live files only, so the site is now
+frozen record rather than converted, and the open conversion work is unchanged.
 The web is overwhelmingly `scripts/data/` derive/build/fetch helpers
 importing each other by bare name (61 same-directory sites, resolvable only
-because `sys.path[0]` is the script's own directory), plus 13 cross-directory
+because `sys.path[0]` is the script's own directory), plus 12 cross-directory
 sites (`lib/sced_corpus_instruments.py` deferred-importing probe modules, the
-two `*_zonal_sufficiency.py`, `validate_ercot_online_capacity.py`,
-`diagnostics/scratchpad_diag_evening.py`, `gen_caiso166_attestation.py`) and
+two `*_zonal_sufficiency.py`, `validate_ercot_online_capacity.py` and
+`diagnostics/scratchpad_diag_evening.py`) and
 a few top-level clusters (`dashboard_add_run.py`,
 `build_ffr3a3_scorecard.py`). Converting that web is open work —
 per-file, with the same both-paths verification, PLUS a direct-run check per
