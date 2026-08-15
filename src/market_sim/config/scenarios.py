@@ -8829,10 +8829,22 @@ class ScenarioConfig:
     #     unplanned-only default, because the model's incumbent envelope
     #     includes planned outages. The definitional mismatch is what
     #     mechanically forced pjm-145's restore-on-364-of-365-days.
-    #  2. REMOVE-ONLY: the cap deepens a class-day's derate toward the measured
-    #     level and NEVER restores, so the water-fill's `_flat` branch — the
+    #  2. REMOVE-ONLY: the cap deepens the derate toward the measured level and
+    #     NEVER restores, so the water-fill's `_flat` branch — the
     #     structural-zero resurrection that was 66-68% of pjm-145's measured
     #     lift — is unreachable by construction.
+    #  3. FLEET grain, not class grain, and the ex-ante measurement is why
+    #     (results/calibration/_pjm161_removeonly_exante.json). PJM publishes
+    #     ONE fleet number; spreading it into a per-class availability FRACTION
+    #     (what `pjm_dam_availability_series` does) degenerates, under a
+    #     remove-only rule, into "every class ceilinged at the fleet mean" — it
+    #     bound on 282-305 of 364 days for 4.8-6.3 GW year-mean, a level
+    #     bulldozer that would flatten the real availability differences
+    #     BETWEEN classes. Comparing the published FLEET outage MW against the
+    #     model's own FLEET outage MW instead preserves every class's relative
+    #     availability and fires only when the operator's record says the fleet
+    #     is more derated than the model believes. One scalar per day:
+    #     mu = (cap_sum - published_out_mw) / available_mw, clipped to [0, 1].
     # Composition with the incumbent is min() on availability, exactly as
     # ercot_dam_availability_{coal,gas}_event_cap: the CAMPD unit-grain overlay
     # stays the sole owner of WHICH units are out, and this only adds the
@@ -8845,12 +8857,15 @@ class ScenarioConfig:
     # for a forward day and responds to conditions.
     #
     # KNOWN, MEASURED, UNCORRECTED BOUNDARY (rule 14's document-the-misalignment
-    # clause): PJM publishes ONE whole-fleet aggregate, so any non-fossil outage
-    # MW inside it is charged to the fossil-thermal denominator. The size of
-    # that over-attribution is measured ex ante in
-    # results/calibration/_pjm161_removeonly_exante.json; it is NOT corrected by
-    # a scale factor, because a factor tuned to close it would be a fitted
-    # parameter (rules 13/21/24).
+    # clause): PJM publishes ONE whole-fleet aggregate while the cap compares it
+    # against the model's FOSSIL-THERMAL outage MW only. That is CONSERVATIVE by
+    # construction in the fleet-grain form — requiring the fossil-only outage to
+    # reach a whole-fleet total makes the cap fire LESS often and less deeply
+    # than a fossil-only published number would, so what it applies is a LOWER
+    # BOUND on the correction. It is deliberately NOT closed with a scale
+    # factor: a factor tuned to the gap would be a fitted parameter
+    # (rules 13/21/24). Measured ex ante in
+    # results/calibration/_pjm161_removeonly_exante.json.
     pjm_measured_outage_event_cap: bool = False
 
     # ERCOT measured class-HOUR thermal availability (default off, ERCOT

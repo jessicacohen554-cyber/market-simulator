@@ -1,0 +1,129 @@
+{
+ "years": {
+  "2023": {
+   "total": {
+    "covered_days": 364,
+    "remove_days": 282,
+    "restore_days": 364,
+    "removed_MW_mean_over_year": 4838.577884935085,
+    "removed_MW_mean_on_binding_days": 5045.94550857516,
+    "removed_MW_max": 19830.743156306784,
+    "would_restore_MW_mean": 12864.70617905329
+   },
+   "unplanned": {
+    "covered_days": 364,
+    "remove_days": 225,
+    "restore_days": 364,
+    "removed_MW_mean_over_year": 234.80674845553912,
+    "removed_MW_mean_on_binding_days": 280.0799450531758,
+    "removed_MW_max": 2634.635897619969,
+    "would_restore_MW_mean": 25884.005948724058
+   },
+   "FLEET(implemented)": {
+    "covered_days": 364,
+    "remove_days": 98,
+    "restore_days": 0,
+    "removed_MW_mean_over_year": 1412.4890180398577,
+    "removed_MW_mean_on_binding_days": 5260.800934536203,
+    "removed_MW_max": 15853.632908694508,
+    "would_restore_MW_mean": 0.0,
+    "model_fleet_out_MW_mean": 41657.66868804417,
+    "published_fleet_out_MW_mean": 33297.93406593407,
+    "median_mu_on_binding_days": 0.9514833623632506
+   }
+  },
+  "2024": {
+   "total": {
+    "covered_days": 364,
+    "remove_days": 297,
+    "restore_days": 364,
+    "removed_MW_mean_over_year": 5282.110941118982,
+    "removed_MW_mean_on_binding_days": 5588.320271038923,
+    "removed_MW_max": 19969.669659643045,
+    "would_restore_MW_mean": 15137.440373737509
+   },
+   "unplanned": {
+    "covered_days": 364,
+    "remove_days": 233,
+    "restore_days": 364,
+    "removed_MW_mean_over_year": 271.9242878127907,
+    "removed_MW_mean_on_binding_days": 335.3120440934749,
+    "removed_MW_max": 5012.494124266748,
+    "would_restore_MW_mean": 27867.527472272377
+   },
+   "FLEET(implemented)": {
+    "covered_days": 364,
+    "remove_days": 61,
+    "restore_days": 0,
+    "removed_MW_mean_over_year": 711.1651163113354,
+    "removed_MW_mean_on_binding_days": 4255.332253338318,
+    "removed_MW_max": 11565.307464545545,
+    "would_restore_MW_mean": 0.0,
+    "model_fleet_out_MW_mean": 43195.954198948435,
+    "published_fleet_out_MW_mean": 33001.508241758245,
+    "median_mu_on_binding_days": 0.9524141788621425
+   }
+  },
+  "2025": {
+   "total": {
+    "covered_days": 365,
+    "remove_days": 305,
+    "restore_days": 365,
+    "removed_MW_mean_over_year": 6272.107194884337,
+    "removed_MW_mean_on_binding_days": 6485.323303492303,
+    "removed_MW_max": 18669.549162200325,
+    "would_restore_MW_mean": 11256.435235186695
+   },
+   "unplanned": {
+    "covered_days": 365,
+    "remove_days": 224,
+    "restore_days": 365,
+    "removed_MW_mean_over_year": 861.859417302557,
+    "removed_MW_mean_on_binding_days": 995.5021750488391,
+    "removed_MW_max": 9039.323098331908,
+    "would_restore_MW_mean": 23738.986582222948
+   },
+   "FLEET(implemented)": {
+    "covered_days": 365,
+    "remove_days": 110,
+    "restore_days": 0,
+    "removed_MW_mean_over_year": 1847.6724017729705,
+    "removed_MW_mean_on_binding_days": 6130.9129695194015,
+    "removed_MW_max": 14495.92478828218,
+    "would_restore_MW_mean": 0.0,
+    "model_fleet_out_MW_mean": 41221.739461789446,
+    "published_fleet_out_MW_mean": 35870.271232876716,
+    "median_mu_on_binding_days": 0.9358545907447475
+   }
+  }
+ },
+ "boundary": {
+  "2023": {
+   "fossil_cap_MW": 137699.64153074095,
+   "nonfossil_cap_MW": 80587.17654521365,
+   "model_out_MW_covered_mean": 41662.8201516958,
+   "model_out_MW_noncovered_mean": 28767.124953417817,
+   "published_total_MW_mean": 33297.93406593407,
+   "published_minus_model_noncov_MW_mean": 4537.482860479063,
+   "nonfossil_share_of_published_if_model_right": 0.863730799289401
+  },
+  "2024": {
+   "fossil_cap_MW": 137713.11153074098,
+   "nonfossil_cap_MW": 82885.42761157759,
+   "model_out_MW_covered_mean": 43222.25171398743,
+   "model_out_MW_noncovered_mean": 29027.566190801368,
+   "published_total_MW_mean": 33001.508241758245,
+   "published_minus_model_noncov_MW_mean": 3967.886856600037,
+   "nonfossil_share_of_published_if_model_right": 0.8797664995329123
+  },
+  "2025": {
+   "fossil_cap_MW": 137819.50153074096,
+   "nonfossil_cap_MW": 84000.13431692639,
+   "model_out_MW_covered_mean": 41221.73946178924,
+   "model_out_MW_noncovered_mean": 29641.015955282586,
+   "published_total_MW_mean": 35870.271232876716,
+   "published_minus_model_noncov_MW_mean": 6229.25527759413,
+   "nonfossil_share_of_published_if_model_right": 0.8263393316110547
+  }
+ }
+}
