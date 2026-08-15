@@ -2524,3 +2524,138 @@ identification and its own charter. The standing NEISO lane items are the two ow
 the `_dual_fuel_plant_groups` vintage seam and the `complete`-entry stale clause above are reported
 and unowned. The **fleet-vintage/Pilgrim charter is NOT a NEISO lane item** and should be assigned as
 its own cross-ISO session.
+
+---
+
+## 2026-08-15 — neiso-96: H1-2026 actuals **LANDED**, the C3c deriver **PRIMED**, and the `final` block recommended for a **SPLIT**
+
+**Session `neiso-96`** (the shorthand neiso-95 named; verified, no divergence). **Keeper unchanged:
+`2026-08-14-neiso-93-envelope`** — no promotion, no re-key, **NO RUN PRODUCED**. Full record:
+`results/calibration/ASSESSMENT-neiso96-h12026-intake-2026-08-15.md`.
+
+**Freeze VERIFIED ACTIVE at HEAD** (`active: true`, re-armed 2026-08-06, scope `isos: ALL`, tiers
+`[validation, locked_test]`) — checked twice, at session start and again after the rebase onto
+`834f761` — and **never engaged**. This session is a **DATA INTAKE**, which rule 22 as amended
+2026-08-06 leaves unrestricted and which needs no marker: *"what is held out is the SCORE, never the
+DATA."* **No year of any tier was solved, scored or registered.** `holdout-freeze.json` and
+`calibration-complete.json` are **unedited**; `tail/actual_tail.json` is **byte-unchanged**. NEISO's
+locked test remains **NEVER GRANTED and NEVER SPENT**. `frontier`/`complete` were **not** re-verified
+— done at neiso-95, not repeated.
+
+### The intake: H1-2026 landed, and the previously-owned years are provably UNMOVED
+
+The SMD hourly workbooks the producer reads are served **only behind a CAPTCHA-gated ISO Express
+form** (established this session; every `2026_smd_hourly.xlsx` path probed 404s), so no committed
+script can refresh them — that is why the H1-2026 half was blocked. But ISO-NE publishes **the same
+nine SMD pricing locations** through the **ungated** daily historical-report tree
+(`histRpts/da-lmp/WW_DALMP_ISO_<date>.csv`, `histRpts/rt-lmp/lmp_rt_final_<date>.csv`). New downloader
+`scripts/data/fetch_neiso_smd_zonal_lmp.py` reduces ~4.9 MB/day of all-node report to ~8 KB/day of
+zonal series; 181/181 operating days fetched, **39,087 rows** (= 181 × 9 × 24 less the 9 spring-forward
+rows — the arithmetic closes).
+
+**The reproduce-check came first (neiso-93 discipline).** All eight owned years rebuilt from their own
+workbooks: **md5 `3323efe038ab1bdb33382764eff4bfd0` before and after — byte-identical**, `git status`
+clean, `DataFrame.equals` True over 70,080 rows. That md5 is also the blob at `origin/main` after the
+rebase, and the 2018–2025 rows were re-verified byte-unmoved **again** after the 2026 merge.
+
+**The two routes are ONE input, measured not asserted** (`neiso96_smd_route_equivalence.py`): on the 11
+sampled days where both sources agree how many hours the day HAD, **2,640 cells, 0 float32 mismatches
+— identical at the precision the parquet stores.** The worst float64 delta is 4.5e-13 and is an Excel
+*storage* artifact (openpyxl returns `16.580000000000002`; the CSV publishes the settled decimal), not
+a price disagreement.
+
+**2026 block:** 8,760 dense rows, coverage **0.4958** (matching the partial-2026 blocks CAISO/NYISO/
+MISO already carry), rt mean **$78.82**, max **$776.59**, and **126 actual RT hours > $300** —
+concentrated Jan 90 h / Feb 35 h / Jun 1 h, a winter event. **Cross-checked against the same weather:**
+NYISO's committed H1-2026 carries 86 h > $300, MISO 150 h > $200. `actual_lmp.json` gained **exactly
+one** entry (`NEISO/2026`); every pre-existing entry across all six ISOs is byte-identical.
+
+### UNPLANNED FINDING — the 2018–2023 SMD workbook vintage is DST-naive (reported, NOT repaired)
+
+The only days the two routes disagree on are DST days, and the comparison isolates the cause to the
+**workbook**. ISO-NE changed its shape mid-archive: **2024–2025 publish the true 23 (spring) / 25
+(fall-back, with the repeated `02X` hour) and agree with the daily reports EXACTLY — 0 mismatches on
+all four sampled DST days. 2018–2023 publish a flat 24 rows on every calendar day.** The producer's
+positional clock is right for the new vintage and wrong for the old: on fall-back the workbook
+collapses the repeated hour into its two-instance mean (2021-11-07 hub DA `52.43` = mean of the
+market's `50.79`/`54.06`) and the day runs an hour short; on spring-forward it carries an extra row and
+the rest of the day is displaced an hour late, spilling into the next date — visible as **exactly 1
+duplicate timestamp in each of 2018–2023 and 0 in 2024–2025**. **Not repaired: 2023 is a tuned year, so
+correcting it moves an in-sample SCORING TARGET and needs its own authorization and re-solve.**
+Recorded with its measurement in `data/raw/lmp-data/README.md`.
+
+### `bench/NEISO/` cannot be extended by an intake — a finding, not a shortfall
+
+A bench part is **an output of REGISTERING A RUN, not a data artifact**: `write_bench_part` is called
+only from `render_backcast`, off `render_calibration_html.build_payload(runs, …)`, which loops the
+**bundle's** years and reads the bundle's own input snapshots **and `system.parquet` (model output)**.
+The registry proves it exactly — NEISO's registered runs cover `{2022} ∪ {2023,2024,2025}` and the
+bench dir holds **precisely** those four years, while 2018–2021 have committed actuals and **no bench
+part**. **A 2026 bench part is produced BY a grant, not required before one**; creating it would mean
+solving and registering H1-2026, the forbidden operation. Not attempted.
+
+### `derive_actual_tail.py` re-run — output BYTE-UNCHANGED, and the hazard quantified
+
+Re-run after the intake: **no diff**. NEISO still emits 2020–2025. The 2026 data is now **present** and
+the tier gate **still refuses it** (locked_test, `final` empty) — 2019 and 2026 both `False`, 2018
+fails closed. **The gate holds.** Against an **in-memory** marker (nothing written, no grant implied)
+the row a grant would unlock is `{threshold 300, da_gt 140, rt_gt 126, coverage 0.496, hours 8760}`.
+**neiso-90's ordering hazard is now an ordering REQUIREMENT rather than a data gap:** before this
+session a grant + re-run would still have produced nothing for 2026 and C3c would have scored SKIPPED,
+spending the touch-once year on a verdict silent on the criterion the frontier is declared on. The
+requirement stands as step one of any grant; what changed is that satisfying it now works.
+
+### `final` readiness, re-answered (updates neiso-94 §5): **DO NOT GRANT — but SPLIT the block**
+
+**Retired:** the H1-2026 *data* blocker (neiso-94 §3.2's "independently hard-blocked"). **Survives,
+untouched:** (1) **2019 cannot exercise C3c** — re-confirmed at HEAD, RT max **$261.35** vs $300,
+**0 hours**, a property of the 2019 market; (2) the **Pilgrim** gap, still the six-ISO charter's.
+
+**A new blocker occupies the place the old one vacated, and it is NOT NEISO's.** With a target in hand
+the solvability question became answerable for the first time and was measured
+(`neiso96_h12026_solvability.py`): H1-2026 is **NOT solvable at HEAD**. `demand` **ERRs**, and
+structurally — the raw `ISNE_region_2026.parquet` exists and spans Jan–Jul, but
+`eia930.frames._eia_hourly_frame` returns `None` unless the extract is a **full `HOURS_PER_YEAR`
+series**, so a half-year is rejected before any ISO's loader sees it, and the fallback
+`eia_demand_profiles.parquet` carries **2021–2025 only** and raises. **The gate is in shared code and
+blind to ISO: every BA — ISNE, NYIS, CISO, MISO, PJM, ERCO — fails it for 2026 while four return 8,760
+for 2025.** The model cannot build a partial-year solve for anybody. Four further per-year gaps:
+`henry_hub` and `backcast_config` `KeyError: 2026`, no `calibration_reference` 2026 block, no
+`renewable_capacity` file (and hydro is OK in name only — 5 plants / 0.04 TWh vs 168 / 8.55). **By
+contrast 2019/2020/2021 demand all resolve OK** — the 2019-unsolvable claim stays withdrawn; it is
+**H1-2026** that is unsolvable, because it is half a year.
+
+**The halves are SEPARABLE and the split is recommended.** Neither of neiso-94's live reasons applies
+to H1-2026: it exercises C3c **decisively** (126 actual RT tail hours vs 2019's zero) and Pilgrim
+retired in 2019 so is correctly absent from a 2026 fleet. 2019's blockers are **permanent and
+NEISO-specific**; H1-2026's are **structural, six-ISO and tractable**. Holding them in one block gates
+a year that CAN answer the open C3c question behind one that provably never can. **RECOMMENDATION
+ONLY — the split, like the grant, is the owner's call and nothing here declares either.**
+
+### Escalations re-measured at HEAD — both OPEN, neither resolvable without a re-solve
+
+**(i)** **NEISO is still the only ISO of six on the archived P2 pass**, measured on all six keepers'
+own `meta.json`: NEISO `commitment=true, passes ["P1","P2"]`; CAISO/ERCOT/MISO/NYISO/PJM all
+`commitment=false, passes ["P1"]`. neiso-84 neither resolved nor worsened. **(ii)** plant **6081**
+Stony Brook units **004/005** still route to `plant_group=CC_REGULAR`, **74 rows each** — unchanged —
+and the **mechanism is now confirmed rather than carried forward**: the `plant_group` enum at
+`fleet/__init__.py:188` has **no oil or diesel member at all**, and `derive_campd_unit_outages.py:1112`
+keys the map by **plant code**, so the diesel peakers inherit the CC units' group. Should be settled
+together in one re-solve.
+
+### No in-sample delta ⇒ no run
+
+The tuned years are byte-unmoved (verified twice), `actual_lmp.json` gained one entry and changed no
+other, `actual_tail.json` is byte-unchanged — and decisively, **nothing landed is a solve input at
+all**: the actuals parquet is a scoring target no LP reads. Rules 15/16 not engaged. *(Incidental:
+upstream #3982 pruned the **superseded** `neiso87_control_A/hourly/*.parquet`, so neiso-95 §1.5's
+counterfactual is no longer re-runnable from those files; its conclusion is recorded and unaffected.)*
+
+**Next shorthand: `neiso-97`.** No NEISO tuning lever is open — the frontier is declared and the
+cross-ISO lever queue stays cleared, so further C3c work needs a NEW measured identification and its
+own charter. Standing NEISO lane items remain the **two owner escalations** above, both needing a
+re-solve and best settled together. **NOT NEISO lane items**, all now with measured evidence attached:
+the **partial-year solve gate** (`HOURS_PER_YEAR`, six-ISO — the H1-2026 half's blocker), the
+**2018–2023 SMD workbook DST defect** (touches in-sample 2023, so it needs authorization and a
+re-solve), the **fleet-vintage/Pilgrim charter**, and the reported-and-unowned
+`_dual_fuel_plant_groups` vintage seam and the `complete`-entry stale clause.
