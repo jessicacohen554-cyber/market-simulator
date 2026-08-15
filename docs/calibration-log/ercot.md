@@ -8774,3 +8774,75 @@ simultaneously). **Noted, nothing renamed — it is an owner call.** 197/199/200
 remain unspent.
 
 **Session consumed the ercot-204 shorthand. Next shorthand: ercot-205.**
+## ercot-205 (2026-08-15) — OWNER-INSTRUCTED PROMOTION: keeper → `2026-08-15-ercot204-rule26-delete` (rule-26 discharge; byte-identical to the superseded keeper) — no solve, no score, no mechanism, no cell verdict changed
+
+**The act.** The ERCOT keeper designation is re-keyed
+`2026-08-14-ercot202-arm-plantphysics` → **`2026-08-15-ercot204-rule26-delete`**,
+executing FINDING-ercot204 §B.7's PROMOTION RECOMMENDATION under the
+pre-registered **direction-blind rule** of
+`docs/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md` §2.6
+(reads only the kill gates and LOYO), **on direct owner instruction given
+in-session** ("promote if a recommended keeper candidate exists; structural
+integrity improving with gates regressing may still be a keeper"). The executing
+lane itself had honoured keeper-cannot-change-in-session and left the
+recommendation to the owner; the owner's stated test is met in its strongest
+form — **structural integrity improves and no gate regresses, by byte-identity**
+(the cycle-11 / A12.1 standard, second application).
+
+**Promotion basis: RULE-26 `[R-DELETE]` DISCHARGE ALONE.** No metric gain is
+claimed and none exists: the promoted run is the ercot-202 keeper recipe
+re-solved with the transitional flag `ercot_faststart_pool_plant_physics`
+deleted and the plant-grain rule-18 gate unconditional, and **all 12 committed
+hourly sidecars are sha256-identical to the superseded keeper**, so every
+criterion is unmoved by identity. Determination **NOT-YET, fail set {C3a-2023,
+C3b-2023} — UNCHANGED**; C3c stays the single ledgered CAVEAT ×3 (58/181,
+22/53, 1/31).
+
+**Verification re-done by the promoting session, not inherited:** (a) 12/12
+sidecar sha256 re-hashed against `ercot202_plantphysics_B` — identical; (b)
+rule-26 discharge re-checked on the promoted bundle (`meta.json` 0 occurrences;
+resolved `scenario_config` and `calibration_flags` carry no such key; the two
+remaining textual hits are provenance prose — `model_changes_note`,
+attestation `attested_by`); (c) `metrics.json` determination re-read: NOT-YET;
+(d) the field confirmed deleted from `ScenarioConfig` (one comment-only mention
+remains at `scenarios.py:8153`); (e) gates read from FINDING-ercot204 §B.4
+(all PASS, G-SHED/G-C3c/G-SPUR/G-SPAN/G-COAL148/G-OWNER/G-DOF/G-D2), LOYO
+structurally N/A with byte-identity as the held-out evidence.
+
+**Surfaces re-keyed, and nothing else:** `frontend/data/backcast/keepers/ERCOT.json`
+(keeper + promotion note; prior note chain preserved verbatim; frontier_history
+untouched); `frontend/data/backcast/status/ERCOT.js` regenerated via
+`scripts/build_status.py --iso ERCOT` (verdict re-scored from the promoted
+bundle: **ERCOT:NOT-YET**); the ERCOT matrix shard keeper stamp + the
+`docs/mechanism-testing-matrix.md` §5.1 prose header (prior stamps preserved
+verbatim in both chains). `scripts/check_mechanism_matrix.py` **exit 0** (keeper
+stamps + §5.x headers match); `scripts/audit_keepers.py --iso ERCOT --check`
+**PASS, 0 failures** (1 pre-existing warning carried: the bundle attestation
+lacks a `"schema"` version tag — E10 says fix on next regeneration; no
+determination affected). No registry entry, run payload, bench, bundle, or any
+other ISO's file touched (rule 25).
+
+**Named cost, expected and intended (FINDING-ercot204 §B.7):** the superseded
+`2026-08-14-ercot202-arm-plantphysics` bundle's `meta.json` still carries the
+deleted key, so it is **unreplayable against HEAD's `ScenarioConfig`** — which
+is precisely why the successor required a re-solve; it stays on the dashboard as
+the immediate-prior comparison. The ercot-188/E2 P0 bit-identity forfeiture is
+inherited unexpired.
+
+**Fences.** No LP built, no year solved or scored, no run produced or registered
+(the promoted run was registered by its own lane); rule 22 — ERCOT holds no
+`complete`/`final` marker, nothing here could grant or spend one. No
+`ScenarioConfig` field, no matrix **cell** verdict changed (a promotion is a
+designation re-key, not a mechanism test — rule 28(b) not engaged; the stamp
+edits are exactly the two the matrix guard requires of a promoting session).
+Q-B and R-A honoured: the series are byte-identical, there is no 2023 movement
+to report and none is claimed. The RTORPA mechanism question (ercot-198 →
+ercot-204 §A.3) and T-3a stay with the owner, untouched.
+
+**Context, one line:** the promoting session is T1-CONTINUE, whose own STEP-0
+verification re-confirmed T-1 dead-on-premise at HEAD (FINDING-ercot202,
+re-proven through `replay_keeper.build_kwargs` against BOTH `ercot192_arm_B`
+and `ercot202_plantphysics_B`: control ≡ arm) — no solve was spent on it, no
+lever substituted, consistent with the cycle-11 board's CARD T DISCHARGED state.
+
+**Session consumed the ercot-205 shorthand. Next shorthand: ercot-206.**
