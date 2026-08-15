@@ -964,3 +964,29 @@ your branch when done.
   duty transfers to the GOLDEN-TIER-FIX lane (prompt issued to the owner
   alongside re-issued BLOAT-B-3 and BLOAT-B-6R prompts) and G3 stays
   evidence-blocked until its run is green. PR-3 remains undispatched.
+- 2026-08-15 — **BLOAT-B-3 dispatched and delivered: PR #3982** (§8/PR-3 of
+  `docs/bloat-removal-plan-2026-08.md`), branch
+  `claude/bloat-b3-hourly-prune-xt1i22` off `11b59ee`, label
+  `intentional-shrink`. Non-keeper `hourly/` prune, the §5.1 list re-derived
+  at execution HEAD **twice** — main moved mid-session (`726f389` → `b26c13e`
+  → `11b59ee`): the nyiso-135 promotion (#3977) re-keyed the NYISO keeper to
+  `2026-08-08-nyiso-133-cod-arm` after the first derivation, flipping
+  `nyiso133_cod_arm` prune → immune and the demoted `nyiso132_cf_arm` immune
+  → prune under the same test. Executed **24 bundles / 288 files /
+  −117.01 MiB** at tip (hourly corpus was 34 dirs / 158.4 MiB, grown from
+  BLOAT-B-6's 137.3/30): ERCOT ×9 44.37 (incl. the demoted run192 pair and
+  the ercot202 pair, whose hourlies are sha256-identical to the ercot-204
+  keeper's), CAISO ×3 12.80, MISO ×4 20.45, NEISO ×1 3.65, NYISO ×3 10.77,
+  PJM ×4 24.97. All three §5.1 HOLDs lifted on lane state (ercot193 via the
+  L-SCAR close-out #3960; miso155 via the now-synthetic sidecar test +
+  closed lane; nyiso133 via nyiso-134's refusal + the promotion). One NEW
+  hold honoured: `pjm_debugb_inputclock_A` (pjm-162 inputclock replay,
+  6.32 MiB) is a live KEEPER CANDIDATE pending the owner's promotion call —
+  kept so promotion needs no re-solve. The C-touchpoint rows stayed per
+  B-5's owner VETO. PERF-B re-verified not mid-golden-capture (never
+  dispatched; G1 undeclared; no perf branch/PR). Greens in-PR pre- and
+  post-prune: parity (70 runs OK) + `audit_keepers --check` (PASS 0/0);
+  zero dashboard files changed. Golden-tier dispatch stays deferred per the
+  B-5 sitting (curate_emissions OOM → GOLDEN-TIER-FIX lane). With PR-3
+  delivered, BLOAT-B's §8 batch is fully executed except the re-measured
+  close-out (BLOAT-B-7, open).
