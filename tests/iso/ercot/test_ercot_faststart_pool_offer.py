@@ -200,15 +200,18 @@ def test_physics_gate_excludes_slow_rows(tmp_path):
     assert out is None  # no eligible row above the boundary -> byte-identical
 
 
-def test_row_grain_physics_gate_is_vacuous_on_a_slow_plant(tmp_path):
-    """The DEFECT (ercot-186): a SLOW plant's bid rows are priced anyway.
+def test_bid_rows_alone_do_not_carry_the_plant_physics(tmp_path):
+    """The DEFECT the ercot-186 grain repair closed, kept as a REGRESSION test.
 
     Fleet assembly stamps the UC-coupling tags on the ``committed`` anchor
-    slice alone, so the plant's ``econ*``/``peak*`` rows read
-    ``min_down_hours = 0`` and the row-grain test never fires — the gate's
-    effective scope collapses onto the caller's class map (rule 18
-    [R-PHYSICS]). Default off, this is the shipped behaviour and it is
-    reproduced here so the repair below has a control.
+    slice alone, so a plant's ``econ*``/``peak*`` rows read
+    ``min_down_hours = 0``. Any eligibility test read on those ROWS is
+    therefore vacuous and the gate's effective scope collapses onto the
+    caller's class map (rule 18 [R-PHYSICS]). This asserts the row-grain
+    premise still holds — if assembly ever starts stamping bid rows, the
+    plant-grain read below would silently become redundant and this test says
+    so. The pre-repair row-grain BRANCH itself was deleted at ercot-204
+    (rule 26 [R-DELETE]).
     """
     gens = [
         # a genuinely slow plant: 8 h min-down, recorded on its committed row
@@ -216,17 +219,11 @@ def test_row_grain_physics_gate_is_vacuous_on_a_slow_plant(tmp_path):
         _gen("p1_econhi", 80.0, 11.0, min_down=0),
         _gen("p1_peak", 10.0, 12.0, min_down=0),
     ]
-    for g in gens:  # the plant's physics, at PLANT grain
-        g.plant_min_down_hours = 8
-    fa = _FA([g.pmax_mw for g in gens])
-    mc = np.vstack([np.full(T, 20.0), np.full(T, 30.0), np.full(T, 80.0)])
-    nl = np.linspace(0.0, 100.0, T)
-    out = build_ercot_faststart_pool_markup(
-        fa, gens, mc, nl, _cfg(tmp_path, _pool_surface(tmp_path)), 2024
+    assert all(
+        float(getattr(g, "min_down_hours", 0) or 0) == 0.0
+        for g in gens
+        if not g.unit_id.endswith("committed")
     )
-    assert out is not None  # the slow plant's peak row IS priced — the defect
-    _markup, mask = out
-    assert mask[2].any()
 
 
 def test_plant_grain_physics_gate_excludes_the_slow_plant(tmp_path):
@@ -245,30 +242,20 @@ def test_plant_grain_physics_gate_excludes_the_slow_plant(tmp_path):
     fa = _FA([g.pmax_mw for g in gens])
     mc = np.vstack([np.full(T, 20.0), np.full(T, 30.0), np.full(T, 80.0)])
     nl = np.linspace(0.0, 100.0, T)
-    cfg = _cfg(
-        tmp_path,
-        _pool_surface(tmp_path),
-        ercot_faststart_pool_plant_physics=True,
-    )
+    cfg = _cfg(tmp_path, _pool_surface(tmp_path))
     assert build_ercot_faststart_pool_markup(fa, gens, mc, nl, cfg, 2024) is None
 
 
 def test_plant_grain_gate_admits_a_fast_plant_unchanged(tmp_path):
-    """A genuinely fast plant (min-down 1 h) prices identically either way."""
+    """A genuinely fast plant (min-down 1 h) clears the plant-grain gate."""
     fa, gens, mc, nl = _fleet()
     for g in gens:
         g.plant_min_down_hours = 1
-    off = build_ercot_faststart_pool_markup(
+    out = build_ercot_faststart_pool_markup(
         fa, gens, mc, nl, _cfg(tmp_path, _pool_surface(tmp_path)), 2024
     )
-    cfg_on = _cfg(
-        tmp_path,
-        _pool_surface(tmp_path),
-        ercot_faststart_pool_plant_physics=True,
-    )
-    on = build_ercot_faststart_pool_markup(fa, gens, mc, nl, cfg_on, 2024)
-    assert off is not None and on is not None
-    assert np.array_equal(off[0], on[0]) and np.array_equal(off[1], on[1])
+    assert out is not None
+    assert out[1].any()  # the plant clears the gate and owns row-hours
 
 
 def test_plant_grain_gate_reads_the_max_over_both_physics_fields(tmp_path):
@@ -289,11 +276,7 @@ def test_plant_grain_gate_reads_the_max_over_both_physics_fields(tmp_path):
     fa = _FA([g.pmax_mw for g in gens])
     mc = np.vstack([np.full(T, 30.0), np.full(T, 80.0)])
     nl = np.linspace(0.0, 100.0, T)
-    cfg = _cfg(
-        tmp_path,
-        _pool_surface(tmp_path),
-        ercot_faststart_pool_plant_physics=True,
-    )
+    cfg = _cfg(tmp_path, _pool_surface(tmp_path))
     assert build_ercot_faststart_pool_markup(fa, gens, mc, nl, cfg, 2024) is None
 
 

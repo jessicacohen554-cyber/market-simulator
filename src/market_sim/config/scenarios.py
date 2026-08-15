@@ -873,14 +873,6 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the wall/pool ladders' measured p90→p100 tails and hashes distinctly.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "ercot_offer_surface_position_tail",
-    # ercot-186 rule-18 physics-grain repair of the fast-start pool's own
-    # eligibility gate (default off): dropped from the hash at its default so
-    # every pre-existing cache key stays byte-stable (gate-off replays the
-    # pre-repair row-grain read, which is byte-identical by construction);
-    # an armed run evaluates the same unchanged bound at PLANT grain and so
-    # hashes distinctly. Registered IN THE SAME COMMIT as the field (the
-    # nyiso-119 discipline).
-    "ercot_faststart_pool_plant_physics",
     # ercot-188 (c2) top-refined econ-curve slicing, SCHEME R1 (default off):
     # dropped from the hash at its default so every pre-existing cache key
     # stays byte-stable (the gate-off branch reproduces the equal-width form
@@ -1172,7 +1164,6 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_offer_surface_continuous": "False",
     "ercot_offer_surface_top_scoped": "False",
     "ercot_offer_surface_position_tail": "False",
-    "ercot_faststart_pool_plant_physics": "False",
     "ercot_econ_curve_top_refine": "False",
 }
 
@@ -8158,28 +8149,14 @@ class ScenarioConfig:
     # Path to the frozen fast-start pool JSON (default:
     # data/raw/_validation-source/ercot_faststart_pool_condbinned.json).
     ercot_faststart_pool_offer_path: str | None = None
-    # ercot-186 RULE-18 [R-PHYSICS] GRAIN REPAIR for the leg above (default
-    # off; owner sitting 2026-08-09 card D3 option (ii),
-    # docs/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md). The leg's own
-    # eligibility test is `min_down_hours <= FASTSTART_POOL_MIN_DOWN_HOURS`
-    # read on the BID ROW — but fleet assembly records the UC-coupling physics
-    # tags on the plant's `committed` anchor slice ALONE (deliberately: a bid
-    # tranche must acquire no commitment coupling), so every econ*/peak* row —
-    # exactly the rows this leg prices — reads min_down = min_run = 0 and the
-    # inequality is False for EVERY row the builder can reach. The test is
-    # vacuous, and the leg's effective scope collapses onto its row universe,
-    # the CT_PEAKER class map: a hard-coded class tuple, which is what rule 18
-    # forbids. Armed, the same unchanged bound is evaluated at PLANT grain
-    # (`fleet.offer_surfaces._plant_unit_physics`, the ercot-176 Amendment-2
-    # construction) and an ineligible plant's rows are skipped whole. A GRAIN
-    # correction, not a parameter: zero new scalars, the bound is untouched,
-    # no min-run bound is added, and no artifact re-derives. Default off
-    # replays the pre-repair behaviour byte-identically (the A/B control);
-    # cache-key registered dropped-at-default. TRANSITIONAL: once a keeper
-    # carries it armed, the flag and the pre-repair branch should be deleted
-    # outright (rule 26 [R-DELETE]) — it is an A/B switch, not a standing
-    # option.
-    ercot_faststart_pool_plant_physics: bool = False
+    # The ercot-186 RULE-18 [R-PHYSICS] GRAIN REPAIR for the leg above is now
+    # UNCONDITIONAL — its transitional flag `ercot_faststart_pool_plant_physics`
+    # was DELETED at ercot-204 (rule 26 [R-DELETE]), together with the
+    # pre-repair row-grain branch it selected, once the re-solve existed that
+    # no longer referenced it. Deleted rather than defaulted-on: a deprecated
+    # parameter that still parses is a re-armable answer key.
+    # (docs/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md
+    # Part B; the repair itself: owner sitting 2026-08-09 card D3 option (ii).)
     # ERCOT-176 offline-increment re-pricing, SLOW-START tier (default off;
     # docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md, the
     # owner-authorized ERCOT-151 §3 design round). The model's availability
@@ -13194,7 +13171,6 @@ TIER_TAGS: dict[str, int] = {
     "ercot_offer_surface_cleared_share_rt_mode": 1,
     "ercot_faststart_pool_offer": 1,
     "ercot_faststart_pool_offer_path": 3,
-    "ercot_faststart_pool_plant_physics": 1,
     "ercot_offline_commit_offer": 1,
     "ercot_offline_commit_offer_path": 3,
     "ercot_shoulder_online_span": 1,
