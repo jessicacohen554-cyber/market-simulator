@@ -784,3 +784,9 @@ data/raw/NYISO/2023-Gold-Book-Public.pdf
 data/raw/NYISO/2024-Gold-Book-Public.pdf
 data/raw/NYISO/2025-Gold-Book-Public.pdf
 data/raw/NYISO/2026-Gold-Book-Public.pdf
+
+# NYISO MIS monthly load-archive bundles (4 zips, 65.2 MiB): zero consumers.
+# The zonal load series the model reads is derived from a DIFFERENT directory,
+# data/raw/zone-specific-demand/NYISO/raw/, which is untouched. Per-product MIS
+# URL patterns + inner month inventory: data/raw/NYISO/README.md.
+data/raw/NYISO/nyiso load reports *.zip
