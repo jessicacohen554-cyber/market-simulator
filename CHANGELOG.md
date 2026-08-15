@@ -1,5 +1,70 @@
 # Changelog
 
+## 2026-08-15 — BLOAT-B-6 close-out: there was nothing to close out — BLOAT-B never executed, and the tip GREW 35 MiB while it waited
+
+WS6 close-out of `docs/model-audit-release-plan-2026-08.md`, dispatched out of
+sequence. Report: `docs/bloat-removal-report-2026-08.md`. Docs-only — no data
+file, corpus, bundle, script or workflow was moved, slimmed, converted or
+deleted.
+
+**The finding.** Not one itemized action from
+`docs/bloat-removal-plan-2026-08.md` §3–§7 has been performed, and no BLOAT-B PR
+exists (the newest bloat-matching PR is #3938, BLOAT-A itself). Measured at
+`315a245`: tip **10,115.0 MiB / 11,214 files** against a planned ≈ 8.1 GiB —
+**+35.2 MiB ABOVE** BLOAT-A's base `f2de3b0`, recovery **0.0 MiB**. Every target
+is intact and byte-for-byte at its planned size: `data/raw/ercot/SCED` 1,025
+files / 3,258.0 MiB still 187/188-column unslimmed (PR-1); 1,094
+`caiso-dam-outages` xlsx / 155.0 MiB, the four NYISO load-report zips / 65.2 MiB
+(PR-2); every one of the 19 named C-5.1 bundles still carrying its `hourly/`
+(PR-3); **83** top-level `gen_*_attestation.py` and **194** top-level
+`scripts/*.py`, matching the plan's §6 census exactly (PR-4). The cause is
+sequencing, not failure: BLOAT-B is a **Wave-3** lane held until **G2 + an
+owner-signed deletion list**, and the program is still in Wave 1 — **BLOAT-1,
+the owner's item-level approve/veto, is the single thing blocking PR-1..PR-4.**
+
+**The two chartered §8 dispatches ran anyway, as a pre-prune baseline rather
+than G3 evidence** — with no prune, neither can mean what §8 wanted it to mean.
+`cleanup-large-blobs.yml` **dry run** (`31857841269`): the `REWRITE-HISTORY`
+confirm phrase was never supplied and the run's own step record proves the guard
+held — `Validate confirmation` skipped, `Validate push token` skipped, the strip
+and force-push steps never reached. Its removable total is pure historical churn,
+not prune reclaim; what it establishes is the floor a future post-prune run
+subtracts from. `golden-data-tier.yml` (`31857842156`) surfaced a prerequisite
+the program had not noticed it was missing: **the tier has never completed a
+run.** Its only prior run (`31767823203`, DEBUG-A's first-ever dispatch under §6
+decision 7) is red on **infrastructure, not a test** — killed at 09:41 elapsed by
+a runner shutdown, exit 143, mid-`curate_emissions.py`, before any test executed.
+G3's wording ("dispatched once post-prune and green") presumes a pre-prune green
+that does not exist, so a post-prune red would not be attributable; that baseline
+must be established and recorded **before** the prunes land.
+
+**Plan §2's measurement method re-validated and carried forward.** Re-evaluating
+`golden-data-tier.yml`'s non-cone sparse globs with gitignore semantics against
+the tip tree reproduces the plan's keep-required block — **1,512.8 MiB / 1,043
+files** vs its 1,500.0 / 1,038 at `f2de3b0`, the delta being exactly the five
+files added since — and independently matches the workflow's own "~1.5 GB"
+header comment.
+
+**Drift BLOAT-B must absorb when it runs.** Both corpora it was chartered to
+shrink kept growing while it waited: five NYISO Gold Books (2018–2022, +12.4 MiB)
+landed in `data/raw/NYISO/`, taking the committed-PDF census from 34 / 144.5 MiB
+to **38 / 153.2 MiB** and B5's convert-group from 28 to 33; and
+`results/calibration/**/hourly/` went from 92.9 MiB to **137.3 MiB across 30
+bundles**, so PR-3's bundle list must be re-derived at execution time, not copied
+from the plan. `nyiso133_control`, a named C-5.1 HOLD row, is not at tip under
+that name. Recorded so the execution session does not re-derive them.
+
+**D-ledger closures, re-verified at this tip rather than carried on the plan's
+word** (numbering left to the PM): **D-3 CLOSE AS SHIPPED** —
+`prune_iso_runs.py` deletes sidecar + payload + mapped bundle together with the
+`live_bundles` immunity set, `check_registry_payload_parity.py` runs in CI and
+passes at tip ("69 runs checked, 0 known-unsynced tolerated"), zero orphans;
+**D-4 CLOSE AS EXECUTED** — zero root-level zips at tip; **D-8 SUPERSEDE** by
+BLOAT-1/2/3, all three still open. One correction to the bloat plan's §9:
+**D-5 is already closed — by DEBUG-A on 2026-08-14**, not pending; the PJM M-1
+patch now lives at `patches/archive/pjm-m1-code.patch`, moved rather than
+deleted, so keep-required is still honored.
+
 ## 2026-08-14 — DEBUG-A: debug sweep (solve-neutral) — fast tier 6→0 ambient reds; D-5 closed, PJM input-clock defect confirmed and chartered to DEBUG-B
 
 WS2 of `docs/model-audit-release-plan-2026-08.md`. Every seed row

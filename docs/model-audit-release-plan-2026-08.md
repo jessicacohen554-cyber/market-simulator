@@ -827,3 +827,28 @@ your branch when done.
   L-1 unblocked, ERCOT keeper may move pre-G2; HTTP/1.1 push fix now in CLAUDE.md.
   Amended DEBUG-A + BLOAT-A prompts re-issued to the owner; AUDIT-A / PERF-A /
   DOCS-A stand as issued.
+- 2026-08-14 — BLOAT-A merged (PR #3938): `docs/bloat-removal-plan-2026-08.md`,
+  the itemized Stage-1 list. Read-only; nothing pruned. Its §9 asks the PM to
+  number four ledger entries (D-3 close, D-4 close, D-8 supersede, BLOAT-1/2/3).
+- 2026-08-14 — DEBUG-A merged: fast tier 6→0 ambient reds, all solve-neutral;
+  **D-5 closed** (PJM M-1 patch archived to `patches/archive/`, must not be
+  applied verbatim; the live input-clock defect chartered to DEBUG-B);
+  branch-protection memo written for G2. Spent §6 decision 7's golden-tier
+  dispatch on the tier's first-ever run — which died on a **runner shutdown**
+  (exit 143) mid-provisioning, so the tier still has **no green baseline**.
+- 2026-08-15 — **BLOAT-B-6 (close-out) dispatched OUT OF SEQUENCE and reported
+  the fact.** BLOAT-B is a Wave-3 lane held until G2 + an owner-signed deletion
+  list (§4.10); G1 has not been declared and no BLOAT-B PR exists. The session
+  measured the tip and confirmed **zero** of plan §3–§7 executed — tip is
+  **10,115.0 MiB / 11,214 files at `315a245`, +35.2 MiB ABOVE** BLOAT-A's base
+  `f2de3b0`, against a planned ≈ 8.1 GiB. It performed the two chartered §8
+  dispatches anyway, as a **pre-prune baseline** rather than G3 evidence:
+  `cleanup-large-blobs.yml` **dry run** (`31857841269`; confirm phrase never
+  supplied, rewrite/push steps never reached) and `golden-data-tier.yml`
+  (`31857842156`). Report: `docs/bloat-removal-report-2026-08.md` — including
+  the D-ledger closures re-verified at this tip, and drift BLOAT-B must absorb
+  (the B5 PDF group and the C-5.1 hourly target both GREW while the lane
+  waited). **Two PM actions fall out:** (a) **BLOAT-1** — the owner's item-level
+  approve/veto — is the single thing blocking PR-1..PR-4, and (b) G3's proof
+  mechanism needs a **pre-prune green** golden-tier run recorded before the
+  prunes land, or a post-prune red cannot be attributed.
