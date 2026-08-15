@@ -1,0 +1,15 @@
+# Scope: the 5 NYISO SOM reports + the 2023-2026 Gold Books ONLY, gitignored
+# at tip (BLOAT-B-2, docs/bloat-removal-plan-2026-08.md 4.5 item B5). The
+# 2018-2022 Gold Books, the NYCA-Generators workbooks and every other file in
+# this directory are NOT covered and stay tracked. See README.md.
+# sha256  size_bytes  file
+
+fbc266a35130bbb8643059f3abe5c96e29f59dc6116e9e0a7e25e794c75d8949  2017857  2023-Gold-Book-Public.pdf
+46a367fb91fd7225fb1b8ef432923c9b4b5c73e84d4aa9e6c76b003f06cb9839  4921089  2024-Gold-Book-Public.pdf
+cc43665b9344a04b4c9355edd1dc7e31d42a6bb759ffe027ad867221556aea8e  2122546  2025-Gold-Book-Public.pdf
+43865c1cbe38ca2ef4c8319d11454881de2b9dde3e48867dbbd2e94855b908bf  2666002  2026-Gold-Book-Public.pdf
+4aa330daad19b5c3b4f177047047d1fa1544c67e978af8f94aed01612715aa95  8239018  NYISO-2020-SOM-Report-final-5-18-2021.pdf
+48b6dcad96b049a71188cfb2f493f75c7afaef26884cf7b61513c46fd0e645f1  10643331  NYISO-2022-SOM-Full-Report__5-16-2023-final.pdf
+e240893a62c6f49a1d44fbe090c502501972d8db6333d609f49b3905d0f25167  7091626  NYISO-2023-SOM-Full-Report__5-13-2024-Final.pdf
+d2b27a93269dbf4d54ffad9ba3d4b721784b7b9c75ad80780c12aad94d3b3a04  6454531  NYISO-2024-SOM-Full-Report_5-14-2025-final.pdf
+80c27d0b75e4c0ecb3c1ad69b3b6e2bea6797f1c0b4c9abce37f6fefaf4e218c  14425051  NYISO-2025-SOM-Report__5-19-2026-final.pdf
