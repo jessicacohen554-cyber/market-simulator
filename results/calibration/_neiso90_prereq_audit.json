@@ -1,0 +1,254 @@
+{
+ "EIA-930 ISNE_fueltype": {
+  "2019": [
+   "OK",
+   "140160 rows in ISNE_fueltype.parquet"
+  ],
+  "2020": [
+   "OK",
+   "140544 rows in ISNE_fueltype.parquet"
+  ],
+  "2023": [
+   "OK",
+   "140160 rows in ISNE_fueltype.parquet"
+  ]
+ },
+ "EIA-930 ISNE_region": {
+  "2019": [
+   "OK",
+   "35040 rows in ISNE_region.parquet"
+  ],
+  "2020": [
+   "OK",
+   "35136 rows in ISNE_region.parquet"
+  ],
+  "2023": [
+   "OK",
+   "35040 rows in ISNE_region.parquet"
+  ]
+ },
+ "NEISO_<y>_renewable_capacity.csv": {
+  "2019": [
+   "OK",
+   "120 rows \u2014 data/raw/_validation-source/NEISO_2019_renewable_capacity.csv"
+  ],
+  "2020": [
+   "OK",
+   "120 rows \u2014 data/raw/_validation-source/NEISO_2020_renewable_capacity.csv"
+  ],
+  "2023": [
+   "OK",
+   "120 rows \u2014 data/raw/_validation-source/NEISO_2023_renewable_capacity.csv"
+  ]
+ },
+ "actual_lmp_hourly_NEISO (C3a/C3b/C3c upstream)": {
+  "2019": [
+   "OK",
+   "8760 h, cov 1.000, max $261.35, mean $30.67, >$300: 0h"
+  ],
+  "2020": [
+   "OK",
+   "8760 h, cov 1.000, max $236.11, mean $23.39, >$300: 0h"
+  ],
+  "2023": [
+   "OK",
+   "8760 h, cov 1.000, max $1,161.97, mean $35.70, >$300: 15h"
+  ]
+ },
+ "actual_tail.json (C3c benchmark part)": {
+  "2019": [
+   "GAP",
+   "no row \u2014 C3c SKIPs for this year"
+  ],
+  "2020": [
+   "OK",
+   "rt_gt 0h, da_gt 0h, cov 1.0"
+  ],
+  "2023": [
+   "OK",
+   "rt_gt 15h, da_gt 5h, cov 1.0"
+  ]
+ },
+ "algonquin_citygate_daily.csv": {
+  "2019": [
+   "OK",
+   "56 rows in algonquin_citygate_daily.csv"
+  ],
+  "2020": [
+   "OK",
+   "45 rows in algonquin_citygate_daily.csv"
+  ],
+  "2023": [
+   "OK",
+   "44 rows in algonquin_citygate_daily.csv"
+  ]
+ },
+ "backcast_config (the keeper recipe, built)": {
+  "2019": [
+   "OK",
+   "built; gas $2.57, campd_bins=True, plant_level=True, winter_fuel_mustrun=False"
+  ],
+  "2020": [
+   "OK",
+   "built; gas $2.03, campd_bins=True, plant_level=True, winter_fuel_mustrun=False"
+  ],
+  "2023": [
+   "OK",
+   "built; gas $2.54, campd_bins=True, plant_level=True, winter_fuel_mustrun=False"
+  ]
+ },
+ "calibration_reference.json (C1/C2 target)": {
+  "2019": [
+   "OK",
+   "isos.NEISO.2019: 4 keys (demand, generation_twh, henry_hub_actual, renewables); henry_hub present"
+  ],
+  "2020": [
+   "OK",
+   "isos.NEISO.2020: 4 keys (demand, generation_twh, henry_hub_actual, renewables); henry_hub present"
+  ],
+  "2023": [
+   "OK",
+   "isos.NEISO.2023: 4 keys (demand, generation_twh, henry_hub_actual, renewables); henry_hub present"
+  ]
+ },
+ "campd-unit-outages-NEISO.csv": {
+  "2019": [
+   "OK",
+   "483 rows in campd-unit-outages-NEISO.csv"
+  ],
+  "2020": [
+   "OK",
+   "441 rows in campd-unit-outages-NEISO.csv"
+  ],
+  "2023": [
+   "OK",
+   "367 rows in campd-unit-outages-NEISO.csv"
+  ]
+ },
+ "capacity_actuals_neiso.csv": {
+  "2019": [
+   "GAP",
+   "no 2019 rows in capacity_actuals_neiso.csv"
+  ],
+  "2020": [
+   "GAP",
+   "no 2020 rows in capacity_actuals_neiso.csv"
+  ],
+  "2023": [
+   "OK",
+   "107 rows in capacity_actuals_neiso.csv"
+  ]
+ },
+ "fossil_co2_rates": {
+  "2019": [
+   "OK",
+   "2547 rows in fossil_co2_rates.csv"
+  ],
+  "2020": [
+   "OK",
+   "2536 rows in fossil_co2_rates.csv"
+  ],
+  "2023": [
+   "OK",
+   "2518 rows in fossil_co2_rates.csv"
+  ]
+ },
+ "gas_basis_by_iso_month.csv": {
+  "2019": [
+   "OK",
+   "84 rows in gas_basis_by_iso_month.csv"
+  ],
+  "2020": [
+   "OK",
+   "84 rows in gas_basis_by_iso_month.csv"
+  ],
+  "2023": [
+   "OK",
+   "84 rows in gas_basis_by_iso_month.csv"
+  ]
+ },
+ "henry_hub_actual (per-year gas price)": {
+  "2019": [
+   "OK",
+   "$2.57/MMBtu"
+  ],
+  "2020": [
+   "OK",
+   "$2.03/MMBtu"
+  ],
+  "2023": [
+   "OK",
+   "$2.54/MMBtu"
+  ]
+ },
+ "load_demand (LP demand array)": {
+  "2019": [
+   "OK",
+   "shape (5, 8760), peak 20,617 MW, 95.54 TWh"
+  ],
+  "2020": [
+   "OK",
+   "shape (5, 8760), peak 21,524 MW, 92.10 TWh"
+  ],
+  "2023": [
+   "OK",
+   "shape (5, 8760), peak 20,347 MW, 96.86 TWh"
+  ]
+ },
+ "load_hydro_budget (neiso-72 window)": {
+  "2019": [
+   "OK",
+   "169 plants, 7.64 TWh budget, max 1,914 MW"
+  ],
+  "2020": [
+   "OK",
+   "170 plants, 6.64 TWh budget, max 1,917 MW"
+  ],
+  "2023": [
+   "OK",
+   "168 plants, 8.55 TWh budget, max 1,882 MW"
+  ]
+ },
+ "load_neiso_reserve_requirements": {
+  "2019": [
+   "OK",
+   "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+  ],
+  "2020": [
+   "OK",
+   "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+  ],
+  "2023": [
+   "OK",
+   "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+  ]
+ },
+ "parasitic_load_factors (pooled map)": {
+  "2019": [
+   "OK",
+   "pooled year==0 map: 544 plants (year-independent by construction)"
+  ],
+  "2020": [
+   "OK",
+   "pooled year==0 map: 544 plants (year-independent by construction)"
+  ],
+  "2023": [
+   "OK",
+   "pooled year==0 map: 544 plants (year-independent by construction)"
+  ]
+ },
+ "plant_emission_rates_v2": {
+  "2019": [
+   "OK",
+   "4346 rows in plant_emission_rates_v2.csv"
+  ],
+  "2020": [
+   "OK",
+   "4271 rows in plant_emission_rates_v2.csv"
+  ],
+  "2023": [
+   "OK",
+   "4127 rows in plant_emission_rates_v2.csv"
+  ]
+ }
+}
