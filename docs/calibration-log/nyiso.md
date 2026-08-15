@@ -6342,3 +6342,91 @@ unfixable from the free archive — disclose before quoting any Dec-2022 or
 winter-tail number.
 
 * Next number: **nyiso-136**.
+
+## 2026-08-15 — nyiso-136 RULE 26 [R-DELETE]: the market-solar in-service DATE basis gate is COLLAPSED TO UNCONDITIONAL
+
+**Owner ruling, session nyiso-136, 2026-08-15:** collapse the gate, accepting the
+forecast-lane re-stale. This is the item `ASSESSMENT-nyiso135-promotion-2026-08-15.md`
+§4 listed as open #2, that nyiso-133 §9 recommended, and that both nyiso-133 and
+nyiso-135 explicitly declined to take without an owner decision.
+
+**NO SOLVE RAN. NO CELL VERDICT MOVES.** `vre_registry_cod_date_basis` NYISO went
+`O` → `K` on the nyiso-135 promotion, which landed earlier in this same session.
+What moves here is the **DEFAULT**, not a verdict.
+
+**What changed.** `ScenarioConfig.nyiso_solar_registry_cod_dates` is **DELETED**.
+`data/renewables.py` now calls `load_market_solar_monthly(..., cod_basis=True)`
+unconditionally, so every NYISO run in **both lanes** ramps each registered
+market-solar plant on its EIA-860 `Operating Month` — the metered commercial
+start — and the Gold Book Table III-2a `In-Service Date` (a registration /
+interconnection-service date that leads it) is no longer reachable from any solve
+path. The CLI flags in `run_calibration.py` / `run_calibration_full.py`, the
+config plumbing, and the default-off tests go with it. The matrix row's `def` and
+the loader/deriver docstrings are re-pointed; the `fc` posture is **dropped**,
+because with the gate gone there is no longer a forecast posture that differs.
+
+**Why.** Rule 26 `[R-DELETE]`, in the words of the gate's own standing in-code
+note: a default-off gate whose OFF position is the **less accurate** basis is a
+re-armable wrong answer. nyiso-135 promoted the armed run to keeper; leaving the
+DEFAULT on the superseded basis left the wrong answer one flag away.
+
+**Declared cost, accepted by the owner in the same ruling.** This re-stales the
+NYISO **forecast** lane's **11 committed `nyiso-*` hindcast sidecars** (rule 15's
+separate namespace, its own governance). They stand as PRE-EPOCH evidence until
+that lane re-runs them. This is exactly the cost nyiso-133 and nyiso-135 both
+flagged and refused to incur unilaterally.
+
+**The cache hazard, found and handled — this is the load-bearing part.** The flip
+is **SAME-KEY**. The field was registered in `_CACHE_KEY_OPTIONAL_FIELDS` and held
+its `False` default, so it was **already dropped from the hash**; deleting it
+leaves the pinned default key `603c2498bf71d21d` **byte-stable**. The first
+attempt retired it into `_CACHE_KEY_RETIRED_FIELDS` — the mechanism rule 26 points
+at — and that was **WRONG and was caught by measurement, not by reasoning**: that
+dict *re-inserts* a name into the payload, so it moved the key to
+`6f8050582a752f5a`. Retirement is for fields that entered the hash at their
+default; never for a registered-optional one. Both values are recorded at the
+tombstone so the next deletion does not repeat it. Because the invalidation is
+invisible in the key, it is written into the cache-epoch ledger in
+`src/market_sim/results/cache.py` (entry **2026-08-15**), which names exactly what
+is invalidated and what is not.
+
+**Not affected.** The designated keeper `2026-08-08-nyiso-133-cod-arm` already
+solved with the flag `True` in its own `run_config.json`, so it is **already on
+the post-collapse basis**; its determination is untouched at
+`CALIBRATED-WITH-CAVEATS` with C3c the lone ledgered caveat, bit-unchanged at
+21 / 3 / 24 h. Its paired control is pre-epoch by construction and is kept as the
+A/B baseline, not as a current-basis run. Rule 25 `[R-ISO-SCOPE]`: NYISO only —
+the loader returns `None` for any other ISO, and NEISO carries the identical
+Tier-3 posture and is explicitly NOT covered. Frontier stays **CLEARED**
+(2026-08-06), not re-asserted.
+
+**Verification.** Two independent cross-checks confirm the collapse reproduces the
+**promoted** basis rather than drifting into a new one. Armed 2024 solar energy
+moves 0.670 → 0.586 TWh, a ratio of **0.8748** against the nyiso-133 A/B's
+recorded K3 liveness of **0.8746**; and 0.586 against NYISO's published 0.503 TWh
+is **+16.5 %**, the exact 2024 advisory figure the promotion reported against
+interest. Pinned default cache key `603c2498bf71d21d` re-measured and byte-stable;
+`check_cache_key_registration.py` clean (713 fields, 166 registered, all declared
+defaults match HEAD); `check_mechanism_matrix.py` integrity / anchors / keeper
+stamps / §5.x headers all OK, with 228 base-file line anchors mechanically
+repaired by `--fix-anchors` (provably digits-only: the file is byte-identical once
+line-number digits are normalized) because deleting the field shifted
+`scenarios.py`; ruff and ruff-format clean. Targeted suite **1,402 passed, 4
+failed**, and the **same 4 fail identically on pristine `origin/main`** — they are
+the gitignored `data/clean` partition absent in a fresh checkout, none from this
+work. The two tests that legitimately moved were updated with the arithmetic above
+written into them, not re-baselined silently.
+
+**Holdout posture UNCHANGED, re-confirmed in session.** The owner was asked and
+ruled **HOLD the freeze**: 2022 was not solved, scored or registered. `complete`
+stays validation ONLY, NYISO stays ABSENT from `final`. The two disclosures that
+must be graded before any 2022 result is quoted are **still ungraded**: the
+import-tranche 719 MW duration RMSE (still not re-measured) and the Transco
+Dec-2022 Elliott hole (unfixable from the free archive).
+
+**Lever queue.** (1) the chartered **JOINT Zone-K transfer-bound + downstate
+ST_GAS `min_gen` reconciliation** (rule 19) — open, still needs its own owner
+charter AND pre-registration. (2) the **FLEET-CF COMPOSITION** object — the
+owner's chosen lever for this session, pre-registration next.
+
+* Next number: **nyiso-137**.

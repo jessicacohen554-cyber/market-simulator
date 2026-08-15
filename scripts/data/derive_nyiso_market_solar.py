@@ -43,8 +43,9 @@ raises it). It is not the measured solar *generation* series and it is not
 capped at delivered output: the LP still dispatches and curtails solar
 endogenously against this capacity.
 
-**THE SECOND DATE BASIS (nyiso-133,
-``ScenarioConfig.nyiso_solar_registry_cod_dates``).** The artifact carries the
+**THE SECOND DATE BASIS (nyiso-133; the SOLE basis the solve path reads
+since nyiso-136, 2026-08-15 — the selecting gate was collapsed under rule 26
+``[R-DELETE]``).** The artifact carries the
 same registry on TWO published in-service date bases, in parallel columns:
 ``capacity_mw`` (the Gold Book ``In-Service Date``, unchanged) and
 ``capacity_mw_cod`` (EIA-860's capacity-weighted ``Operating Year`` /
@@ -390,8 +391,9 @@ def main() -> int:
             "#   as grid supply double-counts it.\n"
             "# ZERO FREE PARAMETERS. Rule 13 input, rule 23 frozen (re-derive only on\n"
             "#   a new Gold Book vintage), rule 25 NYISO-only.\n"
-            "# TWO PUBLISHED DATE BASES, same membership and same nameplate (nyiso-133,\n"
-            "#   ScenarioConfig.nyiso_solar_registry_cod_dates):\n"
+            "# TWO PUBLISHED DATE BASES, same membership and same nameplate (nyiso-133;\n"
+            "#   the solve path reads capacity_mw_cod UNCONDITIONALLY since nyiso-136,\n"
+            "#   2026-08-15 — the selecting gate was collapsed, rule 26 [R-DELETE]):\n"
             "#     capacity_mw     — Gold Book 'In-Service Date' (a registration /\n"
             "#                       interconnection-service date), the historical basis;\n"
             "#     capacity_mw_cod — EIA-860 capacity-weighted Operating Year/Month for\n"

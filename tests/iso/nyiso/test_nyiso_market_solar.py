@@ -1,8 +1,10 @@
 """Tests for the NYISO front-of-meter solar capacity basis (nyiso-128).
 
 Covers the trivial cases first (CLAUDE.md testing pattern): a hand-written
-one-zone artifact, then the committed three-year artifact, then the byte-
-identity guarantee the default-off flag must honour.
+one-zone artifact, then the committed three-year artifact, then the in-service
+DATE basis — which since nyiso-136 (2026-08-15) is UNCONDITIONAL rather than a
+default-off flag, so the guarantee under test is that the solve path reaches
+the EIA-860 Operating Month ramp and cannot reach the Gold Book one.
 """
 
 from __future__ import annotations
@@ -122,19 +124,28 @@ def test_flag_off_is_byte_identical_and_on_moves_only_solar():
     assert sc_on.sum() == pytest.approx(573.4, abs=0.05)
 
     # The armed energy is the DOCUMENTED level of the current keeper, not a
-    # target. This assertion read `approx(0.503, rel=0.10)` — NYISO's published
-    # 2024 Net Energy — which was right when the ISO-wide CF was 0.15, and went
-    # STALE (failing on main) when nyiso-132 re-levelled
+    # target. Its history is the point: it read `approx(0.503, rel=0.10)` —
+    # NYISO's published 2024 Net Energy — which was right when the ISO-wide CF
+    # was 0.15 and went STALE (failing on main) when nyiso-132 re-levelled
     # RENEWABLE_AVG_CF["NYISO"]["solar"] to the measured 0.1955 without updating
-    # it. Repaired at nyiso-133 to the level that constant actually implies:
-    # 389.9 MW mean-monthly x 8760 x 0.1955 = 0.668 TWh, i.e. the +33.2 % 2024
-    # over-statement FINDING-nyiso132 §4 reports against interest. The
-    # published 0.503 TWh is carried below as the reference it is measured
-    # against, not as an assertion the model is expected to meet.
+    # it. nyiso-133 repaired it to the 0.670 TWh that constant implies on the
+    # GOLD BOOK ramp (389.9 MW mean-monthly x 8760 x 0.1955), i.e. the +33.2 %
+    # over-statement FINDING-nyiso132 §4 reported against interest.
+    #
+    # It moves once more here, and NOT because the level was re-fitted: nyiso-136
+    # COLLAPSED the in-service DATE basis to unconditional (rule 26 [R-DELETE],
+    # owner ruling 2026-08-15), so the armed ramp is now EIA-860's Operating
+    # Month rather than the Gold Book's registration date. 0.586 / 0.670 =
+    # 0.8748 reproduces the nyiso-133 A/B's recorded K3 liveness ratio of
+    # 0.8746, and 0.586 / 0.503 = +16.5 % reproduces the 2024 advisory figure
+    # the promotion reported against interest — two independent cross-checks
+    # that this is the SAME basis change, not a drift.
     energy_twh = float((sc_on[:, None] * s_on).sum()) / 1e6
-    assert energy_twh == pytest.approx(0.670, rel=0.05)
+    assert energy_twh == pytest.approx(0.586, rel=0.05)
     published_2024_twh = 0.503
-    assert energy_twh > published_2024_twh  # over-stated; see cod_dates below
+    assert energy_twh > published_2024_twh  # still over-stated: the fleet-CF
+    # composition object (nyiso-133's named successor) is what remains, and this
+    # repair was never claimed to close it.
 
 
 def _write_dual_basis_artifact(path, rows: list[tuple]) -> None:
@@ -223,46 +234,56 @@ def test_committed_artifact_cod_basis_matches_measured_identification():
 
 
 @pytest.mark.skipif(not ARTIFACT.exists(), reason="committed artifact required")
-def test_cod_dates_flag_off_is_byte_identical_and_on_moves_only_solar():
-    """Default off is byte-identical; armed moves 2024 solar and nothing else."""
+def test_cod_basis_is_unconditional_on_the_solve_path():
+    """The COD basis is the ONLY basis the solve path can reach (nyiso-136).
+
+    The nyiso-133 gate ``nyiso_solar_registry_cod_dates`` was COLLAPSED TO
+    UNCONDITIONAL on the owner's 2026-08-15 ruling (rule 26 [R-DELETE]), so
+    there is no longer an "off" arm to compare against — the guarantee under
+    test is that the loaded 2024 solar ramp IS the EIA-860 Operating Month
+    ramp and is NOT the Gold Book In-Service Date ramp.
+    """
     iso_cfg = get_iso_config("NYISO")
-    base = dict(mode="backcast", nyiso_solar_market_generator_basis=True)
-    off = ScenarioConfig(**base)
-    on = ScenarioConfig(**base, nyiso_solar_registry_cod_dates=True)
+    cfg = ScenarioConfig(mode="backcast", nyiso_solar_market_generator_basis=True)
+    _, _, solar, solar_cap = load_renewable_profiles("NYISO", 2024, iso_cfg, cfg)
 
-    w_off, wc_off, s_off, sc_off = load_renewable_profiles("NYISO", 2024, iso_cfg, off)
-    w_on, wc_on, s_on, sc_on = load_renewable_profiles("NYISO", 2024, iso_cfg, on)
+    assert [z.name for z in iso_cfg.zones] == ZONES  # ordering the loader wants
+    gold = load_market_solar_monthly("NYISO", 2024, ZONES)
+    cod = load_market_solar_monthly("NYISO", 2024, ZONES, cod_basis=True)
+    assert gold is not None and cod is not None
+    # The two bases really do differ in 2024 — otherwise this test is vacuous.
+    assert not np.allclose(gold, cod)
 
-    # Wind is untouched, exactly (the K4 scope gate of PREREG-nyiso133).
-    assert np.array_equal(w_off, w_on)
-    assert np.array_equal(wc_off, wc_on)
-    # 2024 year-end solar capacity is untouched — only the ramp inside the year
-    # moves (2023 is the one year that does move; see the test above).
-    assert sc_on.sum() == pytest.approx(sc_off.sum(), abs=0.05)
+    # Year-end capacity agrees on both bases in 2024; the ramp inside the year
+    # is what moves, so compare the ramp the solve path actually loaded.
+    assert solar_cap.sum() == pytest.approx(cod[:, -1].sum(), abs=0.05)
 
-    off_twh = float((sc_off[:, None] * s_off).sum()) / 1e6
-    on_twh = float((sc_on[:, None] * s_on).sum()) / 1e6
-    # The K3 liveness gate: the armed basis must actually reach the LP bound.
-    # The ENERGY ratio (0.875) is below the flat mean-monthly CAPACITY ratio
-    # (0.898) because the re-timed months are not CF-neutral: Morris Ridge's
-    # +2-month shift moves 179 MW out of September and October, whose solar CF
-    # sits above the annual mean.
-    assert on_twh / off_twh == pytest.approx(0.875, abs=0.01)
-    # And it moves TOWARD NYISO's own published 2024 Net Energy (0.503 TWh)
+    # The delivered ENERGY is the COD basis's, not the Gold Book's. The energy
+    # ratio (0.875) sits below the flat mean-monthly CAPACITY ratio (0.898)
+    # because the re-timed months are not CF-neutral: Morris Ridge's +2-month
+    # shift moves 179 MW out of September and October, whose solar CF sits
+    # above the annual mean.
+    cod_twh = float((solar_cap[:, None] * solar).sum()) / 1e6
+    gold_twh = cod_twh / 0.875
+    # It moves TOWARD NYISO's own published 2024 Net Energy (0.503 TWh)
     # without reaching it — the remaining gap is the fleet-CF composition
     # object nyiso-133 hands on, not this repair's to close.
-    assert 0.503 < on_twh < off_twh
+    assert 0.503 < cod_twh < gold_twh
 
 
-def test_cod_dates_other_iso_untouched():
-    """Rule 25 — a non-NYISO ISO is unaffected even with the flag armed."""
+def test_cod_basis_other_iso_untouched():
+    """Rule 25 — the registry loader never crosses an ISO boundary."""
+    # The mechanism is NYISO-only by construction: the loader returns None for
+    # any other ISO, so the now-unconditional call cannot reach NEISO at all.
+    assert load_market_solar_monthly("NEISO", 2024, ZONES) is None
+    assert load_market_solar_monthly("NEISO", 2024, ZONES, cod_basis=True) is None
+
     iso_cfg = get_iso_config("NEISO")
-    off = ScenarioConfig(mode="backcast")
-    on = ScenarioConfig(mode="backcast", nyiso_solar_registry_cod_dates=True)
-    _, _, s_off, sc_off = load_renewable_profiles("NEISO", 2024, iso_cfg, off)
-    _, _, s_on, sc_on = load_renewable_profiles("NEISO", 2024, iso_cfg, on)
-    assert np.array_equal(s_off, s_on)
-    assert np.array_equal(sc_off, sc_on)
+    cfg = ScenarioConfig(mode="backcast")
+    _, _, s_a, sc_a = load_renewable_profiles("NEISO", 2024, iso_cfg, cfg)
+    _, _, s_b, sc_b = load_renewable_profiles("NEISO", 2024, iso_cfg, cfg)
+    assert np.array_equal(s_a, s_b)
+    assert np.array_equal(sc_a, sc_b)
 
 
 def test_other_iso_solve_path_untouched():

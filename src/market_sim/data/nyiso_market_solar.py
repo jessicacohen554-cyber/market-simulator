@@ -57,10 +57,14 @@ that bound rather than banked whole. Re-identifying the fleet CF is a separate
 object with its own identification work (rule 19 ``[R-ONE-MECH]``) and is
 deliberately **not** bundled here.
 
-**THE IN-SERVICE DATE BASIS (nyiso-133,
-``ScenarioConfig.nyiso_solar_registry_cod_dates``).** The artifact carries the
-registry on two published date bases in parallel columns, and *cod_basis*
-selects between them. The Gold Book ``In-Service Date`` is a registration /
+**THE IN-SERVICE DATE BASIS (nyiso-133; UNCONDITIONAL since 2026-08-15,
+nyiso-136).** The artifact carries the registry on two published date bases in
+parallel columns, and *cod_basis* selects between them. The gate that used to
+choose — ``ScenarioConfig.nyiso_solar_registry_cod_dates`` — was COLLAPSED on
+the owner's ruling (rule 26 ``[R-DELETE]``: a default-off gate whose OFF
+position is the less accurate basis is a re-armable wrong answer), so every
+solve path now passes ``cod_basis=True`` and the Gold Book column survives only
+as the A/B's historical baseline. The Gold Book ``In-Service Date`` is a registration /
 interconnection-service date and **leads** the plant's metered commercial start;
 EIA-860's ``Operating Month`` matches it. Measured on this very registry against
 EIA-923 metered monthly output (``scripts/probes/_nyiso133_commissioning_ramp.py``,
@@ -166,10 +170,12 @@ def load_market_solar_monthly(
         path: Optional artifact override (tests).
         cod_basis: Read the EIA-860 ``Operating Month`` in-service date basis
             (``capacity_mw_cod``) instead of the Gold Book ``In-Service Date``
-            basis (``capacity_mw``) — ``ScenarioConfig.nyiso_solar_registry_cod_dates``,
-            nyiso-133. Default ``False`` (byte-identical). Same registry
-            membership and same published nameplate either way; only the month
-            a unit's capacity switches on differs.
+            basis (``capacity_mw``) — nyiso-133. Same registry membership and
+            same published nameplate either way; only the month a unit's
+            capacity switches on differs. The solve path ALWAYS passes ``True``
+            since nyiso-136 (2026-08-15) collapsed the gate; the ``False``
+            default is retained for the derivation probes and the tests that
+            measure the two bases against each other.
 
     Returns:
         An ``(n_zones, 12)`` array of registered nameplate MW by month, ordered
