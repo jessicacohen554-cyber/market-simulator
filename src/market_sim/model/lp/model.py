@@ -34,6 +34,13 @@ logger = logging.getLogger(__name__)
 # millions of Python enum objects.
 _BASIS_LOWER = int(highspy.HighsBasisStatus.kLower)
 _BASIS_BASIC = int(highspy.HighsBasisStatus.kBasic)
+# PERF-A prototype (Exp-2 memoized-enum LUT, wallclock-baseline doc): highspy
+# requires Sequence[HighsBasisStatus], so the status handoff must box every
+# element — but the five enum objects can be constructed once and indexed,
+# instead of calling the enum constructor 13.2M times per basis apply
+# (measured 14.9x: 13.4s -> 0.9s on an ERCOT-2023-sized vector, element-wise
+# identical).
+_BASIS_STATUS_OBJS = [highspy.HighsBasisStatus(i) for i in range(5)]
 
 
 class DispatchModel:
@@ -1422,8 +1429,8 @@ class DispatchModel:
                 ]
 
         basis = highspy.HighsBasis()
-        basis.col_status = [highspy.HighsBasisStatus(int(s)) for s in col_status]
-        basis.row_status = [highspy.HighsBasisStatus(int(s)) for s in row_status]
+        basis.col_status = [_BASIS_STATUS_OBJS[s] for s in col_status]
+        basis.row_status = [_BASIS_STATUS_OBJS[s] for s in row_status]
         basis.alien = True
         self._h.setBasis(basis)
         return True
