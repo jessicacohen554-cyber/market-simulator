@@ -2209,3 +2209,79 @@ precede re-reading the touchpoint — rule 22's touchpoint loop, step 3.
 
 **Next shorthand: `neiso-93`** (the envelope-repair intake: gaps 1–4 across 2019–2025, no solve).
 
+
+## 2026-08-14 — neiso-93: the four 2021-readiness gaps CLOSED across 2019–2025, the keeper re-solved in-sample and PROMOTED — and a NEW 2019-only blocker found
+
+**Scope:** data prep for 2019–2025 + an **IN-SAMPLE** (2023–2025) re-solve. **No out-of-training
+year was solved, scored or registered** — not 2019, 2020, 2021, 2022 or H1-2026. The holdout spend
+freeze was verified **ACTIVE** at HEAD and is **untouched**; no lift was requested and none was
+needed (rule 22 as amended 2026-08-06: *"what is held out is the SCORE, never the DATA"*). The
+`final` block and every locked-test artifact are untouched. **Nothing was tuned to any year's fit.**
+
+**All four neiso-92 gaps CLOSED.** Every producer was **reproduce-checked against the years it
+already owned before being extended**, and the values it already carried were verified unmoved.
+
+**Gap 1 — nuclear availability (the blocker).** Both `--check` modes passed first (anchor: *"committed
+table matches the EIA-923 derivation"*; NRC overlay: *"reproduces **byte-for-byte**"*). The anchor
+gains 2019–2022 and the per-reactor overlay goes **3,288 → 7,670 rows**. **Cross-validated against
+EIA-930 ISNE `NUC` hourly telemetry** — independent of the EIA-923 the anchor is built from —
+at **|mean CF diff| 0.002 / 0.003 / 0.001** for 2020/2021/2022, **tighter than the committed tuned
+years** (2023 0.001, 2024 0.004, 2025 0.007). All three expected refuelling windows appear and each
+resolves to a single reactor: **Oct-2021 0.43 (930: 0.426) = Seabrook at plant CF 0.03**, visible in
+the daily extract as **0.0 from Oct 7–31**, back to full Nov 12 — a five-week outage the static
+climatology was covering at CF ≈ 0.92. The consumer now returns 3 real reactor series × 8760 h where
+it returned `{}`.
+
+**Gap 2 — seam tranches. Two blockers, not one**, and the second was not on the assessment's list
+(patched into it this session). The NYISO proxy producer's source zips are absent from the repo
+(gitignored/regenerable) — re-fetched 84/84 from MIS, rebuild **frame-identical** to the committed
+parquet before widening. The EIA-930 route needs an `EIA_API_KEY` **this environment does not have**;
+rather than stop, a **keyless `--source bulk`** route was added to the fetcher over EIA's Grid
+Monitor archive — *the same family `fetch_eia930_bulk_long.py` already uses* — and proved equivalent
+to the committed API extract over 2023–2025 (**mean identical to full float32 precision**; the only
+18 non-identical rows are the DST fall-back hour's two ambiguous rows in opposite order). Both
+ladders now span 2019–2025. **The year texture the pooled curve was erasing is large:** mean HQT
+import runs **−1,576/−1,559/−1,532/−1,541 MW** across 2019–2022 against **−1,204/−694/−315** in
+2023–2025 — HQ delivered ~5× as much in 2019 as in 2025 — so the early years' `HQ_PhaseII` rungs
+price **below** their anchor where 2025's prices **+$51.9 above** it.
+
+**Gap 3 — CHP by vintage.** The builder reads release zips **this clone does not carry**; a
+vintage-dir source was added and **reproduces 2023/2024 plant-for-plant and flag-for-flag**.
+Materiality, now measured rather than assumed: **exactly one** NEISO plant is classified differently
+by the 2019–2022 vintages than by 2025.
+
+**Gap 4 — parasitic load. THE SPEC WAS WRONG AND THE GAP IS BIGGER.** The assessment's *"NEISO
+carries 2022–2025 but no 2021"* reads the file's **TOTAL** row counts as NEISO's (they sum to its
+2,113). By plant-id intersection the file holds ERCOT 130/130, PJM 410/411, MISO 280/485, NYISO
+27/106 and **ZERO NEISO plants in ANY year — the tuned years included**. Fixing only 2019–2021 would
+have left NEISO inconsistent across the span, so the derive covers **2019–2025**. A destructive-write
+hazard was found and fixed en route: the script rewrites the whole **shared** output, so a scoped
+back-fill would have **silently deleted every other ISO's rows** (rule 25) — `--merge` added, and all
+2,113 committed rows verified byte-identical after.
+
+**Phase B — the keeper re-solved IN-SAMPLE and PROMOTED.** `2026-08-14-neiso-93-envelope`
+(`results/calibration/neiso93_envelope_A`), 2023–2025 in one invocation, years sequential. A
+**zero-delta** `replay_keeper.py` replay of the incumbent's own `meta.json` — the recipe reproduced
+from the committed artifact rather than retyped. **Determination CALIBRATED-WITH-CAVEATS, criterion
+for criterion IDENTICAL** to the superseded keeper (C1/C2/C3a/C3b/C4/C6/C8 PASS, C3c the sole
+ledgered caveat, C1 all 12/12 · free 8/8, **0 FAILs**), so the rule 22 D-5(b) worse-determination
+stop does not fire. It **closes the superseded keeper's disclosed defect (i)**, executing that
+keeper's own standing recommendation: **2025 mean λ 69.7337 → 69.4178**, 2024 essentially
+bit-identical, 2023 −0.011. Gap 4 is why the tuned years move at all — the nuclear *anchor* is
+unchanged there. `audit_keepers --iso NEISO` **0 failures, 0 warnings**; matrix integrity, keeper
+stamps and §5.x headers all OK.
+
+**A NEW 2019-ONLY BLOCKER, FOUND AND NOT FIXED.** Pilgrim (**EIA 1590** — the committed comment cited
+**6098**, which is *Big Stone*, a South Dakota coal plant) ran **Jan–May 2019 for 2.177 TWh** before
+retiring 31 May 2019 and is **absent from the EIA-860 operable snapshot** the model fleet is built
+from. **A 2019 solve is short ~2.18 TWh of nuclear regardless of the extended overlay.** EIA-930
+shows it directly: Jan–May 2019 telemetry implies a 3,355 MW-fleet CF of **1.18–1.20** (impossible),
+and the 923-vs-930 gap collapses to 0.003–0.005 from **June onward, exactly when Pilgrim stops**.
+2020–2022 are unaffected. This is the direct analogue of NYISO's Indian Point caveat and is
+**material to the `final` question**, which stays **NOT GRANTED**.
+
+**2021 IS STILL NOT SOLVED, AND THAT IS CORRECT.** This session made it solvable; spending it needs
+its own owner lift. Evidence:
+`results/calibration/FINDING-neiso93-envelope-repair-2026-08-14.md`.
+
+**Next shorthand: `neiso-94`.**
