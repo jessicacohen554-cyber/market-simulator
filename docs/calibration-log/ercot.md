@@ -9216,3 +9216,62 @@ no run registered, no new workflow; keeper UNCHANGED at
 entry, nothing else. Session consumed the ercot-200 shorthand; the free
 shorthand for the next session is **ercot-209** (main's pointer as ercot-208
 set it, unmoved by this append; ercot-199 also remains unclaimed).
+
+## ercot-209 (2026-08-15) — OWNER-REQUESTED WORKSTREAM PICKUP + the 2023-scarcity CALIBRATION-PATH ASSESSMENT (four doors, one recommendation) — doc-only, NO lever, NO solve, no year solved or scored, no run registered, NO matrix cell or row edit, keeper UNCHANGED
+
+**Trigger.** The owner asked the workstream to be picked up "from the current
+keeper", noting the HTML dashboard still logs `168b` while the lane was thought
+to be well past it, and asked for the route to "a calibrated backcast for 2023
+scarcity". Both halves answered in
+`docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md`.
+
+**Answer 1 — the 168b reconciliation.** The backcast lane IS well past run168b:
+six keeper promotions since 2026-08-05 (run168b → ercot185-shaped-partial →
+run188 → run191 → run192 → ercot202-arm-plantphysics →
+`2026-08-15-ercot204-rule26-delete`), log through ercot-208, live Pages deploy
+current (2026-08-15 20:28Z success). The `168b` the owner saw is the FORECAST
+lane's frozen anchor: the shipped hindcast
+`ercot-2021-2025-t1ff-armr-ffr5d-shipped.json` stamps
+`score.dispatch_skill.keeper_run_id = 2026-08-05-run168b-year-curves` (the
+keeper at its ship date; `keeper_note` null) and the two 2026-08-05 crossover
+reports carry it in their headers — frozen at-ship by design, not a statement
+of the backcast lane's position. A forecast-lane hygiene option (re-score or
+annotate `keeper_note`) is named in the assessment, not executed.
+
+**Answer 2 — the calibration path.** No new measurement was taken; the
+assessment composes the committed record: the blocker is ONE physical object
+(Aug+Sep-2023 scarcity conduct; 96.2 % of the C3b-2023 squared residual,
+~72 % of the C3a-2023 gap via Jun–Sep, C3c 58 vs 181 h), adjudicated
+model-class with the within-class space exhausted (ercot-95→208) and the
+ledger/caveat routes rubric-closed and owner-refused (Q-B FINAL; R-A signed;
+R-B incl. reporting text NOT signed; ercot-206 "unreachable by any
+rule-13-admissible mechanism"). Doors put to the owner: **(A)** charter the
+R-C scarcity-conduct offer layer as a new model class, opening with a
+read-only Phase-0 out-of-year conduct-transfer test on the committed 60-day
+disclosure corpora under a pre-registered mechanical STOP rule (admissibility
+argued both ways in the assessment; signature must explicitly scope Q-B/R-A
+for the new class); **(B)** the rubric act (ledger widening) — reachable
+today, recommended AGAINST on card R's own reasoning; **(C)** the
+reporting-text variant (one-object note on the ERCOT surfaces + the
+forecast-lane anchor annotation), no determination change; **(D)** hold R-A
+and wait for the 2026 SOM's RTC+B-era anchors (~mid-2027, card W).
+Independent of the doors, the two live admissible mechanism charters are
+restated: the ercot-204 §A ORDC reserve-basis question (senior open object;
+2024/2025 formation) and E3 as a year-scoped parameter charter (ercot-206
+B0's year-keyed split). **Recommendation: A's Phase-0 + C now, D as the
+pre-registered fallback, B unsigned.** The adjudication is the OWNER'S; the
+assessment ends at a sitting.
+
+**Fences honoured.** Doc-only read of committed artifacts (the
+ercot-182/189/193/196/200 precedent); Q-B and R-A cited, no 2023 spend of any
+kind (every 2023 number is a committed-artifact citation); DO-NOT-REDO: no
+`R`/`I`/`G` cell proposed for re-test, V0's across-year tightness instrument
+stays dead; rule 22: nothing solved/scored/registered, {2023, 2024, 2025}
+read-only, no marker sought; rule 25: ERCOT only; rule 28: no matrix edit (no
+mechanism tested); rules 5/24: no config surface touched; rule 27: additive
+docs only, blob-verified after push. Keeper at session start AND end:
+`2026-08-15-ercot204-rule26-delete`. New artifacts: the assessment + this
+entry, nothing else. No PR opened (push-and-stop; the owner merges).
+
+**Session consumed the ercot-209 shorthand. Next shorthand: ercot-210**
+(ercot-199 remains unclaimed).
