@@ -97,14 +97,24 @@ def parse_pjm_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     if not path.exists():
         logger.warning("PJM zonal metered-load file not found (%s); skipping", path)
         return None
-    df = pd.read_csv(path, usecols=["datetime_beginning_ept", "zone", "mw"])
+    df = pd.read_csv(path, usecols=["datetime_beginning_utc", "zone", "mw"])
     df = df[df["zone"] != "RTO"].copy()
     df["mzone"] = df["zone"].map(_PJM_LOAD_ZONE_GROUPS)
     if df["mzone"].isna().any():
         missing = sorted(df.loc[df["mzone"].isna(), "zone"].unique())
         logger.warning("PJM load zones not mapped to a model zone: %s", missing)
         df = df.dropna(subset=["mzone"])
-    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
+    # Index on PJM's absolute UTC stamp converted to the model's fixed-EST 8760
+    # clock (Etc/GMT+5, no DST) — the prevailing datetime_beginning_ept stamp
+    # places the DST-months rows one hour late against demand and the EIA-930
+    # series. Byte-identical outside DST, exactly one hour earlier inside. See
+    # docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md §3.
+    ts = (
+        pd.to_datetime(df["datetime_beginning_utc"], format="mixed", errors="coerce")
+        .dt.tz_localize("UTC")
+        .dt.tz_convert("Etc/GMT+5")
+        .dt.tz_localize(None)
+    )
     file_year = int(ts.dt.year.mode().iat[0])
     if file_year != year:
         logger.warning(
@@ -114,7 +124,7 @@ def parse_pjm_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
             file_year,
             year,
         )
-    keep = ~((ts.dt.month == 2) & (ts.dt.day == 29))
+    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
     df, ts = df[keep], ts[keep]
     return _hourly_shares_from_groups(
         df["mzone"], _hours_of_year(ts), df["mw"], zone_names

@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-15-pjm-162-inputclock",
+  "label": "pjm 162 inputclock",
+  "date": "2026-08-15",
+  "shorthand": "pjm-162-inputclock",
+  "definition": "DEBUG-B: replay of keeper 2026-08-04-pjm-152-collapse recipe at the repaired PJM input clock (NG:* fueltype +1h for local-2023/2024; four PJM DataMiner read sites on datetime_beginning_utc/Etc-GMT+5). Measured-input repair, rules 13/14; keeper CANDIDATE only.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-08-15-pjm-162-inputclock.js",
+  "bundle": "results/calibration/pjm_debugb_inputclock_A"
+}
