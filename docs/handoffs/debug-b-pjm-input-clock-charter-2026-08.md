@@ -119,3 +119,70 @@ shares move only inside DST hours (the `_ept` sites). If any criterion
 worsens at the corrected inputs, that is rule-14 territory: keep the accurate
 input, file the root cause — never revert the repair to buy the residual
 back.
+
+---
+
+## 5. OUTCOME — DEBUG-B session, 2026-08-15
+
+**Executed on branch `claude/debug-b-pjm-input-clock-kcwiwn`, off `origin/main` @ `c447199`.**
+Full write-up: `docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md`.
+
+**§1 reproduced exactly.** Both probes re-run before anything changed; every figure in the
+charter's §1 tables matched (July `NG: SUN` centroid 10.91 / 10.94 / 12.03; wind/solar/gas
+diff-lag +1 / +1 / 0; demand vs `hrl_load_metered` best lag 0 in all years and seasons).
+
+**§3.1 data — done.** `NG: *` shifted +1 h for local-2023 and local-2024 under the new
+`--rebuild-pjm-input-clock` in `scripts/data/extend_eia930_hourly_from_balance.py`. Region
+family and all other years untouched. Byte-verified over 74,470 × 16: the 8 non-fueltype
+columns identical at every row; the 8 `NG: *` columns identical outside the two blocks
+(56,927 rows); inside them (17,543 rows) every cell equals the pristine value at UTC `T−1h`;
+NaN count unchanged.
+
+> **Defect found inside the repair mechanics, and fixed.** 2023 and 2024 are adjacent, so
+> applying the blocks sequentially against the accumulating frame double-shifted exactly one
+> hour — `2024-01-01 06:00Z`. Both blocks are now sourced from an explicit pristine frame.
+> The archived patch's helper has the same shape and would reproduce this for any two
+> adjacent shifted years; the byte-verification is what caught it.
+
+**§3.2 code — done, all four sites.** `pjm_net_interchange`, `pjm_zonal_interchange` and
+`pjm_neighbor_interchange` (the per-counterparty sibling the archived patch did not know
+about) in `src/market_sim/data/eia930/envelopes.py`, plus `parse_pjm_shares` in
+`scripts/data/curate_zonal_shares.py` with the `notna()` NaT guard — all onto
+`datetime_beginning_utc` on `Etc/GMT+5` via a shared `_pjm_utc_hoy`. Measured on the
+interchange files: identical placement outside DST (67,078 rows/yr), exactly 1 h earlier
+inside (~125,600 rows/yr). **No curated zonal-shares artifact is committed** (`/data/clean/`
+is gitignored and derived), so the charter's "regenerate + re-commit if committed" conditional
+did not fire; `load_zonal_shares`' raw fallback imports `_PARSE_FUNCS` from the repaired
+script, so the solve consumes the fix regardless.
+
+**§3.3 gates — all pass.**
+
+| gate | 2023 | 2024 | 2025 | bar |
+|---|---|---|---|---|
+| July `NG: SUN` centroid | 11.90 | 11.93 | 12.03 | ∈ [11.5, 12.3] |
+| wind / solar / gas diff-lag vs the PJM UTC feed | 0/0/0 | 0/0/0 | 0/0/0 | 0 |
+| demand daily-peak mode-0 vs `hrl_load_metered` | 96.7 % | 97.0 % | 97.0 % | mode 0, ≥95 % |
+
+Fast test lane, run locally per the charter: **6,838 passed / 0 failed** (31 skipped, 2
+xfailed, 437 subtests). `check_mechanism_matrix.py` and `ci_refactor_guards.py` both pass.
+
+**Rule 28 duty b — re-stamp NOT due this session.** No cell's evidence in
+`docs/codebase-site/data/mechanism-matrix/PJM.js` cites the superseded input state (the
+shard's only "clock" occurrence is the items-12-13 phrase "measured on the SEAM instead of on
+the clock"). The shard's keeper+gates stamps describe the still-current keeper
+`2026-08-04-pjm-152-collapse`; this run is a CANDIDATE and the owner promotes, so re-stamping
+now would misdescribe live state. **The re-stamp becomes due at promotion**, and the
+input-state-sensitive cells to revisit then are the diurnal-amplitude family (items 12-13) and
+`seam_flow_envelopes`.
+
+**Open scope, filed not actioned — years ≤ 2022.** The extract carries 2018-2026 and the
+1 h-early source clock affects *every* year before 2025: the July `NG: SUN` centroid still
+reads **10.73 in 2022** (comparably early 2018-2021). This charter scopes the repair to
+local-2023/2024 and says "all other years untouched", so that instruction was followed rather
+than silently widened — but the committed extract now carries two fueltype clocks, and any
+lane using ≤ 2022 PJM fueltype data is still on the early one. Extending the same
+value-preserving `+1 h` re-placement to 2018-2022 is a one-line change to
+`_PJM_INPUT_CLOCK_SHIFTS` and needs an owner charter. See the FINDING §6 and the
+`data/raw/eia-930-hourly/README.md` scope note.
+
+**§3.4 re-solve + registration:** see the FINDING §8.
