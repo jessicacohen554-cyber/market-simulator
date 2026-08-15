@@ -71,7 +71,7 @@
  *   rule 26 [R-DELETE] — removed, not zeroed): n_entries 35 -> 34, n_residual
  *   UNCHANGED at 6 (its identification was "published", so it never counted
  *   toward the residual total — an OVER-count corrected). All three edits are
- *   made by scripts/gen_nyiso130_keeper_ledger.py, verified idempotent, and
+ *   made by scripts/archive/gen_nyiso130_keeper_ledger.py, verified idempotent, and
  *   audit_keepers --iso NYISO PASSES 0/0 after them.
  * NYISO column re-stamped 2026-08-06 (nyiso-130). KEEPER UNCHANGED
  *   (2026-08-06-nyiso-128-solar-basis); DETERMINATION NOT-YET ->

@@ -5,7 +5,7 @@ plan §5): the calibration reference — measured Henry Hub annual prices and
 the rest of the ``calibration_reference.json`` benchmark inputs — was
 resolved by private helpers in ``scripts/run_calibration.py``
 (``_load_reference`` / ``_henry_hub_actual``), imported from there by
-``run_calibration_full.py``, ``run_calibration_eia930.py``, and the
+``run_calibration_full.py``, ``scripts/archive/run_calibration_eia930.py``, and the
 capture/replay tooling. Moved here verbatim; the script keeps permanent
 same-name ``_``-prefixed aliases (its exported symbol names are a frozen
 surface — 138 live importers).
