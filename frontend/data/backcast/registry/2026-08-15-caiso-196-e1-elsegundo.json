@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-15-caiso-196-e1-elsegundo",
+  "label": "caiso 196 e1 elsegundo",
+  "date": "2026-08-15",
+  "shorthand": "caiso-196-e1-elsegundo",
+  "definition": "caiso-196 e1 ARM: the identical caiso-188 recipe replayed on the REPAIRED extract \u2014 the (330->57901) El Segundo CEMS-history remap and the +233 extract rows it adds are the only tree delta vs caiso196_e0_control (which reproduced the committed keeper BIT-ZERO). Pre-registered at PRECHECK-caiso196-elsegundo-remap-2026-08-15.md. Single-mechanism statement: the A/B delta is the (330 -> 57901) CEMS-history remap and the extract rows it adds; no ScenarioConfig field differs. Direction-hazard: expected sign ANTI-C3a-favorable (adds measured removal); C3a reported, never consulted.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-15-caiso-196-e1-elsegundo.js",
+  "bundle": "results/calibration/caiso196_e1_elsegundo"
+}
