@@ -225,4 +225,62 @@ material scheduling fact for any session that has to register a bundle in-sessio
 
 ## 9. Re-solve and registration
 
-See below (appended after the full-span bundle completed).
+**Run id: `2026-08-15-pjm-162-inputclock`** · bundle
+`results/calibration/pjm_debugb_inputclock_A` · registered on the backcast dashboard in the
+same session (rule 15 `[R-DASHBOARD]`). Full-span PJM `--year 2023 2024 2025` in **ONE**
+bundle (rule 16 `[R-ALLYEARS]`), replaying the current keeper recipe
+`2026-08-04-pjm-152-collapse` (resolved from `frontend/data/backcast/keepers/PJM.json` →
+registry sidecar `bundle` field = `results/calibration/pjm152_collapse_A`; still pjm-152 at
+run time, as the charter anticipated). `meta.json` records `years: [2023, 2024, 2025]` and
+`reuse: null` — **all three years solved fresh** at the corrected inputs, no `--reuse-solved`
+carry-forward, so every year is fresh evidence.
+
+### Verdict — no criterion worsened at the corrected inputs
+
+| criterion | incumbent pjm-152 (rubric 2.9) | **pjm-162 (rubric 3.2)** |
+|---|---|---|
+| C1 fuel-mix by class (grid-delivered) | PASS | **PASS** |
+| C2 system volume (gas/coal families) | PASS | **PASS** |
+| C3a mean LMP | PASS | **PASS** |
+| C3b price duration/shape | PASS | **PASS** |
+| C3c price tail / scarcity (RT hourly) | PASS | **PASS** |
+| C4 fleet hourly dispatch correlation | PASS | **PASS** |
+| C7 diurnal shape (D-1) | PASS | *retired at rubric v3.1* |
+| C8 forced-energy share (D-2) | PASS | **PASS** |
+| C6 governance gate | UNATTESTED | **UNATTESTED** |
+| **determination** | **NOT-YET** | **NOT-YET** |
+| grade summary | 8 scored / 8 target / 0 fails | **7 scored / 7 target / 0 fails** |
+
+**Every criterion that exists in both rubrics scores PASS → PASS, with zero fails.** Two
+book-keeping deltas, neither a regression and both stated rather than smoothed over:
+
+* **C7 is absent because the rubric retired it**, not because it degraded. The incumbent was
+  scored at rubric v2.9; this run scores at v3.2, and `calibration_verdict.py`'s own docstring
+  records *"the C7 criterion that also scored D-1 was retired at v3.1"*. The 8→7 scored count
+  is entirely this.
+* **The determination is `NOT-YET` for the incumbent too**, for the identical single reason —
+  *"governance gate UNATTESTED: no governance attestation in bundle"* (C6 is protective and
+  needs `build_dof_ledger.py`'s governance section, which is a promotion-time artifact). This
+  is **not** a finding about the input repair: the comparison is like-for-like, and on every
+  criterion the rubric actually scores, the corrected inputs hold the incumbent's grade.
+
+C8 required `legitimacy_diagnostics.json` (`scripts/legitimacy_diagnostics.py --json-out`),
+which the solve does not write; it was generated and the verdict re-scored so C8 is a real
+PASS rather than a `SKIPPED`. D-9 overlay quarantine PASS; D-10 free-class rescore PASS
+(C1 all 16/16, free 12/12). The C8 `CT_PEAKER` grounded-above-budget notes carry over from the
+incumbent essentially unchanged (16.2 / 16.4 / 16.7 % forced vs the incumbent's 16.2 / 16.4 /
+16.7 %), as does 2025 `ST_GAS` at 39.9 %.
+
+### Blast radius — measured, not tuned
+
+The registration diff is itself the cleanest confirmation of the predicted radius: the
+per-(ISO, year) benchmark parts changed for **`bench/PJM/2023.json.gz` and
+`bench/PJM/2024.json.gz` only — `2025.json.gz` is byte-identical**, exactly matching the two
+shifted (family, year) blocks. Solar/wind CF profiles move +1 h in 2023/2024 and the gas
+benchmark series moves with them, so the C2/C4-family benchmarks recompute; 2025 does not
+move because its fueltype clock was already correct.
+
+Rule 14 was therefore never invoked: nothing worsened, so there was no accurate-input-versus-
+residual trade to disclose. Had one appeared, the accurate input would have stayed.
+
+**KEEPER CANDIDATE ONLY — the owner promotes.** LOYO is structurally n/a (§5).

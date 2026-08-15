@@ -186,3 +186,36 @@ value-preserving `+1 h` re-placement to 2018-2022 is a one-line change to
 `data/raw/eia-930-hourly/README.md` scope note.
 
 **§3.4 re-solve + registration:** see the FINDING §8.
+
+### §3.4 outcome — re-solve + registration
+
+**Run id `2026-08-15-pjm-162-inputclock`** (bundle
+`results/calibration/pjm_debugb_inputclock_A`), full-span `--year 2023 2024 2025` in ONE
+bundle, replaying keeper `2026-08-04-pjm-152-collapse`; `meta.json` carries
+`years: [2023, 2024, 2025]`, `reuse: null` — all three years fresh. Registered on the backcast
+dashboard the same session (rule 15).
+
+**No criterion worsened.** C1 / C2 / C3a / C3b / C3c / C4 / C8 all PASS → PASS against the
+incumbent; 7 scored / 7 target-grade / **0 fails**. C7 is absent only because rubric v3.1
+retired it (incumbent scored at v2.9, this run at v3.2). The determination reads NOT-YET for
+BOTH runs, for the identical single reason — "governance gate UNATTESTED: no governance
+attestation in bundle" — so the comparison is like-for-like and rule 14 was never triggered.
+**KEEPER CANDIDATE ONLY.**
+
+Blast radius confirmed by the registration diff itself: `bench/PJM/2023.json.gz` and
+`2024.json.gz` changed, `2025.json.gz` byte-identical — precisely the two shifted
+(family, year) blocks.
+
+**Environment notes for the next PJM replay lane** (neither is a defect in this repair, both
+cost real wall-clock here):
+* A fresh clone cannot replay this recipe from `hydrate_data.py --profile pjm` alone. Two
+  inputs are gitignored: `data/clean/` (derived — `scripts/regenerate_clean.py`, 50 datatypes,
+  ~2 h) and `data/raw/pjm-da-virtuals/` (PJM DataMiner2 redistribution restriction — needs a
+  live `scripts/data/fetch_pjm_da_virtuals.py` pull, 36 monthly files). Both mechanisms raise
+  rather than no-op, so each aborts the solve at input-load. See the FINDING §8.
+* `run_calibration_full.py --year` is `nargs="+"` with **store** semantics, so
+  `--year 2023 --year 2024 --year 2025` silently keeps only `2025`. Use
+  `--year 2023 2024 2025`.
+* A single PJM year peaks ~13 GB; this 16 GB box OOM-killed the solve twice at 15.8 GB until
+  `hydrate_data.py --profile pjm` freed ~6 GB of non-PJM raw and a 10 GB swapfile was added.
+  With that headroom all three years run sequentially in one process (swap use stayed < 1 GB).
