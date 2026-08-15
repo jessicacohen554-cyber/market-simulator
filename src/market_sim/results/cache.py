@@ -46,6 +46,46 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-08-15 — nyiso-136 collapse of the NYISO market-solar in-service
+DATE basis gate to unconditional (NYISO only, both lanes).** The nyiso-133 gate
+``ScenarioConfig.nyiso_solar_registry_cod_dates`` is DELETED (rule 26
+``[R-DELETE]``, owner ruling in session nyiso-136, 2026-08-15) and the basis it
+selected is now the only basis: ``data.renewables`` always calls
+``load_market_solar_monthly(..., cod_basis=True)``, so every NYISO run ramps
+each registered market-solar plant on its EIA-860 ``Operating Month`` (metered
+commercial start) instead of the Gold Book Table III-2a ``In-Service Date`` (a
+registration / interconnection-service date that leads it). Promoted to keeper
+at nyiso-135 as ``2026-08-08-nyiso-133-cod-arm``; this epoch is the DEFAULT
+following the keeper.
+
+**NO KEY MOVES, AND THAT IS THE HAZARD.** The field was registered in
+``_CACHE_KEY_OPTIONAL_FIELDS`` and is retired into
+``_CACHE_KEY_RETIRED_FIELDS`` at the same ``False`` it carried, so
+``cache_key(ScenarioConfig())`` stays ``603c2498bf71d21d`` across the change by
+construction — the D-13 / FFR-3A same-key collision in its pure form. A NYISO
+bundle solved before this epoch under the Gold Book basis and one solved after
+under the EIA-860 basis hash IDENTICALLY, and nothing in the path can tell them
+apart.
+
+**INVALIDATED — re-solve before quoting:** every ``results/NYISO/<key>/`` bundle
+solved before 2026-08-15, in BOTH lanes. Concretely and declared by the owner
+when the collapse was ruled: the NYISO forecast lane's **11 committed
+``nyiso-*`` hindcast sidecars** under ``frontend/data/hindcast/`` are now stale
+w.r.t. HEAD (rule 15's separate namespace — the forecast lane's own governance
+decides when they are re-run; they stand as PRE-EPOCH evidence until then).
+
+**NOT invalidated:** any other ISO — the mechanism reads a NYISO-only artifact
+and the loader hard-errors on any other ISO (rule 25 ``[R-ISO-SCOPE]``); NEISO
+carries the identical Tier-3 posture and is explicitly NOT covered. Nor is the
+designated keeper ``2026-08-08-nyiso-133-cod-arm``, which already solved with
+the flag ``True`` in its own ``run_config.json`` and is therefore ALREADY on the
+post-epoch basis — its paired control ``2026-08-08-nyiso-133-cod-control`` is
+pre-epoch by construction and is retained as the A/B's baseline, not as a
+current-basis run. Registered bundles carrying an explicit
+``"nyiso_solar_registry_cod_dates": false`` in their committed ``run_config``
+are historical records of a basis that no longer exists; they are read, never
+replayed, and their recorded flag is inert.
+
 **Epoch 2026-08-14 — D-31 ERCOT solar queue-cap adoption (ERCOT forecast only).**
 ``capacity_market.QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"]`` is re-derived from
 the post-2020 EIA-860 demonstrated-COD record, ``5.0 → 8.0`` GW/yr (owner
