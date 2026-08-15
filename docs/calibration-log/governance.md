@@ -1534,3 +1534,76 @@ passed, 5 failed — all five reproduce byte-identically on `origin/main`**
 `test_cache.py::TestConfigSidecar::test_config_yaml_present_alongside_parquet`
 — environment-dependent at HEAD, not this lane's fallout; the cache-key
 round-trip reproduces CLEAN standalone against this branch's config layer.
+
+## 2026-08-15 — SITE RETENTION, all six lanes: the backcast pages reduced to the CURRENT keepers, their out-of-sample touchpoints and the LIVE remediation record (70 → 12 runs)
+
+**Owner directive, this session:** the Run Explorer and Calibration Status pages
+must show the **current keeper runs and results**, and any run **prior to the
+keeper**, or **rejected wholesale after it as offering no new mechanism for
+closing the C calibration gates**, comes off the site. This generalises the
+2026-08-09 NEISO/PJM directive (recorded in those two lanes'
+`site_retention_note`) to every ISO. **NO SOLVE RAN. No keeper moved, no verdict,
+caveat, frontier declaration, mechanism-matrix cell or holdout posture changed.**
+
+**FIRST, THE PART THAT WAS ALREADY CURRENT — verified, not assumed.** The
+Calibration Status page renders from `status/<ISO>.js`, and
+`scripts/build_status.py --check` re-scores **every** ISO's current keeper bundle
+with `calibration_verdict.py` at this HEAD and compares: **6/6 in sync**, before
+and after this change. So the determinations the page shows —
+**ERCOT NOT-YET · PJM CALIBRATED · CAISO NOT-YET · NYISO CALIBRATED-WITH-CAVEATS ·
+NEISO CALIBRATED-WITH-CAVEATS · MISO NOT-YET**, rubric v3.2 — are the actual
+current model results, including the two promotions landed today (nyiso-135
+promoting `2026-08-08-nyiso-133-cod-arm`, and ERCOT's
+`2026-08-15-ercot204-rule26-delete`). What was stale was the **run roster**: 70
+registered runs, 58 of them superseded probe/control pairs the keepers had already
+passed by.
+
+**AFTER (12 runs).** ERCOT 1 · PJM 5 · CAISO 1 · NYISO 1 · NEISO 2 · MISO 2.
+
+| ISO | kept | ground |
+|---|---|---|
+| ERCOT | `2026-08-15-ercot204-rule26-delete` | keeper IS the newest run |
+| PJM | `2026-08-04-pjm-152-collapse`, `2026-08-05-pjm-2022-touchpoint`, both `2026-08-06-pjm-158` arms, `2026-08-15-pjm-162-inputclock` | keeper + NOT-YET 2022 touchpoint + the live post-touchpoint remediation record (DA-virtual question OPEN; DEBUG-B input-clock repair is a keeper CANDIDATE) |
+| CAISO | `2026-08-09-caiso-188-d1-micseam` | keeper IS the newest run |
+| NYISO | `2026-08-08-nyiso-133-cod-arm` | keeper IS the newest run; no touchpoint exists (holdout freeze ACTIVE) |
+| NEISO | `2026-08-14-neiso-93-envelope`, `2026-08-06-neiso-2022-corrected-basis` | the 2026-08-09 rule, unchanged: keeper + a PASSING 2022 touchpoint |
+| MISO | `2026-08-09-miso-148-basis-aware`, `2026-08-13-miso-155-control-p0` | keeper + the one post-keeper run that is not a rejected mechanism (miso-155 closed the lane's standing instrument blocker) |
+
+**PRUNED ON THE "REJECTED WHOLESALE" GROUND rather than on age** — the two cases
+the directive's second clause exists for, both POST-keeper:
+
+* **`2026-08-11-miso-151-{control,offer-surface}`** — MISO `measured_offer_surface`,
+  "chartered, built, solved, REGISTERED and REJECTED" (miso-151), cell **U → R**.
+  Refused *although* the arm improved both failing gates (C3a-2025 −15.6 → −14.9 %,
+  C3b-2025 NRMSE 0.212 → 0.207), because its identification was refuted by the
+  session's own G-1/G-5 measurements. No admissible mechanism toward C3a/C3b.
+* **`2026-08-14-pjm-161-{control,event-cap}`** — `pjm_measured_outage_event_cap`,
+  **refuted by its own pre-registered predictions**, cell **R**, a null result in
+  the top-1 % net-load hours. pjm-162 then closed the whole
+  "model envelope vs PJM's published aggregate" family **DO-NOT-REDO** and
+  redirected the lane (PJM's scarcity defect is not an availability defect). The
+  control measures nothing without the arm.
+
+Everything else pruned pre-dates its lane's keeper, including four keepers' own
+zero-delta A/B controls (the 2026-08-09 NEISO precedent for pruning a control) and
+`2026-08-14-ercot202-arm-plantphysics`, the immediate predecessor keeper — whose
+12 committed hourly sidecars are **sha256-identical** to the promoted ERCOT bundle,
+so removing it loses no number.
+
+**Mechanics and what dangles.** `scripts/prune_iso_runs.py --iso <ISO>
+--force-uncite` per lane, deleting the registry sidecar, `runs/<id>.js` and the
+mapped `results/calibration/<bundle>/` together (the three-store discipline).
+`--force-uncite` was required and used deliberately: run-id citations in
+`keepers/<ISO>.json`, `calibration-complete.json` and the mechanism-matrix shards
+now point at runs no longer on the site. **Nothing is retracted** — every pruned
+run's determination stands and its durable evidence is retained in full
+(`results/calibration/FINDING-*`, `docs/calibration-log/<iso>.md`, the matrix
+cells, git history). Each lane's `site_retention_note` names its own pruned ids
+and its own dangling citations.
+
+**Gates, all green after the prune:** `check_registry_payload_parity.py` (12 runs,
+0 orphans, 0 dangling ablation refs) · `audit_keepers.py --check` **0 failures /
+0 warnings** · `build_status.py --check` **6/6 in sync** ·
+`check_mechanism_matrix.py` integrity + anchors + keeper stamps + §5.x prose OK ·
+`build_manifest.py` assembles 12 runs across all six ISOs with every keeper year
+present (NEISO/PJM additionally 2022 from their touchpoints).
