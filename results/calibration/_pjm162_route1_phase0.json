@@ -1,0 +1,333 @@
+{
+  "years": {
+    "2023": {
+      "n_days": 365,
+      "level": {
+        "all": {
+          "days": 364,
+          "model_fossil_out_MW": 41657.668688044,
+          "published_total_MW": 33297.93406593407,
+          "published_forced_MW": 7653.024725274725
+        },
+        "top10pct_netload": {
+          "days": 37,
+          "model_fossil_out_MW": 24815.483799408932,
+          "published_total_MW": 12461.405405405405,
+          "published_forced_MW": 8818.081081081082
+        },
+        "top1pct_netload": {
+          "days": 4,
+          "model_fossil_out_MW": 21252.744046490603,
+          "published_total_MW": 10785.25,
+          "published_forced_MW": 9351.25
+        },
+        "event_window": {
+          "days": 2,
+          "model_fossil_out_MW": 25899.171945054397,
+          "published_total_MW": 18116.0,
+          "published_forced_MW": 11709.5
+        }
+      },
+      "direction": {
+        "total": {
+          "all": {
+            "days": 364,
+            "restore_days": 364,
+            "remove_days": 350,
+            "signed_MW_mean": 8048.178097124025,
+            "verdict": "RESTORE"
+          },
+          "top10pct_netload": {
+            "days": 37,
+            "restore_days": 37,
+            "remove_days": 26,
+            "signed_MW_mean": 12237.481605840534,
+            "verdict": "RESTORE"
+          },
+          "top1pct_netload": {
+            "days": 4,
+            "restore_days": 4,
+            "remove_days": 2,
+            "signed_MW_mean": 10366.580428112595,
+            "verdict": "RESTORE"
+          },
+          "event_window": {
+            "days": 2,
+            "restore_days": 2,
+            "remove_days": 2,
+            "signed_MW_mean": 7613.667194535388,
+            "verdict": "RESTORE"
+          }
+        },
+        "unplanned": {
+          "all": {
+            "days": 364,
+            "restore_days": 364,
+            "remove_days": 306,
+            "signed_MW_mean": 25719.664033236288,
+            "verdict": "RESTORE"
+          },
+          "top10pct_netload": {
+            "days": 37,
+            "restore_days": 37,
+            "remove_days": 26,
+            "signed_MW_mean": 12237.481605840534,
+            "verdict": "RESTORE"
+          },
+          "top1pct_netload": {
+            "days": 4,
+            "restore_days": 4,
+            "remove_days": 2,
+            "signed_MW_mean": 10366.580428112595,
+            "verdict": "RESTORE"
+          },
+          "event_window": {
+            "days": 2,
+            "restore_days": 2,
+            "remove_days": 2,
+            "signed_MW_mean": 11227.163938124355,
+            "verdict": "RESTORE"
+          }
+        }
+      },
+      "ceiling_content": {
+        "restore_day_zero_lift_MW": 9281.384679847026,
+        "restore_day_live_lift_MW": 6499.1353217603555,
+        "zero_share": 0.5881545525053444
+      },
+      "attribution": {
+        "fossil_cap_MW": 137699.64153074095,
+        "model_fossil_out_MW_mean": 41662.8201516958,
+        "model_fossil_out_frac_of_fossil_cap": 0.30256302549919656,
+        "model_fossil_out_HARD_ZERO_MW_mean": 27009.469273196537,
+        "model_fossil_out_PARTIAL_MW_mean": 14653.350878499203,
+        "hard_zero_share_of_asserted_outage": 0.6482871100625004,
+        "hard_zero_frac_of_fossil_cap": 0.19614770941264048,
+        "published_total_MW_mean": 33297.93406593407,
+        "published_forced_MW_mean": 7653.024725274725
+      }
+    },
+    "2024": {
+      "n_days": 365,
+      "level": {
+        "all": {
+          "days": 364,
+          "model_fossil_out_MW": 43195.95419894823,
+          "published_total_MW": 33001.508241758245,
+          "published_forced_MW": 7701.486263736264
+        },
+        "top10pct_netload": {
+          "days": 37,
+          "model_fossil_out_MW": 26480.376422291843,
+          "published_total_MW": 14927.918918918918,
+          "published_forced_MW": 10627.45945945946
+        },
+        "top1pct_netload": {
+          "days": 4,
+          "model_fossil_out_MW": 25487.471338819047,
+          "published_total_MW": 13010.5,
+          "published_forced_MW": 10943.75
+        },
+        "event_window": {
+          "days": 3,
+          "model_fossil_out_MW": 25434.604811811267,
+          "published_total_MW": 16042.0,
+          "published_forced_MW": 14667.0
+        }
+      },
+      "direction": {
+        "total": {
+          "all": {
+            "days": 364,
+            "restore_days": 364,
+            "remove_days": 345,
+            "signed_MW_mean": 9882.404513477368,
+            "verdict": "RESTORE"
+          },
+          "top10pct_netload": {
+            "days": 37,
+            "restore_days": 37,
+            "remove_days": 29,
+            "signed_MW_mean": 11411.3085190004,
+            "verdict": "RESTORE"
+          },
+          "top1pct_netload": {
+            "days": 4,
+            "restore_days": 4,
+            "remove_days": 4,
+            "signed_MW_mean": 12353.952258185414,
+            "verdict": "RESTORE"
+          },
+          "event_window": {
+            "days": 3,
+            "restore_days": 3,
+            "remove_days": 3,
+            "signed_MW_mean": 9240.921779527727,
+            "verdict": "RESTORE"
+          }
+        },
+        "unplanned": {
+          "all": {
+            "days": 364,
+            "restore_days": 364,
+            "remove_days": 296,
+            "signed_MW_mean": 27671.415281120186,
+            "verdict": "RESTORE"
+          },
+          "top10pct_netload": {
+            "days": 37,
+            "restore_days": 37,
+            "remove_days": 29,
+            "signed_MW_mean": 11412.399822102208,
+            "verdict": "RESTORE"
+          },
+          "top1pct_netload": {
+            "days": 4,
+            "restore_days": 4,
+            "remove_days": 4,
+            "signed_MW_mean": 12358.999535031282,
+            "verdict": "RESTORE"
+          },
+          "event_window": {
+            "days": 3,
+            "restore_days": 3,
+            "remove_days": 3,
+            "signed_MW_mean": 11492.680223031048,
+            "verdict": "RESTORE"
+          }
+        }
+      },
+      "ceiling_content": {
+        "restore_day_zero_lift_MW": 10660.40466298805,
+        "restore_day_live_lift_MW": 6860.629238340718,
+        "zero_share": 0.6084346804545354
+      },
+      "attribution": {
+        "fossil_cap_MW": 137713.11153074098,
+        "model_fossil_out_MW_mean": 43222.25171398743,
+        "model_fossil_out_frac_of_fossil_cap": 0.3138572009124865,
+        "model_fossil_out_HARD_ZERO_MW_mean": 28091.31026093634,
+        "model_fossil_out_PARTIAL_MW_mean": 15130.941453051042,
+        "hard_zero_share_of_asserted_outage": 0.6499270432929704,
+        "hard_zero_frac_of_fossil_cap": 0.2039842826052599,
+        "published_total_MW_mean": 33001.508241758245,
+        "published_forced_MW_mean": 7701.486263736264
+      }
+    },
+    "2025": {
+      "n_days": 365,
+      "level": {
+        "all": {
+          "days": 365,
+          "model_fossil_out_MW": 41221.73946178924,
+          "published_total_MW": 35870.271232876716,
+          "published_forced_MW": 10531.298630136986
+        },
+        "top10pct_netload": {
+          "days": 37,
+          "model_fossil_out_MW": 25065.237623097648,
+          "published_total_MW": 18356.27027027027,
+          "published_forced_MW": 14721.351351351352
+        },
+        "top1pct_netload": {
+          "days": 4,
+          "model_fossil_out_MW": 23805.746307436246,
+          "published_total_MW": 16673.75,
+          "published_forced_MW": 15736.25
+        },
+        "event_window": {
+          "days": 3,
+          "model_fossil_out_MW": 18336.723137264114,
+          "published_total_MW": 16006.666666666666,
+          "published_forced_MW": 13696.0
+        }
+      },
+      "direction": {
+        "total": {
+          "all": {
+            "days": 365,
+            "restore_days": 365,
+            "remove_days": 353,
+            "signed_MW_mean": 4984.328040302356,
+            "verdict": "RESTORE"
+          },
+          "top10pct_netload": {
+            "days": 37,
+            "restore_days": 37,
+            "remove_days": 34,
+            "signed_MW_mean": 6521.086851856162,
+            "verdict": "RESTORE"
+          },
+          "top1pct_netload": {
+            "days": 4,
+            "restore_days": 4,
+            "remove_days": 3,
+            "signed_MW_mean": 6961.336774919897,
+            "verdict": "RESTORE"
+          },
+          "event_window": {
+            "days": 3,
+            "restore_days": 3,
+            "remove_days": 3,
+            "signed_MW_mean": 2166.2246840779185,
+            "verdict": "RESTORE"
+          }
+        },
+        "unplanned": {
+          "all": {
+            "days": 365,
+            "restore_days": 365,
+            "remove_days": 316,
+            "signed_MW_mean": 22877.127164920395,
+            "verdict": "RESTORE"
+          },
+          "top10pct_netload": {
+            "days": 37,
+            "restore_days": 37,
+            "remove_days": 34,
+            "signed_MW_mean": 6918.92840373439,
+            "verdict": "RESTORE"
+          },
+          "top1pct_netload": {
+            "days": 4,
+            "restore_days": 4,
+            "remove_days": 3,
+            "signed_MW_mean": 7024.476476293747,
+            "verdict": "RESTORE"
+          },
+          "event_window": {
+            "days": 3,
+            "restore_days": 3,
+            "remove_days": 3,
+            "signed_MW_mean": 3108.774146186783,
+            "verdict": "RESTORE"
+          }
+        }
+      },
+      "ceiling_content": {
+        "restore_day_zero_lift_MW": 8304.183234675087,
+        "restore_day_live_lift_MW": 5403.795303770327,
+        "zero_share": 0.605791963518557
+      },
+      "attribution": {
+        "fossil_cap_MW": 137819.50153074096,
+        "model_fossil_out_MW_mean": 41221.73946178924,
+        "model_fossil_out_frac_of_fossil_cap": 0.29909946708517615,
+        "model_fossil_out_HARD_ZERO_MW_mean": 26427.602812850364,
+        "model_fossil_out_PARTIAL_MW_mean": 14794.136648938813,
+        "hard_zero_share_of_asserted_outage": 0.641108384990586,
+        "hard_zero_frac_of_fossil_cap": 0.1917551762945219,
+        "published_total_MW_mean": 35870.271232876716,
+        "published_forced_MW_mean": 10531.298630136986
+      }
+    }
+  },
+  "_meta": {
+    "keeper": "pjm152_collapse_A",
+    "years": [
+      2023,
+      2024,
+      2025
+    ]
+  }
+}

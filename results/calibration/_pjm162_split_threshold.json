@@ -1,0 +1,290 @@
+{
+  "thresholds": {
+    "1": {
+      "2022": {
+        "annual_mean_MW": 0.0,
+        "corr_vs_published_FORCED": NaN,
+        "event_mean_MW": 0.0,
+        "event_over_annual": null
+      },
+      "2023": {
+        "annual_mean_MW": 0.0,
+        "corr_vs_published_FORCED": NaN,
+        "event_mean_MW": 0.0,
+        "event_over_annual": null
+      },
+      "2024": {
+        "annual_mean_MW": 0.0,
+        "corr_vs_published_FORCED": NaN,
+        "event_mean_MW": 0.0,
+        "event_over_annual": null
+      },
+      "2025": {
+        "annual_mean_MW": 0.0,
+        "corr_vs_published_FORCED": NaN,
+        "event_mean_MW": 0.0,
+        "event_over_annual": null
+      }
+    },
+    "2": {
+      "2022": {
+        "annual_mean_MW": 65.68986301369863,
+        "corr_vs_published_FORCED": 0.17887638822076832,
+        "event_mean_MW": 485.45,
+        "event_over_annual": 7.390029111474425
+      },
+      "2023": {
+        "annual_mean_MW": 39.08873626373626,
+        "corr_vs_published_FORCED": 0.19220763968736004,
+        "event_mean_MW": 945.4,
+        "event_over_annual": 24.18599551597872
+      },
+      "2024": {
+        "annual_mean_MW": 62.81643835616438,
+        "corr_vs_published_FORCED": 0.381296147742255,
+        "event_mean_MW": 1140.0,
+        "event_over_annual": 18.14811584089323
+      },
+      "2025": {
+        "annual_mean_MW": 40.99945205479452,
+        "corr_vs_published_FORCED": 0.1896887973148644,
+        "event_mean_MW": 689.0666666666666,
+        "event_over_annual": 16.80672867885527
+      }
+    },
+    "3": {
+      "2022": {
+        "annual_mean_MW": 188.10794520547944,
+        "corr_vs_published_FORCED": 0.16378164802879636,
+        "event_mean_MW": 819.175,
+        "event_over_annual": 4.354813397728497
+      },
+      "2023": {
+        "annual_mean_MW": 103.05906593406593,
+        "corr_vs_published_FORCED": 0.23386113992552696,
+        "event_mean_MW": 945.4,
+        "event_over_annual": 9.173380249776747
+      },
+      "2024": {
+        "annual_mean_MW": 115.33178082191782,
+        "corr_vs_published_FORCED": 0.3977709419080629,
+        "event_mean_MW": 1140.0,
+        "event_over_annual": 9.884526119996863
+      },
+      "2025": {
+        "annual_mean_MW": 113.91534246575344,
+        "corr_vs_published_FORCED": 0.2224436631320343,
+        "event_mean_MW": 689.0666666666666,
+        "event_over_annual": 6.048936444832458
+      }
+    },
+    "4": {
+      "2022": {
+        "annual_mean_MW": 402.1767123287671,
+        "corr_vs_published_FORCED": 0.2364739684704637,
+        "event_mean_MW": 1445.625,
+        "event_over_annual": 3.594502007909016
+      },
+      "2023": {
+        "annual_mean_MW": 189.14835164835165,
+        "corr_vs_published_FORCED": 0.2705445491085067,
+        "event_mean_MW": 945.4,
+        "event_over_annual": 4.998193173565722
+      },
+      "2024": {
+        "annual_mean_MW": 214.69972602739725,
+        "corr_vs_published_FORCED": 0.4359690847191319,
+        "event_mean_MW": 1488.0,
+        "event_over_annual": 6.930609682334296
+      },
+      "2025": {
+        "annual_mean_MW": 301.2709589041096,
+        "corr_vs_published_FORCED": 0.1875657258777442,
+        "event_mean_MW": 704.8666666666667,
+        "event_over_annual": 2.3396435860617286
+      }
+    },
+    "5": {
+      "2022": {
+        "annual_mean_MW": 556.2687671232877,
+        "corr_vs_published_FORCED": 0.2544202988723919,
+        "event_mean_MW": 1445.625,
+        "event_over_annual": 2.5987887248747894
+      },
+      "2023": {
+        "annual_mean_MW": 378.8755494505495,
+        "corr_vs_published_FORCED": 0.21428366794632112,
+        "event_mean_MW": 1255.9,
+        "event_over_annual": 3.3148087856852295
+      },
+      "2024": {
+        "annual_mean_MW": 361.53698630136984,
+        "corr_vs_published_FORCED": 0.4409268680314346,
+        "event_mean_MW": 2058.2,
+        "event_over_annual": 5.692916846644084
+      },
+      "2025": {
+        "annual_mean_MW": 441.6364383561644,
+        "corr_vs_published_FORCED": 0.19929982176579839,
+        "event_mean_MW": 932.8666666666664,
+        "event_over_annual": 2.112295511980246
+      }
+    },
+    "6": {
+      "2022": {
+        "annual_mean_MW": 1418.426301369863,
+        "corr_vs_published_FORCED": 0.22785955294994312,
+        "event_mean_MW": 1914.2,
+        "event_over_annual": 1.3495237631672068
+      },
+      "2023": {
+        "annual_mean_MW": 1219.8076923076924,
+        "corr_vs_published_FORCED": 0.27036552903808886,
+        "event_mean_MW": 3416.7000000000003,
+        "event_over_annual": 2.801015292448368
+      },
+      "2024": {
+        "annual_mean_MW": 1452.1123287671232,
+        "corr_vs_published_FORCED": 0.3267582404872041,
+        "event_mean_MW": 2526.733333333333,
+        "event_over_annual": 1.7400398600558593
+      },
+      "2025": {
+        "annual_mean_MW": 1352.6605479452055,
+        "corr_vs_published_FORCED": 0.2737365587484895,
+        "event_mean_MW": 1552.1333333333332,
+        "event_over_annual": 1.147466994355045
+      }
+    },
+    "7": {
+      "2022": {
+        "annual_mean_MW": 2333.226575342466,
+        "corr_vs_published_FORCED": 0.34216414635737996,
+        "event_mean_MW": 4648.95,
+        "event_over_annual": 1.9924983064782884
+      },
+      "2023": {
+        "annual_mean_MW": 2146.5733516483515,
+        "corr_vs_published_FORCED": 0.16651299733835168,
+        "event_mean_MW": 4130.900000000001,
+        "event_over_annual": 1.9244159519766173
+      },
+      "2024": {
+        "annual_mean_MW": 2279.874794520548,
+        "corr_vs_published_FORCED": 0.29795882509896576,
+        "event_mean_MW": 4613.366666666667,
+        "event_over_annual": 2.0235175535755006
+      },
+      "2025": {
+        "annual_mean_MW": 1956.0290410958908,
+        "corr_vs_published_FORCED": 0.14700850482449962,
+        "event_mean_MW": 1711.3999999999999,
+        "event_over_annual": 0.8749358849197687
+      }
+    },
+    "8": {
+      "2022": {
+        "annual_mean_MW": 3066.8484931506855,
+        "corr_vs_published_FORCED": 0.3411201935878898,
+        "event_mean_MW": 6169.1,
+        "event_over_annual": 2.0115437765438027
+      },
+      "2023": {
+        "annual_mean_MW": 2906.745604395604,
+        "corr_vs_published_FORCED": 0.19685853813992837,
+        "event_mean_MW": 4922.1,
+        "event_over_annual": 1.6933370407636503
+      },
+      "2024": {
+        "annual_mean_MW": 3277.8205479452054,
+        "corr_vs_published_FORCED": 0.2335724360896399,
+        "event_mean_MW": 5041.633333333333,
+        "event_over_annual": 1.538105353721644
+      },
+      "2025": {
+        "annual_mean_MW": 2562.679726027397,
+        "corr_vs_published_FORCED": 0.1783368227790597,
+        "event_mean_MW": 2195.5,
+        "event_over_annual": 0.8567204000179179
+      }
+    },
+    "10": {
+      "2022": {
+        "annual_mean_MW": 4746.230410958904,
+        "corr_vs_published_FORCED": 0.2742967647049729,
+        "event_mean_MW": 8099.199999999999,
+        "event_over_annual": 1.7064489708083257
+      },
+      "2023": {
+        "annual_mean_MW": 4318.007692307692,
+        "corr_vs_published_FORCED": 0.06625135833050987,
+        "event_mean_MW": 5285.699999999999,
+        "event_over_annual": 1.2241062028250205
+      },
+      "2024": {
+        "annual_mean_MW": 4686.3295890410955,
+        "corr_vs_published_FORCED": 0.16261299704009774,
+        "event_mean_MW": 6018.633333333334,
+        "event_over_annual": 1.2842957839345763
+      },
+      "2025": {
+        "annual_mean_MW": 3909.2917808219177,
+        "corr_vs_published_FORCED": 0.041191563992722446,
+        "event_mean_MW": 2195.5,
+        "event_over_annual": 0.5616106760745299
+      }
+    },
+    "14": {
+      "2022": {
+        "annual_mean_MW": 7246.936164383562,
+        "corr_vs_published_FORCED": 0.19756734065473103,
+        "event_mean_MW": 9877.599999999999,
+        "event_over_annual": 1.3630035888194147
+      },
+      "2023": {
+        "annual_mean_MW": 6430.200000000001,
+        "corr_vs_published_FORCED": 0.034150985266060585,
+        "event_mean_MW": 5845.65,
+        "event_over_annual": 0.9090930297657925
+      },
+      "2024": {
+        "annual_mean_MW": 7438.477808219178,
+        "corr_vs_published_FORCED": 0.12441675276892267,
+        "event_mean_MW": 7561.433333333333,
+        "event_over_annual": 1.0165296621545734
+      },
+      "2025": {
+        "annual_mean_MW": 6337.291232876712,
+        "corr_vs_published_FORCED": -0.1072599054823423,
+        "event_mean_MW": 3209.866666666667,
+        "event_over_annual": 0.5065045219974212
+      }
+    },
+    "21": {
+      "2022": {
+        "annual_mean_MW": 10210.480000000001,
+        "corr_vs_published_FORCED": -0.010772854321195279,
+        "event_mean_MW": 10512.099999999999,
+        "event_over_annual": 1.029540237089735
+      },
+      "2023": {
+        "annual_mean_MW": 10406.886813186813,
+        "corr_vs_published_FORCED": 0.026354680284553213,
+        "event_mean_MW": 7197.5,
+        "event_over_annual": 0.6916093284381528
+      },
+      "2024": {
+        "annual_mean_MW": 10874.518630136985,
+        "corr_vs_published_FORCED": -0.00014339028319531325,
+        "event_mean_MW": 9933.466666666665,
+        "event_over_annual": 0.9134626556377085
+      },
+      "2025": {
+        "annual_mean_MW": 10200.207671232876,
+        "corr_vs_published_FORCED": -0.42007713913230466,
+        "event_mean_MW": 3996.8666666666663,
+        "event_over_annual": 0.39184169533516705
+      }
+    }
+  }
+}
