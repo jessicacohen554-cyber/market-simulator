@@ -7879,3 +7879,43 @@ too narrow** — beyond the documented `_processed-legacy` gap, `data/raw/fleet-
 is required or `build_zone_lookup` throws, every hydro unit is dropped for a blank zone,
 and the fleet builds **0 units** while still printing a healthy-looking budget line.
 Record: `results/calibration/FINDING-caiso194-hydro-ror-split-2026-08-11.md`.
+
+## 2026-08-15 — caiso-193 (close-out campaign LANE 2): `wefor_residual` is **REFUSED AT G-COV** — both granted classes fail the 95 % observability bar; killed before solve. The CC_REGULAR miss is TWO named instrument defects, not non-observation — and the larger one (El Segundo, 537 MW) is repaired the same day by caiso-196
+
+**Zero LP for this lane. Nothing registered by it. DOF 11/8 untouched. C3a never
+read.** Keeper UNCHANGED at `2026-08-09-caiso-188-d1-micseam`; both holdout markers
+and the spend freeze untouched. Gate spec
+`GATESPEC-caiso193-wefor-residual-2026-08-11.md` (caiso-191, pre-measurement)
+applied as written.
+
+**G-COV, measured on the frozen instrument** (probe
+`scripts/probes/_caiso193_wefor_coverage.py`, record
+`_caiso193_wefor_coverage.json`, both population readings, gated on the stricter):
+CC_CHP **0.6357/0.6784 FAIL** — 12 of 21 plants (543.4 MW, 32.2 %) absent from the
+extract, a REAL CEMS-exemption observability limit doing exactly what the
+fail-closed clause intends. CC_REGULAR **0.9406 extract-pop / 0.8414 CEMS-2023-25
+FAIL** — a 0.94 pp miss on the literal population. Both classes below bar ⇒
+GATESPEC §5 fires verbatim: *"the arm is dead; the null result is reported (that
+too is a finding: the grant was conditioned on an observability that failed)."*
+
+**The decomposition is the finding.** CC_REGULAR's 907.5 MW miss is (1) **El
+Segundo Energy Center (EIA 57901, 537.4 MW)** — CEMS-observed as ORIS **330** units
+"5"/"7" in every CA file 2018–2025, but `campd.CAMPD_UNIT_PLANT_REMAP` carries only
+the Alamitos/Huntington Beach siblings, so the derive skips facility 330 before
+detection (EIA plant 330's own units retired 2015; nothing remained to
+mis-attribute, which is why this one failed SILENTLY where 315/335 were caught);
+and (2) **Desert Star (EIA 55077, 370.1 MW)** — a Clark County **Nevada** CAISO CC
+outside `ISO_STATES["CAISO"] = ("CA",)`, no NV file ever fetched (the NYISO NY+NJ
+state-list precedent is the template; intake filed). On the repaired instrument
+CC_REGULAR measures **97.58 % / 96.67 %** — ≥ 95 % under BOTH readings — and the
+owner-granted value 0.0 is INVARIANT (X 4–6× W on the committed extract; the repair
+only raises X), so a `{CC_REGULAR}`-scoped re-run is the gatespec's own prescribed
+fail-closed subset. **Not executed this session**: the campaign control anchors to
+the caiso-188 recipe on its committed inputs and the integration protocol reserves
+re-anchoring to the owner. Escalations packaged in
+`PRECHECK-caiso196-elsegundo-remap-2026-08-15.md` §6.
+
+Matrix duty (b): `wefor_residual` CAISO cell **O → R** (provenance/coverage
+refusal, not a dispatch refutation — caiso-194 precedent). Record:
+`results/calibration/FINDING-caiso193-wefor-residual-2026-08-15.md`.
+
