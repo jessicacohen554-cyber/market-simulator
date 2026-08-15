@@ -1,0 +1,614 @@
+{
+ "note": "Equivalence of the ISO-NE daily historical-report LMP route (scripts/data/fetch_neiso_smd_zonal_lmp.py) against the committed SMD workbook route (derive_actual_lmp.neiso_zone_hourly), compared pre-densification on sampled operating days of the committed years. The verdict is taken over days where the two sources agree on how many hours the day HAD; 0.0 there means the two routes are ONE input, so carrying H1-2026 on the daily-report route does not year-gate the input (rule 22 as amended 2026-08-06). Days listed under shape_mismatch are the SMD workbook's DST defect, not a route difference: the 2018-2023 workbook vintage publishes a flat 24 rows on every day, so on a 23-hour or 25-hour operating day it cannot align with the market's own published hours. No year solved, scored or registered.",
+ "sample_rationale": {
+  "2019-01-21": "MLK-day winter cold snap; 2019 is the locked-test year",
+  "2020-03-08": "spring-forward: 23 published hours",
+  "2021-11-07": "fall-back: 25 published hours, '02X' repeated hour",
+  "2022-02-04": "ordinary winter day",
+  "2022-12-24": "Winter Storm Elliott -- inside 2022's 117-hour RT tail",
+  "2023-07-04": "ordinary summer day, in-sample",
+  "2024-02-29": "leap day -- exists pre-densification, dropped by the 8760 calendar",
+  "2025-01-22": "January 2025 cold snap, in-sample",
+  "2025-06-24": "June 2025 heat event, in-sample",
+  "2025-03-09": "spring-forward, 23-row workbook vintage",
+  "2025-11-02": "fall-back, 25-row workbook vintage",
+  "2024-03-10": "spring-forward, 23-row workbook vintage",
+  "2024-11-03": "fall-back, 25-row workbook vintage",
+  "2023-11-05": "fall-back, FLAT-24 workbook vintage (in-sample year)",
+  "2019-11-03": "fall-back, FLAT-24 workbook vintage (locked-test year)"
+ },
+ "days": [
+  {
+   "day": "2019-01-21",
+   "why": "MLK-day winter cold snap; 2019 is the locked-test year",
+   "cells": {
+    "da": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 2.842170943040401e-14,
+     "max_abs_diff_hub": 2.842170943040401e-14,
+     "float32_mismatches": 0
+    },
+    "rt": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 2.842170943040401e-14,
+     "max_abs_diff_hub": 2.842170943040401e-14,
+     "float32_mismatches": 0
+    }
+   },
+   "book_hours": 24,
+   "report_hours": 24,
+   "shape_agrees": true
+  },
+  {
+   "day": "2019-11-03",
+   "why": "fall-back, FLAT-24 workbook vintage (locked-test year)",
+   "cells": {
+    "da": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 12.34,
+     "max_abs_diff_hub": 12.229999999999997,
+     "float32_mismatches": 115
+    },
+    "rt": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 18.59,
+     "max_abs_diff_hub": 18.250000000000004,
+     "float32_mismatches": 115
+    }
+   },
+   "book_hours": 24,
+   "report_hours": 25,
+   "shape_agrees": false
+  },
+  {
+   "day": "2020-03-08",
+   "why": "spring-forward: 23 published hours",
+   "cells": {
+    "da": {
+     "hours": 23,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 115,
+     "max_abs_diff": 7.806666666666665,
+     "max_abs_diff_hub": 7.670000000000002,
+     "float32_mismatches": 110
+    },
+    "rt": {
+     "hours": 23,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 115,
+     "max_abs_diff": 7.109999999999999,
+     "max_abs_diff_hub": 7.09,
+     "float32_mismatches": 110
+    }
+   },
+   "book_hours": 24,
+   "report_hours": 23,
+   "shape_agrees": false
+  },
+  {
+   "day": "2021-11-07",
+   "why": "fall-back: 25 published hours, '02X' repeated hour",
+   "cells": {
+    "da": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 16.56000000000001,
+     "max_abs_diff_hub": 16.560000000000002,
+     "float32_mismatches": 115
+    },
+    "rt": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 22.15333333333335,
+     "max_abs_diff_hub": 21.910000000000004,
+     "float32_mismatches": 115
+    }
+   },
+   "book_hours": 24,
+   "report_hours": 25,
+   "shape_agrees": false
+  },
+  {
+   "day": "2022-02-04",
+   "why": "ordinary winter day",
+   "cells": {
+    "da": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 5.684341886080802e-14,
+     "max_abs_diff_hub": 2.842170943040401e-14,
+     "float32_mismatches": 0
+    },
+    "rt": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 5.684341886080802e-14,
+     "max_abs_diff_hub": 2.842170943040401e-14,
+     "float32_mismatches": 0
+    }
+   },
+   "book_hours": 24,
+   "report_hours": 24,
+   "shape_agrees": true
+  },
+  {
+   "day": "2022-12-24",
+   "why": "Winter Storm Elliott -- inside 2022's 117-hour RT tail",
+   "cells": {
+    "da": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 5.684341886080802e-14,
+     "max_abs_diff_hub": 2.842170943040401e-14,
+     "float32_mismatches": 0
+    },
+    "rt": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 4.547473508864641e-13,
+     "max_abs_diff_hub": 5.684341886080802e-14,
+     "float32_mismatches": 0
+    }
+   },
+   "book_hours": 24,
+   "report_hours": 24,
+   "shape_agrees": true
+  },
+  {
+   "day": "2023-07-04",
+   "why": "ordinary summer day, in-sample",
+   "cells": {
+    "da": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 7.105427357601002e-15,
+     "max_abs_diff_hub": 7.105427357601002e-15,
+     "float32_mismatches": 0
+    },
+    "rt": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 1.4210854715202004e-14,
+     "max_abs_diff_hub": 7.105427357601002e-15,
+     "float32_mismatches": 0
+    }
+   },
+   "book_hours": 24,
+   "report_hours": 24,
+   "shape_agrees": true
+  },
+  {
+   "day": "2023-11-05",
+   "why": "fall-back, FLAT-24 workbook vintage (in-sample year)",
+   "cells": {
+    "da": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 20.14,
+     "max_abs_diff_hub": 20.119999999999997,
+     "float32_mismatches": 115
+    },
+    "rt": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 37.05,
+     "max_abs_diff_hub": 36.980000000000004,
+     "float32_mismatches": 115
+    }
+   },
+   "book_hours": 24,
+   "report_hours": 25,
+   "shape_agrees": false
+  },
+  {
+   "day": "2024-02-29",
+   "why": "leap day -- exists pre-densification, dropped by the 8760 calendar",
+   "cells": {
+    "da": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 1.4210854715202004e-14,
+     "max_abs_diff_hub": 7.105427357601002e-15,
+     "float32_mismatches": 0
+    },
+    "rt": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 7.105427357601002e-15,
+     "max_abs_diff_hub": 7.105427357601002e-15,
+     "float32_mismatches": 0
+    }
+   },
+   "book_hours": 24,
+   "report_hours": 24,
+   "shape_agrees": true
+  },
+  {
+   "day": "2024-03-10",
+   "why": "spring-forward, 23-row workbook vintage",
+   "cells": {
+    "da": {
+     "hours": 23,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 115,
+     "max_abs_diff": 7.105427357601002e-15,
+     "max_abs_diff_hub": 3.552713678800501e-15,
+     "float32_mismatches": 0
+    },
+    "rt": {
+     "hours": 23,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 115,
+     "max_abs_diff": 7.105427357601002e-15,
+     "max_abs_diff_hub": 3.552713678800501e-15,
+     "float32_mismatches": 0
+    }
+   },
+   "book_hours": 23,
+   "report_hours": 23,
+   "shape_agrees": true
+  },
+  {
+   "day": "2024-11-03",
+   "why": "fall-back, 25-row workbook vintage",
+   "cells": {
+    "da": {
+     "hours": 25,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 125,
+     "max_abs_diff": 1.4210854715202004e-14,
+     "max_abs_diff_hub": 7.105427357601002e-15,
+     "float32_mismatches": 0
+    },
+    "rt": {
+     "hours": 25,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 125,
+     "max_abs_diff": 1.4210854715202004e-14,
+     "max_abs_diff_hub": 3.552713678800501e-15,
+     "float32_mismatches": 0
+    }
+   },
+   "book_hours": 25,
+   "report_hours": 25,
+   "shape_agrees": true
+  },
+  {
+   "day": "2025-01-22",
+   "why": "January 2025 cold snap, in-sample",
+   "cells": {
+    "da": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 5.684341886080802e-14,
+     "max_abs_diff_hub": 5.684341886080802e-14,
+     "float32_mismatches": 0
+    },
+    "rt": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 5.684341886080802e-14,
+     "max_abs_diff_hub": 2.842170943040401e-14,
+     "float32_mismatches": 0
+    }
+   },
+   "book_hours": 24,
+   "report_hours": 24,
+   "shape_agrees": true
+  },
+  {
+   "day": "2025-03-09",
+   "why": "spring-forward, 23-row workbook vintage",
+   "cells": {
+    "da": {
+     "hours": 23,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 115,
+     "max_abs_diff": 7.105427357601002e-15,
+     "max_abs_diff_hub": 7.105427357601002e-15,
+     "float32_mismatches": 0
+    },
+    "rt": {
+     "hours": 23,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 115,
+     "max_abs_diff": 1.4210854715202004e-14,
+     "max_abs_diff_hub": 1.4210854715202004e-14,
+     "float32_mismatches": 0
+    }
+   },
+   "book_hours": 23,
+   "report_hours": 23,
+   "shape_agrees": true
+  },
+  {
+   "day": "2025-06-24",
+   "why": "June 2025 heat event, in-sample",
+   "cells": {
+    "da": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 5.684341886080802e-14,
+     "max_abs_diff_hub": 5.684341886080802e-14,
+     "float32_mismatches": 0
+    },
+    "rt": {
+     "hours": 24,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 120,
+     "max_abs_diff": 1.1368683772161603e-13,
+     "max_abs_diff_hub": 1.1368683772161603e-13,
+     "float32_mismatches": 0
+    }
+   },
+   "book_hours": 24,
+   "report_hours": 24,
+   "shape_agrees": true
+  },
+  {
+   "day": "2025-11-02",
+   "why": "fall-back, 25-row workbook vintage",
+   "cells": {
+    "da": {
+     "hours": 25,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 125,
+     "max_abs_diff": 1.4210854715202004e-14,
+     "max_abs_diff_hub": 7.105427357601002e-15,
+     "float32_mismatches": 0
+    },
+    "rt": {
+     "hours": 25,
+     "columns": [
+      "North",
+      "Central",
+      "Boston",
+      "Connecticut",
+      "hub"
+     ],
+     "compared": 125,
+     "max_abs_diff": 1.4210854715202004e-14,
+     "max_abs_diff_hub": 7.105427357601002e-15,
+     "float32_mismatches": 0
+    }
+   },
+   "book_hours": 25,
+   "report_hours": 25,
+   "shape_agrees": true
+  }
+ ],
+ "totals": {
+  "cells_compared_shape_agreeing": 2640,
+  "worst_abs_diff_shape_agreeing": 4.547473508864641e-13,
+  "worst_abs_diff_hub_shape_agreeing": 1.1368683772161603e-13,
+  "float32_mismatches_shape_agreeing": 0,
+  "identical_at_parquet_precision": true,
+  "float_noise_tolerance": 1e-09,
+  "routes_equivalent": true,
+  "shape_mismatch_days": [
+   "2019-11-03",
+   "2020-03-08",
+   "2021-11-07",
+   "2023-11-05"
+  ],
+  "shape_mismatch_detail": [
+   {
+    "day": "2019-11-03",
+    "workbook_hours": 24,
+    "market_hours": 25
+   },
+   {
+    "day": "2020-03-08",
+    "workbook_hours": 24,
+    "market_hours": 23
+   },
+   {
+    "day": "2021-11-07",
+    "workbook_hours": 24,
+    "market_hours": 25
+   },
+   {
+    "day": "2023-11-05",
+    "workbook_hours": 24,
+    "market_hours": 25
+   }
+  ]
+ }
+}
