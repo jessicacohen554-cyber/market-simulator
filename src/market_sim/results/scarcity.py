@@ -516,7 +516,33 @@ def ercot_rtordpa_overlay_series(year: int, hours: int, config=None) -> np.ndarr
     backcast-able on any year incl. 2022. It is an **exogenous measured series,
     never fit to LMP**.
 
-    Regime gate (pre-RTC+B only; RTC+B retired the adders on 2025-12-05):
+    **Basis completeness — ADJUDICATED, do not re-open (ercot-203, 2026-08-15;
+    docs/FINDING-ercot203-rtoffpa-not-in-rtspp-2026-08-15.md).** ERCOT publishes
+    THREE real-time adders in NP6-905-CD (``rtorpa``, ``rtoffpa``, ``rtordpa``),
+    and this overlay reads one of them — which is the complete and correct set
+    for the price we score against. Nodal Protocols §6.5.7.3(12) / §6.6.1(1) /
+    §6.6.1.1(1) / §6.6.1.2(1): ``RTSPP = RTLMP + RTORPA + RTORDPA``. RTORPA is
+    endogenous here (the reserve-balance dual), RTORDPA is this overlay, and
+    **RTOFFPA is NOT in RTSPP at all** — §6.7.5 routes it to Ancillary Service
+    imbalance settlement, where it prices Off-Line reserve *capacity* held by
+    resources generating no energy. It is therefore absent from the measured
+    settlement-point actuals as well, so adding an RTOFFPA leg here would insert
+    a component the benchmark does not contain (and, since ``rtoffpa > 0``
+    implies ``rtorpa > 0`` in every hour of 2023-2025, would stack a second
+    reserve adder on hours the endogenous dual already prices — rule 19
+    ``[R-ONE-MECH]``). The ercot-202 audit's unapplied-``rtoffpa`` magnitudes
+    ($0.58/$0.15/$0.03 per MWh) measure out-of-basis content, not a gap; this
+    confirms ercot-198, which had already excluded RTOFFPA on the 2024 SOM.
+    **Separate and still open** (ercot-198, not adjudicated here): the endogenous
+    RTORPA stand-in — sidecar ``ordc_adder`` — measures ≈ zero (2 non-zero hours
+    in 2024), so published RTORPA content, which IS in basis, reaches neither the
+    scored price nor this overlay. That is a mechanism question about the reserve
+    dual, not a missing overlay column, and rule 19 bars overlaying the published
+    RTORPA series on top of the mechanism meant to produce it.
+
+    Regime gate (pre-RTC+B only; RTC+B retired the adders on 2025-12-05 — the
+    same revision that removes RTOFFPA from Section 6 entirely, and
+    ``RTCB_GOLIVE_HOUR`` lands on its effective date to the hour):
       * year <= 2024 — fully pre-RTC+B, the whole-year measured series applies;
       * year == 2025 — pre-RTC+B only through Dec 4: hours >= RTCB_GOLIVE_HOUR
         zeroed (the measured series is already NaN there);
