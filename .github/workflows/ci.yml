@@ -29,10 +29,16 @@ name: CI
 # each produced byte-identical output with and without data/raw, so those reds
 # are pre-existing and independent of this change.
 #
-# fast-tests is deliberately NOT sparse: removing data/raw takes it from 6
-# failures to 780 failures + 81 errors. It is a hard runtime dependency of that
-# tier, and the tier is BLOCKING. Do not "consistency-fix" this by adding the
-# sparse block to it.
+# fast-tests carries its OWN sparse block — the data-INCLUDING one, not the
+# nine jobs' data-free exclusion. The tier hard-requires a measured ~2.0 GiB
+# subset of data/raw (removing data/raw wholesale takes it from green to ~780
+# failures + 81 errors), while a full checkout no longer fits a standard
+# runner at all (PERF-A 2026-08-15: 8.7 GiB tip pack + 9.0 GiB worktree vs
+# 15 GB runner disk — every fast-tests run died inside actions/checkout with
+# pytest never invoked). Its block lists exactly what the tier opens; do NOT
+# swap it for the nine jobs' `!/data/raw/` exclusion, and extend it (never
+# let a skip stand) when a test grows a new data dependency — see the job's
+# own comment and docs/handoffs/perf-recheck-2026-08.md §1.3.
 #
 # Non-cone mode is required — cone mode has no negation. The pattern set is the
 # same base pair scripts/hydrate_data.py applies (`/*` + `!/data/raw/`), so the
@@ -348,9 +354,109 @@ jobs:
   fast-tests:
     name: Fast test tier
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          # PERF-A (2026-08-15): measured sparse checkout — the ONE job that
+          # needs data/raw gets exactly the subset the tier opens, instead of a
+          # full checkout that no longer fits a standard runner (8.7 GiB tip
+          # pack + 9.0 GiB worktree vs 15 GB disk; every run died inside this
+          # step, pytest never invoked). actions/checkout adds
+          # --filter=blob:none automatically when sparse-checkout is set, so
+          # transfer/disk is bounded by the ~2.0 GiB materialized set.
+          # The list = golden-data-tier.yml's audited 43 patterns + the
+          # fast-tier extension measured by running the full tier against
+          # exactly this restriction (0 failed / baseline skips locally;
+          # 6,837/6,838 + the scope2 line on a real runner, 10m50s job wall).
+          # Contract unchanged from the header: a job that grows a data/raw
+          # dependency extends this list, never silently skips the input —
+          # a missing corpus surfaces as FileNotFoundError or a skip-count
+          # rise over the 31-skip baseline. Measurement record + rerun recipe:
+          # docs/handoffs/perf-recheck-2026-08.md §1.3.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/*/
+            /.github/
+            /src/
+            /scripts/
+            /tests/
+            /configs/
+            /docs/
+            /frontend/
+            /results/
+            /scope2-lce-portfolio/
+            /data/dictionary/
+            /data/raw/*.csv
+            /data/raw/*.parquet
+            /data/raw/ISO-specific-gen-data/
+            /data/raw/NYISO/
+            /data/raw/NYISO-AS/
+            /data/raw/PJM-AS/
+            /data/raw/_processed-legacy/
+            /data/raw/_validation-source/
+            /data/raw/caiso-curtailment/
+            /data/raw/caiso-hsl/
+            /data/raw/campd-facility-level/
+            /data/raw/campd-unit-level/*_2023.parquet
+            /data/raw/confirmed-retirements/
+            /data/raw/eia-860/
+            /data/raw/eia-930/eia_generation_profiles.parquet
+            /data/raw/eia-930-hourly/
+            /data/raw/ercot/2_DAY_AS_DISCLOSURE_2d_Cleared_DAM_AS_*.parquet
+            /data/raw/ercot-AS/*60d_dam_as_only_awards*json.zip
+            /data/raw/ercot-AS/ercot_*_as_up_mw.parquet
+            /data/raw/ercot-hsl/ercot_*_hsl_hourly.parquet
+            /data/raw/ercot-weather/
+            /data/raw/ercot-wind-shape/
+            /data/raw/fleet-egrid/
+            /data/raw/gas-prices/
+            /data/raw/lmp-data/CAISO/CAISO_dam_hourly_*.csv
+            /data/raw/lmp-data/CAISO/CAISO_rtm_hourly_*.csv
+            /data/raw/lmp-data/NEISO/
+            /data/raw/lmp-data/NYISO/
+            /data/raw/lmp-data/PJM_*_rt_da_monthly_lmps.csv
+            /data/raw/miso-wind-shape/
+            /data/raw/reference/
+            /data/raw/zone-specific-demand/
+            /data/raw/MISO/
+            /data/raw/MISO-AS/
+            /data/raw/miso-hsl/
+            /data/raw/nyiso-demand-response/
+            /data/raw/nyiso-renewable-curtailment/
+            /data/raw/capacity-market/
+            /data/raw/capacity-deliverability/
+            /data/raw/ornl-eha/
+            /data/raw/hilarri/
+            /data/raw/coal-prices/
+            /data/raw/oil-prices/
+            /data/raw/policy/
+            /data/raw/som-competitive-conduct/
+            /data/raw/neiso-weather/
+            /data/raw/miso-weather/
+            /data/raw/pjm-weather/
+            /data/raw/nyiso-weather/
+            /data/raw/new-build-cost-benchmarks/
+            /data/raw/nrel-atb/
+            /data/raw/uranium-marketing/
+            /data/raw/eia-aeo/
+            /data/raw/caiso-dam-outages/
+            /data/raw/neiso-operable-capacity/
+            /data/raw/pjm-outages/
+            /data/raw/eia-930-interchange/
+            /data/raw/iso-specific-transmission/
+            /data/raw/miso-generation-outages/
+            /data/raw/maxgen-events/
+            /data/raw/eia-930/eia_demand_profiles.parquet
+            /data/raw/eia-930/eia_demand_meta.parquet
+            /data/raw/ercot-AS/ercot_*_as_by_restype_hourly.parquet
+            /data/raw/ercot/ASPLANNP433_*.parquet
+            /data/raw/ercot/ercot_2024_ordc_reserves_hourly.parquet
+            /data/raw/CAISO-AS/asreq_ALL_2023*.csv
+            /data/raw/CAISO-AS/asreq_ALL_2024*.csv
+            /data/raw/CAISO-AS/asreq_ALL_2025*.csv
+            /data/raw/CAISO-AS/asreq_ALL_20221231_20230101.csv
       - name: Set up uv + Python
         uses: astral-sh/setup-uv@v5
         with:

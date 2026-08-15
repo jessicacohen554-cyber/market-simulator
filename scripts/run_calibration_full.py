@@ -403,38 +403,7 @@ def _dispatch_frame(
     zone_to_idx = {z: i for i, z in enumerate(zone_names)}
     gen_zidx = np.array([zone_to_idx[z] for z in zones], dtype=int)
 
-    rep = lambda a: np.repeat(np.asarray(a, dtype=object), T)  # noqa: E731
     hours = np.tile(np.arange(T, dtype=np.int32), n_gen)
-    klass_col = rep(klass)
-    fuel_col = rep(fuels)
-    # Dual-fuel re-attribution: a gas unit that switched to its backup oil this
-    # hour (gas price > oil parity; mask from fuel.dual_fuel_switch_mask) burned
-    # petroleum, so its dispatched MWh is counted as oil (EIA-930 ``NG: OIL``),
-    # not gas — the LP still priced/dispatched it on the gas heat-rate (the
-    # switch is objective-only), this only relabels the generation. The mask is
-    # ``(n_gen, T)`` over the LP generators, the same (gen, hour) row-major order
-    # as ``disp.reshape(-1)`` and ``rep(...)``, so flatten and overwrite in place.
-    if oil_switch_mask is not None and np.asarray(oil_switch_mask).any():
-        flat = np.asarray(oil_switch_mask, dtype=bool)[:n_gen, :T].reshape(-1)
-        klass_col = np.asarray(klass_col, dtype=object)
-        fuel_col = np.asarray(fuel_col, dtype=object)
-        klass_col[flat] = "oil"
-        fuel_col[flat] = "oil"
-    frames = [
-        pd.DataFrame(
-            {
-                "unit_id": rep(unit_ids),
-                "plant_code": np.repeat(plant_codes.astype(np.int32), T),
-                "klass": klass_col,
-                "fuel": fuel_col,
-                "supply": rep(supply),
-                "zone": rep(zones),
-                "hour": hours,
-                "mw": disp.reshape(-1),
-                "lmp": prices[gen_zidx, :].reshape(-1),
-            }
-        )
-    ]
 
     pseudo = [
         ("wind", result.wind_dispatched),
@@ -443,21 +412,97 @@ def _dispatch_frame(
     # Injected must-run residual classes (biomass / hydro / OTHER), re-added per
     # zone so total model generation reconciles to load (they were netted out of
     # the LP's demand). Carry klass == fuel == the class key.
-    for klass, arr in (must_run or {}).items():
-        pseudo.append((klass, arr))
+    for mr_klass, arr in (must_run or {}).items():
+        pseudo.append((mr_klass, arr))
+
+    # PERF-A prototype (NOT-FOR-MERGE): build every label column as a
+    # categorical directly, with the category vocabulary computed up front as
+    # the sorted uniques the former post-hoc ``.astype("category")`` derived —
+    # so the resulting frame (values, order, categories, dtypes) is identical,
+    # but the five 12.8M-element object arrays and their per-element re-hash
+    # never exist. Codes are per-generator searchsorted (n_gen-sized) repeated
+    # as ints.
+    pseudo_names = [name for name, _ in pseudo]
+    pseudo_units = [f"{n.upper()}_{z}" for n, _ in pseudo for z in zone_names]
+    oil_active = oil_switch_mask is not None and np.asarray(oil_switch_mask).any()
+    extra_kf = ["oil"] if oil_active else []
+
+    def _vocab(*groups):
+        vals: list = []
+        for g_vals in groups:
+            vals.extend(g_vals)
+        return np.sort(pd.unique(np.asarray(vals, dtype=object)))
+
+    cats_unit = _vocab(unit_ids, pseudo_units)
+    cats_klass = _vocab(klass, pseudo_names, extra_kf)
+    cats_fuel = _vocab(fuels, pseudo_names, extra_kf)
+    cats_supply = _vocab(supply)
+    cats_zone = _vocab(zones, zone_names)
+
+    def _codes(cats, values):
+        return np.searchsorted(cats, np.asarray(values, dtype=object)).astype(np.int32)
+
+    kcode = np.repeat(_codes(cats_klass, klass), T)
+    fcode = np.repeat(_codes(cats_fuel, fuels), T)
+    # Dual-fuel re-attribution: a gas unit that switched to its backup oil this
+    # hour (gas price > oil parity; mask from fuel.dual_fuel_switch_mask) burned
+    # petroleum, so its dispatched MWh is counted as oil (EIA-930 ``NG: OIL``),
+    # not gas — the LP still priced/dispatched it on the gas heat-rate (the
+    # switch is objective-only), this only relabels the generation. The mask is
+    # ``(n_gen, T)`` over the LP generators, the same (gen, hour) row-major order
+    # as ``disp.reshape(-1)``, so flatten and overwrite the codes in place.
+    if oil_active:
+        flat = np.asarray(oil_switch_mask, dtype=bool)[:n_gen, :T].reshape(-1)
+        kcode[flat] = np.searchsorted(cats_klass, "oil")
+        fcode[flat] = np.searchsorted(cats_fuel, "oil")
+
+    def _cat(cats, codes):
+        return pd.Categorical.from_codes(codes, categories=cats)
+
+    frames = [
+        pd.DataFrame(
+            {
+                "unit_id": _cat(cats_unit, np.repeat(_codes(cats_unit, unit_ids), T)),
+                "plant_code": np.repeat(plant_codes.astype(np.int32), T),
+                "klass": _cat(cats_klass, kcode),
+                "fuel": _cat(cats_fuel, fcode),
+                "supply": _cat(cats_supply, np.repeat(_codes(cats_supply, supply), T)),
+                "zone": _cat(cats_zone, np.repeat(_codes(cats_zone, zones), T)),
+                "hour": hours,
+                "mw": disp.reshape(-1).astype(np.float32),
+                "lmp": prices[gen_zidx, :].reshape(-1),
+            }
+        )
+    ]
+
     for name, arr in pseudo:
         a = np.asarray(arr, dtype=np.float32)[:, :T]
+        ck = int(np.searchsorted(cats_klass, name))
+        cf = int(np.searchsorted(cats_fuel, name))
+        cs = int(np.searchsorted(cats_supply, ""))
         for z in range(a.shape[0]):
             zone = zone_names[z]
             frames.append(
                 pd.DataFrame(
                     {
-                        "unit_id": f"{name.upper()}_{zone}",
-                        "plant_code": np.int32(0),
-                        "klass": name,
-                        "fuel": name,
-                        "supply": "",
-                        "zone": zone,
+                        "unit_id": _cat(
+                            cats_unit,
+                            np.full(
+                                T,
+                                np.searchsorted(cats_unit, f"{name.upper()}_{zone}"),
+                                dtype=np.int32,
+                            ),
+                        ),
+                        "plant_code": np.full(T, 0, dtype=np.int32),
+                        "klass": _cat(cats_klass, np.full(T, ck, dtype=np.int32)),
+                        "fuel": _cat(cats_fuel, np.full(T, cf, dtype=np.int32)),
+                        "supply": _cat(cats_supply, np.full(T, cs, dtype=np.int32)),
+                        "zone": _cat(
+                            cats_zone,
+                            np.full(
+                                T, np.searchsorted(cats_zone, zone), dtype=np.int32
+                            ),
+                        ),
                         "hour": np.arange(T, dtype=np.int32),
                         "mw": a[z],
                         "lmp": prices[z],
@@ -466,10 +511,14 @@ def _dispatch_frame(
             )
 
     df = pd.concat(frames, ignore_index=True)
-    df.insert(0, "pass", pass_label)
+    df.insert(
+        0,
+        "pass",
+        pd.Categorical.from_codes(
+            np.zeros(len(df), dtype=np.int8), categories=[pass_label]
+        ),
+    )
     df.insert(0, "year", np.int16(year))
-    for col in ("pass", "unit_id", "klass", "fuel", "supply", "zone"):
-        df[col] = df[col].astype("category")
     df["mw"] = df["mw"].astype(np.float32)
     df["lmp"] = df["lmp"].astype(np.float32)
     return df
@@ -657,23 +706,34 @@ def _unit_hourly_frame(
     groups = [str(g) for g in groups][:n_gen] if groups is not None else [""] * n_gen
     # Same plant-code convention as _dispatch_frame, so the two frames join.
     plant_codes = _plant_codes_from_unit_ids(unit_ids, numeric_head=iso != "ERCOT")
-    rep = lambda a: np.repeat(np.asarray(a, dtype=object), T)  # noqa: E731
+
+    # PERF-A prototype (NOT-FOR-MERGE): categorical-from-codes label columns,
+    # same mechanics and identity argument as _dispatch_frame above.
+    def _vocab(values):
+        return np.sort(pd.unique(np.asarray(values, dtype=object)))
+
+    def _repcat(values):
+        cats = _vocab(values)
+        codes = np.searchsorted(cats, np.asarray(values, dtype=object)).astype(np.int32)
+        return pd.Categorical.from_codes(np.repeat(codes, T), categories=cats)
+
+    n_rows = n_gen * T
     df = pd.DataFrame(
         {
-            "year": np.int16(year),
-            "pass": pass_label,
-            "unit_id": rep(unit_ids),
+            "year": np.full(n_rows, year, dtype=np.int16),
+            "pass": pd.Categorical.from_codes(
+                np.zeros(n_rows, dtype=np.int8), categories=[pass_label]
+            ),
+            "unit_id": _repcat(unit_ids),
             "plant_code": np.repeat(plant_codes.astype(np.int32), T),
-            "plant_group": rep(groups),
-            "fuel": rep(fuels),
-            "zone": rep(zones),
+            "plant_group": _repcat(groups),
+            "fuel": _repcat(fuels),
+            "zone": _repcat(zones),
             "hour": np.tile(np.arange(T, dtype=np.int32), n_gen),
             "mw": disp.reshape(-1),
             "cap_mw": cap.reshape(-1),
         }
     )
-    for col in ("pass", "unit_id", "plant_group", "fuel", "zone"):
-        df[col] = df[col].astype("category")
     return df
 
 
