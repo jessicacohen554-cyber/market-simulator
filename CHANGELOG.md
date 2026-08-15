@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-15 — BLOAT-B-5 (PR-5, #3978): owner-signed batch executed — A2 + B1b + B3 untracked (−2,518.5 MiB at tip, 763 payloads), C touchpoints vetoed; golden-tier dispatch deferred by owner
+
+The owner answered the G1 item card in-session: **A2 / B1b / B3 SIGNED**, the
+two §5.1 C-touchpoint rows **VETOED** (kept while the 2022 touchpoint loops
+are live). Per-corpus commits in the merged PR-2 idiom — SHA256 manifests
+tracked (B3's newly created over tree-sha-verified bytes; A2/B1b reuse
+BLOAT-B-1's post-slim manifests), corpus READMEs with source tables,
+past-retention statements, pin sha `726f389d` and `git restore` recovery
+commands, gitignore payload globs (README/SHA256SUMS kept; the OASIS
+SingleZip pattern keeps future pulls out by corpus design). The ERCOT-157
+SCED window (323 shards), `ercot86_tail_days`, and the golden-listed CAISO
+hourly aggregates stay tracked. No history rewrite; pack size unchanged. The
+post-merge golden-data-tier dispatch is deferred by owner decision pending
+the curate_emissions OOM fix lane (GOLDEN-TIER-FIX); the bloat plan's §8
+PR-5 bullet and item sections carry the execution record.
+
 ## 2026-08-15 — BLOAT-B-6 close-out SALVAGED (PR #3954, superseded — not merged as written): the pre-prune baseline at `315a245` preserved — dry-run floor 922.3 MiB removable, golden tier broken (G3 evidence-blocked), D-ledger closures re-verified
 
 Salvage of unmerged PR #3954 (head `f877d61`; the authoring session was lost
