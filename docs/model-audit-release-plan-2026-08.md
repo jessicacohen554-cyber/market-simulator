@@ -920,3 +920,23 @@ your branch when done.
     `2026-08-14-neiso-93-envelope`** (was neiso-87); CAISO/MISO/NYISO/PJM
     unchanged. `complete` markers: NEISO, NYISO, PJM. Any lane quoting keeper
     state re-reads `frontend/data/backcast/keepers/<ISO>.json`.
+- 2026-08-15 — **PR #3954's durable parts SALVAGED, per the ruling above**
+  (branch `claude/prs-3954-3946-salvage-6iufwj`; the authoring session was
+  lost with the PR unmergeable, so the salvage re-lands the content under
+  supersession banners instead of merging it as written).
+  `docs/bloat-removal-report-2026-08.md` lands verbatim under a banner
+  naming what stays authoritative — §2 the dry-run PRE-PRUNE floor
+  (922.3 MiB removable vs 9,901.7 MiB protected at `315a245`, run
+  `31857841269`, guard held), §4 the golden-tier diagnosis (the tier has
+  never reached its own tests; `curate_emissions.py` OOM located to
+  `curate_year()`; corroborated by PERF-A's independent measurement and
+  low-mem prototype), §3 the method re-validation, §5 the drift notes, §7
+  the D-ledger closure re-verifications — and what is superseded: every
+  §0/§1/§6/§8 non-execution statement (BLOAT-B ran 05:38–05:39, hours
+  after the measurement). The CHANGELOG carries the same framing; the
+  bloat plan §9 D-5 line now carries its CLOSED annotation. **The
+  re-measured close-out (BLOAT-B-7) stays OPEN** — the salvage preserves
+  the §2 floor it subtracts from. PR #3946 (ercot-200 regime-conditioning
+  card W) lands whole on the same branch with its own landing notes — its
+  record is the ERCOT calibration log, not this ledger. Both PRs can be
+  closed unmerged once this branch lands.

@@ -1,5 +1,55 @@
 # Changelog
 
+## 2026-08-15 — BLOAT-B-6 close-out SALVAGED (PR #3954, superseded — not merged as written): the pre-prune baseline at `315a245` preserved — dry-run floor 922.3 MiB removable, golden tier broken (G3 evidence-blocked), D-ledger closures re-verified
+
+Salvage of unmerged PR #3954 (head `f877d61`; the authoring session was lost
+with the PR unmergeable against a moved main). The full report lands verbatim
+under a supersession banner: `docs/bloat-removal-report-2026-08.md`. The PM
+ruling it lands under (release plan §8, 2026-08-15 refresh): the close-out
+measured `315a245` at ~02:00 and correctly reported BLOAT-B never executed /
+0.0 MiB recovered — and was then overtaken the same morning when BLOAT-B ran
+out of sequence at 05:38–05:39 (PR-1 #3958 −739.8 MiB, PR-2 #3956
+−361.8 MiB, PR-4 #3955 script rotation; ≈1,101 MiB recovered at tip;
+PR-3/PR-5 remain). The headline is therefore superseded; what is salvaged is
+what stays true:
+
+- **The pre-prune floor, quantified** (`cleanup-large-blobs.yml` dry run
+  `31857841269` at `315a245`; the `REWRITE-HISTORY` confirm phrase never
+  supplied, and the run's own step record proves the guard held): **922.3 MiB
+  removable (3,974 blobs) vs 9,901.7 MiB protected (6,032), disjointness
+  PASSED**, 17.92 GiB mirror pack — a history rewrite at that tip reclaims
+  8.5 % of in-scope bytes / ~5 % of the pack, the standing NO-GO's
+  arithmetic confirmed from a second angle. Measured hours before the first
+  prune merged, this is the exact floor a post-prune dry run subtracts from.
+- **The golden data tier does not work — G3 is evidence-blocked** (report
+  §4): `golden-data-tier.yml` red twice at the same step (`31767823203`,
+  `31857842156`), cause reproduced locally — `curate_emissions.py --years
+  2023` peaks at 9.07 GiB RSS from 119.1 MiB of input parquet (three
+  whole-year materializations in `curate_year()`,
+  `scripts/data/curate_emissions.py:268–291`) and OOMs the runner, reported
+  as "shutdown signal" exit 143. Independently corroborated the same day by
+  PERF-A (10.04 GiB stock peak measured; 6.45 GiB low-mem prototype,
+  `docs/handoffs/perf-recheck-2026-08.md`). The tier has never reached its
+  own tests; a pre-prune green must be recorded before any post-prune red
+  can be attributed.
+- **D-ledger closures re-verified at `315a245`** (report §7): D-3 CLOSE AS
+  SHIPPED (parity checker green — 69 runs, 0 orphans; `live_bundles`
+  immunity intact), D-4 CLOSE AS EXECUTED (zero root-level zips), D-8
+  SUPERSEDE by BLOAT-1/2/3 — plus the correction that **D-5 was already
+  closed by DEBUG-A on 2026-08-14** (patch archived to `patches/archive/`,
+  moved not deleted, keep-required honored); the bloat plan §9 line now
+  carries that annotation.
+- **Plan §2's measurement method re-validated** (report §3): the
+  golden-tier sparse globs re-evaluated at tip reproduce the keep-required
+  block at 1,512.8 MiB / 1,043 files, matching the plan to within the five
+  files added since.
+
+Still open, deliberately not attempted in the salvage: the re-measured
+close-out (BLOAT-B-7) against the post-prune tip, and the
+`curate_emissions.py` memory fix (PERF-B's surface). Docs-only — no data
+file, corpus, bundle, script or workflow was moved, slimmed, converted or
+deleted.
+
 ## 2026-08-15 — BLOAT-B PR-1: the SCED corpus slimmed in place (plan §3 A1 + §4.1 B1a)
 
 WS6 of `docs/model-audit-release-plan-2026-08.md`, executing
