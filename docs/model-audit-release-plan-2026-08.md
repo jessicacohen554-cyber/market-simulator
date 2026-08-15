@@ -940,3 +940,27 @@ your branch when done.
   card W) lands whole on the same branch with its own landing notes — its
   record is the ERCOT calibration log, not this ledger. Both PRs can be
   closed unmerged once this branch lands.
+- 2026-08-15 — **BLOAT-B-5 dispatched and delivered: PR #3978** (§8/PR-5 of
+  `docs/bloat-removal-plan-2026-08.md`), branch
+  `claude/bloat-b5-signed-items-2a7ek3` off `726f389d`, label
+  `intentional-shrink`. The B-5 prompt arrived with its four sign-off
+  placeholders unfilled, so **the owner's G1 item card was served and
+  answered IN-SESSION** — the four verdicts, verbatim: **A2 SIGNED** (the
+  plan's defer-to-Stage-2 recommendation declined), **B1b SIGNED**, **B3
+  SIGNED**, **C touchpoints VETOED — keep while the 2022 touchpoint loops
+  are live** (pjm-2022 #3939/#3951 merged 08-14/15; neiso-92/93 envelope
+  repair; revisit when the 2020–2022 ladder closes). Executed
+  **−2,518.5 MiB / 763 payload files** untracked at tip, no history rewrite,
+  pack unchanged: A2 1,846.9 MiB (673 shards 2024-04..2026-02 + the 27
+  rtcb-format-2026/ parts; ERCOT-157 window kept; a tracked rtcb README stub
+  keeps the quarantine layout), B3 559.9 MiB (60 past-retention OASIS GRP
+  dailies — new SHA256SUMS over tree-sha-verified bytes, README with the
+  past-retention statement, SingleZip glob keeps future pulls out), B1b
+  111.7 MiB (3 probe-only extracts; ercot86 kept for the standing derive).
+  Plan item rows + the §8 PR-5 bullet annotated in the same PR.
+  **Golden-tier dispatch DEFERRED by owner decision this sitting** ("OOM is
+  fine right now"): the pre-existing curate_emissions OOM (salvaged report
+  §4) fails every dispatch regardless of prunes, so the B-1/B-2/B-5 dispatch
+  duty transfers to the GOLDEN-TIER-FIX lane (prompt issued to the owner
+  alongside re-issued BLOAT-B-3 and BLOAT-B-6R prompts) and G3 stays
+  evidence-blocked until its run is green. PR-3 remains undispatched.

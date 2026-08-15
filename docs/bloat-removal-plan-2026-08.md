@@ -206,6 +206,18 @@ windows.
 | **A2** | Conversion of the 2024+ window (post-slim ≈ 1,280 MiB incl. rtcb): gitignore payload globs, keep README + SHA256SUMS, record the last-tracked sha in the README | −≈ 1,280 MiB further | Medium: "re-fetchable" decays; the honest recovery story is history-as-archive, same as Stage 2 | **needs-sign-off** (recommend deferring A2 into the Stage-2 decision — it is the same call in miniature) |
 | — | The ERCOT-157 window (2023) is **never converted**: irreplaceable-from-source, restored by hand once already. It is slimmed under A1 and stays tracked | — | — | recorded |
 
+**A2 EXECUTED 2026-08-15 (BLOAT-B-5, PR #3978) — owner-SIGNED at the
+in-session G1 item card** *(the defer-to-Stage-2 recommendation above was
+declined)*: top-level publications 2024-04..2026-02 (673 shards) + the whole
+`rtcb-format-2026/` quarantine (27 parts) untracked at tip — measured
+**−1,846.9 MiB** of post-slim bytes (above the ≈1,280 estimate because B-1's
+slim recovered 21.3 % rather than the SNAPPY-era 45 %, leaving more bytes for
+this conversion). The ERCOT-157 window (323 shards) stays tracked exactly as
+the table's third row records; `README.md` + post-slim `SHA256SUMS.txt` stay
+tracked (pin sha + whole-window and single-shard restore commands in the
+corpus README), and a tracked `rtcb-format-2026/README.md` stub keeps the
+load-bearing quarantine layout. Execution record: §8 PR-5.
+
 **BLOAT-B execution notes for A1:** the rewrite touches ~1.75 GiB of blobs, far
 beyond a single push. Chunk by publication month (~35 commits of 25–90 MB
 packs, each within the measured `git push` envelope), blob-verify per chunk
@@ -240,6 +252,14 @@ extracts may already be column-subset, in which case the yield shrinks and the
 item self-cancels at measurement). **B1b (needs-sign-off):** convert the three
 probe-only files (145.1 MiB pre-slim) under history-as-archive; keep
 `ercot86_tail_days` tracked while `derive_sced_coal_uppertail.py` is standing.
+
+**B1b EXECUTED 2026-08-15 (BLOAT-B-5, PR #3978) — owner-SIGNED**: the three
+probe-only extracts untracked, measured **−111.7 MiB** post-slim (B1a's slim
+had already banked the projection half). `ercot86_tail_days` stays tracked for
+the standing derive; bytes pinned by the tracked
+`SHA256SUMS-60day-sced-extracts.txt` (post-slim at head, pre-slim raw at
+`971eaa3`); pin sha, restore command and the decaying NP3-965 re-fetch route
+in `data/raw/ercot/README.md`. Execution record: §8 PR-5.
 
 ### 4.2 The 21 loose `60_DAY_DAM_DISCLOSURE_*` parquets (244.1 MiB) — **verified KEEP, removed from the candidate list**
 
@@ -281,6 +301,15 @@ slim) does not apply to already-compressed zips. This is the cleanest concrete
 instance of the Stage-2 recovery story and a good owner test-case for it. The
 `{GUID}.pdf, attachment` file is a hygiene sub-item (identify, then delete or
 rename to convention) — **class-approved** at its 3.7 MiB.
+
+**B3 EXECUTED 2026-08-15 (BLOAT-B-5, PR #3978) — owner-SIGNED**: the 60
+dailies untracked, **−559.9 MiB** (the GUID hygiene sub-item had already
+executed in PR-2 #3956). New tracked `SHA256SUMS.txt` — every zip's disk bytes
+tree-sha-verified against HEAD before hashing — plus a corpus `README.md` with
+the source table, the past-retention statement (history-as-archive is the only
+recovery), pin sha and restore command; `.gitignore` gains the
+date-range-prefixed SingleZip glob so future OASIS pulls stay out per the
+corpus's own staged-out design. Execution record: §8 PR-5.
 
 ### 4.4 `data/raw/caiso-dam-outages` (163.7 MiB: 1,094 xlsx = 155.0 + parquet/README/patch/missing-days 8.7)
 
@@ -410,9 +439,9 @@ applies — deleted means deleted.
 | `miso155_p0_C` | 6.2 | **HOLD — verify** | `tests/test_miso155_p0_commitment_sidecar.py` (added 2026-08-13) reads this bundle's sidecar; prune nothing a committed test opens — resolve the test's fixture path first |
 | `nyiso133_cod_arm` / `_control` | 7.2 | **HOLD** | nyiso-134 2022-readiness assessment dated 2026-08-14 — lane open |
 | **subtotal — hold until lane adjudication** | **23.2** | | |
-| `neiso86_2022_corrected` | 3.7 | **needs-sign-off** | 2022 touchpoint evidence — the rule-22 touchpoint loop is iterative and may re-read it |
-| `pjm2022_touchpoint` | 2.2 | **needs-sign-off** | same |
-| **subtotal — owner call** | **5.9** | | |
+| `neiso86_2022_corrected` | 3.7 | **VETOED 2026-08-15 (owner) — keep** | 2022 touchpoint evidence — the rule-22 touchpoint loop is iterative and may re-read it. Vetoed at the BLOAT-B-5 G1 item card while both 2022 loops are LIVE (pjm-2022 root-cause #3939/#3951 merged 08-14/15; neiso-92/93 envelope repair); revisit when the 2020–2022 ladder closes |
+| `pjm2022_touchpoint` | 2.2 | **VETOED 2026-08-15 (owner) — keep** | same |
+| **subtotal — owner call: VETOED, kept** | **5.9** | | |
 
 ### 5.2 The four `_`-prefixed dirs — **citation check answers KEEP (all four)**
 
@@ -641,6 +670,18 @@ Tip trajectory: 10,080 → **≈ 8.1 GiB** (class-approved only) → **≈ 6.1 G
   three deltas from the itemization: §6 "EXECUTED 2026-08-15".
 - **PR-5 — signed-item batch** (whichever of B3 / B1b / A2 / C-sign-offs the
   owner approves at G1), same mechanics as PR-2/PR-3.
+  **EXECUTED 2026-08-15** (BLOAT-B-5 session, PR #3978, label
+  `intentional-shrink`): the owner answered the G1 item card **in-session** —
+  **A2 SIGNED / B1b SIGNED / B3 SIGNED / C-touchpoint rows VETOED** (kept
+  while the 2022 touchpoint loops are live). Executed **−2,518.5 MiB / 763
+  payload files** at tip (A2 1,846.9 + B3 559.9 + B1b 111.7 — post-slim
+  bytes; no history rewrite, pack unchanged): per-corpus commits in the PR-2
+  idiom, manifests tracked (B3's newly created over tree-sha-verified bytes;
+  A2/B1b reuse B-1's post-slim manifests), pin sha `726f389d` + restore
+  commands per corpus README, ignore semantics asserted for every payload and
+  kept class. Item records: §3 (A2), §4.1 (B1b), §4.3 (B3), §5.1 (C veto).
+  The charter's post-merge golden-tier dispatch is **DEFERRED** — see
+  Close-out below.
 - **Close-out (per WS6):** `cleanup-large-blobs.yml` **DRY RUN** —
   `dry_run=true` — to quantify what the prunes turned into
   superseded-blob reclaim for the standing owner option (the workflow's
@@ -648,6 +689,14 @@ Tip trajectory: 10,080 → **≈ 8.1 GiB** (class-approved only) → **≈ 6.1 G
   NO-GO under AQ). Then the post-prune `golden-data-tier.yml` dispatch result
   goes into the G3 gate evidence, and the recovery table above is re-measured
   against the actual tree for the BLOAT-B report.
+  **Golden-tier dispatch DEFERRED (owner decision 2026-08-15, BLOAT-B-5
+  sitting):** the tier has never been green — the pre-existing
+  `curate_emissions.py` runner OOM (salvaged report
+  `docs/bloat-removal-report-2026-08.md` §4) fails every dispatch regardless
+  of prunes — so the owner accepted deferring the B-1/B-2/B-5 post-merge
+  dispatch duty until the GOLDEN-TIER-FIX lane lands the memory fix and runs
+  the single authorized dispatch; G3 stays evidence-blocked until that run is
+  green.
 
 Ordering within Wave 3: PR-4 (no data) any time; PR-2 → PR-3 → PR-1 (PR-1's
 chunked pushes are the long pole; nothing depends on them landing first);
