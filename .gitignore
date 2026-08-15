@@ -790,3 +790,41 @@ data/raw/NYISO/2026-Gold-Book-Public.pdf
 # data/raw/zone-specific-demand/NYISO/raw/, which is untouched. Per-product MIS
 # URL patterns + inner month inventory: data/raw/NYISO/README.md.
 data/raw/NYISO/nyiso load reports *.zip
+
+# --- BLOAT-B-5 (PR-5) owner-signed conversions, 2026-08-15 -----------------
+# Same corpus idiom as the BLOAT-B-2 section above: payload globs only, each
+# corpus README carries the source table, the pin sha and the
+# `git restore --source=<pin> -- <path>` recovery command; SHA256SUMS files
+# stay tracked as the provenance record for the removed bytes.
+
+# B3 -- CAISO OASIS GRP SingleZip dailies (60 zips, 559.9 MiB, Jan-2023 trade
+# dates). PAST the moving ~39-month OASIS retention: history-as-archive is the
+# ONLY recovery (data/raw/lmp-data/CAISO/README.md). The date-range-prefixed
+# glob also keeps any FUTURE hand-downloaded SingleZip/GRP pull out of the
+# pack, per the corpus's own staged-out design (postprocess_oasis_downloads).
+# The golden-listed CAISO_{dam,rtm}_hourly_*.csv aggregates are untouched.
+data/raw/lmp-data/CAISO/2???????_2???????_*_csv.zip
+!data/raw/lmp-data/CAISO/README.md
+!data/raw/lmp-data/CAISO/SHA256SUMS.txt
+
+# B1b -- three probe-only 60d SCED Gen Resource extracts (111.7 MiB post-slim;
+# frozen-probe consumers only). The FOURTH extract (2025_ercot86_tail_days)
+# STAYS TRACKED -- it feeds the standing derive_sced_coal_uppertail.py -- so
+# these are listed one per line, never globbed. Manifest:
+# data/raw/ercot/SHA256SUMS-60day-sced-extracts.txt (tracked).
+data/raw/ercot/60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot74_tail_days.parquet
+data/raw/ercot/60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot75_control_days.parquet
+data/raw/ercot/60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot75_control_days.parquet
+
+# A2 -- the SCED 2024+ window (top-level pubs 2024-04..2026-02, 673 shards)
+# plus the whole rtcb-format-2026/ quarantine (27 parts): 1,846.9 MiB
+# post-slim. The ERCOT-157 window (2023-03..2024-03) STAYS TRACKED
+# (irreplaceable-from-source) -- the month globs below are shaped to never
+# touch it. README + post-slim SHA256SUMS.txt stay tracked;
+# rtcb-format-2026/README.md keeps the load-bearing quarantine layout.
+data/raw/ercot/SCED/2024-0[4-9].part*.parquet
+data/raw/ercot/SCED/2024-1[0-2].part*.parquet
+data/raw/ercot/SCED/2025-*.part*.parquet
+data/raw/ercot/SCED/2026-*.part*.parquet
+data/raw/ercot/SCED/rtcb-format-2026/*.parquet
+!data/raw/ercot/SCED/rtcb-format-2026/README.md
