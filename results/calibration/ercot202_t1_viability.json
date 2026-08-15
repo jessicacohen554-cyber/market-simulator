@@ -1,0 +1,201 @@
+{
+  "probe": "ercot202_t1_viability",
+  "card": "DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md card T",
+  "keeper_flag_state": {
+    "bundle": "/home/user/market-simulator/results/calibration/ercot192_arm_B",
+    "run_id": "2026-08-12-run192-arm-coal-peak",
+    "meta_timestamp": "2026-08-12T17:55:20",
+    "meta_gas_hh_monthly_shape": true,
+    "resolved_gas_hh_monthly_shape": true,
+    "resolved_gas_seasonality": true,
+    "resolved_gas_daily_shape": true,
+    "resolved_gas_monthly_actuals": false,
+    "resolved_mode": "backcast"
+  },
+  "shape_effect": {
+    "henry_hub_rows_loaded": 354,
+    "henry_hub_source": "data/raw/gas-prices/henry_hub_monthly.csv",
+    "years": {
+      "2023": {
+        "keeper_annual_gas_level_usd_mmbtu": 2.54,
+        "measured_hh_months_present": 12,
+        "armed_month_factors": [
+          1.289463,
+          0.937845,
+          0.908376,
+          0.852236,
+          0.845774,
+          0.857712,
+          1.005017,
+          1.017624,
+          1.038701,
+          1.174582,
+          1.066713,
+          0.993986
+        ],
+        "unarmed_month_factors": [
+          1.15,
+          1.1,
+          1.02,
+          0.92,
+          0.9,
+          0.93,
+          0.95,
+          0.95,
+          0.9,
+          0.95,
+          1.05,
+          1.18
+        ],
+        "armed_hour_weighted_mean_factor": 0.9999999999999998,
+        "armed_equals_unarmed": false,
+        "wedge_usd_mmbtu_by_month": [
+          0.3542,
+          -0.4119,
+          -0.2835,
+          -0.1721,
+          -0.1377,
+          -0.1836,
+          0.1397,
+          0.1718,
+          0.3523,
+          0.5704,
+          0.0425,
+          -0.4725
+        ]
+      },
+      "2024": {
+        "keeper_annual_gas_level_usd_mmbtu": 2.19,
+        "measured_hh_months_present": 12,
+        "armed_month_factors": [
+          1.445682,
+          0.783559,
+          0.679555,
+          0.727848,
+          0.965168,
+          1.154197,
+          0.944686,
+          0.905997,
+          1.035946,
+          1.000944,
+          0.963575,
+          1.368077
+        ],
+        "unarmed_month_factors": [
+          1.15,
+          1.1,
+          1.02,
+          0.92,
+          0.9,
+          0.93,
+          0.95,
+          0.95,
+          0.9,
+          0.95,
+          1.05,
+          1.18
+        ],
+        "armed_hour_weighted_mean_factor": 1.0,
+        "armed_equals_unarmed": false,
+        "wedge_usd_mmbtu_by_month": [
+          0.6475,
+          -0.693,
+          -0.7456,
+          -0.4208,
+          0.1427,
+          0.491,
+          -0.0116,
+          -0.0964,
+          0.2977,
+          0.1116,
+          -0.1893,
+          0.4119
+        ]
+      },
+      "2025": {
+        "keeper_annual_gas_level_usd_mmbtu": 3.52,
+        "measured_hh_months_present": 12,
+        "armed_month_factors": [
+          1.170246,
+          1.188029,
+          1.168488,
+          0.970894,
+          0.884477,
+          0.857648,
+          0.907961,
+          0.826138,
+          0.843552,
+          0.907308,
+          1.076058,
+          1.209272
+        ],
+        "unarmed_month_factors": [
+          1.15,
+          1.1,
+          1.02,
+          0.92,
+          0.9,
+          0.93,
+          0.95,
+          0.95,
+          0.9,
+          0.95,
+          1.05,
+          1.18
+        ],
+        "armed_hour_weighted_mean_factor": 1.0,
+        "armed_equals_unarmed": false,
+        "wedge_usd_mmbtu_by_month": [
+          0.0713,
+          0.3099,
+          0.5227,
+          0.1791,
+          -0.0546,
+          -0.2547,
+          -0.148,
+          -0.436,
+          -0.1987,
+          -0.1503,
+          0.0917,
+          0.103
+        ]
+      }
+    }
+  },
+  "recipe_delta": {
+    "control_effective": true,
+    "arm_effective": true,
+    "effective_values_equal": true,
+    "kwargs_keys_differing": [
+      "prb_overrides"
+    ],
+    "prb_overrides_delta": {
+      "gas_hh_monthly_shape": [
+        null,
+        true
+      ]
+    }
+  },
+  "t3b_adder_audit": {
+    "source_report": "ERCOT MIS NP6-905-CD (Historical Real-Time Price Adders by SCED Interval)",
+    "regime_gate": "2025 hours >= 8112 zeroed (RTC+B go-live)",
+    "columns_read_by_src": [
+      "rtordpa"
+    ],
+    "years": {
+      "2023": {
+        "error": "missing artifact /home/user/market-simulator/data/raw/ercot/ercot_2023_ordc_reserves_hourly.parquet"
+      },
+      "2024": {
+        "error": "missing artifact /home/user/market-simulator/data/raw/ercot/ercot_2024_ordc_reserves_hourly.parquet"
+      },
+      "2025": {
+        "error": "missing artifact /home/user/market-simulator/data/raw/ercot/ercot_2025_ordc_reserves_hourly.parquet"
+      }
+    }
+  },
+  "verdict": {
+    "t1_viable": false,
+    "reason": "CONTROL and ARM resolve to the same effective gas_hh_monthly_shape value \u2014 the mechanism T-1 proposes to arm is already armed in the keeper, so the chartered A/B has zero delta"
+  }
+}

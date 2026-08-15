@@ -8058,9 +8058,9 @@ no matrix cell/row edit (a card is a read — the ercot-182/189 precedent),
 no keeper/registry/bench touch, no C3c ledger change, no rubric amendment,
 no marker granted or spent; the L-SCAR lane (stopped at V0) and the frozen
 composition lane untouched; ercot-188/E2 P0 forfeiture inherited unexpired.
-Session consumed the ercot-196 shorthand. Next shorthand: **ercot-197**.
+Session consumed the ercot-196 shorthand. Next shorthand: **ercot-202**.
 
-## ercot-197 (2026-08-14) — OWNER SITTING RECORD: card T SIGNED (T-1 + T-3b), L-SCAR V0-FAIL ADJUDICATED — docs only, NO lever, NO solve, keeper UNCHANGED
+## ercot-202 (2026-08-14) — OWNER SITTING RECORD: card T SIGNED (T-1 + T-3b), L-SCAR V0-FAIL ADJUDICATED — docs only, NO lever, NO solve, keeper UNCHANGED
 
 **The sitting** (held 2026-08-14 in the ERCOT-SCAR workstream manager
 session, owner selections interactive; primary record:
@@ -8093,7 +8093,45 @@ regime card staged next cycle. This session: appends to the two decision
 cards + this entry, nothing else — no lever, no solve, no year touched
 (rule 22 moot but binding), no matrix/keeper/registry/bench contact; keeper
 UNCHANGED at `2026-08-12-run192-arm-coal-peak`. Session consumed the
-ercot-197 shorthand. Next shorthand: **ercot-198**.
+ercot-202 shorthand. Next shorthand: **ercot-198**.
+
+## ercot-198 (2026-08-14) — T-3b EXECUTED: published-adder overlay-completeness audit — committed overlay INCOMPLETE in 2024 (missing published RTORPA, +0.24 $/MWh dw), near-complete in 2025 (+0.015); NO lever, NO solve, no year scored, NO matrix edit, keeper UNCHANGED
+
+**The signed card-T companion T-3b executed** (T3B-AUDIT lane; card
+`docs/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` §4 T-3b,
+RESOLUTIONS on main at `fb6d08d`). Probe
+`scripts/probes/ercot198_t3b_adder_overlay_audit.py` →
+`results/calibration/ercot198_t3b_adder_overlay_audit.json`; finding
+`docs/FINDING-ercot198-t3b-adder-overlay-audit-2026-08-14.md`. Question
+(card §2(d)): bench `rt_lw_mon` is settlement RTSPP = RTLMP + RTORPA +
+RTORDPA (the design's only two energy-settlement adders, retired at RTC+B
+go-live 2025-12-05); scored `pMon` is the energy-only dual; the committed
+overlay is sidecar `rtordpa_overlay` (= published RTORDPA, verified exact,
+max abs diff 0.0) + `ordc_adder` (the model's endogenous RTORPA analogue —
+measured ≈ ZERO in 2024/2025: 2 and 1 non-zero hours, max $0.15/$0.03).
+**Verdict: 2024 INCOMPLETE — committed 0.240 of 0.477 $/MWh dw settled
+published content (50 %); the missing component is the published RTORPA,
++0.237 dw, concentrated Apr +0.76 / Aug +0.64 / May +0.63 / Nov +0.27.
+2025 NEAR-COMPLETE — 0.395 of 0.410 (96 %), gap +0.015 (Oct +0.13);
+Feb-2025's +1.50 fully captured (gap 0.00).** Card §2(d) restated at full
+magnitude: the T-3a basis wedge is 0.48/0.43 $/MWh mean-of-months
+(2024/2025), not 0.25/0.42 — 2024 doubles, 2025 stands; the "~15 % of the
+2025 uniform bias / ~25 % of Feb-2025" reading stands. Sizes only — T-3a
+stays unsigned with the owner. Intake: the card's "one data ask" resolved
+as already-on-disk — NP6-905-CD curated hourly parquets (complete; 2025
+ends at go-live hour 8112) + recovered raw NP6-323 SCED-interval parquets
+(cross-check; its 2024 file is missing June) + SOM 2024/2025 all-hours
+averages ($0.25/$0.24 and <$0.02/$0.41), all agreeing within aggregation
+basis. One archive print rejected by the settlement-closure guard: 2025
+h4334 (Jun-30 14:00, archive RTORPA $414/h vs settled hub RTSPP $54.96) —
+price-corrected, never settled; it is the whole archive-vs-SOM 2025 RTORPA
+distance. Fences: Q-B/R-A honored (2023 untouched); rule 22/13 clean
+(measured-vs-measured); no mechanism, no ScenarioConfig field, no matrix
+cell/row edit (`ercot_rtordpa_overlay` stays K, read only), no
+keeper/registry/bench contact; keeper UNCHANGED at
+`2026-08-12-run192-arm-coal-peak`. New artifacts: probe + JSON + finding +
+this entry. Session consumed the ercot-198 shorthand. Next shorthand:
+**ercot-199**.
 
 ## ercot-201 (2026-08-14) — L2-BUILD PHASE-0 STOP: the chartered E1 dispersion surface is superseded on main (FFR-8B/FFR-9A), and its identification route is barred by an adjudicated prior stop — NOTHING built, NOTHING solved
 
@@ -8171,11 +8209,142 @@ nothing else; landed push-and-stop on `claude/ercot-scar-l2-e1-dispersion`
 (no PR, no merge — the cycle-8 convention). Session consumed the ercot-201
 shorthand. Next shorthand: **ercot-202**.
 
-## ercot-202 (2026-08-14) — THE CHARTERED ercot-187 SUCCESSOR EXECUTED: the rule-18 `[R-PHYSICS]` grain repair SOLVED, every kill gate PASSES, the arm is MEASURED INERT — **KEEPER → `2026-08-14-ercot202-arm-plantphysics`** on legitimacy alone; `p6243` SETTLED and the charter's fear REFUTED
+## ercot-202 (2026-08-14) — CARD T (T-1) IS **NON-VIABLE ON PREMISE**: `gas_hh_monthly_shape` is ALREADY ARMED on the run192 keeper — A/B CANCELLED before any solve, NO lever substituted; (T-3b) delivered and returns a POSITIVE result (the committed adder overlay is incomplete by RTOFFPA). No LP, no year solved or scored, no run registered, no cell/row edit, keeper UNCHANGED
+
+**Task.** Owner signature on `DECISION-CARD-ercot196` card T option **(T-1)** —
+arm the measured Henry Hub monthly shape as an input-correctness A/B against the
+run192 keeper recipe (level-preserving, zero fitted scalars, ercot-145b posture,
+fit gain NOT predicted) — **with (T-3b)** the published-adder
+overlay-completeness audit as its read-only companion. Deliverables:
+`docs/FINDING-ercot202-t1-nonviable-2026-08-14.md`, the read-only probe
+`scripts/probes/ercot202_t1_viability.py` (output
+`results/calibration/ercot202_t1_viability.json`), and this entry.
+
+**THE FINDING — the A/B was disqualified by its own pre-solve viability check.**
+Card T §4(T-1)(b) charters the arm on the premise that the field is *"built and
+default-off … currently unarmed"*, and §2(c) draws the consequence that *"the
+measured month-to-month commodity shape never enters"* ERCOT. **The premise is
+false.** Three committed records agree the run192 keeper ARMS it: `meta.json`
+`gas_hh_monthly_shape: true`; the RESOLVED `run_config.json` →
+`scenario_config.gas_hh_monthly_shape = True` (rule 24 `[R-REGISTRY]`, what the LP
+actually ran); and `mechanism-matrix.js:1886` (xiso-3 census 2026-08-04),
+*"**ARMED ON THE ERCOT KEEPER**"*. It has been armed since the ercot-29 probe
+ladder (`docs/calibration-log.md` §"ercot29 (+gas shape)"). The card conflated the
+**class default** (`scenarios.py` ships it `False` — "off by default", correctly
+quoted) with the **keeper's value** (`True`, passed as a `solve_and_persist`
+kwarg). Reconstructed through the very seam the A/B would use
+(`replay_keeper.build_kwargs`, `--set` dual-channel routing mirrored): CONTROL
+effective `True`, ARM effective `True`, **effective values EQUAL**; the arm's only
+delta is writing `gas_hh_monthly_shape: True` into `prb_overrides` — setting an
+already-`True` value, a solve no-op. **The chartered A/B has ZERO delta by
+construction**, so running it would spend two full-span ERCOT solves for two
+bundles identical in dispatch, price and every gate. Per the dispatch's standing
+instruction, **no lever was substituted** — `energy_online_capability_cap` was NOT
+armed, prepared or evaluated.
+
+**The mechanism itself is sound — it is the charter that is void.** Measured
+against the production path (`fuel/trajectories.py::gas_seasonal_shape`) with the
+committed HH series present: 12/12 measured months in each of 2023/2024/2025 (the
+NaN fallback never fires), armed ≠ unarmed in all three years, and the armed
+factors are **exactly level-preserving** (hour-weighted mean 1.000000000000 for
+2024/2025; 0.9999999999999998 for 2023, float rounding) — which is what carries
+**zero fitted scalars** (rules 20/23). *Trap recorded for future sessions:* with
+`data/raw/gas-prices/` un-hydrated, `gas_seasonal_shape` silently returns the
+generic shape for BOTH configs (documented missing-data fallback), so an
+armed-vs-unarmed check run without the data looks byte-identical and would wrongly
+read "inert". Hydrate first.
+
+**Card T §2(c)'s wedge reproduced EXACTLY — and what it really measures.** The
+probe regenerates `level × (measured − generic)` to the cent (2024 Jan **+0.65**,
+Feb **−0.69**, Mar −0.75, Apr **−0.42**, Jun +0.49, Dec +0.41; 2025 Feb **+0.31**,
+Mar +0.52, Aug **−0.44** $/MMBtu). **But the sign labels invert the model's actual
+state**: "model-cheap/model-dear" holds only if the model sits on the *generic*
+column, and it sits on the *measured* one. The wedge is the distance between the
+keeper's actual state and a counterfactual it is not in — i.e. **a measure of what
+arming already bought, reported as if still owed** (the same wedge the field's own
+`scenarios.py` docstring quotes as the defect it exists to fix, which §2(c) cites
+and reads as current). Card T §3's *"~$2–3/MWh in Feb from fuel shape (T-1)"* is
+therefore **already spent**, not reachable reach.
+
+**Propagation, so the correction lands at the source.** Origin
+`PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md` §1b/§6 ("currently unarmed …
+carrying no matrix row"), carried VERBATIM through DIAGNOSIS-ercot146,
+DIAGNOSIS-ercot147, PRECOMMIT-ercot148 §5, PRECOMMIT-ercot149 §5 and this log's
+lines 3520/3574/3817/3954 into DECISION-CARD-ercot196 §2(c)/§4(T-1)(b)/§5 — the
+"open owner rulings carried" blocks were copied forward without re-verification
+against the keeper config, while the correction (xiso-3/xiso-4, 2026-08-04) landed
+in another lane and was never back-propagated. **The rule-28(c) "row gap" is
+likewise stale: there is NO gap** — xiso-3 registered the field as a home row
+inside `gas_daily_shape`'s `def`, and `check_mechanism_matrix.py` passes on it
+(integrity OK, 188 field anchors, exit 0). A separate row was deliberately NOT
+minted: it would duplicate a registered field and break the census convention. The
+only matrix edit this session made is the factual correction of the two stale base
+**notes** (`:779`, `:1879`) that contradicted `:1886` of the same file; **no cell
+verdict in any shard was touched** — no mechanism was tested (rule 28(b) attaches
+to a mechanism test; a viability check that cancels the test is not one).
+
+**(T-3b) DELIVERED — POSITIVE RESULT: the committed overlay is INCOMPLETE by
+RTOFFPA.** Card T budgeted "one data ask (month-grain published adder series, not
+currently on disk)"; **the data is on disk**, in the artifact the overlay already
+reads — ERCOT MIS **NP6-905-CD** curated to
+`data/raw/ercot/ercot_<year>_ordc_reserves_hourly.parquet`, carrying all three
+published adders (`rtorpa`, `rtoffpa`, `rtordpa`). No data ask needed.
+`ercot_rtordpa_overlay_series` reads `rtordpa` ONLY; measured across `src/`, the
+consumed set is **`['rtordpa']`** — `rtoffpa` appears in `src/` only in prose
+comments, never as a data read. `rtorpa`'s absence is deliberate and correct (the
+co-opt produces it endogenously; overlaying it would double-count, rule 19).
+**RTOFFPA has neither an endogenous counterpart nor an overlay — represented
+nowhere.** Annual $/MWh with the overlay's own RTC+B gate applied: **2023**
+applied 0.7496 / unapplied RTOFFPA **0.5843** (**+77.9 %**); **2024** 0.2293 /
+**0.1522** (**+66.3 %**); **2025** 0.3709 / **0.0326** (+8.8 %). The applied
+column reproduces card T §2(d)'s demand-weighted +0.25/+0.42. **The unapplied
+slice lands in card T's named 2024 months** — Nov 0.2284 vs 0.2302 (**+101 %**),
+Apr 0.6186 vs 0.5076 (+82 %), Aug 0.1766 vs 0.4265 (**+242 %**), May 0.1238 vs
+0.4108 (**+332 %**); in 2025 near-inert except Jun (+120 %) and Oct (+36 %), and
+**Feb-2025 — §2(d)'s largest basis month — carries rtoffpa ≈ 0.0001, so the gap
+does NOT touch it.** THREE LIMITS, stated so it is not over-read: (1) whether
+RTOFFPA belongs in the RTSPP scoring basis is **NOT settled here** — the repo's own
+intake header calls `rtorpa` the adder "ERCOT folds into RTSPP" and is SILENT on
+`rtoffpa`; closing it needs the Nodal Protocols §6.6.3.2/§6.5.7.5 citation, which
+is the one real ask T-3b produces; (2) magnitudes are basis-consistency scale
+($0.15–0.58) against $5–7 monthly residuals — a correctness question, never a C3b
+lever; (3) direction is NOT uniformly favourable — it helps the under-read months
+(Aug/Nov-2024) and WORSENS the over-read ones (Apr/May-2024), which under rule 1
+`[R-STRUCT]` is irrelevant to whether it is right but means no fit gain should be
+expected and it must never be adopted because of one. **Nothing was armed**: an
+RTOFFPA leg would be a new mechanism needing its own charter, a rule-19
+reconciliation against the endogenous dual and `ercot_rtordpa_overlay` (`K`), and
+the protocol citation.
+
+**Board consequence (nothing decided here).** (T-1) is **void on premise** — it
+should be recorded withdrawn, not tested: no mechanism was refuted and ERCOT's
+`gas_hh_monthly_shape` posture is unchanged and correct. With T-4 refused (Q-B/R-A)
+and T-2 owner-gated (D2), the card's live board reduces to **T-0** plus the
+**T-3a/T-3b basis pair**, and §3's reach ledger should be read down by the Feb-2025
+fuel-shape line. T-3b's positive result needs two owner calls: (a) commission the
+protocol citation; (b) if RTOFFPA is in RTSPP, decide whether the fix is a **model**
+leg (mechanism, needs a charter) or a **scoring** change (T-3a, rubric-only).
+
+**Fences honoured.** No LP built, no year solved or scored, no run produced — so
+rule 15 `[R-DASHBOARD]` has nothing to register and rule 16 `[R-ALLYEARS]` nothing
+to span; no precommit pushed (no A/B to pre-register); no DOF entry (no new field;
+`n_residual` untouched at 6). Rule 22: ERCOT holds no `complete`/`final` marker —
+only {2023, 2024, 2025} artifacts read, no `--holdout-authorized`, no marker
+granted or spent. Not C3a-2023 spend (Q-B final) and not a C3b-2023 round (R-A):
+2023 appears only as a training-span year of the keeper's own config and of the
+adder audit. ercot-195's L-SCAR non-identifiability not re-tested and none of its
+three owner routes taken; D2 composition freeze, T-2/T-3a/T-4 and
+`diurnal_price_amplitude` (`U`) untouched. Rule 25: no ISO boundary crossed — no
+other shard, keeper, bench or registry touched. P2 stays archived (no P2 flag). No
+new GitHub Actions workflow; all work ran in-session.
+`energy_online_capability_cap` NOT armed, prepared or evaluated. Session consumed
+the ercot-202 shorthand. Next shorthand: **ercot-203**.
+
+## ercot-203 (2026-08-14) — THE CHARTERED ercot-187 SUCCESSOR EXECUTED: the rule-18 `[R-PHYSICS]` grain repair SOLVED, every kill gate PASSES, the arm is MEASURED INERT — **KEEPER → `2026-08-14-ercot202-arm-plantphysics`** on legitimacy alone; `p6243` SETTLED and the charter's fear REFUTED
 
 **Shorthand note.** The task prompt opened this lane as *ercot-195*; that
 shorthand was already spent on `main` by L-SCAR-SCREEN-2, whose own record
-closes *"Next shorthand: ercot-202."* This session is **ercot-202**; the
+closes *"Next shorthand: ercot-202."* This session is **ercot-203**; the
 assigned branch keeps its stale name (`claude/ercot-195-lever-selection-scssqc`).
 
 **SHORTHAND RE-KEY (recorded, not silently resolved).** This session ran as
@@ -8188,6 +8357,25 @@ entry so the shorthand maps to exactly one session's artifacts; the two
 registered run ids are `2026-08-14-ercot202-ctl-grain` and
 `2026-08-14-ercot202-arm-plantphysics`. Same class of collision as the
 ercot-193/194 file-order note, handled the same way: openly.
+
+**SECOND SHORTHAND RE-KEY (2026-08-15, at landing — recorded, not silently
+resolved).** The re-key above was itself overtaken: while this branch sat
+unmerged (its session blocked at `add_repo`), **another session landed its own
+`ercot-202` entry on `main`** — the card-T (T-1) viability lane, which closes
+*"Next shorthand: **ercot-203**."* Main's entry stands **unmodified** and this
+one follows it, re-keyed to **ercot-203**, per the standing append-collision
+convention. **The artifact stems were NOT renamed a second time, deliberately:**
+the `ercot202_*` bundles, probes, docs and the two registered run ids
+(`2026-08-14-ercot202-ctl-grain`, `2026-08-14-ercot202-arm-plantphysics`) are
+already REGISTERED and are referenced by `keepers/ERCOT.json`,
+`status/ERCOT.js` and the ERCOT matrix shard, so renaming them would require
+re-registering both bundles and re-stamping the keeper — dashboard-breakage
+risk for zero informational gain. The mapping is therefore explicit here rather
+than implicit in the filenames: **log entry ercot-203 ⇔ artifact stem
+`ercot202_*`**, and main's ercot-202 entry (T-1 non-viable) registered no run
+and produced no `ercot202_*` bundle, so no artifact name is ambiguous.
+Resolution performed by the ERCOT-SCAR workstream manager at landing, on owner
+instruction to promote.
 
 **Task.** The **ercot-187 successor**, open since 2026-08-10
 (`results/calibration/FINDING-ercot186-rule18-grain-2026-08-10.md` §5; owner
@@ -8303,4 +8491,4 @@ documented RTC+B seam — `scarcity.ercot_rtolcap_supply_cap_mw` leaves hours wi
 no measured RTOLCAP (the go-live tail after 2025-12-05) **uncapped**, and a
 sentinel over the final ~27 days averages to exactly the ~7.4e7 observed.
 
-**Next shorthand: ercot-203.**
+**Next shorthand: ercot-204.**

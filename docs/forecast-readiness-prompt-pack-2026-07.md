@@ -7215,3 +7215,41 @@ cache-key-pin CI verdict before merging.
 408/500 → `git config http.version HTTP/1.1` first; DATA PROFILE line required;
 half-dead-container recovery per `docs/fast-clone.md`). Inlined in the chat-delivered
 prompts per §0am.*
+
+## §0au — refresh @ `8f83900` (2026-08-14): D-32 LANDED/ACCEPTED, D-31 still nil, card D-33 opened with its prompt
+
+*Full adjudication: sitting Addendum AU.*
+
+* **§0at-2 D-32-F6FIX — LANDED, ACCEPTED** (#3949, `docs/handoffs/d32-f6fix-2026-08-13.md`).
+  All five acceptance rows met: PJM 16/16 bit-exact, CAISO 7/8 (the miss is the raw
+  product's own OASIS NaN gap, as the finding predicted), NEISO 2–45 h/yr, `_TOL`
+  unchanged and the test un-skipped, raw byte-untouched by hash. NYISO stated OPEN at
+  full magnitude with a measured argument that it is a THIRD defect. Deleted the
+  wrong-clock helper (rule 26) and shipped a fail-closed hub table unprompted.
+* **§0at-1 D-31-ADOPT — NO EVIDENCE YET** (third nil report). Value still 5.0 at
+  `capacity_market.py:3555`. Prompt stands as issued; not re-dispatched.
+* **NEW card D-33 — the NYISO interval convention** (AU.2). Prompt below, parked rather
+  than dispatched: it is data-contract work, not FFR/FH, and this desk is closing.
+
+### §0au-1 — D-33-NYISO-CONVENTION [OPUS] — adjudicate NYISO's RTD interval convention (prompt PARKED, owner routes it)
+
+DATA PROFILE: nyiso
+Object: `docs/handoffs/d32-f6fix-2026-08-13.md` §4 + §7 item 1. Two committed products
+adopt OPPOSITE conventions for NYISO RTD "Time Stamp" — `derive_actual_lmp._nyiso_wide`
+bins interval-BEGINNING, `curate_lmp.parse_nyiso_zip` interval-ENDING
+(`(ts_end − 1s).floor("h")`). Each matches its own product exactly and the other not at
+all (measured on June 2024 against the published 5-minute zip). One boundary sample in
+twelve swaps per hour: mean effect ~$0.62/month, max large on a spiky RT series;
+8,507–8,723 hours/year over the parity tolerance survive the D-32 fix. **The task is to
+adjudicate which convention matches NYISO's PUBLISHED definition — from the NYISO data
+dictionary / market manual, cited — and then correct the ONE product that is wrong.**
+Do NOT guess: a guess puts a wrong answer into a committed product, which is why the
+D-32 lane deliberately stopped here. Fences: `_TOL` stays 1e-2 (no widening, no per-ISO
+carve-out — F6 option C is rejected on the record); if the correction touches the RAW
+product, the NYISO keeper `2026-08-08-nyiso-132-cf-arm` is live on that series, so a
+keeper-impact assessment and (if it moves) a full re-registration per rules 15/16 are
+owed BEFORE promotion; rule 25 — NYISO only. CONSEQUENCE that makes this load-bearing:
+`docs/iso-model-unification-plan.md` §3 plans to make the clean backend mandatory;
+**that migration must not be treated as unblocked for NYISO until this is adjudicated.**
+Clause block: §0ar-clauses as amended by §0as (DATA PROFILE line; HTTP/1.1 push fix;
+fast-clone recovery).

@@ -258,3 +258,44 @@ recommendation only; no workflow was written in this lane.*
 
 **Take A, with the docstring correction inside it, plus D-narrow.** The NYISO interval-convention
 question travels with the FIX lane as a separate, un-adjudicated sub-object.
+
+---
+
+## RESOLUTION — option A landed, 2026-08-13/14 (lane D-32-F6FIX)
+
+*Appended, not edited: everything above is the diagnosis exactly as it landed on 2026-08-11.*
+
+Option A was signed by the owner (**D-32**, Addendum AT.2) and implemented on branch
+`claude/f6-lmp-backend-parity-fuc03v`. **B and C were not revisited.** Nothing was solved,
+scored, registered or promoted; no keeper moved; no `ScenarioConfig` field was added, so no
+rule-28 matrix row and no `_CACHE_KEY_OPTIONAL_FIELDS` entry were due — as §A predicted, and
+`check_mechanism_matrix.py` / `check_cache_key_registration.py` both exit 0.
+
+**What changed**, confined to the two files §A named:
+
+* `src/market_sim/data/neighbor_price.py` — `_neighbor_lmp_clean` now indexes
+  `interval_start_utc` converted to the ISO's fixed standard offset (`_std_hour_of_year`, a
+  mirror of `derive_actual_lmp._std_hour_index`) and reduces with the realized product's own hub
+  definition, from a small fail-closed per-ISO table `_HUB_SPECS` (PJM every node; CAISO's three
+  trading hubs load-weighted; NYISO's eleven internal zones; NEISO's `.H.INTERNAL_HUB` sheet
+  alone). The prevailing-clock `_hour_of_year` is **deleted**, not left callable (rule 26).
+* `tests/curation/test_consume_lmp.py` — the false line-35 float32 claim and the module
+  docstring corrected. **`_TOL` unchanged at 1e-2**; the test passes **un-skipped** on a rebuilt
+  clean tree.
+
+**Measured effect — R2's verdict held: the raw product needed no change.** The clean-backed read
+now agrees with it at float32 storage precision wherever the two products define the same hub:
+bit-parity on **all 16 PJM** partitions (0 hours over tolerance, max ≤9.8e-05) and **7 of 8
+CAISO** (≤2.7e-05; 2023 DAM excepted at 48 h / $37.24, on the raw product's own
+OASIS-retention NaN hours), NEISO down to **2–45 DST-transition-day hours a year**, mean
+≤$0.058. PJM 2024 RTM goes **408.70440 → 1.36e-05**, and its 5,703 out-of-tolerance hours to
+**0**. Every number is two runs of this lane's own `--sweep` instrument, and the fixed code
+matches this lane's independently-written `--fixcheck` `clock+hub` candidate on all 44
+partitions.
+
+**The NYISO interval-convention residual is UNCHANGED and remains OPEN at full magnitude.** It
+was not forced closed, absorbed into a widened tolerance, or carved out of the test. Deciding it
+still requires the NYISO data dictionary; it is the first carried-forward item of the fix lane.
+
+Full record — authority, the per-partition before/after table, the acceptance ledger and the
+un-actioned §D-narrow: `docs/handoffs/d32-f6fix-2026-08-13.md`.

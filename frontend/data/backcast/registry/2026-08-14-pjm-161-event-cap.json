@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-14-pjm-161-event-cap",
+ "label": "pjm 161 event-cap",
+ "date": "2026-08-14",
+ "shorthand": "pjm-161-event-cap",
+ "definition": "pjm-161 TREATMENT (PROBE \u2014 REJECTED): pjm-152 keeper recipe with pjm_measured_outage_event_cap armed, single delta vs pjm161_ctl_A. A REMOVE-ONLY, TOTAL-outage-basis availability cap on PJM's own published gen_outages_by_type record (the ERCOT-148/149 event-cap shape, pjm-145's own named re-open route 3), zero fitted parameters. Motivated by the pjm-161 Phase-0 finding that the CAMPD outage envelope is ANTI-CORRELATED with scarcity in every year (corr -0.68..-0.77; during Winter Storm Elliott it asserts its LOWEST derate of 2022, 15.6 GW, against PJM's published 31-41 GW). REFUTED BY ITS OWN PRE-REGISTERED PREDICTIONS: P1 liveness and P2 no-resurrection pass (max availability delta exactly 0.0) and P5 CC_REGULAR falls in all three years, but P4 FAILS OUTRIGHT (C3c hours>$200 3/10/32 UNCHANGED, max price identical) and P6's top-1%-net-load unavailable MW is unchanged -- the cap adds ~zero outage in the hours it was built for, because PJM's published TOTAL is dominated by planned outages scheduled away from peaks. No gate regresses (C1 16/16 free 12/12; NOT-YET only on C6 UNATTESTED) and several class errors improve, but the mechanism failed its own targeting test, so it is NOT promoted (rule 1). Keeper unchanged at 2026-08-04-pjm-152-collapse. FINDING-pjm161-outage-inversion-and-da-virtual-energy-2026-08-14.md section 7.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "PJM",
+ "file": "frontend/data/backcast/runs/2026-08-14-pjm-161-event-cap.js",
+ "bundle": "results/calibration/pjm161_evcap_B"
+}

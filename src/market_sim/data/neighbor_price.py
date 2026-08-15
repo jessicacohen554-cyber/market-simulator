@@ -621,7 +621,9 @@ def seam_flow_direction(
 # convexity fit in scripts.data.derive_neighbor_convexity). That series has always
 # been read from the committed realized-LMP product under
 # ``paths.CALIBRATION_DIR`` (``actual_lmp_hourly_<ISO>.parquet``: a hub-mean of
-# the ISO's trading hubs on the model's fixed non-leap 8760-hour local calendar).
+# the ISO's trading hubs on the model's fixed non-leap 8760-hour CHRONOLOGICAL
+# calendar — slot k is the k-th real hour after local STANDARD midnight Jan 1,
+# not the ISO's DST-prevailing wall clock; see ``derive_actual_lmp``).
 #
 # This block adds a second backend that sources the same series from the curated
 # ``data/clean`` tree — ``clean_io.read_clean("lmp", iso=..., market=...,
@@ -629,6 +631,29 @@ def seam_flow_direction(
 # to the identical hub-mean-on-8760 series. The backend is selected by the
 # ``MARKET_SIM_USE_CLEAN`` environment flag and defaults OFF, so the raw path is
 # unchanged until the clean tree is explicitly opted into.
+#
+# "Identical" costs two things, BOTH of which this reduction has to reproduce
+# from the realized product (``scripts.data.derive_actual_lmp``) and neither of
+# which the clean frame supplies by itself:
+#
+#   1. **The clock.** The authoritative column is ``interval_start_utc``,
+#      converted to the ISO's FIXED STANDARD offset (:data:`_HUB_SPECS`) — the
+#      chronological calendar every model series rides. Indexing the frame's
+#      other timestamp, the DST-prevailing ``interval_start_local``, lands the
+#      series exactly one hour late for every DST hour (~5,700 a year).
+#   2. **The hub.** Each ISO's system price is a specific node set with specific
+#      weights: CAISO load-weights three trading hubs, NEISO is the internal-hub
+#      sheet ALONE, NYISO excludes its four external proxy buses. A simple mean
+#      over every node in the partition is a different series.
+#
+# Both legs were wrong until 2026-08-13. The producer moved to the standard
+# clock on 2026-07-15 (``79285e6``, the ERCOT clock artifact) and this consumer
+# was not updated, so the two backends silently disagreed by up to $408/MWh on
+# PJM 2024 RTM for 28 days while the parity test that would have caught it sat
+# behind a CI marker exclusion and a skip-if-absent guard. Diagnosis, the
+# per-ISO measurements and the rejected alternatives:
+# docs/FINDING-f6-lmp-backend-parity-2026-08-11.md (owner decision D-32,
+# option A; resolution docs/handoffs/d32-f6fix-2026-08-13.md).
 
 # Environment flag gating the clean-backed read path (default OFF).
 USE_CLEAN_ENV: str = "MARKET_SIM_USE_CLEAN"
@@ -638,7 +663,8 @@ USE_CLEAN_ENV: str = "MARKET_SIM_USE_CLEAN"
 _RUN_TO_MARKET: dict[str, str] = {"rt": "RTM", "da": "DAM"}
 
 # The model's fixed non-leap dispatch calendar (matches scripts.data.derive_actual_lmp
-# and market_sim.data.campd): Feb 29 dropped, hours on the local wall clock.
+# and market_sim.data.campd): Feb 29 dropped, hours on the fixed standard-time
+# clock — never the prevailing (DST) wall clock. See :func:`_std_hour_of_year`.
 _LMP_HOURS_PER_YEAR: int = 8760
 _DAYS_IN_MONTH: tuple[int, ...] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _MONTH_START_HOUR: tuple[int, ...] = tuple(
@@ -656,18 +682,98 @@ def _use_clean() -> bool:
     }
 
 
-def _hour_of_year(local_ts: pd.Series) -> np.ndarray:
-    """Map tz-naive local timestamps to the fixed non-leap hour-of-year (Feb 29 -> -1).
+@dataclass(frozen=True)
+class _HubSpec:
+    """How one ISO's clean ``lmp`` partition reduces to the model's hub series.
 
-    Mirror of ``scripts.data.derive_actual_lmp._hour_index`` so the clean-backed
-    series lands on byte-identical hour slots to the realized product.
+    Attributes:
+        std_tz: The ISO's FIXED standard-time zone (``Etc/GMT+N`` == UTC-N, POSIX
+            sign) — the chronological clock the model's 8760 calendar rides,
+            mirroring ``scripts.data.derive_actual_lmp._STD_TZ``. Never the
+            prevailing (DST) zone the market reports label their hours with.
+        node_weights: ``node -> weight`` defining the ISO's system hub; a node
+            absent from the map carries zero weight and is excluded. ``None``
+            takes every node in the partition at equal weight.
     """
-    month = local_ts.dt.month.to_numpy()
-    day = local_ts.dt.day.to_numpy()
-    hour = local_ts.dt.hour.to_numpy()
-    starts = np.array([_MONTH_START_HOUR[m - 1] for m in month])
-    idx = starts + (day - 1) * 24 + hour
-    return np.where((month == 2) & (day == 29), -1, idx)
+
+    std_tz: str
+    node_weights: dict[str, float] | None = None
+
+
+# NYISO's eleven INTERNAL load zones (``derive_actual_lmp.NYISO_INTERNAL``). The
+# realized product's system price is their simple mean; the four external-proxy
+# buses (H Q, NPX, O H, PJM) are import nodes, not NY load zones, and are out.
+_NYISO_INTERNAL_ZONES: tuple[str, ...] = (
+    "WEST",
+    "GENESE",
+    "CENTRL",
+    "NORTH",
+    "MHK VL",
+    "CAPITL",
+    "HUD VL",
+    "MILLWD",
+    "DUNWOD",
+    "N.Y.C.",
+    "LONGIL",
+)
+
+# The four ISOs ``scripts/data/curate_lmp.py`` curates a clean ``lmp`` partition
+# for, each carrying the standard-time offset and the hub definition its realized
+# product uses. FAIL-CLOSED: an ISO absent here reduces to ``None`` rather than
+# guessing a clock or a hub. ERCOT and MISO have no curated clean partition
+# (curate_lmp, "Sources deliberately NOT curated here"), so nothing is lost;
+# adding one means declaring its conventions here first.
+_HUB_SPECS: dict[str, _HubSpec] = {
+    # PJM: the mean of the 12 trading hubs, which is every node the partition
+    # carries (the raw export is hub-only), so no node map is needed.
+    "PJM": _HubSpec("Etc/GMT+5"),  # EST
+    # CAISO: the three trading hubs LOAD-WEIGHTED by zone share, not a simple
+    # mean (``derive_actual_lmp.CAISO_HUB_WEIGHTS`` — the same static
+    # ``load_share`` values as ``config.iso_configs``).
+    "CAISO": _HubSpec(
+        "Etc/GMT+8",  # PST
+        {
+            "TH_NP15_GEN-APND": 0.3969,
+            "TH_ZP26_GEN-APND": 0.0646,
+            "TH_SP15_GEN-APND": 0.5385,
+        },
+    ),
+    # NYISO: the eleven internal zones at equal weight.
+    "NYISO": _HubSpec("Etc/GMT+5", dict.fromkeys(_NYISO_INTERNAL_ZONES, 1.0)),  # EST
+    # NEISO: the .H.INTERNAL_HUB sheet ALONE, never the zone mean
+    # (``derive_actual_lmp.NEISO_HUB_SHEET``).
+    "NEISO": _HubSpec("Etc/GMT+5", {"ISO NE CA": 1.0}),  # EST
+}
+
+
+def _std_hour_of_year(utc: pd.Series, year: int, std_tz: str) -> np.ndarray:
+    """Map real instants to the model's chronological non-leap hour-of-year.
+
+    Converts tz-aware UTC stamps to the ISO's fixed standard-time clock and maps
+    (month, day, hour) onto the 8760 calendar — slot ``k`` is the k-th real hour
+    after local standard midnight Jan 1. Rows outside ``year`` (a boundary spill
+    from a locally-keyed partition) and the standard-clock Feb 29 map to -1 for
+    the caller to drop. Mirror of
+    ``scripts.data.derive_actual_lmp._std_hour_index`` so the clean-backed series
+    lands on byte-identical hour slots to the realized product.
+
+    Args:
+        utc: Interval-start stamps carrying real instants (tz-aware UTC, or
+            anything ``pd.to_datetime(..., utc=True)`` reads as such).
+        year: Calendar year the 8760 calendar covers.
+        std_tz: The ISO's fixed standard-time zone (see :class:`_HubSpec`).
+
+    Returns:
+        ``(len(utc),)`` int array of hour-of-year slots; -1 where out of scope.
+    """
+    std = pd.DatetimeIndex(pd.to_datetime(utc, utc=True)).tz_convert(std_tz)
+    month = np.asarray(std.month)
+    day = np.asarray(std.day)
+    idx = (
+        np.asarray(_MONTH_START_HOUR)[month - 1] + (day - 1) * 24 + np.asarray(std.hour)
+    )
+    ok = (np.asarray(std.year) == year) & ~((month == 2) & (day == 29))
+    return np.where(ok, idx, -1)
 
 
 def _fill_hourly(series: np.ndarray) -> np.ndarray:
@@ -704,11 +810,17 @@ def _neighbor_lmp_clean(
     """Read a neighbor's realized hourly LMP from the curated clean tree.
 
     Loads the canonical per-node LMP frame (total + components) via
-    ``clean_io.read_clean("lmp", iso=iso, market=market, year=year)``, takes the
-    hub mean of ``lmp_usd_per_mwh`` per local wall-clock hour, and places it on
-    the model's fixed non-leap 8760 calendar — the same reduction the realized
-    product was built with, so the two backends agree within float tolerance.
-    Returns ``None`` when the clean partition is absent (regenerate from raw with
+    ``clean_io.read_clean("lmp", iso=iso, market=market, year=year)`` and
+    reproduces the realized product's reduction exactly: the ISO's own hub
+    (:data:`_HUB_SPECS` node weights) averaged per slot of the model's fixed
+    non-leap 8760 calendar, indexed on ``interval_start_utc`` converted to the
+    ISO's fixed standard offset. Both halves are load-bearing — see the block
+    comment above; indexing ``interval_start_local`` or taking a simple mean over
+    every node in the partition reproduces the F6 parity defect.
+
+    Returns ``None`` when the ISO declares no hub spec (fail-closed — the clean
+    tree carries only the four ISOs ``curate_lmp.py`` curates) or when the
+    partition is absent (regenerate from raw with
     ``python scripts/regenerate_clean.py lmp``).
     """
     # Lazy import: the clean read seam lives under scripts/, off the model
@@ -716,6 +828,9 @@ def _neighbor_lmp_clean(
     # being on sys.path. The raw (default) path never needs it.
     from scripts.lib.clean_io import clean_exists, read_clean
 
+    spec = _HUB_SPECS.get(iso)
+    if spec is None:
+        return None
     market = market or _RUN_TO_MARKET[run]
     if not clean_exists("lmp", iso=iso, market=market, year=year):
         return None
@@ -724,16 +839,27 @@ def _neighbor_lmp_clean(
         iso=iso,
         market=market,
         year=year,
-        columns=["interval_start_local", "node", "lmp_usd_per_mwh"],
+        columns=["interval_start_utc", "node", "lmp_usd_per_mwh"],
     )
-    local = pd.to_datetime(df["interval_start_local"])
-    hub_mean = (
-        df.assign(_hoy=_hour_of_year(local))
-        .query("_hoy >= 0")
-        .groupby("_hoy")["lmp_usd_per_mwh"]
-        .mean()
+    hoy = _std_hour_of_year(df["interval_start_utc"], year, spec.std_tz)
+    price = pd.to_numeric(df["lmp_usd_per_mwh"], errors="coerce").to_numpy(dtype=float)
+    weight = (
+        np.ones(len(df), dtype=float)
+        if spec.node_weights is None
+        else pd.to_numeric(df["node"].map(spec.node_weights), errors="coerce")
+        .fillna(0.0)
+        .to_numpy(dtype=float)
     )
-    dense = hub_mean.reindex(range(_LMP_HOURS_PER_YEAR)).to_numpy(dtype=float)
+    # Off-hub nodes weigh 0; drop them along with the out-of-scope slots and any
+    # unparseable price, so each slot averages exactly the hub rows the realized
+    # product averages (and an hour missing a hub renormalizes over the rest).
+    keep = (hoy >= 0) & (weight > 0.0) & np.isfinite(price)
+    hoy, price, weight = hoy[keep], price[keep], weight[keep]
+    total = np.bincount(hoy, weights=price * weight, minlength=_LMP_HOURS_PER_YEAR)
+    norm = np.bincount(hoy, weights=weight, minlength=_LMP_HOURS_PER_YEAR)
+    dense = np.divide(
+        total, norm, out=np.full(_LMP_HOURS_PER_YEAR, np.nan), where=norm > 0.0
+    )
     return _fill_hourly(dense)
 
 
