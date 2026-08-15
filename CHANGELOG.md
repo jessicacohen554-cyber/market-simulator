@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-08-15 — BLOAT-B PR-1: the SCED corpus slimmed in place (plan §3 A1 + §4.1 B1a)
+
+WS6 of `docs/model-audit-release-plan-2026-08.md`, executing
+`docs/bloat-removal-plan-2026-08.md` §8 PR-1. All 996 corpus shards, the 27
+`rtcb-format-2026/` parts and the four loose probe-day extracts rewritten by
+`scripts/data/slim_ercot_dam_disclosure.py --sced-only`: column projection to
+the re-audited consumer union (corpus KEEP 79→108; extracts 180; rtcb NO
+projection — the read adapter serves every native column, card D/D1) +
+zstd-15. **739.8 MiB recovered (21.3%)**; values/rows/order untouched; every
+consumer derive byte-identical pre-vs-post (the ERCOT-157 acceptance; 12
+artifacts + the 27-part rtcb adapter fingerprint). The measured recovery sits
+below the plan's ≈1,450 estimate because the 2026-08 re-uploads were already
+zstd — the precedent ratio was measured against SNAPPY originals. Pre-slim
+SHA256 manifests committed alone (971eaa3, merged via PR #3957); post-slim
+manifests + README provenance in the PR. Committed derived artifacts are
+byte-untouched; the pre-existing frozen-artifact drift on the 2024/25-window
+wall/faststart/storage surfaces (the ercot-183 basis switch) is recorded in
+the PR, not altered. A2 (2024+ window conversion) stays un-executed
+(needs-sign-off, Stage-2 call).
+
 ## 2026-08-14 — DEBUG-A: debug sweep (solve-neutral) — fast tier 6→0 ambient reds; D-5 closed, PJM input-clock defect confirmed and chartered to DEBUG-B
 
 WS2 of `docs/model-audit-release-plan-2026-08.md`. Every seed row

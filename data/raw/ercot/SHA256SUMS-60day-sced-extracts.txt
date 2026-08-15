@@ -1,0 +1,8 @@
+# The four loose 60_DAY_SCED_DISCLOSURE Gen Resource probe-day extracts —
+# SHA256 manifest over POST-SLIM bytes (BLOAT-B-1 item B1a, 2026-08-15:
+# projection to the 180-column extract consumer union + zstd-15).
+# Pre-slim (raw) hashes: this manifest at commit 971eaa3 (merged via PR #3957).
+c180ba103942332f27a08bdfff4833d871bdeea568c8de4c96215e9883acc137  60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot74_tail_days.parquet
+71c98e3f1ebfc06c922fd3ff1a8e71982534b621b2051367c14113338c4f5583  60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot75_control_days.parquet
+64fa07cf67c3d63838967e5e1477fff6fea7eb4cb79cae66583b1fd01a3b254e  60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot75_control_days.parquet
+dc4f558173c71860a9b0d68627ffd081940cf34f19ed4bafe3dcf518fd244edc  60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot86_tail_days.parquet
