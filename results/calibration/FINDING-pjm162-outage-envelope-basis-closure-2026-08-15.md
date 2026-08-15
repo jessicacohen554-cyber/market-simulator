@@ -202,7 +202,7 @@ this is **data-blocked, not analysis-blocked**.
    from the availability family.
 
 **Nothing is promoted, disarmed or armed.** Keeper unchanged at
-`2026-08-04-pjm-152-collapse` (re-verified **CALIBRATED**, 9/9, governance
+`2026-08-04-pjm-152-collapse` (re-verified **CALIBRATED**, every criterion PASS, governance
 attested, at HEAD rubric this session — see
 `ASSESSMENT-pjm162-final-readiness-2026-08-15.md` §1). No dashboard registration:
 **no run exists**, the pjm-145 no-solve-closure precedent.

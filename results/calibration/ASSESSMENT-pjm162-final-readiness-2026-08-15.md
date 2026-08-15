@@ -43,7 +43,7 @@ Four independent grounds, **any one of which is sufficient**:
 
 ## §1 — (a) does the keeper still re-verify CALIBRATED at HEAD rubric?
 
-> ## **YES — CALIBRATED, 9/9, zero caveats, governance attested.**
+> ## **YES — CALIBRATED, every criterion PASS, zero caveats, governance attested.**
 
 `scripts/calibration_verdict.py --run-id 2026-08-04-pjm-152-collapse`, committed
 artifacts only, **no solve**, run at HEAD this session:
