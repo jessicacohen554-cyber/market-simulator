@@ -1013,3 +1013,21 @@ your branch when done.
   Held at gates: PERF-B (G1), DOCS-B (G2), BLOAT-B-6R/B-7 close-out
   (golden-tier green), SITE-A (G3), AUDIT-B (G3). Live rollup:
   `docs/handoffs/audit-program-director-board-2026-08.md`.
+- 2026-08-15 — **AUDIT-A DELIVERED AND MERGED (#3991):**
+  `docs/audit/third-party-audit-2026-08.md` + `model-positioning-matrix-2026-08.md`,
+  including the §8 gap register (2 PERF ▸already-chartered, 2 DEBUG, 5 DOCS,
+  1 SITE ▸seeded, 8 OWNER rows). The owner also merged the director dispatch
+  record (#3989). **Dispatch-mechanics correction (owner directive):** lane
+  sessions are owner-launched from director-issued prompts; the four seeded
+  sessions were archived — AUDIT-A after delivering, DOCS-A and
+  GOLDEN-TIER-FIX usage-window-capped without pushing, DEBUG-MGR stalled
+  awaiting an interactive permission nobody could see (the concrete
+  seeded-session failure mode). **Three prompts re-issued in chat for owner
+  launch** — DOCS-A [OPUS] (+ audit gap rows D1 priority surgical fix, D2
+  seed, D4, D5), GOLDEN-TIER-FIX [FABLE] (gap row P2 is its charter),
+  DEBUG-MGR [FABLE] (+ gap rows B1, B2; the O2 C6-attestation re-score
+  folded into the promotion card) — each carrying a `DATA PROFILE` line
+  (code / shared / all respectively). AUDIT-A needs no relaunch. **Wave-1
+  outstanding = DOCS-A alone; G1 declares on its merge plus the §6
+  decision-1 ack.** Audit OWNER rows O4–O8 join the decision queue on the
+  board.
