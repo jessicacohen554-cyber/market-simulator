@@ -33599,21 +33599,18 @@
     {
       "param_id": "queue_cap_per_tech_gw.ERCOT.solar",
       "display_name": "Queue Cap Per Tech Gw / Ercot / Solar",
-      "value": 5.0,
-      "unit": "",
+      "value": 8.0,
+      "unit": "GW/yr",
       "domain": "Uncategorized",
-      "tier": 2,
-      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "tier": 1,
+      "source": "EIA-860 2025 Early Release — demonstrated peak annual ERCOT solar COD 2021-2025 = 7.74 GW (2025), Balancing Authority Code = ERCO, nameplate AC. 8.0 is the smallest 0.5 GW step at or above that peak, per this table's convention of a cap modestly above demonstrated peak annual COD.",
+      "source_date": "2026-08",
+      "page_or_table": "EIA-860 2025ER, Schedule 3 operable generators (BA = ERCO, prime mover PV/solar); series 3.97/2.53/3.55/7.29/7.74 GW for 2021-2025",
+      "url": "https://www.eia.gov/electricity/data/eia860/",
+      "notes": "Re-derived 5.0 -> 8.0 under owner decision D-31, signed 2026-08-13 (owner sitting Addendum AT.1). Rule-23 re-derivation on a DATA change (the 2024 + 2025 CODs landed), not a residual. 5.0 was correct for its own 2021-2023 vintage record, where the visible peak was 3.96-3.97 GW and 5.0 sat 1.26x above it. Robustness 7.5-8.5 GW across all five pre-registered windows x four identifications; defensible band 8.0-9.5, with 8.0 the conservative end (1.03x the peak). Derivation: docs/FINDING-rc-ercot-solar-queue-cap-2026-08-11.md (prereg d938f29, measurement 6e6e50b); adoption docs/handoffs/d31-adopt-2026-08-13.md.",
       "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated",
-        "needs-citation"
-      ]
+      "last_verified": "2026-08-13",
+      "flags": []
     },
     {
       "param_id": "queue_cap_per_tech_gw.ERCOT.wind",

@@ -3551,8 +3551,37 @@ QUEUE_CAP_GW: dict[str, float] = {
 # The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.
 QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
     "ERCOT": {
+        # Wind: UNCHANGED at 5.0 and still correct on the same record that
+        # moved solar. Demonstrated peak annual ERCOT wind COD 2021-2025 is
+        # 3.95 GW (2021) -- the cap sits 1.26x above its own peak, the same
+        # multiplier solar's 5.0 carried at its 2021 vintage -- and wind
+        # throughput then FELL (1.46 / 1.73 / 1.67 GW in 2023-2025), so this
+        # cap does not bind. Measured in the same RC-DERIVE pass as solar
+        # below (FINDING §1); deliberately NOT re-derived.
         "wind": 5.0,
-        "solar": 5.0,
+        # Solar: 5.0 -> 8.0 GW/yr. A rule-23 re-derivation on a DATA change,
+        # NOT a residual: the 2024 and 2025 CODs landed and moved the record
+        # this cap claims to bound.
+        #   Basis: demonstrated peak annual ERCOT solar COD over 2021-2025 =
+        #   7.74 GW (2025). EIA-860 2025 Early Release, Balancing Authority
+        #   Code = ERCO, nameplate AC; series 3.97 / 2.53 / 3.55 / 7.29 /
+        #   7.74 GW. 8.0 is the smallest 0.5 GW step at or above that peak,
+        #   which is this table's own documented convention (a cap set
+        #   "modestly above demonstrated peak annual COD", see QUEUE_CAP_GW).
+        #   Robustness: 7.5-8.5 GW across all five pre-registered windows x
+        #   four identifications; no window, statistic or identification lands
+        #   near 5.0. Defensible band 8.0-9.5 -- 8.0 is the conservative end,
+        #   only 1.03x the demonstrated peak.
+        #   Vintage: 5.0 WAS right for its own record. At the 2021-2023
+        #   vintages the visible peak was 3.96-3.97 GW and 5.0 sat 1.26x above
+        #   it; it went stale when 2024-2025 throughput roughly doubled.
+        #   Rule 13: unchanged in kind -- still a published throughput ceiling
+        #   that regenerates for any forward year, now at a current value.
+        #   Source: docs/FINDING-rc-ercot-solar-queue-cap-2026-08-11.md
+        #   (pre-registration d938f29, measurement 6e6e50b).
+        #   ADOPTED by owner decision D-31, signed 2026-08-13 (owner sitting
+        #   Addendum AT.1); adoption docs/handoffs/d31-adopt-2026-08-13.md.
+        "solar": 8.0,
         "gas_cc": 3.0,
         "gas_ct": 3.0,
         "nuclear": 2.0,
