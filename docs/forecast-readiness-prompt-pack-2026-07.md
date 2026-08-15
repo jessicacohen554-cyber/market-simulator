@@ -7253,3 +7253,82 @@ owed BEFORE promotion; rule 25 — NYISO only. CONSEQUENCE that makes this load-
 **that migration must not be treated as unblocked for NYISO until this is adjudicated.**
 Clause block: §0ar-clauses as amended by §0as (DATA PROFILE line; HTTP/1.1 push fix;
 fast-clone recovery).
+
+## §0av — DESK CLOSED @ `315a245` (2026-08-14), and the re-entry prompt if it is ever re-opened
+
+*Closing adjudication: sitting Addendum AV. Both signed cards landed and were accepted
+(**D-31** #3950, **D-32** #3949); FFR remediation and Wave FH are both COMPLETE. Two
+residuals outlive the desk and are re-homed: **Q.2 at G2** (the release program's ledger
+is the authoritative trigger) and **card D-33**, the NYISO RTD interval convention (prompt
+parked at §0au-1, data-contract work). Nothing else is owed and no dispatch is
+contemplated.*
+
+**Do not open a manager session on a cadence.** This desk is closed; a manager with an
+empty queue is where record drift starts (the §0aq→§0ar defect: three prompts that existed
+only in chat because a sitting ran with nothing else to do). Re-open ONLY on one of the
+three triggers below, and the prompt below is the re-entry.
+
+### §0av-1 — FFR/FH DESK RE-ENTRY [FABLE or OPUS] — use ONLY on a listed trigger
+
+```
+[FABLE or OPUS] FFR/FH WORKSTREAM DESK — RE-ENTRY (the desk is CLOSED; this prompt
+re-opens it for ONE named object and closes it again)
+
+Repo /home/user/market-simulator. DATA PROFILE: code (widen only if your trigger solves).
+You are re-opening a CLOSED desk. Read docs/handoffs/ffr-owner-sitting-2026-08-02.md
+Addendum AV FIRST — it is the closing entry and tells you what was discharged, what
+survives, and who holds it. Then read AR–AU backwards for the last cycle's adjudications.
+Do NOT re-litigate anything AV lists as closed, and do NOT invent a queue: if your trigger
+is not one of the three below, the correct action is to say so and stop.
+
+THE ONLY THREE VALID TRIGGERS:
+1. **G2 fires** in the Model Audit & Release program
+   (docs/model-audit-release-plan-2026-08.md) — FINAL MODEL STATE is declared. Then
+   commission the **Q.2 supersession battery**: ONE six-ISO forward-mode scoring run
+   against the final keepers, the program's closing evidence table. Read AS.6 and AU.4
+   for why it was held (ERCOT moved four times, NEISO once, while the desk ran; a battery
+   on unsettled keepers measures nothing) — confirm keepers are frozen at G2 before
+   spending it. It is commissioned ONCE.
+2. **Card D-33 is routed back here** (the NYISO RTD interval convention). The prompt is
+   written and parked at pack §0au-1 — dispatch it verbatim; do not re-derive it. Note it
+   is data-contract work whose natural home is a NYISO/curation desk, and that the
+   iso-model-unification §3 clean-backend migration must not be treated as unblocked for
+   NYISO until it is adjudicated.
+3. **A finding lands that refutes a closed FFR/FH adjudication** — the override-precedence
+   remedy, the stage-B epoch, an FH-5 read, or a keeper moving under a change one of those
+   lanes certified inert. That is stop-the-line: verify by artifact, write the addendum in
+   the SAME session, and correct by ADDENDUM, never by rewriting.
+
+VERIFIED STATE AT CLOSURE (2026-08-14, origin/main `315a245`) — RE-VERIFY BEFORE ANY CLAIM;
+keepers moved five times in the desk's last three cycles:
+- Keepers: CAISO 2026-08-09-caiso-188-d1-micseam · ERCOT 2026-08-12-run192-arm-coal-peak
+  (open PR #3947 will move it to 2026-08-14-ercot196-arm-plantphysics) · MISO
+  2026-08-09-miso-148-basis-aware · NEISO 2026-08-14-neiso-93-envelope · NYISO
+  2026-08-08-nyiso-132-cf-arm · PJM 2026-08-04-pjm-152-collapse.
+- Markers: `complete` = {NEISO, NYISO, PJM}; `final` EMPTY; holdout freeze ACTIVE.
+- ERCOT solar queue cap = 8.0 GW (D-31, epoch 2026-08-14 in results/cache.py's ledger —
+  SAME-KEY invalidation: pre-change ERCOT forward sidecars are historical record and must
+  be RE-SOLVED, never diffed).
+- Two sibling programs own everything adjacent: **Model Audit & Release** (branch
+  protection at G2, BLOAT/data-raw untracking, DEBUG, DOCS, SITE) and **ERCOT-SCAR**
+  (ERCOT scarcity formation, cards T/W, L-SCAR). Do NOT dispatch into either.
+
+HOW TO WORK IF YOU DO RE-OPEN: emit COMPLETE copy-paste prompt blocks, one fenced block
+per session, verified state EMBEDDED not referenced, model assigned, clause block inlined
+(§0ar-clauses as amended by §0as). Deliver every block in chat AND write it into this pack
+in the SAME session — a prompt that lives only in chat is the §0aq defect. Update the
+record in the session that learns a fact. Re-close the desk with a dated addendum when
+your trigger's object is discharged.
+
+> INCOMPLETE COMMITS. Never push, or open a PR containing, a commit whose own message
+> marks it incomplete — a pushed branch is presumed mergeable at any moment (PR #3888
+> merged a "[INCOMPLETE - do not push]" commit and moved a cache epoch silently).
+> PUSH. HTTP 408/500 is HTTP/2 negotiation, not pack size — `git config http.version
+> HTTP/1.1` and retry BEFORE diagnosing. A timed-out push may have LANDED: verify with
+> `git ls-remote`. If your branch was merged and deleted mid-session, restart from latest
+> main. Never push_files a >=300-line file. No new GitHub Actions workflows (private repo).
+> CONTAINER. A half-dead clone (mass staged-deletions, stale index.lock) recurs; recover
+> per docs/fast-clone.md. Declare DATA PROFILE on every prompt you write.
+> DISK. data/raw ~9.6 GB and .git ~7.5 GB against ~13 GB writable — no concurrent
+> worktree agents; run scripts/audit_keepers.py inline.
+```
