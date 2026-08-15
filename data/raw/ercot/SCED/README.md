@@ -22,11 +22,17 @@ LDL, Base Point, statuses) and AS responsibilities.
   consumers glob `*.part*.parquet`, so part granularity is a convention, not
   a contract. Part numbering is chronological within a month and continues
   existing on-disk numbering.
-* Raw 187-column all-string schema (a verbatim CSV copy: unused curve steps
-  are EMPTY STRINGS, timestamps `MM/DD/YYYY HH:MM:SS` Central Prevailing Time
-  with `Repeated Hour Flag`). Consumers coerce numerics and convert CPT→CST.
-  Column inventory drifts at ERCOT's edge (ECRS columns appear mid-2023; some
-  shards carry 188 columns) — consumers take per-shard column intersections.
+* All-string schema (a verbatim CSV copy: unused curve steps are EMPTY
+  STRINGS, timestamps `MM/DD/YYYY HH:MM:SS` Central Prevailing Time with
+  `Repeated Hour Flag`). Consumers coerce numerics and convert CPT→CST.
+  Column inventory drifts at ERCOT's edge (ECRS columns appear mid-2023; the
+  raw publications carry 187/188 columns) — consumers take per-shard column
+  intersections. **Since the 2026-08-15 BLOAT-B-1 in-place slim (see
+  "In-place slim" below) each shard carries the audited 108-column consumer
+  union** (107 in the pre-2023-06 shards, which never had `Ancillary Service
+  ECRS`) at zstd-15 — values, row counts and row order are the verbatim raw
+  copy, only never-read columns were dropped. Consumers select columns
+  explicitly, so every reader is unaffected.
 
 ## Provenance
 
@@ -40,6 +46,50 @@ LDL, Base Point, statuses) and AS responsibilities.
   path by `scripts/data/fetch_ercot_sced_corpus_shards.py` — see
   `docs/handoffs/ercot-sced-2024-2025-reupload-2026-08.md` for the staging
   plan, per-month shard counts and acceptance results.
+
+## In-place slim (BLOAT-B-1, 2026-08-15) — column projection + zstd-15
+
+Every shard in this corpus, the four loose probe-day extracts at
+`data/raw/ercot/`, and the `rtcb-format-2026/` quarantine were rewritten IN
+PLACE on 2026-08-15 by `scripts/data/slim_ercot_dam_disclosure.py
+--sced-only` (BLOAT-B PR-1: `docs/bloat-removal-plan-2026-08.md` §3 item A1 +
+§4.1 item B1a — the ERCOT-157 protocol re-run on the re-uploaded raw corpus):
+
+* **Corpus shards**: projected to the audited 108-column consumer union (of
+  the raw 187/188), zstd-15 + dictionary. The per-consumer citation registry
+  is the slim script's docstring.
+* **The four extracts**: projected to their own 180-column union (the frozen
+  probes read SCED1/TPO/`Min Gen Cost`/`Start Up Hot Offer` columns the
+  corpus consumers don't), zstd-15.
+* **`rtcb-format-2026/`**: recompressed zstd-15 with NO column projection —
+  the read adapter serves every native column (card D/D1), so no consumer
+  subset exists to project to.
+
+Values, row counts and row order are untouched everywhere; filenames
+unchanged. Measured recovery **739.8 MiB / 21.3%** (2023 window 916.5→728.4,
+2024+ window 2,180.3→1,699.3, extracts 208.6→151.6, rtcb 161.2→147.6 MiB) —
+below the plan's ≈1,450 MiB estimate because the 2026-08 re-uploads landed
+already zstd-compressed (the ERCOT-157 precedent ratio was measured against
+SNAPPY originals) and the dropped columns are mostly empty-string curve steps
+that compress to almost nothing.
+
+Acceptance (the ERCOT-157 protocol): every consumer derive re-run over the
+slimmed corpus reproduced its pre-slim output byte-identically, and the rtcb
+adapter served byte-identical frames for all 27 parts — the evidence table is
+in the BLOAT-B PR-1 pull request. The two `--position-tail` vintages STOP by
+design on pre-existing corpus drift (their frozen 2024/25 artifacts were
+derived from the extract basis before the ercot-183 corpus landed); the STOP
+behaviour is identical before and after the slim.
+
+The replaced raw bytes are hashed in the pre-slim `SHA256SUMS.txt` at commit
+`971eaa3` (merged via PR #3957; extracts:
+`../SHA256SUMS-60day-sced-extracts.txt` same commit) and remain recoverable
+from git history: `git restore --source=971eaa3 -- data/raw/ercot/SCED/<shard>`.
+Dropped columns are also re-fetchable from the MIS within its rolling
+retention (`fetch_ercot_sced_corpus_shards.py` /
+`fetch_ercot_60day_sced_gen_resource.py`); to re-adopt one, add it to the
+KEEP registry and re-fetch or restore. The `SHA256SUMS.txt` in this directory
+hashes the POST-slim bytes.
 
 ## `rtcb-format-2026/` — the RTC+B disclosure-format break (quarantined, bytes kept)
 
