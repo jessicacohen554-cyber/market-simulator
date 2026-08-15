@@ -6430,3 +6430,172 @@ charter AND pre-registration. (2) the **FLEET-CF COMPOSITION** object — the
 owner's chosen lever for this session, pre-registration next.
 
 * Next number: **nyiso-137**.
+
+## 2026-08-15 — nyiso-136 REFUTES the FLEET-CF COMPOSITION object (no solve spent)
+
+**The owner chose lever (a)** — nyiso-133's own named successor, carried in the
+lever queue by `ASSESSMENT-nyiso135-promotion-2026-08-15.md` §2. Rule 19
+`[R-ONE-MECH]` requires a pre-registration before any solve; the identification a
+pre-registration must rest on was measured **first**, and it **refuted the
+object**. No mechanism was written, no pre-registration filed, **no LP solved**,
+no run registered, keeper unchanged, **no cell verdict moved**.
+
+**All three factual premises fail on the registry's own published data.** The CF
+*levels* the object quotes all reproduce; the *technology labels* attached to
+them do not.
+
+* **P1, falsified in part — HIGH RIVER IS FIXED TILT.** 90 MW, the
+  second-largest plant in the registry and ~16 % of the 2025 fleet, named by the
+  object as one of the three "2024 tracking" plants. EIA-860 records
+  `Fixed Tilt? = Y`, `Single-Axis Tracking?` blank, **Tilt Angle 18°** — every
+  genuinely tracking plant in the fleet reads 0° or blank.
+* **P2, falsified — the span is ~35 % → ~56 % tracking, not 0 % → 56 %.**
+  Branscomb (COD 2021-12) and Regan (COD 2022-12), two of the units the object
+  calls *"2021–22 small fixed-tilt NY8"*, are single-axis tracking. Tracking
+  share of capacity-months runs **34.8 / 41.7 / 56.1 %**. The end point is right;
+  the start point — the half that makes the composition swing large — is not.
+* **P3, falsified — the tracking flag has no explanatory power here.** Over
+  mature (age ≥ 2, the nyiso-133 threshold) non-zero months: **FIXED n=7 mean
+  0.1854** (0.1639–0.2170) vs **TRACKING n=5 mean 0.1856** (0.1515–0.2091) — the
+  means differ by **0.0002**. The **highest-CF plant in the fleet is fixed tilt**
+  (Calverton 0.2170) and the **lowest is tracking** (Regan 0.1515). The
+  capacity-weighted gap that does exist is carried entirely by Morris Ridge and
+  East Point being *large and recent* — a **vintage** covariate, not a mounting
+  one. What the object grouped was COD vintage, labelled with an assumed
+  technology its own registry contradicts.
+
+**The ceiling — 38 %.** Granting strictly more than the mechanism asks (every
+plant carrying its **own** measured mature CF, a superset of any per-technology
+weighting), the capacity-month-weighted composite runs **0.1794 / 0.1869 /
+0.1923** against implied **0.1613 / 0.1641 / 0.1955**: a **+0.0129** swing
+against **+0.0342**, i.e. **38 % of the named effect**, while *over*-stating 2023
+and 2024 by +11 % and +14 %. The same test retired nyiso-132's commissioning
+curve at ~11 %.
+
+**A hypothesis raised and killed in the same session, recorded because it was
+tested.** The composite sitting ~11 % above the Gold Book's implied CF looks like
+the benchmark-basis defect chartered for hydro at §5.5 item 11b. **False:** over
+the same crosswalked plants the two published series **agree** where both are
+complete — EIA-923 / Gold Book **1.001×** (2023) and **1.028×** (2024). 2025's
+EIA-923 is a **preliminary vintage** (4 of 12 online plants filed) and is
+**excluded**, not averaged in.
+
+**What the same measurement found instead — named, sized, NOT built.** Against
+each plant's own mature CF the shortfall is **10.2 %** (2023) and **5.5 %**
+(2024), and its largest single identified component is **full-month zero output
+at a mature plant**: **43 %** of 2023 (Regan, five consecutive months Mar–Jul)
+and **30 %** of 2024 (Grissom, three consecutive months Mar–May). **The model
+cannot represent that at all** — `derive_cf_profile` normalizes the EIA-930 shape
+to a flat annual mean CF and applies it to the **full registered nameplate every
+hour**, with no availability derate anywhere on the VRE path, while the thermal
+fleet carries `THERMAL_AVAILABILITY` / WEFOR and a measured CAMPD outage layer.
+
+**And the finding argues against spending a solve on it**, which is why it is
+named rather than built: ~11 GWh on a 230 GWh fleet, on a band
+`calibration_verdict.VRE_TOL` marks **report-only** for a class D-10 marks
+`delivered_pinned`; deriving a solar EFOR from two observed plant-outages would
+be fitting a parameter to two events (rule 21); and it leaves most of both
+residuals unexplained anyway.
+
+**Not done and not touched.** `RENEWABLE_AVG_CF["NYISO"]["solar"]` stays at
+**0.1955** — it is the measured **mature-fleet** CF and nothing here gives an
+admissible basis to move it. **No matrix row is added:** rule 28 stamps
+mechanisms that exist, exactly as nyiso-133 added no row for the refuted
+commissioning curve. Keeper unchanged at `2026-08-08-nyiso-133-cod-arm`,
+`CALIBRATED-WITH-CAVEATS`, C3c the lone ledgered caveat at 21 / 3 / 24 h.
+Frontier stays **CLEARED** (2026-08-06) and is **not** re-asserted — the queue is
+not cleared, and this session **opened** an object while retiring another.
+Holdout posture unchanged; the ACTIVE freeze was re-confirmed **HELD** by the
+owner in this session and 2022 was not solved, scored or registered.
+
+**Evidence.** `results/calibration/FINDING-nyiso136-fleet-cf-composition-refuted-2026-08-15.md`,
+probe `scripts/probes/_nyiso136_fleet_cf_composition.py`, record
+`results/calibration/_nyiso136_fleet_cf_composition.json`.
+
+**Lever queue.** (1) the chartered **JOINT Zone-K transfer-bound + downstate
+ST_GAS `min_gen` reconciliation** (rule 19) — still open, still needs its own
+owner charter **and** pre-registration; do **not** re-test the bare number swap
+(`nyiso_li_tsl_n11_security` is `R`, killed on K6 at nyiso-130). (2) **VRE
+availability / forced-outage representation** — newly named and sized here, and
+flagged low-value on a report-only band. (3) **FLEET-CF COMPOSITION is RETIRED**,
+joining the commissioning curve.
+
+* Next number: **nyiso-137**.
+
+## 2026-08-15 — nyiso-136 DISCLOSURE carried forward: NYISO-RTD-CLOCK, and it now attaches to the CURRENT keeper
+
+**No code changed, no product re-derived, no year re-scored, no cell verdict
+moved.** This entry exists for two reasons. First, the disclosure was recorded in
+a handoff **addendum** and **nowhere in this lane's governance** — not in
+`keepers/NYISO.json`, not in `calibration-complete.json`, not in this log, not in
+the matrix shard — so a session reading the NYISO lane would not have seen it.
+Second, **this session superseded the only keeper it named.**
+
+**The defect** (adjudicated 2026-08-15, session nyiso-rtd-clock; ADDENDUM to
+`docs/handoffs/d32-f6fix-2026-08-13.md` §§A.1–A.7). NYISO's P-24A `Time Stamp` is
+interval-**ENDING**. `scripts/data/derive_actual_lmp.py::_nyiso_wide` bins it as
+interval-**BEGINNING** (plain `.floor("h")`), and it is the producer of the
+committed `data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet`. The
+clean-side `curate_lmp.parse_nyiso_zip` is already **correct**.
+
+It was adjudicated not from prose — NYISO publishes no definition of the column,
+and the MPUG, Manual 12, Manual 14, A536 and the MIS index were all searched and
+found silent — but from **NYISO's own arithmetic**: P-4A is published as the
+hourly integration of the P-24A 5-minute prices (Manual 12 p. 136, Manual 14 §4,
+A536 §3.2.2), so binning P-24A under each candidate convention and comparing
+against P-4A *decides* the question. Over 11 zones and 9 months spanning
+2022–2025 including both DST transitions: **ENDING** max |Δ| **0.0050** with
+**zero** zone-hours outside 2-decimal rounding; **BEGINNING** mean 1.1575, max
+151.67, **62,598 of 64,889 zone-hours wrong**. Corroborated three independent
+ways (the daily file spans 00:05…24:00; ex-post posting is incompatible with
+beginning-labels; a live 2026-08-14 fetch).
+
+**Why it lands on this lane.** The scorer
+(`render_calibration_html._actual_lmp_hourly` / `_actual_rt_padded`) loads that
+parquet and **prefers the `rt` column** — the actual series C3a, the
+demand-weighted monthly MAE and **the C3c scarcity tail** are scored against.
+Measured read-only, input side only: 2022 moves **97.8 %** of hours at mean |Δ|
+$1.98 and max $257.21, yet annual mean RT moves **−$0.024** and the top-100-hour
+mean **−$0.49**. **Almost every hour moves and the level barely does** — one
+sample in twelve swaps per hour, so *level* statistics are near-invariant and what
+moves is **hour-by-hour alignment**: correlation-sensitive metrics and **any
+per-hour tail count**.
+
+**What is and is not at risk — stated, not absorbed.**
+
+* **AT RISK — the ACTUAL side of the C3c ledgered caveat** (10 / 12 / 42 h
+  >$300). It is a per-hour tail count taken from this series.
+* **AT RISK — the chartered JOINT Zone-K reconciliation**, this lane's remaining
+  lever. It is a C3c object and its nyiso-130 kill gate **K6 is itself a per-hour
+  tail count**. A future session must **not** tune it against this series without
+  saying so.
+* **NOT at risk — the nyiso-133 A/B's C3c result.** It is **bit-unchanged**
+  between arm and control, and both arms score against the *same* actual, so the
+  comparison is invariant to the binning. The promotion's claim that no C3c
+  evidence moved **stands**.
+* **NOT at risk** — C3a levels (−$0.024 annual mean), and the **DA** block, so
+  the `spec.py` import ladder needs no re-derivation.
+* **NOT at risk** — this session's fleet-CF refutation, which is entirely
+  input-side (EIA-860 registry + EIA-923 metered energy) and touches no LMP
+  series.
+
+**Keeper re-pointed.** The addendum names `2026-08-08-nyiso-132-cf-arm` as the
+keeper scored against the mis-binned series. **This session superseded it**, so
+the disclosure now attaches to **`2026-08-08-nyiso-133-cod-arm`**, which is
+scored against the same parquet and inherits it unchanged.
+
+**Not repaired, deliberately.** The fix is one line (`(idx − 1s).floor("h")`) but
+it is **owner-gated and data-blocked**: re-deriving the parquet needs the NYISO RT
+source zips re-staged, and only **22 monthly zips** are on disk against a
+2018–2026 parquet. **Do not re-derive on partial coverage.** The owner decision
+the addendum requests is unchanged and still outstanding — correct `_nyiso_wide`,
+re-derive, then re-score the NYISO keeper and re-verify its determination (rule 22
+/ D-5(b)). Rule 14 `[R-ACCURATE]` points at the repair: a worse fit after it would
+be a **discovered bug**, not a reason to keep a mis-binned series.
+
+**Instrument:** `scripts/probes/nyiso_rtd_clock_adjudication.py` (read-only; it
+writes no product and solves nothing). Not re-run here — it fetches P-4A months
+into a scratch cache, and nothing in this session turns on re-deriving a result
+already adjudicated to the last published digit.
+
+* Next number: **nyiso-137**.
