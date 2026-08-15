@@ -4189,3 +4189,125 @@ Evidence: `PREREG-pjm161-measured-outage-event-cap-2026-08-14.md`,
 and their committed `_pjm161_*.json` records.
 
 Next shorthand: **pjm-162.**
+
+### pjm-162 — route (1) is ANTI-TARGETED; the availability family closes on a CAPACITY-BASE mismatch; `final` readiness assessed NOT-YET (2026-08-15)
+
+**Nothing was spent.** The freeze is ACTIVE and untouched, `final` is EMPTY, and **no
+out-of-training year was solved, scored or registered.** **No LP was solved at all** — this is
+the pjm-145 / ERCOT-145-146-147 no-solve-closure pattern, so there is no pre-registration
+(there is no arm to pre-register) and no dashboard registration (no run exists).
+
+**TASK A — the named successor, refused on its own prerequisite check.** pjm-161 §7.4 selected
+pjm-145 **route (1)** — "restore ceiling composed with the structural-derate registry (port the
+ercot137 fix)" — and the session prompt required Phase 0 to decide first whether it needs a
+planned/forced split of the model's envelope. Phase 0 answers a harder question than the one
+asked, and the answer kills the route.
+
+**THE DIRECTION TEST.** A bidirectional water-fill repairs a SHAPE defect only if it moves the
+envelope the right way in the hours the shape is wrong; pjm-161 measured the envelope as too
+SHALLOW in scarcity, so route (1) must REMOVE on high-net-load days. Measured net signed MW
+(`_pjm162_route1_phase0.json`; **+ = RESTORE**), over the covered fossil-thermal classes:
+
+| year | basis | all | top-10 % NL | **top-1 % NL** | **winter event** |
+|---|---|---:|---:|---:|---:|
+| 2023 | total / unplanned | +8,048 / +25,720 | +12,237 / +12,237 | **+10,367 / +10,367** | **+7,614 / +11,227** |
+| 2024 | total / unplanned | +9,882 / +27,671 | +11,411 / +11,412 | **+12,354 / +12,359** | **+9,241 / +11,493** |
+| 2025 | total / unplanned | +4,984 / +22,877 | +6,521 / +6,919 | **+6,961 / +7,024** | **+2,166 / +3,109** |
+
+**Twenty-four of twenty-four cells RESTORE.** Route (1) would hand capacity BACK exactly where
+the defect is that it is too shallow. A restore CEILING bounds how much is restored; it cannot
+change the SIGN. **Refused ex ante, no solve.**
+
+**WHY — and it is NOT the outage-type split the prompt asked about.** The cause is a
+**CAPACITY-BASE mismatch** neither pjm-145 nor pjm-161 named. **19.2 / 20.4 / 19.2 % of the
+model's fossil nameplate sits at HARD ZERO every day** (layup, retiree CEMS caps, COD masks,
+full windows) — capacity PJM's `gen_outages_by_type` does not carry as "outage" at all, being an
+operational report over units in commercial operation. So the model asserts **30.3 / 31.4 /
+29.9 %** of fossil nameplate unavailable against PJM's published **24.2 / 24.0 / 26.0 %** on the
+same denominator, and **on top-1 % net-load days 21.3 / 25.5 / 23.8 GW against a published TOTAL
+of 10.8 / 13.0 / 16.7 GW — roughly TWICE the operator's whole-system figure.** Every comparison
+against that aggregate reads "the model is more derated than PJM says", on every day, whatever
+the outage-type basis. The gap is about **twice** the type-composition gap a split would repair.
+
+**THE CEILING, measured, works as advertised and is not enough.** Structural-zero resurrection
+is **58.8 / 60.8 / 60.6 %** of the restore-day lift (reproducing pjm-145 §5's 66–68 % on this
+envelope) — and **5.4–6.9 GW/day of living-unit restore survives it**, still pointed the wrong
+way in scarcity.
+
+**THE SPLIT IS DERIVABLE — a real result, just not the blocker.** Stratifying the CAMPD windows
+by duration against PJM's published typed series separates cleanly in all four years: short
+windows track published **FORCED** (r +0.09..+0.44) and **RISE** in every named winter event
+(**4.35 / 9.17 / 9.88 / 6.05×**, against the published forced series' own 1.30–2.84×); long
+windows track **PLANNED+MAINTENANCE** (r +0.73..+0.93) and fall (0.19–0.74×). **The kill test
+passes** — forced-outage information IS present in CAMPD, in the short-duration family. It also
+quantifies a genuine composition defect: the model's window envelope is **~94 % planned-like /
+~6 % forced-like (≈2.1 GW)** against PJM's real **~73 % / ~27 % (forced 7.7–10.5 GW)**. The
+boundary is **not sharply picked by the data** (corr positive across 2–10 d, no optimum), so any
+cut is a free parameter needing a DOF entry — recorded as a derived, validated, currently-unused
+input, not armed.
+
+**IT EXPLAINS pjm-161's NULL RESULT.** The event cap added ~zero outage in the top-1 % hours
+(P4/P6) because **there was no room**: the model was already ~2× more derated than the published
+total there. A cap that can only deepen cannot bind against a target it is already below.
+**Correction stated against interest:** pjm-161's inversion measurement (corr −0.68..−0.77 on the
+window family) STANDS, but the conclusion drawn from it — "the envelope is too shallow in
+scarcity" — does not survive comparing the WHOLE envelope against the operator's record. Both are
+true of different objects; the prescription that followed from the shorter one is not supported.
+
+**CLOSED (DO-NOT-REDO).** The whole "compare the model's availability envelope against PJM's
+published aggregate" family: route (3) `R` (pjm-161), route (1) refused here, and the refusal
+GENERALISES because the capacity-base gap is a property of the comparison, not of any transform
+over it. Only pjm-145 route (2) survives — a class/unit-resolved PJM source — which is
+**data-blocked** (PJM publishes no GADS-style unit detail). **Redirection, the session's most
+consequential output:** PJM's scarcity defect is **not** an availability defect; three sessions
+have now spent their lever on that hypothesis. The next PJM scarcity lever should come from price
+formation, imports or the demand side.
+
+**TASK B — `final` readiness: NOT YET**, on the merits, four independent grounds, any one
+sufficient (`ASSESSMENT-pjm162-final-readiness-2026-08-15.md`). Grants nothing; `final` untouched.
+
+* **(a) The keeper re-verifies CALIBRATED at HEAD rubric, every criterion PASS, zero caveats, governance
+  attested** (`calibration_verdict.py --run-id 2026-08-04-pjm-152-collapse`, no solve; C1 16/16
+  free 12/12). `audit_keepers.py --iso PJM` **0 failures / 0 warnings**. Ground (a) is satisfied
+  and is NOT what blocks. (The bundle's own `metrics.json` still reads NOT-YET — the frozen
+  pre-attestation record pjm-153 later fixed; the marker already documents this.)
+* **(b) The DA-virtual escalation IS a blocker, and it is now MEASURED for 2019** rather than
+  assumed (`_pjm162_virtual_2019.json`, no LP — PJM's own submitted DA curves at PJM's own
+  published 2019 DA prices, pjm-158's helper chain unchanged). **2019 net DA virtual position =
+  +7.08 TWh**, against **−0.82 / −2.11 / −0.84** in 2023-2025 on the same RTO hub-mean basis:
+  **3.4× the largest training-year magnitude, the opposite sign to two of three, and 60 % of
+  2022's** (+11.71 on the same basis — which also validates the basis, matching pjm-161's +12.25
+  canon). 2019 is a **2022-like year for this layer**, not a training-like one. At pjm-158 §5.2's measured ~80 %
+  channel that is **≈ +5.7 TWh of phantom physical energy on `CC_REGULAR`** — larger than the
+  keeper's entire in-sample CC_REGULAR error range (−3.45 / +0.32 / +3.96). *Basis note:*
+  pjm-161's headline used the canonical committed system DA series; 2019 has no bundle and hence
+  no canon series, so every cell above is on the hub-mean basis and is internally like-for-like.
+  *And the uncertainty runs the wrong way:* ±$5 around actual DA moves the anchor +25.3 → −10.0
+  TWh, and the model's own 2019 price error is unmeasurable without spending the year — so the
+  result would be **uninterpretable**, which is exactly what a touch-once tier must not be spent
+  on.
+* **(c) The 2022 arithmetic confirms no passing combination** (−8.9 TWh virtual-phantom removal
+  vs +5 to +7 TWh seam repair, against a +18.28 TWh miss). It bears on `final` because declaring
+  it would spend the touch-once tier while the ITERABLE tier below it is unresolved — and, per
+  (b), spend it on the year where the same unresolved cause is largest.
+* **(d) The freeze is ACTIVE and its lift condition is unmet — and this session quantified PJM's
+  share of the residual the freeze names rather than closing it** (§4 above; the 2026-07-26 `held`
+  entry's "a residual over-count survives the guard", now located and measured for PJM).
+
+**What would change the answer:** (1) the owner lifts the freeze or closes the merit-order-guard
+charter with cause; (2) the DA-virtual architecture question is DECIDED — a ruling that the layer
+stays as-is with the artifact disclosed also unblocks, provided the +7.08 TWh is on the record in
+advance, which is why it is measured now rather than after the fact; (3) an explicit owner
+disposition of 2022.
+
+**Matrix (rule 28b):** `dam_availability_rebasis` stays **`G`** with its re-open condition (1)
+recorded CLOSED ex ante; `pjm_measured_outage_event_cap` **`R`** — pjm-161's stranded verdict,
+landed this session (its own git write path returned 403 throughout). No cell is armed. **Keeper
+UNCHANGED at `2026-08-04-pjm-152-collapse`.**
+
+Evidence: `FINDING-pjm162-outage-envelope-basis-closure-2026-08-15.md`,
+`ASSESSMENT-pjm162-final-readiness-2026-08-15.md`, probes
+`_pjm162_{route1_phase0,split_derivability,split_threshold,virtual_2019}.py` and their committed
+`_pjm162_*.json` records.
+
+Next shorthand: **pjm-163.**

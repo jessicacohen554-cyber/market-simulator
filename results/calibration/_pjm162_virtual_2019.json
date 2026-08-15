@@ -1,0 +1,42 @@
+[
+  {
+    "year": 2019,
+    "anchor_at_actual_DA_TWh": 7.0798879,
+    "anchor_at_DA_minus5_TWh": 25.32170975,
+    "anchor_at_DA_plus5_TWh": -10.010646200000002,
+    "mean_actual_DA": 25.542398288299086,
+    "n_hours": 8760
+  },
+  {
+    "year": 2022,
+    "anchor_at_actual_DA_TWh": 11.71037245,
+    "anchor_at_DA_minus5_TWh": 22.778791599999998,
+    "anchor_at_DA_plus5_TWh": 2.3817478499999987,
+    "mean_actual_DA": 67.30553672229833,
+    "n_hours": 8760
+  },
+  {
+    "year": 2023,
+    "anchor_at_actual_DA_TWh": -0.8155650999999992,
+    "anchor_at_DA_minus5_TWh": 19.1750124,
+    "anchor_at_DA_plus5_TWh": -17.028554850000003,
+    "mean_actual_DA": 29.332483762205097,
+    "n_hours": 8760
+  },
+  {
+    "year": 2024,
+    "anchor_at_actual_DA_TWh": -2.1053580000000003,
+    "anchor_at_DA_minus5_TWh": 19.32598425,
+    "anchor_at_DA_plus5_TWh": -20.4461862,
+    "mean_actual_DA": 29.78818081291857,
+    "n_hours": 8760
+  },
+  {
+    "year": 2025,
+    "anchor_at_actual_DA_TWh": -0.8425093499999998,
+    "anchor_at_DA_minus5_TWh": 15.8649801,
+    "anchor_at_DA_plus5_TWh": -14.479844,
+    "mean_actual_DA": 43.71455715295853,
+    "n_hours": 8760
+  }
+]

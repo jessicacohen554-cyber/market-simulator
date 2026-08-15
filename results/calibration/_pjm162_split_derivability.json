@@ -1,0 +1,332 @@
+{
+  "years": {
+    "2022": {
+      "event": "Elliott",
+      "strata": {
+        "0-3d": {
+          "n_windows": 425,
+          "annual_mean_MW": 188.10794520547944,
+          "corr_vs_published_FORCED": 0.16378164802879636,
+          "corr_vs_published_PLANNED_MAINT": -0.18178443657387525,
+          "corr_vs_netload": 0.27586560521131215,
+          "event_mean_MW": 819.175,
+          "event_over_annual": 4.354813397728497,
+          "top1pct_netload_MW": 245.15000000000003,
+          "top1pct_over_annual": 1.3032410711424804
+        },
+        "3-7d": {
+          "n_windows": 2596,
+          "annual_mean_MW": 2145.118630136986,
+          "corr_vs_published_FORCED": 0.321498238085957,
+          "corr_vs_published_PLANNED_MAINT": -0.3022407188444892,
+          "corr_vs_netload": 0.12852805723958713,
+          "event_mean_MW": 3829.7750000000005,
+          "event_over_annual": 1.7853441512255352,
+          "top1pct_netload_MW": 2651.7,
+          "top1pct_over_annual": 1.236155410123245
+        },
+        "7-21d": {
+          "n_windows": 5077,
+          "annual_mean_MW": 7877.253424657534,
+          "corr_vs_published_FORCED": -0.21335573381685702,
+          "corr_vs_published_PLANNED_MAINT": 0.4703449668031781,
+          "corr_vs_netload": -0.4312993852279177,
+          "event_mean_MW": 5863.150000000001,
+          "event_over_annual": 0.7443139992991786,
+          "top1pct_netload_MW": 2907.45,
+          "top1pct_over_annual": 0.3690943839510155
+        },
+        "21-60d": {
+          "n_windows": 2232,
+          "annual_mean_MW": 9360.64712328767,
+          "corr_vs_published_FORCED": -0.6535026410261752,
+          "corr_vs_published_PLANNED_MAINT": 0.8833931036387029,
+          "corr_vs_netload": -0.7692219741917622,
+          "event_mean_MW": 3315.0,
+          "event_over_annual": 0.35414218230199634,
+          "top1pct_netload_MW": 680.0,
+          "top1pct_over_annual": 0.07264455021579412
+        },
+        ">60d": {
+          "n_windows": 1274,
+          "annual_mean_MW": 14541.709589041096,
+          "corr_vs_published_FORCED": -0.703774630286485,
+          "corr_vs_published_PLANNED_MAINT": 0.9296395247048961,
+          "corr_vs_netload": -0.7941344354684499,
+          "event_mean_MW": 3708.1749999999993,
+          "event_over_annual": 0.25500268570860124,
+          "top1pct_netload_MW": 4823.65,
+          "top1pct_over_annual": 0.33171134181053874
+        },
+        "PUBLISHED_forced": {
+          "n_windows": null,
+          "annual_mean_MW": 9332.260273972603,
+          "corr_vs_published_FORCED": 1.0,
+          "corr_vs_published_PLANNED_MAINT": -0.6415958177597331,
+          "corr_vs_netload": 0.6216855197410178,
+          "event_mean_MW": 26473.5,
+          "event_over_annual": 2.836772574146245,
+          "top1pct_netload_MW": 13985.0,
+          "top1pct_over_annual": 1.4985651481457016
+        },
+        "PUBLISHED_planned_maint": {
+          "n_windows": null,
+          "annual_mean_MW": 25802.386301369865,
+          "corr_vs_published_FORCED": -0.6415958177597331,
+          "corr_vs_published_PLANNED_MAINT": 1.0,
+          "corr_vs_netload": -0.8017103324294016,
+          "event_mean_MW": 5052.5,
+          "event_over_annual": 0.19581522193285508,
+          "top1pct_netload_MW": 3411.5,
+          "top1pct_over_annual": 0.13221645316653838
+        }
+      }
+    },
+    "2023": {
+      "event": "Feb cold snap",
+      "strata": {
+        "0-3d": {
+          "n_windows": 425,
+          "annual_mean_MW": 103.05906593406593,
+          "corr_vs_published_FORCED": 0.23386113992552696,
+          "corr_vs_published_PLANNED_MAINT": -0.0038949485485560093,
+          "corr_vs_netload": 0.1656139238300279,
+          "event_mean_MW": 945.4,
+          "event_over_annual": 9.173380249776747,
+          "top1pct_netload_MW": 24.8,
+          "top1pct_over_annual": 0.24063870340010932
+        },
+        "3-7d": {
+          "n_windows": 2596,
+          "annual_mean_MW": 2043.5142857142855,
+          "corr_vs_published_FORCED": 0.12587991540072688,
+          "corr_vs_published_PLANNED_MAINT": -0.046545818083067125,
+          "corr_vs_netload": 0.01372635014102982,
+          "event_mean_MW": 3185.5,
+          "event_over_annual": 1.558834221159627,
+          "top1pct_netload_MW": 638.825,
+          "top1pct_over_annual": 0.31261097828670503
+        },
+        "7-21d": {
+          "n_windows": 5077,
+          "annual_mean_MW": 8260.313461538462,
+          "corr_vs_published_FORCED": -0.03511709818280306,
+          "corr_vs_published_PLANNED_MAINT": 0.5954312543995309,
+          "corr_vs_netload": -0.6507701847690586,
+          "event_mean_MW": 3066.6000000000004,
+          "event_over_annual": 0.3712449914011924,
+          "top1pct_netload_MW": 1660.3000000000002,
+          "top1pct_over_annual": 0.20099721490360653
+        },
+        "21-60d": {
+          "n_windows": 2232,
+          "annual_mean_MW": 12544.741483516484,
+          "corr_vs_published_FORCED": -0.2261706474556603,
+          "corr_vs_published_PLANNED_MAINT": 0.7300070847167769,
+          "corr_vs_netload": -0.797604197044654,
+          "event_mean_MW": 8114.799999999999,
+          "event_over_annual": 0.6468686509532834,
+          "top1pct_netload_MW": 1772.125,
+          "top1pct_over_annual": 0.14126436980216242
+        },
+        ">60d": {
+          "n_windows": 1274,
+          "annual_mean_MW": 14345.473626373627,
+          "corr_vs_published_FORCED": -0.21073782980771794,
+          "corr_vs_published_PLANNED_MAINT": 0.8191602347931211,
+          "corr_vs_netload": -0.7464883101284553,
+          "event_mean_MW": 7290.95,
+          "event_over_annual": 0.5082404519984517,
+          "top1pct_netload_MW": 5424.050000000001,
+          "top1pct_over_annual": 0.37810184182612727
+        },
+        "PUBLISHED_forced": {
+          "n_windows": null,
+          "annual_mean_MW": 7653.024725274725,
+          "corr_vs_published_FORCED": 1.0,
+          "corr_vs_published_PLANNED_MAINT": -0.2818609577967757,
+          "corr_vs_netload": 0.2874294970069988,
+          "event_mean_MW": 11709.5,
+          "event_over_annual": 1.5300486304883403,
+          "top1pct_netload_MW": 9351.25,
+          "top1pct_over_annual": 1.221902494201639
+        },
+        "PUBLISHED_planned_maint": {
+          "n_windows": null,
+          "annual_mean_MW": 25644.909340659342,
+          "corr_vs_published_FORCED": -0.2818609577967757,
+          "corr_vs_published_PLANNED_MAINT": 1.0,
+          "corr_vs_netload": -0.713401237010266,
+          "event_mean_MW": 6406.5,
+          "event_over_annual": 0.24981566184921775,
+          "top1pct_netload_MW": 1434.0,
+          "top1pct_over_annual": 0.055917530491185245
+        }
+      }
+    },
+    "2024": {
+      "event": "Heather",
+      "strata": {
+        "0-3d": {
+          "n_windows": 425,
+          "annual_mean_MW": 115.33178082191782,
+          "corr_vs_published_FORCED": 0.3977709419080629,
+          "corr_vs_published_PLANNED_MAINT": -0.200784532040787,
+          "corr_vs_netload": 0.39014074106774405,
+          "event_mean_MW": 1140.0,
+          "event_over_annual": 9.884526119996863,
+          "top1pct_netload_MW": 178.25,
+          "top1pct_over_annual": 1.5455410358679307
+        },
+        "3-7d": {
+          "n_windows": 2596,
+          "annual_mean_MW": 2164.54301369863,
+          "corr_vs_published_FORCED": 0.22143209867404431,
+          "corr_vs_published_PLANNED_MAINT": -0.22380481680288739,
+          "corr_vs_netload": 0.12178545910039168,
+          "event_mean_MW": 3473.366666666667,
+          "event_over_annual": 1.6046651162323653,
+          "top1pct_netload_MW": 1557.775,
+          "top1pct_over_annual": 0.7196784679913455
+        },
+        "7-21d": {
+          "n_windows": 5077,
+          "annual_mean_MW": 8594.643835616438,
+          "corr_vs_published_FORCED": -0.08725437418493877,
+          "corr_vs_published_PLANNED_MAINT": 0.2776002471533342,
+          "corr_vs_netload": -0.37648425418392867,
+          "event_mean_MW": 5320.099999999999,
+          "event_over_annual": 0.6190017994641454,
+          "top1pct_netload_MW": 2696.4750000000004,
+          "top1pct_over_annual": 0.313739004381512
+        },
+        "21-60d": {
+          "n_windows": 2232,
+          "annual_mean_MW": 10339.059452054793,
+          "corr_vs_published_FORCED": -0.563126371607684,
+          "corr_vs_published_PLANNED_MAINT": 0.9117141958122962,
+          "corr_vs_netload": -0.7812467059378982,
+          "event_mean_MW": 3121.433333333333,
+          "event_over_annual": 0.3019068947043318,
+          "top1pct_netload_MW": 758.45,
+          "top1pct_over_annual": 0.07335773660236232
+        },
+        ">60d": {
+          "n_windows": 1274,
+          "annual_mean_MW": 11415.983287671232,
+          "corr_vs_published_FORCED": -0.6469677028232342,
+          "corr_vs_published_PLANNED_MAINT": 0.764803709260293,
+          "corr_vs_netload": -0.7518251861538698,
+          "event_mean_MW": 2570.4666666666667,
+          "event_over_annual": 0.22516384282400445,
+          "top1pct_netload_MW": 1929.5,
+          "top1pct_over_annual": 0.16901741631697872
+        },
+        "PUBLISHED_forced": {
+          "n_windows": null,
+          "annual_mean_MW": 7698.123287671233,
+          "corr_vs_published_FORCED": 0.9999999999999998,
+          "corr_vs_published_PLANNED_MAINT": -0.4902775208442773,
+          "corr_vs_netload": 0.6788723206373792,
+          "event_mean_MW": 14667.0,
+          "event_over_annual": 1.905269564010442,
+          "top1pct_netload_MW": 10702.0,
+          "top1pct_over_annual": 1.390208963935348
+        },
+        "PUBLISHED_planned_maint": {
+          "n_windows": null,
+          "annual_mean_MW": 25274.671232876713,
+          "corr_vs_published_FORCED": -0.4902775208442772,
+          "corr_vs_published_PLANNED_MAINT": 1.0,
+          "corr_vs_netload": -0.7251293740664394,
+          "event_mean_MW": 1375.0,
+          "event_over_annual": 0.054402290234795675,
+          "top1pct_netload_MW": 2140.75,
+          "top1pct_over_annual": 0.08469942023282825
+        }
+      }
+    },
+    "2025": {
+      "event": "Enzo",
+      "strata": {
+        "0-3d": {
+          "n_windows": 425,
+          "annual_mean_MW": 113.91534246575344,
+          "corr_vs_published_FORCED": 0.2224436631320343,
+          "corr_vs_published_PLANNED_MAINT": -0.23139330242745143,
+          "corr_vs_netload": 0.3812894215105262,
+          "event_mean_MW": 689.0666666666666,
+          "event_over_annual": 6.048936444832458,
+          "top1pct_netload_MW": 755.8,
+          "top1pct_over_annual": 6.634751593949844
+        },
+        "3-7d": {
+          "n_windows": 2596,
+          "annual_mean_MW": 1842.113698630137,
+          "corr_vs_published_FORCED": 0.08907656511116868,
+          "corr_vs_published_PLANNED_MAINT": -0.11369830009825847,
+          "corr_vs_netload": 0.0051972336647952535,
+          "event_mean_MW": 1022.3333333333334,
+          "event_over_annual": 0.5549784109925342,
+          "top1pct_netload_MW": 589.55,
+          "top1pct_over_annual": 0.32003996302639237
+        },
+        "7-21d": {
+          "n_windows": 5077,
+          "annual_mean_MW": 8244.178630136987,
+          "corr_vs_published_FORCED": -0.47699488943508767,
+          "corr_vs_published_PLANNED_MAINT": 0.23433591203514734,
+          "corr_vs_netload": -0.544784891615674,
+          "event_mean_MW": 2285.4666666666667,
+          "event_over_annual": 0.2772218760898793,
+          "top1pct_netload_MW": 1812.3249999999998,
+          "top1pct_over_annual": 0.21983087476719143
+        },
+        "21-60d": {
+          "n_windows": 2232,
+          "annual_mean_MW": 11082.469863013697,
+          "corr_vs_published_FORCED": -0.4679971424462075,
+          "corr_vs_published_PLANNED_MAINT": 0.8870698237402488,
+          "corr_vs_netload": -0.7510346822250191,
+          "event_mean_MW": 2292.2000000000003,
+          "event_over_annual": 0.20683115120844314,
+          "top1pct_netload_MW": 683.4000000000001,
+          "top1pct_over_annual": 0.06166495451350233
+        },
+        ">60d": {
+          "n_windows": 1274,
+          "annual_mean_MW": 9267.440273972603,
+          "corr_vs_published_FORCED": -0.4345488352689756,
+          "corr_vs_published_PLANNED_MAINT": 0.8625439277321737,
+          "corr_vs_netload": -0.755993906365024,
+          "event_mean_MW": 1806.0666666666664,
+          "event_over_annual": 0.19488301119554705,
+          "top1pct_netload_MW": 3271.9750000000004,
+          "top1pct_over_annual": 0.3530613527868389
+        },
+        "PUBLISHED_forced": {
+          "n_windows": null,
+          "annual_mean_MW": 10531.298630136986,
+          "corr_vs_published_FORCED": 1.0,
+          "corr_vs_published_PLANNED_MAINT": -0.45558802303778206,
+          "corr_vs_netload": 0.6286106073481454,
+          "event_mean_MW": 13696.0,
+          "event_over_annual": 1.3005043804195922,
+          "top1pct_netload_MW": 15736.25,
+          "top1pct_over_annual": 1.4942364235088936
+        },
+        "PUBLISHED_planned_maint": {
+          "n_windows": null,
+          "annual_mean_MW": 25338.972602739726,
+          "corr_vs_published_FORCED": -0.45558802303778206,
+          "corr_vs_published_PLANNED_MAINT": 0.9999999999999998,
+          "corr_vs_netload": -0.7422233331169423,
+          "event_mean_MW": 2310.6666666666665,
+          "event_over_annual": 0.091190227121396,
+          "top1pct_netload_MW": 937.5,
+          "top1pct_over_annual": 0.036998343014847994
+        }
+      }
+    }
+  }
+}
