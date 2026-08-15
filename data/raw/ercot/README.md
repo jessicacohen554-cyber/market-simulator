@@ -52,3 +52,41 @@ converted* NP6-345-CD copies under `data/raw/reference/`, not this
 directory's `ACTUALSYSLOADWZNP6345_<year>.parquet`. ERCOT settlement-point
 LMP is **not** curated from here — `scripts/curate_lmp.py` notes ERCOT has
 no raw LMP source yet (`data/raw/lmp-data/ERCOT/` is empty).
+
+## Untracked probe extracts (BLOAT-B-5 item B1b, 2026-08-15, owner-signed)
+
+Three of the four loose `60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_*`
+probe-day extracts are gitignored payloads as of 2026-08-15 (111.7 MiB
+post-slim; read only by frozen probes — `scripts/probes/_ercot74_sced_headroom.py`,
+`scripts/probes/_ercot75_control_gate.py` and their downstream census scripts,
+which degrade gracefully when the files are absent):
+
+* `…_2024_ercot74_tail_days.parquet`
+* `…_2024_ercot75_control_days.parquet`
+* `…_2025_ercot75_control_days.parquet`
+
+`…_2025_ercot86_tail_days.parquet` **stays tracked** — it feeds the standing
+rule-23 derive `scripts/data/derive_sced_coal_uppertail.py`
+(→ committed `offer_curve_sced_coal_uppertail.json`).
+
+Their bytes are pinned by `SHA256SUMS-60day-sced-extracts.txt` (tracked, this
+directory): POST-slim hashes at head, pre-slim raw hashes in the same file at
+commit `971eaa3` (PR #3957). Recovery routes:
+
+1. **Git history (exact bytes, always available)** — the conversion untracked
+   the payloads at tip, no history rewrite:
+
+   ```
+   git restore --source=726f389d94c45141bac83eacfdaea5e18a465c56 -- \
+     'data/raw/ercot/60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot74_tail_days.parquet' \
+     'data/raw/ercot/60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot75_control_days.parquet' \
+     'data/raw/ercot/60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot75_control_days.parquet'
+   ```
+
+   Verify with `sha256sum -c` against the manifest's three lines.
+2. **Re-fetch from the MIS while retention lasts** (NP3-965 delivery-range
+   pulls, `scripts/data/fetch_ercot_60day_sced_gen_resource.py
+   --delivery-range …` — the SCED-CT precedent). The 2024/2025 delivery
+   windows sat inside the rolling ~28-month retention as of 2026-08-09 and
+   age out continuously; a re-fetch reproduces the *data*, not these exact
+   probe-day-subset bytes — the manifest hashes are the byte truth.
