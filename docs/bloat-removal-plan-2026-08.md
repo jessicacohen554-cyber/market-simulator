@@ -621,7 +621,7 @@ Tip trajectory: 10,080 → **≈ 8.1 GiB** (class-approved only) → **≈ 6.1 G
   Holds re-checked at execution date against lane state; sign-off rows only if
   signed at G1.
 - **PR-4 — "script rotation" (D1, D2). SHIPPED 2026-08-15**, PR
-  [#3951](https://github.com/jessicacohen554-cyber/market-simulator/pull/3951)
+  [#3955](https://github.com/jessicacohen554-cyber/market-simulator/pull/3955)
   (branch `claude/bloat-b4-script-rotation-dmktqx`). `git mv` + reference rewrite
   + `ci_refactor_guards.py --script-refs` green. No label needed (renames).
   86 scripts rotated; keep-set re-derived to 4; `run_ces_leg.py` verified and
