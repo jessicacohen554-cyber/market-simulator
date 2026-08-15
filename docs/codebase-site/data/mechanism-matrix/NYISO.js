@@ -475,3 +475,94 @@ window.MECH_MATRIX_SHARDS.NYISO = {
  * FINDING-nyiso133-market-solar-cod-basis-2026-08-08.md §9,
  * docs/calibration-log/nyiso.md 2026-08-15.
  */
+
+/* 2026-08-15 (3rd stamp) — nyiso-136 REFUTES the FLEET-CF COMPOSITION object.
+ * NO LP SOLVED, no run registered, KEEPER UNCHANGED, NO CELL VERDICT MOVED, no
+ * pre-registration filed — there is no mechanism to pre-register.
+ *
+ * The owner chose this lever (nyiso-133's own named successor, carried in the
+ * lever queue by ASSESSMENT-nyiso135-promotion-2026-08-15.md §2). The
+ * identification a pre-registration would have to rest on was measured FIRST,
+ * on published data already committed, and it REFUTED the object on all three
+ * of its factual premises. This is the nyiso-133 pattern applied to nyiso-133's
+ * own successor: measure the named cause before writing a mechanism for it.
+ *
+ * THE OBJECT: 'measured mature per-plant CF is 0.174-0.182 (2021-22 small
+ * fixed-tilt NY8) vs 0.198-0.221 (2024 tracking: Morris Ridge, High River, East
+ * Point), so one ISO-wide RENEWABLE_AVG_CF cannot track a fleet going 100 %
+ * fixed-tilt -> 56 % tracking.' The CF LEVELS all reproduce. The TECHNOLOGY
+ * LABELS attached to them do not.
+ *
+ * P1 FALSIFIED IN PART — HIGH RIVER IS FIXED TILT. 90 MW, the second-largest
+ * plant and ~16 % of the 2025 fleet, named by the object as one of the three
+ * "2024 tracking" plants. EIA-860: Fixed Tilt? = Y, Single-Axis Tracking?
+ * blank, Tilt Angle 18 deg (every tracking plant in the fleet reads 0 or blank).
+ *
+ * P2 FALSIFIED — the span is ~35 % -> ~56 % tracking, not 0 % -> 56 %.
+ * Branscomb (COD 2021-12) and Regan (COD 2022-12), two of the units the object
+ * calls "small fixed-tilt NY8", are single-axis tracking. Tracking share of
+ * capacity-months: 34.8 % (2023) / 41.7 % (2024) / 56.1 % (2025). The end point
+ * is right; the start point — the half that makes the swing large — is not.
+ *
+ * P3 FALSIFIED — the tracking flag has NO explanatory power in this fleet.
+ * Over mature (age >= 2, the nyiso-133 threshold) NON-ZERO months: FIXED n=7
+ * mean 0.1854 range 0.1639-0.2170; TRACKING n=5 mean 0.1856 range
+ * 0.1515-0.2091. The means differ by 0.0002. The HIGHEST-CF plant in the fleet
+ * is FIXED TILT (Calverton 0.2170) and the LOWEST is TRACKING (Regan 0.1515).
+ * The capacity-weighted gap that does exist is carried entirely by Morris Ridge
+ * and East Point being large and recent — a VINTAGE covariate, not a mounting
+ * one. What the object grouped was COD vintage, labelled with an assumed
+ * technology its own registry contradicts.
+ *
+ * THE CEILING — 38 %. Granting strictly more than the mechanism asks (EVERY
+ * plant carrying its OWN measured mature CF, a superset of any per-technology
+ * weighting), the capacity-month-weighted composite runs 0.1794 / 0.1869 /
+ * 0.1923 against implied 0.1613 / 0.1641 / 0.1955: a +0.0129 swing against
+ * +0.0342, i.e. 38 % of the named effect, while OVER-stating 2023 and 2024 by
+ * +11 % and +14 %. The same test retired nyiso-132's commissioning curve at
+ * ~11 %.
+ *
+ * A HYPOTHESIS RAISED AND KILLED IN THE SAME SESSION, recorded because it was
+ * tested: the composite sitting ~11 % above the Gold Book's implied CF looks
+ * like the benchmark-basis defect chartered for hydro at 5.5 item 11b. FALSE —
+ * over the same crosswalked plants the two published series AGREE where both
+ * are complete (EIA-923 / Gold Book 1.001x in 2023, 1.028x in 2024). 2025 is a
+ * preliminary EIA-923 vintage (4 of 12 online plants filed) and is EXCLUDED,
+ * not averaged in.
+ *
+ * WHAT THE SAME MEASUREMENT FOUND INSTEAD — NAMED, SIZED, NOT BUILT. Against
+ * each plant's own mature CF the shortfall is 10.2 % (2023) and 5.5 % (2024),
+ * and its largest single IDENTIFIED component is FULL-MONTH ZERO OUTPUT AT A
+ * MATURE PLANT: 43 % of 2023 (Regan, five consecutive months Mar-Jul) and 30 %
+ * of 2024 (Grissom, three consecutive months Mar-May). The model cannot
+ * represent that at all — derive_cf_profile normalizes the EIA-930 shape to a
+ * FLAT annual mean CF and applies it to the FULL registered nameplate every
+ * hour, with no availability derate anywhere on the VRE path, while the thermal
+ * fleet carries THERMAL_AVAILABILITY / WEFOR and a measured CAMPD outage layer.
+ * It is a rule 1 [R-STRUCT] structural-fidelity item and NOT a gate instrument,
+ * and the finding argues AGAINST spending a solve on it: it is ~11 GWh on a
+ * 230 GWh fleet, on a band VRE_TOL marks REPORT-ONLY for a class D-10 marks
+ * `delivered_pinned`; deriving an EFOR from two observed plant-outages would be
+ * fitting to two events (rule 21); and it leaves most of both residuals
+ * unexplained anyway.
+ *
+ * NO ROW IS ADDED. Rule 28 stamps mechanisms that exist; no mechanism was
+ * built, exactly as nyiso-133 added no row for the refuted commissioning curve.
+ * RENEWABLE_AVG_CF["NYISO"]["solar"] is UNTOUCHED at 0.1955 — it is the measured
+ * MATURE-fleet CF and this finding gives no admissible basis to move it.
+ * Frontier stays CLEARED (2026-08-06) and is NOT re-asserted: the queue is not
+ * cleared, and this session OPENED an object while retiring another. Holdout
+ * posture UNCHANGED, freeze re-confirmed HELD by the owner in session.
+ *
+ * LEVER QUEUE: (1) the chartered JOINT Zone-K transfer-bound + downstate ST_GAS
+ * min_gen reconciliation (rule 19), still open, still needs its own owner
+ * charter AND pre-registration — do NOT re-test the bare number swap
+ * (nyiso_li_tsl_n11_security is R, killed on K6 at nyiso-130). (2) VRE
+ * availability / forced-outage representation, newly named and sized here.
+ * (3) FLEET-CF COMPOSITION is RETIRED, joining the commissioning curve.
+ *
+ * Evidence: results/calibration/FINDING-nyiso136-fleet-cf-composition-refuted-2026-08-15.md,
+ * probe scripts/probes/_nyiso136_fleet_cf_composition.py,
+ * record results/calibration/_nyiso136_fleet_cf_composition.json,
+ * docs/calibration-log/nyiso.md 2026-08-15.
+ */

@@ -1,0 +1,350 @@
+{
+ "probe": "nyiso-136 fleet-CF composition identification",
+ "no_lp_solved": true,
+ "premises_tested": {
+  "P1_2024_wave_is_tracking": {
+   "verdict": "FALSIFIED IN PART",
+   "detail": "Morris Ridge and East Point are single-axis tracking, but HIGH RIVER (90 MW, the second-largest plant and ~16 % of the 2025 fleet) is FIXED TILT: EIA-860 'Fixed Tilt?' = Y, 'Single-Axis Tracking?' blank, Tilt Angle 18 deg."
+  },
+  "P2_fleet_goes_100pct_fixed_to_56pct_tracking": {
+   "verdict": "FALSIFIED",
+   "detail": "The fleet is already 35% tracking by capacity-months in 2023, reaching 56% in 2025. Branscomb (COD 2021) and Regan (COD 2022) -- two of the units the object calls 'small fixed-tilt NY8' -- are single-axis tracking. The 56 % end point is right; the 100 % fixed-tilt start point is not."
+  },
+  "P3_tracking_runs_at_a_higher_cf": {
+   "verdict": "FALSIFIED",
+   "detail": "On mature, non-outage months the tracking flag has no explanatory power: FIXED mean 0.1854 (n=7, range 0.1639-0.217) vs TRACKING mean 0.1856 (n=5, range 0.1515-0.2091). The highest-CF plant in the fleet is FIXED TILT (Calverton) and the lowest is TRACKING (Regan)."
+  }
+ },
+ "by_technology": {
+  "FIXED": {
+   "n_plants": 7,
+   "cf_min": 0.1639,
+   "cf_max": 0.217,
+   "cf_simple_mean": 0.1854,
+   "cf_capacity_weighted": 0.1862,
+   "plants": [
+    "Calverton",
+    "Darby",
+    "High River",
+    "Janis",
+    "Long Island Solar Farm",
+    "Puckett",
+    "Stillwater"
+   ]
+  },
+  "TRACKING": {
+   "n_plants": 5,
+   "cf_min": 0.1515,
+   "cf_max": 0.2091,
+   "cf_simple_mean": 0.1856,
+   "cf_capacity_weighted": 0.1971,
+   "plants": [
+    "Branscomb",
+    "East Point",
+    "Grissom",
+    "Morris Ridge",
+    "Regan"
+   ]
+  }
+ },
+ "composition_ceiling": {
+  "construction": "every plant carries its OWN measured mature CF (strictly more expressive than any per-technology grouping), weighted by capacity-months online on the COD basis",
+  "composite_cf_by_year": {
+   "2023": {
+    "composite_cf": 0.1794,
+    "mean_online_mw": 163.0,
+    "tracking_share_of_capacity_months": 0.348,
+    "implied_cf_from_published_energy": 0.1613
+   },
+   "2024": {
+    "composite_cf": 0.1869,
+    "mean_online_mw": 295.3,
+    "tracking_share_of_capacity_months": 0.417,
+    "implied_cf_from_published_energy": 0.1641
+   },
+   "2025": {
+    "composite_cf": 0.1923,
+    "mean_online_mw": 511.4,
+    "tracking_share_of_capacity_months": 0.561,
+    "implied_cf_from_published_energy": 0.1955
+   }
+  },
+  "mechanism_swing": 0.0129,
+  "implied_swing": 0.0342,
+  "fraction_of_named_effect_reachable": 0.377
+ },
+ "published_series_reconciliation": {
+  "2023": {
+   "gold_book_net_energy_gwh": 229.9,
+   "eia923_metered_gwh": 230.2,
+   "ratio": 1.001,
+   "plants_reporting": 9,
+   "plants_crosswalked": 14
+  },
+  "2024": {
+   "gold_book_net_energy_gwh": 503.2,
+   "eia923_metered_gwh": 517.3,
+   "ratio": 1.028,
+   "plants_reporting": 14,
+   "plants_crosswalked": 14
+  },
+  "2025": {
+   "gold_book_net_energy_gwh": 981.8,
+   "eia923_metered_gwh": 609.1,
+   "ratio": 0.62,
+   "plants_reporting": 4,
+   "plants_crosswalked": 14
+  }
+ },
+ "successor_object_sizing": {
+  "claim": "the residual is NOT technology composition; the largest single IDENTIFIED component is full-month zero output at a mature plant, which the VRE path cannot represent at all -- derive_cf_profile normalizes the EIA-930 shape to a flat annual mean CF and applies it to the full registered nameplate every hour, with no availability derate (the thermal fleet has THERMAL_AVAILABILITY / WEFOR; solar has nothing)",
+  "by_year": {
+   "2023": {
+    "expected_at_own_mature_cf_gwh": 256.1,
+    "actual_metered_gwh": 230.0,
+    "shortfall_gwh": 26.1,
+    "shortfall_pct": 10.2,
+    "zero_output_at_mature_plant_gwh": 11.1,
+    "zero_output_share_of_shortfall": 0.43,
+    "outage_months": [
+     "Regan 2023-03",
+     "Regan 2023-04",
+     "Regan 2023-05",
+     "Regan 2023-06",
+     "Regan 2023-07"
+    ]
+   },
+   "2024": {
+    "expected_at_own_mature_cf_gwh": 483.4,
+    "actual_metered_gwh": 457.1,
+    "shortfall_gwh": 26.4,
+    "shortfall_pct": 5.5,
+    "zero_output_at_mature_plant_gwh": 7.9,
+    "zero_output_share_of_shortfall": 0.3,
+    "outage_months": [
+     "Grissom 2024-03",
+     "Grissom 2024-04",
+     "Grissom 2024-05"
+    ]
+   },
+   "2025": {
+    "skipped": "EIA-923 coverage incomplete (preliminary vintage)",
+    "plants_online": 12,
+    "plants_reporting": 4
+   }
+  }
+ },
+ "plants": {
+  "323809": {
+   "technology": "FIXED",
+   "single_axis": false,
+   "fixed_tilt": true,
+   "tilt_angle": "25",
+   "nameplate_mw": 20.0,
+   "cod_year": 2022,
+   "cod_month": 10,
+   "name": "Puckett",
+   "eia_plant_code": 65125,
+   "mature_nonzero_months": 24,
+   "zero_output_mature_months": [],
+   "mature_cf": 0.1791
+  },
+  "323808": {
+   "technology": "FIXED",
+   "single_axis": false,
+   "fixed_tilt": true,
+   "tilt_angle": "30",
+   "nameplate_mw": 20.0,
+   "cod_year": 2023,
+   "cod_month": 3,
+   "name": "Janis",
+   "eia_plant_code": 65123,
+   "mature_nonzero_months": 20,
+   "zero_output_mature_months": [],
+   "mature_cf": 0.189
+  },
+  "323848": {
+   "technology": "TRACKING",
+   "single_axis": true,
+   "fixed_tilt": false,
+   "tilt_angle": "0",
+   "nameplate_mw": 177.0,
+   "cod_year": 2024,
+   "cod_month": 11,
+   "name": "Morris Ridge",
+   "eia_plant_code": 68274,
+   "mature_nonzero_months": 12,
+   "zero_output_mature_months": [],
+   "mature_cf": 0.2021
+  },
+  "323811": {
+   "technology": "TRACKING",
+   "single_axis": true,
+   "fixed_tilt": false,
+   "tilt_angle": "0",
+   "nameplate_mw": 20.0,
+   "cod_year": 2021,
+   "cod_month": 12,
+   "name": "Branscomb",
+   "eia_plant_code": 65122,
+   "mature_nonzero_months": 24,
+   "zero_output_mature_months": [],
+   "mature_cf": 0.1855
+  },
+  "323812": {
+   "technology": "TRACKING",
+   "single_axis": true,
+   "fixed_tilt": false,
+   "tilt_angle": "0",
+   "nameplate_mw": 20.0,
+   "cod_year": 2022,
+   "cod_month": 12,
+   "name": "Regan",
+   "eia_plant_code": 65124,
+   "mature_nonzero_months": 18,
+   "zero_output_mature_months": [
+    "2023-03",
+    "2023-04",
+    "2023-05",
+    "2023-06",
+    "2023-07"
+   ],
+   "mature_cf": 0.1515
+  },
+  "323813": {
+   "technology": "TRACKING",
+   "single_axis": true,
+   "fixed_tilt": false,
+   "tilt_angle": "0",
+   "nameplate_mw": 20.0,
+   "cod_year": 2023,
+   "cod_month": 3,
+   "name": "Grissom",
+   "eia_plant_code": 65121,
+   "mature_nonzero_months": 17,
+   "zero_output_mature_months": [
+    "2024-03",
+    "2024-04",
+    "2024-05"
+   ],
+   "mature_cf": 0.18
+  },
+  "323810": {
+   "technology": "FIXED",
+   "single_axis": false,
+   "fixed_tilt": true,
+   "tilt_angle": "20",
+   "nameplate_mw": 20.0,
+   "cod_year": 2023,
+   "cod_month": 6,
+   "name": "Darby",
+   "eia_plant_code": 65839,
+   "mature_nonzero_months": 17,
+   "zero_output_mature_months": [],
+   "mature_cf": 0.1639
+  },
+  "323814": {
+   "technology": "FIXED",
+   "single_axis": false,
+   "fixed_tilt": true,
+   "tilt_angle": "21.1",
+   "nameplate_mw": 20.0,
+   "cod_year": 2023,
+   "cod_month": 11,
+   "name": "Stillwater",
+   "eia_plant_code": 65841,
+   "mature_nonzero_months": 12,
+   "zero_output_mature_months": [],
+   "mature_cf": 0.1945
+  },
+  "323833": {
+   "technology": "TRACKING",
+   "single_axis": true,
+   "fixed_tilt": false,
+   "tilt_angle": "",
+   "nameplate_mw": 20.0,
+   "cod_year": 2024,
+   "cod_month": 2,
+   "name": "Albany County 1",
+   "eia_plant_code": 64077,
+   "mature_nonzero_months": 9,
+   "zero_output_mature_months": [],
+   "mature_cf": null
+  },
+  "323834": {
+   "name": "Albany County Solar 2",
+   "eia_plant_code": null,
+   "note": "no separate EIA-860 record; keeps its Gold Book date"
+  },
+  "323815": {
+   "technology": "TRACKING",
+   "single_axis": true,
+   "fixed_tilt": false,
+   "tilt_angle": "",
+   "nameplate_mw": 20.0,
+   "cod_year": 2024,
+   "cod_month": 2,
+   "name": "Pattersonville",
+   "eia_plant_code": 65840,
+   "mature_nonzero_months": 9,
+   "zero_output_mature_months": [],
+   "mature_cf": null
+  },
+  "323840": {
+   "technology": "TRACKING",
+   "single_axis": true,
+   "fixed_tilt": false,
+   "tilt_angle": "",
+   "nameplate_mw": 50.0,
+   "cod_year": 2024,
+   "cod_month": 5,
+   "name": "East Point",
+   "eia_plant_code": 65805,
+   "mature_nonzero_months": 18,
+   "zero_output_mature_months": [],
+   "mature_cf": 0.2091
+  },
+  "323847": {
+   "technology": "FIXED",
+   "single_axis": false,
+   "fixed_tilt": true,
+   "tilt_angle": "18",
+   "nameplate_mw": 90.0,
+   "cod_year": 2024,
+   "cod_month": 8,
+   "name": "High River",
+   "eia_plant_code": 65765,
+   "mature_nonzero_months": 15,
+   "zero_output_mature_months": [],
+   "mature_cf": 0.19
+  },
+  "323691": {
+   "technology": "FIXED",
+   "single_axis": false,
+   "fixed_tilt": true,
+   "tilt_angle": "28",
+   "nameplate_mw": 31.5,
+   "cod_year": 2011,
+   "cod_month": 12,
+   "name": "Long Island Solar Farm",
+   "eia_plant_code": 57589,
+   "mature_nonzero_months": 37,
+   "zero_output_mature_months": [],
+   "mature_cf": 0.1646
+  },
+  "323806": {
+   "technology": "FIXED",
+   "single_axis": false,
+   "fixed_tilt": true,
+   "tilt_angle": "24",
+   "nameplate_mw": 22.9,
+   "cod_year": 2022,
+   "cod_month": 8,
+   "name": "Calverton",
+   "eia_plant_code": 65679,
+   "mature_nonzero_months": 24,
+   "zero_output_mature_months": [],
+   "mature_cf": 0.217
+  }
+ }
+}
