@@ -990,3 +990,26 @@ your branch when done.
   B-5 sitting (curate_emissions OOM → GOLDEN-TIER-FIX lane). With PR-3
   delivered, BLOAT-B's §8 batch is fully executed except the re-measured
   close-out (BLOAT-B-7, open).
+- 2026-08-15 — **Director session assumed program coordination; Wave-1
+  completion dispatch** (branch `claude/model-audit-workstreams-wc0npu`).
+  State verified at `origin/main` @ `870c4c8`: **PERF-A DELIVERED and
+  merged** (`docs/handoffs/perf-recheck-2026-08.md` + warm-start memo, via
+  the CI-infrastructure-blocker session — the memo recommends closing §6
+  decision 1 as overtaken by events; owner ack pending), **DEBUG-B
+  DELIVERED and merged** (`docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md`;
+  run pjm-162 registered, keeper CANDIDATE — owner promotion pending; its
+  bundle held from the B-3 prune so promotion needs no re-solve),
+  **BLOAT-B PR-3 fully landed** (#3982 data + #3983 records). Wave-1 gap
+  is now AUDIT-A + DOCS-A only. **Four sessions dispatched by the
+  director:** AUDIT-A [FABLE] (`session_01CKURpfSiq5Z55bWN8QhtU2`, §7.1 +
+  dispatch-delta preamble), DOCS-A [OPUS]
+  (`session_01UTTocEnQLV6VdHotxwCfgB`, §7.4 + post-BLOAT install-story and
+  superseded known-reds deltas), GOLDEN-TIER-FIX [FABLE]
+  (`session_01SYyqHxxsjkUD95E272svYh` — adopt PERF-A's `curate_emissions`
+  low-mem path, then the single authorized golden-tier dispatch; G3
+  evidence), and a **reissued DEBUG manager** [FABLE]
+  (`session_01V4GocSVjMTBwSxVQEUMyTk` — pjm-162 promotion card, ≤2022
+  clock-extension card, clean-main re-verify, sibling-import residue).
+  Held at gates: PERF-B (G1), DOCS-B (G2), BLOAT-B-6R/B-7 close-out
+  (golden-tier green), SITE-A (G3), AUDIT-B (G3). Live rollup:
+  `docs/handoffs/audit-program-director-board-2026-08.md`.
