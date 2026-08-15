@@ -8060,7 +8060,7 @@ no marker granted or spent; the L-SCAR lane (stopped at V0) and the frozen
 composition lane untouched; ercot-188/E2 P0 forfeiture inherited unexpired.
 Session consumed the ercot-196 shorthand. Next shorthand: **ercot-202**.
 
-## ercot-202 (2026-08-14) — OWNER SITTING RECORD: card T SIGNED (T-1 + T-3b), L-SCAR V0-FAIL ADJUDICATED — docs only, NO lever, NO solve, keeper UNCHANGED
+## ercot-197 (2026-08-14) — OWNER SITTING RECORD: card T SIGNED (T-1 + T-3b), L-SCAR V0-FAIL ADJUDICATED — docs only, NO lever, NO solve, keeper UNCHANGED
 
 **The sitting** (held 2026-08-14 in the ERCOT-SCAR workstream manager
 session, owner selections interactive; primary record:
@@ -8093,7 +8093,7 @@ regime card staged next cycle. This session: appends to the two decision
 cards + this entry, nothing else — no lever, no solve, no year touched
 (rule 22 moot but binding), no matrix/keeper/registry/bench contact; keeper
 UNCHANGED at `2026-08-12-run192-arm-coal-peak`. Session consumed the
-ercot-202 shorthand. Next shorthand: **ercot-198**.
+ercot-197 shorthand. Next shorthand: **ercot-198**.
 
 ## ercot-198 (2026-08-14) — T-3b EXECUTED: published-adder overlay-completeness audit — committed overlay INCOMPLETE in 2024 (missing published RTORPA, +0.24 $/MWh dw), near-complete in 2025 (+0.015); NO lever, NO solve, no year scored, NO matrix edit, keeper UNCHANGED
 
