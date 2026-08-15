@@ -1,4 +1,11 @@
-# caiso-dam-outages — raw
+# caiso-dam-outages — raw (`daily/*.xlsx` gitignored)
+
+> **Payload posture.** The 1,094 `daily/cnog-YYYYMMDD.xlsx` snapshots
+> (155.0 MiB) are **gitignored and no longer tracked at tip** — BLOAT-B-2
+> corpus conversion, `docs/bloat-removal-plan-2026-08.md` §4.4 item B4. The
+> DERIVED `caiso-dam-outage-windows.parquet` that every runtime consumer reads
+> **stays tracked**, as do `missing-days.txt`, `loader-wiring.patch`, this
+> README and `SHA256SUMS.txt`. See **Recovery / re-fetch** below.
 
 CAISO's daily **Curtailed and Non-Operational Generator Prior Trade Date
 Report** — the DAM-published unit-level outage/derate instrument
@@ -14,7 +21,8 @@ following morning).
 
 **Layout:**
 
-- `daily/cnog-YYYYMMDD.xlsx` — the immutable daily snapshots. The fetch
+- `daily/cnog-YYYYMMDD.xlsx` — the immutable daily snapshots, **gitignored**
+  (their bytes are pinned by `SHA256SUMS.txt`). The fetch
   **defaults** to 2023-01-01 .. 2025-12-31 (the rule-22 training window); pass
   explicit dates to widen it. CAISO's prior-trade-date series begins
   **2021-06-18** (nothing exists before it), so the maximum available span is
@@ -25,9 +33,12 @@ following morning).
 - `caiso-dam-outage-windows.parquet` — DERIVED consolidation (one row per
   outage-MRID episode: min start / max end across the daily snapshots, an
   episode never seen closed taking its last snapshot day's end-of-day) —
-  `scripts/data/curate_caiso_dam_outages.py`. Binary; regenerated from the
-  daily snapshots (not carried in the committed tree — the push path can't
-  transport binary; see below).
+  `scripts/data/curate_caiso_dam_outages.py`. **Tracked**: this is the only
+  artifact any runtime consumer reads, so it is the one that must survive the
+  payload conversion.
+- `SHA256SUMS.txt` — the provenance record for the gitignored dailies: sha256 +
+  byte size of all 1,094 snapshots as of the pin sha below. A re-fetch is
+  verifiable against it.
 
 **Fetch:** `scripts/data/fetch_caiso_dam_outages.py [START END]` (resumable;
 skips files already present). For the full available series run
@@ -41,11 +52,37 @@ python scripts/data/curate_caiso_dam_outages.py                     # windows pa
 python scripts/data/build_caiso_resource_crosswalk.py              # reviewable crosswalk
 ```
 
-The derived `caiso-dam-outage-windows.parquet` and the daily xlsx are binary
-and are **not committed** (the GitHub API push path used in this repo carries
-only text; `git push` is disabled). They are regenerated locally by the two
-scripts above — the committed, reviewable artifacts are the scripts, the loader,
-and the crosswalk CSV.
+## Recovery / re-fetch — getting the dailies back
+
+Two routes; both end at bytes verifiable against `SHA256SUMS.txt`.
+
+1. **Restore from git history (exact bytes, always available).** History is
+   kept — the conversion untracked the payloads at tip, it did **not** rewrite
+   history, so every snapshot remains fetchable forever from the promisor
+   remote at the pin sha:
+
+   ```
+   git restore --source=315a24524a851566c3d32cc88668fa32dcbd1d74 -- data/raw/caiso-dam-outages/daily
+   ```
+
+   **Pin sha `315a24524a851566c3d32cc88668fa32dcbd1d74`** — the last commit at
+   which the `daily/*.xlsx` payloads were tracked (origin/main, 2026-08-15).
+   In a blobless partial clone this triggers a lazy fetch of ~155 MiB.
+
+2. **Re-fetch from CAISO (regenerates, does not guarantee byte identity).**
+
+   ```
+   python scripts/data/fetch_caiso_dam_outages.py 2021-06-18 <today>
+   cd data/raw/caiso-dam-outages && sha256sum -c <(awk '$1 !~ /^#/ && NF>=3 {s=$1; $1=$2=""; sub(/^ +/,""); print s "  " $0}' SHA256SUMS.txt)
+   ```
+
+   **Retention risk, stated:** the CAISO library's retention is *observed, not
+   contractual*. Route 1 is the backstop; `missing-days.txt` plus the sha
+   manifest make any re-fetch auditable against what was actually held.
+
+Verifying the manifest is also how you confirm a restore succeeded before
+re-deriving. Then re-run `curate_caiso_dam_outages.py` only if the parquet
+needs rebuilding — the committed parquet already reflects these exact bytes.
 
 **Consumer (rule 14 — prefer measured over inferred) — WIRED:** the backcast
 outage overlay now applies unit-level **DAM-before-CAMPD precedence** behind
