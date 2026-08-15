@@ -539,6 +539,18 @@ Tip trajectory: 10,080 → **≈ 8.1 GiB** (class-approved only) → **≈ 6.1 G
   `file-integrity-guard` — its `is_core` set is `src/`, `scripts/`, CLAUDE.md,
   the spec, workflows — but G3's definition expects prune PRs labeled, so label
   by convention). README provenance paragraphs updated in the same PR.
+  **EXECUTED 2026-08-15** (BLOAT-B-1 session, PR #3958; step-1 manifests
+  landed separately via PR #3957 / `971eaa3`): A1 + B1a slimmed in place over
+  all 1,027 files; the ERCOT-157 byte-identity acceptance passed 15/15 (12
+  derive artifacts + the 27-part rtcb adapter fingerprint + both
+  `--position-tail` STOP records — evidence table in the PR). Measured
+  recovery **739.8 MiB / 21.3%** against the ≈1,545 estimate: the precedent
+  ratio (0.547) was measured on SNAPPY originals and the 2026-08 re-uploads
+  were already default-zstd, so the codec half of the yield was banked before
+  this PR — the projection half is what remained. The consumer registry was
+  re-audited first (KEEP 79→108 corpus / 180 extracts; rtcb recompress-only
+  per the adapter contract, card D/D1 — no consumer subset exists to project
+  to). A2 untouched (needs-sign-off, Stage-2 call).
 - **PR-2 — "corpus conversions, evidence-complete set" (B4, B5, B6, GUID
   hygiene).** One PR, per-corpus commits: gitignore blocks in the §4
   established idiom (payload glob + `!README` + `!SHA256SUMS.txt`), SOURCES/URL
