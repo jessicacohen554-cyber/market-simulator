@@ -1,0 +1,1440 @@
+{
+ "probe": "ercot208_cc_nameplate_phase0",
+ "lever": "cc_nameplate_summer_derate (ERCOT CC leg)",
+ "keeper": "2026-08-15-ercot204-rule26-delete",
+ "years_read": [
+  2023,
+  2024,
+  2025
+ ],
+ "no_lp_solved": true,
+ "phase0_a_armed_state": {
+  "keeper_id_at_head": "2026-08-15-ercot204-rule26-delete",
+  "keeper_id_expected": "2026-08-15-ercot204-rule26-delete",
+  "keeper_id_matches": true,
+  "bundle": "results/calibration/ercot204_rule26_delete",
+  "channels": {
+   "cc_nameplate_summer_derate": {
+    "resolved_run_config": false,
+    "meta_solve_kwarg": false,
+    "prb_overrides_channel": "<ABSENT>"
+   },
+   "cc_winter_capability_basis": {
+    "resolved_run_config": false,
+    "meta_solve_kwarg": null,
+    "prb_overrides_channel": "<ABSENT>"
+   },
+   "coal_nameplate_summer_derate": {
+    "resolved_run_config": true,
+    "meta_solve_kwarg": true,
+    "prb_overrides_channel": "<ABSENT>"
+   },
+   "summer_derate_basis_aware": {
+    "resolved_run_config": false,
+    "meta_solve_kwarg": "<ABSENT>",
+    "prb_overrides_channel": "<ABSENT>"
+   },
+   "plant_level_fleet": {
+    "resolved_run_config": false,
+    "meta_solve_kwarg": "<ABSENT>",
+    "prb_overrides_channel": "<ABSENT>"
+   },
+   "use_campd_bins": {
+    "resolved_run_config": true,
+    "meta_solve_kwarg": "<ABSENT>",
+    "prb_overrides_channel": "<ABSENT>"
+   },
+   "outage_source": {
+    "resolved_run_config": "historic",
+    "meta_solve_kwarg": "historic",
+    "prb_overrides_channel": "<ABSENT>"
+   },
+   "mode": {
+    "resolved_run_config": "backcast",
+    "meta_solve_kwarg": "<ABSENT>",
+    "prb_overrides_channel": "<ABSENT>"
+   },
+   "temp_dependent_derate": {
+    "resolved_run_config": false,
+    "meta_solve_kwarg": false,
+    "prb_overrides_channel": "<ABSENT>"
+   },
+   "gt_ambient_derate": {
+    "resolved_run_config": false,
+    "meta_solve_kwarg": "<ABSENT>",
+    "prb_overrides_channel": "<ABSENT>"
+   },
+   "ercot_thermal_dam_availability": {
+    "resolved_run_config": true,
+    "meta_solve_kwarg": true,
+    "prb_overrides_channel": true
+   },
+   "ercot_thermal_dam_availability_hourly": {
+    "resolved_run_config": true,
+    "meta_solve_kwarg": true,
+    "prb_overrides_channel": true
+   },
+   "ercot_thermal_dam_availability_plant": {
+    "resolved_run_config": true,
+    "meta_solve_kwarg": true,
+    "prb_overrides_channel": true
+   },
+   "ercot_thermal_dam_availability_coal": {
+    "resolved_run_config": true,
+    "meta_solve_kwarg": "<ABSENT>",
+    "prb_overrides_channel": "<ABSENT>"
+   },
+   "ercot_dam_availability_gas_event_cap": {
+    "resolved_run_config": true,
+    "meta_solve_kwarg": "<ABSENT>",
+    "prb_overrides_channel": true
+   },
+   "wefor_residual": {
+    "resolved_run_config": 0.02,
+    "meta_solve_kwarg": "<ABSENT>",
+    "prb_overrides_channel": 0.02
+   },
+   "wefor_residual_groups": {
+    "resolved_run_config": [
+     "ST_CHP",
+     "ST_GAS"
+    ],
+    "meta_solve_kwarg": "<ABSENT>",
+    "prb_overrides_channel": [
+     "ST_CHP",
+     "ST_GAS"
+    ]
+   },
+   "wefor_multiplier": {
+    "resolved_run_config": 0.7,
+    "meta_solve_kwarg": "<ABSENT>",
+    "prb_overrides_channel": "<ABSENT>"
+   }
+  },
+  "cc_nameplate_summer_derate_ARMED_ON_KEEPER": false,
+  "verdict": "PASS \u2014 genuinely unarmed on the keeper through all three channels"
+ },
+ "phase0_bc_object": {
+  "per_plant": [
+   {
+    "plant_code": 56152,
+    "plant_name": "Freeport Energy Center",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 260.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 260.0,
+    "eia860_net_summer_mw": 219.4,
+    "measured_summer_ratio": 0.843846,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.843846,
+    "summer_mw_delta": -14.6,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 2007.0
+   },
+   {
+    "plant_code": 50043,
+    "plant_name": "Houston Chemical Complex Battleground",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 380.7,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 380.7,
+    "eia860_net_summer_mw": 263.0,
+    "measured_summer_ratio": 0.690833,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.690833,
+    "summer_mw_delta": -79.63,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 1987.1
+   },
+   {
+    "plant_code": 52120,
+    "plant_name": "Freeport Energy",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 419.3,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 603.1,
+    "eia860_net_summer_mw": 458.0,
+    "measured_summer_ratio": 0.75941,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.75941,
+    "summer_mw_delta": -58.9495,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 1983.0
+   },
+   {
+    "plant_code": 52132,
+    "plant_name": "Power Station 4",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 156.4,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 191.1,
+    "eia860_net_summer_mw": 172.0,
+    "measured_summer_ratio": 0.900052,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.900052,
+    "summer_mw_delta": 0.0082,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 1986.0
+   },
+   {
+    "plant_code": 54676,
+    "plant_name": "Oyster Creek Unit VIII",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 497.9,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 497.9,
+    "eia860_net_summer_mw": 379.0,
+    "measured_summer_ratio": 0.761197,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.761197,
+    "summer_mw_delta": -69.11,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 1994.0
+   },
+   {
+    "plant_code": 55047,
+    "plant_name": "Pasadena Cogeneration",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 815.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 815.0,
+    "eia860_net_summer_mw": 746.0,
+    "measured_summer_ratio": 0.915337,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.915337,
+    "summer_mw_delta": 12.5,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 1999.4
+   },
+   {
+    "plant_code": 55327,
+    "plant_name": "Baytown Energy Center",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 932.9,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 932.9,
+    "eia860_net_summer_mw": 852.0,
+    "measured_summer_ratio": 0.913281,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.913281,
+    "summer_mw_delta": 12.39,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 2002.0
+   },
+   {
+    "plant_code": 55299,
+    "plant_name": "Channel Energy Center LLC",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 923.8,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 923.8,
+    "eia860_net_summer_mw": 760.0,
+    "measured_summer_ratio": 0.822689,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.822689,
+    "summer_mw_delta": -71.42,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 2004.5
+   },
+   {
+    "plant_code": 55187,
+    "plant_name": "Channelview Cogeneration Plant",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 918.3,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 918.3,
+    "eia860_net_summer_mw": 761.0,
+    "measured_summer_ratio": 0.828705,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.828705,
+    "summer_mw_delta": -65.47,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 2001.8
+   },
+   {
+    "plant_code": 52088,
+    "plant_name": "Texas City Power Plant",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 450.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 450.0,
+    "eia860_net_summer_mw": 418.0,
+    "measured_summer_ratio": 0.928889,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.928889,
+    "summer_mw_delta": 13.0,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 1987.0
+   },
+   {
+    "plant_code": 55464,
+    "plant_name": "Deer Park Energy Center",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 1176.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1176.0,
+    "eia860_net_summer_mw": 1176.0,
+    "measured_summer_ratio": 1.0,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 1.0,
+    "summer_mw_delta": 117.6,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 2005.2
+   },
+   {
+    "plant_code": 50815,
+    "plant_name": "Odyssey Energy Altura Cogen, LLC",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 643.6,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 643.6,
+    "eia860_net_summer_mw": 486.0,
+    "measured_summer_ratio": 0.755127,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.755127,
+    "summer_mw_delta": -93.24,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 1986.9
+   },
+   {
+    "plant_code": 55470,
+    "plant_name": "Green Power 2",
+    "plant_group": "CC_CHP",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 611.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 861.0,
+    "eia860_net_summer_mw": 624.0,
+    "measured_summer_ratio": 0.724739,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.724739,
+    "summer_mw_delta": -107.0847,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 2004.7
+   },
+   {
+    "plant_code": 55313,
+    "plant_name": "Ingleside Cogeneration",
+    "plant_group": "CC_CHP",
+    "zone": "South",
+    "nameplate_mw_bins_sheet": 517.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 517.0,
+    "eia860_net_summer_mw": 460.0,
+    "measured_summer_ratio": 0.889749,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.889749,
+    "summer_mw_delta": -5.3,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 1999.0
+   },
+   {
+    "plant_code": 10554,
+    "plant_name": "Formosa Utility Venture Ltd",
+    "plant_group": "CC_CHP",
+    "zone": "South",
+    "nameplate_mw_bins_sheet": 933.4,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 933.4,
+    "eia860_net_summer_mw": 829.8,
+    "measured_summer_ratio": 0.889008,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.889008,
+    "summer_mw_delta": -10.26,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 2002.3
+   },
+   {
+    "plant_code": 55206,
+    "plant_name": "Corpus Christi Energy Center",
+    "plant_group": "CC_CHP",
+    "zone": "South",
+    "nameplate_mw_bins_sheet": 593.3,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 593.3,
+    "eia860_net_summer_mw": 506.0,
+    "measured_summer_ratio": 0.852857,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.852857,
+    "summer_mw_delta": -27.97,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 2002.0
+   },
+   {
+    "plant_code": 50118,
+    "plant_name": "Hal C Weaver Power Plant",
+    "plant_group": "CC_CHP",
+    "zone": "South_Central",
+    "nameplate_mw_bins_sheet": 138.9,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 152.5,
+    "eia860_net_summer_mw": 146.8,
+    "measured_summer_ratio": 0.962623,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.962623,
+    "summer_mw_delta": 8.6983,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 1990.8
+   },
+   {
+    "plant_code": 58151,
+    "plant_name": "Central Utility Plant - Texas A&M",
+    "plant_group": "CC_CHP",
+    "zone": "South_Central",
+    "nameplate_mw_bins_sheet": 45.1,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 45.1,
+    "eia860_net_summer_mw": 43.4,
+    "measured_summer_ratio": 0.962306,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.962306,
+    "summer_mw_delta": 2.81,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": 2011.0
+   },
+   {
+    "plant_code": 55154,
+    "plant_name": "Lost Pines 1 Power Project",
+    "plant_group": "CC_REGULAR",
+    "zone": "South_Central",
+    "nameplate_mw_bins_sheet": 609.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 609.0,
+    "eia860_net_summer_mw": 510.0,
+    "measured_summer_ratio": 0.837438,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.837438,
+    "summer_mw_delta": -38.1,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2001.0
+   },
+   {
+    "plant_code": 52176,
+    "plant_name": "C R Wing Cogen Plant",
+    "plant_group": "CC_CHP",
+    "zone": "West",
+    "nameplate_mw_bins_sheet": 230.0,
+    "eia860_present": false,
+    "eia860_nameplate_mw": null,
+    "eia860_net_summer_mw": null,
+    "measured_summer_ratio": null,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 1.0,
+    "summer_mw_delta": 23.0,
+    "dam_covered_class": false,
+    "eia860_cap_wtd_online_year": null
+   },
+   {
+    "plant_code": 60122,
+    "plant_name": "Colorado Bend II",
+    "plant_group": "CC_REGULAR",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 1230.3,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1230.3,
+    "eia860_net_summer_mw": 1142.7,
+    "measured_summer_ratio": 0.928798,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.928798,
+    "summer_mw_delta": 35.43,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2017.0
+   },
+   {
+    "plant_code": 55062,
+    "plant_name": "Tenaska Frontier Generation Station",
+    "plant_group": "CC_REGULAR",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 939.7,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 939.7,
+    "eia860_net_summer_mw": 860.0,
+    "measured_summer_ratio": 0.915186,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.915186,
+    "summer_mw_delta": 14.27,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2000.0
+   },
+   {
+    "plant_code": 56350,
+    "plant_name": "Colorado Bend Energy Center",
+    "plant_group": "CC_REGULAR",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 654.1,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 580.1,
+    "eia860_net_summer_mw": 546.0,
+    "measured_summer_ratio": 0.941217,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.941217,
+    "summer_mw_delta": 26.9601,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2004.1
+   },
+   {
+    "plant_code": 56806,
+    "plant_name": "Cedar Bayou 4",
+    "plant_group": "CC_REGULAR",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 535.5,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 535.5,
+    "eia860_net_summer_mw": 504.0,
+    "measured_summer_ratio": 0.941176,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.941176,
+    "summer_mw_delta": 22.05,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2009.0
+   },
+   {
+    "plant_code": 3469,
+    "plant_name": "T H Wharton",
+    "plant_group": "CC_REGULAR",
+    "zone": "Houston",
+    "nameplate_mw_bins_sheet": 1189.9,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 663.6,
+    "eia860_net_summer_mw": 652.0,
+    "measured_summer_ratio": 0.98252,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.98252,
+    "summer_mw_delta": 98.1901,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 1973.0
+   },
+   {
+    "plant_code": 55226,
+    "plant_name": "Freestone Energy Center",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 1036.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1036.0,
+    "eia860_net_summer_mw": 1032.0,
+    "measured_summer_ratio": 0.996139,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.996139,
+    "summer_mw_delta": 99.6,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2002.0
+   },
+   {
+    "plant_code": 55320,
+    "plant_name": "Wise County Power LLC",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 821.7,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 821.7,
+    "eia860_net_summer_mw": 735.0,
+    "measured_summer_ratio": 0.894487,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.894487,
+    "summer_mw_delta": -4.53,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2004.0
+   },
+   {
+    "plant_code": 59812,
+    "plant_name": "Wolf Hollow II",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 1231.2,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1231.2,
+    "eia860_net_summer_mw": 1103.4,
+    "measured_summer_ratio": 0.896199,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.896199,
+    "summer_mw_delta": -4.68,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2017.0
+   },
+   {
+    "plant_code": 55230,
+    "plant_name": "Jack County",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 1280.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1280.0,
+    "eia860_net_summer_mw": 1241.0,
+    "measured_summer_ratio": 0.969531,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.969531,
+    "summer_mw_delta": 89.0,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2008.5
+   },
+   {
+    "plant_code": 55097,
+    "plant_name": "Lamar Power Project",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 1112.6,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1112.6,
+    "eia860_net_summer_mw": 1044.0,
+    "measured_summer_ratio": 0.938343,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.938343,
+    "summer_mw_delta": 42.66,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2000.0
+   },
+   {
+    "plant_code": 55480,
+    "plant_name": "Forney Energy Center",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 1894.2,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1894.2,
+    "eia860_net_summer_mw": 1770.0,
+    "measured_summer_ratio": 0.934431,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.934431,
+    "summer_mw_delta": 65.22,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2003.0
+   },
+   {
+    "plant_code": 58005,
+    "plant_name": "Rayburn Energy Station LLC",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 803.2,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 803.2,
+    "eia860_net_summer_mw": 685.0,
+    "measured_summer_ratio": 0.852839,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.852839,
+    "summer_mw_delta": -37.88,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2014.0
+   },
+   {
+    "plant_code": 55139,
+    "plant_name": "Wolf Hollow I LP",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 788.4,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 788.4,
+    "eia860_net_summer_mw": 756.0,
+    "measured_summer_ratio": 0.958904,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.958904,
+    "summer_mw_delta": 46.44,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2003.0
+   },
+   {
+    "plant_code": 55223,
+    "plant_name": "Ennis Power Company LLC",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 418.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 418.0,
+    "eia860_net_summer_mw": 359.5,
+    "measured_summer_ratio": 0.860048,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.860048,
+    "summer_mw_delta": -16.7,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2002.0
+   },
+   {
+    "plant_code": 54817,
+    "plant_name": "Johnson County",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 282.6,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 282.6,
+    "eia860_net_summer_mw": 277.0,
+    "measured_summer_ratio": 0.980184,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.980184,
+    "summer_mw_delta": 22.66,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 1996.0
+   },
+   {
+    "plant_code": 55091,
+    "plant_name": "Midlothian Energy Facility",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 1734.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1734.0,
+    "eia860_net_summer_mw": 1620.0,
+    "measured_summer_ratio": 0.934256,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.934256,
+    "summer_mw_delta": 59.4,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2000.3
+   },
+   {
+    "plant_code": 58001,
+    "plant_name": "Temple Power Station",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 1606.4,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1606.4,
+    "eia860_net_summer_mw": 1580.0,
+    "measured_summer_ratio": 0.983566,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.983566,
+    "summer_mw_delta": 134.24,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2014.5
+   },
+   {
+    "plant_code": 55172,
+    "plant_name": "Thad Hill Energy Center",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 807.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 807.0,
+    "eia860_net_summer_mw": 763.0,
+    "measured_summer_ratio": 0.945477,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.945477,
+    "summer_mw_delta": 36.7,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2003.4
+   },
+   {
+    "plant_code": 50109,
+    "plant_name": "Paris Energy Center",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 265.6,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 265.6,
+    "eia860_net_summer_mw": 239.0,
+    "measured_summer_ratio": 0.899849,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.899849,
+    "summer_mw_delta": -0.04,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 1989.0
+   },
+   {
+    "plant_code": 55132,
+    "plant_name": "Tenaska Gateway Generating Station",
+    "plant_group": "CC_REGULAR",
+    "zone": "Northeast",
+    "nameplate_mw_bins_sheet": 939.6,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 939.6,
+    "eia860_net_summer_mw": 826.0,
+    "measured_summer_ratio": 0.879097,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.879097,
+    "summer_mw_delta": -19.64,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2001.0
+   },
+   {
+    "plant_code": 50127,
+    "plant_name": "Signal Hill Generating LLC",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 80.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 80.0,
+    "eia860_net_summer_mw": 76.1,
+    "measured_summer_ratio": 0.95125,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.95125,
+    "summer_mw_delta": 4.1,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 1987.0
+   },
+   {
+    "plant_code": 55123,
+    "plant_name": "Magic Valley Generating Station",
+    "plant_group": "CC_REGULAR",
+    "zone": "South",
+    "nameplate_mw_bins_sheet": 801.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 801.0,
+    "eia860_net_summer_mw": 667.0,
+    "measured_summer_ratio": 0.832709,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.832709,
+    "summer_mw_delta": -53.9,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2002.0
+   },
+   {
+    "plant_code": 3441,
+    "plant_name": "Nueces Bay",
+    "plant_group": "CC_REGULAR",
+    "zone": "South",
+    "nameplate_mw_bins_sheet": 730.2,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 730.2,
+    "eia860_net_summer_mw": 633.0,
+    "measured_summer_ratio": 0.866886,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.866886,
+    "summer_mw_delta": -24.18,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 1991.7
+   },
+   {
+    "plant_code": 3443,
+    "plant_name": "Victoria",
+    "plant_group": "CC_REGULAR",
+    "zone": "South",
+    "nameplate_mw_bins_sheet": 376.9,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 376.9,
+    "eia860_net_summer_mw": 288.0,
+    "measured_summer_ratio": 0.764128,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.764128,
+    "summer_mw_delta": -51.21,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 1987.0
+   },
+   {
+    "plant_code": 3631,
+    "plant_name": "Sam Rayburn",
+    "plant_group": "CC_REGULAR",
+    "zone": "South",
+    "nameplate_mw_bins_sheet": 192.8,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 189.6,
+    "eia860_net_summer_mw": 183.0,
+    "measured_summer_ratio": 0.96519,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.96519,
+    "summer_mw_delta": 12.5686,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2003.0
+   },
+   {
+    "plant_code": 55086,
+    "plant_name": "Gregory Power Plant",
+    "plant_group": "CC_REGULAR",
+    "zone": "South",
+    "nameplate_mw_bins_sheet": 469.8,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 469.8,
+    "eia860_net_summer_mw": 366.0,
+    "measured_summer_ratio": 0.779055,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.779055,
+    "summer_mw_delta": -56.82,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2000.0
+   },
+   {
+    "plant_code": 55137,
+    "plant_name": "Rio Nogales Power Project",
+    "plant_group": "CC_REGULAR",
+    "zone": "South_Central",
+    "nameplate_mw_bins_sheet": 940.2,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1108.0,
+    "eia860_net_summer_mw": 799.5,
+    "measured_summer_ratio": 0.72157,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.72157,
+    "summer_mw_delta": -167.7595,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2002.0
+   },
+   {
+    "plant_code": 55168,
+    "plant_name": "Bastrop Energy Center",
+    "plant_group": "CC_REGULAR",
+    "zone": "South_Central",
+    "nameplate_mw_bins_sheet": 618.7,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 618.7,
+    "eia860_net_summer_mw": 575.0,
+    "measured_summer_ratio": 0.929368,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.929368,
+    "summer_mw_delta": 18.17,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2002.0
+   },
+   {
+    "plant_code": 55144,
+    "plant_name": "Hays Energy Project",
+    "plant_group": "CC_REGULAR",
+    "zone": "South_Central",
+    "nameplate_mw_bins_sheet": 989.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 989.0,
+    "eia860_net_summer_mw": 931.0,
+    "measured_summer_ratio": 0.941355,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.941355,
+    "summer_mw_delta": 40.9,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2002.0
+   },
+   {
+    "plant_code": 7900,
+    "plant_name": "Sand Hill",
+    "plant_group": "CC_REGULAR",
+    "zone": "South_Central",
+    "nameplate_mw_bins_sheet": 696.4,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 388.0,
+    "eia860_net_summer_mw": 312.0,
+    "measured_summer_ratio": 0.804124,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.804124,
+    "summer_mw_delta": -66.7682,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2004.0
+   },
+   {
+    "plant_code": 55153,
+    "plant_name": "Guadalupe Generating Station",
+    "plant_group": "CC_REGULAR",
+    "zone": "South_Central",
+    "nameplate_mw_bins_sheet": 1088.2,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1088.2,
+    "eia860_net_summer_mw": 1005.0,
+    "measured_summer_ratio": 0.923543,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.923543,
+    "summer_mw_delta": 25.62,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2000.0
+   },
+   {
+    "plant_code": 4937,
+    "plant_name": "Thomas C Ferguson",
+    "plant_group": "CC_REGULAR",
+    "zone": "South_Central",
+    "nameplate_mw_bins_sheet": 574.6,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 574.6,
+    "eia860_net_summer_mw": 516.0,
+    "measured_summer_ratio": 0.898016,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.898016,
+    "summer_mw_delta": -1.14,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2014.0
+   },
+   {
+    "plant_code": 55098,
+    "plant_name": "Frontera Energy Center",
+    "plant_group": "CC_REGULAR",
+    "zone": "Unknown",
+    "nameplate_mw_bins_sheet": 529.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 529.0,
+    "eia860_net_summer_mw": 529.0,
+    "measured_summer_ratio": 1.0,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 1.0,
+    "summer_mw_delta": 52.9,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 1999.3
+   },
+   {
+    "plant_code": 55545,
+    "plant_name": "Hidalgo Energy Center",
+    "plant_group": "CC_REGULAR",
+    "zone": "Unknown",
+    "nameplate_mw_bins_sheet": 551.3,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 551.3,
+    "eia860_net_summer_mw": 495.0,
+    "measured_summer_ratio": 0.897878,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.897878,
+    "summer_mw_delta": -1.17,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2000.0
+   },
+   {
+    "plant_code": 7512,
+    "plant_name": "Arthur Von Rosenberg",
+    "plant_group": "CC_REGULAR",
+    "zone": "Unknown",
+    "nameplate_mw_bins_sheet": 575.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 575.0,
+    "eia860_net_summer_mw": 520.0,
+    "measured_summer_ratio": 0.904348,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.904348,
+    "summer_mw_delta": 2.5,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2000.0
+   },
+   {
+    "plant_code": 55215,
+    "plant_name": "Odessa-Ector Power Plant",
+    "plant_group": "CC_REGULAR",
+    "zone": "West",
+    "nameplate_mw_bins_sheet": 1152.8,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1152.8,
+    "eia860_net_summer_mw": 1061.8,
+    "measured_summer_ratio": 0.921062,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.921062,
+    "summer_mw_delta": 24.28,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2001.0
+   },
+   {
+    "plant_code": 56233,
+    "plant_name": "EG178 Facility",
+    "plant_group": "CC_REGULAR",
+    "zone": "West",
+    "nameplate_mw_bins_sheet": 153.9,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 153.9,
+    "eia860_net_summer_mw": 100.0,
+    "measured_summer_ratio": 0.649773,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.649773,
+    "summer_mw_delta": -38.51,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2005.0
+   },
+   {
+    "plant_code": 56349,
+    "plant_name": "Quail Run Energy Center",
+    "plant_group": "CC_REGULAR",
+    "zone": "West",
+    "nameplate_mw_bins_sheet": 550.4,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 550.4,
+    "eia860_net_summer_mw": 472.2,
+    "measured_summer_ratio": 0.857922,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.857922,
+    "summer_mw_delta": -23.16,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2005.6
+   },
+   {
+    "plant_code": 4939,
+    "plant_name": "Barney M Davis [CC]",
+    "plant_group": "CC_REGULAR",
+    "zone": "South",
+    "nameplate_mw_bins_sheet": 730.0,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 730.2,
+    "eia860_net_summer_mw": 633.0,
+    "measured_summer_ratio": 0.866886,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.866886,
+    "summer_mw_delta": -24.1734,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 1993.7
+   },
+   {
+    "plant_code": 55501,
+    "plant_name": "Kiamichi Energy Facility",
+    "plant_group": "CC_REGULAR",
+    "zone": "North",
+    "nameplate_mw_bins_sheet": 1370.2,
+    "eia860_present": true,
+    "eia860_nameplate_mw": 1370.0,
+    "eia860_net_summer_mw": 1224.0,
+    "measured_summer_ratio": 0.893431,
+    "keeper_summer_multiplier": 0.9,
+    "arm_summer_multiplier": 0.893431,
+    "summer_mw_delta": -9.0013,
+    "dam_covered_class": true,
+    "eia860_cap_wtd_online_year": 2003.0
+   }
+  ],
+  "by_class": {
+   "CC_CHP": {
+    "plants": 19,
+    "plants_matched_in_eia860": 18,
+    "bins_nameplate_mw": 10642.6,
+    "bins_nameplate_mw_matched": 10412.6,
+    "cap_wtd_measured_summer_ratio": 0.858125,
+    "keeper_flat_multiplier": 0.9,
+    "summer_mw_delta_total": -413.03,
+    "summer_mw_delta_matched_only": -436.03,
+    "dam_covered_class": false
+   },
+   "CC_REGULAR": {
+    "plants": 41,
+    "plants_matched_in_eia860": 41,
+    "bins_nameplate_mw": 33349.4,
+    "bins_nameplate_mw_matched": 33349.4,
+    "cap_wtd_measured_summer_ratio": 0.91003,
+    "keeper_flat_multiplier": 0.9,
+    "summer_mw_delta_total": 334.5,
+    "summer_mw_delta_matched_only": 334.5,
+    "dam_covered_class": true
+   }
+  },
+  "dam_covered_classes": [
+   "CC_REGULAR",
+   "COAL",
+   "CT_PEAKER",
+   "ST_GAS"
+  ],
+  "pof_and_age_derate_leg": {
+   "CC_REGULAR": {
+    "class_cap_wtd_online_year": 2002.6,
+    "in_wefor_residual_groups": false,
+    "wefor_capped_to_residual": false,
+    "keeper_availability_base": 0.938587,
+    "arm_availability_base_1_minus_wefor": 0.960059,
+    "delta_availability_pp": 2.1473,
+    "plus_pof_dropped": 0.05,
+    "note": "arrays.py:712 sets availability = 1 - wefor for CC in a historic backcast, dropping the statistical POF and the age/performance derate. The delta below is the age-derate leg only; the POF leg enters through _maint_derate in the shoulder months.",
+    "mw_at_stake": 716.11
+   },
+   "CC_CHP": {
+    "class_cap_wtd_online_year": 1998.9,
+    "in_wefor_residual_groups": false,
+    "wefor_capped_to_residual": false,
+    "keeper_availability_base": 0.941512,
+    "arm_availability_base_1_minus_wefor": 0.964401,
+    "delta_availability_pp": 2.289,
+    "plus_pof_dropped": 0.05,
+    "note": "arrays.py:712 sets availability = 1 - wefor for CC in a historic backcast, dropping the statistical POF and the age/performance derate. The delta below is the age-derate leg only; the POF leg enters through _maint_derate in the shoulder months.",
+    "mw_at_stake": 238.34
+   }
+  },
+  "summer_months": [
+   6,
+   7,
+   8,
+   9
+  ]
+ },
+ "phase0_b_price_reach": {
+  "2023": {
+   "CC_REGULAR": {
+    "summer_hours": 2928,
+    "summer_mean_mw": 21562.38,
+    "summer_max_mw": 27886.86,
+    "delta_mw_applied": 334.5,
+    "reach_upper_bound_hours": 9,
+    "reach_upper_bound_share_of_summer": 0.003074,
+    "reach_upper_bound_mean_price_usd_mwh": 2335.9975,
+    "summer_mean_price_usd_mwh": 60.8576,
+    "annual_mean_price_usd_mwh": 36.5678,
+    "reach_upper_bound_months": [
+     8,
+     9
+    ],
+    "reach_is_an_UPPER_BOUND_because": "the class sidecar records dispatched MW, not the availability ceiling. A summer capability cut binds only where the class is actually at its ceiling; hours within `delta` of the class's OWN observed summer maximum are the largest set that could be, and the committed artifacts cannot narrow it further without a solve."
+   },
+   "CC_CHP": {
+    "summer_hours": 2928,
+    "summer_mean_mw": 3353.84,
+    "summer_max_mw": 4441.21,
+    "delta_mw_applied": 413.03,
+    "reach_upper_bound_hours": 324,
+    "reach_upper_bound_share_of_summer": 0.110656,
+    "reach_upper_bound_mean_price_usd_mwh": 246.3732,
+    "summer_mean_price_usd_mwh": 60.8576,
+    "annual_mean_price_usd_mwh": 36.5678,
+    "reach_upper_bound_months": [
+     7,
+     8,
+     9
+    ],
+    "reach_is_an_UPPER_BOUND_because": "the class sidecar records dispatched MW, not the availability ceiling. A summer capability cut binds only where the class is actually at its ceiling; hours within `delta` of the class's OWN observed summer maximum are the largest set that could be, and the committed artifacts cannot narrow it further without a solve."
+   }
+  },
+  "2024": {
+   "CC_REGULAR": {
+    "summer_hours": 2928,
+    "summer_mean_mw": 20907.07,
+    "summer_max_mw": 27037.85,
+    "delta_mw_applied": 334.5,
+    "reach_upper_bound_hours": 2,
+    "reach_upper_bound_share_of_summer": 0.000683,
+    "reach_upper_bound_mean_price_usd_mwh": 75.4402,
+    "summer_mean_price_usd_mwh": 30.2713,
+    "annual_mean_price_usd_mwh": 28.9387,
+    "reach_upper_bound_months": [
+     8
+    ],
+    "reach_is_an_UPPER_BOUND_because": "the class sidecar records dispatched MW, not the availability ceiling. A summer capability cut binds only where the class is actually at its ceiling; hours within `delta` of the class's OWN observed summer maximum are the largest set that could be, and the committed artifacts cannot narrow it further without a solve."
+   },
+   "CC_CHP": {
+    "summer_hours": 2928,
+    "summer_mean_mw": 3460.39,
+    "summer_max_mw": 4437.78,
+    "delta_mw_applied": 413.03,
+    "reach_upper_bound_hours": 119,
+    "reach_upper_bound_share_of_summer": 0.040642,
+    "reach_upper_bound_mean_price_usd_mwh": 72.0112,
+    "summer_mean_price_usd_mwh": 30.2713,
+    "annual_mean_price_usd_mwh": 28.9387,
+    "reach_upper_bound_months": [
+     6,
+     8
+    ],
+    "reach_is_an_UPPER_BOUND_because": "the class sidecar records dispatched MW, not the availability ceiling. A summer capability cut binds only where the class is actually at its ceiling; hours within `delta` of the class's OWN observed summer maximum are the largest set that could be, and the committed artifacts cannot narrow it further without a solve."
+   }
+  },
+  "2025": {
+   "CC_REGULAR": {
+    "summer_hours": 2928,
+    "summer_mean_mw": 21205.06,
+    "summer_max_mw": 28145.91,
+    "delta_mw_applied": 334.5,
+    "reach_upper_bound_hours": 10,
+    "reach_upper_bound_share_of_summer": 0.003415,
+    "reach_upper_bound_mean_price_usd_mwh": 96.5146,
+    "summer_mean_price_usd_mwh": 33.5824,
+    "annual_mean_price_usd_mwh": 32.7265,
+    "reach_upper_bound_months": [
+     7,
+     8
+    ],
+    "reach_is_an_UPPER_BOUND_because": "the class sidecar records dispatched MW, not the availability ceiling. A summer capability cut binds only where the class is actually at its ceiling; hours within `delta` of the class's OWN observed summer maximum are the largest set that could be, and the committed artifacts cannot narrow it further without a solve."
+   },
+   "CC_CHP": {
+    "summer_hours": 2928,
+    "summer_mean_mw": 3318.16,
+    "summer_max_mw": 4312.48,
+    "delta_mw_applied": 413.03,
+    "reach_upper_bound_hours": 76,
+    "reach_upper_bound_share_of_summer": 0.025956,
+    "reach_upper_bound_mean_price_usd_mwh": 81.947,
+    "summer_mean_price_usd_mwh": 33.5824,
+    "annual_mean_price_usd_mwh": 32.7265,
+    "reach_upper_bound_months": [
+     6,
+     7,
+     8,
+     9
+    ],
+    "reach_is_an_UPPER_BOUND_because": "the class sidecar records dispatched MW, not the availability ceiling. A summer capability cut binds only where the class is actually at its ceiling; hours within `delta` of the class's OWN observed summer maximum are the largest set that could be, and the committed artifacts cannot narrow it further without a solve."
+   }
+  }
+ },
+ "phase0_d_rule19": {
+  "dam_family_armed": {
+   "ercot_thermal_dam_availability": true,
+   "ercot_thermal_dam_availability_hourly": true,
+   "ercot_thermal_dam_availability_plant": true
+  },
+  "dam_covered_classes": [
+   "CC_REGULAR",
+   "COAL",
+   "CT_PEAKER",
+   "ST_GAS"
+  ],
+  "erased_by_waterfill_mw": {
+   "CC_REGULAR": 334.5
+  },
+  "survives_mw": {
+   "CC_CHP": -413.03
+  },
+  "basis": "FINDING-ercot177-temp-derate-refused-2026-08-07.md \u00a73: the class-HOUR water-fill in arrays.py:1616-1633 drives the cap-weighted class-hour mean availability to the measured target `_t` independent of `_cur`, so any PRE-overlay availability edit on a covered class is erased at the class-hour mean; with _plant armed each crosswalked plant is additionally pinned to its own measured site-hour fraction."
+ },
+ "phase0_e_surviving_scope_posture": {
+  "class": "CC_CHP",
+  "pinned_in_c1_scoring": true,
+  "excluded_from_free_class_score": true,
+  "d2_forcing_rows": [
+   {
+    "year": 2023,
+    "class": "CC_CHP",
+    "mechanism": "chp_steam",
+    "forced_twh": 11.8679,
+    "class_total_twh": 26.4056,
+    "share_of_class": 0.4494
+   },
+   {
+    "year": 2024,
+    "class": "CC_CHP",
+    "mechanism": "chp_steam",
+    "forced_twh": 12.7122,
+    "class_total_twh": 28.5453,
+    "share_of_class": 0.4453
+   },
+   {
+    "year": 2025,
+    "class": "CC_CHP",
+    "mechanism": "chp_steam",
+    "forced_twh": 10.1759,
+    "class_total_twh": 27.7011,
+    "share_of_class": 0.3673
+   },
+   {
+    "year": 2025,
+    "class": "CC_CHP",
+    "mechanism": "reliability_floor",
+    "forced_twh": 0.0001,
+    "class_total_twh": 27.7011,
+    "share_of_class": 0.0
+   }
+  ],
+  "min_gen_clipped_to_availability": true,
+  "min_gen_clip_site": "data/fleet/arrays.py:2798 np.minimum(min_gen, pmax[:, None] * availability, out=min_gen)",
+  "consequence": "a summer availability cut on CC_CHP is clipped straight through to the chp_steam must-run floor that carries 44.94 % of the class's 2023 energy, so the arm's surviving scope lands first on a forced leg, not on the economic merit order (rule 19 [R-ONE-MECH] against chp_steam)."
+ },
+ "phase0_f_keeper_promotion_invariance": {
+  "promoted_keeper": "2026-08-15-ercot204-rule26-delete",
+  "superseded_keeper": "2026-08-14-ercot202-arm-plantphysics",
+  "sidecars_read_by_this_probe": {
+   "hourly/class_hourly_2023.parquet": {
+    "identical": true,
+    "sha256": "5cb3af4c8201e89b004b019622fb55c567aba0d7d5bd3243469d1e08f8f3c537"
+   },
+   "hourly/system_2023.parquet": {
+    "identical": true,
+    "sha256": "c8b095cf1bbe5336c865e421eae6461f8223f30791164f3441907a4a19a1f4f4"
+   },
+   "hourly/class_hourly_2024.parquet": {
+    "identical": true,
+    "sha256": "2ae59b36e648e9070cd9908e95b0aed63be1a13b9cb194f9c3f588d5ab481af2"
+   },
+   "hourly/system_2024.parquet": {
+    "identical": true,
+    "sha256": "0e18e8aa79a0b4568e0711431168e9b2056af72d4630c9d0ea953a6b868f60cd"
+   },
+   "hourly/class_hourly_2025.parquet": {
+    "identical": true,
+    "sha256": "6152569b6762d2caa95ddb885418884212ade8e615944d13e5d74683e6f52fdd"
+   },
+   "hourly/system_2025.parquet": {
+    "identical": true,
+    "sha256": "92ecbfcb6bdbeab8fd84efb987f566817714be60f8d8427f7a0394e665437680"
+   }
+  },
+  "all_sidecars_identical": true,
+  "phase0_flags": {
+   "cc_nameplate_summer_derate": {
+    "promoted_keeper": false,
+    "superseded_keeper": false,
+    "identical": true
+   },
+   "cc_winter_capability_basis": {
+    "promoted_keeper": false,
+    "superseded_keeper": false,
+    "identical": true
+   },
+   "coal_nameplate_summer_derate": {
+    "promoted_keeper": true,
+    "superseded_keeper": true,
+    "identical": true
+   },
+   "summer_derate_basis_aware": {
+    "promoted_keeper": false,
+    "superseded_keeper": false,
+    "identical": true
+   },
+   "plant_level_fleet": {
+    "promoted_keeper": false,
+    "superseded_keeper": false,
+    "identical": true
+   },
+   "use_campd_bins": {
+    "promoted_keeper": true,
+    "superseded_keeper": true,
+    "identical": true
+   },
+   "outage_source": {
+    "promoted_keeper": "historic",
+    "superseded_keeper": "historic",
+    "identical": true
+   },
+   "mode": {
+    "promoted_keeper": "backcast",
+    "superseded_keeper": "backcast",
+    "identical": true
+   },
+   "temp_dependent_derate": {
+    "promoted_keeper": false,
+    "superseded_keeper": false,
+    "identical": true
+   },
+   "gt_ambient_derate": {
+    "promoted_keeper": false,
+    "superseded_keeper": false,
+    "identical": true
+   },
+   "ercot_thermal_dam_availability": {
+    "promoted_keeper": true,
+    "superseded_keeper": true,
+    "identical": true
+   },
+   "ercot_thermal_dam_availability_hourly": {
+    "promoted_keeper": true,
+    "superseded_keeper": true,
+    "identical": true
+   },
+   "ercot_thermal_dam_availability_plant": {
+    "promoted_keeper": true,
+    "superseded_keeper": true,
+    "identical": true
+   },
+   "ercot_thermal_dam_availability_coal": {
+    "promoted_keeper": true,
+    "superseded_keeper": true,
+    "identical": true
+   },
+   "ercot_dam_availability_gas_event_cap": {
+    "promoted_keeper": true,
+    "superseded_keeper": true,
+    "identical": true
+   },
+   "wefor_residual": {
+    "promoted_keeper": 0.02,
+    "superseded_keeper": 0.02,
+    "identical": true
+   },
+   "wefor_residual_groups": {
+    "promoted_keeper": [
+     "ST_CHP",
+     "ST_GAS"
+    ],
+    "superseded_keeper": [
+     "ST_CHP",
+     "ST_GAS"
+    ],
+    "identical": true
+   },
+   "wefor_multiplier": {
+    "promoted_keeper": 0.7,
+    "superseded_keeper": 0.7,
+    "identical": true
+   }
+  },
+  "all_phase0_flags_identical": true,
+  "conclusion": "every sidecar this probe reads and every flag this Phase 0 turns on is identical across the promotion, so the verdict is unmoved."
+ }
+}
