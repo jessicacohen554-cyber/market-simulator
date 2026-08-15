@@ -65,6 +65,41 @@ def _year_from_zip_name(name: str) -> int | None:
     return int(m.group(1)) if m else None
 
 
+def _chp_from_vintage_dirs() -> list[pd.DataFrame]:
+    """Return per-year CHP frames from the extracted ``vintage_<year>/`` dirs.
+
+    The release zips are not committed in every clone (they are large and the
+    processed parquets supersede them), but ``data/raw/eia-860/vintage_<year>/
+    eia860_generator_operable.parquet`` is the SAME Operable generator sheet
+    already extracted, carrying the same ``Associated with Combined Heat and
+    Power System`` column. Reading it applies the identical per-plant "any
+    unit flagged CHP" rule as the zip path, so the two sources are
+    interchangeable — verified over the committed 2023/2024 rows (neiso-93,
+    2026-08-14). Used to fill any year the zips do not supply.
+    """
+    frames: list[pd.DataFrame] = []
+    for vdir in sorted(EIA_860_DIR.glob("vintage_*")):
+        m = re.search(r"vintage_(\d{4})", vdir.name)
+        gen_path = vdir / "eia860_generator_operable.parquet"
+        if m is None or not gen_path.exists():
+            continue
+        gen = pd.read_parquet(gen_path)
+        if _CHP_COL not in gen.columns:
+            logger.warning("%s: no CHP column in operable parquet", vdir.name)
+            continue
+        frame = _chp_from_generator_sheet(gen)
+        frame.insert(0, "year", int(m.group(1)))
+        frames.append(frame)
+        logger.info(
+            "%s -> year %s: %d plants (%d CHP)",
+            vdir.name,
+            m.group(1),
+            len(frame),
+            int((frame["chp"] == "Y").sum()),
+        )
+    return frames
+
+
 def build() -> Path:
     """Write the per-year EIA-860 CHP lookup parquet; return its path."""
     frames: list[pd.DataFrame] = []
@@ -92,13 +127,38 @@ def build() -> Path:
             int((frame["chp"] == "Y").sum()),
         )
 
+    # Fill any year the zips did not supply from the extracted vintage dirs.
+    # Zip-derived years win, so a clone that carries both is unaffected.
+    have = {int(f["year"].iloc[0]) for f in frames}
+    frames.extend(
+        f for f in _chp_from_vintage_dirs() if int(f["year"].iloc[0]) not in have
+    )
+
+    # A year already committed to the output is never recomputed: this builder
+    # rewrites the whole file, and the committed 2025 row comes from an early
+    # release whose zip/vintage dir no clone carries. Preserving it keeps the
+    # extension additive (rule 22: applying a measured input to more years must
+    # not move the years it already covers).
+    if _OUT_PATH.exists():
+        prior = pd.read_parquet(_OUT_PATH)
+        fresh = {int(f["year"].iloc[0]) for f in frames}
+        keep = prior[~prior["year"].isin(fresh)]
+        if not keep.empty:
+            logger.info(
+                "preserving committed years %s (no source on disk)",
+                sorted(keep["year"].unique()),
+            )
+            frames.append(keep)
+
     if not frames:
         raise SystemExit(
-            f"no EIA-860 release zips found under {EIA_860_DIR}; "
-            "expected eia860<year>*.zip"
+            f"no EIA-860 release zips or vintage_<year>/ dirs found under "
+            f"{EIA_860_DIR}; expected eia860<year>*.zip or vintage_<year>/"
+            "eia860_generator_operable.parquet"
         )
 
     out = pd.concat(frames, ignore_index=True)
+    out = out.sort_values(["year", "plant_id"], kind="stable").reset_index(drop=True)
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     out.to_parquet(_OUT_PATH, index=False)
     logger.info(
