@@ -672,6 +672,10 @@ elsewhere, e.g. the D-13 cache-key gate):
   (measured); the moved dailies inside `lmp-data/CAISO` are now item B3.
 - **D-5 (`patches/pjm-m1-code.patch`): UNTOUCHED by this plan** — keep-required
   honored; its disposition is release-plan decision 2 (DEBUG lane), not BLOAT.
+  *(Superseded 2026-08-15 — **D-5 is CLOSED**: DEBUG-A closed it on 2026-08-14,
+  archiving the patch to `patches/archive/pjm-m1-code.patch` beside
+  `ARCHIVED-2026-08-14-pjm-m1.md`. Moved, not deleted, so keep-required still
+  holds. `docs/bloat-removal-report-2026-08.md` §5.4.)*
 - **D-8 (data-in-git long-term: "Defer; document status quo"): SUPERSEDE.**
   The deferral is spent: FINDING-rewrite-prep §8 (GO/NO-GO), fast-clone (#3909)
   and release-plan decision 4 replace the status quo with the two-stage
