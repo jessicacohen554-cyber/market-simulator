@@ -9104,3 +9104,115 @@ the owner merges). Inherited ercot-188/E2 permanent limitation carried unexpired
 
 **Session consumed the ercot-208 shorthand. Next shorthand: ercot-209** (197/199/200
 remain unspent).
+
+## ercot-200 (2026-08-14) — REGIME-CONDITIONING DECISION CARD ASSEMBLED (card W, adjudication item (ii) executed): design-conditioned identification is NOT achievable on the committed anchors and the forward regime has ZERO anchors until the 2026 SOM — recommendation WAIT-FOR-DATA; doc-only, NO lever, NO solve, no year solved or scored, NO matrix cell or row edit, keeper UNCHANGED
+
+**Salvage note (second re-check, at landing onto refreshed main 2026-08-15,
+branch `claude/prs-3954-3946-salvage-6iufwj`).** The authoring session was
+lost with PR #3946 (head `69d24f2`) unmergeable against a moved main; the
+card + probe + JSON + this entry land via salvage, bodies verbatim except
+exactly three edits: this note, a mirrored landing note atop the card, and
+this entry's closing pointer line (ercot-203 → ercot-209, main's pointer as
+ercot-208 set it — this append still moves nothing). Re-checked at this tip:
+the ercot-200 claim is still this lane's — ercot-201's A9.4 note reserves it
+for the in-flight REGIME-CARD branch (this one) and ercot-206's hygiene close
+confirms "199/200 remain unspent" (re-confirmed by ercot-208's own closing
+line at this re-anchor). Landed seven entries later than written:
+ercot-203/203b/204/205/206/207/208 now sit above (207/208 landed during this
+salvage's own re-anchor; neither moves the keeper); the keeper was re-keyed twice with
+the determination unchanged (ercot-203 → `2026-08-14-ercot202-arm-plantphysics`,
+ercot-205 → `2026-08-15-ercot204-rule26-delete`; the card reads committed
+anchors + published data only, so nothing on it moves); the ercot-202
+double-claim recorded below was RESOLVED by ercot-206's hygiene restoration
+of the sitting record to ercot-197 (ercot-196 stays the one standing
+collision); and ercot-206's Phase A left frontier rank 2 a re-point
+recommendation (FFR-4/5 per FFR-9A §4) with still no executor, so the card's
+§0.1 consequence stands. Statements below reflect the state at `315a2452`.
+
+**Shorthand note (re-checked at the rebase onto `315a2452`).** This session
+claims **ercot-200**, free on refreshed main: 198 = the T-3b audit (merged),
+201 = the L2-BUILD Phase-0 stop, 202 = consumed TWICE (the sitting record,
+re-keyed from 197, AND the T-1 non-viability finding), 199 = free and
+unclaimed. Recorded per the ercot-193 file-order convention; the log's
+forward pointer stays **ercot-203** as main set it — this entry appends
+after it in session order and does not move it. Two standing collisions
+recorded, NOTHING renamed: **ercot-196** (the shape decision card AND the
+rule-18 grain PRECOMMIT, PR #3933) and **ercot-202** (the sitting record AND
+the T-1 finding).
+
+**Lane-context correction applied at the rebase.** Between assembly and
+landing, BOTH lanes this card referenced as live were stopped on main:
+**L-2 is dead** (ercot-201 — the chartered E1 dispersion surface is
+superseded by FFR-8B/FFR-9A and its identification route barred by an
+adjudicated prior stop; nothing built) and **T-1 is non-viable on premise**
+(ercot-202 — `gas_hh_monthly_shape` was ALREADY ARMED on the run192 keeper;
+the A/B was cancelled before any solve). The card body was corrected to
+match: W-0's reach line no longer claims L-2 as live movement, and §5's
+consequence is stated plainly — with L-2 stopped there is now **NO live lane
+against the screen's ~50–70 $/kW-yr understatement**, which strengthens
+rather than weakens the WAIT-FOR-DATA recommendation and hands the owner a
+sharper question (frontier rank 2 has no executor).
+
+**Task.** Execute L-SCAR V0-FAIL adjudication item (ii) (signed 2026-08-14,
+on main at `fb6d08d`): assemble the regime-conditioned identification
+decision card — can a screen rent term be conditioned on market DESIGN (ORDC
+vintage / ECRS / SWCAP / RTC+B) rather than tightness, and is that
+rule-13-admissible? Deliverable:
+`docs/DECISION-CARD-ercot200-lscar-regime-conditioning-2026-08-14.md`
+(card W; letters U/V skipped for glyph collisions) + read-only probe
+`scripts/probes/ercot200_regime_partition.py` → committed JSON
+`results/calibration/ercot200_regime_partition.json`. The probe reads ONE
+committed input (the ercot-195 anchor intake) and **no tightness variable
+anywhere** — V0 stays the DO-NOT-REDO adjudication for that instrument;
+nothing re-fit or re-argued.
+
+**The measurement.** Seven anchor vintages span ~4 measured design regimes
+(pre-2022 ORDC/$9k SWCAP: 2019–2021; 2022 ORDC-widened/$5k; ECRS era
+2023–2025, splittable at the monitor's own seam into 2023 launch-year vs
+2024–2025 normalised; RTC+B 2026+ with **zero anchors until the 2026 SOM,
+~mid-2027**). Ex-ante V0-analogue arithmetic (same ±25 %/±15 bar): singleton
+regimes UNTESTABLE by construction; pre-2022 FAILS for ANY regime-only
+function (2019 vs 2020 pay 127 vs 39 $/kW-yr CT under one design —
+irreducible ≥ $44 vs $15 tolerance; monitor's own ex-Uri stripping does not
+touch that pair); coarse-ECRS FAILS (2023 vs 2024/25 irreducible ≥ $80–94);
+the ONLY cohering regime is {2024, 2025} (irreducible $7.70 CT / $3.02 CC,
+inside the bar), n=2. The partition dilemma is structural: coarse cuts carry
+within-regime variance 3–25× the tolerance; fine cuts degenerate to 1–2
+anchor regimes = re-labelled level pins. Forward: the earliest fold-testable
+RTC+B read is TWO vintages in (~mid-2028); the charter §2.5 re-derive
+trigger for the first RTC+B vintage is already pre-registered.
+
+**Card W board** (future owner sitting; NOTHING executed): **W-0
+WAIT-FOR-DATA — RECOMMENDED** (what is waited for, named: the 2026 SOM as
+the first RTC+B anchor; §2.5 trigger already registered; reach now $0.00);
+W-1 assemble-and-hold as W-0's read-only companion (fold the monitor's
+committed counterfactuals — 2021 ex-Uri, 2023 ECRS share, the ercot-198
+adder series — into regime-labelled anchor columns; data intake,
+unrestricted; nothing armable); **W-2 attempt-now REFUSED EX ANTE** (the
+probe computes the gate outcome without spend: certain FAIL); **W-3
+different-instrument VACANT** (PNM = outcome import; published adders =
+retired at RTC+B; cross-ISO = rule 25; within-regime tightness =
+DO-NOT-REDO; the live structural complement is the separate chartered L-2
+lane, referenced never overlapped). Rule-13 admissibility argued BOTH ways
+on the card (§4, the §2.6 pattern): exogenous calendar-known driver,
+measured-vs-measured form, sunset intact — vs regime dummies at 1–2 anchors
+as a re-labelled row-4 level pin, forward constancy (no condition response
+within the RTC+B horizon), and $40+-class unexplained within-regime
+variance. The adjudication is the OWNER'S; the card ends at a sitting.
+
+**Fences honoured.** DO-NOT-REDO: matrix §5.1 + ERCOT shard read first;
+cells checked listed in card §6 (`ordc_scarcity_overlay` R,
+`ercot_rtordpa_overlay` K, `capacity_screen_unified_lookahead` fc K,
+`capacity_screen_scarcity_restoration` fc K, `storage_measured_anchors` K);
+no R/I/G cell proposed for re-test; no matrix row exists for the L-SCAR term
+(no field — rule 28c not triggered). Q-B FINAL and R-A cited and honored
+(2023 in anchor tables/citations only, never a target); the L-SCAR charter
+§4 must-nots bind every option drafted; no ScenarioConfig field, no matrix
+cell/row edit (a card is a read — ercot-182/189/196 precedent), no solve, no
+LP, no year solved or scored (rule 22; probe = committed published-data
+read), no model input touched (rule 13), no keeper/registry/bench contact,
+no run registered, no new workflow; keeper UNCHANGED at
+`2026-08-12-run192-arm-coal-peak`. New artifacts: card + probe + JSON + this
+entry, nothing else. Session consumed the ercot-200 shorthand; the free
+shorthand for the next session is **ercot-209** (main's pointer as ercot-208
+set it, unmoved by this append; ercot-199 also remains unclaimed).
