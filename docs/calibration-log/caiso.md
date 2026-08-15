@@ -7919,3 +7919,49 @@ Matrix duty (b): `wefor_residual` CAISO cell **O → R** (provenance/coverage
 refusal, not a dispatch refutation — caiso-194 precedent). Record:
 `results/calibration/FINDING-caiso193-wefor-residual-2026-08-15.md`.
 
+
+## 2026-08-15 — caiso-196: the El Segundo remap repair A/B — control reproduces the keeper **BIT-ZERO**, the repaired extract removes a 3.2 TWh/yr phantom workhorse, ONE pre-registered flip (C1-2023 CC_REGULAR) adjudicated **ACCEPT-WITH-FLIP**, keeper decision escalated
+
+**Runs registered (rule 15): `2026-08-15-caiso-196-e0-control`,
+`2026-08-15-caiso-196-e1-elsegundo`** — both NOT-YET (C6 UNATTESTED, the standard
+non-keeper A/B posture). **Keeper UNCHANGED** at `2026-08-09-caiso-188-d1-micseam`;
+promotion + campaign re-anchor + lane-2 re-run all ESCALATED
+(`FINDING-caiso196-elsegundo-remap-2026-08-15.md` §5). Pre-registered at
+`PRECHECK-caiso196-elsegundo-remap-2026-08-15.md` (committed `c80670d`, before any
+solve). Gates **6/6 PASS**.
+
+**G-CTRL bit-zero, again**: the caiso-188 recipe replayed in this container (MIC
+partition materialized — seam caps 16055/16452/16148 logged; `hydro_ror_split=false`
+disclosed; highspy 1.14.0 vs the keeper's 1.15.1) reproduces the committed keeper at
+max |Δ| = 0.0 over every zone-hour and class-hour of all three years. Noise floor
+exactly zero, quoted before any treated delta.
+
+**The repair** (commit `e68a70d`): `CAMPD_UNIT_PLANT_REMAP` gains (330,"5"/"7") →
+57901 — El Segundo Energy Center's 2013 CTs file CEMS under the fully-retired legacy
+steam ORIS, so the derivation skipped the facility before detection and the keeper
+solved a 537.4 MW CC with no measured outage overlay. Baseline re-derive first proven
+byte-identical (sha `25360e90`) with the edit stashed; repaired extract = **+233
+strictly-additive facility-57901 rows** (units 5/7: 112/121), layup companion
+window-set unchanged. CC_REGULAR X_c 0.2157/0.2621/0.3186 → 0.2443/0.2916/0.3528.
+
+**The compensating error, measured per plant**: El Segundo's measured CEMS gross is
+0.169/0.192/0.053 TWh (CF ≈ 2–6 %); the keeper-recipe control dispatches it
+**3.265/3.245/2.746 TWh (19×/17×/52× measured)**; the repaired arm 0.694/0.636/0.087
+TWh (1.6–4×). The C1-2023 flip (e0 −3.57 TWh PASS at the band edge → e1 −4.44 TWh
+FAIL) is that phantom supply's removal making the standing CC-side under-dispatch
+(caiso-121/135/140 §B over-import lane) visible instead of masked — the §5
+input-side re-examination clears the input (no mis-citation, no coverage failure, no
+classifier deviation), so the disposition is the protocol's verbatim
+**ACCEPT-WITH-FLIP, escalate**. C3a (transparency only, §0 direction-hazard): +3.4 →
++4.4 (2023 PASS), +10.4 → +11.7 (2024 FAIL), +12.9 → +14.5 % (2025 FAIL) — the
+pre-registered anti-favorable sign. C3b stays PASS all years (0.077/0.155/0.176).
+G-DOF: 11/8 in both attestations, zero new parameters.
+
+El Segundo **joins the caiso-187 §3 object at high magnitude** (zero spans classified
+as layup by the shipped guard; the DAM outage-report corpus is the named
+discriminator, owner-chartered). Desert Star NV intake filed (the last CC_REGULAR
+extract gap, 370.1 MW). Matrix: `campd_outage_windows` CAISO evidence appended (sha
+supersession); `wefor_residual` cell O → R by the companion caiso-193 lane-2 entry
+above. Dashboard-deploy stall cleared this session (stuck run #1400 cancelled; live
+site current again from run #1510).
+
