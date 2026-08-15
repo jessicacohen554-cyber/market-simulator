@@ -102,6 +102,11 @@ def main() -> None:
         (args.keeper / "calibration_attestation.json").read_text()
     )
     att = json.loads(json.dumps(keeper_attest))  # deep copy
+    # audit_keepers E10: the inherited attestations carry no schema tag.
+    # Stamp it on regeneration, as that check asks. Nothing reads it for a
+    # determination (calibration_verdict never looks), so this is a
+    # provenance label, not a behaviour change.
+    att = {"schema": "calibration-attestation/v1", **att}
     att["governance"]["attested_by"] = _ATTEST
 
     fp = att["free_parameters"]
