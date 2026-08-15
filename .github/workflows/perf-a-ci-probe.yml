@@ -17,13 +17,10 @@
 name: PERF-A CI probe (NOT-FOR-MERGE)
 
 on:
-  # push trigger scoped to the PERF-A branch only: a workflow that has never
-  # existed on the default branch is not dispatchable by the API until it has
-  # registered, so the first runs ride the branch pushes. Still NOT-FOR-MERGE:
-  # on main this file must never land.
-  push:
-    branches:
-      - claude/ci-infrastructure-blocker-bp3zv3
+  # workflow_dispatch-only. (The first two runs rode a branch-scoped push
+  # trigger because an unregistered workflow 404s the dispatch API; the
+  # workflow is registered now and the trigger was removed so later doc
+  # pushes to this branch do not burn probe runs.)
   workflow_dispatch:
     inputs:
       run_fast_tier:
@@ -57,7 +54,7 @@ jobs:
 
   fast-tier-probe:
     name: Fast tier with golden-list sparse checkout
-    if: ${{ github.event_name == 'push' || inputs.run_fast_tier }}
+    if: ${{ inputs.run_fast_tier }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -180,7 +177,7 @@ jobs:
 
   emissions-probe:
     name: curate_emissions RSS probe
-    if: ${{ github.event_name == 'push' || inputs.run_emissions }}
+    if: ${{ inputs.run_emissions }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
