@@ -1,0 +1,11 @@
+# Scope: the 7 MISO SOM / IMM-quarterly PDFs, gitignored at tip
+# (BLOAT-B-2, docs/bloat-removal-plan-2026-08.md 4.5 item B5). See README.md.
+# sha256  size_bytes  file
+
+56e1a3489e5267687eb06bf4f1e6d19c9d67ff72c5f3e02b1b76225dd7cf53a7  3747021  2023-MISO-SOM_Report_Body-Final.pdf
+6392a233bb81d4f92fec9f68a1242a6617490014e3e7939d0f91bc99014bf8eb  9936075  2024-MISO-SOM_Appendix_Final.pdf
+cfad66258b2c2051fa918cad7599dc68cef64196166bb631b538b14bb653eca9  4012593  2024-MISO-SOM_Report_Body_Final.pdf
+a179e31abf019b6eb4075379126988d7162b05f6d67c3bf5af3cdd02398aec06  4904565  2025-MISO-SOM_Report.pdf
+a9745a9febc0fadbb831e9b8ada2964354d3fd25c46f48c2c777c2eeb4558738  3368339  IMM-Quarterly-Report_Fall-2025_MSC.pdf
+580a89986fc3aca5f525cc17d767c335fdb01b97271ad4890195cbae976fb3a0  3223942  IMM-Quarterly-Report_Spring-2025-MSC.pdf
+2827d7bafbacbf2ceff58cd4ac455c6de7ec4dbdd01ee76f0e2c0ed8751cf111  3302038  IMM-Quarterly-Report_Summer-2025-MSC.pdf

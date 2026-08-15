@@ -1,0 +1,11 @@
+# Scope: the 7 ERCOT State-of-the-Market PDFs, gitignored at tip
+# (BLOAT-B-2, docs/bloat-removal-plan-2026-08.md 4.5 item B5). See README.md.
+# sha256  size_bytes  file
+
+1b56ac3ba6a7b49da156e340cf5e4ce172a26317c0f63b87b95cc1d67adf1c9f  5130847  2019-State-of-the-Market-Report.pdf
+f44fda61c2aa4af9125407a81abb554d5f4d7b29b2ae0f539cc1be0ff53edb21  3470766  2020-ERCOT-State-of-the-Market-Report.pdf
+a450695ff9452ec6853681e7424233a1b720d0765c06c7fa26fbe0b62bce22bf  5723944  2021-State-of-the-Market-Report.pdf
+d08b0f17c5947e5e222434aaa0a4f5239a6c48fe3c430e0a3f5f86281e99cbae  4750473  2022-State-of-the-Market-Report_Final_060623.pdf
+4abda7d74448b406b9ccf5b58ca981325741fde54b0ce03a4c8202248564eee2  4966503  2023-State-of-the-Market-Report_Final_060624.pdf
+0f448c213dc306ddf4e3aa3ede034a66e4bcd8c193346035c4647e4e91b90c43  1997196  2024-State-of-the-Market-Report.pdf
+8febb03a618b923c14f611197cc8bbf6edc6a4a7eda9cb9021f86547ac66c6db  9250005  2025-State-of-the-Market-Report-for-ERCOT.pdf

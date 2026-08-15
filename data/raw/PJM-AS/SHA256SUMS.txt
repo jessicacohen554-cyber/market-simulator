@@ -1,0 +1,10 @@
+# Scope: the 5 PJM-AS reference PDFs ONLY, gitignored at tip (BLOAT-B-2,
+# docs/bloat-removal-plan-2026-08.md 4.5 item B5). The .parquet data in this
+# directory is NOT covered and stays tracked. See README.md.
+# sha256  size_bytes  file
+
+c0ad124b131c18f9a00de71a8cee18efeeba1d472f7d8d79d4539e4a14e68da7  1602269  E-3-052120.pdf
+1b736364729619a8898101bac04f00c4670f3d90a065a02bca3e3cfa228f9efd  6854614  m11.pdf
+2e8a4ba852a77cb4c9583d7e27eeb8deb677ddaaeed9542ac31f8dc8626a957e  4736771  m11v127-energy-and-ancillary-services-market-operations-11-15-2023.pdf
+b04ab64e9070b5f73c7f255e0babb0e835fd958458d2e491541732b5f21b8869  4733719  m11v129-energy-and-ancillary-services-market-operations-02-22-2024.pdf
+fc144dff9e0fb89b213a683fce07ef25021311d2a54b54c738538eb15c579392  158611  shortage-pricing-fact-sheet.pdf

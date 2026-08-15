@@ -827,3 +827,49 @@ your branch when done.
   L-1 unblocked, ERCOT keeper may move pre-G2; HTTP/1.1 push fix now in CLAUDE.md.
   Amended DEBUG-A + BLOAT-A prompts re-issued to the owner; AUDIT-A / PERF-A /
   DOCS-A stand as issued.
+- 2026-08-15 — **BLOAT-B-2 dispatched and delivered: PR #3956** (§8/PR-2 of
+  `docs/bloat-removal-plan-2026-08.md`), branch
+  `claude/bloat-b2-corpus-conversions-qaad94` off `315a245`, labelled
+  `intentional-shrink`. Items **B4 + B5 + B6 + the B3 GUID hygiene sub-item**,
+  all class-approved under §6 decision 4; **no history rewrite**. Net
+  **−361.8 MiB live at tip** (155.0 caiso-dam-outages xlsx + 137.9 publication
+  PDFs + 65.2 NYISO load zips + 3.7 GUID), 1,127 payload files untracked, pack
+  size unchanged. Five per-corpus commits, each: SHA256 manifest over the
+  payload bytes *before* deletion → README with verified source-URL table +
+  re-fetch command + pin sha `315a245` and its
+  `git restore --source=<pin> -- <path>` recovery command → gitignore block →
+  `git rm --cached`. Same-PR CLAUDE.md touch under rule-27 mechanics
+  (edit-local, exact-bytes push, blob-verified after push: 574/574 lines, hash
+  match).
+  **Deviations from BLOAT-A's item list, all recorded in the PR body and the
+  commit messages** — the plan's evidence is dated 2026-08-14 and every consumer
+  claim was re-grepped at `315a245`:
+  (a) **NYISO Gold Books 2018–2022 held back as OUT OF SCOPE.** They landed
+  2026-08-14 in `6f30487` (nyiso-134, D-3 immutable sources) — *after* the
+  plan's `f2de3b0` inventory, whose item names 2023–2026 — and their re-fetch
+  URLs are unrecorded (the 2023+ Liferay pattern 404s for every one). The
+  gitignore lists the four converted editions one per line rather than globbing.
+  (b) The plan's "parsed by `curate_nyiso_som_hub_fuel_annual.py` /
+  `build_nyiso_scr_edrp.py`" notes are **too strong in the safe direction**:
+  both read hand-transcriptions, neither opens a PDF.
+  (c) **Three frozen probes DO open Gold Books via `pypdf`** — `pypdf` is not a
+  project dependency and all three already return `{"unavailable": …}`, so they
+  degrade identically with or without the payload; noted in the NYISO README.
+  (d) `PJM-AS/m11.pdf` is the one payload that is **not byte-reproducible**
+  (living "current revision" URL, drifted to 6,855,912 B vs the snapshot's
+  6,854,614 B) — stated in its README row; restore-from-pin is its exact route.
+  (e) `E-3-052120.pdf` identified as a **FERC** order (171 FERC ¶ 61,153)
+  misfiled as a PJM manual; the GUID file identified as a **NY PSC rate-case
+  exhibit bundle** (Cases 18-E-0067 / 18-G-0068, Orange & Rockland) before
+  deletion.
+  Item B3's 60 OASIS SingleZip dailies (559.9 MiB, needs-sign-off) untouched —
+  still a PR-5 item.
+  Local greens: ruff check + format, `ci_refactor_guards.py`,
+  `check_mechanism_matrix.py`, `audit_keepers.py --check`,
+  `legitimacy_diagnostics.py --keepers --no-d2-recompute`,
+  `check_registry_payload_parity.py` (69 runs), and
+  `test_caiso_dam_outages.py` + `test_dam_outage_wiring.py` (11 passed).
+  **Post-merge duty OPEN: the `golden-data-tier.yml` manual dispatch**
+  (decision 7's authorized BLOAT-B re-dispatch) — result to be appended here.
+  A red on a data-missing skip means restoring that corpus, never widening the
+  workflow's sparse list.
