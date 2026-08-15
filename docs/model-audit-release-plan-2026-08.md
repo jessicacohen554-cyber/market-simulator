@@ -844,11 +844,22 @@ your branch when done.
   `f2de3b0`, against a planned ≈ 8.1 GiB. It performed the two chartered §8
   dispatches anyway, as a **pre-prune baseline** rather than G3 evidence:
   `cleanup-large-blobs.yml` **dry run** (`31857841269`; confirm phrase never
-  supplied, rewrite/push steps never reached) and `golden-data-tier.yml`
-  (`31857842156`). Report: `docs/bloat-removal-report-2026-08.md` — including
-  the D-ledger closures re-verified at this tip, and drift BLOAT-B must absorb
-  (the B5 PDF group and the C-5.1 hourly target both GREW while the lane
-  waited). **Two PM actions fall out:** (a) **BLOAT-1** — the owner's item-level
-  approve/veto — is the single thing blocking PR-1..PR-4, and (b) G3's proof
-  mechanism needs a **pre-prune green** golden-tier run recorded before the
-  prunes land, or a post-prune red cannot be attributed.
+  supplied, rewrite/push steps never reached; **922.3 MiB removable vs 9,901.7
+  MiB protected**, i.e. a rewrite today reclaims 8.5 % of in-scope bytes and
+  ~5 % of the 17.92 GiB mirror pack — the NO-GO's arithmetic confirmed from a
+  second angle) and `golden-data-tier.yml` (`31857842156`). Report:
+  `docs/bloat-removal-report-2026-08.md` — including the D-ledger closures
+  re-verified at this tip, and drift BLOAT-B must absorb (the B5 PDF group and
+  the C-5.1 hourly target both GREW while the lane waited).
+  **G3 IS CURRENTLY UNSATISFIABLE, and not because of BLOAT.** The golden tier
+  went red a second time at the same step, and the session reproduced the cause
+  locally: `curate_emissions.py --years 2023` peaks at **9.07 GiB RSS** from
+  119 MiB of input (three whole-year materializations in `curate_year()`,
+  `scripts/data/curate_emissions.py:268–291`) and OOMs the runner — reported as
+  "shutdown signal", exit 143. The tier has **never reached its own tests**, so
+  "green post-prune" cannot be produced today. Diagnosed but deliberately not
+  fixed (other workstream's surface; the close-out PR is docs-only).
+  **Three PM actions fall out:** (a) **BLOAT-1** — the owner's item-level
+  approve/veto — is the single thing blocking PR-1..PR-4; (b) charter the
+  `curate_emissions.py` memory fix; (c) record a **pre-prune green** golden-tier
+  run before the prunes land, or a post-prune red cannot be attributed.

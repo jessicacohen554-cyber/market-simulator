@@ -27,7 +27,15 @@ The numbers below are real and useful, but they are a **pre-prune baseline**,
 not a post-prune verification. Nothing in this report may be read as G3
 evidence that a prune broke nothing, because there was no prune.
 
-**Root cause is sequencing, not failure.** BLOAT-B is a **Wave-3** lane, held
+**A second finding fell out of the G3 dispatch and is arguably the more urgent
+one: the data-backed test tier does not work.** `golden-data-tier.yml` has now
+failed both times it has ever run, at the same step, and this session
+reproduced the cause locally — `curate_emissions.py --years 2023` peaks at
+**9.07 GiB** and exhausts the runner. The tier has never reached its own tests,
+so **G3's "green post-prune" is currently unreachable regardless of BLOAT-B**
+(§4).
+
+**Root cause of the non-execution is sequencing, not failure.** BLOAT-B is a **Wave-3** lane, held
 until **G2 + an owner-signed deletion list** (release plan §2 gate table, §4.10:
 "BLOAT-B — ⛔ held until G2 + owner-signed deletion list"). The program is still
 in **Wave 1**: the §8 ledger's last entry is 2026-08-13, G1 has not been
@@ -70,7 +78,45 @@ never reached, `Force push cleaned history` → never reached.**
 - Run: `31857841269` (run #15), head `315a245`, dispatched 2026-08-15 01:56 UTC.
 - Prior dry run for comparison: `30071768814`, 2026-07-24, success.
 
-<!-- DRYRUN_RESULTS -->
+**Result — success, 11m46s.** (Units note: the workflow's awk labels these "MB"
+while dividing by 1048576, so every figure it prints is **MiB**; reproduced as
+printed, read as MiB.)
+
+| Quantity | Value |
+|---|---:|
+| Unique blob SHAs live at `main` tip (whole repo) | 10,808 |
+| In-scope blob entries in history (`data/raw/` + `results/calibration/`, all refs) | 10,006 |
+| **PROTECTED** — live at `main` tip, never touched | **6,032 entries / 9,901.7 MiB** |
+| **REMOVABLE** — superseded older versions | **3,974 entries / 922.3 MiB** |
+| Disjointness check (removable ∩ protected = ∅) | **PASSED** |
+| Mirror-clone pack size (all refs) | 17.92 GiB |
+
+So a full history rewrite today would strip **922.3 MiB — 8.5 % of the in-scope
+bytes, and ~5 % of the 17.92 GiB mirror pack.** Removable composition:
+
+| By extension | MiB | blobs |
+|---|---:|---:|
+| `*.parquet` | 830.7 | 1,738 |
+| `*.json` | 46.3 | 1,835 |
+| `*.csv` | 31.4 | 139 |
+| (no extension) | 10.9 | 6 |
+| `*.md` | 2.8 | 228 |
+| everything else | 0.2 | 28 |
+
+It is **highly fragmented** — the largest single directory is `data/raw/` itself
+at 44.6 MiB, and the rest is a long tail of superseded per-bundle
+`results/calibration/<run>/hourly/` sets (`neiso69_control` 10.2, `caiso138_envclip_B`
+8.9, `caiso133_sidecar_A` 8.9, then dozens of ~6 MiB PJM bundles) plus
+re-uploaded `data/raw` singletons (the four historical versions of
+`ercot-thermal-dam-availability-site-hourly.parquet`, 13.2 + 6.5 + 5.6 + 5.4 MiB,
+are the four largest removable blobs in the repo).
+
+Two footnotes worth keeping. **The protected figure is de-duplicated by blob
+SHA** — 6,032 unique blobs against the 6,149 tip *paths* under those two trees
+(§3), i.e. 117 paths whose content is byte-identical to another path — which is
+why 9,901.7 MiB reads slightly under the 9,938.1 MiB path-sum. And **`main` is
+the only ref that matters here**: it pins all 6,032 protected blobs, with the
+three active `claude/*` branches pinning 5,983–6,032 of the same set.
 
 **How to read these numbers.** The workflow's protected set is *blobs live at
 the tip of `main`*; everything else in `data/raw/` and `results/calibration/`
@@ -135,7 +181,65 @@ supply is the tier's own baseline, which turns out to be worth having:
   tier at any commit.
 - This session dispatched run **`31857842156`** at `315a245`.
 
-<!-- GOLDEN_RESULTS -->
+**Result — RED, and for the same reason as the first run.** Killed at 02:07:40
+UTC in step 6, `Provision data/clean emissions (2023 only)`
+(`curate_emissions.py --years 2023`), 1m53s into that step, with
+`The runner has received a shutdown signal … Process completed with exit code
+143`. No traceback, no script-level error. `pytest` (step 7) and the
+loud-failure guard (step 8) were **skipped** — as on 2026-08-14, the tier's
+tests have still never executed in CI.
+
+Two runs, two different commits, same step, same exit 143 is not a coincidental
+runner reclaim, so this session reproduced it locally rather than guessing.
+
+**Diagnosis — CONFIRMED, and it has nothing to do with pruning: the emissions
+provisioning step exhausts runner memory.** Reproduced on this session's box
+(15 GiB RAM, comparable to a standard runner's 16 GiB), running the exact CI
+command against the same on-disk corpus, under a deliberate 12 GiB
+address-space ceiling so the failure would surface as an exception instead of
+an OOM kill:
+
+```
+uv run python scripts/data/curate_emissions.py --years 2023
+  → pyarrow.lib.ArrowMemoryError: malloc of size 1061379584 failed
+  → EXIT=1  ELAPSED=149.8s  PEAK_RSS=9.07 GiB
+```
+
+Peak RSS **9.07 GiB** and still climbing when it hit the ceiling, at 150 s — the
+CI runs died at 113 s and 189 s into the same step. On the runner there is no
+ceiling, so it grows past the box instead of raising, the kernel OOM-killer
+takes the runner agent, and GitHub reports that as "shutdown signal", exit 143.
+The timings and the step line up exactly.
+
+**Root cause, in code:** `curate_year()` in `scripts/data/curate_emissions.py`
+materializes the whole year at once, three times over. The list comprehension at
+**:268–270** holds all 34 per-state cleaned unit-level frames in memory
+simultaneously; `pd.concat` at **:272** then makes a full second copy of the
+whole set; the facility-level pass (**:278–288**) repeats the pattern, and
+**:291** concatenates both. Peak is therefore ≈ 2× a full year of CEMS in
+pandas, from only 119.1 MiB of input parquet (93.5 MiB unit-level ×34 + 25.6 MiB
+facility-level ×13) — the blow-up is parquet→pandas expansion on the string
+columns, not input size. The fix is mechanical (accumulate and concat
+incrementally, or reduce per-state before combining, and drop unused columns at
+read time via `pd.read_parquet(columns=…)`), and it does not need to change the
+output bytes.
+
+**This is a pre-existing defect in the tier as introduced (2026-08-12), not
+prune fallout** — there has been no prune. **I did not fix it in this PR**, and
+that is a deliberate scope call: the charter's "red → diagnose the missing path,
+restore it, re-dispatch" is premised on a prune having removed a path, and with
+that premise false, rewriting a data-curation script is another workstream's
+surface and would pull this docs-only close-out into solve-adjacent territory. I
+also did not spend a third dispatch, which would fail identically. The
+diagnosis above should make the fix a short, cheap follow-up.
+
+**Consequence for G3 — this is the load-bearing finding of the section.** The
+data-backed tier is **not a working guard today**: it has never reached its own
+tests, so "green post-prune" is currently unreachable, and G3 cannot be
+satisfied as written until `curate_emissions.py` is fixed. Worse for the gate's
+logic, even a fixed tier needs its **pre-prune green recorded first** — without
+that baseline a post-prune red cannot be told apart from a defect that was
+already there, which is precisely the trap this section documents.
 
 **Consequence for G3.** G3's wording — "`golden-data-tier.yml` manually
 dispatched once **post-prune** and green" — presumes a tier that is green
@@ -255,8 +359,11 @@ In order, and none of it is this session's to do:
    it there is no deletion list and PR-1..PR-4 cannot be written.
 3. **G2** — final model state, after PERF-B. BLOAT-B waits here so a `results/`
    prune never races `capture_keeper_goldens.py`.
-4. **A pre-prune green `golden-data-tier.yml` run**, recorded — the missing
-   baseline G3's proof mechanism depends on (§4).
+4. **Fix `curate_emissions.py`'s memory profile** (§4 — confirmed: 9.07 GiB peak
+   from 119 MiB of input, three whole-year materializations in `curate_year()`),
+   then get **a pre-prune green `golden-data-tier.yml` run recorded**. Both are
+   prerequisites, not follow-ups: until the tier can reach its own tests and has
+   a green baseline, **G3 is unsatisfiable as written**.
 5. **BLOAT-B PR-1..PR-4**, re-deriving the C-5.1 bundle list and B5's PDF group
    at execution time rather than from the plan (§5.1–§5.3).
 6. **This close-out, re-run**, against a tip that has actually been pruned.
@@ -268,6 +375,16 @@ In order, and none of it is this session's to do:
 - Read-only with respect to the repo: no data file, corpus, bundle, script or
   workflow was moved, slimmed, converted or deleted by this session.
 - Two workflow dispatches, both chartered by plan §8: `cleanup-large-blobs.yml`
-  **dry run** `31857841269` and `golden-data-tier.yml` `31857842156`.
+  **dry run** `31857841269` and `golden-data-tier.yml` `31857842156`. No third
+  dispatch was spent re-running a failure whose cause was already confirmed.
 - The `REWRITE-HISTORY` confirm phrase was never supplied, and the rewrite/push
   steps are recorded as never reached.
+- One local reproduction was run to diagnose the tier's red
+  (`curate_emissions.py --years 2023`, §4). It reads `data/raw` and writes only
+  gitignored `data/clean`; it died before writing, and the working tree is
+  unchanged.
+- **Deliberately left undone, and why:** the `curate_emissions.py` memory fix
+  (§4) — diagnosed and located, not written, because it is another workstream's
+  surface and this close-out is docs-only. The PR touches only `docs/**` and
+  `CHANGELOG.md`, which is outside `ci.yml`'s `pull_request` paths filter, so it
+  correctly triggers no CI; zero check runs on this PR is by design, not a red.

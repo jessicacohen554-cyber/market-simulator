@@ -1,6 +1,6 @@
 # Changelog
 
-## 2026-08-15 — BLOAT-B-6 close-out: there was nothing to close out — BLOAT-B never executed, and the tip GREW 35 MiB while it waited
+## 2026-08-15 — BLOAT-B-6 close-out: nothing to close out — BLOAT-B never executed, the tip GREW 35 MiB while it waited, and the golden data tier turns out to be broken (G3 unsatisfiable)
 
 WS6 close-out of `docs/model-audit-release-plan-2026-08.md`, dispatched out of
 sequence. Report: `docs/bloat-removal-report-2026-08.md`. Docs-only — no data
@@ -27,16 +27,35 @@ than G3 evidence** — with no prune, neither can mean what §8 wanted it to mea
 `cleanup-large-blobs.yml` **dry run** (`31857841269`): the `REWRITE-HISTORY`
 confirm phrase was never supplied and the run's own step record proves the guard
 held — `Validate confirmation` skipped, `Validate push token` skipped, the strip
-and force-push steps never reached. Its removable total is pure historical churn,
-not prune reclaim; what it establishes is the floor a future post-prune run
-subtracts from. `golden-data-tier.yml` (`31857842156`) surfaced a prerequisite
-the program had not noticed it was missing: **the tier has never completed a
-run.** Its only prior run (`31767823203`, DEBUG-A's first-ever dispatch under §6
-decision 7) is red on **infrastructure, not a test** — killed at 09:41 elapsed by
-a runner shutdown, exit 143, mid-`curate_emissions.py`, before any test executed.
-G3's wording ("dispatched once post-prune and green") presumes a pre-prune green
-that does not exist, so a post-prune red would not be attributable; that baseline
-must be established and recorded **before** the prunes land.
+and force-push steps never reached. **922.3 MiB removable (3,974 blobs) against
+9,901.7 MiB protected (6,032 blobs), disjointness PASSED** — a rewrite today
+would strip 8.5 % of in-scope bytes and ~5 % of the 17.92 GiB mirror pack,
+confirming the standing NO-GO's arithmetic from a second angle. That removable
+pool is pure historical churn, not prune reclaim (830.7 MiB of it `*.parquet`,
+highly fragmented — the largest single directory is 44.6 MiB); what it
+establishes is the floor a future post-prune run subtracts from.
+
+**And the golden data tier is broken — G3 is currently unsatisfiable, for
+reasons that have nothing to do with BLOAT.** `golden-data-tier.yml`
+(`31857842156`) went red at the same step as its only predecessor
+(`31767823203`, DEBUG-A's first-ever dispatch under §6 decision 7): both killed
+in `curate_emissions.py --years 2023` with "The runner has received a shutdown
+signal", exit 143, no traceback. Two runs on two commits failing identically is
+not a coincidental reclaim, so the cause was reproduced locally on a 15 GiB box
+under a deliberate 12 GiB ceiling: `ArrowMemoryError: malloc of size 1061379584
+failed` at **9.07 GiB peak RSS, 149.8 s** — still climbing when it hit the
+ceiling, against CI deaths at 113 s and 189 s. Root cause is
+`curate_year()` materializing the whole year three times over
+(`scripts/data/curate_emissions.py:268–291`: a list comprehension holding all 34
+per-state cleaned frames, a `pd.concat` full copy, then the same for
+facility-level and once more to join) — 9 GiB of pandas from **119.1 MiB** of
+input parquet, the blow-up being string-column expansion rather than input size.
+Diagnosed and located but **deliberately not fixed here** (another workstream's
+surface; this close-out is docs-only), and no third dispatch was spent on a
+failure whose cause was already confirmed. The tier has therefore **never
+reached its own tests**, so "green post-prune" cannot be produced at all today —
+and even once fixed it needs its **pre-prune green recorded first**, or a
+post-prune red cannot be told apart from a defect that was already there.
 
 **Plan §2's measurement method re-validated and carried forward.** Re-evaluating
 `golden-data-tier.yml`'s non-cone sparse globs with gitignore semantics against
