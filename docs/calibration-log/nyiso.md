@@ -6217,3 +6217,128 @@ Elliott hole, unfixable from the free archive; CAISO's 2018-2022 CARB block; and
 NEISO's now-stale 2022 touchpoint. Raw ATC/TTC postings (~17 MB) are gitignored
 per the ATC_TTC.zip precedent, but the deriver prints the exact re-fetch command,
 so the derivation is reproducible from a bare checkout.
+
+## 2026-08-15 — nyiso-135 PROMOTION: keeper → `2026-08-08-nyiso-133-cod-arm` (market-solar in-service DATE basis)
+
+**Owner ruling, verbatim:** *"Is this a recommended keeper candidate? If so plz
+promote. If structural integrity improves but gates regress that may still be a
+keeper."* The nyiso-133 session's own recommendation was **PROMOTE**, and the
+standing structure-over-gates clause is **not needed** — no gated criterion
+regresses.
+
+**NO SOLVE RAN.** This is a **governance promotion** over the A/B pair nyiso-133
+registered, pre-registered and adjudicated, and then held pending the owner's
+call. No new mechanism was tested; exactly **one cell verdict moves**
+(`vre_registry_cod_date_basis` NYISO `O` → `K`).
+
+**What is armed.** `nyiso_solar_registry_cod_dates` — the market-solar registry
+ramps each plant on its **commercial operation** date (EIA-860 `Operating
+Month`) instead of the Gold Book Table III-2a *"In-Service Date"*, which is a
+**registration / interconnection-service** date that **leads** the metered
+commercial start. Rule 14 `[R-ACCURATE]` in its reconciled-real-data form: two
+published registries disagree on one field and a **third** published series
+(EIA-923 first metered output) adjudicates — it agrees with EIA-860 in **11 of
+the 12 uncensored plants**, and the lead is **signed both ways** (Darby −1,
+Stillwater −3 against Morris Ridge +2, High River +1, East Point +1), so it is a
+basis difference and not a one-directional correction toward the residual.
+Membership and nameplate stay **100 % Gold Book**; only the switch-on month
+moves. **Zero free parameters** — a 15-row registry identity, each row verified
+on nameplate agreement and **dropped** (keeping its Gold Book date) rather than
+guessed when it fails (Albany County Solar 2 is the one unmatched unit). DOF
+ledger **36 → 37**, `n_residual` **unchanged at 6**, identification `published`.
+
+**Verdict grain — nothing regresses.** Determination **UNCHANGED** at
+`CALIBRATED-WITH-CAVEATS`, all 8 criterion statuses identical, **C3c the lone
+ledgered caveat at 1 of 1 and BIT-UNCHANGED at 21 / 3 / 24 h** against actual
+10 / 12 / 42, so no C3c evidence moved and no new slot is spent. Re-verified
+2026-08-15 with `calibration_verdict.py --run-id` on **committed artifacts only,
+no solve**, per rule 22 D-5(b) — the worse-determination stop does not fire.
+C3a reads +8.8 / +0.8 / −3.4 %. All seven pre-registered gates PASS: K1 exactly
+**one** differing `scenario_config` field of 703; K2 zero slack/dump; K3
+liveness 1.0118 / 0.8746 / 1.0000 against *ex-ante* predictions of
+1.0118 / 0.8746 / 1.0000; K4 wind identical; K5 no status regression; K6 C3c
+bit-unchanged; K7 C8 PASS with no forced share rising (ST_GAS-2024 24.5 →
+24.4 %). Hourly grain at full size: demand-weighted ΔLMP −0.0023 / +0.0345 /
+0.0000 $/MWh, max zonal |ΔLMP| 4.55 / 5.67 / 0.00, and **2025 is
+bit-identical** — the construction's own prediction, since the 2025 registry is
+flat and the two bases coincide. The paired control reproduces the superseded
+keeper **exactly** (max |class-year delta| 0.000 GWh) on a toolchain **matching**
+the keeper bundle's recorded one, so unlike nyiso-132 there is no drift excuse
+available and the delta is attributable to the armed field alone.
+
+**Reported against interest.** Solar vs the published Gold Book Net Energy goes
++20.9 / +33.2 / −0.1 % → **+22.3 / +16.5 / −0.1 %**: 2024 improves by half and
+**2023 gets worse**. That was written into the prereg as **ADV-1 before the
+solve** and expressly ruled out as grounds for rejection — the band
+(`calibration_verdict.VRE_TOL`) is **report-only** and D-10 classes NYISO solar
+`delivered_pinned` ("advisory-only, excluded from skill claims"), so no gated
+criterion moves on it (rule 1 `[R-STRUCT]`). **The signature that this is a
+repair and not a fit is the coherence, not the level:** the implied fleet CF the
+published energy demands goes from 0.1629 / 0.1473 (adjacent years disagreeing
+by 10 %) to **0.1613 / 0.1641** (agreeing to 1.7 %) — a quantity nothing in the
+construction targets. Second cost, disclosed: 2023 year-end registered capacity
+rises **174.4 → 194.4 MW** (Stillwater meters 745 MWh in Dec-2023), so "year-end
+capacity is invariant" holds for 2024 and 2025 only.
+
+**Refuted and not built (rule 26 `[R-DELETE]`).** nyiso-132's named successor —
+*"the model has no commissioning curve"* — was measured **nationally** before any
+mechanism was written: 730 single-vintage EIA-860 `OP` PV plants ≥ 5 MW (36.4 GW,
+COD 2019–2022) against their own EIA-923 monthly history, two-way normalized, give
+age-0/1/2-month ratios **0.723 / 0.962 / 0.995** on a 36–47-month **placebo of
+1.0072**. A new utility PV plant is at **mature output from its second month**;
+the entire commissioning shortfall is 0.321 month-equivalents ≈ **11 %** of the
+effect it was named to explain. No commissioning curve exists and none is built.
+
+**What this promotion does NOT do.** It does not close, narrow or re-open C3c —
+the tail is bit-unchanged, the diagnosed owner is unchanged (100 % of the
+modelled tail is Long Island inside HB14-21 with both Zone-K import paths at
+their bound), and the successor remains the **chartered joint reconciliation** of
+the Zone-K transfer bound and the downstate ST_GAS `min_gen` floor under rule 19
+`[R-ONE-MECH]`. **Do not re-test the bare number swap** —
+`nyiso_li_tsl_n11_security` is `R`, killed on gate K6 at nyiso-130. It does not
+restore frontier status (**cleared 2026-08-06, stays cleared**). It does not touch
+the holdout posture: `complete` (**validation ONLY**), **absent from `final`**, and
+the **ACTIVE spend freeze** independently blocks every out-of-training solve, score
+and registration. This promotion **grants, spends and re-arms nothing**.
+
+**Deferred, flagged, NOT done — first item for the next session.** nyiso-133 §9
+recommends collapsing the gate to **unconditional** on promotion (rule 26: a
+default-off gate whose *off* position is the **less accurate** basis is a
+re-armable wrong answer). nyiso-135 did **not** do it, for two stated reasons:
+(a) it is an owner decision nyiso-133 explicitly flagged and did not take, because
+collapsing it **re-stales the NYISO forecast lane's 11 committed hindcast
+sidecars** (rule 15's separate namespace, its own governance); and (b) this
+session had **no `git fetch`** — the environment carries no git credentials — so
+`src/market_sim/config/scenarios.py` could not be rebased onto a `main` that had
+advanced **19 merged PRs**, and editing a >300-line core file off a stale base is
+precisely the rule 27 `[R-PUSH]` hazard. **The promoted keeper carries the flag
+`True` in its own `run_config.json`**, so the designated keeper is correct either
+way; only the DEFAULT is deferred.
+
+**Gates run (all green, committed artifacts only).**
+`calibration_verdict.py --run-id 2026-08-08-nyiso-133-cod-arm` →
+`CALIBRATED-WITH-CAVEATS`; `audit_keepers.py --iso NYISO` → 0 failures /
+0 warnings; `check_mechanism_matrix.py` → integrity, anchors, keeper stamps and
+§5.x prose headers all OK; `build_status.py --iso NYISO` rebuilt the shard
+(NYISO `CALIBRATED-WITH-CAVEATS`). Only NYISO's shard, status and matrix column
+were touched (rule 25 `[R-ISO-SCOPE]`).
+
+**Lever queue after this promotion.** (1) the chartered **JOINT Zone-K
+transfer-bound + downstate ST_GAS `min_gen` reconciliation** (rule 19) — open,
+needs its own owner charter **and** pre-registration before any solve; (2) the
+**FLEET-CF COMPOSITION** object this promotion's own finding opens, **replacing**
+the refuted commissioning-curve item — after the date repair 2023 and 2024 both
+imply fleet CF **~0.162** against 2025's **0.1955**, while measured mature
+per-plant CF is 0.174–0.182 for the 2021–22 small fixed-tilt NY8 units and
+0.198–0.221 for the 2024 tracking plants (Morris Ridge 0.1998, High River 0.1983,
+East Point 0.2207), so a single ISO-wide `RENEWABLE_AVG_CF` cannot track a fleet
+whose technology mix goes 100 % fixed-tilt → 56 % large tracking across the span.
+
+**Still open and unchanged from nyiso-134:** the ACTIVE holdout freeze (the sole
+blocker on the 2022 touchpoint, which is otherwise **data-ready**); the
+import-tranche 719 MW duration RMSE disclosure, **still not re-measured** — grade
+it before quoting any 2022 result; and the Transco Dec-2022 Elliott hole,
+unfixable from the free archive — disclose before quoting any Dec-2022 or
+winter-tail number.
+
+* Next number: **nyiso-136**.
