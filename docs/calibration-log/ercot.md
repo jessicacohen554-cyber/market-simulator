@@ -8621,3 +8621,156 @@ ledger is tangled: ercot-198's entry declares "next: ercot-199", ercot-202's fin
 declares "next: ercot-198" which was already consumed, its log entry declares ercot-203,
 and two lanes then took ercot-203 simultaneously. The duplicated T-3b execution recorded
 above is the visible cost of the same tangle.)
+
+## ercot-204 (2026-08-15) — CARD-T SUCCESSOR **NON-VIABLE ON PREMISE**: the published-RTORPA overlay is barred by rule 19 and fails rule 13's forward-analogue test (the model's RTORPA counterpart is ARMED); the dispatch-authorized **rule-26 `[R-DELETE]` successor executed instead — SOLVED, ALL GATES PASS, BYTE-IDENTICAL, promotion RECOMMENDED**
+
+**Precommit pushed BEFORE any solve**:
+`docs/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md`.
+Finding: `docs/FINDING-ercot204-rtorpa-gate-and-rule26-2026-08-15.md`. Probes:
+`scripts/probes/ercot204_rtorpa_admissibility.py` → `ercot204_rtorpa_admissibility.json`;
+`scripts/probes/ercot204_repro.py` → `ercot204_repro.json`; plus `ercot204_ab.json`,
+`ercot204_coal148.json`. Keeper at session start **and at session end**:
+`2026-08-14-ercot202-arm-plantphysics` — **UNCHANGED** (the keeper cannot change
+in-session; a promotion RECOMMENDATION only).
+
+**PART A — the chartered lever is NON-VIABLE ON PREMISE, and no lever was
+substituted.** The dispatch chartered *"the single overlay-completeness delta"* —
+add the missing published RTORPA (+0.237 $/MWh dw 2024, ercot-198) as a
+measured-input completeness repair. It also ordered the **T-1 discipline**:
+verify the keeper's effective values from the committed record BEFORE chartering.
+That verification falsified the premise. **(G1)** Read from the keeper's resolved
+`run_config.json` (rule 24), the model's RTORPA counterpart is **ARMED** —
+`ercot_ordc_total_reserve=True` with `energy_reserve_coopt=True`, whose LP dual
+**IS** the model's RTORPA (sidecar `ordc_adder`) — and **no `*rtorpa_overlay*`
+channel exists**: the chartered delta is not a flag that is off, it is a channel
+that would have to be built. **(G2)** Building it stacks a SECOND mechanism on the
+unexplained residual of an armed first — rule 19 `[R-ONE-MECH]` verbatim, and
+independently adjudicated on main the same day by ercot-203b (*"rule 19 bars
+overlaying the published series on top of the mechanism meant to produce it"*).
+**(G3)** It fails the charter's own cited rule 13 `[R-MEASURED]` forward-analogue
+test: RTORPA is not an independent market datum but a deterministic function of
+realized reserve levels through the published ORDC curve (`LOLP(R) × (VOLL − λ)`,
+Nodal Protocols §6.5.7.3), so **its forward analogue IS the endogenous
+computation** — the overlay would substitute a measured OUTCOME for the mechanism
+under validation. The asymmetry with the armed RTORDPA overlay is structural, not
+a preference: RTORDPA prices discretionary out-of-market RUC/ECRS **deployments**,
+which have **no endogenous counterpart**. **MEASURED ANYWAY at full magnitude**
+(re-measured on the CURRENT keeper, not inherited from run192): published RTORPA
+dw **1.2675 / 0.2368 / 0.0787** over **1,705 / 560 / 253** hours vs endogenous
+`ordc_adder` dw **0.4067 / 0.0000 / 0.0000** over **42 / 2 / 1** hours; the armed
+`rtordpa_overlay` is EXACT (max abs diff 4.6e-13 / 2.8e-14 / 1.4e-14), confirming
+ercot-198's RTORDPA completeness verdict on the current keeper. *(Basis caveat:
+this probe reads the RAW NP6-905-CD archive; ercot-198's settlement-closure guard
+rejects one uncorrected print — 2025 h4334, archive $414.12/h vs settled hub RTSPP
+$54.96 — which is the whole 0.0787-vs-0.015 distance in 2025. 2024 unaffected;
+neither number changes a gate that turns on admissibility, not magnitude.)*
+**THE OBJECT THE GATE LEAVES STANDING, measured and HANDED TO THE OWNER
+UN-CHARTERED:** the armed mechanism is **not broken** — in 2023 it fires 42 h up
+to **$1,920/h**, **all 42 inside** the published-fired set, holding within
+**0.2 %** of published RTOLCAP (8,122 vs 8,108 MW). In 2024/2025 it reads ~zero
+across 560/253 published-fired hours and **the simplest explanation is
+FALSIFIED**: the model holds materially LESS reserve than the real system
+(**6,955 vs 8,854 MW**; **6,638 vs 9,654 MW**) and still does not price, while its
+own ORDC-total row records non-zero shortfall in **40** and **4** of those hours.
+*(Caveat: model `held_mw` and published RTOLCAP are constructed differently and
+are not an identity — indicative, not a reconciliation; reported because it
+falsifies the simple reading, not because it identifies anything.)* Where the ORDC
+pricing region sits relative to the model's reserve representation is the open
+object — a **mechanism** question, left un-chartered; the adjacent L-SCAR
+tightness identification stays **DO-NOT-REDO** (V0).
+
+**PART B — the RULE-26 `[R-DELETE]` SUCCESSOR, dispatch-authorized as the named
+second item ("available as a smaller second item if this lane stalls"), EXECUTED.**
+Run registered **`2026-08-15-ercot204-rule26-delete`** (bundle
+`ercot204_rule26_delete`; 2023 + 2024 + 2025, ONE invocation, years sequential).
+The obligation was the ercot-202 promotion's own open item: its precommit bound
+the promoting commit to delete the transitional flag, and the promotion could not
+— `ScenarioConfig.with_overrides` is `dataclasses.replace`, which **raises on an
+unknown key**, and the keeper's `meta.json` carries
+`ercot_faststart_pool_plant_physics: True` inside `coal_prb_sigmoid_overrides`
+(re-verified this session), so deleting the field without a re-solve makes the
+keeper **unreplayable**. **THE DELETION:** the field, its
+`_CACHE_KEY_OPTIONAL_FIELDS` registration, its registered default and its tier tag
+are removed from `scenarios.py`; both pool bodies in `fleet/offer_surfaces.py`
+compute `plant_md` **unconditionally** and the pre-repair row-grain branches are
+**deleted outright, not zeroed** (a deprecated parameter that still parses is a
+re-armable answer key). The test asserting the pre-repair vacuous behaviour lost
+its object and was replaced by a **regression test on its premise** — that
+assembly still stamps UC-coupling tags on the committed anchor alone, so a
+row-grain read would still be vacuous. **ZERO fitted scalars, ZERO new fields, one
+field REMOVED**; `FASTSTART_POOL_MIN_DOWN_HOURS = 2.0` untouched. Fast test lane
+at HEAD: **4,055 passed, 25 skipped, 1 xfailed**.
+
+**G-REPRO (PRIMARY) PASS — 12/12 hourly sidecars BYTE-IDENTICAL to the keeper**,
+sha256 for sha256, so prediction P-1 holds exactly and every price criterion is
+unmoved **by identity**: `system_<year>.parquet`, the series every criterion is
+computed from, is byte-identical in all three years. **ALL REMAINING GATES PASS,
+measured explicitly rather than inferred:** C3a **−24.38 / +7.88 / +0.73**, C3b
+NRMSE **2.9122 / 2.4218 / 0.9527**, G-SHED **4/1/0** with identical hour lists
+(5490/5682/5802/5994; 3067; —), G-C3c model tail **57/22/1** vs actual 181/53/31
+(attestation max-zonal basis **58/22/1**, the ledgered values), G-SPUR **9/11/0**,
+G-SPAN max class energy delta **0.0 %** every year, G-COAL148 above-ceiling
+**0.1213 / 0.1838 / 0.1095 TWh** (rise **0.0** vs the 0.5 bar), G-OWNER
+(C3a-2024/2025 keep PASS, C3b-2024 **0.135**), G-DOF (`n_entries` **18** /
+`n_residual` **6** unchanged), G-D2 (D1/D2/D4 diagnostics byte-identical, the SAME
+3 pre-existing `reliability_floor × CT_PEAKER` D-4 failures at 96.8/98.1/98.3 %
+off-window, **no new row**). **Determination NOT-YET, fail set {C3a-2023,
+C3b-2023} — IDENTICAL to the keeper**, verified by running the scorer on both run
+ids; C3c stays the single ledgered CAVEAT ×3, magnitudes re-measured and carried.
+**LOYO structurally N/A** and declared so pre-solve: byte-identity in all three
+years IS the held-out evidence.
+
+**SOLVE-ENVIRONMENT PIN, recorded because it is a precondition of the primary
+gate.** The container's `uv.lock` environment differed from the keeper's recorded
+one (**highspy 1.14.0 vs 1.15.1**, pandas 3.0.3 vs 3.0.5, pyarrow 24.0.0 vs
+25.0.1) and `replay_keeper.py` warned on the first launch. A different HiGHS build
+can return a different equally-optimal vertex, which would have made G-REPRO
+uninterpretable. That launch was **killed** and the three packages pinned to
+`run_config.json`'s recorded versions before re-launching; the re-launch emits no
+warning. *(Operational note for successors: `uv run` re-syncs from `uv.lock` and
+silently reverts the pin — use `./.venv/bin/python` directly.)*
+
+**RULE 26 DISCHARGED, verified on the artifact:** the new bundle carries the flag
+in **NO** config surface — `meta.json` **0 occurrences**, `scenario_config`
+**absent**, `calibration_flags` **absent**. The two remaining textual hits are
+deliberate provenance PROSE (`model_changes_note`, attestation `attested_by`), so
+the bundle is fully replayable against the post-deletion `ScenarioConfig` — the
+condition ercot-202 could not meet in place.
+
+**PROMOTION RECOMMENDED** under the precommit's pre-registered **direction-blind**
+rule (gates + LOYO only, never the sign or size of a residual): all live gates
+PASS ⇒ recommend. **The recommendation rests on rule-26 discharge ALONE — no
+metric gain is claimed and none exists, by byte-identity rather than by argument.**
+Named cost, accepted and intended: `ercot202_plantphysics_B` becomes unreplayable
+against HEAD's `ScenarioConfig`, which is exactly why the successor required a
+re-solve.
+
+**BOOKKEEPING.** Rule 15: run registered + committed + pushed in this session,
+result on the dashboard not in chat. Rule 16: all three years, one bundle. Rule 22:
+ERCOT holds no `complete`/`final` marker; `--years` never left {2023, 2024, 2025};
+no marker sought, granted or spent. **Retention:** ERCOT stood at 15 with one
+protected (the keeper); registering displaced
+**`2026-08-08-run178-continuous-grain`** — the single oldest unprotected run,
+**named EX ANTE in the precommit §2.7**. Rule 25: ERCOT only; no other ISO's shard,
+keeper, registry or bench touched. Rule 27: `scenarios.py` and `offer_surfaces.py`
+edited **locally** with the Edit tool and pushed as exact on-disk bytes, blob
+verified against the remote; no bulk rewrite; no push during a solve. Rule 28: the
+ERCOT shard cell re-stamped (**stays `K`** — the mechanism remains and is now
+UNCONDITIONAL) and the shared base row annotated with the field deletion and a
+truthful `def` (**the row is KEPT deliberately: removing it would make an active,
+always-on mechanism invisible to the ledger**); `check_mechanism_matrix.py` exits
+**0**. Q-B and R-A honoured — there is no C3a-2023/C3b-2023 movement to report,
+the series being byte-identical. **INHERITED NAMED PERMANENT LIMITATION
+(ercot-188/E2, unexpired):** `ercot_econ_curve_top_refine` writes heat rates into
+the P0 objective, so the offer-surface family's P0 bit-identity proof stays
+FORFEITED — stated so G-REPRO is not over-read: it is a whole-solve reproduction,
+not a seam proof. **No PR opened** (push-and-stop; the owner merges).
+
+**Record note, carried not resolved:** `main` carries a **duplicated `## ercot-202`
+heading** in this file (line 8063, the owner sitting record; line 8212, the T-1
+non-viability entry), and the 198–205 shorthand ledger is tangled across parallel
+branches (ercot-203b's collision note records two lanes taking `ercot-203`
+simultaneously). **Noted, nothing renamed — it is an owner call.** 197/199/200
+remain unspent.
+
+**Session consumed the ercot-204 shorthand. Next shorthand: ercot-205.**
