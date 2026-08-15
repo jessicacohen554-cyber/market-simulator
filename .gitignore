@@ -763,3 +763,24 @@ data/raw/miso-energy-offers/*
 # needs the dailies. Refetch with scripts/data/fetch_caiso_dam_outages.py (see
 # data/raw/caiso-dam-outages/README.md).
 data/raw/caiso-dam-outages/daily/*.xlsx
+
+# Publication PDFs (28 files, ~137.9 MiB) -- hand-read citation sources, opened
+# by no consumer in src/ scripts/ tests/. Each directory's README.md carries the
+# verified source-URL table, the re-fetch command and the pin sha.
+# ERCOT/ and MISO/ hold nothing but these PDFs, so they take the corpus idiom:
+data/raw/ERCOT/*
+!data/raw/ERCOT/README.md
+!data/raw/ERCOT/SHA256SUMS.txt
+data/raw/MISO/*
+!data/raw/MISO/README.md
+!data/raw/MISO/SHA256SUMS.txt
+# PJM-AS/ and NYISO/ are mixed directories -- target only the PDFs. NOTE the
+# NYISO Gold Books are split on purpose: 2023-2026 convert, 2018-2022 STAY
+# TRACKED (nyiso-134 D-3 immutable sources, outside the BLOAT-B-2 item list and
+# with no recorded re-fetch URL), so they are listed one per line, never globbed.
+data/raw/PJM-AS/*.pdf
+data/raw/NYISO/NYISO-*-SOM-*.pdf
+data/raw/NYISO/2023-Gold-Book-Public.pdf
+data/raw/NYISO/2024-Gold-Book-Public.pdf
+data/raw/NYISO/2025-Gold-Book-Public.pdf
+data/raw/NYISO/2026-Gold-Book-Public.pdf
