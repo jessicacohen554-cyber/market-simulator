@@ -397,7 +397,6 @@ def run_year(
     coal_perplant_offer_yearly: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     nyiso_solar_market_generator_basis: bool = False,
-    nyiso_solar_registry_cod_dates: bool = False,
     oil_primary_bin_fuel: bool = False,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
@@ -1166,16 +1165,6 @@ def run_year(
         # III-2a market-generator registry. Input only, never an offer/price
         # change (rule 13 class of the CAMPD outage windows).
         config = config.with_overrides(nyiso_solar_market_generator_basis=True)
-    if nyiso_solar_registry_cod_dates:
-        # NYISO market-solar IN-SERVICE DATE basis (nyiso-133, rule 14
-        # [R-ACCURATE]): the Gold Book "In-Service Date" the registry basis
-        # ramps on is a REGISTRATION / interconnection-service date and LEADS
-        # the plant's metered commercial start, while EIA-860's Operating Month
-        # matches it (equal to the first metered EIA-923 month in 11 of 12
-        # uncensored plants). Reads the same artifact's capacity_mw_cod column:
-        # identical membership, identical nameplate, only the switch-on month.
-        # Input only, never an offer/price change (rule 13 class).
-        config = config.with_overrides(nyiso_solar_registry_cod_dates=True)
     if oil_primary_bin_fuel:
         # Measured EIA-860 oil-primary fuel correction (plant-registry screen
         # unioned with the generator-level Energy-Source-1 majority screen);

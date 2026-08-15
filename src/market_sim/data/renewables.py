@@ -2348,18 +2348,23 @@ def load_renewable_profiles(
             # data.nyiso_market_solar for the identification and the declared
             # CF-basis limitation.
             #
-            # nyiso_solar_registry_cod_dates (nyiso-133) selects WHICH published
-            # in-service date starts each plant: the Gold Book's own
-            # registration date (default) or EIA-860's Operating Month, which
-            # matches the first METERED month of output in 11 of 12 uncensored
-            # plants. Same membership, same nameplate — only the switch-on month.
+            # WHICH published in-service date starts each plant is settled and
+            # UNCONDITIONAL since 2026-08-15 (nyiso-136, owner ruling; rule 26
+            # [R-DELETE] collapse of the nyiso-133 gate, promoted to keeper at
+            # nyiso-135). It is EIA-860's Operating Month — the plant's metered
+            # commercial start, matching the first METERED month of output in 11
+            # of 12 uncensored plants — never the Gold Book's own
+            # registration / interconnection-service date, which LEADS it and is
+            # signed BOTH ways (Darby -1, Stillwater -3 against Morris Ridge +2,
+            # High River +1, East Point +1). Same membership, same published
+            # nameplate — only the switch-on month. There is no longer a flag:
+            # a default-off gate whose OFF position is the less accurate basis is
+            # a re-armable wrong answer.
             registered = load_market_solar_monthly(
                 iso,
                 cal_year,
                 zone_names,
-                cod_basis=bool(
-                    getattr(config, "nyiso_solar_registry_cod_dates", False)
-                ),
+                cod_basis=True,
             )
             if registered is not None:
                 monthly = registered

@@ -151,7 +151,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     solar_deliverability: { cell: "." },
     vre_avg_cf_level: { cell: "K", ev: "nyiso-132 (FINDING-nyiso132-solar-cf-level-2026-08-07.md); nyiso-130 prereg §2-§3" },
     vre_market_generator_basis: { cell: "K" },
-    vre_registry_cod_date_basis: { cell: "K", fc: "O", ev: "nyiso-133 (FINDING-nyiso133-market-solar-cod-basis-2026-08-08.md; PREREG-nyiso133-market-solar-cod-basis-2026-08-08.md; probes _nyiso133_commissioning_ramp.py + _nyiso133_ab_gates.py; records _nyiso133_commissioning_ramp.json + _nyiso133_ab_gates.json); nyiso-135 PROMOTED O -> K on the owner ruling, no solve (ASSESSMENT-nyiso135-promotion-2026-08-15.md); fc stays O because the gate is still DEFAULT-OFF — collapsing it to unconditional is the deferred owner decision (rule 26 [R-DELETE]), so the forecast lane does NOT inherit this keeper" },
+    vre_registry_cod_date_basis: { cell: "K", ev: "nyiso-133 (FINDING-nyiso133-market-solar-cod-basis-2026-08-08.md; PREREG-nyiso133-market-solar-cod-basis-2026-08-08.md; probes _nyiso133_commissioning_ramp.py + _nyiso133_ab_gates.py; records _nyiso133_commissioning_ramp.json + _nyiso133_ab_gates.json); nyiso-135 PROMOTED O -> K on the owner ruling, no solve (ASSESSMENT-nyiso135-promotion-2026-08-15.md); nyiso-136 COLLAPSED THE GATE TO UNCONDITIONAL on a second owner ruling (rule 26 [R-DELETE]), so no fc posture is carried — the ScenarioConfig field is DELETED and BOTH lanes now read the EIA-860 Operating Month basis, at the declared cost of re-staling the forecast lane's 11 committed nyiso-* hindcast sidecars" },
     wtx_curtailment_driver: { cell: "." },
     wtx_curtail_unpooled: { cell: "." },
     hydro_dispatch_envelope: { cell: "K", ev: "nyiso-92 / FINDING-nyiso92-hydro-capability-envelope-2026-07-28.md" },
@@ -417,5 +417,61 @@ window.MECH_MATRIX_SHARDS.NYISO = {
  * FINDING-nyiso133-market-solar-cod-basis-2026-08-08.md,
  * PREREG-nyiso133-market-solar-cod-basis-2026-08-08.md,
  * _nyiso133_ab_gates.json, _nyiso133_commissioning_ramp.json,
+ * docs/calibration-log/nyiso.md 2026-08-15.
+ */
+
+/* 2026-08-15 (2nd stamp) — nyiso-136 RULE 26 [R-DELETE] COLLAPSE of the
+ * market-solar in-service DATE BASIS gate. NO CELL VERDICT MOVES (the cell
+ * went O -> K in the 1st stamp above, on the nyiso-135 promotion); what moves
+ * is the DEFAULT, and the fc posture is dropped because there is no longer a
+ * posture to differ.
+ *
+ * WHAT CHANGED. `ScenarioConfig.nyiso_solar_registry_cod_dates` is DELETED.
+ * data/renewables.py now calls load_market_solar_monthly(..., cod_basis=True)
+ * UNCONDITIONALLY, so every NYISO run in BOTH lanes ramps each registered
+ * market-solar plant on its EIA-860 "Operating Month" (the metered commercial
+ * start) and the Gold Book Table III-2a "In-Service Date" basis is no longer
+ * reachable from any solve path. The CLI flags, the config plumbing and the
+ * default-off tests go with it.
+ *
+ * WHY. Owner ruling, session nyiso-136, 2026-08-15, on nyiso-133 §9's own
+ * standing recommendation and the gate's own in-code note: a default-off gate
+ * whose OFF position is the LESS ACCURATE basis is a re-armable wrong answer
+ * (rule 26 [R-DELETE]). nyiso-135 promoted the armed run to keeper; leaving the
+ * DEFAULT on the superseded basis left the wrong answer one flag away.
+ *
+ * DECLARED COST, ACCEPTED BY THE OWNER IN THE SAME RULING. This re-stales the
+ * NYISO FORECAST lane's 11 committed nyiso-* hindcast sidecars (rule 15's
+ * separate namespace, its own governance — they stand as PRE-EPOCH evidence
+ * until that lane re-runs them). This is exactly the cost nyiso-133 and
+ * nyiso-135 both flagged and declined to incur without an owner decision.
+ *
+ * CACHE. SAME-KEY BEHAVIOURAL FLIP, and it is recorded as such: the field was
+ * registered in _CACHE_KEY_OPTIONAL_FIELDS and held its False default, so it
+ * was ALREADY dropped from the hash — deleting it leaves the pinned default key
+ * 603c2498bf71d21d byte-stable (measured both ways). No _CACHE_KEY_RETIRED_FIELDS
+ * entry is owed and adding one would be the bug: that dict RE-INSERTS the name
+ * and MOVES the key (measured: 6f8050582a752f5a). A pre-2026-08-15 NYISO bundle
+ * and a post one therefore hash IDENTICALLY under a changed basis, which is the
+ * D-13 / FFR-3A same-key collision in its pure form — see the 2026-08-15
+ * cache-epoch entry in market_sim/results/cache.py for exactly what is
+ * invalidated and what is not.
+ *
+ * NOT AFFECTED. The designated keeper 2026-08-08-nyiso-133-cod-arm already
+ * solved with the flag True in its own run_config.json, so it is ALREADY on the
+ * post-collapse basis and its determination is untouched
+ * (CALIBRATED-WITH-CAVEATS, C3c the lone ledgered caveat, bit-unchanged at
+ * 21 / 3 / 24 h). Its paired control is pre-epoch by construction and is kept as
+ * the A/B baseline, not as a current-basis run. Rule 25 [R-ISO-SCOPE]: NYISO
+ * only — the loader returns None for any other ISO, and NEISO carries the
+ * identical Tier-3 posture and is explicitly NOT covered (U). Frontier stays
+ * CLEARED (2026-08-06). Holdout posture UNCHANGED: `complete` is validation
+ * ONLY, NYISO stays ABSENT from `final`, and the ACTIVE spend freeze was
+ * re-confirmed HELD by the owner in this same session — 2022 was not solved,
+ * scored or registered.
+ *
+ * NO SOLVE RAN for this collapse. Evidence:
+ * results/calibration/ASSESSMENT-nyiso135-promotion-2026-08-15.md §4 item 2,
+ * FINDING-nyiso133-market-solar-cod-basis-2026-08-08.md §9,
  * docs/calibration-log/nyiso.md 2026-08-15.
  */
