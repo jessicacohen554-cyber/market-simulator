@@ -94,7 +94,15 @@ _MONTH_START_HOUR: tuple[int, ...] = tuple(
 # extend as more ISOs are calibrated.
 ISO_STATES: dict[str, tuple[str, ...]] = {
     "ERCOT": ("TX",),
-    "CAISO": ("CA",),
+    # CA plus NV: Desert Star Energy Center (EIA 55077, 370.1 MW CC_REGULAR,
+    # Clark County NV) is a CAISO-fleet plant whose CEMS history files under
+    # Nevada, so the CA-only state list left it unobservable by the unit-level
+    # intake — the FINDING-caiso193 §2 state-scope gap (2.42 % of the class,
+    # the residual CC_REGULAR G-COV miss after the caiso-196 remap repair).
+    # The NYISO NY+NJ template applies verbatim: ``load_campd_hourly`` and the
+    # outage derivation filter every loaded state to the ISO's own fleet, so
+    # listing NV here cannot leak non-CAISO NV plants into CAISO.
+    "CAISO": ("CA", "NV"),
     # NY plus NJ: a handful of qualifying NYISO-fleet plants sit physically in
     # New Jersey (EIA-860 balancing authority ``NYIS``), so their unit-level
     # extract feeds NYISO too. ``load_campd_hourly`` and the outage derivation
