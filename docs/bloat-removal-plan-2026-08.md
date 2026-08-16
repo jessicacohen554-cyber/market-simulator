@@ -861,7 +861,16 @@ elsewhere, e.g. the D-13 cache-key gate):
     adjudication pool 4,008.7 MiB / 1,487 files, takeable residual
     ≈ 3,311.9 MiB after the §4.2/§4.7 keep-verdicts, full untrack → tip
     ≈ 3.0 GiB; the report's §7 adds the A2-precedent and rewrite-NO-GO
-    hardening notes.)*
+    hardening notes.)* *(Decision card DRAFTED AND SERVED 2026-08-16, session
+    BLOAT-3 — `docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md`. The
+    2026-08-16 history rewrite invalidated the history-as-archive premise the
+    stage was chartered on, so the card's central question is the RECOVERY
+    STORY, not just the untrack: (a) per-corpus re-fetch evidence-passed /
+    (b) owner-held external archive for the irreplaceable subset / (c)
+    explicit signed loss — with pin-based recovery admissible only under an
+    explicit no-further-rewrite commitment. Card recommends the staged
+    (a)-only GO (O2, ≈ 1.1 GiB prima facie). **VERDICT: PENDING** — record it
+    here, on the card, and in release-plan §8.)*
 
 ---
 

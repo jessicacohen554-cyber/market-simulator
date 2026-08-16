@@ -1278,3 +1278,28 @@ your branch when done.
   bloat plan §0, report-final §5, CLAUDE.md). Open to owner: publish the
   `cite/*` tags against POST-rewrite shas; decide on refs/pull salvage; wire
   artifact upload into the workflow before any future rewrite.
+- 2026-08-16 — **BLOAT-3 decision card drafted and served: the Stage-2
+  charter, re-derived over the post-rewrite recovery reality**
+  (`docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md`; session BLOAT-3,
+  docs-only — no untracking, no gitignore edit, no data move). Input basis:
+  the B-7 re-measured pool at `04d1cf0` (4,008.7 MiB / 1,487 files; takeable
+  residual ≈ 3,311.9 MiB after the §4.2/§4.7 keep-verdicts; full untrack →
+  tip ≈ 3.0 GiB). The card's re-derivation: Stage 2 was chartered on
+  history-as-archive, and run 31955205445 demonstrated that archive is not
+  durable under owner-authorized rewrites — so the ruling sought is the
+  recovery story per corpus ((a) evidence-passed re-fetch / (b) owner-held
+  external archive / (c) explicit signed loss; pin-based recovery only under
+  a no-further-rewrite commitment, without which `hydrate_data.py` pin
+  support is not built). Options O1 defer / O2 staged (a)-only GO
+  (recommended; prima facie ≈ 1,133 MiB: campd non-2023 692.6, eia-930
+  190.3, lmp-data non-golden 143.5, PJM 107.1) / O3 full GO with archive /
+  O4 full GO with signed loss; decisions D1–D5 incl. the §4.2 DAM-2024+
+  re-entry (recommended: travels with the archive decision, not the
+  (a)-stage) and the refs/pull-salvage tie-in. §0ar-3 checklist walked at
+  HEAD: golden-tier sparse list needs zero edits (globs already carve the
+  kept files; B5/B6 precedent), skip-when-absent tests NOT verified (named
+  execution duty), CLAUDE.md rewrite + per-corpus manifests as PR duties.
+  Card flags the rule-22 vintage question (2019–2022 holdout-input status of
+  CAISO-AS/PJM/eia-930 residual files — §4.7 enumerated only ERCOT's) as a
+  mandatory item of each §4.8 evidence pass. **VERDICT: PENDING OWNER
+  RULING** — to be recorded on the card, bloat plan §9/BLOAT-3, and here.
