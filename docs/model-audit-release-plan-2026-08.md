@@ -1073,3 +1073,29 @@ your branch when done.
   no corpus restored, sparse list untouched. The tier's first green that is
   engineering rather than a capacity coin flip (perf-recheck §1.2/§1.5).
   BLOAT-B-7's re-measured close-out remains open.
+- 2026-08-16 — **GATE G1 DECLARED** (director refresh, `origin/main` @
+  `0ad8d42`). Criteria met: all five Wave-1 handoffs merged — AUDIT-A
+  (#3991), DEBUG-A (#3937), PERF-A (perf-recheck + warm-start memo), DOCS-A
+  (#3999 + follow-up #4005: `docs/user-manual.md`,
+  `docs/handoffs/methodology-finalization-audit-2026-08.md`, gap rows
+  D1/D4/D5 landed), BLOAT-A — and the §6 decision queue signed 2026-08-13.
+  §6 decision 1 (warm-start default flip) recorded **CLOSED — OVERTAKEN BY
+  EVENTS** per the PERF-A memo (D-9 flipped it, D-10 disarmed the forecast
+  lane; no flip ships), owner ack requested; PERF-B needs no flip, so it
+  proceeds regardless. **GOLDEN-TIER-FIX is COMPLETE**: #3996 merged and the
+  authorized dispatch `31913648051` SPENT and GREEN (guard PASS, zero
+  data-missing skips) — G3's proof mechanism is restored. **PERF-B prompt
+  issued for owner launch [FABLE]**: stage-0 byte-goldens then the frames
+  categorical fix, basis LUT, ci.yml fast-tier sparse block, data_prep
+  memoizations, and the basis-export consumer gate — `curate_emissions`
+  excluded (done at #3996), warm-start flip excluded (closed). ⚠ Flagged to
+  the owner at refresh: **TWO DEBUG-manager sessions live on the PJM
+  promotion surface** (owner-launched `…t8dg4w` "cards served" + the revived
+  seeded `session_01V4GocSVjMTBwSxVQEUMyTk` executing the pjm-162/163
+  attestation + keeper re-key) — one executes, the other stands down to
+  residue; keeper JSON still pjm-152 on main at refresh time. Open PRs
+  pending owner: #3995 (BLOAT-B-7 close-out), #4000 (golden-tier twin
+  records, mergeable_state dirty — rebase or close). Keepers moved again
+  overnight (CAISO caiso-196 line, MISO miso-159, ERCOT ercot-204/210 notes,
+  NYISO nyiso-133) — G2's freeze window still needs the calibration program
+  to pause.
