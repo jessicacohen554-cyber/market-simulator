@@ -1791,6 +1791,11 @@ def _ercot_multiproduct_design(
     # Appended LAST so the first n_prod family columns keep their product
     # identity for every downstream consumer (as-aware value, MCPC audit).
     total_families: list[ReserveFamily] = []
+    # The credit series the ORDC total-reserve family nets off its requirement,
+    # kept as shared arrays (zeros when un-armed) so the supply-cap netting
+    # below reads the SAME series — the two sides cannot drift (ercot-212).
+    ordc_lr_credit_mw = np.zeros(T, dtype=float)
+    ordc_storage_credit_mw = np.zeros(T, dtype=float)
     if getattr(config, "ercot_ordc_total_reserve", False):
         from market_sim.results.scarcity import (
             ercot_ordc_demand_steps,
@@ -1814,6 +1819,7 @@ def _ercot_multiproduct_design(
             getattr(config, "ercot_load_resource_reserve_from_year", 2023)
         ):
             lr_mw = ercot_load_resource_reserve_credit_mw(config, T, year=sim_year)
+            ordc_lr_credit_mw = np.asarray(lr_mw, dtype=float)
             total_req = np.maximum(total_req - lr_mw, float(config.ordc_mcl_mw))
         if (
             getattr(config, "ercot_storage_as_reserve", False)
@@ -1829,6 +1835,7 @@ def _ercot_multiproduct_design(
                 "the measured ERCOT storage AS-award series (60-Day DAM)",
             )
             storage_as_mw = ercot_storage_as_reserve_mw(year, T)
+            ordc_storage_credit_mw = np.asarray(storage_as_mw, dtype=float)
             total_req = np.maximum(total_req - storage_as_mw, float(config.ordc_mcl_mw))
         total_families.append(
             ReserveFamily(
@@ -1839,6 +1846,31 @@ def _ercot_multiproduct_design(
                 ordc_step_widths=total_wids,
                 reserve_class=-1,  # all-class: sums every product's reserve
             )
+        )
+
+    # ercot-212 consistency repair (config.ercot_reserve_supply_cap_net_credits,
+    # GATED default off): the measured RTOLCAP/RTOFFCAP cap rows already CONTAIN
+    # the online Load-Resource and ESR MW the total family credits off its
+    # requirement, so the same MW must not also ride the supply cap — leaving
+    # the caps gross lets the family's marginal reserve level reach
+    # cap + credits (rule 19 [R-ONE-MECH]: this repairs the armed construction's
+    # basis, it adds no channel; rule 13 [R-MEASURED]: already-armed measured
+    # series, arithmetic only — the award series under-state the capability
+    # components, so the netting is conservative). Scoped to the MEASURED cap
+    # branch: the WS-A forward formula composes storage explicitly and carries
+    # no LR term (docs/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md §3).
+    if (
+        getattr(config, "ercot_reserve_supply_cap_net_credits", False)
+        and supply_cap is not None
+        and getattr(config, "ercot_ordc_total_reserve", False)
+        and not (
+            str(getattr(config, "mode", "forecast")) == "forecast"
+            or getattr(config, "ercot_reserve_supply_forward", False)
+        )
+    ):
+        supply_cap = np.maximum(
+            supply_cap - (ordc_lr_credit_mw + ordc_storage_credit_mw)[None, :],
+            0.0,
         )
 
     return ReserveDesign(

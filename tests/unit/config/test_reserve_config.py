@@ -1883,3 +1883,110 @@ class TestFr12SolveYearAndBackcastGates(unittest.TestCase):
             design = get_reserve_design(cfg, _fleet(), T, ["Z0"], sim_year=2024)
         loader.assert_called_once_with(2024, T)
         np.testing.assert_array_equal(design.families[0].requirement, fake["market"])
+
+
+class TestErcotReserveSupplyCapNetCredits(unittest.TestCase):
+    """ercot-212: measured supply-cap credit netting (consistency repair).
+
+    The RTOLCAP/RTOFFCAP telemetry the measured cap rows carry already
+    contains the online Load-Resource and ESR MW the ORDC total-reserve
+    family credits off its requirement, so under
+    ``ercot_reserve_supply_cap_net_credits`` the SAME credit series is
+    netted off the cap rows (both tiers, clipped at 0). Scoped to the
+    measured (backcast) branch; requirement netting is untouched.
+    """
+
+    _RAW_CAP = (9000.0, 12000.0)  # (fast tier, all tier)
+    _LR = 800.0
+    _SAS = 2000.0
+
+    def _design(self, raw_cap=None, **cfg_kw):
+        import unittest.mock as mock
+
+        def fake_req(_year, hours, code):
+            base = {"REGUP": 50.0, "RRS": 100.0, "ECRS": 150.0, "NSPIN": 120.0}
+            return np.full(hours, base[str(code)])
+
+        fast, allt = raw_cap or self._RAW_CAP
+        cfg = _cfg(
+            ercot_multiproduct_as_coopt=True,
+            ercot_reserve_supply_cap=True,
+            storage_as_commitment=True,
+            **cfg_kw,
+        )
+        with mock.patch(
+            "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+            side_effect=fake_req,
+        ), mock.patch(
+            "market_sim.results.scarcity.ercot_rtolcap_supply_cap_mw",
+            return_value=np.vstack([np.full(24, fast), np.full(24, allt)]),
+        ), mock.patch(
+            "market_sim.results.scarcity.ercot_load_resource_reserve_credit_mw",
+            return_value=np.full(24, self._LR),
+        ), mock.patch(
+            "market_sim.results.scarcity.ercot_storage_as_reserve_mw",
+            return_value=np.full(24, self._SAS),
+        ):
+            return get_reserve_design(cfg, _fleet(), 24, ["Z0"])
+
+    def _credit_kw(self):
+        return dict(
+            ercot_ordc_total_reserve=True,
+            ercot_load_resource_reserve=True,
+            ercot_load_resource_reserve_from_year=2023,
+            ercot_storage_as_reserve=True,
+            ercot_storage_as_reserve_from_year=2023,
+        )
+
+    def test_flag_off_caps_unchanged(self):
+        design = self._design(**self._credit_kw())
+        np.testing.assert_allclose(design.supply_cap[0], self._RAW_CAP[0])
+        np.testing.assert_allclose(design.supply_cap[1], self._RAW_CAP[1])
+
+    def test_flag_on_nets_both_tiers_requirement_untouched(self):
+        design = self._design(
+            ercot_reserve_supply_cap_net_credits=True, **self._credit_kw()
+        )
+        net = self._LR + self._SAS
+        np.testing.assert_allclose(design.supply_cap[0], self._RAW_CAP[0] - net)
+        np.testing.assert_allclose(design.supply_cap[1], self._RAW_CAP[1] - net)
+        # The requirement netting is the SAME series, applied once (no drift,
+        # no double-netting): span − lr − sas, floored at the MCL.
+        total = design.families[-1]
+        self.assertEqual(total.name, "ercot_ordc_total")
+        expected_top = 3000.0 + 0.5 * 1400.0 + 5.0 * 1400.0
+        np.testing.assert_allclose(total.requirement, expected_top - net)
+
+    def test_netting_clips_at_zero(self):
+        design = self._design(
+            raw_cap=(2000.0, 2500.0),
+            ercot_reserve_supply_cap_net_credits=True,
+            **self._credit_kw(),
+        )
+        np.testing.assert_allclose(design.supply_cap[0], 0.0)
+        np.testing.assert_allclose(design.supply_cap[1], 0.0)
+
+    def test_forward_branch_untouched(self):
+        design = self._design(
+            ercot_reserve_supply_cap_net_credits=True,
+            ercot_reserve_supply_forward=True,
+            **self._credit_kw(),
+        )
+        np.testing.assert_allclose(design.supply_cap[0], self._RAW_CAP[0])
+        np.testing.assert_allclose(design.supply_cap[1], self._RAW_CAP[1])
+
+    def test_no_total_family_no_netting(self):
+        # Without the ORDC total family there is no requirement credit to
+        # mirror, so the caps stay gross even with the flag on.
+        design = self._design(ercot_reserve_supply_cap_net_credits=True)
+        np.testing.assert_allclose(design.supply_cap[0], self._RAW_CAP[0])
+        np.testing.assert_allclose(design.supply_cap[1], self._RAW_CAP[1])
+
+    def test_cache_key_registration(self):
+        from market_sim.config.scenarios import ScenarioConfig
+
+        # Registered drop-at-default (nyiso-119 discipline): the global
+        # pinned default key is unmoved, an armed config hashes distinctly.
+        self.assertEqual(ScenarioConfig().cache_key(), "603c2498bf71d21d")
+        armed = ScenarioConfig(ercot_reserve_supply_cap_net_credits=True)
+        self.assertNotEqual(armed.cache_key(), "603c2498bf71d21d")
