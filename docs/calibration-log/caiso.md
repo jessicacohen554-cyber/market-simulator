@@ -7965,3 +7965,32 @@ supersession); `wefor_residual` cell O → R by the companion caiso-193 lane-2 e
 above. Dashboard-deploy stall cleared this session (stuck run #1400 cancelled; live
 site current again from run #1510).
 
+
+## 2026-08-16 — caiso-196 PROMOTION: keeper → `2026-08-15-caiso-196-e1-elsegundo` (OWNER DECISION — "if structural integrity improves but gates regress that may still be a keeper"), C6 attested AT promotion, lane pruned to the keeper per the standing retention directive
+
+**Keeper: `2026-08-09-caiso-188-d1-micseam` → `2026-08-15-caiso-196-e1-elsegundo`.**
+The owner answered FINDING-caiso196 §5 item 1 in-session (verbatim: *"Is this a
+recommended keeper candidate? If so plz promote. If structural integrity improves
+but gates regress that may still be a keeper.."*). Determination **NOT-YET, 2
+load-bearing FAILs** — C3a (+11.7/+14.5 %, 2023 +4.4 % passes) and the disclosed
+C1-2023 CC_REGULAR flip (−4.44 TWh, ACCEPT-WITH-FLIP per protocol §5: the phantom
+3.2 TWh/yr removed, the standing over-import residual visible on the volume side);
+C3c the single ledgered caveat (magnitudes re-measured UNCHANGED: 0 h/1 h vs 47/35);
+**C6 PASS — attestation generated AT the promotion** (`gen_caiso196_attestation.py`,
+premises computed: G-DELTA 0 of 714 config keys differ, G-EXTRACT via
+`resolved_inputs` shas — the caiso-190 machinery's first promotion use — G-ENGAGE
+from committed sidecars, G-DOF ledger byte-carried 11/8, G-EXC four carried
+exceptions); C8 PASS. LOYO discharged by construction (zero fitted parameters,
+per-year-independent detection, no in-sample gain anywhere). `audit_keepers --iso
+CAISO` PASS 0/0; matrix shard keeper+gates re-stamped, §5.2 header re-stamped,
+`check_mechanism_matrix` clean; keeper sidecar carries the `market_story`.
+**Retention (standing 2026-08-15 directive): CAISO lane = the keeper alone** —
+`2026-08-09-caiso-188-d1-micseam` and `2026-08-15-caiso-196-e0-control` pruned
+(`prune_iso_runs.py --force-uncite`; dangling citations deliberate, durable
+evidence in FINDING-caiso188/189/196 + this log + git history). **Campaign
+re-anchor: the promotion is the owner authorization the protocol's amendment
+clause requires** — the close-out campaign's control base is now
+`--replay-bundle results/calibration/caiso196_e1_elsegundo`; the lane-2 re-run
+({CC_REGULAR}-scoped) and lanes 3/5 compose on it. Rule 22 D-5(b) does not fire
+(no `complete` marker); freeze untouched; no out-of-training year touched.
+
