@@ -1,0 +1,327 @@
+{
+ "iso": "CAISO",
+ "gatespec": "GATESPEC-caiso193-stgas-wefor-2026-08-11.md",
+ "keeper_base": "caiso196_e1_elsegundo",
+ "fleet_path": "load_or_synthesize_bins + bins_to_fleet on the keeper config (caiso-187/193 construction; population == the LP's bins)",
+ "st_gas_fleet_lp": {
+  "315": 1142.0,
+  "335": 225.8,
+  "350": 1491.0
+ },
+ "st_gas_fleet_total_mw": 2858.8,
+ "census_units": [
+  {
+   "plant_code": 315,
+   "plant_name": "AES Alamitos LLC",
+   "generator_id": "3",
+   "prime_mover": "ST",
+   "energy_source_1": "NG",
+   "status": "OP",
+   "nameplate_mw": 310.0,
+   "summer_mw": 327.0,
+   "operating_year": 1961,
+   "gads_size_class": "300-399",
+   "gads_row_used": "FOSSIL Gas Primary 300-399",
+   "eford_pct": 10.67
+  },
+  {
+   "plant_code": 315,
+   "plant_name": "AES Alamitos LLC",
+   "generator_id": "4",
+   "prime_mover": "ST",
+   "energy_source_1": "NG",
+   "status": "OP",
+   "nameplate_mw": 310.0,
+   "summer_mw": 335.0,
+   "operating_year": 1962,
+   "gads_size_class": "300-399",
+   "gads_row_used": "FOSSIL Gas Primary 300-399",
+   "eford_pct": 10.67
+  },
+  {
+   "plant_code": 315,
+   "plant_name": "AES Alamitos LLC",
+   "generator_id": "5",
+   "prime_mover": "ST",
+   "energy_source_1": "NG",
+   "status": "OP",
+   "nameplate_mw": 495.0,
+   "summer_mw": 480.0,
+   "operating_year": 1964,
+   "gads_size_class": "400-599",
+   "gads_row_used": "FOSSIL Gas Primary 400-599",
+   "eford_pct": 15.22
+  },
+  {
+   "plant_code": 335,
+   "plant_name": "AES Huntington Beach LLC",
+   "generator_id": "2",
+   "prime_mover": "ST",
+   "energy_source_1": "NG",
+   "status": "OP",
+   "nameplate_mw": 218.0,
+   "summer_mw": 225.8,
+   "operating_year": 1958,
+   "gads_size_class": "200-299",
+   "gads_row_used": "FOSSIL Gas Primary 200-299",
+   "eford_pct": 10.35
+  },
+  {
+   "plant_code": 350,
+   "plant_name": "Ormond Beach",
+   "generator_id": "1",
+   "prime_mover": "ST",
+   "energy_source_1": "NG",
+   "status": "OP",
+   "nameplate_mw": 806.0,
+   "summer_mw": 741.0,
+   "operating_year": 1971,
+   "gads_size_class": "600-799",
+   "gads_row_used": "FOSSIL Gas Primary 600-799",
+   "eford_pct": 19.31
+  },
+  {
+   "plant_code": 350,
+   "plant_name": "Ormond Beach",
+   "generator_id": "2",
+   "prime_mover": "ST",
+   "energy_source_1": "NG",
+   "status": "OP",
+   "nameplate_mw": 806.0,
+   "summer_mw": 750.0,
+   "operating_year": 1973,
+   "gads_size_class": "600-799",
+   "gads_row_used": "FOSSIL Gas Primary 600-799",
+   "eford_pct": 19.31
+  }
+ ],
+ "gads_corpus": {
+  "gate_window": "2020-2024",
+  "gate_document": "NERC GADS Generating Unit Statistical Brochure 3 \u2014 2020-2024 \u2014 Unit Reporting Events (public; corpus data/raw/reference/nerc-gads-eford-2020-2024/ with recorded retrieval + source URL)",
+  "context_windows": {
+   "2018-2022": {
+    "FOSSIL Gas Primary All Sizes": {
+     "n_units": 348.0,
+     "unit_years": 1324.25,
+     "FOR": 18.15,
+     "EFOR": 22.9,
+     "EFORd": 12.6
+    },
+    "FOSSIL Gas Primary 001-099": {
+     "n_units": 83.0,
+     "unit_years": 323.92,
+     "FOR": 34.39,
+     "EFOR": 36.91,
+     "EFORd": 16.02
+    },
+    "FOSSIL Gas Primary 100-199": {
+     "n_units": 108.0,
+     "unit_years": 415.58,
+     "FOR": 15.64,
+     "EFOR": 20.1,
+     "EFORd": 10.06
+    },
+    "FOSSIL Gas Primary 200-299": {
+     "n_units": 46.0,
+     "unit_years": 148.33,
+     "FOR": 7.61,
+     "EFOR": 12.33,
+     "EFORd": 8.18
+    },
+    "FOSSIL Gas Primary 300-399": {
+     "n_units": 39.0,
+     "unit_years": 140.5,
+     "FOR": 10.26,
+     "EFOR": 14.83,
+     "EFORd": 9.77
+    },
+    "FOSSIL Gas Primary 400-599": {
+     "n_units": 50.0,
+     "unit_years": 214.25,
+     "FOR": 19.07,
+     "EFOR": 25.33,
+     "EFORd": 16.65
+    },
+    "FOSSIL Gas Primary 600-799": {
+     "n_units": 13.0,
+     "unit_years": 50.17,
+     "FOR": 18.79,
+     "EFOR": 30.37,
+     "EFORd": 20.62
+    },
+    "FOSSIL Gas Primary 800-999": {
+     "n_units": 9.0,
+     "unit_years": 31.5,
+     "FOR": 15.51,
+     "EFOR": 18.19,
+     "EFORd": 8.07
+    },
+    "FOSSIL Gas Primary 1000 Plus": {
+     "n_units": 0.0,
+     "unit_years": 0.0,
+     "FOR": 0.0,
+     "EFOR": 0.0,
+     "EFORd": 0.0
+    },
+    "FOSSIL Oil/Gas Primary All Sizes": {
+     "n_units": 403.0,
+     "unit_years": 1538.75,
+     "FOR": 18.44,
+     "EFOR": 23.63,
+     "EFORd": 12.82
+    }
+   },
+   "2019-2023": {
+    "FOSSIL Gas Primary All Sizes": {
+     "n_units": 323.0,
+     "unit_years": 1278.08,
+     "FOR": 18.85,
+     "EFOR": 23.72,
+     "EFORd": 13.44
+    },
+    "FOSSIL Gas Primary 001-099": {
+     "n_units": 82.0,
+     "unit_years": 313.33,
+     "FOR": 38.65,
+     "EFOR": 41.04,
+     "EFORd": 18.31
+    },
+    "FOSSIL Gas Primary 100-199": {
+     "n_units": 99.0,
+     "unit_years": 392.58,
+     "FOR": 15.59,
+     "EFOR": 20.22,
+     "EFORd": 10.61
+    },
+    "FOSSIL Gas Primary 200-299": {
+     "n_units": 41.0,
+     "unit_years": 143.5,
+     "FOR": 8.58,
+     "EFOR": 13.37,
+     "EFORd": 8.93
+    },
+    "FOSSIL Gas Primary 300-399": {
+     "n_units": 33.0,
+     "unit_years": 136.75,
+     "FOR": 10.52,
+     "EFOR": 15.23,
+     "EFORd": 10.34
+    },
+    "FOSSIL Gas Primary 400-599": {
+     "n_units": 51.0,
+     "unit_years": 212.67,
+     "FOR": 17.46,
+     "EFOR": 24.19,
+     "EFORd": 16.21
+    },
+    "FOSSIL Gas Primary 600-799": {
+     "n_units": 10.0,
+     "unit_years": 49.5,
+     "FOR": 18.46,
+     "EFOR": 29.83,
+     "EFORd": 20.02
+    },
+    "FOSSIL Gas Primary 800-999": {
+     "n_units": 7.0,
+     "unit_years": 29.75,
+     "FOR": 20.79,
+     "EFOR": 23.54,
+     "EFORd": 10.62
+    },
+    "FOSSIL Oil/Gas Primary All Sizes": {
+     "n_units": 377.0,
+     "unit_years": 1482.17,
+     "FOR": 19.11,
+     "EFOR": 24.51,
+     "EFORd": 13.63
+    }
+   },
+   "2020-2024": {
+    "FOSSIL Gas Primary All Sizes": {
+     "n_units": 318.0,
+     "unit_years": 1234.08,
+     "FOR": 19.5,
+     "EFOR": 24.27,
+     "EFORd": 14.26
+    },
+    "FOSSIL Gas Primary 001-099": {
+     "n_units": 82.0,
+     "unit_years": 291.42,
+     "FOR": 43.3,
+     "EFOR": 45.55,
+     "EFORd": 20.98
+    },
+    "FOSSIL Gas Primary 100-199": {
+     "n_units": 98.0,
+     "unit_years": 376.42,
+     "FOR": 16.08,
+     "EFOR": 20.3,
+     "EFORd": 11.26
+    },
+    "FOSSIL Gas Primary 200-299": {
+     "n_units": 36.0,
+     "unit_years": 144.83,
+     "FOR": 10.81,
+     "EFOR": 15.31,
+     "EFORd": 10.35
+    },
+    "FOSSIL Gas Primary 300-399": {
+     "n_units": 34.0,
+     "unit_years": 133.75,
+     "FOR": 10.08,
+     "EFOR": 15.26,
+     "EFORd": 10.67
+    },
+    "FOSSIL Gas Primary 400-599": {
+     "n_units": 50.0,
+     "unit_years": 208.33,
+     "FOR": 15.27,
+     "EFOR": 22.37,
+     "EFORd": 15.22
+    },
+    "FOSSIL Gas Primary 600-799": {
+     "n_units": 12.0,
+     "unit_years": 49.67,
+     "FOR": 18.96,
+     "EFOR": 28.97,
+     "EFORd": 19.31
+    },
+    "FOSSIL Gas Primary 800-999": {
+     "n_units": 6.0,
+     "unit_years": 29.67,
+     "FOR": 23.62,
+     "EFOR": 26.83,
+     "EFORd": 12.11
+    },
+    "FOSSIL Oil/Gas Primary All Sizes": {
+     "n_units": 372.0,
+     "unit_years": 1429.17,
+     "FOR": 19.42,
+     "EFOR": 24.88,
+     "EFORd": 14.3
+    }
+   }
+  }
+ },
+ "derivation": {
+  "metric": "EFORd",
+  "weighting": "EIA-860 unit summer capacity (NMC analog) over GADS size-class rows",
+  "weighted_eford_pct": 15.9149,
+  "gas_st_wefor_base_override": 0.1591,
+  "g_band": [
+   0.03,
+   0.21
+  ],
+  "in_band": true
+ },
+ "campd_zero_coverage_reverify": {
+  "extract": "data/raw/campd-unit-outages-CAISO.csv",
+  "census_plants_in_extract": [],
+  "n_covered": 0,
+  "n_census_plants": 3
+ },
+ "incumbent": {
+  "constants.THERMAL_AVAILABILITY['ST_GAS']": 0.21,
+  "identification": "fitted to ERCOT once-through 1950s-60s steamers (matrix note; GATESPEC \u00a71)"
+ }
+}
