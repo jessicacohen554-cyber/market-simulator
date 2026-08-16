@@ -17,9 +17,17 @@ two population readings measure once the LAST unobserved CC_REGULAR plant (EIA
 The gate is taken on the STRICTER reading (GATESPEC-caiso193 §5 conservative
 default). The frozen ``wefor_residual = 0.0`` is NOT recomputed — it is the
 caiso-187 record's arithmetic identity and invariant to this repair (X_c can
-only rise). No price series is read. Usage::
+only rise). No price series is read.
 
-    python scripts/probes/_caiso198_gcov_remeasure.py
+Because the caiso-198 arm was VOIDED at the G-DELTA kill criterion (the
+in-place re-derive was not strictly additive — `_caiso198_extract_delta.json`),
+the repair did NOT land: ``--extract`` points the extract-population reading at
+the strictly-additive CANDIDATE extract (run X, panel pinned to the committed
+CA scope, sha256 ``da33e509…``) so the owner package carries the measured
+coverage the repair WOULD deliver. Run with no argument only after an
+owner-adjudicated re-derive has actually landed. Usage::
+
+    python scripts/probes/_caiso198_gcov_remeasure.py [--extract PATH]
 """
 
 from __future__ import annotations
@@ -72,14 +80,26 @@ def _fleet_by_class(cfg):
 
 def main() -> None:
     """Re-measure both G-COV population readings on the repaired instrument."""
+    import argparse
+
     import pyarrow.parquet as pq
 
     from market_sim.data import campd
 
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "--extract",
+        default=None,
+        help="candidate extract CSV for the pop_outage_extract reading "
+        "(default: the committed data/raw extract)",
+    )
+    args = ap.parse_args()
+    extract_path = Path(args.extract) if args.extract else OUTAGE_EXTRACT
+
     cfg = _keeper_config()
     fleet = _fleet_by_class(cfg)
 
-    with OUTAGE_EXTRACT.open() as fh:
+    with extract_path.open() as fh:
         pop_extract = {int(row["facility_id"]) for row in csv.DictReader(fh)}
 
     states = campd.states_for_iso(ISO)
@@ -127,14 +147,21 @@ def main() -> None:
         row["g_cov_pass"] = min(shares) >= BAR
         per_class[klass] = row
 
+    import hashlib
+
     out = {
         "iso": ISO,
         "years": YEARS,
         "keeper": KEEPER.name,
         "states": list(states),
-        "instrument": "STATE-SCOPE REPAIRED (ISO_STATES CAISO = CA+NV, caiso-197 "
-        "NV landing + the caiso-198 re-derived extract; "
-        "PRECHECK-caiso198-desertstar-extract-2026-08-16.md §2)",
+        "extract_measured": str(extract_path),
+        "extract_sha256": hashlib.sha256(extract_path.read_bytes()).hexdigest(),
+        "instrument": "CANDIDATE state-scope repair (ISO_STATES CAISO = CA+NV, "
+        "caiso-197 NV landing; the extract reading is the strictly-additive "
+        "run-X candidate when --extract is passed — the arm was voided at "
+        "G-DELTA and the repair has NOT landed; "
+        "PRECHECK-caiso198-desertstar-extract-2026-08-16.md §2/§5, "
+        "_caiso198_extract_delta.json)",
         "per_class": per_class,
         "g_cov_surviving_groups": [k for k in GROUPS if per_class[k]["g_cov_pass"]],
         "frozen_value_note": "wefor_residual = 0.0 NOT recomputed — the "

@@ -8107,3 +8107,43 @@ record). Rule 22 D-5(b) does not fire; freeze untouched; no out-of-training
 year touched. NEXT SESSION OPENS WITH: the Desert Star extract re-derive
 (NV files landed this session; rule-23 cited re-derive + A/B on this
 keeper, the caiso-196 pattern).
+
+## 2026-08-16 — caiso-198: the Desert Star NV extract re-derive KILLED AT ITS OWN G-DELTA — control bit-zero, baseline byte-identity proven, the merit-panel scope question escalated to the owner with the strictly-additive candidate measured and sha-pinned
+
+**Run `2026-08-16-caiso-198-f0-control`** (NOT-YET / C6 UNATTESTED — standard
+non-keeper control posture; BIT-ZERO vs the keeper on every zone-hour and
+class-hour of all three years, noise floor exactly 0.0; ledger 10/7). The
+chartered caiso-197 §6 handoff item 1, executed on the caiso-196 pattern with
+PRECHECK-caiso198 @ `ddebbfd94` pushed before any solve. **The arm never
+solved**: the pre-registered G-DELTA kill criterion fired — the committed
+recipe's re-derive on the committed CA+NV state list is NOT strictly additive.
+Beside the 158 facility-55077 rows (units EDE1/EDE2, detection content
+INVARIANT to panel scope), 275 CA-facility windows reclassify (188
+layup→mechanical, 87 mechanical→layup; 2024: 107, 2025: 43 of the 188)
+because `build_merit_order_panel` is FLEET-BLIND over the loaded state files:
+the NV widening put the 13–14 non-CAISO NV Energy facilities (59–64 units,
+North Valmy coal included) into CAISO's RCC panel — RCC mean +3.45 $/MWh in
+2024, +2.41 in 2025, and DEFINED in 720 more hours of 2025. Attribution run
+end-to-end (probe `_caiso198_extract_delta.py`): panel pinned at the
+committed CA scope ⇒ **strictly additive candidate** (sha `da33e509…`, layup
+byte-identical, committed rows byte-identical in order); Desert Star alone in
+the panel ⇒ 9 windows mechanical→layup. Baseline byte-identity RE-PROVEN
+first (NV excluded ⇒ `5f3e35c5…`/`1475a577…` exactly — the NV addition is
+the only free variable at this head). `data/raw` RESTORED to the committed
+bytes; keeper, committed extract sha, and the C1-2023 row all UNTOUCHED; no
+price series read in the investigation. **G-COV on the candidate: CC_REGULAR
+extract population 1.000000 — 100 % of the roster, the FINDING-caiso193 §2
+arc closes — strict CEMS 0.990880; CC_CHP stays excluded fail-closed.** The
+frozen `wefor_residual = 0.0` is invariant by construction. OWNER DECISION
+OWED (FINDING-caiso198 §5): (1) pin the merit-panel scope — a rule-23 recipe
+charter (the panel's identification object is the ISO's own running
+capacity; the same fleet-blindness exists at NYISO/PJM/MISO and transfers no
+verdict, rule 25) — then land the additive candidate; or (2) accept the
+fleet-blind output under a FRESH pre-registration with the churn explicit
+(net +101 retained windows = net-more removal, anti-C3a-favorable; the
+C1-2023 CC_REGULAR flip watch, −4.13 TWh vs the ~4.4 band, live in both
+directions). The in-model queue stays EXHAUSTED — the same chartered repair,
+paused at its own gate, one owner decision from landing. Records:
+FINDING-caiso198-desertstar-extract-2026-08-16.md,
+_caiso198_{ctrl_tolerance,extract_delta,gcov_remeasure}.json, probes
+_caiso198_*.py.
