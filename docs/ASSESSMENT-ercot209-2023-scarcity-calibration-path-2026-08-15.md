@@ -345,3 +345,13 @@ the pointer main published. Its artifacts keep the `ercot210` filename stem
 because the precommit was pushed under it before the collision was observable,
 and pushed artifacts are not renamed. X-1 is appended below X-2 in landing
 order, per this section's append-only rule — no line of X-2 was edited.
+
+**X-3 SIGNED (owner, by dispatch of RESERVE-BASIS-1, 2026-08-16)**
+
+"X-3 SIGNED (owner): the ORDC reserve-basis question is chartered diagnose-first — Phase-0 measures WHERE
+the ORDC pricing region sits relative to the model's reserve representation at the 2024/2025
+published-fired hours, from committed artifacts and published telemetry only. Phase-1 (an armed A/B) may
+run in the same lane ONLY if Phase-0 identifies a zero-fitted-scalar mechanism, behind its own pushed
+precommit with direction-blind kill gates; promotion is a recommendation only. Any 2023 movement is
+side-effect-reported at full magnitude under Q-B/R-A phrasing, never a basis. The ercot-206 B0 year-keyed
+split binds: no blanket LOLP-table arming (2023/2024 refute it)."
