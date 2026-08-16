@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-16-caiso-197-w2-r3",
+  "label": "caiso 197 w2 r3",
+  "date": "2026-08-16",
+  "shorthand": "caiso-197-w2-r3",
+  "definition": "caiso-197 WAVE-2 RUNG +L3: the lane-2 three-field move composed with the lane-3 cited override on the re-anchored caiso-196 base (integration protocol \u00a71 ladder, surviving rungs only \u2014 lanes 2 and 3 both ACCEPTED on their pre-registered gates; lane-2 premise recheck satisfied by identity, X_c 0.2443/0.2916/0.3528 >= 4.9x W on the frozen record). One mechanism added vs the previous rung (caiso197_l2_wefor).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-16-caiso-197-w2-r3.js",
+  "bundle": "results/calibration/caiso197_w2_r3"
+}
