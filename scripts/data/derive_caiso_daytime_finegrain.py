@@ -46,13 +46,12 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(REPO / "scripts"))
-sys.path.insert(0, str(REPO / "scripts" / "data"))
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 
-from derive_caiso_import_tranches import YEARS, hub_prices  # noqa: E402
+from scripts.data.derive_caiso_import_tranches import YEARS, hub_prices  # noqa: E402
 from market_sim.config.constants import STATE_CARBON_PRICE_BY_ISO  # noqa: E402
 from market_sim.config.interchange_config import (  # noqa: E402
     CAISO_DSW_SURPLUS_REMOTE_VOM,

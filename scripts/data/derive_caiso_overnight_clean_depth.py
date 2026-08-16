@@ -46,10 +46,9 @@ from pathlib import Path
 import numpy as np
 
 REPO = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(REPO / "scripts"))
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 
-sys.path.insert(0, str(REPO / "scripts" / "data"))
-from derive_caiso_import_tranches import (  # noqa: E402
+from scripts.data.derive_caiso_import_tranches import (  # noqa: E402
     YEARS,
     corridor_net_import,
 )

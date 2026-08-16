@@ -39,11 +39,10 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO / "scripts"))
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 
-sys.path.insert(0, str(REPO / "scripts" / "data"))
 from market_sim.results.scarcity import (  # noqa: E402
     CAISO_SCARCITY_MCL_MW,
     CAISO_SCARCITY_SHIFT_SIGMA,
@@ -54,7 +53,7 @@ from market_sim.results.scarcity import (  # noqa: E402
 
 # Reuse the ERCOT deriver's reconstruction verbatim (same persisted-bundle
 # contract, same online/offline reserve split, same headroom/lambda helpers).
-from derive_ordc_overlay import (  # noqa: E402
+from scripts.data.derive_ordc_overlay import (  # noqa: E402
     _demand_weights,
     _mae,
     _monthly_mae,
