@@ -295,3 +295,27 @@ its own row only when a field exists). Rules 5/24: no config surface
 touched. Keeper at session start and end: `2026-08-15-ercot204-rule26-delete`.
 New artifacts: this assessment + one calibration-log entry (ercot-209),
 nothing else.
+
+---
+
+## RESOLUTIONS — CARD X
+
+Append-only. One line per adjudicated item, each carrying the owner's signature
+text verbatim as dispatched. An item's line is never edited once written; a
+later revision is a new line, not a rewrite.
+
+X-2 SIGNED (owner, by dispatch of REPORTING-TEXT-1, 2026-08-16)
+
+"X-2 SIGNED (owner): (a) a standing one-object note on the ERCOT
+calibration-status surface — the three 2023 price-criterion misses are ONE
+adjudicated model-class object (card R §2 + the C3c ledger as citations);
+determination NOT-YET untouched, misses still reported at full magnitude. (b)
+the forecast-lane keeper_note annotation on the two shipped ffr5d hindcast
+sidecars, stating the dispatch-skill anchor is frozen at ship date (2026-08-05,
+run168b) and the live backcast keeper is tracked on calibration-status. No
+rubric constant moves."
+
+Executed by ercot-210 (2026-08-16): both halves landed, determination
+`NOT-YET` untouched, no rubric constant moved. This signs Door C (§3) only —
+it is **not** a signature of R-B's rubric half, and Q-B FINAL and R-A are
+untouched and uncited-against.
