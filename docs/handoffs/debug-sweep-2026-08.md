@@ -178,3 +178,159 @@ or the post-BLOAT slimmer corpus — routed to the owner via this record, with
 BLOAT-B's re-dispatch (§6 decision 7) as the natural retest point. No
 workflow edit made here: the step's failure is capacity, and choosing the
 remedy (paid larger runner vs code change) is an owner cost decision.
+
+---
+
+## Addendum — reissued DEBUG manager, post-DEBUG-B continuation (2026-08-16)
+
+**Branch:** `claude/fable-debug-manager-reissue-t8dg4w` (off `origin/main` @
+`8a118e7`). **Charter:** the director's reissued DEBUG-manager dispatch
+(plan §8 ledger, 2026-08-15 AUDIT-A entry): pjm-162 promotion card, ≤2022
+clock card, clean-main re-verification, sibling-import residue, plus audit
+gap rows B1/B2/O2 routed to this lane by
+`docs/audit/third-party-audit-2026-08.md` §8.
+
+### A.1 — Audit gap row O2 RESOLVED: the PJM C6-attestation "discrepancy" is a stale quote, not scorer drift
+
+The two committed records describe two different points in time, and both
+were correct when written. The DEBUG-B finding's like-for-like table
+(`docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md` §9) quotes the
+incumbent's **registration-time** grade — its column header says "rubric
+2.9" — scored 2026-08-04 when `results/calibration/pjm152_collapse_A`
+shipped **without** `calibration_attestation.json`: C6 UNATTESTED,
+determination NOT-YET. `status/PJM.js` (generated 2026-08-09) reflects the
+bundle's **current** state: pjm-153 retro-generated the attestation the same
+day with every premise computed (`scripts/gen_pjm153_collapse_attestation.py`)
+and the D-5(b) re-key re-verified CALIBRATED — the sequence the PJM
+`complete` marker's own `determination` text narrates verbatim. The
+definitive re-score on committed artifacts at `8a118e7`
+(`scripts/calibration_verdict.py --run-id`, no solve, rubric v3.2) confirms
+the current state on both sides: **pjm-152 = CALIBRATED, C6 PASS**
+("determination basis: all criteria pass, governance attested") and
+**pjm-162 = NOT-YET with the single reason "governance gate UNATTESTED: no
+governance attestation in bundle"** — every model-determined criterion PASS.
+There is no scorer/artifact-schema drift: `score_governance` reads
+`calibration_attestation.json` from the sidecar-resolved bundle identically
+for both runs; the finding's incumbent column was a stale quote, not a
+re-score. **Corrected baseline for the promotion card: the incumbent keeper
+is CALIBRATED; the candidate's only gap is the promotion-time governance
+attestation, which the promotion mechanics themselves produce** (pjm-153,
+nyiso-135 #3977, ercot-202/204 #3947/#3970 precedents). One hygiene note for
+future finding tables: a "like-for-like" verdict column quoted from a
+registration-time snapshot should say so explicitly, or be re-scored at
+writing time — this row cost an audit gap and a re-score to un-confuse.
+
+### A.2 — Both owner cards served and signed; both outcomes executed same-session
+
+**Card 1 (pjm-162 promotion, audit row O1): PROMOTE signed → executed.**
+Keeper is now `2026-08-15-pjm-162-inputclock`. Full mechanics + evidence:
+`docs/calibration-log/pjm.md` pjm-163 entry (attestation with computed
+premises via `scripts/gen_pjm163_inputclock_attestation.py`; D-5(b)
+re-verification CALIBRATED before landing; keeper shard + status rebuild;
+complete-marker re-key; `audit_keepers --iso PJM --check` PASS 0/0; rule-28
+re-stamps of `diurnal_price_amplitude` + `seam_flow_envelopes` +
+§5.3 prose header, `check_mechanism_matrix.py` green).
+
+**Card 2 (≤2022 input clock, audit row O3): CHARTER EXTENSION NOW signed →
+executed.** `_PJM_INPUT_CLOCK_SHIFTS` now declares 2018–2022 fueltype +1 h;
+applied via the new explicit `--apply-years` mechanism (the committed table
+is a one-shot migration record, not an idempotent transform — re-running an
+embodied entry double-shifts, so the CLI now refuses to run without naming
+the not-yet-embodied years). Byte-verified per the finding §2a protocol:
+non-fueltype columns identical every row; NG:* outside 2018–2022 identical
+(corrected 2023/24 blocks untouched); every in-block cell == pristine at
+T−1h (350,592 cells); NaN 49,305 → 49,313 (+8 = the one pre-extract
+boundary instant, left NaN not fabricated). July centroids post-fix:
+2018–2022 = 11.72/11.73/11.72/11.81/11.73 (were ~10.7), 2023–2025 unchanged.
+**Data repair only — no ≤2022 year solved, scored or registered; the spend
+freeze and tier markers are untouched.** Execution annotation appended to
+the finding §6; audit rows O1/O2/O3 all annotated resolved.
+
+### A.3 — Clean-main re-verification: zero ambient reds STANDS on a full-data clone
+
+Full fast lane (`uv run python -m pytest -q -n 2 -m "not slow and not
+integration and not fulldata"`), full-data working tree (6.1 GB `data/raw`),
+this branch off main `8a118e7` (which post-dates every BLOAT-B prune and
+DEBUG-B):
+
+* **Run 1** (branch = main + the promotion, the ≤2022 clock extension, and
+  the B1 gate): **1 failed / 6,846 passed / 31 skipped / 2 xfailed** (336 s).
+  The single red —
+  `test_replay_keeper_strict.py::TestCurrentKeepersReplayCleanly::test_all_keeper_metas_build`
+  — is **NOT an ambient main red**: it was exposed by this branch's own
+  pjm-163 promotion, which made `pjm_debugb_inputclock_A` the first KEEPER
+  whose `meta.json` records a rule-26-deleted ScenarioConfig field
+  (`nyiso_solar_registry_cod_dates`, deleted by nyiso-136 after that bundle
+  solved), tripping the strict unmapped-key contract exactly as designed.
+  Triage per this sweep's protocol: **FIX NOW (solve-neutral)** — a
+  deliberate `_RULE26_DELETED_UNCONDITIONAL` ledger in `replay_keeper`
+  (ISO-aware: inert provenance outside the owning ISO per rule 25;
+  hard-error on the dead polarity inside it, per the cache.py epoch note's
+  own "read, never replayed"), plus three pinned tests.
+* **Run 2** (after the fix + the batch conversions): **6,850 passed /
+  0 failed / 31 skipped / 2 xfailed** (322 s). **Skip count 31 == the
+  full-data run-A baseline** (perf-recheck §1.3); xfail count unchanged.
+
+Since every other test was green in run 1 and no commit on this branch
+fixes an ambient-main behaviour, **main's zero-ambient-reds state stands**,
+and the branch hands it back green with the promotion included. The loader
+tests passing in run 1 also double as regression cover for the ≤2022 clock
+extension (the extract's consumers were exercised on the extended data).
+
+### A.4 — Audit gap row B1 CLOSED (solve-neutral): holdout gate on the non-`_full` CLI
+
+`scripts/run_calibration.py` now calls
+`run_calibration_full.enforce_holdout_year_gate` ahead of any data access
+(lazy import, the `replay_keeper`/`backfill_nonfossil_hourly` single-home
+reuse pattern), with a `--holdout-authorized` flag matching the `_full`
+semantics and the stale "2021-2024" usage text corrected. Wiring tests in
+`tests/scoring/test_holdout_year_gate.py` (30/30): out-of-window blocks
+before the first data read; in-window passes; year/ISO/flag forwarded.
+
+### A.5 — Audit gap row B2 folded into the standing docs (non-hermetic PJM replay)
+
+The finding §8 facts — a fresh-clone PJM keeper re-solve needs the ~2 h
+`regenerate_clean.py` rebuild (gitignored `data/clean/`) **plus** a live
+licensed DataMiner fetch (`pjm-da-virtuals`, intermittent proxy 502s,
+auto-resumed but non-hermetic) and no `hydrate_data.py` profile can supply
+either — now live where charter authors will actually hit them:
+`docs/fast-clone.md` §"Handoff prompts declare their data profile" carries a
+PJM-replay-lanes warning block with both commands and the scheduling
+consequence for rule-15 same-session registration. (Routing note said "with
+DOCS": DOCS-A should pick the same block up into the user manual's
+troubleshooting section when it lands — flagged to the director.)
+
+### A.6 — Sibling-import residue: two chartered batches converted (census 73/49 → 56/34)
+
+Census at this branch's HEAD (`ci_refactor_guards.py --sibling-census`):
+**56 bare sites / 34 live files**, from 73/49 at dispatch (and 74/50 at
+DEBUG-A; the one-file delta in between was an archive rotation, not a
+conversion). Batch 1: the seven-file CAISO derive cluster. Batch 2: the
+eight-file top-level cluster. Every file went through the README protocol —
+both-paths attribute verification (with a harness correction worth
+recording: compare **structural code equality**, never `marshal` bytes —
+marshal's back-reference sharing varies with string interning across two
+loads of the same file and false-flags equal code objects), the strict
+direct-run bootstrap check (repo root stripped from the interpreter path,
+arbitrary cwd), and `--script-refs` green per batch. One test rig was
+repaired off its own second-copy pattern
+(`test_dashboard_add_run_sidecar.py`). Remaining web, enumerated for the
+next batch: the ERCOT `scripts/data/` derive cluster (the bulk),
+`lib/sced_corpus_instruments.py` (deferred probe imports), and the deploy
+trio (`register_forecast_run.py` / `register_hindcast.py` /
+`pb5_assemble.py` — bare-`python3` sparse-checkout constraint applies).
+`scripts/README.md`'s census paragraph updated to match.
+
+### A.7 — Watch items (report, not owned here)
+
+* **`golden-data-tier.yml` weekly cron, first firing Mon 2026-08-17 05:37
+  UTC.** Framing UPDATE vs the dispatch: the GOLDEN-TIER-FIX
+  `curate_emissions.py` streaming rewrite is **already on main**, and its
+  authorized manual dispatch already ran GREEN (run `31913648051`, 11m33s,
+  zero data-missing skips — plan §8 ledger). So the cron's first firing is
+  post-fix: a red tomorrow would be a NEW finding, not the known OOM.
+* **ci.yml structural unreachability unchanged** (§CI health above): the
+  fast-tier checkout blocker is PERF-B territory (held at G1) and the two
+  by-design-red lanes are other lanes' live signals. Nothing this session
+  landed changes the branch-protection memo's required-check set — no
+  workflow was added or renamed; the memo stands as written for G2.

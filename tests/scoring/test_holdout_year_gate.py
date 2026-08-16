@@ -276,3 +276,64 @@ class TestActualTailTierGate:
     def test_empty_marker_doc_fails_closed(self):
         for year in (2018, 2019, 2022, 2026):
             assert not _TAIL._year_emittable("PJM", year, {})
+
+
+# ---------------------------------------------------------------------------
+# B1 (third-party audit 2026-08, gap register): scripts/run_calibration.py was
+# the ONE solve entry point outside the three-gate enforcement — a direct
+# `--year 2022` there solved with no code-level gate. The fix wires the same
+# single-home gate (run_calibration_full.enforce_holdout_year_gate, which the
+# tests above already pin) into that CLI's main() ahead of any data access.
+# These tests pin the WIRING, not the gate logic.
+# ---------------------------------------------------------------------------
+
+_RC_SPEC = importlib.util.spec_from_file_location(
+    "run_calibration_b1_gate_probe",
+    REPO_ROOT / "scripts" / "run_calibration.py",
+)
+_RC = importlib.util.module_from_spec(_RC_SPEC)
+_RC_SPEC.loader.exec_module(_RC)
+
+
+class _ReachedDataLoad(Exception):
+    """Sentinel: main() got past the holdout gate to its first data read."""
+
+
+class TestRunCalibrationCliGate:
+    def _arm_sentinel(self, monkeypatch):
+        """Make the first post-gate data access loud instead of loading files."""
+
+        def _boom():
+            raise _ReachedDataLoad()
+
+        monkeypatch.setattr(_RC, "_load_reference", _boom)
+
+    def test_out_of_window_year_blocks_before_any_data_access(self, monkeypatch):
+        """`--year 2022` exits at the gate (live repo freeze/marker state) —
+        the SystemExit fires before _load_reference is ever reached, and both
+        of the gate's refusal messages (freeze-active / unauthorized) cite
+        rule 22, so the assertion is robust to the freeze's current state."""
+        self._arm_sentinel(monkeypatch)
+        with pytest.raises(SystemExit, match="rule 22"):
+            _RC.main(["--year", "2022"])
+
+    def test_in_window_years_pass_the_gate(self, monkeypatch):
+        """2023-2025 sail through the gate and stop only at the sentinel."""
+        self._arm_sentinel(monkeypatch)
+        with pytest.raises(_ReachedDataLoad):
+            _RC.main(["--year", "2023", "2024", "2025"])
+
+    def test_gate_receives_years_iso_and_flag(self, monkeypatch):
+        """The wiring forwards --year, the upcased --iso and --holdout-authorized."""
+        import scripts.run_calibration_full as rcf_mod
+
+        calls = []
+
+        def _recorder(years, iso, authorized, repo=None):
+            calls.append((list(years), iso, authorized))
+
+        monkeypatch.setattr(rcf_mod, "enforce_holdout_year_gate", _recorder)
+        self._arm_sentinel(monkeypatch)
+        with pytest.raises(_ReachedDataLoad):
+            _RC.main(["--year", "2022", "--iso", "pjm", "--holdout-authorized"])
+        assert calls == [([2022], "PJM", True)]

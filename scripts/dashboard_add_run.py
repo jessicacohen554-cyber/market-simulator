@@ -260,8 +260,7 @@ def main() -> None:
     # read the headline scored metrics without decoding runs/<id>.js.
     # Best-effort — a scorer error must never block registration.
     try:
-        sys.path.insert(0, str(REPO / "scripts"))
-        import calibration_verdict as cv
+        from scripts import calibration_verdict as cv
 
         verdict = cv.determine(rid)
         print(cv.headline(verdict))

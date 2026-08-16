@@ -46,9 +46,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
-from build_ffr3a2_scorecard import (
+sys.path.insert(
+    0, str(Path(__file__).resolve().parent.parent)
+)  # repo root: canonical scripts.* sibling imports on direct run
+
+from scripts.build_ffr3a2_scorecard import (  # noqa: E402
     FF_VERDICTS,
     FREEZE,
     ISOS,
