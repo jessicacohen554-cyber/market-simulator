@@ -1,0 +1,47 @@
+{
+ "precheck": "PRECHECK-caiso199-merit-panel-scope-2026-08-16.md",
+ "pinned_shas": {
+  "committed_main": "5f3e35c5dad88da76be8f684973fd7c78009f63e84d3f5b23a609e93d45fb4ce",
+  "committed_layup": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+  "candidate_main": "da33e509465911341ba0867aefe02214f2e8ccb666ef86747e0e7ad8b47c86bb",
+  "candidate_layup": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43"
+ },
+ "g_delta_baseline": {
+  "legs": {
+   "a_nv_excluded": {
+    "detection_states": [
+     "CA"
+    ],
+    "panel_states": [
+     "CA"
+    ],
+    "expected_main_sha256": "5f3e35c5dad88da76be8f684973fd7c78009f63e84d3f5b23a609e93d45fb4ce",
+    "measured_main_sha256": "5f3e35c5dad88da76be8f684973fd7c78009f63e84d3f5b23a609e93d45fb4ce",
+    "expected_layup_sha256": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+    "measured_layup_sha256": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+    "main_rows": 4561,
+    "layup_rows": 810,
+    "pass": true
+   },
+   "b_nv_included": {
+    "detection_states": [
+     "CA",
+     "NV"
+    ],
+    "panel_states": [
+     "CA"
+    ],
+    "expected_main_sha256": "da33e509465911341ba0867aefe02214f2e8ccb666ef86747e0e7ad8b47c86bb",
+    "measured_main_sha256": "da33e509465911341ba0867aefe02214f2e8ccb666ef86747e0e7ad8b47c86bb",
+    "expected_layup_sha256": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+    "measured_layup_sha256": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+    "main_rows": 4719,
+    "layup_rows": 810,
+    "pass": true
+   }
+  },
+  "pass": true,
+  "landed": null,
+  "statement": "Leg (a) proves the pin is INERT on the committed baseline (the two scopes coincide \u21d2 committed bytes reproduce exactly). Leg (b) proves the STATE-LIST pin reproduces the caiso-198 DIRECTORY-scoped candidate byte-for-byte, confirming the \u00a71b coal-table no-op claim."
+ }
+}
