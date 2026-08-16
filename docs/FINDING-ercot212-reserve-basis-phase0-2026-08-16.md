@@ -191,11 +191,100 @@ basis (X-3). §5 of this finding records the Phase-1 outcome.
   region, sized by ercot-198 at +0.237 $/MWh dw (2024). No re-scoring is
   performed and no criterion moves in this Phase (read-only).
 
-## 5. PHASE-1 RECORD
+## 5. PHASE-1 RECORD — **REJECTED-AS-ARMED** (G-SPUR kill + a diagnosed structural mis-anchoring); the IDENTIFICATION IS VALIDATED and the successor is named
 
-*(Completed in this session after the Phase-1 precommit; see
-`docs/PRECOMMIT-ercot212-netcredits-phase1-2026-08-16.md` and the registered
-run ids recorded there and in the calibration log entry ercot-212.)*
+**A/B executed under `PRECOMMIT-ercot212-netcredits-phase1-2026-08-16.md`
+including its Amendment 1** (the keeper is not byte-reproducible at HEAD —
+upstream drift, measured on both environments; G-REPRO re-based to
+control-vs-armed BEFORE the armed solve). Both members solved full-span
+2023+2024+2025 sequentially at the same tree (main `00abb60fd` + the ercot-212
+commits, since merged as PR #4016) on the keeper's true solve environment
+(highspy 1.15.1 / pandas 3.0.5 / pyarrow 25.0.1). Registered
+**`2026-08-16-ercot212-ctl-headbase`** / **`2026-08-16-ercot212-arm-netcredits`**,
+then PRUNED in the same session per the dispatch roster duty (adjudication
+rejected-wholesale; this finding + the matrix cell + the log entry are the
+durable record). Probes: `results/calibration/ercot212_ab.json`,
+`ercot212_coal148.json`.
+
+**The HEAD drift is score-inert** (control vs keeper): price dw Δ ≤ ±0.07
+$/MWh, tails 58/22/1 → 57*/22/1 identical on the scorer, shed 4/1/0
+identical hour lists, `ordc_adder` incidence 42/2/1 identical with identical
+maxima; the official scorer reproduces the keeper's determination on the
+control exactly (C3a-2023 −33.2 %, C3b-2023 0.604, C3c 58/22/1). (*57 on the
+probe's dw basis, 58 on the scorer's max-zonal basis — the standing two-basis
+note.)
+
+**Gate table (control → armed), against §3 as amended:**
+
+| gate | 2023 | 2024 | 2025 | verdict |
+|---|---|---|---|---|
+| G-SHED (no increase) | 4 → **0** (h5490/5682/5802/5994 all clear) | 1 → 1 (h3067) | 0 → 0 | **PASS** (reductions reported) |
+| G-C3c (not away from actual) | 57 → **123** (181) | 22 → **33** (53) | 1 → **3** (31) | **PASS** — toward actual in every year |
+| **G-SPUR** (≤ +5) | 9 → **16 (+7)** | 11 → 13 (+2) | 0 → 0 | **KILL** |
+| G-SPAN (≤ 2.0 %) | max 0.077 % (CT_PEAKER) | 0.0 % | 0.0 % | PASS |
+| G-COAL148 (rise ≤ 0.5 TWh) | 0.0 | 0.0 | 0.0 | PASS |
+| G-OWNER | — | C3a-2024 PASS, C3b-2024 PASS | C3a-2025 PASS | PASS |
+| G-DOF | zero fitted scalars; boolean only | | | PASS |
+| G-D2 | no new D-4 row | | | PASS |
+
+**Verdict under the pre-registered direction-blind rule (§6): one kill ⇒
+REJECTED-AS-ARMED.** The verdict is mechanical and stands unrewritten.
+
+**Side-effect report at full magnitude (Q-B/R-A phrasing — reported, never a
+basis, never spent):** on the official scorer the armed member reads
+**C3a-2023 +13.3 %** (from −33.2 % — the magnitude falls 20 pp and the sign
+flips to OVER), **C3b-2023 NRMSE 0.299** (from 0.604 — halved, bar 0.20),
+**C3c-2023 123/181 and C3c-2024 33/53 now PASS their bands** (the keeper
+carries both as ledgered caveats at 58/181, 22/53); C3c-2025 still fails
+(3/31). DA diagnostics on the armed member: 2023 −2.2 % vs DA, 2024 +0.1 %,
+2025 −9.6 %. Armed determination NOT-YET, fail set {C3a-2023, C3b-2023,
+C3c-2025} (+ C6 unattested on both A/B members — no attestation generated
+for a pruned pair).
+
+**The identification is VALIDATED and the failure is DIAGNOSED, both from the
+committed record:**
+
+* Incidence landed almost exactly on the §2 predictions: `ordc_adder` ≥ $1 in
+  **184/38/7** hours (predicted 175/45/5); nonzero in 564/178/67 (upper bound
+  571/190/67); every price-tail count moved toward actual in every year; the
+  2023 shed vanished as predicted (freed reserve serves load).
+* The LEVEL overshoots for a structural reason the arm itself exposes: in the
+  cap-additive regime the writer adds the **VOLL-anchored** curve price (the
+  co-optimization-correct form, whose λ is supposed to cancel through the
+  shared-headroom internalization) **without the λ subtraction the published
+  additive formula carries** (`adder = (VOLL − λ) × LOLP`), and it sums **both
+  headroom tiers'** cap duals — the armed maximum adder is **$10,000/h = 2 ×
+  VOLL**, a price the published design's own protocol cap (λ + adders ≤ VOLL,
+  enforced by the post-solve `ordc_adder()` via `min(adder, VOLL − λ)` and by
+  ERCOT's settlement) **cannot produce**. With the gross caps this regime was
+  nearly unreachable (42/2/1 hours); the netting makes it dominant, so the
+  mis-anchoring converts a correct incidence repair into a 2023 level
+  overshoot (+13.3 %) and the G-SPUR mid-band spill.
+
+**Promotion: DECLINED — this is NOT a recommended keeper candidate**, and the
+owner's standing structural standard ("structural integrity outranks gate
+regression") is judged NOT to apply: the arm is structurally RIGHT about the
+basis (validated above) and structurally WRONG about the additive-regime
+price formula (super-VOLL prices violate the market design being modeled —
+rule 1). Promoting would enshrine the wrong half to keep the right half.
+
+**THE NAMED SUCCESSOR (zero fitted scalars, needs its own precommit — the
+next ERCOT lever):** keep the credit netting, and make the cap-additive
+regime price on the published formula: (a) anchor the additive component at
+**(VOLL − λ)** (or equivalently route it through the post-solve
+`ordc_adder()` construction on the LP's realized netted reserve state, which
+already carries the protocol cap and the floor's date gate); (b) **single
+counterpart, not a two-tier sum** — the ORDC total family's uninternalized
+component alone; (c) the published **two-basis form** (half-hour term at the
+online tier, floor keyed to online) as the second increment. Expected
+landing zone from this session's out-of-LP construction: 2023 tail ~20–37
+h > $100 (vs 17 published settled), 2024 45–48 h > $1 (vs 78) — between the
+control's silence and the arm's overshoot.
+
+**Roster:** both members registered (rule 15) and pruned in-session
+(`scripts/prune_iso_runs.py --iso ERCOT`) per the dispatch roster duty;
+keeper `2026-08-15-ercot204-rule26-delete` unchanged and protected
+throughout.
 
 ## 6. GOVERNANCE
 
