@@ -9321,23 +9321,37 @@ came back BYTE-IDENTICAL, confirming no rubric constant moved.
 **The note as landed.** "The three 2023 price-criterion misses (C3a −33.2 %, C3b
 0.604, C3c 58/181 h) are ONE adjudicated model-class object — Aug/Sep-2023
 scarcity conduct (card R §2, the C3c ledger, ASSESSMENT-ercot209). 2024 and 2025
-pass every scored criterion. Determination NOT-YET on that object alone. (C3c is
-the single ledgered caveat in ALL THREE years — 58/181, 22/53, 1/31 h >
-$200/MWh RT; 2023 is the year that also carries C3a and C3b.)"
+pass every scored criterion. Determination NOT-YET on that object alone. Two
+qualifications this surface keeps visible: (i) C3c is never a PASS in any year —
+it is the single ledgered CAVEAT ×3, at full magnitude 58/181, 22/53, 1/31 h >
+$200/MWh RT, and 2025's 0.03× is the WORST ratio of the three; (ii) in 2025 the
+preliminary EIA-923 vintage leaves five C1 gas classes SKIPPED rather than
+scored, so 2025 passes on fewer scored criteria than 2023 or 2024."
 
-**ONE DEVIATION FROM THE DISPATCHED TEXT, RECORDED NOT QUIETLY APPLIED.** The
-final parenthetical is appended; sentences 1–3 are the owner's text verbatim. The
-dispatched sentence "2024 and 2025 pass every scored criterion" is the
-assessment's own convention, but the assessment states it *immediately beside*
-"C3c the single ledgered CAVEAT ×3 (58/181, 22/53, 1/31 h > $200/MWh RT)"
-(header, lines 13–15). Detached from that disclosure the sentence reads as though
-C3c were a 2023-only miss. It is not: C3c is one criterion caveated across all
-three years, and 2025's 0.03× is the WORST ratio of the three. Since the X-2
-signature itself requires that misses stay "reported at full magnitude", the
-disclosure was restored from the assessment verbatim, under the dispatch's
-"adapt minimally to the channel's format" latitude. Rationale and the exact
+**TWO APPENDED QUALIFICATIONS, RECORDED NOT QUIETLY APPLIED.** The owner's three
+dispatched sentences are landed VERBATIM, contiguous and unaltered; both
+qualifications are appended after them, under the dispatch's "adapt minimally to
+the channel's format" latitude and because the X-2 signature ITSELF requires that
+misses stay "reported at full magnitude".
+- **(i)** The dispatched sentence "2024 and 2025 pass every scored criterion" is
+  the assessment's own convention — but the assessment states it *immediately
+  beside* "C3c the single ledgered CAVEAT ×3 (58/181, 22/53, 1/31 h > $200/MWh
+  RT)" (header, lines 13–15). Only the note text as dispatched separated the two
+  halves; detached, sentence 2 reads as though C3c were a 2023-only miss. It is
+  not — C3c is ONE criterion caveated across all three years, and 2025's 0.03× is
+  the WORST ratio of the three. The disclosure is restored from the assessment.
+- **(ii)** Surfaced by the `calibration-keeper-auditor` pass and then verified
+  against the keeper's own scored records: 2025 carries **9 SKIPPED records vs 3
+  in each of 2023/2024**, five of them C1 fuelmix classes (CC_REGULAR, CC_CHP,
+  CT_PEAKER, ST_GAS, ST_CHP) skipped on preliminary-vintage incomplete plant
+  data, plus C2 sysvol gas. So 2025's "passes every scored criterion" rests on a
+  materially smaller scored set than 2023's or 2024's — true as written, and
+  misleading without the qualifier.
+
+Neither qualification changes a determination, a criterion status or a magnitude;
+both only make an existing committed number visible. Rationale and the exact
 revert are recorded in the shard's `standing_note.note_provenance`; reverting to
-strictly-verbatim is dropping that parenthetical and that field plus a
+strictly-verbatim is dropping both qualifications and that field, plus a
 `build_status.py --iso ERCOT` rebuild. **Nothing else in the note deviates.**
 
 **NOTHING THE NOTE TOUCHES IS A SCORED QUANTITY.** Determination **NOT-YET** —
@@ -9364,7 +9378,11 @@ preserved.** The backcast registry was NOT touched and the gitignored forecast
 namespace was NOT regenerated (the Pages deploy is its writer).
 
 **Gates.** `audit_keepers.py --iso ERCOT` **PASS 0 failures / 0 warnings**
-(baseline before any edit was also 0/0). `build_status.py --check --iso ERCOT`
+(baseline before any edit was also 0/0), and the `calibration-keeper-auditor`
+agent was run scoped `--iso ERCOT` in this session as the shard edit requires —
+it independently reached the same reading of the dispatched sentence and
+contributed qualification (ii), which was then verified against the scored
+records before being adopted. `build_status.py --check --iso ERCOT`
 in sync. `check_mechanism_matrix.py` integrity OK — keeper stamps and §5.x prose
 still match every shard; no ScenarioConfig field added, so rule 28(c) is not
 engaged. `node --check` on the edited renderer passes. Two repo gates fail and
