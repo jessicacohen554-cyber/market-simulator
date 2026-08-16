@@ -15,13 +15,16 @@ on this branch).
 ## Riding the LOCAL commits in the authoring container (NOT yet on this branch)
 
 The authoring container holds the full close-out as ordinary git commits on
-`claude/miso-backcast-calibration-nk4zhj`:
+`claude/miso-backcast-calibration-nk4zhj` — **re-signed 2026-08-16 (SSH
+signatures, committer noreply@anthropic.com); trees and blobs byte-identical
+to the originally-manifested ones, only the commit ids moved**:
 
 ```
-f3c3f901bb4b4ead6e51e36fbe4acf979a08403e  implementation (== patch pieces 1-3 + matrix row + anchors)
-6b250665651a25d50305cd202c5cbcd3d90c95ec  transfer artifacts
-5871b0e0e0f2593cffdd8691a8cacb3d9b2d004a  control bundle miso160_wefor_A
-1a871e0239c44842295cc39bf44811c8cd30d91c  promotion close-out (tree abf51bb8299cb516550ae55d6fa7511ff6093438)
+918de82  implementation (== patch pieces 1-3 + matrix row + anchors; tree 72cd10f3)
+9b8d5c6  transfer artifacts (tree b0b4fad1)
+52905f9  control bundle miso160_wefor_A (tree 36b029cf)
+92f56bc  promotion close-out (tree abf51bb8299cb516550ae55d6fa7511ff6093438)
+ a06610a  close-out pointer (tip; tree ef96ab2a)
 ```
 
 **Preferred delivery: resume a session in the SAME container with working
@@ -35,7 +38,7 @@ the rest (the bundles need a re-solve: replay_keeper on miso159_cod_B, no
 the control is bit-reproducible — this session measured 0/70,080 differing
 price cells against the committed keeper).
 
-### Blob manifest of commit 1a871e0 (verify after any delivery path)
+### Blob manifest of the promotion commit (verify after any delivery path)
 
 ```
 4bf0a27ac2fc82e46d6e14170cd71e839d7c85bf docs/calibration-log/miso.md
@@ -71,9 +74,11 @@ fb3bee601cb68e4a097433c8c00ef6e5e545bdbb results/calibration/miso160_wefor_B/leg
 ```
 
 (The control bundle miso160_wefor_A's parquet/meta/run_config blobs are in
-commit 5871b0e; `git diff-tree -r 5871b0e` lists them. The FINDING, both
-sidecars and the gen script above are ALSO directly on this branch — same
-blobs, verified.)
+the control-bundle commit; `git diff-tree -r 52905f9` lists them. The
+FINDING, both sidecars and the gen script above are ALSO directly on this
+branch — same blobs, verified. APPLY.md's provenance line cites the
+pre-resign commit ids f3c3f90/f8c93af; the patch bytes are identical, so
+apply instructions are unaffected.)
 
 ## What the dashboard needs before the runs are LIVE
 
