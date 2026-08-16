@@ -3999,7 +3999,35 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-15-miso-159-cod-vintage`, **NOT-YET on C3a-2025 ALONE**
+### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-16-miso-160-wefor-shape`, **NOT-YET on C3a-2025 ALONE**
+
+> **QUEUE STAMP miso-160 (2026-08-16) — KEEPER PROMOTED by the session's own
+> pre-registered rule** (PREREG §7(a): no criterion-year PASS→FAIL flip;
+> C3a-2025 improved +0.60 pp ≥ 0.5; V1–V5 PASS, S-2023/S-TAIL silent): the
+> queue's item 2 — `SUMMER_WEFOR_SHARE = 0.30`, gated on the owner's
+> data-provenance decision — was UNBLOCKED by that decision this session
+> (miso-157 §11 item 2 TAKEN: the MISO published ticket-based record
+> adjudicates the forced-outage seasonal shape; CAMPD inadmissible; fleet
+> grain accepted for the fleet-uniform deliverable —
+> `docs/handoffs/miso-outage-grain-data-ask-2026-07.md` §9), and the measured
+> replacement is ARMED: `summer_wefor_share_override = 1.0599` (pooled
+> 2023–2025 Jun–Sep/annual unplanned-outage ratio; per-year
+> 1.1039/0.9671/1.1086 — the SIGN REVERSES the heuristic, summer forced
+> outages sit ABOVE annual). Reach −3.46/−3.59/−3.67 GW Jun–Sep (CT_PEAKER
+> −1.54 GW at the 2025 peak); control BIT-IDENTICAL to the predecessor
+> keeper (0/70,080 price cells, every year); C3a → +0.6/−4.8/−12.5 %
+> (2025 improves +0.60 pp, still failing); C3b 0.079/0.109/0.181 — off the
+> 0.200 knife edge in all three years; C3c toward the actuals (3/6/4 h).
+> THE QUEUE AFTER miso-160: (1) the C3a-2025 blocker remains the miso-156
+> summer-peak identity object with the AVAILABILITY channel now adjudicated
+> and armed — the residue points at the C3c-adjacent above-cost/tail half
+> (18–47 % basis-sensitive, miso-156 §4.2) and any further cushion quantity
+> needs a NEW measured identification with its own charter; (2) cross-ISO
+> export of this mechanism (each lane derives its own share from its own
+> admissible record; PJM holds a candidate in `data/raw/pjm-outages`) —
+> rule 25, cells `U`. Evidence:
+> `FINDING-miso160-measured-summer-wefor-shape-2026-08-16.md`; runs
+> `2026-08-16-miso-160-control` / `2026-08-16-miso-160-wefor-shape`.**
 
 > **QUEUE STAMP miso-159 (2026-08-15) — KEEPER PROMOTED by the session's own
 > pre-registered rule** (PREREG §7(a): fail set strict subset
