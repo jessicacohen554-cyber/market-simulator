@@ -8069,3 +8069,39 @@ composition watch); C1's only FAIL row remains the control's own 2023
 CC_REGULAR (−4.63 here vs −4.44 control, already-FAIL — not a flip).
 Matrix duty (b): `caiso_ps_plant_params` U → O. Composes at the final
 Wave-2 rung (+L5).
+
+## 2026-08-16 — caiso-197 WAVE-2 PROMOTION: keeper → `2026-08-16-caiso-197-w2-r5` (the composed close-out ladder, promoted C3a-BLIND under the pre-committed protocol §6) — ledger 11/8 → 10/7, C1 healed, the campaign EXHAUSTED AS CHARTERED
+
+**Keeper: `2026-08-15-caiso-196-e1-elsegundo` → `2026-08-16-caiso-197-w2-r5`.**
+The final rung (control + L2 + L3 + L5) survived every per-rung verification:
+ladder-exact diffs (G-DELTA recomputed over 714 keys at the promotion),
+composed ledger **10/7** (= the arithmetic composition; the fitted
+`wefor_multiplier` RETIRED), identical extract shas control-vs-keeper
+(G-EXTRACT — the base never moved under the ladder), engagement at every
+rung, and **NO criteria pass→fail flip anywhere** (§5 never fired; C3b
+closed at 0.097/0.174/0.181 vs 0.20; the caiso-196 C1-2023 CC_REGULAR flip
+HEALED at −4.13 TWh in band, C1 12/12). Determination **NOT-YET with C3a
+the SOLE load-bearing FAIL** (+4.0/+12.1/+15.6 %; 2023 passes) — one fewer
+than the incumbent; C3c the single ledgered caveat, magnitudes RE-MEASURED
+at promotion (0 h vs 47/35; 2025 passes); **C6 attested AT promotion**
+(`gen_caiso197_attestation.py`, premises computed — G-DELTA/G-EXTRACT/
+G-ENGAGE/G-MACHINE/G-DOF/G-EXC). LOYO by construction (zero fitted
+parameters in the composed delta; year-independent identifications).
+**C3a was never consulted** (§0/§6 verbatim; lane 5's measured sign was
+ANTI-favorable and its acceptance stood — the clause exercised both ways
+this campaign). Matrix: shard keeper+gates re-stamped, `wefor_residual`
+O→K, `caiso_ps_plant_params` O→K, §5.2 header + session block re-stamped;
+`audit_keepers --iso CAISO` PASS 0/0; `check_mechanism_matrix` clean.
+**Retention (standing directive): CAISO lane = the keeper alone** — the
+superseded caiso-196 keeper, the bit-zero control, the three lane arms and
+the intermediate rung pruned (`prune_iso_runs.py --force-uncite`; dangling
+citations deliberate; durable evidence in the four caiso-197 FINDINGs +
+git history). **The campaign is EXHAUSTED AS CHARTERED**: every lane of the
+CLOSED inventory adjudicated; C3a-2025 still fails after the final rung, so
+the residual stays honestly declared (price face only now), the two named
+owner-funded objects unchanged, and no lane improvised
+(FINDING-caiso197-wave2-promotion-2026-08-16.md §4 is the exhaustion
+record). Rule 22 D-5(b) does not fire; freeze untouched; no out-of-training
+year touched. NEXT SESSION OPENS WITH: the Desert Star extract re-derive
+(NV files landed this session; rule-23 cited re-derive + A/B on this
+keeper, the caiso-196 pattern).
