@@ -419,17 +419,17 @@ ERCOT default is **CAMPD per-plant binning** (`use_campd_bins=True`): one LP uni
 ## Cloning & session data (partial clone + a declared data profile)
 
 **The repo is cloned blobless, and each session hydrates only the `data/raw`
-subtrees it needs.** The pack is 7.44 GiB and **7.37 GiB of that is live at the
-tip of `main`** (measured 2026-08-13; only 82 MB is dead history), so a full
-clone stalls through the egress proxy — that is the "Cloning the git_repository
-source took longer than the allowed time" failure. **A history rewrite does not
-fix it** (it would reclaim ~1.1%) and **neither does `--depth 1`** (a shallow
-clone still transfers the whole tip tree). The fix is `--filter=blob:none` plus
-sparse-checkout. Recipe, measurements and the three partial-clone traps:
-`docs/fast-clone.md`. (Those figures are the 2026-08-13 measurement and are
-**pre-prune**; the BLOAT-B corpus conversions below shrink what is live at tip
-without touching pack size, since history is kept. BLOAT-B-2 alone took 361.8
-MiB off tip. Re-measure before quoting a current number.)
+subtrees it needs.** Post-rewrite measurement (2026-08-16, after the BLOAT-B
+prunes and the 2026-08-16 history rewrite): the pack a full clone transfers is
+**5.46 GiB**, of which **4.13 GiB packed (8,777 blobs) is live at the tip of
+`main`**; a full bare clone completed in **162 s** through the egress proxy, so
+the old hard stall ("Cloning the git_repository source took longer than the
+allowed time") is no longer automatic — but minutes vs seconds still argues
+for the standard recipe: **`--filter=blob:none` plus sparse-checkout**
+(3.5 s / 13.7 MB, code checkout 306 MB). `--depth 1` still transfers the whole
+tip tree — never the fix. Recipe, measurements and the three partial-clone
+traps: `docs/fast-clone.md`. (Never measure pack size with `--mirror` against
+GitHub: `refs/pull/*` still pins the pre-rewrite objects, ~20 GiB.)
 
 - **Every handoff prompt declares its profile** on its own line —
   `DATA PROFILE: <code|shared|ercot|caiso|pjm|miso|nyiso|neiso|all>`. Omitted
@@ -451,22 +451,32 @@ MiB off tip. Re-measure before quoting a current number.)
 - **Some corpus payloads are GITIGNORED, so hydrating a profile no longer
   materializes them — and the profile is that much smaller.** The corpus
   conversion class (`docs/bloat-removal-plan-2026-08.md` §4) untracks a corpus's
-  bulk payload at tip while keeping its `README.md` + `SHA256SUMS.txt` tracked;
-  history is never rewritten, so the bytes stay recoverable forever. **Every such
-  corpus README carries the same three things: the verified source-URL table, the
-  re-fetch command, and the pin sha with its
-  `git restore --source=<pin> -- <path>` recovery command** — read the corpus
-  README before concluding data is missing, and prefer restore-from-pin when you
-  need the exact bytes rather than a fresh download. Converted so far:
+  bulk payload at tip while keeping its `README.md` + `SHA256SUMS.txt` tracked.
+  **The 2026-08-16 history rewrite stripped the untracked payloads from history
+  too — "the bytes stay recoverable forever" is FALSE as of that date, and the
+  README pin shas / `git restore --source=<pin>` commands are dead** (repaired
+  in place; `docs/FINDING-history-rewrite-2026-08-16.md`). What each corpus
+  README now carries: the verified source-URL table, the re-fetch command (the
+  primary recovery route), the honest retention status — some payloads are
+  **unrecoverable from this repository** (the CAISO OASIS GRP dailies; pre-slim
+  SCED columns past MIS retention) — and the `SHA256SUMS.txt` identity record.
+  Read the corpus README before concluding data is missing. Converted so far:
   `pjm-energy-offers`, `caiso-public-bids`, `pjm-da-virtuals`, `pjm-zonal-lmp`,
   `ercot/SCED-CT`, `miso-energy-offers`, `pjm-binding-constraints`, and (BLOAT-B-2)
   `caiso-dam-outages/daily`, the publication PDFs under `ERCOT/` `MISO/` `NYISO/`
   `PJM-AS/`, and `NYISO/nyiso load reports *.zip`.
 
-`.github/workflows/cleanup-large-blobs.yml` is safe to run as of its 2026-08-12
-patch but **will not speed up clones** — it protects blobs live at tip, which are
-exactly the 7.37 GiB. Standing NO-GO on rewriting for size:
-`docs/FINDING-rewrite-prep-2026-08-11.md` §8.
+`.github/workflows/cleanup-large-blobs.yml` **was executed for real on
+2026-08-16** (run 31955205445 — an explicit owner decision superseding the
+former standing NO-GO of `docs/FINDING-rewrite-prep-2026-08-11.md` §8 /
+Addendum AQ; that NO-GO is annotated as superseded, not deleted). It stripped
+7,254 superseded blobs / 7,373.4 MiB and force-pushed the rewritten history —
+which is why every pre-2026-08-16 commit-sha citation outside
+`docs/governance/citation-commit-map.txt` is now a dead (or, for short
+prefixes, possibly WRONG) reference. Full record and the post-rewrite
+recovery rules: `docs/FINDING-history-rewrite-2026-08-16.md`. Any FUTURE
+rewrite remains owner-gated and must archive its commit-map artifacts first
+(finding §7 open item 2).
 
 ## Git & Pushing (transport by PACK size — `git push` permitted for small packs)
 

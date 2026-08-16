@@ -1238,3 +1238,35 @@ your branch when done.
   already issued at the G1 refresh and awaits owner launch. No DEBUG-C
   continuation is needed: the lane's chartered residue work is complete.
   Full record: `docs/handoffs/debug-sweep-2026-08.md` Addendum §B.
+- 2026-08-16 — **THE HISTORY REWRITE EXECUTED — explicit owner decision
+  superseding the Addendum AQ NO-GO** (and report-final §5's restatement).
+  Sequence: owner merged BLOAT-B-7 (#3995) at 14:58 UTC, then dispatched
+  `cleanup-large-blobs.yml` run **31955205445** (run #18, `dry_run=false`,
+  confirm phrase supplied): SUCCESS 15:17–15:49 UTC, integrity verify PASSED
+  (strict `main` manifest byte-identical; 95 branch-reachable cited commits
+  survived with identity intact; the 9 refs/pull-only cited commits — the same
+  9 that aborted run #16 — left untouched and later API-verified alive),
+  force-push landed 15:41–15:48 UTC (5 branches, chunked HTTP/1.1). From the
+  run's own log: stripped **7,254 superseded blobs / 7,373.4 MiB** (the pool
+  B-7 §5 measured at 7,053/7,338.4 two days earlier), pack **20.48 → 5.45
+  GiB** on the runner (mirror basis), 12,482 rewritten commits, 9,067 files at
+  tip — byte-identical. **BLOAT-B-8 aftercare delivered in the same-day
+  follow-up lane** (`claude/bloat-b8-rewrite-aftercare-q89jcn`):
+  `docs/FINDING-history-rewrite-2026-08-16.md` (the durable record);
+  `docs/governance/citation-commit-map.txt` reconstructed and committed (the
+  runner's copy and the full filter-repo commit-map were never archived —
+  95/95 unique identity matches + 9 self-maps) and wired into
+  `citation-tags.md` §8; honest cost measured per rewrite-prep §8
+  precondition 5: **926 of 929 formerly-resolving citation tokens dead (2,492
+  occurrences)**, plus one FALSE survivor (`00abb60` now prefix-resolves to
+  the rewritten main tip — a different commit than cited); **every corpus
+  restore-from-pin contract repaired** (pins `971eaa3`/`315a245`/`726f389d`
+  dead, twins verified payload-free; OASIS dailies, pre-slim SCED columns and
+  pre-slim manifests declared UNRECOVERABLE from this repository;
+  `refs/pull/*` salvage window recorded); pack re-measured on fresh clones
+  (full bare clone **5.46 GiB / 162 s** — no longer stalls; blobless 3.5 s /
+  13.7 MB; tip 8,777 blobs / 4.13 GiB packed) with `docs/fast-clone.md` and
+  CLAUDE.md updated; NO-GO references annotated in place (rewrite-prep top,
+  bloat plan §0, report-final §5, CLAUDE.md). Open to owner: publish the
+  `cite/*` tags against POST-rewrite shas; decide on refs/pull salvage; wire
+  artifact upload into the workflow before any future rewrite.

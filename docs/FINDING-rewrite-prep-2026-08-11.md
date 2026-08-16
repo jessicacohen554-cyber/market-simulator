@@ -1,5 +1,16 @@
 # FINDING — rewrite readiness: can the evidence record survive a history rewrite?
 
+> **SUPERSEDED IN PART, 2026-08-16.** The §8 NO-GO (and its Addendum AQ owner
+> signature) was **overridden by explicit owner decision on 2026-08-16**: the
+> rewrite executed as `cleanup-large-blobs.yml` run 31955205445 and its
+> force-push landed. See `docs/FINDING-history-rewrite-2026-08-16.md` for what
+> ran, which §8 preconditions were and were not met (tags were NEVER published
+> — the citation-manifest leg carried the protection; the commit-map was not
+> archived and was reconstructed), and the measured honest cost (926 of 929
+> formerly-resolving citation tokens dead, one false survivor by prefix
+> collision). This document's analysis stands as the record of *why* the cost
+> was what it was; only its go/no-go verdict is overtaken.
+
 **Date:** 2026-08-12 · **Lane:** REWRITE-PREP (preparation only; **no history was
 rewritten, nothing was force-pushed, no keeper or `data/raw` file was touched**)
 · **Head at start:** `origin/main` @ `17e9ad5` (the charter quoted `f6381c5`;
