@@ -1,18 +1,25 @@
 """Run the dispatch model for calibration years and print comparison tables.
 
-Backcasts the hourly economic dispatch against historical years (2021-2024)
-for which EIA actuals exist, then prints headline diagnostics — generation by
-fuel, CO2, zonal prices, negative-price hours and renewable curtailment — so
-the modeled year can be eyeballed against the eGRID benchmark.
+Backcasts the hourly economic dispatch against historical years for which EIA
+actuals exist, then prints headline diagnostics — generation by fuel, CO2,
+zonal prices, negative-price hours and renewable curtailment — so the modeled
+year can be eyeballed against the eGRID benchmark.
 
 Each calibration year is run as a single-year dispatch (no capacity
 evolution): the EIA-860 fleet is dispatched against that year's EIA-930
 demand and renewable profiles, with the renewable capacity and gas price
 pinned to the year's measured values.
 
+Any ``--year`` outside the 2023-2025 training window is a designated holdout
+and hard-fails at the entry point unless authorized (CLAUDE.md rule 22
+[R-HOLDOUT]): the gate is ``run_calibration_full.enforce_holdout_year_gate``
+— freeze first, then the year's tier marker plus ``--holdout-authorized``,
+fail closed. (Closed 2026-08-16, third-party audit gap row B1: this CLI was
+the one solve entry point outside the three-gate enforcement.)
+
 Usage:
     python scripts/run_calibration.py --year 2023
-    python scripts/run_calibration.py --year 2021 2022 2023 2024
+    python scripts/run_calibration.py --year 2023 2024 2025
     python scripts/run_calibration.py --year 2023 --hours 168
     python scripts/run_calibration.py --year 2023 --ttc-wn 9000 --ttc-wsc 3000
 
@@ -5599,7 +5606,9 @@ def _build_parser() -> argparse.ArgumentParser:
         type=int,
         nargs="+",
         required=True,
-        help="One or more calibration years (2021-2024).",
+        help="One or more calibration years (training window 2023-2025; any "
+        "other year is a designated holdout gated by --holdout-authorized "
+        "plus the ISO's tier marker, rule 22).",
     )
     parser.add_argument(
         "--iso",
@@ -5643,6 +5652,15 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Unlock the ARCHIVED P2 commitment pass (last resort). P0/P1 are the "
         "only production passes and every run is scored on P1. --commitment / "
         "--no-coal-p2 are hidden and inert unless this is passed.",
+    )
+    parser.add_argument(
+        "--holdout-authorized",
+        action="store_true",
+        help="Acknowledge a solve over a designated holdout year (any --year "
+        "outside 2023-2025). Requires the target ISO's tier marker in "
+        "frontend/data/backcast/calibration-complete.json as well — the flag "
+        "alone never authorizes (CLAUDE.md rule 22 [R-HOLDOUT]); an active "
+        "holdout spend freeze outranks both.",
     )
     parser.add_argument(
         "--commitment",
@@ -5783,6 +5801,19 @@ def main(argv: list[str] | None = None) -> None:
             'P2 as a last resort. See CLAUDE.md "Dispatch & Commitment".'
         )
     iso = args.iso.upper()
+    # CLAUDE.md rule 22 [R-HOLDOUT]: until 2026-08 this CLI was the one solve
+    # entry point outside the three-gate enforcement (third-party audit
+    # 2026-08, gap row B1) — a direct `--year 2022` here solved with no
+    # code-level gate. Reuse run_calibration_full's single-home gate rather
+    # than a second copy of the policy (the replay_keeper.py /
+    # backfill_nonfossil_hourly.py pattern); imported lazily so importing this
+    # module for its helpers stays cheap. The gate checks the freeze file
+    # first and fails closed (tier map from scripts/lib/holdout_policy.py).
+    if str(REPO) not in sys.path:
+        sys.path.insert(0, str(REPO))
+    from scripts import run_calibration_full as rcf
+
+    rcf.enforce_holdout_year_gate(args.year, iso, args.holdout_authorized)
     # The reference-price interface is on when the CLI flag is set OR the ISO is
     # in the per-ISO default-on set (MISO); see resolve_reference_price_interface.
     reference_price_interface = resolve_reference_price_interface(
