@@ -890,6 +890,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # fleet), so it gets a distinct key. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 / caiso-186 / miso-148 discipline).
     "commission_year_cod_fallback",
+    # ercot-212 reserve-supply-cap credit netting (GATED default off): dropped
+    # from the hash at its default so every pre-existing cache key stays
+    # byte-stable (the off path is byte-identical by construction — the
+    # netting block is never entered); an armed run nets the credited MW off
+    # the measured cap rows, a different reserve supply, and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "ercot_reserve_supply_cap_net_credits",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1175,6 +1183,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-159 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "commission_year_cod_fallback": "False",
+    # Added by ercot-212 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "ercot_reserve_supply_cap_net_credits": "False",
 }
 
 
@@ -6421,6 +6432,24 @@ class ScenarioConfig:
     # the formula carries the measured cap's role. Default off; ERCOT-only; GATED.
     # The formula never reads the LP's commitment/output state (anti-F3/F4) and
     # never a price (honesty gate: RTOLCAP MW quantity only).
+    ercot_reserve_supply_cap_net_credits: bool = False  # ERCOT: net the armed
+    # load-resource (RRS-UFR) and measured storage AS-award credit series off
+    # the MEASURED reserve-supply cap rows, max(cap − lr − sas, 0) on both
+    # tiers — the ercot-212 consistency repair of the ercot_reserve_supply_cap
+    # + ORDC-total-family credit construction. The RTOLCAP/RTOFFCAP telemetry
+    # already CONTAINS the online ESR and Load-Resource MW the total family
+    # credits off its requirement, so leaving the caps gross lets the family's
+    # marginal reserve level reach cap + credits — measured +1.7/+1.0/+2.4 GW
+    # above published RTOLCAP in the 2024/2025/2023 published-fired hours
+    # (docs/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md §0-§1). Zero
+    # fitted scalars (rules 13/23: already-armed measured series, arithmetic
+    # only; the award series under-state the capability components, so the
+    # netting is conservative), one mechanism (rule 19: repairs the armed
+    # family's basis, adds no channel). Scoped to the MEASURED cap branch
+    # (backcast, ercot_reserve_supply_forward off) of the multi-product design
+    # with ercot_ordc_total_reserve armed; the WS-A forward cap composes
+    # storage explicitly and carries no LR term, so it is untouched. Default
+    # off; ERCOT-only; GATED.
     ercot_online_capacity_envelope: bool = False  # ERCOT: cap the multi-product
     # co-opt's shared-headroom ENERGY+RESERVE at the committed on-line CAPACITY
     # envelope — the G-22 commitment-thinness structure (docs/FINDING-ercot-
@@ -13265,6 +13294,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_reserve_supply_cap": 1,
     "ercot_reserve_supply_cap_from_year": 1,
     "ercot_reserve_supply_forward": 1,
+    "ercot_reserve_supply_cap_net_credits": 1,
     "ercot_online_capacity_envelope": 1,
     "ercot_online_capacity_envelope_extreme": 1,
     "ercot_online_capacity_envelope_measured": 1,

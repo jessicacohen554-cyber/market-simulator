@@ -9585,3 +9585,11 @@ appended to ASSESSMENT-ercot209, and this entry — nothing else. No PR opened
 **Session consumed the ercot-211 shorthand. Next shorthand: ercot-212**
 (ercot-199 remains unclaimed; ercot-210 was taken by REPORTING-TEXT-1, which
 landed first — see the collision note at the head of this entry).
+
+## ercot-212 (2026-08-16) — RESERVE-BASIS-1 (card X item X-3) IN FLIGHT — pointer claimed at landing; entry completed at session close
+
+Pointer claimed at landing per the RESERVE-BASIS-1 dispatch (X-3 signed by
+dispatch of this prompt; the signature text was appended to
+ASSESSMENT-ercot209 "RESOLUTIONS — CARD X" as this session's first landing
+duty). No collision: main published "Next shorthand: ercot-212" and nothing
+else has consumed it; ercot-199 remains unclaimed. Nothing renamed.
