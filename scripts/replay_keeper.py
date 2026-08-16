@@ -100,6 +100,23 @@ _ENV_GATED_INERT: dict = {
     "ercot_west_netload_gas_shape": False,
     "ercot_west_gas_delivered_floor": None,
 }
+# ScenarioConfig fields DELETED by rule-26 [R-DELETE] collapses AFTER some
+# registered bundles solved: their meta.json still records the field, and the
+# recorded value is provenance. Keyed field -> (owning_iso, unconditional
+# value the collapse made the only behaviour). Outside the owning ISO the
+# mechanism was never reachable (rule 25 [R-ISO-SCOPE]), so the recorded
+# default is inert and the key is skipped; inside it, only a bundle recording
+# the now-unconditional value replays at HEAD — the other polarity selected a
+# basis that no longer parses, and its epoch note says "read, never
+# replayed", so build_kwargs hard-errors rather than silently replaying a
+# different mechanism.
+_RULE26_DELETED_UNCONDITIONAL: dict[str, tuple[str, object]] = {
+    # nyiso-136 collapse (cache.py epoch 2026-08-15): market-solar
+    # cod_basis=True is now NYISO's only basis. First keeper meta carrying
+    # the recorded key: pjm-162 inputclock (solved at c447199 while the
+    # field lived; promoted pjm-163, 2026-08-16).
+    "nyiso_solar_registry_cod_dates": ("NYISO", True),
+}
 
 
 def build_kwargs(meta: dict) -> dict:
@@ -119,6 +136,18 @@ def build_kwargs(meta: dict) -> dict:
     unmapped: list[str] = []
     for k, v in meta.items():
         if k in _IGNORE:
+            continue
+        if k in _RULE26_DELETED_UNCONDITIONAL:
+            owner_iso, unconditional = _RULE26_DELETED_UNCONDITIONAL[k]
+            if meta.get("iso") == owner_iso and v != unconditional:
+                raise SystemExit(
+                    f"bundle records the rule-26-deleted field {k}={v!r} on an "
+                    f"{owner_iso} solve: the basis that value selected no "
+                    f"longer exists at HEAD (the collapse made {unconditional!r} "
+                    "unconditional), so a kwargs replay would run a DIFFERENT "
+                    "mechanism than the bundle. Historical record — read, "
+                    "never replayed (see the cache.py epoch note)."
+                )
             continue
         if k in _ENV_GATED_INERT:
             if v != _ENV_GATED_INERT[k]:

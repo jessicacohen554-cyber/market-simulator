@@ -53,6 +53,33 @@ class TestEnvGatedRecordedOnly(unittest.TestCase):
         self.assertIn("ercot_zonal_gas_basis", str(ctx.exception))
 
 
+class TestRule26DeletedRecordedOnly(unittest.TestCase):
+    """rule-26-deleted fields recorded by bundles that solved while they lived.
+
+    nyiso-136 deleted ``nyiso_solar_registry_cod_dates`` after making
+    cod_basis=True unconditional (cache.py epoch 2026-08-15). Outside NYISO
+    the flag was never reachable (rule 25), so a recorded default is inert
+    provenance; an NYISO bundle recording False selected a basis that no
+    longer exists and must hard-error — "read, never replayed".
+    """
+
+    def test_non_owning_iso_recorded_default_is_inert(self):
+        meta = dict(_BASE, iso="PJM", nyiso_solar_registry_cod_dates=False)
+        kwargs = build_kwargs(meta)
+        self.assertNotIn("nyiso_solar_registry_cod_dates", kwargs)
+
+    def test_owning_iso_unconditional_value_passes(self):
+        meta = dict(_BASE, iso="NYISO", nyiso_solar_registry_cod_dates=True)
+        kwargs = build_kwargs(meta)
+        self.assertNotIn("nyiso_solar_registry_cod_dates", kwargs)
+
+    def test_owning_iso_other_polarity_is_a_hard_error(self):
+        meta = dict(_BASE, iso="NYISO", nyiso_solar_registry_cod_dates=False)
+        with self.assertRaises(SystemExit) as ctx:
+            build_kwargs(meta)
+        self.assertIn("never replayed", str(ctx.exception))
+
+
 class TestCurrentKeepersReplayCleanly(unittest.TestCase):
     """Every designated keeper's committed meta.json must build under strict
     mode — the CI --replay-bundle path depends on it."""
