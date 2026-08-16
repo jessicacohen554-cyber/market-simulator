@@ -124,3 +124,53 @@ field is registered (ScenarioConfig + cache key + matrix row); no env-var
 knob, no off-registry channel. No new workflows; solves run in-session.
 `check_mechanism_matrix.py` exit 0 before landing. No PR (push-and-stop; the
 owner merges).
+
+## AMENDMENT 1 (pushed BEFORE the armed solve; recorded, not quietly applied)
+
+**Measured fact: the keeper is not byte-reproducible at HEAD, independent of
+the ercot-212 delta.** Two control replays of the UNCHANGED keeper recipe
+(`replay_keeper.py`, no `--set`, `MARKET_SIM_WARMSTART_XYEAR=0`) both diverge
+from the keeper's committed sidecars:
+
+1. On the container `uv.lock` environment (highspy 1.14.0 / pandas 3.0.3 /
+   pyarrow 24.0.0 — the versions the keeper's `run_config.json`
+   `environment.packages` RECORDS): real content differences — 2023
+   `held_mw` up to 1,689.6 MW (1,081 cells), `class_hourly` `mw` up to
+   1,871.7 MW (5,342 cells), family `dual` 15 cells up to $2.69.
+2. On the keeper's TRUE solve environment (highspy 1.15.1 / pandas 3.0.5 /
+   pyarrow 25.0.1 — the versions the ercot-204 finding §B.2 records it was
+   actually solved with; the `run_config.json` block records the lockfile
+   env, not the runtime — the §B.2 trap, now measured from the other side):
+   `reserve_family_2023` still byte-differs (full 12-sidecar table in the
+   finding §5).
+
+**Attribution: upstream main drift.** The keeper solved on branch state
+`d701b46` whose origin-durable basis is `c447199c9`; the window
+`c447199c9..HEAD (00abb60fd)` touches shared solve paths an ERCOT backcast
+reads — `model/storage.py` (+151), `model/lp/model.py`, `data/fleet/assembly.py`,
+`data/campd.py`, `config/constants.py`, `data/eia930/envelopes.py` — from
+lanes merged since (caiso-196/197, miso-159, PR #4007/#4010/#4011 and
+successors). The ercot-212 delta cannot be the cause in the control: the
+netting block is flag-gated and unreachable at the default (code-path
+identity by construction; the 113-test design suite passes with the field at
+default; the field is drop-at-default in `cache_key`).
+
+**Gate re-basing (the ercot-202 "excluding HEAD drift" posture, stated before
+the armed member exists):**
+
+* **G-REPRO′** replaces G-REPRO: (a) the A/B is measured **control-vs-armed**,
+  both at HEAD `00abb60fd` on the pinned true solve environment, which
+  isolates exactly the single delta; (b) the off-path inertness claim is
+  carried by construction + the design tests (the block is never entered at
+  default), not by vs-keeper bytes; (c) the control-vs-keeper drift is
+  REPORTED at full magnitude in the finding, including the control's own
+  scored values next to the keeper's.
+* Every other gate (G-SHED, G-C3c, G-SPUR, G-SPAN, G-COAL148, G-OWNER, G-DOF,
+  G-D2) is measured **control-vs-armed** exactly as §3 pre-registered, with
+  absolute criteria (G-OWNER, G-C3c) computed on each member's own scorecard.
+* **Filed for the owner, not resolved here:** the current keeper
+  `2026-08-15-ercot204-rule26-delete` is UNREPLAYABLE AT HEAD (the same class
+  of condition the ercot-202→204 chain managed via re-solve, now caused by
+  upstream motion rather than a deleted field). Any future re-gate of this
+  keeper at HEAD will meet the same drift; the registered ercot-212 control
+  is the HEAD-current comparison base.
