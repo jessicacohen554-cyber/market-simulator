@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-16-caiso-197-l3-stgas",
+  "label": "caiso 197 l3 stgas",
+  "date": "2026-08-16",
+  "shorthand": "caiso-197-l3-stgas",
+  "definition": "caiso-197 lane-3 ARM: gas_st_wefor_base_override=0.1591 at CAISO \u2014 the GADS 2020-2024 Gas Primary EFORd size-class capacity-weighted over the EIA-860 six-unit census (PRECHECK-caiso197-stgas-wefor-2026-08-16.md @ 3a4d79db1, frozen before this solve; control caiso197_l2_control shared, BIT-ZERO vs keeper). ONE field; the lane-2 wefor fields stay at control values.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-16-caiso-197-l3-stgas.js",
+  "bundle": "results/calibration/caiso197_l3_stgas"
+}
