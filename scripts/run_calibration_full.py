@@ -1013,6 +1013,8 @@ def _system_frame(
     ercot_storage_as_endogenous: bool = False,
     ercot_ordc_total_reserve: bool = False,
     ercot_ordc_cap_dual_adder: bool = False,
+    ercot_ordc_adder_published_anchor: bool = False,
+    ordc_voll: "float | None" = None,
     ercot_ordc_realized_adder: "np.ndarray | None" = None,
 ) -> pd.DataFrame:
     """Return the per-zone hourly price / slack / demand frame.
@@ -1034,6 +1036,11 @@ def _system_frame(
     the total-family balance dual to the reserve-supply-cap rows' duals
     (summed across headroom tiers) — the uninternalized reserve scarcity
     component. See the inline comment at the adder branch below.
+
+    ``ercot_ordc_adder_published_anchor`` (ercot-213) re-anchors that additive
+    component onto the published ``(VOLL - lambda)`` formula and takes a
+    SINGLE counterpart (the all-tier / total-reserve cap dual) instead of the
+    two-tier sum; ``ordc_voll`` supplies the registered VOLL it needs.
 
     ``ercot_dam_as_overlay`` likewise adds the measured DAM AS-scarcity overlay
     (the day-ahead co-optimization scarcity rent, gated to scarce hours and scoped
@@ -1132,7 +1139,79 @@ def _system_frame(
             cap_dual = getattr(result, "reserve_supply_cap_dual", None)
             rpf = getattr(result, "reserve_price_by_family", None)
             if ercot_ordc_cap_dual_adder and cap_dual is not None:
-                ordc_adder = np.asarray(cap_dual, dtype=float)[:, :T].sum(axis=0).copy()
+                cd = np.asarray(cap_dual, dtype=float)[:, :T]
+                if ercot_ordc_adder_published_anchor:
+                    # ercot-213 ANCHORING REPAIR of the cap-additive regime
+                    # (docs/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md
+                    # §5, the named successor). Two defects of the branch above,
+                    # both structural and both visible only once the ercot-212
+                    # credit netting makes the regime reachable in more than
+                    # 42/2/1 hours a year:
+                    #
+                    # (a) ANCHOR. The in-LP ORDC demand curve is VOLL-anchored
+                    #     (scarcity.ercot_ordc_demand_steps: an LP objective
+                    #     coefficient must be a constant, and lambda is
+                    #     endogenous) — the co-optimization-correct form, where
+                    #     the dual lifts the energy LMP and lambda is already
+                    #     carried there. The PUBLISHED ADDITIVE formula this
+                    #     branch writes is instead
+                    #         RTORPA = 0.5 (VOLL - lambda) (LOLP_f + LOLP_h),
+                    #     capped so lambda + adders <= VOLL (the system-wide
+                    #     offer cap). Writing the VOLL-anchored dual verbatim
+                    #     into an ADDITIVE channel over-prices every hour by
+                    #     exactly the missing lambda subtraction.
+                    # (b) COUNTERPART. Summing both headroom tiers' cap duals
+                    #     adds two ORDC prices for one ORDC. RTORPA is ONE
+                    #     number on ONE reserve level; the total-reserve family
+                    #     the additive channel prices is bounded by the ALL tier
+                    #     (RTOLCAP + RTOFFCAP), so that row is its counterpart.
+                    #     Measured consequence of the sum: a maximum written
+                    #     adder of 2 x VOLL = $10,000/MWh, which the protocol
+                    #     cap makes unreachable in the real market.
+                    #
+                    # The repair is EXACT and carries zero fitted scalars.
+                    # Because the LP step price at the marginal reserve level is
+                    #     gamma = 0.5 VOLL (LOLP_f + LOLP_h)
+                    # at that same level, gamma * (VOLL - lambda) / VOLL IS the
+                    # published adder at that level — a change of anchor, not a
+                    # change of curve, of level or of basis. VOLL is the
+                    # registered ScenarioConfig ``ordc_voll``; lambda is the LP's
+                    # own demand-weighted system energy dual (the model analogue
+                    # documented in results/scarcity.py); the final min() is the
+                    # published protocol cap. Where the LP step is an OBDRR048
+                    # FLOOR step rather than an LOLP step the rescale under-
+                    # states the published floor by lambda/VOLL — conservative,
+                    # and measured negligible (at the floor's <= 7,000 MW
+                    # reserve levels the LOLP price is ~$200+, an order of
+                    # magnitude above the $10/$20 floor, so the floor never sets
+                    # the step). The published TWO-BASIS form (half-hour term at
+                    # the online tier, floor keyed to online) is a separate,
+                    # separately-gated increment — not this flag.
+                    if ordc_voll is None:
+                        raise ValueError(
+                            "ercot_ordc_adder_published_anchor needs ordc_voll "
+                            "(the registered VOLL the published (VOLL - lambda) "
+                            "anchor subtracts from)"
+                        )
+                    voll = float(ordc_voll)
+                    dem = demand[:, :T]
+                    tot_dem = dem.sum(axis=0)
+                    lam = np.where(
+                        tot_dem > 0.0,
+                        (prices[:, :T] * dem).sum(axis=0)
+                        / np.where(tot_dem > 0.0, tot_dem, 1.0),
+                        prices[:, :T].mean(axis=0),
+                    )
+                    headroom_to_cap = np.maximum(voll - lam, 0.0)
+                    # Single counterpart: the ALL tier is the LAST headroom row
+                    # (reserves/spec.py builds headroom_eligible as
+                    # [fast, all]); a single-row cap (lumped single-product
+                    # design) is itself the total-reserve row.
+                    ordc_adder = np.minimum(
+                        cd[-1] * headroom_to_cap / voll, headroom_to_cap
+                    )
+                else:
+                    ordc_adder = cd.sum(axis=0).copy()
             elif ercot_ordc_total_reserve and rpf is not None:
                 ordc_adder = np.asarray(rpf, dtype=float)[:T, -1].copy()
             else:
@@ -3200,6 +3279,7 @@ def solve_and_persist(
     ercot_nonreleasable_as_withholding: bool = False,
     ercot_ordc_total_reserve: bool = False,
     ercot_ordc_cap_dual_adder: bool = False,
+    ercot_ordc_adder_published_anchor: bool = False,
     ercot_storage_as_product_credit: bool = False,
     gas_hh_monthly_shape: bool = False,
     ercot_as_aware_commitment: bool = False,
@@ -4677,6 +4757,15 @@ def solve_and_persist(
         cfg = backcast_config(year, iso, hours, gas_price)
         if first_year_cfg is None:
             first_year_cfg = cfg
+        # Effective VOLL for the published-anchor additive RTORPA
+        # (ercot_ordc_adder_published_anchor). Read through the same
+        # prb_overrides-first channel the CAISO demand flags below use
+        # (the caiso-80 defect class): the pristine ``cfg`` does NOT carry
+        # generic ScenarioConfig overrides, and ``ordc_voll`` is exactly the
+        # kind of published parameter a scenario probe would move.
+        _ordc_voll_eff = float(
+            (prb_overrides or {}).get("ordc_voll", cfg.ordc_voll)
+        )
 
         # Effective CAISO demand flags: they arrive through the generic
         # ``prb_overrides`` ScenarioConfig channel, which run_year's own
@@ -5118,6 +5207,10 @@ def solve_and_persist(
                 ercot_storage_as_endogenous=ercot_storage_as_endogenous,
                 ercot_ordc_total_reserve=ercot_ordc_total_reserve,
                 ercot_ordc_cap_dual_adder=ercot_ordc_cap_dual_adder,
+                ercot_ordc_adder_published_anchor=(
+                    ercot_ordc_adder_published_anchor
+                ),
+                ordc_voll=_ordc_voll_eff,
                 # ORDC-only realized-room RTORPA: computed on the P1
                 # result in run_year; None for other passes/configs.
                 ercot_ordc_realized_adder=(
@@ -5630,6 +5723,7 @@ def solve_and_persist(
         "ercot_nonreleasable_as_withholding": ercot_nonreleasable_as_withholding,
         "ercot_ordc_total_reserve": ercot_ordc_total_reserve,
         "ercot_ordc_cap_dual_adder": ercot_ordc_cap_dual_adder,
+        "ercot_ordc_adder_published_anchor": ercot_ordc_adder_published_anchor,
         "ercot_storage_as_product_credit": ercot_storage_as_product_credit,
         "gas_hh_monthly_shape": gas_hh_monthly_shape,
         "ercot_as_aware_commitment": ercot_as_aware_commitment,
@@ -8956,6 +9050,25 @@ def main() -> None:
         "ERCOT-only. Off (default, keeper-reproducing).",
     )
     parser.add_argument(
+        "--ercot-ordc-adder-published-anchor",
+        action="store_true",
+        help="ERCOT (ercot-213): price the cap-additive RTORPA on the "
+        "PUBLISHED (VOLL - lambda) anchor and from a SINGLE counterpart. "
+        "The in-LP ORDC demand curve is VOLL-anchored (an LP objective "
+        "coefficient must be a constant), which is the co-optimization-"
+        "correct form; the published additive formula is "
+        "RTORPA = 0.5 (VOLL - lambda) (LOLP_full + LOLP_half), capped so "
+        "lambda + adder <= VOLL. Adding the VOLL-anchored dual verbatim, "
+        "summed over BOTH headroom tiers, can therefore write up to "
+        "2 x VOLL - a price the market design cannot produce. Under this "
+        "flag the additive component is the ALL-tier (total-reserve) cap "
+        "dual alone, rescaled by (VOLL - lambda)/VOLL and capped at "
+        "VOLL - lambda. Exact re-anchoring, zero new scalars (VOLL is the "
+        "registered ordc_voll; lambda is the LP's own demand-weighted "
+        "energy dual). Requires --ercot-ordc-cap-dual-adder. ERCOT-only. "
+        "Off (default, keeper-reproducing).",
+    )
+    parser.add_argument(
         "--ercot-storage-as-product-credit",
         action="store_true",
         help="ERCOT multi-product co-opt, measured storage path: net the "
@@ -11518,6 +11631,7 @@ def main() -> None:
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
         ercot_ordc_total_reserve=args.ercot_ordc_total_reserve,
         ercot_ordc_cap_dual_adder=args.ercot_ordc_cap_dual_adder,
+        ercot_ordc_adder_published_anchor=args.ercot_ordc_adder_published_anchor,
         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
         ercot_nuclear_unit_availability=args.ercot_nuclear_unit_availability,
         nuclear_unit_availability=args.nuclear_unit_availability,
