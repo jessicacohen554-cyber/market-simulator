@@ -46,5 +46,82 @@
    "layup_sha256": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43"
   },
   "statement": "Leg (a) proves the pin is INERT on the committed baseline (the two scopes coincide \u21d2 committed bytes reproduce exactly). Leg (b) proves the STATE-LIST pin reproduces the caiso-198 DIRECTORY-scoped candidate byte-for-byte, confirming the \u00a71b coal-table no-op claim."
+ },
+ "arm_stage": {
+  "control": "caiso199_g0_control",
+  "arm": "caiso199_g1_meritpin",
+  "g_delta_c_extract": {
+   "path": "data/raw/campd-unit-outages-CAISO.csv",
+   "header_identical": true,
+   "committed_rows": 4561,
+   "landed_rows": 4719,
+   "committed_55077_rows": 0,
+   "added_55077_rows": 158,
+   "removed_rows": 0,
+   "non_55077_rows_byte_identical_in_order": true,
+   "landed_sha256": "da33e509465911341ba0867aefe02214f2e8ccb666ef86747e0e7ad8b47c86bb",
+   "pass": true
+  },
+  "g_delta_c_layup": {
+   "path": "data/raw/campd-unit-outages-layup-CAISO.csv",
+   "header_identical": true,
+   "committed_rows": 810,
+   "landed_rows": 810,
+   "committed_55077_rows": 0,
+   "added_55077_rows": 0,
+   "removed_rows": 0,
+   "non_55077_rows_byte_identical_in_order": true,
+   "landed_sha256": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+   "pass": true
+  },
+  "g_delta_d_config_diff": {},
+  "g_delta_pass": true,
+  "g_engage_loader": {
+   "2023": {
+    "resolved": true,
+    "mean_multiplier": 0.7018695998774251,
+    "hours_below_1": 2789,
+    "hours_total": 8760
+   },
+   "2024": {
+    "resolved": true,
+    "mean_multiplier": 0.3446946644648588,
+    "hours_below_1": 7197,
+    "hours_total": 8760
+   },
+   "2025": {
+    "resolved": true,
+    "mean_multiplier": 0.6070708035192409,
+    "hours_below_1": 5468,
+    "hours_total": 8760
+   }
+  },
+  "g_engage_loader_resolves_lt1": true,
+  "g_engage_lp_differs": true,
+  "g_engage_engagement": {
+   "2023": {
+    "zone_hours_price_changed": 14966,
+    "zone_hours_total": 61320,
+    "max_abs_price_delta": 79.50720494258528,
+    "class_hours_mw_changed": 4032,
+    "max_abs_mw_delta": 1274.9951171875
+   },
+   "2024": {
+    "zone_hours_price_changed": 26930,
+    "zone_hours_total": 61320,
+    "max_abs_price_delta": 539.4609147581242,
+    "class_hours_mw_changed": 9594,
+    "max_abs_mw_delta": 2287.20361328125
+   },
+   "2025": {
+    "zone_hours_price_changed": 18697,
+    "zone_hours_total": 61320,
+    "max_abs_price_delta": 59.67423312071098,
+    "class_hours_mw_changed": 4575,
+    "max_abs_mw_delta": 2070.0234375
+   }
+  },
+  "g_engage_pass": true,
+  "arm_inert": false
  }
 }
