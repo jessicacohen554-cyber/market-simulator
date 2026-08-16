@@ -295,3 +295,26 @@ its own row only when a field exists). Rules 5/24: no config surface
 touched. Keeper at session start and end: `2026-08-15-ercot204-rule26-delete`.
 New artifacts: this assessment + one calibration-log entry (ercot-209),
 nothing else.
+
+---
+
+## RESOLUTIONS — CARD X
+
+> Append-only. Each item records an owner signature carried verbatim from the
+> dispatch that made it. Never edit another item's lines.
+
+**X-1 SIGNED (owner, by dispatch of CONDUCT-PHASE-0, 2026-08-16)**
+
+> "X-1 SIGNED (owner): Phase-0 of the card-R R-C conduct-layer program is chartered as a READ-ONLY
+> identifiability/transfer measurement. Q-B and R-A are SCOPED, not reopened: they continue to bar any
+> competitive-offer-class C3a/C3b-2023 lever round; they do not bar this measurement, which solves nothing,
+> scores no price criterion, feeds no model input, and creates no ScenarioConfig field. 2023 conduct
+> surfaces appear ONLY as the transfer test's evaluation target (measured-vs-measured). The verdict is
+> mechanical under a pre-registered STOP rule; a Phase-1 build charter, if any, returns to the owner as its
+> own card. If Phase-0 stops, Door D (card W wait-for-data, ~mid-2027) is the recorded floor."
+
+Executing lane: `ercot-210` (CONDUCT-PHASE-0), precommit
+`docs/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`, finding
+`docs/FINDING-ercot210-conduct-transfer-phase0-2026-08-16.md`. This signature
+scopes §3 Door A's Phase-0 only; §3 Door B remains unsigned, Door C unsigned,
+Door D standing.
