@@ -1176,3 +1176,37 @@ your branch when done.
   the integrity verify** — 9 cited-evidence commits would have been pruned;
   nothing was pushed, the remote is untouched (report §5). Both flagged for
   PM/owner attention; §2's G3 warning text left to the PM to refresh.
+- 2026-08-16 — **DEBUG-MGR reissue DELIVERED AND MERGED (#4008)** (branch
+  `claude/fable-debug-manager-reissue-t8dg4w` @ `a4ba177`, 8 commits, off
+  main `8a118e7`, rebased onto `0ad8d42`; owner-merged 09:22 UTC). The two
+  owner cards were served in-sitting, signed, and executed same-session:
+  **(1) pjm-162 promotion (audit row O1)** — keeper re-keyed to
+  `2026-08-15-pjm-162-inputclock` (pjm-163: C6 governance attestation
+  generated with every premise computed
+  (`gen_pjm163_inputclock_attestation.py`), D-5(b) re-verify CALIBRATED on
+  committed artifacts, keeper shard + status + complete-marker re-key,
+  rule-28 re-stamps of the two PJM cells + the §5.3 prose header,
+  `audit_keepers --iso PJM --check` PASS 0/0); **(2) the ≤2022 PJM
+  input-clock extension (row O3)** — `_PJM_INPUT_CLOCK_SHIFTS` extended to
+  2018–2022 fueltype +1 h via the new explicit `--apply-years` one-shot
+  mechanism, byte-verified per the finding's §2a protocol (350,592 in-block
+  cells == pristine at T−1h; non-fueltype columns identical every row).
+  **Data repair only — no ≤2022 year solved, scored or registered; the
+  [R-HOLDOUT] spend freeze untouched.** Audit gap rows **O1/O2/O3/B1/B2
+  all resolved-and-annotated** (O2: the C6 "discrepancy" adjudicated a
+  stale registration-time quote, not scorer drift; B1: holdout gate wired
+  into the non-`_full` CLI ahead of any data access, 30/30 wiring tests;
+  B2: non-hermetic PJM replay facts folded into `docs/fast-clone.md`,
+  flagged for mirror into the user manual's troubleshooting section).
+  Clean-main re-verify GREEN handed back: **6,850 passed / 0 failed /
+  31 skipped (== the full-data run-A baseline) / 2 xfailed** — the one
+  interim red was the branch's own pjm-163 promotion exposing the rule-26
+  strict-replay contract, fixed in-branch (`_RULE26_DELETED_UNCONDITIONAL`
+  ledger in `replay_keeper` + 3 pinned tests). Sibling-import census
+  **73/49 → 56/34** (batches 1–2: the seven-file CAISO derive cluster +
+  the eight-file top-level cluster, per the scripts/README.md per-file
+  protocol; structural-not-marshal comparison caveat recorded there).
+  Landing verified on post-merge main by the successor DEBUG-MGR session:
+  `audit_keepers --iso PJM --check` PASS 0/0 and `check_mechanism_matrix.py`
+  fully clean at `00abb60`. Full record: `docs/handoffs/debug-sweep-2026-08.md`
+  Addendum §A.1–A.7.
