@@ -286,6 +286,23 @@
         </div>`;
       }
 
+      // Standing note — owner-signed statement of WHAT the remaining misses are
+      // (keepers/<ISO>.json "standing_note"): several separately-scored criteria
+      // may be one adjudicated object rather than independent defects. Same
+      // contract as the frontier note: declarative only, never gating. It does
+      // NOT restate or soften any magnitude — the criteria table below keeps
+      // reporting each miss at full magnitude from the scorer, unchanged.
+      if (keeper.standing_note && keeper.standing_note.note) {
+        const sn = keeper.standing_note;
+        html += `
+        <div class="cs-reason" style="margin-top: 8px;">
+          <p style="margin: 4px 0;">
+            <span class="cs-tag tag-lim"${sn.signature ? ` title="${esc(sn.signature)}"` : ''}>STANDING NOTE${sn.declared ? ' ' + esc(sn.declared) : ''}</span>
+            ${esc(sn.note)}
+          </p>
+        </div>`;
+      }
+
       // Validation touchpoint (CLAUDE.md rule 22). Present only for an ISO that
       // has actually SPENT a held-out year with this keeper's frozen recipe.
       // Deliberately shown next to the in-sample determination, because the
