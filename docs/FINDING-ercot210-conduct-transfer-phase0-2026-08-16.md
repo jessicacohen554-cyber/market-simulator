@@ -10,7 +10,21 @@
 >
 > Keeper at session start and end: **`2026-08-15-ercot204-rule26-delete`** —
 > determination NOT-YET, fail set {C3a-2023, C3b-2023}, C3c the single ledgered
-> CAVEAT ×3. Untouched by this session.
+> CAVEAT ×3. Untouched by this session, and **re-resolved from
+> `frontend/data/backcast/keepers/ERCOT.json` on the moved `origin/main` at
+> merge time**, not trusted from the session's opening snapshot.
+>
+> **Shorthand collision, noted; nothing renamed.** This lane read the log tail's
+> published pointer (*"Next shorthand: ercot-210"*) and pushed its precommit,
+> probe, JSON and this finding under the `ercot210` filename stem before any
+> collision was observable. **REPORTING-TEXT-1** (card X item **X-2**, Door C)
+> was dispatched concurrently, landed first, and consumed **ercot-210**. The
+> calibration-log entry for this lane is therefore **`ercot-211`**; the other
+> lane's entry is left whole and untouched in file order per the standing
+> append-collision convention, and **no artifact of either lane is renamed** —
+> renaming pushed, cross-referenced artifacts is precisely what that convention
+> forbids. The two lanes are independent objects: X-2 signs Door C (reporting
+> surfaces), X-1 signs Door A's Phase-0 (this measurement).
 
 ---
 
@@ -373,5 +387,11 @@ none chartered, none costed:
 - **Keeper at session start and end:** `2026-08-15-ercot204-rule26-delete`.
 - **Artifacts:** this finding, the precommit, `scripts/probes/ercot210_conduct_transfer_phase0.py`,
   `results/calibration/ercot210_conduct_transfer_phase0.json`, one calibration-log
-  entry (ercot-210), and the X-1 signature appended to ASSESSMENT-ercot209.
-  Nothing else.
+  entry (**ercot-211**, per the collision note above), and the X-1 signature
+  appended to ASSESSMENT-ercot209's `RESOLUTIONS — CARD X` (appended below X-2 in
+  landing order; no line of X-2 edited). Nothing else.
+- **Concurrent-lane check at merge:** `origin/main` moved during this session
+  (Door C / REPORTING-TEXT-1 among others). Its ERCOT calibration-log entry is
+  preserved **byte-identical**, all 36 pre-existing entry headings remain in file
+  order, and exactly one heading was added. The ERCOT keeper on the moved main is
+  unchanged, so every keeper claim in this finding still holds.

@@ -502,6 +502,16 @@ def build_part(iso: str) -> dict | None:
     # (2023-2025) verdict and a holdout result never silently rewrites it.
     if rec.get("holdout_touchpoint"):
         verdict["holdout_touchpoint"] = rec["holdout_touchpoint"]
+    # Owner-signed STANDING NOTE (the shard's "standing_note" block): a durable
+    # statement about what the ISO's remaining misses ARE — e.g. several scored
+    # criteria that are one adjudicated object rather than independent defects.
+    # Same contract as "frontier" above: purely declarative, never gating, never
+    # touching the verdict, and it never restates or softens a magnitude — every
+    # criterion keeps reporting its own number from the scorer. Added by
+    # ercot-210 for the ERCOT card-X item X-2 signature (Door C of
+    # docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md).
+    if rec.get("standing_note"):
+        verdict["standing_note"] = rec["standing_note"]
     d7 = statmode.get("isos", {}).get(iso)
     if d7:
         # REPORTED line, never gating: the overlay-vs-statistical fail

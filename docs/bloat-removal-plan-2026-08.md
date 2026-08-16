@@ -771,6 +771,18 @@ Tip trajectory: 10,080 → **≈ 8.1 GiB** (class-approved only) → **≈ 6.1 G
   dispatch duty until the GOLDEN-TIER-FIX lane lands the memory fix and runs
   the single authorized dispatch; G3 stays evidence-blocked until that run is
   green.
+  **DISCHARGED 2026-08-15 (GOLDEN-TIER-FIX lane):** the
+  `curate_emissions.py` streaming-assembly fix landed
+  (`claude/golden-tier-emissions-oom-03qlck` @ `ccca569`; peak RSS
+  10.05 → 5.17 GiB on the tier's 2023 inputs, output verified
+  data-byte-identical for 2023 and 2024) and the single authorized dispatch
+  was spent on that branch, whose base `870c4c8` carries every executed
+  BLOAT-B prune: run `31913648051` — **GREEN in 11m33s** (the emissions step
+  1m31s), loud-failure guard PASS, zero data-missing skips, no corpus
+  restored, sparse list untouched. The
+  B-1/B-2/B-5 duty and PR-3 are covered by the one run; **G3's evidence gate
+  reopens** (full entry: release plan §8 ledger, 2026-08-15
+  GOLDEN-TIER-FIX).
 
 Ordering within Wave 3: PR-4 (no data) any time; PR-2 → PR-3 → PR-1 (PR-1's
 chunked pushes are the long pole; nothing depends on them landing first);
