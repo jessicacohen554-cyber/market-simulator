@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-16-caiso-198-f0-control",
+  "label": "caiso 198 f0 control",
+  "date": "2026-08-16",
+  "shorthand": "caiso-198-f0-control",
+  "definition": "caiso-198 f0 CONTROL: caiso-197 keeper recipe replayed per PRECHECK-caiso198 \u00a73 (integration-protocol \u00a73 posture) \u2014 capacity-deliverability partition materialized (386 rows), hydro_ror_split=false with no hydro-plant-modes partition present (both disclosed), warm-start pinned off by the replay driver. Solved BEFORE the Desert Star extract re-derive touched the tree.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-16-caiso-198-f0-control.js",
+  "bundle": "results/calibration/caiso198_f0_control"
+}

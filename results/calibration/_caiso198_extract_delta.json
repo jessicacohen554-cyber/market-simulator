@@ -1,0 +1,151 @@
+{
+ "precheck": "PRECHECK-caiso198-desertstar-extract-2026-08-16.md",
+ "committed_sha_main": "5f3e35c5dad88da76be8f684973fd7c78009f63e84d3f5b23a609e93d45fb4ce",
+ "committed_sha_layup": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+ "baseline_byte_identity_proof": {
+  "construction": "ISO_STATES['CAISO'] temporarily ('CA',), committed recipe to scratch --out, restored immediately",
+  "main_sha256": "5f3e35c5dad88da76be8f684973fd7c78009f63e84d3f5b23a609e93d45fb4ce",
+  "layup_sha256": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+  "pass": true,
+  "statement": "NV state addition is the ONLY free variable at this head"
+ },
+ "kill_criterion": "G-DELTA leg (b): any non-55077 byte => arm void (PRECHECK section 5)",
+ "kill_fired": true,
+ "runs": {
+  "inplace_recipe_ca_nv_panel": {
+   "main_rows": 4820,
+   "layup_rows": 709,
+   "added_55077": 158,
+   "added_non_55077": 188,
+   "removed_from_main": 87,
+   "left_layup": 188,
+   "entered_layup": 87,
+   "non_55077_rows_byte_identical_in_order": false,
+   "layup_byte_identical": false,
+   "sha256_main": "bee2ef1a5e68fcd4e13d64533ac4dc7c88578e844059b58a3b576e5452751a16",
+   "sha256_layup": "12f6d7a6103a0b2d1801137b6ee89d8dc6dcc37a52929c58c221360b0b05d28c",
+   "note": "the committed recipe as shipped on the committed CA+NV state list \u2014 VOIDED by the kill criterion; data/raw restored to the committed bytes"
+  },
+  "runX_panel_ca_only": {
+   "main_rows": 4719,
+   "layup_rows": 810,
+   "added_55077": 158,
+   "added_non_55077": 0,
+   "removed_from_main": 0,
+   "left_layup": 0,
+   "entered_layup": 0,
+   "sha256_main": "da33e509465911341ba0867aefe02214f2e8ccb666ef86747e0e7ad8b47c86bb",
+   "sha256_layup": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+   "non_55077_rows_byte_identical_in_order": true,
+   "layup_byte_identical": true
+  },
+  "runY_panel_ca_plus_ds": {
+   "main_rows": 4710,
+   "layup_rows": 819,
+   "added_55077": 158,
+   "added_non_55077": 0,
+   "removed_from_main": 9,
+   "left_layup": 0,
+   "entered_layup": 9,
+   "sha256_main": "cf156483e08dcd701bd89898ca14670d3c797eb09d9ad30efc7f51cb381390b5",
+   "sha256_layup": "4ccae12ebcfada3d6b716d02f25d81faaa4cfd49fedb22685449581cc6d9ed37",
+   "non_55077_rows_byte_identical_in_order": false,
+   "layup_byte_identical": false
+  }
+ },
+ "moved_row_census_inplace": {
+  "layup_to_mechanical": 188,
+  "mechanical_to_layup": 87,
+  "facilities": {
+   "10349 Yuba City Energy Center": 34,
+   "10294 King City Power Plant": 30,
+   "422 Glenarm": 18,
+   "57564 Algonquin Power Sanger": 18,
+   "54768 Live Oak Limited": 17,
+   "10156 Fresno Cogeneration": 14,
+   "10649 Bear Mountain": 13,
+   "50612 McKittrick": 10,
+   "57978 Lodi Energy Center": 8,
+   "55295 Blythe Energy": 7,
+   "10650 Badger Creek": 6,
+   "356 AES Redondo Beach": 4,
+   "10169 Carson Cogeneration": 4,
+   "55656 Pastoria": 3,
+   "10405 Kingsburg": 2
+  },
+  "by_year_layup_to_mechanical": {
+   "2018": 6,
+   "2019": 3,
+   "2020": 6,
+   "2022": 1,
+   "2023": 21,
+   "2024": 107,
+   "2025": 43,
+   "2026": 1
+  },
+  "out_of_merit_share_of_movers": {
+   "mean": 0.9708,
+   "min": 0.901,
+   "p50": 0.979,
+   "max": 1.0
+  }
+ },
+ "panel_census": {
+  "2023": {
+   "units_ca": 234,
+   "units_ca_nv": 295,
+   "nv_nonfleet_units": 59,
+   "rcc_delta_mean_usd_mwh": -0.457,
+   "rcc_delta_p50": 0.142,
+   "share_hours_rcc_moved": 0.868,
+   "rcc_defined_hours_ca": 8760,
+   "rcc_defined_hours_ca_nv": 8760
+  },
+  "2024": {
+   "units_ca": 231,
+   "units_ca_nv": 297,
+   "nv_nonfleet_units": 64,
+   "rcc_delta_mean_usd_mwh": 3.454,
+   "rcc_delta_p50": 1.653,
+   "share_hours_rcc_moved": 0.974,
+   "rcc_defined_hours_ca": 8784,
+   "rcc_defined_hours_ca_nv": 8784
+  },
+  "2025": {
+   "units_ca": 231,
+   "units_ca_nv": 295,
+   "nv_nonfleet_units": 63,
+   "rcc_delta_mean_usd_mwh": 2.413,
+   "rcc_delta_p50": 1.227,
+   "share_hours_rcc_moved": 0.881,
+   "rcc_defined_hours_ca": 6576,
+   "rcc_defined_hours_ca_nv": 7296
+  },
+  "nonfleet_nv_facilities": [
+   2322,
+   2330,
+   2336,
+   7082,
+   8224,
+   10761,
+   54271,
+   54350,
+   54854,
+   55322,
+   55514,
+   55687,
+   55841,
+   56224
+  ]
+ },
+ "desert_star_detection": {
+  "windows": 158,
+  "invariant_to_panel_scope": true,
+  "units": [
+   "EDE1",
+   "EDE2"
+  ],
+  "capacity_source": "observed_peak (CAMPD EDE1/EDE2 vs EIA ED01/ED02/ED03 miss both id heuristics \u2014 PRECHECK section 1 ex-ante note)"
+ },
+ "attribution": "Desert Star detection content (158 windows) invariant to panel scope; 100% of the non-55077 movement is merit-panel composition \u2014 build_merit_order_panel is fleet-blind over the loaded state files, so the NV widening put 13-14 non-CAISO NV Energy facilities (59-64 units) into the RCC panel (Desert Star's own 2 units contribute only the runY 9-window mechanical->layup shift)."
+}
