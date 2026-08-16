@@ -8046,3 +8046,26 @@ margin, not annual energy. No pass→fail flip (§5 silent); C3b
 0.077/0.154/0.176; C3a transparency-only (+4.4/+11.5/+14.5 vs control
 +4.4/+11.7/+14.5). Matrix duty (b): `wefor_statistical_stack` CAISO evidence
 appended (the row registering the field). Composes at Wave-2 rung +L3.
+
+## 2026-08-16 — caiso-197 (lane 5): six-plant cited-physical PS parameterization ACCEPTED 6/6 — zero MW added, zero fitted scalars; C3a moves ANTI-favorably and the arm is accepted anyway
+
+**Run `2026-08-16-caiso-197-l5-psphys`** (NOT-YET / C6 UNATTESTED — standard
+non-keeper posture; control SHARED, BIT-ZERO vs the keeper). PRECHECK + the
+full registered build pushed at `56ddf497a` BEFORE the solve
+(`caiso_ps_plant_params` + `CAISO_PS_PLANT_PARAMS` + per-plant loader +
+static pump-cap channel on the existing storage_charge_cap, tighten-only;
+matrix row + six shard cells in the same PR per 28c; +5 tests; two
+provenance corpora committed — the PG&E Helms deck and the DWR B132-22
+table extracts). Gates 6/6: G-CITE (table reproduced from citations),
+G-ZONE (mechanical NP15 ×6), G-NOSHAPE (one bool diff; static bounds;
+Hyatt in-block — caiso-141 §G untouched), G-AGG (EXACT 2,077.6 = 2,077.6
+MW), G-DOF (11/8 unchanged, zero fitted), G-ENGAGE (pump caps bind: Helms
+930 < 1,053, Gianelli 375.8 < 424; 25.5k/33.1k/30.1k zone-hours re-priced,
+class-hour dispatch to 4.5 GW — the campaign's largest engagement).
+**C3a +4.4/+12.8/+15.9 vs control +4.4/+11.7/+14.5 — ANTI-favorable, and
+acceptance stands (§0 verbatim; rule 14; caiso-183 lineage).** C3b worsens
+but passes all years (0.098/0.178/0.183; 2025 margin 0.017 = the
+composition watch); C1's only FAIL row remains the control's own 2023
+CC_REGULAR (−4.63 here vs −4.44 control, already-FAIL — not a flip).
+Matrix duty (b): `caiso_ps_plant_params` U → O. Composes at the final
+Wave-2 rung (+L5).
