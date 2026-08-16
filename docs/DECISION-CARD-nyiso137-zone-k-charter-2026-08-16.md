@@ -4,6 +4,12 @@
 solve has been spent and none will be until this card is answered — the arm is
 not written and no pre-registration is filed.
 
+> **STATUS (nyiso-138, 2026-08-16, main `e1760bb`): D1 · D2 · D3 REMAIN OPEN and
+> unanswered — no owner ruling has been received on any of them, and no solve has
+> been spent. D4 is WITHDRAWN: another lane resolved it at HEAD (see D4 below);
+> it needs no ruling and its recommended edit must not be made.** nyiso-138 spent
+> no solve, wrote no mechanism, and made no edit to `src/`.
+
 ---
 
 ## THE ASK, IN ONE SENTENCE
@@ -71,8 +77,39 @@ Session recommendation: **(a) with D2 attached.** The lever's licence is the
 published number and the removed double count, not the tail count (rule 1
 `[R-STRUCT]`), so it does not depend on the repair landing first.
 
-**D4 — NEW, and independent of D1–D3: the designated keeper is UNREPLAYABLE at
-HEAD.** Found while running this session's gates, **confirmed pre-existing on a
+**D4 — WITHDRAWN 2026-08-16 (nyiso-138): RESOLVED AT HEAD BY ANOTHER LANE. No
+owner ruling is required; do not grant one.** The requested `_IGNORE` edit must
+**not** now be made — it would double-handle a key already dispositioned.
+
+Between nyiso-137 writing this card (main `ce779f9`) and nyiso-138 opening
+(main `e1760bb`), commit `a964e23` — the DEBUG-manager lane, pushed by the
+pjm-163 promotion, which made `2026-08-15-pjm-162-inputclock` the first *keeper*
+meta to carry the deleted key — fixed this. The disposition chosen is **not**
+the `_IGNORE` table this card asked for but a **new, narrower ledger**,
+`replay_keeper._RULE26_DELETED_UNCONDITIONAL`, keyed
+`field -> (owning_iso, unconditional_value)`. That is the **better** home and
+supersedes this card's recommendation on the merits: `_IGNORE` would have
+dropped the key silently in *every* ISO, whereas the ledger keeps the recorded
+value as provenance, skips it as inert outside the owning ISO (rule 25
+`[R-ISO-SCOPE]`, where the mechanism was never reachable), and **hard-errors
+inside** the owning ISO for a bundle recording the dead polarity — honouring the
+cache epoch note's own "read, never replayed" rather than silently replaying a
+different mechanism.
+
+Verified by nyiso-138 at `e1760bb`: `test_replay_keeper_strict.py` **8 passed**;
+the designated keeper `2026-08-08-nyiso-133-cod-arm` records
+`nyiso_solar_registry_cod_dates: true`, which **is** the unconditional value, so
+it replays cleanly; and it is the **only** NYISO bundle on disk carrying the key,
+so the ledger's hard-error branch is unreachable in this lane. Nine bundles
+across five ISOs carry the key in total. **The stale baseline this card and the
+nyiso-138 handoff both inherited — "1 pre-existing failure in
+tests/scoring/test_replay_keeper_strict.py" — is therefore no longer true and
+must not be carried forward as a known-failure allowance.**
+
+*Superseded text follows, retained for the record:*
+
+~~**D4 — NEW, and independent of D1–D3: the designated keeper is UNREPLAYABLE at
+HEAD.**~~ Found while running this session's gates, **confirmed pre-existing on a
 pristine tree**, and *not* among the costs nyiso-136 declared.
 `tests/scoring/test_replay_keeper_strict.py::...::test_all_keeper_metas_build`
 fails because `2026-08-08-nyiso-133-cod-arm`'s committed `meta.json` still
