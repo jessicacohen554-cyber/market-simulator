@@ -6688,3 +6688,93 @@ hashing and its semantics ("not a solve kwarg") are now true, since the collapse
 made the flag's behaviour unconditional in both lanes. It is deliberately NOT the
 `_CACHE_KEY_RETIRED_FIELDS` case nyiso-136 warned about, where retirement would
 re-insert the name and move the pinned key.
+
+## 2026-08-16 — nyiso-139: owner answers the charter card (D1 GRANT / D2 adopt / D3 **(b)**), and the ordered FIRST step lands — the NYISO RTD interval-convention repair, on a fully re-staged archive. Keeper determination UNCHANGED.
+
+**Owner rulings** (`AskUserQuestion`, on
+`docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`): **D1 GRANTED**
+("write, prereg, solve"); **D2 ADOPTED as requested**; **D3 = option (b)**,
+*"re-stage the NYISO RT archive, repair first, then charter"* — **not** the
+session-recommended (a). D4 stays withdrawn (nyiso-138). The card is now fully
+answered and needs no further ruling.
+
+D3(b) makes the clock repair the ordered first step, so that is what this
+session did. **No LP solved, no year scored against model output, no run
+registered, and the chartered lever is NOT yet written.**
+
+**The blocker the card called (b)'s cost is GONE.** The card priced (b) as
+"blocked on staging ~8 years of monthly zips". `mis.nyiso.com` is reachable, so
+a new idempotent fetcher `scripts/data/fetch_nyiso_zonal_lmp.py` re-staged the
+archive: **DA 0 → 102/102 months** (the outer container
+`NYISO_zonal_hourly.zip` did not exist at all on a fresh clone — gitignored as
+regenerable — so the DA half had no source) and **RT 21 → 102/102**, zero
+failures. The 21 already-committed RT zips were skipped, not rewritten, so their
+bytes (including the twelve 2022 rule-22 intake months) are untouched. Coverage
+is total across the parquet's committed span, so the re-derivation was option
+**(b)** and never the forbidden **(c)**. The 2026 window was deliberately NOT
+extended past June even though `mis.nyiso.com` now serves 2026-07: the change
+moves the **clock**, not the **span**.
+
+**The repair.** `derive_actual_lmp._nyiso_wide` binned the 5-minute RT (P-24A)
+stamps as interval-BEGINNING; they are interval-**ENDING**. One RT-scoped line
+(`shift = 0 if kind == "da" else 1s`, subtracted in UTC so
+`_localize_ordered`'s fall-back disambiguation is untouched). Adjudicated, not
+assumed, against NYISO's OWN published time-weighted hourly product P-4A
+(Manual 12 p. 136 / Manual 14 §4 state P-4A is built from these 5-minute
+prices): **ENDING agrees within the $0.005 rounding bound on all 14,905 strict
+zone-hours; BEGINNING is wrong on 14,174 of 14,828, by up to $50.01.**
+Independently corroborated this session by the archive's own shape — a monthly
+RT zip runs `00:05` day 1 → `00:00` day 1 of the next month, i.e. exactly the
+intervals *ending* in that month. Rule 14 `[R-ACCURATE]`.
+
+**Measured effect.** ~95 % of hours move, the level does not: annual mean RT
+shifts −0.005 / −0.012 / −0.015 % in 2023/2024/2025 (full-population
+reproduction of nyiso-137 §3's −0.0353 % pooled estimate), against C3a's
+nearest band margin of 1.2 pp. **The `da` column changed in ZERO hours in every
+one of the nine years**, which verifies rather than assumes disclosure §A.6
+item 3 — the DA block, the `spec.py` import ladder derived from it, and the
+DA-only `nyiso_proxy_lmp_hourly_NEISO.parquet` are all untouched (rule 25).
+
+**C3c denominator.** `actual_tail.json` RT tail 2023 **10 → 10**, 2024
+**12 → 13**, 2025 **42 → 42** (2022 97 → 101, input-side only; 2020/2021
+unchanged). Only two values in the whole file changed and **both are NYISO** —
+every other ISO's block is byte-identical. All three land inside the reachable
+intervals nyiso-137 §5 computed ex ante, and **neither verdict-flip edge it
+flagged fired** (2023 did not reach the 11 h that would have vacated its
+caveat; 2025 did not reach the 49 h that would have broken its PASS).
+nyiso-137 §4's correction is now demonstrated on the product: "the C3c tail
+region moves by cents" was false — the tail moved enough to add an hour to 2024.
+
+**Keeper: UNCHANGED.** `calibration_verdict --run-id
+2026-08-08-nyiso-133-cod-arm` (committed artifacts, no solve) still reads
+**CALIBRATED-WITH-CAVEATS**, C1/C2/C3a/C3b/C4/C6/C8 PASS, C3c the lone ledgered
+caveat (budget 1 of 1). The only movement in the entire verdict is 2024's C3c
+magnitude, `0.25× (12 h)` → `0.23× (13 h)`. Re-verified into
+`calibration-complete.json` under rule 22 D-5(b) (label unchanged, so the
+worse-determination stop does not fire); downstream artifacts refreshed for
+self-consistency (`actual_lmp.json` `rt_lw*` via `--lw-retrofit` — `da_lw*`
+unchanged; the three NYISO `bench/` parts; `status/NYISO.js`; `shared.js` NOT
+touched).
+
+**Holdout.** The freeze is ACTIVE and untouched; it lists `"data intake (no-LP,
+rule 22 channel 1)"` under `not_frozen`, which is exactly what this was. Rule
+22 as amended 2026-08-06 requires a measured input be applied consistently to
+every year, which is why 2018-2022 and 2026 were repaired too — leaving them on
+a clock now known wrong, while 2023-2025 use the right one, is the
+inconsistency that amendment forbids. No out-of-training year was solved,
+scored against model output, or registered.
+
+**Discharged:** disclosure `docs/handoffs/d32-f6fix-2026-08-13.md` §A.6 items
+1-3 in full; D2's conditionality **prospectively** (the C3c denominator is now
+measured on the adjudicated-correct clock, so absolute band membership is
+reliable for work that follows the repair — which is precisely what D3(b)
+bought); and the third 2022-touchpoint disclosure. **Still open:** the two
+other touchpoint disclosures (import-tranche 719 MW duration RMSE, Transco
+Dec-2022 Elliott hole) remain ungraded; the `iso-model-unification-plan.md` §3
+caveat is now satisfiable but is flagged, not edited, as another lane's doc;
+and **the chartered joint Zone-K lever (D1) is still to be written** — D3(b)
+put the repair first.
+
+Evidence:
+`results/calibration/FINDING-nyiso139-rtd-clock-repair-landed-2026-08-16.md`.
+Next number: **nyiso-140**.

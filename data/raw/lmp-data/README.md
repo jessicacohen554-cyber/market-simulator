@@ -11,8 +11,8 @@ model's LP-dual prices against actual market clearing prices.
 | `MISO/` | `miso_hub_lmp_<year>_{da,rt}.csv.gz` (already documented — see `MISO/README.md`) | MISO daily market reports | `scripts/fetch_miso_hub_lmp.py` |
 | `NEISO/` | `<year>_smd_hourly.xlsx` (2018–2025) | ISO-NE SMD hourly workbooks | **manual download only** — the ISO Express *Zonal Information* page serves these behind a CAPTCHA-gated "Download Selected Files" form, so no committed script can refresh them and an unattended session cannot obtain a year the repo does not already hold (confirmed 2026-08-15, neiso-96). `2022` relocated from the top-level orphan set 2026-07-07 under the NEISO calibration-complete holdout intake (byte-identical move; same sheet/column layout as 2023–2025, verified) |
 | `NEISO/smd-zonal-lmp/` | `NEISO_smd_zonal_lmp_<year>.csv` (2026 — H1, 181 operating days) — hourly DA + RT-final LMP for the nine SMD pricing locations (`.H.INTERNAL_HUB` + the eight `.Z.*` load zones), one row per (day, hour, location), carrying the as-published within-day row position `seq` | ISO-NE static historical-report tree — `histRpts/da-lmp/WW_DALMP_ISO_<YYYYMMDD>.csv` and `histRpts/rt-lmp/lmp_rt_final_<YYYYMMDD>.csv`; **ungated**, no credentials | `scripts/data/fetch_neiso_smd_zonal_lmp.py` (reduces ~4.9 MB/day of all-node report to ~8 KB/day). The SAME nine locations the workbook publishes: measured identical to the workbook route at the parquet's float32 precision over 2,640 cells / 11 sampled days by `scripts/probes/neiso96_smd_route_equivalence.py`, so it is a second packaging of one input, not a second input |
-| `NYISO/` | `*realtime_zone_csv.zip` (5-min RT zonal LBMP; 2022 carries all 12 months — rule-22 holdout intake 2026-07-12 — while 2023–2025 months are partially staged out; the committed `actual_lmp_hourly_NYISO.parquet` is the durable record) | NYISO MIS public RT zonal LBMP monthly archives (`http://mis.nyiso.com/public/csv/realtime/`) | `scripts/derive_actual_lmp.py`; 2022 lander: `.github/workflows/holdout-intake-nyiso-2022.yml` |
-| `NYISO/` | `YYYYMM01damlbmp_zone_csv.zip` (**gitignored** — regenerable) + `NYISO_zonal_hourly.zip`, the outer container `derive_actual_lmp.py` reads them from (**gitignored**, staged out) | NYISO MIS public DAM zonal LBMP monthly archives (`http://mis.nyiso.com/public/csv/damlbmp/`) | `for m in 01..12; curl -O .../\${y}\${m}01damlbmp_zone_csv.zip; done`, zip into `NYISO_zonal_hourly.zip`; also `scripts/build_nyiso_proxy_lmp_neiso.py` (writes the committed `nyiso_proxy_lmp_hourly_NEISO.parquet`) |
+| `NYISO/` | `*realtime_zone_csv.zip` (5-min RT zonal LBMP; **21 months are committed** — 2022's twelve from the rule-22 holdout intake 2026-07-12, plus nine scattered 2023–2025 months — and the rest are gitignored/regenerable; the committed `actual_lmp_hourly_NYISO.parquet` is the durable record). **Stamps are interval-ENDING** — see the convention note below | NYISO MIS public RT zonal LBMP monthly archives (`http://mis.nyiso.com/public/csv/realtime/`) | `scripts/data/fetch_nyiso_zonal_lmp.py` (idempotent; skips the committed months, so their bytes are never rewritten) → `scripts/data/derive_actual_lmp.py`; 2022 lander: `.github/workflows/holdout-intake-nyiso-2022.yml` |
+| `NYISO/` | `YYYYMM01damlbmp_zone_csv.zip` (**gitignored** — regenerable) + `NYISO_zonal_hourly.zip`, the outer container `derive_actual_lmp.py` reads them from (**gitignored**, staged out) | NYISO MIS public DAM zonal LBMP monthly archives (`http://mis.nyiso.com/public/csv/damlbmp/`) | `scripts/data/fetch_nyiso_zonal_lmp.py --kind da`, which downloads the monthlies **and assembles the outer container** (it replaces the old bare `for m in 01..12; curl -O ...; done` loop); also `scripts/data/build_nyiso_proxy_lmp_neiso.py` (writes the committed `nyiso_proxy_lmp_hourly_NEISO.parquet`, DA-only — untouched by the RT convention repair) |
 | `NYISO/` + top level | `dartmonthlylmpindex_<year>.csv` — **misfiled: ISO-NE monthly LMP index reports** (`.H.INTERNAL_HUB`/`.Z.*` locations), not NYISO data (verified 2026-07-12; equivalency-register N2) | ISO-NE web services | out of scope for every curator (unchanged) |
 | top level | `DAMLZHBSPP_<year>.zip`, `RTMLZHBSPP_<year>.zip` (2023–2025) | ERCOT LZ/HB/SPP settlement-point archives | manual download (ERCOT MIS) |
 | top level | `PJM_<year>_rt_da_monthly_lmps.csv` (2023–2025) | PJM DataMiner2 RT/DA monthly LMP export | manual download (DataMiner2) — see `docs/data-licensing.md` §4 |
@@ -31,6 +31,22 @@ displaced by one hour in `actual_lmp_hourly_NEISO.parquet`. Measured on the four
 sampled DST days in `results/calibration/_neiso96_smd_route_equivalence.json`.
 It is **not repaired here** because 2023 is a tuned year, so correcting it moves a
 scoring target in-sample and needs its own authorization and re-solve.
+
+**NYISO interval convention (REPAIRED 2026-08-16, nyiso-139).** The 5-minute RT
+(P-24A) `Time Stamp` labels an interval by its **END**; the hourly DA
+(`damlbmp`) stamp labels its interval by its **BEGINNING**. `derive_actual_lmp.
+_nyiso_wide` shifts RT back one second before flooring and leaves DA alone; the
+archive's own file boundaries corroborate it (a monthly RT zip runs `00:05` on
+day 1 to `00:00` on day 1 of the next month, i.e. exactly the intervals *ending*
+in that month). Adjudicated against NYISO's own time-weighted hourly product
+P-4A, which Manual 12 p. 136 / Manual 14 §4 state is built from these same
+5-minute prices: ENDING agrees within the $0.005 rounding bound on every one of
+14,905 strict zone-hours, BEGINNING is wrong on 14,174 of 14,828 by up to
+$50.01 (`scripts/probes/nyiso_rtd_clock_adjudication.py --strict`). The repair
+moves ~95 % of hours but shifts the annual level by ≤0.03 %, and it is RT-only —
+the DA block, the `spec.py` import ladder derived from it, and
+`nyiso_proxy_lmp_hourly_NEISO.parquet` are all unaffected. Evidence:
+`results/calibration/FINDING-nyiso139-rtd-clock-repair-landed-2026-08-16.md`.
 
 **Consumers:** `scripts/curate_lmp.py` (the `lmp` clean-datatype curator —
 its docstring is the authoritative per-ISO source map),

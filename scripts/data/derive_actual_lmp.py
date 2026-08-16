@@ -671,6 +671,10 @@ def _nyiso_wide(year: int, kind: str) -> pd.DataFrame | None:
     real (UTC) hour via :func:`_localize_ordered`, so the DST fall-back
     hour's two instances stay distinct and no hour is missing. ``None`` if no
     source.
+
+    The two products label intervals differently and are binned accordingly:
+    RT 5-minute stamps are interval-**ending**, DA hourly stamps
+    interval-**beginning** (see the shift below).
     """
     frames: list[pd.DataFrame] = []
     if kind == "da":
@@ -706,7 +710,19 @@ def _nyiso_wide(year: int, kind: str) -> pd.DataFrame | None:
     df = df[ts.notna()]
     ts = ts[ts.notna()]
     utc = _localize_ordered(ts, df["Name"], _EASTERN_TZ).tz_convert("UTC")
-    df = df.assign(ts=pd.DatetimeIndex(utc).floor("h"))
+    # The 5-minute RT ("P-24A") stamps label an interval by its END; the hourly
+    # DA stamps label theirs by its BEGINNING. Shifting RT back one second
+    # before the floor maps each interval onto the hour it actually priced —
+    # the same convention curate_lmp.parse_nyiso_zip already uses. Adjudicated
+    # against NYISO's OWN time-weighted hourly product (P-4A) rather than
+    # assumed: ENDING agrees within $0.005 on all 65,384 strict zone-hours
+    # sampled over 2022-2025, BEGINNING is wrong on 62,598 of them by up to
+    # $151.67 (scripts/probes/nyiso_rtd_clock_adjudication.py; Manual 12 p.136
+    # and Manual 14 §4 publish that P-4A is built from these 5-minute prices).
+    # Subtracting in UTC keeps _localize_ordered's fall-back disambiguation
+    # untouched and is exact, UTC having no DST discontinuity to cross.
+    shift = pd.Timedelta(0) if kind == "da" else pd.Timedelta(seconds=1)
+    df = df.assign(ts=(pd.DatetimeIndex(utc) - shift).floor("h"))
     # pivot_table mean folds the RT 5-minute intervals into one value per zone
     # per real hour; the fall-back hour's two instances are distinct UTC hours.
     return df.pivot_table(index="ts", columns="Name", values="lmp", aggfunc="mean")

@@ -150,7 +150,7 @@
     "da_gt": 10,
     "hours": 8760,
     "rt_coverage": 1.0,
-    "rt_gt": 97,
+    "rt_gt": 101,
     "threshold": 300.0
    },
    "2023": {
@@ -166,7 +166,7 @@
     "da_gt": 0,
     "hours": 8760,
     "rt_coverage": 1.0,
-    "rt_gt": 12,
+    "rt_gt": 13,
     "threshold": 300.0
    },
    "2025": {
