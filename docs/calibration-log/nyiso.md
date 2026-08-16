@@ -6777,7 +6777,6 @@ put the repair first.
 
 Evidence:
 `results/calibration/FINDING-nyiso139-rtd-clock-repair-landed-2026-08-16.md`.
-Next number: **nyiso-140**.
 
 ## 2026-08-16 — nyiso-139b: the chartered Zone-K joint lever is RE-SCOPED before writing — the floor limb the card pairs with the transfer bound is ALREADY DISABLED on the keeper, and K6 cannot adjudicate an import-relief lever
 
@@ -6843,3 +6842,76 @@ holdout spend freeze ACTIVE; NYISO cross-ISO queue CLOSED since nyiso-122.
 Evidence:
 `results/calibration/FINDING-nyiso139b-zone-k-joint-lever-rescoped-2026-08-16.md`.
 Next number: **nyiso-140**.
+
+## nyiso-140 — the LI ST_GAS floor has the right WINDOW and the wrong MEMBERSHIP (2026-08-16)
+
+Settled the two owner questions nyiso-139b left blocking the chartered Zone-K
+lever, then wrote, pre-registered and A/B-solved the resulting mechanism.
+
+**Q1 — CLOSED, and the window survives.** The always-on `Long_Island × ST_GAS`
+limb (`tmax` −50 °C ⇒ all 8,760 h, `floor_pct` 0.262, `pro_rata`) is
+**identified** on a fleet-aggregate when-available CF but **applied** per unit.
+Measured from the floor's own source (CAMPD conduct + the guard-corrected outage
+extract; no residual, no metrics file, no solve): Barrett (2511) and Northport
+(2516) genuinely run a persistent 24-hour baseline — cool-day median CF
+0.254 / 0.313 at h00-05, zero in only 4–5 % of cool hours — so **the 24-hour
+window is correct and was NOT narrowed**. Port Jefferson (2517, 385 MW) is
+economically laid up: median CF **exactly 0.000 in every hour block of every
+year**, 73 % of cool hours at zero, yet ~100 % model availability because the
+2026-07-26 guard fix (`6a8f285`) correctly un-booked lay-up from the outage
+extract. It absorbed **72.6 % of everything the limb forced** (1.87 of 2.57 TWh
+over three years) on **7.2 %** of the fleet's output — rule 17
+`[R-FLOOR-WINDOW]` verbatim. Its conduct is U-shaped in temperature
+(P(on)=0.93 at tmax ≥ 30 °C, 0.73 below 0 °C, 0.24 in mild weather): the ramp
+limbs' driver, not a persistent base. Correcting both **cancelling** basis errors
+(a daily-mean statistic applied hourly; a fleet aggregate applied per unit) gives
+0.2666 against the frozen 0.2620, so `floor_pct` is **unchanged** and the fix
+adds **zero free parameters** (rule 21 `[R-DOF]`).
+
+**Why the diagnostics were blind:** D-4 is **tautological** for an `h0-23` floor
+(`offwindow_share = 0.0` by construction — it cannot fail), and D-2 is
+class-aggregate, so one plant carrying 73 % of a class's forcing is invisible and
+C8 still PASSes.
+
+**Q2 — K6′ adopted (owner, 2026-08-16).** Bare K6 ("any D-2 mechanism's forced
+share rises") is structurally biased against any lever that relieves a
+constraint. K6′ makes a share rise **escalate to provenance + shape** (D-4 window
++ D-1 `profile_r`/`cv_ratio`) rather than kill, mirroring rule 20's own amended
+C8 logic; the energy-normalised `Δforced` is reported, not gated. Adopted **with
+the D-4 per-unit conduct rider** — not yet implemented, so K6′'s provenance leg
+is currently unproven rather than passed.
+
+**A/B (rule 15, both registered; rule 16, 2023 2024 2025 in one bundle each):**
+control `2026-08-16-nyiso-140-control`, arm
+`2026-08-16-nyiso-140-layup-exclusion`. **All six pre-registered kill gates
+clean.** K3 liveness: the floor shed **0.602 / 0.560 / 0.625 TWh**, against the
+~0.62 TWh/yr predicted from CAMPD *before any solve* — the identification sized
+the object correctly. Both read `NOT-YET` only on `C6 UNATTESTED` (fresh probe
+bundles carry no attestation), symmetric across the comparison.
+
+**The arm does not improve the fit, exactly as pre-registered.** ST_GAS error
++2.679 → +2.263 (2023), −0.595 → −0.916 (2024), −3.379 → −3.737 (2025); summed
+|error| 6.653 → 6.916 TWh; mean LMP firms +0.21 / +0.18 / +0.40 $/MWh. Registered
+on rule 1 `[R-STRUCT]`. Under rule 14 `[R-ACCURATE]` the degradation is a
+**discovered bug** — the manufactured 1.87 TWh was masking a real downstate
+under-production (2025 ST_GAS was already −21 % before the fix) — and the
+successor is that root cause, **never re-flooring the laid-up plant**.
+
+**First application of K6′, and it earned its keep:** the surviving
+`nyiso_gas_commitment_bridge` share ROSE (+0.0045 / +0.0118 / +0.0051) while
+doing strictly less work; bare K6 would have killed the arm.
+
+Also fixed a pre-existing defect found here: `--replay-bundle` could not replay
+the designated NYISO keeper at HEAD, because `_RULE26_DELETED_UNCONDITIONAL`
+strips a rule-26-deleted field from top-level meta keys but not from inside a
+generic override dict splatted via `with_overrides(**d)` — and the keeper records
+`nyiso_solar_registry_cod_dates` in `coal_prb_sigmoid_overrides`.
+
+Keeper `2026-08-08-nyiso-133-cod-arm` UNTOUCHED and still
+`CALIBRATED-WITH-CAVEATS`; promotion is the owner's call. `complete` (validation
+only), ABSENT from `final`; frontier CLEARED 2026-08-06; holdout spend freeze
+ACTIVE and untouched (2023–2025 only). Evidence:
+`results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md`,
+`PREREG-nyiso140-li-st-floor-membership-2026-08-16.md`; probe
+`scripts/probes/_nyiso140_li_st_floor_membership.py`.
+Next number: **nyiso-141**.
