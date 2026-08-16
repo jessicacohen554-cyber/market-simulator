@@ -77,7 +77,7 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-for _p in (str(REPO / "src"), str(REPO), str(REPO / "scripts" / "probes")):
+for _p in (str(REPO / "src"), str(REPO)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -106,9 +106,9 @@ MATCHED_HOURS: tuple[int, ...] = tuple(range(11, 23))
 
 def _probe_imports():
     """Return the committed constructions, imported (never re-implemented)."""
-    import ercot123_coal_sced_reach as e123
-    import ercot136_coal_headroom_conduct as e136
-    import ercot138_coal_gas_ranking as e138
+    from scripts.probes import ercot123_coal_sced_reach as e123
+    from scripts.probes import ercot136_coal_headroom_conduct as e136
+    from scripts.probes import ercot138_coal_gas_ranking as e138
 
     return e123, e136, e138
 
@@ -123,7 +123,7 @@ def _census_imports():
     clock) are the ercot-163 record this session's numbers must bridge to, so
     they are imported, never re-derived (ercot-170 precommit §1).
     """
-    import ercot163_cc_commitment_state_census as e163
+    from scripts.probes import ercot163_cc_commitment_state_census as e163
 
     return e163
 
@@ -554,7 +554,7 @@ def fuel_basis_by_year(years: tuple[int, ...] = (2024, 2025, 2023)) -> dict:
         :data:`FOOTING_TOL`, else the basis moved between ERCOT-138 and the
         keeper and no year's value is comparable to the identification's.
     """
-    from ercot138_coal_gas_ranking import (
+    from scripts.probes.ercot138_coal_gas_ranking import (
         MODEL_CC_GROUPS,
         MODEL_COAL_GROUPS,
         _tranche_role,
@@ -688,7 +688,10 @@ def capability_census(
             f"delivery {e163.YEAR}. Extending it to another year is an edit to a "
             "committed construction, not a call — do that in its own session."
         )
-    from derive_ercot_sced_offer_wall import _delivery_year_rows, _sced_source_files
+    from scripts.data.derive_ercot_sced_offer_wall import (
+        _delivery_year_rows,
+        _sced_source_files,
+    )
 
     files = _sced_source_files(int(year))
     if not files:
