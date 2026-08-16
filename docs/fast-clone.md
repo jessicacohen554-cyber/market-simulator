@@ -174,6 +174,21 @@ A prompt that omits the line is read as `code`. A session that finds it needs
 more can widen at any time (`--profile ercot`); hydration is incremental, so
 already-fetched blobs are not re-fetched.
 
+**PJM replay lanes: `--profile pjm` is NOT sufficient on its own** (audit
+2026-08 gap row B2; measured by DEBUG-B,
+`docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md` §8). A fresh-clone PJM
+keeper re-solve needs two inputs no profile can fetch, both gitignored:
+(1) the derived `data/clean/` tree — `pjm_measured_interface_limits` raises
+rather than no-ops, so budget the `scripts/regenerate_clean.py` rebuild
+(~2 h wall on the 2026-08 container class); and (2) the licensed
+`data/raw/pjm-da-virtuals/` feed — `pjm_da_virtual_bids` likewise refuses to
+no-op, so budget the live DataMiner fetch
+(`scripts/data/fetch_pjm_da_virtuals.py --years 2023 2024 2025 --feeds
+hrl_da_incs_decs`, 36 monthly files; intermittent 502s through the egress
+proxy are auto-resumed but make the run non-hermetic). Charter authors for
+any rule-15 same-session-registration PJM lane must schedule both — that is
+a material multi-hour scheduling fact, not a footnote.
+
 ## Is it safe to run the history-rewrite action?
 
 `.github/workflows/cleanup-large-blobs.yml` (`workflow_dispatch`-only) strips
