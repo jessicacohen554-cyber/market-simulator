@@ -43,20 +43,20 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-REPO = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(REPO / "scripts"))
-sys.path.insert(0, str(REPO / "scripts" / "data"))
-sys.path.insert(0, str(REPO / "src"))
+# Canonical bootstrap (scripts/README.md): repo root on sys.path so the
+# scripts package resolves on a direct run; market_sim via the editable install.
+from market_sim.config.paths import REPO_ROOT
+
+sys.path.insert(0, str(REPO_ROOT))
 
 # Reuse the exact helpers/constants the other ISO builders use so the MISO
 # record is schema-identical (same percentile levels, monthly reducer, calendar
 # and output path) rather than a parallel re-implementation that could drift.
-from derive_actual_lmp import (  # noqa: E402
+from scripts.data.derive_actual_lmp import (  # noqa: E402
     OUT,
     _HOURS_PER_YEAR,
     _MONTH_START_HOUR,

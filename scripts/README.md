@@ -119,8 +119,8 @@ bare form went with them. One recorded side effect: the frozen probe
 `probes/pjm123_composite_precheck.py` bare-imports `run_calibration` itself
 while also calling the now-canonical `lib/bundle_fleet.py`, so a re-run of
 that probe would hold both names (identical code; frozen record, left as-is).
-The **residue is the wider sibling web, re-measured 2026-08-16 at 56 bare
-sites across 34 live files** (down from the 2026-07-27 census's 105/91 —
+The **residue is the wider sibling web, re-measured 2026-08-16 at 54 bare
+sites across 32 live files** (down from the 2026-07-27 census's 105/91 —
 the intervening lanes' conversions are real; the census is now re-runnable
 any time with `python scripts/ci_refactor_guards.py --sibling-census`, an
 advisory mode, so the recorded number can be re-derived instead of trusted).
@@ -133,7 +133,7 @@ seven-file CAISO derive cluster (`derive_caiso_import_tranches` /
 (`dashboard_add_run.py`, `build_ffr3a3_scorecard.py`,
 `generate_parameter_registry.py`, the two `*_zonal_sufficiency.py`,
 `validate_ercot_online_capacity.py`, `diagnostics/scratchpad_diag_evening.py`,
-`score_crossover.py`) — each under the full per-file protocol below, with
+`score_crossover.py`); and a **batch-2 tail, 56/34 → 54/32**, converting the two `scripts/data/` builders the batches missed — `build_eia930_hourly_from_raw.py` (`convert_eia930`) and `build_miso_lmp_reference.py` (`derive_actual_lmp`) — each under the full per-file protocol below, with
 one test rig repaired off its own second-copy pattern
 (`test_dashboard_add_run_sidecar.py` injected a `spec_from_file_location`
 copy of `calibration_verdict` under the bare name; it now stubs the
