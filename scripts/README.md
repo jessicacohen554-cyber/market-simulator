@@ -119,27 +119,37 @@ bare form went with them. One recorded side effect: the frozen probe
 `probes/pjm123_composite_precheck.py` bare-imports `run_calibration` itself
 while also calling the now-canonical `lib/bundle_fleet.py`, so a re-run of
 that probe would hold both names (identical code; frozen record, left as-is).
-The **residue is the wider sibling web, re-measured 2026-08-15 at 73 bare
-sites across 49 live files** (down from the 2026-07-27 census's 105/91 —
+The **residue is the wider sibling web, re-measured 2026-08-16 at 56 bare
+sites across 34 live files** (down from the 2026-07-27 census's 105/91 —
 the intervening lanes' conversions are real; the census is now re-runnable
 any time with `python scripts/ci_refactor_guards.py --sibling-census`, an
 advisory mode, so the recorded number can be re-derived instead of trusted).
-The 2026-08-14 reading was 74/50; the single site that left is
-`gen_caiso166_attestation.py`, which rotated to `archive/` in the 2026-08-15
-keeper rotation above — the census counts live files only, so the site is now
-frozen record rather than converted, and the open conversion work is unchanged.
-The web is overwhelmingly `scripts/data/` derive/build/fetch helpers
-importing each other by bare name (61 same-directory sites, resolvable only
-because `sys.path[0]` is the script's own directory), plus 12 cross-directory
-sites (`lib/sced_corpus_instruments.py` deferred-importing probe modules, the
-two `*_zonal_sufficiency.py`, `validate_ercot_online_capacity.py` and
-`diagnostics/scratchpad_diag_evening.py`) and
-a few top-level clusters (`dashboard_add_run.py`,
-`build_ffr3a3_scorecard.py`). Converting that web is open work —
-per-file, with the same both-paths verification, PLUS a direct-run check per
-converted file: the canonical `from scripts.… import` form needs the repo
-root on `sys.path`, where the bare form needed only the script's own
-directory, so any file meant to run as `python scripts/data/foo.py` must
+The 2026-08-14 reading was 74/50; the single site that left before the
+batch conversions was `gen_caiso166_attestation.py`, which rotated to
+`archive/` in the 2026-08-15 keeper rotation above. **Two chartered batches
+converted 2026-08-16** (DEBUG-manager reissue; 73/49 → 56/34): batch 1 the
+seven-file CAISO derive cluster (`derive_caiso_import_tranches` /
+`derive_ordc_overlay` consumers), batch 2 the top-level cluster
+(`dashboard_add_run.py`, `build_ffr3a3_scorecard.py`,
+`generate_parameter_registry.py`, the two `*_zonal_sufficiency.py`,
+`validate_ercot_online_capacity.py`, `diagnostics/scratchpad_diag_evening.py`,
+`score_crossover.py`) — each under the full per-file protocol below, with
+one test rig repaired off its own second-copy pattern
+(`test_dashboard_add_run_sidecar.py` injected a `spec_from_file_location`
+copy of `calibration_verdict` under the bare name; it now stubs the
+canonical module). The remaining web is overwhelmingly `scripts/data/`
+derive/build/fetch helpers importing each other by bare name
+(same-directory sites resolvable only because `sys.path[0]` is the script's
+own directory — the big ERCOT derive cluster), plus
+`lib/sced_corpus_instruments.py` deferred-importing probe modules and the
+deploy trio (`register_forecast_run.py` / `register_hindcast.py` /
+`pb5_assemble.py`). Converting the rest is open work —
+per-file, with the same both-paths verification (structural code equality,
+NOT marshal bytes: marshal's back-ref sharing varies with string interning
+across two loads of one file and false-flags equal code), PLUS a direct-run
+check per converted file: the canonical `from scripts.… import` form needs
+the repo root on `sys.path`, where the bare form needed only the script's
+own directory, so any file meant to run as `python scripts/data/foo.py` must
 carry (or gain) the repo-root bootstrap before conversion. Note the deploy
 trio (`register_hindcast.py` et al.) runs on bare `python3` in a sparse
 checkout, so any conversion there must keep its stdlib bootstrap
