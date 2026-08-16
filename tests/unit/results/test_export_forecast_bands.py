@@ -19,9 +19,10 @@ import pandas as pd
 from tests.helpers import REPO_ROOT
 
 REPO = REPO_ROOT
-sys.path.insert(0, str(REPO / "scripts"))
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
 
-import export_forecast_bands as efb  # noqa: E402
+from scripts import export_forecast_bands as efb  # noqa: E402
 
 
 def _bands_df(rows):

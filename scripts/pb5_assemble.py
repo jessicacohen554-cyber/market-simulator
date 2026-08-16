@@ -37,6 +37,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import sys
 from dataclasses import replace
 from pathlib import Path
 
@@ -53,6 +54,8 @@ from market_sim.config.schedulable import (
 logger = logging.getLogger("pb5_assemble")
 
 REPO = Path(__file__).resolve().parent.parent
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))  # repo root: canonical scripts.* sibling imports on direct run
 
 
 def prior_from_artifact(path) -> StructuralPrior:
@@ -281,7 +284,7 @@ def do_sensitivity(args) -> None:
 
 def do_publish(args) -> None:
     """Export the fan-chart payload, manifest entry and markdown table."""
-    import export_forecast_bands as efb
+    from scripts import export_forecast_bands as efb
 
     written = efb.export(
         args.out_dir,

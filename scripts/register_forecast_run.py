@@ -730,8 +730,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.bundle is not None:
         # Reuse the canonical hindcast sidecar builder (invariants/scoring live
         # there), write the canonical record, then register into the namespace.
-        sys.path.insert(0, str(REPO / "scripts"))
-        import register_hindcast as RH  # noqa: PLC0415
+        from scripts import register_hindcast as RH  # noqa: PLC0415
 
         RH.SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
         sidecar = RH.build_sidecar(
