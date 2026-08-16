@@ -32,8 +32,13 @@ from pathlib import Path
 import pandas as pd
 
 # Reuse the paging + key resolution of the wide-extract fetcher (same API).
-sys.path.insert(0, str(Path(__file__).parent))
-from fetch_eia930_hourly import FUEL_URL, REGION_URL, _api_key, _fetch
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # repo root: canonical sibling import
+from scripts.data.fetch_eia930_hourly import (  # noqa: E402
+    FUEL_URL,
+    REGION_URL,
+    _api_key,
+    _fetch,
+)
 
 # region-data ``type`` code -> human-readable name, matching the uploaded
 # 2023-2025 extracts (EIA's own type-name strings).

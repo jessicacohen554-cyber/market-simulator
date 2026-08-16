@@ -38,10 +38,9 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO / "scripts"))
 
-sys.path.insert(0, str(REPO / "scripts" / "data"))
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.results.rcpf import (  # noqa: E402
     rcpf_product_prices,
@@ -52,7 +51,7 @@ from market_sim.results.rcpf import (  # noqa: E402
 # price and reporting helpers are market-design-agnostic — ISO-NE's reserve
 # fuels (gas + oil) are the same set NYISO uses — so reuse them directly
 # rather than fork a second copy.
-from derive_nyiso_rcpf_overlay import (  # noqa: E402
+from scripts.data.derive_nyiso_rcpf_overlay import (  # noqa: E402
     _demand_weights,
     _dist,
     _final_pass,

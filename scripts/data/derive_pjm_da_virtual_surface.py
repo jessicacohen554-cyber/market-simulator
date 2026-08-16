@@ -71,13 +71,11 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO))
-sys.path.insert(0, str(REPO / "scripts"))
 
 from market_sim.config.paths import CALIBRATION_DIR, PJM_DA_VIRTUALS_DIR  # noqa: E402
 
-sys.path.insert(0, str(REPO / "scripts" / "data"))
 RAW_DIR = PJM_DA_VIRTUALS_DIR
 OUT_JSON = CALIBRATION_DIR / "pjm_da_virtual_surface_condbinned.json"
 OUT_CSV = CALIBRATION_DIR / "pjm_da_virtual_surface_summary.csv"
@@ -151,7 +149,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--rungs", type=int, default=8)
     args = ap.parse_args(argv)
 
-    from derive_pjm_offer_surface import _netload_pct, _pjm_fuel_daily
+    from scripts.data.derive_pjm_offer_surface import _netload_pct, _pjm_fuel_daily
 
     files, coverage = _month_files(args.years)
     nl = _netload_pct(args.years)

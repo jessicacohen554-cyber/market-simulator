@@ -49,14 +49,13 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(REPO / "scripts"))
-sys.path.insert(0, str(REPO / "scripts" / "data"))
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
 
 # Reuse the exact helpers/constants the other ISO builders use so the MISO
 # record is schema-identical (same percentile levels, monthly reducer, calendar
 # and output path) rather than a parallel re-implementation that could drift.
-from derive_actual_lmp import (  # noqa: E402
+from scripts.data.derive_actual_lmp import (  # noqa: E402
     OUT,
     _HOURS_PER_YEAR,
     _MONTH_START_HOUR,
