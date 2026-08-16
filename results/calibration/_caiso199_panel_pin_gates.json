@@ -41,7 +41,10 @@
    }
   },
   "pass": true,
-  "landed": null,
+  "landed": {
+   "main_sha256": "da33e509465911341ba0867aefe02214f2e8ccb666ef86747e0e7ad8b47c86bb",
+   "layup_sha256": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43"
+  },
   "statement": "Leg (a) proves the pin is INERT on the committed baseline (the two scopes coincide \u21d2 committed bytes reproduce exactly). Leg (b) proves the STATE-LIST pin reproduces the caiso-198 DIRECTORY-scoped candidate byte-for-byte, confirming the \u00a71b coal-table no-op claim."
  }
 }
