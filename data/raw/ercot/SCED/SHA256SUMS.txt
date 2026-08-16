@@ -1,7 +1,9 @@
 # ERCOT NP3-965 SCED Gen Resource corpus — SHA256 manifest over POST-SLIM bytes
 # Regenerated 2026-08-15 after the BLOAT-B-1 in-place slim (column projection to
 # the audited consumer union + zstd-15; rtcb-format-2026/ recompress-only).
-# Pre-slim (raw) hashes: the SHA256SUMS.txt at commit 971eaa3 (merged via PR #3957).
+# Pre-slim (raw) hashes: WERE in this file at commit 971eaa3 (PR #3957) — that
+# blob was stripped by the 2026-08-16 history rewrite (run 31955205445) and the
+# pre-slim hashes are unrecoverable from this repository; see README.md.
 819adc0465c5529587c252ebec56db9fdfec7cc7f4d0b5c9fc499b0def7f15f9  2023-03.part0000.parquet
 f5085ca8074120d46621b6045214707dd5b634d02c7ffdefe96ff23dc251c309  2023-03.part0001.parquet
 687fa94c40d44bfeb9184d6fcadfb485f17e2209518aaa802c49143b2be84191  2023-03.part0002.parquet

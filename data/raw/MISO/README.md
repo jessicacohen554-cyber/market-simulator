@@ -42,16 +42,13 @@ it does **not** generalize from the report period — take the URLs above verbat
 
 ## Recovery / re-fetch
 
-1. **Restore from git history — exact bytes, always available.** History is
-   kept (no rewrite), so every payload stays fetchable from the promisor remote
-   at the pin sha:
-
-   ```
-   git restore --source=315a24524a851566c3d32cc88668fa32dcbd1d74 -- data/raw/MISO
-   ```
-
-   **Pin sha `315a24524a851566c3d32cc88668fa32dcbd1d74`** — the last commit at
-   which these PDFs were tracked (origin/main, 2026-08-15).
+1. **Restore from git history — DEAD since the 2026-08-16 history rewrite**
+   (`cleanup-large-blobs.yml` run #18 / 31955205445, owner decision;
+   `docs/FINDING-history-rewrite-2026-08-16.md`). The pin
+   `315a24524a851566c3d32cc88668fa32dcbd1d74` no longer resolves and its
+   rewritten twin `94b9cda540b8` no longer carries these PDFs (verified
+   2026-08-16) — the payload blobs were stripped. `SHA256SUMS.txt` stays as
+   the identity record a re-fetch is verified against.
 
 2. **Re-fetch from the publisher.** Run from this directory:
 

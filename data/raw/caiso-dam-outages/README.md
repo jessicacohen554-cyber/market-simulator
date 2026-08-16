@@ -56,20 +56,17 @@ python scripts/data/build_caiso_resource_crosswalk.py              # reviewable 
 
 Two routes; both end at bytes verifiable against `SHA256SUMS.txt`.
 
-1. **Restore from git history (exact bytes, always available).** History is
-   kept — the conversion untracked the payloads at tip, it did **not** rewrite
-   history, so every snapshot remains fetchable forever from the promisor
-   remote at the pin sha:
+1. **Restore from git history — DEAD since the 2026-08-16 history rewrite**
+   (`cleanup-large-blobs.yml` run #18 / 31955205445, owner decision;
+   `docs/FINDING-history-rewrite-2026-08-16.md`). The pin
+   `315a24524a851566c3d32cc88668fa32dcbd1d74` no longer resolves, and its
+   rewritten twin `94b9cda540b8`'s tree no longer contains `daily/` (verified
+   2026-08-16) — the 1,094 snapshot blobs were stripped. `git restore
+   --source=<pin>` cannot recover them from this repository. `SHA256SUMS.txt`
+   remains the identity record: any recovered set is verified against it.
 
-   ```
-   git restore --source=315a24524a851566c3d32cc88668fa32dcbd1d74 -- data/raw/caiso-dam-outages/daily
-   ```
-
-   **Pin sha `315a24524a851566c3d32cc88668fa32dcbd1d74`** — the last commit at
-   which the `daily/*.xlsx` payloads were tracked (origin/main, 2026-08-15).
-   In a blobless partial clone this triggers a lazy fetch of ~155 MiB.
-
-2. **Re-fetch from CAISO (regenerates, does not guarantee byte identity).**
+2. **Re-fetch from CAISO — now the PRIMARY route (regenerates, does not
+   guarantee byte identity).**
 
    ```
    python scripts/data/fetch_caiso_dam_outages.py 2021-06-18 <today>
@@ -77,8 +74,12 @@ Two routes; both end at bytes verifiable against `SHA256SUMS.txt`.
    ```
 
    **Retention risk, stated:** the CAISO library's retention is *observed, not
-   contractual*. Route 1 is the backstop; `missing-days.txt` plus the sha
-   manifest make any re-fetch auditable against what was actually held.
+   contractual* — there is no longer a repository backstop behind it. A
+   snapshot day CAISO stops serving is unrecoverable except through GitHub's
+   `refs/pull/*` retention of the pre-rewrite trees (incidental, unadvertised,
+   no guarantee — e.g. `git fetch origin refs/pull/3956/head`).
+   `missing-days.txt` plus the sha manifest make any re-fetch auditable
+   against what was actually held.
 
 Verifying the manifest is also how you confirm a restore succeeded before
 re-deriving. Then re-run `curate_caiso_dam_outages.py` only if the parquet

@@ -70,23 +70,23 @@ rule-23 derive `scripts/data/derive_sced_coal_uppertail.py`
 (→ committed `offer_curve_sced_coal_uppertail.json`).
 
 Their bytes are pinned by `SHA256SUMS-60day-sced-extracts.txt` (tracked, this
-directory): POST-slim hashes at head, pre-slim raw hashes in the same file at
-commit `971eaa3` (PR #3957). Recovery routes:
+directory): POST-slim hashes at head. (The pre-slim raw hashes lived in the
+same file at commit `971eaa3` — that manifest version was stripped by the
+2026-08-16 history rewrite and is gone from this repository.) Recovery routes:
 
-1. **Git history (exact bytes, always available)** — the conversion untracked
-   the payloads at tip, no history rewrite:
-
-   ```
-   git restore --source=726f389d94c45141bac83eacfdaea5e18a465c56 -- \
-     'data/raw/ercot/60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot74_tail_days.parquet' \
-     'data/raw/ercot/60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot75_control_days.parquet' \
-     'data/raw/ercot/60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot75_control_days.parquet'
-   ```
-
-   Verify with `sha256sum -c` against the manifest's three lines.
-2. **Re-fetch from the MIS while retention lasts** (NP3-965 delivery-range
-   pulls, `scripts/data/fetch_ercot_60day_sced_gen_resource.py
+1. **Git history — DEAD since the 2026-08-16 history rewrite** (run #18 /
+   31955205445, owner decision; `docs/FINDING-history-rewrite-2026-08-16.md`).
+   Both pins (`726f389d…` for the post-slim payloads, `971eaa3…` for the
+   pre-slim bytes) no longer resolve, and the rewritten twins' trees no longer
+   carry these three extracts. `git restore --source=<pin>` cannot recover
+   them from this repository. The manifest stays: it is the identity record a
+   re-fetch is judged against.
+2. **Re-fetch from the MIS while retention lasts — now the ONLY route**
+   (NP3-965 delivery-range pulls, `scripts/data/fetch_ercot_60day_sced_gen_resource.py
    --delivery-range …` — the SCED-CT precedent). The 2024/2025 delivery
    windows sat inside the rolling ~28-month retention as of 2026-08-09 and
-   age out continuously; a re-fetch reproduces the *data*, not these exact
-   probe-day-subset bytes — the manifest hashes are the byte truth.
+   age out continuously; a delivery day that ages out is thereafter
+   **unrecoverable from any source**. A re-fetch reproduces the *data*, not
+   these exact probe-day-subset bytes — the manifest hashes are the byte
+   truth. (Last-resort salvage: GitHub's `refs/pull/*` retention still reaches
+   the pre-rewrite trees as of 2026-08-16 — unadvertised, no guarantee.)
