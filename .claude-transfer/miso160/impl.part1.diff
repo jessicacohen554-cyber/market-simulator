@@ -1,0 +1,460 @@
+diff --git a/docs/codebase-site/data/mechanism-matrix/CAISO.js b/docs/codebase-site/data/mechanism-matrix/CAISO.js
+index 3a059a0..0cea159 100644
+--- a/docs/codebase-site/data/mechanism-matrix/CAISO.js
++++ b/docs/codebase-site/data/mechanism-matrix/CAISO.js
+@@ -84,6 +84,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
+     cc_nameplate_summer_derate: { cell: "U" },
+     summer_derate_basis_aware: { cell: "." },
+     commission_year_cod_fallback: { cell: "U", ev: "exposed on the shared assembly.py::_commission_year path (registry hit share 0.0%, miso-158 census; 2025 non-CHP summer capability overstatement censused per ISO) — rule 25/28(d): no verdict transfers, this lane measures its own before arming" },
++    summer_wefor_share_override: { cell: "U", ev: "the 0.30 constant's seasonal split stays this lane's live treatment; the per-ISO measured override (miso-160 construction) is unarmed here — rule 25/28(d): no value transfers, this lane derives its own from its own admissible ticket-based record before arming" },
+     coal_nameplate_summer_derate: { cell: "." },
+     unit_outage_lp_capacity_basis: { cell: "K", ev: "caiso-184 (results/calibration/PRECHECK-caiso184-capacity-basis-2026-08-08.md, FINDING-caiso184-capacity-basis-2026-08-08.md; probes _caiso184_capacity_basis_census.py / _caiso184_be_proof.py / _caiso184_arm_identity.py; records _caiso184_capacity_basis_census.json / _caiso184_be_proof.json)" },
+     wefor_residual: { cell: "K", ev: "ARMED IN THE KEEPER (2026-08-16-caiso-197-w2-r5, via the composed Wave-2 ladder; O -> K at the caiso-197 §6 promotion). caiso-197 lane-2 RE-RUN (results/calibration/FINDING-caiso197-wefor-rerun-2026-08-16.md; PRECHECK-caiso197-wefor-rerun-2026-08-16.md @ 995cfe2c7 pushed before any solve; records _caiso197_ctrl_tolerance.json + _caiso197_l2_gates.json) — R -> O 2026-08-16: the arm wefor_residual=0.0 scoped {CC_REGULAR} / wefor_multiplier->1.0 is ACCEPTED 4/4 on the pre-registered gates on the RE-ANCHORED caiso-196 base (owner promotion = the re-anchor authorization; the {CC_REGULAR} scope is the gatespec's own G-COV fail-closed subset on the repaired instrument, 0.9758/0.9667 both readings, CC_CHP stays excluded at 0.6357 strict — a real CEMS-exemption limit). G-DOF: ledger 11/8 -> 10/7, the fitted ERCOT-derived wefor_multiplier=0.7 compensation RETIRED on the sanctioned removed path; G-ONEMECH exact three-field diff over the full config; control BIT-ZERO vs the committed keeper (noise floor 0.0). The keeper's disclosed C1-2023 CC_REGULAR FAIL (-4.44 TWh, ACCEPT-WITH-FLIP at caiso-196) HEALS in the arm (-3.94 TWh, back in band; C1 12/12) — the other half of the same double-count repaired; C3b clean all years (0.076/0.152/0.173), no pass->fail flip anywhere, C3a reported-only per the direction-hazard clause. Runs 2026-08-16-caiso-197-l2-{control,wefor}. Cell K follows the Wave-2 §6 C3a-blind promotion if the composed rung survives; the structural acceptance is unconditional. Kill lineage: caiso-193 (REFUSED AT G-COV on the frozen instrument, killed before solve — FINDING-caiso193-wefor-residual-2026-08-15.md, _caiso193_wefor_coverage.json: CC_REGULAR 0.9406/0.8414 pre-remap, decomposed into the El Segundo remap gap [repaired caiso-196] + the Desert Star NV state-scope gap [NV intake landed caiso-197, extract re-derive deferred post-ladder]); identification lineage caiso-187 (_caiso187_residual_identification.json, value frozen, never recomputed)" },
+diff --git a/docs/codebase-site/data/mechanism-matrix/ERCOT.js b/docs/codebase-site/data/mechanism-matrix/ERCOT.js
+index f60c2c9..d57f0ee 100644
+--- a/docs/codebase-site/data/mechanism-matrix/ERCOT.js
++++ b/docs/codebase-site/data/mechanism-matrix/ERCOT.js
+@@ -84,6 +84,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
+     cc_nameplate_summer_derate: { cell: "U", ev: "ercot-177 (declared cell split RESOLVED as two rows; no solve — results/calibration/FINDING-ercot177-temp-derate-refused-2026-08-07.md §5); ercot-208 PHASE-0 STOP, cell DELIBERATELY LEFT U — no mechanism was tested, no LP built (docs/FINDING-ercot208-cc-nameplate-phase0-stop-2026-08-15.md; probe scripts/probes/ercot208_cc_nameplate_phase0.py; results/calibration/ercot208_cc_nameplate_phase0.json). Unarmed on the keeper through all three channels; the OBJECT is measured and real (Jun-Sep -413.03 MW CC_CHP / +334.50 MW CC_REGULAR off the EIA-860 net-summer/nameplate ratings), but the ARM is refused ex ante on rule 13 [R-MEASURED]: the single boolean also fires arrays.py:712, dropping the statistical POF + age derate for CC (+2.15/+2.29 pp, ~954 MW) with NO ERCOT identification, and its own in-code premise ('wefor already capped to wefor_residual for this overlay-covered class') is FALSE on this keeper (wefor_residual_groups = [ST_CHP, ST_GAS], CC absent). Independent rule-19 ground: CC_REGULAR is DAM-covered so the ercot-177 §3 water-fill erases 76 % of the object by MW, and the surviving class CC_CHP is 44.94 % chp_steam-forced and PINNED out of the free-class score. A split leg-(i)-only field is a BUILD needing its own charter." },
+     summer_derate_basis_aware: { cell: "." },
+     commission_year_cod_fallback: { cell: "U", ev: "miso-158 census (_miso158_vintage_census.json): ERCOT registry hit share 99.7%; replacing ONLY the fall-through moves ERCOT by EXACTLY 0.000 GW (single miss 56611 Sandy Creek, COAL 936 MW, ages 12 and 15 both price at base rate under the 40/35 coal onsets) — a measured no-op, unarmed pending this lane's own decision" },
++    summer_wefor_share_override: { cell: "U", ev: "the 0.30 constant's seasonal split stays ERCOT's live treatment; the per-ISO measured override (miso-160 construction) is unarmed here — rule 25/28(d): no value transfers, this lane derives its own from its own admissible ticket-based record before arming" },
+     coal_nameplate_summer_derate: { cell: "K", ev: "docs/handoffs/ercot-coal-nameplate-summer-derate-2026-07.md; armed on the ERCOT keeper; row split out at ercot-177 (results/calibration/FINDING-ercot177-temp-derate-refused-2026-08-07.md §5)" },
+     unit_outage_lp_capacity_basis: { cell: "U" },
+     wefor_residual: { cell: "K", ev: "registration only — read from the ERCOT keeper's run_config.json (0.02); no ERCOT evidence, no verdict" },
+diff --git a/docs/codebase-site/data/mechanism-matrix/MISO.js b/docs/codebase-site/data/mechanism-matrix/MISO.js
+index 2d08ef9..98eeda5 100644
+--- a/docs/codebase-site/data/mechanism-matrix/MISO.js
++++ b/docs/codebase-site/data/mechanism-matrix/MISO.js
+@@ -84,6 +84,7 @@ window.MECH_MATRIX_SHARDS.MISO = {
+     cc_nameplate_summer_derate: { cell: "U", ev: "miso-141 (results/calibration/FINDING-miso141-summer-derate-double-count-confirmed-2026-08-07.md; PREREG results/calibration/PREREG-miso141-summer-derate-basis-2026-08-07.md @ 15de62ea) — CELL STAYS U, NO SOLVE SPENT, NO ARM. The flag was adjudicated as a CANDIDATE REPAIR for MISO's measured net-summer double count and REFUSED AS INSUFFICIENT, so no tested verdict is licensed and none is minted. What miso-141 measured, on the model's own loader + availability matrix, 2023-2025: MISO's gas pmax IS the EIA-860 net-summer rating (100.0 % of matched class capacity for CT_PEAKER / CT_CHP / CC_CHP; CC_REGULAR 83.6 %, the residual being EIA-860 rows filing summer capability ABOVE nameplate, already clamped by the 2541f647 guard), and SUMMER_CLASS_DERATE removes a further flat 10 % (CC) / 12.5 % (CT) on top of it — the same size as the nameplate->summer gap already inside that base (clean-subset gaps CC_REGULAR 11.40 %, CC_CHP 14.34 %, CT_PEAKER 16.35 %, CT_CHP 15.25 %). The 'incremental loss below the rating point' reading is REFUTED on MISO's own slopes and weather, independently of provenance: the implied incremental is -1.9 to -2.0 % (CC) / -3.6 to -3.8 % (CT), i.e. an UPRATE, since the mean summer hour is 8.3-11.9 C BELOW the p99 summer-peak rating condition in 18 of 18 zone-years; the flat derate is 3.3-5.2x too large AND inverted in sign. WHY THE FLAG IS NOT THE REPAIR: (a) coverage — it reaches CC_REGULAR + CC_CHP only, 50.3-52.1 % of the 5,933 / 5,853 / 5,686 MW of summer h12-17 capability at stake, while the CT half (2,824-2,841 MW/yr) has NO mechanism (there is no ct_nameplate_summer_derate) and CT_PEAKER carries both the largest gap and the largest idle headroom; (b) it is NOT a basis swap — on this outage_source='historic' keeper cc_np_derate_backcast also drops the statistical POF and the age/performance derate for CC (arrays.py:626-637) and wefor_residual is None, so arming it changes FOUR things at once (rule 19 [R-ONE-MECH]); (c) a CC-only fix leaves two classes competing on the same margin with inconsistent capacity bases. NOT A LEVER and never to be chartered as one: the repair ADDS capability (price sign DOWN, the wrong way for a model already -14.1 % low in 2025) and lands 2.4-3.2x inside miso-139 §7's own cushion, reproduced here to the MW (17,544 / 18,828 / 13,720). CROSS-ISO READ ONLY (rule 25 [R-ISO-SCOPE] / 28(d) — no verdict transferred, no other cell touched): plant_level_fleet=True AND this flag False is MISO alone, 34/34 committed bundles, against CAISO 20/20, NYISO 18/18, NEISO 9/9, PJM 6/6 all True; ERCOT is False but not comparable (CAMPD-bin Nameplate_MW basis, so its flat derate sits on nameplate). The successor is a CLASS-AGNOSTIC pure basis switch covering CT as well as CC, with the POF/age-derate drops kept behind their own flag — a mechanism change (rules 19/24) and an OWNER DECISION, specified in the finding §11 and NOT built." },
+     summer_derate_basis_aware: { cell: "K", ev: "miso-148 (results/calibration/FINDING-miso148-summer-basis-repair-2026-08-09.md; PREREG-miso148-cc-availability-summer-basis-2026-08-09.md @ 456b376, pushed before any adjudicating statistic; runs 2026-08-09-miso-148-control / 2026-08-09-miso-148-basis-aware; probes _miso148_l2_audit.py / _miso148_admission.py / _miso148_ab.py; records _miso148_l2_audit.json / _miso148_admission.json / _miso148_ab.json). Evidence base miso-141 (FINDING-miso141-summer-derate-double-count-confirmed-2026-08-07.md §§4-6, §9, §11.2) and miso-147 (FINDING-miso147-cc-availability-hole-2026-08-09.md §§3-4)" },
+     commission_year_cod_fallback: { cell: "K", ev: "miso-159 (results/calibration/FINDING-miso159-commission-year-cod-repair-2026-08-15.md; PREREG-miso159-commission-year-cod-fallback-2026-08-15.md @ fdb099f blob 77b76622, pushed and byte-verified BEFORE the construction was built; runs 2026-08-15-miso-159-control / 2026-08-15-miso-159-cod-vintage; probe scripts/probes/_miso159_cod_vintage_instrument.py; record _miso159_cod_vintage_instrument.json; unit tests tests/unit/data/test_campd_bins.py::TestCommissionYearCodFallback). ARMED ON THE KEEPER 2026-08-15-miso-159-cod-vintage — promoted by the PREREG §7(a) rule itself (fail set strict subset, no criterion-year flip). Evidence base miso-157 §7 (the defect, measured at 100.0% EIA-860 coverage) and the miso-158 cross-ISO census (_miso158_vintage_census.json)" },
++    summer_wefor_share_override: { cell: "O", ev: "miso-160 CHARTERED AND IN FLIGHT (PREREG-miso160-summer-wefor-measured-share-2026-08-16.md, pushed and blob-verified before the construction; owner provenance decision docs/handoffs/miso-outage-grain-data-ask-2026-07.md §9). Derived R* = 1.0599 (probe _miso160_wefor_shape_instrument.py: per-year composite 1.1039/0.9671/1.1086, V1-reproducing miso-157 to ≤0.0004; S-DERIVE silent). A/B vs same-HEAD zero-delta control in progress; this cell is re-stamped with the verdict in the same session" },
+     coal_nameplate_summer_derate: { cell: "U" },
+     unit_outage_lp_capacity_basis: { cell: "U" },
+     wefor_residual: { cell: "I", ev: "miso-149 (results/calibration/PREREG-miso149-overlay-contradiction-2026-08-10.md @ 318c0542 pushed and blob-verified against the FETCHED remote ref before any adjudicating statistic, FINDING-miso149-the-object-is-the-price-level-2026-08-10.md; probes scripts/probes/_miso149_{overlay,clean_scope,displacement}.py; records results/calibration/_miso149_{overlay,clean_scope,displacement}.json)" },
+diff --git a/docs/codebase-site/data/mechanism-matrix/NEISO.js b/docs/codebase-site/data/mechanism-matrix/NEISO.js
+index 2a82ab5..4ff492e 100644
+--- a/docs/codebase-site/data/mechanism-matrix/NEISO.js
++++ b/docs/codebase-site/data/mechanism-matrix/NEISO.js
+@@ -84,6 +84,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
+     cc_nameplate_summer_derate: { cell: "U" },
+     summer_derate_basis_aware: { cell: "." },
+     commission_year_cod_fallback: { cell: "U", ev: "exposed on the shared assembly.py::_commission_year path (registry hit share 0.0%, miso-158 census; 2025 non-CHP summer capability overstatement censused per ISO) — rule 25/28(d): no verdict transfers, this lane measures its own before arming" },
++    summer_wefor_share_override: { cell: "U", ev: "the 0.30 constant's seasonal split stays this lane's live treatment; the per-ISO measured override (miso-160 construction) is unarmed here — rule 25/28(d): no value transfers, this lane derives its own from its own admissible ticket-based record before arming" },
+     coal_nameplate_summer_derate: { cell: "." },
+     unit_outage_lp_capacity_basis: { cell: "U" },
+     wefor_residual: { cell: "U" },
+diff --git a/docs/codebase-site/data/mechanism-matrix/NYISO.js b/docs/codebase-site/data/mechanism-matrix/NYISO.js
+index 9ff5ac0..bff23b5 100644
+--- a/docs/codebase-site/data/mechanism-matrix/NYISO.js
++++ b/docs/codebase-site/data/mechanism-matrix/NYISO.js
+@@ -84,6 +84,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
+     cc_nameplate_summer_derate: { cell: "K", ev: "nyiso-115 (row added by the shared-field census; scripts/mechanism_matrix_gap_sweep.py shared leg + check_mechanism_matrix.py shared ratchet)" },
+     summer_derate_basis_aware: { cell: "." },
+     commission_year_cod_fallback: { cell: "U", ev: "exposed on the shared assembly.py::_commission_year path (registry hit share 0.0%, miso-158 census; 2025 non-CHP summer capability overstatement censused per ISO) — rule 25/28(d): no verdict transfers, this lane measures its own before arming" },
++    summer_wefor_share_override: { cell: "U", ev: "the 0.30 constant's seasonal split stays this lane's live treatment; the per-ISO measured override (miso-160 construction) is unarmed here — rule 25/28(d): no value transfers, this lane derives its own from its own admissible ticket-based record before arming" },
+     coal_nameplate_summer_derate: { cell: "." },
+     unit_outage_lp_capacity_basis: { cell: "U" },
+     wefor_residual: { cell: "U" },
+diff --git a/docs/codebase-site/data/mechanism-matrix/PJM.js b/docs/codebase-site/data/mechanism-matrix/PJM.js
+index 6abc2d2..ee8487e 100644
+--- a/docs/codebase-site/data/mechanism-matrix/PJM.js
++++ b/docs/codebase-site/data/mechanism-matrix/PJM.js
+@@ -84,6 +84,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
+     cc_nameplate_summer_derate: { cell: "U" },
+     summer_derate_basis_aware: { cell: "." },
+     commission_year_cod_fallback: { cell: "U", ev: "exposed on the shared assembly.py::_commission_year path (registry hit share 0.0%, miso-158 census; 2025 non-CHP summer capability overstatement censused per ISO) — rule 25/28(d): no verdict transfers, this lane measures its own before arming" },
++    summer_wefor_share_override: { cell: "U", ev: "the 0.30 constant's seasonal split stays this lane's live treatment; the per-ISO measured override (miso-160 construction) is unarmed here — a candidate record exists (data/raw/pjm-outages) but rule 25/28(d): no value transfers, this lane derives and adjudicates its own before arming" },
+     coal_nameplate_summer_derate: { cell: "U" },
+     unit_outage_lp_capacity_basis: { cell: "U" },
+     wefor_residual: { cell: "K", ev: "registration only — read from the PJM keeper's run_config.json (0.015); no PJM evidence, no verdict" },
+diff --git a/results/calibration/_miso160_wefor_shape_instrument.json b/results/calibration/_miso160_wefor_shape_instrument.json
+new file mode 100644
+index 0000000..4a64cb7
+--- /dev/null
++++ b/results/calibration/_miso160_wefor_shape_instrument.json
+@@ -0,0 +1,381 @@
++{
++  "prereg": "PREREG-miso160-summer-wefor-measured-share-2026-08-16.md",
++  "prereg_commit": "a96702b",
++  "prereg_blob": "57d2b8b1",
++  "bundle": "miso159_cod_B",
++  "share_replaced": 0.3,
++  "derive": {
++    "basis": {
++      "region": "MISO",
++      "cause_types": [
++        "Derated",
++        "Forced",
++        "Unplanned"
++      ],
++      "window": [
++        6,
++        7,
++        8,
++        9
++      ],
++      "loader": "market_sim.data.miso_outages.miso_outage_mw_series"
++    },
++    "years": {
++      "2023": {
++        "R_junsep_composite": 1.1039495519165858,
++        "R_junjul_composite": 1.0650720918267806,
++        "annual_mean_offline_mw": 21763.0,
++        "covered_days_nonzero": 365,
++        "V1_target": 1.104,
++        "V1_delta": -5.044808341425622e-05,
++        "V1_pass": true,
++        "per_bucket": {
++          "Derated": {
++            "R_junsep": 1.2608836558121412,
++            "R_junjul": 1.2613773279211162,
++            "annual_mean_mw": 7089.726027397261
++          },
++          "Forced": {
++            "R_junsep": 1.0705166439140938,
++            "R_junjul": 1.119198934412462,
++            "annual_mean_mw": 8416.734246575343
++          },
++          "Planned": {
++            "R_junsep": 0.5605872981539249,
++            "R_junjul": 0.5789461567748304,
++            "annual_mean_mw": 20590.408219178084
++          },
++          "Unplanned": {
++            "R_junsep": 0.9710927435805826,
++            "R_junjul": 0.7698095869604953,
++            "annual_mean_mw": 6256.539726027398
++          }
++        },
++        "per_region_composite": {
++          "North": 1.1634135853117524,
++          "Central": 1.112713148161706,
++          "South": 1.0318212515990508,
++          "MISO": 1.1039495519165858
++        }
++      },
++      "2024": {
++        "R_junsep_composite": 0.9670579168838747,
++        "R_junjul_composite": 0.9895369089767905,
++        "annual_mean_offline_mw": 24203.290410958904,
++        "covered_days_nonzero": 365,
++        "V1_target": 0.967,
++        "V1_delta": 5.791688387468685e-05,
++        "V1_pass": true,
++        "per_bucket": {
++          "Derated": {
++            "R_junsep": 1.238130397517495,
++            "R_junjul": 1.2217003088047897,
++            "annual_mean_mw": 8099.394520547945
++          },
++          "Forced": {
++            "R_junsep": 0.8101465337373045,
++            "R_junjul": 0.7788920538203569,
++            "annual_mean_mw": 8419.25205479452
++          },
++          "Planned": {
++            "R_junsep": 0.5899222955162683,
++            "R_junjul": 0.5290384895986974,
++            "annual_mean_mw": 17619.964383561644
++          },
++          "Unplanned": {
++            "R_junsep": 0.8532665040294458,
++            "R_junjul": 0.9756246391152423,
++            "annual_mean_mw": 7684.643835616438
++          }
++        },
++        "per_region_composite": {
++          "North": 1.1167371210466697,
++          "Central": 0.9816275870805851,
++          "South": 0.8560287289954812,
++          "MISO": 0.9670579168838747
++        }
++      },
++      "2025": {
++        "R_junsep_composite": 1.1086453253668733,
++        "R_junjul_composite": 1.1645491909338848,
++        "annual_mean_offline_mw": 28055.04109589041,
++        "covered_days_nonzero": 365,
++        "V1_target": 1.109,
++        "V1_delta": -0.0003546746331266615,
++        "V1_pass": true,
++        "per_bucket": {
++          "Derated": {
++            "R_junsep": 1.174293114363202,
++            "R_junjul": 1.2071530225720224,
++            "annual_mean_mw": 8980.498630136986
++          },
++          "Forced": {
++            "R_junsep": 1.0727750838605967,
++            "R_junjul": 1.0977725917979984,
++            "annual_mean_mw": 10078.709589041096
++          },
++          "Planned": {
++            "R_junsep": 0.6580188935052941,
++            "R_junjul": 0.6260010696970086,
++            "annual_mean_mw": 20634.254794520548
++          },
++          "Unplanned": {
++            "R_junsep": 1.0832975743306332,
++            "R_junjul": 1.196832838523797,
++            "annual_mean_mw": 8995.83287671233
++          }
++        },
++        "per_region_composite": {
++          "North": 1.2555727650836648,
++          "Central": 1.0721777659449865,
++          "South": 1.068735286559887,
++          "MISO": 1.1086453253668733
++        }
++      }
++    },
++    "pooled_R_star": 1.0599,
++    "pooled_band_P1": [
++      1.04,
++      1.08
++    ],
++    "s_derive_band": [
++      1.0,
++      1.12
++    ],
++    "V1_pass_all": true,
++    "S_DERIVE_fired": false
++  },
++  "reach": {
++    "r_star": 1.0599,
++    "years": {
++      "2023": {
++        "V3": {
++          "n_gen_control": 2929,
++          "n_gen_arm": 2929,
++          "n_gen_expected": 2929,
++          "carry_zones": 6,
++          "pass": true
++        },
++        "V4a_winter_max_abs_delta": 0.0,
++        "V4a_pass": true,
++        "V4b_analytic_conservation_max": 1.2977949511600003e-17,
++        "V4b_pass": true,
++        "V4c_final_array_annual_by_class_gw": {
++          "": 0.0,
++          "CC_CHP": -0.0007694326053625292,
++          "CC_REGULAR": -0.08532862859859708,
++          "COAL": 0.0,
++          "CT_CHP": 0.00024231154205650926,
++          "CT_PEAKER": -0.00015381498313534362,
++          "ST_CHP": -0.0007416972777883931,
++          "ST_GAS": -0.031642469179079535,
++          "hydro": 0.0
++        },
++        "P2_reach_by_class": {
++          "": {
++            "annual_gw": 0.0,
++            "summer_gw": 0.0,
++            "top200_junsep_gw": 0.0
++          },
++          "CC_CHP": {
++            "annual_gw": -0.0007694326053625292,
++            "summer_gw": -0.13271690699878638,
++            "top200_junsep_gw": -0.13383602812307935
++          },
++          "CC_REGULAR": {
++            "annual_gw": -0.08532862859859708,
++            "summer_gw": -0.9956864063303718,
++            "top200_junsep_gw": -1.030289898446064
++          },
++          "COAL": {
++            "annual_gw": 0.0,
++            "summer_gw": 0.0,
++            "top200_junsep_gw": 0.0
++          },
++          "CT_CHP": {
++            "annual_gw": 0.00024231154205650926,
++            "summer_gw": -0.04495556106816838,
++            "top200_junsep_gw": -0.04424293202919961
++          },
++          "CT_PEAKER": {
++            "annual_gw": -0.00015381498313534362,
++            "summer_gw": -1.4656004834112806,
++            "top200_junsep_gw": -1.4589746035888038
++          },
++          "ST_CHP": {
++            "annual_gw": -0.0007416972777883931,
++            "summer_gw": -0.056433091429820885,
++            "top200_junsep_gw": -0.06216957500653719
++          },
++          "ST_GAS": {
++            "annual_gw": -0.031642469179079535,
++            "summer_gw": -0.7683917360124272,
++            "top200_junsep_gw": -0.8877134260457167
++          },
++          "hydro": {
++            "annual_gw": 0.0,
++            "summer_gw": 0.0,
++            "top200_junsep_gw": 0.0
++          }
++        },
++        "P2_reach_total": {
++          "annual_gw": -0.11839373110190636,
++          "summer_gw": -3.4637841852508555,
++          "top200_junsep_gw": -3.617226463239401
++        }
++      },
++      "2024": {
++        "V3": {
++          "n_gen_control": 2923,
++          "n_gen_arm": 2923,
++          "n_gen_expected": 2923,
++          "carry_zones": 6,
++          "pass": true
++        },
++        "V4a_winter_max_abs_delta": 0.0,
++        "V4a_pass": true,
++        "V4b_analytic_conservation_max": 1.2977949511600003e-17,
++        "V4b_pass": true,
++        "V4c_final_array_annual_by_class_gw": {
++          "": 0.0,
++          "CC_CHP": -0.0017472280858093043,
++          "CC_REGULAR": -0.07108061863458513,
++          "COAL": 0.0,
++          "CT_CHP": 0.0002052921436861744,
++          "CT_PEAKER": 0.0005943880547263608,
++          "ST_CHP": -0.0016987108258038298,
++          "ST_GAS": -0.028965801021450282,
++          "hydro": 0.0
++        },
++        "P2_reach_by_class": {
++          "": {
++            "annual_gw": 0.0,
++            "summer_gw": 0.0,
++            "top200_junsep_gw": 0.0
++          },
++          "CC_CHP": {
++            "annual_gw": -0.0017472280858093043,
++            "summer_gw": -0.13955168494740844,
++            "top200_junsep_gw": -0.14026152396764974
++          },
++          "CC_REGULAR": {
++            "annual_gw": -0.07108061863458513,
++            "summer_gw": -0.9755663792266955,
++            "top200_junsep_gw": -1.0270268672208784
++          },
++          "COAL": {
++            "annual_gw": 0.0,
++            "summer_gw": 0.0,
++            "top200_junsep_gw": 0.0
++          },
++          "CT_CHP": {
++            "annual_gw": 0.0002052921436861744,
++            "summer_gw": -0.04615137749959998,
++            "top200_junsep_gw": -0.04537692138600596
++          },
++          "CT_PEAKER": {
++            "annual_gw": 0.0005943880547263608,
++            "summer_gw": -1.5061953862511646,
++            "top200_junsep_gw": -1.4996538463609275
++          },
++          "ST_CHP": {
++            "annual_gw": -0.0016987108258038298,
++            "summer_gw": -0.05992284589380466,
++            "top200_junsep_gw": -0.06583082977904645
++          },
++          "ST_GAS": {
++            "annual_gw": -0.028965801021450282,
++            "summer_gw": -0.8661074116391356,
++            "top200_junsep_gw": -0.9403421532812806
++          },
++          "hydro": {
++            "annual_gw": 0.0,
++            "summer_gw": 0.0,
++            "top200_junsep_gw": 0.0
++          }
++        },
++        "P2_reach_total": {
++          "annual_gw": -0.10269267836923603,
++          "summer_gw": -3.593495085457809,
++          "top200_junsep_gw": -3.718492141995789
++        }
++      },
++      "2025": {
++        "V3": {
++          "n_gen_control": 2923,
++          "n_gen_arm": 2923,
++          "n_gen_expected": 2923,
++          "carry_zones": 6,
++          "pass": true
++        },
++        "V4a_winter_max_abs_delta": 0.0,
++        "V4a_pass": true,
++        "V4b_analytic_conservation_max": 1.2977949511600003e-17,
++        "V4b_pass": true,
++        "V4c_final_array_annual_by_class_gw": {
++          "": 0.0,
++          "CC_CHP": 0.0009348263104003901,
++          "CC_REGULAR": -0.07739650372818847,
++          "COAL": 0.0,
++          "CT_CHP": 0.00029428708279019593,
++          "CT_PEAKER": 0.002634550363015073,
++          "ST_CHP": -0.002676165745782187,
++          "ST_GAS": -0.04657761085289897,
++          "hydro": 0.0
++        },
++        "P2_reach_by_class": {
++          "": {
++            "annual_gw": 0.0,
++            "summer_gw": 0.0,
++            "top200_junsep_gw": 0.0
++          },
++          "CC_CHP": {
++            "annual_gw": 0.0009348263104003901,
++            "summer_gw": -0.13489576936553765,
++            "top200_junsep_gw": -0.1311007243823875
++          },
++          "CC_REGULAR": {
++            "annual_gw": -0.07739650372818847,
++            "summer_gw": -0.9434839753066828,
++            "top200_junsep_gw": -0.9801548527926784
++          },
++          "COAL": {
++            "annual_gw": 0.0,
++            "summer_gw": 0.0,
++            "top200_junsep_gw": 0.0
++          },
++          "CT_CHP": {
++            "annual_gw": 0.00029428708279019593,
++            "summer_gw": -0.04705906511248069,
++            "top200_junsep_gw": -0.04530874213330334
++          },
++          "CT_PEAKER": {
++            "annual_gw": 0.002634550363015073,
++            "summer_gw": -1.5407505757685316,
++            "top200_junsep_gw": -1.5108356661336746
++          },
++          "ST_CHP": {
++            "annual_gw": -0.002676165745782187,
++            "summer_gw": -0.04952327221433216,
++            "top200_junsep_gw": -0.05414606939313573
++          },
++          "ST_GAS": {
++            "annual_gw": -0.04657761085289897,
++            "summer_gw": -0.9505592701348509,
++            "top200_junsep_gw": -0.9696733143483026
++          },
++          "hydro": {
++            "annual_gw": 0.0,
++            "summer_gw": 0.0,
++            "top200_junsep_gw": 0.0
++          }
++        },
++        "P2_reach_total": {
++          "annual_gw": -0.12278661657066398,
++          "summer_gw": -3.6662719279024163,
++          "top200_junsep_gw": -3.6912193691834827
++        }
++      }
++    }
++  }
++}
+\ No newline at end of file
