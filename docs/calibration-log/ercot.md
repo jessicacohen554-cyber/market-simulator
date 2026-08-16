@@ -9368,8 +9368,34 @@ in the file moved.
 (was `null`) in BOTH `ercot-2021-2025-t1ff-armr-ffr5d-shipped.json` and
 `-unified.json`: "Anchor frozen at ship (2026-08-05): dispatch-skill was scored
 against that date's backcast keeper (2026-08-05-run168b-year-curves). The live
-backcast keeper is tracked on calibration-status.html (six promotions since as of
-2026-08-15)." This is the fix for the exact confusion that opened ercot-209 (a
+backcast keeper is tracked on calibration-status.html (eight promotions since, as
+of 2026-08-15)."
+
+**COUNT CORRECTED FROM SIX TO EIGHT — a factual error in the dispatched text, and
+in the ercot-209 assessment it was drawn from.** The dispatched note said "six
+promotions since", matching the assessment's chain (§0 item 1 / this log's
+ercot-209 entry): run168b → ercot185-shaped-partial → run188 → run191 → run192 →
+ercot202-arm-plantphysics → ercot204-rule26-delete. That chain **omits two
+keepers**, both recorded in this log:
+1. **ercot-176 (2026-08-07)** — "KEEPER RE-KEYED (owner ruling 2026-08-07, the
+   ercot-175 decision card) … ERCOT → `2026-08-07-run176-control-offline-increment`".
+2. **ercot-181 (2026-08-09)** — "PROMOTED AS KEEPER" →
+   `2026-08-09-run181-position-tail`, corroborated by ERCOT-183's own header
+   ("keeper UNCHANGED at run181-position-tail").
+Both sit between run168b and ercot185-shaped-partial, so the true count since the
+2026-08-05 anchor is **run168b → 176 → 181 → 185 → 188 → 191 → 192 → 202-arm →
+204 = EIGHT promotions**. Surfaced by the `calibration-keeper-auditor` pass and
+verified against the log before the correction was made. **Likely mechanism,
+stated as a hypothesis not a finding:** both omitted keepers are off the site —
+`2026-08-09-run181-position-tail` is named in the ERCOT shard's own
+`site_retention_note` list of fourteen runs pruned 2026-08-15, and
+`run176-control-offline-increment` no longer has a registry sidecar either — so a
+chain reconstructed from the surviving site runs would skip exactly these two.
+A wrong lineage count on the one annotation whose PURPOSE is to un-confuse the
+lineage is worse than no count, so it is corrected here rather than carried.
+**The ercot-209 assessment's own text is NOT edited** (it is a signed, landed
+artifact); this entry is the correction of record, and the owner may propagate it
+there if they wish. This is the fix for the exact confusion that opened ercot-209 (a
 reader seeing a frozen `168b` anchor with no lineage note). Edited as a single
 targeted substitution per file, asserted to be the only occurrence, with the
 parsed documents compared field-by-field afterwards: **one line changed per file,
@@ -9379,10 +9405,16 @@ namespace was NOT regenerated (the Pages deploy is its writer).
 
 **Gates.** `audit_keepers.py --iso ERCOT` **PASS 0 failures / 0 warnings**
 (baseline before any edit was also 0/0), and the `calibration-keeper-auditor`
-agent was run scoped `--iso ERCOT` in this session as the shard edit requires —
-it independently reached the same reading of the dispatched sentence and
-contributed qualification (ii), which was then verified against the scored
-records before being adopted. `build_status.py --check --iso ERCOT`
+agent was run scoped `--iso ERCOT` in this session as the shard edit requires. It
+returned PASS 0/0 with E1–E7, M1a/M1b and S1 all clean, independently CONFIRMED
+each of C3a-2023 −33.2 %, C3b-2023 0.604, C3c-2023 58/181 h and the NOT-YET
+determination against the live verdict, and contributed three things beyond the
+deterministic checks, each verified here before adoption: qualification (ii); the
+`note_provenance` wording fix (it read "the owner's X-2 note text verbatim as
+dispatched" as claiming the X-2 SIGNATURE block, which does not contain sentence
+2 — the sentence comes from the dispatch's task (a) and traces to the
+assessment's header line 14, so the field now says exactly that); and the
+six-vs-eight promotion-count error above. `build_status.py --check --iso ERCOT`
 in sync. `check_mechanism_matrix.py` integrity OK — keeper stamps and §5.x prose
 still match every shard; no ScenarioConfig field added, so rule 28(c) is not
 engaged. `node --check` on the edited renderer passes. Two repo gates fail and
