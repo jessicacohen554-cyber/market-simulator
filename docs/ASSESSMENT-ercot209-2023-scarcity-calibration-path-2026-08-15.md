@@ -319,3 +319,29 @@ Executed by ercot-210 (2026-08-16): both halves landed, determination
 `NOT-YET` untouched, no rubric constant moved. This signs Door C (§3) only —
 it is **not** a signature of R-B's rubric half, and Q-B FINAL and R-A are
 untouched and uncited-against.
+
+**X-1 SIGNED (owner, by dispatch of CONDUCT-PHASE-0, 2026-08-16)**
+
+"X-1 SIGNED (owner): Phase-0 of the card-R R-C conduct-layer program is chartered as a READ-ONLY
+identifiability/transfer measurement. Q-B and R-A are SCOPED, not reopened: they continue to bar any
+competitive-offer-class C3a/C3b-2023 lever round; they do not bar this measurement, which solves nothing,
+scores no price criterion, feeds no model input, and creates no ScenarioConfig field. 2023 conduct
+surfaces appear ONLY as the transfer test's evaluation target (measured-vs-measured). The verdict is
+mechanical under a pre-registered STOP rule; a Phase-1 build charter, if any, returns to the owner as its
+own card. If Phase-0 stops, Door D (card W wait-for-data, ~mid-2027) is the recorded floor."
+
+Executed by ercot-211 (2026-08-16): VERDICT **NOT-TRANSFERABLE** under the
+pre-registered STOP rule, so **nothing was chartered** and **Door D is the
+recorded floor**. Determination `NOT-YET` untouched, keeper untouched, no matrix
+cell minted. This signs Door A's Phase-0 (§3) only — Door B remains unsigned and
+Q-B FINAL / R-A are scoped, not reopened, with no C3a/C3b/C3c value computed in
+any year. Precommit `docs/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`,
+finding `docs/FINDING-ercot210-conduct-transfer-phase0-2026-08-16.md`.
+
+*Ordering and shorthand note (collision, nothing renamed).* X-1 and X-2 were
+dispatched concurrently on 2026-08-16 and raced. REPORTING-TEXT-1 (X-2) landed
+first and consumed the **ercot-210** shorthand, so this lane took **ercot-211**,
+the pointer main published. Its artifacts keep the `ercot210` filename stem
+because the precommit was pushed under it before the collision was observable,
+and pushed artifacts are not renamed. X-1 is appended below X-2 in landing
+order, per this section's append-only rule — no line of X-2 was edited.
