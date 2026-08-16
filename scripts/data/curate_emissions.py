@@ -39,9 +39,22 @@ facility against its own units.
 
 Output is partitioned by year (``iso`` is null, so no ISO/market partition):
 ``data/clean/emissions/emissions_{year}.parquet``. Every file is written
-through ``scripts.lib.clean_io.write_clean`` and round-trip checked with
-``validate_clean``. The script reads only ``data/raw`` and is idempotent —
-re-running regenerates each year's file in place.
+through ``scripts.lib.clean_io.write_clean_iter`` (the streaming writer,
+documented data-byte identical in layout to ``write_clean``) and round-trip
+checked with ``validate_clean``. The script reads only ``data/raw`` and is
+idempotent — re-running regenerates each year's file in place.
+
+A full CEMS year is ~26.5 M rows, and the naive concat-everything assembly
+peaks ~10 GiB RSS — past a standard GitHub runner's 7.8 GiB RAM + 3 GiB swap
+ceiling (it OOM-killed the golden-data-tier runs; measured record:
+``docs/handoffs/perf-recheck-2026-08.md`` §1.2/§1.5). ``curate_year`` is
+therefore memory-bounded: column-wise stacking (per-state parts shed each
+column as the output gains it), a factorized stable lexsort + neighbor dedupe
+in place of whole-frame ``drop_duplicates`` + ``sort_values``, a column-wise
+gather, and the streaming writer in place of ``write_clean``'s full second
+Arrow copy. Peak RSS for 2023 is ~6.4 GiB, and the output is row-, dtype- and
+byte-size-exact against the naive assembly (equivalence protocol + numbers:
+``docs/handoffs/golden-tier-fix-2026-08.md``).
 
 Usage:
     python scripts/data/curate_emissions.py                 # all detected years
@@ -56,6 +69,7 @@ import re
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from market_sim.config import paths
@@ -91,6 +105,10 @@ _SCHEMA_COLUMNS: tuple[str, ...] = (
     "so2_kg",
 )
 _KEY_COLUMNS: list[str] = ["plant_id", "unit_id", "interval_start_utc"]
+
+# Streaming-write chunk (rows); bounds the writer-side buffer independently of
+# write_clean_iter's own row-group buffering.
+_CHUNK_ROWS = 2_000_000
 
 # Hours to ADD to a state's Local Standard Time to reach UTC. CAMPD timestamps
 # are local *standard* time year-round (no DST), so a fixed integer offset is
@@ -244,6 +262,14 @@ def _detect_years(unit_dir: Path, fac_dir: Path) -> list[int]:
     return sorted(years)
 
 
+def _assemble_column(parts: list[pd.DataFrame], col: str) -> pd.Series:
+    """Concat one column across parts, dropping it from each part as consumed."""
+    series = pd.concat([p[col] for p in parts], ignore_index=True)
+    for p in parts:
+        del p[col]
+    return series
+
+
 def curate_year(
     year: int,
     *,
@@ -255,8 +281,16 @@ def curate_year(
     Reads every ``*_{year}.parquet`` under ``unit_dir`` (unit grain) and
     ``fac_dir`` (facility grain), reconciles them unit-first (facility "ALL"
     rows only for plants with no unit-level coverage), writes the result via
-    :func:`clean_io.write_clean`, and round-trip validates it. Returns the
-    written path.
+    :func:`clean_io.write_clean_iter`, and round-trip validates it. Returns
+    the written path.
+
+    The assembly is memory-bounded (see module docstring) but every transform
+    is order-equivalent to stacking the parts and applying
+    ``drop_duplicates(subset=_KEY_COLUMNS, keep="first")`` then
+    ``sort_values(_KEY_COLUMNS)``: the lexsort is stable, so it preserves
+    input order within equal keys and keeping the first row of each equal-key
+    run selects exactly the rows ``keep="first"`` keeps; the final order
+    equals the ``sort_values`` order because keys are unique post-dedupe.
     """
     unit_paths = sorted(unit_dir.glob(f"*_{year}.parquet")) if unit_dir.is_dir() else []
     fac_paths = sorted(fac_dir.glob(f"*_{year}.parquet")) if fac_dir.is_dir() else []
@@ -265,48 +299,88 @@ def curate_year(
             f"no CAMPD extracts for {year} in {unit_dir} or {fac_dir}"
         )
 
-    unit_frames = [
-        clean_campd_frame(pd.read_parquet(p), facility_level=False) for p in unit_paths
-    ]
-    unit_df = (
-        pd.concat(unit_frames, ignore_index=True)
-        if unit_frames
-        else pd.DataFrame(columns=list(_SCHEMA_COLUMNS))
-    )
-    covered = set(unit_df["plant_id"].unique())
-
-    fac_frames = []
+    # Per-state cleaned parts, unit grain first: the list order fixes the
+    # pre-sort row order that the stable dedupe's first-occurrence rule keys
+    # off, so unit rows always beat facility "ALL" rows on a shared key.
+    parts: list[pd.DataFrame] = []
+    covered: set[int] = set()
+    n_unit = 0
+    for p in unit_paths:
+        f = clean_campd_frame(pd.read_parquet(p), facility_level=False)
+        covered.update(f["plant_id"].unique().tolist())
+        n_unit += len(f)
+        parts.append(f)
+    n_fac = 0
     for p in fac_paths:
         f = clean_campd_frame(pd.read_parquet(p), facility_level=True)
         f = f[~f["plant_id"].isin(covered)]  # unit-level wins where it exists
         if len(f):
-            fac_frames.append(f)
-    fac_df = (
-        pd.concat(fac_frames, ignore_index=True)
-        if fac_frames
-        else pd.DataFrame(columns=list(_SCHEMA_COLUMNS))
-    )
+            n_fac += len(f)
+            parts.append(f.reset_index(drop=True))
 
-    frames = [d for d in (unit_df, fac_df) if len(d)]
-    df = pd.concat(frames, ignore_index=True) if frames else unit_df
-    df = (
-        df.drop_duplicates(subset=_KEY_COLUMNS, keep="first")
-        .sort_values(_KEY_COLUMNS)
-        .reset_index(drop=True)
-    )
+    if parts:
+        # Column-wise stack: parts shed each column as the output gains it, so
+        # the per-state parts and the stacked year never coexist in full.
+        cols = {c: _assemble_column(parts, c) for c in _SCHEMA_COLUMNS}
+        parts.clear()
+        n_rows = len(cols["plant_id"])
+
+        # Sort keys as flat int64 arrays. unit_id: factorize (hash, appearance
+        # order), then re-rank the uniques lexicographically so integer order
+        # == string order; interval_start_utc: tz-aware ns since epoch.
+        plant = cols["plant_id"].to_numpy()
+        codes, uniques = pd.factorize(cols["unit_id"], sort=False)
+        rank = np.empty(len(uniques), dtype=np.int64)
+        rank[np.argsort(uniques.astype(object), kind="stable")] = np.arange(
+            len(uniques)
+        )
+        unit_key = rank[codes]
+        del codes, rank
+        ts = cols["interval_start_utc"].to_numpy(dtype="datetime64[ns]").view("i8")
+
+        # Stable lexsort (primary key LAST in np.lexsort's tuple), then keep
+        # the first row of each equal-key run == drop_duplicates(keep="first").
+        order = np.lexsort((ts, unit_key, plant))
+        p_s, u_s, t_s = plant[order], unit_key[order], ts[order]
+        keep = np.empty(n_rows, dtype=bool)
+        if n_rows:
+            keep[0] = True
+            keep[1:] = (
+                (p_s[1:] != p_s[:-1]) | (u_s[1:] != u_s[:-1]) | (t_s[1:] != t_s[:-1])
+            )
+        idx = order[keep]
+        del order, p_s, u_s, t_s, keep, plant, unit_key, ts
+
+        # Column-wise gather of the kept rows, freeing each source column.
+        out = {c: cols.pop(c).take(idx).reset_index(drop=True) for c in _SCHEMA_COLUMNS}
+        del idx
+        n_out = len(out["plant_id"])
+    else:
+        # Nothing survived cleaning: hand the writer an empty stream so it
+        # raises its standard "no non-empty chunks" SchemaError.
+        out = {}
+        n_out = 0
 
     source = (
         f"data/raw/campd-unit-level/*_{year}.parquet, "
         f"data/raw/campd-facility-level/*_{year}.parquet"
     )
-    path = clean_io.write_clean(df, "emissions", year=year, source=source)
+
+    def _chunks():
+        for lo in range(0, n_out, _CHUNK_ROWS):
+            hi = min(lo + _CHUNK_ROWS, n_out)
+            yield pd.DataFrame(
+                {c: out[c].iloc[lo:hi].reset_index(drop=True) for c in _SCHEMA_COLUMNS}
+            )
+
+    path = clean_io.write_clean_iter(_chunks(), "emissions", year=year, source=source)
     clean_io.validate_clean(path)
     logger.info(
         "emissions %d: %d rows (%d unit-grain, %d facility-ALL) -> %s",
         year,
-        len(df),
-        len(unit_df),
-        len(fac_df),
+        n_out,
+        n_unit,
+        n_fac,
         path,
     )
     return path
