@@ -28,9 +28,10 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(REPO / "scripts" / "data"))
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
 
-import derive_ercot_thermal_dam_availability as deriver  # noqa: E402
+from scripts.data import derive_ercot_thermal_dam_availability as deriver  # noqa: E402
 
 from market_sim.data.fleet.withholding import (  # noqa: E402
     _ercot_dam_plant_hourly_apply,

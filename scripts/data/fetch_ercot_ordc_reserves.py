@@ -93,16 +93,14 @@ import pyarrow.parquet as pq
 import requests
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from market_sim.config.paths import ERCOT_MIS_DIR  # noqa: E402
 
 OUT_DIR = ERCOT_MIS_DIR
 
-sys.path.insert(0, str(REPO_ROOT / "scripts"))
-
-sys.path.insert(0, str(REPO_ROOT / "scripts" / "data"))
-from build_ercot_hsl import _prevailing_to_standard  # noqa: E402
+from scripts.data.build_ercot_hsl import _prevailing_to_standard  # noqa: E402
 
 # ERCOT MIS "Historical Real-Time Price Adders by SCED Interval" (NP6-905-CD).
 DOC_LIST_URL = "https://www.ercot.com/misapp/servlets/IceDocListJsonWS"

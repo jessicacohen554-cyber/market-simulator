@@ -43,14 +43,14 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_ercot_as_withholding import (  # noqa: E402
+REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT))  # repo root: canonical scripts.data.* sibling imports on direct run
+from scripts.data.build_ercot_as_withholding import (  # noqa: E402
     HOURS_PER_YEAR,
     _to_model_clock,
     prevailing_he_to_cst,
 )
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
 GEN_DIR = REPO_ROOT / "data/raw/ercot"
 OUT_DIR = REPO_ROOT / "data/raw/ercot-AS"
 

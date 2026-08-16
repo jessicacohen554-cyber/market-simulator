@@ -84,18 +84,17 @@ REPO = Path(__file__).resolve().parents[2]
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 import sys  # noqa: E402
 
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO / "scripts"))
 
-sys.path.insert(0, str(REPO / "scripts" / "data"))
-from derive_ercot_dam_cleared_share import (  # noqa: E402
+from scripts.data.derive_ercot_dam_cleared_share import (  # noqa: E402
     NETLOAD_PCT_EDGES,
     _collapse_and_segment,
     _gas_day_series,
     _load_year,
     _netload_pct,
 )
-from derive_ercot_rtolcap_forward import _class_hourly  # noqa: E402
+from scripts.data.derive_ercot_rtolcap_forward import _class_hourly  # noqa: E402
 
 HOURS = 8760
 DEFAULT_OUT = CALIBRATION_DIR / "ercot_commitment_loading_state.json"

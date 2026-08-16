@@ -18,9 +18,9 @@ import pandas as pd
 from tests.helpers import REPO_ROOT
 
 REPO = REPO_ROOT
-sys.path.insert(0, str(REPO / "scripts"))
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
 
-sys.path.insert(0, str(REPO / "scripts" / "data"))
 from scripts.data import fetch_ercot_ordc_reserves as ordc  # noqa: E402
 from scripts.data.build_ercot_as_withholding import (  # noqa: E402
     prevailing_he_to_cst,
@@ -199,7 +199,7 @@ def test_wtx_sced_ts_fall_back_repeat_disambiguated():
 
 
 def test_by_restype_build_year_uses_converted_clock():
-    import build_ercot_as_by_restype_from_60day as restype
+    from scripts.data import build_ercot_as_by_restype_from_60day as restype
 
     days, hes = [], []
     for day in pd.date_range("2024-06-10", "2024-06-11"):

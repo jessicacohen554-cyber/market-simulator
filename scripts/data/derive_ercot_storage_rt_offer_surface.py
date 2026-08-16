@@ -77,19 +77,19 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-for _p in (REPO, REPO / "src", REPO / "scripts", REPO / "scripts" / "data"):
+for _p in (REPO, REPO / "src"):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 
-from derive_ercot_dam_cleared_share import (  # noqa: E402
+from scripts.data.derive_ercot_dam_cleared_share import (  # noqa: E402
     HCAP_USD_MWH,
     _MONTH_START_HOUR,
     _netload_pct,
     _weighted_quantiles,
 )
-from derive_ercot_sced_offer_wall import (  # noqa: E402
+from scripts.data.derive_ercot_sced_offer_wall import (  # noqa: E402
     _NUMERIC_COLS,
     _SCED2_MW,
     _SCED2_PR,
