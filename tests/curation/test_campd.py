@@ -519,5 +519,73 @@ class TestHeatInputProxy(unittest.TestCase):
         self.assertTrue((filled["gross_mw"] == 90.0).all())
 
 
+class TestMeritPanelStatePin(unittest.TestCase):
+    """The merit-order panel's IDENTIFICATION scope is pinned independently.
+
+    ``ISO_STATES`` is DETECTION coverage ("which state files must be read so
+    every fleet plant is observable"); ``ISO_MERIT_PANEL_STATES`` is the layup
+    classifier's identification scope ("whose running capacity sets the revealed
+    clearing cost"). Widening the first must never move the second — CLAUDE.md
+    rule 23 ``[R-FROZEN-DERIVE]``. Measured coupling that motivated the pin:
+    FINDING-caiso198-desertstar-extract-2026-08-16.md §3 (adding NV for one
+    CAISO-fleet plant pulled 59-64 non-CAISO NV Energy units into CAISO's panel
+    and reclassified 275 CA-facility windows).
+    """
+
+    def test_caiso_panel_pinned_to_ca_only(self):
+        # The scope every committed CAISO extract through sha 5f3e35c5.. was
+        # identified on, and under which the Desert Star re-derive is strictly
+        # additive (candidate da33e509.., layup byte-identical).
+        self.assertEqual(campd.merit_panel_states_for_iso("CAISO"), ("CA",))
+
+    def test_caiso_detection_scope_still_carries_nv(self):
+        # The pin must not undo the Desert Star DETECTION coverage: NV is still
+        # read so EIA 55077's CEMS history is observable.
+        self.assertIn("NV", campd.states_for_iso("CAISO"))
+
+    def test_pin_is_independent_of_detection_widening(self):
+        # The invariant itself: a detection-coverage widening leaves the panel
+        # scope untouched. Guards against the two lists being re-coupled.
+        original = campd.ISO_STATES["CAISO"]
+        try:
+            campd.ISO_STATES["CAISO"] = original + ("AZ",)
+            self.assertEqual(campd.merit_panel_states_for_iso("CAISO"), ("CA",))
+        finally:
+            campd.ISO_STATES["CAISO"] = original
+
+    def test_unpinned_isos_fall_back_to_detection_scope(self):
+        # Rule 25 [R-ISO-SCOPE]: no other ISO's committed extract moves. Every
+        # ISO without an explicit pin resolves to its detection list exactly.
+        for iso in campd.ISO_STATES:
+            if iso in campd.ISO_MERIT_PANEL_STATES:
+                continue
+            with self.subTest(iso=iso):
+                self.assertEqual(
+                    campd.merit_panel_states_for_iso(iso), campd.ISO_STATES[iso]
+                )
+
+    def test_caiso_is_the_only_pinned_iso(self):
+        # The caiso-199 landing pins CAISO alone; the same fleet-blindness at
+        # NYISO/PJM/MISO is each lane's own measurement (rule 25).
+        self.assertEqual(set(campd.ISO_MERIT_PANEL_STATES), {"CAISO"})
+
+    def test_unknown_iso_resolves_empty(self):
+        self.assertEqual(campd.merit_panel_states_for_iso("NOT_AN_ISO"), ())
+
+    def test_deriver_feeds_the_panel_its_pinned_scope(self):
+        # Wiring guard: the deriver must build the panel from the PINNED scope,
+        # never from the detection list it loads its CEMS frames with. Reverting
+        # this call site is the exact regression the pin exists to prevent.
+        import inspect
+
+        from scripts.data import derive_campd_unit_outages as deriver
+
+        src = inspect.getsource(deriver.main)
+        self.assertIn("merit_panel_states = campd.merit_panel_states_for_iso(iso)", src)
+        call = src.split("build_merit_order_panel(")[1].split(")")[0]
+        self.assertIn("merit_panel_states", call)
+        self.assertNotIn("n_full, states", call)
+
+
 if __name__ == "__main__":
     unittest.main()
