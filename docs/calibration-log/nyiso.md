@@ -6778,3 +6778,68 @@ put the repair first.
 Evidence:
 `results/calibration/FINDING-nyiso139-rtd-clock-repair-landed-2026-08-16.md`.
 Next number: **nyiso-140**.
+
+## 2026-08-16 — nyiso-139b: the chartered Zone-K joint lever is RE-SCOPED before writing — the floor limb the card pairs with the transfer bound is ALREADY DISABLED on the keeper, and K6 cannot adjudicate an import-relief lever
+
+Follow-on to the same session, after the D3(b) clock repair merged (main
+`f8c93afe7`). D1 is GRANTED, so the next step is "write, prereg, solve" — this
+is the identification that must precede the writing, and it changes the arm.
+**No solve spent, no mechanism written, no `ScenarioConfig` field added.**
+
+**(a) The card's natural arm is a nullity on the floor side.** The keeper
+carries `iso_configs.NYISO_PEAK_WINDOW_FLOORS_OFF` in full, so
+`Long_Island:ST_GAS:tmax:LI_ST_ev` — the HB14-21 evening ramp family, the only
+ST_GAS limb whose window coincides with the transfer bound's own HB14-21
+application window — is **already disabled**. It was traded away deliberately:
+the `nyiso_gas_commitment_bridge` (armed on the keeper) is its owner-directed
+replacement (2026-07-27). An arm that disables it changes nothing.
+
+**(b) What actually forces is a 24-hour base.** Of Long_Island × ST_GAS's three
+limbs in `reliability_floor_coeffs_NYISO.csv`, exactly one is live: threshold
+**−50 °C** (never not met ⇒ binds all 8,760 h) at **floor_pct 0.262**, basis
+"persistent 24h base: base_24h (when-available cool-day CF p25)", rule-23
+re-derived 2026-07-26 on the guard-corrected outage extract. The keeper's own
+D-4 rows agree — `reliability_floor × ST_GAS` declares window **h0-23**, 2.7891
+/ 2.8025 / 2.3869 TWh, off-window share 0.0 (D-2 class shares 20.5 / 22.1 /
+15.6 %; C8's 30 % cap not approached, C8 PASSes).
+
+**(c) So the two live representations are not one phenomenon.** They differ in
+window (HB14-21 vs all-24 h), object (interface transfer capability vs
+unit-level availability minimum), driver (NYISO's published N-1-1 TSL vs
+measured CAMPD cool-day p25 CF) and meaning (contingency import capability vs
+cable-islanded must-run). The pair that *would* have been one was already
+separated, in the other direction, by the 2026-07-27 directive.
+
+**(d) Why K6 fired at nyiso-130, then.** K6 reads "any D-2 mechanism's forced
+share RISES", and *forced* = energy at a binding floor. Relieving a transmission
+bound displaces the in-zone fleet out of merit, so a unit that sat in-merit
+ABOVE its floor comes to sit out-of-merit AT it: the floor binds in more hours
+and forced TWh rises **even when the class generates the same or less**. That is
+a mechanical property of the forced-share definition under any import relief.
+nyiso-130's K6 firing is therefore ambiguous between a genuine double
+representation and a scoring artifact — and since the only limb that could have
+carried the former is already off, the artifact is the better-supported reading.
+**This is NOT a licence to disarm K6**: rule 17 `[R-FLOOR-WINDOW]` still demands
+that an always-on 26.2 % downstate-steam floor justify its window. It means K6
+cannot adjudicate THIS lever as written, so re-running the bare swap to watch it
+fire again would learn nothing.
+
+**Disposition — do not write the arm yet.** Two owner-level questions first:
+(1) is the always-on LI ST_GAS 26.2 % base the right representation, i.e. should
+a floor whose stated basis is a **cool-day** p25 CF be re-scoped to the hours its
+own driver evidence supports (a rule-23 *source-data* question, never a tuning
+one)? and (2) **what replaces K6 for an import-relief lever** — a gate firing on
+forced *share* is structurally biased against any lever that relieves a
+constraint; a defensible successor measures forced TWh at constant class energy,
+or against the counterfactual merit order rather than the control's. Only then is
+the joint arm writable, and it is likely NOT "940 MW + disable a floor limb" but
+"940 MW + a re-scoped 24-hour base" with its own identification. Writing the
+card's literal arm today buys a floor-side no-op plus an uninformative K6 firing.
+
+Unchanged: keeper `2026-08-08-nyiso-133-cod-arm` **CALIBRATED-WITH-CAVEATS**,
+C3c the lone ledgered caveat against the corrected actual tail **10 / 13 / 42**;
+`complete` (validation only), ABSENT from `final`; frontier CLEARED 2026-08-06;
+holdout spend freeze ACTIVE; NYISO cross-ISO queue CLOSED since nyiso-122.
+Evidence:
+`results/calibration/FINDING-nyiso139b-zone-k-joint-lever-rescoped-2026-08-16.md`.
+Next number: **nyiso-140**.
