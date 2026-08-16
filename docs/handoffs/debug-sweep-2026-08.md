@@ -178,3 +178,44 @@ or the post-BLOAT slimmer corpus — routed to the owner via this record, with
 BLOAT-B's re-dispatch (§6 decision 7) as the natural retest point. No
 workflow edit made here: the step's failure is capacity, and choosing the
 remedy (paid larger runner vs code change) is an owner cost decision.
+
+---
+
+## Addendum — reissued DEBUG manager, post-DEBUG-B continuation (2026-08-16)
+
+**Branch:** `claude/fable-debug-manager-reissue-t8dg4w` (off `origin/main` @
+`8a118e7`). **Charter:** the director's reissued DEBUG-manager dispatch
+(plan §8 ledger, 2026-08-15 AUDIT-A entry): pjm-162 promotion card, ≤2022
+clock card, clean-main re-verification, sibling-import residue, plus audit
+gap rows B1/B2/O2 routed to this lane by
+`docs/audit/third-party-audit-2026-08.md` §8.
+
+### A.1 — Audit gap row O2 RESOLVED: the PJM C6-attestation "discrepancy" is a stale quote, not scorer drift
+
+The two committed records describe two different points in time, and both
+were correct when written. The DEBUG-B finding's like-for-like table
+(`docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md` §9) quotes the
+incumbent's **registration-time** grade — its column header says "rubric
+2.9" — scored 2026-08-04 when `results/calibration/pjm152_collapse_A`
+shipped **without** `calibration_attestation.json`: C6 UNATTESTED,
+determination NOT-YET. `status/PJM.js` (generated 2026-08-09) reflects the
+bundle's **current** state: pjm-153 retro-generated the attestation the same
+day with every premise computed (`scripts/gen_pjm153_collapse_attestation.py`)
+and the D-5(b) re-key re-verified CALIBRATED — the sequence the PJM
+`complete` marker's own `determination` text narrates verbatim. The
+definitive re-score on committed artifacts at `8a118e7`
+(`scripts/calibration_verdict.py --run-id`, no solve, rubric v3.2) confirms
+the current state on both sides: **pjm-152 = CALIBRATED, C6 PASS**
+("determination basis: all criteria pass, governance attested") and
+**pjm-162 = NOT-YET with the single reason "governance gate UNATTESTED: no
+governance attestation in bundle"** — every model-determined criterion PASS.
+There is no scorer/artifact-schema drift: `score_governance` reads
+`calibration_attestation.json` from the sidecar-resolved bundle identically
+for both runs; the finding's incumbent column was a stale quote, not a
+re-score. **Corrected baseline for the promotion card: the incumbent keeper
+is CALIBRATED; the candidate's only gap is the promotion-time governance
+attestation, which the promotion mechanics themselves produce** (pjm-153,
+nyiso-135 #3977, ercot-202/204 #3947/#3970 precedents). One hygiene note for
+future finding tables: a "like-for-like" verdict column quoted from a
+registration-time snapshot should say so explicitly, or be re-scored at
+writing time — this row cost an audit gap and a re-score to un-confuse.
