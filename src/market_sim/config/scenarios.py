@@ -898,6 +898,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "ercot_reserve_supply_cap_net_credits",
+    # nyiso-140 reliability-floor per-plant membership exclusion (GATED
+    # default off): dropped from the hash at its default so every
+    # pre-existing cache key of all six ISOs stays byte-stable (the off path
+    # CLEARS every limb exclusion, so it is byte-identical by construction).
+    # An armed run floors a strictly smaller row set — a different min_gen,
+    # so a different dispatch — and hashes distinctly, which is what keeps
+    # the control/arm A/B off one cache entry. SHARED field, so it goes at
+    # the very end of the tuple per the HOUSE-3 insertion convention.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "reliability_floor_plant_exclusions",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1029,6 +1039,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by FFR-7B-2 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_rps_compliance_regions": "False",
+    # Added by nyiso-140 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "reliability_floor_plant_exclusions": "False",
     # STAYS "False" through the D-29 arming, and must: this ledger declares the
     # SCENARIOCONFIG FIELD default that cache_key() drops against, not the
     # resolved per-ISO posture. D-29 arms Arm 3 through MISO's
@@ -3901,6 +3914,22 @@ class ScenarioConfig:
     # three-segment key cannot turn the peak window off without also killing
     # the always-on base (nyiso-87). The four-segment form wins where both
     # match; three-segment behaviour is unchanged.
+    reliability_floor_plant_exclusions: bool = False  # honour each limb's
+    # exclude_plant_codes membership correction (the coefficient CSV's optional
+    # column, iso_configs.apply_reliability_floor_plant_exclusions). A
+    # persistent-baseline limb is IDENTIFIED on a fleet-aggregate capacity factor
+    # but APPLIED per unit (pro_rata), so an economically laid-up plant — idle in
+    # its own metered conduct, yet fully available because lay-up is correctly not
+    # booked as a forced outage — is held at the fleet baseline in all 8,760 h and
+    # manufactures energy it never produced (rule 17 [R-FLOOR-WINDOW]). Identified
+    # for NYISO Long_Island ST_GAS by nyiso-140: Port Jefferson (2517) carries
+    # median CF 0.000 in every hour block of 2023-25 and 73 % of cool hours at
+    # zero, yet absorbs 72.6 % of everything that limb forces while producing
+    # 7.2 % of the fleet's output. Correcting membership leaves the coefficient
+    # effectively unchanged (0.2666 basis-matched vs the frozen 0.2620), so this
+    # adds NO free parameter (rule 21 [R-DOF]). Default off: every existing run
+    # and every other ISO stays byte-identical.
+    # Evidence: results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md
     class_commitment_overrides: dict[str, dict] = field(default_factory=dict)
     # Per-class commitment overrides for THIS run's ISO, keyed by plant_group
     # class (e.g. "ST_GAS") -> {"min_run_hours"?: int, "min_down_hours"?: int}.

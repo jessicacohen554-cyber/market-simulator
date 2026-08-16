@@ -3304,6 +3304,7 @@ def solve_and_persist(
     ercot_commitment_posture: bool | None = None,
     ercot_commitment_posture_min_load_frac: float | None = None,
     reliability_floor: bool | None = None,
+    reliability_floor_plant_exclusions: bool | None = None,
     scarcity_price_overlay: bool | None = None,
     caiso_scarcity_pricing: bool | None = None,
     caiso_lcr_commitment_credit: bool | None = None,
@@ -4060,6 +4061,10 @@ def solve_and_persist(
         if reliability_floor is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 reliability_floor=reliability_floor
+            )
+        if reliability_floor_plant_exclusions is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                reliability_floor_plant_exclusions=reliability_floor_plant_exclusions
             )
         if chp_export_floor_measured:
             recorded_cfg = recorded_cfg.with_overrides(chp_export_floor_measured=True)
@@ -4950,6 +4955,11 @@ def solve_and_persist(
             ),
             carry_operating_mothballs=carry_operating_mothballs,
             reliability_floor=reliability_floor,
+            reliability_floor_plant_exclusions=(
+                reliability_floor_plant_exclusions
+                if reliability_floor_plant_exclusions is not None
+                else False
+            ),
             scarcity_price_overlay=scarcity_price_overlay,
             caiso_scarcity_pricing=caiso_scarcity_pricing,
             caiso_lcr_commitment_credit=caiso_lcr_commitment_credit,
@@ -5749,6 +5759,7 @@ def solve_and_persist(
         ),
         "carry_operating_mothballs": carry_operating_mothballs,
         "reliability_floor": reliability_floor,
+        "reliability_floor_plant_exclusions": reliability_floor_plant_exclusions,
         # Net-load deployment drags — persisted so the legitimacy-diagnostics
         # floor reconstruction (run_year(fleet_only=True) from meta.json) applies
         # the SAME drag the solve did. Omitting them silently dropped the drag
@@ -10040,6 +10051,20 @@ def main() -> None:
         "flag + a registry entry + a weather file.",
     )
     parser.add_argument(
+        "--reliability-floor-plant-exclusions",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Honour each reliability-floor limb's exclude_plant_codes membership "
+        "correction (the coefficient CSV's optional column). A persistent-baseline "
+        "limb is IDENTIFIED on a fleet-aggregate capacity factor but APPLIED per "
+        "unit (pro_rata), so an economically laid-up plant — idle in its own "
+        "metered conduct, yet fully available because lay-up is correctly not "
+        "booked as a forced outage — is held at the fleet baseline in all 8,760 h "
+        "and manufactures energy it never produced (CLAUDE.md rule 17 "
+        "[R-FLOOR-WINDOW]). Identified for NYISO Long_Island ST_GAS by nyiso-140 "
+        "(Port Jefferson 2517). Default (unset) = OFF, byte-identical.",
+    )
+    parser.add_argument(
         "--scarcity-price-overlay",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -11593,6 +11618,7 @@ def main() -> None:
             args.ercot_commitment_posture_min_load_frac
         ),
         reliability_floor=args.reliability_floor,
+        reliability_floor_plant_exclusions=args.reliability_floor_plant_exclusions,
         scarcity_price_overlay=args.scarcity_price_overlay,
         caiso_scarcity_pricing=args.caiso_scarcity_pricing,
         caiso_lcr_commitment_credit=args.caiso_lcr_commitment_credit,

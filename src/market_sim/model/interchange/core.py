@@ -269,6 +269,18 @@ def inject_reliability_floor(
 
         Selects the ``(plant_class, zone)`` fleet and composes ``frac × available
         capacity`` into ``FleetArrays.min_gen`` cheapest-first or pro-rata.
+
+        Rows whose ``plant_code`` is in ``spec.exclude_plant_codes`` are dropped
+        from the selection first: a persistent-baseline limb is identified on a
+        FLEET-aggregate capacity factor but applied per UNIT, so an economically
+        laid-up plant (idle in its own metered conduct, yet fully available
+        because lay-up is not a forced outage) would otherwise be held at the
+        fleet's baseline every hour — rule 17 ``[R-FLOOR-WINDOW]``. The set is
+        empty unless the run arms
+        ``ScenarioConfig.reliability_floor_plant_exclusions``
+        (:func:`~market_sim.config.iso_configs.apply_reliability_floor_plant_exclusions`),
+        so disarmed runs are byte-identical.
+
         Returns ``True`` iff at least one unit was floored.
         """
         if not np.any(frac > 0.0):
@@ -278,6 +290,9 @@ def inject_reliability_floor(
             & (fleet_arrays.zone_idx == z_idx)
             & (fleet_arrays.pmax > 0.0)
         )
+        excluded = getattr(spec, "exclude_plant_codes", frozenset())
+        if excluded:
+            sel &= ~np.isin(fleet_arrays.plant_code, list(excluded))
         rows = np.flatnonzero(sel)
         if rows.size == 0:
             return False

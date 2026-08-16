@@ -70,6 +70,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     nyiso_seny_rcpf_increment_step: { cell: "K", ev: "nyiso-119 (row added with the field); PREREG-nyiso119-seny-increment-2026-08-03.md; nyiso119_seny_increment_construction_probe.json; screen evidence nyiso117_seny_rcpf_curve_screen.json" },
     gas_commitment_bridge: { cell: "K", ev: "nyiso-87/90" },
     reliability_floor: { cell: "K", ev: "nyiso-81 re-derive; NYISO_PEAK_WINDOW_FLOORS_OFF" },
+    reliability_floor_plant_exclusions: { cell: "O", ev: 'nyiso-140 identification, no solve yet: Port Jefferson (2517) median when-available CF 0.000 in EVERY hour block of 2023/2024/2025, 73% of cool hours at zero, ~100% model availability; absorbs 72.6% of everything the Long_Island ST_GAS always-on limb forces (1.87 of 2.57 TWh over 3 yr) while producing 7.2% of the fleet output. Window CONFIRMED CORRECT and stays — Barrett (2511) and Northport (2516) do run the baseline (cool-day median CF 0.254/0.313 at h00-05). Basis-matched hourly p25 excluding 2517 = 0.2666 vs the frozen 0.2620, so floor_pct is UNCHANGED and no free parameter is added (rule 21 [R-DOF]). results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md; probe scripts/probes/_nyiso140_li_st_floor_membership.py' },
     coal_mustrun_per_plant: { cell: "K" },
     coal_takeorpay_committed: { cell: "." },
     coal_prb_committed_dispatchable: { cell: "." },

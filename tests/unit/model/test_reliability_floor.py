@@ -22,6 +22,7 @@ from market_sim.config.iso_configs import (
     RELIABILITY_FLOOR_REGISTRY,
     ReliabilityFloorSpec,
     apply_reliability_floor_overrides,
+    apply_reliability_floor_plant_exclusions,
 )
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model import transmission as T
@@ -1033,6 +1034,178 @@ class TestRampGroupScopedOverrides(unittest.TestCase):
         # CT_PEAKER's only enabled limbs were the evening ramps, so it is gone.
         self.assertNotIn(("NYC", "CT_PEAKER"), surviving)
         self.assertNotIn(("Long_Island", "CT_PEAKER"), surviving)
+
+
+def _build_two_plant_st_fleet(hours):
+    """Two ST_GAS units in one zone with DISTINCT plant codes, plus a CT.
+
+    Mirrors the Long_Island ST_GAS shape the exclusion was identified on: a
+    pro-rata limb floors every unit of the class in the zone, so the fixture
+    needs at least two same-class units to show that exclusion is per-UNIT and
+    not per-class.
+    """
+    gens = [
+        Generator(
+            unit_id="st_runs",
+            name="st_runs",
+            zone="Z",
+            fuel_type="gas_st",
+            pmax_mw=100.0,
+            pmin_mw=0.0,
+            heat_rate=10.0,
+            plant_group="ST_GAS",
+            plant_code=1111,
+        ),
+        Generator(
+            unit_id="st_laidup",
+            name="st_laidup",
+            zone="Z",
+            fuel_type="gas_st",
+            pmax_mw=50.0,
+            pmin_mw=0.0,
+            heat_rate=10.5,
+            plant_group="ST_GAS",
+            plant_code=2517,
+        ),
+        Generator(
+            unit_id="ct",
+            name="ct",
+            zone="Z",
+            fuel_type="gas_ct",
+            pmax_mw=80.0,
+            pmin_mw=0.0,
+            heat_rate=11.0,
+            plant_group="CT_PEAKER",
+            plant_code=3333,
+        ),
+    ]
+    fa = generators_to_fleet_arrays(gens, ["Z"], hours=hours)
+    return fa, {g.plant_code: i for i, g in enumerate(gens)}
+
+
+class TestReliabilityFloorPlantExclusions(unittest.TestCase):
+    """nyiso-140: the per-unit membership correction on a pro-rata limb.
+
+    A persistent-baseline limb is identified on a FLEET-aggregate capacity factor
+    but applied per UNIT, so an economically laid-up plant would be held at the
+    fleet baseline in every hour (rule 17 [R-FLOOR-WINDOW]).
+    """
+
+    def _always_on_spec(self, exclude=frozenset()):
+        # threshold well below any real temperature => flagged every hour, the
+        # real Long_Island shape (-50 C is never not met).
+        return ReliabilityFloorSpec(
+            zone="Z",
+            plant_class="ST_GAS",
+            driver="tmax",
+            threshold=-50.0,
+            floor_pct=0.262,
+            distribution="pro_rata",
+            exclude_plant_codes=exclude,
+        )
+
+    def test_excluded_plant_is_not_floored_others_unchanged(self):
+        H = 48
+        loader = _weather_from_daily([12.0, 20.0], [2.0, 8.0], H)
+        fa, rows = _build_two_plant_st_fleet(H)
+        with mock.patch(_LOADER, loader):
+            applied = T.inject_reliability_floor(
+                fa, "TEST", 2024, [self._always_on_spec(frozenset({2517}))], ["Z"]
+            )
+        self.assertTrue(applied)
+        keep, drop = rows[1111], rows[2517]
+        # The running plant carries the floor in every hour...
+        np.testing.assert_allclose(
+            fa.min_gen[keep, :], 0.262 * fa.pmax[keep] * fa.availability[keep, :]
+        )
+        # ...and the laid-up plant carries none.
+        np.testing.assert_allclose(fa.min_gen[drop, :], 0.0)
+        # A different class in the same zone is untouched either way.
+        np.testing.assert_allclose(fa.min_gen[rows[3333], :], 0.0)
+
+    def test_empty_exclusion_is_byte_identical_to_no_exclusion(self):
+        H = 48
+        loader = _weather_from_daily([12.0, 20.0], [2.0, 8.0], H)
+        out = []
+        for exclude in (frozenset(), None):
+            fa, _ = _build_two_plant_st_fleet(H)
+            spec = self._always_on_spec(frozenset())
+            if exclude is None:  # a spec predating the field entirely
+                spec = ReliabilityFloorSpec(
+                    zone="Z",
+                    plant_class="ST_GAS",
+                    driver="tmax",
+                    threshold=-50.0,
+                    floor_pct=0.262,
+                    distribution="pro_rata",
+                )
+            with mock.patch(_LOADER, loader):
+                T.inject_reliability_floor(fa, "TEST", 2024, [spec], ["Z"])
+            out.append(fa.min_gen.copy())
+        np.testing.assert_array_equal(out[0], out[1])
+        # and both DO floor the plant that the exclusion would have dropped
+        self.assertGreater(float(out[0].sum()), 0.0)
+
+    def test_cheapest_first_distribution_also_honours_exclusions(self):
+        # The exclusion is applied to row SELECTION, so it must bind on the
+        # cheapest-first path too, not only pro-rata.
+        H = 24
+        loader = _weather_from_daily([12.0], [2.0], H)
+        fa, rows = _build_two_plant_st_fleet(H)
+        spec = ReliabilityFloorSpec(
+            zone="Z",
+            plant_class="ST_GAS",
+            driver="tmax",
+            threshold=-50.0,
+            floor_pct=0.262,
+            distribution="cheapest_first",
+            exclude_plant_codes=frozenset({2517}),
+        )
+        with mock.patch(_LOADER, loader):
+            T.inject_reliability_floor(fa, "TEST", 2024, [spec], ["Z"])
+        np.testing.assert_allclose(fa.min_gen[rows[2517], :], 0.0)
+
+    def test_gate_clears_exclusions_unless_armed(self):
+        specs = [self._always_on_spec(frozenset({2517}))]
+
+        class _Cfg:
+            def __init__(self, armed):
+                self.reliability_floor_plant_exclusions = armed
+
+        armed = apply_reliability_floor_plant_exclusions(specs, _Cfg(True))
+        disarmed = apply_reliability_floor_plant_exclusions(specs, _Cfg(False))
+        self.assertEqual(armed[0].exclude_plant_codes, frozenset({2517}))
+        self.assertEqual(disarmed[0].exclude_plant_codes, frozenset())
+        # A config that predates the field at all disarms (fail-closed).
+        legacy = apply_reliability_floor_plant_exclusions(specs, object())
+        self.assertEqual(legacy[0].exclude_plant_codes, frozenset())
+
+    def test_nyiso_csv_carries_the_port_jefferson_exclusion_only(self):
+        """Data contract: exactly one limb, the always-on LI base, excludes 2517."""
+        specs = RELIABILITY_FLOOR_REGISTRY.get("NYISO", [])
+        if not specs:
+            self.skipTest("NYISO reliability-floor CSV not present")
+        carrying = [s for s in specs if s.exclude_plant_codes]
+        self.assertEqual(len(carrying), 1)
+        limb = carrying[0]
+        self.assertEqual(limb.zone, "Long_Island")
+        self.assertEqual(limb.plant_class, "ST_GAS")
+        self.assertEqual(limb.exclude_plant_codes, frozenset({2517}))
+        # It is the ALWAYS-ON base (no ramp family, no sub-daily window), not an
+        # evening ramp knot — the evening limbs are a different phenomenon.
+        self.assertIsNone(limb.ramp_group)
+        self.assertIsNone(limb.start_hour)
+
+    def test_no_other_iso_carries_an_exclusion(self):
+        """Rule 25 [R-ISO-SCOPE]: the correction is NYISO's alone."""
+        for iso, specs in RELIABILITY_FLOOR_REGISTRY.items():
+            if iso == "NYISO":
+                continue
+            self.assertEqual(
+                [s for s in specs if s.exclude_plant_codes],
+                [],
+                f"{iso} must carry no plant exclusions",
+            )
 
 
 if __name__ == "__main__":

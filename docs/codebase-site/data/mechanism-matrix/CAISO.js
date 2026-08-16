@@ -70,6 +70,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     nyiso_seny_rcpf_increment_step: { cell: "." },
     gas_commitment_bridge: { cell: "K", ev: "caiso-96 WP-1; caiso-119 A/B (±60 MW, inert); caiso-135 §2/§3/§4/§7 basis adjudication" },
     reliability_floor: { cell: "I" },
+    reliability_floor_plant_exclusions: { cell: "U", ev: 'row added with the field 2026-08-16 (nyiso-140, rule 28c); never armed here. Entering as U per rule 28(d) — the NYISO identification transfers nothing; this ISO must identify any laid-up unit from its OWN CAMPD conduct before arming' },
     coal_mustrun_per_plant: { cell: "K" },
     coal_takeorpay_committed: { cell: "." },
     coal_prb_committed_dispatchable: { cell: "." },
