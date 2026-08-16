@@ -173,6 +173,7 @@ window.MECH_MATRIX_SHARDS.MISO = {
     pumped_storage_cycling_depth: { cell: "U" },
     caiso_da_rt_two_settlement: { cell: "." },
     caiso_ps_charge_shape_anchor: { cell: "." },
+    caiso_ps_plant_params: { cell: "." },
     measured_interface_limits: { cell: "U" },
     internal_congestion_split: { cell: "G", ev: "miso-78/79/80" },
     tsa_transfer_derate: { cell: "." },

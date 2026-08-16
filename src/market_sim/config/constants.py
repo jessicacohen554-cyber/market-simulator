@@ -1756,6 +1756,67 @@ PUMPED_STORAGE_RTE: float = 0.80
 # off until a CAISO calibration pass measures Helms' reserve duty.
 PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO: dict[str, float] = {}
 
+# Per-plant cited-physical parameters for CAISO's six pumped-storage plants
+# (lane 5 of the close-out campaign, GATESPEC-caiso195-ps-physical-2026-08-11;
+# armed by ScenarioConfig.caiso_ps_plant_params, default off). Replaces the
+# single NP15 aggregate (fleet-average duration/RTE) with per-plant units.
+# EVERY value is a published public figure or fixed-constant arithmetic on
+# published figures (rule 5 [R-NO-MAGIC]; rule 13 admissibility: static plant
+# ratings regenerate for a forward year from the same public documents).
+# power_cap stays the EIA-860 nameplate the shipped loader already reads
+# (G-AGG: zero MW added); zones stay the model's own build_zone_lookup
+# geography (G-ZONE: all six resolve NP15). RTE keeps PUMPED_STORAGE_RTE for
+# every plant (per-plant RTE is NOT in the gatespec's parameter list).
+#
+# pump_mw — cited pump-side capability (LP charge cap, tighten-only vs the
+#   power cap; a cited pump rating ABOVE the EIA-860 PS-unit nameplate clips
+#   to it, disclosed in the PRECHECK — Hyatt/Thermalito/O'Neill):
+#   * Helms 930.0: PG&E, "Helms Pumped Storage Plant" (M. Yeung, NW Wind
+#     Integration Forum workshop, 2008-10-17, nwcouncil.org), p.4-5: "1,212 MW
+#     total in generation mode, and 930 MW total in pump mode".
+#   * Hyatt 387.0 / Robie Thermalito 89.5 / Gianelli 375.8: DWR Bulletin
+#     132-22 (Sept 2025), Ch.1 SWP pumping-plants table (p.9): total motor
+#     ratings 519,000 / 120,000 / 504,000 hp x 745.7 W/hp.
+#   * O'Neill 26.8: USBR, EWA Draft EIS/EIR (July 2003) Ch.16 §16.2.7.1.1,
+#     six 6,000-hp pump motors (Reclamation 2001) x 745.7 W/hp.
+#   * Eastwood None: no public pump-mode rating found (FERC P-67 narrative
+#     sources give generating rating/head only) — the component keeps the
+#     unrestrained default (charge cap = power cap), the GATESPEC §4.1
+#     more-pumping-capability direction for an uncited parameter.
+# energy_mwh — cited reservoir volume x (cited MW / cited design flow), gross
+#   volumes (overstates usable storage -> MORE cycling capability, the
+#   GATESPEC §4.1 anti-flattering direction):
+#   * Helms 200,424: Courtright (upper) 123,000 AF x 1,212 MW / 9,000 cfs
+#     (PG&E deck p.4-5; 9,000 cfs = 743.80 AF/h).
+#   * Hyatt 31,678: pump-back cycle store = Thermalito Forebay 11,800 AF +
+#     Afterbay 57,000 AF (B132-22 Table 1-1) x 645 MW / 16,950 cfs (Table
+#     1-4). The afterbay is the pump-back store the public record names (USBR
+#     EWA EIS §16.2.5.2.6); forebay included per §4.1 (more capability).
+#     Hyatt STAYS IN the storage block — this is a static cited bound, no
+#     energy re-allocation, no shape (caiso-141 §G / owner ruling 4).
+#   * Robie Thermalito 4,519: Afterbay 57,000 AF x 114 MW / 17,400 cfs.
+#   * Gianelli 613,410: San Luis gross 2,027,800 AF (B132-22 Table 1-1) x
+#     424 MW / 16,960 cfs (Table 1-4).
+#   * O'Neill 4,095: O'Neill Forebay gross 56,400 AF x 25.2 MW / 4,200 cfs
+#     (USBR EWA EIS: 6 units x 700 cfs, 4,200 kW each).
+#   * Eastwood None: Balsam Meadow forebay volume not found in a public
+#     document — the component keeps the incumbent fleet-average duration
+#     (PUMPED_STORAGE_DURATION_HOURS x its EIA-860 nameplate), the uncited-
+#     component default the GATESPEC's kill rule prescribes ("that component
+#     out" — its parameters stay incumbent; the plant still splits out so
+#     G-AGG conservation and per-plant zone/citation accounting stay whole).
+# Full citation chain + reconciliation arithmetic:
+# results/calibration/_caiso197_ps_citations.json and
+# PRECHECK-caiso197-ps-physical-2026-08-16.md.
+CAISO_PS_PLANT_PARAMS: dict[int, dict[str, float | str | None]] = {
+    6100: {"name": "Helms", "pump_mw": 930.0, "energy_mwh": 200_424.0},
+    437: {"name": "Edward C Hyatt", "pump_mw": 387.0, "energy_mwh": 31_678.0},
+    438: {"name": "Robie Thermalito", "pump_mw": 89.5, "energy_mwh": 4_519.0},
+    448: {"name": "W R Gianelli", "pump_mw": 375.8, "energy_mwh": 613_410.0},
+    446: {"name": "O'Neill", "pump_mw": 26.8, "energy_mwh": 4_095.0},
+    104: {"name": "J S Eastwood", "pump_mw": None, "energy_mwh": None},
+}
+
 # NYISO treaty-mandated minimum flows for the two large NYPA hydro plants.
 # EIA plant IDs are the EIA-860/923 ORIS codes used throughout the model.
 #

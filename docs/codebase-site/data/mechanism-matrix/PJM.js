@@ -173,6 +173,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     pumped_storage_cycling_depth: { cell: "G", ev: "constants.py PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO retirement note; docs/multi-iso/pjm-ps-cycling-diagnosis-2026-06.md" },
     caiso_da_rt_two_settlement: { cell: "." },
     caiso_ps_charge_shape_anchor: { cell: "." },
+    caiso_ps_plant_params: { cell: "." },
     measured_interface_limits: { cell: "K", ev: "pjm measured TTC keeper" },
     internal_congestion_split: { cell: "." },
     tsa_transfer_derate: { cell: "." },
