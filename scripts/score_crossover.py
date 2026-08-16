@@ -54,9 +54,9 @@ import numpy as np
 _SRC = Path(__file__).resolve().parent.parent / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
-_SCRIPTS = Path(__file__).resolve().parent
-if str(_SCRIPTS) not in sys.path:
-    sys.path.insert(0, str(_SCRIPTS))
+_REPO_BOOT = Path(__file__).resolve().parent.parent  # repo root: canonical
+if str(_REPO_BOOT) not in sys.path:  # scripts.* sibling imports on direct run
+    sys.path.insert(0, str(_REPO_BOOT))
 
 from market_sim.model.dispatch import DispatchResult  # noqa: E402
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
@@ -67,8 +67,8 @@ from market_sim.results.outputs import (  # noqa: E402
 )
 
 # The capacity-event scorers, reused verbatim (never modified here).
-import score_capacity_hindcast as CH  # noqa: E402
-import calibration_verdict as V  # noqa: E402
+from scripts import calibration_verdict as V  # noqa: E402
+from scripts import score_capacity_hindcast as CH  # noqa: E402
 
 REPO = Path(__file__).resolve().parent.parent
 if str(REPO) not in sys.path:

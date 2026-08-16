@@ -16,8 +16,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, "scripts")
-from legitimacy_diagnostics import load_bench  # noqa: E402
+sys.path.insert(
+    0, str(Path(__file__).resolve().parent.parent.parent)
+)  # repo root: canonical scripts.* sibling imports on direct run
+from scripts.legitimacy_diagnostics import load_bench  # noqa: E402
 
 REPO = Path(".").resolve()
 YEAR = int(sys.argv[1]) if len(sys.argv) > 1 else 2024
