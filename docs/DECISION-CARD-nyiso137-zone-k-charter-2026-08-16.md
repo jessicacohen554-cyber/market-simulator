@@ -4,11 +4,41 @@
 solve has been spent and none will be until this card is answered — the arm is
 not written and no pre-registration is filed.
 
-> **STATUS (nyiso-138, 2026-08-16, main `e1760bb`): D1 · D2 · D3 REMAIN OPEN and
-> unanswered — no owner ruling has been received on any of them, and no solve has
-> been spent. D4 is WITHDRAWN: another lane resolved it at HEAD (see D4 below);
-> it needs no ruling and its recommended edit must not be made.** nyiso-138 spent
-> no solve, wrote no mechanism, and made no edit to `src/`.
+> **STATUS (nyiso-139, 2026-08-16, main `b528785`): ALL FOUR ITEMS ARE NOW
+> CLOSED. THIS CARD IS ANSWERED AND NEEDS NO FURTHER RULING.**
+>
+> The owner ruled on 2026-08-16 (session nyiso-139, `AskUserQuestion`):
+>
+> * **D1 — GRANTED.** "Grant — write, prereg, solve." The joint Zone-K charter is
+>   authorized: write the mechanism and its pre-registration, then solve
+>   2023/2024/2025 in one bundle (rule 16) and register control + arm (rule 15).
+> * **D2 — ADOPTED AS REQUESTED.** Rely on the arm-vs-control C3c **delta**, not
+>   on absolute band membership; any C3c-turning claim is CONDITIONAL on the clock
+>   repair, and the promote decision rests on K1–K6 plus C1/C2/C3a/C3b/C4/C6/C8,
+>   "whatever C3c does". **See the note below: the repair has since landed, which
+>   discharges this condition prospectively.**
+> * **D3 — option (b), NOT the session's recommended (a).** *"Re-stage the NYISO
+>   RT archive, repair first, then charter."* The ordering is binding: the repair
+>   goes before the lever.
+> * **D4 — WITHDRAWN** by nyiso-138 (resolved at HEAD by another lane); no ruling
+>   was sought or given, and its recommended `_IGNORE` edit must not be made.
+>
+> **D3(b) IS DISCHARGED — the repair LANDED in nyiso-139.** The card's own §D3
+> table called (b) "blocked on staging ~8 years of monthly zips"; that blocker is
+> gone. `mis.nyiso.com` was reachable, and a new idempotent fetcher
+> (`scripts/data/fetch_nyiso_zonal_lmp.py`) re-staged the archive to **102/102 DA
+> + 102/102 RT months** with zero failures, preserving the 21 committed RT zips
+> byte-identically. `_nyiso_wide` was corrected to interval-ENDING and the parquet
+> re-derived on **FULL** coverage — so this was option (b), never the forbidden
+> (c). The keeper's determination is **UNCHANGED** (`CALIBRATED-WITH-CAVEATS`,
+> C3c the lone ledgered caveat); the only movement anywhere is the 2024 C3c
+> denominator, 12 h → 13 h. Neither verdict-flip edge §5 of the nyiso-137 finding
+> flagged fired. Evidence:
+> `results/calibration/FINDING-nyiso139-rtd-clock-repair-landed-2026-08-16.md`.
+>
+> nyiso-138 spent no solve, wrote no mechanism, and made no edit to `src/`.
+> nyiso-139 spent no solve either: the repair is data intake plus a one-line
+> binning correction, and the chartered lever itself is **not yet written**.
 
 ---
 
