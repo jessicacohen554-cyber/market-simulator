@@ -1161,6 +1161,14 @@ def main() -> None:
     )
 
     states = campd.states_for_iso(iso)
+    # The merit-order panel's IDENTIFICATION scope, pinned independently of the
+    # detection scope above (CLAUDE.md rule 23 ``[R-FROZEN-DERIVE]``): widening
+    # `states` for coverage must never re-identify the layup classifier for the
+    # plants already covered. Falls back to `states` for any ISO with no pin, so
+    # this is a no-op everywhere but CAISO (rule 25 ``[R-ISO-SCOPE]``). See
+    # `campd.ISO_MERIT_PANEL_STATES` and FINDING-caiso198 §3 for the measurement
+    # that identified the coupling.
+    merit_panel_states = campd.merit_panel_states_for_iso(iso)
     rows: list[dict] = []
     # Windows the merit-order guard reclassifies as economic layup. Always
     # defined so the row sink below is unconditional; stays empty (and no
@@ -1194,10 +1202,11 @@ def main() -> None:
                         pd.date_range(f"{year}-01-01", f"{year}-12-31 23:00", freq="h")
                     )
                     merit_panels[year] = build_merit_order_panel(
-                        iso, year, n_full, states, args.merit_rcc_pctl
+                        iso, year, n_full, merit_panel_states, args.merit_rcc_pctl
                     )
                     print(
-                        f"  merit-order panel {iso} {year}: "
+                        f"  merit-order panel {iso} {year} "
+                        f"[scope {'+'.join(merit_panel_states)}]: "
                         + (
                             "UNIDENTIFIED (guard inert this year)"
                             if merit_panels[year] is None

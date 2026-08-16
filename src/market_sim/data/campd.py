@@ -159,6 +159,51 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
     ),
 }
 
+# States feeding an ISO's MERIT-ORDER PANEL — the identification scope of the
+# economic-layup classifier — pinned INDEPENDENTLY of :data:`ISO_STATES`, which
+# is the DETECTION-coverage scope.
+#
+# The two lists answer different questions and must be free to move apart
+# (CLAUDE.md rule 23 ``[R-FROZEN-DERIVE]``: an instrument is re-identified only
+# when its own source data changes):
+#
+# * :data:`ISO_STATES` = "which CAMPD state files must be READ so every plant in
+#   the ISO's fleet is observable?" Widening it is pure coverage — the loaders
+#   and the outage derivation filter every loaded state back to the ISO's own
+#   fleet, so a new state adds plants and removes nothing.
+# * this map = "whose running capacity SETS the revealed clearing cost the layup
+#   classifier scores each window against?" That object is the ISO's own
+#   market, so a detection widening must NOT re-identify it.
+#
+# ``scripts.lib.outage_detect.build_merit_order_panel`` is fleet-blind by design
+# (self-contained, no EIA-860 join), so before this pin it inherited the
+# detection list verbatim and a coverage widening silently moved the classifier
+# for every already-covered plant. Measured at caiso-198: adding NV for one
+# CAISO-fleet plant (Desert Star, EIA 55077) put 59-64 units of 13-14 NON-CAISO
+# NV Energy facilities into CAISO's panel, lifting the RCC in 87-97 % of hours
+# (mean +3.45 $/MWh in 2024) and reclassifying 275 CA-facility windows that the
+# widening has no business touching (FINDING-caiso198-desertstar-extract-2026-08-16.md
+# §3; owner ruling caiso-199 §5 option 1).
+#
+# An ISO absent from this map falls back to :data:`ISO_STATES` — the pre-pin
+# behaviour, so no other ISO's committed extract moves (rule 25
+# ``[R-ISO-SCOPE]``). The same fleet-blindness exists at NYISO (NY+NJ), PJM and
+# MISO (shared states); those are each their own lane's measurement and this pin
+# adjudicates none of them.
+#
+# NOTE ON SCOPE: this is a STATE-LIST pin, not a fleet filter. The committed
+# CA-only panel already contains non-CAISO CA units (LADWP and municipal
+# utilities file CEMS under CA), and that is the panel the caiso-192 gates
+# adjudicated the guard on. Making the panel fleet-PURE would move the committed
+# extract and needs its own baseline measurement; it is not done here.
+ISO_MERIT_PANEL_STATES: dict[str, tuple[str, ...]] = {
+    # CAISO's panel stays CA-only — the scope every committed CAISO extract
+    # through sha 5f3e35c5.. was identified on, and the scope under which the
+    # Desert Star re-derive is STRICTLY ADDITIVE (candidate sha da33e509..,
+    # layup companion byte-identical). NV is read for DETECTION only.
+    "CAISO": ("CA",),
+}
+
 # CEMS-to-EIA split-plant remap: units that report CAMPD under a *legacy*
 # ORIS code but belong to a different EIA plant in the model fleet. AES
 # repowered Alamitos and Huntington Beach with new CCGTs that EIA lists as
@@ -249,6 +294,19 @@ DEFAULT_CO2_KG_PER_MMBTU: float = 53.06
 def states_for_iso(iso: str) -> tuple[str, ...]:
     """Return the CAMPD state codes feeding an ISO (see :data:`ISO_STATES`)."""
     return ISO_STATES.get(iso.upper(), ())
+
+
+def merit_panel_states_for_iso(iso: str) -> tuple[str, ...]:
+    """Return the CAMPD state codes feeding an ISO's merit-order panel.
+
+    The panel's identification scope, pinned independently of the detection
+    scope :func:`states_for_iso` — see :data:`ISO_MERIT_PANEL_STATES` for why
+    the two must be free to move apart. An ISO with no pin falls back to its
+    detection list, which is the pre-pin behaviour.
+    """
+    key = iso.upper()
+    pinned = ISO_MERIT_PANEL_STATES.get(key)
+    return pinned if pinned is not None else ISO_STATES.get(key, ())
 
 
 def _hour_index_8760(
