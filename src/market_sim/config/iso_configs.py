@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import csv as _csv
 from dataclasses import dataclass
+from dataclasses import replace as _dataclass_replace
 
 from pydantic import BaseModel, Field
 
@@ -1289,6 +1290,21 @@ class ReliabilityFloorSpec:
     threshold_percentile: float | None = (
         None  # engine-computed percentile (netload only)
     )
+    # EIA plant codes this limb does NOT floor, even though they carry the
+    # limb's (zone, plant_class). A persistent-baseline floor is derived from a
+    # FLEET-aggregate capacity factor but applied per UNIT, so a plant that is
+    # economically laid up — available in the outage extract, but idle in its
+    # own metered conduct — is held at the fleet's baseline in every hour and
+    # manufactures energy it never produced (rule 17 [R-FLOOR-WINDOW]: a floor
+    # binding in hours its own driver evidence says the unit is offline is a
+    # bug). Excluding it is a MEMBERSHIP correction to the limb's identification,
+    # sourced from the same CAMPD conduct the coefficient is derived from, and is
+    # frozen against residuals like every other coefficient (rule 23
+    # [R-FROZEN-DERIVE]). Populated from the CSV's optional
+    # ``exclude_plant_codes`` column; inert unless
+    # ``ScenarioConfig.reliability_floor_plant_exclusions`` arms it (see
+    # :func:`apply_reliability_floor_plant_exclusions`).
+    exclude_plant_codes: frozenset[int] = frozenset()
 
 
 # Steam classes carry multi-day event bridging by default (a committed boiler
@@ -1312,7 +1328,15 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
     registry is empty until ``scripts/data/derive_reliability_coeffs.py`` populates
     the coefficients (Phase 2). Required columns: ``zone, plant_class, driver,
     threshold, floor_pct, enabled``; optional: ``min_event_hours``,
-    ``distribution``, ``start_hour``, ``end_hour``, ``ramp_group``, ``r1_disabled``.
+    ``distribution``, ``start_hour``, ``end_hour``, ``ramp_group``, ``r1_disabled``,
+    ``exclude_plant_codes``.
+
+    ``exclude_plant_codes`` is a ``;``- or ``,``-separated list of EIA plant codes
+    the limb does not floor (see
+    :attr:`ReliabilityFloorSpec.exclude_plant_codes`). It is parsed whenever
+    present but stays inert until a run arms
+    ``ScenarioConfig.reliability_floor_plant_exclusions``, so CSVs carrying the
+    column load byte-identically for every existing run.
 
     An ``r1_disabled=True`` row is forced ``enabled=False`` here regardless of its
     ``enabled`` column: the limb is unidentified out-of-training (Spearman ρ sign
@@ -1337,6 +1361,7 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
                     eh_raw = (row.get("end_hour") or "").strip()
                     rg_raw = (row.get("ramp_group") or "").strip()
                     tp_raw = (row.get("threshold_percentile") or "").strip()
+                    ex_raw = (row.get("exclude_plant_codes") or "").strip()
                     limbs.append(
                         ReliabilityFloorSpec(
                             zone=row["zone"].strip(),
@@ -1358,6 +1383,9 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
                             end_hour=int(eh_raw) if eh_raw else None,
                             ramp_group=rg_raw or None,
                             threshold_percentile=float(tp_raw) if tp_raw else None,
+                            exclude_plant_codes=frozenset(
+                                int(c) for c in ex_raw.replace(",", ";").split(";") if c
+                            ),
                         )
                     )
         registry[iso] = limbs
@@ -1459,6 +1487,54 @@ def drop_obligation_owned_reliability_specs(
         s
         for s in specs
         if (s.zone, s.plant_class) not in _INCITY_OBLIGATION_OWNED_LIMBS
+    ]
+
+
+def apply_reliability_floor_plant_exclusions(
+    specs: list[ReliabilityFloorSpec],
+    config,
+) -> list[ReliabilityFloorSpec]:
+    """Arm or clear each limb's ``exclude_plant_codes`` membership correction.
+
+    A persistent-baseline reliability floor is identified from a **fleet-aggregate**
+    capacity factor but applied per **unit** (``distribution="pro_rata"`` floors
+    every unit of the class in the zone at ``floor_pct × pmax × availability``).
+    The two bases diverge whenever the fleet contains a plant that is
+    *economically laid up*: idle in its own metered conduct, yet fully available
+    in the outage extract, because lay-up is correctly not booked as a forced
+    outage. Such a unit is then held at the fleet's baseline in all 8,760 hours
+    and manufactures energy it never produced — rule 17 ``[R-FLOOR-WINDOW]``'s
+    "a floor binding in hours its own driver evidence says the unit is offline is
+    a bug by definition".
+
+    The exclusion list is a **membership correction to the limb's own
+    identification**, derived from the same CAMPD conduct as ``floor_pct`` and
+    carried in the same frozen coefficient CSV, so it is governed by rule 23
+    ``[R-FROZEN-DERIVE]``: it re-derives only when its source data does, never
+    because a residual moved.
+
+    Gated so an A/B is clean. Unless ``config.reliability_floor_plant_exclusions``
+    is set, every limb's exclusions are CLEARED, making a control run
+    byte-identical to the pre-mechanism engine even on a CSV that carries the
+    column.
+
+    Args:
+        specs: Reliability-floor limbs for the ISO, post-overrides.
+        config: The run's ``ScenarioConfig``.
+
+    Returns:
+        *specs* with ``exclude_plant_codes`` retained (armed) or emptied
+        (disarmed). Limbs that carry no exclusions are returned unchanged either
+        way, so the common path allocates nothing.
+    """
+    armed = bool(getattr(config, "reliability_floor_plant_exclusions", False))
+    if armed:
+        return specs
+    return [
+        _dataclass_replace(s, exclude_plant_codes=frozenset())
+        if s.exclude_plant_codes
+        else s
+        for s in specs
     ]
 
 

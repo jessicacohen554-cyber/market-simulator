@@ -3310,6 +3310,7 @@ def run_year(
         from market_sim.config.iso_configs import (
             RELIABILITY_FLOOR_REGISTRY,
             apply_reliability_floor_overrides,
+            apply_reliability_floor_plant_exclusions,
             drop_drag_owned_reliability_specs,
             drop_obligation_owned_reliability_specs,
         )
@@ -3348,6 +3349,21 @@ def run_year(
                 iso,
                 year,
                 _n_pre_obligation - len(_floor_specs),
+            )
+        # Rule 17 [R-FLOOR-WINDOW] membership correction: a persistent-baseline
+        # limb is identified on a FLEET-aggregate CF but applied per UNIT, so an
+        # economically laid-up plant would be held at the fleet baseline in every
+        # hour. Arms each limb's exclude_plant_codes when the run opts in; clears
+        # them otherwise, so a disarmed run is byte-identical (nyiso-140).
+        _n_excluded = sum(len(s.exclude_plant_codes) for s in _floor_specs)
+        _floor_specs = apply_reliability_floor_plant_exclusions(_floor_specs, config)
+        if _n_excluded and sum(len(s.exclude_plant_codes) for s in _floor_specs):
+            logger.info(
+                "%s %d: reliability floor — %d plant exclusion(s) ARMED "
+                "(CLAUDE.md rule 17: laid-up units are not floored)",
+                iso,
+                year,
+                _n_excluded,
             )
         if _floor_specs and inject_reliability_floor(
             fleet_arrays,
