@@ -890,6 +890,14 @@ your branch when done.
   (decision 7's authorized BLOAT-B re-dispatch) — result to be appended here.
   A red on a data-missing skip means restoring that corpus, never widening the
   workflow's sparse list.
+  **APPENDED 2026-08-15 — duty DISCHARGED by the GOLDEN-TIER-FIX lane:** run
+  `31913648051` — GREEN, loud-failure guard PASS, zero data-missing skips, no
+  corpus restored, sparse list untouched. Deferred by the B-5 sitting until
+  the `curate_emissions.py` memory fix existed; spent on the fix branch
+  (`claude/golden-tier-emissions-oom-03qlck` @ `ccca569`, off main `870c4c8`,
+  which carries every executed BLOAT-B prune — PR-1/2/3/4/5), so the one run
+  covers B-1/B-2/B-5 and PR-3 together. Full entry: this ledger, 2026-08-15
+  GOLDEN-TIER-FIX.
 - 2026-08-15 — **PM refresh at main `c447199`. Program state corrected; three
   Wave-1 lanes are still unrun.**
   * **DELIVERED:** DEBUG-A (`docs/handoffs/debug-sweep-2026-08.md`, PR #3937) —
@@ -1031,3 +1039,37 @@ your branch when done.
   outstanding = DOCS-A alone; G1 declares on its merge plus the §6
   decision-1 ack.** Audit OWNER rows O4–O8 join the decision queue on the
   board.
+- 2026-08-15 — **GOLDEN-TIER-FIX delivered: the `curate_emissions.py`
+  runner OOM is fixed, and the deferred B-1/B-2/B-5 golden-tier dispatch is
+  SPENT and GREEN — G3's evidence gate reopens.** Branch
+  `claude/golden-tier-emissions-oom-03qlck` @ `ccca569` off main `870c4c8`
+  (which carries every executed BLOAT-B prune, PR-1/2/3/4/5).
+  `curate_year()`'s assembly rewritten Arrow-side/streaming — per-state
+  cleaning (`clean_campd_frame`) unchanged, converted to Arrow one file at a
+  time; dedupe+sort on the three key columns only (multi-key sort made
+  stable by an original-row-order tiebreaker, then first-of-equal-key-run
+  selection — provably the rows and order of
+  `drop_duplicates(keep="first")` + `sort_values`); rows streamed through
+  the existing `clean_io.write_clean_iter` in one-row-group chunks;
+  `validate_clean` untouched. Peak RSS **10.05 → 5.17 GiB** (2023, identical
+  inputs; stock re-measured in-session, matching PERF-A's 10.04; PERF-A's
+  NOT-FOR-MERGE prototype was 6.45) and **9.91 → 4.71 GiB** (2024); wall
+  unchanged; the residual peak is `validate_clean`'s own full read-back.
+  Rule 13/23-clean: a memory refactor, not a re-derivation —
+  `[R-FROZEN-DERIVE]` output-equivalence verified for 2023 AND 2024 (stock
+  vs streaming on identical inputs, same env): data region byte-identical
+  (174,666,062 B / 190,351,025 B — every page and row group), row-group
+  structural metadata equal, `assert_frame_equal(check_exact=True)` + dtype
+  equality PASS (26,534,489 / 26,030,146 rows); the footer differs only in
+  `market_sim.created_utc` (+ the `ARROW:schema` blob that embeds it, proven
+  by deserialize-and-strip comparison) — the writer-metadata instability the
+  equivalence contract anticipated. Dispatch (decision 7 standing
+  authorization, the B-2/B-5 deferred duty): run `31913648051` — completed
+  SUCCESS in 11m33s (checkout 71s, `regenerate_clean` 5m58s,
+  `curate_emissions --years 2023` 1m31s — the step that OOM-killed 2 of 3
+  prior dispatches — tier 2m43s); loud-failure guard PASS with zero
+  data-missing skips ⇒ the
+  B-1/B-2/B-5 conversions and the PR-3 hourly prune opened no tier-read gap;
+  no corpus restored, sparse list untouched. The tier's first green that is
+  engineering rather than a capacity coin flip (perf-recheck §1.2/§1.5).
+  BLOAT-B-7's re-measured close-out remains open.
