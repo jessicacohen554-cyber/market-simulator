@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-16-miso-160-wefor-shape",
+  "label": "miso 160 wefor shape",
+  "date": "2026-08-16",
+  "shorthand": "miso-160-wefor-shape",
+  "definition": "miso-160 ARM: summer_wefor_share_override=1.0599 (measured MISO MOM seasonal forced-outage shape, PREREG-miso160-summer-wefor-measured-share-2026-08-16.md) - THE SINGLE DELTA vs the same-HEAD zero-delta control miso160_wefor_A",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-16-miso-160-wefor-shape.js",
+  "bundle": "results/calibration/miso160_wefor_B"
+}
