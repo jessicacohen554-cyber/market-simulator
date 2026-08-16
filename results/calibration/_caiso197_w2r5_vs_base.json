@@ -1,0 +1,43 @@
+{
+ "control": "caiso197_w2_r3",
+ "arm": "caiso197_w2_r5",
+ "g_onemech": {
+  "expected_diff": {
+   "caiso_ps_plant_params": {
+    "control": false,
+    "arm": true
+   }
+  },
+  "measured_diff": {
+   "caiso_ps_plant_params": {
+    "control": false,
+    "arm": true
+   }
+  },
+  "pass": true
+ },
+ "engagement": {
+  "2023": {
+   "zone_hours_price_changed": 25813,
+   "zone_hours_total": 61320,
+   "max_abs_price_delta": 81.99037384524814,
+   "class_hours_mw_changed": 13569,
+   "max_abs_mw_delta": 4560.42236328125
+  },
+  "2024": {
+   "zone_hours_price_changed": 33400,
+   "zone_hours_total": 61320,
+   "max_abs_price_delta": 148.34696913677027,
+   "class_hours_mw_changed": 14664,
+   "max_abs_mw_delta": 3521.6748046875
+  },
+  "2025": {
+   "zone_hours_price_changed": 30128,
+   "zone_hours_total": 61320,
+   "max_abs_price_delta": 59.67423312071098,
+   "class_hours_mw_changed": 11944,
+   "max_abs_mw_delta": 3565.654296875
+  }
+ },
+ "arm_inert": false
+}
