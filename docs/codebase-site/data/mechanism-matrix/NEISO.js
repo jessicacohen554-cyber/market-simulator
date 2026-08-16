@@ -173,6 +173,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     pumped_storage_cycling_depth: { cell: "G", ev: "neiso-74 — FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md; probe scripts/probes/_neiso74_ps_cycling_screen.py" },
     caiso_da_rt_two_settlement: { cell: "." },
     caiso_ps_charge_shape_anchor: { cell: "." },
+    caiso_ps_plant_params: { cell: "." },
     measured_interface_limits: { cell: "U" },
     internal_congestion_split: { cell: "." },
     tsa_transfer_derate: { cell: "." },

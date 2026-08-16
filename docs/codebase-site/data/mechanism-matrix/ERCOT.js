@@ -173,6 +173,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     pumped_storage_cycling_depth: { cell: "." },
     caiso_da_rt_two_settlement: { cell: "." },
     caiso_ps_charge_shape_anchor: { cell: "." },
+    caiso_ps_plant_params: { cell: "." },
     measured_interface_limits: { cell: "K", ev: "ercot GTC keeper" },
     internal_congestion_split: { cell: "G", ev: "trough diagnosis §10 / ERCOT-117" },
     tsa_transfer_derate: { cell: "." },

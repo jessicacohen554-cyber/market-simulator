@@ -1,0 +1,51 @@
+{
+ "control": "caiso197_l2_wefor",
+ "arm": "caiso197_w2_r3",
+ "g_onemech": {
+  "expected_diff": {
+   "gas_st_wefor_base_override": {
+    "control": null,
+    "arm": 0.1591
+   },
+   "caiso_ps_plant_params": {
+    "control": null,
+    "arm": false
+   }
+  },
+  "measured_diff": {
+   "caiso_ps_plant_params": {
+    "control": null,
+    "arm": false
+   },
+   "gas_st_wefor_base_override": {
+    "control": null,
+    "arm": 0.1591
+   }
+  },
+  "pass": true
+ },
+ "engagement": {
+  "2023": {
+   "zone_hours_price_changed": 6913,
+   "zone_hours_total": 61320,
+   "max_abs_price_delta": 74.05866941110683,
+   "class_hours_mw_changed": 1918,
+   "max_abs_mw_delta": 190.8980712890625
+  },
+  "2024": {
+   "zone_hours_price_changed": 9636,
+   "zone_hours_total": 61320,
+   "max_abs_price_delta": 130.12640723388918,
+   "class_hours_mw_changed": 2496,
+   "max_abs_mw_delta": 553.7154693603516
+  },
+  "2025": {
+   "zone_hours_price_changed": 7110,
+   "zone_hours_total": 61320,
+   "max_abs_price_delta": 60.47300011368865,
+   "class_hours_mw_changed": 563,
+   "max_abs_mw_delta": 168.0146484375
+  }
+ },
+ "arm_inert": false
+}

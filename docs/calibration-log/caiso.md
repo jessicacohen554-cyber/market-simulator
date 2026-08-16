@@ -7994,3 +7994,116 @@ clause requires** — the close-out campaign's control base is now
 ({CC_REGULAR}-scoped) and lanes 3/5 compose on it. Rule 22 D-5(b) does not fire
 (no `complete` marker); freeze untouched; no out-of-training year touched.
 
+
+## 2026-08-16 — caiso-197 (lane 2 RE-RUN): `wefor_residual=0.0` {CC_REGULAR} ACCEPTED 4/4 on the re-anchored caiso-196 base — ledger 11/8 → 10/7 (the fitted `wefor_multiplier` retired), and the keeper's C1-2023 CC_REGULAR FAIL heals in the arm
+
+**Runs `2026-08-16-caiso-197-l2-control` / `2026-08-16-caiso-197-l2-wefor`**
+(both NOT-YET / C6 UNATTESTED — standard non-keeper A/B posture). PRECHECK
+pushed at `995cfe2c7` BEFORE any solve; GATESPEC-caiso193 applied as written;
+{CC_REGULAR} is the gatespec's own G-COV fail-closed subset on the repaired
+instrument (`_caiso196_gcov_remeasure.json`: 0.9758/0.9667 both readings;
+CC_CHP excluded at 0.6357 strict — real CEMS-exemption limit). **Control
+BIT-ZERO** vs the committed keeper on every zone-hour and class-hour of all
+three years (noise floor 0.0, quoted first; ratified tolerance met
+trivially); seam caps 16055/16452/16148 logged; `hydro_ror_split=false`
+disclosed. **Gates 4/4**: G-COV (committed record), G-DOF (**10/7** — the
+sanctioned removed path: neutral multiplier leaves the ledger, 0.0 residual
+is the frozen measurement's identity, not a free parameter), G-ONEMECH
+(exact three-field diff over the full config), G-SIXISO. Engagement
+34,577/36,780/35,883 of 61,320 zone-hours moved. **C1 fuel-mix flips
+FAIL → PASS 12/12**: 2023 CC_REGULAR −4.44 → −3.94 TWh (−1.9 → −1.6 pp, in
+band) — the caiso-196 ACCEPT-WITH-FLIP row closed by repairing the OTHER
+half of the same double-count; 2024 −1.21 → −0.79. C3b clean all years
+(0.076/0.152/0.173), no pass→fail flip anywhere (§5 silent). C3a
+transparency-only per the verbatim direction-hazard clause:
++4.4/+11.7/+14.5 → +4.0/+11.1/+14.1 % (never consulted). Matrix duty (b):
+`wefor_residual` CAISO **R → O** (acceptance recorded; K follows the Wave-2
+§6 C3a-blind promotion). Environment notes: the replay driver's strict unmapped-key guard bricked
+the first control attempt on the nyiso-136 rule-26-deleted solar-COD key;
+main's own `_RULE26_DELETED_UNCONDITIONAL` (parallel session, merged
+mid-campaign) is the incumbent handling after rebase, with caiso-197's
+three pinning tests adapted onto it; Desert Star NV
+CAMPD intake landed this session (raw files only — extract re-derive
+deferred post-ladder, its own rule-23 charter), bench parts rebuilt on the
+CA+NV CAMPD basis for ALL caiso-197 registrations, C1 measured unaffected
+(EIA-923-scored; the control reprints the keeper's −4.44 exactly).
+
+## 2026-08-16 — caiso-197 (lane 3): `gas_st_wefor_base_override=0.1591` ACCEPTED 5/5 — the ERCOT-fitted 0.21 stops governing CAISO ST_GAS; ledger unchanged 11/8
+
+**Run `2026-08-16-caiso-197-l3-stgas`** (NOT-YET / C6 UNATTESTED — standard
+non-keeper posture; control SHARED with lane 2, BIT-ZERO vs the keeper).
+PRECHECK with the value FROZEN pushed at `3a4d79db1` before the solve.
+Chain: EIA-860 six-unit census through the shipped fleet path (2,858.8 MW —
+the GATESPEC's own figure) → NERC GADS Brochure 3 2020-2024 FOSSIL Gas
+Primary EFORd size-class rows (committed corpus with recorded URL/retrieval)
+→ capacity-weighted 15.9149 % → 0.1591. Gates: G-FROZEN, G-CITE, G-BAND
+(in [0.03,0.21]), G-POSITION (census-grounded: 52.2 % of capacity in the
+600-799 MW class at 19.31 %, vs mid-size rows at 10.35-11.26 % where a
+MISO-like fleet sits), G-DOF (11/8 unchanged — cited input, no ledger row,
+the miso148 precedent) — all PASS; G-ONEMECH exact single-field diff.
+Engagement: 4,915/10,631/10,522 zone-hours re-priced (max |Δ| $82/$482/$50);
+C1 ST_GAS stays PASS with volumes nearly unmoved (−0.77/+0.91 TWh) — the
+class is economics-limited, so released availability expresses on the
+margin, not annual energy. No pass→fail flip (§5 silent); C3b
+0.077/0.154/0.176; C3a transparency-only (+4.4/+11.5/+14.5 vs control
++4.4/+11.7/+14.5). Matrix duty (b): `wefor_statistical_stack` CAISO evidence
+appended (the row registering the field). Composes at Wave-2 rung +L3.
+
+## 2026-08-16 — caiso-197 (lane 5): six-plant cited-physical PS parameterization ACCEPTED 6/6 — zero MW added, zero fitted scalars; C3a moves ANTI-favorably and the arm is accepted anyway
+
+**Run `2026-08-16-caiso-197-l5-psphys`** (NOT-YET / C6 UNATTESTED — standard
+non-keeper posture; control SHARED, BIT-ZERO vs the keeper). PRECHECK + the
+full registered build pushed at `56ddf497a` BEFORE the solve
+(`caiso_ps_plant_params` + `CAISO_PS_PLANT_PARAMS` + per-plant loader +
+static pump-cap channel on the existing storage_charge_cap, tighten-only;
+matrix row + six shard cells in the same PR per 28c; +5 tests; two
+provenance corpora committed — the PG&E Helms deck and the DWR B132-22
+table extracts). Gates 6/6: G-CITE (table reproduced from citations),
+G-ZONE (mechanical NP15 ×6), G-NOSHAPE (one bool diff; static bounds;
+Hyatt in-block — caiso-141 §G untouched), G-AGG (EXACT 2,077.6 = 2,077.6
+MW), G-DOF (11/8 unchanged, zero fitted), G-ENGAGE (pump caps bind: Helms
+930 < 1,053, Gianelli 375.8 < 424; 25.5k/33.1k/30.1k zone-hours re-priced,
+class-hour dispatch to 4.5 GW — the campaign's largest engagement).
+**C3a +4.4/+12.8/+15.9 vs control +4.4/+11.7/+14.5 — ANTI-favorable, and
+acceptance stands (§0 verbatim; rule 14; caiso-183 lineage).** C3b worsens
+but passes all years (0.098/0.178/0.183; 2025 margin 0.017 = the
+composition watch); C1's only FAIL row remains the control's own 2023
+CC_REGULAR (−4.63 here vs −4.44 control, already-FAIL — not a flip).
+Matrix duty (b): `caiso_ps_plant_params` U → O. Composes at the final
+Wave-2 rung (+L5).
+
+## 2026-08-16 — caiso-197 WAVE-2 PROMOTION: keeper → `2026-08-16-caiso-197-w2-r5` (the composed close-out ladder, promoted C3a-BLIND under the pre-committed protocol §6) — ledger 11/8 → 10/7, C1 healed, the campaign EXHAUSTED AS CHARTERED
+
+**Keeper: `2026-08-15-caiso-196-e1-elsegundo` → `2026-08-16-caiso-197-w2-r5`.**
+The final rung (control + L2 + L3 + L5) survived every per-rung verification:
+ladder-exact diffs (G-DELTA recomputed over 714 keys at the promotion),
+composed ledger **10/7** (= the arithmetic composition; the fitted
+`wefor_multiplier` RETIRED), identical extract shas control-vs-keeper
+(G-EXTRACT — the base never moved under the ladder), engagement at every
+rung, and **NO criteria pass→fail flip anywhere** (§5 never fired; C3b
+closed at 0.097/0.174/0.181 vs 0.20; the caiso-196 C1-2023 CC_REGULAR flip
+HEALED at −4.13 TWh in band, C1 12/12). Determination **NOT-YET with C3a
+the SOLE load-bearing FAIL** (+4.0/+12.1/+15.6 %; 2023 passes) — one fewer
+than the incumbent; C3c the single ledgered caveat, magnitudes RE-MEASURED
+at promotion (0 h vs 47/35; 2025 passes); **C6 attested AT promotion**
+(`gen_caiso197_attestation.py`, premises computed — G-DELTA/G-EXTRACT/
+G-ENGAGE/G-MACHINE/G-DOF/G-EXC). LOYO by construction (zero fitted
+parameters in the composed delta; year-independent identifications).
+**C3a was never consulted** (§0/§6 verbatim; lane 5's measured sign was
+ANTI-favorable and its acceptance stood — the clause exercised both ways
+this campaign). Matrix: shard keeper+gates re-stamped, `wefor_residual`
+O→K, `caiso_ps_plant_params` O→K, §5.2 header + session block re-stamped;
+`audit_keepers --iso CAISO` PASS 0/0; `check_mechanism_matrix` clean.
+**Retention (standing directive): CAISO lane = the keeper alone** — the
+superseded caiso-196 keeper, the bit-zero control, the three lane arms and
+the intermediate rung pruned (`prune_iso_runs.py --force-uncite`; dangling
+citations deliberate; durable evidence in the four caiso-197 FINDINGs +
+git history). **The campaign is EXHAUSTED AS CHARTERED**: every lane of the
+CLOSED inventory adjudicated; C3a-2025 still fails after the final rung, so
+the residual stays honestly declared (price face only now), the two named
+owner-funded objects unchanged, and no lane improvised
+(FINDING-caiso197-wave2-promotion-2026-08-16.md §4 is the exhaustion
+record). Rule 22 D-5(b) does not fire; freeze untouched; no out-of-training
+year touched. NEXT SESSION OPENS WITH: the Desert Star extract re-derive
+(NV files landed this session; rule-23 cited re-derive + A/B on this
+keeper, the caiso-196 pattern).

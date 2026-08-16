@@ -909,6 +909,109 @@ class TestEIA860PumpedStorage(unittest.TestCase):
         )
 
 
+class TestCaisoPsPlantParams(unittest.TestCase):
+    """caiso_ps_plant_params (lane 5, GATESPEC-caiso195): per-plant CAISO PS."""
+
+    def test_off_state_is_the_legacy_aggregate(self):
+        # Default off ⇒ byte-identical legacy behaviour: one NP15 aggregate,
+        # no per-plant unit ids, no charge_power_cap_mw anywhere.
+        units = load_eia860_pumped_storage(
+            "CAISO", 2023, ScenarioConfig(iso="CAISO")
+        )
+        self.assertEqual(len(units), 1)
+        self.assertEqual(units[0].unit_id, "NP15_eia860_pumped_storage")
+        self.assertIsNone(units[0].charge_power_cap_mw)
+
+    def test_armed_splits_conserve_the_aggregate(self):
+        # G-AGG: the armed per-plant split re-sums to the off-state aggregate
+        # exactly — zero MW added, the aggregate's own EIA-860 rows
+        # re-attributed. Six plants, all NP15 (build_zone_lookup geography).
+        off = load_eia860_pumped_storage("CAISO", 2023, ScenarioConfig(iso="CAISO"))
+        on = load_eia860_pumped_storage(
+            "CAISO", 2023, ScenarioConfig(iso="CAISO", caiso_ps_plant_params=True)
+        )
+        self.assertEqual(len(on), 6)
+        self.assertAlmostEqual(
+            sum(u.power_cap_mw for u in on),
+            sum(u.power_cap_mw for u in off),
+            places=6,
+        )
+        self.assertEqual({u.zone for u in on}, {"NP15"})
+        by_id = {u.unit_id: u for u in on}
+        # Cited pump ratings ride charge_power_cap_mw (Helms 930 PG&E;
+        # Gianelli 375.8 DWR B132-22); Eastwood is the disclosed uncited
+        # component and keeps the unrestrained default (None).
+        self.assertAlmostEqual(by_id["NP15_ps_6100"].charge_power_cap_mw, 930.0)
+        self.assertAlmostEqual(by_id["NP15_ps_448"].charge_power_cap_mw, 375.8)
+        self.assertIsNone(by_id["NP15_ps_104"].charge_power_cap_mw)
+        # Cited reservoir-derived energy bounds (constants table); Eastwood
+        # keeps the incumbent fleet-average duration.
+        self.assertAlmostEqual(by_id["NP15_ps_6100"].energy_cap_mwh, 200_424.0)
+        self.assertAlmostEqual(by_id["NP15_ps_448"].energy_cap_mwh, 613_410.0)
+        self.assertAlmostEqual(
+            by_id["NP15_ps_104"].energy_cap_mwh,
+            by_id["NP15_ps_104"].power_cap_mw * PUMPED_STORAGE_DURATION_HOURS,
+        )
+
+    def test_other_isos_ignore_the_flag(self):
+        # Rule 25: the gate is CAISO-only — an armed config leaves PJM's
+        # loader output identical to its off state.
+        off = load_eia860_pumped_storage("PJM", 2024, ScenarioConfig(iso="PJM"))
+        on = load_eia860_pumped_storage(
+            "PJM", 2024, ScenarioConfig(iso="PJM", caiso_ps_plant_params=True)
+        )
+        self.assertEqual(
+            [(u.unit_id, u.power_cap_mw, u.energy_cap_mwh) for u in off],
+            [(u.unit_id, u.power_cap_mw, u.energy_cap_mwh) for u in on],
+        )
+
+    def test_charge_caps_compose_tighten_only(self):
+        # caiso_ps_charge_caps: pump rows take min(power_cap, pump); a cited
+        # rating ABOVE the power cap clips (tighten-only, disclosed no-op);
+        # non-pump rows pass the existing envelope through; all-None ⇒ None.
+        from market_sim.model.storage import StorageUnit, caiso_ps_charge_caps
+
+        units = [
+            StorageUnit(
+                unit_id="NP15_ps_6100",
+                zone="NP15",
+                tech_name="pumped_storage",
+                power_cap_mw=1053.0,
+                energy_cap_mwh=200_424.0,
+                charge_power_cap_mw=930.0,
+            ),
+            StorageUnit(
+                unit_id="NP15_ps_437",
+                zone="NP15",
+                tech_name="pumped_storage",
+                power_cap_mw=293.1,
+                energy_cap_mwh=31_678.0,
+                charge_power_cap_mw=387.0,  # cited motor rating > gen cap
+            ),
+            StorageUnit(
+                unit_id="NP15_batt",
+                zone="NP15",
+                tech_name="li_ion",
+                power_cap_mw=100.0,
+                energy_cap_mwh=400.0,
+            ),
+        ]
+        power_cap = np.array([1053.0, 293.1, 100.0])
+        env = np.full((3, 4), 55.0)  # a pre-existing battery envelope
+        out = caiso_ps_charge_caps(power_cap, units, 4, env)
+        self.assertTrue((out[0] == 930.0).all())
+        self.assertTrue((out[1] == 293.1).all())  # clipped at power cap
+        self.assertTrue((out[2] == 55.0).all())  # battery row untouched
+        # No existing envelope: non-pump rows fall back to the power cap.
+        out2 = caiso_ps_charge_caps(power_cap, units, 4, None)
+        self.assertTrue((out2[2] == 100.0).all())
+        # No cited ratings anywhere ⇒ None (caller keeps its channel as-is).
+        bare = [units[2]]
+        self.assertIsNone(
+            caiso_ps_charge_caps(np.array([100.0]), bare, 4, env[2:3])
+        )
+
+
 class TestNYISOPumpedStorage(unittest.TestCase):
     """NYISO pumped-storage fleet from EIA-860 (P4 hydro stage).
 
