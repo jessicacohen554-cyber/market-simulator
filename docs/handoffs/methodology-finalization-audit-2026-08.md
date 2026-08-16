@@ -3,8 +3,9 @@
 # Methodology-spec finalization audit — 2026-08
 
 **Lane:** DOCS-A (Wave 1, `docs/model-audit-release-plan-2026-08.md` §3/WS4 + §7.4).
-**Head audited:** `origin/main` @ `e6fea9a` (2026-08-16). Every P1 finding and
-every count below was re-verified at this head after main moved.
+**Head audited:** `origin/main` @ `ce779f9` (2026-08-16). Every P1 finding and
+every count below was re-verified at this head; main moved five times during the
+session and no cited surface changed across those moves.
 **Subject:** [`model-methodology-spec.md`](../../model-methodology-spec.md) — 1,251 lines, read end to end.
 **Executor:** DOCS-B, after gate **G2**. The spec is **frozen to DOCS-A** this
 session — nothing below has been applied.
@@ -51,7 +52,7 @@ The P1 corrections are the ones that change what a reader believes.
 
 ## 1. P1 — claims the code contradicts
 
-These are the findings that make the current spec actively misleading. All four
+These are the findings that make the current spec actively misleading. All five
 were verified by executing the code, not by reading adjacent prose.
 
 ### 1.1 §5.2 — coal retirement threshold is stated as 1 year; the code ships 3
@@ -152,7 +153,38 @@ levers are shipped. Do **not** re-pin fresh numbers into the spec — measured
 wallclock belongs in the baseline doc, which is maintained; a number in the spec
 rots and this table is the proof.
 
-### 1.4 §6.1 and §4.4 describe a parallelism model that violates `[R-PARALLEL]`
+### 1.4 CAISO's topology is stated as 4 zones; the code ships 6
+
+Both the Scope paragraph (L5) and the §1.3 topology bullet (L180) say CAISO is
+*"3 in-state zones (NP15, ZP26, SP15) split on Path 15 / Path 26, **plus** a WECC
+import/export node"* — four columns in the zonal balance. The shipped topology
+has **six**:
+
+| | Spec | Code |
+|---|---|---|
+| CAISO zones | NP15, ZP26, SP15 (+ `WECC_import`) = **4** | NP15, ZP26, **LA_BASIN**, **SDGE**, **SP15_rest** (+ `WECC_import`) = **6** |
+<!-- verified at runtime: get_iso_config("CAISO").zones -> 6 entries with load shares NP15 .4079, ZP26 .0536, LA_BASIN .374, SDGE .091, SP15_rest .0735, WECC_import 0.0 -->
+
+SP15 was split three ways. That is a **topology refinement the spec never
+absorbed**, not a typo: the zonal energy balance, the price vector, and every
+"SP15" claim downstream all change shape. `CLAUDE.md` carries the same stale
+"CAISO (3 zones + WECC import node)" string.
+
+Every other ISO's stated topology checks out — ERCOT 7 (6 carry load), PJM 8,
+MISO 6, NYISO 5, NEISO 4 load zones + HQ import node.
+<!-- all six verified at runtime, 2026-08-16 -->
+
+**DOCS-B action.** Correct L5 and L180 to the six-zone shape, name the three
+SP15 children, and state what the split is *for* (read `config/iso_configs.py`'s
+CAISO block — do not infer it from the zone names). Flag the matching CLAUDE.md
+string to whoever owns that file; it is out of this checklist's scope.
+
+**Provenance.** Independently surfaced as row **D2** of AUDIT-A's gap register
+(`docs/audit/third-party-audit-2026-08.md` §8), which routes it to this memo.
+D2's phrasing — "CAISO/MISO zone counts" — overstates by one: **MISO's stated 6
+is correct**; only CAISO diverges.
+
+### 1.5 §6.1 and §4.4 describe a parallelism model that violates `[R-PARALLEL]`
 
 §6.1's illustrative snippet is `ProcessPoolExecutor(max_workers=N_CORES)` over
 `(config, iso)` pairs. That is exactly the uncapped `cpu_count() - 1` default
@@ -185,7 +217,7 @@ Gaps, not errors. Each is a mechanism a reader would need and would not find.
 | 2.3 | **The `_p1` cached pass file.** §4.4's cache layout shows only `year_YYYY.parquet`; the code also writes `year_YYYY_p1.parquet` when a commitment pass runs. | §4.4 | `results/cache.py:594` `get_cache_path(..., pass_label)` |
 | 2.4 | **`MARKET_SIM_DATA_ROOT`.** The whole `data/`+`results/` root is relocatable by env var. Unmentioned. | §4.4 | `src/market_sim/config/paths.py:45` |
 | 2.5 | **`retirement_rule` / the pipeline retirement rule.** See [§1.2](#12-52-describes-a-non-default-code-path--retirement_rule-is-absent-entirely). | §5.2 | `scenarios.py:2208` |
-| 2.6 | **The real `cache_key` construction.** §4.1's snippet shows `sha256(json.dumps(asdict(self)))[:16]`. The shipped key has drop-at-default semantics over optional fields plus a registration ledger, guarded in CI by `scripts/check_cache_key_registration.py`. The tuple/list coercion repair landed in the 2026-08 debug sweep precisely because a byte-faithful YAML reload hashed to a *different key than its writer*. Cache-key byte-stability is a **frozen surface** (any key move is a declared epoch, per the FFR-9C precedent); the spec should say so. | §4.1, §4.4 | `check_cache_key_registration.py` output at `e6fea9a`: *"713 ScenarioConfig fields, 166 registered in `_CACHE_KEY_OPTIONAL_FIELDS`, all resolve; 166 declared defaults all match HEAD"*; default key `603c2498bf71d21d` verified; `docs/handoffs/debug-sweep-2026-08.md` Seed-7 row 2 |
+| 2.6 | **The real `cache_key` construction.** §4.1's snippet shows `sha256(json.dumps(asdict(self)))[:16]`. The shipped key has drop-at-default semantics over optional fields plus a registration ledger, guarded in CI by `scripts/check_cache_key_registration.py`. The tuple/list coercion repair landed in the 2026-08 debug sweep precisely because a byte-faithful YAML reload hashed to a *different key than its writer*. Cache-key byte-stability is a **frozen surface** (any key move is a declared epoch, per the FFR-9C precedent); the spec should say so. | §4.1, §4.4 | `check_cache_key_registration.py` output at `ce779f9`: *"713 ScenarioConfig fields, 166 registered in `_CACHE_KEY_OPTIONAL_FIELDS`, all resolve; 166 declared defaults all match HEAD"*; default key `603c2498bf71d21d` verified; `docs/handoffs/debug-sweep-2026-08.md` Seed-7 row 2 |
 | 2.7 | **Warm-start.** Intra-year, cross-year (`MARKET_SIM_WARMSTART_XYEAR`, default **ON** on the calibration path, ~2.3× on warm years, basis-neutral) and the persisted year-1 basis are shipped and load-bearing. §6 mentions none of them. | §6 | `scripts/run_calibration.py:5730-5766`; `docs/cross-year-warmstart.md` |
 | 2.8 | **Byte-identity as a methodological contract.** `capture_keeper_goldens.py` before / `regression_gate.py --mode byte` (atol=rtol=0) after, with "a golden FAIL is a finding, never grounds to regenerate" — this governs what may change about the model. It is reproducibility methodology, not tooling trivia. One paragraph, with the delegation pointer. | §7 successor (see [§3](#3-p2--phase-0-build-agent-content-to-retire)) | `docs/testing.md` "The two golden systems"; `docs/refactor-consolidation-plan-2026-07.md` §8 |
 
@@ -341,7 +373,7 @@ Not asserted wrong — **unverified by this audit**, and each is the kind of num
 that drifts. Re-derive each from code or from its cited artifact before signing
 off §5:
 
-- §5.2 FOM multipliers 1.3 / 1.0 / 1.0 — *verified correct at `e6fea9a`.*
+- §5.2 FOM multipliers 1.3 / 1.0 / 1.0 — *verified correct at `ce779f9`.*
 - §5.5 storage duration-ELCC / saturation-derate / portfolio-dilution stack.
 - §5.6 CCS retrofit constants: `ccs_retrofit_hr_penalty` 12 %, `vom_adder` $8/MWh,
   `capture_rate` 90 %, `capex_kw` ≈ $900/kW, `max_gw_per_year` 3, `min_remaining_life` 15,
@@ -388,7 +420,7 @@ times. Four different spellings are in play: `rule #12`, `rule 24`,
 
 Ordinals drift; IDs do not. This is a **mechanical, high-value** pass.
 
-**Mapping table** (extracted from CLAUDE.md at `e6fea9a` — re-extract at
+**Mapping table** (extracted from CLAUDE.md at `ce779f9` — re-extract at
 execution time, do not trust this copy):
 
 | # | ID | # | ID |
@@ -476,10 +508,10 @@ not that every number in it was re-derived (see [§4.4](#44-numbers-to-re-verify
 
 | § | Title | Verdict | Actions |
 |---|---|---|---|
-| Header (L1–13) | Purpose / Scope / Runtime / as-built note | **Edit** | [3.3](#33-the-as-built-note-at-l11-and-the-two-iso-framing) — delete the as-built note; Scope para at L5 is correct, keep |
+| Header (L1–13) | Purpose / Scope / Runtime / as-built note | **P1 — Edit** | [3.3](#33-the-as-built-note-at-l11-and-the-two-iso-framing) delete the as-built note; [1.4](#14-caisos-topology-is-stated-as-4-zones-the-code-ships-6) the Scope para's CAISO zone count is WRONG (every other ISO checks out) |
 | 1.1 | Decision Variables | OK | — |
 | 1.2 | Objective Function | OK | ε = 0.001 confirm ([4.4](#44-numbers-to-re-verify-against-code-at-execution-time)); cite `[R-EPSILON]` |
-| 1.3 | Constraints | OK | [4.2](#42-module-citations-predating-the-lp-split) repointing; promote `[R-DUALS]` here per [3.2](#32-7-build-agent-instructions-l12221251--the-whole-section) |
+| 1.3 | Constraints | **P1 — Edit** | [1.4](#14-caisos-topology-is-stated-as-4-zones-the-code-ships-6) CAISO six-zone topology (L180 bullet); plus [4.2](#42-module-citations-predating-the-lp-split) repointing; promote `[R-DUALS]` here per [3.2](#32-7-build-agent-instructions-l12221251--the-whole-section) |
 | 1.4 | Policy Constraint Extension Point | OK | Current and dense. Ordinal→ID pass only |
 | 1.5 (.1–.5) | Emerging Technologies | OK | [4.4](#44-numbers-to-re-verify-against-code-at-execution-time) IRA expiry years |
 | 1.6 | Unit Commitment — three-solve heuristic | OK | Already carries the P2-ARCHIVED and "P1 is the MAIN run" corrections. Receive the "no MIP" statement from §7.2 |
@@ -506,7 +538,7 @@ not that every number in it was re-derived (see [§4.4](#44-numbers-to-re-verify
 | 5.7 | Hydro Energy Budgets | OK | — |
 | 5.8 | Locational Capacity Deliverability | OK | [5.2](#52-rule-citations-31-bare-ordinals-zero-r--ids) trap 1 — "repo rule #1"/"rule #12" referents |
 | 5.9 | Capacity-Market Revenue (CR-1) | OK | [4.4](#44-numbers-to-re-verify-against-code-at-execution-time) MARKET_DESIGN coverage |
-| 6.1 | Parallel Execution | **P1 — Edit** | [1.4](#14-61-and-44-describe-a-parallelism-model-that-violates-r-parallel) |
+| 6.1 | Parallel Execution | **P1 — Edit** | [1.5](#15-61-and-44-describe-a-parallelism-model-that-violates-r-parallel) |
 | 6.2 | Performance Targets | **P1 — DELETE** | [1.3](#13-62--performance-targets-the-model-has-never-met-by-15-orders-of-magnitude) |
 | 6.3 | Memory Management | **Edit** | Statement is correct (build/discard per year, fresh HiGHS per solve). Add the measured per-solve envelope and `[R-PARALLEL]`'s ≤2 cap; receive `[R-VECTOR]`/`[R-SOA]` context from [3.1](#31-23-critical-performance-rules-for-the-build-agent-l501508) |
 | 7.1 | Build Agent Rules | **RETIRE** | [3.2](#32-7-build-agent-instructions-l12221251--the-whole-section) |
@@ -516,7 +548,8 @@ not that every number in it was re-derived (see [§4.4](#44-numbers-to-re-verify
 
 ## 8. Definition of done for DOCS-B
 
-1. All four **P1** findings corrected; §5.2 restructured around `retirement_rule`.
+1. All five **P1** findings corrected; §5.2 restructured around `retirement_rule`;
+   CAISO's six-zone topology stated at both L5 and L180.
 2. §2.3 rewritten as construction invariants; **§7 deleted** and its durable
    content rehomed into §1/§6.
 3. No occurrence of "Build Agent" anywhere in the spec.
@@ -536,7 +569,35 @@ not that every number in it was re-derived (see [§4.4](#44-numbers-to-re-verify
 
 ---
 
-## 9. Out of scope for this audit
+## 9. Relationship to AUDIT-A's gap register
+
+AUDIT-A landed (#3991) while this audit was being written, and its §8 gap
+register carries five **DOCS** rows. Reconciliation, so nothing falls between
+the two documents:
+
+| AUDIT-A row | Disposition here |
+|---|---|
+| **D1** — `calibration-and-validation-methodology.md` carries the retracted NEISO locked-test claim as live fact, plus a stale marker/frontier roster and a v2.4 header against rubric v3.2, with no correction notice. | **NOT covered here, by design.** It is a different document, and this checklist's [§6](#6-what-stays-delegated--do-not-re-absorb) exists to keep that document's content *out* of the spec. The audit itself calls it "distinct from the DOCS-A/B manual work". It is the highest-priority DOCS item in the program and needs an owner-assigned executor — flagging it rather than silently absorbing it. |
+| **D2** — enumerated doc/code divergences. | **Absorbed.** Retirement coal=1 vs 3 → [§1.1](#11-52--coal-retirement-threshold-is-stated-as-1-year-the-code-ships-3). CAISO zone count → [§1.4](#14-caisos-topology-is-stated-as-4-zones-the-code-ships-6) (independently found; D2 overstates by one — MISO's 6 is correct). `dispatch.py`/`capacity.py` facades → [§4.2](#42-module-citations-predating-the-lp-split). "Three subcommands vs four" → `../user-manual.md` §10. Three-solve wording → [§9.1](#91-two-d2-items-this-checklist-deliberately-does-not-treat-as-spec-errors) below. `retirement_reserve_margin` → not a spec defect: L782 already records it as DELETED. |
+| **D3** — unmarked Phase-0 build-agent content. | **Absorbed and expanded** → [§3](#3-p2--phase-0-build-agent-content-to-retire), with a per-line disposition for §7.2's mixed durable/scoping content that the register does not attempt. |
+| **D4** — `pipeline/solve.py:38` docstring says forecast cross-year warm-start is "default-OFF" while the dataclass default is `True` and the shipped posture is disarmed via `shipped_forecast_xyear_warmstart()`. | **NOT covered here.** It is a *code docstring*, not the spec, and it is outside this session's brief. One-line fix; needs an owner-assigned executor. |
+| **D5** — stale quantitative snapshots. | **Partly absorbed.** `docs/testing.md` recorded in `../user-manual.md` §10 with both denominators (**447** `test_*.py`, **454** `.py` under `tests/` — the register's "454" counts all Python files, including helpers and `conftest`). The July peer review's §5 accuracy table is a frozen RECORD and is out of scope for both this checklist and the manual. |
+
+### 9.1 Two D2 items this checklist deliberately does not treat as spec errors
+
+- **"Three-solve" wording.** §1.6's *heading* still reads "Unit Commitment —
+  Three-Solve LP Heuristic", but its **body already carries the correction** in
+  two explicit paragraphs ("P2 is ARCHIVED…", "P1 — the no-commitment solve — is
+  the model's MAIN run"). So the content is right and the heading is stale.
+  Retitle it (e.g. "Unit Commitment — LP Screen Heuristic (P0/P1 production;
+  P2 archived)"); do not rewrite the section.
+- **`retirement_reserve_margin`.** L782 already states it "was DELETED with the
+  floor-accreditation rebuild". The spec is correct; the register's "documented
+  live but deleted" applies to a different doc set.
+
+---
+
+## 10. Out of scope for this audit
 
 Recorded so DOCS-B does not treat their absence as an oversight:
 
@@ -544,7 +605,8 @@ Recorded so DOCS-B does not treat their absence as an oversight:
   [`../user-manual.md` §10](../user-manual.md#10-known-doc-divergences-found-while-writing-this-manual)
   (wrong subcommand count, six stale line numbers, two unrunnable examples, a
   stray `</content>` tag). Another lane's surface.
-- **`docs/testing.md`'s "~355 files"** — actual 447. Same place.
+- **`docs/testing.md`'s "~355 files"** — actual **447** `test_*.py` (454 `.py`
+  including helpers and `conftest`). Same place; also AUDIT-A row D5.
 - **`market-sim-build-plan.md`** — the other L1 "spec" row in `docs/README.md`,
   status ACTIVE, is itself Phase-0 build-plan content. Whether it should survive
   finalization is an **owner** question this audit does not answer, but a
