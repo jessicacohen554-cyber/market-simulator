@@ -49,9 +49,11 @@ REGISTRY_PATH = REPO / "frontend" / "data" / "parameters.json"
 CITATIONS_MD = REPO / "docs" / "parameter-citations.md"
 
 sys.path.insert(0, str(SRC))
-sys.path.insert(0, str(REPO / "scripts"))
+sys.path.insert(
+    0, str(REPO)
+)  # repo root: canonical scripts.* sibling imports on direct run
 
-from validate_parameters import expected_param_ids  # noqa: E402
+from scripts.validate_parameters import expected_param_ids  # noqa: E402
 from market_sim.config.scenarios import TIER_TAGS  # noqa: E402
 
 TODAY = dt.date.today().strftime("%Y-%m-%d")
@@ -474,7 +476,7 @@ def main(argv: list[str]) -> int:
 
     if "--check" in argv:
         print("\n--- validate_parameters.py ---")
-        from validate_parameters import main as validate
+        from scripts.validate_parameters import main as validate
 
         return validate()
     return 0

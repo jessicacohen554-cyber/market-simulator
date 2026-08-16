@@ -183,6 +183,25 @@ fueltype data is still on the early clock. Extending the same value-preserving `
 re-placement to 2018-2022 is a one-line change to `_PJM_INPUT_CLOCK_SHIFTS` and needs an owner
 charter, not new analysis.
 
+> **EXECUTED 2026-08-16 (owner-signed charter, DEBUG-manager reissue sitting; audit row O3).**
+> The extension was chartered by in-session owner card and executed the same sitting as a
+> data repair only: `_PJM_INPUT_CLOCK_SHIFTS` extended to declare 2018-2022 fueltype `+1 h`,
+> applied via the new explicit `--rebuild-pjm-input-clock --apply-years 2018 2019 2020 2021
+> 2022` (the `--apply-years` argument exists because the table is a one-shot migration record,
+> not an idempotent transform — re-applying an embodied entry would double-shift it, this §2a's
+> own warning). Byte-verified per the §2a protocol: non-fueltype columns identical at every
+> row; `NG: *` outside local-2018-2022 identical (the corrected 2023/2024 blocks untouched);
+> every in-block cell == pristine value at UTC `T − 1 h` (43,824 rows × 8 cols); NaN count
+> 49,305 → 49,313, the +8 being exactly the first local-2018 hour whose source instant
+> (2018-01-01 05:00Z) precedes the extract — left NaN rather than fabricated (rule 14). July
+> `NG: SUN` centroids on the probe's fixed-EST measure: 2018-2022 moved 10.7-10.8 →
+> **11.72 / 11.73 / 11.72 / 11.81 / 11.73**, all inside [11.5, 12.3]; 2023-2025 unchanged at
+> 11.90 / 11.93 / 12.03. **No ≤ 2022 year was solved, scored or registered** — the holdout
+> tiers and the spend freeze are untouched (rule 22: the score is held out, never the data).
+> The 2022 touchpoint record (`2026-08-05-pjm-2022-touchpoint`) stands as scored on the
+> pre-repair clock; the next owner-authorized 2022 iteration measures against the corrected
+> instrument.
+
 ## 7. Blast radius — reported, not tuned
 
 Expected and confirmed in direction: PJM 2023/2024 solar and wind CF profiles move +1 h

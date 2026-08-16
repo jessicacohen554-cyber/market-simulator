@@ -4311,3 +4311,73 @@ Evidence: `FINDING-pjm162-outage-envelope-basis-closure-2026-08-15.md`,
 `_pjm162_*.json` records.
 
 Next shorthand: **pjm-163.**
+
+
+---
+
+## pjm-163 — 2026-08-16 — KEEPER PROMOTED: `2026-08-15-pjm-162-inputclock` (DEBUG-B corrected-input replay); O2 resolved; ≤2022 clock-extension chartered
+
+**Session:** DEBUG-manager reissue (`claude/fable-debug-manager-reissue-t8dg4w`, off main
+`8a118e7`), serving the plan §8 director dispatch. **No solve** — promotion mechanics only
+(the candidate bundle was held from the BLOAT-B-3 prune precisely so promotion needs no
+re-solve). *(Shorthand note: the dashboard run id `2026-08-15-pjm-162-inputclock` was minted
+by the DEBUG-B lane and collides numerically with this log's pjm-162 outage-envelope session
+— unrelated work. This sitting takes pjm-163 per the previous entry's "next shorthand"; the
+run keeps its registered id.)*
+
+**O2 resolved first** (audit gap register row; one-paragraph note in
+`docs/handoffs/debug-sweep-2026-08.md` Addendum §A.1): the DEBUG-B finding table's "incumbent
+C6 UNATTESTED / NOT-YET" was the **registration-time rubric-2.9 snapshot** (pjm-152 shipped
+without an attestation; pjm-153 retro-generated it with computed premises), not scorer drift.
+Definitive `calibration_verdict.py --run-id` re-score at `8a118e7`: **pjm-152 = CALIBRATED /
+C6 PASS; pjm-162 = NOT-YET solely on the missing promotion-time attestation** — so the
+promotion bar applied was the full not-worse-than-CALIBRATED bar, not a NOT-YET-vs-NOT-YET
+tie-break.
+
+**Owner card (in-session, BLOAT-B-5 sitting pattern): PROMOTE signed.** Second card: **≤2022
++1 h fueltype extension CHARTERED** (executed as a separate data-repair commit this session —
+no ≤2022 year solved/scored/registered; freeze untouched).
+
+**Promotion mechanics executed (order matters, D-5(b)):**
+
+1. **Attestation** written into `results/calibration/pjm_debugb_inputclock_A/` by
+   `scripts/gen_pjm163_inputclock_attestation.py` — every premise **computed, none typed**
+   (the pjm-153/gen_* precedent): recipe identity vs incumbent (0 shared-value diffs;
+   keeper_only = 6 `coal_tranche_*` schema deletions at HEAD; 45 arm_only drift fields all at
+   HEAD defaults, non-falsy ones individually PJM-unreachable — rule-25 prefixes,
+   `storage_measured_base_fleet` scoped to `STORAGE_MEASURED_BASE_FLEET_ISOS={CAISO}`,
+   statutory `ira_ptc_credit_window_years=10` consumed only by the forecast new-entry screen;
+   2 since-deleted fields recorded falsy); July `NG: SUN` centroids recomputed from the
+   committed parquet **11.90 / 11.93 / 12.03** (gate [11.5, 12.3]); verdict parity (incumbent
+   CALIBRATED; arm's sole pre-attestation blocker C6); **DOF ledger carried VERBATIM 19/6**
+   (a blind `build_dof_ledger.py` rebuild measurably drops curated entries — `--check` reads
+   STALE on the incumbent's own committed ledger, the nyiso-8x failure mode).
+2. **Re-verify before landing:** `calibration_verdict.py --run-id 2026-08-15-pjm-162-inputclock`
+   → **CALIBRATED**, every criterion PASS, C1 16/16 free 12/12, zero caveats/fails; C8
+   grounded notes carry over (CT_PEAKER 16.2/16.4/16.7 %, ST_GAS 2025 39.9 %). **NOT WORSE —
+   identical criterion-for-criterion.**
+3. `keepers/PJM.json` re-pointed (promotion note carries the O2 correction);
+   `build_status.py --iso PJM` → `status/PJM.js` [PJM:CALIBRATED].
+4. `calibration-complete.json` PJM entry **re-keyed** (keeper + determination re-verification
+   text; `keeper_at_declaration` untouched). One `audit_keepers` lesson worth recording:
+   M1b's token extractor reads the FIRST bare determination token in the prose, so the
+   marker's touchpoint aside must not name the touchpoint's verdict token — reworded.
+5. `audit_keepers.py --iso PJM --check` → **PASS 0/0** (M1a/M1b, holdout, status).
+6. **Rule-28 re-stamps** (the duty finding §4 deferred to promotion):
+   `mechanism-matrix/PJM.js` `updated`/`keeper`/`gates` stamps + `diurnal_price_amplitude`
+   and `seam_flow_envelopes` evidence annotated **pre-repair-basis, verdicts NOT
+   re-adjudicated** (G and K stand); §5.3 prose header re-stamped.
+   `check_mechanism_matrix.py` green, zero warnings.
+
+**Blast radius (measured at registration, re-cited here):** bench/PJM `2023.json.gz` +
+`2024.json.gz` recomputed; `2025.json.gz` byte-identical. Rule 14 never invoked — nothing
+worsened at the corrected inputs.
+
+**Superseded keeper `2026-08-04-pjm-152-collapse`:** stays on the dashboard under the
+2026-08-09 site-retention directive (remediation record of the 2022 touchpoint); its
+pjm-153 promotion note is preserved in this log (2026-08-04 entry) and in its bundle
+attestation. The 2022 touchpoint record stands as scored — measured on the pre-repair clock;
+any future 2022 iteration (owner freeze-lift required) measures against the corrected
+instrument.
+
+Next shorthand: **pjm-164.**
