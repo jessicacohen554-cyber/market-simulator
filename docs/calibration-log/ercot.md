@@ -9445,3 +9445,143 @@ merges).
 
 **Session consumed the ercot-210 shorthand. Next shorthand: ercot-211**
 (ercot-199 remains unclaimed).
+
+## ercot-211 (2026-08-16) — CONDUCT-PHASE-0 EXECUTED (card X, X-1 signed): the Door-A scarcity-conduct offer layer is **NOT-TRANSFERABLE**, and for STORAGE the failure is **model-free** — THERMAL top-of-stack transfers cleanly, storage does not; NOTHING chartered, Door D is the recorded floor. Read-only: NO LP, no solve, no year solved or scored, no run registered, NO matrix cell or row edit, keeper UNCHANGED
+
+**SHORTHAND COLLISION, NOTED — NOTHING RENAMED.** This lane read the log tail at
+its fetch, which published *"Next shorthand: ercot-210"*, and its precommit,
+finding, probe and JSON were pushed under the `ercot210` filename stem before any
+collision was observable. REPORTING-TEXT-1 (card X item X-2, Door C) was
+dispatched concurrently, landed first, and consumed **ercot-210**. This entry
+therefore takes **ercot-211**, the pointer `main` published; the entry above is
+left whole and untouched in file order (the standing append-collision
+convention), and **no artifact of either lane is renamed** — the `ercot210`
+filename stem on this lane's four artifacts is kept deliberately, since renaming
+pushed, cross-referenced artifacts is exactly what that convention forbids. The
+two lanes are independent: X-2 signs Door C (reporting surfaces), X-1 signs
+Door A's Phase-0 (this measurement), and neither touches the other's object.
+**Charter.** ASSESSMENT-ercot209 §3 Door A's Phase-0, under owner signature
+**X-1** (dispatched 2026-08-16, made durable at the foot of the assessment as
+"RESOLUTIONS — CARD X"). STEP 0 was correctly SKIPPED: the ercot-209 assessment
+already existed on `origin/main` (blob `ca361ed`), so the sitting base was
+already landed and no PR was opened.
+
+**Pre-registered before any delivery-2023 row was read**
+(`docs/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`, pushed and
+blob-verified first): conduct-function family (hour × class offer-surface
+responses `p50`/`p90`/`s500` over above-LSL SCED2 segments capped at HASL — the
+ERCOT-154/161 population discipline, ONTEST excluded, absolute $/MWh);
+QUANTITY-ONLY drivers (within-year PRC percentile, RTOLCAP percentile, AS
+position, SOC/availability proxy, season — the reserves parquet's
+`system_lambda`/`rtorpa`/`rtoffpa`/`rtordpa` columns are NEVER read, and the
+read/refused sets are written into the output JSON so the claim is auditable);
+fit on delivery-2024/2025 at tightness ≥ p90; transfer to delivery-2023 at
+tightness ≥ p98, post-ECRS primary; folds out-of-year + LOYO across 2023 months
++ a within-regime 2024→2025 control; and the mechanical **T1–T5** table with a
+binding verdict rule. T1's ±35 % band was tied to the object, not to
+convenience: the C3a-2023 miss is −33.2 %, so a conduct function whose own
+transfer error exceeds the gap it exists to close cannot close it.
+
+**Coverage inventoried FIRST, and it shaped the design.** delivery-2023 is
+TRACKED (323 shards); the BLOAT-B-5 window (pubs 2024-04..2026-02, 673 shards)
+and 3 of 4 probe extracts were recovered via the corpus README's pinned
+`git restore --source=726f389d…`, never a fresh MIS fetch (that route decays).
+`sha256sum -c` → **1,023/1,023 OK**. The RTC+B quarantine was restored but NOT
+read (globs stay non-recursive; the lane stops at delivery 2025-12-04). Achieved
+2,503/2,629 (2024), 2,432/2,434 (2025), **175/175 (2023)** hours carrying offer
+rows; the 126 missing 2024 hours are the deliveries 2024-01-10..23 MIS gap the
+precommit recorded in advance.
+
+**VERDICT: NOT-TRANSFERABLE — all five gates FAIL — and the class split IS the
+finding.** THERMAL top-of-stack: T4 within-regime **6/6** admissible months in
+band, T5 **0 of 4,501** tie-pairs exceeding (max irreducible error
+**$25.49/MWh**), every 2023 month in band. STORAGE — the object (ercot-161:
+**0.91 of the 1.10 GW** offered ≥ $500 at the top-100 gap hours was storage) —
+fails everywhere: T5 **1,111 of 1,168 tie-pairs (95.1 %)** exceed the band with
+max irreducible error **$2,487.50/MWh**, so **NO function of these drivers
+whatsoever** can fit both members of hour-pairs that are indistinguishable in
+driver space; T4 **1/6**, so this is NOT a 2023-boundary effect and the
+ECRS/ORDC-vintage confound is REFUTED as the explanation; T1 out-of-year misses
+Aug-2023 by **−77.6 %** ($3,361 measured vs $753 predicted) and Sep-2023 by
+**−51.3 %** ($4,052 vs $1,974), the two months the precommit named because they
+carry 96.2 % of the C3b-2023 squared residual.
+
+**WHY storage fails, measured at matched tightness (the p98 cut, all three
+years):** storage offered volume grew **8.4×** (3.0 → 8.4 → **25.3 GW**) while
+its median offer price fell **2.7×** ($2,714 → $1,281 → **$990**); thermal moved
+by neither measure (volume +22 %, `p90` within $2.70 across three years). This
+is ASSESSMENT-ercot209 §3 Door A's own "against" argument MEASURED rather than
+argued — a submitted offer surface is an outcome of the equilibrium under
+validation, a function of the competitive state of the storage fleet, which no
+forward-computable driver can carry because it is the very thing a forecast
+would have to predict.
+
+**TWO DEFECTS IN THIS SESSION'S OWN INSTRUMENT, REPORTED NOT BURIED.** (1) The
+FIRST execution returned NOT-TRANSFERABLE on all five gates and was **NOT a
+measurement** — its coverage block showed 15/2,629 fit and 2/175 test hours and
+an EMPTY selected-form map. Root cause: `load_segments` bound the kept-shard set
+to `keep` then rebound the name to the timestamp mask inside the loop, skipping
+every shard after the first. Renamed `keep_shards`/`ts_ok`; NO threshold, band,
+fold rule, driver, population filter or functional form changed. **The
+precommit's own required coverage block is what caught it** — a pre-registered
+coverage requirement is a cheap falsifier and every future Phase-0 here should
+carry one. (2) The precommit's fold-admissibility constant (≥10 eval hours/month)
+is **UNSATISFIABLE** for post-ECRS 2023: only **22 of 175** tightest-2 % hours
+are post-ECRS, max 9 in a month. The verdict is ROBUST to it — T1/T2 also carry
+the independent Aug+Sep named-months clause (storage misses both), relaxing
+admissibility to ≥1 hour leaves storage at T1 **1/5** and T2 **2/5** against
+thermal 5/5 and 5/5, and T4/T5 never touch the 2023 fold rule. A Phase-1 reusing
+this design must fix the constant.
+
+**A SUBSTANTIVE FINDING INSIDE THAT DEFECT:** 2023's tightest hours by PRC are
+**NOT** its scarcity-priced hours. The tightest-2 % set is Jan 55 · Feb 12 ·
+Mar 5 · Apr 32 · May 44 · Jun 7 · Jul 6 · **Aug 9** · **Sep 4** · Dec 1, and
+**August 2023 sits at mean tightness percentile 0.470, September at 0.372** —
+the two months carrying 96.2 % of the C3b-2023 residual were, on average,
+MEDIAN-tightness months by measured physical reserve. The driver the whole
+conduct-function family is built on does not even SELECT the object it is meant
+to explain, consistent with the committed record that the 2023 tail formed at
+RTORPA p50 ≈ $1–5 with no administrative scarcity to recover (ercot-102,
+ercot52 cap-dual). T3 also fails on MEASURED data (storage 1.52×, thermal 0.84×
+against a 3× bar), though its *predicted* inversion is confounded by
+extrapolation outside the ≥p90 fit support — a defect in the precommit's own T3,
+reported rather than restated; T3 is not load-bearing, the other four gates fail
+independently.
+
+**NOTHING CHARTERED.** Per precommit §7.1 a Phase-1 build charter is authorised
+ONLY on a TRANSFERABLE verdict, so none is drafted. **Door D (card W
+wait-for-data, ~mid-2027) is the recorded floor**, with the exhaustion proof
+extended one model class up. Three items handed back UNCHARTERED and uncosted:
+(i) a thermal-only conduct layer is not refuted by this test but is also NOT the
+2023 object (thermal offers ~1 % of MW ≥ $500 vs storage's 69–100 %), recorded so
+"NOT-TRANSFERABLE" is not later mis-read as covering both classes; (ii) a direct
+SOC/AS-position driver from the committed 60-Day DAM ESR data is the one addition
+with a principled claim on the storage ties, unmeasured, and would need a NEW
+owner card stating why it is not a re-run of a stopped lane; (iii)
+ASSESSMENT-ercot209 §4's REPORTING-TEXT-1 (Door C) and RESERVE-BASIS-1 (the
+ercot-204 §A ORDC pricing-region question) are untouched by this result and
+remain the strongest live items.
+
+**Governance.** Q-B FINAL and R-A cited and honoured, SCOPED by X-1, not
+reopened: **NO C3a, C3b or C3c value was computed in any year** — every such
+number here is a committed-artifact citation, none re-scored, no lever run, no
+offer-curve constant touched. Rule 13: delivery-2023 conduct entered as the
+evaluation target ONLY (measured-vs-measured); nothing feeds any model input.
+DO-NOT-REDO (rule 28a) argued in the precommit against all four dead
+instruments — and V0's verdict was NOT assumed: its own model-free tie test was
+re-run at hour grain as T5 and returned a DIFFERENT, class-split answer.
+Rule 22: nothing solved/scored/registered, {2023, 2024, 2025} read-only, no
+marker sought. Rule 25: ERCOT only. Rule 28: **no matrix cell or row edit** — no
+mechanism was tested (the ercot-182/189/196/200 card-is-a-read precedent); the
+conduct-layer cell stays ABSENT, not `R`, because a Phase-0 identifiability
+measurement adjudicates no mechanism. Rules 5/24: no config surface, no
+ScenarioConfig field, no CLI flag. No `.github/workflows` added. Rule 27: every
+file ≥300 lines edited locally and blob-verified against the remote after push.
+Keeper at session start AND end: **`2026-08-15-ercot204-rule26-delete`**. New
+artifacts: the precommit, the finding, the probe, its JSON, the X-1 signature
+appended to ASSESSMENT-ercot209, and this entry — nothing else. No PR opened
+(push-and-stop; the owner merges).
+
+**Session consumed the ercot-211 shorthand. Next shorthand: ercot-212**
+(ercot-199 remains unclaimed; ercot-210 was taken by REPORTING-TEXT-1, which
+landed first — see the collision note at the head of this entry).

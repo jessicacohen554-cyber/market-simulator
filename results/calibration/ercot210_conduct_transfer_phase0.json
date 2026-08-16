@@ -1,0 +1,1235 @@
+{
+ "_provenance": {
+  "probe": "scripts/probes/ercot210_conduct_transfer_phase0.py",
+  "session": "ercot-210 CONDUCT-PHASE-0 (Door A Phase-0; no LP, no solve)",
+  "precommit": "docs/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md",
+  "charter": "X-1 (owner), ASSESSMENT-ercot209 \u00a73 Door A",
+  "keeper_at_run": "2026-08-15-ercot204-rule26-delete",
+  "reserve_columns_read": [
+   "hour",
+   "prc",
+   "rtolcap"
+  ],
+  "reserve_columns_refused": [
+   "system_lambda",
+   "rtorpa",
+   "rtoffpa",
+   "rtordpa"
+  ],
+  "no_price_series_read": true,
+  "rtcb_quarantine_read": false
+ },
+ "design": {
+  "fit_years": [
+   2024,
+   2025
+  ],
+  "test_year": 2023,
+  "fit_tight_min": 0.9,
+  "eval_tight_min": 0.98,
+  "ecrs_live_hoy": 3840,
+  "headline_statistic": {
+   "STORAGE": "p50",
+   "THERMAL": "p90"
+  },
+  "thresholds": {
+   "T1": {
+    "rel": 0.35,
+    "abs_usd": 50.0,
+    "min_folds": 5,
+    "required_months": [
+     8,
+     9
+    ]
+   },
+   "T2": {
+    "rel": 0.4,
+    "abs_share": 0.15
+   },
+   "T3": {
+    "ratio": 3.0,
+    "band": [
+     0.4,
+     0.6
+    ]
+   },
+   "T4": {
+    "min_folds": 5
+   },
+   "T5": {
+    "tau": 0.05,
+    "max_fail_share": 0.1
+   }
+  }
+ },
+ "coverage": {
+  "2024": {
+   "hours_requested": 2629,
+   "hours_with_offer_rows": 2503,
+   "n_resources_with_hsl_ref": 738,
+   "rows_by_class": {
+    "STORAGE": 2503,
+    "THERMAL": 2503
+   }
+  },
+  "2025": {
+   "hours_requested": 2434,
+   "hours_with_offer_rows": 2432,
+   "n_resources_with_hsl_ref": 833,
+   "rows_by_class": {
+    "STORAGE": 2432,
+    "THERMAL": 2432
+   }
+  },
+  "2023": {
+   "hours_requested": 175,
+   "hours_with_offer_rows": 175,
+   "n_resources_with_hsl_ref": 657,
+   "rows_by_class": {
+    "STORAGE": 175,
+    "THERMAL": 175
+   }
+  }
+ },
+ "candidate_selection_fit_years_only": {
+  "selected": {
+   "STORAGE:p50": {
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 823.99254
+   },
+   "STORAGE:p90": {
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 972.43192
+   },
+   "STORAGE:s500": {
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 0.11248
+   },
+   "THERMAL:p50": {
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 2.78164
+   },
+   "THERMAL:p90": {
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 8.37846
+   },
+   "THERMAL:s500": {
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 0.00348
+   }
+  },
+  "cv_table": [
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "linear",
+    "space": "log",
+    "cv_mae": 832.73204
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 1049.41901
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "quad",
+    "space": "log",
+    "cv_mae": 831.62322
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 1049.16583
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 823.99254
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 1042.6306
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "linear",
+    "space": "log",
+    "cv_mae": 1726.65748
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 973.66207
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "quad",
+    "space": "log",
+    "cv_mae": 1728.7915
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 974.53177
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 1728.3395
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 972.43192
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "s500",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 0.11386
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "s500",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 0.11337
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "s500",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 0.11248
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "linear",
+    "space": "log",
+    "cv_mae": 2.80806
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 2.78686
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "quad",
+    "space": "log",
+    "cv_mae": 2.81258
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 2.79146
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 2.80453
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 2.78164
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "linear",
+    "space": "log",
+    "cv_mae": 8.39529
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 8.84485
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "quad",
+    "space": "log",
+    "cv_mae": 8.3947
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 8.84465
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 8.37846
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 8.82889
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "s500",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 0.00348
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "s500",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 0.00348
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "s500",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 0.00348
+   }
+  ]
+ },
+ "T1_out_of_year_headline": {
+  "pass": false,
+  "by_class": {
+   "STORAGE": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 5000.0,
+      "predicted": 831.5748,
+      "abs_err": 4168.4252,
+      "rel_err": -0.8337,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 4999.9836,
+      "predicted": 156.2803,
+      "abs_err": 4843.7033,
+      "rel_err": -0.9687,
+      "within_band": false
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 3361.1218,
+      "predicted": 752.9684,
+      "abs_err": 2608.1534,
+      "rel_err": -0.776,
+      "within_band": false
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 4052.4775,
+      "predicted": 1974.3553,
+      "abs_err": 2078.1222,
+      "rel_err": -0.5128,
+      "within_band": false
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 271.8082,
+      "predicted": 348.9513,
+      "abs_err": 77.1431,
+      "rel_err": 0.2838,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 0,
+    "n_pass": 0
+   },
+   "THERMAL": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 75.0,
+      "predicted": 35.4949,
+      "abs_err": 39.5051,
+      "rel_err": -0.5267,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 32.6199,
+      "predicted": 34.9449,
+      "abs_err": 2.325,
+      "rel_err": 0.0713,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 65.598,
+      "predicted": 35.4657,
+      "abs_err": 30.1323,
+      "rel_err": -0.4593,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 62.6382,
+      "predicted": 37.01,
+      "abs_err": 25.6282,
+      "rel_err": -0.4091,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 29.9,
+      "predicted": 36.3738,
+      "abs_err": 6.4738,
+      "rel_err": 0.2165,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 0,
+    "n_pass": 0
+   }
+  }
+ },
+ "T2_share_ge_500": {
+  "pass": false,
+  "by_class": {
+   "STORAGE": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 1.0,
+      "predicted": 0.5023,
+      "abs_err": 0.4977,
+      "rel_err": -0.4977,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 0.6919,
+      "predicted": 0.286,
+      "abs_err": 0.4058,
+      "rel_err": -0.5866,
+      "within_band": false
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 0.7553,
+      "predicted": 0.3984,
+      "abs_err": 0.3568,
+      "rel_err": -0.4725,
+      "within_band": false
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 0.7634,
+      "predicted": 0.5698,
+      "abs_err": 0.1936,
+      "rel_err": -0.2536,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 0.4441,
+      "predicted": 0.4117,
+      "abs_err": 0.0324,
+      "rel_err": -0.073,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 0,
+    "n_pass": 0
+   },
+   "THERMAL": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 0.0176,
+      "predicted": 0.0014,
+      "abs_err": 0.0162,
+      "rel_err": -0.9207,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 0.011,
+      "predicted": 0.0022,
+      "abs_err": 0.0088,
+      "rel_err": -0.8014,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 0.0102,
+      "predicted": 0.0026,
+      "abs_err": 0.0076,
+      "rel_err": -0.7441,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 0.0099,
+      "predicted": 0.003,
+      "abs_err": 0.0068,
+      "rel_err": -0.692,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 0.0022,
+      "predicted": 0.0043,
+      "abs_err": 0.0021,
+      "rel_err": 0.9439,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 0,
+    "n_pass": 0
+   }
+  }
+ },
+ "T3_non_degeneracy_fit_years": {
+  "pass": false,
+  "by_class": {
+   "STORAGE": {
+    "pred_tight": 458.359,
+    "pred_mid": 2094.96,
+    "ratio": 0.219,
+    "n_tight": 305,
+    "n_mid": 3337,
+    "ok": false
+   },
+   "THERMAL": {
+    "pred_tight": 36.32,
+    "pred_mid": 49.45,
+    "ratio": 0.734,
+    "n_tight": 305,
+    "n_mid": 3337,
+    "ok": false
+   }
+  }
+ },
+ "T4_within_regime_control_2024_to_2025": {
+  "pass": false,
+  "by_class": {
+   "STORAGE": {
+    "folds": [
+     {
+      "month": 1,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 127.4363,
+      "predicted": 520.6028,
+      "rel_err": 3.0852,
+      "within_band": false
+     },
+     {
+      "month": 2,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 70.0,
+      "predicted": 399.8041,
+      "rel_err": 4.7115,
+      "within_band": false
+     },
+     {
+      "month": 3,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 88.1137,
+      "predicted": 369.1927,
+      "rel_err": 3.19,
+      "within_band": false
+     },
+     {
+      "month": 4,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 441.1036,
+      "predicted": 348.6457,
+      "rel_err": -0.2096,
+      "within_band": true
+     },
+     {
+      "month": 5,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 87.3844,
+      "predicted": 291.1087,
+      "rel_err": 2.3314,
+      "within_band": false
+     },
+     {
+      "month": 6,
+      "n_hours": 24,
+      "admissible": true,
+      "measured": 963.5852,
+      "predicted": 264.2032,
+      "rel_err": -0.7258,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 20,
+      "admissible": true,
+      "measured": 1727.669,
+      "predicted": 187.1183,
+      "rel_err": -0.8917,
+      "within_band": false
+     },
+     {
+      "month": 8,
+      "n_hours": 26,
+      "admissible": true,
+      "measured": 1379.1478,
+      "predicted": 296.6443,
+      "rel_err": -0.7849,
+      "within_band": false
+     },
+     {
+      "month": 9,
+      "n_hours": 33,
+      "admissible": true,
+      "measured": 560.4326,
+      "predicted": 318.5832,
+      "rel_err": -0.4315,
+      "within_band": false
+     },
+     {
+      "month": 10,
+      "n_hours": 13,
+      "admissible": true,
+      "measured": 205.7342,
+      "predicted": 667.6714,
+      "rel_err": 2.2453,
+      "within_band": false
+     },
+     {
+      "month": 11,
+      "n_hours": 24,
+      "admissible": true,
+      "measured": 1912.3882,
+      "predicted": 1969.5342,
+      "rel_err": 0.0299,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 6,
+    "n_pass": 1
+   },
+   "THERMAL": {
+    "folds": [
+     {
+      "month": 1,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 37.2759,
+      "predicted": 30.7254,
+      "rel_err": -0.1757,
+      "within_band": true
+     },
+     {
+      "month": 2,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 31.14,
+      "predicted": 33.4617,
+      "rel_err": 0.0746,
+      "within_band": true
+     },
+     {
+      "month": 3,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 42.4476,
+      "predicted": 33.8001,
+      "rel_err": -0.2037,
+      "within_band": true
+     },
+     {
+      "month": 4,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 41.4477,
+      "predicted": 33.7703,
+      "rel_err": -0.1852,
+      "within_band": true
+     },
+     {
+      "month": 5,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 37.0909,
+      "predicted": 32.9701,
+      "rel_err": -0.1111,
+      "within_band": true
+     },
+     {
+      "month": 6,
+      "n_hours": 24,
+      "admissible": true,
+      "measured": 36.7234,
+      "predicted": 42.0646,
+      "rel_err": 0.1454,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 20,
+      "admissible": true,
+      "measured": 40.4307,
+      "predicted": 36.7683,
+      "rel_err": -0.0906,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 26,
+      "admissible": true,
+      "measured": 37.0929,
+      "predicted": 38.835,
+      "rel_err": 0.047,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 33,
+      "admissible": true,
+      "measured": 37.4552,
+      "predicted": 38.0071,
+      "rel_err": 0.0147,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 13,
+      "admissible": true,
+      "measured": 35.8443,
+      "predicted": 36.0822,
+      "rel_err": 0.0066,
+      "within_band": true
+     },
+     {
+      "month": 11,
+      "n_hours": 24,
+      "admissible": true,
+      "measured": 41.8544,
+      "predicted": 38.5157,
+      "rel_err": -0.0798,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 6,
+    "n_pass": 6
+   }
+  }
+ },
+ "T5_model_free_tie_test": {
+  "pass": false,
+  "by_class": {
+   "STORAGE": {
+    "n_pairs": 1168,
+    "n_exceeding_band": 1111,
+    "share_exceeding": 0.9512,
+    "max_irreducible_error": 2487.5,
+    "ok": false
+   },
+   "THERMAL": {
+    "n_pairs": 4501,
+    "n_exceeding_band": 0,
+    "share_exceeding": 0.0,
+    "max_irreducible_error": 25.49,
+    "ok": true
+   }
+  }
+ },
+ "VERDICT": "NOT-TRANSFERABLE",
+ "reported_not_gating": {
+  "STORAGE:pre_ecrs_2023": {
+   "n_hours": 153,
+   "measured": 2445.73,
+   "predicted": 298.328,
+   "rel_err": -0.878
+  },
+  "STORAGE:post_ecrs_2023_summer": {
+   "n_hours": 21,
+   "measured": 3999.066,
+   "predicted": 891.915,
+   "rel_err": -0.777
+  },
+  "THERMAL:pre_ecrs_2023": {
+   "n_hours": 153,
+   "measured": 34.231,
+   "predicted": 33.867,
+   "rel_err": -0.0106
+  },
+  "THERMAL:post_ecrs_2023_summer": {
+   "n_hours": 21,
+   "measured": 58.623,
+   "predicted": 35.678,
+   "rel_err": -0.3914
+  }
+ },
+ "post_hoc_diagnostics": {
+  "_note": "Computed AFTER the verdict. GATES NOTHING -- no threshold, band, fold rule or verdict depends on this block. Added to interpret two \u00a77 constants that interact badly with 2023's tightness seasonality.",
+  "tightness_seasonality_2023": {
+   "eval_hours_by_month": {
+    "1": 55,
+    "2": 12,
+    "3": 5,
+    "4": 32,
+    "5": 44,
+    "6": 7,
+    "7": 6,
+    "8": 9,
+    "9": 4,
+    "12": 1
+   },
+   "eval_hours_total": 175,
+   "eval_hours_post_ecrs": 22,
+   "mean_tightness_pct_by_month": {
+    "8": 0.47,
+    "9": 0.3715
+   }
+  },
+  "t1_t2_with_fold_min_hours_relaxed_to_1": {
+   "STORAGE:T1": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 5000.0,
+      "predicted": 831.5748,
+      "abs_err": 4168.4252,
+      "rel_err": -0.8337,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 4999.9836,
+      "predicted": 156.2803,
+      "abs_err": 4843.7033,
+      "rel_err": -0.9687,
+      "within_band": false
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 3361.1218,
+      "predicted": 752.9684,
+      "abs_err": 2608.1534,
+      "rel_err": -0.776,
+      "within_band": false
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 4052.4775,
+      "predicted": 1974.3553,
+      "abs_err": 2078.1222,
+      "rel_err": -0.5128,
+      "within_band": false
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 271.8082,
+      "predicted": 348.9513,
+      "abs_err": 77.1431,
+      "rel_err": 0.2838,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 1
+   },
+   "STORAGE:T2": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 1.0,
+      "predicted": 0.5023,
+      "abs_err": 0.4977,
+      "rel_err": -0.4977,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 0.6919,
+      "predicted": 0.286,
+      "abs_err": 0.4058,
+      "rel_err": -0.5866,
+      "within_band": false
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 0.7553,
+      "predicted": 0.3984,
+      "abs_err": 0.3568,
+      "rel_err": -0.4725,
+      "within_band": false
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 0.7634,
+      "predicted": 0.5698,
+      "abs_err": 0.1936,
+      "rel_err": -0.2536,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 0.4441,
+      "predicted": 0.4117,
+      "abs_err": 0.0324,
+      "rel_err": -0.073,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 2
+   },
+   "THERMAL:T1": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 75.0,
+      "predicted": 35.4949,
+      "abs_err": 39.5051,
+      "rel_err": -0.5267,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 32.6199,
+      "predicted": 34.9449,
+      "abs_err": 2.325,
+      "rel_err": 0.0713,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 65.598,
+      "predicted": 35.4657,
+      "abs_err": 30.1323,
+      "rel_err": -0.4593,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 62.6382,
+      "predicted": 37.01,
+      "abs_err": 25.6282,
+      "rel_err": -0.4091,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 29.9,
+      "predicted": 36.3738,
+      "abs_err": 6.4738,
+      "rel_err": 0.2165,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 5
+   },
+   "THERMAL:T2": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 0.0176,
+      "predicted": 0.0014,
+      "abs_err": 0.0162,
+      "rel_err": -0.9207,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 0.011,
+      "predicted": 0.0022,
+      "abs_err": 0.0088,
+      "rel_err": -0.8014,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 0.0102,
+      "predicted": 0.0026,
+      "abs_err": 0.0076,
+      "rel_err": -0.7441,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 0.0099,
+      "predicted": 0.003,
+      "abs_err": 0.0068,
+      "rel_err": -0.692,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 0.0022,
+      "predicted": 0.0043,
+      "abs_err": 0.0021,
+      "rel_err": 0.9439,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 5
+   }
+  },
+  "t3_measured_contrast_fit_years": {
+   "STORAGE": {
+    "measured_tight": 1055.596,
+    "measured_mid": 695.891,
+    "measured_ratio": 1.517,
+    "n_tight": 305,
+    "n_mid": 3337,
+    "note": "measured, not predicted; T3's predicted ratio extrapolates outside the x1>=0.90 fit support"
+   },
+   "THERMAL": {
+    "measured_tight": 37.304,
+    "measured_mid": 44.669,
+    "measured_ratio": 0.835,
+    "n_tight": 305,
+    "n_mid": 3337,
+    "note": "measured, not predicted; T3's predicted ratio extrapolates outside the x1>=0.90 fit support"
+   }
+  },
+  "offer_scale_by_year_at_eval_cut": {
+   "2024:STORAGE": {
+    "n_hours": 143,
+    "mean_offered_mw_per_hour": 8359.7,
+    "measured_headline": 1280.84
+   },
+   "2024:THERMAL": {
+    "n_hours": 143,
+    "mean_offered_mw_per_hour": 76100.4,
+    "measured_headline": 36.08
+   },
+   "2025:STORAGE": {
+    "n_hours": 162,
+    "mean_offered_mw_per_hour": 25266.1,
+    "measured_headline": 989.81
+   },
+   "2025:THERMAL": {
+    "n_hours": 162,
+    "mean_offered_mw_per_hour": 80711.4,
+    "measured_headline": 38.32
+   },
+   "2023:STORAGE": {
+    "n_hours": 175,
+    "mean_offered_mw_per_hour": 3022.9,
+    "measured_headline": 2713.97
+   },
+   "2023:THERMAL": {
+    "n_hours": 175,
+    "mean_offered_mw_per_hour": 66196.7,
+    "measured_headline": 38.78
+   }
+  }
+ }
+}
