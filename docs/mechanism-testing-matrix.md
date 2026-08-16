@@ -3956,7 +3956,27 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-09-miso-148-basis-aware`, **NOT-YET**
+### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-15-miso-159-cod-vintage`, **NOT-YET on C3a-2025 ALONE**
+
+> **QUEUE STAMP miso-159 (2026-08-15) — KEEPER PROMOTED by the session's own
+> pre-registered rule** (PREREG §7(a): fail set strict subset
+> {C3a-2025, C3b-2025} → {C3a-2025}, no criterion-year flip): the miso-157 §11
+> item 1 vintage repair (`commission_year_cod_fallback`, zero-DOF, measured
+> EIA-860 COD via `load_cod_map()`) is ARMED — C3a → −0.1/−5.4/−13.1 %,
+> C3b-2025 FLIPS back through its gate (0.200 exactly, knife-edge), prices
+> +1.97/+2.82/+2.93 % with the direction disclosed in advance and not claimed
+> as skill. THE QUEUE AFTER miso-159: (1) the C3a-2025 blocker remains the
+> miso-156 summer-peak marginal-unit identity object (its two enumerated
+> possibilities — the peak cushion and the C3c-adjacent above-cost residue —
+> still each need their own charter); (2) the largest un-adjudicated
+> availability quantity bearing on the 2025 cushion is
+> `SUMMER_WEFOR_SHARE = 0.30` (miso-157 B-DISAGREE), gated on the OWNER's
+> data-provenance decision (miso-157 §11 item 2: which measured record
+> adjudicates a forced-outage seasonal shape); (3) the vintage defect is
+> exportable to CAISO/PJM/NYISO/NEISO at censused magnitude (cells `U`,
+> rule 25 — each lane measures its own). Evidence:
+> `FINDING-miso159-commission-year-cod-repair-2026-08-15.md`; runs
+> `2026-08-15-miso-159-control` / `2026-08-15-miso-159-cod-vintage`.**
 
 > **QUEUE STAMP miso-157 (2026-08-14) — OWNER-CHARTERED BRANCH (A), THE PEAK
 > CUSHION. BRANCH **B-DISAGREE**: NO LEVER, NO SOLVE, NO RUN REGISTERED, NO
