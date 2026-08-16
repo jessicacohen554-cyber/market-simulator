@@ -6599,3 +6599,92 @@ into a scratch cache, and nothing in this session turns on re-deriving a result
 already adjudicated to the last published digit.
 
 * Next number: **nyiso-137**.
+
+## 2026-08-16 — nyiso-137: the RTD-clock disclosure GRADED against the joint Zone-K lever — gates clean, lever unblocked, but the C3c actual count is verdict-fragile and the adjudication under-stated it
+
+Assigned lever (a), the chartered JOINT Zone-K reconciliation, with the handoff's
+instruction to *"ask for the charter first; and grade the RTD-clock disclosure
+against its K6 gate up front."* The grading is the session. **No LP solved, no
+year scored, no run registered, no keeper moved, no cell verdict moved, no
+pre-registration filed, no product re-derived** — the nyiso-136 shape,
+identification before mechanism. Rule 22: 2023–2025 only; the twelve 2022 source
+zips are on disk and were deliberately **not read** (spend freeze ACTIVE).
+
+**The handoff's premise was false.** It states twice that the lever's *"K6 gate
+is itself a per-hour tail count"*. K6 is the **forcing** gate — D-2 forced share
+/ forced TWh plus a C8 flip — and what fired it at nyiso-130 was
+`reliability_floor × ST_GAS` rising 2.784 → 3.002 / 2.797 → 3.216 / 2.371 →
+2.598 TWh. The per-hour tail count is C3c, a *criterion*, and nyiso-130 §8
+already fixed that the promote test runs *"whatever C3c does"*.
+
+**All six kill gates are model-side and invariant.** K1 config diff, K2
+slack/dump, K3 in-window `limit_up`, K4 other links' bounds, K5
+control-vs-treatment external-link **energy**, K6 forced share + C8 — all read
+from the arms' own bundles. K5 was the only candidate worth checking and is
+clean twice over: `_nyiso130_ab_gates.k5_seam` sums link MW from each arm's
+network parquet, and the import *pricing* path
+(`model/interchange/nyiso.py:105-108`) reads only the PJM/NEISO neighbour series.
+**So the disclosure does not block lever (a).**
+
+**The promote criteria that do read the series are safe by three orders of
+magnitude.** On 6,018 whole staged in-training hours, 94.0 % move but the pooled
+mean shifts −0.0353 % (29.1725 → 29.1622) and the worst single month −0.5063 %,
+against a C3a band of ±10 % with a nearest margin of 1.2 pp and a C3b monthly
+NRMSE ceiling of 0.20.
+
+**What *is* at risk is worse than ADDENDUM §A.6 said.** Its conclusion that *"the
+C3c tail region moves by cents"* is **refuted**: the delta is heteroskedastic in
+price — mean |Δ| $0.4237 over all hours, $17.22 above $100, $30.99 above $200 and
+**$35.55 above $300**, an **84×** ratio. The addendum missed it because every
+statistic it quoted is a **signed** mean (−$0.024 annual, −$0.49 top-100), and
+signed means cancel. Zero staged hours crossed $300, but all three staged tail
+hours started far from it ($450.22→$377.79, $593.16→$598.10, $392.26→$362.98).
+
+**C3c verdict reachability — the durable result.** Staged months hold only 1 of
+10, 3 of 12 and 2 of 42 actual tail hours, so a recount is impossible on present
+coverage and was not attempted. A ceiling was measured instead: the population
+within ±$72.43 (the tail region's own max) of the threshold bounds the count
+movement at **[5, 21] / [10, 21] / [34, 82]** against committed 10 / 12 / 42.
+Against the keeper's model 21 / 3 / 24, **2023 flips FAIL → PASS at actual 11 h —
+one hour** — and **2025 flips PASS → FAIL at actual 49 h — seven**; 2024 is
+stable. The 2023 edge is doubly sharp: actual 10 sits exactly on
+`TAIL_SMALL_COUNT`, so one hour down also switches the scoring rule from ratio to
+absolute difference. **Direction is not claimed** — the staged tail moves net
+downward, which would preserve both verdicts, but n = 3 is not a rate (rule 21).
+
+**Disposition.** Charter **requested, not granted**, at
+`docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`, with three decisions
+for the owner (grant/refuse; the C3c reporting condition; whether the clock
+repair goes first) and a session recommendation of *charter now, repair later,
+with the condition attached*. The condition: an **arm-vs-control** C3c delta is
+invariant and may be relied on; an **absolute** C3c band verdict may not. The
+RTD-clock item on the 2022 touchpoint is now **graded for 2023-2025 and still
+ungraded for 2022** — the year it was quantified on; the other two disclosures
+(import-tranche 719 MW duration RMSE, Transco Dec-2022 Elliott hole) are
+untouched. Keeper unchanged at `2026-08-08-nyiso-133-cod-arm`,
+CALIBRATED-WITH-CAVEATS, C3c the lone ledgered caveat 1 of 1. Frontier stays
+CLEARED and is not re-asserted.
+
+Evidence:
+`results/calibration/FINDING-nyiso137-rtd-clock-graded-against-zone-k-gates-2026-08-16.md`,
+`docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`, probe
+`scripts/probes/_nyiso137_rtd_clock_c3c_grading.py`, record
+`results/calibration/_nyiso137_rtd_clock_c3c_grading.json`. Next number:
+**nyiso-138**.
+
+**Inherited defect found while gating, flagged not fixed — the designated keeper
+is UNREPLAYABLE at HEAD.** `test_replay_keeper_strict.py::...::
+test_all_keeper_metas_build` fails with `meta.json keys not bound to
+solve_and_persist kwargs: ['nyiso_solar_registry_cod_dates']`. **Confirmed
+pre-existing on a stashed pristine tree**, so not caused by this session (whose
+diff is documentation plus one standalone read-only probe). Cause: nyiso-136
+deleted the `ScenarioConfig` field under rule 26, but the keeper was solved with
+the flag armed so its committed `meta.json` still carries the key, and
+`replay_keeper.build_kwargs` is strict by design (miso-50..53 regression class).
+This was **not** among nyiso-136's declared costs. Recommended fix — an owner
+call, raised as **D4** on the decision card — is to add the name to
+`replay_keeper._IGNORE`: that table governs recipe reconstruction rather than
+hashing and its semantics ("not a solve kwarg") are now true, since the collapse
+made the flag's behaviour unconditional in both lanes. It is deliberately NOT the
+`_CACHE_KEY_RETIRED_FIELDS` case nyiso-136 warned about, where retirement would
+re-insert the name and move the pinned key.
