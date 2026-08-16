@@ -277,11 +277,32 @@ def bins_to_fleet(
         eia860_selfcommit_scope_plants() if _prb_split_night else frozenset()
     )
 
+    # commission_year_cod_fallback (miso-159, rules 5 [R-NO-MAGIC] / 14
+    # [R-ACCURATE]): the master registry above is ERCOT-only (833 rows, all
+    # ba_code='ERCO'), so on every other per-plant ISO the 2010 fall-through
+    # below is TOTAL and the whole fleet is stamped one vintage — which makes
+    # the age-escalation limb of THERMAL_AVAILABILITY identically inert
+    # (miso-157 §7: MISO 108.70 GW / 7 classes all at online_year=2010 against
+    # true cap-weighted vintages 1976.8–2006.5). When armed, a registry-missed
+    # plant takes its capacity-weighted EIA-860 COD year from load_cod_map() —
+    # the same single COD source that already drives the backcast monthly
+    # online mask, so mask and age model finally read one measured record
+    # (rule 19 [R-ONE-MECH]). Registry hits keep precedence; 2010 remains only
+    # for plants absent from both sources (0.0–0.6% of capacity, miso-158).
+    _cod_years: dict[int, int] = {}
+    if config.commission_year_cod_fallback:
+        from market_sim.data.cod_ramp import load_cod_map
+
+        _cod_years = {code: int(entry[0]) for code, entry in load_cod_map().items()}
+
     def _commission_year(plant_code: int) -> int:
         """Return the EIA-860 commission year for ``plant_code``."""
         year = _reg_year.get(plant_code)
         if year and not pd.isna(year):
             return int(year)
+        cod_year = _cod_years.get(plant_code)
+        if cod_year is not None:
+            return cod_year
         return 2010
 
     # Coal cogens (PJM): a coal plant whose EIA-860 sector is a CHP host follows

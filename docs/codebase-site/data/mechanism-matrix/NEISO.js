@@ -83,6 +83,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     cc_duct_peaking: { cell: "U" },
     cc_nameplate_summer_derate: { cell: "U" },
     summer_derate_basis_aware: { cell: "." },
+    commission_year_cod_fallback: { cell: "U", ev: "exposed on the shared assembly.py::_commission_year path (registry hit share 0.0%, miso-158 census; 2025 non-CHP summer capability overstatement censused per ISO) — rule 25/28(d): no verdict transfers, this lane measures its own before arming" },
     coal_nameplate_summer_derate: { cell: "." },
     unit_outage_lp_capacity_basis: { cell: "U" },
     wefor_residual: { cell: "U" },
