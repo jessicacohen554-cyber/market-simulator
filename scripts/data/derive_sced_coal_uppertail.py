@@ -87,7 +87,7 @@ import numpy as np
 import pandas as pd
 
 _REPO = Path(__file__).resolve().parents[2]
-for _p in (_REPO / "src", _REPO / "scripts" / "probes", _REPO / "scripts" / "data"):
+for _p in (_REPO, _REPO / "src"):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
@@ -98,8 +98,8 @@ from market_sim.config import paths  # noqa: E402
 # and EXPLICITLY DROPS the December-2025 schema-revision intervals (in which
 # HASL/LASL and the AS *award* block are gone and unrecoverable), instead of
 # letting them silently NaN out of the aggregates.
-import ercot123_coal_sced_reach as sced  # noqa: E402
-import derive_dam_offer_hrmults as dam  # noqa: E402
+from scripts.probes import ercot123_coal_sced_reach as sced  # noqa: E402
+from scripts.data import derive_dam_offer_hrmults as dam  # noqa: E402
 
 OUT_JSON = paths.CALIBRATION_DIR / "offer_curve_sced_coal_uppertail.json"
 

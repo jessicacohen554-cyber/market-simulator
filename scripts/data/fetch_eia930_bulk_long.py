@@ -48,8 +48,8 @@ import pandas as pd
 import requests
 
 # Reuse the exact type-name strings the v2-API-backed sibling script uses.
-sys.path.insert(0, str(Path(__file__).parent))
-from fetch_eia930_long import _REGION_TYPE_NAMES
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # repo root: canonical sibling import
+from scripts.data.fetch_eia930_long import _REGION_TYPE_NAMES  # noqa: E402
 
 BULK_URL_TMPL = (
     "https://www.eia.gov/electricity/gridmonitor/sixMonthFiles/"

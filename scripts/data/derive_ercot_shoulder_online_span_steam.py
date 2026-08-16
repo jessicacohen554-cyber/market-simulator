@@ -76,30 +76,29 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO / "scripts"))
-sys.path.insert(0, str(REPO / "scripts" / "data"))
 
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 
-from derive_ercot_dam_cleared_share import (  # noqa: E402
+from scripts.data.derive_ercot_dam_cleared_share import (  # noqa: E402
     HOURS,
     NETLOAD_PCT_EDGES,
     _MONTH_START_HOUR,
     _netload_pct,
 )
-from derive_ercot_sced_offer_wall import (  # noqa: E402
+from scripts.data.derive_ercot_sced_offer_wall import (  # noqa: E402
     _STD_TZ,
     _coerce_sced_numeric,
     _delivery_year_rows,
     _sced_source_files,
 )
-from derive_ercot_sced_offer_wall_steam import (  # noqa: E402
+from scripts.data.derive_ercot_sced_offer_wall_steam import (  # noqa: E402
     ST_RESTYPES,
     _merge_excluded,
     _scope_fleet,
 )
-from derive_ercot_shoulder_online_span import (  # noqa: E402
+from scripts.data.derive_ercot_shoulder_online_span import (  # noqa: E402
     HOUR_BLOCK_H,
     MIN_CELL_HOURS,
     SEASON_OF_MONTH,

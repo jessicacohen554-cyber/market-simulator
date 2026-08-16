@@ -58,16 +58,14 @@ import pyarrow.parquet as pq
 
 HOURS_PER_YEAR = 8760
 REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from market_sim.config.paths import ERCOT_AS_DIR  # noqa: E402
 
 AS_DIR = ERCOT_AS_DIR
 
-sys.path.insert(0, str(REPO_ROOT / "scripts"))
-
-sys.path.insert(0, str(REPO_ROOT / "scripts" / "data"))
-from build_ercot_hsl import _prevailing_to_standard  # noqa: E402
+from scripts.data.build_ercot_hsl import _prevailing_to_standard  # noqa: E402
 
 # Years built when --year is not given. The NP3-911 *2-Day* cleared-DAM-AS
 # reports under data/raw/ercot-AS/ only reach back to 2023-12-10, so THIS

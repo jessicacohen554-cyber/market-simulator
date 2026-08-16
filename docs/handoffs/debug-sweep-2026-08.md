@@ -334,3 +334,82 @@ trio (`register_forecast_run.py` / `register_hindcast.py` /
   by-design-red lanes are other lanes' live signals. Nothing this session
   landed changes the branch-protection memo's required-check set — no
   workflow was added or renamed; the memo stands as written for G2.
+
+## Addendum B — reissue #2, post-promotion continuation (2026-08-16)
+
+**Branch:** `claude/fable-debug-manager-reissue-2-ofrk9q` (off `origin/main`
+@ `00abb60`, which carries the merged #4008 and the BLOAT-B-7 close-out
+#3995). **Charter:** the outgoing DEBUG-manager's reissue-#2 dispatch —
+landing duties for #4008, sibling-import residue batches 3+, watch-item
+reporting.
+
+### B.1 — Landing duties: #4008 verified landed intact; §8 ledger backfilled
+
+PR #4008 (predecessor branch `…t8dg4w` @ `a4ba177`, 8 commits) confirmed
+MERGED by the owner 09:22 UTC. On post-merge main:
+`audit_keepers.py --iso PJM --check` **PASS 0/0** (keeper
+`2026-08-15-pjm-162-inputclock`, holdout/marker/status all clean) and
+`check_mechanism_matrix.py` fully clean (integrity, anchors, keeper
+stamps, §5.x prose headers). The plan §8 ledger carried no
+DEBUG-MGR-reissue entry — appended one (the durable event record: branch,
+8 commits, both signed cards and their execution, gap rows
+O1/O2/O3/B1/B2, census delta).
+
+### B.2 — Sibling-import residue RETIRED: census 56/34 → 0/0
+
+Four further batches under the scripts/README.md per-file protocol
+(both-paths structural attribute verification FIRST — 58 edges total,
+all IDENTICAL — bare shims → repo-root bootstrap, strict direct-run
+check with the repo root scrubbed from the ambient path and an arbitrary
+cwd, `--script-refs` green per batch):
+
+* **Batch 3** (56/34 → 22/15): the 19-file ERCOT `scripts/data/`
+  derive/build/fetch web. Test rigs `test_dam_deriver.py` and
+  `test_ercot_clock_builders.py` repaired off their own second-copy
+  patterns; 20/20 pass.
+* **Batch 4** (22/15 → 10/4): the `fetch_eia930_*` chain, the CAISO
+  OASIS pair, `build_miso_lmp_reference`, `derive_neiso_rcpf_overlay`,
+  the two `derive_pjm_offer_surface` consumers (deferred in-main site
+  included), `derive_prb_committed_split`.
+* **Batch 5** (10/4 → 4/3): `lib/sced_corpus_instruments.py`'s six
+  deferred probe/data imports → `scripts.probes.*` / `scripts.data.*`;
+  its probes-dir shim retired. Strict check exercised both
+  deferred-import functions in a clean process.
+* **Batch 6** (4/3 → **0/0**): the deploy trio. `register_hindcast.py`
+  gained a **stdlib-only** repo-root bootstrap (never routes through
+  market_sim — Pages sparse-checkout constraint); deploy emulation on
+  stock `python3` (no venv, no numpy) loads it and canonically imports
+  `register_forecast_run`. `deploy-pages.yml` sparse-checks-out the whole
+  `scripts/` dir, so nothing new is required of the workflow.
+  `test_export_forecast_bands.py` repaired; 79 tests + 70 subtests pass.
+
+Harness notes for the record: structural code equality, never marshal
+bytes (the §A.6 caveat), **and set/frozenset fingerprints must be
+order-independent** — repr order is hash-seed dependent across processes
+and false-flagged `ercot123.ONLINE` before the harness was corrected.
+Recorded side effects (the `pjm123_composite_precheck` shape, frozen
+records left as-is): probes `ercot90_stgas_shoulder_measure` and
+`ercot136`/`ercot138` self-shim and bare-import siblings at module
+level, so processes holding them alongside canonical spellings hold
+those modules under both names — identical code, verified structurally.
+`scripts/README.md`'s census paragraph rewritten to the completed state;
+the census stays re-runnable (`--sibling-census`) so any new bare site
+surfaces.
+
+### B.3 — Watch items (report, not owned here)
+
+* **`golden-data-tier.yml` weekly cron, first firing Mon 2026-08-17
+  05:37 UTC — now POST-FIX** (#3996 merged; authorized dispatch
+  `31913648051` GREEN, zero data-missing skips). A red there is a NEW
+  finding, not the known OOM — triage per the DEBUG-A protocol and
+  route.
+* **ci.yml** stays structurally unreachable-green until PERF-B (prompt
+  issued at the G1 refresh, owner launch pending) lands the fast-tier
+  sparse block. No workflow was added or renamed by this session; the
+  branch-protection memo's required-check set stands as written for G2.
+* **Dispatch-state corrections observed at re-verify** (for the director
+  board): BLOAT-B-6R/B-7 close-out is DELIVERED AND MERGED (#3995 — the
+  "last open BLOAT item" is closed; D-ledger proposals in its report);
+  DOCS-A is MERGED (#3999/#4005) and **G1 is DECLARED** (2026-08-16
+  director refresh) — the reissue-#2 dispatch's "G1 still needs one leg"
+  was written before that refresh landed.

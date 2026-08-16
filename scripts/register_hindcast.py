@@ -28,6 +28,12 @@ from pathlib import Path
 _SRC = Path(__file__).resolve().parent.parent / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
+# Repo root: canonical ``scripts.*`` sibling imports on direct run. Stdlib-only
+# on purpose — this file runs on a bare ``python3`` in the Pages sparse
+# checkout, so the bootstrap must never route through market_sim.
+_REPO = Path(__file__).resolve().parent.parent
+if str(_REPO) not in sys.path:
+    sys.path.insert(0, str(_REPO))
 
 SIDECAR_DIR = Path("frontend/data/hindcast")
 PAGE_PATH = Path("docs/codebase-site/forecast-validation.html")
@@ -109,7 +115,7 @@ def build_sidecar(bundle_dir: Path, preserve_invariants: bool = False) -> dict:
     # Lazy import: the invariant summary needs numpy + market_sim constants,
     # which the Pages deploy runner (stdlib-only, --page-only path) does not
     # install. Importing here keeps page regeneration dependency-free.
-    import check_forecast_invariants as CI  # noqa: PLC0415 (sibling script)
+    from scripts import check_forecast_invariants as CI  # noqa: PLC0415 (sibling script)
 
     cache_dir = Path(meta["bundle"])
     if not cache_dir.exists():
@@ -367,7 +373,7 @@ def main(argv: list[str] | None = None) -> int:
     # manifest rebuild there rather than regenerating the retired page. The
     # render_page helper above is kept for any external caller but is no longer
     # wired to forecast-validation.html.
-    import register_forecast_run as RF  # noqa: PLC0415 (sibling; avoids cycle)
+    from scripts import register_forecast_run as RF  # noqa: PLC0415 (sibling; avoids cycle)
 
     RF.reindex(args.site_dir if args.site_dir is not None else RF.REPO)
     return 0

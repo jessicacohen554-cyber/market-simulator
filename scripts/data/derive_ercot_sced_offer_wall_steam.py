@@ -73,13 +73,12 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO / "scripts"))
-sys.path.insert(0, str(REPO / "scripts" / "data"))
 
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 
-from derive_ercot_dam_cleared_share import (  # noqa: E402
+from scripts.data.derive_ercot_dam_cleared_share import (  # noqa: E402
     HCAP_USD_MWH,
     HOURS,
     LADDER_QUANTILES,
@@ -89,7 +88,7 @@ from derive_ercot_dam_cleared_share import (  # noqa: E402
     _netload_pct,
     _weighted_quantiles,
 )
-from derive_ercot_sced_offer_wall import (  # noqa: E402
+from scripts.data.derive_ercot_sced_offer_wall import (  # noqa: E402
     _SCED2_MW,
     _SCED2_PR,
     _STD_TZ,

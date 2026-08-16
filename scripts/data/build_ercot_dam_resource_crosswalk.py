@@ -64,12 +64,12 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / "scripts" / "data"))
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.paths import ERCOT_MIS_DIR, REFERENCE_DIR  # noqa: E402
 
-from derive_ercot_thermal_dam_availability import (  # noqa: E402
+from scripts.data.derive_ercot_thermal_dam_availability import (  # noqa: E402
     RESTYPE_TO_CLASS,
     _RATING_QUANTILE,
     _site,

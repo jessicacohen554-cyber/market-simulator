@@ -49,12 +49,11 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO / "scripts"))
 
-sys.path.insert(0, str(REPO / "scripts" / "data"))
-from fetch_caiso_intertie_lmp import INTERTIE_NODES  # noqa: E402
-from fetch_caiso_oasis import DLAPS, HUBS  # noqa: E402  (single source for both sets)
+from scripts.data.fetch_caiso_intertie_lmp import INTERTIE_NODES  # noqa: E402
+from scripts.data.fetch_caiso_oasis import DLAPS, HUBS  # noqa: E402  (single source for both sets)
 from market_sim.config import paths  # noqa: E402
 
 LMP_DIR = paths.RAW_DATA_DIR / "lmp-data" / "CAISO"

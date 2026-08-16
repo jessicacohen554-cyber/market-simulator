@@ -119,41 +119,55 @@ bare form went with them. One recorded side effect: the frozen probe
 `probes/pjm123_composite_precheck.py` bare-imports `run_calibration` itself
 while also calling the now-canonical `lib/bundle_fleet.py`, so a re-run of
 that probe would hold both names (identical code; frozen record, left as-is).
-The **residue is the wider sibling web, re-measured 2026-08-16 at 56 bare
-sites across 34 live files** (down from the 2026-07-27 census's 105/91 —
-the intervening lanes' conversions are real; the census is now re-runnable
-any time with `python scripts/ci_refactor_guards.py --sibling-census`, an
-advisory mode, so the recorded number can be re-derived instead of trusted).
-The 2026-08-14 reading was 74/50; the single site that left before the
-batch conversions was `gen_caiso166_attestation.py`, which rotated to
-`archive/` in the 2026-08-15 keeper rotation above. **Two chartered batches
-converted 2026-08-16** (DEBUG-manager reissue; 73/49 → 56/34): batch 1 the
-seven-file CAISO derive cluster (`derive_caiso_import_tranches` /
-`derive_ordc_overlay` consumers), batch 2 the top-level cluster
-(`dashboard_add_run.py`, `build_ffr3a3_scorecard.py`,
-`generate_parameter_registry.py`, the two `*_zonal_sufficiency.py`,
-`validate_ercot_online_capacity.py`, `diagnostics/scratchpad_diag_evening.py`,
-`score_crossover.py`) — each under the full per-file protocol below, with
-one test rig repaired off its own second-copy pattern
-(`test_dashboard_add_run_sidecar.py` injected a `spec_from_file_location`
-copy of `calibration_verdict` under the bare name; it now stubs the
-canonical module). The remaining web is overwhelmingly `scripts/data/`
-derive/build/fetch helpers importing each other by bare name
-(same-directory sites resolvable only because `sys.path[0]` is the script's
-own directory — the big ERCOT derive cluster), plus
-`lib/sced_corpus_instruments.py` deferred-importing probe modules and the
-deploy trio (`register_forecast_run.py` / `register_hindcast.py` /
-`pb5_assemble.py`). Converting the rest is open work —
-per-file, with the same both-paths verification (structural code equality,
-NOT marshal bytes: marshal's back-ref sharing varies with string interning
-across two loads of one file and false-flags equal code), PLUS a direct-run
-check per converted file: the canonical `from scripts.… import` form needs
-the repo root on `sys.path`, where the bare form needed only the script's
-own directory, so any file meant to run as `python scripts/data/foo.py` must
-carry (or gain) the repo-root bootstrap before conversion. Note the deploy
-trio (`register_hindcast.py` et al.) runs on bare `python3` in a sparse
-checkout, so any conversion there must keep its stdlib bootstrap
-self-sufficient.
+The **wider sibling web is fully retired as of 2026-08-16: the census reads
+0 bare sites across 0 live files** (down from the 2026-07-27 census's
+105/91; re-runnable any time with
+`python scripts/ci_refactor_guards.py --sibling-census`, an advisory mode,
+so the recorded number can be re-derived instead of trusted — and any NEW
+bare site shows up there). The 2026-08-14 reading was 74/50; the single
+site that left before the batch conversions was
+`gen_caiso166_attestation.py`, which rotated to `archive/` in the
+2026-08-15 keeper rotation above. **Six chartered batches converted
+2026-08-16** (DEBUG-manager reissue sessions; 73/49 → 56/34 → 0/0):
+batch 1 the seven-file CAISO derive cluster
+(`derive_caiso_import_tranches` / `derive_ordc_overlay` consumers),
+batch 2 the top-level cluster (`dashboard_add_run.py`,
+`build_ffr3a3_scorecard.py`, `generate_parameter_registry.py`, the two
+`*_zonal_sufficiency.py`, `validate_ercot_online_capacity.py`,
+`diagnostics/scratchpad_diag_evening.py`, `score_crossover.py`),
+batch 3 the 19-file ERCOT `scripts/data/` derive/build/fetch web
+(the `derive_ercot_dam_cleared_share` / `derive_ercot_sced_offer_wall` /
+`build_ercot_as_withholding` / `build_ercot_hsl` dependency web plus
+`derive_sced_coal_uppertail`'s frozen-probe imports), batch 4 the
+`fetch_eia930_*` chain, the CAISO OASIS pair (`extract_caiso_hubs`,
+`fold_caiso_oasis_grp_zips`) and the misc derive singles, batch 5
+`lib/sced_corpus_instruments.py`'s six deferred probe/data imports
+(now `scripts.probes.*` / `scripts.data.*`; its probes-dir shim went with
+them), batch 6 the deploy trio (`register_forecast_run.py` /
+`register_hindcast.py` / `pb5_assemble.py` — `register_hindcast` gained a
+**stdlib-only** repo-root bootstrap because it runs on bare `python3` in
+the Pages sparse checkout; verified by a deploy emulation on stock
+`python3` with no third-party deps). Each file went through the full
+per-file protocol: both-paths attribute verification FIRST (structural
+code equality, NOT marshal bytes: marshal's back-ref sharing varies with
+string interning across two loads of one file and false-flags equal code;
+set/frozenset comparisons must be order-independent — repr order is
+hash-seed dependent across processes), bare shims → repo-root bootstrap,
+then a STRICT direct-run check (script's own dir as `sys.path[0]`, repo
+root scrubbed from the ambient path, arbitrary cwd — a check run from the
+repo root is vacuous), `--script-refs` green per batch. Three test rigs
+were repaired off their own second-copy patterns along the way
+(`test_dashboard_add_run_sidecar.py`, `test_dam_deriver.py` +
+`test_ercot_clock_builders.py`, `test_export_forecast_bands.py`).
+Recorded side effects, all the `pjm123_composite_precheck` shape (frozen
+record, left as-is): the frozen probes `ercot90_stgas_shoulder_measure`
+(bare-imports two `scripts/data` derive modules) and
+`ercot136_coal_headroom_conduct` / `ercot138_coal_gas_ranking`
+(bare-import `ercot123_coal_sced_reach`) self-shim their own directories,
+so a process that loads them alongside the canonical spellings holds
+those modules under both names — identical code, verified structurally.
+Any future sibling import is spelled canonically from the start, with the
+same protocol if it must coexist with a bare-era frozen record.
 
 ### `keeper_store.py`'s CLI — the sanctioned exception (adjudicated 2026-07-26)
 

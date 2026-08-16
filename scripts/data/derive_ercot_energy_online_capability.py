@@ -65,15 +65,15 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-if str(REPO / "scripts" / "data") not in sys.path:
-    sys.path.insert(0, str(REPO / "scripts" / "data"))
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 
-from derive_ercot_dam_cleared_share import (  # noqa: E402
+from scripts.data.derive_ercot_dam_cleared_share import (  # noqa: E402
     _MONTH_START_HOUR,
     _netload_pct,
 )
-from derive_ercot_faststart_pool import _STD_TZ  # noqa: E402
-from derive_ercot_sced_offer_wall import SCED_DIR  # noqa: E402
+from scripts.data.derive_ercot_faststart_pool import _STD_TZ  # noqa: E402
+from scripts.data.derive_ercot_sced_offer_wall import SCED_DIR  # noqa: E402
 
 CORPUS_DIR = REPO / "data/raw/ercot/SCED"
 OUT_PATH = (

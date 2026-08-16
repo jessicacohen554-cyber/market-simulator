@@ -67,15 +67,13 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO))
-sys.path.insert(0, str(REPO / "scripts"))
 
 from market_sim.config.constants import PJM_SEASON_OF_MONTH  # noqa: E402
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 
-sys.path.insert(0, str(REPO / "scripts" / "data"))
-from derive_pjm_offer_surface import (  # noqa: E402
+from scripts.data.derive_pjm_offer_surface import (  # noqa: E402
     _BID_COLS,
     _MW_COLS,
     _month_files,

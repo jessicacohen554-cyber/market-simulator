@@ -36,10 +36,10 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / "scripts" / "data"))
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
 
-from derive_campd_gas_commitment_params import (  # noqa: E402
+from scripts.data.derive_campd_gas_commitment_params import (  # noqa: E402
     UNIT_LEVEL_DIR,
     class_plant_codes,
     states_for_iso,

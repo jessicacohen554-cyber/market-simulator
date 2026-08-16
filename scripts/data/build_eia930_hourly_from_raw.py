@@ -26,11 +26,14 @@ from pathlib import Path
 
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).parent))
-from convert_eia930 import _build_time_columns, _ordered_fuel_columns
-
 REPO = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
+
+from scripts.data.convert_eia930 import (  # noqa: E402
+    _build_time_columns,
+    _ordered_fuel_columns,
+)
 
 from market_sim.config.paths import EIA_930_DIR, EIA_HOURLY_DIR  # noqa: E402
 
