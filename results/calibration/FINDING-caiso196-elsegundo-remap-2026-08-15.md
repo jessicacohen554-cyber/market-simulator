@@ -163,3 +163,42 @@ Environment: full clone; MIC partition materialized in-session
 (`curate_capacity_deliverability.py --isos CAISO`, 386 rows); the dashboard-deploy
 stall cleared at session start (run #1400 stuck `waiting` since 2026-08-06 cancelled;
 run #1510 deployed 2026-08-15T20:33Z).
+
+## 7. PROMOTION ADDENDUM (2026-08-16) — the owner decided §5 item 1: e1 IS the keeper
+
+The owner's decision, in-session verbatim: *"Is this a recommended keeper candidate?
+If so plz promote. If structural integrity improves but gates regress that may still
+be a keeper.."* — adopting the rule-14/caiso-183 posture for exactly this arm.
+Executed by the same session, one day after registration:
+
+* **C6 attested AT promotion** — `scripts/gen_caiso196_attestation.py` (the
+  `gen_caisoNNN` series resumes; every premise computed: G-DELTA zero of 714 config
+  keys differ; G-EXTRACT each bundle's `resolved_inputs` records its extract sha —
+  the caiso-190 machinery's first use in a promotion; G-ENGAGE CC_REGULAR
+  −0.872/−0.717/−0.968 TWh with 35–40k price zone-hours moved, from committed
+  sidecars; G-MACHINE clean; G-DOF ledger byte-carried 11/8; G-EXC four exceptions
+  carried from caiso-188 with classifications/reasons byte-identical, C3c magnitudes
+  re-measured UNCHANGED, C3a magnitudes REFRESHED and inert under v3.1).
+* **Re-verified determination: NOT-YET** — 8 criteria scored, 2 load-bearing FAILs
+  (C1 2023 CC_REGULAR −4.44 TWh; C3a 2024 +11.7 % / 2025 +14.5 %), C3c the single
+  ledgered caveat, C6/C8/C2/C3b/C4 PASS. One more documented FAIL than the
+  incumbent, per the ACCEPT-WITH-FLIP record (§3) and the owner's clause.
+* **LOYO discharged by construction**: zero fitted parameters, per-year-independent
+  detection, the remap a static registry-identity fact, and no in-sample gain
+  anywhere — the overfitting signature cannot exist on any leave-one-year-out split.
+* **Keeper shard, matrix shard (keeper + gates stamps), §5.2 prose header, status
+  part, and the keeper sidecar `market_story` all re-stamped**; `audit_keepers
+  --iso CAISO` PASS (0 failures, 0 warnings); `check_mechanism_matrix` clean.
+* **Site retention applied per the standing 2026-08-15 directive**:
+  `2026-08-09-caiso-188-d1-micseam` (superseded keeper) and
+  `2026-08-15-caiso-196-e0-control` (the keeper's own bit-zero control, the NEISO
+  control precedent) pruned via `prune_iso_runs.py --force-uncite`; CAISO lane =
+  the keeper alone. Durable evidence: this FINDING, the attestation lineage, the
+  calibration log, git history.
+* **Campaign re-anchor**: the owner's promotion is the fresh authorization the
+  integration protocol's amendment clause requires — the campaign control base is
+  now THIS keeper's recipe/bundle (`--replay-bundle
+  results/calibration/caiso196_e1_elsegundo`). Lane-2 re-run ({CC_REGULAR}-scoped)
+  and lanes 3/5 compose on it.
+* **Rule 22 D-5(b) does not fire** (no `complete` marker); no declaration file
+  touched; freeze untouched.
