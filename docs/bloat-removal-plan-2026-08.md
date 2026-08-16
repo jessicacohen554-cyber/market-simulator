@@ -783,6 +783,25 @@ Tip trajectory: 10,080 → **≈ 8.1 GiB** (class-approved only) → **≈ 6.1 G
   B-1/B-2/B-5 duty and PR-3 are covered by the one run; **G3's evidence gate
   reopens** (full entry: release plan §8 ledger, 2026-08-15
   GOLDEN-TIER-FIX).
+  **Close-out EXECUTED 2026-08-15 (BLOAT-B-7,
+  `docs/bloat-removal-report-final-2026-08.md` — THE after-measurement):**
+  dry run `31912344135` at `04d1cf0` re-quantified the superseded-blob pool
+  against the salvaged 922.3 MiB / 3,974-blob pre-prune floor: **7,053 blobs /
+  7,338.4 MiB removable** vs 6,225.7 MiB protected, disjointness PASSED — the
+  ≈6,416 MiB growth is the prune-created reclaim this bullet chartered the
+  measurement for, and
+  the AQ NO-GO stands with its rationale inverted (the superseded pool is now
+  the conversion class's recovery archive; report §5, which also records the
+  aborted run-#16 rewrite attempt). Recovery table re-measured: tip
+  **6,405.7 MiB / 9,204 files**, −3,674.3 vs the 10,080.0 base; measured PR
+  sum 3,737.1 vs the ≈3,988 full-sign-off estimate, variances reconciled
+  (report §3). Golden-tier status at the close-out's measurement commit
+  `04d1cf0`: the tier's FIRST GREEN already existed — run `31867650665` at
+  `c447199`, post-PR-1/2/4, stock `curate_emissions`, discharging the
+  deferred B-1/B-2 dispatch duty for those PRs — and the GOLDEN-TIER-FIX
+  discharge above landed while the close-out was in flight, supplying the
+  post-PR-3/PR-5 green (`31913648051`) that completes the G3 evidence
+  (report §6, incl. its rebase addendum).
 
 Ordering within Wave 3: PR-4 (no data) any time; PR-2 → PR-3 → PR-1 (PR-1's
 chunked pushes are the long pole; nothing depends on them landing first);
@@ -818,12 +837,23 @@ elsewhere, e.g. the D-13 cache-key gate):
   - **(new) BLOAT-1:** approve/veto the Stage-1 itemized list per class
     (§3–§7), the G1 review this plan exists for. Class-approved items carry
     decision 4's signature; the named needs-sign-off items (A2, B1b, B3,
-    C-touchpoint rows) are the item-level calls.
+    C-touchpoint rows) are the item-level calls. *(SPENT 2026-08-15 — the G1
+    item card was served and answered in-session at the BLOAT-B-5 sitting:
+    A2 SIGNED, B1b SIGNED, B3 SIGNED, C-touchpoint rows VETOED-kept — and
+    every verdict is executed and verified at `04d1cf0`. Proposed CLOSE:
+    `docs/bloat-removal-report-final-2026-08.md` §7.)*
   - **(new) BLOAT-2:** adopt the Class-E retention rule text (§7 E2).
+    *(Still open at the 2026-08-15 close-out; rule 4's quarterly
+    bundle-parity sweep also unbuilt.)*
   - **(new) BLOAT-3:** the Stage-2 charter decision — whether/when to untrack
     the measured 3,561.6 MiB residual under the §0ar-3 checklist, with §4.8's
     follow-on evidence passes as its BLOAT-A-equivalent prerequisite. Until
-    signed, Stage 2 remains a standing option, not scheduled work.
+    signed, Stage 2 remains a standing option, not scheduled work. *(Still
+    open; charter input re-measured at `04d1cf0` by the close-out —
+    adjudication pool 4,008.7 MiB / 1,487 files, takeable residual
+    ≈ 3,311.9 MiB after the §4.2/§4.7 keep-verdicts, full untrack → tip
+    ≈ 3.0 GiB; the report's §7 adds the A2-precedent and rewrite-NO-GO
+    hardening notes.)*
 
 ---
 

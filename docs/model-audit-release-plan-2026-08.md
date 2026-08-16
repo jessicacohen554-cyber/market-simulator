@@ -889,8 +889,14 @@ your branch when done.
   **Post-merge duty OPEN: the `golden-data-tier.yml` manual dispatch**
   (decision 7's authorized BLOAT-B re-dispatch) — result to be appended here.
   A red on a data-missing skip means restoring that corpus, never widening the
-  workflow's sparse list.
-  **APPENDED 2026-08-15 — duty DISCHARGED by the GOLDEN-TIER-FIX lane:** run
+  workflow's sparse list. *[Appended 2026-08-15, BLOAT-B-7 completeness pass:
+  the dispatch happened — run `31867650665` at `c447199`, 05:43–05:58 UTC,
+  minutes after the PR-1/2/4 merges — and it is GREEN, the tier's first ever;
+  loud-failure guard passed. Duty DISCHARGED for PR-1/2/4's prunes. See the
+  B-7 entry below for why the later "never been green" deferral notes were
+  stale.]*
+  **APPENDED 2026-08-15 — duty DISCHARGED in full by the GOLDEN-TIER-FIX
+  lane:** run
   `31913648051` — GREEN, loud-failure guard PASS, zero data-missing skips, no
   corpus restored, sparse list untouched. Deferred by the B-5 sitting until
   the `curate_emissions.py` memory fix existed; spent on the fix branch
@@ -1099,3 +1105,74 @@ your branch when done.
   overnight (CAISO caiso-196 line, MISO miso-159, ERCOT ercot-204/210 notes,
   NYISO nyiso-133) — G2's freeze window still needs the calibration program
   to pause.
+- 2026-08-15 — **BLOAT-B-1 recorded post-hoc (ledger completeness, appended by
+  BLOAT-B-7; the lane self-recorded only in the bloat plan §8/PR-1 and its
+  PRs):** PR **#3957** (step 1: pre-slim SHA256 manifests over the raw bytes,
+  merged 02:38 UTC, commit `971eaa3` — the recovery reference) + PR **#3958**
+  (branch `claude/bloat-b1-sced-slim-o4ar2b`, merged 05:38 UTC, label
+  `intentional-shrink`) — §8/PR-1 of `docs/bloat-removal-plan-2026-08.md`:
+  A1 + B1a in-place slim of all 1,027 SCED corpus files + loose extracts
+  (column projection to the re-audited consumer union, KEEP 79→108 corpus /
+  180 extracts, rtcb recompress-only per the adapter contract; zstd-15).
+  Measured **−739.8 MiB / 21.3 % at tip** vs the ≈1,545 estimate — the 0.547
+  precedent ratio was measured on SNAPPY originals and the 2026-08 re-uploads
+  were already zstd, so the codec half was banked before the PR. ERCOT-157
+  byte-identity acceptance **15/15** (12 derive artifacts + rtcb 27-part
+  fingerprint + both `--position-tail` STOP records); 48 chunked commits over
+  `git push` HTTP/1.1, each blob-verified, plus a fresh-clone fetch-back
+  check. G2 precondition executed under the task card's owner-waiver clause
+  (same-session raw-vs-slim A/B baseline). A2 left untouched by this PR
+  (later signed and executed in PR-5).
+- 2026-08-15 — **BLOAT-B-4 recorded post-hoc (ledger completeness, appended by
+  BLOAT-B-7; same gap):** PR **#3955** (branch
+  `claude/bloat-b4-script-rotation-dmktqx`, merged 05:39 UTC) — §8/PR-4:
+  **86 top-level scripts rotated** to `scripts/archive/` (194 → 108 top-level
+  `.py`), keep-set re-derived at execution to **4** (the neiso-87 and
+  ercot-193 generators rotated on moved lane state — neiso-93 promoted,
+  ercot-193's hold discharged), `run_ces_leg.py` verified and KEPT (live
+  FF-3F harness code), `regen_caiso_bench_cems.py` already archived. Pure
+  `git mv` + 86 re-anchored repo-root expressions + one sibling import;
+  frozen-record trees untouched per the `scripts/README.md` convention.
+  Gates green: `ci_refactor_guards.py` both halves, fast tier 6,838 passed,
+  mechanism-matrix check, ruff; remote tree hash verified identical to local
+  post-push (rule 27). No label — pure renames.
+- 2026-08-15 — **BLOAT-B-7 delivered: the re-measured WS6 close-out the
+  salvage ruling left OPEN.** Branch `claude/bloat-b7-ws6-closeout-62o3p1`;
+  report `docs/bloat-removal-report-final-2026-08.md` — the AFTER measurement
+  the salvaged `docs/bloat-removal-report-2026-08.md` baseline was preserved
+  for. Headline: tip **6,405.7 MiB / 9,204 files** at `04d1cf0` —
+  **−3,674.3 MiB (−36.5 %)** vs the 10,080.0 BLOAT-A base; the five data PRs'
+  measured at-tip recovery sums to 3,737.1 and organic growth (+62.8)
+  closes the ledger exactly; landed ~315 MiB above the plan's ≈6.1 GiB
+  full-sign-off trajectory with every variance explained (report §3: PR-1
+  −805.2 / A2 +566.9 are one codec fact double-entry-booked; PR-3's corpus
+  grew 92.9→158.4 while BLOAT-B waited). Per-item §3–§7 ledger complete —
+  every class-approved item EXECUTED, all four sign-off items adjudicated
+  (A2/B1b/B3 signed-executed, C touchpoints vetoed-kept and verified intact),
+  every KEEP honoured (report §4). Close-out dry run `31912344135`
+  (`dry_run=true`, phrase never supplied) quantified the post-prune
+  superseded-blob floor against the salvaged 922.3 MiB / 3,974-blob baseline:
+  **7,053 blobs / 7,338.4 MiB removable** vs 6,225.7 MiB protected,
+  disjointness PASSED — ≈6,416 MiB of prune-created reclaim, attributed
+  item-by-item (report §5); **AQ NO-GO stands with its rationale inverted** —
+  the superseded pool is now the conversion class's recovery archive.
+  D-ledger: **BLOAT-1 SPENT → propose CLOSE** (the four G1 verdicts executed),
+  BLOAT-2 open (E2 adoption), BLOAT-3 open over the re-measured Stage-2 pool
+  (4,008.7 MiB / takeable ≈3,311.9 → tip ≈3.0 GiB). PRs #3954/#3946 confirmed
+  closed unmerged. Greens at HEAD: parity (70 runs) + `audit_keepers --check`
+  PASS. **Two artifact-record facts surfaced that no ledger entry knew:**
+  (a) `golden-data-tier.yml` run **`31867650665`** (05:43 UTC at `c447199`)
+  is **GREEN — the tier's first ever**, on the stock `curate_emissions.py`,
+  post-PR-1/2/4 — so the B-5 deferral's "never been green" and §2's
+  "G3 proof mechanism BROKEN" warning are stale as written. *(At the B-7
+  measurement commit `04d1cf0` GOLDEN-TIER-FIX was still unlanded and its
+  dispatch unspent; the lane then delivered while this close-out was in
+  flight — #3996 + run `31913648051` GREEN, the GOLDEN-TIER-FIX entry above —
+  supplying exactly the post-PR-3/PR-5 green the report §6 said was
+  outstanding. Report §6 carries a dated addendum; its as-measured text is a
+  record of `04d1cf0`.)* (b) cleanup-large-blobs
+  run **`31907287115`** (20:39 UTC at `b26c13e`) was a **real rewrite
+  attempt** (`dry_run=false`, confirm phrase supplied) that **self-aborted at
+  the integrity verify** — 9 cited-evidence commits would have been pruned;
+  nothing was pushed, the remote is untouched (report §5). Both flagged for
+  PM/owner attention; §2's G3 warning text left to the PM to refresh.

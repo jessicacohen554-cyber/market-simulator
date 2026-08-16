@@ -26,6 +26,40 @@ restored, sparse list untouched.
 Ledger entries: release plan §8 (2026-08-15 GOLDEN-TIER-FIX) + bloat plan §8
 Close-out.
 
+## 2026-08-15 — BLOAT-B-7: the re-measured WS6 close-out — tip 6,405.7 MiB (−36.5 % vs the BLOAT-A base), every §3–§7 item adjudicated, post-prune dry-run floor quantified, BLOAT-1 spent
+
+The AFTER measurement the salvaged pre-prune baseline
+(`docs/bloat-removal-report-2026-08.md`, #3976) was preserved for:
+**`docs/bloat-removal-report-final-2026-08.md`**, measured at `04d1cf0` with
+all five BLOAT-B data PRs merged. Tip **6,405.7 MiB / 9,204 files** —
+−3,674.3 MiB vs the 10,080.0 MiB BLOAT-A base; the PRs' measured recovery
+(3,737.1) plus organic growth (+62.8) closes the ledger exactly, landing
+~315 MiB above the plan's ≈6.1 GiB full-sign-off trajectory with all
+variances reconciled (PR-1 −805.2 / PR-5-A2 +566.9 are one already-zstd
+codec fact booked from both sides; PR-3's target corpus grew 92.9→158.4 MiB
+while BLOAT-B waited). Per-item executed/vetoed ledger complete: every
+class-approved item executed, A2/B1b/B3 signed-and-executed, the two
+C-touchpoint rows vetoed-kept and verified intact with their `hourly/`;
+parity (70 runs) and `audit_keepers --check` green at HEAD.
+`cleanup-large-blobs.yml` dry run `31912344135` (`dry_run=true`, the
+REWRITE-HISTORY phrase never supplied) re-quantified the superseded-blob
+pool against the salvaged 922.3 MiB / 3,974-blob floor: **7,053 blobs /
+7,338.4 MiB removable** — ≈6,416 MiB of prune-created reclaim, attributed
+item-by-item — and the **AQ NO-GO stands with its rationale inverted**:
+those superseded blobs are now the archive behind every corpus README's
+restore-from-pin contract. Also surfaced from the artifact record:
+the golden tier's **first-ever green** (run `31867650665` at `c447199`,
+post-PR-1/2/4, stock `curate_emissions.py` — the deferred B-1/B-2 dispatch
+duty was in fact discharged; GOLDEN-TIER-FIX, unlanded at the measurement
+commit, then delivered while this close-out was in flight and supplied the
+post-PR-3/PR-5 green — see its entry above), and an **aborted real rewrite
+attempt** (run `31907287115`, `dry_run=false` with the confirm phrase,
+self-stopped by the citation-integrity verify — 9 cited commits; nothing
+pushed). D-ledger: BLOAT-1 **SPENT → propose CLOSE**; BLOAT-2 open; BLOAT-3
+open over the re-measured Stage-2 pool (4,008.7 MiB, takeable ≈3,311.9).
+Release-plan §8 ledger back-filled with the missing BLOAT-B-1
+(#3957/#3958) and BLOAT-B-4 (#3955) entries. Docs only.
+
 ## 2026-08-15 — BLOAT-B-5 (PR-5, #3978): owner-signed batch executed — A2 + B1b + B3 untracked (−2,518.5 MiB at tip, 763 payloads), C touchpoints vetoed; golden-tier dispatch deferred by owner
 
 The owner answered the G1 item card in-session: **A2 / B1b / B3 SIGNED**, the
