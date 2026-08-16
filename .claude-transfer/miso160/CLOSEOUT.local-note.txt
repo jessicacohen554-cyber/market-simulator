@@ -1,6 +1,0 @@
-CLOSEOUT.md lives on the remote branch (blob 4efeb5a0d8064707fa400d661b637b0f86be1fee,
-commit 6c7a0835). It documents the local-vs-remote delivery state; this local tree is
-the SOURCE the manifest describes, so the file is not duplicated here byte-for-byte.
-A follow-on git push replaces the remote API-commit history with this local history
-(--force-with-lease), after which the remote CLOSEOUT.md is superseded and the
-transfer directory is deleted per APPLY.md.
