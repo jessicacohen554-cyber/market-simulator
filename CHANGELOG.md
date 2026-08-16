@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-08-16 — BLOAT-2 closed: Class-E retention rule adopted; the point-4 bundle-parity sweep built into the CI parity gate
+
+The four-point Class-E retention rule (bloat plan §7 item E2) was served to
+the owner as the G1-style in-session card and **ADOPTED**; the text is written
+verbatim with the adoption date into
+`frontend/data/backcast/keepers/README.md`, now the rule's standing home.
+Point 4's quarterly bundle-parity sweep — the one unbuilt mechanic — is built:
+`scripts/check_registry_payload_parity.py` gains `check_bundle_retention`,
+which FAILS any top-level `results/calibration/<bundle>` directory that no
+retained registry sidecar's `bundle` field maps and that is not keep-required
+(the §5.2 `_`-prefixed working/archive dirs, bundles referenced by a
+`results/regression-goldens/*/manifest.json` capture record, and the
+documented `KEEP_REQUIRED_UNMAPPED_BUNDLES` allowlist — empty at adoption;
+root-level loose records and the `results/hindcast` /
+`results/regression-goldens` roots are out of scope by construction, and the
+keeper / ablation-referenced / structural-prior classes stay sidecar-mapped
+via the prune immunity, needing no carve-out). The sweep runs inside the
+always-on CI parity gate — a strict superset of the rule's quarterly cadence —
+closing the last three-store drift channel. 10 new tests
+(`tests/scoring/test_registry_payload_parity.py`); no data change. Both
+checkers green at HEAD before and after: parity OK (15 runs checked, 15
+bundle dirs swept) and `audit_keepers.py --check` PASS 0/0. D-ledger:
+bloat plan §9 BLOAT-2 annotated CLOSED; release-plan §8 carries the entry;
+only BLOAT-3 (Stage-2 charter) remains open of the D-8 successors.
 ## 2026-08-16 — BLOAT-3: Stage-2 charter decision card drafted and served — the untrack question re-derived over the post-rewrite recovery reality
 
 Docs-only. `docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md` serves the
