@@ -1,6 +1,10 @@
 # GOLDEN-TIER-FIX — land the low-memory curate_emissions path (2026-08-15)
 
-**STATUS: EXECUTED — equivalence proven, branch pushed; dispatch record below.**
+**STATUS: EXECUTED — equivalence proven, branch pushed. ⚠ TWIN-LANE
+COLLISION (§6): a parallel session landed an independent fix branch and
+already spent the single authorized dispatch — run 31913648051 GREEN. The
+owner should merge exactly ONE of the two fix branches (recommendation in
+§6); this lane did NOT dispatch again.**
 Charter: the owner's 2026-08-15 BLOAT-B-5 sitting decision
 (`docs/model-audit-release-plan-2026-08.md` §8) transferred the deferred
 B-1/B-2/B-5 (and B-3) post-merge golden-tier dispatch duty to this lane; plan
@@ -98,14 +102,30 @@ Against the runner ceiling (7.8 GiB RAM + 3.0 GiB swap, measured by PERF-A):
 
 ## 4. Golden-tier dispatch (the single authorized dispatch)
 
-**Pending merge.** To execute after this branch reaches main, per charter:
-dispatch `golden-data-tier.yml` once from main; record run id, per-step
-walls and outcome here, and append the result to the release-plan §8 ledger
-+ the bloat plan close-out note in the same commit.
+**Already spent — by the twin lane (§6), and it is GREEN.** Run
+**31913648051**: completed SUCCESS in 11m33s — checkout 71 s,
+`regenerate_clean` 5m58s, `curate_emissions --years 2023` 1m31s (the step
+that OOM-killed 2 of 3 prior dispatches), tier 2m43s; loud-failure guard
+PASS with **zero data-missing skips**, no corpus restored, sparse list
+untouched. Dispatched from the twin fix branch
+`claude/golden-tier-emissions-oom-03qlck` @ `ccca569` (off the same
+post-prune main `870c4c8`, which carries every executed BLOAT-B prune), so
+the one run covers the B-1/B-2/B-5 + PR-3 dispatch duty. Per-step walls and
+outcome as recorded in the twin branch's ledger commit `8c27a2e` (which
+appends the release-plan §8 ledger + bloat plan close-out + CHANGELOG — do
+not duplicate those edits from this branch); this session could not
+independently read the Actions API (the session proxy returns 403 on all
+`/actions/*` and `/check-runs` endpoints for this integration), so the run
+record rests on that commit's detail.
 
-Reminder recorded per charter: a red caused by a **data-missing skip** means a
-prune removed something load-bearing — the remedy is restoring that corpus
-(report to the program director), never widening the workflow's sparse list.
+**This lane deliberately did NOT dispatch a second run** — the charter
+authorizes exactly one, and a duplicate would spend billed minutes to prove
+what run 31913648051 already proved.
+
+Reminder recorded per charter (still binding for the weekly cron): a red
+caused by a **data-missing skip** means a prune removed something
+load-bearing — the remedy is restoring that corpus (report to the program
+director), never widening the workflow's sparse list.
 
 ## 5. Test results
 
@@ -127,7 +147,51 @@ prune removed something load-bearing — the remedy is restoring that corpus
   serially against the clean 2023 partition written by the **reworked** path):
   **3 passed** in 43 s.
 
-## 6. Weekly cron
+## 6. Twin-lane collision — two independent fixes, one merge slot
+
+The GOLDEN-TIER-FIX charter was executed **twice in parallel**. While this
+session was proving equivalence, a twin session
+(`session_01St4QNz9jTnw3W5oSav1Tzi`) pushed
+`claude/golden-tier-emissions-oom-03qlck`: commit `86374f2` reworks the same
+`curate_year()` with a **different mechanism** (Arrow-side: per-file
+`pa.Table` conversion, `pc.sort_indices` with an explicit row-order
+tiebreaker + adjacent-key dedupe, `table.take` per row group into
+`write_clean_iter`), then dispatched the golden tier from that branch (§4,
+GREEN) and recorded the ledger entries (commit `8c27a2e`).
+
+**Cross-validation (this session, same host, same inputs, same stock
+baseline):** the twin implementation was checked out and run under the same
+protocol — wall 193.1 s, peak RSS (VmHWM) **5.20 GiB**, and its output is
+**byte-size-equal (174,703,675 B) and exact-equal on all 10 columns over all
+26,534,489 rows with equal dtypes** against the stock baseline; provenance
+metadata differs only in `created_utc` + `git_commit` (the latter because
+this working tree sat on a different HEAD — run-environment, not code). So
+**both fixes are independently proven equivalent to stock, and to each
+other**. Comparative profile: twin = lower peak (5.20 vs 6.48 GiB), slower
+wall (193.1 vs 148.5 s); this branch = lower wall, higher (still ample)
+headroom; twin additionally has the real-runner green (§4).
+
+**Owner action needed: merge exactly ONE of the two fix branches.**
+Recommendation: merge the twin branch
+`claude/golden-tier-emissions-oom-03qlck` — it is runner-validated end to
+end, now independently byte-verified here, and carries the §8-ledger /
+CHANGELOG / bloat close-out records the program needs in the same merge.
+Then take from this branch (`claude/golden-tier-fix-2e138a`) **only this
+handoff document** (cherry-pick or copy) as the collision + verification
+record; its `curate_emissions.py` rework becomes redundant the moment the
+twin merges and must NOT be merged on top of it (the two rewrite the same
+function differently — merging both is a conflict at best and a silent
+mixed-state at worst). If the owner prefers this branch's implementation
+instead, merge this branch alone and cherry-pick the twin's ledger commit
+`8c27a2e` for the records.
+
+Also for the program director, found in passing (§5): the fast tier's one
+red is pre-existing on main — a keeper meta carries
+`nyiso_solar_registry_cod_dates` unbound in `replay_keeper._REMAP/_IGNORE`
+— and `ruff format --check` fails on the two `fetch_neiso_smd_zonal_lmp`
+files from the NEISO H1-2026 intake merge. Both belong to their own lanes.
+
+## 7. Weekly cron
 
 `golden-data-tier.yml`'s schedule (`37 5 * * 1`) is untouched and armed; its
 first-ever scheduled firing is **Monday 2026-08-17 05:37 UTC**. With this
