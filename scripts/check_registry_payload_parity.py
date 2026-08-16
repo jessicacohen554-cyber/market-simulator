@@ -20,6 +20,19 @@ behind:
   dead payload committed forever (it is never rendered, since only registered
   runs appear in the manifest).
 
+Since the Class-E retention rule's adoption (2026-08-16, closing BLOAT-2 —
+rule text: `frontend/data/backcast/keepers/README.md`) it also sweeps the
+THIRD retention store, per the rule's point 4:
+
+* bundle -> sidecar: a top-level `results/calibration/<bundle>/` DIRECTORY
+  that no retained registry sidecar's `bundle` field maps and that is not
+  otherwise keep-required (`check_bundle_retention`). Retention
+  (`dashboard_add_run.prune_iso`) deletes sidecar + payload + bundle
+  together, so an unmapped bundle dir is the last drift channel — dead solve
+  output committed forever with nothing rendering or scoring it. The rule
+  asked for a quarterly sweep; living in this always-on CI gate is a strict
+  superset of that cadence.
+
 It also asserts the namespace BOUNDARY (audit FR-24, added by FFR-1D): a
 forecast-family run — T1-F / T1-X / T1-H / crossover / CES-POC / readiness —
 must never be registered into the backcast registry. Those runs belong to the
@@ -51,6 +64,18 @@ from scripts.lib.known_unsynced_keepers import (  # noqa: E402
 
 REGISTRY_DIR = ba.REGISTRY
 RUNS_DIR = ba.RUNS
+
+# Class-E retention rule point 4 (keepers/README.md): keep-required bundle
+# dirs that legitimately hold NO retained sidecar mapping. Admissible classes
+# are the rule's immunity set when a bundle outlives its sidecar — a
+# `keeper_at_declaration` or structural-prior (STATMODE_PROBE_RUNS) bundle
+# whose registry entry was retired — which is the EXCEPTION: the prune
+# immunity (`dashboard_add_run._protected_run_ids`) normally keeps those
+# sidecars alive, so their bundles are mapped the ordinary way. Every entry
+# names the top-level dir and carries a reason comment; a stale entry is a
+# re-armable hole in the gate (delete it when the bundle goes). Empty at
+# adoption (2026-08-16): every non-`_` dir on the tree was sidecar-mapped.
+KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset()
 
 # Namespace-boundary vocabulary (FR-24). `kind`/`mode` are FORECAST-sidecar
 # fields — a backcast registry entry has neither — so their presence with a
@@ -106,6 +131,90 @@ def check_namespace_boundary(rid: str, rec: dict) -> list[str]:
             f"{BACKCAST_RUNS_PREFIX} — a backcast payload lives there. {remedy}"
         )
     return problems
+
+
+def check_bundle_retention(
+    sidecars: dict[str, dict], *, repo: Path | None = None
+) -> tuple[list[str], int]:
+    """Class-E retention rule point 4: sweep `results/calibration/` bundle dirs.
+
+    Fails any top-level DIRECTORY under `results/calibration/` that no
+    retained sidecar's `bundle` field maps and that is not keep-required
+    (rule text: `frontend/data/backcast/keepers/README.md`). Keep-required
+    carve-outs, in the order tested:
+
+    * `_`-prefixed dirs — the §5.2 working/archive dirs
+      (`docs/bloat-removal-plan-2026-08.md` §5.2, citation-checked KEEP);
+      never run bundles.
+    * dirs a `results/regression-goldens/*/manifest.json` capture record
+      references in a `keepers.<ISO>.bundle` field.
+    * the documented `KEEP_REQUIRED_UNMAPPED_BUNDLES` allowlist (a
+      keep-required bundle that legitimately outlives its sidecar).
+
+    Out of scope by construction: root-level loose records (files, not
+    dirs), and the `results/hindcast/` / `results/regression-goldens/`
+    roots (different trees). The current keeper, ablation-referenced and
+    structural-prior bundles need no carve-out here — the prune immunity
+    keeps their sidecars retained, so they are mapped the ordinary way.
+
+    Args:
+        sidecars: Parsed retained registry sidecars, keyed by run id.
+        repo: Repo root override (tests); defaults to this checkout.
+
+    Returns:
+        ``(problems, swept)`` — human-readable failures, and how many bundle
+        dirs the sweep examined. An absent `results/calibration/` (partial
+        checkout) sweeps nothing and returns no problems, mirroring the
+        RUNS_DIR guard.
+    """
+    repo = repo or REPO
+    calib_root = repo / "results" / "calibration"
+    goldens_root = repo / "results" / "regression-goldens"
+    if not calib_root.is_dir():
+        return [], 0
+
+    mapped: set[str] = set()
+    for rec in sidecars.values():
+        b = ba.bundle_dir_for(rec, repo=repo, calib_root=calib_root)
+        if b is None:
+            continue  # no bundle field, or outside the root (safety guard)
+        rel = b.resolve().relative_to(calib_root.resolve())
+        if rel.parts:  # a sidecar may map a nested path; the dir is top-level
+            mapped.add(rel.parts[0])
+
+    golden_refs: set[str] = set()
+    for manifest in sorted(goldens_root.glob("*/manifest.json")):
+        try:
+            doc = json.loads(manifest.read_text())
+        except (OSError, json.JSONDecodeError):
+            continue  # unreadable capture record never widens the carve-out
+        for entry in (doc.get("keepers") or {}).values():
+            raw = str((entry or {}).get("bundle") or "")
+            parts = Path(raw).parts
+            if parts[:2] == ("results", "calibration") and len(parts) > 2:
+                golden_refs.add(parts[2])
+
+    problems: list[str] = []
+    swept = 0
+    for path in sorted(p for p in calib_root.iterdir() if p.is_dir()):
+        name = path.name
+        if name.startswith("_"):
+            continue
+        swept += 1
+        if name in mapped or name in golden_refs:
+            continue
+        if name in KEEP_REQUIRED_UNMAPPED_BUNDLES:
+            continue
+        problems.append(
+            f"results/calibration/{name}: bundle dir maps to no retained "
+            f"sidecar `bundle` field and is not keep-required — dead solve "
+            f"output (Class-E retention rule point 4, "
+            f"frontend/data/backcast/keepers/README.md). Either register "
+            f"it, prune it (dashboard_add_run.prune_iso deletes the three "
+            f"stores together), or record why it must outlive its sidecar "
+            f"in KEEP_REQUIRED_UNMAPPED_BUNDLES."
+        )
+    return problems, swept
 
 
 def main() -> int:
@@ -166,6 +275,10 @@ def main() -> int:
             msg = f"keepers/{iso}.json: keeper {rid!r} has no runs/{rid}.js payload"
             (warnings if rid in UNSYNCED_RUN_PAYLOADS else problems).append(msg)
 
+    # bundle -> sidecar (Class-E retention rule point 4).
+    bundle_problems, swept_bundles = check_bundle_retention(sidecars)
+    problems.extend(bundle_problems)
+
     if warnings:
         print(
             "registry/payload parity: known-unsynced runs (tracked, not a gate "
@@ -183,6 +296,7 @@ def main() -> int:
 
     print(
         f"registry/payload parity OK ({len(sidecars)} runs checked, "
+        f"{swept_bundles} bundle dirs swept, "
         f"{len(warnings)} known-unsynced tolerated)"
     )
     return 0
