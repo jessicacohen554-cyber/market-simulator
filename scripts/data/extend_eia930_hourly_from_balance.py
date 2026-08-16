@@ -288,10 +288,37 @@ def extend_ba(
 # 2025 is left untouched (the source was correct from ~Feb-2025); January-2025
 # straddles the upstream switch (centroid 11.15) and stays as measured --
 # correcting a sub-month straddle would require fabricating a switch hour
-# (rule 14), so it is documented, not shifted.  Years before 2023 are outside
-# this charter's scope; see the README section this repair updates.
+# (rule 14), so it is documented, not shifted.
+#
+# 2018-2022 EXTENSION (owner-signed charter, 2026-08-16 DEBUG-manager reissue
+# sitting; FINDING-debug-b-pjm-input-clock-2026-08-15.md section 6 filed the
+# inconsistency, audit third-party-audit-2026-08.md section 8 row O3 routed
+# it): the 1 h-early source clock is a property of EIA-930 until ~Feb-2025,
+# so the same value-preserving +1 h re-placement applies to every earlier
+# year in the extract (2022 July NG: SUN centroid read 10.73 pre-fix against
+# the astronomical ~11.9).  Data repair only -- no <=2022 year is solved,
+# scored or registered by the charter; the holdout tiers and the spend
+# freeze are untouched (rule 22: what is held out is the SCORE, never the
+# data).  The first local-2018 hour's source instant (2018-01-01 05:00Z)
+# precedes the extract, so that one row's NG:* cells become NaN rather than
+# fabricated (rule 14).
+#
+# THIS TABLE IS THE FULL DECLARED RECORD of shifts embodied in the committed
+# extract -- it is documentation plus a one-shot migration input, NOT an
+# idempotent transform.  Because ``rebuild_pjm_input_clock`` reads the
+# COMMITTED extract, re-applying an entry already embodied in it would
+# double-shift that block (the archived patch README's "a second run
+# double-shifts" warning).  ``--rebuild-pjm-input-clock`` therefore requires
+# an explicit ``--apply-years`` naming ONLY the not-yet-embodied entries:
+# 2023+2024 were applied by DEBUG-B (merged 2026-08-15); 2018-2022 by the
+# extension charter run.
 _PJM_INPUT_CLOCK_SHIFTS: tuple[tuple[int, str, int], ...] = (
     # (local-date year, family, hours to move the CONTENT: +1 = later)
+    (2018, "fueltype", +1),
+    (2019, "fueltype", +1),
+    (2020, "fueltype", +1),
+    (2021, "fueltype", +1),
+    (2022, "fueltype", +1),
     (2023, "fueltype", +1),
     (2024, "fueltype", +1),
 )
@@ -346,15 +373,28 @@ def _replace_family_by_utc_shift(
     return out
 
 
-def rebuild_pjm_input_clock(force: bool) -> Path:
-    """Apply the DEBUG-B fueltype input-clock re-placement to ``PJM hourly.parquet``.
+def rebuild_pjm_input_clock(force: bool, apply_years: list[int]) -> Path:
+    """Apply the PJM fueltype input-clock re-placement to ``PJM hourly.parquet``.
 
-    Reads the committed wide extract, applies :data:`_PJM_INPUT_CLOCK_SHIFTS`
-    (2023 fueltype +1 h; 2024 fueltype +1 h) as value-preserving UTC-time
-    re-placements, and writes the corrected extract back in the identical
-    schema.  See the module-level notes above and
-    ``docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md`` §3.
+    Reads the committed wide extract and applies the
+    :data:`_PJM_INPUT_CLOCK_SHIFTS` entries whose year is in ``apply_years``
+    as value-preserving UTC-time re-placements, writing the corrected extract
+    back in the identical schema.  ``apply_years`` is REQUIRED and must name
+    only entries not already embodied in the committed file: the source of
+    every block is the committed extract itself, so re-applying an
+    already-applied entry double-shifts that block (see the table's
+    module-level notes).  DEBUG-B applied 2023+2024 (charter
+    ``docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md`` §3); the
+    owner-signed 2026-08-16 extension applied 2018-2022.
     """
+    unknown = [
+        y for y in apply_years if y not in {y_ for y_, _, _ in _PJM_INPUT_CLOCK_SHIFTS}
+    ]
+    if unknown:
+        raise SystemExit(
+            f"--apply-years {unknown} not declared in _PJM_INPUT_CLOCK_SHIFTS; "
+            "declare the shift (with its charter citation) before applying it"
+        )
     out_path = OUT_DIR / "PJM hourly.parquet"
     df = pd.read_parquet(out_path)
     original_cols = list(df.columns)
@@ -364,6 +404,8 @@ def rebuild_pjm_input_clock(force: bool) -> Path:
     # shifted years would otherwise double-shift their shared boundary hour.
     pristine = df.copy()
     for year, family, shift in _PJM_INPUT_CLOCK_SHIFTS:
+        if year not in apply_years:
+            continue
         if family != "fueltype":
             raise ValueError(f"unsupported family {family!r}")
         df = _replace_family_by_utc_shift(df, pristine, year, fuel_cols, shift)
@@ -387,10 +429,19 @@ def main() -> None:
     ap.add_argument(
         "--rebuild-pjm-input-clock",
         action="store_true",
-        help="Apply the DEBUG-B fueltype clock re-placement to the committed "
-        "PJM hourly.parquet (2023 and 2024 fueltype +1h) and exit; "
-        "value-preserving, cites docs/handoffs/debug-b-pjm-input-clock-"
-        "charter-2026-08.md.",
+        help="Apply the PJM fueltype clock re-placement to the committed "
+        "PJM hourly.parquet for the years named by --apply-years, and exit; "
+        "value-preserving one-shot migration (never idempotent -- see the "
+        "_PJM_INPUT_CLOCK_SHIFTS notes). DEBUG-B applied 2023 2024; the "
+        "owner-signed 2026-08-16 extension applied 2018-2022.",
+    )
+    ap.add_argument(
+        "--apply-years",
+        type=int,
+        nargs="+",
+        help="REQUIRED with --rebuild-pjm-input-clock: the declared shift "
+        "entries to apply now. Name ONLY years not already embodied in the "
+        "committed extract -- re-applying an applied entry double-shifts it.",
     )
     ap.add_argument("--ba", action="append", dest="bas")
     ap.add_argument(
@@ -414,7 +465,12 @@ def main() -> None:
     )
     args = ap.parse_args()
     if args.rebuild_pjm_input_clock:
-        rebuild_pjm_input_clock(args.force)
+        if not args.apply_years:
+            ap.error(
+                "--rebuild-pjm-input-clock requires --apply-years (the "
+                "not-yet-embodied shift entries; see _PJM_INPUT_CLOCK_SHIFTS)"
+            )
+        rebuild_pjm_input_clock(args.force, args.apply_years)
         return
     if not args.bas:
         ap.error("--ba is required unless --rebuild-pjm-input-clock is given")
