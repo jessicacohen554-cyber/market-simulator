@@ -790,5 +790,75 @@ class TestBackwardCompatibility(unittest.TestCase):
         self.assertFalse(config.use_campd_bins)
 
 
+class TestCommissionYearCodFallback(unittest.TestCase):
+    """miso-159: the gated EIA-860 COD fall-through for registry-missed plants.
+
+    ``_commission_year`` falls through to a hardcoded 2010 when the ERCOT-only
+    master plant registry misses; ``commission_year_cod_fallback`` routes that
+    fall-through through ``cod_ramp.load_cod_map()`` (the capacity-weighted
+    EIA-860 COD reduction) first. Registry hits keep precedence, and a plant
+    absent from both sources still lands on the disclosed 2010.
+    """
+
+    # A plant code no real source carries, so both the registry and any
+    # patched COD map miss it unless the test says otherwise.
+    MISSING_CODE = 98765431
+
+    def _online_years(self, cfg, plant_code, cod_map):
+        from unittest import mock
+
+        bins = _synthetic_bin(
+            Plant_Code=plant_code, plant_codes=[plant_code], Bin_Label="CODTEST"
+        )
+        with mock.patch("market_sim.data.cod_ramp.load_cod_map", return_value=cod_map):
+            fleet, _ = bins_to_fleet(bins, ZONE_NAMES, cfg)
+        years = {g.online_year for g in fleet if int(g.plant_code) == plant_code}
+        self.assertEqual(len(years), 1)
+        return years.pop()
+
+    def test_default_off_registry_miss_stamps_2010(self):
+        # Byte-inert baseline: flag off, the COD map is never consulted even
+        # when it carries the plant.
+        year = self._online_years(
+            ScenarioConfig(),
+            self.MISSING_CODE,
+            {self.MISSING_CODE: (1999, 7, None, None)},
+        )
+        self.assertEqual(year, 2010)
+
+    def test_armed_registry_miss_takes_cod_year(self):
+        year = self._online_years(
+            ScenarioConfig(commission_year_cod_fallback=True),
+            self.MISSING_CODE,
+            {self.MISSING_CODE: (1999, 7, None, None)},
+        )
+        self.assertEqual(year, 1999)
+
+    def test_armed_cod_miss_keeps_2010(self):
+        year = self._online_years(
+            ScenarioConfig(commission_year_cod_fallback=True),
+            self.MISSING_CODE,
+            {},
+        )
+        self.assertEqual(year, 2010)
+
+    def test_armed_registry_hit_keeps_registry_year(self):
+        # Registry precedence: a plant the curated ERCOT registry carries keeps
+        # its year_built even when the COD map disagrees.
+        from market_sim.config.paths import PLANT_REGISTRY_CSV
+
+        reg = pd.read_csv(
+            PLANT_REGISTRY_CSV, usecols=["plantid", "year_built"]
+        ).dropna()
+        row = reg.iloc[0]
+        code, reg_year = int(row["plantid"]), int(row["year_built"])
+        year = self._online_years(
+            ScenarioConfig(commission_year_cod_fallback=True),
+            code,
+            {code: (reg_year + 5, 7, None, None)},
+        )
+        self.assertEqual(year, reg_year)
+
+
 if __name__ == "__main__":
     unittest.main()

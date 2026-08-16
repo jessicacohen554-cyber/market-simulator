@@ -873,6 +873,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # and hashes distinctly. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "ercot_econ_curve_top_refine",
+    # miso-159 EIA-860 COD commission-year fall-through (GATED default-off;
+    # shared field — any per-plant ISO may arm it after its own measurement,
+    # rule 25): dropped from the hash at its default so every pre-existing
+    # cache key is byte-stable — the off path leaves _commission_year's
+    # registry-then-2010 behavior byte-identical. An ARMED run re-stamps
+    # every registry-missed plant's online_year from the measured COD map,
+    # which moves the age-based THERMAL_AVAILABILITY arrays (a different
+    # fleet), so it gets a distinct key. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 / caiso-186 / miso-148 discipline).
+    "commission_year_cod_fallback",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1154,6 +1164,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_offer_surface_top_scoped": "False",
     "ercot_offer_surface_position_tail": "False",
     "ercot_econ_curve_top_refine": "False",
+    # Added by miso-159 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "commission_year_cod_fallback": "False",
 }
 
 
@@ -9565,6 +9578,35 @@ class ScenarioConfig:
     # measured Oct-Mar CC availability headroom is POSITIVE (miso-147 §4).
     # ZERO continuous degrees of freedom: a boolean over a data predicate.
     summer_derate_basis_aware: bool = False
+
+    # EIA-860 COD fall-through for the commission year
+    # (commission_year_cod_fallback, off by default; miso-159).
+    # ``assembly.bins_to_fleet::_commission_year`` prices the age-based
+    # THERMAL_AVAILABILITY escalation off each plant's online_year, looked up
+    # in the curated master plant registry — an ERCOT-only file (833 rows,
+    # ba_code='ERCO' for all 833) — and hardcodes 2010 on a miss, so every
+    # non-ERCOT per-plant fleet is stamped ONE vintage and the age-escalation
+    # limb (WEFOR +w_rate/yr past w_onset; DERATE +d_rate/yr past d_onset) is
+    # identically inert. miso-157 §7 measured it at MISO: 108.70 GW across 7
+    # classes all at online_year=2010 against true cap-weighted vintages of
+    # 1976.8 (ST_GAS) to 2006.5 (CC_REGULAR); 0.000 GW past onset in every
+    # class in every training year. The miso-158 census measured the same
+    # total registry miss for CAISO/PJM/NYISO/NEISO (hit share 0.0%) with a
+    # measured EIA-860 replacement available at 99.4–100.0% capacity coverage
+    # everywhere.
+    #
+    # When True, the fall-through consults cod_ramp.load_cod_map() — the
+    # capacity-weighted per-plant EIA-860 (Operating Year, Operating Month)
+    # reduction that ALREADY drives the backcast monthly online mask,
+    # resolved through paths.active_eia860_dir() so an eia860_vintage_year
+    # pin is honored — BEFORE the 2010 literal (rule 19 [R-ONE-MECH]: one COD
+    # source for both the online mask and the age model). Registry hits and
+    # the curated COAL_PLANT_COMMISSION_YEAR dict keep precedence unchanged;
+    # 2010 remains only for plants absent from both the registry and the COD
+    # map (0.0–0.6% of capacity per ISO, miso-158 census), disclosed rather
+    # than silently clamped. ZERO continuous degrees of freedom: a boolean
+    # over a measured registry (rules 5 [R-NO-MAGIC] / 14 [R-ACCURATE]).
+    commission_year_cod_fallback: bool = False
 
     # Unit-outage derate DENOMINATOR on the LP's own capacity basis
     # (unit_outage_lp_capacity_basis, off by default). A consistency repair, not
