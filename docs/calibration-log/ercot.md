@@ -9586,10 +9586,97 @@ appended to ASSESSMENT-ercot209, and this entry — nothing else. No PR opened
 (ercot-199 remains unclaimed; ercot-210 was taken by REPORTING-TEXT-1, which
 landed first — see the collision note at the head of this entry).
 
-## ercot-212 (2026-08-16) — RESERVE-BASIS-1 (card X item X-3) IN FLIGHT — pointer claimed at landing; entry completed at session close
+## ercot-212 (2026-08-16) — RESERVE-BASIS-1 (card X item X-3) EXECUTED: the ORDC zero-reading FULLY ATTRIBUTED (Phase-0), the zero-scalar net-credits candidate VIABLE and A/B-TESTED (Phase-1), **REJECTED-AS-ARMED** on G-SPUR + a diagnosed super-VOLL additive mis-anchoring — identification VALIDATED, successor NAMED, keeper UNCHANGED, pair registered-then-pruned
 
 Pointer claimed at landing per the RESERVE-BASIS-1 dispatch (X-3 signed by
-dispatch of this prompt; the signature text was appended to
-ASSESSMENT-ercot209 "RESOLUTIONS — CARD X" as this session's first landing
-duty). No collision: main published "Next shorthand: ercot-212" and nothing
-else has consumed it; ercot-199 remains unclaimed. Nothing renamed.
+dispatch; the signature appended to ASSESSMENT-ercot209 "RESOLUTIONS — CARD
+X" as the first landing duty). No collision: main published "Next shorthand:
+ercot-212"; ercot-199 remains unclaimed. Nothing renamed. Mid-session the
+owner merged the in-flight branch as PR #4016 and the branch was restarted
+from the refreshed main tip per the merged-branch rule; the A/B pair solved
+on the pre-refresh tree (both members identical basis).
+
+**Phase-0 (read-only; precommit pushed before the probe:
+`docs/PRECOMMIT-ercot212-reserve-basis-phase0-2026-08-16.md`; probe
+`scripts/probes/ercot212_reserve_basis_phase0.py` →
+`results/calibration/ercot212_reserve_basis_phase0.json`).** The ercot-204 §A
+open object is fully attributed, construction-exact (A0: the family dual ≡
+the LP step price at `held + credits` to ≤ 2.4e-5 $/MWh): (1) curve-top
+saturation — 1,501/1,705, 520/560, 249/253 published-fired hours sit AT the
+static 10,700 MW span top where the price is zero by construction; (2) the
+credit wedge — the LR + storage-award series net the requirement but ride
+untouched on the RTOLCAP/RTOFFCAP caps, so the marginal level sits +2.4/+1.7
+/+1.0 GW ABOVE published RTOLCAP (the ercot-204 "model holds less" reading
+INVERTS on the honest crosswalk; B_model↔RTOLCAP corr 0.18/0.10/0.05); (3)
+the reporting seam — sidecar `ordc_adder` is the UNINTERNALIZED dual, nonzero
+EXACTLY on the 42/2/1 cap-binding hours; the family dual prices up to $760/h
+inside the 2024 LMP. 2023 is healthy through CAP CONTACT, and the credit
+growth (2.4 → 3.6 → 4.1 GW fired-hours mean, storage-award-led) closes that
+channel 42 → 2 → 1. Floor date-gating: non-explanatory for the zero; 16
+pre-Nov-2023 undated-floor exposure hours measured and carried. The
+NP6-576-ER table entered as a COMPARISON curve only (B0 honoured; in-LP the
+`spec.py` annual-mean collapse makes it near-inert anyway: 11 vs 11 h>$1 at
+model levels, span 10,664 vs 10,700).
+
+**Phase-1 (pre-registered viability rule V1–V5 ALL PASS; its own precommit +
+Amendment 1 pushed before the armed solve).** One field,
+`ercot_reserve_supply_cap_net_credits` (default off, cache-key-registered,
+global pin 603c2498bf71d21d unmoved, a LEG on the `ercot_multiproduct_as`
+matrix row per the nyiso-121 census). Amendment 1, measured before the armed
+member: the keeper is NOT byte-reproducible at HEAD on either environment
+(upstream drift, window c447199c9..HEAD; score-inert: dw Δ ≤ $0.07, every
+scored count identical) — G-REPRO re-based to control-vs-armed; the keeper's
+`run_config.json` environment block records the LOCKFILE env while the bundle
+was solved on highspy 1.15.1 / pandas 3.0.5 / pyarrow 25.0.1 (the ercot-204
+§B.2 trap, now measured from the other side; both members solved on the true
+env). A/B full-span, years sequential: `2026-08-16-ercot212-ctl-headbase` vs
+`-arm-netcredits`. **Verdict, direction-blind: REJECTED-AS-ARMED** — G-SPUR
+kills (2023 spurious 9 → 16, bar +5); G-SHED (4→0, 1→1, 0→0), G-C3c (57→123
+/181, 22→33/53, 1→3/31 — toward actual every year), G-SPAN (max 0.077 %),
+G-COAL148 (0.0 rise), G-OWNER (C3a-2024/2025, C3b-2024 PASS), G-DOF (zero
+scalars), G-D2 (no new row) all PASS. **Side-effect report at full magnitude
+(Q-B/R-A phrasing; reported, never a basis, never spent): C3a-2023 −33.2 % →
++13.3 % (official scorer; magnitude −20 pp, sign flips), C3b-2023 0.604 →
+0.299, C3c-2023/2024 into band (123/181, 33/53), C3c-2025 3/31 still FAIL;
+DA diagnostics −2.2 % / +0.1 % / −9.6 %.** The identification is VALIDATED
+(incidence 184/38/7 h>$1 vs 175/45/5 predicted ex ante) and the failure
+DIAGNOSED: the cap-additive regime adds the VOLL-anchored curve WITHOUT the
+published (VOLL − λ) subtraction and SUMS both headroom tiers' duals — max
+adder $10,000/h = 2×VOLL, super-protocol-cap prices the real design cannot
+produce. **Promotion DECLINED under the owner's structural standard** (the
+arm is right about the basis and wrong about the additive price formula;
+promoting would enshrine the wrong half). **Successor named, zero scalars:**
+net-credits + (VOLL − λ)-correct single-counterpart additive anchoring (or
+route through the post-solve `ordc_adder()` with its protocol cap + date
+gate) + the published two-basis half-term. Finding §5:
+`docs/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md`.
+
+**Roster (dispatch duty):** both members registered (rule 15), adjudication
+rejected-wholesale, pair PRUNED in-session (`prune_iso_runs.py --iso ERCOT`);
+ERCOT registry back to the keeper alone. Queue boxes: (1)
+`gas_hh_monthly_shape` row gap — ALREADY CLOSED (xiso-3 census; the
+mechanism-matrix.js:780 do-not-mint note), nothing done; (2) the item-8
+CME/NYMEX screen — N/A (Phase-0 did not STOP; Phase-1 ran).
+
+**Governance.** Q-B FINAL and R-A cited, honoured: every 2023 number above is
+side-effect reporting under the X-3 phrasing; the promotion decision never
+consulted residual direction (the mechanical rule killed on G-SPUR; the
+structural decline rests on the protocol-cap violation). ercot-206 B0
+honoured (no LOLP-table arming; table = comparison only). ercot-211 Door A
+honoured (no conduct work). V0/ercot-201 DO-NOT-REDO honoured (RTOLCAP read
+as telemetry against the ALREADY-armed cap construction; no tightness
+identification, no E1). Rule 22: {2023, 2024, 2025} only, no marker sought.
+Rule 25: ERCOT only. Rules 5/24: one registered field, no off-registry
+channel. Rule 27: edits local, exact bytes pushed, ≥300-line pushed files
+blob-verified. Rule 28: 28a sweep cited in the finding §6; 28b cell verdict
+on `ercot_multiproduct_as` + 28c leg registration in the same landing;
+`check_mechanism_matrix.py` exit 0. No workflow, no cron, no PR
+(push-and-stop; the owner merges). Keeper at session start AND end:
+**`2026-08-15-ercot204-rule26-delete`**. New artifacts: two precommits (+
+Amendment 1), the Phase-0 probe + JSON, the finding, `ercot212_ab.json`,
+`ercot212_coal148.json`, the X-3 signature, the matrix cell + leg + tail
+stamp, the `ercot_reserve_supply_cap_net_credits` field + netting + 6 tests,
+and this entry.
+
+**Session consumed the ercot-212 shorthand. Next shorthand: ercot-213**
+(ercot-199 remains unclaimed).
