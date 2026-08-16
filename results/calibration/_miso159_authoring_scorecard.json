@@ -1,0 +1,97 @@
+{
+ "session": "miso-159 (authoring container)",
+ "prereg": {
+  "path": "results/calibration/PREREG-miso159-commission-year-cod-fallback-2026-08-15.md",
+  "pushed_at": "fdb099f",
+  "blob": "77b766223a26f2021e83f818ecdcee2b106cae17"
+ },
+ "runs": {
+  "control": "2026-08-15-miso-159-control",
+  "arm": "2026-08-15-miso-159-cod-vintage"
+ },
+ "bundles": {
+  "control": "results/calibration/miso159_cod_A",
+  "arm": "results/calibration/miso159_cod_B"
+ },
+ "cache_keys": {
+  "off": "a7c5bdc709877ec9",
+  "on": "336f1b2b6b85d867"
+ },
+ "solver": {
+  "highspy": "1.14.0",
+  "peak_memsw_gib": 14.99,
+  "p0_2023_s": 382.367,
+  "p1_2023_s": 171.849
+ },
+ "demand_weighted_p1_price_usd_mwh": {
+  "control": {
+   "2023": 32.195,
+   "2024": 29.706,
+   "2025": 38.373
+  },
+  "arm": {
+   "2023": 32.831,
+   "2024": 30.543,
+   "2025": 39.496
+  }
+ },
+ "c3a_pct": {
+  "control": {
+   "2023": -2.0,
+   "2024": -8.0,
+   "2025": -15.6
+  },
+  "arm": {
+   "2023": -0.1,
+   "2024": -5.4,
+   "2025": -13.1
+  }
+ },
+ "c3b_nrmse": {
+  "control": {
+   "2023": 0.082,
+   "2024": 0.125,
+   "2025": 0.212
+  },
+  "arm": {
+   "2023": 0.08,
+   "2024": 0.113,
+   "2025": 0.2
+  }
+ },
+ "c3c_hours_gt200": {
+  "actual": {
+   "2023": 30,
+   "2024": 37,
+   "2025": 88
+  },
+  "control": {
+   "2023": 0,
+   "2024": 4,
+   "2025": 0
+  },
+  "arm": {
+   "2023": 0,
+   "2024": 5,
+   "2025": 1
+  }
+ },
+ "verdicts": {
+  "control": "NOT-YET (C6 UNATTESTED \u2014 control reproduction, miso-155 precedent)",
+  "arm": "NOT-YET on C3a-2025 alone (C6 attested; C3c ledgered; C1/C2/C3b/C4/C8 PASS)"
+ },
+ "decision": "PROMOTED per PREREG \u00a77(a): keeper -> 2026-08-15-miso-159-cod-vintage",
+ "phase0_capability_removed_nonchp_gw": {
+  "annual": {
+   "2023": 2.132,
+   "2024": 2.464,
+   "2025": 2.869
+  },
+  "summer": {
+   "2023": 1.308,
+   "2024": 1.48,
+   "2025": 1.638
+  }
+ },
+ "cross_check_instruction": "Your re-solve must reproduce c3a_pct/c3b_nrmse/c3c per year to the printed precision and the determinations exactly; small lw-price drift (<$0.01) is tolerable, criterion-status drift is stop-the-line."
+}

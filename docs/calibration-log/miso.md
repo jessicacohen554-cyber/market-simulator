@@ -7082,3 +7082,86 @@ statistic); probe `_miso155_p0_exact_instrument.py`; record
 `tests/test_miso155_p0_commitment_sidecar.py`.
 
 **Next number: miso-156.**
+
+## miso-159 (2026-08-15) — the `_commission_year` hardcoded-2010 fall-through is REPAIRED with the measured EIA-860 COD (`commission_year_cod_fallback`): the age-escalation limb prices real vintages at MISO for the first time — **KEEPER**, promoted by the session's own pre-registered rule; the fail set shrinks to {C3a-2025}
+
+**Provenance (rule 28(a)).** The lever queue was EMPTY (miso-156 §8, miso-157
+§10); this session executes miso-157 §11 item 1 — the owner-prepared vintage
+repair — whose rule-25 scoping prerequisite was the miso-158 census (PR #3966).
+Owner instruction to the session: pick the workstream up from the current
+keeper and drive toward a calibrated backcast for testing years.
+
+**PREREG** `PREREG-miso159-commission-year-cod-fallback-2026-08-15.md` pushed
+at `fdb099f` (blob `77b76622`, byte-verified against the fetched remote ref)
+BEFORE the construction was built; its §5 priors, §6 triggers and §7 decision
+rule bound this session.
+
+**The construction.** `ScenarioConfig.commission_year_cod_fallback` (default
+off; registered in `_CACHE_KEY_OPTIONAL_FIELDS` + the pinned-defaults ledger
+in the same commit). `assembly.bins_to_fleet::_commission_year` consults
+`cod_ramp.load_cod_map()` — the single COD source that already drives the
+backcast monthly online mask — before the 2010 literal; precedence otherwise
+unchanged (curated coal dict, master registry, COD map, disclosed 2010). ZERO
+continuous DOF; free-parameter ledger unchanged (30/2). Unit tests
+`TestCommissionYearCodFallback` 4/4; cache-key flip guard 9/9.
+
+**Phase-0 gates** (probe `_miso159_cod_vintage_instrument.py`): V2 off-arm
+byte-inert PASS; S-CACHE PASS (keys a7c5bdc709877ec9 / 336f1b2b6b85d867); V3
+PASS (n_gen 2929/2923/2923, 6 carry zones, both arms); V1 PASS ON ATTRIBUTION
+after S-V1 fired — CT_CHP +1.015 yr on the LP-pmax basis is the BTM
+steam-following holdout's weighting (+0.011 yr on the census's own nameplate
+basis); every non-CHP class ≤0.12 yr on both bases. T-3 paid a FOURTH
+consecutive session: the arm's "18 COAL rows still at 2010" are genuine ≈2010
+CODs — zero MISO plants are absent from both vintage sources. **P-1 priors
+MISSED LOW, attributed**: production-path capability removed is 2.13/2.46/2.87
+GW annual and 1.31/1.48/1.64 GW Jun–Sep (non-CHP) vs census arithmetic
+3.55/3.95/4.37 and 2.06/2.27/2.49 — under `coal_drop_pof` coal's summer
+availability carries no WEFOR term (its summer leg moves on DERATE alone), and
+the census weighted nameplate where the LP prices net-summer pmax. CT_PEAKER,
+the summer price-setter, lands at 94 % of census.
+
+**The A/B** (control `miso159_cod_A` / arm `miso159_cod_B`, same-HEAD, one
+`--year 2023 2024 2025` invocation each, arms sequential; the box needed a
+raised cgroup cap + 8 GB swap, peak 14.99 GiB). **The control reproduces the
+committed keeper EXACTLY at the gated grain** (C3a −2.0/−8.0/−15.6 %, C3b
+0.082/0.125/0.212, all verdicts identical — no K0-class drift). Arm−control:
+demand-weighted prices **+0.635/+0.837/+1.123 $/MWh (+1.97/+2.82/+2.93 %)** —
+UP in all three years exactly as P-2 disclosed in advance (none of it claimed
+as skill). **C3a −2.0/−8.0/−15.6 % → −0.1/−5.4/−13.1 %** (2023 essentially
+zero error; the +1.97 % lift stayed under the +3 % against-interest bound, so
+S-2023 never fired; 2025 still FAILS at −13.1 %, reported at full magnitude).
+**C3b NRMSE 0.082/0.125/0.212 → 0.080/0.113/0.200 — the 2025 shape criterion
+FLIPS FAIL→PASS at the gate exactly** (knife-edge, never quoted as margin),
+recovering the regression the miso-148 promotion accepted. C3c stays the
+ledgered model-class caveat (0/4/0 h → 0/5/1 h vs actual 30/37/88 — marginally
+toward the actuals). C1 16/16 (free 12/12), C2, C4, C8 PASS both arms; C6
+attested on the arm. **Arm determination: NOT-YET on C3a-2025 ALONE — the
+smallest fail set any MISO keeper has carried.**
+
+**Decision — PROMOTED per PREREG §7(a), no escalation needed** (fail set
+strict subset {C3a,C3b}→{C3a}; no criterion-year PASS→FAIL flip): keeper →
+`2026-08-15-miso-159-cod-vintage`, on rules 1 [R-STRUCT] / 14 [R-ACCURATE] —
+a measured input replacing a rule-5 magic literal on the price-setting fleet;
+the favorable residual direction was disclosed before the solve and is not
+the ground of adoption. Both runs registered (rule 15); retention pruned
+2026-08-04-miso-122b-scope-gate and 2026-08-04-miso-124-dualfuel-rearm.
+Matrix: new base row + cells in all six shards (rule 28(c)); MISO cell → `K`.
+
+**Where this leaves the lane.** (1) The blocker is ONE criterion-year,
+C3a-2025 −13.1 % vs ±10 %; the miso-156 summer-peak identity diagnosis
+stands. (2) The largest un-adjudicated availability quantity bearing on the
+2025 cushion is now `SUMMER_WEFOR_SHARE = 0.30` (miso-157 B-DISAGREE) — the
+owner's data-provenance decision (miso-157 §11 item 2) gates that lever.
+(3) The defect is exportable: CAISO/PJM/NYISO/NEISO carry it at censused
+magnitude (PJM +2.749 GW summer, the largest); cells `U`, each lane measures
+its own (rule 25). (4) Path to testing years: close C3a-2025 → determination
+flips to CALIBRATED-WITH-CAVEATS → owner declares MISO `complete` → narrow
+freeze lift (PJM/NEISO 2022 precedent) → 2022 validation solves.
+
+**Rule 22:** 2023–2025 only; freeze untouched; no marker touched. **Session
+infrastructure note, disclosed:** this container's git transport died
+mid-session (egress-proxy relay restart); the PREREG/probe/diff traveled to
+the branch via the API path with blob-sha verification
+(`.claude-transfer/miso159/`, deleted at close-out), and the bundle/payload
+push is executed by a follow-on session with working git against the
+committed hashes. Next number: **miso-160**.
