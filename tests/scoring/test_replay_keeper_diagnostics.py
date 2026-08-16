@@ -157,5 +157,36 @@ def test_suite_hard_error_never_loses_the_solve(
     assert "scripts/legitimacy_diagnostics.py" in err
 
 
+class TestRule26DeletedUnconditional:
+    """``build_kwargs`` handling of rule-26-collapsed (deleted) gates.
+
+    nyiso-136 deleted ``nyiso_solar_registry_cod_dates`` from ScenarioConfig
+    and made its True behaviour unconditional; every bundle solved before the
+    collapse still records the key. Pinned here because the strict
+    unmapped-key check bricked the caiso-197 campaign control (a CAISO
+    replay) before ``_RULE26_DELETED_UNCONDITIONAL`` landed: outside the
+    owning ISO the recorded default is inert and must drop silently; inside
+    it, the collapsed-to value replays and the other polarity refuses (that
+    basis no longer exists at HEAD — read, never replayed).
+    """
+
+    def _meta(self, iso: str, recorded: bool) -> dict:
+        return dict(_META, iso=iso, nyiso_solar_registry_cod_dates=recorded)
+
+    def test_out_of_scope_iso_drops_silently(self, capsys):
+        kwargs = replay_keeper.build_kwargs(self._meta("CAISO", False))
+        assert "nyiso_solar_registry_cod_dates" not in kwargs
+        assert capsys.readouterr().err == ""
+
+    def test_owning_iso_collapsed_value_drops_silently(self, capsys):
+        kwargs = replay_keeper.build_kwargs(self._meta("NYISO", True))
+        assert "nyiso_solar_registry_cod_dates" not in kwargs
+        assert capsys.readouterr().err == ""
+
+    def test_owning_iso_wrong_polarity_refuses(self):
+        with pytest.raises(SystemExit, match="rule-26-deleted"):
+            replay_keeper.build_kwargs(self._meta("NYISO", False))
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-v"]))

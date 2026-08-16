@@ -128,6 +128,10 @@ caiso-196 measurement-side pattern; all caiso-197 bundles register against
 this SAME bench, and C1 (EIA-923-scored) is measured UNAFFECTED: the control
 reprints the keeper's committed −4.44 TWh row exactly. Environment: partial
 clone + `hydrate_data.py --profile caiso`; `curate_capacity_deliverability.py
---isos CAISO` (386 rows); replay driver taught the nyiso-136 rule-26 collapse
-(`_RETIRED_COLLAPSED`, +3 tests) after the strict unmapped-key guard bricked
-the first control attempt — the drift class the guard exists to surface.
+--isos CAISO` (386 rows); replay driver's strict unmapped-key guard bricked the first control attempt
+on the nyiso-136 rule-26-deleted `nyiso_solar_registry_cod_dates` key — the
+drift class the guard exists to surface; a parallel session's
+`_RULE26_DELETED_UNCONDITIONAL` (merged to main mid-campaign) is the incumbent
+handling this branch rebased onto, and caiso-197 contributes the three
+pinning tests (out-of-owning-ISO silent drop — the CAISO replay case —
+collapsed-value replay, wrong-polarity refusal).
