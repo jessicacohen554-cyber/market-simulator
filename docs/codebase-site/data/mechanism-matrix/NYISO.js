@@ -173,6 +173,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     pumped_storage_cycling_depth: { cell: "U" },
     caiso_da_rt_two_settlement: { cell: "." },
     caiso_ps_charge_shape_anchor: { cell: "." },
+    caiso_ps_plant_params: { cell: "." },
     measured_interface_limits: { cell: "G", ev: "nyiso-109 (refused ex-ante on NYISO's own MIS P-32 flow-vs-limit measurement; results/calibration/_nyiso109_trough_offer_stack.json)" },
     internal_congestion_split: { cell: "." },
     tsa_transfer_derate: { cell: "G", ev: "nyiso-95 (docs/FINDING-nyiso95-tsa-derate-not-identifiable-2026-07-28.md)" },

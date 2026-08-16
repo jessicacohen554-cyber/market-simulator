@@ -17,6 +17,7 @@ import pandas as pd
 from pydantic import BaseModel
 
 from market_sim.config.constants import (
+    CAISO_PS_PLANT_PARAMS,
     DEFAULT_MARKET_DESIGN,
     MARKET_DESIGN,
     PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO,
@@ -73,6 +74,12 @@ class StorageUnit(BaseModel):
     # full capacity all year (the static default).
     monthly_power_mw: list[float] | None = None
     monthly_energy_mwh: list[float] | None = None
+    # Cited pump-side (charge) power capability where it differs from the
+    # generating rating (caiso_ps_plant_params, lane 5 — e.g. Helms 930 MW
+    # pumping vs 1,212 MW generating). None = legacy symmetric caps. Applied
+    # as a STATIC per-unit charge cap through the existing storage_charge_cap
+    # LP channel (tighten-only vs power_cap_mw); never touches discharge.
+    charge_power_cap_mw: float | None = None
 
 
 @dataclass
@@ -1085,6 +1092,58 @@ def caiso_storage_shape_caps(
     return chg_cap, dis_cap
 
 
+def caiso_ps_charge_caps(
+    power_cap: np.ndarray,
+    units: list["StorageUnit"],
+    hours: int,
+    existing_charge_cap: np.ndarray | None,
+) -> np.ndarray | None:
+    """Static cited pump-power charge caps for per-plant CAISO pumped storage.
+
+    ``caiso_ps_plant_params`` (lane 5, GATESPEC-caiso195): a per-plant
+    :class:`StorageUnit` built by :func:`load_eia860_pumped_storage` carries
+    its cited pump-side rating in ``charge_power_cap_mw`` (e.g. Helms 930 MW
+    pumping vs 1,212 MW generating — PG&E; Gianelli 375.8 MW vs 424 MW — DWR
+    B132-22 motor ratings). This composes those STATIC bounds into the
+    existing ``storage_charge_cap`` LP channel:
+
+    * rows for units with a cited pump rating take
+      ``min(power_cap[s, t], charge_power_cap_mw)`` — the LP bound layer
+      clips at the power cap anyway (tighten-only), so a cited rating ABOVE
+      the unit's EIA-860 nameplate (Hyatt/Thermalito/O'Neill motor ratings)
+      is a disclosed no-op, never a loosening;
+    * every other row passes through ``existing_charge_cap`` (the battery
+      shape anchor's measured envelope) or the plain power cap when no other
+      contributor is armed — the two mechanisms govern DISJOINT unit sets on
+      one channel (rule 19: one phenomenon, one bound per unit).
+
+    Returns the composed ``(n_storage, hours)`` array, or ``None`` when no
+    unit carries a cited pump rating (nothing to compose — the caller keeps
+    whatever ``existing_charge_cap`` it had, including ``None``).
+    """
+    pump = np.array(
+        [
+            float(u.charge_power_cap_mw)
+            if getattr(u, "charge_power_cap_mw", None) is not None
+            else np.nan
+            for u in units
+        ],
+        dtype=float,
+    )
+    has_pump = ~np.isnan(pump)
+    if not has_pump.any():
+        return None
+    pc = np.asarray(power_cap, dtype=float)
+    pc2 = np.repeat(pc[:, np.newaxis], hours, axis=1) if pc.ndim == 1 else pc.copy()
+    base = (
+        np.asarray(existing_charge_cap, dtype=float).copy()
+        if existing_charge_cap is not None
+        else pc2.copy()
+    )
+    base[has_pump] = np.minimum(pc2[has_pump], pump[has_pump, np.newaxis])
+    return base
+
+
 def caiso_charge_allocation_params(
     units: list["StorageUnit"],
     year: int,
@@ -1222,9 +1281,99 @@ def load_eia860_pumped_storage(
     adder = resolve_pumped_storage_dispatch_adder(iso, config)
     ramp_on = bool(getattr(config, "storage_vintage_ramp", False))
     units: list[StorageUnit] = []
+
+    # Per-plant cited-physical parameterization (caiso_ps_plant_params, lane 5
+    # — GATESPEC-caiso195): armed, CAISO's PS plants leave the zone aggregate
+    # and enter one StorageUnit each. power_cap stays the plant's own EIA-860
+    # nameplate rows exactly as accumulated above (G-AGG: the split re-sums to
+    # the aggregate bit-for-bit at every month of the mask); energy_cap takes
+    # the plant's cited reservoir-derived bound and the cited pump rating
+    # rides StorageUnit.charge_power_cap_mw into the storage_charge_cap LP
+    # channel. An uncited component parameter (Eastwood) keeps the incumbent
+    # constant, disclosed in the PRECHECK. Zones stay build_zone_lookup's own
+    # geography. Plants NOT in the table (none today — the six ARE CAISO's PS
+    # fleet) would stay in the aggregate, fail-safe.
+    ps_params = (
+        CAISO_PS_PLANT_PARAMS
+        if (
+            iso.upper() == "CAISO"
+            and bool(getattr(config, "caiso_ps_plant_params", False))
+        )
+        else {}
+    )
+    if ps_params:
+        per_plant_power: dict[int, np.ndarray] = {}
+        plant_zone: dict[int, str] = {}
+        for code, p_mw, oy, ry in zip(
+            df["plant_id"],
+            pd.to_numeric(df["nameplate_capacity_mw"], errors="coerce"),
+            pd.to_numeric(df["operating_year"], errors="coerce"),
+            ret_year,
+        ):
+            if p_mw != p_mw or p_mw <= 0.0:
+                continue
+            if oy == oy and oy > year:
+                continue
+            try:
+                icode = int(code)
+            except (TypeError, ValueError):
+                continue
+            if icode not in ps_params:
+                continue
+            zone = zone_lookup.get(icode)
+            if zone is None:
+                continue
+            mask = _unit_monthly_mask(oy, None, ry, None, year)
+            if not mask.any():
+                continue
+            per_plant_power.setdefault(icode, np.zeros(12))
+            per_plant_power[icode] += float(p_mw) * mask
+            plant_zone[icode] = zone
+        zone_order = {z: i for i, z in enumerate(get_iso_config(iso).zone_names)}
+        for icode in sorted(per_plant_power):
+            monthly_p = per_plant_power[icode]
+            if monthly_p[-1] <= 0.0:
+                continue
+            spec = ps_params[icode]
+            cited_e = spec.get("energy_mwh")
+            monthly_e = (
+                monthly_p * (float(cited_e) / float(monthly_p[-1]))
+                if cited_e is not None
+                else monthly_p * PUMPED_STORAGE_DURATION_HOURS
+            )
+            zone = plant_zone[icode]
+            ramped = ramp_on and not np.allclose(monthly_p, monthly_p[-1])
+            pump = spec.get("pump_mw")
+            units.append(
+                StorageUnit(
+                    unit_id=f"{zone}_ps_{icode}",
+                    zone=zone,
+                    tech_name="pumped_storage",
+                    power_cap_mw=float(monthly_p[-1]),
+                    energy_cap_mwh=float(monthly_e[-1]),
+                    eta_charge=eta,
+                    eta_discharge=eta,
+                    zone_idx=zone_order[zone],
+                    vom=adder,
+                    monthly_power_mw=(
+                        [float(x) for x in monthly_p] if ramped else None
+                    ),
+                    monthly_energy_mwh=(
+                        [float(x) for x in monthly_e] if ramped else None
+                    ),
+                    charge_power_cap_mw=(
+                        float(pump) if pump is not None else None
+                    ),
+                )
+            )
+        # Remove the split plants' capacity from the zone aggregates so the
+        # armed fleet re-sums to the EIA-860 total exactly (zero MW added).
+        for icode, monthly_p in per_plant_power.items():
+            zone = plant_zone[icode]
+            per_zone_power[zone] = per_zone_power[zone] - monthly_p
     for z_idx, zone in enumerate(get_iso_config(iso).zone_names):
         monthly_p = per_zone_power.get(zone)
-        if monthly_p is None or monthly_p[-1] <= 0.0:
+        if monthly_p is None or monthly_p[-1] <= 1e-9:
             continue
         monthly_e = monthly_p * PUMPED_STORAGE_DURATION_HOURS
         # Attach a monthly profile only when the ramp is on and the zone's PS

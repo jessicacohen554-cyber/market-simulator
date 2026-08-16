@@ -4612,6 +4612,35 @@ def run_year(
             ),
         )
 
+    # Per-plant cited pump-power charge caps (caiso_ps_plant_params, lane 5 —
+    # GATESPEC-caiso195, GATED default off): the per-plant PS units built by
+    # load_eia860_pumped_storage carry cited pump-side ratings (Helms 930 MW
+    # pumping vs 1,212 MW generating; Gianelli 375.8 vs 424 — PG&E / DWR
+    # B132-22 motor ratings) as static charge caps on the SAME
+    # storage_charge_cap channel the battery shape anchor uses — disjoint
+    # unit rows, one channel (rule 19). Fires with or without the anchor so
+    # the mechanism never silently depends on another gate (the caiso-98
+    # dead-flag lesson); None (flag off / no cited rating) leaves the channel
+    # exactly as the anchor block left it.
+    if getattr(config, "caiso_ps_plant_params", False) and iso == "CAISO":
+        from market_sim.model.storage import caiso_ps_charge_caps
+
+        _ps_chg = caiso_ps_charge_caps(
+            storage_power_cap, storage_units, config.hours, storage_charge_cap
+        )
+        if _ps_chg is not None:
+            storage_charge_cap = _ps_chg
+            _ps_rows = [
+                u.unit_id
+                for u in storage_units
+                if getattr(u, "charge_power_cap_mw", None) is not None
+            ]
+            logger.info(
+                "CAISO per-plant PS pump caps armed on %d unit(s): %s",
+                len(_ps_rows),
+                ", ".join(_ps_rows),
+            )
+
     # Measured DA charge-allocation schedule (caiso_charge_allocation_schedule,
     # M1 — owner-granted caiso-103 belly ask, executed caiso-104; GATED default
     # off): floor each day's fleet battery charge in every measured-support

@@ -1,0 +1,191 @@
+{
+ "iso": "CAISO",
+ "gatespec": "GATESPEC-caiso195-ps-physical-2026-08-11.md",
+ "constants_table": "config/constants.py::CAISO_PS_PLANT_PARAMS",
+ "citations": {
+  "6100": {
+   "plant": "Helms (PG&E, FERC P-2735)",
+   "source": "data/raw/reference/pge-helms-ps-plant-2008 (PG&E, NW Wind Integration Forum 2008-10-17, p.4-5)",
+   "pump_mw_quoted": 930.0,
+   "gen_mw_quoted": 1212.0,
+   "design_flow_cfs": 9000.0,
+   "reservoir": "Courtright Lake (upper)",
+   "reservoir_af_gross": 123000.0,
+   "pump_mw": 930.0,
+   "pump_basis": "direct public quote",
+   "energy_mwh": 200424,
+   "energy_basis": "123,000 AF x 1212.0 MW / (9,000 cfs = 743.80 AF/h)",
+   "constants_entry": {
+    "name": "Helms",
+    "pump_mw": 930.0,
+    "energy_mwh": 200424.0
+   },
+   "matches_constants": true
+  },
+  "437": {
+   "plant": "Edward C Hyatt (DWR)",
+   "source": "data/raw/reference/dwr-b132-22-swp-plants (DWR Bulletin 132-22 Ch.1: pumping table p.9; Table 1-4 p.10; Table 1-1 p.7)",
+   "pump_motor_hp": 519000.0,
+   "gen_mw_quoted": 645.0,
+   "design_flow_cfs": 16950.0,
+   "reservoir": "Thermalito Forebay 11,800 + Afterbay 57,000 (pump-back cycle store; USBR EWA EIS \u00a716.2.5.2.6 names the afterbay)",
+   "reservoir_af_gross": 68800.0,
+   "pump_mw": 387.0,
+   "pump_basis": "519,000 hp x 745.6999 W/hp",
+   "energy_mwh": 31678,
+   "energy_basis": "68,800 AF x 645.0 MW / (16,950 cfs = 1,400.83 AF/h)",
+   "constants_entry": {
+    "name": "Edward C Hyatt",
+    "pump_mw": 387.0,
+    "energy_mwh": 31678.0
+   },
+   "matches_constants": true
+  },
+  "438": {
+   "plant": "Robie Thermalito (DWR)",
+   "source": "data/raw/reference/dwr-b132-22-swp-plants",
+   "pump_motor_hp": 120000.0,
+   "gen_mw_quoted": 114.0,
+   "design_flow_cfs": 17400.0,
+   "reservoir": "Thermalito Afterbay",
+   "reservoir_af_gross": 57000.0,
+   "pump_mw": 89.5,
+   "pump_basis": "120,000 hp x 745.6999 W/hp",
+   "energy_mwh": 4519,
+   "energy_basis": "57,000 AF x 114.0 MW / (17,400 cfs = 1,438.02 AF/h)",
+   "constants_entry": {
+    "name": "Robie Thermalito",
+    "pump_mw": 89.5,
+    "energy_mwh": 4519.0
+   },
+   "matches_constants": true
+  },
+  "448": {
+   "plant": "W R Gianelli (DWR/USBR joint)",
+   "source": "data/raw/reference/dwr-b132-22-swp-plants",
+   "pump_motor_hp": 504000.0,
+   "gen_mw_quoted": 424.0,
+   "design_flow_cfs": 16960.0,
+   "reservoir": "San Luis Reservoir (gross; DWR share 1,062,183 AF recorded \u2014 gross used per GATESPEC \u00a74.1 more-capability)",
+   "reservoir_af_gross": 2027800.0,
+   "pump_mw": 375.8,
+   "pump_basis": "504,000 hp x 745.6999 W/hp",
+   "energy_mwh": 613410,
+   "energy_basis": "2,027,800 AF x 424.0 MW / (16,960 cfs = 1,401.65 AF/h)",
+   "constants_entry": {
+    "name": "W R Gianelli",
+    "pump_mw": 375.8,
+    "energy_mwh": 613410.0
+   },
+   "matches_constants": true
+  },
+  "446": {
+   "plant": "O'Neill (USBR)",
+   "source": "USBR EWA Draft EIS/EIR (July 2003) Ch.16 \u00a716.2.7.1.1 (Reclamation 2001): 6 units, 6,000-hp motors, 700 cfs and 4,200 kW each; forebay volume from DWR B132-22 Table 1-1",
+   "pump_motor_hp": 36000.0,
+   "gen_mw_quoted": 25.2,
+   "design_flow_cfs": 4200.0,
+   "reservoir": "O'Neill Forebay (gross; DWR share 29,500 AF recorded)",
+   "reservoir_af_gross": 56400.0,
+   "pump_mw": 26.8,
+   "pump_basis": "36,000 hp x 745.6999 W/hp",
+   "energy_mwh": 4095,
+   "energy_basis": "56,400 AF x 25.2 MW / (4,200 cfs = 347.11 AF/h)",
+   "constants_entry": {
+    "name": "O'Neill",
+    "pump_mw": 26.8,
+    "energy_mwh": 4095.0
+   },
+   "matches_constants": true
+  },
+  "104": {
+   "plant": "J S Eastwood (SCE, FERC P-67)",
+   "source": "USBR Upper San Joaquin Storage Investigation, Hydropower Technical Appendix (June 2005) p.2-16: 199.8 MW, 1,338 ft head, pumped-storage function; NO public pump-mode rating or Balsam Meadow forebay volume found",
+   "pump_mw_quoted": null,
+   "gen_mw_quoted": 199.8,
+   "design_flow_cfs": null,
+   "reservoir": "Balsam Meadow forebay (volume uncited)",
+   "reservoir_af_gross": null,
+   "pump_mw": null,
+   "pump_basis": "UNCITED \u2014 unrestrained default (charge cap = power cap)",
+   "energy_mwh": null,
+   "energy_basis": "UNCITED \u2014 incumbent default (PUMPED_STORAGE_DURATION_HOURS x EIA-860 nameplate)",
+   "constants_entry": {
+    "name": "J S Eastwood",
+    "pump_mw": null,
+    "energy_mwh": null
+   },
+   "matches_constants": true
+  }
+ },
+ "constants_match_citations": true,
+ "mismatched_codes": [],
+ "g_zone_build_zone_lookup": {
+  "6100": "NP15",
+  "437": "NP15",
+  "438": "NP15",
+  "448": "NP15",
+  "446": "NP15",
+  "104": "NP15"
+ },
+ "g_agg": {
+  "off_units": [
+   [
+    "NP15_eia860_pumped_storage",
+    2077.6000000000004
+   ]
+  ],
+  "armed_units": [
+   {
+    "unit_id": "NP15_ps_104",
+    "zone": "NP15",
+    "power_cap_mw": 199.8,
+    "energy_cap_mwh": 1998.0,
+    "charge_power_cap_mw": null
+   },
+   {
+    "unit_id": "NP15_ps_437",
+    "zone": "NP15",
+    "power_cap_mw": 293.1,
+    "energy_cap_mwh": 31678.0,
+    "charge_power_cap_mw": 387.0
+   },
+   {
+    "unit_id": "NP15_ps_438",
+    "zone": "NP15",
+    "power_cap_mw": 82.5,
+    "energy_cap_mwh": 4519.0,
+    "charge_power_cap_mw": 89.5
+   },
+   {
+    "unit_id": "NP15_ps_446",
+    "zone": "NP15",
+    "power_cap_mw": 25.2,
+    "energy_cap_mwh": 4095.0,
+    "charge_power_cap_mw": 26.8
+   },
+   {
+    "unit_id": "NP15_ps_448",
+    "zone": "NP15",
+    "power_cap_mw": 424.0,
+    "energy_cap_mwh": 613410.0,
+    "charge_power_cap_mw": 375.8
+   },
+   {
+    "unit_id": "NP15_ps_6100",
+    "zone": "NP15",
+    "power_cap_mw": 1053.0,
+    "energy_cap_mwh": 200424.0,
+    "charge_power_cap_mw": 930.0
+   }
+  ],
+  "off_total_mw": 2077.6,
+  "armed_total_mw": 2077.6,
+  "zero_mw_added": true
+ },
+ "g_engage_fleet_half": {
+  "armed_unit_count": 6,
+  "expected": 6,
+  "pass": true
+ }
+}

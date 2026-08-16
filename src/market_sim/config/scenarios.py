@@ -199,6 +199,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # vintage-addressed run grows load on a DIFFERENT published rate table and
     # so gets a distinct key (a distinct scenario).
     "demand_growth_vintage",
+    # caiso-197 lane-5 per-plant cited-physical PS parameterization (default
+    # off): dropped from the hash at its default so every pre-existing cached
+    # run keeps its key (the pinned default 603c2498bf71d21d stays
+    # byte-stable), honouring the field's own "byte-identical off" promise.
+    # An armed run splits the NP15 PS aggregate into per-plant units with
+    # cited pump/energy bounds and so gets a distinct key.
+    "caiso_ps_plant_params",
     # G-30 first-wave probes (default-off): dropped from the hash at default so
     # every pre-existing cached run keeps its key; a non-default value enters
     # the key (a distinct scenario). (staged_oversupply_thinning /
@@ -964,6 +971,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "crossover_forward_gas_path": "'mid'",
     "crossover_solve_year_weather": "False",
     "demand_growth_vintage": "None",
+    "caiso_ps_plant_params": "False",
     "limited_foresight_dispatch": "False",
     "retirement_rule": "'pipeline'",
     "retirement_execution_lag_coal": "3",
@@ -5690,6 +5698,30 @@ class ScenarioConfig:
     # mechanism (caiso-74's AS power reservation is default-off/probe-inert;
     # a validator enforces the exclusivity). Default off (byte-identical);
     # CAISO-only.
+    caiso_ps_plant_params: bool = False  # Per-plant CITED-PHYSICAL pumped-storage
+    # parameterization for CAISO's six PS plants (lane 5 of the close-out
+    # campaign, GATESPEC-caiso195-ps-physical-2026-08-11, owner ruling 7 GO
+    # WITH SCOPE RESTRICTIONS). The shipped loader runs the 2,077.6 MW fleet
+    # as ONE aggregate NP15 StorageUnit with fleet-average duration/RTE
+    # constants; armed, load_eia860_pumped_storage emits one StorageUnit per
+    # plant from constants.CAISO_PS_PLANT_PARAMS — power_cap stays each
+    # plant's own EIA-860 nameplate (G-AGG: zero MW added, the aggregate's
+    # own rows re-attributed), energy_cap becomes the plant's cited
+    # reservoir-derived bound, and the cited pump-side rating enters as a
+    # STATIC per-unit charge cap through the existing storage_charge_cap
+    # channel (tighten-only vs the power cap; composes with
+    # caiso_storage_shape_anchor, which governs battery rows only — disjoint
+    # unit sets, one channel). Hyatt STAYS IN the storage block with its
+    # DWR-cited motor rating and pump-back-cycle energy bound — a static
+    # cited parameter bound, NO energy re-allocation into conventional hydro,
+    # NO time-profile input of any kind (G-NOSHAPE structural; caiso-141 §G
+    # wall; owner ruling 4). Zones stay the model's own build_zone_lookup
+    # geography (G-ZONE — all six resolve NP15 today, so the zone axis is
+    # mechanically unchanged). Every value cited in
+    # constants.CAISO_PS_PLANT_PARAMS (PG&E Helms deck; DWR Bulletin 132-22
+    # tables; USBR EWA EIS Ch.16); an uncited component parameter keeps the
+    # incumbent default, disclosed (Eastwood pump/duration). Default off —
+    # byte-identical (registered in _CACHE_KEY_OPTIONAL_FIELDS); CAISO-only.
     caiso_charge_allocation_schedule: bool = False  # Constrain the CAISO battery
     # fleet's INTRA-DAY charge allocation to the measured DAM-allocation shape
     # (M1, the owner-granted caiso-103 belly ask — docs/handoffs/caiso-103-
@@ -13311,6 +13343,7 @@ TIER_TAGS: dict[str, int] = {
     "vintage_capacity_ramp": 3,
     "storage_vintage_ramp": 3,
     "caiso_storage_shape_anchor": 1,
+    "caiso_ps_plant_params": 1,
     "caiso_charge_allocation_schedule": 1,
     "cod_ramp_enabled": 3,
     "coal_prb_contract_passthrough": 3,
