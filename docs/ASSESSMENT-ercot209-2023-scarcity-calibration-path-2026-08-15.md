@@ -300,21 +300,48 @@ nothing else.
 
 ## RESOLUTIONS — CARD X
 
-> Append-only. Each item records an owner signature carried verbatim from the
-> dispatch that made it. Never edit another item's lines.
+Append-only. One line per adjudicated item, each carrying the owner's signature
+text verbatim as dispatched. An item's line is never edited once written; a
+later revision is a new line, not a rewrite.
+
+X-2 SIGNED (owner, by dispatch of REPORTING-TEXT-1, 2026-08-16)
+
+"X-2 SIGNED (owner): (a) a standing one-object note on the ERCOT
+calibration-status surface — the three 2023 price-criterion misses are ONE
+adjudicated model-class object (card R §2 + the C3c ledger as citations);
+determination NOT-YET untouched, misses still reported at full magnitude. (b)
+the forecast-lane keeper_note annotation on the two shipped ffr5d hindcast
+sidecars, stating the dispatch-skill anchor is frozen at ship date (2026-08-05,
+run168b) and the live backcast keeper is tracked on calibration-status. No
+rubric constant moves."
+
+Executed by ercot-210 (2026-08-16): both halves landed, determination
+`NOT-YET` untouched, no rubric constant moved. This signs Door C (§3) only —
+it is **not** a signature of R-B's rubric half, and Q-B FINAL and R-A are
+untouched and uncited-against.
 
 **X-1 SIGNED (owner, by dispatch of CONDUCT-PHASE-0, 2026-08-16)**
 
-> "X-1 SIGNED (owner): Phase-0 of the card-R R-C conduct-layer program is chartered as a READ-ONLY
-> identifiability/transfer measurement. Q-B and R-A are SCOPED, not reopened: they continue to bar any
-> competitive-offer-class C3a/C3b-2023 lever round; they do not bar this measurement, which solves nothing,
-> scores no price criterion, feeds no model input, and creates no ScenarioConfig field. 2023 conduct
-> surfaces appear ONLY as the transfer test's evaluation target (measured-vs-measured). The verdict is
-> mechanical under a pre-registered STOP rule; a Phase-1 build charter, if any, returns to the owner as its
-> own card. If Phase-0 stops, Door D (card W wait-for-data, ~mid-2027) is the recorded floor."
+"X-1 SIGNED (owner): Phase-0 of the card-R R-C conduct-layer program is chartered as a READ-ONLY
+identifiability/transfer measurement. Q-B and R-A are SCOPED, not reopened: they continue to bar any
+competitive-offer-class C3a/C3b-2023 lever round; they do not bar this measurement, which solves nothing,
+scores no price criterion, feeds no model input, and creates no ScenarioConfig field. 2023 conduct
+surfaces appear ONLY as the transfer test's evaluation target (measured-vs-measured). The verdict is
+mechanical under a pre-registered STOP rule; a Phase-1 build charter, if any, returns to the owner as its
+own card. If Phase-0 stops, Door D (card W wait-for-data, ~mid-2027) is the recorded floor."
 
-Executing lane: `ercot-210` (CONDUCT-PHASE-0), precommit
-`docs/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`, finding
-`docs/FINDING-ercot210-conduct-transfer-phase0-2026-08-16.md`. This signature
-scopes §3 Door A's Phase-0 only; §3 Door B remains unsigned, Door C unsigned,
-Door D standing.
+Executed by ercot-211 (2026-08-16): VERDICT **NOT-TRANSFERABLE** under the
+pre-registered STOP rule, so **nothing was chartered** and **Door D is the
+recorded floor**. Determination `NOT-YET` untouched, keeper untouched, no matrix
+cell minted. This signs Door A's Phase-0 (§3) only — Door B remains unsigned and
+Q-B FINAL / R-A are scoped, not reopened, with no C3a/C3b/C3c value computed in
+any year. Precommit `docs/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`,
+finding `docs/FINDING-ercot210-conduct-transfer-phase0-2026-08-16.md`.
+
+*Ordering and shorthand note (collision, nothing renamed).* X-1 and X-2 were
+dispatched concurrently on 2026-08-16 and raced. REPORTING-TEXT-1 (X-2) landed
+first and consumed the **ercot-210** shorthand, so this lane took **ercot-211**,
+the pointer main published. Its artifacts keep the `ercot210` filename stem
+because the precommit was pushed under it before the collision was observable,
+and pushed artifacts are not renamed. X-1 is appended below X-2 in landing
+order, per this section's append-only rule — no line of X-2 was edited.

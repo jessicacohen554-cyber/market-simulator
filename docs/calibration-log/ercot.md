@@ -9276,8 +9276,190 @@ entry, nothing else. No PR opened (push-and-stop; the owner merges).
 **Session consumed the ercot-209 shorthand. Next shorthand: ercot-210**
 (ercot-199 remains unclaimed).
 
-## ercot-210 (2026-08-16) — CONDUCT-PHASE-0 EXECUTED (card X, X-1 signed): the Door-A scarcity-conduct offer layer is **NOT-TRANSFERABLE**, and for STORAGE the failure is **model-free** — THERMAL top-of-stack transfers cleanly, storage does not; NOTHING chartered, Door D is the recorded floor. Read-only: NO LP, no solve, no year solved or scored, no run registered, NO matrix cell or row edit, keeper UNCHANGED
+## ercot-210 (2026-08-16) — REPORTING-TEXT-1 (card X item X-2, Door C) EXECUTED: the one-object STANDING NOTE on the ERCOT calibration-status surface + the frozen-anchor `keeper_note` on the two ffr5d hindcast sidecars — reporting surfaces ONLY, NO lever, NO solve, no year solved/scored/registered, NO matrix cell or row edit, NO rubric constant, keeper UNCHANGED
 
+**Trigger.** Owner dispatch REPORTING-TEXT-1, which IS the X-2 signature (card X
+item X-2, sitting on ercot-209). Door C of
+`docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md` §3 — the
+reporting-text variant card R offered and that had never been signed. Both halves
+of the signature were dispatched, so both were executed.
+
+**STEP 0 skipped, correctly.** The sitting base had already landed: the
+assessment doc was present on `origin/main` at session start (checked before any
+write), so the landing branch `claude/ercot-backcast-calibration-2023-a16qu9`
+needed no PR and none was opened.
+
+**STEP 1 — signature made durable.** `RESOLUTIONS — CARD X` created at the foot
+of the assessment (absent before) and the X-2 signature appended verbatim as
+dispatched, under the line
+`X-2 SIGNED (owner, by dispatch of REPORTING-TEXT-1, 2026-08-16)`. Append-only;
+no other item's lines exist yet and none was edited.
+
+**(a) THE CHANNEL DIAGNOSIS — the `notes` array is NOT the channel, and no
+channel existed.** `status/ERCOT.js` does carry `keeper.notes`, but it is (i)
+COMPUTED, not free-text: `calibration_verdict.determine()` builds it solely from
+C8 `forced_share` records that are PASS + `GROUNDED_ABOVE_BUDGET`, so nothing can
+be placed in it without changing scorer logic; and (ii) NOT RENDERED — the
+Calibration Status page (`docs/codebase-site/js/calibration-status.js`) never
+reads `keeper.notes`, so a note injected there would have landed nowhere visible.
+The keeper shard's existing free-text fields (`promotion_note`,
+`frontier_history`, `site_retention_note`) are likewise never passed to the
+status surface. The genuine channel PATTERN is the shard→verdict pass-through
+`build_part()` already performs for `frontier` and `holdout_touchpoint` —
+"purely declarative, never gating, never touching the verdict". So per the
+dispatch's fallback clause, the smallest additive change was made along exactly
+that pattern:
+1. `keepers/ERCOT.json` gains ONE additive block, `standing_note`
+   (`declared` / `signature` / `note` / `note_provenance`). The `keeper` id and
+   every other field are byte-unchanged (diff: 5 insertions, 0 deletions).
+2. `scripts/build_status.py` gains a 2-line pass-through mirroring
+   `holdout_touchpoint` verbatim in form.
+3. `calibration-status.js` gains a render block mirroring the frontier note.
+Rebuilt with `python3 scripts/build_status.py --iso ERCOT`. `status/shared.js`
+came back BYTE-IDENTICAL, confirming no rubric constant moved.
+
+**The note as landed.** "The three 2023 price-criterion misses (C3a −33.2 %, C3b
+0.604, C3c 58/181 h) are ONE adjudicated model-class object — Aug/Sep-2023
+scarcity conduct (card R §2, the C3c ledger, ASSESSMENT-ercot209). 2024 and 2025
+pass every scored criterion. Determination NOT-YET on that object alone. Two
+qualifications this surface keeps visible: (i) C3c is never a PASS in any year —
+it is the single ledgered CAVEAT ×3, at full magnitude 58/181, 22/53, 1/31 h >
+$200/MWh RT, and 2025's 0.03× is the WORST ratio of the three; (ii) in 2025 the
+preliminary EIA-923 vintage leaves five C1 gas classes SKIPPED rather than
+scored, so 2025 passes on fewer scored criteria than 2023 or 2024."
+
+**TWO APPENDED QUALIFICATIONS, RECORDED NOT QUIETLY APPLIED.** The owner's three
+dispatched sentences are landed VERBATIM, contiguous and unaltered; both
+qualifications are appended after them, under the dispatch's "adapt minimally to
+the channel's format" latitude and because the X-2 signature ITSELF requires that
+misses stay "reported at full magnitude".
+- **(i)** The dispatched sentence "2024 and 2025 pass every scored criterion" is
+  the assessment's own convention — but the assessment states it *immediately
+  beside* "C3c the single ledgered CAVEAT ×3 (58/181, 22/53, 1/31 h > $200/MWh
+  RT)" (header, lines 13–15). Only the note text as dispatched separated the two
+  halves; detached, sentence 2 reads as though C3c were a 2023-only miss. It is
+  not — C3c is ONE criterion caveated across all three years, and 2025's 0.03× is
+  the WORST ratio of the three. The disclosure is restored from the assessment.
+- **(ii)** Surfaced by the `calibration-keeper-auditor` pass and then verified
+  against the keeper's own scored records: 2025 carries **9 SKIPPED records vs 3
+  in each of 2023/2024**, five of them C1 fuelmix classes (CC_REGULAR, CC_CHP,
+  CT_PEAKER, ST_GAS, ST_CHP) skipped on preliminary-vintage incomplete plant
+  data, plus C2 sysvol gas. So 2025's "passes every scored criterion" rests on a
+  materially smaller scored set than 2023's or 2024's — true as written, and
+  misleading without the qualifier.
+
+Neither qualification changes a determination, a criterion status or a magnitude;
+both only make an existing committed number visible. Rationale and the exact
+revert are recorded in the shard's `standing_note.note_provenance`; reverting to
+strictly-verbatim is dropping both qualifications and that field, plus a
+`build_status.py --iso ERCOT` rebuild. **Nothing else in the note deviates.**
+
+**NOTHING THE NOTE TOUCHES IS A SCORED QUANTITY.** Determination **NOT-YET** —
+UNCHANGED. Fail set {C3a-2023, C3b-2023} — UNCHANGED. C3c remains the single
+ledgered CAVEAT ×3 — UNCHANGED. `grade_summary` {scored 8, target 5,
+commercial 0, ledgered 1, fails 2} — UNCHANGED. Caveat budget
+{ledgered_max 1, protective_max 0} — UNCHANGED. The full-magnitude records still
+read −33.2 % / NRMSE 0.604 / 58 h vs RT actual 181 h (0.32×). Machine diff of the
+regenerated status part vs its predecessor: **3 keys added (the `standing_note`
+block), 0 removed, 1 value changed (the `generated` timestamp)** — nothing else
+in the file moved.
+
+**(b) THE FROZEN-ANCHOR ANNOTATION.** `score.dispatch_skill.keeper_note` filled
+(was `null`) in BOTH `ercot-2021-2025-t1ff-armr-ffr5d-shipped.json` and
+`-unified.json`: "Anchor frozen at ship (2026-08-05): dispatch-skill was scored
+against that date's backcast keeper (2026-08-05-run168b-year-curves). The live
+backcast keeper is tracked on calibration-status.html (eight promotions since, as
+of 2026-08-15)."
+
+**COUNT CORRECTED FROM SIX TO EIGHT — a factual error in the dispatched text, and
+in the ercot-209 assessment it was drawn from.** The dispatched note said "six
+promotions since", matching the assessment's chain (§0 item 1 / this log's
+ercot-209 entry): run168b → ercot185-shaped-partial → run188 → run191 → run192 →
+ercot202-arm-plantphysics → ercot204-rule26-delete. That chain **omits two
+keepers**, both recorded in this log:
+1. **ercot-176 (2026-08-07)** — "KEEPER RE-KEYED (owner ruling 2026-08-07, the
+   ercot-175 decision card) … ERCOT → `2026-08-07-run176-control-offline-increment`".
+2. **ercot-181 (2026-08-09)** — "PROMOTED AS KEEPER" →
+   `2026-08-09-run181-position-tail`, corroborated by ERCOT-183's own header
+   ("keeper UNCHANGED at run181-position-tail").
+Both sit between run168b and ercot185-shaped-partial, so the true count since the
+2026-08-05 anchor is **run168b → 176 → 181 → 185 → 188 → 191 → 192 → 202-arm →
+204 = EIGHT promotions**. Surfaced by the `calibration-keeper-auditor` pass and
+verified against the log before the correction was made. **Likely mechanism,
+stated as a hypothesis not a finding:** both omitted keepers are off the site —
+`2026-08-09-run181-position-tail` is named in the ERCOT shard's own
+`site_retention_note` list of fourteen runs pruned 2026-08-15, and
+`run176-control-offline-increment` no longer has a registry sidecar either — so a
+chain reconstructed from the surviving site runs would skip exactly these two.
+A wrong lineage count on the one annotation whose PURPOSE is to un-confuse the
+lineage is worse than no count, so it is corrected here rather than carried.
+**The ercot-209 assessment's own text is NOT edited** (it is a signed, landed
+artifact); this entry is the correction of record, and the owner may propagate it
+there if they wish. This is the fix for the exact confusion that opened ercot-209 (a
+reader seeing a frozen `168b` anchor with no lineage note). Edited as a single
+targeted substitution per file, asserted to be the only occurrence, with the
+parsed documents compared field-by-field afterwards: **one line changed per file,
+`keeper_run_id` untouched, no score value touched, formatting and key order
+preserved.** The backcast registry was NOT touched and the gitignored forecast
+namespace was NOT regenerated (the Pages deploy is its writer).
+
+**Gates.** `audit_keepers.py --iso ERCOT` **PASS 0 failures / 0 warnings**
+(baseline before any edit was also 0/0), and the `calibration-keeper-auditor`
+agent was run scoped `--iso ERCOT` in this session as the shard edit requires. It
+returned PASS 0/0 with E1–E7, M1a/M1b and S1 all clean, independently CONFIRMED
+each of C3a-2023 −33.2 %, C3b-2023 0.604, C3c-2023 58/181 h and the NOT-YET
+determination against the live verdict, and contributed three things beyond the
+deterministic checks, each verified here before adoption: qualification (ii); the
+`note_provenance` wording fix (it read "the owner's X-2 note text verbatim as
+dispatched" as claiming the X-2 SIGNATURE block, which does not contain sentence
+2 — the sentence comes from the dispatch's task (a) and traces to the
+assessment's header line 14, so the field now says exactly that); and the
+six-vs-eight promotion-count error above. `build_status.py --check --iso ERCOT`
+in sync. `check_mechanism_matrix.py` integrity OK — keeper stamps and §5.x prose
+still match every shard; no ScenarioConfig field added, so rule 28(c) is not
+engaged. `node --check` on the edited renderer passes. Two repo gates fail and
+BOTH ARE PRE-EXISTING, verified by re-running each on a stashed clean tree at the
+same HEAD: `check_forecast_parity.py` (ERCOT `ercot_storage_as_soc_reserve`,
+NYISO `nyiso_seam_deliverability_envelope` — byte-identical output before and
+after) and `check_forecast_invariants.py --sidecar-dir` (undeclared invariant
+FAILs across 5 ISOs, incl. a pre-existing `I12` on `ffr5d-shipped` — output
+**byte-identical** before and after this session's edits). Neither is caused by,
+nor in scope for, this session; both are flagged to the owner unrepaired.
+
+**Fences honoured.** Reporting surfaces ONLY. Rule 22: no solve, no LP, no year
+solved/scored/registered, no marker sought. Rules 5/24: no `ScenarioConfig`
+field, no rubric constant (`LEDGERABLE_CRITERIA`, `MAX_LEDGERED_CAVEATS`, the
+v3.0 tier guard all untouched; `status/shared.js` byte-identical proves it).
+Rule 28: no matrix cell or row edit (no mechanism tested). Rule 25: ERCOT only —
+no other ISO's shard, status part or lane file touched; the two shared files
+edited (`build_status.py`, `calibration-status.js`) are ISO-agnostic and gate on
+a key no other shard carries, so every other ISO's rendered surface is unchanged.
+Rule 27: all edits made locally and every pushed file ≥300 lines blob-verified
+after push. Q-B FINAL (`DECISION-CARD-ercot189`) and R-A
+(`DECISION-CARD-ercot193`) cited and untouched — no C3a-2023 spend, no
+C3b-2023-targeted round; every 2023 number here is a committed-artifact citation,
+none newly scored. X-2 authorizes the reporting-text variant ONLY and is **not**
+a signature of R-B's rubric half. Keeper at session start AND end:
+`2026-08-15-ercot204-rule26-delete`. No PR opened (push-and-stop; the owner
+merges).
+
+**Session consumed the ercot-210 shorthand. Next shorthand: ercot-211**
+(ercot-199 remains unclaimed).
+
+## ercot-211 (2026-08-16) — CONDUCT-PHASE-0 EXECUTED (card X, X-1 signed): the Door-A scarcity-conduct offer layer is **NOT-TRANSFERABLE**, and for STORAGE the failure is **model-free** — THERMAL top-of-stack transfers cleanly, storage does not; NOTHING chartered, Door D is the recorded floor. Read-only: NO LP, no solve, no year solved or scored, no run registered, NO matrix cell or row edit, keeper UNCHANGED
+
+**SHORTHAND COLLISION, NOTED — NOTHING RENAMED.** This lane read the log tail at
+its fetch, which published *"Next shorthand: ercot-210"*, and its precommit,
+finding, probe and JSON were pushed under the `ercot210` filename stem before any
+collision was observable. REPORTING-TEXT-1 (card X item X-2, Door C) was
+dispatched concurrently, landed first, and consumed **ercot-210**. This entry
+therefore takes **ercot-211**, the pointer `main` published; the entry above is
+left whole and untouched in file order (the standing append-collision
+convention), and **no artifact of either lane is renamed** — the `ercot210`
+filename stem on this lane's four artifacts is kept deliberately, since renaming
+pushed, cross-referenced artifacts is exactly what that convention forbids. The
+two lanes are independent: X-2 signs Door C (reporting surfaces), X-1 signs
+Door A's Phase-0 (this measurement), and neither touches the other's object.
 **Charter.** ASSESSMENT-ercot209 §3 Door A's Phase-0, under owner signature
 **X-1** (dispatched 2026-08-16, made durable at the foot of the assessment as
 "RESOLUTIONS — CARD X"). STEP 0 was correctly SKIPPED: the ercot-209 assessment
@@ -9400,5 +9582,6 @@ artifacts: the precommit, the finding, the probe, its JSON, the X-1 signature
 appended to ASSESSMENT-ercot209, and this entry — nothing else. No PR opened
 (push-and-stop; the owner merges).
 
-**Session consumed the ercot-210 shorthand. Next shorthand: ercot-211**
-(ercot-199 remains unclaimed).
+**Session consumed the ercot-211 shorthand. Next shorthand: ercot-212**
+(ercot-199 remains unclaimed; ercot-210 was taken by REPORTING-TEXT-1, which
+landed first — see the collision note at the head of this entry).

@@ -637,3 +637,75 @@ window.MECH_MATRIX_SHARDS.NYISO = {
  * instrument scripts/probes/nyiso_rtd_clock_adjudication.py (read-only),
  * docs/calibration-log/nyiso.md 2026-08-15.
  */
+
+/* 2026-08-16 — nyiso-137 GRADES the NYISO-RTD-CLOCK disclosure against the
+ * JOINT Zone-K lever, and CORRECTS the 4th stamp above. NO LP SOLVED, no run
+ * registered, no keeper moved, no cell verdict moved, no pre-registration
+ * filed, no product re-derived. Identification before mechanism, the nyiso-136
+ * shape. Probe scripts/probes/_nyiso137_rtd_clock_c3c_grading.py, record
+ * results/calibration/_nyiso137_rtd_clock_c3c_grading.json. Rule 22 -- 2023-2025
+ * only; the twelve 2022 zips are on disk and were deliberately NOT read.
+ *
+ * CORRECTION TO THE 4th STAMP. It asserts that the joint Zone-K lever is at
+ * risk because 'its nyiso-130 kill gate K6 is itself a per-hour tail count'.
+ * THAT IS FALSE. K6 is the FORCING gate -- its prereg text reads 'any D-2
+ * mechanism's forced share rises, or nyiso_local_selfsupply reappears for
+ * Long_Island, or C8 flips', and what fired it at nyiso-130 was forced ENERGY
+ * in TWh (reliability_floor x ST_GAS 2.784->3.002, 2.797->3.216,
+ * 2.371->2.598). The per-hour tail count is C3c, a CRITERION -- and nyiso-130
+ * §8 already fixed that the promote test runs on K1-K6 plus
+ * C1/C2/C3a/C3b/C4/C6/C8 'whatever C3c does'. The two things sit on opposite
+ * sides of the promote rule.
+ *
+ * ALL SIX KILL GATES ARE MODEL-SIDE AND INVARIANT. K1 config diff, K2
+ * slack/dump, K3 in-window limit_up, K4 other links' bounds, K5 control-vs-
+ * treatment external-link ENERGY, K6 D-2 forced share + C8 -- every one read
+ * from the arms' OWN bundles, none from actual_lmp_hourly_NYISO.parquet. K5
+ * was the only candidate and is clean twice over: _nyiso130_ab_gates.k5_seam
+ * sums link MW from each arm's network parquet, and the model's import PRICING
+ * path (model/interchange/nyiso.py:105-108) reads only the PJM and NEISO
+ * neighbour series, never NYISO's own file. SO THE DISCLOSURE DOES NOT BLOCK
+ * LEVER (a).
+ *
+ * THE PROMOTE CRITERIA THAT DO READ THE SERIES ARE MEASURED SAFE. On 6,018
+ * whole staged in-training hours, 94.0 % move but the pooled mean shifts
+ * -0.0353 % (29.1725 -> 29.1622) and the worst single month -0.5063 %. C3a's
+ * band is +/-10 % with a nearest margin of 1.2 pp; C3b's monthly NRMSE ceiling
+ * is 0.20. Neither is reachable.
+ *
+ * WHAT IS AT RISK IS WORSE THAN THE ADDENDUM SAID. ADDENDUM §A.6 concluded
+ * 'the C3c tail region moves by cents'. REFUTED. The delta is heteroskedastic
+ * in price: mean |d| is $0.4237 over all hours but $17.22 above $100, $30.99
+ * above $200 and $35.55 above $300 -- an 84x ratio for the tail's own region.
+ * The addendum missed it because every statistic it quoted is a SIGNED mean
+ * (-$0.024 annual, -$0.49 top-100), and signed means cancel. Zero staged hours
+ * crossed $300, but all three staged tail hours started far from it
+ * ($450.22->$377.79, $593.16->$598.10, $392.26->$362.98).
+ *
+ * C3c VERDICT REACHABILITY, the durable number. Staged months hold only 1 of
+ * 10, 3 of 12 and 2 of 42 actual tail hours, so a direct recount is impossible
+ * and was not attempted. Instead a CEILING: an hour can only change the count
+ * by crossing $300, so the population within +/-$72.43 (the tail region's own
+ * measured max) bounds it. Reachable actual counts are [5, 21] / [10, 21] /
+ * [34, 82] against committed 10 / 12 / 42. Against the keeper's model
+ * 21 / 3 / 24, through calibration_verdict's exact rule:
+ *   2023 FAIL (2.10x) -> PASS at actual 11 h. ONE HOUR.
+ *   2024 FAIL (0.25x) -> STABLE; PASS needs actual <=9, below the ceiling.
+ *   2025 PASS (0.571x) -> FAIL at actual 49 h. SEVEN HOURS.
+ * The 2023 edge is doubly sharp -- actual 10 sits exactly ON TAIL_SMALL_COUNT,
+ * so one hour DOWN also switches the scoring rule from ratio to absolute
+ * difference. DIRECTION NOT CLAIMED: the staged tail moves net downward
+ * (1 up / 2 down) which would preserve both verdicts, but n=3 is not a rate
+ * (rule 21). The ceiling governs, not the direction.
+ *
+ * DISPOSITION. The charter request stands and is filed at
+ * docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md, carrying a
+ * condition: the arm-vs-control C3c DELTA is invariant (both arms score against
+ * the same actual) and may be relied on; ABSOLUTE C3c band membership may not,
+ * and any C3c-turning claim is reported as CONDITIONAL on the clock repair.
+ * The repair itself stays OWNER-GATED and DATA-BLOCKED -- unchanged.
+ *
+ * Evidence: results/calibration/FINDING-nyiso137-rtd-clock-graded-against-zone-k-gates-2026-08-16.md,
+ * docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md,
+ * docs/calibration-log/nyiso.md 2026-08-16.
+ */
