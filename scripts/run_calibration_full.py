@@ -8010,6 +8010,7 @@ def run_replay_bundle(
     note: str,
     holdout_authorized: bool,
     zero_forcing_ablation: bool = False,
+    reliability_floor_plant_exclusions: bool | None = None,
 ) -> None:
     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
 
@@ -8031,6 +8032,11 @@ def run_replay_bundle(
         holdout_authorized: Forwarded to :func:`enforce_holdout_year_gate`.
         zero_forcing_ablation: Solve the recipe's D-3 zero-forcing ablation
             twin instead (composes exactly like the flag on a direct solve).
+        reliability_floor_plant_exclusions: Override the bundle's setting for the
+            reliability-floor per-plant membership exclusion (``None`` keeps the
+            recipe's own value). Composes like ``zero_forcing_ablation`` so a
+            single-delta A/B arm can be solved from a committed control recipe
+            without re-expressing it flag-by-flag (nyiso-140).
     """
     from scripts import replay_keeper as rk
 
@@ -8046,6 +8052,10 @@ def run_replay_bundle(
     if note:
         kwargs["note"] = note
     kwargs["zero_forcing_ablation"] = zero_forcing_ablation
+    if reliability_floor_plant_exclusions is not None:
+        kwargs["reliability_floor_plant_exclusions"] = (
+            reliability_floor_plant_exclusions
+        )
     if zero_forcing_ablation:
         # D-3 linkage: the twin's run_config must name its base bundle
         # (the dashboard and audit_keepers pair twins by ablation_of).
@@ -11409,6 +11419,9 @@ def main() -> None:
             note=args.note,
             holdout_authorized=args.holdout_authorized,
             zero_forcing_ablation=args.zero_forcing_ablation,
+            reliability_floor_plant_exclusions=(
+                args.reliability_floor_plant_exclusions
+            ),
         )
         return
 
