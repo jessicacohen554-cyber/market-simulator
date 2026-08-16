@@ -1301,8 +1301,17 @@ your branch when done.
   execution duty), CLAUDE.md rewrite + per-corpus manifests as PR duties.
   Card flags the rule-22 vintage question (2019–2022 holdout-input status of
   CAISO-AS/PJM/eia-930 residual files — §4.7 enumerated only ERCOT's) as a
-  mandatory item of each §4.8 evidence pass. **VERDICT: PENDING OWNER
-  RULING** — to be recorded on the card, bloat plan §9/BLOAT-3, and here.
+  mandatory item of each §4.8 evidence pass. **VERDICT: SIGNED IN-SESSION
+  (owner, `AskUserQuestion`, all four rulings as recommended) — BLOAT-3 is
+  ADJUDICATED: D1 = O2 staged (a)-only GO; D2 = story (a) ALONE admitted
+  (no (b) archive — D5's salvage tie-in moot, the refs/pull question stays
+  open at the rewrite finding §7 item 3; no (c) loss route — a corpus
+  failing its pass stays tracked; no (d) pin commitment — pins stay dead,
+  no `hydrate_data.py` pin support); D3 = §4.8 evidence passes AUTHORIZED,
+  golden-tier proof = weekly cron green, no new dispatch spent; D4 = DAM
+  2024+ OUT, travels with any future archive decision.** Open follow-on:
+  the per-corpus evidence passes, then untrack PRs for passing corpora only
+  (prima facie ≈ 1,133 MiB).
 - 2026-08-16 — **BLOAT-2 CLOSED: the Class-E retention rule ADOPTED and its
   last enforcement leg built** (branch `claude/bloat-e2-retention-rule-nn2in8`).
   The §7 E2 four-point rule was served as the G1-style in-session card and
@@ -1321,4 +1330,7 @@ your branch when done.
   Greens at HEAD before AND after: parity OK (15 runs, 15 bundle dirs swept)
   + `audit_keepers --check` PASS 0/0. D-ledger: bloat plan §9 BLOAT-2
   annotated CLOSED. Of the plan's three D-8 successor entries only BLOAT-3
-  (the Stage-2 charter call) now remains open.
+  (the Stage-2 charter call) now remains open. *(Overtaken within the day:
+  the BLOAT-3 card was answered and SIGNED — the entry above carries the
+  ruling. BLOAT-3 is adjudicated; what remains open is its chartered
+  follow-on execution, not the decision.)*

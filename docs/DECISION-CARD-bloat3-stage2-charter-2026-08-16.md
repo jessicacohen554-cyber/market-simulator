@@ -8,8 +8,34 @@ its two ledger entries are the whole deliverable. It serves the D-ledger item
 charter input was re-measured by the BLOAT-B-7 close-out
 (`docs/bloat-removal-report-final-2026-08.md` §2, at `04d1cf0`).
 
-**VERDICT: PENDING OWNER RULING.** Record the ruling here, in bloat plan §9
-(BLOAT-3), and in release-plan §8.
+> **VERDICT — ANSWERED IN-SESSION (owner, 2026-08-16, `AskUserQuestion`; all
+> four rulings as recommended):**
+>
+> * **D1 — O2, STAGED (a)-ONLY GO.** Charter the §4.8 evidence passes now;
+>   untrack ONLY corpora whose pass measures a stable archive (prima facie
+>   `campd-unit-level` non-2023 692.6 + `eia-930` 190.3 + `lmp-data`
+>   non-golden 143.5 + `PJM` 107.1 ≈ 1,133 MiB, plus whatever else passes).
+>   Decaying/past-retention corpora stay tracked.
+> * **D2 — story (a) ALONE is admitted.** (b) external archive: NOT admitted
+>   at this sitting — no archive is chartered, and D5's salvage tie-in is
+>   thereby moot here (the `refs/pull/*` salvage question stays open at
+>   rewrite finding §7 item 3, unanswered by this card). (c) signed loss:
+>   NOT admitted — no loss route exists; a corpus that fails its (a) pass
+>   simply STAYS TRACKED. (d) pins: NOT granted — no no-further-rewrite
+>   commitment; pins stay dead as a recovery story and `hydrate_data.py` pin
+>   support is NOT built.
+> * **D3 — evidence passes AUTHORIZED now** (the §4.8 BLOAT-A-equivalent
+>   prerequisite, scope per §7-D3(i) incl. the rule-22 vintage question);
+>   golden-tier proof for untrack PRs = **the weekly cron green** (first
+>   firing 2026-08-17 05:37 UTC) — no new dispatch authorization spent.
+> * **D4 — OUT.** The §4.2 DAM 2024+ subset does not re-enter with this
+>   grant; it travels with a future (b)-archive decision. The 2023 quarters
+>   stay NEVER-taken regardless.
+>
+> Net effect: **BLOAT-3 is SIGNED (O2).** Execution sequence: per-corpus
+> §4.8 evidence passes → per-corpus untrack PRs (the §5 checklist, PR-2/PR-5
+> idiom, `intentional-shrink`) for passing corpora only → cron green as the
+> post-merge proof. Recorded in bloat plan §9 (BLOAT-3) and release-plan §8.
 
 ---
 
