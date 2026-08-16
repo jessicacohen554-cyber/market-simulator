@@ -119,6 +119,52 @@ _RULE26_DELETED_UNCONDITIONAL: dict[str, tuple[str, object]] = {
 }
 
 
+def _strip_rule26_from_override_dict(channel: str, overrides: dict, meta: dict) -> dict:
+    """Drop rule-26-deleted fields recorded INSIDE a generic override dict.
+
+    ``_RULE26_DELETED_UNCONDITIONAL`` is applied to top-level meta keys, but the
+    same field can also reach ``ScenarioConfig`` through a generic
+    override channel that is splatted with ``with_overrides(**d)`` —
+    ``coal_prb_sigmoid_overrides`` is one, and NYISO keepers record ~33 flags in
+    it. A field deleted from ``ScenarioConfig`` then raises ``TypeError`` from
+    inside ``run_year`` no matter how carefully the top-level keys were mapped,
+    which is what made the designated NYISO keeper unreplayable at HEAD
+    (discovered nyiso-140).
+
+    Applies the SAME polarity check as the top-level path rather than dropping
+    blindly: a recorded value equal to the now-unconditional behaviour is inert
+    and safely dropped; the other polarity selected a basis that no longer
+    exists, so it hard-errors instead of silently replaying a different
+    mechanism (the miso-50..53 strictness).
+
+    Args:
+        channel: The override-dict meta key, for the error message.
+        overrides: The recorded override mapping.
+        meta: The whole bundle meta (for the solve's ISO).
+
+    Returns:
+        *overrides* without the rule-26-deleted entries (a copy only when one
+        was present, so the common path is unchanged).
+    """
+    hits = [k for k in overrides if k in _RULE26_DELETED_UNCONDITIONAL]
+    if not hits:
+        return overrides
+    out = dict(overrides)
+    for k in hits:
+        owner_iso, unconditional = _RULE26_DELETED_UNCONDITIONAL[k]
+        v = out.pop(k)
+        if meta.get("iso") == owner_iso and v != unconditional:
+            raise SystemExit(
+                f"bundle records the rule-26-deleted field {k}={v!r} inside "
+                f"{channel} on an {owner_iso} solve: the basis that value "
+                f"selected no longer exists at HEAD (the collapse made "
+                f"{unconditional!r} unconditional), so a kwargs replay would "
+                "run a DIFFERENT mechanism than the bundle. Historical record "
+                "— read, never replayed (see the cache.py epoch note)."
+            )
+    return out
+
+
 def build_kwargs(meta: dict) -> dict:
     """Map a bundle's meta.json onto solve_and_persist's keyword arguments.
 
@@ -166,6 +212,8 @@ def build_kwargs(meta: dict) -> dict:
                 kwargs["prb_overrides"]["coal_plant_monthly_pricing"] = False
             continue
         if key in params:
+            if isinstance(v, dict) and v:
+                v = _strip_rule26_from_override_dict(k, v, meta)
             kwargs[key] = v
         else:
             unmapped.append(k)

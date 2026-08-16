@@ -526,6 +526,7 @@ def run_year(
     ercot_commitment_posture_min_load_frac: float | None = None,
     carry_operating_mothballs: bool | None = None,
     reliability_floor: bool | None = None,
+    reliability_floor_plant_exclusions: bool | None = None,
     reliability_floor_overrides: dict | None = None,
     scarcity_price_overlay: bool | None = None,
     caiso_scarcity_pricing: bool | None = None,
@@ -1271,6 +1272,10 @@ def run_year(
         )
     if reliability_floor is not None:
         config = config.with_overrides(reliability_floor=reliability_floor)
+    if reliability_floor_plant_exclusions is not None:
+        config = config.with_overrides(
+            reliability_floor_plant_exclusions=reliability_floor_plant_exclusions
+        )
     if reliability_floor_overrides is not None:
         config = config.with_overrides(
             reliability_floor_overrides=reliability_floor_overrides
