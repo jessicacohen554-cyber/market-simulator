@@ -216,6 +216,18 @@ what a history rewrite would now reclaim** — that was the point of
 quantifying the floor before and after: 922.3 MiB of it is prior churn,
 ≈ 6,416 MiB is the prunes' recovery archive.
 
+*[ADDENDUM 2026-08-16 (BLOAT-B-8): the owner overrode AQ the next day and
+executed the rewrite — run 31955205445 (run #18), SUCCESS, force-push landed
+15:49 UTC, reclaiming this pool (7,254 blobs / 7,373.4 MiB at execution; pack
+20.48 → 5.45 GiB on the runner). The paragraph below was this report's
+warning about exactly that trade; it stands as written — the archive it
+describes is now burned, the affected corpus READMEs carry honest
+unrecoverability statements, and the durable record is
+`docs/FINDING-history-rewrite-2026-08-16.md`. The run-#16 abort recorded
+further below was diagnosed correctly: its 9 failing commits were
+refs/pull-only, the workflow was patched to classify them, and all 9 survive
+untouched.]*
+
 **And it still doesn't change the NO-GO (Addendum AQ) — it inverts its
 rationale from "pointless" to "harmful".** Pre-prune, the rewrite was refused
 because it reclaimed ~1 % of the pack (everything was live at tip). Post-prune

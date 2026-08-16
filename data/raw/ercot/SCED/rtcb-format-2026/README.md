@@ -11,11 +11,14 @@ contract, why the subdirectory must never be flattened) is in the parent
 The 27 parquet payloads are **gitignored as of 2026-08-15** (BLOAT-B-5 item
 A2, owner-signed) — this README is tracked so the layout marker survives.
 Their post-slim bytes are hashed in `../SHA256SUMS.txt` (the
-`rtcb-format-2026/…` lines). Restore recreates them in place:
-
-```
-git restore --source=726f389d94c45141bac83eacfdaea5e18a465c56 -- data/raw/ercot/SCED/rtcb-format-2026
-```
+`rtcb-format-2026/…` lines). **The former restore-from-pin route
+(`git restore --source=726f389d…`) is DEAD**: the 2026-08-16 history rewrite
+(run #18 / 31955205445; `docs/FINDING-history-rewrite-2026-08-16.md`) stripped
+these blobs and the pin no longer resolves. Recovery is re-fetch: the RTC+B
+publications (2026-02/03) are recent, well inside the MIS rolling retention —
+`scripts/data/fetch_ercot_sced_corpus_shards.py`, then recompress per the slim
+protocol (`slim_ercot_dam_disclosure.py --sced-only`, rtcb = recompress-only)
+and verify against `../SHA256SUMS.txt`.
 
 Never add this subdirectory to a corpus-root tuple, and never make the corpus
 globs recursive (`sced_rtcb_adapter.assert_pre_rtcb_files` /

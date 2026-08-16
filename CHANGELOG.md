@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-08-16 — BLOAT-B-8: post-rewrite aftercare — the 2026-08-16 history rewrite ledgered, the citation map recovered, every corpus recovery contract repaired, the pack re-measured
+
+The owner executed the `cleanup-large-blobs.yml` history rewrite (run
+31955205445, 15:17–15:49 UTC — an explicit decision superseding the Addendum
+AQ NO-GO): 7,254 superseded blobs / 7,373.4 MiB stripped, integrity verify
+PASSED, force-push landed. This aftercare lane (docs + metadata only) ships
+the durable record `docs/FINDING-history-rewrite-2026-08-16.md`; the
+reconstructed `docs/governance/citation-commit-map.txt` (95 load-bearing
+commits old→new by unique identity match + 9 refs/pull-only self-maps, each
+API-verified alive — the runner's own copy and the full filter-repo
+commit-map were never archived), wired into `citation-tags.md` §8; the honest
+cost measured per rewrite-prep §8: **926 of 929 formerly-resolving citation
+tokens (2,492 occurrences) are dead in a fresh clone**, and `00abb60` is a
+FALSE survivor (prefix-collides with the rewritten main tip — a wrong-commit
+resolution, not a dead one). Every converted corpus's restore-from-pin
+contract was repaired in place (pins `971eaa3`/`315a245`/`726f389d` dead;
+twins `94f8e179`/`94b9cda5`/`4759a160` verified payload-free): re-fetch is
+now the primary route everywhere, and the CAISO OASIS GRP dailies, the
+pre-slim SCED raw columns (ERCOT-157 window) and the pre-slim SHA256
+manifests are declared **unrecoverable from this repository** (GitHub
+`refs/pull/*` salvage window recorded). Pack re-measured on fresh clones:
+**5.46 GiB / 162 s full bare clone** (was 7.44 GiB / stalls), tip 8,777
+blobs / 4.13 GiB packed, blobless recipe unchanged (3.5 s / 13.7 MB) —
+`docs/fast-clone.md` + CLAUDE.md updated; NO-GO references annotated in
+place (rewrite-prep FINDING, bloat plan §0, report-final §5). Release-plan
+§8 carries the ledger entry. Greens at HEAD: registry/payload parity OK
+(15 runs), `audit_keepers.py --check` PASS 0/0.
+
 ## 2026-08-15 — GOLDEN-TIER-FIX: `curate_emissions.py` runner OOM fixed (peak RSS 10.05 → 5.17 GiB, output byte-equivalent); the deferred golden-tier dispatch SPENT and GREEN (run 31913648051) — G3's evidence gate reopens
 
 `curate_year()` held a full CAMPD year in pandas several times over (per-state

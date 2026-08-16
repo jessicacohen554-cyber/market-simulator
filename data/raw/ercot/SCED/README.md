@@ -81,15 +81,26 @@ design on pre-existing corpus drift (their frozen 2024/25 artifacts were
 derived from the extract basis before the ercot-183 corpus landed); the STOP
 behaviour is identical before and after the slim.
 
-The replaced raw bytes are hashed in the pre-slim `SHA256SUMS.txt` at commit
-`971eaa3` (merged via PR #3957; extracts:
-`../SHA256SUMS-60day-sced-extracts.txt` same commit) and remain recoverable
-from git history: `git restore --source=971eaa3 -- data/raw/ercot/SCED/<shard>`.
-Dropped columns are also re-fetchable from the MIS within its rolling
-retention (`fetch_ercot_sced_corpus_shards.py` /
-`fetch_ercot_60day_sced_gen_resource.py`); to re-adopt one, add it to the
-KEEP registry and re-fetch or restore. The `SHA256SUMS.txt` in this directory
-hashes the POST-slim bytes.
+**Pre-slim recovery — INVALIDATED by the 2026-08-16 history rewrite**
+(`cleanup-large-blobs.yml` run #18 / 31955205445, owner decision;
+`docs/FINDING-history-rewrite-2026-08-16.md`). The replaced raw bytes were
+hashed in the pre-slim `SHA256SUMS.txt` at commit `971eaa3` (merged via PR
+#3957; extracts: `../SHA256SUMS-60day-sced-extracts.txt` same commit) and were
+recoverable via `git restore --source=971eaa3`. The rewrite stripped those
+superseded blobs: `971eaa3` no longer resolves, and its rewritten twin
+`94f8e1790d5d` carries neither the raw shards nor the pre-slim manifests —
+**the pre-slim bytes AND their hash manifests are unrecoverable from this
+repository since 2026-08-16.** Dropped columns for publications still inside
+the MIS rolling ~28-month retention remain re-fetchable
+(`fetch_ercot_sced_corpus_shards.py` / `fetch_ercot_60day_sced_gen_resource.py`;
+to re-adopt one, add it to the KEEP registry and re-fetch); for publications
+past retention — the ERCOT-157 window, pubs 2023-03..2024-03 — the dropped raw
+columns are gone from every source. Last-resort salvage: as of 2026-08-16 the
+pre-rewrite objects remain incidentally reachable through GitHub's
+`refs/pull/*` retention (e.g. `git fetch origin refs/pull/3957/head` reaches
+the pre-slim manifests) — unadvertised, no durability guarantee, not a
+recovery contract. The `SHA256SUMS.txt` in this directory hashes the
+POST-slim bytes.
 
 ## `rtcb-format-2026/` — the RTC+B disclosure-format break (quarantined, bytes kept)
 
@@ -163,25 +174,28 @@ tracked here:
 
 Recovery routes for the untracked window:
 
-1. **Git history (exact bytes, always available).** The pin sha is the last
-   commit tracking the full corpus:
-
-   ```
-   # whole window (top level + quarantine):
-   git restore --source=726f389d94c45141bac83eacfdaea5e18a465c56 -- data/raw/ercot/SCED
-   # single shard:
-   git restore --source=726f389d94c45141bac83eacfdaea5e18a465c56 -- 'data/raw/ercot/SCED/<YYYY-MM.partNNNN>.parquet'
-   ```
-
-   Verify with `sha256sum -c SHA256SUMS.txt` (from this directory). Pre-slim
-   raw bytes remain at `971eaa3` exactly as the In-place-slim section above
-   records.
-2. **Re-fetch from the free MIS path while retention lasts**
-   (`scripts/data/fetch_ercot_sced_corpus_shards.py`; publications
+1. **Git history — DEAD since the 2026-08-16 history rewrite** (run #18 /
+   31955205445, owner decision; `docs/FINDING-history-rewrite-2026-08-16.md`).
+   The pin `726f389d94c45141bac83eacfdaea5e18a465c56` no longer resolves, and
+   its rewritten twin `4759a16023f4`'s tree no longer carries the untracked
+   window (verified 2026-08-16: pubs 2024-04..2026-02 and the
+   `rtcb-format-2026/` parts are absent; only the ERCOT-157 window survives
+   there, because it is live at tip). `git restore --source=<pin>` cannot
+   recover these bytes from this repository. `SHA256SUMS.txt` remains the
+   identity record any recovery is verified against.
+2. **Re-fetch from the free MIS path while retention lasts — now the PRIMARY
+   route** (`scripts/data/fetch_ercot_sced_corpus_shards.py`; publications
    ≥ 2024-03-24 were servable as of 2026-08-09). The MIS window is a rolling
-   ~28 months that shrinks daily, so this route decays continuously — the
-   honest recovery story is history-as-archive, same as the Stage-2
-   conversions.
+   ~28 months that shrinks daily: a publication month that ages out is
+   thereafter **unrecoverable from any source** — history-as-archive is no
+   longer true for this corpus. A re-fetch regenerates raw bytes; re-run
+   `slim_ercot_dam_disclosure.py --sced-only` and judge the result against
+   `SHA256SUMS.txt` (the manifest is the byte truth).
+3. **Last-resort salvage:** as of 2026-08-16 the pre-rewrite trees remain
+   incidentally reachable through GitHub's `refs/pull/*` retention (e.g.
+   `git fetch origin refs/pull/3978/head` reaches the last fully-tracked
+   post-slim corpus) — unadvertised, no durability guarantee, not a
+   recovery contract.
 
 Consumers are unaffected at solve/test time (derive-time only, per the
 Consumers note in `docs/bloat-removal-plan-2026-08.md` §3): a rule-23

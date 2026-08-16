@@ -109,22 +109,25 @@ Verified 2026-08-15 by fetching each URL and comparing `Content-Length` to
 - **`m11.pdf` is the only payload here that is not byte-reproducible.** It was
   saved from the *living* "current revision" URL, which PJM overwrites on every
   manual revision; that URL served 6,855,912 B on 2026-08-15 against the
-  committed snapshot's 6,854,614 B. Route 1 below is the byte-exact recovery.
-  Dated revisions live under
+  committed snapshot's 6,854,614 B. Its byte-exact recovery WAS route 1 below;
+  since the 2026-08-16 history rewrite killed that route, **the snapshot's
+  exact bytes are unrecoverable from this repository** — the manifest line
+  records what they were, and the GitHub `refs/pull/*` salvage note below is
+  the only remaining copy. Dated revisions live under
   `https://www.pjm.com/-/media/documents/manuals/archive/m11/m11v<NNN>-energy-and-ancillary-services-market-operations-<MM-DD-YYYY>.pdf`
   (the pattern the two archived revisions above use).
 
 ### Recovery / re-fetch
 
-1. **Restore from git history — exact bytes, always available.** History is
-   kept (no rewrite):
-
-   ```
-   git restore --source=315a24524a851566c3d32cc88668fa32dcbd1d74 -- data/raw/PJM-AS
-   ```
-
-   **Pin sha `315a24524a851566c3d32cc88668fa32dcbd1d74`** — the last commit at
-   which these PDFs were tracked (origin/main, 2026-08-15).
+1. **Restore from git history — DEAD since the 2026-08-16 history rewrite**
+   (`cleanup-large-blobs.yml` run #18 / 31955205445, owner decision;
+   `docs/FINDING-history-rewrite-2026-08-16.md`). The pin
+   `315a24524a851566c3d32cc88668fa32dcbd1d74` no longer resolves and its
+   rewritten twin `94b9cda540b8` no longer carries these PDFs (verified
+   2026-08-16) — the payload blobs were stripped. `SHA256SUMS.txt` stays as
+   the identity record. (Last-resort salvage: GitHub's `refs/pull/*` retention
+   still reaches the pre-rewrite trees as of 2026-08-16, e.g. `git fetch
+   origin refs/pull/3956/head` — unadvertised, no guarantee.)
 
 2. **Re-fetch from the publishers.** Run from this directory:
 

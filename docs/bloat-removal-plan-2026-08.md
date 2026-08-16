@@ -27,10 +27,18 @@ section.
 - **History rewrite is NO-GO** (owner decision, REWRITE-PREP Addendum AQ
   2026-08-13; FINDING-rewrite-prep §8). Nothing below rewrites history. Scope is
   tip prune + corpus conversion only.
+  *[SUPERSEDED 2026-08-16 — after this plan's execution completed, the owner
+  overrode AQ and executed the rewrite: `cleanup-large-blobs.yml` run
+  31955205445, force-push landed 15:49 UTC. This plan's own work was untouched
+  (the prunes are tip-state), but the conversion class's restore-from-pin
+  recovery contracts (§3–§4 below) were invalidated — the pins no longer
+  resolve and the superseded blobs are stripped. Record:
+  `docs/FINDING-history-rewrite-2026-08-16.md`.]*
 - `cleanup-large-blobs.yml` may be run **as a dry run only** (`dry_run=true`
   input verified present in the workflow; the real-run `confirm=REWRITE-HISTORY`
   phrase is never to be supplied). Planned in §8 as the BLOAT-B close-out
-  quantification, never an execution.
+  quantification, never an execution. *[Overtaken with the AQ supersession
+  above: real runs #16 (aborted at verify) and #18 (executed) followed.]*
 - Owner pre-approval (release plan §6 decision 4): the
   gitignore+README+SHA256+fetch-script conversion **class** is approved for
   corpora **proven re-fetchable** (per-item evidence below); irreplaceable

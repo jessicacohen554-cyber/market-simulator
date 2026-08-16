@@ -1,28 +1,32 @@
 # Fast clone — avoiding the "cloning loop"
 
-**Problem.** This repo's git pack is **7.44 GiB** (≈97% of it is immutable
-`data/raw/` source data — parquet/xlsx/zip that git cannot compress further, see
-`docs/handoffs/repo-clone-bloat-audit-2026-07.md`). A **full-history clone** or a
-full `git fetch` has to transfer all of it, which through this environment's
-egress proxy is slow and frequently **stalls** — leaving sessions on a *stale or
-half-checked-out clone*, or failing outright with *"Cloning the git_repository
-source took longer than the allowed time and was stopped."* That is the
-"cloning loop."
+**Problem.** A **full-history clone** or a full `git fetch` transfers the whole
+pack, which through this environment's egress proxy is slow — historically it
+frequently **stalled** outright ("*Cloning the git_repository source took
+longer than the allowed time and was stopped*", the "cloning loop"), because
+the pack was 7.44 GiB, ≈97% of it immutable `data/raw/` source data (see
+`docs/handoffs/repo-clone-bloat-audit-2026-07.md`).
 
-**This is a tip problem, not a stale-history problem — so a history rewrite does
-not fix it.** Measured 2026-08-13 at HEAD:
+**Re-measured 2026-08-16**, after the BLOAT-B tip prunes AND the 2026-08-16
+history rewrite (`cleanup-large-blobs.yml` run 31955205445, owner decision —
+`docs/FINDING-history-rewrite-2026-08-16.md`):
 
-| | Size |
-|---|---:|
-| Packed history (what a clone transfers) | **7.44 GiB** |
-| Blobs **live at the tip of `main`** | **7.37 GiB** (10,642 blobs) |
-| Dead history — all a full rewrite could reclaim | **82.3 MB** (1,093 blobs, **1.1%**) |
+| | 2026-08-13 (pre) | 2026-08-16 (post) |
+|---|---:|---:|
+| Pack a clone transfers (heads+tags) | 7.44 GiB | **5.46 GiB** |
+| Full bare clone through the proxy | stalls | **162 s** |
+| Blobs live at the tip of `main` (packed) | 7.37 GiB (10,642) | **4.13 GiB (8,777)** |
+| History-only blob weight | 82.3 MB (1.1%) | ~1.32 GiB (~24%) |
 
-Almost every byte ever committed is still a live file at the tip, so stripping
-history buys ~1% and the clone still times out. See
-`docs/FINDING-rewrite-prep-2026-08-11.md` §8 for the standing **NO-GO on
-rewriting for size**, and the note on `.github/workflows/cleanup-large-blobs.yml`
-below.
+The tip shrank because BLOAT-B untracked corpus payloads; the pack shrank
+because the rewrite then stripped the superseded blobs those prunes created.
+A full clone now completes — but takes minutes and 5.5 GiB where the partial
+recipe below takes seconds and ~300 MB, so the partial clone stays the
+standard. (Do NOT measure pack size with `git clone --mirror` against GitHub:
+`refs/pull/*` still pins the pre-rewrite objects and transfers ~20 GiB.)
+The former standing NO-GO on rewriting for size
+(`docs/FINDING-rewrite-prep-2026-08-11.md` §8) was superseded by the owner's
+2026-08-16 decision — see the history-rewrite section below.
 
 **The fix is the clone *method*.** The commit/tree graph is tiny; only the file
 *blobs* are heavy, and you rarely need all of them. A **blobless partial clone**
@@ -41,7 +45,8 @@ git sparse-checkout set --no-cone '/*' '!/data/raw/'
 git checkout main
 ```
 
-Measured end to end, 2026-08-13:
+Measured end to end (2026-08-13; clone + checkout re-measured 2026-08-16
+post-rewrite — essentially unchanged: 3.5 s / 13.7 MB, then 12.2 s / 306 MB):
 
 | Step | Time | Cumulative |
 |---|---:|---:|
@@ -50,8 +55,9 @@ Measured end to end, 2026-08-13:
 | + `hydrate_data.py --profile miso` (1,492 files) | **157 s** | 2.2 GB |
 
 That is a complete, working MISO calibration environment — all 2,261 Python
-files, tests, docs, dashboard — in about **3 minutes**, against a full clone that
-does not finish.
+files, tests, docs, dashboard — in about **3 minutes**, against a full clone
+that historically did not finish (post-rewrite: ~2.7 min for the bare clone
+alone, before any checkout).
 
 **A shallow clone is NOT the fix here, despite what the timeout message
 suggests.** `--depth 1` still transfers the entire tip tree, which *is* the 7.37
@@ -189,29 +195,37 @@ proxy are auto-resumed but make the run non-hermetic). Charter authors for
 any rule-15 same-session-registration PJM lane must schedule both — that is
 a material multi-hour scheduling fact, not a footnote.
 
-## Is it safe to run the history-rewrite action?
+## The history-rewrite action — it RAN on 2026-08-16
 
 `.github/workflows/cleanup-large-blobs.yml` (`workflow_dispatch`-only) strips
-*superseded* blob versions under `data/raw/` and `results/calibration/`. Two
-separate questions, with different answers:
+*superseded* blob versions under `data/raw/` and `results/calibration/`. On
+**2026-08-16 the owner executed it for real** (run 31955205445, superseding the
+Addendum AQ NO-GO): 7,254 superseded blobs / 7,373.4 MiB stripped, integrity
+verify passed (strict `main` manifest byte-identical; all cited load-bearing
+commits survived), force-push landed. Full record, citation-map translator and
+recovery-contract fallout: `docs/FINDING-history-rewrite-2026-08-16.md`.
 
-**Is it safe?** Yes, as of the 2026-08-12 patch. It protects every blob live at
-the tip of `main`, verifies per-branch manifests, and — since the defect found in
-`docs/FINDING-rewrite-prep-2026-08-11.md` §10 — passes
-`--prune-empty never --prune-degenerate never` and aborts before pushing if any
-load-bearing commit from `docs/governance/citation-tags.json` was pruned or
-re-pointed. It also needs the `HISTORY_REWRITE_PAT` secret, which is not set.
+Consequences for clones and citations:
 
-**Will it fix the clone timeout?** **No** — and it cannot, by design. It protects
-what is live at tip, and *that is the 7.37 GiB*. Everything it may legitimately
-reclaim is the 82.3 MB of dead history, ~1.1% of the pack. A clone would still
-transfer ~7.36 GiB and still time out. Run it to reclaim superseded calibration
-bundles if you want them gone; do not run it expecting faster clones.
+- The pack numbers at the top of this doc are the post-rewrite reality; a
+  fresh clone is mandatory after a rewrite (a pre-rewrite clone's history no
+  longer matches the remote).
+- **Pre-2026-08-16 commit-sha citations are dead in a fresh clone** (926 of
+  929 formerly-resolving tokens; the 104 load-bearing ones translate via
+  `docs/governance/citation-commit-map.txt`), and a short prefix can even
+  resolve to the WRONG commit — check citation dates before trusting one.
+- The corpus conversions' restore-from-pin recovery routes are gone; each
+  corpus README now states its honest re-fetch/retention status.
 
-The durable fix for clone time is the partial clone above. The *structural* fix
-— untracking `data/raw` going forward so the tip itself stops growing — is
-recommended by that finding's §8 but is an owner decision with real
-reproducibility consequences, and is **not** implemented here.
+Any **future** run remains owner-gated (`HISTORY_REWRITE_PAT` +
+`REWRITE-HISTORY` confirm phrase) and must archive `citation-commit-map.txt`
+and the full filter-repo commit-map as workflow artifacts before pushing —
+this run's full commit-map was lost with the runner (finding §7).
+
+The durable fix for clone time remains the partial clone above. The
+*structural* fix — untracking `data/raw` going forward so the tip itself stops
+growing — remains an owner decision with real reproducibility consequences,
+and is **not** implemented.
 
 ## Proposed environment change (NOT merged — owner decision)
 

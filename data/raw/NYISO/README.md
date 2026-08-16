@@ -86,15 +86,13 @@ fetches with an md5 check. Landing pages:
 
 ### Recovery / re-fetch
 
-1. **Restore from git history — exact bytes, always available.** History is
-   kept (no rewrite):
-
-   ```
-   git restore --source=315a24524a851566c3d32cc88668fa32dcbd1d74 -- data/raw/NYISO
-   ```
-
-   **Pin sha `315a24524a851566c3d32cc88668fa32dcbd1d74`** — the last commit at
-   which these payloads were tracked (origin/main, 2026-08-15).
+1. **Restore from git history — DEAD since the 2026-08-16 history rewrite**
+   (`cleanup-large-blobs.yml` run #18 / 31955205445, owner decision;
+   `docs/FINDING-history-rewrite-2026-08-16.md`). The pin
+   `315a24524a851566c3d32cc88668fa32dcbd1d74` no longer resolves and its
+   rewritten twin `94b9cda540b8` no longer carries these payloads (verified
+   2026-08-16) — the blobs were stripped. `SHA256SUMS.txt` stays as the
+   identity record a re-fetch is verified against.
 
 2. **Re-fetch from the publishers.** Run from this directory:
 
@@ -186,15 +184,15 @@ series — unlike the ERCOT MIS rolling window, there is no known retention clif
 
 ### Recovery / re-fetch
 
-1. **Restore from git history — exact bytes, always available.** History is
-   kept (no rewrite):
-
-   ```
-   git restore --source=315a24524a851566c3d32cc88668fa32dcbd1d74 -- 'data/raw/NYISO/nyiso load reports *.zip'
-   ```
-
-   **Pin sha `315a24524a851566c3d32cc88668fa32dcbd1d74`** — the last commit at
-   which these zips were tracked (origin/main, 2026-08-15).
+1. **Restore from git history — DEAD since the 2026-08-16 history rewrite**
+   (`cleanup-large-blobs.yml` run #18 / 31955205445, owner decision;
+   `docs/FINDING-history-rewrite-2026-08-16.md`). The pin
+   `315a24524a851566c3d32cc88668fa32dcbd1d74` no longer resolves and its
+   rewritten twin `94b9cda540b8` no longer carries these zips (verified
+   2026-08-16) — the blobs were stripped. The outer browser-download bundles
+   are gone for good (they were never reproducible); the MEMBERS are the
+   recoverable form, via route 2. `SHA256SUMS.txt` stays as the record of
+   what the bundles held.
 
 2. **Re-fetch the monthly archives from MIS.** There is no fetch script and the
    outer bundles are not reproducible (they are a browser-download artifact);

@@ -23,29 +23,37 @@ CSVs are bulky … the repo keeps tidy hourly aggregates instead and the raw
 files are staged out"). Their bytes are pinned by `SHA256SUMS.txt` in this
 directory (tracked).
 
-**Re-fetchability: NONE — history-as-archive is the only recovery.** The OASIS
+**Re-fetchability: NONE. And the history-as-archive recovery this conversion
+was built on is GONE: these bytes are UNRECOVERABLE from this repository since
+2026-08-16.** The OASIS
 LMP retention boundary is a *moving* ~39-month window (a property of the
 PRC_LMP report itself): binary-searched at **2023-04-19 on 2026-07-31** and
 already **2023-04-22 by 2026-08-04** (`fetch_caiso_oasis.py` docstring — do not
 hardcode a boundary; re-measure it). Every trade date in these zips is far past
 it, so no OASIS query and no fresh hand-download can ever serve them again.
-History is kept — the conversion untracked the payloads at tip, it did **not**
-rewrite history — so the exact bytes remain fetchable forever from the promisor
-remote at the pin sha:
-
-```
-git restore --source=726f389d94c45141bac83eacfdaea5e18a465c56 -- data/raw/lmp-data/CAISO
-```
-
-Verify a restore against `SHA256SUMS.txt` (`sha256sum -c`, from this
-directory, on the `*_csv.zip` lines).
+The recovery contract written at conversion time — "history is kept … the
+exact bytes remain fetchable forever from the promisor remote at
+`git restore --source=726f389d…`" — was invalidated by the 2026-08-16 history
+rewrite (`cleanup-large-blobs.yml` run #18 / 31955205445, owner decision
+superseding the Addendum AQ NO-GO; `docs/FINDING-history-rewrite-2026-08-16.md`):
+the 60 zip blobs were stripped, the pin no longer resolves, and its rewritten
+twin `4759a16023f4` retains only the 8 non-payload files here (verified
+2026-08-16). What remains: the tracked hourly aggregates (§1, the product
+every consumer reads, already folded from these zips) and `SHA256SUMS.txt`,
+which stays as the identity record of what was held. Last-resort salvage: as
+of 2026-08-16 the pre-rewrite trees are still incidentally reachable through
+GitHub's `refs/pull/*` retention (e.g. `git fetch origin refs/pull/3978/head`)
+— unadvertised, no durability guarantee; if these bytes ever matter again,
+salvage them from there BEFORE GitHub compacts, because no other copy exists
+anywhere.
 
 **Consumers of the zips** (all tolerate their absence at tip):
 `scripts/data/fold_caiso_oasis_grp_zips.py` — the standing folder that turns
 restored GRP zips into the hourly aggregates above (the aggregates already
-carry this fold, so it re-runs only after a restore); and frozen probes from
-the caiso-163…168 lanes (frozen record — they degrade gracefully when the
-payloads are absent, and a restore from the pin revives them byte-exactly).
+carry this fold, so it re-runs only if payloads are ever salvaged back); and
+frozen probes from the caiso-163…168 lanes (frozen record — they degrade
+gracefully when the payloads are absent, which since 2026-08-16 is their
+permanent state absent a refs/pull salvage).
 
 **Future OASIS pulls stay out of the pack by design:** `.gitignore` carries
 `data/raw/lmp-data/CAISO/2???????_2???????_*_csv.zip`, so a fresh SingleZip /

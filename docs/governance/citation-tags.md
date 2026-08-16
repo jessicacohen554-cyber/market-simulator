@@ -4,6 +4,15 @@
 tag set computed and committed, **publication blocked** on credentials (§5).
 **Evidence:** `docs/FINDING-rewrite-prep-2026-08-11.md`.
 
+> **2026-08-16: the rewrite this doc prepared for HAPPENED — with zero tags
+> published** (owner decision superseding Addendum AQ; run 31955205445;
+> `docs/FINDING-history-rewrite-2026-08-16.md`). The manifest leg (§4) carried
+> the protection: all 104 load-bearing commits survived, 95 under NEW shas.
+> **The old→new translator is `docs/governance/citation-commit-map.txt`** —
+> see §8. Every `oid` in `citation-tags.json` is a PRE-rewrite sha; translate
+> before resolving. The tags remain unpublished and must be (re)generated
+> against post-rewrite shas when they are.
+
 ## 1. The problem this solves
 
 This repo's governance model is citation-based — *cite, never re-derive*. Rule 28
@@ -138,3 +147,29 @@ reference today; the tag is the survivor. Where a **tree or blob hash** is
 available it is stronger than both — content-addressed hashes are invariant
 under any rewrite that does not change the content itself, so a `src/` tree hash
 survives a `data/raw` strip unconditionally. Prefer it for byte-identity claims.
+
+## 8. The 2026-08-16 rewrite — pre→post sha translation
+
+The 2026-08-16 history rewrite (run 31955205445; full record and honest-cost
+measurement: `docs/FINDING-history-rewrite-2026-08-16.md`) assigned new shas to
+essentially every commit after 2026-05-16. **`docs/governance/citation-commit-map.txt`
+is the committed translator for the 104 load-bearing commits** of this
+manifest: one `old_sha new_sha` pair per line (the final 9 self-map — they are
+refs/pull-only commits the rewrite never touched), `#` lines are provenance.
+
+```
+awk -v o=<old-40-char-sha> '$1 == o {print $2}' docs/governance/citation-commit-map.txt
+```
+
+Notes for consumers:
+
+- The workflow's own runner-side `citation-commit-map.txt` and the full
+  filter-repo commit-map were never archived; the committed file is a
+  RECONSTRUCTION (unique author-date+subject identity match against the
+  post-rewrite history, 95/95 unique, cross-checked against run #18's verify
+  log). Non-manifest citations (~700 distinct commits, ~2,400 occurrences)
+  have **no translator** and are dead links — the priced §5.4 loss.
+- **Short pre-rewrite citations can now silently lie**: `00abb60` (cited in
+  pre-rewrite docs for a dead #4008-era commit) prefix-resolves to the
+  rewritten main tip `00abb60fd4…`, a different commit. Check a citation's
+  date against 2026-08-16 before trusting what a 7-char prefix resolves to.
