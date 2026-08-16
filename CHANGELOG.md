@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-16 — BLOAT-3: Stage-2 charter decision card drafted and served — the untrack question re-derived over the post-rewrite recovery reality
+
+Docs-only. `docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md` serves the
+open D-ledger item BLOAT-3 (bloat plan §9) over the BLOAT-B-7 re-measured pool
+at `04d1cf0`: adjudication pool 4,008.7 MiB / 1,487 files, takeable residual
+≈ 3,311.9 MiB after the §4.2/§4.7 keep-verdicts, full untrack → tip
+≈ 3.0 GiB. Because the 2026-08-16 history rewrite demonstrated that
+history-as-archive is not durable under owner-authorized rewrites, the card's
+central ruling is the RECOVERY STORY per corpus — (a) evidence-passed
+re-fetch / (b) owner-held external archive / (c) explicit signed loss, with
+pin-based recovery admissible only under a no-further-rewrite commitment —
+before any untrack verdict. Options O1–O4 with O2 (staged (a)-only GO,
+prima facie ≈ 1,133 MiB) recommended; decisions D1–D5; §0ar-3 pre-merge
+checklist walked at HEAD (golden-tier sparse list needs zero edits;
+skip-when-absent tests named as an unverified execution duty;
+`hydrate_data.py` pin support conditional on D2). No untracking, gitignore
+edit, data move, or workflow edit. **Verdict PENDING** — slots opened on the
+card, bloat plan §9/BLOAT-3, and release-plan §8.
+
 ## 2026-08-16 — BLOAT-B-8: post-rewrite aftercare — the 2026-08-16 history rewrite ledgered, the citation map recovered, every corpus recovery contract repaired, the pack re-measured
 
 The owner executed the `cleanup-large-blobs.yml` history rewrite (run
