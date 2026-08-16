@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-16-caiso-197-l2-control",
+  "label": "caiso 197 l2 control",
+  "date": "2026-08-16",
+  "shorthand": "caiso-197-l2-control",
+  "definition": "caiso-197 lane-2 campaign CONTROL: byte-faithful replay of the caiso-196 keeper recipe on the re-anchored base (FINDING-caiso196 \u00a77); capacity-deliverability partition materialized; hydro_ror_split explicitly False (disclosed, integration protocol \u00a73); PRECHECK-caiso197-wefor-rerun-2026-08-16.md pushed at 995cfe2c7 before this solve.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-16-caiso-197-l2-control.js",
+  "bundle": "results/calibration/caiso197_l2_control"
+}

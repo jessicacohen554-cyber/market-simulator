@@ -7994,3 +7994,34 @@ clause requires** — the close-out campaign's control base is now
 ({CC_REGULAR}-scoped) and lanes 3/5 compose on it. Rule 22 D-5(b) does not fire
 (no `complete` marker); freeze untouched; no out-of-training year touched.
 
+
+## 2026-08-16 — caiso-197 (lane 2 RE-RUN): `wefor_residual=0.0` {CC_REGULAR} ACCEPTED 4/4 on the re-anchored caiso-196 base — ledger 11/8 → 10/7 (the fitted `wefor_multiplier` retired), and the keeper's C1-2023 CC_REGULAR FAIL heals in the arm
+
+**Runs `2026-08-16-caiso-197-l2-control` / `2026-08-16-caiso-197-l2-wefor`**
+(both NOT-YET / C6 UNATTESTED — standard non-keeper A/B posture). PRECHECK
+pushed at `995cfe2c7` BEFORE any solve; GATESPEC-caiso193 applied as written;
+{CC_REGULAR} is the gatespec's own G-COV fail-closed subset on the repaired
+instrument (`_caiso196_gcov_remeasure.json`: 0.9758/0.9667 both readings;
+CC_CHP excluded at 0.6357 strict — real CEMS-exemption limit). **Control
+BIT-ZERO** vs the committed keeper on every zone-hour and class-hour of all
+three years (noise floor 0.0, quoted first; ratified tolerance met
+trivially); seam caps 16055/16452/16148 logged; `hydro_ror_split=false`
+disclosed. **Gates 4/4**: G-COV (committed record), G-DOF (**10/7** — the
+sanctioned removed path: neutral multiplier leaves the ledger, 0.0 residual
+is the frozen measurement's identity, not a free parameter), G-ONEMECH
+(exact three-field diff over the full config), G-SIXISO. Engagement
+34,577/36,780/35,883 of 61,320 zone-hours moved. **C1 fuel-mix flips
+FAIL → PASS 12/12**: 2023 CC_REGULAR −4.44 → −3.94 TWh (−1.9 → −1.6 pp, in
+band) — the caiso-196 ACCEPT-WITH-FLIP row closed by repairing the OTHER
+half of the same double-count; 2024 −1.21 → −0.79. C3b clean all years
+(0.076/0.152/0.173), no pass→fail flip anywhere (§5 silent). C3a
+transparency-only per the verbatim direction-hazard clause:
++4.4/+11.7/+14.5 → +4.0/+11.1/+14.1 % (never consulted). Matrix duty (b):
+`wefor_residual` CAISO **R → O** (acceptance recorded; K follows the Wave-2
+§6 C3a-blind promotion). Environment notes: replay driver taught the
+nyiso-136 rule-26 collapse (`_RETIRED_COLLAPSED`, +3 tests) after the
+strict unmapped-key guard bricked the first control attempt; Desert Star NV
+CAMPD intake landed this session (raw files only — extract re-derive
+deferred post-ladder, its own rule-23 charter), bench parts rebuilt on the
+CA+NV CAMPD basis for ALL caiso-197 registrations, C1 measured unaffected
+(EIA-923-scored; the control reprints the keeper's −4.44 exactly).
