@@ -1,0 +1,397 @@
+{
+ "session": "nyiso-137",
+ "what": "Grades the NYISO-RTD-CLOCK interval mis-binning against the joint Zone-K lever's kill gates K1-K6 and against the C3c ACTUAL tail count. Input-side only: no LP solved, no model output scored, no product written.",
+ "threshold": 300.0,
+ "convention": {
+  "committed_producer": "derive_actual_lmp._nyiso_wide -> .floor('h') (interval-BEGINNING, ADJUDICATED WRONG)",
+  "correct": "(ts - 1s).floor('h') (interval-ENDING, ADJUDICATED RIGHT)",
+  "adjudication": "docs/handoffs/d32-f6fix-2026-08-13.md ADDENDUM A.1-A.7"
+ },
+ "holdout": "2023-2025 only. The twelve 2022 zips are on disk and were NOT read -- ACTIVE spend freeze re-confirmed 2026-08-15.",
+ "part_a_exact_staged_months": {
+  "per_month": [
+   {
+    "year": 2023,
+    "month": 6,
+    "hours_total": 721,
+    "hours_whole": 675,
+    "hours_excluded_boundary": 46,
+    "hours_moved_gt_1c": 636,
+    "share_moved": 0.9422,
+    "month_mean_beginning": 26.1657,
+    "month_mean_ending": 26.1646,
+    "month_mean_shift_pct": -0.0042,
+    "mean_abs_delta": 0.4238,
+    "p99_abs_delta": 5.343,
+    "max_abs_delta": 23.1553,
+    "tail_beginning": 0,
+    "tail_ending": 0,
+    "crossings_up": 0,
+    "crossings_down": 0,
+    "net_tail_delta": 0
+   },
+   {
+    "year": 2023,
+    "month": 12,
+    "hours_total": 745,
+    "hours_whole": 705,
+    "hours_excluded_boundary": 40,
+    "hours_moved_gt_1c": 652,
+    "share_moved": 0.9248,
+    "month_mean_beginning": 28.9341,
+    "month_mean_ending": 28.9201,
+    "month_mean_shift_pct": -0.0486,
+    "mean_abs_delta": 0.4082,
+    "p99_abs_delta": 4.0369,
+    "max_abs_delta": 23.1155,
+    "tail_beginning": 0,
+    "tail_ending": 0,
+    "crossings_up": 0,
+    "crossings_down": 0,
+    "net_tail_delta": 0
+   },
+   {
+    "year": 2024,
+    "month": 2,
+    "hours_total": 697,
+    "hours_whole": 632,
+    "hours_excluded_boundary": 65,
+    "hours_moved_gt_1c": 594,
+    "share_moved": 0.9399,
+    "month_mean_beginning": 29.2595,
+    "month_mean_ending": 29.2635,
+    "month_mean_shift_pct": 0.0137,
+    "mean_abs_delta": 0.432,
+    "p99_abs_delta": 3.5537,
+    "max_abs_delta": 17.9015,
+    "tail_beginning": 0,
+    "tail_ending": 0,
+    "crossings_up": 0,
+    "crossings_down": 0,
+    "net_tail_delta": 0
+   },
+   {
+    "year": 2024,
+    "month": 3,
+    "hours_total": 744,
+    "hours_whole": 690,
+    "hours_excluded_boundary": 54,
+    "hours_moved_gt_1c": 640,
+    "share_moved": 0.9275,
+    "month_mean_beginning": 25.5212,
+    "month_mean_ending": 25.5141,
+    "month_mean_shift_pct": -0.0275,
+    "mean_abs_delta": 0.3985,
+    "p99_abs_delta": 4.1144,
+    "max_abs_delta": 24.9109,
+    "tail_beginning": 0,
+    "tail_ending": 0,
+    "crossings_up": 0,
+    "crossings_down": 0,
+    "net_tail_delta": 0
+   },
+   {
+    "year": 2024,
+    "month": 4,
+    "hours_total": 721,
+    "hours_whole": 655,
+    "hours_excluded_boundary": 66,
+    "hours_moved_gt_1c": 613,
+    "share_moved": 0.9359,
+    "month_mean_beginning": 25.1179,
+    "month_mean_ending": 24.9907,
+    "month_mean_shift_pct": -0.5063,
+    "mean_abs_delta": 0.4527,
+    "p99_abs_delta": 3.0536,
+    "max_abs_delta": 72.4302,
+    "tail_beginning": 1,
+    "tail_ending": 1,
+    "crossings_up": 0,
+    "crossings_down": 0,
+    "net_tail_delta": 0
+   },
+   {
+    "year": 2024,
+    "month": 5,
+    "hours_total": 745,
+    "hours_whole": 676,
+    "hours_excluded_boundary": 69,
+    "hours_moved_gt_1c": 630,
+    "share_moved": 0.932,
+    "month_mean_beginning": 25.4826,
+    "month_mean_ending": 25.5333,
+    "month_mean_shift_pct": 0.1988,
+    "mean_abs_delta": 0.378,
+    "p99_abs_delta": 3.2172,
+    "max_abs_delta": 44.3692,
+    "tail_beginning": 0,
+    "tail_ending": 0,
+    "crossings_up": 0,
+    "crossings_down": 0,
+    "net_tail_delta": 0
+   },
+   {
+    "year": 2024,
+    "month": 6,
+    "hours_total": 721,
+    "hours_whole": 649,
+    "hours_excluded_boundary": 72,
+    "hours_moved_gt_1c": 616,
+    "share_moved": 0.9492,
+    "month_mean_beginning": 29.8826,
+    "month_mean_ending": 29.9012,
+    "month_mean_shift_pct": 0.062,
+    "mean_abs_delta": 0.4578,
+    "p99_abs_delta": 4.752,
+    "max_abs_delta": 12.0355,
+    "tail_beginning": 0,
+    "tail_ending": 0,
+    "crossings_up": 0,
+    "crossings_down": 0,
+    "net_tail_delta": 0
+   },
+   {
+    "year": 2024,
+    "month": 9,
+    "hours_total": 721,
+    "hours_whole": 654,
+    "hours_excluded_boundary": 67,
+    "hours_moved_gt_1c": 622,
+    "share_moved": 0.9511,
+    "month_mean_beginning": 30.6772,
+    "month_mean_ending": 30.6768,
+    "month_mean_shift_pct": -0.0012,
+    "mean_abs_delta": 0.3321,
+    "p99_abs_delta": 2.8382,
+    "max_abs_delta": 4.474,
+    "tail_beginning": 0,
+    "tail_ending": 0,
+    "crossings_up": 0,
+    "crossings_down": 0,
+    "net_tail_delta": 0
+   },
+   {
+    "year": 2025,
+    "month": 8,
+    "hours_total": 745,
+    "hours_whole": 682,
+    "hours_excluded_boundary": 63,
+    "hours_moved_gt_1c": 651,
+    "share_moved": 0.9545,
+    "month_mean_beginning": 41.4414,
+    "month_mean_ending": 41.4242,
+    "month_mean_shift_pct": -0.0416,
+    "mean_abs_delta": 0.5307,
+    "p99_abs_delta": 3.669,
+    "max_abs_delta": 29.2787,
+    "tail_beginning": 2,
+    "tail_ending": 2,
+    "crossings_up": 0,
+    "crossings_down": 0,
+    "net_tail_delta": 0
+   }
+  ],
+  "aggregate": {
+   "months_measured": 9,
+   "hours_whole": 6018,
+   "hours_moved_gt_1c": 5654,
+   "tail_beginning": 3,
+   "tail_ending": 3,
+   "crossings_up": 0,
+   "crossings_down": 0,
+   "max_abs_delta": 72.4302,
+   "crossings_total": 0,
+   "share_moved": 0.9395
+  },
+  "delta_by_price_band": {
+   "all": {
+    "hours": 6018,
+    "mean_price_beginning": 29.1725,
+    "mean_price_ending": 29.1622,
+    "mean_shift_pct": -0.0353,
+    "mean_abs_delta": 0.4237,
+    "p99_abs_delta": 4.0111,
+    "max_abs_delta": 72.4302,
+    "mean_signed_delta": -0.0103,
+    "n_up": 2928,
+    "n_down": 3090
+   },
+   ">100": {
+    "hours": 15,
+    "mean_price_beginning": 234.0123,
+    "mean_price_ending": 230.2793,
+    "mean_shift_pct": -1.5952,
+    "mean_abs_delta": 17.2158,
+    "p99_abs_delta": 68.5017,
+    "max_abs_delta": 72.4302,
+    "mean_signed_delta": -3.7329,
+    "n_up": 8,
+    "n_down": 7
+   },
+   ">200": {
+    "hours": 7,
+    "mean_price_beginning": 342.3585,
+    "mean_price_ending": 337.2099,
+    "mean_shift_pct": -1.5039,
+    "mean_abs_delta": 30.9854,
+    "p99_abs_delta": 70.7466,
+    "max_abs_delta": 72.4302,
+    "mean_signed_delta": -5.1486,
+    "n_up": 4,
+    "n_down": 3
+   },
+   ">250": {
+    "hours": 5,
+    "mean_price_beginning": 396.4677,
+    "mean_price_ending": 385.3379,
+    "mean_shift_pct": -2.8072,
+    "mean_abs_delta": 29.5538,
+    "p99_abs_delta": 70.7042,
+    "max_abs_delta": 72.4302,
+    "mean_signed_delta": -11.1298,
+    "n_up": 3,
+    "n_down": 2
+   },
+   ">300": {
+    "hours": 3,
+    "mean_price_beginning": 478.5464,
+    "mean_price_ending": 446.2933,
+    "mean_shift_pct": -6.7398,
+    "mean_abs_delta": 35.5529,
+    "p99_abs_delta": 71.5672,
+    "max_abs_delta": 72.4302,
+    "mean_signed_delta": -32.2531,
+    "n_up": 1,
+    "n_down": 2
+   }
+  },
+  "staged_tail_hours": [
+   {
+    "utc_hour": "2024-04-30 00:00:00+00:00",
+    "beginning": 450.22,
+    "ending": 377.79,
+    "abs_delta": 72.4302
+   },
+   {
+    "utc_hour": "2025-08-10 22:00:00+00:00",
+    "beginning": 593.16,
+    "ending": 598.1,
+    "abs_delta": 4.9496
+   },
+   {
+    "utc_hour": "2025-08-10 23:00:00+00:00",
+    "beginning": 392.26,
+    "ending": 362.98,
+    "abs_delta": 29.2787
+   }
+  ]
+ },
+ "part_b_proximity_ceiling": {
+  "source": "data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet",
+  "per_year": {
+   "2023": {
+    "hours": 8760,
+    "tail_committed": 10,
+    "bands": {
+     "+/-0.01": {
+      "hours_within": 0,
+      "could_drop_out": 0,
+      "could_come_in": 0
+     },
+     "+/-72.43": {
+      "hours_within": 16,
+      "could_drop_out": 5,
+      "could_come_in": 11
+     },
+     "+/-257.21": {
+      "hours_within": 829,
+      "could_drop_out": 8,
+      "could_come_in": 821
+     }
+    }
+   },
+   "2024": {
+    "hours": 8760,
+    "tail_committed": 12,
+    "bands": {
+     "+/-0.01": {
+      "hours_within": 0,
+      "could_drop_out": 0,
+      "could_come_in": 0
+     },
+     "+/-72.43": {
+      "hours_within": 11,
+      "could_drop_out": 2,
+      "could_come_in": 9
+     },
+     "+/-257.21": {
+      "hours_within": 1692,
+      "could_drop_out": 9,
+      "could_come_in": 1683
+     }
+    }
+   },
+   "2025": {
+    "hours": 8760,
+    "tail_committed": 42,
+    "bands": {
+     "+/-0.01": {
+      "hours_within": 0,
+      "could_drop_out": 0,
+      "could_come_in": 0
+     },
+     "+/-72.43": {
+      "hours_within": 48,
+      "could_drop_out": 8,
+      "could_come_in": 40
+     },
+     "+/-257.21": {
+      "hours_within": 4728,
+      "could_drop_out": 18,
+      "could_come_in": 4710
+     }
+    }
+   }
+  }
+ },
+ "part_c_c3c_verdict_reachability": {
+  "ruler": "+/-72.43",
+  "ruler_basis": "max |delta| measured on staged hours ALREADY above the $300 threshold -- the tail's own price region, not the all-hours distribution",
+  "keeper": "2026-08-08-nyiso-133-cod-arm",
+  "per_year": {
+   "2023": {
+    "model_tail": 21,
+    "actual_committed": 10,
+    "verdict_today": "FAIL",
+    "reachable_actual_lo": 5,
+    "reachable_actual_hi": 21,
+    "verdict_flips_within_ceiling": true,
+    "nearest_flipping_actual": 11,
+    "hours_of_movement_to_flip": 1,
+    "flip_to": "PASS"
+   },
+   "2024": {
+    "model_tail": 3,
+    "actual_committed": 12,
+    "verdict_today": "FAIL",
+    "reachable_actual_lo": 10,
+    "reachable_actual_hi": 21,
+    "verdict_flips_within_ceiling": false,
+    "nearest_flipping_actual": null,
+    "hours_of_movement_to_flip": null,
+    "flip_to": null
+   },
+   "2025": {
+    "model_tail": 24,
+    "actual_committed": 42,
+    "verdict_today": "PASS",
+    "reachable_actual_lo": 34,
+    "reachable_actual_hi": 82,
+    "verdict_flips_within_ceiling": true,
+    "nearest_flipping_actual": 49,
+    "hours_of_movement_to_flip": 7,
+    "flip_to": "FAIL"
+   }
+  }
+ }
+}
