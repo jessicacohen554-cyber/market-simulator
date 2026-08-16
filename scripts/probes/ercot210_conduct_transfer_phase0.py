@@ -718,6 +718,77 @@ def main() -> None:
                 "rel_err": (round((pred - meas) / meas, 4) if meas else None),
             }
 
+    # ---- POST-HOC DIAGNOSTICS -----------------------------------------
+    # Added AFTER the verdict was computed, to interpret two pre-registered
+    # gates. They GATE NOTHING: no threshold, band, fold rule or verdict above
+    # depends on anything in this block, and the verdict is byte-reproducible
+    # without it. They exist because two §7 constants turned out to interact
+    # badly with 2023's tightness seasonality, and the honest response is to
+    # measure that rather than to quietly restate the gate.
+    msh_d = np.asarray(imp["MONTH_START_HOUR"], dtype=int)
+    d23 = drv[TEST_YEAR]
+    ev = d23[d23["valid"] & (d23["x1"] >= EVAL_TIGHT_MIN)]
+    ev_mo = _hoy_month(ev["hoy"].to_numpy(), msh_d)
+    all_mo = _hoy_month(d23["hoy"].to_numpy(), msh_d)
+    season = {
+        "eval_hours_by_month": {int(k): int(v) for k, v in
+                                pd.Series(ev_mo).value_counts().sort_index().items()},
+        "eval_hours_total": int(len(ev)),
+        "eval_hours_post_ecrs": int((ev["hoy"] >= ECRS_LIVE_HOY).sum()),
+        "mean_tightness_pct_by_month": {
+            int(mm): round(float(d23.loc[(all_mo == mm) & d23["valid"], "x1"].mean()), 4)
+            for mm in (8, 9)
+        },
+    }
+
+    # (a) T1/T2 with fold admissibility relaxed to >=1 hour -- does the verdict
+    #     depend on the FOLD_MIN_HOURS constant, which post-ECRS 2023 cannot meet?
+    relaxed = {}
+    saved = globals()["FOLD_MIN_HOURS"]
+    try:
+        globals()["FOLD_MIN_HOURS"] = 1
+        for cls in CLASSES:
+            relaxed[f"{cls}:T1"] = fold_table(post, cls, HEADLINE[cls], T1_REL,
+                                              T1_ABS, months_post, EVAL_TIGHT_MIN)
+            relaxed[f"{cls}:T2"] = fold_table(post, cls, "s500", T2_REL, T2_ABS,
+                                              months_post, EVAL_TIGHT_MIN)
+    finally:
+        globals()["FOLD_MIN_HOURS"] = saved
+
+    # (b) T3 asks the fitted function to predict at x1 in [0.40, 0.60], OUTSIDE
+    #     its own x1 >= 0.90 fit support, so its FAIL is confounded with
+    #     extrapolation. The substantive question -- does conduct actually vary
+    #     with tightness -- is answered by the MEASURED contrast.
+    measured_contrast = {}
+    for cls in CLASSES:
+        stat = HEADLINE[cls]
+        hi = fit[(fit["cls"] == cls) & (fit["x1"] >= EVAL_TIGHT_MIN)]
+        lo = fit[(fit["cls"] == cls) & fit["x1"].between(*T3_BAND)]
+        measured_contrast[cls] = {
+            "measured_tight": round(_agg(hi, stat), 3) if len(hi) else None,
+            "measured_mid": round(_agg(lo, stat), 3) if len(lo) else None,
+            "measured_ratio": (round(_agg(hi, stat) / _agg(lo, stat), 3)
+                               if len(hi) and len(lo) and _agg(lo, stat) else None),
+            "n_tight": int(len(hi)), "n_mid": int(len(lo)),
+            "note": "measured, not predicted; T3's predicted ratio extrapolates "
+                    "outside the x1>=0.90 fit support",
+        }
+
+    # (c) competitive-state proxy: offered above-LSL MW per hour at the eval cut.
+    offer_scale = {}
+    for y in (*FIT_YEARS, TEST_YEAR):
+        r = rows_by_year[y]
+        r = r[r["x1"] >= EVAL_TIGHT_MIN]
+        for cls in CLASSES:
+            g = r[r["cls"] == cls]
+            offer_scale[f"{y}:{cls}"] = {
+                "n_hours": int(g["hoy"].nunique()),
+                "mean_offered_mw_per_hour": (round(float(g["offered_mw"].mean()), 1)
+                                             if len(g) else None),
+                "measured_headline": (round(_agg(g, HEADLINE[cls]), 2)
+                                      if len(g) else None),
+            }
+
     out = {
         "_provenance": {
             "probe": "scripts/probes/ercot210_conduct_transfer_phase0.py",
@@ -756,6 +827,18 @@ def main() -> None:
         "T5_model_free_tie_test": {"pass": T5_PASS, "by_class": t5},
         "VERDICT": verdict,
         "reported_not_gating": contrast,
+        "post_hoc_diagnostics": {
+            "_note": (
+                "Computed AFTER the verdict. GATES NOTHING -- no threshold, "
+                "band, fold rule or verdict depends on this block. Added to "
+                "interpret two §7 constants that interact badly with 2023's "
+                "tightness seasonality."
+            ),
+            "tightness_seasonality_2023": season,
+            "t1_t2_with_fold_min_hours_relaxed_to_1": relaxed,
+            "t3_measured_contrast_fit_years": measured_contrast,
+            "offer_scale_by_year_at_eval_cut": offer_scale,
+        },
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(out, indent=1, default=str) + "\n")

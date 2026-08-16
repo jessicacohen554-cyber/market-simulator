@@ -892,5 +892,344 @@
    "predicted": 35.678,
    "rel_err": -0.3914
   }
+ },
+ "post_hoc_diagnostics": {
+  "_note": "Computed AFTER the verdict. GATES NOTHING -- no threshold, band, fold rule or verdict depends on this block. Added to interpret two \u00a77 constants that interact badly with 2023's tightness seasonality.",
+  "tightness_seasonality_2023": {
+   "eval_hours_by_month": {
+    "1": 55,
+    "2": 12,
+    "3": 5,
+    "4": 32,
+    "5": 44,
+    "6": 7,
+    "7": 6,
+    "8": 9,
+    "9": 4,
+    "12": 1
+   },
+   "eval_hours_total": 175,
+   "eval_hours_post_ecrs": 22,
+   "mean_tightness_pct_by_month": {
+    "8": 0.47,
+    "9": 0.3715
+   }
+  },
+  "t1_t2_with_fold_min_hours_relaxed_to_1": {
+   "STORAGE:T1": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 5000.0,
+      "predicted": 831.5748,
+      "abs_err": 4168.4252,
+      "rel_err": -0.8337,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 4999.9836,
+      "predicted": 156.2803,
+      "abs_err": 4843.7033,
+      "rel_err": -0.9687,
+      "within_band": false
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 3361.1218,
+      "predicted": 752.9684,
+      "abs_err": 2608.1534,
+      "rel_err": -0.776,
+      "within_band": false
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 4052.4775,
+      "predicted": 1974.3553,
+      "abs_err": 2078.1222,
+      "rel_err": -0.5128,
+      "within_band": false
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 271.8082,
+      "predicted": 348.9513,
+      "abs_err": 77.1431,
+      "rel_err": 0.2838,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 1
+   },
+   "STORAGE:T2": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 1.0,
+      "predicted": 0.5023,
+      "abs_err": 0.4977,
+      "rel_err": -0.4977,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 0.6919,
+      "predicted": 0.286,
+      "abs_err": 0.4058,
+      "rel_err": -0.5866,
+      "within_band": false
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 0.7553,
+      "predicted": 0.3984,
+      "abs_err": 0.3568,
+      "rel_err": -0.4725,
+      "within_band": false
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 0.7634,
+      "predicted": 0.5698,
+      "abs_err": 0.1936,
+      "rel_err": -0.2536,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 0.4441,
+      "predicted": 0.4117,
+      "abs_err": 0.0324,
+      "rel_err": -0.073,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 2
+   },
+   "THERMAL:T1": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 75.0,
+      "predicted": 35.4949,
+      "abs_err": 39.5051,
+      "rel_err": -0.5267,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 32.6199,
+      "predicted": 34.9449,
+      "abs_err": 2.325,
+      "rel_err": 0.0713,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 65.598,
+      "predicted": 35.4657,
+      "abs_err": 30.1323,
+      "rel_err": -0.4593,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 62.6382,
+      "predicted": 37.01,
+      "abs_err": 25.6282,
+      "rel_err": -0.4091,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 29.9,
+      "predicted": 36.3738,
+      "abs_err": 6.4738,
+      "rel_err": 0.2165,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 5
+   },
+   "THERMAL:T2": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 0.0176,
+      "predicted": 0.0014,
+      "abs_err": 0.0162,
+      "rel_err": -0.9207,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 0.011,
+      "predicted": 0.0022,
+      "abs_err": 0.0088,
+      "rel_err": -0.8014,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 0.0102,
+      "predicted": 0.0026,
+      "abs_err": 0.0076,
+      "rel_err": -0.7441,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 0.0099,
+      "predicted": 0.003,
+      "abs_err": 0.0068,
+      "rel_err": -0.692,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 0.0022,
+      "predicted": 0.0043,
+      "abs_err": 0.0021,
+      "rel_err": 0.9439,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 5
+   }
+  },
+  "t3_measured_contrast_fit_years": {
+   "STORAGE": {
+    "measured_tight": 1055.596,
+    "measured_mid": 695.891,
+    "measured_ratio": 1.517,
+    "n_tight": 305,
+    "n_mid": 3337,
+    "note": "measured, not predicted; T3's predicted ratio extrapolates outside the x1>=0.90 fit support"
+   },
+   "THERMAL": {
+    "measured_tight": 37.304,
+    "measured_mid": 44.669,
+    "measured_ratio": 0.835,
+    "n_tight": 305,
+    "n_mid": 3337,
+    "note": "measured, not predicted; T3's predicted ratio extrapolates outside the x1>=0.90 fit support"
+   }
+  },
+  "offer_scale_by_year_at_eval_cut": {
+   "2024:STORAGE": {
+    "n_hours": 143,
+    "mean_offered_mw_per_hour": 8359.7,
+    "measured_headline": 1280.84
+   },
+   "2024:THERMAL": {
+    "n_hours": 143,
+    "mean_offered_mw_per_hour": 76100.4,
+    "measured_headline": 36.08
+   },
+   "2025:STORAGE": {
+    "n_hours": 162,
+    "mean_offered_mw_per_hour": 25266.1,
+    "measured_headline": 989.81
+   },
+   "2025:THERMAL": {
+    "n_hours": 162,
+    "mean_offered_mw_per_hour": 80711.4,
+    "measured_headline": 38.32
+   },
+   "2023:STORAGE": {
+    "n_hours": 175,
+    "mean_offered_mw_per_hour": 3022.9,
+    "measured_headline": 2713.97
+   },
+   "2023:THERMAL": {
+    "n_hours": 175,
+    "mean_offered_mw_per_hour": 66196.7,
+    "measured_headline": 38.78
+   }
+  }
  }
 }
