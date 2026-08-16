@@ -1210,3 +1210,31 @@ your branch when done.
   `audit_keepers --iso PJM --check` PASS 0/0 and `check_mechanism_matrix.py`
   fully clean at `00abb60`. Full record: `docs/handoffs/debug-sweep-2026-08.md`
   Addendum §A.1–A.7.
+- 2026-08-16 — **DEBUG-MGR reissue #2 delivered: the sibling-import residue
+  is RETIRED — census 0 bare sites / 0 live files** (branch
+  `claude/fable-debug-manager-reissue-2-ofrk9q` off main `00abb60`; owner
+  merges). Four batches (56/34 → 22/15 → 10/4 → 4/3 → 0/0) under the
+  scripts/README.md per-file protocol: the 19-file ERCOT `scripts/data/`
+  derive web, the EIA-930 chain + CAISO OASIS pair + misc singles,
+  `lib/sced_corpus_instruments.py`'s six deferred probe imports, and the
+  deploy trio last (`register_hindcast` gained a stdlib-only repo-root
+  bootstrap; deploy emulation on stock `python3` with no third-party deps
+  passed — the Pages sparse-checkout constraint holds). 58 both-paths
+  edges verified IDENTICAL (structural code equality; harness caveat
+  added: set reprs are hash-seed dependent — compare order-independent),
+  19+11+3 strict direct-run checks green, three test rigs repaired off
+  second-copy patterns, `--script-refs` + ruff green per batch,
+  `scripts/README.md` census paragraph rewritten to the completed state.
+  Fast lane re-run at the branch tip (post-conversion): see the handoff.
+  Landing duties executed: #4008 verified landed intact (keeper + matrix
+  clean on `00abb60`) and its missing §8 entry backfilled (above).
+  Solve-neutral throughout; no golden, artifact, keeper or matrix file
+  touched. Watch items restated: golden-data-tier cron first firing Mon
+  2026-08-17 05:37 UTC is post-fix (a red = NEW finding); ci.yml
+  unreachable-green until PERF-B; branch-protection memo unchanged.
+  Dispatch-state corrections for the board: BLOAT-B-7 close-out MERGED
+  (#3995), DOCS-A MERGED, G1 DECLARED — the reissue-#2 dispatch's routing
+  list (B-6R/B-7, DOCS-A, PERF-B) is fully overtaken; PERF-B's prompt was
+  already issued at the G1 refresh and awaits owner launch. No DEBUG-C
+  continuation is needed: the lane's chartered residue work is complete.
+  Full record: `docs/handoffs/debug-sweep-2026-08.md` Addendum §B.
