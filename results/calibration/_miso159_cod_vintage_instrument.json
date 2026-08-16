@@ -1,0 +1,878 @@
+{
+ "prereg": "PREREG-miso159-commission-year-cod-fallback-2026-08-15.md",
+ "keeper_bundle": "miso148_basis_B",
+ "summer_wefor_share": 0.3,
+ "cache_key_off": "a7c5bdc709877ec9",
+ "cache_key_on": "336f1b2b6b85d867",
+ "years": {
+  "2023": {
+   "arms": {
+    "off": {
+     "classes": {
+      "CC_CHP": {
+       "rows": 64,
+       "lp_cap_gw": 3.620615000000001,
+       "capwt_online_year": 2009.9999999999998,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 64,
+       "cap_at_2010_gw": 3.620615000000001,
+       "availcap_annual_gw": 3.2498047662595275,
+       "availcap_summer_gw": 3.375482993029217,
+       "availcap_summer_peak_gw": 3.3749221349108933
+      },
+      "CC_REGULAR": {
+       "rows": 333,
+       "lp_cap_gw": 27.420099999999998,
+       "capwt_online_year": 2010.0,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 333,
+       "cap_at_2010_gw": 27.420099999999998,
+       "availcap_annual_gw": 19.781020576688817,
+       "availcap_summer_gw": 23.773026340601657,
+       "availcap_summer_peak_gw": 23.76506867684961
+      },
+      "COAL": {
+       "rows": 446,
+       "lp_cap_gw": 42.792764000000005,
+       "capwt_online_year": 2009.9999999999998,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 446,
+       "cap_at_2010_gw": 42.792764000000005,
+       "availcap_annual_gw": 25.937055222853164,
+       "availcap_summer_gw": 32.62123409032351,
+       "availcap_summer_peak_gw": 32.60594064011326
+      },
+      "CT_CHP": {
+       "rows": 114,
+       "lp_cap_gw": 0.8959840700000002,
+       "capwt_online_year": 2009.9999999999995,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 114,
+       "cap_at_2010_gw": 0.8959840700000002,
+       "availcap_annual_gw": 0.8126937779285479,
+       "availcap_summer_gw": 0.844171033692415,
+       "availcap_summer_peak_gw": 0.8378461752329925
+      },
+      "CT_PEAKER": {
+       "rows": 733,
+       "lp_cap_gw": 22.281793098,
+       "capwt_online_year": 2009.9999999999998,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 733,
+       "cap_at_2010_gw": 22.281793098,
+       "availcap_annual_gw": 19.220810411637185,
+       "availcap_summer_gw": 20.59455474080839,
+       "availcap_summer_peak_gw": 20.58394063025511
+      },
+      "ST_CHP": {
+       "rows": 85,
+       "lp_cap_gw": 0.6976352300000002,
+       "capwt_online_year": 2009.9999999999995,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 85,
+       "cap_at_2010_gw": 0.6976352300000002,
+       "availcap_annual_gw": 0.47309809275357706,
+       "availcap_summer_gw": 0.5202607101255418,
+       "availcap_summer_peak_gw": 0.5167790140557668
+      },
+      "ST_GAS": {
+       "rows": 119,
+       "lp_cap_gw": 10.990995000000002,
+       "capwt_online_year": 2010.0000000000005,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 119,
+       "cap_at_2010_gw": 10.990995000000002,
+       "availcap_annual_gw": 5.6359256075899795,
+       "availcap_summer_gw": 6.4995074687004335,
+       "availcap_summer_peak_gw": 6.496947380023819
+      }
+     },
+     "n_gen": 2929
+    },
+    "on": {
+     "classes": {
+      "CC_CHP": {
+       "rows": 64,
+       "lp_cap_gw": 3.620615000000001,
+       "capwt_online_year": 1998.8596302009462,
+       "n_distinct_online_year": 16,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 3.205993673285708,
+       "availcap_summer_gw": 3.356765241209544,
+       "availcap_summer_peak_gw": 3.356207675304334
+      },
+      "CC_REGULAR": {
+       "rows": 333,
+       "lp_cap_gw": 27.420099999999998,
+       "capwt_online_year": 2007.078409633809,
+       "n_distinct_online_year": 25,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 19.71568946658103,
+       "availcap_summer_gw": 23.72780909918833,
+       "availcap_summer_peak_gw": 23.719874772905857
+      },
+      "COAL": {
+       "rows": 446,
+       "lp_cap_gw": 42.792764000000005,
+       "capwt_online_year": 1981.9572351063837,
+       "n_distinct_online_year": 32,
+       "rows_at_2010": 18,
+       "cap_at_2010_gw": 1.9507999999999996,
+       "availcap_annual_gw": 24.996318836933348,
+       "availcap_summer_gw": 32.02420549568234,
+       "availcap_summer_peak_gw": 32.00926377886305
+      },
+      "CT_CHP": {
+       "rows": 114,
+       "lp_cap_gw": 0.8959840700000002,
+       "capwt_online_year": 1996.2218659534874,
+       "n_distinct_online_year": 28,
+       "rows_at_2010": 1,
+       "cap_at_2010_gw": 0.0008274000000000003,
+       "availcap_annual_gw": 0.7899028087854961,
+       "availcap_summer_gw": 0.8322011121665516,
+       "availcap_summer_peak_gw": 0.8259690023853052
+      },
+      "CT_PEAKER": {
+       "rows": 733,
+       "lp_cap_gw": 22.281793098,
+       "capwt_online_year": 1999.5749745307141,
+       "n_distinct_online_year": 55,
+       "rows_at_2010": 2,
+       "cap_at_2010_gw": 0.0026039999999999995,
+       "availcap_annual_gw": 18.592282901357997,
+       "availcap_summer_gw": 20.230238289709003,
+       "availcap_summer_peak_gw": 20.219843662506136
+      },
+      "ST_CHP": {
+       "rows": 85,
+       "lp_cap_gw": 0.6976352300000002,
+       "capwt_online_year": 1980.4066960752536,
+       "n_distinct_online_year": 32,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 0.4414249183117321,
+       "availcap_summer_gw": 0.5003979071942052,
+       "availcap_summer_peak_gw": 0.4970472357431661
+      },
+      "ST_GAS": {
+       "rows": 119,
+       "lp_cap_gw": 10.990995000000002,
+       "capwt_online_year": 1976.8418223281874,
+       "n_distinct_online_year": 20,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 5.138537759322962,
+       "availcap_summer_gw": 6.1976145335139226,
+       "availcap_summer_peak_gw": 6.1951303468639125
+      }
+     },
+     "n_gen": 2929
+    }
+   },
+   "capability_removed_gw": {
+    "CC_CHP": {
+     "removed_annual_gw": 0.043811092973819576,
+     "removed_summer_gw": 0.018717751819672834,
+     "removed_summer_peak_gw": 0.018714459606559153
+    },
+    "CC_REGULAR": {
+     "removed_annual_gw": 0.06533111010778825,
+     "removed_summer_gw": 0.04521724141332584,
+     "removed_summer_peak_gw": 0.045193903943751224
+    },
+    "COAL": {
+     "removed_annual_gw": 0.9407363859198163,
+     "removed_summer_gw": 0.5970285946411735,
+     "removed_summer_peak_gw": 0.5966768612502094
+    },
+    "CT_CHP": {
+     "removed_annual_gw": 0.022790969143051787,
+     "removed_summer_gw": 0.011969921525863403,
+     "removed_summer_peak_gw": 0.0118771728476873
+    },
+    "CT_PEAKER": {
+     "removed_annual_gw": 0.6285275102791879,
+     "removed_summer_gw": 0.3643164510993877,
+     "removed_summer_peak_gw": 0.36409696774897427
+    },
+    "ST_CHP": {
+     "removed_annual_gw": 0.031673174441844976,
+     "removed_summer_gw": 0.019862802931336576,
+     "removed_summer_peak_gw": 0.019731778312600645
+    },
+    "ST_GAS": {
+     "removed_annual_gw": 0.4973878482670173,
+     "removed_summer_gw": 0.30189293518651095,
+     "removed_summer_peak_gw": 0.3018170331599066
+    }
+   },
+   "capability_removed_total_gw": {
+    "annual": 2.230258091132526,
+    "summer": 1.3590056986172707,
+    "summer_peak": 1.3581081768696888
+   },
+   "capability_removed_total_nonchp_gw": {
+    "annual": 2.1319828545738098,
+    "summer": 1.308455222340398,
+    "summer_peak": 1.3077847661028414
+   },
+   "p1_summer_nonchp_in_band": false,
+   "p1_annual_nonchp_in_band": false
+  },
+  "2024": {
+   "arms": {
+    "off": {
+     "classes": {
+      "CC_CHP": {
+       "rows": 64,
+       "lp_cap_gw": 3.620615000000001,
+       "capwt_online_year": 2009.9999999999998,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 64,
+       "cap_at_2010_gw": 3.620615000000001,
+       "availcap_annual_gw": 3.247219701941266,
+       "availcap_summer_gw": 3.420961838114754,
+       "availcap_summer_peak_gw": 3.4195738590163933
+      },
+      "CC_REGULAR": {
+       "rows": 333,
+       "lp_cap_gw": 27.420099999999998,
+       "capwt_online_year": 2010.0,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 333,
+       "cap_at_2010_gw": 27.420099999999998,
+       "availcap_annual_gw": 19.480833074610462,
+       "availcap_summer_gw": 22.942550549680163,
+       "availcap_summer_peak_gw": 22.935926958759353
+      },
+      "COAL": {
+       "rows": 446,
+       "lp_cap_gw": 42.792764000000005,
+       "capwt_online_year": 2009.9999999999998,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 446,
+       "cap_at_2010_gw": 42.792764000000005,
+       "availcap_annual_gw": 26.326560231145656,
+       "availcap_summer_gw": 33.21084108387537,
+       "availcap_summer_peak_gw": 33.20098127430599
+      },
+      "CT_CHP": {
+       "rows": 114,
+       "lp_cap_gw": 0.8959840700000002,
+       "capwt_online_year": 2009.9999999999995,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 114,
+       "cap_at_2010_gw": 0.8959840700000002,
+       "availcap_annual_gw": 0.8127525591480032,
+       "availcap_summer_gw": 0.844921561461229,
+       "availcap_summer_peak_gw": 0.8385915736056168
+      },
+      "CT_PEAKER": {
+       "rows": 733,
+       "lp_cap_gw": 22.281793098,
+       "capwt_online_year": 2009.9999999999998,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 733,
+       "cap_at_2010_gw": 22.281793098,
+       "availcap_annual_gw": 19.277857933754206,
+       "availcap_summer_gw": 20.62874822298052,
+       "availcap_summer_peak_gw": 20.61670710750921
+      },
+      "ST_CHP": {
+       "rows": 86,
+       "lp_cap_gw": 0.6982775600000002,
+       "capwt_online_year": 2009.9999999999995,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 86,
+       "cap_at_2010_gw": 0.6982775600000002,
+       "availcap_annual_gw": 0.4787102038111316,
+       "availcap_summer_gw": 0.5411774896682465,
+       "availcap_summer_peak_gw": 0.5376932220994165
+      },
+      "ST_GAS": {
+       "rows": 115,
+       "lp_cap_gw": 10.987050000000004,
+       "capwt_online_year": 2009.9999999999998,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 115,
+       "cap_at_2010_gw": 10.987050000000004,
+       "availcap_annual_gw": 6.063201122107145,
+       "availcap_summer_gw": 6.988358431269338,
+       "availcap_summer_peak_gw": 6.982629786647761
+      }
+     },
+     "n_gen": 2923
+    },
+    "on": {
+     "classes": {
+      "CC_CHP": {
+       "rows": 64,
+       "lp_cap_gw": 3.620615000000001,
+       "capwt_online_year": 1998.8596302009462,
+       "n_distinct_online_year": 16,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 3.1959082916361585,
+       "availcap_summer_gw": 3.3984207465129783,
+       "availcap_summer_peak_gw": 3.3970437409153007
+      },
+      "CC_REGULAR": {
+       "rows": 333,
+       "lp_cap_gw": 27.420099999999998,
+       "capwt_online_year": 2007.078409633809,
+       "n_distinct_online_year": 25,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 19.38952394342756,
+       "availcap_summer_gw": 22.892676233501085,
+       "availcap_summer_peak_gw": 22.886063660489757
+      },
+      "COAL": {
+       "rows": 446,
+       "lp_cap_gw": 42.792764000000005,
+       "capwt_online_year": 1981.9572351063837,
+       "n_distinct_online_year": 32,
+       "rows_at_2010": 18,
+       "cap_at_2010_gw": 1.9507999999999996,
+       "availcap_annual_gw": 25.260760140264715,
+       "availcap_summer_gw": 32.56916967290315,
+       "availcap_summer_peak_gw": 32.55947264876253
+      },
+      "CT_CHP": {
+       "rows": 114,
+       "lp_cap_gw": 0.8959840700000002,
+       "capwt_online_year": 1996.2218659534874,
+       "n_distinct_online_year": 28,
+       "rows_at_2010": 1,
+       "cap_at_2010_gw": 0.0008274000000000003,
+       "availcap_annual_gw": 0.7876593176996302,
+       "availcap_summer_gw": 0.8317241558677417,
+       "availcap_summer_peak_gw": 0.825496522799736
+      },
+      "CT_PEAKER": {
+       "rows": 733,
+       "lp_cap_gw": 22.281793098,
+       "capwt_online_year": 1999.5749745307141,
+       "n_distinct_online_year": 55,
+       "rows_at_2010": 2,
+       "cap_at_2010_gw": 0.0026039999999999995,
+       "availcap_annual_gw": 18.56461178460488,
+       "availcap_summer_gw": 20.215281700325217,
+       "availcap_summer_peak_gw": 20.203496535407183
+      },
+      "ST_CHP": {
+       "rows": 86,
+       "lp_cap_gw": 0.6982775600000002,
+       "capwt_online_year": 1980.4458767083963,
+       "n_distinct_online_year": 33,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 0.4450394099297325,
+       "availcap_summer_gw": 0.5188291297422476,
+       "availcap_summer_peak_gw": 0.5154881734256168
+      },
+      "ST_GAS": {
+       "rows": 115,
+       "lp_cap_gw": 10.987050000000004,
+       "capwt_online_year": 1976.8051387770145,
+       "n_distinct_online_year": 19,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 5.469108462601028,
+       "availcap_summer_gw": 6.612974123801262,
+       "availcap_summer_peak_gw": 6.6076273004274935
+      }
+     },
+     "n_gen": 2923
+    }
+   },
+   "capability_removed_gw": {
+    "CC_CHP": {
+     "removed_annual_gw": 0.05131141030510733,
+     "removed_summer_gw": 0.022541091601775864,
+     "removed_summer_peak_gw": 0.022530118101092622
+    },
+    "CC_REGULAR": {
+     "removed_annual_gw": 0.09130913118290351,
+     "removed_summer_gw": 0.04987431617907845,
+     "removed_summer_peak_gw": 0.0498632982695959
+    },
+    "COAL": {
+     "removed_annual_gw": 1.0658000908809413,
+     "removed_summer_gw": 0.6416714109722221,
+     "removed_summer_peak_gw": 0.6415086255434588
+    },
+    "CT_CHP": {
+     "removed_annual_gw": 0.025093241448372994,
+     "removed_summer_gw": 0.013197405593487255,
+     "removed_summer_peak_gw": 0.013095050805880804
+    },
+    "CT_PEAKER": {
+     "removed_annual_gw": 0.7132461491493238,
+     "removed_summer_gw": 0.4134665226553018,
+     "removed_summer_peak_gw": 0.4132105721020274
+    },
+    "ST_CHP": {
+     "removed_annual_gw": 0.0336707938813991,
+     "removed_summer_gw": 0.02234835992599893,
+     "removed_summer_peak_gw": 0.022205048673799688
+    },
+    "ST_GAS": {
+     "removed_annual_gw": 0.5940926595061171,
+     "removed_summer_gw": 0.3753843074680763,
+     "removed_summer_peak_gw": 0.3750024862202679
+    }
+   },
+   "capability_removed_total_gw": {
+    "annual": 2.574523476354165,
+    "summer": 1.5384834143959405,
+    "summer_peak": 1.537415199716123
+   },
+   "capability_removed_total_nonchp_gw": {
+    "annual": 2.4644480307192858,
+    "summer": 1.4803965572746787,
+    "summer_peak": 1.47958498213535
+   },
+   "p1_summer_nonchp_in_band": false,
+   "p1_annual_nonchp_in_band": false
+  },
+  "2025": {
+   "arms": {
+    "off": {
+     "classes": {
+      "CC_CHP": {
+       "rows": 64,
+       "lp_cap_gw": 3.620615000000001,
+       "capwt_online_year": 2009.9999999999998,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 64,
+       "cap_at_2010_gw": 3.620615000000001,
+       "availcap_annual_gw": 3.1751443109205613,
+       "availcap_summer_gw": 3.196988101338194,
+       "availcap_summer_peak_gw": 3.196243373580496
+      },
+      "CC_REGULAR": {
+       "rows": 333,
+       "lp_cap_gw": 27.420099999999998,
+       "capwt_online_year": 2010.0,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 333,
+       "cap_at_2010_gw": 27.420099999999998,
+       "availcap_annual_gw": 18.489047335826164,
+       "availcap_summer_gw": 21.698708902918476,
+       "availcap_summer_peak_gw": 21.692666200509247
+      },
+      "COAL": {
+       "rows": 446,
+       "lp_cap_gw": 42.792764000000005,
+       "capwt_online_year": 2009.9999999999998,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 446,
+       "cap_at_2010_gw": 42.792764000000005,
+       "availcap_annual_gw": 27.36517055661835,
+       "availcap_summer_gw": 31.678667603095,
+       "availcap_summer_peak_gw": 31.67162646859902
+      },
+      "CT_CHP": {
+       "rows": 114,
+       "lp_cap_gw": 0.8959840700000002,
+       "capwt_online_year": 2009.9999999999995,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 114,
+       "cap_at_2010_gw": 0.8959840700000002,
+       "availcap_annual_gw": 0.8115991596174192,
+       "availcap_summer_gw": 0.8404018668922566,
+       "availcap_summer_peak_gw": 0.8342634872516979
+      },
+      "CT_PEAKER": {
+       "rows": 733,
+       "lp_cap_gw": 22.281793098,
+       "capwt_online_year": 2009.9999999999998,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 733,
+       "cap_at_2010_gw": 22.281793098,
+       "availcap_annual_gw": 19.265176109852334,
+       "availcap_summer_gw": 20.561240381996914,
+       "availcap_summer_peak_gw": 20.552627238451834
+      },
+      "ST_CHP": {
+       "rows": 86,
+       "lp_cap_gw": 0.6982775600000002,
+       "capwt_online_year": 2009.9999999999995,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 86,
+       "cap_at_2010_gw": 0.6982775600000002,
+       "availcap_annual_gw": 0.38383406727173236,
+       "availcap_summer_gw": 0.44274740191518225,
+       "availcap_summer_peak_gw": 0.43994538579874054
+      },
+      "ST_GAS": {
+       "rows": 115,
+       "lp_cap_gw": 10.987050000000004,
+       "capwt_online_year": 2009.9999999999998,
+       "n_distinct_online_year": 1,
+       "rows_at_2010": 115,
+       "cap_at_2010_gw": 10.987050000000004,
+       "availcap_annual_gw": 6.500982096835719,
+       "availcap_summer_gw": 7.524875036686527,
+       "availcap_summer_peak_gw": 7.522505527184817
+      }
+     },
+     "n_gen": 2923
+    },
+    "on": {
+     "classes": {
+      "CC_CHP": {
+       "rows": 64,
+       "lp_cap_gw": 3.620615000000001,
+       "capwt_online_year": 1998.8596302009462,
+       "n_distinct_online_year": 16,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 3.1175728107184355,
+       "availcap_summer_gw": 3.1725624362238336,
+       "availcap_summer_peak_gw": 3.1718215826874476
+      },
+      "CC_REGULAR": {
+       "rows": 333,
+       "lp_cap_gw": 27.420099999999998,
+       "capwt_online_year": 2007.078409633809,
+       "n_distinct_online_year": 25,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 18.39070440610731,
+       "availcap_summer_gw": 21.638865218765222,
+       "availcap_summer_peak_gw": 21.632846657117394
+      },
+      "COAL": {
+       "rows": 446,
+       "lp_cap_gw": 42.792764000000005,
+       "capwt_online_year": 1981.9572351063837,
+       "n_distinct_online_year": 32,
+       "rows_at_2010": 18,
+       "cap_at_2010_gw": 1.9507999999999996,
+       "availcap_annual_gw": 26.07105005779739,
+       "availcap_summer_gw": 30.989890847951514,
+       "availcap_summer_peak_gw": 30.983015334683824
+      },
+      "CT_CHP": {
+       "rows": 114,
+       "lp_cap_gw": 0.8959840700000002,
+       "capwt_online_year": 1996.2218659534874,
+       "n_distinct_online_year": 28,
+       "rows_at_2010": 1,
+       "cap_at_2010_gw": 0.0008274000000000003,
+       "availcap_annual_gw": 0.7841823365131637,
+       "availcap_summer_gw": 0.8260595683397766,
+       "availcap_summer_peak_gw": 0.820031529962857
+      },
+      "CT_PEAKER": {
+       "rows": 733,
+       "lp_cap_gw": 22.281793098,
+       "capwt_online_year": 1999.5749745307141,
+       "n_distinct_online_year": 55,
+       "rows_at_2010": 2,
+       "cap_at_2010_gw": 0.0026039999999999995,
+       "availcap_annual_gw": 18.46546794842875,
+       "availcap_summer_gw": 20.098899151224213,
+       "availcap_summer_peak_gw": 20.09047388816069
+      },
+      "ST_CHP": {
+       "rows": 86,
+       "lp_cap_gw": 0.6982775600000002,
+       "capwt_online_year": 1980.4458767083963,
+       "n_distinct_online_year": 33,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 0.35678855370193735,
+       "availcap_summer_gw": 0.4237739145716147,
+       "availcap_summer_peak_gw": 0.4210916208536639
+      },
+      "ST_GAS": {
+       "rows": 115,
+       "lp_cap_gw": 10.987050000000004,
+       "capwt_online_year": 1976.8051387770145,
+       "n_distinct_online_year": 19,
+       "rows_at_2010": 0,
+       "cap_at_2010_gw": 0.0,
+       "availcap_annual_gw": 5.824635623860851,
+       "availcap_summer_gw": 7.0978267149897745,
+       "availcap_summer_peak_gw": 7.095569416844334
+      }
+     },
+     "n_gen": 2923
+    }
+   },
+   "capability_removed_gw": {
+    "CC_CHP": {
+     "removed_annual_gw": 0.05757150020212576,
+     "removed_summer_gw": 0.024425665114360395,
+     "removed_summer_peak_gw": 0.02442179089304819
+    },
+    "CC_REGULAR": {
+     "removed_annual_gw": 0.09834292971885361,
+     "removed_summer_gw": 0.05984368415325392,
+     "removed_summer_peak_gw": 0.05981954339185336
+    },
+    "COAL": {
+     "removed_annual_gw": 1.2941204988209591,
+     "removed_summer_gw": 0.6887767551434862,
+     "removed_summer_peak_gw": 0.6886111339151952
+    },
+    "CT_CHP": {
+     "removed_annual_gw": 0.027416823104255528,
+     "removed_summer_gw": 0.014342298552480037,
+     "removed_summer_peak_gw": 0.014231957288840857
+    },
+    "CT_PEAKER": {
+     "removed_annual_gw": 0.7997081614235846,
+     "removed_summer_gw": 0.46234123077270084,
+     "removed_summer_peak_gw": 0.4621533502911426
+    },
+    "ST_CHP": {
+     "removed_annual_gw": 0.02704551356979501,
+     "removed_summer_gw": 0.018973487343567574,
+     "removed_summer_peak_gw": 0.018853764945076623
+    },
+    "ST_GAS": {
+     "removed_annual_gw": 0.6763464729748678,
+     "removed_summer_gw": 0.4270483216967529,
+     "removed_summer_peak_gw": 0.42693611034048295
+    }
+   },
+   "capability_removed_total_gw": {
+    "annual": 2.9805518998144414,
+    "summer": 1.695751442776602,
+    "summer_peak": 1.6950276510656397
+   },
+   "capability_removed_total_nonchp_gw": {
+    "annual": 2.868518062938265,
+    "summer": 1.6380099917661939,
+    "summer_peak": 1.6375201379386741
+   },
+   "p1_summer_nonchp_in_band": false,
+   "p1_annual_nonchp_in_band": false
+  }
+ },
+ "gates": {
+  "V1_rows": [
+   {
+    "year": 2023,
+    "class": "CC_CHP",
+    "capwt_online_year_lp": 1998.8596302009462,
+    "census_true": 1999.5601836409862,
+    "delta_yr_lp_basis": -0.7005534400400393,
+    "capwt_online_year_nameplate_basis": 1999.618682849184,
+    "delta_yr_nameplate_basis": 0.058499208197872576,
+    "pass_lp": true
+   },
+   {
+    "year": 2023,
+    "class": "CC_REGULAR",
+    "capwt_online_year_lp": 2007.078409633809,
+    "census_true": 2006.505788344487,
+    "delta_yr_lp_basis": 0.5726212893221145,
+    "capwt_online_year_nameplate_basis": 2006.8997424610495,
+    "delta_yr_nameplate_basis": 0.3939541165625542,
+    "pass_lp": true
+   },
+   {
+    "year": 2023,
+    "class": "COAL",
+    "capwt_online_year_lp": 1981.9572351063837,
+    "census_true": 1981.9984218784687,
+    "delta_yr_lp_basis": -0.04118677208498411,
+    "capwt_online_year_nameplate_basis": 1981.9564674931423,
+    "delta_yr_nameplate_basis": -0.041954385326334886,
+    "pass_lp": true
+   },
+   {
+    "year": 2023,
+    "class": "CT_CHP",
+    "capwt_online_year_lp": 1996.2218659534874,
+    "census_true": 1995.2070988047565,
+    "delta_yr_lp_basis": 1.0147671487309253,
+    "capwt_online_year_nameplate_basis": 1995.217894977517,
+    "delta_yr_nameplate_basis": 0.010796172760592526,
+    "pass_lp": false
+   },
+   {
+    "year": 2023,
+    "class": "CT_PEAKER",
+    "capwt_online_year_lp": 1999.5749745307141,
+    "census_true": 1998.7313486271069,
+    "delta_yr_lp_basis": 0.8436259036072897,
+    "capwt_online_year_nameplate_basis": 1999.5734700928328,
+    "delta_yr_nameplate_basis": 0.8421214657259952,
+    "pass_lp": true
+   },
+   {
+    "year": 2023,
+    "class": "ST_CHP",
+    "capwt_online_year_lp": 1980.4066960752536,
+    "census_true": 1980.561511378953,
+    "delta_yr_lp_basis": -0.15481530369925167,
+    "capwt_online_year_nameplate_basis": 1980.2039162727885,
+    "delta_yr_nameplate_basis": -0.35759510616435364,
+    "pass_lp": true
+   },
+   {
+    "year": 2023,
+    "class": "ST_GAS",
+    "capwt_online_year_lp": 1976.8418223281874,
+    "census_true": 1976.7973393188443,
+    "delta_yr_lp_basis": 0.0444830093431392,
+    "capwt_online_year_nameplate_basis": 1976.8141472074287,
+    "delta_yr_nameplate_basis": 0.01680788858448068,
+    "pass_lp": true
+   },
+   {
+    "year": 2024,
+    "class": "CC_CHP",
+    "capwt_online_year_lp": 1998.8596302009462,
+    "census_true": 1999.5601836409862,
+    "delta_yr_lp_basis": -0.7005534400400393,
+    "capwt_online_year_nameplate_basis": 1999.618682849184,
+    "delta_yr_nameplate_basis": 0.058499208197872576,
+    "pass_lp": true
+   },
+   {
+    "year": 2024,
+    "class": "CC_REGULAR",
+    "capwt_online_year_lp": 2007.078409633809,
+    "census_true": 2006.505788344487,
+    "delta_yr_lp_basis": 0.5726212893221145,
+    "capwt_online_year_nameplate_basis": 2006.8997424610495,
+    "delta_yr_nameplate_basis": 0.3939541165625542,
+    "pass_lp": true
+   },
+   {
+    "year": 2024,
+    "class": "COAL",
+    "capwt_online_year_lp": 1981.9572351063837,
+    "census_true": 1981.9984218784687,
+    "delta_yr_lp_basis": -0.04118677208498411,
+    "capwt_online_year_nameplate_basis": 1981.9564674931423,
+    "delta_yr_nameplate_basis": -0.041954385326334886,
+    "pass_lp": true
+   },
+   {
+    "year": 2024,
+    "class": "CT_CHP",
+    "capwt_online_year_lp": 1996.2218659534874,
+    "census_true": 1995.2070988047565,
+    "delta_yr_lp_basis": 1.0147671487309253,
+    "capwt_online_year_nameplate_basis": 1995.217894977517,
+    "delta_yr_nameplate_basis": 0.010796172760592526,
+    "pass_lp": false
+   },
+   {
+    "year": 2024,
+    "class": "CT_PEAKER",
+    "capwt_online_year_lp": 1999.5749745307141,
+    "census_true": 1998.7313486271069,
+    "delta_yr_lp_basis": 0.8436259036072897,
+    "capwt_online_year_nameplate_basis": 1999.5734700928328,
+    "delta_yr_nameplate_basis": 0.8421214657259952,
+    "pass_lp": true
+   },
+   {
+    "year": 2024,
+    "class": "ST_CHP",
+    "capwt_online_year_lp": 1980.4458767083963,
+    "census_true": 1980.561511378953,
+    "delta_yr_lp_basis": -0.11563467055657384,
+    "capwt_online_year_nameplate_basis": 1980.1081671958773,
+    "delta_yr_nameplate_basis": -0.45334418307561464,
+    "pass_lp": true
+   },
+   {
+    "year": 2024,
+    "class": "ST_GAS",
+    "capwt_online_year_lp": 1976.8051387770145,
+    "census_true": 1976.7973393188443,
+    "delta_yr_lp_basis": 0.007799458170211437,
+    "capwt_online_year_nameplate_basis": 1976.8035494880546,
+    "delta_yr_nameplate_basis": 0.006210169210362437,
+    "pass_lp": true
+   },
+   {
+    "year": 2025,
+    "class": "CC_CHP",
+    "capwt_online_year_lp": 1998.8596302009462,
+    "census_true": 1999.5601836409862,
+    "delta_yr_lp_basis": -0.7005534400400393,
+    "capwt_online_year_nameplate_basis": 1999.618682849184,
+    "delta_yr_nameplate_basis": 0.058499208197872576,
+    "pass_lp": true
+   },
+   {
+    "year": 2025,
+    "class": "CC_REGULAR",
+    "capwt_online_year_lp": 2007.078409633809,
+    "census_true": 2006.505788344487,
+    "delta_yr_lp_basis": 0.5726212893221145,
+    "capwt_online_year_nameplate_basis": 2006.8997424610495,
+    "delta_yr_nameplate_basis": 0.3939541165625542,
+    "pass_lp": true
+   },
+   {
+    "year": 2025,
+    "class": "COAL",
+    "capwt_online_year_lp": 1981.9572351063837,
+    "census_true": 1981.9984218784687,
+    "delta_yr_lp_basis": -0.04118677208498411,
+    "capwt_online_year_nameplate_basis": 1981.9564674931423,
+    "delta_yr_nameplate_basis": -0.041954385326334886,
+    "pass_lp": true
+   },
+   {
+    "year": 2025,
+    "class": "CT_CHP",
+    "capwt_online_year_lp": 1996.2218659534874,
+    "census_true": 1995.2070988047565,
+    "delta_yr_lp_basis": 1.0147671487309253,
+    "capwt_online_year_nameplate_basis": 1995.217894977517,
+    "delta_yr_nameplate_basis": 0.010796172760592526,
+    "pass_lp": false
+   },
+   {
+    "year": 2025,
+    "class": "CT_PEAKER",
+    "capwt_online_year_lp": 1999.5749745307141,
+    "census_true": 1998.7313486271069,
+    "delta_yr_lp_basis": 0.8436259036072897,
+    "capwt_online_year_nameplate_basis": 1999.5734700928328,
+    "delta_yr_nameplate_basis": 0.8421214657259952,
+    "pass_lp": true
+   },
+   {
+    "year": 2025,
+    "class": "ST_CHP",
+    "capwt_online_year_lp": 1980.4458767083963,
+    "census_true": 1980.561511378953,
+    "delta_yr_lp_basis": -0.11563467055657384,
+    "capwt_online_year_nameplate_basis": 1980.1081671958773,
+    "delta_yr_nameplate_basis": -0.45334418307561464,
+    "pass_lp": true
+   },
+   {
+    "year": 2025,
+    "class": "ST_GAS",
+    "capwt_online_year_lp": 1976.8051387770145,
+    "census_true": 1976.7973393188443,
+    "delta_yr_lp_basis": 0.007799458170211437,
+    "capwt_online_year_nameplate_basis": 1976.8035494880546,
+    "delta_yr_nameplate_basis": 0.006210169210362437,
+    "pass_lp": true
+   }
+  ],
+  "V1_pass_lp_all": false,
+  "V2_off_arm_all_2010": true,
+  "V2_cache_key_distinct": true,
+  "V3_ngen_pass": true
+ }
+}
