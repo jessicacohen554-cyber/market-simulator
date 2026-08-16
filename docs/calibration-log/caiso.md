@@ -8025,3 +8025,24 @@ CAMPD intake landed this session (raw files only — extract re-derive
 deferred post-ladder, its own rule-23 charter), bench parts rebuilt on the
 CA+NV CAMPD basis for ALL caiso-197 registrations, C1 measured unaffected
 (EIA-923-scored; the control reprints the keeper's −4.44 exactly).
+
+## 2026-08-16 — caiso-197 (lane 3): `gas_st_wefor_base_override=0.1591` ACCEPTED 5/5 — the ERCOT-fitted 0.21 stops governing CAISO ST_GAS; ledger unchanged 11/8
+
+**Run `2026-08-16-caiso-197-l3-stgas`** (NOT-YET / C6 UNATTESTED — standard
+non-keeper posture; control SHARED with lane 2, BIT-ZERO vs the keeper).
+PRECHECK with the value FROZEN pushed at `3a4d79db1` before the solve.
+Chain: EIA-860 six-unit census through the shipped fleet path (2,858.8 MW —
+the GATESPEC's own figure) → NERC GADS Brochure 3 2020-2024 FOSSIL Gas
+Primary EFORd size-class rows (committed corpus with recorded URL/retrieval)
+→ capacity-weighted 15.9149 % → 0.1591. Gates: G-FROZEN, G-CITE, G-BAND
+(in [0.03,0.21]), G-POSITION (census-grounded: 52.2 % of capacity in the
+600-799 MW class at 19.31 %, vs mid-size rows at 10.35-11.26 % where a
+MISO-like fleet sits), G-DOF (11/8 unchanged — cited input, no ledger row,
+the miso148 precedent) — all PASS; G-ONEMECH exact single-field diff.
+Engagement: 4,915/10,631/10,522 zone-hours re-priced (max |Δ| $82/$482/$50);
+C1 ST_GAS stays PASS with volumes nearly unmoved (−0.77/+0.91 TWh) — the
+class is economics-limited, so released availability expresses on the
+margin, not annual energy. No pass→fail flip (§5 silent); C3b
+0.077/0.154/0.176; C3a transparency-only (+4.4/+11.5/+14.5 vs control
++4.4/+11.7/+14.5). Matrix duty (b): `wefor_statistical_stack` CAISO evidence
+appended (the row registering the field). Composes at Wave-2 rung +L3.
