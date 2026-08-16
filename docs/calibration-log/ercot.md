@@ -9680,3 +9680,126 @@ and this entry.
 
 **Session consumed the ercot-212 shorthand. Next shorthand: ercot-213**
 (ercot-199 remains unclaimed).
+
+## ercot-213 (2026-08-16) — RESERVE-BASIS-2 (card X item X-3, second increment) EXECUTED: the anchoring-correct successor BUILT and A/B-TESTED — **the repair is CONFIRMED (G-CAP 0 violations / 26,280 h, the 2×VOLL defect GONE) and the arm is STILL REJECTED-AS-ARMED** on the same G-SPUR kill, now sharper; the object SPLITS into a settled price form and an open mid-band spill; keeper UNCHANGED, pair registered WITH PAYLOADS and RETAINED
+
+**Keeper at session start AND end: `2026-08-15-ercot204-rule26-delete`** —
+untouched and protected throughout (X-3: the keeper cannot change in-session).
+Precommit pushed BEFORE any solve:
+`docs/PRECOMMIT-ercot213-published-anchor-2026-08-16.md`. Full record:
+`docs/FINDING-ercot213-published-anchor-2026-08-16.md`. Runs registered:
+**`2026-08-16-ercot213-ctl-headbase`** / **`2026-08-16-ercot213-arm-pubanchor`**.
+
+**THE DELTA (the successor ercot-212 §5 named).** Keeper recipe + the ercot-212
+`ercot_reserve_supply_cap_net_credits` (validated identification, carried
+forward) + the NEW `ercot_ordc_adder_published_anchor`: inside the armed
+cap-additive branch, `adder = min(γ_all·(VOLL−λ)/VOLL, VOLL−λ)` — the published
+`(VOLL−λ)` anchor from a SINGLE counterpart (the all-tier total-reserve cap
+dual), never the two-tier sum. **Zero fitted scalars** (VOLL = the registered
+`ordc_voll` read prb_overrides-first; λ = the LP's own demand-weighted energy
+dual; γ = an LP dual; both flags boolean). The dispatch's alternative — routing
+through the post-solve `ordc_adder()` — was **considered and REJECTED on a
+structural argument recorded in the precommit**: it re-prices the whole curve
+value at the realized level, including the `μ_headroom` the co-opt has already
+folded into the LMP, re-introducing the ercot52 double-count. The rescale
+preserves the LP's `λ_balance = λ_cap + μ_headroom` decomposition and changes
+only the anchor.
+
+**THE REPAIR WORKS — G-CAP PASSES, 0 violations in 26,280 hours.** The
+ercot-212 arm's diagnosed $10,000/h = 2×VOLL maximum is GONE; armed maxima
+4,701.14 / 2,049.45 / 1,196.56 $/MWh, and the 2023 maximum lands at
+λ 298.86 + adder 4,701.14 = **exactly 5,000.00 = VOLL** — the protocol cap
+binds and holds. The ercot-212 §5 diagnosis is confirmed constructively.
+
+**AND THE ARM STILL FAILS — G-SPUR kills HARDER: 2023 spurious 9 → 17 (+8)**
+against the +5 bar (ercot-212 read +7). Coherent, not paradoxical: the repair
+LOWERS adders (factor `(VOLL−λ)/VOLL` ≈ 0.40 in a $3,000/MWh hour) and drops
+the fast tier, pulling hours from above $500 back INTO the [150,500] band
+G-SPUR counts. One kill ⇒ **REJECTED-AS-ARMED** under the direction-blind rule.
+
+**Every other gate PASSES**: G-SHED 4→0 / 1→1 / 0→0; G-C3c 57→123, 22→33, 1→3
+(toward actual in every year); G-SPAN max 0.077 %; G-COAL148 rise 0.0/0.0/0.0;
+G-OWNER (C3a-2024, C3b-2024, C3a-2025 all PASS on the arm's own scorecard);
+G-DOF `n_residual` 6 unchanged and identical control↔arm; G-D2 D-4 FAIL set
+IDENTICAL (the 3 pre-existing `reliability_floor × CT_PEAKER` rows).
+
+**G-REPRO′** (control-vs-armed from the start, per ercot-212 Amendment 1): the
+keeper is not byte-reproducible at HEAD (0/12 sidecars), but the drift is
+score-inert — the control reproduces the keeper's determination EXACTLY
+(C3a-2023 −33.2 %, C3b-2023 0.604, C3c 58/22/1, identical shed hour lists and
+spurious counts; mean price ≤ $0.075/MWh, class energy ≤ 0.463 %).
+
+**SIDE-EFFECT REPORT (Q-B/R-A phrasing — reported, never a basis, never spent;
+the decision rule never consulted it):** C3a-2023 **−33.2 % → +0.4 %** and C3a
+PASSES all three years on the arm; C3b-2023 **0.604 → 0.203** against the 0.20
+bar (still FAIL, by 0.003); C3c-2023 (123/181) and C3c-2024 (33/53) INTO BAND,
+C3c-2025 still fails (3/31). Armed fail set {C3b-2023, C3c-2025}; determination
+NOT-YET on C6 UNATTESTED (no attestation for an A/B pair, as at ercot-212).
+
+**THE LANDING ZONE MISSED, reported not buried:** predicted 2023 ~20–37 h>$100,
+measured **117**. The prediction came from the Phase-0 OUT-OF-LP mirror, which
+evaluates at the cap; the LP's realized marginal level sits BELOW the cap
+whenever physical headroom is tighter, so it prices deeper. A measured
+limitation of that mirror — no future session should re-derive a landing zone
+from it without this correction. §2 predictions were never gates.
+
+**PROMOTION: NOT RECOMMENDED.** The owner's standing structural standard is
+judged not to rescue it: the arm is now structurally RIGHT (G-CAP measured) but
+a mid-band defect it makes worse is not cured by that. **The object now SPLITS:**
+(1) SETTLED — the additive price FORM (netting + `(VOLL−λ)` anchor + single
+counterpart, zero scalars, protocol cap measured) is the standing form; the bare
+netting stays `R` (28a) and must not be re-run. (2) OPEN — the mid-band
+[150,500] spill ALONE. It is not the anchoring, not the counterpart, not the
+protocol cap; all three are fixed and G-SPUR still moved the wrong way. No
+candidate is armed and none is proposed here.
+
+**Increment (c) NOT BUILT** (pre-registered as clean-only; the first increment
+did not land clean).
+
+**ROSTER — pair REGISTERED and RETAINED, deliberately unlike ercot-212.**
+REJECTED-AS-ARMED ≠ rejected-wholesale. The owner's retention test prunes a run
+"offering no new mechanism for closing the C calibration gates"; this pair moves
+C3a-2023 FAIL→PASS, C3b-2023 to within 0.003 of its bar, and C3c-2023/2024 into
+band, on a construction whose protocol-cap correctness is measured. ercot-212
+was pruned because it was structurally WRONG. Flagged for the owner
+(FINDING §6); the prune is one command if the owner reads it more strictly.
+
+**ENVIRONMENT — a standing trap recorded for every future session.** The
+dispatch's solve-environment pin was reverted mid-session by the repo's OWN
+`.claude/hooks/ruff-autofix.sh` PostToolUse hook: it runs `uv run ruff`, and
+`uv run` re-syncs `$CLAUDE_PROJECT_DIR/.venv` to `uv.lock` first. **`.venv` is
+not a safe place to pin a solve environment in this repo** — solve from a venv
+outside the project directory. The A/B was re-run on the correctly pinned env
+(highspy 1.15.1 / pandas 3.0.5 / pyarrow 25.0.1, recorded in both bundles) and
+the earlier lockfile-env pair is RETAINED as an environment-sensitivity
+measurement: it reproduces the pinned gate table **to the last decimal** on
+every C3a, NRMSE, spurious, tail, shed, class-energy, adder-census and
+G-COAL148 figure (`ercot213_*_lockenv.json`).
+
+**AN UNRELATED STOP-THE-LINE DEFECT FOUND AND FIXED ON MAIN.** `main` at
+`7c723fa` could not solve ANY calibration year for ANY ISO: nyiso-140
+(`3febd5c`, PR #4026) added `reliability_floor_plant_exclusions` to
+`solve_and_persist` and passes it to `run_year(...)` without adding the
+parameter to `run_year`, so every call raised `TypeError` before any LP was
+built (its own tests are solve-free; this session's first replay after the
+merge was the first solve to touch it). Repaired in `7246272` mirroring the
+sibling `reliability_floor` idiom, default `None` so nyiso-140's arming
+semantics and its byte-identity claim are untouched. Both ercot-213 members
+solved at the repaired tree.
+
+**Governance.** Q-B FINAL and R-A cited and honoured. ercot-206 B0 honoured (no
+LOLP-table arming; the table was not read). ercot-211 Door A honoured (no
+conduct work). V0/ercot-201 DO-NOT-REDO honoured (RTOLCAP as telemetry against
+the already-armed cap construction; no tightness identification, no E1). 28a
+honoured — the bare netting was NOT re-tested, only the anchored form. Rule 22:
+{2023, 2024, 2025} only, no marker sought. Rule 25: ERCOT only. Rules 5/24: both
+fields registered and recorded in `meta.json`; no off-registry channel. Rule 27:
+edits local, exact bytes pushed, ≥300-line pushed files blob-verified. Rule 28:
+28b cell verdict + 28c leg on `ercot_multiproduct_as`;
+`check_mechanism_matrix.py` exit 0 (the 238 anchor WARNINGS are pre-existing at
+HEAD from the nyiso-140 `scenarios.py` line shift, verified against a clean
+checkout — not introduced here). No workflow, no cron, no PR (push-and-stop;
+the owner merges).
+
+**Session consumed the ercot-213 shorthand. Next shorthand: ercot-214**
+(ercot-199 remains unclaimed).
