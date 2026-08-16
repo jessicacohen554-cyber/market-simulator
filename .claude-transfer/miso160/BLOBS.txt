@@ -14,4 +14,4 @@ a033904d68c62393e85913fe9e6fc57d97f95fcd src/market_sim/config/fuel_trajectories
 16e8fececbe97279f452f035383b4e3700e307a5 src/market_sim/config/scenarios.py
 68837cab69ceb9332d6375a157c0fa5947ab5082 src/market_sim/data/fleet/arrays.py
 ae02ae4a37af6e5bc36155966abe1b929fa3e8ee src/market_sim/results/scarcity.py
-476b2e04f63f67eb2d10b5399eaabfc9a97f95fcd tests/unit/config/test_miso160_summer_wefor_override.py
+476b2e04f63f67eb2d10b5399eaabfc92a97f6af tests/unit/config/test_miso160_summer_wefor_override.py
