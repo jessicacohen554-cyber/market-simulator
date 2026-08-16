@@ -8018,9 +8018,11 @@ half of the same double-count; 2024 −1.21 → −0.79. C3b clean all years
 transparency-only per the verbatim direction-hazard clause:
 +4.4/+11.7/+14.5 → +4.0/+11.1/+14.1 % (never consulted). Matrix duty (b):
 `wefor_residual` CAISO **R → O** (acceptance recorded; K follows the Wave-2
-§6 C3a-blind promotion). Environment notes: replay driver taught the
-nyiso-136 rule-26 collapse (`_RETIRED_COLLAPSED`, +3 tests) after the
-strict unmapped-key guard bricked the first control attempt; Desert Star NV
+§6 C3a-blind promotion). Environment notes: the replay driver's strict unmapped-key guard bricked
+the first control attempt on the nyiso-136 rule-26-deleted solar-COD key;
+main's own `_RULE26_DELETED_UNCONDITIONAL` (parallel session, merged
+mid-campaign) is the incumbent handling after rebase, with caiso-197's
+three pinning tests adapted onto it; Desert Star NV
 CAMPD intake landed this session (raw files only — extract re-derive
 deferred post-ladder, its own rule-23 charter), bench parts rebuilt on the
 CA+NV CAMPD basis for ALL caiso-197 registrations, C1 measured unaffected
