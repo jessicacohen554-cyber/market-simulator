@@ -8147,3 +8147,93 @@ paused at its own gate, one owner decision from landing. Records:
 FINDING-caiso198-desertstar-extract-2026-08-16.md,
 _caiso198_{ctrl_tolerance,extract_delta,gcov_remeasure}.json, probes
 _caiso198_*.py.
+
+## 2026-08-16 — CAISO — caiso-199: the MERIT-PANEL SCOPE PIN (owner ruling caiso-198 §5 option 1) lands the Desert Star extract — ALL TEN pre-registered gates PASS, the C1 flip watch FIRES, disposition ACCEPT-WITH-FLIP escalated to the owner; keeper UNCHANGED
+
+Executes the owner ruling taken at session start on the `FINDING-caiso198` §5
+escalation package: **pin the merit-order panel's identification scope
+independently of the detection state list, then land the strictly-additive
+candidate and A/B it.** `PRECHECK-caiso199-merit-panel-scope-2026-08-16.md`
+pushed at `a4205d1` **before any derive or solve**, with BOTH baseline shas
+pinned ex ante.
+
+**The pin.** New registry `campd.ISO_MERIT_PANEL_STATES` +
+`merit_panel_states_for_iso` scopes `build_merit_order_panel`'s state list
+independently of the detection `ISO_STATES`. CAISO pinned to `("CA",)`; every
+unpinned ISO falls back to its detection list, so no other ISO's committed
+extract can move (rule 25, asserted by test over every registered ISO). It is a
+**STATE-LIST pin, not a fleet filter** — the committed CA panel still contains
+non-CAISO CA units (LADWP, municipals), which is the panel caiso-192 adjudicated
+the guard on; fleet purity would move the committed extract and was NOT taken.
+Rule 23 citation is the owner's recipe charter + the caiso-197 NV data landing;
+no residual was consulted. `tests/curation/test_campd.py::TestMeritPanelStatePin`
+(7 tests) covers the detection-widening invariant, the per-ISO fallback and a
+wiring guard against reverting the call site.
+
+**Gates — 10/10 PASS.** G-CTRL **bit-zero** (max |Δ| = 0.0 over every zone-hour
+and class-hour, all 3 yr; noise floor quoted before any treated delta, and
+also the proof the pin is inert on the solve path). G-DELTA **(a)** NV-excluded
+reproduces `5f3e35c5…`/`1475a577…` byte-identically — the pin is inert when the
+scopes coincide; **(b)** NV-included reproduces the caiso-198 candidate
+`da33e509…`/`1475a577…` byte-identically — the cross-construction check, since
+caiso-198 scoped the panel DIRECTORY while this pin scopes the STATE LIST and so
+also narrows `_delivered_coal_price_tables`; PRECHECK §1b pre-registered that as
+a provable no-op (no CA CEMS unit is coal-fuelled in ANY year 2018–2026) with an
+explicit STOP if wrong, and byte identity confirmed it. **(c)** strictly additive
+4,561 → 4,719, all 158 adds facility 55077, zero removals, layup byte-identical;
+**(d)** control-vs-arm `scenario_config` diff EMPTY. G-ENGAGE **NOT INERT**
+(loader resolves (55077, CC_REGULAR) at mean multiplier 0.702/0.345/0.607,
+2,789/7,197/5,468 derated hours; LP differs in 14,966/26,930/18,697 price
+zone-hours). G-SIXISO / G-DOF **10/7** / G-C8 pass. G-COV on the **landed**
+instrument: CC_REGULAR population **1.000000**, uncovered list EMPTY, strict
+0.990880 — the FINDING-caiso193 §2 arc CLOSES; `wefor_residual = 0.0` invariant,
+not recomputed.
+
+**The flip fired, as pre-registered and in the predicted anti-C3a-favorable
+direction.** C1 PASS → FAIL: 2023 CC_REGULAR −4.13 → **−4.25 TWh** (share
+−1.8 pp); C1 12/12 → 11/12, free 8/8 → 7/8. CC_REGULAR volume −0.112/−0.283/
+−0.101 TWh. The control passes C1 identically to the keeper, so the flip is
+attributable solely to the landing. C3a +12.1/+15.6 → +12.8/+15.7 and was
+**never consulted**.
+
+**§5 input-side re-examination, run in full.** No mis-citation (55077 is a
+CAISO-fleet CC_REGULAR plant; the `observed_peak` basis enters as a *fraction*,
+so it injects no capacity). No coverage failure — coverage went **to 100 %**. No
+classifier deviation, **but a disclosed structural limit**: Desert Star sits in
+NV while the pinned panel is CA-only, so `out_of_merit_share` returns `None` and
+`is_economic_layup` returns `False` for all 158 windows, which are retained as
+mechanical **by the fail-safe, never tested against the merit order** (verified
+directly, all 3 yr) — and the windows are a mid-winter cycling signature with
+2024 mean availability 0.345. **Exposure bounded by caiso-198 run Y**, the only
+variant in which the guard can see this plant: it reclassifies **9 of 158
+(5.7 %)**, leaving 149 mechanical, so the fail-safe default matches the guard's
+own conclusion for ~94 %. **Input survives ⇒ ACCEPT-WITH-FLIP, escalate to
+owner** (verbatim; never a silent rejection, never a C3a rescue).
+
+C3c reads FAIL vs the keeper's CAVEAT purely because a non-keeper arm has no
+governance attestation (standing-rule guards a and b) — the guard working, not a
+tail regression.
+
+**Keeper UNCHANGED** at `2026-08-16-caiso-197-w2-r5`; promotion packaged for the
+owner with a RECOMMEND on the rule-1/rule-14 posture, against the honest
+counterweight that the plant driving the flip is the one plant the classifier
+cannot see. A **third panel option** is recorded and NOT taken: panel = CA + the
+ISO's own out-of-state fleet members (caiso-198 run Y), which closes the
+asymmetry without admitting the non-CAISO NV fleet, but moves the committed
+extract by 9 windows and needs its own pre-registration.
+
+Disclosed against interest: the control's config differs from the committed
+keeper's at 2 of 716 keys (`commission_year_cod_fallback`,
+`ercot_reserve_supply_cap_net_credits`), both arrived from other lanes on main,
+both default-off, one ERCOT-scoped — inertness **measured** by G-CTRL bit-zero,
+not asserted; no rebase was taken between the arms, since main gained solve-path
+changes mid-session. `_caiso198_gcov_remeasure.json` was briefly overwritten by a
+re-run of the caiso-198 probe and restored byte-identical.
+
+**With this landing the in-model queue is EXHAUSTED.** Remaining C3a routes are
+the two standing owner objects (walled hourly PS water-state intake, caiso-141 /
+ruling 4; the 8,800 MW declared residual, caiso-191 §4) plus the §3b panel option.
+Holdout: 2023–2025 only; no `complete`, no `final`, spend freeze untouched; the
+2018–2026 derive span is data preparation (rule 22, spend-only enforcement).
+Runs `2026-08-16-caiso-199-g0-control`, `2026-08-16-caiso-199-g1-meritpin`;
+full record `results/calibration/FINDING-caiso199-merit-panel-scope-2026-08-16.md`.
