@@ -1238,6 +1238,14 @@ your branch when done.
   already issued at the G1 refresh and awaits owner launch. No DEBUG-C
   continuation is needed: the lane's chartered residue work is complete.
   Full record: `docs/handoffs/debug-sweep-2026-08.md` Addendum §B.
+  **LANDING-VERIFY on merged main (`f8c93af`, post-history-rewrite, full-data
+  working tree): the fast-lane confirmation interrupted mid-flight by the
+  rewrite is SUPPLIED — `6,870 passed / 0 failed / 31 skipped / 2 xfailed`
+  (361.9 s, `-n 2`), i.e. 0 failed with exact skip/xfail parity against the
+  §A.3 baseline 6,850/0/31/2 and +20 passes from intervening merges;
+  `ci_refactor_guards.py` both halves OK, `--sibling-census` **0 bare sites /
+  0 live files**, `audit_keepers --iso PJM --check` PASS 0/0,
+  `check_mechanism_matrix.py` fully clean.**
 - 2026-08-16 — **THE HISTORY REWRITE EXECUTED — explicit owner decision
   superseding the Addendum AQ NO-GO** (and report-final §5's restatement).
   Sequence: owner merged BLOAT-B-7 (#3995) at 14:58 UTC, then dispatched
