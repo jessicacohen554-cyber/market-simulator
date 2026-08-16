@@ -1,7 +1,14 @@
 # STANDING DATA ASK (opened 2026-07-26, miso-90) — MISO generation-outage data at UNIT or FUEL grain
 
-**Status:** OPEN. Blocking. No session may treat this as closed until a source
-clears §4.
+**Status:** OPEN for the UNIT/FUEL-grain datum (§1(a)'s year-specific summer
+step still has no class-resolved source). **The §2a deliverable — the
+`SUMMER_WEFOR_SHARE` replacement — is AMENDED and UNBLOCKED by owner decision
+2026-08-16 (§9 below): the fleet-uniform scalar may be replaced at the
+parameter's own fleet-uniform grain from the MISO published record, which the
+owner ruled the admissible seasonal-shape source (CAMPD ruled inadmissible for
+outage measurement).** The unit/fuel-grain ask itself stays open for everything
+§2a's fleet-grain amendment cannot reach (per-class shape, the year-specific
+2025 step).
 
 **Authority:** Owner decision 2026-07-26 (option 2 of the miso-89 three-way
 determination), opened alongside the C3b-2025 ledger entry (option 1). This
@@ -282,3 +289,40 @@ downgraded, and candidate 1 blocked on an environment limitation rather than on
 evidence. **A session chartered to finish candidate 1 needs working browser
 egress** — worth knowing before one is scheduled.
 `docs/handoffs/xiso-4-queue-ratchet-2026-08-04.md` §3(b).
+
+## 9. Owner decision, miso-160 (2026-08-16) — provenance adjudicated for the §2a deliverable; fleet-grain amendment
+
+**The decision.** Presented with the miso-157 §11 item 2 question — *which
+measured record is admissible for a forced-outage seasonal shape* — the owner
+ruled for **MISO's published outage record** (the daily MOM `OUTAGE` sheet,
+ticket-based offline MW by region × cause) and against the CAMPD per-unit
+extract. Grounds, as put to the owner: the MISO record is capability-grain
+(clears §2A — the criterion whose text already rejects "CAMPD … and every
+derivative"), cause-separated (clears §2E), daily and year-specific (clears
+§2C), MISO-footprint 2023+ (clears §2D), and internally coherent (its
+`Planned` bucket moves out of summer, 0.658 in 2025, agreeing with the model's
+separately-measured `MAINTENANCE_MONTHLY_SHAPE`, while its unplanned buckets
+run above annual exactly as heat-correlated forced-outage physics predicts);
+CAMPD is output-derived (fails §2A), carries the documented phantom-outage
+bias whose class gradient miso-157 §5 measured, and covers `CT_PEAKER` — the
+class that sets MISO's summer peak price — at **zero windows**, so its
+seasonal ratio for the governed fleet is not a measurement of it.
+
+**The amendment.** §2a is amended to accept **fleet-level grain** for the one
+deliverable it names: replacing the fleet-uniform scalar `SUMMER_WEFOR_SHARE`.
+The §2B/§2F class-grain requirements exist to stop an aggregate record being
+*pushed down* onto units or classes (the miso-85/87 trap). Replacing a
+fleet-uniform scalar with a fleet-level measured ratio pushes nothing down:
+the replacement inherits exactly the grain the parameter already has, invents
+no attribution, and is documented as fleet-grain. §2B/§2F stand unchanged for
+every other use of this ask — in particular the §1(a) year-specific summer
+step and any per-class seasonal shape still require a class-resolved source,
+and the miso-85/87 closures are untouched.
+
+**What this does NOT decide.** No verdict on the mechanism: the replacement
+still needs its own PREREG, A/B against a zero-delta control, and scoring
+(`PREREG-miso160-summer-wefor-measured-share-2026-08-16.md`). Per §6, the
+derived value is a rule-23 data-cited derivation, never a residual fit; per
+rule 25 it is MISO's alone (armed via a MISO-scoped override; the generic
+0.30 default is untouched for other ISOs, whose lanes derive their own from
+their own records or leave the cell untested).
