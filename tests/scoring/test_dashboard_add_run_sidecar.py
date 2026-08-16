@@ -13,19 +13,11 @@ fake repo from a non-repo CWD: no network, no real bundle, no writes into the
 checkout.
 """
 
-import importlib.util
 import json
 import sys
 
-from tests.helpers import REPO_ROOT
-
+from scripts import calibration_verdict as cv
 from scripts import dashboard_add_run as dar
-
-_spec = importlib.util.spec_from_file_location(
-    "calibration_verdict", str(REPO_ROOT / "scripts" / "calibration_verdict.py")
-)
-cv = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(cv)
 
 RUN_ID = "2099-01-01-tb1"
 
@@ -94,9 +86,10 @@ def test_metrics_sidecar_lands_in_bundle_dir_not_cwd(tmp_path, monkeypatch, caps
     entry = {"id": RUN_ID, "iso": "ERCOT", "label": "tb1", "years": [2024]}
     monkeypatch.setattr(dar.rb, "manifest_entry", lambda label, b: dict(entry))
     monkeypatch.setattr(dar.rb, "generate", lambda runs, years=None: None)
-    # main() imports calibration_verdict by name; hand it this test's copy
-    # with the scorer stubbed out (no committed artifacts to read).
-    monkeypatch.setitem(sys.modules, "calibration_verdict", cv)
+    # main() imports the canonical scripts.calibration_verdict (the bare-name
+    # sibling import was converted 2026-08-16); stub only the scorer so the
+    # real headline/write_metrics_sidecar paths run without committed
+    # artifacts to read.
     monkeypatch.setattr(cv, "determine", lambda rid: dict(VERDICT))
     monkeypatch.setattr(
         sys,
