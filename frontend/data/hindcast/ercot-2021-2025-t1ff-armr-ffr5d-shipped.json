@@ -148,7 +148,7 @@
     ],
     "dispatch_skill": {
       "keeper_run_id": "2026-08-05-run168b-year-curves",
-      "keeper_note": "Anchor frozen at ship (2026-08-05): dispatch-skill was scored against that date's backcast keeper (2026-08-05-run168b-year-curves). The live backcast keeper is tracked on calibration-status.html (six promotions since as of 2026-08-15).",
+      "keeper_note": "Anchor frozen at ship (2026-08-05): dispatch-skill was scored against that date's backcast keeper (2026-08-05-run168b-year-curves). The live backcast keeper is tracked on calibration-status.html (eight promotions since, as of 2026-08-15).",
       "metrics": {
         "fuelmix": {
           "2023": {
