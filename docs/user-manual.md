@@ -8,7 +8,7 @@ launch a forecast or a backcast, and find the outputs. It is deliberately a
 
 **How this doc was built (and how to keep it honest).** Every command, flag,
 default and path below was verified against the code that implements it on
-`origin/main` @ `e6fea9a` (2026-08-16) — argparse read directly and `--help`
+`origin/main` @ `ce779f9` (2026-08-16) — argparse read directly and `--help`
 executed in a synced `uv` environment. Where prose elsewhere in the repo
 disagrees with the code, the code wins and this manual follows the code; the
 divergences found while writing it are listed in
@@ -523,7 +523,7 @@ configs/
 A scenario file lists **only overrides**; every unspecified field takes its
 `ScenarioConfig` default. `ScenarioConfig` has **713 fields**, so this is the
 normal shape of a scenario:
-<!-- verified: len(dataclasses.fields(ScenarioConfig)) == 713 at e6fea9a -->
+<!-- verified: len(dataclasses.fields(ScenarioConfig)) == 713 at ce779f9 -->
 
 ```yaml
 # configs/scenarios/ercot_base.yaml
@@ -745,8 +745,9 @@ a smoke test, nothing more.
 
 ### 7.7 No LP solves on CI runners
 
-Solves are in-session, years sequential, ≤2 concurrent workers. The repo's data
-mass has crossed what a standard GitHub runner can hold — see
+Solves are in-session, years sequential, ≤2 concurrent workers. The data-touching
+CI jobs get their inputs through **sparse, blobless checkouts** rather than a full
+one — the repo's tip no longer fits a standard runner's disk. See
 [§9.5](#95-ci-is-red-and-it-is-not-your-change).
 
 ---
@@ -828,18 +829,24 @@ been retired.
 
 ### 9.5 CI is red, and it is not your change
 
-Three distinct, currently-open infrastructure failures. Recognise them so you do
-not chase them:
+Three infrastructure failure signatures dominated this repo's CI. Two are now
+fixed on main; recognise all three so you do not chase them.
 
-| Symptom | Root cause |
-|---|---|
-| `Fast test tier` job dies **inside `actions/checkout`** after 6–7.5 min, pytest never invoked | The tier hard-requires `data/raw` (~10 GB at tip); the full checkout no longer survives on a GitHub runner. The nine data-free jobs finish checkout in ~20 s on the same runs. Chartered to PERF-A. |
-| `golden-data-tier.yml` fails at `curate_emissions.py` with **exit code 143** | Runner-VM SIGTERM — resource exhaustion, not a code fault. The identical command succeeds in-session (26.5 M rows). |
-| `ci.yml` runs show as `cancelled` | `ci.yml` is `pull_request`-triggered with no concurrency group; PRs merge and delete their branches before the ~7–15 min run finishes, cancelling it. Nothing is wrong with the workflow. |
-<!-- debug-sweep-2026-08.md "CI health" + "Dispatch record"; docs/model-audit-release-plan-2026-08.md §2 G3 warning -->
+| Symptom | Status | What it is |
+|---|---|---|
+| `Fast test tier` dies **inside `actions/checkout`**, pytest never invoked | **FIXED** (on main) | The tier hard-requires `data/raw`, and a full checkout of the tip (≈8.7 GiB pack + ≈9.0 GiB worktree) no longer fits a runner's 15 GB disk. PERF-A replaced it with a **measured sparse checkout** — `actions/checkout` adds `--filter=blob:none` automatically once `sparse-checkout` is set, so the job materializes only the subset the tier opens. First complete fast-tier run in the repo's history: checkout 80 s, pytest 9m03s, all green. |
+| `golden-data-tier.yml` killed at `curate_emissions.py` with **exit code 143** | **FIXED** (on main) | Runner-VM SIGTERM from a ~10 GiB RSS peak, not a code fault. `curate_year()` was rewritten Arrow-side/streaming (per-file conversion, row-group-chunked writes): peak RSS **10.05 → 5.17 GiB** (2023) and **9.91 → 4.71 GiB** (2024), output verified byte-identical in the data region. The tier then ran **green** — run `31913648051`, 11m33s, loud-failure guard PASS, zero data-missing skips. |
+| `ci.yml` runs show as `cancelled` | **Still true** | `ci.yml` is `pull_request`-triggered with no concurrency group; PRs merge and delete their branches before the ~7–15 min run finishes, cancelling it. Nothing is wrong with the workflow. |
+<!-- ci.yml fast-tests sparse block on main @ ce779f9 (PERF-A 2026-08-15); docs/handoffs/perf-recheck-2026-08.md §1.2/§1.3/§1.5; scripts/data/curate_emissions.py streaming rewrite + plan §8 GOLDEN-TIER-FIX entry (run 31913648051); ci.yml trigger re-verified `on: pull_request` only -->
 
 Two further jobs (`FR-22 parity`, `Forecast-invariant artifact audit`) are red
 **by design** as other lanes' live signals.
+
+> **Both data-tier failures were fixed on 2026-08-15**, hours before this manual
+> was written; they are kept here because they dominated CI for weeks and the
+> symptoms are still in circulation. If you hit either signature again, it is a
+> regression in the sparse-checkout block or in `curate_year()`'s streaming path
+> — not the old capacity problem.
 
 ### 9.6 A backcast bundle looks wrong after a fresh clone replay
 
@@ -898,9 +905,10 @@ Routed to DOCS-B.
 | Stray `</content>` at end of file | Line 161. |
 
 **`docs/testing.md`:** opens with "~355 files"; the tiered layout it documents is
-correct, the count is not — **447** `test_*.py` files at `e6fea9a`. Prefer
-removing the hard count entirely rather than re-pinning it; it rots.
-<!-- verified: find tests -name "test_*.py" | wc -l == 447 -->
+correct, the count is not — **447** `test_*.py` files (**454** `.py` in total,
+counting helpers and `conftest`). Prefer removing the hard count entirely rather
+than re-pinning it; it rots. Also AUDIT-A gap-register row D5.
+<!-- verified at ce779f9: find tests -name "test_*.py" | wc -l == 447; find tests -name "*.py" | wc -l == 454 -->
 
 **`model-methodology-spec.md`:** audited separately —
 [`handoffs/methodology-finalization-audit-2026-08.md`](handoffs/methodology-finalization-audit-2026-08.md).
