@@ -65,6 +65,7 @@ produced is L3.)
 
 | Path | Status | Area | Superseded-by |
 |---|---|---|---|
+| [`user-manual.md`](user-manual.md) | ACTIVE | Operations — THE user manual: install, data setup (hydrate + per-corpus fetch + `data/clean`), CLI reference (`market-sim run/sweep/ensemble/matrix` + the two calibration CLIs), configs, outputs, operational constraints, troubleshooting | — |
 | [`calibration-and-validation-methodology.md`](calibration-and-validation-methodology.md) | ACTIVE | Calibration | — |
 | [`calibration-determination-rubric.md`](calibration-determination-rubric.md) | ACTIVE | Calibration — the keeper rubric (v2.x) | — |
 | [`forecast-determination-rubric.md`](forecast-determination-rubric.md) | ACTIVE | Forecast — the forecast (FR) rubric | — |
