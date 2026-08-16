@@ -269,11 +269,11 @@ def load_segments(
     ] + [c for pair in zip(imp["SCED2_MW"], imp["SCED2_PR"]) for c in pair]
 
     paths = imp["sced_source_files"](year)
-    keep = _shard_days(paths, _wanted_ordinals(year, want_hoy, msh))
+    keep_shards = _shard_days(paths, _wanted_ordinals(year, want_hoy, msh))
 
     out: list[pd.DataFrame] = []
     for p in paths:
-        if p not in keep:
+        if p not in keep_shards:
             continue
         df = pd.read_parquet(p, columns=[c for c in read_cols])
         df = imp["delivery_year_rows"](df, year)
@@ -290,8 +290,8 @@ def load_segments(
 
         ts = pd.to_datetime(df["SCED Time Stamp"], format="%m/%d/%Y %H:%M:%S",
                             errors="coerce")
-        keep = ts.notna()
-        df, ts = df[keep], ts[keep]
+        ts_ok = ts.notna()
+        df, ts = df[ts_ok], ts[ts_ok]
         if df.empty:
             continue
         cst = (ts.dt.tz_localize("America/Chicago", ambiguous=True,
