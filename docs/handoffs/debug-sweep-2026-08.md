@@ -219,3 +219,29 @@ nyiso-135 #3977, ercot-202/204 #3947/#3970 precedents). One hygiene note for
 future finding tables: a "like-for-like" verdict column quoted from a
 registration-time snapshot should say so explicitly, or be re-scored at
 writing time — this row cost an audit gap and a re-score to un-confuse.
+
+### A.2 — Both owner cards served and signed; both outcomes executed same-session
+
+**Card 1 (pjm-162 promotion, audit row O1): PROMOTE signed → executed.**
+Keeper is now `2026-08-15-pjm-162-inputclock`. Full mechanics + evidence:
+`docs/calibration-log/pjm.md` pjm-163 entry (attestation with computed
+premises via `scripts/gen_pjm163_inputclock_attestation.py`; D-5(b)
+re-verification CALIBRATED before landing; keeper shard + status rebuild;
+complete-marker re-key; `audit_keepers --iso PJM --check` PASS 0/0; rule-28
+re-stamps of `diurnal_price_amplitude` + `seam_flow_envelopes` +
+§5.3 prose header, `check_mechanism_matrix.py` green).
+
+**Card 2 (≤2022 input clock, audit row O3): CHARTER EXTENSION NOW signed →
+executed.** `_PJM_INPUT_CLOCK_SHIFTS` now declares 2018–2022 fueltype +1 h;
+applied via the new explicit `--apply-years` mechanism (the committed table
+is a one-shot migration record, not an idempotent transform — re-running an
+embodied entry double-shifts, so the CLI now refuses to run without naming
+the not-yet-embodied years). Byte-verified per the finding §2a protocol:
+non-fueltype columns identical every row; NG:* outside 2018–2022 identical
+(corrected 2023/24 blocks untouched); every in-block cell == pristine at
+T−1h (350,592 cells); NaN 49,305 → 49,313 (+8 = the one pre-extract
+boundary instant, left NaN not fabricated). July centroids post-fix:
+2018–2022 = 11.72/11.73/11.72/11.81/11.73 (were ~10.7), 2023–2025 unchanged.
+**Data repair only — no ≤2022 year solved, scored or registered; the spend
+freeze and tier markers are untouched.** Execution annotation appended to
+the finding §6; audit rows O1/O2/O3 all annotated resolved.
