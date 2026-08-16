@@ -527,6 +527,14 @@ def run_year(
     carry_operating_mothballs: bool | None = None,
     reliability_floor: bool | None = None,
     reliability_floor_overrides: dict | None = None,
+    # nyiso-140 per-plant floor-membership exclusion. The mechanism landed in
+    # 3febd5c wired end-to-end EXCEPT here: solve_and_persist grew the kwarg and
+    # passes it to run_year, which had no parameter to receive it, so EVERY
+    # calibration solve of EVERY ISO raised TypeError at HEAD (found by ercot-213
+    # 2026-08-16 on the first replay after the merge). Default None = leave the
+    # config's own value, so the arming semantics and the "default off, every
+    # existing bundle byte-identical" claim are untouched.
+    reliability_floor_plant_exclusions: bool | None = None,
     scarcity_price_overlay: bool | None = None,
     caiso_scarcity_pricing: bool | None = None,
     caiso_lcr_commitment_credit: bool | None = None,
@@ -1274,6 +1282,10 @@ def run_year(
     if reliability_floor_overrides is not None:
         config = config.with_overrides(
             reliability_floor_overrides=reliability_floor_overrides
+        )
+    if reliability_floor_plant_exclusions is not None:
+        config = config.with_overrides(
+            reliability_floor_plant_exclusions=reliability_floor_plant_exclusions
         )
     if scarcity_price_overlay is not None:
         config = config.with_overrides(
