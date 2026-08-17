@@ -190,6 +190,42 @@ Verified at the seam — Astoria plant-level gross becomes 780,293 / 929,474 /
 implied intensities land at 10,678–11,176 Btu/kWh and 578–625 kg CO₂/MWh.
 Regression tests: `tests/curation/test_campd.py::TestStackDuplicateCorrection`.
 
+### 4.1 The corrected values, so the next session can verify its regeneration
+
+`data/clean/emissions-unit-annual/` was rebuilt with the fix in this session and
+gives the target rows exactly. Plant gross falls to the hand-computed values and
+the two real generators' CO₂ intensity roughly doubles into the peer band:
+
+| year | plant gross, old → new | `co2_kg_per_mwh_net`, old → new |
+|---|---|---|
+| 2023 | 1,546,300 → **780,293** | 31RH 308.4 → **603.8** · 51RH 319.5 → **641.2** |
+| 2024 | 1,849,996 → **929,474** | 31RH 302.7 → **591.4** · 51RH 292.5 → **591.8** |
+| 2025 | 2,672,157 → **1,359,022** | 31RH 299.6 → **585.4** · 51RH 284.0 → **563.0** |
+
+`32SH`/`52SH` disappear (merged onto their primaries), and **units `20` and
+`CT0001` are byte-identical before and after** — the scope check that the
+correction touches only the pair.
+
+### 4.2 HAZARD — `plant_emission_rates_v2.parquet` must NOT be regenerated on the default path
+
+Deliberately **not** regenerated in this session, and the next session must not
+regenerate it naively either. The committed artifact carries **2018–2026**
+including 2022 and 2026, and those quarantined-year rows exist only via
+`--holdout-intake`, whose own guard says it "may only run once (rule 22)". The
+default path is a **replace**, not a merge (`out = derive(args.years, isos)`), so
+`derive_plant_emissions_v2.py --iso … --years …` would silently drop:
+
+* every **2018** row — 2018 is no longer built by `regenerate_clean` (CLAUDE.md
+  rule 22: 2018 and earlier are DROPPED), so it cannot be rebuilt; and
+* the **2022 / 2026** holdout-intake rows, which are **unrepeatable by
+  construction**.
+
+The A/B therefore needs either a surgical update of the eight `(8906, unit,
+year)` rows against the targets in §4.1, or an owner decision on the
+regeneration path. This is a **pre-existing artifact-lifecycle hazard** that this
+session merely surfaced — it is not created by the correction, and it applies to
+any future change touching that artifact.
+
 ## 5. WHY THE GOVERNANCE DIAGNOSTICS DID NOT CATCH IT
 
 Nothing in the gate set inspects the benchmark's own construction. C1–C3 score
@@ -254,6 +290,17 @@ ACTIVE and untouched** — this session solved nothing and scored nothing, and
 touched no year outside 2023–2025. The nyiso-140 membership exclusion, the
 nyiso-139 RT interval convention, and the deferred Zone-K joint lever are all
 left exactly as they were.
+
+**The A/B is pre-registered but NOT executed** — see
+`PREREG-nyiso141-astoria-stack-duplication-2026-08-17.md`, written before any
+solve so its ex-ante predictions cannot be fitted after the fact. It was not run
+here because the session could not complete a control + arm pair (6 year-solves
+at `plant_level_fleet=True`) on 4 cores with the clean-tree rebuild holding most
+of 15 GB, and starting a pair it could not finish would have left a half-registered
+bundle — which rule 15 forbids more firmly than it requires the solve. Nothing
+is registered on the dashboard by this session, and nothing needed to be: no run
+was produced. What the next session inherits is the correction, the target values
+(§4.1), the regeneration hazard (§4.2) and the pre-registration.
 
 Scope note (rule 25 `[R-ISO-SCOPE]`): the duplicate-reporting **pattern** is a
 CEMS filing convention and is not inherently NYISO-specific, but this session
