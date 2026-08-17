@@ -1,0 +1,193 @@
+{
+  "probe": "neiso98_escalations_and_final_readiness",
+  "solve_performed": false,
+  "scored_any_out_of_training_year": false,
+  "leg1_p2_scoring_basis": [
+    {
+      "iso": "CAISO",
+      "keeper": "2026-08-16-caiso-197-w2-r5",
+      "bundle": "results/calibration/caiso197_w2_r5",
+      "bundle_present": true,
+      "commitment": false,
+      "passes": [
+        "P1"
+      ]
+    },
+    {
+      "iso": "ERCOT",
+      "keeper": "2026-08-16-ercot213-arm-pubanchor",
+      "bundle": "results/calibration/ercot213_anchor_B",
+      "bundle_present": true,
+      "commitment": false,
+      "passes": [
+        "P1"
+      ]
+    },
+    {
+      "iso": "MISO",
+      "keeper": "2026-08-16-miso-160-wefor-shape",
+      "bundle": "results/calibration/miso160_wefor_B",
+      "bundle_present": true,
+      "commitment": false,
+      "passes": [
+        "P1"
+      ]
+    },
+    {
+      "iso": "NEISO",
+      "keeper": "2026-08-17-neiso-97-dstrepair",
+      "bundle": "results/calibration/neiso97_dstrepair_A",
+      "bundle_present": true,
+      "commitment": true,
+      "passes": [
+        "P1",
+        "P2"
+      ]
+    },
+    {
+      "iso": "NYISO",
+      "keeper": "2026-08-16-nyiso-140-layup-exclusion",
+      "bundle": "results/calibration/nyiso140_exclusion_arm",
+      "bundle_present": true,
+      "commitment": false,
+      "passes": [
+        "P1"
+      ]
+    },
+    {
+      "iso": "PJM",
+      "keeper": "2026-08-15-pjm-162-inputclock",
+      "bundle": "results/calibration/pjm_debugb_inputclock_A",
+      "bundle_present": true,
+      "commitment": false,
+      "passes": [
+        "P1"
+      ]
+    }
+  ],
+  "leg2_stony_brook_6081": {
+    "columns": [
+      "facility_id",
+      "unit_id",
+      "plant_group"
+    ],
+    "units": [
+      {
+        "unit": "001",
+        "rows": 22,
+        "plant_groups": [
+          "CC_REGULAR"
+        ]
+      },
+      {
+        "unit": "002",
+        "rows": 30,
+        "plant_groups": [
+          "CC_REGULAR"
+        ]
+      },
+      {
+        "unit": "003",
+        "rows": 7,
+        "plant_groups": [
+          "CC_REGULAR"
+        ]
+      },
+      {
+        "unit": "004",
+        "rows": 74,
+        "plant_groups": [
+          "CC_REGULAR"
+        ]
+      },
+      {
+        "unit": "005",
+        "rows": 74,
+        "plant_groups": [
+          "CC_REGULAR"
+        ]
+      }
+    ]
+  },
+  "leg3_nyiso_disclosure": {
+    "nyiso_keeper": "2026-08-16-nyiso-140-layup-exclusion",
+    "bundle_present": true,
+    "nyiso_import_hub_prices": true
+  },
+  "leg45_actual_lmp_by_year": [
+    {
+      "year": 2019,
+      "rows": 8760,
+      "inside_repaired_span": true,
+      "rt_max": 261.35,
+      "rt_mean": 30.6719,
+      "rt_hours_gt_300": 0,
+      "rt_coverage": 1.0,
+      "da_max": 178.43,
+      "da_mean": 31.2194,
+      "da_hours_gt_300": 0,
+      "da_coverage": 1.0
+    },
+    {
+      "year": 2020,
+      "rows": 8760,
+      "inside_repaired_span": true,
+      "rt_max": 236.11,
+      "rt_mean": 23.393,
+      "rt_hours_gt_300": 0,
+      "rt_coverage": 1.0,
+      "da_max": 155.02,
+      "da_mean": 23.3252,
+      "da_hours_gt_300": 0,
+      "da_coverage": 1.0
+    },
+    {
+      "year": 2021,
+      "rows": 8760,
+      "inside_repaired_span": true,
+      "rt_max": 375.28,
+      "rt_mean": 44.842,
+      "rt_hours_gt_300": 2,
+      "rt_coverage": 1.0,
+      "da_max": 203.41,
+      "da_mean": 45.9202,
+      "da_hours_gt_300": 0,
+      "da_coverage": 1.0
+    },
+    {
+      "year": 2022,
+      "rows": 8760,
+      "inside_repaired_span": true,
+      "rt_max": 2254.3501,
+      "rt_mean": 84.9155,
+      "rt_hours_gt_300": 117,
+      "rt_coverage": 1.0,
+      "da_max": 374.98,
+      "da_mean": 85.554,
+      "da_hours_gt_300": 27,
+      "da_coverage": 1.0
+    }
+  ],
+  "leg6_partial_year_gate": {
+    "file": "src/market_sim/data/eia930/frames.py",
+    "hours_per_year_references": [
+      "from market_sim.config.constants import HOURS_PER_YEAR",
+      "if len(df) != HOURS_PER_YEAR:",
+      "``HOURS_PER_YEAR`` rows.",
+      "if len(df) < HOURS_PER_YEAR - _HOURLY_FRAME_MAX_GAP or df.empty:",
+      "if len(full) != HOURS_PER_YEAR:"
+    ],
+    "gate_present": true
+  },
+  "verdict": {
+    "isos_on_legacy_p2": [
+      "NEISO"
+    ],
+    "neiso_is_sole_p2_iso": true,
+    "keeper_bundles_resolved": 6,
+    "ladder_years_all_inside_repaired_span": true,
+    "y2019_rt_hours_gt_300": 0,
+    "y2019_rt_max": 261.35,
+    "partial_year_gate_still_live": true
+  }
+}

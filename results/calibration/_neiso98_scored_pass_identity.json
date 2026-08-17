@@ -1,0 +1,215 @@
+{
+  "probe": "neiso98_scored_pass_identity",
+  "keeper": "2026-08-17-neiso-97-dstrepair",
+  "solve_performed": false,
+  "years": {
+    "2023": {
+      "passes_present": [
+        "P1",
+        "P2"
+      ],
+      "annual_max_by_pass": {
+        "P1": 248.9682,
+        "P2": 249.5023
+      },
+      "class_twh_by_pass": {
+        "P1": {
+          "CC_CHP": 0.740336,
+          "CC_REGULAR": 52.561726,
+          "COAL_BIT": 0.081356,
+          "CT_CHP": 0.459906,
+          "CT_PEAKER": 0.303236,
+          "OTHER": 3.400983,
+          "ST_CHP": 0.166691,
+          "ST_GAS": 0.148532,
+          "biomass": 3.004628,
+          "hydro": 8.517344,
+          "nuclear": 23.158884,
+          "oil": 0.304734,
+          "solar": 0.88993,
+          "wind": 3.247468
+        },
+        "P2": {
+          "CC_CHP": 0.740527,
+          "CC_REGULAR": 52.572613,
+          "COAL_BIT": 0.06759,
+          "CT_CHP": 0.459922,
+          "CT_PEAKER": 0.305606,
+          "OTHER": 3.400983,
+          "ST_CHP": 0.166691,
+          "ST_GAS": 0.148685,
+          "biomass": 3.004628,
+          "hydro": 8.517344,
+          "nuclear": 23.158884,
+          "oil": 0.30566,
+          "solar": 0.88993,
+          "wind": 3.247468
+        }
+      },
+      "class_match_abs_error": {
+        "P1": {
+          "abs_error_twh": 0.099246,
+          "classes_compared": 14
+        },
+        "P2": {
+          "abs_error_twh": 0.071409,
+          "classes_compared": 14
+        }
+      },
+      "mean_lmp_by_pass": {
+        "P1": 38.4215,
+        "P2": 38.479
+      },
+      "payload_hq_import_p": 38.48,
+      "hq_import_abs_error": {
+        "P1": 0.0585,
+        "P2": 0.001
+      },
+      "rendered_pass_by_class_twh": "P2",
+      "rendered_pass_by_hq_import": "P2"
+    },
+    "2024": {
+      "passes_present": [
+        "P1",
+        "P2"
+      ],
+      "annual_max_by_pass": {
+        "P1": 218.2412,
+        "P2": 256.9282
+      },
+      "class_twh_by_pass": {
+        "P1": {
+          "CC_CHP": 0.952541,
+          "CC_REGULAR": 56.848248,
+          "COAL_BIT": 0.126738,
+          "CT_CHP": 0.481928,
+          "CT_PEAKER": 0.784612,
+          "OTHER": 3.351861,
+          "ST_CHP": 0.17541,
+          "ST_GAS": 0.072557,
+          "biomass": 2.964051,
+          "hydro": 6.673086,
+          "nuclear": 26.481585,
+          "oil": 0.247926,
+          "solar": 1.311446,
+          "wind": 3.451451
+        },
+        "P2": {
+          "CC_CHP": 0.952565,
+          "CC_REGULAR": 56.851841,
+          "COAL_BIT": 0.122796,
+          "CT_CHP": 0.481943,
+          "CT_PEAKER": 0.784986,
+          "OTHER": 3.351861,
+          "ST_CHP": 0.17541,
+          "ST_GAS": 0.072558,
+          "biomass": 2.964051,
+          "hydro": 6.673086,
+          "nuclear": 26.481585,
+          "oil": 0.248025,
+          "solar": 1.311446,
+          "wind": 3.451451
+        }
+      },
+      "class_match_abs_error": {
+        "P1": {
+          "abs_error_twh": 0.079486,
+          "classes_compared": 14
+        },
+        "P2": {
+          "abs_error_twh": 0.071656,
+          "classes_compared": 14
+        }
+      },
+      "mean_lmp_by_pass": {
+        "P1": 43.697,
+        "P2": 43.708
+      },
+      "payload_hq_import_p": 43.71,
+      "hq_import_abs_error": {
+        "P1": 0.013,
+        "P2": 0.002
+      },
+      "rendered_pass_by_class_twh": "P2",
+      "rendered_pass_by_hq_import": "P2"
+    },
+    "2025": {
+      "passes_present": [
+        "P1",
+        "P2"
+      ],
+      "annual_max_by_pass": {
+        "P1": 280.8542,
+        "P2": 280.8542
+      },
+      "class_twh_by_pass": {
+        "P1": {
+          "CC_CHP": 0.557961,
+          "CC_REGULAR": 58.612057,
+          "COAL_BIT": 0.215792,
+          "CT_CHP": 0.451335,
+          "CT_PEAKER": 1.630081,
+          "OTHER": 2.774808,
+          "ST_CHP": 0.103168,
+          "ST_GAS": 0.064306,
+          "biomass": 2.453763,
+          "hydro": 5.106398,
+          "nuclear": 27.610523,
+          "oil": 1.626868,
+          "solar": 1.577442,
+          "wind": 4.533103
+        },
+        "P2": {
+          "CC_CHP": 0.557998,
+          "CC_REGULAR": 58.61377,
+          "COAL_BIT": 0.210746,
+          "CT_CHP": 0.451378,
+          "CT_PEAKER": 1.631253,
+          "OTHER": 2.774808,
+          "ST_CHP": 0.103168,
+          "ST_GAS": 0.064326,
+          "biomass": 2.453763,
+          "hydro": 5.106398,
+          "nuclear": 27.610523,
+          "oil": 1.629186,
+          "solar": 1.577442,
+          "wind": 4.533103
+        }
+      },
+      "class_match_abs_error": {
+        "P1": {
+          "abs_error_twh": 0.010643,
+          "classes_compared": 14
+        },
+        "P2": {
+          "abs_error_twh": 0.000334,
+          "classes_compared": 14
+        }
+      },
+      "mean_lmp_by_pass": {
+        "P1": 69.3989,
+        "P2": 69.4367
+      },
+      "payload_hq_import_p": 69.44,
+      "hq_import_abs_error": {
+        "P1": 0.0411,
+        "P2": 0.0033
+      },
+      "rendered_pass_by_class_twh": "P2",
+      "rendered_pass_by_hq_import": "P2"
+    }
+  },
+  "verdict": {
+    "routes_agree": true,
+    "routes": {
+      "rendered_pass_by_class_twh": [
+        "P2"
+      ],
+      "rendered_pass_by_hq_import": [
+        "P2"
+      ]
+    },
+    "rendered_scored_pass": "P2",
+    "c3c_tail_is_basis_independent": "measured separately by neiso98_declaration_recheck.py: model tail = 0 h on BOTH passes in all three years, so the frontier declaration does not turn on which pass is scored"
+  }
+}
