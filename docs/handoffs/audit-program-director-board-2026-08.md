@@ -22,7 +22,7 @@
 unmerged at 09:21:38Z** (`mergeable_state: dirty`, stale on arrival), which is
 the correct disposition and empties the queue.
 
-> ### ⚠️ POST-REBASE ADDENDUM — state at merge time (2026-08-17 ~14:47 UTC, `main` @ `b50623f`)
+> ### ⚠️ POST-REBASE ADDENDUM — state at merge time (2026-08-17 ~14:55 UTC, `main` @ `96f5060`)
 >
 > The v7 snapshot above is stamped at **09:25 UTC / `6cc332e`** and is left as
 > the snapshot it was. Main moved before this board could merge; five things
@@ -38,13 +38,19 @@ the correct disposition and empties the queue.
 >    touched zero `lmp-data` paths), as is the history rewrite. Remaining: the
 >    proof-of-fix call — that lane recommends **one** post-merge
 >    `workflow_dispatch` over leaving the proof mechanism red for a week.
-> 2. **WS3 IS NOT FULLY STOOD DOWN — change (d) is delivered and OPEN.**
->    **#4067** "PERF-B (d): memoize `zone_assignment.build_zone_lookup` —
->    byte-identical on a 5-ISO gate" (559 additions / 9 files, opened 14:14 UTC
->    on the revived `claude/perf-b-ws3-recheck-9r11sg`). So "(a)–(e) all
->    unstarted" is **false at merge time**: (c) had already landed and (d) is now
->    awaiting merge. **Whether a paused workstream should be landing changes is
->    an owner call, not this lane's** — flagged, not adjudicated.
+> 2. **WS3 IS NOT STOOD DOWN — THREE OF THE FIVE CHANGES HAVE LANDED.**
+>    **#4067 MERGED** (`cdb5833`, on the revived
+>    `claude/perf-b-ws3-recheck-9r11sg`) carrying **change (d)** — memoize
+>    `zone_assignment.build_zone_lookup`, byte-identical on a 5-ISO gate
+>    (`dcae155`) — **and change (e)** — export the cross-year basis only when its
+>    consumer gate is armed (`b6ae821`) — plus a wallclock baseline and
+>    `perfb-d-before` gate manifests for ERCOT / NYISO / NEISO. With (c) already
+>    landed via #3964, **"(a)–(e) all unstarted" is false three ways**: (c), (d)
+>    and (e) are on main and only **(a) and (b)** remain. **Whether a paused
+>    workstream should be landing changes is an owner call, not this lane's** —
+>    flagged, not adjudicated. Note it cuts both ways: those merges are progress
+>    against G2's leg 1, and G2 still cannot be declared without the goldens the
+>    freeze is blocking.
 > 3. **Two more keepers moved** — ERCOT → **`2026-08-17-ercot215-arm-decontam`**
 >    (#4070, promoted on owner instruction) and NEISO →
 >    **`2026-08-17-neiso-99-joint-p1`** (#4072). The staleness *count* is
@@ -53,9 +59,16 @@ the correct disposition and empties the queue.
 >    inside one day.**
 > 4. **Audit row O5 CLOSED** (#4072, neiso-99) — it was "sharpened" at the
 >    snapshot.
-> 5. **The miso-161 ruling has come in** — **#4069** (miso-163) closes the
->    C3a-2025 lane by owner ruling **as a model-class limit**; open at merge
->    time. Also open: **#4073**, the PR carrying this very board.
+> 5. **The miso-161 ruling has come in and MERGED** — **#4069** (miso-163)
+>    closes the C3a-2025 lane by owner ruling **as a model-class limit**
+>    (`96f5060`). That lane is unblocked and the item is retired.
+>
+> **This addendum is a stamp, not a live read, and it was overtaken twice while
+> being written** (#4067 and #4069 merged between the rebase and the push).
+> While calibration and WS3 lanes are both running, any status board is stale on
+> arrival — re-derive from the keeper shards, the stage-0 manifest and the open-PR
+> list rather than trusting these cells. That volatility is not a defect in the
+> board; it is the same finding this board exists to record.
 >
 > Everything else on this board — the park, the G2 legs, the RESTART CHECKLIST,
 > the outstanding rulings other than miso-161 — stands as written.
@@ -82,7 +95,7 @@ the correct disposition and empties the queue.
 |----|-------|------------|-----------------|
 | WS1 `AUDIT` | AUDIT-A **completed** (#3991); **row O8 CLOSED** — NEISO SMD DST-naive clock repaired (#4043), keeper recipe re-solved at the repaired instrument (#4052), FINDING + probe landed (#4049); **O5 sharpened** (#4063) and then **CLOSED** (#4072, neiso-99 — post-snapshot) | **In progress ~88%** | **AUDIT-B gated at G3 — waiting by design.** Rows **O4, O6, O7** open |
 | WS2 `DEBUG` | **COMPLETED** — DEBUG-A ✓, DEBUG-B ✓, pjm-162 promoted, sibling-import residue retired (census **0 bare sites / 0 live files**), landing-verify green on merged main | **Completed** | none; no DEBUG-C continuation chartered |
-| WS3 `PERF` | PERF-A ✓. **PERF-B PAUSED BY OWNER.** Stage-0 partial: **5 of 6 ISOs captured** — ERCOT #4033, NEISO #4041, NYISO #4050, CAISO #4058, MISO #4060; **PJM never captured**. Changes: **(c) already landed via #3964** (not a standalone item), **(d) delivered and OPEN in #4067** (post-snapshot — see addendum), (a)/(b)/(e) unstarted | **Paused ~68%** | **Paused, not blocked.** On restart: freeze calibration, then re-verify every golden — see RESTART CHECKLIST |
+| WS3 `PERF` | PERF-A ✓. **PERF-B PAUSED BY OWNER.** Stage-0 partial: **5 of 6 ISOs captured** — ERCOT #4033, NEISO #4041, NYISO #4050, CAISO #4058, MISO #4060; **PJM never captured**. Changes: **(c) already landed via #3964** (not a standalone item), **(d) and (e) MERGED via #4067** (post-snapshot — see addendum), **(a)/(b) unstarted** | **Paused ~72%** | **Paused, not blocked.** On restart: freeze calibration, then re-verify every golden — see RESTART CHECKLIST |
 | WS4 `DOCS` | DOCS-A **completed** (#3999 + #4005); DOCS-B held | **In progress ~60%** | **DOCS-B gated at G2 — waiting by design** |
 | WS5 `SITE` | Held by design | **Not started** | gated at **G3** |
 | WS6 `BLOAT` | Prunes B-1..B-8 merged; **BLOAT-2 CLOSED** (Class-E rule adopted + parity sweep, #4032); **BLOAT-3 ADJUDICATED** (O2 staged (a)-only GO, #4031) and **EXECUTED — BLOAT-S2 merged #4047, −444.5 MiB / 144 files at tip** | **Completed but for one RED** | **BLOAT-2 registry/payload parity gate RED**, pending a MISO payload push — **currently UNOWNED** |
@@ -119,8 +132,10 @@ restart.**
 - **G2 — UNREACHABLE while WS3 is paused.** Stated in those words deliberately:
   leg 1 is *PERF-B merged byte-green*, PERF-B is paused by owner decision, and
   no other leg can substitute. The remaining legs, for the record:
-  1. **PERF-B merged byte-green** — partial (5 of 6 captured, 3 already stale,
-     changes (a)–(e) unstarted). **Paused.**
+  1. **PERF-B merged byte-green** — partial: 5 of 6 ISOs captured, 3 already
+     stale, and **changes (c) / (d) / (e) merged** with (a) / (b) unstarted
+     (post-snapshot — see addendum). **Paused, and still short of the gate:**
+     byte-green needs goldens that the un-called freeze is what blocks.
   2. **One completed fast-tier-green `ci.yml` run** — the sparse block itself
      **already landed** (#3964, runner-validated at 31873178938: 6838 passed /
      31 skipped), so this leg is no longer waiting on PERF-B to *land code*.
@@ -169,10 +184,8 @@ Carried forward verbatim; this list replaces the former alerts section.
 
 1. **caiso-199** — NOT-YET determination (#4037 landed the FINDING, matrix cell
    and log entry; the disposition is the owner's).
-2. **miso-161 C3a-2025** — charter C3c under frontier terms, or close as a
-   model-class limit. **RULED after the snapshot: closed as a model-class
-   limit**, landing in **#4069** (miso-163), open at merge time. The lane is
-   unblocked; retire this item once #4069 merges.
+2. ~~**miso-161 C3a-2025**~~ — **RETIRED post-snapshot: RULED as a model-class
+   limit and merged** (#4069, miso-163). The lane is unblocked.
 3. **ercot-214 counterpart-decontamination lever** — G-SPUR phantom-adder risk
    (#4057 identified the mid-band spill's maker exactly and escalated).
 4. **BLOAT-2 parity RED** — needs a MISO payload push; **unowned**.
@@ -209,8 +222,8 @@ test modules and every calibration-solve import.
 > read next cycle.
 
 **PERF-B lanes — STOOD DOWN** (per the owner's pause) — **but see addendum item
-2: the `perf-b-ws3-recheck` lane REVIVED after this snapshot and has change (d)
-open in #4067.**
+2: the `perf-b-ws3-recheck` lane REVIVED after this snapshot and landed changes
+(d) and (e) via #4067.**
 
 | Lane | Branch | Last landing | Status |
 |------|--------|--------------|--------|
