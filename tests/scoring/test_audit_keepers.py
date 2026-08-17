@@ -222,5 +222,45 @@ class MarkerCurrencyTests(unittest.TestCase):
         self.assertEqual(ak.marker_currency_failures(), [])
 
 
+class AssertedDeterminationTests(unittest.TestCase):
+    """The token a marker/sidecar ASSERTS is the one its prose LEADS with.
+
+    Pins the 2026-08-17 positional fix. The scan used to run token-list-first
+    (longest token first, anywhere in the text), so a determination named in a
+    marker's deliberately preserved genealogy outranked the entry's own leading
+    claim -- an accurate marker could not be written without deleting history.
+    Rubric v3.3 made that live: NYISO's and NEISO's markers now lead with
+    CALIBRATED over prior text recording the superseded with-caveats reading.
+    """
+
+    def test_leading_token_wins_over_preserved_prior_text(self):
+        text = (
+            "CALIBRATED on run-b, re-verified under rubric v3.3. "
+            "|| PRIOR TEXT, preserved: CALIBRATED-WITH-CAVEATS on run-a."
+        )
+        self.assertEqual(ak._asserted_determination(text), "CALIBRATED")
+
+    def test_longest_token_still_wins_at_the_same_position(self):
+        # The earliest position matches both "CALIBRATED" (a prefix) and the
+        # full token; positional scanning must not regress into reading the
+        # prefix. This is the case the old longest-first ordering existed for.
+        text = "CALIBRATED-WITH-CAVEATS on run-b. Prior: CALIBRATED on run-a."
+        self.assertEqual(ak._asserted_determination(text), "CALIBRATED-WITH-CAVEATS")
+
+    def test_not_yet_leading_is_read_as_not_yet(self):
+        text = "NOT-YET on run-b (C3a fails). Prior text: CALIBRATED on run-a."
+        self.assertEqual(ak._asserted_determination(text), "NOT-YET")
+
+    def test_naming_another_runs_recipe_is_not_an_assertion(self):
+        # The conservative tail filter is unchanged: a token immediately
+        # followed by recipe/keeper/run/step names something else, and the scan
+        # falls through to the next surviving match.
+        text = "Re-solved the CALIBRATED-WITH-CAVEATS recipe; determination NOT-YET."
+        self.assertEqual(ak._asserted_determination(text), "NOT-YET")
+
+    def test_no_token_returns_none(self):
+        self.assertIsNone(ak._asserted_determination("no determination named here"))
+
+
 if __name__ == "__main__":
     unittest.main()

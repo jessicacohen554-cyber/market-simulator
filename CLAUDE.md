@@ -178,9 +178,15 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       genealogy in `docs/governance/rule-history.md` §4.)* Tier
       membership and the block mapping live in `scripts/lib/holdout_policy.py`; the
       **holdout spend freeze** (`holdout-freeze.json`) outranks both blocks and is checked first.
-    - **C3c STANDING RULE (owner, 2026-08-06; EXTENDED TO EVERY YEAR 2026-08-09): a LONE C3c
+    - **C3c STANDING RULE (owner, 2026-08-06; EXTENDED TO EVERY YEAR 2026-08-09;
+      NON-DOWNGRADING SINCE 2026-08-17): a LONE C3c
       failure in ANY year — training, validation or locked test — is an AUTO-LEDGERED
-      `CALIBRATED-WITH-CAVEATS`, in every ISO, going forward.** When C3c (price tail /
+      caveat that does NOT downgrade the determination, in every ISO, going forward.**
+      Since rubric v3.3 (owner, 2026-08-17, verbatim: *"NYISO should be declared
+      calibrated. C3c is an acceptable miss and shouldn't change a declaration from
+      calibrated to calibrated with caveats because it's a known model limitation that's
+      been ledgered"*) an otherwise-clean run carrying a ledgered C3c reads **`CALIBRATED`**,
+      with the caveat reported on its determination basis. When C3c (price tail /
       scarcity, RT hourly) is the **only** failing criterion and the governance gate passes,
       `calibration_verdict.py::_apply_c3c_standing_rule` reclassifies it to a CAVEAT
       (`ACCEPTED MODEL-CLASS LIMITATION`) instead of failing the run to `NOT-YET`. It
@@ -191,8 +197,17 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       PASS** — a failing or unattested C6 blocks it; (c) **supporting tier only, fail-closed**
       — it classifies `model-class`, which the v3.0 guard admits only for a SUPPORTING-tier
       criterion, so it can never reach load-bearing (C1/C2/C3a/C3b) or protective (C6/C8);
-      (d) it is **never a PASS** — the miss is reported at full magnitude, the run can never
-      read `CALIBRATED`, and the caveat still spends the single ledgerable slot.
+      (d) it is **never a PASS** — C3c reads CAVEAT, never PASS, so
+      `grade_summary.target_grade` never absorbs it; the miss is reported at full magnitude
+      and named on the determination basis even of a `CALIBRATED` run; it is still listed in
+      `caveats.ledgered`; and it still spends the single ledgerable slot. *(AMENDED 2026-08-17,
+      rubric v3.3: this clause formerly read "the run can never read `CALIBRATED`". That half
+      is WITHDRAWN by the owner — a ledgered caveat no longer DOWNGRADES the determination.
+      Everything else in (d), and guards (a)–(c) entire, are untouched, as are the budgets,
+      which are checked first: >1 ledgered or >0 protective caveats is still `NOT-YET`, and
+      every OTHER caveat route — commercial-band misses, protective caveats, unscored criteria,
+      data-blocked years — still downgrades. A run reads `CALIBRATED` only when a ledgered C3c
+      is its SINGLE blemish.)*
       **Why extending it to in-sample years is not a loosening.** The former clause (c),
       *out-of-training ONLY*, was never a statement about C3c's severity — band, tier and
       reported magnitude are identical in every year. In-sample the SAME reclassification was

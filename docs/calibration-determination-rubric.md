@@ -1,6 +1,31 @@
 # Calibration Determination Rubric (v2)
 
-Status: **canonical, machine-enforced. RUBRIC VERSION 3.2** (2026-08-09 owner
+Status: **canonical, machine-enforced. RUBRIC VERSION 3.3** (2026-08-17 owner
+amendment, session nyiso-calibration-declaration. Directive verbatim: *"NYISO
+should be declared calibrated. C3c is an acceptable miss and shouldn't change a
+declaration from calibrated to calibrated with caveats because it's a known
+model limitation that's been ledgered"*. **A ledgered caveat no longer
+DOWNGRADES the determination.** Since v3.1 ledgering is restricted to C3c alone,
+so this is exactly and only the owner's rule: an accepted, ledgered C3c
+price-tail limitation is **reported** but is not the thing that turns
+`CALIBRATED` into `CALIBRATED-WITH-CAVEATS`. This **withdraws** the v3.0–v3.2
+clause *"never `CALIBRATED`"*; CLAUDE.md rule 22's C3c standing-rule guard (d)
+is amended in step. What is **not** loosened: the C3c band, tier and reported
+magnitude are untouched; C3c still reads `CAVEAT` and never `PASS`, so
+`grade_summary.target_grade` does not absorb it; the ledger entry (or the
+standing rule's auto-entry) is still required; **every other route to a caveat
+still downgrades** — commercial-band target misses, protective-gate caveats,
+unscored criteria and data-blocked years; and the budgets are untouched and
+still checked first. So a run reads `CALIBRATED` only when a ledgered C3c is its
+**single** blemish. Effects, measured over all 26 registered runs against a
+pre-change snapshot: **6 determinations change, all `CALIBRATED-WITH-CAVEATS →
+CALIBRATED`**, of which **two are keepers** — NYISO
+`2026-08-16-nyiso-140-layup-exclusion` (the requested ISO) and NEISO
+`2026-08-17-neiso-99-joint-p1` (an unavoidable cross-ISO consequence: the scorer
+is one instrument, and an ISO-scoped verdict rule would be an off-registry
+tuning channel in spirit, rules 24/25). No `NOT-YET` is reclassified;
+CAISO/ERCOT/MISO/PJM are unchanged. Scorer-only: no re-solve, keepers re-score
+in place. Full detail in §9. Prior banner, v3.2: (2026-08-09 owner
 amendment, session neiso-keeper-87-control. Directive verbatim: *"make sure c3c
 is an acceptable caveat for any holdout or training year"*. **(a) The C3c
 standing rule fires in EVERY year**, not out-of-training only — a LONE C3c
@@ -10,7 +35,9 @@ band: in-sample the same reclassification was already reachable via an explicit
 exceptions-ledger entry — the route every current keeper with a C3c caveat used
 — so the split governed who typed the justification, not what a run could claim.
 The guards are unchanged: lone failure only, governance must PASS, supporting
-tier only (fail-closed), never `CALIBRATED`, and it still spends the single
+tier only (fail-closed), never `CALIBRATED` *(this clause of the v3.2 banner is
+**superseded by v3.3 above** — every other guard it lists survives intact)*, and
+it still spends the single
 ledgerable slot. **(b) A defect is fixed in the same amendment**: "lone" was
 measured over every scored record including the REPORTED-ONLY streams the rubric
 demoted out of the determination (C5a `co2`, removed at v2.9), so a `co2` FAIL
@@ -89,7 +116,13 @@ demonstrated commercial-model grade** on every load-bearing criterion, with
 every deviation either inside an evidence-anchored commercial band (listed) or
 an explicitly ledgered measured-input limitation (budgeted). `CALIBRATED`
 additionally requires every criterion at the stricter *target* grade with
-nothing unscored. Both determinations remain conditional on the protective
+nothing unscored — **except**, since v3.3, a single ledgered C3c caveat, which
+is reported on the determination basis instead of downgrading the row. So
+`CALIBRATED` no longer implies "nothing was missed"; it implies "nothing was
+missed **other than** an owner-accepted, ledgered scarcity-tail limitation,
+stated in the verdict". Read `caveats.ledgered` / `grade_summary.ledgered` to
+see whether a given `CALIBRATED` run carries one.
+Both determinations remain conditional on the protective
 anti-self-deception gates (C6/C8 — C7 was retired at v3.1), which are what
 make the accuracy claims believable at all. Every band in this rubric is
 anchored to a *published external benchmark* wherever one exists
@@ -866,6 +899,29 @@ differently:
   assertion that re-widening the ledgerable set without an owner amendment
   cannot silently buy back excuse capacity.
 
+  **v3.3 (owner amendment 2026-08-17) — a ledgered caveat is REPORTED, not
+  DOWNGRADING.** A within-budget ledgered caveat no longer moves the overall
+  determination from `CALIBRATED` to `CALIBRATED-WITH-CAVEATS`. Because the
+  ledgerable set is `{C3c}`, this says exactly one thing: *a known, ledgered
+  scarcity-tail limitation is not a caveat on the calibration*. It changes what
+  the caveat **costs**, not what it **is** —
+  - C3c still reads `CAVEAT`, **never `PASS`**, so `grade_summary.target_grade`
+    does not absorb it and the miss is visible on every report;
+  - the magnitude is still printed in full, the criterion is still listed in
+    `caveats.ledgered` and counted in `grade_summary.ledgered`, and the caveat is
+    still named on the determination basis of a `CALIBRATED` run;
+  - the ledger entry (or the C3c standing rule's auto-entry) is still required,
+    with its exhaustion citation;
+  - **the budgets are unchanged and are checked first**, so >1 ledgered or >0
+    protective caveats is still `NOT-YET`. The 1-slot ledgered budget is now the
+    *sole* numeric bound on what may be carried without a downgrade;
+  - **every other caveat route still downgrades** — commercial-band target
+    misses, protective-gate caveats, `SKIPPED` criteria and data-blocked years
+    are untouched;
+  - and the `FAIL` path is untouched: a C3c miss that is not ledgerable, because
+    a second criterion also fails or governance does not pass, still stands as a
+    `FAIL` and still carries the run to `NOT-YET`.
+
   **Why C3c and nothing else.** C3c is the one criterion with *no published
   commercial comparable at all* (§5 / the C3c band note: no commercial or
   public model publishes tail-hour-count accuracy), so a documented,
@@ -891,8 +947,8 @@ differently:
 
 | Outcome | Conditions (all must hold) |
 |---|---|
-| **CALIBRATED** | C6 governance `PASS`; **every** criterion `PASS` at target grade (no `FAIL`, no `CAVEAT` of either kind, no `SKIPPED`); **no** data-blocked target year. |
-| **CALIBRATED-WITH-CAVEATS** | C6 governance `PASS`; **no** `FAIL` on any criterion; ledgered caveats within budget (v3.1: ≤0 protective, ≤1 other — and only C3c is ledgerable at all) and **every** ledgered caveat has a ledger entry; one or more of {any caveat exists, a criterion is `SKIPPED` (e.g. C8 with no committed `legitimacy_diagnostics.json` — named explicitly in the reasons), a target year is data-blocked}. **Certifies: intended-use delivery at or above commercial grade.** |
+| **CALIBRATED** | C6 governance `PASS`; no `FAIL`; no `SKIPPED`; no data-blocked target year; no commercial-band caveat and no protective caveat. **v3.3:** a **ledgered** caveat is permitted here — it can only be C3c, it is within budget by the row below, and it is reported on the determination basis rather than downgrading the row. (Through v3.2 this row required *every* criterion at clean target grade.) |
+| **CALIBRATED-WITH-CAVEATS** | C6 governance `PASS`; **no** `FAIL` on any criterion; ledgered caveats within budget (v3.1: ≤0 protective, ≤1 other — and only C3c is ledgerable at all) and **every** ledgered caveat has a ledger entry; one or more of {a **commercial-band** caveat exists, a criterion is `SKIPPED` (e.g. C8 with no committed `legitimacy_diagnostics.json` — named explicitly in the reasons), a target year is data-blocked}. *(v3.3 removed "any caveat exists" from this trigger list: the ledgered kind no longer downgrades, the other kinds still do.)* **Certifies: intended-use delivery at or above commercial grade.** |
 | **NOT-YET** | anything else — governance not `PASS`/`UNATTESTED`; **or any criterion `FAIL`** (an out-of-tolerance criterion with no ledger entry is a `FAIL` *by construction*); or a ledgered-caveat budget is exceeded. |
 
 The decisive rule, restated: **a determination with an undocumented
@@ -1118,6 +1174,60 @@ down to.
 
 ## 9. Version history
 
+- **v3.3 (2026-08-17, owner amendment — session nyiso-calibration-declaration;
+  directive verbatim: "NYISO should be declared calibrated. C3c is an acceptable
+  miss and shouldn't change a declaration from calibrated to calibrated with
+  caveats because it's a known model limitation that's been ledgered")** — a
+  **ledgered caveat no longer downgrades the overall determination.**
+
+  Since v3.1 the ledgerable set is `{C3c}`, so the amendment says exactly one
+  thing and cannot say more: an accepted, ledgered scarcity-tail limitation is
+  reported, but it is not what turns `CALIBRATED` into
+  `CALIBRATED-WITH-CAVEATS`. It **withdraws** the v3.0–v3.2 clause *"never
+  `CALIBRATED`"*, which is left verbatim in those entries as genealogy; every
+  other guard those entries list survives intact. CLAUDE.md rule 22's C3c
+  standing-rule guard (d) is amended in step.
+
+  **Why this is a reporting change and not a band change.** The C3c band, tier
+  and measured magnitude are untouched, and the criterion still reads `CAVEAT`
+  and **never `PASS`** — so `grade_summary.target_grade` does not absorb it, the
+  magnitude is still printed in full, the criterion is still listed in
+  `caveats.ledgered` and counted in `grade_summary.ledgered`, and the caveat is
+  still named on the determination basis of a `CALIBRATED` run. What changed is
+  what the caveat *costs*, on the owner's determination that a known, ledgered
+  model-class limitation is not a caveat on the calibration itself.
+
+  **What still binds, unchanged.** The ledger entry (or the standing rule's
+  auto-entry, with its exhaustion citation) is still required. The budgets are
+  untouched and are checked **before** this branch, so >1 ledgered or >0
+  protective caveats is still `NOT-YET` — the 1-slot ledgered budget is now the
+  *sole* numeric bound on what may be carried without a downgrade. Every other
+  caveat route still downgrades: commercial-band target misses, protective-gate
+  caveats, `SKIPPED` criteria and data-blocked years. And the `FAIL` path is
+  untouched — a C3c miss that is not ledgerable, because a second criterion also
+  fails or governance does not pass, still stands as a `FAIL` and still carries
+  the run to `NOT-YET`. So a run reads `CALIBRATED` only when a ledgered C3c is
+  its **single** blemish.
+
+  **Effect at amendment, measured over all 26 registered runs against a
+  pre-change snapshot rather than asserted:** six determinations change, all
+  `CALIBRATED-WITH-CAVEATS → CALIBRATED`, and all six are the same shape (lone
+  ledgered C3c; zero band caveats, zero protective caveats, nothing `SKIPPED`,
+  nothing data-blocked). **Two are keepers** — NYISO
+  `2026-08-16-nyiso-140-layup-exclusion`, the ISO this amendment was requested
+  for, and NEISO `2026-08-17-neiso-99-joint-p1`. The NEISO flip is an
+  **unavoidable cross-ISO consequence, carried openly**: the scorer is one
+  instrument, and an ISO-scoped verdict rule would be an off-registry tuning
+  channel in spirit (rules 24 `[R-REGISTRY]` / 25 `[R-ISO-SCOPE]`), so there is
+  no honest way to move NYISO's determination without moving every run of the
+  same shape. The other four are non-keepers: NYISO
+  `2026-08-08-nyiso-133-cod-arm` and `2026-08-17-nyiso-142-stackdup`, NEISO
+  `2026-08-17-neiso-97-dstrepair` and `2026-08-06-neiso-2022-corrected-basis`.
+  No `NOT-YET` is reclassified in either direction, and CAISO / ERCOT / MISO /
+  PJM are unchanged (each keeper either fails a criterion outright or carries no
+  ledgered C3c). Scorer-only: no re-solve, every keeper re-scores in place from
+  its committed artifacts.
+
 - **v3.2 (2026-08-09, owner amendment — session neiso-keeper-87-control;
   directive verbatim: "make sure c3c is an acceptable caveat for any holdout or
   training year")** — two changes, one widening the C3c standing rule's *scope*
@@ -1143,7 +1253,9 @@ down to.
   the rule is silent and every failure stands, C3c's included — so it can only
   ever fire on an otherwise-clean model), **governance must PASS**, **supporting
   tier only** (the v3.0 fail-closed guard refuses `model-class` on load-bearing
-  and protective criteria), **never `CALIBRATED`**, and the caveat still spends
+  and protective criteria), **never `CALIBRATED`** *(superseded by v3.3 — the
+  ledgered caveat no longer downgrades; every other guard in this list stands)*,
+  and the caveat still spends
   the single ledgerable slot.
 
   **(b) "Lone" is now measured over the determination's own criteria.** The test
