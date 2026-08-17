@@ -1449,3 +1449,174 @@ your branch when done.
   `docs/FINDING-golden-tier-cron-red-2026-08-17.md`. Proof of fix:
   recommend ONE post-merge `workflow_dispatch` (spends an authorized
   dispatch) over leaving the proof mechanism red for a week.
+- 2026-08-17 (owner decision: WS3 paused, program parked at G1) — **OWNER
+  DECISION: WS3 / PERF-B is PAUSED so the calibration program can run.** Not a
+  failure and not a rejection of the work — a sequencing decision. Records
+  landed by a dispatched docs-only lane (board goes v7 in the same pass);
+  live state at record: `origin/main` @ **`6cc332e`**, **ZERO open PRs**.
+  - **CONSEQUENCE, recorded explicitly so no later session mistakes the pause
+    for drift.** *PERF-B merged byte-green* is a G2 precondition (§2), so **G2
+    CANNOT BE DECLARED while WS3 is paused** and the Model Audit &
+    Release-Finalization Program is therefore **PARKED AT G1**. **DOCS-B** (G2),
+    **SITE-A** (G3) and **AUDIT-B** (G3) remain gated and are **not late — they
+    are waiting by design.** The FFR desk's **Q.2 supersession battery**, which
+    commissions at G2 (`ffr-owner-sitting-2026-08-02.md` AS.6), **does not
+    fire.**
+  - **WS3 state at pause — five of six ISOs captured, and further along than
+    the pause dispatch recorded.** Stage-0 goldens merged for **ERCOT**
+    (#4033, `ercot204`), **NEISO** (#4041, `neiso-93-envelope`), **NYISO**
+    (#4050, `nyiso-140-layup-exclusion`), **CAISO** (#4058,
+    `caiso-197-w2-r5`) and **MISO** (#4060, `miso-160-wefor-shape`); **PJM was
+    never captured.** The duplicate MISO capture on the other branch (**#4051**,
+    `claude/perf-b-ws3-recheck-9r11sg`, keeper `miso-159`, swap-backed after a
+    memcg OOM) was **CLOSED UNMERGED at 09:21:38Z** — during this lane's run,
+    `mergeable_state: dirty`, stale on arrival (miso-159 → miso-160) — which is
+    the correct disposition and is why the queue is empty. Changes **(a)–(e)
+    all UNSTARTED**, with one correction below.
+  - **CORRECTION to the pause dispatch: change (c) is ALREADY LANDED, not
+    "landable standalone".** The `ci.yml` fast-tier sparse block — plus
+    `timeout-minutes: 20` — merged via **PR #3964, by the owner
+    2026-08-15T16:56:40Z**, and the file at HEAD is byte-identical (blob
+    `af34031c`) to the prototype head `claude/ci-infrastructure-blocker-bp3zv3`
+    @ `e7dad28a`. **There is nothing left to port and an empty-diff PR is not
+    possible.** Its runner validation stands: run **31873178938** (job
+    94984802917, 10 m 36 s wall) = `6838 passed, 31 skipped, 2 xfailed, 437
+    subtests passed` — skip count **exactly 31**, matching the watch number.
+    Evidence: `docs/handoffs/perfb-stage0-staleness-ledger-2026-08-17.md`
+    §"Change (c) status". Hygiene flag carried forward: #3964 also merged
+    `.github/workflows/perf-a-ci-probe.yml` to main despite its own
+    NOT-FOR-MERGE header — `workflow_dispatch`-only, so it burns nothing, but
+    it is a per-task rig living on main.
+  - **Staleness at pause, recomputed at `6cc332e`: 3 STALE, 2 CURRENT, 1 NO
+    GOLDEN.** The stage-0 staleness ledger (#4061, snapshot `5b89e84`) headlined
+    *2 stale / 2 current / 2 no-golden*; that headline is **superseded within
+    two minutes of its own merge** by #4060 (MISO capture, 05:01:23Z) and #4065
+    (CAISO promotion, 05:03:11Z). At HEAD, golden keeper vs designated keeper:
+    **ERCOT STALE** (`ercot204-rule26-delete` vs `2026-08-16-ercot213-arm-pubanchor`),
+    **NEISO STALE** (`neiso-93-envelope` vs `2026-08-17-neiso-97-dstrepair`),
+    **CAISO STALE** (`caiso-197-w2-r5` vs `2026-08-17-caiso-200-h1-memberpanel`),
+    **MISO CURRENT**, **NYISO CURRENT**, **PJM NO GOLDEN**.
+  - **THE LANE'S FINDING, recorded as a finding: stage-0 could not converge
+    because ISO keepers moved faster than captures completed.** ERCOT moved
+    after #4033; MISO past miso-159; NYISO to `nyiso-140-layup-exclusion`; and
+    the sharpest instance is CAISO — the ledger recording its golden **CURRENT**
+    merged at 05:01:43Z and the caiso-200 promotion staled it at 05:03:11Z,
+    **88 seconds later** (#4065, on the owner's structural-integrity
+    instruction). **A calibration freeze is the precondition for completing
+    WS3 whenever it resumes.** The director escalated this across five cycles;
+    it is **moot until WS3 restarts, but it will bind again on restart** — see
+    the board's RESTART CHECKLIST.
+  - **CORRECTION, recorded as a correction: neiso-97 IS the designated NEISO
+    keeper — "NOT A KEEPER" is wrong.** The pause dispatch recorded neiso-97 as
+    adjudicated not-a-keeper on insufficient structural gains. The committed
+    record contradicts it: `frontend/data/backcast/keepers/NEISO.json` at HEAD
+    carries `keeper: "2026-08-17-neiso-97-dstrepair"` (promotion `d25925b` via
+    **#4055**, 03:37:05Z), re-verified twice — by neiso-97 on measured
+    bit-identity to `neiso-93-envelope`'s committed sidecars (probe
+    `scripts/probes/neiso97_arm_vs_incumbent_sidecars.py`, **zero differing
+    cells**) and again by **neiso-98** (#4063) re-derived directly on the
+    keeper's own sidecars, **no solve**. What IS true is the measurement, not
+    the disposition: the DST-repaired re-solve moved **nothing** — sidecars
+    bit-identical to the superseded keeper, C3c model tail **0 h > $300/MWh in
+    all three years on both passes** (closest approach $280.85 in 2025, short
+    by $19.15), RCPF co-opt DORMANT (`shortfall_mw = 0.0` in all 157,680
+    family-hours). **Consequence for WS3:** NEISO's golden is stale **by keeper
+    id** while its underlying sidecars are bit-identical, so a NEISO re-capture
+    is a **re-stamp, not a re-solve**.
+  - **AUDIT ROW O8 CLOSED.** The NEISO SMD 2018–2023 DST-naive workbook clock
+    was repaired (**#4043**), the keeper recipe re-solved at the repaired
+    instrument (**#4052**, `neiso97_dstrepair_A`), and the FINDING +
+    attestation + sidecar-comparison probe landed (**#4049**). **O5** was
+    sharpened in the same lane (#4063).
+  - **WS6 effectively closed.** **BLOAT-S2 merged** (**#4047**, −444.5 MiB /
+    144 files at tip) and **BLOAT-3's O2 staged (a)-only grant executed**. The
+    **BLOAT-2 registry/payload parity gate remains RED** pending a MISO payload
+    push, **currently unowned**.
+  - **NEW FINDING — THE GOLDEN-TIER WEEKLY CRON FIRED AND IT IS RED.** The
+    standing watch item is discharged, with a red. Run **31999181985**,
+    `event: schedule`, **2026-08-17T05:48:08Z**, head **`6cc332e7`**,
+    conclusion **FAILURE** (job 95296191095, 6 m 24 s). It died in step 5,
+    *"Provision data/clean (the slices the tier reads)"*: **`curate_lmp.py` was
+    the sole failing datatype (`1/9 datatype(s) failed`)** — every other
+    datatype reported `[ ok ]` — so steps 6–7 skipped, pytest never ran
+    (`check_data_tier_report.py`: *"junit report tier-report.xml does not exist
+    — pytest died before writing it; the tier did not run"*), and the
+    loud-failure guard failed the job. Three consequences: (i) **BLOAT-S2's
+    post-merge proof leg is NOT satisfied** — D3 was *"the first weekly
+    golden-tier cron green after merge"* and that firing is **red**; (ii) the
+    last golden-tier green remains the `workflow_dispatch` **31913648051**
+    (2026-08-15 23:01 UTC, `ccca569c`); (iii) **GOLDEN-TIER-FIX's own
+    completion is not in question** — the fix was verified at #4014 — but the
+    tier is not green on a scheduled firing at HEAD. **Cause NOT diagnosed
+    here** (docs-only lane, no `src/`/`scripts/` scope): needs a dispatched
+    diagnostic lane. One lead to rule in or out first: `lmp-data` non-golden is
+    **precisely** the corpus whose BLOAT-S2 evidence pass **FAILED** and which
+    therefore **stays tracked**, so the Stage-2 untrack is not the obvious
+    cause — but it is adjacent enough that it must be cleared explicitly, along
+    with the MISO-archive decay the same finding measured (2022 already 404).
+    ***OVERTAKEN SAME-DAY, before this entry landed** — see the triage entry
+    immediately above, delivered by session DEBUG-TRIAGE (#4071) while this lane
+    was writing. The cause was **`curate_lmp.py::_neiso_flat24_repair`**
+    assigning the string `"02"` into the int64 `Hr_End` column of the 2018–2023
+    NEISO flat-24 vintage (pandas 3.0.3 raises where older pandas upcast),
+    introduced by neiso-97's `a2b5e3d` (#4043) three hours pre-cron, and the fix
+    is delivered. **Both leads this bullet named were checked and cleared:**
+    #4047 touched zero `lmp-data` paths, and the history rewrite was ruled out.
+    So the dispatched-lane recommendation is **discharged, not outstanding** —
+    what remains is the proof-of-fix call (that lane recommends ONE post-merge
+    `workflow_dispatch` over leaving the proof mechanism red for a week). The
+    diagnosis stands as an independent confirmation of this bullet's own
+    reasoning: the untrack was **not** the cause.*
+  - **DEFECT WORTH ITS OWN LINE — #4054, and the part of it that is now
+    answered.** **#4054** restored the `reliability_floor_plant_exclusions`
+    override block in `run_year`, which had been a **SILENT NO-OP on main**.
+    nyiso-140 introduced a lever on that channel (**#4026**) and was promoted
+    (**#4042**) *inside that window*, so **its A/B may have measured a null
+    treatment**; a read-only recheck lane was dispatched. This is an
+    **[R-REGISTRY]-class defect** — an override that parses, is accepted, and
+    does nothing — and the **second** such this program has surfaced. *What the
+    staleness ledger (#4061) has since settled is the narrower question of the
+    stage-0 captures, not the A/B:* only the **named-kwarg channel** was broken,
+    while the ScenarioConfig field and the apply site
+    (`apply_reliability_floor_plant_exclusions`, `scripts/run_calibration.py`
+    :3364 in tree `2dd9dbc`) were present and functional, and
+    `capture_keeper_goldens.py` replays the keeper's recorded `scenario_config`
+    through `config.with_overrides`, never touching the broken block — so
+    NYISO, the **only** keeper arming the override, captured with exclusions
+    **ACTIVE** (`recorded_flag_count` 248 / `meta_matched` 257 /
+    `scenario_config_drift: []`). Residual: code-state + tool-path evidence,
+    not a logged runtime line; a fidelity-only re-check at HEAD (hash compare,
+    no solve) would close it. **The nyiso-140 A/B null-treatment question
+    itself stays OPEN with the dispatched lane.** Two tails to the same defect
+    also landed: **#4059** (miso-162) de-duplicated the restored block, and
+    **#4044** repaired the duplicate-parameter `SyntaxError` on main that had
+    broken collection of 32 test modules and every calibration-solve import.
+  - **OWNER RULINGS OUTSTANDING at the pause, carried forward:** **caiso-199**
+    NOT-YET determination; **miso-161** C3a-2025 (charter C3c under frontier
+    terms, or close as a model-class limit) — **lane BLOCKED**; **ercot-214**
+    counterpart-decontamination lever (G-SPUR phantom-adder risk); the
+    **BLOAT-2 parity RED**; **decision-1 ack** (warm-start
+    closed-overtaken); and audit rows **O4, O5, O6, O7**. **O6 note stands and
+    is verified at HEAD:** 2019 and H1-2026 are touch-once and **no ISO has
+    ever spent one** — `frontend/data/backcast/calibration-complete.json` has
+    `complete` = {NEISO, NYISO, PJM} and `final` carrying **only** its `_note`,
+    i.e. **no ISO holds a `final` marker at all**.
+  - **Designated keepers at HEAD** (read from the shards, not inferred):
+    ERCOT `2026-08-16-ercot213-arm-pubanchor` · CAISO
+    `2026-08-17-caiso-200-h1-memberpanel` · PJM `2026-08-15-pjm-162-inputclock`
+    · MISO `2026-08-16-miso-160-wefor-shape` · NYISO
+    `2026-08-16-nyiso-140-layup-exclusion` · NEISO
+    `2026-08-17-neiso-97-dstrepair`. Calibration is visibly running into the
+    pause — #4064 (ercot-215 control, 12/12 sidecars byte-identical), #4062
+    (nyiso-141 corrected targets + nyiso-142 handoff), #4065 (caiso-200
+    promotion) all merged 05:01–05:03Z, and a live CAISO lane branch
+    (`claude/caiso-backcast-calibration-2yk22l`) sits off main — which is
+    exactly what the pause was taken to allow.
+  - **DEVIATIONS.** (1) The standing one: the director issues prompts only and
+    does not push, so these records land via a dispatched lane. (2) **This
+    lane could not make the live `list_sessions` call the dispatch specified**
+    — the tool required an approval that never arrived across four attempts —
+    so **board v7's roster is rebuilt from live GitHub branch/PR/merge
+    evidence instead of a live session read**, and is labelled as such. Lane
+    *sessions* are therefore inferred; lane *branches, PRs and merges* are
+    live-read and exact.
