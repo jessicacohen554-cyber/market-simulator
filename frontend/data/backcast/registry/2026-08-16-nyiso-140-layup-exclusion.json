@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-16-nyiso-140-layup-exclusion",
+ "label": "nyiso 140 layup exclusion",
+ "date": "2026-08-16",
+ "shorthand": "nyiso-140-layup-exclusion",
+ "definition": "(PROBE — A/B ARM, not promoted; owner's call) Excludes the economically laid-up Port Jefferson (2517) from the always-on Long_Island ST_GAS reliability floor — a rule-17 [R-FLOOR-WINDOW] MEMBERSHIP correction, not a window change. The limb is identified on a FLEET-aggregate capacity factor but applied per UNIT (pro_rata), and 2517's own CAMPD conduct is median CF 0.000 in every hour block of 2023-25 with 73% of cool hours at zero, while carrying ~100% model availability because lay-up is correctly not booked as an outage. It absorbed 72.6% of everything the limb forced (1.87 of 2.57 TWh over 3 yr) on 7.2% of the fleet's output. The 24-hour WINDOW is confirmed correct and unchanged (Barrett/Northport do run the baseline), and floor_pct is UNCHANGED at 0.262 — the basis-matched hourly p25 excluding 2517 is 0.2666 — so ZERO new free parameters (rule 21). ALL SIX pre-registered kill gates clean: K3 liveness shed 0.602/0.560/0.625 TWh, matching the ~0.62/yr predicted from CAMPD before any solve. DO-NOT-MISREAD: the fit gets slightly WORSE and was pre-registered to (ST_GAS err +2.679->+2.263 in 2023, -0.595->-0.916 in 2024, -3.379->-3.737 in 2025). Registered on rule 1 [R-STRUCT]; under rule 14 the degradation is a DISCOVERED BUG — the manufactured energy was masking a real downstate under-run — and the successor is that root cause, never re-flooring the laid-up plant. First application of the owner-adopted K6' gate. Evidence: results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md, PREREG-nyiso140-li-st-floor-membership-2026-08-16.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-08-16-nyiso-140-layup-exclusion.js",
+ "bundle": "results/calibration/nyiso140_exclusion_arm"
+}

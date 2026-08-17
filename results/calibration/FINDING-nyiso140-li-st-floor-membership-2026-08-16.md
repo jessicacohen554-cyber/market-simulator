@@ -215,7 +215,68 @@ correction is justified by the floor's own source evidence alone; if removing
 bug to root-cause under rule 14 `[R-ACCURATE]`, not a reason to keep the plant
 floored.
 
-## 7. WHAT IS UNCHANGED
+## 7. THE A/B RESULT — all six kill gates clean, and the fit gets slightly WORSE
+
+Solved in-session, `--year 2023 2024 2025` in one bundle each (rule 16), both
+registered (rule 15):
+
+* control `2026-08-16-nyiso-140-control` — the keeper recipe replayed at HEAD;
+* arm `2026-08-16-nyiso-140-layup-exclusion` — the same recipe + the exclusion.
+
+| gate | result |
+|---|---|
+| **K1** config isolation | **PASS** — exactly one differing field, `reliability_floor_plant_exclusions: False → True` |
+| **K2** feasibility | **PASS** — slack and dump identically 0.0, both arms, all three years |
+| **K3** liveness | **PASS** — the floor sheds **0.602 / 0.560 / 0.625 TWh** |
+| **K4** scope | **PASS** — only the LI ST_GAS limb loses a row |
+| **K5** gated-criterion regression | **PASS** — nothing goes PASS → FAIL |
+| **K6′** provenance + shape | **does not fire** — both legs pass |
+
+**K3 is the identification's own confirmation.** §3 predicted, from CAMPD conduct
+alone and before any solve, that Port Jefferson's manufactured energy was
+~0.62 TWh/yr. The LP shed 0.602 / 0.560 / 0.625. The object was sized correctly
+from measured conduct, not fitted.
+
+**C1/C2/C3a/C3b/C4/C8 all PASS on both sides; C3c is the same lone failure on
+both.** Both runs read `NOT-YET` **only** because a fresh probe bundle carries no
+`calibration_attestation.json`, so C6 is `UNATTESTED` — symmetric across the
+comparison, and rule 22's C3c standing rule correctly refuses to reclassify
+without a passing governance gate (guard (b)).
+
+**The arm does not improve the fit, exactly as pre-registered.** §3's ex-ante
+table said ST_GAS volume would improve in 2023 and worsen in 2024–25:
+
+| year | actual | control | arm | control err | arm err |
+|---|---:|---:|---:|---:|---:|
+| 2023 | 8.704 | 11.383 | 10.967 | **+2.679** | **+2.263** |
+| 2024 | 11.071 | 10.476 | 10.155 | −0.595 | −0.916 |
+| 2025 | 16.003 | 12.625 | 12.266 | −3.379 | −3.737 |
+
+Summed |error| 6.653 → 6.916 TWh. Mean system LMP firms slightly
+(+0.21 / +0.18 / +0.40 $/MWh) as forced must-run energy is withdrawn.
+
+**This is the rule 1 `[R-STRUCT]` case in its pure form, and the reason the run
+is registered rather than buried.** The floor was holding a laid-up plant at
+26.2 % of nameplate in all 8,760 hours; that is wrong whatever it does to the
+residual. Under rule 14 `[R-ACCURATE]` the degradation is a **discovered bug**,
+not a verdict on the correction: the manufactured 1.87 TWh was masking a real
+downstate under-production (2025 ST_GAS was already −21 % *before* the fix). The
+successor is that root cause — **not** re-flooring the laid-up plant.
+
+**K6′'s first application, and it earned its keep.** The surviving
+`nyiso_gas_commitment_bridge` share ROSE (+0.0045 / +0.0118 / +0.0051) while the
+mechanism did strictly less work in absolute terms in the years its own energy
+fell. Bare K6 — "any D-2 mechanism's forced share rises" — would have killed this
+arm. K6′ correctly escalated to provenance + shape and cleared it.
+
+**Standing caveat, stated because it weakens my own result.** K6′ leg (a) leans
+on D-4, and §4 shows D-4 is *tautological* for an `h0-23` floor: both arms report
+`offwindow_share = 0.000` **by construction**. So the provenance leg is currently
+carried by a check that cannot fail, and the owner-adopted **D-4 per-unit conduct
+rider is not yet implemented**. Until it is, K6′'s provenance leg should be read
+as unproven rather than passed.
+
+## 8. WHAT IS UNCHANGED
 
 Keeper `2026-08-08-nyiso-133-cod-arm` is untouched and remains
 `CALIBRATED-WITH-CAVEATS` with C3c the lone ledgered caveat. NYISO holds
