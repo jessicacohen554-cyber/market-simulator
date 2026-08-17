@@ -95,10 +95,12 @@ class TestSolveCoreGate:
             xyear_warmstart=False,
         )
         assert got.p1.status == "Optimal"
-        # The export is unconditional on a live warm model (so a downstream A/B
-        # does not depend on call ordering) — what the gate controls is the
-        # APPLY. Assert the solve is clean and the disk cache stayed out of it.
-        assert holder, "the basis is still exported for a downstream consumer"
+        # PERF-B: the export follows the cross-year gate. Explicit False means
+        # no consumer exists — not the next year's apply (this gate) and not
+        # the persisted NPZ cache (explicitly-gated callers bypass it) — so
+        # nothing is exported. Supersedes the pre-PERF-B "export is
+        # unconditional on a live warm model" pin.
+        assert holder == [], "no consumer ⇒ no export under explicit False"
 
     def test_explicit_on_without_env(self, monkeypatch):
         """Explicit True + env unset ⇒ the cross-year apply is live."""
