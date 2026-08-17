@@ -9803,3 +9803,82 @@ the owner merges).
 
 **Session consumed the ercot-213 shorthand. Next shorthand: ercot-214**
 (ercot-199 remains unclaimed).
+
+## ercot-214 (2026-08-17) — G-SPUR-2023 PHASE-0 EXECUTED (the ercot-213 named open lane): the mid-band spill is ADDER-MADE and its maker is IDENTIFIED EXACTLY — the AS-product shortfall-ramp penalty (VOLL/12 = $416.67) leaking through the all-tier cap dual into the published-anchor adder; ONE lever proposed (counterpart decontamination, zero scalars), its full-span scorecard measured EXACTLY pre-solve, **Phase-1 NOT entered** (the lever kills G-C3c in all three years by known arithmetic), decision ESCALATED to the owner. Read-only: NO LP, no solve, no year scored, no run registered, NO cell verdict minted, keeper UNCHANGED
+
+**Dispatched by the owner as the ercot-213 successor.** Keeper resolved fresh:
+`2026-08-16-ercot213-arm-pubanchor` (NOT-YET, {C3b-2023} alone, C3c-2025 the
+single ledgered caveat) — unchanged throughout. Committed probe:
+`scripts/probes/ercot214_gspur_phase0.py` →
+`results/calibration/ercot214_gspur_phase0.json`. Full record:
+`docs/FINDING-ercot214-gspur-phase0-2026-08-17.md`.
+
+**The dispatched questions, answered from committed artifacts only.** (a) The
+keeper's 17 spurious 2023 hours split exactly: 8 shared with the control
+(mid-Aug afternoons, ENERGY-made — λ ≥ $150, adder ≤ $43, the surrounding
+recipe's pre-existing object) + 9 keeper-only (Jun 11–19 + Jul 10, hod 15–19
+CST, ADDER-made — λ $50–77 with a near-constant $411–414 written adder);
+control hour h5822 left the band UPWARD ($583.26). The G-SPUR *movement* is
+entirely adder-made. (b) One regime: cheap-energy early-summer afternoons
+where the netted supply cap binds below the AS-plan sum and NonSpin runs
+73–414 MW short; no zonal structure (system-wide broadcast). (c) The real
+market wrote nothing: published RTORPA $0.11–1.32 in the 9 hours (RTOLCAP
+7.0–8.7 GW), actual RT $68–146 — while the model's own `ercot_ordc_total`
+family dual reads $0.15–2.51, matching published RTORPA almost one-for-one.
+
+**THE IDENTIFICATION, exact in 808/808 writing hours (564/177/67 across
+2023/24/25):** `gamma_all(t) = k(t)·(VOLL/12) + gamma_ordc_family(t)`, k
+integer — the `nyiso_rcpf_product_shortfall_steps` ramp step PLUS the ORDC
+family's own balance dual (one capped MW serves both rows, so the cap dual
+is their sum; the anchor formula rescales the sum). The market-design ground
+is the repo's own spec.py:1420 citation: 2023–25 ERCOT has NO real-time
+per-product scarcity pricing — a product-vs-capability squeeze triggers RUC,
+not a price. **The same leak carries the keeper's tail:** 116/117 of 2023's
+deep (>$100) adder hours are contaminated (γ_all p50 $876 vs γ_family p50
+$25.7), where published RTORPA p50 is $14.2 (>$100 in 15 h; published 2023
+total 17 h vs the arm's 117) — the real tail was conduct-made (actual >$200
+in 181 h), and the keeper's C3c/C3a-2023 gains ride the phantom channel.
+
+**THE ONE LEVER (proposed, not armed): counterpart decontamination —
+`gamma' = min(gamma_all, gamma_ordc_family)`,** zero scalars, anchor/
+counterpart-form/protocol-cap/netting untouched; identification = the
+spec.py:1420 market-design fact + the two-regime γ_family↔published-RTORPA
+match (rank-corr 0.709/0.807/0.758, beating γ_all in every year). The delta
+is POST-SOLVE (moves no MW), so its full-span scorecard is EXACT from
+committed bytes: G-SPUR 17→9 (= the control set exactly), 13→11 (= control
+exactly), 0→1 (h3355, energy-made, un-masked from above the band); deep
+adder incidence 117/16/3 → 37/3/0 h >$100 against published 17/4/0; max 2023
+adder UNCHANGED $4,701.14 (the true VOLL-cap hour); G-CAP 0 violations;
+G-SHED/G-SPAN/G-COAL148/G-DOF/G-D2 unchanged BY IDENTITY — **and G-C3c
+KILLS in all three years** (tails 123→67 vs 181, 33→22 vs 53, 3→1 vs 31;
+C3a-2023 +0.40→−30.38 % probe basis, side-effect-reported under Q-B/R-A).
+Both standing candidates REFUTED as the spill lever by measurement: (i) the
+two-basis form touches no ramp term and the online tier was comfortable in
+the spill hours (and cannot legitimize the deep hours — published RTORPA p50
+$14.2 there); (ii) the movement is not energy-made.
+
+**Phase-1 NOT entered:** an armed A/B would reproduce the counterfactual
+bit-for-bit (post-solve delta) at the cost of two multi-hour solves and is
+REJECTED-AS-ARMED by known arithmetic under the inherited ercot-213 §3
+gates. **The fork is the owner's** (structural standard vs gate reading —
+the ercot-188/213 pattern): arm the decontamination and return the 2023
+tail to the C3c model-class ledger where ercot-209/211 adjudicated it, or
+decline and carry the phantom channel as a known price-formation caveat.
+Also flagged: G-SPUR's [150,500] band is blind to phantom adders overshooting
+the top (h5822, h3355 read as improvements while made strictly worse); any
+future gate revision should drop the upper lid or report both.
+
+**Governance.** Q-B FINAL + R-A honoured (all 2023 movement side-effect
+reported, never a basis). ercot-206 B0 honoured (no LOLP-table arming, table
+not read). ercot-211 Door A honoured (no conduct work). V0/ercot-201
+DO-NOT-REDO honoured (RTOLCAP/RTOFFCAP as already-armed cap telemetry,
+FFR-8B §4). 28a honoured (nothing re-run). Rule 22: no year solved or
+scored. Rule 25: ERCOT only. Rule 13: published RTORPA read as evidence
+about a mechanism, never an input. Rule 28: no mechanism tested ⇒ no cell
+verdict; the `ercot_multiproduct_as` cell note carries the Phase-0
+attribution in this same landing; `check_mechanism_matrix.py` exit 0. Rule
+27: edits local, exact bytes pushed, ≥300-line files blob-verified. No
+workflow, no cron, no PR (push-and-stop; the owner merges).
+
+**Session consumed the ercot-214 shorthand. Next shorthand: ercot-215**
+(ercot-199 remains unclaimed).
