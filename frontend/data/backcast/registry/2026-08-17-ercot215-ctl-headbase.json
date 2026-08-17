@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-17-ercot215-ctl-headbase",
+  "label": "ercot215 ctl headbase",
+  "date": "2026-08-17",
+  "shorthand": "ercot215-ctl-headbase",
+  "definition": "ercot-215 control: byte-faithful replay of the ercot-213 published-anchor keeper recipe at HEAD (G-REPRO' control basis; PRECOMMIT-ercot215-counterpart-decontamination-2026-08-17.md \u00a73)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-17-ercot215-ctl-headbase.js",
+  "bundle": "results/calibration/ercot215_control_A"
+}

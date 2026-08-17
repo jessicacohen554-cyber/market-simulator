@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-17-ercot215-arm-decontam",
+  "label": "ercot215 arm decontam",
+  "date": "2026-08-17",
+  "shorthand": "ercot215-arm-decontam",
+  "definition": "ercot-215 armed: keeper recipe + ercot_ordc_adder_family_counterpart (the ercot-214 counterpart decontamination \u2014 gamma' = min(gamma_all, gamma_ordc_family) inside the armed published-anchor branch; PRECOMMIT-ercot215-counterpart-decontamination-2026-08-17.md \u00a71)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-17-ercot215-arm-decontam.js",
+  "bundle": "results/calibration/ercot215_decontam_B"
+}
