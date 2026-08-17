@@ -105,6 +105,16 @@ META_KEY_TO_PARAM = {
     "coal_bit_sigmoid_overrides": "bit_overrides",
 }
 
+# Override-channel parameters whose dict values are replayed verbatim into
+# ``ScenarioConfig.with_overrides``: a key deleted from ScenarioConfig since the
+# keeper froze (rule 26 — deleted flags must not parse) raises TypeError there.
+# Mapped to the meta key each channel is recorded under, so the fidelity oracle
+# can compare the recorded dict modulo exactly the dropped keys.
+OVERRIDE_CHANNEL_META_KEYS = {
+    "prb_overrides": "coal_prb_sigmoid_overrides",
+    "bit_overrides": "coal_bit_sigmoid_overrides",
+}
+
 # Meta keys that are NOT ``solve_and_persist`` parameters: run identity,
 # positional args handled explicitly, gas prices (derived inside
 # ``solve_and_persist`` from the reference), and two config-*derived* mirror
@@ -265,6 +275,44 @@ def build_solve_kwargs(meta: dict, solve_fn) -> tuple[dict, list[str]]:
     return kwargs, defaulted
 
 
+def drop_dead_config_keys(kwargs: dict) -> dict[str, list[str]]:
+    """Drop rule-26-deleted ScenarioConfig fields from override-channel dicts.
+
+    A keeper's ``prb_overrides``/``bit_overrides`` dict rides the generic
+    ScenarioConfig override channel (``run_year`` replays it verbatim into
+    ``config.with_overrides``), so a key whose field was deleted from
+    ``ScenarioConfig`` after the keeper froze fails the replay with TypeError —
+    by design (rule 26: a deleted flag must not parse). Goldens are current-HEAD
+    baselines, and the deletions this covers collapsed the gated behavior to
+    unconditional (e.g. ``nyiso_solar_registry_cod_dates``, 67a25ae), so the
+    HEAD replay without the key is the faithful one. Drop such keys from the
+    kwargs in place — loudly — and return ``{meta_key: [dropped keys]}`` for
+    the manifest entry and the fidelity comparison.
+    """
+    import dataclasses
+
+    from market_sim.config.scenarios import ScenarioConfig
+
+    fields = {f.name for f in dataclasses.fields(ScenarioConfig)}
+    dropped: dict[str, list[str]] = {}
+    for param, meta_key in OVERRIDE_CHANNEL_META_KEYS.items():
+        d = kwargs.get(param)
+        if not isinstance(d, dict):
+            continue
+        dead = sorted(k for k in d if k not in fields)
+        if dead:
+            kwargs[param] = {k: v for k, v in d.items() if k in fields}
+            dropped[meta_key] = dead
+            logger.warning(
+                "dropping rule-26-deleted ScenarioConfig key(s) %s from the "
+                "recorded %s channel (deleted at HEAD; replay without them is "
+                "the current-HEAD behavior)",
+                dead,
+                param,
+            )
+    return dropped
+
+
 def _content_hash(path: Path) -> str:
     """Hash a parquet file's *content* (stable across library metadata).
 
@@ -299,13 +347,23 @@ def _hash_bundle(run_dir: Path) -> dict[str, str]:
     return hashes
 
 
-def _fidelity_check(keeper_bundle: Path, golden_dir: Path) -> dict:
+def _fidelity_check(
+    keeper_bundle: Path,
+    golden_dir: Path,
+    dropped_meta_keys: dict[str, list[str]] | None = None,
+) -> dict:
     """Assert the golden re-solve applied every recorded keeper flag.
 
     Compares the golden's freshly-written ``meta.json`` and
     ``run_config.json`` (``scenario_config``) against the keeper's on the
     intersection of keys. Any mismatch is a dropped/mis-mapped flag → the
     returned dict carries a non-empty ``mismatched`` list and the caller fails.
+
+    ``dropped_meta_keys`` (from :func:`drop_dead_config_keys`) names, per
+    recorded override-channel meta key, the rule-26-deleted inner keys the
+    replay could not pass; the channel dicts are compared modulo exactly those
+    keys, so the intentional, loudly-reported drop does not read as a
+    dropped-flag failure while any OTHER divergence in the dict still does.
 
     Returns a summary dict with ``matched`` / ``mismatched`` / ``golden_only`` /
     ``keeper_only`` for both meta and scenario_config.
@@ -336,6 +394,10 @@ def _fidelity_check(keeper_bundle: Path, golden_dir: Path) -> dict:
 
     keep_meta = _load(keeper_bundle, "meta.json")
     gold_meta = _load(golden_dir, "meta.json")
+    for meta_key, dead in (dropped_meta_keys or {}).items():
+        chan = keep_meta.get(meta_key)
+        if isinstance(chan, dict):
+            keep_meta[meta_key] = {k: v for k, v in chan.items() if k not in dead}
     keep_cfg = _load(keeper_bundle, "run_config.json").get("scenario_config", {})
     gold_cfg = _load(golden_dir, "run_config.json").get("scenario_config", {})
 
@@ -359,6 +421,7 @@ def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
     years = [int(y) for y in meta["years"]]
     hours = int(meta["hours"])
     kwargs, defaulted = build_solve_kwargs(meta, solve_and_persist)
+    dropped_dead = drop_dead_config_keys(kwargs)
 
     golden_dir = GOLDENS_ROOT / stage_tag / iso
     golden_dir.mkdir(parents=True, exist_ok=True)
@@ -387,7 +450,7 @@ def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
         **kwargs,
     )
 
-    fidelity = _fidelity_check(info["bundle"], golden_dir)
+    fidelity = _fidelity_check(info["bundle"], golden_dir, dropped_dead)
     meta_bad = fidelity["meta"]["mismatched"]
     cfg_bad = fidelity["scenario_config"]["mismatched"]
 
@@ -438,6 +501,7 @@ def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
         "hours": hours,
         "recorded_flag_count": len(kwargs),
         "defaulted_unrecorded_params": defaulted,
+        "dropped_dead_config_keys": dropped_dead,
         "fidelity": {
             "meta_matched": fidelity["meta"]["matched"],
             "meta_head_only": fidelity["meta"]["golden_only"],
