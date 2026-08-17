@@ -1,0 +1,113 @@
+{
+ "_provenance": {
+  "scorer": "scripts/probes/ercot213_anchor_gates.py",
+  "base": "results/calibration/ercot215_control_A",
+  "arm": "results/calibration/ercot215_decontam_B",
+  "voll": 5000.0,
+  "gates": "PRECOMMIT-ercot213-published-anchor-2026-08-16.md \u00a73 G-CAP"
+ },
+ "years": {
+  "2023": {
+   "base": {
+    "adder_nonzero_h": 564,
+    "adder_gt1_h": 184,
+    "adder_gt100_h": 117,
+    "adder_max": 4701.1423,
+    "adder_sum_dw": 17.5535,
+    "lambda_at_adder_max": 298.858,
+    "gcap_max_violation": 0.0,
+    "gcap_violation_hours": 0,
+    "gcap_worst_hour": 5970,
+    "published_gt1": 294,
+    "published_gt100": 17,
+    "floor_region_h_of_writing": 333,
+    "held_total_p50_when_writing": 6658.8
+   },
+   "arm": {
+    "adder_nonzero_h": 564,
+    "adder_gt1_h": 175,
+    "adder_gt100_h": 37,
+    "adder_max": 4701.1423,
+    "adder_sum_dw": 2.6687,
+    "lambda_at_adder_max": 298.858,
+    "gcap_max_violation": 0.0,
+    "gcap_violation_hours": 0,
+    "gcap_worst_hour": 5970,
+    "published_gt1": 294,
+    "published_gt100": 17,
+    "floor_region_h_of_writing": 333,
+    "held_total_p50_when_writing": 6658.8
+   }
+  },
+  "2024": {
+   "base": {
+    "adder_nonzero_h": 178,
+    "adder_gt1_h": 37,
+    "adder_gt100_h": 16,
+    "adder_max": 2049.4506,
+    "adder_sum_dw": 1.7832,
+    "lambda_at_adder_max": 238.9,
+    "gcap_max_violation": 0.0,
+    "gcap_violation_hours": 0,
+    "gcap_worst_hour": 3067,
+    "published_gt1": 78,
+    "published_gt100": 4,
+    "floor_region_h_of_writing": 156,
+    "held_total_p50_when_writing": 5724.4
+   },
+   "arm": {
+    "adder_nonzero_h": 178,
+    "adder_gt1_h": 36,
+    "adder_gt100_h": 3,
+    "adder_max": 355.9777,
+    "adder_sum_dw": 0.1247,
+    "lambda_at_adder_max": 246.005,
+    "gcap_max_violation": 0.0,
+    "gcap_violation_hours": 0,
+    "gcap_worst_hour": 3067,
+    "published_gt1": 78,
+    "published_gt100": 4,
+    "floor_region_h_of_writing": 156,
+    "held_total_p50_when_writing": 5724.4
+   }
+  },
+  "2025": {
+   "base": {
+    "adder_nonzero_h": 67,
+    "adder_gt1_h": 7,
+    "adder_gt100_h": 3,
+    "adder_max": 1196.5643,
+    "adder_sum_dw": 0.2324,
+    "lambda_at_adder_max": 214.3,
+    "gcap_max_violation": -3589.135766,
+    "gcap_violation_hours": 0,
+    "gcap_worst_hour": 3355,
+    "published_gt1": 14,
+    "published_gt100": 0,
+    "floor_region_h_of_writing": 63,
+    "held_total_p50_when_writing": 5594.9
+   },
+   "arm": {
+    "adder_nonzero_h": 67,
+    "adder_gt1_h": 5,
+    "adder_gt100_h": 0,
+    "adder_max": 14.6085,
+    "adder_sum_dw": 0.0032,
+    "lambda_at_adder_max": 144.023,
+    "gcap_max_violation": -4785.560785,
+    "gcap_violation_hours": 0,
+    "gcap_worst_hour": 3355,
+    "published_gt1": 14,
+    "published_gt100": 0,
+    "floor_region_h_of_writing": 63,
+    "held_total_p50_when_writing": 5594.9
+   }
+  }
+ },
+ "gates": {
+  "G-CAP": {
+   "pass": true,
+   "rule": "no written ordc_adder(t) may exceed VOLL - lambda(t)"
+  }
+ }
+}

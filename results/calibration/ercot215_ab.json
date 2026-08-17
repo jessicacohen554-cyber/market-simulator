@@ -1,0 +1,241 @@
+{
+ "_provenance": {
+  "scorer": "scripts/probes/_ercot173_ab.py",
+  "base": "results/calibration/ercot215_control_A",
+  "probe": "results/calibration/ercot215_decontam_B",
+  "gates": "PRECOMMIT-ercot172 \u00a75 inherited verbatim per PRECOMMIT-ercot173 \u00a75"
+ },
+ "years": {
+  "2023": {
+   "base": {
+    "c3a_hub_pct": 0.4,
+    "nrmse": 2.2127,
+    "spurious": 17,
+    "tail_model": 123,
+    "tail_caught": 100,
+    "tail_actual": 181,
+    "model_mean": 48.549,
+    "actual_mean": 48.357
+   },
+   "probe": {
+    "c3a_hub_pct": -30.38,
+    "nrmse": 3.4522,
+    "spurious": 9,
+    "tail_model": 67,
+    "tail_caught": 64,
+    "tail_actual": 181,
+    "model_mean": 33.665,
+    "actual_mean": 48.357
+   },
+   "shed_hours_base": [],
+   "shed_hours_probe": [],
+   "class_energy_delta_pct": {
+    "CC_CHP": 0.0,
+    "CC_REGULAR": 0.0,
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "CT_CHP": 0.0,
+    "CT_PEAKER": 0.0,
+    "OTHER": 0.0,
+    "ST_GAS": 0.0,
+    "biomass": 0.0,
+    "hydro": 0.0,
+    "nuclear": 0.0,
+    "solar": 0.0,
+    "wind": 0.0
+   }
+  },
+  "2024": {
+   "base": {
+    "c3a_hub_pct": 14.06,
+    "nrmse": 2.3329,
+    "spurious": 13,
+    "tail_model": 33,
+    "tail_caught": 25,
+    "tail_actual": 53,
+    "model_mean": 30.598,
+    "actual_mean": 26.825
+   },
+   "probe": {
+    "c3a_hub_pct": 7.88,
+    "nrmse": 2.3439,
+    "spurious": 11,
+    "tail_model": 22,
+    "tail_caught": 17,
+    "tail_actual": 53,
+    "model_mean": 28.939,
+    "actual_mean": 26.825
+   },
+   "shed_hours_base": [
+    3067
+   ],
+   "shed_hours_probe": [
+    3067
+   ],
+   "class_energy_delta_pct": {
+    "CC_CHP": 0.0,
+    "CC_REGULAR": 0.0,
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "CT_CHP": 0.0,
+    "CT_PEAKER": 0.0,
+    "OTHER": 0.0,
+    "ST_GAS": 0.0,
+    "biomass": 0.0,
+    "hydro": 0.0,
+    "nuclear": 0.0,
+    "solar": 0.0,
+    "wind": 0.0
+   }
+  },
+  "2025": {
+   "base": {
+    "c3a_hub_pct": 1.21,
+    "nrmse": 0.9798,
+    "spurious": 0,
+    "tail_model": 3,
+    "tail_caught": 2,
+    "tail_actual": 31,
+    "model_mean": 32.885,
+    "actual_mean": 32.491
+   },
+   "probe": {
+    "c3a_hub_pct": 0.51,
+    "nrmse": 0.9389,
+    "spurious": 1,
+    "tail_model": 1,
+    "tail_caught": 0,
+    "tail_actual": 31,
+    "model_mean": 32.656,
+    "actual_mean": 32.491
+   },
+   "shed_hours_base": [],
+   "shed_hours_probe": [],
+   "class_energy_delta_pct": {
+    "CC_CHP": 0.0,
+    "CC_REGULAR": 0.0,
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "CT_CHP": 0.0,
+    "CT_PEAKER": 0.0,
+    "OTHER": 0.0,
+    "ST_GAS": 0.0,
+    "biomass": 0.0,
+    "nuclear": 0.0,
+    "solar": 0.0,
+    "wind": 0.0
+   }
+  }
+ },
+ "gates": {
+  "G-BIT": "N/A (declared pre-solve: year-agnostic rule; replaced by G-SPAN)",
+  "G-SPAN": {
+   "pass": false,
+   "class_energy_violations_pct": {
+    "2023": {},
+    "2025": {}
+   }
+  },
+  "G-SHED": {
+   "pass": false,
+   "shed_2024": [
+    1,
+    1
+   ]
+  },
+  "G-SPUR": {
+   "pass": false,
+   "by_year": {
+    "2023": [
+     17,
+     9
+    ],
+    "2024": [
+     13,
+     11
+    ],
+    "2025": [
+     0,
+     1
+    ]
+   }
+  },
+  "G-C3c": {
+   "pass": false,
+   "by_year": {
+    "2023": {
+     "ledger": [
+      61,
+      181
+     ],
+     "base": 123,
+     "probe": 67
+    },
+    "2024": {
+     "ledger": [
+      25,
+      53
+     ],
+     "base": 33,
+     "probe": 22
+    },
+    "2025": {
+     "ledger": [
+      3,
+      31
+     ],
+     "base": 3,
+     "probe": 1
+    }
+   }
+  },
+  "G-DOF": "structural: zero new fitted scalars (the flag is boolean; reviewed in the FINDING)",
+  "G-COAL148": "scored separately post-registration (ercot149 payload machinery vs the incumbent product ceiling)",
+  "G-D2": "scored from the arm bundle's legitimacy_diagnostics.json",
+  "LOYO": "N/A (parameter-free rule; nothing identified on any year \u2014 per-year deltas reported instead)"
+ },
+ "rg_ercot167": {
+  "RG-1_g4_2024": {
+   "clears": false,
+   "spike_days": {
+    "2024-04-28": {
+     "base_daymean_abs_err": 141.98,
+     "probe_daymean_abs_err": 141.98
+    },
+    "2024-05-08": {
+     "base_daymean_abs_err": 294.04,
+     "probe_daymean_abs_err": 298.91
+    }
+   },
+   "c3a_2024_delta_pp": -6.18
+  },
+  "RG-2_g3_2025": {
+   "spurious_2025": [
+    0,
+    1
+   ],
+   "named_hour": {
+    "hour": 7051,
+    "base_model": 146.16,
+    "probe_model": 146.16,
+    "actual": 191.57,
+    "spurious_in_probe": false
+   }
+  }
+ },
+ "owner_object_2023": {
+  "c3a_hub_base_pct": 0.4,
+  "c3a_hub_probe_pct": -30.38,
+  "delta_pp": -30.78,
+  "missed_set_n": 81,
+  "missed_model_mean": [
+   91.93,
+   91.93
+  ],
+  "missed_model_max": [
+   196.46,
+   196.46
+  ],
+  "missed_flipped_gt200": 0
+ }
+}
