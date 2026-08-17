@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-17-caiso-200-h0-control",
+  "label": "caiso 200 h0 control",
+  "date": "2026-08-17",
+  "shorthand": "caiso-200-h0-control",
+  "definition": "caiso-200 h0 CONTROL: caiso-197 keeper recipe replayed at this head on the committed (caiso-199-landed) extract da33e509. PRECHECK-caiso200-panel-membership-2026-08-17.md section 3.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-17-caiso-200-h0-control.js",
+  "bundle": "results/calibration/caiso200_h0_control"
+}
