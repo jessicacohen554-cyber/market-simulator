@@ -848,3 +848,11 @@ data/raw/storage-as-awards/CAISO/*.xlsx
 # zero consumers -- the live corpora are ISO-specific-gen-data/ and lmp-data/).
 data/raw/PJM/*.csv
 
+# S2-3 -- eia-930 bulk: per-BA per-year long files + the 2018 BALANCE halves
+# (82 files, 33.8 MiB). BALANCE 2019-2026 (wecc-west-supply rebuild inputs,
+# solve-path), the 7 hand-assembled eia_* files (no refetch story) and the
+# unsuffixed NYIS pair STAY TRACKED -- the globs below cannot match them.
+data/raw/eia-930/EIA930_BALANCE_2018_*.parquet
+data/raw/eia-930/*_fueltype_2*.parquet
+data/raw/eia-930/*_region_2*.parquet
+
