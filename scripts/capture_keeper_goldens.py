@@ -212,7 +212,7 @@ def resolve_keeper_bundles(only_isos: set[str] | None = None) -> dict[str, dict]
     return out
 
 
-def build_solve_kwargs(meta: dict, solve_fn) -> tuple[dict, list[str]]:
+def build_solve_kwargs(meta: dict, solve_fn) -> tuple[dict, list[str], dict]:
     """Reconstruct ``solve_and_persist`` kwargs from a keeper's ``meta.json``.
 
     For every ``solve_and_persist`` parameter, use the value recorded in
@@ -227,7 +227,7 @@ def build_solve_kwargs(meta: dict, solve_fn) -> tuple[dict, list[str]]:
             introspection).
 
     Returns:
-        ``(kwargs, defaulted_unrecorded_params)``.
+        ``(kwargs, defaulted_unrecorded_params, retired_keys_stripped)``.
     """
     sig = inspect.signature(solve_fn)
     params = set(sig.parameters)
@@ -262,7 +262,38 @@ def build_solve_kwargs(meta: dict, solve_fn) -> tuple[dict, list[str]]:
     defaulted = sorted(
         p for p in params if p not in handled and p not in recorded_params
     )
-    return kwargs, defaulted
+
+    # Rule-26 [R-DELETE] retired-field strip, generic override channels only.
+    # prb_overrides / bit_overrides are applied wholesale to ScenarioConfig by
+    # run_year (with_overrides RAISES on an unknown key), so a keeper whose
+    # recorded overrides carry a field later DELETED from ScenarioConfig is
+    # mechanically unreplayable at HEAD. When the deletion collapsed the gate
+    # to unconditional (the only deletion pattern on record — e.g.
+    # nyiso_solar_registry_cod_dates, 67a25aee: HEAD behaves as the keeper's
+    # armed value always), dropping the key replays the keeper recipe exactly.
+    # Every strip is WARNED and recorded in the manifest entry — never silent.
+    from market_sim.config.scenarios import ScenarioConfig
+
+    config_fields = set(ScenarioConfig.__dataclass_fields__)
+    stripped: dict[str, object] = {}
+    for channel in ("prb_overrides", "bit_overrides"):
+        chan_val = kwargs.get(channel)
+        if not isinstance(chan_val, dict):
+            continue
+        dead = {k: v for k, v in chan_val.items() if k not in config_fields}
+        if dead:
+            kwargs[channel] = {k: v for k, v in chan_val.items() if k in config_fields}
+            for k, v in dead.items():
+                stripped[f"{channel}.{k}"] = v
+                logger.warning(
+                    "retired-field strip: %s[%r]=%r is no longer a "
+                    "ScenarioConfig field at HEAD — dropped from the replay "
+                    "(rule 26 deletion; HEAD carries the collapsed behavior)",
+                    channel,
+                    k,
+                    v,
+                )
+    return kwargs, defaulted, stripped
 
 
 def _content_hash(path: Path) -> str:
@@ -358,7 +389,7 @@ def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
     meta = json.loads((info["bundle"] / "meta.json").read_text())
     years = [int(y) for y in meta["years"]]
     hours = int(meta["hours"])
-    kwargs, defaulted = build_solve_kwargs(meta, solve_and_persist)
+    kwargs, defaulted, stripped = build_solve_kwargs(meta, solve_and_persist)
 
     golden_dir = GOLDENS_ROOT / stage_tag / iso
     golden_dir.mkdir(parents=True, exist_ok=True)
@@ -438,6 +469,7 @@ def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
         "hours": hours,
         "recorded_flag_count": len(kwargs),
         "defaulted_unrecorded_params": defaulted,
+        "retired_keys_stripped": stripped,
         "fidelity": {
             "meta_matched": fidelity["meta"]["matched"],
             "meta_head_only": fidelity["meta"]["golden_only"],
