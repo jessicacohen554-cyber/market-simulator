@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-17-nyiso-142-stackdup",
+  "label": "nyiso 142 stackdup",
+  "date": "2026-08-17",
+  "shorthand": "nyiso-142-stackdup",
+  "definition": "nyiso-142 ARM: keeper recipe on the CORRECTED Astoria intake (campd.CAMPD_STACK_DUPLICATE_UNITS live + the 18 repaired plant_emission_rates_v2 rows). Paired control: nyiso142_control.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-17-nyiso-142-stackdup.js",
+  "bundle": "results/calibration/nyiso142_stackdup"
+}

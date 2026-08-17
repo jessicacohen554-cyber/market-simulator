@@ -240,7 +240,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     mass_cap_lp_row: { cell: "U" },
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: ".", fc: "U" },
-    plant_emission_rates_v2: { cell: "K" },
+    plant_emission_rates_v2: { cell: "K", ev: "armed on every NYISO keeper (use_plant_emission_rates_v2 default True). nyiso-142 REPAIRED its input, not the mechanism -- Astoria (ORIS 8906) files units 30/50 as reheat/superheat stack pairs, repeating one generator's full grossLoad on both rows while splitting heat and masses, so its unit rates read 279-322 kg CO2/MWh against a 520-575 peer band. 18 rows folded onto their primaries across 2018-2026 by scripts/data/repair_v2_stack_duplicate_rows.py (every other row byte-frozen; MATCH vs a fresh emissions-unit-annual on all six rebuildable years). VERDICT UNCHANGED at K -- a data correction with zero DOF, no ScenarioConfig field and no flag; the paired A/B 2026-08-17-nyiso-142-control vs -stackdup differs by 0 of 718 config fields. Evidence FINDING-nyiso141-astoria-stack-duplication-2026-08-17.md, RESULT-nyiso142-astoria-stack-duplication-ab-2026-08-17.md" },
     startup_co2_reporting: { cell: "U" },
   },
 };

@@ -7001,3 +7001,96 @@ Evidence: `results/calibration/FINDING-nyiso141-astoria-stack-duplication-2026-0
 `PREREG-nyiso141-astoria-stack-duplication-2026-08-17.md`; probe
 `scripts/probes/_nyiso141_astoria_stack_duplication.py`.
 Next number: **nyiso-142**.
+
+## 2026-08-17 — nyiso-142: Astoria A/B executed (arm CALIBRATED-WITH-CAVEATS, all 6 gates clean, P7 refuted); `final` NOT READY; the ST_GAS successor localised to Zone J
+
+Three jobs, one solve pair. Keeper `2026-08-16-nyiso-140-layup-exclusion`
+UNCHANGED; `complete` held, ABSENT from `final`, frontier CLEARED, holdout spend
+freeze ACTIVE and untouched. No year outside 2023-2025 solved, scored or
+registered.
+
+**JOB 1 — the pre-registered A/B, executed as written.** Registered
+`2026-08-17-nyiso-142-control` (bundle `nyiso142_control`) and
+`2026-08-17-nyiso-142-stackdup` (bundle `nyiso142_stackdup`). The blocker
+cleared by the SURGICAL route: `scripts/data/repair_v2_stack_duplicate_rows.py`
+folds Astoria's 18 stack-duplicate rows onto their primaries across 2018-2026
+with every other row asserted byte-frozen — the default derive path is a REPLACE
+and would have destroyed the 2018 rows (no longer buildable) and the 2022/2026
+holdout-intake rows (unrepeatable). Validated MATCH against a freshly curated
+`emissions-unit-annual` on every field for all six rebuildable years.
+`chp-btm-share` is byte-identical across the correction in every ISO, so the
+clean-tree channel is empty and the pair differs by exactly the source table and
+those 18 rows.
+
+**ALL SIX GATES CLEAN.** K1' as pre-registered: **718/718** `scenario_config`
+fields identical, sorted-config sha256 identical, artifact diff **17 CSV lines
+all keyed `NYISO,8906`**. K2 slack/dump 0.0 in all six run-years. K3 benchmark
+2.6722 -> 1.3590 exactly. K4 **zero** other plants move. K5 identical criterion
+statuses. K6' D-1/D-2/D-4 pass both arms with **no D-2 forced share moving at
+all**. The arm re-scores **CALIBRATED-WITH-CAVEATS**, C3c the lone ledgered
+caveat, criterion for criterion identical to the incumbent; C3c is bit-unchanged
+at 21 / 3 / 24 h. The control's NOT-YET is C6 UNATTESTED (probe convention,
+nyiso-140), NOT a model difference.
+
+**P1-P6 CONFIRMED; the honest headline confirmed** — 2025's movement is mostly
+the TARGET moving (benchmark -1.204 TWh) not the model improving (-0.213).
+ST_GAS error 2023 +2.263 -> +2.178, 2024 -0.916 -> **-1.062 (WORSE**, the
+pre-registered adverse case landing on a year whose target was already right),
+2025 -3.737 -> -2.746; summed |error| 6.916 -> 5.986 TWh, which is a consequence
+and not the argument (rule 1). LMP +0.06/+0.10/+0.21 $/MWh.
+
+**P7 REFUTED, in the opposite direction.** It predicted NYISO CO2 metrics would
+RISE; the 2025 benchmark eGRID total FELL 29.167 -> 28.335 Mt. The reasoning
+error: the doubling was in GENERATION only — heat and masses always summed
+correctly — so the class CO2 mass was never understated. C5a is reported-only
+and gates nothing, but the prereg committed to disclosing this.
+
+**NOT pre-registered, disclosed:** the 2025 correction moves SIX class
+benchmarks. As ST_GAS falls 1.204 the others rise by the same total
+(CC_REGULAR +0.787, CC_CHP +0.281, CT_PEAKER +0.066, CT_CHP +0.056, ST_CHP
++0.015) via the ISO-total reconciliation, flattering CC_REGULAR 2025 from +2.877
+to +2.229. **Every NYISO run ever scored on 2025 was scored against an inflated
+ST_GAS target**, so post-correction 2025 figures are not comparable to committed
+pre-correction ones. 2023/2024 bench bytes change (`c_ann` 1.546 -> 0.780,
+1.850 -> 0.930) while the SCORED target does not — P2 confirmed on substance.
+Registering the control alone changed no bench file at all.
+
+**JOB 2 — `final` readiness: NOT READY, on both locked-test years.** (1) Neither
+builds on the frozen config: the armed `nyiso_dynamic_reserve_requirements` has
+no 2019/2026 series and its loader RAISES rather than falling back; H1-2026 also
+has no EIA-930 rows, so `load_demand` cannot build the LP's demand array at all
+— it is unsolvable, not merely unscoreable. (2) 2019's fleet is not
+representable: Indian Point 2/3 (~2,060 MW downstate, **17.4 TWh in 2019, 11 %
+of NYISO load**) are absent from every `eia860_generator*.parquet` while the
+fleet reads the 2025-operable snapshot; `constants.py` already says so. (3) 2019
+cannot exercise C3c, the sole caveat — exactly **ONE** actual RT hour > $300.
+(4) The instrument just changed and the keeper has not been re-scored on it.
+Input audit: **0 blocked of 18 on the 2023 control, 9 on 2019, 10 on H1-2026.**
+The asymmetry worth carrying forward: the year that could discriminate
+(H1-2026, 85 tail hours in 4,343) cannot be solved, and the year that could be
+solved cannot discriminate. NYISO's locked test is UNGRANTED and the record
+already says so correctly at HEAD — unlike the NEISO case, no correction is
+proposed. Assessment: `ASSESSMENT-nyiso142-final-readiness-2026-08-17.md`.
+
+**JOB 3 — the successor is localised to Zone J, and three readings are REFUTED,
+two of them this session's own.** The substitution is not ISO-wide: NYC is the
+ONLY zone whose CC_REGULAR falls (-0.959 TWh) and it carries the largest ST_GAS
+rise (+1.84 net of the double-count). Cause on the CC side is measured — the
+three in-city CCs book **+536 unit-outage-days** in 2025 against 2023 and
+Astoria Energy's metered gross falls 8.29 -> 6.33 TWh. Refuted: (a) plumbing —
+the outages DO reach the LP (Astoria Energy availability 0.868 -> 0.552); (c)
+the Ravenswood `_FLEET_GROUP_OVERRIDE` over-derating in-city steam with CC/CT
+rows — contamination is 4.5 of 256.7 equivalent full-outage days, under 2 %; (b)
+the transfer bound — `nyiso_nyc_lcr_tsl` is armed and working (binding 29/29,
+215/237, 138/138 in-window) but `Lower_Hudson>NYC` binds in only 0.3/2.7/1.6 %
+of hours and sits far below its cap. What survives is a COMMITMENT question:
+in-city ST_GAS FALLS 1.33 TWh in the model over the span the market's rose,
+while Lower-Hudson import rises +2.89 TWh and Ravenswood's steam bin never uses
+its 4.49 TWh ceiling. Zone J clears on economics alone. Named successor:
+`nyiso_incity_commitment_obligation` (matrix cell **U**) — **named, not armed,
+not pre-registered, no parameter derived, no cell verdict moved.** Finding:
+`FINDING-nyiso142-incity-cc-outage-substitution-2026-08-17.md`.
+
+Matrix: only `plant_emission_rates_v2`'s NYISO cell is touched — evidence
+citation added, verdict UNCHANGED at `K` (a data correction is not a lever).
+Next number: **nyiso-143**.

@@ -50,7 +50,7 @@ solves this session runs are in-sample (2023/2024/2025), for the pre-registered 
 | Could 2019 be solved on the frozen config? | **NO** — reserve requirements absent; fleet short 17.4 TWh of nuclear (§2). |
 | Could H1-2026 be solved on the frozen config? | **NO — and it is the harder of the two.** `load_demand` raises: no EIA-930 rows for 2026, so the LP cannot be built at all. Plus the reserve-requirement gap, no 2026 import-ladder row, and two partial-year overlays (§3, §3b). |
 | Would either year discriminate on C3c? | **2019 no** (1 actual hour). **H1-2026 yes, strongly** (85 hours in 4,343) — so it is the year worth **preserving**, even though it is the year that cannot be solved today (§4). |
-| Does the nyiso-141 benchmark change argue for re-scoring first? | **YES** (§6). |
+| Does the nyiso-141 benchmark change argue for re-scoring first? | **YES — and this session did it.** The keeper re-scores on the corrected instrument with its determination and every criterion status **unchanged**, so that objection is now closed; the other three blockers stand (§6). |
 
 ---
 
@@ -289,11 +289,27 @@ re-spent on the repaired input — and the reason that was affordable is that 20
 touch-once tier is opened, not after.
 
 **One honest qualification against my own recommendation.** The 2025 correction moves the
-benchmark by ≈1.31 TWh on one class in one year, and the keeper's C1/C2 both PASS with margin
-today; it is unlikely — though not established until the A/B reports — that the determination
-turns on it. So this is a **sequencing** argument, not a claim that the keeper is wrong. It says:
-the re-score is cheap, in-training, already pre-registered and already under way; there is no
-reason to spend an irreversible year ahead of it.
+benchmark by ≈1.2 TWh on one class in one year, and the keeper's C1/C2 both PASS with margin
+today; it was unlikely that the determination would turn on it. So this is a **sequencing**
+argument, not a claim that the keeper is wrong: the re-score is cheap, in-training, already
+pre-registered and already done; there is no reason to spend an irreversible year ahead of it.
+
+**RESOLVED IN THIS SESSION, and it resolves in the keeper's favour.** The A/B landed while this
+assessment was being written, and the keeper re-scores on the corrected instrument with **its
+determination and every criterion status unchanged** — CALIBRATED-WITH-CAVEATS, C1/C2/C3a/C3b/C4/C6/C8
+PASS, C3c the lone ledgered caveat (`build_status.py --iso NYISO` moves only its `generated`
+timestamp). What the corrected instrument changes is the *reported residual*, and in the
+keeper's favour on both classes it touches:
+
+| keeper `2026-08-16-nyiso-140-layup-exclusion`, 2025 | error vs old benchmark | vs corrected |
+|---|---:|---:|
+| ST_GAS | −3.737 | **−2.533** |
+| CC_REGULAR | +2.877 | **+2.091** |
+
+2023 and 2024 are unchanged to the digit. **So the instrument objection to a `final` grant is
+now closed** — it was worth closing before spending an irreversible year, and it cost one
+in-training A/B rather than a locked-test one-shot. The other three blockers (§§2–4) stand
+entirely unaffected, and they are the ones that decide the recommendation.
 
 ## 7. What would have to be true before `final` is worth putting to the owner
 

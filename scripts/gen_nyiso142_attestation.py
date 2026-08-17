@@ -185,7 +185,7 @@ def main(argv: list[str] | None = None) -> int:
     att = build(args.bundle, _parse_c3c(args.c3c))
     out = args.bundle / "calibration_attestation.json"
     out.write_text(json.dumps(att, indent=1) + "\n")
-    print(f"wrote {out.relative_to(REPO)}")
+    print(f"wrote {out}")
     return 0
 
 
