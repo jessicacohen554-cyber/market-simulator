@@ -85,6 +85,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     cc_nameplate_summer_derate: { cell: "K", ev: "nyiso-115 (row added by the shared-field census; scripts/mechanism_matrix_gap_sweep.py shared leg + check_mechanism_matrix.py shared ratchet)" },
     summer_derate_basis_aware: { cell: "." },
     commission_year_cod_fallback: { cell: "U", ev: "exposed on the shared assembly.py::_commission_year path (registry hit share 0.0%, miso-158 census; 2025 non-CHP summer capability overstatement censused per ISO) — rule 25/28(d): no verdict transfers, this lane measures its own before arming" },
+    summer_wefor_share_override: { cell: "U", ev: "the 0.30 constant's seasonal split stays this lane's live treatment; the per-ISO measured override (miso-160 construction) is unarmed here — rule 25/28(d): no value transfers, this lane derives its own from its own admissible ticket-based record before arming" },
     coal_nameplate_summer_derate: { cell: "." },
     unit_outage_lp_capacity_basis: { cell: "U" },
     wefor_residual: { cell: "U" },

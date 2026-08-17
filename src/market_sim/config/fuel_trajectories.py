@@ -921,6 +921,17 @@ THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
 # forced-outage shape clearing the acceptance test in
 # docs/handoffs/miso-outage-grain-data-ask-2026-07.md, and per rule 23
 # [R-FROZEN-DERIVE] that commit must cite the data change, never a residual.
+#
+# THE MEASURED REPLACEMENT EXISTS (miso-160, 2026-08-16), per the owner's
+# provenance decision amending that ask at fleet grain (its §9):
+# ``ScenarioConfig.summer_wefor_share_override`` carries a per-ISO value
+# derived from a published ticket-based outage record — MISO first, R* =
+# 1.0599 = the pooled 2023-2025 Jun-Sep/annual ratio of the MISO MOM record's
+# unplanned offline MW (Derated+Forced+Unplanned; probe
+# scripts/probes/_miso160_wefor_shape_instrument.py). Note the measured sign:
+# summer forced-outage rates sit ABOVE annual, the reverse of this 0.30.
+# This constant remains the default wherever the override is None; each ISO
+# derives its own from its own record (rule 25 [R-ISO-SCOPE]).
 SUMMER_WEFOR_SHARE: float = 0.30
 
 # Additional summer (Jun-Sep) capacity derate by plant group, modeling the

@@ -406,6 +406,17 @@ def _availability_matrix(
         fleet_year = year if year is not None else config.weather_year
         summer_to_shoulder = summer_hours / shoulder_hours
         drop_coal_pof = getattr(config, "coal_drop_pof", False)
+        # miso-160: the measured seasonal forced-outage shape, when armed,
+        # replaces the uncited SUMMER_WEFOR_SHARE heuristic (per-ISO derived
+        # value, rule 25 [R-ISO-SCOPE]; None -> the module constant,
+        # byte-identical to the pre-field behavior). Same mechanism either
+        # way: annual outage energy conserved, only the seasonal shape moves
+        # (share > 1 puts summer ABOVE annual and the shoulder below - the
+        # measured sign of forced outages under heat).
+        _swf_override = getattr(config, "summer_wefor_share_override", None)
+        swf_share = (
+            _SUMMER_WEFOR_SHARE if _swf_override is None else float(_swf_override)
+        )
         # Historic-backcast WEFOR residual: the CAMPD overlay + unit-level
         # derate already carry every >= 5-day outage for the covered classes
         # (coal + _POF_DROP_GROUPS), so their full statistical WEFOR would
@@ -724,10 +735,8 @@ def _availability_matrix(
                 # CC nameplate, statistical/forward run: keep WEFOR/POF (no
                 # overlay) but the seasonal cap comes from the per-plant summer
                 # derate below, not the flat class derate.
-                summer_wefor = _SUMMER_WEFOR_SHARE * wefor
-                shoulder_wefor = (
-                    wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
-                )
+                summer_wefor = swf_share * wefor
+                shoulder_wefor = wefor + (1.0 - swf_share) * wefor * summer_to_shoulder
                 pof_eff = 0.0 if drop_coal_pof else pof
                 maint_h = _maint_derate(gen.plant_group, pof, pof_eff)
                 availability[g_idx, :] = 1.0 - wefor - derate
@@ -770,10 +779,8 @@ def _availability_matrix(
                 availability[g_idx, :] = 1.0 - wefor - derate
                 availability[g_idx, summer] = 1.0 - derate
             else:
-                summer_wefor = _SUMMER_WEFOR_SHARE * wefor
-                shoulder_wefor = (
-                    wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
-                )
+                summer_wefor = swf_share * wefor
+                shoulder_wefor = wefor + (1.0 - swf_share) * wefor * summer_to_shoulder
                 # Drop the shoulder POF for the historic-overlay classes (CC /
                 # ST + their CHP) so it does not double-count the actual planned
                 # outages from the overlay + unit derate; CTs keep POF.
