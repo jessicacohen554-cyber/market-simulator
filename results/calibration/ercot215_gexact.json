@@ -1,0 +1,369 @@
+{
+ "_provenance": {
+  "scorer": "scripts/probes/ercot215_gexact.py",
+  "arm": "/home/user/market-simulator/results/calibration/ercot215_decontam_B",
+  "control": "/home/user/market-simulator/results/calibration/ercot215_control_A",
+  "keeper": "/home/user/market-simulator/results/calibration/ercot213_anchor_B",
+  "counterfactual": "/home/user/market-simulator/results/calibration/ercot214_gspur_phase0.json",
+  "gate": "PRECOMMIT-ercot215-counterpart-decontamination-2026-08-17.md \u00a73 G-EXACT",
+  "voll": 5000.0
+ },
+ "years": {
+  "2023": {
+   "checks": {
+    "spurious_hours": {
+     "expected": [
+      5438,
+      5439,
+      5443,
+      5660,
+      5684,
+      5731,
+      5804,
+      5821,
+      5822
+     ],
+     "got": [
+      5438,
+      5439,
+      5443,
+      5660,
+      5684,
+      5731,
+      5804,
+      5821,
+      5822
+     ],
+     "match": true
+    },
+    "adder_incidence_nonzero_gt1_gt100": {
+     "expected": [
+      564,
+      175,
+      37
+     ],
+     "got": [
+      564,
+      175,
+      37
+     ],
+     "match": true
+    },
+    "max_adder": {
+     "expected": 4701.14,
+     "got": 4701.14,
+     "match": true
+    },
+    "gcap_violations": {
+     "expected": 0,
+     "got": 0,
+     "match": true
+    },
+    "tail_model_gt200": {
+     "expected": 67,
+     "got": 67,
+     "match": true
+    }
+   },
+   "PASS": true
+  },
+  "2024": {
+   "checks": {
+    "spurious_hours": {
+     "expected": [
+      336,
+      337,
+      338,
+      339,
+      345,
+      346,
+      347,
+      348,
+      349,
+      2540,
+      2829
+     ],
+     "got": [
+      336,
+      337,
+      338,
+      339,
+      345,
+      346,
+      347,
+      348,
+      349,
+      2540,
+      2829
+     ],
+     "match": true
+    },
+    "adder_incidence_nonzero_gt1_gt100": {
+     "expected": [
+      177,
+      36,
+      3
+     ],
+     "got": [
+      177,
+      36,
+      3
+     ],
+     "match": true
+    },
+    "max_adder": {
+     "expected": 355.98,
+     "got": 355.98,
+     "match": true
+    },
+    "gcap_violations": {
+     "expected": 0,
+     "got": 0,
+     "match": true
+    },
+    "tail_model_gt200": {
+     "expected": 22,
+     "got": 22,
+     "match": true
+    }
+   },
+   "PASS": true
+  },
+  "2025": {
+   "checks": {
+    "spurious_hours": {
+     "expected": [
+      3355
+     ],
+     "got": [
+      3355
+     ],
+     "match": true
+    },
+    "adder_incidence_nonzero_gt1_gt100": {
+     "expected": [
+      67,
+      5,
+      0
+     ],
+     "got": [
+      67,
+      5,
+      0
+     ],
+     "match": true
+    },
+    "max_adder": {
+     "expected": 14.61,
+     "got": 14.61,
+     "match": true
+    },
+    "gcap_violations": {
+     "expected": 0,
+     "got": 0,
+     "match": true
+    },
+    "tail_model_gt200": {
+     "expected": 1,
+     "got": 1,
+     "match": true
+    }
+   },
+   "PASS": true
+  }
+ },
+ "sidecar_bytes": {
+  "arm_vs_keeper": {
+   "class_hourly_2023.parquet": {
+    "a": "772856e15b6be5bc",
+    "b": "772856e15b6be5bc",
+    "identical": true
+   },
+   "class_hourly_2024.parquet": {
+    "a": "95079e42d9dfab52",
+    "b": "95079e42d9dfab52",
+    "identical": true
+   },
+   "class_hourly_2025.parquet": {
+    "a": "34501218a84897ca",
+    "b": "34501218a84897ca",
+    "identical": true
+   },
+   "storage_2023.parquet": {
+    "a": "cc79d43291244f73",
+    "b": "cc79d43291244f73",
+    "identical": true
+   },
+   "storage_2024.parquet": {
+    "a": "1dea19d93dcc133e",
+    "b": "1dea19d93dcc133e",
+    "identical": true
+   },
+   "storage_2025.parquet": {
+    "a": "4584c061f8a3b3ba",
+    "b": "4584c061f8a3b3ba",
+    "identical": true
+   },
+   "reserve_family_2023.parquet": {
+    "a": "a3e463365ba2bb10",
+    "b": "a3e463365ba2bb10",
+    "identical": true
+   },
+   "reserve_family_2024.parquet": {
+    "a": "a17c5c2b3942c8a6",
+    "b": "a17c5c2b3942c8a6",
+    "identical": true
+   },
+   "reserve_family_2025.parquet": {
+    "a": "c6352327268e3e79",
+    "b": "c6352327268e3e79",
+    "identical": true
+   },
+   "system_2023.parquet": {
+    "a": "3e66de7113563f93",
+    "b": "4a23eff99663a510",
+    "identical": false
+   },
+   "system_2024.parquet": {
+    "a": "39ca7561bb8a6da0",
+    "b": "ed1009952c94d703",
+    "identical": false
+   },
+   "system_2025.parquet": {
+    "a": "506acfefb363b1fb",
+    "b": "ea7eab4744c7e208",
+    "identical": false
+   }
+  },
+  "control_vs_keeper": {
+   "class_hourly_2023.parquet": {
+    "a": "772856e15b6be5bc",
+    "b": "772856e15b6be5bc",
+    "identical": true
+   },
+   "class_hourly_2024.parquet": {
+    "a": "95079e42d9dfab52",
+    "b": "95079e42d9dfab52",
+    "identical": true
+   },
+   "class_hourly_2025.parquet": {
+    "a": "34501218a84897ca",
+    "b": "34501218a84897ca",
+    "identical": true
+   },
+   "storage_2023.parquet": {
+    "a": "cc79d43291244f73",
+    "b": "cc79d43291244f73",
+    "identical": true
+   },
+   "storage_2024.parquet": {
+    "a": "1dea19d93dcc133e",
+    "b": "1dea19d93dcc133e",
+    "identical": true
+   },
+   "storage_2025.parquet": {
+    "a": "4584c061f8a3b3ba",
+    "b": "4584c061f8a3b3ba",
+    "identical": true
+   },
+   "reserve_family_2023.parquet": {
+    "a": "a3e463365ba2bb10",
+    "b": "a3e463365ba2bb10",
+    "identical": true
+   },
+   "reserve_family_2024.parquet": {
+    "a": "a17c5c2b3942c8a6",
+    "b": "a17c5c2b3942c8a6",
+    "identical": true
+   },
+   "reserve_family_2025.parquet": {
+    "a": "c6352327268e3e79",
+    "b": "c6352327268e3e79",
+    "identical": true
+   },
+   "system_2023.parquet": {
+    "a": "4a23eff99663a510",
+    "b": "4a23eff99663a510",
+    "identical": true
+   },
+   "system_2024.parquet": {
+    "a": "ed1009952c94d703",
+    "b": "ed1009952c94d703",
+    "identical": true
+   },
+   "system_2025.parquet": {
+    "a": "ea7eab4744c7e208",
+    "b": "ea7eab4744c7e208",
+    "identical": true
+   }
+  },
+  "arm_vs_control": {
+   "class_hourly_2023.parquet": {
+    "a": "772856e15b6be5bc",
+    "b": "772856e15b6be5bc",
+    "identical": true
+   },
+   "class_hourly_2024.parquet": {
+    "a": "95079e42d9dfab52",
+    "b": "95079e42d9dfab52",
+    "identical": true
+   },
+   "class_hourly_2025.parquet": {
+    "a": "34501218a84897ca",
+    "b": "34501218a84897ca",
+    "identical": true
+   },
+   "storage_2023.parquet": {
+    "a": "cc79d43291244f73",
+    "b": "cc79d43291244f73",
+    "identical": true
+   },
+   "storage_2024.parquet": {
+    "a": "1dea19d93dcc133e",
+    "b": "1dea19d93dcc133e",
+    "identical": true
+   },
+   "storage_2025.parquet": {
+    "a": "4584c061f8a3b3ba",
+    "b": "4584c061f8a3b3ba",
+    "identical": true
+   },
+   "reserve_family_2023.parquet": {
+    "a": "a3e463365ba2bb10",
+    "b": "a3e463365ba2bb10",
+    "identical": true
+   },
+   "reserve_family_2024.parquet": {
+    "a": "a17c5c2b3942c8a6",
+    "b": "a17c5c2b3942c8a6",
+    "identical": true
+   },
+   "reserve_family_2025.parquet": {
+    "a": "c6352327268e3e79",
+    "b": "c6352327268e3e79",
+    "identical": true
+   },
+   "system_2023.parquet": {
+    "a": "3e66de7113563f93",
+    "b": "4a23eff99663a510",
+    "identical": false
+   },
+   "system_2024.parquet": {
+    "a": "39ca7561bb8a6da0",
+    "b": "ed1009952c94d703",
+    "identical": false
+   },
+   "system_2025.parquet": {
+    "a": "506acfefb363b1fb",
+    "b": "ea7eab4744c7e208",
+    "identical": false
+   }
+  }
+ },
+ "gexact": {
+  "a_to_d_pass": true,
+  "e_dispatch_bytes_pass": true,
+  "e_mismatches": [],
+  "PASS": true
+ }
+}
