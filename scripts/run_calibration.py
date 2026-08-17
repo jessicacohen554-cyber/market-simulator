@@ -1289,6 +1289,11 @@ def run_year(
     # two duplicate PAIRS -- so both override blocks were removed while the
     # parameter survived, leaving it silently ignored. Default None = leave the
     # config's own value, so the arming semantics are unchanged.
+    # De-duplicated 2026-08-17 (miso-162): the restore itself then landed TWICE
+    # -- PR #4054 and the miso-160 merge resolution repaired it independently,
+    # the same over-repair pattern one cycle later. The second copy was
+    # idempotent (same value re-applied), so this removal is a byte no-op for
+    # every solve; it exists so the next reader does not repair a third time.
     if reliability_floor_plant_exclusions is not None:
         config = config.with_overrides(
             reliability_floor_plant_exclusions=reliability_floor_plant_exclusions
@@ -1296,15 +1301,6 @@ def run_year(
     if reliability_floor_overrides is not None:
         config = config.with_overrides(
             reliability_floor_overrides=reliability_floor_overrides
-        )
-    # Wiring restored in the miso-160 merge resolution (2026-08-17): the
-    # duplicate-parameter twin fixes on main removed BOTH copies of this block,
-    # leaving the kwarg accepted but never applied — run_calibration_full.py
-    # passes it on every solve (its run_year call), so without this block the
-    # --reliability-floor-plant-exclusions CLI arming is a silent no-op.
-    if reliability_floor_plant_exclusions is not None:
-        config = config.with_overrides(
-            reliability_floor_plant_exclusions=reliability_floor_plant_exclusions
         )
     if scarcity_price_overlay is not None:
         config = config.with_overrides(
