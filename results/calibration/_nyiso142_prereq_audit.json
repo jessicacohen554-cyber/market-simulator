@@ -1,0 +1,254 @@
+{
+ "EIA-860 restorability of pre-vintage retirees": {
+  "2019": [
+   "GAP",
+   "Indian Point ABSENT from every eia860_generator*.parquet in data/raw"
+  ],
+  "2023": [
+   "OK",
+   "Indian Point ABSENT from every eia860_generator*.parquet in data/raw (post-retirement year \u2014 not needed)"
+  ],
+  "2026": [
+   "OK",
+   "Indian Point ABSENT from every eia860_generator*.parquet in data/raw (post-retirement year \u2014 not needed)"
+  ]
+ },
+ "EIA-930 NYIS_fueltype": {
+  "2019": [
+   "GAP",
+   "no 2019 rows in NYIS_fueltype.parquet"
+  ],
+  "2023": [
+   "OK",
+   "70080 rows in NYIS_fueltype.parquet"
+  ],
+  "2026": [
+   "GAP",
+   "no 2026 rows in NYIS_fueltype.parquet"
+  ]
+ },
+ "EIA-930 NYIS_region": {
+  "2019": [
+   "GAP",
+   "no 2019 rows in NYIS_region.parquet"
+  ],
+  "2023": [
+   "OK",
+   "35040 rows in NYIS_region.parquet"
+  ],
+  "2026": [
+   "GAP",
+   "no 2026 rows in NYIS_region.parquet"
+  ]
+ },
+ "NYISO interface flows": {
+  "2019": [
+   "OK",
+   "NYISO_interface_flows_hourly_2018.csv.gz present (no year column)"
+  ],
+  "2023": [
+   "OK",
+   "NYISO_interface_flows_hourly_2018.csv.gz present (no year column)"
+  ],
+  "2026": [
+   "OK",
+   "NYISO_interface_flows_hourly_2018.csv.gz present (no year column)"
+  ]
+ },
+ "NYISO_<y>_renewable_capacity.csv": {
+  "2019": [
+   "GAP",
+   "file absent"
+  ],
+  "2023": [
+   "OK",
+   "120 rows \u2014 data/raw/_validation-source/NYISO_2023_renewable_capacity.csv"
+  ],
+  "2026": [
+   "GAP",
+   "file absent"
+  ]
+ },
+ "actual_lmp_hourly_NYISO (C3a/C3b/C3c upstream)": {
+  "2019": [
+   "OK",
+   "8760 rows, rt cov 1.000, mean $24.96, max $372.38, >$300: 1h"
+  ],
+  "2023": [
+   "OK",
+   "8760 rows, rt cov 1.000, mean $30.28, max $1,174.88, >$300: 10h"
+  ],
+  "2026": [
+   "OK",
+   "8760 rows, rt cov 0.496, mean $71.75, max $1,899.65, >$300: 85h"
+  ]
+ },
+ "actual_tail.json (C3c benchmark part)": {
+  "2019": [
+   "GAP",
+   "no row \u2014 C3c SKIPs for this year"
+  ],
+  "2023": [
+   "OK",
+   "rt_gt 10h, da_gt 1h, cov 1.0"
+  ],
+  "2026": [
+   "GAP",
+   "no row \u2014 C3c SKIPs for this year"
+  ]
+ },
+ "backcast_config (the keeper recipe, built)": {
+  "2019": [
+   "OK",
+   "built; gas $2.57, plant_level=True, campd_bins=True"
+  ],
+  "2023": [
+   "OK",
+   "built; gas $2.54, plant_level=True, campd_bins=True"
+  ],
+  "2026": [
+   "ERR",
+   "KeyError: 2026"
+  ]
+ },
+ "build_fleet (REGIME DRIFT \u2014 capacity by class)": {
+  "2019": [
+   "GAP",
+   "model fleet 4 reactors / 3,398 MW -> ~27.4 TWh; NYISO published actual 44.78 TWh; shortfall +17.39 TWh"
+  ],
+  "2023": [
+   "OK",
+   "model fleet 4 reactors / 3,398 MW -> ~27.4 TWh; NYISO published actual 27.57 TWh; shortfall +0.18 TWh"
+  ],
+  "2026": [
+   "OK",
+   "model fleet 4 reactors / 3,398 MW -> ~27.4 TWh; NYISO published actual 13.28 TWh; shortfall -14.11 TWh"
+  ]
+ },
+ "calibration_reference.json (C1/C2 target)": {
+  "2019": [
+   "GAP",
+   "no isos.NYISO.2019 block"
+  ],
+  "2023": [
+   "OK",
+   "4 keys (demand, generation_twh, henry_hub_actual, renewables); henry_hub present"
+  ],
+  "2026": [
+   "GAP",
+   "no isos.NYISO.2026 block"
+  ]
+ },
+ "campd-unit-outages-NYISO.csv": {
+  "2019": [
+   "OK",
+   "516 rows in campd-unit-outages-NYISO.csv"
+  ],
+  "2023": [
+   "OK",
+   "540 rows in campd-unit-outages-NYISO.csv"
+  ],
+  "2026": [
+   "OK",
+   "182 rows in campd-unit-outages-NYISO.csv"
+  ]
+ },
+ "gas_basis_by_iso_month.csv": {
+  "2019": [
+   "OK",
+   "84 rows in gas_basis_by_iso_month.csv"
+  ],
+  "2023": [
+   "OK",
+   "84 rows in gas_basis_by_iso_month.csv"
+  ],
+  "2026": [
+   "OK",
+   "20 rows in gas_basis_by_iso_month.csv"
+  ]
+ },
+ "henry_hub_actual (per-year gas price)": {
+  "2019": [
+   "OK",
+   "$2.57/MMBtu"
+  ],
+  "2023": [
+   "OK",
+   "$2.54/MMBtu"
+  ],
+  "2026": [
+   "ERR",
+   "KeyError: 2026"
+  ]
+ },
+ "load_demand (LP demand array)": {
+  "2019": [
+   "OK",
+   "shape (5, 8760), peak 27,622 MW, 131.25 TWh"
+  ],
+  "2023": [
+   "OK",
+   "shape (5, 8760), peak 26,753 MW, 123.60 TWh"
+  ],
+  "2026": [
+   "ERR",
+   "ValueError: No EIA-930 data for ISO 'NYISO' in year 2026"
+  ]
+ },
+ "load_hydro_budget": {
+  "2019": [
+   "OK",
+   "159 plants, 30.61 TWh budget, max 4,676 MW"
+  ],
+  "2023": [
+   "OK",
+   "154 plants, 28.40 TWh budget, max 4,647 MW"
+  ],
+  "2026": [
+   "OK",
+   "3 plants, 6.72 TWh budget, max 3,343 MW"
+  ]
+ },
+ "load_nyiso_reserve_requirements": {
+  "2019": [
+   "ERR",
+   "FileNotFoundError: nyiso_dynamic_reserve_requirements=True but the measured requirement series is absent: /home/user/market-simulator/data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2019.csv. This is the Ask-B external data intake (docs/handoffs/nyiso-data-asks-2026-07.md); the flag must not solve on the static requirements it claims to replace."
+  ],
+  "2023": [
+   "OK",
+   "resolved: 7 families"
+  ],
+  "2026": [
+   "ERR",
+   "FileNotFoundError: nyiso_dynamic_reserve_requirements=True but the measured requirement series is absent: /home/user/market-simulator/data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2026.csv. This is the Ask-B external data intake (docs/handoffs/nyiso-data-asks-2026-07.md); the flag must not solve on the static requirements it claims to replace."
+  ]
+ },
+ "nyiso_market_solar (keeper arms the COD basis)": {
+  "2019": [
+   "GAP",
+   "returns None \u2014 no market-solar registry rows for this year"
+  ],
+  "2023": [
+   "OK",
+   "5 entries"
+  ],
+  "2026": [
+   "GAP",
+   "returns None \u2014 no market-solar registry rows for this year"
+  ]
+ },
+ "plant_emission_rates_v2": {
+  "2019": [
+   "OK",
+   "4346 rows in plant_emission_rates_v2.parquet"
+  ],
+  "2023": [
+   "OK",
+   "4127 rows in plant_emission_rates_v2.parquet"
+  ],
+  "2026": [
+   "OK",
+   "305 rows in plant_emission_rates_v2.parquet"
+  ]
+ }
+}
