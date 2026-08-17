@@ -413,3 +413,52 @@ surfaces.
   DOCS-A is MERGED (#3999/#4005) and **G1 is DECLARED** (2026-08-16
   director refresh) — the reissue-#2 dispatch's "G1 still needs one leg"
   was written before that refresh landed.
+
+## Addendum C — DEBUG-B(NEISO), audit row O8 (2026-08-17)
+
+**Branch:** `claude/neiso-smd-dst-naive-repair-8b2eez` (off `origin/main` @
+`a4ef2a9`). **Charter:** audit §8 row O8 routed to a dedicated DEBUG-B(NEISO)
+sitting; the §A.2 two-card pattern applied (card served in-session with the
+defect quantified from committed bytes BEFORE any repair).
+
+### C.1 — Owner card served and signed; both outcomes executed same-session
+
+**Card (O8 repair + re-solve): option A signed, promotion PRE-SIGNED on
+not-worse → both executed.** The 2018–2023 SMD workbook vintage publishes a
+flat 24 rows every day; measured against the market's own daily hourly-LMP
+reports (0 mismatches, 5 truth years × 9 sheets × 2 markets): the spring
+phantom is the mean of its neighbours to the cent, the fall pair is collapsed
+to its mean, 562 committed hub cells displaced (max $40.17/MWh), one lost
+hour per year, C3c tail provably untouched (max affected cell $138.65 vs
+$300). Value-preserving repair byte-verified per the PJM finding's §2a
+protocol; the twelve defective days now carry published hours from the
+committed `smd-zonal-lmp/` intake; 2024/2025/2026 byte-identical; one NaN per
+market-year filled with the measured value. Keeper recipe re-solved full-span
+fresh (`2026-08-17-neiso-97-dstrepair`) — **dispatch bit-identical to the
+incumbent** — registered, attested (all premises computed), D-5(b)
+re-verified identical criterion for criterion, promoted;
+`audit_keepers --iso NEISO` PASS 0/0; rule-28 re-stamps green; neiso-93
+pruned per the lane's keeper+touchpoint directive. **Data repair applied
+2018–2023 consistently; no out-of-training year solved/scored/registered;
+freeze ACTIVE.** Record: `docs/FINDING-debug-b-neiso-smd-clock-2026-08-17.md`;
+audit row O8 annotated RESOLVED.
+
+### C.2 — Ambient defects fixed or filed in passing
+
+* **FIXED: `origin/main` HEAD was carrying a SyntaxError in
+  `scripts/run_calibration.py`** — the `7246272` hotfix and merge #4036 both
+  added `reliability_floor_plant_exclusions` to `run_year`, leaving the
+  signature declaring it twice: the module was unimportable, every
+  calibration solve of every ISO was blocked, and the fast lane showed 18
+  failures / 32 collection errors all downstream of that one line. Fixed on
+  this branch (`fff285a`); fast lane 6,907 passed / 0 failed after.
+* **FILED (MISO lane, rule 25): registry/payload parity is RED on main** —
+  `2026-08-16-miso-160-control` and `2026-08-16-miso-160-wefor-shape` are
+  sidecar-only registrations (no `runs/<id>.js` payload), the exact
+  invisible-run failure mode the calibration-report skill warns about.
+* **FILED (NYISO lane, rule 25):** the NYISO keeper arms
+  `nyiso_import_hub_prices=True` and solves on the repaired series' DA hub —
+  47 of its 2023 input cells changed (max $20.12/MWh).
+* **Healed in-scope:** the committed `actual_lmp.json` NEISO 2024/2025
+  entries were stale (the `--parquet-only` deferred deltas), landed at this
+  authorized re-derivation and proven code-invariant.
