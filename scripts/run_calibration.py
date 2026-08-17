@@ -1283,14 +1283,15 @@ def run_year(
         )
     if reliability_floor is not None:
         config = config.with_overrides(reliability_floor=reliability_floor)
-    if reliability_floor_plant_exclusions is not None:
-        config = config.with_overrides(
-            reliability_floor_plant_exclusions=reliability_floor_plant_exclusions
-        )
     if reliability_floor_overrides is not None:
         config = config.with_overrides(
             reliability_floor_overrides=reliability_floor_overrides
         )
+    # Wiring restored in the miso-160 merge resolution (2026-08-17): the
+    # duplicate-parameter twin fixes on main removed BOTH copies of this block,
+    # leaving the kwarg accepted but never applied — run_calibration_full.py
+    # passes it on every solve (its run_year call), so without this block the
+    # --reliability-floor-plant-exclusions CLI arming is a silent no-op.
     if reliability_floor_plant_exclusions is not None:
         config = config.with_overrides(
             reliability_floor_plant_exclusions=reliability_floor_plant_exclusions

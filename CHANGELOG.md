@@ -24,7 +24,8 @@ checkers green at HEAD before and after: parity OK (15 runs checked, 15
 bundle dirs swept) and `audit_keepers.py --check` PASS 0/0. D-ledger:
 bloat plan §9 BLOAT-2 annotated CLOSED; release-plan §8 carries the entry;
 only BLOAT-3 (Stage-2 charter) remains open of the D-8 successors.
-## 2026-08-16 — BLOAT-3: Stage-2 charter decision card drafted and served — the untrack question re-derived over the post-rewrite recovery reality
+
+## 2026-08-16 — BLOAT-3: Stage-2 charter decision card served and SIGNED — O2 staged (a)-only GO; story (a) alone admitted
 
 Docs-only. `docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md` serves the
 open D-ledger item BLOAT-3 (bloat plan §9) over the BLOAT-B-7 re-measured pool
@@ -40,7 +41,14 @@ prima facie ≈ 1,133 MiB) recommended; decisions D1–D5; §0ar-3 pre-merge
 checklist walked at HEAD (golden-tier sparse list needs zero edits;
 skip-when-absent tests named as an unverified execution duty;
 `hydrate_data.py` pin support conditional on D2). No untracking, gitignore
-edit, data move, or workflow edit. **Verdict PENDING** — slots opened on the
+edit, data move, or workflow edit. **The card was answered in-session
+(owner, all four rulings as recommended): D1 = O2 staged (a)-only GO;
+D2 = story (a) alone admitted — no external archive, no loss route (a
+corpus failing its pass stays tracked), no pin commitment (pins stay dead,
+no hydrate pin support); D3 = §4.8 evidence passes authorized, golden-tier
+proof = weekly cron green; D4 = DAM 2024+ out of the grant.** BLOAT-3 is
+adjudicated; open follow-on: per-corpus evidence passes, then untrack PRs
+for passing corpora only (prima facie ≈ 1,133 MiB). Verdict recorded on the
 card, bloat plan §9/BLOAT-3, and release-plan §8.
 
 ## 2026-08-16 — BLOAT-B-8: post-rewrite aftercare — the 2026-08-16 history rewrite ledgered, the citation map recovered, every corpus recovery contract repaired, the pack re-measured

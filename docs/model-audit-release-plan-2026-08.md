@@ -1301,8 +1301,17 @@ your branch when done.
   execution duty), CLAUDE.md rewrite + per-corpus manifests as PR duties.
   Card flags the rule-22 vintage question (2019–2022 holdout-input status of
   CAISO-AS/PJM/eia-930 residual files — §4.7 enumerated only ERCOT's) as a
-  mandatory item of each §4.8 evidence pass. **VERDICT: PENDING OWNER
-  RULING** — to be recorded on the card, bloat plan §9/BLOAT-3, and here.
+  mandatory item of each §4.8 evidence pass. **VERDICT: SIGNED IN-SESSION
+  (owner, `AskUserQuestion`, all four rulings as recommended) — BLOAT-3 is
+  ADJUDICATED: D1 = O2 staged (a)-only GO; D2 = story (a) ALONE admitted
+  (no (b) archive — D5's salvage tie-in moot, the refs/pull question stays
+  open at the rewrite finding §7 item 3; no (c) loss route — a corpus
+  failing its pass stays tracked; no (d) pin commitment — pins stay dead,
+  no `hydrate_data.py` pin support); D3 = §4.8 evidence passes AUTHORIZED,
+  golden-tier proof = weekly cron green, no new dispatch spent; D4 = DAM
+  2024+ OUT, travels with any future archive decision.** Open follow-on:
+  the per-corpus evidence passes, then untrack PRs for passing corpora only
+  (prima facie ≈ 1,133 MiB).
 - 2026-08-16 — **BLOAT-2 CLOSED: the Class-E retention rule ADOPTED and its
   last enforcement leg built** (branch `claude/bloat-e2-retention-rule-nn2in8`).
   The §7 E2 four-point rule was served as the G1-style in-session card and
@@ -1321,4 +1330,69 @@ your branch when done.
   Greens at HEAD before AND after: parity OK (15 runs, 15 bundle dirs swept)
   + `audit_keepers --check` PASS 0/0. D-ledger: bloat plan §9 BLOAT-2
   annotated CLOSED. Of the plan's three D-8 successor entries only BLOAT-3
-  (the Stage-2 charter call) now remains open.
+  (the Stage-2 charter call) now remains open. *(Overtaken within the day:
+  the BLOAT-3 card was answered and SIGNED — the entry above carries the
+  ruling. BLOAT-3 is adjudicated; what remains open is its chartered
+  follow-on execution, not the decision.)*
+- 2026-08-17 — **Director cycle 01:55 UTC (records landed by a dispatched
+  docs-only lane; the board goes v6 after three cycles unrefreshed).**
+  `origin/main` @ **`a4ef2a9`** after a **third forced history rewrite**.
+  *Live-state correction to the dispatch: the dispatch snapshotted main at
+  `5f58324` (the #4032 merge, 01:48 UTC) with #4031 as the sole open PR; by
+  the time this lane fetched (01:56 UTC) **#4031 had merged at 01:52 UTC**
+  (`a4ef2a9`) and the repository has **ZERO open PRs**.* Cycle contents:
+  - **PERF-B is ALIVE and partially delivered — and the director's own
+    19:35 UTC report of it was WRONG, corrected here.** At the 19:35 cycle
+    the director reported PERF-B's branch as absent from the remote with
+    nothing durable produced. That overstated the failure: the branch
+    existed, delivered, and **merged as #4033 at 01:44 UTC**, then
+    auto-deleted — which is why the remote read empty. PERF-B was
+    approximately **one ISO further along than reported**. What actually
+    landed: **stage-0 goldens manifest**
+    (`results/regression-goldens/perfb-stage0/manifest.json`, 62 lines,
+    commit `dd8b726`) with **ERCOT captured** (keeper `ercot204`,
+    clean-present, GTC-armed), captured at `f8c93afe` under the determinism
+    pin on the regenerated (frozen) `data/clean` tree; plus the supporting
+    oracle repair `ec413d2` (ignore `basis_sha` in the fidelity oracle — a
+    provenance stamp, not a replayed solve flag; it had failed every capture).
+    **That is one ISO of six, and none of the five changes has landed yet.**
+    The lane's first session (`session_017rr6j76mRLU4NBTK77UL7K`) stopped
+    producing at ~21:36 and a continuation was dispatched to resume from the
+    merged manifest (`session_01KUKpkmjHFgaTSH5hdLC3JR`, branch
+    `claude/perf-b-stage-0-cont-tnyuf2`, launched 01:55 UTC). *Second
+    live-state correction: the dispatch reported the first session's
+    container as gone; the live `list_sessions` read at 01:57 UTC shows it
+    **IDLE / connected**, not disconnected. The continuation stands either
+    way — resuming from the merged manifest costs nothing if the original
+    revives.*
+  - **WS6 — BLOAT-2 CLOSED and BLOAT-3 ADJUDICATED, both now on main.**
+    BLOAT-2's Class-E retention rule was **ADOPTED** and its point-4
+    bundle-parity sweep built and merged (**#4032**, 01:48 UTC). BLOAT-3's
+    signed verdict — **D1 = O2 staged (a)-only GO** — merged as **#4031**
+    (01:52 UTC), so the decision the dispatch listed as the sole open item
+    is landed. What remains of WS6 is **execution, not decision**: the
+    per-corpus §4.8 evidence passes and untrack PRs for passing corpora only
+    (prima facie ≈ 1,133 MiB).
+  - **Adjacent landings this cycle**, all merged 01:44–01:48 UTC: **#4034**
+    nyiso-140 A/B hourly sidecars; **#4035** miso-160 close-out manifest
+    refresh; **#4036** ercot-213 finding + matrix cell verdict; **#4037**
+    caiso-199 FINDING + matrix cell (committed extract sha **SUPERSEDES**,
+    `5f3e35c5` → `da33e509`) + calibration-log entry, determination
+    **NOT-YET with an owner ruling outstanding**.
+  - **G2's keeper freeze remains UNREACHABLE, now across four director
+    cycles.** caiso-200 launched 01:50 UTC and is solving
+    (`session_013tepkL6gSBDvYweJnrNLbD`); caiso-199 awaits its ruling;
+    ERCOT, NYISO and MISO all moved this cycle (#4036, #4034, #4035). The
+    freeze is an **owner call** and cannot be declared by any lane.
+  - **Golden-tier weekly cron — NOT YET FIRED, so no green/red to record.**
+    The first scheduled firing is **2026-08-17 05:37 UTC**, ~3 h 40 m after
+    this snapshot; `golden-data-tier.yml`'s run list at 01:57 UTC contains
+    **only `workflow_dispatch` runs**, the most recent being the
+    GOLDEN-TIER-FIX proof `31913648051` (2026-08-15 23:01 UTC, `ccca569c`,
+    **success**). **Checking that firing is a duty carried to the next
+    cycle**; a red there is a NEW finding, not a known state.
+  - **DEVIATION (standing).** Per owner directive the director issues prompts
+    only and does not push; these records are landed by this dispatched lane.
+    The consequence is on the record: **the board went three cycles without a
+    refresh** and was wrong on every row until this entry's companion v6
+    rewrite. Two prior dispatches of this records lane were never launched.

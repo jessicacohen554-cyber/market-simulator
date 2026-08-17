@@ -882,8 +882,16 @@ elsewhere, e.g. the D-13 cache-key gate):
     (b) owner-held external archive for the irreplaceable subset / (c)
     explicit signed loss — with pin-based recovery admissible only under an
     explicit no-further-rewrite commitment. Card recommends the staged
-    (a)-only GO (O2, ≈ 1.1 GiB prima facie). **VERDICT: PENDING** — record it
-    here, on the card, and in release-plan §8.)*
+    (a)-only GO (O2, ≈ 1.1 GiB prima facie). **VERDICT: SIGNED IN-SESSION
+    2026-08-16 — BLOAT-3 is ADJUDICATED: O2 staged (a)-only GO.** Story (a)
+    alone admitted — no (b) external archive, no (c) loss route (a corpus
+    failing its pass STAYS TRACKED), no (d) pin commitment (pins stay dead;
+    no `hydrate_data.py` pin support). §4.8 evidence passes AUTHORIZED as
+    the prerequisite; golden-tier proof = the weekly cron green; the §4.2
+    DAM 2024+ subset stays OUT (travels with any future archive decision).
+    Full ruling text: the card's verdict banner. Open follow-on work:
+    the per-corpus evidence passes, then untrack PRs for passing corpora
+    only.)*
 
 ---
 

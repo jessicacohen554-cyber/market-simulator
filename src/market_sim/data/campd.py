@@ -309,6 +309,35 @@ def merit_panel_states_for_iso(iso: str) -> tuple[str, ...]:
     return pinned if pinned is not None else ISO_STATES.get(key, ())
 
 
+# ISOs whose merit-order panel ALSO admits the ISO's own OUT-OF-STATE fleet
+# members — the caiso-199 §3b narrowing of the state-list pin above. Under a
+# bare state pin, a fleet plant filing CEMS outside the panel states is not a
+# member of the panel its own spans are scored against (out_of_merit_share ->
+# None, is_economic_layup -> False fail-safe for every window). Membership
+# closes that asymmetry WITHOUT re-admitting the non-fleet units the pin
+# exists to exclude: a facility qualifies iff it appears in an out-of-panel
+# DETECTION state's CAMPD files AND its plant code resolves into the ISO's own
+# fleet registry — derived at derive time from the same group_by_code the
+# detection path filters on, never enumerated per plant (rule 24
+# [R-REGISTRY]). Today CAISO's derived set is exactly {NV: (55077,)} — Desert
+# Star Energy Center, the one CAISO-fleet plant filing CEMS in NV.
+# [R-FROZEN-DERIVE] charter: PRECHECK-caiso200-panel-membership-2026-08-17.md
+# §1-§2 (the caiso-199 §3b named option, measured at caiso-198 run Y).
+# An ISO absent from this set admits no out-of-state members — the pre-charter
+# behaviour, so no other ISO's committed extract moves (rule 25 [R-ISO-SCOPE]).
+MERIT_PANEL_FLEET_MEMBER_ISOS: frozenset[str] = frozenset({"CAISO"})
+
+
+def merit_panel_admits_fleet_members(iso: str) -> bool:
+    """True when the ISO's merit panel admits its own out-of-state fleet members.
+
+    See :data:`MERIT_PANEL_FLEET_MEMBER_ISOS` — the membership itself is
+    derived by the outage deriver from the fleet registry and the detection
+    state list; this predicate only arms the derivation for the ISO.
+    """
+    return iso.upper() in MERIT_PANEL_FLEET_MEMBER_ISOS
+
+
 def _hour_index_8760(
     month: np.ndarray, day: np.ndarray, hour: np.ndarray
 ) -> np.ndarray:
