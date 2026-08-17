@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-16-miso-160-control",
+  "label": "miso 160 control",
+  "date": "2026-08-16",
+  "shorthand": "miso-160-control",
+  "definition": "miso-160 CONTROL: zero-delta same-HEAD replay of 2026-08-15-miso-159-cod-vintage (PREREG-miso160-summer-wefor-measured-share-2026-08-16.md gate V2)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-16-miso-160-control.js",
+  "bundle": "results/calibration/miso160_wefor_A"
+}
