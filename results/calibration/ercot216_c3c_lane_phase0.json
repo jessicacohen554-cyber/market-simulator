@@ -1,0 +1,274 @@
+{
+  "probe": "ercot216_c3c_lane_phase0",
+  "bundle": "results/calibration/ercot215_decontam_B",
+  "keeper": "2026-08-17-ercot215-arm-decontam",
+  "read_only": true,
+  "lane_a_storage_as_flags_on_keeper": {
+    "storage_as_commitment": true,
+    "ercot_storage_as_deployment": true,
+    "ercot_storage_as_soc_reserve": true,
+    "ercot_storage_as_reserve": true,
+    "ercot_storage_as_product_credit": true,
+    "ercot_storage_capability_measured": true,
+    "ercot_storage_rt_offer_surface": false,
+    "ercot_storage_as_endogenous": false,
+    "ercot_storage_as_duration_gate": false
+  },
+  "conventions": {
+    "price_basis": "demand-weighted P1 system price (_ercot173_ab)",
+    "tail_threshold_usd_mwh": 200.0,
+    "eia930_join": "930 period is hour-ENDING; model hour h joins CST stamp h+1",
+    "model_clock": "fixed non-leap 8760; leap years skip Feb 29 (+24 h from Mar 1)"
+  },
+  "years": {
+    "2023": {
+      "tail_hours_actual": 181,
+      "caught": 64,
+      "missed": 117,
+      "phantom": 3,
+      "scored_c3c_model_over_actual": [
+        68,
+        181
+      ],
+      "model_price_at_missed": {
+        "p10": 45.31,
+        "p50": 96.65,
+        "p90": 161.99
+      },
+      "actual_price_at_missed_p50": 442.4,
+      "reality_at_hours": {
+        "missed": {
+          "rtorpa_p50": 0.84,
+          "rtorpa_max": 261.76,
+          "prc_p50_mw": 5708.0,
+          "prc_min_mw": 4132.0,
+          "hours_prc_below_eea1_2300mw": 0,
+          "system_lambda_p50": 456.81,
+          "lambda_over_80pct_of_rt_share": 0.915
+        },
+        "caught": {
+          "rtorpa_p50": 31.39,
+          "rtorpa_max": 650.82,
+          "prc_p50_mw": 5398.0,
+          "prc_min_mw": 2697.0,
+          "hours_prc_below_eea1_2300mw": 0,
+          "system_lambda_p50": 1868.0,
+          "lambda_over_80pct_of_rt_share": 0.859
+        }
+      },
+      "physical_balance_at_missed_mw": {
+        "gas": {
+          "model": 40858.9,
+          "actual": 42271.3,
+          "delta": -1412.4
+        },
+        "coal": {
+          "model": 10934.3,
+          "actual": 10556.8,
+          "delta": 377.5
+        },
+        "nuc": {
+          "model": 4746.7,
+          "actual": 4753.6,
+          "delta": -6.9
+        },
+        "renewables": {
+          "model": 14906.7,
+          "actual": 14402.8,
+          "delta": 503.9
+        },
+        "storage_net": {
+          "model": 503.5,
+          "actual": null,
+          "delta": null,
+          "note": "EIA-930 ERCO BAT reporting starts 2024-11-06; earlier hours carry no measured battery series"
+        },
+        "demand_vs_930_gen_sum": {
+          "model_demand": 72543.1,
+          "actual_gen_sum": 72542.5
+        }
+      },
+      "clock_check_corr_by_930_shift": {
+        "-1": 0.94939,
+        "0": 0.9867,
+        "1": 1.0,
+        "2": 0.98666
+      },
+      "subhourly_actual_tail": {
+        "available": true,
+        "basis": "HB_BUSAVG 15-min RTM settlement point prices",
+        "tail_hours": 180,
+        "median_max_over_mean": 1.819,
+        "hours_median_interval_below_threshold": 31,
+        "hours_min_interval_below_100": 62,
+        "hours_with_interval_above_1000": 104,
+        "p50_hourly_mean": 628.65,
+        "p50_max_interval": 1254.43,
+        "p50_min_interval": 160.98
+      }
+    },
+    "2024": {
+      "tail_hours_actual": 53,
+      "caught": 17,
+      "missed": 36,
+      "phantom": 5,
+      "scored_c3c_model_over_actual": [
+        22,
+        53
+      ],
+      "model_price_at_missed": {
+        "p10": 32.65,
+        "p50": 70.92,
+        "p90": 126.52
+      },
+      "actual_price_at_missed_p50": 266.18,
+      "reality_at_hours": {
+        "missed": {
+          "rtorpa_p50": 1.58,
+          "rtorpa_max": 55.54,
+          "prc_p50_mw": 6197.0,
+          "prc_min_mw": 5345.0,
+          "hours_prc_below_eea1_2300mw": 0,
+          "system_lambda_p50": 272.07,
+          "lambda_over_80pct_of_rt_share": 0.917
+        },
+        "caught": {
+          "rtorpa_p50": 41.0,
+          "rtorpa_max": 252.69,
+          "prc_p50_mw": 5827.0,
+          "prc_min_mw": 4778.0,
+          "hours_prc_below_eea1_2300mw": 0,
+          "system_lambda_p50": 966.47,
+          "lambda_over_80pct_of_rt_share": 0.706
+        }
+      },
+      "physical_balance_at_missed_mw": {
+        "gas": {
+          "model": 35579.3,
+          "actual": 36347.0,
+          "delta": -767.7
+        },
+        "coal": {
+          "model": 8463.4,
+          "actual": 9089.4,
+          "delta": -626.0
+        },
+        "nuc": {
+          "model": 3963.0,
+          "actual": 4017.2,
+          "delta": -54.2
+        },
+        "renewables": {
+          "model": 10533.8,
+          "actual": 9789.4,
+          "delta": 744.4
+        },
+        "storage_net": {
+          "model": 1805.0,
+          "actual": 1907.0,
+          "delta": -102.0,
+          "note": "EIA-930 ERCO BAT reporting starts 2024-11-06; earlier hours carry no measured battery series"
+        },
+        "demand_vs_930_gen_sum": {
+          "model_demand": 60854.8,
+          "actual_gen_sum": 60328.8
+        }
+      },
+      "clock_check_corr_by_930_shift": {
+        "-1": 0.93954,
+        "0": 0.98347,
+        "1": 0.99933,
+        "2": 0.98342
+      },
+      "subhourly_actual_tail": {
+        "available": true,
+        "basis": "HB_BUSAVG 15-min RTM settlement point prices",
+        "tail_hours": 54,
+        "median_max_over_mean": 1.702,
+        "hours_median_interval_below_threshold": 10,
+        "hours_min_interval_below_100": 13,
+        "hours_with_interval_above_1000": 17,
+        "p50_hourly_mean": 273.66,
+        "p50_max_interval": 486.69,
+        "p50_min_interval": 154.32
+      }
+    },
+    "2025": {
+      "tail_hours_actual": 31,
+      "caught": 0,
+      "missed": 31,
+      "phantom": 1,
+      "scored_c3c_model_over_actual": [
+        1,
+        31
+      ],
+      "model_price_at_missed": {
+        "p10": 47.23,
+        "p50": 89.61,
+        "p90": 135.05
+      },
+      "actual_price_at_missed_p50": 250.32,
+      "reality_at_hours": {
+        "missed": {
+          "rtorpa_p50": 0.0,
+          "rtorpa_max": 36.07,
+          "prc_p50_mw": 7727.0,
+          "prc_min_mw": 5979.0,
+          "hours_prc_below_eea1_2300mw": 0,
+          "system_lambda_p50": 278.53,
+          "lambda_over_80pct_of_rt_share": 0.871
+        }
+      },
+      "physical_balance_at_missed_mw": {
+        "gas": {
+          "model": 37564.0,
+          "actual": 38330.5,
+          "delta": -766.6
+        },
+        "coal": {
+          "model": 8747.1,
+          "actual": 8724.8,
+          "delta": 22.2
+        },
+        "nuc": {
+          "model": 4757.3,
+          "actual": 4901.1,
+          "delta": -143.8
+        },
+        "renewables": {
+          "model": 7941.3,
+          "actual": 7449.7,
+          "delta": 491.6
+        },
+        "storage_net": {
+          "model": 2555.4,
+          "actual": 2374.6,
+          "delta": 180.8,
+          "note": "EIA-930 ERCO BAT reporting starts 2024-11-06; earlier hours carry no measured battery series"
+        },
+        "demand_vs_930_gen_sum": {
+          "model_demand": 61716.9,
+          "actual_gen_sum": 59669.5
+        }
+      },
+      "clock_check_corr_by_930_shift": {
+        "-1": 0.90288,
+        "0": 0.93762,
+        "1": 0.94335,
+        "2": 0.91691
+      },
+      "subhourly_actual_tail": {
+        "available": true,
+        "basis": "HB_BUSAVG 15-min RTM settlement point prices",
+        "tail_hours": 35,
+        "median_max_over_mean": 1.239,
+        "hours_median_interval_below_threshold": 3,
+        "hours_min_interval_below_100": 3,
+        "hours_with_interval_above_1000": 5,
+        "p50_hourly_mean": 244.04,
+        "p50_max_interval": 312.92,
+        "p50_min_interval": 186.23
+      }
+    }
+  }
+}
