@@ -22,6 +22,44 @@
 unmerged at 09:21:38Z** (`mergeable_state: dirty`, stale on arrival), which is
 the correct disposition and empties the queue.
 
+> ### ⚠️ POST-REBASE ADDENDUM — state at merge time (2026-08-17 ~14:47 UTC, `main` @ `b50623f`)
+>
+> The v7 snapshot above is stamped at **09:25 UTC / `6cc332e`** and is left as
+> the snapshot it was. Main moved before this board could merge; five things
+> below it are overtaken, recorded here rather than by back-dating the snapshot.
+> **The park itself is unchanged — G2 is still unreachable, WS3 is still paused
+> by owner decision.**
+>
+> 1. **The golden-tier RED is DIAGNOSED and FIXED** (#4071). Cause:
+>    `curate_lmp.py::_neiso_flat24_repair` assigning the string `"02"` into the
+>    int64 `Hr_End` column of the 2018–2023 NEISO flat-24 vintage — pandas 3.0.3
+>    raises where older pandas upcast — introduced by neiso-97's `a2b5e3d`
+>    (#4043) three hours pre-cron. **BLOAT-S2 is CLEARED as a cause** (#4047
+>    touched zero `lmp-data` paths), as is the history rewrite. Remaining: the
+>    proof-of-fix call — that lane recommends **one** post-merge
+>    `workflow_dispatch` over leaving the proof mechanism red for a week.
+> 2. **WS3 IS NOT FULLY STOOD DOWN — change (d) is delivered and OPEN.**
+>    **#4067** "PERF-B (d): memoize `zone_assignment.build_zone_lookup` —
+>    byte-identical on a 5-ISO gate" (559 additions / 9 files, opened 14:14 UTC
+>    on the revived `claude/perf-b-ws3-recheck-9r11sg`). So "(a)–(e) all
+>    unstarted" is **false at merge time**: (c) had already landed and (d) is now
+>    awaiting merge. **Whether a paused workstream should be landing changes is
+>    an owner call, not this lane's** — flagged, not adjudicated.
+> 3. **Two more keepers moved** — ERCOT → **`2026-08-17-ercot215-arm-decontam`**
+>    (#4070, promoted on owner instruction) and NEISO →
+>    **`2026-08-17-neiso-99-joint-p1`** (#4072). The staleness *count* is
+>    unchanged (**3 stale / 2 current / 1 no-golden**) but ERCOT's and NEISO's
+>    stale-against ids are now these. **This is the finding proving itself again
+>    inside one day.**
+> 4. **Audit row O5 CLOSED** (#4072, neiso-99) — it was "sharpened" at the
+>    snapshot.
+> 5. **The miso-161 ruling has come in** — **#4069** (miso-163) closes the
+>    C3a-2025 lane by owner ruling **as a model-class limit**; open at merge
+>    time. Also open: **#4073**, the PR carrying this very board.
+>
+> Everything else on this board — the park, the G2 legs, the RESTART CHECKLIST,
+> the outstanding rulings other than miso-161 — stands as written.
+
 **Three corrections carried into this snapshot**, all detailed in the §8 entry
 `2026-08-17 (owner decision: WS3 paused, program parked at G1)`:
 
@@ -42,13 +80,13 @@ the correct disposition and empties the queue.
 
 | WS | State | Completion | Blockers / next |
 |----|-------|------------|-----------------|
-| WS1 `AUDIT` | AUDIT-A **completed** (#3991); **row O8 CLOSED** — NEISO SMD DST-naive clock repaired (#4043), keeper recipe re-solved at the repaired instrument (#4052), FINDING + probe landed (#4049); **O5 sharpened** (#4063) | **In progress ~87%** | **AUDIT-B gated at G3 — waiting by design.** Rows O4, O5, O6, O7 open |
+| WS1 `AUDIT` | AUDIT-A **completed** (#3991); **row O8 CLOSED** — NEISO SMD DST-naive clock repaired (#4043), keeper recipe re-solved at the repaired instrument (#4052), FINDING + probe landed (#4049); **O5 sharpened** (#4063) and then **CLOSED** (#4072, neiso-99 — post-snapshot) | **In progress ~88%** | **AUDIT-B gated at G3 — waiting by design.** Rows **O4, O6, O7** open |
 | WS2 `DEBUG` | **COMPLETED** — DEBUG-A ✓, DEBUG-B ✓, pjm-162 promoted, sibling-import residue retired (census **0 bare sites / 0 live files**), landing-verify green on merged main | **Completed** | none; no DEBUG-C continuation chartered |
-| WS3 `PERF` | PERF-A ✓. **PERF-B PAUSED BY OWNER.** Stage-0 partial: **5 of 6 ISOs captured** — ERCOT #4033, NEISO #4041, NYISO #4050, CAISO #4058, MISO #4060; **PJM never captured**. Changes **(a)–(e) UNSTARTED**; **(c) already landed via #3964** (not a standalone item) | **Paused ~65%** | **Paused, not blocked.** On restart: freeze calibration, then re-verify every golden — see RESTART CHECKLIST |
+| WS3 `PERF` | PERF-A ✓. **PERF-B PAUSED BY OWNER.** Stage-0 partial: **5 of 6 ISOs captured** — ERCOT #4033, NEISO #4041, NYISO #4050, CAISO #4058, MISO #4060; **PJM never captured**. Changes: **(c) already landed via #3964** (not a standalone item), **(d) delivered and OPEN in #4067** (post-snapshot — see addendum), (a)/(b)/(e) unstarted | **Paused ~68%** | **Paused, not blocked.** On restart: freeze calibration, then re-verify every golden — see RESTART CHECKLIST |
 | WS4 `DOCS` | DOCS-A **completed** (#3999 + #4005); DOCS-B held | **In progress ~60%** | **DOCS-B gated at G2 — waiting by design** |
 | WS5 `SITE` | Held by design | **Not started** | gated at **G3** |
 | WS6 `BLOAT` | Prunes B-1..B-8 merged; **BLOAT-2 CLOSED** (Class-E rule adopted + parity sweep, #4032); **BLOAT-3 ADJUDICATED** (O2 staged (a)-only GO, #4031) and **EXECUTED — BLOAT-S2 merged #4047, −444.5 MiB / 144 files at tip** | **Completed but for one RED** | **BLOAT-2 registry/payload parity gate RED**, pending a MISO payload push — **currently UNOWNED** |
-| — `GOLDEN-TIER-FIX` | **COMPLETED and independently verified** (#4014); authorized dispatch `31913648051` SPENT + GREEN. **But the first scheduled cron firing is RED** — see *Watch* | **Completed** | the fix is not in question; the **tier is not green on a scheduled firing at HEAD** |
+| — `GOLDEN-TIER-FIX` | **COMPLETED and independently verified** (#4014); authorized dispatch `31913648051` SPENT + GREEN. The first scheduled cron firing came back **RED**, and was **diagnosed + fixed same-day** (#4071) — see *Watch* | **Completed** | the fix is not in question; **one post-merge `workflow_dispatch` is the recommended proof of the #4071 fix** |
 
 ## Stage-0 golden staleness at the pause (recomputed at `6cc332e`)
 
@@ -58,10 +96,10 @@ titles. This table supersedes the #4061 ledger's headline (*2 stale / 2 current
 / 2 no-golden* at `5b89e84`), which #4060 and #4065 overtook **within two
 minutes of its own merge**.
 
-| ISO | Golden captured against | Designated keeper at HEAD | Verdict |
+| ISO | Golden captured against | Designated keeper at `6cc332e` | Verdict |
 |-----|-------------------------|---------------------------|---------|
-| ERCOT | `2026-08-15-ercot204-rule26-delete` (#4033) | `2026-08-16-ercot213-arm-pubanchor` | **STALE — keeper moved** |
-| NEISO | `2026-08-14-neiso-93-envelope` (#4041) | `2026-08-17-neiso-97-dstrepair` | **STALE by keeper id** — but the sidecars are bit-identical, so re-capture is a **re-stamp, not a re-solve** |
+| ERCOT | `2026-08-15-ercot204-rule26-delete` (#4033) | `2026-08-16-ercot213-arm-pubanchor` — **now `2026-08-17-ercot215-arm-decontam`** (#4070) | **STALE — keeper moved, twice** |
+| NEISO | `2026-08-14-neiso-93-envelope` (#4041) | `2026-08-17-neiso-97-dstrepair` — **now `2026-08-17-neiso-99-joint-p1`** (#4072) | **STALE** — the re-stamp-not-re-solve shortcut applied to neiso-97 only; **re-check it against neiso-99 before relying on it** |
 | CAISO | `2026-08-16-caiso-197-w2-r5` (#4058) | `2026-08-17-caiso-200-h1-memberpanel` | **STALE — staled 88 s after the ledger called it CURRENT** (#4065, 05:03:11Z) |
 | MISO | `2026-08-16-miso-160-wefor-shape` (#4060) | `2026-08-16-miso-160-wefor-shape` | **CURRENT** |
 | NYISO | `2026-08-16-nyiso-140-layup-exclusion` (#4050) | `2026-08-16-nyiso-140-layup-exclusion` | **CURRENT** |
@@ -89,7 +127,9 @@ restart.**
   3. **A keeper freeze** — **owner call, outstanding across five director
      cycles.** Unreachable at this snapshot by observation: CAISO promoted
      (#4065), ERCOT / NYISO / NEISO all moved 03:37–05:03Z, and a live CAISO
-     lane branch sits off main.
+     lane branch sits off main. **Still unreachable at merge time:** ERCOT
+     moved again (#4070) and NEISO again (#4072) in the hours after the
+     snapshot.
   4. **Branch-protection flip** — owner action, memo ready.
 
   On declaration the PM notifies the FFR desk (Q.2 battery).
@@ -100,8 +140,9 @@ restart.**
 
 ## Watch
 
-- **🔴 GOLDEN-TIER WEEKLY CRON FIRED AND FAILED — a NEW finding, discharged
-  here.** Run **31999181985**, `event: schedule`, **2026-08-17T05:48:08Z**, head
+- **🟢 GOLDEN-TIER WEEKLY CRON FIRED AND FAILED — found here, DIAGNOSED AND
+  FIXED same-day by #4071 (see addendum). Recorded in full because the
+  measurement is what the watch item existed for.** Run **31999181985**, `event: schedule`, **2026-08-17T05:48:08Z**, head
   **`6cc332e7`**, conclusion **FAILURE** (job 95296191095, 6 m 24 s). Died in
   step 5 *"Provision data/clean"*: **`curate_lmp.py` was the sole failing
   datatype** (`1/9 datatype(s) failed`; all others `[ ok ]`), so pytest never
@@ -111,13 +152,14 @@ restart.**
     green after merge") is NOT satisfied — it is RED.**
   - Last golden-tier green remains `workflow_dispatch` **31913648051**
     (2026-08-15 23:01 UTC, `ccca569c`).
-  - **Not diagnosed** — this records lane is docs-only with no `src/`/`scripts/`
-    scope. **Needs a dispatched diagnostic lane.** Lead to clear first:
-    `lmp-data` non-golden is *precisely* the corpus whose BLOAT-S2 evidence pass
-    **FAILED** and which therefore **stays tracked**, so the Stage-2 untrack is
-    not the obvious cause — but it is adjacent enough to rule in or out
-    explicitly, together with the MISO-archive decay the same finding measured
-    (2022 already 404).
+  - **Not diagnosed by this lane** (docs-only, no `src/`/`scripts/` scope); a
+    diagnostic lane was recommended and **has since delivered — #4071**. Its
+    verdict confirms this bullet's own reasoning: the cause was a pandas-3.0.3
+    dtype regression in `curate_lmp.py::_neiso_flat24_repair` introduced by
+    #4043, and **the BLOAT-S2 untrack was NOT the cause** — #4047 touched zero
+    `lmp-data` paths, exactly as predicted from that corpus having FAILED its
+    evidence pass and stayed tracked. **Open item is now only the proof of
+    fix:** one post-merge `workflow_dispatch`.
 - **#4054 / nyiso-140 null-treatment question — OPEN.** The stage-0 *captures*
   are cleared (see below); the **A/B itself is not**.
 
@@ -128,12 +170,15 @@ Carried forward verbatim; this list replaces the former alerts section.
 1. **caiso-199** — NOT-YET determination (#4037 landed the FINDING, matrix cell
    and log entry; the disposition is the owner's).
 2. **miso-161 C3a-2025** — charter C3c under frontier terms, or close as a
-   model-class limit. **The lane is BLOCKED on this.**
+   model-class limit. **RULED after the snapshot: closed as a model-class
+   limit**, landing in **#4069** (miso-163), open at merge time. The lane is
+   unblocked; retire this item once #4069 merges.
 3. **ercot-214 counterpart-decontamination lever** — G-SPUR phantom-adder risk
    (#4057 identified the mid-band spill's maker exactly and escalated).
 4. **BLOAT-2 parity RED** — needs a MISO payload push; **unowned**.
 5. **decision-1 ack** — warm-start closed-overtaken; a one-word ack retires it.
-6. **Audit rows O4, O5, O6, O7.**
+6. **Audit rows O4, O6, O7** — **O5 CLOSED** post-snapshot (#4072), **O8
+   CLOSED** at the snapshot.
 7. **O6 standing guard — restated and VERIFIED at HEAD.** 2019 and H1-2026 are
    **touch-once** and **no ISO has ever spent one**:
    `frontend/data/backcast/calibration-complete.json` carries `complete` =
@@ -163,7 +208,9 @@ test modules and every calibration-solve import.
 > *branches, PRs and merges* are live-read and exact.** Re-establish the live
 > read next cycle.
 
-**PERF-B lanes — STOOD DOWN** (per the owner's pause):
+**PERF-B lanes — STOOD DOWN** (per the owner's pause) — **but see addendum item
+2: the `perf-b-ws3-recheck` lane REVIVED after this snapshot and has change (d)
+open in #4067.**
 
 | Lane | Branch | Last landing | Status |
 |------|--------|--------------|--------|
@@ -206,9 +253,11 @@ declaring a cycle done.**
 
 **While the program is parked, the refresh cycle is not the live instrument it
 was.** Nothing in WS1/WS4/WS5 can advance and WS3 is stood down; a park-period
-refresh should confirm only (a) that the golden-tier RED is owned, (b) whether
-the owner has ruled on anything in *Owner rulings outstanding*, and (c) whether
-the keeper freeze has been called — that last one is the un-park trigger.
+refresh should confirm only (a) that the golden tier is proven green after the
+#4071 fix, (b) whether the owner has ruled on anything in *Owner rulings
+outstanding*, and (c) whether the keeper freeze has been called — that last one
+is the un-park trigger. **Add a (d) while #4067 is open: WS3 is landing changes
+during a pause, which is the owner's call to make explicit.**
 
 ## RESTART CHECKLIST — for whoever un-parks the program
 
@@ -226,9 +275,12 @@ the keeper freeze has been called — that last one is the un-park trigger.
    `results/regression-goldens/perfb-stage0/manifest.json` at that HEAD, and
    re-derive the table.
 3. **Re-capture what is stale, and know which are cheap.** At this snapshot:
-   ERCOT, CAISO, NEISO stale; PJM never captured. **NEISO is a re-stamp, not a
-   re-solve** — its keeper's sidecars are bit-identical to the golden's. Check
-   whether the same is true of any newly-stale ISO before spending a solve.
+   ERCOT, CAISO, NEISO stale; PJM never captured. The **re-stamp-not-re-solve**
+   shortcut was established for **neiso-97 only** — its sidecars are
+   bit-identical to the golden's — and NEISO has since moved on to **neiso-99**
+   (#4072), so **re-establish it before relying on it.** Apply the same test to
+   any newly-stale ISO before spending a solve: compare committed sidecars
+   first, solve only if they differ.
 4. **Capture PJM** — the one ISO with no golden at all, and the one gap that no
    amount of keeper stability closes.
 5. **Do NOT re-do change (c).** It landed via #3964 and is byte-identical at
@@ -240,5 +292,7 @@ the keeper freeze has been called — that last one is the un-park trigger.
    stays with its own lane.**
 7. **Then, and only then, resume changes (a)–(e)** — and re-read the G2 leg list
    above, because *merged byte-green* is what the gate wants, not captures.
-8. **Clear the golden-tier RED before claiming any byte-green result.** A tier
+8. **Confirm the golden tier is green before claiming any byte-green result.**
+   The #4071 fix has landed but its **proof of fix is still outstanding** — one
+   post-merge `workflow_dispatch`, or the next weekly cron. A tier
    that cannot provision `data/clean` cannot prove byte-identity of anything.
