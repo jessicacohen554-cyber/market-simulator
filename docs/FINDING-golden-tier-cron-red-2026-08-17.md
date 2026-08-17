@@ -158,15 +158,18 @@ carry matching annotations.
 ## 7. Local full-job replay record
 
 Replay of the four job steps on a full clone (15 GB RAM / 4 CPU, pandas
-3.0.3, serial pytest), same commands as the workflow. Status at the fix
-commit — the replay runs in-session and this section is finalized by a
-follow-up commit when it completes:
+3.0.3, serial pytest), same commands as the workflow — **all four green**
+(completed in-session, 09:31–09:44 UTC, ~13 min wall):
 
-- Step 5 (nine datatypes): `[ ok ]` through six at commit time —
-  **lmp included, post-fix** (and separately green standalone, §5);
-  generation/renewables/nyiso-interface-flows still running.
-- Tier collection at HEAD: 49 tests collected under
-  `-m "slow or integration or fulldata"`, zero collection errors.
-- Steps 6–8 (emissions 2023, pytest tier, loud-failure guard): pending in
-  the same replay. The binding proof remains the CI re-run of §6 either
-  way.
+- Step 5 (nine datatypes): **`[ ok ]` × 9, exit 0** — lmp included,
+  post-fix (and separately green standalone, §5).
+- Step 6 (`curate_emissions.py --years 2023`): **exit 0** (the post-#3996
+  streaming path).
+- Step 7 (pytest tier, serial, the three performance deselects): **44
+  passed, 2 skipped, exit 0** (49 collected under the `-m` expression,
+  zero collection errors).
+- Step 8 (loud-failure guard): **"data-tier report clean: no data-missing
+  skips; golden ran and passed", exit 0** — the two skips are not
+  data-missing skips, and the golden itself ran and passed.
+
+The binding proof remains the CI re-run of §6.
