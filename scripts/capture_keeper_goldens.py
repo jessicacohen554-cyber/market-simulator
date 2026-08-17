@@ -144,6 +144,10 @@ FIDELITY_IGNORE_KEYS = {
     # oracle must not fail a golden because the keeper was frozen on an older
     # dependency set.
     "environment",
+    # Origin-durable git basis of the solving checkout (`_basis_sha()`,
+    # recorded since the ercot-204 era): a provenance stamp like git_sha, not
+    # a solve flag — a current-HEAD golden legitimately records HEAD's basis.
+    "basis_sha",
 }
 
 
