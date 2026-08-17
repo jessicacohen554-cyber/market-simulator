@@ -1,0 +1,71 @@
+{
+ "precheck": "PRECHECK-caiso200-panel-membership-2026-08-17.md",
+ "baseline": "caiso199_g1_meritpin",
+ "control": "caiso200_h0_control",
+ "control_extract_sha256": "da33e509465911341ba0867aefe02214f2e8ccb666ef86747e0e7ad8b47c86bb",
+ "tolerance": {
+  "dC3a_pp": 0.1,
+  "dC3b": 0.005
+ },
+ "per_year": {
+  "2023": {
+   "system": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "price": 0.0,
+     "slack": 0.0
+    }
+   },
+   "class_hourly": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "mw": 0.0
+    }
+   }
+  },
+  "2024": {
+   "system": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "price": 0.0,
+     "slack": 0.0
+    }
+   },
+   "class_hourly": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "mw": 0.0
+    }
+   }
+  },
+  "2025": {
+   "system": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "price": 0.0,
+     "slack": 0.0
+    }
+   },
+   "class_hourly": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "mw": 0.0
+    }
+   }
+  }
+ },
+ "bit_zero_all_years": true,
+ "noise_floor_statement": "BIT-ZERO: max |\u0394| = 0.0 over every zone-hour (system, prices included) and every class-hour (class_hourly) of all three years \u2014 \u0394C3a = 0.0 pp and \u0394C3b = 0.000 identically; the ratified tolerance is met with a noise floor of exactly zero, quoted before any treated delta was read. Also the measured evidence that the head drift since caiso-199 (#4036/#4032/#4031 + the 5148f2e dedup repair) and the member-panel scope code are inert on the CAISO solve path."
+}
