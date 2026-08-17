@@ -1396,3 +1396,31 @@ your branch when done.
     The consequence is on the record: **the board went three cycles without a
     refresh** and was wrong on every row until this entry's companion v6
     rewrite. Two prior dispatches of this records lane were never launched.
+- 2026-08-17 — **BLOAT-S2 EXECUTED: the Stage-2 (a)-only untrack, evidence
+  passes first** (session BLOAT-S2, the O2 grant's chartered follow-on;
+  evidence: `docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md`; D-ledger:
+  bloat plan §9 BLOAT-3 annotated EXECUTED). Six §4.8 evidence passes ran —
+  five-leg protocol per corpus (consumer census with absent-behavior
+  semantics, golden+holdout overlap incl. the rule-22 vintage question,
+  MEASURED retention with live probes + negative controls, fetch instrument
+  exercised, manifest plan) — and the passing subset was untracked in
+  per-corpus commits: **−444.5 MiB / 144 files** at tip. PASS:
+  `storage-as-awards` (−165.2), `data/raw/PJM` (−107.1, a zero-consumer
+  naming-trap orphan). SPLIT: `campd-unit-level` 2018-only (−105.1; the
+  prima facie 692.6 REFUTED — 2019–2026 are solve-time year-keyed inputs),
+  `eia-930` (−33.8; BALANCE 2019–2026 kept as `wecc-west-supply` rebuild
+  inputs, the hand-assembled `eia_*` files have no (a) story), `iso-specific-
+  transmission` PJM-2018 pair (−33.3; NP6-86 parquets fail leg (iv) — no
+  instrument). FAIL, stays tracked: `lmp-data` non-golden (MISO archive
+  measured decaying — 2022 already 404, 2023 dies ~Jan 2027; ERCOT/ zips are
+  holdout scoring rebuild inputs). Golden-tier sparse list: ZERO edits
+  (verified per-glob at HEAD); skip-when-absent: like-for-like full-suite
+  runs in a payload-absent worktree, zero new reds; the §5(c) baseline also
+  surfaced and fixed a **pre-existing SyntaxError at origin/main**
+  (`run_calibration.py` duplicate `reliability_floor_plant_exclusions` kwarg
+  from the #4036 merge race — collection of 32 test modules and every
+  calibration solve import were broken; FINDING §8). Post-merge proof = the
+  first weekly golden-tier cron green after merge (D3 — no dispatch spent).
+  Under every verdict the §4.7 holdout intakes, `ercot/cdr.*.zip` and the
+  §4.2 2023 DAM quarters were never touched; the DAM-2024+ subset stays OUT
+  (D4).

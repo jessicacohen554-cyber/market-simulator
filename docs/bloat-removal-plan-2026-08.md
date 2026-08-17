@@ -891,7 +891,29 @@ elsewhere, e.g. the D-13 cache-key gate):
     DAM 2024+ subset stays OUT (travels with any future archive decision).
     Full ruling text: the card's verdict banner. Open follow-on work:
     the per-corpus evidence passes, then untrack PRs for passing corpora
-    only.)*
+    only.)* *(EXECUTED 2026-08-17, session BLOAT-S2 — the §4.8 evidence
+    passes ran for six corpora and the passing subset was untracked in
+    per-corpus commits (PR-2/PR-5 idiom, `intentional-shrink`), **−444.5 MiB
+    / 144 files** at tip, tree-sha-verified before hashing. Verdict table
+    (full evidence: `docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md`):
+    `storage-as-awards` **PASS** −165.2 · `data/raw/PJM` **PASS (zero
+    consumers — a naming-trap orphan)** −107.1 · `campd-unit-level`
+    **SPLIT** −105.1 (2018 only; 2019–2026 are solve-time year-keyed inputs
+    — the prima facie 692.6 story REFUTED by the census) · `eia-930`
+    **SPLIT** −33.8 (per-BA long files + 2018 BALANCE; BALANCE 2019–2026
+    stay as `wecc-west-supply` rebuild inputs, the 7 hand-assembled `eia_*`
+    files have no (a) story) · `iso-specific-transmission` **SPLIT** −33.3
+    (PJM-2018 pair; loss surfaces + PJM 2019–2026 + the instrument-less
+    NP6-86 parquets stay) · `lmp-data` non-golden **FAIL — stays tracked**
+    (MISO's archive measured decaying, ERCOT/ zips are holdout scoring
+    rebuild inputs, remainder immaterial). Every retention window was
+    measured live with negative controls; golden-tier sparse list needed
+    ZERO edits (verified per-glob at execution HEAD); skip-when-absent
+    verified by like-for-like full-suite runs in a payload-absent worktree.
+    The session also found and fixed a pre-existing SyntaxError at
+    origin/main (`run_calibration.py` duplicate kwarg from the #4036 merge
+    race — FINDING §8). Post-merge proof = the first weekly golden-tier cron
+    green after merge (no dispatch spent, per D3).)*
 
 ---
 

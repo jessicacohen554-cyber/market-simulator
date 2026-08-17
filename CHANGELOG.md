@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-08-17 — BLOAT-S2: Stage-2 (a)-only untrack executed — six evidence passes, −444.5 MiB / 144 files at tip; the main-blocking run_calibration.py SyntaxError fixed
+
+Executes the signed O2 grant (BLOAT-3 card, 2026-08-16). Six §4.8
+BLOAT-A-grade evidence passes (`docs/FINDING-bloat-s2-evidence-passes-
+2026-08-17.md`): per corpus, a consumer census with loud-vs-silent absence
+semantics, golden+holdout overlap incl. the rule-22 vintage question, a
+MEASURED retention window (live probes with negative controls), an exercised
+fetch instrument, and the manifest plan. Untracked in per-corpus commits
+(tree-sha-verified SHA256SUMS + README recovery sections; re-fetch-only
+recovery — no pins): `storage-as-awards/CAISO` xlsx (−165.2 MiB), the
+zero-consumer `data/raw/PJM` orphan (−107.1), the `campd-unit-level` 2018
+vintage (−105.1 — 2019–2026 stay: solve-time year-keyed inputs, refuting the
+prima facie 692.6 MiB), the `eia-930` per-BA long files + 2018 BALANCE
+(−33.8 — BALANCE 2019–2026 and the hand-assembled `eia_*` files stay), and
+the `iso-specific-transmission` PJM-2018 pair (−33.3 — the NP6-86 parquets
+stay: no fetch instrument). `lmp-data` non-golden FAILED its pass (MISO
+archive measured decaying; ERCOT/ zips are holdout scoring rebuild inputs)
+and stays tracked whole. Golden-tier sparse list needed zero edits;
+skip-when-absent verified like-for-like in a payload-absent worktree. The
+baseline run also surfaced a pre-existing SyntaxError at origin/main —
+`scripts/run_calibration.py` carried a duplicate
+`reliability_floor_plant_exclusions` kwarg from the #4036 merge race,
+breaking collection of 32 test modules and every calibration-solve import —
+fixed by deleting the duplicated kwarg + override block. CLAUDE.md corpus
+list updated; bloat plan §9 BLOAT-3 annotated EXECUTED; release-plan §8
+entry. Post-merge proof: the first weekly golden-tier cron green.
+
 ## 2026-08-16 — BLOAT-2 closed: Class-E retention rule adopted; the point-4 bundle-parity sweep built into the CI parity gate
 
 The four-point Class-E retention rule (bloat plan §7 item E2) was served to
