@@ -6907,8 +6907,21 @@ strips a rule-26-deleted field from top-level meta keys but not from inside a
 generic override dict splatted via `with_overrides(**d)` — and the keeper records
 `nyiso_solar_registry_cod_dates` in `coal_prb_sigmoid_overrides`.
 
-Keeper `2026-08-08-nyiso-133-cod-arm` UNTOUCHED and still
-`CALIBRATED-WITH-CAVEATS`; promotion is the owner's call. `complete` (validation
+**PROMOTED, same session, on the owner's ruling** ("Is this a recommended keeper
+candidate? If so plz promote. If structural integrity improves but gates regress
+that may still be a keeper."). NYISO keeper
+`2026-08-08-nyiso-133-cod-arm` -> **`2026-08-16-nyiso-140-layup-exclusion`**. No
+new solve: the only artifact added was the arm's `calibration_attestation.json`,
+which moved C6 UNATTESTED -> PASS and the determination NOT-YET ->
+**`CALIBRATED-WITH-CAVEATS`** (C3c the lone ledgered caveat, criterion-for-criterion
+identical to the superseded keeper). The structure-over-gates clause was not
+needed for the gates themselves — none regresses — but it is what licenses the
+volume degradation. Rule 22 D-5(b): `calibration-complete.json` re-keyed with the
+determination re-verified from committed artifacts only; label unchanged, so the
+worse-determination stop did not fire. `calibration-keeper-auditor` PASS, 0
+failures, 0 warnings, no repairs. Matrix cell
+`reliability_floor_plant_exclusions` NYISO **O -> K**, keeper stamp and §5.5
+prose header updated (NYISO shard only). `complete` (validation
 only), ABSENT from `final`; frontier CLEARED 2026-08-06; holdout spend freeze
 ACTIVE and untouched (2023–2025 only). Evidence:
 `results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md`,
