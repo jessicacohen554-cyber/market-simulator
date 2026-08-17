@@ -342,7 +342,11 @@ def _stage_arm(ref: str) -> dict:
     end_col = old_lines[0].rstrip("\n").split(",").index("outage_end")
 
     def _linekey(ln: str) -> tuple:
-        f = ln.split(",")
+        # csv-parse the single line: facility names carry embedded commas
+        # inside quotes, so a naive split misaligns those rows' columns.
+        import csv
+
+        f = next(csv.reader([ln]))
         return (int(f[fac_col]), f[uid_col], f[start_col], f[end_col])
 
     expected_kept = [
@@ -351,28 +355,58 @@ def _stage_arm(ref: str) -> dict:
     main_kept_identical = new_lines[1:] == expected_kept
     header_identical = old_lines[0] == new_lines[0]
 
-    old_l_lines = old_layup_blob.decode().splitlines(keepends=True)
-    new_l_lines = new_layup_p.read_text().splitlines(keepends=True)
-    it = iter(new_l_lines[1:])
-    layup_subseq = all(any(o == n for n in it) for o in old_l_lines[1:])
-    added_l = [ln for ln in new_l_lines[1:] if ln not in set(old_l_lines[1:])]
-    layup_added_are_movers = (
-        {_linekey(ln) for ln in added_l} == mover_keys and len(added_l) == 9
+    # Layup accounting is WINDOW-KEY grained, not byte grained: the companion
+    # carries the panel's own measurement column (``out_of_merit_share``),
+    # which legitimately re-measures for every pre-existing row when the panel
+    # gains a member — the run-Y sha pin captures those refreshed bytes
+    # exactly. (The first cut of this probe wrongly assumed the column frozen
+    # and byte-compared the rows; disclosed in the FINDING.)
+    import io
+
+    old_l = pd.read_csv(io.BytesIO(old_layup_blob))
+    new_l = pd.read_csv(io.BytesIO(new_layup_p.read_bytes()))
+    o_keys = set(map(tuple, old_l[KEY].astype(str).values))
+    n_keys = set(map(tuple, new_l[KEY].astype(str).values))
+    entered = {
+        (int(k[0]), k[1], k[2], k[3]) for k in n_keys - o_keys
+    }
+    layup_keys_retained = not (o_keys - n_keys)
+    layup_added_are_movers = entered == mover_keys
+    om = old_l.set_index(KEY)
+    nm = new_l.set_index(KEY)
+    shared = om.index.intersection(nm.index)
+    changed_cols = {
+        col: int((om.loc[shared, col].astype(str) != nm.loc[shared, col].astype(str)).sum())
+        for col in om.columns
+        if (om.loc[shared, col].astype(str) != nm.loc[shared, col].astype(str)).any()
+    }
+    oom_delta = (
+        nm.loc[shared, "out_of_merit_share"] - om.loc[shared, "out_of_merit_share"]
     )
+    only_oom_remeasured = set(changed_cols) <= {"out_of_merit_share"}
     delta_c = {
         "landed_main_sha256": _sha(new_main_p),
         "landed_layup_sha256": _sha(new_layup_p),
         "header_identical": header_identical,
         "main_kept_rows_byte_identical_in_order": main_kept_identical,
-        "layup_committed_rows_in_order_subsequence": layup_subseq,
-        "layup_added_rows_are_exactly_the_movers": layup_added_are_movers,
+        "layup_committed_windows_all_retained": layup_keys_retained,
+        "layup_entered_windows_are_exactly_the_movers": layup_added_are_movers,
+        "layup_shared_rows_changed_columns": changed_cols,
+        "layup_shared_rows_only_oom_remeasured": only_oom_remeasured,
+        "layup_oom_refresh": {
+            "n_changed": int((oom_delta != 0).sum()),
+            "min": float(oom_delta.min()),
+            "max": float(oom_delta.max()),
+            "mean": float(oom_delta.mean()),
+        },
         "pass": (
             _sha(new_main_p) == SHA_RUNY_MAIN
             and _sha(new_layup_p) == SHA_RUNY_LAYUP
             and header_identical
             and main_kept_identical
-            and layup_subseq
+            and layup_keys_retained
             and layup_added_are_movers
+            and only_oom_remeasured
         ),
     }
 

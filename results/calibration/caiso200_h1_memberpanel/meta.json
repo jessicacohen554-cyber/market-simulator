@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-16T08:37:02",
+  "timestamp": "2026-08-17T03:56:50",
   "iso": "CAISO",
   "years": [
     2023,
@@ -121,6 +121,7 @@
   "ercot_nonreleasable_as_withholding": false,
   "ercot_ordc_total_reserve": false,
   "ercot_ordc_cap_dual_adder": false,
+  "ercot_ordc_adder_published_anchor": false,
   "ercot_storage_as_product_credit": false,
   "gas_hh_monthly_shape": false,
   "ercot_as_aware_commitment": false,
@@ -225,6 +226,7 @@
   "ercot_commitment_posture_min_load_frac": null,
   "carry_operating_mothballs": null,
   "reliability_floor": null,
+  "reliability_floor_plant_exclusions": null,
   "ct_netload_drag": false,
   "gas_st_netload_drag": false,
   "ct_drag_overrides": {},
@@ -316,15 +318,15 @@
     "eia930": "../_shared/CAISO/eia930-3697b3115384.parquet",
     "eia923": "../_shared/CAISO/eia923-8ca120c6637d.parquet",
     "campd": "../_shared/CAISO/campd-48c0f1dd36b6.parquet",
-    "unit_outages": "../_shared/CAISO/unit_outages-f5383296b08a.parquet",
+    "unit_outages": "../_shared/CAISO/unit_outages-e28c7b0b81d1.parquet",
     "unit_outages_short": "../_shared/CAISO/unit_outages_short-8822de3c9c11.parquet",
     "unit_outages_partial": "../_shared/CAISO/unit_outages_partial-b00540584f5f.parquet",
     "unit_outages_e923": "../_shared/CAISO/unit_outages_e923-f53035a2541a.parquet",
-    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-cf91707838a3.parquet",
+    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-d75214d7cdc0.parquet",
     "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet"
   },
-  "git_sha": "5133eaa43",
-  "basis_sha": "ce779f9233e23d3c04245d5579c58258166fd053",
+  "git_sha": "c39de54",
+  "basis_sha": "a4ef2a9585c05f377210f5f4893e0e66009a5530",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",

@@ -201,5 +201,107 @@
    "layup_sha256": "4ccae12ebcfada3d6b716d02f25d81faaa4cfd49fedb22685449581cc6d9ed37"
   },
   "statement": "Leg (a) proves the member-scope implementation is INERT when unarmed (committed bytes reproduce exactly) \u2014 the narrowing's own baseline byte-identity proof. Leg (b) proves MEMBERSHIP scoping at this head reproduces the caiso-198 run-Y DIRECTORY-scoped product byte-for-byte. The movement census is the \u00a70a record correction, measured."
+ },
+ "arm_stage": {
+  "control": "caiso200_h0_control",
+  "arm": "caiso200_h1_memberpanel",
+  "g_delta_c": {
+   "landed_main_sha256": "cf156483e08dcd701bd89898ca14670d3c797eb09d9ad30efc7f51cb381390b5",
+   "landed_layup_sha256": "4ccae12ebcfada3d6b716d02f25d81faaa4cfd49fedb22685449581cc6d9ed37",
+   "header_identical": true,
+   "main_kept_rows_byte_identical_in_order": true,
+   "layup_committed_windows_all_retained": true,
+   "layup_entered_windows_are_exactly_the_movers": true,
+   "layup_shared_rows_changed_columns": {
+    "out_of_merit_share": 111
+   },
+   "layup_shared_rows_only_oom_remeasured": true,
+   "layup_oom_refresh": {
+    "n_changed": 111,
+    "min": 0.0,
+    "max": 0.051999999999999935,
+    "mean": 0.0010567901234567897
+   },
+   "pass": true
+  },
+  "g_delta_d_config_diff": {},
+  "g_delta_pass": true,
+  "g_engage_factors_post": {
+   "2023": {
+    "422:CC_REGULAR": {
+     "mean_multiplier": 0.3065803285571826,
+     "hours_below_1": 6382
+    },
+    "10349:CT_CHP": null,
+    "10649:CT_CHP": null,
+    "54768:CT_CHP": null,
+    "57564:CC_REGULAR": {
+     "mean_multiplier": 0.9900508594127037,
+     "hours_below_1": 134
+    },
+    "57978:CC_REGULAR": {
+     "mean_multiplier": 0.6732876712328767,
+     "hours_below_1": 2862
+    }
+   },
+   "2024": {
+    "422:CC_REGULAR": null,
+    "10349:CT_CHP": null,
+    "10649:CT_CHP": null,
+    "54768:CT_CHP": null,
+    "57564:CC_REGULAR": {
+     "mean_multiplier": 0.8898912276794001,
+     "hours_below_1": 1483
+    },
+    "57978:CC_REGULAR": {
+     "mean_multiplier": 0.861986301369863,
+     "hours_below_1": 1209
+    }
+   },
+   "2025": {
+    "422:CC_REGULAR": {
+     "mean_multiplier": 0.8047184170471842,
+     "hours_below_1": 1905
+    },
+    "10349:CT_CHP": null,
+    "10649:CT_CHP": null,
+    "54768:CT_CHP": null,
+    "57564:CC_REGULAR": {
+     "mean_multiplier": 0.9515907487842001,
+     "hours_below_1": 652
+    },
+    "57978:CC_REGULAR": {
+     "mean_multiplier": 0.9461187214611873,
+     "hours_below_1": 472
+    }
+   }
+  },
+  "g_engage_loader_moved": true,
+  "g_engage_lp_differs": true,
+  "g_engage_engagement": {
+   "2023": {
+    "zone_hours_price_changed": 4331,
+    "zone_hours_total": 61320,
+    "max_abs_price_delta": 68.09148691142268,
+    "class_hours_mw_changed": 263,
+    "max_abs_mw_delta": 179.06005859375
+   },
+   "2024": {
+    "zone_hours_price_changed": 0,
+    "zone_hours_total": 61320,
+    "max_abs_price_delta": 0.0,
+    "class_hours_mw_changed": 0,
+    "max_abs_mw_delta": 0.0
+   },
+   "2025": {
+    "zone_hours_price_changed": 0,
+    "zone_hours_total": 61320,
+    "max_abs_price_delta": 0.0,
+    "class_hours_mw_changed": 0,
+    "max_abs_mw_delta": 0.0
+   }
+  },
+  "g_engage_pass": true,
+  "arm_inert": false
  }
 }

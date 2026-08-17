@@ -8237,3 +8237,83 @@ Holdout: 2023–2025 only; no `complete`, no `final`, spend freeze untouched; th
 2018–2026 derive span is data preparation (rule 22, spend-only enforcement).
 Runs `2026-08-16-caiso-199-g0-control`, `2026-08-16-caiso-199-g1-meritpin`;
 full record `results/calibration/FINDING-caiso199-merit-panel-scope-2026-08-16.md`.
+
+## 2026-08-17 — CAISO — caiso-200: the §3b FLEET-MEMBER PANEL SCOPE lands byte-identically to the pre-flip run-Y pins and is PROMOTED KEEPER on the owner's structural-integrity instruction — keeper → `2026-08-17-caiso-200-h1-memberpanel`; the C1-2023 return watch answers NO (+3 GWh), proving the deficit structural; the in-model queue EXHAUSTED BY MEASUREMENT
+
+Executes the caiso-200 handoff's delegated adjudication of the caiso-199 §4
+owner package: **(C)** — fund the §3b panel-membership closure first, then
+re-decide on the PRECHECK §6 pre-registered decision tree (branch 1 fired;
+ratified by the owner in-session: "if structural integrity improves but gates
+regress that may still be a keeper"). `PRECHECK-caiso200-panel-membership-
+2026-08-17.md` pushed at `45254f1` **before any derive or solve**, with the
+committed pair AND the caiso-198 run-Y target pair pinned ex ante.
+
+**Head repair first (disclosed):** main at `a4ef2a9` was UNSOLVABLE — duplicate
+`reliability_floor_plant_exclusions` in `run_year`, the 8839960/7246272
+semantic merge collision via #4036. Deduped at `5148f2e`, blob-verified;
+G-CTRL measured the repaired head bit-zero.
+
+**The change.** `campd.MERIT_PANEL_FLEET_MEMBER_ISOS` + deriver-derived
+membership admits the ISO's own OUT-OF-STATE fleet members to the merit-order
+panel — membership DERIVED from the fleet registry ({NV: (55077,)} today,
+never enumerated), so Desert Star joins the panel its own 158 windows are
+scored against: the caiso-199 §3 item-3 asymmetry closed as a NARROWING (the
+caiso-198 non-fleet NV churn stays excluded; the caiso-192-adjudicated CA
+panel untouched). Six new tests; the extract supersedes `da33e509` →
+**`cf156483`** (layup `1475a577` → `4ccae12e`).
+
+**Gates — ALL PASS** (`_caiso200_member_panel_gates.json`,
+`_caiso200_ctrl_tolerance.json`): G-CTRL **bit-zero** vs the committed
+caiso-199 arm (the head drift incl. the dedup + the member-scope code proven
+inert); G-MEMBER exact; G-DELTA (a) unarmed → committed bytes byte-identical
+(the narrowing's own baseline proof); (b) armed → **the caiso-198 run-Y
+product byte-identical** — a cross-construction, cross-head reproduction of a
+measurement taken BEFORE the C1 flip existed (the anti-tuning defense: zero
+free parameters, content fixed pre-flip, direction-hazard regime REVERSED and
+honoured — the expected sign was C1/C3a-favorable so acceptance rested on
+byte identity + structure alone); (c) movement EXACTLY the §0a
+pre-registration; (d) EMPTY over 717 keys. G-ENGAGE exactly the census: 2023
+only (Glenarm derate 0.3008→0.3066, Lodi 0.6369→0.6733; 4,331 price
+zone-hours, max $68.09; 2024/2025 bit-identical). G-DOF 10/7 carried; G-C8 /
+G-COV / G-SIXISO pass.
+
+**RECORD CORRECTION ON MEASUREMENT (PRECHECK §0a).** The caiso-199 §3 item-3
+reading "run Y reclassifies 9 of the 158 (5.7 %), leaving 149 mechanical" is
+WRONG per the committed record and this re-derive: the 9 movers are
+PRE-EXISTING CA-facility windows (Glenarm ×4, Yuba City, Bear Mountain, Live
+Oak, Sanger, Lodi; oom 0.900–0.932, tipped by the member CC's small RCC dip;
+111 shared layup rows re-measure only their `out_of_merit_share`, ≤ +0.052),
+and **ALL 158 Desert Star windows stay mechanical** — the fail-safe was right
+for 100 % of them. The correction STRENGTHENS the closure's case.
+
+**The watches.** C1-2023 return: **NO** — −4.246 → −4.243 TWh vs ±4.15
+(+3 GWh of a ~0.116 TWh restorable bound): the LP, offered the restored
+spring capacity, barely dispatches it — the guard's economic-layup call
+confirmed dispatch-side, and the C1-2023 deficit measured to be a REAL class
+residual (the standing CC-side under-dispatch / over-import lane, caiso-121/
+135/140 §B — its volume face is ~97 % structural). No other flip anywhere;
+C3a unmoved at 2 dp and never consulted.
+
+**PROMOTION** (duties in-session): determination NOT-YET {C1-2023 CC_REGULAR
+−4.243; C3a +4.1 PASS/+12.8/+15.7}; C3c the single ledgered caveat
+re-measured per caiso-189 §8.3 (0 h/47, **1 h**/35 — the 1 h entered at the
+caiso-199 landing; 2025 PASS); C6 attested AT promotion
+(`gen_caiso200_attestation.py`, premises computed); C8 PASS; LOYO by
+construction. Site retention per the standing directive: lane pruned to the
+keeper alone (caiso-197-w2-r5, caiso-198-f0, caiso-199-g0/g1, caiso-200-h0
+off the site; durable evidence in the FINDINGs + gate records; dangling
+citations deliberate). Shard + matrix cell + §5.2 heading + status re-stamped;
+`audit_keepers` PASS. Registered runs
+`2026-08-17-caiso-200-{h0-control,h1-memberpanel}` (rules 15/16).
+
+**Queue and frontier.** The in-model queue is EXHAUSTED **by measurement**:
+the last named object is landed and its hypothesis sized (+3 GWh). The only
+C3a axes are the two standing owner objects (walled hourly PS water-state,
+caiso-141/ruling 4 DECLINED; the 8,800 MW declared residual, caiso-191 §4).
+Owner ruling 5 stands — **`complete` is NOT supportable on the merits**;
+`ASSESSMENT-caiso200-frontier-2026-08-17.md` packages the owner sitting
+(accept the honest NOT-YET, or fund one of the two objects). Holdout:
+2023–2025 only; freeze ACTIVE; no out-of-training year touched. Probe defects
+disclosed in FINDING §6 (byte-grain layup assumption; naive CSV split). Also
+flagged cross-lane: the two `2026-08-16-miso-160-*` sidecars have no run
+payloads (parity check) — MISO's lane to repair (rule 25).

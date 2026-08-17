@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-08-16T19:19:57",
+  "timestamp": "2026-08-17T03:56:50",
   "git": {
-    "sha": "a353707",
-    "basis_sha": "a353707e9f76838e939bb614d5a4a8fdfd5a939a",
-    "branch": "claude/caiso-199-merit-panel-eudrco",
+    "sha": "c39de54",
+    "basis_sha": "a4ef2a9585c05f377210f5f4893e0e66009a5530",
+    "branch": "claude/caiso-200-backcast-calibration-htuayp",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "caiso-199 g0 CONTROL: keeper replay on the committed extract 5f3e35c5, panel-scope pin in tree (derive-time only, cannot affect the LP). PRECHECK-caiso199 section 3.",
+  "model_changes_note": "caiso-200 h1 ARM: identical replay on the landed fleet-member panel extract cf156483 (9 CA-facility windows mechanical->layup, all 158 Desert Star windows retained mechanical). PRECHECK-caiso200-panel-membership-2026-08-17.md section 3.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "CAISO",
@@ -94,7 +94,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "a353707"
+    "git_sha": "c39de54"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -345,6 +345,7 @@
     "neighbor_hr_forward_skill": null,
     "reliability_floor": true,
     "reliability_floor_overrides": {},
+    "reliability_floor_plant_exclusions": false,
     "class_commitment_overrides": {},
     "caiso_gas_commitment_floor": false,
     "caiso_gas_floor_frac": 0.8,
@@ -1079,8 +1080,8 @@
       "armed": true,
       "path": "data/raw/campd-unit-outages-CAISO.csv",
       "present": true,
-      "sha256": "5f3e35c5dad88da76be8f684973fd7c78009f63e84d3f5b23a609e93d45fb4ce",
-      "bytes": 510590
+      "sha256": "cf156483e08dcd701bd89898ca14670d3c797eb09d9ad30efc7f51cb381390b5",
+      "bytes": 527829
     }
   }
 }
