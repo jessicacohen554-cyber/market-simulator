@@ -165,7 +165,86 @@ gas-basis and PJM input-clock precedents.
    owner-authorized 2022 iteration measures against the corrected one (its 2022 bench part is
    regenerated at that spend, not before).
 
-## 6. Re-solve and registration
+## 6. Re-solve, registration and promotion — executed same-session
 
-*(Filled at registration, same session — see the run's registry sidecar and
-`docs/calibration-log/neiso.md` neiso-97 entry.)*
+**Run id: `2026-08-17-neiso-97-dstrepair`** · bundle
+`results/calibration/neiso97_dstrepair_A` · registered on the backcast dashboard in the same
+session (rule 15 `[R-DASHBOARD]`). Full-span NEISO `--year 2023 2024 2025` in **ONE** bundle
+(rule 16 `[R-ALLYEARS]`), replaying the keeper recipe `2026-08-14-neiso-93-envelope` via
+`scripts/replay_keeper.py` with **zero scenario deltas** (computed, not asserted: zero
+shared-value diffs; the only recipe-key differences are two rule-26 schema deletions by other
+lanes and four post-incumbent fields recorded falsy at HEAD defaults). `meta.json` records
+`reuse: null` — **all three years solved fresh**, P1+P2 like-for-like with the incumbent
+(the O5 legacy-P2 anomaly deliberately not confounded into this lane).
+
+### The headline measurement: the instrument moved, the model did not
+
+**The arm's dispatch is BIT-IDENTICAL to the incumbent keeper's committed sidecars — every
+year, every sidecar (`system`, `class_hourly`, `reserve_family`), both persisted passes, zero
+differing cells** (`scripts/probes/neiso97_arm_vs_incumbent_sidecars.py` →
+`_neiso97_arm_vs_incumbent_sidecars.json`). The prediction (§1: scoring target, not a NEISO
+solve input) was measured, not assumed, and the neiso-91 reproducibility record extends by
+one more byte-faithful replay. Bench blast radius exactly as predicted: `bench/NEISO/2023`
+moves **only in the two DST months**; 2024/2025 move **only** by the previously-deferred
+stale-JSON completeness deltas on the actuals side (`bench/avgLMP`), proven code-invariant
+(§2b).
+
+### Verdict — identical, criterion for criterion (D-5(b) satisfied)
+
+| criterion | incumbent neiso-93 | **neiso-97 (rubric 3.2)** |
+|---|---|---|
+| C1 fuel-mix (grid-delivered) | PASS | **PASS** (all 12/12 · free 8/8) |
+| C2 system volume | PASS | **PASS** |
+| C3a mean LMP | PASS | **PASS** |
+| C3b price duration/shape | PASS | **PASS** |
+| C3c price tail / scarcity | CAVEAT (ledgered) | **CAVEAT (ledgered, carried verbatim)** |
+| C4 dispatch correlation | PASS | **PASS** |
+| C6 governance | PASS | **PASS** (attestation: `gen_neiso97_dstrepair_attestation.py`, every premise computed) |
+| C8 forced-energy share | PASS | **PASS** |
+| **determination** | **CALIBRATED-WITH-CAVEATS** | **CALIBRATED-WITH-CAVEATS** |
+| grade summary | 8 / 7 / 0 / 1, 0 fails | **8 / 7 / 0 / 1, 0 fails** |
+
+Pre-attestation the arm scored NOT-YET on `governance UNATTESTED` alone — guard (b) of the
+C3c standing rule working as designed. The promotion-time attestation carries the incumbent's
+DOF ledger (7 entries / 5 residual) and exceptions ledger (7 entries, C3c included)
+**verbatim, asserted**; the corrected clock is **recomputed from committed sources at
+attestation time** (float32-exact for all six repaired years), not quoted.
+
+### Promotion — pre-signed on not-worse, executed
+
+Keeper re-keyed to `2026-08-17-neiso-97-dstrepair` in `keepers/NEISO.json`;
+`status/NEISO.js` rebuilt (`build_status.py --check` in sync); the `complete` marker's NEISO
+entry re-keyed with the determination re-verified per D-5(b) **before** the re-key landed;
+`audit_keepers.py --iso NEISO` **PASS 0 failures / 0 warnings** (independently confirmed by
+the `calibration-keeper-auditor` agent, which found zero repairs needed); rule-28 re-stamps
+landed on the NEISO matrix shard and the §5.6 prose header (`check_mechanism_matrix.py`
+green: keeper stamps and prose headers match every shard). Under the NEISO lane's standing
+site-retention directive (2026-08-15: keeper + 2022 touchpoint only), the superseded
+`2026-08-14-neiso-93-envelope` was **pruned** from the site with `--force-uncite` — its
+bundle directory travels with the prune per that directive's own precedent; the durable
+evidence is this finding, the committed probe records (the bit-identity measurement was taken
+before the prune), and the promoted bundle itself, whose dispatch is the superseded keeper's
+own to the bit.
+
+### Ambient defects found and disposed of along the way (not O8's, all reported)
+
+1. **`origin/main` HEAD SyntaxError** (§2c) — fixed on this branch; every calibration solve
+   of every ISO was blocked.
+2. **Registry/payload parity was RED on main for two MISO-160 sidecars**
+   (`2026-08-16-miso-160-control`, `-wefor-shape`: sidecars with no `runs/<id>.js` payload —
+   the exact stranded-sidecar failure mode the calibration-report skill warns about). True at
+   measurement time; **resolved by the #4044 MISO merge** before this promotion rebased onto
+   it. At the rebased base the parity check instead flags `caiso200_h0_control` — a bundle
+   dir with no retained sidecar, dead solve output from the just-merged caiso-200 lane
+   (Class-E retention rule point 4). CAISO lane's to disposition (rule 25); this lane's
+   files are parity-clean throughout.
+3. **The committed `actual_lmp.json` NEISO 2024/2025 entries were stale** (§2b) — healed by
+   this authorized re-derivation, proven code-invariant.
+4. **D-1 actual-side third-decimal drift** vs the incumbent's committed
+   `legitimacy_diagnostics.json` (same 7 gate failures, same classes; model side identical) —
+   ambient upstream-actuals drift since 2026-08-14; `legitimacy_diagnostics.py` provably never
+   reads the repaired LMP series.
+
+**Rule 14 was never invoked**: nothing worsened at the corrected instrument, so there was no
+accurate-input-versus-residual trade to disclose. Had one appeared, the accurate input would
+have stayed.

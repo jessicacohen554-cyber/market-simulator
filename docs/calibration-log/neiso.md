@@ -2659,3 +2659,73 @@ the **partial-year solve gate** (`HOURS_PER_YEAR`, six-ISO — the H1-2026 half'
 **2018–2023 SMD workbook DST defect** (touches in-sample 2023, so it needs authorization and a
 re-solve), the **fleet-vintage/Pilgrim charter**, and the reported-and-unowned
 `_dual_fuel_plant_groups` vintage seam and the `complete`-entry stale clause.
+
+---
+
+## neiso-97 — 2026-08-17 — the SMD DST-naive workbook repair, and the keeper re-solved at the corrected instrument (audit row O8; KEEPER PROMOTED)
+
+**Branch** `claude/neiso-smd-dst-naive-repair-8b2eez` · **Charter** `docs/audit/third-party-audit-2026-08.md`
+§8 row O8, served as an in-session owner card (the debug-sweep §A.2 two-card pattern) and **SIGNED:
+option A (repair + full-span re-solve), promotion PRE-SIGNED on not-worse**. Full record:
+`docs/FINDING-debug-b-neiso-smd-clock-2026-08-17.md`.
+
+### The defect, measured from committed bytes before the card was served
+
+Every 2018–2023 SMD workbook publishes a **flat 24 rows on every calendar day** (all 9 sheets;
+2024–2025 publish the true 23/25). Adjudicated against the market's own daily hourly-LMP reports
+(5 truth years × 9 sheets × 2 markets, **0 mismatches** under the winning mapping): the spring
+phantom at position 1 is the **mean of its neighbours** (exact to the cent, every sheet, every truth
+year); the fall-back repeated-hour pair is **collapsed to its mean**; every later value sits an hour
+off; the fall day's true last hour is the single NaN each year carries. Committed-parquet blast
+radius: **562 hub cells** (46–47 per market-year, in-sample 2023 included), max **$40.17/MWh**,
+every cell inside the derived mechanism window. **No affected cell reaches $138.65** → the C3c $300
+tail is untouched by construction; annual means move ≤ $0.008 — the repair cannot buy a score
+(rules 13/14).
+
+### The repair (byte-verified per the PJM input-clock §2a protocol — PASS on every check)
+
+Vintage-aware placement in `derive_actual_lmp._neiso_sheet_series` + a **day-scoped** daily-report
+overlay in `neiso_zone_hourly` (only a day the workbook cannot represent is taken from the report
+route; the twelve DST truth days fetched to the committed `smd-zonal-lmp/` intake home; 2018-03-11's
+RT report is a genuine upstream 31-byte stub — that spring day is fully recovered by re-placement,
+nothing fabricated). Non-affected cells identical every row; displaced cells == pristine at the
+corrected offset; the pair == published truth; one NaN per market-year **filled with the measured
+value**, zero introduced; 2024/2025/2026 blocks byte-identical. `curate_lmp` got the same per-day
+rule. Applied consistently 2018–2023 (rule 22: the data, never the score); **no out-of-training year
+solved/scored/registered, freeze ACTIVE**. The 2022 touchpoint stands as scored on the pre-repair
+instrument.
+
+### The re-solve, and the promotion
+
+`2026-08-17-neiso-97-dstrepair` (bundle `neiso97_dstrepair_A`): `replay_keeper` zero-delta re-solve
+of the neiso-93 recipe, 2023–2025 in ONE invocation, all years fresh. **Dispatch BIT-IDENTICAL to
+the incumbent's committed sidecars — every year, every sidecar, both passes, zero differing cells**
+(the instrument moved, the model did not; probe `_neiso97_arm_vs_incumbent_sidecars.json`).
+Determination **CALIBRATED-WITH-CAVEATS, criterion for criterion identical** (0 FAILs, sole ledgered
+C3c caveat, C1 all 12/12 · free 8/8, grade 8/7/0/1); D-5(b) re-verified **before** the re-key;
+attestation premises all computed (`gen_neiso97_dstrepair_attestation.py`), DOF (7/5) and exceptions
+(7) ledgers carried verbatim, asserted. Keeper/status/complete-marker re-keyed; `audit_keepers --iso
+NEISO` **PASS 0/0** (auditor agent: zero repairs needed); rule-28 re-stamps on the NEISO shard and
+the §5.6 prose header (`check_mechanism_matrix.py` green); neiso-93 pruned from the site per the
+lane's standing keeper+touchpoint directive (`--force-uncite`; bundle travels with the prune, the
+durable evidence is the finding + committed probe records). **O5 (legacy P2) deliberately untouched**
+— the replay stays like-for-like so the input repair is unconfounded; it remains the lane's open
+owner escalation, still best settled together with the Stony Brook outage-routing fix.
+
+### Ambient defects fixed or filed in passing (none O8's)
+
+**Fixed:** `origin/main` HEAD carried a SyntaxError in `scripts/run_calibration.py` (duplicate
+`run_year` kwarg from two racing merges) — every calibration solve of every ISO was blocked; fixed on
+this branch, fast lane 18F/32E → **6,907 passed / 0 failed**. **Filed:** registry/payload parity is
+RED on main for two stranded MISO-160 sidecars (MISO lane's, rule 25); the committed
+`actual_lmp.json` NEISO 2024/2025 entries were stale (healed here, proven code-invariant); D-1
+actual-side third-decimal drift vs the incumbent's committed diagnostics (ambient, `legitimacy_diagnostics.py`
+never reads the LMP series). **NYISO cross-ISO disclosure:** its keeper arms
+`nyiso_import_hub_prices=True` and solves on this parquet's DA hub series — 47 of its 2023 input
+cells changed (max $20.12); filed for the NYISO lane, not acted on.
+
+**Next shorthand: `neiso-98`.** No NEISO tuning lever is open — the frontier declaration was
+re-verified on the strongest basis yet (measured bit-identity to the re-verified incumbent). The
+lane's standing items are unchanged: the two owner escalations (legacy-P2 scoring basis = audit row
+O5, and the Stony Brook 6081 outage routing), best settled together in one re-solve; the 2018–2023
+SMD DST defect is **CLOSED** (this session).
