@@ -7094,3 +7094,28 @@ not pre-registered, no parameter derived, no cell verdict moved.** Finding:
 Matrix: only `plant_emission_rates_v2`'s NYISO cell is touched — evidence
 citation added, verdict UNCHANGED at `K` (a data correction is not a lever).
 Next number: **nyiso-143**.
+
+## 2026-08-17 — NYISO IS DECLARED CALIBRATED (rubric v3.3 owner amendment; no solve, no mechanism change)
+
+Keeper **`2026-08-16-nyiso-140-layup-exclusion` now reads `CALIBRATED`**, up from
+`CALIBRATED-WITH-CAVEATS`. Nothing about the run moved: same bundle, same
+committed artifacts, no solve, no mechanism change, and every criterion status
+identical — 0 FAILs, C1/C2/C3a/C3b/C4/C6/C8 all PASS, C3c the same lone
+**ledgered** caveat at the same magnitude (model 21/3/24 h vs RT actual 10/13/42 h
+> $300; 2023 and 2024 are the caveated years at 2.10× and 0.23×, 2025 PASSes at
+0.57×), grade summary scored 8 / target-grade 7 / commercial-grade 0 / ledgered 1.
+
+What changed is the rubric: under the owner's 2026-08-17 amendment (**v3.3**) a
+ledgered caveat is **reported** but no longer **downgrades** the determination.
+C3c still reads `CAVEAT`, never `PASS`; the miss is still printed at full
+magnitude and is now named on the determination basis of a `CALIBRATED` run. The
+C3c lever queue, the open successor lane (the compressed price distribution /
+`nyiso_incity_commitment_obligation`) and the holdout posture are all untouched —
+NYISO keeps `complete` only, stays absent from `final`, and the **active** holdout
+spend freeze still blocks every out-of-training solve.
+
+Cross-ISO context, the amendment record and the measured 6-run effect (NEISO's
+keeper flipped too, as an unavoidable consequence of a single shared scorer) are
+in `docs/calibration-log/governance.md`, 2026-08-17. Matrix: NYISO's `gates` stamp
+re-stamped; **no cell verdict moved** (rule 28b/28d — no mechanism was tested).
+Next number: **nyiso-143**.

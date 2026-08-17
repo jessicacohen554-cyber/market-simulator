@@ -1997,3 +1997,116 @@ class C3cStandingRuleTest(unittest.TestCase):
         it, and this rule must not be the thing that quietly widens it.
         """
         self.assertEqual(cv.CRITERIA["price_tail"][1], cv.TIER_SUPPORT)
+
+
+class LedgeredC3cDoesNotDowngradeTests(unittest.TestCase):
+    """RUBRIC v3.3 (owner amendment 2026-08-17).
+
+    A LEDGERED caveat no longer downgrades the overall determination. Since
+    v3.1 ledgering is restricted to C3c alone, so these tests pin exactly the
+    owner's rule -- an accepted, ledgered C3c price-tail limitation is REPORTED
+    but is not the thing that turns CALIBRATED into CALIBRATED-WITH-CAVEATS --
+    together with the four things it deliberately does NOT change: C3c never
+    reads PASS, it stays visible in every reported channel, every OTHER caveat
+    route still downgrades, and a non-lone C3c failure is still NOT-YET.
+    """
+
+    def _art(self, *, exceptions=None, model_tail=25, share=0.05):
+        """Clean PJM-2024 artifacts whose ONLY blemish is an out-of-band C3c.
+
+        ``model_tail`` 25 vs the injected RT actual of 100 is 0.25x -- outside
+        the [0.5x, 2x] band, so C3c is an unambiguous miss. The legitimacy
+        artifact is present so C8 is SCORED (an unscored protective criterion
+        would downgrade by its own route and mask what these tests measure).
+        """
+        d = DeterminationTests()
+        ypay = d._clean_year_payload()
+        ypay["ordc"] = {"hoursGt200": {"actual": 100, "model": model_tail}}
+        art = _artifacts(
+            ypay,
+            attestation=_clean_attestation(exceptions=exceptions),
+            **d._clean_bench_args(),
+        )
+        art["legitimacy"] = _legit_artifact(year=2024, share=share)
+        return art
+
+    _LEDGER = [{"criterion": "price_tail", "year": 2024, "reason": "documented"}]
+
+    def setUp(self):
+        _tail({"PJM": {"2024": {"da_gt": 80, "rt_gt": 100, "rt_coverage": 1.0}}})
+        self.addCleanup(_reset_tail)
+
+    def test_explicitly_ledgered_c3c_reads_calibrated(self):
+        v = cv.determine_from_artifacts("t", self._art(exceptions=self._LEDGER))
+        self.assertEqual(v["determination"], cv.CALIBRATED)
+        self.assertEqual(v["criteria"]["price_tail"]["status"], cv.CAVEAT)
+        self.assertEqual(v["criteria"]["price_tail"]["caveat_kind"], "ledgered")
+
+    def test_standing_rule_c3c_reads_calibrated(self):
+        # No exceptions entry at all: `_apply_c3c_standing_rule` auto-ledgers
+        # the lone C3c failure, and v3.3 then leaves the determination clean.
+        v = cv.determine_from_artifacts("t", self._art())
+        self.assertEqual(v["determination"], cv.CALIBRATED)
+        rec = v["criteria"]["price_tail"]["records"][0]
+        self.assertEqual(rec["classification"], cv.MODEL_LIMIT)
+        self.assertEqual(rec["standing_rule"], "c3c-any-year-2026-08-09")
+
+    def test_the_miss_stays_visible_on_a_calibrated_run(self):
+        """v3.3 changes what the caveat COSTS, never whether it is reported."""
+        v = cv.determine_from_artifacts("t", self._art(exceptions=self._LEDGER))
+        self.assertEqual(v["determination"], cv.CALIBRATED)
+        # Listed as a ledgered caveat, counted in the grade summary, and named
+        # on the determination basis -- silence in any of these channels is
+        # what would make the amendment an escape hatch.
+        self.assertEqual(v["caveats"]["ledgered"], [cv.CRITERIA["price_tail"][0]])
+        self.assertEqual(v["grade_summary"]["ledgered"], 1)
+        self.assertTrue(
+            any("ledgered caveat" in r for r in v["reasons"]), v["reasons"]
+        )
+        # And it is NOT absorbed into the clean-pass count: 8 scored, 7 at
+        # target grade, C3c the one that is not.
+        self.assertEqual(v["grade_summary"]["scored"], 8)
+        self.assertEqual(v["grade_summary"]["target_grade"], 7)
+        self.assertEqual(v["grade_summary"]["fails"], 0)
+
+    def test_a_clean_tail_needs_no_caveat_at_all(self):
+        # Control: the same fixture with an in-band tail is CALIBRATED with an
+        # EMPTY ledger, so the tests above are measuring the amendment and not
+        # some other property of the fixture.
+        v = cv.determine_from_artifacts("t", self._art(model_tail=100))
+        self.assertEqual(v["determination"], cv.CALIBRATED)
+        self.assertEqual(v["criteria"]["price_tail"]["status"], cv.PASS)
+        self.assertEqual(v["caveats"]["ledgered"], [])
+        self.assertEqual(v["reasons"], [])
+
+    def test_other_caveat_routes_still_downgrade(self):
+        # v3.3 exempts the LEDGERED route only. Drop the legitimacy artifact so
+        # C8 is unscored: the protective skip downgrades on its own, exactly as
+        # before, even though the ledgered C3c no longer does.
+        art = self._art(exceptions=self._LEDGER)
+        del art["legitimacy"]
+        v = cv.determine_from_artifacts("t", art)
+        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+        self.assertTrue(
+            any("unscored PROTECTIVE criteria" in r for r in v["reasons"]),
+            v["reasons"],
+        )
+
+    def test_c3c_alongside_a_second_failure_is_still_not_yet(self):
+        # The lone-failure guard is what keeps v3.3 honest: with C1 also
+        # failing, the standing rule stays silent, C3c stands as a FAIL too,
+        # and the run is NOT-YET.
+        art = self._art()
+        art["payload"]["years"]["2024"]["gmModel"]["CC_REGULAR"] = 360.0
+        v = cv.determine_from_artifacts("t", art)
+        self.assertEqual(v["determination"], cv.NOT_YET)
+        self.assertEqual(v["criteria"]["price_tail"]["status"], cv.FAIL)
+        self.assertEqual(v["criteria"]["fuelmix"]["status"], cv.FAIL)
+
+    def test_ledgered_budget_still_bounds_the_undowngraded_route(self):
+        # v3.3 does not touch the budgets -- they are checked BEFORE it -- and
+        # the ledgered budget is now the sole numeric bound on what can be
+        # carried without a downgrade, so pin it at exactly one slot.
+        self.assertEqual(cv.MAX_LEDGERED_CAVEATS, 1)
+        self.assertEqual(cv.MAX_PROTECTIVE_CAVEATS, 0)
+        self.assertEqual(cv.LEDGERABLE_CRITERIA, frozenset({"price_tail"}))

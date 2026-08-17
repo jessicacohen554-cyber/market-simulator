@@ -227,7 +227,10 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       is the route every current keeper carrying a C3c caveat used. The real
 #       guard is untouched: LONE failure only, governance must pass, supporting
 #       tier only (fail-closed), never CALIBRATED, and it still spends the one
-#       ledgerable slot.
+#       ledgerable slot. [The "never CALIBRATED" clause of this v3.2 entry was
+#       SUPERSEDED by v3.3 below, which is why the entry is left verbatim: it
+#       is the genealogy, not the live rule. Every OTHER guard listed here
+#       survives v3.3 intact.]
 #       (b) A DEFECT IN THE LONE-FAILURE TEST IS FIXED IN THE SAME AMENDMENT,
 #       and it was suppressing the rule as originally declared. "Lone" was
 #       measured over EVERY record, including the REPORTED-ONLY streams the
@@ -249,13 +252,63 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       2026-08-06-pjm-158-novirtual-disarmed is a lone C3c failure and still
 #       does NOT reclassify -- its C6 is UNATTESTED, which is the governance
 #       guard working.
-RUBRIC_VERSION = 3.2
+# v3.3 — 2026-08-17 owner amendment, session nyiso-calibration-declaration,
+#       verbatim: "NYISO should be declared calibrated. C3c is an acceptable
+#       miss and shouldn't change a declaration from calibrated to calibrated
+#       with caveats because it's a known model limitation that's been
+#       ledgered". A LEDGERED caveat no longer DOWNGRADES the determination.
+#       Since v3.1 ledgering is restricted to C3c alone (LEDGERABLE_CRITERIA),
+#       so this is exactly and only the owner's rule: an accepted, ledgered
+#       C3c price-tail limitation is REPORTED but is not the thing that turns
+#       CALIBRATED into CALIBRATED-WITH-CAVEATS. This supersedes the v3.0-v3.2
+#       clause "IT IS NOT A PASS ... the run reads CALIBRATED-WITH-CAVEATS,
+#       never CALIBRATED" — that clause is withdrawn by the owner, and the
+#       CLAUDE.md rule 22 C3c standing rule's guard (d) is amended in step.
+#       WHAT IS NOT LOOSENED, and why this is a reporting change rather than a
+#       band change:
+#         - The C3c BAND, TIER and REPORTED MAGNITUDE are untouched. The miss
+#           is still measured and printed at full size, still listed in
+#           `caveats.ledgered`, still counted in `grade_summary.ledgered`, and
+#           still named on the determination basis of a CALIBRATED run. The
+#           ledger entry (or the standing rule's auto-entry) is still required.
+#         - It is still NOT A PASS at the criterion level: C3c reads CAVEAT,
+#           never PASS, so `grade_summary.target_grade` does not absorb it and
+#           a reader can always see the model missed the tail.
+#         - EVERY OTHER ROUTE TO A CAVEAT STILL DOWNGRADES: commercial-band
+#           target misses, protective-gate (C6/C8) caveats, unscored criteria
+#           and data-blocked years are untouched. So a run reads CALIBRATED
+#           only when C3c is the SINGLE blemish on it.
+#         - The FAIL path is untouched: a C3c failure that is not ledgerable —
+#           because a second criterion also fails, or governance does not pass
+#           — still stands as a FAIL and still carries the run to NOT-YET
+#           (`_apply_c3c_standing_rule`'s lone-failure and governance guards).
+#         - The budgets are untouched: >1 ledgered or >0 protective caveats is
+#           still NOT-YET, checked BEFORE this branch is reached.
+#       EFFECT AT AMENDMENT, MEASURED over all 26 registered runs against a
+#       pre-change snapshot rather than asserted: SIX determinations change,
+#       all CALIBRATED-WITH-CAVEATS -> CALIBRATED, and all six are the same
+#       shape (lone ledgered C3c, zero band caveats, zero protective caveats,
+#       nothing skipped, nothing data-blocked). TWO ARE KEEPERS —
+#       NYISO 2026-08-16-nyiso-140-layup-exclusion (the ISO this amendment was
+#       requested for) and NEISO 2026-08-17-neiso-99-joint-p1 (an unavoidable
+#       cross-ISO consequence: the scorer is ONE instrument and an ISO-scoped
+#       verdict rule would be an off-registry tuning channel in spirit, rules
+#       24 [R-REGISTRY] / 25 [R-ISO-SCOPE]). The other four are non-keepers:
+#       NYISO 2026-08-08-nyiso-133-cod-arm and 2026-08-17-nyiso-142-stackdup,
+#       NEISO 2026-08-17-neiso-97-dstrepair and 2026-08-06-neiso-2022-
+#       corrected-basis. NO run changes in either direction beyond those six;
+#       no NOT-YET is reclassified, and CAISO/ERCOT/MISO/PJM are UNCHANGED
+#       (each keeper either fails a criterion outright or carries no ledgered
+#       C3c). NO SOLVE RAN — this is a scorer-side reclassification on the
+#       committed artifacts, so every keeper re-scores in place.
+RUBRIC_VERSION = 3.3
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
 # Failure classifications (rubric §1). A CAVEAT is one of:
 #  - MEASURED_LIMIT: an out-of-tolerance criterion reclassified by an explicit
-#    exceptions-ledger entry (the actual is the limitation) — BUDGETED.
+#    exceptions-ledger entry (the actual is the limitation) — BUDGETED, and
+#    since v3.3 REPORTED-BUT-NOT-DOWNGRADING (it can only be C3c).
 #  - COMMERCIAL_BAND: inside the evidence-anchored commercial-grade outer band
 #    but outside our stricter target band — auto-recorded, listed, NOT budgeted
 #    (the certification claim of CALIBRATED-WITH-CAVEATS is exactly
@@ -497,6 +550,12 @@ FORBIDDEN_FLAGS: tuple[str, ...] = ()
 # Both checks are retained as defense-in-depth invariants rather than deleted:
 # they are the assertion that re-widening LEDGERABLE_CRITERIA without an owner
 # amendment cannot silently buy back excuse capacity.
+# v3.3 (owner amendment 2026-08-17) does NOT touch either budget — it is
+# checked BEFORE the v3.3 branch, so >1 ledgered or >0 protective caveats is
+# still NOT-YET. What v3.3 changes is only what a WITHIN-budget ledgered
+# caveat costs the overall determination: nothing. This is why the ledgered
+# budget staying at exactly 1 matters more after v3.3, not less — it is now
+# the sole numeric bound on how much can be carried without a downgrade.
 MAX_PROTECTIVE_CAVEATS = 0  # C6/C8 — no protective criterion is ledgerable (v3.1)
 MAX_LEDGERED_CAVEATS = 1  # C3c is the only ledgerable criterion (v3.1)
 
@@ -772,9 +831,13 @@ C3C_STANDING_RULE_REASON = (
     "failing criterion and the governance gate passes. Classified ACCEPTED MODEL-CLASS "
     "LIMITATION -- admissible because C3c is SUPPORTING tier; the v3.0 fail-closed guard "
     "still refuses model-class on load-bearing and protective criteria, so this rule can "
-    "never wave through C1/C2/C3a/C3b or C6/C8. IT IS NOT A PASS: the miss is "
-    "reported at full magnitude and the run reads CALIBRATED-WITH-CAVEATS, never "
-    "CALIBRATED. THE LONE-FAILURE CONDITION IS WHAT KEEPS IT FROM BEING AN ESCAPE HATCH: "
+    "never wave through C1/C2/C3a/C3b or C6/C8. IT IS NOT A PASS: C3c reads CAVEAT, "
+    "never PASS, and the miss is reported at full magnitude on the determination basis. "
+    "SINCE RUBRIC v3.3 (owner amendment 2026-08-17) the resulting ledgered caveat no "
+    "longer DOWNGRADES the determination, so an otherwise-clean run reads CALIBRATED "
+    "rather than CALIBRATED-WITH-CAVEATS -- the owner's determination being that a "
+    "known, ledgered model-class limitation is not a caveat on the calibration. "
+    "THE LONE-FAILURE CONDITION IS WHAT KEEPS IT FROM BEING AN ESCAPE HATCH: "
     "it fires only when the model is otherwise clean on every criterion, so it can never "
     "mask a second defect, and the caveat still consumes the single ledgerable slot."
 )
@@ -798,9 +861,15 @@ def _apply_c3c_standing_rule(records: list[dict], gov: dict) -> None:
     every current keeper carrying a C3c caveat actually used), so the split
     governed *who typed the justification*, not what the run was allowed to
     claim. Collapsing it removes a difference between years that the rubric
-    could not otherwise defend, and it takes nothing off the model: a run whose
-    C3c misses still reads CALIBRATED-WITH-CAVEATS, never CALIBRATED, and still
-    spends the single ledgerable slot.
+    could not otherwise defend, and it takes nothing off the model: the miss is
+    still measured and reported at full magnitude, and it still spends the
+    single ledgerable slot.
+
+    RUBRIC v3.3 (owner amendment 2026-08-17) changed what that caveat COSTS,
+    not what it IS: a ledgered C3c caveat no longer downgrades the overall
+    determination, so an otherwise-clean run reads CALIBRATED. This function is
+    unchanged by that — it still produces a CAVEAT, never a PASS, and every
+    guard below still binds.
 
     What still stops it from being a general escape hatch — unchanged:
 
@@ -812,8 +881,11 @@ def _apply_c3c_standing_rule(records: list[dict], gov: dict) -> None:
     * **Supporting tier only, fail-closed.** It classifies MODEL_LIMIT, which
       :func:`_apply_ledger`'s v3.0 guard admits only for a SUPPORTING-tier
       criterion, so the rule can never reach C1/C2/C3a/C3b or C6/C8.
-    * **Never upgrades to CALIBRATED.** It produces a CAVEAT, the magnitude is
-      reported in full, and it consumes the one ledgerable caveat slot.
+    * **Never a criterion-level PASS.** It produces a CAVEAT, the magnitude is
+      reported in full, and it consumes the one ledgerable caveat slot. Since
+      v3.3 that caveat no longer downgrades the OVERALL determination, but C3c
+      itself never reads PASS, so ``grade_summary.target_grade`` does not
+      absorb it and the miss stays visible on every report.
 
     "Lone" is measured over the criteria that CONSTITUTE the determination, i.e.
     :data:`CRITERIA` membership. ``records`` also carries REPORTED-ONLY streams
@@ -2514,8 +2586,16 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
             f"{len(ledgered_caveats)}/{MAX_LEDGERED_CAVEATS})"
         )
     else:
-        n_caveats = len(protective_caveats) + len(ledgered_caveats) + len(band_caveats)
-        if n_caveats == 0 and not skipped and not data_blocked:
+        # RUBRIC v3.3 (owner amendment 2026-08-17): a LEDGERED caveat does not
+        # downgrade the determination. Ledgering is restricted to C3c alone
+        # (LEDGERABLE_CRITERIA, v3.1), so this is exactly the owner's rule —
+        # an accepted, ledgered C3c price-tail limitation is reported in full
+        # but is not itself the thing that turns CALIBRATED into
+        # CALIBRATED-WITH-CAVEATS. Every other route to a caveat still
+        # downgrades: commercial-band target misses, protective-gate caveats,
+        # unscored criteria and data-blocked years are untouched.
+        downgrading_caveats = len(protective_caveats) + len(band_caveats)
+        if downgrading_caveats == 0 and not skipped and not data_blocked:
             determination = CALIBRATED
         else:
             determination = CALIBRATED_CAVEATS
@@ -2524,12 +2604,6 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
                     f"{len(band_caveats)} criterion(s) within the commercial-grade "
                     "band but outside target: "
                     + ", ".join(c["label"] for c in band_caveats)
-                )
-            if ledgered_caveats:
-                reasons.append(
-                    f"{len(ledgered_caveats)} ledgered caveat(s) "
-                    "(measured-input or model-class): "
-                    + ", ".join(c["label"] for c in ledgered_caveats)
                 )
             if protective_caveats:
                 reasons.append(
@@ -2547,6 +2621,18 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
                 reasons.append(
                     "data-blocked target year(s): " + ", ".join(map(str, data_blocked))
                 )
+        # Emitted on BOTH branches, and LAST so it never displaces a
+        # downgrading reason from :func:`headline`'s reasons[0]. A CALIBRATED
+        # run carrying a ledgered C3c states it on its own determination basis,
+        # at full magnitude — silence here is what would make v3.3 an escape
+        # hatch, so the caveat stays visible in `reasons`, in `caveats.ledgered`
+        # and in `grade_summary.ledgered` exactly as before.
+        if ledgered_caveats:
+            reasons.append(
+                f"{len(ledgered_caveats)} ledgered caveat(s) (measured-input or "
+                "model-class) — REPORTED, and NOT determination-downgrading "
+                "under rubric v3.3: " + ", ".join(c["label"] for c in ledgered_caveats)
+            )
 
     # Report notes (not caveats): grounded-above-budget C8 passes — a class
     # forced past its cap that cleared the D-4 provenance + D-1 shape escalation

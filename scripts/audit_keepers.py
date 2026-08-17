@@ -376,14 +376,36 @@ def _asserted_determination(definition: str) -> str | None:
     trailing "... NOT-YET." — i.e. the token stands on its own near a status
     verb. To stay conservative (avoid false positives) we require the token to
     appear AND not be immediately followed by "recipe"/"keeper"/"run".
+
+    The scan is by POSITION, not by token-list order: the assertion is whatever
+    the prose LEADS with, and among tokens matching at that same position the
+    LONGEST wins (so "CALIBRATED-WITH-CAVEATS" is never mis-read as its own
+    "CALIBRATED" prefix). Scanning token-list-first instead — the pre-2026-08-17
+    behaviour — let a determination token buried in a marker's deliberately
+    preserved genealogy ("|| PRIOR TEXT, preserved: CALIBRATED-WITH-CAVEATS
+    on <superseded run> …") outrank the entry's own leading claim, so an
+    accurate marker could not be written without deleting its history. Rubric
+    v3.3 made that live: two markers now lead with CALIBRATED over prior text
+    that records the superseded CALIBRATED-WITH-CAVEATS reading.
     """
     text = definition or ""
-    for tok in _DET_TOKENS:
-        for m in re.finditer(re.escape(tok), text):
-            tail = text[m.end() : m.end() + 8].lower()
-            if tail.lstrip().startswith(("recipe", "keeper", "run", "step")):
-                continue
-            return tok
+    # (start, -len, token, end) — sorting puts earlier positions first and, at
+    # equal position, the LONGEST token first, so each position is judged as
+    # the longest token that starts there and never as its own prefix.
+    matches = sorted(
+        (m.start(), -len(tok), tok, m.end())
+        for tok in _DET_TOKENS
+        for m in re.finditer(re.escape(tok), text)
+    )
+    claimed: set[int] = set()
+    for start, _, tok, end in matches:
+        if start in claimed:
+            continue  # a longer token already owns this position
+        claimed.add(start)
+        tail = text[end : end + 8].lower()
+        if tail.lstrip().startswith(("recipe", "keeper", "run", "step")):
+            continue  # names another run's recipe — and so does its prefix
+        return tok
     return None
 
 

@@ -155,6 +155,38 @@ genealogy is owned by** `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(
   only, governance must PASS, supporting-tier-only fail-closed, never
   `CALIBRATED`, single ledgerable slot still spent. Detail:
   `docs/calibration-determination-rubric.md` §9 (v3.2).
+- **2026-08-17 — the ledgered caveat stops DOWNGRADING; rubric v3.3** (session
+  nyiso-calibration-declaration, owner, verbatim: *"NYISO should be declared
+  calibrated. C3c is an acceptable miss and shouldn't change a declaration from
+  calibrated to calibrated with caveats because it's a known model limitation
+  that's been ledgered"*). The standing rule's guard (d) is **split**: C3c still
+  never reads `PASS` and its magnitude is still reported in full, but the
+  resulting ledgered caveat no longer moves the overall determination, so an
+  otherwise-clean run reads `CALIBRATED`. The clause *"the run can never read
+  `CALIBRATED`"* — carried in the v3.0–v3.2 entries above and in CLAUDE.md rule
+  22 guard (d) — is **withdrawn by the owner**; it is left verbatim in the prior
+  entries as genealogy, annotated as superseded. Because ledgering has been
+  restricted to C3c alone since v3.1, the amendment cannot reach any other
+  criterion. **Everything else holds:** guards (a)–(c) entire; the ledger entry
+  (or auto-entry) still required; the budgets untouched and checked first (>1
+  ledgered or >0 protective is still `NOT-YET`, so the 1-slot ledgered budget is
+  now the sole numeric bound on what may be carried without a downgrade); and
+  every other caveat route — commercial-band misses, protective caveats,
+  `SKIPPED` criteria, data-blocked years — still downgrades.
+  **Effect, measured over all 26 registered runs against a pre-change
+  snapshot:** 6 determinations change, all `CALIBRATED-WITH-CAVEATS →
+  CALIBRATED`, of which **2 are keepers** — NYISO
+  `2026-08-16-nyiso-140-layup-exclusion` (the requested ISO) and NEISO
+  `2026-08-17-neiso-99-joint-p1`. The **NEISO flip is a cross-ISO consequence
+  carried openly**: the scorer is one instrument and an ISO-scoped verdict rule
+  would be an off-registry tuning channel in spirit (rules 24/25), so NYISO's
+  determination could not be moved without moving every run of the same shape.
+  No `NOT-YET` is reclassified; CAISO/ERCOT/MISO/PJM unchanged. Scorer-only —
+  no re-solve, keepers re-score in place. **This does not touch the holdout
+  tiers**: NYISO and NEISO both stay in `complete` only, both stay absent from
+  `final`, and `holdout-freeze.json` stays ACTIVE, so no out-of-training year
+  becomes spendable. Detail:
+  `docs/calibration-determination-rubric.md` §9 (v3.3).
 - **2026-08-17 — the first lane RESTED at `NOT-YET`** (session caiso-201, owner ruling Q1;
   record `results/calibration/caiso201-owner-ruling-2026-08-17.md`, packet
   `results/calibration/ASSESSMENT-caiso200-frontier-2026-08-17.md` §5). **No rule text
@@ -296,6 +328,7 @@ board, against the 2026-07-27 keeper roster.
 
 | date | change |
 |---|---|
+| 2026-08-17 | §4: recorded rubric **v3.3** — the owner's amendment that a ledgered C3c caveat is REPORTED but no longer DOWNGRADES the determination, withdrawing the "never `CALIBRATED`" half of CLAUDE.md rule 22 guard (d). 6 registered runs re-score `CALIBRATED-WITH-CAVEATS → CALIBRATED`, 2 of them keepers (NYISO, NEISO); holdout tiers untouched. |
 | 2026-08-17 | §4: recorded the first lane RESTED at `NOT-YET` (CAISO, session caiso-201, owner ruling Q1). No rule text changed — the entry exists so the precedent that an exhausted lane with a genuinely failing load-bearing criterion *rests* rather than ledgers or declares is citable. |
 | 2026-07-27 | Added §7: rule 28 `[R-MECH-MATRIX]` (cross-ISO mechanism testing matrix) — origin and canonical file locations. "Changes to this file" renumbered §7 → §8 (no external references cited §7). |
 | 2026-07-26 | Added §6: the 2026-07-22 history rewrite orphaning pre-rewrite bundle `git.sha` provenance (owner decision B close-out) — no SHA mapping saved, replay/goldens unaffected (`git_sha` in both ignore sets), the `--reuse-solved` unresolvable-SHA refusal intentional and load-bearing. "Changes to this file" renumbered §6 → §7 (no external references cited §6). |

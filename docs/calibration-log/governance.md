@@ -1607,3 +1607,97 @@ and its own dangling citations.
 `check_mechanism_matrix.py` integrity + anchors + keeper stamps + §5.x prose OK ·
 `build_manifest.py` assembles 12 runs across all six ISOs with every keeper year
 present (NEISO/PJM additionally 2022 from their touchpoints).
+
+## 2026-08-17 — RUBRIC v3.3 (owner amendment): a ledgered C3c caveat is REPORTED, not determination-DOWNGRADING — NYISO and NEISO keepers now read CALIBRATED
+
+**Owner directive, verbatim.** *"NYISO should be declared calibrated. C3c is an
+acceptable miss and shouldn't change a declaration from calibrated to calibrated
+with caveats because it's a known model limitation that's been ledgered."*
+
+**What changed (scorer-side only — NO SOLVE, no mechanism change, no keeper
+promotion).** `calibration_verdict.determine_from_artifacts` no longer counts a
+LEDGERED caveat toward the downgrade from `CALIBRATED` to
+`CALIBRATED-WITH-CAVEATS`. Because ledgering has been restricted to C3c alone
+since v3.1 (`LEDGERABLE_CRITERIA`), the amendment can say exactly one thing and
+cannot reach any other criterion. It **withdraws** the v3.0–v3.2 clause *"never
+`CALIBRATED`"*, which is left verbatim in the prior rubric entries and in
+CLAUDE.md rule 22 guard (d) as annotated genealogy.
+
+**Why this is a reporting change, not a band change.** The C3c band, tier and
+measured magnitude are untouched, and the criterion still reads `CAVEAT` and
+**never `PASS`** — so `grade_summary.target_grade` does not absorb it. The miss
+is still printed at full magnitude, still listed in `caveats.ledgered`, still
+counted in `grade_summary.ledgered`, and now **named on the determination basis
+of a `CALIBRATED` run** (the reason line is emitted on both branches, last, so
+it never displaces a downgrading reason from `headline()`). Silence in any of
+those channels is what would have made this an escape hatch.
+
+**What still binds.** The ledger entry (or the C3c standing rule's auto-entry
+with its exhaustion citation) is still required. The budgets are untouched and
+are checked **before** the new branch — >1 ledgered or >0 protective caveats is
+still `NOT-YET`, so the 1-slot ledgered budget is now the *sole* numeric bound
+on what may be carried without a downgrade. Every other caveat route still
+downgrades: commercial-band target misses, protective-gate caveats, `SKIPPED`
+criteria, data-blocked years. And the `FAIL` path is untouched — a C3c miss that
+is not ledgerable, because a second criterion also fails or governance does not
+pass, still stands as a `FAIL` and still carries the run to `NOT-YET`. A run
+reads `CALIBRATED` only when a ledgered C3c is its **single** blemish.
+
+**Effect, MEASURED over all 26 registered runs against a pre-change snapshot
+rather than asserted.** Six determinations change, all `CALIBRATED-WITH-CAVEATS
+→ CALIBRATED`, all of the same shape (lone ledgered C3c; zero band caveats, zero
+protective caveats, nothing `SKIPPED`, nothing data-blocked):
+
+| run | ISO | keeper? |
+|---|---|---|
+| `2026-08-16-nyiso-140-layup-exclusion` | NYISO | **KEEPER** |
+| `2026-08-17-neiso-99-joint-p1` | NEISO | **KEEPER** |
+| `2026-08-08-nyiso-133-cod-arm` | NYISO | no |
+| `2026-08-17-nyiso-142-stackdup` | NYISO | no |
+| `2026-08-17-neiso-97-dstrepair` | NEISO | no |
+| `2026-08-06-neiso-2022-corrected-basis` | NEISO | no |
+
+No `NOT-YET` is reclassified in either direction, and CAISO / ERCOT / MISO / PJM
+are **unchanged** (each keeper either fails a criterion outright or carries no
+ledgered C3c). Every keeper re-scores in place from its committed artifacts.
+
+**THE NEISO FLIP IS A CROSS-ISO CONSEQUENCE, CARRIED OPENLY.** The amendment was
+requested for NYISO; NEISO's keeper moved because the verdict scorer is **one
+instrument**. An ISO-scoped verdict rule would be an off-registry tuning channel
+in spirit (rules 24 `[R-REGISTRY]` / 25 `[R-ISO-SCOPE]`), so there is no honest
+way to move NYISO's determination without moving every run of the same shape.
+Flagged to the owner rather than suppressed; NEISO's keeper shard carries its own
+`determination_amendment` note saying so.
+
+**HOLDOUT POSTURE UNTOUCHED — nothing became spendable.** Both ISOs keep
+`complete` (validation tier) only, both stay **absent** from `final`, and the
+2026-07-25 holdout spend freeze remains **ACTIVE** and outranks every marker. A
+determination is not an authorization: no out-of-training year may be solved,
+scored or registered for any ISO while the freeze stands.
+
+**A latent defect fixed in the same session** (`audit_keepers._asserted_determination`).
+The determination-token extractor scanned token-list-first (longest token first,
+anywhere in the text), so a determination named in a marker's deliberately
+**preserved genealogy** (`|| PRIOR TEXT, preserved: CALIBRATED-WITH-CAVEATS on
+<superseded run> …`) outranked the entry's own leading claim — an accurate marker
+could not be written without deleting its history. It now scans by **position**,
+taking the longest token at the earliest position, and a position filtered out as
+naming another run's recipe takes its own prefix with it (the regression the
+first cut of this fix introduced, caught by its own test). E5 and M1b are
+otherwise unchanged.
+
+**Records updated:** `scripts/calibration_verdict.py` (v3.3 + tests),
+`scripts/audit_keepers.py` (+ tests), `docs/calibration-determination-rubric.md`
+(banner, §2 decision logic + determination table, §9), `CLAUDE.md` rule 22 guard
+(d), `docs/governance/rule-history.md` §4, both keeper shards
+(`determination_amendment`), both `complete` markers (re-keyed per rule 22
+D-5(b) — the determination **improves**, so the worse-determination stop does not
+fire), both keeper registry sidecar definitions, both mechanism-matrix shard
+`gates` stamps, and all seven `status/` parts (`build_status.py`).
+
+**Gates:** `audit_keepers.py --check` **0 failures / 0 warnings** ·
+`build_status.py --check` in sync · `check_mechanism_matrix.py` integrity +
+anchors + keeper stamps + §5.x prose OK · scoring tests **162 passed** (the 4
+`test_ff_readiness_battery` failures on this checkout are a pre-existing,
+unrelated unbuilt-`data/clean` environment artifact — reproduced with the change
+stashed).
