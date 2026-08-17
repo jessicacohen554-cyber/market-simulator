@@ -770,13 +770,20 @@ def build_merit_order_panel(
     n_hours: int,
     states: tuple[str, ...] | list[str],
     rcc_pctl: float = MERIT_RCC_PCTL,
+    member_facilities: dict[str, tuple[int, ...]] | None = None,
 ) -> MeritOrderPanel | None:
     """Build the ISO-year :class:`MeritOrderPanel` from measured CAMPD + fuel.
 
     Self-contained by design: it re-reads the CAMPD unit-level parquets for
     ``states`` rather than taking the caller's frames, so the guard never
     depends on how a particular deriver assembled its fleet, and it needs no
-    EIA-860 join. Per unit, entirely from CAMPD:
+    EIA-860 join. ``member_facilities`` optionally admits the ISO's own
+    out-of-state fleet members (state -> facility ids): those states' parquets
+    are loaded FILTERED to the listed facilities and appended after ``states``,
+    and they join the delivered-coal-table scope. The caller derives the map
+    from its fleet registry (caiso-199 §3b / PRECHECK-caiso200 §2 — the panel
+    stays fleet-blind over ``states``; membership knowledge stays with the
+    deriver). Per unit, entirely from CAMPD:
 
     * **capacity basis** — the unit's own measured peak ``grossLoad`` for the
       year. Used only for the running test and for capacity-weighting the RCC
@@ -798,27 +805,30 @@ def build_merit_order_panel(
     files, no priceable unit, or no hour with a defined RCC) — the caller then
     leaves every window untouched and the extract is byte-identical.
     """
+    cols = [
+        "stateCode",
+        "facilityId",
+        "unitId",
+        "date",
+        "hour",
+        "grossLoad",
+        "steamLoad",
+        "heatInput",
+        "primaryFuelInfo",
+    ]
     frames = []
     for st in states:
         path = _MERIT_UNIT_LEVEL_DIR / f"{st}_{year}.parquet"
         if not path.exists():
             continue
-        frames.append(
-            pd.read_parquet(
-                path,
-                columns=[
-                    "stateCode",
-                    "facilityId",
-                    "unitId",
-                    "date",
-                    "hour",
-                    "grossLoad",
-                    "steamLoad",
-                    "heatInput",
-                    "primaryFuelInfo",
-                ],
-            )
-        )
+        frames.append(pd.read_parquet(path, columns=cols))
+    for st, keep in (member_facilities or {}).items():
+        path = _MERIT_UNIT_LEVEL_DIR / f"{st}_{year}.parquet"
+        if not path.exists():
+            continue
+        df = pd.read_parquet(path, columns=cols)
+        fid = pd.to_numeric(df["facilityId"], errors="coerce")
+        frames.append(df[fid.isin({int(f) for f in keep})])
     if not frames:
         return None
     c = pd.concat(frames, ignore_index=True)
@@ -839,7 +849,13 @@ def build_merit_order_panel(
         return None
 
     gas_px = delivered_gas_price_hourly(iso, year, n_hours)
-    coal_tables = _delivered_coal_price_tables(frozenset(str(s) for s in states), year)
+    # Member states join the coal-table scope so a coal-fuelled member could be
+    # priced; inert for CAISO (CA carries no CEMS coal in any derive year and
+    # the sole member facility is gas-fuelled — caiso-199 §1b measurement).
+    coal_states = frozenset(str(s) for s in states) | frozenset(
+        str(s) for s in (member_facilities or {})
+    )
+    coal_tables = _delivered_coal_price_tables(coal_states, year)
     month_of = pd.date_range(
         f"{year}-01-01", periods=n_hours, freq="h"
     ).month.to_numpy()

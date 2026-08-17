@@ -587,5 +587,91 @@ class TestMeritPanelStatePin(unittest.TestCase):
         self.assertNotIn("n_full, states", call)
 
 
+class TestMeritPanelFleetMembership(unittest.TestCase):
+    """The panel admits the ISO's own out-of-state fleet members — only them.
+
+    The caiso-199 §3b narrowing (PRECHECK-caiso200-panel-membership-2026-08-17
+    §1–§2): under a bare state pin, a fleet plant filing CEMS outside the panel
+    states is never a member of the panel its own spans are scored against.
+    Membership is DERIVED from the fleet registry, so a detection widening can
+    admit only the ISO's own fleet — never the non-fleet units the pin exists
+    to exclude (the caiso-198 275-window churn).
+    """
+
+    def test_caiso_admits_fleet_members(self):
+        self.assertTrue(campd.merit_panel_admits_fleet_members("CAISO"))
+
+    def test_caiso_is_the_only_member_admitting_iso(self):
+        # The same panel fleet-blindness at NYISO (NY+NJ), PJM and MISO is each
+        # lane's own measurement (rule 25 [R-ISO-SCOPE]).
+        self.assertEqual(set(campd.MERIT_PANEL_FLEET_MEMBER_ISOS), {"CAISO"})
+
+    def test_no_other_registered_iso_admits_members(self):
+        for iso in campd.ISO_STATES:
+            if iso in campd.MERIT_PANEL_FLEET_MEMBER_ISOS:
+                continue
+            with self.subTest(iso=iso):
+                self.assertFalse(campd.merit_panel_admits_fleet_members(iso))
+
+    def test_membership_derivation_admits_only_fleet_facilities(self):
+        # The invariant: an out-of-panel detection state contributes ONLY
+        # facilities resolving into the fleet registry; panel states are never
+        # scanned (their whole file already feeds the panel).
+        import scripts.data.derive_campd_unit_outages as deriver
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            pd.DataFrame(
+                {
+                    "facilityId": ["55077", "55077", "2322", "8224"],
+                    "unitId": ["EDE1", "EDE2", "1", "3"],
+                }
+            ).to_parquet(tmp / "NV_2023.parquet", index=False)
+            saved = deriver.UNIT_LEVEL_DIR
+            deriver.UNIT_LEVEL_DIR = tmp
+            try:
+                got = deriver._merit_member_facilities(
+                    ("CA", "NV"),
+                    ("CA",),
+                    [2023],
+                    {55077: "CC_REGULAR", 2222: "COAL"},
+                )
+            finally:
+                deriver.UNIT_LEVEL_DIR = saved
+        self.assertEqual(got, {"NV": (55077,)})
+
+    def test_membership_resolves_through_split_plant_remap(self):
+        # A unit filing CEMS under a legacy ORIS resolves into the fleet via
+        # CAMPD_UNIT_PLANT_REMAP, exactly as the detection path does.
+        import scripts.data.derive_campd_unit_outages as deriver
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            pd.DataFrame({"facilityId": ["330"], "unitId": ["5"]}).to_parquet(
+                tmp / "OR_2023.parquet", index=False
+            )
+            saved = deriver.UNIT_LEVEL_DIR
+            deriver.UNIT_LEVEL_DIR = tmp
+            try:
+                got = deriver._merit_member_facilities(
+                    ("CA", "OR"), ("CA",), [2023], {57901: "CC_REGULAR"}
+                )
+            finally:
+                deriver.UNIT_LEVEL_DIR = saved
+        self.assertEqual(got, {"OR": (330,)})
+
+    def test_deriver_wires_membership_into_the_panel(self):
+        # Wiring guard: the derivation is gated on the registry predicate and
+        # the panel build receives the derived map.
+        import inspect
+
+        from scripts.data import derive_campd_unit_outages as deriver
+
+        src = inspect.getsource(deriver.main)
+        self.assertIn("campd.merit_panel_admits_fleet_members(iso)", src)
+        call = src.split("build_merit_order_panel(")[1].split(")")[0]
+        self.assertIn("member_facilities=merit_member_facilities", call)
+
+
 if __name__ == "__main__":
     unittest.main()
