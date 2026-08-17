@@ -1443,9 +1443,11 @@ def ercot_fleet_forced_outage_sigma_mw(
 
     with ``q_p(t)`` the plant's seasonal forced-outage rate — the SAME
     composition the availability builder applies (winter = WEFOR;
-    summer = SUMMER_WEFOR_SHARE x WEFOR; shoulder absorbs the displaced
-    share; ``gas_st_wefor_base_override`` and ``wefor_multiplier``
-    honoured) — and ``P_p`` the plant's summed capacity at the model's own
+    summer = share x WEFOR where the share is
+    ``summer_wefor_share_override`` when armed, else SUMMER_WEFOR_SHARE;
+    shoulder absorbs the displaced share; ``gas_st_wefor_base_override``
+    and ``wefor_multiplier`` honoured) — and ``P_p`` the plant's summed
+    capacity at the model's own
     plant grain (tranches of one CAMPD-binned plant share a physical outage
     state, so they aggregate before squaring; the grain slightly overstates
     the variance of genuinely multi-unit plants, stated here rather than
@@ -1484,6 +1486,10 @@ def ercot_fleet_forced_outage_sigma_mw(
 
     st_override = getattr(config, "gas_st_wefor_base_override", None)
     mult = float(getattr(config, "wefor_multiplier", 1.0))
+    # miso-160: honour the measured seasonal-shape override so this variance
+    # composition stays the availability builder's (its docstring contract).
+    _swf_override = getattr(config, "summer_wefor_share_override", None)
+    swf_share = _SUMMER_WEFOR_SHARE if _swf_override is None else float(_swf_override)
 
     # Per-plant seasonal (winter, summer, shoulder) rate and capacity.
     var_terms: dict[object, list] = {}
@@ -1503,8 +1509,8 @@ def ercot_fleet_forced_outage_sigma_mw(
             wefor *= mult
             q3 = (
                 wefor,  # winter
-                _SUMMER_WEFOR_SHARE * wefor,  # summer
-                wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder,
+                swf_share * wefor,  # summer
+                wefor + (1.0 - swf_share) * wefor * summer_to_shoulder,
             )
         else:
             q = float(getattr(gen, "eford", 0.05))
@@ -1961,7 +1967,8 @@ def ercot_energy_online_capability_cap_mw(
     path = (
         Path(override)
         if override
-        else RAW_DATA_DIR / "_validation-source/ercot_energy_online_capability_condbinned.json"
+        else RAW_DATA_DIR
+        / "_validation-source/ercot_energy_online_capability_condbinned.json"
     )
     if not path.exists():
         return None
@@ -1993,7 +2000,9 @@ def ercot_energy_online_capability_cap_mw(
     # semantics), so a forecast year's bins would regenerate from its own
     # drivers (the _ercot_rtolcap_fwd_decile pattern).
     rank = pd.Series(nl).rank(pct=True).to_numpy()
-    nl_bin = np.searchsorted(np.asarray(grain["netload_rank_edges"], dtype=float), rank, side="right")
+    nl_bin = np.searchsorted(
+        np.asarray(grain["netload_rank_edges"], dtype=float), rank, side="right"
+    )
     cells = block["cells"]
     cap0 = np.full(T, _RESERVE_SUPPLY_CAP_UNCAPPED_MW, dtype=float)
     combo = season * 1000 + hblock * 100 + nl_bin

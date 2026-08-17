@@ -1,0 +1,381 @@
+{
+  "prereg": "PREREG-miso160-summer-wefor-measured-share-2026-08-16.md",
+  "prereg_commit": "a96702b",
+  "prereg_blob": "57d2b8b1",
+  "bundle": "miso159_cod_B",
+  "share_replaced": 0.3,
+  "derive": {
+    "basis": {
+      "region": "MISO",
+      "cause_types": [
+        "Derated",
+        "Forced",
+        "Unplanned"
+      ],
+      "window": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "loader": "market_sim.data.miso_outages.miso_outage_mw_series"
+    },
+    "years": {
+      "2023": {
+        "R_junsep_composite": 1.1039495519165858,
+        "R_junjul_composite": 1.0650720918267806,
+        "annual_mean_offline_mw": 21763.0,
+        "covered_days_nonzero": 365,
+        "V1_target": 1.104,
+        "V1_delta": -5.044808341425622e-05,
+        "V1_pass": true,
+        "per_bucket": {
+          "Derated": {
+            "R_junsep": 1.2608836558121412,
+            "R_junjul": 1.2613773279211162,
+            "annual_mean_mw": 7089.726027397261
+          },
+          "Forced": {
+            "R_junsep": 1.0705166439140938,
+            "R_junjul": 1.119198934412462,
+            "annual_mean_mw": 8416.734246575343
+          },
+          "Planned": {
+            "R_junsep": 0.5605872981539249,
+            "R_junjul": 0.5789461567748304,
+            "annual_mean_mw": 20590.408219178084
+          },
+          "Unplanned": {
+            "R_junsep": 0.9710927435805826,
+            "R_junjul": 0.7698095869604953,
+            "annual_mean_mw": 6256.539726027398
+          }
+        },
+        "per_region_composite": {
+          "North": 1.1634135853117524,
+          "Central": 1.112713148161706,
+          "South": 1.0318212515990508,
+          "MISO": 1.1039495519165858
+        }
+      },
+      "2024": {
+        "R_junsep_composite": 0.9670579168838747,
+        "R_junjul_composite": 0.9895369089767905,
+        "annual_mean_offline_mw": 24203.290410958904,
+        "covered_days_nonzero": 365,
+        "V1_target": 0.967,
+        "V1_delta": 5.791688387468685e-05,
+        "V1_pass": true,
+        "per_bucket": {
+          "Derated": {
+            "R_junsep": 1.238130397517495,
+            "R_junjul": 1.2217003088047897,
+            "annual_mean_mw": 8099.394520547945
+          },
+          "Forced": {
+            "R_junsep": 0.8101465337373045,
+            "R_junjul": 0.7788920538203569,
+            "annual_mean_mw": 8419.25205479452
+          },
+          "Planned": {
+            "R_junsep": 0.5899222955162683,
+            "R_junjul": 0.5290384895986974,
+            "annual_mean_mw": 17619.964383561644
+          },
+          "Unplanned": {
+            "R_junsep": 0.8532665040294458,
+            "R_junjul": 0.9756246391152423,
+            "annual_mean_mw": 7684.643835616438
+          }
+        },
+        "per_region_composite": {
+          "North": 1.1167371210466697,
+          "Central": 0.9816275870805851,
+          "South": 0.8560287289954812,
+          "MISO": 0.9670579168838747
+        }
+      },
+      "2025": {
+        "R_junsep_composite": 1.1086453253668733,
+        "R_junjul_composite": 1.1645491909338848,
+        "annual_mean_offline_mw": 28055.04109589041,
+        "covered_days_nonzero": 365,
+        "V1_target": 1.109,
+        "V1_delta": -0.0003546746331266615,
+        "V1_pass": true,
+        "per_bucket": {
+          "Derated": {
+            "R_junsep": 1.174293114363202,
+            "R_junjul": 1.2071530225720224,
+            "annual_mean_mw": 8980.498630136986
+          },
+          "Forced": {
+            "R_junsep": 1.0727750838605967,
+            "R_junjul": 1.0977725917979984,
+            "annual_mean_mw": 10078.709589041096
+          },
+          "Planned": {
+            "R_junsep": 0.6580188935052941,
+            "R_junjul": 0.6260010696970086,
+            "annual_mean_mw": 20634.254794520548
+          },
+          "Unplanned": {
+            "R_junsep": 1.0832975743306332,
+            "R_junjul": 1.196832838523797,
+            "annual_mean_mw": 8995.83287671233
+          }
+        },
+        "per_region_composite": {
+          "North": 1.2555727650836648,
+          "Central": 1.0721777659449865,
+          "South": 1.068735286559887,
+          "MISO": 1.1086453253668733
+        }
+      }
+    },
+    "pooled_R_star": 1.0599,
+    "pooled_band_P1": [
+      1.04,
+      1.08
+    ],
+    "s_derive_band": [
+      1.0,
+      1.12
+    ],
+    "V1_pass_all": true,
+    "S_DERIVE_fired": false
+  },
+  "reach": {
+    "r_star": 1.0599,
+    "years": {
+      "2023": {
+        "V3": {
+          "n_gen_control": 2929,
+          "n_gen_arm": 2929,
+          "n_gen_expected": 2929,
+          "carry_zones": 6,
+          "pass": true
+        },
+        "V4a_winter_max_abs_delta": 0.0,
+        "V4a_pass": true,
+        "V4b_analytic_conservation_max": 1.2977949511600003e-17,
+        "V4b_pass": true,
+        "V4c_final_array_annual_by_class_gw": {
+          "": 0.0,
+          "CC_CHP": -0.0007694326053625292,
+          "CC_REGULAR": -0.08532862859859708,
+          "COAL": 0.0,
+          "CT_CHP": 0.00024231154205650926,
+          "CT_PEAKER": -0.00015381498313534362,
+          "ST_CHP": -0.0007416972777883931,
+          "ST_GAS": -0.031642469179079535,
+          "hydro": 0.0
+        },
+        "P2_reach_by_class": {
+          "": {
+            "annual_gw": 0.0,
+            "summer_gw": 0.0,
+            "top200_junsep_gw": 0.0
+          },
+          "CC_CHP": {
+            "annual_gw": -0.0007694326053625292,
+            "summer_gw": -0.13271690699878638,
+            "top200_junsep_gw": -0.13383602812307935
+          },
+          "CC_REGULAR": {
+            "annual_gw": -0.08532862859859708,
+            "summer_gw": -0.9956864063303718,
+            "top200_junsep_gw": -1.030289898446064
+          },
+          "COAL": {
+            "annual_gw": 0.0,
+            "summer_gw": 0.0,
+            "top200_junsep_gw": 0.0
+          },
+          "CT_CHP": {
+            "annual_gw": 0.00024231154205650926,
+            "summer_gw": -0.04495556106816838,
+            "top200_junsep_gw": -0.04424293202919961
+          },
+          "CT_PEAKER": {
+            "annual_gw": -0.00015381498313534362,
+            "summer_gw": -1.4656004834112806,
+            "top200_junsep_gw": -1.4589746035888038
+          },
+          "ST_CHP": {
+            "annual_gw": -0.0007416972777883931,
+            "summer_gw": -0.056433091429820885,
+            "top200_junsep_gw": -0.06216957500653719
+          },
+          "ST_GAS": {
+            "annual_gw": -0.031642469179079535,
+            "summer_gw": -0.7683917360124272,
+            "top200_junsep_gw": -0.8877134260457167
+          },
+          "hydro": {
+            "annual_gw": 0.0,
+            "summer_gw": 0.0,
+            "top200_junsep_gw": 0.0
+          }
+        },
+        "P2_reach_total": {
+          "annual_gw": -0.11839373110190636,
+          "summer_gw": -3.4637841852508555,
+          "top200_junsep_gw": -3.617226463239401
+        }
+      },
+      "2024": {
+        "V3": {
+          "n_gen_control": 2923,
+          "n_gen_arm": 2923,
+          "n_gen_expected": 2923,
+          "carry_zones": 6,
+          "pass": true
+        },
+        "V4a_winter_max_abs_delta": 0.0,
+        "V4a_pass": true,
+        "V4b_analytic_conservation_max": 1.2977949511600003e-17,
+        "V4b_pass": true,
+        "V4c_final_array_annual_by_class_gw": {
+          "": 0.0,
+          "CC_CHP": -0.0017472280858093043,
+          "CC_REGULAR": -0.07108061863458513,
+          "COAL": 0.0,
+          "CT_CHP": 0.0002052921436861744,
+          "CT_PEAKER": 0.0005943880547263608,
+          "ST_CHP": -0.0016987108258038298,
+          "ST_GAS": -0.028965801021450282,
+          "hydro": 0.0
+        },
+        "P2_reach_by_class": {
+          "": {
+            "annual_gw": 0.0,
+            "summer_gw": 0.0,
+            "top200_junsep_gw": 0.0
+          },
+          "CC_CHP": {
+            "annual_gw": -0.0017472280858093043,
+            "summer_gw": -0.13955168494740844,
+            "top200_junsep_gw": -0.14026152396764974
+          },
+          "CC_REGULAR": {
+            "annual_gw": -0.07108061863458513,
+            "summer_gw": -0.9755663792266955,
+            "top200_junsep_gw": -1.0270268672208784
+          },
+          "COAL": {
+            "annual_gw": 0.0,
+            "summer_gw": 0.0,
+            "top200_junsep_gw": 0.0
+          },
+          "CT_CHP": {
+            "annual_gw": 0.0002052921436861744,
+            "summer_gw": -0.04615137749959998,
+            "top200_junsep_gw": -0.04537692138600596
+          },
+          "CT_PEAKER": {
+            "annual_gw": 0.0005943880547263608,
+            "summer_gw": -1.5061953862511646,
+            "top200_junsep_gw": -1.4996538463609275
+          },
+          "ST_CHP": {
+            "annual_gw": -0.0016987108258038298,
+            "summer_gw": -0.05992284589380466,
+            "top200_junsep_gw": -0.06583082977904645
+          },
+          "ST_GAS": {
+            "annual_gw": -0.028965801021450282,
+            "summer_gw": -0.8661074116391356,
+            "top200_junsep_gw": -0.9403421532812806
+          },
+          "hydro": {
+            "annual_gw": 0.0,
+            "summer_gw": 0.0,
+            "top200_junsep_gw": 0.0
+          }
+        },
+        "P2_reach_total": {
+          "annual_gw": -0.10269267836923603,
+          "summer_gw": -3.593495085457809,
+          "top200_junsep_gw": -3.718492141995789
+        }
+      },
+      "2025": {
+        "V3": {
+          "n_gen_control": 2923,
+          "n_gen_arm": 2923,
+          "n_gen_expected": 2923,
+          "carry_zones": 6,
+          "pass": true
+        },
+        "V4a_winter_max_abs_delta": 0.0,
+        "V4a_pass": true,
+        "V4b_analytic_conservation_max": 1.2977949511600003e-17,
+        "V4b_pass": true,
+        "V4c_final_array_annual_by_class_gw": {
+          "": 0.0,
+          "CC_CHP": 0.0009348263104003901,
+          "CC_REGULAR": -0.07739650372818847,
+          "COAL": 0.0,
+          "CT_CHP": 0.00029428708279019593,
+          "CT_PEAKER": 0.002634550363015073,
+          "ST_CHP": -0.002676165745782187,
+          "ST_GAS": -0.04657761085289897,
+          "hydro": 0.0
+        },
+        "P2_reach_by_class": {
+          "": {
+            "annual_gw": 0.0,
+            "summer_gw": 0.0,
+            "top200_junsep_gw": 0.0
+          },
+          "CC_CHP": {
+            "annual_gw": 0.0009348263104003901,
+            "summer_gw": -0.13489576936553765,
+            "top200_junsep_gw": -0.1311007243823875
+          },
+          "CC_REGULAR": {
+            "annual_gw": -0.07739650372818847,
+            "summer_gw": -0.9434839753066828,
+            "top200_junsep_gw": -0.9801548527926784
+          },
+          "COAL": {
+            "annual_gw": 0.0,
+            "summer_gw": 0.0,
+            "top200_junsep_gw": 0.0
+          },
+          "CT_CHP": {
+            "annual_gw": 0.00029428708279019593,
+            "summer_gw": -0.04705906511248069,
+            "top200_junsep_gw": -0.04530874213330334
+          },
+          "CT_PEAKER": {
+            "annual_gw": 0.002634550363015073,
+            "summer_gw": -1.5407505757685316,
+            "top200_junsep_gw": -1.5108356661336746
+          },
+          "ST_CHP": {
+            "annual_gw": -0.002676165745782187,
+            "summer_gw": -0.04952327221433216,
+            "top200_junsep_gw": -0.05414606939313573
+          },
+          "ST_GAS": {
+            "annual_gw": -0.04657761085289897,
+            "summer_gw": -0.9505592701348509,
+            "top200_junsep_gw": -0.9696733143483026
+          },
+          "hydro": {
+            "annual_gw": 0.0,
+            "summer_gw": 0.0,
+            "top200_junsep_gw": 0.0
+          }
+        },
+        "P2_reach_total": {
+          "annual_gw": -0.12278661657066398,
+          "summer_gw": -3.6662719279024163,
+          "top200_junsep_gw": -3.6912193691834827
+        }
+      }
+    }
+  }
+}

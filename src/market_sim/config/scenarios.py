@@ -898,6 +898,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "ercot_reserve_supply_cap_net_credits",
+    # miso-160 measured seasonal forced-outage shape (default None): dropped
+    # from the hash at its default so every pre-existing cache key stays
+    # byte-stable — the None path reads the module constant
+    # SUMMER_WEFOR_SHARE exactly as before, byte-identical availability
+    # arrays. An armed run reallocates every non-coal thermal unit's WEFOR
+    # across summer/shoulder (a different fleet availability), so it hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "summer_wefor_share_override",
     # nyiso-140 reliability-floor per-plant membership exclusion (GATED
     # default off): dropped from the hash at its default so every
     # pre-existing cache key of all six ISOs stays byte-stable (the off path
@@ -1199,6 +1208,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-212 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_reserve_supply_cap_net_credits": "False",
+    # Added by miso-160 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "summer_wefor_share_override": "None",
 }
 
 
@@ -9697,6 +9709,30 @@ class ScenarioConfig:
     # than silently clamped. ZERO continuous degrees of freedom: a boolean
     # over a measured registry (rules 5 [R-NO-MAGIC] / 14 [R-ACCURATE]).
     commission_year_cod_fallback: bool = False
+
+    # Measured seasonal forced-outage shape override
+    # (summer_wefor_share_override, default None; miso-160). Replaces the
+    # module constant SUMMER_WEFOR_SHARE = 0.30 — a self-declared UNCITED
+    # a-priori heuristic (fuel_trajectories.py) that applies 30% of each
+    # unit's WEFOR in Jun–Sep and shifts the displaced 70% into the shoulder,
+    # i.e. the REVERSE of the physical sign for forced outages (they
+    # correlate positively with heat/load) — with a value DERIVED from a
+    # published ticket-based outage record: the Jun–Sep / annual ratio of
+    # unplanned offline MW (Derated+Forced+Unplanned), pooled across the
+    # training years. The mechanism is unchanged (rule 19 [R-ONE-MECH]):
+    # summer gets share × WEFOR, the shoulder absorbs the displaced outage
+    # energy, winter keeps flat WEFOR, and the per-unit annual mean is
+    # conserved for ANY share, including share > 1 (summer above annual,
+    # shoulder below — the measured sign). Applied in
+    # ``data.fleet.arrays._apply_thermal_availability`` and mirrored in the
+    # ``results.scarcity`` variance pro-forma. Rule 25 [R-ISO-SCOPE]: the
+    # derived value is per-ISO (MISO first: R* = 1.0599 from the MISO MOM
+    # record via scripts/probes/_miso160_wefor_shape_instrument.py, owner
+    # provenance decision docs/handoffs/miso-outage-grain-data-ask-2026-07.md
+    # §9); other ISOs keep None → the 0.30 constant, and derive their own
+    # from their own records. Rule 23 [R-FROZEN-DERIVE]: re-derive only on a
+    # source-data update, never on a residual.
+    summer_wefor_share_override: float | None = None
 
     # Unit-outage derate DENOMINATOR on the LP's own capacity basis
     # (unit_outage_lp_capacity_basis, off by default). A consistency repair, not
