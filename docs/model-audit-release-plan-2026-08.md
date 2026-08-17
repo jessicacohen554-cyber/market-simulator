@@ -1620,3 +1620,66 @@ your branch when done.
     evidence instead of a live session read**, and is labelled as such. Lane
     *sessions* are therefore inferred; lane *branches, PRs and merges* are
     live-read and exact.
+- 2026-08-17 (owner refresh — park holds; golden-tier fix merged but UNPROVEN) —
+  Refresh cycle read at **~15:15 UTC**, `origin/main` @ **`f087c67`**, **one open
+  PR** (#4074, this records lane's own — disposition below). **The park is
+  unchanged: WS3/PERF-B is still paused by owner decision and G2 is still
+  unreachable.** Six PRs merged since the previous entry's stamp (`96f5060`):
+  #4073, #4075–#4079.
+  - **⚠️ TOP OPEN ITEM — the golden-tier fix is MERGED but UNPROVEN.** `d4fbf44`
+    (#4071) corrected `_neiso_flat24_repair` to relabel with the **integer** `2`,
+    citing the failing run in the code comment. **No golden-tier run has executed
+    since.** The workflow's latest run remains the red **`31999181985`**; the last
+    green remains the 2026-08-15 dispatch `31913648051`. The next *scheduled*
+    firing is a week out (Mondays 05:37 UTC), so **the proof mechanism stays red
+    for a week unless one `workflow_dispatch` is authorized** — billed minutes,
+    cadence card F, **owner call**. Until it runs, **BLOAT-S2's D3 proof leg and
+    every byte-green claim resting on the tier remain unprovable.**
+  - **DURABLE LESSON — the curation blind spot, recorded because it was nowhere
+    on record.** `.github/workflows/golden-data-tier.yml` is the **ONLY** workflow
+    in the repo that runs `scripts/regenerate_clean.py` (verified by grep across
+    `.github/workflows/*.yml`). **A curation-time defect under
+    `scripts/data/curate_*.py` therefore has NO pre-merge signal at all** — it is
+    invisible to every PR check and surfaces only on the weekly cron. `data/clean`
+    being derived and gitignored compounds it: a session with an already-curated
+    tree sees nothing wrong, so absence of local symptoms is not evidence of
+    health. This is precisely how `a2b5e3d` merged clean and reddened the tier
+    three hours later. **Treat any curate-script change as unguarded**, and do not
+    read a green PR run as coverage of it.
+  - **RUBRIC v3.3 LANDED** (#4077, `7abe32d`, owner) — **a ledgered C3c caveat is
+    *reported*, not *downgrading***; the former "the run can never read
+    `CALIBRATED`" half is repealed for that case (rule-history genealogy updated
+    in the same PR, with `calibration_verdict.py` + `audit_keepers.py` tests).
+    **Determinations at HEAD, read from the status shards:** **NEISO, NYISO and
+    PJM = `CALIBRATED`**; **CAISO, ERCOT and MISO = `NOT-YET`**. The CALIBRATED
+    set is now exactly the `complete`-marker set {NEISO, NYISO, PJM} — worth
+    noting because those markers authorize the 2020–2022 validation ladder, and
+    three ISOs now carry both a marker and a CALIBRATED determination. **No
+    `final` marker exists for any ISO and no locked-test year has been spent**
+    (rule 22 O6 guard re-verified at this HEAD).
+  - **THREE CALIBRATION LANES REPORTED NEGATIVE AND CLOSED** — recorded because
+    negative results are results: **ercot-216** (#4076) found the C3c residual
+    lane **spent and measured empty**, no lever, Phase-1 not entered;
+    **ercot-217** (#4079) found the 2023-vs-2024/25 design split **already built,
+    armed and correctly dated** — no admissible regime lever, nothing built (D-3
+    negative branch); **miso-164** (#4078) resolved the GADS data ask on evidence
+    — it **FAILS on C and D**.
+  - **KEEPERS AT THIS READ, and the freeze still uncalled.** ERCOT
+    `2026-08-17-ercot215-arm-decontam` · CAISO `2026-08-17-caiso-200-h1-memberpanel`
+    · NEISO `2026-08-17-neiso-99-joint-p1` · MISO `2026-08-16-miso-160-wefor-shape`
+    · NYISO `2026-08-16-nyiso-140-layup-exclusion` · PJM
+    `2026-08-15-pjm-162-inputclock`. Stage-0 staleness holds at **3 stale (ERCOT,
+    CAISO, NEISO) / 2 current (MISO, NYISO) / 1 no-golden (PJM)**. **The
+    calibration freeze has still not been called** — it remains the un-park
+    trigger and the precondition for finishing WS3.
+  - **DISPOSITION OF PR #4074 — overtaken, reset, not merged as it stood.** This
+    lane's independent root-cause of the cron RED (branch
+    `claude/director-records-v7-9u1czg`, pushed 09:35 UTC) was **overtaken by
+    #4071/#4073 while it sat unmerged**: the diagnosis is on main in both the
+    board and this ledger, and the fix landed. Because the branch was based on the
+    pre-rebase records branch, merging it as it stood would have **reverted ~113
+    lines of newer board content**. It was therefore **reset onto `f087c67`** and
+    re-pointed at this refresh's records — the #4051 pattern (close the overtaken
+    thing rather than merge it), applied to this lane's own work. Nothing is lost:
+    the only part of that diagnosis not already on main is the curation blind-spot
+    lesson above, carried forward here.
