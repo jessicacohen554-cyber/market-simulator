@@ -5,7 +5,7 @@
     "MARKET_SIM_WARMSTART_XYEAR": "0"
   },
   "git_dirty": false,
-  "git_sha": "ec413d20",
+  "git_sha": "dd8b7265",
   "hash_scheme": "sha256-of-canonical-column-float64-bytes",
   "highspy_version": "unknown",
   "keepers": {
@@ -49,6 +49,52 @@
       },
       "hours": 8760,
       "keeper_id": "2026-08-15-ercot204-rule26-delete",
+      "recorded_flag_count": 247,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "MISO": {
+      "bundle": "results/calibration/miso159_cod_B",
+      "content_hashes": {
+        "btm.parquet": "e7c2e195fea3c2e3f5e0275a37b65e507bca5b0fa34ed2cf3b15414a10a60e75",
+        "dispatch/2023_P1.parquet": "33b407edf27f943b37f2458ce005f65226b6de2d944777a5ffaef526bfb0f2ad",
+        "dispatch/2024_P1.parquet": "111bef4db36eab3d94296e34fe15dbff542d4bfd354fa2ecc6e8f8de921a3c05",
+        "dispatch/2025_P1.parquet": "aa5932b615f7a0382fd6d8d2da46939941e72b7623dcb45e0bf774b291240c13",
+        "flows.parquet": "6464a378e3dd08c285169f1141b18c20cc3c64c7d397a2fa31d99a000ab1a3c1",
+        "storage.parquet": "5709f8326e8f974c294361051b4e07220d6a88149afc0ce9ad95a8637886cf67",
+        "system.parquet": "5d9b21b7ac997c144ef319b10930295f48f354cdf4c8c39d9d286c2d39da63f6"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "persist_p0_commitment",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [],
+        "meta_keeper_only": [
+          "nyiso_solar_registry_cod_dates"
+        ],
+        "meta_matched": 256,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "caiso_ps_plant_params",
+          "ercot_reserve_supply_cap_net_credits"
+        ],
+        "scenario_config_matched": 714
+      },
+      "hours": 8760,
+      "keeper_id": "2026-08-15-miso-159-cod-vintage",
       "recorded_flag_count": 247,
       "years": [
         2023,
