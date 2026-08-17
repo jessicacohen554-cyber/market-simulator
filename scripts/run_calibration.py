@@ -526,7 +526,6 @@ def run_year(
     ercot_commitment_posture_min_load_frac: float | None = None,
     carry_operating_mothballs: bool | None = None,
     reliability_floor: bool | None = None,
-    reliability_floor_plant_exclusions: bool | None = None,
     reliability_floor_overrides: dict | None = None,
     # nyiso-140 per-plant floor-membership exclusion. The mechanism landed in
     # 3febd5c wired end-to-end EXCEPT here: solve_and_persist grew the kwarg and
@@ -1287,10 +1286,6 @@ def run_year(
     if reliability_floor_overrides is not None:
         config = config.with_overrides(
             reliability_floor_overrides=reliability_floor_overrides
-        )
-    if reliability_floor_plant_exclusions is not None:
-        config = config.with_overrides(
-            reliability_floor_plant_exclusions=reliability_floor_plant_exclusions
         )
     if scarcity_price_overlay is not None:
         config = config.with_overrides(
