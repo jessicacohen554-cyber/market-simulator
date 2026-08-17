@@ -9882,3 +9882,80 @@ workflow, no cron, no PR (push-and-stop; the owner merges).
 
 **Session consumed the ercot-214 shorthand. Next shorthand: ercot-215**
 (ercot-199 remains unclaimed).
+
+## ercot-215 — 2026-08-17 — the counterpart decontamination BUILT, G-EXACT full pass, REJECTED-AS-ARMED on the pre-registered G-C3c kill, PROMOTED ON OWNER INSTRUCTION; the mid-band spill lane CLOSES
+
+**Branch `claude/ercot-215-ordc-decontamination-xsbhwn`. Precommit pushed
+BEFORE any solve** (`docs/PRECOMMIT-ercot215-counterpart-decontamination-2026-08-17.md`),
+pre-registering the inherited ercot-213 gates + G-EXACT, the expected G-C3c
+kill, and the owner's advance promotion authorization (the ercot-214 close:
+"If structural integrity improves but gates regress that may still be a
+keeper" — re-confirmed live mid-session). Keeper at start
+`2026-08-16-ercot213-arm-pubanchor`; **at end
+`2026-08-17-ercot215-arm-decontam` (PROMOTED)**.
+
+**The lever (ercot-214's, unchanged, zero fitted scalars):**
+`ercot_ordc_adder_family_counterpart` — inside the armed published-anchor
+branch, `gamma' = min(gamma_all, gamma_ordc_family)`; the AS-product
+shortfall-ramp term (VOLL/12 = $416.67/step, 808/808-hour exact
+decomposition) stops being exported into the written RT price, which the
+2023-25 design cannot emit (spec.py `ercot_ordc_only_scarcity`: a
+product-vs-capability squeeze triggers RUC, not a price). THIRD leg on
+`ercot_multiproduct_as` (nyiso-121 census), matching CLI flag, provably
+inert alone (7 new tests), loud ValueError without the family stack.
+
+**G-EXACT (the added build gate) PASSED IN FULL:** the armed member
+reproduces the ercot-214 pre-solve counterfactual EXACTLY — spurious hour
+SETS (17→9 = ctl set / 13→11 = ctl set / 0→1 h3355 un-masked), incidence
+564/175/37 // 177/36/3 // 67/5/0, max adders $4,701.14 (the VOLL-cap hour,
+untouched) / $355.98 / $14.61 to the cent, G-CAP 0/26,280 — and all 9
+non-system sidecars byte-identical to the keeper's bundle. **G-REPRO′ in its
+strongest form: the control reproduces the keeper 12/12 sidecars
+sha256-identical** (no ERCOT-effective HEAD drift), official determination
+reproduced exactly. G-SHED/G-SPAN/G-COAL148/G-OWNER/G-DOF (8/6)/G-D2 all
+PASS. **G-C3c KILLS as pre-registered** (123→67/181, 33→22/53, 3→1/31) ⇒
+mechanical verdict REJECTED-AS-ARMED, recorded unrewritten; promotion
+executed on the owner instruction over it (ercot-188/213 pattern, third
+application).
+
+**New keeper official scorecard:** NOT-YET, fail set **{C3a-2023 −40.1 %,
+C3b-2023 NRMSE 0.736}** (widened from {C3b-2023} BY DELIBERATE
+DECONTAMINATION — the phantom channel had been carrying those criteria);
+C3c re-ledgered CAVEAT ×3 (68/181, 22/53, 1/31, full magnitude, chains
+carried from ercot-204/213 with the ercot-215 re-opening carry); C6 PASS on
+the fresh attestation (`gen_ercot215_attestation.py`); C1 16/16, C2, C4, C8
+PASS. Deep-adder incidence now at the published order (2023: 37 vs 17
+published h > $100). ISO posture per R-A: NOT-YET held as the honest public
+claim, both failing criteria the closed 2023 model-class object (Q-B: no
+C3a-2023 spend; R-A: re-charter off the 2023 price criteria), C3c the
+ledgered model-class caveat.
+
+**Registered with payloads** (`2026-08-17-ercot215-{ctl-headbase,arm-decontam}`,
+1.6 MB payloads over `git push`, blob-verified); keeper shard + status
+rebuilt (`build_status.py --iso ERCOT`); `calibration-keeper-auditor` PASS
+exit 0, no repairs; matrix 28c third-leg + 28b cell verdict + shard
+keeper/gates re-stamp + §5.1 prose header re-stamp, `check_mechanism_matrix.py`
+exit 0 clean. Solve env: the keeper's true env pinned in a venv OUTSIDE the
+project (`/root/ercot215-venv`; the ruff-hook uv-resync trap). gtc-limits
+regenerated (13,452/15,273/21,864 rows, matching ercot-213).
+
+**Mid-session events, disclosed:** (1) PR #4064 (this branch at its
+pre-registration state) was merged to main and the branch deleted while the
+armed member solved; the remaining work was rebased onto the refreshed main
+and re-pushed on the same branch name per the standing merged-PR protocol.
+(2) `check_registry_payload_parity.py` carries one PRE-EXISTING unrelated
+failure (`caiso200_h0_control`, the caiso-200 landing) — flagged for the
+CAISO lane, not touched (rule 25). (3) Roster: ERCOT now holds 5 runs;
+whether `2026-08-16-ercot213-ctl-headbase` and
+`2026-08-15-ercot204-rule26-delete` stay under the retention directive is
+FLAGGED for the owner (FINDING §5), not decided quietly.
+
+**Governance:** Q-B FINAL + R-A honoured (all 2023 movement side-effect
+reported at full magnitude, never a basis); ercot-206 B0, ercot-211 Door A,
+V0/ercot-201, 28a all honoured; rule 22 {2023,2024,2025} only, no marker
+sought; rule 25 ERCOT only; rule 27 blob-verified pushes. The G-SPUR
+band-top blindness stays flagged for a future owner gate revision only.
+Full record: `docs/FINDING-ercot215-counterpart-decontamination-2026-08-17.md`.
+
+**Session consumed the ercot-215 shorthand. Next shorthand: ercot-216**
+(ercot-199 remains unclaimed).
