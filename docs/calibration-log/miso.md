@@ -7165,3 +7165,71 @@ the branch via the API path with blob-sha verification
 (`.claude-transfer/miso159/`, deleted at close-out), and the bundle/payload
 push is executed by a follow-on session with working git against the
 committed hashes. Next number: **miso-160**.
+
+## miso-160 (2026-08-16) — the owner adjudicates outage-record provenance, and the measured seasonal forced-outage shape replaces the 0.30 heuristic (`summer_wefor_share_override = 1.0599`) — **KEEPER**, promoted by the session's own pre-registered rule; C3b off its knife edge in all three years
+
+**Provenance (rule 28(a)).** The miso-159 queue named one lever:
+`SUMMER_WEFOR_SHARE = 0.30`, gated on the owner's data-provenance decision
+(miso-157 §11 item 2). **The owner took it this session**
+(`docs/handoffs/miso-outage-grain-data-ask-2026-07.md` §9): MISO's published
+ticket-based MOM record adjudicates the forced-outage seasonal shape; CAMPD is
+inadmissible for outage measurement (output-derived — the standing ask's own
+§2A ground; phantom-outage bias; **zero** CT_PEAKER windows); and the ask's
+§2a accepts **fleet grain** for the one fleet-uniform deliverable (no
+attribution invented; miso-85/87 closures untouched).
+
+**PREREG** `PREREG-miso160-summer-wefor-measured-share-2026-08-16.md` pushed
+at `a96702b` (blob `57d2b8b1`, byte-verified against the fetched remote ref)
+**before** the construction was built or the derive computed.
+
+**The construction.** `ScenarioConfig.summer_wefor_share_override` (default
+`None` byte-inert; cache-key + pinned-defaults registered same commit; default
+key verified unmoved). Derived value **R\* = 1.0599** — pooled 2023–2025
+Jun–Sep/annual ratio of the record's unplanned offline MW
+(Derated+Forced+Unplanned, the GADS EFOR-family basis), per-year
+**1.1039/0.9671/1.1086**, V1-reproducing miso-157 to ≤0.0004. **The measured
+sign REVERSES the heuristic** — summer forced-outage rates sit above annual.
+Zero residual DOF added (ledger 30 → 31 / 2 residual; the open rule-20 item on
+the share is RETIRED for MISO; a PREREG §2 bookkeeping miss — "residual count
+falls 2→1" — is disclosed: the share was prose-tracked, not a counted entry).
+
+**Phase-0/1 gates.** V1 3/3; **V2 BIT-IDENTICAL control** (0 of 70,080 price
+cells differ vs the committed keeper, every year — strongest V2 on record);
+V3 3/3; V4a winter invariance exactly 0.0; V4b ≤1.3e−17; V5/S-CACHE PASS.
+**S-CONSERVE fired once — the instrument's own leap-2024 mask defect** (240
+mis-labelled hours vs the model's fixed non-leap clock), rebuilt on the
+production clock, R\* unchanged; disclosed, the fifth consecutive MISO session
+where the trap discipline caught the instrument rather than the model.
+
+**The A/B** (arm − control). Reach: Jun–Sep capability **−3.46/−3.59/−3.67
+GW** (2025: CT_PEAKER −1.54, ST_GAS −0.95, CC_REGULAR −0.94). Prices:
+**+3.83/+4.18/+3.98 % Jun–Sep**, +0.68/+0.68/+0.69 % annual — direction
+disclosed in advance, none claimed as skill; **P-3's magnitude bands missed
+high** (2025 registered +2.5–9 %) and the miss is attributed: summer-only
+removal into a ~6.3 GW cushion that returns capability to the shoulder.
+**C3a −0.1/−5.4/−13.1 % → +0.6/−4.8/−12.5 %** (2025 improves +0.60 pp, still
+FAILS, full magnitude). **C3b 0.080/0.113/0.200 → 0.079/0.109/0.181 — off the
+knife edge miso-159 accepted, improved in all three years.** C3c ledgered,
+toward the actuals (0/5/1 → 3/6/4 h vs 30/37/88). C1 16/16 (free 12/12), C2,
+C4, C6 attested, C8 PASS (ST_GAS grounded share falls 47.4→46.2 % in 2025).
+
+**Decision — PROMOTED per PREREG §7(a), no escalation** (no criterion-year
+flip; C3a-2025 +0.60 pp ≥ 0.5; V1–V5 PASS, S-2023/S-TAIL silent): keeper →
+`2026-08-16-miso-160-wefor-shape`, on rules 1/14. Determination **NOT-YET on
+C3a-2025 alone — membership unchanged, magnitude the smallest on record.**
+Both runs registered; matrix cell `O → K`; shard + §5.4 stamps in-session.
+
+**Where this leaves the lane.** (1) The availability channel of the miso-156
+identity object is now adjudicated and armed; the C3a-2025 residue (−12.5 %)
+points at the **C3c-adjacent above-cost/tail half** (18–47 % basis-sensitive,
+miso-156 §4.2) — further cushion levers need a new measured identification and
+their own charter. (2) The mechanism is exportable per rule 25 (each lane
+derives its own share from its own admissible record; PJM holds a candidate).
+(3) **Session infra, disclosed:** no git credentials; all text artifacts via
+the API path with per-blob verification; the implementation as the verified
+3-piece patch under `.claude-transfer/miso160/`; binary payloads (runs
+`*.js`, hourly parquet, bench) manifested for a follow-on git session — the
+dashboard registration is not fully delivered until that push lands.
+
+Rule 22: 2023–2025 only; freeze untouched; no marker touched. Next number:
+**miso-161.**
