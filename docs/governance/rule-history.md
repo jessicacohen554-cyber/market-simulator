@@ -292,11 +292,78 @@ five-way audit of the `ScenarioConfig` inventory, the six keeper
 `run_config.json`s, the per-ISO calibration logs, and the forecast program
 board, against the 2026-07-27 keeper roster.
 
+### 7.1 Owner rulings adjudicated *through* the matrix — the DO-NOT-REDO decisions
+
+Rule 28's `G` state ("governance-refused/closed") is the matrix's record of a
+mechanism the program has decided not to build. Where that decision is the
+owner's, it is logged here so a successor session reads the *grounds* and not
+only the letter — a `G` re-opened on the wrong grounds is the failure mode the
+DO-NOT-REDO discipline exists to prevent.
+
+- **2026-08-17 — MISO C3a-2025 closed as a model-class limit** (session
+  miso-163; the mechanism is `ordc_scarcity_overlay`, MISO cell `G`). The MISO
+  keeper `2026-08-16-miso-160-wefor-shape` stood at `NOT-YET` on **C3a-2025
+  alone** (−12.5 % against the ±10 % bar). miso-161 exhausted the availability
+  channel at admissible grain and escalated with two shapes on the record;
+  miso-162's read-only recon then changed the question, and **both halves were
+  put to the owner**:
+  **(i)** the stated Shape-1 *data* blocker was **false** —
+  `data/raw/MISO-AS/asm_rtmcp_zonal_{2023,2024,2025}.parquet` already carry
+  hourly zonal RT ASM MCP by product, so an RCPF/ORDC binding-record intake
+  needed **no data ask**; **(ii)** the mechanism that intake would feed was
+  **already cell `G` on STRUCTURAL grounds** (`docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md`
+  §1–§4: MISO's ORDC is a Monte-Carlo LOLP construct pricing 10–30 minute
+  probabilistic risk a perfect-foresight hourly LP does not contain), and §1
+  measures it **inert** — in the 88 actual 2025 RT>$200 hours the keeper clears
+  $50 median / $83 p90 / $157 max, the reserve adder fires 2 of 88, deliverable
+  reserve holds ≥11 GW against a ~4.4 GW requirement, load-shed 0 h. Chartering
+  it would therefore have been a **rule-28 DO-NOT-REDO collision AND provably
+  inert**.
+  **The owner ruled to CLOSE THE LANE**, selecting the option put as *“Shape 2 —
+  close the lane: close C3a-2025 as a model-class limit on the ERCOT C3a-2023
+  (Q-B) precedent”*, against a stated alternative to charter the intake anyway.
+  *(Provenance note, for honesty about the word “verbatim”: the ruling was given
+  as a selection between two written shapes, not as free-form prose, so what is
+  quoted above is the option text the owner selected — there is no owner
+  sentence to quote beyond it. The question as put, including both halves and
+  the recommendation, is reproduced in
+  `results/calibration/FINDING-miso163-c3a-lane-closure-2026-08-17.md` §2–§3.)*
+  The precedent is **ERCOT C3a-2023 (Q-B)**
+  (`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`):
+  *“STOP — ERCOT stands at NOT-YET on C3a-2023 as a model-class limit, and the
+  program stops spending on it … this is a **budget decision, not a rubric
+  decision**. The determination stays NOT-YET; C3a-2023 stands a MODEL MISS at
+  full magnitude; no ledger text moves.”*
+  **What the ruling does and does not do.** It stops MISO sessions being spent
+  on C3a-2025; it does **not** touch the rubric, reclassify the criterion, or
+  move any ledger text. C3a has not been ledgerable since v3.1 and this closure
+  does not seek to make it so: the determination stays `NOT-YET`, the miss is
+  reported at full magnitude as a `[MODEL MISS]`, and C3c remains the single
+  ledgered caveat. **No solve, no promotion, no registration** — the keeper is
+  unchanged and the matrix cell stays `G` (re-affirmed, not re-minted).
+  **The re-opening test, narrowed by this ruling:** new evidence must defeat
+  external-validation **§1–§4 specifically**. A data-availability argument is
+  expressly **not** such evidence — (i) established that the data is present,
+  which is precisely why it cannot carry a re-charter.
+  **Companion precedent, landed the same day:** §4's CAISO entry (session
+  caiso-201, owner ruling Q1) rested that lane at `NOT-YET` on the same posture
+  — an in-model queue exhausted by measurement, a load-bearing criterion
+  genuinely failing, and a rubric amendment that would have ledgered it already
+  declined. Read together they establish the shape: **an exhausted lane whose
+  load-bearing criterion genuinely fails rests or closes at `NOT-YET`; it does
+  not ledger, does not lower a band, and does not declare.** The two differ only
+  in what re-opens them — CAISO's on new funded data, MISO's on evidence
+  defeating a specific structural finding — not in the posture taken. Surfaces:
+  `docs/mechanism-testing-matrix.md` §5.4 queue header,
+  `docs/calibration-log/miso.md` (miso-163),
+  `docs/codebase-site/data/mechanism-matrix/MISO.js`.
+
 ## 8. Changes to this file
 
 | date | change |
 |---|---|
 | 2026-08-17 | §4: recorded the first lane RESTED at `NOT-YET` (CAISO, session caiso-201, owner ruling Q1). No rule text changed — the entry exists so the precedent that an exhausted lane with a genuinely failing load-bearing criterion *rests* rather than ledgers or declares is citable. |
+| 2026-08-17 | Added §7.1: owner rulings adjudicated through the matrix, seeded with the 2026-08-17 MISO C3a-2025 model-class closure (session miso-163, mechanism `ordc_scarcity_overlay` cell `G`). Records the ruling, its two-half basis, the ERCOT (Q-B) precedent, and the narrowed re-opening test. No norm added, reworded or dropped — rule 28's text is unchanged and this is a decision record, not a rule. |
 | 2026-07-27 | Added §7: rule 28 `[R-MECH-MATRIX]` (cross-ISO mechanism testing matrix) — origin and canonical file locations. "Changes to this file" renumbered §7 → §8 (no external references cited §7). |
 | 2026-07-26 | Added §6: the 2026-07-22 history rewrite orphaning pre-rewrite bundle `git.sha` provenance (owner decision B close-out) — no SHA mapping saved, replay/goldens unaffected (`git_sha` in both ignore sets), the `--reuse-solved` unresolvable-SHA refusal intentional and load-bearing. "Changes to this file" renumbered §6 → §7 (no external references cited §6). |
 | 2026-07-25 | §5: recorded the ≥300-line push deadlock (rule 27 + API-only leaving no compliant path) and the owner's per-commit `git push` waiver that landed wave 4C. Per-commit, not a standing exception. |
