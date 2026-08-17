@@ -1,7 +1,11 @@
 # STANDING DATA ASK (opened 2026-07-26, miso-90) — MISO generation-outage data at UNIT or FUEL grain
 
 **Status:** OPEN for the UNIT/FUEL-grain datum (§1(a)'s year-specific summer
-step still has no class-resolved source). **The §2a deliverable — the
+step still has no class-resolved source) — **and as of miso-164 (2026-08-17) the
+only remaining route is candidate 4, the MISO stakeholder data request, which is
+a human/owner action rather than a chartered session: candidates 1, 2 and 3 are
+all now closed or downgraded ON EVIDENCE (§8). This is therefore a HARD DATA
+BLOCKER for any further MISO summer-availability work.** **The §2a deliverable — the
 `SUMMER_WEFOR_SHARE` replacement — is AMENDED and UNBLOCKED by owner decision
 2026-08-16 (§9 below): the fleet-uniform scalar may be replaced at the
 parameter's own fleet-uniform grain from the MISO published record, which the
@@ -266,15 +270,58 @@ Direct MISO PRA postings could not be checked: `misoenergy.org` and
 reachable and the PRA results are not). Candidate 3 stays **open but
 downgraded** — as published it fails C and E.
 
-### Candidate 1 — NERC GADS: **UNRESOLVED, explicitly not refuted**
+### Candidate 1 — NERC GADS: **CLOSED ON EVIDENCE 2026-08-17 (miso-164) — FAILS C AND D**
 
-`nerc.com` serves the GADS Reports page; the public product family is
-*Generating Unit Statistical Brochures*. The brochure links are JS-rendered and
-did not resolve from this environment — **Chromium cannot traverse the session's
-agent proxy at all** (`example.com` fails with `ERR_CONNECTION_RESET`
-identically to any other host, with and without explicit proxy args). §3's prior
-— that these are multi-year rolling class averages and therefore fail C — is
-**untested and is NOT recorded as refuted here.**
+**Superseded status (kept for the record):** *"UNRESOLVED, explicitly not
+refuted"* — the brochure links are JS-rendered and did not resolve from this
+environment, **Chromium cannot traverse the session's agent proxy at all**
+(`example.com` fails with `ERR_CONNECTION_RESET`), so §3's prior — that these are
+multi-year rolling class averages and therefore fail C — was *untested*.
+
+**Resolved at miso-164 (2026-08-17). The browser was never required, and the
+prior was half-wrong but its CONCLUSION stands.** Evidence:
+`results/calibration/FINDING-miso164-gads-candidate1-resolved-2026-08-17.md`.
+
+* **The Chromium blocker is REAL and UNCHANGED** — re-tested 2026-08-17,
+  `example.com` still returns `ERR_CONNECTION_RESET` through the agent proxy.
+  **But it is irrelevant:** the Reports page embeds its file listing as JSON in
+  the served HTML, so plain `curl` enumerates every brochure URL, and the
+  `.xlsx` files download directly from
+  `https://www.nerc.com/globalassets/programs/rapa/gads/{conventional,reports}/`.
+  **Delete the "a session chartered to finish candidate 1 needs working browser
+  egress" scheduling note — no browser is needed.**
+* **§3's stated reason is REFUTED for brochures 1–2, confirmed for 3–4.**
+  Brochures **1** (Units Reporting Events) and **2** (All Units Reporting) are
+  **single-year** files, one per year, 2014–2025 — including 2023, 2024 and 2025.
+  It is brochures **3** and **4** that are the 5-year rolling windows
+  (2019–2023, 2021–2025). So the "multi-year rolling average" objection does not
+  apply to the products that matter.
+* **It still FAILS C**, on the half of C that is load-bearing here: the
+  brochures are **ANNUAL** (`Start` = `End` = the year, statistics keyed on
+  `Unit-Years`; verified 76 rows, single distinct year value). There is **no
+  season/summer resolution of any kind**, and §1(a) is entirely a summer
+  *change* between years. C requires year-specific **and** season-resolved.
+* **It also FAILS D** — the brochures are **NERC-wide North-America
+  aggregates** with no regional cut, where D requires MISO footprint.
+* **It WOULD have cleared A, B and the year-half of C.** Capability-grain from
+  GADS event reporting (clears A); resolved by prime mover × primary fuel ×
+  size band — `FOSSIL {Coal, Gas, Lignite, Oil, Oil/Gas} Primary`,
+  `COMBINED CYCLE`, `GAS TURBINE`, `JET ENGINE`, `DIESEL`, `HYDRO`,
+  `PUMPED STORAGE`, `NUCLEAR {BWR,PWR,CANDU}`, `GEOTHERMAL`, each × 8 size
+  bands (clears B, and maps cleanly onto the model's class taxonomy);
+  cause-separated with the full GADS column family (`FOH/POH/MOH/SEPO/SEMO/UAH`,
+  `FOR/EFOR/EFORd/EAF/AF`, and the weighted `WFOR/WEFOR/WEAF/WSF/WAF` —
+  literally the `WEFOR` this ask's §2a parameter is named for).
+* **Decisive corroboration that intake would be INERT:** the model **already
+  consumes exactly this product**. `constants.py::EFORD` (currently
+  lines 2279–2286, comment *"Source: NERC GADS"*) carries the annual class
+  EFORs — `gas_cc 0.05 / gas_ct 0.06 / gas_st 0.07 / coal 0.08 / nuclear 0.03 /
+  oil 0.10 / biomass 0.08`. Intaking the brochures re-imports the statistical
+  fallback that is already in place, at a *coarser* footprint, with no seasonal
+  content — precisely the outcome §2's own note predicted (*"Re-importing
+  another static class average would satisfy B and D but fail C and would move
+  nothing"*). **No corpus was created and none should be:** this is a
+  no-intake closure, so nothing lands under `data/raw/`.
 
 ### Candidate 4 — MISO data request: unchanged
 
@@ -285,9 +332,15 @@ exactly rather than hoping an existing product happens to."
 ### Net
 
 No source clears. The ask stays **open**, with candidate 2 closed, candidate 3
-downgraded, and candidate 1 blocked on an environment limitation rather than on
-evidence. **A session chartered to finish candidate 1 needs working browser
-egress** — worth knowing before one is scheduled.
+downgraded, and — **as of miso-164, 2026-08-17 — candidate 1 CLOSED ON EVIDENCE
+(fails C on seasonality and D on footprint; annual NERC-wide class averages the
+model already consumes as `constants.py::EFORD`).** The former note that *"a
+session chartered to finish candidate 1 needs working browser egress"* is
+**WITHDRAWN**: the Chromium/proxy blocker is real and unchanged, but no browser
+is required — the Reports page embeds its file listing as JSON and plain `curl`
+retrieves every brochure. **Candidate 4 (MISO stakeholder data request) is now
+the ONLY route left standing**, and it is a human/owner action, not a session
+that can be chartered here.
 `docs/handoffs/xiso-4-queue-ratchet-2026-08-04.md` §3(b).
 
 ## 9. Owner decision, miso-160 (2026-08-16) — provenance adjudicated for the §2a deliverable; fleet-grain amendment

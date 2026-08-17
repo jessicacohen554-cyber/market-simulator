@@ -7362,3 +7362,70 @@ verdict), and `docs/governance/rule-history.md` §7/§8.
 Evidence: `results/calibration/FINDING-miso163-c3a-lane-closure-2026-08-17.md`.
 Next number: **miso-164** — but note there is **no chartered MISO lane** for it
 to pick up.
+
+## miso-164 (2026-08-17) — OWNER RE-CHARTER after miso-163. The GADS data ask (candidate 1) is RESOLVED ON EVIDENCE and it FAILS: no browser was ever needed, the brochures ARE year-specific, but they are ANNUAL and NERC-WIDE and the model already consumes them as `constants.py::EFORD`. Candidate 4 is the only route left and it is not a session. NO SOLVE, keeper UNCHANGED
+
+**Keeper UNCHANGED: `2026-08-16-miso-160-wefor-shape`.** No solve, no run
+registered, no `ScenarioConfig` field, no cell verdict minted, **no corpus
+created** (a no-intake closure — nothing lands under `data/raw/`). Rule 15
+`[R-DASHBOARD]` not engaged. Rule 22: no year solved or scored; freeze untouched.
+
+**Charter.** The owner re-chartered MISO after the miso-163 closure ("needs more
+work"), and rejected a frontier reading — correctly. miso-163 named three grounds
+for "not frontier"; ground (c) was the two standing data asks, of which the
+outage-grain ask's **candidate 1 (NERC GADS)** was flagged *"UNRESOLVED,
+explicitly not refuted"* with a warning that pursuing it *"needs working browser
+egress."* This session tested that instead of scheduling around it.
+
+**(1) The stated blocker is REAL but IRRELEVANT.** Chromium still cannot
+traverse the agent proxy — re-tested 2026-08-17, `example.com` returns
+`ERR_CONNECTION_RESET` from the pre-installed browser. **But no browser is
+needed:** the GADS Reports page embeds its file listing as JSON in the served
+HTML, so one `curl` enumerates **47 brochure URLs** with no JS, and the `.xlsx`
+files download directly. **The scheduling note is WITHDRAWN.**
+
+**(2) §3's stated reason is HALF-WRONG, its conclusion stands.** Brochures **1**
+(Units Reporting Events) and **2** (All Units Reporting) are **single-year**
+files, 2014–**2025**, covering 2023/24/25 individually — the "multi-year rolling
+average" objection is **REFUTED** for them (it holds only for brochures 3–4, the
+5-year windows). Verified on brochure-1-2023: sheet `2023-01`, 76 rows,
+`Start`=`End`=`2023`, one distinct year.
+
+**(3) It FAILS anyway — C on seasonality, D on footprint.** A **CLEARS**
+(capability-grain GADS event reporting). B **CLEARS** (prime mover × primary fuel
+× 8 size bands: `FOSSIL {Coal, Gas, Lignite, Oil, Oil/Gas} Primary`,
+`COMBINED CYCLE`, `GAS TURBINE`, `JET ENGINE`, `DIESEL`, `HYDRO`,
+`PUMPED STORAGE`, `NUCLEAR {BWR,PWR,CANDU}`, `GEOTHERMAL`; cause-separated
+`FOH/POH/MOH/SEPO/SEMO/UAH` with the full `FOR/EFOR/EFORd/EAF` and weighted
+`WFOR/WEFOR/WEAF` family — **`WEFOR` is literally what §2a's parameter is named
+for**, which is why this needed measuring rather than asserting). **C FAILS** on
+the load-bearing half: the brochures are **ANNUAL** (`Unit-Years`), with **no
+month/season/summer split of any kind**, and §1(a) is entirely a summer *change
+between years*. **D FAILS**: NERC-wide North-America aggregates, no regional cut.
+
+**(4) Decisive corroboration that intake would be INERT.** The model **already
+consumes this exact product**: `constants.py::EFORD` (lines 2279–2286, comment
+*"Source: NERC GADS"*) carries the annual class EFORs `gas_cc 0.05 / gas_ct 0.06
+/ gas_st 0.07 / coal 0.08 / nuclear 0.03 / oil 0.10 / biomass 0.08`. Intake
+re-imports the fallback already in place, at a **coarser** footprint, with no
+seasonal content — exactly as §2's own note predicted (*"would satisfy B and D
+but fail C and would move nothing"*); the only correction is that GADS fails D
+too.
+
+**CONSEQUENCES.** Candidate 1 **CLOSED ON EVIDENCE, against**; candidate 2 was
+already closed and candidate 3 downgraded, so **candidate 4 (the MISO
+stakeholder data request) is the ONLY route left standing — a human/owner
+action, not a chartered session. This is a HARD DATA BLOCKER on any further MISO
+summer-availability work.** Frontier remains **NO** on narrower grounds: this
+closes ground (c) for candidate 1, but **(a)** the RCPF/ORDC intake was
+*declined as predicted-inert* and declined-not-tested is not "tested everything
+we could have", and **(b)** the C3a-2025 closure was explicitly *"a budget
+decision, not a rubric decision"* — both untouched, and candidate 4 is itself
+still an open untested object. Determination unchanged: **NOT-YET on C3a-2025
+alone (−12.5 %)** at full magnitude, C3c the single ledgered caveat.
+
+Evidence: `results/calibration/FINDING-miso164-gads-candidate1-resolved-2026-08-17.md`
+(with the sha256 identity record for the two brochures inspected; deliberately
+not committed, per the no-intake closure). Surfaces stamped:
+`docs/handoffs/miso-outage-grain-data-ask-2026-07.md` (status header, candidate 1,
+§8 Net). Next number: **miso-165.**
