@@ -5,7 +5,7 @@
     "MARKET_SIM_WARMSTART_XYEAR": "0"
   },
   "git_dirty": false,
-  "git_sha": "ec413d20",
+  "git_sha": "ebd31a9",
   "hash_scheme": "sha256-of-canonical-column-float64-bytes",
   "highspy_version": "unknown",
   "keepers": {
@@ -49,6 +49,62 @@
       },
       "hours": 8760,
       "keeper_id": "2026-08-15-ercot204-rule26-delete",
+      "recorded_flag_count": 247,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "NEISO": {
+      "bundle": "results/calibration/neiso93_envelope_A",
+      "content_hashes": {
+        "btm.parquet": "30e617f6492cc201e0cfc976b286e76484548e4d3203dc81f6709d8f55a207fe",
+        "dispatch/2023_P1.parquet": "cf778ae5127820e860dd00e8212427c452836f7c382fa190c0fda396eb2a5ef9",
+        "dispatch/2023_P2.parquet": "e345bc83fb9b5c701cc8ea1c7f09c3898ec533dd2687048bba31d552f1e05a6f",
+        "dispatch/2024_P1.parquet": "9d455381c3a837e830f13de488226f9079b598ed01762c4d328b62b8382385f8",
+        "dispatch/2024_P2.parquet": "7cad8dfd479bdcfd802fbc5e0334e79b99b1eecd8288418b00ca0b04ebfee003",
+        "dispatch/2025_P1.parquet": "69bd4745b8f10cdff99c55d2ac999428633910c5d295c6926fc0a09df2e33b60",
+        "dispatch/2025_P2.parquet": "c88c212546dc676497630b52ac3ebb43883325059affd1b11d9baca3298f4655",
+        "flows.parquet": "a36d9ad70f20726cdc2946f4014977ad0ea8a34ac5d5969f58288b29086799cc",
+        "storage.parquet": "ef6a6b36edc06454f27069a2a0ce012afb927cdf8a2e6bd61efd54acd0736e7d",
+        "system.parquet": "3de2a54ca0ae4b301a9ac45d48baf5f035f84cb27d8c4abb55ca17e54d7b7ef4"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "ercot_ordc_adder_published_anchor",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "persist_p0_commitment",
+        "plant_tranche_config",
+        "reliability_floor_plant_exclusions",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "ercot_ordc_adder_published_anchor",
+          "reliability_floor_plant_exclusions"
+        ],
+        "meta_keeper_only": [
+          "nyiso_solar_registry_cod_dates"
+        ],
+        "meta_matched": 256,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "caiso_ps_plant_params",
+          "commission_year_cod_fallback",
+          "ercot_reserve_supply_cap_net_credits",
+          "reliability_floor_plant_exclusions"
+        ],
+        "scenario_config_matched": 713
+      },
+      "hours": 8760,
+      "keeper_id": "2026-08-14-neiso-93-envelope",
       "recorded_flag_count": 247,
       "years": [
         2023,
