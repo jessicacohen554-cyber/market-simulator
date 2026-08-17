@@ -1,6 +1,6 @@
 # Changelog
 
-## 2026-08-17 — BLOAT-S2: Stage-2 (a)-only untrack executed — six evidence passes, −444.5 MiB / 144 files at tip; run_calibration.py run_year dead-flag repaired
+## 2026-08-17 — BLOAT-S2: Stage-2 (a)-only untrack executed — six evidence passes, −444.5 MiB / 144 files at tip
 
 Executes the signed O2 grant (BLOAT-3 card, 2026-08-16). Six §4.8
 BLOAT-A-grade evidence passes (`docs/FINDING-bloat-s2-evidence-passes-
@@ -25,8 +25,9 @@ baseline run also surfaced a pre-existing SyntaxError at origin/main —
 breaking collection of 32 test modules and every calibration-solve import.
 Twin fixes on main then collided and dropped the kwarg's `with_overrides`
 application entirely (the restore brought back only the signature), leaving
-the flag silently ignored by `run_year`; this PR restores the application
-block (FINDING §8 addendum). CLAUDE.md corpus
+the flag silently ignored by `run_year`; both defects were re-fixed upstream
+mid-flight (the #4044 merge restored the wiring), so this PR ships no
+run_calibration.py delta — FINDING §8 carries the genealogy. CLAUDE.md corpus
 list updated; bloat plan §9 BLOAT-3 annotated EXECUTED; release-plan §8
 entry. Post-merge proof: the first weekly golden-tier cron green.
 

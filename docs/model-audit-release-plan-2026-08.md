@@ -1419,8 +1419,8 @@ your branch when done.
   surfaced main's **pre-existing `run_calibration.py` breakage**
   (#4036 merge-race duplicate `reliability_floor_plant_exclusions` kwarg —
   collection of 32 test modules and every calibration-solve import broken;
-  after main's twin fixes collided and dropped the kwarg's `with_overrides`
-  application, this PR restores it — FINDING §8 + addendum). Post-merge proof = the
+  the twin-fix collision then dropped the kwarg's `with_overrides`
+  application; both re-fixed upstream mid-flight — FINDING §8 genealogy). Post-merge proof = the
   first weekly golden-tier cron green after merge (D3 — no dispatch spent).
   Under every verdict the §4.7 holdout intakes, `ercot/cdr.*.zip` and the
   §4.2 2023 DAM quarters were never touched; the DAM-2024+ subset stays OUT

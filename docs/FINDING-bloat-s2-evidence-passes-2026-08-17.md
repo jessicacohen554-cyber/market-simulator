@@ -281,8 +281,11 @@ is gone while `run_calibration_full.py` still passes the flag through,
 making the nyiso-140 arming a silent no-op via that path (the dead-flag
 class the caiso-98 lesson forbids). This branch's original dedup commit was
 auto-dropped at rebase (contents already upstream); a follow-up commit
-restores the missing application block, matching every sibling kwarg's
-pattern.
+restored the missing application block, matching every sibling kwarg's
+pattern. **Final state:** the #4044 miso-160 merge (`ce7ce8e`) then restored
+the same wiring on main, so at the final rebase (base `bad0807`) that commit
+auto-dropped too — the branch ships NO `run_calibration.py` delta, and this
+section stands as the discovery/genealogy record.
 
 ## 9. Skip-when-absent verification (§0ar-3(c) / card §5(c))
 
@@ -342,7 +345,17 @@ red, reported to the owner** — either merge the branch tail (MISO lane
 session) or prune the two orphan sidecars. `audit_keepers --check` PASS 0/0
 and `check_bundle_retention` PASS are unaffected, and this PR adds no parity
 item (verified: the failure list at this branch's HEAD is identical to
-origin/main's — the two miso-160 rows only).
+origin/main's — the two miso-160 rows only). **RESOLVED UPSTREAM while this
+PR was in flight:** PR #4044 merged the branch tail (payloads, bundles and
+the mechanism code) at `bad0807`, and the parity gate is GREEN at the final
+rebase base — re-verified by this session's closing gate run. This section
+stands as the diagnosis record. **A successor instance appeared with the
+same merge wave:** at `bad0807` the caiso-200 lane's `caiso200_h0_control`
+bundle (landed `c39de54`, the lane's live promotion work) maps to no
+retained sidecar, so `check_bundle_retention` now fails on IT — again
+pre-existing on main, again another lane's in-flight artifact (register /
+prune / allowlist is the caiso-200 session's call, not this PR's). Same
+disposition: reported, not touched.
 
 ## 11. Manifest + ignore semantics assertions (per payload class, in-PR)
 
