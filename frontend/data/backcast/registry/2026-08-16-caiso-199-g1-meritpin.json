@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-16-caiso-199-g1-meritpin",
+  "label": "caiso 199 g1 meritpin",
+  "date": "2026-08-16",
+  "shorthand": "caiso-199-g1-meritpin",
+  "definition": "caiso-199 g1 ARM: identical replay on the landed merit-panel-scope-pinned extract da33e509 (+158 facility-55077 Desert Star rows, strictly additive). PRECHECK-caiso199 section 3.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-16-caiso-199-g1-meritpin.js",
+  "bundle": "results/calibration/caiso199_g1_meritpin"
+}

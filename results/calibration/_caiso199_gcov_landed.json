@@ -1,0 +1,176 @@
+{
+ "iso": "CAISO",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "keeper": "caiso197_w2_r5",
+ "states": [
+  "CA",
+  "NV"
+ ],
+ "extract_sha256": "da33e509465911341ba0867aefe02214f2e8ccb666ef86747e0e7ad8b47c86bb",
+ "instrument": "LANDED instrument \u2014 data/raw/campd-unit-outages-CAISO.csv at sha256 da33e509.., the merit-panel-scope-pinned Desert Star extract landed by caiso-199 (no --extract override; the probe reads data/raw itself). PRECHECK-caiso199-merit-panel-scope-2026-08-16.md \u00a74 post-landing no-LP obligation.",
+ "per_class": {
+  "CC_CHP": {
+   "class_capacity_mw": 1689.3,
+   "plants": 21,
+   "pop_outage_extract": {
+    "covered_capacity_mw": 1145.9,
+    "share": 0.678375,
+    "uncovered_plants": [
+     [
+      10213,
+      54.0
+     ],
+     [
+      10262,
+      2.7
+     ],
+     [
+      10342,
+      73.8
+     ],
+     [
+      50061,
+      2.1
+     ],
+     [
+      50216,
+      141.8
+     ],
+     [
+      50849,
+      10.0
+     ],
+     [
+      52109,
+      54.5
+     ],
+     [
+      54912,
+      24.0
+     ],
+     [
+      55084,
+      160.6
+     ],
+     [
+      57122,
+      6.7
+     ],
+     [
+      57584,
+      11.5
+     ],
+     [
+      58198,
+      1.8
+     ]
+    ]
+   },
+   "pop_cems_unitlevel_remap_aware": {
+    "covered_capacity_mw": 1073.9,
+    "share": 0.635703,
+    "uncovered_plants": [
+     [
+      10213,
+      54.0
+     ],
+     [
+      10262,
+      2.7
+     ],
+     [
+      10342,
+      73.8
+     ],
+     [
+      50061,
+      2.1
+     ],
+     [
+      50216,
+      141.8
+     ],
+     [
+      50849,
+      10.0
+     ],
+     [
+      50850,
+      20.0
+     ],
+     [
+      50851,
+      20.2
+     ],
+     [
+      52109,
+      54.5
+     ],
+     [
+      54912,
+      24.0
+     ],
+     [
+      55084,
+      160.6
+     ],
+     [
+      56356,
+      31.8
+     ],
+     [
+      57122,
+      6.7
+     ],
+     [
+      57584,
+      11.5
+     ],
+     [
+      58198,
+      1.8
+     ]
+    ]
+   },
+   "strict_share": 0.635703,
+   "bar": 0.95,
+   "g_cov_pass": false
+  },
+  "CC_REGULAR": {
+   "class_capacity_mw": 15284.8,
+   "plants": 28,
+   "pop_outage_extract": {
+    "covered_capacity_mw": 15284.8,
+    "share": 1.0,
+    "uncovered_plants": []
+   },
+   "pop_cems_unitlevel_remap_aware": {
+    "covered_capacity_mw": 15145.4,
+    "share": 0.99088,
+    "uncovered_plants": [
+     [
+      50541,
+      107.4
+     ],
+     [
+      50748,
+      32.0
+     ]
+    ]
+   },
+   "strict_share": 0.99088,
+   "bar": 0.95,
+   "g_cov_pass": true
+  }
+ },
+ "g_cov_surviving_groups": [
+  "CC_REGULAR"
+ ],
+ "frozen_value_note": "wefor_residual = 0.0 NOT recomputed \u2014 the caiso-187 record's arithmetic identity, invariant to this repair (X_c can only rise; residual_c = max(0, W_c - X_c)).",
+ "reproduces_candidate_measurement": true,
+ "note_vs_caiso198": "identical to _caiso198_gcov_remeasure.json, which measured the same numbers on the run-X CANDIDATE before it landed \u2014 confirming the landed instrument IS that candidate"
+}
