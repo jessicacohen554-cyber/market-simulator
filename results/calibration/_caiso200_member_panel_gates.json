@@ -1,0 +1,205 @@
+{
+ "precheck": "PRECHECK-caiso200-panel-membership-2026-08-17.md",
+ "pinned_shas": {
+  "committed_main": "da33e509465911341ba0867aefe02214f2e8ccb666ef86747e0e7ad8b47c86bb",
+  "committed_layup": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+  "runY_main": "cf156483e08dcd701bd89898ca14670d3c797eb09d9ad30efc7f51cb381390b5",
+  "runY_layup": "4ccae12ebcfada3d6b716d02f25d81faaa4cfd49fedb22685449581cc6d9ed37"
+ },
+ "baseline": {
+  "g_member": {
+   "derived": {
+    "NV": [
+     55077
+    ]
+   },
+   "expected": {
+    "NV": [
+     55077
+    ]
+   },
+   "pass": true
+  },
+  "legs": {
+   "a_member_scope_off": {
+    "member_scope_on": false,
+    "expected_main_sha256": "da33e509465911341ba0867aefe02214f2e8ccb666ef86747e0e7ad8b47c86bb",
+    "measured_main_sha256": "da33e509465911341ba0867aefe02214f2e8ccb666ef86747e0e7ad8b47c86bb",
+    "expected_layup_sha256": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+    "measured_layup_sha256": "1475a57738c6de656938c65eebdd0f197013cac9a435cd09571a72c735b7bd43",
+    "main_rows": 4719,
+    "layup_rows": 810,
+    "pass": true
+   },
+   "b_member_scope_armed": {
+    "member_scope_on": true,
+    "expected_main_sha256": "cf156483e08dcd701bd89898ca14670d3c797eb09d9ad30efc7f51cb381390b5",
+    "measured_main_sha256": "cf156483e08dcd701bd89898ca14670d3c797eb09d9ad30efc7f51cb381390b5",
+    "expected_layup_sha256": "4ccae12ebcfada3d6b716d02f25d81faaa4cfd49fedb22685449581cc6d9ed37",
+    "measured_layup_sha256": "4ccae12ebcfada3d6b716d02f25d81faaa4cfd49fedb22685449581cc6d9ed37",
+    "main_rows": 4710,
+    "layup_rows": 819,
+    "pass": true
+   }
+  },
+  "movement": {
+   "main_rows": 4710,
+   "layup_rows": 819,
+   "ds_rows_retained_in_main": 158,
+   "left_main": 9,
+   "entered_layup": 9,
+   "movement_key_symmetric": true,
+   "added_to_main": 0,
+   "left_layup": 0,
+   "mover_census": [
+    {
+     "facility_id": 422,
+     "facility_name": "Glenarm",
+     "unit_id": "GT3",
+     "plant_group": "CC_REGULAR",
+     "outage_start": "2023-03-14",
+     "outage_end": "2023-03-24",
+     "duration_days": 9.7,
+     "out_of_merit_share": 0.91
+    },
+    {
+     "facility_id": 422,
+     "facility_name": "Glenarm",
+     "unit_id": "GT4",
+     "plant_group": "CC_REGULAR",
+     "outage_start": "2019-01-01",
+     "outage_end": "2019-01-07",
+     "duration_days": 6.1,
+     "out_of_merit_share": 0.911
+    },
+    {
+     "facility_id": 422,
+     "facility_name": "Glenarm",
+     "unit_id": "GT4",
+     "plant_group": "CC_REGULAR",
+     "outage_start": "2023-03-17",
+     "outage_end": "2023-03-24",
+     "duration_days": 6.8,
+     "out_of_merit_share": 0.915
+    },
+    {
+     "facility_id": 422,
+     "facility_name": "Glenarm",
+     "unit_id": "GT5",
+     "plant_group": "CC_REGULAR",
+     "outage_start": "2018-01-04",
+     "outage_end": "2018-01-09",
+     "duration_days": 5.5,
+     "out_of_merit_share": 0.932
+    },
+    {
+     "facility_id": 10349,
+     "facility_name": "Yuba City Energy Center",
+     "unit_id": "2",
+     "plant_group": "CT_CHP",
+     "outage_start": "2020-03-26",
+     "outage_end": "2020-04-02",
+     "duration_days": 6.8,
+     "out_of_merit_share": 0.901
+    },
+    {
+     "facility_id": 10649,
+     "facility_name": "Bear Mountain Limited",
+     "unit_id": "GT1",
+     "plant_group": "CT_CHP",
+     "outage_start": "2019-03-15",
+     "outage_end": "2019-04-03",
+     "duration_days": 18.7,
+     "out_of_merit_share": 0.902
+    },
+    {
+     "facility_id": 54768,
+     "facility_name": "Live Oak Limited",
+     "unit_id": "GT1",
+     "plant_group": "CT_CHP",
+     "outage_start": "2020-03-28",
+     "outage_end": "2020-04-06",
+     "duration_days": 9.0,
+     "out_of_merit_share": 0.903
+    },
+    {
+     "facility_id": 57564,
+     "facility_name": "Algonquin Power Sanger",
+     "unit_id": "8",
+     "plant_group": "CC_REGULAR",
+     "outage_start": "2019-03-25",
+     "outage_end": "2019-04-08",
+     "duration_days": 13.8,
+     "out_of_merit_share": 0.9
+    },
+    {
+     "facility_id": 57978,
+     "facility_name": "Lodi Energy Center",
+     "unit_id": "CT1",
+     "plant_group": "CC_REGULAR",
+     "outage_start": "2023-05-03",
+     "outage_end": "2023-05-16",
+     "duration_days": 13.3,
+     "out_of_merit_share": 0.922
+    }
+   ],
+   "pass": true
+  },
+  "factors_pre_committed_bytes": {
+   "2023": {
+    "422:CC_REGULAR": {
+     "mean_multiplier": 0.3007603789429486,
+     "hours_below_1": 6454
+    },
+    "10349:CT_CHP": null,
+    "10649:CT_CHP": null,
+    "54768:CT_CHP": null,
+    "57564:CC_REGULAR": {
+     "mean_multiplier": 0.9900508594127037,
+     "hours_below_1": 134
+    },
+    "57978:CC_REGULAR": {
+     "mean_multiplier": 0.6368721461187214,
+     "hours_below_1": 3181
+    }
+   },
+   "2024": {
+    "422:CC_REGULAR": null,
+    "10349:CT_CHP": null,
+    "10649:CT_CHP": null,
+    "54768:CT_CHP": null,
+    "57564:CC_REGULAR": {
+     "mean_multiplier": 0.8898912276794001,
+     "hours_below_1": 1483
+    },
+    "57978:CC_REGULAR": {
+     "mean_multiplier": 0.861986301369863,
+     "hours_below_1": 1209
+    }
+   },
+   "2025": {
+    "422:CC_REGULAR": {
+     "mean_multiplier": 0.8047184170471842,
+     "hours_below_1": 1905
+    },
+    "10349:CT_CHP": null,
+    "10649:CT_CHP": null,
+    "54768:CT_CHP": null,
+    "57564:CC_REGULAR": {
+     "mean_multiplier": 0.9515907487842001,
+     "hours_below_1": 652
+    },
+    "57978:CC_REGULAR": {
+     "mean_multiplier": 0.9461187214611873,
+     "hours_below_1": 472
+    }
+   }
+  },
+  "pass": true,
+  "landed": {
+   "main_sha256": "cf156483e08dcd701bd89898ca14670d3c797eb09d9ad30efc7f51cb381390b5",
+   "layup_sha256": "4ccae12ebcfada3d6b716d02f25d81faaa4cfd49fedb22685449581cc6d9ed37"
+  },
+  "statement": "Leg (a) proves the member-scope implementation is INERT when unarmed (committed bytes reproduce exactly) \u2014 the narrowing's own baseline byte-identity proof. Leg (b) proves MEMBERSHIP scoping at this head reproduces the caiso-198 run-Y DIRECTORY-scoped product byte-for-byte. The movement census is the \u00a70a record correction, measured."
+ }
+}
