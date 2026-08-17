@@ -8053,6 +8053,55 @@ def _enforce_legacy_p2_gate(parser: argparse.ArgumentParser, args) -> None:
         )
 
 
+# The ARCHIVED-P2 solve kwargs, by the name they carry in a bundle's meta.json
+# and in solve_and_persist's signature. Kept next to the recipe-replay gate that
+# reads it so the two can never drift apart.
+LEGACY_P2_KWARGS: tuple[str, ...] = (
+    "commitment",
+    "ercot_as_aware_commitment",
+    "persist_p2_state",
+    "run_p2",
+    "no_coal_p2",
+    "class_commitment_overrides",
+)
+
+
+def enforce_legacy_p2_kwargs(kwargs: dict, enable_legacy_p2: bool) -> None:
+    """Fail unless a RECONSTRUCTED recipe's archived-P2 kwargs are explicitly unlocked.
+
+    :func:`_enforce_legacy_p2_gate` guards the ``--commitment`` family on
+    *parsed CLI args*, which is blind to the OTHER way P2 gets armed: a recipe
+    replay rebuilds its kwargs from a committed ``meta.json`` AFTER that gate has
+    already run, so a bundle recorded with ``commitment=true`` re-armed the
+    archived pass silently on every replay — a keeper carrying P2 propagated it
+    to each successor generation with no operator decision anywhere in the chain
+    (audit row O5; ASSESSMENT-neiso98 §4.1). Both replay entry points
+    (:func:`run_replay_bundle` and ``scripts/replay_keeper.py``) call this on the
+    reconstructed kwargs, so the unlock is required on the path that actually
+    arms the pass.
+
+    HARD FAIL rather than a silent drop: quietly rewriting the recipe would make
+    the replay solve something other than the bundle it names, which is the
+    miso-50..53 lossy-reconstruction regression class ``build_kwargs`` exists to
+    prevent. The operator either keeps P2 deliberately (``--enable-legacy-p2``)
+    or moves the recipe to the production basis (``--set commitment=false``).
+    """
+    if enable_legacy_p2:
+        return
+    armed = [k for k in LEGACY_P2_KWARGS if kwargs.get(k)]
+    if not armed:
+        return
+    raise SystemExit(
+        "the replayed recipe arms the ARCHIVED P2 commitment pass ("
+        + ", ".join(f"{k}={kwargs[k]!r}" for k in armed)
+        + "). P0/P1 are the only production passes and every run is scored on "
+        'P1 (CLAUDE.md "Dispatch & Commitment"), so a recipe reconstructed from '
+        "meta.json may not re-arm P2 implicitly. Pass --enable-legacy-p2 to "
+        "keep it as a last resort, or --set commitment=false (replay_keeper) to "
+        "move the recipe onto the production basis."
+    )
+
+
 def run_replay_bundle(
     bundle: Path,
     out_dir: Path | None,
@@ -8061,6 +8110,7 @@ def run_replay_bundle(
     holdout_authorized: bool,
     zero_forcing_ablation: bool = False,
     reliability_floor_plant_exclusions: bool | None = None,
+    enable_legacy_p2: bool = False,
 ) -> None:
     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
 
@@ -8087,11 +8137,16 @@ def run_replay_bundle(
             recipe's own value). Composes like ``zero_forcing_ablation`` so a
             single-delta A/B arm can be solved from a committed control recipe
             without re-expressing it flag-by-flag (nyiso-140).
+        enable_legacy_p2: Unlock the ARCHIVED P2 commitment pass when the
+            REPLAYED RECIPE arms it (see :func:`enforce_legacy_p2_kwargs`).
+            Without it a bundle recorded with ``commitment=true`` is a hard
+            error rather than a silent re-arm.
     """
     from scripts import replay_keeper as rk
 
     meta = json.loads((bundle / "meta.json").read_text())
     kwargs = rk.build_kwargs(meta)
+    enforce_legacy_p2_kwargs(kwargs, enable_legacy_p2)
     kwargs["iso"] = meta["iso"]
     kwargs["years"] = [int(y) for y in (years or meta["years"])]
     kwargs["hours"] = int(meta.get("hours", 8760))
@@ -11490,6 +11545,7 @@ def main() -> None:
             reliability_floor_plant_exclusions=(
                 args.reliability_floor_plant_exclusions
             ),
+            enable_legacy_p2=args.enable_legacy_p2,
         )
         return
 

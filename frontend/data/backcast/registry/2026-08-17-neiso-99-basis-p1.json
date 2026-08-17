@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-17-neiso-99-basis-p1",
+ "label": "neiso 99 basis p1",
+ "date": "2026-08-17",
+ "shorthand": "neiso-99-basis-p1",
+ "definition": "(PROBE / DECOMPOSITION ARM \u2014 not a promotion candidate) neiso-99 arm A, the BASIS-ONLY arm: the incumbent keeper 2026-08-17-neiso-97-dstrepair's own recipe re-solved at HEAD with EXACTLY ONE delta, commitment True -> False, i.e. moved off the ARCHIVED P2 commitment pass onto the production P1 basis every other ISO's keeper already uses (audit row O5). Solved on the COMMITTED PRE-FIX campd-unit-outages-NEISO.csv via a MARKET_SIM_DATA_ROOT shadow root, so it isolates the basis change AND serves as the same-HEAD control for the routing arm 2026-08-17-neiso-99-joint-p1. THE HEADLINE RESULT: the basis change is a pure RE-RENDER, not a different solve \u2014 this arm's system / class_hourly / reserve_family sidecars are BIT-IDENTICAL to the incumbent's own persisted P1 in all three years (0 differing cells of 43,800 + 122,640 + 26,280 rows per year, max |delta| 0.0), which is what makes the two arms separable. What the basis change moves is therefore only WHICH PASS IS PUBLISHED: mean lambda -0.0575 / -0.0110 / -0.0378 $/MWh for 2023/2024/2025, and the 2024 ANNUAL MAXIMUM of the max-across-zones price $256.93 -> $218.24 (P2 was standing 17.7% above P1 on that statistic) \u2014 a price-formation number, reported not tuned around. ITS 'NOT-YET' IS C6-UNATTESTED ONLY: this arm carries no calibration_attestation.json because it is a decomposition control rather than a promotion candidate; C1/C2/C3a/C3b/C4/C8 all PASS and C3c is the lane's standing ledgered caveat, exactly as in the promoted arm. Prereg PREREG-neiso99-p2basis-routing-2026-08-17.md, pushed before either arm solved.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NEISO",
+ "file": "frontend/data/backcast/runs/2026-08-17-neiso-99-basis-p1.js",
+ "bundle": "results/calibration/neiso99_basis_A"
+}

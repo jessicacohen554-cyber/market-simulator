@@ -410,6 +410,16 @@ def main() -> None:
         "the validation ladder, 'final' for the touch-once locked test).",
     )
     ap.add_argument(
+        "--enable-legacy-p2",
+        action="store_true",
+        help="unlock the ARCHIVED P2 commitment pass when the REPLAYED RECIPE "
+        "arms it (meta.json commitment/persist_p2_state/...). Without this a "
+        "bundle recorded with commitment=true is a hard error instead of a "
+        "silent re-arm: P0/P1 are the only production passes and every run is "
+        'scored on P1 (CLAUDE.md "Dispatch & Commitment"). To move a recipe '
+        "onto the production basis instead, pass --set commitment=false.",
+    )
+    ap.add_argument(
         "--offer-curve-json",
         default=None,
         metavar="JSON_OR_PATH",
@@ -483,6 +493,12 @@ def main() -> None:
         )
     if args.note is not None:
         kwargs["note"] = args.note
+    # ARCHIVED-P2 gate on the RECONSTRUCTED recipe (audit row O5). Placed AFTER
+    # the --set loop so `--set commitment=false` is what disarms it, and before
+    # the solve so a bundle recorded with commitment=true can never re-arm P2
+    # implicitly. run_calibration_full's own CLI gate only sees parsed CLI args
+    # and is blind to this path.
+    rcf.enforce_legacy_p2_kwargs(kwargs, args.enable_legacy_p2)
     kwargs.setdefault(
         "note",
         "BTM-basis re-solve: byte-faithful replay of the committed keeper "

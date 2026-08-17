@@ -1,0 +1,687 @@
+{
+ "c3c_evidence_moved": false,
+ "declaration_holds": true,
+ "keeper": "2026-08-17-neiso-99-joint-p1",
+ "keeper_legs": {
+  "bundle": "results/calibration/neiso99_joint_B",
+  "c3c_tail": [
+   {
+    "model_hours_gt_threshold": 0,
+    "pass": "P1",
+    "year": 2023
+   },
+   {
+    "model_hours_gt_threshold": 0,
+    "pass": "P1",
+    "year": 2024
+   },
+   {
+    "model_hours_gt_threshold": 0,
+    "pass": "P1",
+    "year": 2025
+   }
+  ],
+  "payload_cross_check": {
+   "2023": {
+    "actual": 15,
+    "model": 0
+   },
+   "2024": {
+    "actual": 8,
+    "model": 0
+   },
+   "2025": {
+    "actual": 20,
+    "model": 0
+   }
+  },
+  "price_extremes": [
+   {
+    "hours": 8760,
+    "margin_to_threshold": 51.0318,
+    "max": 248.9682,
+    "mean": 38.4053,
+    "p99": 182.4977,
+    "p99_9": 215.6295,
+    "pass": "P1",
+    "year": 2023
+   },
+   {
+    "hours": 8760,
+    "margin_to_threshold": 81.7588,
+    "max": 218.2412,
+    "mean": 43.6837,
+    "p99": 149.3826,
+    "p99_9": 198.5208,
+    "pass": "P1",
+    "year": 2024
+   },
+   {
+    "hours": 8760,
+    "margin_to_threshold": 19.1458,
+    "max": 280.8542,
+    "mean": 69.2877,
+    "p99": 192.694,
+    "p99_9": 258.9823,
+    "pass": "P1",
+    "year": 2025
+   }
+  ],
+  "reserve_families": [
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_spin",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 600.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 600.0,
+    "requirement_is_static": true,
+    "requirement_mw": 600.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2023
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1200.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1200.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2023
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_30min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1800.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1800.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2023
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_spin",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 600.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 600.0,
+    "requirement_is_static": true,
+    "requirement_mw": 600.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2024
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1200.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1200.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2024
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_30min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1800.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1800.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2024
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_spin",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 600.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 600.0,
+    "requirement_is_static": true,
+    "requirement_mw": 600.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2025
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1200.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1200.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2025
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_30min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1800.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1800.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2025
+   }
+  ],
+  "run_id": "2026-08-17-neiso-99-joint-p1",
+  "verdict": {
+   "annual_max_by_year_pass": {
+    "2023:P1": 248.9682,
+    "2024:P1": 218.2412,
+    "2025:P1": 280.8542
+   },
+   "c3c_model_tail_zero_all_years_every_persisted_pass": true,
+   "closest_approach_usd_mwh": 280.8542,
+   "min_margin_to_threshold_usd_mwh": 19.1458,
+   "passes_covered": [
+    "P1"
+   ],
+   "reserve_dormant_held_ge_requirement": true,
+   "reserve_dormant_no_shortfall": true,
+   "reserve_dual_abs_max": 0.0,
+   "reserve_family_hours_total": 78840,
+   "reserve_requirements_equal_published_statics": true,
+   "tail_by_year_pass": {
+    "2023:P1": 0,
+    "2024:P1": 0,
+    "2025:P1": 0
+   }
+  }
+ },
+ "prior_keeper": "2026-08-17-neiso-97-dstrepair",
+ "prior_keeper_legs": {
+  "bundle": "results/calibration/neiso97_dstrepair_A",
+  "c3c_tail": [
+   {
+    "model_hours_gt_threshold": 0,
+    "pass": "P1",
+    "year": 2023
+   },
+   {
+    "model_hours_gt_threshold": 0,
+    "pass": "P2",
+    "year": 2023
+   },
+   {
+    "model_hours_gt_threshold": 0,
+    "pass": "P1",
+    "year": 2024
+   },
+   {
+    "model_hours_gt_threshold": 0,
+    "pass": "P2",
+    "year": 2024
+   },
+   {
+    "model_hours_gt_threshold": 0,
+    "pass": "P1",
+    "year": 2025
+   },
+   {
+    "model_hours_gt_threshold": 0,
+    "pass": "P2",
+    "year": 2025
+   }
+  ],
+  "payload_cross_check": {
+   "2023": {
+    "actual": 15,
+    "model": 0
+   },
+   "2024": {
+    "actual": 8,
+    "model": 0
+   },
+   "2025": {
+    "actual": 20,
+    "model": 0
+   }
+  },
+  "price_extremes": [
+   {
+    "hours": 8760,
+    "margin_to_threshold": 51.0318,
+    "max": 248.9682,
+    "mean": 38.4215,
+    "p99": 182.5827,
+    "p99_9": 215.8735,
+    "pass": "P1",
+    "year": 2023
+   },
+   {
+    "hours": 8760,
+    "margin_to_threshold": 50.4977,
+    "max": 249.5023,
+    "mean": 38.479,
+    "p99": 186.287,
+    "p99_9": 217.6979,
+    "pass": "P2",
+    "year": 2023
+   },
+   {
+    "hours": 8760,
+    "margin_to_threshold": 81.7588,
+    "max": 218.2412,
+    "mean": 43.697,
+    "p99": 149.3826,
+    "p99_9": 198.5208,
+    "pass": "P1",
+    "year": 2024
+   },
+   {
+    "hours": 8760,
+    "margin_to_threshold": 43.0718,
+    "max": 256.9282,
+    "mean": 43.708,
+    "p99": 149.3826,
+    "p99_9": 198.5208,
+    "pass": "P2",
+    "year": 2024
+   },
+   {
+    "hours": 8760,
+    "margin_to_threshold": 19.1458,
+    "max": 280.8542,
+    "mean": 69.3989,
+    "p99": 193.0861,
+    "p99_9": 258.9823,
+    "pass": "P1",
+    "year": 2025
+   },
+   {
+    "hours": 8760,
+    "margin_to_threshold": 19.1458,
+    "max": 280.8542,
+    "mean": 69.4367,
+    "p99": 193.5801,
+    "p99_9": 258.9823,
+    "pass": "P2",
+    "year": 2025
+   }
+  ],
+  "reserve_families": [
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_spin",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 600.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 600.0,
+    "requirement_is_static": true,
+    "requirement_mw": 600.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2023
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1200.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1200.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2023
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_30min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1800.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1800.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2023
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_spin",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 600.0,
+    "matches_published_static": true,
+    "pass": "P2",
+    "published_static_mw": 600.0,
+    "requirement_is_static": true,
+    "requirement_mw": 600.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2023
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P2",
+    "published_static_mw": 1200.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1200.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2023
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_30min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P2",
+    "published_static_mw": 1800.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1800.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2023
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_spin",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 600.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 600.0,
+    "requirement_is_static": true,
+    "requirement_mw": 600.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2024
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1200.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1200.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2024
+   },
+   {
+    "dual_abs_max": 1.4210854715202004e-14,
+    "dual_nonzero_hours": 0,
+    "family": "ne_30min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1800.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1800.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2024
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_spin",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 600.0,
+    "matches_published_static": true,
+    "pass": "P2",
+    "published_static_mw": 600.0,
+    "requirement_is_static": true,
+    "requirement_mw": 600.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2024
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P2",
+    "published_static_mw": 1200.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1200.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2024
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_30min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P2",
+    "published_static_mw": 1800.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1800.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2024
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_spin",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 600.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 600.0,
+    "requirement_is_static": true,
+    "requirement_mw": 600.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2025
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1200.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1200.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2025
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_30min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P1",
+    "published_static_mw": 1800.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1800.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2025
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_spin",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 600.0,
+    "matches_published_static": true,
+    "pass": "P2",
+    "published_static_mw": 600.0,
+    "requirement_is_static": true,
+    "requirement_mw": 600.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2025
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_10min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P2",
+    "published_static_mw": 1200.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1200.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2025
+   },
+   {
+    "dual_abs_max": 0.0,
+    "dual_nonzero_hours": 0,
+    "family": "ne_30min_total",
+    "family_hours": 8760,
+    "held_lt_requirement_hours": 0,
+    "held_minus_req_min": 0.0,
+    "matches_published_static": true,
+    "pass": "P2",
+    "published_static_mw": 1800.0,
+    "requirement_is_static": true,
+    "requirement_mw": 1800.0,
+    "shortfall_hours": 0,
+    "shortfall_mw_max": 0.0,
+    "year": 2025
+   }
+  ],
+  "run_id": "2026-08-17-neiso-97-dstrepair",
+  "verdict": {
+   "annual_max_by_year_pass": {
+    "2023:P1": 248.9682,
+    "2023:P2": 249.5023,
+    "2024:P1": 218.2412,
+    "2024:P2": 256.9282,
+    "2025:P1": 280.8542,
+    "2025:P2": 280.8542
+   },
+   "c3c_model_tail_zero_all_years_every_persisted_pass": true,
+   "closest_approach_usd_mwh": 280.8542,
+   "min_margin_to_threshold_usd_mwh": 19.1458,
+   "passes_covered": [
+    "P1",
+    "P2"
+   ],
+   "reserve_dormant_held_ge_requirement": true,
+   "reserve_dormant_no_shortfall": true,
+   "reserve_dual_abs_max": 1.4210854715202004e-14,
+   "reserve_family_hours_total": 157680,
+   "reserve_requirements_equal_published_statics": true,
+   "tail_by_year_pass": {
+    "2023:P1": 0,
+    "2023:P2": 0,
+    "2024:P1": 0,
+    "2024:P2": 0,
+    "2025:P1": 0,
+    "2025:P2": 0
+   }
+  }
+ },
+ "probe": "neiso99_declaration_recheck",
+ "published_static_mw": {
+  "ne_10min_spin": 600.0,
+  "ne_10min_total": 1200.0,
+  "ne_30min_total": 1800.0
+ },
+ "solve_performed": false,
+ "threshold_usd_mwh": 300.0,
+ "years": [
+  2023,
+  2024,
+  2025
+ ]
+}
