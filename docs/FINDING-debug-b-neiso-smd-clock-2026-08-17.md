@@ -230,11 +230,14 @@ own to the bit.
 
 1. **`origin/main` HEAD SyntaxError** (§2c) — fixed on this branch; every calibration solve
    of every ISO was blocked.
-2. **Registry/payload parity is RED on main for two MISO-160 sidecars**
+2. **Registry/payload parity was RED on main for two MISO-160 sidecars**
    (`2026-08-16-miso-160-control`, `-wefor-shape`: sidecars with no `runs/<id>.js` payload —
-   the exact stranded-sidecar failure mode the calibration-report skill warns about, making
-   both runs invisible in the Run Explorer). Pre-existing, MISO lane's to repair (rule 25);
-   this lane's files are parity-clean.
+   the exact stranded-sidecar failure mode the calibration-report skill warns about). True at
+   measurement time; **resolved by the #4044 MISO merge** before this promotion rebased onto
+   it. At the rebased base the parity check instead flags `caiso200_h0_control` — a bundle
+   dir with no retained sidecar, dead solve output from the just-merged caiso-200 lane
+   (Class-E retention rule point 4). CAISO lane's to disposition (rule 25); this lane's
+   files are parity-clean throughout.
 3. **The committed `actual_lmp.json` NEISO 2024/2025 entries were stale** (§2b) — healed by
    this authorized re-derivation, proven code-invariant.
 4. **D-1 actual-side third-decimal drift** vs the incumbent's committed

@@ -452,10 +452,16 @@ audit row O8 annotated RESOLVED.
   calibration solve of every ISO was blocked, and the fast lane showed 18
   failures / 32 collection errors all downstream of that one line. Fixed on
   this branch (`fff285a`); fast lane 6,907 passed / 0 failed after.
-* **FILED (MISO lane, rule 25): registry/payload parity is RED on main** —
-  `2026-08-16-miso-160-control` and `2026-08-16-miso-160-wefor-shape` are
-  sidecar-only registrations (no `runs/<id>.js` payload), the exact
-  invisible-run failure mode the calibration-report skill warns about.
+* **FILED then OVERTAKEN (MISO lane): registry/payload parity was RED on
+  main** — `2026-08-16-miso-160-control` and `2026-08-16-miso-160-wefor-shape`
+  were sidecar-only registrations (no `runs/<id>.js` payload), the exact
+  invisible-run failure mode the calibration-report skill warns about. True at
+  measurement time; resolved by the #4044 MISO merge before this promotion
+  rebased onto it. **FILED (CAISO lane, rule 25), the successor item at the
+  rebased base:** `results/calibration/caiso200_h0_control` is a bundle dir
+  with no retained sidecar — dead solve output per the Class-E retention rule
+  (keepers/README.md point 4); register it, prune it, or ledger it in
+  `KEEP_REQUIRED_UNMAPPED_BUNDLES`.
 * **FILED (NYISO lane, rule 25):** the NYISO keeper arms
   `nyiso_import_hub_prices=True` and solves on the repaired series' DA hub —
   47 of its 2023 input cells changed (max $20.12/MWh).
