@@ -4037,7 +4037,63 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-16-miso-160-wefor-shape`, **NOT-YET on C3a-2025 ALONE**
+### 5.4 MISO — **LANE CLOSED 2026-08-17 BY OWNER RULING (miso-163): C3a-2025 STANDS AS A MODEL-CLASS LIMIT AND MISO HAS NO OPEN TUNING LANE.** Former target: the 2024/2025 MEAN-LMP LEVEL MISS (owner directive 2026-08-06; C7 COAL_PRB DEPRIORITIZED by owner order, never a lane) — keeper `2026-08-16-miso-160-wefor-shape`, **NOT-YET on C3a-2025 ALONE**
+
+> **QUEUE STAMP miso-163 (2026-08-17) — THE LANE IS CLOSED BY OWNER RULING.
+> C3a-2025 STANDS AS A MODEL-CLASS LIMIT; MISO HAS NO OPEN TUNING LANE. NO
+> SOLVE, NO LEVER, NO `ScenarioConfig` FIELD, NO CELL VERDICT MINTED, NO
+> REGISTRATION. Keeper UNCHANGED at `2026-08-16-miso-160-wefor-shape`** (rule 15
+> `[R-DASHBOARD]` not engaged — nothing was armed or tested; the
+> miso-142/153/155/156/157/161 no-LP precedent).
+>
+> **The miso-161 escalation is resolved, and the miso-162 read-only recon
+> materially changed the question before it was put.** Both halves were put to
+> the owner:
+>
+> * **(i) The stated Shape-1 DATA BLOCKER IS FALSE.**
+>   `data/raw/MISO-AS/asm_rtmcp_zonal_{2023,2024,2025}.parquet` already carry
+>   **hourly zonal RT ASM MCP by product** (`date, zone, product, he01..he24`,
+>   EST year-round), alongside `asm_rt_cleared_mw_*` (hourly Region × product
+>   cleared reserve MW). RCPF binding hours are therefore derivable **in-repo**
+>   against the published step schedule (Spin $65/$98, Reg ~$140, STR to $500,
+>   energy steps $1,100/$2,100 on a $3,500 VOLL). **No data ask was needed** —
+>   the intake half of Shape 1 was never the obstacle.
+> * **(ii) The REAL blocker is the mechanism, and it is already adjudicated.**
+>   `ordc_scarcity_overlay` is cell **`G`** in the MISO shard, extended to the
+>   forecast/entry lane by ffr-4e. The grounds are **STRUCTURAL, not
+>   procedural** (`docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md`
+>   §1–§4): MISO's ORDC is a **Monte-Carlo LOLP construct pricing 10–30 minute
+>   PROBABILISTIC risk that a perfect-foresight hourly LP does not contain**, and
+>   §1 measures the overlay INERT on the keeper's own hourly — in the **88 actual
+>   2025 RT>$200 hours** the model clears **$50 median / $83 p90 / $157 max**,
+>   the reserve adder fires **2 of 88**, deliverable reserve holds **≥11 GW
+>   against a ~4.4 GW requirement**, and load-shed is **0 hours**. The model is
+>   NOT sitting just under the threshold awaiting a nudge.
+>
+> ⇒ Chartering Shape 1 would have been a **rule-28 DO-NOT-REDO collision AND
+> provably inert** (~2 of 88 hours). **THE OWNER RULED SHAPE 2 — CLOSE THE
+> LANE**, on the **ERCOT C3a-2023 (Q-B) precedent**
+> (`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`:
+> *“STOP — ERCOT stands at NOT-YET on C3a-2023 as a model-class limit, and the
+> program stops spending on it”* — explicitly **a budget decision, not a rubric
+> decision**).
+>
+> **STANDING POSTURE.** The determination stays **NOT-YET on C3a-2025 ALONE
+> (−12.5 % against the ±10 % bar)**, held as the **deterministic-LP edge** and
+> reported at **FULL magnitude as a MODEL MISS** — no ledger text moves, no
+> criterion is reclassified, and the rubric is untouched (C3a is not ledgerable
+> since v3.1). **C3c remains the single ledgered CAVEAT.** **MISO has NO open
+> tuning lane.** Re-opening requires either new evidence that defeats
+> external-validation **§1–§4 SPECIFICALLY** — a data-availability argument is
+> NOT such evidence, per (i) — or an explicit owner re-charter. The
+> availability channel is exhausted at admissible grain (miso-161) and every
+> other cushion/identity cell is `R`/`I`/`G`/refuted-at-charter or `K`-armed.
+>
+> Evidence: `results/calibration/FINDING-miso163-c3a-lane-closure-2026-08-17.md`;
+> owner decision recorded at `docs/governance/rule-history.md` §7; predecessor
+> `FINDING-miso161-c3a-residue-exhaustion-2026-08-17.md`. Rule 22
+> `[R-HOLDOUT]`: 2023–2025 only, committed artifacts only; MISO holds neither
+> `complete` nor `final`; the spend freeze is untouched.
 
 > **QUEUE STAMP miso-161 (2026-08-17) — THE QUEUE'S SINGLE IN-LANE ITEM
 > RESOLVED BY MEASUREMENT; ESCALATED TO THE OWNER. NO SOLVE, NO LEVER, NO

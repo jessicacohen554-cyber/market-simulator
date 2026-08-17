@@ -7278,3 +7278,87 @@ Evidence: `results/calibration/FINDING-miso161-c3a-residue-exhaustion-2026-08-17
 probes `_miso161_c3a_decomposition.py` / `_miso161_summer_cushion.py` /
 `_miso161_peakday_outage_shape.py`; records `_miso161_*.json`. Rule 22:
 2023–2025 only; freeze untouched; no marker touched. Next number: **miso-162.**
+
+## miso-163 (2026-08-17) — the owner rules on the C3a-2025 tail object: **THE LANE IS CLOSED as a model-class limit.** The Shape-1 data blocker was FALSE and the real blocker is a structural `G` that measures inert — the intake was available and the lever was refused anyway. NO SOLVE, no lever, no cell verdict, keeper UNCHANGED
+
+**Keeper UNCHANGED: `2026-08-16-miso-160-wefor-shape`.** Nothing promoted,
+nothing registered, no `ScenarioConfig` field, no cell verdict minted (nothing
+was armed or tested — the miso-142/153/155/156/157/161 no-LP precedent; rule 15
+`[R-DASHBOARD]` not engaged). Rule 22 `[R-HOLDOUT]`: 2023–2025 only, committed
+artifacts only; MISO holds neither `complete` nor `final`; the spend freeze is
+untouched.
+
+**Predecessors.** miso-161 escalated the C3a-2025 residue with two shapes on the
+record. miso-162 did no solve: it de-duplicated the twice-restored
+`reliability_floor_plant_exclusions` override (`a84baa2`, merged) and ran
+read-only recon that **materially changed the question before it was put**.
+
+**The state re-verified from committed artifacts** (`calibration_verdict.py
+--run-id 2026-08-16-miso-160-wefor-shape`, no solve): **NOT-YET**, basis
+*undocumented out-of-tolerance (FAIL) criteria: `price_mean`* — **C3a-2025
+−12.5 % `[MODEL MISS]` is the SOLE failing criterion**; C1/C2/C3b/C4/C6/C8 PASS
+(ST_GAS grounded above budget 32.7/34.4/46.2 %, all binding mechanisms clear
+D-4); C3c the ledgered CAVEAT at model 3/6/4 h vs RT actual **30/37/88** h
+>$200. The C3c standing rule cannot fire — it needs C3c to be the **lone**
+failure, and C3a's FAIL keeps it silent (guard (a) working).
+
+**Both halves of the recon verified, and both put to the owner:**
+
+* **(i) THE STATED SHAPE-1 DATA BLOCKER IS FALSE.**
+  `data/raw/MISO-AS/asm_rtmcp_zonal_{2023,2024,2025}.parquet` already carry
+  **hourly zonal RT ASM MCP by product** (`date, zone, product, he01..he24`,
+  EST year-round, one row per (zone, product); products reg/spin/supp/str),
+  alongside the DA twin `asm_damcp_zonal_*` and `asm_rt_cleared_mw_*` (hourly
+  Region × product cleared reserve MW). All present and non-trivial on disk.
+  RCPF binding hours are therefore derivable **in-repo** against the published
+  step schedule (Spin $65/$98, Reg ~$140, STR to $500, energy steps
+  $1,100/$2,100 on a $3,500 VOLL; BPM-002 Att. B §5.4, Potomac IMM 2024 SOM).
+  **No data ask was needed and none should be raised.**
+* **(ii) THE REAL BLOCKER IS THE MECHANISM, ALREADY ADJUDICATED.**
+  `ordc_scarcity_overlay` is cell **`G`** in the MISO shard, extended to the
+  forecast/entry lane by ffr-4e, and the grounds are **STRUCTURAL, not
+  procedural** (`docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md`
+  §1–§4): MISO's ORDC is a **Monte-Carlo LOLP construct pricing 10–30 min
+  PROBABILISTIC risk a perfect-foresight hourly LP does not contain**, and §1
+  measures the overlay INERT on the keeper's own hourly — in the **88 actual
+  2025 RT>$200 hours** the model clears **$50 median / $83 p90 / $157 max**,
+  the reserve adder fires **2 of 88**, energy+reserve >$200 in **1 of 88**,
+  load-shed **0 h**, with deliverable reserve **≥11 GW against a ~4.4 GW
+  requirement** and the LP re-timing energy for ≤$23/MWh — always cheaper than
+  the $200 step, so the steps never engage. The DA column is decisive (h6425 RT
+  $1,598 / DA $99): the DA market, with full commitment/ramp/network, never saw
+  ~90 % of these hours.
+
+⇒ Chartering Shape 1 would have been a **rule-28 DO-NOT-REDO collision AND
+provably inert** (~2 of 88 hours). The two facts compound: (i) removes the
+excuse for not building it, (ii) removes the reason to.
+
+**THE OWNER RULED SHAPE 2 — CLOSE THE LANE**, on the **ERCOT C3a-2023 (Q-B)
+precedent** (`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`:
+*“STOP — ERCOT stands at NOT-YET on C3a-2023 as a model-class limit, and the
+program stops spending on it”* — explicitly **a budget decision, not a rubric
+decision**). Recorded with its provenance at `docs/governance/rule-history.md`
+§7.
+
+**STANDING POSTURE.** The determination stays **NOT-YET on C3a-2025 ALONE
+(−12.5 % vs the ±10 % bar)** as the **deterministic-LP edge**, reported at
+**FULL magnitude as a MODEL MISS** — nothing reclassified, no ledger text
+moved, the rubric untouched (C3a has not been ledgerable since v3.1, and this
+closure does not seek to make it so). **C3c stays the single ledgered CAVEAT.**
+**MISO has NO open tuning lane:** the availability channel is exhausted at
+admissible grain (miso-161), every other cushion/identity cell is
+`R`/`I`/`G`/refuted-at-charter or `K`-armed, and rule 20 `[R-DOF]` closes the
+Δ₁/Δ₂ cancellation (+$2.4–4.4) to tuning. **Re-opening requires new evidence
+that defeats external-validation §1–§4 SPECIFICALLY, or an explicit owner
+re-charter — a data-availability argument is NOT such evidence**, since (i)
+settles that the data is present, which is exactly why it cannot carry a
+re-charter.
+
+Surfaces stamped: §5.4 queue header (`docs/mechanism-testing-matrix.md`), this
+log, the MISO matrix shard (`updated`/`gates` + the `ordc_scarcity_overlay`
+evidence citation; **cell unchanged at `G`** — a re-affirmation, not a new
+verdict), and `docs/governance/rule-history.md` §7/§8.
+`scripts/audit_keepers.py --iso MISO` green before and after.
+Evidence: `results/calibration/FINDING-miso163-c3a-lane-closure-2026-08-17.md`.
+Next number: **miso-164** — but note there is **no chartered MISO lane** for it
+to pick up.
