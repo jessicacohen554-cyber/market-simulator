@@ -1416,10 +1416,11 @@ your branch when done.
   holdout scoring rebuild inputs). Golden-tier sparse list: ZERO edits
   (verified per-glob at HEAD); skip-when-absent: like-for-like full-suite
   runs in a payload-absent worktree, zero new reds; the §5(c) baseline also
-  surfaced and fixed a **pre-existing SyntaxError at origin/main**
-  (`run_calibration.py` duplicate `reliability_floor_plant_exclusions` kwarg
-  from the #4036 merge race — collection of 32 test modules and every
-  calibration solve import were broken; FINDING §8). Post-merge proof = the
+  surfaced main's **pre-existing `run_calibration.py` breakage**
+  (#4036 merge-race duplicate `reliability_floor_plant_exclusions` kwarg —
+  collection of 32 test modules and every calibration-solve import broken;
+  after main's twin fixes collided and dropped the kwarg's `with_overrides`
+  application, this PR restores it — FINDING §8 + addendum). Post-merge proof = the
   first weekly golden-tier cron green after merge (D3 — no dispatch spent).
   Under every verdict the §4.7 holdout intakes, `ercot/cdr.*.zip` and the
   §4.2 2023 DAM quarters were never touched; the DAM-2024+ subset stays OUT

@@ -910,9 +910,10 @@ elsewhere, e.g. the D-13 cache-key gate):
     measured live with negative controls; golden-tier sparse list needed
     ZERO edits (verified per-glob at execution HEAD); skip-when-absent
     verified by like-for-like full-suite runs in a payload-absent worktree.
-    The session also found and fixed a pre-existing SyntaxError at
-    origin/main (`run_calibration.py` duplicate kwarg from the #4036 merge
-    race — FINDING §8). Post-merge proof = the first weekly golden-tier cron
+    The session also surfaced main's pre-existing `run_calibration.py`
+    breakage (#4036 merge-race duplicate kwarg; after main's twin fixes
+    collided, this PR restores the kwarg's lost `with_overrides` application
+    — FINDING §8 + addendum). Post-merge proof = the first weekly golden-tier cron
     green after merge (no dispatch spent, per D3).)*
 
 ---

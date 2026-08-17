@@ -1,6 +1,6 @@
 # Changelog
 
-## 2026-08-17 — BLOAT-S2: Stage-2 (a)-only untrack executed — six evidence passes, −444.5 MiB / 144 files at tip; the main-blocking run_calibration.py SyntaxError fixed
+## 2026-08-17 — BLOAT-S2: Stage-2 (a)-only untrack executed — six evidence passes, −444.5 MiB / 144 files at tip; run_calibration.py run_year dead-flag repaired
 
 Executes the signed O2 grant (BLOAT-3 card, 2026-08-16). Six §4.8
 BLOAT-A-grade evidence passes (`docs/FINDING-bloat-s2-evidence-passes-
@@ -22,8 +22,11 @@ skip-when-absent verified like-for-like in a payload-absent worktree. The
 baseline run also surfaced a pre-existing SyntaxError at origin/main —
 `scripts/run_calibration.py` carried a duplicate
 `reliability_floor_plant_exclusions` kwarg from the #4036 merge race,
-breaking collection of 32 test modules and every calibration-solve import —
-fixed by deleting the duplicated kwarg + override block. CLAUDE.md corpus
+breaking collection of 32 test modules and every calibration-solve import.
+Twin fixes on main then collided and dropped the kwarg's `with_overrides`
+application entirely (the restore brought back only the signature), leaving
+the flag silently ignored by `run_year`; this PR restores the application
+block (FINDING §8 addendum). CLAUDE.md corpus
 list updated; bloat plan §9 BLOAT-3 annotated EXECUTED; release-plan §8
 entry. Post-merge proof: the first weekly golden-tier cron green.
 

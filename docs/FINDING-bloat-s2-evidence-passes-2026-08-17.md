@@ -263,15 +263,26 @@ data-missing skip means RESTORE the corpus, never widen the sparse list.
 ## 8. Pre-existing red found and fixed: `scripts/run_calibration.py` SyntaxError at origin/main
 
 The §5(c) baseline run could not even collect: `origin/main` (`a4ef2a9`)
-carries a **duplicate `reliability_floor_plant_exclusions` kwarg** in
+carried a **duplicate `reliability_floor_plant_exclusions` kwarg** in
 `run_year` (lines 529 + 538) plus a duplicated `with_overrides` block — a
 `SyntaxError` failing collection of 32 test modules and blocking every
 `run_calibration.py` import. Genealogy: nyiso-140 (`3febd5c`) landed the
 mechanism minus the `run_year` kwarg; the ercot-213 repair (`7246272`) added
-it; merge #4036 then brought both copies together. Fixed in this branch's
-first commit by deleting the duplicate kwarg + duplicate override block
-(12 lines; the surviving copy keeps the wiring intact); both runners
+it; merge #4036 then brought both copies together. This session fixed it by
+deleting the duplicate kwarg + duplicate override block; both runners
 AST-parse clean and the fast lane collects 6,900 tests green after the fix.
+
+**Post-rebase addendum (same day):** two OTHER sessions fixed the same
+SyntaxError on main concurrently (`ebd31a9`, `fff285a`), their collision
+dropped BOTH copies (`2dd9dbc` "lost to twin fixes" restored only the
+signature parameter), so at the rebase base `296adea` `run_year` **accepts
+the kwarg and silently ignores it** — the `with_overrides` application block
+is gone while `run_calibration_full.py` still passes the flag through,
+making the nyiso-140 arming a silent no-op via that path (the dead-flag
+class the caiso-98 lesson forbids). This branch's original dedup commit was
+auto-dropped at rebase (contents already upstream); a follow-up commit
+restores the missing application block, matching every sibling kwarg's
+pattern.
 
 ## 9. Skip-when-absent verification (§0ar-3(c) / card §5(c))
 
