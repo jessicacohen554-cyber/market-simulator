@@ -283,7 +283,11 @@ def _neiso_flat24_repair(d: pd.DataFrame) -> pd.DataFrame:
             n_real = _neiso_real_day_hours(date)
             if n_real == 23:  # flat-24 spring-forward
                 g = g.drop(index=g.index[1])
-                g.loc[g.index[1], "Hr_End"] = "02"
+                # Relabel with the INTEGER hour: the flat-24 vintage's Hr_End
+                # is all-numeric so pd.read_excel yields int64, and pandas 3
+                # raises on a lossy str setitem into it (the first cron firing
+                # of golden-data-tier.yml, run 31999181985, failed here).
+                g.loc[g.index[1], "Hr_End"] = 2
             elif n_real == 25:  # flat-24 fall-back
                 g = g.drop(index=g.index[1])
         parts.append(g)
