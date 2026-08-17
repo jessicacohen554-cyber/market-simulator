@@ -368,6 +368,47 @@ def _unit_year_grid(
     return series.reindex(full).fillna(0.0).to_numpy(dtype=float)
 
 
+def _merit_member_facilities(
+    detection_states: tuple[str, ...],
+    panel_states: tuple[str, ...],
+    years: list,
+    group_by_code: dict[int, str],
+) -> dict[str, tuple[int, ...]]:
+    """Out-of-panel detection states' facilities that are the ISO's own fleet.
+
+    The merit-panel MEMBERSHIP derivation
+    (``campd.MERIT_PANEL_FLEET_MEMBER_ISOS``;
+    PRECHECK-caiso200-panel-membership-2026-08-17.md §1–§2): a facility in a
+    detection state outside the panel state list joins the panel iff its plant
+    code — via the CEMS→EIA split-plant remap where one applies — resolves
+    into the ISO's own fleet registry, the same ``group_by_code`` the
+    detection path filters on. Derived, never enumerated (rule 24
+    ``[R-REGISTRY]``); today CAISO resolves to exactly ``{NV: (55077,)}``.
+    Admission is facility-grained, matching the caiso-198 run-Y construction
+    the charter's sha pins were measured on.
+    """
+    panel = set(panel_states)
+    out: dict[str, tuple[int, ...]] = {}
+    for st in detection_states:
+        if st in panel:
+            continue
+        members: set[int] = set()
+        for year in years:
+            path = UNIT_LEVEL_DIR / f"{st}_{int(year)}.parquet"
+            if not path.exists():
+                continue
+            pairs = pd.read_parquet(path, columns=["facilityId", "unitId"])
+            fid = pd.to_numeric(pairs["facilityId"], errors="coerce")
+            pairs = pairs.assign(facilityId=fid).dropna(subset=["facilityId"])
+            for f, u in pairs.drop_duplicates().itertuples(index=False):
+                code = campd.CAMPD_UNIT_PLANT_REMAP.get((int(f), str(u)), int(f))
+                if int(code) in group_by_code:
+                    members.add(int(f))
+        if members:
+            out[st] = tuple(sorted(members))
+    return out
+
+
 def _load_unit_year(state: str, year: int) -> pd.DataFrame:
     """Load one unit-level state-year extract, or empty when absent."""
     path = UNIT_LEVEL_DIR / f"{state}_{year}.parquet"
@@ -1169,6 +1210,17 @@ def main() -> None:
     # `campd.ISO_MERIT_PANEL_STATES` and FINDING-caiso198 §3 for the measurement
     # that identified the coupling.
     merit_panel_states = campd.merit_panel_states_for_iso(iso)
+    # The ISO's own OUT-OF-STATE fleet members join the panel (the caiso-199
+    # §3b narrowing; PRECHECK-caiso200 §2): a fleet plant filing CEMS outside
+    # the pinned panel states must be a member of the panel its own spans are
+    # scored against. Membership is derived from the fleet registry, never
+    # enumerated — {NV: (55077,)} for CAISO today — and admits nothing that
+    # is not the ISO's own fleet.
+    merit_member_facilities = (
+        _merit_member_facilities(states, merit_panel_states, args.years, group_by_code)
+        if campd.merit_panel_admits_fleet_members(iso)
+        else {}
+    )
     rows: list[dict] = []
     # Windows the merit-order guard reclassifies as economic layup. Always
     # defined so the row sink below is unconditional; stays empty (and no
@@ -1202,11 +1254,20 @@ def main() -> None:
                         pd.date_range(f"{year}-01-01", f"{year}-12-31 23:00", freq="h")
                     )
                     merit_panels[year] = build_merit_order_panel(
-                        iso, year, n_full, merit_panel_states, args.merit_rcc_pctl
+                        iso,
+                        year,
+                        n_full,
+                        merit_panel_states,
+                        args.merit_rcc_pctl,
+                        member_facilities=merit_member_facilities or None,
+                    )
+                    member_note = "".join(
+                        f" +members {st}:{','.join(str(f) for f in fs)}"
+                        for st, fs in sorted(merit_member_facilities.items())
                     )
                     print(
                         f"  merit-order panel {iso} {year} "
-                        f"[scope {'+'.join(merit_panel_states)}]: "
+                        f"[scope {'+'.join(merit_panel_states)}{member_note}]: "
                         + (
                             "UNIDENTIFIED (guard inert this year)"
                             if merit_panels[year] is None
