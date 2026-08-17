@@ -171,7 +171,8 @@ test modules and every calibration-solve import.
 | PERF-B (continuation) | `claude/perf-b-stage-0-cont-tnyuf2` — merged + deleted | #4041 NEISO · #4046 tool fix · #4050 NYISO · #4058 CAISO · #4060 MISO | **STOOD DOWN** |
 | PERF-B (staleness ledger) | `claude/perf-b-stage-0-cont-le1qe9` — merged + deleted | #4061 (staleness ledger) | **STOOD DOWN** — its ledger is the WS3 handover artifact |
 
-**Live branches at HEAD** (the only three that exist on the remote):
+**Live branches** (the complete remote set — three at the 09:25 UTC read, plus
+this lane's own branch once it pushes):
 
 | Branch | SHA | Read |
 |--------|-----|------|
