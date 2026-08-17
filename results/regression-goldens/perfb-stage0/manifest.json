@@ -5,7 +5,7 @@
     "MARKET_SIM_WARMSTART_XYEAR": "0"
   },
   "git_dirty": false,
-  "git_sha": "ebd31a9",
+  "git_sha": "2dd9dbc",
   "hash_scheme": "sha256-of-canonical-column-float64-bytes",
   "highspy_version": "unknown",
   "keepers": {
@@ -106,6 +106,53 @@
       "hours": 8760,
       "keeper_id": "2026-08-14-neiso-93-envelope",
       "recorded_flag_count": 247,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "NYISO": {
+      "bundle": "results/calibration/nyiso140_exclusion_arm",
+      "content_hashes": {
+        "btm.parquet": "9b5d612ff4c1d121a1e568f829487cc9b834b6b99b82aee58efbc8edb4bfd348",
+        "dispatch/2023_P1.parquet": "550cbafc785ba91e4b136fb6c36e526367c5833917612effcb151f514b0a2284",
+        "dispatch/2024_P1.parquet": "7448ef24f3f4ef5bcee08ae25dfdec18ac1799c0f9316e2f1403b1804dd1b3db",
+        "dispatch/2025_P1.parquet": "19a80f851df531a736cf8e88218a3b298ee08c4f4bdf9855ea1efee52e33f26a",
+        "flows.parquet": "276f9fc7f180205cef6e31143dc434c1d917bef507c8c95cb08e01e5c08f4ccd",
+        "storage.parquet": "a96c5d2820b54ce990def9e937ec2739234b6b33a16316fd08d85b7e6cbb822d",
+        "system.parquet": "5ed853458ae47a7a92b2d2198b682f0620f088e0647a65d324937111d729c98b"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "ercot_ordc_adder_published_anchor",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "persist_p0_commitment",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "dropped_dead_config_keys": {},
+      "fidelity": {
+        "meta_head_only": [
+          "ercot_ordc_adder_published_anchor"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 257,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "summer_wefor_share_override"
+        ],
+        "scenario_config_matched": 717
+      },
+      "hours": 8760,
+      "keeper_id": "2026-08-16-nyiso-140-layup-exclusion",
+      "recorded_flag_count": 248,
       "years": [
         2023,
         2024,
