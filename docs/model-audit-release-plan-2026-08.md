@@ -1425,3 +1425,27 @@ your branch when done.
   Under every verdict the §4.7 holdout intakes, `ercot/cdr.*.zip` and the
   §4.2 2023 DAM quarters were never touched; the DAM-2024+ subset stays OUT
   (D4).
+- 2026-08-17 — **golden-data-tier FIRST CRON FIRING RED — triaged same-day;
+  BLOAT-S2 CLEARED; fix delivered** (session DEBUG-TRIAGE, branch
+  `claude/golden-data-tier-cron-debug-5r45sh`; the §A.7/§B.3 watch item
+  firing). Run 31999181985 (05:48 UTC, head `6cc332e`) failed step 5:
+  `curate_lmp.py::_neiso_flat24_repair` assigned the string `"02"` into the
+  int64 `Hr_End` column of the 2018–2023 NEISO flat-24 vintage — the exact
+  vintage the relabel exists for — and pandas 3.0.3 raises where older
+  pandas upcast (`TypeError: Invalid value '02' for dtype 'int64'`,
+  `2018_smd_hourly.xlsx` first in sorted order). Introduced by neiso-97's
+  `a2b5e3d` (PR #4043, merged 02:34 UTC, three hours pre-cron): the unit
+  test modelled `Hr_End` as strings, and the session's byte-verification
+  covered `derive_actual_lmp` (openpyxl path, correct on main) — the curate
+  path first executed anywhere in the cron itself. **NOT the untrack**: PR
+  #4047 touched zero `lmp-data` paths (that corpus FAILED its pass and
+  stayed tracked), every sparse-list path re-verified tracked at head; the
+  2026-08-16 history rewrite also ruled out (deterministic in-code
+  traceback, reproduced locally on a fresh clone). Fix: integer relabel
+  (semantically identical hour; executes the already-signed neiso-97 repair,
+  no new solve-affecting decision), test dtype corrected to int64 with an
+  upcast guard; verified on all eight real workbooks + the exact step-5
+  command + a full local job replay. Diagnosis:
+  `docs/FINDING-golden-tier-cron-red-2026-08-17.md`. Proof of fix:
+  recommend ONE post-merge `workflow_dispatch` (spends an authorized
+  dispatch) over leaving the proof mechanism red for a week.

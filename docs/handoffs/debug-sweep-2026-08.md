@@ -468,3 +468,33 @@ audit row O8 annotated RESOLVED.
 * **Healed in-scope:** the committed `actual_lmp.json` NEISO 2024/2025
   entries were stale (the `--parquet-only` deferred deltas), landed at this
   authorized re-derivation and proven code-invariant.
+
+## Addendum D — DEBUG-TRIAGE, the §A.7/§B.3 watch item fires (2026-08-17)
+
+**Branch:** `claude/golden-data-tier-cron-debug-5r45sh` (off `origin/main` @
+`6cc332e`). **Charter:** the watch item's own instruction — the first
+`golden-data-tier.yml` cron firing (run 31999181985, 05:48 UTC) ran RED;
+triage per the DEBUG-A protocol and route.
+
+* **Root cause (NEW finding, as §B.3 anticipated — not the known OOM, and
+  NOT the BLOAT-S2 untrack):** Addendum C's own `a2b5e3d` (neiso-97, merged
+  02:34 UTC — three hours before the cron) crashes
+  `curate_lmp._neiso_flat24_repair` on every real 2018–2023 NEISO workbook:
+  the spring-forward relabel assigns str `"02"` into the int64 `Hr_End`
+  column and pandas 3.0.3 raises where older pandas upcast. The C.1
+  byte-verification covered `derive_actual_lmp` (openpyxl path — correct on
+  main); the curate-path unit test modelled `Hr_End` as strings, so the
+  suite was green while the corpus crashed. The cron was the code path's
+  first-ever execution against real bytes.
+* **PR #4047 formally cleared** (diff walked: zero `lmp-data` paths; sparse
+  list re-verified per-glob at head; the untracked corpora's own curations
+  green in the failing log). History rewrite ruled out (deterministic
+  in-code traceback, reproduced on a fresh clone).
+* **Routing: solve-neutral, fixed with tests** — integer relabel
+  (semantically identical hour; executes C.1's already-signed repair, no new
+  decision), test dtype corrected to int64 + upcast guard, verified on all
+  eight workbooks, the exact step-5 command, and a full local job replay.
+  Record: `docs/FINDING-golden-tier-cron-red-2026-08-17.md`; ledgers
+  annotated (release plan §8, bloat plan §9 BLOAT-3). Proof: recommend one
+  post-merge `workflow_dispatch` (spends an authorized dispatch) over a week
+  of red.

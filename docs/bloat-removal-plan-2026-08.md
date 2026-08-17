@@ -914,7 +914,18 @@ elsewhere, e.g. the D-13 cache-key gate):
     breakage (#4036 merge-race duplicate kwarg, then the twin-fix collision
     that dropped the kwarg's `with_overrides` application; both re-fixed
     upstream mid-flight — FINDING §8 carries the genealogy). Post-merge proof = the first weekly golden-tier cron
-    green after merge (no dispatch spent, per D3).)*
+    green after merge (no dispatch spent, per D3).)* *(PROOF EVENT
+    2026-08-17: that first cron firing ran **RED** — run 31999181985 — and
+    was triaged same-day. Root cause: the neiso-97 `curate_lmp`
+    flat-24-repair dtype defect (`a2b5e3d`, merged three hours before the
+    cron), **UNRELATED to the untrack** — #4047 touched zero `lmp-data`
+    paths, every sparse-list path re-verified tracked at head, and the
+    #4047-adjacent curations (load/generation off eia-930-hourly) are green
+    in the failing log. **BLOAT-S2 is CLEARED; no evidence pass missed a
+    reader; no revert-restore applies.** The proof obligation rolls to the
+    next green run — a post-fix `workflow_dispatch` recommended over waiting
+    out the week. Full diagnosis:
+    `docs/FINDING-golden-tier-cron-red-2026-08-17.md`.)*
 
 ---
 

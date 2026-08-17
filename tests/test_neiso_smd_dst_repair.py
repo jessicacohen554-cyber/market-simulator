@@ -156,13 +156,20 @@ class ReportOverlayTest(unittest.TestCase):
 
 
 class CurateFlat24RepairTest(unittest.TestCase):
-    """``curate_lmp._neiso_flat24_repair`` fixes the label clock's two defects."""
+    """``curate_lmp._neiso_flat24_repair`` fixes the label clock's two defects.
+
+    ``Hr_End`` is built as int64, matching what ``pd.read_excel`` yields for
+    the all-numeric flat-24 vintage sheets — the only vintage that reaches the
+    relabel. A str-typed frame here let the original str relabel pass tests
+    while the real corpus raised under pandas 3 (golden-data-tier run
+    31999181985, first cron firing).
+    """
 
     def _day(self, date: str, n: int) -> pd.DataFrame:
         return pd.DataFrame(
             {
                 "Date": [date] * n,
-                "Hr_End": [f"{k + 1:02d}" for k in range(n)],
+                "Hr_End": pd.array([k + 1 for k in range(n)], dtype="int64"),
                 "DA_LMP": [100.0 + k for k in range(n)],
             }
         )
@@ -171,17 +178,16 @@ class CurateFlat24RepairTest(unittest.TestCase):
         out = curate_lmp._neiso_flat24_repair(self._day(SPRING, 24))
         self.assertEqual(len(out), 23)
         self.assertNotIn(101.0, set(out["DA_LMP"]))  # the phantom value
-        self.assertEqual(out.iloc[1]["Hr_End"], "02")  # true HE02, relabeled
+        self.assertEqual(out.iloc[1]["Hr_End"], 2)  # true HE02, relabeled
         self.assertEqual(out.iloc[1]["DA_LMP"], 102.0)
-        self.assertEqual(
-            list(out.iloc[2:]["Hr_End"]), [f"{k:02d}" for k in range(4, 25)]
-        )
+        self.assertEqual(list(out.iloc[2:]["Hr_End"]), list(range(4, 25)))
+        self.assertEqual(out["Hr_End"].dtype, "int64")  # no silent upcast
 
     def test_fall_pair_mean_dropped(self) -> None:
         out = curate_lmp._neiso_flat24_repair(self._day(FALL, 24))
         self.assertEqual(len(out), 23)
         self.assertNotIn(101.0, set(out["DA_LMP"]))  # the collapsed mean
-        self.assertEqual(out.iloc[1]["Hr_End"], "03")
+        self.assertEqual(out.iloc[1]["Hr_End"], 3)
 
     def test_true_shape_days_untouched(self) -> None:
         for date, n in ((SPRING, 23), (FALL, 25), ("2023-07-04", 24)):
