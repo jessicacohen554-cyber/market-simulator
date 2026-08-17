@@ -62,7 +62,34 @@ def _actual_rt(year: int) -> pd.Series:
     return lmp[lmp["year"] == year].set_index("hour")["rt"]
 
 
+def _model_calendar(year: int) -> pd.DatetimeIndex:
+    """Real CST hour-beginning stamps for the model's fixed non-leap clock.
+
+    Rule 8 ``[R-8760]``: every model year is 8760 hours, so a LEAP year skips
+    Feb 29 (the same fact the ercot-214 probe's ``MONTH_DAYS`` table encodes).
+    A naive ``date_range(periods=8760)`` therefore mis-dates every model hour
+    from March 1 on by -24 h in 2024, which mis-joins that year's actuals
+    entirely. Repaired 2026-08-17 (ercot-216).
+    """
+    leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+    hours = np.arange(8760)
+    offset = hours + (24 * (hours >= 1416) if leap else 0)  # 1416 h = Jan 1-Feb 28
+    return pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(offset, unit="h")
+
+
 def _eia930_by_fuel(year: int, calendar: pd.DatetimeIndex) -> pd.DataFrame:
+    """EIA-930 ERCO net generation on the model's hour index.
+
+    Clock (repaired 2026-08-17, ercot-216; measured, not assumed — the probe
+    ``ercot216_c3c_lane_phase0.py`` §5 correlates model demand against the 930
+    generation sum at four offsets and reads 1.00000 / 0.99933 / 0.94335 at
+    +1 h for 2023/2024/2025, the maximum in every year): EIA-930's ``period``
+    is the hour-**ENDING** stamp, while the model's hour index is hour-
+    **beginning** CST, so model hour ``h`` joins the CST stamp ``h + 1``.
+    Joining them naively lags the actuals one hour, which at a steep evening
+    ramp is a GW-scale error (2023 missed-hour reads moved gas -349 -> -1,412
+    and renewables -1,771 -> +504 MW on repair).
+    """
     eia = pd.read_parquet(REPO / "data/raw/ERCO_fueltype.parquet")
     ts = (
         pd.to_datetime(eia["period"], utc=True)
@@ -70,13 +97,13 @@ def _eia930_by_fuel(year: int, calendar: pd.DatetimeIndex) -> pd.DataFrame:
         .dt.tz_localize(None)
     )
     frame = eia.assign(ts=ts)
-    piv = frame[frame["ts"].dt.year == year].pivot_table(
+    piv = frame[frame["ts"].dt.year.isin([year, year + 1])].pivot_table(
         index="ts", columns="fueltype", values="value_mwh", aggfunc="sum"
     )
     for col in ("BAT", "OTH", "WAT", "SUN", "WND"):
         if col not in piv:
             piv[col] = 0.0
-    piv = piv.reindex(calendar)
+    piv = piv.reindex(calendar + pd.Timedelta(hours=1))
     out = pd.DataFrame(
         {
             "gas": piv["NG"],
@@ -125,7 +152,7 @@ def main(argv: list[str] | None = None) -> int:
 
     bundle = REPO / args.bundle
     year = args.year
-    calendar = pd.date_range(f"{year}-01-01", periods=8760, freq="h")
+    calendar = _model_calendar(year)
 
     hub, p1 = _hub_price(bundle, year)
     rt = _actual_rt(year)

@@ -9959,3 +9959,90 @@ Full record: `docs/FINDING-ercot215-counterpart-decontamination-2026-08-17.md`.
 
 **Session consumed the ercot-215 shorthand. Next shorthand: ercot-216**
 (ercot-199 remains unclaimed).
+
+## ercot-216 (2026-08-17) — THE C3c LEDGER'S OPEN RESIDUAL LANE IS SPENT ON BOTH NAMED CANDIDATES AND MEASURED EMPTY ON THE CURRENT KEEPER: at the missed tail hours the model reproduces ERCOT's own physical dispatch fuel-by-fuel while ERCOT's SCED λ cleared 3–5× higher with RTORPA ≈ $1 and 5.7–7.7 GW of PRC. NO admissible lever; Phase-1 NOT entered, keeper UNCHANGED
+
+**Phase 0 — read-only: no LP, no solve, no year scored, no run registered, no
+bundle modified, no `ScenarioConfig` field, no matrix cell verdict minted
+(rule 28(b)), keeper UNCHANGED at `2026-08-17-ercot215-arm-decontam`** (the
+ercot-163/170/208/214 no-LP precedent). No precommit was pushed because no
+solve was reached. Charter: explore the next lever off the closed 2023 price
+criteria (R-A), on the C3c ledger's own `OPEN RESIDUAL LANE` clause — (a) the
+AS-vs-energy split of storage capability at scarcity, (b) the CC
+headroom/capability identification. Probe
+`scripts/probes/ercot216_c3c_lane_phase0.py` →
+`results/calibration/ercot216_c3c_lane_phase0.json`; full record
+`docs/FINDING-ercot216-c3c-residual-lane-2026-08-17.md`.
+
+**The clause is STALE in both limbs.** (a) is `ercot_storage_as_soc_reserve` —
+built and A/B-tested at ercot-167, promoted the same day, standing re-gate
+DISCHARGED **RG-PASS** at ercot-193, and armed on this keeper with the whole
+measured-award family (`storage_as_commitment`, `_deployment`, `_reserve`,
+`_product_credit`, `ercot_storage_capability_measured` all true). (b) is item
+11 — `FILED-UNLICENSED` at ercot-170 (L1 0.3375–0.5111 vs 0.90) and again at
+ercot-191 on the repaired deriver (L1 **0.3857 FAIL**), which read the signed
+card-Q checkpoint **(Q-B) AUTOMATIC AND FINAL — item 11 CLOSED**.
+
+**And the object is EMPTY, measured on the keeper's committed sidecars.** At
+the C3c missed hours (117/36/31 on the demand-weighted basis; scored C3c
+68/22/1 of 181/53/31, bases disclosed and not reconciled): model battery net
+discharge vs measured EIA-930 `BAT` **−102 MW (2024) / +181 MW (2025)** (2023
+has no BAT series — reporting starts 2024-11-06); gas **−1,412 / −768 /
+−767 MW**, coal +378 / −626 / +22, nuclear −7 / −54 / −144, renewables
++504 / +744 / +492, model demand equal to the 930 generation sum to **0.6 MW**
+in 2023. Every fuel is inside ±8 % — and the model still clears at p50
+**$96.65 / $70.92 / $89.61** where ERCOT's **own SCED system λ** cleared
+**$456.81 / $272.07 / $278.53**, with published **RTORPA p50 $0.84 / $1.58 /
+$0.00**, **PRC p50 5,708 / 6,197 / 7,727 MW** and λ carrying > 87 % of the
+actual price in every year. Same MW, no reserve scarcity, 3–5× the price: the
+residual is an **energy-offer object at a matched clearing quantity**, not a
+quantity object.
+
+**Why Phase-1 was not entered.** Three families could raise a price at a
+matched dispatch and all are shut: offer conduct above marginal cost (Door A
+CLOSED, ercot-211 — transfer measured NOT-TRANSFERABLE, storage model-free);
+merit-order depth (item 11 CLOSED on licence; the per-hour telemetered-HSL cap
+form rule-13-forbidden; `energy_online_capability_cap` `R`); and a
+reserve/ORDC/emergency adder, which the measurement itself forecloses — across
+all **184** missed hours PRC never drops below **4,132 MW** and **zero** hours
+sit under ERCOT's EEA-1 trigger (2,300 MW), so `maxgen_emergency_tier_pricing`
+has no window, and any adder that lifted these hours would re-manufacture the
+ercot-214 shortfall-ramp leak ercot-215 removed. The §5.1 queue holds no live
+un-adjudicated in-model item (3 CLOSED ercot-143, 7 CLOSED-WITH-KEEPER
+ercot-165, 8 CLOSED on owner data refusal, 9's lever cell `R`, 10/12/13
+EXECUTED, 11 CLOSED ercot-191), and all 28 ERCOT `U` cells were read: each
+acts by moving MW (already matched) or delivered fuel cost (which would need
+≈ **+$51/MMBtu** in August 2023 to reach ERCOT's λ at a 7.0 heat rate).
+Supporting, quantified and explicitly NOT sufficient: 17 % / 19 % / 9 % of
+actual tail hours clear $200 only on a minority of their 15-minute intervals
+(median max-interval/hourly-mean 1.82 / 1.70 / 1.24), which rule 8 `[R-8760]`
+cannot represent.
+
+**By-product — two clock defects found and repaired in the instrument layer**
+(probe-side only; no LP input, derive, bench series or scored criterion rides
+them): `scripts/probes/ercot98_tail_attribution_measure.py` joined EIA-930's
+hour-**ENDING** stamps as hour-beginning (correlation of model demand against
+the 930 generation sum peaks at +1 h: **1.00000 / 0.99933 / 0.94335**), and
+built its calendar with `date_range(periods=8760)`, which mis-dates every
+model hour after Feb 28 of a **leap** year by 24 h. Uncorrected 2023 read gas
+−349 / renewables −1,771 MW (corrected −1,412 / +504); uncorrected 2024 read
+renewables −9,216 MW (corrected +744). Both repaired with citations;
+`docs/DIAGNOSIS-ercot-2023-summer-tail-attribution-2026-07.md` §[3] should be
+read as superseded by this finding's §3.
+
+**Filed for the next keeper-promoting session** (a registered bundle's
+attestation is not edited after the fact): re-word the C3c exception's `OPEN
+RESIDUAL LANE` clause to record both candidates as spent, citing this finding.
+Kind, tier, magnitudes and ledger status are unaffected.
+
+**Governance:** Q-B FINAL + R-A cited, not re-litigated (no C3a-2023 spend, no
+2023 price number used as a basis); ercot-206 B0, ercot-211 Door A, V0/
+ercot-201, 28a honoured; the mid-band spill lane stays CLOSED and the
+published two-basis form is neither built nor proposed; the G-SPUR band-top
+blindness stays an owner gate-revision item. Rule 15: no run produced, nothing
+to register. Rule 22: 2023–2025 only, no marker sought. Rule 25: ERCOT only.
+Rules 5/23/24: nothing built, nothing fitted, no field. Rule 27: local edits,
+blob-verified pushes. No new workflows, no PR.
+
+**Session consumed the ercot-216 shorthand. Next shorthand: ercot-217**
+(ercot-199 remains unclaimed).
