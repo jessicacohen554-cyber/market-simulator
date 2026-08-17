@@ -1,0 +1,99 @@
+{
+ "2023": {
+  "system": {
+   "rows": [
+    87600,
+    87600
+   ],
+   "identical_grid": true,
+   "nonnumeric_identical": true,
+   "numeric_diff_columns": {},
+   "bit_identical": true
+  },
+  "class_hourly": {
+   "rows": [
+    245280,
+    245280
+   ],
+   "identical_grid": true,
+   "nonnumeric_identical": true,
+   "numeric_diff_columns": {},
+   "bit_identical": true
+  },
+  "reserve_family": {
+   "rows": [
+    52560,
+    52560
+   ],
+   "identical_grid": true,
+   "nonnumeric_identical": true,
+   "numeric_diff_columns": {},
+   "bit_identical": true
+  }
+ },
+ "2024": {
+  "system": {
+   "rows": [
+    87600,
+    87600
+   ],
+   "identical_grid": true,
+   "nonnumeric_identical": true,
+   "numeric_diff_columns": {},
+   "bit_identical": true
+  },
+  "class_hourly": {
+   "rows": [
+    245280,
+    245280
+   ],
+   "identical_grid": true,
+   "nonnumeric_identical": true,
+   "numeric_diff_columns": {},
+   "bit_identical": true
+  },
+  "reserve_family": {
+   "rows": [
+    52560,
+    52560
+   ],
+   "identical_grid": true,
+   "nonnumeric_identical": true,
+   "numeric_diff_columns": {},
+   "bit_identical": true
+  }
+ },
+ "2025": {
+  "system": {
+   "rows": [
+    87600,
+    87600
+   ],
+   "identical_grid": true,
+   "nonnumeric_identical": true,
+   "numeric_diff_columns": {},
+   "bit_identical": true
+  },
+  "class_hourly": {
+   "rows": [
+    245280,
+    245280
+   ],
+   "identical_grid": true,
+   "nonnumeric_identical": true,
+   "numeric_diff_columns": {},
+   "bit_identical": true
+  },
+  "reserve_family": {
+   "rows": [
+    52560,
+    52560
+   ],
+   "identical_grid": true,
+   "nonnumeric_identical": true,
+   "numeric_diff_columns": {},
+   "bit_identical": true
+  }
+ },
+ "all_bit_identical": true
+}
