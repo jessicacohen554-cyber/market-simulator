@@ -48,7 +48,7 @@ def compare(name: str, year: int) -> dict:
         rec["note"] = "column/row grid differs"
         return rec
     rec["identical_grid"] = True
-    num = [c for c in a.columns if np.issubdtype(a[c].dtype, np.number)]
+    num = [c for c in a.columns if pd.api.types.is_numeric_dtype(a[c])]
     other = [c for c in a.columns if c not in num]
     rec["nonnumeric_identical"] = all(a[c].equals(b[c]) for c in other)
     diffs = {}

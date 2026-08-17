@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-17-neiso-97-dstrepair",
+  "label": "neiso 97 dstrepair",
+  "date": "2026-08-17",
+  "shorthand": "neiso-97-dstrepair",
+  "definition": "neiso-97 (audit row O8, owner-signed 2026-08-17): byte-faithful re-solve of the neiso-93 keeper recipe, zero scenario deltas, at the DST-repaired NEISO SMD actual-LMP instrument. All years fresh, no reuse.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-08-17-neiso-97-dstrepair.js",
+  "bundle": "results/calibration/neiso97_dstrepair_A"
+}
