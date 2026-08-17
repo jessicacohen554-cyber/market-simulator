@@ -8317,3 +8317,71 @@ Owner ruling 5 stands — **`complete` is NOT supportable on the merits**;
 disclosed in FINDING §6 (byte-grain layup assumption; naive CSV split). Also
 flagged cross-lane: the two `2026-08-16-miso-160-*` sidecars have no run
 payloads (parity check) — MISO's lane to repair (rule 25).
+
+---
+
+## caiso-201 (2026-08-17) — **OWNER SITTING ON THE EXHAUSTED FRONTIER: Q1 GRANTED — THE CAISO BACKCAST LANE RESTS AT `NOT-YET`. NO SOLVE, NO RUN REGISTERED, KEEPER UNCHANGED, NO MARKER TOUCHED.**
+
+**READ-AND-WRITE-DOCS ONLY.** No code, no config, no data file, no keeper, no status, no
+attestation, no marker touched; **no LP run**; **no run registered**; no matrix cell verdict
+moved. Keeper unchanged at **`2026-08-17-caiso-200-h1-memberpanel`**. Start-state verified
+against `origin/main` @ `6cc332e`: keeper shard, outage instrument sha `cf156483…`, and
+`ASSESSMENT-caiso200-frontier-2026-08-17.md` all present; `audit_keepers --iso CAISO` PASS
+before and after the session's edits.
+
+**THE RULING** (`results/calibration/caiso201-owner-ruling-2026-08-17.md`), answering the
+ASSESSMENT-caiso200 §5 sitting:
+
+* **Q1 — ACCEPT THE RESTING STATE: GRANTED.** The CAISO backcast **holds at `NOT-YET`**, and
+  that is recorded as **the designed honest outcome of the program, not a failure of process**
+  — owner ruling 5 (caiso-191) discharged exactly as written: *"C3a must genuinely pass;
+  NOT-YET is the honest fallback."* **The lane goes quiet**: no further CAISO calibration
+  session without new funded data. It is a **resting state, not a closure of the question** —
+  the lane re-opens on this identical keeper recipe the moment either standing object is
+  funded.
+* **Q2 — NEITHER OBJECT FUNDED.** (a) The walled hourly PS water-state intake stays DECLINED
+  (ruling 4 undisturbed; reach bounded at **62.1 %/10.4 %** of the 2024/2025 C3a requirement —
+  partial by its own arithmetic — and the rule-13 fabricated-shape prohibition stands).
+  (b) The 8,800 MW import spot capacities stay a **declared residual** (caiso-191 §4 desk
+  refusal; any re-opening still needs the new citable evidence the caiso-188 §7 fences demand,
+  and would be a **data-intake session, not a solve**). A "no" to both is a "yes" to Q1.
+* **Q3 — RATIFIED (awareness only).** The caiso-199 §3 item-3 "9 of the 158" reading is
+  corrected on measurement — **all 158 Desert Star windows stay mechanical**, the 9 movers
+  being pre-existing borderline CA-facility windows — already carried in FINDING-caiso200 §3,
+  the shard and the matrix cell. Item closed.
+
+**WHAT THE LANE RESTS ON** (measured, not asserted; nothing re-derived this session): the most
+structurally faithful CAISO configuration the program has produced — fully-identified outage
+instrument (CC_REGULAR population 1.000000, every fleet window testable against a panel its own
+plant belongs to), zero-forcing-clean, **DOF 10/7** with zero fitted parameters in the
+caiso-198→200 delta, **C6/C8 green**; a **C3a miss that is real and honestly declared**
+(+4.1 PASS / +12.8 / +15.7 % vs ±10 %), never ledgered and never closed by an adder; and a
+**C1-2023 single-row miss measured ~97 % structural** — caiso-200's pre-registered return watch
+answered **NO** at **+0.003 TWh** of a ~0.116 TWh restorable bound, so the deficit is the volume
+face of the standing CC-side under-dispatch / over-import lane (caiso-121/135/140 §B) whose
+price face is C3a. **One lane owns both open faces**, and only real structure moves either
+number.
+
+**MARKERS AND HOLDOUT UNCHANGED.** `complete` is **NOT declared and NOT supportable on the
+merits**; `final` is **moot at two levels** (ASSESSMENT §6). CAISO holds **no `complete` and no
+`final`**; `holdout-freeze.json` **ACTIVE**; **no out-of-training year touched, solved, scored
+or registered**; rule 22 D-5(b) does not fire (no `complete` entry to re-key).
+
+**RULES 15/16 — NO RUN TO REGISTER.** caiso-201 ran no LP, so there is no bundle and no
+dashboard registration; stated explicitly so the absence is not read as a skipped duty (the
+ercot-175 §0 / ercot-177 precedent). The CAISO dashboard lane stays **the keeper alone**.
+
+**NOTHING RETRACTED, NOTHING RE-OPENED.** Every registered determination, gate record, caveat
+and finding stands as scored. No rubric amendment (C3a stays un-ledgerable under v3.1). Every
+DO-NOT-REDO cell stays closed: export/absorption (caiso-142 §H), offer rungs (caiso-131 §10),
+reserve tiers (caiso-144), `hydro_ror_split` (caiso-194), lane 6 without new evidence
+(caiso-191 §4), the caiso-197 composed cells, the caiso-198 unpinned CA+NV re-derive, the
+caiso-199 state-list pin legs, the caiso-200 §3b membership legs. **Cross-ISO: NOTHING
+TRANSFERS** (rule 25) — the panel fleet-blindness closure is CAISO's verdict for CAISO alone;
+NYISO (NY+NJ), PJM and MISO each measure their own. Cross-lane repair still owed by MISO (not
+this session): the two `2026-08-16-miso-160-*` sidecars have no run payloads.
+
+**Records:** `results/calibration/caiso201-owner-ruling-2026-08-17.md` (the ruling),
+`ASSESSMENT-caiso200-frontier-2026-08-17.md` §5.1 (the sitting, re-stamped with the outcomes),
+`docs/governance/rule-history.md` §4 (genealogy), `docs/mechanism-testing-matrix.md` §5.2 +
+`docs/codebase-site/data/mechanism-matrix/CAISO.js` (lane-rest stamp; no cell verdict moved).

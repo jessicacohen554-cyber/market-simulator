@@ -155,6 +155,22 @@ genealogy is owned by** `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(
   only, governance must PASS, supporting-tier-only fail-closed, never
   `CALIBRATED`, single ledgerable slot still spent. Detail:
   `docs/calibration-determination-rubric.md` §9 (v3.2).
+- **2026-08-17 — the first lane RESTED at `NOT-YET`** (session caiso-201, owner ruling Q1;
+  record `results/calibration/caiso201-owner-ruling-2026-08-17.md`, packet
+  `results/calibration/ASSESSMENT-caiso200-frontier-2026-08-17.md` §5). **No rule text
+  changed** — this entry records the first time the rule's *designed* negative outcome was
+  taken deliberately, so the precedent is citable. CAISO's in-model queue was exhausted **by
+  measurement** (caiso-200's last named object returned +0.003 TWh of a ~0.116 TWh bound,
+  measuring C1-2023 ~97 % structural), C3a genuinely failed (+12.8 %/+15.7 % vs ±10 %), and
+  the 2026-08-11 ruling 5 had already DECLINED the rubric amendment that would have ledgered
+  it. With both remaining C3a axes being owner-funding decisions previously declined
+  (caiso-141 §G / ruling 4) or desk-refused (caiso-191 §4), the owner **accepted the resting
+  state** rather than reach the band by a mechanism that is not real: the lane holds at
+  `NOT-YET`, goes quiet, and re-opens only on new funded data. **The load-bearing precedent:**
+  `complete` is a *merits* declaration, so an exhausted lane whose criterion genuinely fails
+  rests — it does not ledger, does not lower a band, and does not declare. The `complete`
+  marker stayed absent, `final` stayed moot, `holdout-freeze.json` stayed ACTIVE and no
+  out-of-training year was touched, so the rule's enforcement machinery was never engaged.
 
 ## 5. Rule 27 `[R-PUSH]` — the 2026-07-15 `constants.py` truncation incident
 
@@ -280,6 +296,7 @@ board, against the 2026-07-27 keeper roster.
 
 | date | change |
 |---|---|
+| 2026-08-17 | §4: recorded the first lane RESTED at `NOT-YET` (CAISO, session caiso-201, owner ruling Q1). No rule text changed — the entry exists so the precedent that an exhausted lane with a genuinely failing load-bearing criterion *rests* rather than ledgers or declares is citable. |
 | 2026-07-27 | Added §7: rule 28 `[R-MECH-MATRIX]` (cross-ISO mechanism testing matrix) — origin and canonical file locations. "Changes to this file" renumbered §7 → §8 (no external references cited §7). |
 | 2026-07-26 | Added §6: the 2026-07-22 history rewrite orphaning pre-rewrite bundle `git.sha` provenance (owner decision B close-out) — no SHA mapping saved, replay/goldens unaffected (`git_sha` in both ignore sets), the `--reuse-solved` unresolvable-SHA refusal intentional and load-bearing. "Changes to this file" renumbered §6 → §7 (no external references cited §6). |
 | 2026-07-25 | §5: recorded the ≥300-line push deadlock (rule 27 + API-only leaving no compliant path) and the owner's per-commit `git push` waiver that landed wave 4C. Per-commit, not a standing exception. |

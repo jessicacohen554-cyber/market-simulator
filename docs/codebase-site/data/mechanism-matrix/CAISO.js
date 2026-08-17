@@ -327,3 +327,31 @@ window.MECH_MATRIX_SHARDS.CAISO = {
  * '9 of 158' record corrected on measurement). Column re-checked: no other cell moved —
  * the caiso-200 delta is derive-time instrument scope, not a ScenarioConfig mechanism.
  */
+
+/* caiso-201 (2026-08-17) — LANE-REST STAMP ONLY. NO CELL VERDICT MOVED, NO
+ * MECHANISM TESTED, NO SOLVE RUN, NO RUN REGISTERED, KEEPER UNCHANGED at
+ * 2026-08-17-caiso-200-h1-memberpanel. The owner sat on the exhausted frontier
+ * (ASSESSMENT-caiso200-frontier-2026-08-17.md §5) and ruled Q1: ACCEPT THE
+ * RESTING STATE — the CAISO backcast HOLDS AT NOT-YET as the designed honest
+ * outcome (owner ruling 5, caiso-191: "C3a must genuinely pass; NOT-YET is the
+ * honest fallback"), and THE LANE GOES QUIET — no further CAISO calibration
+ * session without new funded data. Q2: NEITHER standing object funded (the
+ * walled hourly PS water-state intake stays DECLINED, ruling 4, bounded reach
+ * 62.1%/10.4% of the 2024/2025 C3a requirement and rule-13 fabricated shapes
+ * still forbidden; the 8,800 MW import spot capacities stay a DECLARED
+ * RESIDUAL, caiso-191 §4, re-opening still gated on the caiso-188 §7 evidence
+ * and a data-intake session, not a solve). Q3: RATIFIED, awareness only — the
+ * "9 of the 158" correction already carried in this column's
+ * campd_outage_windows cell and FINDING-caiso200 §3.
+ * A RESTING STATE, NOT A CLOSURE: both objects remain available for future
+ * funding and the lane re-opens on this identical keeper recipe. The column
+ * was re-checked and NO cell moved — caiso-201 tested no mechanism, so rule 28
+ * duty (b) has nothing to record beyond this stamp; every DO-NOT-REDO cell
+ * stays closed. NOTHING TRANSFERS OUT (rule 25): the caiso-200 panel
+ * fleet-blindness closure is CAISO's verdict for CAISO alone — NYISO (NY+NJ),
+ * PJM and MISO each measure their own. Markers untouched: no `complete`, no
+ * `final`, holdout-freeze ACTIVE, no out-of-training year touched. Records:
+ * results/calibration/caiso201-owner-ruling-2026-08-17.md,
+ * ASSESSMENT-caiso200-frontier-2026-08-17.md §5.1,
+ * docs/calibration-log/caiso.md, docs/governance/rule-history.md §4.
+ */
