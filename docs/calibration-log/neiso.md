@@ -2873,3 +2873,92 @@ items are the **two owner escalations** (O5, now sharpened, and the Stony Brook 
 settled together in one re-solve. **Not NEISO lane items:** the partial-year solve gate (six-ISO),
 the fleet-vintage/Pilgrim charter (cross-ISO), the `_dual_fuel_plant_groups` vintage seam, the
 `complete`-entry stale clause and the ledger attribution defect.
+
+## 2026-08-17 — neiso-99: BOTH standing owner escalations CLOSED in one re-solve — the keeper moves off the archived P2 pass (audit row O5) and the Stony Brook 6081 outage routing is repaired; determination UNCHANGED, no gate traded
+
+**New keeper `2026-08-17-neiso-99-joint-p1`**, superseding `2026-08-17-neiso-97-dstrepair`
+(superseded-not-retracted). Two arms registered (rule 15), both `--year 2023 2024 2025` in ONE
+invocation (rule 16), years sequential (rule 12), both at the same HEAD. Prereg
+`results/calibration/PREREG-neiso99-p2basis-routing-2026-08-17.md`, pushed **before either arm
+solved**. Full record: `results/calibration/ASSESSMENT-neiso99-p2basis-routing-2026-08-17.md`.
+
+**The two defects, settled together so they could not be confounded** (exactly as neiso-98 §4
+recommended):
+
+1. **O5 — the keeper was SCORED on the archived P2 pass.** NEISO was the only ISO of six; neiso-98
+   proved the registered payload was *rendered from* P2. Three keeper generations carried it with
+   no operator decision anywhere, because `run_replay_bundle` / `replay_keeper.main` rebuild kwargs
+   from `meta.json` **after** the CLI's P2 gate runs on parsed args. The keeper now persists
+   `["P1"]` alone; `enforce_legacy_p2_kwargs` gates the **reconstructed** recipe at both entry
+   points and **hard-fails** rather than silently rewriting it.
+2. **The Stony Brook routing defect** (filed open by neiso-83, re-confirmed at HEAD by -95/-96/-98).
+   `_resolve_unit_group`'s `fac_group` short-circuit — a pjm-75 conservatism, not a physical claim —
+   handed plant 6081's two **Diesel Oil** combustion turbines (83 MW each, 74 windows each) to the
+   `CC_REGULAR` bin, derating a **305.1 MW combined cycle they are not in** for **48.7 % of the 2024
+   and 56.0 % of the 2025 capacity-year** — years in which the CC units 001/002/003 have **no
+   windows of their own at all**. 1595 Kendall S6, 568 Bridgeport BHB4 and 1588 Mystic MJ-1 the same
+   way; 236 rows removed.
+
+**The discriminator is measured, and the measurement stopped a much worse fix.** Routing on
+`unitType` alone would have been wrong: across all six ISOs' committed extracts, **35** CAMPD units
+filed "Combustion turbine" sit in a non-CT bin and **27 are gas-fired members of a genuine block
+that must keep inheriting it** (Sand Hill SH1–SH7, Colorado Bend, Glenarm, Zeeland, Ravenswood,
+Bethpage). The guard is conjunctive on `unitType` **and** the unit's own liquid-only
+`primaryFuelInfo` — it selects exactly the 8 real peakers and none of the 27. **Zero free
+parameters** (a predicate over a closed CAMPD fuel vocabulary).
+
+**Extract diff, accounted to the row:** 3,189 → 2,932, **0 added**; 257 dropped = **236 the fix** +
+**21** reclassified standard→layup in 2019/2020/2026 only, the latter reproduced by a **pre-fix
+control re-derivation at HEAD** and therefore ambient drift. All 2,932 survivors byte-identical on
+every column; **within 2023–2025 the only change is the 236 rows**. The BLOAT-S2-untracked CAMPD
+**2018 vintage was re-fetched first** per the corpus README (5/6 states byte-identical to
+`SHA256SUMS`; `CT_2018` carries an EPA revision).
+
+**The movement is decomposed, not conflated.** Arm A `2026-08-17-neiso-99-basis-p1` (PROBE,
+basis-only, solved on the pre-fix extract via a `MARKET_SIM_DATA_ROOT` shadow root) is
+**BIT-IDENTICAL to the superseded keeper's own persisted P1** in `system` / `class_hourly` /
+`reserve_family`, all three years — **0 differing cells of 192,720 rows per year**. **P2 never fed
+back into P1; it was only ever what got published.** Basis leg: mean λ −0.0575 / −0.0110 / −0.0378
+$/MWh and the **2024 annual maximum $256.93 → $218.24** (P2 stood **+17.7 %** above P1 on that
+price-formation statistic — reported at full magnitude, not tuned around). Routing leg: a further
+−0.0162 / −0.0133 / −0.1112 $/MWh with the annual maxima **unmoved**.
+
+**One pre-registered expectation is REFUTED and recorded as such.** P3 predicted the routing arm
+would be driven by Stony Brook and would *raise* `CC_REGULAR`. It is driven by **Kendall**, and
+`CC_REGULAR` **falls** (CC_CHP +0.0532 / +0.0644 / +0.0221 TWh against CC_REGULAR −0.0535 / −0.0605
+/ −0.0026, CT_PEAKER −0.0014 / −0.0035 / −0.0193). Reason, already on this lane's record: 6081's
+heat rate **10.6062** sits above **97.5 %** of NEISO's `CC_REGULAR` capacity (cap-weighted p50
+7.340) — deep out of merit whether available or not, the same fact neiso-83 measured at the same
+plant. Restoring an expensive block changes its **availability**, not much of its **dispatch**.
+
+**Determination UNCHANGED at CALIBRATED-WITH-CAVEATS**, criterion for criterion identical to the
+superseded keeper (0 FAILs, C3c the sole ledgered caveat, C1 all 12/12 · free 8/8, grade 8/7/0/1/0),
+re-verified per rule 22 D-5(b) on committed artifacts **before** the re-key landed. **NO GATE WAS
+TRADED** — and the prereg had declared in advance, with the model already *below* actual mean λ in
+all three years, that a C3a/C3b degradation was expected and would be **accepted** under rules 1
+`[R-STRUCT]` / 14 `[R-ACCURATE]`; in the event none had to be. `audit_keepers.py --iso NEISO`:
+**PASS, 0 failures / 0 warnings**.
+
+**Frontier RE-ESTABLISHED on the new keeper's own sidecars** (`neiso99_declaration_recheck.py`,
+which imports neiso-98's helpers verbatim so the pinned tail definition is shared) — **mandatory**,
+because unlike every NEISO keeper change since neiso-93 this one is *not* a dispatch no-op. C3c
+model tail **0 h > $300/MWh in all three years on the now-sole P1 pass**, agreeing with the
+payload's `ordc.hoursGt200.model` 0/0/0 vs RT actuals 15/8/20; annual maxima 248.9682 / 218.2412 /
+280.8542, closest approach short by **$19.15** — **bit-unchanged** from the superseded keeper's own
+P1, so **no C3c evidence moved in either direction**. RCPF co-optimization **DORMANT** in all
+**78,840** family-hours at the published statics (1,800 / 1,200 / 600 MW), `|dual|` max **exactly
+0.0** — the prior keeper's 1.42e-14 residue was P2's own degeneracy noise and left with the pass.
+**No C3c lever was opened** (rule 28a).
+
+**Rule 22:** no out-of-training year solved, scored or registered; the spend freeze stays **ACTIVE**
+and was never engaged; the measured-input repair is applied to every year consistently. NEISO's
+locked test remains **NEVER GRANTED and NEVER SPENT**. No 2022 re-iteration requested.
+
+**Filed for other lanes, NOT acted on (rule 25 `[R-ISO-SCOPE]`):** the same guard would drop
+mis-routed liquid-fuel CT rows at **PJM** 593 Edge Moor 10 (33 rows), **MISO** 2001 New Ulm 7 (114)
+and 8056 Waterford 4 (103), and **NYISO** 2516 Northport UGT001 (42). Only NEISO's extract is
+re-derived here. **Not a NEISO item, reported in passing:**
+`scripts/check_registry_payload_parity.py` fails at HEAD on `results/calibration/ercot215_control_A`
+(bundle mapping to no retained sidecar) — the ERCOT lane's.
+
+**Audit row O5 is CLOSED**; the neiso-83 Stony Brook root-cause issue is CLOSED.
