@@ -526,6 +526,7 @@ def run_year(
     ercot_commitment_posture_min_load_frac: float | None = None,
     carry_operating_mothballs: bool | None = None,
     reliability_floor: bool | None = None,
+    reliability_floor_plant_exclusions: bool | None = None,
     reliability_floor_overrides: dict | None = None,
     scarcity_price_overlay: bool | None = None,
     caiso_scarcity_pricing: bool | None = None,
