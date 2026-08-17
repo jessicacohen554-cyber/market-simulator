@@ -5,10 +5,54 @@
     "MARKET_SIM_WARMSTART_XYEAR": "0"
   },
   "git_dirty": false,
-  "git_sha": "dd8b7265",
+  "git_sha": "0315a094",
   "hash_scheme": "sha256-of-canonical-column-float64-bytes",
   "highspy_version": "unknown",
   "keepers": {
+    "CAISO": {
+      "bundle": "results/calibration/caiso197_w2_r5",
+      "content_hashes": {
+        "btm.parquet": "f59e46c76213b7b67bed113a70233bcc9484bc2c50bef1daed6a4c88b8150545",
+        "dispatch/2023_P1.parquet": "e44e7f52f41c257f569ebcf40601552b253aafbd0e3649bd5372b83b616eb1de",
+        "dispatch/2024_P1.parquet": "8bd6b4fc05b1df8faca1dc3e3a5cd7b1d7afb6f679d01ca1979af5ec58bf206a",
+        "dispatch/2025_P1.parquet": "f703bb2c05e238d135f6d0d41b6b82f722d73c169dd18fcedd2639c89c10823d",
+        "flows.parquet": "d1b2ea68fb080670a0808d4c42e5d7e7b3526a9f9aac1e3b25a93c0d92b05d94",
+        "storage.parquet": "f2dfc70701def89625420def1ecfae89d49cfa93ae6da9f24de34af65baa302a",
+        "system.parquet": "adfc20f1b9a50a79c35cbe3070dd9537e18963f28fd16d788273ce016434689c"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "persist_p0_commitment",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [],
+        "meta_keeper_only": [],
+        "meta_matched": 256,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "commission_year_cod_fallback",
+          "ercot_reserve_supply_cap_net_credits"
+        ],
+        "scenario_config_matched": 714
+      },
+      "hours": 8760,
+      "keeper_id": "2026-08-16-caiso-197-w2-r5",
+      "recorded_flag_count": 247,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
     "ERCOT": {
       "bundle": "results/calibration/ercot204_rule26_delete",
       "content_hashes": {
