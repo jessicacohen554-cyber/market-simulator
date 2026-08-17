@@ -440,6 +440,7 @@ generators and are not part of the gas offer-curve tranche fleet.
 | Committed % / coal must-run % / CC peaking % derivation | `scripts/data/derive_thermal_tranches.py` |
 | Per-ISO bin-assignment export (source-tagged) | `scripts/export_iso_bin_assignments.py` |
 | CEMS→EIA split-plant remap (AES Alamitos / Huntington Beach) | `src/market_sim/data/campd.py` (`CAMPD_UNIT_PLANT_REMAP`) |
+| CEMS common-generator stack-pair drop (Astoria 8906) | `src/market_sim/data/campd.py` (`CAMPD_STACK_DUPLICATE_UNITS`) |
 | Shared outage detectors + thresholds (ERCOT-79-tightened) | `scripts/lib/outage_detect.py` |
 | Unit-level outage detection (sole CAMPD outage source) | `scripts/data/derive_campd_unit_outages.py` |
 | Historic-outage overlay | `src/market_sim/data/outages.py` |

@@ -46,6 +46,8 @@ from market_sim.data.campd import (
     LB_TO_KG,
     SHORT_TON_TO_KG,
     _ONLINE_MW,
+    merge_stack_duplicate_units,
+    stack_duplicate_mask,
 )
 
 # Repo root on sys.path so ``scripts.lib`` resolves when run by path.
@@ -98,11 +100,23 @@ def _normalize_unit_hourly(raw: pd.DataFrame, year: int) -> pd.DataFrame:
     plant_id = pd.to_numeric(raw["facilityId"], errors="coerce")
     hour = pd.to_numeric(raw["hour"], errors="coerce")
     keep = plant_id.notna() & hour.notna()
+    gross = pd.to_numeric(raw["grossLoad"], errors="coerce")
     if "unitId" in raw.columns:
-        unit_id = raw["unitId"].astype("string")
+        # Common-generator stack pairs: one generating unit monitored on two
+        # flue paths, whose FULL grossLoad CAMPD repeats on both rows while
+        # splitting heat and masses between them. Re-label the duplicate onto
+        # its primary and drop its repeated grossLoad, so the group-by below
+        # sums the pair into the one generator it is — generation once, heat
+        # and masses over both paths. campd.CAMPD_STACK_DUPLICATE_UNITS carries
+        # the identification (rule 14 [R-ACCURATE]).
+        unit_id = merge_stack_duplicate_units(raw["facilityId"], raw["unitId"]).astype(
+            "string"
+        )
+        gross = gross.mask(stack_duplicate_mask(raw["facilityId"], raw["unitId"]))
     else:
         unit_id = pd.Series("ALL", index=raw.index, dtype="string")
     raw = raw[keep]
+    gross = gross[keep]
     plant_id = plant_id[keep].astype("int64")
     hour = hour[keep].astype("int64")
     unit_id = unit_id[keep].fillna("ALL").astype(str)
@@ -124,7 +138,7 @@ def _normalize_unit_hourly(raw: pd.DataFrame, year: int) -> pd.DataFrame:
                 else np.array([""] * len(raw))
             ),
             "ts": ts.to_numpy(),
-            "gross_mw": pd.to_numeric(raw["grossLoad"], errors="coerce").to_numpy(),
+            "gross_mw": gross.to_numpy(),
             "steam_load": pd.to_numeric(raw["steamLoad"], errors="coerce").to_numpy(),
             "co2_kg": pd.to_numeric(raw["co2Mass"], errors="coerce").to_numpy()
             * SHORT_TON_TO_KG,

@@ -23,8 +23,19 @@ is **no start-count column** anywhere; starts are derived from `gross_mw > 1 MW`
 transitions (`campd._startup_factors`, `_ONLINE_MW`). Op-hours, heat input, gross gen and the
 three pollutant masses are all present at both grains. `market_sim/data/campd.py` prefers
 facility-level per state (ERCOT/TX reads facility files), falling back to unit-level; unit rows
-are facility-summed downstream, with the CA split-plant remap (`CAMPD_UNIT_PLANT_REMAP`) the
-only unit-identity consumer today besides the CT run-length artifact.
+are facility-summed downstream, with the CA split-plant remap (`CAMPD_UNIT_PLANT_REMAP`) and the
+Astoria stack-duplicate drop (`CAMPD_STACK_DUPLICATE_UNITS`, added nyiso-141) the
+unit-identity consumers today besides the CT run-length artifact.
+
+**Facility-summing is not always safe, and the stack-pair case is why.** Where CEMS
+monitors one generator on two flue paths it files two "units" that repeat the generator's
+FULL `grossLoad` on both rows while SPLITTING heat input and masses between them — so the
+facility sum double-counts generation and halves every derived intensity. NYISO's Astoria
+(ORIS 8906) does this on units 30 and 50; the defect put 279–322 kg CO₂/MWh on a fired gas
+boiler whose peers sit at 520–575. A facility-level extract has the double-count baked in
+with no unit identity to see it with, so such a facility must be rebuilt from its unit-level
+companion (`_FACILITIES_NEEDING_UNIT_ROWS`).
+`results/calibration/FINDING-nyiso141-astoria-stack-duplication-2026-08-17.md`.
 
 ### 1.2 The live rate artifact is stale, TX-only, and carries quarantined rows
 

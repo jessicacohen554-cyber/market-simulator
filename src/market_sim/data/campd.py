@@ -235,6 +235,113 @@ CAMPD_UNIT_PLANT_REMAP: dict[tuple[int, str], int] = {
 # Facilities with at least one remapped unit (split facilities).
 CAMPD_SPLIT_FACILITIES: frozenset[int] = frozenset(f for f, _ in CAMPD_UNIT_PLANT_REMAP)
 
+# Common-generator stack pairs: ONE generating unit whose flue gas is monitored
+# on two separate paths, which CEMS files as two "units". CAMPD repeats the
+# generator's FULL ``grossLoad`` on BOTH rows while splitting ``heatInput`` and
+# the emission masses between them, so summing a facility's units double-counts
+# generation while heat and mass sum correctly. The value is the set of
+# DUPLICATE unit ids whose ``grossLoad`` must be dropped; the primary twin
+# carries the generator's output. Heat and masses are never touched -- they are
+# genuinely per-path and must keep summing.
+#
+# The mapping is ``{facilityId: {duplicate_unit: primary_unit}}``: consumers
+# working at PLANT grain only need the duplicate's grossLoad dropped, while
+# consumers working at UNIT grain must additionally re-label the duplicate onto
+# its primary so the pair aggregates into the ONE generator it physically is.
+#
+# Astoria Generating Station (ORIS 8906, NYISO/NYC, ST_GAS) files units 30 and
+# 50 as reheat/superheat pairs ``31RH``/``32SH`` and ``51RH``/``52SH``.
+# Identified at nyiso-141 on three independent channels, none of them a
+# residual (rule 13 ``[R-MEASURED]``, rule 14 ``[R-ACCURATE]``):
+#   1. INTERNAL -- 51RH/52SH ``grossLoad`` is byte-identical in all 4,327 fired
+#      hours of 2025 (max |diff| exactly 0.000, corr 1.000000); 31RH/32SH in
+#      99.98 %. Genuine twin units dispatched in lockstep do NOT do this: the
+#      Gowanus / Narrows / Holtsville / Barrett peaker banks reach 95-100 %
+#      identical hours yet each carries its OWN full heat input.
+#   2. PHYSICAL -- counted separately each row implies 5,172-5,512 Btu/kWh,
+#      impossible for a wall-/tangentially-fired BOILER (better than a modern
+#      combined cycle). Counted once against the pair's summed heat input it is
+#      10,436-10,764 Btu/kWh, exactly its NYISO gas-steam peers (Arthur Kill
+#      10,033, Northport 9,983, Bowline 9,665).
+#   3. EXTERNAL -- EIA-923 net over CAMPD gross is 0.472 / 0.471 in 2023 / 2024
+#      (~one half) where every genuine NY gas-steam peer sits at 0.92-0.96.
+#      Dropping the duplicate ``grossLoad`` lands Astoria at 0.935 / 0.937,
+#      inside the peer band. The old ratio was OUTSIDE
+#      ``_PARASITIC_MIN``.. ``_PARASITIC_MAX``, so ``compute_parasitic_factors``
+#      already flagged it as implausible and silently substituted the ST_GAS
+#      class default -- detecting the anomaly and then papering over it.
+# Blast radius the correction repairs: the plant's parasitic factor; its
+# unit-level CEMS emission rates (279-322 kg CO2/MWh against a 520-575 peer
+# band -- a fired boiler cannot emit that little); and, in any year EIA-923 has
+# not yet published the plant, the class benchmark itself via
+# ``_backfill_eia923_with_campd``. That last one fired for NYISO 2025 and put
+# 2.672 TWh of ST_GAS actuals on the books where the metered value is ~1.27.
+# FINDING-nyiso141-astoria-stack-duplication-2026-08-17.md.
+CAMPD_STACK_DUPLICATE_UNITS: dict[int, dict[str, str]] = {
+    8906: {"32SH": "31RH", "52SH": "51RH"},
+}
+
+# Facilities carrying at least one duplicate-reporting stack row.
+CAMPD_STACK_DUPLICATE_FACILITIES: frozenset[int] = frozenset(
+    CAMPD_STACK_DUPLICATE_UNITS
+)
+
+# Facilities whose correct plant-level series can only be built from unit
+# identity, so a facility-level extract must be replaced by its unit-level
+# companion: the split-plant remaps plus the stack-duplicate drops.
+_FACILITIES_NEEDING_UNIT_ROWS: frozenset[int] = (
+    CAMPD_SPLIT_FACILITIES | CAMPD_STACK_DUPLICATE_FACILITIES
+)
+
+
+def stack_duplicate_mask(facility: pd.Series, unit: pd.Series) -> pd.Series:
+    """Return a boolean mask of duplicate-reporting stack rows.
+
+    A ``True`` row's ``grossLoad`` repeats its primary twin's and must be
+    dropped before generation is summed; its heat input and emission masses are
+    genuinely its own and must be kept. See
+    :data:`CAMPD_STACK_DUPLICATE_UNITS` for the identification.
+
+    Args:
+        facility: CAMPD ``facilityId`` values (numeric or string).
+        unit: CAMPD ``unitId`` values, exactly as the extract labels them.
+
+    Returns:
+        Boolean Series aligned to ``facility``/``unit``.
+    """
+    fac = pd.to_numeric(facility, errors="coerce").fillna(-1).astype(int)
+    uid = unit.astype(str)
+    mask = pd.Series(False, index=fac.index)
+    for fid, pairs in CAMPD_STACK_DUPLICATE_UNITS.items():
+        mask |= (fac == fid) & uid.isin(pairs)
+    return mask
+
+
+def merge_stack_duplicate_units(facility: pd.Series, unit: pd.Series) -> pd.Series:
+    """Return ``unit`` with duplicate stack rows re-labelled onto their primary.
+
+    For consumers that aggregate at UNIT grain. Combined with dropping the
+    duplicate's ``grossLoad`` (:func:`stack_duplicate_mask`), a group-by on the
+    relabelled unit id sums the pair into the single generator it physically
+    is: generation counted once, heat input and emission masses summed over
+    both monitored paths.
+
+    Args:
+        facility: CAMPD ``facilityId`` values (numeric or string).
+        unit: CAMPD ``unitId`` values, exactly as the extract labels them.
+
+    Returns:
+        Series of unit ids, aligned to the input, duplicates re-labelled.
+    """
+    fac = pd.to_numeric(facility, errors="coerce").fillna(-1).astype(int)
+    out = unit.astype(str).copy()
+    for fid, pairs in CAMPD_STACK_DUPLICATE_UNITS.items():
+        at = fac == fid
+        if at.any():
+            out = out.where(~at, out.replace(pairs))
+    return out
+
+
 # EIA-923 ``fuel_type`` codes burned by coal-class units.
 _COAL_EIA_FUELS: frozenset[str] = frozenset(
     {"SUB", "BIT", "LIG", "ANT", "RC", "WC", "SC"}
@@ -400,15 +507,20 @@ def _read_one(state: str, year: int, raw_dir: Path) -> pd.DataFrame | None:
         return None
     raw = pd.read_parquet(path)
     out = _normalize_campd(raw, year)
-    # Split-plant remap, facility-level case. A unit-level file carries unit
-    # identity, so the remap applies row-by-row in _normalize_campd. A
-    # facility-level file sums the split facility's units into one series;
-    # substitute the remapped unit-level rows for those facilities when the
-    # companion unit-level extract exists, so the new plant's history lands
-    # on its own EIA code there too. Without a companion file the facility
-    # stays summed under the legacy code (e.g. CA 2023 until U1 lands).
+    # Unit-identity repairs, facility-level case. A unit-level file carries
+    # unit identity, so both repairs apply row-by-row in _normalize_campd. A
+    # facility-level file has already summed the facility's units into one
+    # series, which destroys the identity BOTH repairs key on:
+    #   * split plants (CAMPD_UNIT_PLANT_REMAP) need it to re-key each unit's
+    #     history onto the EIA plant the model fleet carries;
+    #   * stack-duplicate plants (CAMPD_STACK_DUPLICATE_UNITS) need it to drop
+    #     the repeated grossLoad -- the facility-level sum has the
+    #     double-count already baked in and no way to see it.
+    # Substitute the unit-level rows for those facilities when the companion
+    # extract exists. Without a companion file the facility stays summed under
+    # the legacy code (e.g. CA 2023 until U1 lands).
     if "unitId" not in raw.columns:
-        split = sorted(CAMPD_SPLIT_FACILITIES & set(out["plant_id"].unique()))
+        split = sorted(_FACILITIES_NEEDING_UNIT_ROWS & set(out["plant_id"].unique()))
         if split:
             unit_path = raw_dir / "campd-unit-level" / fname
             if unit_path.exists():
@@ -425,7 +537,8 @@ def _read_one(state: str, year: int, raw_dir: Path) -> pd.DataFrame | None:
                 )
             else:
                 logger.warning(
-                    "CAMPD %s %d: split facilities %s have no unit-level "
+                    "CAMPD %s %d: facilities %s need unit identity (split-plant "
+                    "remap or stack-duplicate drop) but have no unit-level "
                     "extract; their units stay summed under the legacy code",
                     state,
                     year,
@@ -442,6 +555,7 @@ def _normalize_campd(raw: pd.DataFrame, year: int) -> pd.DataFrame:
     history belongs to before any facility summing happens downstream.
     """
     plant_id = pd.to_numeric(raw["facilityId"], errors="coerce")
+    gross = pd.to_numeric(raw["grossLoad"], errors="coerce")
     if "unitId" in raw.columns and len(raw):
         fac = plant_id.fillna(-1).astype(int).to_numpy()
         uid = raw["unitId"].astype(str).to_numpy()
@@ -449,6 +563,13 @@ def _normalize_campd(raw: pd.DataFrame, year: int) -> pd.DataFrame:
         plant_id = pd.Series(remapped, index=raw.index, dtype=float).where(
             plant_id.notna()
         )
+        # Common-generator stack pairs repeat the generator's grossLoad on both
+        # monitored paths. Drop the duplicate's copy so units sum to the
+        # generator's real output; heat and emission masses are per-path and
+        # stay untouched so they keep summing correctly.
+        dup = stack_duplicate_mask(raw["facilityId"], raw["unitId"])
+        if dup.any():
+            gross = gross.mask(dup)
     out = pd.DataFrame(
         {
             "plant_id": plant_id,
@@ -457,7 +578,7 @@ def _normalize_campd(raw: pd.DataFrame, year: int) -> pd.DataFrame:
             "year": np.int16(year),
             "date": pd.to_datetime(raw["date"]),
             "hour": pd.to_numeric(raw["hour"], errors="coerce").astype("Int64"),
-            "gross_mw": pd.to_numeric(raw["grossLoad"], errors="coerce"),
+            "gross_mw": gross,
             "steam_load": pd.to_numeric(raw["steamLoad"], errors="coerce"),
             "co2_kg": pd.to_numeric(raw["co2Mass"], errors="coerce") * SHORT_TON_TO_KG,
             "nox_kg": pd.to_numeric(raw["noxMass"], errors="coerce") * LB_TO_KG,
