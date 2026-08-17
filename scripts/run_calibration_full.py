@@ -1014,6 +1014,7 @@ def _system_frame(
     ercot_ordc_total_reserve: bool = False,
     ercot_ordc_cap_dual_adder: bool = False,
     ercot_ordc_adder_published_anchor: bool = False,
+    ercot_ordc_adder_family_counterpart: bool = False,
     ordc_voll: "float | None" = None,
     ercot_ordc_realized_adder: "np.ndarray | None" = None,
 ) -> pd.DataFrame:
@@ -1041,6 +1042,14 @@ def _system_frame(
     component onto the published ``(VOLL - lambda)`` formula and takes a
     SINGLE counterpart (the all-tier / total-reserve cap dual) instead of the
     two-tier sum; ``ordc_voll`` supplies the registered VOLL it needs.
+
+    ``ercot_ordc_adder_family_counterpart`` (ercot-215) decontaminates that
+    single counterpart: one capped reserve MW serves an AS-product row and the
+    ORDC total row simultaneously, so the all-tier cap dual is the SUM of the
+    ORDC total family's own balance-row dual and the AS-product shortfall-ramp
+    steps. The armed branch writes ``min(gamma_all, gamma_ordc_family)`` — the
+    ORDC component alone — because 2023-25 ERCOT prices no RT per-product
+    scarcity (see the inline comment at the branch).
 
     ``ercot_dam_as_overlay`` likewise adds the measured DAM AS-scarcity overlay
     (the day-ahead co-optimization scarcity rent, gated to scarce hours and scoped
@@ -1207,8 +1216,48 @@ def _system_frame(
                     # (reserves/spec.py builds headroom_eligible as
                     # [fast, all]); a single-row cap (lumped single-product
                     # design) is itself the total-reserve row.
+                    gam = cd[-1]
+                    if ercot_ordc_adder_family_counterpart:
+                        # ercot-215 COUNTERPART DECONTAMINATION (the ercot-214
+                        # identification: docs/FINDING-ercot214-gspur-phase0-
+                        # 2026-08-17.md §0-§3). One capped reserve MW serves an
+                        # AS-product row and the ORDC total row simultaneously,
+                        # so the all-tier cap dual is their SUM — measured to
+                        # decompose exactly, in 808/808 writing hours across
+                        # 2023-25, as
+                        #   gamma_all = k x (VOLL / ercot_as_n_ramp)
+                        #               + gamma_ordc_family,   k integer
+                        # i.e. the AS-product shortfall-ramp step leaking into
+                        # the written price. 2023-25 ERCOT has NO real-time
+                        # per-product scarcity pricing — a product-vs-
+                        # capability squeeze triggers RUC commitment, not a
+                        # price (the ercot_ordc_only_scarcity citation block,
+                        # model/reserves/spec.py); the ORDC on realized TOTAL
+                        # reserves is the only RT adder, and the total
+                        # family's own balance-row dual is its faithful mirror
+                        # (matches published RTORPA in both regimes,
+                        # ercot-214 §1-§2). So write the ORDC component alone:
+                        #   gamma' = min(gamma_all, gamma_ordc_family).
+                        # The min form (rather than gamma_fam verbatim) keeps
+                        # the protocol-capped hours exact: where the written
+                        # adder saturates at VOLL - lambda, both operands sit
+                        # at or above the cap and the min changes nothing. The
+                        # ramp's IN-LP role — physical withholding of the DAM
+                        # AS plans — is untouched; only its export into the
+                        # written price stops. Zero fitted scalars: both
+                        # operands are duals of the same LP solve.
+                        if rpf is None:
+                            raise ValueError(
+                                "ercot_ordc_adder_family_counterpart needs "
+                                "reserve_price_by_family (the ORDC total "
+                                "family's own balance-row dual) — without "
+                                "the multi-product family stack there is no "
+                                "decontaminated counterpart to read"
+                            )
+                        fam = np.asarray(rpf, dtype=float)[:T, -1]
+                        gam = np.minimum(gam, fam)
                     ordc_adder = np.minimum(
-                        cd[-1] * headroom_to_cap / voll, headroom_to_cap
+                        gam * headroom_to_cap / voll, headroom_to_cap
                     )
                 else:
                     ordc_adder = cd.sum(axis=0).copy()
@@ -3280,6 +3329,7 @@ def solve_and_persist(
     ercot_ordc_total_reserve: bool = False,
     ercot_ordc_cap_dual_adder: bool = False,
     ercot_ordc_adder_published_anchor: bool = False,
+    ercot_ordc_adder_family_counterpart: bool = False,
     ercot_storage_as_product_credit: bool = False,
     gas_hh_monthly_shape: bool = False,
     ercot_as_aware_commitment: bool = False,
@@ -4763,9 +4813,7 @@ def solve_and_persist(
         # (the caiso-80 defect class): the pristine ``cfg`` does NOT carry
         # generic ScenarioConfig overrides, and ``ordc_voll`` is exactly the
         # kind of published parameter a scenario probe would move.
-        _ordc_voll_eff = float(
-            (prb_overrides or {}).get("ordc_voll", cfg.ordc_voll)
-        )
+        _ordc_voll_eff = float((prb_overrides or {}).get("ordc_voll", cfg.ordc_voll))
 
         # Effective CAISO demand flags: they arrive through the generic
         # ``prb_overrides`` ScenarioConfig channel, which run_year's own
@@ -5207,8 +5255,9 @@ def solve_and_persist(
                 ercot_storage_as_endogenous=ercot_storage_as_endogenous,
                 ercot_ordc_total_reserve=ercot_ordc_total_reserve,
                 ercot_ordc_cap_dual_adder=ercot_ordc_cap_dual_adder,
-                ercot_ordc_adder_published_anchor=(
-                    ercot_ordc_adder_published_anchor
+                ercot_ordc_adder_published_anchor=(ercot_ordc_adder_published_anchor),
+                ercot_ordc_adder_family_counterpart=(
+                    ercot_ordc_adder_family_counterpart
                 ),
                 ordc_voll=_ordc_voll_eff,
                 # ORDC-only realized-room RTORPA: computed on the P1
@@ -5724,6 +5773,7 @@ def solve_and_persist(
         "ercot_ordc_total_reserve": ercot_ordc_total_reserve,
         "ercot_ordc_cap_dual_adder": ercot_ordc_cap_dual_adder,
         "ercot_ordc_adder_published_anchor": ercot_ordc_adder_published_anchor,
+        "ercot_ordc_adder_family_counterpart": ercot_ordc_adder_family_counterpart,
         "ercot_storage_as_product_credit": ercot_storage_as_product_credit,
         "gas_hh_monthly_shape": gas_hh_monthly_shape,
         "ercot_as_aware_commitment": ercot_as_aware_commitment,
@@ -9079,6 +9129,24 @@ def main() -> None:
         "Off (default, keeper-reproducing).",
     )
     parser.add_argument(
+        "--ercot-ordc-adder-family-counterpart",
+        action="store_true",
+        help="ERCOT (ercot-215): decontaminate the published-anchor adder's "
+        "single counterpart. One capped reserve MW serves an AS-product "
+        "row and the ORDC total row simultaneously, so the all-tier cap "
+        "dual is the SUM of the ORDC total family's own balance-row dual "
+        "and the AS-product shortfall-ramp steps (measured exact, "
+        "gamma_all = k x VOLL/ercot_as_n_ramp + gamma_fam, in 808/808 "
+        "writing hours 2023-25). 2023-25 ERCOT prices no RT per-product "
+        "scarcity (a product-vs-capability squeeze triggers RUC, not a "
+        "price), so under this flag the written component is "
+        "min(gamma_all, gamma_fam) — the ORDC component alone; the ramp's "
+        "in-LP withholding role is untouched. Zero fitted scalars (both "
+        "operands are LP duals). Requires "
+        "--ercot-ordc-adder-published-anchor. ERCOT-only. Off (default, "
+        "keeper-reproducing).",
+    )
+    parser.add_argument(
         "--ercot-storage-as-product-credit",
         action="store_true",
         help="ERCOT multi-product co-opt, measured storage path: net the "
@@ -11645,6 +11713,7 @@ def main() -> None:
         ercot_ordc_total_reserve=args.ercot_ordc_total_reserve,
         ercot_ordc_cap_dual_adder=args.ercot_ordc_cap_dual_adder,
         ercot_ordc_adder_published_anchor=args.ercot_ordc_adder_published_anchor,
+        ercot_ordc_adder_family_counterpart=(args.ercot_ordc_adder_family_counterpart),
         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
         ercot_nuclear_unit_availability=args.ercot_nuclear_unit_availability,
         nuclear_unit_availability=args.nuclear_unit_availability,
