@@ -6928,3 +6928,76 @@ ACTIVE and untouched (2023–2025 only). Evidence:
 `PREREG-nyiso140-li-st-floor-membership-2026-08-16.md`; probe
 `scripts/probes/_nyiso140_li_st_floor_membership.py`.
 Next number: **nyiso-141**.
+
+## 2026-08-17 — nyiso-141: the downstate ST_GAS under-production is partly a MEASUREMENT artifact — Astoria's CEMS reports one generator twice, and in 2025 that doubled number IS the benchmark
+
+Took up job (A) of the nyiso-141 prompt, the successor nyiso-140 §7 named.
+**Identification only — no solve spent, no mechanism written, no
+`ScenarioConfig` field added, no year outside 2023–2025 touched.**
+
+Decomposing the ACTUAL ST_GAS rise (+7.299 TWh 2023→2025) by plant killed most
+of the prompt's candidate list at once: the rise is broad-based across **six**
+large steam plants in **three** zones (Northport +1.75, Astoria +1.13, Bowline
++1.09, Arthur Kill +1.04, Roseton +0.52, Ravenswood +0.21), so it is neither a
+missing unit nor a Long Island story — not the LI import bound, not
+Barrett/Northport loading. **Fuel switching refuted directly**: implied CO₂ per
+MMBtu stays at ~54 (pure pipeline gas) at the plants that doubled. The model's
+own trend is the tell — reality replaced a falling hydro year with **steam**
+(CC_REGULAR +0.12), the model replaced it with **CC** (+4.85).
+
+**THE OBJECT.** Astoria Generating Station (ORIS 8906, NYC) files units 30 and
+50 as reheat/superheat pairs `31RH`/`32SH`, `51RH`/`52SH` — one generator each,
+monitored on two flue paths. CAMPD repeats the generator's FULL `grossLoad` on
+both rows while SPLITTING heat input and masses, so facility-summing
+double-counts generation and halves every derived intensity. Three independent
+channels, none a residual: **INTERNAL** — 51RH/52SH byte-identical in all 4,327
+fired hours of 2025 (max |diff| exactly 0.000, corr 1.000000), and the control
+group proves identity-of-output alone is not the signature (Gowanus / Narrows /
+Holtsville / Barrett banks also hit 95–100 % identical hours but each carries its
+OWN full heat input); **PHYSICAL** — 5,172–5,512 Btu/kWh counted alone is
+impossible for a fired boiler, 10,436–10,764 counted once, matching peers;
+**EXTERNAL** — EIA-923 net / CAMPD gross = 0.472 / 0.471 against a 0.88–0.96 peer
+band, landing at 0.935 / 0.937 once the duplicate is dropped.
+
+**A guard had already caught it and papered over it**: 0.472 is outside
+`_PARASITIC_MIN`..`_PARASITIC_MAX`, so `compute_parasitic_factors` flagged the
+plant implausible and substituted a class default — a fallback built for a
+*missing* measurement, applied to a *wrong* one. Worth generalising from.
+
+**BLAST RADIUS.** (a) the unit-level CEMS emission rates that feed dispatch
+(279–322 kg CO₂/MWh against a 520–575 peer band — ~$6/MWh too cheap under RGGI);
+(b) the parasitic reconciliation; (c) **the benchmark itself** in any year
+EIA-923 has not published the plant — `_backfill_eia923_with_campd` fired for
+Astoria in **2025 only** (`e_ann == c_ann == 2.6722`, the backfill signature)
+and put 2.672 TWh of ST_GAS actuals on the books where the corrected series
+gives 1.359. 2023/2024 used metered EIA-923 and were correct all along.
+Cleared as unaffected: heat rates (eGRID-sourced), `retiree_availability_caps`,
+and the `nyiso_gas_commitment_bridge` `min_load_frac`s (a p5/p99.5 **ratio**,
+scale-invariant).
+
+**THE FIX** — `campd.CAMPD_STACK_DUPLICATE_UNITS`, **zero new DOF** (rule 21), a
+row-identity correction of exactly the kind `CAMPD_UNIT_PLANT_REMAP` already
+carries for CAISO's El Segundo: drop the duplicate's `grossLoad` at plant grain,
+additionally re-label it onto its primary at unit grain, and generalise the
+loader's split-plant substitution to `_FACILITIES_NEEDING_UNIT_ROWS` because NY's
+preferred facility-level extract has the double-count baked in with no unit
+identity. Verified at the seam (gross 780,293 / 929,474 / 1,359,022 exactly as
+hand-computed; intensities to 10,678–11,176 Btu/kWh and 578–625 kg CO₂/MWh).
+Regression tests `tests/curation/test_campd.py::TestStackDuplicateCorrection`.
+
+**SCOPE, STATED AGAINST MY OWN RESULT.** This accounts for ≈35 % of the 2025
+under-production and **none** of 2023 or 2024. The remaining ≈ −2.4 TWh in 2025,
+the +2.26 TWh 2023 over-production, and the CC-for-steam substitution are **all
+still open** and remain the successor object. Governance consequence worth
+flagging: because 2025's benchmark falls, **every NYISO run ever scored on 2025
+was scored against an inflated ST_GAS target**, keeper included.
+
+Keeper `2026-08-16-nyiso-140-layup-exclusion` UNTOUCHED and still designated.
+`complete` (validation only), ABSENT from `final`, frontier CLEARED, holdout
+spend freeze ACTIVE and untouched. Rule 25: the scan covered state **NY only**
+and the table carries **one** facility; whether another ISO's fleet contains a
+stack pair is that lane's measurement and is deliberately not adjudicated.
+Evidence: `results/calibration/FINDING-nyiso141-astoria-stack-duplication-2026-08-17.md`,
+`PREREG-nyiso141-astoria-stack-duplication-2026-08-17.md`; probe
+`scripts/probes/_nyiso141_astoria_stack_duplication.py`.
+Next number: **nyiso-142**.
