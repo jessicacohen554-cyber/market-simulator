@@ -673,5 +673,131 @@ class TestMeritPanelFleetMembership(unittest.TestCase):
         self.assertIn("member_facilities=merit_member_facilities", call)
 
 
+def _stack_pair_extract(year: int = 2023) -> pd.DataFrame:
+    """Raw unit-level frame for one common-generator stack pair.
+
+    Mirrors what CAMPD files for Astoria 8906: the primary (``31RH``) and the
+    duplicate (``32SH``) repeat the SAME generator MW every hour, while heat
+    input and the emission masses are split between the two monitored paths.
+    A third, ordinary unit is included so the correction's scope is testable.
+    """
+    dates = pd.to_datetime([f"{year}-01-01"] * 24)
+    hours = list(range(24))
+    gross = np.full(24, 300.0)
+    rows = []
+    for unit, heat, co2 in (("31RH", 1600.0, 90.0), ("32SH", 1500.0, 85.0)):
+        rows.append(
+            pd.DataFrame(
+                {
+                    "stateCode": "NY",
+                    "facilityName": "Astoria Generating Station",
+                    "facilityId": "8906",
+                    "unitId": unit,
+                    "date": dates,
+                    "hour": hours,
+                    "grossLoad": gross,
+                    "steamLoad": np.nan,
+                    "so2Mass": 1.0,
+                    "co2Mass": co2,
+                    "noxMass": 0.5,
+                    "heatInput": heat,
+                }
+            )
+        )
+    rows.append(
+        pd.DataFrame(
+            {
+                "stateCode": "NY",
+                "facilityName": "Astoria Generating Station",
+                "facilityId": "8906",
+                "unitId": "20",
+                "date": dates,
+                "hour": hours,
+                "grossLoad": np.full(24, 50.0),
+                "steamLoad": np.nan,
+                "so2Mass": 0.2,
+                "co2Mass": 20.0,
+                "noxMass": 0.1,
+                "heatInput": 600.0,
+            }
+        )
+    )
+    return pd.concat(rows, ignore_index=True)
+
+
+class TestStackDuplicateCorrection(unittest.TestCase):
+    """Common-generator stack pairs count generation once, heat/mass summed.
+
+    The defect: CAMPD repeats one generator's full ``grossLoad`` on both of its
+    monitored flue paths while splitting heat and emission masses between them,
+    so summing units double-counts generation and halves every intensity.
+    See :data:`campd.CAMPD_STACK_DUPLICATE_UNITS`.
+    """
+
+    def test_mask_selects_only_the_duplicate_twin(self):
+        raw = _stack_pair_extract()
+        mask = campd.stack_duplicate_mask(raw["facilityId"], raw["unitId"])
+        self.assertEqual(set(raw.loc[mask, "unitId"]), {"32SH"})
+        self.assertEqual(int(mask.sum()), 24)
+
+    def test_unrelated_facility_is_untouched(self):
+        raw = _stack_pair_extract()
+        raw["facilityId"] = "9999"
+        mask = campd.stack_duplicate_mask(raw["facilityId"], raw["unitId"])
+        self.assertFalse(bool(mask.any()))
+
+    def test_plant_grain_counts_generation_once_and_sums_heat(self):
+        out = campd._normalize_campd(_stack_pair_extract(), 2023)
+        # Generation: the pair contributes 300 MW (not 600) plus unit 20's 50.
+        self.assertAlmostEqual(float(out["gross_mw"].sum()), 24 * 350.0, places=6)
+        # Heat and CO2 are per-path and must still sum over BOTH paths.
+        self.assertAlmostEqual(
+            float(out["heat_mmbtu"].sum()), 24 * (1600.0 + 1500.0 + 600.0), places=6
+        )
+        self.assertAlmostEqual(
+            float(out["co2_kg"].sum()),
+            24 * (90.0 + 85.0 + 20.0) * campd.SHORT_TON_TO_KG,
+            places=3,
+        )
+
+    def test_correction_restores_a_physical_heat_rate(self):
+        # The defect's signature is a halved intensity. Counted once, the
+        # pair's implied heat rate is a real boiler's; uncorrected it is half
+        # — the 5,172-5,512 Btu/kWh that flagged Astoria (better than a modern
+        # combined cycle, impossible for a fired boiler).
+        raw = _stack_pair_extract()
+        pair_only = raw[raw["unitId"] != "20"]
+        out = campd._normalize_campd(pair_only, 2023)
+        hr = float(out["heat_mmbtu"].sum()) * 1e3 / float(out["gross_mw"].sum())
+        self.assertAlmostEqual(hr, (1600.0 + 1500.0) * 1e3 / 300.0, places=3)
+        self.assertGreater(hr, 9_000.0)
+
+        # Without the correction the same frame implies half that rate.
+        uncorrected = (
+            float(pair_only["heatInput"].sum())
+            * 1e3
+            / float(pair_only["grossLoad"].sum())
+        )
+        self.assertAlmostEqual(uncorrected, hr / 2.0, places=3)
+
+    def test_unit_grain_merges_the_pair_onto_its_primary(self):
+        raw = _stack_pair_extract()
+        merged = campd.merge_stack_duplicate_units(raw["facilityId"], raw["unitId"])
+        self.assertNotIn("32SH", set(merged))
+        self.assertEqual(int((merged == "31RH").sum()), 48)
+        self.assertEqual(int((merged == "20").sum()), 24)
+
+    def test_stack_duplicate_facilities_need_unit_level_rows(self):
+        # A facility-level extract has the double-count baked in with no unit
+        # identity, so the loader must substitute unit-level rows for it.
+        self.assertTrue(
+            campd.CAMPD_STACK_DUPLICATE_FACILITIES
+            <= campd._FACILITIES_NEEDING_UNIT_ROWS
+        )
+        self.assertTrue(
+            campd.CAMPD_SPLIT_FACILITIES <= campd._FACILITIES_NEEDING_UNIT_ROWS
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
