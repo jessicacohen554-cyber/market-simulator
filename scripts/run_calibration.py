@@ -1271,10 +1271,6 @@ def run_year(
         )
     if reliability_floor is not None:
         config = config.with_overrides(reliability_floor=reliability_floor)
-    if reliability_floor_plant_exclusions is not None:
-        config = config.with_overrides(
-            reliability_floor_plant_exclusions=reliability_floor_plant_exclusions
-        )
     if reliability_floor_overrides is not None:
         config = config.with_overrides(
             reliability_floor_overrides=reliability_floor_overrides
