@@ -861,3 +861,7 @@ data/raw/eia-930/*_region_2*.parquet
 # and STAY TRACKED -- the glob matches only the 2018 files.
 data/raw/campd-unit-level/*_2018.parquet
 
+# S2-5 -- the two PJM 2018 iso-specific-transmission drops (33.3 MiB; outside
+# the working span). PJM 2019-2026, the loss surfaces and the NP6-86 parquets
+# STAY TRACKED (the NP6-86 archives have NO fetch instrument -- leg-(iv) FAIL).
+data/raw/iso-specific-transmission/PJM_2018_*.csv
