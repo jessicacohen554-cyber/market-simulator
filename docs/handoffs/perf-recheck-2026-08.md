@@ -257,3 +257,83 @@ Measurement recipes (for reruns): fast-tier data audit =
 converge loop = restrict `data/raw` to the candidate list (hardlink replica), run the
 tier, extend from `.pytest_cache/v/cache/lastfailed` + FileNotFoundError paths +
 skip-reason deltas, repeat until run-A parity.
+
+---
+
+## 4. PERF-B completion note (2026-08-17, session perf-b-ws3-recheck)
+
+Executed on branch `claude/perf-b-ws3-recheck-9r11sg`; measured deltas + the HEAD-era
+keeper-replay anchor are in `docs/handoffs/wallclock-baseline-2026-07.md` §PERF-B.
+
+**Disposition of the five changes:**
+
+1. **(a) frames / (b) LUT / (c) ci.yml were already ON MAIN when this session opened** —
+   the 2026-08-16 history rewrite grafted the PERF-A branch content in (707db3ef the
+   prototypes, acf784ec the measurement record + ci.yml), both ancestors of the dispatch's
+   own snapshot 00abb60. Verified against the deleted prototype branch's head (57047c50,
+   recovered by SHA via the Actions-run record): identical modulo the unrelated later
+   NYISO gate collapse (67a25aee). (a) is measured live (frames 10.3–10.8 → 2.1–3.7 s/yr);
+   (c) is green in production CI (9m19s–10m36s fast-tier walls).
+2. **(d) landed** (dcae1559): `build_zone_lookup` memoized, byte-identical on a 5-ISO
+   gate. **§2.4's attribution is CORRECTED**: `_load_cod_map` and the eGRID boundary
+   repair were already `lru_cache`d at the PERF-A base — the profiled cum-time was
+   cache-miss work under two EIA-860 vintage keys, not absent caching — so the ~40–55 s
+   projection is withdrawn; the real, measured (d) win is ~8–23 % of `data_prep` on the
+   legs that show above host noise. The commit message flags the ≥10 %-of-phase adoption
+   bar as met on some legs only, for the merge decision.
+3. **(e) landed** (b6ae8216): both basis-export sites gated on `_xwarm` (the consumers'
+   own gate). Byte-identical; `markup` −18 to −30 s/yr on the ercot213 replay — beyond
+   §2.7's 10–16 s estimate. Two unit-test pins updated to the new contract.
+4. **Excluded scope honored**: curate_emissions (#3996), warm-start flip (overtaken),
+   solver experiments, compute_monthly_markup, export-side dict/fromiter LUT — untouched.
+   `runner.run_scenario_iso` decomposition (optional stretch): not attempted.
+
+**Gate record.** All arms at HEAD `6cc332e7`, determinism pin, uv.lock env (pandas 3.0.3 /
+pyarrow 24.0.0). (d): before/after keeper replays for ERCOT (2026-08-16-ercot213-arm-
+pubanchor), NYISO (2026-08-16-nyiso-140-layup-exclusion), NEISO (2026-08-17-neiso-97-
+dstrepair) at full 8760, plus MISO (2026-08-16-miso-160-wefor-shape) and PJM
+(2026-08-15-pjm-162-inputclock) keeper-recipe pairs at 4368 h — `regression_gate.py
+--mode byte` PASS on every pair. (e): ERCOT full-8760 pair, PASS. Manifests committed
+under `results/regression-goldens/perfb-{d,e}-*/`. CAISO was excluded from the gate set
+(its keeper moved twice mid-session — caiso-197 → caiso-200 — while its replay costs
+~75 min/arm here; the (d)/(e) code paths it shares are covered by the five gated ISOs).
+
+**The keeper-set story the charter asked to record.** The dispatch-time capture pass
+(stage tag perfb-stage0, base f8c93afe) completed ERCOT/MISO/CAISO/NEISO against the
+2026-08-16 keepers and was then wholly superseded: FIVE keepers moved during the pass
+(ercot204→213, caiso-197→200, miso-159→160, nyiso-133→140, neiso-93→97; PJM alone
+unmoved), the owner rewrote main and parallel stage-0 continuation lanes (#4060/#4061)
+landed their own captures. Per the dispatch's own rule those goldens are not evidence;
+the session re-based to 6cc332e7 (branch restarted; every prior commit content-subsumed
+by main) and re-captured the gate arms above against the moved keepers. Institutional
+stage-0 maintenance stays with the continuation lanes; this lane's arms exist to gate
+(d)/(e).
+
+**Environment findings a future lane needs:**
+- **This container class cannot replay PJM or miso-160 at 8760 h**: a ~14.0 GB memory
+  cgroup sits under the host's 15 GB and its swap accounting is zero (a host swapfile
+  goes unused; OOM kills at anon-rss ≈13.9 GB, four occurrences on record this session).
+  The repo's "15 GB calibration box" assumption does not survive the cgroup. Fallback
+  used here: keeper-recipe pairs at 4368 h (26 whole weeks — 4380 breaks on a
+  (4368,)/(4380,) hour-of-day broadcast in `inject_reliability_floor`).
+- **`curate_emissions.py` fails under the container uv.lock env** (pyarrow 24.0.0):
+  ns-vs-µs `interval_start_utc` schema clash at `pa.concat_tables` across raw CAMPD
+  files (scope excluded — #3996 validated on the runner's pyarrow 25; flagged for the
+  owning lane).
+- **Keeper-bundle replayability**: the nyiso-133 keeper was mechanically unreplayable at
+  HEAD (its recorded `prb_overrides` carried the rule-26-deleted
+  `nyiso_solar_registry_cod_dates`); hit independently by this lane and fixed on main by
+  a continuation lane (`drop_dead_config_keys`, feeeeef7). The same hazard class holds
+  for any future field deletion whose keeper is not re-solved.
+- **Host noise**: identical-recipe solve walls vary up to ±35 % run-to-run on this
+  shared container; wall claims here rest on phase-structure deltas, never cross-session
+  solve walls.
+
+**Open items handed forward:** CAISO + full-8760 PJM/MISO byte-arms on an uncapped box
+(if the owner wants 6/6 coverage on record); the `bench` sub-phase now dominating
+MISO/PJM `results_write` (~21–35 s/yr); NEISO's 118–190 s/yr `data_prep` anomaly
+(largest phase of its year, unattributed); the forecast final-year export waste
+(one export per run, needs a caller-visible year count).
+
+Mechanism-matrix duty check (rule 28 `[R-MECH-MATRIX]`): no calibration/forecast
+mechanism tested, no `ScenarioConfig` field added — no matrix touch required.

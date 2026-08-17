@@ -575,3 +575,44 @@ free — well under the ≥10 % adoption bar every other experiment here is scor
 `frames` (10.3–10.8 s) is the larger target if this phase is ever worth attacking. The codec stays
 at the pandas/pyarrow default; no bench was run, because the pre-check that gates it came back
 negative.
+
+## PERF-B — applied wins, measured (2026-08-17)
+
+Execution record for `docs/handoffs/perf-recheck-2026-08.md`'s five changes (its own §4
+completion note carries the full session narrative). Conditions: determinism pin
+(`MARKET_SIM_HIGHS_THREADS=1`, `WARMSTART=1`, `WARMSTART_XYEAR=0`), 4 vCPU / 15 GB
+container, `uv.lock` env (pandas 3.0.3 / pyarrow 24.0.0), keeper-recipe replays via
+`scripts/capture_keeper_goldens.py`. **Host-noise caveat governing every wall number
+here:** identical-recipe cross-run solve walls on this shared container vary up to
+±35 % (measured: the same ERCOT-2025 P0 solved in 574.5 s and 363.6 s in back-to-back
+byte-identical arms), so *phase-structure* deltas are the reliable signal; solve-wall
+deltas between sessions are not.
+
+| Change | Where landed | Measured effect (keeper replays) |
+|---|---|---|
+| (a) `results_write` frames as `Categorical.from_codes` | on main via the 2026-08-16 rewrite graft (707db3ef) | `frames` 10.3–10.8 s (H4 July keeper replay) → **2.1–3.7 s/yr** on ERCOT; MISO frames → 2.6–4.1 s. `results_write` 15.8–16.8 → 8.1–12.6 s (ERCOT). MISO/PJM `results_write` is now **`bench`-dominated** (20.9–34.7 s of CAMPD/EIA-923 benchmark frames) — the next lever if the phase is ever attacked again. |
+| (b) basis-status LUT in `apply_cross_year_basis` | on main via the same graft (707db3ef) | inert under the determinism pin by construction; PERF-A's bench (13,363 → 899 ms per warm apply) stands — no re-measurement possible in a pinned session. |
+| (c) ci.yml fast-tests sparse block + timeout 20 | on main via acf784ec | fast tier green in production CI: 9m19s–10m36s observed job walls; the first-ever complete fast-tier runs in repo history. |
+| (d) memoize `zone_assignment.build_zone_lookup` | PERF-B commit dcae1559 | byte-identical on a 5-ISO gate (ERCOT/NYISO/NEISO full-8760, MISO/PJM 4368 h). `data_prep` deltas: ERCOT y1 98.4 → 90.3 s (−8 %); NEISO warm years −8/−10 %; NYISO warm years −12/−23 %; MISO/PJM inside noise. **PERF-A §2.4 corrected:** `_load_cod_map` and the eGRID boundary repair were *already* `lru_cache`d when profiled — their cum-time was cache-miss work under two EIA-860 vintage keys — so the zone lookup was the only real memoization target and the ~40–55 s projection does not exist. |
+| (e) basis export gated on its consumer (`_xwarm`) | PERF-B commit b6ae8216 | byte-identical (ERCOT full-8760 gate). `markup` window 81.3/74.8/64.4 → **51.6/50.7/46.5 s** (−18 to −30 s/yr, ~25–37 % of the window) on every goldens capture / keeper replay / repro baseline. Exceeds PERF-A's 10–16 s estimate because the ercot213 keeper's LP outgrew the recipe PERF-A profiled. |
+
+**HEAD-era keeper-replay anchor** (@ `6cc332e7`, 2026-08-17 keepers ercot213-arm-pubanchor /
+nyiso-140-layup-exclusion / neiso-97-dstrepair, determinism pin — these are *keeper-recipe*
+walls, not the plain-CLI recipe the 2026-07 tables above anchor):
+
+| ISO-year | data_prep | solve_p0 | markup | solve_p1 | results_write | total |
+|---|---|---|---|---|---|---|
+| ERCOT 2023/24/25 (post-(d),(e)) | 108.4/43.5/35.7 | 473.0/416.7/416.1 | 51.6/50.7/46.5 | 447.1/321.8/344.8 | 12.6/12.8/14.8 | **1092.6/845.5/857.9** |
+| NYISO 2023/24/25 (post-(d), paired) | 74.7/8.4/5.3 | 180.1/149.5/97.7 | 26.8/24.9/21.0 | 170.7/172.7/99.7 | 7.0/6.0/5.4 | 459.3/361.4/229.1 |
+| NEISO 2023/24/25 (post-(d), paired) | 189.6/118.2/123.2 | 105.8/104.1/114.1 | 15.3/13.6/13.8 | 43.3/35.0/36.1 | 7.6/6.7/6.6 | 361.5/277.6/293.8 |
+
+Two standing observations from the anchor: **keeper-recipe growth dominates phase wins**
+(the ercot213 pubanchor arm alone is ~+40 % of ERCOT year wall vs ercot204), and **NEISO's
+`data_prep` is 118–190 s *every* year — the largest phase of its whole year** — an
+unattributed anomaly worth its own charter.
+
+**Environmental negatives (this container class, not the model):** the PJM keeper replay
+(~14.5 GB peak) and the miso-160 keeper replay (≥13.9 GB) cannot fit the ~14.0 GB memory
+cgroup this session's runner imposes under the host's 15 GB (cgroup swap accounting is
+zero — a host swapfile goes unused). Full-8760 gates for those two need a box without the
+cap; the 4368 h keeper-recipe pair method used here is the in-container fallback.

@@ -120,15 +120,27 @@ def test_run_energy_solve_warm_equals_cold_on_unique_optimum(monkeypatch):
 
 
 def test_xyear_cache_export_backcast_seam(monkeypatch):
-    """Backcast seam: with a cache list the warm path exports this year's basis."""
+    """Backcast seam: the export follows the cross-year gate (PERF-B).
+
+    With MARKET_SIM_WARMSTART_XYEAR armed the warm path exports this year's
+    basis for the next year's apply; with the gate off (the goldens/replay
+    determinism pin) nothing consumes the export — neither the apply nor
+    ``persist_year_basis``, which shares the gate — so it is skipped
+    (~10-16 s/yr of dead ``getBasis()`` enum materialization on a real ISO
+    year; perf-recheck §2.7). This supersedes the pre-PERF-B pin that the
+    basis was "stored even with the XYEAR flag off".
+    """
     monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
-    monkeypatch.delenv("MARKET_SIM_WARMSTART_XYEAR", raising=False)
+    monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", "1")
     gens, fa, demand, mc_base, dk = _trivial_inputs()
     cache: list = []
     run_energy_solve(gens, fa, demand, mc_base, dk, _Cfg(), xyear_cache=cache)
-    # The basis is stored even with the XYEAR flag off (A/B independence),
-    # exactly as the inline backcast code did.
     assert len(cache) == 1
+
+    monkeypatch.delenv("MARKET_SIM_WARMSTART_XYEAR", raising=False)
+    cache_off: list = []
+    run_energy_solve(gens, fa, demand, mc_base, dk, _Cfg(), xyear_cache=cache_off)
+    assert cache_off == []
 
 
 def test_xyear_cache_none_forecast_seam(monkeypatch):

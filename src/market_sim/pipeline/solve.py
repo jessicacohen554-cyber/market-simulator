@@ -363,7 +363,7 @@ def run_energy_solve(
         # then release the P0 LP + HiGHS workspace before building the second
         # DispatchModel, so peak RSS stays ~one model (the PJM zone-aggregate
         # co-opt alone peaks ~14.5 GB on the 15 GB calibration box).
-        if _warm and xyear_cache is not None:
+        if _xwarm and xyear_cache is not None:
             basis = model.export_cross_year_basis()
             if basis is not None:
                 xyear_cache[:] = [basis]
@@ -371,9 +371,18 @@ def run_energy_solve(
         p1 = solve_dispatch(p1_fleet_arrays, demand, mc=mc_bid, **p1_dispatch_kwargs)
 
     # Hand this year's optimal basis to the next year's P0 (cross-year warm
-    # start). Stored even when the flag is off so a downstream A/B does not
-    # depend on call ordering; only consumed when MARKET_SIM_WARMSTART_XYEAR=1.
-    if _warm and model is not None and xyear_cache is not None:
+    # start). Exported only when the cross-year gate is armed (`_xwarm`) —
+    # its ONLY consumers are the next year's apply (same gate) and the
+    # persisted year-1 NPZ cache (`basis_cache_enabled()`, the same gate
+    # again; `persist_year_basis` no-ops on the empty holder). Under the
+    # goldens/replay determinism env (MARKET_SIM_WARMSTART_XYEAR=0) the
+    # export was stored and never read, at ~10-16 s/yr of pure `getBasis()`
+    # enum materialization (13.2 M pybind objects) — PERF-B, perf-recheck
+    # §2.7. Skipping it cannot touch the solve: the export runs after the
+    # solves and only reads the model. An explicitly-gated forecast caller
+    # still exports on its final horizon year (the year count is not
+    # visible here) — one wasted export per run, accepted.
+    if _xwarm and model is not None and xyear_cache is not None:
         basis = model.export_cross_year_basis()
         if basis is not None:
             xyear_cache[:] = [basis]
