@@ -1303,3 +1303,22 @@ your branch when done.
   CAISO-AS/PJM/eia-930 residual files — §4.7 enumerated only ERCOT's) as a
   mandatory item of each §4.8 evidence pass. **VERDICT: PENDING OWNER
   RULING** — to be recorded on the card, bloat plan §9/BLOAT-3, and here.
+- 2026-08-16 — **BLOAT-2 CLOSED: the Class-E retention rule ADOPTED and its
+  last enforcement leg built** (branch `claude/bloat-e2-retention-rule-nn2in8`).
+  The §7 E2 four-point rule was served as the G1-style in-session card and
+  **ADOPTED** by the owner; the text now lives verbatim (with adoption date)
+  in `frontend/data/backcast/keepers/README.md`. Point 4's bundle-parity
+  sweep — the one unbuilt mechanic — shipped in the same PR:
+  `check_registry_payload_parity.check_bundle_retention` FAILS any top-level
+  `results/calibration/<bundle>` dir no retained sidecar `bundle` field maps
+  unless keep-required (the §5.2 `_`-dirs, regression-golden-referenced
+  bundles, the documented empty-at-adoption `KEEP_REQUIRED_UNMAPPED_BUNDLES`
+  allowlist; loose records / `results/hindcast` / `results/regression-goldens`
+  out of scope by construction — the keeper / ablation / structural-prior
+  classes stay mapped via the prune immunity). Runs inside the always-on CI
+  parity gate (a strict superset of the rule's quarterly cadence), 10 new
+  tests in `tests/scoring/test_registry_payload_parity.py`, no data change.
+  Greens at HEAD before AND after: parity OK (15 runs, 15 bundle dirs swept)
+  + `audit_keepers --check` PASS 0/0. D-ledger: bloat plan §9 BLOAT-2
+  annotated CLOSED. Of the plan's three D-8 successor entries only BLOAT-3
+  (the Stage-2 charter call) now remains open.

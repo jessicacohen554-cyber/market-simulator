@@ -852,7 +852,20 @@ elsewhere, e.g. the D-13 cache-key gate):
     `docs/bloat-removal-report-final-2026-08.md` §7.)*
   - **(new) BLOAT-2:** adopt the Class-E retention rule text (§7 E2).
     *(Still open at the 2026-08-15 close-out; rule 4's quarterly
-    bundle-parity sweep also unbuilt.)*
+    bundle-parity sweep also unbuilt.)* *(CLOSED 2026-08-16 — the E2 card
+    was served and **ADOPTED** in-session at the BLOAT-2 sitting: all four
+    points written verbatim with the adoption date into
+    `frontend/data/backcast/keepers/README.md` (the rule's standing home),
+    and point 4's bundle-parity sweep BUILT in the same PR —
+    `check_registry_payload_parity.check_bundle_retention` fails any
+    top-level `results/calibration/<bundle>` dir that no retained sidecar's
+    `bundle` field maps and that is not keep-required (`_`-dirs per §5.2,
+    regression-golden-referenced bundles, the documented
+    `KEEP_REQUIRED_UNMAPPED_BUNDLES` allowlist — empty at adoption). It
+    lives in the always-on CI parity gate, a strict superset of the
+    quarterly cadence. No data change; both checkers green at HEAD before
+    and after (15 runs / 15 bundle dirs swept; `audit_keepers --check`
+    PASS 0/0).)*
   - **(new) BLOAT-3:** the Stage-2 charter decision — whether/when to untrack
     the measured 3,561.6 MiB residual under the §0ar-3 checklist, with §4.8's
     follow-on evidence passes as its BLOAT-A-equivalent prerequisite. Until
