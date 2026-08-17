@@ -1,0 +1,20 @@
+# Scope: the 13 orphaned PJM DataMiner2 exports (rt_hrl_lmps 2018-2022,
+# gen_by_fuel 2018-2025), gitignored at tip (BLOAT-S2 Stage-2 (a)-only
+# untrack, O2 grant; evidence FINDING-bloat-s2-evidence-passes-2026-08-17.md 2
+# - zero consumers measured). Hashed over the exact tracked bytes at
+# untracking, tree-sha-verified against HEAD. Recovery: README.md.
+# sha256  size_bytes  file
+
+02f578208570f8a82440d878014487154316027932daf0c7ee37c973938cbdd5  12396578  PJM_2018_rt_hrl_lmps.csv
+cdf48191810555198fa97b499be017100996e774ae415f1adcc87ed086244352  12344056  PJM_2019_rt_hrl_lmps.csv
+37487269e92ce51e981bc5165df13baced6429bc115e66e1af80ce28832ff01e  12405198  PJM_2020_rt_hrl_lmps.csv
+628168e14b1a23bcb9abdacba4911a021892668cf2c1d229444a123acd73d7fc  12362511  PJM_2021_rt_hrl_lmps.csv
+921f9e33f57b9ea617cef02d9a1fb4dcc90daadde30e0f94dc28c1d34ab6896a  12882714  PJM_2022_rt_hrl_lmps.csv
+ff29df8530bd83d246b167245fba908141a9120d8cb4234e3f3a10b5bea3e0dd  6435083  PJM_gen_by_fuel_2018.csv
+5a7cea6440667c9ed83c5cfa46dfbdcbb4bce5b91b8d60c8e640e45bddeae345  6425834  PJM_gen_by_fuel_2019.csv
+db5c7208b6b8ff0a7f0e803eb9077546c43feaeb99df9cbc902c5bb6a4388250  6456885  PJM_gen_by_fuel_2020.csv
+f6e28e9d5769d2e608f73edd67c2e905e77f0deea335b557750b74255d33fac4  6436967  PJM_gen_by_fuel_2021.csv
+1aec80f429e51711b48f1ee1cff431a900d1ed147e9ea449e7cc5434719e1cb5  6440401  PJM_gen_by_fuel_2022.csv
+0b6b121eb28684f00ff0cb466e8f77a1c38851dc18e818a84b8b8f7a76626954  5947280  PJM_gen_by_fuel_2023.csv
+6533753f858e70f70896d6207942370d55977204b981a715d7e75af97fb2ced0  5901586  PJM_gen_by_fuel_2024.csv
+e1846d5b19fc65fdf693954d7267faf72ce0d2978ae8a7521bc7776e6616d76b  5883878  PJM_gen_by_fuel_2025.csv

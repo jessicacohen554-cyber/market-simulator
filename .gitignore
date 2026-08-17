@@ -844,3 +844,7 @@ data/raw/ercot/SCED/rtcb-format-2026/*.parquet
 # quarterly xlsx out of the pack, per the corpus's now-untracked design.
 data/raw/storage-as-awards/CAISO/*.xlsx
 
+# S2-2 -- the orphaned data/raw/PJM DataMiner2 exports (13 files, 107.1 MiB;
+# zero consumers -- the live corpora are ISO-specific-gen-data/ and lmp-data/).
+data/raw/PJM/*.csv
+
