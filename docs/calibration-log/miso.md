@@ -7233,3 +7233,48 @@ dashboard registration is not fully delivered until that push lands.
 
 Rule 22: 2023–2025 only; freeze untouched; no marker touched. Next number:
 **miso-161.**
+
+## miso-161 (2026-08-17) — the C3a-2025 residue re-measured on the miso-160 keeper: the availability channel is EXHAUSTED at admissible grain, the material remainder is the C3c-adjacent above-cost object, and the lane is ESCALATED to the owner. NO SOLVE, no lever, no cell verdict, keeper UNCHANGED
+
+**Precondition delivered first:** PR #4044 (the miso-160 branch,
+`claude/miso-backcast-calibration-nk4zhj`) merged to main at `bad0807` with a
+two-file conflict resolution — the MISO shard's final `K` cell kept over
+main's stale in-flight `O`, and `run_calibration.py`'s
+`reliability_floor_plant_exclusions` declaration kept ONCE with its
+`config.with_overrides` wiring RESTORED (main's duplicate-parameter twin-fix
+series had deleted both wiring copies, leaving the kwarg a silent no-op for
+every solve CLI arming of the nyiso-140 mechanism).
+
+**Charter (the miso-160 queue's single in-lane item):** re-measure the
+three-channel decomposition on the new keeper, then identify ONE lever with a
+measured identification or escalate. Both pre-registered instruments re-run
+under their own T-1 repoint discipline (V1 reproduces the registered C3a
++0.6165/−4.7978/−12.5201 % to ≤0.001 pp; V4 3/3; V2's expected drift on the
+new availability is disclosed and the FLOORS_OFF twin again moves 0.0000 in
+all 27 cells).
+
+**The measurement.** 2025 annual gap $7.08 → **$5.69**; Δ₁ +10.79 (189.8 %) /
+Δ₂ −6.38 (−112.1 %, model gas still ABOVE both measured comparators) / Δ₃
++1.27 — **unchanged in dollars**, so the above-cost share RISES to
+**22.4–58.4 % basis-sensitive** (p99 ceiling; 74.4 % of 2024's gap). CT
+within-$20 cushion 6.31 → **4.19 GW**; CT idle at top-200 11.25 → 8.23 GW.
+2023 crosses to +0.62 % HIGH (gap −0.19), tightening the against-interest
+bound. **The last un-adjudicated admissible availability quantity** — the MOM
+record's daily grain at the peak, on the armed basis — reads
+top-200/Jun–Sep = 0.957/1.042/**1.022**, increment **+0.69 GW** in 2025:
+**≲0.11 pp on C3a-2025** against the +2.5 pp needed, and outside §9's
+one-deliverable fleet-grain amendment (whose own text preserves the
+miso-85/87 closures). Immaterial; not chartered.
+
+**Escalation (owner decision, two shapes on the record):** (1) charter the
+tail object under the C3c ledger's frontier terms — a NEW admissible measured
+identification of MISO's administrative scarcity pricing (RCPF/ORDC
+binding-record intake), its own data-ask + charter; or (2) close the lane as
+a model-class limit (the ERCOT C3a-2023 (Q-B) precedent). **Until the owner
+rules, MISO has no chartered next solve** — anything else re-tests an
+adjudicated cell without new evidence or tunes the residual.
+
+Evidence: `results/calibration/FINDING-miso161-c3a-residue-exhaustion-2026-08-17.md`;
+probes `_miso161_c3a_decomposition.py` / `_miso161_summer_cushion.py` /
+`_miso161_peakday_outage_shape.py`; records `_miso161_*.json`. Rule 22:
+2023–2025 only; freeze untouched; no marker touched. Next number: **miso-162.**

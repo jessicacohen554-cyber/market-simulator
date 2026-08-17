@@ -1,0 +1,43 @@
+{
+ "basis": {
+  "region": "MISO",
+  "cause_types": [
+   "Derated",
+   "Forced",
+   "Unplanned"
+  ],
+  "loader": "market_sim.data.miso_outages.miso_outage_mw_series",
+  "window": "top-200 ISO-demand hours of the keeper's committed P1",
+  "keeper": "2026-08-16-miso-160-wefor-shape"
+ },
+ "years": {
+  "2023": {
+   "annual_mean_offline_mw": 21763.0,
+   "junsep_mean_offline_mw": 24025.254098360656,
+   "top200_mean_offline_mw": 22981.815,
+   "top200_hours_in_junsep": 200,
+   "top200_over_junsep_ratio": 0.9565690712743864,
+   "peak_increment_beyond_seasonal_share_mw": -1043.4390983606572,
+   "m160_junsep_reach_gw": 3.46
+  },
+  "2024": {
+   "annual_mean_offline_mw": 24203.290410958904,
+   "junsep_mean_offline_mw": 23406.713114754097,
+   "top200_mean_offline_mw": 24383.37,
+   "top200_hours_in_junsep": 196,
+   "top200_over_junsep_ratio": 1.0417255032971835,
+   "peak_increment_beyond_seasonal_share_mw": 976.6568852459022,
+   "m160_junsep_reach_gw": 3.59
+  },
+  "2025": {
+   "annual_mean_offline_mw": 28055.04109589041,
+   "junsep_mean_offline_mw": 31103.090163934427,
+   "top200_mean_offline_mw": 31794.44,
+   "top200_hours_in_junsep": 200,
+   "top200_over_junsep_ratio": 1.0222276896739741,
+   "peak_increment_beyond_seasonal_share_mw": 691.3498360655722,
+   "m160_junsep_reach_gw": 3.67,
+   "c3a_2025_upper_bound_pp": 0.1130272211551344
+  }
+ }
+}

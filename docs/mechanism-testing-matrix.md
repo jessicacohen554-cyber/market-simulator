@@ -4001,6 +4001,37 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-16-miso-160-wefor-shape`, **NOT-YET on C3a-2025 ALONE**
 
+> **QUEUE STAMP miso-161 (2026-08-17) — THE QUEUE'S SINGLE IN-LANE ITEM
+> RESOLVED BY MEASUREMENT; ESCALATED TO THE OWNER. NO SOLVE, NO LEVER, NO
+> `ScenarioConfig` FIELD, NO CELL VERDICT MINTED (nothing armed or tested —
+> the miso-142/153/155/156/157 precedent). Keeper UNCHANGED at
+> `2026-08-16-miso-160-wefor-shape`.** The miso-156 decomposition and the
+> miso-153 cushion instrument were re-run on the new keeper under their own
+> T-1 repoint discipline (V1 reproduces the registered C3a to ≤0.001 pp,
+> 3/3): 2025 annual gap $7.08 → **$5.69**; Δ₁ identity +10.79 (189.8 %) /
+> Δ₂ fuel −6.38 (−112.1 %, still wrong-signed) / Δ₃ above-cost **+1.27
+> unchanged in dollars**, so the above-cost share of what remains RISES to
+> **22.4–58.4 % basis-sensitive** (58.4 % on the p99 ceiling; 74.4 % of
+> 2024's gap). CT within-$20 cushion 6.31 → **4.19 GW**; 2023 now sits
+> +0.62 % HIGH (gap −0.19), tightening the against-interest bound against
+> any annual-level lever. THE LAST un-adjudicated admissible availability
+> quantity — the MOM record's DAILY grain at the peak — measured IMMATERIAL
+> on the armed basis: top-200/Jun–Sep ratio 0.957/1.042/1.022, increment
+> −1.04/+0.98/**+0.69 GW**, ≲0.11 pp on C3a-2025 vs the +2.5 pp needed
+> (and outside §9's one-deliverable fleet-grain amendment, whose own text
+> preserves the miso-85/87 closures). Every other cushion/identity cell is
+> R/I/G/refuted-at-charter or K-armed; rule 20 closes the Δ₁/Δ₂
+> cancellation (+$2.4–4.4) to tuning; the C3c ledger's frontier designation
+> governs the tail half. **THE OWNER'S DECISION, two shapes on the record:
+> (1) charter the tail object under the ledger's terms — a NEW admissible
+> measured identification of MISO's administrative scarcity pricing (RCPF/
+> ORDC binding-record intake), its own data-ask + charter; or (2) close the
+> lane as a model-class limit (the ERCOT C3a-2023 (Q-B) precedent, item
+> 11). Until the owner rules, MISO has NO chartered next solve.** Evidence:
+> `FINDING-miso161-c3a-residue-exhaustion-2026-08-17.md`; records
+> `_miso161_c3a_decomposition.json`, `_miso161_summer_cushion.json`,
+> `_miso161_peakday_outage_shape.json`.**
+
 > **QUEUE STAMP miso-160 (2026-08-16) — KEEPER PROMOTED by the session's own
 > pre-registered rule** (PREREG §7(a): no criterion-year PASS→FAIL flip;
 > C3a-2025 improved +0.60 pp ≥ 0.5; V1–V5 PASS, S-2023/S-TAIL silent): the
