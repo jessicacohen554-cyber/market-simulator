@@ -462,9 +462,15 @@ GitHub: `refs/pull/*` still pins the pre-rewrite objects, ~20 GiB.)
   SCED columns past MIS retention) — and the `SHA256SUMS.txt` identity record.
   Read the corpus README before concluding data is missing. Converted so far:
   `pjm-energy-offers`, `caiso-public-bids`, `pjm-da-virtuals`, `pjm-zonal-lmp`,
-  `ercot/SCED-CT`, `miso-energy-offers`, `pjm-binding-constraints`, and (BLOAT-B-2)
+  `ercot/SCED-CT`, `miso-energy-offers`, `pjm-binding-constraints`, (BLOAT-B-2)
   `caiso-dam-outages/daily`, the publication PDFs under `ERCOT/` `MISO/` `NYISO/`
-  `PJM-AS/`, and `NYISO/nyiso load reports *.zip`.
+  `PJM-AS/`, and `NYISO/nyiso load reports *.zip`; and (BLOAT-S2, 2026-08-17,
+  the Stage-2 (a)-only O2 grant — recovery is re-fetch ONLY, never a pin)
+  `storage-as-awards/CAISO/*.xlsx`, the whole orphaned `PJM/` corpus, the
+  `eia-930` per-BA long files + 2018 BALANCE halves, the `campd-unit-level`
+  2018 vintage, and the two `iso-specific-transmission` PJM-2018 drops
+  (−444.5 MiB at tip; per-corpus verdicts incl. what deliberately STAYS
+  tracked: `docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md`).
 
 `.github/workflows/cleanup-large-blobs.yml` **was executed for real on
 2026-08-16** (run 31955205445 — an explicit owner decision superseding the

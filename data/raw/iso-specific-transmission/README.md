@@ -122,3 +122,35 @@ for this repo. Until a bulk-upload path exists, holdout-year extensions of
 these bulky raw datatypes should either land via a session that restores
 `git push`, or accept a materially coarser (weekly/monthly-mean) companion
 series clearly labeled as such alongside the full-fidelity file it summarizes.
+
+## The two PJM 2018 drops are UNTRACKED at tip (BLOAT-S2, 2026-08-17)
+
+`PJM_2018_transfer_limits_and_flows.csv` and
+`PJM_2018_import_export_act_sch_interchange.csv` are **gitignored** since the
+Stage-2 (a)-only untrack (O2 grant,
+`docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md`; evidence pass
+`docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md` §6). 2018 is outside
+the program's working span: the year-keyed solve-time reader
+(`eia930/envelopes.py`) never asks for it, the
+`curate_transfer_interface_limits.py` glob tolerates a missing year, and
+`derive_pjm_seam_ladders.py`'s window starts at 2019.
+
+**Everything else here STAYS TRACKED**: the three `*_loss_surface.csv`
+(derive artifacts read directly at solve time, loud on absence), the PJM
+2019–2026 drops (training + holdout-tier inputs — the interchange files are
+direct solve-year reads with silent seam-uncapped absence semantics, the
+transfer-limits files rebuild the clean `transfer-interface-limits`
+partitions), and the 13 `SCEDBTCNP686_*.parquet` NP6-86 archives (**no fetch
+instrument exists** — MIS listing retains ~7 days, the Data Portal archive is
+login-gated; not recoverable under story (a), so never untrack them).
+
+**Recovery of the 2018 pair is re-fetch ONLY** (story (a); no pin/history
+route). Measured 2026-08-17: both DataMiner2 feeds served 2018-01-01 rows
+live through `scripts/lib/pjm_dataminer.py` (`act_sch_interchange`
+firstAvailable 2014-01-01; `transfer_limits_and_flows` firstAvailable
+2011-01-01). The exact committed producer:
+
+    python scripts/data/fetch_pjm_transmission.py --years 2018 --feed transfer
+    python scripts/data/fetch_pjm_transmission.py --years 2018 --feed interchange
+
+`SHA256SUMS.txt` records the exact removed bytes.

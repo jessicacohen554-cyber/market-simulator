@@ -1,0 +1,11 @@
+# Scope: the 2 PJM 2018 DataMiner2 drops (transfer_limits_and_flows,
+# import_export_act_sch_interchange), gitignored at tip (BLOAT-S2 Stage-2
+# (a)-only untrack, O2 grant; evidence
+# FINDING-bloat-s2-evidence-passes-2026-08-17.md 6 - 2018 is outside the
+# working span; 2019-2026 + loss surfaces + NP6-86 parquets STAY TRACKED).
+# Hashed over the exact tracked bytes at untracking, tree-sha-verified
+# against HEAD. Recovery: README.md (fetch_pjm_transmission.py --years 2018).
+# sha256  size_bytes  file
+
+482bb037465147eea9610436150a699813ab9f67810df36f107eaee3365eda94  23911234  PJM_2018_import_export_act_sch_interchange.csv
+9ecec3394e8d12c69b17f480f30e90aeb13379a245d4028f5c40c8aafdcf46ae  11008940  PJM_2018_transfer_limits_and_flows.csv

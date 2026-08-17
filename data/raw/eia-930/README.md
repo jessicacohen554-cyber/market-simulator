@@ -43,3 +43,42 @@ EIA-930 (Hourly Electric Grid Monitor) extracts, three families:
 procedure unknown.** Consumers: `scripts/curate_demand_profile.py`,
 `scripts/render_data_dictionary.py`, `src/market_sim/config/constants.py`,
 `src/market_sim/data/eia_loader.py`.
+
+## Bulk payloads UNTRACKED at tip (BLOAT-S2, 2026-08-17)
+
+Two payload classes are **gitignored** since the Stage-2 (a)-only untrack
+(O2 grant, `docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md`; evidence
+pass `docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md` §4):
+
+- the per-BA per-year long files `<BA>_{fueltype,region}_<year>.parquet`
+  (CISO/ERCO/MISO/PJM/ISNE/NYIS, incl. `NYIS_*_2025ext`) — rebuild inputs for
+  the committed `data/raw/eia-930-hourly/<BA> hourly.parquet` wide extracts,
+  which stay tracked (and golden-listed) and are what every solve reads;
+- `EIA930_BALANCE_2018_{Jan_Jun,Jul_Dec}.parquet` — 2018 is outside the
+  program's working span.
+
+**STILL TRACKED (deliberately):** `EIA930_BALANCE_2019..2026_*.parquet`
+(`derive_wecc_west_supply.py` rebuilds the clean `wecc-west-supply` datatype
+from them, a CAISO solve-time input — rule-22 vintages 2019-2026 stay); the
+7 hand-assembled `eia_*` files (**no producing script / refetch unknown** —
+no (a) story exists, so they can never be untracked under the O2 grant); and
+the unsuffixed `NYIS_fueltype.parquet`/`NYIS_region.parquet` full-span pair.
+
+**Recovery is re-fetch ONLY** (story (a); no pin/history route). Measured
+2026-08-17: the EIA bulk host served `sixMonthFiles/EIA930_BALANCE_2018_
+Jul_Dec.csv` and `_2019_Jan_Jun.csv` (HTTP 200) — a stable federal archive
+covering the corpus's oldest vintage. Instruments:
+
+    # BALANCE halves (any year):
+    python scripts/data/fetch_eia930_balance.py --year 2018 --half Jul_Dec
+    # per-BA long files, 2018 (v2-API floor is 2019 — bulk route):
+    python scripts/data/fetch_eia930_bulk_long.py --year 2018 --ba PJM ...
+    # per-BA long files, 2019+ (EIA v2 API, EIA_API_KEY):
+    python scripts/data/fetch_eia930_long.py ...
+
+`api.eia.gov` is network-blocked in CCR sessions; the sixMonthFiles bulk host
+(first two instruments) is reachable and is the measured route. Re-fetch
+BEFORE re-running `build_eia930_hourly_from_raw.py` /
+`extend_eia930_hourly_from_balance.py` (wide-extract rebuilds) or any probe
+that reads the long files. `SHA256SUMS.txt` records the exact removed bytes
+(a re-fetch reproduces the data, not necessarily the parquet serialization).

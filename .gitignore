@@ -828,3 +828,40 @@ data/raw/ercot/SCED/2025-*.part*.parquet
 data/raw/ercot/SCED/2026-*.part*.parquet
 data/raw/ercot/SCED/rtcb-format-2026/*.parquet
 !data/raw/ercot/SCED/rtcb-format-2026/README.md
+
+# --- BLOAT-S2 Stage-2 (a)-only corpus conversions (O2 grant, owner-signed
+# 2026-08-16: DECISION-CARD-bloat3-stage2-charter-2026-08-16.md; per-corpus
+# evidence passes: docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md).
+# Payloads untracked at tip; each corpus README carries the verified source
+# table, the re-fetch command and the MEASURED retention window, and a tracked
+# SHA256SUMS.txt records the removed bytes. Recovery is re-fetch ONLY -- the
+# 2026-08-16 history rewrite left pins dead and the O2 grant admits no other
+# story. A class that fails its pass is NOT listed here (it stays tracked).
+
+# S2-1 -- CAISO quarterly Daily-Energy-Storage-Report xlsx (12 files,
+# 165.2 MiB, 2023q1-2025q4). Solve reads the clean seam only; the overlay
+# flag is default-off/probe-inert/in no keeper. Also keeps any FUTURE
+# quarterly xlsx out of the pack, per the corpus's now-untracked design.
+data/raw/storage-as-awards/CAISO/*.xlsx
+
+# S2-2 -- the orphaned data/raw/PJM DataMiner2 exports (13 files, 107.1 MiB;
+# zero consumers -- the live corpora are ISO-specific-gen-data/ and lmp-data/).
+data/raw/PJM/*.csv
+
+# S2-3 -- eia-930 bulk: per-BA per-year long files + the 2018 BALANCE halves
+# (82 files, 33.8 MiB). BALANCE 2019-2026 (wecc-west-supply rebuild inputs,
+# solve-path), the 7 hand-assembled eia_* files (no refetch story) and the
+# unsuffixed NYIS pair STAY TRACKED -- the globs below cannot match them.
+data/raw/eia-930/EIA930_BALANCE_2018_*.parquet
+data/raw/eia-930/*_fueltype_2*.parquet
+data/raw/eia-930/*_region_2*.parquet
+
+# S2-4 -- campd-unit-level 2018 vintage (35 files, 105.1 MiB; outside the
+# working span, derive-time consumers only). 2019-2026 are solve-time inputs
+# and STAY TRACKED -- the glob matches only the 2018 files.
+data/raw/campd-unit-level/*_2018.parquet
+
+# S2-5 -- the two PJM 2018 iso-specific-transmission drops (33.3 MiB; outside
+# the working span). PJM 2019-2026, the loss surfaces and the NP6-86 parquets
+# STAY TRACKED (the NP6-86 archives have NO fetch instrument -- leg-(iv) FAIL).
+data/raw/iso-specific-transmission/PJM_2018_*.csv
