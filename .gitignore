@@ -828,3 +828,19 @@ data/raw/ercot/SCED/2025-*.part*.parquet
 data/raw/ercot/SCED/2026-*.part*.parquet
 data/raw/ercot/SCED/rtcb-format-2026/*.parquet
 !data/raw/ercot/SCED/rtcb-format-2026/README.md
+
+# --- BLOAT-S2 Stage-2 (a)-only corpus conversions (O2 grant, owner-signed
+# 2026-08-16: DECISION-CARD-bloat3-stage2-charter-2026-08-16.md; per-corpus
+# evidence passes: docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md).
+# Payloads untracked at tip; each corpus README carries the verified source
+# table, the re-fetch command and the MEASURED retention window, and a tracked
+# SHA256SUMS.txt records the removed bytes. Recovery is re-fetch ONLY -- the
+# 2026-08-16 history rewrite left pins dead and the O2 grant admits no other
+# story. A class that fails its pass is NOT listed here (it stays tracked).
+
+# S2-1 -- CAISO quarterly Daily-Energy-Storage-Report xlsx (12 files,
+# 165.2 MiB, 2023q1-2025q4). Solve reads the clean seam only; the overlay
+# flag is default-off/probe-inert/in no keeper. Also keeps any FUTURE
+# quarterly xlsx out of the pack, per the corpus's now-untracked design.
+data/raw/storage-as-awards/CAISO/*.xlsx
+

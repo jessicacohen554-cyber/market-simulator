@@ -1,0 +1,20 @@
+# Scope: the 12 CAISO quarterly Daily-Energy-Storage-Report xlsx (2023q1-2025q4),
+# gitignored at tip (BLOAT-S2 Stage-2 (a)-only untrack, O2 grant,
+# docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md; evidence
+# docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md 1). Hashed over the
+# exact tracked bytes at untracking, tree-sha-verified against HEAD.
+# Recovery is re-fetch ONLY (see README.md) - no pin, no history route.
+# sha256  size_bytes  file
+
+c4a8151a520a56e8abf7353edbb0da507f6533741efcaeda718434d0d1dc0d24  11319953  storage-report-2023q1.xlsx
+487415eaeea9fa6d652347807d6fc808296605a9427d86e8a57d30916c447b9b  13573110  storage-report-2023q2.xlsx
+cbf978a1a244cdc7b513a6a827dac500b0cae72a449612ef68e4295e3e811634  13816773  storage-report-2023q3.xlsx
+71c748ea4c32777eba053b625b5c9b32dc01600b66d35fe7b9f7e09e85211d75  13923404  storage-report-2023q4.xlsx
+bd223fcbffb797f6725e6eb9db4b0b99654d316bc4714522b6dd821541f364b8  14344090  storage-report-2024q1.xlsx
+67c05c30bda9ec020dbe476f050436cbebb500b1a9119e9ec08f0275f3201926  14775118  storage-report-2024q2.xlsx
+b8e58169f50e7a796fc29b7207ac591dbe16d7703ed9c5019a6c2bf6234dd725  15121124  storage-report-2024q3.xlsx
+a7eb37e0defef914d03d5ce8b36ea0640afcbf104d7c506cecd9286d9a3ad2df  15007291  storage-report-2024q4.xlsx
+a73c989c5b98dc7bf9be8b0ae91036b710e9eb0799d08322e0fdee69e40a7162  14876071  storage-report-q1-2025.xlsx
+f1aab3598b491b6b58bce020eb85898d06d0ebb9109eef5d437cafec8a1385ba  15443207  storage-report-q2-2025.xlsx
+03ad0ef02dc7ee14e8480dcf0e4a1b4ced017dfe1385fd80b527e68c9fc5eb5e  15465359  storage-report-q3-2025.xlsx
+3dd1e7874e99db152fdfb0cc739e34ceb21d7fb1dfcca74948d2c67ef910fff1  15512146  storage-report-q4-2025.xlsx
