@@ -1,0 +1,106 @@
+{
+ "years": {
+  "2023": {
+   "1595:CC_CHP": {
+    "hours_changed": 8592,
+    "max_abs_delta": 0.194175,
+    "with_misrouted": {
+     "hours_derated": 8760,
+     "mean": 0.884001,
+     "min": 0.0,
+     "mwh_equiv_frac_of_year": 0.115999
+    },
+    "without_misrouted": {
+     "hours_derated": 168,
+     "mean": 0.980822,
+     "min": 0.0,
+     "mwh_equiv_frac_of_year": 0.019178
+    }
+   },
+   "6081:CC_REGULAR": {
+    "hours_changed": 120,
+    "max_abs_delta": 0.632907,
+    "with_misrouted": {
+     "hours_derated": 8760,
+     "mean": 0.0,
+     "min": 0.0,
+     "mwh_equiv_frac_of_year": 1.0
+    },
+    "without_misrouted": {
+     "hours_derated": 8760,
+     "mean": 0.004503,
+     "min": 0.0,
+     "mwh_equiv_frac_of_year": 0.995497
+    }
+   }
+  },
+  "2024": {
+   "1595:CC_CHP": {
+    "hours_changed": 7752,
+    "max_abs_delta": 0.184466,
+    "with_misrouted": {
+     "hours_derated": 8352,
+     "mean": 0.849382,
+     "min": 0.0,
+     "mwh_equiv_frac_of_year": 0.150618
+    },
+    "without_misrouted": {
+     "hours_derated": 600,
+     "mean": 0.931507,
+     "min": 0.0,
+     "mwh_equiv_frac_of_year": 0.068493
+    }
+   },
+   "6081:CC_REGULAR": {
+    "hours_changed": 8448,
+    "max_abs_delta": 0.996395,
+    "with_misrouted": {
+     "hours_derated": 8448,
+     "mean": 0.512776,
+     "min": 0.003605,
+     "mwh_equiv_frac_of_year": 0.487224
+    },
+    "without_misrouted": {
+     "hours_derated": 0,
+     "mean": 1.0,
+     "min": 1.0,
+     "mwh_equiv_frac_of_year": 0.0
+    }
+   }
+  },
+  "2025": {
+   "1595:CC_CHP": {
+    "hours_changed": 8184,
+    "max_abs_delta": 0.174757,
+    "with_misrouted": {
+     "hours_derated": 8664,
+     "mean": 0.862615,
+     "min": 0.0,
+     "mwh_equiv_frac_of_year": 0.137385
+    },
+    "without_misrouted": {
+     "hours_derated": 480,
+     "mean": 0.945205,
+     "min": 0.0,
+     "mwh_equiv_frac_of_year": 0.054795
+    }
+   },
+   "6081:CC_REGULAR": {
+    "hours_changed": 8592,
+    "max_abs_delta": 1.0,
+    "with_misrouted": {
+     "hours_derated": 8592,
+     "mean": 0.439972,
+     "min": 0.0,
+     "mwh_equiv_frac_of_year": 0.560028
+    },
+    "without_misrouted": {
+     "hours_derated": 0,
+     "mean": 1.0,
+     "min": 1.0,
+     "mwh_equiv_frac_of_year": 0.0
+    }
+   }
+  }
+ }
+}

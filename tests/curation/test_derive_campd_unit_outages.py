@@ -23,8 +23,10 @@ from scripts.data.derive_campd_unit_outages import (  # noqa: E402
     EIA923_FALLBACK_OUTAGE_RATIO,
     SHORT_BASELOAD_CF,
     _eia923_month_windows,
+    _is_liquid_only_fuel,
     _operable_mask,
     _partial_plateau_windows,
+    _resolve_unit_group,
     _when_operable_cf,
 )
 
@@ -170,6 +172,111 @@ class TestEia923MonthWindows(unittest.TestCase):
         # Only Jan+Feb filed (partial year like 2026 Q1); both normal -> no window.
         monthly = {1: self.REF, 2: self.REF}
         self.assertEqual(_eia923_month_windows(monthly, self.REF, 2026, self.RATIO), [])
+
+
+class TestLiquidFuelCombustionTurbineRouting(unittest.TestCase):
+    """The liquid-fuel CT guard keeps an oil peaker out of its siblings' gas bin.
+
+    ``_resolve_unit_group``'s ``fac_group`` short-circuit was a pjm-75
+    conservatism ("single-group gas facilities are byte-identical"), not a
+    physical claim, and at a facility that mixes an oil peaker with a gas block
+    it handed the peaker's outage window to the block: NEISO plant 6081 Stony
+    Brook's two Diesel Oil combustion turbines (83 MW each) derated a 305.1 MW
+    combined cycle they are not in, for ~50 % of the 2024 and 2025 capacity-years
+    in which the CC units themselves had no windows at all (neiso-99, rule 14
+    ``[R-ACCURATE]``).
+
+    The discriminator must be the unit's OWN ``primaryFuelInfo``, not
+    ``unitType`` alone: 27 of the 35 CAMPD units filed "Combustion turbine" in a
+    non-CT bin are gas-fired members of a genuine block and MUST keep inheriting
+    it.
+    """
+
+    def test_liquid_ct_does_not_inherit_a_sibling_cc_bin(self):
+        self.assertEqual(
+            _resolve_unit_group(
+                False, "Combustion turbine", {"CC_REGULAR"}, "CC_REGULAR", "Diesel Oil"
+            ),
+            "CT_PEAKER",
+        )
+
+    def test_liquid_ct_does_not_inherit_a_sibling_steam_bin(self):
+        self.assertEqual(
+            _resolve_unit_group(
+                False, "Combustion turbine", {"ST_GAS"}, "ST_GAS", "Other Oil"
+            ),
+            "CT_PEAKER",
+        )
+
+    def test_gas_ct_still_inherits_its_block(self):
+        # The 27-unit majority: a genuine CC block's CT filed "Combustion
+        # turbine". Byte-identical to the pre-guard routing.
+        self.assertEqual(
+            _resolve_unit_group(
+                False,
+                "Combustion turbine",
+                {"CC_REGULAR", "CT_PEAKER"},
+                "CC_REGULAR",
+                "Pipeline Natural Gas",
+            ),
+            "CC_REGULAR",
+        )
+
+    def test_dual_fuel_ct_is_not_liquid_only(self):
+        # A dual-fuel machine carries its gas token in the SAME string.
+        self.assertEqual(
+            _resolve_unit_group(
+                False,
+                "Combustion turbine",
+                {"ST_GAS"},
+                "ST_GAS",
+                "Natural Gas, Residual Oil",
+            ),
+            "ST_GAS",
+        )
+
+    def test_oil_fired_boiler_is_untouched(self):
+        # The guard is conjunctive: a residual-oil BOILER is not a CT.
+        self.assertEqual(
+            _resolve_unit_group(
+                False,
+                "Dry bottom wall-fired boiler",
+                {"ST_GAS"},
+                "ST_GAS",
+                "Residual Oil",
+            ),
+            "ST_GAS",
+        )
+
+    def test_coal_still_wins_over_the_guard(self):
+        self.assertEqual(
+            _resolve_unit_group(
+                True, "Combustion turbine", {"COAL"}, "COAL", "Diesel Oil"
+            ),
+            "COAL",
+        )
+
+    def test_blank_fuel_is_fail_safe(self):
+        # Unknown fuel must not evict a unit from its bin.
+        self.assertEqual(
+            _resolve_unit_group(
+                False, "Combustion turbine", {"CC_REGULAR"}, "CC_REGULAR", ""
+            ),
+            "CC_REGULAR",
+        )
+
+    def test_liquid_predicate_vocabulary(self):
+        for f in ("Diesel Oil", "Other Oil", "Residual Oil", "diesel oil"):
+            self.assertTrue(_is_liquid_only_fuel(f), f)
+        for f in (
+            "Pipeline Natural Gas",
+            "Natural Gas",
+            "Coal",
+            "Wood",
+            "",
+            "Natural Gas, Residual Oil",
+        ):
+            self.assertFalse(_is_liquid_only_fuel(f), f)
 
 
 if __name__ == "__main__":

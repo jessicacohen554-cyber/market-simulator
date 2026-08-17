@@ -533,11 +533,35 @@ def _when_operable_cf(
     return float(np.mean(oper_gross)) / detect_cap
 
 
+# CAMPD ``primaryFuelInfo`` tokens that name LIQUID petroleum. The full CAMPD
+# fuel vocabulary is closed and small — enumerated from every state-year in
+# ``data/raw/campd-unit-level`` — and these three are its only liquid members
+# (the rest are gas, coal, wood, process/other gas and petroleum coke).
+_CAMPD_LIQUID_FUELS: frozenset[str] = frozenset(
+    {"diesel oil", "residual oil", "other oil"}
+)
+
+
+def _is_liquid_only_fuel(primary_fuel: str) -> bool:
+    """True when a CAMPD ``primaryFuelInfo`` names LIQUID petroleum and nothing else.
+
+    The CAMPD vocabulary spells liquid petroleum as exactly
+    :data:`_CAMPD_LIQUID_FUELS`; a dual-fuel machine carries its gas token in the
+    SAME comma-separated string (e.g. ``"Natural Gas, Residual Oil"``), so
+    requiring EVERY token to be liquid keeps dual-fuel gas units out of the
+    population. Blank / unknown fuel is not liquid (fail-safe: the caller's
+    existing routing stands).
+    """
+    toks = [t.strip().lower() for t in str(primary_fuel).split(",") if t.strip()]
+    return bool(toks) and all(t in _CAMPD_LIQUID_FUELS for t in toks)
+
+
 def _resolve_unit_group(
     is_coal: bool,
     unit_type: str,
     fac_groups: set[str],
     fac_group: str | None,
+    unit_fuel: str = "",
 ) -> str:
     """Route a CAMPD unit's outage row to the model bin matching the UNIT.
 
@@ -555,12 +579,46 @@ def _resolve_unit_group(
     the overlay (outages.unit_outage_derate_factors) — correct: a retired
     coal unit's window must not derate the surviving gas plant.
 
+    THE LIQUID-FUEL COMBUSTION-TURBINE GUARD (neiso-99, rule 14
+    ``[R-ACCURATE]``) runs BEFORE the ``fac_group`` short-circuit, because that
+    short-circuit was a deliberate pjm-75 conservatism ("single-group gas
+    facilities are byte-identical") rather than a physical claim, and at an
+    oil-peaker-plus-gas-block facility it is WRONG: it hands the peaker's
+    outage to the block. A CAMPD unit whose own ``unitType`` is a combustion
+    turbine AND whose own ``primaryFuelInfo`` is LIQUID-ONLY is a separate
+    simple-cycle machine, never a member of a sibling gas bin — a combined-cycle
+    CT fires pipeline gas into the block's HRSG, and a gas-steam boiler burns its
+    fuel in the boiler itself, so neither can be an oil-only CT. It routes to
+    ``CT_PEAKER``, which is outside :data:`QUALIFYING_PLANT_GROUPS` and therefore
+    drops the row — correct, because these machines carry NO model bin at all
+    (they are ``fuel="oil"`` fleet rows with an empty ``plant_group``, or absent
+    from the fleet entirely).
+
+    The discriminator is ``primaryFuelInfo`` and not ``unitType`` alone because
+    ``unitType`` does NOT separate the two populations: measured across all six
+    ISOs' committed extracts (``scripts/probes/neiso99_routing_blast_radius.py``
+    → ``results/calibration/_neiso99_routing_blast_radius.json``), 35 CAMPD units
+    filed as "Combustion turbine" sit in a non-CT bin, and 27 of them are
+    GAS-fired members of a genuine block that must keep inheriting it (ERCOT Sand
+    Hill SH1-SH7, Colorado Bend CT-4A/4B, CAISO Glenarm GT3/GT4, MISO Zeeland
+    CC1/CC2, NYISO Ravenswood CT0001/0010/0011, Bethpage GT3, …). The 8 that are
+    liquid-only are exactly the mis-routed peakers: NEISO 6081 Stony Brook
+    004/005 (Diesel Oil, 83 MW each), 568 Bridgeport Harbor BHB4 (Other Oil),
+    1588 Mystic MJ-1, 1595 Kendall S6; PJM 593 Edge Moor 10; MISO 2001 New Ulm 7
+    and 8056 Waterford 4; NYISO 2516 Northport UGT001.
+
     Module-level (not nested in :func:`main`) so the declared-event-window
     sibling deriver (``scripts/data/derive_campd_maxgen_outages.py``) reuses the
     SAME routing verbatim.
     """
     if is_coal:
         return "COAL"
+    if "combustion turbine" in str(unit_type).strip().lower() and _is_liquid_only_fuel(
+        unit_fuel
+    ):
+        # Excluded downstream: peakers carry no overlay. See the guard's
+        # rationale in this function's docstring.
+        return "CT_CHP" if "CT_CHP" in fac_groups else "CT_PEAKER"
     if fac_group in QUALIFYING_PLANT_GROUPS and fac_group != "COAL":
         return str(fac_group)
     ut = str(unit_type).strip().lower()
@@ -1332,6 +1390,12 @@ def main() -> None:
                     uid: str(u["unitType"].iloc[0])
                     for uid, u in fac.groupby("unitId", observed=True)
                 }
+                # The unit's OWN CEMS-reported primary fuel, for the liquid-fuel
+                # combustion-turbine guard in :func:`_resolve_unit_group`.
+                unit_fuel = {
+                    uid: str(u["primaryFuelInfo"].iloc[0])
+                    for uid, u in fac.groupby("unitId", observed=True)
+                }
                 # Per-unit (detect_mw, derate_mw, source) — the detector's CF
                 # basis and the CSV's block share — plus the facility derate
                 # total for the informational pct column.
@@ -1477,6 +1541,7 @@ def main() -> None:
                             unit_type.get(uid, ""),
                             fac_groups,
                             group,
+                            unit_fuel.get(uid, ""),
                         )
                     )
                     if ugroup not in QUALIFYING_PLANT_GROUPS:

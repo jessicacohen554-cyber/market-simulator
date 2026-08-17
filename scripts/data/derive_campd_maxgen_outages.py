@@ -466,12 +466,22 @@ def main() -> None:
                     uid: str(u["unitType"].iloc[0])
                     for uid, u in fac.groupby("unitId", observed=True)
                 }
+                # The unit's OWN CEMS-reported primary fuel, for the liquid-fuel
+                # combustion-turbine guard in :func:`_resolve_unit_group`.
+                unit_fuel = {
+                    uid: str(u["primaryFuelInfo"].iloc[0])
+                    for uid, u in fac.groupby("unitId", observed=True)
+                }
                 for uid, gross in units.items():
                     peak = float(gross.max())
                     if peak <= 0.0:
                         continue  # no gross basis this year
                     ugroup = _resolve_unit_group(
-                        unit_is_coal[uid], unit_type.get(uid, ""), fac_groups, fac_group
+                        unit_is_coal[uid],
+                        unit_type.get(uid, ""),
+                        fac_groups,
+                        fac_group,
+                        unit_fuel.get(uid, ""),
                     )
                     if (code, ugroup) not in plant_cap:
                         continue  # routed to a bin absent from the model fleet

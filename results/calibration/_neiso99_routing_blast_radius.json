@@ -1,0 +1,3125 @@
+{
+ "CAISO": {
+  "csv": "campd-unit-outages-CAISO.csv",
+  "flagged_rows": 265,
+  "flagged_units": 3,
+  "total_rows": 4710,
+  "units": {
+   "10294:2": {
+    "facility_name": "King City Power Plant",
+    "fleet_bins": [
+     "CC_CHP"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_CHP",
+      "pmax": 80.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_CHP",
+      "pmax": 35.0
+     }
+    ],
+    "plant_group_written": "CC_CHP",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 121,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 47.0
+   },
+   "422:GT3": {
+    "facility_name": "Glenarm",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 22.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 22.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.2
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 68.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 16.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 68,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 60.5
+   },
+   "422:GT4": {
+    "facility_name": "Glenarm",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 22.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 22.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.2
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 68.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 16.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 76,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 60.5
+   }
+  }
+ },
+ "ERCOT": {
+  "csv": "campd-unit-outages.csv",
+  "flagged_rows": 1235,
+  "flagged_units": 24,
+  "total_rows": 6700,
+  "units": {
+   "3469:THW51": {
+    "facility_name": "T H Wharton",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 14.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 5,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 85.0
+   },
+   "3469:THW52": {
+    "facility_name": "T H Wharton",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 14.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 5,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 85.0
+   },
+   "3469:THW53": {
+    "facility_name": "T H Wharton",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 14.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 2,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 85.0
+   },
+   "3469:THW54": {
+    "facility_name": "T H Wharton",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 14.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 3,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 85.0
+   },
+   "3469:THW55": {
+    "facility_name": "T H Wharton",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 14.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 5,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 85.0
+   },
+   "3469:THW56": {
+    "facility_name": "T H Wharton",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 54.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 56.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 14.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 5,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 85.0
+   },
+   "3612:CGT5": {
+    "facility_name": "V H Braunig",
+    "fleet_bins": [
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 133,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 61.0
+   },
+   "3612:CGT6": {
+    "facility_name": "V H Braunig",
+    "fleet_bins": [
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 128,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 61.0
+   },
+   "3612:CGT7": {
+    "facility_name": "V H Braunig",
+    "fleet_bins": [
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 120,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 61.0
+   },
+   "3612:CGT8": {
+    "facility_name": "V H Braunig",
+    "fleet_bins": [
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 48.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 112,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 61.0
+   },
+   "3628:**4": {
+    "facility_name": "R W Miller",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 118.0
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 195.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 104.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 104.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 21,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 118.8
+   },
+   "3628:**5": {
+    "facility_name": "R W Miller",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 118.0
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 195.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 104.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 104.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 4,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 118.8
+   },
+   "52176:1": {
+    "facility_name": "C. R. Wing Cogeneration Plant",
+    "fleet_bins": [
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 84.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 84.9
+     }
+    ],
+    "plant_group_written": "CC_CHP",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 69,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 84.9
+   },
+   "52176:2": {
+    "facility_name": "C. R. Wing Cogeneration Plant",
+    "fleet_bins": [
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 84.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 84.9
+     }
+    ],
+    "plant_group_written": "CC_CHP",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 69,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 84.9
+   },
+   "56350:CT-4A": {
+    "facility_name": "Colorado Bend Energy Center",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 85.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 85.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 85.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 85.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 31.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 31.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 103.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 103.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 5,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 37.0
+   },
+   "56350:CT-4B": {
+    "facility_name": "Colorado Bend Energy Center",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 85.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 85.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 85.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 85.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 31.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 31.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 103.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 103.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 2,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 37.0
+   },
+   "6243:2": {
+    "facility_name": "Roland C. Dansby Power Plant",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.1
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 105,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 49.1
+   },
+   "6243:3": {
+    "facility_name": "Roland C. Dansby Power Plant",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 110.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.1
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 106,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 49.1
+   },
+   "7900:SH1": {
+    "facility_name": "Sand Hill Energy Center",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 161.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 151.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 55,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 51.4
+   },
+   "7900:SH2": {
+    "facility_name": "Sand Hill Energy Center",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 161.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 151.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 54,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 51.4
+   },
+   "7900:SH3": {
+    "facility_name": "Sand Hill Energy Center",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 161.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 151.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 56,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 51.4
+   },
+   "7900:SH4": {
+    "facility_name": "Sand Hill Energy Center",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 161.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 151.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 54,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 51.4
+   },
+   "7900:SH6": {
+    "facility_name": "Sand Hill Energy Center",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 161.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 151.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 59,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 51.4
+   },
+   "7900:SH7": {
+    "facility_name": "Sand Hill Energy Center",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 161.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 151.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 47.3
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 58,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 51.4
+   }
+  }
+ },
+ "MISO": {
+  "csv": "campd-unit-outages-MISO.csv",
+  "flagged_rows": 401,
+  "flagged_units": 8,
+  "total_rows": 10445,
+  "units": {
+   "2001:7": {
+    "facility_name": "New Ulm",
+    "fleet_bins": [
+     "ST_CHP"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_CHP",
+      "pmax": 13.2
+     },
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 23.0
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_CHP",
+      "pmax": 4.7
+     },
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 25.0
+     }
+    ],
+    "plant_group_written": "ST_CHP",
+    "primaryFuelInfo": "Diesel Oil",
+    "rows": 114,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 27.5
+   },
+   "2070:**4": {
+    "facility_name": "Moselle Generation Complex",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 59.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 59.0
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 59.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 75.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 75.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 75.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 75.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 11,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 83.0
+   },
+   "2070:5": {
+    "facility_name": "Moselle Generation Complex",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 59.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 59.0
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 59.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 75.0
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 75.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 75.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 75.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 4,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 83.5
+   },
+   "55087:CC1": {
+    "facility_name": "Zeeland Generating Station",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 159.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 158.8
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 155.5
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 154.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 215.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 5,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 178.0
+   },
+   "55087:CC2": {
+    "facility_name": "Zeeland Generating Station",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 159.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 158.8
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 155.5
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 154.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 215.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 7,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 172.0
+   },
+   "55620:2-1": {
+    "facility_name": "Perryville Power Station",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 152.7
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 130.45271437384332
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 130.45271437384332
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 376.99457125231334
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 104,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 186.0
+   },
+   "63259:DEPS1": {
+    "facility_name": "Delta Energy Park",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 48.3
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 48.3
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 46.3
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 81.0
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 53,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 58.0
+   },
+   "8056:4": {
+    "facility_name": "Waterford 1 & 2",
+    "fleet_bins": [
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 417.3
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Diesel Oil",
+    "rows": 103,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 41.0
+   }
+  }
+ },
+ "NEISO": {
+  "csv": "campd-unit-outages-NEISO.csv",
+  "flagged_rows": 236,
+  "flagged_units": 5,
+  "total_rows": 3189,
+  "units": {
+   "1588:MJ-1": {
+    "facility_name": "Mystic",
+    "fleet_bins": [
+     "CC_REGULAR"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 224.7
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 224.7
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 227.4
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 227.4
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 254.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 257.1
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Diesel Oil",
+    "rows": 24,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 10.0
+   },
+   "1595:S6": {
+    "facility_name": "Kendall Green Energy LLC",
+    "fleet_bins": [
+     "CC_CHP"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_CHP",
+      "pmax": 22.9
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_CHP",
+      "pmax": 183.1
+     },
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 18.0
+     }
+    ],
+    "plant_group_written": "CC_CHP",
+    "primaryFuelInfo": "Diesel Oil",
+    "rows": 53,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 21.0
+   },
+   "568:BHB4": {
+    "facility_name": "Bridgeport Harbor Station",
+    "fleet_bins": [
+     "CC_REGULAR"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 334.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 162.2
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Other Oil",
+    "rows": 11,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 17.0
+   },
+   "6081:004": {
+    "facility_name": "Stony Brook Energy Center",
+    "fleet_bins": [
+     "CC_REGULAR"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 65.0
+     },
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 65.0
+     },
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 96.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 69.7
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 69.7
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 69.7
+     },
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 0.6
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Diesel Oil",
+    "rows": 74,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 83.0
+   },
+   "6081:005": {
+    "facility_name": "Stony Brook Energy Center",
+    "fleet_bins": [
+     "CC_REGULAR"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 65.0
+     },
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 65.0
+     },
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 96.0
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 69.7
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 69.7
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 69.7
+     },
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 0.6
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Diesel Oil",
+    "rows": 74,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 83.0
+   }
+  }
+ },
+ "NYISO": {
+  "csv": "campd-unit-outages-NYISO.csv",
+  "flagged_rows": 206,
+  "flagged_units": 18,
+  "total_rows": 4423,
+  "units": {
+   "2490:CT0001": {
+    "facility_name": "Arthur Kill",
+    "fleet_bins": [
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 358.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 518.4
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 3,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 15.0
+   },
+   "2500:CT0001": {
+    "facility_name": "Ravenswood Generating Station",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 364.5
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 375.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 985.1
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 149.8
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 72.4
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 13,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 9.0
+   },
+   "2500:CT0010": {
+    "facility_name": "Ravenswood Generating Station",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 364.5
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 375.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 985.1
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 149.8
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 72.4
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 15,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 22.0
+   },
+   "2500:CT0011": {
+    "facility_name": "Ravenswood Generating Station",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 364.5
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 375.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 985.1
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 149.8
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 72.4
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 20,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 22.0
+   },
+   "2511:U00004": {
+    "facility_name": "E F Barrett",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.7
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.8
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 15.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 41.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 194.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 178.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 2,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 16.0
+   },
+   "2511:U00005": {
+    "facility_name": "E F Barrett",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.7
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.8
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 15.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 41.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 194.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 178.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 1,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 17.0
+   },
+   "2511:U00008": {
+    "facility_name": "E F Barrett",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.7
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.8
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 15.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 41.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 194.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 178.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 2,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 1.0
+   },
+   "2511:U00009": {
+    "facility_name": "E F Barrett",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.7
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.8
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 15.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 41.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 194.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 178.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 3,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 16.0
+   },
+   "2511:U00011": {
+    "facility_name": "E F Barrett",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.7
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.8
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 15.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 41.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 194.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 178.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 1,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 12.0
+   },
+   "2511:U00012": {
+    "facility_name": "E F Barrett",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.7
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.8
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 15.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 41.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 194.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 178.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 1,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 23.0
+   },
+   "2511:U00013": {
+    "facility_name": "E F Barrett",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.7
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.8
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 15.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 41.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 194.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 178.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 1,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 23.0
+   },
+   "2511:U00016": {
+    "facility_name": "E F Barrett",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.7
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.8
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 15.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 41.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 194.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 178.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 1,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 24.0
+   },
+   "2511:U00017": {
+    "facility_name": "E F Barrett",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.7
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.8
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 15.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 41.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 194.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 178.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 1,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 24.0
+   },
+   "2511:U00018": {
+    "facility_name": "E F Barrett",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.7
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.8
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 15.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 41.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 194.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 178.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 1,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 24.0
+   },
+   "2511:U00019": {
+    "facility_name": "E F Barrett",
+    "fleet_bins": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 40.9
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.7
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.8
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 16.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 15.1
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 41.2
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.4
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 17.6
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 194.2
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 178.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 1,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 24.0
+   },
+   "2516:UGT001": {
+    "facility_name": "Northport",
+    "fleet_bins": [
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 398.0
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 398.5
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 398.0
+     },
+     {
+      "fuel": "oil",
+      "group": "",
+      "pmax": 11.8
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 397.7
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Diesel Oil",
+    "rows": 42,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 13.0
+   },
+   "50292:GT3": {
+    "facility_name": "Bethpage Energy Center",
+    "fleet_bins": [
+     "CC_REGULAR",
+     "CT_PEAKER"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 21.3
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 21.1
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 10.21
+     },
+     {
+      "fuel": "gas_ct",
+      "group": "CT_PEAKER",
+      "pmax": 44.08
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 45.6
+     },
+     {
+      "fuel": "gas_cc",
+      "group": "CC_REGULAR",
+      "pmax": 30.78
+     }
+    ],
+    "plant_group_written": "CC_REGULAR",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 45,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 16.2
+   },
+   "8906:CT0001": {
+    "facility_name": "Astoria Generating Station",
+    "fleet_bins": [
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 177.0
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 369.9
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 376.3
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Pipeline Natural Gas",
+    "rows": 53,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 20.0
+   }
+  }
+ },
+ "PJM": {
+  "csv": "campd-unit-outages-PJM.csv",
+  "flagged_rows": 33,
+  "flagged_units": 1,
+  "total_rows": 10670,
+  "units": {
+   "593:10": {
+    "facility_name": "Edge Moor",
+    "fleet_bins": [
+     "ST_GAS"
+    ],
+    "fleet_rows": [
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 86.0
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 171.0
+     },
+     {
+      "fuel": "gas_st",
+      "group": "ST_GAS",
+      "pmax": 438.0
+     }
+    ],
+    "plant_group_written": "ST_GAS",
+    "primaryFuelInfo": "Diesel Oil",
+    "rows": 33,
+    "unitType": "Combustion turbine",
+    "unit_capacity_mw": 12.5
+   }
+  }
+ }
+}
