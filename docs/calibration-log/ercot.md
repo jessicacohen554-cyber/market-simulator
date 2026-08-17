@@ -10046,3 +10046,101 @@ blob-verified pushes. No new workflows, no PR.
 
 **Session consumed the ercot-216 shorthand. Next shorthand: ercot-217**
 (ercot-199 remains unclaimed).
+
+## ercot-217 (2026-08-17) — THE 2023 REGIME LANE (owner-dispatched, Phase-0 read-only): the regime split the owner hypothesizes is ALREADY BUILT, ARMED AND CORRECTLY DATED on the keeper; the residual does NOT step at the published design dates; NO admissible regime lever exists — the D-3 negative branch, NOTHING built, Phase-1 NOT entered, keeper UNCHANGED
+
+**The owner decision this lane executes (recorded verbatim per the dispatch):**
+*"2023 was a weird year in ERCOT with a different market structure that caused
+super high scarcity pricing .. it should accordingly not have precisely the
+same parameters as 2024 and 2025[;] this is a known and real phenomenon. If it
+means the keeper for ERCOT backcast calibration is really the combination of
+two different configurations, one 2023 and before and one 2024 and after,
+that's an acceptable approach and finding."* With (D-1) Q-B FINAL suspended
+FOR THIS LANE ONLY (item 11 stays CLOSED; R-A unchanged), (D-2) a regime-split
+keeper acceptable as ONE bundle resolving the regime internally per weather
+year, (D-3) a negative result equally acceptable at full magnitude.
+
+**Verdict (full record `docs/FINDING-ercot217-2023-regime-split-2026-08-17.md`;
+probe `scripts/probes/ercot217_regime_phase0.py` →
+`results/calibration/ercot217_regime_phase0.json`; no LP, no solve, no year
+scored, no run registered, no cell verdict minted — the ercot-163/170/208/214/
+216 no-LP precedent; no precommit because no solve was reached):**
+
+1. **(P0-A) The regime ledger comes back CARRIED on every row.** The owner's
+   premise is TRUE and is the IMM's own headline — verified from the
+   re-fetched, sha256-verified 2023 SOM: ECRS (go-live OD **2023-06-10**,
+   M-D050523-01) was sequestered from SCED with no price-based release,
+   producing "artificial shortage pricing as high as $5,000 per MWh when the
+   system was not actually short of reserves", which "**doubled average
+   real-time energy prices from June through December 2023**" at "**more than
+   $12 billion**" cost; the 2024-08-01 operating-procedure reform implemented
+   the NPRR1224 deployment process WITHOUT the $750 floor (PUCT rejected the
+   floor 2024-07-25; IMM 2024 SOM rec 2023-3); RTC+B went live 2025-12-05
+   (IMM 2025 SOM). **The model already carries all of it, armed on every
+   bundle of the −33.2 → +0.4 → −40.1 lineage**:
+   `ercot_ecrs_conservative_deployment=True` (ECRS_withheld rigid at VOLL,
+   whole-2023 + 2024 h<5088), `ercot_nonreleasable_as_withholding=True`
+   (RRS/RegUp rigid until RTC+B h8112-2025), the measured per-year ASPLANNP433
+   plan whose first ECRS row IS the go-live day, measured awards/credits/caps
+   per year, ORDC params design-constant ($5,000/3,000 — the design didn't
+   change 2023→2025) with the one within-span change (Nov-2023 OBDRR048
+   floor) date-gated in code. The keeper IS D-2's "one bundle whose config
+   resolves the regime internally per weather year", and −40.1 % is measured
+   WITH the regime split in force.
+2. **(P0-B)** The −33.2 → −40.1 move decomposed on committed bytes (2023
+   demand-weighted $/MWh): ercot-204 price 36.57 = λ 35.55 + ovl 0.75 + adder
+   0.27; ercot-213-arm 48.55 = λ **30.25** (net-credits freed reserves, 4
+   phantom VOLL-plus shed hours removed, **λ −$5.30**) + 0.75 + adder
+   **17.55** (anchor pair, +$17.28, 116/117 deep hours ramp-contaminated);
+   ercot-215-arm 33.66 = λ 30.25 + 0.75 + adder **2.67** (decontamination
+   −$14.88, post-solve). Net vs ercot-204: **−$2.91/MWh** — the validated
+   measured-basis repair removed λ the gross-cap saturation had been
+   manufacturing, and the decontaminated adder restores only the published
+   order of magnitude. Both moves structurally correct; the exposed gap is
+   the true size of the 2023 model-class object.
+3. **(P0-C) The residual does NOT step at a published design date.** 2023
+   pre-go-live bias **+1.2 %** (and the model missed 14/15 pre-ECRS tail
+   hours — the same C3c signature in the OLD regime); Jun 10–23 **−57.5 %**
+   (first heat event lands Jun 14); Jun 24–Jul 7 **+15.4 %** (heat breaks);
+   Aug −56 %, Sep −39 %; **Oct/Nov/Dec −2/−5/+3 %** while the sequestration
+   design runs unchanged to 2024-07-31. Placebo splits in 2024/2025 flat;
+   post-reform 2024 +1.7 %; the 27 in-span RTC+B days +1.8 % (4 tail h). A
+   design driver does not switch off in October — the object is the scarcity
+   EPISODES' price formation inside the regime (the ercot-200 card-W fine
+   partition, reproduced on the backcast object and attributed).
+4. **(P0-D) REFUSED, on measurement.** Sequestration: carried+armed, and
+   ERCOT-102 stands — the withheld families are SLACK at the missed hours
+   (bind 2/88, mean $0.1; the model holds the full plan and still carries
+   more headroom than the real grid's ~5.7 GW PRC); withholding more cannot
+   lift a slack dual, and forcing the bind was rejected at +700–800 % C3a
+   (ercot41/43). Depth: item 11 CLOSED (D-1 keeps it closed). Conduct — the
+   channel that carried reality's dollars (0.91 of 1.10 GW ≥$500 offers =
+   storage at RTORPA $1–5): Door A CLOSED, `ercot_storage_rt_offer_surface`
+   R, ercot-211 T5 model-free non-identifiability, and **ercot-210's
+   within-regime 2024→2025 control refutes the regime label as the driver**
+   — a "2023-regime conduct parameter" has no measured identification on
+   EITHER side (G-REGIME unfulfillable in principle). Administrative regime
+   adder: the design cannot emit it (RTORPA p50 $0.84 at the missed hours)
+   and it is the exact phantom ercot-214/215 removed this week. IMM ×2/$12B
+   as a target: outcome-scaling, rule-13-forbidden. The admissible year-keyed
+   measured re-identifications (ercot-168/192 pattern) are ALREADY EXECUTED
+   and armed; ercot-169 asked the 2023 corpus the remaining invariance
+   questions (CONFIRMED invariant where identifiable). **No parameter is left
+   whose 2023 measured identification differs from its 2024/25 one.**
+
+**Fences honoured:** Q-B suspension used only to read/report 2023 numbers at
+full magnitude (no solve, nothing fitted to them); Door A, item 11,
+`energy_online_capability_cap` R, storage RT offer surface R, mid-band spill
+lane CLOSED, LOLP-table B0, V0/ercot-201 (no tightness conditioning —
+calendar windows and published dates only), 28a — all cited, none re-tested.
+Rule 22 {2023,2024,2025} only; rule 25 ERCOT only; rules 5/23/24 nothing
+built/fitted/registered; rule 15 nothing to register, RETENTION HOLD honoured
+(ercot-213-ctl + ercot-204 retained); rule 28: no cell verdict (28b), no new
+field (28c), duty (a) discharged — off-queue by owner dispatch; the
+`ercot_multiproduct_as` cell note carries the ercot-217 attribution
+(same-session edit). Rule 27 local edits + blob-verified pushes. SOM PDFs
+re-fetched per the corpus README, sha256-verified, payloads stay gitignored.
+No new workflows, no PR (push-and-stop).
+
+**Session consumed the ercot-217 shorthand. Next shorthand: ercot-218**
+(ercot-199 remains unclaimed).
