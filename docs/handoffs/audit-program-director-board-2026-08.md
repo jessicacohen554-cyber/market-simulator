@@ -73,6 +73,51 @@ the correct disposition and empties the queue.
 > Everything else on this board — the park, the G2 legs, the RESTART CHECKLIST,
 > the outstanding rulings other than miso-161 — stands as written.
 
+> ### 🔄 REFRESH ADDENDUM — owner refresh, 2026-08-17 ~15:15 UTC, `main` @ `f087c67`
+>
+> Live read, one cycle after the addendum above. **The park is unchanged.** Six
+> PRs merged since `96f5060` (#4073, #4075–#4079). What moved:
+>
+> 1. **⚠️ THE GOLDEN-TIER FIX IS MERGED BUT UNPROVEN.** `d4fbf44` (#4071)
+>    corrected the relabel to the integer `2`, with the failing run cited in the
+>    code comment — **but no golden-tier run has executed since.** The workflow's
+>    most recent run is still the red `31999181985`; the last green is still the
+>    2026-08-15 dispatch `31913648051`. The next *scheduled* firing is a week out
+>    (Mondays 05:37 UTC), so **the proof mechanism stays red for a week unless one
+>    `workflow_dispatch` is authorized.** Billed minutes, cadence card F — **owner
+>    call, and it is the top open item on this board.**
+> 2. **DURABLE LESSON, not previously recorded anywhere:** `golden-data-tier.yml`
+>    is the **ONLY** workflow that runs `scripts/regenerate_clean.py` (verified by
+>    grep across `.github/workflows/*.yml`). **Any curation-time defect under
+>    `scripts/data/curate_*.py` therefore has NO pre-merge signal** — it is
+>    invisible to every PR check and surfaces only on the weekly cron. `data/clean`
+>    being derived and gitignored compounds it: an already-curated local tree shows
+>    nothing wrong. That is the whole reason `a2b5e3d` merged clean and reddened
+>    the tier three hours later. Treat curate-script changes as unguarded.
+> 3. **RUBRIC v3.3 LANDED** (#4077, `7abe32d`, owner) — *a ledgered C3c caveat is
+>    **reported, not downgrading***. The former "a run can never read
+>    `CALIBRATED`" half is repealed for that case. **Determinations at HEAD:
+>    NEISO, NYISO and PJM read `CALIBRATED`; CAISO, ERCOT and MISO read
+>    `NOT-YET`** — the CALIBRATED set is now exactly the `complete`-marker set.
+> 4. **Three calibration lanes reported NEGATIVE and closed** — ercot-216 (#4076,
+>    C3c residual lane *spent and measured empty*, no lever, Phase-1 not entered),
+>    ercot-217 (#4079, the 2023-vs-2024/25 design split is **already built, armed
+>    and correctly dated** — no admissible regime lever, D-3 negative branch), and
+>    miso-164 (#4078, the GADS data ask **FAILS on C and D**). Negative results,
+>    correctly recorded as such.
+> 5. **Keeper positions at this read** (re-derived from the shards, not inferred):
+>    ERCOT `ercot215-arm-decontam` · CAISO `caiso-200-h1-memberpanel` · NEISO
+>    `neiso-99-joint-p1` · MISO `miso-160-wefor-shape` · NYISO
+>    `nyiso-140-layup-exclusion` · PJM `pjm-162-inputclock`. Staleness holds at
+>    **3 stale (ERCOT, CAISO, NEISO) / 2 current (MISO, NYISO) / 1 no-golden
+>    (PJM)**. **The calibration freeze has still not been called.**
+> 6. **One open PR: #4074**, this records lane's own. Its content — the
+>    independent root-cause of the cron RED — was **overtaken by #4071/#4073 while
+>    it sat**, and its pre-rebase base made it conflict with the current board.
+>    **The branch has been reset onto `f087c67` and re-pointed at this addendum**,
+>    so nothing is lost and nothing reverts. Item 2 above is the one piece of that
+>    diagnosis that was not already on main.
+
 **Three corrections carried into this snapshot**, all detailed in the §8 entry
 `2026-08-17 (owner decision: WS3 paused, program parked at G1)`:
 
@@ -99,7 +144,7 @@ the correct disposition and empties the queue.
 | WS4 `DOCS` | DOCS-A **completed** (#3999 + #4005); DOCS-B held | **In progress ~60%** | **DOCS-B gated at G2 — waiting by design** |
 | WS5 `SITE` | Held by design | **Not started** | gated at **G3** |
 | WS6 `BLOAT` | Prunes B-1..B-8 merged; **BLOAT-2 CLOSED** (Class-E rule adopted + parity sweep, #4032); **BLOAT-3 ADJUDICATED** (O2 staged (a)-only GO, #4031) and **EXECUTED — BLOAT-S2 merged #4047, −444.5 MiB / 144 files at tip** | **Completed but for one RED** | **BLOAT-2 registry/payload parity gate RED**, pending a MISO payload push — **currently UNOWNED** |
-| — `GOLDEN-TIER-FIX` | **COMPLETED and independently verified** (#4014); authorized dispatch `31913648051` SPENT + GREEN. The first scheduled cron firing came back **RED**, and was **diagnosed + fixed same-day** (#4071) — see *Watch* | **Completed** | the fix is not in question; **one post-merge `workflow_dispatch` is the recommended proof of the #4071 fix** |
+| — `GOLDEN-TIER-FIX` | **COMPLETED and independently verified** (#4014); authorized dispatch `31913648051` SPENT + GREEN. The first scheduled cron firing came back **RED**, and was **diagnosed + fixed same-day** (#4071) — see *Watch* | **Completed** | the fix is not in question; **one post-merge `workflow_dispatch` is the recommended proof of the #4071 fix** — **STILL NOT RUN at 15:15 UTC; the tier's latest run is still the red `31999181985`. Top open item.** |
 
 ## Stage-0 golden staleness at the pause (recomputed at `6cc332e`)
 
@@ -182,6 +227,12 @@ restart.**
 
 Carried forward verbatim; this list replaces the former alerts section.
 
+0. **🔴 NEW, and the most actionable of this list — the golden-tier proof-of-fix
+   `workflow_dispatch`.** The #4071 fix is merged and unproven; the tier's latest
+   run is the red one. One dispatch settles it, or it waits a week for the next
+   cron. Billed minutes, so it is the owner's call — but the cost of waiting is
+   that **BLOAT-S2's D3 leg and every byte-green claim stay unprovable** until it
+   runs. *(Added at the 15:15 UTC refresh.)*
 1. **caiso-199** — NOT-YET determination (#4037 landed the FINDING, matrix cell
    and log entry; the disposition is the owner's).
 2. ~~**miso-161 C3a-2025**~~ — **RETIRED post-snapshot: RULED as a model-class
