@@ -2729,3 +2729,147 @@ re-verified on the strongest basis yet (measured bit-identity to the re-verified
 lane's standing items are unchanged: the two owner escalations (legacy-P2 scoring basis = audit row
 O5, and the Stony Brook 6081 outage routing), best settled together in one re-solve; the 2018–2023
 SMD DST defect is **CLOSED** (this session).
+
+---
+
+## neiso-98 — 2026-08-17 — the frontier and `complete` declarations re-verified on the neiso-97 keeper's OWN artifacts; `final` still NOT YET; O5 sharpened
+
+**Session `neiso-98`** (the shorthand neiso-97 named). **Keeper UNCHANGED:
+`2026-08-17-neiso-97-dstrepair`** — no promotion, no re-key, **NO LP, NO RUN PRODUCED, NOTHING
+REGISTERED**. Full record:
+`results/calibration/ASSESSMENT-neiso98-frontier-verification-2026-08-17.md`.
+
+**Freeze VERIFIED ACTIVE at HEAD** and **never engaged**. No year of any tier was solved, scored or
+registered. `holdout-freeze.json` and `calibration-complete.json` are **unedited**. The only
+2019–2022 reads are of **measured input series with no model side** — unrestricted under rule 22 as
+amended 2026-08-06 ("what is held out is the SCORE, never the DATA"). NEISO's locked test remains
+**NEVER GRANTED and NEVER SPENT**.
+
+### `frontier` HOLDS — re-established directly, closing the transitive loop
+
+neiso-97 re-verified the declaration **by measured bit-identity** to `2026-08-14-neiso-93-envelope`,
+whose own basis neiso-95 had established directly — sound, but the same promotion **pruned** the
+neiso-93 bundle, so the chain terminated in an artifact no longer in the repo (confirmed absent at
+HEAD). Both legs are now re-derived from `neiso97_dstrepair_A/hourly/`
+(`neiso98_declaration_recheck.py`). **C3c model tail = 0 hours > $300/MWh in 2023, 2024 and 2025 on
+BOTH passes**, under the pinned `render_calibration_html._tail_hours` definition and agreeing with
+the registered payload's `ordc.hoursGt200.model` (0/0/0 vs RT actuals 15/8/20). **Not a near miss,
+now stated on both passes**: the whole-run max of the max-across-zones price is 248.97 / 218.24 /
+280.85 on P1 and 249.50 / 256.93 / 280.85 on P2 — never reached in any hour of any year on either
+pass, closest by **$19.15** (2025, 93.6 % of $300, identical on both). That is the dual-fuel
+oil-parity cap in the price distribution: a **formation** gap, not a magnitude one.
+`reserve_family_<year>.parquet` carries `shortfall_mw = 0.0` and `held_mw ≥ requirement` in **all
+157,680 family-hours**, max `|dual|` 1.42e-14 (2024 P1 `ne_30min_total`, floating-point noise), at
+requirements **checked against `NEISO_RCPF_PRODUCTS`** rather than read off the artifact
+(1,800 / 1,200 / 600 MW, all three matching in all six year-pass blocks) — the RCPF co-opt is
+**DORMANT**. **No C3c evidence moved and no lever was opened.**
+
+### The shard's pass-basis inconsistency — RESOLVED: the scored pass is **P2**
+
+`frontier.reverified` (neiso-84) said P2 and quoted 249.50 / 256.93 / 280.85; `carried_forward_through`
+(neiso-95) quoted 248.97 / 218.24 / 280.85, the **P1** maxima. Both are correct arithmetic on
+different passes; the shard had been carrying both without saying so, an 18 % spread on 2024.
+Decided on the current keeper's own bytes by neiso-84's two routes, **agreeing in all three years**
+(`neiso98_scored_pass_identity.py`): the payload's `HQ_import` mean λ (the zone with no actual
+counterpart, hence the model mean — NEISO's five zones clear at one λ here) matches **P2** to
+0.001–0.003 against P1 errors 0.0585 / 0.0130 / 0.0411; and the payload's `gmModel` per-class annual
+TWh matches **P2** at 0.0714 / 0.0717 / **0.0003** TWh against P1's 0.0992 / 0.0795 / 0.0106 — 2025
+decisive alone. **The declaration does not turn on this** (the tail is 0 h on both passes), so it is
+a documentation defect, repaired in the shard rather than left for a reader to trip over.
+
+### `complete` reproduces, and M1 passes
+
+`calibration_verdict.py --run-id 2026-08-17-neiso-97-dstrepair` (committed artifacts only, **no
+solve**) returns exactly the marker's recorded re-verification: **CALIBRATED-WITH-CAVEATS, 0 FAILs,
+1 ledgered caveat (C3c), C1 all 12/12 · free 8/8, grade summary `{scored 8, target 7, commercial 0,
+ledgered 1, fails 0}`** — so the D-5(b) re-key neiso-97 performed is **reproducible, not merely
+asserted**. `audit_keepers.py --iso NEISO`: **PASS, 0 failures / 0 warnings**, check M1 included.
+C2 still waits on the final 2025 EIA-923 vintage (2025 C1 CC rows SKIPPED by design; nothing
+estimated around it).
+
+### `final` readiness, re-answered (updates neiso-96 §4): **NOT YET — and this grants nothing**
+
+**2019 half — still NO, now confirmed ON THE REPAIRED INSTRUMENT.** The neiso-94/96 measurement
+predates the neiso-97 repair, which touched 2019 (47 RT + 46 DA cells, max |Δ| $19.48/$19.54).
+Re-measured: **RT max $261.35, 0 hours > $300** — bit-unchanged, as the finding's $138.65
+max-affected bound predicts, so the claim survives its own instrument change. Coverage 0.9999 →
+**1.0000** (the one NaN per market-year filled with the market's published value — an independent
+confirmation of the repair's NaN accounting at HEAD). **2019 cannot exercise C3c**, the criterion
+the frontier is declared on. Second live reason unchanged: the **Pilgrim** fleet-vintage gap
+(~2.18 TWh), the **cross-ISO charter's**, a hard precondition, not a NEISO lane item. **The stale
+clause neiso-95 flagged is now measured false at HEAD rather than withdrawn by argument** and is
+**still left unedited**: the `complete` entry's `locked_test` claims "2019 is UNSOLVABLE at HEAD
+(`eia_demand_profiles.parquet` carries NEISO 2021-2025 only)". The premise about that *fallback*
+file is true, but the **primary** path resolves —
+`eia930.frames._eia_hourly_frame('ISNE', y)` returns **8,760 rows for 2019/2020/2021/2022/2023**.
+The conclusion it supports is unaffected. Flagged for the owner, second session running.
+
+**H1-2026 half — still NO, and the blocker is NOT NEISO's.** The partial-year gate is live at HEAD,
+measured directly: `_eia_hourly_frame('ISNE', 2026)` returns **None**, `ISNE_region.parquet` holding
+13,460 rows for 2026 against 35,040 for a full year against `len(df) != HOURS_PER_YEAR`. Shared
+code, blind to ISO — **the model cannot build a partial-year solve for anybody**. neiso-96's
+recommendation to **SPLIT** the block stands unchanged; the split, like the grant, is the owner's.
+
+**The ladder now runs entirely on the repaired instrument — and a 2022 re-iteration is NOT worth
+requesting.** The corrected 2018–2023 SMD instrument covers every ladder year (2020/2021/2022), so a
+future authorized touchpoint iteration measures against the repaired series. The like-for-like
+caveat is real — the standing `2026-08-06-neiso-2022-corrected-basis` was scored pre-repair — but
+the repair **provably cannot move its determination**: 2022's max affected cell is **$138.65**
+against the $300 threshold so the 117-hour actual tail is bit-identical (`actual_tail.json`
+byte-unchanged); 47 of 8,760 RT cells move, bounding the annual-mean effect at ~$0.06/MWh and
+measured at ≤ $0.008; and neiso-97 measured the model side bit-identical. A re-iteration would
+reproduce the standing record essentially by construction, at the cost of an owner lift, a
+three-year solve and a registration. **Recommendation: reserve the next 2022 spend for after a
+change that actually moves the model side** — settling O5 and the Stony Brook routing in one
+re-solve. Worth recording for whoever plans it: **of the whole ladder only 2022 exercises C3c
+decisively** (117 RT hours > $300); 2021 offers 2 and **2020 offers none at all** — 2020 is
+C3c-degenerate in the same way 2019 is, which neiso-96 did not report.
+
+### Escalations re-measured at HEAD — both OPEN, and O5 is now SHARPER
+
+**(i) O5.** Measured on all six designated keepers' own `meta.json`: CAISO `caiso-197`, ERCOT
+`ercot213`, MISO `miso-160`, NYISO `nyiso-140`, PJM `pjm-162` all `commitment=false` / `passes
+["P1"]`; **NEISO `commitment=true` / `passes ["P1","P2"]`** — still the sole ISO of six, neither
+resolved nor worsened across three keeper generations. The pass-identity result above adds the part
+that bites: **the registered payload, and therefore every published NEISO number and the scored
+determination, is rendered from P2**, the archived pass CLAUDE.md says no keeper uses. Materiality
+small on the means (+0.058 / +0.011 / +0.038 $/MWh) but **+18 % on the 2024 annual maximum**
+($218.24 → $256.93), a price-formation statistic. Resolving it needs a re-solve decision — the
+owner's — best settled together with (ii) so the two are not confounded. **(ii)** plant **6081**
+Stony Brook units **004/005** still route to `plant_group=CC_REGULAR`, **74 rows each**, unchanged.
+**(iii) NYISO disclosure LIVE, and RE-POINTED**: the neiso-97 finding filed it against
+`2026-08-08-nyiso-133-cod-arm`, but NYISO has promoted twice since — the current keeper
+`2026-08-16-nyiso-140-layup-exclusion` still carries `nyiso_import_hub_prices=true`, so it still
+prices its ISONE_tie tranche off the repaired NEISO DA hub series. **Rule 25: filed, not acted on —
+NYISO's call.**
+
+### One text defect reported, deliberately NOT repaired
+
+All **7** entries of the NEISO keeper's exceptions ledger open with *"CARRIED FORWARD from the
+incumbent keeper unchanged in substance. **caiso-159** promotes an INPUT CORRECTION with zero free
+parameters…"* — a CAISO session attributing NEISO's carry-forward. The **substance is true of
+neiso-97** (it is precisely an input correction with zero free parameters and spent no new slot);
+only the attribution is wrong. Traced to `scripts/archive/gen_caiso159_attestation.py`; present at
+HEAD in the keeper attestation (7×) and `status/NEISO.js`; entered the NEISO lane **no later than
+neiso-95** (`edca6f5`), so it predates neiso-97, whose generator carried the ledger **verbatim and
+asserted that it did** — correct behaviour. The 2022 touchpoint's attestation is clean. **Not
+repaired**: the attestation records what was asserted at promotion, and editing it retroactively
+would falsify that record. It changes no number, criterion or determination. Reported for the owner
+— the posture neiso-95 took with the `locked_test` clause.
+
+### No run, by design
+
+Text and stamps only (`keepers/NEISO.json` two leaves — `frontier.reverified` and
+`carried_forward_through`, 18 of 20 leaves byte-identical and key order preserved; `status/NEISO.js`
+rebuilt; this log; audit row O5). Nothing here can change a solve. Rules 15/16 not engaged. Rule 28:
+no mechanism was tested and no cell verdict moved, and the NEISO matrix shard's keeper/gates stamps
+already read `2026-08-17-neiso-97-dstrepair` (rule 28d).
+
+**Next shorthand: `neiso-99`.** No NEISO tuning lever is open — the frontier is declared and now
+re-verified on its own artifacts; DO-NOT-REDO applies to every `R`/`I`/`G` cell in the NEISO matrix
+shard. Further C3c work needs a NEW measured identification and its own charter; **this session
+found none it could name from committed artifacts and therefore requests none.** The lane's standing
+items are the **two owner escalations** (O5, now sharpened, and the Stony Brook 6081 routing), best
+settled together in one re-solve. **Not NEISO lane items:** the partial-year solve gate (six-ISO),
+the fleet-vintage/Pilgrim charter (cross-ISO), the `_dual_fuel_plant_groups` vintage seam, the
+`complete`-entry stale clause and the ledger attribution defect.
