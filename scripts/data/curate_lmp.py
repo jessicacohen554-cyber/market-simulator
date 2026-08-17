@@ -247,6 +247,49 @@ def parse_nyiso_zip(path: Path) -> pd.DataFrame:
     )
 
 
+def _neiso_real_day_hours(date: pd.Timestamp) -> int:
+    """Real length of ``date``'s local Eastern calendar day in hours (23/24/25)."""
+    start = date.tz_localize(_EASTERN)
+    end = (date + pd.Timedelta(days=1)).tz_localize(_EASTERN)
+    return int((end - start) / pd.Timedelta(hours=1))
+
+
+def _neiso_flat24_repair(d: pd.DataFrame) -> pd.DataFrame:
+    """Repair the DST-naive 2018-2023 SMD workbook vintage in one sheet frame.
+
+    That vintage publishes a FLAT 24 rows on every calendar day (audit row O8;
+    measured against the market's own daily hourly-LMP reports by
+    ``scripts/probes/neiso97_smd_dst_defect_quantify.py``, 0 mismatches):
+
+    * spring-forward (23 real hours): positional row 1 — labeled "02" — is a
+      FABRICATED entry for the nonexistent hour (the mean of its neighbours),
+      and the TRUE HE02 record sits at positional row 2 mislabeled "03".
+      Repair: drop the phantom, relabel the true record "2". Every later label
+      is already correct.
+    * fall-back (25 real hours): positional row 1 — labeled "02" — is the
+      repeated hour's two instances COLLAPSED TO THEIR MEAN. Repair: drop it
+      rather than curate a value the market never published; the two true
+      instances exist only in the daily-report route (total LMP, no
+      components) and are deliberately NOT injected here, so those two
+      node-hours are absent from the clean datatype for 2018-2023.
+
+    True-shape days (row count == real day length, the 2024+ vintage) and any
+    other shape pass through untouched.
+    """
+    dates = pd.to_datetime(d["Date"]).dt.normalize()
+    parts = []
+    for date, g in d.groupby(dates, sort=False):
+        if len(g) == 24:
+            n_real = _neiso_real_day_hours(date)
+            if n_real == 23:  # flat-24 spring-forward
+                g = g.drop(index=g.index[1])
+                g.loc[g.index[1], "Hr_End"] = "02"
+            elif n_real == 25:  # flat-24 fall-back
+                g = g.drop(index=g.index[1])
+        parts.append(g)
+    return pd.concat(parts) if parts else d
+
+
 def parse_neiso_file(path: Path) -> pd.DataFrame:
     """Parse one ISO-NE SMD hourly workbook (one sheet per zone/hub)."""
     xl = pd.ExcelFile(path)
@@ -258,6 +301,7 @@ def parse_neiso_file(path: Path) -> pd.DataFrame:
         d = pd.read_excel(xl, sheet_name=sheet)
         if not needed.issubset(d.columns):
             continue
+        d = _neiso_flat24_repair(d)
         # Hr_End is hour-ending 1..24; the fall-back DST repeated hour is tagged
         # with a trailing "X" (e.g. "02X"). Strip it for the numeric hour and use
         # it to disambiguate: tagged rows are the second (standard-time) hour.
