@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import logging
 import os
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -1085,8 +1086,21 @@ def build_zone_lookup(iso: str) -> dict[int, str]:
 
     Returns an empty dict for ISOs without geographic zone rules, letting
     callers fall back to a non-geographic assignment.
+
+    Memoized (PERF-B, perf-recheck §2.4): the per-row ``_zone_from_location``
+    walk over the ISO's eGRID subset is a pure function of two static on-disk
+    sources (the eGRID workbook via :func:`_plnt23`, the EIA-860 plant file)
+    plus the ``MARKET_SIM_USE_CLEAN`` flag, and data_prep calls it ~8× per
+    solved year. The cache is keyed ``(iso, use_clean)`` and the public
+    function returns a fresh shallow copy per call, so a caller mutating its
+    dict can never poison another's.
     """
-    iso = iso.upper()
+    return dict(_build_zone_lookup_cached(iso.upper(), _use_clean()))
+
+
+@lru_cache(maxsize=16)
+def _build_zone_lookup_cached(iso: str, use_clean: bool) -> dict[int, str]:
+    """Cache-bearing core of :func:`build_zone_lookup` (already-uppercased ISO)."""
     ba_code = _ISO_TO_BA_CODE.get(iso)
     if ba_code is None:
         return {}
@@ -1117,8 +1131,10 @@ def build_zone_lookup(iso: str) -> dict[int, str]:
     # plant->zone map fills any ORIS the eGRID/EIA-860 geography missed. eGRID
     # stays authoritative (``setdefault``), and with the flag off this block is
     # skipped, so the default raw path — and the ERCOT/PJM byte-identical
-    # regression guard — is unchanged.
-    if _use_clean():
+    # regression guard — is unchanged. Read via the cache key's ``use_clean``
+    # (not a fresh ``_use_clean()`` call), so the cached entry and the flag
+    # value it was built under can never disagree.
+    if use_clean:
         for oris, zone in load_reference_zone_crosswalk(iso).items():
             lookup.setdefault(oris, zone)
     return lookup
