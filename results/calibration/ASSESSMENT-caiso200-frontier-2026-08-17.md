@@ -7,6 +7,14 @@
 **No out-of-training year was solved, scored or registered in this session.** The only solves
 run are in-sample (2023/2024/2025), for the pre-registered caiso-200 A/B.
 
+> **ANSWERED — RULING STAMP (caiso-201, 2026-08-17).** The owner sat on §5 and ruled **Q1:
+> ACCEPT THE RESTING STATE.** CAISO holds at **`NOT-YET`** as the designed honest outcome;
+> **neither Q2 object is funded**; Q3 is **ratified** (awareness only). The lane goes quiet —
+> no further CAISO calibration session without new funded data. Nothing in this assessment is
+> superseded or re-argued by the ruling; the ruling record is
+> `results/calibration/caiso201-owner-ruling-2026-08-17.md`, and §5 below carries the
+> per-question outcomes.
+
 ---
 
 ## 0. Recommendation
@@ -126,6 +134,20 @@ the 8,800 MW residual (no known axis today). Only these two move C3a within the 
 reading is corrected on measurement (FINDING-caiso200 §3); the matrix cell and this
 assessment carry the corrected record. No action needed beyond awareness — noted here so the
 correction is owner-visible.
+
+### 5.1 THE RULING AS GIVEN (owner, 2026-08-17, session caiso-201)
+
+| question | ruling |
+|---|---|
+| **Q1** accept the resting state | **GRANTED** — CAISO holds at `NOT-YET`; the lane goes quiet; no further calibration session without new funded data |
+| **Q2(a)** fund the hourly PS water-state intake | **NOT FUNDED** — ruling 4's DECLINE stands undisturbed; reach was bounded at 62.1 %/10.4 % and the fabricated-shape prohibition (rule 13) stands |
+| **Q2(b)** fund the 8,800 MW new-evidence search | **NOT FUNDED** — the caiso-191 §4 desk-refusal stands; the 8,800 MW stays a declared residual; re-opening still needs the caiso-188 §7 evidence |
+| **Q3** ratify the record correction | **RATIFIED** (awareness only, no action) |
+
+The resting state is **not a closure of the question**: both Q2 objects remain available for
+future funding, and the lane re-opens on this same keeper recipe if either is funded. Nothing
+is retracted; no marker is granted; the spend freeze stays ACTIVE. Full record, including
+what is explicitly *not* ruled: `results/calibration/caiso201-owner-ruling-2026-08-17.md`.
 
 ## 6. `final` readiness (not asked, answered for completeness)
 
