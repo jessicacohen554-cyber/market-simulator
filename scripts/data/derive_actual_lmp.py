@@ -748,25 +748,51 @@ def nyiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
     return pd.DataFrame(cols)
 
 
+def _neiso_real_day_hours(date: pd.Timestamp) -> int:
+    """Real length of ``date``'s local calendar day in hours (23, 24 or 25)."""
+    start = date.tz_localize(_EASTERN_TZ)
+    end = (date + pd.Timedelta(days=1)).tz_localize(_EASTERN_TZ)
+    return int((end - start) / pd.Timedelta(hours=1))
+
+
 def _neiso_sheet_series(wb, sheet: str) -> dict[str, pd.Series]:
     """``{"da": series, "rt": series}`` of hourly LMP for one SMD sheet.
 
-    The SMD sheets label hours on the Eastern prevailing clock: 23 rows on the
+    The SMD sheets label hours on the Eastern prevailing clock. The 2024+
+    workbook vintage publishes the market's true row count: 23 rows on the
     spring-forward day, 25 on the fall-back day (``Hr_End`` "02X" marks the
     repeated hour, which the old integer parse silently dropped). Within each
     Date the rows are chronological, so the k-th row of a day begins exactly k
     real hours after that day's (never-ambiguous) local midnight — the index
     is those UTC instants. Leap-day Feb 29 rows stay in (dropped only when
     densified onto the 8760 calendar).
+
+    DST-NAIVE 2018-2023 VINTAGE (audit row O8; neiso-96 finding, neiso-97
+    repair). The older vintage publishes a FLAT 24 rows on every calendar day,
+    so the positional clock above cannot hold on its DST days. The true
+    structure, adjudicated against the market's own daily hourly-LMP reports
+    on every truth day available (2019-2023 both transitions, 2018 fall; all
+    9 sheets x both markets, 0 mismatches --
+    ``scripts/probes/neiso97_smd_dst_defect_quantify.py``):
+
+    * spring-forward (23 real hours, 24 rows): row 1 is a FABRICATED
+      nonexistent-02:00 entry — the mean of its two neighbours, exact to the
+      cent on every sheet — and every true value from 01:00 on sits one row
+      late. Placement: row 0 -> position 0, rows 2..23 -> positions 1..22,
+      the phantom dropped. This recovers every published hour of the day.
+    * fall-back (25 real hours, 24 rows): row 1 is the repeated hour's two
+      instances COLLAPSED TO THEIR MEAN, and rows 2..23 are the true values
+      for positions 3..24. Placement: row 0 -> position 0, rows 2..23 ->
+      positions 3..24; the mean is dropped rather than fabricated onto either
+      instance, leaving positions 1-2 absent here — the daily-report overlay
+      in :func:`neiso_zone_hourly` supplies the two measured instances.
+
+    A day whose row count matches neither its real length nor the flat-24
+    pattern keeps the legacy positional placement unchanged.
     """
     rows = wb[sheet].iter_rows(values_only=True)
     next(rows, None)  # header
-    idx: list = []
-    da: list = []
-    rt: list = []
-    day_start: pd.Timestamp | None = None
-    day_key = None
-    pos = 0
+    by_day: dict[pd.Timestamp, list] = {}
     for r in rows:
         if r is None or r[0] is None or r[1] is None:
             continue
@@ -774,19 +800,61 @@ def _neiso_sheet_series(wb, sheet: str) -> dict[str, pd.Series]:
         if not he[:2].isdigit():
             continue
         date = pd.Timestamp(r[0]).normalize()
-        if date != day_key:
-            day_key = date
-            day_start = date.tz_localize(_EASTERN_TZ).tz_convert("UTC")
-            pos = 0
-        idx.append(day_start + pd.Timedelta(hours=pos))
-        pos += 1
-        da.append(r[NEISO_DA_COL])
-        rt.append(r[NEISO_RT_COL])
+        by_day.setdefault(date, []).append((r[NEISO_DA_COL], r[NEISO_RT_COL]))
+    idx: list = []
+    da: list = []
+    rt: list = []
+    for date, day_rows in by_day.items():
+        day_start = date.tz_localize(_EASTERN_TZ).tz_convert("UTC")
+        n, n_real = len(day_rows), _neiso_real_day_hours(date)
+        if n == 24 and n_real == 23:  # flat-24 spring-forward: drop the phantom
+            placed = [(0, day_rows[0])] + [(k - 1, day_rows[k]) for k in range(2, 24)]
+        elif n == 24 and n_real == 25:  # flat-24 fall-back: drop the pair mean
+            placed = [(0, day_rows[0])] + [(k + 1, day_rows[k]) for k in range(2, 24)]
+        else:  # true-shape day (n == n_real), or unknown: legacy positional
+            placed = list(enumerate(day_rows))
+        for pos, (da_v, rt_v) in placed:
+            idx.append(day_start + pd.Timedelta(hours=pos))
+            da.append(da_v)
+            rt.append(rt_v)
     index = pd.DatetimeIndex(idx)
     return {
         "da": pd.Series(pd.to_numeric(da, errors="coerce"), index=index),
         "rt": pd.Series(pd.to_numeric(rt, errors="coerce"), index=index),
     }
+
+
+def _neiso_flat24_dst_days(wb) -> list[tuple[pd.Timestamp, pd.Timestamp, int]]:
+    """DST days a flat-24 workbook cannot represent: ``(start_utc, end_utc, real_hours)``.
+
+    Counted on the hub sheet (the vintage is a property of the whole workbook;
+    every sheet publishes the same per-day row count). Empty for the 2024+
+    true-shape vintage, whose DST days match their real length.
+    """
+    rows = wb[NEISO_HUB_SHEET].iter_rows(values_only=True)
+    next(rows, None)  # header
+    counts: dict[pd.Timestamp, int] = {}
+    for r in rows:
+        if r is None or r[0] is None or r[1] is None:
+            continue
+        if not str(r[1]).strip()[:2].isdigit():
+            continue
+        date = pd.Timestamp(r[0]).normalize()
+        counts[date] = counts.get(date, 0) + 1
+    out = []
+    for date, n in counts.items():
+        n_real = _neiso_real_day_hours(date)
+        if n == 24 and n_real in (23, 25):
+            out.append(
+                (
+                    date.tz_localize(_EASTERN_TZ).tz_convert("UTC"),
+                    (date + pd.Timedelta(days=1))
+                    .tz_localize(_EASTERN_TZ)
+                    .tz_convert("UTC"),
+                    n_real,
+                )
+            )
+    return out
 
 
 #: ISO-NE location id -> SMD sheet name, for the daily historical-report route
@@ -861,13 +929,19 @@ def neiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
     sampled days of the committed years, 0 mismatches. Rule 22 as amended
     2026-08-06 is therefore satisfied in substance, not merely in form.
 
-    The one measured exception is not a route difference but a DEFECT IN THE
+    The one measured exception was not a route difference but a DEFECT IN THE
     2018-2023 WORKBOOK VINTAGE, which publishes a flat 24 rows on every calendar
     day: on a 23-hour or 25-hour operating day it cannot align with the market's
-    own published hours, so the positional clock displaces the rest of that day
+    own published hours, so the positional clock displaced the rest of that day
     by an hour. The 2024-2025 vintage publishes the true 23 / 25 and agrees with
-    the daily reports exactly. Reported, NOT repaired here -- repairing it would
-    move a scoring target in a tuned year and needs its own authorization.
+    the daily reports exactly. REPAIRED (neiso-97, audit row O8, owner-signed):
+    :func:`_neiso_sheet_series` re-places the flat-24 DST days value-preservingly,
+    and the one thing a re-placement cannot recover -- the fall-back repeated
+    hour's two instances, which that vintage collapses to their mean -- is
+    overlaid here from the daily historical-report route (the same publisher
+    series, measured route-equivalent by neiso-96), day-scoped: ONLY a day the
+    workbook cannot represent is taken from the report, so every true-shape day
+    still reproduces from the workbook byte-for-byte.
     """
     raw: dict[str, pd.Series] = {}
     path = LMP_DIR / "NEISO" / f"{year}_smd_hourly.xlsx"
@@ -879,7 +953,22 @@ def neiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
             for sh in wb.sheetnames
             if sh in needed
         }
+        fix_days = _neiso_flat24_dst_days(wb)
         wb.close()
+        if fix_days:
+            rep = _neiso_report_series(year, kind) or {}
+            for sh, ser in raw.items():
+                rser = rep.get(sh)
+                if rser is None:
+                    continue
+                for day_start, day_end, n_real in fix_days:
+                    truth = rser[(rser.index >= day_start) & (rser.index < day_end)]
+                    if len(truth) != n_real:
+                        continue  # no (or partial) report day: keep re-placement
+                    ser = pd.concat(
+                        [ser[(ser.index < day_start) | (ser.index >= day_end)], truth]
+                    ).sort_index()
+                raw[sh] = ser
     else:
         raw = _neiso_report_series(year, kind) or {}
     if not raw:
