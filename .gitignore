@@ -856,3 +856,8 @@ data/raw/eia-930/EIA930_BALANCE_2018_*.parquet
 data/raw/eia-930/*_fueltype_2*.parquet
 data/raw/eia-930/*_region_2*.parquet
 
+# S2-4 -- campd-unit-level 2018 vintage (35 files, 105.1 MiB; outside the
+# working span, derive-time consumers only). 2019-2026 are solve-time inputs
+# and STAY TRACKED -- the glob matches only the 2018 files.
+data/raw/campd-unit-level/*_2018.parquet
+

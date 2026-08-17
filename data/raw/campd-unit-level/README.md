@@ -56,3 +56,32 @@ they were committed and pushed in small per-batch `git push` commits (each pack
 tens of MB, base = latest main) — a single pack of the full ~0.5 GB 413s on this
 remote and `mcp__github__push_files` is text-only (CLAUDE.md Git section). All
 batches are on main; any missing file regenerates from the committed fetcher.
+
+## The 2018 vintage is UNTRACKED at tip (BLOAT-S2, 2026-08-17)
+
+The 35 `<ST>_2018.parquet` files are **gitignored** since the Stage-2
+(a)-only untrack (O2 grant,
+`docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md`; evidence pass
+`docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md` §3). 2018 is outside
+the program's working span (owner decision 2026-08-06; fail-closed
+locked-test tier, unsolvable), so no solve reads it — its consumers are
+derive/curation-time only (the forward CO2-rate history recipe
+`derive_fossil_co2_rates.py --years 2018..2021`, the 2018–2026
+`derive_campd_unit_outages.py` extract recipe and its caiso-198/199 gate
+probes, `derive_correlated_outage_curve.py`, the `curate_emissions*` glob
+defaults). **2019–2026 stay tracked**: they are solve-time inputs
+(`campd.load_campd_hourly` / `outages._campd_availability_envelope`, keyed on
+the solve year) for the training and holdout tiers, with silent-degrade
+absence semantics — never untrack them.
+
+**Recovery is re-fetch ONLY** (story (a); no pin/history route). Measured
+2026-08-17: the EPA CAM-API bulk-files service served
+`emissions-hourly-2018-tx.csv` (HTTP 206, `x-api-key: DEMO_KEY`) — stable
+federal archive, full history. Re-fetch BEFORE running any 2018-spanning
+derive:
+
+    python scripts/data/fetch_campd_unit_level.py --year 2018 --states <ST ...>
+
+(no holdout quarantine applies to 2018). `SHA256SUMS.txt` records the exact
+removed bytes; the fetcher's sibling-schema verification keeps a re-fetched
+file schema-identical, though parquet serialization may differ byte-wise.
