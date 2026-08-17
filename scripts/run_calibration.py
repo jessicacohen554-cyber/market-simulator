@@ -1272,6 +1272,16 @@ def run_year(
         )
     if reliability_floor is not None:
         config = config.with_overrides(reliability_floor=reliability_floor)
+    # nyiso-140 per-plant floor-membership exclusion. Restored 2026-08-17: two
+    # sessions independently repaired the duplicate-argument SyntaxError this
+    # parameter arrived with (6bb3a22 and 19f77d4), and each deleted one of the
+    # two duplicate PAIRS -- so both override blocks were removed while the
+    # parameter survived, leaving it silently ignored. Default None = leave the
+    # config's own value, so the arming semantics are unchanged.
+    if reliability_floor_plant_exclusions is not None:
+        config = config.with_overrides(
+            reliability_floor_plant_exclusions=reliability_floor_plant_exclusions
+        )
     if reliability_floor_overrides is not None:
         config = config.with_overrides(
             reliability_floor_overrides=reliability_floor_overrides
