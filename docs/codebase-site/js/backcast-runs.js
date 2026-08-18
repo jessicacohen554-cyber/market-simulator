@@ -77,7 +77,7 @@
     // reconciliation buckets) are excluded; nuclear/wind/solar are advisory
     // (the verdict scores VRE report-only), shown in the tables but never
     // gated. Green = within 1x the C1 band, amber = 2x.
-    let SUM_TOL_LOAD_FRAC, SUM_TOL_LOAD_CAP, SUM_TOL_SHARE_PP;
+    let SUM_TOL_LOAD_FRAC, SUM_TOL_GEN_FLOOR_FRAC, SUM_TOL_LOAD_CAP, SUM_TOL_SHARE_PP;
     let NONFOSSIL, GAS_CLASSES, COAL_CLASSES, FUELMIX_EXCLUDED;
 
     /** Bind the scorer-derived constants. Called once from boot(), after
@@ -92,6 +92,12 @@
         );
       }
       SUM_TOL_LOAD_FRAC = rc.fuelmixVolLoadFrac;
+      // v3.4 gen-floor on the volume band (min(max(2% load, 3% actual gen),
+      // 8 TWh)). The export equals fuelmixSharePP/100 by construction (the
+      // share leg's own materiality — see rubric_consts.py), so a stale
+      // pre-v3.4 rubric-consts.js falls back to that identity rather than a
+      // NaN band.
+      SUM_TOL_GEN_FLOOR_FRAC = rc.fuelmixVolGenFloorFrac ?? rc.fuelmixSharePP / 100;
       SUM_TOL_LOAD_CAP = rc.fuelmixVolCapTWh;
       SUM_TOL_SHARE_PP = rc.fuelmixSharePP;
       NONFOSSIL = rc.nonfossilFuels;
@@ -666,14 +672,16 @@
         if (!(aSys > 0.02)) return null;
         return {
           grp, err: 100 * (mSys - aSys) / aSys, mFull: mSys, bench923: aSys,
-          annLoad: totalLoad(yr), sharePP: sharePP(yr, mSys, aSys), r: null, nr: null
+          annLoad: totalLoad(yr), aGen: totalGen(yr)?.aGen || 0,
+          sharePP: sharePP(yr, mSys, aSys), r: null, nr: null
         };
       }
       if (!(m.bench923 > 0.02)) return null;
       return {
         grp, err: 100 * (m.mFull - m.bench923) / m.bench923,
         mFull: m.mFull, bench923: m.bench923,
-        annLoad: totalLoad(yr), sharePP: sharePP(yr, mSys, aSys), r: m.r, nr: m.nr
+        annLoad: totalLoad(yr), aGen: totalGen(yr)?.aGen || 0,
+        sharePP: sharePP(yr, mSys, aSys), r: m.r, nr: m.nr
       };
     }
     function nonFosErr(yr, fuel) {
@@ -681,7 +689,8 @@
       if (!(a > 0.02)) return null;
       return {
         grp: fuel, nonfos: true, err: 100 * (m - a) / a,
-        mFull: m, bench923: a, annLoad: totalLoad(yr), sharePP: sharePP(yr, m, a)
+        mFull: m, bench923: a, annLoad: totalLoad(yr),
+        aGen: totalGen(yr)?.aGen || 0, sharePP: sharePP(yr, m, a)
       };
     }
     function anyErr(yr, g) { return NONFOSSIL.includes(g) ? nonFosErr(yr, g) : classErr(yr, g); }
@@ -691,8 +700,10 @@
       return META().groupLabel?.[g] || g;
     }
 
-    /* Tolerance. */
-    function volInTol(e, k) { return e.annLoad > 0 && Math.abs(e.mFull - e.bench923) <= k * Math.min(SUM_TOL_LOAD_FRAC * e.annLoad, SUM_TOL_LOAD_CAP); }
+    /* Tolerance. Volume band = min(max(2% load, 3% actual gen), 8 TWh) —
+       the gen-floor is the rubric v3.4 owner amendment (2026-08-18), mirrors
+       calibration_verdict._fuelmix_vol_band. */
+    function volInTol(e, k) { return e.annLoad > 0 && Math.abs(e.mFull - e.bench923) <= k * Math.min(Math.max(SUM_TOL_LOAD_FRAC * e.annLoad, SUM_TOL_GEN_FLOOR_FRAC * (e.aGen || 0)), SUM_TOL_LOAD_CAP); }
     function shareInTol(e, k) { return e.sharePP == null || Math.abs(e.sharePP) <= k * SUM_TOL_SHARE_PP; }
     function classInTol(e) { return volInTol(e, 1) && shareInTol(e, 1); }
     function clsTol(e) { return classInTol(e) ? 'good' : (volInTol(e, 2) && shareInTol(e, 2)) ? 'ok' : 'bad'; }
@@ -2164,19 +2175,20 @@
       const FG_disp = FG;
       const cf_d = Object.fromEntries(FG.map(g => [g, cf[g] || 0]));
       const gm_d = Object.fromEntries(FG.map(g => [g, gm[g] || 0]));
-      // C1's VOLUME band — ±min(2% of ISO load, 8 TWh), the leg that actually
-      // fails most often and had no column here at all (only Δpp, the share
-      // leg, was shown, so a volume-only breach was invisible whatever the
-      // class partition). Mirrors calibration_verdict.score_fuelmix and the
-      // page's own volInTol.
-      const volBand = Math.min(SUM_TOL_LOAD_FRAC * totalLoad(yr), SUM_TOL_LOAD_CAP);
+      // C1's VOLUME band — ±min(max(2% of ISO load, 3% of actual generation),
+      // 8 TWh) (the gen-floor is the rubric v3.4 owner amendment 2026-08-18) —
+      // the leg that actually fails most often and had no column here at all
+      // (only Δpp, the share leg, was shown, so a volume-only breach was
+      // invisible whatever the class partition). Mirrors
+      // calibration_verdict._fuelmix_vol_band and the page's own volInTol.
+      const volBand = Math.min(Math.max(SUM_TOL_LOAD_FRAC * totalLoad(yr), SUM_TOL_GEN_FLOOR_FRAC * aGen), SUM_TOL_LOAD_CAP);
 
       let h = `<div class="bc-panel"><h2>Generation mix <span class="panel-sub">(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 &minus; BTM); CHP shown separately, as C1 gates it; BTM excluded — grid-delivered only)</span></h2>`;
       h += `<p class="panel-sub">${esc(RUN(yr).label || yearRunId(yr))} generation ${mGen.toFixed(1)} TWh &middot; actual ${aGen.toFixed(1)} TWh`
         + (mImp != null ? ` &middot; + net imports ${mImp.toFixed(1)} (actual ${aImp == null ? '—' : aImp.toFixed(1)}) &rarr; supply ${(mGen + mImp).toFixed(1)} TWh vs load ${load.toFixed(1)} TWh` : '') + `</p>`;
       if (prelim) h += '<p class="panel-sub" style="color:#9a5b12"><b>Preliminary EIA-923 vintage:</b> only <span class="badge-923 ok">&#10003; 923</span> classes are verified-complete and gate the C1 fuel-mix test; <span class="badge-923 inc">&#9888; 923</span> (incomplete) and <span class="badge-923 imm">&mdash; 923</span> (immaterial) classes are shown for reference but not gated.</p>';
       h += `<div class="bc-table-wrap"><table>
-        <thead><tr><th>class</th><th>model TWh</th><th>actual TWh</th><th title="C1 volume leg: ±min(${(SUM_TOL_LOAD_FRAC * 100).toFixed(1)}% ISO load, ${SUM_TOL_LOAD_CAP} TWh) = ±${volBand.toFixed(2)} TWh">Δ TWh</th><th>model %gen</th><th>actual %gen</th><th title="C1 share leg: ±${SUM_TOL_SHARE_PP} pp">Δpp</th></tr></thead>
+        <thead><tr><th>class</th><th>model TWh</th><th>actual TWh</th><th title="C1 volume leg: ±min(max(${(SUM_TOL_LOAD_FRAC * 100).toFixed(1)}% ISO load, ${(SUM_TOL_GEN_FLOOR_FRAC * 100).toFixed(1)}% actual gen), ${SUM_TOL_LOAD_CAP} TWh) = ±${volBand.toFixed(2)} TWh">Δ TWh</th><th>model %gen</th><th>actual %gen</th><th title="C1 share leg: ±${SUM_TOL_SHARE_PP} pp">Δpp</th></tr></thead>
         <tbody>`;
 
       for (const g of FG_disp) {
@@ -2200,7 +2212,7 @@
       h += `<tr class="sub"><td>Total generation</td><td class="num">${mGen.toFixed(2)}</td><td class="num">${aGen.toFixed(2)}</td>`
         + `<td class="num">${fmtSigned2(mGen - aGen)}</td>`
         + `<td class="num">100.0</td><td class="num">100.0</td><td class="num"></td></tr>`;
-      h += `<tr><td colspan="7" class="panel-sub" style="text-align:left;white-space:normal;padding:6px 0 0">A class passes C1 iff BOTH legs are inside their band: |Δ TWh| ≤ ±${volBand.toFixed(2)} (=&nbsp;min(${(SUM_TOL_LOAD_FRAC * 100).toFixed(1)}%&nbsp;ISO&nbsp;load, ${SUM_TOL_LOAD_CAP}&nbsp;TWh)) AND |Δpp| ≤ ±${SUM_TOL_SHARE_PP}. Only C1-gated fossil classes are coloured; CHP subclasses are listed separately because C1 scores them separately.</td></tr>`;
+      h += `<tr><td colspan="7" class="panel-sub" style="text-align:left;white-space:normal;padding:6px 0 0">A class passes C1 iff BOTH legs are inside their band: |Δ TWh| ≤ ±${volBand.toFixed(2)} (=&nbsp;min(max(${(SUM_TOL_LOAD_FRAC * 100).toFixed(1)}%&nbsp;ISO&nbsp;load, ${(SUM_TOL_GEN_FLOOR_FRAC * 100).toFixed(1)}%&nbsp;actual&nbsp;gen), ${SUM_TOL_LOAD_CAP}&nbsp;TWh)) AND |Δpp| ≤ ±${SUM_TOL_SHARE_PP}. Only C1-gated fossil classes are coloured; CHP subclasses are listed separately because C1 scores them separately.</td></tr>`;
 
       // Reconcile generation + net imports = supply = load.
       if (mImp != null) {

@@ -69,9 +69,14 @@ def rubric_consts() -> dict:
         "rubricVersion": cv.RUBRIC_VERSION,
         "source": "scripts/calibration_verdict.py",
         # C1 fuel-mix bands: a class passes iff its volume miss is within
-        # min(volLoadFrac x ISO load, volCapTWh) AND its generation share is
-        # within sharePP percentage points.
+        # min(max(volLoadFrac x ISO load, volGenFloorFrac x actual total gen),
+        # volCapTWh) AND its generation share is within sharePP percentage
+        # points. The gen-floor term is the rubric v3.4 owner amendment
+        # (2026-08-18); it is FUELMIX_SHARE_PP/100 by construction (the share
+        # leg's own mix-materiality, no new constant), exported explicitly so
+        # the JS never re-derives it.
         "fuelmixVolLoadFrac": cv.FUELMIX_VOL_LOAD_FRAC,
+        "fuelmixVolGenFloorFrac": cv.FUELMIX_SHARE_PP / 100.0,
         "fuelmixVolCapTWh": cv.FUELMIX_VOL_CAP_TWH,
         "fuelmixSharePP": cv.FUELMIX_SHARE_PP,
         # C1 gate membership. Declaration order is preserved (the scorer emits

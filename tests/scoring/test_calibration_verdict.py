@@ -167,6 +167,36 @@ class FuelMixTests(unittest.TestCase):
         sg = [r for r in rows if r["key"] == "ST_GAS"][0]
         self.assertEqual(sg["status"], cv.PASS)
 
+    def test_volume_band_gen_floor(self):
+        # Rubric v3.4 (owner amendment 2026-08-18): the volume band is floored
+        # at 3.0% of ACTUAL total generation — the share leg's own declared
+        # mix-materiality — before the 8 TWh cap. Pins the three regimes of
+        # _fuelmix_vol_band:
+        #  * deep net-importer (gen > 2/3 load): floor binds and widens the band
+        self.assertAlmostEqual(cv._fuelmix_vol_band(207.40, 175.74), 5.2722)
+        #  * gen ≤ 2/3 load: the 2%-of-load term still governs, band unchanged
+        self.assertAlmostEqual(cv._fuelmix_vol_band(100.0, 60.0), 2.0)
+        #  * large ISO: the 8 TWh cap tops the band either way (bit-identical
+        #    to the pre-v3.4 band, so PJM/MISO-scale gates are unchanged)
+        self.assertAlmostEqual(cv._fuelmix_vol_band(721.0, 721.0), 8.0)
+        # End-to-end on the CAISO-2023 geometry that motivated the amendment:
+        # CC_REGULAR −4.244 TWh in a 207.4 TWh-load / 175.7 TWh-actual-gen
+        # system fails the load term alone (±4.148) but passes the floored
+        # band (±5.272) with the share leg in band (−1.8 pp) -> PASS; a miss
+        # beyond the floored band still FAILs on volume.
+        actual = {"CC_REGULAR": 51.8, "CT_PEAKER": 10.0}
+        nonfossil = {"nuclear": 40.0, "wind": 30.0, "solar": 43.9}
+        classfull = {**actual, **nonfossil}
+        lmp = {f"Z{i}": {"d": 207.40 / 4} for i in range(4)}
+        for cc_model, want in ((47.556, cv.PASS), (46.4, cv.FAIL)):
+            gm = {**classfull, "CC_REGULAR": cc_model}
+            ypay = {"gmModel": gm, "nonfossil": dict(nonfossil), "lmp": lmp}
+            ybench = {"classFull": dict(classfull), "e930": dict(nonfossil)}
+            rows = cv.score_fuelmix(2024, ypay, ybench)
+            cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
+            self.assertEqual(cc["status"], want)
+            self.assertIn("max(2.0% ISO-load, 3% actual-gen)", cc["tol"])
+
     def test_ct_chp_excluded(self):
         rows = cv.score_fuelmix(
             2024, {"gmModel": {"CT_CHP": 0.0}}, {"classFull": {"CT_CHP": 4.0}}
@@ -1112,11 +1142,12 @@ class DeterminationTests(unittest.TestCase):
         self.assertEqual(v["determination"], cv.NOT_YET)
 
     def test_documented_non_c3c_fail_is_not_excused(self):
-        # ST_GAS (9 TWh actual) overshoots by +5 TWh: the fixture's lmp zone demand
-        # is 100 TWh, so the volume band = min(2.0% of load, 8 TWh) = 2.0 TWh and
-        # the +5 TWh miss still exceeds it -> the class FAILs C1 on volume (share
-        # stays within 3.0pp), but C2 defers to C1 for the fully-reported family
-        # so it still PASSes.
+        # ST_GAS (9 TWh actual) overshoots by +9 TWh: past the 8 TWh cap, so the
+        # miss exceeds the volume band under ANY percent term (rubric v3.4 floors
+        # the band at 3% of actual gen, which this fixture's 409 TWh gen would
+        # otherwise widen past the old +5 TWh miss) -> the class FAILs C1 on
+        # volume (share stays within 3.0pp), but C2 defers to C1 for the
+        # fully-reported family so it still PASSes.
         # RUBRIC v3.1 (owner amendment 2026-08-06): the ledger entry documenting
         # that C1 fail no longer reclassifies it — C3c is the only ledgerable
         # criterion — so the FAIL stands and the determination is NOT-YET. (This
@@ -1126,12 +1157,12 @@ class DeterminationTests(unittest.TestCase):
             "gmModel": {
                 "CC_REGULAR": 325.0,
                 "CT_PEAKER": 20.0,
-                "ST_GAS": 14.0,
+                "ST_GAS": 18.0,
                 "COAL_BIT": 55.0,
             },
             "nonfossil": {"nuclear": 270.0, "wind": 28.0, "solar": 14.0},
             "fuelRows": [
-                {"fuel": "gas", "m": 359, "b": 354, "r": 0.8, "nrmse": 0.15},
+                {"fuel": "gas", "m": 363, "b": 354, "r": 0.8, "nrmse": 0.15},
                 {"fuel": "coal", "m": 55, "b": 55, "r": 0.9, "nrmse": 0.15},
             ],
             "lmp": {
@@ -1144,7 +1175,7 @@ class DeterminationTests(unittest.TestCase):
                     "criterion": "fuelmix",
                     "klass": "ST_GAS",
                     "year": 2024,
-                    "magnitude": "+5.0 TWh",
+                    "magnitude": "+9.0 TWh",
                     "reason": "documented measured-input limit",
                 }
             ]
@@ -2060,9 +2091,7 @@ class LedgeredC3cDoesNotDowngradeTests(unittest.TestCase):
         # what would make the amendment an escape hatch.
         self.assertEqual(v["caveats"]["ledgered"], [cv.CRITERIA["price_tail"][0]])
         self.assertEqual(v["grade_summary"]["ledgered"], 1)
-        self.assertTrue(
-            any("ledgered caveat" in r for r in v["reasons"]), v["reasons"]
-        )
+        self.assertTrue(any("ledgered caveat" in r for r in v["reasons"]), v["reasons"])
         # And it is NOT absorbed into the clean-pass count: 8 scored, 7 at
         # target grade, C3c the one that is not.
         self.assertEqual(v["grade_summary"]["scored"], 8)

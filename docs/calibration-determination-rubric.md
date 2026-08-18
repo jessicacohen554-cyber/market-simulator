@@ -1,6 +1,32 @@
 # Calibration Determination Rubric (v2)
 
-Status: **canonical, machine-enforced. RUBRIC VERSION 3.3** (2026-08-17 owner
+Status: **canonical, machine-enforced. RUBRIC VERSION 3.4** (2026-08-18 owner
+amendment, session caiso-c1-lmp-pricing. Directive verbatim: *"Ccgt is fine at
+-1.8% for passing c1 gate … I want … a shift that declares c1 for 2023
+calibrated"*. **The C1 volume band is floored at the share leg's own
+materiality scale**:
+`vol_band = min(max(2.0% of ISO load, 3.0% of ACTUAL total generation), 8 TWh)`
+(`calibration_verdict._fuelmix_vol_band`). **No new constant** — the floor is
+`FUELMIX_SHARE_PP` (3.0) applied to the actual-side generation total, the same
+±3.0-pp-of-mix materiality the share leg already declares. Coherence repair,
+not a residual fit: on a deep net-importing ISO the 2%-of-load term could bind
+*tighter* than the rubric's own declared mix-materiality on the same class
+(CAISO 2023: ±4.15 TWh of load vs ±5.27 TWh = 3% of actual generation),
+failing a class whose miss the share standard calls fine (`CC_REGULAR`
+−4.24 TWh = −2.4% of actual generation, share −1.8 pp). The floor is measured
+in raw |model−actual| TWh over the **actual** generation denominator —
+deliberately not the model-vs-actual share difference, which a system-total
+shrink (e.g. over-import displacing the class) flatters. Unchanged: the 8 TWh
+cap still tops the band (large-ISO bands bit-identical), the ±3.0 pp share leg
+still binds independently (MISO `CC_REGULAR` +47 TWh / +7.7 pp still fails
+both legs), and the 2%-of-load term still governs wherever it is the wider
+one. Effects, measured over all 26 registered runs against a pre-change
+snapshot: **exactly one row flips** — CAISO keeper
+`2026-08-17-caiso-200-h1-memberpanel` C1 2023 `CC_REGULAR` `FAIL → PASS`
+(C1 criterion `FAIL → PASS`; its determination stays `NOT-YET` on the standing
+C3a mean-LMP miss). No other record and no determination label changes
+anywhere. Scorer-only: no re-solve, keepers re-score in place. Prior banner,
+v3.3: (2026-08-17 owner
 amendment, session nyiso-calibration-declaration. Directive verbatim: *"NYISO
 should be declared calibrated. C3c is an acceptable miss and shouldn't change a
 declaration from calibrated to calibrated with caveats because it's a known
@@ -315,12 +341,18 @@ class mix while nothing external certifies it).
   **both** bands hold (mirrors `scripts/probes/_backcast_shell.py:classInTol`, so
   the determination and the dashboard scorecard agree):
   - **Volume:** the grid-delivered miss `|model − actual|` is within
-    **`min(2.0% of ISO total load, 8 TWh)`** (`SUM_TOL_LOAD_FRAC = 0.02`,
+    **`min(max(2.0% of ISO total load, 3.0% of actual total generation),
+    8 TWh)`** (`SUM_TOL_LOAD_FRAC = 0.02`, gen-floor = `SUM_TOL_SHARE_PP`/100,
     `SUM_TOL_LOAD_CAP = 8` — model grid-LP + non-fossil vs (EIA-923 − BTM) +
-    EIA-930 nuclear/wind/solar). Total load = generation + net imports, so
+    EIA-930 nuclear/wind/solar; `calibration_verdict._fuelmix_vol_band`).
+    Total load = generation + net imports, so
     net-importing ISOs (NEISO, NYISO) get the correct ≈2 pp band; for
     energy-only ISOs with no interchange, load = gen and the band is unchanged.
-    The percent term scales with system size (≈2 pp of load) but is **capped at
+    The percent term scales with system size (≈2 pp of load, floored at the
+    share leg's own ±3.0-pp-of-mix materiality on the actual-generation basis —
+    the **v3.4 owner amendment**, 2026-08-18, banner above: the volume leg may
+    never bind tighter than the mix-materiality the share leg itself declares,
+    measured on the un-flatterable actual-side denominator) but is **capped at
     an absolute 8 TWh** so the band can’t balloon on large ISOs (2% of an
     ~800 TWh system would be 16 TWh, letting a small steam-gas class drift far on
     the margin and still pass). Applied uniformly across classes and ISOs.
@@ -407,8 +439,9 @@ class mix while nothing external certifies it).
   - **Fully-reported family (every complete vintage, plus a preliminary-vintage
     family the completeness audit flags complete — e.g. ERCOT coal 2025):** the
     family **defers to C1** — it passes iff every constituent class is within the
-    universal per-class gate (|model−actual| within min(2.0% of ISO total load,
-    8 TWh) **and** share within ±3.0 pp; actual = `classFull` = EIA-923 − BTM). C1 already
+    universal per-class gate (|model−actual| within min(max(2.0% of ISO total
+    load, 3.0% of actual total generation), 8 TWh) **and** share within
+    ±3.0 pp; actual = `classFull` = EIA-923 − BTM). C1 already
     scores these classes as a HARD criterion, so any breach surfaces there; C2
     records `PASS` and echoes any C1-flagged class in its magnitude (no independent
     family pass/fail).
@@ -1140,7 +1173,7 @@ Calibration Status page renders this comparison next to the live keeper scores
 |---|---|---|---|
 | C3a mean LMP | ±10% (v2.3: single band, passes clean) | ±10% (coincident) | SEM regulator criterion ±5% (ECA SEM-20-004); NERA SEM backcast +0.1% (4-yr); NYISO MAPS benchmark −2…−17% zonal, accepted; monitor competitive re-sims 0–4% (noise floor) |
 | C3b monthly shape | NRMSE ≤ 0.20 (v2.3: single band, passes clean) | ≤ 0.20 (coincident) | SEM accepted −9% peak/+11% off-peak period bias; monthly norms ~5–15%; PyPSA-Eur weekly SMAPE 20–26% |
-| C1 per-class mix | min(2% load, 8 TWh) & 3 pp | (single-band) | **none published** — external validations stop at family/zonal level; we score stricter deliberately |
+| C1 per-class mix | min(max(2% load, 3% actual gen), 8 TWh) & 3 pp | (single-band) | **none published** — external validations stop at family/zonal level; we score stricter deliberately |
 | C2 family volume (prelim fallback) | ±2.5% | ±5% | NYISO zonal energy ~0–4%; AEO 1–3-yr gas-gen SD 5.7–9.6% (forecast upper bound) |
 | C5a CO2 (full-plant basis, v2.3) | ±7% | ±10% | **no published PCM backcast CO2 error**; AEO 1–3-yr CO2 SD 3.2–4.9% (forecast) |
 | C3c tail hours (actual RT hourly basis, v2.7) | [0.5×, 2×] | (single wide band) | **none published** — practice excludes spike hours from scoring (ECA) or tunes hurdle rates (NYISO); we keep scoring it |
@@ -1173,6 +1206,50 @@ down to.
 > change. Ratifying this one after the fact does not license the next one.
 
 ## 9. Version history
+
+- **v3.4 (2026-08-18, owner amendment — session caiso-c1-lmp-pricing;
+  directive verbatim: "Ccgt is fine at -1.8% for passing c1 gate … I want … a
+  shift that declares c1 for 2023 calibrated")** — **the C1 volume band is
+  floored at the share leg's own materiality scale:**
+  `vol_band = min(max(2.0% of ISO load, 3.0% of ACTUAL total generation),
+  8 TWh)` (`calibration_verdict._fuelmix_vol_band`).
+
+  **No new constant.** The floor is `FUELMIX_SHARE_PP` (3.0) applied to the
+  actual-side generation total — the same ±3.0-pp-of-mix materiality the share
+  leg already declares. The amendment reconciles C1's two legs rather than
+  introducing a tolerance: before it, on a deep net-importing ISO the
+  2%-of-load volume term could bind **tighter** than the rubric's own declared
+  mix-materiality on the very same class — CAISO 2023: 2% of 207.4 TWh load =
+  ±4.15 TWh, vs 3% of 175.7 TWh actual generation = ±5.27 TWh — failing a
+  class whose miss the share standard calls fine (`CC_REGULAR` −4.24 TWh =
+  −2.4% of actual generation, share −1.8 pp).
+
+  **Why the floor is measured on actual generation and not on `share_pp`.** The
+  model-vs-actual share difference can be *flattered* by a system-total shrink:
+  when over-import displaces a class, both the class volume and the total
+  generation fall together, so `share_pp` under-reads the miss (the same CAISO
+  CC row reads −1.8 pp on share but −2.4 pp of actual generation). The floor
+  gates on raw `|model − actual|` over the **actual** total — un-flatterable by
+  construction — so it is strictly *harder* than the share leg it mirrors.
+
+  **What is unchanged.** The 8 TWh cap still tops the band after the floor, so
+  large-ISO bands are bit-identical (PJM/MISO-scale: the cap binds either way).
+  The ±3.0 pp share leg still binds independently (MISO `CC_REGULAR` +47 TWh /
+  +7.7 pp still fails both legs by a wide margin). The 2%-of-load term still
+  governs wherever it is the wider term — the floor binds only where actual
+  generation > (2/3) × load. The C2 preliminary-family fallback inherits the
+  same band through the shared helper, and the dashboard mirrors it via
+  `rubric-consts.js` (`fuelmixVolGenFloorFrac`) rather than a JS-side copy.
+
+  **Effect at amendment, measured over all 26 registered runs against a
+  pre-change snapshot rather than asserted:** exactly **one row** flips —
+  CAISO keeper `2026-08-17-caiso-200-h1-memberpanel` C1 2023 `CC_REGULAR`
+  `FAIL → PASS` (|−4.244| ≤ 5.272 with share −1.8 pp in band), taking the
+  run's C1 criterion `FAIL → PASS`. Its determination stays `NOT-YET` on the
+  standing C3a mean-LMP miss (+12.8% / +15.7% in 2024/2025). No other record
+  of any run of any ISO changes status, and no determination label changes
+  anywhere. Scorer-only: no re-solve, every keeper re-scores in place from its
+  committed artifacts.
 
 - **v3.3 (2026-08-17, owner amendment — session nyiso-calibration-declaration;
   directive verbatim: "NYISO should be declared calibrated. C3c is an acceptable

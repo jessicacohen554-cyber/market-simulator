@@ -13,17 +13,17 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 3.2,
+  "rubric_version": 3.4,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -75,10 +75,10 @@
   },
   "grade_summary": {
     "scored": 8,
-    "target_grade": 5,
+    "target_grade": 6,
     "commercial_grade": 0,
     "ledgered": 1,
-    "fails": 2
+    "fails": 1
   },
   "free_class_score": {
     "iso": "CAISO",
@@ -96,13 +96,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 11,
+      "pass": 12,
       "total": 12
     },
     "free": {
-      "pass": 7,
+      "pass": 8,
       "total": 8
     },
-    "headline": "C1 all 11/12 \u00b7 free 7/8"
+    "headline": "C1 all 12/12 \u00b7 free 8/8"
   }
 }

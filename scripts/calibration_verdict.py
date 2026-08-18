@@ -301,7 +301,49 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       (each keeper either fails a criterion outright or carries no ledgered
 #       C3c). NO SOLVE RAN — this is a scorer-side reclassification on the
 #       committed artifacts, so every keeper re-scores in place.
-RUBRIC_VERSION = 3.3
+# v3.4 — 2026-08-18 owner amendment, session caiso-c1-lmp-pricing, verbatim:
+#       "Ccgt is fine at -1.8% for passing c1 gate ... I want ... a shift that
+#       declares c1 for 2023 calibrated". THE C1 VOLUME BAND IS FLOORED AT THE
+#       SHARE LEG'S OWN MATERIALITY SCALE:
+#           vol_band = min(max(2.0% of ISO load, 3.0% of ACTUAL total
+#                              generation), 8 TWh)
+#       (:func:`_fuelmix_vol_band`). NO NEW CONSTANT: the floor is
+#       FUELMIX_SHARE_PP (3.0) applied to the actual-side generation total —
+#       the same ±3.0-pp-of-mix materiality the share leg already declares.
+#       WHY THIS IS A COHERENCE REPAIR AND NOT A RESIDUAL FIT: C1's two legs
+#       state one standard (a class may not misrepresent the mix by more than
+#       3.0 pp) plus an absolute drift bound. But on a deep net-importing ISO
+#       the 2%-of-load volume leg could bind TIGHTER than the declared 3.0-pp
+#       mix standard on the SAME class — CAISO 2023: 2% of 207 TWh load =
+#       ±4.15 TWh vs 3% of 176 TWh actual generation = ±5.27 TWh — failing a
+#       class whose miss the rubric's own materiality standard calls fine
+#       (CC_REGULAR −4.24 TWh = −2.4% of actual generation, share −1.8 pp).
+#       The floor makes the volume leg bottom out at that same declared scale,
+#       measured in raw |model−actual| TWh over the ACTUAL generation
+#       denominator — deliberately NOT the model-vs-actual share_pp, which a
+#       system-total shrink (e.g. over-import displacing the class) flatters:
+#       the same CC row reads −1.8 pp on share but −2.4 pp of actual gen, and
+#       the floor gates on the un-flatterable −2.4. WHAT IS UNCHANGED: the
+#       8 TWh cap still tops the band (a big-ISO class can never buy more than
+#       8 TWh of drift: PJM/MISO-scale bands are bit-identical, cap binds
+#       either way), the ±3.0 pp share leg still binds independently (MISO
+#       CC_REGULAR +47 TWh / +7.7 pp still fails BOTH legs), and the 2%-of-
+#       load term still governs wherever it is the wider one. The floor
+#       binds — i.e. the band moves at all — only where actual generation
+#       > (2/3) × load, and widens mid-size-ISO bands by at most the
+#       load-vs-gen basis gap. Doc: docs/calibration-determination-rubric.md
+#       §C1 (amendment note), mirrored to the dashboard via
+#       scripts/lib/rubric_consts.py (fuelmixVolGenFloorFrac) and
+#       docs/codebase-site/js/backcast-runs.js volInTol.
+#       EFFECT AT AMENDMENT, MEASURED over all 26 registered runs against a
+#       pre-change snapshot rather than asserted: exactly ONE row flips —
+#       CAISO keeper 2026-08-17-caiso-200-h1-memberpanel C1 2023 CC_REGULAR
+#       FAIL -> PASS (|−4.244| ≤ 5.272; the run's C1 criterion goes FAIL ->
+#       PASS, its determination stays NOT-YET on the standing C3a mean-LMP
+#       miss, +12.8/+15.7% in 2024/2025). NO OTHER RECORD of any run of any
+#       ISO changes status, and no determination label changes anywhere.
+#       NO SOLVE RAN — scorer-side only; every keeper re-scores in place.
+RUBRIC_VERSION = 3.4
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -358,21 +400,29 @@ FUELMIX_EXCLUDED = frozenset({"CT_CHP", "OTHER", "OTHER_FOSSIL"})
 # C1 fuel-mix — the universal class gate (mirrors classInTol in the run
 # explorer, docs/codebase-site/backcast-runs.html; supersedes the old ±5%/±1 TWh
 # size-tiered band): a class passes iff BOTH (a) its grid-delivered volume miss
-# |model−actual| is within min(2.0% of ISO total load, 8 TWh), AND (b) its
-# share of total generation is within 3.0 percentage points of the actual share.
-# The volume band scales with system size (≈2 pp of load) but is capped at an
-# absolute 8 TWh so it can't balloon on large ISOs (2% of an 800 TWh system would
-# be 16 TWh, letting a small class drift far on the margin). Applied uniformly
-# across classes and ISOs; the share band stops a class passing on volume alone
-# while still misrepresenting the mix. Using total LOAD (= gen + net imports)
-# rather than generation so net-importing ISOs get the correct ≈2 pp band; for
-# energy-only ISOs with no interchange, load = gen and the band is unchanged.
+# |model−actual| is within min(max(2.0% of ISO total load, 3.0% of actual total
+# generation), 8 TWh) — the gen-floor added by the v3.4 owner amendment
+# 2026-08-18, see the RUBRIC_VERSION entry — AND (b) its share of total
+# generation is within 3.0 percentage points of the actual share.
+# The volume band scales with system size (≈2 pp of load, floored at the share
+# leg's own ±3.0-pp-of-mix materiality on the actual-generation basis) but is
+# capped at an absolute 8 TWh so it can't balloon on large ISOs (2% of an
+# 800 TWh system would be 16 TWh, letting a small class drift far on the
+# margin). Applied uniformly across classes and ISOs; the share band stops a
+# class passing on volume alone while still misrepresenting the mix. Using
+# total LOAD (= gen + net imports) rather than generation so net-importing
+# ISOs get the correct ≈2 pp band; for energy-only ISOs with no interchange,
+# load = gen and (since gen > (2/3)·load trivially holds there) the 3%-of-gen
+# floor is the binding percent term.
 # 2026-07-02 rubric re-balance (docs/calibration-determination-rubric.md §1):
 # loosened from 1.0%/5 TWh/1.5 pp — the old bands failed keepers on ±1–2 TWh
 # small-class residuals that are TWh noise, not a structural miss, while a
 # genuine structural miss (e.g. MISO CC_REGULAR +47 TWh / +7.7 pp) still FAILs
 # the new bands by a wide margin. Paired with a TIGHTER C3 (price) gate below.
 FUELMIX_VOL_LOAD_FRAC = 0.02  # volume band = 2.0% of ISO total load ...
+# ... floored at FUELMIX_SHARE_PP% of ACTUAL total generation (v3.4: the share
+# leg's declared mix-materiality applied to the un-flatterable actual-side
+# denominator; no new constant — see _fuelmix_vol_band) ...
 FUELMIX_VOL_CAP_TWH = 8.0  # ... but never more than an absolute 8 TWh
 FUELMIX_SHARE_PP = 3.0  # +/-3.0 share percentage points of total generation
 # Non-fossil fuels whose grid actual comes from EIA-930 (not 923) for the
@@ -1089,15 +1139,36 @@ def _total_load(ypay: dict, a_gen: float) -> float:
     return sum(float(z.get("d", 0.0)) for z in lmp.values())
 
 
+def _fuelmix_vol_band(total_load: float, a_gen: float) -> float:
+    """C1/C2 volume band (TWh): min(max(2% load, 3% actual gen), 8 TWh).
+
+    The gen-floor term is the v3.4 owner amendment (2026-08-18, see the
+    RUBRIC_VERSION genealogy): the volume leg may never bind tighter than the
+    ±3.0-pp-of-mix materiality the share leg itself declares, measured on the
+    ACTUAL total-generation denominator (raw |model−actual| over actual gen —
+    immune to the system-total shrink that can flatter model-vs-actual
+    share_pp). The 8 TWh cap is applied after the floor, so large-ISO bands
+    are unchanged (the cap binds either way).
+    """
+    return min(
+        max(
+            FUELMIX_VOL_LOAD_FRAC * total_load,
+            (FUELMIX_SHARE_PP / 100.0) * a_gen,
+        ),
+        FUELMIX_VOL_CAP_TWH,
+    )
+
+
 def score_fuelmix(
     year: int, ypay: dict, ybench: dict, iso: str = "ERCOT"
 ) -> list[dict]:
     """C1 — per-class grid-delivered fuel-mix, the universal gate.
 
     A class passes iff BOTH its grid-delivered volume miss is within
-    min(2.0% of ISO total load, 8 TWh) AND its share of total generation is
-    within 3.0 pp of actual (the run explorer's ``classInTol`` on the
-    gmModel/classFull basis).
+    min(max(2.0% of ISO total load, 3.0% of actual total generation), 8 TWh)
+    (:func:`_fuelmix_vol_band`; the gen-floor is the v3.4 owner amendment)
+    AND its share of total generation is within 3.0 pp of actual (the run
+    explorer's ``classInTol`` on the gmModel/classFull basis).
 
     Gating is restricted to (ISO, class) pairs whose EIA-923 actual is VERIFIED
     COMPLETE for the year. A complete-vintage year (no committed completeness part)
@@ -1116,7 +1187,7 @@ def score_fuelmix(
     cf = ybench.get("classFull", {})
     m_gen, a_gen = _gen_totals(ypay, ybench)
     total_load = _total_load(ypay, a_gen)
-    vol_band = min(FUELMIX_VOL_LOAD_FRAC * total_load, FUELMIX_VOL_CAP_TWH)
+    vol_band = _fuelmix_vol_band(total_load, a_gen)
     out = []
     classes = [c for c in (*GAS_CLASSES, *COAL_CLASSES) if c not in FUELMIX_EXCLUDED]
     cmap_year = _completeness_map().get(year, {}).get("isos", {}).get(iso.upper(), {})
@@ -1182,7 +1253,8 @@ def score_fuelmix(
             "actual": round(a, 3),
             "share_pp": round(share_pp, 2) if share_pp is not None else None,
             "tol": (
-                f"±min({FUELMIX_VOL_LOAD_FRAC * 100:.1f}% ISO-load, "
+                f"±min(max({FUELMIX_VOL_LOAD_FRAC * 100:.1f}% ISO-load, "
+                f"{FUELMIX_SHARE_PP:g}% actual-gen), "
                 f"{FUELMIX_VOL_CAP_TWH:g} TWh) = ±{vol_band:.2f} TWh "
                 f"& ±{FUELMIX_SHARE_PP:g}pp share"
             ),
@@ -1298,7 +1370,7 @@ def score_sysvol(
     e930 = ybench.get("e930", {})
     m_gen, a_gen = _gen_totals(ypay, ybench)
     total_load = _total_load(ypay, a_gen)
-    vol_band = min(FUELMIX_VOL_LOAD_FRAC * total_load, FUELMIX_VOL_CAP_TWH)
+    vol_band = _fuelmix_vol_band(total_load, a_gen)
     out = []
     for fam, classes in (("gas", GAS_CLASSES), ("coal", COAL_CLASSES)):
         scored = [c for c in classes if c not in FUELMIX_EXCLUDED]
@@ -1474,7 +1546,8 @@ def score_sysvol(
                 "model": round(m, 2),
                 "actual": round(a923, 2),
                 "tol": (
-                    f"per-class ±min({FUELMIX_VOL_LOAD_FRAC * 100:.1f}% ISO-load, "
+                    f"per-class ±min(max({FUELMIX_VOL_LOAD_FRAC * 100:.1f}% "
+                    f"ISO-load, {FUELMIX_SHARE_PP:g}% actual-gen), "
                     f"{FUELMIX_VOL_CAP_TWH:g} TWh) = ±{vol_band:.2f} TWh "
                     f"& ±{FUELMIX_SHARE_PP:g}pp share (via C1)"
                 ),
