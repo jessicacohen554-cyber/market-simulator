@@ -5222,6 +5222,109 @@ def run_year(
     # None for every non-CAISO / gate-off run (byte-identical); ISO-exclusive
     # with the PJM kwargs hook. Composes with the CAISO RA-bridge fleet hook.
     caiso_reserve_kwargs_prep = build_caiso_reserve_p1_prep(config, iso, fleet_arrays)
+    # ercot-219 stages 2-3 (B-1; PRECOMMIT-ercot219 §1.2-§1.3): the within-day
+    # exhaustion expectation and the P1-only storage reservation-price offer.
+    # Stage 2 is computed here — after fleet assembly (so it sees the
+    # post-stage-1 reconciled availability) and after apply_reserve_coopt (so
+    # the armed *_withheld families' LP requirement rows are read from the
+    # SAME resolved design the solve binds, zero re-implementation) — from the
+    # model's own state and registered constants only. No price, no residual,
+    # no measured outcome enters. Stage 3 hands run_energy_solve the
+    # (n_storage, T) P1-only discharge re-cost; P0 is untouched by seam.
+    p1_storage_discharge_cost = None
+    ercot219_exhaustion = None
+    if iso == "ERCOT" and getattr(config, "ercot_exhaustion_expectation", False):
+        from market_sim.results.scarcity import (
+            lolp,
+            resolve_lolp_params,
+            within_day_forward_max,
+        )
+
+        # The model's own total supply envelope: all-thermal capability
+        # (post-reconciliation), storage discharge power, and the renewable
+        # LP upper bounds (uncurtailed cf x cap — the WTX corridor ceilings
+        # bind West export at high-wind hours, ~zero at evening exhaustion
+        # hours; precommit §1.2 convention).
+        # storage_power_cap is (n_storage,) static or (n_storage, T) hourly
+        # (the armed ercot_storage_capability_measured series) — sum over
+        # UNITS only, never over hours.
+        _spc = np.asarray(storage_power_cap, dtype=float)
+        _storage_term = _spc.sum(axis=0) if _spc.ndim == 2 else float(_spc.sum())
+        _cap_total = (
+            (fleet_arrays.pmax[:, None] * fleet_arrays.availability).sum(axis=0)
+            + _storage_term
+            + (wind_cap[:, None] * wind_cf).sum(axis=0)
+            + (solar_cap[:, None] * solar_cf).sum(axis=0)
+        )
+        # Sequestered AS MW = the armed withholding families' LP requirement
+        # rows (ECRS/RRS/RegUp *_withheld, rigid windows, post-credit),
+        # exactly as the resolved ReserveDesign carries them.
+        _t_h = int(config.hours)
+        _as_seq = np.zeros(_t_h)
+        if reserve_design is not None:
+            for _fam in reserve_design.families:
+                if _fam.name.endswith("_withheld"):
+                    _as_seq += np.asarray(_fam.requirement, dtype=float)[:_t_h]
+        _h_margin = _cap_total - demand.sum(axis=0) - _as_seq
+        # LOLP through the registered machinery (full-tier form): the
+        # ordc_lolp_* constants enter as an EXPECTATION input — the in-LP
+        # ORDC curve, the written adder and every price channel are
+        # untouched (ercot-206 B0 held; precommit §1.2).
+        _mu, _sigma = resolve_lolp_params(config, _t_h)
+        _lolp_t = lolp(
+            _h_margin,
+            _mu,
+            _sigma,
+            float(config.ordc_mcl_mw),
+            float(config.ordc_lolp_shift_sigma),
+        )
+        # P_exhaust(t) = max over h in [t..end-of-day] of LOLP(H(h)) — the
+        # remainder-of-operating-day window on the fixed-CST clock
+        # (within_day_forward_max: reverse cumulative maximum per day block,
+        # rule 2 — no hour loop).
+        _p_exh = within_day_forward_max(_lolp_t)
+        ercot219_exhaustion = {
+            "h_margin_mw": _h_margin,
+            "as_sequestered_mw": _as_seq,
+            "lolp": _lolp_t,
+            "p_exhaust": _p_exh,
+        }
+        logger.info(
+            "ERCOT exhaustion expectation (%d): H p5/p50 %.0f/%.0f MW, "
+            "LOLP>=0.5 in %d h, P_exhaust*VOLL >= $1000 in %d h",
+            year,
+            float(np.percentile(_h_margin, 5)),
+            float(np.percentile(_h_margin, 50)),
+            int((_lolp_t >= 0.5).sum()),
+            int((_p_exh * float(config.ordc_voll) >= 1000.0).sum()),
+        )
+        if getattr(config, "ercot_storage_reservation_offer", False):
+            # Stage 3: P1-only raise-only reservation floor —
+            # max(vom_base, P_exhaust x ordc_voll) per (unit, hour). The
+            # keeper's own offer is the floor, so the mechanism
+            # self-extinguishes as P_exhaust -> 0 (precommit §1.3).
+            p1_storage_discharge_cost = np.maximum(
+                np.asarray(storage.vom, dtype=float)[:, None],
+                _p_exh[None, :] * float(config.ordc_voll),
+            )
+            logger.info(
+                "ERCOT storage reservation-price offer (%d): P1 discharge "
+                "offer > base in %d of %d hours, max $%.0f/MWh",
+                year,
+                int((_p_exh * float(config.ordc_voll) > storage.vom.max()).sum()),
+                _t_h,
+                float(p1_storage_discharge_cost.max()),
+            )
+    elif iso == "ERCOT" and getattr(config, "ercot_storage_reservation_offer", False):
+        # Rule 5: on an ERCOT solve, stage 3 without stage 2 is a loud error
+        # (nothing to price), never a silent fallback. On a NON-ERCOT solve
+        # the three fields are inert by the iso gate (rule 25; seam proof
+        # SP-2 forces them TRUE cross-ISO and asserts byte-identity).
+        raise ValueError(
+            "ercot_storage_reservation_offer requires ercot_exhaustion_"
+            "expectation (stage 3 prices stage 2's P_exhaust; armed alone "
+            "there is nothing to price)."
+        )
     _t_solve_start = time.perf_counter()
     energy_solve = run_energy_solve(
         fleet,
@@ -5246,6 +5349,9 @@ def run_year(
         p1_bid_adjust_prep=lowcurve_bid_adjust_prep or ercot_bridge_bid_prep,
         p1_bid_max_target=p1_bid_max_target,
         startup_run_ratio_t=startup_run_ratio_t,
+        # ercot-219 stage-3 P1-only storage reservation-price re-cost
+        # (None on every flag-off / non-ERCOT path — byte-identical).
+        p1_storage_discharge_cost=p1_storage_discharge_cost,
     )
     _t_solve_end = time.perf_counter()
     # OPT-IN P0 commitment record, taken HERE and not below: ``fleet_arrays``
@@ -5344,6 +5450,12 @@ def run_year(
         # positionally, (T, n_fam); only the design knows which column is
         # ``li_30min_total`` and what its hourly requirement was.
         "reserve_design": reserve_design,
+        # ercot-219 stage-2 exhaustion series (None unless
+        # ercot_exhaustion_expectation armed): H margin, sequestered AS MW,
+        # LOLP(H) and the within-day P_exhaust — persisted by the bundle as
+        # ``hourly/exhaustion_<year>.parquet`` so G-EXH and the stage-3 offer
+        # are auditable from committed artifacts without a re-solve.
+        "ercot219_exhaustion": ercot219_exhaustion,
         # OPT-IN P0 commitment record (--persist-p0-commitment, default off).
         # Read AFTER both LPs have run and consumed by nothing downstream, so
         # it cannot perturb a solve; absent entirely at default, which is what

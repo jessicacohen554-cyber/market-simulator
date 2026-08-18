@@ -2162,6 +2162,76 @@ def _apply_outage_overlays(
             )
         np.clip(availability, 0.0, 1.0, out=availability)
 
+    # ercot-219 stage-1 measured aggregate-capability reconciliation (B-1
+    # SIGNED by dispatch of ERCOT-219 2026-08-18; PRECOMMIT-ercot219 §1.1).
+    # A single hourly TIGHTEN-ONLY scalar on merchant-thermal availability so
+    # the model's aggregate online dispatchable capability matches the
+    # published NP6-905 telemetered aggregate (quantity columns only). Applied
+    # LAST among the level-changing overlays — after the CAMPD windows, the
+    # DAM rescale and the event caps, and before ``_compose_min_gen_floors``
+    # clamps every floor to ``pmax × availability`` — so the LP stays feasible
+    # by construction and the rule-19 ownership split holds: the DAM family
+    # keeps class/plant-grain declared availability (shape/allocation), this
+    # overlay owns the aggregate real-time online LEVEL, tighten-only
+    # (s ≤ 1 never loosens the DAM rescale and never resurrects an outaged
+    # unit — a zeroed row stays zero under multiplication). CHP classes are
+    # excluded from BOTH sides of the comparison: the measured 2023 closure
+    # (ercot219_basis_phase0.json) shows T_tel tracking the SCED-corpus
+    # all-thermal online truth at corr 0.9957 with a stable −4.05 GW
+    # population-boundary offset — the cogen/PUN boundary, which the model's
+    # CHP classes represent on their own measured basis (rule 14
+    # documented-misalignment clause). Nuclear/hydro rows enter the
+    # complement N(t) at their own measured availability and are never scaled.
+    if (
+        config is not None
+        and _iso == "ERCOT"
+        and getattr(config, "ercot_capability_reconciliation", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        from market_sim.data.outages import ercot_capability_reconciliation_target
+
+        _t_tel = ercot_capability_reconciliation_target(int(_yr), hours)
+        _grp = np.array([str(g.plant_group) for g in generators])
+        _fuel = np.array([str(g.fuel_type) for g in generators])
+        _chp = np.char.find(_grp, "CHP") >= 0
+        _complement = np.isin(_fuel, ("nuclear", "hydro"))
+        _merch = ~_chp & ~_complement
+        # t = hour: N/M are (hours,) capability aggregates over the two
+        # populations at the CURRENT (post-overlay) availability state.
+        _n_t = (pmax[_complement, None] * availability[_complement, :]).sum(axis=0)
+        _m_t = (pmax[_merch, None] * availability[_merch, :]).sum(axis=0)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            _s = (_t_tel - _n_t) / np.maximum(_m_t, 1e-9)
+        # PRECOMMIT-ercot219 Amendment 1 (pre-solve): the degenerate branch
+        # s <= 0 — "zero merchant thermal online" — is physically impossible
+        # (a statewide blackout) and is measured to occur ONLY on isolated
+        # single-hour telemetry spikes in the netting series (2023 h2461 wind
+        # HSL 15.2->32.0->25.0 GW; 2024 h7345 wind 33.2->43.3->22.0 GW, above
+        # the year's installed wind). Such hours are series artifacts, treated
+        # reconciliation-inert (s = 1) exactly like a NaN hour — counted and
+        # reported, never fabricated into a shortage. Parameter-free: the
+        # bound is the mechanism's own degenerate point, unreachable by any
+        # real scarcity hour (T_tel p1 = 16.1 GW against N ~ 5 GW).
+        _inert = ~np.isfinite(_t_tel) | (_t_tel <= _n_t)
+        _s = np.clip(_s, 0.0, 1.0)
+        _s[_inert] = 1.0
+        availability[_merch, :] *= _s[None, :]
+        np.clip(availability, 0.0, 1.0, out=availability)
+        logger.info(
+            "ERCOT aggregate-capability reconciliation (B-1, %d): scalar mean "
+            "%.3f / min %.3f, tightened %d of %d telemetered hours (%d "
+            "inert-NaN), merchant fleet %.1f GW over %d rows",
+            int(_yr),
+            float(_s[~_inert].mean()) if (~_inert).any() else 1.0,
+            float(_s[~_inert].min()) if (~_inert).any() else 1.0,
+            int((_s < 1.0).sum()),
+            int((~_inert).sum()),
+            int(_inert.sum()),
+            float(pmax[_merch].sum()) / 1e3,
+            int(_merch.sum()),
+        )
+
     # Reallocate each CC_REGULAR plant's outage derate from pro-rata to
     # top-of-stack (config.cc_outage_derate_from_top): the plant's hourly
     # available MW is unchanged, but it now fills the tranches bottom-up in

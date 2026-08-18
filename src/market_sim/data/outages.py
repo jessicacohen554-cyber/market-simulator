@@ -1142,6 +1142,61 @@ def nuclear_unit_availability_series(
 # admissibility in its docstring); the June/Sep-2023 scarcity-formation
 # forensics measured the statistical stack 13-22 % derated at the summer
 # reserve margin where this disclosure shows the same fleet at its ratings.
+#: NP6-905-CD hourly reserve/λ series (fetch_ercot_ordc_reserves.py output) —
+#: the stage-1 reconciliation reads ONLY the ``rtolhsl`` quantity column.
+ERCOT_ORDC_RESERVES_TMPL: str = "ercot/ercot_{year}_ordc_reserves_hourly.parquet"
+#: Measured wind/solar HSL hourly series (quantity-only).
+ERCOT_HSL_HOURLY_TMPL: str = "ercot-hsl/ercot_{year}_hsl_hourly.parquet"
+#: Measured online storage capability series — the same committed series the
+#: armed ``ercot_storage_capability_measured`` mechanism uses.
+ERCOT_STORAGE_CAPABILITY_CSV: Path = RAW_DATA_DIR / "ercot-storage-capability.csv"
+
+
+@lru_cache(maxsize=None)
+def ercot_capability_reconciliation_target(
+    year: int, hours: int = HOURS_PER_YEAR
+) -> np.ndarray:
+    """Return the ``(hours,)`` telemetered all-thermal capability target T_tel.
+
+    The ercot-219 stage-1 aggregate-capability reconciliation target (B-1;
+    PRECOMMIT-ercot219 §1.1):
+
+        ``T_tel(t) = rtolhsl(t) − wind_hsl(t) − solar_hsl(t) − storage_cap(t)``
+
+    — the published NP6-905 real-time online-HSL aggregate net of the measured
+    non-thermal components, i.e. the telemetered ALL-THERMAL online
+    dispatchable capability on the NP6-905 population boundary. Every input is
+    a committed quantity series on the fixed non-leap 8760 clock; **no price
+    column is ever read** (the parquet reads are column-scoped, so the audit
+    is mechanical). Hours where any input is missing return NaN — the caller
+    treats them as reconciliation-inert (notably the 2025 post-RTC+B tail,
+    hours 8112-8759, where the ORDC-era series honestly ends). Rule 13: a
+    measured physical/market input applied consistently across all backcast
+    years under the B-1 signature, never an outcome fed back.
+    """
+    ordc = pd.read_parquet(
+        RAW_DATA_DIR / ERCOT_ORDC_RESERVES_TMPL.format(year=year),
+        columns=["rtolhsl"],
+    )
+    rtolhsl = ordc["rtolhsl"].to_numpy(dtype=float)[:hours]
+    hsl = pd.read_parquet(
+        RAW_DATA_DIR / ERCOT_HSL_HOURLY_TMPL.format(year=year),
+        columns=["wind_hsl_mw", "solar_hsl_mw"],
+    )
+    wind = hsl["wind_hsl_mw"].to_numpy(dtype=float)[:hours]
+    solar = hsl["solar_hsl_mw"].to_numpy(dtype=float)[:hours]
+    stor = pd.read_csv(ERCOT_STORAGE_CAPABILITY_CSV)
+    stor = (
+        stor[stor["year"] == year]
+        .sort_values("hour")["capability_mw"]
+        .to_numpy(dtype=float)[:hours]
+    )
+    out = np.full(hours, np.nan)
+    n = min(hours, rtolhsl.size, wind.size, solar.size, stor.size)
+    out[:n] = rtolhsl[:n] - wind[:n] - solar[:n] - stor[:n]
+    return out
+
+
 ERCOT_THERMAL_DAM_AVAILABILITY_CSV: Path = (
     RAW_DATA_DIR / "ercot-thermal-dam-availability.csv"
 )

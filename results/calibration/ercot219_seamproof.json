@@ -1,0 +1,244 @@
+{
+ "probe": "ercot219_optionb_seamproof",
+ "charter": "PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md \u00a74",
+ "sp1_gateoff": {
+  "head_gateoff": {
+   "2023": {
+    "availability_sha": "317cd1981c0bd8b179ddc8735fd1ad9a631820a4bb4931da981854b1edba1e12",
+    "pmax_sha": "cbef31464f464ef0ee0ec5e5224b381bfb2e330cb49aec658140c0a2c206699d",
+    "min_gen_sha": "e2d46d3d9168217ae209c1fcbadf86e778ce3ae94b3b24049eb1b88eb15027ab",
+    "storage_vom_sha": "2486faed11251a25d0cf84c673d25e77faee23eb5067df83994f246afaa2fd4a",
+    "n_rows": 2320,
+    "total_pmax_mw": 80744.606,
+    "avail_mean": 0.7939640363
+   },
+   "2024": {
+    "availability_sha": "c6076b7f4b37612ef48981dcc8db1a774fce681785744a157d953ba6c20e1158",
+    "pmax_sha": "0e770b48dccbc95f568256a75cf718ad6efc541621e8eca32251ed990c30a733",
+    "min_gen_sha": "81bec9e3eeb77c5d1f5a17de7fffe5ab3ef156ad6a8ff7ff1c07cf2ef37f1124",
+    "storage_vom_sha": "9d39f8d672c682f373b63ab939b43e0157d034253c0f6248bd496d56bdd93f8e",
+    "n_rows": 2318,
+    "total_pmax_mw": 80739.406,
+    "avail_mean": 0.7899171685
+   },
+   "2025": {
+    "availability_sha": "5d597beb1003f775d38bc6fd0ce27bc7c3970898844e7eaa8638fa5143993e07",
+    "pmax_sha": "90d473174fbfad21878a857b6aac030b94c324a5580b1662b072635690332ef9",
+    "min_gen_sha": "c2ce60a714f53640f1de180a02eec276a632a5ff480b81b6f91d4be9373b825a",
+    "storage_vom_sha": "9d39f8d672c682f373b63ab939b43e0157d034253c0f6248bd496d56bdd93f8e",
+    "n_rows": 2307,
+    "total_pmax_mw": 80202.706,
+    "avail_mean": 0.7745341344
+   }
+  },
+  "pre_edit": {
+   "2023": {
+    "availability_sha": "317cd1981c0bd8b179ddc8735fd1ad9a631820a4bb4931da981854b1edba1e12",
+    "pmax_sha": "cbef31464f464ef0ee0ec5e5224b381bfb2e330cb49aec658140c0a2c206699d",
+    "min_gen_sha": "e2d46d3d9168217ae209c1fcbadf86e778ce3ae94b3b24049eb1b88eb15027ab",
+    "storage_vom_sha": "2486faed11251a25d0cf84c673d25e77faee23eb5067df83994f246afaa2fd4a",
+    "n_rows": 2320,
+    "total_pmax_mw": 80744.606,
+    "avail_mean": 0.7939640363
+   },
+   "2024": {
+    "availability_sha": "c6076b7f4b37612ef48981dcc8db1a774fce681785744a157d953ba6c20e1158",
+    "pmax_sha": "0e770b48dccbc95f568256a75cf718ad6efc541621e8eca32251ed990c30a733",
+    "min_gen_sha": "81bec9e3eeb77c5d1f5a17de7fffe5ab3ef156ad6a8ff7ff1c07cf2ef37f1124",
+    "storage_vom_sha": "9d39f8d672c682f373b63ab939b43e0157d034253c0f6248bd496d56bdd93f8e",
+    "n_rows": 2318,
+    "total_pmax_mw": 80739.406,
+    "avail_mean": 0.7899171685
+   },
+   "2025": {
+    "availability_sha": "5d597beb1003f775d38bc6fd0ce27bc7c3970898844e7eaa8638fa5143993e07",
+    "pmax_sha": "90d473174fbfad21878a857b6aac030b94c324a5580b1662b072635690332ef9",
+    "min_gen_sha": "c2ce60a714f53640f1de180a02eec276a632a5ff480b81b6f91d4be9373b825a",
+    "storage_vom_sha": "9d39f8d672c682f373b63ab939b43e0157d034253c0f6248bd496d56bdd93f8e",
+    "n_rows": 2307,
+    "total_pmax_mw": 80202.706,
+    "avail_mean": 0.7745341344
+   }
+  },
+  "byte_identical_x3": true
+ },
+ "sp1b_stage1_liveness": {
+  "2023": {
+   "changed": true,
+   "max_delta": 0.0,
+   "min_delta": -0.8499888285054963,
+   "tightened_row_hours": 14222577,
+   "tighten_only_ok": true
+  },
+  "2024": {
+   "changed": true,
+   "max_delta": 0.0,
+   "min_delta": -0.9723621108873893,
+   "tightened_row_hours": 15687496,
+   "tighten_only_ok": true
+  },
+  "2025": {
+   "changed": true,
+   "max_delta": 0.0,
+   "min_delta": -0.895289489002745,
+   "tightened_row_hours": 14513211,
+   "tighten_only_ok": true
+  }
+ },
+ "sp2_cross_iso_armed": {
+  "CAISO": {
+   "bundle": "caiso200_h1_memberpanel",
+   "control": {
+    "availability_sha": "25192aeb3a9c698b4672104c65927389fd28f69629b5562a61f730a09b1e72ef",
+    "pmax_sha": "d8f602793c1f0a9a162ab379d0cfbee472fe6c56e185b810f269f80cf62eccc4",
+    "min_gen_sha": "c09a8c41ee045e80712becbe119c25b0f5f0f5ae13a4481593467b7f402e17b7",
+    "storage_vom_sha": "09619ff257719815826f6f9cf9103b2b91e58945fc14425c971c01ab3df39202",
+    "n_rows": 1808,
+    "total_pmax_mw": 69529.299,
+    "avail_mean": 0.8057034871
+   },
+   "armed": {
+    "availability_sha": "25192aeb3a9c698b4672104c65927389fd28f69629b5562a61f730a09b1e72ef",
+    "pmax_sha": "d8f602793c1f0a9a162ab379d0cfbee472fe6c56e185b810f269f80cf62eccc4",
+    "min_gen_sha": "c09a8c41ee045e80712becbe119c25b0f5f0f5ae13a4481593467b7f402e17b7",
+    "storage_vom_sha": "09619ff257719815826f6f9cf9103b2b91e58945fc14425c971c01ab3df39202",
+    "n_rows": 1808,
+    "total_pmax_mw": 69529.299,
+    "avail_mean": 0.8057034871
+   },
+   "byte_identical": true
+  },
+  "PJM": {
+   "bundle": "pjm158_novirt_B",
+   "control": {
+    "availability_sha": "b838b010dbad734412a22e16c0033ebf85cb92b9b52a8cd45ba0d16b5caeec07",
+    "pmax_sha": "d0caae8825a7bf5c45393ddedb3aaae97970eb282534002582ac173b06821007",
+    "min_gen_sha": "d06e61c590cb3674421ed374d9d46a5b1318b94f4a539ab439fef5485293edd3",
+    "storage_vom_sha": "2ea9ab9198d1638007400cd2c3bef1cc745b864b76011a0e1bc52180ac6452d4",
+    "n_rows": 3279,
+    "total_pmax_mw": 197120.742,
+    "avail_mean": 0.7616363706
+   },
+   "armed": {
+    "availability_sha": "b838b010dbad734412a22e16c0033ebf85cb92b9b52a8cd45ba0d16b5caeec07",
+    "pmax_sha": "d0caae8825a7bf5c45393ddedb3aaae97970eb282534002582ac173b06821007",
+    "min_gen_sha": "d06e61c590cb3674421ed374d9d46a5b1318b94f4a539ab439fef5485293edd3",
+    "storage_vom_sha": "2ea9ab9198d1638007400cd2c3bef1cc745b864b76011a0e1bc52180ac6452d4",
+    "n_rows": 3279,
+    "total_pmax_mw": 197120.742,
+    "avail_mean": 0.7616363706
+   },
+   "byte_identical": true
+  },
+  "NYISO": {
+   "bundle": "nyiso140_control",
+   "control": {
+    "availability_sha": "5c2f75f7f0d0018d71b11f3ce86d4c207659bb570e3fc201bf21d29701569034",
+    "pmax_sha": "995e954712454228b081c093af19758c6b0a955e0584d193b17d46001f2998a2",
+    "min_gen_sha": "6339f7271e5010e11a2157daf36831e193823a20bde0eeabb99e512822d99ab1",
+    "storage_vom_sha": "d4817aa5497628e7c77e6b606107042bbba3130888c5f47a375e6179be789fbb",
+    "n_rows": 851,
+    "total_pmax_mw": 42915.363,
+    "avail_mean": 0.7402873764
+   },
+   "armed": {
+    "availability_sha": "5c2f75f7f0d0018d71b11f3ce86d4c207659bb570e3fc201bf21d29701569034",
+    "pmax_sha": "995e954712454228b081c093af19758c6b0a955e0584d193b17d46001f2998a2",
+    "min_gen_sha": "6339f7271e5010e11a2157daf36831e193823a20bde0eeabb99e512822d99ab1",
+    "storage_vom_sha": "d4817aa5497628e7c77e6b606107042bbba3130888c5f47a375e6179be789fbb",
+    "n_rows": 851,
+    "total_pmax_mw": 42915.363,
+    "avail_mean": 0.7402873764
+   },
+   "byte_identical": true
+  },
+  "NEISO": {
+   "bundle": "neiso99_basis_A",
+   "control": {
+    "availability_sha": "451a7e751f735f5ab4c04369cbaba6149cedccfb89c5a3e189e738b409540f64",
+    "pmax_sha": "c9657f7cf73d973f53b87285bec206428f6002646788081436a02fb4e11474a1",
+    "min_gen_sha": "246f6c73e7c765da29093a97c35471a2b92e6b8ce9195590461aa06b02cee8b2",
+    "storage_vom_sha": "17b0761f87b081d5cf10757ccc89f12be355c70e2e29df288b65b30710dcbcd1",
+    "n_rows": 816,
+    "total_pmax_mw": 29124.101,
+    "avail_mean": 0.8010256229
+   },
+   "armed": {
+    "availability_sha": "451a7e751f735f5ab4c04369cbaba6149cedccfb89c5a3e189e738b409540f64",
+    "pmax_sha": "c9657f7cf73d973f53b87285bec206428f6002646788081436a02fb4e11474a1",
+    "min_gen_sha": "246f6c73e7c765da29093a97c35471a2b92e6b8ce9195590461aa06b02cee8b2",
+    "storage_vom_sha": "17b0761f87b081d5cf10757ccc89f12be355c70e2e29df288b65b30710dcbcd1",
+    "n_rows": 816,
+    "total_pmax_mw": 29124.101,
+    "avail_mean": 0.8010256229
+   },
+   "byte_identical": true
+  },
+  "MISO": {
+   "bundle": "miso160_wefor_A",
+   "control": {
+    "availability_sha": "b6f8a88fa74933eaa8c04afca4a3aa79059269d15f3c5af38714e7f4e07fea44",
+    "pmax_sha": "d53baecacbc65de60d2a978c5d7bce9e08499d3b5afed10c2bbc2570b0a24c50",
+    "min_gen_sha": "00d6aba5ac9d387ae3172a88c04ee437db4fa4ddc42bd7f4b255b5e35d9dbf06",
+    "storage_vom_sha": "834a709ba2534ebe3ee1397fd4f7bd288b2acc1d20a08d6c862dcd99b6f04400",
+    "n_rows": 3092,
+    "total_pmax_mw": 148820.6,
+    "avail_mean": 0.7907297048
+   },
+   "armed": {
+    "availability_sha": "b6f8a88fa74933eaa8c04afca4a3aa79059269d15f3c5af38714e7f4e07fea44",
+    "pmax_sha": "d53baecacbc65de60d2a978c5d7bce9e08499d3b5afed10c2bbc2570b0a24c50",
+    "min_gen_sha": "00d6aba5ac9d387ae3172a88c04ee437db4fa4ddc42bd7f4b255b5e35d9dbf06",
+    "storage_vom_sha": "834a709ba2534ebe3ee1397fd4f7bd288b2acc1d20a08d6c862dcd99b6f04400",
+    "n_rows": 3092,
+    "total_pmax_mw": 148820.6,
+    "avail_mean": 0.7907297048
+   },
+   "byte_identical": true
+  }
+ },
+ "sp3_no_price_input": {
+  "loader_reads_column_scoped": {
+   "ordc_parquet_rtolhsl_only": true,
+   "hsl_parquet_wind_solar_only": true
+  },
+  "mechanism_read": {
+   "data/raw/ercot/ercot_<yr>_ordc_reserves_hourly.parquet": [
+    "rtolhsl"
+   ],
+   "data/raw/ercot-hsl/ercot_<yr>_hsl_hourly.parquet": [
+    "wind_hsl_mw",
+    "solar_hsl_mw"
+   ],
+   "data/raw/ercot-storage-capability.csv": [
+    "capability_mw"
+   ]
+  },
+  "mechanism_refused": {
+   "price columns (never read by any stage)": [
+    "system_lambda",
+    "rtorpa",
+    "rtoffpa",
+    "rtordpa",
+    "prc"
+   ],
+   "quantity columns deliberately not used": [
+    "rtolcap",
+    "rtoffcap"
+   ],
+   "outcome series (rule 13)": [
+    "actual RTSPP / hub RT / DA prices",
+    "EIA-930 generation as a capability input",
+    "CEMS realized generation"
+   ]
+  }
+ },
+ "sp4_cache_key": {
+  "default_key": "603c2498bf71d21d",
+  "default_key_unmoved": true,
+  "backcast_key": "35b6dc12f97968f1",
+  "armed_key": "7bf65b6e5aa95144",
+  "armed_distinct": true
+ },
+ "all_assertions_pass": true
+}

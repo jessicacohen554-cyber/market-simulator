@@ -183,8 +183,7 @@ def _component_sanity() -> dict:
                 float(f[f["fueltype"] == "SUN"]["value_mwh"].mean()), 0
             ),
             "hsl_nulls": {
-                c: int(hsl[c].isna().sum())
-                for c in ("wind_hsl_mw", "solar_hsl_mw")
+                c: int(hsl[c].isna().sum()) for c in ("wind_hsl_mw", "solar_hsl_mw")
             },
         }
     stor = pd.read_csv(STORAGE_CAP)

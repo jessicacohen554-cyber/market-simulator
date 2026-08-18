@@ -40,6 +40,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     ordc_scarcity_overlay: { cell: "K", ev: "caiso-137b (FINDING-caiso137b-overlay-reachability-2026-07-29 §2/§3/§4); caiso-137 §1" },
     dump_cost_full_offer_domain: { cell: "K", ev: "caiso-139 (FINDING-caiso139-dump-cost-blindspot-2026-07-29, PREREG-caiso139, probes _caiso139_dump_cost_blindspot.py + _caiso139_dumpguard_ab.py); origin caiso-138 §B" },
     ercot_rtordpa_overlay: { cell: "." },
+    ercot_artificial_shortage_pricing: { cell: "." },
     maxgen_emergency_tier_pricing: { cell: "." },
     nyiso_rcpf_family: { cell: "." },
     reserve_family_dual_sidecar: { cell: "I" },

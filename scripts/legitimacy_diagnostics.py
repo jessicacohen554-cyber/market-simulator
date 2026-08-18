@@ -1537,6 +1537,56 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         "structural mechanism, mode-independent by intent (backcast rides "
         "the measured-HSL potential, forecast the reference-rate gross-up)",
     ),
+    # --- ercot-219 Option-B stage attributions (B-1; PRECOMMIT-ercot219) ---
+    MechanismSpec(
+        "ercot_capability_reconciliation",
+        "ercot_capability_reconciliation",
+        "backcast_only",
+        True,
+        note="stage-1 measured NP6-905 aggregate-capability reconciliation "
+        "(B-1 SIGNED by dispatch of ERCOT-219 2026-08-18): single hourly "
+        "tighten-only scalar on merchant-thermal availability to the "
+        "published rtolhsl aggregate net of measured wind/solar HSL + "
+        "storage capability, CHP boundary excluded both sides. DRIVER: the "
+        "published real-time telemetered capability state. WINDOW: all "
+        "telemetered hours (a standing measured physical state, not an "
+        "event window); inert on NaN hours (2025 post-RTC+B tail). Rule-19 "
+        "owner of the aggregate RT online LEVEL only — the DAM availability "
+        "family keeps class/plant-grain declared availability.",
+        iso="ERCOT",
+    ),
+    MechanismSpec(
+        "ercot_exhaustion_expectation",
+        "ercot_exhaustion_expectation",
+        "backcast_only",
+        True,
+        note="stage-2 within-day exhaustion expectation: P_exhaust(t) = "
+        "max over [t..end-of-day] of the registered LOLP curve at the "
+        "model's own post-reconciliation margin (capability − load − armed "
+        "*_withheld AS requirement rows). Zero new scalars; the ordc_lolp_* "
+        "constants enter as an EXPECTATION input (ercot-206 B0 untouched — "
+        "no price channel changes). Forward-computable by construction "
+        "(regenerates from model state; collapses post-reform/RTC+B); wired "
+        "in the backcast driver only today, hence declared backcast-only. "
+        "Audit trail: hourly/exhaustion_<year>.parquet.",
+        iso="ERCOT",
+    ),
+    MechanismSpec(
+        "ercot_storage_reservation_offer",
+        "ercot_storage_reservation_offer",
+        "backcast_only",
+        True,
+        backcast_symbols=("p1_storage_discharge_cost",),
+        note="stage-3 storage reservation-price offer, P1-ONLY at the "
+        "pipeline.solve P0→P1 seam: discharge offer = max(vom_base, "
+        "P_exhaust × ordc_voll), raise-only (self-extinguishing as "
+        "P_exhaust → 0). DRIVER: the sequestration-induced within-day "
+        "exhaustion expectation (stage 2). WINDOW: the within-day "
+        "exhaustion window its own driver defines — binds only where "
+        "P_exhaust × VOLL exceeds the keeper's own offer; ordinary hours "
+        "keep the keeper's storage dispatch. Energy-only (card §7.4).",
+        iso="ERCOT",
+    ),
 )
 
 

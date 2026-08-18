@@ -898,6 +898,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "ercot_reserve_supply_cap_net_credits",
+    # ercot-219 Option-B three-stage artificial-shortage mechanism (B-1):
+    # dropped from the hash at their defaults so every pre-existing cache key
+    # stays byte-stable (pinned default key unmoved); an armed run enters as
+    # a distinct scenario. Registered IN THE SAME COMMIT as the fields (the
+    # nyiso-119 discipline).
+    "ercot_capability_reconciliation",
+    "ercot_exhaustion_expectation",
+    "ercot_storage_reservation_offer",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -1208,6 +1216,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-212 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_reserve_supply_cap_net_credits": "False",
+    # Added by ercot-219 WITH the fields, in the same commit as their
+    # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
+    "ercot_capability_reconciliation": "False",
+    "ercot_exhaustion_expectation": "False",
+    "ercot_storage_reservation_offer": "False",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
@@ -1304,6 +1317,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "miso_seam_measured_ladder": "measured per-year MISO seam price ladder",
     "pjm_seam_measured_ladder": "measured per-year PJM seam price ladder",
     "ercot_online_capacity_envelope_measured": "measured-fleet on-line capacity envelope",
+    "ercot_capability_reconciliation": "measured NP6-905 aggregate-capability reconciliation (B-1)",
     "hydro_dispatch_envelope": "measured hydro month x hour-of-day dispatch percentiles",
     "caiso_offer_surface_measured": "measured CAISO peak-rung offer repricing",
     "pjm_ct_measured_max_reprice": "measured PJM CT max-offer repricing",
@@ -11830,6 +11844,48 @@ class ScenarioConfig:
     # default; a scoped run enters the cache key as a distinct scenario.
     ercot_offer_hrmult_ep_rebasis_bands: list[str] | None = None
 
+    # --- ercot-219 Option-B artificial-shortage structural mechanism (B-1) ---
+    # The three-stage structural model of ERCOT's 2023 ECRS artificial-shortage
+    # price formation (DECISION-CARD-ercot218b, B-1 SIGNED by dispatch of
+    # ERCOT-219 2026-08-18; conventions pinned in
+    # docs/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md §1). All three are
+    # default-off, ERCOT-gated, zero fitted scalars. Registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS in the same commit (nyiso-119 discipline).
+    #
+    # Stage 1 — measured aggregate-capability reconciliation (the B-1
+    # keystone; backcast-only measured overlay, _BACKCAST_ONLY_OVERLAY_FIELDS).
+    # A single hourly tighten-only scalar on merchant-thermal availability so
+    # the model's aggregate online dispatchable capability matches the
+    # published NP6-905 telemetered aggregate (quantity columns only:
+    # rtolhsl net of measured wind/solar HSL and storage capability; never a
+    # price column). CHP classes are excluded from BOTH sides — the measured
+    # cogen/PUN population-boundary offset (corr 0.9957, stable −4.05 GW;
+    # ercot219_basis_phase0.json) stays out of the scalar (rule 14
+    # documented-misalignment clause). Applied in
+    # data.fleet.arrays._apply_outage_overlays AFTER the DAM rescale and
+    # event caps, BEFORE min-gen floor composition (rule-19 single owner:
+    # the DAM family keeps class/plant-grain declared availability; this
+    # overlay owns the aggregate real-time online level, tighten-only).
+    ercot_capability_reconciliation: bool = False
+    # Stage 2 — the within-day exhaustion expectation P_exhaust(t) =
+    # max_{h in [t..end-of-day]} LOLP(H(h)), H = post-reconciliation total
+    # supply capability − load − the armed *_withheld AS families' LP
+    # requirement rows. LOLP is the model's OWN registered curve
+    # (resolve_lolp_params / ordc_lolp_mu_mw / ordc_lolp_sigma_mw /
+    # ordc_mcl_mw, full-tier form) used as an EXPECTATION input — the
+    # ercot-206 B0 line (no LOLP-table arming as a price mechanism) is
+    # untouched: no in-LP curve, adder or price channel changes.
+    ercot_exhaustion_expectation: bool = False
+    # Stage 3 — the storage reservation-price offer, P1-ONLY through the
+    # pipeline.solve P0→P1 seam (p1_storage_discharge_cost): P1 discharge
+    # offer[s,t] = max(vom_base[s], P_exhaust(t) × ordc_voll) — raise-only,
+    # so ordinary hours keep the keeper's own storage offer and the
+    # mechanism self-extinguishes as P_exhaust → 0 (post-reform / RTC+B /
+    # forecast years without sequestration). Energy-only (no AS
+    # opportunity-cost floor, card §7.4). Requires
+    # ercot_exhaustion_expectation (armed alone: loud ValueError, rule 5).
+    ercot_storage_reservation_offer: bool = False
+
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
         # loaded back from a sidecar (``from_yaml`` over a ``to_yaml_full``
@@ -13363,6 +13419,9 @@ TIER_TAGS: dict[str, int] = {
     "ercot_online_capacity_envelope": 1,
     "ercot_online_capacity_envelope_extreme": 1,
     "ercot_online_capacity_envelope_measured": 1,
+    "ercot_capability_reconciliation": 1,
+    "ercot_exhaustion_expectation": 1,
+    "ercot_storage_reservation_offer": 1,
     "ercot_ordc_only_scarcity": 1,
     "pjm_reserve_supply_cap": 1,
     "pjm_reserve_online_gated": 1,

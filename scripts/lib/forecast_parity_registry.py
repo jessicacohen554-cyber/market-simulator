@@ -452,6 +452,29 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         finding="docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md",
         evidence=(_BACKCAST_ORCH,),
     ),
+    # ercot_capability_reconciliation (ercot-219 stage 1) carries NO row here
+    # deliberately: it lives in the SHARED fleet assembly
+    # (data/fleet/arrays.py::_apply_outage_overlays) like the rest of the
+    # measured-overlay family, so the checker resolves it through the
+    # shared-module evidence tier; its backcast-only enforcement is the
+    # _BACKCAST_ONLY_OVERLAY_FIELDS mode guard (ValueError in forecast mode)
+    # plus the in-block mode gate. A BACKCAST_ONLY row would be flagged
+    # stale ("IS forecast-wired via shared module") by the checker itself.
+    ParityDeclaration(
+        fields=(
+            "ercot_exhaustion_expectation",
+            "ercot_storage_reservation_offer",
+        ),
+        disposition=BACKCAST_ONLY,
+        why="ercot-219 stages 2-3 (exhaustion expectation + P1-only storage "
+        "reservation-price offer): forward-computable by construction — the "
+        "expectation regenerates from the model's own state and "
+        "self-extinguishes with the sequestration design (post-reform / "
+        "RTC+B) — but wired in the backcast orchestrator only today; arming "
+        "them forward is its own future decision, never a silent fork. "
+        "PRECOMMIT-ercot219 §1.2-§1.3.",
+        evidence=(_BACKCAST_ORCH,),
+    ),
 )
 
 

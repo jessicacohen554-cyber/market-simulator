@@ -5474,6 +5474,26 @@ def solve_and_persist(
         _write_hourly_sidecar(run_dir, year, "unit_hourly", unit_frames)
         _write_hourly_sidecar(run_dir, year, "network", network_frames)
         _write_hourly_sidecar(run_dir, year, "reserve_family", reserve_family_frames)
+        # ercot-219 stage-2 exhaustion series (ercot_exhaustion_expectation):
+        # H margin / sequestered AS / LOLP(H) / within-day P_exhaust — the
+        # committed audit trail for G-EXH and the stage-3 offer (PRECOMMIT-
+        # ercot219 §3.1). Absent (no file) on every flag-off run.
+        _exh = p2_state.get("ercot219_exhaustion")
+        if _exh is not None:
+            _t_exh = len(_exh["lolp"])
+            _exhf = pd.DataFrame(
+                {
+                    "year": np.full(_t_exh, year, dtype=np.int32),
+                    "hour": np.arange(_t_exh, dtype=np.int32),
+                    "h_margin_mw": np.asarray(_exh["h_margin_mw"], dtype=float),
+                    "as_sequestered_mw": np.asarray(
+                        _exh["as_sequestered_mw"], dtype=float
+                    ),
+                    "lolp": np.asarray(_exh["lolp"], dtype=float),
+                    "p_exhaust": np.asarray(_exh["p_exhaust"], dtype=float),
+                }
+            )
+            _write_hourly_sidecar(run_dir, year, "exhaustion", [_exhf])
         del result, context, result_p1, p2_state, demand, must_run
         del must_run_total, labelled, res
         del unit_frames, network_frames, reserve_family_frames

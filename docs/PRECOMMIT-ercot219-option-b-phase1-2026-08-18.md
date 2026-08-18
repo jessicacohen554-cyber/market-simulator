@@ -435,3 +435,29 @@ carried inputs; LOLP-table arming as a PRICE mechanism stays B0 — §1.2 states
 the expectation-input distinction explicitly. Q-B FINAL / R-A: every 2023
 price number is side-effect reporting at full magnitude, never a basis, never
 a gate — the card's gate table contains no 2023 price criterion by design.
+
+## AMENDMENT 1 (PRE-SOLVE, appended before any A/B member ran) — the §4 SP-1b falsifier caught a real input defect; the §1.1 inert clause is extended to the degenerate branch
+
+The build-time liveness measurement (SP-1b, run before any solve) found the
+stage-1 scalar clipping to **s = 0** in exactly two isolated hours: 2023
+h2461 (T_tel = **−1.7 GW**) and 2024 h7345 (T_tel = 4.1 GW). Decomposed
+against the input series, both are **single-hour telemetry spikes in the
+measured wind/solar HSL netting series**, not capability events: 2023 h2461
+prints wind HSL 15.2 → **32.0** → 25.0 GW hour-to-hour (solar co-spiked
+11.1 → 17.9 → 13.4); 2024 h7345 prints wind HSL 33.2 → **43.3** → 22.0 GW —
+above the year's installed wind capacity, physically impossible. Unguarded,
+the s→0 branch would zero the merchant thermal fleet for that hour and
+manufacture a load-shed / VOLL price out of a data artifact — failing G-SHED
+on telemetry noise rather than on the mechanism.
+
+**The amendment (zero scalars; the fetch script's own implausible-→-NaN
+philosophy):** an hour on the degenerate branch **s ≤ 0** — "zero merchant
+thermal online", i.e. `T_tel(t) ≤ N(t)` — is definitionally a series
+artifact (a statewide blackout would be required for it to be real) and is
+treated exactly like a NaN hour: **reconciliation-inert (s = 1), counted and
+reported**. The bound is the mechanism's own degenerate point, not a tuned
+threshold, and it is unreachable by any real scarcity hour (T_tel p1 =
+16.1 GW against N ≈ 5 GW — a factor ~3 away). Milder single-hour spikes that
+do not reach degeneracy stay in the series untouched (transient
+over-tightening of a few percent for one hour, absorbed and judged by the
+gates). No other clause changes; the §3 gate table is untouched.
