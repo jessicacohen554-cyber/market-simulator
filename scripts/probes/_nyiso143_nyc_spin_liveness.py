@@ -33,7 +33,6 @@ the weaker statement it is.
 
 from __future__ import annotations
 
-import gzip
 import json
 import sys
 from pathlib import Path
@@ -132,7 +131,9 @@ def main() -> int:
                 float(np.max(REQUIREMENT_MW - backed[short])) if short.any() else 0.0, 3
             ),
             "binding_hours_at_rho_ceiling_4.0": int(short_ceiling.sum()),
-            "verdict": "BINDS (mechanism is LIVE)" if short.any() else "slack in every hour",
+            "verdict": "BINDS (mechanism is LIVE)"
+            if short.any()
+            else "slack in every hour",
             # THE DECISIVE NUMBER: the family is inert iff the solve's actual
             # rho is at least this. rho is a fleet property clipped to
             # [0.5, 4.0], so a rho* above 4.0 means the mechanism binds for

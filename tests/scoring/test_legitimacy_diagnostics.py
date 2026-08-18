@@ -427,8 +427,13 @@ class TestD4PerUnitConductRider:
         meas = np.zeros(HOURS)
         meas[: HOURS // 3] = 60.0  # online a third of the year
         res = run_d4(
-            dispatch, min_gen, mech, self.KLASS, year=2023,
-            pids=["1"], bench_pl={"1": {"npl": 100.0, "mw": meas}},
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["1"],
+            bench_pl={"1": {"npl": 100.0, "mw": meas}},
         )
         assert not res.passed
 
@@ -437,16 +442,26 @@ class TestD4PerUnitConductRider:
         meas = np.full(HOURS, 60.0)
         meas[: HOURS // 3] = 0.0  # offline a third of the year
         res = run_d4(
-            dispatch, min_gen, mech, self.KLASS, year=2023,
-            pids=["1"], bench_pl={"1": {"npl": 100.0, "mw": meas}},
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["1"],
+            bench_pl={"1": {"npl": 100.0, "mw": meas}},
         )
         assert res.passed
 
     def test_unmetered_plant_never_fails_and_is_disclosed(self):
         dispatch, min_gen, mech = self._floored()
         res = run_d4(
-            dispatch, min_gen, mech, self.KLASS, year=2023,
-            pids=["nohydrometer"], bench_pl={},
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["nohydrometer"],
+            bench_pl={},
         )
         assert res.passed
         assert not [r for r in res.rows if r["check"] == "unit-conduct"]
@@ -492,8 +507,13 @@ class TestD4PerUnitConductRider:
         meas = np.zeros(HOURS)
         meas[hot] = 70.0  # the meter agrees: it runs exactly then
         res = run_d4(
-            dispatch, min_gen, mech, self.KLASS, year=2023,
-            pids=["2625"], bench_pl={"2625": {"npl": 621.0, "mw": meas}},
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["2625"],
+            bench_pl={"2625": {"npl": 621.0, "mw": meas}},
         )
         assert res.passed
         conduct = [r for r in res.rows if r["check"] == "unit-conduct"]
@@ -502,8 +522,13 @@ class TestD4PerUnitConductRider:
         assert conduct[0]["measured_median_mw"] == 70.0
         # And the same unit DOES fail when it is idle in those very hours.
         res2 = run_d4(
-            dispatch, min_gen, mech, self.KLASS, year=2023,
-            pids=["2625"], bench_pl={"2625": {"npl": 621.0, "mw": np.zeros(HOURS)}},
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["2625"],
+            bench_pl={"2625": {"npl": 621.0, "mw": np.zeros(HOURS)}},
         )
         assert not res2.passed
 

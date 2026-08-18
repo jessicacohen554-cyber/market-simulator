@@ -124,6 +124,18 @@ at least half the hours the floor asserts it must be online.
   already **above** its forced-share cap. No committed bundle is re-scored
   until its own lane regenerates; NYISO's C8 is under cap in every year, so
   **no determination moves.**
+* **Forward-compatible for every consumer.** Both checks share the `rows` list
+  and the mechanism's own `floor` label — which is what lets
+  `_d4_provenance` pick conduct failures up with **no change to its matching
+  rule** — and are discriminated by a new `check` field
+  (`"window"` / `"unit-conduct"`). A pre-rider artifact has no `check` key and
+  is read as `"window"`, so **every committed bundle re-scores exactly as
+  before**. Surveyed the other seven readers of `D4.rows` (six per-run probes
+  plus the cross-ISO `_xiso3_forced_share_d4_census.py`): all read committed
+  artifacts, none sums `floored_twh` across rows, and the census's
+  window-consistency check passes conduct rows unchanged because they carry the
+  same window string. A consumer that ever *does* want energy totals should
+  filter `check == "window"`.
 * 8 new unit tests (`tests/scoring/test_legitimacy_diagnostics.py::TestD4PerUnitConductRider`);
   full `tests/scoring/` = 1,030 passed, and the 5 pre-existing failures
   (`test_ff_readiness_battery`, `test_crossover_harness` — forecast lane) were

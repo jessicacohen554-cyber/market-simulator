@@ -47,8 +47,14 @@ YEARS = (2023, 2024, 2025)
 def _kwargs(meta: dict) -> dict:
     params = inspect.signature(run_year).parameters
     skip = {
-        "year", "iso", "hours", "gas_price", "ttc_overrides",
-        "fleet_only", "xyear_cache", "must_run_mw",
+        "year",
+        "iso",
+        "hours",
+        "gas_price",
+        "ttc_overrides",
+        "fleet_only",
+        "xyear_cache",
+        "must_run_mw",
     }
     out = {}
     for k, v in meta.items():
@@ -131,8 +137,12 @@ def main() -> int:
                 "identified": bool(o_valid.any()),
             },
             "fleetwide_units": int(np.asarray(fa.pmin).size),
-            "fleetwide_pmin_gt0_units": int((np.asarray(fa.pmin, dtype=float) > 0).sum()),
-            "fleetwide_pmin_sum_mw": round(float(np.asarray(fa.pmin, dtype=float).sum()), 3),
+            "fleetwide_pmin_gt0_units": int(
+                (np.asarray(fa.pmin, dtype=float) > 0).sum()
+            ),
+            "fleetwide_pmin_sum_mw": round(
+                float(np.asarray(fa.pmin, dtype=float).sum()), 3
+            ),
             "fleetwide_min_gen_present": bool(getattr(fa, "min_gen", None) is not None),
             "quick_pmin_gt0_units": int((pmin > 0).sum()),
             "quick_pmax_gt_pmin_units": int((pmax > pmin).sum()),
@@ -147,7 +157,9 @@ def main() -> int:
             "rho_used": round(rho, 4),
             "rho_at_clip_ceiling": bool(raw >= 4.0),
             "nyc_quick_units": int((quick & nyc).sum()),
-            "nyc_quick_pmax_mw": round(float(np.asarray(fa.pmax)[quick & nyc].sum()), 1),
+            "nyc_quick_pmax_mw": round(
+                float(np.asarray(fa.pmax)[quick & nyc].sum()), 1
+            ),
         }
         print(year, res["years"][str(year)])
     (REPO / "results/calibration/_nyiso143_online_rho.json").write_text(
