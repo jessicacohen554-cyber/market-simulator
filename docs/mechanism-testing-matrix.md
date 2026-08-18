@@ -4082,6 +4082,25 @@ loss.
 
 ### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-16-miso-160-wefor-shape`, **NOT-YET on C3a-2025 ALONE (−12.5 %)**
 
+> **QUEUE STAMP miso-168 (2026-08-18) — PREREG-miso167 EXECUTION BLOCKED AGAIN: 15 GB
+> CONTAINER AGAINST THE ≥24 GB REQUIREMENT. NO SOLVE, NO PRE-CHECK, NO CODE BUILT, NO CELL
+> VERDICT MINTED, NO REGISTRATION. Keeper UNCHANGED at `2026-08-16-miso-160-wefor-shape`.**
+> Record: `results/calibration/FINDING-miso168-precheck-data-gap-2026-08-18.md`. Two facts for
+> the successor: (1) the RAM gate failed again (`free -g`: 15 GB total / 14 available, vs
+> miso-161's measured >13.9 GB/yr for the plant-level LP); reported per CLAUDE.md, never routed
+> to a CI runner. (2) **NEW: the prereg §3 "no-LP pre-check" has a DATA GAP — it is not
+> executable from committed artifacts on any fresh clone.** It demands tranche grain on "the
+> keeper's own committed P1", but the committed `miso160_wefor_B` bundle carries CLASS grain
+> only; the needed series are exactly `unit_hourly_<year>.parquet` (`mw`, `cap_mw` —
+> `run_calibration_full.py::_unit_hourly_frame`), and the repo-wide census shows NO MISO bundle
+> has ever committed one (only `neiso86_2022_corrected` has a `unit_hourly` anywhere).
+> Corrected execution order for a ≥24 GB successor, prereg semantics preserved and NO threshold
+> touched: run the §5 zero-delta CONTROL first (it is mandated unconditionally anyway) →
+> bit-identity vs the committed keeper → run the §3 pre-check on the CONTROL's own
+> `unit_hourly_2025` (P1 rows; commit the unit_hourly sidecars with the pre-check record) →
+> K-PRE-A/K-PRE-B decide exactly as pre-registered → only then build the flag and solve the ARM.
+> The prereg itself is UNAMENDED.
+
 > **QUEUE STAMP miso-167 (2026-08-18) — THE LANE IS RE-OPENED BY OWNER RE-CHARTER AND THE
 > OBJECT IS RE-IDENTIFIED. NO SOLVE, NO LEVER ARMED, NO `ScenarioConfig` FIELD, NO CELL
 > VERDICT MINTED, NO REGISTRATION. Keeper UNCHANGED at `2026-08-16-miso-160-wefor-shape`**
