@@ -184,10 +184,16 @@ at least half the hours the floor asserts it must be online.
   window-consistency check passes conduct rows unchanged because they carry the
   same window string. A consumer that ever *does* want energy totals should
   filter `check == "window"`.
-* 8 new unit tests (`tests/scoring/test_legitimacy_diagnostics.py::TestD4PerUnitConductRider`);
-  full `tests/scoring/` = 1,030 passed, and the 5 pre-existing failures
-  (`test_ff_readiness_battery`, `test_crossover_harness` — forecast lane) were
-  confirmed present on a stashed tree, i.e. not caused here.
+* **10 new unit tests** (`tests/scoring/test_legitimacy_diagnostics.py::TestD4PerUnitConductRider`),
+  covering the laid-up signature, the driver-gated limb, the substituted row,
+  the CT-only-flagged plant, the missing meter and the sub-daily-window scope.
+  Full `tests/scoring/` = **1,038 passed, 0 failed**. *(Mid-session a run showed
+  5 failures in `test_ff_readiness_battery` / `test_crossover_harness`; they
+  reproduced on a stashed tree, so they were never this change's doing, and
+  they cleared once the `data/clean` regeneration this session ran finished —
+  they were an artifact of a half-built clean tree, not a repo defect. Recorded
+  because the earlier draft called them "pre-existing failures", which
+  overstated it.)*
 
 ### 2.3 It works in both directions — and it found something
 
