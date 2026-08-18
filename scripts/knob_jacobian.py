@@ -6,8 +6,10 @@ and docs/model-legitimacy-audit-2026-07.md §7 D-11).
 For a keeper bundle, reads the DOF ledger's ``free_parameters`` (built by
 ``scripts/build_dof_ledger.py`` if the bundle's attestation doesn't carry one
 yet), perturbs each numeric knob +-10% one at a time, re-solves ONE year
-(2024 only — CLAUDE.md rule 16's probe exemption; never touches the 2022/
-H1-2026 quarantine, rule 22), and scores the result against the same
+(2024 by default — CLAUDE.md rule 16's probe exemption; an out-of-training
+``--year`` is REFUSED by ``enforce_holdout_year_gate`` in :func:`solve_year`,
+freeze-first and fail-closed, rather than merely not-intended — see that
+function's note), and scores the result against the same
 class-TWh / dispatch-shape / price machinery ``scripts/derive_offer_curve_
 jacobian.py`` already uses for its regression targets — reused here directly
 (``Bundle``, ``class_totals``, ``bundle_metrics``) rather than re-derived, so
@@ -59,6 +61,7 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import re
 import sys
@@ -207,6 +210,9 @@ def solve_year(
     overrides: dict,
     out_dir: Path,
     reference: dict | None = None,
+    *,
+    holdout_authorized: bool = False,
+    enable_legacy_p2: bool = False,
 ) -> Path:
     """Real one-year replay solve of ``bundle``'s keeper config plus ``overrides``.
 
@@ -216,6 +222,32 @@ def solve_year(
     with ``overrides`` layered on top via the generic ``prb_overrides``
     channel — the same channel ``replay_keeper.py --set`` uses for single-
     delta A/B probes.
+
+    THE TWO GATES BELOW ARE WHAT MAKE THE MODULE DOCSTRING'S CLAIMS TRUE RATHER
+    THAN ASSERTED (audit row O5 follow-up, 2026-08-18). This function calls
+    ``solve_and_persist`` directly, so it is a solve entry point in its own
+    right and neither gate reaches it from anywhere else:
+
+    * **Holdout year** — ``enforce_holdout_year_gate`` lives at the *entry
+      points* (``run_calibration_full.main``, ``run_calibration.main``,
+      ``run_replay_bundle``, ``replay_keeper.main``), never inside
+      ``solve_and_persist``. ``--year`` here is a free ``int``, so before this
+      gate ``--year 2019`` solved a locked-test year — under an ACTIVE spend
+      freeze — with nothing to stop it, while this module's own docstring
+      claimed it "never touches the 2022/H1-2026 quarantine, rule 22". Rule 22
+      `[R-HOLDOUT]` fails closed; so does the gate, freeze first.
+    * **Archived P2** — this is the THIRD path that rebuilds kwargs from a
+      committed ``meta.json`` (``run_replay_bundle`` and ``replay_keeper.main``
+      are the two neiso-99 closed). A bundle recorded with ``commitment=true``
+      re-armed the archived pass silently on replay, which is how P2 crossed
+      three NEISO keeper generations with no operator decision anywhere. Two
+      committed bundles still carry ``commitment=true``
+      (``neiso86_2022_corrected``, ``neiso97_dstrepair_A``), so the seam is
+      live here, not hypothetical.
+
+    Both are fail-closed guards on a diagnostic that is advisory and never a
+    keeper: they change no solve's numbers, they only refuse a solve that would
+    otherwise run ungated.
     """
     from scripts import replay_keeper  # noqa: PLC0415
     from scripts import run_calibration_full as rcf  # noqa: PLC0415
@@ -225,6 +257,8 @@ def solve_year(
     kwargs["years"] = [int(year)]
     kwargs["iso"] = iso
     kwargs["hours"] = int(meta.get("hours", 8760))
+    rcf.enforce_holdout_year_gate(kwargs["years"], iso, holdout_authorized)
+    rcf.enforce_legacy_p2_kwargs(kwargs, enable_legacy_p2)
     kwargs["reference"] = reference if reference is not None else rcf._load_reference()
     kwargs["run_dir"] = out_dir
     prb = dict(kwargs.get("prb_overrides") or {})
@@ -513,6 +547,24 @@ def main() -> None:
         default=None,
         help="dir to solve the perturbed bundles into (default: a temp dir)",
     )
+    ap.add_argument(
+        "--holdout-authorized",
+        action="store_true",
+        help=(
+            "acknowledge a rule-22 out-of-training --year. Still fails closed "
+            "unless the ISO carries that year's tier marker AND the holdout "
+            "spend freeze is inactive."
+        ),
+    )
+    ap.add_argument(
+        "--enable-legacy-p2",
+        action="store_true",
+        help=(
+            "unlock the ARCHIVED P2 commitment pass when the replayed bundle's "
+            "meta.json arms it (audit row O5); without it such a bundle is a "
+            "hard error rather than a silent re-arm"
+        ),
+    )
     args = ap.parse_args()
 
     result = compute_jacobian(
@@ -523,6 +575,11 @@ def main() -> None:
         max_knobs=args.max_knobs,
         one_sided=args.one_sided,
         out_root=args.solve_root,
+        solve_fn=functools.partial(
+            solve_year,
+            holdout_authorized=args.holdout_authorized,
+            enable_legacy_p2=args.enable_legacy_p2,
+        ),
     )
     out = args.out or (args.bundle / "knob_jacobian.json")
     out.write_text(json.dumps(result, indent=2) + "\n")
