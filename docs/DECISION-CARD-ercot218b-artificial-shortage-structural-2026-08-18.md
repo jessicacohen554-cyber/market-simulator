@@ -170,3 +170,37 @@ never a basis — the gate table contains no 2023 price criterion).
 Awaiting B-1. If the owner prefers option C instead (the crosswalk data
 intake that needs no rule change), say so and the data-spec card will be
 drafted in its place.*
+
+---
+
+## SIGNATURE (appended by the ercot-219 Phase-1 session, per the card's closing clause)
+
+**`B-1 SIGNED (owner, by dispatch of ERCOT-219, 2026-08-18)`** — the
+signature is constituted by the owner's dispatch of the ERCOT-219 Phase-1
+session itself, per this card's closing clause and the X-1/X-2 precedent
+(signature-by-dispatch; cf. the X-2 signature of 2026-08-16, recorded in
+`frontend/data/backcast/keepers/ERCOT.json` standing_note). The decision
+text signed is §1 above, verbatim:
+
+> **B-1 (owner):** The ERCOT backcast may carry a measured
+> **aggregate-capability reconciliation**: the fleet's hourly dispatchable
+> capability is reconciled to ERCOT's published real-time telemetered
+> aggregate (the committed NP6-905 quantity columns, `rtolhsl`/`rtolcap` —
+> never a price column), applied **consistently across all backcast years**
+> as a measured availability input under rule 14's reconciled-real-data
+> clause. I acknowledge the standing tension this signature resolves:
+> ERCOT-159/163 adjudicated per-hour telemetered-capability caps as
+> rule-13-forbidden because realized telemetry embeds realized commitment.
+> I accept the reconciliation on the rule-14 ground that the accurate
+> aggregate is measured, the per-unit identification twice failed its
+> licence (item 11), and the model's current aggregate is demonstrably less
+> reflective of reality (the ~2.7 GW responsive wedge, ercot-170/191,
+> term A = 102 % of the gap). Runs carrying it are marked
+> `capability-reconciled` on their attestation and determination basis, and
+> the C6 governance attestation must name this signature. The exception
+> covers the AGGREGATE reconciliation only; every per-unit and per-price
+> form stays closed.
+
+Executing session: ercot-219, branch `claude/ercot-219-option-b-phase1-5cs9bf`.
+The Phase-1 precommit (`docs/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md`)
+pins the §7 open choices before any solve.
