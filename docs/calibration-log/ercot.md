@@ -10302,5 +10302,27 @@ merit position: the model clears $70-97 where SCED cleared $272-457. No
 verdict, ledger, gate or keeper is touched by this addendum; it names the
 cause behind the standing C3a/C3b-2023 + C3c model-class object.
 
+### ercot-218 ADDENDUM 2 (same session, 2026-08-18): OPTION B SELECTED BY THE OWNER — the structural artificial-shortage mechanism card is DRAFTED, AWAITING SIGNATURE
+
+On the research memo's three options the owner instructed "Do it — b". Drafted:
+`docs/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md` —
+the B-1 signature text (a scoped rule-14 aggregate-capability reconciliation to
+the published NP6-905 telemetered aggregate, applied consistently across all
+backcast years, with the ERCOT-159/163 tension named verbatim for the owner to
+sign over), the three-stage mechanism spec (reconciled capability -> in-model
+exhaustion expectation via the registered `ordc_lolp_*` machinery -> storage
+reservation-price offer `P_exhaust x ordc_voll` through the P1-only
+`mc_bid_adjust` seam; ZERO fitted scalars, DOF table in the card), the
+direction-blind kill-gate table (G-CAP / G-SPUR@9/11/1 / G-SHED@0/1/0 /
+G-OWNER / G-BAT +-25% vs 930-BAT / G-DOF / G-D2 / G-REPRO; LOYO N/A declared
+pre-solve unless any scalar is identified), the one-session Phase-1 plan, and
+the §6 not-reopened list (Door A, ercot-162 R, item 11 per-unit, mid-band,
+regime lane, Q-B/R-A all stay closed). NOTHING built or armed: no
+ScenarioConfig field, no LP, no matrix cell — the card is void unless B-1 is
+signed, and the ercot-218 close-out stands meanwhile. Supporting measurement
+recorded in the memo §5: August-2023 realized daily P(>=$1,000 spike) 0.52 vs
+the measured storage offer-implied 0.67 — the object month's offer level was
+rational expectation of the artificial-shortage frequency.
+
 **Session consumed the ercot-218 shorthand. Next shorthand: ercot-219**
 (ercot-199 remains unclaimed).
