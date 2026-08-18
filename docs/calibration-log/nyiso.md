@@ -7119,3 +7119,63 @@ keeper flipped too, as an unavoidable consequence of a single shared scorer) are
 in `docs/calibration-log/governance.md`, 2026-08-17. Matrix: NYISO's `gates` stamp
 re-stamped; **no cell verdict moved** (rule 28b/28d — no mechanism was tested).
 Next number: **nyiso-143**.
+
+## 2026-08-17 — PROMOTION: keeper → `2026-08-17-nyiso-142-stackdup` (the Astoria stack-duplicate intake correction). No solve.
+
+Owner ruling this session, verbatim: *"Is this a recommended keeper candidate? If
+so plz promote. If structural integrity improves but gates regress that may still
+be a keeper."* The recommendation was PROMOTE — and the structure-over-gates
+clause is **not needed**, because **no gated criterion regresses**.
+
+**NO NEW SOLVE.** The A/B was pre-registered, solved and adjudicated at nyiso-142
+(control `2026-08-17-nyiso-142-control`) and held pending the owner's call. The
+promotion moves the keeper pointer only.
+
+**What is corrected — rule 14 `[R-ACCURATE]`, zero free parameters.** CAMPD/CEMS
+reports **one Astoria generator twice**, and in 2025 that doubled number **was
+the benchmark**. `campd.CAMPD_STACK_DUPLICATE_UNITS` is live and
+`scripts/data/repair_v2_stack_duplicate_rows.py` folds the 18 stack-duplicate
+`plant_emission_rates_v2` rows onto their primaries across 2018–2026 with every
+other row asserted byte-frozen. The surgical route was **required**: the default
+derive path is a REPLACE and would have destroyed the 2018 rows (no longer
+buildable) and the 2022/2026 holdout-intake rows (unrepeatable). Rule 23
+`[R-FROZEN-DERIVE]`: the trigger is CAMPD's own duplicate stack rows, never a
+residual.
+
+**It is not a lever, and no cell verdict moves (rule 28b/28d).** `718/718`
+`scenario_config` fields identical, sorted-config sha256 identical — the arm
+changes no model parameter. `plant_emission_rates_v2` stays `K`.
+
+**All six pre-registered gates clean.** K1′ artifact diff 17 CSV lines **all**
+keyed `NYISO,8906`; K2 slack/dump 0.0 in all six run-years; K3 benchmark
+2.6722 → 1.3590 exactly; K4 **zero** other plants move; K5 identical criterion
+statuses; K6′ D-1/D-2/D-4 pass both arms with **no D-2 forced share moving at
+all**. `chp-btm-share` byte-identical in **every** ISO (rule 25 `[R-ISO-SCOPE]`).
+
+**Determination `CALIBRATED`**, re-verified from committed artifacts only (rule 22
+D-5(b), no solve), criterion for criterion identical to the superseded keeper —
+0 FAILs, C3c the lone ledgered caveat **bit-unchanged at 21 / 3 / 24 h**, grade
+scored 8 / target 7 / commercial 0 / ledgered 1. D-5(b)'s worse-determination
+stop does not fire.
+
+**DO-NOT-MISREAD, carried from the prereg.** 2025's movement is **mostly the
+target moving** (benchmark −1.204 TWh) not the model improving (−0.213); 2024
+ST_GAS gets **worse** (−0.916 → −1.062), the pre-registered adverse case landing
+on a year whose target was already right. Summed |error| 6.916 → 5.986 TWh is a
+*consequence*, not the argument (rule 1 `[R-STRUCT]`). **The real reason the
+promotion matters:** the superseded keeper's solve inputs embedded the artifact
+while the benchmark has since been corrected — the promoted run is the internally
+consistent pair. And the standing warning stands: the 2025 correction moves **six**
+class benchmarks via the ISO-total reconciliation, so **every NYISO run ever
+scored on 2025 was scored against an inflated ST_GAS target** and post-correction
+2025 figures are not comparable to committed pre-correction ones.
+
+**Successor unchanged:** `nyiso_incity_commitment_obligation` (cell `U`) — named,
+not armed, no parameter derived. **Frontier still CLEARED**; `complete` held,
+**absent from `final`** (nyiso-142 found it NOT READY on both locked-test years on
+grounds no further testing fixes); holdout spend freeze ACTIVE and untouched — no
+year outside 2023–2025 solved, scored or registered.
+
+Gates: `audit_keepers.py --check` **0 failures / 0 warnings** · `build_status.py
+--iso NYISO` → `NYISO:CALIBRATED` · `check_mechanism_matrix.py` integrity +
+anchors + keeper stamps + §5.x prose OK. Next number: **nyiso-143**.
