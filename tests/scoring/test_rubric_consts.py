@@ -27,6 +27,7 @@ def _payload(text: str) -> dict:
 def test_values_come_from_the_scorer():
     c = rubric_consts.rubric_consts()
     assert c["fuelmixVolLoadFrac"] == cv.FUELMIX_VOL_LOAD_FRAC
+    assert c["fuelmixVolGenFloorFrac"] == cv.FUELMIX_SHARE_PP / 100.0
     assert c["fuelmixVolCapTWh"] == cv.FUELMIX_VOL_CAP_TWH
     assert c["fuelmixSharePP"] == cv.FUELMIX_SHARE_PP
     assert c["gasClasses"] == list(cv.GAS_CLASSES)

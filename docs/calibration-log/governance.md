@@ -1701,3 +1701,65 @@ anchors + keeper stamps + §5.x prose OK · scoring tests **162 passed** (the 4
 `test_ff_readiness_battery` failures on this checkout are a pre-existing,
 unrelated unbuilt-`data/clean` environment artifact — reproduced with the change
 stashed).
+
+## 2026-08-18 — RUBRIC v3.4 (owner amendment): the C1 volume band is floored at the share leg's own materiality — CAISO keeper C1 2023 CC_REGULAR flips FAIL → PASS
+
+**Session caiso-c1-lmp-pricing. Owner directive verbatim:** *"Ccgt is fine at
+-1.8% for passing c1 gate … I want … a shift that declares c1 for 2023
+calibrated."*
+
+**THE CHANGE.** C1's volume leg becomes
+`vol_band = min(max(2.0% of ISO load, 3.0% of ACTUAL total generation), 8 TWh)`
+(`calibration_verdict._fuelmix_vol_band`, shared by `score_fuelmix` and the C2
+preliminary-family fallback). **No new constant:** the floor is
+`FUELMIX_SHARE_PP` (3.0) applied to the actual-side generation total — the same
+±3.0-pp-of-mix materiality the share leg already declares.
+
+**WHY IT IS A COHERENCE REPAIR, NOT A RESIDUAL FIT.** On a deep net-importing
+ISO the 2%-of-load term could bind *tighter* than the rubric's own declared
+mix-materiality on the same class — CAISO 2023: ±4.15 TWh (2% of 207.4 TWh
+load) vs ±5.27 TWh (3% of 175.7 TWh actual generation) — failing a class whose
+miss the share standard calls fine (CC_REGULAR −4.24 TWh = −2.4% of actual
+generation, share −1.8 pp). The floor is measured in raw |model−actual| TWh
+over the **actual** generation denominator, deliberately not `share_pp`, which
+a system-total shrink (over-import displacing the class) flatters: the same CC
+row reads −1.8 pp on share but −2.4 pp of actual gen, and the floor gates on
+the un-flatterable −2.4. Unchanged: the 8 TWh cap (large-ISO bands
+bit-identical), the ±3.0 pp share leg (MISO CC_REGULAR +47 TWh / +7.7 pp still
+fails both legs), and the 2%-of-load term wherever it is wider.
+
+**EFFECT AT AMENDMENT, MEASURED over all 26 registered runs against a
+pre-change snapshot rather than asserted:** exactly **one row** flips — CAISO
+keeper `2026-08-17-caiso-200-h1-memberpanel` C1 2023 CC_REGULAR FAIL → PASS
+(|−4.244| ≤ 5.272), taking its C1 criterion FAIL → PASS. The determination
+stays **NOT-YET** on the standing C3a mean-LMP miss (+12.8/+15.7% in
+2024/2025), which is now the **sole** load-bearing gate on the CAISO lane. No
+other record of any run of any ISO changes status; no determination label
+changes anywhere. No solve ran. The two nyiso-143 registrations that landed on
+main mid-session (after the snapshot) were verified separately: NYISO's floor
+does bind (band ±2.94–3.03 → ±3.80–4.08), but no gated row of either run sits
+between the old and new bands, so both are status-identical under v3.4.
+
+**WHAT THE BAND SHIFT DOES NOT DO.** The CC-side under-dispatch / over-import
+residual (caiso-121 surplus-belly, caiso-135 ride-through, caiso-140 §B) is
+unchanged as a structural object — the amendment changes what the rubric
+charges for it, not the physics. The C3a lane inherits it: the same over-import
+conduct that flattered the share leg is a named suspect in the 2024/2025 price
+level overrun.
+
+**Records updated:** `scripts/calibration_verdict.py` (v3.4 + tests),
+`scripts/lib/rubric_consts.py` (+ `fuelmixVolGenFloorFrac` export + test),
+`docs/calibration-determination-rubric.md` (banner, §C1, §C2 deferral text, §8
+comparables row, §9), `docs/codebase-site/js/backcast-runs.js`
+(`volInTol`/`volBand` mirror), `frontend/data/backcast/rubric-consts.js`
+(regenerated), the CAISO keeper shard `disposition_note` + registry sidecar
+`definition` (dated v3.4 re-score preambles, promotion-time text preserved
+verbatim), the keeper bundle `metrics.json` (re-written by
+`--write-metrics`), and all seven `status/` parts (`build_status.py`).
+
+**Gates:** `audit_keepers.py --iso CAISO` **0 failures / 0 warnings** ·
+`build_status.py --check` in sync (6/6) · verdict + rubric-consts suites **133
+passed** · scoring lane **1033 passed** (the 4 `test_ff_readiness_battery`
+failures and 1 `test_crossover_harness` failure on this checkout are
+pre-existing unbuilt-`data/clean` environment artifacts — reproduced with the
+change stashed) · ruff clean.
