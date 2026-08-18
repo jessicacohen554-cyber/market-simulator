@@ -17,7 +17,7 @@ After this session:
 
 | # | object | status after nyiso-143 |
 |---|---|---|
-| 1 | chartered Zone-K reconciliation | **PRE-REGISTERED, SOLVED, REGISTERED — and ESCALATED.** All six gates PASS, including the K6′ that replaced the K6 which killed it; the arm is still not promotable, on a **discovery** rather than a fit result (§1) |
+| 1 | chartered Zone-K reconciliation | **PRE-REGISTERED, SOLVED, REGISTERED — and it PASSES its own pre-registration.** All six gates PASS, including the K6′ that replaced the K6 which killed it; promoting is the pre-registered outcome, and the owner's promote/hold ruling is what stays open (§1) |
 | 2 | D-4 per-unit conduct rider | **CLOSED — BUILT, VALIDATED, SHIPPED.** And it immediately found a live defect on the keeper (§2) |
 | 3 | `nyiso_incity_commitment_obligation` | **OPEN — and newly BLOCKED** on an unidentified coefficient (§3) |
 | 4 | `nyiso_synchronised_reserve` | **OPEN. The ground for closing it is FALSIFIED** (§3) — this is the object nobody knew was open |
@@ -107,14 +107,39 @@ object nyiso-110 named from the reserve side and nyiso-124 located as a
 downstate price-formation gap.
 
 **So the arm is NOT rejected on fit — rule 1 `[R-STRUCT]` forbids that**, and
-the identification is published with zero DOF. It is a **rule 22 D-5(b)
-escalation** with two defensible readings: (A) rule 14 literal — arm the
-accurate number now and open the scarcity mechanism as the discovered root
-cause, at the cost of a 3-of-3 C3c miss and NOT-YET; or (B) sequencing — build
-the scarcity mechanism first so the accurate input does not land on a
-representation left emptier than it started. **Session recommendation: B, as a
-recommendation and not a verdict.** The A/B is DONE and must not be re-solved;
-what is open is the ruling. Cell `nyiso_li_tsl_n11_security`: **`R` → `O`**.
+the identification is published with zero DOF.
+
+### 1.5 CORRECTION — the arm PASSES its pre-registration, and the determination would not move
+
+An earlier version of this section and of the RESULT doc said the arm was *"not
+promotable"* and used §1.4's discovery as the reason. **That was wrong.** Two
+measured facts, checked rather than assumed:
+
+* **It meets every promote criterion that was actually set.** The
+  pre-registration §6 required K1-K5 silent, K6′ clean, and
+  C1/C2/C3a/C3b/C4/C6/C8 no worse than control — *"whatever C3c does"*, wording
+  inherited from charter D2 and nyiso-130 §8, i.e. **the owner had already
+  ruled C3c is not the deciding criterion for this lever.** All of it holds;
+  2023 C3a improves; no pre-registered adverse case fired.
+* **The determination would be the same label.** `price_tail` is the **LONE**
+  failing criterion in **both** arms, with C6 `UNATTESTED` the only other
+  non-PASS — the absent keeper attestation every non-keeper probe carries, not
+  a substantive miss. Attested, both would hit rubric v3.3's C3c standing rule
+  (lone C3c failure + governance PASS ⇒ auto-ledgered caveat that does **not**
+  downgrade) and read **`CALIBRATED` with one ledgered caveat, exactly like the
+  designated keeper.** The "2-of-3 → 3-of-3" above is the per-year criterion
+  **record**, reported at full magnitude — it is not a determination change.
+
+Using a consideration invented after seeing the result to override a gate that
+passed as written is precisely what the nyiso-119 G4 precedent forbids in the
+other direction. §1.4's discovery stands entirely on its own merits and is the
+most valuable thing in the bundle; it does not retroactively block a promotion.
+
+**Corrected disposition: PROMOTING IS THE PRE-REGISTERED OUTCOME.** Holding
+instead requires the owner to affirmatively adopt the post-hoc sequencing
+argument (build the downstate scarcity mechanism first). The A/B is DONE and
+must not be re-solved; what is open is the **ruling**, not a failure. Cell
+`nyiso_li_tsl_n11_security`: **`R` → `O`** — open on that ruling.
 
 ### 1.3 One thing the pre-registration had to decide, and flags for the owner
 
@@ -184,10 +209,16 @@ at least half the hours the floor asserts it must be online.
   window-consistency check passes conduct rows unchanged because they carry the
   same window string. A consumer that ever *does* want energy totals should
   filter `check == "window"`.
-* 8 new unit tests (`tests/scoring/test_legitimacy_diagnostics.py::TestD4PerUnitConductRider`);
-  full `tests/scoring/` = 1,030 passed, and the 5 pre-existing failures
-  (`test_ff_readiness_battery`, `test_crossover_harness` — forecast lane) were
-  confirmed present on a stashed tree, i.e. not caused here.
+* **10 new unit tests** (`tests/scoring/test_legitimacy_diagnostics.py::TestD4PerUnitConductRider`),
+  covering the laid-up signature, the driver-gated limb, the substituted row,
+  the CT-only-flagged plant, the missing meter and the sub-daily-window scope.
+  Full `tests/scoring/` = **1,038 passed, 0 failed**. *(Mid-session a run showed
+  5 failures in `test_ff_readiness_battery` / `test_crossover_harness`; they
+  reproduced on a stashed tree, so they were never this change's doing, and
+  they cleared once the `data/clean` regeneration this session ran finished —
+  they were an artifact of a half-built clean tree, not a repo defect. Recorded
+  because the earlier draft called them "pre-existing failures", which
+  overstated it.)*
 
 ### 2.3 It works in both directions — and it found something
 
