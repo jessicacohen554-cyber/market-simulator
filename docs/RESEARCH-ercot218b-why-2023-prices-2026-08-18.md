@@ -220,7 +220,95 @@ energy offers with the official scarcity mechanism nearly silent.**
 actual tail hours clear $200 on only a minority of their 15-minute
 intervals — structurally invisible to an hourly LP.)
 
-## 5. SOURCES
+## 5. CAN THIS BE MODELED? (owner follow-up, same session: "Is there no way to model this??")
+
+**In principle yes — the mechanism is now understood well enough to specify a
+fully structural model of it. In practice every buildable version chains
+through one keystone that today's data cannot license.** The assessment, with
+a new measurement:
+
+**The new measurement — August 2023's offer level was rational expectation.**
+The realized daily probability of a ≥ $1,000 spike-hour, by month, against
+the measured storage offer at the tightest hours (implied P = offer / $5,000
+cap):
+
+| | realized P(≥$1,000 day) | P × $5,000 | measured storage `p50` | implied P |
+|---|---:|---:|---:|---:|
+| Jun 2023 | 0.03 | $167 | $5,000 | 1.00 |
+| Jul 2023 | 0.06 | $323 | $5,000 | 1.00 |
+| **Aug 2023** | **0.52** | **$2,581** | **$3,361** | **0.67** |
+| Sep 2023 | 0.13 | $667 | $4,052 | 0.81 |
+| 2024 (yr) | 0.014 | $68 | $1,281 | 0.26 |
+| 2025 (yr) | 0.008 | $41 | $990 | 0.20 |
+
+In the month that carries the object (August, with September = 96.2 % of the
+C3b-2023 residual), the offer level matches the realized event base rate to
+~30 % — the "conduct" was a calibrated bet on the artificial-shortage event
+frequency. June/July sit at the cap regardless (park-at-the-cap in an unknown
+new regime), September looks backward-priced off August's experience, and
+2024/25 offers exceed realized frequency severalfold as events vanish —
+consistent with adaptive/lagged expectations, and with why no *static*
+function of same-hour telemetry fits the surface (the T5 irreducibility).
+
+**The structural architecture this implies** (three stages, each with a real
+market analogue, zero fitted scalars in principle):
+
+1. **Stack exhaustion** — the model's SCED-equivalent dispatchable stack must
+   run out where the real one did (the sequestration is already carried; the
+   model's residual headroom is ~2.7 GW too fat — the item-11 capability
+   wedge).
+2. **Expectation** — the probability of an exhaustion event in the evening
+   peak, computed from the model's own state (load, net-load ramp, available
+   capability net of the sequestered MW). In 2023 this is large *because of*
+   ECRS; in 2024/25 it collapses; in a forecast year it regenerates.
+3. **The offer** — storage prices its scarce SOC at that expectation × the
+   cap (the textbook reservation price of stored energy), becoming the
+   marginal price-setter at exactly the hours reality's batteries were.
+
+None of this is the refuted material: it fits nothing to a residual (Door A
+closed *fitted* conduct functions), feeds no measured surface (ercot-162's R),
+and reads no price as an input. It is a NEW mechanism family and would need
+its own owner card, matrix row, precommit and kill gates.
+
+**The keystone, and why it is currently blocked: stage 1.** Without real
+exhaustion events, stage 2's in-model probability is ~zero (the model's
+August-2023 λ sits at ~$97 with headroom to spare), and anchoring the
+expectation on *reality's* event frequency instead is a measured-outcome
+input — the rule-13 forbidden form. The three known ways to close the wedge
+are each adjudicated on today's data: the per-hour telemetered capability cap
+(aggregate or per-unit) pins the backcast to realized commitment — rule-13
+forbidden (ERCOT-159/163, cell `R`); the reproducible per-unit
+SCED-train↔model-unit capability model failed its pre-registered licence
+twice (L1 0.5111/0.3375 then 0.3857 vs a 0.90 bar — item 11, Q-B); the
+commitment-state route was refuted (ercot-163). And capability is *already*
+measured-informed (the DAM availability rescale), so a stacked physics
+derate would double-count a phenomenon that overlay owns (rule 19).
+
+**The three honest options for the owner:**
+
+- **(A) Hold the current posture.** 2023's level stands as the priced
+  residue of a one-summer design defect; the forecast never needs the
+  mechanism (the ECRS trigger since Aug-2024 and RTC+B removed the channel);
+  Door D's 2026 SOM anchors arrive ~mid-2027. Cost: C3a/C3b-2023 stay
+  failed; C3c stays a ledgered caveat.
+- **(B) Sign a scoped rule amendment.** Authorize, as an explicit owner
+  decision, a backcast-2023-only capability reconciliation to the published
+  aggregate telemetry (rule 14's "reconciled version of real data" clause,
+  extended by your signature to cover what rule 13 currently scores as
+  pinning), then build stages 2–3 structurally on top. The record would mark
+  those hours measured-capability-anchored; the forecast lane is untouched.
+- **(C) Fund the data route.** The wedge is at bottom a data-quality
+  problem — a resource-name↔model-unit mapping that cannot be licensed from
+  the committed disclosures alone. A better crosswalk intake (EIA↔ERCOT
+  registry / settlement-ID based) could pass the existing 0.90 licence bar,
+  and then the whole architecture is buildable with zero fitted scalars and
+  no rule change. Unknown cost until scoped; it is the only route that
+  closes the gap *within* the current rules.
+
+Nothing is built or armed here; this section exists so the choice is the
+owner's, on the record.
+
+## 6. SOURCES
 
 **Primary:** Potomac Economics, *2023 State of the Market Report for the
 ERCOT Electricity Markets* (June 2024) — Executive Summary (ECRS mechanism,
