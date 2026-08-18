@@ -356,6 +356,205 @@ class TestD4:
         assert res.passed and not res.rows
 
 
+class TestD4PerUnitConductRider:
+    """The rider adopted with K6' at nyiso-140 §5 (owner, 2026-08-16).
+
+    D-4's off-window test is tautological for an h0-23 floor, so K6' leg (a)
+    and rule 20's grounded-above-budget escalation both rested on a check that
+    could not fire. The rider restores rule 17's substance at per-unit grain:
+    a floored plant whose own measured median output over the declared window
+    is exactly zero fails provenance.
+    """
+
+    # ST_GAS × reliability_floor is the D4_WINDOWS h0-23 row the NYISO keeper
+    # actually carries (nyiso-139b §3); MECH_RELIABILITY_FLOOR × CT_PEAKER is
+    # the [14, 22) row, used here for the sub-daily scope check.
+    KLASS = np.array(["ST_GAS"])
+
+    def _floored(self, n=1):
+        dispatch = np.full((n, HOURS), 40.0)
+        min_gen = np.full((n, HOURS), 40.0)
+        mech = np.full((n, HOURS), MECH_RELIABILITY_FLOOR, dtype=np.int8)
+        return dispatch, min_gen, mech
+
+    def test_laid_up_plant_fails_provenance(self):
+        """The Port Jefferson signature: floored all year, meter flat zero."""
+        dispatch, min_gen, mech = self._floored()
+        res = run_d4(
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["2517"],
+            bench_pl={"2517": {"npl": 100.0, "mw": np.zeros(HOURS)}},
+        )
+        assert not res.passed
+        conduct = [r for r in res.rows if r["check"] == "unit-conduct"]
+        assert len(conduct) == 1
+        assert conduct[0]["plant"] == "2517"
+        assert conduct[0]["verdict"] == "FAIL"
+        assert conduct[0]["measured_zero_share"] == 1.0
+        # The window row itself still passes — which is exactly the blindness
+        # the rider exists to cover.
+        window = [r for r in res.rows if r["check"] == "window"]
+        assert window[0]["verdict"] == "pass"
+        assert window[0]["offwindow_share"] == 0.0
+
+    def test_running_plant_passes(self):
+        dispatch, min_gen, mech = self._floored()
+        res = run_d4(
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["8906"],
+            bench_pl={"8906": {"npl": 100.0, "mw": np.full(HOURS, 55.0)}},
+        )
+        assert res.passed
+        conduct = [r for r in res.rows if r["check"] == "unit-conduct"]
+        assert len(conduct) == 1 and conduct[0]["verdict"] == "pass"
+
+    def test_majority_zero_still_fails_on_the_median(self):
+        """Offline in > half the window hours ⇒ median 0 ⇒ FAIL.
+
+        The statistic is threshold-free on purpose (rule 5 [R-NO-MAGIC]):
+        "the meter says it is offline in at least half the hours the floor
+        asserts it must be online".
+        """
+        dispatch, min_gen, mech = self._floored()
+        meas = np.zeros(HOURS)
+        meas[: HOURS // 3] = 60.0  # online a third of the year
+        res = run_d4(
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["1"],
+            bench_pl={"1": {"npl": 100.0, "mw": meas}},
+        )
+        assert not res.passed
+
+    def test_minority_zero_passes(self):
+        dispatch, min_gen, mech = self._floored()
+        meas = np.full(HOURS, 60.0)
+        meas[: HOURS // 3] = 0.0  # offline a third of the year
+        res = run_d4(
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["1"],
+            bench_pl={"1": {"npl": 100.0, "mw": meas}},
+        )
+        assert res.passed
+
+    def test_unmetered_plant_never_fails_and_is_disclosed(self):
+        dispatch, min_gen, mech = self._floored()
+        res = run_d4(
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["nohydrometer"],
+            bench_pl={},
+        )
+        assert res.passed
+        assert not [r for r in res.rows if r["check"] == "unit-conduct"]
+        assert any("no measured series" in n for n in res.notes)
+
+    def test_rider_scoped_to_all_hours_windows_only(self):
+        """A sub-daily window can already fail off-window; no rider row."""
+        dispatch, min_gen, mech = self._floored()
+        res = run_d4(
+            dispatch,
+            min_gen,
+            mech,
+            np.array(["CT_PEAKER"]),  # the [14, 22) row
+            year=2023,
+            pids=["1"],
+            bench_pl={"1": {"npl": 100.0, "mw": np.zeros(HOURS)}},
+        )
+        assert not [r for r in res.rows if r["check"] == "unit-conduct"]
+
+    def test_skipped_without_bench_and_says_so(self):
+        dispatch, min_gen, mech = self._floored()
+        res = run_d4(dispatch, min_gen, mech, self.KLASS, year=2023)
+        assert res.passed
+        assert any("NOT RUN" in n for n in res.notes)
+
+    def test_substituted_row_is_excluded_and_disclosed(self):
+        """A row whose dispatch IS its floor cannot carry a conduct verdict.
+
+        pjm-149 / caiso-155 substitute ``dispatch := min_gen`` for plants the
+        active source carries no series for, which makes the at-floor set the
+        whole floor-positive set by construction — "indeterminate on a fail".
+        """
+        dispatch, min_gen, mech = self._floored()
+        res = run_d4(
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["2517"],
+            bench_pl={"2517": {"npl": 100.0, "mw": np.zeros(HOURS)}},
+            substituted=np.array([True]),
+        )
+        assert res.passed
+        assert not [r for r in res.rows if r["check"] == "unit-conduct"]
+        assert any("SUBSTITUTED" in n for n in res.notes)
+
+    def test_driver_gated_limb_scored_on_its_binding_hours(self):
+        """A limb inside an h0-23 window but gated by its own driver.
+
+        NYISO's ``Capital_Hudson × ST_GAS`` tmax limb (threshold 31.1 °C, no
+        start/end hour) binds only on design-cooling hours. A unit that runs
+        exactly then has an ANNUAL median of 0 — a window-wide test would fail
+        it — but its conduct in the hours the floor actually forces it is
+        precisely what the driver predicts, so it must PASS.
+        """
+        dispatch = np.zeros((1, HOURS))
+        min_gen = np.zeros((1, HOURS))
+        mech = np.zeros((1, HOURS), dtype=np.int8)
+        hot = np.zeros(HOURS, dtype=bool)
+        hot[13:19] = True  # the limb's own driver window (design-cooling hours)
+        dispatch[0, hot] = 40.0
+        min_gen[0, hot] = 40.0
+        mech[0, hot] = MECH_RELIABILITY_FLOOR
+        meas = np.zeros(HOURS)
+        meas[hot] = 70.0  # the meter agrees: it runs exactly then
+        res = run_d4(
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["2625"],
+            bench_pl={"2625": {"npl": 621.0, "mw": meas}},
+        )
+        assert res.passed
+        conduct = [r for r in res.rows if r["check"] == "unit-conduct"]
+        assert len(conduct) == 1
+        assert conduct[0]["binding_hours"] == 6
+        assert conduct[0]["measured_median_mw"] == 70.0
+        # And the same unit DOES fail when it is idle in those very hours.
+        res2 = run_d4(
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["2625"],
+            bench_pl={"2625": {"npl": 621.0, "mw": np.zeros(HOURS)}},
+        )
+        assert not res2.passed
+
+
 # ---------------------------------------------------------------------------
 # D-5 — forecast/backcast parity
 # ---------------------------------------------------------------------------

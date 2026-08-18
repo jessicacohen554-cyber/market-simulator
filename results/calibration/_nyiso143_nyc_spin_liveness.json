@@ -1,0 +1,98 @@
+{
+ "run_id": "2026-08-17-nyiso-142-stackdup",
+ "requirement_mw": 250.0,
+ "rho_used": 1.0,
+ "rho_clip_ceiling_for_reference": 4.0,
+ "spin_zone": "NYC",
+ "quick_groups": [
+  "CT_CHP",
+  "CT_PEAKER",
+  "GT_OIL",
+  "IC_OIL",
+  "OIL",
+  "ST_OIL"
+ ],
+ "years": {
+  "2023": {
+   "n_plants": 13,
+   "plants": [
+    "2493:CT_CHP",
+    "2494",
+    "2499",
+    "2503",
+    "55243",
+    "55699",
+    "56964",
+    "7909",
+    "7910",
+    "7913",
+    "7914",
+    "7915",
+    "8053"
+   ],
+   "hours": 8760,
+   "nyc_quickstart_mw_p0": 79.143,
+   "nyc_quickstart_mw_p50": 212.248,
+   "nyc_quickstart_mw_p100": 1455.1,
+   "binding_hours": 7911,
+   "binding_share": 0.9031,
+   "worst_deficit_mw": 170.857,
+   "binding_hours_at_rho_ceiling_4.0": 0,
+   "verdict": "BINDS (mechanism is LIVE)",
+   "rho_star_for_inertness": 3.1588
+  },
+  "2024": {
+   "n_plants": 12,
+   "plants": [
+    "2493:CT_CHP",
+    "2494",
+    "2499",
+    "2503",
+    "55699",
+    "56964",
+    "7909",
+    "7910",
+    "7913",
+    "7914",
+    "7915",
+    "8053"
+   ],
+   "hours": 8760,
+   "nyc_quickstart_mw_p0": 86.262,
+   "nyc_quickstart_mw_p50": 140.176,
+   "nyc_quickstart_mw_p100": 1506.111,
+   "binding_hours": 7159,
+   "binding_share": 0.8172,
+   "worst_deficit_mw": 163.738,
+   "binding_hours_at_rho_ceiling_4.0": 0,
+   "verdict": "BINDS (mechanism is LIVE)",
+   "rho_star_for_inertness": 2.8981
+  },
+  "2025": {
+   "n_plants": 11,
+   "plants": [
+    "2493:CT_CHP",
+    "2494",
+    "2499",
+    "55699",
+    "56964",
+    "7909",
+    "7910",
+    "7913",
+    "7914",
+    "7915",
+    "8053"
+   ],
+   "hours": 8760,
+   "nyc_quickstart_mw_p0": 82.914,
+   "nyc_quickstart_mw_p50": 248.742,
+   "nyc_quickstart_mw_p100": 1537.334,
+   "binding_hours": 4669,
+   "binding_share": 0.533,
+   "worst_deficit_mw": 167.086,
+   "binding_hours_at_rho_ceiling_4.0": 0,
+   "verdict": "BINDS (mechanism is LIVE)",
+   "rho_star_for_inertness": 3.0152
+  }
+ }
+}
