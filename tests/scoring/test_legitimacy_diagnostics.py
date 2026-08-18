@@ -487,6 +487,28 @@ class TestD4PerUnitConductRider:
         assert res.passed
         assert any("NOT RUN" in n for n in res.notes)
 
+    def test_substituted_row_is_excluded_and_disclosed(self):
+        """A row whose dispatch IS its floor cannot carry a conduct verdict.
+
+        pjm-149 / caiso-155 substitute ``dispatch := min_gen`` for plants the
+        active source carries no series for, which makes the at-floor set the
+        whole floor-positive set by construction — "indeterminate on a fail".
+        """
+        dispatch, min_gen, mech = self._floored()
+        res = run_d4(
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["2517"],
+            bench_pl={"2517": {"npl": 100.0, "mw": np.zeros(HOURS)}},
+            substituted=np.array([True]),
+        )
+        assert res.passed
+        assert not [r for r in res.rows if r["check"] == "unit-conduct"]
+        assert any("SUBSTITUTED" in n for n in res.notes)
+
     def test_driver_gated_limb_scored_on_its_binding_hours(self):
         """A limb inside an h0-23 window but gated by its own driver.
 

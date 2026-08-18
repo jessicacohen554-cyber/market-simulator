@@ -1015,6 +1015,7 @@ def run_d4(
     windows: dict[tuple[int, str | None], tuple[int, int]] | None = None,
     pids: list[str] | None = None,
     bench_pl: dict[str, dict] | None = None,
+    substituted: np.ndarray | None = None,
 ) -> GateResult:
     """D-4 off-window binding: floored MWh outside each declared window.
 
@@ -1042,7 +1043,13 @@ def run_d4(
     t = dispatch.shape[1]
     hod = np.arange(t) % 24
     conduct_ok = pids is not None and bench_pl is not None
+    subbed = (
+        np.zeros(dispatch.shape[0], dtype=bool)
+        if substituted is None
+        else np.asarray(substituted, dtype=bool)
+    )
     unmetered: set[str] = set()
+    skipped_substituted: set[str] = set()
     for (mech_id, k_filter), (start, end) in windows.items():
         in_window = (hod >= start) & (hod < end)
         sel_rows = (
@@ -1092,6 +1099,9 @@ def run_d4(
             if floored_mwh <= 0.0 or float(min_gen[global_i].max()) <= D2_FLOOR_MIN_MW:
                 continue
             pid = str(pids[global_i])
+            if subbed[global_i]:
+                skipped_substituted.add(pid)
+                continue
             b = bench_pl.get(pid)
             if b is None:
                 unmetered.add(pid)
@@ -1151,6 +1161,16 @@ def run_d4(
                     f"says it is offline in at least half the hours the floor "
                     f"asserts it must be online (per-unit conduct rider)"
                 )
+    if conduct_ok and skipped_substituted:
+        res.notes.append(
+            f"{year}: per-unit conduct rider skipped "
+            f"{len(skipped_substituted)} floored row(s) whose dispatch is "
+            "SUBSTITUTED by their own floor (no series in the active source) "
+            "— their at-floor set is the whole floor-positive set by "
+            "construction, so a conduct verdict on them would be an artifact: "
+            + ", ".join(sorted(skipped_substituted)[:20])
+            + (" …" if len(skipped_substituted) > 20 else "")
+        )
     if conduct_ok and unmetered:
         res.notes.append(
             f"{year}: per-unit conduct rider skipped {len(unmetered)} floored "
@@ -2725,6 +2745,7 @@ def diagnose_bundle(
                     npl=npl,
                     pids=all_pids,
                     bench_pl=bench_pl,
+                    substituted=mats.substituted,
                 )
                 d4.rows.extend(sub_res.rows)
                 d4.failures.extend(sub_res.failures)
