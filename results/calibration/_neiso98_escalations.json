@@ -5,8 +5,8 @@
   "leg1_p2_scoring_basis": [
     {
       "iso": "CAISO",
-      "keeper": "2026-08-16-caiso-197-w2-r5",
-      "bundle": "results/calibration/caiso197_w2_r5",
+      "keeper": "2026-08-17-caiso-200-h1-memberpanel",
+      "bundle": "results/calibration/caiso200_h1_memberpanel",
       "bundle_present": true,
       "commitment": false,
       "passes": [
@@ -15,8 +15,8 @@
     },
     {
       "iso": "ERCOT",
-      "keeper": "2026-08-16-ercot213-arm-pubanchor",
-      "bundle": "results/calibration/ercot213_anchor_B",
+      "keeper": "2026-08-17-ercot215-arm-decontam",
+      "bundle": "results/calibration/ercot215_decontam_B",
       "bundle_present": true,
       "commitment": false,
       "passes": [
@@ -35,13 +35,12 @@
     },
     {
       "iso": "NEISO",
-      "keeper": "2026-08-17-neiso-97-dstrepair",
-      "bundle": "results/calibration/neiso97_dstrepair_A",
+      "keeper": "2026-08-17-neiso-99-joint-p1",
+      "bundle": "results/calibration/neiso99_joint_B",
       "bundle_present": true,
-      "commitment": true,
+      "commitment": false,
       "passes": [
-        "P1",
-        "P2"
+        "P1"
       ]
     },
     {
@@ -74,7 +73,7 @@
     "units": [
       {
         "unit": "001",
-        "rows": 22,
+        "rows": 21,
         "plant_groups": [
           "CC_REGULAR"
         ]
@@ -88,21 +87,7 @@
       },
       {
         "unit": "003",
-        "rows": 7,
-        "plant_groups": [
-          "CC_REGULAR"
-        ]
-      },
-      {
-        "unit": "004",
-        "rows": 74,
-        "plant_groups": [
-          "CC_REGULAR"
-        ]
-      },
-      {
-        "unit": "005",
-        "rows": 74,
+        "rows": 6,
         "plant_groups": [
           "CC_REGULAR"
         ]
@@ -180,10 +165,8 @@
     "gate_present": true
   },
   "verdict": {
-    "isos_on_legacy_p2": [
-      "NEISO"
-    ],
-    "neiso_is_sole_p2_iso": true,
+    "isos_on_legacy_p2": [],
+    "neiso_is_sole_p2_iso": false,
     "keeper_bundles_resolved": 6,
     "ladder_years_all_inside_repaired_span": true,
     "y2019_rt_hours_gt_300": 0,

@@ -1,0 +1,237 @@
+{
+  "probe": "neiso100_touchpoint_staleness",
+  "keeper": "2026-08-17-neiso-99-joint-p1",
+  "prior_keeper": "2026-08-17-neiso-97-dstrepair",
+  "touchpoint": "2026-08-06-neiso-2022-corrected-basis",
+  "no_lp": true,
+  "nothing_scored": true,
+  "leg1_recipe_divergence": {
+    "axes": [
+      {
+        "axis": "campd",
+        "touchpoint": "campd-39ee0bebce26.parquet",
+        "prior_keeper": "campd-28501f5539d0.parquet",
+        "keeper": "campd-28501f5539d0.parquet",
+        "differs_vs_keeper": true,
+        "stale_before_neiso99": true
+      },
+      {
+        "axis": "eia923",
+        "touchpoint": "eia923-6fe297dbc11e.parquet",
+        "prior_keeper": "eia923-a2384ce8cfeb.parquet",
+        "keeper": "eia923-a2384ce8cfeb.parquet",
+        "differs_vs_keeper": true,
+        "stale_before_neiso99": true
+      },
+      {
+        "axis": "eia930",
+        "touchpoint": "eia930-fa8cba2e1ec2.parquet",
+        "prior_keeper": "eia930-d398d867c742.parquet",
+        "keeper": "eia930-d398d867c742.parquet",
+        "differs_vs_keeper": true,
+        "stale_before_neiso99": true
+      },
+      {
+        "axis": "unit_outages",
+        "touchpoint": "unit_outages-d2df8f1e6357.parquet",
+        "prior_keeper": "unit_outages-d2df8f1e6357.parquet",
+        "keeper": "unit_outages-c6be5bbb89ab.parquet",
+        "differs_vs_keeper": true,
+        "stale_before_neiso99": false
+      },
+      {
+        "axis": "unit_outages_e923",
+        "touchpoint": "unit_outages_e923-eec106f23392.parquet",
+        "prior_keeper": "unit_outages_e923-eec106f23392.parquet",
+        "keeper": "unit_outages_e923-eec106f23392.parquet",
+        "differs_vs_keeper": false,
+        "stale_before_neiso99": false
+      },
+      {
+        "axis": "unit_outages_layup",
+        "touchpoint": "unit_outages_layup-cb80c81b7c2b.parquet",
+        "prior_keeper": "unit_outages_layup-cb80c81b7c2b.parquet",
+        "keeper": "unit_outages_layup-c622c4d5058e.parquet",
+        "differs_vs_keeper": true,
+        "stale_before_neiso99": false
+      },
+      {
+        "axis": "unit_outages_partial",
+        "touchpoint": "unit_outages_partial-b00540584f5f.parquet",
+        "prior_keeper": "unit_outages_partial-b00540584f5f.parquet",
+        "keeper": "unit_outages_partial-b00540584f5f.parquet",
+        "differs_vs_keeper": false,
+        "stale_before_neiso99": false
+      },
+      {
+        "axis": "unit_outages_short",
+        "touchpoint": "unit_outages_short-849e1d0a5f28.parquet",
+        "prior_keeper": "unit_outages_short-849e1d0a5f28.parquet",
+        "keeper": "unit_outages_short-849e1d0a5f28.parquet",
+        "differs_vs_keeper": false,
+        "stale_before_neiso99": false
+      },
+      {
+        "axis": "scoring_basis",
+        "touchpoint": "commitment=True passes=['P1', 'P2']",
+        "prior_keeper": "commitment=True passes=['P1', 'P2']",
+        "keeper": "commitment=False passes=['P1']",
+        "differs_vs_keeper": true,
+        "stale_before_neiso99": false
+      }
+    ],
+    "n_differing_vs_keeper": 6,
+    "n_stale_before_neiso99": 3
+  },
+  "leg2_routing_exposure": {
+    "pre_rows": 3189,
+    "post_rows": 2932,
+    "removed_rows": 257,
+    "guard_rows": 239,
+    "churn_rows": 18,
+    "guard_rows_by_unit": [
+      {
+        "facility_id": 568,
+        "unit_id": "BHB3",
+        "rows": 1
+      },
+      {
+        "facility_id": 568,
+        "unit_id": "BHB4",
+        "rows": 11
+      },
+      {
+        "facility_id": 1588,
+        "unit_id": "MJ-1",
+        "rows": 24
+      },
+      {
+        "facility_id": 1595,
+        "unit_id": "S6",
+        "rows": 53
+      },
+      {
+        "facility_id": 6081,
+        "unit_id": "001",
+        "rows": 1
+      },
+      {
+        "facility_id": 6081,
+        "unit_id": "003",
+        "rows": 1
+      },
+      {
+        "facility_id": 6081,
+        "unit_id": "004",
+        "rows": 74
+      },
+      {
+        "facility_id": 6081,
+        "unit_id": "005",
+        "rows": 74
+      }
+    ],
+    "guard_overlap_by_year": [
+      {
+        "year": 2018,
+        "windows": 34,
+        "mw_window_sum": 1478.0
+      },
+      {
+        "year": 2019,
+        "windows": 24,
+        "mw_window_sum": 1073.0
+      },
+      {
+        "year": 2020,
+        "windows": 37,
+        "mw_window_sum": 1525.0
+      },
+      {
+        "year": 2021,
+        "windows": 24,
+        "mw_window_sum": 1282.0
+      },
+      {
+        "year": 2022,
+        "windows": 19,
+        "mw_window_sum": 1419.0
+      },
+      {
+        "year": 2023,
+        "windows": 29,
+        "mw_window_sum": 1856.0
+      },
+      {
+        "year": 2024,
+        "windows": 28,
+        "mw_window_sum": 1784.0
+      },
+      {
+        "year": 2025,
+        "windows": 37,
+        "mw_window_sum": 2557.0
+      },
+      {
+        "year": 2026,
+        "windows": 7,
+        "mw_window_sum": 550.0
+      }
+    ],
+    "churn_overlap_by_year": [
+      {
+        "year": 2018,
+        "windows": 0,
+        "mw_window_sum": 0.0
+      },
+      {
+        "year": 2019,
+        "windows": 2,
+        "mw_window_sum": 459.2
+      },
+      {
+        "year": 2020,
+        "windows": 3,
+        "mw_window_sum": 804.8
+      },
+      {
+        "year": 2021,
+        "windows": 0,
+        "mw_window_sum": 0.0
+      },
+      {
+        "year": 2022,
+        "windows": 0,
+        "mw_window_sum": 0.0
+      },
+      {
+        "year": 2023,
+        "windows": 0,
+        "mw_window_sum": 0.0
+      },
+      {
+        "year": 2024,
+        "windows": 0,
+        "mw_window_sum": 0.0
+      },
+      {
+        "year": 2025,
+        "windows": 0,
+        "mw_window_sum": 0.0
+      },
+      {
+        "year": 2026,
+        "windows": 13,
+        "mw_window_sum": 2150.7
+      }
+    ]
+  },
+  "verdict": {
+    "touchpoint_axes_differing_from_keeper": 6,
+    "axes_already_stale_before_neiso99": 3,
+    "y2022_guard_windows": 19,
+    "min_tuned_year_guard_windows": 28,
+    "y2022_exposure_below_every_tuned_year": true,
+    "churn_windows_in_2021_2025": 0
+  }
+}
