@@ -4080,7 +4080,69 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — **LANE CLOSED 2026-08-17 BY OWNER RULING (miso-163): C3a-2025 STANDS AS A MODEL-CLASS LIMIT AND MISO HAS NO OPEN TUNING LANE.** Former target: the 2024/2025 MEAN-LMP LEVEL MISS (owner directive 2026-08-06; C7 COAL_PRB DEPRIORITIZED by owner order, never a lane) — keeper `2026-08-16-miso-160-wefor-shape`, **NOT-YET on C3a-2025 ALONE**
+### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-16-miso-160-wefor-shape`, **NOT-YET on C3a-2025 ALONE (−12.5 %)**
+
+> **QUEUE STAMP miso-167 (2026-08-18) — THE LANE IS RE-OPENED BY OWNER RE-CHARTER AND THE
+> OBJECT IS RE-IDENTIFIED. NO SOLVE, NO LEVER ARMED, NO `ScenarioConfig` FIELD, NO CELL
+> VERDICT MINTED, NO REGISTRATION. Keeper UNCHANGED at `2026-08-16-miso-160-wefor-shape`**
+> (the miso-142/153/155/156/157/161/163/164 no-LP precedent; rule 15 `[R-DASHBOARD]` not
+> engaged). Records: `results/calibration/FINDING-miso167-summer-scarcity-anatomy-2026-08-18.md`,
+> `PREREG-miso167-online-gated-reserve-supply-2026-08-18.md`, instrument
+> `scripts/probes/_miso167_summer_scarcity_instrument.py`, record
+> `_miso167_summer_scarcity_instrument.json`.
+>
+> **THE MISS IS A SLOPE DEFECT, NOT A LEVEL DEFECT, AND 2023/2024 PASS BY CANCELLATION.**
+> Summer-2025 load-weighted gap **+11.75 $/MWh**, of which **68.9 % sits in 47 hours (1.6 % of
+> summer)**. By summer demand decile the model is **over**-priced at low load (+7.96 at decile 0)
+> and **under**-priced at high load (**−58.13 at decile 9**, model $52.29 vs actual $110.42); its
+> summer stack is **4.32× too flat** (0.59 vs 2.55 $/GW). The same defect is present in 2023
+> (1.68×) and 2024 (1.67×) where C3a still passes — **by cancellation of the two signs, not by
+> correctness** (the MISO instance of pjm-139/141). **Binding consequence for successors: any
+> lever that lifts the annual mean uniformly makes 2023/2024 WORSE** — the mechanical form of
+> miso-161's against-interest bound.
+>
+> **THREE CAUSES MEASURED AND ELIMINATED.** (a) **Not load** — model vs EIA-930 +0.04 % annual,
+> +0.07 % summer, −0.72 % in the scarcity hours. (b) **Not availability** — 11.54 GW idle thermal
+> at the top-200 hours (CT_PEAKER alone 8.23 GW = 45.2 % of available); confirms miso-161's
+> +0.69 GW immateriality and miso-164's GADS closure ON FRESH EVIDENCE. (c) **Not the reserve
+> REQUIREMENT** — the model already requires **5.21 GW** against the **2.62 GW** MISO actually
+> cleared, i.e. ~2×; raising it would argue against measured data (rule 14). (d) Disclosed
+> second-order defect, real and unlevered: the model **over-imports +1.33 GW** precisely in the
+> scarcity hours (2023 +1.76, 2024 +1.01).
+>
+> **WHAT IT IS.** In the 47 hours, MISO's OWN published RT ASM MCP is **$484.87** against an
+> energy gap of **$408.24 — 118.8 % of it** (2023 120.9 %; 2024 the honest exception at 19.2 %),
+> while the model's reserve dual is **$10.71**. Root cause located at a named code site:
+> **`model/reserves/spec.py::_miso_design` never sets `online_gated`**, so MISO's reserve
+> requirement may be backed by UNSYNCHRONISED capacity — the nyiso-83 idle-allowed-headroom
+> misrepresentation, whose fix (`nyiso_spin_reserve_online`) and whose ISO-agnostic LP machinery
+> (`model/lp/reserve_rows.py`, armed at PJM via `pjm_reserve_online_gated`) already exist. MISO
+> does not arm it and has no cell for it.
+>
+> **THIS IS NOT `ordc_scarcity_overlay` (cell `G`) AND DOES NOT RE-OPEN IT.** That refusal
+> concerns the reserve DEMAND curve (the Monte-Carlo LOLP construct an hourly LP does not
+> contain). The new object is the reserve **SUPPLY** side — who may physically sell the product.
+> No demand curve, no adder, no LOLP reconstruction. The miso-163 structural grounds stand
+> untouched, and (b)/(c) above independently CONFIRM them.
+>
+> **IT ANSWERS THE OBJECTION STANDING AGAINST `measured_ramp_capability` (`U`)** — *"a qualifier
+> that tightens a constraint which never binds cannot move a price"*. The inference is inverted:
+> the constraint never binds BECAUSE supply is unrestricted. Non-binding is the symptom, not an
+> independent fact. **The cell stays `U` — nothing was tested.**
+>
+> **THE PRIZE IS BOUNDED HONESTLY.** Splitting the 47 hours by whether MISO's own DA market (a
+> deterministic co-optimized LP with foresight) also priced them up: **DA-foreseen 20 h**
+> (load 109.09 GW, DA $254.12, RT $546.68, model $102.72) = **34.1 %** of the summer gap and is
+> **REACHABLE**; **RT-only 27 h** (load 98.69 GW, DA $80.55, RT $428.09) = **34.8 %** and is a
+> **GENUINE MODEL-CLASS LIMIT — miso-163 was right about this half.** Ceiling on any structural
+> fix ≈ **+3.3 pp on C3a-2025** against the 2.5 pp needed. **No successor may quote a larger prize.**
+>
+> **NEXT STEP AND ITS BLOCKER.** `miso_reserve_online_gated` is specified with a no-LP pre-check
+> that can kill it (K-PRE-A inertness at 80 %, K-PRE-B over-reach at 99 %) and a fixed decision
+> rule whose K-1 guard FAILS the lever if it pushes C3a-2023 out of band. **NOT EXECUTED: the
+> miso-167 container has 15 GB RAM against miso-161's measured >13.9 GB/yr for a MISO plant-level
+> LP.** A successor needs **≥24 GB**. Reported per CLAUDE.md, never routed to a CI runner.
+
 
 > **QUEUE STAMP miso-163 (2026-08-17) — THE LANE IS CLOSED BY OWNER RULING.
 > C3a-2025 STANDS AS A MODEL-CLASS LIMIT; MISO HAS NO OPEN TUNING LANE. NO
