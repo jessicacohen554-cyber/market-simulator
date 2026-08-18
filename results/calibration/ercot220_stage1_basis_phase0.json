@@ -1,0 +1,306 @@
+{
+ "probe": "ercot220_stage1_basis_phase0",
+ "date": "2026-08-18",
+ "read_only": true,
+ "sources": {
+  "exhaustion_audit_trail": "results/calibration/ercot219_optionb_B",
+  "keeper_bundle": "results/calibration/ercot215_decontam_B",
+  "actual_rt": "data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet",
+  "note": "The ercot-219 arm's committed exhaustion parquets are READ as the T_tel-basis audit trail; nothing is re-run. The keeper's class_hourly bounds the endogenous basis. Actual RT enters ONLY as the evaluation calendar (never an input)."
+ },
+ "registered_constants": {
+  "mu_mw": 0.0,
+  "sigma_mw": 1400.0,
+  "mcl_mw": 3000.0,
+  "shift_sigma": 0.5,
+  "voll": 5000.0
+ },
+ "L1_ttel_basis_incidence": {
+  "2023": {
+   "exhaustion_hours_lolp_ge_0p5": 1557,
+   "offer_active_hours_ge_1000": 5780,
+   "actual_tail_hours_gt200": 181,
+   "actual_tail_hours_gt1000": 61,
+   "exh_and_tail200": 176,
+   "exh_and_tail1000": 61,
+   "precision_exh_vs_tail200": 0.113,
+   "recall_exh_vs_tail200": 0.9724,
+   "offer1k_and_tail200": 177,
+   "precision_offer1k_vs_tail200": 0.0306,
+   "exhaustion_by_window": {
+    "pre_ecrs_golive": 572,
+    "ecrs_sequestration": 985
+   },
+   "tail200_by_window": {
+    "pre_ecrs_golive": 15,
+    "ecrs_sequestration": 166
+   },
+   "exhaustion_monthly": {
+    "1": 77,
+    "2": 54,
+    "3": 124,
+    "4": 127,
+    "5": 141,
+    "6": 184,
+    "7": 207,
+    "8": 240,
+    "9": 180,
+    "10": 0,
+    "11": 187,
+    "12": 36
+   },
+   "tail200_monthly": {
+    "1": 2,
+    "2": 0,
+    "3": 6,
+    "4": 1,
+    "5": 6,
+    "6": 14,
+    "7": 11,
+    "8": 100,
+    "9": 32,
+    "10": 4,
+    "11": 3,
+    "12": 2
+   }
+  },
+  "2024": {
+   "exhaustion_hours_lolp_ge_0p5": 336,
+   "offer_active_hours_ge_1000": 4270,
+   "actual_tail_hours_gt200": 53,
+   "actual_tail_hours_gt1000": 8,
+   "exh_and_tail200": 36,
+   "exh_and_tail1000": 5,
+   "precision_exh_vs_tail200": 0.1071,
+   "recall_exh_vs_tail200": 0.6792,
+   "offer1k_and_tail200": 49,
+   "precision_offer1k_vs_tail200": 0.0115,
+   "exhaustion_by_window": {
+    "ecrs_sequestration": 258,
+    "post_release_reform": 78
+   },
+   "tail200_by_window": {
+    "ecrs_sequestration": 34,
+    "post_release_reform": 19
+   },
+   "exhaustion_monthly": {
+    "1": 31,
+    "2": 18,
+    "3": 27,
+    "4": 37,
+    "5": 35,
+    "6": 79,
+    "7": 31,
+    "8": 45,
+    "9": 11,
+    "10": 6,
+    "11": 11,
+    "12": 5
+   },
+   "tail200_monthly": {
+    "1": 10,
+    "2": 0,
+    "3": 3,
+    "4": 11,
+    "5": 7,
+    "6": 2,
+    "7": 1,
+    "8": 6,
+    "9": 0,
+    "10": 4,
+    "11": 8,
+    "12": 1
+   }
+  },
+  "2025": {
+   "exhaustion_hours_lolp_ge_0p5": 63,
+   "offer_active_hours_ge_1000": 2270,
+   "actual_tail_hours_gt200": 31,
+   "actual_tail_hours_gt1000": 3,
+   "exh_and_tail200": 5,
+   "exh_and_tail1000": 1,
+   "precision_exh_vs_tail200": 0.0794,
+   "recall_exh_vs_tail200": 0.1613,
+   "offer1k_and_tail200": 11,
+   "precision_offer1k_vs_tail200": 0.0048,
+   "exhaustion_by_window": {
+    "post_release_reform": 63,
+    "rtcb": 0
+   },
+   "tail200_by_window": {
+    "post_release_reform": 27,
+    "rtcb": 4
+   },
+   "exhaustion_monthly": {
+    "1": 0,
+    "2": 2,
+    "3": 15,
+    "4": 9,
+    "5": 10,
+    "6": 7,
+    "7": 3,
+    "8": 3,
+    "9": 5,
+    "10": 7,
+    "11": 2,
+    "12": 0
+   },
+   "tail200_monthly": {
+    "1": 2,
+    "2": 6,
+    "3": 0,
+    "4": 5,
+    "5": 6,
+    "6": 0,
+    "7": 4,
+    "8": 0,
+    "9": 0,
+    "10": 2,
+    "11": 0,
+    "12": 6
+   }
+  }
+ },
+ "L2_split_decomposition": {
+  "2023": {
+   "h_mean_mw": 9640.1,
+   "seq_mean_mw": 2246.1,
+   "h_plus_seq_mean_mw": 11886.1,
+   "as_carried": {
+    "h_p5_mw": 1749.6,
+    "exhaustion_hours_lolp_ge_0p5": 1557,
+    "offer_active_hours_ge_1000": 5780
+   },
+   "seq_zeroed": {
+    "h_p5_mw": 3822.7,
+    "exhaustion_hours_lolp_ge_0p5": 389,
+    "offer_active_hours_ge_1000": 3788
+   },
+   "seq_replaced_by_2025_profile": {
+    "h_p5_mw": 2999.8,
+    "exhaustion_hours_lolp_ge_0p5": 759,
+    "offer_active_hours_ge_1000": 4462
+   }
+  },
+  "2024": {
+   "h_mean_mw": 11471.9,
+   "seq_mean_mw": 1542.4,
+   "h_plus_seq_mean_mw": 13014.2,
+   "as_carried": {
+    "h_p5_mw": 3991.1,
+    "exhaustion_hours_lolp_ge_0p5": 336,
+    "offer_active_hours_ge_1000": 4270
+   },
+   "seq_zeroed": {
+    "h_p5_mw": 5316.1,
+    "exhaustion_hours_lolp_ge_0p5": 98,
+    "offer_active_hours_ge_1000": 2373
+   },
+   "seq_replaced_by_2025_profile": {
+    "h_p5_mw": 4801.7,
+    "exhaustion_hours_lolp_ge_0p5": 178,
+    "offer_active_hours_ge_1000": 3060
+   }
+  },
+  "2025": {
+   "h_mean_mw": 16036.1,
+   "seq_mean_mw": 703.3,
+   "h_plus_seq_mean_mw": 16739.3,
+   "as_carried": {
+    "h_p5_mw": 6180.3,
+    "exhaustion_hours_lolp_ge_0p5": 63,
+    "offer_active_hours_ge_1000": 2270
+   },
+   "seq_zeroed": {
+    "h_p5_mw": 6594.9,
+    "exhaustion_hours_lolp_ge_0p5": 55,
+    "offer_active_hours_ge_1000": 2001
+   },
+   "seq_replaced_by_2025_profile": null
+  }
+ },
+ "L3_endogenous_degeneracy": {
+  "h_at_lolp_0p5_mw": 3700.0,
+  "h_at_offer_1000_mw": 4878.3,
+  "years": {
+   "2023": {
+    "count_none_hours_seq_gt0_lolp_eq_1": 8760,
+    "faststart_headroom_bound_minus_seq_p5_mw": 37.7,
+    "merchant_thermal_headroom_bound_p5_at_exh_hours_mw": 6893.1,
+    "merchant_thermal_headroom_bound_p50_at_exh_hours_mw": 23279.6,
+    "faststart_headroom_bound_p5_at_exh_hours_mw": 2133.3,
+    "n_eval_hours": 1557
+   },
+   "2024": {
+    "count_none_hours_seq_gt0_lolp_eq_1": 8747,
+    "faststart_headroom_bound_minus_seq_p5_mw": 1691.2,
+    "merchant_thermal_headroom_bound_p5_at_exh_hours_mw": 7236.0,
+    "merchant_thermal_headroom_bound_p50_at_exh_hours_mw": 21509.3,
+    "faststart_headroom_bound_p5_at_exh_hours_mw": 1189.8,
+    "n_eval_hours": 336
+   },
+   "2025": {
+    "count_none_hours_seq_gt0_lolp_eq_1": 7335,
+    "faststart_headroom_bound_minus_seq_p5_mw": 1572.6,
+    "merchant_thermal_headroom_bound_p5_at_exh_hours_mw": 9559.1,
+    "merchant_thermal_headroom_bound_p50_at_exh_hours_mw": 23458.8,
+    "faststart_headroom_bound_p5_at_exh_hours_mw": 922.3,
+    "n_eval_hours": 63
+   }
+  }
+ },
+ "L5_ideal_availability_ceiling": {
+  "2023": {
+   "hours_evaluated": 8760,
+   "prc_p10_at_tail_mw": 4728.0,
+   "prc_p50_at_tail_mw": 5619.0,
+   "implied_offer_p50_at_tail": 426.1,
+   "implied_offer_p90_at_tail": 1157.2,
+   "implied_offer_max_at_tail": 5000.0,
+   "windowed_offer_p50_at_tail": 650.4,
+   "windowed_offer_p90_at_tail": 2254.4,
+   "windowed_hours_offer_ge_1000": 1170,
+   "windowed_hours_offer_ge_2500": 38,
+   "hours_offer_ge_1000": 172,
+   "hours_offer_ge_2500": 2,
+   "hours_prc_below_mcl": 1,
+   "actual_tail_hours_gt200": 181
+  },
+  "2024": {
+   "hours_evaluated": 8760,
+   "prc_p10_at_tail_mw": 5383.0,
+   "prc_p50_at_tail_mw": 6131.0,
+   "implied_offer_p50_at_tail": 206.2,
+   "implied_offer_p90_at_tail": 574.8,
+   "implied_offer_max_at_tail": 1103.0,
+   "windowed_offer_p50_at_tail": 330.5,
+   "windowed_offer_p90_at_tail": 839.4,
+   "windowed_hours_offer_ge_1000": 41,
+   "windowed_hours_offer_ge_2500": 0,
+   "hours_offer_ge_1000": 2,
+   "hours_offer_ge_2500": 0,
+   "hours_prc_below_mcl": 0,
+   "actual_tail_hours_gt200": 53
+  },
+  "2025": {
+   "hours_evaluated": 8112,
+   "prc_p10_at_tail_mw": 6298.0,
+   "prc_p50_at_tail_mw": 7727.0,
+   "implied_offer_p50_at_tail": 10.0,
+   "implied_offer_p90_at_tail": 158.8,
+   "implied_offer_max_at_tail": 258.8,
+   "windowed_offer_p50_at_tail": 22.3,
+   "windowed_offer_p90_at_tail": 199.5,
+   "windowed_hours_offer_ge_1000": 0,
+   "windowed_hours_offer_ge_2500": 0,
+   "hours_offer_ge_1000": 0,
+   "hours_offer_ge_2500": 0,
+   "hours_prc_below_mcl": 0,
+   "actual_tail_hours_gt200": 27
+  }
+ },
+ "L4_fleet_scope_wedge": {
+  "wedge_gw_cited": "2.7-3.6 (ercot-163 \u00a74; ercot-170/191 term A)",
+  "note": "Compare L3's merchant-thermal headroom LOWER bounds at the exhaustion-calendar hours minus 3.6 GW against h_at_lolp_0p5_mw \u2014 computed in the finding from these numbers."
+ }
+}
