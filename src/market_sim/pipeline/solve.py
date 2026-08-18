@@ -137,6 +137,7 @@ def run_energy_solve(
     p1_bid_adjust_prep=None,
     p1_bid_max_target: Optional[np.ndarray] = None,
     startup_run_ratio_t: Optional[np.ndarray] = None,
+    p1_storage_discharge_cost: Optional[np.ndarray] = None,
 ) -> EnergySolveResult:
     """Run the shared P0 → markup → P1 energy solve (both orchestrators).
 
@@ -207,6 +208,21 @@ def run_energy_solve(
             fleet replacement, a kwargs override precludes the warm-start basis
             reuse (the LP rows change), so that P1 is a cold solve; ``None`` (or
             a hook returning ``None``/empty) is byte-identical.
+        p1_storage_discharge_cost: Optional ``(n_storage, T)`` hourly storage
+            discharge cost applied to the P1 clearing solve ONLY — the
+            ercot-219 storage reservation-price offer
+            (``ercot_storage_reservation_offer``, PRECOMMIT-ercot219 §1.3).
+            The thermal ``mc_bid_adjust`` seam's ``(n_gen, T)`` array cannot
+            reach the storage discharge columns (they carry their own
+            objective input, ``lp.costs.build_cost_vector``), so this is that
+            seam's storage analogue at the SAME P0→P1 boundary: P0 solves on
+            the untouched base cost first, then this array re-costs only the
+            storage discharge objective coefficients for P1 — an
+            objective-only change (warm-start preserving on the live model;
+            merged into the kwargs on the cold-rebuild path AFTER the
+            warm/cold routing is decided, so it never forces a cold P1 by
+            itself). ``None`` (every flag-off / non-ERCOT path) is
+            byte-identical.
 
     Returns:
         :class:`EnergySolveResult` with the P0/P1 results, the bid MC, and the
@@ -354,7 +370,16 @@ def run_energy_solve(
         _inplace_floored = refloor_thermal_inplace(
             model, p1_fleet_arrays, _avail_in_rows
         )
+    # P1-only storage discharge re-cost (the ercot-219 reservation-price
+    # offer): applied AFTER the warm/cold routing above is decided, so the
+    # override never forces a cold P1 by itself. Warm/in-place path: set on
+    # the live model — DispatchModel.solve rebuilds the full cost vector each
+    # pass (changeColsCost), so this is the exact storage analogue of the
+    # thermal ``mc=mc_bid`` re-cost, and P0 (already solved) is untouched.
+    # Cold path: merged over the P1 kwargs at the call below.
     if _warm_p1 or _inplace_floored:
+        if p1_storage_discharge_cost is not None:
+            model.storage_discharge_cost = p1_storage_discharge_cost
         p1 = model.solve(mc=mc_bid)
     else:
         # Cold P1 on a replaced fleet / overridden kwargs / declined in-place
@@ -368,6 +393,11 @@ def run_energy_solve(
             if basis is not None:
                 xyear_cache[:] = [basis]
         model = None
+        if p1_storage_discharge_cost is not None:
+            p1_dispatch_kwargs = {
+                **p1_dispatch_kwargs,
+                "storage_discharge_cost": p1_storage_discharge_cost,
+            }
         p1 = solve_dispatch(p1_fleet_arrays, demand, mc=mc_bid, **p1_dispatch_kwargs)
 
     # Hand this year's optimal basis to the next year's P0 (cross-year warm

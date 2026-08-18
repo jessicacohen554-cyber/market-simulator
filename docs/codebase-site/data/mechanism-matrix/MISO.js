@@ -40,6 +40,7 @@ window.MECH_MATRIX_SHARDS.MISO = {
     ordc_scarcity_overlay: { cell: "G", ev: "miso-scarcity-tail-external-validation §1; ffr-4e (docs/handoffs/ffr-4e-entry-price-scarcity-2026-08-04.md §1-§4) EXTENDS the G to the FORECAST/ENTRY lane, no solve; miso-163 (2026-08-17) RE-AFFIRMS the G BY OWNER RULING against a chartering proposal and CLOSES the C3a-2025 lane on it — the RCPF/ORDC intake is NOT data-blocked (data/raw/MISO-AS/asm_rtmcp_zonal_* already carry hourly zonal RT ASM MCP by product), so the G rests ENTIRELY on the structural grounds of §1-§4 (Monte-Carlo LOLP probabilistic-risk construct absent from a perfect-foresight hourly LP; measured inert at ~2 of the 88 actual 2025 RT>$200 hours). Re-opening requires new evidence defeating §1-§4 SPECIFICALLY, never a data-availability argument (FINDING-miso163-c3a-lane-closure-2026-08-17.md; rule-history §7)" },
     dump_cost_full_offer_domain: { cell: "I", ev: "caiso-139 §E ex-ante census" },
     ercot_rtordpa_overlay: { cell: "." },
+    ercot_artificial_shortage_pricing: { cell: "." },
     maxgen_emergency_tier_pricing: { cell: "K", ev: "miso-70" },
     nyiso_rcpf_family: { cell: "." },
     reserve_family_dual_sidecar: { cell: "I" },

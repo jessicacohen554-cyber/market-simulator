@@ -235,6 +235,32 @@ def load_lolp_params(
     return mu, sigma
 
 
+def within_day_forward_max(x: np.ndarray) -> np.ndarray:
+    """Remainder-of-operating-day forward maximum on the fixed non-leap clock.
+
+    ``out[t] = max(x[t .. end-of-day(t)])`` with days = consecutive 24-hour
+    blocks of the model's fixed-CST calendar (rule 8). The ercot-219 stage-2
+    window convention (PRECOMMIT-ercot219 §1.2): the exhaustion expectation at
+    hour t looks forward over the remainder of t's operating day only.
+    Vectorized as a reverse cumulative maximum per day block (rule 2
+    [R-VECTOR]); a non-multiple-of-24 tail (test harnesses) is carried
+    element-wise unchanged.
+
+    Args:
+        x: ``(T,)`` values.
+
+    Returns:
+        ``(T,)`` forward within-day maxima.
+    """
+    x = np.asarray(x, dtype=float)
+    days = x.size // 24
+    body = x[: days * 24].reshape(days, 24)
+    out = np.maximum.accumulate(body[:, ::-1], axis=1)[:, ::-1].reshape(-1)
+    if x.size > days * 24:
+        out = np.concatenate([out, x[days * 24 :]])
+    return out
+
+
 def lolp(
     reserves_mw: np.ndarray,
     mu_mw: np.ndarray | float,

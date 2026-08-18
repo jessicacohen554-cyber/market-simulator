@@ -40,6 +40,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     ordc_scarcity_overlay: { cell: "G", ev: "DIAGNOSIS-pjm-dof-scarcity-tail §B.3; pjm-138 (FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29 §3.3/§6) CONFIRMS G — the in-LP co-opt already owns the phenomenon with PJM's published two-step ORDC curve loaded, so an adder would still be a rule-19 stack" },
     dump_cost_full_offer_domain: { cell: "I", ev: "caiso-139 §E + virtual_bids._inc_offer_floor" },
     ercot_rtordpa_overlay: { cell: "." },
+    ercot_artificial_shortage_pricing: { cell: "." },
     maxgen_emergency_tier_pricing: { cell: "." },
     nyiso_rcpf_family: { cell: "." },
     reserve_family_dual_sidecar: { cell: "I" },

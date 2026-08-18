@@ -452,6 +452,32 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         finding="docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md",
         evidence=(_BACKCAST_ORCH,),
     ),
+    ParityDeclaration(
+        fields=("ercot_capability_reconciliation",),
+        disposition=BACKCAST_ONLY,
+        why="ercot-219 stage-1 measured NP6-905 aggregate-capability "
+        "reconciliation (B-1 SIGNED by dispatch of ERCOT-219 2026-08-18): a "
+        "measured availability overlay keyed to the year's published "
+        "real-time telemetry — no forward analogue by definition (rule 13); "
+        "the forecast substitute is the model's own availability chain. "
+        "PRECOMMIT-ercot219 §1.1.",
+        evidence=(_BACKCAST_ORCH,),
+    ),
+    ParityDeclaration(
+        fields=(
+            "ercot_exhaustion_expectation",
+            "ercot_storage_reservation_offer",
+        ),
+        disposition=BACKCAST_ONLY,
+        why="ercot-219 stages 2-3 (exhaustion expectation + P1-only storage "
+        "reservation-price offer): forward-computable by construction — the "
+        "expectation regenerates from the model's own state and "
+        "self-extinguishes with the sequestration design (post-reform / "
+        "RTC+B) — but wired in the backcast orchestrator only today; arming "
+        "them forward is its own future decision, never a silent fork. "
+        "PRECOMMIT-ercot219 §1.2-§1.3.",
+        evidence=(_BACKCAST_ORCH,),
+    ),
 )
 
 

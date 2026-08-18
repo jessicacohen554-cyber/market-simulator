@@ -55,9 +55,10 @@ def build_cost_vector(
             $/MWh. Subtracted from the discharge slot cost; the discharge
             level stays bounded by SOC dynamics and the power cap.
         storage_discharge_cost: Per-unit dispatch cost added to the
-            discharge slot in $/MWh; scalar (flat) or ``(n_storage,)``.
-            Carries the pumped-storage throughput adder so PS bids above
-            batteries instead of arbitraging every clearable spread.
+            discharge slot in $/MWh; scalar (flat), ``(n_storage,)``, or
+            hourly ``(n_storage, T)`` (the P1-only reservation-price
+            re-cost). Carries the pumped-storage throughput adder so PS bids
+            above batteries instead of arbitraging every clearable spread.
         posture_startup_cost: ``(n_posture,)`` startup cost in $/MW applied
             to the posture SU[p,t] columns (NREL class tables, capacity-
             weighted per pool). Required when ``layout.n_posture > 0``. The
@@ -110,13 +111,15 @@ def build_cost_vector(
     # net of any exogenous discharge EAC credit, so the slot cost can go
     # negative; SOC dynamics and the power cap still bound the discharge.
     block[:, layout._chg_off : layout._dis_off] = storage_epsilon
+    # ``storage_discharge_cost`` is a scalar / static ``(n_storage,)`` cost, or
+    # an HOURLY ``(n_storage, T)`` cost — the P1-only storage reservation-price
+    # offer (``ercot_storage_reservation_offer``) re-costs the discharge block
+    # per hour at the P0→P1 seam. Every static caller broadcasts exactly as
+    # before (byte-identical).
+    _sdc = np.asarray(storage_discharge_cost, dtype=float)
+    _sdc_t = _sdc.T if _sdc.ndim == 2 else np.broadcast_to(_sdc, (layout.n_storage,))
     block[:, layout._dis_off : layout._soc_off] = (
-        storage_epsilon
-        + np.broadcast_to(
-            np.asarray(storage_discharge_cost, dtype=float),
-            (layout.n_storage,),
-        )
-        - storage_discharge_eac
+        storage_epsilon + _sdc_t - storage_discharge_eac
     )
 
     # Storage RT discharge-offer tranches (ERCOT ercot_storage_rt_offer_surface).
