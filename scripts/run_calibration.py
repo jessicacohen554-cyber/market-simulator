@@ -5245,9 +5245,14 @@ def run_year(
         # LP upper bounds (uncurtailed cf x cap — the WTX corridor ceilings
         # bind West export at high-wind hours, ~zero at evening exhaustion
         # hours; precommit §1.2 convention).
+        # storage_power_cap is (n_storage,) static or (n_storage, T) hourly
+        # (the armed ercot_storage_capability_measured series) — sum over
+        # UNITS only, never over hours.
+        _spc = np.asarray(storage_power_cap, dtype=float)
+        _storage_term = _spc.sum(axis=0) if _spc.ndim == 2 else float(_spc.sum())
         _cap_total = (
             (fleet_arrays.pmax[:, None] * fleet_arrays.availability).sum(axis=0)
-            + float(np.asarray(storage_power_cap, dtype=float).sum())
+            + _storage_term
             + (wind_cap[:, None] * wind_cf).sum(axis=0)
             + (solar_cap[:, None] * solar_cf).sum(axis=0)
         )
