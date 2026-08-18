@@ -2111,6 +2111,7 @@ def _d4_provenance(legit: dict, year: int, klass: str, mechs: list[str]):
     d4_rows = legit.get("diagnostics", {}).get("D4", {}).get("rows", [])
     unwindowed: list[str] = []
     offwindow: list[str] = []
+    misconduct: list[str] = []
     for mech in mechs:
         applicable = [
             row
@@ -2120,14 +2121,31 @@ def _d4_provenance(legit: dict, year: int, klass: str, mechs: list[str]):
         ]
         if not applicable:
             unwindowed.append(mech)
-        elif any(str(row.get("verdict")) == "FAIL" for row in applicable):
-            offwindow.append(mech)
-    ok = not unwindowed and not offwindow
+            continue
+        # Two D-4 checks share the ``rows`` list and the ``floor`` label
+        # (legitimacy_diagnostics.run_d4): the original off-window energy
+        # share (``check == "window"``, or absent in a pre-rider artifact)
+        # and the per-unit conduct rider adopted with K6' at nyiso-140. Both
+        # are provenance failures; they are separated only so the report says
+        # which one fired. A pre-rider bundle re-scores exactly as before.
+        for row in applicable:
+            if str(row.get("verdict")) != "FAIL":
+                continue
+            if str(row.get("check", "window")) == "unit-conduct":
+                misconduct.append(f"{mech} (plant {row.get('plant', '?')})")
+            else:
+                offwindow.append(mech)
+    ok = not unwindowed and not offwindow and not misconduct
     bits = []
     if unwindowed:
         bits.append("no declared D-4 window: " + ", ".join(unwindowed))
     if offwindow:
-        bits.append("binds off-window (D-4 FAIL): " + ", ".join(offwindow))
+        bits.append("binds off-window (D-4 FAIL): " + ", ".join(sorted(set(offwindow))))
+    if misconduct:
+        bits.append(
+            "floors a unit its own meter says is offline (D-4 per-unit conduct "
+            "FAIL): " + ", ".join(sorted(set(misconduct)))
+        )
     return ok, ("; ".join(bits) if bits else "all binding mechanisms clear D-4")
 
 

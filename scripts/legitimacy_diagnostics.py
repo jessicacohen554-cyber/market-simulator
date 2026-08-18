@@ -223,6 +223,36 @@ D2_VERIFY_SHARE_TOL: float = 0.025
 # (mechanism_id, plant_class) with None matching any class. Hours are local
 # standard [start, end) — the model's t % 24 clock. Fail > 5 % off-window.
 D4_MAX_OFFWINDOW_SHARE: float = 0.05
+# D-4 PER-UNIT CONDUCT RIDER (owner decision 2026-08-16, nyiso-140 §5/§6.3 —
+# adopted WITH K6', implemented at nyiso-143). The off-window test above is
+# TAUTOLOGICAL for a floor whose declared window is all 24 hours: offwindow_
+# share is 0.0 BY CONSTRUCTION, so an h0-23 mechanism can never fail D-4 and
+# K6' leg (a) / rule 20 [R-FORCED-BUDGET]'s grounded-above-budget escalation
+# both rest on a check that cannot fire. (Measured: every one of NYISO's six
+# D-4 rows in the designated keeper declares h0-23.)
+#
+# The rider restores rule 17 [R-FLOOR-WINDOW]'s SUBSTANCE for those rows —
+# does the driver evidence support binding in these hours? — at the grain the
+# defect lives at. The class aggregate cannot see it: at nyiso-140 a single
+# economically laid-up plant (Port Jefferson, 2517) absorbed 72.6 % of what
+# the always-on Long_Island ST_GAS limb forced while its own CAMPD conduct was
+# median CF exactly 0.000 in every hour block of every training year, and both
+# live checks passed (D-4 by construction, D-2 because it is class-aggregate).
+#
+# The statistic is THRESHOLD-FREE and carries no free parameter (rule 5
+# [R-NO-MAGIC] / rule 21 [R-DOF]): a floored plant fails provenance when its
+# OWN measured (CAMPD bench) median hourly output over the declared window is
+# EXACTLY ZERO — i.e. the meter says the unit is offline in at least half the
+# hours the floor asserts it must be online. Materiality reuses the module's
+# existing D2_FLOOR_MIN_MW; nothing new is introduced.
+#
+# SCOPE, deliberately narrow: all-hours windows only. A sub-daily window can
+# already fail the off-window test on its own, so the rider is confined to the
+# rows where that test is vacuous. Plants with no measured series (hydro,
+# nuclear, renewables, interchange pseudo-units) are NOT scored and are
+# disclosed by count — the rider is a measured-conduct test and cannot speak
+# where there is no meter. It never fails a mechanism for a missing meter.
+D4_CONDUCT_ALLHOURS_ONLY: bool = True
 # CT reliability commitment is an evening-ramp phenomenon: the CAMPD
 # derivation found overnight CT CF ~ 0 even at high net load
 # (docs/caiso-ct-netload-drag-2026-06.md), so the justified window matches
@@ -983,13 +1013,36 @@ def run_d4(
     year: int | str = "",
     npl: np.ndarray | None = None,
     windows: dict[tuple[int, str | None], tuple[int, int]] | None = None,
+    pids: list[str] | None = None,
+    bench_pl: dict[str, dict] | None = None,
 ) -> GateResult:
-    """D-4 off-window binding: floored MWh outside each declared window."""
+    """D-4 off-window binding: floored MWh outside each declared window.
+
+    Two checks share the gate, discriminated by each row's ``check`` field:
+
+    ``window``
+        the original off-window energy share, one row per declared
+        (mechanism, class) window.
+    ``unit-conduct``
+        the PER-UNIT CONDUCT RIDER (owner decision 2026-08-16, nyiso-140 §5),
+        emitted only for windows spanning all 24 hours, where the off-window
+        test is vacuous by construction. A floored plant whose OWN measured
+        median hourly output over the window is exactly zero fails provenance
+        for its mechanism regardless of the class aggregate. Requires ``pids``
+        (row keys, aligned to ``dispatch``) and ``bench_pl`` (the plant-level
+        measured view); without them the rider is skipped and says so.
+
+    Conduct rows carry the mechanism's own ``floor`` label so
+    ``calibration_verdict._d4_provenance`` — which matches on that label —
+    picks them up with no change to its matching rule.
+    """
     res = GateResult("D-4 off-window binding")
     windows = D4_WINDOWS if windows is None else windows
     mask = at_floor_mask(dispatch, min_gen, npl)
     t = dispatch.shape[1]
     hod = np.arange(t) % 24
+    conduct_ok = pids is not None and bench_pl is not None
+    unmetered: set[str] = set()
     for (mech_id, k_filter), (start, end) in windows.items():
         in_window = (hod >= start) & (hod < end)
         sel_rows = (
@@ -1010,11 +1063,16 @@ def run_d4(
         res.rows.append(
             {
                 "year": year,
+                "check": "window",
                 "floor": label,
                 "window": f"h{start}-{end - 1}",
+                "plant": "",
                 "floored_twh": round(total / 1e6, 4),
                 "offwindow_twh": round(off_mwh / 1e6, 4),
                 "offwindow_share": round(share, 4),
+                "binding_hours": "",
+                "measured_median_mw": "",
+                "measured_zero_share": "",
                 "verdict": "FAIL" if share > D4_MAX_OFFWINDOW_SHARE else "pass",
             }
         )
@@ -1024,6 +1082,90 @@ def run_d4(
                 f"justified window h{start}-{end - 1} (> "
                 f"{D4_MAX_OFFWINDOW_SHARE:.0%})"
             )
+        # --- per-unit conduct rider ------------------------------------
+        # Only where the off-window test is vacuous (all-hours window).
+        if not conduct_ok or (end - start) < 24 or not D4_CONDUCT_ALLHOURS_ONLY:
+            continue
+        row_idx = np.flatnonzero(sel_rows)
+        for local_i, global_i in enumerate(row_idx):
+            floored_mwh = float(dispatch[global_i][sel[local_i]].sum())
+            if floored_mwh <= 0.0 or float(min_gen[global_i].max()) <= D2_FLOOR_MIN_MW:
+                continue
+            pid = str(pids[global_i])
+            b = bench_pl.get(pid)
+            if b is None:
+                unmetered.add(pid)
+                continue
+            meas = np.asarray(b["mw"], dtype=float)[:t]
+            if meas.size < t:
+                unmetered.add(pid)
+                continue
+            # MEASURE OVER THE PLANT'S OWN BINDING HOURS, not the whole
+            # declared window. The adopted wording is "a floored unit whose
+            # own measured CF is ~0 across the declared window" (nyiso-140
+            # §5), and for the limb that motivated it — the Long_Island
+            # always-on base, which binds in all 8,760 h — the two are the
+            # same set. They are NOT the same for a limb that lives inside an
+            # all-hours DECLARED window but is gated by its own driver, e.g.
+            # NYISO's Capital_Hudson x ST_GAS tmax limb (threshold 31.1 degC,
+            # no start/end hour): a unit that runs only on design-cooling days
+            # has an annual median of 0 and would fail a window-wide test even
+            # though its conduct in the hours the floor actually forces it is
+            # exactly what the driver predicts. Scoring the binding hours is
+            # both the faithful reading of "the hours the floor asserts it
+            # must be online" and the only one that cannot manufacture a
+            # false positive out of a driver-gated limb.
+            bind_h = sel[local_i] & in_window
+            if not bind_h.any():
+                continue
+            win = meas[bind_h[: meas.size]]
+            if win.size == 0:
+                continue
+            med = float(np.median(win))
+            zero_share = float((win <= 0.0).mean())
+            fail = med <= 0.0
+            res.rows.append(
+                {
+                    "year": year,
+                    "check": "unit-conduct",
+                    "floor": label,
+                    "window": f"h{start}-{end - 1}",
+                    "plant": pid,
+                    "floored_twh": round(floored_mwh / 1e6, 4),
+                    "offwindow_twh": "",
+                    "offwindow_share": round(floored_mwh / total, 4),
+                    "binding_hours": int(bind_h.sum()),
+                    "measured_median_mw": round(med, 3),
+                    "measured_zero_share": round(zero_share, 4),
+                    "verdict": "FAIL" if fail else "pass",
+                }
+            )
+            if fail:
+                res.failures.append(
+                    f"{year} {label}: plant {pid} is floored for "
+                    f"{floored_mwh / 1e6:.4f} TWh ({floored_mwh / total:.1%} of "
+                    f"the mechanism's forced energy) while its own measured "
+                    f"median output over the {int(bind_h.sum())} hours the "
+                    f"floor actually binds for it (inside h{start}-{end - 1}) "
+                    f"is 0.000 MW ({zero_share:.1%} of them at zero) — the meter "
+                    f"says it is offline in at least half the hours the floor "
+                    f"asserts it must be online (per-unit conduct rider)"
+                )
+    if conduct_ok and unmetered:
+        res.notes.append(
+            f"{year}: per-unit conduct rider skipped {len(unmetered)} floored "
+            "row(s) with no measured series (hydro / nuclear / renewables / "
+            "interchange pseudo-units) — the rider is a measured-conduct test "
+            "and never fails a mechanism for a missing meter: "
+            + ", ".join(sorted(unmetered)[:20])
+            + (" …" if len(unmetered) > 20 else "")
+        )
+    elif not conduct_ok:
+        res.notes.append(
+            f"{year}: per-unit conduct rider NOT RUN (caller supplied no "
+            "pids/bench view) — every all-hours window row below is an "
+            "off-window test that cannot fail by construction"
+        )
     return res
 
 
@@ -2574,9 +2716,19 @@ def diagnose_bundle(
                 d2.notes.extend(sub_res.notes)
                 d2.summary.extend(sub_res.summary)
             if "D4" in only:
-                sub_res = run_d4(disp, floors, mechs, klass, year=year, npl=npl)
+                sub_res = run_d4(
+                    disp,
+                    floors,
+                    mechs,
+                    klass,
+                    year=year,
+                    npl=npl,
+                    pids=all_pids,
+                    bench_pl=bench_pl,
+                )
                 d4.rows.extend(sub_res.rows)
                 d4.failures.extend(sub_res.failures)
+                d4.notes.extend(sub_res.notes)
 
     if "D1" in only:
         results.append(d1)

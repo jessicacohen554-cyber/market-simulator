@@ -1,0 +1,96 @@
+{
+ "bundle": "nyiso142_stackdup",
+ "clip": [
+  0.5,
+  4.0
+ ],
+ "years": {
+  "2023": {
+   "obligation_branch": {
+    "n_units": 451,
+    "n_units_valid_for_rho": 0,
+    "rho_raw": 1.0,
+    "rho_used": 1.0,
+    "identified": false
+   },
+   "fleetwide_units": 851,
+   "fleetwide_pmin_gt0_units": 4,
+   "fleetwide_pmin_sum_mw": 2393.31,
+   "fleetwide_min_gen_present": true,
+   "quick_pmin_gt0_units": 0,
+   "quick_pmax_gt_pmin_units": 363,
+   "quick_pmin_sum_mw": 0.0,
+   "fuel_mix_quick": {
+    "gas_ct": 150,
+    "hydro": 154,
+    "oil": 59
+   },
+   "hydro_in_quick_class": true,
+   "n_quick_units": 363,
+   "n_quick_units_valid_for_rho": 0,
+   "rho_raw": 1.0,
+   "rho_used": 1.0,
+   "rho_at_clip_ceiling": false,
+   "nyc_quick_units": 100,
+   "nyc_quick_pmax_mw": 2398.4
+  },
+  "2024": {
+   "obligation_branch": {
+    "n_units": 443,
+    "n_units_valid_for_rho": 0,
+    "rho_raw": 1.0,
+    "rho_used": 1.0,
+    "identified": false
+   },
+   "fleetwide_units": 849,
+   "fleetwide_pmin_gt0_units": 4,
+   "fleetwide_pmin_sum_mw": 2393.31,
+   "fleetwide_min_gen_present": true,
+   "quick_pmin_gt0_units": 0,
+   "quick_pmax_gt_pmin_units": 355,
+   "quick_pmin_sum_mw": 0.0,
+   "fuel_mix_quick": {
+    "gas_ct": 149,
+    "hydro": 147,
+    "oil": 59
+   },
+   "hydro_in_quick_class": true,
+   "n_quick_units": 355,
+   "n_quick_units_valid_for_rho": 0,
+   "rho_raw": 1.0,
+   "rho_used": 1.0,
+   "rho_at_clip_ceiling": false,
+   "nyc_quick_units": 100,
+   "nyc_quick_pmax_mw": 2398.4
+  },
+  "2025": {
+   "obligation_branch": {
+    "n_units": 299,
+    "n_units_valid_for_rho": 0,
+    "rho_raw": 1.0,
+    "rho_used": 1.0,
+    "identified": false
+   },
+   "fleetwide_units": 705,
+   "fleetwide_pmin_gt0_units": 4,
+   "fleetwide_pmin_sum_mw": 2393.31,
+   "fleetwide_min_gen_present": true,
+   "quick_pmin_gt0_units": 0,
+   "quick_pmax_gt_pmin_units": 211,
+   "quick_pmin_sum_mw": 0.0,
+   "fuel_mix_quick": {
+    "gas_ct": 149,
+    "hydro": 3,
+    "oil": 59
+   },
+   "hydro_in_quick_class": true,
+   "n_quick_units": 211,
+   "n_quick_units_valid_for_rho": 0,
+   "rho_raw": 1.0,
+   "rho_used": 1.0,
+   "rho_at_clip_ceiling": false,
+   "nyc_quick_units": 100,
+   "nyc_quick_pmax_mw": 2398.4
+  }
+ }
+}
