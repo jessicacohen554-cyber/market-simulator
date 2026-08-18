@@ -1,0 +1,1045 @@
+{
+ "actual_tail_gate": {
+  "per_year": {
+   "2019": {
+    "emittable": false,
+    "iso_holds_block": false,
+    "marker_block_required": "final",
+    "row_committed": false,
+    "tier": "locked_test"
+   },
+   "2020": {
+    "emittable": true,
+    "iso_holds_block": true,
+    "marker_block_required": "complete",
+    "row_committed": true,
+    "tier": "validation"
+   },
+   "2021": {
+    "emittable": true,
+    "iso_holds_block": true,
+    "marker_block_required": "complete",
+    "row_committed": true,
+    "tier": "validation"
+   },
+   "2022": {
+    "emittable": true,
+    "iso_holds_block": true,
+    "marker_block_required": "complete",
+    "row_committed": true,
+    "tier": "validation"
+   },
+   "2023": {
+    "emittable": true,
+    "iso_holds_block": true,
+    "marker_block_required": null,
+    "row_committed": true,
+    "tier": "train"
+   },
+   "2024": {
+    "emittable": true,
+    "iso_holds_block": true,
+    "marker_block_required": null,
+    "row_committed": true,
+    "tier": "train"
+   },
+   "2025": {
+    "emittable": true,
+    "iso_holds_block": true,
+    "marker_block_required": null,
+    "row_committed": true,
+    "tier": "train"
+   }
+  },
+  "years_committed": [
+   "2020",
+   "2021",
+   "2022",
+   "2023",
+   "2024",
+   "2025"
+  ]
+ },
+ "actual_tail_rederive_identity": {
+  "byte_identical": true,
+  "cell_diffs": [],
+  "tuned_year_diffs": []
+ },
+ "bench_provenance": {
+  "dir": "frontend/data/backcast/bench/NEISO",
+  "preparable_in_advance": false,
+  "source": "render_calibration_html.build_payload, over a registered bundle's own eia923/eia930/campd input snapshots and meta['years']",
+  "why": "byproduct of rendering a registered run, so it is downstream of the very spend it would support; there is no run-free code path that emits a bench year, and adding one would be building a scoring artifact for an unauthorized year",
+  "writer": "scripts/render_backcast.py::generate -> scripts/lib/backcast_artifacts.py::write_bench_part",
+  "years_absent_in_span": [
+   2019,
+   2020,
+   2021
+  ],
+  "years_present": [
+   2022,
+   2023,
+   2024,
+   2025
+  ]
+ },
+ "capacity_actuals_window": {
+  "action": "FILED, not acted on (rule 25) \u2014 cross-ISO forecast-lane change",
+  "file": "data/raw/_validation-source/capacity_actuals_neiso.csv",
+  "reads_it": "scripts/score_capacity_hindcast.py (forecast lane) \u2014 no backcast criterion",
+  "rows_by_year": {
+   "2021": 198,
+   "2022": 133,
+   "2023": 107,
+   "2024": 115,
+   "2025": 73
+  },
+  "this_lane": false,
+  "window_source": "scripts/data/build_capacity_actuals.py::WINDOW = range(2021, 2026)"
+ },
+ "gas_basis_provenance": {
+  "file": "data/raw/gas_basis_by_iso_month.csv",
+  "per_year": {
+   "2015": {
+    "all_measured": false,
+    "measured": 0,
+    "months": 12,
+    "proxy": 12
+   },
+   "2016": {
+    "all_measured": false,
+    "measured": 0,
+    "months": 12,
+    "proxy": 12
+   },
+   "2017": {
+    "all_measured": false,
+    "measured": 0,
+    "months": 12,
+    "proxy": 12
+   },
+   "2018": {
+    "all_measured": false,
+    "measured": 8,
+    "months": 12,
+    "proxy": 4
+   },
+   "2019": {
+    "all_measured": true,
+    "measured": 12,
+    "months": 12,
+    "proxy": 0
+   },
+   "2020": {
+    "all_measured": true,
+    "measured": 12,
+    "months": 12,
+    "proxy": 0
+   },
+   "2021": {
+    "all_measured": true,
+    "measured": 12,
+    "months": 12,
+    "proxy": 0
+   },
+   "2022": {
+    "all_measured": true,
+    "measured": 12,
+    "months": 12,
+    "proxy": 0
+   },
+   "2023": {
+    "all_measured": true,
+    "measured": 12,
+    "months": 12,
+    "proxy": 0
+   },
+   "2024": {
+    "all_measured": true,
+    "measured": 12,
+    "months": 12,
+    "proxy": 0
+   },
+   "2025": {
+    "all_measured": true,
+    "measured": 12,
+    "months": 12,
+    "proxy": 0
+   },
+   "2026": {
+    "all_measured": false,
+    "measured": 5,
+    "months": 5,
+    "proxy": 0
+   }
+  },
+  "span_uniform": true
+ },
+ "hub_series_actuals": {
+  "file": "data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet",
+  "per_year": {
+   "2019": {
+    "da_gt_300": 0,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt_300": 0
+   },
+   "2020": {
+    "da_gt_300": 0,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt_300": 0
+   },
+   "2021": {
+    "da_gt_300": 0,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt_300": 2
+   },
+   "2022": {
+    "da_gt_300": 27,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt_300": 117
+   },
+   "2023": {
+    "da_gt_300": 5,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt_300": 15
+   },
+   "2024": {
+    "da_gt_300": 5,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt_300": 8
+   },
+   "2025": {
+    "da_gt_300": 12,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt_300": 20
+   }
+  },
+  "present": true
+ },
+ "iso": "NEISO",
+ "mode": "INPUT PREP ONLY \u2014 no LP, no solve, no score, no registration",
+ "outage_extract_vintage": {
+  "file": "data/raw/campd-unit-outages-NEISO.csv",
+  "neiso87_warning_status": "CLOSED",
+  "rows": 2932,
+  "single_vintage_evidence": "neiso-99 commit ef9e911 re-derived the extract WHOLE-FILE at HEAD: 257 rows deleted, 0 added, and its own control re-derivation reproduced every surviving row byte-identically on every column. The file is therefore HEAD-reproducible end to end, which is what neiso-87's missing vintage column could not establish.",
+  "windows_by_start_year": {
+   "2018": 400,
+   "2019": 457,
+   "2020": 401,
+   "2021": 373,
+   "2022": 321,
+   "2023": 338,
+   "2024": 289,
+   "2025": 260,
+   "2026": 93
+  }
+ },
+ "per_input_span_walk": {
+  "EIA-930 ISNE_fueltype": {
+   "2019": [
+    "OK",
+    "140160 rows in ISNE_fueltype.parquet"
+   ],
+   "2020": [
+    "OK",
+    "140544 rows in ISNE_fueltype.parquet"
+   ],
+   "2021": [
+    "OK",
+    "140160 rows in ISNE_fueltype.parquet"
+   ],
+   "2022": [
+    "OK",
+    "140160 rows in ISNE_fueltype.parquet"
+   ],
+   "2023": [
+    "OK",
+    "140160 rows in ISNE_fueltype.parquet"
+   ],
+   "2024": [
+    "OK",
+    "140544 rows in ISNE_fueltype.parquet"
+   ],
+   "2025": [
+    "OK",
+    "140160 rows in ISNE_fueltype.parquet"
+   ]
+  },
+  "EIA-930 ISNE_region": {
+   "2019": [
+    "OK",
+    "35040 rows in ISNE_region.parquet"
+   ],
+   "2020": [
+    "OK",
+    "35136 rows in ISNE_region.parquet"
+   ],
+   "2021": [
+    "OK",
+    "35040 rows in ISNE_region.parquet"
+   ],
+   "2022": [
+    "OK",
+    "35040 rows in ISNE_region.parquet"
+   ],
+   "2023": [
+    "OK",
+    "35040 rows in ISNE_region.parquet"
+   ],
+   "2024": [
+    "OK",
+    "35136 rows in ISNE_region.parquet"
+   ],
+   "2025": [
+    "OK",
+    "35040 rows in ISNE_region.parquet"
+   ]
+  },
+  "NEISO_<y>_renewable_capacity.csv": {
+   "2019": [
+    "OK",
+    "120 rows \u2014 data/raw/_validation-source/NEISO_2019_renewable_capacity.csv"
+   ],
+   "2020": [
+    "OK",
+    "120 rows \u2014 data/raw/_validation-source/NEISO_2020_renewable_capacity.csv"
+   ],
+   "2021": [
+    "OK",
+    "120 rows \u2014 data/raw/_validation-source/NEISO_2021_renewable_capacity.csv"
+   ],
+   "2022": [
+    "OK",
+    "120 rows \u2014 data/raw/_validation-source/NEISO_2022_renewable_capacity.csv"
+   ],
+   "2023": [
+    "OK",
+    "120 rows \u2014 data/raw/_validation-source/NEISO_2023_renewable_capacity.csv"
+   ],
+   "2024": [
+    "OK",
+    "120 rows \u2014 data/raw/_validation-source/NEISO_2024_renewable_capacity.csv"
+   ],
+   "2025": [
+    "OK",
+    "120 rows \u2014 data/raw/_validation-source/NEISO_2025_renewable_capacity.csv"
+   ]
+  },
+  "actual_lmp_hourly_NEISO (C3a/C3b/C3c upstream)": {
+   "2019": [
+    "OK",
+    "8760 h, cov 1.000, max $261.35, mean $30.67, >$300: 0h"
+   ],
+   "2020": [
+    "OK",
+    "8760 h, cov 1.000, max $236.11, mean $23.39, >$300: 0h"
+   ],
+   "2021": [
+    "OK",
+    "8760 h, cov 1.000, max $375.28, mean $44.84, >$300: 2h"
+   ],
+   "2022": [
+    "OK",
+    "8760 h, cov 1.000, max $2,254.35, mean $84.92, >$300: 117h"
+   ],
+   "2023": [
+    "OK",
+    "8760 h, cov 1.000, max $1,161.97, mean $35.70, >$300: 15h"
+   ],
+   "2024": [
+    "OK",
+    "8760 h, cov 1.000, max $2,112.77, mean $39.54, >$300: 8h"
+   ],
+   "2025": [
+    "OK",
+    "8760 h, cov 1.000, max $1,110.22, mean $65.88, >$300: 20h"
+   ]
+  },
+  "actual_tail.json (C3c benchmark part)": {
+   "2019": [
+    "GAP",
+    "no row \u2014 C3c SKIPs for this year"
+   ],
+   "2020": [
+    "OK",
+    "rt_gt 0h, da_gt 0h, cov 1.0"
+   ],
+   "2021": [
+    "OK",
+    "rt_gt 2h, da_gt 0h, cov 1.0"
+   ],
+   "2022": [
+    "OK",
+    "rt_gt 117h, da_gt 27h, cov 1.0"
+   ],
+   "2023": [
+    "OK",
+    "rt_gt 15h, da_gt 5h, cov 1.0"
+   ],
+   "2024": [
+    "OK",
+    "rt_gt 8h, da_gt 5h, cov 1.0"
+   ],
+   "2025": [
+    "OK",
+    "rt_gt 20h, da_gt 12h, cov 1.0"
+   ]
+  },
+  "algonquin_citygate_daily.csv": {
+   "2019": [
+    "OK",
+    "56 rows in algonquin_citygate_daily.csv"
+   ],
+   "2020": [
+    "OK",
+    "45 rows in algonquin_citygate_daily.csv"
+   ],
+   "2021": [
+    "OK",
+    "94 rows in algonquin_citygate_daily.csv"
+   ],
+   "2022": [
+    "OK",
+    "62 rows in algonquin_citygate_daily.csv"
+   ],
+   "2023": [
+    "OK",
+    "44 rows in algonquin_citygate_daily.csv"
+   ],
+   "2024": [
+    "OK",
+    "49 rows in algonquin_citygate_daily.csv"
+   ],
+   "2025": [
+    "OK",
+    "30 rows in algonquin_citygate_daily.csv"
+   ]
+  },
+  "backcast_config (the keeper recipe, built)": {
+   "2019": [
+    "OK",
+    "built; gas $2.57, campd_bins=True, plant_level=True, winter_fuel_mustrun=False"
+   ],
+   "2020": [
+    "OK",
+    "built; gas $2.03, campd_bins=True, plant_level=True, winter_fuel_mustrun=False"
+   ],
+   "2021": [
+    "OK",
+    "built; gas $3.72, campd_bins=True, plant_level=True, winter_fuel_mustrun=False"
+   ],
+   "2022": [
+    "OK",
+    "built; gas $6.45, campd_bins=True, plant_level=True, winter_fuel_mustrun=False"
+   ],
+   "2023": [
+    "OK",
+    "built; gas $2.54, campd_bins=True, plant_level=True, winter_fuel_mustrun=False"
+   ],
+   "2024": [
+    "OK",
+    "built; gas $2.19, campd_bins=True, plant_level=True, winter_fuel_mustrun=False"
+   ],
+   "2025": [
+    "OK",
+    "built; gas $3.52, campd_bins=True, plant_level=True, winter_fuel_mustrun=False"
+   ]
+  },
+  "calibration_reference.json (C1/C2 target)": {
+   "2019": [
+    "OK",
+    "isos.NEISO.2019: 4 keys (demand, generation_twh, henry_hub_actual, renewables); henry_hub present"
+   ],
+   "2020": [
+    "OK",
+    "isos.NEISO.2020: 4 keys (demand, generation_twh, henry_hub_actual, renewables); henry_hub present"
+   ],
+   "2021": [
+    "OK",
+    "isos.NEISO.2021: 4 keys (demand, generation_twh, henry_hub_actual, renewables); henry_hub present"
+   ],
+   "2022": [
+    "OK",
+    "isos.NEISO.2022: 4 keys (demand, generation_twh, henry_hub_actual, renewables); henry_hub present"
+   ],
+   "2023": [
+    "OK",
+    "isos.NEISO.2023: 4 keys (demand, generation_twh, henry_hub_actual, renewables); henry_hub present"
+   ],
+   "2024": [
+    "OK",
+    "isos.NEISO.2024: 4 keys (demand, generation_twh, henry_hub_actual, renewables); henry_hub present"
+   ],
+   "2025": [
+    "OK",
+    "isos.NEISO.2025: 5 keys (demand, eia923_incomplete, generation_twh, henry_hub_actual, renewables); henry_hub present"
+   ]
+  },
+  "campd-unit-outages-NEISO.csv": {
+   "2019": [
+    "OK",
+    "457 rows in campd-unit-outages-NEISO.csv"
+   ],
+   "2020": [
+    "OK",
+    "401 rows in campd-unit-outages-NEISO.csv"
+   ],
+   "2021": [
+    "OK",
+    "373 rows in campd-unit-outages-NEISO.csv"
+   ],
+   "2022": [
+    "OK",
+    "321 rows in campd-unit-outages-NEISO.csv"
+   ],
+   "2023": [
+    "OK",
+    "338 rows in campd-unit-outages-NEISO.csv"
+   ],
+   "2024": [
+    "OK",
+    "289 rows in campd-unit-outages-NEISO.csv"
+   ],
+   "2025": [
+    "OK",
+    "260 rows in campd-unit-outages-NEISO.csv"
+   ]
+  },
+  "capacity_actuals_neiso.csv": {
+   "2019": [
+    "GAP",
+    "no 2019 rows in capacity_actuals_neiso.csv"
+   ],
+   "2020": [
+    "GAP",
+    "no 2020 rows in capacity_actuals_neiso.csv"
+   ],
+   "2021": [
+    "OK",
+    "198 rows in capacity_actuals_neiso.csv"
+   ],
+   "2022": [
+    "OK",
+    "133 rows in capacity_actuals_neiso.csv"
+   ],
+   "2023": [
+    "OK",
+    "107 rows in capacity_actuals_neiso.csv"
+   ],
+   "2024": [
+    "OK",
+    "115 rows in capacity_actuals_neiso.csv"
+   ],
+   "2025": [
+    "OK",
+    "73 rows in capacity_actuals_neiso.csv"
+   ]
+  },
+  "fossil_co2_rates": {
+   "2019": [
+    "OK",
+    "2547 rows in fossil_co2_rates.csv"
+   ],
+   "2020": [
+    "OK",
+    "2536 rows in fossil_co2_rates.csv"
+   ],
+   "2021": [
+    "OK",
+    "2619 rows in fossil_co2_rates.csv"
+   ],
+   "2022": [
+    "OK",
+    "2666 rows in fossil_co2_rates.csv"
+   ],
+   "2023": [
+    "OK",
+    "2518 rows in fossil_co2_rates.csv"
+   ],
+   "2024": [
+    "OK",
+    "2500 rows in fossil_co2_rates.csv"
+   ],
+   "2025": [
+    "OK",
+    "2500 rows in fossil_co2_rates.csv"
+   ]
+  },
+  "gas_basis_by_iso_month.csv": {
+   "2019": [
+    "OK",
+    "84 rows in gas_basis_by_iso_month.csv"
+   ],
+   "2020": [
+    "OK",
+    "84 rows in gas_basis_by_iso_month.csv"
+   ],
+   "2021": [
+    "OK",
+    "84 rows in gas_basis_by_iso_month.csv"
+   ],
+   "2022": [
+    "OK",
+    "84 rows in gas_basis_by_iso_month.csv"
+   ],
+   "2023": [
+    "OK",
+    "84 rows in gas_basis_by_iso_month.csv"
+   ],
+   "2024": [
+    "OK",
+    "84 rows in gas_basis_by_iso_month.csv"
+   ],
+   "2025": [
+    "OK",
+    "80 rows in gas_basis_by_iso_month.csv"
+   ]
+  },
+  "henry_hub_actual (per-year gas price)": {
+   "2019": [
+    "OK",
+    "$2.57/MMBtu"
+   ],
+   "2020": [
+    "OK",
+    "$2.03/MMBtu"
+   ],
+   "2021": [
+    "OK",
+    "$3.72/MMBtu"
+   ],
+   "2022": [
+    "OK",
+    "$6.45/MMBtu"
+   ],
+   "2023": [
+    "OK",
+    "$2.54/MMBtu"
+   ],
+   "2024": [
+    "OK",
+    "$2.19/MMBtu"
+   ],
+   "2025": [
+    "OK",
+    "$3.52/MMBtu"
+   ]
+  },
+  "load_demand (LP demand array)": {
+   "2019": [
+    "OK",
+    "shape (5, 8760), peak 20,617 MW, 95.54 TWh"
+   ],
+   "2020": [
+    "OK",
+    "shape (5, 8760), peak 21,524 MW, 92.10 TWh"
+   ],
+   "2021": [
+    "OK",
+    "shape (5, 8760), peak 22,529 MW, 98.55 TWh"
+   ],
+   "2022": [
+    "OK",
+    "shape (5, 8760), peak 22,933 MW, 100.21 TWh"
+   ],
+   "2023": [
+    "OK",
+    "shape (5, 8760), peak 20,347 MW, 96.86 TWh"
+   ],
+   "2024": [
+    "OK",
+    "shape (5, 8760), peak 20,986 MW, 103.81 TWh"
+   ],
+   "2025": [
+    "OK",
+    "shape (5, 8760), peak 22,928 MW, 107.15 TWh"
+   ]
+  },
+  "load_hydro_budget (neiso-72 window)": {
+   "2019": [
+    "OK",
+    "169 plants, 7.64 TWh budget, max 1,914 MW"
+   ],
+   "2020": [
+    "OK",
+    "170 plants, 6.64 TWh budget, max 1,917 MW"
+   ],
+   "2021": [
+    "OK",
+    "168 plants, 6.20 TWh budget, max 1,907 MW"
+   ],
+   "2022": [
+    "OK",
+    "169 plants, 6.54 TWh budget, max 1,908 MW"
+   ],
+   "2023": [
+    "OK",
+    "168 plants, 8.55 TWh budget, max 1,882 MW"
+   ],
+   "2024": [
+    "OK",
+    "166 plants, 6.71 TWh budget, max 1,900 MW"
+   ],
+   "2025": [
+    "OK",
+    "5 plants, 0.09 TWh budget, max 30 MW"
+   ]
+  },
+  "load_neiso_reserve_requirements": {
+   "2019": [
+    "OK",
+    "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+   ],
+   "2020": [
+    "OK",
+    "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+   ],
+   "2021": [
+    "OK",
+    "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+   ],
+   "2022": [
+    "OK",
+    "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+   ],
+   "2023": [
+    "OK",
+    "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+   ],
+   "2024": [
+    "OK",
+    "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+   ],
+   "2025": [
+    "OK",
+    "static (year-independent): ne_30min_total 1,800 MW, ne_10min_total 1,200 MW, ne_10min_spin 600 MW"
+   ]
+  },
+  "parasitic_load_factors (pooled map)": {
+   "2019": [
+    "OK",
+    "pooled year==0 map: 544 plants (year-independent by construction)"
+   ],
+   "2020": [
+    "OK",
+    "pooled year==0 map: 544 plants (year-independent by construction)"
+   ],
+   "2021": [
+    "OK",
+    "pooled year==0 map: 544 plants (year-independent by construction)"
+   ],
+   "2022": [
+    "OK",
+    "pooled year==0 map: 544 plants (year-independent by construction)"
+   ],
+   "2023": [
+    "OK",
+    "pooled year==0 map: 544 plants (year-independent by construction)"
+   ],
+   "2024": [
+    "OK",
+    "pooled year==0 map: 544 plants (year-independent by construction)"
+   ],
+   "2025": [
+    "OK",
+    "pooled year==0 map: 544 plants (year-independent by construction)"
+   ]
+  },
+  "plant_emission_rates_v2": {
+   "2019": [
+    "OK",
+    "4344 rows in plant_emission_rates_v2.csv"
+   ],
+   "2020": [
+    "OK",
+    "4269 rows in plant_emission_rates_v2.csv"
+   ],
+   "2021": [
+    "OK",
+    "4211 rows in plant_emission_rates_v2.csv"
+   ],
+   "2022": [
+    "OK",
+    "3526 rows in plant_emission_rates_v2.csv"
+   ],
+   "2023": [
+    "OK",
+    "4125 rows in plant_emission_rates_v2.csv"
+   ],
+   "2024": [
+    "OK",
+    "4055 rows in plant_emission_rates_v2.csv"
+   ],
+   "2025": [
+    "OK",
+    "3992 rows in plant_emission_rates_v2.csv"
+   ]
+  }
+ },
+ "regeneration_durability": {
+  "clean_demand_profile_partition_present": false,
+  "partition_is_gitignored": true,
+  "per_year": {
+   "2019": {
+    "load_demand": "OK (5, 8760)",
+    "load_demand_meta": "ERR ValueError: No EIA-930 data for ISO 'NEISO' in year 2019"
+   },
+   "2020": {
+    "load_demand": "OK (5, 8760)",
+    "load_demand_meta": "ERR ValueError: No EIA-930 data for ISO 'NEISO' in year 2020"
+   },
+   "2021": {
+    "load_demand": "OK (5, 8760)",
+    "load_demand_meta": "OK"
+   },
+   "2022": {
+    "load_demand": "OK (5, 8760)",
+    "load_demand_meta": "OK"
+   },
+   "2023": {
+    "load_demand": "OK (5, 8760)",
+    "load_demand_meta": "OK"
+   },
+   "2024": {
+    "load_demand": "OK (5, 8760)",
+    "load_demand_meta": "OK"
+   },
+   "2025": {
+    "load_demand": "OK (5, 8760)",
+    "load_demand_meta": "OK"
+   }
+  },
+  "rebuild_prerequisite": "scripts/data/curate_demand_profile.py (or scripts/regenerate_clean.py demand-profile) must run before build_calibration_reference.py can REGENERATE a pre-2021 block; the committed 2019 block itself is unaffected",
+  "solve_path_impact": "NONE \u2014 load_demand (the LP driver) resolves for every year in the span; load_demand_meta has no solve-path consumer (neiso-88 \u00a72.3), only scripts/data/build_calibration_reference.py",
+  "span_symmetric": "the partition absence degrades the TUNED years identically \u2014 not a 2019-specific handicap"
+ },
+ "schema_uniformity": {
+  "calibration_reference": {
+   "2019": {
+    "demand_keys": 5,
+    "extra_vs_2023": [],
+    "generation_twh_classes": 9,
+    "keys": [
+     "demand",
+     "generation_twh",
+     "henry_hub_actual",
+     "renewables"
+    ],
+    "missing_vs_2023": [],
+    "present": true
+   },
+   "2020": {
+    "demand_keys": 5,
+    "extra_vs_2023": [],
+    "generation_twh_classes": 9,
+    "keys": [
+     "demand",
+     "generation_twh",
+     "henry_hub_actual",
+     "renewables"
+    ],
+    "missing_vs_2023": [],
+    "present": true
+   },
+   "2021": {
+    "demand_keys": 5,
+    "extra_vs_2023": [],
+    "generation_twh_classes": 9,
+    "keys": [
+     "demand",
+     "generation_twh",
+     "henry_hub_actual",
+     "renewables"
+    ],
+    "missing_vs_2023": [],
+    "present": true
+   },
+   "2022": {
+    "demand_keys": 5,
+    "extra_vs_2023": [],
+    "generation_twh_classes": 9,
+    "keys": [
+     "demand",
+     "generation_twh",
+     "henry_hub_actual",
+     "renewables"
+    ],
+    "missing_vs_2023": [],
+    "present": true
+   },
+   "2023": {
+    "demand_keys": 5,
+    "extra_vs_2023": [],
+    "generation_twh_classes": 9,
+    "keys": [
+     "demand",
+     "generation_twh",
+     "henry_hub_actual",
+     "renewables"
+    ],
+    "missing_vs_2023": [],
+    "present": true
+   },
+   "2024": {
+    "demand_keys": 5,
+    "extra_vs_2023": [],
+    "generation_twh_classes": 9,
+    "keys": [
+     "demand",
+     "generation_twh",
+     "henry_hub_actual",
+     "renewables"
+    ],
+    "missing_vs_2023": [],
+    "present": true
+   },
+   "2025": {
+    "demand_keys": 5,
+    "extra_vs_2023": [
+     "eia923_incomplete"
+    ],
+    "generation_twh_classes": 9,
+    "keys": [
+     "demand",
+     "eia923_incomplete",
+     "generation_twh",
+     "henry_hub_actual",
+     "renewables"
+    ],
+    "missing_vs_2023": [],
+    "present": true
+   }
+  },
+  "renewable_capacity": {
+   "2019": {
+    "fuels": [
+     "solar",
+     "wind"
+    ],
+    "july_mw": {
+     "solar": 1191.2,
+     "wind": 1385.6
+    },
+    "months": 12,
+    "present": true,
+    "rows": 120,
+    "zones": 5
+   },
+   "2020": {
+    "fuels": [
+     "solar",
+     "wind"
+    ],
+    "july_mw": {
+     "solar": 1428.4,
+     "wind": 1424.0
+    },
+    "months": 12,
+    "present": true,
+    "rows": 120,
+    "zones": 5
+   },
+   "2021": {
+    "fuels": [
+     "solar",
+     "wind"
+    ],
+    "july_mw": {
+     "solar": 1854.2,
+     "wind": 1496.6
+    },
+    "months": 12,
+    "present": true,
+    "rows": 120,
+    "zones": 5
+   },
+   "2022": {
+    "fuels": [
+     "solar",
+     "wind"
+    ],
+    "july_mw": {
+     "solar": 2385.1,
+     "wind": 1516.4
+    },
+    "months": 12,
+    "present": true,
+    "rows": 120,
+    "zones": 5
+   },
+   "2023": {
+    "fuels": [
+     "solar",
+     "wind"
+    ],
+    "july_mw": {
+     "solar": 2687.6,
+     "wind": 1536.4
+    },
+    "months": 12,
+    "present": true,
+    "rows": 120,
+    "zones": 5
+   },
+   "2024": {
+    "fuels": [
+     "solar",
+     "wind"
+    ],
+    "july_mw": {
+     "solar": 3118.1,
+     "wind": 1536.4
+    },
+    "months": 12,
+    "present": true,
+    "rows": 120,
+    "zones": 5
+   },
+   "2025": {
+    "fuels": [
+     "solar",
+     "wind"
+    ],
+    "july_mw": {
+     "solar": 3548.1,
+     "wind": 1721.2
+    },
+    "months": 12,
+    "present": true,
+    "rows": 120,
+    "zones": 5
+   }
+  }
+ },
+ "session": "neiso-101",
+ "span": [
+  2019,
+  2020,
+  2021,
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "would_be_2019_tail_row": {
+  "computable": true,
+  "emitted": false,
+  "row": {
+   "da_coverage": 1.0,
+   "da_gt": 0,
+   "hours": 8760,
+   "rt_coverage": 1.0,
+   "rt_gt": 0,
+   "threshold": 300.0
+  },
+  "withheld_by": "rule-22 tier gate \u2014 2019 is locked_test and NEISO holds no `final` marker"
+ }
+}
