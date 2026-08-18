@@ -7669,6 +7669,28 @@ The frontier re-declaration was assessed against the five open objects and
 two** because the instrument the session was asked to build is what found them.
 Full packet: `results/calibration/ASSESSMENT-nyiso143-frontier-redeclaration-2026-08-18.md`.
 
+* **OBJECT 1 CLOSED AS AN ESCALATION — the chartered Zone-K bound was
+  PRE-REGISTERED, SOLVED (2023+2024+2025, one bundle) and BOTH ARMS REGISTERED**
+  (`2026-08-18-nyiso-143-control`, `2026-08-18-nyiso-143-n11tsl-arm`).
+  `nyiso_li_tsl_n11_security` moves **`R` → `O`**: the nyiso-130 rejection is
+  SUPERSEDED, since it was killed on K6 and the owner replaced K6 with **K6′**
+  at nyiso-140 §6.3 precisely because K6 cannot adjudicate an import-relief
+  lever. **All six gates SILENT, K6′ included** — it escalated on the
+  pre-registered forced-share rise and cleared both legs (zero new D-4
+  failures, zero new D-1 misses). **And the arm is still not promotable, on a
+  DISCOVERY rather than a fit result: 100 % of the model's C3c tail hours are
+  Long_Island, in both arms and every year.** NYISO's modelled scarcity pricing
+  IS this bound binding in 84.5/87.6/71.1 % of its design-condition hours; swap
+  in the published 940 MW and occupancy falls to 24.8/21.3/6.8 % and C3c goes
+  **21→2 / 3→0 / 24→5 h** against actuals 10/13/42 — a 2-of-3 miss becomes
+  3-of-3 and **2025 goes PASS → FAIL**. C1/C2/C3a/C3b/C4/C8 PASS in both, mean
+  LMP moves ≤ $0.26/MWh, 2023 C3a *improves*, and the control reproduces the
+  designated keeper's C3c **bit-identically at 21/3/24**. **NOT a rejection on
+  fit** (rule 1 `[R-STRUCT]`; the identification is published, zero DOF) — a
+  **rule 22 D-5(b) owner escalation**, session recommending the sequencing
+  reading. **DO NOT RE-SOLVE**: the A/B is done and committed; what is open is
+  the ruling. Named root-cause successor: **the downstate scarcity mechanism**.
+  Evidence: `results/calibration/RESULT-nyiso143-zone-k-transfer-bound-ab-2026-08-18.md`.
 * **CLOSED — the D-4 PER-UNIT CONDUCT RIDER IS BUILT, VALIDATED AND SHIPPED**
   (owner-adopted with K6′ at nyiso-140 §5/§6.3). D-4's off-window test is
   `0.0` **by construction** for an `h0-23` floor, and **all six** of NYISO's
@@ -7690,15 +7712,24 @@ Full packet: `results/calibration/ASSESSMENT-nyiso143-frontier-redeclaration-202
   limb, driver-gated inside an `h0-23` declared window); binding-hour scoring
   cleared 2625 and 8006 at medians 372–472 MW. Recorded because the first draft
   was wrong.*
-* **NEW OPEN OBJECT, found by the rider on the DESIGNATED KEEPER: the
-  nyiso-140 membership repair is INCOMPLETE.** `Capital_Hudson × ST_GAS` floors
-  **2480 Danskammer** for 0.0011 TWh over 102 binding hours (2023) and 0.0001
-  TWh over 24 (2024) with its own meter at **0.000 MW in 100 %** of them.
-  0.07 % the size of Port Jefferson and energetically trivial — rule 17
-  `[R-FLOOR-WINDOW]` is not a magnitude rule. Pre-existing (it fails on the
-  control too), declared in the Zone-K prereg §5 so it is not misread as that
-  arm's doing, and NOT repaired here (rule 19: its own identification, its own
-  A/B).
+* **NEW OPEN OBJECT, found by the rider: the nyiso-140 membership repair is
+  INCOMPLETE — `reliability_floor_plant_exclusions` fixed ONE MECHANISM, NOT
+  THE PLANT.** The **gas commitment bridge has no membership exclusion**, so it
+  still floors **2517 Port Jefferson** for **0.1495 TWh in 2024 — 34.6 % of
+  everything that bridge leg forces** — over 4,623 binding hours with its own
+  meter at 0.000 MW in 71.2 % of them, and again in 2025 (0.0529 TWh, 11.9 %).
+  Also 7314 (0.0819 TWh, 11.4 %, 2025), 8006 Roseton (0.1881 TWh, 44.9 %, arm
+  2025) and 2480 Danskammer (both the bridge and the `Capital_Hudson` floor,
+  90.7–100 % of its binding hours at zero). Rule 19 `[R-ONE-MECH]`'s "enumerate
+  what already floors the same class", working one mechanism later. Present
+  identically in both Zone-K arms, declared in that prereg §5, and NOT repaired
+  here — its own identification, its own A/B. **Two guards the full-dispatch
+  run forced into the rider, recorded because the first version was wrong:**
+  plants carrying the benchmark's own `ct_only` CT-only CEMS flag (EIA-923 net
+  > 1.1× CAMPD gross ⇒ the benchmark itself scores them on EIA-923 *monthly*)
+  and rows whose dispatch is *substituted* by their own floor (pjm-149 /
+  caiso-155) are both excluded — a zero median in a series the benchmark
+  declines to trust is a metering artifact, not conduct.
 * **RE-OPENED — `nyiso_synchronised_reserve` STAYS `U` and its closing
   argument is FALSIFIED.** The class-2 headroom row is **per-zone**, not
   aggregate; nyiso-110's inert arm gated the NYCA/East **published** families

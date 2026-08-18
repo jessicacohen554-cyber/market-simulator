@@ -17,17 +17,18 @@ After this session:
 
 | # | object | status after nyiso-143 |
 |---|---|---|
-| 1 | chartered Zone-K reconciliation | **PRE-REGISTERED AND SOLVED** — see §1; disposition below |
+| 1 | chartered Zone-K reconciliation | **PRE-REGISTERED, SOLVED, REGISTERED — and ESCALATED.** All six gates PASS, including the K6′ that replaced the K6 which killed it; the arm is still not promotable, on a **discovery** rather than a fit result (§1) |
 | 2 | D-4 per-unit conduct rider | **CLOSED — BUILT, VALIDATED, SHIPPED.** And it immediately found a live defect on the keeper (§2) |
 | 3 | `nyiso_incity_commitment_obligation` | **OPEN — and newly BLOCKED** on an unidentified coefficient (§3) |
 | 4 | `nyiso_synchronised_reserve` | **OPEN. The ground for closing it is FALSIFIED** (§3) — this is the object nobody knew was open |
 | 5 | `nyiso_iroquois_winter_spread` | **OPEN** (owner question, unchanged) **+ governance defect CONFIRMED and FILED** (§4) |
-| — | *new*: `Capital_Hudson × ST_GAS` floors Danskammer, meter reads zero | **NEW OPEN OBJECT**, surfaced by object 2 (§2.3) |
+| — | *new*: the nyiso-140 membership repair is **INCOMPLETE** — the gas commitment bridge still floors Port Jefferson (34.6 % of its 2024 ST_GAS forcing) | **NEW OPEN OBJECT**, surfaced by object 2 (§2.3) |
+| — | *new*: the model's **entire** downstate scarcity formation is the Zone-K import bound | **NEW OPEN OBJECT**, surfaced by object 1 (§1.4) |
 
 The honest summary is that the queue did not shrink by three. It shrank by
-two and **grew by two**, because the instrument this session was asked to build
-is the instrument that found them. That is the rider working, not the lane
-regressing.
+two and **grew by three**, because the two instruments this session was asked to
+build — the conduct rider and the Zone-K A/B — are what found them. That is the
+gates working, not the lane regressing.
 
 ---
 
@@ -67,6 +68,53 @@ each independently sufficient:
 
 Pre-registration: `results/calibration/PREREG-nyiso143-zone-k-transfer-bound-2026-08-18.md`,
 written and committed **before** either solve was launched.
+
+### 1.2b THE RESULT — all six gates pass, and the arm is still not promotable
+
+Full record: `results/calibration/RESULT-nyiso143-zone-k-transfer-bound-ab-2026-08-18.md`.
+Both arms solved 2023/2024/2025 in one bundle and **both registered** (rule 15):
+`2026-08-18-nyiso-143-control` and `2026-08-18-nyiso-143-n11tsl-arm`.
+
+**K1-K5 silent, and K6′ SILENT — the gate that killed nyiso-130 clears it.**
+The forced shares rose exactly as pre-registered (downstate
+`reliability_floor × ST_GAS` 0.169→0.185, 0.190→0.222, 0.123→0.138); bare K6
+fires on any rise, K6′ escalated and cleared both legs — **zero new D-4
+failures** in the arm (it *removes* three) and **zero new D-1 misses**.
+
+| year | C3c model → (actual, band) | C3a | at-bound share in-window | LI AC import TWh |
+|---|---|---|---|---|
+| 2023 | **21 → 2 h** (10, [5, 20]) | +9.6 % → **+9.0 %** | 0.845 → **0.248** | 3.392 → 4.563 |
+| 2024 | **3 → 0 h** (13, [6, 26]) | +1.6 % → +1.9 % | 0.876 → **0.213** | 3.383 → 4.791 |
+| 2025 | **24 → 5 h** (42, [21, 84]) | −2.5 % → −2.3 % | 0.711 → **0.068** | 2.599 → 3.321 |
+
+C1 / C2 / C3a / C3b / C4 / C8 PASS in both; mean LMP moves ≤ $0.26/MWh and 2023
+C3a *improves*. **C3c is the whole story and it goes the wrong way:** the
+control misses two years and **passes 2025**; the arm misses all three and
+takes 2025 PASS → FAIL.
+
+The control is itself a validation: replaying the keeper's own recipe at this
+HEAD reproduces **C3c 21 / 3 / 24 bit-identically**.
+
+### 1.4 THE DISCOVERY — the model's entire downstate scarcity IS this bound
+
+**100 % of the model's C3c tail hours are Long_Island, in both arms and every
+year.** NYISO's modelled scarcity pricing is the Zone-K import bound binding in
+84.5 / 87.6 / 71.1 % of its design-condition hours; swap in the published
+number and occupancy falls to 24.8 / 21.3 / 6.8 % and the scarcity goes with
+it. **The model has no other downstate scarcity mechanism** — the rule 14
+`[R-ACCURATE]` "the estimate was silently compensating" signature, and the same
+object nyiso-110 named from the reserve side and nyiso-124 located as a
+downstate price-formation gap.
+
+**So the arm is NOT rejected on fit — rule 1 `[R-STRUCT]` forbids that**, and
+the identification is published with zero DOF. It is a **rule 22 D-5(b)
+escalation** with two defensible readings: (A) rule 14 literal — arm the
+accurate number now and open the scarcity mechanism as the discovered root
+cause, at the cost of a 3-of-3 C3c miss and NOT-YET; or (B) sequencing — build
+the scarcity mechanism first so the accurate input does not land on a
+representation left emptier than it started. **Session recommendation: B, as a
+recommendation and not a verdict.** The A/B is DONE and must not be re-solved;
+what is open is the ruling. Cell `nyiso_li_tsl_n11_security`: **`R` → `O`**.
 
 ### 1.3 One thing the pre-registration had to decide, and flags for the owner
 
@@ -156,24 +204,44 @@ So the rider **independently reproduces nyiso-140's finding through the new
 gate** — it would have caught Port Jefferson — and **clears** on the repair.
 That is the validation in both directions.
 
-**NEW OPEN OBJECT.** On the designated keeper the rider still fails, on one
-plant the class aggregate could never see:
+**One more guard the full-dispatch run forced, recorded because the first
+version was wrong.** Plants carrying the benchmark's own **CT-only CEMS flag**
+(`ct_only`: EIA-923 net > 1.1× CAMPD gross, so the *benchmark* scores them on
+EIA-923 **monthly** because the hourly CAMPD series is incomplete) are excluded
+— a zero median in a series the benchmark itself declines to trust is a
+metering artifact, not conduct (rule 14 `[R-ACCURATE]`). Without it the rider
+convicted five such plants. Rows whose dispatch is **substituted** by their own
+floor (pjm-149 / caiso-155) are excluded for the same reason: their at-floor
+set is the whole floor-positive set by construction, so a verdict on them would
+be "indeterminate on a fail".
 
-| plant | limb | year | floored | share of mechanism | binding h | measured median | at zero |
+**NEW OPEN OBJECT — the nyiso-140 membership repair is INCOMPLETE, and in a
+bigger way than a single small plant.** Run on the full-dispatch bundles rather
+than the payload, the rider shows `reliability_floor_plant_exclusions` fixed
+**one mechanism, not the plant**:
+
+| year | mechanism | plant | floored | share of mechanism | binding h | measured median | at zero |
 |---|---|---|---:|---:|---:|---:|---:|
-| **2480 Danskammer** | `Capital_Hudson × ST_GAS` tmax 31.1 °C | 2023 | 0.0011 TWh | 0.05 % | 102 | **0.000 MW** | **100 %** |
-| | | 2024 | 0.0001 TWh | 0.004 % | 24 | **0.000 MW** | **100 %** |
+| 2024 | `nyiso_gas_commitment_bridge × ST_GAS` | **2517 Port Jefferson** | 0.1495 TWh | **34.6 %** | 4,623 | **0.000 MW** | 71.2 % |
+| 2025 | `nyiso_gas_commitment_bridge × ST_GAS` | **2517 Port Jefferson** | 0.0529 TWh | 11.9 % | 1,568 | **0.000 MW** | 50.3 % |
+| 2025 | `nyiso_gas_commitment_bridge × CC_REGULAR` | 7314 | 0.0819 TWh | 11.4 % | 2,360 | **0.000 MW** | 80.3 % |
+| 2023–25 | bridge × ST_GAS **and** `reliability_floor × ST_GAS` | **2480 Danskammer** | 0.0010–0.0140 TWh | 0.0–4.4 % | 24–1,641 | **0.000 MW** | 90.7–100 % |
+| 2025 (arm) | `nyiso_gas_commitment_bridge × ST_GAS` | 8006 Roseton | 0.1881 TWh | 44.9 % | 1,714 | **0.000 MW** | 60.9 % |
 
-0.0012 TWh over three years — **0.07 %** the size of Port Jefferson, and
-energetically trivial. Rule 17 `[R-FLOOR-WINDOW]` is not a magnitude rule:
-*"A floor binding in hours its own driver evidence says the class is offline is
-a bug by definition, whatever it does to the residual."* It fails on the
-control too, so it is **pre-existing**, a second instance of the nyiso-140
-class in a different zone's limb — and it means **the nyiso-140 membership
-repair was incomplete**. It is declared in the Zone-K pre-registration §5 so it
-cannot later be read as that arm's doing, and it is NOT repaired in this
-session (rule 19: one mechanism per arm; it needs its own identification and
-its own A/B).
+**The exclusion channel exists only on the reliability floor.** The gas
+commitment bridge has no membership exclusion, so the very plant nyiso-140
+identified as economically laid up is still floored — by the *other* mechanism,
+for a THIRD of everything that bridge leg forces in 2024. This is rule 19
+`[R-ONE-MECH]`'s "enumerate what already floors the same class" working exactly
+as intended, one mechanism later. It is a named successor with its own
+identification and its own A/B; **not repaired here**, present identically in
+both Zone-K arms, and declared in the Zone-K pre-registration §5 so it cannot be
+misread as that arm's doing.
+
+*(The pre-registration and this section's first draft named only 2480
+Danskammer, from a payload-based run that covered 100 plants and substituted
+127. The full-dispatch numbers above supersede that figure; the Danskammer row
+survives, it is simply the smallest of the set.)*
 
 ---
 
@@ -302,16 +370,23 @@ regardless.
 
 ## 6. WHAT WOULD CLOSE THE REMAINING QUEUE
 
-1. **`rho` identification** for the online-gated reserve class — a measured
+1. **The Zone-K ruling** (§1.4) — reading A or reading B, under rule 22 D-5(b).
+   The A/B is done, registered and must not be re-solved; what is open is the
+   ruling. Plus an owner ruling on K6′ leg (a)'s absolute-vs-delta reading,
+   which the pre-registration declared in advance and this run is scored on.
+2. **The downstate scarcity mechanism** — the root cause §1.4 uncovers, and the
+   thing reading B says must exist before the accurate bound is armed. Same
+   object nyiso-110 named from the reserve side and nyiso-124 located as a
+   downstate price-formation gap.
+3. **`rho` identification** for the online-gated reserve class — a measured
    10-minute headroom per MW online, from CAMPD ramp conduct or NYISO's
    published capability data, under rule 23. Unblocks objects 3 **and** 4 (only
    one may be armed).
-2. **Danskammer (2480)** — its own identification and A/B, extending the
-   nyiso-140 membership channel to the `Capital_Hudson` limb.
-3. **`nyiso_iroquois_winter_spread`** — the owner's D-5(b) call, plus the
+4. **A membership-exclusion channel on `nyiso_gas_commitment_bridge`** (§2.3) —
+   it still floors Port Jefferson for a third of its 2024 ST_GAS forcing, plus
+   7314, 8006 and Danskammer. Its own identification and A/B.
+5. **`nyiso_iroquois_winter_spread`** — the owner's D-5(b) call, plus the
    two-row matrix remediation in a governance round.
-4. **The Zone-K A/B disposition** (§1), and an owner ruling on K6′ leg (a)'s
-   absolute-vs-delta reading.
 
 **Not on this list, and not to be re-opened** (cite, do not re-litigate):
 BLOCKER-A's topology split, **CLOSED AT G0 WITH CAUSE** at nyiso-124 — so
