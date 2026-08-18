@@ -10254,3 +10254,53 @@ probe + JSON. No PR (push-and-stop on `claude/ercot-218-direct-driver-5ckiur`).
 
 **Session consumed the ercot-218 shorthand. Next shorthand: ercot-219**
 (ercot-199 remains unclaimed).
+
+### ercot-218 ADDENDUM (same session, 2026-08-18, owner-directed): WHY ERCOT 2023 PRICES WERE ACTUALLY SO HIGH — researched from primary sources and measured telemetry; the cause is now fully named and quantified
+
+Owner directive mid-session, verbatim: *"research why ERCOT 2023 prices were so
+high actually."* Executed read-only (no LP, no solve, no criterion scored;
+keeper untouched). Full memo:
+`docs/RESEARCH-ercot218b-why-2023-prices-2026-08-18.md`. The 2023 SOM PDF was
+re-fetched and sha256-verified byte-exact against the committed manifest.
+
+**The measured answer.** (1) The 181-hour 2023 tail was made by the SCED
+energy price λ, NOT scarcity adders: 162/181 hours λ-carried (all 7 hours
+>$4,000), RTORPA median $4.51 and max $650.80 all year, PRC 4-5.5 GW at the
+tail (one hour below the 3,000 MW ORDC knee, none below EEA-1), and the ORDC
+contributed ~$1/MWh across 2023 (~2 %, LESS than 2022's $6.41) — the IMM:
+"most of the price spikes ... did not reflect true shortages." (2) The maker
+was the ECRS artificial-shortage design: ~2.1 GW of new 10-minute reserve on
+top of undiminished RRS (Aug: ECRS 2,127 + RRS 2,566 + RegUp 389 ≈ 5.1 GW,
+measured ASPLANNP433), sequestered from SCED and "generally not deployed";
+capacity that pre-ECRS would have self-committed sat in reserve, SCED "ran
+out of available resources," prices to $5,000 "when the system was not
+actually short." IMM 75%-release counterfactual: DOUBLED Jun-Dec RT prices,
+>$12B added through November; ECRS reliability value $12M vs >$600M cost.
+(3) At that thinned margin the price-setters were the young storage fleet's
+energy offers (0.91 of the 1.10 GW offered >=$500 at the top gap hours;
+storage p50 $2,714 at matched tightness 2023, $3,361-5,000 Jun-Sep, falling
+to $990 by 2025 as the fleet ~tripled) — scarce 1-2h SOC priced at expected
+evening scarcity, an expectation the WHOLE market held (133/181 tail hours
+also >$200 DAY-AHEAD; Aug DA mean $261 > RT $192; Modo: 51 % of Jan-Aug-2023
+battery revenue in 10 days). (4) Genuine emergencies were few and different:
+17 reserve-priced hours (Aug 17-30, Sep 6-8); the Sep-6 EEA-2 was
+TRANSMISSION-driven (1,500 MW manual curtailment incl. 1,300 MW wind,
+frequency 59.91 Hz for 15 min); heat (49 records, 85.7 GW) was necessary,
+not sufficient — the IMM found "no material risks of load shedding." Both
+halves of the mechanism are since gone (the Aug-2024 deployment trigger;
+RTC+B; fleet growth compressing the offers 2.7x) — 2023 is sui generis.
+
+**Model mapping (memo §4):** sequestration/load/ORDC/RUC all CARRIED; the
+miss lives in two adjudicated closures that are one phenomenon — real SCED's
+stack EXHAUSTED where the model's retains cheap headroom (the twice-
+unlicensed ~2.7 GW capability wedge, item 11/Q-B), and the marginal OFFER at
+that exhausted margin was storage pricing expectation, not cost (Door A,
+measured non-transferable x3 at ercot-210/211/218; an endogenous
+opportunity-cost offer is circular at the model's own price level; a
+measured-level feedback is the rule-13 forbidden form). Same MW, opposite
+merit position: the model clears $70-97 where SCED cleared $272-457. No
+verdict, ledger, gate or keeper is touched by this addendum; it names the
+cause behind the standing C3a/C3b-2023 + C3c model-class object.
+
+**Session consumed the ercot-218 shorthand. Next shorthand: ercot-219**
+(ercot-199 remains unclaimed).
