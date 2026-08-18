@@ -11,6 +11,7 @@ untouched — mathematical results are byte-identical for all 6 ISOs.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Optional
 
@@ -18,6 +19,8 @@ import numpy as np
 
 from market_sim.config.constants import ERCOT_AS_PLAN_HOLD_EPS, MISO_RPE_DEMAND_VALUE
 from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Reserve-product constants (moved from config/constants.py)
@@ -2735,6 +2738,77 @@ def _miso_design(
 # ---- NYISO -----------------------------------------------------------------
 
 
+def _identified_online_rho(
+    fleet_arrays: FleetArrays,
+    elig_idx: np.ndarray,
+    *,
+    iso: str,
+    family_set: str,
+) -> float:
+    """Return the online-gated class's headroom multiplier ``rho``.
+
+    ``rho`` is how much 10-minute reserve one MW of on-line output backs, in
+    the gated class-2 row ``R[c,z] - rho * sum_g P[g] <= 0``. For a gated class
+    that row REPLACES the capability row rather than joining it
+    (``model/lp/reserve_rows.py``), so ``rho`` is the class's only bound and has
+    to be identified, never defaulted.
+
+    Two identification sources, in rule 14 ``[R-ACCURATE]`` order:
+
+    1. **The MEASURED statistic** — ``data.online_reserve_rho``, the aggregate
+       10-minute deliverable headroom per MW on-line over the eligible fleet's
+       own CAMPD operating record. Preferred whenever the ISO has the artifact.
+    2. **The eligible fleet's own cap-weighted ``(pmax-pmin)/pmin``** at min
+       load — the original identification. Retained because it is correct and
+       self-contained on a fleet that carries real ``pmin`` values, but it is
+       DEAD CODE on a binned/tranche fleet, where must-run rides ``min_gen``
+       and ``pmin`` is identically zero (see the module the measured seam
+       documents). When neither source identifies it, the caller gets 1.0 and
+       the mechanism is running on an unidentified coefficient — which rule 21
+       ``[R-DOF]`` forbids in a keeper, so the fallback is logged.
+
+    Args:
+        fleet_arrays: The dispatch fleet.
+        elig_idx: LP row indices of the gated class's eligible set.
+        iso: The ISO whose measured artifact to read.
+        family_set: The online-gated family set key in that artifact.
+    """
+    from market_sim.data.online_reserve_rho import RHO_CLIP, load_online_rho
+
+    measured = load_online_rho(iso, family_set)
+    if measured is not None:
+        logger.info(
+            "%s gated reserve class '%s': MEASURED online_rho=%.4f "
+            "(pre-clip %.4f; min-load sensitivity %.4f, full-hour %.4f) over "
+            "%d online unit-hours, CAMPD coverage %.1f%%, vintages %s",
+            iso,
+            family_set,
+            measured.rho_used,
+            measured.rho,
+            measured.rho_minload,
+            measured.rho_fullhour,
+            measured.online_unit_hours,
+            100.0 * measured.campd_coverage_frac,
+            measured.years,
+        )
+        return measured.rho_used
+    pmin_e = np.asarray(fleet_arrays.pmin, dtype=float)[elig_idx]
+    pmax_e = np.asarray(fleet_arrays.pmax, dtype=float)[elig_idx]
+    valid = (pmin_e > 0) & (pmax_e > pmin_e)
+    if valid.any():
+        ratio = (pmax_e[valid] - pmin_e[valid]) / pmin_e[valid]
+        return float(np.clip(np.average(ratio, weights=pmax_e[valid]), *RHO_CLIP))
+    logger.warning(
+        "%s gated reserve class '%s': online_rho is UNIDENTIFIED — no measured "
+        "artifact and 0 of %d eligible rows carry pmin > 0 (binned fleet); "
+        "falling back to 1.0, which rule 21 [R-DOF] does not admit in a keeper",
+        iso,
+        family_set,
+        int(elig_idx.size),
+    )
+    return 1.0
+
+
 def _nyiso_design(
     config,
     fleet_arrays: FleetArrays,
@@ -3148,21 +3222,9 @@ def _nyiso_design(
         eligible = np.vstack([full_elig, quick_elig, obligation_elig])
         online_gated = np.array([False, False, True], dtype=bool)
         o_idx = np.flatnonzero(obligation_elig)
-        pmin_o = np.asarray(fleet_arrays.pmin, dtype=float)[o_idx]
-        pmax_o = np.asarray(fleet_arrays.pmax, dtype=float)[o_idx]
-        valid = (pmin_o > 0) & (pmax_o > pmin_o)
-        if valid.any():
-            # rho = the obligation fleet's own (pmax-pmin)/pmin at min load —
-            # how much 10-minute headroom one MW of on-line output backs. A
-            # fleet property read off the same arrays the LP dispatches, not a
-            # tuned coefficient (rule 5 [R-NO-MAGIC]); clipped to the same
-            # [0.5, 4.0] physical band the path-A family uses.
-            ratio = (pmax_o[valid] - pmin_o[valid]) / pmin_o[valid]
-            online_rho = float(
-                np.clip(np.average(ratio, weights=pmax_o[valid]), 0.5, 4.0)
-            )
-        else:
-            online_rho = 1.0
+        online_rho = _identified_online_rho(
+            fleet_arrays, o_idx, iso="NYISO", family_set="incity_obligation"
+        )
     elif (synch and not commit_gated) or spin_online:
         # ONE online-gated class-2 construction serves both arm shapes: path
         # A's hand-scoped NYC spin family (synch) and the published spinning
@@ -3173,16 +3235,28 @@ def _nyiso_design(
         eligible = np.vstack([full_elig, quick_elig, quick_elig])
         online_gated = np.array([False, False, True], dtype=bool)
         q_idx = np.flatnonzero(quick_elig)
-        pmin_q = np.asarray(fleet_arrays.pmin, dtype=float)[q_idx]
-        pmax_q = np.asarray(fleet_arrays.pmax, dtype=float)[q_idx]
-        valid = (pmin_q > 0) & (pmax_q > pmin_q)
-        if valid.any():
-            ratio = (pmax_q[valid] - pmin_q[valid]) / pmin_q[valid]
-            online_rho = float(
-                np.clip(np.average(ratio, weights=pmax_q[valid]), 0.5, 4.0)
-            )
-        else:
-            online_rho = 1.0
+        # The two arm shapes share the machinery but NOT the measurement basis,
+        # so they must not share the artifact row (rule 14 [R-ACCURATE]):
+        #
+        # * path A's family is NYC-masked, and the `nyc_spin` row is measured on
+        #   NYC's own eligible fleet — the right basis, and hydro-free (there is
+        #   no NYC hydro), so the statistic is a clean thermal-pocket ratio.
+        # * `spin_online` gates the PUBLISHED NYCA/East spinning families, whose
+        #   eligible set is NYCA-wide and — with nyiso_hydro_reserve_eligible
+        #   armed — DOMINATED by hydro output (2-5 GW against ~60-230 MW of
+        #   thermal quick-start). No `nyca_spin` row is derived, because hydro
+        #   has no CEMS and carries no entry in fleet.RAMP10_FRAC_* at all, so
+        #   its 10-minute headroom is a COVERAGE GAP rather than a measured 0.
+        #   Measuring the NYCA ratio through that gap would manufacture a
+        #   binding constraint out of missing data — exactly what nyiso-110 §10
+        #   forbade — so this path deliberately finds no row and falls through
+        #   to the legacy identification, logging that it is unidentified.
+        online_rho = _identified_online_rho(
+            fleet_arrays,
+            q_idx,
+            iso="NYISO",
+            family_set="nyc_spin" if synch else "nyca_spin",
+        )
     else:
         eligible = np.vstack([full_elig, quick_elig])
         online_gated = None
