@@ -1683,3 +1683,231 @@ your branch when done.
     thing rather than merge it), applied to this lane's own work. Nothing is lost:
     the only part of that diagnosis not already on main is the curation blind-spot
     lesson above, carried forward here.
+- 2026-08-18 (03:45 UTC director cycle — calibration convergence) — Cycle read
+  completed at **04:25 UTC**, `origin/main` @ **`7e6da12`**, **ZERO open PRs**.
+  **Nine PRs merged since the v7 records landed** (#4074, 2026-08-17T20:50:49Z):
+  **#4080–#4088**. **The park is unchanged — WS3/PERF-B is still paused by owner
+  decision and G2 is still unreachable** — but this is the first cycle in six
+  whose headline is calibration *converging* rather than churning.
+  - **GOLDEN-TIER RED RESOLVED — and the resolution is narrower than "the tier is
+    green again".** Root cause, one sentence, from #4071's finding:
+    `curate_lmp.py::_neiso_flat24_repair` relabelled the true spring-forward row
+    by assigning the **string** `"02"` into the **int64** `Hr_End` column of the
+    2018–2023 NEISO flat-24 workbook vintage, which pandas 3.0.3 (the unchanged
+    `uv.lock` pin) raises on where older pandas silently upcast — introduced by
+    neiso-97's `a2b5e3d` (#4043) three hours before the cron. Fixed by relabelling
+    with the integer `2` (`d4fbf44`), a one-line behaviour delta of crash → works
+    as signed, with the unit test corrected to build the real dtype.
+    **Deliverables verified** — `docs/FINDING-golden-tier-cron-red-2026-08-17.md`
+    §7 records a **full local replay of all four CI job steps, all green** (nine
+    datatypes `[ ok ]`×9 → emissions 2023 → pytest tier serial 44 passed / 2
+    skipped → loud-failure guard clean, ~13 min wall), plus the standalone step-5
+    command green at 44 lmp partitions and `tests/test_neiso_smd_dst_repair.py`
+    7/7. **CORRECTION TO THE DISPATCH, verified rather than assumed: no
+    golden-tier workflow run has executed since.** The workflow's latest run is
+    **still the red `31999181985`** (schedule, 2026-08-17T05:48:08Z) and the last
+    green is still `31913648051` (`workflow_dispatch`, 2026-08-15 23:01 UTC) —
+    re-read live at 04:23 UTC this cycle. So the tier's standing expectation
+    returns to green **on the code and on a verified local replay**, and the next
+    red is again a NEW finding, but **the binding CI proof is unspent**:
+    BLOAT-S2's D3 leg ("first weekly golden-tier cron green after merge") and
+    every byte-green claim resting on the tier stay unprovable until one
+    `workflow_dispatch` runs or the Monday 05:37 UTC cron fires. That call —
+    billed minutes, cadence card F — remains the owner's, and it is the one item
+    this cycle could not close.
+  - **WS3/PERF CLOSE-OUT LANDED (#4075).** The paused lane's own handoff now
+    carries the **wallclock-baseline PERF-B section + the perf-recheck completion
+    note**: measured per-change deltas, the HEAD-era keeper-replay anchor, the
+    corrected §2.4 attribution, the gate record stamped with keeper ids, the
+    keeper-treadmill/rebase story and the environment findings (memcg ceiling,
+    pyarrow-24 curation sensitivity, keeper replayability, host noise), with open
+    items handed forward. **The park is therefore recorded in the lane's own
+    document, not only on this board** — which is what makes the pause resumable
+    by someone who never read a director cycle.
+  - **CALIBRATION CONVERGENCE — the cycle's headline, and the first time all six
+    ISO lanes are simultaneously at rest, closed, or scorer-only.**
+    - **ERCOT — keeper promoted, then three consecutive negative lanes, then the
+      backcast lane RESTS.** The keeper moved to
+      **`2026-08-17-ercot215-arm-decontam`** on **owner instruction** (**#4070** —
+      keeper shard + status + matrix third-leg/cell/stamps + log + finding).
+      After it: **ercot-216** (#4076) measured the C3c residual lane **spent and
+      empty** — no lever, Phase-1 not entered; **ercot-217** (#4079) found the
+      2023-vs-2024/25 design split **already built, armed and correctly dated** —
+      no admissible regime lever, D-3 negative branch, nothing built; and
+      **ercot-218** (**#4084**) measured the direct AS-state driver swap
+      **NOT-TRANSFERABLE on all five gates** (proxy T5 reproduced to the pair,
+      98.2 % of storage ties dissolve, survivors still violate at 71.1 %), so
+      **Door D is confirmed as the floor and the ERCOT backcast lane rests**.
+      *Recorded against the dispatch: "rests" is true of the LEVER lane only.*
+      The owner then directed the same session to answer why 2023 prices were
+      actually that high — **#4087** landed the research memo (ECRS artificial
+      shortage + young-storage margin, measured and sourced; August-2023 storage
+      offers measured as a rational expectation of the spike frequency) and
+      **#4088** drafted the **option-B owner decision card** (structural
+      artificial-shortage mechanism: B-1 signature text, three-stage
+      zero-fitted-scalar spec, direction-blind kill gates). **Nothing is armed,
+      no `ScenarioConfig` field exists, no matrix cell is minted** — the card is
+      **DRAFT AWAITING SIGNATURE** and is a **new owner-queue item created after
+      the lane rested**.
+    - **MISO — the blocked lane is CLOSED and its data ask is resolved against.**
+      **#4069** (miso-163) executed the owner's ruling closing **C3a-2025 as a
+      model-class limit** on the ERCOT C3a-2023 (Q-B) precedent — a budget
+      decision, not a rubric one; no solve, no lever, no cell verdict, keeper
+      `2026-08-16-miso-160-wefor-shape` unchanged. Two halves went to the owner
+      and both are on the record: the stated Shape-1 **data blocker is FALSE**
+      (`data/raw/MISO-AS/asm_rtmcp_zonal_{2023,2024,2025}.parquet` already carry
+      hourly zonal RT ASM MCP by product), and the **real** blocker is the
+      mechanism — already cell `G` on structural grounds and **measured inert**
+      (in the 88 actual 2025 RT>$200 h the keeper clears $50 median, the reserve
+      adder fires 2 of 88, reserve holds ≥11 GW against ~4.4 GW required).
+      **#4078** (miso-164) then resolved the GADS data ask on evidence — it
+      **FAILS on C and D**. *(#4078 was already ledgered at the v7 refresh;
+      #4069 is new to this ledger — it merged at 14:48:58Z, before the v7 stamp,
+      but only reached the board's post-rebase addendum.)*
+    - **NYISO — keeper promoted to the Astoria stack-duplicate intake
+      correction.** **#4081** promoted **`2026-08-17-nyiso-142-stackdup`** on the
+      owner's ruling; the A/B itself was pre-registered, solved and adjudicated
+      at nyiso-142 (**#4068**) and held pending that call, so the promotion
+      carries **no new solve**. Rule 14 `[R-ACCURATE]`, **zero free parameters**:
+      CAMPD/CEMS reports one Astoria generator twice and in 2025 that doubled
+      number **was the benchmark**; 18 stack-duplicate `plant_emission_rates_v2`
+      rows folded onto their primaries across 2018–2026 with every other row
+      asserted byte-frozen (the surgical route was required because the default
+      derive path is a REPLACE that would have destroyed the 2018 rows and the
+      2022/2026 holdout-intake rows). **Not a lever and no cell verdict moves**
+      (rule 28b/28d): **718/718 `scenario_config` fields identical, sorted-config
+      sha256 identical**. All six pre-registered gates clean, determination
+      **CALIBRATED**, C3c bit-unchanged at 21/3/24 h, no gated criterion
+      regresses (the structure-over-gates clause was offered and not needed).
+    - **CAISO — scorer-only, and the lane already rests.** **#4080** recorded the
+      **C1 band threshold finding** for the keeper's single C1 failure (2023
+      `CC_REGULAR`, −4.243 TWh) with **no rubric constant edited and no run
+      solved, registered or promoted**: the 8 TWh is a **cap**, not the band
+      (`vol_band = min(2 % × load, 8 TWh)`; CAISO's 207.404 TWh load gives
+      ±4.148, so the row misses by 0.0955 TWh = 102.2 % of band, while the share
+      leg passes at −1.75 pp vs ±3.0 pp); the 4.148 is traced end to end and
+      measured stable across all 26 registered runs; a generation basis would
+      **tighten** CAISO to 3.515, not loosen it; "C1 is a C3a symptom" is
+      **refuted** (the two are inversely related across years); and over 372
+      gated C1 rows there are exactly 2 failures, the share leg has never bound
+      (peak 79.0 %), and **every candidate widening flips 0 determinations**
+      because C3a fails CAISO independently. Also newly ledgered here: **#4066**
+      recorded owner ruling **caiso-201 — the CAISO backcast lane rests at
+      NOT-YET** (merged 2026-08-17T09:26Z, never carried into §8).
+  - **GOVERNANCE — the declaration desk sat, and it said NOT YET three times.**
+    Rubric **v3.3** (#4077 — a ledgered C3c caveat is *reported*, not
+    *downgrading*) was ledgered at the v7 refresh and is not re-recorded; what is
+    new is what was decided **under** it.
+    - **#4083 — PJM, NYISO and NEISO assessed for a `final` declaration: all
+      three NOT YET, on the merits** (not on the freeze, which independently
+      blocks every out-of-training spend for every ISO). **NYISO is the least
+      ready of the three.** `final` remains empty; granting it is the owner's
+      act. **#4086** then re-verified the NYISO assessment **against the promoted
+      nyiso-142 keeper** — recommendation **unchanged**, no keeper, marker, matrix
+      or governance file touched, no year solved, scored or registered.
+    - **#4082 — NEISO re-assessed under v3.3 (neiso-100): `final` still NOT
+      YET**, and nothing granted. No solve, keeper unchanged at
+      `2026-08-17-neiso-99-joint-p1`, determination re-verifies **CALIBRATED** on
+      committed artifacts, `audit_keepers --iso NEISO` 0/0. The frontier recheck
+      probe re-ran unmodified and came back **byte-unchanged** (tail 0/0/0 h >
+      $300 on the sole P1 pass; RCPF dormant in all 78,840 family-hours), and the
+      v3.3 question is answered on the **ledgerability invariant**, explicitly
+      **not** on rubric-independence (which the v3.1/CAISO precedent refutes).
+      The `final` blockers are re-measured, not asserted: **2019 cannot exercise
+      C3c** (RT max $261.35, 0 h > $300; 2020 degenerate the same way), the
+      Pilgrim gap costs **~91 % of the 2019 C1 band**, and H1-2026 is blocked by
+      the six-ISO partial-year gate. Two findings worth their own line: the
+      standing **2022 touchpoint now differs from the keeper on six axes at hash
+      grain** (three already stale at neiso-98), so **neiso-98's leg 3 has
+      expired** — the conclusion survives but on a measured bound (2022 carries
+      19 guard-removed outage windows, the fewest of any year 2018–2025); and a
+      **v3.3 re-score of 2022 was REFUSED on the active holdout freeze**, whose
+      `frozen_operations` names "score". The **2025 EIA-923 final vintage is
+      re-checked and still not landed.**
+    - **#4085 — audit rows O5 and O4 worked, and the correction the dispatch
+      needs: O4 is NOT closed.** **O5 is CLOSED** and re-verifies **stronger than
+      as written** — re-derived from each designated keeper's own bundle
+      `meta.json` on a **newer keeper set than the closing session could cite**
+      (ERCOT and CAISO both promoted since), all six read `commitment=false` /
+      `passes ["P1"]`. Its **residual was found and fixed in-session**: the seam
+      was closed at two of **three** recipe-replay paths —
+      `scripts/knob_jacobian.py::solve_year` rebuilt kwargs via
+      `replay_keeper.build_kwargs(meta)` and called `solve_and_persist` directly,
+      gated by **neither** `enforce_legacy_p2_kwargs` **nor**
+      `enforce_holdout_year_gate`, with both exposures live rather than
+      hypothetical (two committed bundles still carry `commitment=true`, and a
+      free-`int` `--year 2019` would have solved a **locked-test year under an
+      ACTIVE freeze** while the script's own docstring claimed rule-22 safety).
+      Fixed solve-neutrally with both gates added ahead of the solve and
+      `tests/regression/test_recipe_replay_gates.py` (10 tests + 6 subtests)
+      pinning hard-fail-not-rewrite semantics across all three paths. **O4 is
+      RE-MEASURED and REMAINS OPEN.** The numeric premise **survives the merit-order
+      guard** — post-guard `CC_REGULAR` capacity-weighted outage share **14.2–36.7 %
+      with 17 of 18 ISO-years above the 15 % norm ceiling** — while the *detector*
+      question is closed on evidence across four lanes, so the row's own routing
+      note ("resolve the detector question") is now wrong. The recommendation is
+      **option (A): close the charter with cause and lift the VALIDATION tier
+      only**, leaving `final` empty and carrying the definitional seam explicitly
+      (`docs/audit/AUDIT-FOLLOWUP-o5-o4-2026-08-18.md` §2.4). **What is open is the
+      disposition act alone — an owner signature — so the open audit rows at cycle
+      end are O4, O6 and O7, not O6 and O7.** (DEBUG row B1 additionally annotated
+      **STALE**; no code change.)
+  - **VERIFIED THIS CYCLE, NOT ASSUMED — the BLOAT-2 registry/payload parity gate
+    is GREEN, and its RED was carried stale for two cycles.** The gate was run
+    rather than inferred: `python3 scripts/check_registry_payload_parity.py` at
+    `7e6da12` prints **"registry/payload parity OK (26 runs checked, 26 bundle
+    dirs swept, 0 known-unsynced tolerated)"**. The MISO payloads it was recorded
+    as pending (`2026-08-16-miso-160-control` + `-wefor-shape`) landed with the
+    miso-160 promotion at **2026-08-17T01:58:04Z** (`3c2aa5e`) — **before both v7
+    stamps** — and a tree-only name-parity read confirms 1:1 held at `6cc332e`
+    (20/20) and at `f087c67` (26/26) as well as at HEAD (26/26). **WS6 therefore
+    has no RED**: the item is retired from the owner queue, not merely reassigned
+    from "unowned".
+  - **ALSO VERIFIED — the nyiso-140 null-treatment question (#4054) has NEVER been
+    adjudicated, and it is now a matrix-hygiene item rather than a keeper risk.**
+    No lane, PR or doc merged since the v7 refresh touches it (searched across
+    §8, the board, the NYISO shard and every docs landing since 2026-08-17T15:00Z);
+    the dispatched read-only recheck lane has produced nothing on main. What has
+    changed is only its consequence: the NYISO keeper has moved on to
+    **nyiso-142**, whose promotion is a **data correction with 718/718
+    `scenario_config` fields identical** to nyiso-140 — so the
+    `reliability_floor_plant_exclusions` arm and its matrix cell verdict `K`
+    **carry forward unchanged**, and what is unproven is the **A/B evidence
+    behind that verdict**, not the keeper's numbers. **Recorded as an open
+    matrix-hygiene item: the cell's `K` rests on an A/B that may have measured a
+    null treatment; re-checking it costs a fidelity read, not a solve.** The
+    stage-0 *captures* remain cleared on code-state evidence (only the
+    named-kwarg channel was broken; `capture_keeper_goldens.py` replays the
+    recorded config through `with_overrides`).
+  - **OWNER QUEUE AT CYCLE END** (carried verbatim into board v8): **NEISO-100
+    keeper-candidate + EIA-923-2025-vintage questions**; the **validation-freeze
+    lift signature** (the O4/O5 card, recommendation (A)); **NYISO frontier
+    re-declaration** (in flight); **O6** — locked-test scheduling, 2019 and
+    H1-2026 touch-once, **no ISO has ever spent one** (re-verified at this HEAD:
+    `complete` = {NEISO, NYISO, PJM}, `final` carries only its `_note`); **O7** —
+    ERCOT P0 bit-identity proof forfeited; **decision-1 ack** — still unacked, a
+    **fifth** cycle; plus the new **ercot-218b option-B card** (#4088) awaiting
+    signature and the standing **golden-tier proof-of-fix `workflow_dispatch`**.
+  - **PROGRAM POSTURE — parked at G1, and for the first time the park's own
+    precondition looks satisfiable.** The owner's stated precondition for
+    restarting WS3 is **keeper stability**, and at this cycle's end every ISO lane
+    is at rest by a decision rather than mid-lever: **ERCOT rests** (#4084, with
+    its next move gated behind an unsigned card), **MISO's blocking lane is
+    closed** (#4069), **NYISO has promoted and its successor is a governance
+    question** (#4081/#4086), **CAISO rests at NOT-YET and its open finding is
+    scorer-only** (#4066/#4080), **NEISO's lane produced a NOT-YET with no keeper
+    move** (#4082), and PJM has not moved since pjm-162. That is not a freeze —
+    **only the owner can declare one** — but it is the first cycle in which
+    declaring one would not interrupt an armed lane. **The director has
+    accordingly served the owner a restart option**: declare the freeze, re-verify
+    the stage-0 goldens against the then-current keepers, and resume WS3 from the
+    RESTART CHECKLIST. It is offered, not taken; the park holds until the owner
+    says otherwise.
+  - **DEVIATIONS.** (1) The standing one: the director issues prompts only and
+    does not push, so these records land via a dispatched lane. (2) **The live
+    `list_sessions` read failed again — second consecutive cycle** (the MCP call
+    returned "requires approval" on both attempts). Board v8's roster is therefore
+    rebuilt from **`Claude-Session` commit trailers on merged main** plus the live
+    branch/PR/merge state — which is stronger than v7's branch inference (it
+    carries actual session ids) but is still **not** a live session read, and is
+    labelled as such on the board.
