@@ -309,3 +309,23 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
  * the attribution note lands on the ercot_multiproduct_as cell. Q-B was suspended by the owner
  * FOR THAT LANE ONLY and was used only to read/report 2023 numbers; item 11 stays CLOSED.
  * docs/FINDING-ercot217-2023-regime-split-2026-08-17.md */
+
+/* ercot-218 re-stamp (2026-08-17/18, THE DIRECT SOC/AS-POSITION DRIVER LANE — Phase-0 read-only,
+ * no LP, NO cell verdict minted; keeper UNCHANGED at 2026-08-17-ercot215-arm-decontam). The
+ * owner-dispatched card for ercot-211 handback item (ii): the ercot-211 identifiability
+ * instrument re-run UNCHANGED except the driver swap — the aggregate (HSL-HASL)/HSL AS-position
+ * proxy replaced by the NP3-965 corpus's own five measured per-product AS-responsibility columns
+ * (REGUP/RRS/RRSFFR/NSRS/ECRS; the 60d_DAM_ESR_Data family the record named turns out RTC+B-era
+ * only, first delivery 2025-12-06, and carries NO SOC column even there — measured ESR SOC exists
+ * in NO committed corpus for 2023-2025, so the SOC half of item (ii) is unbuildable and x4 stays
+ * the telemetered-capability driver). VERDICT NOT-TRANSFERABLE, all five gates FAIL: the proxy
+ * T5 reproduces ercot-211 TO THE PAIR (1,168/1,111 = 95.1%), the true AS state BREAKS 98.2% of
+ * those ties (only 1.53% of the violating mass survives) — ercot-211's 95.1% magnitude was
+ * proxy-inflated, corrected here — and the surviving true-AS-state ties still violate at 71.1%
+ * (32/45, max irreducible $2,479/MWh, 7.1x the bar) while the within-regime control WORSENS to
+ * 0/6 (proxy 1/6): the mapping itself moves (the ercot-210 §4 competitive-state mechanism), not
+ * the drivers. Storage cells unchanged (ercot_storage_rt_offer_surface stays R; the armed
+ * storage_as/soc family untouched); nothing built, nothing armed, no verdict moved — the lane
+ * CLOSES per the precommitted rule, Door D CONFIRMED as the floor, the ERCOT backcast lane RESTS
+ * pending the 2026 SOM RTC+B-era anchors (~mid-2027; + the 2025 EIA-923 final vintage; + ESR SOC
+ * nonexistent pre-RTC+B). docs/FINDING-ercot218-direct-driver-phase0-2026-08-17.md */

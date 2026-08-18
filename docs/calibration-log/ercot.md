@@ -10144,3 +10144,113 @@ No new workflows, no PR (push-and-stop).
 
 **Session consumed the ercot-217 shorthand. Next shorthand: ercot-218**
 (ercot-199 remains unclaimed).
+
+## ercot-218 (2026-08-17/18) — THE DIRECT SOC/AS-POSITION DRIVER LANE (Phase-0, owner-dispatched — the owner card ercot-211 handback item (ii) required): the measured AS-state swap REPRODUCES the ercot-211 record TO THE PAIR, DISSOLVES 98.2 % of its storage tie-pairs — and the verdict is **NOT-TRANSFERABLE on all five gates anyway**; the LANE CLOSES, **Door D CONFIRMED as the floor**, the ERCOT backcast lane RESTS. No LP, no solve, no year scored, no run registered, no cell verdict, keeper UNCHANGED
+
+**Charter.** The ercot-218 owner dispatch itself — the NEW owner card ercot-211's
+handback item (ii) demanded ("a direct SOC/AS-position driver from the committed
+60-Day DAM ESR data is the one addition with a principled claim on the storage
+ties, unmeasured"). Not a re-run of a stopped lane: ercot-211 adjudicated the
+PROXY family; this lane measured the identifiability of the DIRECT family under
+its own card and fitted nothing to any residual. Off-queue by the dispatch (the
+§5.1 queue holds no live un-adjudicated in-model item — re-verified). Keeper
+resolved fresh at session start AND end: **2026-08-17-ercot215-arm-decontam**
+(NOT-YET, fail set {C3a-2023 −40.1 %, C3b-2023 0.736}, C3c the ledgered CAVEAT
+×3) — UNCHANGED. Pre-registered in
+`docs/PRECOMMIT-ercot218-direct-driver-phase0-2026-08-17.md`, pushed and
+blob-verified BEFORE the instrument read any delivery-2023 row.
+
+**(P0-A) The data premise, measured — and the record-named source fails it.**
+The dispatch names "the committed 60-Day DAM ESR disclosures" for per-hour
+measured ESR SOC + AS responsibility by product + telemetered capability.
+Measured: the `60d_DAM_ESR_Data` family is an **RTC+B-era artifact** — ERCOT
+added it to the NP3-966 bundle at go-live; first delivery day 2025-12-06, AFTER
+the SCED-corpus lane's 2025-12-04 stop (committed file verified: 183,881 rows,
+deliveries 2025-12-06..31; the Mar-Jul file is H1-2026, not read) — and it
+carries **NO SOC column even in the RTC+B era** (38 cols, the Gen_Resource
+layout). **Measured per-hour ESR SOC for 2023–2025 exists in NO committed
+corpus**; integrating Telemetered Net Output was refused as a construction
+(rule 13). The buildable DIRECT set: the NP3-965 corpus's own five per-product
+telemetered AS-responsibility columns (`Ancillary Service
+REGUP/RRS/RRSFFR/NSRS/ECRS`, in the audited 108-col union, non-null 1.000 on
+PWRSTR rows; ECRS column absent through pub 2023-08 — for the 2 post-ECRS
+June-2023 eval hours it reads 0.0, disclosed; RRSFFR ⊄ RRS at 90.1 % so no
+nesting assumed) + telemetered capability (HSL/HSL_ref retained as x4). The
+DAM-award alternative recorded, not used (day-ahead not real-time; HE-CPT join
+surface against the binding ercot-216 §6 clock discipline; 2023 coverage holes
+in the test year). Fit-year corpus recovered post-history-rewrite via the
+README route-3 salvage — `git fetch --depth=2 origin refs/pull/3978/head`, the
+corpus in the PR head's PARENT (the head IS the untracking commit) —
+**996/996 sha256-verified** against the tip manifest; quarantine not restored,
+not read.
+
+**(P0-B) The instrument, unchanged except the swap** (T1–T5 verbatim, fit
+2024/25 ≥ p90, test 2023 ≥ p98 post-ECRS primary, folds + the 2024→2025
+within-regime control, quantity-only read/refused sets written to the JSON):
+`scripts/probes/ercot218_direct_driver_phase0.py` →
+`results/calibration/ercot218_direct_driver_phase0.json`. Coverage falsifier
+ALL-PASS (2,503/2,432/175 hours — ercot-211's coverage exactly; selected-form
+map 6/6; AS columns non-null 1.000 ×3 years).
+
+**VERDICT: NOT-TRANSFERABLE — all five gates FAIL** (the pre-stated null), at
+full magnitude: **T1** storage Jun −66.8 / Jul −82.7 / **Aug +33.9 (IN band,
+was −77.6 at ercot-211)** / **Sep +135.3** / Dec +173.5 % — the direct state
+chases August into band and overshoots September in the same motion; no
+admissible fold (the carried FOLD_MIN_HOURS constant; relaxed diagnostic in
+the JSON); thermal in band every month on substance. **T2** storage
+Jul/Aug/Sep/Dec in band on substance, Jun outside (1.00 vs 0.58). **T3**
+inverted 0.46 / 0.64 vs 3× (extrapolation caveat carried). **T4 — the
+decisive control — WORSENS: storage 0/6** (Jun–Sep −64 to −92 %; proxy was
+1/6), thermal 6/6. **T5 direct: storage 45 tie-pairs, 32 violating =
+71.1 %**, max irreducible error **$2,479.00/MWh** — not vacuous, 7.1× the
+10 % bar; thermal 0 of 4,501.
+
+**THE DELIVERABLE — the direct-vs-proxy T5 delta.** Proxy re-run on the same
+rows reproduces ercot-211 **to the pair** (1,168 ties / 1,111 violating =
+95.12 % / max $2,487.50). The true AS state **breaks 98.2 % of the proxy
+ties**; only **17 of 1,111 violating pairs (1.53 %)** survive as
+true-AS-state ties (max $2,478.50 among them) — ercot-211's 95.1 % magnitude
+was **proxy-inflated**, and the record is corrected on that number. AND the
+corrected measurement still refutes identifiability at 71.1 % on the direct
+vector's own 45 ties, while T4 shows the added information buys NO transfer
+(0/6 within-regime). The wall moves from "the drivers are blurred" to "the
+mapping itself moves" — the ercot-210 §4 competitive-state mechanism (volume
+×8.4, price ÷2.7 at matched tightness; measured AS position halving 0.337 →
+0.144 across 2023→2025 while offers fell 2.7×) stands as the identified
+driver, an equilibrium object no forward-computable driver can carry. Class
+split persists: thermal transfers (T4 6/6, T5 0/4,501), and the AS columns
+break ZERO thermal ties.
+
+**(P0-C) Per the precommitted rule: the lane CLOSES; nothing chartered,
+nothing armed, nothing built. Door D (2026 SOM RTC+B-era anchors, ~mid-2027)
+is CONFIRMED as the floor** with the exhaustion proof at its strongest form:
+storage scarcity conduct is model-free non-identifiable at hour grain on
+tightness, capability AND the true per-product AS state, and does not
+transfer within-regime even with that state in hand. **The ERCOT backcast
+lane RESTS**, standing data blockers recorded in the finding §5: (1) the
+RTC+B-era SOM anchors (~mid-2027); (2) the 2025 EIA-923 final-vintage
+re-derivation (five C1 gas-class SKIPs); (3) NEW — measured ESR SOC does not
+exist pre-RTC+B in any committed or record-identified published disclosure
+(the SOC half of item (ii) permanently unbuildable for 2023–2025).
+
+**Governance.** Q-B FINAL and R-A honoured (no C3a/C3b/C3c value computed in
+any year; this dispatch does NOT re-suspend Q-B); rule 13 (2023 conduct =
+evaluation target only, measured-vs-measured; nothing feeds a solve);
+DO-NOT-REDO in full (Door A not re-fit; item 11 closed; the R cells not
+re-opened; mid-band spill CLOSED; LOLP B0; V0/ercot-201; 28a; regime lane
+CLOSED ercot-217); rule 22 ({2023,2024,2025} only; the H1-2026 ESR file and
+RTC+B quarantine never read; no marker sought); rule 25 (ERCOT only); rules
+5/23/24 (no config surface, nothing fitted to a residual); rule 15 (no run
+produced, nothing to register; RETENTION HOLD honoured — ercot-213-ctl and
+ercot-204 retained); rule 28 (no mechanism tested ⇒ NO cell verdict, the
+ercot-214/217 note precedent — attribution note appended to the ERCOT shard);
+rule 27 (local edits, exact bytes, ≥300-line pushes blob-verified; the
+session's git-push relay fault and its resolution recorded in the finding
+§6). The ercot-216 filed item (C3c OPEN RESIDUAL LANE re-wording) stays with
+the next keeper-promoting session; G-SPUR band-top blindness stays an owner
+gate-revision item. Full record:
+`docs/FINDING-ercot218-direct-driver-phase0-2026-08-17.md` + the precommit +
+probe + JSON. No PR (push-and-stop on `claude/ercot-218-direct-driver-5ckiur`).
+
+**Session consumed the ercot-218 shorthand. Next shorthand: ercot-219**
+(ercot-199 remains unclaimed).

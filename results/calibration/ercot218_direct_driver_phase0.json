@@ -1,0 +1,1280 @@
+{
+ "_provenance": {
+  "probe": "scripts/probes/ercot218_direct_driver_phase0.py",
+  "session": "ercot-218 DIRECT-DRIVER PHASE-0 (no LP, no solve)",
+  "precommit": "docs/PRECOMMIT-ercot218-direct-driver-phase0-2026-08-17.md",
+  "charter": "the ercot-218 owner dispatch (the owner card for ercot-211 handback item (ii))",
+  "keeper_at_run": "2026-08-17-ercot215-arm-decontam",
+  "instrument": "ercot-210/211 verbatim except the driver swap (precommit \u00a72)",
+  "reserve_columns_read": [
+   "hour",
+   "prc",
+   "rtolcap"
+  ],
+  "reserve_columns_refused": [
+   "system_lambda",
+   "rtorpa",
+   "rtoffpa",
+   "rtordpa"
+  ],
+  "as_responsibility_columns_read": {
+   "x3_regup": "Ancillary Service REGUP",
+   "x3_rrs": "Ancillary Service RRS",
+   "x3_ffr": "Ancillary Service RRSFFR",
+   "x3_nspin": "Ancillary Service NSRS",
+   "x3_ecrs": "Ancillary Service ECRS"
+  },
+  "no_price_series_read": true,
+  "rtcb_quarantine_read": false,
+  "dam_esr_file_read": false,
+  "esr_data_family_note": "60d_DAM_ESR_Data is an RTC+B-era artifact (first delivery 2025-12-06, after this lane's 2025-12-04 stop) and carries no SOC column; measured ESR SOC exists in no committed corpus for 2023-2025 (precommit \u00a71). The SOC coordinate of the direct driver set is therefore honestly ABSENT; x4 remains the telemetered-capability driver."
+ },
+ "design": {
+  "fit_years": [
+   2024,
+   2025
+  ],
+  "test_year": 2023,
+  "fit_tight_min": 0.9,
+  "eval_tight_min": 0.98,
+  "ecrs_live_hoy": 3840,
+  "headline_statistic": {
+   "STORAGE": "p50",
+   "THERMAL": "p90"
+  },
+  "direct_drivers": [
+   "x1",
+   "x2",
+   "x3_regup",
+   "x3_rrs",
+   "x3_ffr",
+   "x3_nspin",
+   "x3_ecrs",
+   "x4"
+  ],
+  "proxy_drivers_decomposition_only": [
+   "x1",
+   "x2",
+   "x3_old",
+   "x4"
+  ],
+  "thresholds": {
+   "T1": {
+    "rel": 0.35,
+    "abs_usd": 50.0,
+    "min_folds": 5,
+    "required_months": [
+     8,
+     9
+    ]
+   },
+   "T2": {
+    "rel": 0.4,
+    "abs_share": 0.15
+   },
+   "T3": {
+    "ratio": 3.0,
+    "band": [
+     0.4,
+     0.6
+    ]
+   },
+   "T4": {
+    "min_folds": 5
+   },
+   "T5": {
+    "tau": 0.05,
+    "max_fail_share": 0.1
+   }
+  }
+ },
+ "coverage": {
+  "2024": {
+   "hours_requested": 2629,
+   "hours_with_offer_rows": 2503,
+   "n_resources_with_hsl_ref": 738,
+   "rows_by_class": {
+    "STORAGE": 2503,
+    "THERMAL": 2503
+   },
+   "as_responsibility_nonnull_share_storage_segments": {
+    "x3_regup": 1.0,
+    "x3_rrs": 1.0,
+    "x3_ffr": 1.0,
+    "x3_nspin": 1.0,
+    "x3_ecrs": 1.0
+   }
+  },
+  "2025": {
+   "hours_requested": 2434,
+   "hours_with_offer_rows": 2432,
+   "n_resources_with_hsl_ref": 833,
+   "rows_by_class": {
+    "STORAGE": 2432,
+    "THERMAL": 2432
+   },
+   "as_responsibility_nonnull_share_storage_segments": {
+    "x3_regup": 1.0,
+    "x3_rrs": 1.0,
+    "x3_ffr": 1.0,
+    "x3_nspin": 1.0,
+    "x3_ecrs": 1.0
+   }
+  },
+  "2023": {
+   "hours_requested": 175,
+   "hours_with_offer_rows": 175,
+   "n_resources_with_hsl_ref": 657,
+   "rows_by_class": {
+    "STORAGE": 175,
+    "THERMAL": 175
+   },
+   "as_responsibility_nonnull_share_storage_segments": {
+    "x3_regup": 1.0,
+    "x3_rrs": 1.0,
+    "x3_ffr": 1.0,
+    "x3_nspin": 1.0,
+    "x3_ecrs": 1.0
+   }
+  }
+ },
+ "candidate_selection_fit_years_only": {
+  "selected": {
+   "STORAGE:p50": {
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 768.26571
+   },
+   "STORAGE:p90": {
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 988.21173
+   },
+   "STORAGE:s500": {
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 0.10308
+   },
+   "THERMAL:p50": {
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 2.41607
+   },
+   "THERMAL:p90": {
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 8.40743
+   },
+   "THERMAL:s500": {
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 0.00355
+   }
+  },
+  "cv_table": [
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "linear",
+    "space": "log",
+    "cv_mae": 771.13988
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 1056.92663
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "quad",
+    "space": "log",
+    "cv_mae": 771.15594
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 1057.41153
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 768.26571
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p50",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 1054.43395
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "linear",
+    "space": "log",
+    "cv_mae": 1789.08679
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 988.52409
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "quad",
+    "space": "log",
+    "cv_mae": 1790.17353
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 988.54855
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 1792.38966
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "p90",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 988.21173
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "s500",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 0.10403
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "s500",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 0.10351
+   },
+   {
+    "cls": "STORAGE",
+    "stat": "s500",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 0.10308
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "linear",
+    "space": "log",
+    "cv_mae": 2.46216
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 2.42656
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "quad",
+    "space": "log",
+    "cv_mae": 2.46279
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 2.42771
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 2.45469
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p50",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 2.41607
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "linear",
+    "space": "log",
+    "cv_mae": 8.45995
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 8.96228
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "quad",
+    "space": "log",
+    "cv_mae": 8.45155
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 8.95751
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "logit",
+    "space": "log",
+    "cv_mae": 8.40743
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "p90",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 8.91331
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "s500",
+    "form": "linear",
+    "space": "level",
+    "cv_mae": 0.00357
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "s500",
+    "form": "quad",
+    "space": "level",
+    "cv_mae": 0.00356
+   },
+   {
+    "cls": "THERMAL",
+    "stat": "s500",
+    "form": "logit",
+    "space": "level",
+    "cv_mae": 0.00355
+   }
+  ]
+ },
+ "T1_out_of_year_headline": {
+  "pass": false,
+  "by_class": {
+   "STORAGE": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 5000.0,
+      "predicted": 1661.8098,
+      "abs_err": 3338.1902,
+      "rel_err": -0.6676,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 4999.9836,
+      "predicted": 863.6574,
+      "abs_err": 4136.3262,
+      "rel_err": -0.8273,
+      "within_band": false
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 3361.1218,
+      "predicted": 4500.7689,
+      "abs_err": 1139.6471,
+      "rel_err": 0.3391,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 4052.4775,
+      "predicted": 9536.1461,
+      "abs_err": 5483.6686,
+      "rel_err": 1.3532,
+      "within_band": false
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 271.8082,
+      "predicted": 743.424,
+      "abs_err": 471.6158,
+      "rel_err": 1.7351,
+      "within_band": false
+     }
+    ],
+    "n_admissible": 0,
+    "n_pass": 0
+   },
+   "THERMAL": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 75.0,
+      "predicted": 40.3278,
+      "abs_err": 34.6722,
+      "rel_err": -0.4623,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 32.6199,
+      "predicted": 40.1616,
+      "abs_err": 7.5416,
+      "rel_err": 0.2312,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 65.598,
+      "predicted": 37.1102,
+      "abs_err": 28.4879,
+      "rel_err": -0.4343,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 62.6382,
+      "predicted": 39.7988,
+      "abs_err": 22.8393,
+      "rel_err": -0.3646,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 29.9,
+      "predicted": 41.5863,
+      "abs_err": 11.6863,
+      "rel_err": 0.3908,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 0,
+    "n_pass": 0
+   }
+  }
+ },
+ "T2_share_ge_500": {
+  "pass": false,
+  "by_class": {
+   "STORAGE": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 1.0,
+      "predicted": 0.5813,
+      "abs_err": 0.4187,
+      "rel_err": -0.4187,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 0.6919,
+      "predicted": 0.5032,
+      "abs_err": 0.1886,
+      "rel_err": -0.2727,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 0.7553,
+      "predicted": 0.5926,
+      "abs_err": 0.1626,
+      "rel_err": -0.2154,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 0.7634,
+      "predicted": 0.6559,
+      "abs_err": 0.1075,
+      "rel_err": -0.1408,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 0.4441,
+      "predicted": 0.5071,
+      "abs_err": 0.063,
+      "rel_err": 0.1417,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 0,
+    "n_pass": 0
+   },
+   "THERMAL": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 0.0176,
+      "predicted": 0.0005,
+      "abs_err": 0.0171,
+      "rel_err": -0.9695,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 0.011,
+      "predicted": 0.0023,
+      "abs_err": 0.0087,
+      "rel_err": -0.7879,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 0.0102,
+      "predicted": 0.0008,
+      "abs_err": 0.0094,
+      "rel_err": -0.9187,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 0.0099,
+      "predicted": 0.002,
+      "abs_err": 0.0078,
+      "rel_err": -0.7951,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 0.0022,
+      "predicted": 0.0051,
+      "abs_err": 0.0029,
+      "rel_err": 1.3186,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 0,
+    "n_pass": 0
+   }
+  }
+ },
+ "T3_non_degeneracy_fit_years": {
+  "pass": false,
+  "by_class": {
+   "STORAGE": {
+    "pred_tight": 508.005,
+    "pred_mid": 1104.797,
+    "ratio": 0.46,
+    "n_tight": 305,
+    "n_mid": 3337,
+    "ok": false
+   },
+   "THERMAL": {
+    "pred_tight": 36.345,
+    "pred_mid": 56.782,
+    "ratio": 0.64,
+    "n_tight": 305,
+    "n_mid": 3337,
+    "ok": false
+   }
+  }
+ },
+ "T4_within_regime_control_2024_to_2025": {
+  "pass": false,
+  "by_class": {
+   "STORAGE": {
+    "folds": [
+     {
+      "month": 1,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 127.4363,
+      "predicted": 365.6367,
+      "rel_err": 1.8692,
+      "within_band": false
+     },
+     {
+      "month": 2,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 70.0,
+      "predicted": 218.7015,
+      "rel_err": 2.1243,
+      "within_band": false
+     },
+     {
+      "month": 3,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 88.1137,
+      "predicted": 207.2723,
+      "rel_err": 1.3523,
+      "within_band": false
+     },
+     {
+      "month": 4,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 441.1036,
+      "predicted": 267.5061,
+      "rel_err": -0.3936,
+      "within_band": false
+     },
+     {
+      "month": 5,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 87.3844,
+      "predicted": 98.3373,
+      "rel_err": 0.1253,
+      "within_band": true
+     },
+     {
+      "month": 6,
+      "n_hours": 24,
+      "admissible": true,
+      "measured": 963.5852,
+      "predicted": 165.1737,
+      "rel_err": -0.8286,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 20,
+      "admissible": true,
+      "measured": 1727.669,
+      "predicted": 144.9546,
+      "rel_err": -0.9161,
+      "within_band": false
+     },
+     {
+      "month": 8,
+      "n_hours": 26,
+      "admissible": true,
+      "measured": 1379.1478,
+      "predicted": 177.9812,
+      "rel_err": -0.8709,
+      "within_band": false
+     },
+     {
+      "month": 9,
+      "n_hours": 33,
+      "admissible": true,
+      "measured": 560.4326,
+      "predicted": 203.6859,
+      "rel_err": -0.6366,
+      "within_band": false
+     },
+     {
+      "month": 10,
+      "n_hours": 13,
+      "admissible": true,
+      "measured": 205.7342,
+      "predicted": 322.2369,
+      "rel_err": 0.5663,
+      "within_band": false
+     },
+     {
+      "month": 11,
+      "n_hours": 24,
+      "admissible": true,
+      "measured": 1912.3882,
+      "predicted": 843.054,
+      "rel_err": -0.5592,
+      "within_band": false
+     }
+    ],
+    "n_admissible": 6,
+    "n_pass": 0
+   },
+   "THERMAL": {
+    "folds": [
+     {
+      "month": 1,
+      "n_hours": 9,
+      "admissible": false,
+      "measured": 37.2759,
+      "predicted": 24.3975,
+      "rel_err": -0.3455,
+      "within_band": true
+     },
+     {
+      "month": 2,
+      "n_hours": 1,
+      "admissible": false,
+      "measured": 31.14,
+      "predicted": 25.3827,
+      "rel_err": -0.1849,
+      "within_band": true
+     },
+     {
+      "month": 3,
+      "n_hours": 6,
+      "admissible": false,
+      "measured": 42.4476,
+      "predicted": 30.9573,
+      "rel_err": -0.2707,
+      "within_band": true
+     },
+     {
+      "month": 4,
+      "n_hours": 4,
+      "admissible": false,
+      "measured": 41.4477,
+      "predicted": 26.5085,
+      "rel_err": -0.3604,
+      "within_band": true
+     },
+     {
+      "month": 5,
+      "n_hours": 2,
+      "admissible": false,
+      "measured": 37.0909,
+      "predicted": 29.735,
+      "rel_err": -0.1983,
+      "within_band": true
+     },
+     {
+      "month": 6,
+      "n_hours": 24,
+      "admissible": true,
+      "measured": 36.7234,
+      "predicted": 32.9931,
+      "rel_err": -0.1016,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 20,
+      "admissible": true,
+      "measured": 40.4307,
+      "predicted": 31.4648,
+      "rel_err": -0.2218,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 26,
+      "admissible": true,
+      "measured": 37.0929,
+      "predicted": 28.9625,
+      "rel_err": -0.2192,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 33,
+      "admissible": true,
+      "measured": 37.4552,
+      "predicted": 28.5117,
+      "rel_err": -0.2388,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 13,
+      "admissible": true,
+      "measured": 35.8443,
+      "predicted": 28.0005,
+      "rel_err": -0.2188,
+      "within_band": true
+     },
+     {
+      "month": 11,
+      "n_hours": 24,
+      "admissible": true,
+      "measured": 41.8544,
+      "predicted": 26.3705,
+      "rel_err": -0.3699,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 6,
+    "n_pass": 6
+   }
+  }
+ },
+ "T5_model_free_tie_test_DIRECT": {
+  "pass": false,
+  "by_class": {
+   "STORAGE": {
+    "n_pairs": 45,
+    "n_exceeding_band": 32,
+    "share_exceeding": 0.7111,
+    "max_irreducible_error": 2479.0,
+    "ok": false
+   },
+   "THERMAL": {
+    "n_pairs": 4501,
+    "n_exceeding_band": 0,
+    "share_exceeding": 0.0,
+    "max_irreducible_error": 25.49,
+    "ok": true
+   }
+  }
+ },
+ "T5_proxy_reproduction": {
+  "STORAGE": {
+   "n_pairs": 1168,
+   "n_exceeding_band": 1111,
+   "share_exceeding": 0.9512,
+   "max_irreducible_error": 2487.5,
+   "ok": false
+  },
+  "THERMAL": {
+   "n_pairs": 4501,
+   "n_exceeding_band": 0,
+   "share_exceeding": 0.0,
+   "max_irreducible_error": 25.49,
+   "ok": true
+  }
+ },
+ "T5_direct_vs_proxy_decomposition": {
+  "STORAGE": {
+   "proxy_tied_pairs": 1168,
+   "proxy_violating_pairs": 1111,
+   "proxy_pairs_still_tied_on_direct": 21,
+   "share_of_proxy_ties_broken_by_direct": 0.982,
+   "violating_pairs_still_tied_on_direct": 17,
+   "share_of_violation_surviving_direct": 0.0153,
+   "max_irreducible_error_among_surviving": 2478.5
+  },
+  "THERMAL": {
+   "proxy_tied_pairs": 4501,
+   "proxy_violating_pairs": 0,
+   "proxy_pairs_still_tied_on_direct": 4501,
+   "share_of_proxy_ties_broken_by_direct": 0.0,
+   "violating_pairs_still_tied_on_direct": 0,
+   "share_of_violation_surviving_direct": null,
+   "max_irreducible_error_among_surviving": 0.0
+  }
+ },
+ "VERDICT": "NOT-TRANSFERABLE",
+ "reported_not_gating": {
+  "STORAGE:pre_ecrs_2023": {
+   "n_hours": 153,
+   "measured": 2445.73,
+   "predicted": 1369.487,
+   "rel_err": -0.44
+  },
+  "STORAGE:post_ecrs_2023_summer": {
+   "n_hours": 21,
+   "measured": 3999.066,
+   "predicted": 4628.744,
+   "rel_err": 0.1575
+  },
+  "THERMAL:pre_ecrs_2023": {
+   "n_hours": 153,
+   "measured": 34.231,
+   "predicted": 40.759,
+   "rel_err": 0.1907
+  },
+  "THERMAL:post_ecrs_2023_summer": {
+   "n_hours": 21,
+   "measured": 58.623,
+   "predicted": 38.671,
+   "rel_err": -0.3403
+  }
+ },
+ "post_hoc_diagnostics": {
+  "_note": "Gates nothing; the relaxed-fold table re-reports the ercot-211 \u00a73.2 diagnostic on this run's rows.",
+  "t1_t2_with_fold_min_hours_relaxed_to_1": {
+   "STORAGE:T1": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 5000.0,
+      "predicted": 1661.8098,
+      "abs_err": 3338.1902,
+      "rel_err": -0.6676,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 4999.9836,
+      "predicted": 863.6574,
+      "abs_err": 4136.3262,
+      "rel_err": -0.8273,
+      "within_band": false
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 3361.1218,
+      "predicted": 4500.7689,
+      "abs_err": 1139.6471,
+      "rel_err": 0.3391,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 4052.4775,
+      "predicted": 9536.1461,
+      "abs_err": 5483.6686,
+      "rel_err": 1.3532,
+      "within_band": false
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 271.8082,
+      "predicted": 743.424,
+      "abs_err": 471.6158,
+      "rel_err": 1.7351,
+      "within_band": false
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 1
+   },
+   "STORAGE:T2": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 1.0,
+      "predicted": 0.5813,
+      "abs_err": 0.4187,
+      "rel_err": -0.4187,
+      "within_band": false
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 0.6919,
+      "predicted": 0.5032,
+      "abs_err": 0.1886,
+      "rel_err": -0.2727,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 0.7553,
+      "predicted": 0.5926,
+      "abs_err": 0.1626,
+      "rel_err": -0.2154,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 0.7634,
+      "predicted": 0.6559,
+      "abs_err": 0.1075,
+      "rel_err": -0.1408,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 0.4441,
+      "predicted": 0.5071,
+      "abs_err": 0.063,
+      "rel_err": 0.1417,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 4
+   },
+   "THERMAL:T1": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 75.0,
+      "predicted": 40.3278,
+      "abs_err": 34.6722,
+      "rel_err": -0.4623,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 32.6199,
+      "predicted": 40.1616,
+      "abs_err": 7.5416,
+      "rel_err": 0.2312,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 65.598,
+      "predicted": 37.1102,
+      "abs_err": 28.4879,
+      "rel_err": -0.4343,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 62.6382,
+      "predicted": 39.7988,
+      "abs_err": 22.8393,
+      "rel_err": -0.3646,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 29.9,
+      "predicted": 41.5863,
+      "abs_err": 11.6863,
+      "rel_err": 0.3908,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 5
+   },
+   "THERMAL:T2": {
+    "folds": [
+     {
+      "month": 6,
+      "n_hours": 2,
+      "admissible": true,
+      "measured": 0.0176,
+      "predicted": 0.0005,
+      "abs_err": 0.0171,
+      "rel_err": -0.9695,
+      "within_band": true
+     },
+     {
+      "month": 7,
+      "n_hours": 6,
+      "admissible": true,
+      "measured": 0.011,
+      "predicted": 0.0023,
+      "abs_err": 0.0087,
+      "rel_err": -0.7879,
+      "within_band": true
+     },
+     {
+      "month": 8,
+      "n_hours": 9,
+      "admissible": true,
+      "measured": 0.0102,
+      "predicted": 0.0008,
+      "abs_err": 0.0094,
+      "rel_err": -0.9187,
+      "within_band": true
+     },
+     {
+      "month": 9,
+      "n_hours": 4,
+      "admissible": true,
+      "measured": 0.0099,
+      "predicted": 0.002,
+      "abs_err": 0.0078,
+      "rel_err": -0.7951,
+      "within_band": true
+     },
+     {
+      "month": 10,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 11,
+      "n_hours": 0,
+      "admissible": false
+     },
+     {
+      "month": 12,
+      "n_hours": 1,
+      "admissible": true,
+      "measured": 0.0022,
+      "predicted": 0.0051,
+      "abs_err": 0.0029,
+      "rel_err": 1.3186,
+      "within_band": true
+     }
+    ],
+    "n_admissible": 5,
+    "n_pass": 5
+   }
+  },
+  "storage_direct_as_state_at_eval_cut": {
+   "2024": {
+    "n_hours": 143,
+    "x3_regup": 0.0497,
+    "x3_rrs": 0.1062,
+    "x3_ffr": 0.0152,
+    "x3_nspin": 0.0406,
+    "x3_ecrs": 0.0897,
+    "x3_old": 0.2538,
+    "x4": 0.9599
+   },
+   "2025": {
+    "n_hours": 162,
+    "x3_regup": 0.0188,
+    "x3_rrs": 0.0679,
+    "x3_ffr": 0.0101,
+    "x3_nspin": 0.0688,
+    "x3_ecrs": 0.0249,
+    "x3_old": 0.1435,
+    "x4": 0.9693
+   },
+   "2023": {
+    "n_hours": 175,
+    "x3_regup": 0.1115,
+    "x3_rrs": 0.2209,
+    "x3_ffr": 0.0011,
+    "x3_nspin": 0.0163,
+    "x3_ecrs": 0.0209,
+    "x3_old": 0.3366,
+    "x4": 0.9741
+   }
+  }
+ }
+}
