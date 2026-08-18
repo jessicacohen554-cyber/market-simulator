@@ -2203,7 +2203,17 @@ def _apply_outage_overlays(
         _m_t = (pmax[_merch, None] * availability[_merch, :]).sum(axis=0)
         with np.errstate(invalid="ignore", divide="ignore"):
             _s = (_t_tel - _n_t) / np.maximum(_m_t, 1e-9)
-        _inert = ~np.isfinite(_t_tel)
+        # PRECOMMIT-ercot219 Amendment 1 (pre-solve): the degenerate branch
+        # s <= 0 — "zero merchant thermal online" — is physically impossible
+        # (a statewide blackout) and is measured to occur ONLY on isolated
+        # single-hour telemetry spikes in the netting series (2023 h2461 wind
+        # HSL 15.2->32.0->25.0 GW; 2024 h7345 wind 33.2->43.3->22.0 GW, above
+        # the year's installed wind). Such hours are series artifacts, treated
+        # reconciliation-inert (s = 1) exactly like a NaN hour — counted and
+        # reported, never fabricated into a shortage. Parameter-free: the
+        # bound is the mechanism's own degenerate point, unreachable by any
+        # real scarcity hour (T_tel p1 = 16.1 GW against N ~ 5 GW).
+        _inert = ~np.isfinite(_t_tel) | (_t_tel <= _n_t)
         _s = np.clip(_s, 0.0, 1.0)
         _s[_inert] = 1.0
         availability[_merch, :] *= _s[None, :]
