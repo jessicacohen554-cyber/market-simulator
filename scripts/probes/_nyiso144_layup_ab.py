@@ -99,8 +99,23 @@ def k1(mc: dict, ma: dict) -> dict:
     """Exactly one scenario_config field differs, and it is the flag."""
     keys = set(mc) | set(ma)
     diff = sorted(k for k in keys if mc.get(k) != ma.get(k))
-    # meta carries provenance fields that legitimately differ between runs.
-    provenance = {"timestamp", "note", "run_id", "git", "out_dir", "label"}
+    # meta carries provenance fields that legitimately differ between runs and
+    # cannot change a solve. `git_sha` is one of them HERE and only because it
+    # was checked: the two arms carry 800d475 (control) and 684f6be (arm), and
+    # the sole commit between them adds the control bundle's own artifacts —
+    # `git diff --name-only 800d475..684f6be` touches nothing under `src/`,
+    # `scripts/run_*`, `scripts/lib/` or `data/raw/`. A differing sha is NOT
+    # automatically benign; it is benign when that diff is empty, which is the
+    # check a reader should repeat rather than assume.
+    provenance = {
+        "timestamp",
+        "note",
+        "run_id",
+        "git",
+        "git_sha",
+        "out_dir",
+        "label",
+    }
     solve_diff = [k for k in diff if k not in provenance]
     return {
         "gate": "K1 armed and recorded",

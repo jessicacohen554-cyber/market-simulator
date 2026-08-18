@@ -1,15 +1,18 @@
 # ASSESSMENT nyiso-144 — frontier re-declaration and the `complete`-tier posture
 
-Session nyiso-144. Keeper at HEAD `2026-08-18-nyiso-143-n11tsl-arm`
-(determination **CALIBRATED**, rubric v3.4, C3c the lone ledgered caveat).
+Session nyiso-144. Keeper at HEAD **`2026-08-18-nyiso-144-layup-exclusion`**,
+promoted this session (determination **CALIBRATED**, rubric v3.4, C3c the lone
+ledgered caveat), superseding `2026-08-18-nyiso-143-n11tsl-arm`.
 
 ---
 
 ## 0. THE ANSWER
 
-* **`complete` is HELD and needs nothing from this session** — unless the
-  nyiso-144 A/B promotes, in which case its entry is re-keyed with a
-  determination re-verification (rule 22 D-5(b); §3).
+* **`complete` is HELD, and this session RE-KEYED it** — the nyiso-144 A/B
+  promoted, so its entry now names `2026-08-18-nyiso-144-layup-exclusion` with
+  the determination re-verified from committed artifacts (rule 22 D-5(b); §3).
+  Determination unchanged at **CALIBRATED**; the superseded keeper re-scores
+  CALIBRATED at the same HEAD, so the worse-determination stop does not fire.
 * **Frontier: still NOT-YET.** But the queue has changed character. nyiso-143
   left four open items, three of which were open *research* questions. After
   this session **none of them is**: item 1 is dissolved and replaced by a named
@@ -82,6 +85,15 @@ failures evidence rather than circularity. Pre-registration:
 `PREREG-nyiso144-bridge-layup-membership-2026-08-18.md`; result:
 `RESULT-nyiso144-bridge-layup-membership-2026-08-18.md`.
 
+**OUTCOME: all six kill gates PASS, and the arm is the new keeper.** The shed
+predicted from the control's own D-4 rows *before either solve* landed within
+1.3 % in all three years (0.1201 / 0.1406 / 0.3099 TWh against 0.1186 / 0.1396 /
+0.3089); D-4 unit-conduct failures fall **17 → 3** with zero new; every material
+class's forced share **falls**, so K6′ never escalated. No gated criterion moves
+— across both full verdict reports the only difference is a skipped, non-gated
+day-ahead diagnostic — and C3c is bit-unchanged at 2/0/5 h. Determination
+**CALIBRATED**, zero new free parameters (`n_residual` unchanged at 6).
+
 **A correction to the handoff's premise is recorded there**: the keeper's own
 committed `legitimacy_diagnostics.json` does not carry the Port Jefferson
 figures the handoff quotes (2024: 0.0616 TWh / 1,716 h / median 45.222 MW /
@@ -112,6 +124,11 @@ is open investigation:
 | 3 | plant 7314's bridge over-run | model-side, **offer/economics** | a NYISO lane |
 | 4 | `nyiso_iroquois_winter_spread` arming + taxonomy | **governance** ×2 | owner |
 
+Item 3 is newly sharpened by this session's A/B: 7314 survives the membership
+correction *by design* (it fails the lay-up test), and it is now the bridge's
+single largest remaining D-4 unit-conduct failure — so the object is isolated
+rather than merely named.
+
 Only item 3 is a lane-sized modelling task, and it is a small one. **A frontier
 re-declaration is therefore reachable in one more session once items 1, 2 and 4
 are ruled on** — which is a materially different position from nyiso-143's,
@@ -126,10 +143,11 @@ keeper's lone ledgered caveat, reported at full magnitude.
 
 ## 3. `complete` — the posture, stated explicitly
 
-**HELD, and correctly keyed at HEAD.** `frontend/data/backcast/calibration-complete.json`
-carries NYISO under `complete` with `keeper: "2026-08-18-nyiso-143-n11tsl-arm"`
-and `determination: CALIBRATED` (rubric v3.4, 0 FAILs, C3c the lone ledgered
-caveat), re-verified without a solve at the nyiso-143 promotion.
+**HELD, and RE-KEYED this session.** `frontend/data/backcast/calibration-complete.json`
+now carries NYISO under `complete` with `keeper:
+"2026-08-18-nyiso-144-layup-exclusion"` and `determination: CALIBRATED` (rubric
+v3.4, 0 FAILs, C3c the lone ledgered caveat), re-verified from committed
+artifacts without a solve. `keeper_at_declaration` is preserved.
 
 **What `complete` authorizes and what it does not.** It authorizes the
 validation touchpoints (2022, and the ladder back to 2020) — and **the holdout
@@ -138,13 +156,15 @@ out-of-training year may be solved, scored or registered in this session or any
 other while the freeze stands, and none was: every year read anywhere in this
 session is 2023, 2024 or 2025.
 
-**The one duty this session may incur.** If the nyiso-144 A/B promotes, rule 22
-D-5(b) requires the `complete` entry to be re-keyed to the new run **and its
+**The duty this session incurred, and discharged.** The A/B promoted, so rule
+22 D-5(b) required the `complete` entry re-keyed to the new run **and its
 determination re-verified against it** (`scripts/calibration_verdict.py
 --run-id`, committed artifacts only, never a solve) before the promotion commit
-lands; a re-verified determination that is *worse* stops the promotion and
-escalates. `keeper_at_declaration` is preserved either way. If the A/B does not
-promote, the entry is untouched.
+landed. Done: the arm scores **CALIBRATED**, and the superseded keeper
+`2026-08-18-nyiso-143-n11tsl-arm` **re-scores CALIBRATED at the same HEAD**, so
+the worse-determination stop does not fire and no owner escalation is owed.
+`scripts/audit_keepers.py --iso NYISO` passes clean (including check M1, the
+re-key check).
 
 ---
 

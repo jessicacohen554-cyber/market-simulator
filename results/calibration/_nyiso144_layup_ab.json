@@ -1,0 +1,337 @@
+{
+ "session": "nyiso-144",
+ "control": "nyiso144_control",
+ "arm": "nyiso144_layup_arm",
+ "declared_layup_plants": [
+  2480,
+  2625,
+  2682,
+  8006,
+  10190,
+  10620,
+  10621,
+  50744,
+  54034,
+  54592,
+  54593,
+  56188
+ ],
+ "gates": [
+  {
+   "gate": "K1 armed and recorded",
+   "solve_field_diffs": [
+    "nyiso_gas_bridge_plant_exclusions"
+   ],
+   "flag_control": null,
+   "flag_arm": true,
+   "passed": true
+  },
+  {
+   "gate": "K2 liveness",
+   "years": [
+    {
+     "year": 2023,
+     "control_floored_twh": 1.5071,
+     "arm_floored_twh": 1.387,
+     "shed_twh": 0.1201,
+     "predicted_twh": 0.1186,
+     "band": [
+      0.0593,
+      0.1779
+     ],
+     "in_band": true
+    },
+    {
+     "year": 2024,
+     "control_floored_twh": 1.046,
+     "arm_floored_twh": 0.9054,
+     "shed_twh": 0.1406,
+     "predicted_twh": 0.1396,
+     "band": [
+      0.0698,
+      0.2094
+     ],
+     "in_band": true
+    },
+    {
+     "year": 2025,
+     "control_floored_twh": 1.106,
+     "arm_floored_twh": 0.7961,
+     "shed_twh": 0.3099,
+     "predicted_twh": 0.3089,
+     "band": [
+      0.1545,
+      0.4634
+     ],
+     "in_band": true
+    }
+   ],
+   "passed": true
+  },
+  {
+   "gate": "K3 membership exactness",
+   "years": [
+    {
+     "year": 2023,
+     "lost_floor": [
+      2480,
+      2625,
+      8006,
+      10190,
+      54034,
+      56188
+     ],
+     "declared_and_floored_in_control": [
+      2480,
+      2625,
+      8006,
+      10190,
+      54034,
+      56188
+     ],
+     "stray_non_declared_losses": [],
+     "declared_still_floored_in_arm": []
+    },
+    {
+     "year": 2024,
+     "lost_floor": [
+      2480,
+      2625,
+      8006,
+      10190,
+      54034,
+      56188
+     ],
+     "declared_and_floored_in_control": [
+      2480,
+      2625,
+      8006,
+      10190,
+      54034,
+      56188
+     ],
+     "stray_non_declared_losses": [],
+     "declared_still_floored_in_arm": []
+    },
+    {
+     "year": 2025,
+     "lost_floor": [
+      2480,
+      2625,
+      8006,
+      10190,
+      54034,
+      54592,
+      56188
+     ],
+     "declared_and_floored_in_control": [
+      2480,
+      2625,
+      8006,
+      10190,
+      54034,
+      54592,
+      54593,
+      56188
+     ],
+     "stray_non_declared_losses": [],
+     "declared_still_floored_in_arm": []
+    }
+   ],
+   "passed": true
+  },
+  {
+   "gate": "K4 no new D-4 failure",
+   "control_failures": 17,
+   "arm_failures": 3,
+   "new_failures": [],
+   "cleared": [
+    [
+     2023,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "54034"
+    ],
+    [
+     2023,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "56188"
+    ],
+    [
+     2023,
+     "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
+     "2480"
+    ],
+    [
+     2024,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "10190"
+    ],
+    [
+     2024,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "54034"
+    ],
+    [
+     2024,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "56188"
+    ],
+    [
+     2024,
+     "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
+     "2480"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "10190"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "54034"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "54592"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "54593"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "56188"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
+     "2480"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
+     "8006"
+    ]
+   ],
+   "cleared_that_are_declared_layup": [
+    [
+     2023,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "54034"
+    ],
+    [
+     2023,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "56188"
+    ],
+    [
+     2023,
+     "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
+     "2480"
+    ],
+    [
+     2024,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "10190"
+    ],
+    [
+     2024,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "54034"
+    ],
+    [
+     2024,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "56188"
+    ],
+    [
+     2024,
+     "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
+     "2480"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "10190"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "54034"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "54592"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "54593"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+     "56188"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
+     "2480"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
+     "8006"
+    ]
+   ],
+   "passed": true
+  },
+  {
+   "gate": "K5 no gated-criterion regression",
+   "note": "metrics.json is reported verbatim for both arms; the criterion-level verdicts come from scripts/calibration_verdict.py --run-id after registration, which is the production scorer and the only thing that may declare a determination",
+   "control_keys": [
+    "caveats",
+    "criteria",
+    "data_blocked_years",
+    "determination",
+    "free_class_score",
+    "grade_summary",
+    "iso",
+    "label",
+    "notes",
+    "reasons",
+    "rubric_version",
+    "run_id"
+   ],
+   "arm_keys": [
+    "caveats",
+    "criteria",
+    "data_blocked_years",
+    "determination",
+    "free_class_score",
+    "grade_summary",
+    "iso",
+    "label",
+    "notes",
+    "reasons",
+    "rubric_version",
+    "run_id"
+   ],
+   "gated_criteria": [
+    "C1",
+    "C2",
+    "C3a",
+    "C3b",
+    "C4",
+    "C6",
+    "C8"
+   ],
+   "passed": null
+  }
+ ]
+}
