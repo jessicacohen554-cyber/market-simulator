@@ -253,3 +253,46 @@ declaration. **None of this requires spending the locked tier, and all of it sho
 Immediate predecessor for NYISO: `ASSESSMENT-nyiso142-final-readiness-2026-08-17` (same day,
 pre-v3.3 framing); this assessment independently re-verifies its grounds 1 and 3 at HEAD, adds
 the v3.3 determination analysis (§1) and the touchpoint-loop finding (§4).*
+
+---
+
+## ADDENDUM — 2026-08-17, post-merge: NYISO's keeper was promoted in parallel
+
+**The keeper this assessment was written against, `2026-08-16-nyiso-140-layup-exclusion`, is
+SUPERSEDED.** A concurrent session (nyiso-142, merged as PR #4081, commit `6336405`) promoted
+**`2026-08-17-nyiso-142-stackdup`** — the Astoria stack-duplicate intake correction — and the
+`complete.NYISO` marker is correctly re-keyed to it. This assessment's header names the older
+run because the two sessions overlapped.
+
+**Every finding below is re-verified against the NEW keeper and stands unchanged.** Re-run at
+`188f2d4`, committed artifacts only, no solve:
+
+| §1 finding | `nyiso-140-layup-exclusion` | **`nyiso-142-stackdup` (current)** |
+|---|---|---|
+| determination | CALIBRATED | **CALIBRATED** |
+| C1 / C2 / C3a / C3b / C4 / C6 / C8 | PASS | **PASS** |
+| C3c | CAVEAT [ledgered] | **CAVEAT [ledgered]** |
+| C3c 2023 | 21 h vs 10 h (**2.10×**) | **21 h vs 10 h (2.10×)** |
+| C3c 2024 | 3 h vs 13 h (**0.23×**) | **3 h vs 13 h (0.23×)** |
+| determination basis | *"1 ledgered caveat … NOT determination-downgrading under rubric v3.3"* | **identical, verbatim** |
+
+**§1's conclusion is therefore unchanged and applies verbatim to the current keeper: NYISO's
+CALIBRATED is carried entirely by the v3.3 caveat re-reading, not by a criterion that passes.**
+The v3.3 amendment block independently lists `2026-08-17-nyiso-142-stackdup` among the runs
+that flipped CALIBRATED-WITH-CAVEATS → CALIBRATED — it was a non-keeper at the time the
+amendment was measured, and has since been promoted. Its status is a relabelling on both counts.
+
+**§3.1's blocker also holds verbatim.** The new keeper's `run_config.json` still reads
+`scenario_config.nyiso_dynamic_reserve_requirements = True`, and
+`NYISO_reserve_requirements_<y>.csv` still exists for 2022–2025 only, with the loader still
+failing closed (`reserve_requirements.py:226-232`). **Neither locked-test year can be built on
+the current frozen keeper config either.**
+
+Findings **§3.2–§3.5 and §4 are keeper-independent** — they concern input coverage
+(`calibration_reference`, `renewable_capacity`, demand profiles), published actuals, and the
+absence of any NYISO out-of-training run. The parallel promotion does not touch any of them.
+
+> **The recommendation is unchanged: NOT YET, on the merits.** Ground 4 — NYISO has still never
+> run a single validation touchpoint — is if anything reinforced: the ISO has now taken three
+> keeper promotions (nyiso-140 → 142) since its `complete` marker was declared on 2026-07-31,
+> without once spending the ladder that marker authorizes.
