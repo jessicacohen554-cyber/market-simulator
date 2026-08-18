@@ -10326,3 +10326,108 @@ rational expectation of the artificial-shortage frequency.
 
 **Session consumed the ercot-218 shorthand. Next shorthand: ercot-219**
 (ercot-199 remains unclaimed).
+
+## 2026-08-18 — ERCOT-219 (OPTION-B PHASE-1, the ercot-218b structural artificial-shortage mechanism BUILT under B-1 and A/B'd full-span; 2 full-span solves; keeper UNCHANGED at ercot215): **REJECTED-AS-ARMED on four gates at full magnitude** — G-SPUR 9→273 / 11→671 / 1→1239 against a +5/yr bar, G-SHED 0/1/0 → 218/77/221 h of NEW load shed, G-OWNER C3a-2024 +715 % / C3a-2025 +1,278 %, G-BAT-2024 ratio 0.41 — and **the cause is measured and DIMENSIONAL: `RTOLHSL` is an ONLINE aggregate while the model's `pmax × availability` is an AVAILABLE envelope**, so stage 1 deleted the LP's commitment freedom (ERCOT-159/163 restated at aggregate grain, which B-1 cannot waive). **Stages 2–3 are NOT refuted**: G-EXH's own signature is monotone and correct — exhaustion hours **1,557 → 336 → 63** across 2023→2024→2025 from carried inputs alone. Matrix cell `ercot_artificial_shortage_pricing` minted **R**
+
+**Charter.** The owner dispatch of ERCOT-219 executing card §5 of
+`docs/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md`,
+whose **B-1 is SIGNED by that dispatch** — appended verbatim at the card's
+foot (commit `ecbad28`) before any build step, per the card's closing clause
+and the X-1/X-2 signature-by-dispatch precedent. Off-queue by the dispatch and
+the signed card (the §5.1 queue holds no live in-model item; FINDING-ercot218
+§0). Pre-registered in
+`docs/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md` (437 lines, pushed and
+blob-verified `fe1596ed` BEFORE any solve), which pinned the card-§7 open
+choices with citations: **stage-1 basis `rtolhsl`** (`rtolcap` REFUSED — a
+ramp-limited reserve headroom, and already the armed reserve-supply-cap input,
+rule 19), the **CHP-boundary exclusion** on the measured −4.05 GW cogen/PUN
+offset (`ercot219_basis_phase0.json`, corr 0.9957), the **2025 post-RTC+B
+648-null-hour tail** (hours 8112–8759, inert not fabricated), the **stage-2
+remainder-of-operating-day window** and same-hour load basis, and
+**energy-only stage 3**; plus the card-§4 gate table VERBATIM and the card-§3
+DOF table. **Amendment 1 (pre-solve)**: the SP-1b falsifier caught two
+single-hour wind/solar-HSL telemetry spikes (2023 h2461, 2024 h7345 — wind HSL
+above installed capacity) that would have manufactured a shed from a data
+artifact; the degenerate `T_tel ≤ N` branch is now inert like a NaN hour, zero
+scalars.
+
+**Built (all standing, default-off).** Three ERCOT-gated `ScenarioConfig`
+booleans, zero fitted scalars: `ercot_capability_reconciliation` (stage 1, in
+`_apply_outage_overlays` after the DAM rescale/event caps, before min-gen
+composition — tighten-only), `ercot_exhaustion_expectation` (stage 2,
+`P_exhaust = max over [t..end-of-day] LOLP(H)` on the registered `ordc_lolp_*`
+curve as an EXPECTATION input, ercot-206 B0 untouched; helper
+`scarcity.within_day_forward_max`), `ercot_storage_reservation_offer` (stage
+3, **P1-only** through a NEW `run_energy_solve(p1_storage_discharge_cost=…)`
+seam — measured at build time that the thermal `mc_bid_adjust` array cannot
+reach the storage discharge columns, so the card's named seam was implemented
+as its storage analogue at the same P0→P1 boundary, with `build_cost_vector`'s
+`storage_discharge_cost` widened to `(n_storage, T)`; **P0 untouched**).
+Committed audit trail: `hourly/exhaustion_<year>.parquet`.
+
+**Seam proofs ALL PASS** (`ercot219_seamproof.json`): SP-1 gate-off
+byte-identity ×3 years against the PRE-EDIT tree (worktree at the precommit
+commit); SP-1b stage-1 live in every year and **tighten-only** (max delta ≤ 0);
+**SP-2 all five non-ERCOT ISOs byte-identical with all three booleans ARMED**
+(CAISO/PJM/NYISO/NEISO/MISO on their own current bundles — rule 25 proven, not
+asserted); SP-3 column-scoped reads with the READ/REFUSED sets written; SP-4
+pinned default key `603c2498bf71d21d` UNMOVED, armed key distinct.
+**G-REPRO in its strongest form**: the control reproduces the keeper **12/12
+sidecars sha256-identical** AND its determination + reasons exactly, so the
+A/B delta is the mechanism alone.
+
+**The verdict, recorded unrewritten.** FOUR gates FAIL (table above); G-CAP 0
+violations in 26,280 h, G-DOF 8/6 identical control-vs-arm, G-D2 D-4 rows
+byte-identical with all three stage attribution rows present, LOYO
+structurally N/A declared pre-solve. The official fail set **WIDENS** from
+{price_mean, price_shape} to **{fuelmix, price_mean, price_shape,
+dispatch_corr}** — the arm breaks two criteria the keeper passes.
+
+**Root cause, measured from committed artifacts (2023).** Model merchant-thermal
+**AVAILABLE** envelope ≈ 68 GW; `T_tel` = `rtolhsl − wind_hsl − solar_hsl −
+storage_capability` (telemetered **ONLINE** all-thermal) 37.3 GW; SCED-corpus
+ONLINE truth 41.3 GW; and the model's **own** merchant-thermal dispatch in the
+control 26.4 GW mean / 48.2 GW p95 — i.e. **the model's online level already
+sits in the telemetered online regime**. Stage 1 pushed the *available*
+envelope onto reality's *online* level (scalar mean 0.63–0.74 in every hour),
+deleting the headroom the LP needs to commit at peak → shed at VOLL. **B-1
+waived the rule-13 licensing objection to ERCOT-159/163; it cannot waive the
+dimensional one.** The Phase-0 closure was correct and read one step too far —
+it validated `T_tel` *as an online object*.
+
+**Not closed.** Stages 2–3 stay built, seam-proven and default-off, and their
+own G-EXH signature is right: exhaustion hours **1,557 / 336 / 63** and `H` p5
+**1.75 / 3.99 / 6.18 GW** across 2023/2024/2025, 2023 concentrated Jun–Sep
+(184/207/240/180 h) — the real sequestration's decay across the ECRS release
+reform and RTC+B, reproduced with **no regime parameter** (ercot-217 stays
+closed). A successor supplying a dimensionally correct capability object
+inherits them at zero build cost; the object that would be needed is a
+*commitment*-side reconciliation, which is the ercot-163-refuted route and is
+**named as the diagnosis, not chartered**. Door D remains the floor for the
+2023 price object.
+
+**Side-effect reporting at full magnitude (Q-B FINAL / R-A — never a basis,
+never a gate; the card's table contains no 2023 price criterion by design):**
+C3a probe basis 2023 −30.4 → **+1,092.3 %**, 2024 +7.9 → **+715.3 %**, 2025
++0.5 → **+1,278.4 %**; C3b NRMSE 3.45 → 25.16 / 2.34 → 24.63 / 0.94 → 35.65;
+model tail > $200 67 → 2,370 / 22 → 1,243 / 1 → 2,076 against actual
+181/53/31. The arm over-prices by an order of magnitude in every year;
+nothing is minimised and no improvement is claimed.
+
+**Registration.** Pair `2026-08-18-ercot219-ctl-headbase` /
+`2026-08-18-ercot219-arm-optionb` registered WITH payloads and RETAINED
+(roster 5 → 7, under top-15, RETENTION HOLD honoured: ercot213-ctl-headbase
+and ercot204-rule26-delete NOT pruned). Both attestations authored; the arm's
+is marked `capability_reconciled: true` and NAMES the B-1 signature, per B-1's
+own condition. Matrix: the new family row `ercot_artificial_shortage_pricing`
+landed in the base + a cell line in EVERY ISO shard in the build commit (28c),
+and the ERCOT cell verdict is minted **R** this session (28b);
+`check_mechanism_matrix.py` exit 0. Keeper UNCHANGED; **promotion is a
+separate owner decision on this recorded verdict and was NOT taken in
+session.** Full record:
+`docs/FINDING-ercot219-option-b-artificial-shortage-2026-08-18.md` +
+`docs/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md` +
+`results/calibration/ercot219_{gates,seamproof,basis_phase0}.json`.
+
+**Session consumed the ercot-219 shorthand. Next shorthand: ercot-220**
+(ercot-199 remains unclaimed).
