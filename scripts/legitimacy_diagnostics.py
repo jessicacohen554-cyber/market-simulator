@@ -1050,6 +1050,7 @@ def run_d4(
     )
     unmetered: set[str] = set()
     skipped_substituted: set[str] = set()
+    ct_only_skipped: set[str] = set()
     for (mech_id, k_filter), (start, end) in windows.items():
         in_window = (hod >= start) & (hod < end)
         sel_rows = (
@@ -1106,6 +1107,15 @@ def run_d4(
             if b is None:
                 unmetered.add(pid)
                 continue
+            if b.get("ct_only"):
+                # The benchmark's own CT-only CEMS flag: EIA-923 net exceeds
+                # CAMPD gross by >10 %, so this plant's CAMPD HOURLY series is
+                # incomplete and the benchmark scores it on EIA-923 MONTHLY.
+                # A median of zero in a series the benchmark already declines
+                # to trust is a metering artifact, not conduct — the rider
+                # must not convict on it (rule 14 [R-ACCURATE]).
+                ct_only_skipped.add(pid)
+                continue
             meas = np.asarray(b["mw"], dtype=float)[:t]
             if meas.size < t:
                 unmetered.add(pid)
@@ -1161,6 +1171,16 @@ def run_d4(
                     f"says it is offline in at least half the hours the floor "
                     f"asserts it must be online (per-unit conduct rider)"
                 )
+    if conduct_ok and ct_only_skipped:
+        res.notes.append(
+            f"{year}: per-unit conduct rider skipped {len(ct_only_skipped)} "
+            "floored plant(s) carrying the benchmark's CT-only CEMS flag "
+            "(EIA-923 net > 1.1x CAMPD gross ⇒ scored on EIA-923 MONTHLY, "
+            "hourly CAMPD incomplete) — a zero median in a series the "
+            "benchmark itself declines to trust is a metering artifact, not "
+            "conduct: " + ", ".join(sorted(ct_only_skipped)[:20])
+            + (" …" if len(ct_only_skipped) > 20 else "")
+        )
     if conduct_ok and skipped_substituted:
         res.notes.append(
             f"{year}: per-unit conduct rider skipped "
@@ -1992,6 +2012,7 @@ def load_bench(repo_root: Path, iso: str, year: int) -> dict[str, dict]:
             "group": p["group"],
             "zone": p.get("zone"),
             "npl": float(p.get("npl") or 0.0),
+            "ct_only": bool(p.get("ct_only", False)),
             "mw": _decode_cf_bytes(
                 p["campd"], p.get("c_ann"), float(p.get("npl") or 0.0)
             ),
@@ -2009,12 +2030,24 @@ def bench_plant_view(bench: dict[str, dict]) -> dict[str, dict]:
     out: dict[str, dict] = {}
     for key, b in bench.items():
         code = str(bm.plant_code_of_key(key))
+        # ``ct_only``: the benchmark's own CT-only CEMS flag (EIA-923 net >
+        # 1.1x CAMPD gross), which marks a plant whose CAMPD HOURLY series is
+        # incomplete and which the benchmark therefore scores on EIA-923
+        # MONTHLY instead. Carried through so the D-4 per-unit conduct rider
+        # can decline to read an hourly meter the benchmark itself does not
+        # trust; a plant is flagged if ANY of its class slices is.
+        ct_only = bool(b.get("ct_only", False))
         cur = out.get(code)
         if cur is None:
-            out[code] = {"npl": float(b["npl"]), "mw": np.asarray(b["mw"], float)}
+            out[code] = {
+                "npl": float(b["npl"]),
+                "mw": np.asarray(b["mw"], float),
+                "ct_only": ct_only,
+            }
         else:
             cur["npl"] += float(b["npl"])
             cur["mw"] = cur["mw"] + np.asarray(b["mw"], float)
+            cur["ct_only"] = cur.get("ct_only", False) or ct_only
     return out
 
 

@@ -509,6 +509,24 @@ class TestD4PerUnitConductRider:
         assert not [r for r in res.rows if r["check"] == "unit-conduct"]
         assert any("SUBSTITUTED" in n for n in res.notes)
 
+    def test_ct_only_cems_plant_is_not_convicted(self):
+        """The benchmark's own CT-only flag means its hourly meter is partial.
+
+        ``ct_only`` marks EIA-923 net > 1.1x CAMPD gross, i.e. a plant the
+        BENCHMARK scores on EIA-923 monthly because the CAMPD hourly series is
+        incomplete. A zero median there is a metering artifact, not conduct
+        (rule 14 ``[R-ACCURATE]``).
+        """
+        dispatch, min_gen, mech = self._floored()
+        b = {"npl": 65.0, "mw": np.zeros(HOURS), "ct_only": True}
+        res = run_d4(
+            dispatch, min_gen, mech, self.KLASS, year=2023,
+            pids=["50744"], bench_pl={"50744": b},
+        )
+        assert res.passed
+        assert not [r for r in res.rows if r["check"] == "unit-conduct"]
+        assert any("CT-only CEMS flag" in n for n in res.notes)
+
     def test_driver_gated_limb_scored_on_its_binding_hours(self):
         """A limb inside an h0-23 window but gated by its own driver.
 
