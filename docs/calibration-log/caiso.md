@@ -8385,3 +8385,61 @@ this session): the two `2026-08-16-miso-160-*` sidecars have no run payloads.
 `ASSESSMENT-caiso200-frontier-2026-08-17.md` §5.1 (the sitting, re-stamped with the outcomes),
 `docs/governance/rule-history.md` §4 (genealogy), `docs/mechanism-testing-matrix.md` §5.2 +
 `docs/codebase-site/data/mechanism-matrix/CAISO.js` (lane-rest stamp; no cell verdict moved).
+
+## caiso-202 (2026-08-18) — **OWNER RE-OPENING of the rested lane (directive 2026-08-18): C3a 2024/2025 overrun structurally diagnosed end-to-end; every candidate lever killed by arithmetic BEFORE any solve; the charter's honest-fallback clause executed. NO LP, NO SOLVE, NO RUN REGISTERED, KEEPER UNCHANGED, NO MARKER TOUCHED, NO CELL VERDICT MOVED.**
+
+**Authorization.** The caiso-201 resting state ("no further CAISO calibration session without
+new funded data") was SUPERSEDED for this one charter by the owner's 2026-08-18 directive:
+*"I want a fix to 2024-2025 price overruns … likely lies in offer curve mechanics, solar hydro
+and wind potential overrun offsetting ct peaker underrun etc."* This entry is the re-opening
+record the charter requires; the caiso-201 ruling record stands, annotated never rewritten.
+Q2 of caiso-201 was NOT re-opened (neither object funded); the lane RETURNS to its resting
+state at this entry's close.
+
+**Finding (the deliverable):**
+`results/calibration/FINDING-caiso202-c3a-overrun-decomposition-2026-08-18.md`, from committed
+bytes only, probes `scripts/probes/_caiso202_c3a_decomp.py` +
+`scripts/probes/_caiso202_marginal_rung.py`. Headlines:
+
+1. **One behaviour, three scarcity regimes.** The model overprices EVERY sub-$60 actual-price
+   bucket by +$10–14/h in all three years — 2023 included — and underprices the >$60 tail in
+   all three. C3a's +4.1/+12.8/+15.7 % is the cancellation ordering (2023 had 2,752 tail hours
+   to cancel with; 2024 had 640; 2025 had 475). 2024/2025 are NOT a regression.
+2. **2024 is ~85 % settlement basis.** Model vs DA-lw +1.6 % (in-band); measured lw RT−DA
+   basis +$3.32; the rubric scores RT; `caiso_da_rt_two_settlement` is R and stays untouched
+   (the DA table is evidence, not a lever — per the charter's own instruction).
+3. **The mid-band marginal price-setter is the in-state CC econ rung** — interior in ~98 % of
+   overrun hours — **carrying CAISO's own measured PUB_DAM_GRP bid multipliers**
+   (`caiso_offer_curve_measured.json`, armed via `caiso_offer_surface_measured` since
+   2026-08-02), measured hub fuel, CARB carbon, and the CAISO-own pooled delivered-gas margin
+   anchor. There is no fitted offer object left to repair. The storage belly floor inherits
+   this level through arbitrage parity (the 19–22 % dual-priced share).
+4. **Every owner-named suspect ACQUITTED on measurement**: import tranches <5 % of the gap
+   (per-hub measured hubs; the caiso-140-era "8,800 MW pinning the belly λ" no longer
+   describes the post-caiso-188 keeper); biomass month-flat EIA-923 must-run (the first-pass
+   25 % attribution was a probe artifact, corrected against interest in §C.1); coal 13 MW;
+   solar bound = measured HSL potential BY DESIGN with the delivered-cap variant self-labelled
+   a rule-13 pin. Lane-2 answer: the renewable overrun CUSHIONS the price miss (zero-MC
+   supply); repairing it is C3a-adverse — the offsetting hypothesis is answered against.
+5. **Levers killed by arithmetic (§F), no solve spent**: per-year measured band mults
+   (2025-adverse), per-year margin anchor (2023 fails high), firm-selfsched reconciliation
+   (C3a-adverse; caiso-150's over-forcing), the wedge instruments (adjudicated/unfunded).
+   Required moves: −$0.97 (2024) / −$1.96 (2025); 2023 tolerates −$7.4.
+
+**Determination stands NOT-YET** (rule 13/owner ruling 5: no manufactured pass). The two
+routes that move C3a remain the caiso-201 Q2 owner objects — with the new bound that the
+import-spot-capacities object's direct λ share is now measured <5 % — and the C3a-basis
+question ruling 5 declined, to whose record this session adds: the same model scored against
+the DA settlement it structurally represents is IN-BAND in 2024.
+
+**RULES 15/16 — NO RUN TO REGISTER** (no LP; the caiso-140/150/201 precedent, stated so the
+absence is not read as a skipped duty). **Rule 28b:** evidence appended, no verdict moves —
+`import_hub_pricing` (acquittal), `cc_committed_offer_margin` (§E annotation),
+`diurnal_price_amplitude` (§B evidence base), `caiso_firm_selfsched_floor` (§F.3 direction
+note); §5.2 caiso-202 block added. **Filed, not fixed:** the DOF ledger's
+`offer_curve_by_group` "residual" identification is stale for CAISO's measured CC/CT bands
+(measured 2026-08-02) — correct at the next promotion's attestation.
+
+**Records:** the FINDING (above), the two committed probes,
+`docs/mechanism-testing-matrix.md` §5.2 caiso-202 block,
+`docs/codebase-site/data/mechanism-matrix/CAISO.js` (evidence appends).
