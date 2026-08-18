@@ -7677,19 +7677,32 @@ Full packet: `results/calibration/ASSESSMENT-nyiso143-frontier-redeclaration-202
   at nyiso-140 §6.3 precisely because K6 cannot adjudicate an import-relief
   lever. **All six gates SILENT, K6′ included** — it escalated on the
   pre-registered forced-share rise and cleared both legs (zero new D-4
-  failures, zero new D-1 misses). **And the arm is still not promotable, on a
-  DISCOVERY rather than a fit result: 100 % of the model's C3c tail hours are
-  Long_Island, in both arms and every year.** NYISO's modelled scarcity pricing
+  failures, zero new D-1 misses). **THE ARM PASSES ITS OWN PRE-REGISTRATION**:
+  §6 set promotion as K1-K5 silent + K6′ clean + C1/C2/C3a/C3b/C4/C6/C8 no
+  worse than control, *"whatever C3c does"* (charter D2 / nyiso-130 §8 — the
+  **owner** had already ruled C3c is not this lever's deciding criterion), and
+  all of it holds with 2023 C3a *improving* and no pre-registered adverse case
+  firing. **The determination would not move either**: `price_tail` is the LONE
+  failing criterion in BOTH arms (C6 `UNATTESTED` is the absent keeper
+  attestation every probe carries), so attested both would hit rubric v3.3's
+  C3c standing rule and read `CALIBRATED` with one ledgered caveat — the same
+  label the keeper holds. **What the arm EXPOSES — a finding, not a gate:
+  100 % of the model's C3c tail hours are Long_Island, in both arms and every
+  year.** NYISO's modelled scarcity pricing
   IS this bound binding in 84.5/87.6/71.1 % of its design-condition hours; swap
   in the published 940 MW and occupancy falls to 24.8/21.3/6.8 % and C3c goes
   **21→2 / 3→0 / 24→5 h** against actuals 10/13/42 — a 2-of-3 miss becomes
   3-of-3 and **2025 goes PASS → FAIL**. C1/C2/C3a/C3b/C4/C8 PASS in both, mean
   LMP moves ≤ $0.26/MWh, 2023 C3a *improves*, and the control reproduces the
   designated keeper's C3c **bit-identically at 21/3/24**. **NOT a rejection on
-  fit** (rule 1 `[R-STRUCT]`; the identification is published, zero DOF) — a
-  **rule 22 D-5(b) owner escalation**, session recommending the sequencing
-  reading. **DO NOT RE-SOLVE**: the A/B is done and committed; what is open is
-  the ruling. Named root-cause successor: **the downstate scarcity mechanism**.
+  fit** (rule 1 `[R-STRUCT]`; the identification is published, zero DOF).
+  **CORRECTED IN-SESSION: an earlier version of this entry said "not
+  promotable" and used the discovery as the reason — that inverted the
+  nyiso-119 G4 precedent (a gate passing AS WRITTEN is not overridden by a
+  consideration invented after the result) and is WITHDRAWN. PROMOTING IS THE
+  PRE-REGISTERED OUTCOME**; holding instead needs the owner to affirmatively
+  adopt the post-hoc sequencing argument. **DO NOT RE-SOLVE**: the A/B is done
+  and committed; what is open is the **ruling**, not a failure. Named root-cause successor: **the downstate scarcity mechanism**.
   Evidence: `results/calibration/RESULT-nyiso143-zone-k-transfer-bound-ab-2026-08-18.md`.
 * **CLOSED — the D-4 PER-UNIT CONDUCT RIDER IS BUILT, VALIDATED AND SHIPPED**
   (owner-adopted with K6′ at nyiso-140 §5/§6.3). D-4's off-window test is

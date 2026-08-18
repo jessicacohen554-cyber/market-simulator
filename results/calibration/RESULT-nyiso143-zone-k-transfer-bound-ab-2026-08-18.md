@@ -23,16 +23,44 @@ Gate record: `results/calibration/_nyiso143_ab_gates.json`, probe
 > shape and **clears it**. This is K6′'s second application and it did exactly
 > what it was adopted to do.
 >
-> **And the arm still should not be promoted, for a reason that is a discovery
-> rather than a fit result: the model's ENTIRE downstate scarcity formation IS
-> this bound.** 100 % of its C3c tail hours are Long_Island, in both arms and
-> every year. Relax the bound to the published number and the tail essentially
-> vanishes — 21 → 2, 3 → 0, 24 → 5 h — turning a 2-of-3 C3c miss into 3-of-3
-> and **breaking the only year C3c passes**.
+> **THE ARM MEETS EVERY PRE-REGISTERED AND OWNER-SPECIFIED PROMOTE CRITERION.**
+> §6 of the pre-registration set promotion as: K1-K5 silent, K6′ clean, and
+> C1/C2/C3a/C3b/C4/C6/C8 no worse than the control — *"whatever C3c does"*, the
+> wording taken from charter D2 and nyiso-130 §8, i.e. the owner had already
+> ruled that C3c is not the deciding criterion for this lever. Every one of
+> those holds; 2023 C3a even **improves**. No pre-registered adverse case
+> fired. **On its own pre-registration, this arm PASSES.**
 >
-> **This is a rule 22 D-5(b) escalation, not a session decision, and it is
-> emphatically NOT a rejection on the residual (rule 1 `[R-STRUCT]` forbids
-> that).** The cell moves `R → O`.
+> **And the determination would not move either.** Measured, not asserted:
+> C3c (`price_tail`) is the **LONE** failing criterion in **both** arms,
+> identically, with C6 `UNATTESTED` the only other non-PASS — which is what
+> every non-keeper probe reads, an absent keeper attestation rather than a
+> substantive miss. Attested, both arms would hit rubric v3.3's C3c standing
+> rule (lone C3c failure + governance PASS ⇒ auto-ledgered caveat that does not
+> downgrade) and read **`CALIBRATED` with one ledgered caveat — the same label
+> the designated keeper carries today.**
+>
+> **What the arm DOES do is expose something: 100 % of the model's C3c tail
+> hours are Long_Island, in both arms and every year, so NYISO's entire
+> downstate scarcity formation IS this bound.** Relax it to the published
+> number and the tail essentially vanishes — 21 → 2, 3 → 0, 24 → 5 h. That is a
+> **finding**, and it is the most valuable thing in this bundle. It is **not**
+> a gate, and it was **not** pre-registered.
+>
+> ### CORRECTION, recorded rather than quietly fixed
+>
+> This document's first version led with *"the arm is still not promotable"*
+> and used the scarcity discovery as the reason. **That was wrong, and it is
+> the specific error this repo's pre-registration discipline exists to
+> prevent** — the nyiso-119 G4 precedent (a gate that fails as written is
+> RECORDED, not redefined) applies in the other direction too: a gate that
+> **passes** as written is not overridden by a consideration invented after
+> seeing the result. The scarcity finding stands on its own; it does not
+> retroactively block a promotion.
+>
+> **Corrected disposition: PROMOTING IS THE PRE-REGISTERED OUTCOME.** Holding
+> requires the owner to accept a NEW, post-hoc consideration (§5 reading B).
+> The cell stays `O` — open on an owner promote/hold ruling, not on a failure.
 
 ## 1. THE CONTROL REPRODUCES THE DESIGNATED KEEPER
 
@@ -111,28 +139,34 @@ the same object nyiso-110 named from the other side (missing everyday
 reserve-price formation) and nyiso-124 located as a downstate/in-city price
 formation gap.
 
-## 5. THE TWO READINGS, AND WHY THIS IS THE OWNER'S CALL
+## 5. THE TWO READINGS — and which one is the default
 
-Stated plainly because the rules point in different directions and pretending
-otherwise would be the dishonest move:
+**The default is PROMOTE**, because that is what the pre-registration and the
+owner's own D2 ruling specify and the arm met them. The alternative requires an
+owner decision to accept a consideration this session invented after the fact.
 
-* **Reading A — rule 14 literal.** The 940 MW is the accurate published input
-  and removes a 660 MW contingency the model already carries twice. Arm it; the
-  C3c collapse is a **discovered bug**, and the downstate scarcity mechanism
-  becomes the named root cause. Cost: C3c goes 3-of-3 miss, the single ledgered
-  caveat slot cannot absorb it, and the determination goes NOT-YET.
-* **Reading B — sequencing.** Build the downstate scarcity mechanism first,
-  arm the accurate bound after, so the accurate input lands without leaving the
-  model with **no** downstate scarcity formation at all. On rule 1
-  `[R-STRUCT]`'s own terms — mechanisms that mirror the real market — a model
-  whose scarcity comes from a deliberately-too-tight transfer bound and one
-  whose scarcity comes from nowhere are both wrong; B says fix them in the
-  order that never leaves the representation emptier than it started.
+* **Reading A — promote (the pre-registered outcome).** The 940 MW is the
+  accurate published input and removes a 660 MW contingency the model already
+  carries twice; zero DOF; all gates silent; every graded criterion no worse,
+  one better. The C3c collapse is then a **discovered bug** under rule 14
+  `[R-ACCURATE]` — *"treat the worse fit as a discovered bug: keep the accurate
+  input, find and fix the real root cause"* — and the downstate scarcity
+  mechanism becomes the named successor. Rule 1 `[R-STRUCT]` points the same
+  way: *"a real market behaviour stays in even if it makes the fit worse"*.
+  Cost: the C3c miss is reported at full magnitude in all three years instead
+  of two, on a criterion the standing rule already ledgers.
+* **Reading B — hold, and build the scarcity mechanism first (POST-HOC).** On
+  rule 1's own terms a model whose scarcity comes from a deliberately-too-tight
+  transfer bound and one whose scarcity comes from nowhere are both wrong; B
+  says fix them in the order that never leaves the representation emptier than
+  it started. **This is not a pre-registered criterion and was not one of the
+  charter's.** It is offered as a consideration for the owner, nothing more.
 
-**Session recommendation: B, on sequencing — offered as a recommendation, not a
-verdict.** Whichever way it goes, the deliverable is the same and it is already
-committed: this A/B is DONE and must not be re-solved. What is open is the
-ruling.
+**Session recommendation, corrected: follow the pre-registration — READING A,
+promote — unless the owner affirmatively adopts B.** The earlier version of
+this document recommended B while calling the arm "not promotable"; that
+conflated a post-hoc concern with a gate result and is withdrawn. Either way
+the A/B is DONE and must not be re-solved; what is open is the ruling.
 
 ## 6. COLLATERAL FINDING — the nyiso-140 membership repair is INCOMPLETE, in a bigger way than Danskammer
 
