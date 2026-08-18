@@ -417,3 +417,101 @@ class TestCTBlockCommitment(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestPlantMembershipExclusions(unittest.TestCase):
+    """``nyiso_gas_bridge_plant_exclusions`` — the lay-up MEMBERSHIP correction.
+
+    The bridge's half of a correction that previously existed only on the
+    reliability floor (``reliability_floor_plant_exclusions``), so the same
+    economically-laid-up plants were still floored by the OTHER mechanism
+    (nyiso-140 fixed one mechanism, not the plant — rule 19 ``[R-ONE-MECH]``).
+
+    Contract: default OFF is byte-identical; armed, a listed plant is dropped
+    from the bridge population entirely while its unlisted neighbours keep the
+    floor they had. Expressed through the detector's existing population gate
+    (a non-positive ``min_load_frac_by_gen`` entry), so no class-name tuple and
+    no new detector parameter is involved (rule 18 ``[R-PHYSICS]``).
+    """
+
+    def _fleet(self):
+        """Two identical CC plants, one of which the artifact will exclude."""
+        keep = _gen("KEEP", "gas_cc", "CC_REGULAR")
+        keep.plant_code = 1111
+        drop = _gen("DROP", "gas_cc", "CC_REGULAR")
+        drop.plant_code = 2222
+        gens = [keep, drop]
+        return gens, generators_to_fleet_arrays(gens, ["z"], hours=_HOURS)
+
+    def _dispatch(self):
+        """One 6 h run then a 4 h gap then another run — a bridgeable pattern."""
+        disp = np.zeros((2, _HOURS))
+        for g in (0, 1):
+            disp[g, 10:16] = 300.0
+            disp[g, 20:26] = 300.0
+        return disp
+
+    def _floor(self, cfg, monkeypatch_codes=None):
+        # The consuming import is function-local, so the SOURCE module is what
+        # a stub has to replace — patching the caller's namespace would miss it.
+        import market_sim.data.bridge_layup_exclusions as seam
+
+        gens, fa = self._fleet()
+        p0 = self._dispatch()
+        mc = np.full((2, _HOURS), 30.0)
+        lmp = np.full((1, _HOURS), 25.0)
+        if monkeypatch_codes is not None:
+            original = seam.load_layup_exclusions
+            seam.load_layup_exclusions = lambda iso: frozenset(monkeypatch_codes)
+            try:
+                return _nyiso_gas_bridge_floor(cfg, gens, fa, p0, lmp, mc)
+            finally:
+                seam.load_layup_exclusions = original
+        return _nyiso_gas_bridge_floor(cfg, gens, fa, p0, lmp, mc)
+
+    def test_default_off_is_byte_identical(self):
+        """The flag defaults off, so the artifact is never even read."""
+        base = self._floor(_config())
+        off = self._floor(_config(nyiso_gas_bridge_plant_exclusions=False), [2222])
+        self.assertIsNotNone(base)
+        np.testing.assert_array_equal(base, off)
+
+    def test_armed_drops_only_the_listed_plant(self):
+        base = self._floor(_config())
+        armed = self._floor(_config(nyiso_gas_bridge_plant_exclusions=True), [2222])
+        self.assertIsNotNone(base)
+        self.assertIsNotNone(armed)
+        # The excluded plant loses its floor entirely...
+        self.assertGreater(float(base[1].sum()), 0.0)
+        self.assertEqual(float(armed[1].sum()), 0.0)
+        # ...and its neighbour keeps exactly the floor it had.
+        np.testing.assert_array_equal(base[0], armed[0])
+
+    def test_empty_artifact_is_a_no_op(self):
+        """A missing/empty artifact must not silently disarm the mechanism."""
+        base = self._floor(_config())
+        armed = self._floor(_config(nyiso_gas_bridge_plant_exclusions=True), [])
+        np.testing.assert_array_equal(base, armed)
+
+    def test_artifact_reader_selects_only_laid_up_rows(self):
+        """The seam reads the real committed artifact and filters on laid_up."""
+        from market_sim.data.bridge_layup_exclusions import load_layup_exclusions
+
+        codes = load_layup_exclusions("NYISO")
+        # The committed NYISO artifact is non-empty and every row it yields is
+        # a plant the derive script marked laid_up.
+        self.assertTrue(codes)
+        # Roseton (8006) and Danskammer (2480) are the two large laid-up steam
+        # stations the nyiso-143 D-4 rider convicted on this mechanism.
+        self.assertIn(8006, codes)
+        self.assertIn(2480, codes)
+        # Port Jefferson (2517) is a temperature-conditional CYCLER, not a
+        # laid-up plant: it is excluded from the RELIABILITY FLOOR (whose
+        # always-on baseline it does not have) but must stay in the BRIDGE
+        # population, which is keyed to detected runs it genuinely performs.
+        self.assertNotIn(2517, codes)
+
+    def test_unknown_iso_yields_no_exclusions(self):
+        from market_sim.data.bridge_layup_exclusions import load_layup_exclusions
+
+        self.assertEqual(load_layup_exclusions("NOSUCHISO"), frozenset())

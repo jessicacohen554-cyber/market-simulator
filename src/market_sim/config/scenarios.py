@@ -633,6 +633,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_st_min_run_hours",
     "nyiso_gas_bridge_ct",
     "nyiso_gas_bridge_ct_min_load_frac",
+    "nyiso_gas_bridge_plant_exclusions",
     "nyiso_gas_bridge_ct_min_run_hours",
     # ERCOT gas-bridge ONLINE-HOURS leg (ercot141): inert at its default (off —
     # the floor stays gap-only and the detector call is byte-identical), so
@@ -1184,6 +1185,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_bridge_st_min_run_hours": "None",
     "nyiso_gas_bridge_ct": "False",
     "nyiso_gas_bridge_ct_min_load_frac": "0.238",
+    "nyiso_gas_bridge_plant_exclusions": "False",
     "nyiso_gas_bridge_ct_min_run_hours": "2.0",
     "ercot_gas_bridge_online_hours": "False",
     "forecast_xyear_warmstart": "True",
@@ -4884,6 +4886,34 @@ class ScenarioConfig:
     # mixed steam/turbine facility (Barrett, Gowanus, Narrows) contributes only
     # its turbines instead of being dropped as unattributable.
     nyiso_gas_bridge_ct_min_load_frac: float = 0.238
+    # MEMBERSHIP correction for the bridge (nyiso-144): skip plants in economic
+    # LAY-UP — idle in their own metered conduct while reading ~100 % available
+    # in the outage extract, because lay-up is correctly not booked as a forced
+    # outage. Bridging such a plant holds a mothballed boiler at minimum load
+    # across gaps it never operated in, which is rule 17 [R-FLOOR-WINDOW]'s "a
+    # floor binding in hours its own driver evidence says the class is offline
+    # is a bug by definition".
+    #
+    # This is the BRIDGE's half of a correction that previously existed only on
+    # the reliability floor (reliability_floor_plant_exclusions): the two
+    # mechanisms floor the same class, so nyiso-140 fixed one MECHANISM rather
+    # than the plant (rule 19 [R-ONE-MECH] — "enumerate what already floors the
+    # same class", one mechanism later).
+    #
+    # Population: data/raw/_processed-legacy/campd_bridge_layup_exclusions_NYISO.csv
+    # (scripts/data/derive_campd_bridge_layup_exclusions.py). A plant qualifies
+    # iff its median gross load is ZERO in every (year, 4-hour block) cell of
+    # 2023-2025 — the nyiso-140 criterion verbatim. The per-cell quantifier is
+    # what makes it a lay-up test rather than a low-capacity-factor test: a
+    # pooled median of zero also catches ordinary cyclers, which are exactly
+    # the population a commitment bridge exists to hold together. Frozen
+    # against residuals (rule 23 [R-FROZEN-DERIVE]); it reads only the meter and
+    # is computed WITHOUT reference to which plants the bridge floors, which is
+    # what makes its agreement with the D-4 verdicts evidence rather than
+    # circularity.
+    #
+    # Default off so a control run is byte-identical.
+    nyiso_gas_bridge_plant_exclusions: bool = False
     # Minimum run duration (hours) for the CT block-commitment extension.
     # 2 h = run_hours_p25_capwtd from the artifact above (34,024 measured runs;
     # cap-weighted p25/p50/p75 = 2 / 4 / 8 h, equally-weighted 2 / 4 / 7 h).
@@ -13332,6 +13362,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_gas_bridge_startup": 1,
     "nyiso_gas_bridge_da_horizon": 1,
     "nyiso_gas_bridge_min_run": 1,
+    "nyiso_gas_bridge_plant_exclusions": 1,
     "nyiso_gas_bridge_cc_min_run_hours": 2,
     "nyiso_gas_bridge_st_min_run_hours": 2,
     "nyiso_gas_bridge_ct": 1,

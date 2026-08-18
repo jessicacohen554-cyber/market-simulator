@@ -3484,6 +3484,7 @@ def solve_and_persist(
     nyiso_gas_bridge_startup: bool | None = None,
     nyiso_gas_bridge_da_horizon: bool | None = None,
     nyiso_gas_bridge_min_run: bool | None = None,
+    nyiso_gas_bridge_plant_exclusions: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -4430,6 +4431,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_min_run=nyiso_gas_bridge_min_run
             )
+        if nyiso_gas_bridge_plant_exclusions is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions
+            )
         if nyiso_gas_bridge_cc_min_run_hours is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours
@@ -5147,6 +5152,7 @@ def solve_and_persist(
             nyiso_gas_bridge_startup=nyiso_gas_bridge_startup,
             nyiso_gas_bridge_da_horizon=nyiso_gas_bridge_da_horizon,
             nyiso_gas_bridge_min_run=nyiso_gas_bridge_min_run,
+            nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
             nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
@@ -5986,6 +5992,7 @@ def solve_and_persist(
         "nyiso_gas_bridge_startup": nyiso_gas_bridge_startup,
         "nyiso_gas_bridge_da_horizon": nyiso_gas_bridge_da_horizon,
         "nyiso_gas_bridge_min_run": nyiso_gas_bridge_min_run,
+        "nyiso_gas_bridge_plant_exclusions": nyiso_gas_bridge_plant_exclusions,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
         "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
         "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
@@ -11476,6 +11483,16 @@ def main() -> None:
         help="Cap economic bridges at one DA operating day (24 h). Default on.",
     )
     parser.add_argument(
+        "--nyiso-gas-bridge-plant-exclusions",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="MEMBERSHIP correction: skip plants in economic LAY-UP (median "
+        "gross load zero in every year x 4-hour-block cell of 2023-2025, "
+        "data/raw/_processed-legacy/campd_bridge_layup_exclusions_NYISO.csv). "
+        "The bridge's half of the correction that previously existed only on "
+        "the reliability floor (--reliability-floor-plant-exclusions).",
+    )
+    parser.add_argument(
         "--nyiso-gas-bridge-min-run",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -11942,6 +11959,7 @@ def main() -> None:
         nyiso_gas_bridge_startup=args.nyiso_gas_bridge_startup,
         nyiso_gas_bridge_da_horizon=args.nyiso_gas_bridge_da_horizon,
         nyiso_gas_bridge_min_run=args.nyiso_gas_bridge_min_run,
+        nyiso_gas_bridge_plant_exclusions=args.nyiso_gas_bridge_plant_exclusions,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
         nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
