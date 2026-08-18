@@ -1,0 +1,178 @@
+{
+ "probe": "ercot219_basis_phase0",
+ "charter": "DECISION-CARD-ercot218b \u00a77 items 1-2; B-1 SIGNED (owner, by dispatch of ERCOT-219, 2026-08-18); pinned by docs/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "np6905_null_patterns": {
+  "2023": {
+   "rows": 8760,
+   "rtolhsl": {
+    "n_null": 0,
+    "null_first_hour": null,
+    "null_last_hour": null,
+    "mean_mw": 57163.1,
+    "p5_mw": 42067.9,
+    "p95_mw": 79018.5
+   },
+   "rtolcap": {
+    "n_null": 0,
+    "null_first_hour": null,
+    "null_last_hour": null,
+    "mean_mw": 13485.1,
+    "p5_mw": 7426.6,
+    "p95_mw": 21961.3
+   }
+  },
+  "2024": {
+   "rows": 8760,
+   "rtolhsl": {
+    "n_null": 0,
+    "null_first_hour": null,
+    "null_last_hour": null,
+    "mean_mw": 62310.5,
+    "p5_mw": 47825.8,
+    "p95_mw": 81468.5
+   },
+   "rtolcap": {
+    "n_null": 0,
+    "null_first_hour": null,
+    "null_last_hour": null,
+    "mean_mw": 16679.3,
+    "p5_mw": 9298.2,
+    "p95_mw": 25743.2
+   }
+  },
+  "2025": {
+   "rows": 8760,
+   "rtolhsl": {
+    "n_null": 648,
+    "null_first_hour": 8112,
+    "null_last_hour": 8759,
+    "mean_mw": 67906.6,
+    "p5_mw": 51654.4,
+    "p95_mw": 88255.1
+   },
+   "rtolcap": {
+    "n_null": 648,
+    "null_first_hour": 8112,
+    "null_last_hour": 8759,
+    "mean_mw": 19124.0,
+    "p5_mw": 10974.5,
+    "p95_mw": 29830.6
+   }
+  }
+ },
+ "closure_2023_t_tel_vs_sced_truth": {
+  "corr_t_tel_vs_sced_thermal_online": 0.9957,
+  "resid_mw_mean": -4054.9,
+  "resid_mw_p10": -5433.6,
+  "resid_mw_p50": -3979.9,
+  "resid_mw_p90": -2796.1,
+  "resid_mw_summer_evening_mean": -3987.6,
+  "resid_mw_hod_profile": {
+   "0": -4004.2,
+   "6": -4189.3,
+   "12": -4249.1,
+   "15": -3987.9,
+   "18": -3893.8,
+   "21": -3822.7
+  },
+  "sced_thermal_online_mw_mean": 41283.9,
+  "t_tel_mw_mean": 37344.7,
+  "hours_compared": 8039,
+  "reading": "T_tel tracks the SCED-corpus all-thermal online truth at corr 0.996 with a STABLE level offset (~-4.1 GW, flat in hour-of-day incl. the summer-evening window) \u2014 a population-boundary misalignment (the cogen/PUN boundary), not noise. The reconciliation must therefore exclude the model's CHP classes from both sides rather than import the offset into the scalar."
+ },
+ "component_sanity": {
+  "2023": {
+   "wind_hsl_mw_mean": 13019.0,
+   "wind_930_mwh_mean": 12331.0,
+   "solar_hsl_mw_mean": 3910.0,
+   "solar_930_mwh_mean": 3638.0,
+   "hsl_nulls": {
+    "wind_hsl_mw": 0,
+    "solar_hsl_mw": 0
+   },
+   "storage_capability_mw_mean": 2881.0,
+   "storage_capability_rows": 8760
+  },
+  "2024": {
+   "wind_hsl_mw_mean": 13551.0,
+   "wind_930_mwh_mean": 12724.0,
+   "solar_hsl_mw_mean": 5870.0,
+   "solar_930_mwh_mean": 5438.0,
+   "hsl_nulls": {
+    "wind_hsl_mw": 0,
+    "solar_hsl_mw": 0
+   },
+   "storage_capability_mw_mean": 6541.0,
+   "storage_capability_rows": 8760
+  },
+  "2025": {
+   "wind_hsl_mw_mean": 14120.0,
+   "wind_930_mwh_mean": 13139.0,
+   "solar_hsl_mw_mean": 8314.0,
+   "solar_930_mwh_mean": 7724.0,
+   "hsl_nulls": {
+    "wind_hsl_mw": 0,
+    "solar_hsl_mw": 0
+   },
+   "storage_capability_mw_mean": 11428.0,
+   "storage_capability_rows": 8760
+  }
+ },
+ "gbat_coverage": {
+  "2023": {
+   "bat_hours": 0,
+   "bat_first_utc": null,
+   "bat_last_utc": null,
+   "actual_tail_hours_gt200": 181
+  },
+  "2024": {
+   "bat_hours": 1337,
+   "bat_first_utc": "2024-11-06 07:00:00+00:00",
+   "bat_last_utc": "2024-12-31 23:00:00+00:00",
+   "actual_tail_hours_gt200": 53,
+   "tail_hours_inside_bat_coverage": 9
+  },
+  "2025": {
+   "bat_hours": 8736,
+   "bat_first_utc": "2025-01-01 00:00:00+00:00",
+   "bat_last_utc": "2025-12-31 23:00:00+00:00",
+   "actual_tail_hours_gt200": 31,
+   "tail_hours_inside_bat_coverage": 31
+  }
+ },
+ "mechanism_read": {
+  "data/raw/ercot/ercot_<yr>_ordc_reserves_hourly.parquet": [
+   "rtolhsl"
+  ],
+  "data/raw/ercot-hsl/ercot_<yr>_hsl_hourly.parquet": [
+   "wind_hsl_mw",
+   "solar_hsl_mw"
+  ],
+  "data/raw/ercot-storage-capability.csv": [
+   "capability_mw"
+  ]
+ },
+ "mechanism_refused": {
+  "price columns (never read by any stage)": [
+   "system_lambda",
+   "rtorpa",
+   "rtoffpa",
+   "rtordpa",
+   "prc"
+  ],
+  "quantity columns deliberately not used": [
+   "rtolcap",
+   "rtoffcap"
+  ],
+  "outcome series (rule 13)": [
+   "actual RTSPP / hub RT / DA prices",
+   "EIA-930 generation as a capability input",
+   "CEMS realized generation"
+  ]
+ }
+}
