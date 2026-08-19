@@ -156,3 +156,55 @@ model-path quantities and four frozen constants); Door A's static
 conduct-function closures untouched (this is the dynamic family their
 post-mortems pointed at); the ercot-219 aggregate reconciliation stays R;
 item 11 / mid-band / regime lanes stay closed.
+
+---
+
+## AMENDMENT 1 (pushed BEFORE any v2 fit; the v1 verdict stands recorded)
+
+**Family v1 as pre-registered was fitted once and FAILED its gates — recorded
+unrewritten** (`results/calibration/ercot221_adaptive_phase0.json`, v1
+section): G-ID daily corr 0.44 vs 0.6 (1/7 months in band); G-DECAY
+over-predicts the fall tail; G-SAFE read 0.67 on 2024; G-COV's fidelity leg
+mis-specified. G-BOOT PASSED ($1,319 Aug–Sep mean floor from the keeper's own
+2023 path vs the $750 bar). Diagnosis, from the measured response itself:
+
+1. **The prior term is mis-specified and does no identified work.** The
+   Jun/Jul cap-parking lives in the tightness-conditioned surface (offers at
+   the year's tightest hours), NOT in the unconditional evening window the
+   windowed mechanism actually floors (measured evening p50s: Jun $175, Jul
+   $761 — cheap at typical evenings, cap only when tight). The pre-registered
+   ablation leg measured the prior's own correlation at 0.006. The evening
+   response is a pure experience-follower: $175 → $761 → $4,700 → $5,000 →
+   $1,852 → $300 across Jun–Dec against spike-day counts 1/2/16/4/0/0/0.
+2. **v1's fitted half-life (45–90 d) was the prior term's artifact** — with
+   the prior absorbing the summer level, SSE pushed the trail term long.
+3. **G-SAFE was computed on an UNWINDOWED daily floor** the mechanism never
+   applies (§1 pins the floor to h17–20 only).
+4. **G-COV's ±10 % fidelity leg compared non-identical populations**: the
+   committed ercot-210 monthly values are per-month admissible-fold subsets
+   (n = 2/6/9/4/1 hours) not reconstructable from the JSON alone; the
+   saturated/flat months reproduce exactly (Jun −0.02 %, Jul 0.00 %, Dec
+   −0.00 %), which is the byte-fidelity evidence.
+
+**Family v2 (STRICTLY FEWER DOF — a term is removed, nothing added):**
+`P_hat(d) = clip(β · P_trail(d; λh), 0, 1)` — two identified constants
+(λh, β), grid λh ∈ {5, 7, 10, 15, 20, 30, 45} d, β ≥ 0 by OLS. The prior
+term is RETIRED (its phenomenon is out of the windowed mechanism's scope and
+its ablation showed zero identified work). For gate comparisons only, the
+prediction is `max(β · P_trail × VOLL, base)` where `base` = the median
+daily evening p50 over the PRE-go-live window Jan 1–Jun 9 2023 (a measured
+standing-ask constant identified on a window disjoint from the fit span —
+the fleet's ordinary evening ask, which in the LP is carried by the
+keeper's own storage offer, so `base` never enters the armed floor). The
+ARMED mechanism is unchanged from §1 except the prior term is zero.
+
+**Gate re-statements (bars unchanged):** G-ID and G-DECAY identical bars on
+the v2 prediction. G-SAFE unchanged bar (≥ 95 % of all 8,760 hours ≤
+vom+$100) computed on the mechanism's ACTUAL windowed floor schedule
+(h17–20 carry the floor; all other hours are vom by construction). G-COV
+fidelity leg: the saturated/flat months (Jun/Jul/Dec) within ±1 %
+(measured: pass), with the Aug/Sep population mismatch disclosed. G-BOOT
+unchanged (already PASS at v1; re-scored at v2 constants).
+
+Verdict rule unchanged: ALL v2 gates must pass to enter Phase-1; a v2 fail
+closes the lane with both fits recorded.
