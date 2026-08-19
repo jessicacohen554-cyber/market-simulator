@@ -1197,14 +1197,57 @@ class TestReliabilityFloorPlantExclusions(unittest.TestCase):
         self.assertIsNone(limb.start_hour)
 
     def test_no_other_iso_carries_an_exclusion(self):
-        """Rule 25 [R-ISO-SCOPE]: the correction is NYISO's alone."""
+        """Rule 25 [R-ISO-SCOPE]: exclusions exist only where identified in-lane.
+
+        Each allowlisted ISO carries its OWN CAMPD lay-up identification —
+        NYISO's Port Jefferson (nyiso-140) and MISO's 15-plant census
+        (miso-170, ``derive_campd_bridge_layup_exclusions --iso MISO
+        --patch-reliability-coeffs``). No other ISO may carry an exclusion
+        without its own derived artifact; a verdict never transfers
+        (rule 28(d)). (This pin read "NYISO alone" until miso-170 landed the
+        MISO census; the landed CSV made it fail at HEAD and it is corrected
+        here with the census it pins.)
+        """
+        identified = {"NYISO", "MISO"}
         for iso, specs in RELIABILITY_FLOOR_REGISTRY.items():
-            if iso == "NYISO":
+            if iso in identified:
                 continue
             self.assertEqual(
                 [s for s in specs if s.exclude_plant_codes],
                 [],
                 f"{iso} must carry no plant exclusions",
+            )
+
+    def test_miso_exclusions_match_the_layup_census_at_site_grain(self):
+        """Data contract: MISO limb exclusions = the census, stamped at SITE
+        grain (miso-170 K-1 amendment 2026-08-19): a census plant is excluded
+        from every limb whose (zone, class) contains any of the site's model
+        tranches — the majority-class-only stamping left Burlington (1104)'s
+        CT_PEAKER tranches floorable by the Plains CT netload limb while the
+        site metered dark in 98.7 % of that floor's binding hours."""
+        specs = RELIABILITY_FLOOR_REGISTRY.get("MISO", [])
+        if not specs:
+            self.skipTest("MISO reliability-floor CSV not present")
+        expected = {
+            ("MISO-South", "ST_GAS"): frozenset({170, 203, 1464, 8054, 8056}),
+            ("MISO-Indiana", "ST_GAS"): frozenset({992, 6639}),
+            ("MISO-Plains", "ST_GAS"): frozenset({1104, 1131, 2123}),
+            ("MISO-East", "ST_GAS"): frozenset({1702, 3992}),
+            ("MISO-West", "ST_GAS"): frozenset({1891}),
+            ("MISO-West", "CC_REGULAR"): frozenset({6358}),
+            ("MISO-South", "CC_REGULAR"): frozenset({58478}),
+            # Site-grain rows: census sites' tranches in OTHER classes.
+            ("MISO-Plains", "CT_PEAKER"): frozenset({1104, 2123}),
+            ("MISO-South", "CT_PEAKER"): frozenset({1464}),
+            ("MISO-West", "CT_PEAKER"): frozenset({6358}),
+        }
+        carrying = [s for s in specs if s.exclude_plant_codes]
+        self.assertGreater(len(carrying), 0)
+        for limb in carrying:
+            self.assertEqual(
+                limb.exclude_plant_codes,
+                expected.get((limb.zone, limb.plant_class)),
+                f"{limb.zone}:{limb.plant_class}:{limb.driver}",
             )
 
 
