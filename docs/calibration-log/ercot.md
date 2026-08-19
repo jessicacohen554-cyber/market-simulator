@@ -10522,3 +10522,42 @@ trailing-30d 0.53; Jun/Jul cap-parking under regime uncertainty; pre-ECRS
 charter ercot-221 Phase-0 (adaptive-rule identification at daily grain,
 LOYO + the 2024→2025 within-regime control as the decisive gate, fixed-point
 feasibility leg). Nothing built, nothing armed; B-2 stays unsigned.
+
+## 2026-08-19 — ercot-221 PREP (read-only owner-Q&A measurement session; NO shorthand consumed — ercot-221 stays free for the Phase-0): the 2022 regime point measured, the trailing-expectation year-grain test run, the trigger half shown well-posed on the keeper; 2022 offer corpus found NOT HELD (MIS recoverability = named open data task). No LP, no solve, no year scored, no run registered, no matrix cell touched, keeper UNCHANGED
+
+Supporting evidence for the ercot-220b-recommended ercot-221 Phase-0
+(adaptive expectation offer), produced under rule-22 data-not-score (2021/2022
+actuals as identification inputs only; **2019 untouched by every statistic**).
+Three measurements, probe `scripts/probes/ercot221prep_2022_regime_phase0.py`
+→ `results/calibration/ercot221prep_2022_regime.json`:
+
+* **M-1, the regime axis as a two-point contrast (NP6-323 telemetry):** 2022's
+  196-hour tail formed at PRC p50 **3,768 MW** with RTORPA p50/p90 **$34/$493**
+  and adder share p50 **15.3 %** (λ-carried 83/196); 2023's 181-hour tail at
+  PRC p50 5,794 MW, RTORPA p50 $0.72, adder share 0.5 % (λ-carried 122/181).
+  2022 = administrative scarcity at real tightness (physics the model already
+  has); 2023 = conduct at comfortable PRC. FINDING-ercot195's regime-series
+  verdict, measured directly.
+* **M-2, trailing-expectation year grain:** of six reported candidate
+  statistics of realized evening RT prices, only the Uri-inclusive one (36mo
+  mean of top-100h) lands the measured 2023 storage offer level (3,016 vs
+  2,714) and the 2023→2024 direction — then flattens by 2025 (1,660 vs 990).
+  Post-Uri price memory sets the level; the residual decay is the
+  competitive-state (fleet 8.4×) driver. Six-candidate post-hoc scan stated
+  as spent selection freedom: the Phase-0 must pre-register.
+* **M-3, the trigger half is well-posed:** ranking 2023 hours by the keeper's
+  own P1 `ercot_ordc_total` held-MW margin catches **136/181** actual tail
+  hours at matched count (actual tail sits at the model's 1st–2nd margin
+  percentile) — distinct from FINDING-ercot210's actual-PRC instrument, which
+  does not select. The open object is purely the price function on the
+  selected hours.
+* **Data:** 2022 60-day SCED offer corpus NOT HELD (publications start
+  2023-03); MIS recoverability is the named open check, and a measured 2022
+  storage offer level is the memory-vs-competition discriminator. 2022
+  NP6-323 telemetry and 2018–2026 hourly actuals are held.
+
+Full record: `docs/RESEARCH-ercot221prep-2022-regime-point-2026-08-19.md`.
+Governance: no shorthand consumed; `complete` block verified empty (no
+validation-year spend is authorized for any ISO); Door D and every adjacent
+matrix verdict stand unmoved. **Next shorthand remains ercot-221**
+(ercot-199 remains unclaimed).

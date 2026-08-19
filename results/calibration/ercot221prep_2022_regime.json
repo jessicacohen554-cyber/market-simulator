@@ -1,0 +1,131 @@
+{
+ "probe": "ercot221prep_2022_regime_phase0",
+ "posture": "read-only; no LP, no solve, no year scored, no run registered, no matrix cell touched, no shorthand consumed; rule-22 data-not-score (2019 untouched)",
+ "m1_regime_contrast_2022_vs_2023": {
+  "2022": {
+   "tail_hours_gt200": 196,
+   "prc_at_tail_mw": {
+    "p50": 3768.2529166666664,
+    "p10": 3253.355128205128,
+    "min": 2681.13375
+   },
+   "lambda_at_tail": {
+    "p50": 176.24857500000002,
+    "max": 4878.057375
+   },
+   "rtorpa_at_tail": {
+    "p50": 34.0002375,
+    "p90": 492.7227664215686,
+    "max": 1865.355525
+   },
+   "lambda_carried_hours": 83,
+   "adder_share_of_price_p50_pct": 15.348977093446305
+  },
+  "2023": {
+   "tail_hours_gt200": 181,
+   "prc_at_tail_mw": {
+    "p50": 5794.2716666666665,
+    "p10": 5076.89,
+    "min": 2696.511111111111
+   },
+   "lambda_at_tail": {
+    "p50": 405.64061666666663,
+    "max": 4927.03331875
+   },
+   "rtorpa_at_tail": {
+    "p50": 0.7192583333333333,
+    "p90": 54.63379333333333,
+    "max": 369.0321590909091
+   },
+   "lambda_carried_hours": 122,
+   "adder_share_of_price_p50_pct": 0.49623020315463034
+  }
+ },
+ "m2_trailing_expectation_year_grain": {
+  "measured_storage_offer_p50": {
+   "2023": 2714.0,
+   "2024": 1281.0,
+   "2025": 990.0
+  },
+  "trailing_evening_rt_stats": {
+   "12mo_p99": {
+    "2023": 686.1261108398444,
+    "2024": 2023.8960327148602,
+    "2025": 243.225274505616
+   },
+   "24mo_p99": {
+    "2023": 422.6703591918951,
+    "2024": 1179.830651855462,
+    "2025": 1123.1293957519556
+   },
+   "24mo_p995": {
+    "2023": 735.3868167114224,
+    "2024": 2270.2894653320122,
+    "2025": 2126.2139172362618
+   },
+   "36mo_p99": {
+    "2023": 804.8912103271474,
+    "2024": 919.4406433105469,
+    "2025": 960.7444427490199
+   },
+   "24mo_mean_top50h": {
+    "2023": 904.6488037109375,
+    "2024": 2413.768798828125,
+    "2025": 2319.174560546875
+   },
+   "36mo_mean_top100h": {
+    "2023": 3016.171630859375,
+    "2024": 1626.2021484375,
+    "2025": 1659.8062744140625
+   }
+  },
+  "selection_caveat": "six candidates scanned post hoc in one session; a Phase-0 must pre-register its statistic and gates before evaluation",
+  "reading": "Uri-inclusive memory (36mo_mean_top100h) lands 2023 (~3016 vs 2714) and the 2023->2024 direction, then flattens by 2025 while the measured level keeps falling \u2014 the residual decay matches the competitive-state (fleet 8.4x growth) driver, not price memory"
+ },
+ "m3_keeper_margin_selection_2023": {
+  "instrument": "keeper P1 ercot_ordc_total held_mw (ascending = tighter)",
+  "keeper_bundle": "ercot215_decontam_B",
+  "threshold_sweep": [
+   {
+    "n_tightest": 100,
+    "hits_of_181": 91,
+    "false_positives": 9,
+    "actual_rt_p50_in_false_hours": 151.67999267578125
+   },
+   {
+    "n_tightest": 181,
+    "hits_of_181": 136,
+    "false_positives": 45,
+    "actual_rt_p50_in_false_hours": 126.00250244140625
+   },
+   {
+    "n_tightest": 300,
+    "hits_of_181": 162,
+    "false_positives": 138,
+    "actual_rt_p50_in_false_hours": 100.35624694824219
+   },
+   {
+    "n_tightest": 500,
+    "hits_of_181": 171,
+    "false_positives": 329,
+    "actual_rt_p50_in_false_hours": 77.5
+   },
+   {
+    "n_tightest": 1000,
+    "hits_of_181": 173,
+    "false_positives": 827,
+    "actual_rt_p50_in_false_hours": 45.07749938964844
+   }
+  ],
+  "actual_tail_model_tightness_percentile": {
+   "p25": 0.005251141552511416,
+   "p50": 0.01141552511415525,
+   "p75": 0.020319634703196348
+  }
+ },
+ "data_availability": {
+  "sced_60day_offer_corpus_2022": "NOT HELD: corpus publications span 2023-03..2026-03 (delivery >= ~2023-01); 2022 deliveries published 2022-03..2023-02. MIS recoverability is an OPEN check (fetch_ercot_sced_corpus_shards.py exists; the fresh-MIS route decays per the corpus README)",
+  "np6323_telemetry_2022": "held (data/raw/ercot)",
+  "actual_lmp_hourly": "held 2018-2026 (_validation-source)"
+ }
+}
