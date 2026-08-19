@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-19-miso-170-membership",
+  "label": "miso 170 membership",
+  "date": "2026-08-19",
+  "shorthand": "miso-170-membership",
+  "definition": "miso-170 ARM: the keeper recipe with the laid-up-plant MEMBERSHIP correction armed on BOTH mechanisms that floor MISO ST_GAS (reliability_floor_plant_exclusions + mustrun_plant_exclusions). Population = the mechanism-blind 15-plant CAMPD lay-up census, computed without reference to any D-4 verdict. PREREG-miso170-stgas-floor-membership-2026-08-19.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-19-miso-170-membership.js",
+  "bundle": "results/calibration/miso170_membership_B"
+}

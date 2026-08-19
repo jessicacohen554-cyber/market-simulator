@@ -7573,3 +7573,80 @@ stamp re-stamped, keeper auditor run. Determination on the new keeper: **NOT-YET
 (−12.4 %, the RT-only model-class residue; the miso-163 ruling stands for that half) + C8 on
 regenerated-artifact vintage only (the rider; instrument drift, attested)**. Next number:
 **miso-170**.
+
+## miso-170 (2026-08-19) — the laid-up-plant MEMBERSHIP repair: 15 of 18 D-4 conduct failures cleared and C8-2024 PASSES, but K-1 fails as written and the arm is REJECTED-AS-ARMED pending the owner
+
+**Keeper UNCHANGED: `2026-08-19-miso-169-online-gated`.** Nothing promoted.
+`mustrun_plant_exclusions` **`O` (tested, escalated)**. Runs registered (rule 15):
+`2026-08-19-miso-170-control` (`miso170_membership_A`),
+`2026-08-19-miso-170-membership` (`miso170_membership_B`).
+
+Executes the miso-169 §5 **ask 2** on its second branch — the nyiso-143 D-4
+rider is right, the floors are wrong — per
+`PREREG-miso170-stgas-floor-membership-2026-08-19.md`, committed before either
+arm solved, with the gate scorer committed before either result was read.
+
+**RHO_CLIP (the session's conditional scope item) was NOT touched.** No owner
+ruling on the band exists, so the standing nyiso-144 escalation holds and both
+arms solved at the same uncited 0.5 floor the keeper did.
+
+**The charter's single channel was not enough.** `reliability_floor_plant_exclusions`
+carries 2 of the keeper's 18 D-4 per-unit conduct failures; the other 16 belong to
+`st_gas_mustrun_per_plant`, which had no exclusion channel at all — the
+nyiso-140 → nyiso-144 story one mechanism later (rule 19 `[R-ONE-MECH]`). Both
+halves shipped: the census is written into `reliability_floor_coeffs_MISO.csv`'s
+`exclude_plant_codes` column **mechanically** (new opt-in
+`--patch-reliability-coeffs` on the census deriver; original 17 columns
+byte-identical), and a new GATED `mustrun_plant_exclusions` (default off) gates
+**both** must-run seams — including the `st_gas_mustrun_p25_level` block, which
+reads the measured artifact directly and would otherwise have left the
+correction silently inert on this keeper. Cache-key pin `603c2498bf71d21d`
+unmoved. **Zero new free parameters** (rule 21).
+
+**Identification, blind to D-4:** the unchanged deriver's nyiso-140 criterion —
+median plant gross load ZERO in every (year, 4 h block) cell of 2023–2025 — takes
+**15 of 62 covered MISO plants**, nearest non-qualifier at 16/18, and **selects
+7 of the 8 D-4-flagged plants without being shown any of them**. Plant **1402
+Little Gypsy does not qualify and was left in, named before the solve**
+(6/18 cells, P(on) = 0.506) — a cycler, the NYISO plant-7314 case verbatim.
+
+**Gates:** K-0 PASS (12/12 sidecars, `max|diff| = 0.0`); **K-1 FAIL AS WRITTEN**;
+K-2 PASS (shed 0.5295/0.8653/0.9459 TWh vs pre-registered 0.5044/0.7531/0.7853);
+K-3 PASS (conduct failures **18 → 3**, ZERO new, pre-named survivor present);
+K-5 PASS (zero flips over 67 records); K-6 PASS (shape held).
+**K-4: C8 ST_GAS 2024 FAIL → PASS — the first MISO year ever to clear C8's
+provenance leg.**
+
+**The K-1 forensic, and why it is not reinterpreted.** At unit grain from the
+arm's own floors npz, plant 1104's **ST_GAS** rows carry **ZERO**
+reliability-floor unit-hours; the two residual D-4 rows are **777 (2023) and 763
+(2025) unit-hours on its CT_PEAKER tranches inside h15-21** — the MISO-Plains CT
+evening-ramp limb, which never leaves its own declared window. D-4 labels it
+`reliability_floor × ST_GAS` because `aggregate_floors_by_plant` collapses a
+plant's unit rows into one row and labels the plant with its most common unit
+group (1104: 4 ST_GAS vs 3 CT_PEAKER). **A CT_PEAKER floor is charged to
+ST_GAS's provenance leg** — a D-4 instrument attribution defect, independent of
+this lever, and the second thing the owner must adjudicate. Under prereg §6 a
+K-1 failure means **REJECTED-AS-ARMED**, and that mechanical verdict **stands**:
+a forensic produced after the result does not convert a pre-registered kill into
+a pass.
+
+**What the arm bought:** ~2.34 TWh over three years of forcing removed from
+plants whose own meter says they were mothballed; forced share 32.7 → 31.2 %,
+34.4 → 31.9 %, 46.2 → 43.6 % (still above the 30 % cap every year, as
+pre-registered — this buys legitimacy, not budget headroom). C3a-2025
+−12.4 → −12.1 %, disclosed and not claimed. Determination NOT-YET on both arms.
+
+**Open for the owner:** (1) the K-1 disposition — is the arm a keeper candidate
+on rule 1 `[R-STRUCT]`; (2) the D-4 plant-grain class attribution, which affects
+any ISO with mixed-class sites; (3) the named successor — per-year rather than
+pooled `online_frac` (1402: pooled 0.508 vs per-year metered
+0.2495/0.6134/0.6548), NOT bundled here; (4) RHO_CLIP, still the nyiso-144
+owner call.
+
+Records: `RESULT-miso170-stgas-floor-membership-2026-08-19.md`,
+`PREREG-miso170-stgas-floor-membership-2026-08-19.md`, gate record
+`_miso170_membership_ab.json`, scorer
+`scripts/probes/_miso170_membership_ab.py`. A **parallel** miso-170 session
+(`miso170_layup_A`, `FINDING-miso170-congestion-elmp-assessment-2026-08-19.md`)
+is a separate no-LP object and does not overlap this A/B.
