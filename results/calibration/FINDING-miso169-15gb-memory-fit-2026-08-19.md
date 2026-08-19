@@ -82,12 +82,18 @@ before the rest of the extraction runs. Solve-phase `MEM` checkpoints
 (`MARKET_SIM_MEM_DEBUG=1`) are added around the marshalling so the phase that
 owns the peak is attributed in every future profile, not just this one.
 This is a pure reordering of the same reads — no value, shape, dtype or
-ordering of any output changes (§5). Worth ~0.2 GB at the peak moment and
-~0.4 GB across the extraction tail; the honest majority of the peak (HiGHS's
-own ~8.5 GB workspace for a 25.4M-column LP) is irreducible without changing
-the solver, which bit-identity forbids (the keeper is pinned to highspy
-1.14.0 — 1.15.1 was present in this container and was DOWNGRADED to match
-the bundle's recorded environment before any solve).
+ordering of any output changes (§5). **Measured effect (patched single-year
+2023 replay, same box, same env): VmHWM 13.95 → 12.40 GB, −1.55 GB.** The
+new checkpoints show the mechanism: the year's high-water mark is now set
+*during the P1 solve* and the extraction never rises above it — under the
+old ordering the marshalling transients stacked ~1.9 GB on top of the
+in-run baseline at exactly the peak moment. With the 0.55 GB cross-year
+floor, a full 3-year invocation now peaks ~13.0 GB on a 15 GB box. The
+honest majority of the remaining peak (HiGHS's own ~8.5 GB workspace for a
+25.4M-column LP) is irreducible without changing the solver, which
+bit-identity forbids (the keeper is pinned to highspy 1.14.0 — 1.15.1 was
+present in this container and was DOWNGRADED to match the bundle's recorded
+environment before any solve).
 
 ## 3. What actually makes the 15 GB box work — measured, not hoped
 
@@ -156,10 +162,13 @@ The marshalling reorder was validated three ways:
 2. By construction: the change moves `np.asarray(solution.<vec>)` calls
    earlier and deletes the local copy sooner; every downstream consumer
    receives the same arrays.
-3. A patched single-year 2023 replay is byte-compared against the unpatched
-   control's 2023 sidecars (recorded in the session log alongside the 2024/
-   2025 control results). This is the same-HEAD hygiene for any ARM solved
-   on the patched tree: bit-identity is transitive through the keeper.
+3. **DONE — the patched single-year 2023 replay compares max|diff| = 0
+   against the unpatched control's 2023 sidecars on every file, the
+   tranche-grain `unit_hourly` included**, at the rebased HEAD (which
+   carries the 2026-08-18 NYISO merge). This is the same-HEAD hygiene for
+   any ARM solved on the patched tree: bit-identity is transitive through
+   the keeper, and the NYISO merge is established MISO-inert at the same
+   stroke.
 
 ## 6. What this session does NOT claim
 
