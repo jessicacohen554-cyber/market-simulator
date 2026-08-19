@@ -330,3 +330,35 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
  * CLOSES per the precommitted rule, Door D CONFIRMED as the floor, the ERCOT backcast lane RESTS
  * pending the 2026 SOM RTC+B-era anchors (~mid-2027; + the 2025 EIA-923 final vintage; + ESR SOC
  * nonexistent pre-RTC+B). docs/FINDING-ercot218-direct-driver-phase0-2026-08-17.md */
+
+/* ercot-220 re-stamp (2026-08-18, THE STAGE-1 CAPABILITY-OBJECT SUCCESSOR LANE — Phase-0
+ * read-only, no LP, NO cell verdict minted; keeper UNCHANGED at 2026-08-17-ercot215-arm-decontam).
+ * The ercot-219 §6 handback measured to closure: the candidate space for a stage-1 basis that
+ * could arm the built stages 2-3 (ercot_artificial_shortage_pricing, cell R) is EMPTY. From the
+ * arm's committed exhaustion audit trail + the keeper's sidecars + published PRC (quantity column
+ * only): (L1) the T_tel-basis incidence blowout is PRE-SOLVE AND INTRINSIC, not shed-made —
+ * 1,557/336/63 exhaustion h and 5,780/4,270/2,270 offer-active h vs 181/53/31 tail h (recall
+ * 0.972 in 2023, precision 11.3%/3.1%), with 48% of 2023's exhaustion mass OFF-SEASON (Nov 187 h
+ * vs 3 tail; 572 h pre-ECRS-go-live vs 15) — an online margin is thin in tight AND slack states,
+ * so it cannot signal scarcity without the commitment decision itself; (L2) the armed split is
+ * JOINT: seq->0 collapses 2023 exhaustion 1,557->389 (~75% of within-year incidence is the
+ * carried sequestration) but seq contributes only +0.70/+0.84 GW of the +1.83/+4.56 GW
+ * between-year margin widening — the balance is fleet+load+realized commitment posture inside
+ * T_tel; (L3) the endogenous model-own-state basis is degenerate both ways (count-none: LOLP=1
+ * in 8,760/8,747/7,335 h; fast-start-inclusive: unresolvable at class grain and rule-19-colliding
+ * with the armed ORDC, the model's responsive margin already measured 8-9 GW -> LOLP~3e-4);
+ * (L4) the cogen/PUN fleet-scope wedge (2.7-3.6 GW, dimensionally correct) cannot reach the
+ * 3.7 GW firing threshold from p5 6.9 / p50 23.3 GW headroom — inert even granted free;
+ * (L5, DECISIVE) even reality's OWN PRC under the registered curve gives windowed offers p50
+ * $650 / p90 $2,254 at the 2023 tail (>=2,500 in 38 h/yr; PRC<MCL in 1 h/yr) vs measured conduct
+ * $3,361-5,000 p50, while still firing >=$1,000 in 1,170 h — the ideal admissible basis
+ * UNDER-REACHES the level ~5x and OVER-FIRES the count ~6x. Both jaws: admissible bases can't
+ * reach the object; bases that reach it are online/commitment objects (rule 13; ercot-219 R).
+ * The commitment-side reconciliation (model committed state ↔ T_tel) is the ONLY instrument left
+ * = the ercot-163/159-refuted route: ESCALATED as a drafted UNSIGNED card with a measured ex-ante
+ * G-SPUR kill and a DO-NOT-SIGN recommendation
+ * (docs/DECISION-CARD-ercot220-commitment-side-reconciliation-2026-08-18.md, B-2). Nothing
+ * built, nothing armed, no verdict moved; stages 2-3 stay default-off; Door D RE-CONFIRMED as
+ * the floor. docs/FINDING-ercot220-stage1-capability-object-phase0-2026-08-18.md +
+ * scripts/probes/ercot220_stage1_basis_phase0.py +
+ * results/calibration/ercot220_stage1_basis_phase0.json */

@@ -10431,3 +10431,77 @@ session.** Full record:
 
 **Session consumed the ercot-219 shorthand. Next shorthand: ercot-220**
 (ercot-199 remains unclaimed).
+
+---
+
+## ercot-220 — 2026-08-18 — THE STAGE-1 CAPABILITY-OBJECT SUCCESSOR LANE (Phase-0 read-only): the candidate space is EMPTY on measurement; the commitment-side reconciliation is the only instrument left and is ESCALATED UNSIGNED with a DO-NOT-SIGN recommendation; Phase-1 NOT entered; keeper UNCHANGED
+
+**Branch `claude/ercot-220-lever-phase0-je3znm`. No LP, no solve, no year
+scored, no run registered, no `ScenarioConfig` field, no matrix cell verdict
+minted; no precommit pushed because no solve was reached (the ercot-217
+precedent).** Keeper resolved fresh at session start and end:
+`2026-08-17-ercot215-arm-decontam` (NOT-YET, {C3a-2023 −40.1 %, C3b-2023
+0.736}, C3c ledgered CAVEAT ×3). RETENTION HOLD honoured (ercot213-ctl,
+ercot204-rule26-delete retained).
+
+**Off-queue, duty (a) discharged:** the §5.1 queue re-verified at HEAD — no
+live un-adjudicated in-model item; the sole surviving queue action (item 8's
+CME/NYMEX basis-swap screen) targets the CT-band/winter object and cannot
+reach {C3a-2023, C3b-2023} (96.2 % Aug/Sep). The lane's charter is the
+ercot-219 §6 handback: do the built, seam-proven, default-off stages 2–3
+have any admissible stage-1 capability object?
+
+**Answer: NO — measured to closure from committed artifacts only** (probe
+`scripts/probes/ercot220_stage1_basis_phase0.py` →
+`results/calibration/ercot220_stage1_basis_phase0.json`; the ercot-219 arm's
+committed exhaustion audit trail READ, never re-run):
+
+- **L1** — the T_tel incidence blowout is **pre-solve and intrinsic**, not
+  shed-made: 1,557/336/63 exhaustion h, 5,780/4,270/2,270 offer-active h vs
+  181/53/31 tail h (2023 recall 0.972, precision 11.3 %/3.1 %); **48 % of
+  2023's exhaustion mass is off-season** (Nov 187 h vs 3 tail h, 572 h
+  pre-ECRS-go-live vs 15). An online margin is thin when tight AND when
+  slack — it cannot signal scarcity without the commitment decision itself.
+- **L2** — the armed split is joint: seq→0 collapses 2023 exhaustion
+  1,557→389 (~75 % of within-year incidence is the carried sequestration),
+  but seq carries only +0.70/+0.84 GW of the +1.83/+4.56 GW between-year
+  margin widening; the balance is fleet+load+realized commitment posture
+  inside T_tel.
+- **L3/L4** — the endogenous basis is degenerate both ways (count-none:
+  LOLP≡1 in 8,760/8,747/7,335 h; fast-start-inclusive: class-grain
+  unresolvable and rule-19-colliding with the armed ORDC — the model's
+  responsive margin is already measured 8–9 GW → LOLP ≈ 3×10⁻⁴, inert);
+  the cogen/PUN fleet-scope wedge (2.7–3.6 GW) cannot reach the 3.7 GW
+  firing threshold from p5 6.9 / p50 23.3 GW headroom — inert even free.
+- **L5 (decisive)** — even reality's OWN telemetered PRC under the
+  registered LOLP curve gives windowed reservation offers p50 **$650** /
+  p90 $2,254 at the 2023 tail hours (≥$2,500 in 38 h/yr; PRC<MCL in 1 h/yr)
+  against measured storage conduct $3,361–5,000 p50 — while still firing
+  ≥$1,000 offers in 1,170 h (6.5× the tail). The ideal admissible basis
+  under-reaches the level ~5× and over-fires the count ~6×.
+
+**Both jaws:** admissible (availability-side) bases cannot reach the 2023
+object; every basis that reaches it is an online/commitment object (rule-13
+wall; ercot-219 `R`). The same-hour-margin → LOLP → reservation-offer
+architecture cannot land on 181 hours at $3–5k under ANY basis — the
+discrimination is the conduct layer's adaptive expectation
+(NOT-TRANSFERABLE ×3, model-free non-identifiable). The commitment-side
+reconciliation (model committed state ↔ T_tel) — the ercot-163/159-refuted
+route — is the only instrument left and is **escalated as a drafted,
+unsigned owner card with a measured ex-ante G-SPUR kill and a DO-NOT-SIGN
+recommendation**:
+`docs/DECISION-CARD-ercot220-commitment-side-reconciliation-2026-08-18.md`
+(decision text B-2). **Door D re-confirmed as the floor.** Stages 2–3 stay
+built, default-off, inert — correctly so.
+
+Governance: Q-B FINAL / R-A honoured (2023 numbers side-effect/evaluation
+only, full magnitude, never a basis); DO-NOT-REDO honoured in full
+(ercot-219 aggregate route not re-run in any form, rtolcap untouched, Door
+A / item 11 / mid-band / regime lanes / ercot-206 B0 all cited, none
+re-litigated); rules 22/25 fenced; rule 28(b) attribution note appended to
+the `ercot_artificial_shortage_pricing` cell, no verdict moved;
+`check_mechanism_matrix.py` exit 0. Full record:
+`docs/FINDING-ercot220-stage1-capability-object-phase0-2026-08-18.md`.
+
+**Session consumed the ercot-220 shorthand. Next shorthand: ercot-221**
+(ercot-199 remains unclaimed).
