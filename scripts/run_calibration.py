@@ -5400,8 +5400,30 @@ def run_year(
         _lam_t = (
             np.asarray(energy_solve.p1.prices, dtype=float)[:, :_t_h] * demand[:, :_t_h]
         ).sum(axis=0) / np.where(_dem_t > 0.0, _dem_t, 1.0)
+        # Event basis (precommit Amendment 4): the model's own settled-price
+        # analogue = lambda + its OWN decontaminated anchored scarcity-adder
+        # mirror — the identical arithmetic the persist path writes (cap-dual
+        # ALL tier, min'd with the ORDC total family's balance dual where
+        # present, x (VOLL - lambda)/VOLL, protocol-capped). Both terms are
+        # duals of the model's own pass-1 LP: zero measured content (rule 13;
+        # the measured RTORDPA overlay is deliberately EXCLUDED). A config
+        # with no reserve duals degrades to lambda-only, disclosed inert.
+        _voll = float(config.ordc_voll)
+        _adder_t = np.zeros(_t_h)
+        _cd = getattr(energy_solve.p1, "reserve_supply_cap_dual", None)
+        _rpf = getattr(energy_solve.p1, "reserve_price_by_family", None)
+        _gam = None
+        if _cd is not None:
+            _gam = np.asarray(_cd, dtype=float)[:, :_t_h][-1]
+        if _rpf is not None:
+            _fam = np.asarray(_rpf, dtype=float)[:_t_h, -1]
+            _gam = _fam if _gam is None else np.minimum(_gam, _fam)
+        if _gam is not None:
+            _head = np.maximum(_voll - _lam_t, 0.0)
+            _adder_t = np.minimum(np.maximum(_gam, 0.0) * _head / _voll, _head)
+        _settle_t = _lam_t + _adder_t
         _n_days = _t_h // 24
-        _day_max = _lam_t[: _n_days * 24].reshape(_n_days, 24).max(axis=1)
+        _day_max = _settle_t[: _n_days * 24].reshape(_n_days, 24).max(axis=1)
         _s_m = (_day_max >= ERCOT_ADAPTIVE_EVENT_USD).astype(float)
         _p_hat = ercot_adaptive_expectation_daily(
             _s_m,
