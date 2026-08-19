@@ -452,12 +452,17 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     #   of the same plant — shorter than the unit's physical min-down (a
     #   restart bar) or bounded by one DA operating day on the economic leg —
     #   or (b) in the hours immediately following a P0 run-start that are
-    #   inside the unit's own MINIMUM RUN DURATION. Neither placement is a
-    #   clock-hour rule: both are anchored to the model's own run pattern, so
-    #   there is no hour of day the mechanism is declared off. That is the
-    #   POINT of the substitution — the boxcar it replaces asserted a fixed
-    #   afternoon window and bound in hours (overnight CT CF ~= 0) its own
-    #   driver evidence said the class was offline.
+    #   inside the unit's own MINIMUM RUN DURATION, or (c) when the
+    #   ONLINE-HOURS leg is armed (nyiso_gas_bridge_online_hours, the
+    #   ercot141 floor_online_hours leg), in every hour of a P0-detected run
+    #   itself — the LSL must-take of the committed STATE the gap legs
+    #   interpolate between; still anchored to the model's own run pattern,
+    #   never a clock hour, and capped at the base tranche's own capacity.
+    #   No placement is a clock-hour rule: all are anchored to the model's
+    #   own run pattern, so there is no hour of day the mechanism is declared
+    #   off. That is the POINT of the substitution — the boxcar it replaces
+    #   asserted a fixed afternoon window and bound in hours (overnight CT
+    #   CF ~= 0) its own driver evidence said the class was offline.
     # * DRIVER — unit-commitment physics only: minimum run duration, minimum
     #   down time, and the restart inequality (published per-MW startup costs
     #   from NREL/SR-5500-55433, the model's own P0 duals). Minimum stable
