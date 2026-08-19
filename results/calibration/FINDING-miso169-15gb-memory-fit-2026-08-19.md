@@ -119,12 +119,27 @@ results/calibration/miso160_wefor_B` (same HEAD, zero delta, years
 2023–2025 sequential in one process). Verified against the committed keeper
 bundle so far:
 
-* `class_hourly_2023.parquet` — max|diff| = 0 (all numeric columns)
-* `storage_2023.parquet` — max|diff| = 0
-* `reserve_family_2023.parquet` — max|diff| = 0 numeric, non-numeric equal
-* (2024/2025 and `system_<year>` comparisons recorded in the session log as
-  the runs complete; the system frames are cross-year accumulators written
-  at end-of-invocation.)
+* **ALL YEARS, ALL SCORED SIDECARS: max|diff| = 0.** `class_hourly`,
+  `storage`, `reserve_family` and `system` for 2023, 2024 AND 2025 each
+  compare bit-identical to the committed keeper (numeric max|diff| = 0,
+  non-numeric columns equal). The §5 "control must reproduce the committed
+  keeper bit-identically" condition is SATISFIED, and per the miso-168 §3
+  order the control's `unit_hourly_<year>.parquet` sidecars are therefore
+  the keeper's own P1. The control bundle is committed as
+  `results/calibration/miso169_gated_A` (unit_hourly force-added per the
+  .gitignore opt-in convention; `legitimacy_diagnostics.json` regenerated
+  in-repo after the out-of-repo out-dir skipped it at solve time).
+
+**The §3 pre-check verdict** (`_miso169_online_gated_precheck.json`,
+thresholds verbatim from the prereg): **PROCEED TO ARM — narrowly.**
+K-PRE-A measures H_on ≥ (reg+spin requirement) in **78.7 %** (37/47) of the
+scarce hours against the ≥ 80 % inertness kill — one hour inside the line,
+so the gate is NOT declared inert, and can bind in 10 of the 47 hours that
+matter. K-PRE-B is clear in every year (H_on short of the requirement in
+0.1–0.2 % of covered hours, vs the ≥ 99 % over-reach kill). Disclosed
+honestly: the same measurement says the binding surface is ~10 hours, so
+the arm's reachable effect is bounded well below even the prereg §4
+ceiling.
 
 Year 2023 wall time on this box: data_prep 106 s, P0 565 s (cold), markup
 25 s, P1 191 s (warm), results_write 61 s — **~16 min/year**.
