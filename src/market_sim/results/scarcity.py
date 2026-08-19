@@ -261,6 +261,67 @@ def within_day_forward_max(x: np.ndarray) -> np.ndarray:
     return out
 
 
+# --------------------------------------------------------------------------- #
+# ercot-221 adaptive-expectation storage offer — pinned conventions
+# (PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md §1 + Amendments 1-3).
+# --------------------------------------------------------------------------- #
+# Daily spike-event threshold ($/MWh) on the model's OWN daily max
+# demand-weighted P1 energy dual (pure lambda — Amendment 3; rule 13: no
+# measured price enters the armed path). $1,000 is the deep-scarcity range of
+# the RESEARCH-ercot218b §5 spike-day convention.
+ERCOT_ADAPTIVE_EVENT_USD: float = 1000.0
+# Trailing-memory window (days) for the exponentially-weighted spike
+# frequency; the half-life inside it is the identified ScenarioConfig
+# constant `ercot_adaptive_half_life_days`.
+ERCOT_ADAPTIVE_TRAIL_DAYS: int = 120
+# Evening net-peak window (fixed-clock CST hour-beginning) carrying the
+# reservation floor — identical to the identification window; hours outside
+# it keep the incumbent storage offer (the measured lesson of ercot-219's
+# G-BAT whole-day-floor collapse, ratio 0.41).
+ERCOT_ADAPTIVE_WINDOW_HOURS: tuple[int, ...] = (17, 18, 19, 20)
+
+
+def ercot_adaptive_expectation_daily(
+    events: np.ndarray,
+    *,
+    half_life_days: float,
+    beta: float,
+    trail_days: int = ERCOT_ADAPTIVE_TRAIL_DAYS,
+) -> np.ndarray:
+    """Daily adaptive spike expectation ``P_hat = clip(beta * EWMA(S), 0, 1)``.
+
+    ``P_trail(d)`` is the normalized exponentially-weighted mean of the daily
+    spike indicator over the ``trail_days`` days STRICTLY before ``d`` (uses
+    ``S(d-1)`` and earlier only; day 0 has no history and reads 0 — the
+    per-solve-year reset of the precommit). Vectorized as a lagged weight
+    matrix over the zero-padded series (rule 2 [R-VECTOR]); partial histories
+    normalize by the weights actually available, matching the Phase-0
+    identification instrument's construction exactly.
+
+    Args:
+        events: ``(n_days,)`` 0/1 daily spike indicator.
+        half_life_days: EWMA half-life in days (identified constant).
+        beta: Linear gain from trailing frequency to expectation (identified).
+        trail_days: Trailing window length in days.
+
+    Returns:
+        ``(n_days,)`` expectation in [0, 1].
+    """
+    s = np.asarray(events, dtype=float)
+    n = s.size
+    w = 0.5 ** (np.arange(1, trail_days + 1, dtype=float) / float(half_life_days))
+    pad = np.concatenate([np.zeros(trail_days), s])
+    # pad index of s[t] is trail_days + t; lag j of day d reads s[d-1-j].
+    idx = (
+        trail_days - 1
+        + np.arange(n)[:, None]
+        - np.arange(trail_days)[None, :]
+    )
+    num = (pad[idx] * w[None, :]).sum(axis=1)
+    denom = np.cumsum(w)[np.clip(np.arange(n), 1, trail_days) - 1]
+    return np.clip(float(beta) * num / denom, 0.0, 1.0)
+
+
 def lolp(
     reserves_mw: np.ndarray,
     mu_mw: np.ndarray | float,

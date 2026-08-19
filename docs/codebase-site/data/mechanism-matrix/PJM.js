@@ -41,6 +41,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     dump_cost_full_offer_domain: { cell: "I", ev: "caiso-139 §E + virtual_bids._inc_offer_floor" },
     ercot_rtordpa_overlay: { cell: "." },
     ercot_artificial_shortage_pricing: { cell: "." },
+    ercot_storage_adaptive_expectation: { cell: "." },
     maxgen_emergency_tier_pricing: { cell: "." },
     nyiso_rcpf_family: { cell: "." },
     reserve_family_dual_sidecar: { cell: "I" },

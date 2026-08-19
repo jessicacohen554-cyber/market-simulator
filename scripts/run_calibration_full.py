@@ -5494,6 +5494,25 @@ def solve_and_persist(
                 }
             )
             _write_hourly_sidecar(run_dir, year, "exhaustion", [_exhf])
+        # ercot-221 adaptive-expectation series (ercot_storage_adaptive_
+        # expectation): the pass-1 model spike indicator, daily P_hat
+        # (broadcast hourly) and the applied evening-window floor — the
+        # committed audit trail for the mechanism's A/B gates (PRECOMMIT-
+        # ercot221 §4). Absent (no file) on every flag-off run.
+        _ada = p2_state.get("ercot221_adaptive")
+        if _ada is not None:
+            _t_ada = len(_ada["floor_t"])
+            _day_idx = np.minimum(np.arange(_t_ada) // 24, len(_ada["p_hat"]) - 1)
+            _adaf = pd.DataFrame(
+                {
+                    "year": np.full(_t_ada, year, dtype=np.int32),
+                    "hour": np.arange(_t_ada, dtype=np.int32),
+                    "s_model_day": np.asarray(_ada["s_model"], dtype=float)[_day_idx],
+                    "p_hat_day": np.asarray(_ada["p_hat"], dtype=float)[_day_idx],
+                    "floor_usd": np.asarray(_ada["floor_t"], dtype=float),
+                }
+            )
+            _write_hourly_sidecar(run_dir, year, "adaptive", [_adaf])
         del result, context, result_p1, p2_state, demand, must_run
         del must_run_total, labelled, res
         del unit_frames, network_frames, reserve_family_frames
