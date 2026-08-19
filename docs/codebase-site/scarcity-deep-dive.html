@@ -442,7 +442,14 @@ python -m scripts.probes.ercot109_scarcity_mix \
           </div>
           <div class="fig__caption">
             Written up in <code>results/calibration/FINDING-ercot107-108-scarcity-tail-bistable-2026-07-24.md</code> §7.
-            Keeper <code>2026-07-23-ercot100-netrev-margin-keeper</code>, unchanged.
+            Every figure on this page is read from the <code>ercot_netrev_margin</code> bundle, which was
+            ERCOT&rsquo;s designated keeper (<code>2026-07-23-ercot100-netrev-margin-keeper</code>) when the
+            finding was written and which that finding left unchanged. ERCOT&rsquo;s keeper has since moved
+            &mdash; it is <code>2026-08-17-ercot215-arm-decontam</code>
+            (<code>frontend/data/backcast/keepers/ERCOT.json</code>) &mdash; and this analysis has not been
+            re-run against it, so read these numbers as the record of that probe rather than as the current
+            keeper&rsquo;s behaviour. The live per-ISO keeper is always on
+            <a href="calibration-status.html">Calibration Status</a>.
           </div>
         </div>
 
