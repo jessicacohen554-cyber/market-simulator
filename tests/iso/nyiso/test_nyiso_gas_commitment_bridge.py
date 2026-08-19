@@ -618,3 +618,45 @@ class TestPerPlantMinRun(unittest.TestCase):
         from market_sim.data.perplant_min_run import load_perplant_min_run
 
         self.assertEqual(load_perplant_min_run("NOSUCHISO"), {})
+
+
+class TestOnlineHoursLeg(unittest.TestCase):
+    """``nyiso_gas_bridge_online_hours`` — the ercot141 LSL state leg, NYISO.
+
+    nyiso-146's A/B measured that every gap/extension floor covers only
+    P0-OFF hours while the CC over-cycling lives in P1 shutting committed
+    plants INSIDE P0-on hours; this leg floors that state. Default OFF is
+    byte-identical; armed, every hour of a detected run carries the min-load
+    floor (capped at the base tranche), composing with the gap legs by
+    maximum.
+    """
+
+    def _floor(self, cfg):
+        gens = [_gen("CC", "gas_cc", "CC_REGULAR")]
+        fa = generators_to_fleet_arrays(gens, ["z"], hours=_HOURS)
+        disp = np.zeros((1, _HOURS))
+        disp[0, 10:16] = 300.0
+        disp[0, 20:26] = 300.0
+        mc = np.full((1, _HOURS), 30.0)
+        lmp = np.full((1, _HOURS), 25.0)
+        return _nyiso_gas_bridge_floor(cfg, gens, fa, disp, lmp, mc)
+
+    def test_default_off_is_byte_identical(self):
+        base = self._floor(_config())
+        off = self._floor(_config(nyiso_gas_bridge_online_hours=False))
+        np.testing.assert_array_equal(base, off)
+
+    def test_armed_floors_the_detected_run_hours(self):
+        base = self._floor(_config())
+        armed = self._floor(_config(nyiso_gas_bridge_online_hours=True))
+        # The gap floor is unchanged (maximum-composition never lowers)...
+        self.assertTrue(np.all(armed >= base))
+        # ...and the run hours themselves now carry a floor.
+        self.assertTrue(np.all(armed[0, 10:16] > 0.0))
+        self.assertTrue(np.all(armed[0, 20:26] > 0.0))
+        self.assertEqual(float(base[0, 10:16].sum()), 0.0)
+
+    def test_offline_hours_stay_unfloored(self):
+        armed = self._floor(_config(nyiso_gas_bridge_online_hours=True))
+        # Hours outside runs and outside the bridged gap carry no floor.
+        self.assertEqual(float(armed[0, 40:].sum()), 0.0)

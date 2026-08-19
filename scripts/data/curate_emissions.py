@@ -237,7 +237,15 @@ def clean_campd_frame(raw: pd.DataFrame, *, facility_level: bool) -> pd.DataFram
         }
     )
     # Make interval_start_utc tz-aware UTC (numpy round-trip above drops tz).
-    out["interval_start_utc"] = pd.to_datetime(out["interval_start_utc"], utc=True)
+    # Pin the resolution to nanoseconds, as the schema declares
+    # (data/dictionary/schema/emissions.schema.yaml: datetime64[ns, UTC]) and as
+    # the sibling interval_start_local already does above. Without this the
+    # column inherits whatever resolution raw["date"] carried, which varies
+    # across the CAMPD extracts (some us, some ns) and makes the per-file
+    # tables un-concatenable in curate_year.
+    out["interval_start_utc"] = pd.to_datetime(
+        out["interval_start_utc"], utc=True
+    ).astype("datetime64[ns, UTC]")
     out["unit_id"] = out["unit_id"].astype("string")
     out["plant_id"] = out["plant_id"].astype("int64")
     return out[list(_SCHEMA_COLUMNS)]

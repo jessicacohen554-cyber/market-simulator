@@ -3487,6 +3487,8 @@ def solve_and_persist(
     nyiso_gas_bridge_min_run: bool | None = None,
     nyiso_gas_bridge_plant_exclusions: bool | None = None,
     nyiso_gas_bridge_plant_min_run: bool | None = None,
+    nyiso_gas_bridge_online_hours: bool | None = None,
+    cc_reserve_duty_split: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -4443,6 +4445,14 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run
             )
+        if nyiso_gas_bridge_online_hours is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_online_hours=nyiso_gas_bridge_online_hours
+            )
+        if cc_reserve_duty_split is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                cc_reserve_duty_split=cc_reserve_duty_split
+            )
         if nyiso_gas_bridge_cc_min_run_hours is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours
@@ -5163,6 +5173,8 @@ def solve_and_persist(
             nyiso_gas_bridge_min_run=nyiso_gas_bridge_min_run,
             nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions,
             nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run,
+            nyiso_gas_bridge_online_hours=nyiso_gas_bridge_online_hours,
+            cc_reserve_duty_split=cc_reserve_duty_split,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
             nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
@@ -6027,6 +6039,8 @@ def solve_and_persist(
         "nyiso_gas_bridge_min_run": nyiso_gas_bridge_min_run,
         "nyiso_gas_bridge_plant_exclusions": nyiso_gas_bridge_plant_exclusions,
         "nyiso_gas_bridge_plant_min_run": nyiso_gas_bridge_plant_min_run,
+        "nyiso_gas_bridge_online_hours": nyiso_gas_bridge_online_hours,
+        "cc_reserve_duty_split": cc_reserve_duty_split,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
         "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
         "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
@@ -11553,6 +11567,24 @@ def main() -> None:
         "keep the class fallback.",
     )
     parser.add_argument(
+        "--nyiso-gas-bridge-online-hours",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ONLINE-HOURS LSL floor (the ercot141 detector leg, NYISO leg — "
+        "nyiso-146 successor): floor the base tranche at measured min-load in "
+        "EVERY hour the P0 pattern has the plant online, not only across idle "
+        "gaps. Same detector, same measured fractions, same D-2 id.",
+    )
+    parser.add_argument(
+        "--cc-reserve-duty-split",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="RESERVE-DUTY CC offer split (nyiso-146): route the measured "
+        "capacity-only CC cohort (reserve_duty_cc_<ISO>.csv, on-share/CF <= "
+        "0.10 population-gap ceiling) to the class offer curve's peak band — "
+        "the duty-role mirror of --cc-intermediate-split; zero new scalars.",
+    )
+    parser.add_argument(
         "--nyiso-gas-bridge-min-run",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12022,6 +12054,8 @@ def main() -> None:
         nyiso_gas_bridge_min_run=args.nyiso_gas_bridge_min_run,
         nyiso_gas_bridge_plant_exclusions=args.nyiso_gas_bridge_plant_exclusions,
         nyiso_gas_bridge_plant_min_run=args.nyiso_gas_bridge_plant_min_run,
+        nyiso_gas_bridge_online_hours=args.nyiso_gas_bridge_online_hours,
+        cc_reserve_duty_split=args.cc_reserve_duty_split,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
         nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,

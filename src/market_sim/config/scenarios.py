@@ -636,6 +636,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_plant_exclusions",
     "nyiso_gas_bridge_ct_min_run_hours",
     "nyiso_gas_bridge_plant_min_run",
+    "nyiso_gas_bridge_online_hours",
+    # Reserve-duty CC offer split (nyiso-146): inert at its default (off — the
+    # bins frame is byte-identical and the artifact is not even read), so it
+    # is dropped from the hash at default and every pre-existing cache key is
+    # byte-stable; an armed run enters the key as a distinct scenario.
+    "cc_reserve_duty_split",
     # ERCOT gas-bridge ONLINE-HOURS leg (ercot141): inert at its default (off —
     # the floor stays gap-only and the detector call is byte-identical), so
     # registering it here keeps the pinned default cache_key byte-stable; an
@@ -1236,6 +1242,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_bridge_plant_exclusions": "False",
     "nyiso_gas_bridge_ct_min_run_hours": "2.0",
     "nyiso_gas_bridge_plant_min_run": "False",
+    "nyiso_gas_bridge_online_hours": "False",
+    "cc_reserve_duty_split": "False",
     "ercot_gas_bridge_online_hours": "False",
     "forecast_xyear_warmstart": "True",
     "ercot_offer_hrmult_ep_rebasis": "False",
@@ -5037,6 +5045,46 @@ class ScenarioConfig:
     # [R-FROZEN-DERIVE] — re-derives only when the CAMPD vintages update).
     # Default off so a control run is byte-identical.
     nyiso_gas_bridge_plant_min_run: bool = False
+    # ONLINE-HOURS LSL FLOOR, NYISO leg (default off, requires the bridge —
+    # the ercot141 `floor_online_hours` detector leg, tested here on NYISO's
+    # OWN evidence per rule 25): extend the bridge's minimum-load floor from
+    # the idle GAPS between P0-detected runs to EVERY hour the P0 pattern has
+    # the plant ONLINE. Same detector, same measured min-load fractions
+    # (CC 0.523 / ST_GAS 0.239), same D-2 id
+    # (MECH_NYISO_GAS_COMMITMENT_BRIDGE) — a wider WINDOW on one mechanism,
+    # so it EXTENDS rather than stacks (rule 19 [R-ONE-MECH]).
+    #
+    # THE NYISO EVIDENCE (nyiso-146,
+    # RESULT-nyiso146-perplant-min-run-ab-2026-08-19.md): the per-plant
+    # measured min-run A/B delivered its floors EXACTLY (Bethlehem 2539's
+    # bridge floor 685 -> 1,329 GWh in 2023) and the plant's P1 start count
+    # moved only -7.6/-9.5/-4.6 % against 6-7 metered starts/yr — because
+    # every gap/extension floor covers only hours the unit was OFF in P0,
+    # while the fragmentation lives in P1's bid-cost pass shutting the plant
+    # INSIDE P0-committed hours. This leg floors exactly that state: the LSL
+    # block of a synchronized unit is must-take in every online hour (the gap
+    # legs model the restart DECISION; this models the committed STATE the
+    # gaps interpolate between — the ercot141 charter, verbatim).
+    #
+    # Rule 17 [R-FLOOR-WINDOW]: driver = minimum-stable-load inflexibility of
+    # a synchronized unit; level = the measured per-class CAMPD
+    # loading-when-on p50s already on the bridge (NO new scalar, rule 21);
+    # window = the model's own P0 online hours — no clock-hour rule, a plant
+    # the model has offline is never floored, and the detector caps the
+    # target at the base tranche's own capacity so the leg cannot force more
+    # than the unit's real minimum. Forward story: regenerates from the
+    # model's own P0 pattern plus the frozen constants, exactly as the gap
+    # legs do.
+    #
+    # CC-SCOPED (rule 18/25 — scope on evidence): the leg arms only the
+    # gas_cc detector call. The nyiso-146 diagnosis is combined-cycle conduct
+    # (Bethlehem near-baseload, 6-7 metered starts/yr); NYISO's ST_GAS fleet
+    # cycles diurnally by its own meter (Barrett p50 run 4 h), carries no
+    # over-cycling evidence, and an all-online-hours LSL floor on the
+    # always-on Ravenswood steamer alone would manufacture ~2 TWh of state
+    # floor with no driver evidence. Default off so a control run is
+    # byte-identical.
+    nyiso_gas_bridge_online_hours: bool = False
     nyiso_spin_reserve_online: bool = False  # NYISO online-gated PUBLISHED
     # spinning families (nyiso-84, the mechanism arm): re-classes the published
     # NYCA 10-minute spinning family (655 MW, $775) — and east_10min_spin (330
@@ -7490,6 +7538,31 @@ class ScenarioConfig:
     # re-solved.
     cc_intermediate_split: bool = False
     cc_intermediate_cf_threshold: float = 50.0
+
+    # RESERVE-DUTY CC split (nyiso-146) — the duty-role MIRROR of the three
+    # intermediate splits above: they flatten offers for the measured HIGH-CF
+    # cohort; this steepens them for the measured RESERVE (capacity-only)
+    # cohort. A CC plant that holds capacity but essentially never sells
+    # energy (measured plant-summed CAMPD on-share, or EIA-923 pooled CF for
+    # CAMPD-less plants, at or below a population-gap ceiling of 0.10 —
+    # NYISO's live-fleet distribution runs {0.012..0.064} then a 2.7x gap to
+    # {0.17..}; NYISO's cohort is the Seneca Power Partners fleet + peers,
+    # artifact data/raw/_processed-legacy/reserve_duty_cc_<ISO>.csv,
+    # scripts/data/derive_reserve_duty_cc.py) carries a competitive heat
+    # rate, so the LP runs it 87-99 % of hours against 1-6 % metered — the
+    # nyiso-145 defect-B merit-order inversion (model/EIA-923 25-225x at
+    # Sterling/Batavia/Massena/Allegany), with ZERO floor involved: the
+    # phantom energy is *economic*, where D-2/D-4 do not look. When set, the
+    # cohort's whole dispatchable capacity moves to the class offer curve's
+    # PEAK band (fleet_to_bins: pct_mc = 0, pct_peak = 100 - pct_mr), i.e.
+    # it is priced at the class's existing identified peak multiplier — an
+    # offer SHAPE from a measured duty-role signal, never a pin to measured
+    # output (rule 13, the ct_intermediate_plants admissibility lineage),
+    # with ZERO new scalars (rule 21). Membership is frozen against
+    # residuals (rule 23) and mechanism-blind; a reactivated plant exits the
+    # cohort when the artifact re-derives. Identified per ISO (rule 25);
+    # default off so a control run is byte-identical.
+    cc_reserve_duty_split: bool = False
 
     # ISO-gated gas-steam startup amortization. The ST_GAS startup cost +
     # min-run/min-down (constants.ST_GAS_COMMITMENT_PARAMS) are only fed into the
@@ -13621,6 +13694,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_gas_bridge_min_run": 1,
     "nyiso_gas_bridge_plant_exclusions": 1,
     "nyiso_gas_bridge_plant_min_run": 1,
+    "nyiso_gas_bridge_online_hours": 1,
     "nyiso_gas_bridge_cc_min_run_hours": 2,
     "nyiso_gas_bridge_st_min_run_hours": 2,
     "nyiso_gas_bridge_ct": 1,
@@ -13649,6 +13723,7 @@ TIER_TAGS: dict[str, int] = {
     "st_gas_intermediate_cf_threshold": 3,
     "cc_intermediate_split": 1,
     "cc_intermediate_cf_threshold": 3,
+    "cc_reserve_duty_split": 1,
     "gas_st_startup_cost": 3,
     "tranche_startup_amortization": 1,
     "tranche_startup_measured_runs": 1,
