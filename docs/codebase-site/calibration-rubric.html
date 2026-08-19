@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calibration Rubric — Codebase Explorer</title>
-  <meta name="description" content="The calibration determination rubric v2.x: the C1–C8 tiered criteria, two-band tolerances, forced-energy budgets, D-4 driver windows, and the frontier-achieved designation.">
+  <meta name="description" content="The calibration determination rubric v3.x: the C1–C8 tiered criteria, two-band tolerances, forced-energy budgets, D-4 driver windows, and the frontier-achieved designation.">
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/shared.css">
@@ -286,7 +286,7 @@
         <span class="header__eyebrow">Backcast</span>
         <h1 class="header__title">Calibration Rubric</h1>
         <p class="header__subtitle">
-          How a backcast run is graded. The v2.x determination rubric: eight tiered criteria (C1&ndash;C8), two-band tolerances, forced-energy budgets, D-4 driver windows, and the frontier-achieved designation.
+          How a backcast run is graded. The v3.x determination rubric: eight tiered criteria (C1&ndash;C8), two-band tolerances, forced-energy budgets, D-4 driver windows, and the frontier-achieved designation.
         </p>
         <div class="header-accent" aria-hidden="true"></div>
       </div>
@@ -320,7 +320,7 @@
               <tr>
                 <td><code>scripts/calibration_verdict.py</code></td>
                 <td><span class="role-pill gates">Gates</span></td>
-                <td><code>RUBRIC_VERSION = 3.1</code>. Scores the criterion set per year, applies tiers, two-band tolerances and caveat budgets, and emits one of <code>CALIBRATED</code>, <code>CALIBRATED-WITH-CAVEATS</code>, or <code>NOT-YET</code>. Stdlib-only; reads <strong>committed artifacts only</strong> and never re-solves the LP.</td>
+                <td><code>RUBRIC_VERSION = 3.4</code>. Scores the criterion set per year, applies tiers, two-band tolerances and caveat budgets, and emits one of <code>CALIBRATED</code>, <code>CALIBRATED-WITH-CAVEATS</code>, or <code>NOT-YET</code>. Stdlib-only; reads <strong>committed artifacts only</strong> and never re-solves the LP.</td>
               </tr>
             </tbody>
           </table>
@@ -394,7 +394,7 @@
             <li style="margin-bottom: var(--space-sm);"><strong>C6 governance not PASS</strong> (FAIL or <code>UNATTESTED</code>) → <code>NOT-YET</code>.</li>
             <li style="margin-bottom: var(--space-sm);"><strong>Any FAIL on any criterion</strong> → <code>NOT-YET</code>.</li>
             <li style="margin-bottom: var(--space-sm);"><strong>Caveat budget exceeded</strong> → <code>NOT-YET</code>.</li>
-            <li><strong>Otherwise</strong> → <code>CALIBRATED</code> iff there are <em>zero</em> caveats of any kind, nothing SKIPPED, and no data-blocked target years; else <code>CALIBRATED-WITH-CAVEATS</code> with the reasons enumerated.</li>
+            <li><strong>Otherwise</strong> → <code>CALIBRATED</code> iff there are zero <em>downgrading</em> caveats, nothing SKIPPED, and no data-blocked target years; else <code>CALIBRATED-WITH-CAVEATS</code> with the reasons enumerated. Since <strong>v3.3</strong> a <em>ledgered</em> caveat is not downgrading — and only C3c is ledgerable at all — so a run whose single blemish is a ledgered C3c reads <code>CALIBRATED</code>, with the miss still reported at full magnitude and named on the determination basis. Commercial-band caveats, protective caveats, unscored criteria and data-blocked years all still downgrade.</li>
           </ol>
         </div>
 
@@ -535,9 +535,21 @@
             <div class="ver-head"><span class="ver-tag">v2.5 → v3.0</span><span class="ver-date">2026-07-13 → 08-05</span></div>
             <p>Summarised — full entries in <code>docs/calibration-determination-rubric.md</code> §9. C2 gates only fully-reported EIA-923 vintages (v2.5); C3c re-gated on the actual <strong>RT</strong> hourly scarcity tail for every ISO and C5b/C5c storage criteria removed from the rubric (v2.6/v2.7); the C7 gate set widened to the merchant coal classes (v2.8, ratified 2026-07-27); C5a CO₂ removed from the rubric and demoted to reported-only, since eGRID publishes no 2025 vintage (v2.9); and the <code>ACCEPTED MODEL-CLASS LIMITATION</code> ledger kind added for supporting-tier criteria only (v3.0).</p>
           </li>
-          <li class="ver-item is-current">
-            <div class="ver-head"><span class="ver-tag">v3.1</span><span class="ver-date">2026-08-06</span><span class="rs-badge st-grounded">current</span></div>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.1</span><span class="ver-date">2026-08-06</span></div>
             <p><strong>Ledgering restricted to C3c alone</strong> (<code>LEDGERABLE_CRITERIA</code>, fail-closed): every other criterion stands or falls on its own band, so both caveat budgets collapse (protective 1 → 0, non-protective 3 → 1). <strong>C7 diurnal shape retired</strong> from the report and the determination outright — §8's comparables row already scored the protective gates "beyond commercial practice", i.e. with no external anchor — with <code>score_shape</code> and <code>C7_GATED_CLASSES</code> deleted, while the D-1 measurement survives and keeps gating through C8's grounded-above-budget escalation. Scorer-only: keepers re-score in place, no re-solve. <em>Effects:</em> CAISO <code>CALIBRATED-WITH-CAVEATS</code> → <code>NOT-YET</code> (C3a mean LMP 2024 +11.7%, 2025 +14.8%, formerly ledgered), and its <code>complete</code> marker and frontier claim withdrawn; MISO C3a <code>CAVEAT</code> → <code>FAIL</code> with its <code>NOT-YET</code> label unchanged; NEISO, PJM, NYISO and ERCOT unchanged.</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.2</span><span class="ver-date">2026-08-09</span></div>
+            <p><strong>The C3c standing rule now fires in every year</strong>, training years included — a <em>lone</em> C3c FAIL with governance passing reclassifies to a ledgered <code>ACCEPTED MODEL-CLASS LIMITATION</code> caveat. Not a loosening: in-sample the same reclassification was already reachable through an explicit exceptions-ledger entry, which is the route every keeper carrying a C3c caveat actually used, so the split governed who typed the justification rather than what a run could claim. The guards are untouched — lone failure only, governance must PASS, supporting tier only. It also <strong>fixed a defect that had been suppressing the rule as declared</strong>: "lone" was measured over every scored record, so a FAIL on a reported-only stream (C5a CO₂, demoted at v2.9) silenced it; it is now measured over <code>CRITERIA</code> membership.</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.3</span><span class="ver-date">2026-08-17</span></div>
+            <p><strong>A ledgered caveat is REPORTED, not downgrading.</strong> Since v3.1 the ledgerable set is <code>{C3c}</code>, so this says exactly one thing: an accepted, ledgered scarcity-tail limitation is no longer what turns <code>CALIBRATED</code> into <code>CALIBRATED-WITH-CAVEATS</code>. It withdraws the v3.0–v3.2 <em>"never <code>CALIBRATED</code>"</em> clause, left verbatim in those entries as genealogy. <strong>A reporting change, not a band change</strong> — the C3c band, tier and measured magnitude are untouched, the criterion still reads <span class="rs-badge st-caveat">CAVEAT</span> and never PASS, and the miss is still printed in full, still listed in <code>caveats.ledgered</code>, and still named on the determination basis of a <code>CALIBRATED</code> run.</p>
+          </li>
+          <li class="ver-item is-current">
+            <div class="ver-head"><span class="ver-tag">v3.4</span><span class="ver-date">2026-08-18</span><span class="rs-badge st-grounded">current</span></div>
+            <p><strong>The C1 volume band is floored at the share leg's own materiality scale</strong>: <code>vol_band = min(max(2% of ISO load, 3% of actual total generation), 8 TWh)</code>. <strong>No new constant</strong> — the floor is <code>FUELMIX_SHARE_PP</code> applied to the actual-side generation total, reconciling C1's two legs rather than adding a tolerance. Before it, on a deep net-importing ISO the 2%-of-load term could bind <em>tighter</em> than the rubric's own declared mix-materiality on the same class. It is measured on actual generation, not <code>share_pp</code>, because a system-total shrink flatters the share difference; gating on raw <code>|model − actual|</code> over the actual total is un-flatterable, and therefore strictly harder than the share leg it mirrors. The 8 TWh cap still tops the band, so large-ISO bands are bit-identical.</p>
           </li>
         </ol>
 
@@ -569,37 +581,37 @@
             <h3>Calibration-complete <span class="complete-badge-demo">GATING</span></h3>
             <p class="contrast-card__file"><code>calibration-complete.json</code> · <code>complete</code> marker</p>
             <dl>
-              <dt>Purpose</dt><dd><strong>Gating</strong> — authorizes the rule-22 holdout solves (2022 validation, then the locked-test one-shot).</dd>
+              <dt>Purpose</dt><dd><strong>Gating</strong> — authorizes the rule-22 <em>validation</em> holdout solves (2022, extensible back to 2020), and those only. Since 2026-07-31 the locked test carries its own separate <code>final</code> marker, so one declaration can never spend both tiers.</dd>
               <dt>Enforced by</dt><dd>CI <code>quarantine-gates</code> + <code>run_calibration_full.py</code> hard-fail.</dd>
-              <dt>Holders</dt><dd><strong>NEISO only</strong> (declared 2026-07-07).</dd>
+              <dt>Holders</dt><dd><strong>NEISO</strong> (declared 2026-07-07), <strong>NYISO</strong> and <strong>PJM</strong> (both 2026-07-31). CAISO's was withdrawn 2026-08-06. Validation tier only — no ISO appears in <code>final</code>, so no locked-test year is authorized anywhere.</dd>
             </dl>
           </div>
           <div class="contrast-card is-frontier">
             <h3>Frontier achieved <span class="frontier-badge-demo">DECLARATIVE</span></h3>
-            <p class="contrast-card__file"><code>keepers.json</code> · <code>frontier</code> map</p>
+            <p class="contrast-card__file"><code>keepers/&lt;ISO&gt;.json</code> · <code>frontier</code> block</p>
             <dl>
               <dt>Purpose</dt><dd><strong>Declarative label only</strong> — "the admissible mechanism space for the residual is exhausted."</dd>
               <dt>Enforced by</dt><dd>Nothing (pure rendering; never feeds the verdict).</dd>
-              <dt>Holders</dt><dd><strong>NEISO + NYISO</strong> (both declared 2026-07-11).</dd>
+              <dt>Holders</dt><dd><strong>NEISO</strong> (declared 2026-07-11) and <strong>PJM</strong> (2026-07-31). NYISO's was withdrawn 2026-07-19 and ERCOT's removed 2026-07-26.</dd>
             </dl>
           </div>
         </div>
 
         <div class="story-section" style="margin-top: 22px;">
           <p>
-            NYISO carries a frontier designation but <strong>no</strong> complete marker: frontier does <em>not</em> imply holdout authorization, and complete does <em>not</em> imply frontier. Both ISOs earned the frontier label the same way — every hard and volume criterion is in band, and the <em>entire remaining residual is the C3c price scarcity tail</em>, gated by reserve-requirement dynamics the real ISO either has not implemented or that would need new measured identification to add:
+            The two designations are independent: frontier does <em>not</em> imply holdout authorization, and complete does <em>not</em> imply frontier. NYISO is the live illustration — it holds a <code>complete</code> marker but <strong>no</strong> frontier designation, its own having been withdrawn on 2026-07-19. The two current holders reached the label by different routes, which is the point: what "frontier" records is that an ISO's <em>named admissible lever queue</em> is exhausted, not that it has a particular residual left.
           </p>
           <ul style="margin: 0 0 var(--space-lg); padding-left: var(--space-xl);">
             <li style="margin-bottom: var(--space-sm);"><strong>NEISO</strong> — four named mechanisms tried on record (winter fuel-security stack, in-LP reserve co-optimization, measured dynamic reserve requirements, the measured fast-start DA offer surface). The real tail forms while the model still carries several GW of cheaper non-fast-start headroom, so no repricing of the fast-start band reaches it. Further C3c work needs a new measured identification — its own charter.</li>
-            <li><strong>NYISO</strong> — the deep &gt;$300 tail's two candidate reserve levers are chased to ground (largest-contingency requirement already in-model as the measured NYCA families; the ORDC/RCPF stack verified complete and SOM-grounded). The sole remaining gap is the net-load forecast-uncertainty reserve increment (IMM Recommendation 2021-1), which NYISO itself <em>has not implemented</em> and which has no published formula — adding it would be residual-fitting.</li>
+            <li><strong>PJM</strong> (declared 2026-07-31, at pjm-142) — a different route: its keeper passes <em>every</em> criterion, so there is no residual caveat family at all. What is exhausted is the structural lever queue. The diurnal-amplitude family closed <strong>MEASURED</strong> — hour-varying offer conduct has no admissible in-model route (the measured offer surface rejected under both conditioning definitions; re-binning barred by rule 23; the reserve/scarcity lane owner-closed; ramp envelopes spent; the daily gas series barred by a zero within-day offer sigma), and the last non-adjudicated successor, the overnight gas commitment bridge, was killed at a pre-registered no-LP pre-check. Further PJM price-formation work needs a new defect or a new measured identification, with its own charter.</li>
           </ul>
           <p style="margin-bottom: 0;">
-            Closing either tail in-model would violate CLAUDE.md rule 26 (no fitting to a residual). That is precisely why the designation is <em>declarative</em> and non-gating — it records an honest stopping point, not a passing grade. The live <span class="frontier-badge-demo">FRONTIER</span> badge renders on the <a href="calibration-status.html">Calibration Status</a> page (style <code>.cs-badge.det-frontier</code>). The whole holdout-and-validity program these designations sit within is on <a href="model-validity.html">Model Validity</a>.
+            Closing NEISO's tail in-model would violate CLAUDE.md rule 26 (no fitting to a residual), and PJM has no residual left to close on the current lever queue. That is precisely why the designation is <em>declarative</em> and non-gating — it records an honest stopping point, not a passing grade. The live <span class="frontier-badge-demo">FRONTIER</span> badge renders on the <a href="calibration-status.html">Calibration Status</a> page (style <code>.cs-badge.det-frontier</code>). The whole holdout-and-validity program these designations sit within is on <a href="model-validity.html">Model Validity</a>.
           </p>
         </div>
 
         <p class="src-cap">
-          <code>scripts/build_status.py:458–472</code> (non-gating attach after <code>determine()</code>) · <code>frontend/data/backcast/keepers.json</code> (<code>frontier</code> map) · <code>frontend/data/backcast/calibration-complete.json</code> · <code>docs/calibration-and-validation-methodology.md</code> §5
+          <code>scripts/build_status.py:458–472</code> (non-gating attach after <code>determine()</code>) · <code>frontend/data/backcast/keepers/&lt;ISO&gt;.json</code> (per-ISO <code>frontier</code> block) · <code>frontend/data/backcast/calibration-complete.json</code> · <code>docs/calibration-and-validation-methodology.md</code> §5
         </p>
       </div>
     </section>
