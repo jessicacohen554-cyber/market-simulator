@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-19T09:01:42",
+  "timestamp": "2026-08-19T08:49:38",
   "iso": "NYISO",
   "years": [
     2023,
@@ -295,9 +295,9 @@
   "nyiso_gas_bridge_min_run": true,
   "nyiso_gas_bridge_plant_exclusions": true,
   "nyiso_gas_bridge_plant_min_run": null,
-  "nyiso_gas_bridge_online_hours": null,
-  "nyiso_gas_bridge_state_floor_min_run": null,
-  "cc_reserve_duty_split": true,
+  "nyiso_gas_bridge_online_hours": true,
+  "nyiso_gas_bridge_state_floor_min_run": true,
+  "cc_reserve_duty_split": null,
   "nyiso_gas_bridge_cc_min_run_hours": 21.0,
   "nyiso_gas_bridge_st_min_run_hours": 13.0,
   "nyiso_spin_reserve_online": null,

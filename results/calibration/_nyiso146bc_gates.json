@@ -1,0 +1,251 @@
+{
+ "session": "nyiso-146 (b/c chain)",
+ "control": "2026-08-19-nyiso-146-control",
+ "arms": {
+  "B_online_hours_unscoped": {
+   "run_id": "2026-08-19-nyiso-146b-online-hours",
+   "verdict": "REJECTED-AS-ARMED (B-K3b, B-K4)",
+   "K1": {
+    "passed": true,
+    "diff": [
+     "nyiso_gas_bridge_online_hours"
+    ]
+   },
+   "K2a_legs_gas_cc_twh": {
+    "2023": [
+     17.0629,
+     17.3213
+    ],
+    "2024": [
+     19.0021,
+     19.1247
+    ],
+    "2025": [
+     17.6674,
+     17.6596
+    ],
+    "band": 0.05,
+    "passed": true
+   },
+   "K2a_gas_st_equal_control": true,
+   "K2b_2539_starts": {
+    "2023": [
+     327,
+     41
+    ],
+    "2024": [
+     526,
+     10
+    ],
+    "2025": [
+     262,
+     15
+    ],
+    "bar": 0.6,
+    "passed": true
+   },
+   "K3b_failures": [
+    {
+     "plant": 57185,
+     "year": 2024,
+     "ctl": 26,
+     "arm": 1,
+     "metered": 20,
+     "allowed": 14,
+     "err": 19
+    },
+    {
+     "plant": 55405,
+     "year": 2025,
+     "ctl": 69,
+     "arm": 9,
+     "metered": 63,
+     "allowed": 14,
+     "err": 54
+    }
+   ],
+   "K4_new_d4": [
+    [
+     2024,
+     "nyiso_gas_commitment_bridge x CC_REGULAR",
+     "54574"
+    ]
+   ],
+   "K5_criteria": "statuses identical to control (C3c bit-identical 2/0/5)"
+  },
+  "B2_state_scoped": {
+   "run_id": "2026-08-19-nyiso-146c-state-scoped",
+   "verdict": "PASSES ALL GATES -> PROMOTED KEEPER",
+   "C2K1": {
+    "vs_armB": [
+     "nyiso_gas_bridge_state_floor_min_run"
+    ],
+    "vs_control": [
+     "nyiso_gas_bridge_online_hours",
+     "nyiso_gas_bridge_state_floor_min_run"
+    ],
+    "passed": true
+   },
+   "C2K2_gas_cc_totals_twh": {
+    "2023": 5.046,
+    "2024": 5.564,
+    "2025": 5.7,
+    "band": [
+     4,
+     8
+    ],
+    "passed": true,
+    "cohort_log": "[2527, 2539, 56196, 56234] (2527 Greenidge is ST_GAS and scoped out by the CC-only leg; effective CC membership {2539, 56234, 56196} exactly as pre-registered)"
+   },
+   "C2K3_2539": {
+    "2023": [
+     327,
+     41,
+     6
+    ],
+    "2024": [
+     526,
+     10,
+     7
+    ],
+    "2025": [
+     262,
+     15,
+     7
+    ],
+    "medians_h": [
+     [
+      12,
+      68
+     ],
+     [
+      7,
+      144
+     ],
+     [
+      14,
+      319
+     ]
+    ],
+    "passed": true
+   },
+   "C2K3_56234": {
+    "2023": [
+     102,
+     3,
+     4
+    ],
+    "2024": [
+     8,
+     2,
+     6
+    ],
+    "2025": [
+     14,
+     4,
+     8
+    ],
+    "passed": true
+   },
+   "C2K4_no_degrade": {
+    "passed": true,
+    "note": "57185/55405/54574/7314/56940/50292/56196 all inside 1.5xctl_err+5; Athens 121/56/74 (ctl 116/45/69), Cricket 225/28/38 (ctl 203/26/31), Saranac 64/35/12 (ctl 64/34/12), Flynn 322/395/310 (ctl 284/382/280)"
+   },
+   "C2K5": {
+    "new_d4": [],
+    "new_d1": [],
+    "saranac_armB_conviction_gone": true,
+    "cc_bridge_share": {
+     "2023": [
+      0.0444,
+      0.0529
+     ],
+     "2024": [
+      0.0236,
+      0.0353
+     ],
+     "2025": [
+      0.0178,
+      0.0221
+     ]
+    },
+    "passed": true
+   },
+   "C2K6_criteria": {
+    "passed": true,
+    "note": "criterion statuses identical to control; determination CALIBRATED with attestation, C3c lone ledgered caveat bit-identical 2/0/5"
+   },
+   "C2K7_loyo": {
+    "passed": true,
+    "note": "membership stable >=2/3 subsets per member (2539 2/3 disclosed; 56234 3/3; 56196 >=2/3); per-year gates hold in each year separately"
+   }
+  },
+  "C_reserve_duty": {
+   "run_id": "2026-08-19-nyiso-146b-reserve-duty",
+   "inert_first_solve": "2026-08-19-nyiso-146b-reserve-inert",
+   "verdict": "REJECTED (C-K2 Allegany, C-K5 C3a-2023)",
+   "CK1": {
+    "passed": true,
+    "diff": [
+     "cc_reserve_duty_split"
+    ]
+   },
+   "CK2_object_falls_gated_years": {
+    "50744": [
+     0.883,
+     0.895
+    ],
+    "54592": [
+     0.893,
+     0.901
+    ],
+    "54593": [
+     0.931,
+     0.942
+    ],
+    "7784": [
+     0.636,
+     0.505
+    ],
+    "bar": 0.8,
+    "passed": false
+   },
+   "CK3_no_degrade": {
+    "passed": true
+   },
+   "CK4": {
+    "new_d4": [],
+    "new_d1": [],
+    "passed": true
+   },
+   "CK5": {
+    "passed": false,
+    "note": "C3a-2023 +9.0% -> +11.3% (PASS->FAIL; ~1.4 TWh phantom cheap upstate energy was price-relevant and 2023 held 1 pp of headroom)"
+   },
+   "reported_not_gated": {
+    "bethlehem_energy_gwh": {
+     "2023": [
+      1469,
+      1726,
+      4358
+     ],
+     "2024": [
+      3224,
+      3484,
+      3639
+     ],
+     "2025": [
+      4221,
+      4282,
+      3432
+     ]
+    },
+    "2025_falls": {
+     "50744": 0.236,
+     "54592": 0.254,
+     "54593": 0.325
+    }
+   }
+  }
+ }
+}

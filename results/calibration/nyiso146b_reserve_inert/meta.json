@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-19T09:01:42",
+  "timestamp": "2026-08-19T08:37:32",
   "iso": "NYISO",
   "years": [
     2023,
@@ -296,7 +296,6 @@
   "nyiso_gas_bridge_plant_exclusions": true,
   "nyiso_gas_bridge_plant_min_run": null,
   "nyiso_gas_bridge_online_hours": null,
-  "nyiso_gas_bridge_state_floor_min_run": null,
   "cc_reserve_duty_split": true,
   "nyiso_gas_bridge_cc_min_run_hours": 21.0,
   "nyiso_gas_bridge_st_min_run_hours": 13.0,
@@ -343,7 +342,7 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-a67f13721a3a.parquet"
   },
-  "git_sha": "d502ca4",
+  "git_sha": "74ff852",
   "basis_sha": "9c3e45c018806e309f7202a9ef4ad3981cb5ba25",
   "highspy_version": "1.14.0",
   "environment": {

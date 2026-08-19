@@ -1,16 +1,11 @@
 {
-  "timestamp": "2026-08-19T09:01:42",
+  "timestamp": "2026-08-19T08:37:32",
   "git": {
-    "sha": "d502ca4",
+    "sha": "74ff852",
     "basis_sha": "9c3e45c018806e309f7202a9ef4ad3981cb5ba25",
     "branch": "claude/nyiso-cc-min-run-per-plant-cwfin5",
-    "dirty": true,
-    "changed_files": [
-      "frontend/data/backcast/registry/2026-08-19-nyiso-146b-online-hours.json",
-      "frontend/data/backcast/registry/2026-08-19-nyiso-146c-state-scoped.json",
-      "frontend/data/backcast/runs/2026-08-19-nyiso-146b-online-hours.js",
-      "frontend/data/backcast/runs/2026-08-19-nyiso-146c-state-scoped.js"
-    ],
+    "dirty": false,
+    "changed_files": [],
     "diffstat": ""
   },
   "model_changes_note": "",
@@ -110,7 +105,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "d502ca4"
+    "git_sha": "74ff852"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -435,7 +430,6 @@
     "nyiso_gas_bridge_ct_min_run_hours": 2.0,
     "nyiso_gas_bridge_plant_min_run": false,
     "nyiso_gas_bridge_online_hours": false,
-    "nyiso_gas_bridge_state_floor_min_run": false,
     "nyiso_spin_reserve_online": false,
     "nyiso_synchronised_reserve": false,
     "nyiso_spin_headroom_frac": 1.0,
