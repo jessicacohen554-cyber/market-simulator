@@ -252,3 +252,22 @@ so the armed path carries ZERO measured content (strictly purer than §1 as
 pinned; the overlay's dw mean is $0.75 and it almost never moves a day across
 the $1,000 event line). Identification constants and every gate are
 unchanged.
+
+**Amendment 4 (mid-A/B, the first arm launch STOPPED and DISCARDED — recorded
+honestly):** Amendment 3's "pure lambda" event basis OVERSHOT the owner's
+purity requirement and made the mechanism structurally inert-by-construction:
+the first armed member's 2023 pass-1 read **0 model spike days** (audit
+sidecar `adaptive_2023.parquet`: P_hat ≡ 0, floor ≡ 0) because the model's
+deep-scarcity expression lives in its OWN co-optimization scarcity adder, not
+its energy dual — the keeper's λ tops out ~$700 and its one $5,000 hour is
+λ $299 + model adder $4,701. The model's scarcity adder is a MODEL OUTPUT
+(the reserve co-opt's own duals through the ercot-215 decontaminated
+(VOLL−λ)/VOLL anchor), so including it carries ZERO measured content and is
+the §1-original "model's own settled price" restated precisely. **The armed
+event basis is now: the model's own demand-weighted P1 energy dual PLUS its
+own decontaminated anchored scarcity-adder mirror** (`gam = cap-dual ALL
+tier, min'd with the ORDC total family's balance dual where present;
+adder = min(gam × (VOLL−λ)/VOLL, VOLL−λ)` — the identical arithmetic the
+persist path writes), the measured RTORDPA overlay still EXCLUDED. The
+discarded λ-only arm is recorded as a diagnostic (mechanism inert at zero
+spike days), never registered. All constants, windows and gates unchanged.
