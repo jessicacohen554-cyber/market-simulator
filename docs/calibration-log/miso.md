@@ -7576,8 +7576,9 @@ regenerated-artifact vintage only (the rider; instrument drift, attested)**. Nex
 
 ## miso-170 (2026-08-19) — the laid-up-plant MEMBERSHIP repair: 15 of 18 D-4 conduct failures cleared and C8-2024 PASSES, but K-1 fails as written and the arm is REJECTED-AS-ARMED pending the owner
 
-**Keeper UNCHANGED: `2026-08-19-miso-169-online-gated`.** Nothing promoted.
-`mustrun_plant_exclusions` **`O` (tested, escalated)**. Runs registered (rule 15):
+**Keeper UNCHANGED AT THE TIME OF WRITING: `2026-08-19-miso-169-online-gated`;
+SUPERSEDED SAME DAY BY THE OWNER — see the promotion addendum at the end of
+this log.** `mustrun_plant_exclusions` **`O` (tested, escalated) → `K`**. Runs registered (rule 15):
 `2026-08-19-miso-170-control` (`miso170_membership_A`),
 `2026-08-19-miso-170-membership` (`miso170_membership_B`).
 
@@ -7650,3 +7651,40 @@ Records: `RESULT-miso170-stgas-floor-membership-2026-08-19.md`,
 `scripts/probes/_miso170_membership_ab.py`. A **parallel** miso-170 session
 (`miso170_layup_A`, `FINDING-miso170-congestion-elmp-assessment-2026-08-19.md`)
 is a separate no-LP object and does not overlap this A/B.
+
+## miso-170 (2026-08-19, ADDENDUM) — PROMOTED BY OWNER DIRECTION: MISO keeper → `2026-08-19-miso-170-membership`
+
+**This supersedes the "Keeper UNCHANGED / nothing promoted" disposition of the
+miso-170 entry above.** Owner ruling, verbatim: *"Is this a recommended keeper
+candidate? If so plz promote. If structural integrity improves but gates regress
+that may still be a keeper."* The session's answer was **yes**, and the
+promotion was taken **over its own pre-registered mechanical verdict of
+REJECTED-AS-ARMED**; both records stand.
+
+**THE STRUCTURE-OVER-GATES CLAUSE IS NOT NEEDED AND IS NOT INVOKED.** Measured
+at RECORD grain against the designated keeper over the full scorer output, the
+arm differs in **exactly one of 67 records, and it is an improvement**:
+`forced_share ST_GAS 2024 FAIL → PASS`. **Zero PASS→FAIL regressions anywhere.**
+C1/C2/C3b/C4 unchanged, C3c the same ledgered caveat, and C6 PASS on a fresh
+attestation (`scripts/gen_miso170_attestation.py`; DOF ledger 32 → 33 entries
+with `n_residual` UNCHANGED at 2 — the new entry is a plant-code SET with
+`n_scalars` 0).
+
+**Determination UNCHANGED at NOT-YET** — C3a-2025 (−12.4 → −12.1 %, disclosed
+and NOT claimed) plus C8 in 2023 and 2025. ST_GAS stays above the 30 % merchant
+cap in every year (32.7 → 31.2 / 34.4 → 31.9 / 46.2 → 43.6 %), exactly as
+pre-registered: **this keeper buys legitimacy, not budget headroom.**
+
+Cells: `mustrun_plant_exclusions` **`O` → `K`**,
+`reliability_floor_plant_exclusions` **`U` → `K`** (armed together over one
+census). `scripts/audit_keepers.py --iso MISO` PASSES, 0 failures / 0 warnings.
+MISO holds neither `complete` nor `final`, so no `calibration-complete.json`
+re-key applies (rule 22 D-5(b) not engaged).
+
+**Both open items carry forward UNRESOLVED and are not touched by the
+promotion:** (1) the D-4 plant-grain class-attribution defect — a plant that
+mixes classes has all its floors charged to its dominant class, which is what
+failed K-1 and what still fails C8 on plant 1104 in 2023/2025; it affects any
+ISO with mixed-class sites. (2) The uncited **RHO_CLIP** band (nyiso-144).
+**Named successor, still not bundled** (rule 19): per-year rather than pooled
+`online_frac` for the per-plant must-run window.
