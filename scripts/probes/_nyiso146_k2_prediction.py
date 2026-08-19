@@ -34,6 +34,7 @@ from __future__ import annotations
 import argparse
 import inspect
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -48,6 +49,8 @@ import scripts.run_calibration as RC  # noqa: E402
 import market_sim.pipeline.commitment as PC  # noqa: E402
 
 BUNDLE = REPO / "results/calibration/nyiso144_layup_arm"
+ARM_FIELD = os.environ.get("NYISO146_ARM_FIELD", "nyiso_gas_bridge_plant_min_run")
+OUT_SUFFIX = "" if ARM_FIELD == "nyiso_gas_bridge_plant_min_run" else "_" + ARM_FIELD
 OUT = REPO / "results/calibration/_nyiso146_k2_prediction.json"
 RUN_THRESHOLD_FRAC = 0.05
 
@@ -91,7 +94,7 @@ def _capture(year: int, meta: dict) -> dict:
 
     def _spy(config, fleet, fleet_arrays, p0_dispatch, p0_prices, mc_base):
         out = orig(config, fleet, fleet_arrays, p0_dispatch, p0_prices, mc_base)
-        arm_cfg = config.with_overrides(nyiso_gas_bridge_plant_min_run=True)
+        arm_cfg = config.with_overrides(**{ARM_FIELD: True})
         arm = orig(arm_cfg, fleet, fleet_arrays, p0_dispatch, p0_prices, mc_base)
         cap["p0"] = np.array(p0_dispatch, copy=True)
         z = np.zeros_like(cap["p0"])
@@ -194,6 +197,8 @@ def main() -> int:
                 f"{r['pred_starts_arm']:8d} {r['pred_on_share_ctl']:7.4f} "
                 f"{r['pred_on_share_arm']:7.4f}"
             )
+    globals()["OUT"] = OUT.with_name(OUT.stem + OUT_SUFFIX + ".json") if OUT_SUFFIX else OUT
+    out["arm_field"] = ARM_FIELD
     OUT.write_text(json.dumps(out, indent=1) + "\n")
     print(f"\nwrote {OUT.relative_to(REPO)}")
     return 0

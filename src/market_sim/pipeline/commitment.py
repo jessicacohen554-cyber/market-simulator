@@ -809,6 +809,17 @@ def _nyiso_gas_bridge_floor(
     from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
 
     startup_bridge = bool(getattr(config, "nyiso_gas_bridge_startup", True))
+    # ONLINE-HOURS LSL leg (nyiso-146 successor; the ercot141 detector leg on
+    # NYISO's own evidence): floor the base tranche at min-load in EVERY hour
+    # the P0 pattern has the plant online, not only across idle gaps — the
+    # committed STATE the gap legs interpolate between. Same detector, same
+    # measured fractions, same D-2 id; a wider window on one mechanism
+    # (rule 19 [R-ONE-MECH]). CC-SCOPED: the nyiso-146 evidence (Bethlehem's
+    # P1 fragmentation inside P0-committed hours) is combined-cycle conduct;
+    # NYISO's gas-steam fleet cycles diurnally by its own meter and carries no
+    # such evidence, so the leg arms only the gas_cc detector call (the same
+    # evidence-scoping as the ERCOT leg, whose bridge is gas_cc-only).
+    online_hours = bool(getattr(config, "nyiso_gas_bridge_online_hours", False))
     max_gap = (
         float(DA_COMMITMENT_HORIZON_HOURS)
         if getattr(config, "nyiso_gas_bridge_da_horizon", True)
@@ -869,6 +880,7 @@ def _nyiso_gas_bridge_floor(
             fuel_types=(fuel,),
             max_econ_gap_hours=max_gap,
             min_run_hours=min_run,
+            floor_online_hours=online_hours and fuel == "gas_cc",
             min_load_frac_by_gen=frac_by_gen,
         )
         # PER-CLASS trace. The composed total cannot show that one leg

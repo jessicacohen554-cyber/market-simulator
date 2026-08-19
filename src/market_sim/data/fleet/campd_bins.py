@@ -1797,6 +1797,14 @@ def fleet_to_bins(
         iso, getattr(config, "coal_mustrun_online_pmin", False)
     )
     peaking = thermal_tranche_peaking(iso)
+    if getattr(config, "cc_reserve_duty_split", False):
+        _cohort = _reserve_duty_cohort(iso)
+        logger.info(
+            "cc_reserve_duty_split armed: %d measured reserve-duty CC "
+            "plant(s) route to the class peak band — %s",
+            len(_cohort),
+            sorted(_cohort),
+        )
     # Aggregate the per-generator fleet to one row per (plant, group): capacity
     # sums, heat rate is capacity-weighted.
     agg: dict[tuple[int, str], dict] = {}
@@ -1871,6 +1879,24 @@ def fleet_to_bins(
         room = max(0.0, 100.0 - pct_mr)
         if pct_mc + pct_peak > room:
             pct_mc = max(0.0, min(pct_mc, room - pct_peak))
+        # RESERVE-DUTY split (cc_reserve_duty_split, nyiso-146): a CC plant in
+        # the measured capacity-only cohort (reserve_duty_cc_<ISO>.csv —
+        # on-share/CF <= the population-gap ceiling; NYISO's Seneca fleet)
+        # offers its WHOLE dispatchable capacity at the class curve's PEAK
+        # band, the duty-role mirror of cc_intermediate_split: the LP,
+        # seeing only the (competitive) heat rate, runs these plants
+        # 87-99 % of hours against 1-6 % metered (the nyiso-145 defect-B
+        # merit-order inversion). An offer SHAPE from a measured duty-role
+        # signal, never a pin (rule 13); the level is the class's existing
+        # identified peak multiplier — zero new scalars (rule 21). Gated
+        # default off so a control run is byte-identical.
+        if (
+            group == "CC_REGULAR"
+            and getattr(config, "cc_reserve_duty_split", False)
+            and code in _reserve_duty_cohort(iso)
+        ):
+            pct_mc = 0.0
+            pct_peak = room
         pct_econ = max(0.0, 100.0 - pct_mr - pct_mc - pct_peak)
         mults = _DEFAULT_HR_MULT_BY_GROUP.get(
             group, _DEFAULT_HR_MULT_BY_GROUP["CC_REGULAR"]
@@ -1952,6 +1978,19 @@ CC_DUCT_BURNER_PEAK_MULT: dict[str, float] = {
     "f": 2.25,  # F-class incl. E/F
     "older": 2.00,  # E-class, legacy
 }
+
+
+@lru_cache(maxsize=8)
+def _reserve_duty_cohort(iso: str) -> frozenset[int]:
+    """The measured reserve-duty (capacity-only) CC cohort for *iso*.
+
+    Thin cached wrapper over
+    :func:`market_sim.data.reserve_duty.load_reserve_duty_cc` so the
+    ``fleet_to_bins`` per-plant loop reads the artifact once per process.
+    """
+    from market_sim.data.reserve_duty import load_reserve_duty_cc
+
+    return load_reserve_duty_cc(iso)
 
 
 def cc_duct_burner_peak_mult(turbine_class: object) -> float:
