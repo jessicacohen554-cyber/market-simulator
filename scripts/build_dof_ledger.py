@@ -383,6 +383,40 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                 "PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO retirement note)",
             )
         )
+    if sc.get("ercot_storage_adaptive_expectation"):
+        # ercot-221: the two rule-23 frozen constants of the adaptive-
+        # expectation storage offer, identified in the PRE-REGISTERED Phase-0
+        # v2 instrument on the MEASURED 2023 daily evening storage offer
+        # surface (delivery-2023 60-Day SCED corpus, ERCOT-154/161 population
+        # discipline) — measured CONDUCT as identification evidence, never a
+        # price residual (the ercot-210/211/218 instrument class). Re-derive
+        # only on a source-data change (rule 23), never on a residual.
+        out.append(
+            _entry(
+                "ercot_adaptive_half_life_days / ercot_adaptive_beta",
+                "run_config.scenario_config.ercot_adaptive_*",
+                "measured-physical",
+                iso,
+                value=[
+                    sc.get("ercot_adaptive_half_life_days"),
+                    sc.get("ercot_adaptive_beta"),
+                ],
+                n_scalars=2,
+                source="EWMA half-life (days) and gain beta of the daily "
+                "spike-frequency expectation P_hat, SSE-fit of "
+                "implied_P(d) = evening storage offer p50 / ordc_voll on "
+                "P_hat(d) over admissible days 2023-06-10..12-31 on the "
+                "pre-registered grid (PRECOMMIT-ercot221-adaptive-"
+                "expectation-2026-08-18.md Amendment 1 family v2; artifact "
+                "results/calibration/ercot221_adaptive_phase0.json). The "
+                "armed path consumes only the model's own pass-1 price path "
+                "(Amendment 4) — the measured surface is identification "
+                "evidence only. Phase-0 v1+v2 FAILED their gates; Phase-1 "
+                "entered on owner instruction (recorded in the precommit "
+                "Amendment 2), so these constants are additionally flagged "
+                "by that standing record.",
+            )
+        )
     return out
 
 
