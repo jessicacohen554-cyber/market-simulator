@@ -43,6 +43,23 @@ _BASIS_BASIC = int(highspy.HighsBasisStatus.kBasic)
 _BASIS_STATUS_OBJS = [highspy.HighsBasisStatus(i) for i in range(5)]
 
 
+def _log_rss(label: str) -> None:
+    """Peak-memory checkpoint (``MARKET_SIM_MEM_DEBUG=1``): VmRSS + VmHWM.
+
+    Module-level twin of the ``_rss`` closure in ``DispatchModel.__init__``,
+    for the solve/extraction phase — the measured owner of the year-solve
+    peak (miso-169: build tops out ~5.1 GB while the solve+extraction reach
+    ~14.4 GB on the plant-level MISO LP), which the build-phase checkpoints
+    alone could not attribute.
+    """
+    if os.environ.get("MARKET_SIM_MEM_DEBUG") != "1":
+        return
+    with open("/proc/self/status") as f:
+        for line in f:
+            if line.startswith(("VmRSS", "VmHWM")):
+                logger.info("MEM %s: %s", label, line.split(":")[1].strip())
+
+
 class DispatchModel:
     """A reusable HiGHS dispatch LP whose objective can be re-costed in place.
 
@@ -151,6 +168,8 @@ class DispatchModel:
         reserve_posture_startup: np.ndarray | None = None,
         reserve_pergen_col_pool: np.ndarray | None = None,
         reserve_balance_col_mask: np.ndarray | None = None,
+        reserve_pergen_online_gated_cols: np.ndarray | None = None,
+        reserve_pergen_pool_ramp10: np.ndarray | None = None,
         posture_gen_idx: np.ndarray | None = None,
         posture_col: np.ndarray | None = None,
         posture_mlf: np.ndarray | None = None,
@@ -517,6 +536,8 @@ class DispatchModel:
             ),
             reserve_pergen_col_pool=reserve_pergen_col_pool,
             reserve_balance_col_mask=reserve_balance_col_mask,
+            reserve_pergen_online_gated_cols=reserve_pergen_online_gated_cols,
+            reserve_pergen_pool_ramp10=reserve_pergen_pool_ramp10,
             posture_gen_idx=(posture_gen_idx if standalone_posture else None),
             posture_col=(posture_col if standalone_posture else None),
             posture_mlf=(posture_mlf if standalone_posture else None),
@@ -868,11 +889,30 @@ class DispatchModel:
                 )
                 n_posture_rows = (q_mlf + 2 * n_posture) * T
             # Joint-headroom rows are per POOL (the product split maps several
-            # R columns onto one pool row; identity otherwise).
+            # R columns onto one pool row; identity otherwise). The online-
+            # gated coupling rows (one per gated R column per hour) and the
+            # shared product-ramp rows (one per pool per hour) sit between
+            # the storage-gate and balance blocks (miso_reserve_online_gated;
+            # both zero on every flag-off path).
+            n_online_gate_rows = (
+                int(
+                    np.count_nonzero(
+                        np.asarray(reserve_pergen_online_gated_cols, dtype=bool)
+                    )
+                )
+                * T
+                if reserve_pergen_online_gated_cols is not None
+                else 0
+            )
+            n_shared_ramp_rows = (
+                n_pergen_pools * T if reserve_pergen_pool_ramp10 is not None else 0
+            )
             self._n_reserve_rows = (
                 n_pergen_pools * T
                 + n_posture_rows
                 + n_storage_gate_rows
+                + n_online_gate_rows
+                + n_shared_ramp_rows
                 + n_families * T
             )
         else:
@@ -1060,9 +1100,45 @@ class DispatchModel:
         n_storage = self.n_storage
         n_links = self.n_links
 
+        # --- Solution marshalling: one up-front block, largest transient
+        # first. highspy 1.14 returns the HighsSolution by VALUE (a C++-side
+        # copy of all four vectors, ~0.4 GB at plant-level MISO scale) and
+        # converts a vector attribute to a boxed-float Python list on EVERY
+        # access (~0.8 GB per access at ~25M columns) — transients that stack
+        # directly on the live simplex workspace, the top of the measured
+        # 14.4 GB year-solve peak (miso-169 attribution; G-40 lineage). So:
+        # convert each needed vector exactly once, do the two column-length
+        # conversions while nothing else from the solution is yet retained,
+        # and drop the C++ copy before the rest of the extraction runs. This
+        # is a pure reordering of the same reads — every downstream value is
+        # bit-identical.
+        _log_rss("post-run pre-extraction")
         solution = h.getSolution()
+        # Flow reduced costs: highspy 1.14 has no partial accessor, so the
+        # full col_dual converts, but only the (n_links, T) flow block is
+        # retained (the network sidecar's input; see the stationarity notes
+        # further down where it is consumed).
+        flow_dual = None
+        if n_links:
+            col_dual = np.asarray(solution.col_dual, dtype=float)
+            flow_dual = col_dual.reshape(T, layout.vars_per_hour)[
+                :, layout._flow_off : layout._slack_off
+            ].T.copy()
+            del col_dual
+            _log_rss("post col_dual extraction")
+        # Reserve balance-row ACTIVITY (Ax), co-opt only: the final
+        # n_families*T entries of row_value — the only output that needs the
+        # row-activity vector (consumed by the per-family reserve sidecar
+        # extraction below, where its role is documented).
+        balance_activity = None
+        if self._coopt:
+            balance_activity = np.asarray(
+                solution.row_value[-(self._n_families * T) :], dtype=float
+            ).reshape(T, self._n_families)
         col_value = np.asarray(solution.col_value, dtype=float)
         row_dual = np.asarray(solution.row_dual, dtype=float)
+        del solution
+        _log_rss("post extraction")
 
         block = col_value.reshape(T, layout.vars_per_hour)
         dispatch = block[:, layout._p_off : layout._w_off].T
@@ -1213,13 +1289,9 @@ class DispatchModel:
             # slack says how far a non-binding family was from binding — which
             # ``reserve_dispatch`` cannot answer, being itself discarded at
             # persist time and having no family index.
-            # Row ACTIVITY (Ax) — the only output that needs it, so it is
-            # materialised HERE rather than beside row_dual: converting the full
-            # row vector costs a copy proportional to the row count on every
-            # solve, and an energy-only LP would pay it for nothing.
-            balance_activity = np.asarray(
-                solution.row_value[-(n_fam * T) :], dtype=float
-            ).reshape(T, n_fam)
+            # Row ACTIVITY (Ax) — the only output that needs it, converted
+            # once in the up-front marshalling block (an energy-only LP pays
+            # nothing: the conversion is gated on the same self._coopt).
             reserve_held_by_family = balance_activity - reserve_shortfall_by_family
             # Reserve-supply cap duals (zonal spec): the cap block sits directly
             # before [online_cap | storage_gate | balance] at the row tail, one
@@ -1295,18 +1367,13 @@ class DispatchModel:
         # group row binds up or down and the reader needs to know which) --
         # ``run_calibration_full._network_frame`` records them verbatim.
         # Read-only post-solve extraction; nothing here re-enters the model.
+        # (``flow_dual`` itself was sliced out of col_dual in the up-front
+        # marshalling block, before the primal column block was retained.)
         interface_dual = None
-        flow_dual = None
         if self._n_iface_groups > 0 and self._iface_row_offset >= 0:
             n_g = self._n_iface_groups
             off_i = self._iface_row_offset
             interface_dual = row_dual[off_i : off_i + n_g * T].reshape(T, n_g).T
-        if n_links:
-            col_dual = np.asarray(solution.col_dual, dtype=float)
-            flow_dual = col_dual.reshape(T, layout.vars_per_hour)[
-                :, layout._flow_off : layout._slack_off
-            ].T.copy()
-            del col_dual
 
         return DispatchResult(
             dispatch=dispatch,

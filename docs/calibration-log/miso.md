@@ -7500,3 +7500,57 @@ fails it if the price rise lands in RT-only rather than DA-foreseen hours); inst
 **15 GB RAM** against miso-161's measured **>13.9 GB/year** for a MISO plant-level LP, so the
 control+arm pair over `--year 2023 2024 2025` is not runnable here. A successor needs **≥24 GB**.
 Per CLAUDE.md this is escalated rather than routed to a GitHub Actions runner.
+
+## miso-169 (2026-08-19) — the 15 GB blocker is ENGINEERED AWAY (owner: "fix it so it doesn't need that much memory"), PREREG-miso167 is EXECUTED IN FULL, every §6 gate PASSES, and promotion is ESCALATED on the rho band + the D-4 conduct rider. Keeper UNCHANGED
+
+**The memory fix (the session's re-charter, owner in-session).** The MISO year-solve peak is
+ATTRIBUTED for the first time: ~8.5 GB irreducible HiGHS dual-simplex workspace (25.4M-column
+LP), ~3.3 GB model inputs, and ~1.9 GB of highspy-1.14 solution-MARSHALLING waste (getSolution
+returns the HighsSolution BY VALUE and boxes every 25M-vector attribute access into a Python
+list, stacked at exactly the in-solve peak). The marshalling reorder in
+`model/lp/model.py::DispatchModel.solve` — every vector converted once, largest transients
+first, C++ copy dropped early, MEM checkpoints added — cuts the measured year peak
+**13.95 → 12.40 GB, bit-identical** (patched 2023 replay: max|diff| = 0 on every sidecar,
+unit_hourly included). Cross-year floor 0.55 GB → a 3-year invocation peaks ~13.0 GB. With the
+thread cap (`MARKET_SIM_HIGHS_THREADS=4`, proven result-neutral by the control's bit-identity)
+and an 8 GB swapfile, **the ≥24 GB requirement is RETIRED**
+(`FINDING-miso169-15gb-memory-fit-2026-08-19.md`; recipe in §3).
+
+**PREREG-miso167 executed with the miso-168 order.** (1) CONTROL
+`2026-08-19-miso-169-control` (`miso169_gated_A`): bit-identical to the committed keeper on
+every scored sidecar of all three years — the §5 condition, satisfied exactly. (2) §3
+pre-check on its unit_hourly (committed BEFORE any build): **K-PRE-A 78.7 %** vs the ≥80 %
+inertness kill (one hour inside the line), K-PRE-B 0.1–0.2 % — proceed. (3)
+`miso_reserve_online_gated` BUILT (default off, MISO-only, zero fitted parameters): pergen
+product split (gated Reg+Spin coupling row `R − ρ·ΣP ≤ 0` + ungated Supplemental), nested
+measured Reg+Spin family on the PUBLISHED Schedule-28 $65/$98 two-step curve, pool-shared
+10-min ramp row; ρ measured from MISO's OWN CAMPD record per rule 25 (**0.1764** over 5.28M
+online unit-hours, 93.1 % coverage) — **solved at the uncited RHO_CLIP 0.5 floor** (nyiso-144
+standing escalation; conservative here, since the coupling row ADDS to the joint headroom
+row rather than replacing it). (4) ARM `2026-08-19-miso-169-online-gated` (`miso169_gated_B`),
+single delta via `replay_keeper --set`.
+
+**The §6 rule, gate by gate: ALL PASS.** K-1 zero flips at RECORD grain (2023 annual −0.00 %
+— the against-interest risk did not materialize); K-2 C3b PASS both arms; K-3 forced shares
+unchanged to 4 dp (no new floor, no D-2 id); **K-5 textbook** — 2025's rise is **+$10.12 in
+DA-foreseen scarce hours and $0.00 in RT-only hours** (regspin dual $25.81 vs $0.00), binding
+5/6/12 h across the years; magnitude +0.10 pp on C3a-2025 vs the +3.3 pp ceiling — no
+over-reach; no verdict flip, so rule-22 LOYO is not triggered. A/B record
+`_miso169_gated_ab.json`. A real interaction disclosed: 2023's few foreseen hours get
+CHEAPER (−$49) — the regspin binding re-dispatches synchronized capacity and relieves the
+Midwest family's $200 step (3 h → 0).
+
+**Disposition: VALIDATED, NOT PROMOTED — two owner asks**
+(`RESULT-miso169-online-gated-execution-2026-08-19.md` §5): (1) the RHO_CLIP band (solve at
+the measured 0.1764 is one `--set` re-run once the owner rules); (2) the nyiso-143 D-4
+per-unit conduct rider (shipped 2026-08-18) now **C8-FAILs ANY regenerated MISO artifact,
+the keeper's own diagnostics included**, on ~4 sub-materiality ST_GAS plants floored in
+meter-offline hours — an instrument change the whole lane must confront (the nyiso-140
+`reliability_floor_plant_exclusions` machinery is the pointed-at repair). Matrix cell
+`reserve_deliverability_scoping` **R → O** — miso-132(a)'s July-NIGHT slack grounds are
+defeated for the SCARCE window (H_on < req in 21 % of the 47 hours), untouched for its own.
+Both runs registered; C3a-2025 −12.5 → −12.4 % and the determination stays NOT-YET at full
+magnitude, exactly as the prereg's rule-1 clause anticipated — the RT-only half remains the
+honest model-class limit.
+
+Rule 22: 2023–2025 only; freeze untouched; no marker touched. Next number: **miso-170**.

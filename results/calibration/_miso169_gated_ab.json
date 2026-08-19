@@ -1,0 +1,127 @@
+{
+ "basis": {
+  "session": "miso-169",
+  "prereg": "PREREG-miso167-online-gated-reserve-supply-2026-08-18.md \u00a74/\u00a76",
+  "control": "/home/user/market-simulator/results/calibration/miso169_gated_A",
+  "arm": "/home/user/market-simulator/results/calibration/miso169_gated_B",
+  "hour_key": "model chronological non-leap 8760 CST calendar",
+  "scarce_rt_threshold": 200.0,
+  "foreseen_da_threshold": 150.0
+ },
+ "years": {
+  "2023": {
+   "price_delta_mean": {
+    "annual": -6.002960887688017e-06,
+    "annual_pct_of_control": -1.8469621453609146e-05,
+    "summer": -0.0018142842367214836,
+    "summer_pct_of_control": -0.005513130572529657,
+    "scarce": -4.4554007497518375,
+    "foreseen": -49.0,
+    "rt_only": -0.0009408247270215498
+   },
+   "n_hours": {
+    "scarce": 11,
+    "foreseen": 1,
+    "rt_only": 10
+   },
+   "reserve_dual_delta_mean": {
+    "annual": 0.03108048066496849,
+    "scarce": 3.345414161682129,
+    "foreseen": 36.799556732177734,
+    "rt_only": 0.0
+   },
+   "arm_families": [
+    "miso_rbdc",
+    "miso_rbdc_regspin",
+    "miso_subregional_or_midwest",
+    "miso_zonal_or_miso_south"
+   ],
+   "regspin_family": {
+    "req_mean_mw": 1346.3265380859375,
+    "held_mean_mw": 1406.1917724609375,
+    "shortfall_hours": 5,
+    "dual_pos_hours": 5,
+    "dual_mean": 0.05452461540699005,
+    "dual_mean_scarce": 8.909090995788574,
+    "dual_mean_foreseen": 98.0,
+    "dual_mean_rt_only": 0.0
+   }
+  },
+  "2024": {
+   "price_delta_mean": {
+    "annual": 0.002174896045951425,
+    "annual_pct_of_control": 0.007272758365916239,
+    "summer": 0.003641443538762037,
+    "summer_pct_of_control": 0.012074097333853272,
+    "scarce": 0.0,
+    "foreseen": 0.0,
+    "rt_only": 0.0
+   },
+   "n_hours": {
+    "scarce": 14,
+    "foreseen": 1,
+    "rt_only": 13
+   },
+   "reserve_dual_delta_mean": {
+    "annual": 0.07375292479991913,
+    "scarce": 7.650813579559326,
+    "foreseen": 107.11138916015625,
+    "rt_only": 0.0
+   },
+   "arm_families": [
+    "miso_rbdc",
+    "miso_rbdc_regspin",
+    "miso_subregional_or_midwest",
+    "miso_zonal_or_miso_south"
+   ],
+   "regspin_family": {
+    "req_mean_mw": 1454.1397705078125,
+    "held_mean_mw": 1508.947998046875,
+    "shortfall_hours": 6,
+    "dual_pos_hours": 6,
+    "dual_mean": 0.0601356141269207,
+    "dual_mean_scarce": 6.484196662902832,
+    "dual_mean_foreseen": 90.77875518798828,
+    "dual_mean_rt_only": 0.0
+   }
+  },
+  "2025": {
+   "price_delta_mean": {
+    "annual": 0.038997085657983065,
+    "annual_pct_of_control": 0.10018971720967904,
+    "summer": 0.11873427462118497,
+    "summer_pct_of_control": 0.3095502154665981,
+    "scarce": 4.306636657099541,
+    "foreseen": 10.121872225630582,
+    "rt_only": -0.0009452455160454347
+   },
+   "n_hours": {
+    "scarce": 47,
+    "foreseen": 20,
+    "rt_only": 27
+   },
+   "reserve_dual_delta_mean": {
+    "annual": 0.054136183112859726,
+    "scarce": 6.595372200012207,
+    "foreseen": 15.499124526977539,
+    "rt_only": 0.0
+   },
+   "arm_families": [
+    "miso_rbdc",
+    "miso_rbdc_regspin",
+    "miso_subregional_or_midwest",
+    "miso_zonal_or_miso_south"
+   ],
+   "regspin_family": {
+    "req_mean_mw": 1551.66796875,
+    "held_mean_mw": 1591.6839599609375,
+    "shortfall_hours": 7,
+    "dual_pos_hours": 12,
+    "dual_mean": 0.0772920548915863,
+    "dual_mean_scarce": 10.98215389251709,
+    "dual_mean_foreseen": 25.808063507080078,
+    "dual_mean_rt_only": 0.0
+   }
+  }
+ }
+}

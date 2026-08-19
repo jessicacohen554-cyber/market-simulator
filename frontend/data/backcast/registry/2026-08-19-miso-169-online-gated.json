@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-19-miso-169-online-gated",
+  "label": "miso 169 online gated",
+  "date": "2026-08-19",
+  "shorthand": "miso-169-online-gated",
+  "definition": "miso-169 ARM: miso_reserve_online_gated=true \u2014 THE SINGLE DELTA vs the same-recipe zero-delta control miso169_gated_A (PREREG-miso167 \u00a72/\u00a75, miso-168 corrected order). Reg+Spin split into an online-gated product (coupling row, measured CAMPD rho 0.1764 via data.online_reserve_rho \u2014 the RHO_CLIP 0.5 floor binds, the standing nyiso-144 owner escalation) and an ungated Supplemental product; nested measured Reg+Spin family priced on the published Schedule-28 $65/$98 two-step curve.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-19-miso-169-online-gated.js",
+  "bundle": "results/calibration/miso169_gated_B"
+}

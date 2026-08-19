@@ -3318,6 +3318,7 @@ def solve_and_persist(
     miso_midwest_subregional_reserves: bool = False,
     miso_reserve_pergen: bool = False,
     miso_commitment_posture: bool = False,
+    miso_reserve_online_gated: bool = False,
     miso_measured_reserve_requirements: bool = False,
     miso_south_seam_split: bool = False,
     miso_rdt_tcdc: bool = False,
@@ -3840,6 +3841,8 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(miso_reserve_pergen=True)
         if miso_commitment_posture:
             recorded_cfg = recorded_cfg.with_overrides(miso_commitment_posture=True)
+        if miso_reserve_online_gated:
+            recorded_cfg = recorded_cfg.with_overrides(miso_reserve_online_gated=True)
         if miso_measured_reserve_requirements:
             recorded_cfg = recorded_cfg.with_overrides(
                 miso_measured_reserve_requirements=True
@@ -4971,6 +4974,7 @@ def solve_and_persist(
             miso_midwest_subregional_reserves=miso_midwest_subregional_reserves,
             miso_reserve_pergen=miso_reserve_pergen,
             miso_commitment_posture=miso_commitment_posture,
+            miso_reserve_online_gated=miso_reserve_online_gated,
             miso_measured_reserve_requirements=miso_measured_reserve_requirements,
             miso_south_seam_split=miso_south_seam_split,
             miso_rdt_tcdc=miso_rdt_tcdc,
@@ -5807,6 +5811,7 @@ def solve_and_persist(
         "miso_midwest_subregional_reserves": miso_midwest_subregional_reserves,
         "miso_reserve_pergen": miso_reserve_pergen,
         "miso_commitment_posture": miso_commitment_posture,
+        "miso_reserve_online_gated": miso_reserve_online_gated,
         "miso_measured_reserve_requirements": miso_measured_reserve_requirements,
         "miso_south_seam_split": miso_south_seam_split,
         "miso_rdt_tcdc": miso_rdt_tcdc,
@@ -9410,6 +9415,21 @@ def main() -> None:
         "--energy-reserve-coopt. MISO-only; default off.",
     )
     parser.add_argument(
+        "--miso-reserve-online-gated",
+        action="store_true",
+        help="MISO online-gated reserve SUPPLY (PREREG-miso167 S2): split "
+        "each pergen pool's R column into a GATED Reg+Spin product (coupling "
+        "row R <= online_rho * sum P over the pool's members — idle capacity "
+        "backs none of the synchronised products; measured CAMPD rho, "
+        "data.online_reserve_rho) and an UNGATED Supplemental product, with "
+        "one NESTED market-wide Reg+Spin family (measured cleared reg+spin "
+        "requirement, published Schedule-28 $65/$98 two-step curve) and a "
+        "pool-shared 10-min ramp row. Requires --energy-reserve-coopt + "
+        "--miso-reserve-pergen + --miso-measured-reserve-requirements; "
+        "mutually exclusive with --miso-commitment-posture (rule 19). "
+        "MISO-only; default off.",
+    )
+    parser.add_argument(
         "--miso-commitment-posture",
         action="store_true",
         help="MISO pooled linear commitment-posture lever (design note "
@@ -11811,6 +11831,7 @@ def main() -> None:
         miso_midwest_subregional_reserves=args.miso_midwest_subregional_reserves,
         miso_reserve_pergen=args.miso_reserve_pergen,
         miso_commitment_posture=args.miso_commitment_posture,
+        miso_reserve_online_gated=args.miso_reserve_online_gated,
         miso_measured_reserve_requirements=args.miso_measured_reserve_requirements,
         miso_south_seam_split=args.miso_south_seam_split,
         miso_rdt_tcdc=args.miso_rdt_tcdc,

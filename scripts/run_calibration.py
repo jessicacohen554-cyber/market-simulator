@@ -467,6 +467,7 @@ def run_year(
     miso_midwest_subregional_reserves: bool = False,
     miso_reserve_pergen: bool = False,
     miso_commitment_posture: bool = False,
+    miso_reserve_online_gated: bool = False,
     miso_measured_reserve_requirements: bool = False,
     miso_south_seam_split: bool = False,
     miso_rdt_tcdc: bool = False,
@@ -1895,6 +1896,10 @@ def run_year(
     # docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A).
     if miso_commitment_posture:
         config = config.with_overrides(miso_commitment_posture=True)
+    # Online-gated Reg+Spin reserve supply on the pergen pools
+    # (PREREG-miso167 §2; reserve_config._miso_design gated branch).
+    if miso_reserve_online_gated:
+        config = config.with_overrides(miso_reserve_online_gated=True)
     # Measured hourly OR requirement basis for the MISO co-opt families
     # (asm_rt_cleared_mw intake, data.miso_reserve_requirements): replaces
     # the flat fleet-MSSC+400 and South within-zone-MSSC estimates with the
