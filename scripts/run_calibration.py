@@ -5441,6 +5441,20 @@ def run_year(
         _day_of = np.minimum(np.arange(_t_h) // 24, _n_days - 1)
         _in_win = np.isin(_hod, ERCOT_ADAPTIVE_WINDOW_HOURS)
         _floor_t[_in_win] = _p_hat[_day_of[_in_win]] * float(config.ordc_voll)
+        # ercot-223 EVENT-REALIZED RELEASE guard (rule 17 structural yield;
+        # PRECOMMIT-ercot223-event-release-guard-2026-08-19.md §1). The
+        # conduct floor is an offer — withhold in anticipation OF the spike;
+        # at hours the SAME pass-1 settle basis the day-max event detector
+        # reads marks the spike as REALIZED (>= ERCOT_ADAPTIVE_EVENT_USD,
+        # the existing frozen constant — zero new fitted scalars), a cleared
+        # offer does not withhold physical energy, so the floor is masked
+        # and the cost falls back to storage vom (the seam default). Without
+        # this, offer-as-cost debases the storage SOC shadow against the
+        # co-opt's floor-free reserve-headroom value and manufactures load
+        # shed at real event hours (the 2024 h3066 G-SHED defect,
+        # ercot223_shed_phase0.json). Default off: byte-identical floors.
+        if getattr(config, "ercot_adaptive_event_release", False):
+            _floor_t[_settle_t >= ERCOT_ADAPTIVE_EVENT_USD] = 0.0
         _adaptive_cost = np.maximum(_vom_s, _floor_t[None, :])
         logger.info(
             "ERCOT adaptive-expectation offer (%d): pass-1 model spike days "
