@@ -945,6 +945,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # keeping the control/arm A/B off one cache entry. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "miso_reserve_online_gated",
+    # miso-170 per-plant must-run floor MEMBERSHIP correction (GATED default
+    # off): dropped from the hash at its default so every pre-existing cache
+    # key of all six ISOs stays byte-stable — the off path never reads the
+    # lay-up census at all, so it is byte-identical by construction. An armed
+    # run floors a strictly smaller plant set — a different min_gen, so a
+    # different dispatch — and hashes distinctly, which is what keeps the
+    # control/arm A/B off one cache entry. SHARED field, so it goes at the very
+    # end of the tuple per the HOUSE-3 insertion convention. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "mustrun_plant_exclusions",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1253,6 +1263,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-169 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_reserve_online_gated": "False",
+    # Added by miso-170 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "mustrun_plant_exclusions": "False",
 }
 
 
@@ -9679,6 +9692,45 @@ class ScenarioConfig:
     # (rule 20 as amended 2026-07-14 — legitimacy rests on the DOF ledger +
     # legitimacy_diagnostics.json D-1/D-2/D-4).
     st_gas_mustrun_p25_level: bool = False
+
+    # MEMBERSHIP correction for the per-plant must-run floors
+    # (cc_mustrun_per_plant / st_gas_mustrun_per_plant, the p25 level swap
+    # included): skip plants in economic LAY-UP — idle in their own metered
+    # conduct while reading ~100 % available in the outage extract, because
+    # lay-up is correctly not booked as a forced outage. Flooring such a plant
+    # holds a mothballed boiler at its measured operating level in the top
+    # system-load hours it never operated in, which is rule 17
+    # [R-FLOOR-WINDOW]'s "a floor binding in hours its own driver evidence says
+    # the class is offline is a bug by definition".
+    #
+    # This is the MUST-RUN FLOORS' half of a correction that previously existed
+    # only on the reliability floor (reliability_floor_plant_exclusions,
+    # nyiso-140) and the NYISO commitment bridge
+    # (nyiso_gas_bridge_plant_exclusions, nyiso-144). All three mechanisms floor
+    # the same merchant thermal plants, so each earlier fix repaired one
+    # MECHANISM rather than the plant (rule 19 [R-ONE-MECH] — "enumerate what
+    # already floors the same class", one mechanism later). Identified for MISO
+    # by miso-170, where the per-plant ST_GAS floor was the mechanism carrying
+    # 16 of the keeper's 18 D-4 per-unit conduct failures.
+    #
+    # Population: data/raw/_processed-legacy/campd_bridge_layup_exclusions_<ISO>.csv
+    # (scripts/data/derive_campd_bridge_layup_exclusions.py) — the SAME
+    # mechanism-blind lay-up census the bridge reads, by design: lay-up is a
+    # property of the SITE, so one identification serves every mechanism that
+    # floors it. A plant qualifies iff its median gross load is ZERO in every
+    # (year, 4-hour block) cell of 2023-2025 — the nyiso-140 criterion verbatim.
+    # The per-cell quantifier is what makes it a lay-up test rather than a
+    # low-capacity-factor test: a pooled median of zero also catches ordinary
+    # cyclers, which are exactly the population a measured operating floor
+    # exists to reproduce. Frozen against residuals (rule 23
+    # [R-FROZEN-DERIVE]); it reads only the meter and is computed WITHOUT
+    # reference to which plants the floors force or to any D-4 verdict, which
+    # is what makes its agreement with those verdicts evidence rather than
+    # circularity. Rule 21 [R-DOF]: zero free parameters — the correction is a
+    # plant-code SET produced by a conduct test, with no scalar.
+    #
+    # Default off so a control run is byte-identical.
+    mustrun_plant_exclusions: bool = False
 
     # When True, each CC_REGULAR plant's LP capacity is reconciled to its
     # demonstrated CAMPD peak: raised where the peak exceeds the model bound

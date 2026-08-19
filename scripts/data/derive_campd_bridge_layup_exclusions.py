@@ -63,10 +63,23 @@ any vintage and a plant returning to service leaves the set on its own meter.
 It reads no price and no volume residual, and re-derives ONLY when its source
 data updates.
 
+THREE MECHANISMS, ONE CENSUS (miso-170). Lay-up is a property of the SITE, so
+the same census now serves every mechanism that floors a laid-up plant, each
+through its own gate: the NYISO commitment bridge
+(``nyiso_gas_bridge_plant_exclusions``, reading this artifact directly), the
+per-plant must-run floors (``mustrun_plant_exclusions``, likewise), and the
+reliability floor (``reliability_floor_plant_exclusions``, which consumes its
+membership through the coefficient CSV's ``exclude_plant_codes`` column —
+written from this same census by ``--patch-reliability-coeffs``, so the two can
+never drift apart). Nothing about the TEST is per-mechanism; keeping it that way
+is what stops a membership list from becoming a place to bury a dispatch error.
+
 Usage::
 
     python scripts/data/derive_campd_bridge_layup_exclusions.py --iso NYISO
     python scripts/data/derive_campd_bridge_layup_exclusions.py --iso NYISO --detail
+    python scripts/data/derive_campd_bridge_layup_exclusions.py --iso MISO \
+        --detail --patch-reliability-coeffs
 """
 
 from __future__ import annotations
@@ -232,6 +245,64 @@ def layup_table(
     )
 
 
+def patch_reliability_coeffs(iso: str, excluded: pd.DataFrame) -> None:
+    """Write the lay-up census into the ISO's reliability-floor coefficient CSV.
+
+    The reliability floor consumes its membership correction through the
+    coefficient CSV's optional ``exclude_plant_codes`` column
+    (``config.iso_configs.apply_reliability_floor_plant_exclusions``, armed by
+    ``ScenarioConfig.reliability_floor_plant_exclusions``), not through this
+    artifact. That column was hand-populated at nyiso-140 for a single plant;
+    doing the same by hand for a 15-plant census would leave the ISO's
+    identification unreproducible and would be silently wiped by the next
+    ``derive_reliability_coeffs.py`` run. This step makes it mechanical instead:
+    each limb receives exactly the laid-up plants that carry its own ``zone``
+    and ``plant_class``, so the census and the column can never drift apart.
+
+    Rewrites in place, preserving every other column and row order. Plants
+    already listed on a limb are kept (union), so a hand-identified exclusion
+    from an earlier session is never dropped. A limb with no laid-up plant of
+    its (zone, class) gets an empty cell — and the whole column stays inert
+    until a run arms the flag, so this is byte-identical for every existing run.
+
+    Args:
+        iso: The ISO name.
+        excluded: The qualifying rows written to the lay-up artifact.
+    """
+    path = REPO / "data" / "raw" / "reference" / f"reliability_floor_coeffs_{iso}.csv"
+    if not path.exists():
+        print(f"  (skip reliability-coeff patch: {path.name} not on disk)")
+        return
+    by_zone_class: dict[tuple[str, str], set[int]] = {}
+    for _, r in excluded.iterrows():
+        by_zone_class.setdefault((str(r.zone), str(r.plant_group)), set()).add(
+            int(r.plant_code)
+        )
+    coeffs = pd.read_csv(path, dtype=str).fillna("")
+    if "exclude_plant_codes" not in coeffs.columns:
+        coeffs["exclude_plant_codes"] = ""
+    new_col: list[str] = []
+    touched = 0
+    for _, row in coeffs.iterrows():
+        prior = {
+            int(code)
+            for code in str(row["exclude_plant_codes"]).replace(",", ";").split(";")
+            if code.strip()
+        }
+        codes = prior | by_zone_class.get(
+            (str(row["zone"]), str(row["plant_class"])), set()
+        )
+        new_col.append(";".join(str(c) for c in sorted(codes)))
+        touched += 1 if codes else 0
+    coeffs["exclude_plant_codes"] = new_col
+    coeffs.to_csv(path, index=False)
+    print(
+        f"  patched {path.name}: {touched} of {len(coeffs)} limb(s) now carry an "
+        f"exclude_plant_codes list (inert unless "
+        f"ScenarioConfig.reliability_floor_plant_exclusions is armed)"
+    )
+
+
 def main() -> None:
     """CLI entry point: derive and write one ISO's lay-up exclusion artifact."""
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
@@ -247,6 +318,16 @@ def main() -> None:
         "--detail",
         action="store_true",
         help="also write the full population with its cell counts",
+    )
+    ap.add_argument(
+        "--patch-reliability-coeffs",
+        action="store_true",
+        help=(
+            "also write the census into data/raw/reference/"
+            "reliability_floor_coeffs_<ISO>.csv's exclude_plant_codes column "
+            "(the reliability floor's own consumption seam; inert unless "
+            "ScenarioConfig.reliability_floor_plant_exclusions is armed)"
+        ),
     )
     args = ap.parse_args()
     iso = args.iso.upper()
@@ -286,6 +367,8 @@ def main() -> None:
         out_all = PROCESSED_DIR / f"campd_bridge_layup_exclusions_{iso}_population.csv"
         table.to_csv(out_all, index=False)
         print(f"wrote {out_all}")
+    if args.patch_reliability_coeffs:
+        patch_reliability_coeffs(iso, excluded)
 
 
 if __name__ == "__main__":
