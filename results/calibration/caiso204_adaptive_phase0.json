@@ -1,0 +1,750 @@
+{
+ "probe": "caiso204_adaptive_phase0",
+ "date": "2026-08-19",
+ "precheck": "results/calibration/PRECHECK-caiso204-adaptive-phase0-2026-08-19.md",
+ "conventions": {
+  "event_usd": 200.0,
+  "trail_days": 120,
+  "window_pt": [
+   18,
+   19,
+   20,
+   21
+  ],
+  "park_cap_usd": 1000.0,
+  "per_year_reset": true,
+  "half_life_grid": [
+   5.0,
+   7.0,
+   10.0,
+   15.0,
+   20.0,
+   30.0,
+   45.0
+  ]
+ },
+ "fitted_constants": {
+  "half_life": 30.0,
+  "beta": 0.5945,
+  "sse": 0.7799
+ },
+ "base_usd": 53.2,
+ "daily_monthly_measured_p50": {
+  "2023-01": {
+   "n_days": 31,
+   "measured_p50": 166.8
+  },
+  "2023-02": {
+   "n_days": 25,
+   "measured_p50": 68.4
+  },
+  "2023-03": {
+   "n_days": 31,
+   "measured_p50": 78.5
+  },
+  "2023-04": {
+   "n_days": 17,
+   "measured_p50": 73.7
+  },
+  "2023-05": {
+   "n_days": 31,
+   "measured_p50": 35.6
+  },
+  "2023-06": {
+   "n_days": 10,
+   "measured_p50": 39.3
+  },
+  "2023-07": {
+   "n_days": 31,
+   "measured_p50": 68.1
+  },
+  "2023-08": {
+   "n_days": 31,
+   "measured_p50": 62.6
+  },
+  "2023-09": {
+   "n_days": 10,
+   "measured_p50": 44.4
+  },
+  "2023-10": {
+   "n_days": 7,
+   "measured_p50": 67.3
+  },
+  "2023-11": {
+   "n_days": 30,
+   "measured_p50": 61.4
+  },
+  "2023-12": {
+   "n_days": 28,
+   "measured_p50": 52.9
+  },
+  "2024-01": {
+   "n_days": 21,
+   "measured_p50": 62.1
+  },
+  "2024-02": {
+   "n_days": 9,
+   "measured_p50": 52.9
+  },
+  "2024-03": {
+   "n_days": 14,
+   "measured_p50": 34.2
+  },
+  "2024-04": {
+   "n_days": 15,
+   "measured_p50": 37.4
+  },
+  "2024-05": {
+   "n_days": 10,
+   "measured_p50": 22.8
+  },
+  "2024-06": {
+   "n_days": 19,
+   "measured_p50": 30.6
+  },
+  "2024-07": {
+   "n_days": 13,
+   "measured_p50": 50.7
+  },
+  "2024-08": {
+   "n_days": 16,
+   "measured_p50": 42.4
+  },
+  "2024-09": {
+   "n_days": 5,
+   "measured_p50": 40.0
+  },
+  "2024-10": {
+   "n_days": 23,
+   "measured_p50": 40.7
+  },
+  "2024-11": {
+   "n_days": 5,
+   "measured_p50": 46.5
+  },
+  "2024-12": {
+   "n_days": 22,
+   "measured_p50": 49.6
+  },
+  "2025-01": {
+   "n_days": 14,
+   "measured_p50": 57.6
+  },
+  "2025-02": {
+   "n_days": 14,
+   "measured_p50": 48.6
+  },
+  "2025-03": {
+   "n_days": 20,
+   "measured_p50": 38.7
+  },
+  "2025-04": {
+   "n_days": 29,
+   "measured_p50": 34.5
+  },
+  "2025-05": {
+   "n_days": 19,
+   "measured_p50": 35.2
+  },
+  "2025-06": {
+   "n_days": 5,
+   "measured_p50": 40.0
+  },
+  "2025-07": {
+   "n_days": 5,
+   "measured_p50": 40.0
+  },
+  "2025-08": {
+   "n_days": 5,
+   "measured_p50": 43.5
+  },
+  "2025-09": {
+   "n_days": 5,
+   "measured_p50": 49.3
+  },
+  "2025-10": {
+   "n_days": 5,
+   "measured_p50": 42.6
+  },
+  "2025-11": {
+   "n_days": 5,
+   "measured_p50": 59.3
+  },
+  "2025-12": {
+   "n_days": 5,
+   "measured_p50": 50.0
+  }
+ },
+ "gates": {
+  "G-DRIVER": {
+   "event_days_200": {
+    "2023": 22,
+    "2024": 9,
+    "2025": 5
+   },
+   "total": 36,
+   "quarters_with_ge2": 9,
+   "diagnostic_event_days_1000": {
+    "2023": 0,
+    "2024": 0,
+    "2025": 0
+   },
+   "ok": true
+  },
+  "G-COV": {
+   "coverage": {
+    "2023": {
+     "selected": 282,
+     "present": 282,
+     "parsed": 282,
+     "errors": []
+    },
+    "2024": {
+     "selected": 172,
+     "present": 172,
+     "parsed": 172,
+     "errors": []
+    },
+    "2025": {
+     "selected": 131,
+     "present": 131,
+     "parsed": 131,
+     "errors": []
+    }
+   },
+   "parsed_total": 585,
+   "admissible_days": 585,
+   "admissible_by_quarter_of_year": {
+    "1": 179,
+    "2": 155,
+    "3": 121,
+    "4": 130
+   },
+   "quarter_ok": true,
+   "fidelity": {
+    "2023": {
+     "share_p_hi_gt_15": 0.9016,
+     "committed_ref": 0.8954,
+     "abs_diff_pp": 0.62,
+     "ok": true,
+     "n_curve_hours": 400443
+    },
+    "2024": {
+     "share_p_hi_gt_15": 0.8208,
+     "committed_ref": 0.8128,
+     "abs_diff_pp": 0.8,
+     "ok": true,
+     "n_curve_hours": 403252
+    },
+    "2025": {
+     "share_p_hi_gt_15": 0.7693,
+     "committed_ref": 0.8158,
+     "abs_diff_pp": 4.65,
+     "ok": true,
+     "n_curve_hours": 407813
+    }
+   },
+   "fidelity_ok": true,
+   "n_members": {
+    "2023": 76,
+    "2024": 123,
+    "2025": 163
+   },
+   "ok": true
+  },
+  "G-ID": {
+   "daily_corr": 0.7035,
+   "corr_ok": true,
+   "base_usd": 53.2,
+   "n_quiet_days": 31,
+   "monthly": {
+    "cells": {
+     "2023-01": {
+      "n_days": 31,
+      "measured_p50": 166.8,
+      "predicted": 158.8,
+      "rel_err": -0.0479,
+      "in_band": true
+     },
+     "2023-02": {
+      "n_days": 25,
+      "measured_p50": 68.4,
+      "predicted": 93.4,
+      "rel_err": 0.3652,
+      "in_band": false
+     },
+     "2023-03": {
+      "n_days": 31,
+      "measured_p50": 78.5,
+      "predicted": 61.8,
+      "rel_err": -0.2137,
+      "in_band": true
+     },
+     "2023-04": {
+      "n_days": 17,
+      "measured_p50": 73.7,
+      "predicted": 53.2,
+      "rel_err": -0.279,
+      "in_band": true
+     },
+     "2023-05": {
+      "n_days": 31,
+      "measured_p50": 35.6,
+      "predicted": 53.2,
+      "rel_err": 0.492,
+      "in_band": false
+     },
+     "2023-06": {
+      "n_days": 10,
+      "measured_p50": 39.3,
+      "predicted": 53.2,
+      "rel_err": 0.3542,
+      "in_band": false
+     },
+     "2023-07": {
+      "n_days": 31,
+      "measured_p50": 68.1,
+      "predicted": 53.2,
+      "rel_err": -0.2195,
+      "in_band": true
+     },
+     "2023-08": {
+      "n_days": 31,
+      "measured_p50": 62.6,
+      "predicted": 53.2,
+      "rel_err": -0.1508,
+      "in_band": true
+     },
+     "2023-09": {
+      "n_days": 10,
+      "measured_p50": 44.4,
+      "predicted": 53.2,
+      "rel_err": 0.1978,
+      "in_band": true
+     },
+     "2023-10": {
+      "n_days": 7,
+      "measured_p50": 67.3,
+      "predicted": 53.2,
+      "rel_err": -0.2101,
+      "in_band": true
+     },
+     "2023-11": {
+      "n_days": 30,
+      "measured_p50": 61.4,
+      "predicted": 53.2,
+      "rel_err": -0.1346,
+      "in_band": true
+     },
+     "2023-12": {
+      "n_days": 28,
+      "measured_p50": 52.9,
+      "predicted": 53.2,
+      "rel_err": 0.0043,
+      "in_band": true
+     },
+     "2024-01": {
+      "n_days": 21,
+      "measured_p50": 62.1,
+      "predicted": 73.2,
+      "rel_err": 0.1785,
+      "in_band": true
+     },
+     "2024-02": {
+      "n_days": 9,
+      "measured_p50": 52.9,
+      "predicted": 53.2,
+      "rel_err": 0.0049,
+      "in_band": true
+     },
+     "2024-03": {
+      "n_days": 14,
+      "measured_p50": 34.2,
+      "predicted": 53.2,
+      "rel_err": 0.5521,
+      "in_band": false
+     },
+     "2024-04": {
+      "n_days": 15,
+      "measured_p50": 37.4,
+      "predicted": 53.2,
+      "rel_err": 0.4203,
+      "in_band": false
+     },
+     "2024-05": {
+      "n_days": 10,
+      "measured_p50": 22.8,
+      "predicted": 53.2,
+      "rel_err": 1.329,
+      "in_band": false
+     },
+     "2024-06": {
+      "n_days": 19,
+      "measured_p50": 30.6,
+      "predicted": 53.2,
+      "rel_err": 0.7361,
+      "in_band": false
+     },
+     "2024-07": {
+      "n_days": 13,
+      "measured_p50": 50.7,
+      "predicted": 53.2,
+      "rel_err": 0.0489,
+      "in_band": true
+     },
+     "2024-08": {
+      "n_days": 16,
+      "measured_p50": 42.4,
+      "predicted": 53.2,
+      "rel_err": 0.2532,
+      "in_band": true
+     },
+     "2024-09": {
+      "n_days": 5,
+      "measured_p50": 40.0,
+      "predicted": 53.2,
+      "rel_err": 0.329,
+      "in_band": true
+     },
+     "2024-10": {
+      "n_days": 23,
+      "measured_p50": 40.7,
+      "predicted": 53.2,
+      "rel_err": 0.3068,
+      "in_band": true
+     },
+     "2024-11": {
+      "n_days": 5,
+      "measured_p50": 46.5,
+      "predicted": 53.2,
+      "rel_err": 0.142,
+      "in_band": true
+     },
+     "2024-12": {
+      "n_days": 22,
+      "measured_p50": 49.6,
+      "predicted": 53.2,
+      "rel_err": 0.071,
+      "in_band": true
+     },
+     "2025-01": {
+      "n_days": 14,
+      "measured_p50": 57.6,
+      "predicted": 53.2,
+      "rel_err": -0.0776,
+      "in_band": true
+     },
+     "2025-02": {
+      "n_days": 14,
+      "measured_p50": 48.6,
+      "predicted": 53.2,
+      "rel_err": 0.0941,
+      "in_band": true
+     },
+     "2025-03": {
+      "n_days": 20,
+      "measured_p50": 38.7,
+      "predicted": 53.2,
+      "rel_err": 0.3736,
+      "in_band": false
+     },
+     "2025-04": {
+      "n_days": 29,
+      "measured_p50": 34.5,
+      "predicted": 53.2,
+      "rel_err": 0.5395,
+      "in_band": false
+     },
+     "2025-05": {
+      "n_days": 19,
+      "measured_p50": 35.2,
+      "predicted": 53.2,
+      "rel_err": 0.5107,
+      "in_band": false
+     },
+     "2025-06": {
+      "n_days": 5,
+      "measured_p50": 40.0,
+      "predicted": 53.2,
+      "rel_err": 0.329,
+      "in_band": true
+     },
+     "2025-07": {
+      "n_days": 5,
+      "measured_p50": 40.0,
+      "predicted": 53.2,
+      "rel_err": 0.329,
+      "in_band": true
+     },
+     "2025-08": {
+      "n_days": 5,
+      "measured_p50": 43.5,
+      "predicted": 53.2,
+      "rel_err": 0.2221,
+      "in_band": true
+     },
+     "2025-09": {
+      "n_days": 5,
+      "measured_p50": 49.3,
+      "predicted": 53.2,
+      "rel_err": 0.0781,
+      "in_band": true
+     },
+     "2025-10": {
+      "n_days": 5,
+      "measured_p50": 42.6,
+      "predicted": 53.2,
+      "rel_err": 0.2473,
+      "in_band": true
+     },
+     "2025-11": {
+      "n_days": 5,
+      "measured_p50": 59.3,
+      "predicted": 53.2,
+      "rel_err": -0.1031,
+      "in_band": true
+     },
+     "2025-12": {
+      "n_days": 5,
+      "measured_p50": 50.0,
+      "predicted": 53.2,
+      "rel_err": 0.0632,
+      "in_band": true
+     }
+    },
+    "n_cells": 36,
+    "n_in_band": 26,
+    "share_in_band": 0.722
+   },
+   "monthly_ok": true,
+   "ok": true
+  },
+  "G-DECAY": {
+   "fit_2023_only": {
+    "half_life": 45.0,
+    "beta": 0.5601,
+    "sse": 0.4535
+   },
+   "monthly_2024_2025": {
+    "cells": {
+     "2024-01": {
+      "n_days": 21,
+      "measured_p50": 62.1,
+      "predicted": 68.5,
+      "rel_err": 0.1044,
+      "in_band": true
+     },
+     "2024-02": {
+      "n_days": 9,
+      "measured_p50": 52.9,
+      "predicted": 53.2,
+      "rel_err": 0.0049,
+      "in_band": true
+     },
+     "2024-03": {
+      "n_days": 14,
+      "measured_p50": 34.2,
+      "predicted": 53.2,
+      "rel_err": 0.5521,
+      "in_band": false
+     },
+     "2024-04": {
+      "n_days": 15,
+      "measured_p50": 37.4,
+      "predicted": 53.2,
+      "rel_err": 0.4203,
+      "in_band": true
+     },
+     "2024-05": {
+      "n_days": 10,
+      "measured_p50": 22.8,
+      "predicted": 53.2,
+      "rel_err": 1.329,
+      "in_band": false
+     },
+     "2024-06": {
+      "n_days": 19,
+      "measured_p50": 30.6,
+      "predicted": 53.2,
+      "rel_err": 0.7361,
+      "in_band": false
+     },
+     "2024-07": {
+      "n_days": 13,
+      "measured_p50": 50.7,
+      "predicted": 53.2,
+      "rel_err": 0.0489,
+      "in_band": true
+     },
+     "2024-08": {
+      "n_days": 16,
+      "measured_p50": 42.4,
+      "predicted": 53.2,
+      "rel_err": 0.2532,
+      "in_band": true
+     },
+     "2024-09": {
+      "n_days": 5,
+      "measured_p50": 40.0,
+      "predicted": 53.2,
+      "rel_err": 0.329,
+      "in_band": true
+     },
+     "2024-10": {
+      "n_days": 23,
+      "measured_p50": 40.7,
+      "predicted": 53.2,
+      "rel_err": 0.3068,
+      "in_band": true
+     },
+     "2024-11": {
+      "n_days": 5,
+      "measured_p50": 46.5,
+      "predicted": 53.2,
+      "rel_err": 0.142,
+      "in_band": true
+     },
+     "2024-12": {
+      "n_days": 22,
+      "measured_p50": 49.6,
+      "predicted": 53.2,
+      "rel_err": 0.071,
+      "in_band": true
+     },
+     "2025-01": {
+      "n_days": 14,
+      "measured_p50": 57.6,
+      "predicted": 53.2,
+      "rel_err": -0.0776,
+      "in_band": true
+     },
+     "2025-02": {
+      "n_days": 14,
+      "measured_p50": 48.6,
+      "predicted": 53.2,
+      "rel_err": 0.0941,
+      "in_band": true
+     },
+     "2025-03": {
+      "n_days": 20,
+      "measured_p50": 38.7,
+      "predicted": 53.2,
+      "rel_err": 0.3736,
+      "in_band": true
+     },
+     "2025-04": {
+      "n_days": 29,
+      "measured_p50": 34.5,
+      "predicted": 53.2,
+      "rel_err": 0.5395,
+      "in_band": false
+     },
+     "2025-05": {
+      "n_days": 19,
+      "measured_p50": 35.2,
+      "predicted": 53.2,
+      "rel_err": 0.5107,
+      "in_band": false
+     },
+     "2025-06": {
+      "n_days": 5,
+      "measured_p50": 40.0,
+      "predicted": 53.2,
+      "rel_err": 0.329,
+      "in_band": true
+     },
+     "2025-07": {
+      "n_days": 5,
+      "measured_p50": 40.0,
+      "predicted": 53.2,
+      "rel_err": 0.329,
+      "in_band": true
+     },
+     "2025-08": {
+      "n_days": 5,
+      "measured_p50": 43.5,
+      "predicted": 53.2,
+      "rel_err": 0.2221,
+      "in_band": true
+     },
+     "2025-09": {
+      "n_days": 5,
+      "measured_p50": 49.3,
+      "predicted": 53.2,
+      "rel_err": 0.0781,
+      "in_band": true
+     },
+     "2025-10": {
+      "n_days": 5,
+      "measured_p50": 42.6,
+      "predicted": 53.2,
+      "rel_err": 0.2473,
+      "in_band": true
+     },
+     "2025-11": {
+      "n_days": 5,
+      "measured_p50": 59.3,
+      "predicted": 53.2,
+      "rel_err": -0.1031,
+      "in_band": true
+     },
+     "2025-12": {
+      "n_days": 5,
+      "measured_p50": 50.0,
+      "predicted": 53.2,
+      "rel_err": 0.0632,
+      "in_band": true
+     }
+    },
+    "n_cells": 24,
+    "n_in_band": 19,
+    "share_in_band": 0.792
+   },
+   "monthly_ok": true,
+   "base_only_ablation_corr": 0.0,
+   "ablation_fails_corr_leg": true,
+   "ok": true
+  },
+  "G-BOOT": {
+   "model_event_days_200": {
+    "2023": 0,
+    "2024": 1,
+    "2025": 0
+   },
+   "leg_i_ok": false,
+   "per_year": {
+    "2023": {
+     "window_hours_floor_ge_200": 0,
+     "max_floor": 0.0,
+     "share_all_hours_floor_le_100": 1.0
+    },
+    "2024": {
+     "window_hours_floor_ge_200": 0,
+     "max_floor": 14.5,
+     "share_all_hours_floor_le_100": 1.0
+    },
+    "2025": {
+     "window_hours_floor_ge_200": 0,
+     "max_floor": 0.0,
+     "share_all_hours_floor_le_100": 1.0
+    }
+   },
+   "leg_ii_ok": false,
+   "ok": false
+  },
+  "G-SAFE": {
+   "years": {
+    "2023": {
+     "share_hours_floor_le_100": 1.0,
+     "ok": true
+    },
+    "2025": {
+     "share_hours_floor_le_100": 1.0,
+     "ok": true
+    }
+   },
+   "ok": true
+  }
+ },
+ "ALL_PASS": false
+}
