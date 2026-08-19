@@ -637,6 +637,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_ct_min_run_hours",
     "nyiso_gas_bridge_plant_min_run",
     "nyiso_gas_bridge_online_hours",
+    "nyiso_gas_bridge_state_floor_min_run",
     # Reserve-duty CC offer split (nyiso-146): inert at its default (off — the
     # bins frame is byte-identical and the artifact is not even read), so it
     # is dropped from the hash at default and every pre-existing cache key is
@@ -1235,6 +1236,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_bridge_ct_min_run_hours": "2.0",
     "nyiso_gas_bridge_plant_min_run": "False",
     "nyiso_gas_bridge_online_hours": "False",
+    "nyiso_gas_bridge_state_floor_min_run": "False",
     "cc_reserve_duty_split": "False",
     "ercot_gas_bridge_online_hours": "False",
     "forecast_xyear_warmstart": "True",
@@ -5074,6 +5076,22 @@ class ScenarioConfig:
     # floor with no driver evidence. Default off so a control run is
     # byte-identical.
     nyiso_gas_bridge_online_hours: bool = False
+    # DUTY SCOPING for the online-hours state floor (the nyiso-146b unscoped
+    # arm's own finding, sharpened in the same session): hold the state floor
+    # ONLY for plants whose OWN measured plant-basis run-length p25
+    # (campd_perplant_min_run_NYISO.csv — the nyiso-146 phase-0 artifact)
+    # clears the population gap (constants.NYISO_STATE_FLOOR_MIN_RUN_HOURS =
+    # 100 h, inside the measured 6.6x gap between the cyclers at 7-20 h and
+    # the near-baseload cohort at 130-646 h). The unscoped arm measured both
+    # halves: it repaired the near-baseload cohort exactly (Bethlehem
+    # 327/526/262 -> 41/10/15 starts vs 6/7/7 metered) AND over-glued the
+    # intermediates (Athens-2025 9 vs 63 metered starts; one new D-4
+    # conviction at Saranac, a 0.43-on-share cycler) — the two cohorts are
+    # exactly the two sides of the phase-0 gap. Requires
+    # nyiso_gas_bridge_online_hours; zero new scalars (the ceiling is a
+    # population-gap separator, the membership a frozen measured artifact —
+    # rules 5/21/23). Default off so the unscoped arm stays reproducible.
+    nyiso_gas_bridge_state_floor_min_run: bool = False
     nyiso_spin_reserve_online: bool = False  # NYISO online-gated PUBLISHED
     # spinning families (nyiso-84, the mechanism arm): re-classes the published
     # NYCA 10-minute spinning family (655 MW, $775) — and east_10min_spin (330
@@ -13667,6 +13685,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_gas_bridge_plant_exclusions": 1,
     "nyiso_gas_bridge_plant_min_run": 1,
     "nyiso_gas_bridge_online_hours": 1,
+    "nyiso_gas_bridge_state_floor_min_run": 1,
     "nyiso_gas_bridge_cc_min_run_hours": 2,
     "nyiso_gas_bridge_st_min_run_hours": 2,
     "nyiso_gas_bridge_ct": 1,
