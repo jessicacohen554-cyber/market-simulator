@@ -5359,6 +5359,95 @@ def run_year(
         p1_storage_discharge_cost=p1_storage_discharge_cost,
     )
     _t_solve_end = time.perf_counter()
+    # ercot-221 ADAPTIVE-EXPECTATION storage offer (owner card by dispatch;
+    # PRECOMMIT-ercot221 §1 + Amendments 1-3): TWO-PASS P1. The pass-1 solve
+    # above ran with the incumbent offers; the model's OWN daily
+    # demand-weighted P1 energy dual — PURE lambda, Amendment 3: zero
+    # measured content enters this path (rule 13) — yields the daily spike
+    # events whose trailing EWMA frequency (the two rule-23 frozen constants)
+    # is the storage fleet's experience-based spike expectation. Pass 2, THE
+    # scored pass, floors ERCOT storage discharge at max(vom, P_hat x VOLL)
+    # in the evening window ONLY, through the same p1_storage_discharge_cost
+    # seam (off-window hours carry storage.vom exactly — the seam's default —
+    # so ordinary-hour cycling is untouched by construction). P0 identical in
+    # both passes; exactly ONE adaptation pass (rule 10 spirit, precommit).
+    # Every non-ERCOT / gate-off run never enters this block (byte-identical).
+    ercot221_adaptive = None
+    if (
+        iso == "ERCOT"
+        and getattr(config, "ercot_storage_adaptive_expectation", False)
+        and storage.n_storage
+    ):
+        if getattr(config, "ercot_storage_reservation_offer", False):
+            raise ValueError(
+                "ercot_storage_adaptive_expectation and "
+                "ercot_storage_reservation_offer both drive the P1 storage "
+                "discharge re-cost seam — arm at most one (rule 19)."
+            )
+        from market_sim.results.scarcity import (
+            ERCOT_ADAPTIVE_EVENT_USD,
+            ERCOT_ADAPTIVE_WINDOW_HOURS,
+            ercot_adaptive_expectation_daily,
+        )
+
+        _t_h = int(config.hours)
+        _dem_t = demand.sum(axis=0)[:_t_h]
+        _lam_t = (
+            np.asarray(energy_solve.p1.prices, dtype=float)[:, :_t_h] * demand[:, :_t_h]
+        ).sum(axis=0) / np.where(_dem_t > 0.0, _dem_t, 1.0)
+        _n_days = _t_h // 24
+        _day_max = _lam_t[: _n_days * 24].reshape(_n_days, 24).max(axis=1)
+        _s_m = (_day_max >= ERCOT_ADAPTIVE_EVENT_USD).astype(float)
+        _p_hat = ercot_adaptive_expectation_daily(
+            _s_m,
+            half_life_days=float(config.ercot_adaptive_half_life_days),
+            beta=float(config.ercot_adaptive_beta),
+        )
+        _vom_s = np.asarray(storage.vom, dtype=float)[:, None]
+        _floor_t = np.zeros(_t_h)
+        _hod = np.arange(_t_h) % 24
+        _day_of = np.minimum(np.arange(_t_h) // 24, _n_days - 1)
+        _in_win = np.isin(_hod, ERCOT_ADAPTIVE_WINDOW_HOURS)
+        _floor_t[_in_win] = _p_hat[_day_of[_in_win]] * float(config.ordc_voll)
+        _adaptive_cost = np.maximum(_vom_s, _floor_t[None, :])
+        logger.info(
+            "ERCOT adaptive-expectation offer (%d): pass-1 model spike days "
+            "%d, P_hat max %.3f, floor > vom in %d of %d window hours; "
+            "re-solving P1 (pass 2, THE scored pass)",
+            year,
+            int(_s_m.sum()),
+            float(_p_hat.max()),
+            int((_floor_t[_in_win] > float(_vom_s.max())).sum()),
+            int(_in_win.sum()),
+        )
+        ercot221_adaptive = {
+            "s_model": _s_m,
+            "p_hat": _p_hat,
+            "floor_t": _floor_t,
+        }
+        energy_solve = run_energy_solve(
+            fleet,
+            fleet_arrays,
+            demand,
+            mc_base,
+            dispatch_kwargs,
+            config,
+            xyear_cache=xyear_cache,
+            p1_fleet_prep=(
+                ra_p1_prep
+                or ercot_bridge_prep
+                or nyiso_bridge_prep
+                or miso_night_floor_prep
+                or pjm_fleet_prep
+            ),
+            p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
+            mc_bid_adjust=offer_surface_mc_bid_adjust,
+            p1_bid_adjust_prep=lowcurve_bid_adjust_prep or ercot_bridge_bid_prep,
+            p1_bid_max_target=p1_bid_max_target,
+            startup_run_ratio_t=startup_run_ratio_t,
+            p1_storage_discharge_cost=_adaptive_cost,
+        )
+        _t_solve_end = time.perf_counter()
     # OPT-IN P0 commitment record, taken HERE and not below: ``fleet_arrays``
     # is about to be rebound to ``energy_solve.p1_fleet_arrays``, and the
     # markup was computed against the PRE-prep arrays. A P1 fleet hook only
@@ -5461,6 +5550,10 @@ def run_year(
         # ``hourly/exhaustion_<year>.parquet`` so G-EXH and the stage-3 offer
         # are auditable from committed artifacts without a re-solve.
         "ercot219_exhaustion": ercot219_exhaustion,
+        # ercot-221 adaptive-expectation audit series (None on every flag-off
+        # run): the pass-1 model spike days, daily P_hat and the hourly floor
+        # actually applied — the committed audit trail for the A/B gates.
+        "ercot221_adaptive": ercot221_adaptive,
         # OPT-IN P0 commitment record (--persist-p0-commitment, default off).
         # Read AFTER both LPs have run and consumed by nothing downstream, so
         # it cannot perturb a solve; absent entirely at default, which is what

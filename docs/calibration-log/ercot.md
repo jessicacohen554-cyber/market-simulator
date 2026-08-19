@@ -10505,3 +10505,20 @@ the `ercot_artificial_shortage_pricing` cell, no verdict moved;
 
 **Session consumed the ercot-220 shorthand. Next shorthand: ercot-221**
 (ercot-199 remains unclaimed).
+
+**ercot-220b addendum (same session, owner-directed):** on declining B-2 the
+owner directed: *"some mechanism has to be able to improve to 40 % miss for
+2023."* Answered by measurement (read-only, committed artifacts):
+`docs/RESEARCH-ercot220b-what-can-still-move-2023-2026-08-18.md`. The miss
+DECOMPOSES — the model already catches 64 of 181 tail hours at $659 dw vs
+actual $1,999; repricing ONLY those moves probe C3a-2023 −37.8 → −13.4 %
+(two-thirds of the miss, needing NO capability/commitment change), while the
+117 missed hours (~16 pp) remain the exhaustion-count half closed by
+FINDING-ercot220. The depth half's one un-adjudicated mechanism family is
+the ADAPTIVE expectation offer (card-ercot218b-reserved, never tested; new
+month-grain evidence: Sep-2023 implied P 0.81 vs own-month realized 0.13 vs
+trailing-30d 0.53; Jun/Jul cap-parking under regime uncertainty; pre-ECRS
+2023 offers already $2,446 vs static-surface $298). Recommendation:
+charter ercot-221 Phase-0 (adaptive-rule identification at daily grain,
+LOYO + the 2024→2025 within-regime control as the decisive gate, fixed-point
+feasibility leg). Nothing built, nothing armed; B-2 stays unsigned.

@@ -466,3 +466,35 @@ class TestCaisoScarcityOverlay:
                 energy_reserve_coopt=True,
                 caiso_reserve_coopt=True,
             )
+
+
+class TestErcotAdaptiveExpectationDaily:
+    """ercot-221: the trailing-EWMA spike expectation helper (rule 23 frozen
+    constants live in ScenarioConfig; this tests the arithmetic contract)."""
+
+    def test_no_history_reads_zero(self):
+        from market_sim.results.scarcity import ercot_adaptive_expectation_daily
+
+        s = np.zeros(10)
+        s[0] = 1.0
+        out = ercot_adaptive_expectation_daily(s, half_life_days=30.0, beta=3.0)
+        assert out[0] == 0.0  # day 0 has no history (per-year reset)
+
+    def test_strictly_lagged_and_decaying(self):
+        from market_sim.results.scarcity import ercot_adaptive_expectation_daily
+
+        s = np.zeros(60)
+        s[10] = 1.0
+        out = ercot_adaptive_expectation_daily(s, half_life_days=10.0, beta=1.0)
+        assert out[10] == 0.0            # own-day event never seen same day
+        assert out[11] > out[20] > out[40] > 0.0   # monotone decay after
+        assert np.all(out[:11] == 0.0)
+
+    def test_clip_and_beta_gain(self):
+        from market_sim.results.scarcity import ercot_adaptive_expectation_daily
+
+        s = np.ones(200)
+        out = ercot_adaptive_expectation_daily(s, half_life_days=30.0, beta=5.0)
+        assert out[100] == 1.0           # saturates at the clip
+        out1 = ercot_adaptive_expectation_daily(s, half_life_days=30.0, beta=0.5)
+        assert 0.0 < out1[100] <= 0.5

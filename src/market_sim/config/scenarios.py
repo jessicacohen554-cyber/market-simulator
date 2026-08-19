@@ -907,6 +907,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "ercot_capability_reconciliation",
     "ercot_exhaustion_expectation",
     "ercot_storage_reservation_offer",
+    # ercot-221 adaptive-expectation storage offer (GATED default off) + its
+    # two rule-23 identified constants: dropped from the hash at their
+    # defaults so every pre-existing cache key stays byte-stable (the off
+    # path never enters the two-pass block — byte-identical by construction);
+    # an armed run re-costs P1 storage discharge, a different scenario, and
+    # hashes distinctly. Registered IN THE SAME COMMIT as the fields (the
+    # nyiso-119 discipline).
+    "ercot_storage_adaptive_expectation",
+    "ercot_adaptive_half_life_days",
+    "ercot_adaptive_beta",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -1223,6 +1233,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_capability_reconciliation": "False",
     "ercot_exhaustion_expectation": "False",
     "ercot_storage_reservation_offer": "False",
+    # Added by ercot-221 WITH the fields, in the same commit as their
+    # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
+    "ercot_storage_adaptive_expectation": "False",
+    "ercot_adaptive_half_life_days": "30.0",
+    "ercot_adaptive_beta": "3.0077",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
@@ -11915,6 +11930,33 @@ class ScenarioConfig:
     # opportunity-cost floor, card §7.4). Requires
     # ercot_exhaustion_expectation (armed alone: loud ValueError, rule 5).
     ercot_storage_reservation_offer: bool = False
+    # ercot-221 ADAPTIVE-EXPECTATION storage offer (owner card by dispatch,
+    # PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md §1 + Amendments
+    # 1-3; ERCOT-gated, backcast+forecast — forward-computable by
+    # construction). TWO-PASS P1: pass 1 solves with the incumbent offers;
+    # the model's OWN daily demand-weighted P1 energy dual (pure lambda —
+    # Amendment 3: ZERO measured content in the armed path, rule 13) yields
+    # daily spike events (>= ERCOT_ADAPTIVE_EVENT_USD), whose trailing
+    # exponentially-weighted frequency (half-life ercot_adaptive_half_life_
+    # days over ERCOT_ADAPTIVE_TRAIL_DAYS, per-solve-year reset) scaled by
+    # ercot_adaptive_beta and clipped to [0, 1] is the storage fleet's
+    # experience-based spike expectation P_hat(d). Pass 2 — THE scored pass —
+    # floors ERCOT storage discharge offers at max(vom, P_hat x ordc_voll)
+    # in ERCOT_ADAPTIVE_WINDOW_HOURS only (the evening net-peak window; the
+    # measured lesson of ercot-219's G-BAT whole-day-floor collapse), via the
+    # existing p1_storage_discharge_cost seam. P0 untouched; exactly ONE
+    # adaptation pass (rule 10 spirit). Mutually exclusive with
+    # ercot_storage_reservation_offer (both drive the same seam, rule 19 —
+    # loud ValueError in run_year). Self-extinguishing: a year whose own
+    # model path has no spikes gets P_hat ~ 0 and the floor collapses to vom.
+    ercot_storage_adaptive_expectation: bool = False
+    # The two rule-23 identified constants (Phase-0 v2 fit on the measured
+    # 2023 daily evening storage offer surface, delivery-2023 60-Day SCED
+    # corpus — ercot221_adaptive_phase0.json; FROZEN, never residual-tuned):
+    # trailing-memory half-life in days, and the linear gain from trailing
+    # spike frequency to offer-implied probability.
+    ercot_adaptive_half_life_days: float = 30.0
+    ercot_adaptive_beta: float = 3.0077
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -13453,6 +13495,9 @@ TIER_TAGS: dict[str, int] = {
     "ercot_capability_reconciliation": 1,
     "ercot_exhaustion_expectation": 1,
     "ercot_storage_reservation_offer": 1,
+    "ercot_storage_adaptive_expectation": 1,
+    "ercot_adaptive_half_life_days": 2,
+    "ercot_adaptive_beta": 2,
     "ercot_ordc_only_scarcity": 1,
     "pjm_reserve_supply_cap": 1,
     "pjm_reserve_online_gated": 1,
