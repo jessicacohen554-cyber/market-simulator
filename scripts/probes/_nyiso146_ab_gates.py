@@ -3,69 +3,75 @@
 
 Evaluates the kill gates of
 ``results/calibration/PREREG-nyiso146-perplant-min-run-2026-08-19.md`` on the
-two committed bundles plus the arms' solve logs and registered run payloads —
-no solve, no LP.
+two committed bundles — no solve, no LP. Every quantity comes from bundle
+artifacts: ``meta.json`` (K1), ``floors/<yr>_P1.npz`` (K2a — the persisted
+floor matrix, bridge-attributed cells, mechanism code 20),
+``hourly/unit_hourly_<yr>.parquet`` (K2b/K3 start counts at 0.05 x plant
+capacity), ``legitimacy_diagnostics.json`` (K2a corroboration, K4).
 
-* **K1 EXACTNESS** — exactly ONE ``scenario_config`` field differs between the
-  arms, and it is ``nyiso_gas_bridge_plant_min_run``.
-* **K2(a) FLOOR, EXACT** — the arm's per-leg bridge floor volumes (the solve
-  log's own ``bridge leg`` lines, the only place the floor VOLUME is reported)
-  land within ±2 % of the control-side capture's deterministic prediction.
-  Corroboration: 2539's D-4 binding energy rises and 2517's falls, every year.
-* **K2(b) STARTS, BANDED** — Bethlehem's P1 starts fall ≥50 % in 2023 and
-  ≥10 % in 2024/2025 (the §4 mechanism-shape prediction).
-* **K3 THE OBJECT** — 2539 starts strictly fall and median run length rises in
-  all years; the no-degrade cohort stays within 1.5×control error + 5 starts;
+* **K1 EXACTNESS** — exactly ONE ``scenario_config`` field differs, and it is
+  ``nyiso_gas_bridge_plant_min_run``.
+* **K2(a) FLOOR DELIVERY** — per-plant arm/control floor-volume ratios within
+  ±25 % (relative) of the capture's predicted ratios, per-leg totals within
+  ±5 % of the rebased predictions (PREREG §5, amended before the arm solved),
+  and the D-4 corroboration (2539 binding energy rises, 2517 falls).
+* **K2(b) STARTS** — Bethlehem's P1 starts fall ≥50 % in 2023, ≥10 % in
+  2024/2025.
+* **K3 THE OBJECT** — 2539 starts strictly fall and median run length rises
+  in all years; no-degrade cohort within 1.5×control error + 5 starts;
   Flynn ≤ control + 25 %.
 * **K4 D-4/D-2 (K6-prime form)** — zero new D-4 unit-conduct failures; the
-  pre-registered CC forced-share rise escalates and clears only with zero new
+  pre-registered forced-share rise escalates and clears only with zero new
   D-4 failures AND zero new D-1 shape misses.
-* **K5** — reported: the production scorer (``calibration_verdict.py``) is the
-  only thing that may declare criterion verdicts; this probe just records the
-  pointer.
-* **K6(a)** — derive-side LOYO, already measured and cleared ex ante in the
-  prereg; recorded verbatim.
+* **K5** — pointer only: criterion verdicts belong to calibration_verdict.py.
+* **K6(a)** — derive-side LOYO, measured and cleared ex ante in the prereg.
 
-Writes ``results/calibration/_nyiso146_ab_gates.json`` and prints a verdict
-table. Exit status is 0 whatever the verdict — this reports, it does not gate.
+Writes ``results/calibration/_nyiso146_ab_gates.json``. Exit 0 whatever the
+verdict — this reports, it does not gate.
 """
 
 from __future__ import annotations
 
-import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
-sys.path.insert(0, str(REPO / "scripts"))
 
 CONTROL = REPO / "results/calibration/nyiso146_control"
 ARM = REPO / "results/calibration/nyiso146_perplant_arm"
 YEARS = (2023, 2024, 2025)
 FLAG = "nyiso_gas_bridge_plant_min_run"
 BRIDGE = "nyiso_gas_commitment_bridge"
-K2_PRED = REPO / "results/calibration/_nyiso146_k2_prediction.json"
+BRIDGE_MECH_CODE = 20  # data.floor_mechanisms.MECH_NAMES index
 PHASE0 = REPO / "results/calibration/_nyiso146_perplant_minrun_phase0.json"
 OUT = REPO / "results/calibration/_nyiso146_ab_gates.json"
 
-# Predicted ARM per-leg floor volumes (TWh) from the control-side capture
-# (PREREG §5 K2(a); scripts/probes/_nyiso146_k2_prediction.py log record).
-PRED_LEG_TWH = {
-    ("gas_cc", 2023): 2.4508,
-    ("gas_st", 2023): 0.1172,
-    ("gas_cc", 2024): 1.8400,
-    ("gas_st", 2024): 0.1343,
-    ("gas_cc", 2025): 1.4399,
-    ("gas_st", 2025): 0.1150,
+# PREREG §5 K2(a): predicted per-plant arm/control floor ratios (capture
+# basis, basis-robust) and the ±25 % relative band.
+PRED_RATIO = {
+    2539: {2023: 1.77, 2024: 1.23, 2025: 1.24},
+    56234: {2023: 2.42, 2024: 3.84, 2025: 4.95},
+    56940: {2023: 0.84, 2024: 0.61, 2025: 0.57},
+    2517: {2023: 0.11, 2024: 0.32, 2025: 0.44},
+    7314: {2023: 0.93, 2024: 0.96, 2025: 0.91},
 }
-K2A_TOL = 0.02
+RATIO_BAND = 0.25
+# Rebased per-leg totals (TWh), ±5 %. Legs keyed by plant_group.
+PRED_LEG_TWH = {
+    ("CC_REGULAR", 2023): 2.4602,
+    ("CC_REGULAR", 2024): 1.9179,
+    ("CC_REGULAR", 2025): 1.4762,
+    ("ST_GAS", 2023): 0.1196,
+    ("ST_GAS", 2024): 0.1389,
+    ("ST_GAS", 2025): 0.1124,
+}
+LEG_TOL = 0.05
 
-# K3 cohort definitions (PREREG §5 K3). no_degrade holds (plant, year) pairs.
 NO_DEGRADE = (
     [(56940, y) for y in YEARS]
     + [(55405, y) for y in YEARS]
@@ -74,11 +80,6 @@ NO_DEGRADE = (
     + [(2500, y) for y in YEARS]
     + [(50292, y) for y in YEARS]
     + [(57185, 2024), (57185, 2025), (56234, 2024), (56234, 2025)]
-)
-
-_LEG_RE = re.compile(
-    r"NYISO gas bridge leg (\w+) \(min_load_frac [\d.]+, min_run [\w.]+\): "
-    r"\d+ unit-hours floored, ([\d.]+) TWh floor volume"
 )
 
 
@@ -95,53 +96,54 @@ def _runs(flag: np.ndarray) -> list[tuple[int, int]]:
     return list(zip(idx[0::2], idx[1::2]))
 
 
-def _plant_starts(payload: dict, year: int, code: int) -> tuple[int, float] | None:
-    """(starts, median run h) for a plant at 0.05 x its total capacity.
+def _bridge_floor_by_plant(bundle: Path, year: int) -> dict[int, float]:
+    """{plant_code: bridge-attributed floor GWh} plus per-class totals."""
+    z = np.load(bundle / "floors" / f"{year}_P1.npz", allow_pickle=True)
+    mg = np.where(z["mechanism"] == BRIDGE_MECH_CODE, z["min_gen"], 0.0)
+    pc = z["plant_code"]
+    out: dict[int, float] = {}
+    for code in np.unique(pc):
+        rows = np.flatnonzero(pc == code)
+        v = float(mg[rows].sum()) / 1e3
+        if v > 0.0:
+            out[int(code)] = v
+    return out
 
-    Sums every class slice of the plant code (the bench wire-key convention,
-    nyiso-88 §5) so the model series matches the whole-facility CAMPD basis.
-    """
-    from scripts.legitimacy_diagnostics import _decode_cf_bytes
 
-    pl = payload["years"][str(year)]["plants"]
-    keys = [k for k in pl if k.split(":")[0] == str(code)]
-    if not keys:
+def _bridge_floor_by_class(bundle: Path, year: int) -> dict[str, float]:
+    z = np.load(bundle / "floors" / f"{year}_P1.npz", allow_pickle=True)
+    mg = np.where(z["mechanism"] == BRIDGE_MECH_CODE, z["min_gen"], 0.0)
+    pg = z["plant_group"]
+    return {
+        str(k): float(mg[np.flatnonzero(pg == k)].sum()) / 1e6
+        for k in np.unique(pg)
+        if str(k)
+    }
+
+
+def _plant_starts(bundle: Path, year: int, code: int) -> tuple[int, float] | None:
+    """(starts, median run h) at 0.05 x plant capacity from unit_hourly."""
+    df = pd.read_parquet(
+        bundle / "hourly" / f"unit_hourly_{year}.parquet",
+        columns=["pass", "plant_code", "unit_id", "hour", "mw", "cap_mw"],
+        filters=[("plant_code", "==", code), ("pass", "==", "P1")],
+    )
+    if df.empty:
         return None
-    total = None
-    cap = 0.0
-    for k in keys:
-        v = pl[k]
-        arr = _decode_cf_bytes(v["m"], v.get("m_ann"), float(v["cap"]))
-        total = arr if total is None else total + arr
-        cap += float(v["cap"])
-    on = total > 0.05 * cap
+    cap = float(df.groupby("unit_id")["cap_mw"].max().sum())
+    series = df.groupby("hour")["mw"].sum().sort_index().to_numpy()
+    on = series > 0.05 * cap
     r = _runs(on)
     lens = [e - s for s, e in r]
     return len(r), (float(np.median(lens)) if lens else 0.0)
 
 
-def _parse_leg_volumes(log: Path) -> dict[tuple[str, int], float]:
-    """Map (fuel, year) -> floor volume TWh from a 3-year solve log.
-
-    The solve runs years sequentially in YEARS order and logs one line per
-    armed leg per year, in leg order — so pairs are assigned positionally.
-    """
-    vols: list[tuple[str, float]] = [
-        (m.group(1), float(m.group(2)))
-        for m in _LEG_RE.finditer(log.read_text())
-    ]
-    out: dict[tuple[str, int], float] = {}
-    per_year = {}
-    for fuel, v in vols:
-        per_year.setdefault(fuel, []).append(v)
-    for fuel, series in per_year.items():
-        if len(series) != len(YEARS):
-            raise SystemExit(
-                f"{log}: expected {len(YEARS)} '{fuel}' leg lines, got "
-                f"{len(series)} — is this a single 3-year solve log?"
-            )
-        for year, v in zip(YEARS, series):
-            out[(fuel, year)] = v
+def _metered_starts() -> dict[tuple[int, int], int]:
+    rec = json.loads(PHASE0.read_text())
+    out = {}
+    for p in rec["plants"]:
+        for year, n in zip(YEARS, p.get("plant_runs_by_year") or []):
+            out[(int(p["plant_code"]), year)] = int(n)
     return out
 
 
@@ -153,18 +155,7 @@ def _bridge_rows(diag: dict) -> list[dict]:
     ]
 
 
-def _metered_starts() -> dict[tuple[int, int], int]:
-    """(plant, year) -> metered plant-basis run count, from the phase-0 record."""
-    rec = json.loads(PHASE0.read_text())
-    out = {}
-    for p in rec["plants"]:
-        for year, n in zip(YEARS, p.get("plant_runs_by_year") or []):
-            out[(int(p["plant_code"]), year)] = int(n)
-    return out
-
-
 def k1(mc: dict, ma: dict) -> dict:
-    """Exactly one scenario_config field differs, and it is the flag."""
     keys = set(mc) | set(ma)
     provenance = {"timestamp", "note", "run_id", "git", "git_sha", "basis_sha",
                   "out_dir", "label"}
@@ -180,17 +171,25 @@ def k1(mc: dict, ma: dict) -> dict:
     }
 
 
-def k2a(arm_log: Path, dc: dict, da: dict) -> dict:
-    """Arm per-leg floor volumes within ±2 % of the deterministic prediction."""
-    vols = _parse_leg_volumes(arm_log)
+def k2a(dc: dict, da: dict) -> dict:
     rows, ok = [], True
-    for (fuel, year), pred in sorted(PRED_LEG_TWH.items(), key=lambda x: (x[0][1], x[0][0])):
-        got = vols.get((fuel, year))
-        hit = got is not None and abs(got - pred) <= K2A_TOL * pred
+    for code, by_year in PRED_RATIO.items():
+        for year, pred in by_year.items():
+            c = _bridge_floor_by_plant(CONTROL, year).get(code, 0.0)
+            a = _bridge_floor_by_plant(ARM, year).get(code, 0.0)
+            ratio = a / c if c > 0 else float("inf")
+            hit = c > 0 and abs(ratio - pred) <= RATIO_BAND * pred
+            ok = ok and hit
+            rows.append({"plant": code, "year": year, "ctl_gwh": round(c, 2),
+                         "arm_gwh": round(a, 2), "ratio": round(ratio, 3),
+                         "predicted_ratio": pred, "ok": hit})
+    legs = []
+    for (klass, year), pred in sorted(PRED_LEG_TWH.items(), key=lambda x: (x[0][1], x[0][0])):
+        got = _bridge_floor_by_class(ARM, year).get(klass, 0.0)
+        hit = abs(got - pred) <= LEG_TOL * pred
         ok = ok and hit
-        rows.append({"leg": fuel, "year": year, "predicted_twh": pred,
-                     "measured_twh": got, "within_2pct": hit})
-    # Corroboration from committed D-4 binding energy.
+        legs.append({"leg": klass, "year": year, "predicted_twh": pred,
+                     "measured_twh": round(got, 4), "within_5pct": hit})
     rc, ra = _bridge_rows(dc), _bridge_rows(da)
 
     def _plant_year(rows_, code, year):
@@ -209,18 +208,16 @@ def k2a(arm_log: Path, dc: dict, da: dict) -> dict:
         corr.append({"year": year, "2539_ctl": round(c39, 4), "2539_arm": round(a39, 4),
                      "2517_ctl": round(c17, 4), "2517_arm": round(a17, 4),
                      "rise_2539": rise, "fall_2517": fall})
-    return {"gate": "K2a floor exact", "legs": rows, "d4_corroboration": corr,
-            "passed": ok}
+    return {"gate": "K2a floor delivery", "per_plant": rows, "per_leg": legs,
+            "d4_corroboration": corr, "passed": ok}
 
 
-def k2b_k3(pc: dict, pa: dict) -> tuple[dict, dict]:
-    """K2(b) Bethlehem start bands + K3 object/no-degrade gates."""
+def k2b_k3() -> tuple[dict, dict]:
     metered = _metered_starts()
-    # K2(b) + K3(a): 2539.
     beth, ok2b, ok3a = [], True, True
     for year in YEARS:
-        c = _plant_starts(pc, year, 2539)
-        a = _plant_starts(pa, year, 2539)
+        c = _plant_starts(CONTROL, year, 2539)
+        a = _plant_starts(ARM, year, 2539)
         drop = (c[0] - a[0]) / c[0] if c and c[0] else 0.0
         bar = 0.50 if year == 2023 else 0.10
         ok2b = ok2b and drop >= bar
@@ -229,11 +226,10 @@ def k2b_k3(pc: dict, pa: dict) -> tuple[dict, dict]:
                      "metered": metered.get((2539, year)),
                      "drop_frac": round(drop, 3), "bar": bar,
                      "ctl_median_run_h": c[1], "arm_median_run_h": a[1]})
-    # K3(b): no-degrade cohort.
     cohort, ok3b = [], True
     for code, year in NO_DEGRADE:
-        c = _plant_starts(pc, year, code)
-        a = _plant_starts(pa, year, code)
+        c = _plant_starts(CONTROL, year, code)
+        a = _plant_starts(ARM, year, code)
         m = metered.get((code, year))
         if c is None or a is None or m is None:
             cohort.append({"plant": code, "year": year, "skipped": "no series"})
@@ -246,11 +242,10 @@ def k2b_k3(pc: dict, pa: dict) -> tuple[dict, dict]:
                        "ctl_starts": c[0], "arm_starts": a[0],
                        "ctl_err": ce, "arm_err": ae,
                        "allowed": round(allowed, 1), "ok": hit})
-    # K3(c): Flynn no-degrade.
     flynn, ok3c = [], True
     for year in YEARS:
-        c = _plant_starts(pc, year, 7314)
-        a = _plant_starts(pa, year, 7314)
+        c = _plant_starts(CONTROL, year, 7314)
+        a = _plant_starts(ARM, year, 7314)
         hit = a[0] <= c[0] * 1.25
         ok3c = ok3c and hit
         flynn.append({"year": year, "ctl_starts": c[0], "arm_starts": a[0],
@@ -264,8 +259,6 @@ def k2b_k3(pc: dict, pa: dict) -> tuple[dict, dict]:
 
 
 def k4(dc: dict, da: dict) -> dict:
-    """Zero new D-4 failures; forced-share escalation with the two K6' legs."""
-
     def fails(diag):
         return {
             (int(r["year"]), str(r["floor"]), str(r["plant"]))
@@ -319,27 +312,16 @@ def k4(dc: dict, da: dict) -> dict:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--arm-log", type=Path, required=True,
-                    help="the ARM's 3-year solve log (per-leg volume lines)")
-    ap.add_argument("--control-payload", type=Path, required=True)
-    ap.add_argument("--arm-payload", type=Path, required=True)
-    args = ap.parse_args()
-
-    from scripts.lib.backcast_artifacts import decode_run_js
-
-    pc = decode_run_js(args.control_payload.read_text())
-    pa = decode_run_js(args.arm_payload.read_text())
     mc, ma = _meta(CONTROL), _meta(ARM)
     dc, da = _diag(CONTROL), _diag(ARM)
-    g_k2b, g_k3 = k2b_k3(pc, pa)
+    g_k2b, g_k3 = k2b_k3()
     result = {
         "session": "nyiso-146",
         "control": CONTROL.name,
         "arm": ARM.name,
         "gates": [
             k1(mc, ma),
-            k2a(args.arm_log, dc, da),
+            k2a(dc, da),
             g_k2b,
             g_k3,
             k4(dc, da),

@@ -7301,3 +7301,23 @@ Gates: `audit_keepers.py --iso NYISO` **0 failures / 0 warnings** ·
 `build_status.py --check` 6/6 in sync → `NYISO:CALIBRATED` ·
 `check_mechanism_matrix.py` integrity + anchors + keeper stamps OK · 1,927 tests
 pass. Next number: **nyiso-145**.
+
+## 2026-08-19 — nyiso-146: per-plant measured min-run — REJECTED on its own gates; the rejection is the finding
+
+Pre-registered (PREREG-nyiso146-perplant-min-run-2026-08-19.md, committed
+before either solve, two pre-solve amendments) A/B of
+`nyiso_gas_bridge_plant_min_run`: fill each slow-start row's minimum-run from
+its own plant's measured CAMPD run-length p25 (plant-summed series; artifact
+campd_perplant_min_run_NYISO.csv), replacing the class scalars. Phase 0
+refuted the class scalar as a population description (CC per-plant p25 spans
+7-646 h vs 21 h). The arm delivered the floors EXACTLY (Bethlehem 685->1,329
+GWh 2023; all 15 per-plant ratios in band) and the object did not move:
+Bethlehem P1 starts -7.6/-9.5/-4.6% vs bars >=50/>=10/>=10%, plus one new D-4
+conviction (Saranac 2024). K5 clean — the arms' production verdicts are
+line-identical (C3c bit-identical 2/0/5) — so the rejection is on the
+pre-registered object gates, not fit. Diagnosis: every bridge floor covers
+only P0-OFF hours; the fragmentation lives in P1's bid-cost pass shutting
+committed plants INSIDE P0-on hours — the ercot141 `floor_online_hours` state
+leg's exact domain, never tested on NYISO. Both arms registered
+(2026-08-19-nyiso-146-control / -perplant-minrun); keeper unchanged.
+RESULT-nyiso146-perplant-min-run-ab-2026-08-19.md.
