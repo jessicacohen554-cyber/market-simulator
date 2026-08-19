@@ -7554,3 +7554,22 @@ magnitude, exactly as the prereg's rule-1 clause anticipated — the RT-only hal
 honest model-class limit.
 
 Rule 22: 2023–2025 only; freeze untouched; no marker touched. Next number: **miso-170**.
+
+### miso-169 addendum (2026-08-19, same session) — OWNER PROMOTES: keeper → `2026-08-19-miso-169-online-gated`
+
+The owner, in-session and in writing: *"Is this a recommended keeper candidate? If so plz
+promote. If structural integrity improves but gates regress that may still be a keeper."* The
+session's recommendation was YES on rule 1 — the arm adds real market structure (synchronised
+products supplied only by synchronised capacity; measured requirement; published curve),
+passes every pre-registered gate, and regresses nothing at the dispatch grain — so the
+promotion is taken ON OWNER DIRECTION over the session's own escalation, which stays OPEN as
+two recorded owner questions (RHO_CLIP band; the nyiso-143 D-4 conduct rider). Executed:
+`calibration_attestation.json` generated for `miso169_gated_B`
+(`scripts/gen_miso169_attestation.py`, ledger 31→32 entries / 2 residual — `online_rho`
+enters as a MEASURED entry with the clip disclosure; C6 now PASS), keeper shard re-pointed
+with the full promotion note + keeper-delta narrative + `market_story`,
+`build_status --iso MISO` re-run (NOT-YET), matrix shard cell `O → K` and the keeper/gates
+stamp re-stamped, keeper auditor run. Determination on the new keeper: **NOT-YET — C3a-2025
+(−12.4 %, the RT-only model-class residue; the miso-163 ruling stands for that half) + C8 on
+regenerated-artifact vintage only (the rider; instrument drift, attested)**. Next number:
+**miso-170**.
