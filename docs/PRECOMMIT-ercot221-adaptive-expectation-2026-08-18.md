@@ -243,3 +243,12 @@ recorded, promotion a separate owner decision.
 does not exist in v2 (G-DOF ledger: TWO identified constants, not four).
 Conventions unchanged ($1,000 event; 120-day trail; h17–20 CST; per-year
 reset; one adaptation pass).
+
+**Amendment 3 (pre-build, on the owner's direct question "You're not letting
+it see actual 2023 price right? Just model price?"):** the armed event series
+is the model's own demand-weighted P1 energy dual (λ) ONLY — the measured
+RTORDPA overlay component named in §1 is dropped from the event construction
+so the armed path carries ZERO measured content (strictly purer than §1 as
+pinned; the overlay's dw mean is $0.75 and it almost never moves a day across
+the $1,000 event line). Identification constants and every gate are
+unchanged.
