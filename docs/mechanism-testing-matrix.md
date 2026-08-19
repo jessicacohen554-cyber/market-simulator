@@ -4174,7 +4174,24 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-16-miso-160-wefor-shape`, **NOT-YET on C3a-2025 ALONE (−12.5 %)**
+### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-19-miso-170-membership` (promoted miso-170, 2026-08-19), **NOT-YET on C3a-2025 (−12.1 %) + C8 (2023/2025)**
+
+> **PROMOTION STAMP miso-170 (2026-08-19) — MISO KEEPER →
+> `2026-08-19-miso-170-membership`, BY OWNER DIRECTION** ("Is this a recommended
+> keeper candidate? If so plz promote. If structural integrity improves but gates
+> regress that may still be a keeper"), taken OVER the session's own
+> pre-registered REJECTED-AS-ARMED verdict; both records stand. **The
+> structure-over-gates clause is NOT needed and is NOT invoked**: measured at
+> RECORD grain against the designated keeper, the arm differs in **exactly one of
+> 67 scorer records and it is an improvement** — C8 ST_GAS 2024 FAIL → PASS, the
+> first MISO year ever to clear C8's provenance leg. Zero PASS→FAIL regressions;
+> C6 PASS on a fresh attestation; DOF ledger 32 → 33 with `n_residual` UNCHANGED
+> at 2. Cells `mustrun_plant_exclusions` **O → K** and
+> `reliability_floor_plant_exclusions` **U → K** (armed together over one
+> census). **Determination UNCHANGED at NOT-YET** (C3a-2025 −12.1 %, C8
+> 2023/2025) — this buys legitimacy, not budget headroom. Two OPEN owner items
+> carry forward: the D-4 plant-grain class-attribution defect (§ the queue stamp
+> below) and the still-unresolved RHO_CLIP band (nyiso-144).
 
 > **QUEUE STAMP miso-170 (2026-08-19) — THE miso-169 §5 ASK-2 MEMBERSHIP REPAIR
 > BUILT, SOLVED AND ESCALATED. Keeper UNCHANGED at `2026-08-19-miso-169-online-gated`;
