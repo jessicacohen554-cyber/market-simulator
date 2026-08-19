@@ -161,7 +161,7 @@ stated reason for being ISO-scoped — *"only the CAISO design admits hydro
 reserve"* — is **falsified at HEAD by NYISO's own keeper**, which arms
 `nyiso_hydro_reserve_eligible` (nyiso-144 already noted this).
 
-**(a2) Two LANE-SIZED CODE SEAMS, which no amount of data can get past today.**
+**(a2) Three LANE-SIZED SEAMS, which no amount of data can get past today.**
 
 1. `fleet.withholding._ramp10_capability` applies the measured reconciliation
    only `if measured and frac > 0.0`. Hydro's class fraction is `0.0` (it is in
@@ -169,6 +169,8 @@ reserve"* — is **falsified at HEAD by NYISO's own keeper**, which arms
    would be ignored.** The gate is structural, not a data gap.
 2. `scripts/lib/ramp_capability/` carries `caiso.py`, `miso.py`, `pjm.py` and
    **no NYISO module**, so the datatype cannot be built for NYISO at all.
+3. `ScenarioConfig.measured_ramp_capability` is **`False` on the keeper**, so
+   even a built and reachable datatype would not be read.
 
 **(a3) What genuinely remains unmeasured — and it is the part that matters.**
 `10M` establishes the *machine*; a reserve product needs *deliverable energy*.
@@ -225,7 +227,7 @@ all-six-shards edit, out of a single-ISO lane's scope.
 | 2 | **Merit-order inversion on mothballed small CCs** (25×–225×) | **model-side, lane** | a NYISO lane |
 | 3 | `RHO_CLIP` band | governance | owner (D-5(b)) — **card delivered** |
 | 4 | NYISO hydro 10-min ramp: **certification + water limit only** | data intake | owner (funding/scope) |
-| 4b | the two `ramp_capability` code seams | model-side, lane | a NYISO lane |
+| 4b | the three `ramp_capability` seams (§5) | model-side, lane | a NYISO lane |
 | 5 | `nyiso_iroquois_winter_spread` arming + taxonomy | governance ×2 | owner |
 | 6 | a vintage guard for D-4's conduct rider | model-side, lane | a NYISO lane |
 | 7 | the Astoria campus benchmark attribution | data repair | a NYISO lane (needs its own pre-registration — it moves the target) |
