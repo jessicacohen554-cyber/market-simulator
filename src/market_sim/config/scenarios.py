@@ -925,6 +925,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "ercot_storage_adaptive_expectation",
     "ercot_adaptive_half_life_days",
     "ercot_adaptive_beta",
+    # ercot-223 event-realized release guard on the ercot-221 floor (GATED
+    # default off): dropped from the hash at its default so every
+    # pre-existing cache key stays byte-stable (the off path never masks the
+    # floor — byte-identical by construction, G-REPRO ercot-223); an armed
+    # run releases the floor at pass-1-realized event hours, a different
+    # scenario, and hashes distinctly. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "ercot_adaptive_event_release",
     # caiso-205 CAISO leg of the adaptive-expectation family (GATED default
     # off) + its two rule-23 identified constants: dropped from the hash at
     # their defaults so every pre-existing cache key stays byte-stable (the
@@ -1279,6 +1287,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_storage_adaptive_expectation": "False",
     "ercot_adaptive_half_life_days": "30.0",
     "ercot_adaptive_beta": "3.0077",
+    # Added by ercot-223 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "ercot_adaptive_event_release": "False",
     # Added by caiso-205 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "caiso_storage_adaptive_expectation": "False",
@@ -12198,6 +12209,23 @@ class ScenarioConfig:
     # spike frequency to offer-implied probability.
     ercot_adaptive_half_life_days: float = 30.0
     ercot_adaptive_beta: float = 3.0077
+    # ercot-223 EVENT-REALIZED RELEASE guard on the adaptive floor
+    # (PRECOMMIT-ercot223-event-release-guard-2026-08-19.md §1; rule 17
+    # structural yield). The conduct floor is an OFFER — "withhold in
+    # anticipation OF the spike" — and at hours the model's OWN pass-1
+    # settle basis marks the spike as realized (>= ERCOT_ADAPTIVE_EVENT_USD,
+    # the mechanism's existing frozen event constant, reused at hour
+    # granularity — zero new fitted scalars), a cleared offer does not
+    # withhold physical energy. Offer-as-cost otherwise debases the storage
+    # SOC shadow against the co-opt's floor-free reserve-headroom value and
+    # manufactures load shed at real event hours (the keeper's 2024 h3066
+    # G-SHED defect, measured in ercot223_shed_phase0.json: mu 576 -> 184
+    # $/MWh, the h3065 top-up margin +79 -> -225, DeltaNonSpin-held ==
+    # shed == 17.887 MW). When True, pass-2 masks the floor to 0 (cost
+    # falls back to storage vom, the seam default) at in-window hours whose
+    # pass-1 settle >= the event threshold; everything else is unchanged.
+    # Reads only inside the ERCOT adaptive block (armed alone: no-op).
+    ercot_adaptive_event_release: bool = False
     # caiso-205 ADAPTIVE-EXPECTATION storage offer, the CAISO leg of the
     # ercot-221 family (owner order caiso-205 branch 1 over the caiso-204
     # recorded Phase-0 G-BOOT FAIL — the ercot-188/213/215/221 pattern:
@@ -13781,6 +13809,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_storage_adaptive_expectation": 1,
     "ercot_adaptive_half_life_days": 2,
     "ercot_adaptive_beta": 2,
+    "ercot_adaptive_event_release": 1,
     "caiso_storage_adaptive_expectation": 1,
     "caiso_adaptive_half_life_days": 2,
     "caiso_adaptive_beta": 2,
