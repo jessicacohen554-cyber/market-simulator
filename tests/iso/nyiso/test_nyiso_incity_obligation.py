@@ -330,25 +330,94 @@ class TestRuleNineteenFloorSubstitution:
 
 
 class TestObligationRhoFallback:
-    """rho is a live fleet computation, with a documented neutral fallback.
+    """rho has a THREE-tier identification, in rule 14 [R-ACCURATE] order.
 
-    The real NYISO solve logs ``rho=1.00``. That is NOT the computation
-    failing — it is the documented fallback for a fleet whose tranches carry
-    ``pmin == 0`` (no unit satisfies ``pmin > 0 and pmax > pmin``), which is
-    the case for the legacy equal-width bins NYISO uses. The gate is still a
-    real constraint at rho = 1 (``R <= sum_g P``: idle capacity backs nothing);
-    only the headroom multiplier is neutral rather than fleet-derived.
-    Pinned here so a later reader does not mistake 1.00 for a broken average.
+    1. the MEASURED CAMPD statistic (``data.online_reserve_rho``) — the
+       aggregate 10-minute deliverable headroom per MW on-line over the
+       eligible fleet's own operating record;
+    2. the eligible fleet's own cap-weighted ``(pmax-pmin)/pmin`` at min load —
+       correct on a fleet carrying real ``pmin`` values, but DEAD CODE on the
+       binned/tranche fleets NYISO actually runs, where must-run rides
+       ``min_gen`` and ``pmin`` is identically zero;
+    3. a neutral 1.0, which rule 21 [R-DOF] does not admit in a keeper and
+       which the design logs a warning for.
+
+    Tiers 2 and 3 are exercised with the measured loader patched OFF, so these
+    stay unit tests of the fallback contract rather than of whichever ISO
+    artifacts happen to be on disk. The gate is a real constraint at every tier
+    (``R <= rho * sum_g P``: idle capacity backs nothing); only the multiplier
+    differs.
     """
 
-    def test_rho_is_computed_from_the_fleet_when_pmin_is_positive(self):
+    @staticmethod
+    def _no_measured(monkeypatch):
+        """Patch the measured seam to miss, exposing the pmin/neutral tiers."""
+        import market_sim.data.online_reserve_rho as orr
+
+        monkeypatch.setattr(orr, "load_online_rho", lambda iso, family_set: None)
+
+    def test_measured_statistic_wins_when_the_artifact_covers_the_iso(
+        self, monkeypatch
+    ):
+        import market_sim.data.online_reserve_rho as orr
+
+        measured = orr.OnlineReserveRho(
+            iso="NYISO",
+            family_set="incity_obligation",
+            mechanism="nyiso_incity_commitment_obligation",
+            rho=0.8,
+            rho_minload=1.9,
+            rho_fullhour=0.7,
+            online_unit_hours=401361,
+            campd_coverage_frac=0.955,
+            years="2023-2024-2025",
+        )
+        monkeypatch.setattr(orr, "load_online_rho", lambda iso, family_set: measured)
+        design = _nyiso_design(
+            _config(nyiso_incity_commitment_obligation=True), _fa(), T, ZONES
+        )
+        # The fixture's own pmin path would say 3.0; the measurement outranks it.
+        assert design.online_rho == pytest.approx(0.8)
+
+    def test_measured_statistic_is_clipped_to_the_band(self, monkeypatch):
+        """A measurement below the floor returns the FLOOR, not the datum.
+
+        Both real NYISO values (0.3014 / 0.2011) sit below the inherited,
+        UNCITED 0.5 floor, so arming a gated family today still decides its
+        only reserve bound with a guardrail rather than with data. Pinned so
+        the clip cannot be mistaken for the measurement.
+        """
+        import market_sim.data.online_reserve_rho as orr
+
+        measured = orr.OnlineReserveRho(
+            iso="NYISO",
+            family_set="incity_obligation",
+            mechanism="nyiso_incity_commitment_obligation",
+            rho=0.3014,
+            rho_minload=1.2462,
+            rho_fullhour=0.2864,
+            online_unit_hours=401361,
+            campd_coverage_frac=0.955,
+            years="2023-2024-2025",
+        )
+        monkeypatch.setattr(orr, "load_online_rho", lambda iso, family_set: measured)
+        design = _nyiso_design(
+            _config(nyiso_incity_commitment_obligation=True), _fa(), T, ZONES
+        )
+        assert design.online_rho == pytest.approx(orr.RHO_CLIP[0])
+
+    def test_rho_is_computed_from_the_fleet_when_pmin_is_positive(self, monkeypatch):
+        self._no_measured(monkeypatch)
         design = _nyiso_design(
             _config(nyiso_incity_commitment_obligation=True), _fa(), T, ZONES
         )
         # fixture: pmin 250, pmax 1000 -> (1000-250)/250 = 3.0
         assert design.online_rho == pytest.approx(3.0)
 
-    def test_rho_falls_back_to_neutral_when_no_unit_has_positive_pmin(self):
+    def test_rho_falls_back_to_neutral_when_no_unit_has_positive_pmin(
+        self, monkeypatch
+    ):
+        self._no_measured(monkeypatch)
         fa = _fa()
         fa.pmin = np.zeros_like(fa.pmin)  # the real NYISO legacy-bin case
         design = _nyiso_design(

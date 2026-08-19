@@ -767,6 +767,7 @@ def _nyiso_gas_bridge_floor(
     Returns ``None`` when neither class produces a floor.
     """
     from market_sim.config.constants import DA_COMMITMENT_HORIZON_HOURS
+    from market_sim.data.bridge_layup_exclusions import load_layup_exclusions
     from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
 
     startup_bridge = bool(getattr(config, "nyiso_gas_bridge_startup", True))
@@ -780,11 +781,45 @@ def _nyiso_gas_bridge_floor(
         if getattr(config, "nyiso_gas_bridge_min_run", False)
         else None
     )
+    # MEMBERSHIP correction (nyiso_gas_bridge_plant_exclusions): a plant in
+    # economic lay-up is not in the day-ahead commitment population at all, so
+    # bridging it holds a mothballed boiler at min load across gaps it never
+    # operated in (rule 17 [R-FLOOR-WINDOW]). Expressed through the detector's
+    # own population gate — a non-positive min_load_frac_by_gen entry scopes the
+    # row out — so no new detector parameter and no class-name tuple is needed
+    # (the miso-113 convention; rule 18 [R-PHYSICS] keeps ELIGIBILITY on
+    # _ra_bridge_unit_params' min-down/startup physics). Gated: with the flag
+    # off the vector is None and every leg is byte-identical.
+    excluded = (
+        load_layup_exclusions("NYISO")
+        if getattr(config, "nyiso_gas_bridge_plant_exclusions", False)
+        else frozenset()
+    )
+    if excluded:
+        in_pop = sum(
+            1 for gen in fleet if int(getattr(gen, "plant_code", 0) or 0) in excluded
+        )
+        logger.info(
+            "NYISO gas bridge membership correction: %d laid-up plant code(s) "
+            "excluded, matching %d fleet row(s) — %s",
+            len(excluded),
+            in_pop,
+            sorted(excluded),
+        )
     per_class = _nyiso_bridge_min_load_fracs(config)
     total = None
     for fuel, frac in per_class.items():
         if frac <= 0.0:
             continue
+        frac_by_gen = None
+        if excluded:
+            frac_by_gen = np.array(
+                [
+                    0.0 if int(getattr(gen, "plant_code", 0) or 0) in excluded else frac
+                    for gen in fleet
+                ],
+                dtype=float,
+            )
         part = caiso_ra_mustoffer_min_gen(
             p0_dispatch,
             fleet_arrays,
@@ -796,6 +831,7 @@ def _nyiso_gas_bridge_floor(
             fuel_types=(fuel,),
             max_econ_gap_hours=max_gap,
             min_run_hours=min_run,
+            min_load_frac_by_gen=frac_by_gen,
         )
         # PER-CLASS trace. The composed total cannot show that one leg
         # contributed nothing, and a leg that floors zero unit-hours is exactly

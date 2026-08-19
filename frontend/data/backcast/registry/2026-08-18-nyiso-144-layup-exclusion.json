@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-18-nyiso-144-layup-exclusion",
+  "label": "nyiso 144 layup exclusion",
+  "date": "2026-08-18",
+  "shorthand": "nyiso-144-layup-exclusion",
+  "definition": "nyiso-144 ARM: keeper recipe + nyiso_gas_bridge_plant_exclusions (lay-up membership correction)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-18-nyiso-144-layup-exclusion.js",
+  "bundle": "results/calibration/nyiso144_layup_arm"
+}
