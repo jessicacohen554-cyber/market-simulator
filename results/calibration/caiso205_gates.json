@@ -1,0 +1,251 @@
+{
+ "probe": "caiso205_gates",
+ "charter": "PRECOMMIT-caiso205-adaptive-ab-2026-08-19.md \u00a74",
+ "keeper": "results/calibration/caiso200_h1_memberpanel",
+ "control": "results/calibration/caiso205_control_A",
+ "arm": "results/calibration/caiso205_adaptive_B",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "per_year": {
+  "2023": {
+   "gcap_arm_introduced": 0,
+   "shed_control": [],
+   "shed_arm": [],
+   "new_shed_hours": [],
+   "bat_discharge_mwh": {
+    "control": 3927674.5,
+    "arm": 3927674.5,
+    "ratio": 1.0
+   },
+   "system_sidecar_byte_identical": true,
+   "side_effects_probe_basis": {
+    "c3a_pct_control": 3.72,
+    "c3a_pct_arm": 3.72,
+    "tail_gt200_control": 0,
+    "tail_gt200_arm": 0
+   },
+   "gada_arm": {
+    "present": true,
+    "model_spike_days": 0,
+    "p_hat_max": 0.0,
+    "floor_gt_vom_hours": 0,
+    "floor_gt_vom_by_month": {},
+    "floor_max_usd": 0.0
+   }
+  },
+  "2024": {
+   "gcap_arm_introduced": 0,
+   "shed_control": [],
+   "shed_arm": [],
+   "new_shed_hours": [],
+   "bat_discharge_mwh": {
+    "control": 7647008.0,
+    "arm": 7586318.5,
+    "ratio": 0.9921
+   },
+   "system_sidecar_byte_identical": false,
+   "side_effects_probe_basis": {
+    "c3a_pct_control": 12.92,
+    "c3a_pct_arm": 12.9,
+    "tail_gt200_control": 1,
+    "tail_gt200_arm": 1
+   },
+   "gada_arm": {
+    "present": true,
+    "model_spike_days": 1,
+    "p_hat_max": 0.0145,
+    "floor_gt_vom_hours": 188,
+    "floor_gt_vom_by_month": {
+     "9": 100,
+     "10": 88
+    },
+    "floor_max_usd": 14.5
+   }
+  },
+  "2025": {
+   "gcap_arm_introduced": 0,
+   "shed_control": [],
+   "shed_arm": [],
+   "new_shed_hours": [],
+   "bat_discharge_mwh": {
+    "control": 11160631.0,
+    "arm": 11160631.0,
+    "ratio": 1.0
+   },
+   "system_sidecar_byte_identical": true,
+   "side_effects_probe_basis": {
+    "c3a_pct_control": 13.72,
+    "c3a_pct_arm": 13.72,
+    "tail_gt200_control": 0,
+    "tail_gt200_arm": 0
+   },
+   "gada_arm": {
+    "present": true,
+    "model_spike_days": 0,
+    "p_hat_max": 0.0,
+    "floor_gt_vom_hours": 0,
+    "floor_gt_vom_by_month": {},
+    "floor_max_usd": 0.0
+   }
+  }
+ },
+ "g_repro": {
+  "files": {
+   "class_hourly_2023.parquet": true,
+   "class_hourly_2024.parquet": true,
+   "class_hourly_2025.parquet": true,
+   "storage_2023.parquet": true,
+   "storage_2024.parquet": true,
+   "storage_2025.parquet": true,
+   "system_2023.parquet": true,
+   "system_2024.parquet": true,
+   "system_2025.parquet": true
+  },
+  "extra_in_control_reported": [
+   "network_2023.parquet",
+   "network_2024.parquet",
+   "network_2025.parquet",
+   "unit_hourly_2023.parquet",
+   "unit_hourly_2024.parquet",
+   "unit_hourly_2025.parquet"
+  ],
+  "pass": true
+ },
+ "d4_rows_control": [
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|pass",
+  "2023|chp_steam|h0-23|pass",
+  "2023|chp_steam|h0-23|pass",
+  "2023|chp_steam|h0-23|pass",
+  "2023|firm_import|h0-23|pass",
+  "2023|hydro_min_flow|h0-23|pass",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|pass",
+  "2024|chp_steam|h0-23|pass",
+  "2024|chp_steam|h0-23|pass",
+  "2024|chp_steam|h0-23|pass",
+  "2024|firm_import|h0-23|pass",
+  "2024|hydro_min_flow|h0-23|pass",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|pass",
+  "2025|chp_steam|h0-23|pass",
+  "2025|chp_steam|h0-23|pass",
+  "2025|chp_steam|h0-23|pass",
+  "2025|firm_import|h0-23|pass",
+  "2025|hydro_min_flow|h0-23|pass"
+ ],
+ "d4_rows_arm": [
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|FAIL",
+  "2023|chp_steam|h0-23|pass",
+  "2023|chp_steam|h0-23|pass",
+  "2023|chp_steam|h0-23|pass",
+  "2023|chp_steam|h0-23|pass",
+  "2023|firm_import|h0-23|pass",
+  "2023|hydro_min_flow|h0-23|pass",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|FAIL",
+  "2024|chp_steam|h0-23|pass",
+  "2024|chp_steam|h0-23|pass",
+  "2024|chp_steam|h0-23|pass",
+  "2024|chp_steam|h0-23|pass",
+  "2024|firm_import|h0-23|pass",
+  "2024|hydro_min_flow|h0-23|pass",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|FAIL",
+  "2025|chp_steam|h0-23|pass",
+  "2025|chp_steam|h0-23|pass",
+  "2025|chp_steam|h0-23|pass",
+  "2025|chp_steam|h0-23|pass",
+  "2025|firm_import|h0-23|pass",
+  "2025|hydro_min_flow|h0-23|pass"
+ ],
+ "d4_no_new_rows": true,
+ "d5_adaptive_rows_arm": [
+  "caiso_storage_adaptive_expectation"
+ ],
+ "dof": {
+  "control_n": 10,
+  "arm_n": 11,
+  "delta": [
+   "caiso_adaptive_half_life_days / caiso_adaptive_beta"
+  ],
+  "pass": true
+ },
+ "byte_identical_years": [
+  2023,
+  2025
+ ],
+ "gates": {
+  "G-REPRO": {
+   "pass": true
+  },
+  "G-CAP": {
+   "violations": 0,
+   "pass": true
+  },
+  "G-SHED": {
+   "pass": true
+  },
+  "G-BAT": {
+   "pass": true,
+   "band": [
+    0.8,
+    1.25
+   ]
+  },
+  "G-D2": {
+   "no_new_d4_rows": true,
+   "adaptive_row_present": true,
+   "pass": true
+  },
+  "G-DOF": {
+   "pass": true
+  },
+  "G-ADA": {
+   "reported_not_gated": true
+  }
+ }
+}
