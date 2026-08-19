@@ -7688,3 +7688,56 @@ failed K-1 and what still fails C8 on plant 1104 in 2023/2025; it affects any
 ISO with mixed-class sites. (2) The uncited **RHO_CLIP** band (nyiso-144).
 **Named successor, still not bundled** (rule 19): per-year rather than pooled
 `online_frac` for the per-plant must-run window.
+
+## miso-170 (2026-08-19, ADDENDUM 2) — NO-LP scarcity anatomy: the reserve requirement is met EXACTLY and priced at ZERO on every family; the sub-regional lever is identified and its prerequisite may kill it
+
+**Keeper UNCHANGED at `2026-08-19-miso-170-membership`. NO LP SPENT, no mechanism
+tested, no cell verdict minted** (the miso-142/153/155/156/157/161/163/167 no-LP
+precedent; rule 15 not engaged). Record:
+`FINDING-miso170-scarcity-reserve-supply-anatomy-2026-08-19.md`.
+
+Answers the owner's question — *why can we still not access scarcity pricing in
+summer 2025* — from the keeper's own committed hourly sidecars.
+
+**The model is never physically scarce.** 2 hours > $200 against 88 actual RT;
+max hourly LMP $227.34; **0.0 MWh of load shed in the whole year**, against
+11.5 GW of idle thermal at the peak. In the 47 summer scarcity hours (115.4 GW)
+the model clears energy $72.74 + reserve $10.81 = **$83.54** vs $110.42 actual.
+
+**The reserve state is NOT slack — it is FREE.** Across all three years and all
+four families, median `held_mw − requirement_mw` is **+0.00 %** and the minimum
+is **0.0 MW**: every family holds exactly its requirement, every hour. What is
+zero is the PRICE. In 2025's scarce hours, of a 6,593 MW requirement,
+`miso_rbdc` (2,488 MW) and `miso_subregional_or_midwest` (2,073 MW) carry a dual
+of **exactly zero in all 8,760 hours** — **69 % of the requirement priced at
+$0** — because reserves held on idle, unsynchronised capacity displace nothing
+and so have no opportunity cost. They are not incapable of pricing: both bind in
+2024, when the free supply runs out.
+
+**This partially SUPERSEDES `FINDING-miso167` §4.** Its diagnosis is confirmed
+and its mechanism validated — miso-169's gating drives the `miso_rbdc_regspin`
+dual positive in **12 hours of 2025 (max $85.87)** against zero for the ungated
+families — but the gated family is **1,617 MW of 6,593, i.e. 24.5 %**. Gating one
+family of four was always worth about a quarter of the effect, which is why the
+mechanism bought +0.10 pp of the ~+3.3 pp ceiling.
+
+**MY OWN PRIOR HYPOTHESIS, FALSIFIED AND RECORDED AS SUCH:** the uncited
+`RHO_CLIP` 0.5 floor is **not** what throttles this. At the solved 0.5 the
+market-wide coupling cap is 36.94 GW and at the measured 0.1764 it is 13.03 GW,
+against a 1,617 MW requirement — **8–23× headroom either way**. Limitation
+stated in the finding: the row is per-pool and the committed sidecar is
+family-grain, so this is an aggregate bound, not a pool-level proof; closing it
+properly needs per-pool R columns no MISO bundle carries. Resolving the band is
+still right on rule-21 grounds, but it must not be sold as the scarcity fix.
+
+**The lever, and the prerequisite that may end the lane:** extend online-gating
+to `miso_subregional_or_midwest` (and the Reg+Spin component of `miso_rbdc`).
+**Supplemental reserve is legitimately providable by OFFLINE quick-start
+resources**, so gating a supplemental requirement would be a rule-1
+`[R-STRUCT]` breach — the right number through an unreal mechanism. The
+sub-regional and RBDC requirements must first be decomposed into synchronised
+(reg + spin) vs non-synchronised (supplemental) components from MISO's published
+definitions (BPM-002, Schedule 28). If they are mostly supplemental **the lever
+does not exist and MISO's C3a-2025 becomes a documented model-class limit end to
+end** — an outcome to be reported as readily as a positive one. **No solve is
+justified until that decomposition is on paper.**
