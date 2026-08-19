@@ -139,9 +139,23 @@ cohort.
   over-run is an offer/commitment question, and membership would bury it
   (the nyiso-144 plant-7314 discipline).
 * **Level** (zero new scalars, rule 21): the class curve's existing peak
-  band (`_DEFAULT_HR_MULT_BY_GROUP["CC_REGULAR"]["peak"]` = 1.55): the
-  cohort's whole dispatchable capacity becomes the peak band
-  (`pct_mc = 0, pct_peak = 100 − pct_mr`).
+  band, AS THE RECIPE RESOLVES IT: the cohort's whole dispatchable capacity
+  becomes the peak band (`pct_mc = 0, pct_peak = 100 − pct_mr`), priced by
+  the same resolution every CC peak band gets in this recipe.
+  *(PLUMBING AMENDMENT, disclosed before the arm's VALID solve: the first
+  solve of this arm was INERT — the `fleet_to_bins` frame seam was
+  clobbered downstream in `bins_to_fleet` by the recipe's
+  `offer_curve_by_group.pct_peaking`, `cc_peaking_per_plant` and
+  `cc_duct_peaking` overrides (pct_peak 100 → 8 → 0), leaving dispatch
+  byte-identical; the inert bundle is registered as a probe. The override
+  now applies LAST in `bins_to_fleet` (the same supersession precedence
+  `cc_duct_peaking` itself claims), verified in-process against the arm's
+  own recorded `run_config`: the cohort collapses to one peak tranche at
+  the recipe's CC peak multiplier — measured `offer["peak"] = 2.25×`, so
+  Sterling prices at hr 19.26 ≈ $51/MWh in 2023, the level whose
+  share-above was measured at 0.02-0.04 against 0.01-0.06 metered
+  on-shares in the phase-0 table. No gate changes; C-K2's ≥80 % bars
+  stand.)*
 * **Why 1.55× is predicted sufficient — the model's own revealed merit
   cliff**: Carthage (hr 9.7, econ mc $26.6 in 2023) and Syracuse (9.55)
   dispatch at ~1 % on the control while Sterling (8.56, $23.7) dispatches
