@@ -10729,3 +10729,53 @@ Full record: docs/FINDING-ercot221-adaptive-expectation-2026-08-19.md.
 
 **Session consumed the ercot-221 shorthand. Next shorthand: ercot-222**
 (ercot-199 remains unclaimed).
+
+---
+
+## ercot-222 — 2026-08-19 — THE CROSS-YEAR-SEEDED EXPECTATION VARIANT, Phase-0 (read-only, precommitted): **NEGATIVE ON ALL FIVE GATES** — the M-2 year-scale memory level under-reaches every 2023 cap-parked month while over-flooring both within-regime years and TRIPLING the floor at the May-8-2024 G-SHED kill hour; the adaptive family's one disclosed cross-year member is refuted; Door D stands
+
+**Branch claude/ercot-222-cross-year-seed-44of8n. Precommit
+docs/PRECOMMIT-ercot222-crossyear-seed-2026-08-19.md pushed + blob-verified
+BEFORE any evaluation; executed as written. NO LP, no solve, no arming, no
+registration.** Keeper at dispatch: `2026-08-19-ercot221-arm-adaptive` (the
+adaptive mechanism ARMED).
+
+The instrument validates before it kills: the pinned M-2 statistic (36-month
+mean of the top-100 evening HE17-22 RT hours) reproduces the as-scanned
+June-1 disclosures to 0.01 % (3,016.2 / 1,626.2 vs 3,016 / 1,626; HE17-22 =
+hour-beginning 16–21 resolved by that fidelity; →2025's +68 % CITED, not
+recomputed — no 2025 measured price read). Purity-form seeds (window frozen
+at Jan-1, start rolling daily, 2020–2024 history only): 2023 near-FLAT
+$3,017→$2,997 (Uri never exits a 2023 window — the composition decay is
+0.7 %/yr where the measured surface switches $5,000↔$100); 2024
+$3,747→$1,544 (the calendar decay WORKS — Uri exits Feb-2024 — and still
+lands 1.2–2.9× the $1,281 anchor); 2025 $1,666→$1,472 vs $990.
+
+**Gates (all pre-registered): G-R FAIL** (0 of 12 months in ±35 %, bar ≥5
+incl Aug+Sep: Aug −36.0 %, Sep −39.8 %, Apr +2,910 % — the flat level misses
+both directions at once; only the Aug–Sep floor leg $3,009 ≥ $2,200 clears).
+**G-WINTER FAIL** (Jan–Feb 2023 seeded P_hat p50 0.6034 vs 0.65 — even the
+motivating post-Uri parking under-reproduces). **G-C FAIL, the
+pre-registered kill realized** (2024 +192.5 % Jan-1 / +43.7 % annual mean;
+2025 +68.3 % / +60.2 % — both readings, both years; M-2's memory-alone
+flattening caveat measured: the post-Uri memory floor ~$1.5k cannot follow
+the competitive-state decline ercot-210 measured at 8.4× offered volume).
+**G-S24 FAIL** (share ≤ vom+$100 = 0.8333 vs 0.95 — every in-window 2024
+hour floored; kill hours h3065–3068 seeded $1,556 vs armed $523, **+$1,033
+where the arm's $523 already manufactured the 17.9 MW shed**). **G-S25
+FAIL** (2025 share 0.8333 vs 0.95; floor max $1,666 resurrected in the
+self-extinguished year). LOYO structurally N/A as declared (zero new fitted
+scalars; G-C was the out-of-year test).
+
+**Disposition (STOP rule):** no Phase-1 card; Door D stands as the recorded
+floor; the rule-13 both-ways argument preserved in the finding for any
+future seed-form precommit; ERCOT bandwidth returns to the R-A re-pointed
+queue (standing: item-8 CME/NYMEX basis-swap screen; G-SPUR band-top
+blindness owner gate revision). Evidence appended to the
+`ercot_storage_adaptive_expectation` cell (no new row). Probe:
+`scripts/probes/ercot222_crossyear_phase0.py` →
+`results/calibration/ercot222_crossyear_phase0.json`. Full record:
+docs/FINDING-ercot222-crossyear-seed-2026-08-19.md.
+
+**Session consumed the ercot-222 shorthand. Next shorthand: ercot-223**
+(ercot-199 remains unclaimed).
