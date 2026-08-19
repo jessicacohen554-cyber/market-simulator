@@ -176,16 +176,28 @@ arms: `nyiso_gas_bridge_plant_min_run` False → True. Verified field-by-field
 from the two bundles' `run_config.json`. *Fails otherwise.*
 
 **K2 — LIVENESS, two legs.**
-(a) *Floor, exact:* each arm-year's PER-LEG bridge floor volume — the solve's
-own `NYISO gas bridge leg <fuel> ... TWh floor volume` lines, the only place
-the floor VOLUME (as opposed to D-4's binding energy) is reported — lands
-within **±2 %** of the prediction (tolerance covers toolchain noise only; the
-computation is deterministic, and the leg totals are a tight functional of
-the per-plant vector — 2539 alone carries 25-45 % of the CC leg's move, so a
-wrong per-plant delivery moves the total). Predicted arm leg volumes:
-gas_cc **2.4508 / 1.8400 / 1.4399 TWh**, gas_st **0.1172 / 0.1343 / 0.1150
-TWh** (control: 1.8347/1.7126/1.2807 and 0.1087/0.1493/0.0987). Per-plant
-corroboration from the committed D-4 rows: 2539's bridge binding energy
+(a) *Floor delivery — AMENDED BEFORE THE ARM SOLVED, with the discrepancy
+disclosed.* The §4 capture replays the recipe through `run_calibration.
+run_year` (the nyiso-145 probe construction), which skips the recipe's
+`ttc_overrides`/`must_run_mw`; the real A/B replays through
+`--replay-bundle`. The CONTROL solve (already complete when this amendment
+was committed; the ARM not yet launched) shows the two bases differ enough
+to matter at plant level: per-leg control totals differ by 0.4-4.2 %
+(gas_cc 1.8417/1.7851/1.3130 vs the capture's 1.8347/1.7126/1.2807) and
+per-plant bridge floors by up to ±27 % (2539-2023: 684.8 vs 779.4 GWh),
+because a P0 run boundary moving a few hours relocates a whole extension
+block. The capture's arm/control RATIOS are the basis-robust prediction, so
+the gate is scored from the two bundles' own committed `floors/<yr>_P1.npz`
+(bridge-attributed cells, mechanism code 20):
+  * per-plant arm/control floor-volume ratio within **±25 % (relative)** of
+    the capture's predicted ratio, for each of — 2539: **1.77 / 1.23 / 1.24**,
+    56234: **2.42 / 3.84 / 4.95**, 56940: **0.84 / 0.61 / 0.57**, 2517:
+    **0.11 / 0.32 / 0.44**, 7314: **0.93 / 0.96 / 0.91** (a mis-delivered
+    vector reads ratio ≈ 1.0 for 2539/56234 and fails);
+  * per-leg totals within **±5 %** of the REBASED predictions
+    `captured_arm × (control_solve / captured_control)`: gas_cc
+    **2.4602 / 1.9179 / 1.4762 TWh**, gas_st **0.1196 / 0.1389 / 0.1124 TWh**.
+Corroboration from the committed D-4 rows: 2539's bridge binding energy
 RISES in every year, 2517's FALLS in every year.
 (b) *Starts, banded to the §4 mechanism-shape prediction:* Bethlehem's arm
 P1 starts (0.05 × capacity, from the arm's own committed hourlies) fall by
