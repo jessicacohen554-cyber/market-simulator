@@ -635,6 +635,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_ct_min_load_frac",
     "nyiso_gas_bridge_plant_exclusions",
     "nyiso_gas_bridge_ct_min_run_hours",
+    "nyiso_gas_bridge_plant_min_run",
     # ERCOT gas-bridge ONLINE-HOURS leg (ercot141): inert at its default (off —
     # the floor stays gap-only and the detector call is byte-identical), so
     # registering it here keeps the pinned default cache_key byte-stable; an
@@ -1216,6 +1217,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_bridge_ct_min_load_frac": "0.238",
     "nyiso_gas_bridge_plant_exclusions": "False",
     "nyiso_gas_bridge_ct_min_run_hours": "2.0",
+    "nyiso_gas_bridge_plant_min_run": "False",
     "ercot_gas_bridge_online_hours": "False",
     "forecast_xyear_warmstart": "True",
     "ercot_offer_hrmult_ep_rebasis": "False",
@@ -4974,6 +4976,41 @@ class ScenarioConfig:
     # — a live convention inconsistency, deliberately NOT reconciled here
     # because doing so would change those legs' floors (a second delta).
     nyiso_gas_bridge_ct_min_run_hours: float = 2.0
+    # PER-PLANT minimum-run identification for the bridge's min_run extension
+    # (nyiso-146): fill each slow-start row's minimum-run duration from ITS
+    # OWN plant's measured CAMPD run-length distribution
+    # (data/raw/_processed-legacy/campd_perplant_min_run_NYISO.csv,
+    # scripts/data/derive_campd_perplant_min_run.py) instead of the per-class
+    # scalar above — REPLACING the scalar for covered plants, never stacking
+    # (rule 19 [R-ONE-MECH]); uncovered plants (no CAMPD series of their own,
+    # mixed-class facilities, the misaligned Astoria campus pair 55375/57664)
+    # keep the class fallback, and the CT leg keeps its own required measured
+    # horizon.
+    #
+    # WHY PER-PLANT: the class is provably not one run-length population.
+    # Measured on the plant-summed series (the basis the floor's
+    # min_load x PLANT capacity convention and the nyiso-145 starts object
+    # both live on), CC_REGULAR per-plant p25 spans 7 h (Carr Street, a true
+    # cycler) to 646 h (Caithness, near-baseload) — a 92x spread — while the
+    # keeper's class scalar is 21 h; ST_GAS spans 2.5-213 h against 13 h. One
+    # scalar simultaneously over-constrains the cyclers and lets the LP
+    # shatter the near-baseload CCs into hundreds of phantom starts
+    # (Bethlehem 2539: 262-302 model starts/yr in runs of median 5-9 h
+    # against 5-7 metered starts in runs of median 487-1,217 h — nyiso-145,
+    # FINDING-nyiso145-cc-overcycling-and-d4-vintage-2026-08-19.md §3a).
+    #
+    # The per-plant value is each plant's own run-length p25 — the
+    # pre-registered order statistic (PREREG-nyiso146-perplant-min-run-
+    # 2026-08-19.md, chosen at phase 0 BEFORE any solve): an observed run
+    # bounds a minimum-run constraint from ABOVE, so a low order statistic
+    # is the correct estimator (the ct_min_run_hours reasoning above,
+    # verbatim), and p25 rather than p10 because within-year computation
+    # splits year-boundary runs into spurious short ones. A measured
+    # per-plant statistic with ZERO fitted scalars (rule 21 [R-DOF], the
+    # lay-up plant-code-set shape); frozen against residuals (rule 23
+    # [R-FROZEN-DERIVE] — re-derives only when the CAMPD vintages update).
+    # Default off so a control run is byte-identical.
+    nyiso_gas_bridge_plant_min_run: bool = False
     nyiso_spin_reserve_online: bool = False  # NYISO online-gated PUBLISHED
     # spinning families (nyiso-84, the mechanism arm): re-classes the published
     # NYCA 10-minute spinning family (655 MW, $775) — and east_10min_spin (330
@@ -13503,6 +13540,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_gas_bridge_da_horizon": 1,
     "nyiso_gas_bridge_min_run": 1,
     "nyiso_gas_bridge_plant_exclusions": 1,
+    "nyiso_gas_bridge_plant_min_run": 1,
     "nyiso_gas_bridge_cc_min_run_hours": 2,
     "nyiso_gas_bridge_st_min_run_hours": 2,
     "nyiso_gas_bridge_ct": 1,

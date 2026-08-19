@@ -593,6 +593,7 @@ def run_year(
     nyiso_gas_bridge_da_horizon: bool | None = None,
     nyiso_gas_bridge_min_run: bool | None = None,
     nyiso_gas_bridge_plant_exclusions: bool | None = None,
+    nyiso_gas_bridge_plant_min_run: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -1477,6 +1478,10 @@ def run_year(
     if nyiso_gas_bridge_plant_exclusions is not None:
         config = config.with_overrides(
             nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions
+        )
+    if nyiso_gas_bridge_plant_min_run is not None:
+        config = config.with_overrides(
+            nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run
         )
     if nyiso_gas_bridge_cc_min_run_hours is not None:
         config = config.with_overrides(

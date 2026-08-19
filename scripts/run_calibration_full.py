@@ -3486,6 +3486,7 @@ def solve_and_persist(
     nyiso_gas_bridge_da_horizon: bool | None = None,
     nyiso_gas_bridge_min_run: bool | None = None,
     nyiso_gas_bridge_plant_exclusions: bool | None = None,
+    nyiso_gas_bridge_plant_min_run: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -4438,6 +4439,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions
             )
+        if nyiso_gas_bridge_plant_min_run is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run
+            )
         if nyiso_gas_bridge_cc_min_run_hours is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours
@@ -5157,6 +5162,7 @@ def solve_and_persist(
             nyiso_gas_bridge_da_horizon=nyiso_gas_bridge_da_horizon,
             nyiso_gas_bridge_min_run=nyiso_gas_bridge_min_run,
             nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions,
+            nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
             nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
@@ -6017,6 +6023,7 @@ def solve_and_persist(
         "nyiso_gas_bridge_da_horizon": nyiso_gas_bridge_da_horizon,
         "nyiso_gas_bridge_min_run": nyiso_gas_bridge_min_run,
         "nyiso_gas_bridge_plant_exclusions": nyiso_gas_bridge_plant_exclusions,
+        "nyiso_gas_bridge_plant_min_run": nyiso_gas_bridge_plant_min_run,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
         "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
         "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
@@ -11532,6 +11539,17 @@ def main() -> None:
         "the reliability floor (--reliability-floor-plant-exclusions).",
     )
     parser.add_argument(
+        "--nyiso-gas-bridge-plant-min-run",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="PER-PLANT minimum-run identification (nyiso-146): fill each "
+        "slow-start row's minimum-run duration from its own plant's measured "
+        "CAMPD run-length p25 "
+        "(data/raw/_processed-legacy/campd_perplant_min_run_NYISO.csv), "
+        "replacing the per-class scalar for covered plants; uncovered plants "
+        "keep the class fallback.",
+    )
+    parser.add_argument(
         "--nyiso-gas-bridge-min-run",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12000,6 +12018,7 @@ def main() -> None:
         nyiso_gas_bridge_da_horizon=args.nyiso_gas_bridge_da_horizon,
         nyiso_gas_bridge_min_run=args.nyiso_gas_bridge_min_run,
         nyiso_gas_bridge_plant_exclusions=args.nyiso_gas_bridge_plant_exclusions,
+        nyiso_gas_bridge_plant_min_run=args.nyiso_gas_bridge_plant_min_run,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
         nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
