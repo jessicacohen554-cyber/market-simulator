@@ -417,6 +417,40 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                 "by that standing record.",
             )
         )
+    if sc.get("caiso_storage_adaptive_expectation"):
+        # caiso-205: the two rule-23 frozen constants of the CAISO leg,
+        # identified in the PRE-REGISTERED caiso-204 Phase-0 instrument on
+        # the MEASURED 2023-2025 daily evening storage offer surface
+        # (PUB_BID_DAM 585-date balanced subset, caiso-178 classifier) —
+        # measured CONDUCT as identification evidence, never a price
+        # residual. Re-derive only on a source-data change (rule 23).
+        out.append(
+            _entry(
+                "caiso_adaptive_half_life_days / caiso_adaptive_beta",
+                "run_config.scenario_config.caiso_adaptive_*",
+                "measured-physical",
+                iso,
+                value=[
+                    sc.get("caiso_adaptive_half_life_days"),
+                    sc.get("caiso_adaptive_beta"),
+                ],
+                n_scalars=2,
+                source="EWMA half-life (days) and gain beta of the daily "
+                "spike-frequency expectation P_hat, SSE-fit of "
+                "implied_P(d) = evening battery discharge offer p50 / "
+                "$1,000 park cap on P_hat(d) over 585 admissible days "
+                "2023-2025 on the pre-registered grid (PRECHECK-caiso204-"
+                "adaptive-phase0-2026-08-19.md §2-3; artifact "
+                "results/calibration/caiso204_adaptive_phase0.json, G-ID "
+                "daily corr 0.704, G-DECAY 2023-only fit transfers 79%). "
+                "The armed path consumes only the model's own pass-1 price "
+                "path — the measured surface is identification evidence "
+                "only. Phase-0 FAILED G-BOOT (bootstrap infeasible on the "
+                "caiso-200 keeper path); Phase-1 entered on owner order "
+                "(caiso-205 charter branch 1), so these constants are "
+                "additionally flagged by that standing record.",
+            )
+        )
     return out
 
 
