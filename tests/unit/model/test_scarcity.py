@@ -486,8 +486,8 @@ class TestErcotAdaptiveExpectationDaily:
         s = np.zeros(60)
         s[10] = 1.0
         out = ercot_adaptive_expectation_daily(s, half_life_days=10.0, beta=1.0)
-        assert out[10] == 0.0            # own-day event never seen same day
-        assert out[11] > out[20] > out[40] > 0.0   # monotone decay after
+        assert out[10] == 0.0  # own-day event never seen same day
+        assert out[11] > out[20] > out[40] > 0.0  # monotone decay after
         assert np.all(out[:11] == 0.0)
 
     def test_clip_and_beta_gain(self):
@@ -495,6 +495,28 @@ class TestErcotAdaptiveExpectationDaily:
 
         s = np.ones(200)
         out = ercot_adaptive_expectation_daily(s, half_life_days=30.0, beta=5.0)
-        assert out[100] == 1.0           # saturates at the clip
+        assert out[100] == 1.0  # saturates at the clip
         out1 = ercot_adaptive_expectation_daily(s, half_life_days=30.0, beta=0.5)
         assert 0.0 < out1[100] <= 0.5
+
+
+class TestCaisoAdaptiveConstants:
+    """caiso-205: the CAISO leg's frozen conventions (caiso-204 identification;
+    the EWMA arithmetic is shared with the ERCOT helper tested above)."""
+
+    def test_frozen_conventions(self):
+        from market_sim.results.scarcity import (
+            CAISO_ADAPTIVE_EVENT_USD,
+            CAISO_ADAPTIVE_PARK_CAP_USD,
+            CAISO_ADAPTIVE_WINDOW_HOURS,
+        )
+
+        assert CAISO_ADAPTIVE_EVENT_USD == 200.0
+        assert CAISO_ADAPTIVE_PARK_CAP_USD == 1000.0
+        assert CAISO_ADAPTIVE_WINDOW_HOURS == (18, 19, 20, 21)
+
+    def test_config_fields_frozen_at_caiso204(self):
+        cfg = ScenarioConfig(iso="CAISO")
+        assert cfg.caiso_storage_adaptive_expectation is False  # default off
+        assert cfg.caiso_adaptive_half_life_days == 30.0
+        assert cfg.caiso_adaptive_beta == 0.5945

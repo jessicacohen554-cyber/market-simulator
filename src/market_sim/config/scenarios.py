@@ -918,6 +918,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "ercot_storage_adaptive_expectation",
     "ercot_adaptive_half_life_days",
     "ercot_adaptive_beta",
+    # caiso-205 CAISO leg of the adaptive-expectation family (GATED default
+    # off) + its two rule-23 identified constants: dropped from the hash at
+    # their defaults so every pre-existing cache key stays byte-stable (the
+    # off path never enters the two-pass block — byte-identical by
+    # construction); an armed run re-costs P1 battery discharge, a
+    # different scenario, and hashes distinctly. Registered IN THE SAME
+    # COMMIT as the fields (the nyiso-119 discipline).
+    "caiso_storage_adaptive_expectation",
+    "caiso_adaptive_half_life_days",
+    "caiso_adaptive_beta",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -1259,6 +1269,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_storage_adaptive_expectation": "False",
     "ercot_adaptive_half_life_days": "30.0",
     "ercot_adaptive_beta": "3.0077",
+    # Added by caiso-205 WITH the fields, in the same commit as their
+    # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
+    "caiso_storage_adaptive_expectation": "False",
+    "caiso_adaptive_half_life_days": "30.0",
+    "caiso_adaptive_beta": "0.5945",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
@@ -12092,6 +12107,43 @@ class ScenarioConfig:
     # spike frequency to offer-implied probability.
     ercot_adaptive_half_life_days: float = 30.0
     ercot_adaptive_beta: float = 3.0077
+    # caiso-205 ADAPTIVE-EXPECTATION storage offer, the CAISO leg of the
+    # ercot-221 family (owner order caiso-205 branch 1 over the caiso-204
+    # recorded Phase-0 G-BOOT FAIL — the ercot-188/213/215/221 pattern:
+    # Phase-1 entry on explicit owner instruction, A/B vs zero-delta
+    # control, both runs registered whatever the verdict). CAISO-gated,
+    # default off — NEVER widened onto the ERCOT field (rule 25
+    # [R-ISO-SCOPE]: ERCOT's identified beta is 3.0077, CAISO's 0.5945, a
+    # 5x conduct difference between the two markets' storage fleets).
+    # TWO-PASS P1 through the same pipeline.solve p1_storage_discharge_cost
+    # seam: pass 1 solves the incumbent recipe; the model's OWN daily
+    # demand-weighted P1 energy dual (pure lambda — CAISO's scored backcast
+    # price IS the energy-only dual, caiso-137b; zero measured content in
+    # the armed path, rule 13) yields daily spike events
+    # (>= CAISO_ADAPTIVE_EVENT_USD = $200, CAISO's frozen scarcity-tail
+    # threshold = 20% of its $1,000 soft cap), whose trailing EWMA
+    # frequency (half-life caiso_adaptive_half_life_days over the shared
+    # 120-day window, per-solve-year reset) x caiso_adaptive_beta, clipped
+    # to [0, 1], is the storage fleet's experience-based spike expectation
+    # P_hat(d). Pass 2 — THE scored pass — floors CAISO BATTERY discharge
+    # offers (pumped storage excluded: the caiso-204 identification's S4
+    # classifier removed PS from the conduct population, so the floor never
+    # touches the PS units' own calibrated adders) at
+    # max(vom, P_hat x CAISO_ADAPTIVE_PARK_CAP_USD) in
+    # CAISO_ADAPTIVE_WINDOW_HOURS only (h18-21 PT, the identification
+    # window). Self-extinguishing: a year whose own model path has no
+    # spikes gets P_hat ~ 0 and the floor collapses to vom (the caiso-204
+    # G-BOOT wall says exactly this happens on the caiso-200 keeper path:
+    # 0/1/0 model event days -> byte-identical 2023/2025, max floor $14.5
+    # in 2024 — the A/B buys the honest stamp, not a gate move).
+    caiso_storage_adaptive_expectation: bool = False
+    # The two rule-23 identified constants (caiso-204 Phase-0 fit on the
+    # measured 2023-2025 daily evening storage offer surface, PUB_BID_DAM
+    # 585-date balanced subset — caiso204_adaptive_phase0.json, G-ID daily
+    # corr 0.704; FROZEN at the caiso-204 identification per the caiso-205
+    # charter, never residual-tuned).
+    caiso_adaptive_half_life_days: float = 30.0
+    caiso_adaptive_beta: float = 0.5945
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -13635,6 +13687,9 @@ TIER_TAGS: dict[str, int] = {
     "ercot_storage_adaptive_expectation": 1,
     "ercot_adaptive_half_life_days": 2,
     "ercot_adaptive_beta": 2,
+    "caiso_storage_adaptive_expectation": 1,
+    "caiso_adaptive_half_life_days": 2,
+    "caiso_adaptive_beta": 2,
     "ercot_ordc_only_scarcity": 1,
     "pjm_reserve_supply_cap": 1,
     "pjm_reserve_online_gated": 1,

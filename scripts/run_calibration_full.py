@@ -5515,7 +5515,10 @@ def solve_and_persist(
         # (broadcast hourly) and the applied evening-window floor — the
         # committed audit trail for the mechanism's A/B gates (PRECOMMIT-
         # ercot221 §4). Absent (no file) on every flag-off run.
-        _ada = p2_state.get("ercot221_adaptive")
+        # caiso-205: the CAISO leg writes the same audit columns under its
+        # own p2_state key; at most one of the two can fire per solve (each
+        # is iso-gated), so the first non-None dict is the year's series.
+        _ada = p2_state.get("ercot221_adaptive") or p2_state.get("caiso205_adaptive")
         if _ada is not None:
             _t_ada = len(_ada["floor_t"])
             _day_idx = np.minimum(np.arange(_t_ada) // 24, len(_ada["p_hat"]) - 1)

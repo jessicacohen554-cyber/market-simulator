@@ -280,6 +280,33 @@ ERCOT_ADAPTIVE_TRAIL_DAYS: int = 120
 # G-BAT whole-day-floor collapse, ratio 0.41).
 ERCOT_ADAPTIVE_WINDOW_HOURS: tuple[int, ...] = (17, 18, 19, 20)
 
+# --------------------------------------------------------------------------- #
+# caiso-205 adaptive-expectation storage offer — the CAISO leg of the same
+# family, constants FROZEN at the caiso-204 Phase-0 identification
+# (results/calibration/caiso204_adaptive_phase0.json; owner order caiso-205
+# branch 1). Rule 25 [R-ISO-SCOPE]: CAISO's own conventions, never ERCOT's.
+# --------------------------------------------------------------------------- #
+# Daily spike-event threshold ($/MWh) on the model's OWN daily max
+# demand-weighted P1 energy dual (pure lambda — CAISO's scored backcast price
+# is the energy-only dual, caiso-137b; rule 13: no measured price enters the
+# armed path). $200 is CAISO's frozen scarcity-tail threshold (the C3c gate
+# level) AND 20% of its $1,000 soft cap — the caiso-204 PRECHECK's symmetric
+# measured/model threshold convention.
+CAISO_ADAPTIVE_EVENT_USD: float = 200.0
+# Evening net-load-peak window (fixed-clock PT hour-beginning) carrying the
+# reservation floor — identical to the caiso-204 identification window;
+# hours outside it keep the incumbent storage offer.
+CAISO_ADAPTIVE_WINDOW_HOURS: tuple[int, ...] = (18, 19, 20, 21)
+# Floor scale: the CAISO soft energy bid cap ($1,000, Tariff §39.6.1 FERC
+# Order 831 soft cap — the caiso-178 §3 park level the identification's
+# implied_P divides by). NOT the $2,000 cost-verified hard cap: the measured
+# conduct parks at the soft cap, so P_hat x park cap is the identified offer.
+CAISO_ADAPTIVE_PARK_CAP_USD: float = 1000.0
+# The trailing window length is shared with the ERCOT leg
+# (ERCOT_ADAPTIVE_TRAIL_DAYS = 120): identical EWMA construction
+# (ercot_adaptive_expectation_daily) with CAISO's own identified half-life
+# and beta from ScenarioConfig.
+
 
 def ercot_adaptive_expectation_daily(
     events: np.ndarray,

@@ -1613,6 +1613,35 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         "the window scoping. Audit trail: hourly/adaptive_<year>.parquet.",
         iso="ERCOT",
     ),
+    # --- caiso-205 adaptive-expectation storage offer, CAISO leg (owner order
+    # caiso-205 branch 1 over the caiso-204 recorded Phase-0 G-BOOT FAIL) ---
+    MechanismSpec(
+        "caiso_storage_adaptive_expectation",
+        "caiso_storage_adaptive_expectation",
+        "backcast_only",
+        True,
+        backcast_symbols=("caiso205_adaptive",),
+        note="adaptive-expectation storage scarcity offer, CAISO leg, P1-only "
+        "two-pass: batteries price scarce SOC at their experienced recent "
+        "spike frequency. DRIVER: the model's OWN pass-1 daily demand-"
+        "weighted P1 lambda >= $200 (CAISO's frozen scarcity-tail threshold; "
+        "pure model, zero measured content in the armed path — CAISO's "
+        "scored backcast price IS the energy-only dual, caiso-137b), "
+        "trailing EWMA half-life 30 d x beta 0.5945 (the two rule-23 "
+        "constants, identified caiso-204 Phase-0 on the measured 2023-2025 "
+        "daily evening storage offer surface, PUB_BID_DAM subset, daily corr "
+        "0.704, and FROZEN). WINDOW: evening net-load-peak hours h18-21 PT, "
+        "on days the model's own trailing state is active — a spike-free "
+        "year collapses the floor to vom (self-extinguishing; the caiso-204 "
+        "G-BOOT wall predicts exactly this on the caiso-200 keeper path). "
+        "FORWARD STORY: regenerates from the model's own price path in any "
+        "year (wired in the backcast driver only today, hence backcast-"
+        "only). Rule-25: CAISO's own identified constants, never ERCOT's "
+        "(beta 0.5945 vs 3.0077). Battery-only (caiso-204 S4 excluded "
+        "pumped storage from the conduct population). Audit trail: "
+        "hourly/adaptive_<year>.parquet.",
+        iso="CAISO",
+    ),
 )
 
 

@@ -5480,6 +5480,99 @@ def run_year(
             p1_storage_discharge_cost=_adaptive_cost,
         )
         _t_solve_end = time.perf_counter()
+    # caiso-205 ADAPTIVE-EXPECTATION storage offer — the CAISO leg of the
+    # ercot-221 family (owner order caiso-205 branch 1 over the caiso-204
+    # recorded Phase-0 G-BOOT FAIL; constants FROZEN at the caiso-204
+    # identification, caiso204_adaptive_phase0.json). TWO-PASS P1 through
+    # the same p1_storage_discharge_cost seam, one adaptation pass (rule 10
+    # spirit). Event basis: the model's OWN daily max CA demand-weighted P1
+    # energy dual — PURE lambda, which IS CAISO's scored backcast price
+    # (caiso-137b: the calibration lane's price writer carries no CAISO
+    # overlay term, so unlike ERCOT's Amendment-4 case there is no
+    # model-side scarcity-adder mirror to add; zero measured content in the
+    # armed path, rule 13). WECC_import carries load_share 0.0, so the
+    # all-zone demand weighting below IS the CA-zone weighting of the
+    # caiso-204 G-BOOT instrument. The floor applies to BATTERY rows only —
+    # the caiso-204 S4 classifier excluded pumped storage from the
+    # identified conduct population, so PS keeps its own calibrated
+    # throughput adder untouched (rule 25 spirit within the ISO). Every
+    # non-CAISO / gate-off run never enters this block (byte-identical).
+    caiso205_adaptive = None
+    if (
+        iso == "CAISO"
+        and getattr(config, "caiso_storage_adaptive_expectation", False)
+        and storage.n_storage
+    ):
+        from market_sim.results.scarcity import (
+            CAISO_ADAPTIVE_EVENT_USD,
+            CAISO_ADAPTIVE_PARK_CAP_USD,
+            CAISO_ADAPTIVE_WINDOW_HOURS,
+            ercot_adaptive_expectation_daily,
+        )
+
+        _t_h = int(config.hours)
+        _dem_t = demand.sum(axis=0)[:_t_h]
+        _lam_t = (
+            np.asarray(energy_solve.p1.prices, dtype=float)[:, :_t_h] * demand[:, :_t_h]
+        ).sum(axis=0) / np.where(_dem_t > 0.0, _dem_t, 1.0)
+        _n_days = _t_h // 24
+        _day_max = _lam_t[: _n_days * 24].reshape(_n_days, 24).max(axis=1)
+        _s_m = (_day_max >= CAISO_ADAPTIVE_EVENT_USD).astype(float)
+        _p_hat = ercot_adaptive_expectation_daily(
+            _s_m,
+            half_life_days=float(config.caiso_adaptive_half_life_days),
+            beta=float(config.caiso_adaptive_beta),
+        )
+        _vom_s = np.asarray(storage.vom, dtype=float)[:, None]
+        _floor_t = np.zeros(_t_h)
+        _hod = np.arange(_t_h) % 24
+        _day_of = np.minimum(np.arange(_t_h) // 24, _n_days - 1)
+        _in_win = np.isin(_hod, CAISO_ADAPTIVE_WINDOW_HOURS)
+        _floor_t[_in_win] = _p_hat[_day_of[_in_win]] * CAISO_ADAPTIVE_PARK_CAP_USD
+        # Battery-only mask: t=hour rows below are (n_storage, T); PS rows
+        # keep the incumbent static vom exactly (broadcast byte-identical).
+        _batt = np.asarray(storage.tech_names) != "pumped_storage"
+        _adaptive_cost = np.broadcast_to(_vom_s, (storage.n_storage, _t_h)).copy()
+        _adaptive_cost[_batt] = np.maximum(_vom_s[_batt], _floor_t[None, :])
+        _batt_vom_max = float(_vom_s[_batt].max()) if _batt.any() else 0.0
+        logger.info(
+            "CAISO adaptive-expectation offer (%d): pass-1 model spike days "
+            "%d, P_hat max %.3f, floor > battery vom in %d of %d window "
+            "hours; re-solving P1 (pass 2, THE scored pass)",
+            year,
+            int(_s_m.sum()),
+            float(_p_hat.max()),
+            int((_floor_t[_in_win] > _batt_vom_max).sum()),
+            int(_in_win.sum()),
+        )
+        caiso205_adaptive = {
+            "s_model": _s_m,
+            "p_hat": _p_hat,
+            "floor_t": _floor_t,
+        }
+        energy_solve = run_energy_solve(
+            fleet,
+            fleet_arrays,
+            demand,
+            mc_base,
+            dispatch_kwargs,
+            config,
+            xyear_cache=xyear_cache,
+            p1_fleet_prep=(
+                ra_p1_prep
+                or ercot_bridge_prep
+                or nyiso_bridge_prep
+                or miso_night_floor_prep
+                or pjm_fleet_prep
+            ),
+            p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
+            mc_bid_adjust=offer_surface_mc_bid_adjust,
+            p1_bid_adjust_prep=lowcurve_bid_adjust_prep or ercot_bridge_bid_prep,
+            p1_bid_max_target=p1_bid_max_target,
+            startup_run_ratio_t=startup_run_ratio_t,
+            p1_storage_discharge_cost=_adaptive_cost,
+        )
+        _t_solve_end = time.perf_counter()
     # OPT-IN P0 commitment record, taken HERE and not below: ``fleet_arrays``
     # is about to be rebound to ``energy_solve.p1_fleet_arrays``, and the
     # markup was computed against the PRE-prep arrays. A P1 fleet hook only
@@ -5586,6 +5679,10 @@ def run_year(
         # run): the pass-1 model spike days, daily P_hat and the hourly floor
         # actually applied — the committed audit trail for the A/B gates.
         "ercot221_adaptive": ercot221_adaptive,
+        # caiso-205 adaptive-expectation audit series (None on every flag-off
+        # run): the CAISO leg's pass-1 spike days, daily P_hat and applied
+        # evening-window floor — same columns, same "adaptive" sidecar.
+        "caiso205_adaptive": caiso205_adaptive,
         # OPT-IN P0 commitment record (--persist-p0-commitment, default off).
         # Read AFTER both LPs have run and consumed by nothing downstream, so
         # it cannot perturb a solve; absent entirely at default, which is what
