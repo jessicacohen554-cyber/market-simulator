@@ -418,9 +418,9 @@
 
             <div class="insight-box warn" style="margin-top:20px;">
               <div class="insight-title">⚠ CAISO example</div>
-              WECC_import → NP15 is rated 4,800 MW and WECC_import → SP15 is
+              WECC_import → NP15 is rated 4,800 MW and WECC_import → SP15_rest is
               rated 10,623 MW, but the <em>simultaneous</em> import cap is only
-              8,300 MW — well below the 15,423 MW naive sum.
+              7,500 MW — well below the 15,423 MW naive sum.
             </div>
           </div>
 
@@ -441,13 +441,27 @@
                   <tr>
                     <td><span class="badge badge--iso-caiso">CAISO</span></td>
                     <td>WECC simultaneous import</td>
-                    <td>WECC→NP15, WECC→SP15</td>
-                    <td>8,300</td>
+                    <td>WECC→NP15, WECC→SP15_rest</td>
+                    <td>7,500</td>
+                    <td>✓</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge--iso-miso">MISO</span></td>
+                    <td>CIL/CEL — West, Plains, Illinois, Indiana, East</td>
+                    <td>2–3 paths each</td>
+                    <td>6,025–9,635 in / 3,991–10,330 out</td>
+                    <td>asym.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge--iso-neiso">NEISO</span></td>
+                    <td>HQ simultaneous import</td>
+                    <td>HQ→Boston, HQ→North, HQ→Connecticut</td>
+                    <td>3,850</td>
                     <td>✓</td>
                   </tr>
                   <tr>
                     <td colspan="5" style="color:var(--text-muted);font-size:0.82rem;font-style:italic;">
-                      ERCOT, MISO, PJM, NYISO, NEISO — no aggregate interface limits modeled (individual TTC limits apply)
+                      ERCOT, PJM, NYISO — no aggregate interface limits modeled (individual TTC limits apply)
                     </td>
                   </tr>
                 </tbody>
@@ -469,11 +483,11 @@
                 <div class="stat-card__label">ISOs modeled</div>
               </div>
               <div class="stat-card">
-                <div class="stat-card__value">32</div>
-                <div class="stat-card__label">Total zones</div>
+                <div class="stat-card__value">37</div>
+                <div class="stat-card__label">Total zones — 34 carry load, 3 are zero-load nodes</div>
               </div>
               <div class="stat-card">
-                <div class="stat-card__value">38</div>
+                <div class="stat-card__value">46</div>
                 <div class="stat-card__label">Transmission links</div>
               </div>
             </div>
@@ -645,8 +659,8 @@
 
             <div class="insight-box info" style="margin-top:16px;">
               <div class="insight-title">🔗 Linked interface paths</div>
-              The WECC import node connects to both NP15 and SP15 with
-              separate TTC limits, subject to the 8.3 GW simultaneous import
+              The WECC import node connects to both NP15 and SP15_rest with
+              separate TTC limits, subject to the 7.5 GW simultaneous import
               cap (§ 3). The LP treats each path independently but the
               interface constraint links them.
             </div>
@@ -747,8 +761,8 @@
             <div class="narrative-card">
               <div class="narrative-card__eyebrow">⚡ WECC_import node</div>
               <div class="narrative-card__body">
-                CAISO's external node. Connects to NP15 (4,800 MW) and SP15
-                (10,623 MW), subject to the 8,300 MW simultaneous import cap.
+                CAISO's external node. Connects to NP15 (4,800 MW) and SP15_rest
+                (10,623 MW), subject to the 7,500 MW simultaneous import cap.
               </div>
             </div>
             <div class="narrative-card">

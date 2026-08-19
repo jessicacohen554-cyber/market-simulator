@@ -23,11 +23,11 @@
 
   const ISO_DESCRIPTIONS = {
     ERCOT: 'Seven zones with major congestion interfaces (WESTEX, PNHNDL, NE_LOB); calibrated reference.',
-    CAISO: 'North–south trading zones (NP15, ZP26, SP15) plus WECC import node.',
+    CAISO: 'Five load zones north to south (NP15, ZP26, SP15_rest, LA_BASIN, SDGE) plus the WECC import node.',
     PJM: 'Eight LDA zones capturing west-to-east price gradients and eastern load pockets.',
-    MISO: 'Three regions (North/Central/South) with asymmetric RDT directional limits.',
+    MISO: 'Six LRZ-union zones with per-zone CIL/CEL limits and the asymmetric RDT path to MISO-South.',
     NYISO: 'Five zones with downstate import constraints (Progressive eastern islanding).',
-    NEISO: 'Five zones plus HQ import node for Quebec interconnection.',
+    NEISO: 'Four load zones plus the HQ import node for the Quebec interconnection.',
   };
 
   /**
