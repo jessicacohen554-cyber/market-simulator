@@ -10522,3 +10522,55 @@ trailing-30d 0.53; Jun/Jul cap-parking under regime uncertainty; pre-ECRS
 charter ercot-221 Phase-0 (adaptive-rule identification at daily grain,
 LOYO + the 2024→2025 within-regime control as the decisive gate, fixed-point
 feasibility leg). Nothing built, nothing armed; B-2 stays unsigned.
+
+
+---
+
+## ercot-221 — 2026-08-18/19 — THE ADAPTIVE-EXPECTATION STORAGE OFFER (owner-dispatched Phase-1 over a recorded Phase-0 screen-fail): built, live, split self-generated (7/3/0 spike days; 2025 byte-identical — self-extinguishing); mechanical verdict REJECTED-AS-ARMED on G-SHED alone (one new 17.9 MW shed hour at a real $2,451 storm hour); 2023 toward actual on every measure; **PROMOTED ON THE OWNER'S STANDING STRUCTURAL STANDARD → KEEPER 2026-08-19-ercot221-arm-adaptive**
+
+**Branch claude/ercot-220-lever-phase0-je3znm (continuing the ercot-220
+session). Owner card: direct dispatch recorded verbatim (PRECOMMIT-ercot221
+§0); precommit + Amendments 1-4 each pushed + blob-verified before its step.**
+
+The record in order: Phase-0 v1 AND v2 FAILED as pre-registered (recorded
+unrewritten; v2 identifies half-life 30 d / beta 3.0077 on the measured 2023
+daily evening offer surface — an experience-follower $175→$761→$4,700→
+$5,000→$1,852→$300 Jun-Dec); Phase-1 ENTERED ON OWNER INSTRUCTION (the
+ercot-188/213/215 pattern); the Amendment-3 bare-lambda purity overshoot was
+caught LIVE (first arm INERT at 0 spike days — the model expresses deep
+scarcity through its OWN co-opt adder; that arm stopped and discarded as a
+diagnostic) and Amendment 4 pinned the event basis to lambda + the model's
+own decontaminated anchored adder mirror (zero measured content; verified
+7/3/0 on the keeper's own path pre-launch). Control replay: G-REPRO
+strongest form, 12/12 sidecars byte-identical to the ercot-215 keeper.
+
+**A/B (pair 2026-08-19-ercot221-{ctl-headbase,arm-adaptive}, both registered
+with payloads):** the split SELF-GENERATES (spike days 7/3/0, P_hat max
+0.370/0.176/0.000, floor max $1,850/$878/$0; 2025 pass-2 identical to
+control). Gates: G-CAP 0/26,280; G-SPUR 9→11/11→10/1→1 PASS; G-BAT
+0.886/1.076 PASS; G-DOF n_residual 6→6 PASS; G-D2 PASS; **G-SHED FAIL — one
+new 17.9 MW shed hour (2024 h3066, actual RT $2,451, the Jan-2024 storm;
+control already $4,925)** ⇒ mechanical verdict REJECTED-AS-ARMED, recorded
+unrewritten. Official movement, un-targeted: C3a-2023 −40.1 → **−39.4 %**,
+C3b-2023 0.736 → **0.723**, C3c tail 68 → **72** of 181 (22/53, 1/31
+unchanged); fail set {C3a-2023, C3b-2023} UNCHANGED; C6 PASS (attestation
+names the Phase-0 record and the owner instruction). The depth ceiling is
+bootstrap starvation, measured: the model's own path carries 7 spike days vs
+reality's 23, so one adaptation pass reaches $1,850 floors vs reality's
+$3.4-5k asks.
+
+**PROMOTION:** executed in-session under the owner's standing structural
+standard given in advance this session ("If structural integrity improves
+but gates regress that may still be a keeper") — the fourth application of
+the ercot-188/213/215 pattern; both records stand. Keeper re-keyed, status
+rebuilt, auditor PASS 0 failures. Matrix: cell verdict **K** minted + keeper
+re-stamp + §5.1 header (28b); the family row + six shard cells landed in the
+build commit (28c); check_mechanism_matrix exit 0, zero warnings. Named
+successors (each needs its own identification, NOT built): a second
+adaptation pass, the cross-year post-Uri memory (Jan-Feb-2023 evening
+cap-parking, measured), a seasonal end-of-season term. The 117 missed-hour
+count half stays with FINDING-ercot220 (B-2 unsigned, Door D the floor).
+Full record: docs/FINDING-ercot221-adaptive-expectation-2026-08-19.md.
+
+**Session consumed the ercot-221 shorthand. Next shorthand: ercot-222**
+(ercot-199 remains unclaimed).
