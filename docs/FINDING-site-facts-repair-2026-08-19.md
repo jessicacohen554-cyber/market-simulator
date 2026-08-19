@@ -312,9 +312,22 @@ A scan of all nine edited pages for light-theme colour tokens used inside a `.se
 returned **zero** hits. No regressions introduced.
 
 **Rendering:** all nine edited pages were validated for HTML well-formedness (zero unclosed tags,
-zero mismatches), both edited JS files pass `node --check`, and the pages were loaded in Chromium
-off a local server to confirm they render and the site's own JS runs clean — in particular that
-`viz-iso-topology.js` handles the regenerated `iso-topologies.json`.
+zero mismatches), both edited JS files pass `node --check`, and all nine were loaded in Chromium off
+a local server: **zero page errors, zero local 404s, nav and content present on every one.**
+
+The regenerated topology was then *exercised*, not just loaded. The sandbox blocks the browser's CDN
+requests, so on the first pass d3 never loaded and `viz-iso-topology.js` never ran — the check that
+mattered most was the one not being made. Re-run with the CDN assets fetched and served locally, the
+topology viz renders per-ISO zone circles:
+
+```
+ERCOT 7    CAISO 6    PJM 8    MISO 6    NYISO 5    NEISO 5      (= 37)
+```
+
+which is the config's own per-ISO zone count, ISO for ISO — CAISO now drawing 6 where it drew 4 and
+MISO 6 where it drew 3. Every ISO tab was clicked and re-rendered. The only remaining console error
+on any page is the sandbox blocking `fonts.googleapis.com`, which is environmental and unrelated to
+these changes.
 
 **Rule 27 `[R-PUSH]`:** every push was byte-verified — the pushed blob fetched back and its line
 count and SHA-256 compared to the local file — before the next commit. All matched. No file was
