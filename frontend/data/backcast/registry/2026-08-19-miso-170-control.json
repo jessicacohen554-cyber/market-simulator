@@ -3,7 +3,7 @@
   "label": "miso 170 control",
   "date": "2026-08-19",
   "shorthand": "miso-170-control",
-  "definition": "miso-170 K-0 control: patched tree + patched CSV, both exclusion flags OFF; must be bit-identical to the committed miso-169 keeper",
+  "definition": "miso-170 CONTROL: same-recipe zero-delta replay of the 2026-08-19-miso-169-online-gated keeper on the miso-170 patched tree (mustrun_plant_exclusions field + arrays.py membership seams, both OFF; reliability_floor_coeffs_MISO.csv carrying the new exclude_plant_codes column, unarmed). PREREG-miso170 K-0 inertness proof.",
   "years": [
     2023,
     2024,
@@ -11,5 +11,5 @@
   ],
   "iso": "MISO",
   "file": "frontend/data/backcast/runs/2026-08-19-miso-170-control.js",
-  "bundle": "results/calibration/miso170_layup_A"
+  "bundle": "results/calibration/miso170_membership_A"
 }
