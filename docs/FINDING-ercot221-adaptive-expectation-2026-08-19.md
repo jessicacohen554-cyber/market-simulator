@@ -69,7 +69,7 @@ is the model's own storm calendar amplified by the identified memory rule.
 |---|---|---|
 | G-CAP | 0 violations in 26,280 h | **PASS** |
 | G-SPUR | 9→11 (+2, bar +5) / 11→10 (improves) / 1→1 | **PASS** |
-| **G-SHED** | 2023 0→0; **2024 {3067} → {3066, 3067}** — ONE new hour, **17.9 MW**, at a REAL extreme hour (actual RT $2,451, the Jan-2024 storm; control already priced it $4,925 with 600 MW shed at the adjacent h3067 in BOTH members); 2025 0→0 | **FAIL** |
+| **G-SHED** | 2023 0→0; **2024 {3067} → {3066, 3067}** — ONE new hour, **17.9 MW**, at a REAL extreme hour (actual RT $2,451, the May-8-2024 evening event; control already priced it $4,925 with 600 MW shed at the adjacent h3067 in BOTH members); 2025 0→0 | **FAIL** |
 | G-BAT | 2024 ratio 0.886, 2025 1.076 (±25 % band) | **PASS** |
 | G-DOF | ledger delta = exactly {`ercot_adaptive_half_life_days`, `ercot_adaptive_beta`}, measured-conduct identification cited; **n_residual 6 → 6** | **PASS** |
 | G-D2 | no new D-4 rows; the `ercot_storage_adaptive_expectation` attribution row present with its declared window | **PASS** |

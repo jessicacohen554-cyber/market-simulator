@@ -10704,7 +10704,7 @@ with payloads):** the split SELF-GENERATES (spike days 7/3/0, P_hat max
 0.370/0.176/0.000, floor max $1,850/$878/$0; 2025 pass-2 identical to
 control). Gates: G-CAP 0/26,280; G-SPUR 9→11/11→10/1→1 PASS; G-BAT
 0.886/1.076 PASS; G-DOF n_residual 6→6 PASS; G-D2 PASS; **G-SHED FAIL — one
-new 17.9 MW shed hour (2024 h3066, actual RT $2,451, the Jan-2024 storm;
+new 17.9 MW shed hour (2024 h3066, actual RT $2,451, the May-8-2024 evening event;
 control already $4,925)** ⇒ mechanical verdict REJECTED-AS-ARMED, recorded
 unrewritten. Official movement, un-targeted: C3a-2023 −40.1 → **−39.4 %**,
 C3b-2023 0.736 → **0.723**, C3c tail 68 → **72** of 181 (22/53, 1/31
