@@ -4112,6 +4112,25 @@ loss.
 
 ### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-16-miso-160-wefor-shape`, **NOT-YET on C3a-2025 ALONE (−12.5 %)**
 
+> **QUEUE STAMP miso-169 (2026-08-19) — PREREG-miso167 EXECUTED IN FULL ON THE 15 GB
+> CONTAINER (the ≥24 GB requirement is RETIRED:
+> `FINDING-miso169-15gb-memory-fit-2026-08-19.md` — solve-path marshalling patch 13.95 →
+> 12.40 GB year peak, bit-identical, + thread cap + swapfile recipe). Control
+> `2026-08-19-miso-169-control` bit-identical to the keeper on every scored sidecar/year;
+> §3 pre-check CLEARED both kills (K-PRE-A 78.7 % vs the 80 % inertness line — one hour
+> inside; K-PRE-B 0.1–0.2 %); `miso_reserve_online_gated` BUILT (default off, zero DOF,
+> measured MISO rho 0.1764 — solved at the uncited RHO_CLIP 0.5 floor) and the arm
+> `2026-08-19-miso-169-online-gated` SOLVED. EVERY §6 GATE PASSES — K-1 zero record-grain
+> flips, K-2, K-3 (forced shares unchanged to 4 dp), K-5 textbook (2025 rise lands
+> +$10.12 in DA-foreseen scarce hours, $0.00 RT-only). PROMOTION ESCALATED, not taken:
+> (1) the rho band is the standing nyiso-144 owner call; (2) the nyiso-143 D-4 conduct
+> rider now C8-FAILs any regenerated MISO artifact including the keeper's own
+> diagnostics. Cell `R → O` (miso-132(a)'s July-NIGHT grounds defeated for the scarce
+> window, untouched for its own). Keeper UNCHANGED; C3a-2025 −12.5 → −12.4 % (the
+> mechanism prices only the hours MISO's own DA market priced — the rest is the
+> RT-only model-class limit, exactly as the prereg's honest ceiling said).
+> `RESULT-miso169-online-gated-execution-2026-08-19.md`.**
+
 > **QUEUE STAMP miso-168 (2026-08-18) — PREREG-miso167 EXECUTION BLOCKED AGAIN: 15 GB
 > CONTAINER AGAINST THE ≥24 GB REQUIREMENT. NO SOLVE, NO PRE-CHECK, NO CODE BUILT, NO CELL
 > VERDICT MINTED, NO REGISTRATION. Keeper UNCHANGED at `2026-08-16-miso-160-wefor-shape`.**
