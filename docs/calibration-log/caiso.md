@@ -8594,3 +8594,64 @@ caiso-204 block, `docs/codebase-site/data/mechanism-matrix/CAISO.js`
 (cell . → I + tail stamp block).
 
 Next number: caiso-205.
+
+## 2026-08-19 — CAISO-205 (ADAPTIVE-EXPECTATION STORAGE OFFER, CAISO LEG — PHASE-1 ENTERED ON OWNER ORDER over the caiso-204 recorded G-BOOT FAIL; built, A/B'd at full magnitude, ALL pre-registered gates PASS; keeper UNCHANGED at caiso-200): **ARMED-AND-INERT CONFIRMED — cell stays I** — arm byte-identical to control in 2023/2025, near-inert in 2024 (floor max $14.5, exactly the caiso-204 prediction); NOT a keeper candidate
+
+**Charter.** The caiso-205 owner-decision charter offered three branches;
+the owner ordered **branch 1** in-session (the ercot-188/213/215/221
+pattern): Phase-1 entry over the caiso-204 recorded Phase-0 FAIL, scope
+fixed by the charter — CAISO-gated default-off field, constants FROZEN at
+the caiso-204 identification, A/B vs zero-delta control, direction-blind
+kill table, both runs registered.
+
+**Built** (`caiso_storage_adaptive_expectation` + frozen
+`caiso_adaptive_half_life_days` 30.0 / `caiso_adaptive_beta` 0.5945; event
+$200 on the model's OWN daily CA demand-weighted P1 lambda — pure energy
+dual, caiso-137b, zero measured content; window h18–21 PT; park cap $1,000;
+battery-only per the caiso-204 S4 classifier; two-pass P1 through the
+`p1_storage_discharge_cost` seam; audit sidecar
+`hourly/adaptive_<year>.parquet`; cache-key/TIER_TAGS/D-5/DOF-ledger
+registration in the same commit, rule 28c checker clean).
+
+**The A/B, at full magnitude** (`caiso205_gates.json`; kill table
+pre-registered in `PRECOMMIT-caiso205-adaptive-ab-2026-08-19.md`, pushed
+before any solve): control = zero-delta keeper replay
+(`2026-08-19-caiso205-ctl-headbase`), arm = single `--set` delta
+(`2026-08-19-caiso205-arm-adaptive`), full span 2023–2025. G-REPRO **PASS
+9/9** committed keeper sidecars sha256-identical in the control. Pass-1
+spike days **0/1/0**, P_hat max 0/0.0145/0, floor max **$14.5** (188
+Sep–Oct window-hours) — the caiso-204 G-BOOT wall measured to the dollar.
+**2023/2025 arm byte-identical to control; 2024 near-inert** (battery
+discharge ratio 0.9921, C3a 12.92 → 12.90 % side-effect line, model tail
+1 → 1). G-CAP 0; G-SHED none; G-BAT in band; G-D2 attribution row present,
+no new D-4 vs control; G-DOF 10 → 11 (delta exactly the two frozen
+constants). Scorecards symmetric control = arm = keeper (C3a sole
+load-bearing FAIL, C3c the ledgered caveat, C3b/C8/C6 PASS — the
+MUST-NOT-REGRESS legs hold trivially).
+
+**Keeper question, answered on the record (owner asked with the
+structure-over-gates standard):** NOT recommended — structural integrity
+did not improve (the arm adds nothing the keeper's path can express; the
+mechanism's trigger never fires on the model's own tail-deficient price
+path), so there is no structure-vs-gates trade to weigh. The honest stamp
+the owner ordered is complete: the caiso-204 screen verdict now carries a
+full-magnitude solve behind it. Keeper stays
+`2026-08-17-caiso-200-h1-memberpanel`; the C3a/C3c compression (caiso-202
+§B, adjudicated model-class) remains the lane's wall.
+
+**Session mechanics recorded** (finding §D): fresh-container `data/clean`
+emptiness tripped the strict input guard (fixed by curation); concurrent
+control+arm+regen breached the session cgroup's ~13.3 GiB cap (control
+OOM-killed once) — on this container class run ONE CAISO 3-year invocation
+at a time.
+
+**DO-NOT-REDO added:** do not re-run this A/B — the registered pair is the
+full-magnitude record; new evidence = a keeper whose own scored path
+spikes. All caiso-202/203/204 lists carry forward.
+
+**Records:** `results/calibration/FINDING-caiso205-adaptive-ab-2026-08-19.md`,
+`PRECOMMIT-caiso205-adaptive-ab-2026-08-19.md`, `caiso205_gates.json`,
+matrix CAISO shard cell + caiso-205 block, this entry. Lane RETURNS TO REST
+(caiso-201 Q1); markers, holdout freeze untouched.
+
+**Session consumed the caiso-205 shorthand. Next shorthand: caiso-206.**

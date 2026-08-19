@@ -41,7 +41,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     dump_cost_full_offer_domain: { cell: "K", ev: "caiso-139 (FINDING-caiso139-dump-cost-blindspot-2026-07-29, PREREG-caiso139, probes _caiso139_dump_cost_blindspot.py + _caiso139_dumpguard_ab.py); origin caiso-138 §B" },
     ercot_rtordpa_overlay: { cell: "." },
     ercot_artificial_shortage_pricing: { cell: "." },
-    ercot_storage_adaptive_expectation: { cell: "I", ev: "caiso-204 (2026-08-19, owner-dispatched transfer test, rule-25 fresh identification): Phase-0 FAIL on G-BOOT ALONE, recorded unrewritten (caiso204_adaptive_phase0.json; PRECHECK-caiso204 pushed pre-fit) — CAISO's storage fleet IS an adaptive expecter (daily corr 0.704 vs the 0.6 bar ERCOT failed; 2023-only fit predicts 2024/2025 months 19/24 in ±50%; identified half-life 30 d, beta 0.5945 — an UNDER-reactor, 5x below ERCOT's 3.0; $200 event = CAISO's own scarcity-tail threshold / 20% of soft cap; window h18-21 PT; 585/585-day pre-registered PUB_BID_DAM subset re-fetch, zero holes), but the mechanism is INERT ON THIS KEEPER BY BOOTSTRAP: the armed path reads only the model's own scored price (lambda + its own scarcity overlay, zero measured content) and the keeper's committed path holds 0/1/0 event days (the C3c-ledgered tail deficit), so P_hat ~ 0 and max floor $14.5 — byte-identical A/B predicted in 2023/2025. The lever amplifies a model tail, never creates one; a CAISO Phase-1 needs the tail-formation root cause (caiso-202 §B compression, adjudicated model-class) fixed first. NO CAISO field built (rule 28c not triggered); no solve spent; Phase-1 over the recorded FAIL = explicit owner act only. FINDING-caiso204-adaptive-storage-phase0-2026-08-19.md" },
+    ercot_storage_adaptive_expectation: { cell: "I", ev: "caiso-204 (2026-08-19, owner-dispatched transfer test, rule-25 fresh identification): Phase-0 FAIL on G-BOOT ALONE, recorded unrewritten (caiso204_adaptive_phase0.json; PRECHECK-caiso204 pushed pre-fit) — CAISO's storage fleet IS an adaptive expecter (daily corr 0.704 vs the 0.6 bar ERCOT failed; 2023-only fit predicts 2024/2025 months 19/24 in ±50%; identified half-life 30 d, beta 0.5945 — an UNDER-reactor, 5x below ERCOT's 3.0; $200 event = CAISO's own scarcity-tail threshold / 20% of soft cap; window h18-21 PT; 585/585-day pre-registered PUB_BID_DAM subset re-fetch, zero holes), but the mechanism is INERT ON THIS KEEPER BY BOOTSTRAP: the armed path reads only the model's own scored price (lambda + its own scarcity overlay, zero measured content) and the keeper's committed path holds 0/1/0 event days (the C3c-ledgered tail deficit), so P_hat ~ 0 and max floor $14.5 — byte-identical A/B predicted in 2023/2025. The lever amplifies a model tail, never creates one; a CAISO Phase-1 needs the tail-formation root cause (caiso-202 §B compression, adjudicated model-class) fixed first. NO CAISO field built (rule 28c not triggered); no solve spent; Phase-1 over the recorded FAIL = explicit owner act only. FINDING-caiso204-adaptive-storage-phase0-2026-08-19.md. caiso-205 (2026-08-19, PHASE-1 ENTERED ON OWNER ORDER, charter branch 1): the CAISO leg built (caiso_storage_adaptive_expectation, default-off, constants FROZEN at the caiso-204 identification) and A/B'd at full magnitude vs zero-delta control off the caiso-200 keeper (PRECOMMIT-caiso205-adaptive-ab pushed pre-solve; direction-blind kill table caiso205_gates.json). MEASURED: 2023/2025 byte-identical arm-vs-control (system sidecar sha256-equal), 2024 near-inert (1 pass-1 spike day, P_hat max 0.0145, floor max $14.5 in 188 Sep/Oct window-hours, battery discharge ratio 0.9921, C3a 12.92 -> 12.90 side-effect, tail 1 -> 1) — the caiso-204 G-BOOT wall confirmed to the dollar. ALL pre-registered gates PASS (G-REPRO 9/9 keeper sidecars sha-identical in control; G-CAP 0; G-SHED none; G-BAT in band; G-D2 attribution row present, no new D-4; G-DOF delta exactly the two frozen constants, 10 -> 11); scorecard symmetric control=arm=keeper (C3a sole FAIL, C3c ledgered, C3b/C8/C6 PASS). Cell stays I — ARMED-AND-INERT AT FULL MAGNITUDE, honest stamp complete; NOT a keeper candidate (adds no structure on this keeper's path). Pair 2026-08-19-caiso205-{ctl-headbase,arm-adaptive} registered. FINDING-caiso205-adaptive-ab-2026-08-19.md" },
     maxgen_emergency_tier_pricing: { cell: "." },
     nyiso_rcpf_family: { cell: "." },
     reserve_family_dual_sidecar: { cell: "I" },
@@ -416,4 +416,29 @@ window.MECH_MATRIX_SHARDS.CAISO = {
  * feasibility; no quoting beta=0.59 as calibration skill. Records:
  * results/calibration/FINDING-caiso204-adaptive-storage-phase0-2026-08-19.md,
  * docs/calibration-log/caiso.md, docs/mechanism-testing-matrix.md §5.2.
+ */
+
+/* caiso-205 (2026-08-19) — PHASE-1 ENTRY ON OWNER ORDER (charter branch 1,
+ * the ercot-188/213/215/221 pattern) over the caiso-204 recorded G-BOOT
+ * FAIL. The CAISO leg was BUILT (caiso_storage_adaptive_expectation +
+ * caiso_adaptive_half_life_days 30.0 / caiso_adaptive_beta 0.5945, FROZEN;
+ * $200 event / h18-21 PT / $1,000 park cap / battery-only per the S4
+ * classifier; two-pass P1 through the p1_storage_discharge_cost seam,
+ * event basis = the model's own daily CA demand-weighted P1 lambda — pure
+ * energy dual, caiso-137b, zero measured content) and A/B'd at full
+ * magnitude: control = zero-delta keeper replay, arm = single --set delta,
+ * both full-span 2023-2025, kill table pre-registered
+ * (PRECOMMIT-caiso205-adaptive-ab-2026-08-19.md pushed pre-solve).
+ * MEASURED, exactly the caiso-204 ex-ante: pass-1 spike days 0/1/0, P_hat
+ * max 0/0.0145/0, floor max $14.5 (188 Sep-Oct window-hours), 2023/2025
+ * byte-identical, 2024 near-inert (bat ratio 0.9921, C3a 12.92 -> 12.90,
+ * tail 1 -> 1). ALL gates PASS; scorecards symmetric control=arm=keeper.
+ * Cell verdict UNCHANGED at I — armed-and-inert now measured at full
+ * magnitude, the honest stamp the owner ordered; NOT a keeper candidate
+ * (no structural delta on this keeper's path; the wall remains
+ * tail-formation, caiso-202 §B, adjudicated model-class). Keeper stays
+ * 2026-08-17-caiso-200-h1-memberpanel; markers/freeze untouched. Pair
+ * registered 2026-08-19-caiso205-{ctl-headbase,arm-adaptive}. Records:
+ * results/calibration/FINDING-caiso205-adaptive-ab-2026-08-19.md,
+ * results/calibration/caiso205_gates.json, docs/calibration-log/caiso.md.
  */

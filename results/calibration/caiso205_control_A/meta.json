@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-19T09:25:45",
+  "timestamp": "2026-08-19T10:18:10",
   "iso": "CAISO",
   "years": [
     2023,
@@ -88,8 +88,7 @@
       "CC_REGULAR"
     ],
     "gas_st_wefor_base_override": 0.1591,
-    "caiso_ps_plant_params": true,
-    "caiso_storage_adaptive_expectation": true
+    "caiso_ps_plant_params": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -331,7 +330,7 @@
     "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet",
     "hydro_plant_modes": "../_shared/CAISO/hydro_plant_modes-a44772fd5dd4.parquet"
   },
-  "git_sha": "507209b",
+  "git_sha": "ed5120e",
   "basis_sha": "507209be6949e8c960ca82d1fad83b56742e5416",
   "highspy_version": "1.14.0",
   "environment": {

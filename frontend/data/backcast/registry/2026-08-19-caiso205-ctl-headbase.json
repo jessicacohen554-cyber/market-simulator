@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-19-caiso205-ctl-headbase",
+ "label": "caiso205 ctl headbase",
+ "date": "2026-08-19",
+ "shorthand": "caiso205-ctl-headbase",
+ "definition": "(PROBE \u2014 A/B control) caiso-205 control A: zero-delta replay of the keeper caiso200_h1_memberpanel at HEAD; G-REPRO PASS 9/9 committed keeper hourly sidecars sha256-identical (caiso205_gates.json). The A/B basis for 2026-08-19-caiso205-arm-adaptive. PRECOMMIT-caiso205-adaptive-ab-2026-08-19.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-08-19-caiso205-ctl-headbase.js",
+ "bundle": "results/calibration/caiso205_control_A"
+}

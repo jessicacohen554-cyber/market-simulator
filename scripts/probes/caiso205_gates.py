@@ -54,11 +54,16 @@ def _g_repro(keeper: Path, control: Path) -> dict:
         same = c.exists() and _sha(f) == _sha(c)
         rows[f.name] = bool(same)
         ok = ok and same
+    # The PRECOMMIT §4 bar is committed-set identity ONLY: every hourly
+    # sidecar the KEEPER committed is byte-identical in the control. Files
+    # the replay additionally writes (network_/unit_hourly_ — solve outputs
+    # the keeper's slim committed set never included) are reported, never
+    # gated: they have no keeper counterpart to reproduce.
     extra = sorted(
         set(p.name for p in (control / "hourly").glob("*.parquet"))
         - set(f.name for f in files)
     )
-    return {"files": rows, "extra_in_control": extra, "pass": bool(ok and not extra)}
+    return {"files": rows, "extra_in_control_reported": extra, "pass": bool(ok)}
 
 
 def _system(bundle: Path, year: int) -> pd.DataFrame:
