@@ -208,3 +208,38 @@ unchanged (already PASS at v1; re-scored at v2 constants).
 
 Verdict rule unchanged: ALL v2 gates must pass to enter Phase-1; a v2 fail
 closes the lane with both fits recorded.
+
+---
+
+## AMENDMENT 2 — the v2 Phase-0 verdict (recorded unrewritten) and the OWNER-INSTRUCTED Phase-1 entry over it
+
+**Family v2 verdict: FAIL as pre-registered** (`ercot221_adaptive_phase0.json`
+v2 section). Passing: G-COV (365 days; flat-month fidelity −0.02 %/0.00 %/
+−0.00 %), G-ID's monthly leg (4/7 in ±35 %: Jul −20 %, Aug −34 %, Sep −13 %,
+Oct +21 %), G-BOOT ($899 Aug–Sep mean floor from the keeper's own 2023 path,
+7 model spike days), the prior-ablation leg (0.006), G-SAFE-2025 (1.000).
+Failing: G-ID's daily-correlation leg (0.447 vs 0.6 — the daily response is
+a cap-or-cheap switching series; 61 fit-span days ≥ $4,999 against 79 ≤
+$500), G-DECAY (the single-exponential off-ramp is too slow for the
+measured Oct→Nov cliff, $1,852 → $300 — a seasonal end-of-scarcity-season
+structure one memory constant cannot carry), G-SAFE-2024 by 0.0011 (0.9489
+vs 0.95; the keeper's 3 real 2024 event days keep evening floors ≥ $110 in
+~5 % of hours). Also recorded as identification evidence: Jan–Feb 2023
+evening asks were parked at $5,000 (post-Uri winter memory) — cross-year
+adaptive conduct outside this family's per-year window, disclosed, not
+modeled.
+
+**Owner instruction (verbatim, repeated after the Phase-0 record):**
+*"I want you to do the adaptive battery fix for sure."* Under the
+ercot-188/213/215 pattern (an explicit owner act over a recorded mechanical
+kill), Phase-1 is ENTERED ON OWNER INSTRUCTION with the Phase-0 verdict
+standing unrewritten. The §4 direction-blind A/B kill table is UNCHANGED
+and remains the mechanical protection: any gate FAIL ⇒ REJECTED-AS-ARMED,
+recorded, promotion a separate owner decision.
+
+**Frozen Phase-1 constants (the v2 identification, rule 23):**
+`ercot_adaptive_half_life_days = 30.0`, `ercot_adaptive_beta = 3.0077`
+(v2 full-span fit; SSE-optimal on the pre-registered grid). The prior term
+does not exist in v2 (G-DOF ledger: TWO identified constants, not four).
+Conventions unchanged ($1,000 event; 120-day trail; h17–20 CST; per-year
+reset; one adaptation pass).
