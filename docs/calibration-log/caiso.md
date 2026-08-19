@@ -8534,3 +8534,63 @@ handoff carries these rulings in its guardrails. Lane otherwise stays at rest
 (caiso-201 Q1).
 
 Next number: caiso-204 (reserved for the adaptive-lever transfer session).
+
+## caiso-204 (2026-08-19) — **the ercot-221 ADAPTIVE-EXPECTATION storage offer transfer-tested (owner dispatch re-opening the rested lane for this ONE lever; rule 25: fresh CAISO identification, NOTHING transferred from the ERCOT verdict). Phase-0 KILL-BEFORE-SOLVE: verdict FAIL on G-BOOT ALONE, recorded unrewritten; cell `ercot_storage_adaptive_expectation` . → I; NO SOLVE SPENT, NO FIELD BUILT, KEEPER UNCHANGED.**
+
+Pre-registration `PRECHECK-caiso204-adaptive-phase0-2026-08-19.md` (pushed
+b6da910 BEFORE any bid value was read; six gates ex ante, both committed-bytes
+expectations declared honestly — including that G-BOOT was expected to FAIL
+from the C3c record). Record `caiso204_adaptive_phase0.json`; finding
+`FINDING-caiso204-adaptive-storage-phase0-2026-08-19.md`.
+
+**Data action, reading stated up front (caiso-203b scope note):** a zero-cost
+re-fetch of the established OASIS PUB_BID_DAM public corpus — the
+pre-registered 585-date seasonally-balanced subset (every 6th doy + 21-day
+post-event windows around the 36 measured $200 event days), fetched with the
+committed fetcher at 6 s spacing: **585/585 dates, zero rate-limit failures,
+zero archive holes.** NOT a funded intake; no owner objection raised.
+
+**The two-sided result:**
+
+1. **CAISO's storage fleet IS an adaptive expecter — both identification gates
+   PASS where ERCOT's own Phase-0 failed.** The evening (h18–21 PT) MW-weighted
+   p50 discharge offer of the caiso-178-classified storage set (76/123/163
+   members on the subset vs 77/121/167 full-corpus; fidelity 0.6–4.7 pp) tracks
+   the trailing $200-spike EWMA at daily corr **0.704** (bar 0.6; ERCOT: 0.447
+   FAIL), monthly reconstruction 26/36 in ±35 %, and a 2023-only fit predicts
+   the 2024+2025 months **19/24** within ±50 %. Identified constants:
+   **half-life 30 d, β 0.5945** — an UNDER-reactor pricing scarce-SOC evenings
+   at ~60 % of trailing frequency × cap, 5× below ERCOT's β 3.0 (rule 25 made
+   empirical). Quiet-day standing ask $53.2. Event threshold $200 = CAISO's own
+   frozen scarcity-tail threshold AND 20 % of its $1,000 soft cap; the ERCOT
+   $1,000 absolute is degenerate in-window (0 days; CA system RT max $907).
+2. **The mechanism is INERT ON THIS KEEPER by bootstrap (G-BOOT FAIL, the
+   sole structural fail, measured exactly as pre-declared).** The armed path
+   reads only the model's own scored price (λ + its own scarcity overlay, zero
+   measured content — and CAISO's scored price ALREADY contains its LOLP
+   overlay, so unlike ercot-221 Amendment 4 there is no further model-side
+   term to add). The keeper's committed path holds **0/1/0** event days at
+   $200 — the C3c-ledgered tail deficit itself — so P_hat ≈ 0 everywhere, max
+   implied floor **$14.5** (2024's single-event decay window, below even the
+   $53 standing ask), byte-identical A/B predicted in 2023/2025. **The lever
+   AMPLIFIES a model tail; it cannot CREATE the missing one.** A CAISO Phase-1
+   needs the tail-formation root cause (the caiso-202 §B compression,
+   adjudicated model-class) fixed first. G-SAFE passes trivially — the same
+   committed-path fact from the other side.
+
+**Disposition:** Phase-1 entry over the recorded FAIL is an explicit owner act
+only (ercot-188/213/215/221 pattern), and §D.3 of the finding bounds its
+reachable C3c upside as modest even then (β < 1). Lane RETURNS TO ITS RESTING
+STATE (caiso-201 Q1); keeper `2026-08-17-caiso-200-h1-memberpanel`, markers,
+holdout freeze: untouched. Dashboard: nothing to register (no run produced).
+
+**DO-NOT-REDO (caiso-204, binding):** re-running this identification on this
+corpus absent new evidence; any measured event series in an armed path; any
+model-side event threshold below $200 to manufacture bootstrap feasibility;
+quoting β = 0.59 as calibration skill.
+
+**Records:** the FINDING (above), `docs/mechanism-testing-matrix.md` §5.2
+caiso-204 block, `docs/codebase-site/data/mechanism-matrix/CAISO.js`
+(cell . → I + tail stamp block).
+
+Next number: caiso-205.

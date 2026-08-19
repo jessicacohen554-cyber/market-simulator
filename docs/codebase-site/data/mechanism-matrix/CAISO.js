@@ -41,7 +41,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     dump_cost_full_offer_domain: { cell: "K", ev: "caiso-139 (FINDING-caiso139-dump-cost-blindspot-2026-07-29, PREREG-caiso139, probes _caiso139_dump_cost_blindspot.py + _caiso139_dumpguard_ab.py); origin caiso-138 §B" },
     ercot_rtordpa_overlay: { cell: "." },
     ercot_artificial_shortage_pricing: { cell: "." },
-    ercot_storage_adaptive_expectation: { cell: "." },
+    ercot_storage_adaptive_expectation: { cell: "I", ev: "caiso-204 (2026-08-19, owner-dispatched transfer test, rule-25 fresh identification): Phase-0 FAIL on G-BOOT ALONE, recorded unrewritten (caiso204_adaptive_phase0.json; PRECHECK-caiso204 pushed pre-fit) — CAISO's storage fleet IS an adaptive expecter (daily corr 0.704 vs the 0.6 bar ERCOT failed; 2023-only fit predicts 2024/2025 months 19/24 in ±50%; identified half-life 30 d, beta 0.5945 — an UNDER-reactor, 5x below ERCOT's 3.0; $200 event = CAISO's own scarcity-tail threshold / 20% of soft cap; window h18-21 PT; 585/585-day pre-registered PUB_BID_DAM subset re-fetch, zero holes), but the mechanism is INERT ON THIS KEEPER BY BOOTSTRAP: the armed path reads only the model's own scored price (lambda + its own scarcity overlay, zero measured content) and the keeper's committed path holds 0/1/0 event days (the C3c-ledgered tail deficit), so P_hat ~ 0 and max floor $14.5 — byte-identical A/B predicted in 2023/2025. The lever amplifies a model tail, never creates one; a CAISO Phase-1 needs the tail-formation root cause (caiso-202 §B compression, adjudicated model-class) fixed first. NO CAISO field built (rule 28c not triggered); no solve spent; Phase-1 over the recorded FAIL = explicit owner act only. FINDING-caiso204-adaptive-storage-phase0-2026-08-19.md" },
     maxgen_emergency_tier_pricing: { cell: "." },
     nyiso_rcpf_family: { cell: "." },
     reserve_family_dual_sidecar: { cell: "I" },
@@ -386,4 +386,34 @@ window.MECH_MATRIX_SHARDS.CAISO = {
  * out-of-training year touched. Records:
  * results/calibration/FINDING-caiso203-selfsched-charter-duplicate-2026-08-19.md,
  * docs/calibration-log/caiso.md.
+ */
+
+/* caiso-204 (2026-08-19) — the ercot-221 ADAPTIVE-EXPECTATION storage offer
+ * transfer-tested (owner dispatch 2026-08-19 re-opening the rested lane for
+ * this ONE lever; rule 25: fresh CAISO identification, nothing transferred
+ * from the ERCOT verdict). Cell ercot_storage_adaptive_expectation . -> I.
+ * Phase-0 kill-before-solve, verdict FAIL recorded unrewritten
+ * (caiso204_adaptive_phase0.json; PRECHECK-caiso204 pushed pre-fit with all
+ * six gates ex ante). The two-sided result: (a) the conduct IS real in
+ * CAISO — the pre-registered 585-day PUB_BID_DAM subset re-fetch (the
+ * caiso-203b zero-cost-re-fetch reading, stated up front; 585/585 dates,
+ * zero holes) identifies the evening (h18-21 PT) storage offer surface as
+ * an adaptive expecter of trailing $200-spike experience at daily corr
+ * 0.704 with cross-year transfer 19/24 (both legs ERCOT's own Phase-0
+ * failed) — identified half-life 30 d, beta 0.5945 (an UNDER-reactor, vs
+ * ERCOT's 3.0); (b) the mechanism is INERT ON THIS KEEPER: its armed path
+ * reads only the model's own scored price (lambda + own scarcity overlay,
+ * zero measured content — and no further model-side term exists to add,
+ * unlike ERCOT Amendment 4), and the keeper's committed path holds 0/1/0
+ * event days at $200 (the C3c-ledgered tail deficit), so P_hat ~ 0, max
+ * floor $14.5, byte-identical A/B predicted in 2023/2025. The lever
+ * AMPLIFIES a model tail; it cannot CREATE the missing one (caiso-202 §B
+ * compression, adjudicated model-class). No ScenarioConfig field built, no
+ * solve spent, keeper/markers/freeze untouched; Phase-1 over the recorded
+ * FAIL is an explicit owner act only. DO-NOT-REDO added: no re-run of this
+ * identification without new evidence; no measured event series in any
+ * armed path; no model-side threshold below $200 to manufacture bootstrap
+ * feasibility; no quoting beta=0.59 as calibration skill. Records:
+ * results/calibration/FINDING-caiso204-adaptive-storage-phase0-2026-08-19.md,
+ * docs/calibration-log/caiso.md, docs/mechanism-testing-matrix.md §5.2.
  */
