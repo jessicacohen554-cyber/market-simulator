@@ -10561,3 +10561,108 @@ Governance: no shorthand consumed; `complete` block verified empty (no
 validation-year spend is authorized for any ISO); Door D and every adjacent
 matrix verdict stand unmoved. **Next shorthand remains ercot-221**
 (ercot-199 remains unclaimed).
+
+## 2026-08-19 — ERCOT-221 (ADAPTIVE-EXPECTATION STORAGE OFFER — the dynamic conduct family the static closures' post-mortems pointed at: Phase-0 v1+v2 FAIL recorded unrewritten, Phase-1 ENTERED ON OWNER INSTRUCTION, full-span A/B completed across an interrupted session; keeper UNCHANGED at ercot215): **REJECTED-AS-ARMED on G-SHED** — one NEW manufactured 2024 load-shed hour against a no-new-shed bar, every other gate passing; and the measured cause is the BOOTSTRAP STARVING on the missing count half (model path 7 spike days vs reality's 23, P_hat ≤ 0.37 vs measured implied 0.67–0.94). Door D re-confirmed as the floor for the 2023 price object, now from BOTH halves.
+
+**Charter.** The ercot-220b-recommended lane, chartered mid-ercot-220 by direct
+owner dispatch (verbatim in `PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md`
+§0: *"Ok yes let's do this"* / *"I want you to do the adaptive battery fix for
+sure"*) — the ONE un-adjudicated conduct family (DECISION-CARD-ercot218b §2
+reserved it as its own future card; ercot-210/211/218 measured "the mapping
+itself moves", the adaptive state's own signature).
+
+**Two-session shape, recorded.** The builder session pinned the precommit
+pre-fit (1039e94), recorded Phase-0 v1 FAIL and pre-registered the reduced v2
+family before any v2 fit (dc517d7), recorded v2 FAIL and entered Phase-1 on
+owner instruction with frozen constants half-life 30 d / β 3.0077 (6e2ea21),
+built the mechanism default-off through the ercot-219 stage-3
+`p1_storage_discharge_cost` seam as two-pass P1 (fc3bd02), committed the D-5
+attribution spec + §4 gate scorer before either arm was read (c9cfd15), solved
+and committed the CONTROL (18907e5), recorded Amendment 3 (pure-λ event basis,
+on the owner's purity question) and Amendment 4 — the λ-only arm measured
+INERT at 0 model spike days (the model's deep-scarcity expression lives in its
+own scarcity adder; its λ tops out ~$700), STOPPED, DISCARDED, recorded;
+event basis = λ + the model's own decontaminated anchored scarcity-adder
+mirror (906be2f, 41cc6f1) — then solved the ARM and committed bundle + gate
+scorecard (c407c8d) before dying UNREGISTERED and UNSTAMPED. THIS session
+(branch `claude/ercot-221-adaptive-expectation-xwkpk2`) completed the
+pipeline unchanged: G-REPRO re-verified from committed bytes (control ≡
+keeper 12/12 hourly sidecars sha256-identical), attestations + G-DOF ledgers
+written (`gen_ercot221_attestation.py`; ledger delta = exactly the two
+measured-conduct constants, n_residual 6 unchanged), both members registered
+WITH payloads, matrix cell stamped **R**, this entry + the finding authored.
+Its opening dispatch pre-dated the merged record; under DO-NOT-REDO the
+adjudicated Phase-0 was NOT re-run.
+
+**Phase-0 record (both fits stand, `ercot221_adaptive_phase0.json`).** v1
+(4-param family incl. the regime-uncertainty prior): G-ID daily corr 0.44 vs
+0.6; the prior's ablation corr 0.006 — the Jun/Jul cap-parking lives in the
+tightness-conditioned surface, NOT the unconditional evening window the
+mechanism floors; the evening response is a pure experience-follower
+(measured evening p50 $175 → $761 → $4,700 → $5,000 → $1,852 → $300 Jun–Dec
+vs spike-day counts 1/2/16/4/0/0/0). v2 (STRICTLY FEWER DOF:
+P_hat = clip(β·P_trail(λh), 0, 1)): PASSES G-COV (365 admissible days,
+flat-month fidelity ≤ 0.02 %), G-ID's monthly leg 4/7 (Jul −20 % / Aug −34 %
+/ Sep −13 % / Oct +21 %), G-BOOT ($899 Aug–Sep mean floor from the keeper's
+own 2023 path, 7 model spike days), the ablation leg; FAILS the daily-corr
+bar (0.447 vs 0.6 — cap-or-cheap switching, 61 fit-span days ≥ $4,999 vs 79
+≤ $500), G-DECAY (single exponential too slow for the Oct→Nov cliff
+$1,852 → $300), G-SAFE-2024 by 0.0011. Also recorded: Jan–Feb 2023 evening
+asks parked at $5,000 — post-Uri winter memory, cross-year conduct outside
+the per-year window, disclosed, not modeled.
+
+**The A/B, at full magnitude (`ercot221_gates.json`; control = keeper replay,
+G-REPRO strongest form).** G-CAP 0/26,280. G-SPUR 9→11 / 11→10 / 1→1 vs a
++5/yr bar — PASS. **G-SHED FAIL: 2024 {3067} → {3066, 3067}** — hour 3066 is
+May 8 HB18, inside the h17–20 floor window: the reservation floor withheld
+storage discharge at a tight hour the keeper serves — the ercot-162 failure
+mode at single-hour scale, and exactly what Phase-0's G-SAFE-2024 miss
+(0.9489 vs 0.95) warned of. G-BAT 0.886 / 1.076 in band. G-D2: the D-5
+attribution row present, D-4 rows identical. G-DOF 8/6 → 9/6, delta = the
+two constants. Side-effects (Q-B FINAL / R-A — never a basis): C3a-2023
+probe −30.38 → **−29.77 %**, C3b-2023 3.452 → 3.422, model tail 67 → 71 of
+181; C3a-2024 +7.88 → +8.64 %; **2025 byte-inert** (0 spike days — the
+self-extinguishing signature clean, ercot-217 stays closed).
+
+**G-ADA signature (reported).** 2023: 7 model spike days, P_hat max 0.370,
+floors ≥ $1,000 in 160 window-hours (Aug 24 / Sep 120 / Oct 16), max $1,850.
+2024: 3 days, max $878, none ≥ $1k. 2025: zero everything. Qualitatively the
+right dynamic (Aug–Oct 2023 concentration, decay, extinction, no year key);
+quantitatively STARVED — reality's September priced off August at implied
+P ≈ 0.81; the model's own August supplies ≤ 0.37, floors peak $1,850 where
+measured conduct sat $3,361–5,000 p50. **The joint ercot-220 + ercot-221
+reading: the count half cannot be seen without the refused online/commitment
+object, and the depth half cannot be priced off the model's own path BECAUSE
+the count half is missing. Door D (2026 SOM anchors, ~mid-2027) is the
+confirmed floor from both directions.** An iterated fixed point
+(spikes → floors → more spikes) is NOT adjudicated and would be a new card —
+G-SHED-exposed by construction; the precommit pinned one pass.
+
+**Keeper question, answered on the record (owner asked with the standing
+structural standard).** NOT recommended; promotion declined by this session
+and left to the owner: the structural claim under-delivers by its own
+bootstrap measurement (this is not ercot-213/215, where the arm bought
+measured structural exactness), and the broken gate is a physical outcome —
+manufactured load shed — not a reporting band. Both records stand.
+
+**Data task (dispatched): 2022 NP3-965 MIS recoverability = NOT
+RECOVERABLE.** Measured live: 885 documents on the MIS list, earliest
+publication **2024-03-24**, 0 in the 2022-03..2023-02 window — the 2022
+publication span has aged out of the rolling free window and is
+unrecoverable from any route this repo reaches; the measured 2022 storage
+offer level (the prep memo's memory-vs-competition discriminator) is only
+obtainable via an owner-side ERCOT archive request (named, not chartered).
+The 2024-03-24+ corpus span remains re-fetchable.
+
+**Registration.** Pair `2026-08-19-ercot221-ctl-headbase` /
+`2026-08-19-ercot221-arm-adaptive` registered WITH payloads (roster 7 → 9,
+under top-15; RETENTION HOLD honoured: ercot213-ctl-headbase and
+ercot204-rule26-delete retained). Matrix: `ercot_storage_adaptive_expectation`
+ERCOT cell **R** with the full two-session record; `check_mechanism_matrix.py`
+clean. Keeper UNCHANGED. Full record:
+`docs/FINDING-ercot221-adaptive-expectation-ab-2026-08-19.md` +
+`docs/PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md` (incl.
+Amendments 1–4) + `results/calibration/ercot221_{adaptive_phase0,gates}.json`.
+
+**Session consumed the ercot-221 shorthand. Next shorthand: ercot-222**
+(ercot-199 remains unclaimed).
