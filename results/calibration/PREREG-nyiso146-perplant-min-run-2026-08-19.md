@@ -176,10 +176,17 @@ arms: `nyiso_gas_bridge_plant_min_run` False → True. Verified field-by-field
 from the two bundles' `run_config.json`. *Fails otherwise.*
 
 **K2 — LIVENESS, two legs.**
-(a) *Floor, exact:* each arm-year's total bridge floor volume and the
-per-plant floors for 2539 and 7314 land within **±2 %** of §4's predictions
-(the tolerance covers toolchain noise only — the computation is
-deterministic). A miss means the seam did not deliver the identified vector.
+(a) *Floor, exact:* each arm-year's PER-LEG bridge floor volume — the solve's
+own `NYISO gas bridge leg <fuel> ... TWh floor volume` lines, the only place
+the floor VOLUME (as opposed to D-4's binding energy) is reported — lands
+within **±2 %** of the prediction (tolerance covers toolchain noise only; the
+computation is deterministic, and the leg totals are a tight functional of
+the per-plant vector — 2539 alone carries 25-45 % of the CC leg's move, so a
+wrong per-plant delivery moves the total). Predicted arm leg volumes:
+gas_cc **2.4508 / 1.8400 / 1.4399 TWh**, gas_st **0.1172 / 0.1343 / 0.1150
+TWh** (control: 1.8347/1.7126/1.2807 and 0.1087/0.1493/0.0987). Per-plant
+corroboration from the committed D-4 rows: 2539's bridge binding energy
+RISES in every year, 2517's FALLS in every year.
 (b) *Starts, banded to the §4 mechanism-shape prediction:* Bethlehem's arm
 P1 starts (0.05 × capacity, from the arm's own committed hourlies) fall by
 **≥ 50 % in 2023** (the year whose fragmentation is P0-off and now floored)
