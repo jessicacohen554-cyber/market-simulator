@@ -168,6 +168,8 @@ class DispatchModel:
         reserve_posture_startup: np.ndarray | None = None,
         reserve_pergen_col_pool: np.ndarray | None = None,
         reserve_balance_col_mask: np.ndarray | None = None,
+        reserve_pergen_online_gated_cols: np.ndarray | None = None,
+        reserve_pergen_pool_ramp10: np.ndarray | None = None,
         posture_gen_idx: np.ndarray | None = None,
         posture_col: np.ndarray | None = None,
         posture_mlf: np.ndarray | None = None,
@@ -534,6 +536,8 @@ class DispatchModel:
             ),
             reserve_pergen_col_pool=reserve_pergen_col_pool,
             reserve_balance_col_mask=reserve_balance_col_mask,
+            reserve_pergen_online_gated_cols=reserve_pergen_online_gated_cols,
+            reserve_pergen_pool_ramp10=reserve_pergen_pool_ramp10,
             posture_gen_idx=(posture_gen_idx if standalone_posture else None),
             posture_col=(posture_col if standalone_posture else None),
             posture_mlf=(posture_mlf if standalone_posture else None),
@@ -885,11 +889,30 @@ class DispatchModel:
                 )
                 n_posture_rows = (q_mlf + 2 * n_posture) * T
             # Joint-headroom rows are per POOL (the product split maps several
-            # R columns onto one pool row; identity otherwise).
+            # R columns onto one pool row; identity otherwise). The online-
+            # gated coupling rows (one per gated R column per hour) and the
+            # shared product-ramp rows (one per pool per hour) sit between
+            # the storage-gate and balance blocks (miso_reserve_online_gated;
+            # both zero on every flag-off path).
+            n_online_gate_rows = (
+                int(
+                    np.count_nonzero(
+                        np.asarray(reserve_pergen_online_gated_cols, dtype=bool)
+                    )
+                )
+                * T
+                if reserve_pergen_online_gated_cols is not None
+                else 0
+            )
+            n_shared_ramp_rows = (
+                n_pergen_pools * T if reserve_pergen_pool_ramp10 is not None else 0
+            )
             self._n_reserve_rows = (
                 n_pergen_pools * T
                 + n_posture_rows
                 + n_storage_gate_rows
+                + n_online_gate_rows
+                + n_shared_ramp_rows
                 + n_families * T
             )
         else:

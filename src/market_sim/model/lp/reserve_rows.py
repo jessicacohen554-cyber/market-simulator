@@ -561,6 +561,9 @@ def _build_reserve_rows_pergen(
     storage_duration_h: np.ndarray | None = None,
     pergen_col_pool: np.ndarray | None = None,
     balance_col_mask: np.ndarray | None = None,
+    online_gated_cols: np.ndarray | None = None,
+    online_rho: float = 1.0,
+    pool_ramp10_shared: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Build the PER-GENERATOR energy+reserve co-optimization rows.
 
@@ -656,6 +659,29 @@ def _build_reserve_rows_pergen(
             R-column selection (zone ∧ product), replacing the zone-only
             selection derived from ``balance_zone_mask``. ``None`` keeps the
             zone-derived selection (byte-identical).
+        online_gated_cols: ``(n_r,)`` bool — R columns whose award must be
+            backed by ON-LINE output (MISO ``miso_reserve_online_gated``,
+            PREREG-miso167 §2: Regulating + Spinning require a synchronised
+            resource, BPM-002). Each gated column ``r`` gains one coupling
+            row per hour, ``R[r,t] − online_rho · Σ_{members j of pool(r)}
+            P[g_j,t] ≤ 0`` — the ISO-agnostic online-gated row form of the
+            zone-aggregate spec, at pool grain: idle capacity backs none of
+            the gated product, so only generation that is actually running
+            carries it. ``None`` (every flag-off path) adds no rows —
+            byte-identical.
+        online_rho: The measured online-headroom multiplier for the gated
+            coupling rows (``data.online_reserve_rho`` /
+            ``spec._identified_online_rho`` — MW of 10-minute deliverable
+            headroom one MW of on-line output carries).
+        pool_ramp10_shared: ``(n_pools, T)`` — the pool's availability-scaled
+            10-minute deliverable ramp, enforced as one row per pool-hour
+            over the SUM of the pool's product columns
+            (``Σ_{r: pool(r)=p} R[r,t] ≤ pool_ramp10[p,t]``). Passed by the
+            product-split layouts where the per-COLUMN
+            ``reserve_pergen_ramp10`` bound alone would let the products
+            stack to a multiple of the pool's physical ramp (MISO's Reg+Spin
+            and Supplemental share the same iron's 10-minute capability).
+            ``None`` adds no rows — byte-identical.
 
     Returns:
         ``(block, row_lower, row_upper)``: joint-headroom rows (``<=``,
@@ -1018,6 +1044,58 @@ def _build_reserve_rows_pergen(
         gate_lower.append(np.full(n_zones * T, -np.inf))
         gate_upper.append(np.zeros(n_zones * T))
 
+    # --- Online-gated coupling + shared product-ramp blocks (MISO
+    # miso_reserve_online_gated; both None on every flag-off path — zero rows,
+    # byte-identical). Inserted BEFORE the balance rows so the balance dual
+    # stays the final n_fam*T (the dual-extraction anchor).
+    gated_blocks: list[sp.csr_matrix] = []
+    gated_lower: list[np.ndarray] = []
+    gated_upper: list[np.ndarray] = []
+    if online_gated_cols is not None:
+        gcols = np.flatnonzero(np.asarray(online_gated_cols, dtype=bool))
+        if gcols.size:
+            # Per-hour block (n_gated, vph): +1 on the gated R column, and
+            # −rho on every member P column of its pool. Coefficients are
+            # hour-constant, so one kron replicates the pattern (rule 2
+            # [R-VECTOR] — no hour loop; the loop below is over the O(n_r)
+            # gated columns, like the balance builder's family loop).
+            g_rows = [np.arange(gcols.size)]
+            g_cols = [layout._reserve_off + gcols]
+            g_vals = [np.ones(gcols.size)]
+            for k, r in enumerate(gcols):
+                # members map to POOLS (``col``); gated column r draws on the
+                # members of its own pool (identity when pools ≡ columns).
+                m_sel = np.flatnonzero(col == col_pool[r])
+                g_rows.append(np.full(m_sel.size, k))
+                g_cols.append(layout._p_off + gidx[m_sel])
+                g_vals.append(np.full(m_sel.size, -float(online_rho)))
+            og_per_hour = sp.coo_matrix(
+                (
+                    np.concatenate(g_vals),
+                    (np.concatenate(g_rows), np.concatenate(g_cols)),
+                ),
+                shape=(gcols.size, layout.vars_per_hour),
+            ).tocsr()
+            gated_blocks.append(
+                sp.kron(sp.eye(T, format="csr"), og_per_hour, format="csr")
+            )
+            gated_lower.append(np.full(gcols.size * T, -np.inf))
+            gated_upper.append(np.zeros(gcols.size * T))
+    if pool_ramp10_shared is not None:
+        pr = np.asarray(pool_ramp10_shared, dtype=float)
+        if pr.shape != (n_pools, T):
+            raise ValueError(f"pool_ramp10_shared shape {pr.shape} != ({n_pools}, {T})")
+        sr_per_hour = sp.coo_matrix(
+            (
+                np.ones(n_r),
+                (col_pool, layout._reserve_off + np.arange(n_r)),
+            ),
+            shape=(n_pools, layout.vars_per_hour),
+        ).tocsr()
+        gated_blocks.append(sp.kron(sp.eye(T, format="csr"), sr_per_hour, format="csr"))
+        gated_lower.append(np.full(n_pools * T, -np.inf))
+        gated_upper.append(np.ascontiguousarray(pr).T.ravel())
+
     # Free-concat the reserve sub-blocks (joint headroom is by far the largest —
     # T * n_members nnz). Drop the block names first so the list owns them and
     # _vstack_csr_free can release joint before allocating the stacked result,
@@ -1027,12 +1105,17 @@ def _build_reserve_rows_pergen(
         joint,
         *posture_blocks,
         *gate_blocks,
+        *gated_blocks,
         balance,
     ]
-    del joint, balance, posture_blocks, gate_blocks
+    del joint, balance, posture_blocks, gate_blocks, gated_blocks
     block = _vstack_csr_free(_res_sub, layout.total_columns)
-    row_lower = np.concatenate([joint_lower, *posture_lower, *gate_lower, bal_lower])
-    row_upper = np.concatenate([joint_upper, *posture_upper, *gate_upper, bal_upper])
+    row_lower = np.concatenate(
+        [joint_lower, *posture_lower, *gate_lower, *gated_lower, bal_lower]
+    )
+    row_upper = np.concatenate(
+        [joint_upper, *posture_upper, *gate_upper, *gated_upper, bal_upper]
+    )
     return block, row_lower, row_upper
 
 

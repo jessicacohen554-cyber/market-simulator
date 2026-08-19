@@ -383,6 +383,13 @@ MISO_AS_DIR: Path = RAW_DATA_DIR / "MISO-AS"
 #: a separate 30-minute product outside the OR construct).
 OR_PRODUCTS: tuple[str, ...] = ("reg", "spin", "supp")
 
+#: The synchronised (online-only) product pair nested inside the OR
+#: requirement — Regulating + Spinning, both requiring a resource
+#: synchronised to the grid (BPM-002 product definitions). The measured basis
+#: of the ``miso_reserve_online_gated`` nested Reg+Spin family
+#: (PREREG-miso167 §2); the ungated remainder is ``supp``.
+REGSPIN_PRODUCTS: tuple[str, ...] = ("reg", "spin")
+
 #: Model zone name of the MISO-South zonal reserve family
 #: (reserve_config.MISO_ZONAL_RESERVE_DEFAULT_ZONES) and its source region
 #: label in the cleared-offers report.
@@ -441,10 +448,14 @@ def load_miso_reserve_requirements(
 
     Returns:
         ``{"market": (hours,) array, "MISO-South": (hours,) array,
-        "MISO-Midwest": (hours,) array}`` — the measured market-wide (all
-        regions summed), South-region, and Midwest (North+Central summed) OR
-        reservation MW (``reg + spin + supp``). By construction
-        ``MISO-Midwest + MISO-South == market`` in every fully-covered hour.
+        "MISO-Midwest": (hours,) array, "market_regspin": (hours,) array}``
+        — the measured market-wide (all regions summed), South-region, and
+        Midwest (North+Central summed) OR reservation MW
+        (``reg + spin + supp``), plus the market-wide synchronised Reg+Spin
+        subset (``REGSPIN_PRODUCTS``, the ``miso_reserve_online_gated``
+        nested family's measured basis; ``market_regspin ≤ market`` in every
+        fully-covered hour). By construction ``MISO-Midwest + MISO-South ==
+        market`` in every fully-covered hour.
 
     Raises:
         FileNotFoundError: The intake parquet is absent — the
@@ -482,6 +493,7 @@ def load_miso_reserve_requirements(
         ("market", df),
         (SOUTH_ZONE, df[df["region"] == SOUTH_REGION]),
         (MIDWEST_ZONE, df[df["region"].isin(MIDWEST_REGIONS)]),
+        ("market_regspin", df[df["product"].isin(REGSPIN_PRODUCTS)]),
     ):
         series = np.full(int(hours), np.nan)
         hourly = sub.groupby("_hour")["cleared_mw"].sum()

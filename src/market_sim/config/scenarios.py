@@ -926,6 +926,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the very end of the tuple per the HOUSE-3 insertion convention.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "reliability_floor_plant_exclusions",
+    # miso-169 online-gated reserve supply (GATED default off): dropped from
+    # the hash at its default so every pre-existing cache key stays
+    # byte-stable — the off path passes None through the whole pergen
+    # product-split surface (no columns split, no rows added, byte-identical
+    # by construction). An armed run splits the R columns and adds the
+    # nested Reg+Spin family — a different LP, so it hashes distinctly,
+    # keeping the control/arm A/B off one cache entry. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "miso_reserve_online_gated",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1226,6 +1235,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
+    # Added by miso-169 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_reserve_online_gated": "False",
 }
 
 
@@ -6064,6 +6076,40 @@ class ScenarioConfig:
     # energy_reserve_coopt + MISO; hard-errors when the intake parquet is
     # absent (no silent fallback to the estimates it replaces). Default off;
     # GATED CHANGE (alters withholding, hence dispatch volumes).
+    miso_reserve_online_gated: bool = False  # MISO: restrict the synchronised
+    # reserve products' SUPPLY to on-line capacity (PREREG-miso167 §2, the
+    # miso-167 summer-scarcity anatomy's supply-side lever). Splits each
+    # (zone, fuel-class) pergen pool's R column into a GATED Reg+Spin product
+    # column and an UNGATED Supplemental column (published BPM-002 product
+    # definitions: Regulating and Spinning require a resource synchronised to
+    # the grid — Reg additionally on AGC — while Supplemental may be supplied
+    # by offline quick-start resources), sharing the pool's joint P+R
+    # headroom row via the pjm_reserve_pergen_sync product-split layout. Each
+    # gated column carries the coupling row R − online_rho·ΣP(members) ≤ 0
+    # (reserve_rows online_gated_cols — the ISO-agnostic online-gated row
+    # form at pool grain), so idle capacity backs none of the synchronised
+    # products; a pool-shared ramp row keeps the two product columns inside
+    # the pool's one availability-scaled 10-minute deliverable ramp. Adds ONE
+    # nested market-wide Reg+Spin family (the NYISO East ⊂ NYCA template):
+    # requirement = the measured hourly cleared reg+spin series
+    # (data.reserve_requirements market_regspin leg, the same committed
+    # intake miso_measured_reserve_requirements reads), demand curve = the
+    # PUBLISHED two-step Schedule 28 / BPM-002 Market-Wide Regulation &
+    # Spinning Reserve Demand Curve ($65 to 90 % cleared, $98 below —
+    # spec.MISO_REGSPIN_DEMAND_CURVE_STEPS). Every pre-existing family
+    # (market RBDC, South zonal, Midwest sub-regional) keeps its requirement,
+    # curve and all-product draw byte-identically. online_rho is the
+    # CAMPD-measured fleet statistic (data.online_reserve_rho, derived from
+    # MISO's OWN operating record per rule 25 —
+    # scripts/data/derive_campd_online_reserve_rho.py --iso MISO; measured
+    # 0.1764 over 5.28M online unit-hours, 93.1 % coverage — NOTE the
+    # consumption seam clips to RHO_CLIP whose 0.5 floor is UNCITED, the
+    # standing nyiso-144 owner escalation). Zero fitted parameters (rule 21).
+    # Requires energy_reserve_coopt + miso_reserve_pergen +
+    # miso_measured_reserve_requirements; mutually exclusive with
+    # miso_commitment_posture (rule 19 — the posture U/SU re-anchor gates the
+    # same phenomenon). Default off; GATED CHANGE (alters withholding, hence
+    # dispatch volumes).
     miso_south_seam_split: bool = False  # MISO: host the South seam's
     # reference-price bands in their own external zone
     # (constants.MISO_SOUTH_EXTERNAL_ZONE) instead of the shared
@@ -13419,6 +13465,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_midwest_subregional_reserves": 3,
     "miso_reserve_pergen": 1,
     "miso_commitment_posture": 1,
+    "miso_reserve_online_gated": 1,
     "miso_measured_reserve_requirements": 1,
     "miso_south_seam_split": 1,
     "miso_rdt_tcdc": 1,

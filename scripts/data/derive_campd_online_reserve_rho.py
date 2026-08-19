@@ -175,6 +175,7 @@ _FAMILY_SETS: dict[str, dict] = {
     # nyiso_incity_commitment_obligation -> NYISO_INCITY_OBLIGATION_FAMILIES
     # {nyc_10min_total, li_10min_total}; obligation_elig = quick_elig | ST_GAS.
     "incity_obligation": {
+        "iso": "NYISO",
         "mechanism": "nyiso_incity_commitment_obligation",
         "zones": ("NYC", "Long_Island"),
         "steam": True,
@@ -182,9 +183,27 @@ _FAMILY_SETS: dict[str, dict] = {
     # nyiso_synchronised_reserve path A -> the hand-scoped nyc_spin_online
     # family (NYISO_DOWNSTATE_SPIN_ZONES = {NYC}); eligible = quick_elig.
     "nyc_spin": {
+        "iso": "NYISO",
         "mechanism": "nyiso_synchronised_reserve",
         "zones": ("NYC",),
         "steam": False,
+    },
+    # miso_reserve_online_gated (PREREG-miso167 §2) -> the nested market-wide
+    # Reg+Spin family, drawing gated class-2 reserve across ALL MISO zones
+    # (zone_mask = ones — the market-wide RBDC convention). Eligible set =
+    # the pergen member fleet itself (reserves/spec._miso_design:
+    # RESERVE_FUEL_TYPES ∩ ramp10 > 0 — exactly the fuels
+    # RAMP10_FRAC_BY_FUEL enumerates; nuclear's zero ramp excludes it), so
+    # the statistic is measured on the same units whose online output the
+    # gated row reads. ``eligible: "reserve"`` selects the per-fuel-class
+    # bucket model below (a coal boiler, a CC block and a CT each carry
+    # their own class ramp fraction) instead of the NYISO quick/steam pair.
+    "miso_reg_spin": {
+        "iso": "MISO",
+        "mechanism": "miso_reserve_online_gated",
+        "zones": None,  # all model zones (market-wide family)
+        "steam": False,
+        "eligible": "reserve",
     },
 }
 
@@ -198,8 +217,63 @@ _QUICK_START_FUEL_TYPES: frozenset[str] = frozenset({"gas_ct", "oil"})
 _STEAM_GROUP: str = "ST_GAS"
 
 
+def _reserve_bucket_for_fuel(fuel_type: str) -> str | None:
+    """Model fuel type -> its reserve-mode bucket (``None`` = not eligible).
+
+    The bucket IS the model fuel class, and eligibility IS membership in
+    :data:`RAMP10_FRAC_BY_FUEL` — the same table ``FleetArrays.ramp10`` reads,
+    so the derive's eligible set can never drift from the pergen member set
+    (``RESERVE_FUEL_TYPES ∩ ramp10 > 0``: nuclear has no entry, exactly as it
+    has no pergen column).
+    """
+    return fuel_type if fuel_type in RAMP10_FRAC_BY_FUEL else None
+
+
+# CAMPD ``primaryFuelInfo`` -> reserve-mode fuel family, checked in order
+# (coal before gas so "Coal Refuse" never reads as gas; oil/diesel/petroleum
+# before gas so "Petroleum Coke" and oil-fired GTs resolve to oil).
+_RESERVE_FUEL_TOKENS: tuple[tuple[str, str], ...] = (
+    ("coal", "coal"),
+    ("oil", "oil"),
+    ("diesel", "oil"),
+    ("petroleum", "oil"),
+    ("gas", "gas"),
+)
+
+
+def _bucket_for_unit_reserve(
+    unit_type: str, fuel_info: str, plant_buckets: frozenset[str]
+) -> str | None:
+    """Resolve one CAMPD unit to its reserve-mode class bucket, or drop it.
+
+    Same device-first / admissibility-second structure as
+    :func:`_bucket_for_unit`, widened to the full synchronized-provider set:
+    CAMPD's ``unitType`` names the device (CC block, simple-cycle turbine,
+    boiler) and ``primaryFuelInfo`` names the fuel, which together map onto
+    the model fuel classes; the plant's own model rows then admit or drop the
+    device exactly as in the quick/steam mode.
+    """
+    ut = unit_type.strip().casefold()
+    fuel = ""
+    fi = (fuel_info or "").strip().casefold()
+    for token, fam in _RESERVE_FUEL_TOKENS:
+        if token in fi:
+            fuel = fam
+            break
+    if ut == _CC_UNIT_TYPE:
+        bucket = "gas_cc"
+    elif ut == _CT_UNIT_TYPE:
+        bucket = "oil" if fuel == "oil" else "gas_ct"
+    else:  # boiler devices
+        bucket = {"coal": "coal", "gas": "gas_st", "oil": "oil"}.get(fuel, "")
+    return bucket if bucket and bucket in plant_buckets else None
+
+
 def eligible_plants(
-    iso: str, zones: tuple[str, ...], steam: bool
+    iso: str,
+    zones: tuple[str, ...] | None,
+    steam: bool,
+    eligible: str = "quick_steam",
 ) -> tuple[dict[int, frozenset[str]], dict[str, float], dict[str, float]]:
     """Return ``({plant_code: buckets}, {bucket: ramp10_frac}, {bucket: MW})``.
 
@@ -228,14 +302,22 @@ def eligible_plants(
         steam: Whether the consumer's eligible set unions in ``ST_GAS``.
     """
     fleet = load_fleet_from_csv(iso, get_iso_config(iso))
+    reserve_mode = eligible == "reserve"
     by_code: dict[int, set[str]] = {}
-    ramp_num: dict[str, float] = {"quick": 0.0, "steam": 0.0}
-    ramp_den: dict[str, float] = {"quick": 0.0, "steam": 0.0}
+    ramp_num: dict[str, float] = {}
+    ramp_den: dict[str, float] = {}
+    if not reserve_mode:
+        ramp_num = {"quick": 0.0, "steam": 0.0}
+        ramp_den = {"quick": 0.0, "steam": 0.0}
     for gen in fleet:
-        if gen.zone not in zones:
+        if zones is not None and gen.zone not in zones:
             continue
         group = getattr(gen, "plant_group", None) or ""
-        if gen.fuel_type in _QUICK_START_FUEL_TYPES:
+        if reserve_mode:
+            bucket = _reserve_bucket_for_fuel(gen.fuel_type)
+            if bucket is None:
+                continue
+        elif gen.fuel_type in _QUICK_START_FUEL_TYPES:
             bucket = "quick"
         elif steam and group == _STEAM_GROUP:
             bucket = "steam"
@@ -247,12 +329,11 @@ def eligible_plants(
         frac = RAMP10_FRAC_BY_GROUP.get(group)
         if frac is None:
             frac = RAMP10_FRAC_BY_FUEL.get(gen.fuel_type, 0.0)
-        ramp_num[bucket] += frac * float(gen.pmax_mw)
-        ramp_den[bucket] += float(gen.pmax_mw)
+        ramp_num[bucket] = ramp_num.get(bucket, 0.0) + frac * float(gen.pmax_mw)
+        ramp_den[bucket] = ramp_den.get(bucket, 0.0) + float(gen.pmax_mw)
     mapping = {code: frozenset(b) for code, b in by_code.items()}
     ramp = {
-        b: (ramp_num[b] / ramp_den[b] if ramp_den[b] > 0 else 0.0)
-        for b in ("quick", "steam")
+        b: (ramp_num[b] / ramp_den[b] if ramp_den[b] > 0 else 0.0) for b in ramp_den
     }
     return mapping, ramp, dict(ramp_den)
 
@@ -282,6 +363,7 @@ def unit_statistics(
     years: tuple[int, ...],
     mapping: dict[int, frozenset[str]],
     ramp: dict[str, float],
+    eligible: str = "quick_steam",
 ) -> pd.DataFrame:
     """Return one row per CAMPD unit with its measured headroom and output sums.
 
@@ -317,6 +399,7 @@ def unit_statistics(
                     "facilityName",
                     "unitId",
                     "unitType",
+                    "primaryFuelInfo",
                     "date",
                     "hour",
                     "opTime",
@@ -329,7 +412,16 @@ def unit_statistics(
                 continue
             df = df.sort_values(["facilityId", "unitId", "date", "hour"])
             for (fid, uid), g in df.groupby(["facilityId", "unitId"], sort=False):
-                bucket = _bucket_for_unit(str(g["unitType"].iloc[0]), mapping[int(fid)])
+                if eligible == "reserve":
+                    bucket = _bucket_for_unit_reserve(
+                        str(g["unitType"].iloc[0]),
+                        str(g["primaryFuelInfo"].iloc[0]),
+                        mapping[int(fid)],
+                    )
+                else:
+                    bucket = _bucket_for_unit(
+                        str(g["unitType"].iloc[0]), mapping[int(fid)]
+                    )
                 if bucket is None:
                     continue
                 key = (int(fid), str(uid))
@@ -445,7 +537,7 @@ def family_summary(
                 "iso": iso,
                 "family_set": family_set,
                 "mechanism": spec["mechanism"],
-                "zones": "|".join(spec["zones"]),
+                "zones": ("ALL" if spec["zones"] is None else "|".join(spec["zones"])),
                 "steam_union": bool(spec["steam"]),
                 "n_units": int(len(units)),
                 "n_plants": int(units["plant_code"].nunique()),
@@ -499,21 +591,29 @@ def main() -> None:
     args = ap.parse_args()
     iso = args.iso.upper()
     years = tuple(int(y) for y in args.years)
-    wanted = sorted(_FAMILY_SETS) if args.families == "all" else [args.families]
+    wanted = (
+        # "all" = every family set DECLARED for this ISO — a NYISO-designed
+        # set is never silently derived on MISO's fleet (rule 25) and vice
+        # versa; an explicit --families still selects exactly what it names.
+        [k for k in sorted(_FAMILY_SETS) if _FAMILY_SETS[k].get("iso", iso) == iso]
+        if args.families == "all"
+        else [args.families]
+    )
 
     summaries: list[pd.DataFrame] = []
     details: list[pd.DataFrame] = []
     for family_set in wanted:
         spec = _FAMILY_SETS[family_set]
         print(f"{iso}/{family_set}: zones={spec['zones']} steam={spec['steam']}")
-        mapping, ramp, eligible_mw = eligible_plants(iso, spec["zones"], spec["steam"])
+        elig_mode = spec.get("eligible", "quick_steam")
+        mapping, ramp, eligible_mw = eligible_plants(
+            iso, spec["zones"], spec["steam"], eligible=elig_mode
+        )
         if not mapping:
             raise SystemExit(f"{iso}/{family_set}: model fleet has no eligible plants")
-        print(
-            f"  {len(mapping)} eligible plant code(s); "
-            f"ramp10_frac quick={ramp['quick']:.4f} steam={ramp['steam']:.4f}"
-        )
-        units = unit_statistics(iso, years, mapping, ramp)
+        ramp_str = " ".join(f"{b}={ramp[b]:.4f}" for b in sorted(ramp))
+        print(f"  {len(mapping)} eligible plant code(s); ramp10_frac {ramp_str}")
+        units = unit_statistics(iso, years, mapping, ramp, eligible=elig_mode)
         summary = family_summary(units, iso, family_set, eligible_mw)
         row = summary.iloc[0]
         print(

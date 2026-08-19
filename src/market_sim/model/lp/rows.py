@@ -1249,6 +1249,8 @@ def build_constraints(
     reserve_pergen_ramp10: np.ndarray | None = None,
     reserve_pergen_col_pool: np.ndarray | None = None,
     reserve_balance_col_mask: np.ndarray | None = None,
+    reserve_pergen_online_gated_cols: np.ndarray | None = None,
+    reserve_pergen_pool_ramp10: np.ndarray | None = None,
     posture_gen_idx: np.ndarray | None = None,
     posture_col: np.ndarray | None = None,
     posture_mlf: np.ndarray | None = None,
@@ -1893,11 +1895,13 @@ def build_constraints(
             # Per-generator reserve columns (R[j,t] per reserve-providing
             # unit): joint P+R headroom per unit-hour + per-family balance.
             # Mutually exclusive with the zone-aggregate spec's scoping
-            # mechanisms (supply cap / online gating / additive headroom) —
-            # the per-unit ramp10 variable bound supersedes them all. Storage
-            # participates via the same duration-gated RS[c,z] columns as the
-            # zone-aggregate path when the layout allocated them (CAISO
-            # caiso_reserve_coopt, issue #1492).
+            # mechanisms (supply cap / zone-class online gating / additive
+            # headroom) — the per-unit ramp10 variable bound supersedes them
+            # all; the pergen layout's own online gating is the per-column
+            # ``reserve_pergen_online_gated_cols`` coupling rows (MISO
+            # miso_reserve_online_gated). Storage participates via the same
+            # duration-gated RS[c,z] columns as the zone-aggregate path when
+            # the layout allocated them (CAISO caiso_reserve_coopt, #1492).
             res_block, res_lower, res_upper = _build_reserve_rows_pergen(
                 layout,
                 fleet,
@@ -1914,6 +1918,9 @@ def build_constraints(
                 storage_duration_h=reserve_storage_duration_h,
                 pergen_col_pool=reserve_pergen_col_pool,
                 balance_col_mask=reserve_balance_col_mask,
+                online_gated_cols=reserve_pergen_online_gated_cols,
+                online_rho=reserve_online_rho,
+                pool_ramp10_shared=reserve_pergen_pool_ramp10,
             )
             blocks.append(res_block)
             del res_block
