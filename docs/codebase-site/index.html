@@ -276,7 +276,7 @@
             </div>
             <div class="page-card__num">05 — The Engine</div>
             <div class="page-card__title">Solving &amp; Pricing</div>
-            <p class="page-card__desc">The P0→P1→P2 three-solve sequence. How startup costs enter bid-cost pricing. The commitment screen. Duals on energy balance constraints become LMPs.</p>
+            <p class="page-card__desc">The P0→P1 two-solve sequence. How startup costs enter bid-cost pricing. The P1-native commitment bridges. Duals on energy balance constraints become LMPs.</p>
             <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
           </a>
 
@@ -491,7 +491,7 @@
       { id: 'fleet',  label: 'Fleet',     sub: 'Offer curves',    color: '#0EA5E9', fill: 'rgba(14,165,233,0.14)',  stroke: 'rgba(14,165,233,0.60)',
         tip: { title: 'Fleet', body: 'Generators with CAMPD per-plant binning (must-run / committed / economic / peaking tranches). Each tranche has a marginal cost = fuel × heat rate + VOM + carbon + NOx. Renewable CFs from EIA-930.' } },
       { id: 'lp',     label: 'LP Solver', sub: 'HiGHS · ~200k vars', color: '#6366F1', fill: 'rgba(99,102,241,0.22)',  stroke: 'rgba(99,102,241,0.75)',
-        tip: { title: 'LP Solver (HiGHS)', body: 'Three solves per year: P0 base-cost → P1 bid-cost (startup markup) → P2 optional commitment screen. Direct CSC matrix → HiGHS. No Pyomo, PuLP, or scipy. Vectorized — no Python loops over hours.' } },
+        tip: { title: 'LP Solver (HiGHS)', body: 'Two solves per year: P0 base-cost → P1 bid-cost (startup markup). P1 is the production path and what every run is scored on; the legacy P2 commitment pass is archived. Direct CSC matrix → HiGHS. No Pyomo, PuLP, or scipy. Vectorized — no Python loops over hours.' } },
       { id: 'lmps',   label: 'LMPs',      sub: 'Shadow prices',   color: '#22C55E', fill: 'rgba(34,197,94,0.16)',   stroke: 'rgba(34,197,94,0.65)',
         tip: { title: 'LMPs — Locational Marginal Prices', body: 'The dual variables on energy-balance constraints. No separate pricing model — prices ARE the LP duals. Zonal separation emerges when transmission hits TTC limits. Scarcity via VOLL × slack dispatch.' } },
       { id: 'capevo', label: 'Capacity Evolution', sub: '6-step annual loop', color: '#22C55E', fill: 'rgba(34,197,94,0.14)', stroke: 'rgba(34,197,94,0.60)',

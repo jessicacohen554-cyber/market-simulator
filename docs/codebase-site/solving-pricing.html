@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solving &amp; Pricing — Codebase Explorer</title>
-  <meta name="description" content="The P0→P1→P2 three-solve sequence: how startup costs enter bid-cost pricing, the commitment screen, and how LP duals become zonal LMPs.">
+  <meta name="description" content="The P0→P1 two-solve sequence: how startup costs enter bid-cost pricing, the P1-native commitment bridges, and how LP duals become zonal LMPs.">
 
   <link rel="stylesheet" href="css/shared.css">
   <link rel="stylesheet" href="css/site.css">
@@ -310,7 +310,7 @@
   <main id="main">
 
     <!-- =======================================================================
-         Section 1: Why Three Solves?
+         Section 1: Why Two Solves?
          ======================================================================= -->
     <section class="section-light" aria-labelledby="s1-heading">
       <div class="content-section">
@@ -319,7 +319,7 @@
           <div class="section-number">①</div>
           <div>
             <div class="section-header__title">Motivation</div>
-            <h2 id="s1-heading">Why Three Solves?</h2>
+            <h2 id="s1-heading">Why Two Solves?</h2>
           </div>
         </div>
 
@@ -332,8 +332,9 @@
             to amortise the cost, but the run length depends on the price it sets.
           </p>
           <p>
-            Three passes break this circularity cleanly — and stay pure LP, avoiding the MIP complexity of
-            true unit commitment:
+            <strong>Two passes</strong> break this circularity cleanly — and stay pure LP, avoiding the MIP
+            complexity of true unit commitment. A third pass, P2, existed historically and is listed below
+            for the record; it is <strong>archived</strong>, not an option (see the note under the table).
           </p>
         </div>
 
@@ -358,16 +359,31 @@
                 <td><span class="pass-label pass-p1">P1</span></td>
                 <td>Bid MC = base MC + amortised startup markup μ</td>
                 <td><strong>Sets clearing prices.</strong> Markup reflects real startup economics in the LMP</td>
-                <td>LMP duals, P1 dispatch, warm basis for P2</td>
+                <td><strong>LMP duals and the scored dispatch.</strong> P1 is the production/forecast path
+                    and what every run is scored on</td>
               </tr>
               <tr>
-                <td><span class="pass-label pass-p2">P2</span></td>
+                <td><span class="pass-label pass-p2">P2</span> <span style="font-size:0.72rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--text-muted);">archived</span></td>
                 <td>Bid MC on a commitment-screened fleet</td>
-                <td>Optional: decommit unprofitable CC/CT runs below IRR hurdle (off by default)</td>
-                <td>Commitment decisions; P2 re-dispatch if enabled</td>
+                <td>Historical: decommitted unprofitable CC/CT runs below an IRR hurdle</td>
+                <td>Commitment decisions; P2 re-dispatch</td>
               </tr>
             </tbody>
           </table>
+          <div class="insight-box warn" style="margin-top:16px;">
+            <div class="insight-title">P2 is archived — not a calibration option</div>
+            <p style="margin:0;">
+              P0 and P1 are the <strong>only two passes</strong>. P2 is a legacy artifact kept intact as a
+              last resort: its flags (<code>--commitment</code>, <code>--ercot-as-aware-commitment</code>,
+              <code>--run-p2</code>, …) are hidden from <code>--help</code> and <strong>hard-error</strong>
+              unless <code>--enable-legacy-p2</code> is passed, so it can never become a silent calibration
+              option. <strong>No keeper uses it</strong> and it is in no default or recommended
+              configuration. Commitment structure that <em>is</em> live reaches P1 a different way — three
+              P1-native bridges inject a <code>min_gen</code> floor detected from the P0 run pattern at the
+              P0→P1 seam, so the ISO keeps its commitment structure and is still scored on P1, and none of
+              them triggers a P2 pass.
+            </p>
+          </div>
         </div>
 
         <div class="story-section">
@@ -385,12 +401,12 @@
 
         <div class="sp-stats story-section" role="list" aria-label="Key solve statistics">
           <div class="sp-stat sp-stat--green" role="listitem">
-            <div class="sp-stat__value">3</div>
-            <div class="sp-stat__label">LP solves per ISO-year — P0, P1, and optional P2</div>
+            <div class="sp-stat__value">2</div>
+            <div class="sp-stat__label">LP solves per ISO-year — P0 base-cost, then P1 bid-cost; P1 is the scored run</div>
           </div>
           <div class="sp-stat sp-stat--blue" role="listitem">
             <div class="sp-stat__value">~5×</div>
-            <div class="sp-stat__label">Warm-start speedup — P1 inherits P0's basis; P2 inherits P1's</div>
+            <div class="sp-stat__label">Warm-start speedup — P1 inherits P0's optimal basis</div>
           </div>
           <div class="sp-stat sp-stat--amber" role="listitem">
             <div class="sp-stat__value">12</div>
@@ -704,7 +720,7 @@
         <div class="content-section-narrow">
           <div class="story-section">
             <p>
-              The three-solve structure pays for itself through basis reuse. Each pass warm-starts
+              The two-solve structure pays for itself through basis reuse. P1 warm-starts
               from the previous one's optimal basis — the set of active constraints HiGHS
               identified. Because P0 and P1 share the same constraint structure (only the
               objective changes), P1 typically reaches optimality in a handful of dual-simplex
@@ -758,7 +774,7 @@
                 Before any solve, <code class="code-ref">cache.py</code> checks whether
                 the Parquet output already exists for this scenario + year hash.
                 Re-running the same config is instant — the result is loaded from disk,
-                not recomputed. P1 and P2 are cached separately.
+                not recomputed.
               </div>
             </div>
 

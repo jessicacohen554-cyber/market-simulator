@@ -154,7 +154,7 @@
           </p>
 
           <p style="margin-bottom: 0;">
-            The <a href="solving-pricing.html">Solving & Pricing page</a> explains the full three-solve sequence (P0→P1→P2) and how startup costs and unit-commitment effects enter the pricing. For now: <strong>dispatch → LP → duals = prices.</strong>
+            The <a href="solving-pricing.html">Solving & Pricing page</a> explains the full two-solve sequence (P0→P1) and how startup costs and unit-commitment effects enter the pricing. For now: <strong>dispatch → LP → duals = prices.</strong>
           </p>
         </div>
       </div>
@@ -195,7 +195,7 @@
     <section class="section-light">
       <div class="content-section">
         <div class="insight-box info">
-          <strong>⚡ Key takeaway:</strong> This is a <strong>dispatch model</strong>, not a commitment model. The LP finds the cheapest way to meet demand hour by hour. We assume all generators can be started and stopped instantly at no cost — we don't model minimum-run times, startup lags, or ramping constraints. (An optional P2 commitment screen can tighten the solution, but it is off by default — the default mode is pure economic dispatch.) This simplification lets us solve all 8,760 hours of a year together as a single LP — then step through the 25 years sequentially — keeping the model tractable while still capturing the core economics.
+          <strong>⚡ Key takeaway:</strong> This is a <strong>dispatch model</strong>, not a commitment model. The LP finds the cheapest way to meet demand hour by hour. We assume all generators can be started and stopped instantly at no cost — we don't model minimum-run times, startup lags, or ramping constraints. (A legacy P2 commitment screen exists but is archived — no keeper uses it and it hard-errors without an explicit unlock flag. Commitment structure that is live enters the P1 solve as a min-gen floor instead.) This simplification lets us solve all 8,760 hours of a year together as a single LP — then step through the 25 years sequentially — keeping the model tractable while still capturing the core economics.
         </div>
       </div>
     </section>
