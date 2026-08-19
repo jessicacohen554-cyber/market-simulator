@@ -4176,6 +4176,31 @@ loss.
 
 ### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-16-miso-160-wefor-shape`, **NOT-YET on C3a-2025 ALONE (−12.5 %)**
 
+> **QUEUE STAMP miso-170 (2026-08-19) — THE miso-169 §5 ASK-2 MEMBERSHIP REPAIR
+> BUILT, SOLVED AND ESCALATED. Keeper UNCHANGED at `2026-08-19-miso-169-online-gated`;
+> nothing promoted. RHO_CLIP NOT TOUCHED — no owner ruling on the band exists, so the
+> standing nyiso-144 escalation holds and both arms solved at the same uncited 0.5 floor.**
+> New GATED field `mustrun_plant_exclusions` (default off, zero DOF) armed WITH the
+> existing `reliability_floor_plant_exclusions` over ONE mechanism-blind CAMPD lay-up
+> census — the charter's single channel reaches only 2 of the keeper's 18 D-4 conduct
+> failures, the other 16 being `st_gas_mustrun_per_plant`, which had no exclusion channel
+> (the nyiso-140 → nyiso-144 story one mechanism later, rule 19). Runs
+> `2026-08-19-miso-170-control` / `2026-08-19-miso-170-membership`. **K-0 bit-identity
+> 12/12 `max|diff| = 0.0`; K-2 shed 0.5295/0.8653/0.9459 TWh inside the pre-registered
+> ±50 % band; K-3 conduct failures 18 → 3 with ZERO new; K-5 zero record-grain flips over
+> 67 records; K-6 shape held. C8 ST_GAS 2024 FAIL → PASS — the first MISO year ever to
+> clear C8's provenance leg.** BUT **K-1 (membership exactness) FAILS AS WRITTEN** on two
+> residual plant-1104 `reliability_floor` rows, so the prereg §6 mechanical verdict is
+> **REJECTED-AS-ARMED and is NOT reinterpreted**. Unit-grain forensic: 1104's ST_GAS rows
+> carry ZERO reliability-floor unit-hours in the arm; the residual is 777/763 unit-hours on
+> its CT_PEAKER tranches inside h15-21, charged to ST_GAS because
+> `aggregate_floors_by_plant` labels a plant with its most common unit group — a D-4
+> **instrument attribution defect**, not a membership residual, and the second thing the
+> owner must adjudicate. Cell `mustrun_plant_exclusions` stays `O`. Named successor (NOT
+> bundled, rule 19): per-year rather than pooled `online_frac`, measured on plant 1402
+> Little Gypsy (pooled 0.508 vs per-year metered 0.2495/0.6134/0.6548).
+> `RESULT-miso170-stgas-floor-membership-2026-08-19.md`.
+
 > **QUEUE STAMP miso-169 (2026-08-19) — PREREG-miso167 EXECUTED IN FULL ON THE 15 GB
 > CONTAINER (the ≥24 GB requirement is RETIRED:
 > `FINDING-miso169-15gb-memory-fit-2026-08-19.md` — solve-path marshalling patch 13.95 →
