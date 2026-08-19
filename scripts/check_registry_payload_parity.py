@@ -75,7 +75,21 @@ RUNS_DIR = ba.RUNS
 # names the top-level dir and carries a reason comment; a stale entry is a
 # re-armable hole in the gate (delete it when the bundle goes). Empty at
 # adoption (2026-08-16): every non-`_` dir on the tree was sidecar-mapped.
-KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset()
+KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
+    {
+        # miso-170b independent-replication evidence (2026-08-19): this pair
+        # was solved concurrently with — and verified BIT-IDENTICAL to — the
+        # registered miso170_membership_A/B (probe --identity, max|diff|=0 on
+        # every scored sidecar of every year). Their duplicate registrations
+        # were reconciled away in favour of the canonical ids, but the bundles
+        # are cited by the 2026-08-19-miso-170-sitegrain keeper's promotion
+        # note and RESULT-miso170b-sitegrain-execution-2026-08-19.md as the
+        # replication record (which also proves the intervening merges
+        # MISO-inert), so they legitimately outlive their sidecars.
+        "miso170_layup_A",
+        "miso170_layup_B",
+    }
+)
 
 # Namespace-boundary vocabulary (FR-24). `kind`/`mode` are FORECAST-sidecar
 # fields — a backcast registry entry has neither — so their presence with a

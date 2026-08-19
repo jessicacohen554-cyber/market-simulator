@@ -7741,3 +7741,59 @@ definitions (BPM-002, Schedule 28). If they are mostly supplemental **the lever
 does not exist and MISO's C3a-2025 becomes a documented model-class limit end to
 end** — an outcome to be reported as readily as a positive one. **No solve is
 justified until that decomposition is on paper.**
+
+### miso-170b (2026-08-19, session claude/miso-2025-pricing-analysis-a4cby5) — SITE-GRAIN RE-STAMP EXECUTED AND PROMOTED: keeper → `2026-08-19-miso-170-sitegrain`; C8 2025 joins 2024 at PASS; plus the congestion/ELMP adjudication and the Ames diagnosis
+
+Owner-chartered fresh look at MISO summer-2025 underpricing (two named hypotheses) plus the
+in-session owner report "Ames Burlington and Syl laskin are wya off and now we're failing c8".
+Ran concurrently with the session that landed miso-170; the overlap was reconciled on the
+record (duplicate registrations removed, the independently solved pair verified BIT-IDENTICAL
+to `miso170_membership_A/B` — max|diff|=0 on every scored sidecar of every year, which also
+proves the intervening ERCOT/NYISO/CAISO merges MISO-inert).
+
+**1. The C8 repair, completed.** Executed `PREREG-miso170` §7 (this session's dated K-1
+amendment): `patch_reliability_coeffs` re-stamps the SAME 15-plant lay-up census at SITE
+grain — each census site excluded from every `(zone, class)` limb its model tranches occupy
+(9 CT_PEAKER-limb cells; the live repair is Burlington 1104, whose CT tranches were floored
+777/763 unit-hours by the Plains CT netload limb while the SITE metered dark in 98.7 %/91.8 %
+of exactly those hours; 1464/2123/6358 stamps are measured-inert guards). Arm-2
+(`miso170_layup_B2`, run `2026-08-19-miso-170-sitegrain`): **ALL KILLS SILENT** — K-1 PASS
+(zero census rows on either mechanism in any year), K-2 in band, K-3 18→1 with zero new and
+the pre-named 1402 survivor, K-5 zero record flips, K-6 shape held; **C8 ST_GAS 2025
+FAIL→PASS joins 2024** (both grounded above budget). Promoted under the owner's standing
+same-session instruction and the prereg's own candidate rule. Determination **NOT-YET on
+C3a-2025 (−12.1 %) + C8-2023 alone** (1402's pooled-`online_frac` window defect — per-year
+`online_frac` stays the named successor; the cycler is never added to the census). C3c
+ledgered; C6 PASS (`gen_miso170b_attestation.py`, 33 entries / 2 residual, zero new DOF).
+The predecessor's `aggregate_floors_by_plant` attribution defect STANDS as an open cross-ISO
+scorer item, now decoupled from MISO's C8. Also repaired in the same commit: the rule-25
+exclusion pin test (`test_no_other_iso_carries_an_exclusion`) that FAILED at the landed HEAD
+(NYISO-only → NYISO+MISO allowlist) + a site-grain MISO contract test.
+
+**2. The two owner hypotheses, adjudicated NO-LP**
+(`FINDING-miso170-congestion-elmp-assessment-2026-08-19.md`). (a) CONGESTION/penalty
+factors: refuted as a C3a-2025 cause against the scored target's own components — the
+INDIANA.HUB series' MCC is FLAT (+1.75→+1.56 $/MWh, 2023→2025) while its LMP rose +$11.06;
+the $2.2 B congestion spike lives in hub dispersion (South MCC → −6.5) and sub-hub pockets,
+neither in the target; the representable penalty factors are already keeper-armed
+(`rdt_tcdc` $40/$500 TCDC + $200 RPE); miso-78/79's fundamental NO-BUILD stands; the missing
+lw-premium ($1.62/MWh of 2025) is measured TEMPORAL (spatial within-hour: actual +$0.12 vs
+model +$0.54). Named-not-chartered: `measured_interface_limits` (U) as a zonal-basis lever;
+the +1.33 GW scarce-hour over-import; the benchmark-composition question (hub vs load-zone
+target) as an OWNER decision. (b) ELMP ex-post premium: the representable half is already
+in (the LP is the relaxation ELMP approximates; `tranche_startup_amortization` is the
+registered fast-start pricing at $4.15–4.74/MWh top-200; `maxgen_emergency_tier_pricing` K;
+IMM markup +3.0 %/−2.5 % closes the missing-markup route); the residue is the RT-only
+model-class limit (27 of 47 hours where MISO's own DA priced $80 vs RT $428), owned by the
+miso-163 ruling and the miso-171 charter.
+
+**3. Ames (1122) diagnosed — a floor-LEVEL basis defect, not lay-up** (finding §3): the
+model runs it 586–591 GWh/yr vs ~290–356 GWh metered (+65–93 %), ~90 % floor-forced, D-4
+conduct PASSING because the plant genuinely runs 91 % of hours; the artifact's
+`p25_cf = 0.674` reconstructs against NAMEPLATE while the measured p25-of-online is 33 MW =
+0.304 of nameplate (0.674 × its ~49 MW available-capacity base = 33.0 exactly — a
+basis-mismatch signature). NAMED SUCCESSOR in the 1402/mustrun-parameter family; not bundled
+(rule 19); Ames is never excluded (its floor is right in kind, wrong in LEVEL).
+
+Rule 22: 2023–2025 only; freeze untouched; no marker touched. Next number: **miso-171**
+(the reserve-requirement decomposition charter, already drafted).
