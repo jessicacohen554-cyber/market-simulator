@@ -21,7 +21,7 @@
 window.MECH_MATRIX_SHARDS = window.MECH_MATRIX_SHARDS || {};
 window.MECH_MATRIX_SHARDS.CAISO = {
   iso: "CAISO",
-  updated: "2026-08-17",
+  updated: "2026-08-19",
   keeper: "2026-08-17-caiso-200-h1-memberpanel",
   gates: "TWO load-bearing FAILs as of the caiso-200 promotion (2026-08-17, the fleet-member panel-membership closure promoted on the OWNER'S in-session structural-integrity instruction executing the PRECHECK-caiso200 §6 pre-registered decision tree): C1 fuel-mix (single row: 2023 CC_REGULAR -4.243 TWh vs the +/-4.15 band; 11/12, free 7/8 — entered at the caiso-199 Desert Star landing, ACCEPT-WITH-FLIP, and measured at caiso-200 to be a REAL class residual: the panel-membership closure returned only +0.003 TWh, so the deficit is the standing CC-side under-dispatch / over-import lane, caiso-121/135/140 §B, NOT an outage-instrument artifact) and C3a mean LMP 2024 (+12.8%) / 2025 (+15.7%) with 2023 PASSING (+4.1%). C3b clean. C3c the single ledgered caveat, re-measured at promotion (2023 0h vs 47h; 2024 1h vs 35h — the 1 h entered at the caiso-199 landing; 2025 PASSES). C6 attested AT promotion (gen_caiso200_attestation.py, premises computed; DOF ledger 10/7 carried, zero new parameters). BOTH incremental costs vs the caiso-197 incumbent are the measured INSTRUMENT (the Desert Star landing + the membership closure), not any mechanism: the recipe is G-DELTA-EMPTY identical. THE IN-MODEL QUEUE IS EXHAUSTED (caiso-199 §4, confirmed caiso-200): the only named C3a routes are the two standing owner objects (the walled hourly PS water-state intake, caiso-141/ruling 4 DECLINED; the 8,800 MW declared residual, caiso-191 §4 desk-refused), owner ruling 5 stands (C3a must genuinely pass — NOT-YET is the honest fallback), and the frontier/complete-readiness answer is NOT SUPPORTABLE (ASSESSMENT-caiso200-frontier-2026-08-17.md). DO-NOT-REDO adjudications unchanged: export/absorption (caiso-142 §H), offer rungs (caiso-131 §10), reserve tiers (caiso-144), hydro_ror_split (caiso-194), lane 6 (caiso-191 §4), the caiso-197 composed cells, the caiso-198 unpinned CA+NV re-derive, the caiso-199 state-list pin legs, and now the caiso-200 §3b membership legs (byte-identity proven both ways; re-running them expecting different shas is a frozen cell)",
   cells: {
@@ -36,12 +36,12 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     reference_price_interface: { cell: "U" },
     gas_offer_net_revenue_margin: { cell: "K", ev: "caiso-115" },
     gas_offer_margin_zonal_anchor: { cell: "." },
-    diurnal_price_amplitude: { cell: "U", ev: "xiso-1 §2 (audit, no prior ISO-local finding)" },
+    diurnal_price_amplitude: { cell: "U", ev: "xiso-1 §2 (audit, no prior ISO-local finding); caiso-202 §B is the CAISO evidence base (FINDING-caiso202-c3a-overrun-decomposition-2026-08-18 — the sub-$60 overprice / >$60 underprice compression is year-invariant, measured per actual-price bucket on all three years)" },
     ordc_scarcity_overlay: { cell: "K", ev: "caiso-137b (FINDING-caiso137b-overlay-reachability-2026-07-29 §2/§3/§4); caiso-137 §1" },
     dump_cost_full_offer_domain: { cell: "K", ev: "caiso-139 (FINDING-caiso139-dump-cost-blindspot-2026-07-29, PREREG-caiso139, probes _caiso139_dump_cost_blindspot.py + _caiso139_dumpguard_ab.py); origin caiso-138 §B" },
     ercot_rtordpa_overlay: { cell: "." },
     ercot_artificial_shortage_pricing: { cell: "." },
-    ercot_storage_adaptive_expectation: { cell: "." },
+    ercot_storage_adaptive_expectation: { cell: "I", ev: "caiso-204 (2026-08-19, owner-dispatched transfer test, rule-25 fresh identification): Phase-0 FAIL on G-BOOT ALONE, recorded unrewritten (caiso204_adaptive_phase0.json; PRECHECK-caiso204 pushed pre-fit) — CAISO's storage fleet IS an adaptive expecter (daily corr 0.704 vs the 0.6 bar ERCOT failed; 2023-only fit predicts 2024/2025 months 19/24 in ±50%; identified half-life 30 d, beta 0.5945 — an UNDER-reactor, 5x below ERCOT's 3.0; $200 event = CAISO's own scarcity-tail threshold / 20% of soft cap; window h18-21 PT; 585/585-day pre-registered PUB_BID_DAM subset re-fetch, zero holes), but the mechanism is INERT ON THIS KEEPER BY BOOTSTRAP: the armed path reads only the model's own scored price (lambda + its own scarcity overlay, zero measured content) and the keeper's committed path holds 0/1/0 event days (the C3c-ledgered tail deficit), so P_hat ~ 0 and max floor $14.5 — byte-identical A/B predicted in 2023/2025. The lever amplifies a model tail, never creates one; a CAISO Phase-1 needs the tail-formation root cause (caiso-202 §B compression, adjudicated model-class) fixed first. NO CAISO field built (rule 28c not triggered); no solve spent; Phase-1 over the recorded FAIL = explicit owner act only. FINDING-caiso204-adaptive-storage-phase0-2026-08-19.md" },
     maxgen_emergency_tier_pricing: { cell: "." },
     nyiso_rcpf_family: { cell: "." },
     reserve_family_dual_sidecar: { cell: "I" },
@@ -73,6 +73,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     gas_commitment_bridge: { cell: "K", ev: "caiso-96 WP-1; caiso-119 A/B (±60 MW, inert); caiso-135 §2/§3/§4/§7 basis adjudication" },
     reliability_floor: { cell: "I" },
     reliability_floor_plant_exclusions: { cell: "U", ev: 'row added with the field 2026-08-16 (nyiso-140, rule 28c); never armed here. Entering as U per rule 28(d) — the NYISO identification transfers nothing; this ISO must identify any laid-up unit from its OWN CAMPD conduct before arming' },
+    mustrun_plant_exclusions: { cell: "U", ev: "row added with the field 2026-08-19 (miso-170, rule 28c); never armed here. Entering as U per rule 28(d) — the MISO identification transfers nothing; this ISO must identify any laid-up unit from its OWN CAMPD conduct before arming" },
     coal_mustrun_per_plant: { cell: "K" },
     coal_takeorpay_committed: { cell: "." },
     coal_prb_committed_dispatchable: { cell: "." },
@@ -116,7 +117,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     coal_passthrough_sigmoids: { cell: "K" },
     coal_econ_bound: { cell: "." },
     coal_offer_net_revenue_margin: { cell: "." },
-    cc_committed_offer_margin: { cell: "U" },
+    cc_committed_offer_margin: { cell: "U", ev: "caiso-202 §E annotation (FINDING-caiso202 2026-08-18): the ERCOT-form re-identification has no CAISO gap to close — CAISO's CC/CT committed+econ band multipliers have been MEASURED from its own PUB_DAM_GRP bids since 2026-08-02 (caiso_offer_curve_measured.json, armed via caiso_offer_surface_measured). Stays U as a never-armed ERCOT-derived form, not an open lever" },
     coal_peak_offer_margin: { cell: "." },
     coal_perplant_offer_level: { cell: "." },
     coal_offer_level_rebasis: { cell: "." },
@@ -190,14 +191,14 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     rdt_tcdc: { cell: "." },
     seam_flow_envelopes: { cell: "." },
     nyiso_seam_par_attribution: { cell: "." },
-    import_hub_pricing: { cell: "K", ev: "caiso-120/121, caiso-132" },
+    import_hub_pricing: { cell: "K", ev: "caiso-120/121, caiso-132; caiso-202 §C ACQUITTAL on the caiso-200 keeper (FINDING-caiso202 2026-08-18): tranche-level attribution with wheel+CARB adders puts the import legs at <5% of the C3a 2024/2025 positive gap — the caiso-140-era '8,800 MW spot capacities pinning the belly λ' no longer describes the per-hub-priced keeper" },
     import_shape_lever: { cell: "." },
     nyiso_import_sil_retire: { cell: "." },
     nyiso_li_tsl_n11_security: { cell: "." },
     nyiso_central_east_measured_ttc: { cell: ".", fc: "." },
     nyiso_gj_locality_tsl: { cell: "." },
     caiso_firm_envelope_clip: { cell: "K", ev: "caiso-138 (FINDING-caiso138, probe _caiso138_pnw_firm_dump.py, PREREG-caiso138); shape-BASIS defect measured at caiso-150 — see caiso_firm_selfsched_floor" },
-    caiso_firm_selfsched_floor: { cell: "O", ev: "caiso-150 (FINDING-caiso150-firm-import-elasticity-2026-07-31, probe _caiso150_firm_import_elasticity.py §A-§C); origin caiso-77; prerequisite chain caiso-138 §C -> caiso-143 §H (a)" },
+    caiso_firm_selfsched_floor: { cell: "K", ev: "O -> K at caiso-203 (2026-08-19, FINDING-caiso203-selfsched-charter-duplicate-2026-08-19.md §E) as a BOOKKEEPING ADJUDICATION ON EXISTING EVIDENCE, no solve spent: the caiso-150 §F reconciliation this cell was chartered-open for WAS BUILT AND PROMOTED at caiso-151 (caiso_firm_selfsched_clip K, armed in every keeper since 2026-07-31 incl. caiso-200, whose committed D-2 rows read firm_import 17.938/22.684/22.494 TWh = caiso-150's unclipped 18.856/27.232/27.989 minus EXACTLY the caiso-151 clip removals 0.919/4.548/5.495; D-4 h0-23 off-window 0.000 pass all years) — the verdict was reached 2026-07-31 and never recorded on this cell (caiso-151 stamped only its new clip row; the caiso-167 stale-parenthetical mirror image). Defect lineage: measured caiso-150 (probe _caiso150_firm_import_elasticity.py §A-§C), origin caiso-77, prerequisite chain caiso-138 §C -> caiso-143 §H (a); remediated caiso-151 (clip + D4_WINDOWS); gate-visible since caiso-155 (plant-set fix). STANDING ANNOTATIONS, not open build work: (1) below the measured ceiling the floor's shape basis is still EIA-930 realised net corridor interchange — the wrong object in kind, with NO admissible measured replacement (the caiso-150 §B direction wall: only the one-sided ceiling is measurable; the clip form is the complete reconciliation the public record supports); any successor needs a new direction-splitting source, adjudicated unreachable from the public feed at caiso-150 §H. (2) caiso-202 §F.3 direction note (2026-08-18) carried: the reconciliation removes over-forced overnight supply, so it is C3a-ADVERSE — never a C3a lever (confirmed at caiso-151: +0.045/+0.626/+0.494 pp, pre-registered, accepted under rule 1)" },
     caiso_firm_selfsched_clip: { cell: "K", ev: "caiso-151 (derive scripts/data/derive_caiso_intertie_selfsched.py, PREREG-caiso151-firm-selfsched-clip-2026-07-31); specified caiso-150 §F (FINDING-caiso150-firm-import-elasticity-2026-07-31); pattern precedent caiso-138" },
     caiso_seam_loss_surface: { cell: "G", ev: "caiso-167 (FINDING-caiso167-import-price-basis-2026-08-04 §2-§5, probe scripts/probes/caiso167_import_basis_phase0.py, artifact results/calibration/_caiso167_import_basis_phase0.json); parent mechanism row zonal_loss_surface (caiso-164, CAISO K, internal links only); comparator corrected from caiso-121; export half closed caiso-142 §C/§E + caiso-143 §E/§F" },
     caiso_corridor_export_path: { cell: "R", ev: "caiso-132 (ask A1); basis corrected caiso-138 §D, then caiso-142 (FINDING-caiso142-export-sink-seam-2026-07-30 §C/§E, probe _caiso142_export_sink_basis.py), then caiso-143 (FINDING-caiso143-node-export-constraint-2026-07-30 §A/§E/§F, probe _caiso143_node_export_gates.py); precedents caiso-113 rejected, caiso-121 family selection" },
@@ -356,4 +357,63 @@ window.MECH_MATRIX_SHARDS.CAISO = {
  * results/calibration/caiso201-owner-ruling-2026-08-17.md,
  * ASSESSMENT-caiso200-frontier-2026-08-17.md §5.1,
  * docs/calibration-log/caiso.md, docs/governance/rule-history.md §4.
+ */
+
+/* caiso-203 (2026-08-19) — KILL-BEFORE-BUILD STAMP + ONE BOOKKEEPING CELL
+ * REPAIR. NO MECHANISM TESTED, NO SOLVE RUN, NO DERIVE RUN, NO CORPUS
+ * FETCHED, NO RUN REGISTERED, KEEPER UNCHANGED at
+ * 2026-08-17-caiso-200-h1-memberpanel. The owner-issued caiso-203 charter
+ * ordered the caiso-150 §F firm-import self-schedule reconciliation built
+ * (frozen derive + new field + D4_WINDOWS + A/B, calling
+ * caiso_firm_selfsched_floor "the LAST OPEN in-model cell") — but the
+ * charter's premise is STALE: that reconciliation IS
+ * caiso_firm_import_selfsched_clip, built/gated/A-B'd/promoted at caiso-151
+ * (2026-07-31) and armed in every keeper since; gate visibility landed at
+ * caiso-155. Verified this session on committed bytes only: the keeper's
+ * D-2 firm_import rows equal caiso-150's unclipped totals minus exactly the
+ * caiso-151 clip removals, D-4 passes all years. Executing the charter
+ * would have violated rules 28a/19/23, so the session stopped before any
+ * solve (caiso-129/140/150/202 kill-before-solve pattern) and instead
+ * repaired the bookkeeping omission that CAUSED the stale charter:
+ * caiso_firm_selfsched_floor O -> K on the existing caiso-151 evidence
+ * (caiso-151 stamped only its new clip row and never re-adjudicated the
+ * floor cell it was executing the charter OF; caiso-202 §F.3 then read the
+ * open cell at face value). Standing annotations carried on the cell: the
+ * below-ceiling shape basis remains EIA-930 net interchange with no
+ * admissible measured replacement (caiso-150 §B wall), and the mechanism is
+ * C3a-ADVERSE, never a C3a lever. The lane RETURNS TO ITS RESTING STATE
+ * (caiso-201 Q1); markers untouched, holdout-freeze ACTIVE, no
+ * out-of-training year touched. Records:
+ * results/calibration/FINDING-caiso203-selfsched-charter-duplicate-2026-08-19.md,
+ * docs/calibration-log/caiso.md.
+ */
+
+/* caiso-204 (2026-08-19) — the ercot-221 ADAPTIVE-EXPECTATION storage offer
+ * transfer-tested (owner dispatch 2026-08-19 re-opening the rested lane for
+ * this ONE lever; rule 25: fresh CAISO identification, nothing transferred
+ * from the ERCOT verdict). Cell ercot_storage_adaptive_expectation . -> I.
+ * Phase-0 kill-before-solve, verdict FAIL recorded unrewritten
+ * (caiso204_adaptive_phase0.json; PRECHECK-caiso204 pushed pre-fit with all
+ * six gates ex ante). The two-sided result: (a) the conduct IS real in
+ * CAISO — the pre-registered 585-day PUB_BID_DAM subset re-fetch (the
+ * caiso-203b zero-cost-re-fetch reading, stated up front; 585/585 dates,
+ * zero holes) identifies the evening (h18-21 PT) storage offer surface as
+ * an adaptive expecter of trailing $200-spike experience at daily corr
+ * 0.704 with cross-year transfer 19/24 (both legs ERCOT's own Phase-0
+ * failed) — identified half-life 30 d, beta 0.5945 (an UNDER-reactor, vs
+ * ERCOT's 3.0); (b) the mechanism is INERT ON THIS KEEPER: its armed path
+ * reads only the model's own scored price (lambda + own scarcity overlay,
+ * zero measured content — and no further model-side term exists to add,
+ * unlike ERCOT Amendment 4), and the keeper's committed path holds 0/1/0
+ * event days at $200 (the C3c-ledgered tail deficit), so P_hat ~ 0, max
+ * floor $14.5, byte-identical A/B predicted in 2023/2025. The lever
+ * AMPLIFIES a model tail; it cannot CREATE the missing one (caiso-202 §B
+ * compression, adjudicated model-class). No ScenarioConfig field built, no
+ * solve spent, keeper/markers/freeze untouched; Phase-1 over the recorded
+ * FAIL is an explicit owner act only. DO-NOT-REDO added: no re-run of this
+ * identification without new evidence; no measured event series in any
+ * armed path; no model-side threshold below $200 to manufacture bootstrap
+ * feasibility; no quoting beta=0.59 as calibration skill. Records:
+ * results/calibration/FINDING-caiso204-adaptive-storage-phase0-2026-08-19.md,
+ * docs/calibration-log/caiso.md, docs/mechanism-testing-matrix.md §5.2.
  */

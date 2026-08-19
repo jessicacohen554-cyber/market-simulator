@@ -870,13 +870,21 @@
 
         <div class="story-section">
           <p>
-            The rubric proves a run <em>matches</em> the market. Two further keeper obligations prove the match wasn't <em>bought</em> — that the model earns its fit with real mechanisms, not free parameters tuned to the residual. Both are required of every keeper under <strong>CLAUDE.md rule&nbsp;21</strong> ("Every keeper carries a DOF ledger and an ablation twin")<a href="#fn-rule21" class="footnote-ref" id="fnref-rule21"><sup>1</sup></a>: the <strong>zero-forcing ablation twin</strong> quantifies what the floors do, and the <strong>DOF ledger</strong> enumerates every free parameter and how it was identified.
+            The rubric proves a run <em>matches</em> the market. A further keeper obligation proves the match wasn't <em>bought</em> — that the model earns its fit with real mechanisms, not free parameters tuned to the residual. <strong>CLAUDE.md rule&nbsp;21</strong> (<code>[R-DOF]</code>)<a href="#fn-rule21" class="footnote-ref" id="fnref-rule21"><sup>1</sup></a> requires the <strong>DOF ledger</strong>, which enumerates every free parameter and how it was identified. It once also required a paired <strong>zero-forcing ablation twin</strong>; that half was <strong>retired by owner amendment on 2026-07-14</strong>, and forcing-legitimacy now rests on the DOF ledger plus the D-2 mechanism attribution in <code>legitimacy_diagnostics.json</code> — the C8 forced-share gate and the D-4 off-window-binding check — alone.
           </p>
         </div>
 
         <!-- The ablation twin -->
-        <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">The zero-forcing ablation twin</h3>
+        <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">The zero-forcing ablation twin <span style="font-weight:600;font-size:0.78rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--text-muted);border:1px solid currentColor;border-radius:4px;padding:2px 7px;vertical-align:middle;margin-left:8px;">Retired 2026-07-14</span></h3>
         <div class="story-section">
+          <p>
+            <strong>Status: no longer produced.</strong> No keeper builds or registers a twin any more, and
+            <strong>no current keeper carries one</strong> — none of the six per-ISO keeper shards declares an
+            <code>ablation_twin</code>. Already-registered twins remain on the dashboard as historical
+            artifacts. The machinery described below still exists in the code and the description is accurate
+            about it; what changed is that it is no longer an obligation. It is kept here because the twins in
+            the record were produced this way.
+          </p>
           <p>
             An <strong>ablation twin</strong> is a re-solve of a keeper's <em>exact</em> config with <strong>every merchant floor, bridge, drag, and availability-haircut turned off</strong> — keeping only the structural must-run set (nuclear must-run, CHP steam-following, coal take-or-pay) and the firm-import boundary. It is produced by the config transform <code>ScenarioConfig.as_zero_forcing_ablation(cfg)</code>, applied <em>after</em> all per-ISO defaults and overrides so that config-level defaults (e.g. CAISO's net-load drag or RA must-offer) are forced off regardless of how they were set.
           </p>
@@ -927,14 +935,14 @@
           </p>
           <ul style="margin-bottom: 0; padding-left: var(--space-xl); margin-top: var(--space-md);">
             <li style="margin-bottom: var(--space-sm);"><strong>E8 (DOF ledger)</strong> — FAILs a keeper whose attestation has no <code>free_parameters</code> section, or that has a <code>residual</code> entry lacking a root cause. Unconditional; every keeper carried a ledger when it landed.</li>
-            <li><strong>E9 (ablation twin)</strong> — FAILs a keeper without a resolvable <code>ablation_twin</code> sidecar link; a <em>declared-but-broken</em> link FAILs regardless of any grace. The rollout grandfather list was designed to self-empty as keepers were re-registered with twins, and today all current keepers carry registered twins.</li>
+            <li><strong>E9 (ablation-twin link integrity)</strong> — since the 2026-07-14 amendment this is a <em>data-integrity</em> check only: a keeper with <strong>no</strong> <code>ablation_twin</code> link is fine and can never FAIL E9, but a <em>declared-but-dangling</em> link — a sidecar naming a twin that is not a registered run — FAILs. The rollout grandfather list was deleted along with the requirement. No current keeper declares a twin.</li>
           </ul>
         </div>
 
         <!-- Footnote -->
         <div class="footnote" id="fn-rule21">
           <p style="margin: 0;">
-            <span class="footnote-ref">1.</span>&nbsp; <strong>A note on rule numbering.</strong> The code comments for both features cite <strong>"CLAUDE.md rule 20"</strong>, but the obligation is <strong>rule&nbsp;21</strong> in the current CLAUDE.md ("Every keeper carries a DOF ledger and an ablation twin"; rule&nbsp;20 there is a different rule, "Forced energy is budgeted"). The gap is a documented renumbering offset, not a contradiction: the protective rules were numbered 16&ndash;25 in the legitimacy audit's §8, then CLAUDE.md later inserted rule&nbsp;16 (all-years-one-bundle), shifting them to 17&ndash;26 — so <em>audit rule 20 = CLAUDE.md rule 21</em>. Both labels point at the same obligation; the code comments simply predate the shift and should not be "fixed" against it. <a href="#fnref-rule21" class="footnote-ref">↩</a>
+            <span class="footnote-ref">1.</span>&nbsp; <strong>A note on rule numbering.</strong> The code comments for these features cite <strong>"CLAUDE.md rule 20"</strong>, but the obligation is <strong>rule&nbsp;21</strong> in the current CLAUDE.md — <code>[R-DOF]</code>, "Every keeper carries a DOF ledger"; rule&nbsp;20 there is a different rule, <code>[R-FORCED-BUDGET]</code>, "Forced energy is budgeted". The gap is a documented renumbering offset, not a contradiction: the protective rules were numbered 16&ndash;25 in the legitimacy audit's §8, then CLAUDE.md later inserted rule&nbsp;16 (all-years-one-bundle), shifting them to 17&ndash;26 — so <em>audit rule 20 = CLAUDE.md rule 21</em>. Both labels point at the same obligation; the code comments simply predate the shift and should not be "fixed" against it. <strong>Cite the stable <code>[R-*]</code> ID where you can</strong> — CLAUDE.md now carries one per rule precisely so the ordinal drift stops mattering, and the full mapping and amendment genealogy live in <code>docs/governance/rule-history.md</code>. <a href="#fnref-rule21" class="footnote-ref">↩</a>
           </p>
         </div>
       </div>

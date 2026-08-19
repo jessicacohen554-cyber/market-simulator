@@ -73,6 +73,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     gas_commitment_bridge: { cell: "K" },
     reliability_floor: { cell: "K" },
     reliability_floor_plant_exclusions: { cell: "U", ev: 'row added with the field 2026-08-16 (nyiso-140, rule 28c); never armed here. Entering as U per rule 28(d) — the NYISO identification transfers nothing; this ISO must identify any laid-up unit from its OWN CAMPD conduct before arming' },
+    mustrun_plant_exclusions: { cell: "U", ev: "row added with the field 2026-08-19 (miso-170, rule 28c); never armed here. Entering as U per rule 28(d) — the MISO identification transfers nothing; this ISO must identify any laid-up unit from its OWN CAMPD conduct before arming" },
     coal_mustrun_per_plant: { cell: "K" },
     coal_takeorpay_committed: { cell: "." },
     coal_prb_committed_dispatchable: { cell: "." },

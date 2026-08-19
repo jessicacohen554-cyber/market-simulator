@@ -45,7 +45,12 @@ const GEO_HINTS = {
   CAISO: {
     NP15:         [0.45, 0.12],
     ZP26:         [0.45, 0.50],
-    SP15:         [0.45, 0.82],
+    /* SP15 was split into the three LCT local areas (caiso-172); placed
+       north-to-south down the SP26 footprint. SP15_rest is the gateway the
+       Path 26 and Path 46 (West of the River) imports land on. */
+    SP15_rest:    [0.42, 0.70],
+    LA_BASIN:     [0.60, 0.86],
+    SDGE:         [0.70, 0.98],
     WECC_import:  [0.10, 0.46],
   },
   PJM: {
@@ -58,10 +63,18 @@ const GEO_HINTS = {
     PJM_EMAAC:      [0.78, 0.32],
     PJM_SWMAAC:     [0.72, 0.58],
   },
+  /* Six LRZ-union zones; the former 3-zone North/Central/South build was a
+     copperplate and is gone. Placed on the real state geography named in
+     iso_configs._miso_config: West = MN/ND/SD/MT, Plains = IA/MO,
+     Illinois = IL, Indiana = IN/KY, East = WI/MI, South = AR/LA/MS/E-TX
+     (electrically separate, reached only over the RDT contract path). */
   MISO: {
-    'MISO-North':   [0.50, 0.12],
-    'MISO-Central': [0.50, 0.50],
-    'MISO-South':   [0.50, 0.86],
+    'MISO-West':     [0.16, 0.10],
+    'MISO-East':     [0.74, 0.18],
+    'MISO-Plains':   [0.22, 0.42],
+    'MISO-Illinois': [0.46, 0.42],
+    'MISO-Indiana':  [0.70, 0.52],
+    'MISO-South':    [0.40, 0.88],
   },
   NYISO: {
     Upstate_West:   [0.08, 0.32],

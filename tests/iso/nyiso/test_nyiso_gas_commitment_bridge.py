@@ -417,3 +417,204 @@ class TestCTBlockCommitment(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestPlantMembershipExclusions(unittest.TestCase):
+    """``nyiso_gas_bridge_plant_exclusions`` — the lay-up MEMBERSHIP correction.
+
+    The bridge's half of a correction that previously existed only on the
+    reliability floor (``reliability_floor_plant_exclusions``), so the same
+    economically-laid-up plants were still floored by the OTHER mechanism
+    (nyiso-140 fixed one mechanism, not the plant — rule 19 ``[R-ONE-MECH]``).
+
+    Contract: default OFF is byte-identical; armed, a listed plant is dropped
+    from the bridge population entirely while its unlisted neighbours keep the
+    floor they had. Expressed through the detector's existing population gate
+    (a non-positive ``min_load_frac_by_gen`` entry), so no class-name tuple and
+    no new detector parameter is involved (rule 18 ``[R-PHYSICS]``).
+    """
+
+    def _fleet(self):
+        """Two identical CC plants, one of which the artifact will exclude."""
+        keep = _gen("KEEP", "gas_cc", "CC_REGULAR")
+        keep.plant_code = 1111
+        drop = _gen("DROP", "gas_cc", "CC_REGULAR")
+        drop.plant_code = 2222
+        gens = [keep, drop]
+        return gens, generators_to_fleet_arrays(gens, ["z"], hours=_HOURS)
+
+    def _dispatch(self):
+        """One 6 h run then a 4 h gap then another run — a bridgeable pattern."""
+        disp = np.zeros((2, _HOURS))
+        for g in (0, 1):
+            disp[g, 10:16] = 300.0
+            disp[g, 20:26] = 300.0
+        return disp
+
+    def _floor(self, cfg, monkeypatch_codes=None):
+        # The consuming import is function-local, so the SOURCE module is what
+        # a stub has to replace — patching the caller's namespace would miss it.
+        import market_sim.data.bridge_layup_exclusions as seam
+
+        gens, fa = self._fleet()
+        p0 = self._dispatch()
+        mc = np.full((2, _HOURS), 30.0)
+        lmp = np.full((1, _HOURS), 25.0)
+        if monkeypatch_codes is not None:
+            original = seam.load_layup_exclusions
+            seam.load_layup_exclusions = lambda iso: frozenset(monkeypatch_codes)
+            try:
+                return _nyiso_gas_bridge_floor(cfg, gens, fa, p0, lmp, mc)
+            finally:
+                seam.load_layup_exclusions = original
+        return _nyiso_gas_bridge_floor(cfg, gens, fa, p0, lmp, mc)
+
+    def test_default_off_is_byte_identical(self):
+        """The flag defaults off, so the artifact is never even read."""
+        base = self._floor(_config())
+        off = self._floor(_config(nyiso_gas_bridge_plant_exclusions=False), [2222])
+        self.assertIsNotNone(base)
+        np.testing.assert_array_equal(base, off)
+
+    def test_armed_drops_only_the_listed_plant(self):
+        base = self._floor(_config())
+        armed = self._floor(_config(nyiso_gas_bridge_plant_exclusions=True), [2222])
+        self.assertIsNotNone(base)
+        self.assertIsNotNone(armed)
+        # The excluded plant loses its floor entirely...
+        self.assertGreater(float(base[1].sum()), 0.0)
+        self.assertEqual(float(armed[1].sum()), 0.0)
+        # ...and its neighbour keeps exactly the floor it had.
+        np.testing.assert_array_equal(base[0], armed[0])
+
+    def test_empty_artifact_is_a_no_op(self):
+        """A missing/empty artifact must not silently disarm the mechanism."""
+        base = self._floor(_config())
+        armed = self._floor(_config(nyiso_gas_bridge_plant_exclusions=True), [])
+        np.testing.assert_array_equal(base, armed)
+
+    def test_artifact_reader_selects_only_laid_up_rows(self):
+        """The seam reads the real committed artifact and filters on laid_up."""
+        from market_sim.data.bridge_layup_exclusions import load_layup_exclusions
+
+        codes = load_layup_exclusions("NYISO")
+        # The committed NYISO artifact is non-empty and every row it yields is
+        # a plant the derive script marked laid_up.
+        self.assertTrue(codes)
+        # Roseton (8006) and Danskammer (2480) are the two large laid-up steam
+        # stations the nyiso-143 D-4 rider convicted on this mechanism.
+        self.assertIn(8006, codes)
+        self.assertIn(2480, codes)
+        # Port Jefferson (2517) is a temperature-conditional CYCLER, not a
+        # laid-up plant: it is excluded from the RELIABILITY FLOOR (whose
+        # always-on baseline it does not have) but must stay in the BRIDGE
+        # population, which is keyed to detected runs it genuinely performs.
+        self.assertNotIn(2517, codes)
+
+    def test_unknown_iso_yields_no_exclusions(self):
+        from market_sim.data.bridge_layup_exclusions import load_layup_exclusions
+
+        self.assertEqual(load_layup_exclusions("NOSUCHISO"), frozenset())
+
+
+class TestPerPlantMinRun(unittest.TestCase):
+    """``nyiso_gas_bridge_plant_min_run`` — the per-plant min-run identification.
+
+    nyiso-146: the class is not one run-length population (measured per-plant
+    p25 spans 7-646 h against a 21 h class scalar), so when the gate is on a
+    slow-start row whose plant appears in the measured artifact takes ITS OWN
+    plant's value, REPLACING the class scalar (rule 19 ``[R-ONE-MECH]``);
+    uncovered plants keep the class fallback, and the armed CT leg keeps its
+    own required measured horizon. Default OFF is byte-identical.
+    """
+
+    def _fleet(self):
+        """Two CC plants (one covered by the artifact) and one CT."""
+        covered = _gen("COVERED", "gas_cc", "CC_REGULAR")
+        covered.plant_code = 1111
+        uncovered = _gen("UNCOVERED", "gas_cc", "CC_REGULAR")
+        uncovered.plant_code = 2222
+        ct = _gen("CT", "gas_ct", "CT_PEAKER")
+        ct.plant_code = 1111  # same plant code — must NOT take the CC value
+        gens = [covered, uncovered, ct]
+        return gens, generators_to_fleet_arrays(gens, ["z"], hours=_HOURS)
+
+    def _min_run(self, cfg, mapping=None):
+        # The consuming import is function-local, so the SOURCE module is what
+        # a stub has to replace — patching the caller's namespace would miss it.
+        import market_sim.data.perplant_min_run as seam
+
+        gens, fa = self._fleet()
+        if mapping is None:
+            return _nyiso_bridge_min_run_hours(cfg, gens, fa)
+        original = seam.load_perplant_min_run
+        seam.load_perplant_min_run = lambda iso: dict(mapping)
+        try:
+            return _nyiso_bridge_min_run_hours(cfg, gens, fa)
+        finally:
+            seam.load_perplant_min_run = original
+
+    def test_default_off_is_byte_identical(self):
+        """The flag defaults off, so the artifact is never even read."""
+        cfg = _config(nyiso_gas_bridge_cc_min_run_hours=21.0)
+        base = self._min_run(cfg)
+        off = self._min_run(
+            cfg.with_overrides(nyiso_gas_bridge_plant_min_run=False),
+            {1111: 134.75},
+        )
+        np.testing.assert_array_equal(base, off)
+
+    def test_armed_replaces_the_scalar_for_covered_plants_only(self):
+        cfg = _config(
+            nyiso_gas_bridge_cc_min_run_hours=21.0,
+            nyiso_gas_bridge_plant_min_run=True,
+        )
+        mr = self._min_run(cfg, {1111: 134.75})
+        # Covered plant takes its own measured value, replacing the scalar...
+        self.assertEqual(mr[0], 134.75)
+        # ...the uncovered plant keeps the class scalar...
+        self.assertEqual(mr[1], 21.0)
+        # ...and the CT row never matches (leg off here: CT carries 0).
+        self.assertEqual(mr[2], 0.0)
+
+    def test_ct_leg_keeps_its_own_measured_horizon(self):
+        """A CT sharing a covered plant code keeps the required CT horizon."""
+        cfg = _config(
+            nyiso_gas_bridge_min_run=True,
+            nyiso_gas_bridge_ct=True,
+            nyiso_gas_bridge_cc_min_run_hours=21.0,
+            nyiso_gas_bridge_plant_min_run=True,
+        )
+        mr = self._min_run(cfg, {1111: 134.75})
+        self.assertEqual(mr[0], 134.75)
+        self.assertEqual(mr[2], float(cfg.nyiso_gas_bridge_ct_min_run_hours))
+
+    def test_empty_artifact_falls_back_to_the_class_scalar(self):
+        """A missing/empty artifact must not silently zero the extension."""
+        cfg = _config(
+            nyiso_gas_bridge_cc_min_run_hours=21.0,
+            nyiso_gas_bridge_plant_min_run=True,
+        )
+        mr = self._min_run(cfg, {})
+        self.assertEqual(mr[0], 21.0)
+        self.assertEqual(mr[1], 21.0)
+
+    def test_committed_artifact_reads_and_covers_the_object(self):
+        """The real committed NYISO artifact carries the nyiso-145 objects."""
+        from market_sim.data.perplant_min_run import load_perplant_min_run
+
+        values = load_perplant_min_run("NYISO")
+        self.assertTrue(values)
+        # Bethlehem (2539), the over-cycling object: measured p25 far above
+        # the class scalar; Flynn (7314) measures BELOW it.
+        self.assertGreater(values[2539], 100.0)
+        self.assertLess(values[7314], 21.0)
+        # The misaligned Astoria campus pair is deliberately absent (the CAMPD
+        # facility series spans two EIA plants — nyiso-145 §5).
+        self.assertNotIn(55375, values)
+        self.assertNotIn(57664, values)
+
+    def test_unknown_iso_yields_no_coverage(self):
+        from market_sim.data.perplant_min_run import load_perplant_min_run
+
+        self.assertEqual(load_perplant_min_run("NOSUCHISO"), {})

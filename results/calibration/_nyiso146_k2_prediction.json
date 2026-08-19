@@ -1,0 +1,377 @@
+{
+ "probe": "_nyiso146_k2_prediction",
+ "bundle": "nyiso144_layup_arm",
+ "run_threshold_frac": 0.05,
+ "note": "floor_arm_gwh is EXACT (the floor is a deterministic function of the config-invariant P0 pattern); pred_starts_* is the block count of (P0 + floor) > 0.05 x plant capacity and carries the pre-registered band (P1 re-runs the economics above the floor)",
+ "years": {
+  "2023": [
+   {
+    "plant": 2539,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 893.1,
+    "floor_ctl_gwh": 779.35,
+    "pred_starts_ctl": 62,
+    "pred_on_share_ctl": 0.6436,
+    "floor_arm_gwh": 1376.78,
+    "pred_starts_arm": 27,
+    "pred_on_share_arm": 0.9244
+   },
+   {
+    "plant": 7314,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 207.2,
+    "floor_ctl_gwh": 130.71,
+    "pred_starts_ctl": 69,
+    "pred_on_share_ctl": 0.7428,
+    "floor_arm_gwh": 121.01,
+    "pred_starts_arm": 73,
+    "pred_on_share_arm": 0.7126
+   },
+   {
+    "plant": 56234,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 348.9,
+    "floor_ctl_gwh": 55.34,
+    "pred_starts_ctl": 5,
+    "pred_on_share_ctl": 0.945,
+    "floor_arm_gwh": 133.85,
+    "pred_starts_arm": 3,
+    "pred_on_share_arm": 0.9452
+   },
+   {
+    "plant": 56940,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 770.5,
+    "floor_ctl_gwh": 128.46,
+    "pred_starts_ctl": 13,
+    "pred_on_share_ctl": 0.8311,
+    "floor_arm_gwh": 108.26,
+    "pred_starts_arm": 13,
+    "pred_on_share_arm": 0.8311
+   },
+   {
+    "plant": 2500,
+    "plant_class": "ST_GAS",
+    "lp_capacity_mw": 1993.3,
+    "floor_ctl_gwh": 5.6,
+    "pred_starts_ctl": 1,
+    "pred_on_share_ctl": 1.0,
+    "floor_arm_gwh": 5.6,
+    "pred_starts_arm": 1,
+    "pred_on_share_arm": 1.0
+   },
+   {
+    "plant": 55405,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 1221.6,
+    "floor_ctl_gwh": 26.17,
+    "pred_starts_ctl": 14,
+    "pred_on_share_ctl": 0.422,
+    "floor_arm_gwh": 26.08,
+    "pred_starts_arm": 14,
+    "pred_on_share_arm": 0.4219
+   },
+   {
+    "plant": 57185,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 1312.5,
+    "floor_ctl_gwh": 301.36,
+    "pred_starts_ctl": 39,
+    "pred_on_share_ctl": 0.9908,
+    "floor_arm_gwh": 295.62,
+    "pred_starts_arm": 39,
+    "pred_on_share_arm": 0.9908
+   },
+   {
+    "plant": 50292,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 179.6,
+    "floor_ctl_gwh": 65.73,
+    "pred_starts_ctl": 48,
+    "pred_on_share_ctl": 0.5146,
+    "floor_arm_gwh": 44.43,
+    "pred_starts_arm": 75,
+    "pred_on_share_arm": 0.4299
+   },
+   {
+    "plant": 56196,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 623.8,
+    "floor_ctl_gwh": 0.0,
+    "pred_starts_ctl": 3,
+    "pred_on_share_ctl": 0.9123,
+    "floor_arm_gwh": 0.0,
+    "pred_starts_arm": 3,
+    "pred_on_share_arm": 0.9123
+   },
+   {
+    "plant": 2517,
+    "plant_class": "ST_GAS",
+    "lp_capacity_mw": 385.0,
+    "floor_ctl_gwh": 29.82,
+    "pred_starts_ctl": 36,
+    "pred_on_share_ctl": 0.139,
+    "floor_arm_gwh": 3.23,
+    "pred_starts_arm": 61,
+    "pred_on_share_arm": 0.0589
+   },
+   {
+    "plant": 2511,
+    "plant_class": "ST_GAS",
+    "lp_capacity_mw": 372.2,
+    "floor_ctl_gwh": 0.0,
+    "pred_starts_ctl": 2,
+    "pred_on_share_ctl": 0.9973,
+    "floor_arm_gwh": 0.0,
+    "pred_starts_arm": 2,
+    "pred_on_share_arm": 0.9973
+   }
+  ],
+  "2024": [
+   {
+    "plant": 2539,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 893.1,
+    "floor_ctl_gwh": 490.08,
+    "pred_starts_ctl": 31,
+    "pred_on_share_ctl": 0.896,
+    "floor_arm_gwh": 602.44,
+    "pred_starts_arm": 22,
+    "pred_on_share_arm": 0.9182
+   },
+   {
+    "plant": 7314,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 207.2,
+    "floor_ctl_gwh": 126.95,
+    "pred_starts_ctl": 77,
+    "pred_on_share_ctl": 0.8699,
+    "floor_arm_gwh": 121.58,
+    "pred_starts_arm": 79,
+    "pred_on_share_arm": 0.8533
+   },
+   {
+    "plant": 56234,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 348.9,
+    "floor_ctl_gwh": 40.72,
+    "pred_starts_ctl": 2,
+    "pred_on_share_ctl": 0.7151,
+    "floor_arm_gwh": 156.31,
+    "pred_starts_arm": 2,
+    "pred_on_share_arm": 0.7151
+   },
+   {
+    "plant": 56940,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 770.5,
+    "floor_ctl_gwh": 177.88,
+    "pred_starts_ctl": 3,
+    "pred_on_share_ctl": 0.9452,
+    "floor_arm_gwh": 108.66,
+    "pred_starts_arm": 3,
+    "pred_on_share_arm": 0.9452
+   },
+   {
+    "plant": 2500,
+    "plant_class": "ST_GAS",
+    "lp_capacity_mw": 1993.3,
+    "floor_ctl_gwh": 32.41,
+    "pred_starts_ctl": 6,
+    "pred_on_share_ctl": 0.9952,
+    "floor_arm_gwh": 32.41,
+    "pred_starts_arm": 6,
+    "pred_on_share_arm": 0.9952
+   },
+   {
+    "plant": 55405,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 1221.6,
+    "floor_ctl_gwh": 11.17,
+    "pred_starts_ctl": 10,
+    "pred_on_share_ctl": 0.7174,
+    "floor_arm_gwh": 11.17,
+    "pred_starts_arm": 10,
+    "pred_on_share_arm": 0.7174
+   },
+   {
+    "plant": 57185,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 1312.5,
+    "floor_ctl_gwh": 267.78,
+    "pred_starts_ctl": 4,
+    "pred_on_share_ctl": 0.9995,
+    "floor_arm_gwh": 259.61,
+    "pred_starts_arm": 4,
+    "pred_on_share_arm": 0.9995
+   },
+   {
+    "plant": 50292,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 179.6,
+    "floor_ctl_gwh": 69.14,
+    "pred_starts_ctl": 27,
+    "pred_on_share_ctl": 0.7992,
+    "floor_arm_gwh": 57.31,
+    "pred_starts_arm": 35,
+    "pred_on_share_arm": 0.7747
+   },
+   {
+    "plant": 56196,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 623.8,
+    "floor_ctl_gwh": 2.69,
+    "pred_starts_ctl": 4,
+    "pred_on_share_ctl": 0.8986,
+    "floor_arm_gwh": 2.69,
+    "pred_starts_arm": 4,
+    "pred_on_share_arm": 0.8986
+   },
+   {
+    "plant": 2517,
+    "plant_class": "ST_GAS",
+    "lp_capacity_mw": 385.0,
+    "floor_ctl_gwh": 63.21,
+    "pred_starts_ctl": 53,
+    "pred_on_share_ctl": 0.3123,
+    "floor_arm_gwh": 20.26,
+    "pred_starts_arm": 100,
+    "pred_on_share_arm": 0.1747
+   },
+   {
+    "plant": 2511,
+    "plant_class": "ST_GAS",
+    "lp_capacity_mw": 372.2,
+    "floor_ctl_gwh": 0.0,
+    "pred_starts_ctl": 1,
+    "pred_on_share_ctl": 1.0,
+    "floor_arm_gwh": 0.0,
+    "pred_starts_arm": 1,
+    "pred_on_share_arm": 1.0
+   }
+  ],
+  "2025": [
+   {
+    "plant": 2539,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 893.1,
+    "floor_ctl_gwh": 484.5,
+    "pred_starts_ctl": 35,
+    "pred_on_share_ctl": 0.9285,
+    "floor_arm_gwh": 601.17,
+    "pred_starts_arm": 21,
+    "pred_on_share_arm": 0.9562
+   },
+   {
+    "plant": 7314,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 207.2,
+    "floor_ctl_gwh": 79.85,
+    "pred_starts_ctl": 52,
+    "pred_on_share_ctl": 0.9074,
+    "floor_arm_gwh": 72.77,
+    "pred_starts_arm": 60,
+    "pred_on_share_arm": 0.8856
+   },
+   {
+    "plant": 56234,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 348.9,
+    "floor_ctl_gwh": 32.08,
+    "pred_starts_ctl": 4,
+    "pred_on_share_ctl": 0.9288,
+    "floor_arm_gwh": 158.79,
+    "pred_starts_arm": 4,
+    "pred_on_share_arm": 0.9288
+   },
+   {
+    "plant": 56940,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 770.5,
+    "floor_ctl_gwh": 94.42,
+    "pred_starts_ctl": 4,
+    "pred_on_share_ctl": 0.8602,
+    "floor_arm_gwh": 53.74,
+    "pred_starts_arm": 4,
+    "pred_on_share_arm": 0.8602
+   },
+   {
+    "plant": 2500,
+    "plant_class": "ST_GAS",
+    "lp_capacity_mw": 1993.3,
+    "floor_ctl_gwh": 15.96,
+    "pred_starts_ctl": 1,
+    "pred_on_share_ctl": 1.0,
+    "floor_arm_gwh": 15.96,
+    "pred_starts_arm": 1,
+    "pred_on_share_arm": 1.0
+   },
+   {
+    "plant": 55405,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 1221.6,
+    "floor_ctl_gwh": 18.96,
+    "pred_starts_ctl": 14,
+    "pred_on_share_ctl": 0.7637,
+    "floor_arm_gwh": 18.96,
+    "pred_starts_arm": 14,
+    "pred_on_share_arm": 0.7637
+   },
+   {
+    "plant": 57185,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 1312.5,
+    "floor_ctl_gwh": 198.12,
+    "pred_starts_ctl": 6,
+    "pred_on_share_ctl": 0.9902,
+    "floor_arm_gwh": 188.86,
+    "pred_starts_arm": 6,
+    "pred_on_share_arm": 0.99
+   },
+   {
+    "plant": 50292,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 179.6,
+    "floor_ctl_gwh": 77.75,
+    "pred_starts_ctl": 48,
+    "pred_on_share_ctl": 0.8645,
+    "floor_arm_gwh": 53.0,
+    "pred_starts_arm": 80,
+    "pred_on_share_arm": 0.7846
+   },
+   {
+    "plant": 56196,
+    "plant_class": "CC_REGULAR",
+    "lp_capacity_mw": 623.8,
+    "floor_ctl_gwh": 0.0,
+    "pred_starts_ctl": 6,
+    "pred_on_share_ctl": 0.8137,
+    "floor_arm_gwh": 0.0,
+    "pred_starts_arm": 6,
+    "pred_on_share_arm": 0.8137
+   },
+   {
+    "plant": 2517,
+    "plant_class": "ST_GAS",
+    "lp_capacity_mw": 385.0,
+    "floor_ctl_gwh": 36.53,
+    "pred_starts_ctl": 55,
+    "pred_on_share_ctl": 0.2075,
+    "floor_arm_gwh": 16.14,
+    "pred_starts_arm": 75,
+    "pred_on_share_arm": 0.1403
+   },
+   {
+    "plant": 2511,
+    "plant_class": "ST_GAS",
+    "lp_capacity_mw": 372.2,
+    "floor_ctl_gwh": 0.0,
+    "pred_starts_ctl": 1,
+    "pred_on_share_ctl": 1.0,
+    "floor_arm_gwh": 0.0,
+    "pred_starts_arm": 1,
+    "pred_on_share_arm": 1.0
+   }
+  ]
+ }
+}

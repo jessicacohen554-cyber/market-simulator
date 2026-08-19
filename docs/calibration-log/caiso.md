@@ -8385,3 +8385,212 @@ this session): the two `2026-08-16-miso-160-*` sidecars have no run payloads.
 `ASSESSMENT-caiso200-frontier-2026-08-17.md` §5.1 (the sitting, re-stamped with the outcomes),
 `docs/governance/rule-history.md` §4 (genealogy), `docs/mechanism-testing-matrix.md` §5.2 +
 `docs/codebase-site/data/mechanism-matrix/CAISO.js` (lane-rest stamp; no cell verdict moved).
+
+## caiso-202 (2026-08-18) — **OWNER RE-OPENING of the rested lane (directive 2026-08-18): C3a 2024/2025 overrun structurally diagnosed end-to-end; every candidate lever killed by arithmetic BEFORE any solve; the charter's honest-fallback clause executed. NO LP, NO SOLVE, NO RUN REGISTERED, KEEPER UNCHANGED, NO MARKER TOUCHED, NO CELL VERDICT MOVED.**
+
+**Authorization.** The caiso-201 resting state ("no further CAISO calibration session without
+new funded data") was SUPERSEDED for this one charter by the owner's 2026-08-18 directive:
+*"I want a fix to 2024-2025 price overruns … likely lies in offer curve mechanics, solar hydro
+and wind potential overrun offsetting ct peaker underrun etc."* This entry is the re-opening
+record the charter requires; the caiso-201 ruling record stands, annotated never rewritten.
+Q2 of caiso-201 was NOT re-opened (neither object funded); the lane RETURNS to its resting
+state at this entry's close.
+
+**Finding (the deliverable):**
+`results/calibration/FINDING-caiso202-c3a-overrun-decomposition-2026-08-18.md`, from committed
+bytes only, probes `scripts/probes/_caiso202_c3a_decomp.py` +
+`scripts/probes/_caiso202_marginal_rung.py`. Headlines:
+
+1. **One behaviour, three scarcity regimes.** The model overprices EVERY sub-$60 actual-price
+   bucket by +$10–14/h in all three years — 2023 included — and underprices the >$60 tail in
+   all three. C3a's +4.1/+12.8/+15.7 % is the cancellation ordering (2023 had 2,752 tail hours
+   to cancel with; 2024 had 640; 2025 had 475). 2024/2025 are NOT a regression.
+2. **2024 is ~85 % settlement basis.** Model vs DA-lw +1.6 % (in-band); measured lw RT−DA
+   basis +$3.32; the rubric scores RT; `caiso_da_rt_two_settlement` is R and stays untouched
+   (the DA table is evidence, not a lever — per the charter's own instruction).
+3. **The mid-band marginal price-setter is the in-state CC econ rung** — interior in ~98 % of
+   overrun hours — **carrying CAISO's own measured PUB_DAM_GRP bid multipliers**
+   (`caiso_offer_curve_measured.json`, armed via `caiso_offer_surface_measured` since
+   2026-08-02), measured hub fuel, CARB carbon, and the CAISO-own pooled delivered-gas margin
+   anchor. There is no fitted offer object left to repair. The storage belly floor inherits
+   this level through arbitrage parity (the 19–22 % dual-priced share).
+4. **Every owner-named suspect ACQUITTED on measurement**: import tranches <5 % of the gap
+   (per-hub measured hubs; the caiso-140-era "8,800 MW pinning the belly λ" no longer
+   describes the post-caiso-188 keeper); biomass month-flat EIA-923 must-run (the first-pass
+   25 % attribution was a probe artifact, corrected against interest in §C.1); coal 13 MW;
+   solar bound = measured HSL potential BY DESIGN with the delivered-cap variant self-labelled
+   a rule-13 pin. Lane-2 answer: the renewable overrun CUSHIONS the price miss (zero-MC
+   supply); repairing it is C3a-adverse — the offsetting hypothesis is answered against.
+5. **Levers killed by arithmetic (§F), no solve spent**: per-year measured band mults
+   (2025-adverse), per-year margin anchor (2023 fails high), firm-selfsched reconciliation
+   (C3a-adverse; caiso-150's over-forcing), the wedge instruments (adjudicated/unfunded).
+   Required moves: −$0.97 (2024) / −$1.96 (2025); 2023 tolerates −$7.4.
+
+**Determination stands NOT-YET** (rule 13/owner ruling 5: no manufactured pass). The two
+routes that move C3a remain the caiso-201 Q2 owner objects — with the new bound that the
+import-spot-capacities object's direct λ share is now measured <5 % — and the C3a-basis
+question ruling 5 declined, to whose record this session adds: the same model scored against
+the DA settlement it structurally represents is IN-BAND in 2024.
+
+**RULES 15/16 — NO RUN TO REGISTER** (no LP; the caiso-140/150/201 precedent, stated so the
+absence is not read as a skipped duty). **Rule 28b:** evidence appended, no verdict moves —
+`import_hub_pricing` (acquittal), `cc_committed_offer_margin` (§E annotation),
+`diurnal_price_amplitude` (§B evidence base), `caiso_firm_selfsched_floor` (§F.3 direction
+note); §5.2 caiso-202 block added. **Filed, not fixed:** the DOF ledger's
+`offer_curve_by_group` "residual" identification is stale for CAISO's measured CC/CT bands
+(measured 2026-08-02) — correct at the next promotion's attestation.
+
+**Records:** the FINDING (above), the two committed probes,
+`docs/mechanism-testing-matrix.md` §5.2 caiso-202 block,
+`docs/codebase-site/data/mechanism-matrix/CAISO.js` (evidence appends).
+
+## caiso-203 (2026-08-19) — **the chartered caiso-150 §F build found ALREADY BUILT, PROMOTED AND ARMED (caiso-151, 2026-07-31); kill-before-build executed, ONE bookkeeping cell repaired (`caiso_firm_selfsched_floor` O → K on existing evidence). NO SOLVE, NO DERIVE, NO CORPUS FETCH, NO RUN REGISTERED, KEEPER UNCHANGED.**
+
+**Keeper stays `2026-08-17-caiso-200-h1-memberpanel`** (NOT-YET, C3a the sole
+load-bearing FAIL under rubric v3.4, C3c the single ledgered caveat —
+untouched). Full evidence:
+`results/calibration/FINDING-caiso203-selfsched-charter-duplicate-2026-08-19.md`.
+
+**The charter as received.** The owner-issued caiso-203 charter (second
+re-opening of the caiso-201 rested lane, after caiso-202) ordered the
+caiso-150 §F firm-import self-schedule reconciliation built as "the LAST OPEN
+in-model cell" (`caiso_firm_selfsched_floor` O): rule-23 frozen derive from
+the PUB_BID_DAM corpus, a new `ScenarioConfig` field flooring `min_gen` at the
+measured self-schedule instead of full shaped capability, `D4_WINDOWS` + D-2
+visibility, PRECHECK, A/B vs a same-HEAD control, both registered.
+
+**What the record shows (verified this session on committed bytes only).**
+Every deliverable already exists:
+
+* The §F reconciliation IS `caiso_firm_import_selfsched_clip` — built,
+  gate-passed (G1 CV 0.042; G2 4.6/8.4/4.6 %; G3 19.3/12.3/18.6 %; G4
+  288/288), A/B'd and PROMOTED at caiso-151 (2026-07-31), on the frozen
+  artifact `caiso_intertie_selfsched_ceiling.csv` from an independent
+  357-day balanced OASIS re-fetch.
+* Armed in every keeper since, including caiso-200 (`run_config.json`, both
+  the override channel and the resolved config).
+* Engaged, not just armed: the keeper's committed D-2 `firm_import` rows read
+  **17.938 / 22.684 / 22.494 TWh** — caiso-150's unclipped 18.856/27.232/27.989
+  minus **exactly** the caiso-151 clip removals 0.919/4.548/5.495. D-4:
+  h0-23, off-window 0.000, pass, all three years.
+* `D4_WINDOWS` entry added at caiso-151; D-2/D-4 visibility landed at
+  caiso-155 (plant-set fix).
+* Even the charter's pre-registered directions are the caiso-151 measured
+  outcomes: C3a UP +0.045/+0.626/+0.494 pp (pre-registered E1-adverse,
+  accepted under rule 1), import → CC_REGULAR displacement ~1:1, C8/C6 clean.
+
+**Why the charter was not executed literally.** Rule 28a (the clip cell is
+adjudicated K; no new evidence), rule 19 (a second field reconciling the same
+floor against the same measured series), rule 23 (no source-data change, so
+no re-derive; OASIS reachability consequently NOT tested — the charter's
+data-blocker clause is moot because no fetch is owed). The only arm that
+would differ from the keeper — flooring AT the measured ceiling, raising the
+midday floor — is forbidden by the caiso-150 §B direction wall (§H: the
+ceiling is a both-directions upper bound, most generous midday).
+
+**The repair.** The stale premise traces to a bookkeeping omission: caiso-151
+stamped its result on the NEW `caiso_firm_selfsched_clip` row and never
+re-adjudicated the `caiso_firm_selfsched_floor` cell whose charter it was
+executing; caiso-202 §F.3 then read the open cell at face value ("completing
+the O-cell reconciliation"), and the caiso-203 charter compounded it by
+quoting caiso-150's unclipped measurements as the current keeper state — the
+mirror image of the caiso-167 stale-parenthetical incident. Repaired:
+`caiso_firm_selfsched_floor` **O → K** in the CAISO shard as a bookkeeping
+adjudication on the existing caiso-151 evidence (the caiso-167/169 pattern),
+with two standing annotations carried (below-ceiling shape basis remains
+EIA-930 net interchange, no admissible measured replacement per the §B wall;
+C3a-ADVERSE, never a C3a lever per caiso-202 §F.3).
+
+**Not done, deliberately:** no dashboard registration (rule 15 applies to
+completed runs — the caiso-134/140/150/202 disposition); the DOF-ledger
+stale-text item (caiso-202 §H) stays FILED, its trigger being the next
+promotion's attestation. **The lane RETURNS TO ITS RESTING STATE** (caiso-201
+Q1); markers untouched, holdout-freeze ACTIVE, no out-of-training year
+touched.
+
+**DO-NOT-REDO (caiso-203, binding; carried lists unchanged):** re-chartering
+a build of `caiso_firm_selfsched_floor` / the §F reconciliation absent
+evidence newer than caiso-151; re-fetching the OASIS corpus to regenerate the
+ceiling with no source-data change; flooring firm-import `min_gen` AT the
+measured ceiling in any hour; quoting caiso-150's unclipped-floor numbers as
+the state of any keeper from caiso-151 onward.
+
+**Records:** the FINDING (above), `docs/mechanism-testing-matrix.md` §5.2
+caiso-203 block, `docs/codebase-site/data/mechanism-matrix/CAISO.js`
+(cell O → K + tail stamp).
+
+Next number: caiso-204.
+
+## caiso-203b (2026-08-19, same session, post-finding) — **two owner rulings recorded: C3a is judged against ACTUAL (RT) LMP (basis question CLOSED, ruling 5 re-affirmed) and NO data intake is funded (both caiso-201 Q2 objects stay unfunded; the proposed caiso-204 sitting SUPERSEDED). NO SOLVE, NO CELL MOVED, KEEPER UNCHANGED.**
+
+Verbatim and interpretation: `results/calibration/caiso203-owner-rulings-2026-08-19.md`.
+Effects: the caiso-202 model-vs-DA +1.6 % stays context only, never a scoring
+basis; `caiso_da_rt_two_settlement` stays R with a governance close on top; the
+PS water-state intake stays DECLINED and the import spot-capacity derivation is
+NOT funded (declared residual stands, measured direct λ share < 5 %). The one
+live owner-dispatched charter is the ercot-221 adaptive-expectation storage
+lever CAISO transfer test (caiso-204, rule-25 fresh identification), whose
+handoff carries these rulings in its guardrails. Lane otherwise stays at rest
+(caiso-201 Q1).
+
+Next number: caiso-204 (reserved for the adaptive-lever transfer session).
+
+## caiso-204 (2026-08-19) — **the ercot-221 ADAPTIVE-EXPECTATION storage offer transfer-tested (owner dispatch re-opening the rested lane for this ONE lever; rule 25: fresh CAISO identification, NOTHING transferred from the ERCOT verdict). Phase-0 KILL-BEFORE-SOLVE: verdict FAIL on G-BOOT ALONE, recorded unrewritten; cell `ercot_storage_adaptive_expectation` . → I; NO SOLVE SPENT, NO FIELD BUILT, KEEPER UNCHANGED.**
+
+Pre-registration `PRECHECK-caiso204-adaptive-phase0-2026-08-19.md` (pushed
+b6da910 BEFORE any bid value was read; six gates ex ante, both committed-bytes
+expectations declared honestly — including that G-BOOT was expected to FAIL
+from the C3c record). Record `caiso204_adaptive_phase0.json`; finding
+`FINDING-caiso204-adaptive-storage-phase0-2026-08-19.md`.
+
+**Data action, reading stated up front (caiso-203b scope note):** a zero-cost
+re-fetch of the established OASIS PUB_BID_DAM public corpus — the
+pre-registered 585-date seasonally-balanced subset (every 6th doy + 21-day
+post-event windows around the 36 measured $200 event days), fetched with the
+committed fetcher at 6 s spacing: **585/585 dates, zero rate-limit failures,
+zero archive holes.** NOT a funded intake; no owner objection raised.
+
+**The two-sided result:**
+
+1. **CAISO's storage fleet IS an adaptive expecter — both identification gates
+   PASS where ERCOT's own Phase-0 failed.** The evening (h18–21 PT) MW-weighted
+   p50 discharge offer of the caiso-178-classified storage set (76/123/163
+   members on the subset vs 77/121/167 full-corpus; fidelity 0.6–4.7 pp) tracks
+   the trailing $200-spike EWMA at daily corr **0.704** (bar 0.6; ERCOT: 0.447
+   FAIL), monthly reconstruction 26/36 in ±35 %, and a 2023-only fit predicts
+   the 2024+2025 months **19/24** within ±50 %. Identified constants:
+   **half-life 30 d, β 0.5945** — an UNDER-reactor pricing scarce-SOC evenings
+   at ~60 % of trailing frequency × cap, 5× below ERCOT's β 3.0 (rule 25 made
+   empirical). Quiet-day standing ask $53.2. Event threshold $200 = CAISO's own
+   frozen scarcity-tail threshold AND 20 % of its $1,000 soft cap; the ERCOT
+   $1,000 absolute is degenerate in-window (0 days; CA system RT max $907).
+2. **The mechanism is INERT ON THIS KEEPER by bootstrap (G-BOOT FAIL, the
+   sole structural fail, measured exactly as pre-declared).** The armed path
+   reads only the model's own scored price (λ + its own scarcity overlay, zero
+   measured content — and CAISO's scored price ALREADY contains its LOLP
+   overlay, so unlike ercot-221 Amendment 4 there is no further model-side
+   term to add). The keeper's committed path holds **0/1/0** event days at
+   $200 — the C3c-ledgered tail deficit itself — so P_hat ≈ 0 everywhere, max
+   implied floor **$14.5** (2024's single-event decay window, below even the
+   $53 standing ask), byte-identical A/B predicted in 2023/2025. **The lever
+   AMPLIFIES a model tail; it cannot CREATE the missing one.** A CAISO Phase-1
+   needs the tail-formation root cause (the caiso-202 §B compression,
+   adjudicated model-class) fixed first. G-SAFE passes trivially — the same
+   committed-path fact from the other side.
+
+**Disposition:** Phase-1 entry over the recorded FAIL is an explicit owner act
+only (ercot-188/213/215/221 pattern), and §D.3 of the finding bounds its
+reachable C3c upside as modest even then (β < 1). Lane RETURNS TO ITS RESTING
+STATE (caiso-201 Q1); keeper `2026-08-17-caiso-200-h1-memberpanel`, markers,
+holdout freeze: untouched. Dashboard: nothing to register (no run produced).
+
+**DO-NOT-REDO (caiso-204, binding):** re-running this identification on this
+corpus absent new evidence; any measured event series in an armed path; any
+model-side event threshold below $200 to manufacture bootstrap feasibility;
+quoting β = 0.59 as calibration skill.
+
+**Records:** the FINDING (above), `docs/mechanism-testing-matrix.md` §5.2
+caiso-204 block, `docs/codebase-site/data/mechanism-matrix/CAISO.js`
+(cell . → I + tail stamp block).
+
+Next number: caiso-205.

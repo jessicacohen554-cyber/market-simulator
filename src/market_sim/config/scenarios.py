@@ -633,7 +633,9 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_st_min_run_hours",
     "nyiso_gas_bridge_ct",
     "nyiso_gas_bridge_ct_min_load_frac",
+    "nyiso_gas_bridge_plant_exclusions",
     "nyiso_gas_bridge_ct_min_run_hours",
+    "nyiso_gas_bridge_plant_min_run",
     # ERCOT gas-bridge ONLINE-HOURS leg (ercot141): inert at its default (off —
     # the floor stays gap-only and the detector call is byte-identical), so
     # registering it here keeps the pinned default cache_key byte-stable; an
@@ -935,6 +937,25 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the very end of the tuple per the HOUSE-3 insertion convention.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "reliability_floor_plant_exclusions",
+    # miso-169 online-gated reserve supply (GATED default off): dropped from
+    # the hash at its default so every pre-existing cache key stays
+    # byte-stable — the off path passes None through the whole pergen
+    # product-split surface (no columns split, no rows added, byte-identical
+    # by construction). An armed run splits the R columns and adds the
+    # nested Reg+Spin family — a different LP, so it hashes distinctly,
+    # keeping the control/arm A/B off one cache entry. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "miso_reserve_online_gated",
+    # miso-170 per-plant must-run floor MEMBERSHIP correction (GATED default
+    # off): dropped from the hash at its default so every pre-existing cache
+    # key of all six ISOs stays byte-stable — the off path never reads the
+    # lay-up census at all, so it is byte-identical by construction. An armed
+    # run floors a strictly smaller plant set — a different min_gen, so a
+    # different dispatch — and hashes distinctly, which is what keeps the
+    # control/arm A/B off one cache entry. SHARED field, so it goes at the very
+    # end of the tuple per the HOUSE-3 insertion convention. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "mustrun_plant_exclusions",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1194,7 +1215,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_bridge_st_min_run_hours": "None",
     "nyiso_gas_bridge_ct": "False",
     "nyiso_gas_bridge_ct_min_load_frac": "0.238",
+    "nyiso_gas_bridge_plant_exclusions": "False",
     "nyiso_gas_bridge_ct_min_run_hours": "2.0",
+    "nyiso_gas_bridge_plant_min_run": "False",
     "ercot_gas_bridge_online_hours": "False",
     "forecast_xyear_warmstart": "True",
     "ercot_offer_hrmult_ep_rebasis": "False",
@@ -1239,6 +1262,12 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
+    # Added by miso-169 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_reserve_online_gated": "False",
+    # Added by miso-170 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "mustrun_plant_exclusions": "False",
 }
 
 
@@ -4899,6 +4928,34 @@ class ScenarioConfig:
     # mixed steam/turbine facility (Barrett, Gowanus, Narrows) contributes only
     # its turbines instead of being dropped as unattributable.
     nyiso_gas_bridge_ct_min_load_frac: float = 0.238
+    # MEMBERSHIP correction for the bridge (nyiso-144): skip plants in economic
+    # LAY-UP — idle in their own metered conduct while reading ~100 % available
+    # in the outage extract, because lay-up is correctly not booked as a forced
+    # outage. Bridging such a plant holds a mothballed boiler at minimum load
+    # across gaps it never operated in, which is rule 17 [R-FLOOR-WINDOW]'s "a
+    # floor binding in hours its own driver evidence says the class is offline
+    # is a bug by definition".
+    #
+    # This is the BRIDGE's half of a correction that previously existed only on
+    # the reliability floor (reliability_floor_plant_exclusions): the two
+    # mechanisms floor the same class, so nyiso-140 fixed one MECHANISM rather
+    # than the plant (rule 19 [R-ONE-MECH] — "enumerate what already floors the
+    # same class", one mechanism later).
+    #
+    # Population: data/raw/_processed-legacy/campd_bridge_layup_exclusions_NYISO.csv
+    # (scripts/data/derive_campd_bridge_layup_exclusions.py). A plant qualifies
+    # iff its median gross load is ZERO in every (year, 4-hour block) cell of
+    # 2023-2025 — the nyiso-140 criterion verbatim. The per-cell quantifier is
+    # what makes it a lay-up test rather than a low-capacity-factor test: a
+    # pooled median of zero also catches ordinary cyclers, which are exactly
+    # the population a commitment bridge exists to hold together. Frozen
+    # against residuals (rule 23 [R-FROZEN-DERIVE]); it reads only the meter and
+    # is computed WITHOUT reference to which plants the bridge floors, which is
+    # what makes its agreement with the D-4 verdicts evidence rather than
+    # circularity.
+    #
+    # Default off so a control run is byte-identical.
+    nyiso_gas_bridge_plant_exclusions: bool = False
     # Minimum run duration (hours) for the CT block-commitment extension.
     # 2 h = run_hours_p25_capwtd from the artifact above (34,024 measured runs;
     # cap-weighted p25/p50/p75 = 2 / 4 / 8 h, equally-weighted 2 / 4 / 7 h).
@@ -4919,6 +4976,41 @@ class ScenarioConfig:
     # — a live convention inconsistency, deliberately NOT reconciled here
     # because doing so would change those legs' floors (a second delta).
     nyiso_gas_bridge_ct_min_run_hours: float = 2.0
+    # PER-PLANT minimum-run identification for the bridge's min_run extension
+    # (nyiso-146): fill each slow-start row's minimum-run duration from ITS
+    # OWN plant's measured CAMPD run-length distribution
+    # (data/raw/_processed-legacy/campd_perplant_min_run_NYISO.csv,
+    # scripts/data/derive_campd_perplant_min_run.py) instead of the per-class
+    # scalar above — REPLACING the scalar for covered plants, never stacking
+    # (rule 19 [R-ONE-MECH]); uncovered plants (no CAMPD series of their own,
+    # mixed-class facilities, the misaligned Astoria campus pair 55375/57664)
+    # keep the class fallback, and the CT leg keeps its own required measured
+    # horizon.
+    #
+    # WHY PER-PLANT: the class is provably not one run-length population.
+    # Measured on the plant-summed series (the basis the floor's
+    # min_load x PLANT capacity convention and the nyiso-145 starts object
+    # both live on), CC_REGULAR per-plant p25 spans 7 h (Carr Street, a true
+    # cycler) to 646 h (Caithness, near-baseload) — a 92x spread — while the
+    # keeper's class scalar is 21 h; ST_GAS spans 2.5-213 h against 13 h. One
+    # scalar simultaneously over-constrains the cyclers and lets the LP
+    # shatter the near-baseload CCs into hundreds of phantom starts
+    # (Bethlehem 2539: 262-302 model starts/yr in runs of median 5-9 h
+    # against 5-7 metered starts in runs of median 487-1,217 h — nyiso-145,
+    # FINDING-nyiso145-cc-overcycling-and-d4-vintage-2026-08-19.md §3a).
+    #
+    # The per-plant value is each plant's own run-length p25 — the
+    # pre-registered order statistic (PREREG-nyiso146-perplant-min-run-
+    # 2026-08-19.md, chosen at phase 0 BEFORE any solve): an observed run
+    # bounds a minimum-run constraint from ABOVE, so a low order statistic
+    # is the correct estimator (the ct_min_run_hours reasoning above,
+    # verbatim), and p25 rather than p10 because within-year computation
+    # splits year-boundary runs into spurious short ones. A measured
+    # per-plant statistic with ZERO fitted scalars (rule 21 [R-DOF], the
+    # lay-up plant-code-set shape); frozen against residuals (rule 23
+    # [R-FROZEN-DERIVE] — re-derives only when the CAMPD vintages update).
+    # Default off so a control run is byte-identical.
+    nyiso_gas_bridge_plant_min_run: bool = False
     nyiso_spin_reserve_online: bool = False  # NYISO online-gated PUBLISHED
     # spinning families (nyiso-84, the mechanism arm): re-classes the published
     # NYCA 10-minute spinning family (655 MW, $775) — and east_10min_spin (330
@@ -6049,6 +6141,40 @@ class ScenarioConfig:
     # energy_reserve_coopt + MISO; hard-errors when the intake parquet is
     # absent (no silent fallback to the estimates it replaces). Default off;
     # GATED CHANGE (alters withholding, hence dispatch volumes).
+    miso_reserve_online_gated: bool = False  # MISO: restrict the synchronised
+    # reserve products' SUPPLY to on-line capacity (PREREG-miso167 §2, the
+    # miso-167 summer-scarcity anatomy's supply-side lever). Splits each
+    # (zone, fuel-class) pergen pool's R column into a GATED Reg+Spin product
+    # column and an UNGATED Supplemental column (published BPM-002 product
+    # definitions: Regulating and Spinning require a resource synchronised to
+    # the grid — Reg additionally on AGC — while Supplemental may be supplied
+    # by offline quick-start resources), sharing the pool's joint P+R
+    # headroom row via the pjm_reserve_pergen_sync product-split layout. Each
+    # gated column carries the coupling row R − online_rho·ΣP(members) ≤ 0
+    # (reserve_rows online_gated_cols — the ISO-agnostic online-gated row
+    # form at pool grain), so idle capacity backs none of the synchronised
+    # products; a pool-shared ramp row keeps the two product columns inside
+    # the pool's one availability-scaled 10-minute deliverable ramp. Adds ONE
+    # nested market-wide Reg+Spin family (the NYISO East ⊂ NYCA template):
+    # requirement = the measured hourly cleared reg+spin series
+    # (data.reserve_requirements market_regspin leg, the same committed
+    # intake miso_measured_reserve_requirements reads), demand curve = the
+    # PUBLISHED two-step Schedule 28 / BPM-002 Market-Wide Regulation &
+    # Spinning Reserve Demand Curve ($65 to 90 % cleared, $98 below —
+    # spec.MISO_REGSPIN_DEMAND_CURVE_STEPS). Every pre-existing family
+    # (market RBDC, South zonal, Midwest sub-regional) keeps its requirement,
+    # curve and all-product draw byte-identically. online_rho is the
+    # CAMPD-measured fleet statistic (data.online_reserve_rho, derived from
+    # MISO's OWN operating record per rule 25 —
+    # scripts/data/derive_campd_online_reserve_rho.py --iso MISO; measured
+    # 0.1764 over 5.28M online unit-hours, 93.1 % coverage — NOTE the
+    # consumption seam clips to RHO_CLIP whose 0.5 floor is UNCITED, the
+    # standing nyiso-144 owner escalation). Zero fitted parameters (rule 21).
+    # Requires energy_reserve_coopt + miso_reserve_pergen +
+    # miso_measured_reserve_requirements; mutually exclusive with
+    # miso_commitment_posture (rule 19 — the posture U/SU re-anchor gates the
+    # same phenomenon). Default off; GATED CHANGE (alters withholding, hence
+    # dispatch volumes).
     miso_south_seam_split: bool = False  # MISO: host the South seam's
     # reference-price bands in their own external zone
     # (constants.MISO_SOUTH_EXTERNAL_ZONE) instead of the shared
@@ -9603,6 +9729,45 @@ class ScenarioConfig:
     # (rule 20 as amended 2026-07-14 — legitimacy rests on the DOF ledger +
     # legitimacy_diagnostics.json D-1/D-2/D-4).
     st_gas_mustrun_p25_level: bool = False
+
+    # MEMBERSHIP correction for the per-plant must-run floors
+    # (cc_mustrun_per_plant / st_gas_mustrun_per_plant, the p25 level swap
+    # included): skip plants in economic LAY-UP — idle in their own metered
+    # conduct while reading ~100 % available in the outage extract, because
+    # lay-up is correctly not booked as a forced outage. Flooring such a plant
+    # holds a mothballed boiler at its measured operating level in the top
+    # system-load hours it never operated in, which is rule 17
+    # [R-FLOOR-WINDOW]'s "a floor binding in hours its own driver evidence says
+    # the class is offline is a bug by definition".
+    #
+    # This is the MUST-RUN FLOORS' half of a correction that previously existed
+    # only on the reliability floor (reliability_floor_plant_exclusions,
+    # nyiso-140) and the NYISO commitment bridge
+    # (nyiso_gas_bridge_plant_exclusions, nyiso-144). All three mechanisms floor
+    # the same merchant thermal plants, so each earlier fix repaired one
+    # MECHANISM rather than the plant (rule 19 [R-ONE-MECH] — "enumerate what
+    # already floors the same class", one mechanism later). Identified for MISO
+    # by miso-170, where the per-plant ST_GAS floor was the mechanism carrying
+    # 16 of the keeper's 18 D-4 per-unit conduct failures.
+    #
+    # Population: data/raw/_processed-legacy/campd_bridge_layup_exclusions_<ISO>.csv
+    # (scripts/data/derive_campd_bridge_layup_exclusions.py) — the SAME
+    # mechanism-blind lay-up census the bridge reads, by design: lay-up is a
+    # property of the SITE, so one identification serves every mechanism that
+    # floors it. A plant qualifies iff its median gross load is ZERO in every
+    # (year, 4-hour block) cell of 2023-2025 — the nyiso-140 criterion verbatim.
+    # The per-cell quantifier is what makes it a lay-up test rather than a
+    # low-capacity-factor test: a pooled median of zero also catches ordinary
+    # cyclers, which are exactly the population a measured operating floor
+    # exists to reproduce. Frozen against residuals (rule 23
+    # [R-FROZEN-DERIVE]); it reads only the meter and is computed WITHOUT
+    # reference to which plants the floors force or to any D-4 verdict, which
+    # is what makes its agreement with those verdicts evidence rather than
+    # circularity. Rule 21 [R-DOF]: zero free parameters — the correction is a
+    # plant-code SET produced by a conduct test, with no scalar.
+    #
+    # Default off so a control run is byte-identical.
+    mustrun_plant_exclusions: bool = False
 
     # When True, each CC_REGULAR plant's LP capacity is reconciled to its
     # demonstrated CAMPD peak: raised where the peak exceeds the model bound
@@ -13374,6 +13539,8 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_gas_bridge_startup": 1,
     "nyiso_gas_bridge_da_horizon": 1,
     "nyiso_gas_bridge_min_run": 1,
+    "nyiso_gas_bridge_plant_exclusions": 1,
+    "nyiso_gas_bridge_plant_min_run": 1,
     "nyiso_gas_bridge_cc_min_run_hours": 2,
     "nyiso_gas_bridge_st_min_run_hours": 2,
     "nyiso_gas_bridge_ct": 1,
@@ -13430,6 +13597,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_midwest_subregional_reserves": 3,
     "miso_reserve_pergen": 1,
     "miso_commitment_posture": 1,
+    "miso_reserve_online_gated": 1,
     "miso_measured_reserve_requirements": 1,
     "miso_south_seam_split": 1,
     "miso_rdt_tcdc": 1,

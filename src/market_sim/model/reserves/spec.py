@@ -11,6 +11,7 @@ untouched — mathematical results are byte-identical for all 6 ISOs.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Optional
 
@@ -18,6 +19,8 @@ import numpy as np
 
 from market_sim.config.constants import ERCOT_AS_PLAN_HOLD_EPS, MISO_RPE_DEMAND_VALUE
 from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Reserve-product constants (moved from config/constants.py)
@@ -185,6 +188,30 @@ MISO_ZONAL_ORDC_STEPS: tuple[tuple[float, float], ...] = (
     (0.70, 1100.0),
     (0.10, 3300.0),
 )
+# MISO Market-Wide Regulation & Spinning Reserve Demand Curve
+# (config.miso_reserve_online_gated — the nested Reg+Spin product family):
+# the PUBLISHED two-step curve, Tariff Schedule 28 / BPM-002 (the middle of
+# MISO's three cascading market-wide demand curves: Regulating ⊂ Reg+Spin ⊂
+# Operating Reserve). Values as published in MISO's own co-optimization
+# methodology deck ("MISO Energy and Ancillary Service Co-optimization",
+# presented to the ERCOT RTC lessons-learned engagement, 2019-09-18, slide
+# "Market-Wide Regulation & Spinning Reserve Demand Curve" — it "represent[s]
+# the reliability value when contingency reserve is not short but the
+# spinning portion is short"):
+#   * cleared ≥ 90 % of the Reg+Spin requirement -> $65/MWh;
+#   * cleared < 90 %                             -> $98/MWh.
+# Same (width-fraction, penalty) encoding and cheapest-band-first ordering as
+# MISO_ZONAL_ORDC_STEPS; widths anchor to the measured requirement's annual
+# max (the South-family feasibility convention). In force for the whole
+# 2023-2025 backcast window (the Sept-30-2025 ER25-579 reform replaces the
+# OR curve's VOLL anchor, not this product curve's steps — and the same
+# 37-of-38-tail-hours windowing argument as MISO_RESERVE_DEMAND_CURVE_MAX
+# applies regardless). Cited in docs/parameter-citations.md.
+MISO_REGSPIN_DEMAND_CURVE_STEPS: tuple[tuple[float, float], ...] = (
+    (0.10, 65.0),
+    (0.90, 98.0),
+)
+
 # Default zonal reserve family set (config.miso_zonal_reserve_zones override):
 # MISO-South only — the sub-region whose reserves are separated from the
 # Midwest pool by the RDT contract-path limit (scope doc §6). MISO-East
@@ -752,6 +779,18 @@ class ReserveDesign:
     # columns ≡ pools, zone selection).
     pergen_col_pool: Optional[np.ndarray] = None  # (n_r,) pool per R column
     balance_col_mask: Optional[np.ndarray] = None  # (n_fam, n_r) bool
+    # Pergen-native online gating (MISO miso_reserve_online_gated,
+    # PREREG-miso167 §2): R columns whose award must be backed by ON-LINE
+    # output — each gated column gains the coupling row
+    # ``R − online_rho·ΣP(members) ≤ 0`` (reserve_rows online_gated_cols),
+    # with ``online_rho`` above carrying the measured multiplier
+    # (_identified_online_rho). ``pergen_pool_ramp10`` is the pool's
+    # availability-scaled 10-minute deliverable ramp enforced across the
+    # pool's PRODUCT columns jointly (the per-column bound alone would let
+    # the split products stack past the iron's physical ramp). Both ``None``
+    # on every flag-off path (byte-identical: no rows added).
+    pergen_online_gated_cols: Optional[np.ndarray] = None  # (n_r,) bool
+    pergen_pool_ramp10: Optional[np.ndarray] = None  # (n_pools, T)
     # Commitment-posture lever (miso_commitment_posture, design note §A): the
     # postured subset of the pergen pools. ``posture_pools`` indexes the R
     # columns that get an online-capacity variable U[p,t] (fast-start pools —
@@ -976,6 +1015,16 @@ def build_reserve_dispatch_kwargs(
             kw["reserve_pergen_col_pool"] = design.pergen_col_pool
         if design.balance_col_mask is not None:
             kw["reserve_balance_col_mask"] = design.balance_col_mask
+        # Pergen-native online gating (MISO miso_reserve_online_gated): the
+        # gated columns' coupling rows plus the pool-shared product ramp.
+        # ``reserve_online_rho`` is shared with the zone-aggregate gated
+        # spec's kwarg — the two layouts are mutually exclusive, so the one
+        # float channel is unambiguous.
+        if design.pergen_online_gated_cols is not None:
+            kw["reserve_pergen_online_gated_cols"] = design.pergen_online_gated_cols
+            kw["reserve_online_rho"] = design.online_rho
+        if design.pergen_pool_ramp10 is not None:
+            kw["reserve_pergen_pool_ramp10"] = design.pergen_pool_ramp10
 
     # Commitment-posture pools (MISO miso_commitment_posture, design note §A)
     if design.posture_pools is not None and design.posture_pools.size:
@@ -2701,6 +2750,95 @@ def _miso_design(
         member_ramp_t = ramp10[pergen_gen_idx][:, np.newaxis] * avail  # (m, T)
         col_ramp10 = np.zeros((n_r, member_ramp_t.shape[1]), dtype=float)
         np.add.at(col_ramp10, pergen_col, member_ramp_t)
+        # Online-gated reserve supply (miso_reserve_online_gated,
+        # PREREG-miso167 §2): split each (zone, fuel-class) pool's single R
+        # column into a GATED Reg+Spin product column and an UNGATED
+        # Supplemental product column (published BPM-002 product definitions
+        # — Reg and Spin require a resource synchronised to the grid, Supp is
+        # offline-quick-start-eligible), sharing the pool's joint P+R
+        # headroom row via the product-split layout (the PJM
+        # pjm_reserve_pergen_sync machinery). The gated columns carry the
+        # coupling row ``R − online_rho·ΣP(members) ≤ 0`` so idle capacity
+        # backs none of the synchronised products, and one NESTED market-wide
+        # Reg+Spin family (measured requirement, published two-step $65/$98
+        # demand curve) draws on the gated columns only — the NYISO
+        # nested-family template (East ⊂ NYCA), leaving the existing market/
+        # zonal families' requirements, curves and all-product draws
+        # untouched. A pool-shared ramp row keeps the two product columns
+        # inside the pool's one 10-minute deliverable ramp. Zero fitted
+        # parameters (rule 21): the split is a published product definition,
+        # the requirement is the already-committed measured series, and
+        # ``online_rho`` is the CAMPD-measured fleet statistic
+        # (_identified_online_rho / data.online_reserve_rho — derived from
+        # MISO's OWN record per rule 25).
+        pergen_col_pool = None
+        balance_col_mask = None
+        pergen_online_gated_cols = None
+        pergen_pool_ramp10 = None
+        online_rho = 1.0
+        if getattr(config, "miso_reserve_online_gated", False):
+            if getattr(config, "miso_commitment_posture", False):
+                raise ValueError(
+                    "miso_reserve_online_gated is mutually exclusive with "
+                    "miso_commitment_posture — the posture U/SU re-anchor and "
+                    "the online-gated coupling row gate the same phenomenon "
+                    "(CLAUDE.md rule 19: one mechanism per phenomenon)"
+                )
+            if "market_regspin" not in measured_req:
+                raise ValueError(
+                    "miso_reserve_online_gated requires "
+                    "miso_measured_reserve_requirements — the nested Reg+Spin "
+                    "family's requirement is the measured synchronised-product "
+                    "series (PREREG-miso167 §2); a forward-basis generator is "
+                    "a forecast-lane charter, not a silent fallback"
+                )
+            regspin_req = np.asarray(measured_req["market_regspin"], dtype=float)
+            rs_anchor = float(np.max(regspin_req))
+            rs_pen = np.array([p for _, p in MISO_REGSPIN_DEMAND_CURVE_STEPS])
+            rs_wid = np.array(
+                [frac * rs_anchor for frac, _ in MISO_REGSPIN_DEMAND_CURVE_STEPS]
+            )
+            families.append(
+                ReserveFamily(
+                    name="miso_rbdc_regspin",
+                    requirement=regspin_req,
+                    zone_mask=np.ones(n_zones, dtype=bool),
+                    ordc_penalties=rs_pen.astype(float),
+                    ordc_step_widths=rs_wid.astype(float),
+                    reserve_class=0,
+                )
+            )
+            # Column layout: [0, n_r) = GATED Reg+Spin, [n_r, 2*n_r) =
+            # UNGATED Supplemental; both columns of pool p share joint row p.
+            pergen_col_pool = np.tile(np.arange(n_r, dtype=int), 2)
+            pool_zone = np.zeros(n_r, dtype=int)
+            pool_zone[pergen_col] = zone
+            # Every PRE-EXISTING family keeps its all-product draw over its
+            # own zones (a South/Midwest reservation is reg+spin+supp); the
+            # appended Reg+Spin family draws the gated columns only.
+            masks = [
+                np.tile(np.asarray(f.zone_mask, dtype=bool)[pool_zone], 2)
+                for f in families[:-1]
+            ]
+            masks.append(
+                np.concatenate([np.ones(n_r, dtype=bool), np.zeros(n_r, dtype=bool)])
+            )
+            balance_col_mask = np.stack(masks, axis=0)
+            pergen_online_gated_cols = np.concatenate(
+                [np.ones(n_r, dtype=bool), np.zeros(n_r, dtype=bool)]
+            )
+            online_rho = _identified_online_rho(
+                fleet_arrays,
+                pergen_gen_idx,
+                iso=str(config.iso),
+                family_set="miso_reg_spin",
+            )
+            # Pool-shared 10-minute ramp: each product column keeps the pool
+            # cap as its per-column bound, and this row holds their SUM to
+            # the same pool cap — the products share the iron's one ramp.
+            pergen_pool_ramp10 = col_ramp10
+            col_ramp10 = np.vstack([col_ramp10, col_ramp10])
+
         # Commitment-posture lever (design note §A): U/SU columns on the
         # non-fast-start pools, gated on miso_commitment_posture. Pool
         # parameters are measured/published only (_posture_pool_params).
@@ -2720,6 +2858,11 @@ def _miso_design(
             pergen_gen_idx=pergen_gen_idx,
             pergen_col=pergen_col.astype(int),
             pergen_ramp10=col_ramp10,
+            pergen_col_pool=pergen_col_pool,
+            balance_col_mask=balance_col_mask,
+            pergen_online_gated_cols=pergen_online_gated_cols,
+            online_rho=online_rho,
+            pergen_pool_ramp10=pergen_pool_ramp10,
             posture_pools=posture_pools,
             posture_mlf=posture_mlf,
             posture_startup=posture_startup,
@@ -2733,6 +2876,77 @@ def _miso_design(
 
 
 # ---- NYISO -----------------------------------------------------------------
+
+
+def _identified_online_rho(
+    fleet_arrays: FleetArrays,
+    elig_idx: np.ndarray,
+    *,
+    iso: str,
+    family_set: str,
+) -> float:
+    """Return the online-gated class's headroom multiplier ``rho``.
+
+    ``rho`` is how much 10-minute reserve one MW of on-line output backs, in
+    the gated class-2 row ``R[c,z] - rho * sum_g P[g] <= 0``. For a gated class
+    that row REPLACES the capability row rather than joining it
+    (``model/lp/reserve_rows.py``), so ``rho`` is the class's only bound and has
+    to be identified, never defaulted.
+
+    Two identification sources, in rule 14 ``[R-ACCURATE]`` order:
+
+    1. **The MEASURED statistic** — ``data.online_reserve_rho``, the aggregate
+       10-minute deliverable headroom per MW on-line over the eligible fleet's
+       own CAMPD operating record. Preferred whenever the ISO has the artifact.
+    2. **The eligible fleet's own cap-weighted ``(pmax-pmin)/pmin``** at min
+       load — the original identification. Retained because it is correct and
+       self-contained on a fleet that carries real ``pmin`` values, but it is
+       DEAD CODE on a binned/tranche fleet, where must-run rides ``min_gen``
+       and ``pmin`` is identically zero (see the module the measured seam
+       documents). When neither source identifies it, the caller gets 1.0 and
+       the mechanism is running on an unidentified coefficient — which rule 21
+       ``[R-DOF]`` forbids in a keeper, so the fallback is logged.
+
+    Args:
+        fleet_arrays: The dispatch fleet.
+        elig_idx: LP row indices of the gated class's eligible set.
+        iso: The ISO whose measured artifact to read.
+        family_set: The online-gated family set key in that artifact.
+    """
+    from market_sim.data.online_reserve_rho import RHO_CLIP, load_online_rho
+
+    measured = load_online_rho(iso, family_set)
+    if measured is not None:
+        logger.info(
+            "%s gated reserve class '%s': MEASURED online_rho=%.4f "
+            "(pre-clip %.4f; min-load sensitivity %.4f, full-hour %.4f) over "
+            "%d online unit-hours, CAMPD coverage %.1f%%, vintages %s",
+            iso,
+            family_set,
+            measured.rho_used,
+            measured.rho,
+            measured.rho_minload,
+            measured.rho_fullhour,
+            measured.online_unit_hours,
+            100.0 * measured.campd_coverage_frac,
+            measured.years,
+        )
+        return measured.rho_used
+    pmin_e = np.asarray(fleet_arrays.pmin, dtype=float)[elig_idx]
+    pmax_e = np.asarray(fleet_arrays.pmax, dtype=float)[elig_idx]
+    valid = (pmin_e > 0) & (pmax_e > pmin_e)
+    if valid.any():
+        ratio = (pmax_e[valid] - pmin_e[valid]) / pmin_e[valid]
+        return float(np.clip(np.average(ratio, weights=pmax_e[valid]), *RHO_CLIP))
+    logger.warning(
+        "%s gated reserve class '%s': online_rho is UNIDENTIFIED — no measured "
+        "artifact and 0 of %d eligible rows carry pmin > 0 (binned fleet); "
+        "falling back to 1.0, which rule 21 [R-DOF] does not admit in a keeper",
+        iso,
+        family_set,
+        int(elig_idx.size),
+    )
+    return 1.0
 
 
 def _nyiso_design(
@@ -3148,21 +3362,9 @@ def _nyiso_design(
         eligible = np.vstack([full_elig, quick_elig, obligation_elig])
         online_gated = np.array([False, False, True], dtype=bool)
         o_idx = np.flatnonzero(obligation_elig)
-        pmin_o = np.asarray(fleet_arrays.pmin, dtype=float)[o_idx]
-        pmax_o = np.asarray(fleet_arrays.pmax, dtype=float)[o_idx]
-        valid = (pmin_o > 0) & (pmax_o > pmin_o)
-        if valid.any():
-            # rho = the obligation fleet's own (pmax-pmin)/pmin at min load —
-            # how much 10-minute headroom one MW of on-line output backs. A
-            # fleet property read off the same arrays the LP dispatches, not a
-            # tuned coefficient (rule 5 [R-NO-MAGIC]); clipped to the same
-            # [0.5, 4.0] physical band the path-A family uses.
-            ratio = (pmax_o[valid] - pmin_o[valid]) / pmin_o[valid]
-            online_rho = float(
-                np.clip(np.average(ratio, weights=pmax_o[valid]), 0.5, 4.0)
-            )
-        else:
-            online_rho = 1.0
+        online_rho = _identified_online_rho(
+            fleet_arrays, o_idx, iso="NYISO", family_set="incity_obligation"
+        )
     elif (synch and not commit_gated) or spin_online:
         # ONE online-gated class-2 construction serves both arm shapes: path
         # A's hand-scoped NYC spin family (synch) and the published spinning
@@ -3173,16 +3375,28 @@ def _nyiso_design(
         eligible = np.vstack([full_elig, quick_elig, quick_elig])
         online_gated = np.array([False, False, True], dtype=bool)
         q_idx = np.flatnonzero(quick_elig)
-        pmin_q = np.asarray(fleet_arrays.pmin, dtype=float)[q_idx]
-        pmax_q = np.asarray(fleet_arrays.pmax, dtype=float)[q_idx]
-        valid = (pmin_q > 0) & (pmax_q > pmin_q)
-        if valid.any():
-            ratio = (pmax_q[valid] - pmin_q[valid]) / pmin_q[valid]
-            online_rho = float(
-                np.clip(np.average(ratio, weights=pmax_q[valid]), 0.5, 4.0)
-            )
-        else:
-            online_rho = 1.0
+        # The two arm shapes share the machinery but NOT the measurement basis,
+        # so they must not share the artifact row (rule 14 [R-ACCURATE]):
+        #
+        # * path A's family is NYC-masked, and the `nyc_spin` row is measured on
+        #   NYC's own eligible fleet — the right basis, and hydro-free (there is
+        #   no NYC hydro), so the statistic is a clean thermal-pocket ratio.
+        # * `spin_online` gates the PUBLISHED NYCA/East spinning families, whose
+        #   eligible set is NYCA-wide and — with nyiso_hydro_reserve_eligible
+        #   armed — DOMINATED by hydro output (2-5 GW against ~60-230 MW of
+        #   thermal quick-start). No `nyca_spin` row is derived, because hydro
+        #   has no CEMS and carries no entry in fleet.RAMP10_FRAC_* at all, so
+        #   its 10-minute headroom is a COVERAGE GAP rather than a measured 0.
+        #   Measuring the NYCA ratio through that gap would manufacture a
+        #   binding constraint out of missing data — exactly what nyiso-110 §10
+        #   forbade — so this path deliberately finds no row and falls through
+        #   to the legacy identification, logging that it is unidentified.
+        online_rho = _identified_online_rho(
+            fleet_arrays,
+            q_idx,
+            iso="NYISO",
+            family_set="nyc_spin" if synch else "nyca_spin",
+        )
     else:
         eligible = np.vstack([full_elig, quick_elig])
         online_gated = None

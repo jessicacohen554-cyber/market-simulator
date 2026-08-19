@@ -7179,3 +7179,125 @@ year outside 2023–2025 solved, scored or registered.
 Gates: `audit_keepers.py --check` **0 failures / 0 warnings** · `build_status.py
 --iso NYISO` → `NYISO:CALIBRATED` · `check_mechanism_matrix.py` integrity +
 anchors + keeper stamps + §5.x prose OK. Next number: **nyiso-143**.
+
+---
+
+## nyiso-144 (2026-08-18) — the C3c tail is **NYCA-wide, not Long-Island locational**; `online_rho` measured; and the bridge's lay-up membership correction **PROMOTED**
+
+**KEEPER → `2026-08-18-nyiso-144-layup-exclusion`**, superseding
+`2026-08-18-nyiso-143-n11tsl-arm`. Determination **CALIBRATED** (rubric v3.4),
+C3c the lone ledgered caveat, **bit-unchanged at 2/0/5 h** against RT actuals
+10/13/42 — no gated criterion moves at all, so the structure-over-gates clause
+is neither invoked nor needed.
+
+*Log-continuity note: nyiso-143 promoted a keeper but left no entry here, so the
+previous section's "Next number: **nyiso-143**" is the last marker on file. This
+entry follows nyiso-143's promotion, whose full record lives in
+`RESULT-nyiso143-zone-k-transfer-bound-ab-2026-08-18.md` and the keeper shard.*
+
+### The headline finding — the successor object was misidentified, and it is not downstate
+
+nyiso-143 named "build a downstate scarcity mechanism" as its critical path,
+having measured that 100 % of the **model's** C3c tail hours are Long_Island.
+This session measured what the **real** tail is before building anything, from
+NYISO's own posted RT ancillary prices (full 11-zone, 8,760 h coverage) in
+exactly the actual C3c tail hours:
+
+| year | tail h | NYCA-wide reserve price (mean) | share of tail h > $50 | LI *locational* adder (mean) |
+|---|---:|---:|---:|---:|
+| 2023 | 10 | **$306.74** | **100 %** | $116.00 |
+| 2024 | 13 | $31.74 | 15 % | $5.36 |
+| 2025 | 42 | **$393.31** | **95 %** | $152.12 |
+
+The tail is a **control-area reserve-shortage pricing event** that Long Island
+participates in, not a Zone-K separation. **A downstate-scoped mechanism could
+not have reproduced it.** The instrument that would price it already exists —
+`nyca_10min_spin`, published 655 MW at a **$775** RCPF — and binds in **zero
+hours of all three years**, as do both Long Island families, because the classes
+are idle-allowed. Same object nyiso-110 named from the reserve side and
+nyiso-124 located as a downstate price-formation gap: **one gap, control-area
+wide.** Record: `FINDING-nyiso144-downstate-scarcity-and-rho-2026-08-18.md`;
+probe `scripts/probes/_nyiso144_tail_anatomy.py`.
+
+### `online_rho` — measured for the first time, and it lands below its own code's band
+
+`scripts/data/derive_campd_online_reserve_rho.py` +
+`src/market_sim/data/online_reserve_rho.py`. Measured `incity_obligation`
+**0.3014** (min-load sensitivity 1.2462) over 401,361 online unit-hours at 95.5 %
+CAMPD coverage; `nyc_spin` **0.2011** (1.1247) at 80.5 %.
+
+**Settled:** the downstate gated family is LIVE — `rho*` for inertness is ~3.0,
+far above the entire admissible band, so rho decides how *hard* the row binds,
+never *whether*. **Not settled:** both values fall **below the code's own
+`RHO_CLIP` floor of 0.5**, a band inherited from the legacy path with **no
+primary citation anywhere in the repo**, so `rho_used` returns the floor rather
+than the measurement. The band was left **unchanged** rather than widened to fit
+the measurement. Both gated flags stay `U` on an owner D-5(b) call.
+
+`nyiso_spin_reserve_online` keeps its `I`, **confirmed rather than overturned**:
+`rho*` is 0.3426 / 0.3635 / 0.4619, *below* nyiso-110's own stated 0.5 floor, and
+the eligible output is dominated by hydro, which has no CEMS and **no
+`RAMP10_FRAC_*` entry at all** — a coverage gap, not a measured zero. No
+NYCA-wide rho row was derived, deliberately: measuring through that gap would
+manufacture a binding constraint out of missing data. **Re-open condition, now a
+single purchasable object: a defensible 10-minute deliverable-ramp capability for
+NYISO hydro.**
+
+### The promotion — all six pre-registered kill gates PASS
+
+One differing field, `nyiso_gas_bridge_plant_exclusions` False → True, giving
+the commitment bridge the lay-up **membership** channel that existed only on the
+reliability floor (nyiso-140 repaired one *mechanism*, not the plant; rule 19
+`[R-ONE-MECH]`). Identification is the nyiso-140 criterion **verbatim** — median
+CAMPD plant gross load zero in every (year, 4-hour block) cell of 2023–2025 —
+derived **blind to the mechanism's own D-4 verdicts**, which is what makes its
+selection of **7 of the bridge's 8 D-4 failures** evidence rather than fitting.
+The per-cell quantifier is load-bearing: a *pooled* median of zero also catches
+ordinary cyclers, and the qualifying set stops at 18/18 zero cells against a
+nearest non-qualifier at 16/18.
+
+**K2's prediction was made before either solve and landed within 1.3 %:** shed
+0.1201 / 0.1406 / 0.3099 TWh against a predicted 0.1186 / 0.1396 / 0.3089 (±50 %
+band). **K3:** zero stray losses, zero residuals. **K4:** D-4 unit-conduct
+failures **17 → 3**, zero new. **K6′ never escalated** — every material class's
+forced share *falls* (ST_GAS 20.2→19.7 / 24.9→23.9 / 16.7→14.7 %), the opposite
+of nyiso-140. **Zero new free parameters** (DOF ledger 39 → 40, `n_residual`
+unchanged at 6 — the entry is a plant-code *set*, `n_scalars` 0).
+
+**What it does not buy, plainly:** no fit improvement, and none was expected.
+Across both full `calibration_verdict` reports the **only** difference is a
+skipped, non-gated day-ahead diagnostic line. What it buys is legitimacy: ~0.57
+TWh over three years no longer manufactured at plants whose own meter says they
+were mothballed.
+
+**Two plants deliberately left in**, both named in the pre-registration before
+the solve: **7314** (the eighth D-4 FAIL, 77.1 % of its floored hours metered at
+zero) fails the lay-up test — it is a cycler the model's own P0 over-runs, so its
+forcing is an **offer/economics** defect and excluding it would bury that error
+in a membership list (rules 1 / 14); it is the **named successor**. And **2517
+Port Jefferson** stays in the bridge population (D-4 verdict `pass` all three
+years) though correctly excluded from the reliability floor.
+
+**Record correction:** the nyiso-144 handoff's Port Jefferson figures (0.1495
+TWh / 4,623 h / 0.000 MW / 71.2 % in 2024) do **not** match the keeper's own
+committed `legitimacy_diagnostics.json` (0.0616 TWh / 1,716 h / 45.222 MW /
+44.7 % / **pass**). Roseton's row matches exactly; 2517's and 7314's do not. The
+committed artifact is the source of truth and the arm was scoped to it.
+
+### Posture
+
+Frontier **still NOT-YET**, but changed in kind: all four open items are now
+enumerable and none is open investigation — (1) NYISO hydro's 10-minute ramp
+(**data intake**, the new critical path), (2) the uncited `RHO_CLIP` band
+(**owner D-5(b)**), (3) plant 7314's bridge over-run (**lane-sized**,
+offer/economics), (4) `nyiso_iroquois_winter_spread` (**owner** ×2).
+`complete` **held and re-keyed** with the determination re-verified from
+committed artifacts (rule 22 D-5(b); the superseded keeper re-scores CALIBRATED,
+so the worse-determination stop does not fire). **Absent from `final`** —
+nyiso-142's NOT-READY stands, unchanged. Holdout spend freeze **ACTIVE**: every
+year solved, scored or read this session is 2023–2025.
+
+Gates: `audit_keepers.py --iso NYISO` **0 failures / 0 warnings** ·
+`build_status.py --check` 6/6 in sync → `NYISO:CALIBRATED` ·
+`check_mechanism_matrix.py` integrity + anchors + keeper stamps OK · 1,927 tests
+pass. Next number: **nyiso-145**.

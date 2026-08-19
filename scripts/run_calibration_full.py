@@ -3318,6 +3318,7 @@ def solve_and_persist(
     miso_midwest_subregional_reserves: bool = False,
     miso_reserve_pergen: bool = False,
     miso_commitment_posture: bool = False,
+    miso_reserve_online_gated: bool = False,
     miso_measured_reserve_requirements: bool = False,
     miso_south_seam_split: bool = False,
     miso_rdt_tcdc: bool = False,
@@ -3484,6 +3485,8 @@ def solve_and_persist(
     nyiso_gas_bridge_startup: bool | None = None,
     nyiso_gas_bridge_da_horizon: bool | None = None,
     nyiso_gas_bridge_min_run: bool | None = None,
+    nyiso_gas_bridge_plant_exclusions: bool | None = None,
+    nyiso_gas_bridge_plant_min_run: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -3839,6 +3842,8 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(miso_reserve_pergen=True)
         if miso_commitment_posture:
             recorded_cfg = recorded_cfg.with_overrides(miso_commitment_posture=True)
+        if miso_reserve_online_gated:
+            recorded_cfg = recorded_cfg.with_overrides(miso_reserve_online_gated=True)
         if miso_measured_reserve_requirements:
             recorded_cfg = recorded_cfg.with_overrides(
                 miso_measured_reserve_requirements=True
@@ -4430,6 +4435,14 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_min_run=nyiso_gas_bridge_min_run
             )
+        if nyiso_gas_bridge_plant_exclusions is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions
+            )
+        if nyiso_gas_bridge_plant_min_run is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run
+            )
         if nyiso_gas_bridge_cc_min_run_hours is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours
@@ -4966,6 +4979,7 @@ def solve_and_persist(
             miso_midwest_subregional_reserves=miso_midwest_subregional_reserves,
             miso_reserve_pergen=miso_reserve_pergen,
             miso_commitment_posture=miso_commitment_posture,
+            miso_reserve_online_gated=miso_reserve_online_gated,
             miso_measured_reserve_requirements=miso_measured_reserve_requirements,
             miso_south_seam_split=miso_south_seam_split,
             miso_rdt_tcdc=miso_rdt_tcdc,
@@ -5147,6 +5161,8 @@ def solve_and_persist(
             nyiso_gas_bridge_startup=nyiso_gas_bridge_startup,
             nyiso_gas_bridge_da_horizon=nyiso_gas_bridge_da_horizon,
             nyiso_gas_bridge_min_run=nyiso_gas_bridge_min_run,
+            nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions,
+            nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
             nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
@@ -5801,6 +5817,7 @@ def solve_and_persist(
         "miso_midwest_subregional_reserves": miso_midwest_subregional_reserves,
         "miso_reserve_pergen": miso_reserve_pergen,
         "miso_commitment_posture": miso_commitment_posture,
+        "miso_reserve_online_gated": miso_reserve_online_gated,
         "miso_measured_reserve_requirements": miso_measured_reserve_requirements,
         "miso_south_seam_split": miso_south_seam_split,
         "miso_rdt_tcdc": miso_rdt_tcdc,
@@ -6005,6 +6022,8 @@ def solve_and_persist(
         "nyiso_gas_bridge_startup": nyiso_gas_bridge_startup,
         "nyiso_gas_bridge_da_horizon": nyiso_gas_bridge_da_horizon,
         "nyiso_gas_bridge_min_run": nyiso_gas_bridge_min_run,
+        "nyiso_gas_bridge_plant_exclusions": nyiso_gas_bridge_plant_exclusions,
+        "nyiso_gas_bridge_plant_min_run": nyiso_gas_bridge_plant_min_run,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
         "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
         "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
@@ -9403,6 +9422,21 @@ def main() -> None:
         "--energy-reserve-coopt. MISO-only; default off.",
     )
     parser.add_argument(
+        "--miso-reserve-online-gated",
+        action="store_true",
+        help="MISO online-gated reserve SUPPLY (PREREG-miso167 S2): split "
+        "each pergen pool's R column into a GATED Reg+Spin product (coupling "
+        "row R <= online_rho * sum P over the pool's members — idle capacity "
+        "backs none of the synchronised products; measured CAMPD rho, "
+        "data.online_reserve_rho) and an UNGATED Supplemental product, with "
+        "one NESTED market-wide Reg+Spin family (measured cleared reg+spin "
+        "requirement, published Schedule-28 $65/$98 two-step curve) and a "
+        "pool-shared 10-min ramp row. Requires --energy-reserve-coopt + "
+        "--miso-reserve-pergen + --miso-measured-reserve-requirements; "
+        "mutually exclusive with --miso-commitment-posture (rule 19). "
+        "MISO-only; default off.",
+    )
+    parser.add_argument(
         "--miso-commitment-posture",
         action="store_true",
         help="MISO pooled linear commitment-posture lever (design note "
@@ -11495,6 +11529,27 @@ def main() -> None:
         help="Cap economic bridges at one DA operating day (24 h). Default on.",
     )
     parser.add_argument(
+        "--nyiso-gas-bridge-plant-exclusions",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="MEMBERSHIP correction: skip plants in economic LAY-UP (median "
+        "gross load zero in every year x 4-hour-block cell of 2023-2025, "
+        "data/raw/_processed-legacy/campd_bridge_layup_exclusions_NYISO.csv). "
+        "The bridge's half of the correction that previously existed only on "
+        "the reliability floor (--reliability-floor-plant-exclusions).",
+    )
+    parser.add_argument(
+        "--nyiso-gas-bridge-plant-min-run",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="PER-PLANT minimum-run identification (nyiso-146): fill each "
+        "slow-start row's minimum-run duration from its own plant's measured "
+        "CAMPD run-length p25 "
+        "(data/raw/_processed-legacy/campd_perplant_min_run_NYISO.csv), "
+        "replacing the per-class scalar for covered plants; uncovered plants "
+        "keep the class fallback.",
+    )
+    parser.add_argument(
         "--nyiso-gas-bridge-min-run",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -11794,6 +11849,7 @@ def main() -> None:
         miso_midwest_subregional_reserves=args.miso_midwest_subregional_reserves,
         miso_reserve_pergen=args.miso_reserve_pergen,
         miso_commitment_posture=args.miso_commitment_posture,
+        miso_reserve_online_gated=args.miso_reserve_online_gated,
         miso_measured_reserve_requirements=args.miso_measured_reserve_requirements,
         miso_south_seam_split=args.miso_south_seam_split,
         miso_rdt_tcdc=args.miso_rdt_tcdc,
@@ -11961,6 +12017,8 @@ def main() -> None:
         nyiso_gas_bridge_startup=args.nyiso_gas_bridge_startup,
         nyiso_gas_bridge_da_horizon=args.nyiso_gas_bridge_da_horizon,
         nyiso_gas_bridge_min_run=args.nyiso_gas_bridge_min_run,
+        nyiso_gas_bridge_plant_exclusions=args.nyiso_gas_bridge_plant_exclusions,
+        nyiso_gas_bridge_plant_min_run=args.nyiso_gas_bridge_plant_min_run,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
         nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,

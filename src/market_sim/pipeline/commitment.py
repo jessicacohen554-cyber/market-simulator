@@ -703,6 +703,20 @@ def _nyiso_bridge_min_run_hours(config, fleet: list, fleet_arrays) -> np.ndarray
     tranche with no startup cost) carry 0 — the detector skips them before it
     reads this array, so their value is inert either way.
 
+    PER-PLANT identification (``nyiso_gas_bridge_plant_min_run``, nyiso-146):
+    the class is not one run-length population (measured per-plant p25 spans
+    7-646 h against a 21 h class scalar), so when the gate is on, a slow-start
+    row whose plant appears in the measured artifact
+    (``data/raw/_processed-legacy/campd_perplant_min_run_{ISO}.csv``) takes
+    ITS OWN plant's measured value — REPLACING the class scalar for covered
+    plants, never stacking on it (rule 19 [R-ONE-MECH]). Uncovered plants
+    (no CAMPD series, the mixed-class drops, the misaligned Astoria campus
+    pair) keep the class fallback below, and the armed CT leg keeps its own
+    REQUIRED measured horizon (the artifact never covers gas_ct rows). The
+    same miso-113 per-gen-vector convention as
+    ``min_load_frac_by_gen``; gated default off so a control run is
+    byte-identical.
+
     Args:
         config: The run's ``ScenarioConfig``.
         fleet: The dispatch fleet, aligned with ``fleet_arrays`` rows.
@@ -711,6 +725,7 @@ def _nyiso_bridge_min_run_hours(config, fleet: list, fleet_arrays) -> np.ndarray
     Returns:
         A ``(n_gen,)`` float array of minimum run hours.
     """
+    from market_sim.data.perplant_min_run import load_perplant_min_run
     from market_sim.model.commitment import COMMITMENT_PARAMS_BY_FUEL
 
     hr = np.asarray(fleet_arrays.heat_rate, dtype=float)
@@ -725,11 +740,26 @@ def _nyiso_bridge_min_run_hours(config, fleet: list, fleet_arrays) -> np.ndarray
         # which extends nothing, so falling back would make the leg inert.
         fuels.add(_NYISO_CT_FUEL)
         override[_NYISO_CT_FUEL] = float(config.nyiso_gas_bridge_ct_min_run_hours)
+    per_plant: dict[int, float] = (
+        load_perplant_min_run(str(getattr(config, "iso", "")))
+        if getattr(config, "nyiso_gas_bridge_plant_min_run", False)
+        else {}
+    )
+    covered = 0
     out = np.zeros(len(fleet), dtype=float)
     for g, gen in enumerate(fleet):
         fuel = gen.fuel_type
         if fuel not in fuels or gen.plant_group.endswith("_CHP"):
             continue
+        # Per-plant replacement fires only on the slow-start classes the
+        # artifact measures — never the CT leg, whose measured horizon is its
+        # own required field above.
+        if fuel in _NYISO_BRIDGE_FUELS:
+            pp = per_plant.get(int(getattr(gen, "plant_code", 0) or 0))
+            if pp is not None:
+                out[g] = float(pp)
+                covered += 1
+                continue
         ov = override.get(fuel)
         if ov is not None:
             out[g] = float(ov)
@@ -743,6 +773,14 @@ def _nyiso_bridge_min_run_hours(config, fleet: list, fleet_arrays) -> np.ndarray
                 params = p
                 break
         out[g] = float(params["min_run_hours"])
+    if per_plant:
+        logger.info(
+            "NYISO gas bridge per-plant min-run identification: %d measured "
+            "plant(s) in the artifact, matching %d fleet row(s); uncovered "
+            "rows keep the class fallback",
+            len(per_plant),
+            covered,
+        )
     return out
 
 
@@ -767,6 +805,7 @@ def _nyiso_gas_bridge_floor(
     Returns ``None`` when neither class produces a floor.
     """
     from market_sim.config.constants import DA_COMMITMENT_HORIZON_HOURS
+    from market_sim.data.bridge_layup_exclusions import load_layup_exclusions
     from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
 
     startup_bridge = bool(getattr(config, "nyiso_gas_bridge_startup", True))
@@ -780,11 +819,45 @@ def _nyiso_gas_bridge_floor(
         if getattr(config, "nyiso_gas_bridge_min_run", False)
         else None
     )
+    # MEMBERSHIP correction (nyiso_gas_bridge_plant_exclusions): a plant in
+    # economic lay-up is not in the day-ahead commitment population at all, so
+    # bridging it holds a mothballed boiler at min load across gaps it never
+    # operated in (rule 17 [R-FLOOR-WINDOW]). Expressed through the detector's
+    # own population gate — a non-positive min_load_frac_by_gen entry scopes the
+    # row out — so no new detector parameter and no class-name tuple is needed
+    # (the miso-113 convention; rule 18 [R-PHYSICS] keeps ELIGIBILITY on
+    # _ra_bridge_unit_params' min-down/startup physics). Gated: with the flag
+    # off the vector is None and every leg is byte-identical.
+    excluded = (
+        load_layup_exclusions("NYISO")
+        if getattr(config, "nyiso_gas_bridge_plant_exclusions", False)
+        else frozenset()
+    )
+    if excluded:
+        in_pop = sum(
+            1 for gen in fleet if int(getattr(gen, "plant_code", 0) or 0) in excluded
+        )
+        logger.info(
+            "NYISO gas bridge membership correction: %d laid-up plant code(s) "
+            "excluded, matching %d fleet row(s) — %s",
+            len(excluded),
+            in_pop,
+            sorted(excluded),
+        )
     per_class = _nyiso_bridge_min_load_fracs(config)
     total = None
     for fuel, frac in per_class.items():
         if frac <= 0.0:
             continue
+        frac_by_gen = None
+        if excluded:
+            frac_by_gen = np.array(
+                [
+                    0.0 if int(getattr(gen, "plant_code", 0) or 0) in excluded else frac
+                    for gen in fleet
+                ],
+                dtype=float,
+            )
         part = caiso_ra_mustoffer_min_gen(
             p0_dispatch,
             fleet_arrays,
@@ -796,6 +869,7 @@ def _nyiso_gas_bridge_floor(
             fuel_types=(fuel,),
             max_econ_gap_hours=max_gap,
             min_run_hours=min_run,
+            min_load_frac_by_gen=frac_by_gen,
         )
         # PER-CLASS trace. The composed total cannot show that one leg
         # contributed nothing, and a leg that floors zero unit-hours is exactly

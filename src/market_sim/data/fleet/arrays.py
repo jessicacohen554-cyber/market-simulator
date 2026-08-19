@@ -2338,6 +2338,32 @@ def _compose_min_gen_floors(
     # block (rule 19 — the level source is REPLACED, no second floor). Gated on
     # BOTH flags: st_gas_mustrun_per_plant arms the phenomenon, p25_level swaps
     # the level. Off => empty dicts => byte-identical to today.
+    # MEMBERSHIP correction for BOTH per-plant must-run floors below
+    # (config.mustrun_plant_exclusions, miso-170): the plants the mechanism-blind
+    # CAMPD lay-up census says are mothballed — median gross load ZERO in every
+    # (year, 4-hour block) cell — carry no measured operating floor at all. A
+    # laid-up plant reads ~100 % available in the outage extract (lay-up is
+    # correctly not booked as a forced outage), so without this the floor holds
+    # a mothballed boiler at its historical operating level in the top
+    # system-load hours it never ran in (rule 17 [R-FLOOR-WINDOW]). Same census
+    # the NYISO commitment bridge reads — lay-up is a property of the SITE, so
+    # one identification serves every mechanism that floors it (rule 19
+    # [R-ONE-MECH]). Off => empty set => byte-identical to today, and the census
+    # file is not even opened.
+    mustrun_excluded: frozenset[int] = frozenset()
+    if config is not None and getattr(config, "mustrun_plant_exclusions", False):
+        # Local import: the census module is a leaf of data/, and importing it
+        # at module scope would add a fleet -> data cycle (the same reason
+        # pipeline/commitment.py imports it inside its own floor builder).
+        from market_sim.data.bridge_layup_exclusions import load_layup_exclusions
+
+        mustrun_excluded = load_layup_exclusions(_iso or "ERCOT")
+        logger.info(
+            "mustrun_plant_exclusions ARMED (%s): %d laid-up plant(s) carry no "
+            "per-plant must-run floor (mechanism-blind CAMPD lay-up census)",
+            _iso or "ERCOT",
+            len(mustrun_excluded),
+        )
     st_gas_p25_tranches: dict[int, list[int]] = {}
     st_gas_p25_levels_by_plant: dict[int, float] = {}
     st_gas_p25_frac_by_plant: dict[int, float] = {}
@@ -2352,6 +2378,8 @@ def _compose_min_gen_floors(
         for _g_idx, _gen in enumerate(generators):
             if getattr(_gen, "plant_group", "") != "ST_GAS":
                 continue
+            if int(_gen.plant_code or 0) in mustrun_excluded:
+                continue  # economic lay-up (config.mustrun_plant_exclusions)
             _key = (int(_gen.plant_code), "ST_GAS")
             _level = _p25_levels.get(_key, 0.0)
             _frac = _p25_fracs.get(_key, 0.0)
@@ -2577,6 +2605,8 @@ def _compose_min_gen_floors(
                 frac = float(getattr(gen, "cc_mustrun_online_frac", 0.0))
                 if frac <= 0.0:
                     continue
+                if int(getattr(gen, "plant_code", 0) or 0) in mustrun_excluded:
+                    continue  # economic lay-up (config.mustrun_plant_exclusions)
                 # miso-67 level swap: ST_GAS plants are floored by the dedicated
                 # p25-level block below when st_gas_mustrun_p25_level is armed —
                 # the committed-tranche level is replaced, not stacked (rule 19).

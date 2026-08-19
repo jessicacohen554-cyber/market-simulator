@@ -567,7 +567,7 @@
           </p>
 
           <p style="margin-bottom: 0;">
-            This is why <strong>congestion pricing works</strong>. It emerges naturally from the LP's solution structure. No special logic needed — just let the duals do their job. The <a href="solving-pricing.html">Solving &amp; Pricing page</a> explains how P0→P1→P2 refines these prices to account for startup costs.
+            This is why <strong>congestion pricing works</strong>. It emerges naturally from the LP's solution structure. No special logic needed — just let the duals do their job. The <a href="solving-pricing.html">Solving &amp; Pricing page</a> explains how P0→P1 refines these prices to account for startup costs.
           </p>
         </div>
 
@@ -612,15 +612,15 @@
               <div class="solver-info__value">Typical: 30–60 seconds per year on a modern CPU</div>
             </div>
             <div class="solver-info__item">
-              <div class="solver-info__label">P0→P1→P2 Sequence</div>
-              <div class="solver-info__value">After P0 solves, P1 only changes the cost vector (startup markup) and warm-starts from P0's basis. Converges in <5 iterations. P2 is optional.</div>
+              <div class="solver-info__label">P0→P1 Sequence</div>
+              <div class="solver-info__value">After P0 solves, P1 only changes the cost vector (startup markup) and warm-starts from P0's basis. Converges in <5 iterations. P1 is the scored run.</div>
             </div>
           </div>
 
           <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Warm-Starting & Cross-Year Basis</h3>
 
           <p>
-            The P0→P1→P2 sequence is fast because <strong>P1 warm-starts from P0's optimal basis</strong>. Instead of solving P1 cold, HiGHS uses P0's variable statuses (in-basis, at-lower, at-upper) as a starting point. Since the matrix and bounds haven't changed, only 1–5 simplex iterations are needed to re-optimize after the cost change.
+            The P0→P1 sequence is fast because <strong>P1 warm-starts from P0's optimal basis</strong>. Instead of solving P1 cold, HiGHS uses P0's variable statuses (in-basis, at-lower, at-upper) as a starting point. Since the matrix and bounds haven't changed, only 1–5 simplex iterations are needed to re-optimize after the cost change.
           </p>
 
           <p>
