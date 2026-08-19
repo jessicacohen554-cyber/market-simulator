@@ -1,0 +1,145 @@
+{
+ "session": "ercot-223",
+ "phase": "0 (read-only, no LP)",
+ "shed_2024": {
+  "control": [
+   {
+    "hour": 3067,
+    "zone": "Northeast",
+    "slack_mw": 600.1578655488606,
+    "price": 5000.0
+   }
+  ],
+  "arm": [
+   {
+    "hour": 3067,
+    "zone": "Northeast",
+    "slack_mw": 600.1578655488597,
+    "price": 5000.0
+   },
+   {
+    "hour": 3066,
+    "zone": "South",
+    "slack_mw": 17.887106244591905,
+    "price": 5000.032994117647
+   }
+  ]
+ },
+ "window_ledger": {
+  "h3064": {
+   "floor_usd": 0.0,
+   "ctl_chg": 10.706,
+   "ctl_dis": 9.1,
+   "arm_chg": 0.0,
+   "arm_dis": 21.401
+  },
+  "h3065": {
+   "floor_usd": 523.124,
+   "ctl_chg": 218.689,
+   "ctl_dis": 261.3,
+   "arm_chg": 0.0,
+   "arm_dis": 261.3
+  },
+  "h3066": {
+   "floor_usd": 523.124,
+   "ctl_chg": 0.0,
+   "ctl_dis": 2189.191,
+   "arm_chg": 0.0,
+   "arm_dis": 1994.047
+  },
+  "h3067": {
+   "floor_usd": 523.124,
+   "ctl_chg": 0.0,
+   "ctl_dis": 2226.753,
+   "arm_chg": 0.0,
+   "arm_dis": 2214.61
+  },
+  "h3068": {
+   "floor_usd": 523.124,
+   "ctl_chg": 0.0,
+   "ctl_dis": 938.273,
+   "arm_chg": 0.0,
+   "arm_dis": 0.0
+  },
+  "h3069": {
+   "floor_usd": 0.0,
+   "ctl_chg": 0.0,
+   "ctl_dis": 127.414,
+   "arm_chg": 0.0,
+   "arm_dis": 1065.687
+  }
+ },
+ "window_deficit_mwh_3066_67": 207.287,
+ "class_backfill_3066": {
+  "CT_PEAKER": 177.257
+ },
+ "nonspin_identity_3066": {
+  "delta_nonspin_held_mw": 17.8871,
+  "shed_mw": 17.8871,
+  "delta_storage_dis_mw": -195.144,
+  "delta_ct_peaker_mw": 177.257,
+  "identity |dNS - shed|": 0.0,
+  "identity |dStorHeadroom + dThermalHeadroom - dNS|": 0.0001
+ },
+ "freeze_arithmetic": {
+  "deploy_floor_h3065_forced_mw": 261.3,
+  "both_runs_dis_h3065": [
+   261.3,
+   261.3
+  ],
+  "freeze_net_mwh": {
+   "h3067": 3091.5,
+   "h3068": 2073.8,
+   "h3069": 1935.6
+  },
+  "ctl_dis_3068 vs eta*(SOCexit67-fz68), SOCexit67=fz67": [
+   938.27,
+   938.27
+  ],
+  "ctl_dis_3069 vs eta*(fz68-fz69)": [
+   127.41,
+   127.41
+  ],
+  "arm_dis_3069 vs eta*(fz67-fz69)": [
+   1065.69,
+   1065.69
+  ],
+  "note": "both runs exit h3067 with fleet SOC pinned at the freeze; the post-window discharges are exactly the eta-scaled freeze releases, re-timed by the floor (938 MWh h3068->h3069)."
+ },
+ "marginal_identities": {
+  "sigma_3066": {
+   "ctl": 4290.24,
+   "arm": 4276.86
+  },
+  "mu_soc_shadow_3066": {
+   "ctl": 575.6,
+   "arm": 184.4
+  },
+  "h3065_topup_margin (sigma + mu*eta - lambda)": {
+   "ctl": 78.5,
+   "arm": -224.5
+  },
+  "h3068_energy_vs_reserve": {
+   "ctl_margin (lam - vom)": 663.4,
+   "arm_margin (lam - floor)": 271.6,
+   "sigma_3068": 419.2,
+   "flip": "ctl margin > sigma (discharge); arm margin < sigma (hold as reserve-counted headroom, dump at h3069)"
+  }
+ },
+ "event_release_breadth": {
+  "2023": {
+   "floored_window_hours": 776,
+   "would_be_exempt": 8,
+   "kill_window_exempt": []
+  },
+  "2024": {
+   "floored_window_hours": 568,
+   "would_be_exempt": 5,
+   "kill_window_exempt": [
+    3065,
+    3066,
+    3067
+   ]
+  }
+ }
+}
