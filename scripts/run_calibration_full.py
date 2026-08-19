@@ -3488,6 +3488,7 @@ def solve_and_persist(
     nyiso_gas_bridge_plant_exclusions: bool | None = None,
     nyiso_gas_bridge_plant_min_run: bool | None = None,
     nyiso_gas_bridge_online_hours: bool | None = None,
+    nyiso_gas_bridge_state_floor_min_run: bool | None = None,
     cc_reserve_duty_split: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
@@ -4449,6 +4450,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_online_hours=nyiso_gas_bridge_online_hours
             )
+        if nyiso_gas_bridge_state_floor_min_run is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run
+            )
         if cc_reserve_duty_split is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_reserve_duty_split=cc_reserve_duty_split
@@ -5174,6 +5179,7 @@ def solve_and_persist(
             nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions,
             nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run,
             nyiso_gas_bridge_online_hours=nyiso_gas_bridge_online_hours,
+            nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run,
             cc_reserve_duty_split=cc_reserve_duty_split,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
             nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
@@ -6040,6 +6046,7 @@ def solve_and_persist(
         "nyiso_gas_bridge_plant_exclusions": nyiso_gas_bridge_plant_exclusions,
         "nyiso_gas_bridge_plant_min_run": nyiso_gas_bridge_plant_min_run,
         "nyiso_gas_bridge_online_hours": nyiso_gas_bridge_online_hours,
+        "nyiso_gas_bridge_state_floor_min_run": nyiso_gas_bridge_state_floor_min_run,
         "cc_reserve_duty_split": cc_reserve_duty_split,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
         "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
@@ -11576,6 +11583,16 @@ def main() -> None:
         "gaps. Same detector, same measured fractions, same D-2 id.",
     )
     parser.add_argument(
+        "--nyiso-gas-bridge-state-floor-min-run",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="DUTY SCOPING for the online-hours state floor: hold it only for "
+        "plants whose measured run-length p25 clears the population gap "
+        "(constants.NYISO_STATE_FLOOR_MIN_RUN_HOURS; membership from "
+        "campd_perplant_min_run_NYISO.csv). Requires "
+        "--nyiso-gas-bridge-online-hours.",
+    )
+    parser.add_argument(
         "--cc-reserve-duty-split",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12055,6 +12072,7 @@ def main() -> None:
         nyiso_gas_bridge_plant_exclusions=args.nyiso_gas_bridge_plant_exclusions,
         nyiso_gas_bridge_plant_min_run=args.nyiso_gas_bridge_plant_min_run,
         nyiso_gas_bridge_online_hours=args.nyiso_gas_bridge_online_hours,
+        nyiso_gas_bridge_state_floor_min_run=args.nyiso_gas_bridge_state_floor_min_run,
         cc_reserve_duty_split=args.cc_reserve_duty_split,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
         nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,
