@@ -8443,3 +8443,80 @@ note); §5.2 caiso-202 block added. **Filed, not fixed:** the DOF ledger's
 **Records:** the FINDING (above), the two committed probes,
 `docs/mechanism-testing-matrix.md` §5.2 caiso-202 block,
 `docs/codebase-site/data/mechanism-matrix/CAISO.js` (evidence appends).
+
+## caiso-203 (2026-08-19) — **the chartered caiso-150 §F build found ALREADY BUILT, PROMOTED AND ARMED (caiso-151, 2026-07-31); kill-before-build executed, ONE bookkeeping cell repaired (`caiso_firm_selfsched_floor` O → K on existing evidence). NO SOLVE, NO DERIVE, NO CORPUS FETCH, NO RUN REGISTERED, KEEPER UNCHANGED.**
+
+**Keeper stays `2026-08-17-caiso-200-h1-memberpanel`** (NOT-YET, C3a the sole
+load-bearing FAIL under rubric v3.4, C3c the single ledgered caveat —
+untouched). Full evidence:
+`results/calibration/FINDING-caiso203-selfsched-charter-duplicate-2026-08-19.md`.
+
+**The charter as received.** The owner-issued caiso-203 charter (second
+re-opening of the caiso-201 rested lane, after caiso-202) ordered the
+caiso-150 §F firm-import self-schedule reconciliation built as "the LAST OPEN
+in-model cell" (`caiso_firm_selfsched_floor` O): rule-23 frozen derive from
+the PUB_BID_DAM corpus, a new `ScenarioConfig` field flooring `min_gen` at the
+measured self-schedule instead of full shaped capability, `D4_WINDOWS` + D-2
+visibility, PRECHECK, A/B vs a same-HEAD control, both registered.
+
+**What the record shows (verified this session on committed bytes only).**
+Every deliverable already exists:
+
+* The §F reconciliation IS `caiso_firm_import_selfsched_clip` — built,
+  gate-passed (G1 CV 0.042; G2 4.6/8.4/4.6 %; G3 19.3/12.3/18.6 %; G4
+  288/288), A/B'd and PROMOTED at caiso-151 (2026-07-31), on the frozen
+  artifact `caiso_intertie_selfsched_ceiling.csv` from an independent
+  357-day balanced OASIS re-fetch.
+* Armed in every keeper since, including caiso-200 (`run_config.json`, both
+  the override channel and the resolved config).
+* Engaged, not just armed: the keeper's committed D-2 `firm_import` rows read
+  **17.938 / 22.684 / 22.494 TWh** — caiso-150's unclipped 18.856/27.232/27.989
+  minus **exactly** the caiso-151 clip removals 0.919/4.548/5.495. D-4:
+  h0-23, off-window 0.000, pass, all three years.
+* `D4_WINDOWS` entry added at caiso-151; D-2/D-4 visibility landed at
+  caiso-155 (plant-set fix).
+* Even the charter's pre-registered directions are the caiso-151 measured
+  outcomes: C3a UP +0.045/+0.626/+0.494 pp (pre-registered E1-adverse,
+  accepted under rule 1), import → CC_REGULAR displacement ~1:1, C8/C6 clean.
+
+**Why the charter was not executed literally.** Rule 28a (the clip cell is
+adjudicated K; no new evidence), rule 19 (a second field reconciling the same
+floor against the same measured series), rule 23 (no source-data change, so
+no re-derive; OASIS reachability consequently NOT tested — the charter's
+data-blocker clause is moot because no fetch is owed). The only arm that
+would differ from the keeper — flooring AT the measured ceiling, raising the
+midday floor — is forbidden by the caiso-150 §B direction wall (§H: the
+ceiling is a both-directions upper bound, most generous midday).
+
+**The repair.** The stale premise traces to a bookkeeping omission: caiso-151
+stamped its result on the NEW `caiso_firm_selfsched_clip` row and never
+re-adjudicated the `caiso_firm_selfsched_floor` cell whose charter it was
+executing; caiso-202 §F.3 then read the open cell at face value ("completing
+the O-cell reconciliation"), and the caiso-203 charter compounded it by
+quoting caiso-150's unclipped measurements as the current keeper state — the
+mirror image of the caiso-167 stale-parenthetical incident. Repaired:
+`caiso_firm_selfsched_floor` **O → K** in the CAISO shard as a bookkeeping
+adjudication on the existing caiso-151 evidence (the caiso-167/169 pattern),
+with two standing annotations carried (below-ceiling shape basis remains
+EIA-930 net interchange, no admissible measured replacement per the §B wall;
+C3a-ADVERSE, never a C3a lever per caiso-202 §F.3).
+
+**Not done, deliberately:** no dashboard registration (rule 15 applies to
+completed runs — the caiso-134/140/150/202 disposition); the DOF-ledger
+stale-text item (caiso-202 §H) stays FILED, its trigger being the next
+promotion's attestation. **The lane RETURNS TO ITS RESTING STATE** (caiso-201
+Q1); markers untouched, holdout-freeze ACTIVE, no out-of-training year
+touched.
+
+**DO-NOT-REDO (caiso-203, binding; carried lists unchanged):** re-chartering
+a build of `caiso_firm_selfsched_floor` / the §F reconciliation absent
+evidence newer than caiso-151; re-fetching the OASIS corpus to regenerate the
+ceiling with no source-data change; flooring firm-import `min_gen` AT the
+measured ceiling in any hour; quoting caiso-150's unclipped-floor numbers as
+the state of any keeper from caiso-151 onward.
+
+**Records:** the FINDING (above), `docs/mechanism-testing-matrix.md` §5.2
+caiso-203 block, `docs/codebase-site/data/mechanism-matrix/CAISO.js`
+(cell O → K + tail stamp).
+
+Next number: caiso-204.
