@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-19T07:09:56",
+  "timestamp": "2026-08-19T08:07:48",
   "iso": "MISO",
   "years": [
     2023,
@@ -204,7 +204,9 @@
     "summer_derate_basis_aware": true,
     "commission_year_cod_fallback": true,
     "summer_wefor_share_override": 1.0599,
-    "miso_reserve_online_gated": true
+    "miso_reserve_online_gated": true,
+    "reliability_floor_plant_exclusions": true,
+    "mustrun_plant_exclusions": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -347,7 +349,7 @@
   "ercot_commitment_posture_min_load_frac": null,
   "carry_operating_mothballs": true,
   "reliability_floor": true,
-  "reliability_floor_plant_exclusions": null,
+  "reliability_floor_plant_exclusions": true,
   "ct_netload_drag": null,
   "gas_st_netload_drag": false,
   "ct_drag_overrides": {},
@@ -446,8 +448,8 @@
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
     "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
   },
-  "git_sha": "cff2ac2",
-  "basis_sha": "cff2ac233e1a3eaae1d69a0b822c022388aca21c",
+  "git_sha": "30645fd",
+  "basis_sha": "30645fd68ab9fed4c58dca0941838a4a20ae31da",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
