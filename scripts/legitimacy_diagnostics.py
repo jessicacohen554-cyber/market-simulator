@@ -1178,7 +1178,8 @@ def run_d4(
             "(EIA-923 net > 1.1x CAMPD gross ⇒ scored on EIA-923 MONTHLY, "
             "hourly CAMPD incomplete) — a zero median in a series the "
             "benchmark itself declines to trust is a metering artifact, not "
-            "conduct: " + ", ".join(sorted(ct_only_skipped)[:20])
+            "conduct: "
+            + ", ".join(sorted(ct_only_skipped)[:20])
             + (" …" if len(ct_only_skipped) > 20 else "")
         )
     if conduct_ok and skipped_substituted:
@@ -1585,6 +1586,31 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         "exhaustion window its own driver defines — binds only where "
         "P_exhaust × VOLL exceeds the keeper's own offer; ordinary hours "
         "keep the keeper's storage dispatch. Energy-only (card §7.4).",
+        iso="ERCOT",
+    ),
+    # --- ercot-221 adaptive-expectation storage offer (owner card by dispatch;
+    # PRECOMMIT-ercot221 + Amendments 1-3) ---
+    MechanismSpec(
+        "ercot_storage_adaptive_expectation",
+        "ercot_storage_adaptive_expectation",
+        "backcast_only",
+        True,
+        backcast_symbols=("ercot221_adaptive",),
+        note="adaptive-expectation storage scarcity offer, P1-only two-pass: "
+        "batteries price scarce SOC at their experienced recent deep-scarcity "
+        "frequency. DRIVER: the model's OWN pass-1 realized spike experience "
+        "(daily demand-weighted P1 lambda >= $1,000 — pure model, zero "
+        "measured content in the armed path, precommit Amendment 3), trailing "
+        "EWMA half-life 30 d x beta 3.0077 (the two rule-23 constants, "
+        "identified Phase-0 v2 on the measured 2023 daily evening storage "
+        "offer surface and FROZEN). WINDOW: evening net-peak hours h17-20 "
+        "CST, on days the model's own trailing state is active — a spike-free "
+        "year collapses the floor to vom (self-extinguishing). FORWARD STORY: "
+        "regenerates from the model's own price path in any year (wired in "
+        "the backcast driver only today, hence declared backcast-only). "
+        "Rule-19: exclusive with ercot_storage_reservation_offer on the "
+        "p1_storage_discharge_cost seam; ordinary-hour cycling untouched by "
+        "the window scoping. Audit trail: hourly/adaptive_<year>.parquet.",
         iso="ERCOT",
     ),
 )
