@@ -8520,3 +8520,17 @@ caiso-203 block, `docs/codebase-site/data/mechanism-matrix/CAISO.js`
 (cell O → K + tail stamp).
 
 Next number: caiso-204.
+
+## caiso-203b (2026-08-19, same session, post-finding) — **two owner rulings recorded: C3a is judged against ACTUAL (RT) LMP (basis question CLOSED, ruling 5 re-affirmed) and NO data intake is funded (both caiso-201 Q2 objects stay unfunded; the proposed caiso-204 sitting SUPERSEDED). NO SOLVE, NO CELL MOVED, KEEPER UNCHANGED.**
+
+Verbatim and interpretation: `results/calibration/caiso203-owner-rulings-2026-08-19.md`.
+Effects: the caiso-202 model-vs-DA +1.6 % stays context only, never a scoring
+basis; `caiso_da_rt_two_settlement` stays R with a governance close on top; the
+PS water-state intake stays DECLINED and the import spot-capacity derivation is
+NOT funded (declared residual stands, measured direct λ share < 5 %). The one
+live owner-dispatched charter is the ercot-221 adaptive-expectation storage
+lever CAISO transfer test (caiso-204, rule-25 fresh identification), whose
+handoff carries these rulings in its guardrails. Lane otherwise stays at rest
+(caiso-201 Q1).
+
+Next number: caiso-204 (reserved for the adaptive-lever transfer session).
