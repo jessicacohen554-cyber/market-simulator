@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-19T02:28:09",
+  "timestamp": "2026-08-19T03:46:07",
   "iso": "MISO",
   "years": [
     2023,
@@ -203,7 +203,8 @@
     },
     "summer_derate_basis_aware": true,
     "commission_year_cod_fallback": true,
-    "summer_wefor_share_override": 1.0599
+    "summer_wefor_share_override": 1.0599,
+    "miso_reserve_online_gated": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -226,6 +227,7 @@
   "miso_midwest_subregional_reserves": false,
   "miso_reserve_pergen": true,
   "miso_commitment_posture": false,
+  "miso_reserve_online_gated": true,
   "miso_measured_reserve_requirements": true,
   "miso_south_seam_split": true,
   "miso_rdt_tcdc": true,
@@ -399,6 +401,7 @@
   "nyiso_gas_bridge_startup": null,
   "nyiso_gas_bridge_da_horizon": null,
   "nyiso_gas_bridge_min_run": null,
+  "nyiso_gas_bridge_plant_exclusions": null,
   "nyiso_gas_bridge_cc_min_run_hours": null,
   "nyiso_gas_bridge_st_min_run_hours": null,
   "nyiso_spin_reserve_online": null,
@@ -443,7 +446,7 @@
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
     "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
   },
-  "git_sha": "b6f8053",
+  "git_sha": "a8b0a5b",
   "basis_sha": "3617acbc085816e9539f391fa083c78807d274b8",
   "highspy_version": "1.14.0",
   "environment": {
