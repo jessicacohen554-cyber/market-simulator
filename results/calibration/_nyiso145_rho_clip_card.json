@@ -1,0 +1,367 @@
+{
+ "run_id": "2026-08-18-nyiso-144-layup-exclusion",
+ "rho_clip_today": [
+  0.5,
+  4.0
+ ],
+ "measured_rows": [
+  {
+   "iso": "MISO",
+   "family_set": "miso_reg_spin",
+   "mechanism": "miso_reserve_online_gated",
+   "rho": 0.1764,
+   "rho_minload": 0.6863,
+   "rho_fullhour": 0.1705,
+   "online_unit_hours": 5276357,
+   "campd_coverage_frac": 0.9307,
+   "rho_used_today": 0.5,
+   "clipped_by_floor": true,
+   "minload_inside_band": true
+  },
+  {
+   "iso": "NYISO",
+   "family_set": "incity_obligation",
+   "mechanism": "nyiso_incity_commitment_obligation",
+   "rho": 0.3014,
+   "rho_minload": 1.2462,
+   "rho_fullhour": 0.2864,
+   "online_unit_hours": 401361,
+   "campd_coverage_frac": 0.9545,
+   "rho_used_today": 0.5,
+   "clipped_by_floor": true,
+   "minload_inside_band": true
+  },
+  {
+   "iso": "NYISO",
+   "family_set": "nyc_spin",
+   "mechanism": "nyiso_synchronised_reserve",
+   "rho": 0.2011,
+   "rho_minload": 1.1247,
+   "rho_fullhour": 0.0874,
+   "online_unit_hours": 124850,
+   "campd_coverage_frac": 0.8053,
+   "rho_used_today": 0.5,
+   "clipped_by_floor": true,
+   "minload_inside_band": true
+  }
+ ],
+ "band_that_admits_every_measurement": [
+  0.1764,
+  4.0
+ ],
+ "families": {
+  "nyiso_synchronised_reserve": {
+   "family_set": "nyc_spin",
+   "zones": {
+    "NYC": {
+     "requirement_mw": 250.0,
+     "years": {
+      "2023": {
+       "n_plants": 13,
+       "online_mw_p50": 212.3,
+       "online_mw_p05": 136.7,
+       "bind": {
+        "0.2011": {
+         "binding_hours": 8739,
+         "binding_share": 0.9976,
+         "worst_deficit_mw": 234.1
+        },
+        "0.3014": {
+         "binding_hours": 8650,
+         "binding_share": 0.9874,
+         "worst_deficit_mw": 226.1
+        },
+        "0.5": {
+         "binding_hours": 8608,
+         "binding_share": 0.9826,
+         "worst_deficit_mw": 210.4
+        },
+        "1.0": {
+         "binding_hours": 7583,
+         "binding_share": 0.8656,
+         "worst_deficit_mw": 170.8
+        },
+        "4.0": {
+         "binding_hours": 0,
+         "binding_share": 0.0,
+         "worst_deficit_mw": 0.0
+        }
+       }
+      },
+      "2024": {
+       "n_plants": 12,
+       "online_mw_p50": 140.2,
+       "online_mw_p05": 140.2,
+       "bind": {
+        "0.2011": {
+         "binding_hours": 8740,
+         "binding_share": 0.9977,
+         "worst_deficit_mw": 232.7
+        },
+        "0.3014": {
+         "binding_hours": 8640,
+         "binding_share": 0.9863,
+         "worst_deficit_mw": 224.0
+        },
+        "0.5": {
+         "binding_hours": 8572,
+         "binding_share": 0.9785,
+         "worst_deficit_mw": 206.9
+        },
+        "1.0": {
+         "binding_hours": 6744,
+         "binding_share": 0.7699,
+         "worst_deficit_mw": 163.7
+        },
+        "4.0": {
+         "binding_hours": 0,
+         "binding_share": 0.0,
+         "worst_deficit_mw": 0.0
+        }
+       }
+      },
+      "2025": {
+       "n_plants": 11,
+       "online_mw_p50": 248.7,
+       "online_mw_p05": 137.0,
+       "bind": {
+        "0.2011": {
+         "binding_hours": 8714,
+         "binding_share": 0.9947,
+         "worst_deficit_mw": 233.3
+        },
+        "0.3014": {
+         "binding_hours": 8171,
+         "binding_share": 0.9328,
+         "worst_deficit_mw": 225.0
+        },
+        "0.5": {
+         "binding_hours": 7845,
+         "binding_share": 0.8955,
+         "worst_deficit_mw": 208.5
+        },
+        "1.0": {
+         "binding_hours": 4436,
+         "binding_share": 0.5064,
+         "worst_deficit_mw": 167.1
+        },
+        "4.0": {
+         "binding_hours": 0,
+         "binding_share": 0.0,
+         "worst_deficit_mw": 0.0
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "nyiso_incity_commitment_obligation": {
+   "family_set": "incity_obligation",
+   "zones": {
+    "NYC": {
+     "requirement_mw": 500.0,
+     "years": {
+      "2023": {
+       "n_plants": 16,
+       "online_mw_p50": 813.0,
+       "online_mw_p05": 390.4,
+       "bind": {
+        "0.2011": {
+         "binding_hours": 8210,
+         "binding_share": 0.9372,
+         "worst_deficit_mw": 469.9
+        },
+        "0.3014": {
+         "binding_hours": 7117,
+         "binding_share": 0.8124,
+         "worst_deficit_mw": 454.9
+        },
+        "0.5": {
+         "binding_hours": 4858,
+         "binding_share": 0.5546,
+         "worst_deficit_mw": 425.3
+        },
+        "1.0": {
+         "binding_hours": 2367,
+         "binding_share": 0.2702,
+         "worst_deficit_mw": 350.5
+        },
+        "4.0": {
+         "binding_hours": 0,
+         "binding_share": 0.0,
+         "worst_deficit_mw": 0.0
+        }
+       }
+      },
+      "2024": {
+       "n_plants": 15,
+       "online_mw_p50": 567.7,
+       "online_mw_p05": 304.2,
+       "bind": {
+        "0.2011": {
+         "binding_hours": 8344,
+         "binding_share": 0.9525,
+         "worst_deficit_mw": 468.5
+        },
+        "0.3014": {
+         "binding_hours": 7912,
+         "binding_share": 0.9032,
+         "worst_deficit_mw": 452.8
+        },
+        "0.5": {
+         "binding_hours": 6717,
+         "binding_share": 0.7668,
+         "worst_deficit_mw": 421.7
+        },
+        "1.0": {
+         "binding_hours": 3697,
+         "binding_share": 0.422,
+         "worst_deficit_mw": 343.5
+        },
+        "4.0": {
+         "binding_hours": 0,
+         "binding_share": 0.0,
+         "worst_deficit_mw": 0.0
+        }
+       }
+      },
+      "2025": {
+       "n_plants": 14,
+       "online_mw_p50": 773.6,
+       "online_mw_p05": 261.9,
+       "bind": {
+        "0.2011": {
+         "binding_hours": 8307,
+         "binding_share": 0.9483,
+         "worst_deficit_mw": 472.8
+        },
+        "0.3014": {
+         "binding_hours": 7493,
+         "binding_share": 0.8554,
+         "worst_deficit_mw": 459.2
+        },
+        "0.5": {
+         "binding_hours": 5596,
+         "binding_share": 0.6388,
+         "worst_deficit_mw": 432.3
+        },
+        "1.0": {
+         "binding_hours": 2358,
+         "binding_share": 0.2692,
+         "worst_deficit_mw": 364.5
+        },
+        "4.0": {
+         "binding_hours": 0,
+         "binding_share": 0.0,
+         "worst_deficit_mw": 0.0
+        }
+       }
+      }
+     }
+    },
+    "Long_Island": {
+     "requirement_mw": 120.0,
+     "years": {
+      "2023": {
+       "n_plants": 12,
+       "online_mw_p50": 219.6,
+       "online_mw_p05": 122.7,
+       "bind": {
+        "0.2011": {
+         "binding_hours": 8089,
+         "binding_share": 0.9234,
+         "worst_deficit_mw": 117.7
+        },
+        "0.3014": {
+         "binding_hours": 7471,
+         "binding_share": 0.8529,
+         "worst_deficit_mw": 116.5
+        },
+        "0.5": {
+         "binding_hours": 5346,
+         "binding_share": 0.6103,
+         "worst_deficit_mw": 114.2
+        },
+        "1.0": {
+         "binding_hours": 162,
+         "binding_share": 0.0185,
+         "worst_deficit_mw": 108.4
+        },
+        "4.0": {
+         "binding_hours": 24,
+         "binding_share": 0.0027,
+         "worst_deficit_mw": 73.6
+        }
+       }
+      },
+      "2024": {
+       "n_plants": 12,
+       "online_mw_p50": 239.2,
+       "online_mw_p05": 153.7,
+       "bind": {
+        "0.2011": {
+         "binding_hours": 7917,
+         "binding_share": 0.9038,
+         "worst_deficit_mw": 117.5
+        },
+        "0.3014": {
+         "binding_hours": 6679,
+         "binding_share": 0.7624,
+         "worst_deficit_mw": 116.3
+        },
+        "0.5": {
+         "binding_hours": 4488,
+         "binding_share": 0.5123,
+         "worst_deficit_mw": 113.9
+        },
+        "1.0": {
+         "binding_hours": 93,
+         "binding_share": 0.0106,
+         "worst_deficit_mw": 107.7
+        },
+        "4.0": {
+         "binding_hours": 66,
+         "binding_share": 0.0075,
+         "worst_deficit_mw": 70.8
+        }
+       }
+      },
+      "2025": {
+       "n_plants": 12,
+       "online_mw_p50": 268.1,
+       "online_mw_p05": 149.3,
+       "bind": {
+        "0.2011": {
+         "binding_hours": 7152,
+         "binding_share": 0.8164,
+         "worst_deficit_mw": 120.0
+        },
+        "0.3014": {
+         "binding_hours": 5483,
+         "binding_share": 0.6259,
+         "worst_deficit_mw": 120.0
+        },
+        "0.5": {
+         "binding_hours": 4086,
+         "binding_share": 0.4664,
+         "worst_deficit_mw": 120.0
+        },
+        "1.0": {
+         "binding_hours": 192,
+         "binding_share": 0.0219,
+         "worst_deficit_mw": 120.0
+        },
+        "4.0": {
+         "binding_hours": 167,
+         "binding_share": 0.0191,
+         "worst_deficit_mw": 120.0
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}
