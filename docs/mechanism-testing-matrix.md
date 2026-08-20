@@ -4252,7 +4252,41 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-20-miso-172-p25mw` (**PROMOTED miso-172, 2026-08-20**, superseding `2026-08-19-miso-170-sitegrain`), **NOT-YET on C3a-2025 (−12.1 %) ALONE — C8-2023 CLEARED**
+### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-20-miso-173-layup-mask` (**PROMOTED miso-173, 2026-08-20**, superseding `2026-08-20-miso-172-p25mw`), **NOT-YET on C3a-2025 (−11.8 %) ALONE — ZERO D-4 conduct failures**
+
+> **PROMOTION + QUEUE STAMP miso-173 (2026-08-20) — THE 1402 SEASONAL/PART-YEAR LAY-UP OBJECT
+> BUILT, SOLVED AND PROMOTED ON ITS OWN PRE-REGISTERED GATES: MISO KEEPER →
+> `2026-08-20-miso-173-layup-mask`** (bundle `miso173_layupmask`; control
+> `2026-08-20-miso-173-control` bit-identical to the predecessor keeper, 12/12 sidecars
+> max|diff| = 0.0). New GATED field `mustrun_layup_window_mask` (default off, backcast-only,
+> ZERO DOF): the per-plant must-run floors' hourly clip basis becomes
+> `pmax x max(0, availability − layup_share)`, the share read from the merit-order guard's
+> economic-lay-up extract through the SAME accumulator/routing/denominator as the unit-outage
+> overlay — the engine stops FORCING plants on inside the very windows its own outage pipeline
+> adjudicated as not-operating (rule 17). The OBJECT was decided and defended against the two
+> alternatives: NOT an availability correction (the windows are the guard's ECONOMIC class;
+> re-feeding them as unavailability would re-arm the 23–46 % phantom-outage bias and fail
+> rule 13) and NOT a census tier (1402 is a cycler; the line has now held FIVE times).
+> ALL KILLS SILENT (record `_miso173_layup_mask_ab.json`): M-1/M-2 exact vs the frozen
+> pre-solve ENGINE-build volume predictions (mechanism-total floor volume
+> −0.944/−0.564/−0.762 TWh); M-3 sign PASS with D-2 forced 5.5632/5.6112/7.1480 →
+> 4.6839/5.0515/6.3594 TWh (2024 magnitude 0.018 TWh past its ±50 % band — the pre-registered
+> at-floor-rate-drift NON-KILL, reported); **M-4 D-4 conduct failures 2 → 0 — the 1402-2023
+> target row cleared exactly as predicted pre-solve (0.4 % window-grain zero-share vs the 50 %
+> rider, where miso-172 arm-1 missed by 2.2 pp) AND the plant-990 regen reliability_floor row
+> (its single binding hour masked) — the FIRST MISO bundle with ZERO conduct failures**; M-5 C8
+> PASS all years (2025 grounded above budget at 32.2 %, profile_r 0.981); M-6 ZERO record flips
+> over 67; M-7 shape held. Determination UNCHANGED at NOT-YET on C3a-2025 (−11.8 %) ALONE, C3c
+> ledgered — structural legitimacy, not budget. Cell `mustrun_layup_window_mask` U → **K**
+> (row + U cells added in every shard in the same PR, rule 28(c)). Housekeeping discharged:
+> the miso-172 keeper-audit debt (audit_keepers --iso MISO PASS, zero drift, zero repairs) and
+> miso-172's missing cache-key drop-at-default registrations (nine pin tests failing at HEAD;
+> pin 603c2498bf71d21d restored). The miso-172 arm-1 re-run (per-year window on a re-banded
+> K-2) is NOT taken: the mask subsumes the 2023 half of its case (1402's conduct row is now
+> clear) and its 2024/25 half RAISES forced share against C8's budget — it stays cell R with
+> only its K-2 banding noted as instrument-limited. Evidence:
+> `results/calibration/RESULT-miso173-layup-window-mask-2026-08-20.md`;
+> prereg `PREREG-miso173-layup-window-mask-2026-08-20.md`.
 
 > **QUEUE STAMP miso-171 (2026-08-20) — THE CHARTER PREREQUISITE EXECUTED: THE RESERVE
 > REQUIREMENT IS DECOMPOSED INTO SYNCHRONISED vs SUPPLEMENTAL, AND THE SUB-REGIONAL GATING
