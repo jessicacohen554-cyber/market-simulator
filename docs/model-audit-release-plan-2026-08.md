@@ -1976,7 +1976,29 @@ your branch when done.
     bit-identical** — took the year peak **13.95 → 12.40 GB**, with the full
     3-year control replay running on the 15 GB box. LP size for the record:
     **492,516 rows × 25,447,800 columns, 50.3 M nnz**.
-  - **CORRECTION — BLOAT-2 registry/payload parity is RED at HEAD**, not the
+  - **CLOSED 2026-08-20 — BLOAT-2 registry/payload parity is GREEN.** Repaired
+    by the ws6-parity-repair lane; record
+    `results/calibration/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md`.
+    The failure count grew 2 → 9 before the lane ran and stood at **8, all
+    NYISO**, at `66ae225`: both dirs named in the prior text below **cleared
+    themselves** on their lanes' registrations (`ercot221_control_A`;
+    `miso172_control` likewise). **The prior diagnosis was half wrong** — these
+    were not "output that outran its registration". Seven of the eight hold a
+    single `meta.json` and **no solve output whatsoever**; since
+    `run_replay_bundle` reads only `meta.json`, they are complete
+    `--replay-bundle` **inputs** — pre-registered A/B arm recipes, committed
+    before their arms solve — and the eighth (`nyiso147_control`) is the live
+    control of an **unsolved** pre-registered A/B whose kill gates are defined
+    *vs the control*. **All 8 keep-required** with citations and explicit
+    removal conditions (Class-E point 4's carve-out, `miso170_layup_A/B`
+    precedent); **0 registered, 0 pruned, no solve, no keeper move**. Gate:
+    `parity OK (52 runs checked, 62 bundle dirs swept, 0 known-unsynced
+    tolerated)`; parity tests 10 passed. Prevention **recommended not built**:
+    the gap is in the gate's *classifier* (it calls every unmapped dir "dead
+    solve output"), so the fix is a class-level carve-out for meta-only,
+    doc-cited dirs — **not** a pre-merge check, which would block correct
+    pre-registration commits. **PRIOR TEXT, preserved:** *CORRECTION — BLOAT-2
+    registry/payload parity is RED at HEAD*, not the
     GREEN 28/28 the dispatch reports. Re-run at `598554e`,
     `check_registry_payload_parity.py` **FAILS** on two tracked bundle dirs that
     map to no retained sidecar `bundle` field and are not keep-required (Class-E

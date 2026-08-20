@@ -88,6 +88,53 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         # MISO-inert), so they legitimately outlive their sidecars.
         "miso170_layup_A",
         "miso170_layup_B",
+        # --- NYISO A/B RECIPE DIRS (ws6-parity-repair, 2026-08-20) ----------
+        # A SECOND admissible class, adjudicated on the merits rather than on
+        # the `_recipe` naming pattern: a `--replay-bundle` RECIPE dir. These
+        # hold exactly ONE file, `meta.json`, and NO solve output of any kind
+        # (no metrics/diagnostics/parquet) — `run_replay_bundle` reads only
+        # `meta.json`, so a one-file dir is a COMPLETE and valid replay input
+        # by construction, not a truncated bundle. They are therefore solve
+        # INPUT, and point 4's stated target ("dead solve output committed
+        # forever with nothing rendering or scoring it") does not describe
+        # them. Each is committed BEFORE its arm solves (the NYISO lane's
+        # pre-registration discipline) and is named as the sole input of a
+        # reproduction command in a committed PREREG/RESULT doc, which is the
+        # same ground the miso170 pair above is kept on. Verified 2026-08-20:
+        # each recipe is config-equal to the arm it produced except for
+        # fields that did not yet exist at declaration time, every one of
+        # which the arm records as null — so the cited replay commands are
+        # FAITHFUL, not stale. Retention record and the recommended
+        # structural fix (so this list stops growing one arm at a time):
+        # results/calibration/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md
+        #
+        # SPENT recipes — arm solved and REGISTERED; kept because pruning
+        # them turns the cited reproduction command into a dead reference.
+        # Removable when the citing doc is retired or its reproduction
+        # section is re-pointed at the registered arm bundle.
+        "nyiso144_arm_recipe",  # PREREG/RESULT-nyiso144 -> nyiso144_layup_arm
+        "nyiso146_arm_recipe",  # RESULT-nyiso146 -> nyiso146_perplant_arm
+        "nyiso146b_armB_recipe",  # RESULT-nyiso146bc -> nyiso146b_online_arm
+        "nyiso146b_armC_recipe",  # RESULT-nyiso146bc -> nyiso146b_reserve_arm
+        # -> nyiso146c_state_arm, the CURRENT NYISO KEEPER
+        # (2026-08-19-nyiso-146c-state-scoped): this is the recipe that
+        # reproduces the designated keeper. RESULT-nyiso146bc §"reproduce".
+        "nyiso146c_armB2_recipe",
+        #
+        # LIVE — session nyiso-147 (PREREG-nyiso147-chp-btm-measured-
+        # 2026-08-20), arms NOT yet solved at this writing. `nyiso147_control`
+        # is the pre-registered CONTROL, verified byte-identical to the
+        # keeper's committed hourlies (max |dprice| = 0.0) before the PREREG
+        # was written; kill gates A-K1/A-K3/A-K4/A-K5 are all defined *vs the
+        # control*, so deleting it destroys the experiment's reference arm.
+        # DO NOT PRUNE. REMOVAL CONDITION: session nyiso-147 clears these
+        # three when it registers arms A/B (rule 15) — the control registers
+        # with them, exactly as `ercot221_control_A` cleared itself on the
+        # ercot-221 registration. If nyiso-147 is abandoned, the lane that
+        # retires it prunes all three in that commit.
+        "nyiso147_control",
+        "nyiso147_armA_recipe",
+        "nyiso147_armB_recipe",
     }
 )
 
