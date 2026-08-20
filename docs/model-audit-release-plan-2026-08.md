@@ -2172,3 +2172,253 @@ your branch when done.
     `push_files` fallback needed; both files re-fetched and **blob-verified**
     after push per rule 27 `[R-PUSH]` (board 318 → 540 lines, plan 1,913 → 2,174
     lines — both grew, no shrink).
+- 2026-08-20 — **DIRECTOR REFRESH v10 (records lane) — THE LARGEST CYCLE OF THE
+  PROGRAM. Board refreshed to v10; every figure RE-DERIVED at a PINNED
+  `origin/main` `e0c1f0e`, not transcribed from the dispatch or from board v9.**
+  - **CYCLE SIZE — corrected upward at both ends.** The dispatch reports "~42 PRs
+    (#4116–#4157)". Measured: **#4108–#4163, fifty-six PRs**, of which **#4112 is
+    v9's own records lane**, leaving **55 PRs of lane work** across **153
+    commits** since the v9 board commit `17ed9b9`. **`main` advanced TWICE during
+    the read** (`e90b916` → `66ae225` → `e0c1f0e`, two merges landing
+    mid-verification), so the board is pinned at a named commit and says so
+    rather than claiming a stationary HEAD.
+  - **FOUR OF SIX KEEPERS MOVED — and TWO moved past the runs the dispatch
+    names.** Nine promotions across three ISOs.
+    **ERCOT → `2026-08-20-ercot223-arm-eventrelease`** (dispatch said ercot-221):
+    ercot-221 (adaptive-expectation storage offer) was promoted 2026-08-19 on the
+    owner's standing structural standard **over** a pre-registered
+    **REJECTED-AS-ARMED on G-SHED** — one manufactured 17.9 MW shed at 2024 h3066,
+    a real storm hour with actual RT $2,451 (ercot-188/213/215 pattern, **fourth**
+    application; both records stand) — and **ercot-223 then repaired that exact
+    gate and superseded it on 2026-08-20**: `ercot_adaptive_event_release` masks
+    the pass-2 floor at in-window hours whose pass-1 settle basis already clears
+    the existing **$1,000** event constant, **zero new numeric constants**
+    (`PRECOMMIT-ercot223-event-release-guard-2026-08-19.md`), **every
+    pre-registered gate PASSING** incl. G-SHED tightened to **zero NEW shed**, the
+    2024 shed set returning to {3067}. Fail set unchanged {C3a-2023, C3b-2023};
+    determination **NOT-YET**. ercot-222 (cross-year-seeded expectation, Phase-0)
+    ran and archived between them; **ercot-224 opened** (#4163, read-only Phase-0
+    precommit, the item-8 CME/NYMEX basis-swap reopen screen).
+    **MISO → `2026-08-20-miso-172-p25mw`** (dispatch said miso-170-sitegrain):
+    **FOUR promotions**, each a single delta with its own zero-delta control —
+    **miso-169** (`miso_reserve_online_gated`, the escalation v9 recorded as
+    pending two owner answers, **taken by explicit owner direction**; reserve
+    SUPPLY restricted to synchronised capacity, zero free parameters, control
+    bit-identical) → **miso-170-membership** (promoted over the lane's own
+    mechanical REJECTED-AS-ARMED, **both records standing**, but the
+    structure-over-gates clause **NOT needed**: at record grain the arm differs in
+    **exactly one of 67 records and it is an improvement** — C8 ST_GAS 2024
+    FAIL → PASS, the first MISO year ever to clear C8's grounded-above-budget leg;
+    D-4 conduct failures **18 → 3, zero new**; ~**2.34 TWh** of three-year forcing
+    removed from plants whose own meter reads zero; the third and last mechanism
+    in the lay-up-membership family nyiso-140 → nyiso-144 → miso-170, rule 19
+    `[R-ONE-MECH]` one mechanism later) → **miso-170-sitegrain** (**DATA, not
+    mechanism**: the same 15-plant census re-stamped at SITE grain so a floor
+    reaches every limb a site's tranches occupy; repairs the predecessor's K-1
+    residual — Burlington IA's CT tranches floored 777/763 unit-hours while the
+    site metered dark in **98.7 %/91.8 %** of exactly those binding hours, rule 17
+    `[R-FLOOR-WINDOW]`; C8-2025 FAIL → PASS) → **miso-172-p25mw**, promoted **on
+    its own pre-registered gates, all passing, no owner override**: a
+    **dropped-basis repair with ZERO free parameters** — the frozen deriver
+    measures `p25_cf` against *available* capacity and
+    `campd_bins.thermal_tranche_p25_level` rebuilt the runtime floor as
+    `p25_cf × nameplate`, **dropping the `avail_mult` it had been divided by**, so
+    every deeply-derated plant was over-floored by `1/avail_mult`; the replacement
+    takes the same percentile of the same online sample **directly in MW** via a
+    script that *imports* the frozen deriver rather than restating it (rule 23
+    `[R-FROZEN-DERIVE]` satisfied, frozen deriver untouched, zero bytes; rule 14
+    `[R-ACCURATE]` governs). Determination stays NOT-YET; **C8 now fails 2023
+    alone** and its per-year `online_frac` successor (miso-173) is **running**.
+    **NYISO → `2026-08-19-nyiso-146c-state-scoped`** (as the dispatch says): three
+    promotions this cycle (146 → 146b → 146c), **five in two days** counting v9's
+    143 → 144. 146c is the **online-hours LSL state floor, duty-scoped by the
+    measured run-length gap** — two fields over nyiso-144, carrying a synchronised
+    CC's committed-state inflexibility at its measured min stable load.
+    Determination **CALIBRATED**; `complete` **re-keyed to 146c** with
+    determination re-verified from committed artifacts, no solve (rule 22 D-5(b)).
+    **CAISO, NEISO, PJM unmoved**, each verified from its own shard. CAISO
+    deliberately did not move: caiso-205 A/B'd the ERCOT adaptive-expectation
+    mechanism as a rule 26 `[R-MECH-MATRIX]` transfer with **its own CAISO-derived
+    constants** (beta **0.5945**) and registered it as a **PROBE, armed-and-inert,
+    explicitly NOT a keeper**, its control G-REPRO'ing **9/9 committed keeper
+    hourly sidecars sha256-identical**; caiso-206 confirmed rest; caiso-208
+    (#4162) re-verified Branch A at rest and repaired a stale v3.3 gate posture on
+    both matrix surfaces.
+    *Observation recorded, not repaired (keeper shards are out of a records lane's
+    scope):* commit `41c5bc6` changed **only** the `keeper` field of
+    `keepers/NYISO.json`, so its `promotion_note` / `determination_note` /
+    `superseded` prose still describes **nyiso-144**. The `keeper` field and the
+    `calibration-complete` entry are both correct; the prose around them lags.
+  - **WS5 MOVED OFF ZERO — Job 1 (site factual repair, pre-G3) COMPLETE and
+    merged** (#4120 + #4121, commits `5f4a6af` + `cd8293b`; record
+    `docs/FINDING-site-facts-repair-2026-08-19.md`, 321 lines; 19 site files).
+    Fifteen repairs: **twelve ordinary staleness, THREE GOVERNANCE-GRADE**, every
+    number re-derived from `src/`, `scripts/` or committed data. **The worst
+    asserted, on `model-validity.html` §4 — the page whose entire subject is
+    out-of-sample discipline — that NEISO's "2019 + H1-2026 one-shot was scored
+    once with the then-frozen `neiso-53` config and stands."** **It had not been.
+    No ISO has ever spent a locked-test year**; the `final` block carries only its
+    `_note`. This was **not a new discovery**: it is exactly the claim **owner
+    decision D-23 corrected on the record on 2026-08-06**, and **the site never
+    followed for two weeks** — a public reader would have concluded the model held
+    a **certified out-of-sample result that does not exist**. Figure MV2's caption
+    carried it independently. Repaired by **stating the correction explicitly**
+    rather than silently swapping the text. The other two: **the holdout spend
+    freeze was invisible site-wide** (`active: true`, checked *before* the marker,
+    failing closed — a reader could reasonably have concluded the three `complete`
+    ISOs were free to spend 2022; they are not), and **marker state wrong on two
+    pages in both directions** (`calibration-rubric` said NYISO *"carries a
+    frontier designation but no complete marker"* — **both halves backwards**).
+    Among the ordinary twelve: the landing page advertised **seven ISOs including
+    SPP** — there are six, and **SPP occurs in the codebase only as a MISO seam
+    comment for a wheeled external contract path and in `paths.py` where "SPP"
+    means *Settlement Point Price*, a different noun entirely** — and **"50+
+    transmission links", which was never true at any point (46)**; plus P2 shown
+    as a live third solve on four pages, the retired ablation twin shown as a live
+    keeper obligation, a topology JSON **rendering a network the model does not
+    have**, and the rubric page pinned at v3.1 (now 3.4). **SITE-A (§7.6) remains
+    gated at G3 and NOT started** — Job 1 was scoped pre-G3 deliberately, because
+    false statements should not wait on a gate.
+  - **WS6 PARITY — RED for a second cycle, at EIGHT dead dirs (not nine), now
+    entirely NYISO; AND A DIRECTOR MISS CORRECTED IN THE OPPOSITE DIRECTION.**
+    `check_registry_payload_parity.py` **exits 1** at the pin on
+    `nyiso144_arm_recipe`, `nyiso146_arm_recipe`, `nyiso146b_armB_recipe`,
+    `nyiso146b_armC_recipe`, `nyiso146c_armB2_recipe`, `nyiso147_armA_recipe`,
+    `nyiso147_armB_recipe`, `nyiso147_control`. The dispatch's list names
+    `miso172_control`, which **registered and is not flagged**; v9's
+    `ercot221_control_A` **cleared itself** on registration exactly as v9
+    predicted. Trajectory **2 → 9 → 8**. **The dispatch records the repair prompt
+    as "issued 2026-08-19 and NEVER LAUNCHED". That is FALSE at this read:**
+    `session_01AF4gAXqqBa235VGTuRDdSM`, *"WS6 parity repair: nine dead bundle
+    dirs"*, branch `claude/ws6-parity-repair-hvmt54`, **RUNNING** at
+    2026-08-20T05:49:01Z (*"Comparing recipe configs to the arms they produced"*),
+    its own title dating its launch to when the count was 9. **The miss is real
+    but narrower than stated — a late launch, not a lost prompt** — and the lane
+    was **NOT re-issued**; it is in flight and has pushed no branch. The
+    structural cause is recorded on the board: **the NYISO lane registers arm
+    bundles slower than it produces them**, which no single prune pass fixes.
+  - **STAGE-0 GOLDENS CROSSED ZERO — 5 STALE / 0 CURRENT / 1 NO-GOLDEN**, against
+    4/1/1 at both v8 and v9, re-derived at the pin from the six keeper shards and
+    `results/regression-goldens/perfb-stage0/manifest.json` (`git_sha` `af1ccb6`,
+    `git_dirty: false`, **byte-unmoved this cycle**). MISO held the last current
+    golden and lost it to the four-link promotion chain. **THE STRUCTURAL POINT,
+    recorded plainly at the owner's instruction: not one stage-0 golden now
+    matches its keeper.** This is the **sixth consecutive cycle in which keepers
+    moved faster than captures could complete**, and the first in which effective
+    coverage of the current model reached **0/6**. It is no longer a scheduling
+    accident: five paid-for captures are unusable as byte-baselines and the sixth
+    (PJM) was never taken; MISO held its golden four days; NYISO staled its own
+    twice in one day at v9 and three more times at v10. **Therefore WS3 cannot
+    converge without a declared calibration freeze — not "would benefit from",
+    *cannot*** — and G2's leg 1 (*PERF-B merged byte-green*) is unreachable by
+    effort alone. The corollary the owner should weigh: the freeze is expensive
+    *because* the lanes are productive, and most of this cycle's moves were real
+    structural repairs with zero free parameters. **The choice is not
+    freeze-versus-drift; it is which of two goods to buy first.**
+  - **GOLDEN-TIER CI — CONFIRMED UNCHANGED, THIRD CONSECUTIVE READ.** Live
+    `actions_list` returns **five runs, unchanged**: latest still the red
+    **`31999181985`** (schedule, 2026-08-17T05:48:08Z, main), last green still
+    **`31913648051`** (workflow_dispatch, 2026-08-15T23:01:19Z). The #4071 fix is
+    not in question — a full local four-step job replay is green. **The CI proof
+    is.** Next cron **Monday 2026-08-24 05:37 UTC** (four days out).
+    **NUMBERING CORRECTED:** the dispatch calls this the **eighth** cycle as top
+    standing item; **board v9 (`17ed9b9`) recorded it as the sixth**, and v10 is
+    the next cycle, so it is the **SEVENTH**. Same +2 drift corrected on the
+    decision-1 ack.
+  - **HOLDOUT POSTURE — verified exhaustively, not asserted.** Markers at the pin:
+    `complete` = **{NEISO, NYISO, PJM}** (NYISO's entry re-keyed to nyiso-146c),
+    **`final` = `_note` only**, `holdout-freeze.json` **`active: true`** and
+    outranking both blocks. **NO ISO HAS EVER SPENT A LOCKED-TEST YEAR:** across
+    all **52** registered sidecars (34 at v9; **18 added this cycle**) the
+    solve-year histogram is **{2022: 2, 2023: 50, 2024: 50, 2025: 50}**, and the
+    only two out-of-training registrations are the authorized **2022 validation
+    touchpoints** (PJM `2026-08-05-pjm-2022-touchpoint`, NEISO
+    `2026-08-06-neiso-2022-corrected-basis`). No 2019 and no H1-2026 anywhere
+    ([R-HOLDOUT]). **This cycle supplied the reason that line is re-verified and
+    republished every time:** WS5 Job 1 found the public site asserting the exact
+    opposite for two weeks after D-23 corrected it. A governance fact that is true
+    in the JSON and false on the site is not a fact the program can claim.
+  - **`RHO_CLIP` — PREPARED, WAITING, STILL UNRULED.** Verified at the pin:
+    `src/market_sim/data/online_reserve_rho.py:87` still reads
+    `RHO_CLIP: tuple[float, float] = (0.5, 4.0)`. The work is **done** —
+    nyiso-145 filed both findings
+    (`FINDING-nyiso143-online-rho-unidentified`,
+    `FINDING-nyiso144-downstate-scarcity-and-rho`) and the module's own comment
+    block states the defect: **both measured NYISO values fall BELOW the floor**
+    (`incity_obligation` 0.3014, `nyc_spin` 0.2011), so `rho_used` returns **the
+    floor, not the measurement**. **MISO's measured rho is 0.1764 — also below —
+    so MISO dispatches on a clipped-up rho whose floor carries no citation**
+    (rule 5 `[R-NO-MAGIC]`), under a keeper now promoted **four times** on top of
+    it. The code itself says resolving the band is an owner call. **The re-solve
+    is one `--set`.**
+  - **CROSS-ISO COLLISION CLOSED BY EXECUTION.** v9 raised the nyiso-143 D-4
+    per-unit conduct rider as C8-FAILing any regenerated MISO artifact.
+    **miso-170 answered it on its second branch — the rider is RIGHT and the
+    floors were WRONG** — and the repair carried through miso-170b and miso-172
+    (D-4 conduct failures 18 → 3, zero new). The rule 25 `[R-ISO-SCOPE]`
+    *precedent* question (a scorer-side change in one ISO's lane silently
+    re-grading another's committed artifacts) was **never formally adjudicated**;
+    it was overtaken by the target ISO agreeing with it, and is re-entered on the
+    owner queue as a one-line ruling so the precedent is explicit rather than
+    implied.
+  - **WORKSTREAM ROLLUP — WS1–WS4 byte-unmoved; WS5 moved and WS6's gate
+    changed.** WS1 **in progress ~91 %** (AUDIT-B gated at G3 by design; rows
+    **O4, O6, O7** open) · WS2 **completed** · WS3 **paused ~74 %** · WS4 **in
+    progress ~60 %** (DOCS-B gated at G2 by design) · WS5 **Job 1 COMPLETED /
+    Job 2 (SITE-A) not started, G3 by design** · WS6 **completed on its charter,
+    parity GATE RED**. Verified rather than assumed: across all 56 merges the only
+    WS-owned documents touched are the director board, this ledger and — for the
+    first time — the 19 `docs/codebase-site/` files of WS5 Job 1; **no
+    `.github/workflows/` file changed** and **no `results/regression-goldens/`
+    file changed**. **G2 remains UNREACHABLE while WS3 is paused**, and its leg 3
+    (a keeper freeze) is at its **highest cost yet**. **Nothing gated is late.**
+  - **OWNER QUEUE AT CYCLE END.** 0. **Golden-tier proof-of-fix
+    `workflow_dispatch`** (seventh cycle, unchanged for three reads; next cron
+    Monday 2026-08-24). 1. **The `RHO_CLIP` 0.5-floor ruling — PREPARED AND
+    WAITING**, now the oldest piece of *finished* work on the board. 2. **WS3
+    restart / calibration freeze — RE-SERVED AND REFRAMED.** The director did not
+    serve a restart option at v9 and this board judges that a mistake. **The
+    freeze has been framed for eight cycles as a precondition to schedule around —
+    something to declare once the lanes go quiet. That framing is wrong and this
+    cycle proves it:** the lanes have never gone quiet and have accelerated, while
+    stage-0 coverage fell to 0/6. **The freeze is not a cost imposed on WS3 by the
+    calibration program — it is the only thing that makes WS3 finishable at all.**
+    Waiting for a cheap window has no terminal state: every cycle spent waiting
+    makes the freeze more expensive *and* destroys more captured goldens.
+    **Recommendation: a scoped, TIME-BOXED freeze** — long enough to re-capture
+    six goldens and land changes (a)/(b) — rather than an open-ended one, which
+    converts the question from *"when will the lanes stop?"* (never) to *"how many
+    days of calibration are six goldens worth?"*, which is answerable. 3.
+    NEISO-100/101 keeper-candidate + **EIA-923 2025 vintage STILL NOT LANDED**.
+    4. Validation-freeze lift signature — O4/O5 card, recommendation **(A)**,
+    unmoved. 5. **NEW — rule on the cross-ISO scorer-change precedent** (above).
+    6. **NEW — the `holdout-freeze.json` prose conflict**: its text still says
+    intake is permitted *"under session-logged owner authorization"*, which the
+    **2026-08-06 rule 22 amendment reversed** (*what is held out is the score,
+    never the data or the architecture*) — committed governance data disagreeing
+    with the governing rule, surfaced by WS5 Job 1 and out of that lane's scope;
+    **cheapest correctness item on the board**. 7. O6 locked-test scheduling.
+    8. O7 ERCOT P0 bit-identity. 9. decision-1 ack, **seventh** cycle. 10.
+    caiso-199 NOT-YET. 11. ercot-214 lever. **RETIRED THIS CYCLE:** *"say go on
+    the WS6 register/prune lane"* (**LAUNCHED — running; do not re-issue**) and
+    the nyiso-143 D-4 conduct-rider adjudication (**closed by execution**).
+  - **DEVIATIONS.** (1) The standing one: the director issues prompts only and
+    does not push, so these records land via a dispatched lane. (2) **The
+    session-read deviation STAYS CLOSED for a second consecutive cycle** — the
+    dispatch pre-authorised a commit-trailer rebuild expecting a fourth straight
+    *"requires approval"* failure; `list_sessions` **returned 40 sessions**
+    (`mine: true`, `has_more: true`), the fallback was not needed, and **no roster
+    row is trailer-rebuilt**. The dispatch's premise was already stale at v9,
+    which recorded the deviation closed on a 30-session read; v10 confirms it was
+    not a one-off. (3) **The director miss of item WS6, corrected in the OPPOSITE
+    direction from the dispatch** — a lane reported as never launched was running
+    at the moment of the read. Two protocol amendments follow and are on the
+    board: **check the live session roster before declaring a lane unlaunched**
+    (branch state no longer sees in-flight work — three running lanes hold
+    unpushed branches at this pin, so a `ls-remote`-only read now *understates*
+    the program), and **pin the read and say so** (`main` advanced twice
+    mid-verification; at this merge rate a board is a snapshot of a named commit,
+    not of "HEAD"). Transport: `git push` on a freshly-fetched base, no HTTP
+    408/500, no `push_files` fallback needed; both files re-fetched and
+    **blob-verified** after push per rule 27 `[R-PUSH]` (board 540 → 648 lines,
+    plan 2,174 → 2,424 lines — both grew, no shrink).
