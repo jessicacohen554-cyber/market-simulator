@@ -1763,3 +1763,41 @@ passed** · scoring lane **1033 passed** (the 4 `test_ff_readiness_battery`
 failures and 1 `test_crossover_harness` failure on this checkout are
 pre-existing unbuilt-`data/clean` environment artifacts — reproduced with the
 change stashed) · ruff clean.
+
+## 2026-08-20 — D-2/D-4 UNIT-GRAIN FLOOR-CLASS ATTRIBUTION (miso-171 carry-forward a): the plant-grain mis-attribution is repaired in the scorer, every designated keeper re-scored, ZERO determination movement
+
+**Scorer-only, no LP, no rubric change.** `legitimacy_diagnostics.py` gains
+`FloorClassMatrix`: the plant-hour FLOOR class under the same
+maximum-composition rule as the plant-hour mechanism (the class of the unit
+contributing the largest floor that hour; empty groups impute to the plant
+majority first — #1488 unchanged). D-2 mechanism attribution and D-4
+(mechanism × class) selection key on it, so a mixed-class site's
+minority-class floor is charged to the class that CARRIES it, never the
+plant label (the miso-170 K-1 forensic: plant 1104's CT_PEAKER floor
+convicted under ST_GAS's conduct row). Row-label attribution is preserved
+behind `floor_klass=None` — legacy artifacts re-score byte-identically.
+
+**Re-score of all six designated keepers** (regen before/after on one
+rebuilt-floors baseline; verdicts on in-place-swapped diagnostics, bundles
+restored byte-identical; record
+`results/calibration/_miso171_d4_attribution_rescore.json`, report
+`RESULT-miso171-d4-attribution-repair-2026-08-20.md`):
+**zero determination flips in any ISO; the charter's other-ISO escalation
+trigger does not fire.** ERCOT/CAISO/NYISO/NEISO: zero deltas of any kind.
+MISO: ~0.3 TWh/yr of reliability_floor energy re-attributed ST_GAS/CC →
+CT_PEAKER, zero C8 record flips (CT_PEAKER-2023 lands 15.17 % vs the 15 %
+cap and grounds). PJM: the mirror-image case — the repair flips C8
+CT_PEAKER 2023/2024/2025 **FAIL → PASS on the regen baseline**
+(mis-attributed ST_GAS floors had pushed CT_PEAKER to 16.4–16.8 % vs 15 %).
+
+**Disclosed, pre-existing, NOT repaired here (owner-relevant):** on the
+regen baseline the PJM keeper reads NOT-YET on forced_share (ST_GAS-2025 C8
+FAIL) while its committed artifact reads CALIBRATED — the same
+regenerated-vs-committed exposure family miso-169 K-3 disclosed for MISO,
+now measured at PJM; this repair narrows it (3 of the 4 regen-baseline C8
+failures were the mis-attribution) but does not close it. CAISO's regen
+baseline carries 23 D-4 row failures absent from its committed artifact
+(C8/determination unchanged). Raised with the two standing C8 rubric design
+questions (denominator = model's own class output; no materiality floor
+inside the provenance leg) in the RESULT §5 — owner decisions, not a
+session's.
