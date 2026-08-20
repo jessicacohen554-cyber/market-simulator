@@ -2408,6 +2408,48 @@ def _compose_min_gen_floors(
             _yr,
             len(_per_year_frac),
         )
+    # MEASURED LAY-UP WINDOW MASK for both per-plant must-run seams
+    # (config.mustrun_layup_window_mask, miso-173). The merit-order guard's
+    # economic-lay-up companion extract records, per unit and dated window, the
+    # >= 5-day full stops it removed from the availability envelope BECAUSE the
+    # unit sat out of merit — i.e. the measured hours in which the plant's
+    # self-commitment driver is absent. A must-run floor binding inside such a
+    # window forces operation the model's own outage pipeline adjudicated as
+    # not-operating (rule 17 [R-FLOOR-WINDOW]; MISO 1402's 2023 D-4 conduct
+    # FAIL is the live case). When armed, each floored plant-hour's clip basis
+    # becomes pmax x max(0, availability - layup_share) — availability itself
+    # is NOT touched (an economically idle unit stays available to the LP's own
+    # economics), only the forcing is confined to hours outside the plant's own
+    # measured lay-up windows. BACKCAST ONLY (rule 13): same-year windows have
+    # no forward analogue, exactly like the CAMPD outage overlay produced by
+    # the same detector. Zero free parameters (rule 21): windows, shares and
+    # the out-of-merit threshold live in the frozen derive layer (rule 23).
+    _layup_removed: dict[tuple[int, str], np.ndarray] = {}
+    if (
+        config is not None
+        and getattr(config, "mustrun_layup_window_mask", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        # Local import for the same fleet -> data cycle reason as the census
+        # loader above.
+        from market_sim.data.outages import unit_layup_removed_fractions
+
+        _layup_removed = unit_layup_removed_fractions(
+            int(getattr(config, "weather_year", 0) or _yr),
+            hours,
+            getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV)),
+            iso=_iso or "ERCOT",
+            cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
+            cc_nameplate_basis=getattr(config, "unit_outage_lp_capacity_basis", False),
+        )
+        logger.info(
+            "mustrun_layup_window_mask ARMED (%s %s): %d plant-tranche lay-up "
+            "share series mask the per-plant must-run floors",
+            _iso or "ERCOT",
+            _yr,
+            len(_layup_removed),
+        )
     st_gas_p25_tranches: dict[int, list[int]] = {}
     st_gas_p25_levels_by_plant: dict[int, float] = {}
     st_gas_p25_frac_by_plant: dict[int, float] = {}
@@ -2702,18 +2744,48 @@ def _compose_min_gen_floors(
                     if getattr(gen, "plant_group", "") == "ST_GAS"
                     else MECH_CC_MUSTRUN_PER_PLANT
                 )
+                # Measured lay-up window mask (config.mustrun_layup_window_mask,
+                # miso-173): cap the floor at the plant's NON-LAID-UP available
+                # capacity that hour, pmax x max(0, availability - layup_share).
+                # An hour inside a measured lay-up window loses its floor
+                # exactly as a measured-outage hour already does under the
+                # global pmax x availability clip; no hour is added or moved.
+                _lu = _layup_removed.get(
+                    (
+                        int(getattr(gen, "plant_code", 0) or 0),
+                        str(getattr(gen, "plant_group", "") or ""),
+                    )
+                )
                 if frac >= 1.0 or load_rank is None:
-                    raised = min_gen[g_idx, :] < pmin_mw
-                    np.maximum(min_gen[g_idx, :], pmin_mw, out=min_gen[g_idx, :])
+                    if _lu is not None:
+                        vals = np.minimum(
+                            pmin_mw,
+                            pmax[g_idx] * np.maximum(0.0, availability[g_idx, :] - _lu),
+                        )
+                        raised = min_gen[g_idx, :] < vals
+                        np.maximum(min_gen[g_idx, :], vals, out=min_gen[g_idx, :])
+                    else:
+                        raised = min_gen[g_idx, :] < pmin_mw
+                        np.maximum(min_gen[g_idx, :], pmin_mw, out=min_gen[g_idx, :])
                     min_gen_mech[g_idx, raised] = mech_id
                 else:
                     k = int(round(frac * hours))
                     if k <= 0:
                         continue
                     hrs = load_rank[:k]
-                    # Fancy indexing returns a copy (see the coal block above).
-                    raised = hrs[min_gen[g_idx, hrs] < pmin_mw]
-                    min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], pmin_mw)
+                    if _lu is not None:
+                        vals = np.minimum(
+                            pmin_mw,
+                            pmax[g_idx]
+                            * np.maximum(0.0, availability[g_idx, hrs] - _lu[hrs]),
+                        )
+                        # Fancy indexing returns a copy (see the coal block above).
+                        raised = hrs[min_gen[g_idx, hrs] < vals]
+                        min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], vals)
+                    else:
+                        # Fancy indexing returns a copy (see the coal block above).
+                        raised = hrs[min_gen[g_idx, hrs] < pmin_mw]
+                        min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], pmin_mw)
                     min_gen_mech[g_idx, raised] = mech_id
         # ST_GAS per-plant p25-LEVEL commitment floor
         # (config.st_gas_mustrun_p25_level — the miso-67 level swap for
@@ -2761,10 +2833,21 @@ def _compose_min_gen_floors(
                 # Distribute cheapest-first across the plant's tranches, each
                 # capped at its available MW that hour; np.maximum composes with
                 # any floor already placed (the CT-deployment precedent below).
+                # Measured lay-up window mask (config.mustrun_layup_window_mask,
+                # miso-173): the clip basis excludes the plant's laid-up
+                # capacity share that hour — availability itself is untouched,
+                # and the plant-level share applied per tranche sums to exactly
+                # the plant's non-laid-up available MW.
+                _lu = _layup_removed.get((pc, "ST_GAS"))
                 for g_idx in sorted(idxs, key=lambda i: heat_rate[i]):
                     if not target.any():
                         break
-                    cap = pmax[g_idx] * availability[g_idx, :]
+                    if _lu is not None:
+                        cap = pmax[g_idx] * np.maximum(
+                            0.0, availability[g_idx, :] - _lu
+                        )
+                    else:
+                        cap = pmax[g_idx] * availability[g_idx, :]
                     take = np.minimum(target, cap)
                     raised = min_gen[g_idx, :] < take
                     np.maximum(min_gen[g_idx, :], take, out=min_gen[g_idx, :])
