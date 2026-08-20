@@ -868,8 +868,23 @@ def run_d2(
     total_load_mwh: float | None = None,
     actual_by_class: dict[str, float] | None = None,
     dispatch_substituted: np.ndarray | None = None,
+    floor_klass: "FloorClassMatrix | None" = None,
 ) -> GateResult:
     """D-2 forced-energy attribution over aligned (n, T) row arrays.
+
+    ``floor_klass`` (:class:`FloorClassMatrix`, the plant-hour floor class
+    under maximum-composition) attributes each at-floor cell's forced energy
+    to the class of the unit CARRYING the floor rather than to the row's
+    plant-majority label — the unit-grain repair of the mixed-class
+    mis-attribution (miso-170 K-1 forensic / miso-171 charter item (a)).
+    Class DENOMINATORS stay on the row label (the dispatch grain): at-floor
+    plant-hours have dispatch ≈ the floor, so the re-attributed numerator is
+    the floored slice's own energy to within the at-floor tolerance. A floor
+    class with no labeled rows reports its detail rows but has no denominator
+    and is skipped by the summary (disclosed pathology — it would need a
+    (plant, class) denominator split, which the payload dispatch grain cannot
+    support). ``None`` = row labels attribute (the pre-repair rule; direct
+    callers and legacy artifacts re-score exactly as before).
 
     Rows may be LP units or plants (floors aggregated per plant with the
     binding mechanism's id) — the arithmetic is identical. ``klass`` labels
@@ -904,29 +919,39 @@ def run_d2(
         if dispatch_substituted is None
         else np.asarray(dispatch_substituted, dtype=bool)
     )
-    classes = np.unique(klass)
-    mechs = [m for m in np.unique(mechanism[mask]) if m != 0]
+    row_classes = [str(k) for k in np.unique(klass)]
     total_by_class = {
-        k: float(np.clip(dispatch[klass == k], 0.0, None).sum()) for k in classes
+        k: float(np.clip(dispatch[klass == k], 0.0, None).sum()) for k in row_classes
     }
+    if floor_klass is None:
+        classes = list(row_classes)
+    else:
+        # Floors may be carried by a class none of the rows is labeled with
+        # (a minority slice of a mixed plant): those classes still get their
+        # detail rows, so the attribution is complete.
+        classes = sorted(set(row_classes) | set(floor_klass.present_under(mask)))
+    mechs = [m for m in np.unique(mechanism[mask]) if m != 0]
     forced_gated: dict[str, float] = {k: 0.0 for k in classes}
     for k in classes:
-        rows = klass == k
+        cells = (
+            (klass == k)[:, None] & mask
+            if floor_klass is None
+            else floor_klass.eq(k) & mask
+        )
         for m in mechs:
-            sel = mask[rows] & (mechanism[rows] == m)
-            mwh = float(dispatch[rows][sel].sum())
+            sel = cells & (mechanism == m)
+            mwh = float(dispatch[sel].sum())
             if mwh <= 0.0:
                 continue
+            total_k = total_by_class.get(str(k), 0.0)
             res.rows.append(
                 {
                     "year": year,
                     "class": str(k),
                     "mechanism": MECH_NAMES.get(int(m), str(m)),
                     "forced_twh": round(mwh / 1e6, 4),
-                    "class_total_twh": round(total_by_class[k] / 1e6, 4),
-                    "share_of_class": round(mwh / total_by_class[k], 4)
-                    if total_by_class[k] > 0
-                    else 0.0,
+                    "class_total_twh": round(total_k / 1e6, 4),
+                    "share_of_class": round(mwh / total_k, 4) if total_k > 0 else 0.0,
                 }
             )
             if int(m) not in D2_EXEMPT_MECHS and int(m) not in NON_THERMAL_MECHS:
@@ -942,9 +967,10 @@ def run_d2(
         # magnitude between the parquet and payload paths. Excluding it keeps
         # the summary path-independent and every merchant row per-class
         # truthful (#1488, rule 20).
-        if str(k) in D2_EXEMPT_CLASSES or str(k) == "" or total_by_class[k] <= 0.0:
+        total_k = total_by_class.get(str(k), 0.0)
+        if str(k) in D2_EXEMPT_CLASSES or str(k) == "" or total_k <= 0.0:
             continue
-        share = forced_gated[k] / total_by_class[k]
+        share = forced_gated[k] / total_k
         limit = (
             D2_PEAKER_MAX_SHARE
             if str(k) in D2_PEAKER_CLASSES
@@ -957,7 +983,7 @@ def run_d2(
         actual_energy = (
             float((actual_by_class or {}).get(str(k), 0.0)) if actual_by_class else 0.0
         )
-        material_energy = max(total_by_class[k], actual_energy)
+        material_energy = max(total_k, actual_energy)
         load_share = (
             material_energy / total_load_mwh
             if total_load_mwh and total_load_mwh > 0.0
@@ -971,12 +997,17 @@ def run_d2(
         # the share — but the flag travels with the number so a breach on such
         # a class reads as INDETERMINATE and escalates rather than convicting.
         is_upper_bound = bool(substituted[klass == k].any())
+        if floor_klass is not None and not is_upper_bound:
+            # A substituted row whose floor is CHARGED to this class (a
+            # mixed-plant minority slice) inflates its numerator the same way.
+            contributing = substituted & (floor_klass.eq(k) & mask).any(axis=1)
+            is_upper_bound = bool(contributing.any())
         res.summary.append(
             {
                 "year": year,
                 "class": str(k),
                 "forced_twh": round(forced_gated[k] / 1e6, 4),
-                "class_total_twh": round(total_by_class[k] / 1e6, 4),
+                "class_total_twh": round(total_k / 1e6, 4),
                 "forced_share": round(share, 4),
                 "limit": limit,
                 "load_share": round(load_share, 4) if load_share is not None else None,
@@ -992,7 +1023,7 @@ def run_d2(
         if breach:
             res.failures.append(
                 f"{year} {k}: forced share {share:.1%} > {limit:.0%} "
-                f"({forced_gated[k] / 1e6:.2f} of {total_by_class[k] / 1e6:.2f} TWh "
+                f"({forced_gated[k] / 1e6:.2f} of {total_k / 1e6:.2f} TWh "
                 "at binding non-exempt floors)"
                 + (
                     " [UPPER BOUND — the class holds a floor-substituted plant "
@@ -1021,8 +1052,16 @@ def run_d4(
     pids: list[str] | None = None,
     bench_pl: dict[str, dict] | None = None,
     substituted: np.ndarray | None = None,
+    floor_klass: "FloorClassMatrix | None" = None,
 ) -> GateResult:
     """D-4 off-window binding: floored MWh outside each declared window.
+
+    ``floor_klass`` (:class:`FloorClassMatrix`) selects each window's
+    (mechanism × class) cells by the class of the unit CARRYING the floor
+    rather than by the row's plant-majority label — the unit-grain repair of
+    the mixed-class mis-attribution (miso-170 K-1 forensic: plant 1104's
+    CT_PEAKER netload floor was tested, and convicted, under the ST_GAS
+    conduct row). ``None`` = row labels select (the pre-repair rule).
 
     Two checks share the gate, discriminated by each row's ``check`` field:
 
@@ -1058,17 +1097,18 @@ def run_d4(
     ct_only_skipped: set[str] = set()
     for (mech_id, k_filter), (start, end) in windows.items():
         in_window = (hod >= start) & (hod < end)
-        sel_rows = (
-            np.ones(dispatch.shape[0], dtype=bool)
-            if k_filter is None
-            else (klass == k_filter)
-        )
-        sel = mask[sel_rows] & (mechanism[sel_rows] == mech_id)
-        total = float(dispatch[sel_rows][sel].sum())
+        if k_filter is None:
+            class_cells = np.ones(dispatch.shape, dtype=bool)
+        elif floor_klass is not None:
+            class_cells = floor_klass.eq(k_filter)
+        else:
+            class_cells = (klass == k_filter)[:, None] & np.ones((1, t), dtype=bool)
+        sel = mask & (mechanism == mech_id) & class_cells
+        total = float(dispatch[sel].sum())
         if total <= 0.0:
             continue
         off = sel & ~in_window[None, :]
-        off_mwh = float(dispatch[sel_rows][off].sum())
+        off_mwh = float(dispatch[off].sum())
         share = off_mwh / total
         label = f"{MECH_NAMES.get(mech_id, mech_id)}" + (
             f" × {k_filter}" if k_filter else ""
@@ -1099,9 +1139,8 @@ def run_d4(
         # Only where the off-window test is vacuous (all-hours window).
         if not conduct_ok or (end - start) < 24 or not D4_CONDUCT_ALLHOURS_ONLY:
             continue
-        row_idx = np.flatnonzero(sel_rows)
-        for local_i, global_i in enumerate(row_idx):
-            floored_mwh = float(dispatch[global_i][sel[local_i]].sum())
+        for global_i in np.flatnonzero(sel.any(axis=1)):
+            floored_mwh = float(dispatch[global_i][sel[global_i]].sum())
             if floored_mwh <= 0.0 or float(min_gen[global_i].max()) <= D2_FLOOR_MIN_MW:
                 continue
             pid = str(pids[global_i])
@@ -1140,7 +1179,7 @@ def run_d4(
             # both the faithful reading of "the hours the floor asserts it
             # must be online" and the only one that cannot manufacture a
             # false positive out of a driver-gated limb.
-            bind_h = sel[local_i] & in_window
+            bind_h = sel[global_i] & in_window
             if not bind_h.any():
                 continue
             win = meas[bind_h[: meas.size]]
@@ -2351,6 +2390,46 @@ PSEUDO_PLANT_KEY_PREFIX = "u:"
 
 
 @dataclass(frozen=True)
+class FloorClassMatrix:
+    """Per plant-HOUR class of the floor's max-contributing unit, vocab-encoded.
+
+    The unit-grain repair of the D-4 plant-grain class-attribution defect
+    (miso-169 §5 ask 2 → miso-170 K-1 forensic → the miso-171 charter item):
+    ``aggregate_floors_by_plant`` labels each ROW with its plant's most-common
+    unit group, so a mixed-class site's floor carried by a MINORITY-class unit
+    was charged to the majority class's D-2 mechanism rows and D-4 provenance
+    leg (the live case: plant 1104's CT_PEAKER netload floor charged to
+    ST_GAS's C8 provenance in every pre-repair MISO artifact). This matrix
+    resolves the class the same way the plant-hour MECHANISM is already
+    resolved — maximum-composition: the class of the unit contributing the
+    largest floor that hour — so floors are attributed to the class that
+    actually carries them, while the plant stays one row (the metering and
+    dispatch grain). Empty unit groups impute to the plant's majority
+    non-empty group first (the #1488 rule, unchanged), so single-class plants
+    are attributed exactly as before.
+
+    ``codes`` is (n, T) int16 into ``names``; unfloored cells carry the row's
+    own label code (inert under the at-floor mask, kept meaningful).
+    """
+
+    codes: np.ndarray
+    names: tuple[str, ...]
+
+    def eq(self, name: str) -> np.ndarray:
+        """Boolean (n, T) mask of cells whose floor class is ``name``."""
+        try:
+            code = self.names.index(str(name))
+        except ValueError:
+            return np.zeros(self.codes.shape, dtype=bool)
+        return self.codes == code
+
+    def present_under(self, mask: np.ndarray) -> list[str]:
+        """Class names holding at least one cell of ``mask`` (sorted)."""
+        codes = np.unique(self.codes[mask])
+        return sorted(self.names[int(c)] for c in codes)
+
+
+@dataclass(frozen=True)
 class PlantMatrices:
     """The aligned (n, T) D-2/D-4 input matrices plus each row's provenance.
 
@@ -2369,6 +2448,10 @@ class PlantMatrices:
     substituted: np.ndarray
     substituted_pseudo: list[str]
     substituted_plants: list[str]
+    #: Per-cell floor class (FloorClassMatrix) aligned to the full row set —
+    #: what D-2 mechanism attribution and D-4 selection key on when present.
+    #: None on legacy/direct paths: row labels attribute, the pre-repair rule.
+    floor_klass: FloorClassMatrix | None = None
 
 
 def build_plant_matrices(
@@ -2379,6 +2462,7 @@ def build_plant_matrices(
     groups: np.ndarray,
     bench_pl: dict[str, dict],
     t: int = 8760,
+    floor_klass: FloorClassMatrix | None = None,
 ) -> PlantMatrices:
     """Assemble the D-2/D-4 row matrices from a dispatch map and a floors fleet.
 
@@ -2454,6 +2538,21 @@ def build_plant_matrices(
     for p in absent_floored:
         disp[index[p]] = floors[index[p]]
         substituted[index[p]] = True
+    fk_full: FloorClassMatrix | None = None
+    if floor_klass is not None:
+        # Align the floors-fleet floor-class matrix onto the full row set:
+        # rows outside the floors fleet carry their own label code (inert
+        # under the at-floor mask — they hold no floor).
+        code_of = {n: c for c, n in enumerate(floor_klass.names)}
+        row_label = np.array(
+            [code_of.get(str(klass[i]), 0) for i in range(len(all_pids))],
+            dtype=np.int16,
+        )
+        codes = np.repeat(row_label[:, None], t, axis=1)
+        for j, p in enumerate(pid_strs):
+            if p in index:
+                codes[index[p]] = floor_klass.codes[j][:t]
+        fk_full = FloorClassMatrix(codes=codes, names=floor_klass.names)
     return PlantMatrices(
         pids=all_pids,
         disp=disp,
@@ -2462,6 +2561,7 @@ def build_plant_matrices(
         klass=klass,
         npl=npl,
         substituted=substituted,
+        floor_klass=fk_full,
         substituted_pseudo=[
             p for p in absent_floored if p.startswith(PSEUDO_PLANT_KEY_PREFIX)
         ],
@@ -2473,7 +2573,7 @@ def build_plant_matrices(
 
 def aggregate_floors_by_plant(
     arrays: dict,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, FloorClassMatrix]:
     """Aggregate unit-level floors to plants: keys, floor sum, binding mech, class.
 
     The plant floor is the sum of its units' positive floors; the plant-hour
@@ -2481,6 +2581,16 @@ def aggregate_floors_by_plant(
     (maximum-composition at plant level). Loops over plants, never hours.
     Keys are strings: ``str(plant_code)`` per aggregated plant, plus one
     ``"u:<unit_id>"`` row per FLOORED ``plant_code <= 0`` pseudo-unit.
+
+    The fifth return is the :class:`FloorClassMatrix` — the plant-hour FLOOR
+    class under the same maximum-composition rule as the mechanism (the class
+    of the unit contributing the largest floor that hour, empty groups imputed
+    to the plant majority first). It is what D-2 mechanism attribution and
+    D-4 selection key on, so a mixed-class site's minority-class floor is
+    charged to the class that carries it rather than to the plant label (the
+    miso-170 K-1 forensic / miso-171 charter item (a); see
+    :class:`FloorClassMatrix`). The plant LABEL below (fourth return) is
+    unchanged and still names the row and its class denominator.
 
     The plant class is the **most common non-empty** unit group in the plant —
     NOT the first unit's group. A single plant frequently mixes classified
@@ -2520,6 +2630,9 @@ def aggregate_floors_by_plant(
     floor_sum = np.add.reduceat(pos, starts, axis=0)
     mech_plant = np.zeros((n_plants, t), dtype=np.int8)
     group_plant = np.empty(n_plants, dtype=object)
+    vocab: dict[str, int] = {"": 0}
+    fcode = np.zeros((n_plants, t), dtype=np.int16)
+    label_code = np.zeros(n_plants, dtype=np.int16)
     hours_idx = np.arange(t)
     for i in range(n_plants):
         block = slice(bounds[i], bounds[i + 1])
@@ -2531,7 +2644,17 @@ def aggregate_floors_by_plant(
             group_plant[i] = str(vals[counts.argmax()])
         else:
             group_plant[i] = ""
+        label_code[i] = vocab.setdefault(group_plant[i], len(vocab))
+        # Floor class, maximum-composition (FloorClassMatrix): the class of
+        # the SAME max-contributing unit the mechanism is taken from; empty
+        # unit groups impute to the plant majority (the #1488 rule).
+        eff = np.where(groups[block] == "", group_plant[i], groups[block])
+        codes_block = np.array(
+            [vocab.setdefault(str(g), len(vocab)) for g in eff], dtype=np.int16
+        )
+        fcode[i] = codes_block[rel]
     mech_plant[floor_sum <= 0.0] = 0
+    fcode = np.where(floor_sum <= 0.0, label_code[:, None], fcode)
     keys = [str(int(p)) for p in pc[starts]]
 
     dropped = ~keep
@@ -2548,7 +2671,20 @@ def aggregate_floors_by_plant(
             floor_sum = np.vstack([floor_sum, pos_f])
             mech_plant = np.vstack([mech_plant, mech_d])
             group_plant = np.concatenate([group_plant, groups_d.astype(object)])
-    return np.array(keys, dtype=object), floor_sum, mech_plant, group_plant.astype(str)
+            # A pseudo-unit row IS one unit: its floor class is its own group.
+            codes_d = np.array(
+                [vocab.setdefault(str(g), len(vocab)) for g in groups_d],
+                dtype=np.int16,
+            )
+            fcode = np.vstack([fcode, np.repeat(codes_d[:, None], t, axis=1)])
+    names = tuple(sorted(vocab, key=vocab.get))
+    return (
+        np.array(keys, dtype=object),
+        floor_sum,
+        mech_plant,
+        group_plant.astype(str),
+        FloorClassMatrix(codes=fcode, names=names),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -2784,7 +2920,9 @@ def diagnose_bundle(
             arrays, ra_missing = load_or_rebuild_floors(
                 bundle, iso, year, force_rebuild=rebuild_floors
             )
-            pids, floor_sum, mech_plant, groups = aggregate_floors_by_plant(arrays)
+            pids, floor_sum, mech_plant, groups, floor_klass = (
+                aggregate_floors_by_plant(arrays)
+            )
             pid_strs = [str(p) for p in pids]
             klass_by_pid = dict(zip(pid_strs, groups))
             # The D-2/D-4 row set and the floor-energy convention for rows the
@@ -2792,7 +2930,13 @@ def diagnose_bundle(
             # (pjm-149 §3.1/§3.2) — a pure function so the path behaviour is
             # unit-testable without a bundle.
             mats = build_plant_matrices(
-                model_plants_plant, pid_strs, floor_sum, mech_plant, groups, bench_pl
+                model_plants_plant,
+                pid_strs,
+                floor_sum,
+                mech_plant,
+                groups,
+                bench_pl,
+                floor_klass=floor_klass,
             )
             all_pids = mats.pids
             disp, floors, mechs = mats.disp, mats.floors, mats.mechs
@@ -2873,6 +3017,7 @@ def diagnose_bundle(
                     total_load_mwh=total_load_mwh,
                     actual_by_class=actual_by_class,
                     dispatch_substituted=mats.substituted,
+                    floor_klass=mats.floor_klass,
                 )
                 d2.rows.extend(sub_res.rows)
                 d2.failures.extend(sub_res.failures)
@@ -2889,6 +3034,7 @@ def diagnose_bundle(
                     pids=all_pids,
                     bench_pl=bench_pl,
                     substituted=mats.substituted,
+                    floor_klass=mats.floor_klass,
                 )
                 d4.rows.extend(sub_res.rows)
                 d4.failures.extend(sub_res.failures)

@@ -4215,7 +4215,55 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-19-miso-170-membership` (promoted miso-170, 2026-08-19), **NOT-YET on C3a-2025 (−12.1 %) + C8 (2023/2025)**
+### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-19-miso-170-sitegrain` (promoted miso-170b, 2026-08-19, superseding same-day `2026-08-19-miso-170-membership`), **NOT-YET on C3a-2025 (−12.1 %) + C8-2023 alone**
+
+> **QUEUE STAMP miso-171 (2026-08-20) — THE CHARTER PREREQUISITE EXECUTED: THE RESERVE
+> REQUIREMENT IS DECOMPOSED INTO SYNCHRONISED vs SUPPLEMENTAL, AND THE SUB-REGIONAL GATING
+> EXTENSION IS ADJUDICATED WITHOUT A SOLVE — MEASURED INERT. NO LP, NOTHING ARMED, NO
+> `ScenarioConfig` FIELD, NO REGISTRATION. Keeper UNCHANGED at `2026-08-19-miso-170-sitegrain`.**
+> Records: `results/calibration/FINDING-miso171-reserve-requirement-decomposition-2026-08-20.md`,
+> instrument `scripts/probes/_miso171_reserve_product_decomposition.py` + committed JSON.
+> The decomposition (measured cleared MW by region × product, the loader's own hour key and
+> product sets; identities vs the keeper families exact to 0.0 MW): the Midwest sub-regional OR
+> requirement is **58.2 % reg+spin / 41.8 % supplemental** in the 2025 scarce hours
+> (1,207.6 / 865.8 MW of 2,073.3), South is 98.7 % synchronised, market 65.0 % — the charter's
+> MIXED outcome. Product-definition basis cited per split (BPM-002-r23: reg §4.2.1.1.2 p.73 and
+> spin §4.2.1.2.2 p.75 are synchronised products; supplemental §4.2.1.3 p.75 / §4.2.1.3.2 p.77
+> is offline-quick-start-eligible, so gating it is a rule-1 breach; §3.6.2.2 Exhibit 3-2 p.57 —
+> MISO's own zonal construct splits min-spin vs min-supp). Three adjudications: (1)
+> `miso_rbdc`'s synchronised component is ALREADY the armed nested `miso_rbdc_regspin` family
+> (requirement identity 0.0 MW); its ungated margin is exactly the supplemental share — correct
+> in kind, no further gate admissible. (2) The locational Midwest/South regspin legs add ZERO
+> new gated volume (their sum IS the armed 1,617 MW re-cut locationally) and their incremental
+> binding surface beyond the armed market gate measures **3 scarce hours in 2025 and 0 hours in
+> all of 2023/2024** (regional replication of the miso-169 K-PRE H_on instrument on committed
+> unit_hourly) — K-PRE-A's own ≥80 % inertness kill fires (Midwest leg 80.9 %, incremental
+> 93.6 %), DO NOT SOLVE. (3) ~29 % of MISO's published scarce-hour ASM price sits on the
+> supplemental product (share robust 27–29 % across hour-key alignments; DA supp $20.50 vs RT
+> supp $97.94 even in DA-foreseen hours — 79 % RT-only). **Consequence: C3a-2025 is a documented
+> model-class limit END TO END** — the DA-foreseen half decomposes into armed-and-captured
+> (+0.10 pp), forbidden structure (a supp gate), inert structure (the locational split), and the
+> DA→RT gap MISO's own two clearings measure at 4× ($81 → $327 in the 20 foreseen hours). The
+> miso-167 §5 ~+3.3 pp ceiling is REVISED DOWN for supply-side reserve levers: measured capture
+> +0.10 pp, measured residual increment ~+0.03 pp. Cell `reserve_deliverability_scoping` stays
+> `K` with the extension's DO-NOT-REDO grounds appended; RHO_CLIP untouched (nyiso-144 owner
+> escalation); `ordc_scarcity_overlay` `G` untouched (demand side). Carry-forward items taken
+> per the charter: the cross-ISO D-4 plant-grain attribution defect, the 1402 per-year
+> `online_frac` successor (MISO's sole C8 blocker), the Ames (1122) p25-level basis, and the two
+> C8 rubric design questions (owner).
+
+> **PROMOTION STAMP miso-170b (2026-08-19, recorded retroactively by miso-171 — the promoting
+> session re-keyed the shard but missed this doc's header/stamp) — MISO KEEPER →
+> `2026-08-19-miso-170-sitegrain`** (`miso170_layup_B2`), the site-grain arm-2 of the lay-up
+> membership correction (`PREREG-miso170-stgas-floor-membership-2026-08-19.md` §7, the dated
+> K-1 amendment): the SAME 15-plant census stamped on every `(zone, plant_class)` limb its
+> tranches occupy instead of the majority class only. ALL KILLS SILENT — K-1 exact (zero census
+> rows on either mechanism), K-2 in band, K-3 18 → 1 (the pre-named 1402 survivor), K-4 C8
+> 2024 AND 2025 FAIL → PASS (grounded above budget), K-5 zero flips, K-6 shape held.
+> Determination **NOT-YET on C3a-2025 (−12.1 %) + C8-2023 alone** (1402's pooled-`online_frac`
+> window defect). Control-chain: bit-identical replication of `miso170_membership_A/B` at a
+> later MISO-inert HEAD (max|diff| = 0 on every scored sidecar).
+> `RESULT-miso170b-sitegrain-execution-2026-08-19.md`.
 
 > **PROMOTION STAMP miso-170 (2026-08-19) — MISO KEEPER →
 > `2026-08-19-miso-170-membership`, BY OWNER DIRECTION** ("Is this a recommended
