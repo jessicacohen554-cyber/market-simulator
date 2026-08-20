@@ -1,0 +1,16 @@
+{
+ "id": "2026-08-20-ercot223-arm-eventrelease",
+ "label": "ercot223 arm eventrelease",
+ "date": "2026-08-20",
+ "shorthand": "ercot223-arm-eventrelease",
+ "definition": "ercot-223 arm: EVENT-REALIZED RELEASE guard on the ercot-221 adaptive floor (ercot_adaptive_event_release; masks the pass-2 floor at in-window hours whose pass-1 settle basis >= the existing $1,000 event constant; zero new numeric constants \u2014 PRECOMMIT-ercot223-event-release-guard-2026-08-19.md). Repairs the keeper's manufactured May-8-2024 h3066 load shed (its one failing kill gate): all pre-registered gates PASS incl. G-SHED tightened to zero NEW shed vs the original 0/1/0 \u2014 the arm's 2024 shed set returns to {3067}.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-08-20-ercot223-arm-eventrelease.js",
+ "bundle": "results/calibration/ercot223_release_arm",
+ "market_story": "Storage: ERCOT batteries in 2023 priced scarce SOC at their experienced recent frequency of deep-scarcity events \u2014 the IMM's artificial-shortage summer monetized through adaptive expectation offers ($3.4-5k asks after August's spike experience, decaying to ~$300 by November as events vanished). The mechanism reproduces that conduct from the model's OWN price path (7/3/0 self-generated spike days across 2023/24/25; the 2025 floor is exactly zero \u2014 self-extinguishing), with two measured-conduct constants (30 d memory half-life, gain 3.0077) identified on the 2023 daily evening SCED offer surface and frozen. No measured price, no year key, no regime parameter enters the armed path. EVENT-REALIZED RELEASE (ercot-223): the holdout conduct is a claim about WHEN the fleet releases, not the social cost of its stored energy \u2014 on the real May-8-2024 storm evening (RT $2,451) the fleet discharged into the spike and no firm load was shed. At hours the model's own pass-1 path marks the anticipated spike as realized, the offer clears and the floor yields; everywhere else (99% of floored hours) the anticipation conduct stands. Without the guard, offer-as-cost debased the LP's private SOC value against the co-opt's floor-free reserve-headroom value and manufactured 17.9 MW of shed reality never recorded (ercot223_shed_phase0.json)."
+}
