@@ -7871,3 +7871,65 @@ regenerated-vs-committed exposure (PJM ST_GAS-2025): see
 `docs/calibration-log/governance.md` (2026-08-20 entry). Items (b) 1402
 per-year `online_frac`, (c) Ames p25 basis, (d) the two C8 rubric design
 questions remain RAISED, not decided (RESULT §5).
+
+## miso-172 (2026-08-20) — two arms on the per-plant must-run floor: the WINDOW-VINTAGE arm rejected on its own K-2, the LEVEL-BASIS arm promoted: keeper → `2026-08-20-miso-172-p25mw`, C8-2023 CLEARED
+
+*(Entry appended retroactively by miso-173 — the miso-172 session registered,
+promoted and stamped the matrix but missed this log; full records:
+`RESULT-miso172-mustrun-window-vintage-2026-08-20.md`,
+`RESULT-miso172-p25-level-basis-2026-08-20.md`,
+`PREREG-miso172-*.md` ×2, scorer `scripts/probes/_miso172_window_ab.py`.)*
+
+Arm 1 (`mustrun_online_frac_per_year`): the pooled-vs-per-year window GRAIN
+defect, real and zero-DOF (178/178 pooled reproduction), REJECTED-AS-ARMED on
+a K-2 liveness band whose predictor held at-floor rates fixed — the mechanical
+verdict stands unreinterpreted; 1402's 2023 zero-share fell 71.17 → 52.19 %,
+missing the 50 % rider by 2.2 pp. Cell `R`. Arm 2
+(`st_gas_mustrun_p25_measured_level`): the dropped-avail_mult LEVEL basis —
+88/134 rows agreeing to 0.1 % (the underated plants) vs 25/134 ≥ 1.10× (all
+derated) is the proof — EVERY gate passed; ST_GAS forced share
+30.53/30.93/42.56 → 24.59/24.88/35.16 %, C8-2023 FAIL → PASS (the only record
+change in 67), determination NOT-YET on C3a-2025 + C8-2023 → **C3a-2025
+ALONE**. The C8 blocker was cleared by the arm nobody expected: the class
+dropped below budget, so the provenance leg (and 1402's still-failing conduct
+row) stopped being consulted. Successor named pre-solve: the 1402 seasonal /
+part-year lay-up object (→ miso-173). Latent and not armed: the CC/CT leg of
+the same basis defect (CC max 2.03×, CT 1.50×; inert under
+`cc_mustrun_per_plant=False`; per-ISO hand-off under rule 25).
+
+## miso-173 (2026-08-20) — the measured lay-up window mask: ALL KILLS SILENT, keeper → `2026-08-20-miso-173-layup-mask`, and the bundle's D-4 conduct failures go to ZERO
+
+The 1402 seasonal/part-year object decided as the COMMITMENT-WINDOW object
+and built as `mustrun_layup_window_mask` (gated, default off, backcast-only,
+ZERO DOF): the per-plant must-run floors' hourly clip basis becomes
+`pmax × max(0, availability − layup_share)`, the share read from the
+merit-order guard's economic-lay-up extract
+(`campd-unit-outages-layup-MISO.csv`) through the same accumulator/routing/
+denominator as the unit-outage overlay — the engine stops FORCING plants on
+inside the very windows its own outage pipeline adjudicated as not-operating
+(rule 17). NOT an availability correction (the windows are the guard's
+ECONOMIC class; rule 13 forbids "didn't run" fed back as "couldn't run"; the
+phantom-outage bias would re-arm) and NOT a census tier (1402 is a cycler;
+the line has held five times). Availability untouched.
+
+Prereg with frozen PRE-SOLVE ENGINE-BUILD volume predictions (the CSV
+instrument's composition-blindness was found by the engine check and
+disclosed, not papered over). Control `2026-08-20-miso-173-control`
+bit-identical to the predecessor keeper (12/12 sidecars, max|diff| = 0.0).
+ALL KILLS SILENT: M-1/M-2 exact vs the engine build (mechanism floor volume
+−0.944/−0.564/−0.762 TWh); M-3 sign PASS, D-2 forced 5.5632/5.6112/7.1480 →
+4.6839/5.0515/6.3594 TWh (2024 magnitude 0.018 TWh past its ±50 % band — the
+pre-registered at-floor-rate-drift non-kill, reported); **M-4 conduct
+failures 2 → 0** — the 1402-2023 target cleared exactly as predicted (0.4 %
+window-grain zero-share vs the 50 % rider) AND the plant-990 regen
+reliability_floor row (its single binding hour masked; the
+materiality-floor rubric question REMAINS OPEN, re-raised); M-5 C8 PASS all
+years (2025 grounded above budget 32.2 %, profile_r 0.981); M-6 zero flips
+over 67 records; M-7 shape held. Determination UNCHANGED at **NOT-YET on
+C3a-2025 (−11.8 %) ALONE**, C3c ledgered — structural legitimacy, not
+budget. Housekeeping: miso-172's keeper-audit debt discharged (PASS, zero
+drift), miso-172's missing cache-key registrations repaired (pin
+`603c2498bf71d21d` restored), this retroactive log entry. The arm-1 re-run
+(charter item 3) NOT taken: the mask subsumes its 2023 case; its 2024/25
+half raises forced share and buys no gate; re-arming needs a reconciliation
+charter vs this mask (rule 19). Next number: **miso-174**.

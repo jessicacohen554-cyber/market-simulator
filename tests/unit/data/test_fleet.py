@@ -2401,6 +2401,153 @@ class TestMustrunOnlineFracPerYear(unittest.TestCase):
         self.assertTrue(fa.min_gen is None or float(fa.min_gen.sum()) == 0.0)
 
 
+class TestMustrunLayupWindowMask(unittest.TestCase):
+    """Measured lay-up window mask (``mustrun_layup_window_mask``).
+
+    miso-173. The merit-order guard's economic-lay-up extract records the
+    >= 5-day windows it removed from the availability envelope because the
+    unit sat out of merit — the measured hours in which the plant's
+    self-commitment driver is absent. The mask confines the per-plant
+    must-run floor to hours OUTSIDE those windows (clip basis
+    ``pmax x max(0, availability - layup_share)``) without touching
+    availability itself. These tests pin default-off byte-inertness, the
+    mask zeroing/clipping the floor inside windows, availability staying
+    untouched, the backcast-only mode gate (rule 13), and the generic
+    (non-p25) branch honouring the same mask.
+    """
+
+    _HOURS = 48
+    _PLANT = 9904
+
+    def _gens(self, **extra):
+        return [
+            Generator(
+                unit_id="stg_0",
+                name="Steamer",
+                zone="North",
+                fuel_type="gas_st",
+                pmax_mw=200.0,
+                heat_rate=7.0,
+                plant_group="ST_GAS",
+                plant_code=self._PLANT,
+                **extra,
+            )
+        ]
+
+    def _layup(self, share, lo, hi):
+        arr = np.zeros(self._HOURS)
+        arr[lo:hi] = share
+        return {(self._PLANT, "ST_GAS"): arr}
+
+    def _fa(self, *, masked=False, layup=None, mode="backcast", gens=None, p25=True):
+        cfg = ScenarioConfig(
+            mode=mode,
+            weather_year=2024,
+            st_gas_mustrun_per_plant=True,
+            st_gas_mustrun_p25_level=p25,
+            mustrun_layup_window_mask=masked,
+        )
+        load = np.arange(self._HOURS, dtype=float) + 1.0  # top-frac == last k h
+        with (
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_p25_level",
+                return_value={(self._PLANT, "ST_GAS"): 100.0},
+            ),
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_online_frac",
+                return_value={(self._PLANT, "ST_GAS"): 0.5},
+            ),
+            unittest.mock.patch(
+                "market_sim.data.outages.unit_layup_removed_fractions",
+                return_value=layup if layup is not None else {},
+            ),
+        ):
+            return generators_to_fleet_arrays(
+                gens if gens is not None else self._gens(),
+                ["North"],
+                hours=self._HOURS,
+                iso="MISO",
+                config=cfg,
+                load_shape=load,
+            )
+
+    def test_default_off_is_byte_inert(self):
+        """Flag off: the floor is unchanged even when windows exist on disk."""
+        fa = self._fa(masked=False, layup=self._layup(1.0, 24, 48))
+        self.assertEqual(int((fa.min_gen[0] > 0).sum()), 24)
+
+    def test_masked_window_hours_lose_the_floor(self):
+        """A full-share lay-up window zeroes the floor in exactly its hours."""
+        # Window = top-half load hours = h24-47; lay-up covers h36-47.
+        fa = self._fa(masked=True, layup=self._layup(1.0, 36, 48))
+        np.testing.assert_allclose(fa.min_gen[0, 36:], 0.0)
+        self.assertEqual(int((fa.min_gen[0] > 0).sum()), 12)  # h24-35 keep it
+
+    def test_partial_share_clips_at_nonlaidup_capacity(self):
+        """A partial lay-up clips the floor at pmax x (avail - share)."""
+        # share 0.7 on a 200 MW plant: clip = pmax x (availability - 0.7),
+        # computed against the run's own (statistical-base) availability.
+        fa = self._fa(masked=True, layup=self._layup(0.7, 36, 48))
+        expected = 200.0 * np.maximum(0.0, fa.availability[0, 36:] - 0.7)
+        np.testing.assert_allclose(fa.min_gen[0, 36:], expected)
+        self.assertTrue((fa.min_gen[0, 36:] < 100.0).all())
+        np.testing.assert_allclose(fa.min_gen[0, 24:36], 100.0)
+
+    def test_availability_is_not_touched(self):
+        """The mask confines the FLOOR only; availability stays as loaded."""
+        fa_off = self._fa(masked=False, layup=self._layup(1.0, 0, 48))
+        fa_on = self._fa(masked=True, layup=self._layup(1.0, 0, 48))
+        np.testing.assert_array_equal(fa_on.availability, fa_off.availability)
+        self.assertTrue(float(fa_on.min_gen.sum()) == 0.0)
+
+    def test_backcast_only_mode_gate(self):
+        """Forecast mode refuses the flag at construction, and the engine
+        gate independently no-ops when construction is bypassed."""
+        with self.assertRaises(ValueError):
+            ScenarioConfig(mode="forecast", iso="MISO", mustrun_layup_window_mask=True)
+        fa = self._fa(masked=True, layup=self._layup(1.0, 36, 48), mode="backcast")
+        fa2_cfg = ScenarioConfig(
+            mode="backcast",
+            weather_year=2024,
+            st_gas_mustrun_per_plant=True,
+            st_gas_mustrun_p25_level=True,
+            mustrun_layup_window_mask=True,
+        )
+        fa2_cfg.mode = "forecast"  # post-construction: bypasses the config guard
+        load = np.arange(self._HOURS, dtype=float) + 1.0
+        with (
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_p25_level",
+                return_value={(self._PLANT, "ST_GAS"): 100.0},
+            ),
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_online_frac",
+                return_value={(self._PLANT, "ST_GAS"): 0.5},
+            ),
+            unittest.mock.patch(
+                "market_sim.data.outages.unit_layup_removed_fractions",
+                return_value=self._layup(1.0, 36, 48),
+            ),
+        ):
+            fa2 = generators_to_fleet_arrays(
+                self._gens(),
+                ["North"],
+                hours=self._HOURS,
+                iso="MISO",
+                config=fa2_cfg,
+                load_shape=load,
+            )
+        self.assertEqual(int((fa.min_gen[0] > 0).sum()), 12)  # masked in backcast
+        self.assertEqual(int((fa2.min_gen[0] > 0).sum()), 24)  # unmasked forecast
+
+    def test_generic_branch_honours_the_mask(self):
+        """The non-p25 (committed-tranche) floor branch masks identically."""
+        gens = self._gens(cc_mustrun_pmin_mw=80.0, cc_mustrun_online_frac=0.5)
+        fa = self._fa(masked=True, layup=self._layup(1.0, 36, 48), gens=gens, p25=False)
+        np.testing.assert_allclose(fa.min_gen[0, 36:], 0.0)
+        self.assertEqual(int((fa.min_gen[0] > 0).sum()), 12)
+
+
 class TestStGasP25MeasuredLevelBasis(unittest.TestCase):
     """Measured-MW p25 level basis (``st_gas_mustrun_p25_measured_level``).
 

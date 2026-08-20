@@ -1,0 +1,16 @@
+{
+ "id": "2026-08-20-miso-173-layup-mask",
+ "label": "miso 173 layup mask",
+ "date": "2026-08-20",
+ "shorthand": "miso-173-layup-mask",
+ "definition": "miso-173 KEEPER: measured lay-up window mask on the per-plant must-run floors (mustrun_layup_window_mask; PREREG-miso173-layup-window-mask-2026-08-20.md). Single delta vs miso173_control. All kills silent; D-4 conduct failures 2 -> 0 (1402-2023 target + the plant-990 regen row); determination NOT-YET on C3a-2025 alone, C3c ledgered.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-08-20-miso-173-layup-mask.js",
+ "bundle": "results/calibration/miso173_layupmask",
+ "market_story": "ST_GAS (the Entergy MISO-South legacy steamers and their Midwest peers): these plants self-commit for local reliability/VLR and municipal obligations when they are in their operating season, and the model floors them at their measured p25-of-online level over their measured synchronization window. What the real market ALSO does \u2014 and the model now mirrors \u2014 is take a seasonal cycler out of service entirely for part of the year: winter lay-up with boiler preservation and reduced staffing, revealed in the CEMS record as multi-week zero-generation windows the outage pipeline's merit-order guard classifies as economic lay-up (the unit's own SRMC above the revealed clearing cost for >=90% of the window). Nobody self-commits a steamer that is sitting in lay-up, so the floor may not bind inside those windows; the plant remains AVAILABLE to the LP's economics, reserves and the scarcity cushion, exactly as the lay-up extract's own charter requires. 1402 Little Gypsy 2023 is the chartering case: Jan-Feb and Oct-Dec measured lay-up, meter online share 0.000-0.058, and the floor previously forced 0.13 TWh across 2,542 of exactly those hours."
+}

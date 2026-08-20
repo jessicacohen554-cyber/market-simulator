@@ -677,6 +677,65 @@ def unit_outage_short_derate_factors(
     )
 
 
+def unit_layup_csv_for_iso(iso: str | None) -> Path:
+    """Return the ECONOMIC-LAYUP companion CSV path for an ISO.
+
+    Written by ``scripts/data/derive_campd_unit_outages.py --merit-order-guard``
+    (``campd-unit-outages-layup[-<ISO>].csv``): detected >= 5-day full-stop
+    windows the merit-order guard RECLASSIFIED as economic lay-up — the unit's
+    own measured SRMC sat above the revealed clearing cost for >=
+    ``MERIT_OOM_FRAC`` of the window (scripts/lib/outage_detect.py). These
+    windows deliberately stay OUT of the availability envelope (an economically
+    idle unit is available; the LP declines it on its own economics); the sole
+    engine consumer is the must-run floor mask
+    (``ScenarioConfig.mustrun_layup_window_mask``), which reads them as the
+    measured hours in which the plant's self-commitment driver is absent.
+    """
+    if iso is None or iso.upper() == "ERCOT":
+        return UNIT_OUTAGE_CSV.with_name("campd-unit-outages-layup.csv")
+    return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-layup-{iso.upper()}.csv")
+
+
+@lru_cache(maxsize=None)
+def unit_layup_removed_fractions(
+    year: int,
+    hours: int = HOURS_PER_YEAR,
+    bins_path: str | Path = BINS_CSV_DEFAULT,
+    iso: str = "ERCOT",
+    cc_steam_part_reclass: bool = False,
+    cc_nameplate_basis: bool = False,
+) -> dict[tuple[int, str], np.ndarray]:
+    """Return ``{(plant_code, plant_group): (hours,) laid-up capacity fraction}``.
+
+    The measured LAY-UP share of each plant's capacity by hour, from the
+    merit-order guard's economic-lay-up companion extract
+    (:func:`unit_layup_csv_for_iso`). Built through the SAME accumulator as
+    :func:`unit_outage_derate_factors` — identical unit->plant routing
+    (CTs excluded), identical model-fleet capacity denominator, identical
+    window clipping and concurrent-unit summing — so a lay-up share and an
+    outage share for the same plant sit on the same basis and are additive
+    (a >= 5-day gap window is classified as exactly one of the two by the
+    derive script). NOT an availability layer: the sole consumer is the
+    must-run floor mask (``ScenarioConfig.mustrun_layup_window_mask``), which
+    subtracts this share from the floor's ``pmax x availability`` clip basis.
+    ISOs or years without the file get an empty dict (no effect).
+    """
+    iso = (iso or "ERCOT").upper()
+    csv_path = unit_layup_csv_for_iso(iso)
+    if not csv_path.exists():
+        return {}
+    df = pd.read_csv(csv_path)
+    # Same duration floor as the standard overlay: the lay-up companion is a
+    # reclassification of the >= 5-day detector output, re-filtered defensively.
+    df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
+    factors = _unit_outage_factors_from_events(
+        df, year, hours, bins_path, iso, cc_steam_part_reclass, cc_nameplate_basis
+    )
+    # The accumulator returns availability multipliers (1 - removed share);
+    # this loader's contract is the REMOVED (laid-up) share itself.
+    return {k: 1.0 - v for k, v in factors.items()}
+
+
 def unit_partial_outage_csv_for_iso(iso: str | None) -> Path:
     """Return the UNIT-GRAIN partial-derate plateau CSV path for an ISO.
 

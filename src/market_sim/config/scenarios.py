@@ -986,6 +986,25 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # end of the tuple per the HOUSE-3 insertion convention. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "mustrun_plant_exclusions",
+    # miso-172's two per-plant must-run corrections (GATED default off). Both
+    # were MISSED at their own merge — an omission from this tuple, found by
+    # miso-173 when nine cache-key pin tests (test_cache_key_registration and
+    # the *_key_is_unmoved family) turned up failing at HEAD: an unregistered
+    # default-off field moves the GLOBAL default key, which is exactly what the
+    # nyiso-119 discipline exists to prevent. Registering them here RESTORES
+    # the pinned default key (both are byte-inert off — proven by miso-172's
+    # own K-0, 12/12 sidecars max|diff|=0); an armed run still hashes
+    # distinctly because a non-default value always enters the payload.
+    "mustrun_online_frac_per_year",
+    "st_gas_mustrun_p25_measured_level",
+    # miso-173 measured lay-up window mask for the per-plant must-run floors
+    # (GATED default off): dropped from the hash at its default — the off path
+    # never reads the lay-up extract at all, so it is byte-identical by
+    # construction. An armed run masks floor hours (a different min_gen, so a
+    # different dispatch) and hashes distinctly, keeping the control/arm A/B
+    # off one cache entry. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "mustrun_layup_window_mask",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1310,6 +1329,16 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-170 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_plant_exclusions": "False",
+    # miso-172's two fields, registered RETROACTIVELY by miso-173: their own
+    # merge missed the _CACHE_KEY_OPTIONAL_FIELDS registration entirely (nine
+    # cache-key pin tests failing at HEAD), so the registration and this ledger
+    # entry land together in the repairing commit. The defaults recorded here
+    # are the fields' original merge-time defaults, unchanged.
+    "mustrun_online_frac_per_year": "False",
+    "st_gas_mustrun_p25_measured_level": "False",
+    # Added by miso-173 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "mustrun_layup_window_mask": "False",
 }
 
 
@@ -1394,6 +1423,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "st_gas_mustrun_p25_level": "measured per-plant ST-gas p25 operating level",
     "mustrun_online_frac_per_year": "measured per-YEAR must-run commitment window",
     "st_gas_mustrun_p25_measured_level": "measured p25 level in MW (no CF basis)",
+    "mustrun_layup_window_mask": "measured lay-up windows mask the must-run floor",
     "coal_lignite_mustrun_override": "measured lignite must-run level",
     "coal_prb_mustrun_override": "measured PRB must-run level",
     "chp_export_floor_measured": "measured steam-host export floor",
@@ -9953,6 +9983,63 @@ class ScenarioConfig:
     # from each new CAMPD vintage). Off by default; independent of
     # mustrun_online_frac_per_year (separate phenomena, separate gates).
     st_gas_mustrun_p25_measured_level: bool = False
+
+    # MEASURED LAY-UP WINDOW MASK for the per-plant must-run floors
+    # (cc_mustrun_per_plant / st_gas_mustrun_per_plant, the p25 level swap
+    # included) — miso-173. The floors are commitment scaffolding whose driver
+    # is the plant's own revealed self-commitment (rule 17 [R-FLOOR-WINDOW]),
+    # and the model's own outage pipeline already measures, per unit and dated
+    # window, when that driver is ABSENT: the merit-order guard
+    # (scripts/lib/outage_detect.py) reclassifies a detected >= 5-day full-stop
+    # window as ECONOMIC LAY-UP when the unit's measured SRMC sat above the
+    # revealed clearing cost for >= 90 % of the window, and writes it to
+    # ``campd-unit-outages-layup-<ISO>.csv`` ON THE EXPRESS CHARTER that the
+    # window stays out of the availability envelope ("an economically idle unit
+    # is AVAILABLE; the LP declines it on its own economics"). Without this
+    # mask the engine CONTRADICTS that adjudication: the must-run floor forces
+    # the plant on inside the very windows the pipeline classified as
+    # not-operating. Measured case: MISO 1402 (Little Gypsy) 2023 — unit 3 in
+    # measured lay-up Jan 1 - Mar 9, both units Oct 4 - Dec 31, meter online
+    # share 0.000 / 0.015 (Jan/Feb) and 0.033 / 0.058 (Nov/Dec), while the
+    # floor binds 2,542 hours across the year with the meter dark in 71 % of
+    # them (the keeper's own D-4 conduct FAIL; part-year grain the pooled
+    # lay-up census cannot see).
+    #
+    # When True the floor's per-hour clip basis is
+    # ``pmax x max(0, availability - layup_share(t))``: the plant-hour lay-up
+    # share from :func:`market_sim.data.outages.unit_layup_removed_fractions`
+    # (the SAME accumulator, routing and capacity denominator as the unit
+    # outage overlay, so the two shares are additive by construction) is
+    # subtracted from the floor's eligible capacity. AVAILABILITY IS NOT
+    # TOUCHED — an economically idle unit stays fully available to the LP's
+    # own economics, to reserves and to the scarcity cushion; only the FORCING
+    # is confined to hours the plant's own record says its self-commitment
+    # regime was operating. The window SIZE (online_frac, pooled or per-year)
+    # and the LEVEL are untouched; masked window-hours lose their floor exactly
+    # as measured-outage hours already do under the existing clip.
+    #
+    # Rule 21 [R-DOF]: ZERO free parameters — windows, unit shares and the 0.90
+    # out-of-merit threshold all live in the frozen derive layer (rule 23; the
+    # extract is consumed, not re-derived, and MERIT_OOM_FRAC's identification
+    # note shows it is not load-bearing). Rule 13 [R-MEASURED]: BACKCAST ONLY
+    # (mode-gated in the engine + this family): same-year lay-up windows have
+    # no forward analogue, exactly like the CAMPD outage windows produced by
+    # the same detector; a FORECAST year keeps the un-masked floor, whose
+    # window/level already regenerate from pooled CEMS history as each vintage
+    # lands. No outcome pinning: dispatch above the floor stays free, and the
+    # mask can only REMOVE forcing the record says is spurious — it never adds
+    # or relocates any.
+    # Rule 19 [R-ONE-MECH]: no new floor and no membership change — the
+    # existing floor's hour-eligibility is refined by the same measured-conduct
+    # family that identifies its window and level. Distinct from
+    # mustrun_plant_exclusions (site-grain, always-laid-up membership census —
+    # a plant IN the census carries no floor and the mask never sees it) and
+    # from mustrun_online_frac_per_year (window SIZE vintage): the three gates
+    # compose without stacking because they touch membership, size and
+    # hour-eligibility respectively, of the ONE floor.
+    # Off by default (every existing keeper byte-identical); the extract is
+    # per-ISO by construction, so the mechanism self-scopes (rule 25).
+    mustrun_layup_window_mask: bool = False
 
     # MEMBERSHIP correction for the per-plant must-run floors
     # (cc_mustrun_per_plant / st_gas_mustrun_per_plant, the p25 level swap
