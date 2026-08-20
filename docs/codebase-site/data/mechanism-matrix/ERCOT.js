@@ -98,6 +98,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     cc_mustrun_per_plant: { cell: "." },
     winter_fuelsec_posture: { cell: "U" },
     chp_steam_following: { cell: "K" },
+    chp_btm_measured: { cell: "U", ev: "row minted at nyiso-147 with the field (rule 28c); never armed here. Rule 25/28(d): the NYISO two-meter identity transfers nothing — this lane derives its own settlement-vs-EIA-923 share from its own market's meters before arming" },
     netload_drag_floors: { cell: "K" },
     ramp_envelopes: { cell: "R", ev: "ERCOT-127 §1, ERCOT-132 leg A" },
     forced_share_d4_census: { cell: "I", ev: "xiso-3 §3 (all material classes within cap; ST_GAS 20.1% closest; latent reliability_floor×CC map §5)" },

@@ -98,6 +98,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     cc_mustrun_per_plant: { cell: "." },
     winter_fuelsec_posture: { cell: "." },
     chp_steam_following: { cell: "K" },
+    chp_btm_measured: { cell: "O", ev: "nyiso-147 (row minted with the field, rule 28c): phase-0 root-cause identification of the 2023 upstate price level — FINDING-nyiso147-upstate-price-root-cause-2026-08-20.md; PREREG-nyiso147-chp-btm-measured-2026-08-20.md committed before any arm solve; artifact chp_btm_share_measured_NYISO.csv frozen (rule 23). O pending the arm-A solve this session" },
     netload_drag_floors: { cell: "R" },
     ramp_envelopes: { cell: "K", ev: "nyiso-111 (own artifact + bound-against-the-bound pre-check + A/B, PROMOTED KEEPER — FINDING-nyiso111-ramp-envelopes-2026-08-02.md §4)" },
     forced_share_d4_census: { cell: "I", ev: "xiso-3 §3 (zero latent gaps — fully windowed; ST_GAS 27.5% the closest sub-cap class anywhere)" },

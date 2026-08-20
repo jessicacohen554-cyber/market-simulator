@@ -98,6 +98,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     cc_mustrun_per_plant: { cell: "R", ev: "caiso-140 (FINDING-caiso140-belly-supply-state-2026-07-30 §C/§D; probes _caiso140_belly_supply_state.py + _caiso140_d3_walkdown.py)" },
     winter_fuelsec_posture: { cell: "." },
     chp_steam_following: { cell: "K" },
+    chp_btm_measured: { cell: "U", ev: "row minted at nyiso-147 with the field (rule 28c); never armed here. Rule 25/28(d): the NYISO two-meter identity transfers nothing — this lane derives its own settlement-vs-EIA-923 share from its own market's meters before arming" },
     netload_drag_floors: { cell: "R", ev: "caiso-140 (FINDING-caiso140-belly-supply-state-2026-07-30 §C/§D)" },
     ramp_envelopes: { cell: "I", ev: "FINDING-ramp-lcr-caiso-2026-07, caiso-ct-drag-d8-closure §7" },
     forced_share_d4_census: { cell: "I", ev: "xiso-3 §3/§5 (ra_mustoffer_bridge the sole non-exempt binder, 6.8-9.6% vs 30; no D4_WINDOWS entry of any kind)" },
