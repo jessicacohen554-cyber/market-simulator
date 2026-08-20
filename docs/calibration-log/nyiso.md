@@ -7343,3 +7343,40 @@ upstate energy was price-relevant); its first solve was INERT (seam clobbered
 by pct_peaking/cc_duct_peaking; fixed, disclosed, both solves registered).
 Defect B is now a JOINT object with the 2023 upstate price level.
 RESULT-nyiso146bc-state-floor-keeper-2026-08-19.md.
+
+## 2026-08-20 — nyiso-147: the 2023 upstate price root cause FOUND (the CHP BTM carve) — measured repair REJECTED-AS-ARMED; keeper unchanged
+
+Phase 0 (no LP): C3a-2023's +9.2 % decomposed **entirely into Upstate_West**
+(+9.46 pp contribution; +30.8 % zone error, year-round, present all three
+years but cancelled by downstate under-pricing in 2024/25 — the missing
+zonal gradient of nyiso-126 §2.3(4), now zone-attributed). Fuel basis
+refuted (west marginal gas $1.79–1.96 vs SOM Z4 $1.82); the $8.1 "markup"
+is ~$7.4 RGGI; the real object is the marginal unit's identity (a ~10-HR
+unit where reality clears a ~7.2–7.5-HR CC). Root cause: the
+`chp_steam_following` merchant 35 % BTM carve — self-described
+"residual-identified … no independent source yet" — is REFUTED by the
+plants' own meters: Sithe Independence (54547) delivers 100.3 % of its
+EIA-923 net to the NYISO grid (Gold Book Table III-2a, three years), BNY's
+carved capacity implies CF 1.07, Independence-2024 needs CF 0.93 of its
+carved 753 MW. New rule-23 artifact `chp_btm_share_measured_NYISO.csv`
+(16 plants, two published meters, zero fitted scalars); new default-off
+`nyiso_chp_btm_measured` consumed by all three share legs (LP carve,
+add-back, bench classFull).
+
+The A/B (prereg first; control replay byte-identical to the keeper): the
+single delta moves lw C3a **+8.7 → +1.5 % (2023)** and lands upstate within
+$1 of actual in 2024/2025 (+0.89 / −0.38 eqh err) — the object CONFIRMED —
+and is **REJECTED-AS-ARMED** because the carve was masking three defects
+that become visible with the capacity restored: Selkirk dispatches 7.9× its
+meter (idle-cogen phantom energy, CHP-side merit-order inversion), CC_CHP
+over-runs +5.0 TWh against its OWN corrected bench (offer-implied CF vs the
+class's real 0.4–0.7 conduct), and 2025 breaks the band at −12.2 % (the
+control's −2.2 % "pass" was ~$6/MWh of masked under-pricing). Owner
+structure-over-gates clause considered, not applied. Artifact and wiring
+ship default-off (the pjm-146 disposition). Arm B (`cc_reserve_duty_split`
+re-arm) did not solve — conditioned on arm A passing. Successors: CHP
+idle/lay-up membership + CC_CHP conduct; the 2025 level object. Runs
+`2026-08-20-nyiso-147-control` / `2026-08-20-nyiso-147a-chp-btm`; evidence
+`RESULT-nyiso147-chp-btm-ab-2026-08-20.md`,
+`FINDING-nyiso147-upstate-price-root-cause-2026-08-20.md`,
+`_nyiso147_ab_gates.json`.

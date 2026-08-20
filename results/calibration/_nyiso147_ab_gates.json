@@ -1,0 +1,191 @@
+{
+ "control": "results/calibration/nyiso147_control",
+ "arm": "results/calibration/nyiso147_armA",
+ "A_K1": {
+  "diff": [
+   "nyiso_chp_btm_measured"
+  ],
+  "passed": true
+ },
+ "A_K2_peak_dispatch_mw": {
+  "control": {
+   "54547": 731.5,
+   "50006": 615.4,
+   "56259": 366.4,
+   "2493": 369.8
+  },
+  "arm": {
+   "54547": 1125.4,
+   "50006": 692.1,
+   "56259": 562.6,
+   "2493": 568.8
+  }
+ },
+ "A_K2_btm_twh_2023": {
+  "control": {
+   "CC_CHP": 5.933,
+   "CT_CHP": 0.252,
+   "ST_CHP": 0.646
+  },
+  "arm": {
+   "CC_CHP": 1.698,
+   "CT_CHP": 0.151,
+   "ST_CHP": 0.36
+  }
+ },
+ "A_K2_passed": true,
+ "A_K3": {
+  "2023": {
+   "control": {
+    "model": 32.95,
+    "err": 7.63
+   },
+   "arm": {
+    "model": 30.54,
+    "err": 5.22
+   },
+   "actual_rt": 25.32
+  },
+  "2024": {
+   "control": {
+    "model": 36.6,
+    "err": 3.54
+   },
+   "arm": {
+    "model": 33.95,
+    "err": 0.89
+   },
+   "actual_rt": 33.06
+  },
+  "2025": {
+   "control": {
+    "model": 61.31,
+    "err": 5.79
+   },
+   "arm": {
+    "model": 55.14,
+    "err": -0.38
+   },
+   "actual_rt": 55.52
+  },
+  "passed": false,
+  "fall_2023": 0.316
+ },
+ "A_K4_selkirk": {
+  "2024": {
+   "model_gwh": 730.2,
+   "e923_gwh": 92.4,
+   "ratio": 7.9,
+   "passed": false
+  },
+  "2023_reported_gwh": 315.3,
+  "passed": false
+ },
+ "zone_table": {
+  "2023": {
+   "Upstate_West": {
+    "actual": 25.32,
+    "control": 32.95,
+    "arm": 30.54
+   },
+   "Capital_Hudson": {
+    "actual": 34.58,
+    "control": 33.85,
+    "arm": 31.93
+   },
+   "Lower_Hudson": {
+    "actual": 32.49,
+    "control": 33.85,
+    "arm": 31.94
+   },
+   "NYC": {
+    "actual": 33.47,
+    "control": 34.07,
+    "arm": 32.07
+   },
+   "Long_Island": {
+    "actual": 41.05,
+    "control": 34.72,
+    "arm": 33.21
+   }
+  },
+  "2024": {
+   "Upstate_West": {
+    "actual": 33.06,
+    "control": 36.6,
+    "arm": 33.95
+   },
+   "Capital_Hudson": {
+    "actual": 36.79,
+    "control": 36.89,
+    "arm": 34.27
+   },
+   "Lower_Hudson": {
+    "actual": 37.22,
+    "control": 36.92,
+    "arm": 34.3
+   },
+   "NYC": {
+    "actual": 39.52,
+    "control": 37.56,
+    "arm": 34.81
+   },
+   "Long_Island": {
+    "actual": 42.23,
+    "control": 37.99,
+    "arm": 35.67
+   }
+  },
+  "2025": {
+   "Upstate_West": {
+    "actual": 55.52,
+    "control": 61.31,
+    "arm": 55.14
+   },
+   "Capital_Hudson": {
+    "actual": 63.46,
+    "control": 61.51,
+    "arm": 55.43
+   },
+   "Lower_Hudson": {
+    "actual": 63.17,
+    "control": 61.51,
+    "arm": 55.44
+   },
+   "NYC": {
+    "actual": 67.16,
+    "control": 61.99,
+    "arm": 55.92
+   },
+   "Long_Island": {
+    "actual": 70.35,
+    "control": 62.14,
+    "arm": 56.41
+   }
+  }
+ },
+ "system_lw": {
+  "2023": {
+   "control": 35.06,
+   "arm": 32.73
+  },
+  "2024": {
+   "control": 38.74,
+   "arm": 35.84
+  },
+  "2025": {
+   "control": 64.96,
+   "arm": 58.36
+  }
+ },
+ "A_K5": {
+  "passed": false,
+  "verdict": "NOT-YET (arm) \u2014 C1 FAIL 2023 CC_REGULAR -3.96 TWh / 2023+2024 CC_CHP +5.0 TWh vs the arm's own corrected bench; C3a FAIL 2025 -12.2%; C3b FAIL 2025 NRMSE 0.210; C3c FAIL 2023 1h vs 10h (control: CAVEAT)",
+  "system_lw_err_pct": {
+   "2023": "+8.7 -> +1.5",
+   "2024": "+1.6 -> -6.0",
+   "2025": "-2.2 -> -12.2"
+  }
+ },
+ "verdict": "REJECTED-AS-ARMED (A-K3 2023 leg 31.6% < 40%; A-K4 Selkirk 7.9x; A-K5 C1/C3a-2025/C3b-2025 PASS->FAIL)"
+}
