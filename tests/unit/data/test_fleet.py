@@ -2262,6 +2262,224 @@ class TestStGasP25LevelFloor(unittest.TestCase):
         np.testing.assert_allclose(fa_lsl.min_gen[1, window], 50.0)
 
 
+class TestMustrunOnlineFracPerYear(unittest.TestCase):
+    """Per-YEAR must-run commitment window (``mustrun_online_frac_per_year``).
+
+    miso-172. The committed thermal-tranche artifact publishes ONE pooled
+    ``online_frac`` per plant and the runtime applies it as a SINGLE solve
+    year's commitment window, so a plant whose synchronization share moves
+    across the derive window is over-committed in its light years (MISO 1402:
+    pooled 0.508 vs per-year 0.251/0.615/0.658). These tests pin the four
+    properties that make the correction safe: default-off byte-inertness,
+    the per-year window actually sizing the floor, the backcast-only mode gate
+    (rule 13), and membership staying on the pooled artifact.
+    """
+
+    _HOURS = 48
+    _PLANT = 9902
+
+    def _gens(self):
+        return [
+            Generator(
+                unit_id="stg_0",
+                name="Steamer",
+                zone="North",
+                fuel_type="gas_st",
+                pmax_mw=200.0,
+                heat_rate=7.0,
+                plant_group="ST_GAS",
+                plant_code=self._PLANT,
+            )
+        ]
+
+    def _fa(self, *, per_year=False, mode="backcast", pooled=0.5, by_year=None):
+        cfg = ScenarioConfig(
+            mode=mode,
+            weather_year=2024,
+            st_gas_mustrun_per_plant=True,
+            st_gas_mustrun_p25_level=True,
+            mustrun_online_frac_per_year=per_year,
+        )
+        load = np.arange(self._HOURS, dtype=float) + 1.0  # top-frac == last k h
+        with (
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_p25_level",
+                return_value={(self._PLANT, "ST_GAS"): 100.0},
+            ),
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_online_frac",
+                return_value={(self._PLANT, "ST_GAS"): pooled},
+            ),
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_online_frac_by_year",
+                return_value=(
+                    by_year
+                    if by_year is not None
+                    else {(self._PLANT, "ST_GAS", 2024): 0.25}
+                ),
+            ),
+        ):
+            return generators_to_fleet_arrays(
+                self._gens(),
+                ["North"],
+                hours=self._HOURS,
+                iso="MISO",
+                config=cfg,
+                load_shape=load,
+            )
+
+    def test_default_off_is_byte_inert(self):
+        """Flag off: the pooled window is used, unchanged."""
+        fa = self._fa(per_year=False)
+        floored = int((fa.min_gen[0] > 0).sum())
+        self.assertEqual(floored, 24)  # pooled 0.5 x 48 h
+
+    def test_per_year_window_sizes_the_floor(self):
+        """Armed: the SOLVE YEAR's own fraction sizes the window, not the pool."""
+        fa = self._fa(per_year=True)
+        floored = int((fa.min_gen[0] > 0).sum())
+        self.assertEqual(floored, 12)  # per-year 0.25 x 48 h
+        # And it is the TOP-load hours that carry it.
+        np.testing.assert_allclose(fa.min_gen[0, :36], 0.0)
+
+    def test_backcast_only_mode_gate(self):
+        """Forecast mode keeps the pooled window (rule 13 — no same-year meter).
+
+        The ScenarioConfig guard refuses the flag outright in forecast mode, so
+        the engine gate is only reachable when a caller bypasses construction;
+        assert both halves.
+        """
+        with self.assertRaises(ValueError):
+            ScenarioConfig(
+                mode="forecast", iso="MISO", mustrun_online_frac_per_year=True
+            )
+        cfg = ScenarioConfig(
+            mode="backcast",
+            weather_year=2024,
+            st_gas_mustrun_per_plant=True,
+            st_gas_mustrun_p25_level=True,
+            mustrun_online_frac_per_year=True,
+        )
+        cfg.mode = "forecast"  # post-construction: bypasses the config guard
+        load = np.arange(self._HOURS, dtype=float) + 1.0
+        with (
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_p25_level",
+                return_value={(self._PLANT, "ST_GAS"): 100.0},
+            ),
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_online_frac",
+                return_value={(self._PLANT, "ST_GAS"): 0.5},
+            ),
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_online_frac_by_year",
+                return_value={(self._PLANT, "ST_GAS", 2024): 0.25},
+            ),
+        ):
+            fa = generators_to_fleet_arrays(
+                self._gens(),
+                ["North"],
+                hours=self._HOURS,
+                iso="MISO",
+                config=cfg,
+                load_shape=load,
+            )
+        self.assertEqual(int((fa.min_gen[0] > 0).sum()), 24)  # pooled, not 12
+
+    def test_membership_stays_on_the_pooled_artifact(self):
+        """A plant absent from the pooled artifact acquires no floor.
+
+        The per-year file must never ADD members — only re-size the window of
+        plants the pooled artifact already qualifies (rule 19).
+        """
+        fa = self._fa(per_year=True, pooled=0.0)
+        self.assertTrue(fa.min_gen is None or float(fa.min_gen.sum()) == 0.0)
+
+    def test_zero_per_year_fraction_drops_the_floor_that_year(self):
+        """A year the plant's own meter says it never synchronized carries none."""
+        fa = self._fa(per_year=True, by_year={(self._PLANT, "ST_GAS", 2024): 0.0})
+        self.assertTrue(fa.min_gen is None or float(fa.min_gen.sum()) == 0.0)
+
+
+class TestStGasP25MeasuredLevelBasis(unittest.TestCase):
+    """Measured-MW p25 level basis (``st_gas_mustrun_p25_measured_level``).
+
+    miso-172. ``p25_cf`` is a percentile of ``net / (nameplate x avail_mult)``,
+    so the incumbent ``p25_cf x nameplate`` reconstruction drops the derate the
+    statistic was divided by and over-floors deep-derate plants by
+    ``1 / avail_mult`` (MISO 1122 Ames: 73.3 MW reconstructed vs 33 MW
+    measured). These tests pin default-off inertness and the level REPLACE.
+    """
+
+    _HOURS = 48
+    _PLANT = 9903
+
+    def _fa(self, *, measured=False):
+        cfg = ScenarioConfig(
+            mode="backcast",
+            weather_year=2024,
+            st_gas_mustrun_per_plant=True,
+            st_gas_mustrun_p25_level=True,
+            st_gas_mustrun_p25_measured_level=measured,
+        )
+        gens = [
+            Generator(
+                unit_id="stg_0",
+                name="Steamer",
+                zone="North",
+                fuel_type="gas_st",
+                pmax_mw=200.0,
+                heat_rate=7.0,
+                plant_group="ST_GAS",
+                plant_code=self._PLANT,
+            )
+        ]
+        load = np.arange(self._HOURS, dtype=float) + 1.0
+        with (
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_p25_level",
+                return_value={(self._PLANT, "ST_GAS"): 120.0},
+            ),
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_online_frac",
+                return_value={(self._PLANT, "ST_GAS"): 0.5},
+            ),
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_p25_measured_level",
+                return_value={(self._PLANT, "ST_GAS"): 50.0},
+            ),
+        ):
+            return generators_to_fleet_arrays(
+                gens,
+                ["North"],
+                hours=self._HOURS,
+                iso="MISO",
+                config=cfg,
+                load_shape=load,
+            )
+
+    def test_default_off_keeps_the_reconstructed_level(self):
+        fa = self._fa(measured=False)
+        window = np.arange(self._HOURS - 24, self._HOURS)
+        np.testing.assert_allclose(fa.min_gen[0, window], 120.0)
+
+    def test_armed_replaces_the_level_only(self):
+        """The measured MW level replaces the CF reconstruction; window intact."""
+        fa = self._fa(measured=True)
+        window = np.arange(self._HOURS - 24, self._HOURS)
+        np.testing.assert_allclose(fa.min_gen[0, window], 50.0)
+        np.testing.assert_allclose(fa.min_gen[0, : self._HOURS - 24], 0.0)
+        self.assertTrue(
+            (fa.min_gen_mechanism[0, window] == MECH_ST_GAS_MUSTRUN_PER_PLANT).all()
+        )
+
+    def test_forecast_mode_refused(self):
+        with self.assertRaises(ValueError):
+            ScenarioConfig(
+                mode="forecast", iso="MISO", st_gas_mustrun_p25_measured_level=True
+            )
+
+
 class TestCcWinterCapabilityBasis(unittest.TestCase):
     """``cc_winter_capability_basis`` — the published seasonal capability basis.
 

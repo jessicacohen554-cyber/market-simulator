@@ -1349,6 +1349,99 @@ def thermal_tranche_p25_level(iso: str) -> dict[tuple[int, str], float]:
 
 
 @lru_cache(maxsize=8)
+def thermal_tranche_online_frac_by_year(
+    iso: str,
+) -> dict[tuple[int, str, int], float]:
+    """Return ``{(plant_code, group, year): online_frac}`` — the PER-YEAR window.
+
+    The same CEMS synchronization fraction :func:`thermal_tranche_online_frac`
+    returns, at the grain the runtime actually applies it: one value per SOLVE
+    YEAR instead of one value per plant pooled over the whole derive window.
+    Read from ``data/raw/_processed-legacy/thermal_tranches_online_frac_by_year_<ISO>.csv``
+    (``scripts/data/derive_thermal_tranche_online_frac_by_year.py``, which
+    IMPORTS the frozen estimator rather than restating it — summing that file's
+    ``sync_hours`` / ``total_hours`` over the pooled years reproduces the pooled
+    column exactly).
+
+    The pooled column is a multi-year average applied as a SINGLE year's
+    commitment window, so a plant whose synchronization share moves across the
+    window is over-committed in its light years and under-committed in its heavy
+    ones. MISO plant 1402 (Little Gypsy) is the measured case: pooled 0.508
+    against 0.251 / 0.615 / 0.658 — a ~2.3x 2023 over-commitment that the C8 D-4
+    per-unit conduct rider convicts (rule 17 ``[R-FLOOR-WINDOW]``: a floor
+    binding in hours its own driver evidence says the unit is offline).
+
+    Consumed under ``config.mustrun_online_frac_per_year`` (BACKCAST only — the
+    same-year meter has no forward analogue; a forecast year keeps the pooled
+    multi-year fraction, which is the estimator's own forward form). Empty when
+    the ISO has no per-year artifact, which leaves the pooled behaviour
+    byte-identical. Rows with a blank/NaN fraction are absent.
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_online_frac_by_year_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "online_frac" not in df.columns or "year" not in df.columns:
+        return {}
+    out: dict[tuple[int, str, int], float] = {}
+    for r in df.itertuples(index=False):
+        try:
+            frac = float(getattr(r, "online_frac", float("nan")))
+            year = int(getattr(r, "year"))
+        except (TypeError, ValueError):
+            continue
+        if not frac == frac:  # NaN guard (blank cell)
+            continue
+        out[(int(r.plant_code), str(r.plant_group), year)] = min(1.0, max(0.0, frac))
+    return out
+
+
+@lru_cache(maxsize=8)
+def thermal_tranche_p25_measured_level(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, group): p25_level_mw}`` measured DIRECTLY in MW.
+
+    The same 25th-percentile-of-online statistic :func:`thermal_tranche_p25_level`
+    reconstructs from ``p25_cf``, taken over the plant's online net-MW sample
+    instead — read from
+    ``data/raw/_processed-legacy/thermal_tranches_p25_level_mw_<ISO>.csv``
+    (``scripts/data/derive_thermal_tranche_p25_level_mw.py``, which imports the
+    frozen deriver's online mask, net construction, derate source and pooled
+    window).
+
+    Why the MW basis exists: ``p25_cf`` is a percentile of ``net_MW /
+    (nameplate x avail_mult)`` — a fraction of AVAILABLE capacity — and the
+    reconstruction ``p25_cf x nameplate`` drops the ``avail_mult`` it was divided
+    by, so a plant carrying a deep availability derate gets a floor ``1 /
+    avail_mult`` too high. MISO plant 1122 (Ames) is the measured case: ``p25_cf``
+    0.674 x 108.7 MW nameplate = 73.3 MW against a measured p25-of-online of
+    33 MW, and 0.674 x its ~49 MW available base = 33.0 MW exactly. The runtime
+    then held the plant ~90 % floor-forced at +65-93 % of its own metered energy.
+    Measuring the level in MW removes the reconstruction, so no basis can be
+    dropped (rule 14 ``[R-ACCURATE]``).
+
+    Consumed under ``config.st_gas_mustrun_p25_measured_level``, which REPLACES
+    the level source — it never stacks a second floor (rule 19 ``[R-ONE-MECH]``).
+    Empty when the ISO has no artifact, leaving today's behaviour byte-identical.
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_p25_level_mw_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "p25_level_mw" not in df.columns:
+        return {}
+    out: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        try:
+            level = float(getattr(r, "p25_level_mw", float("nan")))
+        except (TypeError, ValueError):
+            continue
+        if not level == level or level <= 0.0:  # NaN / no floor
+            continue
+        out[(int(r.plant_code), str(r.plant_group))] = level
+    return out
+
+
+@lru_cache(maxsize=8)
 def coal_prb_committed_split_night(iso: str) -> dict[int, float]:
     """Return ``{plant_code: night_p50}`` from the PRB committed-split artifact.
 

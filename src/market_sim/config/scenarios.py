@@ -1392,6 +1392,8 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "cc_mustrun_per_plant": "measured per-plant CC operating floors",
     "st_gas_mustrun_per_plant": "measured per-plant ST-gas operating floors",
     "st_gas_mustrun_p25_level": "measured per-plant ST-gas p25 operating level",
+    "mustrun_online_frac_per_year": "measured per-YEAR must-run commitment window",
+    "st_gas_mustrun_p25_measured_level": "measured p25 level in MW (no CF basis)",
     "coal_lignite_mustrun_override": "measured lignite must-run level",
     "coal_prb_mustrun_override": "measured PRB must-run level",
     "chp_export_floor_measured": "measured steam-host export floor",
@@ -9873,6 +9875,84 @@ class ScenarioConfig:
     # (rule 20 as amended 2026-07-14 — legitimacy rests on the DOF ledger +
     # legitimacy_diagnostics.json D-1/D-2/D-4).
     st_gas_mustrun_p25_level: bool = False
+
+    # WINDOW-VINTAGE correction for BOTH per-plant must-run floors
+    # (cc_mustrun_per_plant / st_gas_mustrun_per_plant, the p25 level swap
+    # included) — miso-172. The committed thermal-tranche artifact publishes ONE
+    # ``online_frac`` per plant, measured over the POOLED derive window
+    # (2023-2025 for MISO), and the runtime applies it as a SINGLE SOLVE YEAR's
+    # commitment window. The two grains do not match: a plant whose
+    # synchronization share MOVES across the window is committed at its
+    # multi-year average in every year — over-committed in its light years,
+    # under-committed in its heavy ones. Measured case: MISO 1402 (Little
+    # Gypsy), pooled 0.508 against per-year 0.251 / 0.615 / 0.658, a ~2.3x 2023
+    # over-commitment that the C8 D-4 per-unit conduct rider convicts (the meter
+    # is dark in 71 % of the hours the floor asserts the plant must be online) —
+    # rule 17 [R-FLOOR-WINDOW] verbatim: a floor binding in hours its own driver
+    # evidence says the unit is offline is a bug by definition. 68 of MISO's 184
+    # covered plants move >= 0.10 across the window.
+    #
+    # When True the window is sized by the SOLVE YEAR's own measured
+    # synchronization fraction, read from
+    # ``thermal_tranches_online_frac_by_year_<ISO>.csv``
+    # (scripts/data/derive_thermal_tranche_online_frac_by_year.py, which IMPORTS
+    # the frozen estimator rather than restating it; summing its counts over the
+    # pooled years reproduces the committed column exactly — 178/178 rows for
+    # MISO, verified in the build). Rule 23 [R-FROZEN-DERIVE]: the pooled deriver
+    # is untouched and its artifact is not regenerated — this is a reporting
+    # GRAIN refinement of the same statistic, not a re-derivation of any value,
+    # and the trigger is a measured window/driver mismatch, never a residual.
+    #
+    # Rule 21 [R-DOF]: ZERO free parameters — the values are the plant's own
+    # CEMS record at the grain the floor is applied at.
+    # Rule 13 [R-MEASURED]: BACKCAST ONLY (mode-gated in the engine). The solve
+    # year's own meter has no forward analogue, exactly like the CAMPD outage
+    # windows this input sits beside; a FORECAST year keeps the POOLED
+    # multi-year fraction, which is the same estimator's own forward form
+    # (re-derived from the most recent CEMS history as each year lands, and
+    # responsive to changed conditions through it). No outcome pinning: the
+    # window is a commitment-hours count, not a price or volume target, and
+    # dispatch above the floor stays free.
+    # Rule 19 [R-ONE-MECH]: the window VINTAGE is replaced, never stacked, and
+    # MEMBERSHIP is unchanged — a plant qualifies on the pooled artifact exactly
+    # as today. The single membership consequence is deliberate: a per-year
+    # fraction of zero means the plant's own meter says it never synchronized
+    # that year, so it carries no floor that year.
+    # Off by default (every existing keeper byte-identical); the artifact is
+    # per-ISO by construction, so the mechanism self-scopes (rule 25).
+    mustrun_online_frac_per_year: bool = False
+
+    # LEVEL-BASIS correction for the st_gas_mustrun_p25_level floor — miso-172.
+    # ``p25_cf`` is a percentile of ``net_MW / (nameplate x avail_mult)``, i.e. a
+    # fraction of AVAILABLE capacity, and ``thermal_tranche_p25_level``
+    # reconstructs a floor level from it as ``p25_cf x nameplate`` — dropping the
+    # very ``avail_mult`` the statistic was divided by. On a plant carrying a
+    # deep availability derate the reconstructed floor lands 1/avail_mult too
+    # high. Measured case: MISO 1122 (Ames), p25_cf 0.674 x 108.7 MW nameplate =
+    # 73.3 MW against a measured p25-of-online of 33 MW — and 0.674 x its ~49 MW
+    # available base = 33.0 MW exactly, the basis-mismatch signature. The runtime
+    # consequently ran the plant at +65/+77/+93 % of its own metered energy,
+    # ~90 % floor-forced, in 2023/2024/2025.
+    #
+    # When True the level is the SAME percentile of the SAME online sample taken
+    # DIRECTLY IN MW (``thermal_tranches_p25_level_mw_<ISO>.csv``,
+    # scripts/data/derive_thermal_tranche_p25_level_mw.py, which imports the
+    # frozen deriver's online mask, net construction, derate source and pooled
+    # window), so there is no reconstruction and no basis to drop — rule 14
+    # [R-ACCURATE]: prefer the measured quantity over an estimate of it, and fix
+    # the measurement rather than deleting the plant (the floor is right in kind,
+    # wrong in LEVEL, so an exclusion would be the wrong instrument).
+    #
+    # Rule 21 [R-DOF]: ZERO free parameters. Rule 19 [R-ONE-MECH]: the level
+    # SOURCE is replaced — membership, window, mechanism id and the
+    # cheapest-first pmax*availability clip are untouched, and no second floor is
+    # stacked. Rule 23: additive side artifact on the same pooled window; the
+    # frozen deriver is not touched and its file is not regenerated. Rule 13:
+    # a pooled multi-year percentile of measured operation, the same admissible
+    # family as p25_cf itself, with the identical forward story (it re-derives
+    # from each new CAMPD vintage). Off by default; independent of
+    # mustrun_online_frac_per_year (separate phenomena, separate gates).
+    st_gas_mustrun_p25_measured_level: bool = False
 
     # MEMBERSHIP correction for the per-plant must-run floors
     # (cc_mustrun_per_plant / st_gas_mustrun_per_plant, the p25 level swap
