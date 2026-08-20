@@ -111,7 +111,7 @@ def census_year(bundle: Path, iso: str, year: int, sidecar: dict | None) -> dict
     # of P1's; POST-FIX (the "u:" pseudo keys exist) it must carry the P1
     # energy too — so re-running this probe after the caiso-155 fix verifies
     # the drop is GONE rather than re-measuring it.
-    head_keys, floor_sum, _, _ = aggregate_floors_by_plant(arrays)
+    head_keys, floor_sum, _, _, _ = aggregate_floors_by_plant(arrays)
     head_twh = float(np.clip(floor_sum, 0.0, None).sum()) / 1e6
     kept_twh = float(mg[pc > 0].sum()) / 1e6
     dropped_twh = dropped_twh_exact
