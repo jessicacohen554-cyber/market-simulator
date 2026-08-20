@@ -4252,7 +4252,7 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-19-miso-170-sitegrain` (promoted miso-170b, 2026-08-19, superseding same-day `2026-08-19-miso-170-membership`), **NOT-YET on C3a-2025 (−12.1 %) + C8-2023 alone**
+### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-20-miso-172-p25mw` (**PROMOTED miso-172, 2026-08-20**, superseding `2026-08-19-miso-170-sitegrain`), **NOT-YET on C3a-2025 (−12.1 %) ALONE — C8-2023 CLEARED**
 
 > **QUEUE STAMP miso-171 (2026-08-20) — THE CHARTER PREREQUISITE EXECUTED: THE RESERVE
 > REQUIREMENT IS DECOMPOSED INTO SYNCHRONISED vs SUPPLEMENTAL, AND THE SUB-REGIONAL GATING
