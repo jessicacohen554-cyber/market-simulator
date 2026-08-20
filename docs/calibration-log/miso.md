@@ -7797,3 +7797,63 @@ basis-mismatch signature). NAMED SUCCESSOR in the 1402/mustrun-parameter family;
 
 Rule 22: 2023–2025 only; freeze untouched; no marker touched. Next number: **miso-171**
 (the reserve-requirement decomposition charter, already drafted).
+
+## miso-171 (2026-08-20) — the reserve-requirement decomposition: synchronised vs supplemental, the sub-regional extension adjudicated INERT without a solve, and C3a-2025 documented as a model-class limit END TO END
+
+**NO LP. Keeper UNCHANGED at `2026-08-19-miso-170-sitegrain`; nothing armed, no
+`ScenarioConfig` field, no registration** (rule 15 not engaged). Records:
+`results/calibration/FINDING-miso171-reserve-requirement-decomposition-2026-08-20.md`,
+instrument `scripts/probes/_miso171_reserve_product_decomposition.py` +
+`_miso171_reserve_product_decomposition.json`. Executes the miso-171 charter's
+PREREQUISITE (FINDING-miso170 §5) — decompose before deciding whether the
+sub-regional gating lever exists.
+
+**1. The decomposition (measured, loader-identical).** From MISO's own RT ASM
+cleared-offers record on the solve-path loader's hour key and product sets
+(identities vs the keeper families exact to 0.0 MW): 2025 scarce-47 means —
+market OR 2,488.1 MW = 65.0 % reg+spin / 35.0 % supp; **Midwest sub-regional
+2,073.3 MW = 58.2 % reg+spin (1,207.6) / 41.8 % supp (865.8)**; South 414.7 MW
+= 98.7 % reg+spin. Essentially ALL of MISO's cleared supplemental sits in the
+Midwest. Charter outcome: **MIXED**. Citations per split (BPM-002-r23, KY PSC
+docket copy, printed pages): reg §4.2.1.1.2 p.73 and spin §4.2.1.2.2 p.75 are
+synchronised products; supplemental §4.2.1.3 p.75 ("Only Resources registered
+as Quick Start will be eligible to clear as off-line Supplemental") /
+§4.2.1.3.2 p.77 is providable online OR offline-quick-start, so gating it is a
+rule-1 breach; §3.6.2.2 Exhibit 3-2 p.57 shows MISO's own zonal construct
+splits min-spin vs min-supp (Reserve Zone Requirements Study).
+
+**2. Three adjudications.** (a) `miso_rbdc`'s synchronised component is
+ALREADY the armed nested `miso_rbdc_regspin` family (requirement identity
+0.0 MW); its ungated margin is exactly its supplemental share (871 MW vs
+8.0 GW of idle quick-start capability) — zero dual correct in kind; no further
+gate admissible. (b) The locational Midwest/South regspin legs add **ZERO new
+gated volume** (their sum IS the armed 1,617 MW — the charter's "up to ~2 GW
+additional gated requirement" premise is false as measured) and their
+incremental binding surface beyond the armed market gate is **3 scarce hours
+in 2025, 0 hours in all of 2023/2024** (regional replication of the miso-169
+K-PRE H_on instrument on committed `miso169_gated_A` unit_hourly; lay-up
+census delta disclosed). K-PRE-A's own ≥80 % inertness kill fires (Midwest leg
+80.9 %, incremental 93.6 %) → **NOT SOLVED, measured INERT**; extrapolated
+prize ~+0.03 pp vs the 2.5 pp C3a-2025 needs. (c) ~29 % of MISO's published
+scarce-hour ASM price is on the supplemental product (share robust 27–29 %
+across hour-key alignments; the miso-167 $484.87 reproduces exactly at that
+instrument's −1 h alignment); even in DA-foreseen hours DA supp cleared $20.50
+vs RT supp $97.94 — 79 % RT-only.
+
+**3. The closure.** C3a-2025 is a documented model-class limit END TO END: the
+RT-only half (miso-163 owner ruling) + a DA-foreseen half that decomposes into
+armed-and-captured (+0.10 pp, K-5 textbook), forbidden structure (a supp
+gate), inert structure (the locational split), and the DA→RT gap MISO's own
+two clearings measure at 4× ($81 → $327 over the 20 foreseen hours). The
+miso-167 §5 ~+3.3 pp ceiling is REVISED DOWN for supply-side reserve levers:
+measured capture +0.10 pp, measured residual increment ~+0.03 pp. Cell
+`reserve_deliverability_scoping` stays `K` with the extension's DO-NOT-REDO
+grounds appended (new evidence must defeat the regional H_on measurement).
+Matrix housekeeping: the missing miso-170b promotion stamp added to §5.4
+retroactively (the shard was already re-keyed to sitegrain).
+
+Rule 22: 2023–2025 only; freeze untouched; no marker touched. Carry-forward
+(charter §4): the cross-ISO D-4 plant-grain attribution defect (taken up next
+in this session), the 1402 per-year `online_frac` successor (MISO's sole C8
+blocker — own prereg, own A/B), the Ames (1122) p25-level basis, and the two
+C8 rubric design questions (owner). Next number: **miso-172**.
