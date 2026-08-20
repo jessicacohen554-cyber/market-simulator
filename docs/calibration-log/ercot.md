@@ -10858,3 +10858,65 @@ returns to the Door-D hold and the R-A re-pointed queue. Full record:
 
 **Session consumed the ercot-223 shorthand. Next shorthand: ercot-224**
 (ercot-199 remains unclaimed).
+
+---
+
+## ercot-224 — 2026-08-20 — THE ITEM-8 CME/NYMEX REOPEN SCREEN, Phase-0 (read-only, precommitted, NO LP): **NEGATIVE AT THE EXISTENCE LEG — the sole reopen condition is FACTUALLY FALSE.** CME/NYMEX delisted every Waha and HSC gas contract before the training span (Waha basis NW entirely 2020-12-07, SER-8689; HSC basis NH/NHN 2022-01-10, Chadv 22-008 — both on ZERO open interest; the swing/index families removed from Globex Oct-2017 in the SER-8000 Platts-complex cull). Item 8 STAYS CLOSED, now effectively unconditionally
+
+**Branch `claude/ercot-224-calibration-ye2ivp`. Precommit
+`docs/PRECOMMIT-ercot224-item8-cme-screen-2026-08-20.md` pushed +
+blob-verified (blob `df65c0eb`, 151 lines) BEFORE any CME/NYMEX content was
+read; executed as written. NO LP, no solve, no intake, no arming, no
+registration; keeper untouched at `2026-08-20-ercot223-arm-eventrelease`.**
+Queue choice stated per dispatch: item (a) taken as the first-listed
+standing queue item — Phase-0 shaped, and it adjudicates a closed lever's
+sole reopen condition; item (b), the G-SPUR band-top owner gate revision,
+remains the next queue item.
+
+**The screen (precommit legs A1–A4 access / B1–B3 admissibility, verdict
+rule fail-closed):** the reopen condition — "CME/NYMEX publishes Waha and
+Houston-Ship-Channel basis-swap daily settlements publicly at no cost" —
+**fails at A1 (existence), both hubs, BOTH in-scope families** (F1 monthly
+Inside-FERC basis futures; F2 Gas-Daily-settled swing/index, screened per
+precommit §1 as the same free-CME channel). Primary CME documents, quoted
+in the probe record: the Oct-2017 "Delisting and Removal of Platts Natural
+Gas Products" (SER-8000 track) removed the ENTIRE Platts regional complex
+from Globex incl. Waha IY/SY/WFS/A5O and HSC HIP/SMN/XJT/5F; SER-8689
+(2020-12-07) delisted "Waha Natural Gas (Platts IFERC) Basis Futures" (NW)
+entirely — "There is no open interest in the Contracts"; Chadv 22-008
+(effective 2022-01-10) delisted the HSC basis (NH/NHN) from Globex AND
+ClearPort — "There is currently no open interest in this product"; and no
+live Waha/HSC product exists on cmegroup.com as of 2026-08-20 (the one
+"Waha basis options" launch release found is the pre-2016 5O/A5O product
+the 2017 notice removed — not a relaunch). A2–A4 moot, with the
+aggravating fact recorded: the final listed years carried ZERO open
+interest, so archived "daily settlements" would be no-trade marks.
+**B-legs for the record (unreached):** B1 confirmed — a NYMEX basis future
+is "monthly cash settled … subtracting [NYMEX HH] from the monthly price
+published by Inside FERC" — so the precommit's B3 default presumption
+stands as the bar any FUTURE forward-market proposal must clear in
+addition to existence: a daily mark of a monthly-average forward cannot
+resolve the ERCOT-147 §3 daily cash-basis confound. F2, which WOULD pass
+B3 by construction (Gas Daily settlement), is exactly the family CME
+removed in 2017.
+
+**Disposition:** item 8 stays CLOSED and its closure is now **effectively
+unconditional pending owner action** — reopening requires a new free daily
+Waha/HSC source (none known; free paths exhausted by ERCOT-160 + this
+screen) or the owner reversing the 2026-08-04 no-paid-daily-gas decision
+(the instrument lives only on ICE, e.g. product 6590171). Matrix §5.1
+item-8 block re-stamped with the screen result so the condition is never
+re-litigated from memory (28a); no mechanism was tested, so no cell
+verdict is minted (28b evidence duty discharged via the item-8 block).
+ERCOT-160/163 fences honoured: no free EIA/ERCOT path re-screened, no
+licence re-asked, no Henry Hub substitution, no price series read (rule 22
+untouched — contract specs and access facts only). Transport note: direct
+curl to www.cmegroup.com is bot-walled from this environment; the primary
+documents came via the session fetch route and the probe records the
+transport state reproducibly (never load-bearing). Probe:
+`scripts/probes/ercot224_cme_basis_screen.py` →
+`results/calibration/ercot224_cme_basis_screen.json`. Full record:
+`docs/FINDING-ercot224-item8-cme-screen-2026-08-20.md`.
+
+**Session consumed the ercot-224 shorthand. Next shorthand: ercot-225**
+(ercot-199 remains unclaimed).
