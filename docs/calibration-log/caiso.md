@@ -8655,3 +8655,58 @@ matrix CAISO shard cell + caiso-205 block, this entry. Lane RETURNS TO REST
 (caiso-201 Q1); markers, holdout freeze untouched.
 
 **Session consumed the caiso-205 shorthand. Next shorthand: caiso-206.**
+
+## 2026-08-20 — CAISO-206 (POST-caiso-205 REST CONFIRMATION — no solve, no probe, no LP; the record re-verified clean on committed bytes and the ONE live owner decision restated as a packet): **REST CONTINUES; keeper UNCHANGED at `2026-08-17-caiso-200-h1-memberpanel` (NOT-YET); nothing tested, so no matrix cell moves**
+
+**What ran.** Read-only re-verification only. The lane is rested (caiso-201
+Q1) and no owner funding order arrived, so the charter's default branch
+executed. No bundle, no dashboard registration due (rule 15 applies to
+completed runs — the caiso-134/140/150/202 disposition).
+
+**Verified clean, eight checks:** (1) keeper identity unchanged since
+2026-08-17; (2) **determination re-verified from committed artifacts**
+(`calibration_verdict.py --run-id`, never a solve) — **NOT-YET**, C3a the
+SOLE load-bearing FAIL (2023 passes, 2024 **+12.8 %**, 2025 **+15.7 %** vs
+actual RT LMP), C3c the single ledgered caveat (0 h/47, 1 h/35, 2025 PASS),
+C1 12/12 free 8/8, C2/C3b/C4/C6/C8 PASS, basis line *undocumented
+out-of-tolerance (FAIL) criteria: price_mean*; (3) `audit_keepers.py --iso
+CAISO` **PASS 0/0** (keeper, holdout, marker, status); (4) `build_status.py
+--iso CAISO --check` in sync; (5) the caiso-205 pair registered and
+committed, sidecars + payloads, years 2023–2025 each; (6) **DOF ledgers
+keeper 10/7, control 10/7, arm 11/7** — the 11th entry lives only on the
+registered arm, as the guardrail requires; (7) CAISO absent from BOTH
+`complete` and `final`, holdout freeze **ACTIVE**, no out-of-training year
+touched; (8) matrix cell `ercot_storage_adaptive_expectation` **I** with the
+caiso-205 full-magnitude stamp, §5.2 block present.
+
+**The one live decision, restated with its measured bounds** (owner act
+alone; a session cannot execute it): fund a **tail-formation** object —
+**(a)** the PS water-state hourly intake (declined 3×; covers **62.1 % /
+10.4 %** of the required 2024/2025 C3a move at its most favourable bound,
+caiso-186 sitting) or **(b)** the import spot-capacity derivation (declined;
+direct λ share **< 5 %** of the positive gap, caiso-202 §C). **Neither closes
+C3a on its own arithmetic** — the required move is a broad ~$2–3/h level-down
+across the sub-$60 buckets (caiso-202 §B) and no admissible in-model
+instrument of that size exists (§F); the mid-band level is already set by
+CAISO's own measured DAM bid stack. Only a funded tail-formation object can
+move the C3a/C3c compression; every in-model lever is exhausted, and
+caiso-205 proved that by measurement rather than argument.
+
+**Filed items carried to the next promotion** (none fixable without one):
+the stale `offer_curve_by_group` "residual" identification text (caiso-202
+§H, verified still stale on the keeper bundle); the keeper-vintage
+`legitimacy_diagnostics.json` chp_steam D-4 vintage drift (caiso-205 §C.3);
+site retention — the caiso-205 pair postdates the keeper and every prior
+sweep ran AT a promotion, so it stays until the next one prunes it as
+prior-to-keeper in the ordinary way.
+
+**DO-NOT-REDO unchanged and consolidated** in the assessment §B: the
+caiso-202/203/204/205 lists all carry forward. New evidence means one thing —
+a keeper whose own scored path spikes.
+
+**Records:**
+`results/calibration/ASSESSMENT-caiso206-rest-confirmation-2026-08-20.md`,
+matrix §5.2 caiso-206 block, this entry. Keeper, markers, holdout freeze,
+every matrix cell verdict: UNCHANGED.
+
+**Session consumed the caiso-206 shorthand. Next shorthand: caiso-207.**
