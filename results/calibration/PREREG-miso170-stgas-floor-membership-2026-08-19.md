@@ -187,3 +187,48 @@ another.
 
 Both runs are registered (rule 15), all three years in one invocation each
 (rule 16), 2023–2025 only (rule 22 — MISO holds neither `complete` nor `final`).
+
+---
+
+## §7 — DATED AMENDMENT (2026-08-19, same session, AFTER the first arm was scored): K-1 fired on the patcher's class scoping, not the mechanism; site-grain re-stamp and arm-2
+
+**What happened, on the record before anything was changed.** The first arm
+(`miso170_layup_B`, run `2026-08-19-miso-170-layup-exclusions`) was solved and
+scored against the K-0-clean control: K-2 liveness PASSED in band all three
+years (0.5295 / 0.8653 / 0.9459 TWh vs predicted 0.5044 / 0.7531 / 0.7853),
+K-3 conduct failures fell 18 → 3 with zero new failures and the 1402 survivor
+exactly as §2a pre-registered, K-5 zero record-grain flips over 67 records,
+K-6 ST_GAS shape clear in every year, C8 2024 FAIL → PASS — and **K-1 FAILED**:
+census plant 1104 still carries `reliability_floor` D-4 rows in 2023 and 2025.
+
+**The diagnosis, from the arm's own solve-written floors** (`floors/*_P1.npz`):
+the ST_GAS exclusion worked COMPLETELY — every ST_GAS floor on every census
+plant, both mechanisms, is gone. The surviving rows are Burlington's
+**CT_PEAKER tranches** floored by the MISO-Plains **CT netload limb**
+(h15–21, 770/749 binding cells at ≤14.3 MW in 2023/2025; the D-4 rows label
+them ST_GAS because the diagnostics attribute the plant's class). The
+`--patch-reliability-coeffs` step stamped each census plant only on the limbs
+of its census-row (majority) class, while §2's own identification is
+SITE-grain — the census verdict is computed on the facility-summed meter,
+every unit included, and this document's §3 states "lay-up is a property of
+the SITE, so one identification serves every mechanism that floors it". The
+patcher under-implemented the prereg; the mechanism is unrefuted. The conduct
+evidence at the missed limb is the same defect class: the site metered dark in
+**98.7 % / 91.8 %** of exactly the hours the CT floor binds (2023/2025).
+
+**The amendment (data + patcher only; no engine or ScenarioConfig change):**
+`patch_reliability_coeffs` now maps each census plant to EVERY
+(zone, plant_class) its site's model tranches occupy, reading the class map
+from the fleet itself. Re-running `--patch-reliability-coeffs` changes exactly
+9 cells (the Plains/South/West CT_PEAKER limbs gain 1104;2123 / 1464 / 6358),
+first-17-column identity verified byte-exact, census CSV byte-identical,
+default cache key unmoved at 603c2498bf71d21d. Measured blast radius beyond
+arm-1: ONLY Burlington's CT floor — no other census site's CT tranches are
+floored in either solved arm (2123/1464/6358 stamps are guards, live-inert).
+
+**Arm-2 decision rule: §5–§6 apply UNCHANGED** to the re-solved arm
+(`miso170_layup_B2`), with one addition — **K-1 is scored against the
+site-grain stamp** (no census plant floored by either mechanism in any
+class), and arm-1 remains registered as the K-1-documented first attempt.
+Nothing else in §5–§6 moves; the K-4 2023 branch expectation (1402 survivor,
+C8-2023 EXPECTED FAIL) is unchanged.

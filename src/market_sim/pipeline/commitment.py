@@ -855,8 +855,41 @@ def _nyiso_gas_bridge_floor(
             in_pop,
             sorted(excluded),
         )
+    # STATE-FLOOR DUTY SCOPING (nyiso_gas_bridge_state_floor_min_run, the
+    # nyiso-146b sharpening): the online-hours leg holds only plants whose
+    # OWN measured run-length p25 clears the population gap
+    # (constants.NYISO_STATE_FLOOR_MIN_RUN_HOURS — near-baseload conduct:
+    # Bethlehem/Caithness/Poletti at 130-646 h, against the cyclers at
+    # 7-20 h that the unscoped arm over-glued). Expressed by SPLITTING the
+    # gas_cc detector call into a state cohort (floor_online_hours=True) and
+    # the rest (False), partitioned through the detector's own population
+    # gate (min_load_frac_by_gen zeroing) — the floors compose by maximum
+    # over disjoint rows, so the split is exact and no detector parameter is
+    # added.
+    state_scoped = online_hours and bool(
+        getattr(config, "nyiso_gas_bridge_state_floor_min_run", False)
+    )
+    state_cohort: frozenset[int] = frozenset()
+    if state_scoped:
+        from market_sim.config.constants import NYISO_STATE_FLOOR_MIN_RUN_HOURS
+        from market_sim.data.perplant_min_run import load_perplant_min_run
+
+        state_cohort = frozenset(
+            code
+            for code, hours in load_perplant_min_run(
+                str(getattr(config, "iso", ""))
+            ).items()
+            if hours >= NYISO_STATE_FLOOR_MIN_RUN_HOURS
+        )
+        logger.info(
+            "NYISO state-floor duty scoping: %d plant(s) clear the measured "
+            "run-length gap and carry the online-hours floor — %s",
+            len(state_cohort),
+            sorted(state_cohort),
+        )
     per_class = _nyiso_bridge_min_load_fracs(config)
     total = None
+    legs: list[tuple[str, float, np.ndarray | None, bool]] = []
     for fuel, frac in per_class.items():
         if frac <= 0.0:
             continue
@@ -869,6 +902,23 @@ def _nyiso_gas_bridge_floor(
                 ],
                 dtype=float,
             )
+        if state_scoped and fuel == "gas_cc":
+            base = (
+                frac_by_gen
+                if frac_by_gen is not None
+                else np.full(len(fleet), frac, dtype=float)
+            )
+            in_cohort = np.array(
+                [
+                    int(getattr(gen, "plant_code", 0) or 0) in state_cohort
+                    for gen in fleet
+                ]
+            )
+            legs.append((fuel, frac, np.where(in_cohort, base, 0.0), True))
+            legs.append((fuel, frac, np.where(in_cohort, 0.0, base), False))
+        else:
+            legs.append((fuel, frac, frac_by_gen, online_hours and fuel == "gas_cc"))
+    for fuel, frac, frac_by_gen, leg_online in legs:
         part = caiso_ra_mustoffer_min_gen(
             p0_dispatch,
             fleet_arrays,
@@ -880,7 +930,7 @@ def _nyiso_gas_bridge_floor(
             fuel_types=(fuel,),
             max_econ_gap_hours=max_gap,
             min_run_hours=min_run,
-            floor_online_hours=online_hours and fuel == "gas_cc",
+            floor_online_hours=leg_online,
             min_load_frac_by_gen=frac_by_gen,
         )
         # PER-CLASS trace. The composed total cannot show that one leg

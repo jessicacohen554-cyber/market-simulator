@@ -1078,16 +1078,26 @@ def _capture_on_923(
     return r, nr, _capture(r, nr, dev)
 
 
-def _btm_share(plant_id: int, group: str, iso: str = "ERCOT") -> float:
+def _btm_share(
+    plant_id: int,
+    group: str,
+    iso: str = "ERCOT",
+    measured: dict[int, float] | None = None,
+) -> float:
     """Behind-the-meter host self-supply share of net gen for a CHP plant.
 
     Mirrors :func:`market_sim.data.fleet.chp_btm_pct` — the ISO's derived
     EIA-923 sector (thermal-tranches artifact) first, then the hardcoded
     ERCOT sector map — so the report's add-back uses the same share the LP
-    pull-out used.
+    pull-out used. ``measured`` (a 0-1 fraction map, resolved per run from
+    the bundle's ``nyiso_chp_btm_measured`` flag — nyiso-147) supersedes the
+    sector share for the plants it carries, keeping the bench-side gas-family
+    grid volumes on the same measured share the run's LP carve used.
     """
     if group not in ("CC_CHP", "CT_CHP", "ST_CHP"):
         return 0.0
+    if measured is not None and int(plant_id) in measured:
+        return float(measured[int(plant_id)])
     from market_sim.data.chp import chp_btm_pct
 
     return chp_btm_pct(int(plant_id), group, iso=iso) / 100.0
@@ -1282,6 +1292,16 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
     for label, bdir in runs:
         meta = json.loads((bdir / "meta.json").read_text())
         tr_bands = _tranche_bands_for_bundle(bdir)
+        # nyiso-147: a bundle armed with the measured CHP BTM shares scores
+        # its bench-side gas-family grid volumes on the same per-plant
+        # Gold-Book/EIA-923 shares its LP carve and btm.parquet used.
+        _btm_measured: dict[int, float] | None = None
+        if meta.get("nyiso_chp_btm_measured") and meta.get("iso") == "NYISO":
+            from market_sim.data.chp import measured_chp_btm_pct_nyiso
+
+            _btm_measured = {
+                c: p / 100.0 for c, p in measured_chp_btm_pct_nyiso().items()
+            }
         run_years: dict[int, dict] = {}
         # Non-CEMS gas-class cogen block per rendered year — (grid, full-plant)
         # TWh — for the CEMS-anchor writer (EIA930_NG_CELL_CORRUPT ISOs): a
@@ -1546,7 +1566,14 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     "c_mon": _monthly_gwh(cn),
                     "e_ann": round(e_ann, 4),
                     "btm": round(
-                        e_ann * _btm_share(code, grp, meta.get("iso", "ERCOT")), 4
+                        e_ann
+                        * _btm_share(
+                            code,
+                            grp,
+                            meta.get("iso", "ERCOT"),
+                            measured=_btm_measured,
+                        ),
+                        4,
                     ),
                     "e_mon": [round(x, 2) for x in (_e_mon / 1e3)],
                 }
@@ -1690,7 +1717,12 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     / 1e6
                     * (
                         1.0
-                        - _btm_share(int(r["plant_id"]), str(r["klass"]), _iso_anchor)
+                        - _btm_share(
+                            int(r["plant_id"]),
+                            str(r["klass"]),
+                            _iso_anchor,
+                            measured=_btm_measured,
+                        )
                     )
                     for _, r in _nc.iterrows()
                 )

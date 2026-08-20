@@ -2364,6 +2364,50 @@ def _compose_min_gen_floors(
             _iso or "ERCOT",
             len(mustrun_excluded),
         )
+    # PER-YEAR WINDOW VINTAGE for both per-plant must-run seams
+    # (config.mustrun_online_frac_per_year, miso-172). The committed
+    # thermal-tranche artifact publishes ONE ``online_frac`` per plant, measured
+    # over the POOLED derive window, and the runtime applies it as a SINGLE
+    # SOLVE YEAR's commitment window — so a plant whose synchronization share
+    # moves across the window is committed at its multi-year average in every
+    # year, over-committed in its light years and under-committed in its heavy
+    # ones. MISO 1402 (Little Gypsy): pooled 0.508 vs per-year
+    # 0.251 / 0.615 / 0.658, a ~2.3x 2023 over-commitment the C8 D-4 conduct
+    # rider convicts (rule 17 [R-FLOOR-WINDOW]). The per-year artifact is the
+    # SAME frozen estimator at the grain the floor is applied at (rule 23:
+    # the pooled deriver is untouched and its file is not regenerated).
+    #
+    # BACKCAST ONLY (rule 13 [R-MEASURED]): the solve year's own meter has no
+    # forward analogue, exactly like the CAMPD outage windows this sits beside.
+    # A forecast year keeps the POOLED multi-year fraction — which is the same
+    # estimator's own forward form, re-derived from the most recent history as
+    # each year of CEMS lands — so the mechanism regenerates forward unchanged.
+    #
+    # MEMBERSHIP IS NOT TOUCHED, only the window: a plant qualifies on the
+    # pooled artifact exactly as today, and the per-year value then sizes its
+    # window. The one consequence that IS a membership change is deliberate and
+    # measured: a per-year fraction of zero means the plant's own meter says it
+    # never synchronized that year, so it carries no floor that year.
+    _per_year_frac: dict[tuple[int, str], float] = {}
+    if (
+        config is not None
+        and getattr(config, "mustrun_online_frac_per_year", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        _by_year = _pkg_ns().thermal_tranche_online_frac_by_year(_iso or "ERCOT")
+        _per_year_frac = {
+            (pc, grp): frac
+            for (pc, grp, yr), frac in _by_year.items()
+            if yr == int(_yr)
+        }
+        logger.info(
+            "mustrun_online_frac_per_year ARMED (%s %s): %d per-year "
+            "synchronization fraction(s) replace the pooled window vintage",
+            _iso or "ERCOT",
+            _yr,
+            len(_per_year_frac),
+        )
     st_gas_p25_tranches: dict[int, list[int]] = {}
     st_gas_p25_levels_by_plant: dict[int, float] = {}
     st_gas_p25_frac_by_plant: dict[int, float] = {}
@@ -2375,6 +2419,28 @@ def _compose_min_gen_floors(
     if st_gas_p25_level_on:
         _p25_levels = _pkg_ns().thermal_tranche_p25_level(_iso or "ERCOT")
         _p25_fracs = _pkg_ns().thermal_tranche_online_frac(_iso or "ERCOT")
+        # MEASURED-MW LEVEL BASIS (config.st_gas_mustrun_p25_measured_level,
+        # miso-172). ``p25_cf`` is a percentile of net / (nameplate x
+        # avail_mult), so the incumbent reconstruction ``p25_cf x nameplate``
+        # drops the availability derate the statistic was divided by and
+        # over-floors any plant with a deep one by 1 / avail_mult. MISO 1122
+        # (Ames): 0.674 x 108.7 = 73.3 MW against a measured p25-of-online of
+        # 33 MW (= 0.674 x its ~49 MW available base). The replacement level is
+        # the SAME percentile of the SAME online sample taken directly in MW, so
+        # there is no reconstruction to drop a basis (rule 14 [R-ACCURATE]).
+        # The level source is REPLACED, never stacked (rule 19 [R-ONE-MECH]);
+        # membership, window and mechanism id are untouched.
+        _p25_measured: dict[tuple[int, str], float] = {}
+        if getattr(config, "st_gas_mustrun_p25_measured_level", False):
+            _p25_measured = _pkg_ns().thermal_tranche_p25_measured_level(
+                _iso or "ERCOT"
+            )
+            logger.info(
+                "st_gas_mustrun_p25_measured_level ARMED (%s): %d measured-MW "
+                "level(s) replace the p25_cf x nameplate reconstruction",
+                _iso or "ERCOT",
+                len(_p25_measured),
+            )
         for _g_idx, _gen in enumerate(generators):
             if getattr(_gen, "plant_group", "") != "ST_GAS":
                 continue
@@ -2385,6 +2451,12 @@ def _compose_min_gen_floors(
             _frac = _p25_fracs.get(_key, 0.0)
             if _level <= 0.0 or _frac <= 0.0:
                 continue
+            # Membership decided on the pooled artifact above; only the LEVEL
+            # basis and the WINDOW vintage are swapped below.
+            _level = _p25_measured.get(_key, _level)
+            _frac = _per_year_frac.get(_key, _frac)
+            if _level <= 0.0 or _frac <= 0.0:
+                continue  # measured dark all year / no measured level
             _pc = int(_gen.plant_code)
             st_gas_p25_tranches.setdefault(_pc, []).append(_g_idx)
             st_gas_p25_levels_by_plant[_pc] = _level
@@ -2605,6 +2677,19 @@ def _compose_min_gen_floors(
                 frac = float(getattr(gen, "cc_mustrun_online_frac", 0.0))
                 if frac <= 0.0:
                     continue
+                # Per-year window vintage (config.mustrun_online_frac_per_year):
+                # membership stays on the pooled fraction stamped in assembly;
+                # the window it sizes becomes the SOLVE YEAR's own measured
+                # synchronization share. See the gather block above.
+                frac = _per_year_frac.get(
+                    (
+                        int(getattr(gen, "plant_code", 0) or 0),
+                        str(getattr(gen, "plant_group", "") or ""),
+                    ),
+                    frac,
+                )
+                if frac <= 0.0:
+                    continue  # measured dark all year
                 if int(getattr(gen, "plant_code", 0) or 0) in mustrun_excluded:
                     continue  # economic lay-up (config.mustrun_plant_exclusions)
                 # miso-67 level swap: ST_GAS plants are floored by the dedicated

@@ -8594,3 +8594,201 @@ caiso-204 block, `docs/codebase-site/data/mechanism-matrix/CAISO.js`
 (cell . → I + tail stamp block).
 
 Next number: caiso-205.
+
+## 2026-08-19 — CAISO-205 (ADAPTIVE-EXPECTATION STORAGE OFFER, CAISO LEG — PHASE-1 ENTERED ON OWNER ORDER over the caiso-204 recorded G-BOOT FAIL; built, A/B'd at full magnitude, ALL pre-registered gates PASS; keeper UNCHANGED at caiso-200): **ARMED-AND-INERT CONFIRMED — cell stays I** — arm byte-identical to control in 2023/2025, near-inert in 2024 (floor max $14.5, exactly the caiso-204 prediction); NOT a keeper candidate
+
+**Charter.** The caiso-205 owner-decision charter offered three branches;
+the owner ordered **branch 1** in-session (the ercot-188/213/215/221
+pattern): Phase-1 entry over the caiso-204 recorded Phase-0 FAIL, scope
+fixed by the charter — CAISO-gated default-off field, constants FROZEN at
+the caiso-204 identification, A/B vs zero-delta control, direction-blind
+kill table, both runs registered.
+
+**Built** (`caiso_storage_adaptive_expectation` + frozen
+`caiso_adaptive_half_life_days` 30.0 / `caiso_adaptive_beta` 0.5945; event
+$200 on the model's OWN daily CA demand-weighted P1 lambda — pure energy
+dual, caiso-137b, zero measured content; window h18–21 PT; park cap $1,000;
+battery-only per the caiso-204 S4 classifier; two-pass P1 through the
+`p1_storage_discharge_cost` seam; audit sidecar
+`hourly/adaptive_<year>.parquet`; cache-key/TIER_TAGS/D-5/DOF-ledger
+registration in the same commit, rule 28c checker clean).
+
+**The A/B, at full magnitude** (`caiso205_gates.json`; kill table
+pre-registered in `PRECOMMIT-caiso205-adaptive-ab-2026-08-19.md`, pushed
+before any solve): control = zero-delta keeper replay
+(`2026-08-19-caiso205-ctl-headbase`), arm = single `--set` delta
+(`2026-08-19-caiso205-arm-adaptive`), full span 2023–2025. G-REPRO **PASS
+9/9** committed keeper sidecars sha256-identical in the control. Pass-1
+spike days **0/1/0**, P_hat max 0/0.0145/0, floor max **$14.5** (188
+Sep–Oct window-hours) — the caiso-204 G-BOOT wall measured to the dollar.
+**2023/2025 arm byte-identical to control; 2024 near-inert** (battery
+discharge ratio 0.9921, C3a 12.92 → 12.90 % side-effect line, model tail
+1 → 1). G-CAP 0; G-SHED none; G-BAT in band; G-D2 attribution row present,
+no new D-4 vs control; G-DOF 10 → 11 (delta exactly the two frozen
+constants). Scorecards symmetric control = arm = keeper (C3a sole
+load-bearing FAIL, C3c the ledgered caveat, C3b/C8/C6 PASS — the
+MUST-NOT-REGRESS legs hold trivially).
+
+**Keeper question, answered on the record (owner asked with the
+structure-over-gates standard):** NOT recommended — structural integrity
+did not improve (the arm adds nothing the keeper's path can express; the
+mechanism's trigger never fires on the model's own tail-deficient price
+path), so there is no structure-vs-gates trade to weigh. The honest stamp
+the owner ordered is complete: the caiso-204 screen verdict now carries a
+full-magnitude solve behind it. Keeper stays
+`2026-08-17-caiso-200-h1-memberpanel`; the C3a/C3c compression (caiso-202
+§B, adjudicated model-class) remains the lane's wall.
+
+**Session mechanics recorded** (finding §D): fresh-container `data/clean`
+emptiness tripped the strict input guard (fixed by curation); concurrent
+control+arm+regen breached the session cgroup's ~13.3 GiB cap (control
+OOM-killed once) — on this container class run ONE CAISO 3-year invocation
+at a time.
+
+**DO-NOT-REDO added:** do not re-run this A/B — the registered pair is the
+full-magnitude record; new evidence = a keeper whose own scored path
+spikes. All caiso-202/203/204 lists carry forward.
+
+**Records:** `results/calibration/FINDING-caiso205-adaptive-ab-2026-08-19.md`,
+`PRECOMMIT-caiso205-adaptive-ab-2026-08-19.md`, `caiso205_gates.json`,
+matrix CAISO shard cell + caiso-205 block, this entry. Lane RETURNS TO REST
+(caiso-201 Q1); markers, holdout freeze untouched.
+
+**Session consumed the caiso-205 shorthand. Next shorthand: caiso-206.**
+
+## 2026-08-20 — CAISO-206 (POST-caiso-205 REST CONFIRMATION — no solve, no probe, no LP; the record re-verified clean on committed bytes and the ONE live owner decision restated as a packet): **REST CONTINUES; keeper UNCHANGED at `2026-08-17-caiso-200-h1-memberpanel` (NOT-YET); nothing tested, so no matrix cell moves**
+
+**What ran.** Read-only re-verification only. The lane is rested (caiso-201
+Q1) and no owner funding order arrived, so the charter's default branch
+executed. No bundle, no dashboard registration due (rule 15 applies to
+completed runs — the caiso-134/140/150/202 disposition).
+
+**Verified clean, eight checks:** (1) keeper identity unchanged since
+2026-08-17; (2) **determination re-verified from committed artifacts**
+(`calibration_verdict.py --run-id`, never a solve) — **NOT-YET**, C3a the
+SOLE load-bearing FAIL (2023 passes, 2024 **+12.8 %**, 2025 **+15.7 %** vs
+actual RT LMP), C3c the single ledgered caveat (0 h/47, 1 h/35, 2025 PASS),
+C1 12/12 free 8/8, C2/C3b/C4/C6/C8 PASS, basis line *undocumented
+out-of-tolerance (FAIL) criteria: price_mean*; (3) `audit_keepers.py --iso
+CAISO` **PASS 0/0** (keeper, holdout, marker, status); (4) `build_status.py
+--iso CAISO --check` in sync; (5) the caiso-205 pair registered and
+committed, sidecars + payloads, years 2023–2025 each; (6) **DOF ledgers
+keeper 10/7, control 10/7, arm 11/7** — the 11th entry lives only on the
+registered arm, as the guardrail requires; (7) CAISO absent from BOTH
+`complete` and `final`, holdout freeze **ACTIVE**, no out-of-training year
+touched; (8) matrix cell `ercot_storage_adaptive_expectation` **I** with the
+caiso-205 full-magnitude stamp, §5.2 block present.
+
+**The one live decision, restated with its measured bounds** (owner act
+alone; a session cannot execute it): fund a **tail-formation** object —
+**(a)** the PS water-state hourly intake (declined 3×; covers **62.1 % /
+10.4 %** of the required 2024/2025 C3a move at its most favourable bound,
+caiso-186 sitting) or **(b)** the import spot-capacity derivation (declined;
+direct λ share **< 5 %** of the positive gap, caiso-202 §C). **Neither closes
+C3a on its own arithmetic** — the required move is a broad ~$2–3/h level-down
+across the sub-$60 buckets (caiso-202 §B) and no admissible in-model
+instrument of that size exists (§F); the mid-band level is already set by
+CAISO's own measured DAM bid stack. Only a funded tail-formation object can
+move the C3a/C3c compression; every in-model lever is exhausted, and
+caiso-205 proved that by measurement rather than argument.
+
+**Filed items carried to the next promotion** (none fixable without one):
+the stale `offer_curve_by_group` "residual" identification text (caiso-202
+§H, verified still stale on the keeper bundle); the keeper-vintage
+`legitimacy_diagnostics.json` chp_steam D-4 vintage drift (caiso-205 §C.3);
+site retention — the caiso-205 pair postdates the keeper and every prior
+sweep ran AT a promotion, so it stays until the next one prunes it as
+prior-to-keeper in the ordinary way.
+
+**DO-NOT-REDO unchanged and consolidated** in the assessment §B: the
+caiso-202/203/204/205 lists all carry forward. New evidence means one thing —
+a keeper whose own scored path spikes.
+
+**Records:**
+`results/calibration/ASSESSMENT-caiso206-rest-confirmation-2026-08-20.md`,
+matrix §5.2 caiso-206 block, this entry. Keeper, markers, holdout freeze,
+every matrix cell verdict: UNCHANGED.
+
+**Session consumed the caiso-206 shorthand. Next shorthand: caiso-207.**
+
+## 2026-08-20 — CAISO-207 (BRANCH B FOUND ALREADY COMPLETE — the chartered `caiso_ra_mpb_capacity_anchor` work was executed IN FULL at FFR-4F on 2026-08-09; re-verified at HEAD, mechanism live, seam reproduced to the dollar; its dashboard absence is the deliberate `cccc911` sweep, not a gap): **NO SOLVE, NO PROBE, NO LP; keeper UNCHANGED at `2026-08-17-caiso-200-h1-memberpanel` (NOT-YET); nothing tested, so no matrix cell moves**
+
+**Kill-before-build, on the caiso-203 pattern.** The caiso-207 handoff nominated
+Branch B (the CAISO forecast-lane RA capacity anchor) as "THE EXECUTABLE WORK".
+It is not executable **because it is already done**. Every element of the stated
+deliverable was executed at **FFR-4F (2026-08-09)**: the gate table
+pre-registered before any solve (§4 P-1…P-3, committed ahead of both arms), the
+A/B against a zero-delta control (§5, control key `3d3e836a176ac9cd` verified by
+key identity against FFR-4E's control, treated `da19509d457988e5`), the forecast
+dashboard registration (§5.5), and the rule-28b matrix stamp. **The handoff's
+premise is a misreading of the `O` verdict** — the cell note defines it verbatim
+as *"FORECAST STAYS O — deliberately NOT R … built, published-source-grounded,
+solve-adjudicated, merged, default-OFF, in no keeper, with ARMING AN OWNER
+DECISION"*, i.e. adjudicated-and-merged, **not** untested. Re-running the A/B
+would spend hours of solve to reproduce a committed result — the rule 28(a)
+DO-NOT-REDO case exactly.
+
+**Branch B verified intact at HEAD (no solve):** field
+`caiso_ra_mpb_capacity_anchor` default-OFF (`scenarios.py:3487`), resolver +
+`CAISO_RA_MPB_ANCHOR_PER_KW_YR = 138.36` (`capacity_market.py:1161/1164`), CLI
+flag wired, **11/11 unit pins pass**, and the seam reproduces FFR-4F §3.2 **to
+the dollar** — gate-off **82,795.2** / armed **130,058.4** $/MW-yr — with all
+five other ISOs **byte-identical** under both configs (rule 25 confirmed by
+measurement). `check_cache_key_registration` ok, 189 declared defaults all match
+HEAD, so the pinned default is unmoved.
+
+**THE ONE GENUINELY NEW FACT — the FFR-4F pair is off the forecast dashboard,
+deliberately.** `register_forecast_run.py --reindex` (which IS the Pages-deploy
+assembly step, the single writer of the live dashboard) now writes **2 runs**,
+neither CAISO. Commit **`cccc911` (2026-08-19, "Clear forecast dashboard of all
+pre-keeper-refresh runs")** deleted **all 187** canonical
+`frontend/data/hindcast/*.json` sidecars — including both FFR-4F arms — because
+*"none was built on a current keeper config"*, naming
+`2026-08-17-caiso-200-h1-memberpanel` among the postdating keepers. This is the
+**forecast-side analogue of the standing 2026-08-15 site-retention directive**,
+policy working as designed. **The sidecars are NOT re-committed** — doing so
+would undo an owner-directed sweep executed one day earlier. The anchor's
+evidence now lives only in the committed `results/ffr4f/` slim artifacts, the
+FFR-4F handoff doc and the matrix note; the `.gitignore` provision committing
+those slim artifacts *"so the paired table is auditable without a re-solve"* is
+now load-bearing.
+
+**Branch A untouched and re-verified** (committed bytes only): keeper unchanged;
+determination **NOT-YET** reproduced with C3a the SOLE load-bearing FAIL (2023
+PASS / **+12.8** / **+15.7 %** vs actual RT LMP) and C3c the single ledgered
+caveat (0h/47, 1h/35, 2025 PASS); C1 12/12 free 8/8; C2/C3b/C4/C6/C8 PASS;
+`audit_keepers --iso CAISO` **PASS 0/0**; `build_status --check` in sync;
+caiso-205 pair registered and tracked (2023–2025 each); DOF keeper 10/7, control
+10/7, arm 11/7; CAISO absent from both `complete` and `final`, freeze **ACTIVE**.
+
+**The owner packet is now TWO items.** (1) *Carried unchanged:* fund a
+tail-formation object — PS water-state intake (62.1 %/10.4 % of the required
+2024/2025 C3a move at its most favourable bound) or import spot capacities
+(direct λ share < 5 %) — neither closing C3a on its own arithmetic against the
+broad ~$2–3/h sub-$60 level-down. (2) **NEWLY SURFACED — F-3, the anchor's arming
+posture.** Arming costs 1.9 pp of 2027 reserve margin (7.74 → 5.88 %), deepens
+the I7 shortfall and makes FC-1 + FC-2 row1 **worse**, and buys FC-2 row 4
+52.5 → 46.1 %. But FFR-4F's pre-registered **trap test fired**: total thermal
+built is **identical to the megawatt** (10,186.3 MW both arms), and the only
+change is the **label on 1,000 MW** — so row 4's movement is **channel
+substitution, not a gain**. Routed, not decided; the assessment's convenience
+recommendation is **keep default-OFF** absent a reason unrelated to row 4.
+
+**DO-NOT-REDO extended:** do not re-run the FFR-4F A/B; do not read the anchor's
+`O` cell as untested; do not re-commit the swept sidecars; do not re-derive the
+138.36 anchor value.
+
+**Filed items:** the three caiso-206 items all **re-verified still open** (stale
+`offer_curve_by_group` "residual" text, chp_steam D-4 vintage drift, caiso-205
+site retention), plus a **new cross-lane item routed OFF this lane (rule 25)** —
+`cccc911` swept 187 sidecars across every ISO, so every lane's citations of
+registered forecast-run ids now point at runs no longer on the dashboard,
+including the shared `mechanism-matrix.js` base row for this anchor. Fixing only
+CAISO's would make the shared file inconsistent; fixing all is off-lane.
+
+**Records:**
+`results/calibration/ASSESSMENT-caiso207-anchor-completion-2026-08-20.md`,
+matrix §5.2 caiso-207 block, this entry. Keeper, markers, holdout freeze, every
+matrix cell verdict, and every source file: UNCHANGED.
+
+**Session consumed the caiso-207 shorthand. Next shorthand: caiso-208.**

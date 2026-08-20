@@ -960,6 +960,84 @@ rule-13-admissible mechanism available to carry it.
 ### 5.2 CAISO — **LANE RESTED AT `NOT-YET` BY OWNER RULING (caiso-201, 2026-08-17 — Q1 GRANTED: the lane goes quiet, NO further CAISO calibration session without new funded data; NEITHER standing object funded; a RESTING STATE, not a closure — it re-opens on this identical keeper recipe if the owner funds either object);** **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY (EXHAUSTED BY MEASUREMENT at caiso-200: the last named object returned +0.003 TWh); `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-17-caiso-200-h1-memberpanel`** — caiso-200, THE MERIT-PANEL INSTRUMENT ARC COMPLETED: the caiso-197 composed recipe (G-DELTA EMPTY over 717 keys) solved on the fully-identified outage instrument — the caiso-199 Desert Star landing (extract da33e509, CC_REGULAR population 1.000000) plus the caiso-200 fleet-member panel scope (caiso-199 §3b: extract cf156483/layup 4ccae12e, byte-equal to the caiso-198 run-Y pre-flip measurement; membership DERIVED from the fleet registry, {NV: (55077,)}) — promoted 2026-08-17 ON THE OWNER'S IN-SESSION STRUCTURAL-INTEGRITY INSTRUCTION executing the PRECHECK-caiso200 §6 pre-registered tree; NOT-YET, 8 criteria, TWO load-bearing FAILs — C1-2023 CC_REGULAR -4.243 TWh vs ±4.15 (entered at the caiso-199 landing; the caiso-200 closure returned only +0.003 TWh, proving it a REAL class residual of the standing CC-side under-dispatch lane, not an instrument artifact) and C3a +4.1/+12.8/+15.7 % (2023 passes) — BOTH costs the measured instrument, not any mechanism; C3c the single ledgered caveat re-measured (0h/47, 1h/35, 2025 PASS); C6 attested AT promotion (gen_caiso200_attestation.py); ALL 158 Desert Star windows retained mechanical under the panel that can finally see them — the caiso-199 '9 of the 158' record CORRECTED on measurement (the 9 movers are borderline CA-facility windows). Superseding **`2026-08-16-caiso-197-w2-r5`** — caiso-197, THE CLOSE-OUT CAMPAIGN'S COMPOSED LADDER (control + lane 2 wefor_residual=0.0 {CC_REGULAR} + lane 3 gas_st_wefor_base_override=0.1591 + lane 5 six-plant cited-physical PS), promoted 2026-08-16 C3a-BLIND under the PRE-COMMITTED integration protocol §6 on structural superiority: DOF ledger 11/8 -> 10/7 (the fitted wefor_multiplier RETIRED), the ERCOT-fitted ST_GAS 0.21 replaced by the cited GADS class EFORd, the unrestrained PS aggregate replaced by cited plant physics (zero MW added); NOT-YET, 8 criteria, ONE load-bearing FAIL — C3a +4.0/+12.1/+15.6 % (2023 passes) — the caiso-196 C1-2023 CC_REGULAR flip HEALED (-4.13 TWh in band, C1 12/12); C3b clean (0.097/0.174/0.181); C3c the single ledgered caveat re-measured; C6 attested AT promotion (gen_caiso197_attestation.py); control BIT-ZERO vs the incumbent; no criteria pass->fail flip at any rung; the campaign EXHAUSTED AS CHARTERED with the C3a residual honestly declared. Superseding **`2026-08-15-caiso-196-e1-elsegundo`** — caiso-196, the EL SEGUNDO CEMS-REMAP repair, promoted 2026-08-16 BY OWNER DECISION on structural integrity with ONE DISCLOSED gate regression [C1-2023 CC_REGULAR -4.44 TWh, ACCEPT-WITH-FLIP: the phantom 3.2 TWh/yr this plant contributed is removed and the standing over-import residual becomes visible on the volume side too]; NOT-YET, 8 criteria, 2 load-bearing FAILs — C3a +4.4/+11.7/+14.5 % and C1-2023; C3c the single ledgered caveat; C6 attested AT promotion. Superseding **`2026-08-09-caiso-188-d1-micseam`** — caiso-188, the SEAM-CAP PROVENANCE repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY under rule 14 with **ZERO gate flips either way**: the fitted 7,500 MW `WECC_import_simultaneous` cap the ledger called *superseded* had been binding 764/477/807 h since caiso-175, and the published branch-group MIC (16,055/16,452/16,148 MW) retires it — seam dual now EXACTLY 0.000 in every hour. **NOT-YET**, 8 criteria, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.4 / +12.9 %**. Superseding **`2026-08-09-caiso-184-c1-lpbasis`** — caiso-184, the outage-derate DENOMINATOR repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY with **EVERY pre-registered gate PASSING**; **NOT-YET**, 8 criteria scored, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.5 / +13.1 %** having narrowed in all three years against a **ZERO** same-head noise floor). **QUEUE RE-CONFIRMED EMPTY 2026-08-09 by caiso-185: `cc_capacity_reconcile` — the last named un-adjudicated in-model cell — is **REJECTED EX ANTE, NO LP SPENT**, and the open question is now an OWNER SITTING, not a tenth lever.** **THE SITTING IS NOW PREPARED (owner-sitting session, 2026-08-09, `docs/handoffs/caiso-186-owner-sitting-2026-08-09.md`): both owner questions are DECIDABLE from committed artifacts, and BOTH ANSWER **NO** — the walled PS water-state intake covers only **62.1 % / 10.4 %** of 2024/2025's required C3a move at its most favourable bound, and a C3a ledger amendment would take TWO rubric changes, inherit to ERCOT (−32.4 %) and MISO (−14.1 %), and flip MISO for free. **THE NON-LEVER WORK IS RE-STATED AND IT IS LARGER THAN THE LEDGER SAYS:** CAISO's ISO-specific residual DOF census is **3, not 4** (the TAC-weights row CLOSED at caiso-172) and CAISO is **TIED WITH ERCOT**, not "the most of any ISO" — but the `IMPORT_TRANCHES[CAISO]` row's "superseded on the binding path" text **DOES NOT CHECK OUT**: split into limbs, **the four spot CAPACITIES (8,800 MW, uncited, and the object FINDING-caiso140 §C measures as pinning the belly λ) and the two firm PRICES (re-armed onto the margin by `caiso_firm_import_selfsched_clip`, 0.97/4.63/5.71 TWh/yr) are LIVE AND FITTED** — ~~7~~ **6 live fitted scalars** on the backcast binding path where the ledger implies ~1 *(count CORRECTED 7 → 6, 2026-08-11 by caiso-189, re-stamping this header to the caiso-188 census block below: 4 spot capacities + 2 firm prices is **6**, and the committed DOF ledger on the keeper bundle carries `n_scalars: 6` on the `IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]` row — `results/calibration/caiso188_d1_micseam/calibration_attestation.json`, `FINDING-caiso188` §1–§2)*.**
 
 
+> **caiso-207 (2026-08-20) — BRANCH B FOUND ALREADY COMPLETE: the chartered
+> `caiso_ra_mpb_capacity_anchor` work was executed IN FULL at FFR-4F (2026-08-09).
+> NO SOLVE, NO PROBE, NO LP; NO CELL VERDICT MOVES (nothing was tested — rule 28b
+> does not attach).** The caiso-207 handoff nominated the CAISO forecast-lane RA
+> capacity anchor as "the executable work"; it is not executable because it is done.
+> FFR-4F pre-registered its gate table before any solve (§4), ran the A/B against a
+> zero-delta control (§5 — control key `3d3e836a176ac9cd`, verified by KEY IDENTITY
+> against FFR-4E's control; treated `da19509d457988e5`), registered on the forecast
+> dashboard (§5.5) and stamped this cell. **The handoff misread the `O` verdict:** the
+> cell note defines it verbatim as *"FORECAST STAYS O — deliberately NOT R … built,
+> published-source-grounded, solve-adjudicated, merged, default-OFF, in no keeper, with
+> ARMING AN OWNER DECISION"* — adjudicated-and-merged, NOT untested. Re-running the A/B
+> is the rule 28(a) DO-NOT-REDO case. **Verified intact at HEAD, no solve:** field
+> default-OFF (`scenarios.py:3487`), `CAISO_RA_MPB_ANCHOR_PER_KW_YR = 138.36`, CLI wired,
+> **11/11 pins pass**, and the seam reproduces FFR-4F §3.2 **to the dollar** — gate-off
+> **82,795.2** / armed **130,058.4** $/MW-yr — with ERCOT/PJM/MISO/NYISO/NEISO
+> **byte-identical** under both configs (rule 25 by measurement); cache-key check ok,
+> 189 defaults match HEAD. **NEW FACT — the FFR-4F pair is off the forecast dashboard,
+> DELIBERATELY:** `--reindex` (the Pages-deploy assembly step) now writes **2 runs**,
+> neither CAISO, because commit **`cccc911` (2026-08-19, "Clear forecast dashboard of all
+> pre-keeper-refresh runs")** deleted **all 187** canonical `frontend/data/hindcast/*.json`
+> sidecars including both arms — the forecast-side analogue of the standing 2026-08-15
+> retention directive. **The sidecars are NOT re-committed** (that would undo an
+> owner-directed sweep); the anchor's evidence lives in the committed `results/ffr4f/`
+> slim artifacts + the FFR-4F doc + this note. **NOTE for every ISO's cells, routed
+> off-lane (rule 25):** that sweep makes *every* lane's citations of registered
+> forecast-run ids — including this row's base-row text *"registered
+> caiso-2026-2030-ffr4f-caiso-{control,treated}"* — point at runs no longer on the
+> dashboard. Branch A stays rested and re-verified (keeper unchanged, NOT-YET, C3a sole
+> load-bearing FAIL, `audit_keepers` PASS 0/0, freeze ACTIVE). Owner packet now TWO items:
+> the carried tail-formation funding question, and **F-3 the anchor's arming posture** —
+> arming buys row 4 52.5 → 46.1 % but costs 1.9 pp of 2027 reserve margin and worsens
+> FC-1/row1, and FFR-4F's **trap test fired** (total thermal identical to the megawatt;
+> only the label on 1,000 MW moved), so the row-4 gain is channel substitution.
+> Recommendation routed, not decided: keep default-OFF.
+> ASSESSMENT-caiso207-anchor-completion-2026-08-20.md.
+
+> **caiso-206 (2026-08-20) — POST-caiso-205 REST CONFIRMATION: NO SOLVE, NO PROBE, NO
+> LP; the record re-verified clean on committed bytes and NO CELL VERDICT MOVES (nothing
+> was tested — rule 28b does not attach).** The lane is rested (caiso-201 Q1) and no
+> owner funding order arrived, so the charter's DEFAULT branch executed. Verified:
+> keeper `2026-08-17-caiso-200-h1-memberpanel` unchanged; determination re-verified from
+> committed artifacts (`calibration_verdict.py --run-id`, never a solve) as **NOT-YET**
+> with C3a the SOLE load-bearing FAIL (2023 PASS / +12.8 / +15.7 % vs actual RT LMP) and
+> C3c the single ledgered caveat (0h/47, 1h/35, 2025 PASS); `audit_keepers --iso CAISO`
+> PASS 0/0; `build_status --iso CAISO --check` in sync; the caiso-205 pair registered
+> and committed (2023–2025 each); DOF ledgers keeper 10/7, control 10/7, arm 11/7 (the
+> 11th entry on the ARM ONLY); CAISO absent from both `complete` and `final`, holdout
+> freeze ACTIVE, no out-of-training year touched. **The one live decision stays an owner
+> act:** fund a tail-formation object — PS water-state intake (62.1 %/10.4 % of the
+> required 2024/2025 C3a move at its most favourable bound) or import spot capacities
+> (direct λ share < 5 %) — neither closing C3a on its own arithmetic against the
+> ~$2–3/h broad move caiso-202 §B measures. Filed to the next promotion: the stale
+> `offer_curve_by_group` "residual" text (caiso-202 §H, still stale on the keeper
+> bundle), the chp_steam D-4 diagnostics vintage drift (caiso-205 §C.3), and site
+> retention of the caiso-205 pair (postdates the keeper; prior sweeps ran at
+> promotions). Lane REMAINS at rest.
+> ASSESSMENT-caiso206-rest-confirmation-2026-08-20.md.
+
+> **caiso-205 (2026-08-19) — PHASE-1 ENTERED ON OWNER ORDER (charter branch 1, the
+> ercot-188/213/215/221 pattern) over the caiso-204 recorded G-BOOT FAIL: the CAISO leg
+> BUILT (`caiso_storage_adaptive_expectation`, default-off, constants FROZEN at the
+> caiso-204 identification — half-life 30 d / β 0.5945 / $200 event / h18–21 PT /
+> $1,000 park cap / battery-only) and A/B'd AT FULL MAGNITUDE vs a zero-delta control
+> off the caiso-200 keeper; ALL pre-registered gates PASS
+> (PRECOMMIT-caiso205-adaptive-ab pushed pre-solve; caiso205_gates.json); cell STAYS
+> I — ARMED-AND-INERT CONFIRMED; NOT a keeper candidate; KEEPER UNCHANGED.** Measured
+> exactly the caiso-204 ex-ante: pass-1 spike days 0/1/0, P_hat max 0/0.0145/0, floor
+> max **$14.5** (188 Sep–Oct window-hours), **2023/2025 arm byte-identical to control**
+> (system sidecar sha256-equal), 2024 near-inert (battery discharge ratio 0.9921, C3a
+> 12.92 → 12.90 % side-effect line, tail 1 → 1). G-REPRO 9/9 keeper sidecars
+> sha-identical in the control; G-DOF 10 → 11 (delta exactly the two frozen
+> constants); scorecards symmetric control = arm = keeper (C3a sole FAIL, C3c
+> ledgered, C3b/C8/C6 PASS). Pair registered
+> `2026-08-19-caiso205-{ctl-headbase,arm-adaptive}`. DO-NOT-REDO: never re-run this
+> A/B — new evidence = a keeper whose own scored path spikes. Lane returns to rest
+> (caiso-201 Q1). FINDING-caiso205-adaptive-ab-2026-08-19.md.
+
 > **caiso-204 (2026-08-19) — THE ERCOT-221 ADAPTIVE-EXPECTATION STORAGE OFFER
 > TRANSFER-TESTED (owner dispatch re-opening the rested lane for this one lever;
 > rule 25: fresh CAISO identification, nothing transferred): Phase-0 KILL-BEFORE-SOLVE,
@@ -4174,7 +4252,55 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-19-miso-170-membership` (promoted miso-170, 2026-08-19), **NOT-YET on C3a-2025 (−12.1 %) + C8 (2023/2025)**
+### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-19-miso-170-sitegrain` (promoted miso-170b, 2026-08-19, superseding same-day `2026-08-19-miso-170-membership`), **NOT-YET on C3a-2025 (−12.1 %) + C8-2023 alone**
+
+> **QUEUE STAMP miso-171 (2026-08-20) — THE CHARTER PREREQUISITE EXECUTED: THE RESERVE
+> REQUIREMENT IS DECOMPOSED INTO SYNCHRONISED vs SUPPLEMENTAL, AND THE SUB-REGIONAL GATING
+> EXTENSION IS ADJUDICATED WITHOUT A SOLVE — MEASURED INERT. NO LP, NOTHING ARMED, NO
+> `ScenarioConfig` FIELD, NO REGISTRATION. Keeper UNCHANGED at `2026-08-19-miso-170-sitegrain`.**
+> Records: `results/calibration/FINDING-miso171-reserve-requirement-decomposition-2026-08-20.md`,
+> instrument `scripts/probes/_miso171_reserve_product_decomposition.py` + committed JSON.
+> The decomposition (measured cleared MW by region × product, the loader's own hour key and
+> product sets; identities vs the keeper families exact to 0.0 MW): the Midwest sub-regional OR
+> requirement is **58.2 % reg+spin / 41.8 % supplemental** in the 2025 scarce hours
+> (1,207.6 / 865.8 MW of 2,073.3), South is 98.7 % synchronised, market 65.0 % — the charter's
+> MIXED outcome. Product-definition basis cited per split (BPM-002-r23: reg §4.2.1.1.2 p.73 and
+> spin §4.2.1.2.2 p.75 are synchronised products; supplemental §4.2.1.3 p.75 / §4.2.1.3.2 p.77
+> is offline-quick-start-eligible, so gating it is a rule-1 breach; §3.6.2.2 Exhibit 3-2 p.57 —
+> MISO's own zonal construct splits min-spin vs min-supp). Three adjudications: (1)
+> `miso_rbdc`'s synchronised component is ALREADY the armed nested `miso_rbdc_regspin` family
+> (requirement identity 0.0 MW); its ungated margin is exactly the supplemental share — correct
+> in kind, no further gate admissible. (2) The locational Midwest/South regspin legs add ZERO
+> new gated volume (their sum IS the armed 1,617 MW re-cut locationally) and their incremental
+> binding surface beyond the armed market gate measures **3 scarce hours in 2025 and 0 hours in
+> all of 2023/2024** (regional replication of the miso-169 K-PRE H_on instrument on committed
+> unit_hourly) — K-PRE-A's own ≥80 % inertness kill fires (Midwest leg 80.9 %, incremental
+> 93.6 %), DO NOT SOLVE. (3) ~29 % of MISO's published scarce-hour ASM price sits on the
+> supplemental product (share robust 27–29 % across hour-key alignments; DA supp $20.50 vs RT
+> supp $97.94 even in DA-foreseen hours — 79 % RT-only). **Consequence: C3a-2025 is a documented
+> model-class limit END TO END** — the DA-foreseen half decomposes into armed-and-captured
+> (+0.10 pp), forbidden structure (a supp gate), inert structure (the locational split), and the
+> DA→RT gap MISO's own two clearings measure at 4× ($81 → $327 in the 20 foreseen hours). The
+> miso-167 §5 ~+3.3 pp ceiling is REVISED DOWN for supply-side reserve levers: measured capture
+> +0.10 pp, measured residual increment ~+0.03 pp. Cell `reserve_deliverability_scoping` stays
+> `K` with the extension's DO-NOT-REDO grounds appended; RHO_CLIP untouched (nyiso-144 owner
+> escalation); `ordc_scarcity_overlay` `G` untouched (demand side). Carry-forward items taken
+> per the charter: the cross-ISO D-4 plant-grain attribution defect, the 1402 per-year
+> `online_frac` successor (MISO's sole C8 blocker), the Ames (1122) p25-level basis, and the two
+> C8 rubric design questions (owner).
+
+> **PROMOTION STAMP miso-170b (2026-08-19, recorded retroactively by miso-171 — the promoting
+> session re-keyed the shard but missed this doc's header/stamp) — MISO KEEPER →
+> `2026-08-19-miso-170-sitegrain`** (`miso170_layup_B2`), the site-grain arm-2 of the lay-up
+> membership correction (`PREREG-miso170-stgas-floor-membership-2026-08-19.md` §7, the dated
+> K-1 amendment): the SAME 15-plant census stamped on every `(zone, plant_class)` limb its
+> tranches occupy instead of the majority class only. ALL KILLS SILENT — K-1 exact (zero census
+> rows on either mechanism), K-2 in band, K-3 18 → 1 (the pre-named 1402 survivor), K-4 C8
+> 2024 AND 2025 FAIL → PASS (grounded above budget), K-5 zero flips, K-6 shape held.
+> Determination **NOT-YET on C3a-2025 (−12.1 %) + C8-2023 alone** (1402's pooled-`online_frac`
+> window defect). Control-chain: bit-identical replication of `miso170_membership_A/B` at a
+> later MISO-inert HEAD (max|diff| = 0 on every scored sidecar).
+> `RESULT-miso170b-sitegrain-execution-2026-08-19.md`.
 
 > **PROMOTION STAMP miso-170 (2026-08-19) — MISO KEEPER →
 > `2026-08-19-miso-170-membership`, BY OWNER DIRECTION** ("Is this a recommended

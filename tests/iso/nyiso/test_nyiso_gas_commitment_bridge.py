@@ -660,3 +660,62 @@ class TestOnlineHoursLeg(unittest.TestCase):
         armed = self._floor(_config(nyiso_gas_bridge_online_hours=True))
         # Hours outside runs and outside the bridged gap carry no floor.
         self.assertEqual(float(armed[0, 40:].sum()), 0.0)
+
+
+class TestStateFloorDutyScoping(unittest.TestCase):
+    """``nyiso_gas_bridge_state_floor_min_run`` — duty scoping of the state leg.
+
+    The online-hours floor holds only plants whose measured run-length p25
+    clears the population gap; the rest keep gap/extension floors only.
+    """
+
+    def _fleet(self):
+        base = _gen("BASE", "gas_cc", "CC_REGULAR")
+        base.plant_code = 1111  # in the state cohort
+        cyc = _gen("CYC", "gas_cc", "CC_REGULAR")
+        cyc.plant_code = 2222  # below the gap
+        gens = [base, cyc]
+        return gens, generators_to_fleet_arrays(gens, ["z"], hours=_HOURS)
+
+    def _floor(self, cfg):
+        import market_sim.data.perplant_min_run as seam
+
+        gens, fa = self._fleet()
+        disp = np.zeros((2, _HOURS))
+        for g in (0, 1):
+            disp[g, 10:16] = 300.0
+            disp[g, 20:26] = 300.0
+        mc = np.full((2, _HOURS), 30.0)
+        lmp = np.full((1, _HOURS), 25.0)
+        original = seam.load_perplant_min_run
+        # 1111 measures p25 = 200 h (clears the 100 h gap); 2222 = 12 h.
+        seam.load_perplant_min_run = lambda iso: {1111: 200.0, 2222: 12.0}
+        try:
+            return _nyiso_gas_bridge_floor(cfg, gens, fa, disp, lmp, mc)
+        finally:
+            seam.load_perplant_min_run = original
+
+    def test_scoped_holds_only_the_cohort_run_hours(self):
+        armed = self._floor(
+            _config(
+                nyiso_gas_bridge_online_hours=True,
+                nyiso_gas_bridge_state_floor_min_run=True,
+            )
+        )
+        # The cohort plant's run hours carry the state floor...
+        self.assertTrue(np.all(armed[0, 10:16] > 0.0))
+        # ...the cycler's run hours do NOT (its gap floor is untouched)...
+        self.assertEqual(float(armed[1, 10:16].sum()), 0.0)
+        self.assertTrue(np.all(armed[1, 16:20] > 0.0))  # the bridged gap
+
+    def test_unscoped_still_holds_everyone(self):
+        armed = self._floor(_config(nyiso_gas_bridge_online_hours=True))
+        self.assertTrue(np.all(armed[0, 10:16] > 0.0))
+        self.assertTrue(np.all(armed[1, 10:16] > 0.0))
+
+    def test_scoping_flag_alone_is_inert(self):
+        base = self._floor(_config())
+        scoped_only = self._floor(
+            _config(nyiso_gas_bridge_state_floor_min_run=True)
+        )
+        np.testing.assert_array_equal(base, scoped_only)

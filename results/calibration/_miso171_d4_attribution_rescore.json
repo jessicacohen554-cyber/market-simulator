@@ -1,0 +1,666 @@
+{
+ "session": "miso-171",
+ "isos": {
+  "ERCOT": {
+   "run_id": "2026-08-19-ercot221-arm-adaptive",
+   "bundle": "results/calibration/ercot221_adaptive_B",
+   "verdicts": {
+    "committed": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "PASS",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "PASS",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "PASS",
+      "2024:CT_PEAKER": "SKIPPED",
+      "2024:ST_GAS": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "PASS",
+      "2025:CT_PEAKER": "SKIPPED",
+      "2025:ST_GAS": "PASS"
+     }
+    },
+    "before": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "PASS",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "PASS",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "PASS",
+      "2024:CT_PEAKER": "SKIPPED",
+      "2024:ST_GAS": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "PASS",
+      "2025:CT_PEAKER": "SKIPPED",
+      "2025:ST_GAS": "PASS"
+     }
+    },
+    "after": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "PASS",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "PASS",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "PASS",
+      "2024:CT_PEAKER": "SKIPPED",
+      "2024:ST_GAS": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "PASS",
+      "2025:CT_PEAKER": "SKIPPED",
+      "2025:ST_GAS": "PASS"
+     }
+    }
+   },
+   "d2_share_deltas": {},
+   "d4_row_deltas": {},
+   "c8_record_flips": {}
+  },
+  "PJM": {
+   "run_id": "2026-08-15-pjm-162-inputclock",
+   "bundle": "results/calibration/pjm_debugb_inputclock_A",
+   "verdicts": {
+    "committed": {
+     "determination": "CALIBRATED",
+     "reasons": [],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "PASS",
+      "2023:CT_PEAKER": "PASS",
+      "2023:ST_GAS": "SKIPPED",
+      "2023:hydro": "SKIPPED",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "PASS",
+      "2024:CT_PEAKER": "PASS",
+      "2024:ST_GAS": "SKIPPED",
+      "2024:hydro": "SKIPPED",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "PASS",
+      "2025:CT_PEAKER": "PASS",
+      "2025:ST_GAS": "PASS",
+      "2025:hydro": "SKIPPED"
+     }
+    },
+    "before": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: forced_share"
+     ],
+     "c8_status": "FAIL",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "PASS",
+      "2023:CT_PEAKER": "FAIL",
+      "2023:ST_GAS": "SKIPPED",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "PASS",
+      "2024:CT_PEAKER": "FAIL",
+      "2024:ST_GAS": "SKIPPED",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "PASS",
+      "2025:CT_PEAKER": "FAIL",
+      "2025:ST_GAS": "FAIL"
+     }
+    },
+    "after": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: forced_share"
+     ],
+     "c8_status": "FAIL",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "PASS",
+      "2023:CT_PEAKER": "PASS",
+      "2023:ST_GAS": "SKIPPED",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "PASS",
+      "2024:CT_PEAKER": "PASS",
+      "2024:ST_GAS": "SKIPPED",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "PASS",
+      "2025:CT_PEAKER": "PASS",
+      "2025:ST_GAS": "FAIL"
+     }
+    }
+   },
+   "d2_share_deltas": {
+    "2023:CT_PEAKER": {
+     "before": [
+      0.1642,
+      "FAIL"
+     ],
+     "after": [
+      0.109,
+      "pass"
+     ]
+    },
+    "2023:ST_GAS": {
+     "before": [
+      0.5255,
+      "pass"
+     ],
+     "after": [
+      0.6467,
+      "pass"
+     ]
+    },
+    "2024:CC_REGULAR": {
+     "before": [
+      0.0322,
+      "pass"
+     ],
+     "after": [
+      0.0321,
+      "pass"
+     ]
+    },
+    "2024:CT_PEAKER": {
+     "before": [
+      0.168,
+      "FAIL"
+     ],
+     "after": [
+      0.1262,
+      "pass"
+     ]
+    },
+    "2024:ST_GAS": {
+     "before": [
+      0.4903,
+      "pass"
+     ],
+     "after": [
+      0.5832,
+      "pass"
+     ]
+    },
+    "2025:CC_REGULAR": {
+     "before": [
+      0.0295,
+      "pass"
+     ],
+     "after": [
+      0.0294,
+      "pass"
+     ]
+    },
+    "2025:COAL": {
+     "before": [
+      0.0007,
+      "pass"
+     ],
+     "after": [
+      0.0005,
+      "pass"
+     ]
+    },
+    "2025:CT_PEAKER": {
+     "before": [
+      0.1676,
+      "FAIL"
+     ],
+     "after": [
+      0.1129,
+      "pass"
+     ]
+    },
+    "2025:ST_GAS": {
+     "before": [
+      0.3995,
+      "pass"
+     ],
+     "after": [
+      0.5063,
+      "pass"
+     ]
+    }
+   },
+   "d4_row_deltas": {},
+   "c8_record_flips": {
+    "2023:CT_PEAKER": {
+     "before": "FAIL",
+     "after": "PASS"
+    },
+    "2024:CT_PEAKER": {
+     "before": "FAIL",
+     "after": "PASS"
+    },
+    "2025:CT_PEAKER": {
+     "before": "FAIL",
+     "after": "PASS"
+    }
+   }
+  },
+  "CAISO": {
+   "run_id": "2026-08-17-caiso-200-h1-memberpanel",
+   "bundle": "results/calibration/caiso200_h1_memberpanel",
+   "verdicts": {
+    "committed": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "SKIPPED",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "SKIPPED",
+      "2023:hydro": "PASS",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "SKIPPED",
+      "2024:CT_PEAKER": "PASS",
+      "2024:ST_GAS": "SKIPPED",
+      "2024:hydro": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "SKIPPED",
+      "2025:CT_PEAKER": "SKIPPED",
+      "2025:ST_GAS": "SKIPPED",
+      "2025:hydro": "PASS"
+     }
+    },
+    "before": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "SKIPPED",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "SKIPPED",
+      "2023:hydro": "PASS",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "SKIPPED",
+      "2024:CT_PEAKER": "PASS",
+      "2024:ST_GAS": "SKIPPED",
+      "2024:hydro": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "SKIPPED",
+      "2025:CT_PEAKER": "SKIPPED",
+      "2025:ST_GAS": "SKIPPED",
+      "2025:hydro": "PASS"
+     }
+    },
+    "after": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "SKIPPED",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "SKIPPED",
+      "2023:hydro": "PASS",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "SKIPPED",
+      "2024:CT_PEAKER": "PASS",
+      "2024:ST_GAS": "SKIPPED",
+      "2024:hydro": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "SKIPPED",
+      "2025:CT_PEAKER": "SKIPPED",
+      "2025:ST_GAS": "SKIPPED",
+      "2025:hydro": "PASS"
+     }
+    }
+   },
+   "d2_share_deltas": {},
+   "d4_row_deltas": {},
+   "c8_record_flips": {}
+  },
+  "NYISO": {
+   "run_id": "2026-08-19-nyiso-146c-state-scoped",
+   "bundle": "results/calibration/nyiso146c_state_arm",
+   "verdicts": {
+    "committed": {
+     "determination": "CALIBRATED",
+     "reasons": [
+      "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "PASS",
+      "2023:hydro": "PASS",
+      "2024:CC_REGULAR": "PASS",
+      "2024:CT_PEAKER": "SKIPPED",
+      "2024:ST_GAS": "PASS",
+      "2024:hydro": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:CT_PEAKER": "PASS",
+      "2025:ST_GAS": "PASS",
+      "2025:hydro": "PASS"
+     }
+    },
+    "before": {
+     "determination": "CALIBRATED",
+     "reasons": [
+      "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "PASS",
+      "2023:hydro": "PASS",
+      "2024:CC_REGULAR": "PASS",
+      "2024:CT_PEAKER": "SKIPPED",
+      "2024:ST_GAS": "PASS",
+      "2024:hydro": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:CT_PEAKER": "PASS",
+      "2025:ST_GAS": "PASS",
+      "2025:hydro": "PASS"
+     }
+    },
+    "after": {
+     "determination": "CALIBRATED",
+     "reasons": [
+      "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "PASS",
+      "2023:hydro": "PASS",
+      "2024:CC_REGULAR": "PASS",
+      "2024:CT_PEAKER": "SKIPPED",
+      "2024:ST_GAS": "PASS",
+      "2024:hydro": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:CT_PEAKER": "PASS",
+      "2025:ST_GAS": "PASS",
+      "2025:hydro": "PASS"
+     }
+    }
+   },
+   "d2_share_deltas": {},
+   "d4_row_deltas": {},
+   "c8_record_flips": {}
+  },
+  "NEISO": {
+   "run_id": "2026-08-17-neiso-99-joint-p1",
+   "bundle": "results/calibration/neiso99_joint_B",
+   "verdicts": {
+    "committed": {
+     "determination": "CALIBRATED",
+     "reasons": [
+      "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "SKIPPED",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "SKIPPED",
+      "2023:hydro": "PASS",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "SKIPPED",
+      "2024:CT_PEAKER": "SKIPPED",
+      "2024:ST_GAS": "SKIPPED",
+      "2024:hydro": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "SKIPPED",
+      "2025:CT_PEAKER": "SKIPPED",
+      "2025:ST_GAS": "SKIPPED",
+      "2025:hydro": "PASS"
+     }
+    },
+    "before": {
+     "determination": "CALIBRATED",
+     "reasons": [
+      "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "SKIPPED",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "SKIPPED",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "SKIPPED",
+      "2024:CT_PEAKER": "SKIPPED",
+      "2024:ST_GAS": "SKIPPED",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "SKIPPED",
+      "2025:CT_PEAKER": "SKIPPED",
+      "2025:ST_GAS": "SKIPPED"
+     }
+    },
+    "after": {
+     "determination": "CALIBRATED",
+     "reasons": [
+      "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+     ],
+     "c8_status": "PASS",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "SKIPPED",
+      "2023:CT_PEAKER": "SKIPPED",
+      "2023:ST_GAS": "SKIPPED",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "SKIPPED",
+      "2024:CT_PEAKER": "SKIPPED",
+      "2024:ST_GAS": "SKIPPED",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "SKIPPED",
+      "2025:CT_PEAKER": "SKIPPED",
+      "2025:ST_GAS": "SKIPPED"
+     }
+    }
+   },
+   "d2_share_deltas": {},
+   "d4_row_deltas": {},
+   "c8_record_flips": {}
+  },
+  "MISO": {
+   "run_id": "2026-08-19-miso-170-sitegrain",
+   "bundle": "results/calibration/miso170_layup_B2",
+   "verdicts": {
+    "committed": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: price_mean, forced_share"
+     ],
+     "c8_status": "FAIL",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "PASS",
+      "2023:CT_PEAKER": "PASS",
+      "2023:ST_GAS": "FAIL",
+      "2023:hydro": "SKIPPED",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "PASS",
+      "2024:CT_PEAKER": "PASS",
+      "2024:ST_GAS": "PASS",
+      "2024:hydro": "SKIPPED",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "PASS",
+      "2025:CT_PEAKER": "PASS",
+      "2025:ST_GAS": "PASS",
+      "2025:hydro": "SKIPPED"
+     }
+    },
+    "before": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: price_mean, forced_share"
+     ],
+     "c8_status": "FAIL",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "PASS",
+      "2023:CT_PEAKER": "PASS",
+      "2023:ST_GAS": "FAIL",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "PASS",
+      "2024:CT_PEAKER": "PASS",
+      "2024:ST_GAS": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "PASS",
+      "2025:CT_PEAKER": "PASS",
+      "2025:ST_GAS": "PASS"
+     }
+    },
+    "after": {
+     "determination": "NOT-YET",
+     "reasons": [
+      "undocumented out-of-tolerance (FAIL) criteria: price_mean, forced_share"
+     ],
+     "c8_status": "FAIL",
+     "c8_records": {
+      "2023:CC_REGULAR": "PASS",
+      "2023:COAL": "PASS",
+      "2023:CT_PEAKER": "PASS",
+      "2023:ST_GAS": "FAIL",
+      "2024:CC_REGULAR": "PASS",
+      "2024:COAL": "PASS",
+      "2024:CT_PEAKER": "PASS",
+      "2024:ST_GAS": "PASS",
+      "2025:CC_REGULAR": "PASS",
+      "2025:COAL": "PASS",
+      "2025:CT_PEAKER": "PASS",
+      "2025:ST_GAS": "PASS"
+     }
+    }
+   },
+   "d2_share_deltas": {
+    "2023:CC_REGULAR": {
+     "before": [
+      0.0009,
+      "pass"
+     ],
+     "after": [
+      0.0,
+      "pass"
+     ]
+    },
+    "2023:CT_PEAKER": {
+     "before": [
+      0.1301,
+      "pass"
+     ],
+     "after": [
+      0.1517,
+      "FAIL"
+     ]
+    },
+    "2023:ST_GAS": {
+     "before": [
+      0.312,
+      "FAIL"
+     ],
+     "after": [
+      0.305,
+      "FAIL"
+     ]
+    },
+    "2024:CC_REGULAR": {
+     "before": [
+      0.0001,
+      "pass"
+     ],
+     "after": [
+      0.0,
+      "pass"
+     ]
+    },
+    "2024:CT_PEAKER": {
+     "before": [
+      0.093,
+      "pass"
+     ],
+     "after": [
+      0.1058,
+      "pass"
+     ]
+    },
+    "2024:ST_GAS": {
+     "before": [
+      0.3186,
+      "FAIL"
+     ],
+     "after": [
+      0.3095,
+      "FAIL"
+     ]
+    },
+    "2025:CC_REGULAR": {
+     "before": [
+      0.0008,
+      "pass"
+     ],
+     "after": [
+      0.0,
+      "pass"
+     ]
+    },
+    "2025:CT_PEAKER": {
+     "before": [
+      0.0933,
+      "pass"
+     ],
+     "after": [
+      0.1126,
+      "pass"
+     ]
+    },
+    "2025:ST_GAS": {
+     "before": [
+      0.4361,
+      "FAIL"
+     ],
+     "after": [
+      0.4257,
+      "FAIL"
+     ]
+    }
+   },
+   "d4_row_deltas": {
+    "2023:reliability_floor \u00d7 ST_GAS:unit-conduct:990": {
+     "before": "pass",
+     "after": null
+    },
+    "2023:reliability_floor \u00d7 ST_GAS:window:": {
+     "before": "pass",
+     "after": null
+    },
+    "2024:reliability_floor \u00d7 ST_GAS:unit-conduct:990": {
+     "before": "pass",
+     "after": null
+    },
+    "2024:reliability_floor \u00d7 ST_GAS:window:": {
+     "before": "pass",
+     "after": null
+    }
+   },
+   "c8_record_flips": {}
+  }
+ },
+ "determination_flips_before_to_after": []
+}

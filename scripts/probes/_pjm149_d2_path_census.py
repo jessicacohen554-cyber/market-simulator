@@ -104,7 +104,7 @@ def _gated_mech(mech_id: int) -> bool:
 def census_year(bundle: Path, iso: str, year: int, sidecar: dict | None) -> dict:
     """Census one keeper-bundle year. Returns the record printed/serialized."""
     arrays, ra_missing = load_or_rebuild_floors(bundle, iso, year)
-    pids, floor_sum, mech_plant, groups = aggregate_floors_by_plant(arrays)
+    pids, floor_sum, mech_plant, groups, _fk = aggregate_floors_by_plant(arrays)
     pid_strs = [str(p) for p in pids]
     klass_by_pid = dict(zip(pid_strs, groups))
 

@@ -7321,3 +7321,25 @@ committed plants INSIDE P0-on hours — the ercot141 `floor_online_hours` state
 leg's exact domain, never tested on NYISO. Both arms registered
 (2026-08-19-nyiso-146-control / -perplant-minrun); keeper unchanged.
 RESULT-nyiso146-perplant-min-run-ab-2026-08-19.md.
+
+## 2026-08-19 — nyiso-146b/c (same session): KEEPER PROMOTED — the duty-scoped LSL state floor closes the CC over-cycling object
+
+Three more pre-registered arms in the same session, chained single-delta from
+the registered control. Arm B (`nyiso_gas_bridge_online_hours`, the ercot141
+state leg, gas_cc-scoped): REJECTED-AS-ARMED — it repairs the near-baseload
+cohort exactly AND over-glues the 7-20 h-p25 cyclers (Athens-2025 9 vs 63
+metered starts; one new D-4 at Saranac); the two cohorts are the two sides of
+the phase-0 6.6x run-length gap. Arm B2 (+`nyiso_gas_bridge_state_floor_min_run`,
+membership = the frozen min-run artifact over
+constants.NYISO_STATE_FLOOR_MIN_RUN_HOURS=100 h): PASSES EVERY GATE →
+**KEEPER `2026-08-19-nyiso-146c-state-scoped`, CALIBRATED**, C3c lone
+ledgered caveat bit-identical 2/0/5. Bethlehem 327/526/262 P1 starts (6-7
+metered) → 41/10/15, medians 12/7/14 h → 68/144/319 h; Caithness lands on
+metered; zero new D-4/D-1; zero new scalars; `complete` re-keyed under
+D-5(b); auditor PASS. Arm C (`cc_reserve_duty_split`, the duty-role mirror
+split): REJECTED — Sterling/Massena/Batavia repair at ≥88 % but Allegany
+only −64/−50 % and C3a-2023 +9.0 → +11.3 % (the ~1.4 TWh phantom cheap
+upstate energy was price-relevant); its first solve was INERT (seam clobbered
+by pct_peaking/cc_duct_peaking; fixed, disclosed, both solves registered).
+Defect B is now a JOINT object with the 2023 upstate price level.
+RESULT-nyiso146bc-state-floor-keeper-2026-08-19.md.

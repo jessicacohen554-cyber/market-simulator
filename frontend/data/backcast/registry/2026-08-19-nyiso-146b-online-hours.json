@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-19-nyiso-146b-online-hours",
+ "label": "nyiso 146b online hours",
+ "date": "2026-08-19",
+ "shorthand": "nyiso-146b-online-hours",
+ "definition": "(PROBE, REJECTED-AS-ARMED \u2014 and the diagnostic that identified the keeper's duty scope.) The ercot141 online-hours LSL state floor on the NYISO bridge, gas_cc-scoped, UNSCOPED by duty: one field over the control (nyiso_gas_bridge_online_hours). Repairs the near-baseload cohort exactly (Bethlehem 327/526/262 -> 41/10/15 P1 starts vs 6-7 metered) AND over-glues the 7-20 h-p25 cyclers (Athens-2025 9 vs 63 metered starts, Cricket-2024 1 vs 20; ONE new D-4 conviction at Saranac 2024) \u2014 failing pre-registered B-K3(b)/B-K4. The two cohorts are exactly the two sides of the nyiso-146 phase-0 6.6x run-length gap, which is the keeper 2026-08-19-nyiso-146c-state-scoped's scoping. Criteria: statuses identical to control (C3c bit-identical 2/0/5). PREREG-nyiso146b \u00a7ARM B.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-08-19-nyiso-146b-online-hours.js",
+ "bundle": "results/calibration/nyiso146b_online_arm"
+}

@@ -942,6 +942,15 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
         _dpk = cc_duct_peaking_pct().get(plant_code)
         if _dpk is not None:
             pct_peak = _dpk
+    # RESERVE-DUTY split (cc_reserve_duty_split, nyiso-146): mirror of the
+    # load-bearing bins_to_fleet override so the dashboard bands track the
+    # dispatch — applied LAST, superseding every pct override above.
+    if group == "CC_REGULAR" and getattr(config, "cc_reserve_duty_split", False):
+        from market_sim.data.fleet import _reserve_duty_cohort
+
+        if plant_code in _reserve_duty_cohort(str(getattr(config, "iso", "") or "")):
+            pct_mc = 0.0
+            pct_peak = 100.0 - pct_mr
 
     if fuel == "coal":
         mustrun_cap = nameplate * pct_mr / 100.0

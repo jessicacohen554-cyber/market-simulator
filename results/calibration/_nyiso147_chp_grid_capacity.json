@@ -1,0 +1,978 @@
+{
+ "2493": {
+  "grid_pmax_sum": 400.1,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_NYC_p2493_committed",
+    "pmax": 91.8,
+    "avail_mean": 0.882,
+    "offer_mean": 30.31
+   },
+   {
+    "unit_id": "CT_CHP_NYC_p2493_econlo",
+    "pmax": 42.8,
+    "avail_mean": 0.882,
+    "offer_mean": 30.31
+   },
+   {
+    "unit_id": "CT_CHP_NYC_p2493_econhi",
+    "pmax": 42.8,
+    "avail_mean": 0.882,
+    "offer_mean": 30.31
+   },
+   {
+    "unit_id": "CT_CHP_NYC_p2493_peak",
+    "pmax": 21.4,
+    "avail_mean": 0.882,
+    "offer_mean": 30.31
+   },
+   {
+    "unit_id": "ST_CHP_NYC_p2493_committed",
+    "pmax": 94.4,
+    "avail_mean": 0.522,
+    "offer_mean": 32.25
+   },
+   {
+    "unit_id": "ST_CHP_NYC_p2493_econ",
+    "pmax": 60.4,
+    "avail_mean": 0.522,
+    "offer_mean": 30.81
+   },
+   {
+    "unit_id": "ST_CHP_NYC_p2493_peak",
+    "pmax": 46.4,
+    "avail_mean": 0.522,
+    "offer_mean": 34.25
+   }
+  ]
+ },
+ "10025": {
+  "grid_pmax_sum": 46.7,
+  "rows": [
+   {
+    "unit_id": "ST_CHP_Upstate_West_p10025_committed",
+    "pmax": 31.8,
+    "avail_mean": 0.811,
+    "offer_mean": 33.41
+   },
+   {
+    "unit_id": "ST_CHP_Upstate_West_p10025_econ",
+    "pmax": 4.1,
+    "avail_mean": 0.811,
+    "offer_mean": 31.46
+   },
+   {
+    "unit_id": "CT_CHP_Upstate_West_p10025_committed",
+    "pmax": 9.6,
+    "avail_mean": 0.882,
+    "offer_mean": 27.49
+   },
+   {
+    "unit_id": "CT_CHP_Upstate_West_p10025_econlo",
+    "pmax": 0.6,
+    "avail_mean": 0.882,
+    "offer_mean": 27.49
+   },
+   {
+    "unit_id": "CT_CHP_Upstate_West_p10025_econhi",
+    "pmax": 0.6,
+    "avail_mean": 0.882,
+    "offer_mean": 27.49
+   }
+  ]
+ },
+ "10521": {
+  "grid_pmax_sum": 5.4,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p10521_committed",
+    "pmax": 5.4,
+    "avail_mean": 0.948,
+    "offer_mean": 23.41
+   }
+  ]
+ },
+ "10617": {
+  "grid_pmax_sum": 70.1,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Upstate_West_p10617_committed",
+    "pmax": 13.5,
+    "avail_mean": 0.004,
+    "offer_mean": 23.92
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p10617_econc00",
+    "pmax": 4.8,
+    "avail_mean": 0.004,
+    "offer_mean": 25.7
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p10617_econc01",
+    "pmax": 4.8,
+    "avail_mean": 0.004,
+    "offer_mean": 26.51
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p10617_econc02",
+    "pmax": 4.8,
+    "avail_mean": 0.004,
+    "offer_mean": 27.31
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p10617_econc03",
+    "pmax": 4.8,
+    "avail_mean": 0.004,
+    "offer_mean": 28.11
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p10617_econc04",
+    "pmax": 4.8,
+    "avail_mean": 0.004,
+    "offer_mean": 28.92
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p10617_econc05",
+    "pmax": 4.8,
+    "avail_mean": 0.004,
+    "offer_mean": 29.72
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p10617_peak",
+    "pmax": 28.0,
+    "avail_mean": 0.004,
+    "offer_mean": 47.44
+   }
+  ]
+ },
+ "10725": {
+  "grid_pmax_sum": 490.0,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p10725_committed",
+    "pmax": 125.1,
+    "avail_mean": 0.281,
+    "offer_mean": 30.7
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p10725_econc00",
+    "pmax": 34.5,
+    "avail_mean": 0.281,
+    "offer_mean": 33.27
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p10725_econc01",
+    "pmax": 34.5,
+    "avail_mean": 0.281,
+    "offer_mean": 34.46
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p10725_econc02",
+    "pmax": 34.5,
+    "avail_mean": 0.281,
+    "offer_mean": 35.65
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p10725_econc03",
+    "pmax": 34.5,
+    "avail_mean": 0.281,
+    "offer_mean": 36.85
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p10725_econc04",
+    "pmax": 34.5,
+    "avail_mean": 0.281,
+    "offer_mean": 38.04
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p10725_econc05",
+    "pmax": 34.5,
+    "avail_mean": 0.281,
+    "offer_mean": 39.23
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p10725_peak",
+    "pmax": 157.5,
+    "avail_mean": 0.281,
+    "offer_mean": 64.69
+   }
+  ]
+ },
+ "50006": {
+  "grid_pmax_sum": 633.2,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_NYC_p50006_committed",
+    "pmax": 325.3,
+    "avail_mean": 0.824,
+    "offer_mean": 23.36
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p50006_econc00",
+    "pmax": 41.6,
+    "avail_mean": 0.824,
+    "offer_mean": 25.2
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p50006_econc01",
+    "pmax": 41.6,
+    "avail_mean": 0.824,
+    "offer_mean": 26.16
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p50006_econc02",
+    "pmax": 41.6,
+    "avail_mean": 0.824,
+    "offer_mean": 27.12
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p50006_econc03",
+    "pmax": 41.6,
+    "avail_mean": 0.824,
+    "offer_mean": 28.08
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p50006_econc04",
+    "pmax": 41.6,
+    "avail_mean": 0.824,
+    "offer_mean": 29.04
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p50006_econc05",
+    "pmax": 41.6,
+    "avail_mean": 0.824,
+    "offer_mean": 30.0
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p50006_peak",
+    "pmax": 58.4,
+    "avail_mean": 0.824,
+    "offer_mean": 47.53
+   }
+  ]
+ },
+ "50203": {
+  "grid_pmax_sum": 1.4,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_Upstate_West_p50203_committed",
+    "pmax": 1.4,
+    "avail_mean": 0.882,
+    "offer_mean": 18.43
+   }
+  ]
+ },
+ "50368": {
+  "grid_pmax_sum": 12.7,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50368_committed",
+    "pmax": 6.2,
+    "avail_mean": 0.337,
+    "offer_mean": 12.23
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50368_econc00",
+    "pmax": 1.1,
+    "avail_mean": 0.337,
+    "offer_mean": 13.02
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50368_econc01",
+    "pmax": 1.1,
+    "avail_mean": 0.337,
+    "offer_mean": 13.37
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50368_econc02",
+    "pmax": 1.1,
+    "avail_mean": 0.337,
+    "offer_mean": 13.73
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50368_econc03",
+    "pmax": 1.1,
+    "avail_mean": 0.337,
+    "offer_mean": 14.09
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50368_econc04",
+    "pmax": 1.1,
+    "avail_mean": 0.337,
+    "offer_mean": 14.44
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50368_econc05",
+    "pmax": 1.1,
+    "avail_mean": 0.337,
+    "offer_mean": 14.8
+   }
+  ]
+ },
+ "50449": {
+  "grid_pmax_sum": 36.8,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50449_committed",
+    "pmax": 15.2,
+    "avail_mean": 0.202,
+    "offer_mean": 24.5
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50449_econc00",
+    "pmax": 2.9,
+    "avail_mean": 0.202,
+    "offer_mean": 26.29
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50449_econc01",
+    "pmax": 2.9,
+    "avail_mean": 0.202,
+    "offer_mean": 27.1
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50449_econc02",
+    "pmax": 2.9,
+    "avail_mean": 0.202,
+    "offer_mean": 27.91
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50449_econc03",
+    "pmax": 2.9,
+    "avail_mean": 0.202,
+    "offer_mean": 28.72
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50449_econc04",
+    "pmax": 2.9,
+    "avail_mean": 0.202,
+    "offer_mean": 29.53
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50449_econc05",
+    "pmax": 2.9,
+    "avail_mean": 0.202,
+    "offer_mean": 30.34
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50449_peak",
+    "pmax": 4.3,
+    "avail_mean": 0.202,
+    "offer_mean": 48.16
+   }
+  ]
+ },
+ "50450": {
+  "grid_pmax_sum": 49.0,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50450_committed",
+    "pmax": 20.0,
+    "avail_mean": 0.268,
+    "offer_mean": 22.5
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50450_econc00",
+    "pmax": 3.6,
+    "avail_mean": 0.268,
+    "offer_mean": 24.11
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50450_econc01",
+    "pmax": 3.6,
+    "avail_mean": 0.268,
+    "offer_mean": 24.85
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50450_econc02",
+    "pmax": 3.6,
+    "avail_mean": 0.268,
+    "offer_mean": 25.58
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50450_econc03",
+    "pmax": 3.6,
+    "avail_mean": 0.268,
+    "offer_mean": 26.31
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50450_econc04",
+    "pmax": 3.6,
+    "avail_mean": 0.268,
+    "offer_mean": 27.04
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50450_econc05",
+    "pmax": 3.6,
+    "avail_mean": 0.268,
+    "offer_mean": 27.77
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50450_peak",
+    "pmax": 7.6,
+    "avail_mean": 0.268,
+    "offer_mean": 43.87
+   }
+  ]
+ },
+ "50451": {
+  "grid_pmax_sum": 55.1,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50451_committed",
+    "pmax": 21.9,
+    "avail_mean": 0.21,
+    "offer_mean": 25.58
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50451_econc00",
+    "pmax": 2.4,
+    "avail_mean": 0.21,
+    "offer_mean": 27.47
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50451_econc01",
+    "pmax": 2.4,
+    "avail_mean": 0.21,
+    "offer_mean": 28.33
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50451_econc02",
+    "pmax": 2.4,
+    "avail_mean": 0.21,
+    "offer_mean": 29.18
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50451_econc03",
+    "pmax": 2.4,
+    "avail_mean": 0.21,
+    "offer_mean": 30.04
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50451_econc04",
+    "pmax": 2.4,
+    "avail_mean": 0.21,
+    "offer_mean": 30.89
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50451_econc05",
+    "pmax": 2.4,
+    "avail_mean": 0.21,
+    "offer_mean": 31.75
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p50451_peak",
+    "pmax": 19.0,
+    "avail_mean": 0.21,
+    "offer_mean": 50.58
+   }
+  ]
+ },
+ "50458": {
+  "grid_pmax_sum": 95.5,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p50458_committed",
+    "pmax": 95.5,
+    "avail_mean": 0.551,
+    "offer_mean": 31.95
+   }
+  ]
+ },
+ "52168": {
+  "grid_pmax_sum": 13.6,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_NYC_p52168_committed",
+    "pmax": 12.4,
+    "avail_mean": 0.963,
+    "offer_mean": 26.24
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p52168_peak",
+    "pmax": 1.2,
+    "avail_mean": 0.963,
+    "offer_mean": 37.82
+   }
+  ]
+ },
+ "54041": {
+  "grid_pmax_sum": 143.8,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54041_committed",
+    "pmax": 45.4,
+    "avail_mean": 0.969,
+    "offer_mean": 26.77
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54041_econc00",
+    "pmax": 16.0,
+    "avail_mean": 0.969,
+    "offer_mean": 28.49
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54041_econc01",
+    "pmax": 16.0,
+    "avail_mean": 0.969,
+    "offer_mean": 29.27
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54041_econc02",
+    "pmax": 16.0,
+    "avail_mean": 0.969,
+    "offer_mean": 30.05
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54041_econc03",
+    "pmax": 16.0,
+    "avail_mean": 0.969,
+    "offer_mean": 30.83
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54041_econc04",
+    "pmax": 16.0,
+    "avail_mean": 0.969,
+    "offer_mean": 31.6
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54041_econc05",
+    "pmax": 16.0,
+    "avail_mean": 0.969,
+    "offer_mean": 32.38
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54041_peak",
+    "pmax": 2.2,
+    "avail_mean": 0.969,
+    "offer_mean": 49.55
+   }
+  ]
+ },
+ "54076": {
+  "grid_pmax_sum": 58.9,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54076_committed",
+    "pmax": 30.8,
+    "avail_mean": 0.09,
+    "offer_mean": 23.03
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54076_econc00",
+    "pmax": 2.8,
+    "avail_mean": 0.09,
+    "offer_mean": 24.7
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54076_econc01",
+    "pmax": 2.8,
+    "avail_mean": 0.09,
+    "offer_mean": 25.45
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54076_econc02",
+    "pmax": 2.8,
+    "avail_mean": 0.09,
+    "offer_mean": 26.21
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54076_econc03",
+    "pmax": 2.8,
+    "avail_mean": 0.09,
+    "offer_mean": 26.96
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54076_econc04",
+    "pmax": 2.8,
+    "avail_mean": 0.09,
+    "offer_mean": 27.72
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54076_econc05",
+    "pmax": 2.8,
+    "avail_mean": 0.09,
+    "offer_mean": 28.47
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54076_peak",
+    "pmax": 11.4,
+    "avail_mean": 0.09,
+    "offer_mean": 45.1
+   }
+  ]
+ },
+ "54099": {
+  "grid_pmax_sum": 12.3,
+  "rows": [
+   {
+    "unit_id": "ST_CHP_Upstate_West_p54099_committed",
+    "pmax": 11.5,
+    "avail_mean": 0.856,
+    "offer_mean": 21.8
+   },
+   {
+    "unit_id": "ST_CHP_Upstate_West_p54099_econ",
+    "pmax": 0.8,
+    "avail_mean": 0.856,
+    "offer_mean": 20.62
+   }
+  ]
+ },
+ "54114": {
+  "grid_pmax_sum": 80.0,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_NYC_p54114_committed",
+    "pmax": 30.0,
+    "avail_mean": 0.685,
+    "offer_mean": 25.33
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p54114_econc00",
+    "pmax": 8.3,
+    "avail_mean": 0.685,
+    "offer_mean": 27.28
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p54114_econc01",
+    "pmax": 8.3,
+    "avail_mean": 0.685,
+    "offer_mean": 28.3
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p54114_econc02",
+    "pmax": 8.3,
+    "avail_mean": 0.685,
+    "offer_mean": 29.32
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p54114_econc03",
+    "pmax": 8.3,
+    "avail_mean": 0.685,
+    "offer_mean": 30.33
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p54114_econc04",
+    "pmax": 8.3,
+    "avail_mean": 0.685,
+    "offer_mean": 31.35
+   },
+   {
+    "unit_id": "CC_CHP_NYC_p54114_econc05",
+    "pmax": 8.3,
+    "avail_mean": 0.685,
+    "offer_mean": 32.37
+   }
+  ]
+ },
+ "54131": {
+  "grid_pmax_sum": 42.7,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54131_committed",
+    "pmax": 37.8,
+    "avail_mean": 0.923,
+    "offer_mean": 27.11
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54131_peak",
+    "pmax": 4.9,
+    "avail_mean": 0.923,
+    "offer_mean": 51.23
+   }
+  ]
+ },
+ "54149": {
+  "grid_pmax_sum": 28.9,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_Long_Island_p54149_committed",
+    "pmax": 28.9,
+    "avail_mean": 0.882,
+    "offer_mean": 43.83
+   }
+  ]
+ },
+ "54547": {
+  "grid_pmax_sum": 752.6,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54547_committed",
+    "pmax": 225.8,
+    "avail_mean": 0.635,
+    "offer_mean": 19.5
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54547_econc00",
+    "pmax": 61.0,
+    "avail_mean": 0.635,
+    "offer_mean": 20.89
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54547_econc01",
+    "pmax": 61.0,
+    "avail_mean": 0.635,
+    "offer_mean": 21.5
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54547_econc02",
+    "pmax": 61.0,
+    "avail_mean": 0.635,
+    "offer_mean": 22.12
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54547_econc03",
+    "pmax": 61.0,
+    "avail_mean": 0.635,
+    "offer_mean": 22.73
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54547_econc04",
+    "pmax": 61.0,
+    "avail_mean": 0.635,
+    "offer_mean": 23.35
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54547_econc05",
+    "pmax": 61.0,
+    "avail_mean": 0.635,
+    "offer_mean": 23.96
+   },
+   {
+    "unit_id": "CC_CHP_Upstate_West_p54547_peak",
+    "pmax": 160.9,
+    "avail_mean": 0.635,
+    "offer_mean": 37.92
+   }
+  ]
+ },
+ "54808": {
+  "grid_pmax_sum": 5.0,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_NYC_p54808_committed",
+    "pmax": 5.0,
+    "avail_mean": 0.972,
+    "offer_mean": 30.87
+   }
+  ]
+ },
+ "54914": {
+  "grid_pmax_sum": 209.3,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_NYC_p54914_committed",
+    "pmax": 209.3,
+    "avail_mean": 0.881,
+    "offer_mean": 24.95
+   }
+  ]
+ },
+ "56259": {
+  "grid_pmax_sum": 424.9,
+  "rows": [
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p56259_committed",
+    "pmax": 234.7,
+    "avail_mean": 0.726,
+    "offer_mean": 29.21
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p56259_econc00",
+    "pmax": 19.4,
+    "avail_mean": 0.726,
+    "offer_mean": 31.71
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p56259_econc01",
+    "pmax": 19.4,
+    "avail_mean": 0.726,
+    "offer_mean": 32.88
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p56259_econc02",
+    "pmax": 19.4,
+    "avail_mean": 0.726,
+    "offer_mean": 34.05
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p56259_econc03",
+    "pmax": 19.4,
+    "avail_mean": 0.726,
+    "offer_mean": 35.22
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p56259_econc04",
+    "pmax": 19.4,
+    "avail_mean": 0.726,
+    "offer_mean": 36.39
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p56259_econc05",
+    "pmax": 19.4,
+    "avail_mean": 0.726,
+    "offer_mean": 37.56
+   },
+   {
+    "unit_id": "CC_CHP_Capital_Hudson_p56259_peak",
+    "pmax": 73.9,
+    "avail_mean": 0.726,
+    "offer_mean": 62.16
+   }
+  ]
+ },
+ "57789": {
+  "grid_pmax_sum": 1.3,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_NYC_p57789_committed",
+    "pmax": 1.3,
+    "avail_mean": 0.882,
+    "offer_mean": 31.02
+   }
+  ]
+ },
+ "57798": {
+  "grid_pmax_sum": 2.7,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_NYC_p57798_committed",
+    "pmax": 1.4,
+    "avail_mean": 0.882,
+    "offer_mean": 19.38
+   },
+   {
+    "unit_id": "CT_CHP_NYC_p57798_econlo",
+    "pmax": 0.6,
+    "avail_mean": 0.882,
+    "offer_mean": 19.38
+   },
+   {
+    "unit_id": "CT_CHP_NYC_p57798_econhi",
+    "pmax": 0.6,
+    "avail_mean": 0.882,
+    "offer_mean": 19.38
+   }
+  ]
+ },
+ "58167": {
+  "grid_pmax_sum": 0.8,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_Long_Island_p58167_committed",
+    "pmax": 0.8,
+    "avail_mean": 0.882,
+    "offer_mean": 29.68
+   }
+  ]
+ },
+ "58186": {
+  "grid_pmax_sum": 1.3,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_Capital_Hudson_p58186_committed",
+    "pmax": 1.3,
+    "avail_mean": 0.882,
+    "offer_mean": 46.82
+   }
+  ]
+ },
+ "58507": {
+  "grid_pmax_sum": 0.8,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_NYC_p58507_committed",
+    "pmax": 0.8,
+    "avail_mean": 0.882,
+    "offer_mean": 44.81
+   }
+  ]
+ },
+ "59453": {
+  "grid_pmax_sum": 2.3,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_Capital_Hudson_p59453_committed",
+    "pmax": 1.2,
+    "avail_mean": 0.0,
+    "offer_mean": 27.32
+   },
+   {
+    "unit_id": "CT_CHP_Capital_Hudson_p59453_econlo",
+    "pmax": 0.6,
+    "avail_mean": 0.0,
+    "offer_mean": 27.32
+   },
+   {
+    "unit_id": "CT_CHP_Capital_Hudson_p59453_econhi",
+    "pmax": 0.6,
+    "avail_mean": 0.0,
+    "offer_mean": 27.32
+   }
+  ]
+ },
+ "61238": {
+  "grid_pmax_sum": 2.3,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_NYC_p61238_committed",
+    "pmax": 1.1,
+    "avail_mean": 0.882,
+    "offer_mean": 34.98
+   },
+   {
+    "unit_id": "CT_CHP_NYC_p61238_econlo",
+    "pmax": 0.6,
+    "avail_mean": 0.882,
+    "offer_mean": 34.98
+   },
+   {
+    "unit_id": "CT_CHP_NYC_p61238_econhi",
+    "pmax": 0.6,
+    "avail_mean": 0.882,
+    "offer_mean": 34.98
+   }
+  ]
+ },
+ "61488": {
+  "grid_pmax_sum": 2.2,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_NYC_p61488_committed",
+    "pmax": 1.2,
+    "avail_mean": 0.882,
+    "offer_mean": 26.16
+   },
+   {
+    "unit_id": "CT_CHP_NYC_p61488_econlo",
+    "pmax": 0.5,
+    "avail_mean": 0.882,
+    "offer_mean": 26.16
+   },
+   {
+    "unit_id": "CT_CHP_NYC_p61488_econhi",
+    "pmax": 0.5,
+    "avail_mean": 0.882,
+    "offer_mean": 26.16
+   }
+  ]
+ },
+ "63236": {
+  "grid_pmax_sum": 4.0,
+  "rows": [
+   {
+    "unit_id": "CT_CHP_NYC_p63236_committed",
+    "pmax": 3.4,
+    "avail_mean": 0.882,
+    "offer_mean": 37.43
+   },
+   {
+    "unit_id": "CT_CHP_NYC_p63236_peak",
+    "pmax": 0.6,
+    "avail_mean": 0.882,
+    "offer_mean": 37.43
+   }
+  ]
+ }
+}

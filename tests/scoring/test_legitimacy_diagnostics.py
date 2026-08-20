@@ -520,8 +520,13 @@ class TestD4PerUnitConductRider:
         dispatch, min_gen, mech = self._floored()
         b = {"npl": 65.0, "mw": np.zeros(HOURS), "ct_only": True}
         res = run_d4(
-            dispatch, min_gen, mech, self.KLASS, year=2023,
-            pids=["50744"], bench_pl={"50744": b},
+            dispatch,
+            min_gen,
+            mech,
+            self.KLASS,
+            year=2023,
+            pids=["50744"],
+            bench_pl={"50744": b},
         )
         assert res.passed
         assert not [r for r in res.rows if r["check"] == "unit-conduct"]
@@ -1046,7 +1051,7 @@ class TestMechanismThreading:
             "plant_code": np.array([7, 7]),
             "plant_group": np.array(["CT_PEAKER", "CT_PEAKER"]),
         }
-        pids, floor_sum, mech_plant, groups = aggregate_floors_by_plant(arrays)
+        pids, floor_sum, mech_plant, groups, _fk = aggregate_floors_by_plant(arrays)
         assert pids.tolist() == ["7"]  # string keys since caiso-155
         assert (floor_sum[0] == 40.0).all()
         assert (mech_plant[0] == MECH_RELIABILITY_FLOOR).all()
@@ -1071,7 +1076,7 @@ class TestMechanismThreading:
             "plant_code": np.array([546, 546, 546]),
             "plant_group": np.array(["", "ST_GAS", "ST_GAS"]),
         }
-        _, _, _, groups = aggregate_floors_by_plant(arrays)
+        _, _, _, groups, _ = aggregate_floors_by_plant(arrays)
         assert groups.tolist() == ["ST_GAS"]
 
     def test_all_unbinned_plant_stays_unclassified(self):
@@ -1086,7 +1091,7 @@ class TestMechanismThreading:
             "plant_code": np.array([12, 12]),
             "plant_group": np.array(["", ""]),
         }
-        _, _, _, groups = aggregate_floors_by_plant(arrays)
+        _, _, _, groups, _ = aggregate_floors_by_plant(arrays)
         assert groups.tolist() == [""]
 
     def test_floored_pseudo_unit_rides_as_own_row(self):
@@ -1105,7 +1110,7 @@ class TestMechanismThreading:
             "plant_code": np.array([7, 0]),
             "plant_group": np.array(["CT_PEAKER", ""]),
         }
-        pids, floor_sum, mech_plant, groups = aggregate_floors_by_plant(arrays)
+        pids, floor_sum, mech_plant, groups, _fk = aggregate_floors_by_plant(arrays)
         assert pids.tolist() == ["7", "u:NYISO_external_HQ_hydro"]
         assert (floor_sum[0] == 30.0).all()
         assert (floor_sum[1] == 900.0).all()
@@ -1126,7 +1131,7 @@ class TestMechanismThreading:
             "plant_code": np.array([9, 0, 0]),
             "plant_group": np.array(["ST_GAS", "", ""]),
         }
-        pids, floor_sum, _, _ = aggregate_floors_by_plant(arrays)
+        pids, floor_sum, _, _, _ = aggregate_floors_by_plant(arrays)
         assert pids.tolist() == ["9"]
         assert floor_sum.shape[0] == 1
 
@@ -1801,7 +1806,7 @@ class TestDispatchPathIndependence:
         )
 
     def _matrices(self, dispatch_map, codes, level, mech, groups, hours=HOURS):
-        pids, floor_sum, mech_plant, grp = self._floors(
+        pids, floor_sum, mech_plant, grp, _fk = self._floors(
             codes, level, mech, groups, hours
         )
         return build_plant_matrices(
@@ -1911,7 +1916,7 @@ class TestDispatchPathIndependence:
         NOT be dragged in — it would perturb its class denominator with a
         fabricated zero (PREREG-caiso155 §2 P3, carried forward)."""
         h = HOURS
-        pids, floor_sum, mech_plant, grp = self._floors(
+        pids, floor_sum, mech_plant, grp, _fk = self._floors(
             [10, 20], 0.0, 0, ["CT_PEAKER"] * 2
         )
         mats = build_plant_matrices(
@@ -1939,7 +1944,7 @@ class TestDispatchPathIndependence:
             "plant_code": np.array([7, 0]),
             "plant_group": np.array(["CT_PEAKER", ""], dtype=object),
         }
-        pids, floor_sum, mech_plant, grp = aggregate_floors_by_plant(arrays)
+        pids, floor_sum, mech_plant, grp, _fk = aggregate_floors_by_plant(arrays)
         mats = build_plant_matrices(
             {"7": np.full(h, 80.0)},
             [str(p) for p in pids],
@@ -1980,7 +1985,7 @@ class TestDispatchPathIndependence:
         """
         h = HOURS
         dispatch_map = {"10": np.full(h, 80.0)}
-        pids, floor_sum, mech_plant, grp = self._floors(
+        pids, floor_sum, mech_plant, grp, _fk = self._floors(
             [10, 20], 30.0, MECH_CT_NETLOAD_DRAG, ["CT_PEAKER"] * 2
         )
         pid_strs = [str(p) for p in pids]
@@ -1991,3 +1996,128 @@ class TestDispatchPathIndependence:
             dispatch_map, pid_strs, floor_sum, mech_plant, grp, {}, t=h
         )
         assert mats.pids == ["10", "20"]  # the fix: it is not
+
+
+class TestFloorClassAttribution:
+    """The miso-171 unit-grain repair of the D-4/D-2 plant-grain class
+    attribution defect (miso-170 K-1 forensic): a mixed-class plant's
+    minority-class floor must be charged to the class CARRYING it, never to
+    the plant's majority label. Live case pinned here: plant 1104's CT_PEAKER
+    netload floor was tested — and convicted — under ST_GAS's D-4 conduct row
+    and charged to ST_GAS's D-2 mechanism list in every pre-repair artifact.
+    """
+
+    HOURS = HOURS
+
+    @staticmethod
+    def _mixed_plant_arrays(h=HOURS):
+        """Plant 9: two ST_GAS units (no floor) + one CT_PEAKER unit floored
+        by the CT netload limb — the 1104 topology."""
+        return {
+            "min_gen": np.array(
+                [[0.0] * h, [0.0] * h, [20.0] * h], dtype=float
+            ),
+            "mechanism": np.array(
+                [[0] * h, [0] * h, [MECH_CT_NETLOAD_DRAG] * h], dtype=np.int8
+            ),
+            "unit_ids": np.array(["p9_st_a", "p9_st_b", "p9_ct"]),
+            "plant_code": np.array([9, 9, 9]),
+            "plant_group": np.array(
+                ["ST_GAS", "ST_GAS", "CT_PEAKER"], dtype=object
+            ),
+        }
+
+    def test_floor_class_is_the_carrying_units_class(self):
+        pids, floor_sum, mech_plant, grp, fk = aggregate_floors_by_plant(
+            self._mixed_plant_arrays()
+        )
+        assert grp.tolist() == ["ST_GAS"]  # the plant LABEL stays majority
+        assert (floor_sum[0] == 20.0).all()
+        assert (mech_plant[0] == MECH_CT_NETLOAD_DRAG).all()
+        # The floor class is the CT unit's, in every floored hour.
+        assert fk.eq("CT_PEAKER")[0].all()
+        assert not fk.eq("ST_GAS")[0].any()
+
+    def test_single_class_plant_attribution_unchanged(self):
+        """A pure-class plant's floor class equals its label — the repair is
+        a no-op outside mixed-class sites (incl. the #1488 empty-group
+        imputation, which resolves BEFORE the max-composition pick)."""
+        h = HOURS
+        arrays = {
+            "min_gen": np.array([[5.0] * h, [7.0] * h], dtype=float),
+            "mechanism": np.array(
+                [[MECH_RELIABILITY_FLOOR] * h, [MECH_RELIABILITY_FLOOR] * h],
+                dtype=np.int8,
+            ),
+            "unit_ids": np.array(["p546_x", "p546_a"]),
+            "plant_code": np.array([546, 546]),
+            "plant_group": np.array(["", "ST_GAS"], dtype=object),
+        }
+        _, _, _, grp, fk = aggregate_floors_by_plant(arrays)
+        assert grp.tolist() == ["ST_GAS"]
+        assert fk.eq("ST_GAS")[0].all()
+
+    def _mixed_mats(self, h=HOURS):
+        pids, floor_sum, mech_plant, grp, fk = aggregate_floors_by_plant(
+            self._mixed_plant_arrays(h)
+        )
+        # Plant dispatch sits AT the CT floor (the ST units are offline).
+        return build_plant_matrices(
+            {"9": np.full(h, 20.0)},
+            [str(p) for p in pids],
+            floor_sum,
+            mech_plant,
+            grp,
+            {},
+            t=h,
+            floor_klass=fk,
+        )
+
+    def test_run_d2_charges_the_carrying_class(self):
+        mats = self._mixed_mats()
+        res = run_d2(
+            mats.disp,
+            mats.floors,
+            mats.mechs,
+            mats.klass,
+            year=2024,
+            floor_klass=mats.floor_klass,
+        )
+        by_class = {(r["class"], r["mechanism"]): r for r in res.rows}
+        assert ("CT_PEAKER", "ct_netload_drag") in by_class
+        assert ("ST_GAS", "ct_netload_drag") not in by_class
+
+    def test_run_d2_without_floor_klass_reproduces_the_defect(self):
+        """The pre-repair rule is preserved behind ``floor_klass=None`` so
+        legacy artifacts re-score exactly as before — and this pins what the
+        defect WAS."""
+        mats = self._mixed_mats()
+        res = run_d2(mats.disp, mats.floors, mats.mechs, mats.klass, year=2024)
+        by_class = {(r["class"], r["mechanism"]): r for r in res.rows}
+        assert ("ST_GAS", "ct_netload_drag") in by_class
+
+    def test_run_d4_conduct_conviction_lands_on_the_carrying_class(self):
+        h = HOURS
+        mats = self._mixed_mats()
+        windows = {
+            (MECH_CT_NETLOAD_DRAG, "ST_GAS"): (0, 24),
+            (MECH_CT_NETLOAD_DRAG, "CT_PEAKER"): (0, 24),
+        }
+        bench_pl = {"9": {"mw": np.zeros(h), "npl": 100.0, "group": "ST_GAS"}}
+        res = run_d4(
+            mats.disp,
+            mats.floors,
+            mats.mechs,
+            mats.klass,
+            year=2024,
+            windows=windows,
+            pids=mats.pids,
+            bench_pl=bench_pl,
+            floor_klass=mats.floor_klass,
+        )
+        conduct = [r for r in res.rows if r["check"] == "unit-conduct"]
+        assert conduct, "conduct rider must fire on the dark meter"
+        assert {r["floor"] for r in conduct} == {"ct_netload_drag × CT_PEAKER"}
+        assert all(r["verdict"] == "FAIL" for r in conduct)
+        # No window/conduct row exists under the majority label.
+        assert not any("ST_GAS" in r["floor"] for r in res.rows)

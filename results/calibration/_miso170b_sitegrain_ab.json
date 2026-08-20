@@ -1,0 +1,194 @@
+{
+ "identity": {
+  "gate": "K-0",
+  "files": [
+   {
+    "file": "class_hourly_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   }
+  ],
+  "passed": true
+ },
+ "gates": {
+  "census_size": 15,
+  "years": [
+   2023,
+   2024,
+   2025
+  ],
+  "K1": {
+   "gate": "membership exactness",
+   "census_rows_remaining": [],
+   "non_census_rows_lost": [],
+   "passed": true
+  },
+  "K2": {
+   "gate": "liveness vs pre-registered shed",
+   "years": {
+    "2023": {
+     "predicted_twh": 0.5044,
+     "measured_twh": 0.5336,
+     "band": [
+      0.2522,
+      0.7566
+     ],
+     "passed": true
+    },
+    "2024": {
+     "predicted_twh": 0.7531,
+     "measured_twh": 0.8766,
+     "band": [
+      0.3765,
+      1.1297
+     ],
+     "passed": true
+    },
+    "2025": {
+     "predicted_twh": 0.7853,
+     "measured_twh": 0.9487,
+     "band": [
+      0.3926,
+      1.178
+     ],
+     "passed": true
+    }
+   },
+   "passed": true
+  },
+  "K3": {
+   "gate": "D-4 per-unit conduct failures",
+   "control_count": 18,
+   "arm_count": 1,
+   "arm_failures": [
+    [
+     2023,
+     "st_gas_mustrun_per_plant",
+     "1402"
+    ]
+   ],
+   "new_failures": [],
+   "expected_survivor_present": true,
+   "passed": true,
+   "new_offwindow_failures": []
+  },
+  "K4": {
+   "gate": "C8 ST_GAS per year",
+   "years": {
+    "2023": {
+     "control": "FAIL",
+     "arm": "FAIL",
+     "control_share": 0.3271,
+     "arm_share": 0.3123
+    },
+    "2024": {
+     "control": "FAIL",
+     "arm": "PASS",
+     "control_share": 0.3442,
+     "arm_share": 0.3184
+    },
+    "2025": {
+     "control": "FAIL",
+     "arm": "PASS",
+     "control_share": 0.4618,
+     "arm_share": 0.436
+    }
+   }
+  },
+  "K5": {
+   "gate": "no record-grain PASS -> FAIL flip",
+   "flips": [],
+   "records_compared": 67,
+   "passed": true
+  },
+  "K6": {
+   "gate": "ST_GAS D-1 shape",
+   "years": {
+    "2023": {
+     "profile_r": 0.951,
+     "cv_ratio": 1.422,
+     "passed": true
+    },
+    "2024": {
+     "profile_r": 0.958,
+     "cv_ratio": 1.109,
+     "passed": true
+    },
+    "2025": {
+     "profile_r": 0.975,
+     "cv_ratio": 1.265,
+     "passed": true
+    }
+   },
+   "passed": true
+  },
+  "kills_silent": true
+ }
+}

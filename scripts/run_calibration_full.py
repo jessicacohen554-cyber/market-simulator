@@ -2508,6 +2508,7 @@ def _btm_frame(
     campd_active: set[int] | None = None,
     iso: str = "ERCOT",
     group_by_code: dict[int, str] | None = None,
+    nyiso_chp_btm_measured: bool = False,
 ) -> pd.DataFrame:
     """Return behind-the-meter CHP must-run by class for one year-pass.
 
@@ -2642,6 +2643,23 @@ def _btm_frame(
         )
         if float(pct) > 0.0
     }
+    # nyiso-147: with the measured shares armed, the add-back must size from
+    # the SAME per-plant Gold-Book/EIA-923 shares the LP hold-out removed —
+    # classFull is EIA-923 minus this frame, so the three legs (capacity
+    # carve, add-back, benchmark subtrahend) stay on one share by
+    # construction.
+    if nyiso_chp_btm_measured and iso == "NYISO":
+        from market_sim.data.chp import measured_chp_btm_pct_nyiso
+
+        _measured = measured_chp_btm_pct_nyiso()
+        _chp_codes = {
+            int(code)
+            for code, grp in zip(bins["Plant_Code"], bins["Plant_Group"])
+            if str(grp) in ("CC_CHP", "CT_CHP", "ST_CHP")
+        }
+        for _code, _pct in _measured.items():
+            if _code in share_by_plant and _code in _chp_codes:
+                share_by_plant[_code] = float(_pct) / 100.0
     mr = compute_must_run_emissions(
         bins,
         year,
@@ -3488,6 +3506,8 @@ def solve_and_persist(
     nyiso_gas_bridge_plant_exclusions: bool | None = None,
     nyiso_gas_bridge_plant_min_run: bool | None = None,
     nyiso_gas_bridge_online_hours: bool | None = None,
+    nyiso_gas_bridge_state_floor_min_run: bool | None = None,
+    nyiso_chp_btm_measured: bool | None = None,
     cc_reserve_duty_split: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
@@ -4449,6 +4469,14 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_online_hours=nyiso_gas_bridge_online_hours
             )
+        if nyiso_gas_bridge_state_floor_min_run is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run
+            )
+        if nyiso_chp_btm_measured is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_chp_btm_measured=nyiso_chp_btm_measured
+            )
         if cc_reserve_duty_split is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_reserve_duty_split=cc_reserve_duty_split
@@ -5174,6 +5202,8 @@ def solve_and_persist(
             nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions,
             nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run,
             nyiso_gas_bridge_online_hours=nyiso_gas_bridge_online_hours,
+            nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run,
+            nyiso_chp_btm_measured=nyiso_chp_btm_measured,
             cc_reserve_duty_split=cc_reserve_duty_split,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
             nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
@@ -5428,6 +5458,7 @@ def solve_and_persist(
                     campd_active=campd_active,
                     iso=iso,
                     group_by_code=group_by_code,
+                    nyiso_chp_btm_measured=bool(nyiso_chp_btm_measured),
                 )
             )
 
@@ -6040,6 +6071,8 @@ def solve_and_persist(
         "nyiso_gas_bridge_plant_exclusions": nyiso_gas_bridge_plant_exclusions,
         "nyiso_gas_bridge_plant_min_run": nyiso_gas_bridge_plant_min_run,
         "nyiso_gas_bridge_online_hours": nyiso_gas_bridge_online_hours,
+        "nyiso_gas_bridge_state_floor_min_run": nyiso_gas_bridge_state_floor_min_run,
+        "nyiso_chp_btm_measured": nyiso_chp_btm_measured,
         "cc_reserve_duty_split": cc_reserve_duty_split,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
         "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
@@ -6918,7 +6951,15 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
             must_run=must_run,
         ).to_parquet(bundle / "dispatch" / f"{year}_P2.parquet", index=False)
         system_p2.append(_system_frame(year, "P2", result, state["demand"], zone_names))
-        btm_p2.append(_btm_frame(year, "P2", generation, iso=meta["iso"]))
+        btm_p2.append(
+            _btm_frame(
+                year,
+                "P2",
+                generation,
+                iso=meta["iso"],
+                nyiso_chp_btm_measured=bool(meta.get("nyiso_chp_btm_measured")),
+            )
+        )
         # Older p2_state pickles predate the storage frame; skip them.
         storage_frame = _storage_frame(year, "P2", result, state.get("storage_units"))
         if storage_frame is not None:
@@ -11576,6 +11617,26 @@ def main() -> None:
         "gaps. Same detector, same measured fractions, same D-2 id.",
     )
     parser.add_argument(
+        "--nyiso-gas-bridge-state-floor-min-run",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="DUTY SCOPING for the online-hours state floor: hold it only for "
+        "plants whose measured run-length p25 clears the population gap "
+        "(constants.NYISO_STATE_FLOOR_MIN_RUN_HOURS; membership from "
+        "campd_perplant_min_run_NYISO.csv). Requires "
+        "--nyiso-gas-bridge-online-hours.",
+    )
+    parser.add_argument(
+        "--nyiso-chp-btm-measured",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Measured NYISO CHP behind-the-meter electric share (nyiso-147): "
+        "replace the sector-keyed CHP_BTM_PCT_BY_SECTOR default with the "
+        "plant's own Gold-Book/EIA-923 grid-delivery share "
+        "(chp_btm_share_measured_NYISO.csv) in the fleet capacity carve, the "
+        "BTM add-back and the benchmark classFull subtrahend.",
+    )
+    parser.add_argument(
         "--cc-reserve-duty-split",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12055,6 +12116,8 @@ def main() -> None:
         nyiso_gas_bridge_plant_exclusions=args.nyiso_gas_bridge_plant_exclusions,
         nyiso_gas_bridge_plant_min_run=args.nyiso_gas_bridge_plant_min_run,
         nyiso_gas_bridge_online_hours=args.nyiso_gas_bridge_online_hours,
+        nyiso_gas_bridge_state_floor_min_run=args.nyiso_gas_bridge_state_floor_min_run,
+        nyiso_chp_btm_measured=args.nyiso_chp_btm_measured,
         cc_reserve_duty_split=args.cc_reserve_duty_split,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
         nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,

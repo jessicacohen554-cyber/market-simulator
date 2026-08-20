@@ -301,6 +301,22 @@ ST_GAS_STARTUP_PARAMS: list[tuple[float, float]] = [
 # ScenarioConfig.caiso_ra_bridge_decommit is on.
 DA_COMMITMENT_HORIZON_HOURS: int = 24
 
+# Measured run-length ceiling that scopes the NYISO ONLINE-HOURS LSL state
+# floor (ScenarioConfig.nyiso_gas_bridge_state_floor_min_run) to the
+# near-baseload duty cohort: a CC plant carries the state floor only when its
+# OWN measured plant-basis run-length p25
+# (data/raw/_processed-legacy/campd_perplant_min_run_NYISO.csv, nyiso-146
+# phase 0) is at or above this many hours. A POPULATION-GAP SEPARATOR, not a
+# tuned value (rules 5/21): NYISO's live CC fleet measures p25s of
+# {7, 8, 10, 12, 14, 15, 19.75} h (the cyclers/intermediates) then a 6.6x gap
+# to {130 Poletti, 134.75 Bethlehem, 645.75 Caithness} (the near-baseload
+# cohort the nyiso-146b unscoped arm repaired) — any threshold inside
+# (19.75, 130) selects the identical membership; 100 is the round midpoint.
+# The unscoped arm measured WHY the scope is needed: the state floor glued
+# the intermediates too (Athens 2025: 9 model starts vs 63 metered; one new
+# D-4 conviction at Saranac), exactly the plants below the gap.
+NYISO_STATE_FLOOR_MIN_RUN_HOURS: float = 100.0
+
 # Fast-start exclusion for the ECONOMIC (startup-cost) leg of the RA
 # must-offer bridge. Holding a unit at min-load across a gap LONGER than its
 # min-down is only ever the economic choice when the restart it avoids is

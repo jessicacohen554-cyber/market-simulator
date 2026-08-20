@@ -509,6 +509,7 @@ from market_sim.data.fleet.campd_bins import (  # noqa: F401
     _override_bin_class_from_eia923,
     _plant_emission_rate_map,
     _reconcile_cc_capacity,
+    _reserve_duty_cohort,
     apply_plant_emission_rates,
     apply_plant_emission_rates_v2,
     build_ramp_groups,
@@ -538,8 +539,10 @@ from market_sim.data.fleet.campd_bins import (  # noqa: F401
     st_gas_intermediate_plants,
     thermal_tranche_chp_steam_level,
     thermal_tranche_online_frac,
+    thermal_tranche_online_frac_by_year,
     thermal_tranche_overrides,
     thermal_tranche_p25_level,
+    thermal_tranche_p25_measured_level,
     thermal_tranche_peaking,
 )
 from market_sim.data.fleet.arrays import (  # noqa: F401

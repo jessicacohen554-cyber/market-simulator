@@ -414,6 +414,20 @@ def bins_to_fleet(
                 str(b["Plant_Group"]),
                 iso=getattr(config, "iso", "ERCOT"),
             )
+            # nyiso-147: replace the sector-keyed default with the plant's
+            # own measured Gold-Book/EIA-923 grid-delivery share where the
+            # rule-23 artifact carries it (rule 14 [R-ACCURATE] — the
+            # "merchant" 35% default is refuted by the market meter for the
+            # large NYISO merchant cogens; Sithe Independence measured ~0).
+            if (
+                getattr(config, "nyiso_chp_btm_measured", False)
+                and getattr(config, "iso", "ERCOT") == "NYISO"
+            ):
+                from market_sim.data.chp import measured_chp_btm_pct_nyiso
+
+                _measured = measured_chp_btm_pct_nyiso()
+                if int(b["Plant_Code"]) in _measured:
+                    pct_mr = _measured[int(b["Plant_Code"])]
         # Petra Nova runs on its own classification (see PETRA_NOVA_* above):
         # one tranche at the capture train's net capacity, forced to
         # PETRA_NOVA_MIN_CF whenever the outage overlay says it is up. No
@@ -553,6 +567,26 @@ def bins_to_fleet(
                 pct_peak = min(_dpk, float(_cap)) if _cap is not None else _dpk
         if ov is not None:
             pct_mc, pct_peak = ov["pct_mc"], ov["pct_pk"]
+        # RESERVE-DUTY split (cc_reserve_duty_split, nyiso-146): a CC plant in
+        # the measured capacity-only cohort offers its WHOLE dispatchable
+        # capacity at the class peak band. Applied LAST so it supersedes the
+        # offer curve's class-wide pct_peaking, the per-plant peaking artifact
+        # and the duct-burner map — the first solve of the arm measured all
+        # three clobbering the fleet_to_bins frame values back to a normal
+        # split (pct_peak 100 -> 8 -> duct 0.0), leaving the mechanism inert;
+        # the frame-side seam stays for the synthesized-bins schema but THIS
+        # is the load-bearing override. The peak band's heat rate resolves
+        # exactly as the class's peak band does in this recipe (offer "peak"
+        # mult or the duct-burner class multiplier) — an existing identified
+        # constant either way, zero new scalars.
+        if (
+            group == "CC_REGULAR"
+            and getattr(config, "cc_reserve_duty_split", False)
+            and plant_code
+            in _pkg_ns()._reserve_duty_cohort(str(getattr(config, "iso", "") or ""))
+        ):
+            pct_mc = 0.0
+            pct_peak = 100.0 - pct_mr
         denom = 100.0 - pct_mr
         committed_cap = grid_cap * pct_mc / denom if denom > 0.0 else 0.0
         peak_cap = grid_cap * pct_peak / denom if denom > 0.0 else 0.0

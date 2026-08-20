@@ -1,0 +1,16 @@
+{
+ "id": "2026-08-19-nyiso-146c-state-scoped",
+ "label": "nyiso 146c state scoped",
+ "date": "2026-08-19",
+ "shorthand": "nyiso-146c-state-scoped",
+ "definition": "KEEPER (promoted nyiso-146, 2026-08-19): the ONLINE-HOURS LSL STATE FLOOR, duty-scoped by the measured run-length gap. Two fields over the superseded keeper 2026-08-18-nyiso-144-layup-exclusion (single-delta at each registered link): nyiso_gas_bridge_online_hours (the ercot141 floor_online_hours detector leg, gas_cc-scoped \u2014 a synchronized CC's LSL block is must-take in EVERY P0-online hour) and nyiso_gas_bridge_state_floor_min_run (the floor holds ONLY plants whose measured plant-basis run-length p25 clears the 6.6x population gap: {2539 Bethlehem, 56234 Caithness, 56196 Poletti} at 130-646 h vs the 7-20 h cyclers). Repairs the nyiso-145 CC over-cycling object: Bethlehem 327/526/262 P1 starts (metered 6-7/yr) -> 41/10/15 with median runs 12/7/14 h -> 68/144/319 h; Caithness -> 3/2/4 vs 4/6/8 metered. Zero new fitted scalars; zero new D-4/D-1 findings; criterion statuses identical to control; determination CALIBRATED, C3c the lone ledgered caveat (bit-identical 2/0/5 h).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-08-19-nyiso-146c-state-scoped.js",
+ "bundle": "results/calibration/nyiso146c_state_arm",
+ "market_story": "CC_REGULAR (near-baseload cohort): a committed combined cycle stays synchronized at or above its minimum stable load through the hours between its economic dispatch peaks \u2014 the DAM commits the unit for operating days, not for the LP's hour-by-hour bid-cost re-decision, so Bethlehem/Caithness/Poletti run 5-10 long runs a year in reality. The state floor carries that committed-state inflexibility at the measured CC min-load fraction; the duty scoping keeps it off the intermediate-duty CCs whose real conduct (measured run p25 7-20 h) is daily cycling."
+}

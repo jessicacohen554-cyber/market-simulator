@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-19-caiso205-arm-adaptive",
+ "label": "caiso205 arm adaptive",
+ "date": "2026-08-19",
+ "shorthand": "caiso205-arm-adaptive",
+ "definition": "(PROBE \u2014 armed-and-inert confirmed, NOT a keeper) caiso-205 arm B: single delta caiso_storage_adaptive_expectation=true on the caiso-200 keeper recipe, constants FROZEN at the caiso-204 identification (half-life 30 d, beta 0.5945, $200 event, h18-21 PT, $1,000 park cap, battery-only). ALL pre-registered gates PASS (caiso205_gates.json): 2023/2025 byte-identical to control, 2024 near-inert (floor max $14.5, bat ratio 0.9921, C3a 12.92->12.90%) \u2014 the caiso-204 G-BOOT wall measured at full magnitude. PRECOMMIT-caiso205-adaptive-ab-2026-08-19.md; FINDING-caiso205-adaptive-ab-2026-08-19.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-08-19-caiso205-arm-adaptive.js",
+ "bundle": "results/calibration/caiso205_adaptive_B"
+}

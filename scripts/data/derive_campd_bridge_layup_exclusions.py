@@ -265,6 +265,19 @@ def patch_reliability_coeffs(iso: str, excluded: pd.DataFrame) -> None:
     its (zone, class) gets an empty cell — and the whole column stays inert
     until a run arms the flag, so this is byte-identical for every existing run.
 
+    SITE-GRAIN STAMPING (dated amendment 2026-08-19, miso-170 K-1): lay-up is
+    a property of the SITE — the census verdict is computed on the
+    facility-summed meter, every unit included — so a census plant is excluded
+    from EVERY limb whose (zone, plant_class) contains any of that site's
+    model tranches, not only the limb of the plant's majority (census-row)
+    class. The first stamping keyed on the census row's single plant_group and
+    left e.g. Burlington (1104)'s CT_PEAKER tranches floorable by the
+    MISO-Plains CT netload limb — 770 binding h/yr at ~14 MW with the site
+    metered dark in 98.7 % of exactly those hours (the miso-170 arm's D-4
+    row), which is the rule-17 defect the census exists to remove. The
+    class map is read from the model fleet itself, so it can never drift from
+    what the engine floors.
+
     Args:
         iso: The ISO name.
         excluded: The qualifying rows written to the lay-up artifact.
@@ -273,11 +286,20 @@ def patch_reliability_coeffs(iso: str, excluded: pd.DataFrame) -> None:
     if not path.exists():
         print(f"  (skip reliability-coeff patch: {path.name} not on disk)")
         return
+    codes_set = {int(c) for c in excluded["plant_code"]}
+    # Every (zone, class) the census SITES occupy in the model fleet — all
+    # classes, not TARGET_CLASSES: the site-grain census verdict covers every
+    # unit at the facility, so its exclusion reaches every limb that could
+    # floor any tranche of the site.
     by_zone_class: dict[tuple[str, str], set[int]] = {}
-    for _, r in excluded.iterrows():
-        by_zone_class.setdefault((str(r.zone), str(r.plant_group)), set()).add(
-            int(r.plant_code)
-        )
+    for gen in load_fleet_from_csv(iso, get_iso_config(iso)):
+        code = int(gen.plant_code or 0)
+        if code not in codes_set:
+            continue
+        group = getattr(gen, "plant_group", None) or ""
+        if not group:
+            continue
+        by_zone_class.setdefault((gen.zone, group), set()).add(code)
     coeffs = pd.read_csv(path, dtype=str).fillna("")
     if "exclude_plant_codes" not in coeffs.columns:
         coeffs["exclude_plant_codes"] = ""
