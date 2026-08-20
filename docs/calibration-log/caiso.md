@@ -8792,3 +8792,95 @@ matrix §5.2 caiso-207 block, this entry. Keeper, markers, holdout freeze, every
 matrix cell verdict, and every source file: UNCHANGED.
 
 **Session consumed the caiso-207 shorthand. Next shorthand: caiso-208.**
+
+## 2026-08-20 — CAISO — caiso-208: Branch A executed (REST CONTINUES); full record re-verified on committed bytes at a HEAD that had moved — and the lane's own gate posture found STALE ON BOTH MATRIX SURFACES (v3.3 "TWO load-bearing FAILs" three days after rubric v3.4 made it ONE) and repaired; keeper unchanged, NOT-YET
+
+**Runs:** NONE. No solve, no probe, no LP, nothing registered — **rule 15
+attaches to completed runs and none was produced.** No mechanism tested, so
+**rule 28b does not attach and no cell verdict moves** (caiso-206/207 precedent).
+
+**Branch selection.** No owner funding order issued into this session, so
+caiso-203 **ruling 2 (FINAL)** governs and **Branch A** is the correct
+execution. The blocker is the finding, not an obstacle to route around: the
+in-model lever queue is empty with every cell adjudicated (caiso-185, re-confirmed
+188/191/202) and re-proven **by measurement** at caiso-205 — the last chartered
+lever came back **byte-identical in 2023/2025** (floor max $14.5 in 2024); *an
+inert arm is not a lever*. Neither standing tail-formation object closes C3a on
+its own arithmetic ((a) 62.1 %/10.4 % of the required 2024/2025 move at its most
+favourable bound; (b) direct λ share < 5 %), and no admissible in-model
+instrument of the required size (~$2–3/h broad sub-$60 level-down, caiso-202 §B)
+exists. Reaching the number through a §F-killed lever would be a rule-13 act;
+**NOT-YET is the honest fallback** (ruling 5).
+
+**Standing state reproduced item-for-item, exactly.** Keeper
+`2026-08-17-caiso-200-h1-memberpanel`; `calibration_verdict.py --run-id` →
+**NOT-YET**, basis *"undocumented out-of-tolerance (FAIL) criteria: price_mean"*;
+**C3a the SOLE load-bearing FAIL** (2023 PASS +4.1 %, 2024 **+12.8 %**, 2025
+**+15.7 %**, judged vs actual RT LMP only — caiso-203 ruling 1); **C3c the SINGLE
+ledgered caveat** (0h/47, 1h/35, 2025 PASS), the standing rule correctly silent
+because guard (a) is *lone failure only*; **C1 12/12 free 8/8**; C2/C3b/C4/C6/C8
+PASS. `audit_keepers --iso CAISO` **PASS 0/0**; `build_status --iso CAISO
+--check` in sync; **DOF 10/7**; CAISO absent from **both** `complete` and
+`final`; freeze **ACTIVE**; all three CAISO registrations present, tracked, years
+`[2023,2024,2025]` — **no out-of-training year touched**. Shard census unmoved:
+K 64 · U 32 · I 15 · R 9 · O 6 · G 5 (131 cells); `check_mechanism_matrix.py`
+exit 0, integrity OK, keeper stamps match.
+
+**THE NEW FACT, and it is why re-verifying beat carrying forward.** HEAD had
+advanced past the caiso-207 baseline (PR **#4160** vs the **#4154** the charter
+recorded). The keeper was **RE-SCORED UNDER RUBRIC v3.4 on 2026-08-18** (owner
+amendment — C1 volume band floored at 3 % of actual total generation, **±5.27
+TWh**), flipping **C1 FAIL → PASS** and the load-bearing count **TWO → ONE**.
+That re-score updated `keepers/CAISO.json` (commit **568699d**) but **neither
+matrix surface**: the CAISO shard's `gates` stamp and the §5.2 header both still
+read *"TWO load-bearing FAILs … 11/12, free 7/8"*. The caiso-204/205 shard
+touches of 2026-08-19 moved **cells** only and never re-stamped `gates`, so the
+drift survived three sessions — caiso-206 and caiso-207 each re-verified the
+*verdict* (both correctly reporting C1 12/12) without reading the *matrix text*
+back against it.
+
+**Materiality.** Consulting the matrix for an ISO's open-gate set is exactly what
+rule 28a DO-NOT-REDO and the lever-queue discipline require **before proposing a
+lever**. A reader doing that correctly would have read **C1 fuel-mix as an open
+failing gate inviting a lever** — when it is closed and C3a is the sole
+load-bearing failure.
+
+**Repaired in both places**, in this lane's standing *nothing-is-retracted* form:
+the promotion-time (2026-08-17, rubric v3.3) record retained **verbatim**, the
+live posture prepended to the shard stamp and annotated inline in the §5.2
+header. **The C1-2023 residual is UNCHANGED AS A PHYSICAL OBJECT** — the band
+shift changes what the rubric *charges* for it, not the physics — so the CC-side
+under-dispatch / over-import lane (caiso-121/135/140 §B) stays open exactly as
+before, and the caiso-200 measurement that only +0.003 TWh was instrument
+artifact is untouched. **Authority:** rule 28b does not attach (nothing tested);
+the **neiso-100** precedent (2026-08-18) is exact — a no-solve re-assessment
+refreshing its own ISO's `gates` stamp with no cell verdict moving; rule 25 clean
+(CAISO's own shard and §5.2 section only, shared base rows untouched).
+
+**Owner packet UNCHANGED at TWO items:** (1) fund a tail-formation object —
+neither (a) nor (b) closes C3a alone, so if a funding order issues the Branch B
+pre-registration must state up front what a **partial** close is worth and what
+verdict a partial earns; (2) **F-3** arming posture of
+`caiso_ra_mpb_capacity_anchor` — recommendation **keep default-OFF**, since
+FFR-4F's trap test fired (thermal built identical to the megawatt, 10,186.3 MW;
+only the label on 1,000 MW moves) and FC-2 row 4 improves solely by channel
+substitution.
+
+**Filed items:** item 1 (stale DOF text — `offer_curve_by_group` still reads
+`identification: "residual"`) **re-verified still open by direct read of the
+attestation's 10 entries**; items 2–4 carried; caiso-207 item 5 (program-wide
+stale registration citations from `cccc911`) stays routed **off-lane**. Each is
+fixable only at a session that produces a promotion.
+
+**DO-NOT-REDO** carried forward verbatim from caiso-206 §B / caiso-207 §5, plus:
+do not re-verify the v3.4 C1 re-score as though open, and do not read the
+retained v3.3 promotion-time blocks as live. New evidence still means exactly one
+thing — a keeper whose own scored path spikes.
+
+**Records:**
+`results/calibration/ASSESSMENT-caiso208-rest-continuation-2026-08-20.md`,
+matrix §5.2 caiso-208 block, the two repaired gate-posture surfaces, this entry.
+Keeper, markers, holdout freeze, DOF ledger, every matrix cell verdict, and every
+source file: UNCHANGED.
+
+**Lane REMAINS RESTED. Session consumed the caiso-208 shorthand. Next shorthand: caiso-209.**
