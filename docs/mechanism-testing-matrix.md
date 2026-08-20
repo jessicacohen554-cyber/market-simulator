@@ -936,7 +936,25 @@ rule-13-admissible mechanism available to carry it.
      no cost. That is a FORWARD settlement, not a cash spot, so it needs
      its own admissibility argument under rule 13 before it could stand in
      for a daily cash basis — screen it first (no LP), and only if it
-     passes does item 8 come back. **DO-NOT-REDO:** do not re-screen the
+     passes does item 8 come back. **▶ THE REOPEN SCREEN WAS RUN AND IS
+     NEGATIVE (ercot-224, 2026-08-20, precommitted, no LP): the condition
+     is FACTUALLY FALSE — CME/NYMEX delisted every Waha/HSC gas contract
+     before the training span** (Waha basis NW delisted entirely
+     2020-12-07 per SER-8689, HSC basis NH/NHN 2022-01-10 per Chadv
+     22-008, both on ZERO open interest; the swing/index families IY/SY/
+     HIP/SMN removed from Globex Oct-2017 in the SER-8000 Platts-complex
+     cull; no live Waha/HSC product on cmegroup.com as of 2026-08-20).
+     Recorded for any future forward-market proposal: even a live basis
+     future settles to the MONTHLY Inside-FERC differential, so its daily
+     mark cannot resolve the daily cash-basis confound (the screen's B3
+     presumption, confirmed in kind). **Item 8's closure is therefore
+     effectively UNCONDITIONAL pending owner action** — reopening now
+     requires a new free daily source (none known) or the owner reversing
+     the 2026-08-04 no-paid-daily-gas decision (the instrument lives only
+     on ICE). Do NOT re-screen the CME route without a new listing.
+     Evidence: `docs/FINDING-ercot224-item8-cme-screen-2026-08-20.md`,
+     `results/calibration/ercot224_cme_basis_screen.json`.
+     **DO-NOT-REDO:** do not re-screen the
      free EIA/ERCOT paths, and **never substitute Henry Hub** — ERCOT-147 §3's
      confound is precisely that 63–67 % of CT capacity's daily p50 sits below
      its own sheet-HR × HH burn, so a HH stand-in assumes away the object.

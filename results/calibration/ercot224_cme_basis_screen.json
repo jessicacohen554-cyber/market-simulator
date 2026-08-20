@@ -1,0 +1,91 @@
+{
+  "session": "ercot-224",
+  "precommit": "docs/PRECOMMIT-ercot224-item8-cme-screen-2026-08-20.md",
+  "generated": "2026-08-20T05:53:46.134627+00:00",
+  "evidence": [
+    {
+      "leg": "A1",
+      "doc": "Delisting and Removal of Platts Natural Gas Products",
+      "url": "https://www.cmegroup.com/notices/electronic-trading/2017/10/delplatts.pdf",
+      "doc_date": "2017-10 (SER-8000 track, dated 2017-10-16 per SER-8689)",
+      "retrieved": "2026-08-20",
+      "finding": "Entire Platts regional NG complex removed from CME Globex. Waha rows: 'Waha Natural Gas (Platts Gas Daily/Platts IFERC) Index Futures' (IY), 'Waha Natural Gas (Platts Gas Daily) Swing Futures' (SY), 'Waha Natural Gas (Platts IFERC) Fixed Price Futures' (WFS), 'Waha Texas Basis Swap Options' (A5O). HSC rows: 'Houston Ship Channel Natural Gas (Platts Gas Daily/Platts IFERC) Index Futures' (HIP), '... (Platts Gas Daily) Swing Futures' (SMN), '... (Platts IFERC) Fixed Price Futures' (XJT), '... (Platts IFERC) Basis Option' (5F)."
+    },
+    {
+      "leg": "A1",
+      "doc": "SER-8689: Delisting of Six (6) Natural Gas (Platts IFERC) Futures Contracts",
+      "url": "https://www.cmegroup.com/notices/ser/2020/12/SER-8689.pdf",
+      "doc_date": "2020-12-07",
+      "retrieved": "2026-08-20",
+      "finding": "Verbatim: 'Effective today, Monday, December 7, 2020, [NYMEX] delisted six (6) natural gas (Platts IFERC) futures contracts ... There is no open interest in the Contracts.' Row: 'Waha Natural Gas (Platts IFERC) Basis Futures', rulebook ch. 634, ClearPort NW, Globex NW. Also: 'The Exchange previously notified market participants ... (see SER 8000 dated October 16, 2017). At that time, the Exchange advised that December 2021 would be the Contracts' last listed month.'"
+    },
+    {
+      "leg": "A1",
+      "doc": "CME Clearing Advisory 22-008: Delisting of Houston Ship Channel Natural Gas (Platts IFERC) Basis Futures",
+      "url": "https://www.cmegroup.com/notices/clearing/2022/01/Chadv22-008.pdf",
+      "doc_date": "2022-01-11 (effective 2022-01-10)",
+      "retrieved": "2026-08-20",
+      "finding": "Verbatim: 'Effective January 10, 2022, [NYMEX] delisted Houston Ship Channel Natural Gas (Platts IFERC) Basis Futures (Clearing Code NH/Globex Code NHN) from CME Globex and CME ClearPort. There is currently no open interest in this product.'"
+    },
+    {
+      "leg": "A1",
+      "doc": "SER-6358: Listing of 149 Existing Natural Gas Futures Contracts on CME Globex (product-code census only)",
+      "url": "https://www.cmegroup.com/tools-information/lookups/advisories/market-regulation/SER-6358.html",
+      "doc_date": "2012 (effective 2012-09-30)",
+      "retrieved": "2026-08-20",
+      "finding": "Pins the code census this screen adjudicated: Waha basis NW, index IY, swing SY; HSC basis NH/NHN, index IP/HIP, swing SM/SMN. Every one of these appears in a later removal/delist notice above; none has a live cmegroup.com product page as of 2026-08-20."
+    },
+    {
+      "leg": "B1",
+      "doc": "NYMEX basis-futures settlement construction (contract descriptions, e.g. Barchart JNW* spec text mirroring the NYMEX rulebook)",
+      "url": "https://www.barchart.com/futures/quotes/JNWK20/futures-prices",
+      "doc_date": "n/a (spec text)",
+      "retrieved": "2026-08-20",
+      "finding": "'Basis Futures are monthly cash settled ... based upon the mathematical result of subtracting the price of the NYMEX Henry Hub Natural Gas Futures Contract from the monthly price published by Inside FERC for the location specified.' A forward on a MONTHLY index differential - the precommit B3 default presumption stands: a daily settlement of a monthly-average forward cannot resolve intra-month daily cash-basis variation (the ERCOT-147 \u00a73 confound object)."
+    },
+    {
+      "leg": "context",
+      "doc": "ICE Waha Basis Future (live venue for the instrument)",
+      "url": "https://www.ice.com/products/6590171/Waha-Basis-Future",
+      "doc_date": "live listing",
+      "retrieved": "2026-08-20",
+      "finding": "The surviving Waha/HSC basis daily markets are ICE's - paid data, out of the precommit's scope, and materially the same owner licensing decision already refused 2026-08-04 (NO PAID DAILY GAS DATA)."
+    }
+  ],
+  "verdict": {
+    "A1_exists": "FAIL - both hubs, both families (F1 basis, F2 swing/index)",
+    "A2_current_settlements_free": "MOOT (no product)",
+    "A3_history_2023_2025_free": "MOOT (no product listed at any point in 2023-2025; Waha basis delisted 2020-12-07, HSC basis 2022-01-10, swing/index families removed 2017-10 - and the final listed years carried ZERO open interest, so even archived settlements would be no-trade marks)",
+    "A4_licence": "MOOT",
+    "B1_instrument_is": "F1 = forward on the MONTHLY Inside-FERC index differential vs the NYMEX HH last-day settle (recorded; confirms the B3 presumption)",
+    "B2_rule13": "NOT ADJUDICATED (unreached; A1 failed)",
+    "B3_fidelity": "NOT ADJUDICATED (unreached); the recorded default presumption - a monthly-average forward cannot carry realized DAILY cash-basis variation - stands as the bar any future forward-market reopen proposal must clear IN ADDITION to existence",
+    "item_8": "STAYS CLOSED - the sole recorded reopen condition is factually FALSE. Closure is now effectively unconditional pending owner action: no free CME/NYMEX route exists; the instrument lives only on paid venues (ICE) already covered by the 2026-08-04 owner refusal."
+  },
+  "transport_checks": [
+    {
+      "url": "https://www.cmegroup.com/notices/electronic-trading/2017/10/delplatts.pdf",
+      "error": "ReadTimeout: HTTPSConnectionPool(host='www.cmegroup.com', port=443): Read timed out. (read timeout=45)"
+    },
+    {
+      "url": "https://www.cmegroup.com/notices/ser/2020/12/SER-8689.pdf",
+      "error": "ReadTimeout: HTTPSConnectionPool(host='www.cmegroup.com', port=443): Read timed out. (read timeout=45)"
+    },
+    {
+      "url": "https://www.cmegroup.com/notices/clearing/2022/01/Chadv22-008.pdf",
+      "error": "ReadTimeout: HTTPSConnectionPool(host='www.cmegroup.com', port=443): Read timed out. (read timeout=45)"
+    },
+    {
+      "url": "https://www.cmegroup.com/tools-information/lookups/advisories/market-regulation/SER-6358.html",
+      "error": "ReadTimeout: HTTPSConnectionPool(host='www.cmegroup.com', port=443): Read timed out. (read timeout=45)"
+    },
+    {
+      "url": "https://www.barchart.com/futures/quotes/JNWK20/futures-prices",
+      "status": 403
+    },
+    {
+      "url": "https://www.ice.com/products/6590171/Waha-Basis-Future",
+      "status": 200
+    }
+  ]
+}
