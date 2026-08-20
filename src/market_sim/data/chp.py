@@ -295,6 +295,36 @@ def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None, float |
 # ---------------------------------------------------------------------------
 
 
+@lru_cache(maxsize=2)
+def measured_chp_btm_pct_nyiso() -> dict[int, float]:
+    """Measured NYISO per-plant CHP BTM electric share (% of nameplate).
+
+    The nyiso-147 rule-23 artifact
+    ``data/raw/_processed-legacy/chp_btm_share_measured_NYISO.csv``
+    (:mod:`scripts.data.derive_nyiso_chp_btm_share`): per plant,
+    ``100 x clip(1 - Gold Book net energy / EIA-923 net generation, 0, 1)``
+    pooled CY2022-2024 — the plant's own two published meters, so the share
+    regenerates every year and responds to changed host arrangements
+    (rule 13 [R-MEASURED]). Consumed only under
+    ``ScenarioConfig.nyiso_chp_btm_measured`` (NYISO-only, rule 25
+    [R-ISO-SCOPE]); a plant absent from the artifact (no Gold Book station —
+    a non-market campus/industrial cogen) keeps the :func:`chp_btm_pct`
+    sector default. Empty when the artifact is absent, so the caller falls
+    back to the default and an armed run without the artifact fails loud in
+    the fleet build rather than silently reverting.
+    """
+    path = PROCESSED_DIR / "chp_btm_share_measured_NYISO.csv"
+    if not path.exists():
+        logger.warning(
+            "nyiso_chp_btm_measured armed but %s is absent — "
+            "run scripts/data/derive_nyiso_chp_btm_share.py",
+            path,
+        )
+        return {}
+    df = pd.read_csv(path)
+    return {int(r.plant_code): float(r.btm_pct) for r in df.itertuples(index=False)}
+
+
 def chp_btm_pct(plant_code: int, group: str, iso: str = "ERCOT") -> float:
     """Behind-the-meter pull-out share (% of nameplate) for a CHP plant.
 

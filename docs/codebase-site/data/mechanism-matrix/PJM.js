@@ -98,6 +98,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     cc_mustrun_per_plant: { cell: "K" },
     winter_fuelsec_posture: { cell: "." },
     chp_steam_following: { cell: "K", ev: "pjm-148 (results/calibration/FINDING-pjm148-chp-host-steam-refused-2026-08-03.md) — host-steam successor lane REFUSED, no LP spent" },
+    chp_btm_measured: { cell: "U", ev: "row minted at nyiso-147 with the field (rule 28c); never armed here. Rule 25/28(d): the NYISO two-meter identity transfers nothing — this lane derives its own settlement-vs-EIA-923 share from its own market's meters before arming" },
     netload_drag_floors: { cell: "K" },
     ramp_envelopes: { cell: "K", ev: "pjm-139 W7 (no-LP pre-check FIRES; cell stayed U pending a solve) + PREREG-pjm140-ramp-envelopes-2026-07-30 + pjm-140 A/B (2026-07-30-pjm-140-control / 2026-07-30-pjm-140-rampenv) -> K, FINDING-pjm140-ramp-envelopes-remove-infeasible-ramping-but-not-the-price-shape-2026-07-30" },
     forced_share_d4_census: { cell: "I", ev: "xiso-3 §4 (CT_PEAKER ×3 + ST_GAS-2025 grounded above budget, 0.0% off-window, D-1 clear)" },

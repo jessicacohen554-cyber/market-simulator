@@ -638,6 +638,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_plant_min_run",
     "nyiso_gas_bridge_online_hours",
     "nyiso_gas_bridge_state_floor_min_run",
+    # Measured CHP behind-the-meter electric share (nyiso-147): inert at its
+    # default (off — the measured artifact is not read), so it is dropped
+    # from the hash at default and every pre-existing cache key is
+    # byte-stable; an armed run enters the key as a distinct scenario.
+    "nyiso_chp_btm_measured",
     # Reserve-duty CC offer split (nyiso-146): inert at its default (off — the
     # bins frame is byte-identical and the artifact is not even read), so it
     # is dropped from the hash at default and every pre-existing cache key is
@@ -1245,6 +1250,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_bridge_plant_min_run": "False",
     "nyiso_gas_bridge_online_hours": "False",
     "nyiso_gas_bridge_state_floor_min_run": "False",
+    "nyiso_chp_btm_measured": "False",
     "cc_reserve_duty_split": "False",
     "ercot_gas_bridge_online_hours": "False",
     "forecast_xyear_warmstart": "True",
@@ -5103,6 +5109,27 @@ class ScenarioConfig:
     # population-gap separator, the membership a frozen measured artifact —
     # rules 5/21/23). Default off so the unscoped arm stays reproducible.
     nyiso_gas_bridge_state_floor_min_run: bool = False
+    # Measured NYISO CHP behind-the-meter electric share (nyiso-147). The
+    # chp_steam_following LP carve sizes a CHP plant's grid capacity as
+    # nameplate x (1 - BTM share) with the share from the sector-keyed
+    # constants.CHP_BTM_PCT_BY_SECTOR default ("merchant" 35.0 — its own
+    # comment: "residual-identified ... no independent source yet"). This
+    # flag replaces the default with the MEASURED per-plant share
+    # 1 - (NYISO Gold Book Table III-2a net energy / EIA-923 net generation),
+    # pooled CY2022-2024, from the rule-23 artifact
+    # data/raw/_processed-legacy/chp_btm_share_measured_NYISO.csv
+    # (scripts/data/derive_nyiso_chp_btm_share.py). Both meters are published,
+    # regenerate every year and respond to changed host arrangements (rule
+    # 13); the sector default is refuted by the plants' own market meters —
+    # Sithe Independence (54547) delivers 100.3% of its EIA-923 net to the
+    # NYISO grid (BTM 0, not 35%), and Brooklyn Navy Yard's carved capacity
+    # implies CF 1.07 against its own metered delivery (impossible). Consumed
+    # consistently by the three legs that share the default: the fleet-build
+    # capacity carve (data/fleet/assembly.py), the BTM add-back
+    # (run_calibration_full._btm_frame) and the benchmark classFull
+    # subtrahend built from it. NYISO-only (rule 25); default off so every
+    # other ISO and every existing NYISO recipe is byte-identical.
+    nyiso_chp_btm_measured: bool = False
     nyiso_spin_reserve_online: bool = False  # NYISO online-gated PUBLISHED
     # spinning families (nyiso-84, the mechanism arm): re-classes the published
     # NYCA 10-minute spinning family (655 MW, $775) — and east_10min_spin (330
@@ -13714,6 +13741,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_gas_bridge_plant_min_run": 1,
     "nyiso_gas_bridge_online_hours": 1,
     "nyiso_gas_bridge_state_floor_min_run": 1,
+    "nyiso_chp_btm_measured": 1,
     "nyiso_gas_bridge_cc_min_run_hours": 2,
     "nyiso_gas_bridge_st_min_run_hours": 2,
     "nyiso_gas_bridge_ct": 1,

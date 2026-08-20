@@ -414,6 +414,20 @@ def bins_to_fleet(
                 str(b["Plant_Group"]),
                 iso=getattr(config, "iso", "ERCOT"),
             )
+            # nyiso-147: replace the sector-keyed default with the plant's
+            # own measured Gold-Book/EIA-923 grid-delivery share where the
+            # rule-23 artifact carries it (rule 14 [R-ACCURATE] — the
+            # "merchant" 35% default is refuted by the market meter for the
+            # large NYISO merchant cogens; Sithe Independence measured ~0).
+            if (
+                getattr(config, "nyiso_chp_btm_measured", False)
+                and getattr(config, "iso", "ERCOT") == "NYISO"
+            ):
+                from market_sim.data.chp import measured_chp_btm_pct_nyiso
+
+                _measured = measured_chp_btm_pct_nyiso()
+                if int(b["Plant_Code"]) in _measured:
+                    pct_mr = _measured[int(b["Plant_Code"])]
         # Petra Nova runs on its own classification (see PETRA_NOVA_* above):
         # one tranche at the capture train's net capacity, forced to
         # PETRA_NOVA_MIN_CF whenever the outage overlay says it is up. No
