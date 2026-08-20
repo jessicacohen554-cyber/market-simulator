@@ -7857,3 +7857,17 @@ Rule 22: 2023–2025 only; freeze untouched; no marker touched. Carry-forward
 in this session), the 1402 per-year `online_frac` successor (MISO's sole C8
 blocker — own prereg, own A/B), the Ames (1122) p25-level basis, and the two
 C8 rubric design questions (owner). Next number: **miso-172**.
+
+**miso-171 ADDENDUM (same session): carry-forward (a) EXECUTED.** The D-4
+plant-grain class-attribution defect is repaired at unit grain
+(`FloorClassMatrix`, maximum-composition floor class; scorer-only, no LP) and
+every designated keeper re-scored before/after: **zero determination flips in
+any ISO** — MISO's attribution moves (~0.3 TWh/yr ST_GAS/CC → CT_PEAKER,
+zero C8 record flips; 1402/C8-2023 stands, as expected), PJM's regen-baseline
+C8 CT_PEAKER records flip FAIL→PASS (the mirror-image mis-attribution,
+un-convicted). Cross-ISO record and the disclosed pre-existing
+regenerated-vs-committed exposure (PJM ST_GAS-2025): see
+`RESULT-miso171-d4-attribution-repair-2026-08-20.md` and
+`docs/calibration-log/governance.md` (2026-08-20 entry). Items (b) 1402
+per-year `online_frac`, (c) Ames p25 basis, (d) the two C8 rubric design
+questions remain RAISED, not decided (RESULT §5).
