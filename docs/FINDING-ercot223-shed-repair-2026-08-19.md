@@ -122,18 +122,85 @@ story and the not-a-shed-hour-patch argument: precommit §1.
 
 ## 6. Phase-1 A/B under the precommit §3 kill table
 
-*(completed after the solves; see §7 for the gate table and verdict)*
-
 - **Control** = the CURRENT keeper recipe replayed at HEAD via
-  `scripts/replay_keeper.py` (per-year process chain), G-REPRO verified
-  sha256-identical to the committed `ercot221_adaptive_B` sidecars BEFORE
-  the arm was read.
-- **Arm** = the identical replay + `--set ercot_adaptive_event_release=true`.
+  `scripts/replay_keeper.py` (per-year process chain, 2023 → 2024 → 2025
+  with `--reuse-solved` byte-copies), registered
+  `2026-08-20-ercot223-ctl-headbase`
+  (`results/calibration/ercot223_control_replay`).
+- **Arm** = the identical replay + the single delta
+  `--set ercot_adaptive_event_release=true`, registered
+  `2026-08-20-ercot223-arm-eventrelease`
+  (`results/calibration/ercot223_release_arm`).
+- **G-REPRO, both legs recorded honestly.** The precommit pinned
+  "sha256-identical to the committed `ercot221_adaptive_B` sidecars". As
+  measured BEFORE the arm was read:
+  - **Edit-inertness leg — PASS in the strongest form:** a replay at pure
+    `origin/main` 9c3e45c (no ercot-223 edit) is **7/7 hourly sidecars
+    sha256-identical** to the HEAD control replay, so the guard code is
+    byte-inert with the flag off.
+  - **Committed-bundle byte-identity leg — FAIL on pre-existing main
+    drift** (commits 41cc6f1 → 9c3e45c, which this session merged on the
+    owner's instruction; NOT this session's edit, per the leg above). The
+    drift's character, measured: the `adaptive_*` sidecars (pass-1 path,
+    P̂, floors) are byte-identical in all three years; 2024
+    slack/shed rows and every reserve-family balance reproduce EXACTLY
+    (shed set {3066: 17.887106, 3067: 600.157866} to 1e-6; reserve duals
+    to 1e-13); prices reshuffle within degenerate ties (2024
+    demand-weighted mean 29.14 → 29.22, +0.25 %); and the OFFICIAL
+    scorecard is IDENTICAL to the keeper's (C3a-2023 −39.4 %, C3b-2023
+    0.723). The A/B is therefore internally coherent at HEAD with the
+    keeper's exact baselines.
 
-## 7. Gates and verdict
+## 7. Gates and verdict (`results/calibration/ercot223_gates.json`)
 
-*(to be completed from `results/calibration/ercot223_gates.json`)*
+| gate | result | verdict |
+|---|---|---|
+| G-CAP | 0 violations in 26,280 h | PASS |
+| G-SPUR | 2023 11 (+2 vs 9), 2024 11 (+0 vs 11), 2025 1 (+0) — bar ≤ +5/yr | PASS |
+| **G-SHED (tightened)** | **arm shed sets {} / {3067} / {} — the manufactured h3066 is GONE; zero new shed vs the ORIGINAL 0/1/0** | **PASS** |
+| G-OWNER | C3a-2024 PASS, C3a-2025 PASS, C3b-2024 PASS on the official scorecard — all retained | PASS |
+| G-BAT | within ±25 % of EIA-930 BAT at tail hours (2024/2025) | PASS |
+| G-DOF | ledger delta = the ONE boolean; 9 entries both members, zero residual-sourced; `n_residual` flat | PASS |
+| G-D2 | `ercot_storage_adaptive_expectation` attribution row present; D-4 rows identical | PASS |
+| G-REPRO | edit-inertness 7/7 sha-identical (pure-main vs HEAD); committed-bundle leg failed on pre-existing drift, attributed §6 | PASS (as attributed) |
+| LOYO / G-SAFE | zero new fitted scalars ⇒ LOYO N/A; 2025 arm ≡ control **5/5 sidecars sha256-identical** (the guard can only remove floors; 2025 has none) | as declared |
+
+**Mask breadth realized = the Phase-0 pre-measurement exactly:** 2023
+8/776 floored hours masked, 2024 5/568 (the {3065, 3066, 3067} kill window),
+2025 zero. The May-8 dispatch reverts precisely as the §3 economics
+predicted: the h3065 top-up charge returns (218.7 MW), h3066 discharge
+1,994 → 2,189 MW, and the 17.887 MW slack is gone. h3068 keeps its floor
+(pass-1 settle $675 < $1,000) so the 938 MWh h3068→h3069 re-timing
+persists — priced, not shed.
+
+**Side-effects at full magnitude (Q-B FINAL / R-A — never a gate):**
+official C3a-2023 −39.4 → **−39.7 %**, C3b-2023 0.723 → **0.729** (the 8
+masked 2023 hours were the ≥$1,000 evenings where the ≤$1,850 floor had
+been adding level); probe basis −29.78 → −29.99 %. 2024: C3b 2.3572 →
+2.3519 (slightly better), C3a +8.91 → +8.94 %. 2025 byte-identical. C3c
+ledgered CAVEAT ×3 carried (74/181, 22/53, 1/31). Determination:
+**NOT-YET, fail set {C3a-2023 −39.7 %, C3b-2023 0.729}** — the keeper's
+determination basis exactly in kind.
+
+**VERDICT: KEEPER-CANDIDATE, mechanical — every pre-registered gate
+passes.** Unlike the ercot-221 promotion, this one carries no gate
+regression to override: the repair clears the keeper's one failing kill
+gate and retains everything else.
 
 ## 8. Disposition
 
-*(to be completed)*
+**PROMOTED → keeper `2026-08-20-ercot223-arm-eventrelease`** on the
+owner's in-session instruction ("Is this a recommended keeper candidate?
+If so plz promote"), with the recommendation affirmative on the mechanical
+record itself. Keeper shard re-keyed, `build_status --iso ERCOT` rebuilt,
+`calibration-keeper-auditor` PASS (0 failures, 0 warnings). ERCOT holds no
+`complete` marker, so no `calibration-complete.json` re-key (D-5(b) not in
+scope). Matrix: the `ercot_storage_adaptive_expectation` ERCOT cell keeps
+K with the ercot-223 evidence appended (no new row — the guard field is
+registered on the family row's `def:`, rule 28c), keeper + §5.1 header
+re-stamped. The ercot-221 REJECTED-AS-ARMED record and the ercot-222 seed
+refutation stand unrewritten. The depth ceiling (bootstrap starvation, 7
+vs 23 spike days) and the 117 missed-hour count half remain with Door D —
+this repair changes neither; ERCOT bandwidth returns to the Door-D hold
+and the R-A re-pointed queue (standing alternatives: the item-8 CME/NYMEX
+basis-swap screen; the G-SPUR band-top blindness owner gate revision).

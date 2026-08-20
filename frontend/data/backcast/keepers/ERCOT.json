@@ -1,6 +1,6 @@
 {
  "iso": "ERCOT",
- "keeper": "2026-08-19-ercot221-arm-adaptive",
+ "keeper": "2026-08-20-ercot223-arm-eventrelease",
  "standing_note": {
   "declared": "2026-08-16",
   "signature": "X-2 SIGNED (owner, by dispatch of REPORTING-TEXT-1, 2026-08-16) \u2014 card X item X-2, Door C of docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md \u00a73. Reporting surface only: the determination, the rubric constants (LEDGERABLE_CRITERIA, MAX_LEDGERED_CAVEATS, the v3.0 tier guard), the C3c ledger and every scored number are UNTOUCHED, and the misses keep reporting at full magnitude. NOT a signature of R-B's rubric half; Q-B FINAL (DECISION-CARD-ercot189) and R-A (DECISION-CARD-ercot193) are cited and unchanged.",

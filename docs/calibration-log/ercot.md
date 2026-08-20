@@ -10779,3 +10779,82 @@ docs/FINDING-ercot222-crossyear-seed-2026-08-19.md.
 
 **Session consumed the ercot-222 shorthand. Next shorthand: ercot-223**
 (ercot-199 remains unclaimed).
+
+---
+
+## ercot-223 — 2026-08-19/20 — THE KEEPER SHED REPAIR: Phase-0 measures the manufactured May-8-2024 h3066 shed to the identity level (offer-as-cost debases the storage SOC shadow against the co-opt's floor-free reserve-headroom value); the EVENT-REALIZED RELEASE guard (zero new numeric constants) clears it with ALL pre-registered gates PASSING → **PROMOTED, KEEPER `2026-08-20-ercot223-arm-eventrelease`** — the first ERCOT promotion since ercot-188 whose mechanical verdict is itself KEEPER-CANDIDATE
+
+**Branch `claude/ercot-223-keeper-shed-8iztwv`. Precommit
+`docs/PRECOMMIT-ercot223-event-release-guard-2026-08-19.md` pushed +
+blob-verified BEFORE any solve; executed as written.** Keeper at dispatch:
+`2026-08-19-ercot221-arm-adaptive` (owner-promoted over the recorded
+G-SHED REJECTED-AS-ARMED; the shed became a keeper defect this session
+repairs).
+
+**Phase-0 (read-only, committed artifacts, no LP —
+`scripts/probes/ercot223_shed_phase0.py` →
+`results/calibration/ercot223_shed_phase0.json`), every identity closing
+to numerical precision:** the shed is a SYSTEM-level 17.887 MW shortage at
+h3066 (zonal prices uniform at VOLL; the South booking is solver
+placement). Candidate discrimination: **(c) co-opt interaction in a precise
+form, transmitted through (a) re-timing; (b) the measured AS overlays are
+identical across the A/B and discriminate nothing.** The reserve co-opt
+counts storage upward headroom (cap − Dis + Chg) as reserve supply
+(`model/lp/reserve_rows.py`, pooled spec); the adaptive floor enters as a
+discharge COST, so it debases the fleet's private SOC shadow μ one-for-one
+while the reserve-side headroom value σ carries no floor: at h3066
+μ = η·(λ − cost − σ) collapses **$575.6 → $184.4/MWh**, the control's
+h3065 pre-peak top-up flips **+78.5 → −224.5 $/MWh** (so 218.7 MW of
+charge disappears), 195.1 MW of storage energy swaps into reserve-counted
+headroom at the kill hour (**ΔNonSpin-held == shed == 17.887 MW exact**;
+CT_PEAKER backfill exhausts at +177.3 MW), and the arrives-empty story is
+FALSE — both runs exit h3067 pinned at the measured AS-backing freeze
+(3,091.5 MWh), the post-window discharges being exactly the η-scaled
+freeze releases (ctl 938.3/127.4 at h3068/h3069; arm 1,065.7 bundled at
+h3069 on the h3068 co-opt merit-order flip: floored margin 271.6 < σ
+419.2 where the unfloored 663.4 > σ).
+
+**The repair (rule 17 structural yield): `ercot_adaptive_event_release`**
+— mask the pass-2 floor at in-window hours whose pass-1 settle basis (the
+mechanism's own event-detector series) ≥ `ERCOT_ADAPTIVE_EVENT_USD`
+($1,000, the existing frozen constant — ZERO new numeric constants, one
+default-off boolean registered at all four nyiso-119 cache-key points).
+The conduct is "withhold in anticipation OF the spike"; at hours the
+model's own pass-1 path marks the spike realized, a cleared offer does not
+withhold physical energy (the real May-8-2024 evening: RT $2,451, the
+fleet discharged, no shed). Surgical: 8/776 (2023) and 5/568 (2024)
+floored hours masked — the {3065–3067} kill window exactly — 2025
+untouched.
+
+**A/B (pair `2026-08-20-ercot223-{ctl-headbase,arm-eventrelease}`, both
+registered WITH payloads): ALL PRECOMMIT-ercot223 §3 gates PASS.**
+G-SHED TIGHTENED: arm shed 0/{3067}/0 — the manufactured h3066 GONE, zero
+new shed vs the ORIGINAL 0/1/0. G-CAP 0/26,280; G-SPUR 11/11/1 vs 9/11/1;
+G-BAT PASS; G-D2 PASS; G-DOF delta = the one boolean (9 entries both,
+zero residual-sourced); G-OWNER retained; 2025 arm ≡ ctl 5/5
+sha-identical (G-SAFE); LOYO N/A (zero new fitted scalars). **G-REPRO
+recorded honestly in both legs:** edit-inertness the strongest form — a
+pure-`origin/main` replay is 7/7 sidecars sha256-identical to the HEAD
+control, the guard byte-inert flag-off; the committed-bundle byte-identity
+leg FAILS on PRE-EXISTING main drift (41cc6f1..9c3e45c: adaptive floors
+byte-identical all years, 2024 slack/shed + reserve balances EXACT to
+1e-6, prices reshuffled within degenerate ties ±0.25 % dw-mean, official
+scorecard IDENTICAL to the keeper — C3a-2023 −39.4 %, C3b 0.723).
+Side-effects at full magnitude (never a gate): official C3a-2023 −39.4 →
+−39.7 %, C3b-2023 0.723 → 0.729 (the 8 masked ≥$1k evenings), 2024
+slightly better C3b, 2025 byte-inert; C3c ledgered CAVEAT ×3 carried;
+determination NOT-YET {C3a-2023, C3b-2023} — the keeper's basis exactly.
+
+**PROMOTION:** executed on the owner's in-session instruction, the
+recommendation affirmative on the mechanical record itself (no gate
+regression to override — unlike ercot-221/213/215/188). Keeper re-keyed,
+status rebuilt, auditor PASS 0 failures/0 warnings. Matrix: the
+`ercot_storage_adaptive_expectation` cell keeps K with the ercot-223
+evidence appended (guard field on the family row's `def:`, rule 28c);
+keeper + §5.1 header re-stamped. Door D unchanged (the depth ceiling and
+the 117-hour count half are untouched by this repair); ERCOT bandwidth
+returns to the Door-D hold and the R-A re-pointed queue. Full record:
+`docs/FINDING-ercot223-shed-repair-2026-08-19.md`.
+
+**Session consumed the ercot-223 shorthand. Next shorthand: ercot-224**
+(ercot-199 remains unclaimed).
