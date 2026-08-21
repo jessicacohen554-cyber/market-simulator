@@ -7380,3 +7380,89 @@ idle/lay-up membership + CC_CHP conduct; the 2025 level object. Runs
 `RESULT-nyiso147-chp-btm-ab-2026-08-20.md`,
 `FINDING-nyiso147-upstate-price-root-cause-2026-08-20.md`,
 `_nyiso147_ab_gates.json`.
+
+## 2026-08-21 — nyiso-148: frontier re-statement; the CHP lay-up duty split REJECTED-AS-ARMED, and the 2025 level proven NOT a CHP object
+
+**Keeper unchanged** (`2026-08-19-nyiso-146c-state-scoped`), re-verified
+**CALIBRATED** at HEAD on committed artifacts and on the miso-171 scorer
+(`audit_keepers --iso NYISO` PASS 0/0; the unit-grain attribution repair adds
+three `ST_CHP × chp_steam` rows — forcing previously mis-credited to `CT_CHP` —
+and shifts bridge shares ≤ 0.3 pp, flipping no C8 record and no determination).
+Holdout freeze ACTIVE; 2023–2025 only.
+
+**Part 1 — frontier.** `ASSESSMENT-nyiso148-frontier-2026-08-21.md` supersedes
+nyiso-145 as NYISO's live frontier statement. **Still NOT-YET, but the queue
+changes in KIND**: nyiso-145's two lane-sized objects collapse to ONE with a
+PROVEN cause (the 35 % residual-identified merchant CHP BTM carve, refuted by
+the plants' own market meters) blocked on an unbuilt representation of CHP
+conduct. Recorded for the first time, and it governs how the keeper's own
+numbers may be read: the keeper's C3a-2025 **“pass” (−2.2 %) is ~$6/MWh of
+MASKED under-pricing**, and the model carries essentially **no zonal gradient**
+(< $1.5 across five zones in 2024/2025 against actual $9–15) — Upstate_West
++11.4/+10.8 % cancelled by NYC −4.4/−7.4 % and LI −9.5/−11.4 %. True as scored
+on the load-weighted mean; no longer quotable as a validated 2024/2025 level.
+`complete` HELD and correctly not re-keyed (no promotion); `final` **NOT-YET on
+the merits** — no 2026 reserve-requirements file, no 2019 NYISO LMP file and
+2019 carries one actual RT hour > $300 so it cannot discriminate on C3c, and
+the fleet a touch-once spend would burn is now known to be misspecified.
+
+**Part 2 — the lever.** Phase 0 (`_nyiso148_chp_conduct_phase0.json`, no LP)
+measured the CHP fleet's own CAMPD/EIA-923 conduct **before** the construction
+was chosen. The nyiso-140/144 zero-cell criterion applied beyond the bridge's
+`(CC_REGULAR, ST_GAS)` population selects 10 of 20 CAMPD-covered CHP plants —
+and the measurement **forced a guard**: three of those ten (RED-Rochester 10025,
+Ticonderoga 54099, Cornell 50368) are **CAMPD-INVISIBLE, not idle** (p99.5 HSL
+= 0.0 MW against 439–950 GWh of EIA-923 net), so the census must ABSTAIN where
+the meter is silent. That is a degeneracy test, not a threshold, so the leg
+stays zero-DOF. Seven qualifiers remain, separating 18/18 against a nearest
+non-qualifier of 13/18.
+
+New default-off `ScenarioConfig.chp_layup_duty_split` (+ census artifact and
+derive script) routes that cohort's CHP tranches to the class peak band — the
+`cc_reserve_duty_split` construction, disjoint by class scope, zero new scalars.
+**REJECTED-AS-ARMED** on its own gates: D-K1/D-K2/D-K4 PASS; D-K3 (overkill),
+D-K5 (C1-2024 `CC_REGULAR` PASS → FAIL at share **+3.04 pp** vs ±3 pp; the TWh
+leg still passes at +3.22 of ±3.98) and D-K6 (2025 recovers **18.9 %** of the
+base's −12.2 %, bar ≥ 40 %) FAIL.
+
+**What it buys** — substantial, and why the rejection is worth reading: CC_CHP
+volume lands **+0.23 TWh (2023) / +0.03 TWh (2024)** against a base of
++1.52/+1.53; CC_REGULAR-2023 share goes to −0.0 pp; against the base **C3a-2025
+FAIL→PASS, C3b-2025 FAIL→PASS and C8 FAIL→PASS** (the base's D-2 `ST_GAS`-2024
+30.4 % forced-share failure is cleared); C3a-2023 reads **+3.4 %** against the
+keeper's +8.7 %, i.e. the nyiso-147 upstate repair carried.
+
+**The two findings that reject it.** (1) **Energy is CONSERVED**: removing
+1.29/1.50/1.68 TWh of CC_CHP moves the gas family total by −0.01/−0.11/−0.02 TWh
+— the load is re-served by CC_REGULAR (+0.60/+0.76/+0.76), ST_GAS
+(+0.46/+0.48/+0.61), CT_PEAKER and imports at almost the same offer — so the
+price moves only +$0.63/+$0.79/+$1.50 and **the 2025 −12.2 % survives removing
+the entire CHP phantom**. The 2025 dear-gas level is therefore an **OFFER-LEVEL**
+object, not a capacity or membership one: $1.50 of the $8.07 gap is recoverable
+here, **$6.57 is a different object** (owner card
+`docs/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md`). Do not scope
+CHP membership work against the 2025 level. (2) **One band cannot make a graded
+response**: the cohort goes bang-bang — essentially OFF in 2023/2024 (Selkirk
+2.01×/6.78× → 0.03×/0.04× of its own meter) and STILL OVER in the dear year
+(Lockport 3.96×, Yerkes 2.15×, Oswego 1.92× in 2025) — while the real plants run
+1.6–18.6 % of hours in 10–43 h runs and scale *with* price (Selkirk metered
+gross 156.9 → 107.7 → 384.8 GWh). The successor identification is a
+**price-conditional on-share** (a duty curve), not a band level; the membership
+is sound and must not be re-derived (rule 23).
+
+**Seam lesson, second lane in a row.** The first ARM D solve was **inert by
+half** — the leg was wired at `fleet_to_bins` and mirrored in `offer_curves` but
+not at `assembly.py::bins_to_fleet`, so `pct_peak` was clobbered back by the
+tranche artifact / duct-burner map (verbatim the nyiso-146b defect). Caught by
+the arm's own **D-K2 anti-inert gate**, which tests band composition rather than
+a price delta; disclosed in PREREG §9 before the corrected solve and registered
+as a plumbing probe. *Standing note: wire `bins_to_fleet` FIRST and prove
+liveness on band composition before reading a price.*
+
+Arm E (`cc_reserve_duty_split` re-arm) did **not** solve — conditioned on ARM D
+passing; `PREREG-nyiso146b §ARM C` untouched. Runs
+`2026-08-21-nyiso-148-chp-layup` / `2026-08-21-nyiso-148-inert-plumbing`;
+evidence `ASSESSMENT-nyiso148-frontier-2026-08-21.md`,
+`RESULT-nyiso148-chp-layup-duty-2026-08-21.md`,
+`PREREG-nyiso148-chp-layup-duty-2026-08-21.md`, `_nyiso148_ab_gates.json`,
+`_nyiso148_chp_conduct_phase0.json`.

@@ -11,6 +11,19 @@ BASE = the nyiso147_armA recipe re-solved at this HEAD
 the single delta. The keeper `2026-08-19-nyiso-146c-state-scoped` is the
 reporting control, read through its byte-identical replay `nyiso147_control`.
 
+The BASE bundle is NOT committed: it reproduces the already-registered
+`2026-08-20-nyiso-147a-chp-btm` bit-exactly (max |dprice| = 0.0 over every
+zone and hour of all three years), so it is deliberately not double-registered
+and takes no dashboard retention slot. To re-run this probe, re-create it
+first::
+
+    python scripts/run_calibration_full.py \
+        --replay-bundle results/calibration/nyiso147_armA_recipe \
+        --out-dir results/calibration/nyiso148_base
+
+`--base-diag` already defaults to the committed twin, so the D-K4 leg needs no
+re-solve.
+
 Usage:
     PYTHONPATH=.:src python scripts/probes/_nyiso148_ab_gates.py
     PYTHONPATH=.:src python scripts/probes/_nyiso148_ab_gates.py --merge-k5 '<json>'
@@ -77,6 +90,12 @@ def main() -> None:
     ap.add_argument("--base", default="results/calibration/nyiso148_base")
     ap.add_argument("--arm", default="results/calibration/nyiso148_armD")
     ap.add_argument("--keeper", default="results/calibration/nyiso147_control")
+    # D-K4's BASE side reads the committed diagnostics of nyiso147_armA, which
+    # is the SAME RUN as nyiso148_base: the re-solve reproduces it bit-exactly
+    # (max |dP| = 0.0 over all zones/hours in all three years), so the base is
+    # deliberately not double-registered and its committed twin supplies the
+    # diagnostics rather than a redundant regeneration.
+    ap.add_argument("--base-diag", default="results/calibration/nyiso147_armA")
     ap.add_argument("--out", default="results/calibration/_nyiso148_ab_gates.json")
     ap.add_argument("--merge-k5", default=None, help="JSON blob for the D-K5 leg")
     args = ap.parse_args()
@@ -205,15 +224,33 @@ def main() -> None:
         return json.loads(p.read_text()) if p.exists() else {}
 
     k4: dict = {}
-    bd, ad = _diag(base), _diag(arm)
+    bd, ad = _diag(REPO / args.base_diag), _diag(arm)
+    k4["base_diag_bundle"] = args.base_diag
+
+    def _ident(text: str) -> str:
+        """Reduce a D-1/D-2/D-4 failure string to its IDENTITY.
+
+        A row is NEW when its (year, mechanism x class, plant) is new — not
+        when the same row's TWh and binding-hour counts moved. Both arms
+        dispatch differently by construction, so a full-text diff would call
+        every surviving row new (and, worse, would call an IMPROVING row a
+        regression). The magnitudes are reported separately, so nothing is
+        hidden by the reduction.
+        """
+        head = str(text).split(" is floored for ")[0]
+        return " ".join(head.split())
+
     if bd and ad:
         for key in ("D1", "D2", "D4"):
             bf = (bd["diagnostics"].get(key, {}).get("failures") or [])
             af = (ad["diagnostics"].get(key, {}).get("failures") or [])
+            bi = {_ident(f) for f in bf}
             k4[key] = {
                 "base_failures": len(bf),
                 "arm_failures": len(af),
-                "new": [f for f in af if f not in bf],
+                "new": [f for f in af if _ident(f) not in bi],
+                "cleared": [f for f in bf if _ident(f) not in {_ident(x) for x in af}],
+                "carried_over_texts": [f for f in af if _ident(f) in bi],
             }
         k4["passed"] = bool(
             not k4["D4"]["new"] and not k4["D1"]["new"] and not k4["D2"]["new"]

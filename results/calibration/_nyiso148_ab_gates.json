@@ -1,0 +1,534 @@
+{
+ "base": "results/calibration/nyiso148_base",
+ "arm": "results/calibration/nyiso148_armD",
+ "keeper": "results/calibration/nyiso147_control",
+ "D_K1": {
+  "diff": [
+   "chp_layup_duty_split"
+  ],
+  "passed": true
+ },
+ "D_K2": {
+  "per_plant": {
+   "10617": {
+    "base_bands": [
+     "committed",
+     "econ",
+     "peak"
+    ],
+    "base_gwh": 1.7,
+    "arm_bands": [
+     "peak"
+    ],
+    "arm_gwh": 0.0,
+    "collapsed_to_peak": true
+   },
+   "10725": {
+    "base_bands": [
+     "committed",
+     "econ",
+     "peak"
+    ],
+    "base_gwh": 315.3,
+    "arm_bands": [
+     "peak"
+    ],
+    "arm_gwh": 5.1,
+    "collapsed_to_peak": true
+   },
+   "50449": {
+    "base_bands": [
+     "committed",
+     "econ",
+     "peak"
+    ],
+    "base_gwh": 68.2,
+    "arm_bands": [
+     "peak"
+    ],
+    "arm_gwh": 8.2,
+    "collapsed_to_peak": true
+   },
+   "50450": {
+    "base_bands": [
+     "committed",
+     "econ",
+     "peak"
+    ],
+    "base_gwh": 143.5,
+    "arm_bands": [
+     "peak"
+    ],
+    "arm_gwh": 22.7,
+    "collapsed_to_peak": true
+   },
+   "50451": {
+    "base_bands": [
+     "committed",
+     "econ",
+     "peak"
+    ],
+    "base_gwh": 91.0,
+    "arm_bands": [
+     "peak"
+    ],
+    "arm_gwh": 8.9,
+    "collapsed_to_peak": true
+   },
+   "54041": {
+    "base_bands": [
+     "committed",
+     "econ",
+     "peak"
+    ],
+    "base_gwh": 963.6,
+    "arm_bands": [
+     "peak"
+    ],
+    "arm_gwh": 60.3,
+    "collapsed_to_peak": true
+   },
+   "54076": {
+    "base_bands": [
+     "committed",
+     "econ",
+     "peak"
+    ],
+    "base_gwh": 57.2,
+    "arm_bands": [
+     "peak"
+    ],
+    "arm_gwh": 9.4,
+    "collapsed_to_peak": true
+   }
+  },
+  "non_cohort_chp_moved": [],
+  "non_cohort_chp_unchanged": true,
+  "cohort_size": 7,
+  "passed": true
+ },
+ "D_K3": {
+  "per_plant": {
+   "10617": {
+    "2023": {
+     "metered_gwh": 4.9,
+     "base_gwh": 1.7,
+     "arm_gwh": 0.0,
+     "base_ratio": 0.35,
+     "arm_ratio": 0.0
+    },
+    "2024": {
+     "metered_gwh": 8.9,
+     "base_gwh": 8.8,
+     "arm_gwh": 0.4,
+     "base_ratio": 0.99,
+     "arm_ratio": 0.05
+    },
+    "2025": {
+     "metered_gwh": 11.8,
+     "base_gwh": 14.8,
+     "arm_gwh": 14.8,
+     "base_ratio": 1.26,
+     "arm_ratio": 1.25
+    }
+   },
+   "10725": {
+    "2023": {
+     "metered_gwh": 156.9,
+     "base_gwh": 315.3,
+     "arm_gwh": 5.1,
+     "base_ratio": 2.01,
+     "arm_ratio": 0.03
+    },
+    "2024": {
+     "metered_gwh": 107.7,
+     "base_gwh": 730.2,
+     "arm_gwh": 3.8,
+     "base_ratio": 6.78,
+     "arm_ratio": 0.04
+    },
+    "2025": {
+     "metered_gwh": 384.8,
+     "base_gwh": 1222.2,
+     "arm_gwh": 21.1,
+     "base_ratio": 3.18,
+     "arm_ratio": 0.05
+    }
+   },
+   "50449": {
+    "2023": {
+     "metered_gwh": 42.5,
+     "base_gwh": 68.2,
+     "arm_gwh": 8.2,
+     "base_ratio": 1.6,
+     "arm_ratio": 0.19
+    },
+    "2024": {
+     "metered_gwh": 64.6,
+     "base_gwh": 96.8,
+     "arm_gwh": 13.6,
+     "base_ratio": 1.5,
+     "arm_ratio": 0.21
+    },
+    "2025": {
+     "metered_gwh": 98.1,
+     "base_gwh": 153.4,
+     "arm_gwh": 114.2,
+     "base_ratio": 1.56,
+     "arm_ratio": 1.16
+    }
+   },
+   "50450": {
+    "2023": {
+     "metered_gwh": 36.7,
+     "base_gwh": 143.5,
+     "arm_gwh": 22.7,
+     "base_ratio": 3.91,
+     "arm_ratio": 0.62
+    },
+    "2024": {
+     "metered_gwh": 52.8,
+     "base_gwh": 176.7,
+     "arm_gwh": 31.7,
+     "base_ratio": 3.35,
+     "arm_ratio": 0.6
+    },
+    "2025": {
+     "metered_gwh": 123.2,
+     "base_gwh": 310.7,
+     "arm_gwh": 236.1,
+     "base_ratio": 2.52,
+     "arm_ratio": 1.92
+    }
+   },
+   "50451": {
+    "2023": {
+     "metered_gwh": 33.0,
+     "base_gwh": 91.0,
+     "arm_gwh": 8.9,
+     "base_ratio": 2.76,
+     "arm_ratio": 0.27
+    },
+    "2024": {
+     "metered_gwh": 22.6,
+     "base_gwh": 71.1,
+     "arm_gwh": 4.6,
+     "base_ratio": 3.14,
+     "arm_ratio": 0.2
+    },
+    "2025": {
+     "metered_gwh": 66.9,
+     "base_gwh": 192.0,
+     "arm_gwh": 144.0,
+     "base_ratio": 2.87,
+     "arm_ratio": 2.15
+    }
+   },
+   "54041": {
+    "2023": {
+     "metered_gwh": 67.5,
+     "base_gwh": 963.6,
+     "arm_gwh": 60.3,
+     "base_ratio": 14.28,
+     "arm_ratio": 0.89
+    },
+    "2024": {
+     "metered_gwh": 134.2,
+     "base_gwh": 910.5,
+     "arm_gwh": 32.2,
+     "base_ratio": 6.78,
+     "arm_ratio": 0.24
+    },
+    "2025": {
+     "metered_gwh": 279.5,
+     "base_gwh": 1786.9,
+     "arm_gwh": 1105.9,
+     "base_ratio": 6.39,
+     "arm_ratio": 3.96
+    }
+   },
+   "54076": {
+    "2023": {
+     "metered_gwh": 37.5,
+     "base_gwh": 57.2,
+     "arm_gwh": 9.4,
+     "base_ratio": 1.53,
+     "arm_ratio": 0.25
+    },
+    "2024": {
+     "metered_gwh": 36.3,
+     "base_gwh": 63.8,
+     "arm_gwh": 27.4,
+     "base_ratio": 1.76,
+     "arm_ratio": 0.75
+    },
+    "2025": {
+     "metered_gwh": 80.4,
+     "base_gwh": 160.3,
+     "arm_gwh": 135.0,
+     "base_ratio": 1.99,
+     "arm_ratio": 1.68
+    }
+   }
+  },
+  "cohort": {
+   "phantom_gwh_base": 5691.2,
+   "phantom_gwh_arm": 1090.1,
+   "phantom_fall": 0.808
+  },
+  "selkirk_arm_ratios": {
+   "2023": 0.03,
+   "2024": 0.04,
+   "2025": 0.05
+  },
+  "selkirk_over_bar": [],
+  "overkill_below_bar": [
+   [
+    "10617",
+    "2023"
+   ],
+   [
+    "10617",
+    "2024"
+   ],
+   [
+    "10725",
+    "2023"
+   ],
+   [
+    "10725",
+    "2024"
+   ],
+   [
+    "10725",
+    "2025"
+   ],
+   [
+    "50449",
+    "2023"
+   ],
+   [
+    "50449",
+    "2024"
+   ],
+   [
+    "50451",
+    "2024"
+   ],
+   [
+    "54041",
+    "2024"
+   ]
+  ],
+  "passed": false
+ },
+ "D_K4": {
+  "base_diag_bundle": "results/calibration/nyiso147_armA",
+  "D1": {
+   "base_failures": 0,
+   "arm_failures": 0,
+   "new": [],
+   "cleared": [],
+   "carried_over_texts": []
+  },
+  "D2": {
+   "base_failures": 1,
+   "arm_failures": 0,
+   "new": [],
+   "cleared": [
+    "2024 ST_GAS: forced share 30.4% > 30% (3.03 of 9.96 TWh at binding non-exempt floors)"
+   ],
+   "carried_over_texts": []
+  },
+  "D4": {
+   "base_failures": 4,
+   "arm_failures": 4,
+   "new": [],
+   "cleared": [],
+   "carried_over_texts": [
+    "2023 reliability_floor \u00d7 ST_GAS: plant 2480 is floored for 0.0011 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 107 hours the floor actually binds for it (inside h0-23) is 0.000 MW (100.0% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2024 reliability_floor \u00d7 ST_GAS: plant 2480 is floored for 0.0002 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 24 hours the floor actually binds for it (inside h0-23) is 0.000 MW (100.0% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2024 nyiso_gas_commitment_bridge \u00d7 CC_REGULAR: plant 54574 is floored for 0.0042 TWh (0.2% of the mechanism's forced energy) while its own measured median output over the 163 hours the floor actually binds for it (inside h0-23) is 0.000 MW (52.1% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2025 nyiso_gas_commitment_bridge \u00d7 CC_REGULAR: plant 7314 is floored for 0.1024 TWh (8.4% of the mechanism's forced energy) while its own measured median output over the 2959 hours the floor actually binds for it (inside h0-23) is 0.000 MW (72.6% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+   ]
+  },
+  "passed": true
+ },
+ "zone_table": {
+  "2023": {
+   "Upstate_West": {
+    "keeper": 32.95,
+    "actual": 25.32,
+    "base": 30.54,
+    "arm": 31.34
+   },
+   "Capital_Hudson": {
+    "keeper": 33.85,
+    "actual": 34.58,
+    "base": 31.93,
+    "arm": 32.42
+   },
+   "Lower_Hudson": {
+    "keeper": 33.85,
+    "actual": 32.49,
+    "base": 31.94,
+    "arm": 32.42
+   },
+   "NYC": {
+    "keeper": 34.07,
+    "actual": 33.47,
+    "base": 32.07,
+    "arm": 32.52
+   },
+   "Long_Island": {
+    "keeper": 34.72,
+    "actual": 41.05,
+    "base": 33.21,
+    "arm": 33.52
+   }
+  },
+  "2024": {
+   "Upstate_West": {
+    "keeper": 36.6,
+    "actual": 33.06,
+    "base": 33.95,
+    "arm": 34.76
+   },
+   "Capital_Hudson": {
+    "keeper": 36.89,
+    "actual": 36.79,
+    "base": 34.27,
+    "arm": 35.07
+   },
+   "Lower_Hudson": {
+    "keeper": 36.92,
+    "actual": 37.22,
+    "base": 34.3,
+    "arm": 35.09
+   },
+   "NYC": {
+    "keeper": 37.56,
+    "actual": 39.52,
+    "base": 34.81,
+    "arm": 35.48
+   },
+   "Long_Island": {
+    "keeper": 37.99,
+    "actual": 42.23,
+    "base": 35.67,
+    "arm": 36.21
+   }
+  },
+  "2025": {
+   "Upstate_West": {
+    "keeper": 61.31,
+    "actual": 55.52,
+    "base": 55.14,
+    "arm": 56.64
+   },
+   "Capital_Hudson": {
+    "keeper": 61.51,
+    "actual": 63.46,
+    "base": 55.43,
+    "arm": 56.89
+   },
+   "Lower_Hudson": {
+    "keeper": 61.51,
+    "actual": 63.17,
+    "base": 55.44,
+    "arm": 56.89
+   },
+   "NYC": {
+    "keeper": 61.99,
+    "actual": 67.16,
+    "base": 55.92,
+    "arm": 57.26
+   },
+   "Long_Island": {
+    "keeper": 62.14,
+    "actual": 70.35,
+    "base": 56.41,
+    "arm": 57.62
+   }
+  }
+ },
+ "system_lw": {
+  "2023": {
+   "actual": 32.25,
+   "keeper": 35.06,
+   "keeper_err_pct": 8.7,
+   "base": 32.73,
+   "base_err_pct": 1.5,
+   "arm": 33.36,
+   "arm_err_pct": 3.4
+  },
+  "2024": {
+   "actual": 38.12,
+   "keeper": 38.74,
+   "keeper_err_pct": 1.6,
+   "base": 35.84,
+   "base_err_pct": -6.0,
+   "arm": 36.63,
+   "arm_err_pct": -3.9
+  },
+  "2025": {
+   "actual": 66.43,
+   "keeper": 64.96,
+   "keeper_err_pct": -2.2,
+   "base": 58.36,
+   "base_err_pct": -12.2,
+   "arm": 59.86,
+   "arm_err_pct": -9.9
+  }
+ },
+ "D_K6": {
+  "base_2025_err_pct": -12.2,
+  "arm_2025_err_pct": -9.9,
+  "fall_2025": 0.189,
+  "arm_2023_err_pct": 3.4,
+  "passed": false
+ },
+ "verdict": "REJECTED-AS-ARMED (D_K3, D_K5, D_K6)",
+ "D_K5": {
+  "rule": "no LOAD-BEARING criterion may FAIL on ARM D where the KEEPER passes; C6/C8 unchanged",
+  "keeper": {
+   "run": "2026-08-19-nyiso-146c-state-scoped",
+   "C1": "PASS",
+   "C2": "PASS",
+   "C3a": "PASS",
+   "C3b": "PASS",
+   "C3c": "CAVEAT (ledgered)",
+   "C4": "PASS",
+   "C6": "PASS",
+   "C8": "PASS",
+   "determination": "CALIBRATED"
+  },
+  "base": {
+   "run": "2026-08-20-nyiso-147a-chp-btm",
+   "C1": "PASS",
+   "C2": "PASS",
+   "C3a": "FAIL 2025 -12.2%",
+   "C3b": "FAIL 2025 NRMSE 0.210",
+   "C3c": "FAIL 2023/2024/2025",
+   "C4": "PASS",
+   "C6": "UNATTESTED",
+   "C8": "FAIL 2024 ST_GAS 30.4%",
+   "determination": "NOT-YET"
+  },
+  "arm": {
+   "run": "2026-08-21-nyiso-148-chp-layup",
+   "C1": "FAIL 2024 CC_REGULAR +3.22 TWh share +3.0pp",
+   "C2": "PASS",
+   "C3a": "PASS",
+   "C3b": "PASS",
+   "C3c": "FAIL 2023/2024/2025",
+   "C4": "PASS",
+   "C6": "UNATTESTED",
+   "C8": "PASS",
+   "determination": "NOT-YET"
+  },
+  "vs_base": "C3a 2025 FAIL->PASS, C3b 2025 FAIL->PASS, C8 FAIL->PASS; C1 PASS->FAIL",
+  "vs_keeper": "C1 2024 CC_REGULAR PASS -> FAIL (share +2.4pp -> +3.0pp, band +/-3pp; the TWh leg still passes at +3.22 of +/-3.82)",
+  "passed": false
+ }
+}

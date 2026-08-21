@@ -135,6 +135,17 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         "nyiso147_control",
         "nyiso147_armA_recipe",
         "nyiso147_armB_recipe",
+        #
+        # LIVE — session nyiso-148 (PREREG-nyiso148-chp-layup-duty-2026-08-21).
+        # `nyiso148_armD_recipe` is the same one-file replay-input class as the
+        # recipe dirs above: committed BEFORE the arm solved, and named as the
+        # sole input of the reproduction command in
+        # RESULT-nyiso148-chp-layup-duty-2026-08-21.md §Reproduction. The arm it
+        # produced IS registered (2026-08-21-nyiso-148-chp-layup), so this is a
+        # SPENT recipe kept only so that citation stays live. REMOVAL
+        # CONDITION: the citing RESULT is retired, or its reproduction section
+        # is re-pointed at the registered arm bundle.
+        "nyiso148_armD_recipe",
     }
 )
 
