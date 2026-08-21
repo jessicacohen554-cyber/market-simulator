@@ -4374,7 +4374,112 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-20-miso-173-layup-mask` (**PROMOTED miso-173, 2026-08-20**, superseding `2026-08-20-miso-172-p25mw`), **NOT-YET on C3a-2025 (−11.8 %) ALONE — ZERO D-4 conduct failures**
+### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-20-miso-173-layup-mask` (**PROMOTED miso-173, 2026-08-20**, superseding `2026-08-20-miso-172-p25mw`), **NOT-YET on C3a-2025 (−11.8 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates since miso-174 (2026-08-21), which adjudicated the last named OPEN cell `measured_interface_limits` U → R on a pre-registered no-LP kill — see the miso-174 stamp below for the four handed-forward (NAMED, NOT CHARTERED) items and the four standing OWNER items.**
+
+> **QUEUE STAMP miso-174 (2026-08-21) — MISO'S LAST NAMED OPEN CELL IS ADJUDICATED:
+> `measured_interface_limits` U → R ON A PRE-REGISTERED NO-LP KILL, AND THE +1.33 GW
+> SCARCE-HOUR OVER-IMPORT IS DECOMPOSED AND ATTRIBUTED. NO LP, NOTHING ARMED, NO
+> `ScenarioConfig` FIELD, NO REGISTRATION (rule 15 not engaged). Keeper UNCHANGED at
+> `2026-08-20-miso-173-layup-mask`; determination UNCHANGED at NOT-YET on C3a-2025 ALONE.**
+> Records: `results/calibration/FINDING-miso174-seam-overimport-adjudication-2026-08-21.md`,
+> prereg `PREREG-miso174-seam-import-limit-precheck-2026-08-21.md` (committed at 6cd0335
+> **BEFORE** the gated quantities were computed; miso-167 K-PRE-A pattern, miso-171
+> no-solve-adjudication precedent), instruments
+> `scripts/probes/_miso174_{seam_overimport_decomposition,import_limit_precheck,seam_price_evidence}.py`
+> + their committed JSON records.
+> **THE OBJECT, re-measured on the current keeper** (it survives three keeper promotions):
+> over-import **+1.86 / +1.04 / +1.41 GW** in the 11 / 14 / 47 scarce hours (summer, MISO's own
+> RT > $200), 3-yr mean **+1.44 GW**. **It is not one defect** — decomposed by seam (EIA-930
+> BA-to-BA DIBA pooled by `MISO_SEAM_DIBA` vs the priced-seam pseudo-generator rows): **PJM
+> +0.87/+0.72/+0.94** (import-side in all three years), **South +0.63/+0.35/+1.19** (an
+> under-**EXPORT** — model gross import there is 0.00–0.05 GW, unreachable by any import
+> ceiling), SPP +0.41/+0.25/−0.34 (sign flips), **Manitoba −0.15/−0.26/−0.46** (an
+> UNDER-import a ceiling could only worsen).
+> **THE KILL, at full strength: K-PRE-1 fires 3/3.** Across ALL 72 scarce hours the model's
+> gross import **never once** exceeds the largest transfer that seam has been observed to
+> deliver in the same (month × hour-of-day) bucket of the same year — **PJM 0/11, 0/14, 0/47**
+> and **SPP 0/72**, under BOTH hour-key conventions, against a kill line of < 20 % exceedance
+> in ≥ 2 of 3 years. Model gross import sits **26–29 % BELOW** the observed ceiling on PJM
+> (5.76 vs 7.75 / 4.16 vs 5.44 / 4.37 vs 6.16 GW). Conservative three ways against the kill
+> (model GROSS vs measured NET; bucket max not annual max; both keys). **There is no capability
+> violation to repair**, so arming a limit here is a rule 1 `[R-STRUCT]` + rule 19
+> `[R-ONE-MECH]` breach. **K-PRE-4 reaches the same verdict independently on data:** no measured
+> per-seam MW interface-limit series exists at our grain that is not already armed (hourly
+> derated limit published by NOBODY — RDT deprecated without archive, Data Exchange key-gated,
+> adjudicated 2026-07-11/12; `bc_HIST`/`pbc` carry no MW limit and no flow; PJM's
+> `*_transfer_limits_and_flows.csv` is PJM-INTERNAL, none of its areas is the MISO seam, rule 14
+> misalignment; M2M ratings are branch × contingency with **no published PTDF**, the standing M1
+> refutation, miso-77 §5.2; the EIA-930 p90 directed-flow envelope is **already armed** as
+> `miso_seam_flow_limit`/`miso_seam_export_limit`).
+> **REPORTED AGAINST INTEREST — the lever is NOT rejected for being small:** K-PRE-2 (reach)
+> **does not fire**; an import ceiling could touch **2.74/2.25/2.97 GW** against a 0.50 GW line.
+> The volume is there; the mechanism is wrong.
+> **WHAT THE OBJECT ACTUALLY IS (evidence, no new cell):** a **coincident-peak seam-RESPONSE**
+> defect. The model's PJM-seam flow moves the **wrong way** under stress — measured response in
+> the scarce hours vs its own summer mean is **−0.77/−0.54/−1.03 GW** while the model's is
+> **+0.89/+0.48/+1.34 GW**, opposite sign every year — with a huge **unarbitraged** spread
+> present (MISO-facing PJM border hub $43/$57/$147 vs MISO RT $359/$374/$479, border above MISO
+> in 0/11, 0/14, 3/47 h) and measured seam flow essentially **uncorrelated** with that spread
+> all summer (r = +0.062/+0.047/−0.057). Not a ramp story: the real seam is MORE volatile
+> hour-to-hour than the model's (320–363 vs 142–172 MW mean |Δ/h|). **Manitoba is the control
+> that makes the diagnosis specific** — the one seam whose measured flow DOES respond to MISO
+> scarcity (+0.57/+0.48/+1.19) is the one the model reproduces (+0.58/+0.82/+0.67), because it
+> is carried by a firm contract block rather than spread arbitrage. Covered by **no** existing
+> cell: NOT `import_shape_lever` (MISO `G`), whose refusal is about hour-of-day price SHAPE and
+> which miso-123 exonerated at r = +0.81…+0.996.
+> **A DEFECT FOUND IN AN ARMED KEEPER MECHANISM, reported NOT fixed (FINDING §4):** the seam
+> envelope's **hour key is rotated one hour**. `data/eia930/envelopes.py::measured_seam_import_envelope`
+> buckets on the **raw** `local_time` (lines 1014/1018) and applies it to the model's
+> `hour % 24`, but `local_time` is **hour-ENDING** — solved against the independently-derived
+> BALANCE `TI` series, a −1 h shift reproduces `TI` at **r = 1.0000** (2023, 2025). Confirmed an
+> exact +1 h rotation, not a level error (rolling the correctly keyed p90 by +1 h reproduces the
+> production cap to mean |Δ| **2.9 / 3.2 MW** vs **241 MW** at roll 0; annual mean cap unchanged,
+> PJM 6.232 vs 6.231 GW). **Internally inconsistent with the repo's own conventions** — the MISO
+> seam *ladder* derivation reads the same parquet and converts explicitly
+> (`scripts/data/derive_miso_seam_ladders.py:141`), and CAISO routes stamps through a dedicated
+> helper — so a correctly keyed price ladder is applied against a cap profile rotated one hour
+> away from it. Both armed directions affected. A fix CHANGES THE KEEPER and needs its own
+> prereg + control/arm pair (rule 19); the PJM analogue is **not** inspected here (rule 25).
+> **DO-NOT-REDO:** do not re-test a seam or zonal interface-LIMIT lever at MISO without new
+> evidence defeating **K-PRE-1** (a measured capability series showing the model exceeding
+> deliverable transfer) or new data defeating **K-PRE-4**. The **zonal** reading is separately
+> refused on K-PRE-3(i) admissibility (no LRZ-pair MW-limit series reconcilable without an
+> invented apportionment) and sits inside the standing congestion adjudications
+> (`internal_congestion_split` `G`, `zonal_loss_surface` `R`) — note it is **NOT** refused as
+> redundant: the keeper's Midwest is a perfect **copper plate** (zonal price spread exactly 0.00
+> in all 8,760 h of all three years; separation exists only against MISO-South via the RDT,
+> 2,432/2,705/5,086 h), so neither the 40,000 MW placeholder internal links nor the seasonal
+> CIL/CEL groups ever bind.
+> **THE HONEST CEILING, stated before the measurement and unchanged by it:** C3a-2025 is closed
+> END TO END as a model-class limit (miso-163 owner ruling + FINDING-miso171 §6). Nothing here
+> is claimed against it — at the model's own summer top-quintile supply slope the ENTIRE K-PRE-2
+> reach is worth **+3.3/+7.7/+3.9 $/MWh** against scarce-hour gaps of $303/$302/$404, i.e.
+> **1–2.5 %** of the miss even in its inadmissible flow-pinned form. The over-import is a real
+> **second-order structural** defect (rule 1 / rule 14) worth repairing on its own merits.
+> **THE LEVER QUEUE IS NOW EMPTY of named, un-adjudicated candidates.** Handed forward, NAMED
+> NOT CHARTERED: (1) **the hour-key rotation** above — smallest scope, highest confidence, a
+> rule-14 accuracy repair independent of everything else; (2) the **coincident-peak
+> seam-response** object, whose admissibility a charter must settle FIRST (an envelope
+> conditioned on the neighbour's own load is admissible in kind under rule 13 but correlates
+> with MISO scarcity by coincident summer peak — the line between "conditioned on an exogenous
+> forward driver" and "pinned to the residual" needs an OWNER ruling before anything is built);
+> (3) **M2M/CMP seam data scoped to the seam class only** (miso-77 §2a: hourly per-flowgate FFE
+> and M2M flows/shadow prices publicly fetchable, EXT coverage 90/90/88 %; miso-77 §5.2's
+> no-PTDF blocker is materially weaker at a seam already modelled as ONE link; shadow prices
+> stay ANSWER-class, validation only); (4) **the South under-EXPORT** (+0.63/+0.35/+1.19 GW),
+> the second-largest component, never separately chartered.
+> **STANDING OWNER ITEMS, raised not decided** (unchanged from miso-171/172/173): (i) the **C8
+> provenance-materiality floor** — the plant-990 zero-energy/one-hour conviction was cleared at
+> miso-173 as a SIDE EFFECT of the mask; **the rubric hole is unrepaired**; (ii) the
+> **committed-vs-regenerated diagnostics exposure** (MISO **and** PJM, measured, disclosed not
+> created); (iii) **`RHO_CLIP` 0.5 vs the measured MISO rho 0.1764** (nyiso-144; FINDING-miso170
+> §4 measured that resolving it would not flip the scarce hours at family-grain headroom);
+> (iv) **MISO's determination posture** — C3a-2025 is the SOLE failing criterion, documented end
+> to end as a model-class limit, on a keeper with ZERO D-4 conduct failures and C6 attested,
+> C3c the single ledgered caveat. Whether NOT-YET should be adjudicated to a declaration is an
+> **OWNER question**, and it is **riper after miso-174 than ever**: the last named OPEN cell is
+> adjudicated and the largest disclosed second-order defect is measured, decomposed, attributed
+> and bounded.
 
 > **PROMOTION + QUEUE STAMP miso-173 (2026-08-20) — THE 1402 SEASONAL/PART-YEAR LAY-UP OBJECT
 > BUILT, SOLVED AND PROMOTED ON ITS OWN PRE-REGISTERED GATES: MISO KEEPER →
