@@ -7503,3 +7503,56 @@ D-K3 and D-K6.** Root cause (which commit moved the backfill, and which
 reconciliation is right) and the cross-ISO exposure are OPEN and chartered to
 the owner. Evidence:
 `FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md`.
+
+### 2026-08-21 addendum 2 — the owner's ruling landed; cross-ISO sweep; the mechanism fixed
+
+**Owner ruling** (`AskUserQuestion`, session nyiso-148): (1) the **regenerated
+benchmark is authoritative**; (2) **sweep and fix the mechanism**.
+
+**Ruling landed.** NYISO's determination restated to **NOT-YET** in the three
+places that asserted the superseded one — the keeper sidecar, the
+`calibration-complete` marker (prior value preserved in
+`determination_at_prior_rekey`; new `marker_reexamination_open` records the
+second question the ruling opened, whether validation-tier authorization
+survives a NOT-YET determination) and `status/NYISO.js`. **The run remains the
+designated keeper** — still NYISO's most structurally faithful run, with no
+successor — it is now a NOT-YET keeper. The marker is **left in place**, not
+withdrawn: withdrawal is a separate owner decision, and it authorizes nothing
+spendable today because the holdout spend freeze outranks every marker.
+`audit_keepers --iso NYISO` passes 0/0.
+
+**Sweep (read-only, nothing regenerated or committed).** A faithful cross-ISO
+regeneration would need every ISO's raw data hydrated and a bundle carrying
+benchmark inputs; the sweep instead measures the exposure at git's own
+resolution — a part is potentially stale iff the code that produces it changed
+after the part was written, an **upper bound**, reported as one. **Five of six
+ISOs are exposed**: CAISO, ERCOT, MISO, NEISO and PJM all sit on parts written
+2026-08-17, behind **22 engine commits**; only NYISO is current. Two refinements
+keep the bound honest: the single builder-script commit since then (`01db36d`,
+nyiso-147) is **provably gated** to NYISO-with-the-flag and so explains neither
+the NYISO drift nor any other ISO's part — which is why the root cause stays
+OPEN — and the exposure is carried by the ENGINE import closure (class map, CHP
+shares, EIA-923 reconciliation), consistent with the delta having been localized
+to the vintage-reconciliation layer rather than the meters.
+
+**Fix, three pieces.** (a) `scripts/lib/bench_stamp.py` stamps every part with
+`meta.builderFingerprint`, a hash of the builder sources — **content-derived
+only**, because a timestamp or HEAD sha would rewrite every part on every
+registration and destroy the byte-determinism that let the staleness hide;
+verified to move nothing else (re-rendering NYISO's parts left `classFull`
+identical in all three years). (b) `scripts/check_bench_freshness.py` gates in
+two tiers: HARD on a fingerprint mismatch or absence, SOFT (reported, never
+gating) on engine commits since the part was written — folding the engine into
+the hash would mark every part stale after any lane's edit and train everyone to
+ignore it. (c) `calibration_verdict.py` prints a loud `[!] STALE BENCHMARK` line
+naming the parts and the fix; it **warns and never fails**, verified silent on
+NYISO and loud on PJM with the verdict untouched.
+
+**Deliberately NOT done: the checker is not wired into CI as a hard gate here.**
+Nineteen of twenty parts are stale, so gating now would red-light every PR for
+defects only each ISO's own lane can fix. Sequence: each ISO regenerates and
+re-verifies, then the gate goes on. OPEN after this session: the benchmark root
+cause (chartered BEFORE any NYISO re-calibration), the five ISO regenerations,
+turning the gate on, and the `complete`-marker question. Evidence:
+`FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md` §§8–11,
+`_nyiso148_bench_staleness_sweep.json`.

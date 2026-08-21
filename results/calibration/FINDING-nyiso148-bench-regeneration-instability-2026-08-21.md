@@ -150,3 +150,125 @@ PY
 python scripts/calibration_verdict.py --run-id 2026-08-19-nyiso-146c-state-scoped
 python scripts/audit_keepers.py --iso NYISO
 ```
+
+---
+
+# ADDENDUM — the owner's ruling, the cross-ISO sweep, and the mechanism fix
+
+**Owner ruling, 2026-08-21 (session nyiso-148, `AskUserQuestion`):**
+
+1. **"Regenerated is authoritative."** The regenerated benchmark stands; NYISO's
+   keeper determination becomes NOT-YET; the root cause is chartered *before*
+   any re-calibration so the lane is not tuned against a moving target.
+2. **"Sweep and fix the mechanism."** Size the exposure across all six ISOs
+   **and** change the refresh rule so a bench part can never silently outlive
+   the builder that produced it.
+
+Both are executed below. §§1–5 above are unchanged.
+
+## 8. THE RULING, LANDED
+
+The determination was written into exactly the three places that asserted the
+superseded one, and nowhere else (commit `3e69981`):
+
+* `frontend/data/backcast/registry/2026-08-19-nyiso-146c-state-scoped.json` —
+  the promoted determination restated as prose, the live **NOT-YET** recorded
+  with its cause.
+* `frontend/data/backcast/calibration-complete.json` — `complete.NYISO.determination`
+  restated; the prior value preserved in `determination_at_prior_rekey`; a new
+  `marker_reexamination_open` field records the second thing the ruling opened —
+  **whether validation-tier authorization should survive a NOT-YET
+  determination**. The marker is deliberately **left in place**, not withdrawn:
+  withdrawal is a separate owner decision, and it authorizes nothing spendable
+  today because the holdout spend freeze outranks every marker.
+* `frontend/data/backcast/status/NYISO.js` — rebuilt; reads NOT-YET.
+
+**The run remains NYISO's designated keeper.** It is still the most structurally
+faithful NYISO run and no successor exists; it is now a NOT-YET keeper.
+`audit_keepers --iso NYISO` passes 0/0 again.
+
+## 9. THE SWEEP — five of six ISOs are exposed
+
+Probe `scripts/probes/_nyiso148_bench_staleness_sweep.py`; record
+`_nyiso148_bench_staleness_sweep.json`. **Read-only** — nothing regenerated,
+nothing committed.
+
+A faithful regeneration of every ISO's part would need each ISO's raw data
+hydrated and a bundle carrying benchmark inputs — hours of solve for a sizing
+question, and this session holds the `nyiso` data profile. The sweep instead
+measures the exposure at the resolution git already carries: **a part is
+POTENTIALLY STALE iff the code that produces it changed after the part was last
+written.** That is an **upper bound**, and it is reported as one.
+
+| ISO | part last written | builder-script commits since | engine commits since | verdict |
+|---|---|---:|---:|---|
+| **NYISO** | **2026-08-21** | 0 | 0 | **current** (regenerated this session) |
+| CAISO | 2026-08-17 | 0 ungated | **22** | POTENTIALLY STALE |
+| ERCOT | 2026-08-17 | 0 ungated | **22** | POTENTIALLY STALE |
+| MISO | 2026-08-17 | 0 ungated | **22** | POTENTIALLY STALE |
+| NEISO | 2026-08-17 | 0 ungated | **22** | POTENTIALLY STALE |
+| PJM | 2026-08-17 | 0 ungated | **22** | POTENTIALLY STALE |
+
+**Five of six ISOs sit on parts that predate 22 engine commits.** Only NYISO is
+confirmed by actual regeneration.
+
+Two refinements that keep the bound honest rather than alarmist:
+
+* **The one builder-script commit since 2026-08-17 is provably gated and is
+  annotated as such.** `01db36d` (nyiso-147) changes `_btm_share` only behind
+  `meta["nyiso_chp_btm_measured"] and meta["iso"] == "NYISO"`, so it can move
+  NYISO's two measured-BTM per-plant fields and nothing else. **It explains
+  neither the ~4 TWh NYISO `classFull` drift nor any non-NYISO part** — which is
+  why the root cause in §6 item 3 stays OPEN and is not pinned on it.
+* **The exposure is carried by the ENGINE, not the scripts.** The builder
+  imports `src/market_sim/` for the plant→class map, the CHP shares and the
+  EIA-923 reconciliation. That is consistent with §3, which localized NYISO's
+  delta to the vintage-reconciliation/backfill layer rather than to the meters.
+
+## 10. THE FIX — a content-derived stamp, a checker, and a loud scorer alarm
+
+Three pieces, designed so the signal survives being useful:
+
+**(a) `scripts/lib/bench_stamp.py` — the fingerprint.** Every part now carries
+`meta.builderFingerprint`, a hash over the source of the scripts that compute
+and write it. **Content-derived only**: a timestamp or a HEAD sha would rewrite
+every part on every registration and destroy the byte-determinism that keeps
+concurrent registrations conflict-free — the very property that let the
+staleness hide. Same code + same data ⇒ same bytes, and the stamp is verified
+to move **nothing else**: re-rendering NYISO's parts through the stamped writer
+left `classFull` identical in all three years.
+
+**(b) `scripts/check_bench_freshness.py` — the gate, in two tiers.**
+*HARD (exit 1)*: the part's fingerprint differs from HEAD's, or is absent
+(predating the stamp) — the part provably was not written by the builder that
+would run now. *SOFT (reported, never gates)*: the fingerprint matches but
+engine commits have landed since the part was committed. The split is
+deliberate — folding the engine into the hash would mark every part stale after
+any lane's edit, and a signal that always fires is a signal nobody reads.
+
+**(c) The scorer says so out loud.** `calibration_verdict.py` now prints a
+`[!] STALE BENCHMARK` line to stderr, naming the parts and the fix, whenever it
+scores a run against a part the builder at HEAD did not write. It **warns and
+never fails** — the scorer's job is to report what the committed artifacts say;
+(b) is the gate. Verified in both directions: silent on NYISO (fresh), loud on
+PJM (stale), and the verdict itself is untouched.
+
+**What is deliberately NOT done: the checker is NOT wired into CI as a hard gate
+in this session.** Nineteen of twenty committed parts are stale right now, so
+gating would red-light every PR in the repo for defects that only each ISO's own
+lane can fix (regenerating a part needs that ISO's data and a bundle). The
+sequence has to be: each ISO regenerates its part and re-verifies its keeper,
+*then* the gate goes on. Wiring it in is the owner's call once that is done, and
+it is one line in the existing CI checks job.
+
+## 11. WHAT REMAINS OPEN AFTER THIS SESSION
+
+1. **Root cause** — which change moved the EIA-923 backfill (CC_REGULAR-2024
+   +8.00 → +4.02 TWh), and which reconciliation is correct. Chartered **before**
+   NYISO re-calibration. Not pinned on `01db36d`, which §9 rules out.
+2. **Five ISOs to regenerate and re-verify** — CAISO, ERCOT, MISO, NEISO, PJM,
+   each in its own lane with its own data (rule 25), each ending in a keeper
+   re-verification like NYISO's.
+3. **Turn on the gate** once (2) is done.
+4. **NYISO's `complete` marker** — whether validation-tier authorization
+   survives a NOT-YET determination (`marker_reexamination_open`).

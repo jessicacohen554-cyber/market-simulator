@@ -770,6 +770,12 @@ REPORTED_ONLY = {
 # ---------------------------------------------------------------------------
 # Artifact loading
 # ---------------------------------------------------------------------------
+try:  # nyiso-148 stale-bench alarm; never let the scorer die on it
+    from scripts.lib import bench_stamp as _bench_stamp
+except Exception:  # pragma: no cover - defensive
+    _bench_stamp = None  # type: ignore[assignment]
+
+
 def load_artifacts(run_id: str) -> dict:
     """Load every committed artifact the scorer needs for ``run_id``.
 
@@ -787,10 +793,35 @@ def load_artifacts(run_id: str) -> dict:
     payload = _decode_run_js(run_js.read_text()) if run_js.exists() else None
 
     bench: dict[int, dict] = {}
+    # STALE-BENCH ALARM (nyiso-148). The per-(ISO, year) bench part is refreshed
+    # only when a registering bundle happens to carry the benchmark inputs, so a
+    # part can go un-refreshed while the builder moves underneath — silently,
+    # because the parts are byte-deterministic and show no diff until something
+    # regenerates them. NYISO's part went un-refreshed from 2026-08-17;
+    # regenerating it moved CC_REGULAR-2024's metered actual by ~4 TWh and
+    # flipped EVERY registered NYISO run to NOT-YET, the keeper included. C1 is
+    # scored against these numbers, so a verdict read off a stale part is not
+    # reproducible from the code that would produce it now. WARN, never fail:
+    # the scorer's job is to score the committed artifacts and say what they
+    # are; scripts/check_bench_freshness.py is the gate.
+    _stale_parts: list[str] = []
     for part in sorted((BENCH_DIR / iso).glob("*.json.gz")) if iso else []:
         obj = ba.load_bench_part(part)
+        if _bench_stamp is not None and _bench_stamp.is_stale(obj):
+            _stale_parts.append(part.name)
         for y in obj.get("meta", {}).get("years", []):
             bench[int(y)] = obj.get("bench", {})
+    if _stale_parts:
+        print(
+            f"[!] STALE BENCHMARK: {iso} part(s) {', '.join(_stale_parts)} were "
+            f"NOT written by the builder at HEAD (fingerprint "
+            f"{_bench_stamp.builder_fingerprint()}). C1's metered actuals below "
+            f"may not be reproducible — regenerate the part "
+            f"(run_calibration_full.py --rebuild-benchmark <bundle>, then "
+            f"dashboard_add_run.py) before relying on this verdict. See "
+            f"scripts/check_bench_freshness.py.",
+            file=sys.stderr,
+        )
 
     bundle_dir = REPO / sidecar["bundle"] if sidecar.get("bundle") else None
     config = None
