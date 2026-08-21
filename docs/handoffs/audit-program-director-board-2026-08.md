@@ -164,6 +164,32 @@ last three keeper promotions landed.**
      `ws6-parity-repair` ref), so nothing has landed yet. **Do not re-issue it —
      it is in flight.** What the owner still owes is nothing; what the *director*
      owes is checking the live roster before declaring a lane unlaunched.
+   - **🟢 RESOLVED 2026-08-20 by that lane — and its finding CORRECTS this
+     board's stated root cause.** The gate is **GREEN**: `parity OK (52 runs
+     checked, 62 bundle dirs swept, 0 known-unsynced tolerated)`; parity tests
+     10 passed. The count of 8 and the all-NYISO composition are confirmed
+     exactly as recorded above. **What is wrong is the diagnosis**, here and in
+     the risk register: these are *not* "unregistered arm bundles", and the root
+     cause is *not* that NYISO registers too slowly. **Seven of the eight hold a
+     single `meta.json` and no solve output at all**; `run_replay_bundle` reads
+     only `meta.json`, so each is a **complete `--replay-bundle` INPUT** — a
+     pre-registered arm recipe, committed *before* its arm solves, and named as
+     the sole input of a reproduction command in a committed PREREG/RESULT doc
+     (including the command that reproduces the **current NYISO keeper**). They
+     were never registrable and never will be: there is no run, no metrics, no
+     payload to register. The eighth, `nyiso147_control`, is the **live control
+     of an A/B whose arms are unsolved** (`PREREG-nyiso147…2026-08-20`), with
+     kill gates A-K1/K3/K4/K5 all defined *vs the control* — pruning it would
+     have destroyed a running experiment. **All 8 keep-required** with citations
+     and explicit removal conditions (Class-E point 4's own carve-out, on the
+     `miso170_layup_A/B` precedent); **0 registered, 0 pruned, no solve, no
+     keeper move.** The real defect is a **classifier gap in the gate** — it
+     calls every unmapped dir "dead solve output", but pre-registered recipes
+     and in-flight controls are both *supposed* to exist before any sidecar
+     does. Prevention recommended (not built, per dispatch): a class-level
+     carve-out for meta-only, doc-cited dirs; explicitly **against** a pre-merge
+     check, which would block correct pre-registration commits. Record:
+     `results/calibration/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md`.
 
 6. **🟢 WS5 MOVED OFF ZERO — Job 1 COMPLETE and merged (#4120 + #4121; commits
    `5f4a6af`, `cd8293b`; record `docs/FINDING-site-facts-repair-2026-08-19.md`,
@@ -264,7 +290,7 @@ Determinations: **PJM, NYISO, NEISO `CALIBRATED`** · **ERCOT, CAISO, MISO
 | WS3 `PERF` | PERF-A ✓. **PERF-B PAUSED BY OWNER.** Stage-0: **5 of 6 ISOs captured** (ERCOT #4033, NEISO #4041, NYISO #4050, CAISO #4058, MISO #4060; **PJM never captured**). Changes: **(c) landed via #3964**, **(d)+(e) merged via #4067**, **(a)/(b) unstarted**. Close-out note + wallclock baseline landed (#4075). **`results/regression-goldens/` is byte-unmoved this cycle** — verified, not assumed | **Paused ~74%** | **Paused, not blocked. The restart precondition is FURTHER away than at v9 and the case for it is now arithmetic: 0 of 6 goldens match their keeper.** On restart: freeze calibration, then re-verify every golden — RESTART CHECKLIST |
 | WS4 `DOCS` | DOCS-A **completed** (#3999 + #4005); DOCS-B held | **In progress ~60%** | **DOCS-B gated at G2 — waiting by design** |
 | WS5 `SITE` | **OFF ZERO. Job 1 (site factual repair, pre-G3) COMPLETED and merged** — #4120 + #4121, record `docs/FINDING-site-facts-repair-2026-08-19.md`. 15 repairs over 19 site files; **3 governance-grade**, incl. a false locked-test-spent claim live for two weeks (§ item 6). Job 2 = **SITE-A**, not started | **Job 1 completed · Job 2 not started** | **SITE-A gated at **G3** — waiting by design.** Job 1 was scoped pre-G3 precisely because false statements should not wait on a gate |
-| WS6 `BLOAT` | Prunes B-1..B-8 merged; **BLOAT-2 CLOSED** (#4032); **BLOAT-3 ADJUDICATED** (#4031) and **EXECUTED** (BLOAT-S2 #4047, −444.5 MiB / 144 files at tip). **The chartered work stays completed — the parity GATE is RED for a second consecutive cycle** | **Completed (charter) · gate RED** | **RED, 8 dead dirs, ALL NYISO** (`nyiso144_arm_recipe`, `nyiso146_arm_recipe`, `nyiso146b_armB/armC_recipe`, `nyiso146c_armB2_recipe`, `nyiso147_armA/armB_recipe`, `nyiso147_control`). v9's `ercot221_control_A` **cleared itself** on registration, as v9 predicted; `miso172_control` **registered** and is not flagged. **Trajectory 2 → 9 → 8.** **The repair lane IS RUNNING** (`claude/ws6-parity-repair-hvmt54`, live roster) — **do not re-issue**; it has pushed no branch yet |
+| WS6 `BLOAT` | Prunes B-1..B-8 merged; **BLOAT-2 CLOSED** (#4032); **BLOAT-3 ADJUDICATED** (#4031) and **EXECUTED** (BLOAT-S2 #4047, −444.5 MiB / 144 files at tip). **The chartered work stays completed; the parity gate was RED for a second consecutive cycle and is now GREEN** | **Completed (charter) · gate GREEN** | **CLOSED 2026-08-20** by `claude/ws6-parity-repair-hvmt54`. The 8 dead dirs and the all-NYISO composition are confirmed as recorded (v9's `ercot221_control_A` **cleared itself** on registration as predicted; `miso172_control` **registered**; trajectory 2 → 9 → 8). **But the diagnosis in this row was wrong**: 7 of the 8 hold a lone `meta.json` and **no solve output**, and since `run_replay_bundle` reads only `meta.json` they are complete `--replay-bundle` **INPUTS** — pre-registered arm recipes, each cited as the sole input of a reproduction command in a committed PREREG/RESULT doc — while the 8th is the **live control of an unsolved pre-registered A/B**. Not "unregistered bundles", and **none was ever registrable**. **All 8 keep-required** with citations + explicit removal conditions; **0 registered, 0 pruned, no solve, no keeper move.** Gate: `parity OK (52 runs checked, 62 bundle dirs swept, 0 known-unsynced tolerated)`; tests 10 passed. Root cause is a **classifier gap in the gate**, not NYISO's registration cadence; prevention recommended not built. Record: `results/calibration/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md` |
 | — `GOLDEN-TIER-FIX` | **COMPLETED and independently verified** (#4014). First scheduled cron came back **RED**, **diagnosed + fixed same-day** (#4071), **deliverables verified by a full local four-step job replay, all green** | **Completed** | **the fix is not in question. The CI proof is: STILL NO RUN since the red**, re-read live this cycle (5 runs total, unchanged; latest `31999181985` red; last green `31913648051`). Next cron **Monday 2026-08-24 05:37 UTC**. One `workflow_dispatch` settles it — **top standing open item, seventh cycle** |
 
 **WS1–WS4 are byte-unmoved this cycle; WS5 moved and WS6's gate changed.**
@@ -356,12 +382,23 @@ stop being reported as one:
   structural point above — this is the single strongest piece of evidence the
   program has produced for the freeze, and it arrived as arithmetic rather than
   argument.
-- **🔴 BLOAT-2 parity RED for a second cycle, now ALL NYISO.** 8 dead bundle
-  dirs, every one from the 144/146/147 promotion chain. **The repair lane is
-  RUNNING** (`claude/ws6-parity-repair-hvmt54`) and has pushed nothing yet —
-  **do not re-issue it.** Standing structural note: **the NYISO lane is
-  generating unregistered arm bundles faster than it registers them**, which is
-  the actual root cause and is not fixed by one prune pass.
+- **🟢 BLOAT-2 parity CLOSED 2026-08-20 — and the structural note below was
+  wrong.** The repair lane (`claude/ws6-parity-repair-hvmt54`) landed: gate
+  **GREEN** (`parity OK`, 52 runs / 62 dirs swept), all 8 dirs keep-required
+  with citations and removal conditions, **0 registered, 0 pruned**. **The
+  retracted claim:** *"the NYISO lane is generating unregistered arm bundles
+  faster than it registers them, which is the actual root cause."* It is not.
+  Seven of the eight are **not bundles and not registrable** — a lone
+  `meta.json`, which is a complete `--replay-bundle` input and the only way to
+  express an A/B arm whose delta is a code change; the eighth is a live
+  control whose arms are still unsolved. Registration cadence was never the
+  driver. **The actual root cause is a classifier gap in the gate**, which
+  calls every unmapped dir "dead solve output" though pre-registered recipes
+  and in-flight controls both legitimately precede any sidecar. Fix
+  recommended (not built): a class-level carve-out for meta-only, doc-cited
+  dirs — **not** a pre-merge check, which would penalise correct
+  pre-registration. Record:
+  `results/calibration/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md`.
 - **🟠 THE UNCITED `RHO_CLIP` 0.5 FLOOR — PREPARED, WAITING, AND STILL
   UNRULED.** Verified at the pin: `src/market_sim/data/online_reserve_rho.py:87`
   still reads `RHO_CLIP: tuple[float, float] = (0.5, 4.0)`. The work is **done** —
