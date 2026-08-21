@@ -1,0 +1,2350 @@
+{
+ "session": "miso-174",
+ "keeper_bundle": "miso173_layupmask",
+ "unit_hourly_bundle": "miso169_gated_A",
+ "scarce_definition": {
+  "summer": "Jun 1 - Sep 30",
+  "rt_threshold": 200.0,
+  "top_load_n": 47,
+  "da_foreseen": 150.0
+ },
+ "stage1_object": {
+  "2023": {
+   "annual": {
+    "n": 8760,
+    "model_net_import_gw": 4.64183447265625,
+    "e930_net_import_gw": 4.327923059360731,
+    "over_import_gw": 0.3139115644115291,
+    "model_price": 32.68992019420498,
+    "actual_rt": 31.78876304626465,
+    "model_demand_gw": 73.17268401826485,
+    "e930_demand_gw": 73.17215547945204
+   },
+   "summer": {
+    "n": 2928,
+    "model_net_import_gw": 4.83379052734375,
+    "e930_net_import_gw": 5.421258538251366,
+    "over_import_gw": -0.587468142144667,
+    "model_price": 33.088736696466725,
+    "actual_rt": 32.45497512817383,
+    "model_demand_gw": 81.24541393442624,
+    "e930_demand_gw": 81.24791666666667
+   },
+   "summer_scarce_rt200": {
+    "n": 11,
+    "model_net_import_gw": 6.948521484375,
+    "e930_net_import_gw": 5.090363636363636,
+    "over_import_gw": 1.8581571821732954,
+    "model_price": 55.91490287504177,
+    "actual_rt": 358.7727355957031,
+    "model_demand_gw": 95.53790909090908,
+    "e930_demand_gw": 93.964
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "model_net_import_gw": 8.17560888671875,
+    "e930_net_import_gw": 5.202531914893617,
+    "over_import_gw": 2.973077169215425,
+    "model_price": 64.86195540464308,
+    "actual_rt": 60.684471130371094,
+    "model_demand_gw": 114.41557446808511,
+    "e930_demand_gw": 113.77802127659574
+   },
+   "scarce_da_foreseen": {
+    "n": 1,
+    "model_net_import_gw": 8.7,
+    "e930_net_import_gw": 7.978,
+    "over_import_gw": 0.722,
+    "model_price": 233.19749777188048,
+    "actual_rt": 248.3699951171875,
+    "model_demand_gw": 118.456,
+    "e930_demand_gw": 119.057
+   },
+   "scarce_rt_only": {
+    "n": 10,
+    "model_net_import_gw": 6.77337255859375,
+    "e930_net_import_gw": 4.8016000000000005,
+    "over_import_gw": 1.971772900390625,
+    "model_price": 38.18664338535788,
+    "actual_rt": 369.8130187988281,
+    "model_demand_gw": 93.24610000000001,
+    "e930_demand_gw": 91.4547
+   }
+  },
+  "2024": {
+   "annual": {
+    "n": 8760,
+    "model_net_import_gw": 2.840419677734375,
+    "e930_net_import_gw": 2.633342035955571,
+    "over_import_gw": 0.20698338944338912,
+    "model_price": 30.118840702080828,
+    "actual_rt": 30.79646110534668,
+    "model_demand_gw": 73.58824223744291,
+    "e930_demand_gw": 73.59371726190476
+   },
+   "summer": {
+    "n": 2928,
+    "model_net_import_gw": 3.108649169921875,
+    "e930_net_import_gw": 3.8591311475409835,
+    "over_import_gw": -0.7504818865539598,
+    "model_price": 30.397503836335964,
+    "actual_rt": 32.017921447753906,
+    "model_demand_gw": 81.2721144125683,
+    "e930_demand_gw": 81.27779337431694
+   },
+   "summer_scarce_rt200": {
+    "n": 14,
+    "model_net_import_gw": 5.22130712890625,
+    "e930_net_import_gw": 4.180428571428571,
+    "over_import_gw": 1.040878452845982,
+    "model_price": 72.12833879783325,
+    "actual_rt": 374.1493225097656,
+    "model_demand_gw": 97.74485714285714,
+    "e930_demand_gw": 97.26492857142857
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "model_net_import_gw": 5.76341845703125,
+    "e930_net_import_gw": 3.145595744680851,
+    "over_import_gw": 2.6178229616855053,
+    "model_price": 100.72539364603077,
+    "actual_rt": 93.37510681152344,
+    "model_demand_gw": 112.53285106382978,
+    "e930_demand_gw": 107.04025531914894
+   },
+   "scarce_da_foreseen": {
+    "n": 1,
+    "model_net_import_gw": 7.615,
+    "e930_net_import_gw": 7.093,
+    "over_import_gw": 0.522,
+    "model_price": 500.0,
+    "actual_rt": 206.33999633789062,
+    "model_demand_gw": 121.178,
+    "e930_demand_gw": 113.527
+   },
+   "scarce_rt_only": {
+    "n": 13,
+    "model_net_import_gw": 5.0371767578125,
+    "e930_net_import_gw": 3.956384615384615,
+    "over_import_gw": 1.0807921799879807,
+    "model_price": 39.215134089974285,
+    "actual_rt": 387.0577392578125,
+    "model_demand_gw": 95.9423076923077,
+    "e930_demand_gw": 96.014
+   }
+  },
+  "2025": {
+   "annual": {
+    "n": 8760,
+    "model_net_import_gw": 2.172465576171875,
+    "e930_net_import_gw": 2.1649172949508797,
+    "over_import_gw": 0.007878468277957141,
+    "model_price": 39.26704659578657,
+    "actual_rt": 42.85029602050781,
+    "model_demand_gw": 75.77739394977169,
+    "e930_demand_gw": 75.77552330363262
+   },
+   "summer": {
+    "n": 2928,
+    "model_net_import_gw": 2.2031162109375,
+    "e930_net_import_gw": 3.7642663934426226,
+    "over_import_gw": -1.5611502222441584,
+    "model_price": 38.786523880308486,
+    "actual_rt": 47.19202423095703,
+    "model_demand_gw": 83.34994979508197,
+    "e930_demand_gw": 83.34718032786884
+   },
+   "summer_scarce_rt200": {
+    "n": 47,
+    "model_net_import_gw": 5.38637060546875,
+    "e930_net_import_gw": 3.9718085106382977,
+    "over_import_gw": 1.4145624532496675,
+    "model_price": 75.26055248593629,
+    "actual_rt": 478.55194091796875,
+    "model_demand_gw": 103.11540425531915,
+    "e930_demand_gw": 103.95659574468084
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "model_net_import_gw": 5.63747216796875,
+    "e930_net_import_gw": 4.837787234042553,
+    "over_import_gw": 0.7996846638131649,
+    "model_price": 72.77707878973517,
+    "actual_rt": 184.98789978027344,
+    "model_demand_gw": 115.4055744680851,
+    "e930_demand_gw": 114.90914893617021
+   },
+   "scarce_da_foreseen": {
+    "n": 20,
+    "model_net_import_gw": 7.0036796875,
+    "e930_net_import_gw": 4.5753,
+    "over_import_gw": 2.4283794921875,
+    "model_price": 113.60466424605863,
+    "actual_rt": 546.6800537109375,
+    "model_demand_gw": 109.0928,
+    "e930_demand_gw": 110.68615
+   },
+   "scarce_rt_only": {
+    "n": 27,
+    "model_net_import_gw": 4.18836474609375,
+    "e930_net_import_gw": 3.524777777777778,
+    "over_import_gw": 0.6635868688512732,
+    "model_price": 46.85750673769752,
+    "actual_rt": 428.086669921875,
+    "model_demand_gw": 98.6877037037037,
+    "e930_demand_gw": 98.97174074074074
+   }
+  }
+ },
+ "stage2_alignment": {
+  "-3": {
+   "mean_r": 0.8756259844126225,
+   "per_year_r": [
+    0.92724689085217,
+    0.7785035353874039,
+    0.9211275269982938
+   ]
+  },
+  "-2": {
+   "mean_r": 0.9159650665195159,
+   "per_year_r": [
+    0.969212443037497,
+    0.8092107941681758,
+    0.969471962352875
+   ]
+  },
+  "-1": {
+   "mean_r": 0.9428615279616969,
+   "per_year_r": [
+    1.0,
+    0.8285860988025295,
+    0.999998485082561
+   ]
+  },
+  "0": {
+   "mean_r": 0.9130225196700795,
+   "per_year_r": [
+    0.9692216527295043,
+    0.8003859587257313,
+    0.9694599475550028
+   ]
+  },
+  "1": {
+   "mean_r": 0.8697746507138899,
+   "per_year_r": [
+    0.9272601272567282,
+    0.7609769234568688,
+    0.9210869014280726
+   ]
+  },
+  "2": {
+   "mean_r": 0.8286265945656099,
+   "per_year_r": [
+    0.8888423942717784,
+    0.7239706915879769,
+    0.8730666978370747
+   ]
+  },
+  "3": {
+   "mean_r": 0.7932805339956016,
+   "per_year_r": [
+    0.8563502156266709,
+    0.6913233888889239,
+    0.8321679974712101
+   ]
+  },
+  "chosen_shift_h": -1,
+  "chosen_mean_r": 0.9428615279616969
+ },
+ "stage2_measured_by_seam": {
+  "2023": {
+   "unmapped_dibas": [],
+   "dibas_present": [
+    "AECI",
+    "IESO",
+    "LGEE",
+    "MHEB",
+    "PJM",
+    "SOCO",
+    "SPA",
+    "SWPP",
+    "TVA"
+   ],
+   "annual": {
+    "n": 8760,
+    "PJM_gw": 4.673788356164384,
+    "SPP_gw": 0.10989828767123287,
+    "South_gw": -1.0709795662100456,
+    "Manitoba_gw": 0.6152159817351599,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 4.327923059360731,
+    "balance_ti_net_import_gw": 4.327923059360731
+   },
+   "summer": {
+    "n": 2928,
+    "PJM_gw": 5.662139344262295,
+    "SPP_gw": -0.08913900273224044,
+    "South_gw": -1.0069450136612021,
+    "Manitoba_gw": 0.8552032103825137,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 5.421258538251366,
+    "balance_ti_net_import_gw": 5.421258538251366
+   },
+   "summer_scarce_rt200": {
+    "n": 11,
+    "PJM_gw": 4.889818181818182,
+    "SPP_gw": -0.22445454545454546,
+    "South_gw": -1.004,
+    "Manitoba_gw": 1.429,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 5.090363636363636,
+    "balance_ti_net_import_gw": 5.090363636363636
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "PJM_gw": 6.239212765957447,
+    "SPP_gw": -0.8844468085106383,
+    "South_gw": -1.8933617021276596,
+    "Manitoba_gw": 1.741127659574468,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 5.202531914893617,
+    "balance_ti_net_import_gw": 5.202531914893617
+   },
+   "scarce_da_foreseen": {
+    "n": 1,
+    "PJM_gw": 8.64,
+    "SPP_gw": -0.549,
+    "South_gw": -2.083,
+    "Manitoba_gw": 1.97,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 7.978,
+    "balance_ti_net_import_gw": 7.978
+   },
+   "scarce_rt_only": {
+    "n": 10,
+    "PJM_gw": 4.5148,
+    "SPP_gw": -0.192,
+    "South_gw": -0.8961,
+    "Manitoba_gw": 1.3749,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 4.8016000000000005,
+    "balance_ti_net_import_gw": 4.8016000000000005
+   }
+  },
+  "2024": {
+   "unmapped_dibas": [],
+   "dibas_present": [
+    "AECI",
+    "IESO",
+    "LGEE",
+    "MHEB",
+    "PJM",
+    "SOCO",
+    "SPA",
+    "SWPP",
+    "TVA"
+   ],
+   "annual": {
+    "n": 8760,
+    "PJM_gw": 3.689803389442345,
+    "SPP_gw": -0.04274728043055079,
+    "South_gw": -1.3540425970456889,
+    "Manitoba_gw": 0.34508015573113476,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 2.6299625570776257,
+    "balance_ti_net_import_gw": 2.633342035955571
+   },
+   "summer": {
+    "n": 2928,
+    "PJM_gw": 3.986253099173554,
+    "SPP_gw": -0.10544662534435262,
+    "South_gw": -1.086836432506887,
+    "Manitoba_gw": 1.0837995867768595,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 3.845984631147541,
+    "balance_ti_net_import_gw": 3.8591311475409835
+   },
+   "summer_scarce_rt200": {
+    "n": 14,
+    "PJM_gw": 3.4455,
+    "SPP_gw": -0.020285714285714285,
+    "South_gw": -0.8612142857142857,
+    "Manitoba_gw": 1.568142857142857,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 4.132142857142857,
+    "balance_ti_net_import_gw": 4.180428571428571
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "PJM_gw": 4.231787234042553,
+    "SPP_gw": -0.11068085106382979,
+    "South_gw": -1.1719148936170214,
+    "Manitoba_gw": 1.7364468085106382,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 4.68563829787234,
+    "balance_ti_net_import_gw": 3.145595744680851
+   },
+   "scarce_da_foreseen": {
+    "n": 1,
+    "PJM_gw": 6.336,
+    "SPP_gw": 0.263,
+    "South_gw": -0.573,
+    "Manitoba_gw": 2.097,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 8.123,
+    "balance_ti_net_import_gw": 7.093
+   },
+   "scarce_rt_only": {
+    "n": 13,
+    "PJM_gw": 3.223153846153846,
+    "SPP_gw": -0.04207692307692308,
+    "South_gw": -0.8833846153846153,
+    "Manitoba_gw": 1.5274615384615386,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 3.8251538461538463,
+    "balance_ti_net_import_gw": 3.956384615384615
+   }
+  },
+  "2025": {
+   "unmapped_dibas": [],
+   "dibas_present": [
+    "AECI",
+    "IESO",
+    "LGEE",
+    "MHEB",
+    "PJM",
+    "SIKE",
+    "SOCO",
+    "SPA",
+    "SWPP",
+    "TVA"
+   ],
+   "annual": {
+    "n": 8760,
+    "PJM_gw": 3.198515410958904,
+    "SPP_gw": 0.1094945205479452,
+    "South_gw": -1.030775799086758,
+    "Manitoba_gw": -0.11340433789954338,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 2.1638297945205482,
+    "balance_ti_net_import_gw": 2.1649172949508797
+   },
+   "summer": {
+    "n": 2928,
+    "PJM_gw": 4.462741803278688,
+    "SPP_gw": 0.3016690573770492,
+    "South_gw": -0.7541195355191256,
+    "Manitoba_gw": -0.24602493169398906,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 3.7642663934426226,
+    "balance_ti_net_import_gw": 3.7642663934426226
+   },
+   "summer_scarce_rt200": {
+    "n": 47,
+    "PJM_gw": 3.436723404255319,
+    "SPP_gw": 0.9543617021276596,
+    "South_gw": -1.3675531914893617,
+    "Manitoba_gw": 0.9482765957446809,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 3.9718085106382977,
+    "balance_ti_net_import_gw": 3.9718085106382977
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "PJM_gw": 4.501574468085106,
+    "SPP_gw": 0.7300851063829787,
+    "South_gw": -1.1406595744680852,
+    "Manitoba_gw": 0.7467872340425532,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 4.837787234042553,
+    "balance_ti_net_import_gw": 4.837787234042553
+   },
+   "scarce_da_foreseen": {
+    "n": 20,
+    "PJM_gw": 2.9516,
+    "SPP_gw": 1.9393,
+    "South_gw": -2.01225,
+    "Manitoba_gw": 1.69665,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 4.5753,
+    "balance_ti_net_import_gw": 4.5753
+   },
+   "scarce_rt_only": {
+    "n": 27,
+    "PJM_gw": 3.796074074074074,
+    "SPP_gw": 0.22477777777777777,
+    "South_gw": -0.89,
+    "Manitoba_gw": 0.3939259259259259,
+    "_unmapped_gw": 0.0,
+    "diba_total_gw": 3.524777777777778,
+    "balance_ti_net_import_gw": 3.524777777777778
+   }
+  }
+ },
+ "stage3_model_by_seam": {
+  "2023": {
+   "vintage_note": "per-seam split read from miso169_gated_A (the only MISO bundle carrying unit_hourly); the current keeper miso173_layupmask commits no unit_hourly. Drift below is measured, not assumed.",
+   "drift_vs_keeper": {
+    "annual": {
+     "proxy_gw": 4.5879873046875,
+     "keeper_gw": 4.64183447265625,
+     "drift_gw": -0.05384767150878906,
+     "max_abs_drift_mw": 1130.90625
+    },
+    "summer": {
+     "proxy_gw": 4.77904248046875,
+     "keeper_gw": 4.83379052734375,
+     "drift_gw": -0.054747909545898435,
+     "max_abs_drift_mw": 912.5
+    },
+    "summer_scarce_rt200": {
+     "proxy_gw": 6.849591796875,
+     "keeper_gw": 6.948521484375,
+     "drift_gw": -0.09892986297607421,
+     "max_abs_drift_mw": 717.8603515625
+    },
+    "summer_top47_load": {
+     "proxy_gw": 8.128490234375,
+     "keeper_gw": 8.17560888671875,
+     "drift_gw": -0.047119121551513675,
+     "max_abs_drift_mw": 361.39794921875
+    },
+    "scarce_da_foreseen": {
+     "proxy_gw": 8.7,
+     "keeper_gw": 8.7,
+     "drift_gw": 0.0,
+     "max_abs_drift_mw": 0.0
+    },
+    "scarce_rt_only": {
+     "proxy_gw": 6.6645498046875,
+     "keeper_gw": 6.77337255859375,
+     "drift_gw": -0.10882285308837891,
+     "max_abs_drift_mw": 717.8603515625
+    }
+   },
+   "annual": {
+    "n": 8760,
+    "Manitoba_gw": 0.57019189453125,
+    "PJM_gw": 4.75912890625,
+    "SPP_gw": 0.14425115966796875,
+    "South_gw": -0.8855846557617187,
+    "Manitoba_exp_gw": -0.004619791507720948,
+    "Manitoba_imp_gw": 0.5748117065429688,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 4.75912890625,
+    "SPP_exp_gw": -0.014198987007141114,
+    "SPP_imp_gw": 0.15845014953613282,
+    "South_exp_gw": -0.8856569213867187,
+    "South_imp_gw": 7.226027548313141e-05,
+    "total_gw": 4.5879873046875
+   },
+   "summer": {
+    "n": 2928,
+    "Manitoba_gw": 0.6943440551757812,
+    "PJM_gw": 4.86864013671875,
+    "SPP_gw": 0.07805575561523438,
+    "South_gw": -0.861997802734375,
+    "Manitoba_exp_gw": -0.0034943780899047852,
+    "Manitoba_imp_gw": 0.6978384399414063,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 4.86864013671875,
+    "SPP_exp_gw": -0.0162316951751709,
+    "SPP_imp_gw": 0.0942874526977539,
+    "South_exp_gw": -0.8622139892578125,
+    "South_imp_gw": 0.00021618852019309996,
+    "total_gw": 4.77904248046875
+   },
+   "summer_scarce_rt200": {
+    "n": 11,
+    "Manitoba_gw": 1.2767908935546874,
+    "PJM_gw": 5.76327294921875,
+    "SPP_gw": 0.1803909149169922,
+    "South_gw": -0.3708636474609375,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 1.2767908935546874,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 5.76327294921875,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.1803909149169922,
+    "South_exp_gw": -0.375,
+    "South_imp_gw": 0.004136363506317139,
+    "total_gw": 6.849591796875
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "Manitoba_gw": 1.609216796875,
+    "PJM_gw": 6.440896484375,
+    "SPP_gw": 0.11746808624267578,
+    "South_gw": -0.03909146881103515,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 1.609216796875,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 6.440896484375,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.11746808624267578,
+    "South_exp_gw": -0.05255955505371094,
+    "South_imp_gw": 0.013468085289001465,
+    "total_gw": 8.128490234375
+   },
+   "scarce_da_foreseen": {
+    "n": 1,
+    "Manitoba_gw": 1.8125,
+    "PJM_gw": 6.821,
+    "SPP_gw": 0.021,
+    "South_gw": 0.0455,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 1.8125,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 6.821,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.021,
+    "South_exp_gw": 0.0,
+    "South_imp_gw": 0.0455,
+    "total_gw": 8.7
+   },
+   "scarce_rt_only": {
+    "n": 10,
+    "Manitoba_gw": 1.223219970703125,
+    "PJM_gw": 5.6575,
+    "SPP_gw": 0.1963300018310547,
+    "South_gw": -0.4125,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 1.223219970703125,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 5.6575,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.1963300018310547,
+    "South_exp_gw": -0.4125,
+    "South_imp_gw": 0.0,
+    "total_gw": 6.6645498046875
+   }
+  },
+  "2024": {
+   "vintage_note": "per-seam split read from miso169_gated_A (the only MISO bundle carrying unit_hourly); the current keeper miso173_layupmask commits no unit_hourly. Drift below is measured, not assumed.",
+   "drift_vs_keeper": {
+    "annual": {
+     "proxy_gw": 2.798758056640625,
+     "keeper_gw": 2.840419677734375,
+     "drift_gw": -0.04166153335571289,
+     "max_abs_drift_mw": 936.434814453125
+    },
+    "summer": {
+     "proxy_gw": 3.047424072265625,
+     "keeper_gw": 3.108649169921875,
+     "drift_gw": -0.061225101470947264,
+     "max_abs_drift_mw": 936.434814453125
+    },
+    "summer_scarce_rt200": {
+     "proxy_gw": 5.1877138671875,
+     "keeper_gw": 5.22130712890625,
+     "drift_gw": -0.03359273910522461,
+     "max_abs_drift_mw": 277.7333984375
+    },
+    "summer_top47_load": {
+     "proxy_gw": 5.7318837890625,
+     "keeper_gw": 5.76341845703125,
+     "drift_gw": -0.031534959793090823,
+     "max_abs_drift_mw": 378.5
+    },
+    "scarce_da_foreseen": {
+     "proxy_gw": 7.615,
+     "keeper_gw": 7.615,
+     "drift_gw": 0.0,
+     "max_abs_drift_mw": 0.0
+    },
+    "scarce_rt_only": {
+     "proxy_gw": 5.001,
+     "keeper_gw": 5.0371767578125,
+     "drift_gw": -0.03617679595947266,
+     "max_abs_drift_mw": 277.7333984375
+    }
+   },
+   "annual": {
+    "n": 8760,
+    "Manitoba_gw": 0.31508340454101563,
+    "PJM_gw": 3.6007138671875,
+    "SPP_gw": 0.048637420654296874,
+    "South_gw": -1.165676513671875,
+    "Manitoba_exp_gw": -0.03369766235351562,
+    "Manitoba_imp_gw": 0.3487810363769531,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 3.6007138671875,
+    "SPP_exp_gw": -0.05816483688354492,
+    "SPP_imp_gw": 0.10680224609375,
+    "South_exp_gw": -1.1711739501953125,
+    "South_imp_gw": 0.005497383117675781,
+    "total_gw": 2.798758056640625
+   },
+   "summer": {
+    "n": 2928,
+    "Manitoba_gw": 0.48850982666015624,
+    "PJM_gw": 3.686607177734375,
+    "SPP_gw": 0.019957319259643554,
+    "South_gw": -1.1476502685546874,
+    "Manitoba_exp_gw": -0.0009077869057655335,
+    "Manitoba_imp_gw": 0.4894176025390625,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 3.686607177734375,
+    "SPP_exp_gw": -0.052843196868896485,
+    "SPP_imp_gw": 0.07280051422119141,
+    "South_exp_gw": -1.1490870361328125,
+    "South_imp_gw": 0.001436816930770874,
+    "total_gw": 3.047424072265625
+   },
+   "summer_scarce_rt200": {
+    "n": 14,
+    "Manitoba_gw": 1.3050357666015624,
+    "PJM_gw": 4.16496435546875,
+    "SPP_gw": 0.22914285278320312,
+    "South_gw": -0.5114285583496094,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 1.3050357666015624,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 4.16496435546875,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.22914285278320312,
+    "South_exp_gw": -0.5625,
+    "South_imp_gw": 0.051071430206298826,
+    "total_gw": 5.1877138671875
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "Manitoba_gw": 1.5101075439453124,
+    "PJM_gw": 4.28336181640625,
+    "SPP_gw": 0.13337872314453125,
+    "South_gw": -0.1949642791748047,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 1.5101075439453124,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 4.28336181640625,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.13337872314453125,
+    "South_exp_gw": -0.2844749145507813,
+    "South_imp_gw": 0.08951063537597656,
+    "total_gw": 5.7318837890625
+   },
+   "scarce_da_foreseen": {
+    "n": 1,
+    "Manitoba_gw": 1.958,
+    "PJM_gw": 4.798,
+    "SPP_gw": 0.144,
+    "South_gw": 0.715,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 1.958,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 4.798,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.144,
+    "South_exp_gw": 0.0,
+    "South_imp_gw": 0.715,
+    "total_gw": 7.615
+   },
+   "scarce_rt_only": {
+    "n": 13,
+    "Manitoba_gw": 1.2548077392578125,
+    "PJM_gw": 4.11626904296875,
+    "SPP_gw": 0.2356923065185547,
+    "South_gw": -0.6057692260742188,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 1.2548077392578125,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 4.11626904296875,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.2356923065185547,
+    "South_exp_gw": -0.6057692260742188,
+    "South_imp_gw": 0.0,
+    "total_gw": 5.001
+   }
+  },
+  "2025": {
+   "vintage_note": "per-seam split read from miso169_gated_A (the only MISO bundle carrying unit_hourly); the current keeper miso173_layupmask commits no unit_hourly. Drift below is measured, not assumed.",
+   "drift_vs_keeper": {
+    "annual": {
+     "proxy_gw": 2.120406494140625,
+     "keeper_gw": 2.172465576171875,
+     "drift_gw": -0.052059288024902346,
+     "max_abs_drift_mw": 1249.89892578125
+    },
+    "summer": {
+     "proxy_gw": 2.135994873046875,
+     "keeper_gw": 2.2031162109375,
+     "drift_gw": -0.0671212615966797,
+     "max_abs_drift_mw": 912.5000610351562
+    },
+    "summer_scarce_rt200": {
+     "proxy_gw": 5.29709130859375,
+     "keeper_gw": 5.38637060546875,
+     "drift_gw": -0.08927993774414063,
+     "max_abs_drift_mw": 505.24658203125
+    },
+    "summer_top47_load": {
+     "proxy_gw": 5.583603515625,
+     "keeper_gw": 5.63747216796875,
+     "drift_gw": -0.053868064880371096,
+     "max_abs_drift_mw": 608.07666015625
+    },
+    "scarce_da_foreseen": {
+     "proxy_gw": 6.9253994140625,
+     "keeper_gw": 7.0036796875,
+     "drift_gw": -0.0782800521850586,
+     "max_abs_drift_mw": 505.24658203125
+    },
+    "scarce_rt_only": {
+     "proxy_gw": 4.0909365234375,
+     "keeper_gw": 4.18836474609375,
+     "drift_gw": -0.09742800903320313,
+     "max_abs_drift_mw": 448.31640625
+    }
+   },
+   "annual": {
+    "n": 8760,
+    "Manitoba_gw": -0.15556915283203124,
+    "PJM_gw": 2.91726220703125,
+    "SPP_gw": 0.10876314544677734,
+    "South_gw": -0.7500498657226562,
+    "Manitoba_exp_gw": -0.19177445983886718,
+    "Manitoba_imp_gw": 0.036205314636230466,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 2.91726220703125,
+    "SPP_exp_gw": -0.024475568771362304,
+    "SPP_imp_gw": 0.1332386932373047,
+    "South_exp_gw": -0.7504638671875,
+    "South_imp_gw": 0.0004139863848686218,
+    "total_gw": 2.120406494140625
+   },
+   "summer": {
+    "n": 2928,
+    "Manitoba_gw": -0.17883287048339844,
+    "PJM_gw": 3.038161865234375,
+    "SPP_gw": 0.14068666076660155,
+    "South_gw": -0.8640205078125,
+    "Manitoba_exp_gw": -0.22847987365722655,
+    "Manitoba_imp_gw": 0.049646984100341796,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 3.038161865234375,
+    "SPP_exp_gw": -0.007800226211547852,
+    "SPP_imp_gw": 0.1484868927001953,
+    "South_exp_gw": -0.8648310546875,
+    "South_imp_gw": 0.000810588300228119,
+    "total_gw": 2.135994873046875
+   },
+   "summer_scarce_rt200": {
+    "n": 47,
+    "Manitoba_gw": 0.49032705688476563,
+    "PJM_gw": 4.373365234375,
+    "SPP_gw": 0.6101925659179688,
+    "South_gw": -0.1767941131591797,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 0.49032705688476563,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 4.373365234375,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.6101925659179688,
+    "South_exp_gw": -0.20699409484863282,
+    "South_imp_gw": 0.03019999885559082,
+    "total_gw": 5.29709130859375
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "Manitoba_gw": 0.42465054321289064,
+    "PJM_gw": 4.655322265625,
+    "SPP_gw": 0.63112548828125,
+    "South_gw": -0.1274945983886719,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 0.42465054321289064,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 4.655322265625,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.63112548828125,
+    "South_exp_gw": -0.13449884033203124,
+    "South_imp_gw": 0.007004255771636963,
+    "total_gw": 5.583603515625
+   },
+   "scarce_da_foreseen": {
+    "n": 20,
+    "Manitoba_gw": 0.9157635498046875,
+    "PJM_gw": 5.03814794921875,
+    "SPP_gw": 0.900517578125,
+    "South_gw": 0.07097000122070313,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 0.9157635498046875,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 5.03814794921875,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.900517578125,
+    "South_exp_gw": 0.0,
+    "South_imp_gw": 0.07097000122070313,
+    "total_gw": 6.9253994140625
+   },
+   "scarce_rt_only": {
+    "n": 27,
+    "Manitoba_gw": 0.1751888885498047,
+    "PJM_gw": 3.88093408203125,
+    "SPP_gw": 0.395136962890625,
+    "South_gw": -0.36032305908203127,
+    "Manitoba_exp_gw": 0.0,
+    "Manitoba_imp_gw": 0.1751888885498047,
+    "PJM_exp_gw": 0.0,
+    "PJM_imp_gw": 3.88093408203125,
+    "SPP_exp_gw": 0.0,
+    "SPP_imp_gw": 0.395136962890625,
+    "South_exp_gw": -0.36032305908203127,
+    "South_imp_gw": 0.0,
+    "total_gw": 4.0909365234375
+   }
+  }
+ },
+ "stage4_binding_precheck": {
+  "2023": {
+   "percentile": 90.0,
+   "seams": {
+    "PJM": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 4.75912890625,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 4.75912890625,
+      "import_cap_gw": 6.232324200913242,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 1.4731956388987362,
+      "at_import_cap_share": 0.16278538812785387,
+      "import_cap_binding_share": 0.15605022831050228
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 4.86864013671875,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 4.86864013671875,
+      "import_cap_gw": 7.082183401639344,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 2.2135429602867918,
+      "at_import_cap_share": 0.03859289617486339,
+      "import_cap_binding_share": 0.03790983606557377
+     },
+     "summer_scarce_rt200": {
+      "n": 11,
+      "model_gross_import_gw": 5.76327294921875,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 5.76327294921875,
+      "import_cap_gw": 6.526918181818182,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.7636454545454547,
+      "at_import_cap_share": 0.09090909090909091,
+      "import_cap_binding_share": 0.09090909090909091
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 6.440896484375,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 6.440896484375,
+      "import_cap_gw": 6.708510638297872,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.2676139876994681,
+      "at_import_cap_share": 0.3829787234042553,
+      "import_cap_binding_share": 0.3829787234042553
+     },
+     "scarce_da_foreseen": {
+      "n": 1,
+      "model_gross_import_gw": 6.821,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 6.821,
+      "import_cap_gw": 6.821,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.0,
+      "at_import_cap_share": 1.0,
+      "import_cap_binding_share": 1.0
+     },
+     "scarce_rt_only": {
+      "n": 10,
+      "model_gross_import_gw": 5.6575,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 5.6575,
+      "import_cap_gw": 6.49751,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.8400100000000003,
+      "at_import_cap_share": 0.0,
+      "import_cap_binding_share": 0.0
+     }
+    },
+    "SPP": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 0.15845014953613282,
+      "model_gross_export_gw": -0.014198987007141114,
+      "model_net_gw": 0.14425115966796875,
+      "import_cap_gw": 0.6824140410958904,
+      "export_cap_gw": 0.4802198744292238,
+      "headroom_gw": 0.5239638900713834,
+      "at_import_cap_share": 0.18310502283105023,
+      "import_cap_binding_share": 0.18299086757990868
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 0.0942874526977539,
+      "model_gross_export_gw": -0.0162316951751709,
+      "model_net_gw": 0.07805575561523438,
+      "import_cap_gw": 0.3640204918032788,
+      "export_cap_gw": 0.5787202868852459,
+      "headroom_gw": 0.2697330390985221,
+      "at_import_cap_share": 0.39549180327868855,
+      "import_cap_binding_share": 0.3951502732240437
+     },
+     "summer_scarce_rt200": {
+      "n": 11,
+      "model_gross_import_gw": 0.1803909149169922,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.1803909149169922,
+      "import_cap_gw": 0.1803909090909091,
+      "export_cap_gw": 0.8088909090909091,
+      "headroom_gw": -1.6645951539182782e-09,
+      "at_import_cap_share": 1.0,
+      "import_cap_binding_share": 1.0
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 0.11746808624267578,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.11746808624267578,
+      "import_cap_gw": 0.11746808510638297,
+      "export_cap_gw": 1.1696808510638297,
+      "headroom_gw": 0.0,
+      "at_import_cap_share": 1.0,
+      "import_cap_binding_share": 1.0
+     },
+     "scarce_da_foreseen": {
+      "n": 1,
+      "model_gross_import_gw": 0.021,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.021,
+      "import_cap_gw": 0.021,
+      "export_cap_gw": 1.336,
+      "headroom_gw": 0.0,
+      "at_import_cap_share": 1.0,
+      "import_cap_binding_share": 1.0
+     },
+     "scarce_rt_only": {
+      "n": 10,
+      "model_gross_import_gw": 0.1963300018310547,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.1963300018310547,
+      "import_cap_gw": 0.19633,
+      "export_cap_gw": 0.7561800000000001,
+      "headroom_gw": -1.8310546693101059e-09,
+      "at_import_cap_share": 1.0,
+      "import_cap_binding_share": 1.0
+     }
+    },
+    "South": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 7.226027548313141e-05,
+      "model_gross_export_gw": -0.8856569213867187,
+      "model_net_gw": -0.8855846557617187,
+      "import_cap_gw": 0.08536385844748862,
+      "export_cap_gw": 2.0255527511415528,
+      "headroom_gw": 0.085291598173516,
+      "at_import_cap_share": 0.6857305936073059,
+      "import_cap_binding_share": 0.6924657534246575
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 0.00021618852019309996,
+      "model_gross_export_gw": -0.8622139892578125,
+      "model_net_gw": -0.861997802734375,
+      "import_cap_gw": 0.16194125683060115,
+      "export_cap_gw": 1.9103661202185793,
+      "headroom_gw": 0.161725068306011,
+      "at_import_cap_share": 0.6591530054644809,
+      "import_cap_binding_share": 0.6591530054644809
+     },
+     "summer_scarce_rt200": {
+      "n": 11,
+      "model_gross_import_gw": 0.004136363506317139,
+      "model_gross_export_gw": -0.375,
+      "model_net_gw": -0.3708636474609375,
+      "import_cap_gw": 0.3174818181818182,
+      "export_cap_gw": 2.0480363636363634,
+      "headroom_gw": 0.3133454545454546,
+      "at_import_cap_share": 0.36363636363636365,
+      "import_cap_binding_share": 0.36363636363636365
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 0.013468085289001465,
+      "model_gross_export_gw": -0.05255955505371094,
+      "model_net_gw": -0.03909146881103515,
+      "import_cap_gw": 0.1894255319148936,
+      "export_cap_gw": 2.0573829787234046,
+      "headroom_gw": 0.17595744680851064,
+      "at_import_cap_share": 0.425531914893617,
+      "import_cap_binding_share": 0.425531914893617
+     },
+     "scarce_da_foreseen": {
+      "n": 1,
+      "model_gross_import_gw": 0.0455,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.0455,
+      "import_cap_gw": 0.302,
+      "export_cap_gw": 2.15,
+      "headroom_gw": 0.2565,
+      "at_import_cap_share": 0.0,
+      "import_cap_binding_share": 0.0
+     },
+     "scarce_rt_only": {
+      "n": 10,
+      "model_gross_import_gw": 0.0,
+      "model_gross_export_gw": -0.4125,
+      "model_net_gw": -0.4125,
+      "import_cap_gw": 0.31903000000000004,
+      "export_cap_gw": 2.03784,
+      "headroom_gw": 0.31903000000000004,
+      "at_import_cap_share": 0.4,
+      "import_cap_binding_share": 0.4
+     }
+    },
+    "Manitoba": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 0.5748117065429688,
+      "model_gross_export_gw": -0.004619791507720948,
+      "model_net_gw": 0.57019189453125,
+      "import_cap_gw": 1.0895944977168952,
+      "export_cap_gw": 0.2146096575342466,
+      "headroom_gw": 0.5147828126118934,
+      "at_import_cap_share": 0.3613013698630137,
+      "import_cap_binding_share": 0.358675799086758
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 0.6978384399414063,
+      "model_gross_export_gw": -0.0034943780899047852,
+      "model_net_gw": 0.6943440551757812,
+      "import_cap_gw": 1.2743674863387977,
+      "export_cap_gw": 0.06275717213114755,
+      "headroom_gw": 0.5765290518409567,
+      "at_import_cap_share": 0.1991120218579235,
+      "import_cap_binding_share": 0.19398907103825136
+     },
+     "summer_scarce_rt200": {
+      "n": 11,
+      "model_gross_import_gw": 1.2767908935546874,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 1.2767908935546874,
+      "import_cap_gw": 1.6927272727272729,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.4159363625266335,
+      "at_import_cap_share": 0.18181818181818182,
+      "import_cap_binding_share": 0.09090909090909091
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 1.609216796875,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 1.609216796875,
+      "import_cap_gw": 1.8297446808510638,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.22052799565741354,
+      "at_import_cap_share": 0.3617021276595745,
+      "import_cap_binding_share": 0.2978723404255319
+     },
+     "scarce_da_foreseen": {
+      "n": 1,
+      "model_gross_import_gw": 1.8125,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 1.8125,
+      "import_cap_gw": 1.824,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.0115,
+      "at_import_cap_share": 1.0,
+      "import_cap_binding_share": 0.0
+     },
+     "scarce_rt_only": {
+      "n": 10,
+      "model_gross_import_gw": 1.223219970703125,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 1.223219970703125,
+      "import_cap_gw": 1.6796,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.4563799987792969,
+      "at_import_cap_share": 0.1,
+      "import_cap_binding_share": 0.1
+     }
+    }
+   }
+  },
+  "2024": {
+   "percentile": 90.0,
+   "seams": {
+    "PJM": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 3.6007138671875,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 3.6007138671875,
+      "import_cap_gw": 5.068666084474887,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 1.467952285178546,
+      "at_import_cap_share": 0.27751141552511416,
+      "import_cap_binding_share": 0.2634703196347032
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 3.686607177734375,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 3.686607177734375,
+      "import_cap_gw": 5.1396432377049175,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 1.453035977923284,
+      "at_import_cap_share": 0.2687841530054645,
+      "import_cap_binding_share": 0.2459016393442623
+     },
+     "summer_scarce_rt200": {
+      "n": 14,
+      "model_gross_import_gw": 4.16496435546875,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 4.16496435546875,
+      "import_cap_gw": 4.330964285714285,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.16599998256138385,
+      "at_import_cap_share": 0.7857142857142857,
+      "import_cap_binding_share": 0.7857142857142857
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 4.28336181640625,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 4.28336181640625,
+      "import_cap_gw": 4.317110638297873,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.03374893617021277,
+      "at_import_cap_share": 0.9148936170212766,
+      "import_cap_binding_share": 0.851063829787234
+     },
+     "scarce_da_foreseen": {
+      "n": 1,
+      "model_gross_import_gw": 4.798,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 4.798,
+      "import_cap_gw": 4.798,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.0,
+      "at_import_cap_share": 1.0,
+      "import_cap_binding_share": 1.0
+     },
+     "scarce_rt_only": {
+      "n": 13,
+      "model_gross_import_gw": 4.11626904296875,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 4.11626904296875,
+      "import_cap_gw": 4.295038461538462,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.17876921198918264,
+      "at_import_cap_share": 0.7692307692307693,
+      "import_cap_binding_share": 0.7692307692307693
+     }
+    },
+    "SPP": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 0.10680224609375,
+      "model_gross_export_gw": -0.05816483688354492,
+      "model_net_gw": 0.048637420654296874,
+      "import_cap_gw": 0.5793407534246576,
+      "export_cap_gw": 0.7211991552511415,
+      "headroom_gw": 0.47253849719503566,
+      "at_import_cap_share": 0.18401826484018266,
+      "import_cap_binding_share": 0.18401826484018266
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 0.07280051422119141,
+      "model_gross_export_gw": -0.052843196868896485,
+      "model_net_gw": 0.019957319259643554,
+      "import_cap_gw": 0.3860712773224043,
+      "export_cap_gw": 0.599653244535519,
+      "headroom_gw": 0.3132707596513092,
+      "at_import_cap_share": 0.28688524590163933,
+      "import_cap_binding_share": 0.28688524590163933
+     },
+     "summer_scarce_rt200": {
+      "n": 14,
+      "model_gross_import_gw": 0.22914285278320312,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.22914285278320312,
+      "import_cap_gw": 0.2723,
+      "export_cap_gw": 0.8275142857142856,
+      "headroom_gw": 0.043157143947056345,
+      "at_import_cap_share": 0.8571428571428571,
+      "import_cap_binding_share": 0.8571428571428571
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 0.13337872314453125,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.13337872314453125,
+      "import_cap_gw": 0.1333787234042553,
+      "export_cap_gw": 0.973063829787234,
+      "headroom_gw": -3.895861095286896e-10,
+      "at_import_cap_share": 1.0,
+      "import_cap_binding_share": 1.0
+     },
+     "scarce_da_foreseen": {
+      "n": 1,
+      "model_gross_import_gw": 0.144,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.144,
+      "import_cap_gw": 0.144,
+      "export_cap_gw": 1.295,
+      "headroom_gw": 0.0,
+      "at_import_cap_share": 1.0,
+      "import_cap_binding_share": 1.0
+     },
+     "scarce_rt_only": {
+      "n": 13,
+      "model_gross_import_gw": 0.2356923065185547,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.2356923065185547,
+      "import_cap_gw": 0.28216923076923073,
+      "export_cap_gw": 0.791553846153846,
+      "headroom_gw": 0.04647692425067607,
+      "at_import_cap_share": 0.8461538461538461,
+      "import_cap_binding_share": 0.8461538461538461
+     }
+    },
+    "South": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 0.005497383117675781,
+      "model_gross_export_gw": -1.1711739501953125,
+      "model_net_gw": -1.165676513671875,
+      "import_cap_gw": 0.09368162100456624,
+      "export_cap_gw": 2.293684863013698,
+      "headroom_gw": 0.08818423821610405,
+      "at_import_cap_share": 0.7183789954337899,
+      "import_cap_binding_share": 0.7219178082191781
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 0.001436816930770874,
+      "model_gross_export_gw": -1.1490870361328125,
+      "model_net_gw": -1.1476502685546874,
+      "import_cap_gw": 0.11406693989071041,
+      "export_cap_gw": 1.9777747609289618,
+      "headroom_gw": 0.11263012295081971,
+      "at_import_cap_share": 0.6092896174863388,
+      "import_cap_binding_share": 0.6198770491803278
+     },
+     "summer_scarce_rt200": {
+      "n": 14,
+      "model_gross_import_gw": 0.051071430206298826,
+      "model_gross_export_gw": -0.5625,
+      "model_net_gw": -0.5114285583496094,
+      "import_cap_gw": 0.1742428571428572,
+      "export_cap_gw": 1.9153785714285714,
+      "headroom_gw": 0.12317142857142861,
+      "at_import_cap_share": 0.42857142857142855,
+      "import_cap_binding_share": 0.42857142857142855
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 0.08951063537597656,
+      "model_gross_export_gw": -0.2844749145507813,
+      "model_net_gw": -0.1949642791748047,
+      "import_cap_gw": 0.2985404255319149,
+      "export_cap_gw": 2.2025063829787235,
+      "headroom_gw": 0.20902978723404256,
+      "at_import_cap_share": 0.46808510638297873,
+      "import_cap_binding_share": 0.5106382978723404
+     },
+     "scarce_da_foreseen": {
+      "n": 1,
+      "model_gross_import_gw": 0.715,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.715,
+      "import_cap_gw": 0.715,
+      "export_cap_gw": 2.265,
+      "headroom_gw": 0.0,
+      "at_import_cap_share": 1.0,
+      "import_cap_binding_share": 1.0
+     },
+     "scarce_rt_only": {
+      "n": 13,
+      "model_gross_import_gw": 0.0,
+      "model_gross_export_gw": -0.6057692260742188,
+      "model_net_gw": -0.6057692260742188,
+      "import_cap_gw": 0.13264615384615389,
+      "export_cap_gw": 1.8884846153846153,
+      "headroom_gw": 0.13264615384615389,
+      "at_import_cap_share": 0.38461538461538464,
+      "import_cap_binding_share": 0.38461538461538464
+     }
+    },
+    "Manitoba": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 0.3487810363769531,
+      "model_gross_export_gw": -0.03369766235351562,
+      "model_net_gw": 0.31508340454101563,
+      "import_cap_gw": 0.8841946803652968,
+      "export_cap_gw": 0.4010680479452054,
+      "headroom_gw": 0.5354136397813445,
+      "at_import_cap_share": 0.33515981735159817,
+      "import_cap_binding_share": 0.3327625570776256
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 0.4894176025390625,
+      "model_gross_export_gw": -0.0009077869057655335,
+      "model_net_gw": 0.48850982666015624,
+      "import_cap_gw": 1.561211475409836,
+      "export_cap_gw": 0.0030399590163934427,
+      "headroom_gw": 1.0717938366601376,
+      "at_import_cap_share": 0.003756830601092896,
+      "import_cap_binding_share": 0.003756830601092896
+     },
+     "summer_scarce_rt200": {
+      "n": 14,
+      "model_gross_import_gw": 1.3050357666015624,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 1.3050357666015624,
+      "import_cap_gw": 1.7731928571428575,
+      "export_cap_gw": 0.0008000000000000001,
+      "headroom_gw": 0.46815714285714277,
+      "at_import_cap_share": 0.07142857142857142,
+      "import_cap_binding_share": 0.07142857142857142
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 1.5101075439453124,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 1.5101075439453124,
+      "import_cap_gw": 1.8762638297872338,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.3661562364943484,
+      "at_import_cap_share": 0.1702127659574468,
+      "import_cap_binding_share": 0.1702127659574468
+     },
+     "scarce_da_foreseen": {
+      "n": 1,
+      "model_gross_import_gw": 1.958,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 1.958,
+      "import_cap_gw": 1.958,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.0,
+      "at_import_cap_share": 1.0,
+      "import_cap_binding_share": 1.0
+     },
+     "scarce_rt_only": {
+      "n": 13,
+      "model_gross_import_gw": 1.2548077392578125,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 1.2548077392578125,
+      "import_cap_gw": 1.7589769230769234,
+      "export_cap_gw": 0.0008615384615384618,
+      "headroom_gw": 0.5041692307692307,
+      "at_import_cap_share": 0.0,
+      "import_cap_binding_share": 0.0
+     }
+    }
+   }
+  },
+  "2025": {
+   "percentile": 90.0,
+   "seams": {
+    "PJM": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 2.91726220703125,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 2.91726220703125,
+      "import_cap_gw": 4.669655365296803,
+      "export_cap_gw": 0.008312328767123296,
+      "headroom_gw": 1.7523930888067099,
+      "at_import_cap_share": 0.14931506849315068,
+      "import_cap_binding_share": 0.14235159817351598
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 3.038161865234375,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 3.038161865234375,
+      "import_cap_gw": 5.998135928961749,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 2.959974391103442,
+      "at_import_cap_share": 0.025956284153005466,
+      "import_cap_binding_share": 0.02459016393442623
+     },
+     "summer_scarce_rt200": {
+      "n": 47,
+      "model_gross_import_gw": 4.373365234375,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 4.373365234375,
+      "import_cap_gw": 5.122682978723403,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.7493174898188167,
+      "at_import_cap_share": 0.44680851063829785,
+      "import_cap_binding_share": 0.425531914893617
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 4.655322265625,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 4.655322265625,
+      "import_cap_gw": 5.322282978723404,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.6669606351811835,
+      "at_import_cap_share": 0.425531914893617,
+      "import_cap_binding_share": 0.3829787234042553
+     },
+     "scarce_da_foreseen": {
+      "n": 20,
+      "model_gross_import_gw": 5.03814794921875,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 5.03814794921875,
+      "import_cap_gw": 5.13509,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 0.09694178222656265,
+      "at_import_cap_share": 0.85,
+      "import_cap_binding_share": 0.8
+     },
+     "scarce_rt_only": {
+      "n": 27,
+      "model_gross_import_gw": 3.88093408203125,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 3.88093408203125,
+      "import_cap_gw": 5.113492592592594,
+      "export_cap_gw": 0.0,
+      "headroom_gw": 1.2325587547019676,
+      "at_import_cap_share": 0.14814814814814814,
+      "import_cap_binding_share": 0.14814814814814814
+     }
+    },
+    "SPP": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 0.1332386932373047,
+      "model_gross_export_gw": -0.024475568771362304,
+      "model_net_gw": 0.10876314544677734,
+      "import_cap_gw": 0.7336482191780823,
+      "export_cap_gw": 0.541568287671233,
+      "headroom_gw": 0.6004095110143591,
+      "at_import_cap_share": 0.054337899543379,
+      "import_cap_binding_share": 0.05365296803652968
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 0.1484868927001953,
+      "model_gross_export_gw": -0.007800226211547852,
+      "model_net_gw": 0.14068666076660155,
+      "import_cap_gw": 0.8094750683060109,
+      "export_cap_gw": 0.1987209699453552,
+      "headroom_gw": 0.6609881691841479,
+      "at_import_cap_share": 0.03415300546448088,
+      "import_cap_binding_share": 0.03381147540983607
+     },
+     "summer_scarce_rt200": {
+      "n": 47,
+      "model_gross_import_gw": 0.6101925659179688,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.6101925659179688,
+      "import_cap_gw": 0.8750574468085106,
+      "export_cap_gw": 0.38329148936170215,
+      "headroom_gw": 0.2648648873836438,
+      "at_import_cap_share": 0.3404255319148936,
+      "import_cap_binding_share": 0.3191489361702128
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 0.63112548828125,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.63112548828125,
+      "import_cap_gw": 0.8474170212765958,
+      "export_cap_gw": 0.30708723404255317,
+      "headroom_gw": 0.21629148884225405,
+      "at_import_cap_share": 0.3404255319148936,
+      "import_cap_binding_share": 0.3404255319148936
+     },
+     "scarce_da_foreseen": {
+      "n": 20,
+      "model_gross_import_gw": 0.900517578125,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.900517578125,
+      "import_cap_gw": 0.9584050000000001,
+      "export_cap_gw": 0.331535,
+      "headroom_gw": 0.05788738525390638,
+      "at_import_cap_share": 0.7,
+      "import_cap_binding_share": 0.65
+     },
+     "scarce_rt_only": {
+      "n": 27,
+      "model_gross_import_gw": 0.395136962890625,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.395136962890625,
+      "import_cap_gw": 0.8133185185185186,
+      "export_cap_gw": 0.4216296296296297,
+      "headroom_gw": 0.41818155562789366,
+      "at_import_cap_share": 0.07407407407407407,
+      "import_cap_binding_share": 0.07407407407407407
+     }
+    },
+    "South": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 0.0004139863848686218,
+      "model_gross_export_gw": -0.7504638671875,
+      "model_net_gw": -0.7500498657226562,
+      "import_cap_gw": 0.18539817351598178,
+      "export_cap_gw": 1.9882492465753423,
+      "headroom_gw": 0.18498418713530454,
+      "at_import_cap_share": 0.5907534246575342,
+      "import_cap_binding_share": 0.5906392694063927
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 0.000810588300228119,
+      "model_gross_export_gw": -0.8648310546875,
+      "model_net_gw": -0.8640205078125,
+      "import_cap_gw": 0.19924146174863394,
+      "export_cap_gw": 1.5838323087431696,
+      "headroom_gw": 0.1984308734109493,
+      "at_import_cap_share": 0.453551912568306,
+      "import_cap_binding_share": 0.4532103825136612
+     },
+     "summer_scarce_rt200": {
+      "n": 47,
+      "model_gross_import_gw": 0.03019999885559082,
+      "model_gross_export_gw": -0.20699409484863282,
+      "model_net_gw": -0.1767941131591797,
+      "import_cap_gw": 0.19352765957446819,
+      "export_cap_gw": 1.683823404255319,
+      "headroom_gw": 0.1633276597043302,
+      "at_import_cap_share": 0.44680851063829785,
+      "import_cap_binding_share": 0.44680851063829785
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 0.007004255771636963,
+      "model_gross_export_gw": -0.13449884033203124,
+      "model_net_gw": -0.1274945983886719,
+      "import_cap_gw": 0.0549957446808511,
+      "export_cap_gw": 1.9754872340425533,
+      "headroom_gw": 0.04799148910197809,
+      "at_import_cap_share": 0.7659574468085106,
+      "import_cap_binding_share": 0.7659574468085106
+     },
+     "scarce_da_foreseen": {
+      "n": 20,
+      "model_gross_import_gw": 0.07097000122070313,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.07097000122070313,
+      "import_cap_gw": 0.19142000000000012,
+      "export_cap_gw": 1.6399650000000001,
+      "headroom_gw": 0.1204500003051759,
+      "at_import_cap_share": 0.55,
+      "import_cap_binding_share": 0.55
+     },
+     "scarce_rt_only": {
+      "n": 27,
+      "model_gross_import_gw": 0.0,
+      "model_gross_export_gw": -0.36032305908203127,
+      "model_net_gw": -0.36032305908203127,
+      "import_cap_gw": 0.19508888888888892,
+      "export_cap_gw": 1.7163111111111111,
+      "headroom_gw": 0.19508888888888892,
+      "at_import_cap_share": 0.37037037037037035,
+      "import_cap_binding_share": 0.37037037037037035
+     }
+    },
+    "Manitoba": {
+     "annual": {
+      "n": 8760,
+      "model_gross_import_gw": 0.036205314636230466,
+      "model_gross_export_gw": -0.19177445983886718,
+      "model_net_gw": -0.15556915283203124,
+      "import_cap_gw": 0.4505752739726028,
+      "export_cap_gw": 0.5959303196347032,
+      "headroom_gw": 0.4143699582483562,
+      "at_import_cap_share": 0.36655251141552514,
+      "import_cap_binding_share": 0.36621004566210047
+     },
+     "summer": {
+      "n": 2928,
+      "model_gross_import_gw": 0.049646984100341796,
+      "model_gross_export_gw": -0.22847987365722655,
+      "model_net_gw": -0.17883287048339844,
+      "import_cap_gw": 0.370995218579235,
+      "export_cap_gw": 0.708727800546448,
+      "headroom_gw": 0.32134822768200944,
+      "at_import_cap_share": 0.46311475409836067,
+      "import_cap_binding_share": 0.46277322404371585
+     },
+     "summer_scarce_rt200": {
+      "n": 47,
+      "model_gross_import_gw": 0.49032705688476563,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.49032705688476563,
+      "import_cap_gw": 0.9269744680851063,
+      "export_cap_gw": 0.49979574468085125,
+      "headroom_gw": 0.43664741769344234,
+      "at_import_cap_share": 0.23404255319148937,
+      "import_cap_binding_share": 0.2127659574468085
+     },
+     "summer_top47_load": {
+      "n": 47,
+      "model_gross_import_gw": 0.42465054321289064,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.42465054321289064,
+      "import_cap_gw": 0.7026851063829787,
+      "export_cap_gw": 0.724012765957447,
+      "headroom_gw": 0.27803455992353726,
+      "at_import_cap_share": 0.46808510638297873,
+      "import_cap_binding_share": 0.44680851063829785
+     },
+     "scarce_da_foreseen": {
+      "n": 20,
+      "model_gross_import_gw": 0.9157635498046875,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.9157635498046875,
+      "import_cap_gw": 1.22917,
+      "export_cap_gw": 0.3802700000000001,
+      "headroom_gw": 0.31340643188476575,
+      "at_import_cap_share": 0.3,
+      "import_cap_binding_share": 0.25
+     },
+     "scarce_rt_only": {
+      "n": 27,
+      "model_gross_import_gw": 0.1751888885498047,
+      "model_gross_export_gw": 0.0,
+      "model_net_gw": 0.1751888885498047,
+      "import_cap_gw": 0.7031259259259258,
+      "export_cap_gw": 0.5883333333333334,
+      "headroom_gw": 0.527937036810981,
+      "at_import_cap_share": 0.18518518518518517,
+      "import_cap_binding_share": 0.18518518518518517
+     }
+    }
+   }
+  }
+ },
+ "stage5_attribution": {
+  "2023": {
+   "annual": {
+    "n": 8760,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 4.75912890625,
+      "measured_gw": 4.673788356164384,
+      "gap_gw": 0.08534020585012218,
+      "model_gross_import_gw": 4.75912890625,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.14425115966796875,
+      "measured_gw": 0.10989828767123287,
+      "gap_gw": 0.03435287628974,
+      "model_gross_import_gw": 0.15845014953613282,
+      "model_gross_export_gw": -0.014198987007141114
+     },
+     "South": {
+      "model_gw": -0.8855846557617187,
+      "measured_gw": -1.0709795662100456,
+      "gap_gw": 0.1853948994812628,
+      "model_gross_import_gw": 7.226027548313141e-05,
+      "model_gross_export_gw": -0.8856569213867187
+     },
+     "Manitoba": {
+      "model_gw": 0.57019189453125,
+      "measured_gw": 0.6152159817351599,
+      "gap_gw": -0.045024088315550055,
+      "model_gross_import_gw": 0.5748117065429688,
+      "model_gross_export_gw": -0.004619791507720948
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "summer": {
+    "n": 2928,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 4.86864013671875,
+      "measured_gw": 5.662139344262295,
+      "gap_gw": -0.7934989029097427,
+      "model_gross_import_gw": 4.86864013671875,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.07805575561523438,
+      "measured_gw": -0.08913900273224044,
+      "gap_gw": 0.16719475955569027,
+      "model_gross_import_gw": 0.0942874526977539,
+      "model_gross_export_gw": -0.0162316951751709
+     },
+     "South": {
+      "model_gw": -0.861997802734375,
+      "measured_gw": -1.0069450136612021,
+      "gap_gw": 0.14494724372395726,
+      "model_gross_import_gw": 0.00021618852019309996,
+      "model_gross_export_gw": -0.8622139892578125
+     },
+     "Manitoba": {
+      "model_gw": 0.6943440551757812,
+      "measured_gw": 0.8552032103825137,
+      "gap_gw": -0.16085915416088262,
+      "model_gross_import_gw": 0.6978384399414063,
+      "model_gross_export_gw": -0.0034943780899047852
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "summer_scarce_rt200": {
+    "n": 11,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 5.76327294921875,
+      "measured_gw": 4.889818181818182,
+      "gap_gw": 0.8734545454545455,
+      "model_gross_import_gw": 5.76327294921875,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.1803909149169922,
+      "measured_gw": -0.22445454545454546,
+      "gap_gw": 0.4048454562100497,
+      "model_gross_import_gw": 0.1803909149169922,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": -0.3708636474609375,
+      "measured_gw": -1.004,
+      "gap_gw": 0.6331363636363636,
+      "model_gross_import_gw": 0.004136363506317139,
+      "model_gross_export_gw": -0.375
+     },
+     "Manitoba": {
+      "model_gw": 1.2767908935546874,
+      "measured_gw": 1.429,
+      "gap_gw": -0.1522090897993608,
+      "model_gross_import_gw": 1.2767908935546874,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 6.440896484375,
+      "measured_gw": 6.239212765957447,
+      "gap_gw": 0.20168388464095743,
+      "model_gross_import_gw": 6.440896484375,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.11746808624267578,
+      "measured_gw": -0.8844468085106383,
+      "gap_gw": 1.0019148936170212,
+      "model_gross_import_gw": 0.11746808624267578,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": -0.03909146881103515,
+      "measured_gw": -1.8933617021276596,
+      "gap_gw": 1.8542702367255028,
+      "model_gross_import_gw": 0.013468085289001465,
+      "model_gross_export_gw": -0.05255955505371094
+     },
+     "Manitoba": {
+      "model_gw": 1.609216796875,
+      "measured_gw": 1.741127659574468,
+      "gap_gw": -0.1319109743808178,
+      "model_gross_import_gw": 1.609216796875,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "scarce_da_foreseen": {
+    "n": 1,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 6.821,
+      "measured_gw": 8.64,
+      "gap_gw": -1.819,
+      "model_gross_import_gw": 6.821,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.021,
+      "measured_gw": -0.549,
+      "gap_gw": 0.57,
+      "model_gross_import_gw": 0.021,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": 0.0455,
+      "measured_gw": -2.083,
+      "gap_gw": 2.1285,
+      "model_gross_import_gw": 0.0455,
+      "model_gross_export_gw": 0.0
+     },
+     "Manitoba": {
+      "model_gw": 1.8125,
+      "measured_gw": 1.97,
+      "gap_gw": -0.1575,
+      "model_gross_import_gw": 1.8125,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "scarce_rt_only": {
+    "n": 10,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 5.6575,
+      "measured_gw": 4.5148,
+      "gap_gw": 1.1427,
+      "model_gross_import_gw": 5.6575,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.1963300018310547,
+      "measured_gw": -0.192,
+      "gap_gw": 0.3883300018310547,
+      "model_gross_import_gw": 0.1963300018310547,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": -0.4125,
+      "measured_gw": -0.8961,
+      "gap_gw": 0.48360000000000003,
+      "model_gross_import_gw": 0.0,
+      "model_gross_export_gw": -0.4125
+     },
+     "Manitoba": {
+      "model_gw": 1.223219970703125,
+      "measured_gw": 1.3749,
+      "gap_gw": -0.1516799987792969,
+      "model_gross_import_gw": 1.223219970703125,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   }
+  },
+  "2024": {
+   "annual": {
+    "n": 8760,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 3.6007138671875,
+      "measured_gw": 3.689803389442345,
+      "gap_gw": -0.08746566107455199,
+      "model_gross_import_gw": 3.6007138671875,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.048637420654296874,
+      "measured_gw": -0.04274728043055079,
+      "gap_gw": 0.09169961130279836,
+      "model_gross_import_gw": 0.10680224609375,
+      "model_gross_export_gw": -0.05816483688354492
+     },
+     "South": {
+      "model_gw": -1.165676513671875,
+      "measured_gw": -1.3540425970456889,
+      "gap_gw": 0.18856437510476548,
+      "model_gross_import_gw": 0.005497383117675781,
+      "model_gross_export_gw": -1.1711739501953125
+     },
+     "Manitoba": {
+      "model_gw": 0.31508340454101563,
+      "measured_gw": 0.34508015573113476,
+      "gap_gw": -0.029291898495405585,
+      "model_gross_import_gw": 0.3487810363769531,
+      "model_gross_export_gw": -0.03369766235351562
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "summer": {
+    "n": 2928,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 3.686607177734375,
+      "measured_gw": 3.986253099173554,
+      "gap_gw": -0.2955726388978564,
+      "model_gross_import_gw": 3.686607177734375,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.019957319259643554,
+      "measured_gw": -0.10544662534435262,
+      "gap_gw": 0.126058859990648,
+      "model_gross_import_gw": 0.07280051422119141,
+      "model_gross_export_gw": -0.052843196868896485
+     },
+     "South": {
+      "model_gw": -1.1476502685546874,
+      "measured_gw": -1.086836432506887,
+      "gap_gw": -0.060930343321860654,
+      "model_gross_import_gw": 0.001436816930770874,
+      "model_gross_export_gw": -1.1490870361328125
+     },
+     "Manitoba": {
+      "model_gw": 0.48850982666015624,
+      "measured_gw": 1.0837995867768595,
+      "gap_gw": -0.5920622247283195,
+      "model_gross_import_gw": 0.4894176025390625,
+      "model_gross_export_gw": -0.0009077869057655335
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "summer_scarce_rt200": {
+    "n": 14,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 4.16496435546875,
+      "measured_gw": 3.4455,
+      "gap_gw": 0.7194643031529019,
+      "model_gross_import_gw": 4.16496435546875,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.22914285278320312,
+      "measured_gw": -0.020285714285714285,
+      "gap_gw": 0.24942857033865792,
+      "model_gross_import_gw": 0.22914285278320312,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": -0.5114285583496094,
+      "measured_gw": -0.8612142857142857,
+      "gap_gw": 0.34978571428571426,
+      "model_gross_import_gw": 0.051071430206298826,
+      "model_gross_export_gw": -0.5625
+     },
+     "Manitoba": {
+      "model_gw": 1.3050357666015624,
+      "measured_gw": 1.568142857142857,
+      "gap_gw": -0.2631071428571428,
+      "model_gross_import_gw": 1.3050357666015624,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 4.28336181640625,
+      "measured_gw": 4.231787234042553,
+      "gap_gw": 0.05157446808510638,
+      "model_gross_import_gw": 4.28336181640625,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.13337872314453125,
+      "measured_gw": -0.11068085106382979,
+      "gap_gw": 0.2440595748576712,
+      "model_gross_import_gw": 0.13337872314453125,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": -0.1949642791748047,
+      "measured_gw": -1.1719148936170214,
+      "gap_gw": 0.9769506253993258,
+      "model_gross_import_gw": 0.08951063537597656,
+      "model_gross_export_gw": -0.2844749145507813
+     },
+     "Manitoba": {
+      "model_gw": 1.5101075439453124,
+      "measured_gw": 1.7364468085106382,
+      "gap_gw": -0.22633921521775266,
+      "model_gross_import_gw": 1.5101075439453124,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "scarce_da_foreseen": {
+    "n": 1,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 4.798,
+      "measured_gw": 6.336,
+      "gap_gw": -1.538,
+      "model_gross_import_gw": 4.798,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.144,
+      "measured_gw": 0.263,
+      "gap_gw": -0.119,
+      "model_gross_import_gw": 0.144,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": 0.715,
+      "measured_gw": -0.573,
+      "gap_gw": 1.288,
+      "model_gross_import_gw": 0.715,
+      "model_gross_export_gw": 0.0
+     },
+     "Manitoba": {
+      "model_gw": 1.958,
+      "measured_gw": 2.097,
+      "gap_gw": -0.139,
+      "model_gross_import_gw": 1.958,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "scarce_rt_only": {
+    "n": 13,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 4.11626904296875,
+      "measured_gw": 3.223153846153846,
+      "gap_gw": 0.8931154033954327,
+      "model_gross_import_gw": 4.11626904296875,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.2356923065185547,
+      "measured_gw": -0.04207692307692308,
+      "gap_gw": 0.2777692295954778,
+      "model_gross_import_gw": 0.2356923065185547,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": -0.6057692260742188,
+      "measured_gw": -0.8833846153846153,
+      "gap_gw": 0.27761538461538465,
+      "model_gross_import_gw": 0.0,
+      "model_gross_export_gw": -0.6057692260742188
+     },
+     "Manitoba": {
+      "model_gw": 1.2548077392578125,
+      "measured_gw": 1.5274615384615386,
+      "gap_gw": -0.27265384615384614,
+      "model_gross_import_gw": 1.2548077392578125,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   }
+  },
+  "2025": {
+   "annual": {
+    "n": 8760,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 2.91726220703125,
+      "measured_gw": 3.198515410958904,
+      "gap_gw": -0.2812531344688102,
+      "model_gross_import_gw": 2.91726220703125,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.10876314544677734,
+      "measured_gw": 0.1094945205479452,
+      "gap_gw": -0.0007313816592573575,
+      "model_gross_import_gw": 0.1332386932373047,
+      "model_gross_export_gw": -0.024475568771362304
+     },
+     "South": {
+      "model_gw": -0.7500498657226562,
+      "measured_gw": -1.030775799086758,
+      "gap_gw": 0.28072591151412996,
+      "model_gross_import_gw": 0.0004139863848686218,
+      "model_gross_export_gw": -0.7504638671875
+     },
+     "Manitoba": {
+      "model_gw": -0.15556915283203124,
+      "measured_gw": -0.11340433789954338,
+      "gap_gw": -0.04216479772600137,
+      "model_gross_import_gw": 0.036205314636230466,
+      "model_gross_export_gw": -0.19177445983886718
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "summer": {
+    "n": 2928,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 3.038161865234375,
+      "measured_gw": 4.462741803278688,
+      "gap_gw": -1.424580265420382,
+      "model_gross_import_gw": 3.038161865234375,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.14068666076660155,
+      "measured_gw": 0.3016690573770492,
+      "gap_gw": -0.1609823846181885,
+      "model_gross_import_gw": 0.1484868927001953,
+      "model_gross_export_gw": -0.007800226211547852
+     },
+     "South": {
+      "model_gw": -0.8640205078125,
+      "measured_gw": -0.7541195355191256,
+      "gap_gw": -0.10990089690685272,
+      "model_gross_import_gw": 0.000810588300228119,
+      "model_gross_export_gw": -0.8648310546875
+     },
+     "Manitoba": {
+      "model_gw": -0.17883287048339844,
+      "measured_gw": -0.24602493169398906,
+      "gap_gw": 0.06719205781072378,
+      "model_gross_import_gw": 0.049646984100341796,
+      "model_gross_export_gw": -0.22847987365722655
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "summer_scarce_rt200": {
+    "n": 47,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 4.373365234375,
+      "measured_gw": 3.436723404255319,
+      "gap_gw": 0.9366420846492687,
+      "model_gross_import_gw": 4.373365234375,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.6101925659179688,
+      "measured_gw": 0.9543617021276596,
+      "gap_gw": -0.34416914270279253,
+      "model_gross_import_gw": 0.6101925659179688,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": -0.1767941131591797,
+      "measured_gw": -1.3675531914893617,
+      "gap_gw": 1.190759087177033,
+      "model_gross_import_gw": 0.03019999885559082,
+      "model_gross_export_gw": -0.20699409484863282
+     },
+     "Manitoba": {
+      "model_gw": 0.49032705688476563,
+      "measured_gw": 0.9482765957446809,
+      "gap_gw": -0.45794954535301696,
+      "model_gross_import_gw": 0.49032705688476563,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "summer_top47_load": {
+    "n": 47,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 4.655322265625,
+      "measured_gw": 4.501574468085106,
+      "gap_gw": 0.15374787545711435,
+      "model_gross_import_gw": 4.655322265625,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.63112548828125,
+      "measured_gw": 0.7300851063829787,
+      "gap_gw": -0.09895957394863697,
+      "model_gross_import_gw": 0.63112548828125,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": -0.1274945983886719,
+      "measured_gw": -1.1406595744680852,
+      "gap_gw": 1.01316498009702,
+      "model_gross_import_gw": 0.007004255771636963,
+      "model_gross_export_gw": -0.13449884033203124
+     },
+     "Manitoba": {
+      "model_gw": 0.42465054321289064,
+      "measured_gw": 0.7467872340425532,
+      "gap_gw": -0.3221366875831117,
+      "model_gross_import_gw": 0.42465054321289064,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "scarce_da_foreseen": {
+    "n": 20,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 5.03814794921875,
+      "measured_gw": 2.9516,
+      "gap_gw": 2.0865482177734376,
+      "model_gross_import_gw": 5.03814794921875,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.900517578125,
+      "measured_gw": 1.9393,
+      "gap_gw": -1.0387823852539064,
+      "model_gross_import_gw": 0.900517578125,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": 0.07097000122070313,
+      "measured_gw": -2.01225,
+      "gap_gw": 2.0832199996948244,
+      "model_gross_import_gw": 0.07097000122070313,
+      "model_gross_export_gw": 0.0
+     },
+     "Manitoba": {
+      "model_gw": 0.9157635498046875,
+      "measured_gw": 1.69665,
+      "gap_gw": -0.7808864318847657,
+      "model_gross_import_gw": 0.9157635498046875,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   },
+   "scarce_rt_only": {
+    "n": 27,
+    "per_seam": {
+     "PJM": {
+      "model_gw": 3.88093408203125,
+      "measured_gw": 3.796074074074074,
+      "gap_gw": 0.08485976381655093,
+      "model_gross_import_gw": 3.88093408203125,
+      "model_gross_export_gw": 0.0
+     },
+     "SPP": {
+      "model_gw": 0.395136962890625,
+      "measured_gw": 0.22477777777777777,
+      "gap_gw": 0.17035918511284723,
+      "model_gross_import_gw": 0.395136962890625,
+      "model_gross_export_gw": 0.0
+     },
+     "South": {
+      "model_gw": -0.36032305908203127,
+      "measured_gw": -0.89,
+      "gap_gw": 0.5296769297564471,
+      "model_gross_import_gw": 0.0,
+      "model_gross_export_gw": -0.36032305908203127
+     },
+     "Manitoba": {
+      "model_gw": 0.1751888885498047,
+      "measured_gw": 0.3939259259259259,
+      "gap_gw": -0.2187370368109809,
+      "model_gross_import_gw": 0.1751888885498047,
+      "model_gross_export_gw": 0.0
+     },
+     "_unmapped_measured_gw": 0.0
+    }
+   }
+  }
+ }
+}
