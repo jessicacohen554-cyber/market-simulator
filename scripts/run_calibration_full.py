@@ -3509,6 +3509,7 @@ def solve_and_persist(
     nyiso_gas_bridge_state_floor_min_run: bool | None = None,
     nyiso_chp_btm_measured: bool | None = None,
     cc_reserve_duty_split: bool | None = None,
+    chp_layup_duty_split: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -4477,6 +4478,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_chp_btm_measured=nyiso_chp_btm_measured
             )
+        if chp_layup_duty_split is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                chp_layup_duty_split=chp_layup_duty_split
+            )
         if cc_reserve_duty_split is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_reserve_duty_split=cc_reserve_duty_split
@@ -5205,6 +5210,7 @@ def solve_and_persist(
             nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run,
             nyiso_chp_btm_measured=nyiso_chp_btm_measured,
             cc_reserve_duty_split=cc_reserve_duty_split,
+            chp_layup_duty_split=chp_layup_duty_split,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
             nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
@@ -6074,6 +6080,7 @@ def solve_and_persist(
         "nyiso_gas_bridge_state_floor_min_run": nyiso_gas_bridge_state_floor_min_run,
         "nyiso_chp_btm_measured": nyiso_chp_btm_measured,
         "cc_reserve_duty_split": cc_reserve_duty_split,
+        "chp_layup_duty_split": chp_layup_duty_split,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
         "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
         "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
@@ -11637,6 +11644,17 @@ def main() -> None:
         "BTM add-back and the benchmark classFull subtrahend.",
     )
     parser.add_argument(
+        "--chp-layup-duty-split",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="CHP LAY-UP duty split (nyiso-148): route the measured laid-up "
+        "cogeneration cohort (chp_layup_census_<ISO>.csv — median gross load "
+        "zero in every (year, 4h block) cell AND a non-degenerate CAMPD "
+        "series) to the class offer curve's peak band. The cogeneration "
+        "sibling of --cc-reserve-duty-split, disjoint from it by class scope; "
+        "zero new scalars.",
+    )
+    parser.add_argument(
         "--cc-reserve-duty-split",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12119,6 +12137,7 @@ def main() -> None:
         nyiso_gas_bridge_state_floor_min_run=args.nyiso_gas_bridge_state_floor_min_run,
         nyiso_chp_btm_measured=args.nyiso_chp_btm_measured,
         cc_reserve_duty_split=args.cc_reserve_duty_split,
+        chp_layup_duty_split=args.chp_layup_duty_split,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
         nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,

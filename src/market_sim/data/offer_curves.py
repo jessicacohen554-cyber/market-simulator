@@ -951,6 +951,20 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
         if plant_code in _reserve_duty_cohort(str(getattr(config, "iso", "") or "")):
             pct_mc = 0.0
             pct_peak = 100.0 - pct_mr
+    # CHP LAY-UP duty split (chp_layup_duty_split, nyiso-148): mirror of the
+    # load-bearing bins_to_fleet override so the dashboard bands track the
+    # dispatch — applied LAST, superseding every pct override above. Same
+    # placement discipline as the reserve-duty block: nyiso-146b's first solve
+    # was INERT because the frame seam was clobbered by pct_peaking /
+    # cc_duct_peaking, and applying last is the fix.
+    if getattr(config, "chp_layup_duty_split", False):
+        from market_sim.data.fleet.campd_bins import _CHP_GROUPS, _chp_layup_cohort
+
+        if group in _CHP_GROUPS and plant_code in _chp_layup_cohort(
+            str(getattr(config, "iso", "") or "")
+        ):
+            pct_mc = 0.0
+            pct_peak = 100.0 - pct_mr
 
     if fuel == "coal":
         mustrun_cap = nameplate * pct_mr / 100.0

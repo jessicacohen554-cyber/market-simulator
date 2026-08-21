@@ -648,6 +648,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # is dropped from the hash at default and every pre-existing cache key is
     # byte-stable; an armed run enters the key as a distinct scenario.
     "cc_reserve_duty_split",
+    # CHP lay-up duty split (nyiso-148): inert at its default (off — the bins
+    # frame is byte-identical and the census artifact is not even read), so it
+    # is dropped from the hash at default and every pre-existing cache key is
+    # byte-stable; an armed run enters the key as a distinct scenario.
+    "chp_layup_duty_split",
     # ERCOT gas-bridge ONLINE-HOURS leg (ercot141): inert at its default (off —
     # the floor stays gap-only and the detector call is byte-identical), so
     # registering it here keeps the pinned default cache_key byte-stable; an
@@ -1271,6 +1276,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_bridge_state_floor_min_run": "False",
     "nyiso_chp_btm_measured": "False",
     "cc_reserve_duty_split": "False",
+    "chp_layup_duty_split": "False",
     "ercot_gas_bridge_online_hours": "False",
     "forecast_xyear_warmstart": "True",
     "ercot_offer_hrmult_ep_rebasis": "False",
@@ -7641,6 +7647,49 @@ class ScenarioConfig:
     # default off so a control run is byte-identical.
     cc_reserve_duty_split: bool = False
 
+    # CHP LAY-UP duty split (nyiso-148) — the COGENERATION sibling of
+    # cc_reserve_duty_split directly above, disjoint from it by class scope
+    # (that one is CC_REGULAR-only, this one CC_CHP/CT_CHP/ST_CHP-only), so
+    # the two populations can never overlap and nothing stacks (rule 19
+    # [R-ONE-MECH]). nyiso-147 restored the NYISO CHP fleet's MEASURED grid
+    # capacity (nyiso_chp_btm_measured — the Gold-Book/EIA-923 per-plant share
+    # replacing the residual-identified 35 % sector carve) and proved the 2023
+    # upstate price object with it, while exposing what the carve had masked:
+    # semi-mothballed cogens dispatching far above their own meters (Selkirk
+    # 10725, metered 92 GWh in 2024, runs 730 GWh once its capacity is
+    # restored — 7.9x), with ZERO floor involved. D-2 books CHP forcing at
+    # 0.38 % of CC_CHP energy and the CHP classes are D-2-exempt, so the
+    # phantom energy is *economic*, where D-2 and D-4 do not look.
+    #
+    # Membership: data/raw/_processed-legacy/chp_layup_census_<ISO>.csv
+    # (scripts/data/derive_campd_chp_layup_census.py). A plant qualifies iff
+    # its median plant-summed gross load is ZERO in every (year, 4-hour block)
+    # cell of 2023-2025 — the nyiso-140/144 criterion verbatim — AND its CAMPD
+    # series is non-degenerate (p99.5 HSL > 0). The second half is a GUARD the
+    # measurement forced, not a tuned cut: three NYISO CHP plants
+    # (RED-Rochester 10025, Ticonderoga 54099, Cornell 50368) carry an
+    # identically-zero CAMPD series while EIA-923 reports 439-950 GWh, so a
+    # naive census would convict plants CAMPD simply cannot see. A silent
+    # meter is no evidence; the census abstains. Measured separation on the
+    # NYISO CHP population: qualifiers stop at 18/18 zero cells, nearest
+    # non-qualifier 13/18 (Indeck-Corinth 50458, on-share 0.457).
+    #
+    # When set, a census plant's CHP-class tranches move their whole
+    # dispatchable capacity to the class offer curve's PEAK band
+    # (fleet_to_bins: pct_mc = 0, pct_peak = 100 - pct_mr), i.e. they are
+    # priced at the class's existing identified peak multiplier — an offer
+    # SHAPE from a measured duty-role signal, never a pin to measured output
+    # (rule 13 [R-MEASURED]; dispatch above the peak band stays free, which is
+    # exactly what the real Selkirk did as 2025 prices rose: 157 -> 108 -> 385
+    # GWh metered gross), with ZERO new scalars (rule 21 [R-DOF]). Membership
+    # is frozen against residuals (rule 23 [R-FROZEN-DERIVE]) and
+    # mechanism-blind — it reads only the meter, never a price residual or a
+    # D-4 verdict. AVAILABILITY IS NOT TOUCHED: the outage envelope already
+    # derates five of NYISO's seven census plants and the split adds nothing
+    # to it. Identified per ISO through a per-ISO artifact (rule 25
+    # [R-ISO-SCOPE]); default off so a control run is byte-identical.
+    chp_layup_duty_split: bool = False
+
     # ISO-gated gas-steam startup amortization. The ST_GAS startup cost +
     # min-run/min-down (constants.ST_GAS_COMMITMENT_PARAMS) are only fed into the
     # P1 monthly bid markup when this is set, so a stop-start costs more than
@@ -13938,6 +13987,7 @@ TIER_TAGS: dict[str, int] = {
     "cc_intermediate_split": 1,
     "cc_intermediate_cf_threshold": 3,
     "cc_reserve_duty_split": 1,
+    "chp_layup_duty_split": 1,
     "gas_st_startup_cost": 3,
     "tranche_startup_amortization": 1,
     "tranche_startup_measured_runs": 1,
