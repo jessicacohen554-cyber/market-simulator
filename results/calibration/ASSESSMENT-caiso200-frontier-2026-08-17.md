@@ -49,7 +49,7 @@ pre-registered A/B.
 | C1 fuel-mix | load-bearing | **FAIL** | single row: 2023 CC_REGULAR **−4.243 TWh** vs ±4.15 & −1.8 pp vs ±3 pp; 11/12 rows pass, free 7/8 |
 | C2 system volume | load-bearing | PASS | — |
 | C3a mean LMP | load-bearing | **FAIL** | **+4.1 % PASS / +12.8 % / +15.7 %** vs ±10 % |
-| C3b price shape | load-bearing | PASS | 0.097 / 0.174 / 0.181 vs 0.20 |
+| C3b price shape | load-bearing | PASS | 0.097 / 0.174 / 0.181 vs 0.20 *(**CORRECTED 2026-08-21 by caiso-209 — RECORDED, NOT RETRACTED**: this triplet is the SUPERSEDED `2026-08-16-caiso-197-w2-r5` keeper's, carried forward into this row rather than measured on caiso-200. Re-scored at HEAD on this run's own committed bytes, caiso-200 measures **0.098 / 0.179 / 0.182** — still PASS in all three years, still not in the failing-gate set, so **no determination changes**. Provenance and the four-way evidence that it is transcription rather than a moved measurement: `ASSESSMENT-caiso209-rest-continuation-2026-08-21.md` §3. 2025's true margin is **0.018**, not 0.019 — the composition watch is live.)* |
 | C3c price tail | supporting | **CAVEAT** (ledgered) | model 0 h vs 47 h; 1 h vs 35 h; 2025 PASS |
 | C4 dispatch corr | supporting | PASS | — |
 | C6 governance | protective | PASS | attestation generated at promotion |

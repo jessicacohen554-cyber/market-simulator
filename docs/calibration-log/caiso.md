@@ -8884,3 +8884,121 @@ Keeper, markers, holdout freeze, DOF ledger, every matrix cell verdict, and ever
 source file: UNCHANGED.
 
 **Lane REMAINS RESTED. Session consumed the caiso-208 shorthand. Next shorthand: caiso-209.**
+
+## 2026-08-21 — CAISO — caiso-209: Branch A executed (REST CONTINUES); full record re-verified on committed bytes at a HEAD that had moved again — and the lane's standing C3b GUARDRAIL MAGNITUDES found to be the SUPERSEDED caiso-197 keeper's, not caiso-200's; keeper unchanged, NOT-YET
+
+**No solve. No probe. No LP. Nothing registered, nothing armed, no cell verdict
+moves** (nothing was tested, so rule 28b does not attach — the caiso-206/207/208
+precedent applied identically).
+
+**Branch A was correct and Branch B never opened.** No owner funding order issued
+for either standing tail-formation object, so caiso-203 ruling 2 (FINAL) governs:
+the in-model lever queue is empty with every cell adjudicated, re-proven BY
+MEASUREMENT at caiso-205 (the last chartered lever came back byte-identical in
+2023/2025, floor max $14.5 in 2024 — an inert arm is not a lever), and no
+admissible in-model instrument of the required size exists (~$2–3/h broad
+sub-$60 level-down, caiso-202 §B / §F). Reaching C3a through a §F-killed lever
+would be a rule-13 act; NOT-YET is the honest fallback (ruling 5).
+
+**Standing state reproduced item-for-item and exactly.** Keeper
+`2026-08-17-caiso-200-h1-memberpanel`; `calibration_verdict.py --run-id` →
+**NOT-YET** at rubric **v3.4**, basis *"undocumented out-of-tolerance (FAIL)
+criteria: price_mean"*; C3a the SOLE load-bearing FAIL (2023 PASS +4.1 %, 2024
++12.8 %, 2025 +15.7 %, judged vs ACTUAL RT LMP only); C3c the SINGLE ledgered
+caveat (0h/47, 1h/35, 2025 PASS at 0h/8h), caveat budget **ledgered 1 of 1,
+protective 0 of 0**; C1 **12/12, free 8/8**; C2/C3b/C4/C6/C8 PASS;
+`audit_keepers --iso CAISO` **PASS 0/0**; `build_status --iso CAISO --check` in
+sync; DOF ledger **10/7**; CAISO absent from BOTH `complete` and `final` (it sits
+in `withdrawn`); holdout freeze **ACTIVE**; all three CAISO registrations
+present, tracked, years `[2023,2024,2025]` — no out-of-training year touched.
+`check_mechanism_matrix.py` exit 0, keeper stamps match.
+
+**caiso-208's gate-posture cross-check re-run and CLEAN** — the shard `gates`
+stamp and the §5.2 header both read back current against the verdict output.
+That repair held.
+
+**THE NEW FACT: the C3b guardrail triplet belongs to the superseded caiso-197
+keeper.** The cross-check caiso-208 added to the rest protocol covers the
+*posture* but not the *magnitudes*, and the magnitude half was uncovered. The
+lane's standing C3b guardrail — quoted in the caiso-209 charter as *"MUST NOT
+REGRESS … C3b (0.097/0.174/0.181 vs 0.20)"* and carried in the caiso-200
+assessment's scorecard row — is the `2026-08-16-caiso-197-w2-r5` triplet,
+correctly recorded as caiso-197's own at line 8084 of this log and in the §5.2
+superseded block, but carried forward into caiso-200's row rather than measured
+on caiso-200. **Re-scored at HEAD on its own committed bytes the keeper measures
+NRMSE 0.098 / 0.179 / 0.182 vs ≤0.20.**
+
+**It changes no determination.** C3b PASSES all three years under either reading
+and has never been in this lane's failing-gate set. The damage is to the
+guardrail: a Branch-B session checking a fresh solve against the old triplet
+would read a **phantom regression in all three years**, against a run that no
+longer exists — structurally the same species of trap as the caiso-208 stale gate
+posture, and surviving the same way, in the gap between records that were each
+individually checked (206, 207 and 208 all recorded "C3b PASS" without reading
+the magnitude back).
+
+**Evidence for transcription rather than a moved measurement**, four ways:
+(1) `bench/CAISO/{2023,2024,2025}.json.gz` and the run payload landed together at
+the promotion and are unchanged since — the only later in-scope commit, 568699d
+(the v3.4 C1 re-score), touched the keeper shard, sidecar, `status/CAISO.js` and
+`metrics.json`, **not** the payload; (2) C3b's load-weighted basis dates to
+rubric **v2.4**, long before caiso-200 was scored at v3.3; (3) since the visible
+history root the only two scorer commits — b7a2874 (v3.4) and 0ef672a
+(nyiso-143) — carry **zero** `price_shape`/NRMSE hunks; (4) caiso-200 is
+caiso-197 plus the fleet-member panel and its C3a moved in **all three years**
+(+4.0/+12.1/+15.6 → +4.1/+12.8/+15.7 %), so a bit-identical three-decimal NRMSE
+in all three years is not a credible measurement — and the caiso-19x PS rung
+(0.098/0.178/0.183, line 8069) shows C3b does move at this precision between
+CAISO recipes. *Stated honestly:* the partial clone is **root-truncated at
+d985fca**, so the one check I could not run is a scorer diff across the promotion
+boundary itself. The reproducible number at HEAD is 0.098/0.179/0.182.
+
+**Repaired, recorded not retracted.** The measured baseline is stamped onto both
+live guardrail surfaces (the CAISO shard `gates` stamp and the §5.2 header),
+which previously carried C3b only as "PASS" with no magnitude — precisely why the
+wrong triplet had nothing to be checked against; the caiso-200 assessment's row
+is annotated inline with the measured value and its provenance, promotion-time
+text retained verbatim. 2025's true margin is **0.018**, so the composition watch
+the caiso-19x PS rung opened at 0.017 is live, not resting at 0.019.
+
+**Census re-baselined 131 → 132.** U 32 → 33, every other verdict exact. The
+whole delta is ONE foreign, legitimate cell — `mustrun_layup_window_mask`, added
+by **miso-173** (2026-08-20) under rule 28c (base row + a cell line in every
+shard) and entering CAISO as `U` under rule 28(d), since a MISO identification
+transfers nothing. **No CAISO verdict moved.** Current census: K 64 · U 33 · I 15
+· R 9 · O 6 · G 5 = 132.
+
+**Owner packet unchanged at TWO items.** (1) Fund a tail-formation object —
+(a) PS water-state hourly intake, declined 3×, reaches 62.1 %/10.4 % of the
+required 2024/2025 C3a move at its most favourable bound; (b) import
+spot-capacity derivation, not funded, direct λ share < 5 %. Neither closes C3a on
+its own arithmetic. (2) F-3 arming posture of `caiso_ra_mpb_capacity_anchor` —
+recommendation **keep default-OFF**, since FC-2 row 4 improves solely by channel
+substitution (identical 10,186.3 MW built in both arms; only the label on
+1,000 MW moves). §3 adds no third item — it is a records correction, not a
+decision.
+
+**Filed items:** item 1 (stale DOF text — `offer_curve_by_group` still reads
+`identification: "residual"`) **re-verified still open by direct read of the
+attestation's 10 entries**; items 2–4 carried; **NEW item 5** — a session that
+produces a promotion should re-measure and re-state the whole scorecard from the
+verdict output rather than carrying rows forward from the superseded run; the
+`cccc911` program-wide stale-citation item stays routed **off-lane** (rule 25),
+now joined there by an NYISO §5.x prose-header keeper-name warning. The
+`scenarios.py` anchor drift caiso-208 observed now reports **0 unresolvable
+beyond the ratchet**.
+
+**DO-NOT-REDO** carried forward verbatim from caiso-206 §B / caiso-207 §5 /
+caiso-208 §4, plus: **do not "fix" C3b and do not read 0.098/0.179/0.182 as a
+regression** — it is the keeper's own unchanged baseline, arrived at by no
+mechanism; and **do not re-derive the census as 131** — it is 132 since
+miso-173. New evidence still means exactly one thing: a keeper whose own scored
+path spikes.
+
+**Records:**
+`results/calibration/ASSESSMENT-caiso209-rest-continuation-2026-08-21.md`,
+matrix §5.2 caiso-209 block, the §5.2 header + shard `gates` C3b baseline stamp,
+the caiso-200 assessment row annotation, this entry. Keeper, markers, holdout
+freeze, DOF ledger, every matrix cell verdict, and every source file: UNCHANGED.
+
+**Lane REMAINS RESTED. Session consumed the caiso-209 shorthand. Next shorthand: caiso-210.**
