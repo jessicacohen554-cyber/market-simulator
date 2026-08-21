@@ -10920,3 +10920,56 @@ transport state reproducibly (never load-bearing). Probe:
 
 **Session consumed the ercot-224 shorthand. Next shorthand: ercot-225**
 (ercot-199 remains unclaimed).
+
+---
+
+## ercot-225 — 2026-08-21 — THE G-SPUR BAND-TOP BLINDNESS OWNER GATE REVISION, drafted as a DECISION CARD (Phase-0 precommitted, NO LP, no solve, NO GATE CHANGE — awaiting owner sign-off): the lidless re-reading of ALL 11 registered ERCOT runs changes ZERO standing verdicts, EXONERATES the one recorded artifact-leg FAIL (ercot-215's "2025 0→1"), strengthens both recorded FAILs a fortiori, and surfaces h3068-2024 as a band-top-blind hour in EVERY lineage
+
+**Branch `claude/ercot-225-gspur-gate-z1q0f6`. Precommit
+`docs/PRECOMMIT-ercot225-gspur-bandtop-gate-revision-2026-08-21.md` pushed +
+blob-verified (blob `9b55eac9`, 199 lines) BEFORE any re-reading was
+computed; executed as written. Keeper UNTOUCHED at
+`2026-08-20-ercot223-arm-eventrelease`.** Queue choice per dispatch: the R-A
+re-pointed queue's last standing item (item 8 spent NEGATIVE at ercot-224).
+
+**The revised spec (card §2):** Option A (recommended) gates on
+`S_nolid = #{model ≥ 150 & actual < 150}` with the `S_band`/`S_top`
+decomposition reported (`S_top = #{model > 500 & actual < 150}` — the blind
+population); baseline re-reads 9/11/1 → **9/12/1** (`ercot215_decontam_B`
+lidless). Option B report-only side-by-side; Option C status quo.
+
+**The re-reading (probe `ercot225_gspur_bandtop_reread.py`, committed JSON;
+demand-weighted P1 price, both NaN conventions agree on every count):**
+keeper 11·11·1 → 11·12·1; ercot-213-arm/215-ctl 17·13·0 → **24·14·1**
+(seven 2023 overshoot hours, not one: h3954/4051/4069/4070/4071/4117 at
+$885–1,310 on actuals $83–138, + h5822 $583); ercot-219-arm 273·671·1239 →
+**2210·1330·2402** (banded 2023 concealed ~8×); every 204/213-lineage
+control 9·11·0 → 9·12·**1**. **Verdict flips: exactly ONE, the exonerating
+one** — ercot-215's recorded strict-leg FAIL (2025 0→1, `ercot215_ab.json`)
+flips to PASS on both rules (24→9 / 14→12 / 1→1, non-increasing every
+year); ercot-213's REJECTED-AS-ARMED G-SPUR FAIL stays and STRENGTHENS
+(+8 banded was +15 lidless); ercot-204/221/223 keep PASS (keeper margin:
+11·12·1 vs revised bars 14/17/6); ercot-219 FAIL a fortiori. **No
+historical promotion or standing determination would have differed.** All
+five precommit priors resolved in their declared expected branch.
+
+**Newly visible objects (named, not chartered):** h3068-2024 (May 8
+20:00 CST — model $677–798 vs actual $110.41, the hour after the ercot-223
+event window) is band-top-blind in EVERY registered run of every lineage;
+h3355-2025 was above the top in the ercot-204-era keeper too ($630.98), so
+the 204/213-lineage "2025: 0" was never a clean zero. Hygiene CONFIRMED
+(report-only): `ercot221_gates.py::SPUR_BASELINE` 2023/2024 hour LISTS
+don't match the baseline bundle's own banded hours (counts agree; true
+identities in FINDING §2); repair chartered into card §7 step 2.
+
+**Disposition:** the card
+(`results/calibration/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`)
+is pushed AWAITING OWNER SIGN-OFF — the owner was not in-session, so the
+gate files are NOT edited. **The R-A re-pointed queue is now EMPTY** (item 8
+closed effectively-unconditional at ercot-224; the band-top item
+card-drafted pending the owner). Door D unchanged. Matrix §5.1 re-stamped
+same-session (rule 28 evidence duty; no cell verdict — no mechanism
+tested). Full record: `docs/FINDING-ercot225-gspur-bandtop-card-2026-08-21.md`.
+
+**Session consumed the ercot-225 shorthand. Next shorthand: ercot-226**
+(ercot-199 remains unclaimed).
