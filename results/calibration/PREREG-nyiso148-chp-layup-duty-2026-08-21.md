@@ -280,3 +280,55 @@ So that a surprise is legible rather than rationalised afterwards:
   Iroquois winter spread, no Astoria attribution, no re-derivation of the BTM
   shares against any residual.
 * Flynn's start-count excess is open and is **not** this session's lever.
+
+---
+
+## 9. DISCLOSURE — the first ARM D solve was INERT-BY-HALF, and why (added 2026-08-21, BEFORE the valid solve)
+
+Recorded here, in the pre-registration, before the corrected arm solved — the
+nyiso-146b disclosure discipline, and the second time this exact seam has bitten
+a duty-split leg.
+
+**What happened.** The first ARM D solve (`nyiso148_armD_inert`, registered as a
+plumbing probe under rule 15) armed the census correctly — the run log carries
+*"chp_layup_duty_split armed: 7 measured laid-up CHP plant(s) route to the class
+peak band — [10617, 10725, 50449, 50450, 50451, 54041, 54076]"* for all three
+years — and **still moved almost nothing**: every cohort plant kept a full econ
+band and its energy fell by under 3 % (Selkirk 315.3 → 302.5 GWh, Lockport
+963.6 → 937.9 GWh in 2023). System lw 2025 moved by $0.04.
+
+**Why.** The leg was wired at the frame seam (`fleet_to_bins`) and mirrored in
+`offer_curves`, but **NOT** at `assembly.py::bins_to_fleet`, which is the
+LOAD-BEARING override when the run reads a cached binned-fleet frame (the NYISO
+keeper does: *"Binned fleet cache for NYISO is up to date"*). There `pct_mc`
+reached 0 but `pct_peak` was clobbered straight back by the thermal-tranche
+artifact and the duct-burner peaking map, so the cohort's capacity fell through
+to the econ band. This is **verbatim** the defect `cc_reserve_duty_split`'s own
+in-code comment records from nyiso-146b (*"the first solve of the arm measured
+all three clobbering the fleet_to_bins frame values back to a normal split
+(pct_peak 100 → 8 → duct 0.0), leaving the mechanism inert"*) — reproduced in a
+second leg because the sibling's frame-side seam was mirrored and its
+load-bearing one was not.
+
+**How it was caught.** By this pre-registration's own **D-K2 anti-inert gate**,
+which is why that gate exists and why it tests band COMPOSITION rather than a
+price delta. Had ARM D been judged on prices alone it would have read as a
+clean, well-behaved near-null result.
+
+**The fix**, and its verification before re-solving: the CHP block is added to
+`bins_to_fleet`, applied LAST, exactly mirroring the CC_REGULAR one. Confirmed
+on the arm recipe's own fleet-only rebuild (no LP): Selkirk 10725 now enters the
+LP as **peak 754 MW @ $64.69** and Lockport 54041 as **peak 221 MW @ $49.55**,
+single-band, while the non-cohort Independence 54547 keeps its normal
+committed $19.50 / econ $22.43 / peak $37.92 split.
+
+**Effect on the BASE.** None, by construction: the whole delta sits inside
+`if ... getattr(config, "chp_layup_duty_split", False) ...`, so a base run
+(flag off) cannot reach it. The base bundle is NOT re-solved, and this is
+verified rather than asserted — a fleet-only rebuild of the base recipe at the
+fixed HEAD reproduces its committed tranche structure exactly (`§10` of the
+RESULT).
+
+**Both solves are registered** (rule 15): `nyiso148_armD_inert` as the plumbing
+probe and `nyiso148_armD` as the arm the gates are scored on. The gates
+themselves are UNCHANGED from §5 — nothing in this disclosure moves a bar.

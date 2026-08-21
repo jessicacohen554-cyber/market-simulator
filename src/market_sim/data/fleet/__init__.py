@@ -509,6 +509,7 @@ from market_sim.data.fleet.campd_bins import (  # noqa: F401
     _override_bin_class_from_eia923,
     _plant_emission_rate_map,
     _reconcile_cc_capacity,
+    _CHP_GROUPS,
     _chp_layup_cohort,
     _reserve_duty_cohort,
     apply_plant_emission_rates,
