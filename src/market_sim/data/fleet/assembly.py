@@ -587,6 +587,25 @@ def bins_to_fleet(
         ):
             pct_mc = 0.0
             pct_peak = 100.0 - pct_mr
+        # CHP LAY-UP split (chp_layup_duty_split, nyiso-148): the cogeneration
+        # sibling of the block directly above, and applied LAST for the SAME
+        # reason — measured on this arm's first solve, the offer-curve mirror
+        # alone left the mechanism HALF-applied: pct_mc reached 0 but pct_peak
+        # was clobbered back by the tranche artifact / duct-burner map, so the
+        # cohort kept a full econ band and its energy moved by < 3 % (the
+        # nyiso-146b inert-solve defect, reproduced in a second leg and caught
+        # by this arm's own D-K2 anti-inert gate). The frame-side seam in
+        # fleet_to_bins stays for the synthesized-bins schema; THIS is the
+        # load-bearing override. Zero new scalars — the peak band's heat rate
+        # resolves exactly as the class's own peak band does in this recipe.
+        if (
+            group in _pkg_ns()._CHP_GROUPS
+            and getattr(config, "chp_layup_duty_split", False)
+            and plant_code
+            in _pkg_ns()._chp_layup_cohort(str(getattr(config, "iso", "") or ""))
+        ):
+            pct_mc = 0.0
+            pct_peak = 100.0 - pct_mr
         denom = 100.0 - pct_mr
         committed_cap = grid_cap * pct_mc / denom if denom > 0.0 else 0.0
         peak_cap = grid_cap * pct_peak / denom if denom > 0.0 else 0.0

@@ -598,6 +598,7 @@ def run_year(
     nyiso_gas_bridge_state_floor_min_run: bool | None = None,
     nyiso_chp_btm_measured: bool | None = None,
     cc_reserve_duty_split: bool | None = None,
+    chp_layup_duty_split: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -1499,6 +1500,8 @@ def run_year(
         config = config.with_overrides(nyiso_chp_btm_measured=nyiso_chp_btm_measured)
     if cc_reserve_duty_split is not None:
         config = config.with_overrides(cc_reserve_duty_split=cc_reserve_duty_split)
+    if chp_layup_duty_split is not None:
+        config = config.with_overrides(chp_layup_duty_split=chp_layup_duty_split)
     if nyiso_gas_bridge_cc_min_run_hours is not None:
         config = config.with_overrides(
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours

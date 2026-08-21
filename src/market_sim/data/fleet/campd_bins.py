@@ -1898,6 +1898,14 @@ def fleet_to_bins(
             len(_cohort),
             sorted(_cohort),
         )
+    if getattr(config, "chp_layup_duty_split", False):
+        _chp_cohort = _chp_layup_cohort(iso)
+        logger.info(
+            "chp_layup_duty_split armed: %d measured laid-up CHP plant(s) "
+            "route to the class peak band — %s",
+            len(_chp_cohort),
+            sorted(_chp_cohort),
+        )
     # Aggregate the per-generator fleet to one row per (plant, group): capacity
     # sums, heat rate is capacity-weighted.
     agg: dict[tuple[int, str], dict] = {}
@@ -1990,6 +1998,24 @@ def fleet_to_bins(
         ):
             pct_mc = 0.0
             pct_peak = room
+        # CHP LAY-UP duty split (chp_layup_duty_split, nyiso-148): the
+        # cogeneration sibling of the block directly above, DISJOINT from it by
+        # class scope (rule 19 [R-ONE-MECH]) — a semi-mothballed cogen whose
+        # own meter reads a zero median in every (year, 4-hour block) cell
+        # (chp_layup_census_<ISO>.csv) offers its WHOLE dispatchable capacity
+        # at the class curve's PEAK band. Exposed by nyiso-147: with the
+        # measured grid capacity restored the LP runs Selkirk (10725) at 7.9x
+        # its meter, with ZERO floor involved. Offer SHAPE from a measured
+        # duty-role signal, never a pin (rule 13); the level is the class's
+        # existing identified peak multiplier — zero new scalars (rule 21).
+        # Gated default off so a control run is byte-identical.
+        if (
+            group in _CHP_GROUPS
+            and getattr(config, "chp_layup_duty_split", False)
+            and code in _chp_layup_cohort(iso)
+        ):
+            pct_mc = 0.0
+            pct_peak = room
         pct_econ = max(0.0, 100.0 - pct_mr - pct_mc - pct_peak)
         mults = _DEFAULT_HR_MULT_BY_GROUP.get(
             group, _DEFAULT_HR_MULT_BY_GROUP["CC_REGULAR"]
@@ -2071,6 +2097,25 @@ CC_DUCT_BURNER_PEAK_MULT: dict[str, float] = {
     "f": 2.25,  # F-class incl. E/F
     "older": 2.00,  # E-class, legacy
 }
+
+
+#: The cogeneration plant groups ``chp_layup_duty_split`` may re-band. Held as
+#: a module constant rather than inline so the load-bearing seam and the
+#: offer-curve mirror can never drift apart.
+_CHP_GROUPS: tuple[str, ...] = ("CC_CHP", "CT_CHP", "ST_CHP")
+
+
+@lru_cache(maxsize=8)
+def _chp_layup_cohort(iso: str) -> frozenset[int]:
+    """The measured laid-up CHP cohort for *iso*.
+
+    Thin cached wrapper over
+    :func:`market_sim.data.chp_layup.load_chp_layup_census` so the
+    ``fleet_to_bins`` per-plant loop reads the artifact once per process.
+    """
+    from market_sim.data.chp_layup import load_chp_layup_census
+
+    return load_chp_layup_census(iso)
 
 
 @lru_cache(maxsize=8)
