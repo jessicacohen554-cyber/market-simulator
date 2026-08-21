@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-21-nyiso-148-inert-plumbing",
+  "label": "nyiso 148 inert plumbing",
+  "date": "2026-08-21",
+  "shorthand": "nyiso-148-inert-plumbing",
+  "definition": "(PROBE \u2014 PLUMBING) nyiso-148 ARM D's FIRST solve, retained as the record of a seam defect: chp_layup_duty_split armed its 7-plant census correctly and was still INERT-BY-HALF because the leg was wired at the frame seam (fleet_to_bins) and not at the load-bearing bins_to_fleet override, so pct_peak was clobbered back by the tranche artifact / duct-burner map (verbatim the nyiso-146b inert-solve defect). Caught by the arm's own D-K2 anti-inert gate; disclosed in PREREG section 9 before the corrected solve. Cohort energy moved <3%; system lw 2025 moved $0.04.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-21-nyiso-148-inert-plumbing.js",
+  "bundle": "results/calibration/nyiso148_armD_inert"
+}
