@@ -1,0 +1,434 @@
+{
+ "session": "miso-174",
+ "prereg": "PREREG-miso174-seam-import-limit-precheck-2026-08-21.md (commit 6cd0335)",
+ "align_shift_h": -1,
+ "thresholds": {
+  "K_PRE_1_exceedance_share": 0.2,
+  "K_PRE_2_reach_gw": 0.5
+ },
+ "k_pre_1": {
+  "2023": {
+   "aligned": {
+    "PJM": {
+     "n": 11,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 5.76327294921875,
+     "mean_observed_max_gw": 7.749272727272727,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "SPP": {
+     "n": 11,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 0.1803909149169922,
+     "mean_observed_max_gw": 0.5114545454545454,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "South": {
+     "n": 11,
+     "exceedance_share": 0.36363636363636365,
+     "exceedance_hours": 4,
+     "mean_model_gross_import_gw": 0.004136363506317139,
+     "mean_observed_max_gw": 0.5889090909090908,
+     "mean_excess_when_exceeding_gw": 0.289
+    },
+    "Manitoba": {
+     "n": 11,
+     "exceedance_share": 0.09090909090909091,
+     "exceedance_hours": 1,
+     "mean_model_gross_import_gw": 1.2767908935546874,
+     "mean_observed_max_gw": 1.8764545454545456,
+     "mean_excess_when_exceeding_gw": 0.068
+    }
+   },
+   "production": {
+    "PJM": {
+     "n": 11,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 5.76327294921875,
+     "mean_observed_max_gw": 7.783272727272727,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "SPP": {
+     "n": 11,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 0.1803909149169922,
+     "mean_observed_max_gw": 0.5380909090909092,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "South": {
+     "n": 11,
+     "exceedance_share": 0.2727272727272727,
+     "exceedance_hours": 3,
+     "mean_model_gross_import_gw": 0.004136363506317139,
+     "mean_observed_max_gw": 0.6020909090909091,
+     "mean_excess_when_exceeding_gw": 0.435
+    },
+    "Manitoba": {
+     "n": 11,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 1.2767908935546874,
+     "mean_observed_max_gw": 1.8702727272727273,
+     "mean_excess_when_exceeding_gw": 0.0
+    }
+   }
+  },
+  "2024": {
+   "aligned": {
+    "PJM": {
+     "n": 14,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 4.16496435546875,
+     "mean_observed_max_gw": 5.440142857142857,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "SPP": {
+     "n": 14,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 0.22914285278320312,
+     "mean_observed_max_gw": 0.5908571428571429,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "South": {
+     "n": 14,
+     "exceedance_share": 0.07142857142857142,
+     "exceedance_hours": 1,
+     "mean_model_gross_import_gw": 0.051071430206298826,
+     "mean_observed_max_gw": 0.6387857142857143,
+     "mean_excess_when_exceeding_gw": 0.055
+    },
+    "Manitoba": {
+     "n": 14,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 1.3050357666015624,
+     "mean_observed_max_gw": 1.9884285714285714,
+     "mean_excess_when_exceeding_gw": 0.0
+    }
+   },
+   "production": {
+    "PJM": {
+     "n": 14,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 4.16496435546875,
+     "mean_observed_max_gw": 5.517428571428572,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "SPP": {
+     "n": 14,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 0.22914285278320312,
+     "mean_observed_max_gw": 0.5852857142857143,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "South": {
+     "n": 14,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 0.051071430206298826,
+     "mean_observed_max_gw": 0.6975714285714285,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "Manitoba": {
+     "n": 14,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 1.3050357666015624,
+     "mean_observed_max_gw": 1.9755714285714288,
+     "mean_excess_when_exceeding_gw": 0.0
+    }
+   }
+  },
+  "2025": {
+   "aligned": {
+    "PJM": {
+     "n": 47,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 4.373365234375,
+     "mean_observed_max_gw": 6.162574468085107,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "SPP": {
+     "n": 47,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 0.6101925659179688,
+     "mean_observed_max_gw": 1.8440851063829786,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "South": {
+     "n": 47,
+     "exceedance_share": 0.02127659574468085,
+     "exceedance_hours": 1,
+     "mean_model_gross_import_gw": 0.03019999885559082,
+     "mean_observed_max_gw": 1.1599574468085108,
+     "mean_excess_when_exceeding_gw": 0.137
+    },
+    "Manitoba": {
+     "n": 47,
+     "exceedance_share": 0.02127659574468085,
+     "exceedance_hours": 1,
+     "mean_model_gross_import_gw": 0.49032705688476563,
+     "mean_observed_max_gw": 1.5194255319148935,
+     "mean_excess_when_exceeding_gw": 0.123
+    }
+   },
+   "production": {
+    "PJM": {
+     "n": 47,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 4.373365234375,
+     "mean_observed_max_gw": 6.212063829787234,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "SPP": {
+     "n": 47,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 0.6101925659179688,
+     "mean_observed_max_gw": 1.6628936170212767,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "South": {
+     "n": 47,
+     "exceedance_share": 0.0,
+     "exceedance_hours": 0,
+     "mean_model_gross_import_gw": 0.03019999885559082,
+     "mean_observed_max_gw": 1.1397446808510638,
+     "mean_excess_when_exceeding_gw": 0.0
+    },
+    "Manitoba": {
+     "n": 47,
+     "exceedance_share": 0.02127659574468085,
+     "exceedance_hours": 1,
+     "mean_model_gross_import_gw": 0.49032705688476563,
+     "mean_observed_max_gw": 1.3623829787234043,
+     "mean_excess_when_exceeding_gw": 0.079
+    }
+   }
+  }
+ },
+ "k_pre_2": {
+  "2023": {
+   "n": 11,
+   "reach_gw": 2.738481819846413,
+   "per_seam_gw": {
+    "PJM": 1.2248636363636363,
+    "SPP": 0.4213909107555043,
+    "South": 1.0331363636363637,
+    "Manitoba": 0.0590909090909091
+   },
+   "object_over_import_gw": 1.8581571821732954
+  },
+  "2024": {
+   "n": 14,
+   "reach_gw": 2.245928587777274,
+   "per_seam_gw": {
+    "PJM": 0.9857857317243304,
+    "SPP": 0.28528571319580076,
+    "South": 0.9188571428571429,
+    "Manitoba": 0.056
+   },
+   "object_over_import_gw": 1.040878452845982
+  },
+  "2025": {
+   "n": 47,
+   "reach_gw": 2.973642583968792,
+   "per_seam_gw": {
+    "PJM": 1.2310059840425531,
+    "SPP": 0.21556000405169548,
+    "South": 1.444795744550989,
+    "Manitoba": 0.08228085132355387
+   },
+   "object_over_import_gw": 1.4145624532496675
+  }
+ },
+ "k_pre_3_evidence": {
+  "2023": {
+   "midwest_zones": [
+    "MISO-West",
+    "MISO-Plains",
+    "MISO-Illinois",
+    "MISO-Indiana",
+    "MISO-East"
+   ],
+   "scarce_mean_spread": 0.0,
+   "scarce_share_separated_gt_0p01": 0.0,
+   "scarce_share_separated_gt_1": 0.0,
+   "annual_share_separated_gt_0p01": 0.0,
+   "annual_mean_spread": 4.866731066850001e-18
+  },
+  "2024": {
+   "midwest_zones": [
+    "MISO-West",
+    "MISO-Plains",
+    "MISO-Illinois",
+    "MISO-Indiana",
+    "MISO-East"
+   ],
+   "scarce_mean_spread": 0.0,
+   "scarce_share_separated_gt_0p01": 0.0,
+   "scarce_share_separated_gt_1": 0.0,
+   "annual_share_separated_gt_0p01": 0.0,
+   "annual_mean_spread": 6.083413833562501e-18
+  },
+  "2025": {
+   "midwest_zones": [
+    "MISO-West",
+    "MISO-Plains",
+    "MISO-Illinois",
+    "MISO-Indiana",
+    "MISO-East"
+   ],
+   "scarce_mean_spread": 6.047172219234895e-16,
+   "scarce_share_separated_gt_0p01": 0.0,
+   "scarce_share_separated_gt_1": 0.0,
+   "annual_share_separated_gt_0p01": 0.0,
+   "annual_mean_spread": 1.2572388589362504e-17
+  }
+ },
+ "reported_price_reach": {
+  "2023": {
+   "summer_slope_usd_per_gw": 0.4384893741629758,
+   "summer_top20pct_slope_usd_per_gw": 1.2199454261294158,
+   "reach_gw": 2.738481819846413,
+   "implied_price_lift_usd_at_top_slope": 3.3407983706601905,
+   "scarce_mean_model_price": 55.91490287504177,
+   "scarce_mean_actual_rt": 358.7727355957031
+  },
+  "2024": {
+   "summer_slope_usd_per_gw": 0.5925952443725834,
+   "summer_top20pct_slope_usd_per_gw": 3.447277883079648,
+   "reach_gw": 2.245928587777274,
+   "implied_price_lift_usd_at_top_slope": 7.742339947620906,
+   "scarce_mean_model_price": 72.12833879783325,
+   "scarce_mean_actual_rt": 374.1493225097656
+  },
+  "2025": {
+   "summer_slope_usd_per_gw": 0.4788432819861514,
+   "summer_top20pct_slope_usd_per_gw": 1.317838158230324,
+   "reach_gw": 2.973642583968792,
+   "implied_price_lift_usd_at_top_slope": 3.918779666092694,
+   "scarce_mean_model_price": 75.26055248593629,
+   "scarce_mean_actual_rt": 478.55194091796875
+  }
+ },
+ "reported_envelope_rotation": {
+  "2023": {
+   "PJM": {
+    "mean_production_cap_gw": 6.232324200913242,
+    "mean_aligned_cap_gw": 6.231040616438356,
+    "mean_abs_diff_mw": 240.92605022831046,
+    "max_abs_diff_mw": 1022.4000000000005,
+    "scarce_mean_diff_mw": -39.13636363636347
+   },
+   "SPP": {
+    "mean_production_cap_gw": 0.6824140410958904,
+    "mean_aligned_cap_gw": 0.6824314155251142,
+    "mean_abs_diff_mw": 88.45468036529678,
+    "max_abs_diff_mw": 433.0,
+    "scarce_mean_diff_mw": 29.56363636363634
+   },
+   "South": {
+    "mean_production_cap_gw": 0.08536385844748862,
+    "mean_aligned_cap_gw": 0.08536385844748862,
+    "mean_abs_diff_mw": 43.56780821917808,
+    "max_abs_diff_mw": 454.99999999999966,
+    "scarce_mean_diff_mw": -30.909090909090935
+   },
+   "Manitoba": {
+    "mean_production_cap_gw": 1.0895944977168952,
+    "mean_aligned_cap_gw": 1.0892113698630137,
+    "mean_abs_diff_mw": 95.95997716894976,
+    "max_abs_diff_mw": 932.0,
+    "scarce_mean_diff_mw": 11.354545454545494
+   }
+  },
+  "2024": {
+   "PJM": {
+    "mean_production_cap_gw": 5.068666084474887,
+    "mean_aligned_cap_gw": 5.068458276255708,
+    "mean_abs_diff_mw": 251.1183105022831,
+    "max_abs_diff_mw": 1210.3999999999996,
+    "scarce_mean_diff_mw": -67.10714285714292
+   },
+   "SPP": {
+    "mean_production_cap_gw": 0.5793407534246576,
+    "mean_aligned_cap_gw": 0.5785412214611872,
+    "mean_abs_diff_mw": 74.72722602739726,
+    "max_abs_diff_mw": 359.0,
+    "scarce_mean_diff_mw": -38.06428571428571
+   },
+   "South": {
+    "mean_production_cap_gw": 0.09368162100456624,
+    "mean_aligned_cap_gw": 0.09368162100456623,
+    "mean_abs_diff_mw": 41.75684931506849,
+    "max_abs_diff_mw": 414.0,
+    "scarce_mean_diff_mw": 17.407142857142865
+   },
+   "Manitoba": {
+    "mean_production_cap_gw": 0.8841946803652968,
+    "mean_aligned_cap_gw": 0.8841319863013699,
+    "mean_abs_diff_mw": 97.81251141552512,
+    "max_abs_diff_mw": 875.0,
+    "scarce_mean_diff_mw": -12.13571428571431
+   }
+  },
+  "2025": {
+   "PJM": {
+    "mean_production_cap_gw": 4.669655365296803,
+    "mean_aligned_cap_gw": 4.670613127853882,
+    "mean_abs_diff_mw": 241.37534246575342,
+    "max_abs_diff_mw": 917.6000000000008,
+    "scarce_mean_diff_mw": -55.87021276595742
+   },
+   "SPP": {
+    "mean_production_cap_gw": 0.7336482191780823,
+    "mean_aligned_cap_gw": 0.734876894977169,
+    "mean_abs_diff_mw": 106.49689497716895,
+    "max_abs_diff_mw": 440.0,
+    "scarce_mean_diff_mw": -76.77021276595747
+   },
+   "South": {
+    "mean_production_cap_gw": 0.18539817351598178,
+    "mean_aligned_cap_gw": 0.1854181506849315,
+    "mean_abs_diff_mw": 68.34417808219177,
+    "max_abs_diff_mw": 603.6999999999998,
+    "scarce_mean_diff_mw": -86.52553191489363
+   },
+   "Manitoba": {
+    "mean_production_cap_gw": 0.4505752739726028,
+    "mean_aligned_cap_gw": 0.4502485616438357,
+    "mean_abs_diff_mw": 92.31949771689499,
+    "max_abs_diff_mw": 844.4999999999999,
+    "scarce_mean_diff_mw": -39.28723404255317
+   }
+  }
+ },
+ "verdict": {
+  "K_PRE_1_pjm_exceedance_shares": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "K_PRE_1_years_below_threshold": 3,
+  "K_PRE_1_FIRES": true,
+  "K_PRE_2_reaches_gw": [
+   2.738481819846413,
+   2.245928587777274,
+   2.973642583968792
+  ],
+  "K_PRE_2_years_below_threshold": 0,
+  "K_PRE_2_FIRES": false
+ }
+}

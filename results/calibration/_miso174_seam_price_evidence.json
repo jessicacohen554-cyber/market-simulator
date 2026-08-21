@@ -1,0 +1,183 @@
+{
+ "session": "miso-174",
+ "note": "evidence only \u2014 not a pre-registered gate",
+ "2023": {
+  "n": 11,
+  "miso_actual_rt": 358.7727355957031,
+  "miso_model_price": 55.91490287504177,
+  "pjm_border_hub_lmp": 43.363327272727275,
+  "pjm_system_rt": 68.50657029585405,
+  "spp_rt": 22.57879537885839,
+  "measured_miso_minus_pjm_border": 315.4093986128374,
+  "model_miso_minus_pjm_border": 12.551575602314484,
+  "hours_pjm_border_above_miso_model": 7,
+  "hours_pjm_border_above_miso_actual": 0,
+  "hours_pjm_border_gt_200": 0,
+  "hours_spp_rt_gt_200": 0,
+  "model_pjm_gross_import_gw": 5.76327294921875,
+  "summer_corr_measured_spread_vs_measured_seam_flow": 0.06243142301823531,
+  "summer_corr_measured_spread_vs_model_seam_flow": 0.02199281669247296
+ },
+ "2024": {
+  "n": 14,
+  "miso_actual_rt": 374.1493225097656,
+  "miso_model_price": 72.12833879783325,
+  "pjm_border_hub_lmp": 56.666407142857146,
+  "pjm_system_rt": 86.87148720877511,
+  "spp_rt": 31.022174835205078,
+  "measured_miso_minus_pjm_border": 317.48287504010875,
+  "model_miso_minus_pjm_border": 15.461931654976127,
+  "hours_pjm_border_above_miso_model": 12,
+  "hours_pjm_border_above_miso_actual": 0,
+  "hours_pjm_border_gt_200": 0,
+  "hours_spp_rt_gt_200": 0,
+  "model_pjm_gross_import_gw": 4.16496435546875,
+  "summer_corr_measured_spread_vs_measured_seam_flow": 0.04719115404943623,
+  "summer_corr_measured_spread_vs_model_seam_flow": 0.016650784371234822
+ },
+ "2025": {
+  "n": 47,
+  "miso_actual_rt": 478.55194091796875,
+  "miso_model_price": 75.26055248593629,
+  "pjm_border_hub_lmp": 147.18203617021277,
+  "pjm_system_rt": 283.18751850533994,
+  "spp_rt": 63.54615792822331,
+  "measured_miso_minus_pjm_border": 331.3698781260389,
+  "model_miso_minus_pjm_border": -71.92148368427648,
+  "hours_pjm_border_above_miso_model": 40,
+  "hours_pjm_border_above_miso_actual": 3,
+  "hours_pjm_border_gt_200": 13,
+  "hours_spp_rt_gt_200": 2,
+  "model_pjm_gross_import_gw": 4.373365234375,
+  "summer_corr_measured_spread_vs_measured_seam_flow": -0.05694141003223946,
+  "summer_corr_measured_spread_vs_model_seam_flow": 0.07658420389476862
+ },
+ "scarcity_response": {
+  "2023": {
+   "PJM": {
+    "measured_summer_gw": 5.662139344262295,
+    "measured_scarce_gw": 4.889818181818182,
+    "measured_response_gw": -0.7723211624441129,
+    "model_summer_gw": 4.86864013671875,
+    "model_scarce_gw": 5.76327294921875,
+    "model_response_gw": 0.8946328125,
+    "measured_mean_abs_hourly_change_mw": 319.7485480013666,
+    "model_mean_abs_hourly_change_mw": 172.39797973632812
+   },
+   "SPP": {
+    "measured_summer_gw": -0.08913900273224044,
+    "measured_scarce_gw": -0.22445454545454546,
+    "measured_response_gw": -0.13531554272230503,
+    "model_summer_gw": 0.07805575561523438,
+    "model_scarce_gw": 0.1803909149169922,
+    "model_response_gw": 0.10233515930175781,
+    "measured_mean_abs_hourly_change_mw": 147.6043730782371,
+    "model_mean_abs_hourly_change_mw": 52.61476135253906
+   },
+   "South": {
+    "measured_summer_gw": -1.0069450136612021,
+    "measured_scarce_gw": -1.004,
+    "measured_response_gw": 0.002945013661202211,
+    "model_summer_gw": -0.861997802734375,
+    "model_scarce_gw": -0.3708636474609375,
+    "model_response_gw": 0.4911341552734375,
+    "measured_mean_abs_hourly_change_mw": 222.47318073112402,
+    "model_mean_abs_hourly_change_mw": 91.8207015991211
+   },
+   "Manitoba": {
+    "measured_summer_gw": 0.8552032103825137,
+    "measured_scarce_gw": 1.429,
+    "measured_response_gw": 0.5737967896174863,
+    "model_summer_gw": 0.6943440551757812,
+    "model_scarce_gw": 1.2767908935546874,
+    "model_response_gw": 0.5824468383789062,
+    "measured_mean_abs_hourly_change_mw": 168.4841134267168,
+    "model_mean_abs_hourly_change_mw": 100.07772827148438
+   }
+  },
+  "2024": {
+   "PJM": {
+    "measured_summer_gw": 3.986253099173554,
+    "measured_scarce_gw": 3.4455,
+    "measured_response_gw": -0.5407530991735539,
+    "model_summer_gw": 3.686607177734375,
+    "model_scarce_gw": 4.16496435546875,
+    "model_response_gw": 0.478357177734375,
+    "measured_mean_abs_hourly_change_mw": 363.48070296347345,
+    "model_mean_abs_hourly_change_mw": 168.305419921875
+   },
+   "SPP": {
+    "measured_summer_gw": -0.10544662534435262,
+    "measured_scarce_gw": -0.020285714285714285,
+    "measured_response_gw": 0.08516091105863834,
+    "model_summer_gw": 0.019957319259643554,
+    "model_scarce_gw": 0.22914285278320312,
+    "model_response_gw": 0.20918553161621095,
+    "measured_mean_abs_hourly_change_mw": 140.6895244658856,
+    "model_mean_abs_hourly_change_mw": 57.0008544921875
+   },
+   "South": {
+    "measured_summer_gw": -1.086836432506887,
+    "measured_scarce_gw": -0.8612142857142857,
+    "measured_response_gw": 0.22562214679260148,
+    "model_summer_gw": -1.1476502685546874,
+    "model_scarce_gw": -0.5114285583496094,
+    "model_response_gw": 0.6362216796875,
+    "measured_mean_abs_hourly_change_mw": 222.74431426602342,
+    "model_mean_abs_hourly_change_mw": 89.17852783203125
+   },
+   "Manitoba": {
+    "measured_summer_gw": 1.0837995867768595,
+    "measured_scarce_gw": 1.568142857142857,
+    "measured_response_gw": 0.48434327036599756,
+    "model_summer_gw": 0.48850982666015624,
+    "model_scarce_gw": 1.3050357666015624,
+    "model_response_gw": 0.8165259399414062,
+    "measured_mean_abs_hourly_change_mw": 159.7343211578222,
+    "model_mean_abs_hourly_change_mw": 78.64898681640625
+   }
+  },
+  "2025": {
+   "PJM": {
+    "measured_summer_gw": 4.462741803278688,
+    "measured_scarce_gw": 3.436723404255319,
+    "measured_response_gw": -1.026018399023369,
+    "model_summer_gw": 3.038161865234375,
+    "model_scarce_gw": 4.373365234375,
+    "model_response_gw": 1.335203369140625,
+    "measured_mean_abs_hourly_change_mw": 356.9234711308507,
+    "model_mean_abs_hourly_change_mw": 142.1907958984375
+   },
+   "SPP": {
+    "measured_summer_gw": 0.3016690573770492,
+    "measured_scarce_gw": 0.9543617021276596,
+    "measured_response_gw": 0.6526926447506104,
+    "model_summer_gw": 0.14068666076660155,
+    "model_scarce_gw": 0.6101925659179688,
+    "model_response_gw": 0.46950592041015626,
+    "measured_mean_abs_hourly_change_mw": 155.63067987700717,
+    "model_mean_abs_hourly_change_mw": 38.225563049316406
+   },
+   "South": {
+    "measured_summer_gw": -0.7541195355191256,
+    "measured_scarce_gw": -1.3675531914893617,
+    "measured_response_gw": -0.6134336559702361,
+    "model_summer_gw": -0.8640205078125,
+    "model_scarce_gw": -0.1767941131591797,
+    "model_response_gw": 0.6872263793945312,
+    "measured_mean_abs_hourly_change_mw": 223.9521694567817,
+    "model_mean_abs_hourly_change_mw": 87.81149291992188
+   },
+   "Manitoba": {
+    "measured_summer_gw": -0.24602493169398906,
+    "measured_scarce_gw": 0.9482765957446809,
+    "measured_response_gw": 1.19430152743867,
+    "model_summer_gw": -0.17883287048339844,
+    "model_scarce_gw": 0.49032705688476563,
+    "model_response_gw": 0.669159912109375,
+    "measured_mean_abs_hourly_change_mw": 150.2036214554151,
+    "model_mean_abs_hourly_change_mw": 62.131126403808594
+   }
+  }
+ }
+}
