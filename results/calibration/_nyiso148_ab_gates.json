@@ -488,7 +488,7 @@
   "arm_2023_err_pct": 3.4,
   "passed": false
  },
- "verdict": "REJECTED-AS-ARMED (D_K3, D_K5, D_K6)",
+ "verdict": "REJECTED-AS-ARMED (D_K3, D_K6)",
  "D_K5": {
   "rule": "no LOAD-BEARING criterion may FAIL on ARM D where the KEEPER passes; C6/C8 unchanged",
   "keeper": {
@@ -501,7 +501,8 @@
    "C4": "PASS",
    "C6": "PASS",
    "C8": "PASS",
-   "determination": "CALIBRATED"
+   "determination": "CALIBRATED",
+   "C1_on_regenerated_bench": "FAIL 2024 CC_REGULAR +5.18 TWh / +4.5 pp"
   },
   "base": {
    "run": "2026-08-20-nyiso-147a-chp-btm",
@@ -529,6 +530,7 @@
   },
   "vs_base": "C3a 2025 FAIL->PASS, C3b 2025 FAIL->PASS, C8 FAIL->PASS; C1 PASS->FAIL",
   "vs_keeper": "C1 2024 CC_REGULAR PASS -> FAIL (share +2.4pp -> +3.0pp, band +/-3pp; the TWh leg still passes at +3.22 of +/-3.82)",
-  "passed": false
+  "passed": true,
+  "correction_2026_08_21": "SCORED FAIL, THEN CORRECTED TO PASS. The registration that produced these scores also REGENERATED NYISO's shared benchmark part (stale since 2026-08-17). On the regenerated part the KEEPER also fails C1-2024 CC_REGULAR, and by more (+5.18 TWh / +4.5 pp vs the arm's +3.22 / +3.04 pp), so D-K5's condition -- a load-bearing criterion failing on the arm where the KEEPER passes -- is not met. The overall verdict is UNCHANGED: D-K3 and D-K6 still fail, so the arm stays REJECTED-AS-ARMED. The benchmark drift is a stop-the-line finding that outranks this lane, is NOT caused by anything this session armed (flag-off and flag-on rebuilds at this HEAD give byte-identical classFull), and is escalated to the owner in FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md. No determination has been written anywhere."
  }
 }

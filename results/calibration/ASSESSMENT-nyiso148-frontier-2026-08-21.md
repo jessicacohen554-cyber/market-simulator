@@ -48,6 +48,29 @@ as NYISO's live frontier statement.
 
 ## 1. (a) THE KEEPER, RE-SCORED AT HEAD
 
+> **CORRECTION, added later in this same session — READ THIS FIRST.** Everything
+> in §1 was measured against the benchmark part committed on **2026-08-17**, and
+> it was true against the committed artifacts at the time it was written. Later
+> in the session the Part-2 registration **regenerated** that part (the first
+> NYISO registration since 2026-08-17 whose bundle carried the benchmark
+> inputs), and on the regenerated part **the keeper reads `NOT-YET`** on a new
+> C1-2024 `CC_REGULAR` failure (+5.18 TWh, share +4.5 pp) — as does **every**
+> other registered NYISO run. The cause is benchmark drift, **not** anything
+> this session armed: a flag-off and a flag-on rebuild at this HEAD produce
+> byte-identical `classFull`. **No determination has been written anywhere** —
+> `calibration-complete.json`, `keepers/NYISO.json` and `status/NYISO.js` are
+> untouched and still read CALIBRATED, because rule 22 D-5(b) requires a worse
+> re-verified determination to STOP and escalate rather than be written.
+> The full evidence, the localization of the delta to the benchmark's
+> vintage-reconciliation layer, and the owner escalation are in
+> `FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md`.
+> **§1's conclusion should be read as: the keeper is CALIBRATED against the
+> benchmark its determination was recorded on, and its standing against the
+> regenerated benchmark is an OPEN OWNER QUESTION.** §§2–5 below are unaffected
+> — they concern price levels, zonal structure and holdout tiers, none of which
+> the C1 benchmark touches.
+
+
 ### 1.1 The determination
 
 `python scripts/calibration_verdict.py --run-id 2026-08-19-nyiso-146c-state-scoped`,

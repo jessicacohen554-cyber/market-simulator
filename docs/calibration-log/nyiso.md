@@ -7466,3 +7466,40 @@ evidence `ASSESSMENT-nyiso148-frontier-2026-08-21.md`,
 `RESULT-nyiso148-chp-layup-duty-2026-08-21.md`,
 `PREREG-nyiso148-chp-layup-duty-2026-08-21.md`, `_nyiso148_ab_gates.json`,
 `_nyiso148_chp_conduct_phase0.json`.
+
+### 2026-08-21 addendum — STOP-THE-LINE: NYISO's committed benchmark part was STALE
+
+Surfaced by nyiso-148's own registration and escalated to the owner **without
+writing any determination**. `frontend/data/backcast/bench/NYISO/{2023,2024,2025}.json.gz`
+had not changed since 2026-08-17; this session was the first NYISO registration
+since then whose bundle carried the benchmark inputs, so it was the first to
+**regenerate** the part. On the regenerated part **every registered NYISO run —
+the keeper included — reads `NOT-YET`**, on the same new failure: C1-2024
+`CC_REGULAR` (keeper +5.18 TWh, share +4.5 pp against ±3 pp).
+
+**It is not caused by anything this session armed.** Rebuilding the part at this
+HEAD with `nyiso_chp_btm_measured` OFF and ON gives **byte-identical
+`classFull`** in all three years. The per-plant `plants` rows are identical apart
+from two measured-BTM values, and `Σ (e_ann − btm)` is the same in both parts —
+the ~4 TWh moves entirely inside the benchmark's EIA-923
+vintage-reconciliation / CAMPD-backfill layer (CC_REGULAR-2024 backfill +8.00 →
++4.02). The raw EIA-923 parquet is unchanged since 2026-08-17.
+
+**Nothing was written**: `calibration-complete.json`, `keepers/NYISO.json` and
+`status/NYISO.js` are byte-untouched and still assert CALIBRATED (rule 22
+D-5(b) — a worse re-verified determination stops and escalates, never silently
+lands). The regenerated part is **kept** rather than reverted (rule 14
+`[R-ACCURATE]`: reverting would bury a discovered defect inside a stale input).
+`audit_keepers --iso NYISO` consequently FAILS on three text-vs-verdict
+mismatches, and **that failure is the intended signal**, to be resolved by the
+owner's ruling, not by editing the text.
+
+This session's own affected claims were corrected rather than left standing:
+`ASSESSMENT-nyiso148-frontier` §1 carries a CORRECTION block, and
+`RESULT-nyiso148-chp-layup-duty` §1a withdraws its D-K5 FAIL (on the
+regenerated bench the keeper fails C1-2024 too, and by more, so the gate's
+condition is not met). **The arm's verdict is unchanged — REJECTED-AS-ARMED on
+D-K3 and D-K6.** Root cause (which commit moved the backfill, and which
+reconciliation is right) and the cross-ISO exposure are OPEN and chartered to
+the owner. Evidence:
+`FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md`.

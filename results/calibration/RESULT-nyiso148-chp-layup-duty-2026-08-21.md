@@ -28,8 +28,30 @@ byte-inert at its default.
 | **D-K2** liveness | **PASS** | all 7 census plants collapse to a peak-ONLY band; **zero** non-census CHP plants move |
 | **D-K3** the object | **FAIL** | cohort phantom −80.8 % ✓, Selkirk ≤ 2.0× ✓, **but 9 plant-years fall below 0.25× their own meter** ✗ |
 | **D-K4** conduct | **PASS** | zero new D-1/D-2/D-4 rows; the base's D-2 `ST_GAS` 2024 failure is **CLEARED** |
-| **D-K5** criteria | **FAIL** | C1-2024 `CC_REGULAR` PASS → FAIL vs the keeper (share **+3.04 pp** against ±3 pp) |
+| **D-K5** criteria | **PASS** ~~FAIL~~ | scored FAIL, then CORRECTED — see §1a. On the regenerated benchmark the KEEPER also fails C1-2024 `CC_REGULAR`, and by MORE (+5.18 TWh / +4.5 pp against the arm's +3.22 / +3.04 pp), so the gate's condition — *fails where the keeper passes* — is not met. **The overall verdict is unchanged:** D-K3 and D-K6 still fail. |
 | **D-K6** 2025 recovery | **FAIL** | −12.2 % → **−9.9 %**, a fall of **18.9 %** against the ≥ 40 % bar (2023 leg passes, in band at +3.4 %) |
+
+### 1a. CORRECTION to D-K5, and a stop-the-line finding this arm surfaced
+
+D-K5 was first scored **FAIL** on "C1-2024 `CC_REGULAR` PASS → FAIL vs the
+keeper". That reading is **withdrawn**. The registration that produced the
+scores also **regenerated** NYISO's shared benchmark part — stale since
+2026-08-17 — and on the regenerated part the keeper *also* fails C1-2024, by a
+larger margin than the arm. D-K5's condition is therefore not met and the gate
+**passes**. The arm is still **REJECTED-AS-ARMED** on D-K3 and D-K6, so the
+verdict, the dispositions and every other number in this document stand.
+
+The benchmark drift itself is a **stop-the-line finding that outranks this
+lane**, is **not** caused by anything this session armed (a flag-off rebuild at
+this HEAD yields byte-identical `classFull`), and flips **every** registered
+NYISO run to NOT-YET. It is documented and escalated to the owner in
+`FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md`; **no
+determination has been written anywhere**.
+
+**One caveat this places on §2 below:** the C1 columns are read against the
+REGENERATED benchmark. The CC_CHP improvement (+1.52 → +0.23 and +1.53 → +0.03)
+is measured base-vs-arm on that one benchmark, so it is a valid A/B; the
+absolute PASS/FAIL labels depend on the owner's ruling.
 
 **Verdict: REJECTED-AS-ARMED.** The mechanism, its census and its wiring SHIP
 default-off (rule 14; the pjm-146 / nyiso-147 disposition) — built, gated, and
