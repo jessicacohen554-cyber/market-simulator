@@ -100,6 +100,7 @@ def model_net_import(bundle: Path, year: int) -> pd.Series:
 
 
 def actual_lmp(year: int) -> pd.DataFrame:
+    """MISO's measured RT and DA hub LMP for ``year``, on the model hour key."""
     a = pd.read_parquet(ACTUAL)
     return a[a["year"] == year][["hour", "rt", "da"]].reset_index(drop=True)
 
@@ -375,6 +376,7 @@ def stage5_attribution(frames: dict[int, pd.DataFrame], align_shift: int) -> dic
 
 # --------------------------------------------------------------------------
 def build_frames() -> dict[int, pd.DataFrame]:
+    """Return one per-hour frame per year joining keeper output to measured actuals."""
     frames = {}
     for y in YEARS:
         df = model_system(KEEPER, y).merge(actual_lmp(y), on="hour").merge(
@@ -386,6 +388,7 @@ def build_frames() -> dict[int, pd.DataFrame]:
 
 
 def main() -> None:
+    """Run all five stages, write the JSON record and print the console summary."""
     frames = build_frames()
     stage1 = stage1_object(frames)
     align, measured = stage2_alignment_and_measured(frames)

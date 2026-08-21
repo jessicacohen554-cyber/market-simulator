@@ -36,12 +36,14 @@ OUT = ROOT / "results" / "calibration" / "_miso174_seam_price_evidence.json"
 
 
 def series(path: Path, year: int, col: str) -> np.ndarray:
+    """Return one column of a validation-source LMP parquet on the model hour key."""
     d = pd.read_parquet(path)
     d = d[d["year"] == year]
     return d.set_index("hour")[col].reindex(range(HOURS)).to_numpy(dtype=float)
 
 
 def main() -> None:
+    """Measure the neighbour prices and the seams' scarcity response; write the record."""
     frames = build_frames()
     rec: dict = {"session": "miso-174", "note": "evidence only — not a pre-registered gate"}
     for y in YEARS:

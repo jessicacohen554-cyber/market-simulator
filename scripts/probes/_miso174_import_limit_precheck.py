@@ -106,6 +106,7 @@ def bucket_stat(year: int, stat: str, shift_h: int) -> dict[str, np.ndarray]:
 
 
 def main() -> None:
+    """Run the pre-registered kills, write the JSON record, print the verdicts."""
     frames = build_frames()
     rec: dict = {
         "session": "miso-174",

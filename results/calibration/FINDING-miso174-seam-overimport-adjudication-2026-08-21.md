@@ -271,6 +271,35 @@ actually the phenomenon.
    component, untouched by anything in the import lane, and never separately
    chartered.
 
+## 7b. Standing OWNER items, restated not decided (charter item 4)
+
+Carried forward unchanged from miso-171/172/173. This session raises them; it
+decides none of them.
+
+1. **The C8 provenance-materiality floor.** The plant-990 `reliability_floor`
+   conviction on **0.0000 TWh across ONE binding hour** was cleared at miso-173
+   as a SIDE EFFECT of the lay-up mask removing that hour. The bundle no longer
+   instantiates the defect; **the rubric hole is unrepaired** — C8's provenance
+   leg still has no materiality floor, so a zero-energy, single-hour row can
+   fail a keeper again the moment one reappears.
+2. **The committed-vs-regenerated diagnostics exposure** (MISO **and** PJM,
+   measured). Unchanged in kind, disclosed rather than created; every gate in
+   this lane compares regen-control to regen-arm through the same path at the
+   same HEAD.
+3. **`RHO_CLIP` 0.5 vs the measured MISO rho 0.1764** (nyiso-144). Still the
+   owner escalation; this finding adds no new claim on it. FINDING-miso170 §4
+   measured that resolving it would not flip the scarce hours at family-grain
+   headroom.
+4. **MISO's determination posture.** C3a-2025 is the **sole** failing
+   criterion, documented end to end as a model-class limit (miso-163 owner
+   ruling + FINDING-miso171 §6), on a keeper with **zero D-4 conduct failures**
+   and C6 attested, with C3c the single ledgered caveat. Whether `NOT-YET`
+   should be adjudicated to a declaration is an **OWNER question**. It is riper
+   after miso-174 than after miso-173: the last named OPEN cell in MISO's queue
+   is now adjudicated, and the +1.33 GW over-import — the largest disclosed
+   second-order defect — is measured, decomposed, attributed and bounded at
+   1–2.5 % of the scarce-hour miss even under its inadmissible upper bound.
+
 ## 8. Governance
 
 Rule 22: 2023–2025 only; MISO holds neither `complete` nor `final`; the holdout
