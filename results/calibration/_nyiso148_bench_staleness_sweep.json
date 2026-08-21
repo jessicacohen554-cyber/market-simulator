@@ -1,0 +1,367 @@
+{
+ "session": "nyiso-148",
+ "measure": "a committed bench part is POTENTIALLY STALE iff the benchmark-builder code path changed after the part was last written; an UPPER BOUND on the exposure, not a confirmation",
+ "builder_paths": {
+  "scripts/render_calibration_html.py": {
+   "sha": "01db36d",
+   "date": "2026-08-20"
+  },
+  "scripts/render_backcast.py": {
+   "sha": "d985fca",
+   "date": "2026-08-17"
+  }
+ },
+ "builder_last_moved": "2026-08-20",
+ "parts": [
+  {
+   "iso": "CAISO",
+   "year": 2023,
+   "part": "frontend/data/backcast/bench/CAISO/2023.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "CAISO",
+   "year": 2024,
+   "part": "frontend/data/backcast/bench/CAISO/2024.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "CAISO",
+   "year": 2025,
+   "part": "frontend/data/backcast/bench/CAISO/2025.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2023,
+   "part": "frontend/data/backcast/bench/ERCOT/2023.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2024,
+   "part": "frontend/data/backcast/bench/ERCOT/2024.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2025,
+   "part": "frontend/data/backcast/bench/ERCOT/2025.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "MISO",
+   "year": 2023,
+   "part": "frontend/data/backcast/bench/MISO/2023.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "MISO",
+   "year": 2024,
+   "part": "frontend/data/backcast/bench/MISO/2024.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "MISO",
+   "year": 2025,
+   "part": "frontend/data/backcast/bench/MISO/2025.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "NEISO",
+   "year": 2022,
+   "part": "frontend/data/backcast/bench/NEISO/2022.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "NEISO",
+   "year": 2023,
+   "part": "frontend/data/backcast/bench/NEISO/2023.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "NEISO",
+   "year": 2024,
+   "part": "frontend/data/backcast/bench/NEISO/2024.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "NEISO",
+   "year": 2025,
+   "part": "frontend/data/backcast/bench/NEISO/2025.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "NYISO",
+   "year": 2023,
+   "part": "frontend/data/backcast/bench/NYISO/2023.json.gz",
+   "last_written": "2026-08-21",
+   "last_written_sha": "f9145cf",
+   "builder_commits_since": [],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 0,
+   "potentially_stale": false
+  },
+  {
+   "iso": "NYISO",
+   "year": 2024,
+   "part": "frontend/data/backcast/bench/NYISO/2024.json.gz",
+   "last_written": "2026-08-21",
+   "last_written_sha": "f9145cf",
+   "builder_commits_since": [],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 0,
+   "potentially_stale": false
+  },
+  {
+   "iso": "NYISO",
+   "year": 2025,
+   "part": "frontend/data/backcast/bench/NYISO/2025.json.gz",
+   "last_written": "2026-08-21",
+   "last_written_sha": "f9145cf",
+   "builder_commits_since": [],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 0,
+   "potentially_stale": false
+  },
+  {
+   "iso": "PJM",
+   "year": 2022,
+   "part": "frontend/data/backcast/bench/PJM/2022.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "PJM",
+   "year": 2023,
+   "part": "frontend/data/backcast/bench/PJM/2023.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "PJM",
+   "year": 2024,
+   "part": "frontend/data/backcast/bench/PJM/2024.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  },
+  {
+   "iso": "PJM",
+   "year": 2025,
+   "part": "frontend/data/backcast/bench/PJM/2025.json.gz",
+   "last_written": "2026-08-17",
+   "last_written_sha": "d985fca",
+   "builder_commits_since": [
+    {
+     "sha": "01db36d",
+     "date": "2026-08-20",
+     "subject": "nyiso-147: wire nyiso_chp_btm_measured through the three BTM-share legs",
+     "gated_note": "nyiso-147 _btm_share measured override \u2014 gated on the bundle's own nyiso_chp_btm_measured flag AND iso == NYISO; cannot move any other ISO's part, and does not touch the classFull reconciliation layer"
+    }
+   ],
+   "builder_commits_since_ungated": 0,
+   "closure_commits_since": 22,
+   "potentially_stale": true
+  }
+ ],
+ "isos_exposed": [
+  "CAISO",
+  "ERCOT",
+  "MISO",
+  "NEISO",
+  "PJM"
+ ],
+ "confirmed_by_regeneration": [
+  "NYISO"
+ ],
+ "keepers": {}
+}

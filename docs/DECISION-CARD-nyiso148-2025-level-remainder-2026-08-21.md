@@ -2,7 +2,21 @@
 
 **Filed:** 2026-08-21, session nyiso-148. **Decision owner:** the model owner.
 **Nothing is armed, changed or promoted by this card.** The NYISO keeper remains
-`2026-08-19-nyiso-146c-state-scoped` (CALIBRATED).
+`2026-08-19-nyiso-146c-state-scoped`.
+
+> **UPDATE, same day — READ BEFORE THE NUMBERS BELOW.** Later in the session the
+> Part-2 registration regenerated NYISO's shared benchmark part (stale since
+> 2026-08-17), and the owner ruled the **regenerated benchmark authoritative**.
+> The keeper's determination is therefore now **NOT-YET** (C1-2024 `CC_REGULAR`),
+> as is every other registered NYISO run's. That is a BENCHMARK change, not a
+> model change, and it does **not** disturb this card: every price number here
+> is an LMP level, and C1's metered actuals do not enter C3a, C3b or C3c. The
+> $1.50-of-$8.07 decomposition, the energy-conservation argument and both
+> questions stand exactly as written. What it adds is a SEQUENCING point for
+> Q1: the benchmark root cause is chartered ahead of any NYISO re-calibration,
+> so if the owner charters the 2025 offer-level object it should queue **behind**
+> that investigation. Full record:
+> `results/calibration/FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md`.
 
 ---
 
@@ -16,7 +30,8 @@ NYISO lane, or is it left standing as a known, quantified defect while the lane
 works other items? *(Recommendation: charter it. §4.)*
 
 **Q2 — Reporting.** The keeper's C3a-2025 reads **−2.2 %**, comfortably inside
-the ±10 % band. nyiso-147 and nyiso-148 together prove that number is held up by
+the ±10 % band — and C3a is unaffected by the benchmark ruling above, so this
+question is live exactly as posed. nyiso-147 and nyiso-148 together prove that number is held up by
 **capacity the model does not carry**, not by price formation that is right.
 Should the keeper's determination note and the Calibration Status page carry an
 explicit annotation to that effect? *(Recommendation: yes — annotate, do not

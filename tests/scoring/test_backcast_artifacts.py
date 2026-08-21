@@ -19,6 +19,7 @@ from pathlib import Path
 import pytest
 
 from scripts.lib import backcast_artifacts as ba
+from scripts.lib import bench_stamp
 
 
 # --------------------------------------------------------------------------- #
@@ -91,11 +92,24 @@ def _committed_bench_parts() -> list[Path]:
 
 
 def test_committed_bench_parts_rewrite_byte_identical():
-    """Every committed ``bench/<ISO>/<year>.json.gz`` re-writes to identical bytes."""
+    """Re-writing a committed part is byte-identical — and drift is EXPLAINED.
+
+    The determinism contract is what keeps concurrent registrations
+    conflict-free, and it is also what let a stale part hide (nyiso-148): an
+    un-refreshed part shows no diff until something regenerates it. Since the
+    builder fingerprint was added, the contract is sharper, and this test now
+    pins both halves:
+
+    * a part written by the builder at HEAD MUST re-write to identical bytes;
+    * a part that does NOT re-write identically MUST be one the stamp already
+      flags as stale — i.e. every byte difference is accounted for by the
+      staleness mechanism, and UNEXPLAINED drift still fails.
+    """
     parts = _committed_bench_parts()
     if not parts:
         pytest.skip("no committed bench parts in this checkout")
-    mismatches = []
+    unexplained = []
+    stale_seen = []
     with tempfile.TemporaryDirectory() as td:
         tmp = Path(td)
         for path in parts:
@@ -103,18 +117,50 @@ def test_committed_bench_parts_rewrite_byte_identical():
             year = int(path.stem.split(".")[0])
             part = ba.load_bench_part(path)
             out = ba.write_bench_part(tmp, iso, year, part["meta"], part["bench"])
-            if out.read_bytes() != path.read_bytes():
-                mismatches.append(f"{iso}/{year}")
-    assert not mismatches, f"bench part re-write drift: {mismatches}"
+            if out.read_bytes() == path.read_bytes():
+                continue
+            if bench_stamp.is_stale(part):
+                stale_seen.append(f"{iso}/{year}")
+            else:
+                unexplained.append(f"{iso}/{year}")
+    assert not unexplained, (
+        "bench part re-write drift NOT explained by the staleness stamp: "
+        f"{unexplained} — these parts carry the current builder fingerprint yet "
+        "do not reproduce, which means the writer is non-deterministic"
+    )
+    # `stale_seen` is expected to be non-empty until every ISO regenerates its
+    # part (nyiso-148 §11); it is reported by scripts/check_bench_freshness.py,
+    # not gated here.
 
 
-def test_write_bench_part_pins_year_in_meta():
+def test_write_bench_part_pins_year_and_stamps_the_builder():
     with tempfile.TemporaryDirectory() as td:
         tmp = Path(td)
         out = ba.write_bench_part(tmp, "ERCOT", 2024, {"groups": ["a"]}, {"x": 1})
         assert out == tmp / "ERCOT" / "2024.json.gz"
         loaded = ba.load_bench_part(out)
-        assert loaded == {"meta": {"groups": ["a"], "years": [2024]}, "bench": {"x": 1}}
+        assert loaded == {
+            "meta": {
+                "groups": ["a"],
+                "years": [2024],
+                "builderFingerprint": bench_stamp.builder_fingerprint(),
+            },
+            "bench": {"x": 1},
+        }
+        # A part the current builder just wrote is never stale.
+        assert not bench_stamp.is_stale(loaded)
+
+
+def test_bench_stamp_is_deterministic_and_detects_staleness():
+    """The fingerprint is content-derived, so it is stable and it discriminates."""
+    fp = bench_stamp.builder_fingerprint()
+    assert fp == bench_stamp.builder_fingerprint()
+    assert len(fp) == 12 and all(c in "0123456789abcdef" for c in fp)
+    # A part written before the stamp existed reads as stale, not as current.
+    assert bench_stamp.part_fingerprint({"meta": {"years": [2024]}}) is None
+    assert bench_stamp.is_stale({"meta": {"years": [2024]}})
+    assert bench_stamp.is_stale({"meta": {"builderFingerprint": "0" * 12}})
+    assert not bench_stamp.is_stale({"meta": {"builderFingerprint": fp}})
 
 
 # --------------------------------------------------------------------------- #

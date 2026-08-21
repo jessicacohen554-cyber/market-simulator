@@ -116,12 +116,26 @@ def write_bench_part(
 
     Raw gzip bytes (``compresslevel=9``, ``mtime=0``) — NOT base64-wrapped (the
     deploy re-wraps parts into ``benchmark.js`` per ISO). The part is
-    ``{"meta": {**meta, "years": [int(year)]}, "bench": bench_year}``; rewriting
-    identical content yields identical bytes (conflict-free re-render).
+    ``{"meta": {**meta, "years": [int(year)], "builderFingerprint": ...},
+    "bench": bench_year}``; rewriting identical content yields identical bytes
+    (conflict-free re-render). The fingerprint is a hash of the BUILDER SOURCES
+    — content-derived, never a timestamp or a HEAD sha — precisely so that
+    determinism survives (nyiso-148; ``scripts/lib/bench_stamp``).
     """
+    from scripts.lib.bench_stamp import builder_fingerprint
+
     part_dir = Path(bench_dir) / iso
     part_dir.mkdir(parents=True, exist_ok=True)
-    part = {"meta": {**meta, "years": [int(year)]}, "bench": bench_year}
+    # STALENESS STAMP (nyiso-148). Content-derived only — a hash of the builder
+    # sources — so the part stays byte-deterministic; see scripts/lib/bench_stamp.
+    part = {
+        "meta": {
+            **meta,
+            "years": [int(year)],
+            "builderFingerprint": builder_fingerprint(),
+        },
+        "bench": bench_year,
+    }
     path = part_dir / f"{year}.json.gz"
     path.write_bytes(gzip.compress(json.dumps(part).encode(), compresslevel=9, mtime=0))
     return path
