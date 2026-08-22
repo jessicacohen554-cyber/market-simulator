@@ -177,6 +177,26 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         "nyiso150_armC_recipe",
         "nyiso150_armW_recipe",
         "nyiso150_control",
+        #
+        # SPENT — session nyiso-151 (PREREG-nyiso151-egrid-identity-hr-and-
+        # regate-2026-08-22.md). The two one-file recipe dirs are the standard
+        # replay-input class (committed before their arms solved; PREREG §7
+        # reproduction inputs). ARM H is REGISTERED (2026-08-22-nyiso-151-
+        # identity-hr, PROMOTED TO KEEPER on the owner's arm-on-legitimacy
+        # ruling) so its bundle is mapped the ordinary way; ARM HC is
+        # deliberately NOT registered — it is BIT-IDENTICAL to the registered
+        # 2026-08-22-nyiso-150-reserve-rearm (max |dprice| = 0.0 x3 years,
+        # _nyiso151_ab_gates.json) and a second registration of identical
+        # bytes would be a double entry (the nyiso-149 convention); its
+        # committed bundle is the replication record the RESULT cites.
+        # `nyiso151_control` is the IDENT reference arm at the post-merge
+        # HEAD (proven == the 149 keeper), the baseline every H/HC gate is
+        # defined against. REMOVAL CONDITION: the citing PREREG/RESULT docs
+        # are retired or re-pointed at registered bundles.
+        "nyiso151_armH_recipe",
+        "nyiso151_armHC_recipe",
+        "nyiso151_armHC",
+        "nyiso151_control",
     }
 )
 
