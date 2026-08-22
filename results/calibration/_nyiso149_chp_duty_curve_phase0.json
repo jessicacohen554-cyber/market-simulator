@@ -1,0 +1,657 @@
+{
+ "session": "nyiso-149",
+ "statistic": "metered on-share conditional on own-zone RT price (deciles + lo/mid/hi bands at p40/p80), loading-when-on vs census HSL, all hours AND live hours (zero-runs >= 120 h excluded); membership FROZEN from chp_layup_census_NYISO.csv",
+ "plants": {
+  "10617": {
+   "name": "Beaver Falls, LLC",
+   "zone": "Upstate_West",
+   "pmax_mw": 79.8,
+   "hsl_mw": 77.0,
+   "pooled": {
+    "on_share": 0.0166,
+    "loading_when_on": 0.7641,
+    "s_lo": 0.0056,
+    "s_lo_live": 0.2694,
+    "U_lo_of_pmax": 0.0041,
+    "s_mid": 0.0142,
+    "s_mid_live": 0.4448,
+    "U_mid_of_pmax": 0.0104,
+    "s_hi": 0.0433,
+    "s_hi_live": 0.7355,
+    "U_hi_of_pmax": 0.032
+   },
+   "years": {
+    "2023": {
+     "hours": 8759,
+     "on_share": 0.0094,
+     "loading_when_on": 0.7787,
+     "decile_on_share": [
+      0.0,
+      0.0023,
+      0.008,
+      0.0091,
+      0.0114,
+      0.0091,
+      0.0068,
+      0.0103,
+      0.0023,
+      0.0343
+     ],
+     "live_hour_share": 0.0195,
+     "s_lo": 0.0049,
+     "s_lo_live": 0.3696,
+     "s_mid": 0.0094,
+     "s_mid_live": 0.6111,
+     "s_hi": 0.0183,
+     "s_hi_live": 0.4507
+    },
+    "2024": {
+     "hours": 8783,
+     "on_share": 0.0176,
+     "loading_when_on": 0.7444,
+     "decile_on_share": [
+      0.0114,
+      0.0091,
+      0.0046,
+      0.0068,
+      0.0046,
+      0.008,
+      0.0125,
+      0.0103,
+      0.0364,
+      0.0718
+     ],
+     "live_hour_share": 0.0406,
+     "s_lo": 0.008,
+     "s_lo_live": 0.2188,
+     "s_mid": 0.0088,
+     "s_mid_live": 0.3131,
+     "s_hi": 0.0546,
+     "s_hi_live": 0.7385
+    },
+    "2025": {
+     "hours": 8757,
+     "on_share": 0.0227,
+     "loading_when_on": 0.7733,
+     "decile_on_share": [
+      0.0011,
+      0.0046,
+      0.0057,
+      0.0046,
+      0.0011,
+      0.0228,
+      0.0297,
+      0.0434,
+      0.0548,
+      0.0583
+     ],
+     "live_hour_share": 0.0384,
+     "s_lo": 0.004,
+     "s_lo_live": 0.3111,
+     "s_mid": 0.0243,
+     "s_mid_live": 0.467,
+     "s_hi": 0.0571,
+     "s_hi_live": 0.9174
+    }
+   }
+  },
+  "10725": {
+   "name": "Selkirk Cogen Partners",
+   "zone": "Capital_Hudson",
+   "pmax_mw": 596.6,
+   "hsl_mw": 355.0,
+   "pooled": {
+    "on_share": 0.1035,
+    "loading_when_on": 0.6717,
+    "s_lo": 0.0608,
+    "s_lo_live": 0.4801,
+    "U_lo_of_pmax": 0.0243,
+    "s_mid": 0.132,
+    "s_mid_live": 0.7036,
+    "U_mid_of_pmax": 0.0528,
+    "s_hi": 0.1321,
+    "s_hi_live": 0.8956,
+    "U_hi_of_pmax": 0.0528
+   },
+   "years": {
+    "2023": {
+     "hours": 8759,
+     "on_share": 0.1021,
+     "loading_when_on": 0.4941,
+     "decile_on_share": [
+      0.0331,
+      0.0422,
+      0.0434,
+      0.0765,
+      0.1107,
+      0.0993,
+      0.1073,
+      0.1301,
+      0.1473,
+      0.2309
+     ],
+     "live_hour_share": 0.1401,
+     "s_lo": 0.0488,
+     "s_lo_live": 0.5625,
+     "s_mid": 0.1119,
+     "s_mid_live": 0.6975,
+     "s_hi": 0.1889,
+     "s_hi_live": 0.9169
+    },
+    "2024": {
+     "hours": 8783,
+     "on_share": 0.0545,
+     "loading_when_on": 0.6336,
+     "decile_on_share": [
+      0.0342,
+      0.0296,
+      0.0216,
+      0.0444,
+      0.0364,
+      0.0353,
+      0.0671,
+      0.0843,
+      0.1082,
+      0.0831
+     ],
+     "live_hour_share": 0.0731,
+     "s_lo": 0.0325,
+     "s_lo_live": 0.7755,
+     "s_mid": 0.0558,
+     "s_mid_live": 0.6577,
+     "s_hi": 0.0962,
+     "s_hi_live": 0.8579
+    },
+    "2025": {
+     "hours": 8757,
+     "on_share": 0.1542,
+     "loading_when_on": 0.8029,
+     "decile_on_share": [
+      0.0469,
+      0.0799,
+      0.1279,
+      0.1497,
+      0.161,
+      0.2683,
+      0.248,
+      0.2374,
+      0.1416,
+      0.08
+     ],
+     "live_hour_share": 0.2526,
+     "s_lo": 0.1011,
+     "s_lo_live": 0.4023,
+     "s_mid": 0.2287,
+     "s_mid_live": 0.719,
+     "s_hi": 0.1113,
+     "s_hi_live": 0.8945
+    }
+   }
+  },
+  "50449": {
+   "name": "Indeck-Silver Springs Energy Center",
+   "zone": "Upstate_West",
+   "pmax_mw": 52.3,
+   "hsl_mw": 54.0,
+   "pooled": {
+    "on_share": 0.1837,
+    "loading_when_on": 0.7868,
+    "s_lo": 0.0511,
+    "s_lo_live": 0.2608,
+    "U_lo_of_pmax": 0.0415,
+    "s_mid": 0.1905,
+    "s_mid_live": 0.5416,
+    "U_mid_of_pmax": 0.1548,
+    "s_hi": 0.4351,
+    "s_hi_live": 0.8006,
+    "U_hi_of_pmax": 0.3535
+   },
+   "years": {
+    "2023": {
+     "hours": 8759,
+     "on_share": 0.1224,
+     "loading_when_on": 0.7338,
+     "decile_on_share": [
+      0.0194,
+      0.0365,
+      0.0742,
+      0.0605,
+      0.0879,
+      0.1084,
+      0.1199,
+      0.1735,
+      0.1941,
+      0.3497
+     ],
+     "live_hour_share": 0.269,
+     "s_lo": 0.0477,
+     "s_lo_live": 0.276,
+     "s_mid": 0.1224,
+     "s_mid_live": 0.4316,
+     "s_hi": 0.2717,
+     "s_hi_live": 0.6288
+    },
+    "2024": {
+     "hours": 8783,
+     "on_share": 0.1765,
+     "loading_when_on": 0.7718,
+     "decile_on_share": [
+      0.0273,
+      0.0308,
+      0.0364,
+      0.0728,
+      0.0752,
+      0.1139,
+      0.1729,
+      0.2426,
+      0.4157,
+      0.5763
+     ],
+     "live_hour_share": 0.3169,
+     "s_lo": 0.0418,
+     "s_lo_live": 0.2697,
+     "s_mid": 0.1512,
+     "s_mid_live": 0.4613,
+     "s_hi": 0.4963,
+     "s_hi_live": 0.8022
+    },
+    "2025": {
+     "hours": 8757,
+     "on_share": 0.2521,
+     "loading_when_on": 0.823,
+     "decile_on_share": [
+      0.0629,
+      0.0365,
+      0.0571,
+      0.0983,
+      0.1301,
+      0.2386,
+      0.3977,
+      0.4258,
+      0.5548,
+      0.5189
+     ],
+     "live_hour_share": 0.3973,
+     "s_lo": 0.0637,
+     "s_lo_live": 0.2453,
+     "s_mid": 0.298,
+     "s_mid_live": 0.6714,
+     "s_hi": 0.5371,
+     "s_hi_live": 0.9271
+    }
+   }
+  },
+  "50450": {
+   "name": "Indeck-Oswego Energy Center",
+   "zone": "Upstate_West",
+   "pmax_mw": 67.8,
+   "hsl_mw": 59.0,
+   "pooled": {
+    "on_share": 0.1663,
+    "loading_when_on": 0.8244,
+    "s_lo": 0.0361,
+    "s_lo_live": 0.2174,
+    "U_lo_of_pmax": 0.0259,
+    "s_mid": 0.161,
+    "s_mid_live": 0.4664,
+    "U_mid_of_pmax": 0.1155,
+    "s_hi": 0.437,
+    "s_hi_live": 0.7906,
+    "U_hi_of_pmax": 0.3135
+   },
+   "years": {
+    "2023": {
+     "hours": 8759,
+     "on_share": 0.0928,
+     "loading_when_on": 0.7647,
+     "decile_on_share": [
+      0.0091,
+      0.0103,
+      0.0205,
+      0.0342,
+      0.0331,
+      0.0559,
+      0.0959,
+      0.1416,
+      0.234,
+      0.2937
+     ],
+     "live_hour_share": 0.1921,
+     "s_lo": 0.0186,
+     "s_lo_live": 0.2,
+     "s_mid": 0.0816,
+     "s_mid_live": 0.387,
+     "s_hi": 0.2637,
+     "s_hi_live": 0.7464
+    },
+    "2024": {
+     "hours": 8783,
+     "on_share": 0.126,
+     "loading_when_on": 0.8082,
+     "decile_on_share": [
+      0.0091,
+      0.0091,
+      0.0182,
+      0.0398,
+      0.0296,
+      0.0626,
+      0.1047,
+      0.164,
+      0.3223,
+      0.5
+     ],
+     "live_hour_share": 0.2715,
+     "s_lo": 0.0191,
+     "s_lo_live": 0.1365,
+     "s_mid": 0.0902,
+     "s_mid_live": 0.317,
+     "s_hi": 0.4115,
+     "s_hi_live": 0.8087
+    },
+    "2025": {
+     "hours": 8757,
+     "on_share": 0.2801,
+     "loading_when_on": 0.8515,
+     "decile_on_share": [
+      0.0354,
+      0.0502,
+      0.089,
+      0.1086,
+      0.1416,
+      0.2591,
+      0.3943,
+      0.4509,
+      0.6199,
+      0.6514
+     ],
+     "live_hour_share": 0.4819,
+     "s_lo": 0.0708,
+     "s_lo_live": 0.2661,
+     "s_mid": 0.3114,
+     "s_mid_live": 0.5763,
+     "s_hi": 0.6358,
+     "s_hi_live": 0.7986
+    }
+   }
+  },
+  "50451": {
+   "name": "Indeck-Yerkes Energy Center",
+   "zone": "Upstate_West",
+   "pmax_mw": 65.8,
+   "hsl_mw": 55.0,
+   "pooled": {
+    "on_share": 0.1077,
+    "loading_when_on": 0.7861,
+    "s_lo": 0.0317,
+    "s_lo_live": 0.2509,
+    "U_lo_of_pmax": 0.0208,
+    "s_mid": 0.0875,
+    "s_mid_live": 0.4003,
+    "U_mid_of_pmax": 0.0575,
+    "s_hi": 0.2999,
+    "s_hi_live": 0.6873,
+    "U_hi_of_pmax": 0.1971
+   },
+   "years": {
+    "2023": {
+     "hours": 8759,
+     "on_share": 0.0903,
+     "loading_when_on": 0.7577,
+     "decile_on_share": [
+      0.0091,
+      0.0411,
+      0.0856,
+      0.0685,
+      0.089,
+      0.0674,
+      0.0559,
+      0.0902,
+      0.1244,
+      0.272
+     ],
+     "live_hour_share": 0.2025,
+     "s_lo": 0.0511,
+     "s_lo_live": 0.3849,
+     "s_mid": 0.0756,
+     "s_mid_live": 0.3813,
+     "s_hi": 0.1981,
+     "s_hi_live": 0.5651
+    },
+    "2024": {
+     "hours": 8783,
+     "on_share": 0.0634,
+     "loading_when_on": 0.7384,
+     "decile_on_share": [
+      0.0159,
+      0.0182,
+      0.0125,
+      0.0182,
+      0.0228,
+      0.0285,
+      0.0455,
+      0.0672,
+      0.1276,
+      0.2768
+     ],
+     "live_hour_share": 0.147,
+     "s_lo": 0.0162,
+     "s_lo_live": 0.1662,
+     "s_mid": 0.041,
+     "s_mid_live": 0.342,
+     "s_hi": 0.2026,
+     "s_hi_live": 0.6755
+    },
+    "2025": {
+     "hours": 8757,
+     "on_share": 0.1695,
+     "loading_when_on": 0.8191,
+     "decile_on_share": [
+      0.0206,
+      0.0331,
+      0.0228,
+      0.0343,
+      0.0342,
+      0.0936,
+      0.1943,
+      0.2626,
+      0.4132,
+      0.5851
+     ],
+     "live_hour_share": 0.3265,
+     "s_lo": 0.0277,
+     "s_lo_live": 0.1869,
+     "s_mid": 0.1462,
+     "s_mid_live": 0.4321,
+     "s_hi": 0.4994,
+     "s_hi_live": 0.7576
+    }
+   }
+  },
+  "54041": {
+   "name": "Lockport",
+   "zone": "Upstate_West",
+   "pmax_mw": 219.0,
+   "hsl_mw": 140.0,
+   "pooled": {
+    "on_share": 0.186,
+    "loading_when_on": 0.7027,
+    "s_lo": 0.0519,
+    "s_lo_live": 0.4977,
+    "U_lo_of_pmax": 0.0233,
+    "s_mid": 0.1644,
+    "s_mid_live": 0.6764,
+    "U_mid_of_pmax": 0.0738,
+    "s_hi": 0.4974,
+    "s_hi_live": 0.903,
+    "U_hi_of_pmax": 0.2235
+   },
+   "years": {
+    "2023": {
+     "hours": 8759,
+     "on_share": 0.0804,
+     "loading_when_on": 0.6853,
+     "decile_on_share": [
+      0.0171,
+      0.024,
+      0.0491,
+      0.0445,
+      0.0514,
+      0.0582,
+      0.0708,
+      0.0833,
+      0.1027,
+      0.3029
+     ],
+     "live_hour_share": 0.1193,
+     "s_lo": 0.0337,
+     "s_lo_live": 0.602,
+     "s_mid": 0.0659,
+     "s_mid_live": 0.5923,
+     "s_hi": 0.2026,
+     "s_hi_live": 0.7734
+    },
+    "2024": {
+     "hours": 8783,
+     "on_share": 0.1578,
+     "loading_when_on": 0.6918,
+     "decile_on_share": [
+      0.0376,
+      0.0376,
+      0.0262,
+      0.0637,
+      0.0695,
+      0.0968,
+      0.1274,
+      0.1674,
+      0.2961,
+      0.6549
+     ],
+     "live_hour_share": 0.1898,
+     "s_lo": 0.0413,
+     "s_lo_live": 0.6388,
+     "s_mid": 0.1153,
+     "s_mid_live": 0.75,
+     "s_hi": 0.4758,
+     "s_hi_live": 0.9289
+    },
+    "2025": {
+     "hours": 8757,
+     "on_share": 0.32,
+     "loading_when_on": 0.7124,
+     "decile_on_share": [
+      0.0366,
+      0.0468,
+      0.1039,
+      0.136,
+      0.1575,
+      0.2237,
+      0.3874,
+      0.4795,
+      0.7237,
+      0.904
+     ],
+     "live_hour_share": 0.4384,
+     "s_lo": 0.0808,
+     "s_lo_live": 0.4199,
+     "s_mid": 0.312,
+     "s_mid_live": 0.6722,
+     "s_hi": 0.8139,
+     "s_hi_live": 0.9266
+    }
+   }
+  },
+  "54076": {
+   "name": "Indeck-Olean Energy Center",
+   "zone": "Upstate_West",
+   "pmax_mw": 79.2,
+   "hsl_mw": 75.0,
+   "pooled": {
+    "on_share": 0.0939,
+    "loading_when_on": 0.8322,
+    "s_lo": 0.0281,
+    "s_lo_live": 0.2556,
+    "U_lo_of_pmax": 0.0222,
+    "s_mid": 0.0985,
+    "s_mid_live": 0.495,
+    "U_mid_of_pmax": 0.0776,
+    "s_hi": 0.2163,
+    "s_hi_live": 0.7694,
+    "U_hi_of_pmax": 0.1705
+   },
+   "years": {
+    "2023": {
+     "hours": 8759,
+     "on_share": 0.07,
+     "loading_when_on": 0.8159,
+     "decile_on_share": [
+      0.0046,
+      0.0068,
+      0.0137,
+      0.0308,
+      0.0183,
+      0.0411,
+      0.0582,
+      0.0936,
+      0.129,
+      0.304
+     ],
+     "live_hour_share": 0.1289,
+     "s_lo": 0.014,
+     "s_lo_live": 0.3289,
+     "s_mid": 0.0528,
+     "s_mid_live": 0.4176,
+     "s_hi": 0.2163,
+     "s_hi_live": 0.7058
+    },
+    "2024": {
+     "hours": 8783,
+     "on_share": 0.0674,
+     "loading_when_on": 0.8174,
+     "decile_on_share": [
+      0.0205,
+      0.0114,
+      0.008,
+      0.0216,
+      0.0308,
+      0.0387,
+      0.0808,
+      0.1059,
+      0.2016,
+      0.1538
+     ],
+     "live_hour_share": 0.1392,
+     "s_lo": 0.0154,
+     "s_lo_live": 0.1667,
+     "s_mid": 0.064,
+     "s_mid_live": 0.4091,
+     "s_hi": 0.1781,
+     "s_hi_live": 0.8968
+    },
+    "2025": {
+     "hours": 8757,
+     "on_share": 0.1445,
+     "loading_when_on": 0.8469,
+     "decile_on_share": [
+      0.032,
+      0.0331,
+      0.0696,
+      0.0857,
+      0.0902,
+      0.1518,
+      0.232,
+      0.2409,
+      0.2934,
+      0.2149
+     ],
+     "live_hour_share": 0.2716,
+     "s_lo": 0.0551,
+     "s_lo_live": 0.2818,
+     "s_mid": 0.1787,
+     "s_mid_live": 0.5691,
+     "s_hi": 0.2546,
+     "s_hi_live": 0.7521
+    }
+   }
+  }
+ }
+}

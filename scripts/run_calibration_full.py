@@ -3546,6 +3546,7 @@ def solve_and_persist(
     nyiso_chp_btm_measured: bool | None = None,
     cc_reserve_duty_split: bool | None = None,
     chp_layup_duty_split: bool | None = None,
+    chp_layup_duty_curve: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -4519,6 +4520,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 chp_layup_duty_split=chp_layup_duty_split
             )
+        if chp_layup_duty_curve is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                chp_layup_duty_curve=chp_layup_duty_curve
+            )
         if cc_reserve_duty_split is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_reserve_duty_split=cc_reserve_duty_split
@@ -5252,6 +5257,7 @@ def solve_and_persist(
             nyiso_chp_btm_measured=nyiso_chp_btm_measured,
             cc_reserve_duty_split=cc_reserve_duty_split,
             chp_layup_duty_split=chp_layup_duty_split,
+            chp_layup_duty_curve=chp_layup_duty_curve,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
             nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
@@ -6123,6 +6129,7 @@ def solve_and_persist(
         "nyiso_chp_btm_measured": nyiso_chp_btm_measured,
         "cc_reserve_duty_split": cc_reserve_duty_split,
         "chp_layup_duty_split": chp_layup_duty_split,
+        "chp_layup_duty_curve": chp_layup_duty_curve,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
         "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
         "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
@@ -11714,6 +11721,20 @@ def main() -> None:
         "zero new scalars.",
     )
     parser.add_argument(
+        "--chp-layup-duty-curve",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="CHP LAY-UP duty CURVE (nyiso-149): the GRADED successor to "
+        "--chp-layup-duty-split (rejected nyiso-148 — bang-bang where the "
+        "meters are graded). Each frozen-census plant offers its measured "
+        "price-conditional duty (chp_duty_curve_<ISO>.csv: pct_econ at the "
+        "class econ band, pct_peak at the class peak band, derived from "
+        "CAMPD on-share x loading conditional on envelope-live hours) and "
+        "WITHHOLDS the remainder from energy and reserves. Mutually "
+        "exclusive with --chp-layup-duty-split (rule 19); zero new price "
+        "constants.",
+    )
+    parser.add_argument(
         "--cc-reserve-duty-split",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12197,6 +12218,7 @@ def main() -> None:
         nyiso_chp_btm_measured=args.nyiso_chp_btm_measured,
         cc_reserve_duty_split=args.cc_reserve_duty_split,
         chp_layup_duty_split=args.chp_layup_duty_split,
+        chp_layup_duty_curve=args.chp_layup_duty_curve,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
         nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,

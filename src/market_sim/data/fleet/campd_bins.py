@@ -1906,6 +1906,23 @@ def fleet_to_bins(
             len(_chp_cohort),
             sorted(_chp_cohort),
         )
+    if getattr(config, "chp_layup_duty_curve", False):
+        # Rule 19 [R-ONE-MECH]: one mechanism per phenomenon — the graded
+        # curve REPLACES the single-band split, never stacks on it.
+        if getattr(config, "chp_layup_duty_split", False):
+            raise ValueError(
+                "chp_layup_duty_curve and chp_layup_duty_split are mutually "
+                "exclusive (rule 19 [R-ONE-MECH]): the curve is the split's "
+                "graded successor — arm exactly one"
+            )
+        _duty = _chp_duty_curve(iso)
+        logger.info(
+            "chp_layup_duty_curve armed: %d measured laid-up CHP plant(s) "
+            "offer their price-conditional duty (econ/peak %% of pmax), "
+            "remainder withheld — %s",
+            len(_duty),
+            {c: _duty[c] for c in sorted(_duty)},
+        )
     # Aggregate the per-generator fleet to one row per (plant, group): capacity
     # sums, heat rate is capacity-weighted.
     agg: dict[tuple[int, str], dict] = {}
@@ -2017,6 +2034,25 @@ def fleet_to_bins(
             pct_mc = 0.0
             pct_peak = room
         pct_econ = max(0.0, 100.0 - pct_mr - pct_mc - pct_peak)
+        # CHP LAY-UP duty CURVE (chp_layup_duty_curve, nyiso-149): the GRADED
+        # successor to the single-band split above (rejected nyiso-148 —
+        # bang-bang where the meters are graded). A census plant offers only
+        # its measured price-conditional duty: pct_econ at the class econ
+        # band, pct_peak at the class peak band (chp_duty_curve_<ISO>.csv),
+        # and the remainder is WITHHELD (neither energy nor reserves). Frame
+        # values here keep the synthesized-bins schema coherent; the
+        # load-bearing override is assembly.py::bins_to_fleet (the nyiso-146b
+        # / nyiso-148 inert-solve lesson, twice paid).
+        if (
+            group in _CHP_GROUPS
+            and getattr(config, "chp_layup_duty_curve", False)
+            and code in _chp_layup_cohort(iso)
+        ):
+            _duty = _chp_duty_curve(iso).get(code)
+            if _duty is not None:
+                pct_mc = 0.0
+                pct_econ = min(_duty[0], max(0.0, room))
+                pct_peak = min(_duty[1], max(0.0, room - pct_econ))
         mults = _DEFAULT_HR_MULT_BY_GROUP.get(
             group, _DEFAULT_HR_MULT_BY_GROUP["CC_REGULAR"]
         )
@@ -2116,6 +2152,20 @@ def _chp_layup_cohort(iso: str) -> frozenset[int]:
     from market_sim.data.chp_layup import load_chp_layup_census
 
     return load_chp_layup_census(iso)
+
+
+@lru_cache(maxsize=8)
+def _chp_duty_curve(iso: str) -> dict[int, tuple[float, float]]:
+    """The measured duty-curve offer fractions for *iso*'s lay-up cohort.
+
+    Thin cached wrapper over
+    :func:`market_sim.data.chp_layup.load_chp_duty_curve` (nyiso-149); the
+    census (:func:`_chp_layup_cohort`) stays the membership authority — a
+    plant in the artifact but not the census is never re-banded.
+    """
+    from market_sim.data.chp_layup import load_chp_duty_curve
+
+    return load_chp_duty_curve(iso)
 
 
 @lru_cache(maxsize=8)

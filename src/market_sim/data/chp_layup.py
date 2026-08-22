@@ -69,3 +69,35 @@ def load_chp_layup_census(iso: str) -> frozenset[int]:
             for row in csv.DictReader(fh)
             if str(row.get("laid_up", "")).strip().lower() in ("true", "1", "yes")
         )
+
+
+def load_chp_duty_curve(iso: str) -> dict[int, tuple[float, float]]:
+    """Return ``{plant_code: (pct_econ, pct_peak)}`` for *iso*'s duty-curve cohort.
+
+    The nyiso-149 price-conditional duty artifact
+    (``chp_duty_curve_{ISO}.csv``, ``scripts/data/derive_nyiso_chp_duty_curve.py``)
+    — the graded successor to the rejected single-band lay-up split: per census
+    plant, the measured share of model capacity that belongs at the class ECON
+    band and at the class PEAK band (envelope-conditional on-share x loading x
+    HSL/pmax); the remainder is WITHHELD from the offer entirely. Membership is
+    the intersection with :func:`load_chp_layup_census` at the consumption seam
+    (the census stays the single membership authority — rule 19).
+
+    A missing artifact is a normal state (per-ISO, additive): returns an empty
+    mapping and the caller keeps every plant on its class curve, logging what
+    it armed so a run cannot silently claim a correction it never read.
+    """
+    path = PROCESSED_DIR / f"chp_duty_curve_{iso.upper()}.csv"
+    if not path.exists():
+        logger.warning(
+            "no CHP duty-curve artifact for %s (%s) — every CHP plant keeps "
+            "its class offer curve",
+            iso,
+            path.name,
+        )
+        return {}
+    with path.open(newline="") as fh:
+        return {
+            int(row["plant_code"]): (float(row["pct_econ"]), float(row["pct_peak"]))
+            for row in csv.DictReader(fh)
+        }
