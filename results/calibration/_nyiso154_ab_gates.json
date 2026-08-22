@@ -1,0 +1,403 @@
+{
+ "session": "nyiso-154",
+ "control": "nyiso152_armSE",
+ "arm": "nyiso154_armD",
+ "gates": [
+  {
+   "gate": "D-K1 exactness (nyiso_gas_bridge_da_horizon True/None -> False)",
+   "solve_field_diffs": [
+    "nyiso_gas_bridge_da_horizon"
+   ],
+   "ctl_value": null,
+   "arm_value": false,
+   "passed": true
+  },
+  {
+   "gate": "D-K2 liveness (Bethlehem glue fires; >24h floored segments)",
+   "bethlehem_floor": {
+    "2023": {
+     "ctl": {
+      "floored_hours": 4432,
+      "segments_gt24h": 28,
+      "longest_segment_h": 1456
+     },
+     "arm": {
+      "floored_hours": 4461,
+      "segments_gt24h": 27,
+      "longest_segment_h": 1456
+     },
+     "grew": true
+    },
+    "2024": {
+     "ctl": {
+      "floored_hours": 7688,
+      "segments_gt24h": 10,
+      "longest_segment_h": 3836
+     },
+     "arm": {
+      "floored_hours": 7688,
+      "segments_gt24h": 10,
+      "longest_segment_h": 3836
+     },
+     "grew": false
+    },
+    "2025": {
+     "ctl": {
+      "floored_hours": 7797,
+      "segments_gt24h": 16,
+      "longest_segment_h": 3280
+     },
+     "arm": {
+      "floored_hours": 7797,
+      "segments_gt24h": 16,
+      "longest_segment_h": 3280
+     },
+     "grew": false
+    }
+   },
+   "log_gt24h_bucket_lines": 3,
+   "passed": false
+  },
+  {
+   "gate": "D-K3 capture band + falls + no-degrade harness",
+   "bethlehem": [
+    {
+     "year": 2023,
+     "ctl_starts": 45,
+     "arm_starts": 44,
+     "band": [
+      17,
+      51
+     ],
+     "in_band": true,
+     "metered": 6
+    },
+    {
+     "year": 2024,
+     "ctl_starts": 13,
+     "arm_starts": 13,
+     "band": [
+      4,
+      12
+     ],
+     "in_band": false,
+     "metered": 7
+    },
+    {
+     "year": 2025,
+     "ctl_starts": 28,
+     "arm_starts": 28,
+     "band": [
+      12,
+      35
+     ],
+     "in_band": true,
+     "metered": 7
+    }
+   ],
+   "no_degrade": [
+    {
+     "plant": 2539,
+     "year": 2023,
+     "metered": 6,
+     "ctl": 45,
+     "arm": 44,
+     "ok": true
+    },
+    {
+     "plant": 2539,
+     "year": 2024,
+     "metered": 7,
+     "ctl": 13,
+     "arm": 13,
+     "ok": true
+    },
+    {
+     "plant": 2539,
+     "year": 2025,
+     "metered": 7,
+     "ctl": 28,
+     "arm": 28,
+     "ok": true
+    },
+    {
+     "plant": 56234,
+     "year": 2023,
+     "metered": 4,
+     "ctl": 3,
+     "arm": 3,
+     "ok": true
+    },
+    {
+     "plant": 56234,
+     "year": 2024,
+     "metered": 6,
+     "ctl": 2,
+     "arm": 2,
+     "ok": true
+    },
+    {
+     "plant": 56234,
+     "year": 2025,
+     "metered": 8,
+     "ctl": 4,
+     "arm": 4,
+     "ok": true
+    },
+    {
+     "plant": 56196,
+     "year": 2023,
+     "metered": 9,
+     "ctl": 3,
+     "arm": 3,
+     "ok": true
+    },
+    {
+     "plant": 56196,
+     "year": 2024,
+     "metered": 5,
+     "ctl": 4,
+     "arm": 4,
+     "ok": true
+    },
+    {
+     "plant": 56196,
+     "year": 2025,
+     "metered": 11,
+     "ctl": 6,
+     "arm": 6,
+     "ok": true
+    },
+    {
+     "plant": 7314,
+     "year": 2023,
+     "metered": 115,
+     "ctl": 229,
+     "arm": 229,
+     "ok": true
+    },
+    {
+     "plant": 7314,
+     "year": 2024,
+     "metered": 78,
+     "ctl": 288,
+     "arm": 288,
+     "ok": true
+    },
+    {
+     "plant": 7314,
+     "year": 2025,
+     "metered": 103,
+     "ctl": 284,
+     "arm": 284,
+     "ok": true
+    },
+    {
+     "plant": 55405,
+     "year": 2023,
+     "metered": 29,
+     "ctl": 131,
+     "arm": 135,
+     "ok": true
+    },
+    {
+     "plant": 55405,
+     "year": 2024,
+     "metered": 13,
+     "ctl": 118,
+     "arm": 119,
+     "ok": true
+    },
+    {
+     "plant": 55405,
+     "year": 2025,
+     "metered": 63,
+     "ctl": 97,
+     "arm": 96,
+     "ok": true
+    },
+    {
+     "plant": 54574,
+     "year": 2023,
+     "metered": 123,
+     "ctl": 74,
+     "arm": 74,
+     "ok": true
+    },
+    {
+     "plant": 54574,
+     "year": 2024,
+     "metered": 139,
+     "ctl": 49,
+     "arm": 50,
+     "ok": true
+    },
+    {
+     "plant": 54574,
+     "year": 2025,
+     "metered": 115,
+     "ctl": 12,
+     "arm": 12,
+     "ok": true
+    },
+    {
+     "plant": 50292,
+     "year": 2023,
+     "metered": 63,
+     "ctl": 238,
+     "arm": 240,
+     "ok": true
+    },
+    {
+     "plant": 50292,
+     "year": 2024,
+     "metered": 109,
+     "ctl": 490,
+     "arm": 490,
+     "ok": true
+    },
+    {
+     "plant": 50292,
+     "year": 2025,
+     "metered": 64,
+     "ctl": 379,
+     "arm": 379,
+     "ok": true
+    },
+    {
+     "plant": 56940,
+     "year": 2023,
+     "metered": 11,
+     "ctl": 95,
+     "arm": 95,
+     "ok": true
+    },
+    {
+     "plant": 56940,
+     "year": 2024,
+     "metered": 3,
+     "ctl": 33,
+     "arm": 34,
+     "ok": true
+    },
+    {
+     "plant": 56940,
+     "year": 2025,
+     "metered": 8,
+     "ctl": 28,
+     "arm": 28,
+     "ok": true
+    },
+    {
+     "plant": 57185,
+     "year": 2023,
+     "metered": 23,
+     "ctl": 258,
+     "arm": 258,
+     "ok": true
+    },
+    {
+     "plant": 57185,
+     "year": 2024,
+     "metered": 20,
+     "ctl": 82,
+     "arm": 82,
+     "ok": true
+    },
+    {
+     "plant": 57185,
+     "year": 2025,
+     "metered": 13,
+     "ctl": 67,
+     "arm": 67,
+     "ok": true
+    }
+   ],
+   "passed": false
+  },
+  {
+   "gate": "D-K4 (K6-prime; the bridge D-2 rise is DECLARED)",
+   "new_d4_failures": [],
+   "cleared_d4": [],
+   "forced_share_rises": [
+    {
+     "key": [
+      2023,
+      "chp_steam",
+      "CT_CHP"
+     ],
+     "ctl": 0.1907,
+     "arm": 0.1912
+    },
+    {
+     "key": [
+      2023,
+      "chp_steam",
+      "ST_CHP"
+     ],
+     "ctl": 1.7392,
+     "arm": 1.7431
+    },
+    {
+     "key": [
+      2023,
+      "nyiso_gas_commitment_bridge",
+      "CC_REGULAR"
+     ],
+     "ctl": 0.0626,
+     "arm": 0.0631
+    },
+    {
+     "key": [
+      2023,
+      "nyiso_gas_commitment_bridge",
+      "ST_GAS"
+     ],
+     "ctl": 0.0108,
+     "arm": 0.0113
+    },
+    {
+     "key": [
+      2024,
+      "hydro_min_flow",
+      "hydro"
+     ],
+     "ctl": 0.2304,
+     "arm": 0.2306
+    },
+    {
+     "key": [
+      2024,
+      "nyiso_gas_commitment_bridge",
+      "ST_GAS"
+     ],
+     "ctl": 0.0142,
+     "arm": 0.0145
+    },
+    {
+     "key": [
+      2025,
+      "chp_steam",
+      "ST_CHP"
+     ],
+     "ctl": 1.7871,
+     "arm": 1.7872
+    }
+   ],
+   "new_d1_misses": [],
+   "passed": true
+  },
+  {
+   "gate": "D-K5 gated criteria",
+   "note": "calibration_verdict.py on the registered arm",
+   "passed": null,
+   "recorded": {
+    "run_id": "2026-08-22-nyiso-154-da-horizon",
+    "determination": "NOT-YET (C6 unattested-probe; rejected/inert probe, never attested)",
+    "criteria_vs_keeper": "statuses IDENTICAL; C3a +5.2/-2.7/-8.1 (keeper +5.3/-2.7/-8.1 \u2014 the 29 glued hours move 2023 by 0.1pp); C3c bit-identical 1/0/0",
+    "passed_no_criteria_flip": true
+   }
+  }
+ ],
+ "verdict": "MEASURED EFFECTIVELY INERT \u2014 the uncapped restart inequality glues ONE >24h segment in 2023 (+29 floored hours; Bethlehem starts 45->44) and ZERO in 2024/2025 (floored hours bit-identical 7,688/7,797). D-K2/D-K3 FAIL on liveness/capture (the phase-0 $35-50/MW capture over-predicted 11-12/5/5 glued gaps: the detector's own mc_base/startup arithmetic finds riding through the surviving gaps UNECONOMIC in all but one case). D-K1/D-K4 PASS (exact single delta; zero new D-4/D-1). THE TYPING THE PREREG PRE-COMMITTED STANDS AND CLOSES THE QUEUE ITEM: on the model's own prices and registered startup costs, shutting down over these gaps IS the economic choice \u2014 the real plant's 6-7-start/yr ride-through implies an effective cycling/self-commitment cost several times the NREL startup table. The residual is NOT closable by an admissible lever at HEAD; the remaining routes are an OWNER-COURT identification intake (a published cycling-cost basis, e.g. the NREL/Intertek-APTECH cycling-cost study, adopted as an identification decision rather than a residual fit) or the ledgered trough-compression object moving in its own lane."
+}

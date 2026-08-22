@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-19-nyiso-146b-online-hours",
+  "run_id": "2026-08-22-nyiso-154-da-horizon",
   "iso": "NYISO",
-  "label": "nyiso 146b online hours",
+  "label": "nyiso 154 da horizon",
   "target_years": [
     2023,
     2024,

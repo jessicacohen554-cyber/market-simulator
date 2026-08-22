@@ -8691,6 +8691,36 @@ nyiso-148's as the live frontier statement); runs
 `2026-08-22-nyiso-150-reserve-rearm` / `-winter-spread`; gates
 `_nyiso150_ab_gates.json`.
 
+**FRONTIER STATUS 2026-08-22 (nyiso-154) — THE TESTABLE SET IS EXHAUSTED;
+AT FRONTIER ON THE MERITS, RECOMMENDED FOR OWNER RATIFICATION. KEEPER
+`2026-08-22-nyiso-152-duty-complete` (CALIBRATED, audit 0/0, auditor PASS),
+`complete` held, `final` not proposed, holdout freeze ACTIVE and unspent.**
+The nyiso-150 path-to-frontier's four testable lanes are ALL closed with
+pre-registered records: (1) the reserve-cohort graded duty — CLOSED WITH
+KEEPER (nyiso-152, the completed duty-role mechanism; control-side capture
+confirmed to 0.6%/0.09%); (2) the hydro RAMP10 seams — PROVABLY LP-INERT
+for NYISO, no solve spent (nyiso-152 phase-0, which also OVERTURNED the
+nyiso-151 reserve-posture re-type); (3) the online_rho pair — BOTH cells
+adjudicated at nyiso-153 (obligation solved on its measured 0.3014 and
+REJECTED on its pre-registered branches — with the durable finding that
+the downstate under-commitment is REAL and the $25-capped gated-reserve
+instrument wrong for it; synch G by the disposition rule); (4) the
+start-conduct residual — CLOSED AS TESTED at nyiso-154 (identity mislabel
+corrected: 56234 is Caithness, not Flynn; outage/trough confounds ruled
+out; the DA-horizon uncap measured effectively inert — the real
+ride-through implies a cycling cost several times the NREL table). THE
+REMAINING OPEN SET IS ENTIRELY OWNER-COURT OR LEDGERED: the ledgered C3c
+summer face; the winter locational identification intake; the Q2
+annotation; the hydro AS certification+water intake (scoped only as the
+future spin_reserve_online unlock); the NEW cycling-cost identification
+intake (nyiso-154); the `final` grant (NOT-YET on the merits, unchanged).
+The declaration itself is an OWNER act (the nyiso-104/nyiso-130
+precedent) — this session edits no frontier field. Full statement:
+`results/calibration/ASSESSMENT-nyiso154-frontier-2026-08-22.md`
+(supersedes nyiso-150's as the live frontier statement); runs
+`2026-08-22-nyiso-153-incity-obligation` / `2026-08-22-nyiso-154-da-horizon`;
+gates `_nyiso153_ab_gates.json` / `_nyiso154_ab_gates.json`.
+
 **nyiso-152 PHASE-0 ADJUDICATION 2026-08-22 (owner-chartered RAMP10 phase-0;
 NO SOLVE SPENT):** the **hydro RAMP10 seams item is OFF THE QUEUE — provably
 LP-inert for NYISO**. The NYISO reserve design consumes no ramp10 quantity

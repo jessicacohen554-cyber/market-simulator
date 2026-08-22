@@ -226,6 +226,15 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         # re-solve — prereg §3). REMOVAL CONDITION: the citing PREREG/RESULT
         # docs are retired or re-pointed at registered bundles.
         "nyiso153_armO_recipe",
+        #
+        # SPENT — session nyiso-154 (PREREG-nyiso154-da-horizon-uncap-
+        # 2026-08-22.md). Same class as nyiso-153: the one-file recipe dir is
+        # the replay input committed before the arm solved; the arm is
+        # REGISTERED (2026-08-22-nyiso-154-da-horizon, measured effectively
+        # inert on its own gates) so its bundle is mapped the ordinary way;
+        # the control is the nyiso-152 keeper (no re-solve). REMOVAL
+        # CONDITION: the citing PREREG/RESULT docs are retired or re-pointed.
+        "nyiso154_armD_recipe",
     }
 )
 
