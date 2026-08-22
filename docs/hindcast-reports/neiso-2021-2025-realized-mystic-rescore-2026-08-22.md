@@ -195,6 +195,15 @@ bundle's ledgers (`--pass2-run NEISO=neiso-2021-2025-realized-mystic-rescore`):
 | 2024 | 24,255 | 26,259 | 24,315 | 1.080 | $4.0 | — |
 | 2025 | 25,898 | 27,447 | 25,962 | 1.057 | $33.9 | — |
 
+**The bundle's own forecast invariants corroborate this independently.** The
+registered sidecar (`frontend/data/hindcast/neiso-2021-2025-realized-mystic-rescore.json`)
+carries **I12 as a WARN** for exactly this: reserve margin **27.8 % (2021)** and
+**30.5 % (2023)** against a requirement-implied band of **[0.2 %, 15.2 %]** — the
+same over-long position, flagged by a check that knows nothing about the capacity
+screen. **I6 FAILs** alongside it (23.1 % of thermal retired in one year, 2024 —
+the harness's own statistic on its own denominator; the 21.9 % quoted above is the
+directly-computed figure and the two differ only in denominator).
+
 `_NEISO_FCA_CURVE`'s zero-cross is **reserve position 1.083**. The published
 positions sit at **1.035–1.063**, just inside it; the model's own sit at
 **1.343 / 1.371**, well past it — so the curve returns **exactly zero** in both
