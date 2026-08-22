@@ -1019,6 +1019,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off one cache entry. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "mustrun_layup_window_mask",
+    # Hindcast announced-exit verification (owner directive 2026-08-22, the
+    # PJM Byron/Dresden false-retire investigation): dropped from the hash at
+    # its False default so every pre-existing cache key of all six ISOs stays
+    # byte-stable — the off path reads the reversal registry exactly as
+    # before (RC-1B vintage gate applied), byte-identical by construction. An
+    # armed run suppresses announced dates the realized record reversed (a
+    # different fleet) and hashes distinctly. SHARED field, so it goes at the
+    # very end of the tuple per the HOUSE-3 insertion convention. Registered
+    # IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "hindcast_verified_announced_exits",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1357,6 +1367,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-173 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_layup_window_mask": "False",
+    # Added 2026-08-22 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "hindcast_verified_announced_exits": "False",
 }
 
 
@@ -1693,6 +1706,29 @@ class ScenarioConfig:
     # docs/handoffs/forecast-validation-program-2026-07.md §1.
     hindcast: bool = False
     hindcast_fuel_variant: str = "realized"  # "realized" | "asknown"
+    # Hindcast announced-exit verification (owner directive 2026-08-22, the
+    # PJM Byron/Dresden 4.1 GW nuclear false-retire investigation): an
+    # announced/"known" retirement in a hindcast is VERIFIED against the
+    # realized record before it executes — a plant whose announced exit was
+    # cancelled outright by a later public counter-instrument and demonstrably
+    # kept operating (every confirmed-registry row ``superseded``, e.g.
+    # Byron/Dresden's 2021 dates reversed by IL CEJA's CMC program) is
+    # countered instead of false-retired. Consumption is hindcast-only, in
+    # ``runner.run_scenario_iso``: when armed, the announced-REVERSAL loader
+    # (``data.confirmed_retirements.load_announced_reversal_plants``) is read
+    # WITHOUT the RC-1B vintage information gate (``as_of=None``), so a
+    # reversal instrument that postdates the vintage cutoff still suppresses
+    # the stale EIA-860 announced date. The confirmed-EXIT channel keeps its
+    # information gate untouched — this flag never injects an exit, it only
+    # stops executing one the realized record proves never happened. This is
+    # a deliberate posture trade recorded per leg (harness meta +
+    # ``run_config.json``): ex-ante purity (RC-1B, information-set-correct)
+    # vs a verified fleet; the scorer reports raw and IS-2020 side by side
+    # either way, so neither posture hides the difference. Default-off and
+    # cache-neutral (``_CACHE_KEY_OPTIONAL_FIELDS``); the hindcast harness
+    # arms it by default (scripts/run_capacity_hindcast.py,
+    # --no-verified-announced-exits restores the pre-2026-08-22 ex-ante arm).
+    hindcast_verified_announced_exits: bool = False
     # T1-X crossover boundary (FF-0E, plan §2.2): the first FORECAST year in a
     # vintage-seeded crossover run. ``None`` => plain capacity-hindcast (every
     # year uses the realized/measured hindcast inputs). When set (crossover

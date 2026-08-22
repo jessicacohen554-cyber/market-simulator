@@ -1357,13 +1357,27 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # announced-channel data correction, not an exogenous exit injection.
     announced_reversal_plants: frozenset[int] = frozenset()
     if config.mode == "forecast":
+        # Hindcast announced-exit verification (owner directive 2026-08-22;
+        # field docstring in scenarios.py): when armed, the REVERSAL loader
+        # bypasses the RC-1B vintage information gate (as_of=None) so an
+        # announced date the realized record shows was cancelled by a later
+        # counter-instrument (Byron/Dresden's 2021 dates, reversed by IL CEJA
+        # 2021-09-15 — after the 2020-vintage cutoff) is countered instead of
+        # false-retiring a running plant. Verification-only: the confirmed-
+        # EXIT channel above keeps its information gate untouched, so this
+        # can suppress a never-executed exit but never inject one.
+        reversal_as_of = confirmed_registry_as_of
+        if getattr(config, "hindcast", False) and getattr(
+            config, "hindcast_verified_announced_exits", False
+        ):
+            reversal_as_of = None
         # Fail-loud shares the confirmed channel's condition (same clean
         # partition, W2-E / G12): when confirmed_exits_enabled is off the
         # reversal channel keeps its warn-only degradation, preserving its
         # deliberate independence from the gate.
         announced_reversal_plants = load_announced_reversal_plants(
             iso,
-            as_of=confirmed_registry_as_of,
+            as_of=reversal_as_of,
             required=_confirmed_exits_active(config),
         )
 

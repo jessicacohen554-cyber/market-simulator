@@ -1,8 +1,9 @@
 # capacity_actuals_neiso.csv — capacity-hindcast scoring target (W2-P5, plan §1.2.3)
 # Source: latest committed EIA-860 (data/raw/eia-860/ operable + retired_and_canceled sheets); registry outcome facts, not bench.
-# Window 2021-2025 (rule 22: no 2026). Fuel in the model taxonomy (data.fleet._map_fuel_type + renewable/storage). Built 2026-08-07.
+# Window 2021-2025 (rule 22: no 2026). Fuel in the model taxonomy (data.fleet._map_fuel_type + renewable/storage). Built 2026-08-22.
 # Units >= 300 MW flagged (large_unit). BA(s): ['ISNE'].
 # Retirements dated at PHYSICAL cessation (EIA-860 Status series across releases [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025], FFR-7A / D-21(b)), not at the reported paper date; units already OS/RE at the 2020 fleet vintage are excluded (1 here).
+# RD-5 actuals-coverage fix applied: plant(s) [1588] unioned in from /home/user/market-simulator/data/raw/_validation-source/retired_sheet_coverage_gaps.csv (missing from the current top-level retired sheet) -- see that file's header and data/raw/eia-860/README.md.
 kind,unit_id,plant_id,fuel,mw,year,state,large_unit
 addition,54907_GT200,54907,gas_ct,21.7,2021,MA,False
 addition,54907_GT300,54907,gas_ct,21.7,2021,MA,False
@@ -601,6 +602,12 @@ retirement,57689_NORD2,57689,oil,2.0,2023,CT,False
 retirement,57689_NORD3,57689,oil,2.0,2023,CT,False
 retirement,59717_TOW1,59717,oil,0.2,2023,MA,False
 retirement,59639_LIGHT,59639,wind,2.0,2023,MA,False
+retirement,1588_ST85,1588,gas_cc,315.0,2024,MA,True
+retirement,1588_ST96,1588,gas_cc,315.0,2024,MA,True
+retirement,1588_GT81,1588,gas_cc,278.6,2024,MA,False
+retirement,1588_GT82,1588,gas_cc,278.6,2024,MA,False
+retirement,1588_GT93,1588,gas_cc,278.6,2024,MA,False
+retirement,1588_GT94,1588,gas_cc,278.6,2024,MA,False
 retirement,63673_EU-12,63673,gas_ct,3.0,2024,CT,False
 retirement,62455_DGR01,62455,gas_ct,2.0,2024,CT,False
 retirement,50832_1,50832,hydro,1.2,2024,MA,False

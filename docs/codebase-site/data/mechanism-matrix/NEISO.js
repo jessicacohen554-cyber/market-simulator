@@ -241,6 +241,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     electrification_layers: { cell: ".", fc: "O", ev: "FFR-SA T0 smoke 2026-08-03 (docs/handoffs/ffr-sa-load-shape-implementation-2026-08.md §4)" },
     transmission_expansion: { cell: ".", fc: "U" },
     t1ff_solve_year_weather: { cell: ".", fc: "U" },
+    hindcast_verified_announced_exits: { cell: ".", fc: "U" },
     rps_lp_constraint: { cell: "K", fc: "K" },
     miso_rps_compliance_regions: { cell: ".", fc: "." },
     miso_clean_tier_rows: { cell: ".", fc: "." },
