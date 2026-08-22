@@ -113,6 +113,72 @@ def _reserve_family_diag(bundle: Path, year: int) -> dict:
     return out
 
 
+#: Non-leap hour windows (0-based hour-of-year): the 2023 scarcity-episode
+#: window Jun-10 00:00 (ECRS go-live, day 160) .. Sep-30 24:00 (day 273), and
+#: the ercot-217 calm fortnight Jun-24 (day 174) .. Jul-7 24:00 (day 188).
+_EPISODE = (160 * 24, 273 * 24)
+_CALM = (174 * 24, 188 * 24)
+
+
+def _summer_block(ctl: dict, arm: dict, a: np.ndarray) -> dict:
+    """Precommit §5.2: miss-set response, window concentration, calm
+    fortnight, channel attribution (λ vs adder) — all ctl-vs-arm."""
+    aa = np.nan_to_num(a, nan=-np.inf)
+    tail = aa > 200.0
+    pc = np.nan_to_num(ctl["price"])
+    pa = np.nan_to_num(arm["price"])
+    miss_ctl = tail & (pc <= 200.0)
+    d_price = pa - pc
+    d_lam = np.nan_to_num(arm["lam"]) - np.nan_to_num(ctl["lam"])
+    dem = np.nan_to_num(ctl["demand"])
+    win = np.zeros(pc.size, dtype=bool)
+    win[_EPISODE[0] : _EPISODE[1]] = True
+    tot = float((d_price * dem).sum())
+    win_share = float((d_price[win] * dem[win]).sum()) / tot if abs(tot) > 1e-6 else None
+
+    def _bias(p: np.ndarray, lo: int, hi: int) -> float:
+        w = dem[lo:hi]
+        act = a[lo:hi]
+        ok = np.isfinite(act) & (w > 0)
+        m = float((p[lo:hi][ok] * w[ok]).sum() / w[ok].sum())
+        x = float((act[ok] * w[ok]).sum() / w[ok].sum())
+        return (m - x) / x * 100.0
+
+    improved = miss_ctl & (d_price > 1.0)
+    if improved.any():
+        di = float((d_price[improved] * dem[improved]).sum())
+        lam_share = float((d_lam[improved] * dem[improved]).sum()) / di if di else None
+    else:
+        lam_share = None
+    return {
+        "miss_split_ctl": {
+            "caught": int((tail & (pc > 200.0)).sum()),
+            "missed": int(miss_ctl.sum()),
+            "phantom": int(((~tail) & (pc > 200.0) & np.isfinite(a)).sum()),
+        },
+        "miss_split_arm": {
+            "caught": int((tail & (pa > 200.0)).sum()),
+            "missed": int((tail & (pa <= 200.0)).sum()),
+            "phantom": int(((~tail) & (pa > 200.0) & np.isfinite(a)).sum()),
+        },
+        "d_price_at_miss_p50": round(float(np.median(d_price[miss_ctl])), 3)
+        if miss_ctl.any()
+        else None,
+        "d_price_at_miss_max": round(float(d_price[miss_ctl].max()), 2)
+        if miss_ctl.any()
+        else None,
+        "window_concentration": round(win_share, 4) if win_share is not None else None,
+        "calm_fortnight_bias_pct": {
+            "control": round(_bias(pc, *_CALM), 2),
+            "arm": round(_bias(pa, *_CALM), 2),
+        },
+        "channel_lambda_share_at_improved_miss": (
+            round(lam_share, 4) if lam_share is not None else None
+        ),
+        "improved_miss_hours": int(improved.sum()),
+    }
+
+
 def _d5_held_rows(bundle: Path) -> list[str]:
     d = json.loads((bundle / "legitimacy_diagnostics.json").read_text())
     rows = d["diagnostics"].get("D5", {}).get("rows", [])
@@ -201,6 +267,7 @@ def main() -> None:
                     if not arm_set <= ctl_set:
                         shortfall_fail = True
                         rec["new_shortfall_hours"] = sorted(arm_set - ctl_set)
+        yr["summer"] = _summer_block(_member(ctl_b, y), _member(arm_b, y), a)
         yr["spur_baseline"] = SPUR_BASELINE[y]
         yr["shed_baseline"] = SHED_BASELINE[y]
         out["per_year"][str(y)] = yr
