@@ -123,3 +123,37 @@ end-to-end check).
   adjudications, the Zone-K bound, LI CC/ST and 7314 untouched.
 * OUT OF LANE: RHO_CLIP, `nyiso_iroquois_winter_spread`, the D-4
   vintage-guard charter, the Astoria attribution, other ISOs' bench parts.
+
+---
+
+## 7. DISCLOSURE — ARM F's FIRST solve is MIS-BASED, caught by F-K2 (appended BEFORE the corrected solve)
+
+The first ARM F solve completed and its pre-registered gates were scored
+(`_nyiso149_duty_curve_gates.json`, first run). **F-K3 (graded conduct) PASSES
+on all 21 plant-years and F-K4 passes with the base's D2 ST_GAS-2024 failure
+CLEARED — the identification is right. F-K2 FAILS, and the failure is real and
+exactly what the LP-entry-grain liveness gate exists to catch:** the seams
+apply the artifact's %-of-pmax fractions to the BIN nameplate, which exceeds
+the census `model_pmax_mw` the fractions were derived on (offered capacity
+1.01–1.35× intended; Selkirk 251.9 MW got vs 199.4 MW want = exactly the
+754/596.6 nameplate ratio). The measured duty is a **MW quantity**
+(`s·L·HSL`), basis-free; expressing it as a fraction silently re-based it —
+the fourth member of the nyiso-146b/148 seam-defect class, this time caught
+by the pre-registered gate BEFORE any registration or scoring.
+
+**The fix (expression-only, zero re-derivation of the statistic — rule 23):**
+the artifact carries `econ_mw` / `peak_mw` explicitly (`= s_mid·L·HSL` and
+`(s_hi−s_mid)·L·HSL`, the same numbers the pct columns encode on the census
+basis); the three seams consume the MW directly, clamped into `grid_cap`.
+Unit tests updated to the MW contract.
+
+**Also corrected in the probe:** F-K1's flattener counted the run
+`timestamp` — provenance, not config. The substantive diff was exactly
+`{scenario_config.chp_layup_duty_curve: False→True}`. Provenance keys
+(`timestamp`, `note`) are excluded from F-K1 henceforth; the gate's meaning
+is unchanged.
+
+**Disposition (per §5.2's spirit, the nyiso-148 inert-plumbing precedent):**
+the mis-based first solve is kept and registered as the seam-defect record;
+ARM F is re-solved on the MW contract and scored as the arm. All other gate
+definitions are untouched.
