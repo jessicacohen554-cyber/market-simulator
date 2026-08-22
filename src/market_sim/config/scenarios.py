@@ -1002,6 +1002,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # keeping the control/arm A/B off one cache entry. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "miso_reserve_online_gated",
+    # miso-177 measured-value rho treatment (GATED default off): dropped from
+    # the hash at its default so every pre-existing cache key stays
+    # byte-stable — the off path returns the identical RHO_CLIP-banded
+    # coefficient, byte-identical by construction. An armed run consumes the
+    # measured 0.1764 instead of the 0.5 floor in the gated coupling row — a
+    # different LP, so it hashes distinctly, keeping the control/arm A/B off
+    # one cache entry. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "miso_online_rho_no_floor",
     # miso-175 seam-envelope hour-key repair (GATED default off): dropped from
     # the hash at its default so the pinned global default key
     # 603c2498bf71d21d stays byte-stable — the off path takes the identical
@@ -1381,6 +1390,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-169 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_reserve_online_gated": "False",
+    # Added by miso-177 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_online_rho_no_floor": "False",
     # Added by miso-175 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_seam_envelope_hour_ending_key": "False",
@@ -6458,6 +6470,30 @@ class ScenarioConfig:
     # miso_commitment_posture (rule 19 — the posture U/SU re-anchor gates the
     # same phenomenon). Default off; GATED CHANGE (alters withholding, hence
     # dispatch volumes).
+    miso_online_rho_no_floor: bool = False  # MISO: consume the CAMPD-measured
+    # online_rho AT ITS MEASURED VALUE in the miso_reserve_online_gated
+    # coupling row, bounded by the cited 4.0 ceiling alone — the RHO_CLIP 0.5
+    # floor is NOT applied. The floor is REFUTED as a citable parameter
+    # (miso-177, the standing miso-169/nyiso-144 owner escalation): no primary
+    # citation exists in the repo (nyiso-145 decision card §3 — the band was
+    # written for the legacy min-load estimand (1−f)/f and inherited across a
+    # change of estimand), MISO's own BPM-002-r25 limits per-resource reserve
+    # by ramp × deploy-time (§4.2.1.46–47: reserve ≤ ramp rate × 10 min,
+    # ContResRampMult=1.0) with the only capability-role 0.5 a CEILING on the
+    # regulation range (§4.2.1.37), and the physical lower bound of
+    # headroom-per-MW-online is zero. Armed, the consumed coefficient is the
+    # committed artifact's measured 0.1764 (5.28M online unit-hours, 93.1 %
+    # coverage, campd_online_reserve_rho_MISO.csv) instead of the 0.5 floor —
+    # ~2.83× tighter gated Reg+Spin supply. Zero new free parameters (a
+    # boolean selector between two treatments of one committed measured
+    # input); hard-errors if the measured artifact is absent (no silent
+    # fallback identification). Read ONLY inside _miso_design's gated branch,
+    # so it is inert without miso_reserve_online_gated and inert for every
+    # other ISO (rule 25 — the shared RHO_CLIP band and every NYISO call site
+    # are byte-untouched; the band ruling remains the owner's nyiso-145
+    # decision card). Evidence:
+    # FINDING-miso177-rho-clip-floor-identification-2026-08-22.md. Default
+    # off; GATED CHANGE (alters reserve withholding, hence dispatch volumes).
     miso_south_seam_split: bool = False  # MISO: host the South seam's
     # reference-price bands in their own external zone
     # (constants.MISO_SOUTH_EXTERNAL_ZONE) instead of the shared

@@ -84,6 +84,19 @@ logger = logging.getLogger(__name__)
 # owner call (rule 22 D-5(b)), not a session's; until it is resolved, neither
 # gated NYISO flag is admissible in a keeper. Record:
 # results/calibration/FINDING-nyiso144-downstate-scarcity-and-rho-2026-08-18.md
+#
+# miso-177 (2026-08-22) completed the identification hunt for the MISO leg of
+# that escalation: the 0.5 floor is REFUTED as a citable parameter — MISO's
+# own BPM-002-r25 limits per-resource reserve by ramp x deploy-time
+# (§4.2.1.46–47), its only capability-role 0.5 is the §4.2.1.37 CEILING on
+# the regulation range, and the physical lower bound of headroom-per-MW-online
+# is zero. The 4.0 CEILING keeps its (1−f)/f min-load derivation (decision
+# card §3) and is not disturbed. The band itself is UNCHANGED here — it
+# remains the owner's nyiso-145 decision card — but MISO's gated consumption
+# may bypass the refuted floor via ScenarioConfig.miso_online_rho_no_floor
+# (:attr:`OnlineReserveRho.rho_used_no_floor`), scoped so no other ISO moves
+# (rule 25). Record:
+# results/calibration/FINDING-miso177-rho-clip-floor-identification-2026-08-22.md
 RHO_CLIP: tuple[float, float] = (0.5, 4.0)
 
 
@@ -119,6 +132,21 @@ class OnlineReserveRho:
         """Return the headline multiplier clipped to :data:`RHO_CLIP`."""
         lo, hi = RHO_CLIP
         return min(max(self.rho, lo), hi)
+
+    @property
+    def rho_used_no_floor(self) -> float:
+        """Return the headline multiplier bounded by the cited ceiling alone.
+
+        The measured as-operated statistic consumed as measured: the 0.5 floor
+        — refuted as a citable parameter on MISO's primary record
+        (FINDING-miso177-rho-clip-floor-identification-2026-08-22.md; the
+        physical lower bound of headroom-per-MW-online is zero) — is not
+        applied; the 4.0 ceiling keeps its ``(1−f)/f`` min-load derivation and
+        cannot bind on any as-operated measurement. Consumed only where a
+        ``ScenarioConfig`` gate selects it (``miso_online_rho_no_floor``);
+        :attr:`rho_used` and the shared :data:`RHO_CLIP` band are untouched.
+        """
+        return min(self.rho, RHO_CLIP[1])
 
 
 def _artifact_path(iso: str):
