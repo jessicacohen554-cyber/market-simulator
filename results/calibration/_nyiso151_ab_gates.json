@@ -1,0 +1,747 @@
+{
+ "session": "nyiso-151",
+ "control": "nyiso151_control",
+ "arms": {
+  "H": [
+   {
+    "gate": "H-K1 exactness (egrid_identity_heat_rates)",
+    "solve_field_diffs": [
+     "egrid_identity_heat_rates"
+    ],
+    "passed": true
+   },
+   {
+    "gate": "H-K2 construction (apply line every year)",
+    "apply_lines": 3,
+    "passed": true
+   },
+   {
+    "gate": "H-K3 Allegany energy falls each year + no-degrade",
+    "allegany": [
+     {
+      "year": 2023,
+      "ctl_gwh": 502.8,
+      "arm_gwh": 502.8,
+      "e923_gwh": 11.7,
+      "falls": false
+     },
+     {
+      "year": 2024,
+      "ctl_gwh": 514.7,
+      "arm_gwh": 514.7,
+      "e923_gwh": 15.5,
+      "falls": false
+     },
+     {
+      "year": 2025,
+      "ctl_gwh": 0.0,
+      "arm_gwh": 0.0,
+      "e923_gwh": 0.0,
+      "falls": false
+     }
+    ],
+    "no_degrade_ok": true,
+    "no_degrade": [
+     {
+      "plant": 56940,
+      "year": 2023,
+      "metered": 11,
+      "ctl": 110,
+      "arm": 110,
+      "ok": true
+     },
+     {
+      "plant": 56940,
+      "year": 2024,
+      "metered": 3,
+      "ctl": 35,
+      "arm": 35,
+      "ok": true
+     },
+     {
+      "plant": 56940,
+      "year": 2025,
+      "metered": 8,
+      "ctl": 30,
+      "arm": 30,
+      "ok": true
+     },
+     {
+      "plant": 55405,
+      "year": 2023,
+      "metered": 29,
+      "ctl": 146,
+      "arm": 146,
+      "ok": true
+     },
+     {
+      "plant": 55405,
+      "year": 2024,
+      "metered": 13,
+      "ctl": 148,
+      "arm": 148,
+      "ok": true
+     },
+     {
+      "plant": 55405,
+      "year": 2025,
+      "metered": 63,
+      "ctl": 126,
+      "arm": 126,
+      "ok": true
+     },
+     {
+      "plant": 56196,
+      "year": 2023,
+      "metered": 9,
+      "ctl": 3,
+      "arm": 3,
+      "ok": true
+     },
+     {
+      "plant": 56196,
+      "year": 2024,
+      "metered": 5,
+      "ctl": 4,
+      "arm": 4,
+      "ok": true
+     },
+     {
+      "plant": 56196,
+      "year": 2025,
+      "metered": 11,
+      "ctl": 6,
+      "arm": 6,
+      "ok": true
+     },
+     {
+      "plant": 2511,
+      "year": 2023,
+      "metered": 42,
+      "ctl": 4,
+      "arm": 4,
+      "ok": true
+     },
+     {
+      "plant": 2511,
+      "year": 2024,
+      "metered": 45,
+      "ctl": 12,
+      "arm": 12,
+      "ok": true
+     },
+     {
+      "plant": 2511,
+      "year": 2025,
+      "metered": 36,
+      "ctl": 1,
+      "arm": 1,
+      "ok": true
+     },
+     {
+      "plant": 2500,
+      "year": 2023,
+      "skipped": true
+     },
+     {
+      "plant": 2500,
+      "year": 2024,
+      "skipped": true
+     },
+     {
+      "plant": 2500,
+      "year": 2025,
+      "skipped": true
+     },
+     {
+      "plant": 50292,
+      "year": 2023,
+      "metered": 63,
+      "ctl": 224,
+      "arm": 224,
+      "ok": true
+     },
+     {
+      "plant": 50292,
+      "year": 2024,
+      "metered": 109,
+      "ctl": 468,
+      "arm": 468,
+      "ok": true
+     },
+     {
+      "plant": 50292,
+      "year": 2025,
+      "metered": 64,
+      "ctl": 391,
+      "arm": 391,
+      "ok": true
+     },
+     {
+      "plant": 57185,
+      "year": 2024,
+      "metered": 20,
+      "ctl": 107,
+      "arm": 107,
+      "ok": true
+     },
+     {
+      "plant": 57185,
+      "year": 2025,
+      "metered": 13,
+      "ctl": 70,
+      "arm": 70,
+      "ok": true
+     },
+     {
+      "plant": 56234,
+      "year": 2024,
+      "metered": 6,
+      "ctl": 2,
+      "arm": 2,
+      "ok": true
+     },
+     {
+      "plant": 56234,
+      "year": 2025,
+      "metered": 8,
+      "ctl": 4,
+      "arm": 4,
+      "ok": true
+     },
+     {
+      "plant": 2539,
+      "year": 2023,
+      "metered": 6,
+      "ctl": 42,
+      "arm": 42,
+      "ok": true
+     },
+     {
+      "plant": 2539,
+      "year": 2024,
+      "metered": 7,
+      "ctl": 14,
+      "arm": 14,
+      "ok": true
+     },
+     {
+      "plant": 2539,
+      "year": 2025,
+      "metered": 7,
+      "ctl": 29,
+      "arm": 29,
+      "ok": true
+     },
+     {
+      "plant": 7314,
+      "year": 2023,
+      "metered": 115,
+      "ctl": 204,
+      "arm": 204,
+      "ok": true
+     },
+     {
+      "plant": 7314,
+      "year": 2024,
+      "metered": 78,
+      "ctl": 288,
+      "arm": 288,
+      "ok": true
+     },
+     {
+      "plant": 7314,
+      "year": 2025,
+      "metered": 103,
+      "ctl": 293,
+      "arm": 293,
+      "ok": true
+     }
+    ],
+    "passed": false
+   },
+   {
+    "gate": "H-K4 D-4/D-2 (K6-prime)",
+    "new_d4_failures": [],
+    "cleared_d4": [],
+    "forced_share_rises": [],
+    "escalated": false,
+    "new_d1_misses": [],
+    "passed": true
+   },
+   {
+    "gate": "H-K5 gated criteria",
+    "note": "BY BIT-IDENTITY to the control (== the registered keeper 2026-08-22-nyiso-149-duty-curve, IDENT max|dprice|=0.0 x3y): every criterion equals the keeper's \u2014 C1/C2/C3a/C3b/C4/C8 PASS, C3c the standing ledgered caveat. No separate registration (the nyiso-149 non-double-registration convention); the identity is the record.",
+    "passed": true
+   },
+   {
+    "gate": "H-K6 LOYO (derive-side in artifact; gate-side = per-year H-K3)",
+    "passed": false
+   }
+  ],
+  "HC": [
+   {
+    "gate": "HC-K1 exactness (egrid_identity_heat_rates+cc_reserve_duty_split)",
+    "solve_field_diffs": [
+     "cc_reserve_duty_split",
+     "egrid_identity_heat_rates"
+    ],
+    "passed": true
+   },
+   {
+    "gate": "HC-vs-H-K1 exactness (cc_reserve_duty_split)",
+    "solve_field_diffs": [
+     "cc_reserve_duty_split"
+    ],
+    "passed": true
+   },
+   {
+    "gate": "HC-K2 liveness (cohort armed + >=80% collapse incl. 7784)",
+    "cohort_log_line": true,
+    "object_plants": [
+     {
+      "plant": 50744,
+      "year": 2023,
+      "ctl_gwh": 444.3,
+      "armH_gwh": 444.3,
+      "armHC_gwh": 28.3,
+      "e923_gwh": 2.1,
+      "fall_vs_ctl": 0.936,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 50744,
+      "year": 2024,
+      "ctl_gwh": 444.1,
+      "armH_gwh": 444.1,
+      "armHC_gwh": 30.4,
+      "e923_gwh": 3.7,
+      "fall_vs_ctl": 0.932,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 50744,
+      "year": 2025,
+      "ctl_gwh": 508.3,
+      "armH_gwh": 508.3,
+      "armHC_gwh": 356.7,
+      "e923_gwh": null,
+      "fall_vs_ctl": 0.298,
+      "gated": false,
+      "ok": null
+     },
+     {
+      "plant": 54592,
+      "year": 2023,
+      "ctl_gwh": 495.0,
+      "armH_gwh": 495.0,
+      "armHC_gwh": 29.5,
+      "e923_gwh": 21.9,
+      "fall_vs_ctl": 0.94,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 54592,
+      "year": 2024,
+      "ctl_gwh": 394.5,
+      "armH_gwh": 394.5,
+      "armHC_gwh": 20.7,
+      "e923_gwh": 12.2,
+      "fall_vs_ctl": 0.948,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 54592,
+      "year": 2025,
+      "ctl_gwh": 730.5,
+      "armH_gwh": 730.5,
+      "armHC_gwh": 494.7,
+      "e923_gwh": null,
+      "fall_vs_ctl": 0.323,
+      "gated": false,
+      "ok": null
+     },
+     {
+      "plant": 54593,
+      "year": 2023,
+      "ctl_gwh": 364.0,
+      "armH_gwh": 364.0,
+      "armHC_gwh": 15.2,
+      "e923_gwh": 6.1,
+      "fall_vs_ctl": 0.958,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 54593,
+      "year": 2024,
+      "ctl_gwh": 290.6,
+      "armH_gwh": 290.6,
+      "armHC_gwh": 6.5,
+      "e923_gwh": 3.4,
+      "fall_vs_ctl": 0.978,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 54593,
+      "year": 2025,
+      "ctl_gwh": 498.8,
+      "armH_gwh": 498.8,
+      "armHC_gwh": 295.2,
+      "e923_gwh": null,
+      "fall_vs_ctl": 0.408,
+      "gated": false,
+      "ok": null
+     },
+     {
+      "plant": 7784,
+      "year": 2023,
+      "ctl_gwh": 502.8,
+      "armH_gwh": 502.8,
+      "armHC_gwh": 148.2,
+      "e923_gwh": 11.7,
+      "fall_vs_ctl": 0.705,
+      "gated": true,
+      "ok": false
+     },
+     {
+      "plant": 7784,
+      "year": 2024,
+      "ctl_gwh": 514.7,
+      "armH_gwh": 514.7,
+      "armHC_gwh": 203.2,
+      "e923_gwh": 15.5,
+      "fall_vs_ctl": 0.605,
+      "gated": true,
+      "ok": false
+     },
+     {
+      "plant": 7784,
+      "year": 2025,
+      "ctl_gwh": 0.0,
+      "armH_gwh": 0.0,
+      "armHC_gwh": 0.0,
+      "e923_gwh": null,
+      "fall_vs_ctl": 0.0,
+      "gated": false,
+      "ok": null
+     }
+    ],
+    "passed": false
+   },
+   {
+    "gate": "HC-K3 no-degrade",
+    "rows": [
+     {
+      "plant": 56940,
+      "year": 2023,
+      "metered": 11,
+      "ctl": 110,
+      "arm": 96,
+      "ok": true
+     },
+     {
+      "plant": 56940,
+      "year": 2024,
+      "metered": 3,
+      "ctl": 35,
+      "arm": 35,
+      "ok": true
+     },
+     {
+      "plant": 56940,
+      "year": 2025,
+      "metered": 8,
+      "ctl": 30,
+      "arm": 28,
+      "ok": true
+     },
+     {
+      "plant": 55405,
+      "year": 2023,
+      "metered": 29,
+      "ctl": 146,
+      "arm": 132,
+      "ok": true
+     },
+     {
+      "plant": 55405,
+      "year": 2024,
+      "metered": 13,
+      "ctl": 148,
+      "arm": 120,
+      "ok": true
+     },
+     {
+      "plant": 55405,
+      "year": 2025,
+      "metered": 63,
+      "ctl": 126,
+      "arm": 97,
+      "ok": true
+     },
+     {
+      "plant": 56196,
+      "year": 2023,
+      "metered": 9,
+      "ctl": 3,
+      "arm": 3,
+      "ok": true
+     },
+     {
+      "plant": 56196,
+      "year": 2024,
+      "metered": 5,
+      "ctl": 4,
+      "arm": 4,
+      "ok": true
+     },
+     {
+      "plant": 56196,
+      "year": 2025,
+      "metered": 11,
+      "ctl": 6,
+      "arm": 6,
+      "ok": true
+     },
+     {
+      "plant": 2511,
+      "year": 2023,
+      "metered": 42,
+      "ctl": 4,
+      "arm": 4,
+      "ok": true
+     },
+     {
+      "plant": 2511,
+      "year": 2024,
+      "metered": 45,
+      "ctl": 12,
+      "arm": 12,
+      "ok": true
+     },
+     {
+      "plant": 2511,
+      "year": 2025,
+      "metered": 36,
+      "ctl": 1,
+      "arm": 1,
+      "ok": true
+     },
+     {
+      "plant": 2500,
+      "year": 2023,
+      "skipped": true
+     },
+     {
+      "plant": 2500,
+      "year": 2024,
+      "skipped": true
+     },
+     {
+      "plant": 2500,
+      "year": 2025,
+      "skipped": true
+     },
+     {
+      "plant": 50292,
+      "year": 2023,
+      "metered": 63,
+      "ctl": 224,
+      "arm": 239,
+      "ok": true
+     },
+     {
+      "plant": 50292,
+      "year": 2024,
+      "metered": 109,
+      "ctl": 468,
+      "arm": 490,
+      "ok": true
+     },
+     {
+      "plant": 50292,
+      "year": 2025,
+      "metered": 64,
+      "ctl": 391,
+      "arm": 379,
+      "ok": true
+     },
+     {
+      "plant": 57185,
+      "year": 2024,
+      "metered": 20,
+      "ctl": 107,
+      "arm": 83,
+      "ok": true
+     },
+     {
+      "plant": 57185,
+      "year": 2025,
+      "metered": 13,
+      "ctl": 70,
+      "arm": 67,
+      "ok": true
+     },
+     {
+      "plant": 56234,
+      "year": 2024,
+      "metered": 6,
+      "ctl": 2,
+      "arm": 2,
+      "ok": true
+     },
+     {
+      "plant": 56234,
+      "year": 2025,
+      "metered": 8,
+      "ctl": 4,
+      "arm": 4,
+      "ok": true
+     },
+     {
+      "plant": 2539,
+      "year": 2023,
+      "metered": 6,
+      "ctl": 42,
+      "arm": 45,
+      "ok": true
+     },
+     {
+      "plant": 2539,
+      "year": 2024,
+      "metered": 7,
+      "ctl": 14,
+      "arm": 13,
+      "ok": true
+     },
+     {
+      "plant": 2539,
+      "year": 2025,
+      "metered": 7,
+      "ctl": 29,
+      "arm": 28,
+      "ok": true
+     },
+     {
+      "plant": 7314,
+      "year": 2023,
+      "metered": 115,
+      "ctl": 204,
+      "arm": 230,
+      "ok": true
+     },
+     {
+      "plant": 7314,
+      "year": 2024,
+      "metered": 78,
+      "ctl": 288,
+      "arm": 291,
+      "ok": true
+     },
+     {
+      "plant": 7314,
+      "year": 2025,
+      "metered": 103,
+      "ctl": 293,
+      "arm": 284,
+      "ok": true
+     }
+    ],
+    "passed": true
+   },
+   {
+    "gate": "HC-K4 D-4/D-2 (K6-prime)",
+    "new_d4_failures": [],
+    "cleared_d4": [],
+    "forced_share_rises": [
+     {
+      "key": [
+       2023,
+       "hydro_min_flow",
+       "hydro"
+      ],
+      "ctl": 0.2145,
+      "arm": 0.2153
+     },
+     {
+      "key": [
+       2023,
+       "nyiso_gas_commitment_bridge",
+       "CC_REGULAR"
+      ],
+      "ctl": 0.0613,
+      "arm": 0.0646
+     },
+     {
+      "key": [
+       2024,
+       "nyiso_gas_commitment_bridge",
+       "CC_REGULAR"
+      ],
+      "ctl": 0.0493,
+      "arm": 0.0494
+     },
+     {
+      "key": [
+       2024,
+       "nyiso_gas_commitment_bridge",
+       "ST_GAS"
+      ],
+      "ctl": 0.0141,
+      "arm": 0.0143
+     },
+     {
+      "key": [
+       2025,
+       "hydro_min_flow",
+       "hydro"
+      ],
+      "ctl": 0.3828,
+      "arm": 0.3839
+     },
+     {
+      "key": [
+       2025,
+       "nyiso_gas_commitment_bridge",
+       "ST_GAS"
+      ],
+      "ctl": 0.0093,
+      "arm": 0.0094
+     }
+    ],
+    "escalated": true,
+    "new_d1_misses": [],
+    "passed": true
+   },
+   {
+    "gate": "HC-K5 gated criteria",
+    "note": "BY BIT-IDENTITY to the registered 2026-08-22-nyiso-150-reserve-rearm (max|dprice|=0.0 x3y): criteria equal that run's \u2014 C1/C2/C3a/C3b/C4/C8 PASS, C6 UNATTESTED (probe), C3c reported. No separate registration; the identity is the record and simultaneously proves the new flag machinery byte-inert composed with the split.",
+    "passed": true
+   },
+   {
+    "gate": "HC-K6 LOYO (gate-side: HC-K2 per-year)",
+    "passed": false
+   }
+  ]
+ },
+ "ident": {
+  "gate": "IDENT control == keeper (post-merge HEAD)",
+  "max_abs_dprice": 0.0,
+  "passed": true
+ },
+ "bit_identity": {
+  "armH_vs_control": 0.0,
+  "armHC_vs_2026-08-22-nyiso-150-reserve-rearm": 0.0,
+  "note": "max |dprice| over every zone-hour of all three years, both comparisons"
+ },
+ "verdicts": {
+  "H": "REJECTED-AS-ARMED on H-K3/H-K6 (the direction leg) \u2014 MEASURED PROVABLY INERT: bit-identical to the control in every zone-hour x3 years despite the bins frame carrying 7.5->8.4209 (verified in-process). Allegany runs ~96% CF deeply inframarginal, so +$2.3/MWh crosses no LP vertex. The rule-14 accurate-input case is INTACT AND FREE (zero measured cost anywhere); its arming is an owner disposition (arm-on-legitimacy, the ercot-202 class, or hold default-off).",
+  "HC": "REJECTED-AS-ARMED on HC-K2/HC-K6 \u2014 Allegany 70%/60% falls vs >=80%, IDENTICAL TO nyiso-150 TO THE DECIMAL: bit-identical to 2026-08-22-nyiso-150-reserve-rearm everywhere, across a hr_peak 11.625->13.052 offer shift. TWO offer levels, ONE armed outcome = the residual is OFFER-INSENSITIVE. RE-TYPE (the finding): under the split Allegany runs 3,524h/40% with HALF its on-hours at 27-34 MW mid-load carrying ~30 MW of 10-min headroom \u2014 RESERVE-PROVISION dispatch. Root chain: the model's 10-min reserve supply is missing NY hydro (~5.69 GW EIA-860 10M-capable; the _ramp10_capability frac>0 seam + missing NYISO ramp module zero it), so the co-opt leans on small gas CCs for headroom. Successor: the hydro RAMP10 seams (with the AS-certification admissibility question), then re-measure \u2014 NEVER another offer-side lever (two proven insensitive)."
+ }
+}

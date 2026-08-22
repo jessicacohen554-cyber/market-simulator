@@ -7701,3 +7701,47 @@ realized rates 5.7–118 MMBtu/MWh — threshold-screening it would be a rule-21
 construction). EIA-923's CHP flag is `N` every year, closing the
 CHP-framework route; Schedule-5 fuel costs 0 rows. Matrix cell record
 appended on `offer_curve_by_group`; assessment queue row 3 re-typed.
+
+## 2026-08-22 — nyiso-151: the identity heat-rate repair PROVEN INERT in both postures, the merit-order residual RE-TYPED to reserve-provision dispatch, and the offer-side lane CLOSED
+
+The nyiso-150 successor executed end-to-end
+(`PREREG-nyiso151-egrid-identity-hr-and-regate-2026-08-22.md` + Amendment 1,
+committed before any arm solved). NEW MECHANISM (rule 28c, row + six cells in
+the same PR): `egrid_identity_heat_rates` — the threshold-free two-registry
+identity discovery rule (exact PLNGENAN == EIA-923 netgen in every
+overlapping eGRID vintage, ≥2 overlaps; NYISO: 108 candidates × 7 vintages →
+exactly Allegany 7784↔10619, pooled 8.4209, LOYO [8.3434, 8.5266]); derive +
+artifact + loader seam + 5 unit tests + CLI. Mid-session, PR #4193 (the
+nyiso-150 work) MERGED and the branch auto-deleted; the unmerged commit was
+rebased onto the new main per the merged-branch rule, and the control
+re-solved at the post-merge HEAD — **IDENT PASS (max |Δprice| = 0.0 ×3
+years)**, proving the concurrently-merged ERCOT-gated reserve changes
+NYISO-inert.
+
+**ARM H** (repair alone): REJECTED-AS-ARMED on the H-K3 direction leg —
+**BIT-IDENTICAL to the control everywhere** despite the bins frame provably
+carrying 7.5→8.4209. Allegany runs ~96 % CF deeply inframarginal; +$2.3/MWh
+crosses no LP vertex. The rule-14 accurate-input case is intact and FREE
+(zero measured cost anywhere); arming is an owner disposition (the ercot-202
+arm-on-legitimacy class). Cell `egrid_identity_heat_rates` NYISO = **I**.
+
+**ARM HC** (repair + `cc_reserve_duty_split`): REJECTED on HC-K2 — Allegany
+70 %/60 % falls vs ≥80 %, **BIT-IDENTICAL to
+`2026-08-22-nyiso-150-reserve-rearm`** across a hr_peak 11.625→13.052 armed
+offer shift. Two offer levels, one armed outcome, at machine precision.
+**THE RE-TYPE (the session's finding):** under the split Allegany runs
+3,524 h (40 %) with HALF its on-hours at 27–34 MW mid-load on 64.7 MW —
+reserve-posture, ~30 MW of 10-min headroom held online. The residual is
+RESERVE-PROVISION dispatch the energy offer cannot price away, and its root
+chains to the standing hydro RAMP10 seams (~5.69 GW of EIA-860 10M-capable
+NY hydro zeroed by the `_ramp10_capability` frac>0 guard + the missing
+NYISO ramp module — the co-opt leans on small gas CCs for headroom instead).
+**The offer-side lane for the merit-order object is CLOSED** (rule 1: two
+levers proven insensitive); the successor is the RAMP10 seams, then
+re-measure. Neither arm separately registered (bit-identical replays of
+registered runs — the nyiso-149 convention; `_nyiso151_ab_gates.json` +
+`RESULT-nyiso151-identity-hr-and-regate-2026-08-22.md` are the record; both
+bundles committed). Keeper, marker, status untouched; freeze ACTIVE; years
+2023–2025 only. OWNER ITEMS QUEUED: the ARM H arming disposition; the
+RHO_CLIP band card (re-verified live: both NYISO measured rhos 0.3014/0.2011
+sit below the 0.5 floor, so the clip — not the meter — is the coefficient).

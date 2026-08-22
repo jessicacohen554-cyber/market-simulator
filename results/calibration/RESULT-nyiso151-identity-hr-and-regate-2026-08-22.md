@@ -27,14 +27,29 @@ solved, scored or read is 2023–2025.
   arming it is a pure fleet-truthfulness gain with provably zero fit
   consequence at the current recipe.
 
-## 2. ARM HC (repair + `cc_reserve_duty_split`) — [FINAL GATES AFTER SOLVE; 2023 already decisive]
+## 2. ARM HC (repair + `cc_reserve_duty_split`) — REJECTED on HC-K2/HC-K6, and the rejection is a bit-identity
 
-* Sterling / Massena / Batavia reproduce their collapses (2023: −93.6 %,
-  −94.0 %, −95.8 % vs control — in family with nyiso-150).
-* **Allegany 2023 lands at 148.2 GWh — the EXACT nyiso-150 armC value, to
-  the decimal — a 70.5 % fall against the ≥80 % bar, IDENTICAL across a
-  ~+12 % peak-offer shift** (hr_peak 11.625 → 13.052 between the two armed
-  runs). Two independent offer levels, one armed outcome.
+* HC-K1 PASS both ways (two fields vs control; one vs ARM H); HC-K3 PASS;
+  HC-K4 PASS; Sterling / Massena / Batavia reproduce their collapses
+  (−93/−94/−96 % and −93/−95/−98 % in the gated years).
+* **Allegany lands at 148.2 / 203.2 GWh (70 % / 60 % falls vs the ≥80 %
+  bar) — the EXACT nyiso-150 armC values to the decimal — and the whole run
+  is BIT-IDENTICAL to `2026-08-22-nyiso-150-reserve-rearm` in every
+  zone-hour of all three years**, across a hr_peak 11.625 → 13.052 armed
+  offer shift. Two independent offer levels, one armed outcome, proven at
+  machine precision: the residual is OFFER-INSENSITIVE.
+* HC-K5 by identity: criteria equal the registered nyiso-150 run's
+  (C1/C2/C3a/C3b/C4/C8 PASS; C6 unattested-probe; C3c reported).
+
+## 2b. REGISTRATION DISPOSITION (rule 15, the nyiso-149 convention)
+
+Neither arm is separately registered, because each reproduces an
+already-registered run bit-exactly: **ARM H ≡ the designated keeper**
+(`2026-08-22-nyiso-149-duty-curve`, via IDENT + the H bit-identity) and
+**ARM HC ≡ `2026-08-22-nyiso-150-reserve-rearm`**. A second registration of
+identical bytes would be a double entry; the identity proofs + this gates
+record ARE the dashboard-visible record (both cited runs are live on the Run
+Explorer). The bundles are committed for the replication record.
 
 ## 3. THE RE-TYPE — the residual is reserve-provision dispatch
 
