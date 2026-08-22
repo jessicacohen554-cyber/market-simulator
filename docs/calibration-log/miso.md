@@ -8077,3 +8077,57 @@ is PJM's lane's hour-key question. The four standing OWNER items restated in
 RESULT §7 — the determination-posture item riper than ever.
 Records: `RESULT-miso175-seam-envelope-hour-key-2026-08-22.md`,
 `PREREG-miso175-seam-envelope-hour-key-2026-08-22.md`.
+
+## miso-176 (2026-08-22) — the M2M/CMP seam-class record intaken and adjudicated: binding CO-MOVES with MISO stress, restriction-consistent, MISO over-entitlement — `m2m_seam_entitlement_cap` minted `G`, NO LP
+
+**NO LP. Keeper UNCHANGED at `2026-08-22-miso-175-hourkey`; determination
+UNCHANGED at NOT-YET on C3a-2025 ALONE; no ScenarioConfig field; no run
+registered (rule 15 not engaged).** Executes miso-174 §7 item 3 — the last
+of the seam lane's executable handed-forward items.
+
+**The intake** (data-intake contract, schema-first): datatype
+`miso-m2m-flowgates` — MISO's public annual `M2M_Settlement_srw_YYYY.csv`
+(the miso-77 §2a seam-class series, same no-auth channel as bc_HIST):
+hourly per-flowgate rows for BOTH M2M seams (PJM, SWPP) carrying both
+parties' RT shadow prices, market flows, Firm Flow Entitlements and
+settlement credits; 124,821/162,394/181,989 rows, 309/385/401 flowgates.
+Mirrors gitignored with sha256 README rows (bc_HIST precedent); schema +
+fetch + curate + tmp-CLEAN_DIR tests + dictionary; rule-13 line fixed in
+the schema header (FFE input-class in kind; shadow/flow/credit
+ANSWER-class, validation only). Intake commit `9d4681c`.
+
+**The measurement** (prereg `75b8488` committed BEFORE any
+hour-set-conditioned quantity; probe `_miso176_m2m_seam_binding.py`, record
+`_miso176_m2m_seam_binding.json`): **V-KEY** — the settlement file's
+fixed-EST hour-ending clock VERIFIED against `2025_rt_bc_HIST` on the
+NERC-ID join, shift 0 wins at pooled r = 0.9934 over 8 flowgates. **A-2
+CO-MOVES 3/3** — PJM-seam binding intensity in the 72 scarce hours vs its
+own summer baseline: R_cnt 1.81/1.15/2.32, R_ssp 3.82/5.31/5.74 (Σ-shadow
+258/476/692 vs 68/90/121 $/h — the binding at stress is 4–6× HARDER).
+**A-3 RESTRICTION-CONSISTENT 2/3** — top-quartile-binding summer hours
+carry −0.06/−0.58/−1.22 GW less measured PJM-seam import than zero-binding
+hours. **A-4** — on scarce-hour BINDING rows MISO's market flow exceeds its
+own FFE on 67/82/80 %: the JOA obligation in exactly those hours pushes
+MISO back toward entitlement — measured congestion-management physics
+restricting the seam when MISO is tight. **Census**: 6/8/13 distinct
+flowgates; 2025 dominated by CherryValley_SilverLake_flo_Byron
+(PJM-monitored, 15/47 h, p50 $699) and Burr_Oak_Plymouth (MISO-monitored,
+10 h, p50 $1,304). **HONESTLY PARTIAL**: binding present in only
+36/57/49 % of the scarce hours and the non-binding half still pulls back
+(2025: −1.54 GW below summer mean when binding vs −0.54 when not) — partly
+measured congestion management, partly still conduct.
+
+**The verdict** (pre-registered mapping): `m2m_seam_entitlement_cap`
+minted **G** — the phenomenon is real and named, and every zero-DOF
+encoding is refused: K-1 (any binding/shadow/flow-conditioned encoding is
+ANSWER-class — rule 13, the charter's fixed line) + K-2 (FFE is
+branch-grain MW on named facilities vs ONE aggregate model seam link, no
+published PTDF/distribution factors — the standing M1/miso-77 §5.2
+apportionment refusal). The evidence TRANSFERS to standing owner item 5(i)
+(the coincident-peak seam-response envelope admissibility ruling): the
+seam's stress response is now measured as, in about half the hours and
+hardest in 2025, real named JOA congestion management with MISO
+over-entitlement — not a residual-fit artifact. Base row + cells in every
+shard minted this session (MISO `G`, PJM `U` — rule 25; others `.`).
+Records: `FINDING-miso176-m2m-seam-binding-reality-2026-08-22.md`,
+`PREREG-miso176-m2m-seam-class-adjudication-2026-08-22.md`.
