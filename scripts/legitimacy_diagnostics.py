@@ -2235,6 +2235,30 @@ def bench_plant_view(bench: dict[str, dict]) -> dict[str, dict]:
     return out
 
 
+def ct_only_span_union(
+    repo_root: Path, iso: str, years: "list[int] | tuple[int, ...]"
+) -> set[str]:
+    """Plant codes flagged ``ct_only`` in ANY scored year's bench — the D-4
+    vintage guard's union set.
+
+    ``ct_only`` (EIA-923 net > 1.1× CAMPD gross ⇒ the benchmark scores the
+    plant on EIA-923 monthly) is a metering-configuration CHARACTER of the
+    plant, not a year property; in a preliminary-vintage year the ratio's
+    ``e_ann`` falls back to ``c_ann`` and computes exactly 1.00, silently
+    un-flagging the plant. The union restores the flag in those years so the
+    per-unit conduct rider cannot convict on a series the benchmark's own
+    complete-vintage years decline to trust (protective direction only — it
+    can only ever SKIP a conviction). Measured on NYISO 2023–2025 at
+    introduction (nyiso-150): ten plants lose the flag in 2025, zero gain it.
+    """
+    union: set[str] = set()
+    for y in years:
+        for pid, b in bench_plant_view(load_bench(repo_root, iso, y)).items():
+            if b.get("ct_only"):
+                union.add(pid)
+    return union
+
+
 def aggregate_model_plants(
     model_plants: dict[str, np.ndarray],
 ) -> dict[str, np.ndarray]:
@@ -2855,6 +2879,20 @@ def diagnose_bundle(
     d1 = GateResult("D-1 diurnal shape")
     d2 = GateResult("D-2 forced-energy attribution")
     d4 = GateResult("D-4 off-window binding")
+    # D-4 VINTAGE GUARD (nyiso-150; queue item nyiso-145 §3). ``ct_only``
+    # marks a plant whose CAMPD hourly series is structurally incomplete
+    # (EIA-923 net > 1.1× CAMPD gross, so the benchmark scores it on EIA-923
+    # monthly) — a metering-CONFIGURATION character of the plant, not a year
+    # property. In a year whose EIA-923 vintage is preliminary the ratio's
+    # e_ann falls back to c_ann and computes exactly 1.00, silently
+    # un-flagging the plant: NYISO plant 7314 was convicted by the per-unit
+    # conduct rider in 2025 alone — the one year whose vintage cannot
+    # evaluate the flag — and skipped in both complete years. C1 already
+    # guards this vintage by name; the rider now does too, by UNION-ing the
+    # flag across the scored span. Protective direction only: the union can
+    # only ever SKIP a conviction, never create one (measured on NYISO
+    # 2023–2025: ten plants lose the flag in 2025, zero gain it).
+    ct_only_span = ct_only_span_union(repo_root, iso, years) if "D4" in only else set()
     for year in years:
         # Bench (per-plant nameplate + class) is needed by D-2/D-4 too, not
         # just D-1: it supplies each plant's ``npl`` for the payload dispatch
@@ -2935,6 +2973,20 @@ def diagnose_bundle(
                 len(model_plants_plant),
             )
         bench_pl = bench_plant_view(bench) if bench else {}
+        if ct_only_span:
+            extended = sorted(
+                p
+                for p in (ct_only_span & bench_pl.keys())
+                if not bench_pl[p].get("ct_only")
+            )
+            if extended:
+                d4.notes.append(
+                    f"{year}: ct_only vintage guard extended the flag from "
+                    f"sibling-year vintages for {len(extended)} plant(s): "
+                    + ", ".join(extended)
+                )
+            for p in ct_only_span & bench_pl.keys():
+                bench_pl[p]["ct_only"] = True
 
         if "D1" in only and model_plants and bench:
             model_by_class: dict[str, np.ndarray] = {}

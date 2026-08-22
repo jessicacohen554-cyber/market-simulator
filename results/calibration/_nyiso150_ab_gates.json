@@ -1,0 +1,1808 @@
+{
+ "session": "nyiso-150",
+ "control": "nyiso150_control",
+ "arms": {
+  "C": [
+   {
+    "gate": "K1 exactness (cc_reserve_duty_split)",
+    "solve_field_diffs": [
+     "cc_reserve_duty_split"
+    ],
+    "passed": true
+   },
+   {
+    "gate": "C-K2 liveness (cohort armed + >=80% collapse)",
+    "cohort_log_line": true,
+    "object_plants": [
+     {
+      "plant": 50744,
+      "year": 2023,
+      "ctl_gwh": 444.3,
+      "arm_gwh": 28.3,
+      "e923_gwh": 2.1,
+      "fall": 0.936,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 50744,
+      "year": 2024,
+      "ctl_gwh": 444.1,
+      "arm_gwh": 30.4,
+      "e923_gwh": 3.7,
+      "fall": 0.932,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 50744,
+      "year": 2025,
+      "ctl_gwh": 508.3,
+      "arm_gwh": 356.7,
+      "e923_gwh": null,
+      "fall": 0.298,
+      "gated": false,
+      "ok": null
+     },
+     {
+      "plant": 54592,
+      "year": 2023,
+      "ctl_gwh": 495.0,
+      "arm_gwh": 29.5,
+      "e923_gwh": 21.9,
+      "fall": 0.94,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 54592,
+      "year": 2024,
+      "ctl_gwh": 394.5,
+      "arm_gwh": 20.7,
+      "e923_gwh": 12.2,
+      "fall": 0.948,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 54592,
+      "year": 2025,
+      "ctl_gwh": 730.5,
+      "arm_gwh": 494.7,
+      "e923_gwh": null,
+      "fall": 0.323,
+      "gated": false,
+      "ok": null
+     },
+     {
+      "plant": 54593,
+      "year": 2023,
+      "ctl_gwh": 364.0,
+      "arm_gwh": 15.2,
+      "e923_gwh": 6.1,
+      "fall": 0.958,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 54593,
+      "year": 2024,
+      "ctl_gwh": 290.6,
+      "arm_gwh": 6.5,
+      "e923_gwh": 3.4,
+      "fall": 0.978,
+      "gated": true,
+      "ok": true
+     },
+     {
+      "plant": 54593,
+      "year": 2025,
+      "ctl_gwh": 498.8,
+      "arm_gwh": 295.2,
+      "e923_gwh": null,
+      "fall": 0.408,
+      "gated": false,
+      "ok": null
+     },
+     {
+      "plant": 7784,
+      "year": 2023,
+      "ctl_gwh": 502.8,
+      "arm_gwh": 148.2,
+      "e923_gwh": 11.7,
+      "fall": 0.705,
+      "gated": true,
+      "ok": false
+     },
+     {
+      "plant": 7784,
+      "year": 2024,
+      "ctl_gwh": 514.7,
+      "arm_gwh": 203.2,
+      "e923_gwh": 15.5,
+      "fall": 0.605,
+      "gated": true,
+      "ok": false
+     },
+     {
+      "plant": 7784,
+      "year": 2025,
+      "ctl_gwh": 0.0,
+      "arm_gwh": 0.0,
+      "e923_gwh": null,
+      "fall": 0.0,
+      "gated": false,
+      "ok": null
+     }
+    ],
+    "passed": false
+   },
+   {
+    "gate": "C-K3 no-degrade",
+    "rows": [
+     {
+      "plant": 56940,
+      "year": 2023,
+      "metered": 11,
+      "ctl": 110,
+      "arm": 96,
+      "ok": true
+     },
+     {
+      "plant": 56940,
+      "year": 2024,
+      "metered": 3,
+      "ctl": 35,
+      "arm": 35,
+      "ok": true
+     },
+     {
+      "plant": 56940,
+      "year": 2025,
+      "metered": 8,
+      "ctl": 30,
+      "arm": 28,
+      "ok": true
+     },
+     {
+      "plant": 55405,
+      "year": 2023,
+      "metered": 29,
+      "ctl": 146,
+      "arm": 132,
+      "ok": true
+     },
+     {
+      "plant": 55405,
+      "year": 2024,
+      "metered": 13,
+      "ctl": 148,
+      "arm": 120,
+      "ok": true
+     },
+     {
+      "plant": 55405,
+      "year": 2025,
+      "metered": 63,
+      "ctl": 126,
+      "arm": 97,
+      "ok": true
+     },
+     {
+      "plant": 56196,
+      "year": 2023,
+      "metered": 9,
+      "ctl": 3,
+      "arm": 3,
+      "ok": true
+     },
+     {
+      "plant": 56196,
+      "year": 2024,
+      "metered": 5,
+      "ctl": 4,
+      "arm": 4,
+      "ok": true
+     },
+     {
+      "plant": 56196,
+      "year": 2025,
+      "metered": 11,
+      "ctl": 6,
+      "arm": 6,
+      "ok": true
+     },
+     {
+      "plant": 2511,
+      "year": 2023,
+      "metered": 42,
+      "ctl": 4,
+      "arm": 4,
+      "ok": true
+     },
+     {
+      "plant": 2511,
+      "year": 2024,
+      "metered": 45,
+      "ctl": 12,
+      "arm": 12,
+      "ok": true
+     },
+     {
+      "plant": 2511,
+      "year": 2025,
+      "metered": 36,
+      "ctl": 1,
+      "arm": 1,
+      "ok": true
+     },
+     {
+      "plant": 2500,
+      "year": 2023,
+      "skipped": true
+     },
+     {
+      "plant": 2500,
+      "year": 2024,
+      "skipped": true
+     },
+     {
+      "plant": 2500,
+      "year": 2025,
+      "skipped": true
+     },
+     {
+      "plant": 50292,
+      "year": 2023,
+      "metered": 63,
+      "ctl": 224,
+      "arm": 239,
+      "ok": true
+     },
+     {
+      "plant": 50292,
+      "year": 2024,
+      "metered": 109,
+      "ctl": 468,
+      "arm": 490,
+      "ok": true
+     },
+     {
+      "plant": 50292,
+      "year": 2025,
+      "metered": 64,
+      "ctl": 391,
+      "arm": 379,
+      "ok": true
+     },
+     {
+      "plant": 57185,
+      "year": 2024,
+      "metered": 20,
+      "ctl": 107,
+      "arm": 83,
+      "ok": true
+     },
+     {
+      "plant": 57185,
+      "year": 2025,
+      "metered": 13,
+      "ctl": 70,
+      "arm": 67,
+      "ok": true
+     },
+     {
+      "plant": 56234,
+      "year": 2024,
+      "metered": 6,
+      "ctl": 2,
+      "arm": 2,
+      "ok": true
+     },
+     {
+      "plant": 56234,
+      "year": 2025,
+      "metered": 8,
+      "ctl": 4,
+      "arm": 4,
+      "ok": true
+     },
+     {
+      "plant": 2539,
+      "year": 2023,
+      "metered": 6,
+      "ctl": 42,
+      "arm": 45,
+      "ok": true
+     },
+     {
+      "plant": 2539,
+      "year": 2024,
+      "metered": 7,
+      "ctl": 14,
+      "arm": 13,
+      "ok": true
+     },
+     {
+      "plant": 2539,
+      "year": 2025,
+      "metered": 7,
+      "ctl": 29,
+      "arm": 28,
+      "ok": true
+     },
+     {
+      "plant": 7314,
+      "year": 2023,
+      "metered": 115,
+      "ctl": 204,
+      "arm": 230,
+      "ok": true
+     },
+     {
+      "plant": 7314,
+      "year": 2024,
+      "metered": 78,
+      "ctl": 288,
+      "arm": 291,
+      "ok": true
+     },
+     {
+      "plant": 7314,
+      "year": 2025,
+      "metered": 103,
+      "ctl": 293,
+      "arm": 284,
+      "ok": true
+     }
+    ],
+    "bethlehem_energy_reported": [
+     {
+      "year": 2023,
+      "ctl_gwh": 1207.0,
+      "arm_gwh": 1374.3,
+      "e923_gwh": 4357.9
+     },
+     {
+      "year": 2024,
+      "ctl_gwh": 3015.5,
+      "arm_gwh": 3228.3,
+      "e923_gwh": 3638.5
+     },
+     {
+      "year": 2025,
+      "ctl_gwh": 3735.4,
+      "arm_gwh": 3806.0,
+      "e923_gwh": 3431.9
+     }
+    ],
+    "passed": true
+   },
+   {
+    "gate": "C-K4 D-4/D-2 (K6-prime)",
+    "new_d4_failures": [],
+    "cleared_d4": [],
+    "forced_share_rises": [
+     {
+      "key": [
+       2023,
+       "hydro_min_flow",
+       "hydro"
+      ],
+      "ctl": 0.2145,
+      "arm": 0.2153
+     },
+     {
+      "key": [
+       2023,
+       "nyiso_gas_commitment_bridge",
+       "CC_REGULAR"
+      ],
+      "ctl": 0.0613,
+      "arm": 0.0646
+     },
+     {
+      "key": [
+       2024,
+       "nyiso_gas_commitment_bridge",
+       "CC_REGULAR"
+      ],
+      "ctl": 0.0493,
+      "arm": 0.0494
+     },
+     {
+      "key": [
+       2024,
+       "nyiso_gas_commitment_bridge",
+       "ST_GAS"
+      ],
+      "ctl": 0.0141,
+      "arm": 0.0143
+     },
+     {
+      "key": [
+       2025,
+       "hydro_min_flow",
+       "hydro"
+      ],
+      "ctl": 0.3828,
+      "arm": 0.3839
+     },
+     {
+      "key": [
+       2025,
+       "nyiso_gas_commitment_bridge",
+       "ST_GAS"
+      ],
+      "ctl": 0.0093,
+      "arm": 0.0094
+     }
+    ],
+    "escalated": true,
+    "new_d1_misses": [],
+    "passed": true
+   },
+   {
+    "gate": "C-K5 gated criteria",
+    "note": "C1/C2/C3a/C3b/C4/C8 all PASS on the registered arm (2026-08-22-nyiso-150-reserve-rearm); C3a 2023 +5.2% in band \u2014 the nyiso-146b rejection leg (b) is RESOLVED by the CHP repair; C6 UNATTESTED (probe convention); C3c reported 1/0/0 vs 10/13/42 (standing ledger, not this lever's criterion)",
+    "passed": true
+   },
+   {
+    "gate": "C-K6 LOYO (gate-side: C-K2 per-year)",
+    "passed": false
+   }
+  ],
+  "W": [
+   {
+    "gate": "K1 exactness (nyiso_iroquois_winter_spread)",
+    "solve_field_diffs": [
+     "nyiso_iroquois_winter_spread"
+    ],
+    "passed": true
+   },
+   {
+    "gate": "W-K2c LP liveness (DJF mean |dLMP|)",
+    "djf_mean_abs_dlmp": 5.566,
+    "passed": true
+   },
+   {
+    "gate": "W-K3a gated winter spread recovery >=30% (no overshoot >+15%)",
+    "rows": [
+     {
+      "year": 2023,
+      "month": 2,
+      "zone": "Capital_Hudson",
+      "gated": true,
+      "spread_ctl": 1.6,
+      "spread_arm": 2.9,
+      "spread_actual": 33.2,
+      "recovery": 0.04,
+      "model_ctl": 37.5,
+      "model_arm": 42.5,
+      "actual": 59.8,
+      "overshoot": false,
+      "ok": false
+     },
+     {
+      "year": 2023,
+      "month": 2,
+      "zone": "NYC",
+      "gated": true,
+      "spread_ctl": 1.6,
+      "spread_arm": 2.9,
+      "spread_actual": 21.8,
+      "recovery": 0.063,
+      "model_ctl": 37.5,
+      "model_arm": 42.5,
+      "actual": 48.4,
+      "overshoot": false,
+      "ok": false
+     },
+     {
+      "year": 2023,
+      "month": 2,
+      "zone": "Long_Island",
+      "gated": true,
+      "spread_ctl": 1.6,
+      "spread_arm": 2.9,
+      "spread_actual": 43.7,
+      "recovery": 0.03,
+      "model_ctl": 37.5,
+      "model_arm": 42.5,
+      "actual": 70.2,
+      "overshoot": false,
+      "ok": false
+     },
+     {
+      "year": 2024,
+      "month": 12,
+      "zone": "Capital_Hudson",
+      "gated": true,
+      "spread_ctl": 0.0,
+      "spread_arm": 0.0,
+      "spread_actual": 11.0,
+      "recovery": 0.0,
+      "model_ctl": 47.8,
+      "model_arm": 61.9,
+      "actual": 71.9,
+      "overshoot": false,
+      "ok": false
+     },
+     {
+      "year": 2024,
+      "month": 12,
+      "zone": "NYC",
+      "gated": true,
+      "spread_ctl": 0.2,
+      "spread_arm": 0.0,
+      "spread_actual": 13.6,
+      "recovery": -0.018,
+      "model_ctl": 48.0,
+      "model_arm": 61.9,
+      "actual": 74.5,
+      "overshoot": false,
+      "ok": false
+     },
+     {
+      "year": 2024,
+      "month": 12,
+      "zone": "Long_Island",
+      "gated": true,
+      "spread_ctl": 1.2,
+      "spread_arm": 1.1,
+      "spread_actual": 18.1,
+      "recovery": -0.003,
+      "model_ctl": 49.0,
+      "model_arm": 63.0,
+      "actual": 79.0,
+      "overshoot": false,
+      "ok": false
+     },
+     {
+      "year": 2025,
+      "month": 2,
+      "zone": "Capital_Hudson",
+      "gated": true,
+      "spread_ctl": 0.1,
+      "spread_arm": 0.4,
+      "spread_actual": 27.1,
+      "recovery": 0.012,
+      "model_ctl": 76.5,
+      "model_arm": 87.8,
+      "actual": 114.2,
+      "overshoot": false,
+      "ok": false
+     },
+     {
+      "year": 2025,
+      "month": 2,
+      "zone": "NYC",
+      "gated": true,
+      "spread_ctl": 0.1,
+      "spread_arm": 0.4,
+      "spread_actual": 24.6,
+      "recovery": 0.012,
+      "model_ctl": 76.6,
+      "model_arm": 87.8,
+      "actual": 111.8,
+      "overshoot": false,
+      "ok": false
+     },
+     {
+      "year": 2025,
+      "month": 2,
+      "zone": "Long_Island",
+      "gated": true,
+      "spread_ctl": 0.4,
+      "spread_arm": 0.5,
+      "spread_actual": 24.4,
+      "recovery": 0.005,
+      "model_ctl": 76.9,
+      "model_arm": 88.0,
+      "actual": 111.5,
+      "overshoot": false,
+      "ok": false
+     },
+     {
+      "year": 2025,
+      "month": 1,
+      "zone": "Capital_Hudson",
+      "gated": false,
+      "spread_ctl": 2.1,
+      "spread_arm": 2.8,
+      "spread_actual": 36.9,
+      "recovery": 0.019,
+      "model_ctl": 90.1,
+      "model_arm": 95.2,
+      "actual": 127.0,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2025,
+      "month": 1,
+      "zone": "NYC",
+      "gated": false,
+      "spread_ctl": 2.2,
+      "spread_arm": 2.8,
+      "spread_actual": 44.3,
+      "recovery": 0.014,
+      "model_ctl": 90.2,
+      "model_arm": 95.2,
+      "actual": 134.4,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2025,
+      "month": 1,
+      "zone": "Long_Island",
+      "gated": false,
+      "spread_ctl": 2.6,
+      "spread_arm": 3.2,
+      "spread_actual": 40.7,
+      "recovery": 0.017,
+      "model_ctl": 90.6,
+      "model_arm": 95.7,
+      "actual": 130.8,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2025,
+      "month": 6,
+      "zone": "Capital_Hudson",
+      "gated": false,
+      "spread_ctl": 0.2,
+      "spread_arm": 0.0,
+      "spread_actual": 5.2,
+      "recovery": -0.037,
+      "model_ctl": 48.3,
+      "model_arm": 44.2,
+      "actual": 58.8,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2025,
+      "month": 6,
+      "zone": "NYC",
+      "gated": false,
+      "spread_ctl": 0.8,
+      "spread_arm": 0.7,
+      "spread_actual": 12.3,
+      "recovery": -0.009,
+      "model_ctl": 49.0,
+      "model_arm": 44.9,
+      "actual": 65.9,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2025,
+      "month": 6,
+      "zone": "Long_Island",
+      "gated": false,
+      "spread_ctl": 1.6,
+      "spread_arm": 0.9,
+      "spread_actual": 25.6,
+      "recovery": -0.031,
+      "model_ctl": 49.8,
+      "model_arm": 45.1,
+      "actual": 79.1,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2025,
+      "month": 7,
+      "zone": "Capital_Hudson",
+      "gated": false,
+      "spread_ctl": 0.0,
+      "spread_arm": 0.0,
+      "spread_actual": 3.3,
+      "recovery": 0.0,
+      "model_ctl": 63.8,
+      "model_arm": 60.2,
+      "actual": 66.9,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2025,
+      "month": 7,
+      "zone": "NYC",
+      "gated": false,
+      "spread_ctl": 1.2,
+      "spread_arm": 1.5,
+      "spread_actual": 19.2,
+      "recovery": 0.019,
+      "model_ctl": 64.9,
+      "model_arm": 61.7,
+      "actual": 82.8,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2025,
+      "month": 7,
+      "zone": "Long_Island",
+      "gated": false,
+      "spread_ctl": 1.7,
+      "spread_arm": 1.8,
+      "spread_actual": 26.8,
+      "recovery": 0.006,
+      "model_ctl": 65.4,
+      "model_arm": 62.0,
+      "actual": 90.3,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2025,
+      "month": 12,
+      "zone": "Capital_Hudson",
+      "gated": false,
+      "spread_ctl": 0.0,
+      "spread_arm": 0.1,
+      "spread_actual": 11.1,
+      "recovery": 0.01,
+      "model_ctl": 95.6,
+      "model_arm": 105.1,
+      "actual": 100.6,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2025,
+      "month": 12,
+      "zone": "NYC",
+      "gated": false,
+      "spread_ctl": 0.0,
+      "spread_arm": 0.1,
+      "spread_actual": 8.8,
+      "recovery": 0.012,
+      "model_ctl": 95.6,
+      "model_arm": 105.1,
+      "actual": 98.2,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2025,
+      "month": 12,
+      "zone": "Long_Island",
+      "gated": false,
+      "spread_ctl": 0.3,
+      "spread_arm": 0.6,
+      "spread_actual": 21.6,
+      "recovery": 0.017,
+      "model_ctl": 95.8,
+      "model_arm": 105.6,
+      "actual": 111.0,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2024,
+      "month": 1,
+      "zone": "Capital_Hudson",
+      "gated": false,
+      "spread_ctl": 3.5,
+      "spread_arm": 4.2,
+      "spread_actual": 12.2,
+      "recovery": 0.089,
+      "model_ctl": 59.0,
+      "model_arm": 61.8,
+      "actual": 56.1,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2024,
+      "month": 1,
+      "zone": "NYC",
+      "gated": false,
+      "spread_ctl": 3.8,
+      "spread_arm": 4.3,
+      "spread_actual": 22.9,
+      "recovery": 0.026,
+      "model_ctl": 59.4,
+      "model_arm": 61.9,
+      "actual": 66.8,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2024,
+      "month": 1,
+      "zone": "Long_Island",
+      "gated": false,
+      "spread_ctl": 3.9,
+      "spread_arm": 4.5,
+      "spread_actual": 20.7,
+      "recovery": 0.036,
+      "model_ctl": 59.5,
+      "model_arm": 62.1,
+      "actual": 64.6,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2024,
+      "month": 7,
+      "zone": "Capital_Hudson",
+      "gated": false,
+      "spread_ctl": 0.2,
+      "spread_arm": 0.0,
+      "spread_actual": 6.6,
+      "recovery": -0.025,
+      "model_ctl": 38.3,
+      "model_arm": 36.5,
+      "actual": 44.7,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2024,
+      "month": 7,
+      "zone": "NYC",
+      "gated": false,
+      "spread_ctl": 1.5,
+      "spread_arm": 1.6,
+      "spread_actual": 6.0,
+      "recovery": 0.023,
+      "model_ctl": 39.7,
+      "model_arm": 38.1,
+      "actual": 44.2,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2024,
+      "month": 7,
+      "zone": "Long_Island",
+      "gated": false,
+      "spread_ctl": 3.1,
+      "spread_arm": 2.4,
+      "spread_actual": 15.8,
+      "recovery": -0.055,
+      "model_ctl": 41.3,
+      "model_arm": 38.9,
+      "actual": 54.0,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2023,
+      "month": 1,
+      "zone": "Capital_Hudson",
+      "gated": false,
+      "spread_ctl": 0.6,
+      "spread_arm": 1.5,
+      "spread_actual": 11.3,
+      "recovery": 0.085,
+      "model_ctl": 39.1,
+      "model_arm": 38.8,
+      "actual": 43.6,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2023,
+      "month": 1,
+      "zone": "NYC",
+      "gated": false,
+      "spread_ctl": 0.6,
+      "spread_arm": 1.5,
+      "spread_actual": 8.3,
+      "recovery": 0.119,
+      "model_ctl": 39.1,
+      "model_arm": 38.8,
+      "actual": 40.5,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2023,
+      "month": 1,
+      "zone": "Long_Island",
+      "gated": false,
+      "spread_ctl": 0.6,
+      "spread_arm": 1.5,
+      "spread_actual": 16.9,
+      "recovery": 0.056,
+      "model_ctl": 39.1,
+      "model_arm": 38.8,
+      "actual": 49.2,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2023,
+      "month": 12,
+      "zone": "Capital_Hudson",
+      "gated": false,
+      "spread_ctl": 0.0,
+      "spread_arm": 0.0,
+      "spread_actual": 2.0,
+      "recovery": 0.0,
+      "model_ctl": 32.8,
+      "model_arm": 32.5,
+      "actual": 29.4,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2023,
+      "month": 12,
+      "zone": "NYC",
+      "gated": false,
+      "spread_ctl": 0.0,
+      "spread_arm": 0.0,
+      "spread_actual": 3.1,
+      "recovery": 0.0,
+      "model_ctl": 32.8,
+      "model_arm": 32.5,
+      "actual": 30.5,
+      "overshoot": false,
+      "ok": null
+     },
+     {
+      "year": 2023,
+      "month": 12,
+      "zone": "Long_Island",
+      "gated": false,
+      "spread_ctl": 0.1,
+      "spread_arm": 0.2,
+      "spread_actual": 7.7,
+      "recovery": 0.001,
+      "model_ctl": 33.0,
+      "model_arm": 32.6,
+      "actual": 35.0,
+      "overshoot": false,
+      "ok": null
+     }
+    ],
+    "passed": false
+   },
+   {
+    "gate": "W-K3b annual gradient toward actual (2024+2025)",
+    "rows": [
+     {
+      "year": 2024,
+      "gradient_ctl": 1.47,
+      "gradient_arm": 1.27,
+      "gradient_actual": 9.17,
+      "ok": false
+     },
+     {
+      "year": 2025,
+      "gradient_ctl": 0.8,
+      "gradient_arm": 0.69,
+      "gradient_actual": 14.83,
+      "ok": false
+     }
+    ],
+    "passed": false
+   },
+   {
+    "gate": "W-K3c UW-2023 annual improves",
+    "ctl": 31.29,
+    "arm": 31.34,
+    "actual": 25.32,
+    "passed": false
+   },
+   {
+    "gate": "W-K3d anti-relocation (worst zone |ann err|)",
+    "rows": [
+     {
+      "year": 2023,
+      "worst_ctl_pct": 23.6,
+      "worst_arm_pct": 23.8,
+      "ok": false
+     },
+     {
+      "year": 2024,
+      "worst_ctl_pct": 14.5,
+      "worst_arm_pct": 14.2,
+      "ok": true
+     },
+     {
+      "year": 2025,
+      "worst_ctl_pct": 17.4,
+      "worst_arm_pct": 18.3,
+      "ok": false
+     }
+    ],
+    "passed": false
+   },
+   {
+    "gate": "W-K4 D-4/D-2 (K6-prime)",
+    "new_d4_failures": [
+     [
+      2023,
+      "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+      "54574"
+     ],
+     [
+      2025,
+      "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
+      "2500"
+     ]
+    ],
+    "cleared_d4": [
+     [
+      2024,
+      "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+      "54574"
+     ]
+    ],
+    "forced_share_rises": [
+     {
+      "key": [
+       2023,
+       "chp_steam",
+       "CC_CHP"
+      ],
+      "ctl": 0.0055,
+      "arm": 0.0057
+     },
+     {
+      "key": [
+       2023,
+       "chp_steam",
+       "CT_CHP"
+      ],
+      "ctl": 0.22,
+      "arm": 0.2396
+     },
+     {
+      "key": [
+       2023,
+       "chp_steam",
+       "ST_CHP"
+      ],
+      "ctl": 1.9343,
+      "arm": 2.1292
+     },
+     {
+      "key": [
+       2023,
+       "hydro_min_flow",
+       "hydro"
+      ],
+      "ctl": 0.2145,
+      "arm": 0.2169
+     },
+     {
+      "key": [
+       2023,
+       "nyiso_gas_commitment_bridge",
+       "CC_REGULAR"
+      ],
+      "ctl": 0.0613,
+      "arm": 0.064
+     },
+     {
+      "key": [
+       2023,
+       "nyiso_gas_commitment_bridge",
+       "ST_GAS"
+      ],
+      "ctl": 0.0111,
+      "arm": 0.0137
+     },
+     {
+      "key": [
+       2023,
+       "reliability_floor",
+       "ST_GAS"
+      ],
+      "ctl": 0.2154,
+      "arm": 0.223
+     },
+     {
+      "key": [
+       2024,
+       "chp_steam",
+       "CC_CHP"
+      ],
+      "ctl": 0.0059,
+      "arm": 0.016
+     },
+     {
+      "key": [
+       2024,
+       "nyiso_gas_commitment_bridge",
+       "ST_GAS"
+      ],
+      "ctl": 0.0141,
+      "arm": 0.0159
+     },
+     {
+      "key": [
+       2025,
+       "chp_steam",
+       "CC_CHP"
+      ],
+      "ctl": 0.0023,
+      "arm": 0.0081
+     },
+     {
+      "key": [
+       2025,
+       "chp_steam",
+       "CT_CHP"
+      ],
+      "ctl": 0.0602,
+      "arm": 0.0936
+     },
+     {
+      "key": [
+       2025,
+       "chp_steam",
+       "ST_CHP"
+      ],
+      "ctl": 1.9449,
+      "arm": 2.535
+     },
+     {
+      "key": [
+       2025,
+       "hydro_min_flow",
+       "hydro"
+      ],
+      "ctl": 0.3828,
+      "arm": 0.3837
+     },
+     {
+      "key": [
+       2025,
+       "nuclear_mustrun",
+       ""
+      ],
+      "ctl": 0.7823,
+      "arm": 0.7824
+     },
+     {
+      "key": [
+       2025,
+       "nyiso_gas_commitment_bridge",
+       "ST_GAS"
+      ],
+      "ctl": 0.0093,
+      "arm": 0.018
+     }
+    ],
+    "escalated": true,
+    "new_d1_misses": [],
+    "passed": false
+   },
+   {
+    "gate": "W-K5 gated criteria",
+    "note": "C1 PASS->FAIL vs control: 2024 CC_REGULAR +3.63 TWh / share +3.3pp (MODEL MISS) on the registered arm (2026-08-22-nyiso-150-winter-spread); C2/C3a/C3b/C4/C8 PASS; C6 UNATTESTED (probe convention); C3c reported 1/0/0",
+    "passed": false
+   },
+   {
+    "gate": "W-K6 LOYO (gate-side per-month/per-year legs)",
+    "passed": false
+   },
+   {
+    "gate": "ADV-W1/W2 monthly report (reported, not gated)",
+    "rows": [
+     {
+      "year": 2023,
+      "month": 1,
+      "zone": "Upstate_West",
+      "ctl": 38.5,
+      "arm": 37.3,
+      "actual": 32.3
+     },
+     {
+      "year": 2023,
+      "month": 1,
+      "zone": "Capital_Hudson",
+      "ctl": 39.1,
+      "arm": 38.8,
+      "actual": 43.6
+     },
+     {
+      "year": 2023,
+      "month": 1,
+      "zone": "Lower_Hudson",
+      "ctl": 39.1,
+      "arm": 38.8,
+      "actual": 40.4
+     },
+     {
+      "year": 2023,
+      "month": 1,
+      "zone": "NYC",
+      "ctl": 39.1,
+      "arm": 38.8,
+      "actual": 40.5
+     },
+     {
+      "year": 2023,
+      "month": 1,
+      "zone": "Long_Island",
+      "ctl": 39.1,
+      "arm": 38.8,
+      "actual": 49.2
+     },
+     {
+      "year": 2023,
+      "month": 2,
+      "zone": "Upstate_West",
+      "ctl": 35.9,
+      "arm": 39.6,
+      "actual": 26.6
+     },
+     {
+      "year": 2023,
+      "month": 2,
+      "zone": "Capital_Hudson",
+      "ctl": 37.5,
+      "arm": 42.5,
+      "actual": 59.8
+     },
+     {
+      "year": 2023,
+      "month": 2,
+      "zone": "Lower_Hudson",
+      "ctl": 37.5,
+      "arm": 42.5,
+      "actual": 47.8
+     },
+     {
+      "year": 2023,
+      "month": 2,
+      "zone": "NYC",
+      "ctl": 37.5,
+      "arm": 42.5,
+      "actual": 48.4
+     },
+     {
+      "year": 2023,
+      "month": 2,
+      "zone": "Long_Island",
+      "ctl": 37.5,
+      "arm": 42.5,
+      "actual": 70.2
+     },
+     {
+      "year": 2023,
+      "month": 6,
+      "zone": "Upstate_West",
+      "ctl": 29.6,
+      "arm": 29.7,
+      "actual": 24.6
+     },
+     {
+      "year": 2023,
+      "month": 6,
+      "zone": "Capital_Hudson",
+      "ctl": 29.6,
+      "arm": 29.7,
+      "actual": 28.0
+     },
+     {
+      "year": 2023,
+      "month": 6,
+      "zone": "Lower_Hudson",
+      "ctl": 29.6,
+      "arm": 29.7,
+      "actual": 27.0
+     },
+     {
+      "year": 2023,
+      "month": 6,
+      "zone": "NYC",
+      "ctl": 29.6,
+      "arm": 29.7,
+      "actual": 27.4
+     },
+     {
+      "year": 2023,
+      "month": 6,
+      "zone": "Long_Island",
+      "ctl": 31.2,
+      "arm": 31.3,
+      "actual": 35.2
+     },
+     {
+      "year": 2023,
+      "month": 7,
+      "zone": "Upstate_West",
+      "ctl": 38.1,
+      "arm": 37.4,
+      "actual": 32.9
+     },
+     {
+      "year": 2023,
+      "month": 7,
+      "zone": "Capital_Hudson",
+      "ctl": 38.2,
+      "arm": 37.5,
+      "actual": 35.2
+     },
+     {
+      "year": 2023,
+      "month": 7,
+      "zone": "Lower_Hudson",
+      "ctl": 38.2,
+      "arm": 37.5,
+      "actual": 36.0
+     },
+     {
+      "year": 2023,
+      "month": 7,
+      "zone": "NYC",
+      "ctl": 38.3,
+      "arm": 37.6,
+      "actual": 39.1
+     },
+     {
+      "year": 2023,
+      "month": 7,
+      "zone": "Long_Island",
+      "ctl": 40.8,
+      "arm": 39.8,
+      "actual": 47.6
+     },
+     {
+      "year": 2023,
+      "month": 12,
+      "zone": "Upstate_West",
+      "ctl": 32.8,
+      "arm": 32.5,
+      "actual": 27.4
+     },
+     {
+      "year": 2023,
+      "month": 12,
+      "zone": "Capital_Hudson",
+      "ctl": 32.8,
+      "arm": 32.5,
+      "actual": 29.4
+     },
+     {
+      "year": 2023,
+      "month": 12,
+      "zone": "Lower_Hudson",
+      "ctl": 32.8,
+      "arm": 32.5,
+      "actual": 29.6
+     },
+     {
+      "year": 2023,
+      "month": 12,
+      "zone": "NYC",
+      "ctl": 32.8,
+      "arm": 32.5,
+      "actual": 30.5
+     },
+     {
+      "year": 2023,
+      "month": 12,
+      "zone": "Long_Island",
+      "ctl": 33.0,
+      "arm": 32.6,
+      "actual": 35.0
+     },
+     {
+      "year": 2024,
+      "month": 1,
+      "zone": "Upstate_West",
+      "ctl": 55.6,
+      "arm": 57.6,
+      "actual": 43.9
+     },
+     {
+      "year": 2024,
+      "month": 1,
+      "zone": "Capital_Hudson",
+      "ctl": 59.0,
+      "arm": 61.8,
+      "actual": 56.1
+     },
+     {
+      "year": 2024,
+      "month": 1,
+      "zone": "Lower_Hudson",
+      "ctl": 59.0,
+      "arm": 61.8,
+      "actual": 55.1
+     },
+     {
+      "year": 2024,
+      "month": 1,
+      "zone": "NYC",
+      "ctl": 59.4,
+      "arm": 61.9,
+      "actual": 66.8
+     },
+     {
+      "year": 2024,
+      "month": 1,
+      "zone": "Long_Island",
+      "ctl": 59.5,
+      "arm": 62.1,
+      "actual": 64.6
+     },
+     {
+      "year": 2024,
+      "month": 2,
+      "zone": "Upstate_West",
+      "ctl": 30.0,
+      "arm": 32.3,
+      "actual": 27.5
+     },
+     {
+      "year": 2024,
+      "month": 2,
+      "zone": "Capital_Hudson",
+      "ctl": 30.0,
+      "arm": 32.3,
+      "actual": 29.6
+     },
+     {
+      "year": 2024,
+      "month": 2,
+      "zone": "Lower_Hudson",
+      "ctl": 30.0,
+      "arm": 32.3,
+      "actual": 30.4
+     },
+     {
+      "year": 2024,
+      "month": 2,
+      "zone": "NYC",
+      "ctl": 30.0,
+      "arm": 32.3,
+      "actual": 32.0
+     },
+     {
+      "year": 2024,
+      "month": 2,
+      "zone": "Long_Island",
+      "ctl": 30.7,
+      "arm": 33.3,
+      "actual": 35.0
+     },
+     {
+      "year": 2024,
+      "month": 6,
+      "zone": "Upstate_West",
+      "ctl": 33.7,
+      "arm": 32.5,
+      "actual": 28.6
+     },
+     {
+      "year": 2024,
+      "month": 6,
+      "zone": "Capital_Hudson",
+      "ctl": 33.7,
+      "arm": 32.5,
+      "actual": 30.9
+     },
+     {
+      "year": 2024,
+      "month": 6,
+      "zone": "Lower_Hudson",
+      "ctl": 33.8,
+      "arm": 32.5,
+      "actual": 32.7
+     },
+     {
+      "year": 2024,
+      "month": 6,
+      "zone": "NYC",
+      "ctl": 35.0,
+      "arm": 33.8,
+      "actual": 34.1
+     },
+     {
+      "year": 2024,
+      "month": 6,
+      "zone": "Long_Island",
+      "ctl": 37.2,
+      "arm": 34.8,
+      "actual": 44.4
+     },
+     {
+      "year": 2024,
+      "month": 7,
+      "zone": "Upstate_West",
+      "ctl": 38.2,
+      "arm": 36.5,
+      "actual": 38.1
+     },
+     {
+      "year": 2024,
+      "month": 7,
+      "zone": "Capital_Hudson",
+      "ctl": 38.3,
+      "arm": 36.5,
+      "actual": 44.7
+     },
+     {
+      "year": 2024,
+      "month": 7,
+      "zone": "Lower_Hudson",
+      "ctl": 38.5,
+      "arm": 36.6,
+      "actual": 42.5
+     },
+     {
+      "year": 2024,
+      "month": 7,
+      "zone": "NYC",
+      "ctl": 39.7,
+      "arm": 38.1,
+      "actual": 44.2
+     },
+     {
+      "year": 2024,
+      "month": 7,
+      "zone": "Long_Island",
+      "ctl": 41.3,
+      "arm": 38.9,
+      "actual": 54.0
+     },
+     {
+      "year": 2024,
+      "month": 12,
+      "zone": "Upstate_West",
+      "ctl": 47.8,
+      "arm": 61.9,
+      "actual": 60.9
+     },
+     {
+      "year": 2024,
+      "month": 12,
+      "zone": "Capital_Hudson",
+      "ctl": 47.8,
+      "arm": 61.9,
+      "actual": 71.9
+     },
+     {
+      "year": 2024,
+      "month": 12,
+      "zone": "Lower_Hudson",
+      "ctl": 47.8,
+      "arm": 61.9,
+      "actual": 72.0
+     },
+     {
+      "year": 2024,
+      "month": 12,
+      "zone": "NYC",
+      "ctl": 48.0,
+      "arm": 61.9,
+      "actual": 74.5
+     },
+     {
+      "year": 2024,
+      "month": 12,
+      "zone": "Long_Island",
+      "ctl": 49.0,
+      "arm": 63.0,
+      "actual": 79.0
+     },
+     {
+      "year": 2025,
+      "month": 1,
+      "zone": "Upstate_West",
+      "ctl": 88.0,
+      "arm": 92.4,
+      "actual": 90.2
+     },
+     {
+      "year": 2025,
+      "month": 1,
+      "zone": "Capital_Hudson",
+      "ctl": 90.1,
+      "arm": 95.2,
+      "actual": 127.0
+     },
+     {
+      "year": 2025,
+      "month": 1,
+      "zone": "Lower_Hudson",
+      "ctl": 90.1,
+      "arm": 95.2,
+      "actual": 119.2
+     },
+     {
+      "year": 2025,
+      "month": 1,
+      "zone": "NYC",
+      "ctl": 90.2,
+      "arm": 95.2,
+      "actual": 134.4
+     },
+     {
+      "year": 2025,
+      "month": 1,
+      "zone": "Long_Island",
+      "ctl": 90.6,
+      "arm": 95.7,
+      "actual": 130.8
+     },
+     {
+      "year": 2025,
+      "month": 2,
+      "zone": "Upstate_West",
+      "ctl": 76.5,
+      "arm": 87.4,
+      "actual": 87.1
+     },
+     {
+      "year": 2025,
+      "month": 2,
+      "zone": "Capital_Hudson",
+      "ctl": 76.5,
+      "arm": 87.8,
+      "actual": 114.2
+     },
+     {
+      "year": 2025,
+      "month": 2,
+      "zone": "Lower_Hudson",
+      "ctl": 76.5,
+      "arm": 87.8,
+      "actual": 100.1
+     },
+     {
+      "year": 2025,
+      "month": 2,
+      "zone": "NYC",
+      "ctl": 76.6,
+      "arm": 87.8,
+      "actual": 111.8
+     },
+     {
+      "year": 2025,
+      "month": 2,
+      "zone": "Long_Island",
+      "ctl": 76.9,
+      "arm": 88.0,
+      "actual": 111.5
+     },
+     {
+      "year": 2025,
+      "month": 6,
+      "zone": "Upstate_West",
+      "ctl": 48.2,
+      "arm": 44.2,
+      "actual": 53.6
+     },
+     {
+      "year": 2025,
+      "month": 6,
+      "zone": "Capital_Hudson",
+      "ctl": 48.3,
+      "arm": 44.2,
+      "actual": 58.8
+     },
+     {
+      "year": 2025,
+      "month": 6,
+      "zone": "Lower_Hudson",
+      "ctl": 48.4,
+      "arm": 44.2,
+      "actual": 64.8
+     },
+     {
+      "year": 2025,
+      "month": 6,
+      "zone": "NYC",
+      "ctl": 49.0,
+      "arm": 44.9,
+      "actual": 65.9
+     },
+     {
+      "year": 2025,
+      "month": 6,
+      "zone": "Long_Island",
+      "ctl": 49.8,
+      "arm": 45.1,
+      "actual": 79.1
+     },
+     {
+      "year": 2025,
+      "month": 7,
+      "zone": "Upstate_West",
+      "ctl": 63.8,
+      "arm": 60.2,
+      "actual": 63.6
+     },
+     {
+      "year": 2025,
+      "month": 7,
+      "zone": "Capital_Hudson",
+      "ctl": 63.8,
+      "arm": 60.2,
+      "actual": 66.9
+     },
+     {
+      "year": 2025,
+      "month": 7,
+      "zone": "Lower_Hudson",
+      "ctl": 63.8,
+      "arm": 60.2,
+      "actual": 75.0
+     },
+     {
+      "year": 2025,
+      "month": 7,
+      "zone": "NYC",
+      "ctl": 64.9,
+      "arm": 61.7,
+      "actual": 82.8
+     },
+     {
+      "year": 2025,
+      "month": 7,
+      "zone": "Long_Island",
+      "ctl": 65.4,
+      "arm": 62.0,
+      "actual": 90.3
+     },
+     {
+      "year": 2025,
+      "month": 12,
+      "zone": "Upstate_West",
+      "ctl": 95.6,
+      "arm": 105.0,
+      "actual": 89.4
+     },
+     {
+      "year": 2025,
+      "month": 12,
+      "zone": "Capital_Hudson",
+      "ctl": 95.6,
+      "arm": 105.1,
+      "actual": 100.6
+     },
+     {
+      "year": 2025,
+      "month": 12,
+      "zone": "Lower_Hudson",
+      "ctl": 95.6,
+      "arm": 105.1,
+      "actual": 97.9
+     },
+     {
+      "year": 2025,
+      "month": 12,
+      "zone": "NYC",
+      "ctl": 95.6,
+      "arm": 105.1,
+      "actual": 98.2
+     },
+     {
+      "year": 2025,
+      "month": 12,
+      "zone": "Long_Island",
+      "ctl": 95.8,
+      "arm": 105.6,
+      "actual": 111.0
+     }
+    ],
+    "passed": null
+   }
+  ]
+ },
+ "ident": {
+  "gate": "IDENT control == keeper",
+  "max_abs_dprice": 0.0,
+  "passed": true
+ },
+ "verdicts": {
+  "C": "REJECTED-AS-ARMED \u2014 C-K2 liveness fails on Allegany 7784 alone (70%/60% falls vs the >=80% bar; 50744/54592/54593 collapse 93-98%); C-K6 fails as its per-year consequence; C-K1/C-K3/C-K4/C-K5 all PASS. The nyiso-146b rejection leg (b) (C3a-2023) is RESOLVED; leg (a) STANDS. Named successor: the nyiso-149 graded-duty pattern applied to the reserve cohort (a measured per-plant duty for Allegany, not the class peak band).",
+  "W": "REJECTED-AS-ARMED \u2014 W-K3a (gated-month spread recovery 0-4% vs >=30%), W-K3b (gradient FALLS: 1.47->1.27, 0.80->0.69), W-K3c (UW-2023 worsens +23.6->+23.8%), W-K3d (anti-relocation fires in 2023 and 2025), W-K4 (2 new D-4 conduct rows: 54574-2023, 2500-2025), W-K5 (C1-2024 CC_REGULAR PASS->FAIL). THE REJECTION IS THE MEASUREMENT: the whole state moves UP together in the winter event months (Dec-24 47.8->61.9 statewide with UW landing ~exact at actual 60.9; Feb-25 UW exact 87.4 vs 87.1) while the downstate-upstate spread stays <=$1.1 against $11-27 actual \u2014 an $8-13/MMBtu measured zonal gas spread produces <$1 of zonal price spread, so the winter downstate premium is PROVEN LOCATIONAL BY SOLVE (the internal west->east cutset never binds; the nyiso-122 static read confirmed at the LP). The measured monthly input is MISALIGNED to the coupled-block representation (rule 14's misalignment clause) until a locational mechanism lets the cutset bind \u2014 the re-open condition."
+ }
+}

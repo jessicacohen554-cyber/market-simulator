@@ -138,6 +138,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     gas_daily_shape: { cell: "K", ev: "ERCOT-145b (docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md; keeper 2026-07-31-ercot145-gas-daily-shape)" },
     zonal_gas_basis: { cell: "K" },
     gas_hub_basis_overlay: { cell: "U" },
+    nyiso_iroquois_winter_spread: { cell: "." },
     winter_citygate_daily: { cell: "U" },
     dual_fuel_switching: { cell: "U" },
     gas_price_override: { cell: "K" },

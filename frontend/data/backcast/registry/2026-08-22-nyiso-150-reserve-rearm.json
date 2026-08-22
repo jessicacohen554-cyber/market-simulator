@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-22-nyiso-150-reserve-rearm",
+  "label": "nyiso 150 reserve rearm",
+  "date": "2026-08-22",
+  "shorthand": "nyiso-150-reserve-rearm",
+  "definition": "(PROBE, REJECTED-AS-ARMED) nyiso-150 ARM C-prime: the cc_reserve_duty_split re-arm on the nyiso-149 keeper recipe \u2014 queue item 3, unblocked when the CHP capacity+conduct repair landed. C-K2 fails on Allegany 7784 ALONE (falls 70%/60% vs the >=80% bar; Sterling/Batavia/50744 collapse 93-98%); every other gate passes and the nyiso-146b rejection leg (b) is RESOLVED (C3a-2023 +5.2% in band on the arm). Named successor: the nyiso-149 graded-duty pattern applied to the reserve cohort. PREREG-nyiso150-gradient-winter-and-reserve-rearm-2026-08-22.md; gates _nyiso150_ab_gates.json.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-22-nyiso-150-reserve-rearm.js",
+  "bundle": "results/calibration/nyiso150_armC"
+}

@@ -123,5 +123,45 @@ class TestCaptureOn923(unittest.TestCase):
         self.assertEqual((r, nr, cap), (None, None, None))
 
 
+class TestCtOnlySpanUnion(unittest.TestCase):
+    """D-4 vintage guard (nyiso-150): ``ct_only`` unions across the span.
+
+    A preliminary EIA-923 vintage collapses the 923/gross ratio to exactly
+    1.00 (``e_ann`` falls back to ``c_ann``), silently un-flagging a plant
+    the complete years DO flag — the artifact that convicted NYISO plant
+    7314 in 2025 alone. The union restores the flag; it never creates one.
+    """
+
+    def test_union_restores_flag_dropped_by_preliminary_vintage(self):
+        import scripts.legitimacy_diagnostics as ld
+
+        bench_by_year = {
+            2023: {"7314": {"npl": 100.0, "mw": [0.0], "ct_only": True}},
+            2024: {"7314": {"npl": 100.0, "mw": [0.0], "ct_only": True}},
+            # Preliminary vintage: the flag computes False.
+            2025: {"7314": {"npl": 100.0, "mw": [0.0], "ct_only": False}},
+        }
+        orig = ld.load_bench
+        ld.load_bench = lambda repo, iso, year: bench_by_year[year]
+        try:
+            union = ld.ct_only_span_union(_REPO, "NYISO", [2023, 2024, 2025])
+        finally:
+            ld.load_bench = orig
+        self.assertEqual(union, {"7314"})
+
+    def test_union_empty_when_no_year_flags(self):
+        import scripts.legitimacy_diagnostics as ld
+
+        orig = ld.load_bench
+        ld.load_bench = lambda repo, iso, year: {
+            "999": {"npl": 50.0, "mw": [0.0], "ct_only": False}
+        }
+        try:
+            union = ld.ct_only_span_union(_REPO, "NYISO", [2024, 2025])
+        finally:
+            ld.load_bench = orig
+        self.assertEqual(union, set())
+
+
 if __name__ == "__main__":
     unittest.main()

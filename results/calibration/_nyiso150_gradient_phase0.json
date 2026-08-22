@@ -1,0 +1,791 @@
+{
+ "session": "nyiso-150",
+ "phase": 0,
+ "zones": [
+  "Upstate_West",
+  "Capital_Hudson",
+  "Lower_Hudson",
+  "NYC",
+  "Long_Island"
+ ],
+ "annual": {
+  "2023": {
+   "zones": {
+    "Upstate_West": {
+     "model_eqh": 31.29,
+     "actual_rt": 25.32,
+     "err_pct": 23.6
+    },
+    "Capital_Hudson": {
+     "model_eqh": 32.38,
+     "actual_rt": 34.58,
+     "err_pct": -6.4
+    },
+    "Lower_Hudson": {
+     "model_eqh": 32.38,
+     "actual_rt": 32.49,
+     "err_pct": -0.3
+    },
+    "NYC": {
+     "model_eqh": 32.47,
+     "actual_rt": 33.47,
+     "err_pct": -3.0
+    },
+    "Long_Island": {
+     "model_eqh": 33.5,
+     "actual_rt": 41.05,
+     "err_pct": -18.4
+    }
+   },
+   "gradient_model": 2.21,
+   "gradient_actual": 15.73
+  },
+  "2024": {
+   "zones": {
+    "Upstate_West": {
+     "model_eqh": 34.65,
+     "actual_rt": 33.06,
+     "err_pct": 4.8
+    },
+    "Capital_Hudson": {
+     "model_eqh": 34.96,
+     "actual_rt": 36.79,
+     "err_pct": -5.0
+    },
+    "Lower_Hudson": {
+     "model_eqh": 34.98,
+     "actual_rt": 37.22,
+     "err_pct": -6.0
+    },
+    "NYC": {
+     "model_eqh": 35.37,
+     "actual_rt": 39.52,
+     "err_pct": -10.5
+    },
+    "Long_Island": {
+     "model_eqh": 36.12,
+     "actual_rt": 42.23,
+     "err_pct": -14.5
+    }
+   },
+   "gradient_model": 1.47,
+   "gradient_actual": 9.17
+  },
+  "2025": {
+   "zones": {
+    "Upstate_West": {
+     "model_eqh": 57.31,
+     "actual_rt": 55.52,
+     "err_pct": 3.2
+    },
+    "Capital_Hudson": {
+     "model_eqh": 57.56,
+     "actual_rt": 63.46,
+     "err_pct": -9.3
+    },
+    "Lower_Hudson": {
+     "model_eqh": 57.56,
+     "actual_rt": 63.17,
+     "err_pct": -8.9
+    },
+    "NYC": {
+     "model_eqh": 57.79,
+     "actual_rt": 67.16,
+     "err_pct": -13.9
+    },
+    "Long_Island": {
+     "model_eqh": 58.11,
+     "actual_rt": 70.35,
+     "err_pct": -17.4
+    }
+   },
+   "gradient_model": 0.8,
+   "gradient_actual": 14.83
+  }
+ },
+ "winter_months": {
+  "2023": {
+   "1": {
+    "Upstate_West": {
+     "model": 38.5,
+     "actual": 32.3
+    },
+    "Capital_Hudson": {
+     "model": 39.1,
+     "actual": 43.6
+    },
+    "Lower_Hudson": {
+     "model": 39.1,
+     "actual": 40.4
+    },
+    "NYC": {
+     "model": 39.1,
+     "actual": 40.5
+    },
+    "Long_Island": {
+     "model": 39.1,
+     "actual": 49.2
+    },
+    "spread_vs_uw": {
+     "Capital_Hudson": {
+      "model": 0.6,
+      "actual": 11.3
+     },
+     "NYC": {
+      "model": 0.6,
+      "actual": 8.2
+     },
+     "Long_Island": {
+      "model": 0.6,
+      "actual": 16.9
+     }
+    },
+    "gated": false
+   },
+   "2": {
+    "Upstate_West": {
+     "model": 35.9,
+     "actual": 26.6
+    },
+    "Capital_Hudson": {
+     "model": 37.5,
+     "actual": 59.8
+    },
+    "Lower_Hudson": {
+     "model": 37.5,
+     "actual": 47.8
+    },
+    "NYC": {
+     "model": 37.5,
+     "actual": 48.4
+    },
+    "Long_Island": {
+     "model": 37.5,
+     "actual": 70.2
+    },
+    "spread_vs_uw": {
+     "Capital_Hudson": {
+      "model": 1.6,
+      "actual": 33.2
+     },
+     "NYC": {
+      "model": 1.6,
+      "actual": 21.8
+     },
+     "Long_Island": {
+      "model": 1.6,
+      "actual": 43.6
+     }
+    },
+    "gated": true
+   },
+   "12": {
+    "Upstate_West": {
+     "model": 32.8,
+     "actual": 27.4
+    },
+    "Capital_Hudson": {
+     "model": 32.8,
+     "actual": 29.4
+    },
+    "Lower_Hudson": {
+     "model": 32.8,
+     "actual": 29.6
+    },
+    "NYC": {
+     "model": 32.8,
+     "actual": 30.5
+    },
+    "Long_Island": {
+     "model": 33.0,
+     "actual": 35.0
+    },
+    "spread_vs_uw": {
+     "Capital_Hudson": {
+      "model": 0.0,
+      "actual": 2.0
+     },
+     "NYC": {
+      "model": 0.0,
+      "actual": 3.1
+     },
+     "Long_Island": {
+      "model": 0.2,
+      "actual": 7.6
+     }
+    },
+    "gated": false
+   }
+  },
+  "2024": {
+   "1": {
+    "Upstate_West": {
+     "model": 55.6,
+     "actual": 43.9
+    },
+    "Capital_Hudson": {
+     "model": 59.0,
+     "actual": 56.1
+    },
+    "Lower_Hudson": {
+     "model": 59.0,
+     "actual": 55.1
+    },
+    "NYC": {
+     "model": 59.4,
+     "actual": 66.8
+    },
+    "Long_Island": {
+     "model": 59.5,
+     "actual": 64.6
+    },
+    "spread_vs_uw": {
+     "Capital_Hudson": {
+      "model": 3.4,
+      "actual": 12.2
+     },
+     "NYC": {
+      "model": 3.8,
+      "actual": 22.9
+     },
+     "Long_Island": {
+      "model": 3.9,
+      "actual": 20.7
+     }
+    },
+    "gated": false
+   },
+   "7": {
+    "Upstate_West": {
+     "model": 38.2,
+     "actual": 38.1
+    },
+    "Capital_Hudson": {
+     "model": 38.3,
+     "actual": 44.7
+    },
+    "Lower_Hudson": {
+     "model": 38.5,
+     "actual": 42.5
+    },
+    "NYC": {
+     "model": 39.7,
+     "actual": 44.2
+    },
+    "Long_Island": {
+     "model": 41.3,
+     "actual": 54.0
+    },
+    "spread_vs_uw": {
+     "Capital_Hudson": {
+      "model": 0.1,
+      "actual": 6.6
+     },
+     "NYC": {
+      "model": 1.5,
+      "actual": 6.1
+     },
+     "Long_Island": {
+      "model": 3.1,
+      "actual": 15.9
+     }
+    },
+    "gated": false
+   },
+   "12": {
+    "Upstate_West": {
+     "model": 47.8,
+     "actual": 60.9
+    },
+    "Capital_Hudson": {
+     "model": 47.8,
+     "actual": 71.9
+    },
+    "Lower_Hudson": {
+     "model": 47.8,
+     "actual": 72.0
+    },
+    "NYC": {
+     "model": 48.0,
+     "actual": 74.5
+    },
+    "Long_Island": {
+     "model": 49.0,
+     "actual": 79.0
+    },
+    "spread_vs_uw": {
+     "Capital_Hudson": {
+      "model": 0.0,
+      "actual": 11.0
+     },
+     "NYC": {
+      "model": 0.2,
+      "actual": 13.6
+     },
+     "Long_Island": {
+      "model": 1.2,
+      "actual": 18.1
+     }
+    },
+    "gated": true
+   }
+  },
+  "2025": {
+   "1": {
+    "Upstate_West": {
+     "model": 88.0,
+     "actual": 90.2
+    },
+    "Capital_Hudson": {
+     "model": 90.1,
+     "actual": 127.0
+    },
+    "Lower_Hudson": {
+     "model": 90.1,
+     "actual": 119.2
+    },
+    "NYC": {
+     "model": 90.2,
+     "actual": 134.4
+    },
+    "Long_Island": {
+     "model": 90.6,
+     "actual": 130.8
+    },
+    "spread_vs_uw": {
+     "Capital_Hudson": {
+      "model": 2.1,
+      "actual": 36.8
+     },
+     "NYC": {
+      "model": 2.2,
+      "actual": 44.2
+     },
+     "Long_Island": {
+      "model": 2.6,
+      "actual": 40.6
+     }
+    },
+    "gated": false
+   },
+   "2": {
+    "Upstate_West": {
+     "model": 76.5,
+     "actual": 87.1
+    },
+    "Capital_Hudson": {
+     "model": 76.5,
+     "actual": 114.2
+    },
+    "Lower_Hudson": {
+     "model": 76.5,
+     "actual": 100.1
+    },
+    "NYC": {
+     "model": 76.6,
+     "actual": 111.8
+    },
+    "Long_Island": {
+     "model": 76.9,
+     "actual": 111.5
+    },
+    "spread_vs_uw": {
+     "Capital_Hudson": {
+      "model": 0.0,
+      "actual": 27.1
+     },
+     "NYC": {
+      "model": 0.1,
+      "actual": 24.7
+     },
+     "Long_Island": {
+      "model": 0.4,
+      "actual": 24.4
+     }
+    },
+    "gated": true
+   },
+   "6": {
+    "Upstate_West": {
+     "model": 48.2,
+     "actual": 53.6
+    },
+    "Capital_Hudson": {
+     "model": 48.3,
+     "actual": 58.8
+    },
+    "Lower_Hudson": {
+     "model": 48.4,
+     "actual": 64.8
+    },
+    "NYC": {
+     "model": 49.0,
+     "actual": 65.9
+    },
+    "Long_Island": {
+     "model": 49.8,
+     "actual": 79.1
+    },
+    "spread_vs_uw": {
+     "Capital_Hudson": {
+      "model": 0.1,
+      "actual": 5.2
+     },
+     "NYC": {
+      "model": 0.8,
+      "actual": 12.3
+     },
+     "Long_Island": {
+      "model": 1.6,
+      "actual": 25.5
+     }
+    },
+    "gated": false
+   },
+   "7": {
+    "Upstate_West": {
+     "model": 63.8,
+     "actual": 63.6
+    },
+    "Capital_Hudson": {
+     "model": 63.8,
+     "actual": 66.9
+    },
+    "Lower_Hudson": {
+     "model": 63.8,
+     "actual": 75.0
+    },
+    "NYC": {
+     "model": 64.9,
+     "actual": 82.8
+    },
+    "Long_Island": {
+     "model": 65.4,
+     "actual": 90.3
+    },
+    "spread_vs_uw": {
+     "Capital_Hudson": {
+      "model": 0.0,
+      "actual": 3.3
+     },
+     "NYC": {
+      "model": 1.1,
+      "actual": 19.2
+     },
+     "Long_Island": {
+      "model": 1.6,
+      "actual": 26.7
+     }
+    },
+    "gated": false
+   },
+   "12": {
+    "Upstate_West": {
+     "model": 95.6,
+     "actual": 89.4
+    },
+    "Capital_Hudson": {
+     "model": 95.6,
+     "actual": 100.6
+    },
+    "Lower_Hudson": {
+     "model": 95.6,
+     "actual": 97.9
+    },
+    "NYC": {
+     "model": 95.6,
+     "actual": 98.2
+    },
+    "Long_Island": {
+     "model": 95.8,
+     "actual": 111.0
+    },
+    "spread_vs_uw": {
+     "Capital_Hudson": {
+      "model": 0.0,
+      "actual": 11.2
+     },
+     "NYC": {
+      "model": 0.0,
+      "actual": 8.8
+     },
+     "Long_Island": {
+      "model": 0.2,
+      "actual": 21.6
+     }
+    },
+    "gated": false
+   }
+  }
+ },
+ "construction": {
+  "2023": {
+   "reference_off": [
+    4.641,
+    5.194,
+    3.561,
+    3.078,
+    2.804,
+    2.768,
+    3.071,
+    2.613,
+    2.761,
+    2.759,
+    3.542,
+    3.623
+   ],
+   "reference_on": [
+    4.733,
+    8.13,
+    3.561,
+    2.525,
+    2.251,
+    2.768,
+    2.81,
+    2.059,
+    2.208,
+    2.205,
+    3.542,
+    3.623
+   ],
+   "nyc_off": [
+    3.301,
+    3.854,
+    2.221,
+    1.738,
+    1.465,
+    1.428,
+    1.731,
+    1.273,
+    1.421,
+    1.419,
+    2.202,
+    2.283
+   ],
+   "nyc_on": [
+    3.301,
+    3.854,
+    2.221,
+    1.738,
+    1.465,
+    1.428,
+    1.731,
+    1.273,
+    1.421,
+    1.419,
+    2.202,
+    2.283
+   ],
+   "uw_off": [
+    3.181,
+    3.734,
+    2.101,
+    1.618,
+    1.345,
+    1.308,
+    1.611,
+    1.153,
+    1.302,
+    1.299,
+    2.082,
+    2.163
+   ],
+   "uw_on": [
+    2.557,
+    1.665,
+    1.59,
+    1.447,
+    1.431,
+    1.461,
+    1.835,
+    1.867,
+    1.921,
+    2.266,
+    1.992,
+    1.807
+   ],
+   "nyc_identity_max_abs": 0.0,
+   "reference_annual_conservation": -0.0
+  },
+  "2024": {
+   "reference_off": [
+    6.288,
+    2.413,
+    2.17,
+    2.179,
+    2.284,
+    2.429,
+    2.322,
+    2.219,
+    2.289,
+    2.366,
+    2.502,
+    4.007
+   ],
+   "reference_on": [
+    7.676,
+    2.978,
+    1.639,
+    1.554,
+    1.658,
+    1.804,
+    1.696,
+    1.593,
+    1.663,
+    1.74,
+    1.971,
+    7.497
+   ],
+   "nyc_off": [
+    5.578,
+    1.704,
+    1.46,
+    1.47,
+    1.574,
+    1.719,
+    1.612,
+    1.509,
+    1.579,
+    1.656,
+    1.792,
+    3.297
+   ],
+   "nyc_on": [
+    5.578,
+    1.704,
+    1.46,
+    1.47,
+    1.574,
+    1.719,
+    1.612,
+    1.509,
+    1.579,
+    1.656,
+    1.792,
+    3.297
+   ],
+   "uw_off": [
+    5.218,
+    1.344,
+    1.1,
+    1.11,
+    1.214,
+    1.359,
+    1.252,
+    1.149,
+    1.219,
+    1.296,
+    1.432,
+    2.937
+   ],
+   "uw_on": [
+    2.814,
+    1.359,
+    1.131,
+    1.237,
+    1.758,
+    2.173,
+    1.713,
+    1.628,
+    1.914,
+    1.837,
+    1.755,
+    2.643
+   ],
+   "nyc_identity_max_abs": 0.0,
+   "reference_annual_conservation": 0.0
+  },
+  "2025": {
+   "reference_off": [
+    14.095,
+    7.396,
+    4.808,
+    4.235,
+    3.774,
+    3.712,
+    4.293,
+    3.621,
+    3.24,
+    3.725,
+    4.619,
+    9.174
+   ],
+   "reference_on": [
+    16.916,
+    10.978,
+    3.647,
+    3.009,
+    2.548,
+    2.487,
+    3.542,
+    2.395,
+    2.014,
+    2.499,
+    3.804,
+    12.854
+   ],
+   "nyc_off": [
+    12.715,
+    6.016,
+    3.428,
+    2.855,
+    2.394,
+    2.333,
+    2.913,
+    2.241,
+    1.86,
+    2.345,
+    3.239,
+    7.794
+   ],
+   "nyc_on": [
+    12.715,
+    6.016,
+    3.428,
+    2.855,
+    2.394,
+    2.333,
+    2.913,
+    2.241,
+    1.859,
+    2.345,
+    3.239,
+    7.794
+   ],
+   "uw_off": [
+    11.015,
+    4.316,
+    1.728,
+    1.155,
+    0.694,
+    0.633,
+    1.214,
+    0.541,
+    0.16,
+    0.645,
+    1.539,
+    6.094
+   ],
+   "uw_on": [
+    3.537,
+    3.6,
+    3.531,
+    2.834,
+    2.53,
+    2.435,
+    2.613,
+    2.324,
+    2.385,
+    2.61,
+    3.205,
+    3.675
+   ],
+   "nyc_identity_max_abs": 0.0,
+   "reference_annual_conservation": 0.0
+  }
+ },
+ "construction_checks": {
+  "nyc_identity": true,
+  "annual_conservation": true
+ }
+}
