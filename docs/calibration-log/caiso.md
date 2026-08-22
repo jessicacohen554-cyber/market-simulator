@@ -9232,3 +9232,116 @@ ledger, every matrix cell verdict, the shard `gates` stamp, the §5.2 header,
 every bench part, and every source file: UNCHANGED.
 
 **Lane REMAINS RESTED. Session consumed the caiso-211 shorthand. Next shorthand: caiso-212.**
+
+---
+
+## 2026-08-22 — CAISO — caiso-212: Branch A executed (REST CONTINUES); full record re-verified on committed bytes at a HEAD that moved heavily — the chartered frame-builder re-hash executed: the builder fingerprint MOVED (`ded4ca25749a` → `dbea7bf45111`), the caiso-210/211 identity terms are dead, and the stamp-absence conclusion RE-DERIVED from scratch and HOLDS; keeper unchanged, NOT-YET
+
+**NO SOLVE, NO PROBE, NO LP, NOTHING REGISTERED, NOTHING REGENERATED, AND NO
+CELL VERDICT MOVES** (nothing was tested, so rule 28b does not attach — the
+caiso-206…211 precedent applied identically). No owner funding order issued for
+either standing tail-formation object, so caiso-203 ruling 2 (FINAL) governs
+and Branch A is the correct execution. Numbering is consistent: the charter
+delivered is the caiso-212 charter and caiso-211 closed *"Next number:
+caiso-212"*.
+
+**Standing state reproduced item-for-item and EXACTLY** at `c55da9c` (35
+commits / 12 merges / 185 files past the 317be02 caiso-211 measured from —
+nyiso-149, miso-175, ercot-226, site-facts-2, the NEISO mystic-rescore):
+keeper `2026-08-17-caiso-200-h1-memberpanel`; `calibration_verdict.py
+--run-id` → **NOT-YET** at rubric **v3.4**, `reasons` *"undocumented
+out-of-tolerance (FAIL) criteria: price_mean"*; C3a the SOLE load-bearing FAIL
+(model/actual $/MWh 56.40/54.17 = **+4.1 % PASS**, 39.07/34.65 = **+12.8 %**,
+39.82/34.42 = **+15.7 %**, judged vs ACTUAL RT LMP only); C3c the SINGLE
+ledgered caveat (0h/47, 1h/35, 2025 PASS 0h/8h), budget **ledgered 1 of 1,
+protective 0 of 0**; C1 **12/12 free 8/8**; C2/C3b/C4/C6/C8 PASS;
+`grade_summary` scored 8 / target_grade 6 / commercial_grade 0 / ledgered 1 /
+fails 1; `audit_keepers --iso CAISO` **PASS 0/0**; `build_status --iso CAISO
+--check` in sync; DOF ledger **10/7**; CAISO absent from BOTH `complete` and
+`final` (it sits in `withdrawn`, its entry **byte-equal across the whole
+delta**); freeze **ACTIVE**; all three registrations present, tracked, years
+`[2023,2024,2025]`, payloads on disk. Census **exactly as the charter
+pre-registered: K 64 · U 33 · I 15 · R 9 · O 6 · G 5 = 132, n/a 92 → 94** —
+the CAISO shard's total movement across the delta is +2 lines, the two foreign
+rule-28c `·` cells (`miso_seam_envelope_hour_ending_key` ad0f85a,
+`hindcast_verified_announced_exits` 9c5a635). `check_mechanism_matrix` exit 0
+on all four checks. **Zero movement** in the scorer/governance scripts across
+the delta; the `calibration-complete.json` churn is re-serialization + the
+NYISO D-5(b) re-key at its promotion (zero keys added/removed, verified
+structurally).
+
+**THE SESSION'S ONE CHARTERED ADDITION, EXECUTED — the frame-builder re-hash
+across `fce890d..HEAD`.** `BUILDER_SOURCES` now carries THREE commits since
+`fce890d` (caiso-210's two plus **28ac3c2**, nyiso-149's bench-basis pin on
+`render_calibration_html.py`), so the fingerprint moved to **`dbea7bf45111`**
+(computed independently; matches the banner) and the caiso-211 "identical
+fingerprint" argument is no longer available. Re-measured from scratch:
+**the caiso-210 twelve hash byte-identical — twelve for twelve, again**; the
+full changed-function census of `run_calibration_full.py` (15 commits,
+11,965 → 12,263 lines) is exactly `_btm_frame` + `solve_and_persist` +
+`run_p2_layer` + `main`, and the latter three's entire bench-adjacent movement
+is `nyiso_chp_btm_measured` flag threading. **`_btm_frame` — newly in scope
+because nyiso-149 proved the BTM channel feeds the part — CHANGED and is
+PROVEN CAISO-inert at three levels** (gates read, never assumed): (1) the
+measured-share block is `iso == "NYISO"`-gated with the run-basis mutation
+additionally flag-gated, so for CAISO the new `btm_bench_twh` column
+duplicates `btm_twh` value-for-value and no second compute path executes;
+(2) every callee on the CAISO path hashes identical across the range
+(`_classify_f923`, `compute_must_run_emissions`, `chp_btm_pct`,
+`CHP_BTM_PCT_BY_SECTOR`, `coal_chp_overrides`, `BIN_GROUP_TO_FUEL`;
+`load_campd_bins` is ERCOT-branch-only; `fleet/__init__.py` +6/−0 additive);
+(3) the render consumer substitutes `btm_cls_bench` at three points with an
+explicit `btm_twh` fallback for bundles predating the column — CAISO's
+committed bundle predates it — and `_btm_share`'s measured map retains the ISO
+half of 01db36d's gate (the flag half removed BY DESIGN, the NYISO root
+cause), staying `None` for CAISO. **CONCLUSION: STAMP-ABSENCE, NOT DRIFT,
+still — C1's 12/12 PASS reproducible, no determination changes — now resting
+on caiso-212's own terms, not caiso-210's.** Sizing at HEAD: 20 parts / 17
+STALE (NYISO's three current). Same honest limit: static argument, not a
+regeneration (numpy absent; `_shared/CAISO/` and dispatch parquets
+uncommitted).
+
+**Cross-lane item 1 verified as chartered: nyiso-149 did NOT repair the
+checker.** D1 stands (`BUILDER_SOURCES` still the four scripts,
+`ENGINE_PATHS` still data/+config/, the number-producing tier in neither) —
+and is now DEMONSTRATED: 28ac3c2 changed `_btm_frame` and the fingerprint
+moved only because the same sweep touched a covered file; the frame change
+alone would have been invisible. D2 stands (the `continue` after the HARD
+branch, `check_bench_freshness.py:120`; "0 with engine drift" still vacuous
+for all 17). **Both stay routed off-lane (rule 25)** — the item is retained
+with its verification recorded, not dropped.
+
+**Guardrail cross-checks:** caiso-209's *magnitude* extension clean (every
+number above re-read from `--json`; C3b **0.098/0.179/0.182 vs ≤0.20**, 2025
+margin **0.018**, composition watch live). caiso-208's *posture* check: the
+§5.2 header CURRENT; the shard `gates` stamp's open-gate content current but
+its bench-staleness facts (fingerprint `ded4ca25749a`, "two commits", "twelve
+functions") **superseded at this HEAD** — refreshed with a caiso-212 stamp on
+the caiso-208/209/210 records-truthfulness precedent (a Branch-B session
+checking the old fingerprint would read phantom drift).
+
+**Owner packet unchanged at TWO items** ((a)/(b) tail-formation funding —
+neither closes C3a on its own arithmetic; F-3 anchor arming — keep
+default-OFF, row 4 is channel substitution). A re-derivation that lands on the
+same conclusion adds no third.
+
+**Filed items:** item 1 re-verified still open (`offer_curve_by_group` still
+`identification: "residual"`); item 5 updated — the parts now trip against
+fingerprint `dbea7bf45111`; items 2–4, 6 carried. Routed off-lane: D1/D2
+(verified unrepaired, retained), the five-ISO regeneration + CI-gate sequence
+(NYISO's leg re-done at its promotion), the `cccc911` sweep.
+
+**DO-NOT-REDO:** carried forward verbatim, with the bench-staleness entry
+SUPERSEDED IN PLACE — the adjudication now stands on caiso-212 §2 terms
+(fingerprint `dbea7bf45111`, three inert BUILDER_SOURCES commits, twelve
+identical + `_btm_frame` CAISO-inert at `c55da9c`); re-opening it requires new
+measured movement in the named builder set past `c55da9c`, exactly as this
+charter's own unfreeze clause worked.
+
+**Records:**
+`results/calibration/ASSESSMENT-caiso212-rest-continuation-2026-08-22.md`,
+matrix §5.2 caiso-212 block, the CAISO shard `gates` stamp refresh, this
+entry. Keeper, markers, holdout freeze, DOF ledger, every matrix cell verdict,
+the §5.2 header, every bench part, and every source file: UNCHANGED.
+
+**Lane REMAINS RESTED. Session consumed the caiso-212 shorthand. Next shorthand: caiso-213.**
