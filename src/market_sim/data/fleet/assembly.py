@@ -619,6 +619,40 @@ def bins_to_fleet(
             committed_cap = min(committed_cap, grid_cap)
             peak_cap = max(0.0, min(peak_cap, grid_cap - committed_cap))
         econ_cap = max(grid_cap - committed_cap - peak_cap, 0.0)
+        # CHP LAY-UP duty CURVE (chp_layup_duty_curve, nyiso-149): the GRADED
+        # successor to the single-band split above, applied LAST — and at the
+        # CAP level, not the pct level, because the econ residual would
+        # otherwise re-absorb the withheld share. A census plant offers its
+        # measured price-conditional duty (chp_duty_curve_<ISO>.csv: pct_econ
+        # of nameplate at the class econ band, pct_peak at the class peak
+        # band — both derived from CAMPD on-share x loading conditional on
+        # envelope-live hours, so the availability envelope and this offer
+        # never double-count the same mothball spells, rule 19) and the
+        # REMAINDER LEAVES THE OFFER ENTIRELY — energy and reserves: grid_cap
+        # shrinks to the offered total, so the withheld trains back no
+        # product (a mothballed train does not return for a price spike).
+        # Zero new price constants: band heat rates resolve exactly as the
+        # class's own bands do in this recipe (rule 21).
+        if group in _pkg_ns()._CHP_GROUPS and getattr(
+            config, "chp_layup_duty_curve", False
+        ):
+            _duty = (
+                _pkg_ns()
+                ._chp_duty_curve(str(getattr(config, "iso", "") or ""))
+                .get(plant_code)
+            )
+            if _duty is not None and plant_code in _pkg_ns()._chp_layup_cohort(
+                str(getattr(config, "iso", "") or "")
+            ):
+                # The duty is a MW quantity (s·L·HSL — basis-free), clamped
+                # into the grid-facing share so the BTM hold-out is honored.
+                # (The first solve applied pct-of-census-pmax fractions to
+                # the BIN nameplate and over-offered by the basis ratio —
+                # caught by gate F-K2, PREREG-nyiso149 §7.)
+                committed_cap = 0.0
+                peak_cap = min(_duty[1], grid_cap)
+                econ_cap = min(_duty[0], grid_cap - peak_cap)
+                grid_cap = committed_cap + peak_cap + econ_cap
 
         zone = str(b["ERCOT_Zone"])
         if zone == "Unknown" or zone not in valid_zones:

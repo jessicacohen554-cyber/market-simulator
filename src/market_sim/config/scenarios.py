@@ -653,6 +653,9 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # is dropped from the hash at default and every pre-existing cache key is
     # byte-stable; an armed run enters the key as a distinct scenario.
     "chp_layup_duty_split",
+    # CHP lay-up duty CURVE (nyiso-149): same reasoning as its sibling directly
+    # above — inert at default (neither artifact read), armed runs key apart.
+    "chp_layup_duty_curve",
     # ERCOT gas-bridge ONLINE-HOURS leg (ercot141): inert at its default (off —
     # the floor stays gap-only and the detector call is byte-identical), so
     # registering it here keeps the pinned default cache_key byte-stable; an
@@ -1296,6 +1299,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_chp_btm_measured": "False",
     "cc_reserve_duty_split": "False",
     "chp_layup_duty_split": "False",
+    "chp_layup_duty_curve": "False",
     "ercot_gas_bridge_online_hours": "False",
     "forecast_xyear_warmstart": "True",
     "ercot_offer_hrmult_ep_rebasis": "False",
@@ -7759,6 +7763,35 @@ class ScenarioConfig:
     # to it. Identified per ISO through a per-ISO artifact (rule 25
     # [R-ISO-SCOPE]); default off so a control run is byte-identical.
     chp_layup_duty_split: bool = False
+
+    # CHP lay-up duty CURVE (nyiso-149) — the GRADED successor to the
+    # single-band chp_layup_duty_split above, which nyiso-148 rejected on its
+    # own pre-registered gates because one peak band gives a BANG-BANG
+    # response (cohort ~OFF in 2023/2024, STILL OVER in dear 2025) where the
+    # plants' meters give a graded one that scales WITH price (Selkirk gross
+    # 157 -> 108 -> 385 GWh). Same FROZEN 7-plant census membership
+    # (chp_layup_census_<ISO>.csv — rule 23, never re-derived); what changes
+    # is the OFFER SHAPE: per plant, the measured price-conditional on-share
+    # (chp_duty_curve_<ISO>.csv, derive_nyiso_chp_duty_curve.py — own-zone RT
+    # price quantile bands p40-p80/>=p80, conditional on envelope-live hours
+    # so the availability envelope and the offer never double-count the same
+    # mothball spells, rule 19 [R-ONE-MECH]) sizes an ECON tranche
+    # (pct_econ = s_mid x loading x HSL/pmax) and a PEAK tranche
+    # (pct_peak = (s_hi - s_mid) x loading x HSL/pmax) at the class curve's
+    # EXISTING band multipliers — zero new price constants (rule 21). The
+    # artifact carries the duty as MW (econ_mw/peak_mw = s x L x HSL,
+    # basis-free) and the seams consume the MW directly: the first arm solve
+    # applied pct-of-census-pmax fractions to the bin nameplate and
+    # over-offered by the basis ratio, caught by gate F-K2
+    # (PREREG-nyiso149 §7) — and
+    # the remainder is WITHHELD from the offer entirely (energy and
+    # reserves): the measured "never seen at any price" share; a mothballed
+    # train does not return for a price spike. Rule 13: the statistic
+    # regenerates for any vintage from CAMPD + MIS LBMP and responds to
+    # changed conditions. Mutually exclusive with chp_layup_duty_split
+    # (same phenomenon, one mechanism — enforced at the consumption seam).
+    # Default off so a control run is byte-identical.
+    chp_layup_duty_curve: bool = False
 
     # ISO-gated gas-steam startup amortization. The ST_GAS startup cost +
     # min-run/min-down (constants.ST_GAS_COMMITMENT_PARAMS) are only fed into the

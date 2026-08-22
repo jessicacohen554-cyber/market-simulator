@@ -976,6 +976,27 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
     committed_cap = grid_cap * pct_mc / denom if denom > 0.0 else 0.0
     peak_cap = grid_cap * pct_peak / denom if denom > 0.0 else 0.0
     econ_cap = max(grid_cap - committed_cap - peak_cap, 0.0)
+    # CHP LAY-UP duty CURVE (chp_layup_duty_curve, nyiso-149): mirror of the
+    # load-bearing bins_to_fleet CAP override so the dashboard bands track the
+    # dispatch — at the cap level, after the residual, because the econ
+    # residual would otherwise re-absorb the withheld share (same placement
+    # discipline as the duty-split mirror above).
+    if getattr(config, "chp_layup_duty_curve", False):
+        from market_sim.data.fleet.campd_bins import (
+            _CHP_GROUPS,
+            _chp_duty_curve,
+            _chp_layup_cohort,
+        )
+
+        _iso = str(getattr(config, "iso", "") or "")
+        if group in _CHP_GROUPS and plant_code in _chp_layup_cohort(_iso):
+            _duty = _chp_duty_curve(_iso).get(plant_code)
+            if _duty is not None:
+                # MW contract (PREREG-nyiso149 §7): the duty tuple IS the MW.
+                committed_cap = 0.0
+                peak_cap = min(_duty[1], grid_cap)
+                econ_cap = min(_duty[0], grid_cap - peak_cap)
+                grid_cap = committed_cap + peak_cap + econ_cap
 
     # Per-band heat rates, mirroring bins_to_fleet (offer-curve multipliers,
     # CC duct-burner peak, or the legacy per-class overrides / CSV columns).
