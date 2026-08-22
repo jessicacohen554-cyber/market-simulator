@@ -2129,10 +2129,15 @@ def _ercot_multiproduct_design(
                 "envelope variants are R-adjudicated)"
             )
         if supply_cap is not None:
+            from market_sim.results.scarcity import _RESERVE_SUPPLY_CAP_UNCAPPED_MW
+
             supply_cap = np.vstack(
                 [
                     np.asarray(supply_cap, dtype=float),
-                    np.full((len(held_class_families), T), np.inf),
+                    np.full(
+                        (len(held_class_families), T),
+                        _RESERVE_SUPPLY_CAP_UNCAPPED_MW,
+                    ),
                 ]
             )
 

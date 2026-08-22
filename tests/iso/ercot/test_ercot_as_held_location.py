@@ -197,7 +197,9 @@ class TestCarveAndCredit(unittest.TestCase):
                 fleet,
             )
         self.assertEqual(d.supply_cap.shape, (3, H))
-        self.assertTrue(np.isinf(d.supply_cap[2]).all())
+        self.assertTrue((d.supply_cap[2] == 1.0e9).all())  # the repo's
+        # standing uncapped sentinel (_RESERVE_SUPPLY_CAP_UNCAPPED_MW) — a
+        # finite value, because shared logging int()s the row means.
 
 
 class TestGuards(unittest.TestCase):
