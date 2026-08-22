@@ -197,6 +197,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     rdt_tcdc: { cell: "." },
     seam_flow_envelopes: { cell: "." },
     miso_seam_envelope_hour_ending_key: { cell: ".", ev: "MISO-only field (the seam-DIBA gate returns None for every other ISO — byte-identical; verified miso-175 V-3). Whether this ISO's own seam-envelope analogue carries the same hour-key convention is this lane's call, handed forward by FINDING-miso174 §4/§7 — not inspected or stamped by miso-175 (rule 25)." },
+    m2m_seam_entitlement_cap: { cell: ".", ev: "No M2M/CMP construct on this ISO's seams — the row's record is the MISO-PJM / MISO-SPP JOA settlement product; any other market's seam-coordination analogue (e.g. the PJM-NYISO PAR-based M2M) is a different source and would be its own row." },
     nyiso_seam_par_attribution: { cell: "." },
     import_hub_pricing: { cell: "." },
     import_shape_lever: { cell: "." },

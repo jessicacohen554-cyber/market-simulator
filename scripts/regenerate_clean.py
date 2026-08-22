@@ -81,6 +81,7 @@ DATATYPES: tuple[str, ...] = (
     # version axis — the intake contract's step 5.
     "nrel-atb",
     "ira-credit-parameters",
+    "miso-m2m-flowgates",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent

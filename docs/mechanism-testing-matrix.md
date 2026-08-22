@@ -4618,7 +4618,37 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-22-miso-175-hourkey` (**PROMOTED miso-175, 2026-08-22**, superseding `2026-08-20-miso-173-layup-mask`), **NOT-YET on C3a-2025 (−11.8 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, and miso-175 (2026-08-22) EXECUTED the first of its four handed-forward items (the seam-envelope hour-key rotation — now the keeper); the remaining three (the coincident-peak seam-response object [OWNER admissibility ruling needed], the M2M/CMP seam-class data intake, the South under-export) stay NAMED, NOT CHARTERED — see the miso-174 stamp below and the four standing OWNER items.**
+### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-22-miso-175-hourkey` (**PROMOTED miso-175, 2026-08-22**, superseding `2026-08-20-miso-173-layup-mask`), **NOT-YET on C3a-2025 (−11.8 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, miso-175 (2026-08-22) EXECUTED item 1 (the seam-envelope hour-key rotation — now the keeper); miso-176 (2026-08-22) EXECUTED item 3 (the M2M/CMP seam-class intake + binding-reality measurement — `m2m_seam_entitlement_cap` minted `G`, no LP); the remaining two (the coincident-peak seam-response object [OWNER admissibility ruling needed, now holding miso-176's binding evidence], the South under-export) stay NAMED, NOT CHARTERED — see the stamps below and the standing OWNER items.**
+> **QUEUE STAMP miso-176 (2026-08-22) — THE M2M/CMP SEAM-CLASS RECORD IS INTAKEN AND THE
+> BINDING-REALITY MEASUREMENT IS ADJUDICATED: `m2m_seam_entitlement_cap` MINTED `G` ON THE
+> PRE-REGISTERED VERDICT MAPPING. NO LP, NOTHING ARMED, NO `ScenarioConfig` FIELD, NO
+> REGISTRATION (rule 15 not engaged). Keeper UNCHANGED at `2026-08-22-miso-175-hourkey`;
+> determination UNCHANGED at NOT-YET on C3a-2025 ALONE.** Intake: datatype
+> `miso-m2m-flowgates` (MISO's public annual `M2M_Settlement_srw_YYYY.csv` — hourly
+> per-flowgate FFE + market flows + shadow prices + credits, both M2M seams, 2023–2025;
+> schema-first, mirrors gitignored w/ sha256 README, rule-13 line fixed in the schema header:
+> FFE input-class in kind, shadow/flow/credit ANSWER-class). Records:
+> `FINDING-miso176-m2m-seam-binding-reality-2026-08-22.md`, prereg
+> `PREREG-miso176-m2m-seam-class-adjudication-2026-08-22.md` (committed at 75b8488 BEFORE any
+> hour-set-conditioned quantity), instrument `scripts/probes/_miso176_m2m_seam_binding.py` +
+> `_miso176_m2m_seam_binding.json`. **THE MEASUREMENT: the record NAMES the binder in about
+> half the scarce hours.** V-KEY: the settlement clock VERIFIED against `2025_rt_bc_HIST` on
+> the NERC-ID join (shift 0 wins, pooled r = 0.9934). A-2 CO-MOVES 3/3: PJM-seam binding at
+> MISO's stress is 4–6× harder than ordinary summer (Σ-shadow 258/476/692 vs 68/90/121 $/h).
+> A-3 RESTRICTION-CONSISTENT 2/3: top-binding summer hours carry −0.06/−0.58/−1.22 GW less
+> measured import than zero-binding hours. A-4: on scarce-hour binding rows MISO sits OVER its
+> own FFE 67/82/80 % — the JOA obligation pushes MISO's use back toward entitlement exactly
+> when MISO is tight. Census: 2025 dominated by CherryValley_SilverLake flo Byron
+> (PJM-monitored, 15/47 h, p50 $699) and Burr_Oak_Plymouth (MISO-monitored, 10 h, p50 $1,304).
+> HONESTLY PARTIAL: binding in only 36/57/49 % of scarce hours; the non-binding half still
+> pulls back — partly measured congestion management, partly still conduct. THE REFUSAL (G,
+> not O): K-1 any binding/shadow/flow-conditioned encoding is ANSWER-class (rule 13, fixed
+> line); K-2 FFE is branch-grain on named facilities vs the model's ONE aggregate seam link
+> with no published PTDF/distribution factors (the standing M1/miso-77 §5.2 apportionment
+> refusal). THE EVIDENCE TRANSFERS to owner item 5(i) — the coincident-peak seam-response
+> envelope ruling now holds measured proof that the stress response is (half) real named JOA
+> congestion management, not a residual-fit artifact.
+
 > **QUEUE STAMP miso-175 (2026-08-22) — THE SEAM-ENVELOPE HOUR-KEY ROTATION IS REPAIRED AND
 > PROMOTED: KEEPER → `2026-08-22-miso-175-hourkey` (bundle `miso175_hourkey`), on the arm's OWN
 > pre-registered gates (`PREREG-miso175-seam-envelope-hour-key-2026-08-22.md`, committed with the
