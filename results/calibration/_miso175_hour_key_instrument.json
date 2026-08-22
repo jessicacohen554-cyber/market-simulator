@@ -1,0 +1,373 @@
+{
+ "session": "miso-175",
+ "frozen_before_solve": true,
+ "loader": "market_sim.data.eia930.measured_seam_import_envelope (PRODUCTION)",
+ "windows": {
+  "annual": 8760,
+  "summer": 2928,
+  "summer_evening_he18_22": 610,
+  "summer_morning_he07_12": 732
+ },
+ "arrays": {
+  "2023_import_PJM": {
+   "sha256_legacy": "a3541a8c6723f934e37e8a8fcc819a923ddc953d394011f3d79e416737af8245",
+   "sha256_corrected": "5dd137d39761f3027c39292a25dcb50255f2b10f3c15525ef947df19f3285cf4",
+   "annual_mean_legacy_gw": 6.232324200913242,
+   "annual_mean_corrected_gw": 6.231040616438356,
+   "mean_abs_delta_mw": 240.92605022831046,
+   "max_abs_delta_mw": 1022.4000000000005,
+   "hours_delta_nonzero": 8760,
+   "window_mean_delta_mw": {
+    "annual": -1.2835844748858485,
+    "summer": -1.586065573770494,
+    "summer_evening_he18_22": 74.22131147540988,
+    "summer_morning_he07_12": -73.97540983606552
+   }
+  },
+  "2023_import_SPP": {
+   "sha256_legacy": "162640c5eb7e2b161d7f97e5381687821e711a45f2048ad6162cd8c3eedcc2f7",
+   "sha256_corrected": "965b5fe849c49b0c4ddd48334d3d390f57cc12dbcd821faff26e3e3da8794825",
+   "annual_mean_legacy_gw": 0.6824140410958904,
+   "annual_mean_corrected_gw": 0.6824314155251142,
+   "mean_abs_delta_mw": 88.45468036529678,
+   "max_abs_delta_mw": 433.0,
+   "hours_delta_nonzero": 8729,
+   "window_mean_delta_mw": {
+    "annual": 0.01737442922374424,
+    "summer": 0.009221311475410186,
+    "summer_evening_he18_22": 8.432786885245896,
+    "summer_morning_he07_12": -78.48087431693989
+   }
+  },
+  "2023_import_South": {
+   "sha256_legacy": "b20ad640c9e48f6afb8db4011cbbbfdc4dc6899b9586d32a5026ec0622aa379f",
+   "sha256_corrected": "56f3bee6770b0be62bd7745036a47e3587b081ac53e89bf8733903629dcc0a25",
+   "annual_mean_legacy_gw": 0.08536385844748862,
+   "annual_mean_corrected_gw": 0.08536385844748862,
+   "mean_abs_delta_mw": 43.56780821917808,
+   "max_abs_delta_mw": 454.99999999999966,
+   "hours_delta_nonzero": 3386,
+   "window_mean_delta_mw": {
+    "annual": 2.0115821742980006e-16,
+    "summer": 3.4944724709513123e-16,
+    "summer_evening_he18_22": -113.1327868852459,
+    "summer_morning_he07_12": 22.15163934426232
+   }
+  },
+  "2023_import_Manitoba": {
+   "sha256_legacy": "a9e7c0b618d117a2add45bc7511dfe2a533f20c58ee7a66c4bf9e2a5db8c9049",
+   "sha256_corrected": "ca63c668e712feae88c8a738f6d56cf53fdc12692af4e94fee20a9531a8aeb2d",
+   "annual_mean_legacy_gw": 1.0895944977168952,
+   "annual_mean_corrected_gw": 1.0892113698630137,
+   "mean_abs_delta_mw": 95.95997716894976,
+   "max_abs_delta_mw": 932.0,
+   "hours_delta_nonzero": 7965,
+   "window_mean_delta_mw": {
+    "annual": -0.383127853881279,
+    "summer": -1.0594262295081978,
+    "summer_evening_he18_22": -34.90163934426228,
+    "summer_morning_he07_12": 149.0068306010929
+   }
+  },
+  "2023_export_PJM": {
+   "sha256_legacy": "552174f2b8c10e2690611955d8f47cb536cc985d4b9e562e8cd03bf083bcd137",
+   "sha256_corrected": "552174f2b8c10e2690611955d8f47cb536cc985d4b9e562e8cd03bf083bcd137",
+   "annual_mean_legacy_gw": 0.0,
+   "annual_mean_corrected_gw": 0.0,
+   "mean_abs_delta_mw": 0.0,
+   "max_abs_delta_mw": 0.0,
+   "hours_delta_nonzero": 0,
+   "window_mean_delta_mw": {
+    "annual": 0.0,
+    "summer": 0.0,
+    "summer_evening_he18_22": 0.0,
+    "summer_morning_he07_12": 0.0
+   }
+  },
+  "2023_export_SPP": {
+   "sha256_legacy": "d5069cdeed5b1a0a002a3415826c2d6bdf8cb87472c1d3a045940efdea9eeb3e",
+   "sha256_corrected": "4783d571738c12a687603be9adfd36bdd11dfb84f37a03efe4fcf19c6dfba81e",
+   "annual_mean_legacy_gw": 0.4802198744292238,
+   "annual_mean_corrected_gw": 0.48027518264840174,
+   "mean_abs_delta_mw": 103.49117579908675,
+   "max_abs_delta_mw": 484.7999999999997,
+   "hours_delta_nonzero": 8328,
+   "window_mean_delta_mw": {
+    "annual": 0.055308219178081604,
+    "summer": -1.9413735949729513e-16,
+    "summer_evening_he18_22": -139.35409836065574,
+    "summer_morning_he07_12": 92.6639344262295
+   }
+  },
+  "2023_export_South": {
+   "sha256_legacy": "e87c0ab9d19dfdc5da750002c9bafa0f8e6a2ec894d79f14ce6ddb0ec0950d1c",
+   "sha256_corrected": "6304352269a737ad88eaf68569311044e2a1850f364709a0d261253b75612e27",
+   "annual_mean_legacy_gw": 2.0255527511415528,
+   "annual_mean_corrected_gw": 2.0259753881278537,
+   "mean_abs_delta_mw": 140.81950913242008,
+   "max_abs_delta_mw": 564.0,
+   "hours_delta_nonzero": 8760,
+   "window_mean_delta_mw": {
+    "annual": 0.4226369863013685,
+    "summer": 0.0,
+    "summer_evening_he18_22": -33.844262295082004,
+    "summer_morning_he07_12": -79.84426229508195
+   }
+  },
+  "2023_export_Manitoba": {
+   "sha256_legacy": "e4b299f0bf7581493aae02609ae2bde28cd9aea6c730ab84a0c1bc96f488d68c",
+   "sha256_corrected": "2451eed9a292a8a463222ac2b827b6253dcbbc1b9bda8524d2b87729cbff50dc",
+   "annual_mean_legacy_gw": 0.2146096575342466,
+   "annual_mean_corrected_gw": 0.2146096575342466,
+   "mean_abs_delta_mw": 26.7375799086758,
+   "max_abs_delta_mw": 530.1000000000001,
+   "hours_delta_nonzero": 3505,
+   "window_mean_delta_mw": {
+    "annual": -7.786769706960002e-17,
+    "summer": 9.706867974864756e-17,
+    "summer_evening_he18_22": 2.9213114754098366,
+    "summer_morning_he07_12": -28.924863387978146
+   }
+  },
+  "2024_import_PJM": {
+   "sha256_legacy": "c623e2c18e3564c8975c8f0a76eeea3a09925ad76533b6136bf589a9e62ac50b",
+   "sha256_corrected": "250fe9fd66e9ef79d7c536b41d140772e808ac1ad67c3c62806afba7d6f19603",
+   "annual_mean_legacy_gw": 5.068666084474887,
+   "annual_mean_corrected_gw": 5.068458276255708,
+   "mean_abs_delta_mw": 251.1183105022831,
+   "max_abs_delta_mw": 1210.3999999999996,
+   "hours_delta_nonzero": 8760,
+   "window_mean_delta_mw": {
+    "annual": -0.20780821917808132,
+    "summer": -0.9881830601092915,
+    "summer_evening_he18_22": 168.03770491803277,
+    "summer_morning_he07_12": -229.50136612021862
+   }
+  },
+  "2024_import_SPP": {
+   "sha256_legacy": "68c3c394240ac52f8a6227290388f7d09adc5d14acbdbfe45bfcc05fe7202284",
+   "sha256_corrected": "6a7d7fe0ee58de76339077714faebc5655ea4b47d6afcd5cfed636bc21b4921c",
+   "annual_mean_legacy_gw": 0.5793407534246576,
+   "annual_mean_corrected_gw": 0.5785412214611872,
+   "mean_abs_delta_mw": 74.72722602739726,
+   "max_abs_delta_mw": 359.0,
+   "hours_delta_nonzero": 8729,
+   "window_mean_delta_mw": {
+    "annual": -0.7995319634703187,
+    "summer": -0.08801229508196844,
+    "summer_evening_he18_22": 25.127868852459024,
+    "summer_morning_he07_12": -72.84426229508196
+   }
+  },
+  "2024_import_South": {
+   "sha256_legacy": "a3d05e3176e689dff8aebad658efae31768bba8da3873b9f11c94641b9310fc9",
+   "sha256_corrected": "a2437f08977b0dac202879284a1c054a3e49f7986b873d7ecc64d300f8e0313d",
+   "annual_mean_legacy_gw": 0.09368162100456624,
+   "annual_mean_corrected_gw": 0.09368162100456623,
+   "mean_abs_delta_mw": 41.75684931506849,
+   "max_abs_delta_mw": 414.0,
+   "hours_delta_nonzero": 2929,
+   "window_mean_delta_mw": {
+    "annual": 1.5167978491682504e-16,
+    "summer": 3.6886098304486077e-16,
+    "summer_evening_he18_22": -63.65245901639342,
+    "summer_morning_he07_12": 7.165300546448086
+   }
+  },
+  "2024_import_Manitoba": {
+   "sha256_legacy": "78838298a4655d931758e04f000f722b2ad768d7ca0cc2201dc2db481deb9fd5",
+   "sha256_corrected": "06935c2959a19806e04194f9c50c7db7fedd68c9073ff914c66adad49574d938",
+   "annual_mean_legacy_gw": 0.8841946803652968,
+   "annual_mean_corrected_gw": 0.8841319863013699,
+   "mean_abs_delta_mw": 97.81251141552512,
+   "max_abs_delta_mw": 875.0,
+   "hours_delta_nonzero": 7672,
+   "window_mean_delta_mw": {
+    "annual": -0.06269406392694137,
+    "summer": -0.02465846994535707,
+    "summer_evening_he18_22": -17.90819672131148,
+    "summer_morning_he07_12": 110.77868852459017
+   }
+  },
+  "2024_export_PJM": {
+   "sha256_legacy": "552174f2b8c10e2690611955d8f47cb536cc985d4b9e562e8cd03bf083bcd137",
+   "sha256_corrected": "552174f2b8c10e2690611955d8f47cb536cc985d4b9e562e8cd03bf083bcd137",
+   "annual_mean_legacy_gw": 0.0,
+   "annual_mean_corrected_gw": 0.0,
+   "mean_abs_delta_mw": 0.0,
+   "max_abs_delta_mw": 0.0,
+   "hours_delta_nonzero": 0,
+   "window_mean_delta_mw": {
+    "annual": 0.0,
+    "summer": 0.0,
+    "summer_evening_he18_22": 0.0,
+    "summer_morning_he07_12": 0.0
+   }
+  },
+  "2024_export_SPP": {
+   "sha256_legacy": "8b57e0028bee2865fafba0786d9153fd2be8d395cca9487a6e6fa3761ff16c1a",
+   "sha256_corrected": "c4df7308b698b39debc679aa0bccf519bf2d75bf62f4312554afc7b230fe3c9d",
+   "annual_mean_legacy_gw": 0.7211991552511415,
+   "annual_mean_corrected_gw": 0.7207619863013699,
+   "mean_abs_delta_mw": 118.27550228310501,
+   "max_abs_delta_mw": 509.0,
+   "hours_delta_nonzero": 8341,
+   "window_mean_delta_mw": {
+    "annual": -0.4371689497716899,
+    "summer": -0.6949112021857946,
+    "summer_evening_he18_22": -61.97868852459016,
+    "summer_morning_he07_12": 88.59016393442623
+   }
+  },
+  "2024_export_South": {
+   "sha256_legacy": "c13c956b2d8b1e51df83306da5f0fa271b0c9832d6d59403265a4114dc70bf63",
+   "sha256_corrected": "a5a37663f590d0abce6a2286ccf380b3340a8a42a2007b93f75007e401119b9a",
+   "annual_mean_legacy_gw": 2.293684863013698,
+   "annual_mean_corrected_gw": 2.2934822031963473,
+   "mean_abs_delta_mw": 145.3387100456621,
+   "max_abs_delta_mw": 590.0,
+   "hours_delta_nonzero": 8698,
+   "window_mean_delta_mw": {
+    "annual": -0.2026598173515992,
+    "summer": -0.19381830601092973,
+    "summer_evening_he18_22": -12.250819672131149,
+    "summer_morning_he07_12": -50.922131147540995
+   }
+  },
+  "2024_export_Manitoba": {
+   "sha256_legacy": "f384b297cde5f6e809431d6e6c6a83e7f203f41ae9e8973eb533bc89f20bf990",
+   "sha256_corrected": "2109f42092072c40b15a22c9a8b5477b88a554bca8c6a317e262aabfbeb8ec92",
+   "annual_mean_legacy_gw": 0.4010680479452054,
+   "annual_mean_corrected_gw": 0.40099487442922377,
+   "mean_abs_delta_mw": 57.90497716894977,
+   "max_abs_delta_mw": 510.3999999999999,
+   "hours_delta_nonzero": 6036,
+   "window_mean_delta_mw": {
+    "annual": -0.07317351598173526,
+    "summer": -0.08094262295081978,
+    "summer_evening_he18_22": 0.0,
+    "summer_morning_he07_12": -0.30464480874316935
+   }
+  },
+  "2025_import_PJM": {
+   "sha256_legacy": "7e9fbc65592b02cee7654b1a46bf4850b2e5b02bdeb4b107b21c74baae4b8556",
+   "sha256_corrected": "0681d63068fd31c70ca18d319144f3a0b34f103d89c66bf69e6c5a32586ca4d2",
+   "annual_mean_legacy_gw": 4.669655365296803,
+   "annual_mean_corrected_gw": 4.670613127853882,
+   "mean_abs_delta_mw": 241.37534246575342,
+   "max_abs_delta_mw": 917.6000000000008,
+   "hours_delta_nonzero": 8760,
+   "window_mean_delta_mw": {
+    "annual": 0.9577625570776275,
+    "summer": -0.6321721311475388,
+    "summer_evening_he18_22": 283.0934426229508,
+    "summer_morning_he07_12": -180.53961748633878
+   }
+  },
+  "2025_import_SPP": {
+   "sha256_legacy": "ff6c62cf39a9a4a8167ea3cf85f1776e3e0ee856dc5a3a33d0ed5134d6a627da",
+   "sha256_corrected": "83bc177aa82234249c9852ebedf718ec79f179f3da9db9a5cc780297a4cbcdae",
+   "annual_mean_legacy_gw": 0.7336482191780823,
+   "annual_mean_corrected_gw": 0.734876894977169,
+   "mean_abs_delta_mw": 106.49689497716895,
+   "max_abs_delta_mw": 440.0,
+   "hours_delta_nonzero": 8760,
+   "window_mean_delta_mw": {
+    "annual": 1.2286757990867578,
+    "summer": 0.3063524590163927,
+    "summer_evening_he18_22": -24.62459016393444,
+    "summer_morning_he07_12": -62.255464480874316
+   }
+  },
+  "2025_import_South": {
+   "sha256_legacy": "0f73b5b685f0f3d7873d8171f65eab5739bd7d81248012e66e50def6989d94fe",
+   "sha256_corrected": "eb14b109bdfe07ef10d090e0dd3197c53a972ce7d9e1fe33838952466065d298",
+   "annual_mean_legacy_gw": 0.18539817351598178,
+   "annual_mean_corrected_gw": 0.1854181506849315,
+   "mean_abs_delta_mw": 68.34417808219177,
+   "max_abs_delta_mw": 603.6999999999998,
+   "hours_delta_nonzero": 3962,
+   "window_mean_delta_mw": {
+    "annual": 0.01997716894977133,
+    "summer": -0.30020491803278704,
+    "summer_evening_he18_22": 61.57704918032787,
+    "summer_morning_he07_12": 27.903005464480884
+   }
+  },
+  "2025_import_Manitoba": {
+   "sha256_legacy": "dde25b916e9def12ff5c242e6cfc0bad3ff1146d48a1c4f8150574ad94ea23a7",
+   "sha256_corrected": "d158df51fe3d6e8abcbfbed28cb83dd31d6876a4c89be8c6369a36f1e3ea5dad",
+   "annual_mean_legacy_gw": 0.4505752739726028,
+   "annual_mean_corrected_gw": 0.4502485616438357,
+   "mean_abs_delta_mw": 92.31949771689499,
+   "max_abs_delta_mw": 844.4999999999999,
+   "hours_delta_nonzero": 6104,
+   "window_mean_delta_mw": {
+    "annual": -0.32671232876712414,
+    "summer": -0.4692622950819689,
+    "summer_evening_he18_22": -98.92950819672132,
+    "summer_morning_he07_12": 32.327868852459034
+   }
+  },
+  "2025_export_PJM": {
+   "sha256_legacy": "539291039b44bb26dd75b039dfdf1b8a07a7e9d22b676aa394673b639a79789f",
+   "sha256_corrected": "7772c508af97a9b4e2a56154a5e65cad8293a79546c2be290a422668e8f739f5",
+   "annual_mean_legacy_gw": 0.008312328767123296,
+   "annual_mean_corrected_gw": 0.008312328767123294,
+   "mean_abs_delta_mw": 8.981506849315071,
+   "max_abs_delta_mw": 588.4,
+   "hours_delta_nonzero": 510,
+   "window_mean_delta_mw": {
+    "annual": 2.984928387668001e-16,
+    "summer": 0.0,
+    "summer_evening_he18_22": 0.0,
+    "summer_morning_he07_12": 0.0
+   }
+  },
+  "2025_export_SPP": {
+   "sha256_legacy": "d8a0492d172e3b311c305c77a761e68227fbd671a307a6c2f7e3a5807e4ea998",
+   "sha256_corrected": "58e7b54e76fce6305d3b86d10bfcd64f40ab355b0033ef8fd0202e570d907035",
+   "annual_mean_legacy_gw": 0.541568287671233,
+   "annual_mean_corrected_gw": 0.5421576712328767,
+   "mean_abs_delta_mw": 102.58924657534246,
+   "max_abs_delta_mw": 555.2999999999986,
+   "hours_delta_nonzero": 8116,
+   "window_mean_delta_mw": {
+    "annual": 0.5893835616438343,
+    "summer": -3.106197751956722e-16,
+    "summer_evening_he18_22": -82.77868852459015,
+    "summer_morning_he07_12": 60.882513661202196
+   }
+  },
+  "2025_export_South": {
+   "sha256_legacy": "b57cf82237b91f837083f14ffc260badde6611e9673cfd45e85eb769a8abe3ff",
+   "sha256_corrected": "bac9872c18b2d642f9769f2827362446741caaf0ea9072bbc95f1358843a9050",
+   "annual_mean_legacy_gw": 1.9882492465753423,
+   "annual_mean_corrected_gw": 1.988108721461187,
+   "mean_abs_delta_mw": 151.75883561643835,
+   "max_abs_delta_mw": 692.0,
+   "hours_delta_nonzero": 8760,
+   "window_mean_delta_mw": {
+    "annual": -0.14052511415525037,
+    "summer": 1.1010928961748636,
+    "summer_evening_he18_22": -103.05245901639344,
+    "summer_morning_he07_12": 32.532786885245905
+   }
+  },
+  "2025_export_Manitoba": {
+   "sha256_legacy": "f38559f2f1a6b0d47164e9cb6e5c5f628350987fefa18548d727661f1171dd79",
+   "sha256_corrected": "bb26b1887c38550ea9ec07c37b5ef91b7a6960b0eb08a5b28e87bf28cdec192e",
+   "annual_mean_legacy_gw": 0.5959303196347032,
+   "annual_mean_corrected_gw": 0.5960056621004567,
+   "mean_abs_delta_mw": 80.98465753424658,
+   "max_abs_delta_mw": 637.4999999999998,
+   "hours_delta_nonzero": 7503,
+   "window_mean_delta_mw": {
+    "annual": 0.07534246575342474,
+    "summer": 0.22540983606557394,
+    "summer_evening_he18_22": 15.308196721311482,
+    "summer_morning_he07_12": 8.225409836065582
+   }
+  }
+ }
+}
