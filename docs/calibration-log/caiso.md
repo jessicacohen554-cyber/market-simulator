@@ -9147,3 +9147,88 @@ Keeper, markers, holdout freeze, DOF ledger, every matrix cell verdict, **every
 bench part**, and every source file: UNCHANGED.
 
 **Lane REMAINS RESTED. Session consumed the caiso-210 shorthand. Next shorthand: caiso-211.**
+
+---
+
+## 2026-08-22 — CAISO — caiso-211: Branch A executed (REST CONTINUES); full record re-verified on committed bytes — first CLEAN re-verification since the rest protocol gained its cross-checks: no new defect, HEAD delta empty of CAISO
+
+**NO SOLVE, NO PROBE, NO LP, NOTHING REGISTERED, NOTHING REGENERATED, AND NO
+CELL VERDICT MOVES** (nothing was tested, so rule 28b does not attach — the
+caiso-206/207/208/209/210 precedent applied identically). No owner funding
+order issued for either standing tail-formation object, so caiso-203 ruling 2
+(FINAL) governs and Branch A is the correct execution. Numbering is consistent
+this session: the charter delivered is the caiso-211 charter and caiso-210
+closed *"Next number: caiso-211"*.
+
+**Standing state reproduced item-for-item and EXACTLY:** keeper
+`2026-08-17-caiso-200-h1-memberpanel`; `calibration_verdict.py --run-id` →
+**NOT-YET** at rubric **v3.4**, `reasons` *"undocumented out-of-tolerance
+(FAIL) criteria: price_mean"*; C3a the SOLE load-bearing FAIL (model/actual
+$/MWh 56.40/54.17 = **+4.1 % PASS**, 39.07/34.65 = **+12.8 %**, 39.82/34.42 =
+**+15.7 %**, judged vs ACTUAL RT LMP only); C3c the SINGLE ledgered caveat
+(0h/47, 1h/35, 2025 PASS 0h/8h), budget **ledgered 1 of 1, protective 0 of 0**;
+C1 **12/12 free 8/8**; C2/C3b/C4/C6/C8 PASS; `grade_summary` scored 8 /
+target_grade 6 / commercial_grade 0 / ledgered 1 / fails 1;
+`audit_keepers --iso CAISO` **PASS 0/0**; `build_status --iso CAISO --check` in
+sync; DOF ledger **10/7**; CAISO absent from BOTH `complete` and `final` (it
+sits in `withdrawn`); freeze **ACTIVE**; all three registrations present,
+tracked, years `[2023,2024,2025]`, payloads on disk — no out-of-training year
+touched. Census **unchanged at K 64 · U 33 · I 15 · R 9 · O 6 · G 5 = 132**.
+`check_mechanism_matrix` exit 0: integrity OK, keeper stamps AND §5.x prose
+headers match every keeper shard, 0 unresolvable beyond the ratchet.
+
+**Both guardrail cross-checks re-run and CLEAN on first read.** caiso-208's
+*posture* check: the shard `gates` stamp (caiso-210's) and the §5.2 header both
+read back CURRENT against the verdict — **no correction needed, so neither
+surface was touched**; a current stamp is left alone, not churned with a
+no-change re-stamp. caiso-209's *magnitude* extension: every recorded magnitude
+re-read independently from `calibration_verdict.py --json` — **C3b NRMSE
+0.098 / 0.179 / 0.182 vs ≤0.20** (2025 margin **0.018**, composition watch
+live), C3a and C3c as above — nothing carried forward unread.
+
+**THE DISTINCTIVE FACT: a clean re-verification, made meaningful by two
+measurements rather than assumed.** (1) **The HEAD delta is empty of CAISO** —
+since caiso-210's merge (`627f547`, PR #4174), `origin/main` moved by exactly
+two commits (`57c36e4` miso-174 + merge `317be02`, PR #4175), touching ONE file
+(`docs/mechanism-testing-matrix.md`, +106/−1) in a single hunk at line 4459,
+immediately above the `### 5.4 MISO` header — entirely inside MISO's own
+section. No scorer, bench part, shard, keeper file or `src/` path moved.
+(2) **The STALE BENCHMARK banner still fires with the IDENTICAL fingerprint
+`ded4ca25749a`** caiso-210 recorded — an independent confirmation that
+`BUILDER_SOURCES` is byte-unchanged since the caiso-210 exposure measurement,
+so its conclusion (**stamp-absence, not drift**; payload reproducible at HEAD;
+C1's 12/12 PASS unaffected) **carries forward without re-derivation**, exactly
+as its DO-NOT-REDO entry requires. caiso-208 found the stale stamp, caiso-209
+the superseded C3b triplet, caiso-210 the stale-benchmark flag; caiso-211 ran
+the same instruments and found nothing — the negative result is the record.
+
+**Owner packet unchanged at TWO items.** (1) Fund a tail-formation object —
+(a) PS water-state hourly intake, declined 3×, reaches 62.1 %/10.4 % of the
+required 2024/2025 C3a move at its most favourable bound; (b) import
+spot-capacity derivation, not funded, direct λ share < 5 %. Neither closes C3a
+on its own arithmetic. (2) F-3 arming posture of `caiso_ra_mpb_capacity_anchor`
+— recommendation **keep default-OFF** (FC-2 row 4 improves solely by channel
+substitution: identical 10,186.3 MW built in both arms, only the label on
+1,000 MW moves). **A clean re-verification adds no third item.**
+
+**Filed items:** item 1 (stale DOF text — `offer_curve_by_group` still reads
+`identification: "residual"`) **re-verified still open by direct read of the
+attestation**; items 2–5 carried, including the unstamped bench parts
+(discharge as a by-product of the next funded solve, then
+`check_bench_freshness.py --iso CAISO` + a keeper verdict re-run). Routed
+off-lane unchanged: the checker defects D1/D2, the five-ISO regeneration +
+CI-gate sequence (program-level), and the `cccc911` stale forecast-citation
+sweep including the shared `mechanism-matrix.js` base-row text.
+
+**DO-NOT-REDO** carried forward verbatim from caiso-206 §B / caiso-207 §5 /
+caiso-208 §4 / caiso-209 §5 / caiso-210 §4; this session adds no new entry —
+no new adjudication was made, so there is nothing new to freeze. New evidence
+still means exactly one thing: a keeper whose own scored path spikes.
+
+**Records:**
+`results/calibration/ASSESSMENT-caiso211-rest-continuation-2026-08-22.md`,
+matrix §5.2 caiso-211 block, this entry. Keeper, markers, holdout freeze, DOF
+ledger, every matrix cell verdict, the shard `gates` stamp, the §5.2 header,
+every bench part, and every source file: UNCHANGED.
+
+**Lane REMAINS RESTED. Session consumed the caiso-211 shorthand. Next shorthand: caiso-212.**
