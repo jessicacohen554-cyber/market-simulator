@@ -1,0 +1,176 @@
+{
+ "probe": "ercot227_probe_f1b",
+ "factor": "F1b ercot_as_held_requirement_nspin \u2014 NSPIN-family held-depth, requirement_NSPIN(t) = max(plan(t), held(t)) over the full year (the NSPIN family is NOT rigid: it releases down the standard ramp, matching the real design in which online Non-Spin energy is SCED-dispatchable at its offer)",
+ "charter": "docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md \u00a72 (F1b row), \u00a75.11 Amendment 3; waiver W-3 (ercot-226)",
+ "session": "hub (ercot-227) \u2014 HUB FALLBACK: the ercot-229 spoke was dispatched for this arm and did not deliver (no branch, no commit, no JSON at 2026-08-22 15:4x UTC), so the hub ran it, per the precommit \u00a76 clause that spokes are an accelerator and never a dependency.",
+ "branch_sha": "cb7aadf8408a727ad7a06268232e250a54ae83a1",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1"
+ },
+ "control": {
+  "bundle": "results/calibration/ercot226_ctl2023",
+  "official_2023": {
+   "C3a_pct": -39.7,
+   "C3b_nrmse": 0.729,
+   "C3c_model_tail_h": 74
+  }
+ },
+ "arm": {
+  "bundle": "results/calibration/ercot227_f1b_arm",
+  "set": {
+   "ercot_as_held_requirement_nspin": true
+  },
+  "years": [
+   2023
+  ]
+ },
+ "official": {
+  "2023": {
+   "C3a_pct": -39.7,
+   "C3b_nrmse": 0.729,
+   "C3c_model_tail_h": 74,
+   "model_mean_usd": 38.81,
+   "delta_vs_control_pp": 0.0
+  }
+ },
+ "numeric_identity_vs_control": {
+  "verdict": "PRICES AND DISPATCH NUMERICALLY IDENTICAL",
+  "per_sidecar_max_abs_delta": {
+   "system": {
+    "max_abs_delta": 1.4210854715202004e-13,
+    "worst_col": "price"
+   },
+   "reserve_family": {
+    "max_abs_delta": 314.050048828125,
+    "worst_col": "held_mw"
+   },
+   "class_hourly": {
+    "max_abs_delta": 0.0,
+    "worst_col": null
+   },
+   "adaptive": {
+    "max_abs_delta": 0.0,
+    "worst_col": null
+   },
+   "storage": {
+    "max_abs_delta": 0.0001220703125,
+    "worst_col": "charge_mw"
+   },
+   "network": {
+    "max_abs_delta": 246.872802734375,
+    "worst_col": "mw"
+   }
+  },
+  "reading": "system.price 1.4e-13 and storage.charge_mw 1.2e-04 are LP re-solve floating-point noise; class_hourly and adaptive are EXACTLY 0.0 apart; reserve_family.held_mw (\u2264314 MW) and network.mw (\u2264247 MW) are degenerate re-allocation within the optimal face at an unchanged objective and unchanged duals."
+ },
+ "probe_basis": {
+  "nspin_family": {
+   "n_hours_requirement_changed": 15,
+   "hours": [
+    5175,
+    5176,
+    5177,
+    5247,
+    5248,
+    5249,
+    5271,
+    5656,
+    5657,
+    5967,
+    5968,
+    5969,
+    6016,
+    6017,
+    6378
+   ],
+   "max_requirement_delta_mw": 5.625,
+   "annual_requirement_delta_mwh": 34.45,
+   "dual_max_abs_delta": 0.0,
+   "shortfall_hours_control": 117,
+   "shortfall_hours_arm": 117
+  },
+  "measured_prior": {
+   "plan_mean_mw": 3348.66,
+   "held_rt_mean_mw": 756.81,
+   "hours_held_gt_plan": 15,
+   "max_held_minus_plan_mw": 5.625,
+   "confirmed_by_solve": true
+  },
+  "c3a_probe_pct": {
+   "control": -29.99,
+   "arm": -29.99
+  },
+  "model_mean": {
+   "control": 33.856,
+   "arm": 33.856
+  },
+  "tail_model_gt200": {
+   "control": 74,
+   "arm": 74
+  }
+ },
+ "summer": {
+  "miss_split_ctl": {
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  },
+  "miss_split_arm": {
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  },
+  "d_price_at_miss_p50": 0.0,
+  "d_price_at_miss_max": 0.0,
+  "window_concentration": null,
+  "calm_fortnight_bias_pct": {
+   "control": 15.44,
+   "arm": 15.44
+  },
+  "channel_lambda_share_at_improved_miss": null,
+  "improved_miss_hours": 0
+ },
+ "gates": {
+  "G-CAP": {
+   "violations": 0,
+   "pass": true
+  },
+  "G-SPUR": {
+   "pass": true,
+   "bar": "+5/yr vs banded baseline (lidless REPORT-ONLY)"
+  },
+  "G-SHED": {
+   "pass": true
+  },
+  "G-BAT": {
+   "pass": true
+  },
+  "G-D2": {
+   "no_new_d4_rows": true
+  },
+  "G-SHORTFALL": {
+   "pass": true,
+   "rule": "per rigid family, arm shortfall hour-set \u2286 control's (precommit AMENDMENT 1 \u2014 no MANUFACTURED shortage; the keeper baseline itself carries 21 designed VOLL-engagement hours)"
+  }
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "disposition": "MEASURED-INERT",
+  "criteria": {
+   "C3a_2023_gain_pp": 0.0,
+   "C3a_required_pp": 1.5,
+   "pass": false,
+   "C3b_2023_delta": 0.0,
+   "C3b_budget": 0.005,
+   "pass_c3b": true,
+   "gates_all_clean": true
+  },
+  "statement": "F1b is REJECTED for adoption on a measured-null, exactly as F1 was. The mechanism engages \u2014 it raises the NSPIN requirement in 15 hours of 2023 by at most 5.63 MW, 34.5 MWh over 8,760 family-hours \u2014 and changes nothing: the NonSpin dual is exactly unchanged, its 117 shortfall hours are exactly unchanged, class dispatch and adaptive expression are exactly 0.0 apart, and the official scorer prints the keeper digits. 2023 NSPIN procurement was LARGE (plan mean 3,349 MW, 5,052 MW in May falling to 2,206 in August) and the telemetered online responsibility averaged 757 MW against it \u2014 the gap is offline Non-Spin and Load Resources, which are outside the Gen-resource corpus by construction and are NOT operator conservatism.",
+  "structural_reading": "F1b completes the held-depth sweep. All three admissible readings of the procurement-quantity object \u2014 RT telemetered depth on the rigid families (F1), DAM cleared depth (F1c), and RT telemetered depth on the ramp-released NSPIN family (F1b) \u2014 are now measured nulls confirmed by solve. Nothing in ERCOT's 2023 AS procurement quantity is deeper than the plan the keeper already carries."
+ },
+ "do_not_redo": "The held-depth family (F1/F1b/F1c) is adjudicated by measurement plus three confirming solves. Do not re-open without a NEW measured driver, cited by name.",
+ "dashboard": "NOT REGISTERED \u2014 precommit waiver W-2."
+}

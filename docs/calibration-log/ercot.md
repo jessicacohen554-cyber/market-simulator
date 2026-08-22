@@ -11111,3 +11111,79 @@ keeper stands untouched. Env verified at the keeper pins
 
 **Session consumed the ercot-228 shorthand.** (ercot-227 ran concurrently
 in the hub; ercot-199 remains unclaimed)
+
+---
+
+## ercot-227 — 2026-08-22 — THE OWNER'S PROCEED-WITH-ALL-FACTORS EXTENSION: every 2023 conservatism factor carried to a **SOLVED** verdict — F1/F1b/F1c MEASURED-INERT, F3 REJECTED-AS-ARMED at the grain, F4 DATA-ABSENT — **the AS-sequestration channel is CLOSED as an explanation for the 2023 summer miss**
+
+**Charter:** the ercot-226 owner dispatch as EXTENDED 2026-08-22 (*"Proceed with
+all the factors to test not just 1 keep going"*), recorded verbatim in
+`docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md` §5.11 (Amendment 3),
+which converts every Phase-0 kill from **probe-terminating** to
+**probe-informing**. Waivers W-1..W-5 carried forward unchanged.
+**FINDING:** `docs/FINDING-ercot227-factor-sweep-2026-08-22.md`.
+
+**Four solves on the hub box, all 2023-only, all sequential** (rule 12), all
+A/B'd against the hub's own numeric-identical control `ercot226_ctl2023`:
+
+| factor | field | verdict | evidence |
+|---|---|---|---|
+| **F1** rigid held-depth | `ercot_as_held_requirement` | **MEASURED-INERT** | requirement rises in **2 h** (h5875, h6831) by ≤ **8.33 MW**; duals and shortfall hour-sets exactly unchanged; official −39.7 %/0.729/74 h identical; all gates PASS |
+| **F1c** DAM cleared depth | (no field needed) | **MEASURED-ZERO** | RegUp/ECRS/NSPIN cleared **≡ plan** in all 8,760 h; RRS cleared **below** plan in all 8,760 h ⇒ `max(plan, cleared) ≡ plan` |
+| **F1b** NSPIN held-depth | `ercot_as_held_requirement_nspin` | **MEASURED-INERT** | requirement rises in **15 h** by ≤ **5.63 MW**; NonSpin dual and its 117 shortfall hours exactly unchanged; all gates PASS |
+| **F3** RUC/OOM commitment | `ercot_ruc_commitment_floor` (MECH id 23) | **REJECTED-AS-ARMED** (G-D2) | live and attributable — 229,598 floor cells, +0.0097 TWh — but **23 of 42 D-4 unit-conduct rows FAIL**, carrying **94 % of its floored energy** on units whose measured CEMS generation is zero in the majority of floored hours |
+| **F4** load-forecast conservatism | — | **DATA-ABSENT** | ercot-228; every ERCOT surface tried, 7-day rolling retention is ERCOT's advertised design |
+| **F5** deployment-design depth | — | **ALREADY-CARRIED** | feature-by-feature audit |
+
+**F3's cause is THE GRAIN, not the driver, and the reopening was worth it
+anyway.** The ercot-226 Phase-0 kill rested on *"no 2023 RUC MW data on disk"*
+— false: the NP3-965 `Telemetered Resource Status` **ONRUC** rows *are* the
+RUC-instructed unit-hours. The derived 2023 series carries **2,031 distinct
+ONRUC unit-hours over 96 days**, **6.7×** the ercot97 plant-grain lane's
+2024/25-subset 303 — a standing scale premise now corrected on the record
+(`results/calibration/ercot227_ruc_sizing.json`). But the instruction names
+*specific* units, and barred from the per-unit crosswalk (item 11 / Q-B FINAL)
+the mechanism spreads class MW **pro-rata over every unit in the class**,
+reproducing the class total while placing it on units the record says were
+offline — rule 17 `[R-FLOOR-WINDOW]` by its own definition. **F3 is refuted at
+the level of representability, not of data.** The only route back is a *grain*
+change, separately closed and needing its own owner instrument.
+
+**What the program established.** The ercot-217 §5 wedge (~2.7 GW of
+responsive headroom the model retains and real SCED did not) admitted exactly
+three procurement-side readings, and all three are now measured: **mis-SIZED**
+refuted by F1/F1b/F1c, **mis-LOCATED** refuted by F2 at ercot-226 (built,
+armed, negative), **mis-COMMITTED** refuted by F3. Sharper still: **every
+armed factor showed `d_price_at_miss` p50 = max = 0.0** — not one of the 114
+missed scarcity hours moved under any of them. *The 2023 summer residual is
+not reachable from the AS-procurement inputs at all.*
+
+**Disposition — precommit §5.8 else-branch, now on solved evidence:** no
+factor cleared adoption (F1 0.00 pp, F1b 0.00 pp, F3 0.00 pp with a gate FAIL,
+F2 −5.8 pp with a gate FAIL). **No combined run, no registration, no
+promotion; the keeper `2026-08-20-ercot223-arm-eventrelease` is untouched.**
+W-4's pre-authorisation went unexercised because nothing reached its
+threshold, and no verdict is borderline — every rejection is a measured null
+at 0.00 pp or a gate failure with zero accompanying benefit. Nothing was
+registered on the dashboard (W-2); probe bundles stayed local; the committed
+record is `results/calibration/ercot227_probe_{f1,f1b,f3}.json` +
+`ercot227_{f1,f1b,f3}_gates.json` + `ercot227_ruc_sizing.json`.
+
+**Matrix:** `ercot_as_held_requirement` **U → I** (F1 + F1b + F1c evidence),
+`ercot_ruc_commitment_floor` **U → R** (D-4 unit-conduct + the grain
+diagnosis). `ercot_as_held_location` stays **R** from ercot-226.
+
+**Stop-the-line repairs** made ahead of all other work: commit `08a440c` had
+referenced `MECH_ERCOT_RUC_COMMITMENT` in `scripts/legitimacy_diagnostics.py`
+without importing it (module broken at import time), and its matrix base row
+used an unknown category token (hard CI failure). Both fixed and pushed; the
+import was subsequently dropped again by a merge and re-repaired on main
+(`c06616ba`).
+
+**Also run by the hub as a fallback:** F1b was dispatched to the ercot-229
+spoke, which did not deliver (no branch, no commit, no JSON). The hub ran it —
+precommit §6 makes spokes an accelerator, never a dependency. **ercot-229 was
+therefore never consumed and remains available**, alongside ercot-199.
+
+**Session consumed the ercot-227 shorthand. Next shorthand: ercot-230**
+(ercot-199 and ercot-229 remain unclaimed)
