@@ -756,6 +756,11 @@ class ReserveDesign:
     headroom_eligible: Optional[np.ndarray] = None  # (n_hr, n_gen) bool
     headroom_products: Optional[np.ndarray] = None  # (n_hr, n_families) bool
     headroom_extra_cap: Optional[np.ndarray] = None
+    # (n_hr,) bool — which additive headroom rows pooled storage backs
+    # (ercot-226 ercot_as_held_location: storage backs the two tier rows but
+    # never a class-carve row, whose RHS must stay the class's own thermal
+    # capability). None = every row (byte-identical legacy behaviour).
+    headroom_storage: Optional[np.ndarray] = None
     online_gated: Optional[np.ndarray] = None  # (n_classes,) bool
     online_rho: float = 1.0
     # Per-generator reserve spec (dispatch._build_reserve_rows_pergen): one
@@ -867,6 +872,16 @@ def get_reserve_design(
     """
     iso = str(config.iso)
     if iso == "ERCOT":
+        if getattr(config, "ercot_as_held_location", False) and not getattr(
+            config, "ercot_multiproduct_as_coopt", False
+        ):
+            # ercot-226 F2 fail-loud (design-time — the staged config
+            # channels forbid a __post_init__ cross-field guard): the
+            # held-location carve exists only in the multi-product design.
+            raise ValueError(
+                "ercot_as_held_location requires ercot_multiproduct_as_coopt "
+                "(it carves the multi-product rigid families)."
+            )
         if getattr(config, "ercot_multiproduct_as_coopt", False):
             return _ercot_multiproduct_design(
                 config,
@@ -989,6 +1004,10 @@ def build_reserve_dispatch_kwargs(
 
     if design.headroom_extra_cap is not None:
         kw["reserve_headroom_extra_cap"] = design.headroom_extra_cap
+
+    # Per-row storage pooling mask (ercot-226 held-location class rows)
+    if design.headroom_storage is not None:
+        kw["reserve_headroom_storage"] = design.headroom_storage
 
     # Online-gated reserve (NYISO synchronised, PJM)
     if design.online_gated is not None:
@@ -1389,6 +1408,66 @@ def _ercot_design(
 # ---- ERCOT multi-product ---------------------------------------------------
 
 
+#: ercot-226 F2 held-location: measured-class token (the committed
+#: RESTYPE→class map of build_ercot_as_by_restype_from_60day /
+#: derive_ercot_as_responsibility) → this fleet's plant_group members. The
+#: NP3-965 Resource Type grain does not split CHP from merchant trains
+#: (CCGT90 covers both), so each token maps to the technology class whole;
+#: the location constraint is "held on this technology" at the grain the
+#: disclosure supports. gas_ct is deliberately absent (quick-start — outside
+#: the fast tier the rigid products draw on; its measured holds are ~0 at
+#: the target hours, ercot226_helddepth_phase0.json).
+ERCOT_HELD_CLASS_GROUPS: dict[str, tuple[str, ...]] = {
+    "gas_cc": ("CC_REGULAR", "CC_CHP"),
+    # The fleet's plant_group token for coal is the single "COAL" (the
+    # COAL_LIGNITE/COAL_PRB split is the class_hourly sidecar's REPORTING
+    # vocabulary, not the fleet grain — measured on the armed run's own
+    # skip log, ercot-226).
+    "coal": ("COAL",),
+    "gas_st": ("ST_GAS", "ST_CHP"),
+}
+
+
+def _ercot_rigid_end(config, year: int, T: int, code: str) -> int:
+    """End hour (exclusive) of product ``code``'s rigid no-release window.
+
+    Pure date/design logic, factored out of the family-split loop
+    (behavior-identical — ercot-226) so the held-location leg reads the SAME
+    windows. Returns 0 when the product is not rigid for this config-year.
+
+    * ECRS (``ercot_ecrs_conservative_deployment``): whole year before the
+      2024-08-01 release reform (onset carried by the data — the plan is zero
+      pre-launch), ``ERCOT_ECRS_RELEASE_REFORM_HOUR`` in the reform year.
+    * RegUp/RRS (``ercot_nonreleasable_as_withholding``): rigid while the
+      solve-year regime is ``"ordc"`` — FR-12: the regime test rides the
+      SOLVE year through the ``ercot_market_regime`` seam
+      (results/scarcity.py). RTC+B retired the HASL carve-out, so an
+      auto-regime 2026+ year (or an explicit design="rtcb" pin) never
+      re-arms it, and a design="ordc" scenario pin keeps it in force as
+      pinned. Under auto this is value-identical to the former numeric gates
+      (ordc ⇔ year < 2026) for every backcast year.
+    """
+    if getattr(config, "ercot_ecrs_conservative_deployment", False) and code == "ECRS":
+        if year < ERCOT_ECRS_RELEASE_REFORM_YEAR:
+            return T  # whole year (ECRS onset carried by the data)
+        if year == ERCOT_ECRS_RELEASE_REFORM_YEAR:
+            return min(ERCOT_ECRS_RELEASE_REFORM_HOUR, T)
+        return 0
+    if getattr(config, "ercot_nonreleasable_as_withholding", False) and code in (
+        "REGUP",
+        "RRS",
+    ):
+        from market_sim.results.scarcity import (
+            RTCB_GOLIVE_HOUR,
+            RTCB_GOLIVE_YEAR,
+            ercot_market_regime,
+        )
+
+        if ercot_market_regime(year, config) == "ordc":
+            return min(RTCB_GOLIVE_HOUR, T) if year == RTCB_GOLIVE_YEAR else T
+    return 0
+
+
 def _ercot_multiproduct_design(
     config,
     fleet_arrays: FleetArrays,
@@ -1402,13 +1481,10 @@ def _ercot_multiproduct_design(
 ) -> ReserveDesign:
     """ERCOT multi-product AS co-optimization (RegUp/RRS/ECRS/NonSpin)."""
     from market_sim.results.scarcity import (
-        RTCB_GOLIVE_HOUR,
-        RTCB_GOLIVE_YEAR,
         ercot_as_forward_drivers,
         ercot_as_forward_requirement_mw,
         ercot_as_plan_requirement_mw,
         ercot_load_resource_reserve_credit_mw,
-        ercot_market_regime,
         ercot_rtolcap_supply_cap_mw,
         nyiso_rcpf_product_shortfall_steps,
     )
@@ -1508,30 +1584,7 @@ def _ercot_multiproduct_design(
         # outside each window) — penalty steps are static per family, so the
         # date gate lives in the requirement mask. See the
         # ERCOT_ECRS_RELEASE_REFORM_* citation block above.
-        rigid_end = 0
-        if req_peak > 0.0:
-            if (
-                getattr(config, "ercot_ecrs_conservative_deployment", False)
-                and code == "ECRS"
-            ):
-                if year < ERCOT_ECRS_RELEASE_REFORM_YEAR:
-                    rigid_end = T  # whole year (ECRS onset carried by the data)
-                elif year == ERCOT_ECRS_RELEASE_REFORM_YEAR:
-                    rigid_end = min(ERCOT_ECRS_RELEASE_REFORM_HOUR, T)
-            elif getattr(
-                config, "ercot_nonreleasable_as_withholding", False
-            ) and code in ("REGUP", "RRS"):
-                # FR-12: the regime test rides the SOLVE year through the
-                # ercot_market_regime seam (results/scarcity.py) — RTC+B
-                # retired the HASL carve-out, so an auto-regime 2026+ year
-                # (or an explicit design="rtcb" pin) never re-arms it, and a
-                # design="ordc" scenario pin keeps it in force as pinned.
-                # Under auto this is value-identical to the former numeric
-                # gates (ordc ⇔ year < 2026) for every backcast year.
-                if ercot_market_regime(year, config) == "ordc":
-                    rigid_end = (
-                        min(RTCB_GOLIVE_HOUR, T) if year == RTCB_GOLIVE_YEAR else T
-                    )
+        rigid_end = _ercot_rigid_end(config, year, T, code) if req_peak > 0.0 else 0
         if rigid_end > 0:
             req_rigid = req_t.copy()
             req_rigid[rigid_end:] = 0.0
@@ -1684,6 +1737,166 @@ def _ercot_multiproduct_design(
         headroom_products[1, p] = True
         if tier == "fast":
             headroom_products[0, p] = True
+
+    # ercot-226 F2 — measured held-LOCATION of the rigid-product AS
+    # (config.ercot_as_held_location, GATED default off, backcast-only;
+    # PRECOMMIT-ercot226-held-sequestration-2026-08-22 §2 F2 under owner
+    # waiver W-3 (ercot-226)). The co-opt satisfies the system-wide rigid
+    # requirements with the CHEAPEST-to-hold capacity — idle/extra-marginal
+    # units whose headroom rows stay slack (FINDING-ercot217 §5), while the
+    # real 2023 grid held its RegUp/RRS/ECRS on specific ONLINE units (the
+    # HASL carve, Nodal §6.5.7.6.2.3/§3.17), displacing marginal energy
+    # supply. This pins WHERE the held MW sit at class grain (the committed
+    # RESTYPE map — per-unit grain is Q-B-closed, item 11): per thermal class
+    # C with measured telemetered responsibilities, a new reserve class +
+    # class-scoped headroom row (Σ_{g∈C∩z} P + R[c_C,z] ≤ cap(C,z)) and a
+    # rigid VOLL-step family requiring the measured held MW on that class,
+    # with a CONSERVING credit — each rigid product's system requirement
+    # gives up exactly the class-located MW, so total held reserve is
+    # unchanged (rule 19: location only, no new quantity). The held series is
+    # a measured power reservation (rule 13's admissible example), zero
+    # outside its published coverage, so an uncovered year's design is
+    # byte-identical to flag-off (2024/2025 invariance by construction).
+    # Class capability clip (data-vs-data, no free parameter): a class can
+    # never be required to hold more than its own pmax×availability.
+    held_class_families: list[ReserveFamily] = []
+    headroom_storage: np.ndarray | None = None
+    if getattr(config, "ercot_as_held_location", False):
+        # Design-time pairing guards (ercot-226; a __post_init__ guard on
+        # kwargs-channel flags fires on valid intermediate configs — the
+        # staged construction lesson). One writer, rule 19.
+        if not (
+            getattr(config, "ercot_ecrs_conservative_deployment", False)
+            or getattr(config, "ercot_nonreleasable_as_withholding", False)
+        ):
+            raise ValueError(
+                "ercot_as_held_location requires a rigid no-release family "
+                "(ercot_ecrs_conservative_deployment or "
+                "ercot_nonreleasable_as_withholding) — the held-location "
+                "carve is the rigid design's WHERE, not a new quantity."
+            )
+        if getattr(config, "ercot_storage_as_endogenous", False) or getattr(
+            config, "ercot_storage_as_duration_gate", False
+        ):
+            raise ValueError(
+                "ercot_as_held_location cannot pair with the endogenous "
+                "storage AS split / duration gate (unsupported RS-column "
+                "interaction; the measured storage treatment is the armed "
+                "path)."
+            )
+        if getattr(config, "ercot_ordc_only_scarcity", False):
+            raise ValueError(
+                "ercot_as_held_location and ercot_ordc_only_scarcity are "
+                "mutually exclusive: the held families price rigid VOLL "
+                "steps the plan-hold design deliberately does not."
+            )
+        _require_backcast_measured(
+            config,
+            "ercot_as_held_location",
+            "the measured telemetered per-class AS responsibilities "
+            "(NP3-965 60-Day SCED, derive_ercot_as_responsibility.py)",
+        )
+        from market_sim.results.scarcity import ercot_as_held_by_class_mw
+
+        plant_group = getattr(fleet_arrays, "plant_group", None)
+        if plant_group is None:
+            raise ValueError(
+                "ercot_as_held_location requires per-plant fleet arrays with "
+                "plant_group (ERCOT use_campd_bins)"
+            )
+        pg = np.asarray(plant_group)
+        cap_gt = fleet_arrays.pmax[:, None] * np.asarray(
+            fleet_arrays.availability, dtype=float
+        )
+        rigid_codes = [
+            (p, code)
+            for p, (_n, code, _t) in enumerate(products)
+            if code in ("REGUP", "RRS", "ECRS")
+        ]
+        for token, groups in ERCOT_HELD_CLASS_GROUPS.items():
+            cls_mask = fast_elig & np.isin(pg, list(groups))
+            if not cls_mask.any():
+                logger.info(
+                    "ercot_as_held_location: class %s SKIPPED — no fleet "
+                    "member matches plant groups %s (fleet groups present: %s)",
+                    token,
+                    groups,
+                    sorted(set(np.asarray(pg, dtype=str)))[:20],
+                )
+                continue
+            held_p: dict[int, np.ndarray] = {}
+            tot = np.zeros(T, dtype=float)
+            for p, code in rigid_codes:
+                r_end = _ercot_rigid_end(config, year, T, code)
+                h = np.asarray(ercot_as_held_by_class_mw(year, T, token, code), float)
+                if r_end < T:
+                    h = h.copy()
+                    h[r_end:] = 0.0
+                held_p[p] = h
+                tot += h
+            if tot.max() <= 0.0:
+                continue
+            cls_cap = cap_gt[cls_mask].sum(axis=0)  # (T,)
+            used = np.minimum(tot, cls_cap)
+            if used.max() <= 0.0:
+                continue
+            with np.errstate(invalid="ignore", divide="ignore"):
+                ratio = np.where(tot > 0.0, used / tot, 0.0)
+            for p, _code in rigid_codes:
+                requirement[p, :] = np.maximum(
+                    requirement[p, :] - held_p[p] * ratio, 0.0
+                )
+            held_class_families.append(
+                ReserveFamily(
+                    name=f"{token}_held",
+                    requirement=used,
+                    zone_mask=zone_mask_all.copy(),
+                    ordc_penalties=np.array([voll], dtype=float),
+                    ordc_step_widths=np.array([float(used.max())], dtype=float),
+                    reserve_class=n_prod + len(held_class_families),
+                )
+            )
+            reserve_eligible = np.vstack([reserve_eligible, cls_mask])
+            headroom_eligible = np.vstack([headroom_eligible, cls_mask])
+            logger.info(
+                "ercot_as_held_location: class %s ARMED — %d members, held "
+                "mean %.0f / max %.0f MW (clip engaged %d h)",
+                token,
+                int(cls_mask.sum()),
+                float(used.mean()),
+                float(used.max()),
+                int((used < tot).sum()),
+            )
+        if held_class_families:
+            # Re-mask the credited product requirements into every product
+            # family's own active window (the LR/storage-credit idiom).
+            for fam_list in (families, released_ecrs_families):
+                for f, fam in enumerate(fam_list):
+                    p = int(fam.reserve_class)
+                    fam_list[f] = ReserveFamily(
+                        name=fam.name,
+                        requirement=np.where(
+                            fam.requirement > 0.0, requirement[p, :], 0.0
+                        ),
+                        zone_mask=fam.zone_mask,
+                        ordc_penalties=fam.ordc_penalties,
+                        ordc_step_widths=fam.ordc_step_widths,
+                        reserve_class=fam.reserve_class,
+                    )
+            k = len(held_class_families)
+            hp = np.zeros((2 + k, n_prod + k), dtype=bool)
+            hp[:2, :n_prod] = headroom_products
+            # Held-class reserve competes inside BOTH tier rows (its MW are
+            # rigid fast-product holds) and rides the RTOLCAP supply-cap rows
+            # through them; each class row bounds only its own R.
+            hp[0, n_prod:] = True
+            hp[1, n_prod:] = True
+            for j in range(k):
+                hp[2 + j, n_prod + j] = True
+            headroom_products = hp
+            # Storage backs the two tier rows exactly as before but NEVER a
+            # class row — idle battery room must not loosen the class carve.
+            headroom_storage = np.array([True, True] + [False] * k, dtype=bool)
 
     # Mode-aware: measured RTOLCAP/RTOFFCAP parquet in backcast (flag off), or the
     # WS-A forward formula in forecast / under the ercot_reserve_supply_forward
@@ -1922,13 +2135,43 @@ def _ercot_multiproduct_design(
             0.0,
         )
 
+    if held_class_families:
+        # The class headroom rows are new rows in every (n_hr, T)-strict
+        # consumer: the supply-cap block gets uncapped sentinel rows (the
+        # class R already rides the two tier cap rows via headroom_products),
+        # and the online-capacity envelope pairing is refused outright — its
+        # padding is unimplemented and every envelope variant is R-adjudicated
+        # (one writer, rule 19).
+        if online_capacity_cap is not None:
+            raise ValueError(
+                "ercot_as_held_location cannot be combined with the "
+                "online-capacity envelope family (unsupported row padding; "
+                "envelope variants are R-adjudicated)"
+            )
+        if supply_cap is not None:
+            from market_sim.results.scarcity import _RESERVE_SUPPLY_CAP_UNCAPPED_MW
+
+            supply_cap = np.vstack(
+                [
+                    np.asarray(supply_cap, dtype=float),
+                    np.full(
+                        (len(held_class_families), T),
+                        _RESERVE_SUPPLY_CAP_UNCAPPED_MW,
+                    ),
+                ]
+            )
+
     return ReserveDesign(
-        families=families + released_ecrs_families + total_families,
+        families=families
+        + released_ecrs_families
+        + held_class_families
+        + total_families,
         eligible=reserve_eligible,
         storage_eligible=True,
         storage_duration_h=storage_duration_h,
         headroom_eligible=headroom_eligible,
         headroom_products=headroom_products,
+        headroom_storage=headroom_storage,
         supply_cap=supply_cap,
         online_capacity_cap=online_capacity_cap,
         online_capacity_pricing_mw=online_capacity_pricing_mw,

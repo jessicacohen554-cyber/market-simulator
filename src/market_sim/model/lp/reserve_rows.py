@@ -33,6 +33,7 @@ def _build_reserve_rows(
     headroom_eligible: np.ndarray | None = None,
     headroom_products: np.ndarray | None = None,
     headroom_extra_cap: np.ndarray | None = None,
+    headroom_storage: np.ndarray | None = None,
     reserve_supply_cap: np.ndarray | None = None,
     online_capacity_cap: np.ndarray | None = None,
     storage_duration_h: np.ndarray | None = None,
@@ -142,6 +143,12 @@ def _build_reserve_rows(
             ``(n_headroom_rows, n_zones)`` MW — extra non-generator headroom
             added to each additive row's RHS (e.g. offline quick-start capacity
             that backs Non-Spin without an energy term). ``None`` adds nothing.
+        headroom_storage: ``(n_headroom_rows,)`` boolean — which additive rows
+            pooled storage backs (ercot-226 ``ercot_as_held_location``: the
+            two tier rows keep storage room, a class-carve row's RHS must stay
+            the class's own thermal capability). ``None`` = every row
+            (byte-identical legacy behaviour). Ignored under the duration gate
+            (storage then has its own RS columns instead of pooling).
         reserve_supply_cap: ``(n_headroom_rows, T)`` MW — a **system-wide** upper
             bound on the cleared reserve of each additive headroom row's products,
             ``sum_z sum_{p in headroom_products[h]} R[p,z] <= reserve_supply_cap[h,t]``.
@@ -289,10 +296,16 @@ def _build_reserve_rows(
             shape=(n_zones, layout.n_gen),
         )
         zc = zone_gen_elig @ cap  # (n_zones, T)
-        if use_storage and not gate:
+        if (
+            use_storage
+            and not gate
+            and (headroom_storage is None or bool(headroom_storage[h]))
+        ):
             # Pooled storage in the thermal headroom (pre-duration-gate co-opt).
             # Under the duration gate storage has its own RS columns and power
             # row instead, so it must NOT also add its room here (double count).
+            # A row opted out via ``headroom_storage`` (ercot-226 class-carve
+            # rows) keeps its thermal-only RHS and no storage columns.
             rows.append(base + s_zone)
             cols.append(layout._dis_off + s_idx)
             vals.append(np.ones(n_storage))  # +Dis

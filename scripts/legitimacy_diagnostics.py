@@ -1657,6 +1657,41 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         "the window scoping. Audit trail: hourly/adaptive_<year>.parquet.",
         iso="ERCOT",
     ),
+    # --- ercot-226 held-location carve (owner program by dispatch;
+    # PRECOMMIT-ercot226-held-sequestration-2026-08-22 §2 F2, waiver W-3
+    # (ercot-226)). D-4 NOTE — carries NO row BY CONSTRUCTION: a reserve-
+    # requirement/allocation mechanism never touches min_gen, so it can never
+    # bind a dispatch floor on- or off-window; its window set is the rigid-
+    # family date gates (spec._ercot_rigid_end) ∩ the measured file's
+    # published coverage, and off-coverage hours are byte-identical to
+    # flag-off (held = 0 ⇒ no class families built). Its engagement is
+    # observable in hourly/reserve_family_<year>.parquet (the *_held family
+    # rows) and gated by ercot226_gates.py G-SHORTFALL (arm shortfall
+    # hour-set ⊆ control's, precommit Amendment 1). ---
+    MechanismSpec(
+        "ercot_as_held_location",
+        "ercot_as_held_location",
+        "backcast_only",
+        True,
+        note="measured held-LOCATION of the rigid-product AS (NP3-965 60-Day "
+        "SCED telemetered per-class responsibilities, "
+        "derive_ercot_as_responsibility.py): per thermal class a new reserve "
+        "class + class-scoped headroom row + rigid VOLL-step family requiring "
+        "the class's measured held MW (clipped at the class's own "
+        "pmax×availability), with a CONSERVING credit on the product "
+        "requirements — location only, total held quantity unchanged "
+        "(rule 19). DRIVER: the published HASL carve (Nodal §6.5.7.6.2.3/"
+        "§3.17) — WHERE the sequestered MW physically sat. WINDOW: the rigid "
+        "no-release design windows ∩ published disclosure coverage "
+        "(delivery-2023 in the tracked corpus; uncovered years byte-identical "
+        "to flag-off). FORWARD STORY: a forecast year carries no disclosure "
+        "and uses the endogenous allocation, exactly like "
+        "outage_source='historic'. Class grain (the committed RESTYPE map) — "
+        "per-unit grain is Q-B-closed (item 11); distinct from the "
+        "R-adjudicated capability-level objects (no capability level enters; "
+        "class capacity is only a clip).",
+        iso="ERCOT",
+    ),
     # --- caiso-205 adaptive-expectation storage offer, CAISO leg (owner order
     # caiso-205 branch 1 over the caiso-204 recorded Phase-0 G-BOOT FAIL) ---
     MechanismSpec(

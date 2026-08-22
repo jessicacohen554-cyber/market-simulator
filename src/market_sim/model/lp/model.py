@@ -157,6 +157,7 @@ class DispatchModel:
         reserve_headroom_eligible: np.ndarray | None = None,
         reserve_headroom_products: np.ndarray | None = None,
         reserve_headroom_extra_cap: np.ndarray | None = None,
+        reserve_headroom_storage: np.ndarray | None = None,
         reserve_supply_cap: np.ndarray | None = None,
         reserve_online_capacity_cap: np.ndarray | None = None,
         reserve_storage_duration_h: np.ndarray | None = None,
@@ -520,6 +521,7 @@ class DispatchModel:
             reserve_headroom_eligible=reserve_headroom_eligible,
             reserve_headroom_products=reserve_headroom_products,
             reserve_headroom_extra_cap=reserve_headroom_extra_cap,
+            reserve_headroom_storage=reserve_headroom_storage,
             reserve_supply_cap=reserve_supply_cap,
             reserve_online_capacity_cap=reserve_online_capacity_cap,
             reserve_storage_duration_h=(
