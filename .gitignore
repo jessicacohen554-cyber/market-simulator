@@ -883,3 +883,12 @@ results/calibration/ercot226_f2_arm/
 results/calibration/ercot226_f2_arm_hub/
 results/calibration/ercot226_combined2023/
 results/calibration/ercot226_arm_y2324/
+
+# ercot-227 PROBE bundles (same W-2 clause, extended by PRECOMMIT-ercot226
+# §5.11 Amendment 3): the F1 / F1b / F3 single-year arms. Their record is the
+# committed results/calibration/ercot227_probe_{f1,f1b,f3}.json +
+# ercot227_{f1,f1b,f3}_gates.json + the FINDING table. No factor cleared
+# adoption, so no 3-year bundle exists to register.
+results/calibration/ercot227_f1_arm/
+results/calibration/ercot227_f1b_arm/
+results/calibration/ercot227_f3_arm/
