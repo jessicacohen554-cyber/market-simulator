@@ -1,0 +1,63 @@
+{
+ "probe": "ercot226_helddepth_phase0",
+ "charter": "PRECOMMIT-ercot226-held-sequestration-2026-08-22 \u00a75.4",
+ "keeper": "2026-08-20-ercot223-arm-eventrelease",
+ "year": 2023,
+ "miss_set": {
+  "actual_tail_h": 181,
+  "caught": 67,
+  "missed": 114,
+  "phantom": 7
+ },
+ "F1": {
+  "delta_sum_p50_miss": 0.0,
+  "delta_sum_p90_miss": 0.0,
+  "delta_sum_max_year": 10.400000000000006,
+  "delta_hours_gt0_year": 2,
+  "held_over_plan_ratio_p50_miss": {
+   "REGUP": 0.7309636544011544,
+   "RRS": 0.41938839285714286,
+   "ECRS": 0.5514535989531574
+  },
+  "verdict": "REFUTED-P0"
+ },
+ "F1b": {
+  "delta_p50_miss": 0.0,
+  "delta_p90_miss": 0.0,
+  "delta_max_year": 5.625,
+  "verdict": "REFUTED-P0"
+ },
+ "F1_feasibility": {
+  "margin_fast_min": -5001.63045721273,
+  "margin_fast_neg_hours": 292,
+  "margin_fast_p5": 427.2525203759696
+ },
+ "F2": {
+  "thermal_held_p50_miss": 1050.55,
+  "thermal_held_p90_miss": 1501.1275,
+  "thermal_held_p50_year": 412.3125,
+  "by_class_p50_miss": {
+   "gas_cc": 154.95,
+   "coal": 220.5625,
+   "gas_st": 542.825,
+   "storage": 1761.775
+  },
+  "verdict": "PROCEED-BUILD"
+ },
+ "F3": {
+  "verdict": "REFUTED-P0",
+  "basis": "no committed 2023 RUC-MW series (data/raw/ercot has RUC AS disclosure for 2025/2026 only); predicted sign ~0/negative (RUC adds supply; model already matches physical dispatch \u00b18%); RUC price side owned by ercot_rtordpa_overlay (K) \u2014 rule 19"
+ },
+ "F4": {
+  "verdict": "REFUTED-P0",
+  "basis": "no measured DA-load-forecast series in the repo; demand is measured actual and must remain; procurement-sizing entry double-counts the armed ASPLANNP433 plan (rule 19); ORDC entry channel-forbidden (precommit \u00a71)"
+ },
+ "F5": {
+  "verdict": "ALREADY-CARRIED",
+  "basis": "armed representation is maximal (ECRS_withheld single VOLL step full width; RRS/RegUp rigid through RTC+B; OBDRR048 floor date-gated); storage AS measured-credited (telemetered vs DAM award means: regup 205/269, rrs 882/844, ecrs 127/120, nonspin 16/15 MW \u2014 derive validation (c)); online-NSPIN depth measured under F1b"
+ },
+ "notes": [
+  "held basis is Gen-resource ONLINE\\ONTEST telemetered responsibilities \u2014 Load Resources and offline NSPIN are outside the corpus, so held < plan is expected by construction wherever LR/offline provision is material (the F1 kill's meaning: the conservatism depth is not in the system-level GEN quantity)",
+  "rrsffr telemetered column is ~identically 0 in this corpus (battery FFR responsibility reports under the RRS column), so DECISION-2's exclusion is inert in practice"
+ ]
+}
