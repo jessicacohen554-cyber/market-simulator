@@ -10973,3 +10973,91 @@ tested). Full record: `docs/FINDING-ercot225-gspur-bandtop-card-2026-08-21.md`.
 
 **Session consumed the ercot-225 shorthand. Next shorthand: ercot-226**
 (ercot-199 remains unclaimed).
+
+---
+
+## ercot-226 — 2026-08-22 — THE OWNER'S 2023 HELD-SEQUESTRATION FACTOR PROGRAM (Door-D floor and lane-rests SET ASIDE by owner waivers W-1..W-5): four of five factors REFUTED-P0 on the measured record, the held-LOCATION carve BUILT and REJECTED-AS-ARMED with a NEGATIVE sign — the quantity side of the 2023 conservatism object is now measured dead in both admissible forms, and the residual re-adjudicates to the conduct/offer object as a MEASUREMENT RESULT
+
+**Branch `claude/ercot-2023-summer-scarcity-9lg3nm`. Precommit
+`docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md` (519 ln) pushed +
+blob-verified BEFORE any measurement; Amendment 1 (G-SHORTFALL subset form —
+the keeper's own rigid families carry 21 designed VOLL-engagement hours)
+landed before any probe was scored. Keeper UNTOUCHED at
+`2026-08-20-ercot223-arm-eventrelease`. Hub-and-spokes execution per the
+owner's mid-session parallelization instruction; probes NOT
+dashboard-registered per owner waiver W-2 (committed JSONs are the record).**
+
+**Corrections recorded (§0b):** B-1 is SIGNED-and-SPENT (by dispatch of
+ercot-219, commit ecbad28) — the UNSIGNED card is B-2; W-5's substance
+honored (Stage 1 unarmed, B-2 unsigned). "Waiver W-3 (ercot-226)" is
+namespace-distinct from card-W's vacant W-3 slot; the card-W fence (IMM
+quantification is never identification) held throughout.
+
+**The factor table (full detail: FINDING-ercot226 §1;
+`results/calibration/ercot226_helddepth_phase0.json`):** F1 held-depth and
+F1b NSPIN-depth REFUTED-P0 — the NP3-965 Gen-ONLINE telemetered
+responsibilities sit FAR BELOW the armed ASPLANNP433 plan everywhere (RRS
+~1,100/2,900; ECRS 600–930/1,450–2,130; NSPIN 520–1,080/2,206–5,051 —
+Load Resources and offline Non-Spin are outside the corpus by
+construction), delta max(0, held−plan) ≡ 0.0 MW p50 at the keeper miss
+set; NO field built. F3 RUC-MW REFUTED-P0 (no 2023 series on disk; sign
+~0/negative; price side owned by `ercot_rtordpa_overlay` K). F4
+load-forecast conservatism REFUTED-P0 (no measured series; the plan IS the
+operator's conservative product — rule 19). F5 deployment-design depth
+ALREADY-CARRIED (rigid-at-VOLL is maximal; storage AS measured-credited —
+telemetered/award means regup 205/269, rrs 882/844, ecrs 127/120 MW; HASL
+identity median dev 0.00 MW on 26,052 sample rows). New committed data:
+`data/raw/ercot-AS/ercot_2023_as_responsibility{,_by_class}_hourly.parquet`
+(`scripts/data/derive_ercot_as_responsibility.py`).
+
+**F2 held-location (`ercot_as_held_location`, the one live factor —
+Phase-0 screen PASSED at 1,051 MW p50 on online thermal at the miss
+hours): BUILT (class families + conserving credit in
+`_ercot_multiproduct_design`, `headroom_storage` opt-out through four LP
+seams, cache-key/defaults/backcast-only/TIER registrations, D5 row + D-4
+no-row declaration, matrix row + 6 shard cells, 10 hermetic tests) and
+REJECTED-AS-ARMED on the 2023-only A/B** (control G-REPRO: numeric
+identity max|Δ|=0.0 vs the keeper's committed sidecars; official scorer
+exact): **official C3a-2023 −39.7 % → −45.5 %, C3b 0.729 → 0.842, C3c
+74 → 66 h; G-SHORTFALL FAIL** (new VOLL engagement: coal_held 21 h,
+gas_st_held 13, gas_cc_held 4); every other gate PASS. Measured cause
+(FINDING §3): the conserving credit RELIEVES the system withheld families
+(VOLL engagement 21→12 h each — the keeper's own deep-scarcity pricing at
+its caught hours) while the class families engage in new hours;
+engagement moves between families and sums LOWER; and the smoothed settle
+path **starves the armed adaptive conduct mechanism 7 → 0 spike days**.
+SHARPENS ercot-217 §5: the ~2.7 GW wedge is NOT a mis-located AS carve.
+
+**Disposition (precommit §5.8 else-branch): no factor cleared adoption ⇒
+NO combined run, NO 3-year bundle, NO promotion.** The keeper stands. The
+field stays built, default-off, adjudicated **R** in the ERCOT shard
+(DO-NOT-REDO without new evidence; zone-grain/per-unit variants re-test
+the same phenomenon, per-unit separately Q-B-closed). What W-1's
+set-aside bought: the lane's "no admissible lever / Door D floor" posture
+is now RE-DERIVED AS A MEASUREMENT RESULT over the full admissible
+quantity-side space, not held as governance.
+
+**The 2022 dual-config standing protocol (owner-ordered record; NOT
+executed — ERCOT holds no `complete` marker):** when the 2022 validation
+touchpoint is authorized, 2022 is scored under BOTH the 2023 regime
+config and the 2024–2025 keeper config; whichever clears calibration
+becomes the config for the remaining holdout years, while 2023 remains
+tested single-year under its own regime config. ECRS-keyed factors are
+naturally zero in 2022 (no ECRS before 2023-06-10), so the comparison
+isolates the non-ECRS conservatism factors.
+
+**Infrastructure findings for successors (FINDING §4):** the armed LP
+(+3 reserve classes, ~+10M nnz) OOM-killed twice at the ~13.9 GB memcg
+ceiling the control fits under — a 6G swapfile (cgroup swap uncapped)
+carried it; boxes ship with zero swap. Three construction-seam lessons: a
+`__post_init__` cross-field guard fires on the staged config channels
+(guards on kwargs-channel flags belong at design time); pad (n_hr,T)
+consumers with the standing 1e9 sentinel, never `np.inf` (shared logging
+int()s row means); a new dispatch kwarg threads through FOUR seams. The
+fleet's coal plant_group token is `COAL` (LIGNITE/PRB is sidecar
+reporting vocabulary). Mid-program, PR #4186 merged this branch and
+auto-deleted it; recreated from the new tip per the merged-branch
+protocol.
+
+**Session consumed the ercot-226 shorthand. Next shorthand: ercot-227**
+(ercot-199 remains unclaimed).

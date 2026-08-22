@@ -82,21 +82,85 @@ hours), so the no-manufactured-shortage rule is the G-SHED subset form (arm
 shortfall hour-set ⊆ control's per family), never absolute zero
 (precommit §5.10; `ercot226_gates.py` G-SHORTFALL).
 
-## 3. THE F2 PROBE (2023-only A/B vs the keeper config)
+## 3. THE F2 PROBE (2023-only A/B vs the keeper config, hub-executed) —
+**REJECTED-AS-ARMED, direction NEGATIVE**
 
-> **TODO(probe): filled from `results/calibration/ercot226_probe_f2.json`
-> when the spoke (or hub fallback) lands — official C3a/C3b/C3c ctl→arm,
-> the gate table incl. lidless G-SPUR both forms, the summer block
-> (miss-split, window concentration, calm fortnight vs the keeper's
-> +15.44 %, λ-vs-adder channel attribution), adaptive expression ctl→arm
-> (spike days from 7), reserve-family engagement, and the §5.5 verdict.**
+Committed record: `results/calibration/ercot226_probe_f2.json` +
+`ercot226_f2_gates_hub.json` (full hour lists). Control G-REPRO: the hub
+control replay reproduces the keeper's committed 2023 sidecars to
+**numeric identity** (max|Δ| = 0.0 on every numeric column; the sha256
+difference is parquet file-layout only) and the official scorer to the
+printed digit.
 
-## 4. THE COMBINED 3-YEAR DESIGN BUNDLE
+| official (2023) | control | arm |
+|---|---|---|
+| C3a (load-weighted vs RT 64.32) | **−39.7 %** (38.81) | **−45.5 %** (35.04) |
+| C3b monthly NRMSE | **0.729** | **0.842** |
+| C3c tail h > $200 (RT actual 181) | **74** | **66** |
 
-> **TODO(combined): the reuse chain (arm-2023 → +2024 → +2025, fresh
-> out-years), the 2024/2025 invariance evidence (sha256 sidecar identity
-> primary / printed-digit scorer fallback), registration id, verdict, and
-> the promotion (or the handback naming the failed gate).**
+Gates: G-CAP/G-SPUR (banded 11→11; lidless S_nolid 11, S_top 0)/G-SHED/
+G-BAT/G-D2 all PASS; **G-SHORTFALL FAIL** — the class families engage
+their VOLL steps in NEW hours (coal_held 21, gas_st_held 13, gas_cc_held
+4; Amendment 1's manufactured-shortage signature). Summer block: Δprice at
+the miss set p50 **−$1.28**; caught 67→62; window concentration 0.985 (the
+movement is in-episode, downward); calm fortnight 15.44 → 15.01 %.
+
+**The mechanism story, in three measured facts:**
+1. The conserving credit RELIEVES exactly the families doing the keeper's
+   scarcity work: the system withheld families' requirements fall (ECRS
+   742→559, RRS 1,263→1,053, RegUp 241→158 MW mean) and their VOLL-dual
+   engagement HALVES (21 → 12 hours each). Those 21 engagement hours were
+   the keeper's deep-scarcity pricing at its caught tail hours.
+2. The class families engage VOLL in new hours instead (the classes are
+   fully dispatched at the tightest hours, so a rigid class-hold cannot be
+   met there without the ORDC step) — engagement MOVED between families
+   and summed LOWER: mean price −$3.8/MWh, tail −8 h.
+3. **The armed adaptive conduct mechanism starves to zero: 7 → 0 spike
+   days.** The carve smooths the model's own settle path below the $1,000
+   event threshold, so `ercot_storage_adaptive_expectation` — the depth
+   mechanism this program meant to FEED — expresses nothing on the arm.
+
+The ercot-217 §5 slack-dual reading is thereby SHARPENED, not merely
+confirmed: re-allocating the measured holds onto the real holding classes
+does not tighten the energy stack the way the wedge hypothesis wanted —
+it substitutes class-located engagement for the system-family engagement
+the co-opt already priced, at a net LOWER scarcity expression. The
+2.7 GW wedge is not a mis-located AS carve.
+
+## 4. PROGRAM DISPOSITION — the precommit §5.8 else-branch
+
+**No factor cleared the adoption criteria** (F1/F1b/F3/F4 REFUTED-P0 on
+the data; F2 REJECTED-AS-ARMED on the solve), so per the precommit there
+is **NO combined run, NO 3-year bundle, NO registration and NO
+promotion**. The keeper stays `2026-08-20-ercot223-arm-eventrelease`,
+untouched. `ercot_as_held_location` remains built, default-off,
+registered and tested — an adjudicated R cell, not an armed mechanism.
+
+**What the program establishes** (the owner's conservatism-depth question,
+answered by measurement): the 2023 operator-conservatism object is
+carried COMPLETELY on the quantity side — the level is the plan (F1 ≡ 0
+against it), the design is rigid-at-VOLL (F5), and the location carve —
+the last admissible quantity-side object — moves prices DOWN and
+manufactures shortage where it binds (F2). The 2023 residual is the
+CONDUCT/OFFER object, exactly as the Door-D adjudication held — now with
+the quantity-side alternatives measured dead rather than presumed dead,
+which is what W-1's set-aside bought: the lane's governance posture is
+re-derived as a measurement result.
+
+**Infrastructure findings** (recorded for successors): (a) the armed LP
+(+3 reserve classes, ~+10M nnz) OOM-killed twice at the ~13.9 GB memcg
+ceiling the control fits under; a 6G swapfile (cgroup swap uncapped)
+carried it — future ERCOT mechanisms that grow the LP should budget for
+this, and boxes ship with zero swap. (b) Three construction-seam defects
+were caught by the real solve that hermetic design tests cannot see: a
+__post_init__ cross-field guard fires on the calibration channels' staged
+config construction (guards on kwargs-channel flags belong at design
+time); `np.inf` sentinel rows break shared int()-logging (use the
+standing 1e9 `_RESERVE_SUPPLY_CAP_UNCAPPED_MW`); a new dispatch kwarg
+must be threaded through FOUR seams (design → kwargs builder →
+`solve_dispatch` wrapper → `DispatchModel` → rows). (c) The fleet's coal
+plant_group token is `COAL`; the sidecar's `COAL_LIGNITE/COAL_PRB` is
+reporting vocabulary.
 
 ## 5. THE 2022 DUAL-CONFIG STANDING PROTOCOL (recorded, NOT executed)
 

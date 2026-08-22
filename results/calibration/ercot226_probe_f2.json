@@ -1,0 +1,378 @@
+{
+ "probe": "ercot226_probe_f2",
+ "factor": "F2 ercot_as_held_location (measured held-location carve)",
+ "charter": "PRECOMMIT-ercot226-held-sequestration-2026-08-22 \u00a72 F2 / waiver W-3 (ercot-226)",
+ "session": "hub",
+ "branch_sha": "2ef44a34573ef67fa330e28fcda6148698f11787",
+ "env": {
+  "highspy": "1.15.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "python": "3.11.15"
+ },
+ "control": {
+  "out_dir": "results/calibration/ercot226_ctl2023",
+  "grepro": {
+   "sidecar_sha256_match": false,
+   "numeric_identity": "max|delta| = 0.0 on every numeric column of system/reserve_family/storage vs the keeper's committed 2023 sidecars (sha diff is parquet file-layout only)",
+   "official_reproduction": "-39.7% / 0.729 / 74 h EXACT",
+   "legitimacy_gates": "equal to keeper (2023 D4 rows identical; the keeper-only rows are its 2024/2025 year scope)"
+  }
+ },
+ "arm": {
+  "out_dir": "results/calibration/ercot226_f2_arm_hub",
+  "set_flags": [
+   "ercot_as_held_location=true"
+  ],
+  "classes_armed": {
+   "gas_cc": {
+    "members": 901,
+    "held_mean_mw": 120,
+    "held_max_mw": 727
+   },
+   "coal": {
+    "members": 40,
+    "held_mean_mw": 184,
+    "held_max_mw": 824
+   },
+   "gas_st": {
+    "members": 207,
+    "held_mean_mw": 171,
+    "held_max_mw": 1145
+   }
+  },
+  "clip_engaged_hours": 0,
+  "runtime_note": "solved under MALLOC_ARENA_MAX=2 + a 6G swapfile \u2014 the armed LP (+3 reserve classes, +~10M nnz) OOM-killed twice at the memcg ~13.9 GB ceiling the control fits under; malloc/swap config does not change solver arithmetic"
+ },
+ "official": {
+  "control": {
+   "c3a_2023": "-39.7%",
+   "c3b_2023": "0.729",
+   "c3c_2023_h": 74
+  },
+  "arm": {
+   "c3a_2023": "-45.5%",
+   "c3b_2023": "0.842",
+   "c3c_2023_h": 66
+  },
+  "c3c_actual_rt_h": 181
+ },
+ "probe_basis": {
+  "c3a_ctl": -29.99,
+  "c3a_arm": -35.25,
+  "c3b_ctl": 3.4476,
+  "c3b_arm": 4.1239,
+  "tail_ctl": 74,
+  "tail_arm": 66
+ },
+ "gates": {
+  "G-CAP": {
+   "violations": 0,
+   "pass": true
+  },
+  "G-SPUR": {
+   "pass": true,
+   "bar": "+5/yr vs banded baseline (lidless REPORT-ONLY)"
+  },
+  "G-SHED": {
+   "pass": true
+  },
+  "G-BAT": {
+   "pass": true
+  },
+  "G-D2": {
+   "no_new_d4_rows": true
+  },
+  "G-SHORTFALL": {
+   "pass": false,
+   "rule": "per rigid family, arm shortfall hour-set \u2286 control's (precommit AMENDMENT 1 \u2014 no MANUFACTURED shortage; the keeper baseline itself carries 21 designed VOLL-engagement hours)"
+  }
+ },
+ "family_diagnostics": {
+  "arm": {
+   "ECRS_withheld": {
+    "shortfall_hour_set": [
+     4098,
+     5490,
+     5682,
+     5683,
+     5803,
+     5967,
+     5970,
+     5994
+    ],
+    "shortfall_hours": 8,
+    "shortfall_max_mw": 556.12,
+    "dual_ge_voll_hours": 12,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 558.7,
+    "requirement_max_mw": 2512.9,
+    "held_mean_mw": 1103.9,
+    "new_shortfall_hours": [
+     5803
+    ]
+   },
+   "RRS_withheld": {
+    "shortfall_hour_set": [
+     5489,
+     5658,
+     5682,
+     5802,
+     5970
+    ],
+    "shortfall_hours": 5,
+    "shortfall_max_mw": 1029.179,
+    "dual_ge_voll_hours": 12,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 1053.3,
+    "requirement_max_mw": 2197.3,
+    "held_mean_mw": 1533.8
+   },
+   "RegUp_withheld": {
+    "shortfall_hour_set": [
+     4098,
+     5490,
+     5802,
+     5970
+    ],
+    "shortfall_hours": 4,
+    "shortfall_max_mw": 244.855,
+    "dual_ge_voll_hours": 12,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 158.4,
+    "requirement_max_mw": 760.1,
+    "held_mean_mw": 769.1,
+    "new_shortfall_hours": [
+     4098,
+     5802
+    ]
+   },
+   "coal_held": {
+    "shortfall_hour_set": [
+     4096,
+     4098,
+     4099,
+     5487,
+     5488,
+     5489,
+     5490,
+     5563,
+     5656,
+     5658,
+     5659,
+     5682,
+     5683,
+     5801,
+     5802,
+     5803,
+     5966,
+     5967,
+     5970,
+     5994,
+     6015
+    ],
+    "shortfall_hours": 21,
+    "shortfall_max_mw": 661.6,
+    "dual_ge_voll_hours": 21,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 184.3,
+    "requirement_max_mw": 823.6,
+    "held_mean_mw": 298.1,
+    "new_shortfall_hours": [
+     4096,
+     4098,
+     4099,
+     5487,
+     5488,
+     5489,
+     5490,
+     5563,
+     5656,
+     5658,
+     5659,
+     5682,
+     5683,
+     5801,
+     5802,
+     5803,
+     5966,
+     5967,
+     5970,
+     5994,
+     6015
+    ]
+   },
+   "gas_cc_held": {
+    "shortfall_hour_set": [
+     5490,
+     5682,
+     5970,
+     5994
+    ],
+    "shortfall_hours": 4,
+    "shortfall_max_mw": 649.5,
+    "dual_ge_voll_hours": 12,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 120.4,
+    "requirement_max_mw": 727.2,
+    "held_mean_mw": 547.4,
+    "new_shortfall_hours": [
+     5490,
+     5682,
+     5970,
+     5994
+    ]
+   },
+   "gas_st_held": {
+    "shortfall_hour_set": [
+     4096,
+     4098,
+     4099,
+     5488,
+     5489,
+     5490,
+     5658,
+     5682,
+     5683,
+     5802,
+     5803,
+     5967,
+     5970
+    ],
+    "shortfall_hours": 13,
+    "shortfall_max_mw": 625.423,
+    "dual_ge_voll_hours": 14,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 171.3,
+    "requirement_max_mw": 1144.8,
+    "held_mean_mw": 449.2,
+    "new_shortfall_hours": [
+     4096,
+     4098,
+     4099,
+     5488,
+     5489,
+     5490,
+     5658,
+     5682,
+     5683,
+     5802,
+     5803,
+     5967,
+     5970
+    ]
+   }
+  },
+  "control": {
+   "ECRS_withheld": {
+    "shortfall_hour_set": [
+     4098,
+     4099,
+     5488,
+     5490,
+     5659,
+     5682,
+     5683,
+     5802,
+     5967,
+     5970,
+     5994
+    ],
+    "shortfall_hours": 11,
+    "shortfall_max_mw": 1671.694,
+    "dual_ge_voll_hours": 21,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 741.8,
+    "requirement_max_mw": 2875.0,
+    "held_mean_mw": 1506.2
+   },
+   "RRS_withheld": {
+    "shortfall_hour_set": [
+     5489,
+     5490,
+     5563,
+     5656,
+     5658,
+     5682,
+     5802,
+     5803,
+     5970
+    ],
+    "shortfall_hours": 9,
+    "shortfall_max_mw": 1284.078,
+    "dual_ge_voll_hours": 21,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 1263.1,
+    "requirement_max_mw": 2261.1,
+    "held_mean_mw": 1927.6
+   },
+   "RegUp_withheld": {
+    "shortfall_hour_set": [
+     4096,
+     5487,
+     5488,
+     5489,
+     5490,
+     5658,
+     5801,
+     5966,
+     5970,
+     5994,
+     6015
+    ],
+    "shortfall_hours": 11,
+    "shortfall_max_mw": 343.799,
+    "dual_ge_voll_hours": 21,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 241.1,
+    "requirement_max_mw": 789.0,
+    "held_mean_mw": 1088.1
+   }
+  },
+  "reading": "the carve RELIEVES the system withheld families (VOLL engagement 21->12 h each; requirements credited down) and engages VOLL on the class families in NEW hours (coal 21, gas_st 13, gas_cc 4) \u2014 engagement moved between families and summed LOWER"
+ },
+ "summer": {
+  "miss_split_ctl": {
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  },
+  "miss_split_arm": {
+   "caught": 62,
+   "missed": 119,
+   "phantom": 4
+  },
+  "d_price_at_miss_p50": -1.28,
+  "d_price_at_miss_max": 23.76,
+  "window_concentration": 0.9846,
+  "calm_fortnight_bias_pct": {
+   "control": 15.44,
+   "arm": 15.01
+  },
+  "channel_lambda_share_at_improved_miss": 1.4778,
+  "improved_miss_hours": 30
+ },
+ "adaptive": {
+  "control_spike_days": 7,
+  "arm_spike_days": 0,
+  "reading": "the carve smooths the model's own path below the $1,000 event threshold \u2014 the armed adaptive conduct mechanism goes 7 -> 0 spike days and expresses NOTHING on the arm"
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "disposition": "REJECTED-AS-ARMED",
+  "failed_criteria": [
+   "C3a-2023 must improve >=1.5pp toward zero: WORSENED -39.7% -> -45.5%",
+   "C3b-2023 <= 0.734: WORSENED 0.729 -> 0.842",
+   "G-SHORTFALL: new VOLL-shortfall hours on coal_held (21), gas_st_held (13), gas_cc_held (4) \u2014 manufactured-shortage signature (Amendment 1)"
+  ],
+  "passed_gates": [
+   "G-CAP",
+   "G-SPUR (banded 11->11; lidless s_top 0)",
+   "G-SHED",
+   "G-BAT",
+   "G-D2"
+  ]
+ }
+}
