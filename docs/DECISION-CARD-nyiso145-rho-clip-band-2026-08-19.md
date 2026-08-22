@@ -1,5 +1,17 @@
 # DECISION CARD — the `RHO_CLIP` band (owner, rule 22 D-5(b))
 
+> **RULED 2026-08-22 (session nyiso-151): OPTION A — THE 0.5 FLOOR IS
+> DELETED.** `RHO_CLIP = (0.0, 4.0)`
+> (`src/market_sim/data/online_reserve_rho.py`), the 4.0 ceiling retained on
+> its min-load derivation. Every measured `online_rho` row now solves at its
+> own measurement, and both NYISO gated reserve flags become admissible on a
+> data-identified coefficient (rule 21). Cross-lane consequence flagged, not
+> executed (rule 25): MISO's armed `miso_reserve_online_gated` keeper solved
+> at the floor; its future replays solve at the measured 0.1764, which
+> TIGHTENS its additive coupling row — the MISO lane re-gates on its own
+> schedule (`docs/calibration-log/governance.md`, 2026-08-22). Test pins
+> updated (`tests/iso/nyiso/test_nyiso_incity_obligation.py`).
+
 Raised by session **nyiso-145**, 2026-08-19, on the standing escalation opened by
 nyiso-144. **No solve was spent**; every number below is measured on committed
 artifacts (`scripts/probes/_nyiso145_rho_clip_card.py`, record

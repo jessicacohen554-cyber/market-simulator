@@ -1,0 +1,16 @@
+{
+  "id": "2026-08-22-nyiso-151-identity-hr",
+  "label": "nyiso 151 identity hr",
+  "date": "2026-08-22",
+  "shorthand": "nyiso-151-identity-hr",
+  "definition": "(KEEPER, promoted 2026-08-22 by owner ruling) nyiso-151 ARM H: the eGRID identity heat-rate repair armed (egrid_identity_heat_rates \u2014 Allegany 7784 at its pooled seven-vintage eGRID measured 8.4209 MMBtu/MWh via the proven 7784<->10619 two-registry identity, replacing the uncited 7.5 gas_cc class default). BIT-IDENTICAL to the superseded keeper 2026-08-22-nyiso-149-duty-curve (max |dprice| = 0.0 over every zone-hour of all three years), so every criterion is unchanged by identity: CALIBRATED, C3c the lone ledgered caveat (1/0/0 h vs RT 10/13/42). OWNER-PROMOTED on the arm-on-legitimacy standard (ercot-202 class) over the prereg's mechanical direction-leg rejection \u2014 both records stand. PREREG-nyiso151-egrid-identity-hr-and-regate-2026-08-22.md; _nyiso151_ab_gates.json; FINDING-nyiso150-allegany-hr-identity-2026-08-22.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-22-nyiso-151-identity-hr.js",
+  "bundle": "results/calibration/nyiso151_armH",
+  "market_story": "This keeper's own delta moves NO generation \u2014 it is a config-truthfulness promotion (the run is bit-identical to its predecessor; the armed identity heat-rate repair is proven inert because Allegany runs deeply inframarginal either way). The recipe's market stories are inherited from the 149 lineage: the CHP fleet's grid deliveries follow the measured Gold-Book/EIA-923 per-plant BTM shares (nyiso_chp_btm_measured) because the plants' own meters refute the former 35% sector carve; the seven laid-up cogens offer their measured price-conditional duty (chp_layup_duty_curve) because mothballed trains return gradually with price, not bang-bang; the gas commitment bridge floors slow-start CC/ST units at their CAMPD-measured loading because NYISO's DAM commits them through evening troughs a pure LP would shatter; and downstate imports ride the measured P-32 deliverability envelopes because the seams physically deliver less than their static ratings. Allegany itself now carries its own measured heat rate for the day a mechanism prices its margin \u2014 currently its residual dispatch is reserve-provision (the co-opt holds quick-start CCs online for 10-minute headroom in lieu of the missing hydro RAMP10 supply), the named successor lane."
+}

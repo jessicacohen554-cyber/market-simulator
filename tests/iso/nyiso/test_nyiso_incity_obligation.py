@@ -250,10 +250,13 @@ class TestInCityCommitmentObligation:
         assert _family(design, "east_10min_total").reserve_class == 1
 
     def test_online_rho_within_physical_band(self):
+        import market_sim.data.online_reserve_rho as orr
+
         design = _nyiso_design(
             _config(nyiso_incity_commitment_obligation=True), _fa(), T, ZONES
         )
-        assert 0.5 <= design.online_rho <= 4.0
+        lo, hi = orr.RHO_CLIP
+        assert lo <= design.online_rho <= hi
 
     def test_mutually_exclusive_with_synchronised_reserve(self):
         """Same phenomenon, two mechanisms — rule 19 [R-ONE-MECH]."""
@@ -379,13 +382,14 @@ class TestObligationRhoFallback:
         # The fixture's own pmin path would say 3.0; the measurement outranks it.
         assert design.online_rho == pytest.approx(0.8)
 
-    def test_measured_statistic_is_clipped_to_the_band(self, monkeypatch):
-        """A measurement below the floor returns the FLOOR, not the datum.
+    def test_measured_statistic_solves_at_its_own_measurement(self, monkeypatch):
+        """A measurement inside the band returns THE MEASUREMENT.
 
-        Both real NYISO values (0.3014 / 0.2011) sit below the inherited,
-        UNCITED 0.5 floor, so arming a gated family today still decides its
-        only reserve bound with a guardrail rather than with data. Pinned so
-        the clip cannot be mistaken for the measurement.
+        Owner ruling 2026-08-22 (nyiso-151, card nyiso-145 option A): the
+        uncited 0.5 floor is DELETED — ``RHO_CLIP = (0.0, 4.0)`` — so the
+        real NYISO values (0.3014 / 0.2011), which the old floor overrode,
+        now reach the LP as measured. Pinned so a re-introduced floor cannot
+        silently override data again.
         """
         import market_sim.data.online_reserve_rho as orr
 
@@ -404,7 +408,8 @@ class TestObligationRhoFallback:
         design = _nyiso_design(
             _config(nyiso_incity_commitment_obligation=True), _fa(), T, ZONES
         )
-        assert design.online_rho == pytest.approx(orr.RHO_CLIP[0])
+        assert orr.RHO_CLIP == (0.0, 4.0)
+        assert design.online_rho == pytest.approx(0.3014)
 
     def test_rho_is_computed_from_the_fleet_when_pmin_is_positive(self, monkeypatch):
         self._no_measured(monkeypatch)

@@ -41,6 +41,23 @@ solved, scored or read is 2023–2025.
 * HC-K5 by identity: criteria equal the registered nyiso-150 run's
   (C1/C2/C3a/C3b/C4/C8 PASS; C6 unattested-probe; C3c reported).
 
+## 2b′. AMENDED BY OWNER RULING (same day): ARM H REGISTERED AND PROMOTED
+
+The owner, answering the disposition question in-session, chose **promote**
+(the arm-on-legitimacy standard, the ercot-202 class). ARM H is therefore
+registered after all — `2026-08-22-nyiso-151-identity-hr`, DETERMINATION
+CALIBRATED on its own registration verdict (bit-identical artifacts + a
+fresh attestation carrying the identity artifact as DOF entry 9, n_scalars
+0) — and PROMOTED TO KEEPER with the full workflow (shard swap, D-5(b)
+re-key with the identity making a worse determination impossible by
+construction, status rebuild, audit 0/0, matrix cell I → K with the I
+record preserved, §5.5 header re-stamp). The mechanical
+REJECTED-AS-ARMED on the H-K3 direction leg stands unrewritten in
+`_nyiso151_ab_gates.json` — both records stand. ARM HC's non-registration
+stands as below (bit-identical to `2026-08-22-nyiso-150-reserve-rearm`).
+The same sitting also ruled the RHO_CLIP card (option A — floor deleted)
+and chartered the RAMP10 seams session.
+
 ## 2b. REGISTRATION DISPOSITION (rule 15, the nyiso-149 convention)
 
 Neither arm is separately registered, because each reproduces an

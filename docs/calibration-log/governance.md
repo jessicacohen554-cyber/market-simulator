@@ -1801,3 +1801,23 @@ baseline carries 23 D-4 row failures absent from its committed artifact
 questions (denominator = model's own class output; no materiality floor
 inside the provenance leg) in the RESULT §5 — owner decisions, not a
 session's.
+
+## 2026-08-22 — RHO_CLIP floor DELETED (owner ruling, card nyiso-145 option A) — cross-ISO flag for the MISO lane
+
+Owner ruling (session nyiso-151, rule 22 D-5(b)): `RHO_CLIP` moves
+`(0.5, 4.0) → (0.0, 4.0)` in `src/market_sim/data/online_reserve_rho.py` —
+option A of `docs/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md`, on the
+card's own recommendation (the floor had no primary citation, no physical
+basis, and was inherited across a change of estimand; every measured row on
+two ISOs' fleets sat below it). Every measured `online_rho` now solves at its
+own measurement; the 4.0 ceiling keeps its min-load derivation.
+
+**MISO LANE ITEM (rule 25 — flagged here, not executed):** MISO's armed
+`miso_reserve_online_gated` keeper solved at the floor (0.5, measured
+0.1764). Its committed bundle stands as solved; any FUTURE replay/re-solve of
+the recipe now uses the measured 0.1764, which TIGHTENS the additive coupling
+row (the conservative-at-floor direction miso-169 recorded inverts to
+measured-at-meter). The MISO lane should re-gate its keeper recipe against
+the measured coefficient on its own schedule and re-stamp its shard. NYISO's
+current keeper arms neither gated flag, so this change is byte-inert for
+every registered NYISO run.
