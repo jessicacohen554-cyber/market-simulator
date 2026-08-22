@@ -1,0 +1,145 @@
+{
+ "probe": "nyiso154_phase0",
+ "bundle": "nyiso152_armSE",
+ "plants": {
+  "2539_Bethlehem": [
+   {
+    "year": 2023,
+    "model_starts": 45,
+    "model_median_run_h": 44.0,
+    "metered_starts": 6
+   },
+   {
+    "year": 2024,
+    "model_starts": 13,
+    "model_median_run_h": 249.0,
+    "metered_starts": 7
+   },
+   {
+    "year": 2025,
+    "model_starts": 28,
+    "model_median_run_h": 55.5,
+    "metered_starts": 7
+   }
+  ],
+  "56234_Caithness": [
+   {
+    "year": 2023,
+    "model_starts": 3,
+    "model_median_run_h": 3000.0,
+    "metered_starts": 4
+   },
+   {
+    "year": 2024,
+    "model_starts": 2,
+    "model_median_run_h": 3132.0,
+    "metered_starts": 6
+   },
+   {
+    "year": 2025,
+    "model_starts": 4,
+    "model_median_run_h": 1980.0,
+    "metered_starts": 8
+   }
+  ],
+  "7314_Flynn": [
+   {
+    "year": 2023,
+    "model_starts": 229,
+    "model_median_run_h": 20.0,
+    "metered_starts": 115
+   },
+   {
+    "year": 2024,
+    "model_starts": 288,
+    "model_median_run_h": 19.0,
+    "metered_starts": 78
+   },
+   {
+    "year": 2025,
+    "model_starts": 284,
+    "model_median_run_h": 16.0,
+    "metered_starts": 103
+   }
+  ],
+  "56196_Poletti": [
+   {
+    "year": 2023,
+    "model_starts": 3,
+    "model_median_run_h": 2184.0,
+    "metered_starts": 9
+   },
+   {
+    "year": 2024,
+    "model_starts": 4,
+    "model_median_run_h": 1752.0,
+    "metered_starts": 5
+   },
+   {
+    "year": 2025,
+    "model_starts": 6,
+    "model_median_run_h": 552.0,
+    "metered_starts": 11
+   }
+  ]
+ },
+ "bethlehem": {
+  "2023": {
+   "starts": 45,
+   "offer_est_above_floor_p10": 34.362620350889635,
+   "gaps_gt24h": 42,
+   "gaps_gt24h_outage": 2,
+   "gaps_gt24h_economic": 40,
+   "gap_deficit_per_mwh": {
+    "p50": 4.162057816904374,
+    "p90": 8.976738241685524
+   },
+   "glued_at_startup_band": {
+    "35.0": 11,
+    "50.0": 12
+   },
+   "predicted_starts_uncapped": {
+    "35.0": 34,
+    "50.0": 33
+   }
+  },
+  "2024": {
+   "starts": 13,
+   "offer_est_above_floor_p10": 31.11461478011214,
+   "gaps_gt24h": 10,
+   "gaps_gt24h_outage": 1,
+   "gaps_gt24h_economic": 9,
+   "gap_deficit_per_mwh": {
+    "p50": 1.6494243773373967,
+    "p90": 5.2620205354607625
+   },
+   "glued_at_startup_band": {
+    "35.0": 5,
+    "50.0": 5
+   },
+   "predicted_starts_uncapped": {
+    "35.0": 8,
+    "50.0": 8
+   }
+  },
+  "2025": {
+   "starts": 28,
+   "offer_est_above_floor_p10": 43.411557868577745,
+   "gaps_gt24h": 10,
+   "gaps_gt24h_outage": 1,
+   "gaps_gt24h_economic": 9,
+   "gap_deficit_per_mwh": {
+    "p50": 0.10189101394401945,
+    "p90": 12.744556812827293
+   },
+   "glued_at_startup_band": {
+    "35.0": 5,
+    "50.0": 5
+   },
+   "predicted_starts_uncapped": {
+    "35.0": 23,
+    "50.0": 23
+   }
+  }
+ }
+}
