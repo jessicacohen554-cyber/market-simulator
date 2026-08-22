@@ -215,6 +215,17 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         "nyiso152_armSE_recipe",
         "nyiso152_control_recipe",
         "nyiso152_control",
+        #
+        # SPENT — session nyiso-153 (PREREG-nyiso153-incity-obligation-
+        # 2026-08-22.md). The one-file recipe dir is the standard replay-input
+        # class (committed before the arm solved; PREREG §7 reproduction
+        # input). The arm itself is REGISTERED
+        # (2026-08-22-nyiso-153-incity-obligation, REJECTED-AS-ARMED on its
+        # own pre-registered branches) so its bundle is mapped the ordinary
+        # way; the control is the already-registered nyiso-152 keeper (no
+        # re-solve — prereg §3). REMOVAL CONDITION: the citing PREREG/RESULT
+        # docs are retired or re-pointed at registered bundles.
+        "nyiso153_armO_recipe",
     }
 )
 

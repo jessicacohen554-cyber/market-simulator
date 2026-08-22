@@ -1,0 +1,237 @@
+{
+ "session": "nyiso-153",
+ "control": "nyiso152_armSE",
+ "arm": "nyiso153_armO",
+ "gates": [
+  {
+   "gate": "O-K1 exactness (nyiso_incity_commitment_obligation)",
+   "solve_field_diffs": [
+    "nyiso_incity_commitment_obligation"
+   ],
+   "passed": true
+  },
+  {
+   "gate": "O-K2 liveness (measured-rho log line every year; families re-classed 1 -> 2)",
+   "rho_log_lines": 3,
+   "classes": {
+    "nyc_10min_total_2023": {
+     "arm_class": 2,
+     "ctl_class": 1
+    },
+    "nyc_10min_total_2024": {
+     "arm_class": 2,
+     "ctl_class": 1
+    },
+    "nyc_10min_total_2025": {
+     "arm_class": 2,
+     "ctl_class": 1
+    },
+    "li_10min_total_2023": {
+     "arm_class": 2,
+     "ctl_class": 1
+    },
+    "li_10min_total_2024": {
+     "arm_class": 2,
+     "ctl_class": 1
+    },
+    "li_10min_total_2025": {
+     "arm_class": 2,
+     "ctl_class": 1
+    }
+   },
+   "passed": true
+  },
+  {
+   "gate": "O-K3 adjudication (REJECT branch iff nyc_10min_total shortfall hours >= 2000 in any year)",
+   "rows": [
+    {
+     "zone": "NYC",
+     "family": "nyc_10min_total",
+     "year": 2023,
+     "shortfall_hours": 5744,
+     "shortfall_mwh": 872081.0,
+     "dual_pos_hours": 7404,
+     "mean_dual_when_pos": 22.78,
+     "held_p50_mw": 422.8,
+     "requirement_p50_mw": 500.0,
+     "onlineP_p50_ctl": 645.0,
+     "onlineP_p50_arm": 1404.0
+    },
+    {
+     "zone": "NYC",
+     "family": "nyc_10min_total",
+     "year": 2024,
+     "shortfall_hours": 7458,
+     "shortfall_mwh": 1806290.0,
+     "dual_pos_hours": 7950,
+     "mean_dual_when_pos": 24.39,
+     "held_p50_mw": 257.5,
+     "requirement_p50_mw": 500.0,
+     "onlineP_p50_ctl": 443.0,
+     "onlineP_p50_arm": 880.0
+    },
+    {
+     "zone": "NYC",
+     "family": "nyc_10min_total",
+     "year": 2025,
+     "shortfall_hours": 7160,
+     "shortfall_mwh": 1756403.0,
+     "dual_pos_hours": 7644,
+     "mean_dual_when_pos": 24.17,
+     "held_p50_mw": 278.0,
+     "requirement_p50_mw": 500.0,
+     "onlineP_p50_ctl": 676.0,
+     "onlineP_p50_arm": 923.0
+    },
+    {
+     "zone": "Long_Island",
+     "family": "li_10min_total",
+     "year": 2023,
+     "shortfall_hours": 8056,
+     "shortfall_mwh": 853281.0,
+     "dual_pos_hours": 8059,
+     "mean_dual_when_pos": 22.69,
+     "held_p50_mw": 0.2,
+     "requirement_p50_mw": 120.0,
+     "onlineP_p50_ctl": 203.0,
+     "onlineP_p50_arm": 1.0
+    },
+    {
+     "zone": "Long_Island",
+     "family": "li_10min_total",
+     "year": 2024,
+     "shortfall_hours": 7924,
+     "shortfall_mwh": 699078.0,
+     "dual_pos_hours": 7936,
+     "mean_dual_when_pos": 19.62,
+     "held_p50_mw": 32.4,
+     "requirement_p50_mw": 120.0,
+     "onlineP_p50_ctl": 224.0,
+     "onlineP_p50_arm": 107.0
+    },
+    {
+     "zone": "Long_Island",
+     "family": "li_10min_total",
+     "year": 2025,
+     "shortfall_hours": 7481,
+     "shortfall_mwh": 697542.0,
+     "dual_pos_hours": 7548,
+     "mean_dual_when_pos": 20.15,
+     "held_p50_mw": 24.1,
+     "requirement_p50_mw": 120.0,
+     "onlineP_p50_ctl": 230.0,
+     "onlineP_p50_arm": 80.0
+    }
+   ],
+   "branch": "REJECT",
+   "passed": null
+  },
+  {
+   "gate": "O-K4 D-4/D-2 (K6-prime)",
+   "new_d4_failures": [
+    [
+     2024,
+     "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
+     "2517"
+    ],
+    [
+     2025,
+     "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
+     "2517"
+    ]
+   ],
+   "cleared_d4": [],
+   "forced_share_rises": [
+    {
+     "key": [
+      2023,
+      "nyiso_gas_commitment_bridge",
+      "CC_REGULAR"
+     ],
+     "ctl": 0.0626,
+     "arm": 0.0794
+    },
+    {
+     "key": [
+      2023,
+      "nyiso_gas_commitment_bridge",
+      "ST_GAS"
+     ],
+     "ctl": 0.0108,
+     "arm": 0.0312
+    },
+    {
+     "key": [
+      2024,
+      "chp_steam",
+      "CC_CHP"
+     ],
+     "ctl": 0.0049,
+     "arm": 0.0051
+    },
+    {
+     "key": [
+      2024,
+      "nyiso_gas_commitment_bridge",
+      "CC_REGULAR"
+     ],
+     "ctl": 0.0467,
+     "arm": 0.0504
+    },
+    {
+     "key": [
+      2024,
+      "nyiso_gas_commitment_bridge",
+      "ST_GAS"
+     ],
+     "ctl": 0.0142,
+     "arm": 0.0675
+    },
+    {
+     "key": [
+      2025,
+      "chp_steam",
+      "CC_CHP"
+     ],
+     "ctl": 0.0019,
+     "arm": 0.002
+    },
+    {
+     "key": [
+      2025,
+      "nyiso_gas_commitment_bridge",
+      "CC_REGULAR"
+     ],
+     "ctl": 0.0319,
+     "arm": 0.033
+    },
+    {
+     "key": [
+      2025,
+      "nyiso_gas_commitment_bridge",
+      "ST_GAS"
+     ],
+     "ctl": 0.0094,
+     "arm": 0.03
+    }
+   ],
+   "escalated": true,
+   "new_d1_misses": [],
+   "passed": false
+  },
+  {
+   "gate": "O-K5 gated criteria",
+   "note": "calibration_verdict.py on the registered arm",
+   "passed": null,
+   "recorded": {
+    "run_id": "2026-08-22-nyiso-153-incity-obligation",
+    "determination": "NOT-YET (C6 unattested-probe; rejected probe, never attested)",
+    "criteria_vs_keeper": "statuses IDENTICAL (C1/C2/C3a/C3b/C4/C8 PASS; C3c FAIL at the same 1/0/0 counts)",
+    "c3a": "+3.4% / -4.0% / -8.2% (keeper +5.3/-2.7/-8.1 \u2014 2023 IMPROVES: the committed NYC steam lowers the 2023 over-pricing)",
+    "c3c": "bit-identical counts 1/0/0 vs RT 10/13/42 \u2014 the $25 reserve-shortfall regime never touches the >$300 energy tail",
+    "passed_no_criteria_flip": true
+   }
+  }
+ ],
+ "verdict": "REJECTED-AS-ARMED on O-K3 (REJECT branch: nyc_10min_total standing shortfall 5,744/7,458/7,160 h vs the 2,000 bar \u2014 prediction >=5,000/>=5,000/>=4,000 confirmed) AND O-K4 (two NEW D-4 convictions at 2517 Port Jefferson, bridge x ST_GAS 2024/2025, with forced-share escalation bridge ST_GAS 1.4%->6.8% in 2024 \u2014 K6-prime both legs). AGAINST-PREDICTION NOTE, recorded honestly: the static flip-cross under-predicted the equilibrium commitment response (NYC in-pocket online p50 645->1,404 MW in 2023; the subsidy DID commit steam) and C3a-2023 improves +5.3->+3.4% \u2014 the downstate under-commitment diagnosis is REAL; the $25-capped gated row + bridge amplification is the wrong instrument (it floods the family with a standing shortfall regime the real market never shows, collapses LI in-pocket output 203->1 MW p50 as subsidized NYC energy displaces it, and routes commitment through bridge floors at meter-dark plants)."
+}

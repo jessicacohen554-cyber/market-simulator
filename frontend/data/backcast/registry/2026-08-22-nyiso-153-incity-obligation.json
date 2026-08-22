@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-22-nyiso-153-incity-obligation",
+ "label": "nyiso 153 incity obligation",
+ "date": "2026-08-22",
+ "shorthand": "nyiso-153-incity-obligation",
+ "definition": "(REJECTED PROBE, adjudicated 2026-08-22 on PREREG-nyiso153's pre-registered branches) The in-city commitment obligation (nyiso_incity_commitment_obligation, measured rho 0.3014 — first solve since the RHO_CLIP ruling made the coefficient admissible): re-classes nyc_10min_total + li_10min_total onto the online-gated class 2 (online in-pocket output only; no idle credit, no storage). ONE flag over the nyiso-152 keeper. REJECT branch fired exactly as pre-registered: the LP prefers the published $25 RCPF shortfall to full commitment — NYC family in shortfall 5,744/7,458/7,160 h/yr at a ~$23-24 standing dual (real RCPF activations are an exception state), LI in-pocket output collapses (203->1 MW p50, 2023) as subsidized NYC steam displaces it, and O-K4 fails with two NEW D-4 convictions (2517 Port Jefferson, bridge x ST_GAS) as the induced P0 runs get bridge-extended into meter-dark floors. THE DURABLE FINDING: the commitment channel WORKED (NYC in-pocket online 645->1,404 MW p50; C3a-2023 +5.3->+3.4% IMPROVES) — the downstate under-commitment is real; this instrument is structurally wrong for it. C3c bit-identical 1/0/0. Criteria statuses identical to the keeper; C6 unattested-probe. Evidence: _nyiso153_ab_gates.json, _nyiso153_phase0.json, RESULT-nyiso153-obligation-rejected-2026-08-22.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-08-22-nyiso-153-incity-obligation.js",
+ "bundle": "results/calibration/nyiso153_armO"
+}

@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-19-nyiso-146-perplant-minrun",
+  "run_id": "2026-08-22-nyiso-153-incity-obligation",
   "iso": "NYISO",
-  "label": "nyiso 146 perplant minrun",
+  "label": "nyiso 153 incity obligation",
   "target_years": [
     2023,
     2024,
