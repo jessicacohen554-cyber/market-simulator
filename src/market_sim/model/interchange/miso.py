@@ -629,6 +629,7 @@ def inject_miso_seam_flow_limit(
     percentile: float | None = None,
     direction: str = "import",
     merit_cap: bool = False,
+    hour_ending_key: bool = False,
 ) -> bool:
     """Cap each MISO reference-price seam's import bands at the measured envelope.
 
@@ -683,6 +684,16 @@ def inject_miso_seam_flow_limit(
     constraint, implemented availability-only (no new LP rows). See
     ``docs/handoffs/miso-g23-seam-envelope-composition-design-2026-07.md``.
 
+    ``hour_ending_key`` (``ScenarioConfig.miso_seam_envelope_hour_ending_key``,
+    miso-175) reads the envelope's EIA-930 ``local_time`` stamp as hour-ENDING
+    (its measured convention, solved at r = 1.0000 against the BALANCE ``TI``
+    series), un-rotating the (month × hour-of-day) cap profile one hour back
+    onto the model's hour-beginning clock. Pure key repair: cap values,
+    percentile and band grid are unchanged — only which model hour receives
+    each bucket moves. Default ``False`` keeps the legacy rotated key for
+    replay fidelity of pre-miso-175 bundles. See
+    :func:`~market_sim.data.eia_loader.measured_seam_import_envelope`.
+
     Returns ``True`` when at least one seam was capped, ``False`` when no
     reference-price bands (of the requested direction) are present or no measured
     envelope is available (forecast year / unmapped ISO), leaving the seam
@@ -694,7 +705,12 @@ def inject_miso_seam_flow_limit(
 
     hours = int(fleet_arrays.availability.shape[1])
     env = measured_seam_import_envelope(
-        iso, year, hours, percentile, direction=direction
+        iso,
+        year,
+        hours,
+        percentile,
+        direction=direction,
+        hour_ending_key=hour_ending_key,
     )
     if not env:
         return False

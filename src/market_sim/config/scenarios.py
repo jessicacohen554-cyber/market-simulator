@@ -981,6 +981,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # keeping the control/arm A/B off one cache entry. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "miso_reserve_online_gated",
+    # miso-175 seam-envelope hour-key repair (GATED default off): dropped from
+    # the hash at its default so the pinned global default key
+    # 603c2498bf71d21d stays byte-stable — the off path takes the identical
+    # legacy raw-stamp branch, byte-identical by construction. An armed run
+    # un-rotates every seam cap's (month × hod) key one hour — a different
+    # availability/min_gen surface, so a different dispatch — and hashes
+    # distinctly, keeping the control/arm A/B off one cache entry. Registered
+    # IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "miso_seam_envelope_hour_ending_key",
     # miso-170 per-plant must-run floor MEMBERSHIP correction (GATED default
     # off): dropped from the hash at its default so every pre-existing cache
     # key of all six ISOs stays byte-stable — the off path never reads the
@@ -1332,6 +1341,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-169 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_reserve_online_gated": "False",
+    # Added by miso-175 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_seam_envelope_hour_ending_key": "False",
     # Added by miso-170 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_plant_exclusions": "False",
@@ -5330,6 +5342,28 @@ class ScenarioConfig:
     # bites with miso_seam_flow_limit / miso_seam_export_limit. Default off
     # (replay fidelity for pre-miso-73 bundles); see
     # docs/handoffs/miso-g23-seam-envelope-composition-design-2026-07.md.
+    miso_seam_envelope_hour_ending_key: bool = False  # MISO seam deliverability
+    # envelope HOUR-KEY repair (miso-175, rule 14 [R-ACCURATE]): read the
+    # EIA-930 DIBA parquet's `local_time` stamp as hour-ENDING on MISO's local
+    # standard clock — its measured convention, SOLVED not assumed (a −1 h
+    # shift reproduces the independently-keyed BALANCE TI series at r = 1.0000
+    # in 2023 and 2025; miso-174 §4, re-verified miso-175 V-1) — when building
+    # the seam deliverability envelopes, so the (month × hour-of-day) cap
+    # applied at model hour h is built from the measured population of hour h.
+    # The legacy raw-stamp key rotates the whole diurnal cap profile +1 h
+    # against the model clock (measured: rolling the correctly keyed p90
+    # profile +1 h reproduces the legacy cap to mean |Δ| ≈ 2 MW vs ≈ 241 MW at
+    # roll 0; annual mean level unchanged, PJM 6.232 vs 6.231 GW) — internally
+    # inconsistent with the repo's own conventions, since the seam LADDER
+    # derivation reads the SAME parquet with the conversion applied
+    # (scripts/data/derive_miso_seam_ladders.py), so a correctly keyed price
+    # ladder was applied against a mis-keyed cap. Pure key repair, ZERO new
+    # numeric parameters: cap values, percentile, ladder rungs and band grid
+    # are unchanged — only which model hour receives each bucket moves.
+    # Affects both armed directions (miso_seam_flow_limit /
+    # miso_seam_export_limit) and every seam in MISO_SEAM_DIBA; only bites
+    # with those flags; MISO-only (the seam-DIBA gate returns None elsewhere —
+    # byte-identical). Default off (replay fidelity for pre-miso-175 bundles).
     miso_firm_import_floor: bool = False  # Firm (must-flow) import floor on the
     # reference-price seam — the import-direction mirror of the PJM firm-export
     # floor and the Manitoba/HQ firm-import blocks. MISO net-imports from the PJM
@@ -13970,6 +14004,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_flow_percentile": 3,
     "miso_seam_export_limit": 1,
     "miso_seam_envelope_merit_cap": 1,
+    "miso_seam_envelope_hour_ending_key": 1,
     "miso_manitoba_seam": 1,
     "pjm_seam_flow_limit": 1,
     "pjm_seam_flow_percentile": 3,

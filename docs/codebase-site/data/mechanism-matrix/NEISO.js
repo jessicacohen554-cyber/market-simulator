@@ -193,6 +193,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     zonal_loss_surface: { cell: "." },
     rdt_tcdc: { cell: "." },
     seam_flow_envelopes: { cell: "." },
+    miso_seam_envelope_hour_ending_key: { cell: ".", ev: "MISO-only field (the seam-DIBA gate returns None for every other ISO — byte-identical; verified miso-175 V-3). Whether this ISO's own seam-envelope analogue carries the same hour-key convention is this lane's call, handed forward by FINDING-miso174 §4/§7 — not inspected or stamped by miso-175 (rule 25)." },
     nyiso_seam_par_attribution: { cell: "." },
     import_hub_pricing: { cell: "K" },
     import_shape_lever: { cell: "." },

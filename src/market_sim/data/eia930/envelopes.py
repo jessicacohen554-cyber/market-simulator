@@ -947,6 +947,7 @@ def measured_seam_import_envelope(
     hours: int,
     percentile: float | None = None,
     direction: str = "import",
+    hour_ending_key: bool = False,
 ) -> dict[str, np.ndarray] | None:
     """Return each priced seam's measured net-import deliverability cap (MW).
 
@@ -993,6 +994,22 @@ def measured_seam_import_envelope(
     by :func:`~market_sim.model.transmission.inject_miso_seam_flow_limit` as the
     reverse-direction floor (raised ``min_gen`` lower bound) on each seam's
     negative-output export bands.
+
+    ``hour_ending_key`` (``ScenarioConfig.miso_seam_envelope_hour_ending_key``,
+    miso-175 — a rule 14 ``[R-ACCURATE]`` hour-key repair) selects how the
+    file's ``local_time`` stamp is read. The stamp is **hour-ENDING on MISO's
+    local standard clock** — solved, not assumed: a −1 h shift reproduces the
+    independently-keyed EIA-930 BALANCE ``TI`` series at r = 1.0000 in 2023 and
+    2025 (miso-174 §4, re-verified miso-175 V-1), and it is the same conversion
+    the seam-ladder derivation applies to the same parquet
+    (``scripts/data/derive_miso_seam_ladders.py``). ``True`` subtracts one hour
+    BEFORE the year filter and the (month × hod) bucketing, so the cap applied
+    at model hour *h* is built from the measured population of hour *h*.
+    Default ``False`` keeps the legacy raw-stamp key — under which the whole
+    diurnal cap profile is rotated +1 h against the model clock (measured:
+    rolling the correctly keyed p90 profile by +1 h reproduces the legacy cap
+    to mean |Δ| ≈ 2 MW vs ≈ 241 MW at roll 0, annual mean level unchanged) —
+    for replay fidelity of pre-miso-175 bundles.
     """
     if direction not in ("import", "export"):
         raise ValueError(f"direction must be 'import' or 'export', got {direction!r}")
@@ -1012,10 +1029,15 @@ def measured_seam_import_envelope(
         return None
     frame = pd.read_parquet(path)
     local = pd.DatetimeIndex(frame["local_time"])
-    frame = frame[local.year == year]
+    if hour_ending_key:
+        # Hour-ending -> hour-beginning: shift BEFORE the year filter so the
+        # year-boundary hour lands in the year it belongs to on the model
+        # clock (the ladder derivation's exact convention).
+        local = local - pd.Timedelta(hours=1)
+    keep = local.year == year
+    frame, local = frame[keep], local[keep]
     if frame.empty:
         return None
-    local = pd.DatetimeIndex(frame["local_time"])
     # Map each DIBA to its seam; rows whose DIBA is in no seam (e.g. MHEB, the
     # firm-hydro block) drop out.
     diba_to_seam = {d: s for s, dibas in seam_diba.items() for d in dibas}
