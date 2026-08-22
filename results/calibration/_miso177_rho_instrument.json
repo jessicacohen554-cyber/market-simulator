@@ -1,0 +1,58 @@
+{
+ "session": "miso-177",
+ "keeper": "2026-08-22-miso-175-hourkey",
+ "artifact": {
+  "path": "data/raw/_processed-legacy/campd_online_reserve_rho_MISO.csv",
+  "sha256": "259fdc1a46d6d97996e2995d20026da29c054dd4205b2db42bf7327f85e1da2b"
+ },
+ "coefficients": {
+  "rho_measured": 0.17644175978069962,
+  "rho_control_consumes": 0.5,
+  "rho_arm_consumes": 0.17644175978069962,
+  "rho_clip": [
+   0.5,
+   4.0
+  ],
+  "tightening_factor": 2.8337962658128815,
+  "online_unit_hours": 5276357,
+  "campd_coverage_frac": 0.9307
+ },
+ "years": {
+  "2023": {
+   "requirement_mean_mw": 1346.3265380859375,
+   "requirement_max_mw": 2110.533447265625,
+   "keeper_regspin_dual_pos_hours": 5,
+   "keeper_regspin_dual_max": 98.0,
+   "sum_p_elig_mean_mw": 43821.984375,
+   "sum_p_elig_min_mw": 24640.82421875,
+   "static_surface_hours_at_floor_0p5": 0,
+   "static_surface_hours_at_measured": 0,
+   "new_static_surface_hours": 0,
+   "annual_price_ceiling_pct_of_40usd": 0.0
+  },
+  "2024": {
+   "requirement_mean_mw": 1454.1397705078125,
+   "requirement_max_mw": 2431.843994140625,
+   "keeper_regspin_dual_pos_hours": 6,
+   "keeper_regspin_dual_max": 84.30604553222656,
+   "sum_p_elig_mean_mw": 44299.0859375,
+   "sum_p_elig_min_mw": 25606.37890625,
+   "static_surface_hours_at_floor_0p5": 0,
+   "static_surface_hours_at_measured": 0,
+   "new_static_surface_hours": 0,
+   "annual_price_ceiling_pct_of_40usd": 0.0
+  },
+  "2025": {
+   "requirement_mean_mw": 1551.66796875,
+   "requirement_max_mw": 2579.0,
+   "keeper_regspin_dual_pos_hours": 10,
+   "keeper_regspin_dual_max": 84.47150421142578,
+   "sum_p_elig_mean_mw": 46044.24609375,
+   "sum_p_elig_min_mw": 23747.109375,
+   "static_surface_hours_at_floor_0p5": 0,
+   "static_surface_hours_at_measured": 0,
+   "new_static_surface_hours": 0,
+   "annual_price_ceiling_pct_of_40usd": 0.0
+  }
+ }
+}
