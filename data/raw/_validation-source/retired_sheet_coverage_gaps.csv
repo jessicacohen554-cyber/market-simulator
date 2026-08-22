@@ -40,9 +40,31 @@
 # eia860_plant.parquet, so the normal plant-code -> BA lookup
 # (build_capacity_actuals._plant_ba) cannot resolve it.
 #
+# THIRD GAP, found 2026-08-22 (the NEISO capacity-hindcast Mystic question):
+#   - Plant 1588, Mystic Generating Station 8/9 (MA / ISO-NE): the 1,744.4 MW
+#     gas combined-cycle pair (six generator parts: GT81/GT82/ST85 = Mystic 8,
+#     GT93/GT94/ST96 = Mystic 9) retired 2024-06 when its FERC cost-of-service
+#     agreement ended. Absent from the current top-level snapshot's
+#     retired_and_canceled sheet (EIA dropped plant code 1588 from the 2025
+#     Early Release, the Indian Point pattern), and the repo's vintage_2023 /
+#     vintage_2024 snapshots carry no retired sheets at all — so the union
+#     missed it and capacity_actuals_neiso.csv scored NEISO gas_cc actual
+#     retirements at 0.139 GW. Rows below are transcribed VERBATIM from
+#     data/raw/eia-860/eia860_generator_retired_within_window.parquet — the
+#     backcast within-window retiree snapshot process_eia860.py built from the
+#     EIA-860 2024-release retired sheet (the one release that carried the
+#     exit), i.e. the same EIA-860 survey data at the vintage that captured it.
+#     ba_code ISNE per the plant's balancing_authority_code in that snapshot.
+#
 # Consumed by scripts/build_capacity_actuals.py::build_retirements (unioned
 # in before the BA + WINDOW filters, so it flows through the same downstream
 # logic as the main retired_and_canceled sheet).
 plant_code,plant_name,generator_id,technology,energy_source_1,prime_mover,nameplate_capacity_mw,retirement_month,retirement_year,state,ba_code,source_vintage
 8907,Indian Point 3,3,Nuclear,NUC,ST,1012.0,4,2021,NY,NYIS,data/raw/eia-860/vintage_2021/eia860_generator_retired_and_canceled.parquet
 1715,Palisades,1,Nuclear,NUC,ST,811.8,6,2022,MI,MISO,data/raw/eia-860/vintage_2022/eia860_generator_retired_and_canceled.parquet
+1588,Mystic Generating Station,GT81,Natural Gas Fired Combined Cycle,NG,CT,278.6,6,2024,MA,ISNE,data/raw/eia-860/eia860_generator_retired_within_window.parquet
+1588,Mystic Generating Station,GT82,Natural Gas Fired Combined Cycle,NG,CT,278.6,6,2024,MA,ISNE,data/raw/eia-860/eia860_generator_retired_within_window.parquet
+1588,Mystic Generating Station,ST85,Natural Gas Fired Combined Cycle,NG,CA,315.0,6,2024,MA,ISNE,data/raw/eia-860/eia860_generator_retired_within_window.parquet
+1588,Mystic Generating Station,GT93,Natural Gas Fired Combined Cycle,NG,CT,278.6,6,2024,MA,ISNE,data/raw/eia-860/eia860_generator_retired_within_window.parquet
+1588,Mystic Generating Station,GT94,Natural Gas Fired Combined Cycle,NG,CT,278.6,6,2024,MA,ISNE,data/raw/eia-860/eia860_generator_retired_within_window.parquet
+1588,Mystic Generating Station,ST96,Natural Gas Fired Combined Cycle,NG,CA,315.0,6,2024,MA,ISNE,data/raw/eia-860/eia860_generator_retired_within_window.parquet
