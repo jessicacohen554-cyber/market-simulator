@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-22-nyiso-150-winter-spread",
+  "label": "nyiso 150 winter spread",
+  "date": "2026-08-22",
+  "shorthand": "nyiso-150-winter-spread",
+  "definition": "(PROBE, REJECTED-AS-ARMED) nyiso-150 ARM W: nyiso_iroquois_winter_spread single delta on the nyiso-149 keeper recipe \u2014 the first solve test of the flag as a keeper arm. THE REJECTION IS THE MEASUREMENT: the whole state rises together in the winter event months (Dec-24 47.8->61.9 statewide, UW ~exact; Feb-25 UW exact) while the downstate-upstate spread stays <=$1.1 against $11-27 actual \u2014 the winter downstate premium is PROVEN LOCATIONAL BY SOLVE. Fails W-K3a/b/c/d, W-K4 (2 new D-4 rows) and W-K5 (C1-2024 CC_REGULAR +3.63 TWh PASS->FAIL). Re-open: after a locational mechanism lets the west->east cutset bind. PREREG-nyiso150 Amendment 1; gates _nyiso150_ab_gates.json.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-22-nyiso-150-winter-spread.js",
+  "bundle": "results/calibration/nyiso150_armW"
+}

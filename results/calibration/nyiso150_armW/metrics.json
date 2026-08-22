@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-18-nyiso-144-control",
+  "run_id": "2026-08-22-nyiso-150-winter-spread",
   "iso": "NYISO",
-  "label": "nyiso 144 control",
+  "label": "nyiso 150 winter spread",
   "target_years": [
     2023,
     2024,
@@ -23,7 +23,7 @@
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -72,10 +72,10 @@
   },
   "grade_summary": {
     "scored": 7,
-    "target_grade": 6,
+    "target_grade": 5,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 1
+    "fails": 2
   },
   "free_class_score": {
     "iso": "NYISO",
@@ -94,13 +94,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 14,
+      "pass": 13,
       "total": 14
     },
     "free": {
-      "pass": 10,
+      "pass": 9,
       "total": 10
     },
-    "headline": "C1 all 14/14 \u00b7 free 10/10"
+    "headline": "C1 all 13/14 \u00b7 free 9/10"
   }
 }
