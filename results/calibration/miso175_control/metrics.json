@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-15-miso-159-cod-vintage",
+  "run_id": "2026-08-22-miso-175-control",
   "iso": "MISO",
-  "label": "miso 159 cod vintage",
+  "label": "miso 175 control",
   "target_years": [
     2023,
     2024,
@@ -13,15 +13,13 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 3.2,
+  "rubric_version": 3.4,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [
-    "C8 2023 ST_GAS: grounded above budget \u2014 34.2% forced (8.3808 of 24.4823 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.952 (\u22650.8) & off-peak CV ratio 1.47 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2024 ST_GAS: grounded above budget \u2014 35.8% forced (8.7047 of 24.3405 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.961 (\u22650.8) & off-peak CV ratio 1.201 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2025 ST_GAS: grounded above budget \u2014 47.4% forced (10.7488 of 22.6806 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.969 (\u22650.8) & off-peak CV ratio 1.325 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2025 ST_GAS: grounded above budget \u2014 32.2% forced (6.3602 of 19.7293 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.981 (\u22650.8) & off-peak CV ratio 1.531 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
@@ -47,8 +45,7 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -58,7 +55,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -68,9 +65,7 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [
-      "C3c price tail / scarcity (RT hourly)"
-    ],
+    "ledgered": [],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -78,11 +73,11 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 6,
+    "scored": 7,
+    "target_grade": 5,
     "commercial_grade": 0,
-    "ledgered": 1,
-    "fails": 1
+    "ledgered": 0,
+    "fails": 2
   },
   "free_class_score": {
     "iso": "MISO",

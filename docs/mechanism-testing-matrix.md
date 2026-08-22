@@ -4522,7 +4522,25 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-20-miso-173-layup-mask` (**PROMOTED miso-173, 2026-08-20**, superseding `2026-08-20-miso-172-p25mw`), **NOT-YET on C3a-2025 (−11.8 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates since miso-174 (2026-08-21), which adjudicated the last named OPEN cell `measured_interface_limits` U → R on a pre-registered no-LP kill — see the miso-174 stamp below for the four handed-forward (NAMED, NOT CHARTERED) items and the four standing OWNER items.**
+### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-22-miso-175-hourkey` (**PROMOTED miso-175, 2026-08-22**, superseding `2026-08-20-miso-173-layup-mask`), **NOT-YET on C3a-2025 (−11.8 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, and miso-175 (2026-08-22) EXECUTED the first of its four handed-forward items (the seam-envelope hour-key rotation — now the keeper); the remaining three (the coincident-peak seam-response object [OWNER admissibility ruling needed], the M2M/CMP seam-class data intake, the South under-export) stay NAMED, NOT CHARTERED — see the miso-174 stamp below and the four standing OWNER items.**
+> **QUEUE STAMP miso-175 (2026-08-22) — THE SEAM-ENVELOPE HOUR-KEY ROTATION IS REPAIRED AND
+> PROMOTED: KEEPER → `2026-08-22-miso-175-hourkey` (bundle `miso175_hourkey`), on the arm's OWN
+> pre-registered gates (`PREREG-miso175-seam-envelope-hour-key-2026-08-22.md`, committed with the
+> ENGINE-FROZEN 48 cap-array digests + signed window deltas BEFORE any solve) — EVERY KILL SILENT.**
+> Single delta vs miso-173: `miso_seam_envelope_hour_ending_key=true` — the armed p90 seam envelopes
+> read the EIA-930 `local_time` stamp as hour-ENDING (solved at r = 1.0000 against BALANCE `TI`;
+> miso-174 §4, independently re-verified by miso-175 scope 1 before building), un-rotating the
+> (month × hod) cap key +1 h back onto the model clock — the same conversion the seam LADDER applies
+> to the same parquet. Rule 14 `[R-ACCURATE]`, ZERO new DOF (ledger 33/2). M-0 control bit-identity
+> 12/12; M-1a 48/48 digests; M-2a LIVE (95,828 cells); M-2b direction 3/3 (+114/+221/+272 MW PJM
+> import over the loosened binding sets); M-3 zero D-4 conduct failures preserved; M-4 C8 PASS; M-5
+> zero flips/67; M-6 against-interest PASS. Determination UNCHANGED — NOT-YET on C3a-2025 ALONE
+> (−11.65 → −11.80 %, moved AGAINST the model exactly as the frozen instrument predicted, which is
+> why the repair is kept on rule-14 grounds ALONE). Records:
+> `RESULT-miso175-seam-envelope-hour-key-2026-08-22.md`, `_miso175_rotation_verify.json`,
+> `_miso175_hour_key_instrument.json`, `_miso175_hour_key_ab.json`. Runs
+> `2026-08-22-miso-175-control` / `2026-08-22-miso-175-hourkey` (both registered). Bench parts
+> restamped stamp-only (content byte-identical; the caiso-210 conclusion MEASURED for MISO).
 
 > **QUEUE STAMP miso-174 (2026-08-21) — MISO'S LAST NAMED OPEN CELL IS ADJUDICATED:
 > `measured_interface_limits` U → R ON A PRE-REGISTERED NO-LP KILL, AND THE +1.33 GW

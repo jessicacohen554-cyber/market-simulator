@@ -1,0 +1,133 @@
+{
+ "session": "miso-175",
+ "prereg": "PREREG-miso175-seam-envelope-hour-key-2026-08-22.md",
+ "gates": {
+  "M0_control_inertness": {
+   "class_hourly_2023": 0.0,
+   "system_2023": 0.0,
+   "storage_2023": 0.0,
+   "reserve_family_2023": 0.0,
+   "class_hourly_2024": 0.0,
+   "system_2024": 0.0,
+   "storage_2024": 0.0,
+   "reserve_family_2024": 0.0,
+   "class_hourly_2025": 0.0,
+   "system_2025": 0.0,
+   "storage_2025": 0.0,
+   "reserve_family_2025": 0.0,
+   "max_over_12": 0.0,
+   "verdict": "PASS"
+  },
+  "M1a_cap_digests": {
+   "mismatches": [],
+   "n_checked": 48,
+   "verdict": "PASS"
+  },
+  "M1b_bound_respect": {
+   "2023": {
+    "PJM_import_max_over_mw": 0.00019531250018189894,
+    "PJM_export_max_over_mw": -0.0,
+    "SPP_import_max_over_mw": 2.4414062522737368e-05,
+    "SPP_export_max_over_mw": 1.2207031204525265e-05,
+    "South_import_max_over_mw": 0.0,
+    "South_export_max_over_mw": 4.8828125045474735e-05,
+    "Manitoba_import_max_over_mw": 4.8828125045474735e-05,
+    "Manitoba_export_max_over_mw": 0.0
+   },
+   "2024": {
+    "PJM_import_max_over_mw": 0.00019531250018189894,
+    "PJM_export_max_over_mw": -0.0,
+    "SPP_import_max_over_mw": 1.220703143189894e-05,
+    "SPP_export_max_over_mw": 2.4414062522737368e-05,
+    "South_import_max_over_mw": 0.0,
+    "South_export_max_over_mw": 9.765624963620212e-05,
+    "Manitoba_import_max_over_mw": 4.8828125045474735e-05,
+    "Manitoba_export_max_over_mw": 2.4414062522737368e-05
+   },
+   "2025": {
+    "PJM_import_max_over_mw": 0.00019531250018189894,
+    "PJM_export_max_over_mw": -0.0,
+    "SPP_import_max_over_mw": 2.4414062522737368e-05,
+    "SPP_export_max_over_mw": 1.2207031204525265e-05,
+    "South_import_max_over_mw": 1.2207031147681846e-05,
+    "South_export_max_over_mw": 4.8828125045474735e-05,
+    "Manitoba_import_max_over_mw": 2.4414062522737368e-05,
+    "Manitoba_export_max_over_mw": 2.4414062295363692e-05
+   },
+   "max_over_mw": 0.00019531250018189894,
+   "verdict": "PASS"
+  },
+  "M2a_liveness": {
+   "2023": 31476,
+   "2024": 36370,
+   "2025": 27982,
+   "total_differing_cells": 95828,
+   "verdict": "LIVE"
+  },
+  "M2b_direction": {
+   "2023": {
+    "n_B_loose": 68,
+    "mean_arm_minus_control_mw": 113.79550170898438,
+    "gated": true,
+    "ok": true
+   },
+   "2024": {
+    "n_B_loose": 300,
+    "mean_arm_minus_control_mw": 220.89968872070312,
+    "gated": true,
+    "ok": true
+   },
+   "2025": {
+    "n_B_loose": 43,
+    "mean_arm_minus_control_mw": 272.0664367675781,
+    "gated": true,
+    "ok": true
+   },
+   "years_failing": 0,
+   "verdict": "PASS"
+  },
+  "M3_conduct": {
+   "arm_failures": [],
+   "arm_nonpass_rows": [],
+   "control_nonpass_rows": [],
+   "new_nonpass_vs_control": [],
+   "verdict": "PASS"
+  },
+  "M6_against_interest": {
+   "keeper": {
+    "2023": 1.219,
+    "2024": -4.068,
+    "2025": -11.648
+   },
+   "control": {
+    "2023": 1.219,
+    "2024": -4.068,
+    "2025": -11.648
+   },
+   "arm": {
+    "2023": 1.23,
+    "2024": -4.064,
+    "2025": -11.795
+   },
+   "c3a_2023_ok": true,
+   "c3a_2024_ok": true,
+   "c3a_2024_adverse_pp": -0.003,
+   "c3a_2025_reported_not_gated": -11.795,
+   "verdict": "PASS"
+  },
+  "M4_c8": {
+   "verdict": "PASS",
+   "detail": "calibration_verdict 2026-08-22-miso-175-hourkey: C8 forced-energy share PASS all three years; 2025 ST_GAS grounded above budget 32.3% forced (6.3653 of 19.7182 TWh), profile_r 0.982, off-peak cv_ratio 1.533 \u2014 the keeper's grounded form preserved"
+  },
+  "M5_record_flips": {
+   "verdict": "PASS",
+   "records_compared": 67,
+   "pass_to_nonpass_flips": [],
+   "arm_determination": "NOT-YET (C3a-2025 alone, C3c ledgered \u2014 identical posture to the keeper)"
+  }
+ },
+ "kills": [],
+ "all_kills_silent": true,
+ "m2a_live": true,
+ "promotion": "ALL KILLS SILENT + M-2a LIVE -> promoted to keeper 2026-08-22-miso-175-hourkey per PREREG \u00a76 on the rule-14 [R-ACCURATE] ground alone"
+}

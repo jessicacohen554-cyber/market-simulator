@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-22-miso-175-hourkey",
+ "label": "miso 175 hourkey",
+ "date": "2026-08-22",
+ "shorthand": "miso-175-hourkey",
+ "definition": "miso-175 KEEPER: the seam-envelope hour-key rotation repair (miso_seam_envelope_hour_ending_key=true; PREREG-miso175-seam-envelope-hour-key-2026-08-22.md, committed with the ENGINE-FROZEN 48 cap-array digests before any solve). Single delta vs miso173_layupmask: the armed p90 seam envelopes read the EIA-930 local_time stamp as hour-ENDING (solved at r=1.0000 vs BALANCE TI), un-rotating the (month x hod) cap key +1 h back onto the model clock \u2014 the same conversion the seam ladder applies to the same parquet. ALL KILLS SILENT (M-0..M-6); zero new DOF; ZERO D-4 conduct failures preserved; determination NOT-YET on C3a-2025 alone (-11.65 -> -11.80%, moved AGAINST the model as the frozen instrument predicted \u2014 kept on rule-14 [R-ACCURATE] grounds ALONE), C3c ledgered.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-08-22-miso-175-hourkey.js",
+ "bundle": "results/calibration/miso175_hourkey"
+}
