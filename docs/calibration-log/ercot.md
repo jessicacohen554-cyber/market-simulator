@@ -11061,3 +11061,53 @@ protocol.
 
 **Session consumed the ercot-226 shorthand. Next shorthand: ercot-227**
 (ercot-199 remains unclaimed).
+
+## ercot-228 — 2026-08-22 — F4 load-forecast conservatism: **DATA-ABSENT** (Phase A terminal; no build, no solve)
+
+Spoke of the ercot-226/227 owner program (Amendment 3, "Proceed with all
+the factors to test not just 1 keep going"); factor F4 ONLY, branch
+`claude/ercot-2023-summer-scarcity-9lg3nm` at `705ec9b`. Charter: fetch a
+public 2023 vintage of the ERCOT DA load forecast (NP3-560-CD /
+NP3-561-CD), curate it, then A/B the pinned `ercot_load_forecast_margin`
+mechanism (max(0, forecast − actual) added to the ORDC total-reserve
+requirement before its MCL floor; RHS-only, zero fitted scalars) — with
+DATA-ABSENT precommitted as an honest terminal verdict if no vintage is
+retrievable.
+
+**Phase A failed on every ERCOT-published surface** (full URL-by-URL
+attempt log: `results/calibration/ercot228_probe_f4.json`): mis.ercot.com
+GetReports 302s to the SiteMinder market-participant client-cert wall
+(both reportTypeIds 12311/12312); the public
+`www.ercot.com/misapp/servlets/IceDocListJsonWS` doc lists are 7-day
+rolling windows (346 docs each, 2026-08-15 → 2026-08-22; ExpiredDate =
+publish + 7 d), matching ERCOT's own EMIL catalog `misDisplayDuration_i =
+7`; a sweep of EVERY load-forecast catalog item finds only rolling
+windows (7/31/365 d — the 31-d NP8-92x are accuracy metrics, the 365-d
+items are distribution factors / monthly 36-month, none a DA vintage
+reaching 2023); and `api.ercot.com/api/public-reports/archive/NP3-560-CD`
+— the one archive that DOES span the 2023 vintages — returns 401 behind
+the data.ercot.com subscription key the owner **closed permanently
+2026-07-05** (`ercot-as-coopt-plan-2026-07.md` §WS-E; no credentials in
+the session env, swept). The ercot-226 F4 REFUTED-P0 prior is thereby
+upgraded in kind: "no measured series in the repo" → "no measured series
+retrievable from the public record," measured live.
+
+**Nothing was built** — no ScenarioConfig field, no loader, no tests, no
+PRECOMMIT-ercot228 (Phase B was data-conditional). The pinned-but-
+unexercised mechanism form and the DAM-close vintage rule (last issuance
+before 10:00 CPT of the prior day) are recorded in the probe JSON. Matrix:
+new base row `ercot_load_forecast_margin` (NOT BUILT, adjudication
+record) + ERCOT cell **O** (open — blocked on an intake dependency, the
+`demand_growth_vintage` CAISO-cell precedent), other shards `·`; checker
+integrity OK. **Reopen route is an owner action only** (the WS-E HSL
+precedent): manual Data Access Portal download of the 2023 NP3-560/561
+zips into `data/raw/ercot/` — then Phases B–C execute as precommitted,
+under the unchanged ercot-216 §5 prior (reality's own ORDC ≈ $1 at the
+missed hours) and the §1 channel doctrine (adder-carried improvement
+fails adoption). W-2 honored: nothing dashboard-registered; the JSON +
+`docs/FINDING-ercot228-load-forecast-2026-08-22.md` are the record. The
+keeper stands untouched. Env verified at the keeper pins
+(1.15.1/3.0.5/25.0.1/2.4.6/1.17.1) though no solve ran.
+
+**Session consumed the ercot-228 shorthand.** (ercot-227 ran concurrently
+in the hub; ercot-199 remains unclaimed)

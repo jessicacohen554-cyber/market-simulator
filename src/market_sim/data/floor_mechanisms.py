@@ -159,6 +159,20 @@ MECH_COAL_MIN_CONFIG: int = 21
 # forced-share gate.
 MECH_MISO_COAL_NIGHT_FLOOR: int = 22
 
+# ercot-227 F3 (PRECOMMIT-ercot226 §5.11 Amendment 3, owner waiver W-3):
+# the measured RUC INSTRUCTION-STATE commitment floor — per class-hour, the
+# NP3-965 ``Telemetered Resource Status == ONRUC`` units' summed LSL
+# (derive_ercot_ruc_committed.py), distributed pro-rata over the class's
+# available capacity. DRIVER: the operator's RUC instruction (an input of
+# the outage-window family, rule 13 — never realized output, the D-9
+# quarantined deployment-overlay shape, and never a per-unit crosswalk,
+# Q-B). WINDOW: the measured instruction hours themselves — zero series ⇒
+# zero floor by construction. A merchant-visible commitment floor — subject
+# to the D-2 forced-share gate; rule-19 incumbents (the gas bridge on CC,
+# the ST_GAS net-load drag) reconcile through maximum-composition with
+# per-mechanism attribution (ties keep the incumbent id).
+MECH_ERCOT_RUC_COMMITMENT: int = 23
+
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
     MECH_NUCLEAR: "nuclear_mustrun",
@@ -183,6 +197,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_NYISO_GAS_COMMITMENT_BRIDGE: "nyiso_gas_commitment_bridge",
     MECH_COAL_MIN_CONFIG: "coal_min_config",
     MECH_MISO_COAL_NIGHT_FLOOR: "miso_coal_night_floor",
+    MECH_ERCOT_RUC_COMMITMENT: "ercot_ruc_commitment",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -246,6 +261,8 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     # Same classification and rationale as MECH_HYDRO_MIN_FLOW (the reconciled
     # family's other half): real water physics, but new and switchable.
     MECH_HYDRO_ROR_FLAT: {"hydro_ror_split": False},
+    # ercot-227 F3: ABLATED (visible, switchable merchant commitment floor).
+    MECH_ERCOT_RUC_COMMITMENT: {"ercot_ruc_commitment_floor": False},
 }
 
 # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural

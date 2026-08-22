@@ -1,0 +1,71 @@
+{
+ "probe": "ercot228_probe_f4",
+ "factor": "F4 ercot_load_forecast_margin (operator load-forecast conservatism)",
+ "charter": "PRECOMMIT-ercot226-held-sequestration-2026-08-22 §5.11 Amendment 3 (F4-ARM, owner-named session ercot-228); owner order verbatim: 'Proceed with all the factors to test not just 1 keep going'",
+ "session": "spoke (ercot-228)",
+ "branch_sha": "705ec9b6e9058800e1fda950657d57a46ec68f1a",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1"
+ },
+ "control": null,
+ "arm": null,
+ "official": null,
+ "probe_basis": null,
+ "gates": null,
+ "family_diagnostics": null,
+ "summer": null,
+ "adaptive": null,
+ "verdict": {
+  "adoption_pass": false,
+  "disposition": "DATA-ABSENT",
+  "failed_criteria": [
+   "Phase A (the measured driver): NO public 2023 vintage of the ERCOT day-ahead load forecast is retrievable. Every ERCOT-published surface is a rolling window ending 'today' (7-31 days) that structurally cannot reach 2023, and the one archive that does carry 2023 vintages (the credentialed Public Data API) requires the data.ercot.com subscription key the owner permanently declined to procure (2026-07-05, ercot-as-coopt-plan-2026-07.md §WS-E / open-items row 3). Per the ercot-228 dispatch: DATA-ABSENT is the honest terminal verdict — no curation, no precommit, no mechanism build, no solve."
+  ]
+ },
+ "phase_a_attempt_log": [
+  {
+   "target": "MIS report archive, NP3-560-CD Seven-Day Load Forecast by Forecast Zone (reportTypeId 12311)",
+   "url": "https://mis.ercot.com/misapp/GetReports.do?reportTypeId=12311&reportTitle=Seven-Day%20Load%20Forecast%20by%20Forecast%20Zone&showHTMLView=&mimicKey",
+   "outcome": "HTTP 302 -> https://mis.ercot.com/siteminderagent/cert/.../smgetcred.scc (SiteMinder market-participant CLIENT-CERTIFICATE wall); the cert endpoint then fails the TLS handshake without a participant certificate (OpenSSL alert handshake failure). Same 302-to-SiteMinder for reportTypeId 12312. Matches the wall fetch_ercot_as_reports.py re-verified 2026-07-10 for the AS reportTypeIds."
+  },
+  {
+   "target": "www.ercot.com public doc list, NP3-560-CD (reportTypeId 12311)",
+   "url": "https://www.ercot.com/misapp/servlets/IceDocListJsonWS?reportTypeId=12311",
+   "outcome": "HTTP 200, 346 documents listed, PublishDate range 2026-08-15T00:30 .. 2026-08-22T04:30 (7-day ROLLING window; each doc's ExpiredDate = publish + 7 d). No 2023 vintage. The window's right edge always tracks 'now' — the permanent structural limit fetch_ercot_as_reports.py documents: 2023 will never re-enter it."
+  },
+  {
+   "target": "www.ercot.com public doc list, NP3-561-CD Seven-Day Load Forecast by Weather Zone (reportTypeId 12312)",
+   "url": "https://www.ercot.com/misapp/servlets/IceDocListJsonWS?reportTypeId=12312",
+   "outcome": "HTTP 200, 346 documents, identical 7-day window (2026-08-15 .. 2026-08-22). No 2023 vintage."
+  },
+  {
+   "target": "ERCOT's own EMIL product catalog — advertised retention for every load-forecast product",
+   "url": "https://www.ercot.com/api/1/services/read/common/all-emil-items-search.json",
+   "outcome": "np3-560-cd and np3-561-cd: misDisplayDuration_i = 7. Full sweep of every catalog item matching 'load forecast': np3-562-cd intra-hour (7 d), np3-565-cd MTLF by model (7 d), np3-566-cd by model/study area (7 d), gen-55-cd forecast-vs-actual dashboard feed (7 d), np8-927/928/929/930 forecast-ACCURACY reports (31 d; accuracy metrics, not forecast vintages), np12-753 settlement-input extract incl. public load forecast 2 days prior to OD (31 d), np4-159-cd load distribution factors (365 d; factors, not forecasts), np3-778-m 36-month monthly min/max (365 d; monthly grain, MIS Secure Area). Every product is a rolling window ending today; NONE reaches 2023."
+  },
+  {
+   "target": "ERCOT Public Data API archive (the credentialed EMIL history route)",
+   "url": "https://api.ercot.com/api/public-reports/archive/NP3-560-CD",
+   "outcome": "HTTP 401 {\"statusCode\": 401, \"message\": \"Access denied due to missing subscription key...\"}. This archive DOES span the 2023 vintages (multi-year history per the developer portal), but requires an apiexplorer/developer.ercot.com account + subscription key + OAuth bearer — the exact route the owner CLOSED PERMANENTLY 2026-07-05: 'owner will not procure a data.ercot.com key' (docs/handoffs/ercot-as-coopt-plan-2026-07.md §WS-E and open-items row 3; docs/ercot-hsl-2024-25-intake-attempt-2026-07.md). No credentials exist in the session environment (swept)."
+  },
+  {
+   "target": "any other ERCOT-published bulk archive of 2023 forecast vintages",
+   "url": "web sweep (developer.ercot.com relnotes; www.ercot.com/gridinfo/load; www.ercot.com/mp/data-products/data-product-details?id=np3-560-cd)",
+   "outcome": "None exists outside the credentialed API. www.ercot.com/gridinfo/load carries current forecasts and ACTUAL-load archives only (backcast demand already uses measured actual load); the data-product-details pages front the same 7-day MIS listing."
+  }
+ ],
+ "pinned_but_unexercised": {
+  "mechanism": "ercot_load_forecast_margin (bool, default False, backcast-only measured overlay) — margin_t = max(0, forecast_mw(t) - actual_load(t)) added to the ercot_ordc_total_reserve requirement BEFORE its MCL floor; RHS-only, zero LP growth, zero fitted scalars; sign declared UNCERTAIN (procured tightness up vs over-commitment suppression down)",
+  "vintage_rule": "for each delivery hour, the last forecast issued before 10:00 CPT of the PRIOR day (the DAM-close vintage); CPT->Etc/GMT+6 clock discipline per derive_ercot_as_responsibility.py",
+  "status": "NOT built — no ScenarioConfig field, no loader, no tests, no precommit-228 doc (Phase B was data-conditional and the data did not land)"
+ },
+ "reopen_route": {
+  "owner_action": "the WS-E HSL precedent (2026-07-06): the owner manually downloading the 2023 NP3-560-CD/NP3-561-CD archive files through the data.ercot.com Data Access Portal UI ('Search History') is an already-authorized mechanism distinct from procuring an API key. If those zips land under data/raw/ercot/, Phases B-C of the ercot-228 charter execute as precommitted.",
+  "standing_prior_unchanged": "ercot-216 §5: measured reality's own ORDC sat at ~$1 with no window at the missed hours, and the precommit §1 channel doctrine binds — an ORDC-requirement mechanism that carried improvement through the model adder rather than lambda would FAIL adoption regardless"
+ }
+}

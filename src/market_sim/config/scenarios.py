@@ -958,6 +958,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # per-class holds, a different scenario, and hashes distinctly.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "ercot_as_held_location",
+    # ercot-227 F1/F1b held-depth (GATED default off, backcast-only): same
+    # contract — off path byte-identical (max(plan, 0) = plan), armed runs
+    # hash distinctly. Registered WITH the fields (nyiso-119).
+    "ercot_as_held_requirement",
+    "ercot_as_held_requirement_nspin",
+    "ercot_ruc_commitment_floor",
     # caiso-205 CAISO leg of the adaptive-expectation family (GATED default
     # off) + its two rule-23 identified constants: dropped from the hash at
     # their defaults so every pre-existing cache key stays byte-stable (the
@@ -1360,6 +1366,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-226 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_as_held_location": "False",
+    # Added by ercot-227 WITH the fields (nyiso-119 discipline).
+    "ercot_as_held_requirement": "False",
+    "ercot_as_held_requirement_nspin": "False",
+    "ercot_ruc_commitment_floor": "False",
     # Added by caiso-205 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "caiso_storage_adaptive_expectation": "False",
@@ -1446,6 +1456,9 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "ercot_thermal_dam_availability_coal": "measured 60-Day DAM awards (coal)",
     "ercot_dam_availability_coal_event_cap": "measured DAM-award coal event cap",
     "ercot_as_held_location": "measured NP3-965 telemetered per-class AS holds",
+    "ercot_as_held_requirement": "measured NP3-965 system AS responsibilities",
+    "ercot_as_held_requirement_nspin": "measured NP3-965 NSPIN responsibilities",
+    "ercot_ruc_commitment_floor": "measured NP3-965 ONRUC instruction state",
     # Added by the FFR-W1X Wave-1 close (2026-08-02), not by FFR-1D: the field
     # landed with ERCOT-149 (73e237a, 2026-08-01) AFTER this family was
     # written, and it is the literal sibling of the coal entry directly above —
@@ -6815,6 +6828,46 @@ class ScenarioConfig:
     # allocation (a forecast year carries no disclosure, exactly like
     # outage_source="historic"). Backcast-only measured overlay
     # (_BACKCAST_ONLY_OVERLAY_FIELDS). Default off; ERCOT only. GATED.
+    ercot_as_held_requirement: bool = False  # ercot-227 F1 held-DEPTH
+    # (PRECOMMIT-ercot226 §2 F1 + Amendment 3): deepen the rigid products'
+    # (RegUp/RRS/ECRS) requirements to max(plan, measured telemetered held)
+    # inside their rigid windows — the NP3-965 system responsibility series
+    # (derive_ercot_as_responsibility.py; a measured power reservation, rule
+    # 13's admissible example). Measured prior: held < plan everywhere on
+    # the Gen-ONLINE basis (LR + offline NonSpin outside the corpus), so the
+    # armed solve is the MEASUREMENT of the mechanism's inertness (bit
+    # identity vs control). Absent file/column ⇒ zeros ⇒ exact plan fallback
+    # (uncovered years byte-identical to flag-off). Backcast-only measured
+    # overlay. Default off; ERCOT multi-product co-opt only. GATED.
+    ercot_as_held_requirement_nspin: bool = False  # ercot-227 F1b: the same
+    # max(plan, held) on the NSPIN family (full published coverage — NSPIN
+    # is not a rigid family; its ramp-released design matches the real
+    # market's SCED-dispatchable online Non-Spin). Same measured prior,
+    # same zeros-fallback contract. Backcast-only. Default off. GATED.
+    ercot_ruc_commitment_floor: bool = False  # ercot-227 F3 (PRECOMMIT-
+    # ercot226 §5.11 Amendment 3, owner waiver W-3 "measured RUC /
+    # out-of-market commitment MW"): a P1 min_gen commitment floor from the
+    # measured RUC INSTRUCTION state — per class-hour, the NP3-965
+    # `Telemetered Resource Status == ONRUC` units' summed LSL
+    # (derive_ercot_ruc_committed.py; 2023: ST_GAS 778 h / CC 258 h / CT 40 h
+    # of nonzero floor, 2,031 unit-hours total vs the gas bridge's ~50,000 —
+    # ercot227_ruc_sizing.json), distributed pro-rata over the class's
+    # available capacity, clipped at class capability (data-vs-data, zero
+    # fitted scalars). DRIVER: the operator's RUC instruction — an INPUT of
+    # the outage-window family (rule 13's admissible example class), never
+    # realized output (the D-9 quarantined ct_deployment_overlay /
+    # reliability_deployment_overlay shape pins measured ENERGY; the
+    # ct_mustrun_per_plant quarantine pinned ANNUAL commitment from an
+    # outcome filing — this floor is hourly, instruction-driven, and its
+    # window IS the measured instruction set: zero series ⇒ zero floor by
+    # construction). Class grain (Q-B stays closed). Rule-19 incumbents (the
+    # gas bridge on CC; the ST_GAS net-load drag) reconcile via maximum-
+    # composition with per-mechanism D-2 attribution
+    # (data.floor_mechanisms.MECH_ERCOT_RUC_COMMITMENT; ties keep the
+    # incumbent). FORWARD STORY: a forecast year carries no disclosure and
+    # the model's own commitment machinery (bridge + drag) governs, exactly
+    # like outage_source="historic". Backcast-only measured overlay.
+    # Default off; ERCOT only. GATED.
     ercot_ordc_total_reserve: bool = False  # ERCOT multi-product co-opt: ALSO
     # enforce the lumped ORDC TOTAL-reserve demand curve (the published RTORPA
     # mechanism of the 2014-2025 ORDC regime, NPRR568 / PUCT project 37897 +
@@ -14212,6 +14265,9 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ecrs_requirement": 1,
     "ercot_ecrs_requirement_from_year": 1,
     "ercot_as_held_location": 1,
+    "ercot_as_held_requirement": 1,
+    "ercot_as_held_requirement_nspin": 1,
+    "ercot_ruc_commitment_floor": 1,
     "ercot_multiproduct_as_coopt": 1,
     "ercot_ecrs_conservative_deployment": 1,
     "ercot_nonreleasable_as_withholding": 1,

@@ -1,0 +1,74 @@
+{
+ "probe": "ercot227_ruc_sizing",
+ "charter": "PRECOMMIT-ercot226 \u00a75.11 Amendment 3, F3 (ercot97 Lane B re-run on delivery-2023 \u2014 new evidence)",
+ "year": 2023,
+ "onruc_rows": 7963,
+ "onruc_unit_hours": 2031,
+ "days_touched": 96,
+ "by_class": {
+  "CC_REGULAR": {
+   "rows": 1148,
+   "mean_hsl": 238.6,
+   "mean_lsl": 126.2,
+   "mean_bp": 129.0,
+   "units": 26
+  },
+  "CT_PEAKER": {
+   "rows": 183,
+   "mean_hsl": 91.7,
+   "mean_lsl": 47.1,
+   "mean_bp": 49.6,
+   "units": 9
+  },
+  "ST_GAS": {
+   "rows": 6632,
+   "mean_hsl": 199.9,
+   "mean_lsl": 49.4,
+   "mean_bp": 55.5,
+   "units": 35
+  }
+ },
+ "by_month_rows": {
+  "1": 666,
+  "2": 996,
+  "3": 583,
+  "4": 1452,
+  "5": 1772,
+  "6": 1228,
+  "7": 448,
+  "8": 43,
+  "9": 326,
+  "10": 131,
+  "11": 290,
+  "12": 28
+ },
+ "by_hod_rows": {
+  "0": 128,
+  "1": 124,
+  "2": 125,
+  "3": 120,
+  "4": 119,
+  "5": 120,
+  "6": 172,
+  "7": 206,
+  "8": 211,
+  "9": 149,
+  "10": 153,
+  "11": 164,
+  "12": 194,
+  "13": 254,
+  "14": 368,
+  "15": 512,
+  "16": 603,
+  "17": 687,
+  "18": 711,
+  "19": 695,
+  "20": 734,
+  "21": 643,
+  "22": 459,
+  "23": 312
+ },
+ "bridge_unit_hours_yardstick": 50000,
+ "ratio_vs_bridge": 0.0406,
+ "ercot97_prior": "303 unit-hours on 2024/2025 slim subsets (178x below the bridge) \u2014 IMMATERIAL, step 2 not triggered"
+}

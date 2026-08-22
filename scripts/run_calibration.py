@@ -5243,6 +5243,14 @@ def run_year(
         mc_base,
         floorscoped_markdown_fn=floorscoped_markdown_fn,
     )
+    # ercot-227 F3 (Amendment 3): chain the measured RUC-instruction floor
+    # after the bridge's (works with the bridge on or off; ISO/flag-gated
+    # inside — every other path returns the prep unchanged, byte-identical).
+    from market_sim.pipeline.commitment import wrap_ercot_ruc_floor_prep
+
+    ercot_bridge_prep = wrap_ercot_ruc_floor_prep(
+        config, iso, fleet_arrays, ercot_bridge_prep
+    )
     # P1-native NYISO gas commitment bridge (nyiso-87): the committed-state
     # floor on the merchant slow-start gas fleet (CC_REGULAR + ST_GAS by unit
     # physics) — minimum run duration, minimum down time and the

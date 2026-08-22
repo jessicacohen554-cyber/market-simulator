@@ -466,6 +466,71 @@ a subset of the control's** (`G-SHORTFALL` in `ercot226_gates.py`; new
 engagement hours are listed and fail the gate). No factor had been scored
 when this amendment landed; the adoption criteria are otherwise unchanged.
 
+### 5.11 AMENDMENT 3 (2026-08-22, post-close owner order — the ercot-227/228
+EXTENSION: every factor gets a SOLVED verdict)
+
+After the ercot-226 close the owner ordered (verbatim): **"Proceed with all
+the factors to test not just 1 keep going"**, and, on the factor split,
+**"Give me a prompt for 228 with the next factor while this one runs"** and
+**"And whatever other factors are missing"**. Effect: the §5.4 kill
+preconditions are RECLASSIFIED from probe-terminating to probe-informing
+PRIORS — every factor with a buildable form and on-disk (or fetchable) data
+proceeds to a real 2023-only A/B, and a predicted-inert factor's solve is
+the MEASUREMENT of its inertness (bit/numeric identity as the recorded
+verdict). The extension program:
+
+- **F1-ARM** (`ercot_as_held_requirement`, the precommitted §2 F1 max form)
+  and **F1b-ARM** (`ercot_as_held_requirement_nspin`): built and solved in
+  the hub (ercot-227). Prior: delta ≡ 0 ⇒ arm ≡ control; the solve converts
+  REFUTED-P0 into MEASURED-INERT.
+- **F1c — DAM-awarded-vs-plan depth** (completeness addition under W-3
+  category (i)'s third basis, the on-disk DAMASAGGNP419 2023 aggregate DAM
+  AS awards — F1 tested the telemetered basis, never the awarded one):
+  Phase-0 measurement of max(0, awarded − plan) per product; a nonzero
+  delta proceeds to a solve on the same max-form mechanism with the awarded
+  series; a zero delta is covered by the F1 solve's identity demonstration
+  (same formula, provably same LP) and recorded as such.
+- **F3-ARM** (RUC/OOM commitment, hub): the ercot97 Lane B sizing is
+  RE-RUN ON THE 2023 DELIVERY MONTHS (new evidence — the 2023 SCED corpus
+  is now on disk; ercot97's 303-unit-hour immateriality was measured on
+  2024/2025, and 2023 is the heavy-RUC year), then the mechanism is BUILT
+  AND SOLVED regardless of the sizing (the owner's order; a small floor's
+  near-identity is then the measured verdict). Form (the D-9-survivable
+  one): class-grain floors at LSL on measured ONRUC INSTRUCTION-STATE
+  unit-hours — an operator input of the outage-window class (rule 13's own
+  admissible example family), never realized energy. Confrontations
+  recorded in the FINDING: (a) `ct_deployment_overlay` /
+  `reliability_deployment_overlay` (D-9): those pin measured OUTPUT in
+  out-of-merit hours — F3 pins the instruction state at the physical LSL;
+  (b) `ct_mustrun_per_plant` (D-9): that pinned ANNUAL per-plant commitment
+  from an outcome filing with no window — F3 is hourly, instruction-driven,
+  measured-windowed (D4_WINDOWS from the ONRUC firing pattern, the ercot97
+  charter's own demand); (c) rule 19 vs `ercot_gas_commitment_bridge`:
+  max-composition with mechanism tagging (ties keep the incumbent), and the
+  ONRUC population is ST_GAS-dominated — a class the bridge never floors.
+  W-3 names measured RUC MW admissible; this arm is that waiver exercised.
+- **F4-ARM** (load-forecast conservatism): dispatched to session
+  **ercot-228** (owner-named) with its own precommit
+  (PRECOMMIT-ercot228-load-forecast-2026-08-22.md): fetch-attempt for the
+  2023 NP3-560/561 DA load-forecast archive (no fetcher exists in the repo
+  — verified), DATA-ABSENT is an honest terminal verdict; if data lands,
+  `ercot_load_forecast_margin` adds max(0, forecast − actual) to the ORDC
+  total-family requirement before its MCL floor (RHS-only, zero LP growth),
+  sign declared UNCERTAIN, §5.5 adjudicates.
+- **F5**: no buildable delta (the rigid representation is already maximal)
+  — remains a measurement row; stated, not solved.
+- **F2**: adjudicated R this session — NOT retested (DO-NOT-REDO).
+- **Completeness boundary**: no other factor exists inside the W-3
+  admissible space; the excluded-for-structure rows (§3) stay excluded
+  under the dispatch's own carried-forward fences unless the owner names a
+  new waiver.
+
+Combination and W-4 promotion re-enter iff any factor clears §5.5. W-2 (no
+probe registration; committed JSONs are the record) and the §5.8
+else-branch are unchanged. Concurrency: ercot-227 (hub) and ercot-228 run
+in parallel on one branch — additive edits at distinct anchors,
+pull-rebase before every push; the hub folds the program-level conclusion.
+
 ## 6. EXECUTION PROTOCOL (hub-and-spokes, per the owner's parallel-session
 instruction)
 
