@@ -68,10 +68,13 @@ ISO_CAMPD_STATES = {
 # authority, summed over the states the ISO spans. A plain state sum would be
 # badly boundary-misaligned here (rule 11) — MISO shares IN/IL/KY/MI with PJM,
 # so a TX..WI state sum would double-count PJM and overstate MISO CO2 by a large
-# margin; NYISO ≈ NY but carries a few NJ/PJM-border plants. The crosswalk keeps
-# the reference on the model's own BA boundary. ERCOT/PJM stay on the state-sum
-# path above (unchanged, already registered).
-ISO_CAMPD_FACILITY = frozenset({"MISO", "NYISO"})
+# margin; NYISO ≈ NY but carries a few NJ/PJM-border plants. CAISO joined
+# 2026-08-22 (first CAISO T1-H leg): a CA state sum would overcount CAISO by
+# the non-CAISO CA balancing authorities' fossil fleets (LADWP, BANC, IID —
+# several GW of in-state gas outside the CISO BA), so the same BA crosswalk
+# applies. The crosswalk keeps the reference on the model's own BA boundary.
+# ERCOT/PJM stay on the state-sum path above (unchanged, already registered).
+ISO_CAMPD_FACILITY = frozenset({"MISO", "NYISO", "CAISO"})
 
 THERMAL_FUELS = frozenset(
     {"coal", "gas_cc", "gas_ct", "gas_st", "oil", "nuclear", "biomass"}
