@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-22 — miso-176: M2M/CMP seam-class intake + binding-reality adjudication (no LP, nothing armed, keeper unchanged)
+
+New curated datatype `miso-m2m-flowgates` (schema-first, data-intake
+contract): MISO's public annual `M2M_Settlement_srw_YYYY.csv` — hourly
+per-flowgate FFE + market flows + shadow prices + credits for the MISO–PJM
+and MISO–SWPP seams, 2023–2025 (miso-77 §2a series). Mirrors gitignored
+with sha256 README rows (bc_HIST precedent);
+`scripts/data/{fetch,curate}_miso_m2m_flowgates.py`; rule-13 line fixed in
+the schema header (FFE input-class in kind; shadow/flow/credit
+ANSWER-class, validation only). The miso-176 no-LP measurement
+(`_miso176_m2m_seam_binding.json`, prereg-first) verified the file's clock
+against `rt_bc_HIST` on the NERC-ID join (r = 0.9934), measured PJM-seam
+M2M binding CO-MOVING with MISO's 72 scarce hours (4–6× harder,
+restriction-consistent, MISO over its own FFE on 67–82 % of binding rows),
+and minted matrix cell `m2m_seam_entitlement_cap` = `G` (every zero-DOF
+encoding refused: rule-13 conditioning + the miso-77 §5.2 apportionment
+refusal). Evidence transfers to the standing coincident-peak seam-response
+owner item. `FINDING-miso176-m2m-seam-binding-reality-2026-08-22.md`.
+
 ## 2026-08-17 — BLOAT-S2: Stage-2 (a)-only untrack executed — six evidence passes, −444.5 MiB / 144 files at tip
 
 Executes the signed O2 grant (BLOAT-3 card, 2026-08-16). Six §4.8
