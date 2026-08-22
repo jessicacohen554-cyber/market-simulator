@@ -1,0 +1,461 @@
+{
+ "probe": "ercot227_probe_f1",
+ "factor": "F1 ercot_as_held_requirement \u2014 telemetered RT AS-responsibility deepening of the rigid families, requirement_p(t) = max(plan_p(t), held_p(t))",
+ "sub_factor_folded": "F1c (DAM-CLEARED-vs-plan): measured zero, no separate solve required \u2014 see f1c_cleared_vs_plan below",
+ "charter": "docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md \u00a72 (F1 row), \u00a75.9 (probe JSON schema), \u00a75.11 Amendment 3 (the owner extension converting Phase-0 kills from probe-TERMINATING to probe-INFORMING priors: every factor gets a SOLVED verdict)",
+ "waiver": "W-3 (ercot-226) \u2014 the 2023 operator-conservatism object re-opened in year/window-scoped measured-input form; admissible category (i) 2023 AS procurement/award quantities + (iv) measured AS power reservation. NP3-965 telemetry enters as a measured QUANTITY, never as Door-A conduct identification (\u00d73 refused, DO-NOT-REDO intact).",
+ "session": "hub (ercot-227)",
+ "branch_sha": "29d958445569ceaf7103d93081c12cfc4a5245ad",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1",
+  "note": "G-REPRO adapted per ercot-226: cross-environment parquet layout makes sha-identity unusable; the binding evidence is NUMERIC identity (max|\u0394| per column) + official-scorer printed-digit exactness."
+ },
+ "control": {
+  "bundle": "results/calibration/ercot226_ctl2023",
+  "basis": "hub same-box replay of keeper 2026-08-20-ercot223-arm-eventrelease (results/calibration/ercot223_release_arm), 2023",
+  "official_2023": {
+   "C3a_pct": -39.7,
+   "C3b_nrmse": 0.729,
+   "C3c_model_tail_h": 74,
+   "C3c_actual_tail_h": 181
+  },
+  "keeper_expected": {
+   "C3a_pct": -39.7,
+   "C3b_nrmse": 0.729,
+   "C3c_model_tail_h": 74
+  },
+  "control_reproduces_keeper": true
+ },
+ "arm": {
+  "bundle": "results/calibration/ercot227_f1_arm",
+  "set": {
+   "ercot_as_held_requirement": true
+  },
+  "years": [
+   2023
+  ],
+  "meta_flag_verified": true
+ },
+ "official": {
+  "2023": {
+   "C3a_pct": -39.7,
+   "C3b_nrmse": 0.729,
+   "C3c_model_tail_h": 74,
+   "model_mean_usd": 38.81,
+   "actual_rt_lw_usd": 64.32,
+   "delta_vs_control_pp": 0.0
+  }
+ },
+ "numeric_identity_vs_control": {
+  "verdict": "PRICES AND DISPATCH NUMERICALLY IDENTICAL",
+  "per_sidecar_max_abs_delta": {
+   "system": {
+    "max_abs_delta": 1.6342482922482304e-13,
+    "worst_col": "price"
+   },
+   "reserve_family": {
+    "max_abs_delta": 336.140869140625,
+    "worst_col": "held_mw"
+   },
+   "storage": {
+    "max_abs_delta": 6.103515625e-05,
+    "worst_col": "charge_mw"
+   },
+   "class_hourly": {
+    "max_abs_delta": 0.0,
+    "worst_col": null
+   },
+   "adaptive": {
+    "max_abs_delta": 0.0,
+    "worst_col": null
+   },
+   "network": {
+    "max_abs_delta": 247.17459106445312,
+    "worst_col": "mw"
+   }
+  },
+  "reading": "system.price 1.6e-13 and storage.charge_mw 6.1e-05 are LP re-solve floating-point noise; class_hourly and adaptive are EXACTLY 0.0 (identical dispatch by class, identical adaptive-conduct expression); reserve_family.held_mw (\u2264336 MW, 24 family-hours) and network.mw (\u2264247 MW) are degenerate re-allocation WITHIN the optimal face \u2014 which capacity holds the reserve and how flow splits, at an unchanged objective and unchanged duals."
+ },
+ "probe_basis": {
+  "mechanism_actually_engaged": true,
+  "per_family_requirement_delta": {
+   "ECRS_withheld": {
+    "n_hours_requirement_changed": 1,
+    "hours": [
+     5875
+    ],
+    "max_requirement_delta_mw": 1.4661,
+    "annual_requirement_delta_mwh": 1.466,
+    "dual_max_abs_delta": 0.0,
+    "shortfall_hours_control": 11,
+    "shortfall_hours_arm": 11
+   },
+   "RRS_withheld": {
+    "n_hours_requirement_changed": 1,
+    "hours": [
+     5875
+    ],
+    "max_requirement_delta_mw": 1.6281,
+    "annual_requirement_delta_mwh": 1.628,
+    "dual_max_abs_delta": 0.0,
+    "shortfall_hours_control": 9,
+    "shortfall_hours_arm": 9
+   },
+   "RegUp_withheld": {
+    "n_hours_requirement_changed": 2,
+    "hours": [
+     5875,
+     6831
+    ],
+    "max_requirement_delta_mw": 8.325,
+    "annual_requirement_delta_mwh": 15.631,
+    "dual_max_abs_delta": 0.0,
+    "shortfall_hours_control": 11,
+    "shortfall_hours_arm": 11
+   },
+   "NonSpin": {
+    "n_hours_requirement_changed": 0,
+    "hours": [],
+    "max_requirement_delta_mw": 0.0,
+    "annual_requirement_delta_mwh": 0.0,
+    "dual_max_abs_delta": 0.0,
+    "shortfall_hours_control": 117,
+    "shortfall_hours_arm": 117
+   }
+  },
+  "summary": "max(plan, held) raised the requirement in EXACTLY 2 distinct hours of 2023 (h5875, h6831) across all three rigid families, by at most 8.33 MW; annual requirement delta 18.7 MWh over 26,280 rigid family-hours. Every family's dual is EXACTLY unchanged (max|\u0394dual| = 0.0) and every shortfall hour-set is EXACTLY unchanged.",
+  "phase0_prediction": {
+   "delta_hours_gt0_year": 2,
+   "delta_sum_max_year_mw": 10.4,
+   "delta_sum_p50_at_miss_hours": 0.0,
+   "confirmed_by_solve": true,
+   "source": "results/calibration/ercot226_helddepth_phase0.json"
+  }
+ },
+ "f1c_cleared_vs_plan": {
+  "question": "Does the DAM-CLEARED AS quantity ever exceed the published plan (the second admissible reading of waiver W-3 category (i))?",
+  "source": "data/raw/ercot-AS/ercot_2023_as_up_mw.parquet (60-day DAM awards) vs ercot_as_plan_requirement_mw (ASPLANNP433)",
+  "per_product": {
+   "REGUP": {
+    "plan_mean_mw": 394.08,
+    "cleared_mean_mw": 394.08,
+    "held_rt_mean_mw": 300.97,
+    "F1c_hours_cleared_gt_plan": 0,
+    "F1c_max_cleared_minus_plan_mw": 0.0,
+    "F1c_hours_cleared_lt_plan": 0,
+    "F1_hours_held_gt_plan": 2,
+    "F1_max_held_minus_plan_mw": 10.4
+   },
+   "RRS": {
+    "plan_mean_mw": 2902.75,
+    "cleared_mean_mw": 1821.95,
+    "held_rt_mean_mw": 1096.17,
+    "F1c_hours_cleared_gt_plan": 0,
+    "F1c_max_cleared_minus_plan_mw": -422.2316,
+    "F1c_hours_cleared_lt_plan": 8760,
+    "F1_hours_held_gt_plan": 0,
+    "F1_max_held_minus_plan_mw": -1125.15
+   },
+   "ECRS": {
+    "plan_mean_mw": 1081.61,
+    "cleared_mean_mw": 1081.61,
+    "held_rt_mean_mw": 324.61,
+    "F1c_hours_cleared_gt_plan": 0,
+    "F1c_max_cleared_minus_plan_mw": 0.0,
+    "F1c_hours_cleared_lt_plan": 0,
+    "F1_hours_held_gt_plan": 0,
+    "F1_max_held_minus_plan_mw": 0.0
+   },
+   "NSPIN": {
+    "plan_mean_mw": 3348.66,
+    "cleared_mean_mw": 3348.66,
+    "held_rt_mean_mw": 756.81,
+    "F1c_hours_cleared_gt_plan": 0,
+    "F1c_max_cleared_minus_plan_mw": 0.0,
+    "F1c_hours_cleared_lt_plan": 0,
+    "F1_hours_held_gt_plan": 15,
+    "F1_max_held_minus_plan_mw": 5.625
+   }
+  },
+  "verdict": "MEASURED ZERO \u2014 RegUp, ECRS and NSPIN cleared EXACTLY the plan in all 8760 hours (0 hours above, 0 below, max|\u0394| = 0.0); RRS cleared BELOW plan in all 8760 hours (mean 1822 vs plan 2903 MW; even the least-short hour is 422 MW under). The DAM never procured more than planned, so max(plan, cleared) \u2261 plan and F1c's arm is bit-identical to F1's by construction \u2014 covered by this solve, no separate probe."
+ },
+ "gates": {
+  "G-CAP": {
+   "violations": 0,
+   "pass": true
+  },
+  "G-SPUR": {
+   "pass": true,
+   "bar": "+5/yr vs banded baseline (lidless REPORT-ONLY)"
+  },
+  "G-SHED": {
+   "pass": true
+  },
+  "G-BAT": {
+   "pass": true
+  },
+  "G-D2": {
+   "no_new_d4_rows": true
+  },
+  "G-SHORTFALL": {
+   "pass": true,
+   "rule": "per rigid family, arm shortfall hour-set \u2286 control's (precommit AMENDMENT 1 \u2014 no MANUFACTURED shortage; the keeper baseline itself carries 21 designed VOLL-engagement hours)"
+  }
+ },
+ "gate_detail_2023": {
+  "control": {
+   "gcap_violations": 0,
+   "spur_hours": [
+    5251,
+    5443,
+    5660,
+    5684,
+    5731,
+    5804,
+    5821,
+    5822,
+    5874,
+    5995,
+    6450
+   ],
+   "spur_count": 11,
+   "spur_lidless": {
+    "s_nolid": 11,
+    "s_band": 11,
+    "s_top": 0
+   },
+   "shed_hours": [],
+   "c3a_probe_pct": -29.99,
+   "c3b_probe_nrmse": 3.4476,
+   "tail_model_gt200": 74,
+   "model_mean": 33.856,
+   "reserve_family": {
+    "present": true,
+    "families": {
+     "ECRS_withheld": {
+      "shortfall_hour_set": [
+       4098,
+       4099,
+       5488,
+       5490,
+       5659,
+       5682,
+       5683,
+       5802,
+       5967,
+       5970,
+       5994
+      ],
+      "shortfall_hours": 11,
+      "shortfall_max_mw": 1671.694,
+      "dual_ge_voll_hours": 21,
+      "dual_max": 5000.0,
+      "requirement_mean_mw": 741.8,
+      "requirement_max_mw": 2875.0,
+      "held_mean_mw": 1506.2
+     },
+     "RRS_withheld": {
+      "shortfall_hour_set": [
+       5489,
+       5490,
+       5563,
+       5656,
+       5658,
+       5682,
+       5802,
+       5803,
+       5970
+      ],
+      "shortfall_hours": 9,
+      "shortfall_max_mw": 1284.078,
+      "dual_ge_voll_hours": 21,
+      "dual_max": 5000.0,
+      "requirement_mean_mw": 1263.1,
+      "requirement_max_mw": 2261.1,
+      "held_mean_mw": 1927.6
+     },
+     "RegUp_withheld": {
+      "shortfall_hour_set": [
+       4096,
+       5487,
+       5488,
+       5489,
+       5490,
+       5658,
+       5801,
+       5966,
+       5970,
+       5994,
+       6015
+      ],
+      "shortfall_hours": 11,
+      "shortfall_max_mw": 343.799,
+      "dual_ge_voll_hours": 21,
+      "dual_max": 5000.0,
+      "requirement_mean_mw": 241.1,
+      "requirement_max_mw": 789.0,
+      "held_mean_mw": 1088.1
+     }
+    },
+    "total_rigid_shortfall_hours": 31
+   },
+   "gada": {
+    "present": true,
+    "model_spike_days": 7,
+    "p_hat_max": 0.37,
+    "floor_ge_1000_hours": 156,
+    "floor_ge_1000_by_month": {
+     "8": 22,
+     "9": 118,
+     "10": 16
+    },
+    "floor_max_usd": 1850.0
+   }
+  },
+  "arm": {
+   "gcap_violations": 0,
+   "spur_hours": [
+    5251,
+    5443,
+    5660,
+    5684,
+    5731,
+    5804,
+    5821,
+    5822,
+    5874,
+    5995,
+    6450
+   ],
+   "spur_count": 11,
+   "spur_lidless": {
+    "s_nolid": 11,
+    "s_band": 11,
+    "s_top": 0
+   },
+   "shed_hours": [],
+   "c3a_probe_pct": -29.99,
+   "c3b_probe_nrmse": 3.4476,
+   "tail_model_gt200": 74,
+   "model_mean": 33.856,
+   "reserve_family": {
+    "present": true,
+    "families": {
+     "ECRS_withheld": {
+      "shortfall_hour_set": [
+       4098,
+       4099,
+       5488,
+       5490,
+       5659,
+       5682,
+       5683,
+       5802,
+       5967,
+       5970,
+       5994
+      ],
+      "shortfall_hours": 11,
+      "shortfall_max_mw": 1671.694,
+      "dual_ge_voll_hours": 21,
+      "dual_max": 5000.0,
+      "requirement_mean_mw": 741.8,
+      "requirement_max_mw": 2875.0,
+      "held_mean_mw": 1506.2
+     },
+     "RRS_withheld": {
+      "shortfall_hour_set": [
+       5489,
+       5490,
+       5563,
+       5656,
+       5658,
+       5682,
+       5802,
+       5803,
+       5970
+      ],
+      "shortfall_hours": 9,
+      "shortfall_max_mw": 1284.078,
+      "dual_ge_voll_hours": 21,
+      "dual_max": 5000.0,
+      "requirement_mean_mw": 1263.1,
+      "requirement_max_mw": 2261.1,
+      "held_mean_mw": 1927.7
+     },
+     "RegUp_withheld": {
+      "shortfall_hour_set": [
+       4096,
+       5487,
+       5488,
+       5489,
+       5490,
+       5658,
+       5801,
+       5966,
+       5970,
+       5994,
+       6015
+      ],
+      "shortfall_hours": 11,
+      "shortfall_max_mw": 343.799,
+      "dual_ge_voll_hours": 21,
+      "dual_max": 5000.0,
+      "requirement_mean_mw": 241.1,
+      "requirement_max_mw": 789.0,
+      "held_mean_mw": 1088.1
+     }
+    },
+    "total_rigid_shortfall_hours": 31
+   },
+   "gada": {
+    "present": true,
+    "model_spike_days": 7,
+    "p_hat_max": 0.37,
+    "floor_ge_1000_hours": 156,
+    "floor_ge_1000_by_month": {
+     "8": 22,
+     "9": 118,
+     "10": 16
+    },
+    "floor_max_usd": 1850.0
+   }
+  },
+  "spur_baseline": [
+   4283,
+   4404,
+   4547,
+   4548,
+   4571,
+   4572,
+   4593,
+   4832,
+   5024
+  ],
+  "shed_baseline": []
+ },
+ "d4": {
+  "no_new_rows": true,
+  "note": "the arm's D-4 FAIL rows (chp_steam, reliability_floor \u00d7 CT_PEAKER, st_netload_drag, gas_commitment_bridge \u00d7 CC_REGULAR) are the keeper's OWN inherited rows, present identically in the control; F1 introduces none."
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "disposition": "MEASURED-INERT",
+  "criteria": {
+   "C3a_2023_gain_pp": 0.0,
+   "C3a_required_pp": 1.5,
+   "pass": false,
+   "C3b_2023_delta": 0.0,
+   "C3b_budget": 0.005,
+   "pass_c3b": true,
+   "gates_all_clean": true
+  },
+  "statement": "F1 is REJECTED for adoption on a measured-null, not on a gate failure. Every gate passes and nothing degrades \u2014 the mechanism is simply an identity on 2023 data. The object it was built to capture DOES NOT EXIST at material scale: ERCOT's telemetered real-time AS responsibility exceeds its own published AS plan in 2 hours of 8760, by \u22648.3 MW, and its DAM clears never exceed plan at all. The keeper's plan-based requirement is ALREADY the ceiling of the measured 2023 procurement conservatism.",
+  "structural_reading": "This is the direct measured refutation of the held-DEPTH reading of the ercot-217 \u00a75 wedge (RESEARCH-ercot218b \u00a74). Combined with ercot-226's F2 rejection (held-LOCATION: built, armed, and rejected \u2014 the conserving class carve RELIEVES the system withheld families and costs net scarcity expression), the ~2.7 GW wedge is now measured to be NEITHER a mis-SIZED nor a mis-LOCATED AS carve. The AS-sequestration channel is closed as an explanation for the 2023 summer miss; the remaining live surface is the energy/tightness channel outside AS procurement."
+ },
+ "do_not_redo": "F1 (held-depth, any product) and F1c (cleared-vs-plan) are adjudicated by MEASUREMENT plus a confirming solve. Do not re-open without a NEW measured driver \u2014 a different telemetry basis or a corrected plan series, cited by name.",
+ "dashboard": "NOT REGISTERED \u2014 precommit waiver W-2 (2023-only diagnostic probes are recorded as committed JSON + the FINDING probe table, never as dashboard runs)."
+}
