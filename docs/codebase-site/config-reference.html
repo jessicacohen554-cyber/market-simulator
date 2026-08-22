@@ -88,7 +88,9 @@
       padding: 0.75rem 1rem;
       text-align: left;
       font-weight: 600;
-      color: var(--text-secondary);
+      /* NO color override: shared.css paints .data-table th on var(--navy), so a
+         light-theme colour lands as near-black on navy (measured 1.01:1).
+         Inherit shared.css's rgba(255,255,255,0.90) -> 12.24:1. */
       font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;

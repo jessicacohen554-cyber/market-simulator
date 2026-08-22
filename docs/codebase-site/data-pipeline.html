@@ -84,7 +84,9 @@
     }
 
     .data-table thead {
-      background: var(--bg-card);
+      /* NO opaque background here: shared.css tints .section-dark .data-table th
+         with rgba(255,255,255,0.10), which must composite over var(--navy). An
+         opaque white thead underneath turned that into white-on-white (1:1). */
       border-bottom: 2px solid var(--border);
     }
 
@@ -92,7 +94,9 @@
       text-align: left;
       padding: var(--space-sm) var(--space-md);
       font-weight: 700;
-      color: var(--text-primary);
+      /* NO color override here: shared.css paints .data-table th on var(--navy),
+         so a light-theme colour lands as near-black on navy (measured 1.42:1).
+         Inherit shared.css's rgba(255,255,255,0.90) -> 12.24:1. */
     }
 
     .data-table td {
@@ -141,6 +145,30 @@
       border-color: rgba(168, 85, 247, 0.5);
       color: #a855f7;
     }
+    /* How a corpus enters the model — the rule 13 [R-MEASURED] distinction.
+       Colours chosen for WCAG AA on --bg-card (#FFFFFF) and --bg-page (#F8F9FC). */
+    .use-tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      white-space: nowrap;
+      border: 1px solid currentColor;
+    }
+    .use-tag.solve    { color: #166534; background: rgba(22, 101, 52, 0.07); }
+    .use-tag.derived  { color: #6B21A8; background: rgba(107, 33, 168, 0.07); }
+    .use-tag.identify { color: #92400E; background: rgba(146, 64, 14, 0.07); }
+    .use-tag.score    { color: #1E40AF; background: rgba(30, 64, 175, 0.07); }
+    /* body{overflow-x:hidden} clips anything past the viewport, so a wide table
+       must scroll inside its own box rather than lose its right-hand column. */
+    .corpus-table-scroll { overflow-x: auto; max-width: 100%; margin: var(--space-lg) 0; }
+    .corpus-table-scroll > .corpus-table { margin: 0; min-width: 620px; }
+    .corpus-table td:first-child { white-space: nowrap; }
+    .corpus-table code { font-size: 0.82em; }
 
     .journey-step {
       display: flex;
@@ -598,6 +626,197 @@
               </tr>
             </tbody>
           </table>
+
+          <h3 id="iso-corpora" style="margin-top: var(--space-xl); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">The ISO-Specific Corpora</h3>
+          <p style="margin-bottom: var(--space-md);">
+            The federal sources above are the <strong>cross-ISO backbone</strong>: they describe every plant in
+            every market on one schema, which is what lets one LP serve six ISOs. What they cannot describe is
+            how a <em>particular</em> market behaves — what its participants actually bid, where its network
+            actually binds, which units its operator declared unavailable, and what it holds back for reserves.
+            That is what the roughly two dozen <strong>ISO-specific corpora</strong> under <code>data/raw/</code>
+            are for. They are the reason a mechanism can be identified from a market's own conduct rather than
+            assumed, and they are why per-ISO verdicts never transfer between markets.
+          </p>
+          <p style="margin-bottom: var(--space-md);">
+            <strong>How a corpus enters the model matters more than what it contains</strong> — project rule 13
+            <code>[R-MEASURED]</code> allows measured data as a reproducible physical or market <em>input</em>,
+            never as the <em>answer</em>. Each corpus below is tagged with which of those it is:
+          </p>
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: 6px;"><span class="use-tag solve">Solve</span> — read at solve time by <code>src/market_sim/</code>; it shapes the dispatch.</li>
+            <li style="margin-bottom: 6px;"><span class="use-tag derived">Derived&nbsp;→&nbsp;Solve</span> — the bulk corpus is <em>not</em> read at solve time; a small committed artifact derived from it is.</li>
+            <li style="margin-bottom: 6px;"><span class="use-tag identify">Identify</span> — grounds a parameter (a min-load fraction, an offer band, a reserve ρ). Never enters a solve.</li>
+            <li><span class="use-tag score">Score</span> — used to grade the model's output. Never an input, by construction.</li>
+          </ul>
+
+          <h4 style="margin-top: var(--space-lg); margin-bottom: var(--space-sm); font-size: 0.98rem; font-weight: 700;">Offer conduct — what participants actually bid</h4>
+          <div class="corpus-table-scroll">
+          <table class="data-table corpus-table">
+            <thead>
+              <tr><th>Corpus</th><th>What it measures</th><th>How it enters</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>ercot/SCED-CT</code><br><span style="font-size:0.78rem;color:var(--text-muted);">ERCOT</span></td>
+                <td>Every SCED interval's dispatched energy-offer curve, the QSE's submitted three-part offer, and unit telemetry (HSL/LSL, base point) — scoped to the ≥90&nbsp;MW simple-cycle fleet, one file per delivery day.</td>
+                <td><span class="use-tag identify">Identify</span><br><span style="font-size:0.8rem;">Re-identifying the CT offer band. The CT curve is repriced daily and holds no stable price level, so the conduct object has to be measured across the whole training span rather than sampled.</span></td>
+              </tr>
+              <tr>
+                <td><code>caiso-public-bids</code><br><span style="font-size:0.78rem;color:var(--text-muted);">CAISO</span></td>
+                <td>Every scheduling resource's as-submitted day-ahead bid curve, self-schedule MW and AS product bids, published on a 90-day lag. Resource identity is masked, but the masked id is persistent across years, so per-resource statistics are meaningful.</td>
+                <td><span class="use-tag identify">Identify</span><br><span style="font-size:0.8rem;">Battery bid floor; intertie self-schedule.</span></td>
+              </tr>
+              <tr>
+                <td><code>pjm-energy-offers</code><br><span style="font-size:0.78rem;color:var(--text-muted);">PJM</span></td>
+                <td>One row per unit-hour carrying the offer curve as up to twenty MW/price breakpoints, plus no-load cost and economic min/max.</td>
+                <td><span class="use-tag identify">Identify</span><br><span style="font-size:0.8rem;">The PJM offer mid-curve.</span></td>
+              </tr>
+              <tr>
+                <td><code>miso-energy-offers</code><br><span style="font-size:0.78rem;color:var(--text-muted);">MISO</span></td>
+                <td>One row per masked unit-hour with the full ten-segment offer curve, economic and emergency limits, and the must-run declaration. <strong>Identity is masked with no fuel or technology attribute</strong>; an offer-side coal/CC/CT class bridge was built and <em>refuted</em>, so no class crosswalk is asserted from this corpus.</td>
+                <td><span class="use-tag identify">Identify</span></td>
+              </tr>
+              <tr>
+                <td><code>pjm-da-virtuals</code><br><span style="font-size:0.78rem;color:var(--text-muted);">PJM</span></td>
+                <td>Hourly submitted INCrement (virtual supply) and DECrement (virtual demand) bid curves — participant inputs, never cleared outcomes.</td>
+                <td><span class="use-tag solve">Solve</span> <span style="font-size:0.78rem;color:var(--text-muted);">(gated)</span><br><span style="font-size:0.8rem;">The one offer corpus that is a live LP input. PJM's day-ahead market clears ~7–11&nbsp;GW more than the physical load at summer peaks, so under <code>pjm_da_virtual_bids</code> the net virtual curve is cleared endogenously in the LP.</span></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+
+          <h4 style="margin-top: var(--space-lg); margin-bottom: var(--space-sm); font-size: 0.98rem; font-weight: 700;">Network and congestion — where the grid actually binds</h4>
+          <div class="corpus-table-scroll">
+          <table class="data-table corpus-table">
+            <thead>
+              <tr><th>Corpus</th><th>What it measures</th><th>How it enters</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>pjm-zonal-lmp</code><br><span style="font-size:0.78rem;color:var(--text-muted);">PJM</span></td>
+                <td>Hourly zonal LMP split into its published energy, congestion and loss components, for all 21 PJM transmission zones.</td>
+                <td><span class="use-tag derived">Derived&nbsp;→&nbsp;Solve</span><br><span style="font-size:0.8rem;">Reduced to the committed <code>PJM_loss_surface.csv</code>, which the LP builder reads as per-zone monthly delivery-factor deviations.</span></td>
+              </tr>
+              <tr>
+                <td><code>lmp-components</code><br><span style="font-size:0.78rem;color:var(--text-muted);">MISO</span></td>
+                <td>Per-node hourly LMP with the published congestion (MCC) and loss (MLC) components, from the public all-node daily market reports.</td>
+                <td><span class="use-tag derived">Derived&nbsp;→&nbsp;Solve</span><br><span style="font-size:0.8rem;">The MISO marginal delivery-factor surface, plus congestion-vs-loss decomposition validation.</span></td>
+              </tr>
+              <tr>
+                <td><code>pjm-binding-constraints</code><br><span style="font-size:0.78rem;color:var(--text-muted);">PJM</span></td>
+                <td>PJM's own answer to <em>which</em> facility limited the day-ahead dispatch and by how much: the monitored and contingency facility plus the constraint's shadow price. 55–80k constraint-hours a year across 840–1,060 facilities.</td>
+                <td><span class="use-tag score">Score</span><br><span style="font-size:0.8rem;">A directly comparable quantity to the model's own transmission-constraint duals — the same object measured on the two networks.</span></td>
+              </tr>
+              <tr>
+                <td><code>pjm-ehv-lmp</code><br><span style="font-size:0.78rem;color:var(--text-muted);">PJM</span></td>
+                <td>Day-ahead LMP and components at PJM's 500&nbsp;kV extra-high-voltage aggregate nodes — ~135 nodes across 15 zones, 38 of them inside the DOM zone alone.</td>
+                <td><span class="use-tag score">Score</span><br><span style="font-size:0.8rem;">Intra-zonal price spread — how much structure a single model zone is averaging over.</span></td>
+              </tr>
+              <tr>
+                <td><code>transfer-constraint-binding</code><br><span style="font-size:0.78rem;color:var(--text-muted);">MISO</span></td>
+                <td>MISO's day-ahead and real-time price-binding-constraint reports — the only public series for when, and how hard, the Regional Directional Transfer constraint bound.</td>
+                <td><span class="use-tag identify">Identify</span><br><span style="font-size:0.8rem;">Anchors the RDT limits.</span></td>
+              </tr>
+              <tr>
+                <td><code>iso-specific-transmission</code><br><span style="font-size:0.78rem;color:var(--text-muted);">multi-ISO</span></td>
+                <td>Per-ISO transfer limits and flows — PJM's hourly interface transfer limits across ten series — together with the committed per-ISO loss surfaces derived from the LMP-component corpora above.</td>
+                <td><span class="use-tag solve">Solve</span><br><span style="font-size:0.8rem;">Interface limits and delivery factors, read straight by the interchange spec and the loss-surface loader.</span></td>
+              </tr>
+              <tr>
+                <td><code>lmp-data</code><br><span style="font-size:0.78rem;color:var(--text-muted);">all six</span></td>
+                <td>Actual per-ISO clearing prices: CAISO OASIS DAM/RTM, MISO hub reports, ISO-NE SMD workbooks, NYISO zonal LBMP, ERCOT settlement-point prices.</td>
+                <td><span class="use-tag score">Score</span><br><span style="font-size:0.8rem;">What the model's LP duals are graded against. Never an input — pinning the backcast to observed prices is exactly what rule 13 forbids.</span></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+
+          <h4 style="margin-top: var(--space-lg); margin-bottom: var(--space-sm); font-size: 0.98rem; font-weight: 700;">Availability and emergencies — what the operator declared</h4>
+          <div class="corpus-table-scroll">
+          <table class="data-table corpus-table">
+            <thead>
+              <tr><th>Corpus</th><th>What it measures</th><th>How it enters</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>caiso-dam-outages</code><br><span style="font-size:0.78rem;color:var(--text-muted);">CAISO</span></td>
+                <td>CAISO's daily Curtailed-and-Non-Operational-Generator report: per-unit outage type (forced/planned), nature of work, curtailment MW and window — one workbook per trade date, back to the series' 2021-06-18 start.</td>
+                <td><span class="use-tag solve">Solve</span><br><span style="font-size:0.8rem;">Consolidated into outage windows and applied as a per-plant hourly availability multiplier, with published-schedule-before-CAMPD-inference precedence.</span></td>
+              </tr>
+              <tr>
+                <td><code>maxgen-events</code><br><span style="font-size:0.78rem;color:var(--text-muted);">MISO</span></td>
+                <td>Hand-curated registries of publicly <em>declared</em> capacity-emergency instruments — for MISO, the Capacity Advisory → Maximum Generation Alert → Warning → Event Steps 1–5 ladder.</td>
+                <td><span class="use-tag solve">Solve</span><br><span style="font-size:0.8rem;">Inside a declared window the energy-balance load-slack is repriced from the bid cap down to that tier's emergency offer floor.</span></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+
+          <h4 style="margin-top: var(--space-lg); margin-bottom: var(--space-sm); font-size: 0.98rem; font-weight: 700;">Reserves, capacity and zonal load — the market-design quantities</h4>
+          <div class="corpus-table-scroll">
+          <table class="data-table corpus-table">
+            <thead>
+              <tr><th>Corpus</th><th>What it measures</th><th>How it enters</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>CAISO-AS</code>, <code>MISO-AS</code>,<br><code>NEISO-AS</code>, <code>NYISO-AS</code>,<br><code>PJM-AS</code>, <code>ercot-AS</code></td>
+                <td>Each ISO's own ancillary-service record on its own product taxonomy: regional requirements, day-ahead and real-time clearing prices, and cleared MW where the ISO publishes it (NYISO publishes prices only).</td>
+                <td><span class="use-tag solve">Solve</span><br><span style="font-size:0.8rem;">The measured reserve requirements the co-optimisation holds capacity back to meet.</span></td>
+              </tr>
+              <tr>
+                <td><code>storage-as-awards</code><br><span style="font-size:0.78rem;color:var(--text-muted);">CAISO</span></td>
+                <td>The measured hourly MW of ancillary services <em>awarded</em> to the storage fleet.</td>
+                <td><span class="use-tag solve">Solve</span><br><span style="font-size:0.8rem;">A power reservation: capacity the market has committed to reserves cannot simultaneously offer energy arbitrage. Used as a capability input the LP dispatches beneath, never as a dispatch outcome.</span></td>
+              </tr>
+              <tr>
+                <td><code>capacity-deliverability</code><br><span style="font-size:0.78rem;color:var(--text-muted);">five capacity markets</span></td>
+                <td>Locational capacity requirements and import transfer limits per capacity area, per delivery period — PJM's CETO/CETL pair and the other ISOs' native equivalents mapped onto the same canonical metrics.</td>
+                <td><span class="use-tag solve">Solve</span> <span style="font-size:0.78rem;color:var(--text-muted);">(gated)</span><br><span style="font-size:0.8rem;">Under <code>capacity_deliverability_limits</code>, a zone already clearing its published requirement is RA-saturated and its marginal capacity payment collapses.</span></td>
+              </tr>
+              <tr>
+                <td><code>zone-specific-demand</code><br><span style="font-size:0.78rem;color:var(--text-muted);">all six</span></td>
+                <td>Per-zone metered load: ERCOT weather-zone native load, PJM metered load by zone, CAISO TAC-area load, NYISO zonal actuals, MISO sub-BA demand.</td>
+                <td><span class="use-tag solve">Solve</span><br><span style="font-size:0.8rem;">Derives each ISO's hourly zonal load-share weights, which split the balancing-authority demand across model zones.</span></td>
+              </tr>
+              <tr>
+                <td><code>ISO-specific-gen-data</code><br><span style="font-size:0.78rem;color:var(--text-muted);">PJM</span></td>
+                <td>PJM's own generation-by-fuel-type feed — preferred over the EIA-930 PJM series because it carries the <code>is_renewable</code> flag directly.</td>
+                <td><span class="use-tag score">Score</span><br><span style="font-size:0.8rem;">Generation-mix benchmarking.</span></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+
+          <p style="margin-top: var(--space-lg);">
+            Two further directories hold <strong>publications rather than data</strong>: <code>data/raw/ERCOT/</code>
+            and <code>data/raw/MISO/</code> carry Potomac Economics' State of the Market volumes and IMM quarterly
+            reports for those markets. No code opens them — they are hand-read citation sources, and the values
+            taken from them are recorded with their citations in the constants and the parameter-citation register.
+            (<code>data/raw/PJM/</code>, confusingly named, is an <em>orphan</em>: a superseded set of DataMiner2
+            exports with zero consumers. The live equivalents are <code>ISO-specific-gen-data</code> and
+            <code>lmp-data</code>.)
+          </p>
+
+          <div class="insight-box warn" style="margin-top: var(--space-lg);">
+            <strong>⚠ These payloads are not in the repository — and most cannot be recovered from it.</strong>
+            <p style="margin-top: var(--space-sm);">
+              For most of the corpora above, only <code>README.md</code> and <code>SHA256SUMS.txt</code> are tracked;
+              the bulk payload is gitignored. The 2026-08-16 history rewrite also stripped the previously-tracked
+              payloads out of history, so <strong>checking out an older commit will not bring them back</strong> and
+              any recovery command pinned to a pre-rewrite commit is dead. <strong>The recovery route is re-fetch</strong>,
+              and every corpus README carries the verified source-URL table and the exact fetch command for it.
+            </p>
+            <p style="margin-top: var(--space-sm);">
+              Some are <strong>unrecoverable from this repository at all</strong> — the CAISO OASIS group-zip dailies,
+              and SCED columns dropped before slimming that have since aged past ERCOT's MIS retention window.
+              Size is not the only reason for gitignoring: PJM DataMiner2 data carries a non-member redistribution
+              restriction, and some ISO-NE workbooks sit behind a CAPTCHA-gated form that no committed script can
+              refresh. What <em>is</em> tracked is the small derived artifact each solve actually reads — the CAISO
+              outage-window Parquet, the per-ISO loss surfaces, the PJM virtual-bid multiplier surface and the
+              capacity-deliverability CSVs. Read a corpus's README before concluding its data is missing.
+            </p>
+          </div>
         </div>
       </div>
     </section>
