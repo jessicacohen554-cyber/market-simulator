@@ -95,6 +95,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_CHP_STEAM,
     MECH_COAL_MIN_CONFIG,
     MECH_CT_NETLOAD_DRAG,
+    MECH_ERCOT_RUC_COMMITMENT,
     MECH_FIRM_IMPORT,
     MECH_GAS_COMMITMENT_BRIDGE,
     MECH_MISO_COAL_NIGHT_FLOOR,
