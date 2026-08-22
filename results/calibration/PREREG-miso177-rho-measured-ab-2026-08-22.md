@@ -177,3 +177,51 @@ claimed, and no number this A/B produces may be quoted as scarcity progress.
   `needs-citation` row are their own lanes' objects.
 * Abandon-before-solve conditions: available RAM < 13 GB at solve start;
   artifact sha256 mismatch vs the instrument; R-0.
+
+---
+
+## 7. DATED AMENDMENT (2026-08-22, committed AFTER the control solve began and
+## BEFORE the arm solve started or any arm result existed)
+
+**The owner ruled mid-session.** After this prereg was committed and pushed
+(51d8971) and while the control was solving, `origin/main` merged the owner's
+rule 22 D-5(b) ruling (session nyiso-151, PR #4201-era merge set):
+`RHO_CLIP` moves `(0.5, 4.0) → (0.0, 4.0)` — option A of the nyiso-145
+decision card, the floor DELETED globally. The governance log's cross-ISO
+flag (`docs/calibration-log/governance.md`, 2026-08-22 entry) hands MISO
+exactly this session's charter: *"The MISO lane should re-gate its keeper
+recipe against the measured coefficient on its own schedule and re-stamp its
+shard."*
+
+What changes and what does not:
+
+* **The A/B executes VERBATIM on the pre-ruling tree (51d8971).** Same tree
+  for both arms, single delta = the coefficient. The numbers are UNCHANGED
+  from §3's frozen instrument: the control consumes 0.5 (the committed
+  keeper's solved coefficient) and the arm consumes 0.17644175978069962 —
+  which is byte-exactly the value the post-ruling seam yields by default
+  (`min(max(0.1764…, 0.0), 4.0)`). The arm's LP is therefore the SAME LP a
+  zero-delta keeper replay produces at post-ruling HEAD (the only
+  MISO-solve-relevant change in `94fafba..cb7aadf` is the band itself;
+  `pipeline/commitment.py`'s +10 is ERCOT-gated logging, verified by diff
+  read). Every gate R-0..R-7, the scorer, and the verdict mapping stand as
+  written; R-1(c) is scored on the pre-ruling tree where both seam
+  properties exist, and the post-merge HEAD-default equality
+  (`rho_used == 0.17644175978069962`) is re-checked and reported after
+  reconciliation.
+* **The session field `miso_online_rho_no_floor` is SUPERSEDED and will be
+  REMOVED in the post-scoring reconciliation merge** (rules 19/26: the
+  global deletion is the owner's mechanism for the same phenomenon; a
+  MISO-scoped bypass surviving beside it would be a duplicate channel). It
+  never reaches `main`. The two bundle records that carry it are handled by
+  the existing rule-26 replay machinery:
+  `replay_keeper._RULE26_DELETED_UNCONDITIONAL` gains
+  `("MISO", True)` — the ARM bundle (recorded `true`) replays at HEAD
+  byte-equivalently (the measured value is now the default), and the CONTROL
+  bundle (recorded `false`) hard-errors as historical-record-only, exactly
+  like the committed miso-175 keeper itself, whose 0.5 basis no longer
+  exists at HEAD by the owner's own ruling.
+* **§5's owner-presentation clause is unchanged in substance**: the ruling
+  resolved the BAND; keeper promotion remains a separate owner act, now
+  sitting inside the owner's standing re-gate instruction. The session still
+  presents and does not self-promote.
