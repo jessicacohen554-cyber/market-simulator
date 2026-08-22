@@ -612,6 +612,7 @@ def run_year(
     miso_seam_flow_percentile: float | None = None,
     miso_seam_export_limit: bool = False,
     miso_seam_envelope_merit_cap: bool = False,
+    miso_seam_envelope_hour_ending_key: bool = False,
     nyiso_seam_deliverability_envelope: bool = False,
     nyiso_seam_par_attribution: bool = False,
     miso_pjm_border_anchor: bool = False,
@@ -1549,6 +1550,8 @@ def run_year(
         config = config.with_overrides(miso_seam_export_limit=True)
     if miso_seam_envelope_merit_cap:
         config = config.with_overrides(miso_seam_envelope_merit_cap=True)
+    if miso_seam_envelope_hour_ending_key:
+        config = config.with_overrides(miso_seam_envelope_hour_ending_key=True)
     if nyiso_seam_deliverability_envelope:
         config = config.with_overrides(nyiso_seam_deliverability_envelope=True)
     if nyiso_seam_par_attribution:
@@ -3236,8 +3239,16 @@ def run_year(
         # miso-73: envelope composition semantics — merit-order (waterfall)
         # ceiling instead of the uniform per-band derate when armed.
         _seam_merit = getattr(config, "miso_seam_envelope_merit_cap", False)
+        # miso-175: read the DIBA local_time stamp as hour-ENDING (its
+        # measured convention) so the (month × hod) cap key is un-rotated.
+        _seam_hek = getattr(config, "miso_seam_envelope_hour_ending_key", False)
         if inject_miso_seam_flow_limit(
-            fleet_arrays, iso, year, percentile=_seam_pct, merit_cap=_seam_merit
+            fleet_arrays,
+            iso,
+            year,
+            percentile=_seam_pct,
+            merit_cap=_seam_merit,
+            hour_ending_key=_seam_hek,
         ):
             from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
 
@@ -3262,6 +3273,7 @@ def run_year(
 
         _seam_pct = getattr(config, "miso_seam_flow_percentile", None)
         _seam_merit = getattr(config, "miso_seam_envelope_merit_cap", False)
+        _seam_hek = getattr(config, "miso_seam_envelope_hour_ending_key", False)
         if inject_miso_seam_flow_limit(
             fleet_arrays,
             iso,
@@ -3269,6 +3281,7 @@ def run_year(
             percentile=_seam_pct,
             direction="export",
             merit_cap=_seam_merit,
+            hour_ending_key=_seam_hek,
         ):
             from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
 

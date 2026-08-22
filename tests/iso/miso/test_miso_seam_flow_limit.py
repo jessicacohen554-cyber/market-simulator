@@ -71,6 +71,58 @@ class TestSeamEnvelopeLoader(unittest.TestCase):
             measured_seam_import_envelope("MISO", 2024, T, direction="sideways")
 
 
+class TestSeamEnvelopeHourEndingKey(unittest.TestCase):
+    """miso-175: ``hour_ending_key`` un-rotates the (month × hod) cap profile.
+
+    The DIBA parquet's ``local_time`` is hour-ENDING on MISO's local standard
+    clock (solved at r = 1.0000 against the BALANCE ``TI`` series), so the
+    legacy raw-stamp key applies the bucket of hour h−1 at model hour h. The
+    repair is a pure +1 h un-rotation of the diurnal profile — placement
+    moves, the level does not.
+    """
+
+    def test_default_off_is_the_legacy_key(self):
+        # Omitting the flag and passing False are the same construction.
+        legacy = measured_seam_import_envelope("MISO", 2024, T)
+        off = measured_seam_import_envelope("MISO", 2024, T, hour_ending_key=False)
+        for name in MISO_SEAM_DIBA:
+            np.testing.assert_array_equal(legacy[name], off[name])
+
+    def test_corrected_key_is_a_pure_rotation(self):
+        # Reading the corrected profile one hour back (roll +1) reproduces the
+        # legacy profile almost exactly (residual = month-boundary bucket
+        # membership), while at roll 0 the two differ by the full rotation —
+        # hundreds of MW on the PJM seam. A level error would fail both.
+        for year in (2023, 2024, 2025):
+            legacy = measured_seam_import_envelope("MISO", year, T)
+            fixed = measured_seam_import_envelope("MISO", year, T, hour_ending_key=True)
+            cap_l, cap_f = legacy["PJM"], fixed["PJM"]
+            roll0 = float(np.mean(np.abs(cap_l - cap_f)))
+            roll1 = float(np.mean(np.abs(cap_l - np.roll(cap_f, 1))))
+            self.assertLess(roll1, 25.0, f"{year}: roll+1 residual {roll1:.1f} MW")
+            self.assertGreater(roll0, 10.0 * roll1, f"{year}: not a rotation")
+
+    def test_annual_mean_level_unchanged(self):
+        # A key repair moves which hour receives each bucket, not the level:
+        # every seam's annual mean cap moves by well under 1 %.
+        for direction in ("import", "export"):
+            legacy = measured_seam_import_envelope("MISO", 2024, T, direction=direction)
+            fixed = measured_seam_import_envelope(
+                "MISO", 2024, T, direction=direction, hour_ending_key=True
+            )
+            for name in MISO_SEAM_DIBA:
+                lm, fm = float(legacy[name].mean()), float(fixed[name].mean())
+                self.assertLess(abs(fm - lm), max(0.01 * lm, 5.0), name)
+
+    def test_miso_only_under_the_flag(self):
+        # The seam-DIBA gate holds with the flag set: no other ISO gets an
+        # envelope, so no other ISO's bundle can move (rule 25).
+        for iso in ("ERCOT", "CAISO", "PJM", "NYISO", "NEISO"):
+            self.assertIsNone(
+                measured_seam_import_envelope(iso, 2024, T, hour_ending_key=True)
+            )
+
+
 class TestSeamInjection(unittest.TestCase):
     """``inject_miso_seam_flow_limit`` caps import bands, leaves exports alone."""
 
@@ -118,6 +170,32 @@ class TestSeamInjection(unittest.TestCase):
         before = fleet.availability.copy()
         self.assertFalse(inject_miso_seam_flow_limit(fleet, "MISO", 2030))
         np.testing.assert_array_equal(fleet.availability, before)
+
+    def test_hour_ending_key_threads_to_the_envelope(self):
+        # miso-175: with the flag the seam is capped at the CORRECTED (un-
+        # rotated) envelope — the same summed-availability identity as
+        # test_import_bands_capped_to_envelope, against the corrected caps.
+        node, fleet = self._fleet()
+        env = measured_seam_import_envelope("MISO", 2024, T, hour_ending_key=True)
+        self.assertTrue(
+            inject_miso_seam_flow_limit(fleet, "MISO", 2024, hour_ending_key=True)
+        )
+        for neighbor in INTERFACE_NEIGHBORS["MISO"]:
+            name = neighbor.name
+            imp_rows = [
+                r
+                for r, uid in enumerate(fleet.unit_ids)
+                if _REF_IMPORT_MARK in uid
+                and uid.rsplit(_REF_IMPORT_MARK, 1)[1].partition("#")[0] == name
+            ]
+            self.assertTrue(imp_rows)
+            limit = float(fleet.pmax[imp_rows].sum())
+            avail_mw = (
+                fleet.availability[imp_rows, :] * fleet.pmax[imp_rows, None]
+            ).sum(axis=0)
+            np.testing.assert_allclose(
+                avail_mw, np.clip(env[name], 0.0, limit), atol=1.0
+            )
 
 
 class TestSeamExportInjection(unittest.TestCase):

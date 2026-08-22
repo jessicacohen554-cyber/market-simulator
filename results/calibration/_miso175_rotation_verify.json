@@ -1,0 +1,353 @@
+{
+ "session": "miso-175",
+ "charter_expectations": {
+  "V1_shift": -1,
+  "V1_r_2023_2025": 1.0,
+  "V1_r_2024": 0.8286,
+  "V2_pjm_roll0_mean_mw": 241.0,
+  "V2_pjm_roll1_mean_mw": [
+   2.9,
+   3.2
+  ]
+ },
+ "v1_alignment": {
+  "-3": {
+   "per_year_r": [
+    0.92724689085217,
+    0.7785035353874039,
+    0.9211275269982938
+   ],
+   "mean_r": 0.8756259844126225
+  },
+  "-2": {
+   "per_year_r": [
+    0.969212443037497,
+    0.8092107941681758,
+    0.969471962352875
+   ],
+   "mean_r": 0.9159650665195159
+  },
+  "-1": {
+   "per_year_r": [
+    1.0,
+    0.8285860988025295,
+    0.999998485082561
+   ],
+   "mean_r": 0.9428615279616969
+  },
+  "0": {
+   "per_year_r": [
+    0.9692216527295043,
+    0.8003859587257313,
+    0.9694599475550028
+   ],
+   "mean_r": 0.9130225196700795
+  },
+  "1": {
+   "per_year_r": [
+    0.9272601272567282,
+    0.7609769234568688,
+    0.9210869014280726
+   ],
+   "mean_r": 0.8697746507138899
+  },
+  "2": {
+   "per_year_r": [
+    0.8888423942717784,
+    0.7239706915879769,
+    0.8730666978370747
+   ],
+   "mean_r": 0.8286265945656099
+  },
+  "3": {
+   "per_year_r": [
+    0.8563502156266709,
+    0.6913233888889239,
+    0.8321679974712101
+   ],
+   "mean_r": 0.7932805339956016
+  },
+  "solved_shift_h": -1
+ },
+ "v2_rotation": {
+  "import": {
+   "2023": {
+    "PJM": {
+     "prod_annual_mean_gw": 6.232324200913242,
+     "aligned_annual_mean_gw": 6.231040616438356,
+     "roll0_mean_abs_mw": 240.92605022831046,
+     "roll0_max_abs_mw": 1022.4000000000005,
+     "roll1_mean_abs_mw": 1.7952283105022857,
+     "roll1_max_abs_mw": 261.0
+    },
+    "SPP": {
+     "prod_annual_mean_gw": 0.6824140410958904,
+     "aligned_annual_mean_gw": 0.6824314155251142,
+     "roll0_mean_abs_mw": 88.45468036529678,
+     "roll0_max_abs_mw": 433.0,
+     "roll1_mean_abs_mw": 0.08531963470319702,
+     "roll1_max_abs_mw": 15.100000000000023
+    },
+    "South": {
+     "prod_annual_mean_gw": 0.08536385844748862,
+     "aligned_annual_mean_gw": 0.08536385844748862,
+     "roll0_mean_abs_mw": 43.56780821917808,
+     "roll0_max_abs_mw": 454.99999999999966,
+     "roll1_mean_abs_mw": 0.0,
+     "roll1_max_abs_mw": 0.0
+    },
+    "Manitoba": {
+     "prod_annual_mean_gw": 1.0895944977168952,
+     "aligned_annual_mean_gw": 1.0892113698630137,
+     "roll0_mean_abs_mw": 95.95997716894976,
+     "roll0_max_abs_mw": 932.0,
+     "roll1_mean_abs_mw": 0.3831278538812792,
+     "roll1_max_abs_mw": 99.20000000000005
+    }
+   },
+   "2024": {
+    "PJM": {
+     "prod_annual_mean_gw": 5.068666084474887,
+     "aligned_annual_mean_gw": 5.068458276255708,
+     "roll0_mean_abs_mw": 251.1183105022831,
+     "roll0_max_abs_mw": 1210.3999999999996,
+     "roll1_mean_abs_mw": 1.3749315068493189,
+     "roll1_max_abs_mw": 133.60000000000036
+    },
+    "SPP": {
+     "prod_annual_mean_gw": 0.5793407534246576,
+     "aligned_annual_mean_gw": 0.5785412214611872,
+     "roll0_mean_abs_mw": 74.72722602739726,
+     "roll0_max_abs_mw": 359.0,
+     "roll1_mean_abs_mw": 0.802271689497716,
+     "roll1_max_abs_mw": 188.09999999999968
+    },
+    "South": {
+     "prod_annual_mean_gw": 0.09368162100456624,
+     "aligned_annual_mean_gw": 0.09368162100456623,
+     "roll0_mean_abs_mw": 41.75684931506849,
+     "roll0_max_abs_mw": 414.0,
+     "roll1_mean_abs_mw": 0.0,
+     "roll1_max_abs_mw": 0.0
+    },
+    "Manitoba": {
+     "prod_annual_mean_gw": 0.8841946803652968,
+     "aligned_annual_mean_gw": 0.8841319863013699,
+     "roll0_mean_abs_mw": 97.81251141552512,
+     "roll0_max_abs_mw": 875.0,
+     "roll1_mean_abs_mw": 0.18776255707762504,
+     "roll1_max_abs_mw": 31.400000000000034
+    }
+   },
+   "2025": {
+    "PJM": {
+     "prod_annual_mean_gw": 4.669655365296803,
+     "aligned_annual_mean_gw": 4.670613127853882,
+     "roll0_mean_abs_mw": 241.37534246575342,
+     "roll0_max_abs_mw": 917.6000000000008,
+     "roll1_mean_abs_mw": 2.416210045662101,
+     "roll1_max_abs_mw": 375.0
+    },
+    "SPP": {
+     "prod_annual_mean_gw": 0.7336482191780823,
+     "aligned_annual_mean_gw": 0.734876894977169,
+     "roll0_mean_abs_mw": 106.49689497716895,
+     "roll0_max_abs_mw": 440.0,
+     "roll1_mean_abs_mw": 2.4229223744292234,
+     "roll1_max_abs_mw": 449.0
+    },
+    "South": {
+     "prod_annual_mean_gw": 0.18539817351598178,
+     "aligned_annual_mean_gw": 0.1854181506849315,
+     "roll0_mean_abs_mw": 68.34417808219177,
+     "roll0_max_abs_mw": 603.6999999999998,
+     "roll1_mean_abs_mw": 0.22066210045662144,
+     "roll1_max_abs_mw": 34.0
+    },
+    "Manitoba": {
+     "prod_annual_mean_gw": 0.4505752739726028,
+     "aligned_annual_mean_gw": 0.4502485616438357,
+     "roll0_mean_abs_mw": 92.31949771689499,
+     "roll0_max_abs_mw": 844.4999999999999,
+     "roll1_mean_abs_mw": 0.32671232876712414,
+     "roll1_max_abs_mw": 48.0
+    }
+   }
+  },
+  "export": {
+   "2023": {
+    "PJM": {
+     "prod_annual_mean_gw": 0.0,
+     "aligned_annual_mean_gw": 0.0,
+     "roll0_mean_abs_mw": 0.0,
+     "roll0_max_abs_mw": 0.0,
+     "roll1_mean_abs_mw": 0.0,
+     "roll1_max_abs_mw": 0.0
+    },
+    "SPP": {
+     "prod_annual_mean_gw": 0.4802198744292238,
+     "aligned_annual_mean_gw": 0.48027518264840174,
+     "roll0_mean_abs_mw": 103.49117579908675,
+     "roll0_max_abs_mw": 484.7999999999997,
+     "roll1_mean_abs_mw": 0.40352739726027437,
+     "roll1_max_abs_mw": 45.60000000000008
+    },
+    "South": {
+     "prod_annual_mean_gw": 2.0255527511415528,
+     "aligned_annual_mean_gw": 2.0259753881278537,
+     "roll0_mean_abs_mw": 140.81950913242008,
+     "roll0_max_abs_mw": 564.0,
+     "roll1_mean_abs_mw": 0.6785045662100493,
+     "roll1_max_abs_mw": 106.00000000000023
+    },
+    "Manitoba": {
+     "prod_annual_mean_gw": 0.2146096575342466,
+     "aligned_annual_mean_gw": 0.2146096575342466,
+     "roll0_mean_abs_mw": 26.7375799086758,
+     "roll0_max_abs_mw": 530.1000000000001,
+     "roll1_mean_abs_mw": 0.0,
+     "roll1_max_abs_mw": 0.0
+    }
+   },
+   "2024": {
+    "PJM": {
+     "prod_annual_mean_gw": 0.0,
+     "aligned_annual_mean_gw": 0.0,
+     "roll0_mean_abs_mw": 0.0,
+     "roll0_max_abs_mw": 0.0,
+     "roll1_mean_abs_mw": 0.0,
+     "roll1_max_abs_mw": 0.0
+    },
+    "SPP": {
+     "prod_annual_mean_gw": 0.7211991552511415,
+     "aligned_annual_mean_gw": 0.7207619863013699,
+     "roll0_mean_abs_mw": 118.27550228310501,
+     "roll0_max_abs_mw": 509.0,
+     "roll1_mean_abs_mw": 1.2536757990867573,
+     "roll1_max_abs_mw": 181.0
+    },
+    "South": {
+     "prod_annual_mean_gw": 2.293684863013698,
+     "aligned_annual_mean_gw": 2.2934822031963473,
+     "roll0_mean_abs_mw": 145.3387100456621,
+     "roll0_max_abs_mw": 590.0,
+     "roll1_mean_abs_mw": 0.3823858447488597,
+     "roll1_max_abs_mw": 47.69999999999982
+    },
+    "Manitoba": {
+     "prod_annual_mean_gw": 0.4010680479452054,
+     "aligned_annual_mean_gw": 0.40099487442922377,
+     "roll0_mean_abs_mw": 57.90497716894977,
+     "roll0_max_abs_mw": 510.3999999999999,
+     "roll1_mean_abs_mw": 0.41198630136986303,
+     "roll1_max_abs_mw": 46.0
+    }
+   },
+   "2025": {
+    "PJM": {
+     "prod_annual_mean_gw": 0.008312328767123296,
+     "aligned_annual_mean_gw": 0.008312328767123294,
+     "roll0_mean_abs_mw": 8.981506849315071,
+     "roll0_max_abs_mw": 588.4,
+     "roll1_mean_abs_mw": 0.0,
+     "roll1_max_abs_mw": 0.0
+    },
+    "SPP": {
+     "prod_annual_mean_gw": 0.541568287671233,
+     "aligned_annual_mean_gw": 0.5421576712328767,
+     "roll0_mean_abs_mw": 102.58924657534246,
+     "roll0_max_abs_mw": 555.2999999999986,
+     "roll1_mean_abs_mw": 0.589383561643836,
+     "roll1_max_abs_mw": 172.10000000000014
+    },
+    "South": {
+     "prod_annual_mean_gw": 1.9882492465753423,
+     "aligned_annual_mean_gw": 1.988108721461187,
+     "roll0_mean_abs_mw": 151.75883561643835,
+     "roll0_max_abs_mw": 692.0,
+     "roll1_mean_abs_mw": 2.012671232876711,
+     "roll1_max_abs_mw": 241.0
+    },
+    "Manitoba": {
+     "prod_annual_mean_gw": 0.5959303196347032,
+     "aligned_annual_mean_gw": 0.5960056621004567,
+     "roll0_mean_abs_mw": 80.98465753424658,
+     "roll0_max_abs_mw": 637.4999999999998,
+     "roll1_mean_abs_mw": 0.24794520547945237,
+     "roll1_max_abs_mw": 47.200000000000045
+    }
+   }
+  }
+ },
+ "v3_miso_only": {
+  "ERCOT": "None",
+  "CAISO": "None",
+  "PJM": "None",
+  "NYISO": "None",
+  "NEISO": "None"
+ },
+ "v4_record_crosscheck": {
+  "2023/PJM": {
+   "rederived_roll0_mean_mw": 240.92605022831046,
+   "committed_mean_abs_diff_mw": 240.92605022831046,
+   "abs_delta_mw": 0.0
+  },
+  "2023/SPP": {
+   "rederived_roll0_mean_mw": 88.45468036529678,
+   "committed_mean_abs_diff_mw": 88.45468036529678,
+   "abs_delta_mw": 0.0
+  },
+  "2023/South": {
+   "rederived_roll0_mean_mw": 43.56780821917808,
+   "committed_mean_abs_diff_mw": 43.56780821917808,
+   "abs_delta_mw": 0.0
+  },
+  "2023/Manitoba": {
+   "rederived_roll0_mean_mw": 95.95997716894976,
+   "committed_mean_abs_diff_mw": 95.95997716894976,
+   "abs_delta_mw": 0.0
+  },
+  "2024/PJM": {
+   "rederived_roll0_mean_mw": 251.1183105022831,
+   "committed_mean_abs_diff_mw": 251.1183105022831,
+   "abs_delta_mw": 0.0
+  },
+  "2024/SPP": {
+   "rederived_roll0_mean_mw": 74.72722602739726,
+   "committed_mean_abs_diff_mw": 74.72722602739726,
+   "abs_delta_mw": 0.0
+  },
+  "2024/South": {
+   "rederived_roll0_mean_mw": 41.75684931506849,
+   "committed_mean_abs_diff_mw": 41.75684931506849,
+   "abs_delta_mw": 0.0
+  },
+  "2024/Manitoba": {
+   "rederived_roll0_mean_mw": 97.81251141552512,
+   "committed_mean_abs_diff_mw": 97.81251141552512,
+   "abs_delta_mw": 0.0
+  },
+  "2025/PJM": {
+   "rederived_roll0_mean_mw": 241.37534246575342,
+   "committed_mean_abs_diff_mw": 241.37534246575342,
+   "abs_delta_mw": 0.0
+  },
+  "2025/SPP": {
+   "rederived_roll0_mean_mw": 106.49689497716895,
+   "committed_mean_abs_diff_mw": 106.49689497716895,
+   "abs_delta_mw": 0.0
+  },
+  "2025/South": {
+   "rederived_roll0_mean_mw": 68.34417808219177,
+   "committed_mean_abs_diff_mw": 68.34417808219177,
+   "abs_delta_mw": 0.0
+  },
+  "2025/Manitoba": {
+   "rederived_roll0_mean_mw": 92.31949771689499,
+   "committed_mean_abs_diff_mw": 92.31949771689499,
+   "abs_delta_mw": 0.0
+  }
+ },
+ "failures": [],
+ "verdict": "ROTATION CONFIRMED"
+}
