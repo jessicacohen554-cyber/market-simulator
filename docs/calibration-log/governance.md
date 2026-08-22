@@ -1821,3 +1821,27 @@ measured-at-meter). The MISO lane should re-gate its keeper recipe against
 the measured coefficient on its own schedule and re-stamp its shard. NYISO's
 current keeper arms neither gated flag, so this change is byte-inert for
 every registered NYISO run.
+
+## 2026-08-22 — `_ramp10_capability` measured-reconciliation seam: cross-ISO code note from the NYISO lane (nyiso-152 phase-0)
+
+The NYISO lane's phase-0 measurement
+(`results/calibration/FINDING-nyiso152-phase0-reserve-posture-overturned-2026-08-22.md`)
+adjudicated the "hydro RAMP10 seams" queue item **provably LP-inert for
+NYISO** (its reserve design consumes no ramp10 quantity). The two code seams
+the item recorded are real, and they now belong to the lanes whose designs DO
+consume ramp10 (ERCOT supply caps, PJM/MISO/CAISO pergen deliverable-ramp
+pools) — rule 25 `[R-ISO-SCOPE]`, each lane decides on its own evidence:
+
+* `src/market_sim/data/fleet/withholding.py::_ramp10_capability` reconciles a
+  measured unit cap onto the class fraction only `if measured and frac > 0.0`
+  — a fuel whose `RAMP10_FRAC_BY_FUEL` entry is absent/0.0 (hydro everywhere;
+  CAISO backfills hydro separately via `CAISO_HYDRO_RAMP10_FRAC`) can never
+  receive measured capability through this seam even where data exists
+  (EIA-860 Sch. 3.1 flags 96.1 % of NY hydro nameplate `10M`; other states
+  unmeasured here).
+* `scripts/lib/ramp_capability/` has per-ISO modules for some lanes and not
+  others; a lane arming `measured_ramp_capability` should verify its own
+  module exists rather than assuming the flag is live.
+
+No lane's verdict, keeper or matrix cell is touched by this note; it is
+discovery hand-off only.

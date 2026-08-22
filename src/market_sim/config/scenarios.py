@@ -639,6 +639,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_ct",
     "nyiso_gas_bridge_ct_min_load_frac",
     "nyiso_gas_bridge_plant_exclusions",
+    "nyiso_gas_bridge_reserve_duty_exclusions",
     "nyiso_gas_bridge_ct_min_run_hours",
     "nyiso_gas_bridge_plant_min_run",
     "nyiso_gas_bridge_online_hours",
@@ -1311,6 +1312,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_bridge_ct": "False",
     "nyiso_gas_bridge_ct_min_load_frac": "0.238",
     "nyiso_gas_bridge_plant_exclusions": "False",
+    "nyiso_gas_bridge_reserve_duty_exclusions": "False",
     "nyiso_gas_bridge_ct_min_run_hours": "2.0",
     "nyiso_gas_bridge_plant_min_run": "False",
     "nyiso_gas_bridge_online_hours": "False",
@@ -5140,6 +5142,30 @@ class ScenarioConfig:
     #
     # Default off so a control run is byte-identical.
     nyiso_gas_bridge_plant_exclusions: bool = False
+    # NYISO gas-bridge membership correction, RESERVE-DUTY channel (nyiso-152):
+    # when armed, the measured reserve-duty CC cohort
+    # (data.reserve_duty.load_reserve_duty_cc, the FROZEN nyiso-149 artifact
+    # reserve_duty_cc_NYISO.csv — pooled online-share/CF <= 0.1 against the
+    # population gap) joins the bridge's excluded membership set through the
+    # SAME detector population gate (min_load_frac_by_gen zeroing) as the
+    # lay-up channel above. A capacity-only plant is not in the day-ahead
+    # energy-commitment population, so bridging it manufactures min-load
+    # energy in hours its own meter says it is off — rule 17
+    # [R-FLOOR-WINDOW]; the lay-up channel cannot reach it when the plant has
+    # no CAMPD series (Allegany 7784, e923_pooled_cf 0.0173, is the sole
+    # duty-cohort plant outside campd_bridge_layup_exclusions_NYISO precisely
+    # because that criterion requires a CAMPD gross-load series). Rule 18
+    # [R-PHYSICS]: eligibility stays on physics — this is MEMBERSHIP on a
+    # measured duty-role signal (rule 13, the ct_intermediate_plants
+    # lineage); rule 21 [R-DOF]: a plant-code set, zero new scalars; rule 23:
+    # re-derives only on source-data update. Composed with
+    # cc_reserve_duty_split it completes the duty-role mechanism (offer shape
+    # + commitment population, rule 19 [R-ONE-MECH]). Evidence:
+    # results/calibration/
+    # FINDING-nyiso152-phase0-reserve-posture-overturned-2026-08-22.md.
+    #
+    # Default off so a control run is byte-identical.
+    nyiso_gas_bridge_reserve_duty_exclusions: bool = False
     # Minimum run duration (hours) for the CT block-commitment extension.
     # 2 h = run_hours_p25_capwtd from the artifact above (34,024 measured runs;
     # cap-weighted p25/p50/p75 = 2 / 4 / 8 h, equally-weighted 2 / 4 / 7 h).
@@ -14185,6 +14211,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_gas_bridge_da_horizon": 1,
     "nyiso_gas_bridge_min_run": 1,
     "nyiso_gas_bridge_plant_exclusions": 1,
+    "nyiso_gas_bridge_reserve_duty_exclusions": 1,
     "nyiso_gas_bridge_plant_min_run": 1,
     "nyiso_gas_bridge_online_hours": 1,
     "nyiso_gas_bridge_state_floor_min_run": 1,

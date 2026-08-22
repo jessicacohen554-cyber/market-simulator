@@ -8691,6 +8691,32 @@ nyiso-148's as the live frontier statement); runs
 `2026-08-22-nyiso-150-reserve-rearm` / `-winter-spread`; gates
 `_nyiso150_ab_gates.json`.
 
+**nyiso-152 PHASE-0 ADJUDICATION 2026-08-22 (owner-chartered RAMP10 phase-0;
+NO SOLVE SPENT):** the **hydro RAMP10 seams item is OFF THE QUEUE — provably
+LP-inert for NYISO**. The NYISO reserve design consumes no ramp10 quantity
+anywhere (non-gated class-level headroom rows; no supply cap, no pergen; the
+keeper's `measured_ramp_capability` False), hydro is ALREADY in both
+eligibility classes at full `cap×avail` headroom via the armed
+`nyiso_hydro_reserve_eligible`, and Upstate_West class-1 headroom never drops
+below ~1.5 GW in any hour of 2023–2025 — the NYCA/East families' duals are
+zero in ALL 8,760 h of 2023 and 2024. The nyiso-151 §3 "reserve-provision
+dispatch" re-type is thereby **OVERTURNED**: Allegany's mid-load hours are
+100 % `MECH_NYISO_GAS_COMMITMENT_BRIDGE` floor hours (1,804/2,797 h at the
+0.523 CC min-load in 2023/24 under the armed split; every reserve dual zero
+in them), i.e. rule 17 scaffolding at a plant whose meter (e923 pooled CF
+0.0173) says it is off — and the plant escapes the nyiso-144 lay-up channel
+only because that criterion needs a CAMPD series it does not have. The
+item's AS-certification owner-court question DISSOLVES for NYISO (no ramp10
+gate exists for it to feed); the `_ramp10_capability` `frac > 0.0` seam is
+logged for the consuming lanes in `docs/calibration-log/governance.md`
+(rule 25). RE-TYPED SUCCESSOR, pre-registered before any solve:
+`nyiso_gas_bridge_reserve_duty_exclusions` (the bridge's reserve-duty
+MEMBERSHIP leg, net new membership exactly {7784}), composed with the split.
+Evidence:
+`results/calibration/FINDING-nyiso152-phase0-reserve-posture-overturned-2026-08-22.md`,
+`PREREG-nyiso152-bridge-reserve-duty-exclusion-2026-08-22.md`, probe
+`scripts/probes/_nyiso152_phase0.py`, record `_nyiso152_phase0.json`.
+
 **FRONTIER STATUS 2026-08-18 (nyiso-143) — NOT YET FRONTIER. KEEPER UNCHANGED,
 `complete` untouched, `final` NOT proposed, holdout freeze ACTIVE and unspent.**
 The frontier re-declaration was assessed against the five open objects and
@@ -8859,7 +8885,13 @@ work, which is why frontier is NOT-YET independent of every pending owner ruling
    (hydro's class fraction is 0.0), and `scripts/lib/ramp_capability/` has no
    NYISO module. Only NYISO's own AS **certification** plus the hour-by-hour
    water limit remain an owner-funded intake. Do NOT measure a NYCA rho through
-   the gap (nyiso-110 §10).
+   the gap (nyiso-110 §10). *(ADJUDICATED 2026-08-22, nyiso-152 phase-0: the
+   two code seams are PROVABLY LP-INERT for NYISO — nothing in the NYISO
+   reserve design consumes ramp10, and hydro already supplies both classes at
+   full headroom via the armed union — so this re-open condition can never
+   fire on NYISO's own LP; the certification/water-limit intake question
+   dissolves with it. The seam note passes to the consuming lanes via
+   `docs/calibration-log/governance.md`. See the §5.5 nyiso-152 block.)*
 6. **OWNER RULINGS PENDING** — `RHO_CLIP` (card delivered,
    `docs/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md`) and
    `nyiso_iroquois_winter_spread` arming + its two-row taxonomy remedy
