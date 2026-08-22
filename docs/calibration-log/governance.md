@@ -1801,3 +1801,47 @@ baseline carries 23 D-4 row failures absent from its committed artifact
 questions (denominator = model's own class output; no materiality floor
 inside the provenance leg) in the RESULT §5 — owner decisions, not a
 session's.
+
+## 2026-08-22 — RHO_CLIP floor DELETED (owner ruling, card nyiso-145 option A) — cross-ISO flag for the MISO lane
+
+Owner ruling (session nyiso-151, rule 22 D-5(b)): `RHO_CLIP` moves
+`(0.5, 4.0) → (0.0, 4.0)` in `src/market_sim/data/online_reserve_rho.py` —
+option A of `docs/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md`, on the
+card's own recommendation (the floor had no primary citation, no physical
+basis, and was inherited across a change of estimand; every measured row on
+two ISOs' fleets sat below it). Every measured `online_rho` now solves at its
+own measurement; the 4.0 ceiling keeps its min-load derivation.
+
+**MISO LANE ITEM (rule 25 — flagged here, not executed):** MISO's armed
+`miso_reserve_online_gated` keeper solved at the floor (0.5, measured
+0.1764). Its committed bundle stands as solved; any FUTURE replay/re-solve of
+the recipe now uses the measured 0.1764, which TIGHTENS the additive coupling
+row (the conservative-at-floor direction miso-169 recorded inverts to
+measured-at-meter). The MISO lane should re-gate its keeper recipe against
+the measured coefficient on its own schedule and re-stamp its shard. NYISO's
+current keeper arms neither gated flag, so this change is byte-inert for
+every registered NYISO run.
+
+## 2026-08-22 — `_ramp10_capability` measured-reconciliation seam: cross-ISO code note from the NYISO lane (nyiso-152 phase-0)
+
+The NYISO lane's phase-0 measurement
+(`results/calibration/FINDING-nyiso152-phase0-reserve-posture-overturned-2026-08-22.md`)
+adjudicated the "hydro RAMP10 seams" queue item **provably LP-inert for
+NYISO** (its reserve design consumes no ramp10 quantity). The two code seams
+the item recorded are real, and they now belong to the lanes whose designs DO
+consume ramp10 (ERCOT supply caps, PJM/MISO/CAISO pergen deliverable-ramp
+pools) — rule 25 `[R-ISO-SCOPE]`, each lane decides on its own evidence:
+
+* `src/market_sim/data/fleet/withholding.py::_ramp10_capability` reconciles a
+  measured unit cap onto the class fraction only `if measured and frac > 0.0`
+  — a fuel whose `RAMP10_FRAC_BY_FUEL` entry is absent/0.0 (hydro everywhere;
+  CAISO backfills hydro separately via `CAISO_HYDRO_RAMP10_FRAC`) can never
+  receive measured capability through this seam even where data exists
+  (EIA-860 Sch. 3.1 flags 96.1 % of NY hydro nameplate `10M`; other states
+  unmeasured here).
+* `scripts/lib/ramp_capability/` has per-ISO modules for some lanes and not
+  others; a lane arming `measured_ramp_capability` should verify its own
+  module exists rather than assuming the flag is live.
+
+No lane's verdict, keeper or matrix cell is touched by this note; it is
+discovery hand-off only.

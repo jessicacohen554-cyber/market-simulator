@@ -116,6 +116,18 @@ _RULE26_DELETED_UNCONDITIONAL: dict[str, tuple[str, object]] = {
     # the recorded key: pjm-162 inputclock (solved at c447199 while the
     # field lived; promoted pjm-163, 2026-08-16).
     "nyiso_solar_registry_cod_dates": ("NYISO", True),
+    # miso-177 (2026-08-22): the transient session field that delivered the
+    # measured-rho arm before the same-day owner ruling deleted the RHO_CLIP
+    # floor globally (nyiso-151, decision-card option A) — the field was
+    # removed in the same session's reconciliation, never reaching main.
+    # True (the arm/keeper 2026-08-22-miso-177-rho-measured) is the
+    # unconditional post-ruling behaviour: the seam consumes the measured
+    # 0.1764 by default, so the recorded key replays byte-equivalently.
+    # False (the control 2026-08-22-miso-177-control) selected the deleted
+    # 0.5-floor basis and correctly hard-errors as historical-record-only —
+    # the same non-replayability the owner's ruling gave every pre-ruling
+    # MISO bundle, the miso-175 keeper included.
+    "miso_online_rho_no_floor": ("MISO", True),
 }
 
 

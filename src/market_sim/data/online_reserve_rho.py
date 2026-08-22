@@ -65,39 +65,39 @@ from market_sim.config.paths import PROCESSED_DIR
 
 logger = logging.getLogger(__name__)
 
-# Band the identified multiplier is clipped to, carried over UNCHANGED from the
-# legacy pmin path in model/reserves/spec.py so this seam cannot be read as
-# re-banding the coefficient while it re-identifies it.
+# Band the identified multiplier is clipped to.
 #
-# HONEST STATUS, because it is now load-bearing: the band has NO primary
-# citation anywhere in the repo — the two call sites described it only as "the
-# same [0.5, 4.0] physical band the path-A family uses", which is
-# self-referential. It never mattered before, because the legacy path was dead
-# code on a binned fleet and the fallback 1.0 sits inside the band.
+# OWNER RULING 2026-08-22 (session nyiso-151, rule 22 D-5(b)): the 0.5 FLOOR
+# IS DELETED — option A of
+# docs/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md, taken on the
+# card's own recommendation. The floor had no primary citation and no
+# physical basis (the true lower bound on 10-minute headroom per MW online
+# is zero — a fleet at full load carries none); it was inherited across a
+# change of estimand (written for the min-load `(pmax−pmin)/pmin` basis,
+# where [0.5, 4.0] brackets f ∈ [0.2, 0.667], then applied to the
+# as-operated `Σhead/ΣP` aggregate, which every measured fleet — MISO
+# miso_reg_spin 0.1764, NYISO incity_obligation 0.3014, NYISO nyc_spin
+# 0.2011 — sits below). Every measured row now solves at its own
+# measurement, which is what makes the gated NYISO flags admissible on a
+# data-identified coefficient (rule 21 [R-DOF]).
 #
-# It matters now: BOTH measured NYISO values fall BELOW the 0.5 floor
-# (incity_obligation 0.3014, nyc_spin 0.2011), so :attr:`OnlineReserveRho.rho_used`
-# returns the FLOOR, not the measurement. A run that arms a gated family today
-# is therefore still deciding its only reserve bound with a number chosen by an
-# uncited guardrail rather than by data — the same rule 21 [R-DOF] defect the
-# measurement was meant to close, moved one level out. Resolving the band is an
-# owner call (rule 22 D-5(b)), not a session's; until it is resolved, neither
-# gated NYISO flag is admissible in a keeper. Record:
-# results/calibration/FINDING-nyiso144-downstate-scarcity-and-rho-2026-08-18.md
+# The 4.0 CEILING STAYS: it has a real derivation on the min-load estimand
+# (the deepest class turn-down in the model's own tables, NYISO ST_GAS
+# f = 0.239, gives ≈ 3.2; f = 0.2 gives exactly 4.0) and is loose-but-
+# harmless on the as-operated one.
 #
-# miso-177 (2026-08-22) completed the identification hunt for the MISO leg of
-# that escalation: the 0.5 floor is REFUTED as a citable parameter — MISO's
-# own BPM-002-r25 limits per-resource reserve by ramp x deploy-time
-# (§4.2.1.46–47), its only capability-role 0.5 is the §4.2.1.37 CEILING on
-# the regulation range, and the physical lower bound of headroom-per-MW-online
-# is zero. The 4.0 CEILING keeps its (1−f)/f min-load derivation (decision
-# card §3) and is not disturbed. The band itself is UNCHANGED here — it
-# remains the owner's nyiso-145 decision card — but MISO's gated consumption
-# may bypass the refuted floor via ScenarioConfig.miso_online_rho_no_floor
-# (:attr:`OnlineReserveRho.rho_used_no_floor`), scoped so no other ISO moves
-# (rule 25). Record:
-# results/calibration/FINDING-miso177-rho-clip-floor-identification-2026-08-22.md
-RHO_CLIP: tuple[float, float] = (0.5, 4.0)
+# CROSS-LANE CONSEQUENCE, flagged not executed here (rule 25
+# [R-ISO-SCOPE]): MISO's armed `miso_reserve_online_gated` keeper solved at
+# the floor (0.5); its future replays now solve at the measurement (0.1764),
+# which TIGHTENS its additive coupling row — the MISO lane re-gates on its
+# own schedule (docs/calibration-log/governance.md, 2026-08-22 entry).
+# History: FINDING-nyiso144-downstate-scarcity-and-rho-2026-08-18.md,
+# FINDING-nyiso143-online-rho-unidentified-2026-08-18.md; the MISO
+# primary-source leg of the refutation (BPM-002-r25: capability is
+# ramp x deploy-time, the only 0.5 a regulation-range CEILING) and the
+# ruling's MISO re-gate:
+# FINDING-miso177-rho-clip-floor-identification-2026-08-22.md.
+RHO_CLIP: tuple[float, float] = (0.0, 4.0)
 
 
 @dataclass(frozen=True)
@@ -132,21 +132,6 @@ class OnlineReserveRho:
         """Return the headline multiplier clipped to :data:`RHO_CLIP`."""
         lo, hi = RHO_CLIP
         return min(max(self.rho, lo), hi)
-
-    @property
-    def rho_used_no_floor(self) -> float:
-        """Return the headline multiplier bounded by the cited ceiling alone.
-
-        The measured as-operated statistic consumed as measured: the 0.5 floor
-        — refuted as a citable parameter on MISO's primary record
-        (FINDING-miso177-rho-clip-floor-identification-2026-08-22.md; the
-        physical lower bound of headroom-per-MW-online is zero) — is not
-        applied; the 4.0 ceiling keeps its ``(1−f)/f`` min-load derivation and
-        cannot bind on any as-operated measurement. Consumed only where a
-        ``ScenarioConfig`` gate selects it (``miso_online_rho_no_floor``);
-        :attr:`rho_used` and the shared :data:`RHO_CLIP` band are untouched.
-        """
-        return min(self.rho, RHO_CLIP[1])
 
 
 def _artifact_path(iso: str):

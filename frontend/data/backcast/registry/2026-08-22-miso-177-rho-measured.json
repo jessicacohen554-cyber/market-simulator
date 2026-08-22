@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-22-miso-177-rho-measured",
+  "label": "miso 177 rho measured",
+  "date": "2026-08-22",
+  "shorthand": "miso-177-rho-measured",
+  "definition": "miso-177 ARM: measured online_rho 0.17644175978069962 consumed without the refuted 0.5 floor (single delta)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-22-miso-177-rho-measured.js",
+  "bundle": "results/calibration/miso177_rho_B"
+}

@@ -7745,3 +7745,25 @@ bundles committed). Keeper, marker, status untouched; freeze ACTIVE; years
 2023–2025 only. OWNER ITEMS QUEUED: the ARM H arming disposition; the
 RHO_CLIP band card (re-verified live: both NYISO measured rhos 0.3014/0.2011
 sit below the 0.5 floor, so the clip — not the meter — is the coefficient).
+
+### 2026-08-22 addendum 2 — OWNER SITTING (three rulings) and the ARM H promotion executed
+
+The owner ruled in-session on the queued cards: **(1) RHO_CLIP option A** —
+the 0.5 floor is DELETED (`(0.0, 4.0)`; card nyiso-145 annotated; every
+measured `online_rho` now solves at its own measurement; both NYISO gated
+reserve flags become admissible on data-identified coefficients; the MISO
+re-gate consequence flagged in `docs/calibration-log/governance.md`, rule
+25). **(2) ARM H PROMOTED** on the arm-on-legitimacy standard (ercot-202
+class): registered as `2026-08-22-nyiso-151-identity-hr` — DETERMINATION
+**CALIBRATED** on its own registration verdict (bit-identical artifacts +
+fresh attestation, DOF 8→9 with the identity artifact at n_scalars 0,
+n_residual 6 unchanged) — keeper shard swapped, D-5(b) re-key executed
+(worse determination impossible by construction), `build_status` NYISO:
+CALIBRATED, `audit_keepers` PASS 0/0, matrix cell I→K with the I record
+preserved, shard + §5.5 headers re-stamped. The mechanical direction-leg
+rejection stands unrewritten alongside. **(3) RAMP10 chartered** as the next
+session. Housekeeping: PR #4196 (the nyiso-151 gates work) merged mid-flow
+and the branch auto-deleted — recreated from the new main per the
+merged-branch rule; a category-vocabulary typo the merged ERCOT row carried
+(`cat: "commitment"`) fixed to `commit` so the matrix checker runs clean for
+every lane.

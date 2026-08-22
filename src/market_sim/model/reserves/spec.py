@@ -3109,13 +3109,6 @@ def _miso_design(
                 pergen_gen_idx,
                 iso=str(config.iso),
                 family_set="miso_reg_spin",
-                # miso-177: consume the measured statistic without the refuted
-                # 0.5 floor (ceiling kept). MISO-scoped (rule 25) — this is
-                # the only call site that passes the flag; NYISO's branches
-                # and the shared RHO_CLIP band are untouched.
-                measured_no_floor=bool(
-                    getattr(config, "miso_online_rho_no_floor", False)
-                ),
             )
             # Pool-shared 10-minute ramp: each product column keeps the pool
             # cap as its per-column bound, and this row holds their SUM to
@@ -3168,7 +3161,6 @@ def _identified_online_rho(
     *,
     iso: str,
     family_set: str,
-    measured_no_floor: bool = False,
 ) -> float:
     """Return the online-gated class's headroom multiplier ``rho``.
 
@@ -3197,31 +3189,19 @@ def _identified_online_rho(
         elig_idx: LP row indices of the gated class's eligible set.
         iso: The ISO whose measured artifact to read.
         family_set: The online-gated family set key in that artifact.
-        measured_no_floor: Consume the measured statistic bounded by the cited
-            4.0 ceiling alone, skipping the refuted 0.5 floor
-            (``OnlineReserveRho.rho_used_no_floor``;
-            FINDING-miso177-rho-clip-floor-identification-2026-08-22.md).
-            Caller-gated per ISO (rule 25 — only MISO's branch passes it, from
-            ``ScenarioConfig.miso_online_rho_no_floor``); hard-errors when no
-            measured artifact exists, because falling back to the legacy
-            identification would silently solve a DIFFERENT mechanism than the
-            one the flag armed.
     """
     from market_sim.data.online_reserve_rho import RHO_CLIP, load_online_rho
 
     measured = load_online_rho(iso, family_set)
     if measured is not None:
-        used = measured.rho_used_no_floor if measured_no_floor else measured.rho_used
         logger.info(
-            "%s gated reserve class '%s': MEASURED online_rho=%.4f (%s; "
+            "%s gated reserve class '%s': MEASURED online_rho=%.4f "
+            "(RHO_CLIP banded — floorless since the 2026-08-22 owner ruling; "
             "pre-clip %.4f; min-load sensitivity %.4f, full-hour %.4f) over "
             "%d online unit-hours, CAMPD coverage %.1f%%, vintages %s",
             iso,
             family_set,
-            used,
-            "ceiling-only, floor refuted miso-177"
-            if measured_no_floor
-            else "RHO_CLIP banded",
+            measured.rho_used,
             measured.rho,
             measured.rho_minload,
             measured.rho_fullhour,
@@ -3229,15 +3209,7 @@ def _identified_online_rho(
             100.0 * measured.campd_coverage_frac,
             measured.years,
         )
-        return used
-    if measured_no_floor:
-        raise ValueError(
-            f"{iso} gated reserve class '{family_set}': the measured-value "
-            "treatment (miso_online_rho_no_floor) is armed but no measured "
-            "online_rho artifact exists — the legacy (pmax-pmin)/pmin "
-            "fallback would identify a different coefficient than the one "
-            "the flag selects (rule 24: no silent mechanism substitution)"
-        )
+        return measured.rho_used
     pmin_e = np.asarray(fleet_arrays.pmin, dtype=float)[elig_idx]
     pmax_e = np.asarray(fleet_arrays.pmax, dtype=float)[elig_idx]
     valid = (pmin_e > 0) & (pmax_e > pmin_e)

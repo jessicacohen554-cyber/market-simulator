@@ -673,13 +673,18 @@ def _ercot_ruc_floor(config, fleet_arrays) -> "np.ndarray | None":
         fleet_arrays.availability, dtype=float
     )
     floor = None
+    armed: list[str] = []
+    skipped: list[str] = []
     for token, groups in _ERCOT_RUC_CLASS_GROUPS.items():
         series = np.asarray(ercot_ruc_committed_mw(year, T, token), float)
         if series.max() <= 0.0:
+            skipped.append(f"{token}(no measured ONRUC)")
             continue
         mask = np.isin(pg, list(groups))
         if not mask.any():
+            skipped.append(f"{token}(no fleet units)")
             continue
+        armed.append(f"{token}: {int((series > 0).sum())} h, max {series.max():.0f} MW")
         cls_cap = cap[mask].sum(axis=0)  # (T,)
         with np.errstate(invalid="ignore", divide="ignore"):
             level = np.where(cls_cap > 0.0, np.minimum(series, cls_cap), 0.0)
@@ -688,6 +693,11 @@ def _ercot_ruc_floor(config, fleet_arrays) -> "np.ndarray | None":
         if floor is None:
             floor = np.zeros_like(cap)
         floor[mask] = np.maximum(floor[mask], contrib)
+    print(
+        f"INFO: ERCOT RUC instruction-state commitment floor ({year}): "
+        f"ARMED [{'; '.join(armed) or 'none'}]"
+        + (f", SKIPPED [{'; '.join(skipped)}]" if skipped else "")
+    )
     if floor is None or float(floor.max()) <= 0.0:
         return None
     return floor
@@ -938,6 +948,30 @@ def _nyiso_gas_bridge_floor(
             in_pop,
             sorted(excluded),
         )
+    # RESERVE-DUTY membership channel (nyiso_gas_bridge_reserve_duty_exclusions,
+    # nyiso-152): the measured capacity-only CC cohort is not in the day-ahead
+    # energy-commitment population either, and the lay-up channel above cannot
+    # reach a plant with no CAMPD series (its criterion is CAMPD-defined).
+    # Same population-gate expression, second measured membership signal —
+    # rule 17 [R-FLOOR-WINDOW] / rule 19 [R-ONE-MECH]; see the field's
+    # ScenarioConfig citation block.
+    if getattr(config, "nyiso_gas_bridge_reserve_duty_exclusions", False):
+        from market_sim.data.reserve_duty import load_reserve_duty_cc
+
+        duty = load_reserve_duty_cc("NYISO")
+        if duty:
+            in_pop = sum(
+                1 for gen in fleet if int(getattr(gen, "plant_code", 0) or 0) in duty
+            )
+            logger.info(
+                "NYISO gas bridge reserve-duty membership correction: %d "
+                "capacity-only plant code(s) excluded, matching %d fleet "
+                "row(s) — %s",
+                len(duty),
+                in_pop,
+                sorted(duty),
+            )
+            excluded = frozenset(excluded | duty)
     # STATE-FLOOR DUTY SCOPING (nyiso_gas_bridge_state_floor_min_run, the
     # nyiso-146b sharpening): the online-hours leg holds only plants whose
     # OWN measured run-length p25 clears the population gap

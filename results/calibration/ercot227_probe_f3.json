@@ -1,0 +1,251 @@
+{
+ "probe": "ercot227_probe_f3",
+ "factor": "F3 ercot_ruc_commitment_floor \u2014 measured RUC (out-of-market) commitment as an instruction-state min-gen floor: ONRUC telemetered resource status x LSL, class grain",
+ "charter": "docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md \u00a75.11 Amendment 3 (the owner proceed-with-all-factors order); waiver W-3 (ercot-226) category (iii) 'measured RUC / out-of-market commitment MW'",
+ "session": "hub (ercot-227)",
+ "branch_sha": "14ce4ce83328344cfe1ec274fcda351a766e4b06",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1"
+ },
+ "amendment3_reopening": {
+  "ercot226_phase0_premise": "REFUTED-P0 on 'no 2023 RUC MW data on disk (only 2025/2026 RUC AS disclosure)'",
+  "what_changed": "the NP3-965 60-Day SCED Gen Resource Data corpus carries a Telemetered Resource Status column whose ONRUC rows ARE the RUC-instructed unit-hours, with LSL and HSL alongside. The 2023 series was derived (scripts/data/derive_ercot_ruc_committed.py) rather than assumed absent.",
+  "overturned_prior": "the ercot97 plant-grain RUC lane's SCALE premise: 2023 carries 2,031 distinct ONRUC unit-hours over 96 days (7,963 SCED rows), not the 303 unit-hours the 2024/25-subset lane measured \u2014 a 6.7x larger object. Sizing record: results/calibration/ercot227_ruc_sizing.json",
+  "by_class_2023": {
+   "CC_REGULAR": {
+    "rows": 1148,
+    "mean_hsl": 238.6,
+    "mean_lsl": 126.2,
+    "mean_bp": 129.0,
+    "units": 26
+   },
+   "CT_PEAKER": {
+    "rows": 183,
+    "mean_hsl": 91.7,
+    "mean_lsl": 47.1,
+    "mean_bp": 49.6,
+    "units": 9
+   },
+   "ST_GAS": {
+    "rows": 6632,
+    "mean_hsl": 199.9,
+    "mean_lsl": 49.4,
+    "mean_bp": 55.5,
+    "units": 35
+   }
+  }
+ },
+ "d9_boundary": {
+  "question": "how is this distinct from the D-9-quarantined ct_deployment_overlay / reliability_deployment_overlay?",
+  "answer": "those overlays pin measured ENERGY (a realized outcome, rule-13 forbidden). F3 feeds the INSTRUCTION STATE at the physical LSL \u2014 an operator input of the outage-window class, which rule 13 names as its own admissible example family. It is never realized output and never a per-unit model crosswalk (class grain; item 11 / Q-B stays FINAL-closed).",
+  "d9_result": "PASS \u2014 every quarantined overlay reads False/None in the arm, as in the control.",
+  "rule19_incumbents_reconciled": "the gas commitment bridge (CC) and the ST_GAS net-load drag already floor the same fleet; F3 composes by MAXIMUM with tie-keeps-incumbent attribution, so it never stacks (rule 19 [R-ONE-MECH])."
+ },
+ "control": {
+  "bundle": "results/calibration/ercot226_ctl2023",
+  "official_2023": {
+   "C3a_pct": -39.7,
+   "C3b_nrmse": 0.729,
+   "C3c_model_tail_h": 74
+  }
+ },
+ "arm": {
+  "bundle": "results/calibration/ercot227_f3_arm",
+  "set": {
+   "ercot_ruc_commitment_floor": true
+  },
+  "years": [
+   2023
+  ]
+ },
+ "mechanism_engaged": {
+  "verdict": "YES \u2014 the floor is live and attributable",
+  "floor_mechanism_cells": {
+   "control": {
+    "0": 17675352,
+    "1": 33240,
+    "2": 1546104,
+    "4": 49896,
+    "6": 900564,
+    "17": 12451,
+    "21": 105593
+   },
+   "arm": {
+    "0": 17446162,
+    "1": 33240,
+    "2": 1546104,
+    "4": 49896,
+    "6": 900156,
+    "17": 12451,
+    "21": 105593,
+    "23": 229598
+   },
+   "MECH_ERCOT_RUC_COMMITMENT_id": 23,
+   "cells_claimed_by_mech_23": 229598,
+   "taken_from_unfloored_mech_0": 229190,
+   "taken_from_mech_6": 408
+  },
+  "total_min_gen_twh": {
+   "control": 95.4549,
+   "arm": 95.5246
+  },
+  "added_forced_energy_twh": 0.0097
+ },
+ "official": {
+  "2023": {
+   "C3a_pct": -39.7,
+   "C3b_nrmse": 0.729,
+   "C3c_model_tail_h": 74,
+   "model_mean_usd": 38.8,
+   "control_model_mean_usd": 38.81,
+   "delta_vs_control_pp": 0.0
+  }
+ },
+ "probe_basis": {
+  "c3a_probe_pct": {
+   "control": -29.99,
+   "arm": -30.0
+  },
+  "c3b_probe_nrmse": {
+   "control": 3.4476,
+   "arm": 3.4476
+  },
+  "model_mean": {
+   "control": 33.856,
+   "arm": 33.851
+  },
+  "tail_model_gt200": {
+   "control": 74,
+   "arm": 74
+  }
+ },
+ "summer": {
+  "miss_split_ctl": {
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  },
+  "miss_split_arm": {
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  },
+  "d_price_at_miss_p50": 0.0,
+  "d_price_at_miss_max": 0.0,
+  "window_concentration": 0.2251,
+  "calm_fortnight_bias_pct": {
+   "control": 15.44,
+   "arm": 15.44
+  },
+  "channel_lambda_share_at_improved_miss": null,
+  "improved_miss_hours": 0
+ },
+ "gates": {
+  "G-CAP": {
+   "violations": 0,
+   "pass": true
+  },
+  "G-SPUR": {
+   "pass": true,
+   "bar": "+5/yr vs banded baseline (lidless REPORT-ONLY)"
+  },
+  "G-SHED": {
+   "pass": true
+  },
+  "G-BAT": {
+   "pass": true
+  },
+  "G-D2": {
+   "no_new_d4_rows": false
+  },
+  "G-SHORTFALL": {
+   "pass": true,
+   "rule": "per rigid family, arm shortfall hour-set \u2286 control's (precommit AMENDMENT 1 \u2014 no MANUFACTURED shortage; the keeper baseline itself carries 21 designed VOLL-engagement hours)"
+  }
+ },
+ "d4_unit_conduct": {
+  "window_check": {
+   "verdict": "pass",
+   "offwindow_share": 0.0,
+   "reading": "the WINDOW leg passes by construction, exactly as declared in D4_WINDOWS \u2014 the measured ONRUC series carries its own window, so there are no off-window hours to bind in."
+  },
+  "unit_conduct_rows": 42,
+  "unit_conduct_FAIL": 23,
+  "fail_floored_twh": 0.0082,
+  "total_floored_twh": 0.0087,
+  "fail_share_of_floored_energy": 0.9425,
+  "binding_hours_on_fail_units": 1886,
+  "worst_units": [
+   {
+    "plant": "3453",
+    "binding_hours": 382,
+    "measured_median_mw": 0.0,
+    "measured_zero_share": 0.6309,
+    "floored_twh": 0.0028
+   },
+   {
+    "plant": "3576",
+    "binding_hours": 358,
+    "measured_median_mw": 0.0,
+    "measured_zero_share": 0.905,
+    "floored_twh": 0.0012
+   },
+   {
+    "plant": "3504",
+    "binding_hours": 299,
+    "measured_median_mw": 0.0,
+    "measured_zero_share": 0.7425,
+    "floored_twh": 0.0015
+   },
+   {
+    "plant": "3507",
+    "binding_hours": 279,
+    "measured_median_mw": 0.0,
+    "measured_zero_share": 0.8459,
+    "floored_twh": 0.0009
+   },
+   {
+    "plant": "3490",
+    "binding_hours": 255,
+    "measured_median_mw": 0.0,
+    "measured_zero_share": 0.851,
+    "floored_twh": 0.001
+   },
+   {
+    "plant": "4266",
+    "binding_hours": 192,
+    "measured_median_mw": 0.0,
+    "measured_zero_share": 0.8438,
+    "floored_twh": 0.0004
+   },
+   {
+    "plant": "3441",
+    "binding_hours": 14,
+    "measured_median_mw": 0.0,
+    "measured_zero_share": 0.8571,
+    "floored_twh": 0.0
+   },
+   {
+    "plant": "3439",
+    "binding_hours": 13,
+    "measured_median_mw": 0.0,
+    "measured_zero_share": 0.6923,
+    "floored_twh": 0.0001
+   }
+  ]
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "disposition": "REJECTED-AS-ARMED (G-D2 / D-4 unit-conduct FAIL), with zero benefit",
+  "gate_failure": "G-D2 \u2014 2 new D-4 rows for ercot_ruc_commitment; 23 of 42 unit-conduct rows FAIL, carrying 94% of the mechanism's floored energy (0.0082 of 0.0087 TWh) over 1,886 binding unit-hours on units whose measured CEMS generation is ZERO in the majority of those hours (measured_median_mw 0.0, measured_zero_share 0.55-1.00).",
+  "benefit": "NONE. d_price_at_miss p50 = max = 0.0 and improved_miss_hours = 0 \u2014 the floor moves nothing at the 114 missed scarcity hours. Official scores print the keeper digits unchanged; the probe-basis C3a is 0.01 pp WORSE (-29.99 -> -30.00) and the model mean falls 38.81 -> 38.80.",
+  "measured_cause": "THE GRAIN, not the driver. The measured ONRUC instruction identifies ~2,031 SPECIFIC unit-hours on ~70 SPECIFIC units. Barred from the per-unit crosswalk (item 11 / Q-B FINAL), the mechanism distributes the class MW PRO-RATA across every unit in the class \u2014 so it reproduces the class MW total while attributing it to units the measured record says were offline. That is rule 17 [R-FLOOR-WINDOW] by its own definition: a floor binding in hours its own driver evidence says the unit is not running is a bug, whatever it does to the residual. The class-grain form is the ONLY admissible grain here, and it provably mis-locates the instruction.",
+  "structural_reading": "F3 is refuted at the level of REPRESENTABILITY, not of data. The 2023 RUC object is real and 6.7x larger than the ercot97 lane measured \u2014 but ERCOT's out-of-market commitment is an inherently PER-UNIT instruction, and this model cannot place it per-unit under the standing Q-B closure. Any future re-open must first reopen the grain question, not the data question."
+ },
+ "do_not_redo": "Do NOT re-test the class-grain pro-rata form \u2014 it is adjudicated by a solved D-4 unit-conduct failure with 94% of its energy mis-placed. The ONLY route back is a grain change (per-unit placement), which is separately closed by item 11 / Q-B FINAL and would need its own owner instrument.",
+ "field_disposition": "ercot_ruc_commitment_floor stays BUILT, default-off, registered (rule 26 does not apply \u2014 measured-input mechanism, zero fitted scalars, adjudicated by probe). The derive and the 2023 series stay: they are the sizing record that overturned the ercot97 premise.",
+ "dashboard": "NOT REGISTERED \u2014 precommit waiver W-2."
+}

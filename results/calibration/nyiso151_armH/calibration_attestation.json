@@ -1,0 +1,220 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "session nyiso-151 (2026-08-22), OWNER-PROMOTED on the arm-on-legitimacy standard (the ercot-202 class), owner decision given in-session in response to the ARM H disposition question. ARM H of PREREG-nyiso151-egrid-identity-hr-and-regate-2026-08-22.md (committed and pushed before any arm solved; Amendment 1 disclosed the post-merge-HEAD control re-solve before any arm completed). Single delta over the nyiso-149 keeper recipe verified at gate H-K1 (egrid_identity_heat_rates False->True); the control replay reproduces the registered 2026-08-22-nyiso-149-duty-curve BIT-EXACTLY (IDENT max |dprice| = 0.0 over every zone-hour of all three years) and THIS ARM IS BIT-IDENTICAL TO THE CONTROL \u2014 so every criterion equals the keeper's BY IDENTITY and no metric gain is claimed or possible. The mechanical verdict REJECTED-AS-ARMED on the H-K3 'energy falls' direction leg stands unrewritten in _nyiso151_ab_gates.json (the ercot-188 pattern: both records stand); the promotion basis is rule 14 [R-ACCURATE] alone \u2014 the measured fleet input (Allegany 7784 at its own pooled seven-vintage eGRID rate 8.4209, identity 7784<->10619 proven by exact netgen equality in all seven overlapping vintages) replaces an uncited class default (7.5) at zero measured cost anywhere.",
+  "note": "THE eGRID IDENTITY HEAT-RATE REPAIR \u2014 a CAMPD-less fossil plant whose measured eGRID history lives under a DIFFERENT ORISPL (the two-registry identity-split family) takes its pooled PLHTIAN/PLNGENAN rate instead of the HEAT_RATE_BINS vintage class default. Membership is the threshold-free discovery rule (exact PLNGENAN == EIA-923 annual netgen to <0.5 MWh in EVERY overlapping eGRID vintage, >=2 overlaps, same state, different ORISPL) run mechanically over the ISO's whole CAMPD-less fossil population: NYISO = 108 candidates x 7 vintages -> exactly one hit, Allegany. PROVEN INERT at this recipe (bit-identical dispatch and prices in both the base and split postures): Allegany runs ~96% CF deeply inframarginal, so the +$2.3/MWh correction crosses no LP vertex \u2014 the phantom-dispatch object was never a base-offer artifact, and the residual under the split is reserve-provision dispatch chaining to the hydro RAMP10 seams (RESULT-nyiso151-identity-hr-and-regate-2026-08-22.md). Everything else in this attestation is inherited unchanged from the 149 lineage; the run's artifacts are bit-identical to the superseded keeper's."
+ },
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 9,
+  "n_residual": 6,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ]
+    },
+    "n_scalars": 88,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page \u00b7 NYISO B-NYI-1/C-13: CC_REGULAR econ_high de-leaked 1.21 -> 1.0 (ERCOT cross-borrowed markup removed); the exposed C3a hole is missing NYISO reserve/scarcity price formation, not a CC markup \u2014 open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1344"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 2,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "COAL_SIGMOID_DEFAULTS[NYISO]",
+    "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid)",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "n_scalars": 4,
+    "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+    "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_NYISO.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
+    "name": "NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island']",
+    "where": "constants.py NYISO_LOCAL_SELFSUPPLY_FRAC",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "value": 0.45,
+    "source": "LI self-supply floor set 'a touch below' the 2023 realized share ~0.48 (audit C-17; W1d marker) \u2014 the LMIC rule is market design but the fraction is outcome-anchored",
+    "root_cause": "audit C-17 / B-NYI-1: the published Zone-K LCR is now on disk (data/raw/capacity-deliverability/nyiso/nyiso.csv, value_pu 1.052/1.053/1.065) but it is a PEAK-capacity ratio, while this is an all-hours energy self-supply fraction \u2014 a rule-14 boundary mismatch: substituting the LCR% (~1.05) or the TSL-implied ~0.94 peak fraction over-forces ~2x the physical LI generation, and any scalar reproducing ~0.45 requires a load-duration haircut tuned to the realized share (rule-12 pin). The faithful fix is a peak-capacity/TSL MECHANISM, not a scalar re-ground; 0.45 left in place \u2014 open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1345"
+   },
+   {
+    "name": "campd_ct_run_lengths_NYISO.csv (fast-start v3 horizon)",
+    "where": "data/raw/_processed-legacy/campd_ct_run_lengths_NYISO.csv via fleet.campd_ct_run_lengths",
+    "identification": "measured-physical",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "source": "EPA CAMPD unit-level hourly grossLoad start-to-stop run blocks (simple-cycle CT units, pooled 2023-2025), frozen scripts/data/derive_campd_ct_run_lengths.py; start cost is the published NREL/SR-5500-55433 CT_STARTUP_PARAMS (constants.py)",
+    "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: monthly-granularity amortization (compute_monthly_markup), no within-day run-length variation"
+   },
+   {
+    "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[NYISO]",
+    "where": "interchange_config.py per-ISO seam supply-curve ladders",
+    "identification": "residual",
+    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+    "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback; NEISO closed this item (see the NEISO-only entry, measured-physical), MISO closes it under miso_seam_measured_ladder and PJM under pjm_seam_measured_ladder (their own measured-physical rows) \u2014 remaining scope for this item is NYISO/CAISO's static ladder (and the MISO/PJM formula seams only when their measured ladders are off)",
+    "root_cause": "audit C-6/#1350 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam, following the NEISO precedent (scripts/data/derive_neiso_import_tranches.py); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "egrid_identity_heat_rates artifact (NYISO: Allegany 7784<->10619)",
+    "where": "data/raw/_processed-legacy/egrid_identity_heat_rates_NYISO.csv via fleet/eia860.apply_egrid_identity_heat_rates",
+    "identification": "published",
+    "lineage_solves": "nyiso-151 A/B (ARM H bit-identical to the keeper; ARM HC bit-identical to 2026-08-22-nyiso-150-reserve-rearm)",
+    "value": "pooled 8.4209 MMBtu/MWh over 7 eGRID vintages (2018-2024); LOYO [8.3434, 8.5266]; per-vintage envelope [7.9904, 8.6826]",
+    "n_scalars": 0,
+    "source": "eGRID PLHTIAN/PLNGENAN (arithmetic on published fields, the accepted 55641 boundary-repair posture); membership = the threshold-free exact-netgen identity discovery rule (scripts/data/derive_egrid_identity_heat_rates.py, --check byte-reproduces)",
+    "root_cause": "closed measured-input gap: the two-registry ORISPL split hid the plant's measured rate from every per-plant channel, leaving the gas_cc 'older' class default (7.5) as its only rate"
+   }
+  ]
+ },
+ "exceptions": [],
+ "exceptions_note": "C3c (price tail) is deliberately NOT explicitly ledgered here: the rule-22 C3c STANDING RULE auto-ledgers it as an ACCEPTED MODEL-CLASS LIMITATION (lone failure, C6 PASS, supporting tier \u2014 all three guards verified on this bundle). Explicit price_tail entries written at the promotion duplicated that route without a \"kind\" tag and mis-routed the classification to the measured-input default; removed 2026-08-22 (same session, keeper-text audit) so the scorer's path matches the recorded prose. Model 1/0/0 h > $300/MWh vs RT actual 10/13/42 h, reported at full magnitude; 1 of 1 caveat budget."
+}
