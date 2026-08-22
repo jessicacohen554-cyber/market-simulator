@@ -2648,7 +2648,22 @@ def _btm_frame(
     # classFull is EIA-923 minus this frame, so the three legs (capacity
     # carve, add-back, benchmark subtrahend) stay on one share by
     # construction.
-    if nyiso_chp_btm_measured and iso == "NYISO":
+    #
+    # nyiso-149 [R-ACCURATE]: the BENCHMARK subtrahend is pinned to the
+    # measured shares whenever the measured artifact exists, INDEPENDENT of
+    # the run's flag. The run-basis map (``share_by_plant`` -> ``btm_twh``)
+    # still follows the flag — it describes what THIS run's LP held out (the
+    # model-side add-back) — but the shared bench part's "actual grid
+    # delivery" is a physical fact that cannot depend on the registering
+    # run's config: letting it follow the flag is what flipped the committed
+    # NYISO parts between flag-off and flag-on registrations and silently
+    # re-armed the ±3% family reconcile (the ×1.07–×1.19 gas-family scale
+    # the sector carve forced — FINDING-nyiso149-bench-root-cause-2026-08-22
+    # §3). ``btm_bench_twh`` carries the measured-basis class totals; for
+    # every ISO without a measured artifact the two maps are identical and
+    # the column duplicates ``btm_twh`` byte-for-byte.
+    share_bench_by_plant = dict(share_by_plant)
+    if iso == "NYISO":
         from market_sim.data.chp import measured_chp_btm_pct_nyiso
 
         _measured = measured_chp_btm_pct_nyiso()
@@ -2658,20 +2673,33 @@ def _btm_frame(
             if str(grp) in ("CC_CHP", "CT_CHP", "ST_CHP")
         }
         for _code, _pct in _measured.items():
-            if _code in share_by_plant and _code in _chp_codes:
-                share_by_plant[_code] = float(_pct) / 100.0
-    mr = compute_must_run_emissions(
-        bins,
-        year,
-        total_gen_by_plant=total_by_plant,
-        btm_share_by_plant=share_by_plant,
+            if _code in _chp_codes:
+                if _code in share_bench_by_plant:
+                    share_bench_by_plant[_code] = float(_pct) / 100.0
+                if nyiso_chp_btm_measured and _code in share_by_plant:
+                    share_by_plant[_code] = float(_pct) / 100.0
+
+    def _class_totals(shares: dict[int, float]) -> dict[str, float]:
+        mr = compute_must_run_emissions(
+            bins,
+            year,
+            total_gen_by_plant=total_by_plant,
+            btm_share_by_plant=shares,
+        )
+        out: dict[str, float] = {}
+        if not mr.empty:
+            for grp, twh in (
+                mr.groupby("Plant_Group")["mr_gen_mwh"].sum() / _MWH_PER_TWH
+            ).items():
+                out[str(grp)] = out.get(str(grp), 0.0) + float(twh)
+        return out
+
+    btm_by_class = _class_totals(share_by_plant)
+    btm_bench_by_class = (
+        dict(btm_by_class)
+        if share_bench_by_plant == share_by_plant
+        else _class_totals(share_bench_by_plant)
     )
-    btm_by_class: dict[str, float] = {}
-    if not mr.empty:
-        for grp, twh in (
-            mr.groupby("Plant_Group")["mr_gen_mwh"].sum() / _MWH_PER_TWH
-        ).items():
-            btm_by_class[str(grp)] = btm_by_class.get(str(grp), 0.0) + float(twh)
     # Coal cogen (PJM): host self-supply held out of the LP is chp_btm_pct of the
     # plant's measured EIA-923 coal-class net generation, booked under the coal
     # class so render subtracts it from classFull on both sides — the same
@@ -2684,17 +2712,25 @@ def _btm_frame(
                 continue
             _, sector = coal_chp[int(pid)]
             pct = CHP_BTM_PCT_BY_SECTOR.get(sector, CHP_BTM_PCT_BY_SECTOR["merchant"])
-            btm_by_class[str(klass)] = btm_by_class.get(str(klass), 0.0) + (
-                float(tot) * pct / 100.0 / _MWH_PER_TWH
+            _add = float(tot) * pct / 100.0 / _MWH_PER_TWH
+            btm_by_class[str(klass)] = btm_by_class.get(str(klass), 0.0) + _add
+            # No coal measured-share artifact exists, so the bench basis is the
+            # same sector share — the two columns stay equal for coal cogens.
+            btm_bench_by_class[str(klass)] = (
+                btm_bench_by_class.get(str(klass), 0.0) + _add
             )
-    if not btm_by_class:
-        return pd.DataFrame(columns=["year", "pass", "klass", "btm_twh"])
+    if not btm_by_class and not btm_bench_by_class:
+        return pd.DataFrame(
+            columns=["year", "pass", "klass", "btm_twh", "btm_bench_twh"]
+        )
+    klasses = sorted(set(btm_by_class) | set(btm_bench_by_class))
     return pd.DataFrame(
         {
             "year": np.int16(year),
             "pass": pass_label,
-            "klass": list(btm_by_class.keys()),
-            "btm_twh": list(btm_by_class.values()),
+            "klass": klasses,
+            "btm_twh": [btm_by_class.get(k, 0.0) for k in klasses],
+            "btm_bench_twh": [btm_bench_by_class.get(k, 0.0) for k in klasses],
         }
     )
 

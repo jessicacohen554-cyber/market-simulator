@@ -1089,10 +1089,11 @@ def _btm_share(
     Mirrors :func:`market_sim.data.fleet.chp_btm_pct` — the ISO's derived
     EIA-923 sector (thermal-tranches artifact) first, then the hardcoded
     ERCOT sector map — so the report's add-back uses the same share the LP
-    pull-out used. ``measured`` (a 0-1 fraction map, resolved per run from
-    the bundle's ``nyiso_chp_btm_measured`` flag — nyiso-147) supersedes the
-    sector share for the plants it carries, keeping the bench-side gas-family
-    grid volumes on the same measured share the run's LP carve used.
+    pull-out used. ``measured`` (a 0-1 fraction map — the nyiso-147 measured
+    per-plant shares, resolved by artifact PRESENCE since nyiso-149, never by
+    the registering run's flag) supersedes the sector share for the plants it
+    carries, so the shared bench part's grid-delivered actuals stay on the
+    measured basis whatever the run's config.
     """
     if group not in ("CC_CHP", "CT_CHP", "ST_CHP"):
         return 0.0
@@ -1292,16 +1293,25 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
     for label, bdir in runs:
         meta = json.loads((bdir / "meta.json").read_text())
         tr_bands = _tranche_bands_for_bundle(bdir)
-        # nyiso-147: a bundle armed with the measured CHP BTM shares scores
-        # its bench-side gas-family grid volumes on the same per-plant
-        # Gold-Book/EIA-923 shares its LP carve and btm.parquet used.
+        # nyiso-147 introduced the measured CHP BTM shares; nyiso-149 PINS the
+        # bench side to them. The shared bench part states the ACTUAL grid
+        # delivery — a physical fact — so its per-plant ``btm`` fields and the
+        # classFull subtrahend use the measured shares whenever the measured
+        # artifact exists, INDEPENDENT of the registering run's
+        # ``nyiso_chp_btm_measured`` flag. Gating this on the flag made the
+        # committed NYISO parts flip between flag-off and flag-on
+        # registrations (sector-carve subtrahend re-arming the ±3% family
+        # reconcile: ×1.07–×1.19 on every gas class —
+        # FINDING-nyiso149-bench-root-cause-2026-08-22 §3). The run's OWN
+        # add-back (what its LP actually held out) still comes from the
+        # bundle's ``btm_twh`` below. [R-ACCURATE]
         _btm_measured: dict[int, float] | None = None
-        if meta.get("nyiso_chp_btm_measured") and meta.get("iso") == "NYISO":
+        if meta.get("iso") == "NYISO":
             from market_sim.data.chp import measured_chp_btm_pct_nyiso
 
-            _btm_measured = {
-                c: p / 100.0 for c, p in measured_chp_btm_pct_nyiso().items()
-            }
+            _measured_map = measured_chp_btm_pct_nyiso()
+            if _measured_map:
+                _btm_measured = {c: p / 100.0 for c, p in _measured_map.items()}
         run_years: dict[int, dict] = {}
         # Non-CEMS gas-class cogen block per rendered year — (grid, full-plant)
         # TWh — for the CEMS-anchor writer (EIA930_NG_CELL_CORRUPT ISOs): a
@@ -1611,9 +1621,16 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # same basis the model (grid LP, no add-back) and the gate score on.
             # ISOs without a btm.parquet (no CHP split) keep full 923.
             btm_cls = {}
+            btm_cls_bench = {}
             if btm_all is not None:
                 _by = _primary_pass(btm_all[btm_all["year"] == year])
                 btm_cls = dict(zip(_by["klass"], _by["btm_twh"]))
+                # Benchmark-basis BTM (nyiso-149): the measured-share class
+                # totals, flag-independent, so the shared bench part cannot
+                # flip with the registering run's config. Bundles predating
+                # the column fall back to the run basis (their btm_twh).
+                _bcol = "btm_bench_twh" if "btm_bench_twh" in _by.columns else "btm_twh"
+                btm_cls_bench = dict(zip(_by["klass"], _by[_bcol]))
             # Every actual class is kept (not just the hardcoded MIX_GROUPS)
             # so the model's real plant classification — e.g. EIA-923-derived
             # coal ranks COAL_BIT / COAL_PRB / COAL_WC — carries its actual
@@ -1733,7 +1750,7 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 else:
                     gas_cogen_by_year[int(year)] = (_cogen, _cogen_full)
                 _coal_grid = sum(
-                    float(e923_cls.get(c, 0.0)) / 1e6 - float(btm_cls.get(c, 0.0))
+                    float(e923_cls.get(c, 0.0)) / 1e6 - float(btm_cls_bench.get(c, 0.0))
                     for c in _COAL_GROUPS
                     if c in e923_cls.index
                 )
@@ -1751,8 +1768,14 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             bench[int(year)] = {
                 "plants": bplants,
                 "e930": _e930d,
+                # Grid-delivered actual: the BTM subtrahend is the BENCH basis
+                # (measured shares where the measured artifact exists,
+                # flag-independent — nyiso-149), never the registering run's
+                # own hold-out, so the shared part is stable across runs.
                 "classFull": {
-                    str(g): round(float(v) / 1e6 - float(btm_cls.get(str(g), 0.0)), 4)
+                    str(g): round(
+                        float(v) / 1e6 - float(btm_cls_bench.get(str(g), 0.0)), 4
+                    )
                     for g, v in e923_cls.items()
                 },
             }
@@ -1911,9 +1934,13 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 "byClass": actual_co2_by,
                 "intensity": {k: round(v, 5) for k, v in co2_intensity.items()},
                 "covPct": round(100.0 * _gcov / _gall, 1) if _gall > 0 else 0.0,
+                # Bench basis (nyiso-149): the shared part carries the
+                # measured BTM, not the registering run's hold-out, so its
+                # bytes cannot flip with the run's flag. (C5a is reported-only
+                # since rubric v2.9.)
                 "btmClass": {
                     str(k): round(float(v), 4)
-                    for k, v in sorted(btm_cls.items())
+                    for k, v in sorted(btm_cls_bench.items())
                     if float(v) > 0.0
                 },
                 "basis": "full-plant",

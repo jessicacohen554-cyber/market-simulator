@@ -1,0 +1,77 @@
+{
+ "session": "nyiso-149",
+ "measure": "old/new committed NYISO bench parts reconstructed EXACTLY from one shared e923 frame + {sector, measured} BTM subtrahend through the \u00b13% EIA-930 family reconcile; plus the flag-independence of the nyiso-149 btm_bench_twh pin",
+ "years": {
+  "2023": {
+   "e930_dict_old_equals_new": true,
+   "family_sums": {
+    "sector_pre": 57.0506,
+    "measured_pre": 61.6717,
+    "target_930_gas_plus_coal": 60.999
+   },
+   "old_part_reconstruction (sector btm + reconcile)": "EXACT",
+   "new_part_reconstruction (measured btm + reconcile)": "EXACT",
+   "pin: flag_off_render_now_reproduces_new_part": "EXACT",
+   "pin: flag_on_render_reproduces_new_part": "EXACT",
+   "pin: run_basis_still_flag_dependent": true,
+   "btm_sector_cls": {
+    "CC_CHP": 5.933,
+    "CT_CHP": 0.252,
+    "ST_CHP": 0.6463
+   },
+   "btm_measured_cls": {
+    "CC_CHP": 1.6984,
+    "CT_CHP": 0.1514,
+    "ST_CHP": 0.3604
+   }
+  },
+  "2024": {
+   "e930_dict_old_equals_new": true,
+   "family_sums": {
+    "sector_pre": 60.7096,
+    "measured_pre": 65.9456,
+    "target_930_gas_plus_coal": 67.802
+   },
+   "old_part_reconstruction (sector btm + reconcile)": "EXACT",
+   "new_part_reconstruction (measured btm + reconcile)": "EXACT",
+   "pin: flag_off_render_now_reproduces_new_part": "EXACT",
+   "pin: flag_on_render_reproduces_new_part": "EXACT",
+   "pin: run_basis_still_flag_dependent": true,
+   "btm_sector_cls": {
+    "CC_CHP": 6.7118,
+    "CT_CHP": 0.252,
+    "ST_CHP": 0.5586
+   },
+   "btm_measured_cls": {
+    "CC_CHP": 1.7566,
+    "CT_CHP": 0.1438,
+    "ST_CHP": 0.386
+   }
+  },
+  "2025": {
+   "e930_dict_old_equals_new": true,
+   "family_sums": {
+    "sector_pre": 59.1061,
+    "measured_pre": 63.7897,
+    "target_930_gas_plus_coal": 70.252
+   },
+   "old_part_reconstruction (sector btm + reconcile)": "EXACT",
+   "new_part_reconstruction (measured btm + reconcile)": "EXACT",
+   "pin: flag_off_render_now_reproduces_new_part": "EXACT",
+   "pin: flag_on_render_reproduces_new_part": "EXACT",
+   "pin: run_basis_still_flag_dependent": true,
+   "btm_sector_cls": {
+    "CC_CHP": 5.9386,
+    "CT_CHP": 0.0,
+    "ST_CHP": 0.5007
+   },
+   "btm_measured_cls": {
+    "CC_CHP": 1.4177,
+    "CT_CHP": 0.0,
+    "ST_CHP": 0.338
+   }
+  }
+ },
+ "e923_frame_content_hash": "920c8b8bc1b1",
+ "e923_frame_hash_note": "equals the eia923 shared-input ref declared by EVERY registered NYISO bundle meta (nyiso-142 stackdup, 146c state_arm, 147/148 recipes) \u2014 the EIA-923 vintage-reconciliation/CAMPD-backfill frame never moved"
+}
