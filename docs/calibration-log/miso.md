@@ -8034,3 +8034,46 @@ Deliverables: `FINDING-miso174-seam-overimport-adjudication-2026-08-21.md`,
 `scripts/probes/_miso174_{seam_overimport_decomposition,import_limit_precheck,seam_price_evidence}.py`
 with their `_miso174_*.json` records; MISO matrix shard stamped `R`. Next
 number: **miso-175**.
+
+## miso-175 (2026-08-22) — the seam-envelope hour-key rotation repaired: ALL KILLS SILENT, keeper → `2026-08-22-miso-175-hourkey`, the armed cap lands on the hour it was measured in
+
+**The lever** (miso-174 §7 hand-forward item 1, highest confidence, smallest
+scope): `measured_seam_import_envelope` bucketed the EIA-930 DIBA series on
+its raw `local_time` stamp — but the stamp is hour-ENDING on MISO's local
+standard clock (solved at r = 1.0000 against the independently-keyed BALANCE
+`TI` series in 2023 AND 2025), so the ARMED p90 cap applied at model hour h
+was built from the measured population of hour h−1, one hour out of key with
+the seam price ladder derived from the SAME parquet WITH the conversion.
+**Re-verified independently before building** (charter scope 1:
+`_miso175_rotation_verify.py` — the −1 h solve, the roll-+1 identity
+241 → ~2 MW, the MISO-only gate, the committed-record cross-check, all PASS).
+
+**The mechanism**: `miso_seam_envelope_hour_ending_key` (default off,
+cache-key registered drop-at-default, pin `603c2498bf71d21d` unmoved; zero
+new numeric parameters — ledger 33/2 unchanged). Prereg committed with the
+ENGINE-FROZEN 48 cap-array digests + signed window deltas BEFORE any solve;
+the instrument predicted the corrected key LOOSENS the summer-evening PJM
+import cap (+74/+168/+283 MW) — i.e. runs AGAINST C3a-2025 — which is why
+the repair was only ever keepable on rule-14 grounds.
+
+**The gates** (`_miso175_hour_key_ab.json`): M-0 control bit-identity 12/12
+(max|diff| = 0.0, regen diagnostics matching the committed artifact
+gate-for-gate); M-1a 48/48 frozen digests exact; M-1b no corrected-cap
+exceedance > 1 MW; M-2a LIVE (95,828 differing P1 price cells); M-2b
+direction PASS 3/3 (+113.8/+220.9/+272.1 MW PJM import over the loosened
+binding sets); M-3 ZERO D-4 conduct failures preserved; M-4 C8 PASS all
+years (2025 ST_GAS grounded 32.3 %, profile_r 0.982); M-5 ZERO flips over 67
+records; M-6 against-interest PASS (C3a-2023 +1.219 → +1.230 %, C3a-2024
+−4.068 → −4.064 %). **Determination UNCHANGED: NOT-YET on C3a-2025 ALONE,
+−11.65 → −11.80 % — moved AGAINST the model exactly as the frozen instrument
+predicted; disclosed, never claimed.** C3c ledgered (2025 tail 3 → 2 h,
+disclosed). Bench parts restamped stamp-only at registration (content
+byte-identical + `builderFingerprint` — the caiso-210 stamp-absence
+conclusion MEASURED for MISO). Runs `2026-08-22-miso-175-control` /
+`2026-08-22-miso-175-hourkey` both registered (retention pruned miso-155-p0
+and miso-159-cod-vintage). Cross-ISO hand-forward (rule 25): PJM's
+seam-envelope analogue (`pjm_seam_flow_limit`, a different measured source)
+is PJM's lane's hour-key question. The four standing OWNER items restated in
+RESULT §7 — the determination-posture item riper than ever.
+Records: `RESULT-miso175-seam-envelope-hour-key-2026-08-22.md`,
+`PREREG-miso175-seam-envelope-hour-key-2026-08-22.md`.
