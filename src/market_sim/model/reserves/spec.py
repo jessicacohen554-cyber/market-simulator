@@ -1812,6 +1812,13 @@ def _ercot_multiproduct_design(
         for token, groups in ERCOT_HELD_CLASS_GROUPS.items():
             cls_mask = fast_elig & np.isin(pg, list(groups))
             if not cls_mask.any():
+                logger.info(
+                    "ercot_as_held_location: class %s SKIPPED — no fleet "
+                    "member matches plant groups %s (fleet groups present: %s)",
+                    token,
+                    groups,
+                    sorted(set(np.asarray(pg, dtype=str)))[:20],
+                )
                 continue
             held_p: dict[int, np.ndarray] = {}
             tot = np.zeros(T, dtype=float)
@@ -1847,6 +1854,15 @@ def _ercot_multiproduct_design(
             )
             reserve_eligible = np.vstack([reserve_eligible, cls_mask])
             headroom_eligible = np.vstack([headroom_eligible, cls_mask])
+            logger.info(
+                "ercot_as_held_location: class %s ARMED — %d members, held "
+                "mean %.0f / max %.0f MW (clip engaged %d h)",
+                token,
+                int(cls_mask.sum()),
+                float(used.mean()),
+                float(used.max()),
+                int((used < tot).sum()),
+            )
         if held_class_families:
             # Re-mask the credited product requirements into every product
             # family's own active window (the LR/storage-credit idiom).
