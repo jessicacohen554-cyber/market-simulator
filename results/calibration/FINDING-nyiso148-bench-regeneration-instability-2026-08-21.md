@@ -272,3 +272,42 @@ it is one line in the existing CI checks job.
 3. **Turn on the gate** once (2) is done.
 4. **NYISO's `complete` marker** — whether validation-tier authorization
    survives a NOT-YET determination (`marker_reexamination_open`).
+
+---
+
+# ADDENDUM 2 (nyiso-149, 2026-08-22) — §11 item 1 is RESOLVED, and two of this finding's inferences are corrected
+
+The chartered root-cause session landed
+(`FINDING-nyiso149-bench-root-cause-2026-08-22.md`, evidence record
+`_nyiso149_bench_reconcile_closure.json`). Both parts reconstruct EXACTLY, every
+gas/coal class, all three years, from ONE shared e923 frame. What it changes in
+THIS document's record:
+
+* **§2's conclusion ("none of it is the flag") is WITHDRAWN.** The drift IS
+  `01db36d`'s flag, through the one channel §2's test could not see:
+  `rebuild_benchmark` does not rebuild `btm.parquet`, so both scratch rebuilds
+  shared the armD bundle's flag-ON btm frame. The flag's benchmark channel is
+  the btm subtrahend; holding it fixed made flag-on and flag-off render
+  identically. §9's `01db36d` gated-note ("cannot … touch the classFull
+  reconciliation layer") is wrong at one remove for the same reason: the commit
+  never touches the reconcile code — it moves the reconcile's INPUT across the
+  ±3% deadband (sector carve: gas family −10.5% vs EIA-930 → scaled ×1.117;
+  measured: −2.7% → in deadband, no scale; 2024 figures).
+* **§3's localization ("the ~4 TWh moves entirely inside the … backfill
+  layer") was a residual attribution, not a measurement of that layer.** The
+  benchmark EIA-923 frame is hash-identical across the whole window
+  (`920c8b8bc1b1`, the shared-input name every registered NYISO bundle meta
+  declares): `_benchmark_eia923_frame` / `_backfill_eia923_with_campd` never
+  moved. The "implied backfill" delta is the family reconcile's pro-rata smear
+  (+3.98 TWh onto CC_REGULAR-2024) compensating the carve's over-subtraction.
+* **§1's "unchanged since 2026-08-17" has a sharper reading**: nyiso-147's
+  registration (`d1a298d`, 08-20) re-rendered the flipped parts on its own
+  container and committed none of them; this session's registration was the
+  first to COMMIT the flip, not the first to produce it.
+* **The RULING (owner, Addendum §8) is now grounded in mechanism**: the
+  regenerated reconciliation is CORRECT — the measured subtrahend is the
+  plants' own meters, and only under it does EIA-923+CAMPD agree with EIA-930
+  unscaled — and it is made durable by the nyiso-149 pin (`btm_bench_twh`:
+  bench basis measured-when-artifact-exists, flag-independent; run add-back
+  basis unchanged), so a future flag-off registration can no longer flip the
+  committed parts back. §11 items 2–4 remain open.

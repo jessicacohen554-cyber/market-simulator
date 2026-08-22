@@ -294,7 +294,10 @@ Not committed, but the render/scorer read them to bake scalars into the
 committed payload/bench: `dispatch/<year>_{P1,P2}.parquet` (per-generator-hour
 dispatch), `system.parquet` (per-zone hourly price + demand duals),
 `storage.parquet` (per-unit charge/discharge), `btm.parquet` (behind-the-meter
-CHP host supply held out of the LP), `scarcity.parquet` (post-solve overlay:
+CHP host supply: run-basis `btm_twh` = what this run's LP held out, the model
+add-back; bench-basis `btm_bench_twh` = the measured-artifact basis the shared
+bench part subtracts, flag-independent — nyiso-149; bundles predating the
+column fall back to `btm_twh`), `scarcity.parquet` (post-solve overlay:
 `year, hour, scarcity_adder, lmp, lmp_scarcity`), `model_changes.diff`
 (uncommitted-edit snapshot when `git.dirty`).
 
