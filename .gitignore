@@ -91,6 +91,13 @@ data/raw/caiso-public-bids/*
 # data/raw/transfer-constraint-binding/MISO/README.md provenance table).
 data/raw/transfer-constraint-binding/MISO/*_bc_HIST.csv.gz
 
+# MISO annual M2M/CMP flowgate settlement mirrors (~13-20 MB raw each;
+# seam-class binding record, rule-13 line in the schema header): refetch
+# with scripts/data/fetch_miso_m2m_flowgates.py (see
+# data/raw/miso-m2m-flowgates/README.md provenance table).
+data/raw/miso-m2m-flowgates/*
+!data/raw/miso-m2m-flowgates/README.md
+
 # PJM DataMiner2 DA virtual-bid feeds (hrl_da_incs_decs, hrl_dmd_bids): same
 # non-member redistribution restriction as pjm-energy-offers; refetch with
 # scripts/fetch_pjm_da_virtuals.py (see data/raw/pjm-da-virtuals/README.md).

@@ -1,0 +1,153 @@
+# Canonical schema: MISO M2M/CMP seam-class flowgate settlement record
+#
+# Hourly per-flowgate Market-to-Market (M2M) coordination record from MISO's
+# public annual settlement consolidations
+# (docs.misoenergy.org/marketreports/M2M_Settlement_srw_YYYY.csv) — the
+# Congestion Management Process (CMP) record for MISO's two M2M seams
+# (MISO–PJM under their Joint Operating Agreement, MISO–SPP/"SWPP"
+# likewise). One row per (flowgate, hour) while the flowgate is under M2M
+# coordination; a missing (flowgate, hour) means "not in M2M coordination
+# that hour", not missing data (every hour of the year carries rows for
+# some flowgates; MISO market time is EST, UTC-5 fixed year-round).
+#
+# RULE 13 LINE, fixed at intake (miso-176 charter; miso-77 §4): the FFE
+# (Firm Flow Entitlement) columns are a CMP market-design quantity —
+# admissible IN KIND as a model input, subject to rule 17's
+# window/driver/forward-story test in whatever mechanism consumes them.
+# The SHADOW PRICE, MARKET FLOW and CREDIT columns are the ANSWER class —
+# when/how hard a coordinated flowgate binds and what actually flowed are
+# dispatch outcomes; they exist for validation/diagnosis ONLY and are
+# never a solve input.
+#
+# Curated by scripts/data/curate_miso_m2m_flowgates.py from the gitignored
+# source mirrors under data/raw/miso-m2m-flowgates/ (fetched by
+# scripts/data/fetch_miso_m2m_flowgates.py; sha256 identity in that
+# directory's README.md).
+datatype: miso-m2m-flowgates
+schema_version: 1
+title: MISO M2M/CMP seam flowgate settlement record (hourly)
+description: >-
+  Hourly per-flowgate M2M coordination record for MISO's PJM and SPP seams:
+  both parties' RT shadow prices, market flows and Firm Flow Entitlements
+  plus settlement credits, one row per (flowgate, hour) under M2M
+  coordination. FFE columns are input-class in kind (CMP market design);
+  shadow price / market flow / credit columns are answer-class
+  (validation only, rule 13).
+
+key_columns: [iso, flowgate_id, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: Publishing ISO whose settlement view this is (MISO).
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: >-
+      tz-aware UTC hour start. Source stamps are hour-ENDING labels 1..24
+      on MISO market time (EST, UTC-5 fixed year-round; HE 24 posted as
+      "24:00:00"): hour-beginning EST = posted date + (HE-1) h, UTC = +5 h.
+  - name: interval_start_est
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: false
+    description: >-
+      EST wall-clock hour start (informational; MISO market time, fixed
+      UTC-5, no DST — full 24-label days year-round in the source).
+  - name: flowgate_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: NERC flowgate ID exactly as posted.
+  - name: flowgate_name
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Flowgate description as posted (monitored element + contingency
+      tokens; stable per ID within a year with rare mid-year renames).
+  - name: monitoring_rto
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Monitoring RTO as posted — MISO, PJM, SWPP, or "NO RTO" (a small
+      transitional class, ~30-460 rows/year).
+  - name: cp_rto
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Counterparty RTO as posted (MISO when the monitoring RTO is the
+      neighbour; PJM/SWPP when MISO or "NO RTO" monitors).
+  - name: seam_rto
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Derived seam key — the non-MISO RTO of the (monitoring, counterparty)
+      pair: PJM or SWPP. This is the M2M seam the flowgate's coordination
+      belongs to.
+  - name: miso_shadow_price_usd_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: >-
+      MISO's RT shadow price on the flowgate (hourly settlement basis) as
+      posted. ANSWER CLASS — validation only.
+  - name: miso_mkt_flow_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      MISO's market flow on the flowgate (signed; negative = counter to
+      the flowgate's defined direction). ANSWER CLASS — validation only.
+  - name: miso_ffe_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      MISO's Firm Flow Entitlement on the flowgate (signed like market
+      flow). CMP market-design quantity — input-class in kind.
+  - name: cp_shadow_price_usd_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: >-
+      Counterparty RTO's shadow price on the flowgate (populated on both
+      MISO-monitored and neighbour-monitored rows). ANSWER CLASS —
+      validation only.
+  - name: cp_mkt_flow_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Counterparty RTO's market flow. Populated only on MISO-monitored
+      rows; zero-filled by the source on neighbour-monitored rows.
+      ANSWER CLASS — validation only.
+  - name: cp_ffe_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Counterparty RTO's Firm Flow Entitlement. Populated only on
+      MISO-monitored rows; zero-filled on neighbour-monitored rows.
+      Input-class in kind where populated.
+  - name: miso_credit_usd
+    dtype: float64
+    unit: usd
+    nullable: true
+    description: >-
+      MISO's hourly M2M settlement credit on the flowgate as posted.
+      ANSWER CLASS — validation only.
+  - name: cp_credit_usd
+    dtype: float64
+    unit: usd
+    nullable: true
+    description: >-
+      Counterparty RTO's hourly M2M settlement credit as posted.
+      ANSWER CLASS — validation only.

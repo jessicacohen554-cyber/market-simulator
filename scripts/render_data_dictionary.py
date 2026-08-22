@@ -120,6 +120,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "uranium-marketing-price",
     "benchmark-corridor",
     "hydro-plant-modes",
+    "miso-m2m-flowgates",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -368,6 +369,23 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "no numeric threshold, frozen against residuals (rule 21). "
             "CAISO-only until another ISO's lane reviews the completion "
             "against its own labeled subset."
+        ),
+    },
+    "miso-m2m-flowgates": {
+        "summary": (
+            "Hourly per-flowgate M2M/CMP coordination record for MISO's PJM "
+            "and SPP seams — both parties' RT shadow prices, market flows and "
+            "Firm Flow Entitlements plus settlement credits (miso-77 §2a; "
+            "intake miso-176)."
+        ),
+        "reconciles": (
+            "MISO's annual public M2M_Settlement_srw_YYYY.csv consolidations "
+            "(hour-ending 1..24 labels on fixed-EST market time, converted to "
+            "UTC hour starts; seam_rto derived as the non-MISO RTO of the "
+            "monitoring/counterparty pair). Rule-13 line fixed in the schema "
+            "header: FFE columns are input-class in kind (CMP market design); "
+            "shadow price / market flow / credit columns are ANSWER-class — "
+            "validation/diagnosis only, never a solve input."
         ),
     },
     "ercot-wtx-congestion": {

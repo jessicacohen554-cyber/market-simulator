@@ -86,6 +86,7 @@ for the market split.
 | capacity-market-avoidable-cost-rate | — | — | — | — | — | — |
 | benchmark-corridor | — | — | — | — | — | — |
 | hydro-plant-modes | — | — | — | — | — | — |
+| miso-m2m-flowgates | — | — | — | 2023–2025 | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -1880,3 +1881,38 @@ consumes. Schema:
 | `method` | `string` | `none` | no | Which rule classified the row: eha_mode (EHA Mode present) \| hilarri_canal (HILARRI canal/conduit project type) \| corps_dam (dam owned/operated by the U.S. Army Corps of Engineers) \| hilarri_no_reservoir (no HILARRI reservoir association) \| hilarri_reservoir (reservoir-associated, operator-controlled). |
 | `fc_dock` | `string` | `none` | yes | FERC licence docket (EHA FC_Dock), provenance. |
 | `dam_own` | `string` | `none` | yes | Dam owner at the plant's site (EHA Dam_Own), provenance for the corps_dam completion rule. |
+
+## miso-m2m-flowgates
+
+Hourly per-flowgate M2M/CMP coordination record for MISO's PJM and SPP seams —
+both parties' RT shadow prices, market flows and Firm Flow Entitlements plus
+settlement credits (miso-77 §2a; intake miso-176). Schema:
+[`schema/miso-m2m-flowgates.schema.yaml`](schema/miso-m2m-flowgates.schema.yaml).
+
+- **Keys:** `iso`, `flowgate_id`, `interval_start_utc`
+- **Reconciles:** MISO's annual public M2M_Settlement_srw_YYYY.csv
+  consolidations (hour-ending 1..24 labels on fixed-EST market time, converted
+  to UTC hour starts; seam_rto derived as the non-MISO RTO of the
+  monitoring/counterparty pair). Rule-13 line fixed in the schema header: FFE
+  columns are input-class in kind (CMP market design); shadow price / market
+  flow / credit columns are ANSWER-class — validation/diagnosis only, never a
+  solve input.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | Publishing ISO whose settlement view this is (MISO). |
+| `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC hour start. Source stamps are hour-ENDING labels 1..24 on MISO market time (EST, UTC-5 fixed year-round; HE 24 posted as "24:00:00"): hour-beginning EST = posted date + (HE-1) h, UTC = +5 h. |
+| `interval_start_est` | `datetime64[ns]` | `local_timestamp` | no | EST wall-clock hour start (informational; MISO market time, fixed UTC-5, no DST — full 24-label days year-round in the source). |
+| `flowgate_id` | `int64` | `none` | no | NERC flowgate ID exactly as posted. |
+| `flowgate_name` | `string` | `none` | no | Flowgate description as posted (monitored element + contingency tokens; stable per ID within a year with rare mid-year renames). |
+| `monitoring_rto` | `string` | `none` | no | Monitoring RTO as posted — MISO, PJM, SWPP, or "NO RTO" (a small transitional class, ~30-460 rows/year). |
+| `cp_rto` | `string` | `none` | no | Counterparty RTO as posted (MISO when the monitoring RTO is the neighbour; PJM/SWPP when MISO or "NO RTO" monitors). |
+| `seam_rto` | `string` | `none` | no | Derived seam key — the non-MISO RTO of the (monitoring, counterparty) pair: PJM or SWPP. This is the M2M seam the flowgate's coordination belongs to. |
+| `miso_shadow_price_usd_mwh` | `float64` | `usd_per_mwh` | yes | MISO's RT shadow price on the flowgate (hourly settlement basis) as posted. ANSWER CLASS — validation only. |
+| `miso_mkt_flow_mw` | `float64` | `mw` | yes | MISO's market flow on the flowgate (signed; negative = counter to the flowgate's defined direction). ANSWER CLASS — validation only. |
+| `miso_ffe_mw` | `float64` | `mw` | yes | MISO's Firm Flow Entitlement on the flowgate (signed like market flow). CMP market-design quantity — input-class in kind. |
+| `cp_shadow_price_usd_mwh` | `float64` | `usd_per_mwh` | yes | Counterparty RTO's shadow price on the flowgate (populated on both MISO-monitored and neighbour-monitored rows). ANSWER CLASS — validation only. |
+| `cp_mkt_flow_mw` | `float64` | `mw` | yes | Counterparty RTO's market flow. Populated only on MISO-monitored rows; zero-filled by the source on neighbour-monitored rows. ANSWER CLASS — validation only. |
+| `cp_ffe_mw` | `float64` | `mw` | yes | Counterparty RTO's Firm Flow Entitlement. Populated only on MISO-monitored rows; zero-filled on neighbour-monitored rows. Input-class in kind where populated. |
+| `miso_credit_usd` | `float64` | `usd` | yes | MISO's hourly M2M settlement credit on the flowgate as posted. ANSWER CLASS — validation only. |
+| `cp_credit_usd` | `float64` | `usd` | yes | Counterparty RTO's hourly M2M settlement credit as posted. ANSWER CLASS — validation only. |
