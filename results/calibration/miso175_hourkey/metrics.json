@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-13-miso-155-control-p0",
+  "run_id": "2026-08-22-miso-175-hourkey",
   "iso": "MISO",
-  "label": "miso 155 control p0",
+  "label": "miso 175 hourkey",
   "target_years": [
     2023,
     2024,
@@ -13,12 +13,14 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 3.2,
+  "rubric_version": 3.4,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
   ],
-  "notes": [],
+  "notes": [
+    "C8 2025 ST_GAS: grounded above budget \u2014 32.3% forced (6.3653 of 19.7182 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.982 (\u22650.8) & off-peak CV ratio 1.533 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
@@ -38,12 +40,13 @@
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -53,17 +56,19 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -71,11 +76,11 @@
     }
   },
   "grade_summary": {
-    "scored": 6,
-    "target_grade": 3,
+    "scored": 8,
+    "target_grade": 6,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 3
+    "ledgered": 1,
+    "fails": 1
   },
   "free_class_score": {
     "iso": "MISO",
