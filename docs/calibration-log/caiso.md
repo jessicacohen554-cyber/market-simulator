@@ -9345,3 +9345,99 @@ entry. Keeper, markers, holdout freeze, DOF ledger, every matrix cell verdict,
 the §5.2 header, every bench part, and every source file: UNCHANGED.
 
 **Lane REMAINS RESTED. Session consumed the caiso-212 shorthand. Next shorthand: caiso-213.**
+
+## caiso-213 (2026-08-22) — REST CONTINUES: full re-verification at a moved HEAD; the conditional carry test run on BOTH legs and BOTH HOLD (whole-file byte identity); one new cross-lane anchor defect routed off-lane
+
+**Branch A executed. No solve, no probe, no LP, nothing registered, nothing
+regenerated, no cell verdict moved** (nothing was tested, so rule 28b does not
+attach — the caiso-206 … caiso-212 precedent). No owner funding order issued for
+either standing tail-formation object, so caiso-203 ruling 2 (FINAL) governs.
+
+`origin/main` **c55da9c → 04605b7** (35 commits: ercot-226, nyiso-150,
+site-facts-2, and caiso-212's own merge PR #4190). Every number below was
+**re-measured at this HEAD, never carried**.
+
+**Standing state reproduced item-for-item and exactly.** Keeper
+`2026-08-17-caiso-200-h1-memberpanel`; determination **NOT-YET** at rubric
+**v3.4**, basis *"undocumented out-of-tolerance (FAIL) criteria: price_mean"*.
+**ONE** load-bearing FAIL — C3a alone: 56.40/54.17 **+4.1 % PASS**,
+39.07/34.65 **+12.8 %**, 39.82/34.42 **+15.7 %**, judged vs ACTUAL RT LMP only.
+**C1 12/12, free 8/8**; C2/C3b/C4/C6/C8 PASS; **C3b 0.098 / 0.179 / 0.182** vs
+≤0.20 (2025 margin 0.018 — composition watch live), re-read independently from
+`--json`; **C3c the single ledgered caveat** (0h/47, 1h/35, 2025 PASS 0h/8h),
+budget ledgered 1 of 1, protective 0 of 0; `grade_summary` scored 8 / target 6 /
+commercial 0 / ledgered 1 / fails 1. `audit_keepers --iso CAISO` **PASS 0/0**;
+`build_status --iso CAISO --check` in sync; **DOF 10/7**; CAISO in `withdrawn`,
+absent from BOTH `complete` and `final` (entry **byte-equal**, 10,846 chars);
+freeze **ACTIVE**; three registrations, years `[2023,2024,2025]`, payloads
+present — no out-of-training year touched.
+
+**Census exactly as pre-registered: K 64 / U 33 / I 15 / R 9 / O 6 / G 5 = 132**,
+n/a 94 → 96. The shard's cell-key diff across the delta is **exactly two
+additions, zero removals, zero CAISO verdict moves** — the foreign rule-28c `·`
+cells `ercot_as_held_location` (5a5b387) and `nyiso_iroquois_winter_spread`
+(2bf4038). Foreign `·` cells move the n/a count only.
+
+**THE CONDITIONAL CARRY TEST, RUN ON BOTH LEGS — BOTH HOLD.** The charter made
+the caiso-212 bench-staleness adjudication carry only while (a) the fingerprint
+is still `dbea7bf45111` and (b) nothing touched the frame-builder set or
+`BUILDER_SOURCES` past `c55da9c`.
+
+* **(a) HOLDS**, corroborated **independently of the printed banner** — the very
+  surface a stale conclusion would be read off. All four `BUILDER_SOURCES` files
+  carry **0 commits** since `c55da9c`, which is the *cause* of the unchanged
+  digest, not merely consistent with it.
+* **(b) HOLDS BY WHOLE-FILE BYTE IDENTITY.** This leg could **not** be
+  discharged by the fingerprint — the whole point of its being separate: under
+  standing defect **D1** the frame-builder tier is in **neither**
+  `BUILDER_SOURCES` nor `ENGINE_PATHS`, so a change there moves no digest
+  (caiso-212 *demonstrated* exactly that with `_btm_frame`). Measured directly:
+  `scripts/run_calibration_full.py` carries **0 commits**, 12,263 → 12,263 lines,
+  **sha256 `887d5fa6a8a0995f…be7b12f3b` IDENTICAL** at `c55da9c` and HEAD —
+  **strictly stronger** than the chartered per-function AST re-hash, since
+  identical bytes make the caiso-210 twelve, `_btm_frame` and every in-file
+  CAISO-path callee identical necessarily, with no function-selection judgement
+  left. The re-hash was rendered moot for this delta rather than merely passed.
+
+**Trigger did not fire ⇒ STAMP-ABSENCE, NOT DRIFT, still**; C1 reproducible; no
+determination change; the exposure was **not** re-derived and CAISO's bench parts
+were **not** regenerated (Branch B, unfunded). **Filed item 5 unchanged and still
+funding-blocked** — the three parts trip the HARD flag against `dbea7bf45111` on
+every scorer run; not a correctness defect; discharge as a by-product of the next
+funded solve, never an errand of its own.
+
+**ONE NEW FINDING — foreign in origin, in a SHARED file, routed off-lane.**
+`check_mechanism_matrix.py` still exits 0 with *"integrity OK"*, keeper stamps
+and §5.x headers matching — but its anchor line moved **0 → 239 unresolvable**
+against the caiso-212 record. **Cause measured:** `scenarios.py` grew
+**14,381 → 14,429 (+48)** across exactly two ercot-226 commits (`5a5b387` the
+`ercot_as_held_location` build, `31bc76a` the pairing-guard move), and the shared
+base `mechanism-matrix.js` was touched in the same sweep **without
+`--fix-anchors` being re-run**, so its stored `scenarios.py:N` digits point below
+the shifted definitions — the warning bodies show that exact signature (constant
+offsets +11 before the first insertion point, +36 after the second).
+**Line-digit drift, not a broken matrix**: the checker itself states the field
+NAME is the durable identifier, integrity passes, CI does not fail, and no CAISO
+cell, verdict, citation, keeper stamp or verified number depends on it. **Not
+CAISO's to fix** (rule 25 and the rule 28 sharding discipline): it is in the
+shared base row file every lane reads, `--fix-anchors` rewrites all ISOs' anchors
+at once, and it belongs to the lane that moved `scenarios.py`. Routed to
+ercot-226 or governance as **new open cross-lane item 4**.
+
+**Foreign movement verified legitimate, not assumed:** zero commits across the
+delta in `calibration_verdict.py`, `audit_keepers.py`, `build_status.py`,
+`holdout_policy.py`, `check_mechanism_matrix.py`, `check_bench_freshness.py` and
+`bench_stamp.py`, so every number above is produced by the same instruments
+caiso-212 used; `calibration-complete.json`'s top-level key set and all three
+grant blocks are structurally identical. Checker defects **D1 + D2 re-confirmed
+NOT repaired** and unchanged (0 commits), still routed off-lane.
+
+**Owner packet UNCHANGED at TWO items** — fund the walled hourly PS water-state
+intake (covers only 62.1 % / 10.4 % of the required 2024/2025 C3a move at its
+most favourable bound, so it does **not** close C3a alone) or the import
+spot-capacity derivation (direct λ share < 5 %). Absent either, the lane rests:
+owner ruling 5 stands, C3a must genuinely pass, **NOT-YET is the honest
+fallback**, and reaching the number through a §F-killed lever is a rule-13 act.
+
+Evidence: `results/calibration/ASSESSMENT-caiso213-rest-continuation-2026-08-22.md`.
+**Next number: caiso-214.**
