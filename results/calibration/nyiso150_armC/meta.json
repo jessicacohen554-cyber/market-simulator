@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-18T04:34:25",
+  "timestamp": "2026-08-22T07:19:51",
   "iso": "NYISO",
   "years": [
     2023,
@@ -122,6 +122,7 @@
   "miso_midwest_subregional_reserves": false,
   "miso_reserve_pergen": false,
   "miso_commitment_posture": false,
+  "miso_reserve_online_gated": false,
   "miso_measured_reserve_requirements": false,
   "miso_south_seam_split": false,
   "miso_rdt_tcdc": false,
@@ -292,6 +293,14 @@
   "nyiso_gas_bridge_startup": null,
   "nyiso_gas_bridge_da_horizon": null,
   "nyiso_gas_bridge_min_run": true,
+  "nyiso_gas_bridge_plant_exclusions": true,
+  "nyiso_gas_bridge_plant_min_run": null,
+  "nyiso_gas_bridge_online_hours": true,
+  "nyiso_gas_bridge_state_floor_min_run": true,
+  "nyiso_chp_btm_measured": true,
+  "cc_reserve_duty_split": true,
+  "chp_layup_duty_split": null,
+  "chp_layup_duty_curve": true,
   "nyiso_gas_bridge_cc_min_run_hours": 21.0,
   "nyiso_gas_bridge_st_min_run_hours": 13.0,
   "nyiso_spin_reserve_online": null,
@@ -305,6 +314,7 @@
   "miso_seam_flow_percentile": null,
   "miso_seam_export_limit": false,
   "miso_seam_envelope_merit_cap": false,
+  "miso_seam_envelope_hour_ending_key": false,
   "nyiso_seam_deliverability_envelope": true,
   "nyiso_seam_par_attribution": false,
   "miso_pjm_border_anchor": false,
@@ -337,12 +347,12 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-a67f13721a3a.parquet"
   },
-  "git_sha": "cae1724",
-  "basis_sha": "188f2d46c5d5ee4d27a0a2d7a23642e8565ef5f9",
+  "git_sha": "aae73c2",
+  "basis_sha": "317be02eadce8b6049a02d9776cea63176f55e6b",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-fc-v20-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v21-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",

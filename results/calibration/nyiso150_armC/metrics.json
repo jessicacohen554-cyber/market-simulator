@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-18-nyiso-143-n11tsl-arm",
+  "run_id": "2026-08-22-nyiso-150-reserve-rearm",
   "iso": "NYISO",
-  "label": "nyiso 143 n11tsl arm",
+  "label": "nyiso 150 reserve rearm",
   "target_years": [
     2023,
     2024,
@@ -14,9 +14,9 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 3.4,
-  "determination": "CALIBRATED",
+  "determination": "NOT-YET",
   "reasons": [
-    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [],
   "criteria": {
@@ -43,8 +43,7 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -54,7 +53,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -64,9 +63,7 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [
-      "C3c price tail / scarcity (RT hourly)"
-    ],
+    "ledgered": [],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -74,11 +71,11 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 7,
+    "scored": 7,
+    "target_grade": 6,
     "commercial_grade": 0,
-    "ledgered": 1,
-    "fails": 0
+    "ledgered": 0,
+    "fails": 1
   },
   "free_class_score": {
     "iso": "NYISO",
