@@ -112,6 +112,20 @@ cache key is untouched (hash-drop registration; config suite 53/53).
 * No gated criterion moves in either arm beyond noise: the whole delta is
   one 67 MW plant's merit position.
 
+## AMENDMENT 1 (disclosed before any arm completes) — control re-solved at the post-merge HEAD
+
+Between this prereg's commit and the arm launches, PR #4193 (the nyiso-150
+branch) merged into main together with two other-lane PRs (#4190 CAISO,
+#4194 forecast-lane) whose diffs touch shared reserve/LP machinery via
+default-off ERCOT-scoped gates (`ercot_as_held_location`,
+`ercot_ecrs_conservative_deployment`, `ercot_nonreleasable_as_withholding`).
+NYISO-inertness is therefore VERIFIED rather than assumed: the control is
+re-solved at the rebased HEAD as `nyiso151_control` and the IDENT gate
+(bit-identity of prices to the registered keeper) is re-proven there; both
+arms solve at the same HEAD against that control. No gate, bar, or
+prediction changes — the control's identity requirement is the design's own
+first gate doing its job at the new base.
+
 ## 7. REPRODUCTION
 
 ```
