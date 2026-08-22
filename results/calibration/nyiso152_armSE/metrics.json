@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-19-nyiso-146-control",
+  "run_id": "2026-08-22-nyiso-152-duty-complete",
   "iso": "NYISO",
-  "label": "nyiso 146 control",
+  "label": "nyiso 152 duty complete",
   "target_years": [
     2023,
     2024,
