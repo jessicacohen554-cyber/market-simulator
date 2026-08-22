@@ -243,3 +243,64 @@ class TestGuards(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestHeldRequirementDepth(unittest.TestCase):
+    """ercot-227 F1/F1b: max(plan, held) on the requirement basis."""
+
+    def test_off_by_default_and_zeros_identical(self):
+        fleet = _fleet()
+        p = _patches()  # held loader returns zeros for every product
+        with p[0], p[1], p[2], mock.patch.object(
+            scarcity, "ercot_as_responsibility_mw",
+            lambda y, h, c: np.zeros(h),
+        ):
+            off = _design(_config(), fleet)
+            on = _design(
+                _config(
+                    ercot_as_held_requirement=True,
+                    ercot_as_held_requirement_nspin=True,
+                ),
+                fleet,
+            )
+        for a, b in zip(on.families, off.families):
+            np.testing.assert_array_equal(a.requirement, b.requirement)
+
+    def test_max_deepens_rigid_window_only(self):
+        fleet = _fleet()
+        held = {"RRS": 150.0, "NSPIN": 0.0}
+        p = _patches(plan=100.0)
+        with p[0], p[1], p[2], mock.patch.object(
+            scarcity, "ercot_as_responsibility_mw",
+            lambda y, h, c: np.full(h, held.get(c, 0.0)),
+        ):
+            d = _design(_config(ercot_as_held_requirement=True), fleet)
+        names = [f.name for f in d.families]
+        rrs = d.families[names.index("RRS_withheld")]
+        np.testing.assert_allclose(rrs.requirement, 150.0)  # deepened
+        regup = d.families[names.index("RegUp_withheld")]
+        np.testing.assert_allclose(regup.requirement, 100.0)  # held=0 ⇒ plan
+
+    def test_nspin_leg_gated_separately(self):
+        fleet = _fleet()
+        p = _patches(plan=100.0)
+        with p[0], p[1], p[2], mock.patch.object(
+            scarcity, "ercot_as_responsibility_mw",
+            lambda y, h, c: np.full(h, 400.0 if c == "NSPIN" else 0.0),
+        ):
+            f1_only = _design(_config(ercot_as_held_requirement=True), fleet)
+            both = _design(
+                _config(
+                    ercot_as_held_requirement=True,
+                    ercot_as_held_requirement_nspin=True,
+                ),
+                fleet,
+            )
+        n1 = [f.name for f in f1_only.families]
+        nb = [f.name for f in both.families]
+        np.testing.assert_allclose(
+            f1_only.families[n1.index("NonSpin")].requirement, 100.0
+        )
+        np.testing.assert_allclose(
+            both.families[nb.index("NonSpin")].requirement, 400.0
+        )

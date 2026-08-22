@@ -1534,6 +1534,40 @@ def _ercot_multiproduct_design(
                 "the load/VRE drivers for the forward formula)",
             )
             req_t = ercot_as_plan_requirement_mw(year, T, code)
+        # ercot-227 F1/F1b held-DEPTH (PRECOMMIT-ercot226 §2 F1/F1b +
+        # Amendment 3, owner order): deepen the requirement to the measured
+        # telemetered held quantity where it exceeds the plan —
+        # max(plan, held), rigid-window-masked for the rigid products (F1),
+        # full-coverage for NSPIN (F1b, whose family releases on its ramp).
+        # Measured prior: held < plan everywhere on the Gen-ONLINE basis, so
+        # the max is expected to be the plan identically and the armed solve
+        # MEASURES that inertness (bit identity vs control is the verdict).
+        # Applied BEFORE requirement[p,:] so the family split and every
+        # downstream credit see one requirement basis.
+        _f1 = getattr(config, "ercot_as_held_requirement", False)
+        _f1b = getattr(config, "ercot_as_held_requirement_nspin", False)
+        if req_t.max() > 0.0 and (
+            (_f1 and code in ("REGUP", "RRS", "ECRS")) or (_f1b and code == "NSPIN")
+        ):
+            _require_backcast_measured(
+                config,
+                "ercot_as_held_requirement"
+                if code != "NSPIN"
+                else "ercot_as_held_requirement_nspin",
+                "the measured telemetered system AS responsibilities "
+                "(NP3-965, derive_ercot_as_responsibility.py)",
+            )
+            from market_sim.results.scarcity import ercot_as_responsibility_mw
+
+            held_t = np.asarray(ercot_as_responsibility_mw(year, T, code), float)
+            if held_t.max() > 0.0:
+                if code == "NSPIN":
+                    req_t = np.maximum(req_t, held_t)
+                else:
+                    r_end = _ercot_rigid_end(config, year, T, code)
+                    if r_end > 0:
+                        mask = np.arange(T) < r_end
+                        req_t = np.where(mask, np.maximum(req_t, held_t), req_t)
         requirement[p, :] = req_t
         req_peak = float(req_t.max())
         if req_peak <= 0.0:

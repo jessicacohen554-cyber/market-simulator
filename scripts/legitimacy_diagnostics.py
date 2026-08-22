@@ -1668,6 +1668,33 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
     # observable in hourly/reserve_family_<year>.parquet (the *_held family
     # rows) and gated by ercot226_gates.py G-SHORTFALL (arm shortfall
     # hour-set ⊆ control's, precommit Amendment 1). ---
+    # --- ercot-227 F1/F1b held-depth (Amendment 3; D-4: NO row BY
+    # CONSTRUCTION — a requirement max never touches min_gen; window =
+    # rigid gates (F1) / published coverage (F1b); off-coverage byte-
+    # identical: held = 0 ⇒ max(plan, 0) = plan). ---
+    MechanismSpec(
+        "ercot_as_held_requirement",
+        "ercot_as_held_requirement",
+        "backcast_only",
+        True,
+        note="held-DEPTH max(plan, telemetered held) on the rigid RegUp/RRS/"
+        "ECRS requirements inside their rigid windows (NP3-965 system "
+        "responsibilities, derive_ercot_as_responsibility.py — a measured "
+        "power reservation, rule 13's admissible example). Measured prior: "
+        "held < plan everywhere on the Gen-ONLINE basis, so the armed arm "
+        "is the inertness MEASUREMENT (PRECOMMIT-ercot226 Amendment 3).",
+        iso="ERCOT",
+    ),
+    MechanismSpec(
+        "ercot_as_held_requirement_nspin",
+        "ercot_as_held_requirement_nspin",
+        "backcast_only",
+        True,
+        note="the F1b NSPIN leg of the held-depth max — same series (nsrs "
+        "column), full published coverage, ramp-released family (NSPIN is "
+        "not rigid). Same zeros-fallback and inertness prior as F1.",
+        iso="ERCOT",
+    ),
     MechanismSpec(
         "ercot_as_held_location",
         "ercot_as_held_location",

@@ -42,6 +42,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     ercot_rtordpa_overlay: { cell: "." },
     ercot_artificial_shortage_pricing: { cell: "." },
     ercot_storage_adaptive_expectation: { cell: "." },
+    ercot_as_held_requirement: { cell: "." },
     ercot_as_held_location: { cell: "." },
     maxgen_emergency_tier_pricing: { cell: "I", ev: "nyiso-115 (ex-ante transfer adjudication, 0 solves; scripts/probes/_nyiso115_transfer_queue_adjudication.py -> results/calibration/nyiso115_transfer_queue_adjudication.json)" },
     nyiso_rcpf_family: { cell: "K", ev: "nyiso-84; calibration-best-so-far-nyiso frontier note; nyiso-110 (FINDING-nyiso110-peak-half-decomposition-2026-08-02.md §5-E4/§6.1)" },

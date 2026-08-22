@@ -1215,6 +1215,43 @@ ERCOT_HELD_PRODUCT_COLS: dict[str, str] = {
 }
 
 
+#: ercot-227 F1/F1b: system-total responsibility column per model product
+#: (nsrs = NSPIN's telemetered column; rrsffr excluded from rrs, DECISION-2).
+_ERCOT_AS_RESP_SYSTEM_COLS: dict[str, str] = {
+    "REGUP": "regup",
+    "RRS": "rrs",
+    "ECRS": "ecrs",
+    "NSPIN": "nsrs",
+}
+
+
+def ercot_as_responsibility_mw(year: int, hours: int, as_type: str) -> np.ndarray:
+    """System-total measured telemetered AS responsibility MW, ``(hours,)``.
+
+    The ercot-227 F1/F1b held-DEPTH input (``ercot_as_held_requirement`` /
+    ``_nspin``, PRECOMMIT-ercot226 §2 F1/F1b + Amendment 3): the NP3-965
+    ONLINE Gen-resource upward responsibilities summed over classes
+    (``derive_ercot_as_responsibility.py``). Zero-padded / **all-zero when
+    the file or column is absent** — the plan-fallback contract
+    (max(plan, 0) = plan), which is also why the measured F1 prior
+    (held < plan everywhere on this Gen-only basis) predicts an arm
+    bit-identical to control: the solve MEASURES that identity.
+    """
+    path = _ERCOT_AS_DIR / f"ercot_{year}_as_responsibility_hourly.parquet"
+    col = _ERCOT_AS_RESP_SYSTEM_COLS.get(str(as_type))
+    if col is None or not path.exists():
+        return np.zeros(int(hours), dtype=float)
+    import pandas as pd
+
+    df = pd.read_parquet(path)
+    if col not in df.columns:
+        return np.zeros(int(hours), dtype=float)
+    series = df[col].to_numpy(dtype=float)
+    if len(series) < hours:
+        series = np.concatenate([series, np.zeros(int(hours) - len(series))])
+    return series[: int(hours)]
+
+
 def ercot_as_held_by_class_mw(
     year: int, hours: int, klass: str, as_type: str
 ) -> np.ndarray:
