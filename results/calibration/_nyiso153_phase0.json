@@ -1,0 +1,110 @@
+{
+ "probe": "nyiso153_phase0",
+ "bundle": "nyiso152_armSE",
+ "rho": 0.301384269761953,
+ "max_inducement_per_mwh": 7.5346067440488245,
+ "years": {
+  "2023": {
+   "NYC": {
+    "requirement_mw": 490.82476806640625,
+    "online_p_mw": {
+     "p10": 373.9320068359375,
+     "p50": 644.7520751953125,
+     "p90": 2069.429443359375
+    },
+    "deficit_hours": 7391,
+    "need_online_mw_p50": 1096.78564453125,
+    "flippable_mw_p50": 190.85763996839523,
+    "deficit_hours_closable": 246,
+    "closable_frac": 0.03328372344743607,
+    "unknown_offer_mw_p50": 674.6171720921993,
+    "family": "nyc_10min_total",
+    "family_dual_pos_hours_today": 18
+   },
+   "Long_Island": {
+    "requirement_mw": 120.0,
+    "online_p_mw": {
+     "p10": 138.19264221191406,
+     "p50": 202.9571990966797,
+     "p90": 468.68414306640625
+    },
+    "deficit_hours": 7524,
+    "need_online_mw_p50": 204.10923767089844,
+    "flippable_mw_p50": 36.672637939453125,
+    "deficit_hours_closable": 1283,
+    "closable_frac": 0.17052099946836788,
+    "unknown_offer_mw_p50": 1099.9121762812138,
+    "family": "li_10min_total",
+    "family_dual_pos_hours_today": 0
+   }
+  },
+  "2024": {
+   "NYC": {
+    "requirement_mw": 488.234375,
+    "online_p_mw": {
+     "p10": 271.5168151855469,
+     "p50": 443.0691833496094,
+     "p90": 1570.560302734375
+    },
+    "deficit_hours": 7920,
+    "need_online_mw_p50": 1197.560791015625,
+    "flippable_mw_p50": 180.81225764751434,
+    "deficit_hours_closable": 261,
+    "closable_frac": 0.03295454545454545,
+    "unknown_offer_mw_p50": 637.8864090144634,
+    "family": "nyc_10min_total",
+    "family_dual_pos_hours_today": 9
+   },
+   "Long_Island": {
+    "requirement_mw": 120.0,
+    "online_p_mw": {
+     "p10": 141.56442260742188,
+     "p50": 223.68333435058594,
+     "p90": 534.90625
+    },
+    "deficit_hours": 6806,
+    "need_online_mw_p50": 177.5052947998047,
+    "flippable_mw_p50": 68.66641044616699,
+    "deficit_hours_closable": 1259,
+    "closable_frac": 0.18498383779018512,
+    "unknown_offer_mw_p50": 1320.6969892084599,
+    "family": "li_10min_total",
+    "family_dual_pos_hours_today": 0
+   }
+  },
+  "2025": {
+   "NYC": {
+    "requirement_mw": 493.9783020019531,
+    "online_p_mw": {
+     "p10": 235.3196563720703,
+     "p50": 675.7291870117188,
+     "p90": 1943.580078125
+    },
+    "deficit_hours": 7653,
+    "need_online_mw_p50": 1027.76611328125,
+    "flippable_mw_p50": 144.82633990049362,
+    "deficit_hours_closable": 940,
+    "closable_frac": 0.12282764928786097,
+    "unknown_offer_mw_p50": 233.4331543147564,
+    "family": "nyc_10min_total",
+    "family_dual_pos_hours_today": 32
+   },
+   "Long_Island": {
+    "requirement_mw": 120.0,
+    "online_p_mw": {
+     "p10": 150.5270233154297,
+     "p50": 229.76004028320312,
+     "p90": 776.5066528320312
+    },
+    "deficit_hours": 5768,
+    "need_online_mw_p50": 211.63214111328125,
+    "flippable_mw_p50": 74.02943134307861,
+    "deficit_hours_closable": 2127,
+    "closable_frac": 0.36875866851595007,
+    "unknown_offer_mw_p50": 1095.052176386118,
+    "family": "li_10min_total",
+    "family_dual_pos_hours_today": 0
+   }
+  }
+ }
+}

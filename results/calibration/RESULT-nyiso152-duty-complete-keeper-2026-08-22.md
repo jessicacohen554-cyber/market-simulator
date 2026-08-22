@@ -85,7 +85,12 @@ retention).
   split + exclusion, Carthage/Syracuse already lay-up-excluded); the hydro
   RAMP10 seams (adjudicated provably LP-inert for NYISO, off the queue; the
   cross-ISO seam note handed to the consuming lanes via the governance log);
-  the AS-certification owner-court question (dissolved with it).
+  the AS-certification question in its "may certification gate hydro's
+  reserve SUPPLY" form (no gate exists to feed; the union is
+  keeper-adjudicated). NOT touched: nyiso-110 §10's bar on measuring a NYCA
+  rho through the hydro CEMS gap — `nyiso_spin_reserve_online` keeps its `I`
+  with the certification+water-limit intake as that future arm's only honest
+  unlock (owner court, unchanged).
 * **REMAINING testable:** the Flynn/Bethlehem start-conduct residual; the
   `online_rho` pair A/B (`nyiso_synchronised_reserve` /
   `nyiso_incity_commitment_obligation`, admissible since the RHO_CLIP

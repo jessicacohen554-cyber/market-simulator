@@ -8888,10 +8888,16 @@ work, which is why frontier is NOT-YET independent of every pending owner ruling
    the gap (nyiso-110 §10). *(ADJUDICATED 2026-08-22, nyiso-152 phase-0: the
    two code seams are PROVABLY LP-INERT for NYISO — nothing in the NYISO
    reserve design consumes ramp10, and hydro already supplies both classes at
-   full headroom via the armed union — so this re-open condition can never
-   fire on NYISO's own LP; the certification/water-limit intake question
-   dissolves with it. The seam note passes to the consuming lanes via
-   `docs/calibration-log/governance.md`. See the §5.5 nyiso-152 block.)*
+   full headroom via the armed union — so the SEAM-REPAIR route recorded here
+   is dead, and the certification question in its "may certification gate
+   hydro's reserve SUPPLY" form dissolves (there is no gate to feed; the
+   union is keeper-adjudicated). What this does NOT touch: `nyiso-110 §10`'s
+   bar on measuring a NYCA rho through the hydro CEMS coverage gap stands on
+   its own, so `nyiso_spin_reserve_online` keeps its `I` with the
+   certification+water-limit intake as the only honest unlock FOR A FUTURE
+   ARM of that gated family — an owner-court item, unchanged. The seam note
+   passes to the consuming lanes via `docs/calibration-log/governance.md`.
+   See the §5.5 nyiso-152 block.)*
 6. **OWNER RULINGS PENDING** — `RHO_CLIP` (card delivered,
    `docs/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md`) and
    `nyiso_iroquois_winter_spread` arming + its two-row taxonomy remedy
