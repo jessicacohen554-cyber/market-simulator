@@ -173,3 +173,19 @@ screen over-retires under softer prices**, and the nuclear phantom was partially
 masking it — the phantom's 4.097 GW displaced coal that the screen would otherwise
 have retired. The coal screen is the separate open question (rules 1/13/21); it is
 **deliberately not chased here** and nothing was tuned to the score.
+
+### Invariant side-effect of the coal knock-on
+
+Both arms fail the same two forecast invariants, so neither is introduced by the
+mechanism — but the induced coal retirement makes the treated arm marginally
+tighter, which is the expected direction:
+
+| invariant | control (ex-ante) | treated (armed) |
+|---|---|---|
+| reliability floor | FAIL — 2025 accredited firm 138,785 < 139,850 MW | FAIL — 2025 accredited firm **138,286** < 139,850 MW |
+| reserve-margin band | WARN — 2025 out (-13.6%) | WARN — 2023 (+2.7%) and 2025 (**-13.9%**) out |
+
+The ~499 MW of extra firm-capacity shortfall and the additional 2023 band
+excursion both trace to the +5.290 GW of coal retired in 2024, not to the nuclear
+restoration (which *adds* 4.097 GW of firm capacity). This is further evidence
+that the coal economic screen, not the verification gate, is the open defect.
