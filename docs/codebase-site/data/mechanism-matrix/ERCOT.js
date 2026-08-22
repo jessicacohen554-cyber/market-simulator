@@ -241,6 +241,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     electrification_layers: { cell: ".", fc: "U" },
     transmission_expansion: { cell: ".", fc: "U" },
     t1ff_solve_year_weather: { cell: ".", fc: "O", ev: "fh-1 gate probe (docs/handoffs/fh-1-full-forward-harness-2026-08.md §7); FFR-3Q-3 five-year re-cut (docs/handoffs/ffr-3q3-gate-reprobe-2026-08-04.md; runs ercot-2021-2025-t1ff-armr-ffr3q3-pipeline / -legacy)" },
+    hindcast_verified_announced_exits: { cell: ".", fc: "U" },
     rps_lp_constraint: { cell: "K", fc: "K" },
     miso_rps_compliance_regions: { cell: ".", fc: "." },
     miso_clean_tier_rows: { cell: ".", fc: "." },

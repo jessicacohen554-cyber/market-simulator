@@ -75,6 +75,20 @@ actually runs. Two explicit arms remain:
 The two are mutually exclusive. No ``ScenarioConfig`` default moves here: the
 harness selects among postures the config already supports (rule 24).
 
+**Announced-exit verification (owner directive 2026-08-22).** The harness
+DEFAULT arms ``hindcast_verified_announced_exits``: announced/"known"
+retirement dates from the vintage EIA-860 are countered by the realized
+record before they execute — a plant whose exit was reversed outright by a
+later public counter-instrument and demonstrably kept operating (the worked
+case: Byron 1-2 / Dresden 2-3, 4.1 GW, 2021 dates reversed by IL CEJA's CMC
+program 2021-09-15) is never false-retired. Mechanically the runner reads the
+announced-REVERSAL registry without the RC-1B vintage information gate; the
+confirmed-EXIT channel keeps its gate, so verification can suppress a
+never-executed exit but never inject one. ``--no-verified-announced-exits``
+restores the pure ex-ante arm (the posture every committed pre-2026-08-22 leg
+ran — their verdicts stand as scored, and the scorer reports raw + IS-2020
+side by side under either posture).
+
 Rule 12: years run sequentially inside one invocation; independent variants /
 ISOs are launched as concurrent background invocations with separate
 ``--out-dir``s.
@@ -462,6 +476,11 @@ META_RECORD_SPEC = RecordSpec(
         "entry_pipeline_aware_signal": FromConfig(cast=bool),
         # FFR-9C R-b SMR availability-year gate (None = shipped ungated).
         "smr_available_year": FromConfig(),
+        # Announced-exit verification posture (owner directive 2026-08-22).
+        # FromConfig so the record reads the SOLVED gate (FFR-3R: a meta may
+        # never claim a posture the solve lacked); absent from committed
+        # pre-2026-08-22 metas, which all ran the ex-ante arm.
+        "hindcast_verified_announced_exits": FromConfig(cast=bool),
         # FFR-5E procurement channel (owner decision D-18(a)). Declared
         # FromConfig, never FromArgs: the record reads the SOLVED gate, so a
         # meta can never claim an arming the solve did not carry (FFR-3R).
@@ -566,6 +585,7 @@ def build_config(
     entry_pipeline_aware_signal: "bool | None" = None,
     smr_available_year: "int | None" = None,
     ptc_window: "int | str | None" = None,
+    verified_announced_exits: bool = True,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -659,6 +679,17 @@ def build_config(
         end_year=end_year,
         eia860_vintage_year=vintage,
         hindcast_fuel_variant=variant,
+        # Announced-exit verification (owner directive 2026-08-22): announced/
+        # "known" retirement dates are countered by the realized record — a
+        # plant whose exit was reversed outright by a later public counter-
+        # instrument and kept operating (Byron/Dresden under IL CEJA's CMC) is
+        # NOT retired, whatever the vintage EIA-860 says. HARNESS default ON
+        # (--no-verified-announced-exits restores the RC-1B ex-ante arm, the
+        # posture every committed pre-2026-08-22 leg ran, so their verdicts
+        # stand as scored); the ScenarioConfig default stays False (rule 24 —
+        # no model default moves here). An armed leg hashes distinctly; the
+        # off arm is byte-identical to the pre-flag harness.
+        hindcast_verified_announced_exits=verified_announced_exits,
         gas_price_path=gas_path,
         # T1-X crossover (FF-0E, plan §2.2): set the forward boundary so years
         # >= CROSSOVER_FORWARD_YEAR (2026) run on pure forward drivers (the
@@ -1451,6 +1482,23 @@ def main(argv: list[str] | None = None) -> int:
             "ungated always-eligible posture)."
         ),
     )
+    parser.add_argument(
+        "--no-verified-announced-exits",
+        dest="verified_announced_exits",
+        action="store_false",
+        default=True,
+        help=(
+            "Restore the RC-1B ex-ante announced-exit posture: honor every "
+            "vintage EIA-860 announced date even when the realized record "
+            "shows the exit was reversed by a later counter-instrument "
+            "(Byron/Dresden under IL CEJA). The harness DEFAULT since "
+            "2026-08-22 is verification ON — announced/'known' exits are "
+            "countered by the reversal registry read without the vintage "
+            "information gate, so a plant that demonstrably kept running is "
+            "never false-retired. Committed pre-2026-08-22 legs all ran the "
+            "ex-ante arm and their verdicts stand as scored."
+        ),
+    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
@@ -1605,6 +1653,7 @@ def main(argv: list[str] | None = None) -> int:
         entry_pipeline_aware_signal=args.entry_pipeline_aware_signal,
         smr_available_year=args.smr_available_year,
         ptc_window=args.ptc_window,
+        verified_announced_exits=args.verified_announced_exits,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) -- deliberately

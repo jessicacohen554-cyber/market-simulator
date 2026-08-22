@@ -1245,7 +1245,9 @@ def channel_of(reason) -> str:
     return _LEGACY_REASON.get(r, r)
 
 
-def load_reversal_set(iso: str) -> dict[tuple[str, str], dict]:
+def load_reversal_set(
+    iso: str, cutoff: "date | None" = None
+) -> dict[tuple[str, str], dict]:
     """Post-cutoff reversal rows from the confirmed-registry (§c.5-1).
 
     Membership test for the Byron/Dresden class: a confirmed-registry row with
@@ -1253,6 +1255,11 @@ def load_reversal_set(iso: str) -> dict[tuple[str, str], dict]:
     (``instrument_date <= V``) and was superseded *only* by a counter-instrument
     dated **after** V (``superseding_instrument_date > V``). Keyed on
     ``(plant_id, generator_id)`` — the grain the model records nuclear exits on.
+
+    ``cutoff`` is V; ``None`` (the T-R8 default) uses :data:`IS2020_CUTOFF`, so
+    the ``--rescore`` lane is byte-identical. The default scoring path passes
+    the run's own vintage cutoff (``vintage_cutoff_of``), so a non-2020-vintage
+    leg classifies against ITS information set rather than 2020's.
 
     Eddystone (superseded by a DOE 202(c) order with **no**
     ``superseding_instrument_date`` populated) is correctly excluded: its
@@ -1268,7 +1275,7 @@ def load_reversal_set(iso: str) -> dict[tuple[str, str], dict]:
     path = Path("data/raw/confirmed-retirements") / f"{iso.lower()}.csv"
     if not path.exists():
         return {}
-    cutoff = pd.Timestamp(IS2020_CUTOFF)
+    cutoff = pd.Timestamp(cutoff if cutoff is not None else IS2020_CUTOFF)
     lines = [
         ln
         for ln in path.read_text().splitlines(keepends=True)
@@ -1810,11 +1817,17 @@ def write_report(
     report_path: Path,
     add_cod: dict | None = None,
     add_basis: dict | None = None,
+    ret_is: dict | None = None,
+    is_cutoff: str | None = None,
 ) -> None:
     """Render the markdown hindcast report.
 
     ``add_cod``/``add_basis`` render the D-9(ii) basis disclosure and the
     COD-basis comparison; omitted (``None``) they are simply not rendered.
+    ``ret_is``/``is_cutoff`` render the policy-saved announced-exit note
+    (§c.5-1 reversal exposure at the run's vintage cutoff V=``is_cutoff``)
+    when the exposure is non-zero; omitted or zero-exposure they are not
+    rendered.
     """
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     L = []
@@ -1880,6 +1893,43 @@ def write_report(
         e = "" if d["err_frac"] is None else format(d["err_frac"], "+.0%")
         L.append(f"| {f} | {d['actual_gw']} | {d['model_gw']} | {e} |")
     L.append("")
+    # Policy-saved announced exits (§c.5-1 reversal exposure): plants whose
+    # announced retirement the model executed but which were saved at the
+    # last moment by a public counter-instrument the run's information set
+    # could not know. Rendered only when the run actually retired one.
+    if ret_is is not None and ret_is.get("reversal_exposure_gw", 0.0) > 0.0:
+        L.append("### Announced exits reversed by later policy (information-set note)")
+        L.append("")
+        L.append(
+            f"**{ret_is['reversal_exposure_gw']} GW** of the model's retired "
+            "capacity executed announced retirement dates that were REVERSED "
+            "by a policy instrument dated after the run's vintage cutoff "
+            f"(V = {is_cutoff or IS2020_CUTOFF.isoformat()}) — the plants were "
+            "saved at the last moment and run today, so the raw pass counts "
+            "them as false-retire while the information-set pass excludes "
+            "them (ex-ante the exit was the knowable outcome). Raw stays the "
+            "graded instrument; both are reported (RC-0B §c.5). Units:"
+        )
+        L.append("")
+        L.append("| unit | fuel | MW | reversing instrument |")
+        L.append("|---|---|--:|---|")
+        for r in ret_is.get("reversal_rows", []):
+            L.append(
+                f"| {r['unit_name'] or r['unit_id']} | {r['fuel']} | "
+                f"{r['mw']:.0f} | {r['instrument']} |"
+            )
+        fr_is = ret_is["false_retire"]
+        L.append("")
+        L.append(
+            f"False-retire net of these reversals: **{fr_is['false_gw']} GW** "
+            f"({format(fr_is['frac_of_model'], '.0%')} of model, "
+            f"{_fmt_band(fr_is['band'])}) vs raw "
+            f"{ret['false_retire']['false_gw']} GW. A hindcast leg launched "
+            "with announced-exit verification armed (the harness default "
+            "since 2026-08-22) counters these dates in the solve itself and "
+            "shows zero exposure here."
+        )
+        L.append("")
     # Additions
     basis = add.get("basis", ADDITIONS_BASIS_DEFAULT)
     L.append(f"## Additions (cumulative 2021→2025) — **{basis} basis**")
@@ -2289,6 +2339,17 @@ def main(argv: list[str] | None = None) -> int:
         solved_config=solved,
     )
     ret = score_retirements(mret, actuals, reach)
+    # Policy-saved annotation (default path, owner directive 2026-08-22): the
+    # IS-<V> reversal-exclusion lane is computed alongside the raw pass on
+    # EVERY score, not only under --rescore, so a bundle whose announced
+    # channel executed exits that were later reversed by policy (Byron/Dresden
+    # under IL CEJA's CMC) carries the note in its own score.json instead of
+    # reading as unexplained model error. Raw stays the graded instrument;
+    # both are reported side by side (RC-0B §c.5 — quoting only the
+    # flattering one is scoring abuse). V is the run's own vintage cutoff.
+    run_cutoff = vintage_cutoff_of(meta, solved)
+    reversal_set = load_reversal_set(iso, cutoff=run_cutoff)
+    ret_is = score_retirements_is2020(mret, actuals, reversal_set, reach)
     add = score_additions(madd, actuals, basis=ADDITIONS_BASIS_DECISION)
     add_cod = score_additions(madd_cod, actuals, basis=ADDITIONS_BASIS_COD)
     add_basis = additions_basis_record(
@@ -2305,6 +2366,11 @@ def main(argv: list[str] | None = None) -> int:
         "variant": variant,
         "scored_years": list(SCORED_YEARS),
         "retirements": ret,
+        # The information-set lane (§c.5-1 reversal exclusion at the run's own
+        # vintage cutoff), always present so policy-saved exits are annotated
+        # in the same artifact as the raw grade they inflate.
+        "retirements_is": ret_is,
+        "is_cutoff": run_cutoff.isoformat(),
         "additions": add,
         "additions_cod_basis": add_cod,
         "additions_basis": add_basis,
@@ -2323,13 +2389,33 @@ def main(argv: list[str] | None = None) -> int:
     run_id = args.bundle.name or f"{iso.lower()}-2021-2025-{variant}"
     report_path = args.report_dir / f"{run_id}-{stamp}.md"
     write_report(
-        iso, variant, meta, ret, add, co2, baselines, report_path, add_cod, add_basis
+        iso,
+        variant,
+        meta,
+        ret,
+        add,
+        co2,
+        baselines,
+        report_path,
+        add_cod,
+        add_basis,
+        ret_is=ret_is,
+        is_cutoff=run_cutoff.isoformat(),
     )
 
     print(
         f"[score] {iso} {variant}: thermal-retire band {ret['total_gw']['band']}, "
         f"recall band {ret['unit_recall_gt300']['band']}"
     )
+    if ret_is.get("reversal_exposure_gw", 0.0) > 0.0:
+        print(
+            f"[score] policy-saved announced exits: "
+            f"{ret_is['reversal_exposure_gw']} GW retired on announced dates "
+            f"later reversed by {'; '.join(ret_is['reversal_instruments']) or 'policy'} "
+            f"— false-retire {ret['false_retire']['false_gw']} GW raw -> "
+            f"{ret_is['false_retire']['false_gw']} GW net of reversals "
+            f"(see the report's information-set note)"
+        )
     print(f"[score] score.json: {cache_dir / 'score.json'}")
     print(f"[score] report:     {report_path}")
     return 0

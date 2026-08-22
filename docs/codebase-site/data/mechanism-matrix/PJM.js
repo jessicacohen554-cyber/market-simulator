@@ -241,6 +241,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     electrification_layers: { cell: ".", fc: "O", ev: "FFR-SA-close T0 PJM smoke 2026-08-04 (docs/handoffs/ffr-sa-load-shape-implementation-2026-08.md §4 + §4.1; results/ffr-sa-smoke/pjm-{off,mid})" },
     transmission_expansion: { cell: ".", fc: "I", ev: "FFR-SC registry+seam measurement, no solve (same doc §1); re-verified at FFR-SC-2 2026-08-04" },
     t1ff_solve_year_weather: { cell: ".", fc: "U" },
+    hindcast_verified_announced_exits: { cell: ".", fc: "U", ev: "TARGET CASE, minted 2026-08-22 from the PJM nuclear false-retire investigation: every 2020-vintage PJM leg executes Byron 1-2 + Dresden 2-3 (4.097 GW, reason 'known', evolution_2022.json in pjm-2021-2025-realized / -s3 et al.; score.json nuclear model_gw 4.097 vs actual 0.0) off announced dates IL CEJA's CMC reversed 2021-09-15 — post-V, so the RC-1B gate correctly let them fire. U: built + harness-default armed, no leg has SOLVED with it yet; first armed PJM leg should show nuclear model_gw 0.0 and zero §c.5-1 exposure" },
     rps_lp_constraint: { cell: "K", fc: "K" },
     miso_rps_compliance_regions: { cell: ".", fc: "." },
     miso_clean_tier_rows: { cell: ".", fc: "." },
