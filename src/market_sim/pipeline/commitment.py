@@ -673,13 +673,18 @@ def _ercot_ruc_floor(config, fleet_arrays) -> "np.ndarray | None":
         fleet_arrays.availability, dtype=float
     )
     floor = None
+    armed: list[str] = []
+    skipped: list[str] = []
     for token, groups in _ERCOT_RUC_CLASS_GROUPS.items():
         series = np.asarray(ercot_ruc_committed_mw(year, T, token), float)
         if series.max() <= 0.0:
+            skipped.append(f"{token}(no measured ONRUC)")
             continue
         mask = np.isin(pg, list(groups))
         if not mask.any():
+            skipped.append(f"{token}(no fleet units)")
             continue
+        armed.append(f"{token}: {int((series > 0).sum())} h, max {series.max():.0f} MW")
         cls_cap = cap[mask].sum(axis=0)  # (T,)
         with np.errstate(invalid="ignore", divide="ignore"):
             level = np.where(cls_cap > 0.0, np.minimum(series, cls_cap), 0.0)
@@ -688,6 +693,11 @@ def _ercot_ruc_floor(config, fleet_arrays) -> "np.ndarray | None":
         if floor is None:
             floor = np.zeros_like(cap)
         floor[mask] = np.maximum(floor[mask], contrib)
+    print(
+        f"INFO: ERCOT RUC instruction-state commitment floor ({year}): "
+        f"ARMED [{'; '.join(armed) or 'none'}]"
+        + (f", SKIPPED [{'; '.join(skipped)}]" if skipped else "")
+    )
     if floor is None or float(floor.max()) <= 0.0:
         return None
     return floor
