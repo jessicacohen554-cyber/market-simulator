@@ -201,31 +201,42 @@ class TestCarveAndCredit(unittest.TestCase):
 
 
 class TestGuards(unittest.TestCase):
+    """Pairing guards fire at DESIGN time, never __post_init__ — the
+    calibration channels build the config in stages (the keeper-replay
+    crash this build measured), so only the final config is checkable."""
+
     def test_requires_multiproduct(self):
+        cfg = _config(ercot_as_held_location=True, ercot_multiproduct_as_coopt=False)
         with self.assertRaises(ValueError):
-            _config(ercot_as_held_location=True, ercot_multiproduct_as_coopt=False)
+            _design(cfg, _fleet())
 
     def test_requires_a_rigid_family(self):
-        with self.assertRaises(ValueError):
-            _config(
-                ercot_as_held_location=True,
-                ercot_ecrs_conservative_deployment=False,
-                ercot_nonreleasable_as_withholding=False,
-            )
+        cfg = _config(
+            ercot_as_held_location=True,
+            ercot_ecrs_conservative_deployment=False,
+            ercot_nonreleasable_as_withholding=False,
+        )
+        p = _patches()
+        with p[0], p[1], p[2]:
+            with self.assertRaises(ValueError):
+                _design(cfg, _fleet())
 
     def test_forecast_mode_hard_errors(self):
         # The _BACKCAST_ONLY_OVERLAY_FIELDS registration fires at CONFIG
-        # construction — earlier (and stricter) than the design-time
-        # _require_backcast_measured backstop.
+        # construction (mode is a base-channel field, so this one IS safe
+        # in __post_init__) — earlier than the design-time backstop.
         with self.assertRaises(ValueError):
             _config(ercot_as_held_location=True, mode="forecast")
 
     def test_endogenous_storage_pairing_refused(self):
-        with self.assertRaises(ValueError):
-            _config(
-                ercot_as_held_location=True,
-                ercot_storage_as_endogenous=True,
-            )
+        # Simulate the staged/hostile state directly (post_init bypassed),
+        # exactly what a design-time guard exists to catch.
+        cfg = _config(ercot_as_held_location=True)
+        object.__setattr__(cfg, "ercot_storage_as_endogenous", True)
+        p = _patches()
+        with p[0], p[1], p[2]:
+            with self.assertRaises(ValueError):
+                _design(cfg, _fleet())
 
 
 if __name__ == "__main__":

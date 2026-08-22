@@ -13157,43 +13157,16 @@ class ScenarioConfig:
                     "is the reserve level RTORPA prices."
                 )
 
-        # ercot-226 F2 held-location: fail loud rather than silently no-op or
-        # pair with a construction its row shapes don't support (one writer,
-        # rule 19). It modifies the RIGID families of the multi-product
-        # design, so both the co-opt and at least one rigid flag must be on;
-        # the endogenous-storage split (and its duration gate) would give the
-        # new class rows RS columns this build does not carry; the
-        # ordc_only/envelope pairing is refused inside the design builder.
-        if self.ercot_as_held_location:
-            if not (self.energy_reserve_coopt and self.ercot_multiproduct_as_coopt):
-                raise ValueError(
-                    "ercot_as_held_location requires energy_reserve_coopt + "
-                    "ercot_multiproduct_as_coopt (it carves the multi-product "
-                    "rigid families)."
-                )
-            if not (
-                self.ercot_ecrs_conservative_deployment
-                or self.ercot_nonreleasable_as_withholding
-            ):
-                raise ValueError(
-                    "ercot_as_held_location requires a rigid no-release family "
-                    "(ercot_ecrs_conservative_deployment or "
-                    "ercot_nonreleasable_as_withholding) — the held-location "
-                    "carve is the rigid design's WHERE, not a new quantity."
-                )
-            if self.ercot_storage_as_endogenous or self.ercot_storage_as_duration_gate:
-                raise ValueError(
-                    "ercot_as_held_location cannot pair with the endogenous "
-                    "storage AS split / duration gate (unsupported RS-column "
-                    "interaction; the measured storage treatment is the armed "
-                    "path)."
-                )
-            if self.ercot_ordc_only_scarcity:
-                raise ValueError(
-                    "ercot_as_held_location and ercot_ordc_only_scarcity are "
-                    "mutually exclusive: the held families price rigid VOLL "
-                    "steps the plan-hold design deliberately does not."
-                )
+        # ercot-226 F2 held-location: the cross-field pairing guards live at
+        # DESIGN time (model/reserves/spec.py, get_reserve_design +
+        # _ercot_multiproduct_design), NOT here — the calibration channels
+        # build the config in stages (base kwargs, then the generic
+        # prb_overrides replace, then explicit solve kwargs), so a
+        # __post_init__ requirement on kwargs-channel flags fires on valid
+        # intermediate states (measured: the keeper replay crashed at
+        # run_calibration.py::run_year's prb with_overrides). Only the
+        # mode gate stays construction-time, via
+        # _BACKCAST_ONLY_OVERLAY_FIELDS (mode is a base-channel field).
 
         # Endogenous storage energy-vs-AS competition is priced *inside* the
         # reserve co-optimization: without it the flag would silently no-op

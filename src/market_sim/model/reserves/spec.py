@@ -872,6 +872,16 @@ def get_reserve_design(
     """
     iso = str(config.iso)
     if iso == "ERCOT":
+        if getattr(config, "ercot_as_held_location", False) and not getattr(
+            config, "ercot_multiproduct_as_coopt", False
+        ):
+            # ercot-226 F2 fail-loud (design-time — the staged config
+            # channels forbid a __post_init__ cross-field guard): the
+            # held-location carve exists only in the multi-product design.
+            raise ValueError(
+                "ercot_as_held_location requires ercot_multiproduct_as_coopt "
+                "(it carves the multi-product rigid families)."
+            )
         if getattr(config, "ercot_multiproduct_as_coopt", False):
             return _ercot_multiproduct_design(
                 config,
@@ -1748,6 +1758,34 @@ def _ercot_multiproduct_design(
     held_class_families: list[ReserveFamily] = []
     headroom_storage: np.ndarray | None = None
     if getattr(config, "ercot_as_held_location", False):
+        # Design-time pairing guards (ercot-226; a __post_init__ guard on
+        # kwargs-channel flags fires on valid intermediate configs — the
+        # staged construction lesson). One writer, rule 19.
+        if not (
+            getattr(config, "ercot_ecrs_conservative_deployment", False)
+            or getattr(config, "ercot_nonreleasable_as_withholding", False)
+        ):
+            raise ValueError(
+                "ercot_as_held_location requires a rigid no-release family "
+                "(ercot_ecrs_conservative_deployment or "
+                "ercot_nonreleasable_as_withholding) — the held-location "
+                "carve is the rigid design's WHERE, not a new quantity."
+            )
+        if getattr(config, "ercot_storage_as_endogenous", False) or getattr(
+            config, "ercot_storage_as_duration_gate", False
+        ):
+            raise ValueError(
+                "ercot_as_held_location cannot pair with the endogenous "
+                "storage AS split / duration gate (unsupported RS-column "
+                "interaction; the measured storage treatment is the armed "
+                "path)."
+            )
+        if getattr(config, "ercot_ordc_only_scarcity", False):
+            raise ValueError(
+                "ercot_as_held_location and ercot_ordc_only_scarcity are "
+                "mutually exclusive: the held families price rigid VOLL "
+                "steps the plan-hold design deliberately does not."
+            )
         _require_backcast_measured(
             config,
             "ercot_as_held_location",
