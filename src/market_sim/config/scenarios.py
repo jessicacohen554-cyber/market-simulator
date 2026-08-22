@@ -946,6 +946,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario, and hashes distinctly. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "ercot_adaptive_event_release",
+    # ercot-226 F2 held-location (GATED default off, backcast-only measured
+    # overlay): dropped from the hash at its default so every pre-existing
+    # cache key stays byte-stable (the off path builds no class families —
+    # byte-identical by construction); an armed run carves the measured
+    # per-class holds, a different scenario, and hashes distinctly.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "ercot_as_held_location",
     # caiso-205 CAISO leg of the adaptive-expectation family (GATED default
     # off) + its two rule-23 identified constants: dropped from the hash at
     # their defaults so every pre-existing cache key stays byte-stable (the
@@ -1344,6 +1351,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-223 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_adaptive_event_release": "False",
+    # Added by ercot-226 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "ercot_as_held_location": "False",
     # Added by caiso-205 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "caiso_storage_adaptive_expectation": "False",
@@ -1429,6 +1439,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "ercot_thermal_dam_availability_plant": "measured 60-Day DAM awards (per plant)",
     "ercot_thermal_dam_availability_coal": "measured 60-Day DAM awards (coal)",
     "ercot_dam_availability_coal_event_cap": "measured DAM-award coal event cap",
+    "ercot_as_held_location": "measured NP3-965 telemetered per-class AS holds",
     # Added by the FFR-W1X Wave-1 close (2026-08-02), not by FFR-1D: the field
     # landed with ERCOT-149 (73e237a, 2026-08-01) AFTER this family was
     # written, and it is the literal sibling of the coal entry directly above —
@@ -6751,6 +6762,31 @@ class ScenarioConfig:
     # AS plan net of the LR / storage-award supply credits — no parameter is
     # fitted to a price residual. Default off; ERCOT multi-product co-opt
     # only. GATED — tightens every ORDC-regime year; re-gate all years.
+    ercot_as_held_location: bool = False  # ERCOT multi-product co-opt
+    # (ercot-226 F2, PRECOMMIT-ercot226-held-sequestration-2026-08-22 §2 under
+    # owner waiver W-3 (ercot-226)): pin WHERE the rigid-product held MW sit,
+    # at class grain, from the measured NP3-965 telemetered per-class AS
+    # responsibilities (derive_ercot_as_responsibility.py; a measured power
+    # reservation — rule 13's own admissible example — never a price). The
+    # co-opt satisfies the system-wide rigid RegUp/RRS/ECRS requirements with
+    # the cheapest-to-hold (idle/extra-marginal) capacity, so the headroom
+    # rows stay slack while the model keeps ~GW more cheap dispatchable
+    # supply than real SCED had (FINDING-ercot217 §5 — the ~2.7 GW wedge,
+    # RESEARCH-ercot218b §4); the real 2023 grid held these products on
+    # specific ONLINE units (the HASL carve, Nodal §6.5.7.6.2.3/§3.17),
+    # displacing marginal energy supply. Armed: per measured thermal class
+    # (gas_cc / coal / gas_st — reserves.spec.ERCOT_HELD_CLASS_GROUPS) a new
+    # reserve class + class-scoped headroom row + rigid VOLL-step family
+    # requiring the class's measured held MW (clipped at the class's own
+    # pmax×availability — data-vs-data, no free parameter), with a CONSERVING
+    # credit on the product requirements so the total held quantity is
+    # unchanged (rule 19: location only). Held series are zero outside their
+    # published coverage (delivery-2023 in the tracked corpus), so an
+    # uncovered year's design is BYTE-IDENTICAL to flag-off — the 2024/2025
+    # invariance is by construction, and the forward story is the endogenous
+    # allocation (a forecast year carries no disclosure, exactly like
+    # outage_source="historic"). Backcast-only measured overlay
+    # (_BACKCAST_ONLY_OVERLAY_FIELDS). Default off; ERCOT only. GATED.
     ercot_ordc_total_reserve: bool = False  # ERCOT multi-product co-opt: ALSO
     # enforce the lumped ORDC TOTAL-reserve demand curve (the published RTORPA
     # mechanism of the 2014-2025 ORDC regime, NPRR568 / PUCT project 37897 +
@@ -13121,6 +13157,44 @@ class ScenarioConfig:
                     "is the reserve level RTORPA prices."
                 )
 
+        # ercot-226 F2 held-location: fail loud rather than silently no-op or
+        # pair with a construction its row shapes don't support (one writer,
+        # rule 19). It modifies the RIGID families of the multi-product
+        # design, so both the co-opt and at least one rigid flag must be on;
+        # the endogenous-storage split (and its duration gate) would give the
+        # new class rows RS columns this build does not carry; the
+        # ordc_only/envelope pairing is refused inside the design builder.
+        if self.ercot_as_held_location:
+            if not (self.energy_reserve_coopt and self.ercot_multiproduct_as_coopt):
+                raise ValueError(
+                    "ercot_as_held_location requires energy_reserve_coopt + "
+                    "ercot_multiproduct_as_coopt (it carves the multi-product "
+                    "rigid families)."
+                )
+            if not (
+                self.ercot_ecrs_conservative_deployment
+                or self.ercot_nonreleasable_as_withholding
+            ):
+                raise ValueError(
+                    "ercot_as_held_location requires a rigid no-release family "
+                    "(ercot_ecrs_conservative_deployment or "
+                    "ercot_nonreleasable_as_withholding) — the held-location "
+                    "carve is the rigid design's WHERE, not a new quantity."
+                )
+            if self.ercot_storage_as_endogenous or self.ercot_storage_as_duration_gate:
+                raise ValueError(
+                    "ercot_as_held_location cannot pair with the endogenous "
+                    "storage AS split / duration gate (unsupported RS-column "
+                    "interaction; the measured storage treatment is the armed "
+                    "path)."
+                )
+            if self.ercot_ordc_only_scarcity:
+                raise ValueError(
+                    "ercot_as_held_location and ercot_ordc_only_scarcity are "
+                    "mutually exclusive: the held families price rigid VOLL "
+                    "steps the plan-hold design deliberately does not."
+                )
+
         # Endogenous storage energy-vs-AS competition is priced *inside* the
         # reserve co-optimization: without it the flag would silently no-op
         # (and, worse, still suppress the exogenous storage AS credit in the
@@ -14136,6 +14210,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_storage_as_reserve_from_year": 1,
     "ercot_ecrs_requirement": 1,
     "ercot_ecrs_requirement_from_year": 1,
+    "ercot_as_held_location": 1,
     "ercot_multiproduct_as_coopt": 1,
     "ercot_ecrs_conservative_deployment": 1,
     "ercot_nonreleasable_as_withholding": 1,

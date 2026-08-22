@@ -1205,6 +1205,54 @@ def ercot_as_plan_requirement_mw(year: int, hours: int, as_type: str) -> np.ndar
     return out
 
 
+#: ercot-226 F2 held-location: parquet column token per rigid AS product
+#: (RRSFFR deliberately excluded — PRECOMMIT-ercot226 DECISION-2; NSPIN is not
+#: a rigid family, so it carries no held-location leg).
+ERCOT_HELD_PRODUCT_COLS: dict[str, str] = {
+    "REGUP": "regup",
+    "RRS": "rrs",
+    "ECRS": "ecrs",
+}
+
+
+def ercot_as_held_by_class_mw(
+    year: int, hours: int, klass: str, as_type: str
+) -> np.ndarray:
+    """Measured telemetered AS responsibility held on one plant class, ``(hours,)``.
+
+    The ercot-226 held-LOCATION input (``ercot_as_held_location``,
+    PRECOMMIT-ercot226-held-sequestration-2026-08-22 §2 F2): per class token
+    (``gas_cc`` / ``coal`` / ``gas_st`` — the committed RESTYPE→class map) and
+    rigid product code, the NP3-965 60-Day SCED telemetered upward-AS
+    responsibility MW on ONLINE Gen resources, hourly, derived by
+    ``scripts/data/derive_ercot_as_responsibility.py``. A measured power
+    reservation (rule 13's own admissible example) — a QUANTITY, never a
+    price.
+
+    Returns ``(hours,)`` MW on the non-leap 8760 clock; zero-padded if short
+    and **all-zero when the file or column is absent** — the
+    measured-where-published contract that makes an uncovered year's design
+    byte-identical to the flag-off design (2024/2025 invariance by
+    construction).
+    """
+    path = _ERCOT_AS_DIR / f"ercot_{year}_as_responsibility_by_class_hourly.parquet"
+    if not path.exists():
+        return np.zeros(int(hours), dtype=float)
+    col = ERCOT_HELD_PRODUCT_COLS.get(str(as_type))
+    if col is None:
+        return np.zeros(int(hours), dtype=float)
+    import pandas as pd
+
+    df = pd.read_parquet(path)
+    name = f"{klass}_{col}"
+    if name not in df.columns:
+        return np.zeros(int(hours), dtype=float)
+    series = df[name].to_numpy(dtype=float)
+    if len(series) < hours:
+        series = np.concatenate([series, np.zeros(int(hours) - len(series))])
+    return series[: int(hours)]
+
+
 def ercot_as_forward_drivers(
     system_load: np.ndarray, wind_gen: np.ndarray, solar_gen: np.ndarray
 ) -> dict[str, np.ndarray]:
