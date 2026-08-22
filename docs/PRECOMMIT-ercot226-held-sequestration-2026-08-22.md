@@ -448,6 +448,24 @@ window_concentration, calm_fortnight_bias, channel_attribution},
 adaptive {spike_days, p_hat_max, floored_hours_ge_1000},
 verdict {adoption_pass, failed_criteria[]}}`.
 
+### 5.10 AMENDMENT 1 (2026-08-22, before any probe was scored — gate-definition
+correction discovered on committed baseline artifacts)
+
+The §5.3/§5.5 channel-attribution rule as first written ("withheld-family
+VOLL-shortfall engagement = 0 hours") mis-specifies the intent: the gate
+wrapper's self-test on the KEEPER ITSELF (control ≡ arm ≡
+`ercot223_release_arm`, 2023) shows the keeper's own rigid families already
+engage their VOLL steps in **21 hours of 2023** (ECRS_withheld 11 shortfall
+hours / max 1,672 MW; RRS_withheld 9 / 1,284; RegUp_withheld 11 / 344;
+family dual at VOLL in 21 hours each) — the model's *designed* scarcity
+expression at the hours it catches, present in the promoted baseline. An
+absolute-zero rule would fail the unmodified keeper. The intent — no
+improvement through MANUFACTURED shortage — is therefore pinned in the
+G-SHED subset form: **per rigid family, the arm's shortfall HOUR SET must be
+a subset of the control's** (`G-SHORTFALL` in `ercot226_gates.py`; new
+engagement hours are listed and fail the gate). No factor had been scored
+when this amendment landed; the adoption criteria are otherwise unchanged.
+
 ## 6. EXECUTION PROTOCOL (hub-and-spokes, per the owner's parallel-session
 instruction)
 
