@@ -137,6 +137,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     gas_daily_shape: { cell: "K", ev: "pjm-107 (adopted, leg A); pjm-139 W0/W1 (cell confirmed K; all-ISO day-scale resolution bound)" },
     zonal_gas_basis: { cell: "K" },
     gas_hub_basis_overlay: { cell: "." },
+    nyiso_iroquois_winter_spread: { cell: "." },
     winter_citygate_daily: { cell: "R", ev: "pjm-153 (results/calibration/FINDING-pjm153-queue-clear-2026-08-04.md §4; probe scripts/probes/pjm153_queue_screens.py; machine record results/calibration/_pjm153_queue_screens.json) — REFUTED ex ante, no solve spent; pjm-139 W1 (the calendar-day scope bound)" },
     dual_fuel_switching: { cell: "K" },
     gas_price_override: { cell: "K" },

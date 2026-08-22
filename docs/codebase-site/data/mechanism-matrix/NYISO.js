@@ -137,6 +137,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     gas_daily_shape: { cell: "K" },
     zonal_gas_basis: { cell: "K" },
     gas_hub_basis_overlay: { cell: "K" },
+    nyiso_iroquois_winter_spread: { cell: "O", ev: "nyiso-150 (2026-08-22): row split out of gas_hub_basis_overlay's def per DECISION-CARD-nyiso143-iroquois-taxonomy-gap-2026-08-18.md D1 — the field finally has a verdict-bearing cell. Status O carried over from nyiso-122: construction gates PASS (annual conservation Delta=0.00000 x3 years; NYC delivered gas bit-identical all 36 months), refused ex ante AS THE C3a-2025 WINTER LEVER on reach (that refusal stands un-relitigated on the overlay row), standalone rule-14 measured-input case open. nyiso-150 runs the A/B under PREREG-nyiso150-gradient-winter-and-reserve-rearm-2026-08-22.md (ARM W) with the nyiso-122 grounds mapped to kill gates (Amendment 1); verdict to be stamped by the same session on the gate record." },
     winter_citygate_daily: { cell: "." },
     dual_fuel_switching: { cell: "K" },
     gas_price_override: { cell: "K" },

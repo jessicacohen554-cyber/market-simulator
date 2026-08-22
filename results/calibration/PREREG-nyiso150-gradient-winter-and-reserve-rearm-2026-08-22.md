@@ -212,6 +212,43 @@ limitation's face and is reported at full magnitude, never called progress.
   mechanism (`gas_hub_basis_overlay` + `nyiso_zonal_gas_basis`, both already
   armed) — one mechanism, its measured monthly form; nothing stacks.
 
+## AMENDMENT 1 (disclosed before any arm solve) — the nyiso-122 refusal grounds, re-read and mapped to gates
+
+The `gas_hub_basis_overlay` row def carries nyiso-122's ex-ante refusal of this
+flag *as the C3a-2025 winter lever*, on four measured grounds. This prereg does
+NOT re-litigate that refusal — the arm is run as the rule-14 measured-input
+repair whose "standalone case survives untested by solve" per the same record,
+under the owner round §0 describes — and each refusal ground maps to a kill
+gate so the A/B cannot succeed by the refused route failing silently:
+
+* **(a) "it cannot touch NYC"** — confirmed independently in §1.1 (NYC gas
+  bit-identical). Any NYC winter improvement must come through the COUPLED
+  clearing (the eastern marginal unit re-pricing the block) or not at all;
+  W-K3(a) gates the NYC spread leg on the same ≥30 % bar, and if the static
+  read is right and the LP agrees, that leg fails and the arm registers as a
+  rejection — which is itself the decisive measurement the ex-ante read could
+  not make (nyiso-82's solved A/B on the pre-CHP keeper moved winter months
+  decisively; the two reads disagree BECAUSE prices move through the coupled
+  marginal unit, and only a solve arbitrates).
+* **(b) "it cuts Upstate-January gas by $7.48 on the one zone that is
+  currently right"** — the UW-January accuracy still holds on the 149 keeper
+  (−2.2 $/MWh err) and W-K3(d) (anti-relocation: no year's worst-zone error
+  may worsen) plus ADV-W2 make breaking UW a kill, not a footnote.
+* **(c) "it lifts December on a month already accurate"** — no longer true at
+  the 149 keeper for 2025 (UW Dec-25 is +6.9 % OVER and the flag *cuts* UW
+  Dec gas; LI Dec-25 is −13.9 % UNDER and the flag lifts its reference), but
+  Dec-2025 stays ungated and reported, and the overshoot kill in W-K3(a)
+  bounds the gated months.
+* **(d) "the measured NYC−Upstate gas spread is worth only $12.75–17.00/MWh
+  against a $44.28 actual premium"** — accepted: Jan-2025 is reported, not
+  gated. The GATED months were chosen where the mechanism's measured reach
+  covers the actual spread: Feb-25 reference−UW gas spread $7.38/MMBtu
+  (≈$55/MWh at CC heat rates) vs $24–27 actual; Dec-24 $4.86 (≈$36) vs
+  $11–18; Feb-23 $6.47 (≈$48) vs $22–44.
+
+The C3a-2025 *system* consequence remains fully gated by W-K5 in both
+directions, and the summer surrender by ADV-W1 + W-K3(d).
+
 ## 7. REPRODUCTION
 
 ```
