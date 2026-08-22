@@ -129,6 +129,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     tranche_startup_amortization: { cell: "G", ev: "ERCOT-145 (docs/DIAGNOSIS-ercot145-tranche-startup-2026-07-31.md)" },
     measured_ct_heat_rates: { cell: "I", ev: "ERCOT-146 (docs/DIAGNOSIS-ercot146-measured-ct-heat-rates-2026-07-31.md)" },
     measured_chp_heat_rates: { cell: "U" },
+    egrid_identity_heat_rates: { cell: "U" },
     da_virtual_bids: { cell: "." },
     negative_renewable_offers: { cell: "G" },
     wind_ptc_vintage_offers: { cell: "I" },

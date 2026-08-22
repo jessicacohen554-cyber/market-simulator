@@ -1,0 +1,2 @@
+plant_id,egrid_orispl,heat_rate_mmbtu_mwh,n_vintages,vintages,per_vintage_hr,loyo_min,loyo_max,source
+7784,10619,8.4209,7,2018;2019;2020;2021;2022;2023;2024,2018:8.6826;2019:7.9904;2020:8.6533;2021:8.6820;2022:8.1456;2023:8.5785;2024:8.4401,8.3434,8.5266,eGRID PLHTIAN/PLNGENAN pooled over matched vintages; identity = exact PLNGENAN == EIA-923 annual netgen (<0.5 MWh) in every overlapping vintage

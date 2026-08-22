@@ -3547,6 +3547,7 @@ def solve_and_persist(
     cc_reserve_duty_split: bool | None = None,
     chp_layup_duty_split: bool | None = None,
     chp_layup_duty_curve: bool | None = None,
+    egrid_identity_heat_rates: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -4524,6 +4525,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 chp_layup_duty_curve=chp_layup_duty_curve
             )
+        if egrid_identity_heat_rates is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                egrid_identity_heat_rates=egrid_identity_heat_rates
+            )
         if cc_reserve_duty_split is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_reserve_duty_split=cc_reserve_duty_split
@@ -5258,6 +5263,7 @@ def solve_and_persist(
             cc_reserve_duty_split=cc_reserve_duty_split,
             chp_layup_duty_split=chp_layup_duty_split,
             chp_layup_duty_curve=chp_layup_duty_curve,
+            egrid_identity_heat_rates=egrid_identity_heat_rates,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
             nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
@@ -6130,6 +6136,7 @@ def solve_and_persist(
         "cc_reserve_duty_split": cc_reserve_duty_split,
         "chp_layup_duty_split": chp_layup_duty_split,
         "chp_layup_duty_curve": chp_layup_duty_curve,
+        "egrid_identity_heat_rates": egrid_identity_heat_rates,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
         "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
         "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
@@ -11735,6 +11742,20 @@ def main() -> None:
         "constants.",
     )
     parser.add_argument(
+        "--egrid-identity-heat-rates",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="eGRID IDENTITY-RECONCILED heat rates (nyiso-151): a CAMPD-less "
+        "fossil plant whose measured eGRID history lives under a DIFFERENT "
+        "ORISPL (a proven two-registry identity split, e.g. Allegany EIA "
+        "7784 <-> eGRID 10619) takes its pooled PLHTIAN/PLNGENAN rate from "
+        "the committed per-ISO artifact "
+        "(egrid_identity_heat_rates_<ISO>.csv, "
+        "scripts/data/derive_egrid_identity_heat_rates.py) instead of the "
+        "HEAT_RATE_BINS vintage class default. Threshold-free discovery "
+        "rule; zero fitted parameters; no-op for an ISO with no artifact.",
+    )
+    parser.add_argument(
         "--cc-reserve-duty-split",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12219,6 +12240,7 @@ def main() -> None:
         cc_reserve_duty_split=args.cc_reserve_duty_split,
         chp_layup_duty_split=args.chp_layup_duty_split,
         chp_layup_duty_curve=args.chp_layup_duty_curve,
+        egrid_identity_heat_rates=args.egrid_identity_heat_rates,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
         nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,

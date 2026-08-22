@@ -1621,6 +1621,61 @@ def load_binned_fleet(iso: str) -> pd.DataFrame:
     return pd.read_parquet(cache_path)
 
 
+def egrid_identity_heat_rates_for(iso: str) -> dict[int, float]:
+    """Load the committed eGRID identity-reconciled heat-rate artifact.
+
+    ``{plant_id: pooled_heat_rate}`` from
+    ``data/raw/_processed-legacy/egrid_identity_heat_rates_<ISO>.csv``
+    (``scripts/data/derive_egrid_identity_heat_rates.py`` — the threshold-free
+    two-registry identity discovery rule; see the ScenarioConfig
+    ``egrid_identity_heat_rates`` docstring and
+    ``FINDING-nyiso150-allegany-hr-identity-2026-08-22.md``). Empty when the
+    ISO has no committed artifact — the mechanism is a no-op there by
+    construction (rule 25: each ISO's lane derives its own artifact).
+    """
+    from market_sim.config.paths import PROCESSED_DIR
+
+    path = PROCESSED_DIR / f"egrid_identity_heat_rates_{iso}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if df.empty or not {"plant_id", "heat_rate_mmbtu_mwh"}.issubset(df.columns):
+        return {}
+    return {
+        int(r.plant_id): float(r.heat_rate_mmbtu_mwh)
+        for r in df.itertuples()
+        if float(r.heat_rate_mmbtu_mwh) > 0.0
+    }
+
+
+def apply_egrid_identity_heat_rates(generators: list, iso: str) -> frozenset[int]:
+    """Swap in the identity-reconciled measured heat rate where it covers.
+
+    In-place, gated by ``ScenarioConfig.egrid_identity_heat_rates`` at the
+    call site; every unit of a covered plant takes the plant's pooled
+    measured rate (the plants are single-block small CCs whose class default
+    was the only rate they carried). Returns the ``id()`` set of repriced
+    generators, mirroring :func:`market_sim.data.chp.apply_measured_chp_heat_rates`.
+    """
+    rates = egrid_identity_heat_rates_for(iso)
+    if not rates:
+        return frozenset()
+    touched: set[int] = set()
+    for gen in generators:
+        rate = rates.get(int(getattr(gen, "plant_code", 0) or 0))
+        if rate is not None:
+            gen.heat_rate = rate
+            touched.add(id(gen))
+    logger.info(
+        "%s: eGRID identity-reconciled heat rates applied to %d generator(s) "
+        "across %d plant(s)",
+        iso,
+        len(touched),
+        len(rates),
+    )
+    return frozenset(touched)
+
+
 def load_fleet_from_csv(
     iso: str,
     iso_config: ISOConfig | None = None,
@@ -1629,6 +1684,7 @@ def load_fleet_from_csv(
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
     measured_chp_heat_rates: bool = False,
+    egrid_identity_heat_rates: bool = False,
     apply_chp_steam_credit_correction: bool = True,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
@@ -1793,6 +1849,14 @@ def load_fleet_from_csv(
         if measured_chp_heat_rates
         else frozenset()
     )
+    # eGRID identity-reconciled heat rates (config.egrid_identity_heat_rates,
+    # default off): a plant whose measured eGRID history lives under a
+    # DIFFERENT ORISPL (the proven two-registry identity splits of the
+    # committed per-ISO artifact) takes its pooled measured rate instead of
+    # the HEAT_RATE_BINS vintage class default. Off, the artifact is not read
+    # and the fleet is byte-identical.
+    if egrid_identity_heat_rates:
+        apply_egrid_identity_heat_rates(generators, iso)
     if not apply_chp_steam_credit_correction:
         # Basis-inspection read only (the CHP derive). Return before the hand
         # factor AND before the cache write, so the committed side cache always

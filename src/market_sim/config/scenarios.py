@@ -171,6 +171,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the hash at its default so every pre-existing cached run keeps its key;
     # an armed run carries a different fleet cost and so gets a distinct key.
     "measured_chp_heat_rates",
+    # eGRID identity-reconciled heat rates (nyiso-151, default off): dropped
+    # from the hash at its default so every pre-existing cached run keeps its
+    # key; an armed run carries a different fleet cost and so gets a distinct
+    # key.
+    "egrid_identity_heat_rates",
     # Combined-cycle steam-part capacity repair (miso-126, default off):
     # dropped from the hash at its default so every pre-existing cached run
     # keeps its key; an armed run carries a different FLEET and so gets a
@@ -1114,6 +1119,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ramp_limits": "False",
     "measured_ct_heat_rates": "False",
     "measured_chp_heat_rates": "False",
+    "egrid_identity_heat_rates": "False",
     "cc_steam_part_capacity": "False",
     "cc_steam_part_reclass": "False",
     "crossover_forward_year": "None",
@@ -2871,6 +2877,28 @@ class ScenarioConfig:
     # scripts/data/derive_chp_power_only_heat_rates.py and
     # results/calibration/FINDING-miso99-chp-heat-rate-2026-07-28.md.
     measured_chp_heat_rates: bool = False
+
+    # eGRID IDENTITY-RECONCILED heat rates (nyiso-151; default OFF,
+    # byte-identical off). A fossil plant the fleet knows by its EIA-860/923
+    # plant id can carry its measured history in eGRID under a DIFFERENT
+    # ORISPL (a two-registry identity split, the campd.CAMPD_UNIT_PLANT_REMAP
+    # / Astoria 55375<->57664 family). Such a plant has no CAMPD record under
+    # either id, so it prices at the HEAT_RATE_BINS vintage class default
+    # even though a stable multi-vintage measured rate exists. When True,
+    # plants covered by the committed per-ISO artifact
+    # (data/raw/_processed-legacy/egrid_identity_heat_rates_<ISO>.csv,
+    # scripts/data/derive_egrid_identity_heat_rates.py) take their pooled
+    # eGRID PLHTIAN/PLNGENAN rate. Membership is a threshold-free DISCOVERY
+    # RULE, never a per-plant carve: exact PLNGENAN == EIA-923 annual netgen
+    # (<0.5 MWh) in EVERY overlapping eGRID vintage, >=2 overlaps, same
+    # state, different ORISPL — run over the ISO's whole CAMPD-less fossil
+    # population (NYISO: 108 candidates x 7 vintages -> exactly one hit,
+    # Allegany 7784<->10619, 7/7). The rate is arithmetic on eGRID's own
+    # published fields (the accepted 55641 boundary-repair posture); rule 13:
+    # regenerates from any new eGRID/EIA-923/CAMPD vintage and responds to
+    # changed conditions; rule 25: each ISO's lane derives its own artifact.
+    # See FINDING-nyiso150-allegany-hr-identity-2026-08-22.md.
+    egrid_identity_heat_rates: bool = False
 
     # Combined-cycle STEAM-part capacity repair (miso-126; default OFF,
     # byte-identical off). EIA-860's ``Energy Source 1`` on a ``CA``
