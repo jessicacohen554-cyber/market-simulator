@@ -2049,10 +2049,13 @@ def fleet_to_bins(
             and code in _chp_layup_cohort(iso)
         ):
             _duty = _chp_duty_curve(iso).get(code)
-            if _duty is not None:
+            if _duty is not None and cap > 0.0:
+                # MW contract (PREREG-nyiso149 §7): the duty tuple is MW;
+                # the frame's pct columns express it against THIS bin's own
+                # capacity, so the two seams can never disagree on basis.
                 pct_mc = 0.0
-                pct_econ = min(_duty[0], max(0.0, room))
-                pct_peak = min(_duty[1], max(0.0, room - pct_econ))
+                pct_econ = min(100.0 * _duty[0] / cap, max(0.0, room))
+                pct_peak = min(100.0 * _duty[1] / cap, max(0.0, room - pct_econ))
         mults = _DEFAULT_HR_MULT_BY_GROUP.get(
             group, _DEFAULT_HR_MULT_BY_GROUP["CC_REGULAR"]
         )

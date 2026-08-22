@@ -109,10 +109,14 @@ def k1_exactness() -> dict:
         return o
 
     fb, fa = flat(b), flat(a)
+    # Provenance keys (when the solve ran, free-text notes) are metadata, not
+    # config — excluded from the exactness diff (PREREG §7).
+    _PROVENANCE = ("timestamp", "note", "git.", "hostname")
     diffs = {
         k: (fb.get(k), fa.get(k))
         for k in set(fb) | set(fa)
         if fb.get(k) != fa.get(k)
+        and not any(k == p or k.startswith(p) or k.endswith("." + p) for p in _PROVENANCE)
     }
     ok = set(diffs) <= {
         "chp_layup_duty_curve",
@@ -154,17 +158,15 @@ def _fleet_caps(run_dir: Path) -> dict[int, dict[str, float]]:
 
 
 def k2_liveness() -> dict:
-    cen, dc = census(), duty()
+    dc = duty()
     base_caps = _fleet_caps(BASE)
     arm_caps = _fleet_caps(ARM)
     plants, ok = {}, True
-    for code, (pe, pp) in sorted(dc.items()):
-        pmax = float(cen[str(code)]["model_pmax_mw"]) if str(code) in cen else None
-        if pmax is None:
-            pmax = float(cen[code]["model_pmax_mw"])
+    for code, (pe_mw, pp_mw) in sorted(dc.items()):
         a = arm_caps.get(code, {})
-        want_total = pmax * (pe + pp) / 100.0
-        want_peak = pmax * pp / 100.0
+        # MW contract (PREREG §7): the artifact's MW ARE the wanted caps.
+        want_total = pe_mw + pp_mw
+        want_peak = pp_mw
         got_total = a.get("total", 0.0)
         got_peak = a.get("peak", 0.0)
         row_ok = (

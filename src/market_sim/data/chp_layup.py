@@ -72,16 +72,19 @@ def load_chp_layup_census(iso: str) -> frozenset[int]:
 
 
 def load_chp_duty_curve(iso: str) -> dict[int, tuple[float, float]]:
-    """Return ``{plant_code: (pct_econ, pct_peak)}`` for *iso*'s duty-curve cohort.
+    """Return ``{plant_code: (econ_mw, peak_mw)}`` for *iso*'s duty-curve cohort.
 
     The nyiso-149 price-conditional duty artifact
     (``chp_duty_curve_{ISO}.csv``, ``scripts/data/derive_nyiso_chp_duty_curve.py``)
     — the graded successor to the rejected single-band lay-up split: per census
-    plant, the measured share of model capacity that belongs at the class ECON
-    band and at the class PEAK band (envelope-conditional on-share x loading x
-    HSL/pmax); the remainder is WITHHELD from the offer entirely. Membership is
-    the intersection with :func:`load_chp_layup_census` at the consumption seam
-    (the census stays the single membership authority — rule 19).
+    plant, the measured MW that belongs at the class ECON band and at the class
+    PEAK band (envelope-conditional on-share × loading × HSL — a basis-free MW
+    quantity; the first ARM F solve applied pct-of-census-pmax fractions to the
+    bin nameplate and over-offered by the basis ratio, caught by gate F-K2 —
+    PREREG-nyiso149 §7); the remainder is WITHHELD from the offer entirely.
+    Membership is the intersection with :func:`load_chp_layup_census` at the
+    consumption seam (the census stays the single membership authority —
+    rule 19).
 
     A missing artifact is a normal state (per-ISO, additive): returns an empty
     mapping and the caller keeps every plant on its class curve, logging what
@@ -98,6 +101,6 @@ def load_chp_duty_curve(iso: str) -> dict[int, tuple[float, float]]:
         return {}
     with path.open(newline="") as fh:
         return {
-            int(row["plant_code"]): (float(row["pct_econ"]), float(row["pct_peak"]))
+            int(row["plant_code"]): (float(row["econ_mw"]), float(row["peak_mw"]))
             for row in csv.DictReader(fh)
         }

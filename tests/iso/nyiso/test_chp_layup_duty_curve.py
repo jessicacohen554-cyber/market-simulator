@@ -26,7 +26,10 @@ from market_sim.data.fleet.assembly import bins_to_fleet
 
 COHORT = 1111
 OTHER = 2222
-DUTY = {COHORT: (20.0, 10.0)}  # pct_econ, pct_peak (% of model pmax)
+# The duty tuple is a MW quantity (econ_mw, peak_mw) — PREREG-nyiso149 §7:
+# the first solve treated it as a pct of one capacity basis applied to
+# another and over-offered by the basis ratio (caught by gate F-K2).
+DUTY = {COHORT: (20.0, 10.0)}  # econ_mw, peak_mw
 
 
 def _gen(code, group="CC_CHP", name="P", pmax=100.0, hr=8.5):
@@ -138,14 +141,24 @@ class TestCommittedArtifact(unittest.TestCase):
             load_chp_layup_census,
         )
 
+        import csv
+
+        from market_sim.config.paths import PROCESSED_DIR
+
         curve = load_chp_duty_curve("NYISO")
         census = load_chp_layup_census("NYISO")
         self.assertEqual(set(curve), set(census))
-        for code, (pe, pp) in curve.items():
-            self.assertGreaterEqual(pe, 0.0, code)
-            self.assertGreaterEqual(pp, 0.0, code)
-            # the whole point: a graded, PARTIAL offer — never the full plant
-            self.assertLess(pe + pp, 100.0, code)
+        with (PROCESSED_DIR / "chp_duty_curve_NYISO.csv").open(newline="") as fh:
+            rows = {int(r["plant_code"]): r for r in csv.DictReader(fh)}
+        for code, (pe_mw, pp_mw) in curve.items():
+            self.assertGreaterEqual(pe_mw, 0.0, code)
+            self.assertGreaterEqual(pp_mw, 0.0, code)
+            # the whole point: a graded, PARTIAL offer — the offered MW never
+            # reaches the plant's own observed HSL, let alone its capacity
+            hsl = float(rows[code]["hsl_mw"])
+            pmax = float(rows[code]["pmax_mw"])
+            self.assertLess(pe_mw + pp_mw, hsl, code)
+            self.assertLess(pe_mw + pp_mw, pmax, code)
         # the graded signature that rejected the single band: every plant
         # carries a non-trivial econ leg (the split had zero)
         self.assertTrue(all(pe > 1.0 for pe, _ in curve.values()))

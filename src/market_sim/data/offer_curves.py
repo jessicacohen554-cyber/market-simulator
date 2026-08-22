@@ -992,9 +992,10 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
         if group in _CHP_GROUPS and plant_code in _chp_layup_cohort(_iso):
             _duty = _chp_duty_curve(_iso).get(plant_code)
             if _duty is not None:
+                # MW contract (PREREG-nyiso149 §7): the duty tuple IS the MW.
                 committed_cap = 0.0
-                peak_cap = min(nameplate * _duty[1] / 100.0, grid_cap)
-                econ_cap = min(nameplate * _duty[0] / 100.0, grid_cap - peak_cap)
+                peak_cap = min(_duty[1], grid_cap)
+                econ_cap = min(_duty[0], grid_cap - peak_cap)
                 grid_cap = committed_cap + peak_cap + econ_cap
 
     # Per-band heat rates, mirroring bins_to_fleet (offer-curve multipliers,

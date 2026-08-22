@@ -248,8 +248,13 @@ def main() -> None:
         s_mid = float(on[mid].mean()) if mid.any() else 0.0
         s_hi = float(on[hi].mean()) if hi.any() else 0.0
         loading = float((pool["grossLoad"].to_numpy(float)[on] / hsl).mean())
-        pct_econ = 100.0 * s_mid * loading * hsl / pmax
-        pct_peak = 100.0 * max(0.0, s_hi - s_mid) * loading * hsl / pmax
+        # The duty is a MW quantity — basis-free (PREREG §7: expressing it as
+        # a fraction of one capacity basis and applying it to another re-based
+        # it; the seams consume these MW directly).
+        econ_mw = s_mid * loading * hsl
+        peak_mw = max(0.0, s_hi - s_mid) * loading * hsl
+        pct_econ = 100.0 * econ_mw / pmax
+        pct_peak = 100.0 * peak_mw / pmax
         out_rows.append(
             {
                 "iso": ISO,
@@ -261,6 +266,8 @@ def main() -> None:
                 "s_mid_env": round(s_mid, 4),
                 "s_hi_env": round(s_hi, 4),
                 "loading_when_on": round(loading, 4),
+                "econ_mw": round(econ_mw, 2),
+                "peak_mw": round(peak_mw, 2),
                 "pct_econ": round(pct_econ, 2),
                 "pct_peak": round(pct_peak, 2),
                 "years": "-".join(str(y) for y in YEARS),

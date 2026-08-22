@@ -644,12 +644,14 @@ def bins_to_fleet(
             if _duty is not None and plant_code in _pkg_ns()._chp_layup_cohort(
                 str(getattr(config, "iso", "") or "")
             ):
-                # Fractions are % of the plant's FULL model capacity (the
-                # census pmax basis the artifact was derived on), clamped
+                # The duty is a MW quantity (s·L·HSL — basis-free), clamped
                 # into the grid-facing share so the BTM hold-out is honored.
+                # (The first solve applied pct-of-census-pmax fractions to
+                # the BIN nameplate and over-offered by the basis ratio —
+                # caught by gate F-K2, PREREG-nyiso149 §7.)
                 committed_cap = 0.0
-                peak_cap = min(nameplate * _duty[1] / 100.0, grid_cap)
-                econ_cap = min(nameplate * _duty[0] / 100.0, grid_cap - peak_cap)
+                peak_cap = min(_duty[1], grid_cap)
+                econ_cap = min(_duty[0], grid_cap - peak_cap)
                 grid_cap = committed_cap + peak_cap + econ_cap
 
         zone = str(b["ERCOT_Zone"])

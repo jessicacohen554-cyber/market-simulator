@@ -7778,7 +7778,12 @@ class ScenarioConfig:
     # mothball spells, rule 19 [R-ONE-MECH]) sizes an ECON tranche
     # (pct_econ = s_mid x loading x HSL/pmax) and a PEAK tranche
     # (pct_peak = (s_hi - s_mid) x loading x HSL/pmax) at the class curve's
-    # EXISTING band multipliers — zero new price constants (rule 21) — and
+    # EXISTING band multipliers — zero new price constants (rule 21). The
+    # artifact carries the duty as MW (econ_mw/peak_mw = s x L x HSL,
+    # basis-free) and the seams consume the MW directly: the first arm solve
+    # applied pct-of-census-pmax fractions to the bin nameplate and
+    # over-offered by the basis ratio, caught by gate F-K2
+    # (PREREG-nyiso149 §7) — and
     # the remainder is WITHHELD from the offer entirely (energy and
     # reserves): the measured "never seen at any price" share; a mothballed
     # train does not return for a price spike. Rule 13: the statistic
