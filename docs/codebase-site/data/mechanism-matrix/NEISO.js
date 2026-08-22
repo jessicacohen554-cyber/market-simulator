@@ -44,6 +44,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     ercot_storage_adaptive_expectation: { cell: "." },
     ercot_as_held_requirement: { cell: "." },
     ercot_as_held_location: { cell: "." },
+    ercot_load_forecast_margin: { cell: "." },
     maxgen_emergency_tier_pricing: { cell: "U" },
     nyiso_rcpf_family: { cell: "." },
     reserve_family_dual_sidecar: { cell: "I" },
