@@ -1,12 +1,14 @@
 {
  "program": "Forecast Finalization Program (FF)",
- "generated": "2026-08-04",
+ "generated": "2026-08-22",
  "sources": [
   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md (FFR-3A-3 \u2014 post-FFR-3F re-measurement of the T1-H/T1-X halves)",
   "docs/handoffs/ff-t1-gate-2026-07.md (FF-2D \u2014 T1 gate battery, six ISOs)",
   "docs/handoffs/ff-poc-closeout-2026-07.md (FF-3E \u2014 full-solve readiness + \u00a72.1b scorecard)",
   "docs/handoffs/ff-t1-gate-verdicts.json (FC-1..FC-8 rubric verdicts)",
-  "docs/forecast-development-plan-2026-07.md \u00a71.2 / \u00a72.1 / \u00a72.1b"
+  "docs/forecast-development-plan-2026-07.md \u00a71.2 / \u00a72.1 / \u00a72.1b",
+  "docs/forecast-development-plan-2026-07.md \u00a72.1b(2)(a) (gate (a) pass criterion)",
+  "FR-21 gate-(a) refresh 2026-08-22 at cb7aadf8408a (keepers/status/markers re-read live)"
  ],
  "headline": "No ISO clears the T1->T2 rubric gate at HEAD \u2014 all six read HOLD, unchanged from FF-2D and unchanged after FFR-3A-3 re-measured the T1-H and T1-X halves at the post-FFR-3F HEAD. No ISO clears the \u00a72.1b full-solve authorization gate either. NO DETERMINATION MOVED, but two band-level results did: MISO's retire.total_gw flipped PASS -> FAIL (its 3/3 retirement sweep does not survive the G3 cap-grain fix) and PJM's retirement depth improved 22.415 -> 18.862 GW. Both PJM and MISO now land exactly on the values FFR-2B measured against a paired control. This board is the \u00a72.1b evidence, not a green-wash: every remaining blocker is structural (rule 1).",
  "gate_reading": "The dominant T1-F blocker is FC-1 structural \u2014 the I4 capacity-accounting leak (the FF-0B \"A1\" finding, still open) for CAISO/PJM/MISO/NEISO, plus I7 base-year adequacy (A2) for CAISO/MISO/NYISO and ERCOT's I3 scarcity slack. PJM and NEISO are closest \u2014 their only T1-F blocker is the single I4 leak invariant; fix A1 and both clear FC-1. The FF-2C capacity-clearing flip is the structurally-correct mechanism and is working; the residuals it exposes are the open retirement-rule / backstop / capacity-accounting lanes, not tuning targets.",
@@ -78,8 +80,9 @@
    "gate": {
     "a_keeper_marker": {
      "status": "fail",
-     "detail": "keeper 2026-08-03-ercot158-pool-arm; determination NOT-YET; marker complete=False final=False.",
-     "read_live_at": "e2a422c1"
+     "detail": "keeper 2026-08-20-ercot223-arm-eventrelease (full-span 2023-2025, rule 16); determination NOT-YET; marker complete=False final=False. Absent from the `complete` block, so gate (a) is closed on the marker; the NOT-YET determination is concurring evidence, not the gate test. Gate (a) test is charter \u00a72.1b(2)(a): designated full-span keeper AND an entry in the `complete` block; `final` is never required for forecast work.",
+     "read_live_at": "cb7aadf8408a",
+     "corrected_by": "forecast-gate-refresh (2026-08-22, FR-21)"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -131,8 +134,9 @@
    "gate": {
     "a_keeper_marker": {
      "status": "fail",
-     "detail": "keeper 2026-08-04-caiso164-zonal-loss-surface; determination CALIBRATED-WITH-CAVEATS; marker complete=False final=False.",
-     "read_live_at": "e2a422c1"
+     "detail": "keeper 2026-08-17-caiso-200-h1-memberpanel (full-span 2023-2025, rule 16); determination NOT-YET; marker complete=False final=False. Absent from the `complete` block, so gate (a) is closed on the marker; the NOT-YET determination is concurring evidence, not the gate test. Gate (a) test is charter \u00a72.1b(2)(a): designated full-span keeper AND an entry in the `complete` block; `final` is never required for forecast work.",
+     "read_live_at": "cb7aadf8408a",
+     "corrected_by": "forecast-gate-refresh (2026-08-22, FR-21)"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -185,8 +189,9 @@
    "gate": {
     "a_keeper_marker": {
      "status": "pass",
-     "detail": "keeper 2026-08-03-pjm-151-seam-envelope; determination CALIBRATED; marker complete=True final=False.",
-     "read_live_at": "e2a422c1"
+     "detail": "keeper 2026-08-15-pjm-162-inputclock (full-span 2023-2025, rule 16); determination CALIBRATED; marker complete=True final=False. Full-span keeper + `complete` entry: both charter conditions met. The determination concurs (CALIBRATED). Gate (a) test is charter \u00a72.1b(2)(a): designated full-span keeper AND an entry in the `complete` block; `final` is never required for forecast work.",
+     "read_live_at": "cb7aadf8408a",
+     "corrected_by": "forecast-gate-refresh (2026-08-22, FR-21)"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -210,7 +215,6 @@
     },
     "open": false,
     "closed_on": [
-     "a",
      "b"
     ]
    },
@@ -241,8 +245,9 @@
    "gate": {
     "a_keeper_marker": {
      "status": "fail",
-     "detail": "keeper 2026-08-04-miso-124-dualfuel-rearm; determination NONE PARSEABLE (no calibration-complete entry, and the promotion note carries no determination string); marker complete=False final=False.",
-     "read_live_at": "e2a422c1"
+     "detail": "keeper 2026-08-22-miso-175-hourkey (full-span 2023-2025, rule 16); determination NOT-YET; marker complete=False final=False. Absent from the `complete` block, so gate (a) is closed on the marker; the NOT-YET determination is concurring evidence, not the gate test. Supersedes the stale 'NONE PARSEABLE' reading: the live keeper's determination parses cleanly from status/MISO.js as NOT-YET. Gate (a) test is charter \u00a72.1b(2)(a): designated full-span keeper AND an entry in the `complete` block; `final` is never required for forecast work.",
+     "read_live_at": "cb7aadf8408a",
+     "corrected_by": "forecast-gate-refresh (2026-08-22, FR-21)"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -297,9 +302,10 @@
    ],
    "gate": {
     "a_keeper_marker": {
-     "status": "fail",
-     "detail": "keeper 2026-08-04-nyiso-120-c119-scope; determination NOT-YET; marker complete=True final=False.",
-     "read_live_at": "e2a422c1"
+     "status": "pass",
+     "detail": "keeper 2026-08-22-nyiso-151-identity-hr (full-span 2023-2025, rule 16); determination CALIBRATED; marker complete=True final=False. Full-span keeper + `complete` entry: both charter conditions met. The determination now concurs (CALIBRATED, rubric v3.3), where the 2026-08-04 board read NOT-YET on a two-promotions-stale keeper. Gate (a) test is charter \u00a72.1b(2)(a): designated full-span keeper AND an entry in the `complete` block; `final` is never required for forecast work.",
+     "read_live_at": "cb7aadf8408a",
+     "corrected_by": "forecast-gate-refresh (2026-08-22, FR-21)"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -351,9 +357,9 @@
    "gate": {
     "a_keeper_marker": {
      "status": "pass",
-     "detail": "keeper 2026-08-05-neiso-83-ca1-reclass (full-span 2023-2025, rule 16); determination CALIBRATED-WITH-CAVEATS; marker complete=True final=False. \u00a72.1b(a) needs the complete block only \u2014 `final` is never required for forecast work. Was 'fail' on a TWO-PROMOTIONS-STALE keeper name (2026-08-03-neiso-caiso156-meter-screen; neiso-81 then neiso-83 landed after the e2a422c1 read). calibration-complete.json's NEISO entry is already re-keyed to the live keeper.",
-     "read_live_at": "7c857c51",
-     "corrected_by": "neiso-88 (2026-08-06)"
+     "detail": "keeper 2026-08-17-neiso-99-joint-p1 (full-span 2023-2025, rule 16); determination CALIBRATED; marker complete=True final=False. Full-span keeper + `complete` entry: both charter conditions met. The determination concurs (CALIBRATED, re-read 2026-08-17 under rubric v3.3; the board's 2026-08-05 text read CALIBRATED-WITH-CAVEATS). Gate (a) test is charter \u00a72.1b(2)(a): designated full-span keeper AND an entry in the `complete` block; `final` is never required for forecast work.",
+     "read_live_at": "cb7aadf8408a",
+     "corrected_by": "forecast-gate-refresh (2026-08-22, FR-21)"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -381,7 +387,7 @@
      "c",
      "d"
     ],
-    "note": "Closest to the gate \u2014 and since neiso-88 (2026-08-06) it is the only ISO whose leg (a) PASSES. Legs (b), (c) and (d) all remain closed: (b) on I7/BLK-10 (a behavioural adequacy defect, NOT the I4 bookkeeping leak, which is closed), (c) because no NEISO T1-X has ever been run, (d) because no authorization exists. See docs/handoffs/neiso-88-forecast-readiness-2026-08-06.md."
+    "note": "Closest to the gate. Legs (b), (c) and (d) all remain closed: (b) on I7/BLK-10 (a behavioural adequacy defect, NOT the I4 bookkeeping leak, which is closed), (c) because no NEISO T1-X has ever been run, (d) because no authorization exists. See docs/handoffs/neiso-88-forecast-readiness-2026-08-06.md. [UPDATED 2026-08-22, FR-21] The former claim that NEISO is 'the only ISO whose leg (a) PASSES' is withdrawn: leg (a) now passes for THREE ISOs \u2014 NEISO, NYISO and PJM \u2014 the full membership of the `complete` block, exactly as owner decision D-5(a) (2026-08-02) already read it."
    },
    "golden": "deferred (\u00a72.1b).",
    "candidate": null,
@@ -539,5 +545,17 @@
   "what_was_refreshed": "Criterion (a) keeper + marker + determination for all six ISOs, read LIVE from frontend/data/backcast/keepers/*.json and calibration-complete.json (the prior seed was generated 2026-07-20 and had gone materially stale \u2014 it recorded PJM as having no calibration-complete marker, which is no longer true). Criterion (b) t1h/t1x determinations for the SIX legs re-solved at the post-FFR-3F HEAD.",
   "what_was_CARRIED_not_remeasured": "Every t1f determination, all blocking_rows, flip notes and per-ISO FC maps for legs this session did not solve. These date from FF-2D/FFR-3A-2 and are NOT re-verified here. MISO T1-X was launched twice and killed twice (the second time by this session's own concurrent git activity) and is explicitly NOT measured \u2014 its t1x cell is null rather than carrying a stale value.",
   "why": "FFR-3A-2's provenance ceiling recorded that its battery measured a SUPERSEDED configuration: FFR-3F's G3 cap-grain fix (2adfb49) is unconditional and moves the admitted exit set under every T1-H finding."
+ },
+ "gate_a_provenance": {
+  "note": "Gate (a) DERIVATION stamp \u2014 records the sha the keeper/marker read was taken at. This is NOT a scoring stamp: no forecast run was solved or re-scored to produce it, and it deliberately avoids the forecast-provenance/v1 field names so scripts/check_forecast_staleness.py can never read it as evidence of a re-score. Gates (b) and (c) still carry their FF-2D verdicts, unmoved.",
+  "derived_at_sha": "cb7aadf8408a",
+  "derived_at_date": "2026-08-22",
+  "derived_by": "forecast-gate-refresh session (FR-21)",
+  "inputs": [
+   "frontend/data/backcast/keepers/<ISO>.json",
+   "frontend/data/backcast/status/<ISO>.js",
+   "frontend/data/backcast/registry/<keeper-id>.json",
+   "frontend/data/backcast/calibration-complete.json"
+  ]
  }
 }

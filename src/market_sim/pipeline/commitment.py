@@ -948,6 +948,30 @@ def _nyiso_gas_bridge_floor(
             in_pop,
             sorted(excluded),
         )
+    # RESERVE-DUTY membership channel (nyiso_gas_bridge_reserve_duty_exclusions,
+    # nyiso-152): the measured capacity-only CC cohort is not in the day-ahead
+    # energy-commitment population either, and the lay-up channel above cannot
+    # reach a plant with no CAMPD series (its criterion is CAMPD-defined).
+    # Same population-gate expression, second measured membership signal —
+    # rule 17 [R-FLOOR-WINDOW] / rule 19 [R-ONE-MECH]; see the field's
+    # ScenarioConfig citation block.
+    if getattr(config, "nyiso_gas_bridge_reserve_duty_exclusions", False):
+        from market_sim.data.reserve_duty import load_reserve_duty_cc
+
+        duty = load_reserve_duty_cc("NYISO")
+        if duty:
+            in_pop = sum(
+                1 for gen in fleet if int(getattr(gen, "plant_code", 0) or 0) in duty
+            )
+            logger.info(
+                "NYISO gas bridge reserve-duty membership correction: %d "
+                "capacity-only plant code(s) excluded, matching %d fleet "
+                "row(s) — %s",
+                len(duty),
+                in_pop,
+                sorted(duty),
+            )
+            excluded = frozenset(excluded | duty)
     # STATE-FLOOR DUTY SCOPING (nyiso_gas_bridge_state_floor_min_run, the
     # nyiso-146b sharpening): the online-hours leg holds only plants whose
     # OWN measured run-length p25 clears the population gap

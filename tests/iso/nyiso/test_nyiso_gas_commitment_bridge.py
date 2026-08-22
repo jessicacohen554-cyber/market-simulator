@@ -719,3 +719,106 @@ class TestStateFloorDutyScoping(unittest.TestCase):
             _config(nyiso_gas_bridge_state_floor_min_run=True)
         )
         np.testing.assert_array_equal(base, scoped_only)
+
+
+class TestReserveDutyMembershipExclusions(unittest.TestCase):
+    """``nyiso_gas_bridge_reserve_duty_exclusions`` — the duty MEMBERSHIP channel.
+
+    nyiso-152: the measured capacity-only CC cohort (``reserve_duty_cc_NYISO``)
+    is not in the day-ahead energy-commitment population, and the CAMPD lay-up
+    channel cannot reach a plant with no CAMPD series (Allegany 7784 is
+    e923-basis). Same population-gate expression as the lay-up channel — a
+    second measured membership signal on ONE mechanism (rules 17/18/19).
+
+    Contract: default OFF is byte-identical (the artifact is never read);
+    armed, a duty-cohort plant is dropped from the bridge population entirely
+    while its unlisted neighbour keeps the floor it had; the two membership
+    channels compose by union.
+    """
+
+    def _fleet(self):
+        keep = _gen("KEEP", "gas_cc", "CC_REGULAR")
+        keep.plant_code = 1111
+        drop = _gen("DROP", "gas_cc", "CC_REGULAR")
+        drop.plant_code = 7784
+        gens = [keep, drop]
+        return gens, generators_to_fleet_arrays(gens, ["z"], hours=_HOURS)
+
+    def _dispatch(self):
+        disp = np.zeros((2, _HOURS))
+        for g in (0, 1):
+            disp[g, 10:16] = 300.0
+            disp[g, 20:26] = 300.0
+        return disp
+
+    def _floor(self, cfg, duty_codes=None, layup_codes=None):
+        # Both consuming imports are function-local, so the SOURCE modules are
+        # what a stub has to replace (the lay-up test's own convention).
+        import market_sim.data.bridge_layup_exclusions as layup_seam
+        import market_sim.data.reserve_duty as duty_seam
+
+        gens, fa = self._fleet()
+        p0 = self._dispatch()
+        mc = np.full((2, _HOURS), 30.0)
+        lmp = np.full((1, _HOURS), 25.0)
+        orig_duty = duty_seam.load_reserve_duty_cc
+        orig_layup = layup_seam.load_layup_exclusions
+        if duty_codes is not None:
+            duty_seam.load_reserve_duty_cc = lambda iso: frozenset(duty_codes)
+        if layup_codes is not None:
+            layup_seam.load_layup_exclusions = lambda iso: frozenset(layup_codes)
+        try:
+            return _nyiso_gas_bridge_floor(cfg, gens, fa, p0, lmp, mc)
+        finally:
+            duty_seam.load_reserve_duty_cc = orig_duty
+            layup_seam.load_layup_exclusions = orig_layup
+
+    def test_default_off_is_byte_identical(self):
+        base = self._floor(_config())
+        off = self._floor(
+            _config(nyiso_gas_bridge_reserve_duty_exclusions=False), [7784]
+        )
+        self.assertIsNotNone(base)
+        np.testing.assert_array_equal(base, off)
+
+    def test_armed_drops_only_the_duty_plant(self):
+        base = self._floor(_config())
+        armed = self._floor(
+            _config(nyiso_gas_bridge_reserve_duty_exclusions=True), [7784]
+        )
+        self.assertIsNotNone(base)
+        self.assertIsNotNone(armed)
+        self.assertGreater(float(base[1].sum()), 0.0)
+        self.assertEqual(float(armed[1].sum()), 0.0)
+        np.testing.assert_array_equal(base[0], armed[0])
+
+    def test_empty_artifact_is_a_no_op(self):
+        base = self._floor(_config())
+        armed = self._floor(
+            _config(nyiso_gas_bridge_reserve_duty_exclusions=True), []
+        )
+        np.testing.assert_array_equal(base, armed)
+
+    def test_channels_compose_by_union(self):
+        """Lay-up excludes one plant, duty the other — both floors go."""
+        armed = self._floor(
+            _config(
+                nyiso_gas_bridge_plant_exclusions=True,
+                nyiso_gas_bridge_reserve_duty_exclusions=True,
+            ),
+            duty_codes=[7784],
+            layup_codes=[1111],
+        )
+        self.assertIsNone(armed)  # nobody left to floor
+
+    def test_artifact_reader_selects_only_duty_rows(self):
+        """The seam reads the real committed artifact and filters on duty."""
+        from market_sim.data.reserve_duty import load_reserve_duty_cc
+
+        codes = load_reserve_duty_cc("NYISO")
+        self.assertTrue(codes)
+        # Allegany — the CEMS-invisible plant this channel exists to reach.
+        self.assertIn(7784, codes)
+        # High-CF baseload CCs are not duty plants.
+        self.assertNotIn(2500, codes)  # Ravenswood, online share 0.9492
+        self.assertNotIn(55375, codes)  # Astoria Energy, 0.9919

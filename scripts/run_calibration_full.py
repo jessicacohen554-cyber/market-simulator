@@ -3540,6 +3540,7 @@ def solve_and_persist(
     nyiso_gas_bridge_da_horizon: bool | None = None,
     nyiso_gas_bridge_min_run: bool | None = None,
     nyiso_gas_bridge_plant_exclusions: bool | None = None,
+    nyiso_gas_bridge_reserve_duty_exclusions: bool | None = None,
     nyiso_gas_bridge_plant_min_run: bool | None = None,
     nyiso_gas_bridge_online_hours: bool | None = None,
     nyiso_gas_bridge_state_floor_min_run: bool | None = None,
@@ -4501,6 +4502,12 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions
             )
+        if nyiso_gas_bridge_reserve_duty_exclusions is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_reserve_duty_exclusions=(
+                    nyiso_gas_bridge_reserve_duty_exclusions
+                )
+            )
         if nyiso_gas_bridge_plant_min_run is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run
@@ -5256,6 +5263,9 @@ def solve_and_persist(
             nyiso_gas_bridge_da_horizon=nyiso_gas_bridge_da_horizon,
             nyiso_gas_bridge_min_run=nyiso_gas_bridge_min_run,
             nyiso_gas_bridge_plant_exclusions=nyiso_gas_bridge_plant_exclusions,
+            nyiso_gas_bridge_reserve_duty_exclusions=(
+                nyiso_gas_bridge_reserve_duty_exclusions
+            ),
             nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run,
             nyiso_gas_bridge_online_hours=nyiso_gas_bridge_online_hours,
             nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run,
@@ -6129,6 +6139,9 @@ def solve_and_persist(
         "nyiso_gas_bridge_da_horizon": nyiso_gas_bridge_da_horizon,
         "nyiso_gas_bridge_min_run": nyiso_gas_bridge_min_run,
         "nyiso_gas_bridge_plant_exclusions": nyiso_gas_bridge_plant_exclusions,
+        "nyiso_gas_bridge_reserve_duty_exclusions": (
+            nyiso_gas_bridge_reserve_duty_exclusions
+        ),
         "nyiso_gas_bridge_plant_min_run": nyiso_gas_bridge_plant_min_run,
         "nyiso_gas_bridge_online_hours": nyiso_gas_bridge_online_hours,
         "nyiso_gas_bridge_state_floor_min_run": nyiso_gas_bridge_state_floor_min_run,
@@ -11677,6 +11690,16 @@ def main() -> None:
         "the reliability floor (--reliability-floor-plant-exclusions).",
     )
     parser.add_argument(
+        "--nyiso-gas-bridge-reserve-duty-exclusions",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="MEMBERSHIP correction, reserve-duty channel (nyiso-152): also "
+        "skip plants in the measured capacity-only CC cohort "
+        "(data/raw/_processed-legacy/reserve_duty_cc_NYISO.csv, pooled "
+        "online-share/CF <= 0.1). Reaches the CEMS-invisible plants the "
+        "CAMPD lay-up criterion cannot test (rule 17 [R-FLOOR-WINDOW]).",
+    )
+    parser.add_argument(
         "--nyiso-gas-bridge-plant-min-run",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12233,6 +12256,9 @@ def main() -> None:
         nyiso_gas_bridge_da_horizon=args.nyiso_gas_bridge_da_horizon,
         nyiso_gas_bridge_min_run=args.nyiso_gas_bridge_min_run,
         nyiso_gas_bridge_plant_exclusions=args.nyiso_gas_bridge_plant_exclusions,
+        nyiso_gas_bridge_reserve_duty_exclusions=(
+            args.nyiso_gas_bridge_reserve_duty_exclusions
+        ),
         nyiso_gas_bridge_plant_min_run=args.nyiso_gas_bridge_plant_min_run,
         nyiso_gas_bridge_online_hours=args.nyiso_gas_bridge_online_hours,
         nyiso_gas_bridge_state_floor_min_run=args.nyiso_gas_bridge_state_floor_min_run,
