@@ -129,6 +129,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     tranche_startup_amortization: { cell: "G", ev: "caiso-149 (results/calibration/FINDING-caiso149-tranche-startup-2026-07-31.md; CAISO DMM FERC RM17-3 comments 2017-02-28 + BOSR fast-start-pricing deck 2025-01-10 — the independent market-design source)" },
     measured_ct_heat_rates: { cell: "K", ev: "caiso-146 (results/calibration/FINDING-caiso146-measured-ct-heat-rates-2026-07-31.md)" },
     measured_chp_heat_rates: { cell: "K", ev: "caiso-147 (results/calibration/FINDING-caiso147-measured-chp-heat-rates-2026-07-31.md)" },
+    egrid_identity_heat_rates: { cell: "U" },
     da_virtual_bids: { cell: "U" },
     negative_renewable_offers: { cell: "K" },
     wind_ptc_vintage_offers: { cell: "." },

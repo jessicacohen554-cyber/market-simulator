@@ -600,6 +600,7 @@ def run_year(
     cc_reserve_duty_split: bool | None = None,
     chp_layup_duty_split: bool | None = None,
     chp_layup_duty_curve: bool | None = None,
+    egrid_identity_heat_rates: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -1506,6 +1507,10 @@ def run_year(
         config = config.with_overrides(chp_layup_duty_split=chp_layup_duty_split)
     if chp_layup_duty_curve is not None:
         config = config.with_overrides(chp_layup_duty_curve=chp_layup_duty_curve)
+    if egrid_identity_heat_rates is not None:
+        config = config.with_overrides(
+            egrid_identity_heat_rates=egrid_identity_heat_rates
+        )
     if nyiso_gas_bridge_cc_min_run_hours is not None:
         config = config.with_overrides(
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours
