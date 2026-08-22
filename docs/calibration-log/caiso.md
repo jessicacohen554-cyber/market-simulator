@@ -9441,3 +9441,30 @@ fallback**, and reaching the number through a §F-killed lever is a rule-13 act.
 
 Evidence: `results/calibration/ASSESSMENT-caiso213-rest-continuation-2026-08-22.md`.
 **Next number: caiso-214.**
+
+---
+
+## caiso-214 (2026-08-22) — FORECAST-FAMILY LANE: first CAISO plain T1-H capacity hindcast solved, scored, registered
+
+**Not a backcast session: no keeper change, no backcast cell verdict, no
+backcast registration.** Charter: T1-H tier (forecast plan; hindcast-forward
+plan §1.1), owner direction 2026-08-22 ("Miso Caiso and ERCOT can run
+hindcasts 2021-2025 to test capacity expansion but no holdout years").
+Bundle `results/hindcast/caiso-2021-2025-realized` (key `408f9199a82f5814`),
+vintage 2020, arm realized, posture `shipped`, solved [2021, 2023, 2024,
+2025], 2022 bridged, leakage clean, freeze-legal (banner in the report).
+Scored 2023-2025 only; registered on the FORECAST dashboard
+(`frontend/data/hindcast/caiso-2021-2025-realized.json`).
+
+Headline: decision-basis additions 28.8 vs 26.6 GW actual — volume right,
+mix inverted. Storage entry 0 vs 15.1 GW actual (dominant miss); backstop
+filled the gap with 11.8 GW generic CT; DCPP false-retires 2.24 GW on its
+2020-vintage announced dates (SB 846 unknowable at the cutoff); RPS dual at
+the $50 ACP all years; CO2 2025 +92% (model flat ~36 Mt, actual 18.7).
+`hindcast_verified_announced_exits` measured INERT (exposure 0.0; reversal
+set empty by construction) — matrix cell fc U → I, rule 28(b). Scorer
+completion: CAISO joined `ISO_CAMPD_FACILITY` (facility-exact CO2 reference;
+a CA state sum would overcount by LADWP/BANC/IID). Full read:
+`docs/hindcast-reports/caiso-2021-2025-realized-2026-08-22.md`.
+
+**Next number: caiso-215.**
