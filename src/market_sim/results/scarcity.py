@@ -1252,6 +1252,34 @@ def ercot_as_responsibility_mw(year: int, hours: int, as_type: str) -> np.ndarra
     return series[: int(hours)]
 
 
+def ercot_ruc_committed_mw(year: int, hours: int, klass: str) -> np.ndarray:
+    """Measured RUC-instructed committed LSL MW for one plant class, ``(hours,)``.
+
+    The ercot-227 F3 input (``ercot_ruc_commitment_floor``, PRECOMMIT-ercot226
+    §5.11 Amendment 3 under owner waiver W-3's "measured RUC / out-of-market
+    commitment MW"): the sum of LSL over units whose NP3-965 telemetered
+    status is ``ONRUC`` in the hour (``derive_ercot_ruc_committed.py``) — the
+    operator INSTRUCTION state at the physical minimum-stable level, an input
+    of the outage-window class (rule 13), never realized output. ``klass`` is
+    the plant-group token (CC_REGULAR / ST_GAS / CT_PEAKER / COAL). Zero-
+    padded / **all-zero when the file or column is absent** — uncovered years
+    byte-identical to flag-off.
+    """
+    path = _ERCOT_AS_DIR / f"ercot_{year}_ruc_committed_hourly.parquet"
+    if not path.exists():
+        return np.zeros(int(hours), dtype=float)
+    import pandas as pd
+
+    df = pd.read_parquet(path)
+    col = f"{klass}_lsl_mw"
+    if col not in df.columns:
+        return np.zeros(int(hours), dtype=float)
+    series = df[col].to_numpy(dtype=float)
+    if len(series) < hours:
+        series = np.concatenate([series, np.zeros(int(hours) - len(series))])
+    return series[: int(hours)]
+
+
 def ercot_as_held_by_class_mw(
     year: int, hours: int, klass: str, as_type: str
 ) -> np.ndarray:

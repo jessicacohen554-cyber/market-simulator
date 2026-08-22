@@ -637,6 +637,89 @@ def build_ercot_gas_bridge_p1_preps(
     return _fleet_prep, bid_prep
 
 
+#: ercot-227 F3: measured-class token → plant_group members (direct — the
+#: derive already writes plant-group vocabulary; CHP variants excluded, the
+#: RUC record's resource types are the merchant classes).
+_ERCOT_RUC_CLASS_GROUPS: dict[str, tuple[str, ...]] = {
+    "CC_REGULAR": ("CC_REGULAR",),
+    "ST_GAS": ("ST_GAS",),
+    "CT_PEAKER": ("CT_PEAKER",),
+    "COAL": ("COAL",),
+}
+
+
+def _ercot_ruc_floor(config, fleet_arrays) -> "np.ndarray | None":
+    """Build the ``(n_gen, T)`` measured RUC-instruction commitment floor.
+
+    ercot-227 F3 (``ercot_ruc_commitment_floor``, PRECOMMIT-ercot226 §5.11
+    Amendment 3, owner waiver W-3): per class-hour, the measured ONRUC LSL
+    sum (:func:`results.scarcity.ercot_ruc_committed_mw`) distributed
+    pro-rata over the class members' available capacity (clipped at the
+    class's own capability — data-vs-data, no free parameter). The floor is
+    zero wherever the measured series is zero, so its window IS the
+    instruction set (off-window binding impossible by construction) and an
+    uncovered year is byte-identical to flag-off. Returns ``None`` when
+    nothing floors.
+    """
+    from market_sim.results.scarcity import ercot_ruc_committed_mw
+
+    pg = getattr(fleet_arrays, "plant_group", None)
+    if pg is None:
+        return None
+    pg = np.asarray(pg)
+    T = int(fleet_arrays.availability.shape[1])
+    year = int(getattr(config, "weather_year"))
+    cap = fleet_arrays.pmax[:, None] * np.asarray(
+        fleet_arrays.availability, dtype=float
+    )
+    floor = None
+    for token, groups in _ERCOT_RUC_CLASS_GROUPS.items():
+        series = np.asarray(ercot_ruc_committed_mw(year, T, token), float)
+        if series.max() <= 0.0:
+            continue
+        mask = np.isin(pg, list(groups))
+        if not mask.any():
+            continue
+        cls_cap = cap[mask].sum(axis=0)  # (T,)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            level = np.where(cls_cap > 0.0, np.minimum(series, cls_cap), 0.0)
+            share = np.where(cls_cap > 0.0, level / cls_cap, 0.0)  # (T,)
+        contrib = cap[mask] * share[None, :]  # pro-rata, each ≤ own cap
+        if floor is None:
+            floor = np.zeros_like(cap)
+        floor[mask] = np.maximum(floor[mask], contrib)
+    if floor is None or float(floor.max()) <= 0.0:
+        return None
+    return floor
+
+
+def wrap_ercot_ruc_floor_prep(config, iso: str, fleet_arrays, base_prep):
+    """Chain the measured RUC-instruction floor after ``base_prep``.
+
+    Wraps the (possibly ``None``) ERCOT ``p1_fleet_prep`` so the F3 floor
+    composes AFTER the gas commitment bridge's floor on the same fleet —
+    maximum-composition with per-mechanism attribution via
+    :func:`_bridge_floored_fleet` (ties keep the incumbent id: the bridge on
+    CC and the ST_GAS drag remain the rule-19 owners wherever they already
+    floor at least as high). Returns ``base_prep`` unchanged when the flag
+    is off or the ISO is not ERCOT (byte-identical).
+    """
+    if not (getattr(config, "ercot_ruc_commitment_floor", False) and iso == "ERCOT"):
+        return base_prep
+
+    from market_sim.data.floor_mechanisms import MECH_ERCOT_RUC_COMMITMENT
+
+    def _ruc_prep(r0, _base=base_prep):
+        floored = _base(r0) if _base is not None else None
+        base_fa = floored if floored is not None else fleet_arrays
+        ruc_floor = _ercot_ruc_floor(config, base_fa)
+        if ruc_floor is None:
+            return floored
+        return _bridge_floored_fleet(base_fa, ruc_floor, MECH_ERCOT_RUC_COMMITMENT)
+
+    return _ruc_prep
+
+
 # NYISO gas commitment bridge: the merchant slow-start gas fuels it floors by
 # default. ``gas_cc`` is the CC_REGULAR class, ``gas_st`` the ST_GAS class; the
 # detector excludes every ``*_CHP`` group on top (cogens follow their steam

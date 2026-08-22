@@ -304,3 +304,65 @@ class TestHeldRequirementDepth(unittest.TestCase):
         np.testing.assert_allclose(
             both.families[nb.index("NonSpin")].requirement, 400.0
         )
+
+
+class TestRucCommitmentFloor(unittest.TestCase):
+    """ercot-227 F3: the measured ONRUC instruction-state floor."""
+
+    def _fa(self):
+        return _fleet(groups=("ST_GAS", "CT_PEAKER"), pmax=100.0)
+
+    def test_off_or_no_data_returns_base(self):
+        from market_sim.pipeline.commitment import wrap_ercot_ruc_floor_prep
+
+        fa = self._fa()
+        cfg = _config()  # flag off
+        self.assertIsNone(wrap_ercot_ruc_floor_prep(cfg, "ERCOT", fa, None))
+        cfg2 = _config(ercot_ruc_commitment_floor=True)
+        with mock.patch.object(
+            scarcity, "ercot_ruc_committed_mw", lambda y, h, k: np.zeros(h)
+        ):
+            prep = wrap_ercot_ruc_floor_prep(cfg2, "ERCOT", fa, None)
+            self.assertIsNone(prep(None))  # zero series -> no floored fleet
+
+    def test_pro_rata_distribution_and_clip(self):
+        from market_sim.pipeline.commitment import _ercot_ruc_floor
+
+        fa = self._fa()
+        series = {"ST_GAS": 40.0}
+        with mock.patch.object(
+            scarcity,
+            "ercot_ruc_committed_mw",
+            lambda y, h, k: np.full(h, series.get(k, 0.0)),
+        ):
+            floor = _ercot_ruc_floor(_config(ercot_ruc_commitment_floor=True), fa)
+        self.assertIsNotNone(floor)
+        np.testing.assert_allclose(floor[0], 40.0)  # the ST_GAS member
+        np.testing.assert_allclose(floor[1], 0.0)  # the CT member untouched
+        # Clip: series above class capability caps at capability.
+        with mock.patch.object(
+            scarcity,
+            "ercot_ruc_committed_mw",
+            lambda y, h, k: np.full(h, 500.0 if k == "ST_GAS" else 0.0),
+        ):
+            floor = _ercot_ruc_floor(_config(ercot_ruc_commitment_floor=True), fa)
+        np.testing.assert_allclose(floor[0], 100.0)  # pmax-capped
+
+    def test_composes_after_base_prep_with_mech_tag(self):
+        from market_sim.data.floor_mechanisms import MECH_ERCOT_RUC_COMMITMENT
+        from market_sim.pipeline.commitment import wrap_ercot_ruc_floor_prep
+
+        fa = self._fa()
+        with mock.patch.object(
+            scarcity,
+            "ercot_ruc_committed_mw",
+            lambda y, h, k: np.full(h, 30.0 if k == "ST_GAS" else 0.0),
+        ):
+            prep = wrap_ercot_ruc_floor_prep(
+                _config(ercot_ruc_commitment_floor=True), "ERCOT", fa, None
+            )
+            out = prep(None)
+        self.assertIsNotNone(out)
+        np.testing.assert_allclose(out.min_gen[0], 30.0)
+        mech = np.asarray(out.min_gen_mechanism)
+        self.assertTrue((mech[0] == MECH_ERCOT_RUC_COMMITMENT).all())

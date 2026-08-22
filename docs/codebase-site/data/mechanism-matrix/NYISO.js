@@ -42,6 +42,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     ercot_rtordpa_overlay: { cell: "." },
     ercot_artificial_shortage_pricing: { cell: "." },
     ercot_storage_adaptive_expectation: { cell: "." },
+    ercot_ruc_commitment_floor: { cell: "." },
     ercot_as_held_requirement: { cell: "." },
     ercot_as_held_location: { cell: "." },
     ercot_load_forecast_margin: { cell: "." },

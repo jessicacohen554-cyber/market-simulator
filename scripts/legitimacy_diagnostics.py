@@ -301,6 +301,16 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # [R-FLOOR-WINDOW] forward story: the level re-derives from the next EIA-860
     # vintage with no model input (scripts/data/derive_eia860_coal_min_config.py).
     (MECH_COAL_MIN_CONFIG, None): (0, 24),
+    # ercot_ruc_commitment (ercot-227 F3, MECH_ERCOT_RUC_COMMITMENT —
+    # pipeline.commitment.wrap_ercot_ruc_floor_prep): BY-CONSTRUCTION 24 h
+    # window. The floor is the measured NP3-965 ONRUC instruction-state LSL
+    # sum per class-hour (derive_ercot_ruc_committed.py) — its driver-
+    # justified window IS the measured instruction set, and the floor is
+    # exactly zero wherever the series is zero, so an off-window bind is
+    # impossible by construction (rule 17: driver = the operator's RUC
+    # instruction, an outage-window-class input; forward story = no
+    # disclosure forward, the bridge/drag commitment machinery governs).
+    (MECH_ERCOT_RUC_COMMITMENT, None): (0, 24),
     # firm_import (MECH_FIRM_IMPORT — the CAISO/MISO/NYISO firm must-flow
     # import blocks: inject_caiso_firm_import_selfschedule,
     # inject_miso_firm_imports, inject_nyiso_firm_imports): the
@@ -1672,6 +1682,25 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
     # CONSTRUCTION — a requirement max never touches min_gen; window =
     # rigid gates (F1) / published coverage (F1b); off-coverage byte-
     # identical: held = 0 ⇒ max(plan, 0) = plan). ---
+    MechanismSpec(
+        "ercot_ruc_commitment_floor",
+        "ercot_ruc_commitment_floor",
+        "backcast_only",
+        True,
+        note="measured RUC INSTRUCTION-STATE commitment floor (ercot-227 F3, "
+        "Amendment 3 / waiver W-3): per class-hour ONRUC LSL sums "
+        "(NP3-965, derive_ercot_ruc_committed.py) pro-rata over class "
+        "available capacity, clipped at class capability. DRIVER: the "
+        "operator's RUC instruction (outage-window-class input, rule 13 — "
+        "never realized output; the D-9 deployment overlays pin measured "
+        "ENERGY and ct_mustrun_per_plant pinned annual outcome commitment; "
+        "this is hourly instruction state at physical LSL). WINDOW: the "
+        "measured instruction set, zero floor off it by construction "
+        "(D4_WINDOWS by-construction entry). Rule-19: max-composition after "
+        "the gas bridge / ST_GAS drag incumbents, per-mechanism D-2 "
+        "attribution (MECH_ERCOT_RUC_COMMITMENT).",
+        iso="ERCOT",
+    ),
     MechanismSpec(
         "ercot_as_held_requirement",
         "ercot_as_held_requirement",
