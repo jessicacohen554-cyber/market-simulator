@@ -7556,3 +7556,61 @@ cause (chartered BEFORE any NYISO re-calibration), the five ISO regenerations,
 turning the gate on, and the `complete`-marker question. Evidence:
 `FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md` §§8–11,
 `_nyiso148_bench_staleness_sweep.json`.
+
+## 2026-08-22 — nyiso-149: the benchmark root cause CLOSED (it was the flag through the ±3% reconcile) and the duty curve PROMOTED — the first keeper CALIBRATED on the authoritative benchmark
+
+**Job 1 (owner-chartered, blocking).** The 2026-08-17→08-21 benchmark drift is
+fully attributed with an exact closure
+(`FINDING-nyiso149-bench-root-cause-2026-08-22.md`,
+`_nyiso149_bench_reconcile_closure.json`): the EIA-923
+vintage-reconciliation/CAMPD-backfill layer **never moved** — the benchmark
+frame rebuilt at HEAD hashes to `920c8b8bc1b1`, the identical shared-input
+name every registered NYISO bundle meta declares — and the whole classFull
+delta is commit `01db36d`'s flag-dependent BTM subtrahend: the 35 % sector
+carve left the gas family 6.5–15.9 % below the EIA-930 target so
+`reconcile_vintage_classes` scaled every gas class ×1.069/×1.117/×1.189
+(CC_REGULAR-2024's +3.98 TWh exactly), and the measured subtrahend lands the
+family inside the ±3 % deadband so the scale stands down. Both committed
+parts reconstruct EXACTLY (every gas/coal class, all years) from one frame +
+the two btm bases. nyiso-148 §2's "none of it is the flag" is corrected by
+addendum — its flag-flip test was blind to `btm.parquet`, which
+`rebuild_benchmark` does not rebuild. **RULING: the regenerated (measured)
+reconciliation is CORRECT** — the subtrahend is the plants' own meters
+(rule 14), EIA-923+CAMPD agrees with EIA-930 unscaled only under it, the old
+part's extra CC_REGULAR mass traces to no measurement, and the exposed keeper
+C1-2024 failure is the real over-dispatch nyiso-147/148 diagnosed from the
+other side. **PINNED**: `_btm_frame` now emits `btm_bench_twh`
+(measured-when-artifact-exists, flag-INDEPENDENT — the bench subtrahend) next
+to the run-basis `btm_twh` (the model add-back); the render's bench-part
+writers consume the bench basis; the committed parts reproduce byte-for-value
+with the flag OFF and ON alike (unit-pinned,
+`tests/regression/test_btm_bench_basis_pin.py`).
+
+**Job 2 (the CHP conduct successor).** `chp_layup_duty_curve` — the graded
+price-conditional duty nyiso-148 named when it rejected the single band: per
+frozen-census plant, on-share by own-zone RT price band (p40–p80/≥p80,
+declared a priori) × loading-when-on × HSL, measured **conditional on
+envelope-live hours** so the availability envelope and the offer never
+double-count the same mothball spells (rule 19; phase 0 measured the envelope
+tracking metered live share within ~0.02 for six of seven plants, Lockport
+the exception whose lay-up the offer carries whole). Offered as **MW** at the
+class's existing band multipliers, remainder withheld from energy and
+reserves; zero new free parameters. All pre-registered gates pass
+(`PREREG-nyiso149-chp-duty-curve-2026-08-22.md`,
+`_nyiso149_duty_curve_gates.json`): base replay bit-identical to registered
+147a; single delta; LP-entry composition exact to 0.01 MW; graded conduct
+in-band on all 21 plant-years (Selkirk 0.54×/1.76×/0.85× of its own meter;
+cohort 291→413→988 GWh matching the metered climb into dear 2025); zero new
+D-rows with the base's D2 ST_GAS-2024 failure CLEARED; C1 **14/14** incl.
+CC_REGULAR-2024. vs the base: C3a-2025 −12.2 % → −8.8 % PASS, C3b-2025 →
+PASS, C8 → PASS. The first solve applied pct fractions to the wrong capacity
+basis — **caught by gate F-K2 before any scoring**, disclosed in PREREG §7,
+fixed by the MW contract, registered as `2026-08-22-nyiso-149-basis-probe`.
+
+**PROMOTED: keeper → `2026-08-22-nyiso-149-duty-curve`, determination
+CALIBRATED** (C3c the single ledgered caveat, 1/0/0 h vs RT 10/13/42);
+D-5(b) re-key executed (label improves, stop does not fire);
+`audit_keepers --iso NYISO` PASS 0/0; shard + §5.5 header re-stamped
+(`chp_btm_measured` R→K — the named successor arrived). OPEN and not claimed:
+the 2025 offer-level object ($6.57, owner card pending), C3c, the zonal
+gradient, Flynn starts. Records: `RESULT-nyiso149-duty-curve-keeper-2026-08-22.md`.

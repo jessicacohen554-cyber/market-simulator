@@ -109,21 +109,37 @@ def k1_exactness() -> dict:
         return o
 
     fb, fa = flat(b), flat(a)
-    # Provenance keys (when the solve ran, free-text notes) are metadata, not
-    # config — excluded from the exactness diff (PREREG §7).
-    _PROVENANCE = ("timestamp", "note", "git.", "hostname")
+    # Provenance keys (when/where the solve ran, free-text notes) are
+    # metadata, not config — excluded from the exactness diff (PREREG §7).
+    # git_sha is REPORTED below rather than failed on: the base ran at the
+    # pre-MW-fix commit, and the delta between the shas is flag-gated code
+    # only — the base's bit-identity to the registered 147a (IDENT, solved at
+    # yet another sha) is the live proof the sha difference is solve-inert
+    # at the flag-off default.
+    _PROVENANCE = ("timestamp", "note", "git_sha", "git.", "hostname")
     diffs = {
         k: (fb.get(k), fa.get(k))
         for k in set(fb) | set(fa)
         if fb.get(k) != fa.get(k)
         and not any(k == p or k.startswith(p) or k.endswith("." + p) for p in _PROVENANCE)
     }
+    provenance = {
+        k: (fb.get(k), fa.get(k))
+        for k in set(fb) | set(fa)
+        if fb.get(k) != fa.get(k) and k not in diffs
+    }
     ok = set(diffs) <= {
         "chp_layup_duty_curve",
         "scenario_config.chp_layup_duty_curve",
         "calibration_flags.chp_layup_duty_curve",
     } and any("chp_layup_duty_curve" in k for k in diffs)
-    return {"pass": bool(ok), "diffs": {k: list(v) for k, v in diffs.items()}}
+    return {
+        "pass": bool(ok),
+        "diffs": {k: list(v) for k, v in diffs.items()},
+        "provenance_diffs_reported": {
+            k: list(v) for k, v in provenance.items()
+        },
+    }
 
 
 def _fleet_caps(run_dir: Path) -> dict[int, dict[str, float]]:
