@@ -1419,7 +1419,11 @@ def _ercot_design(
 #: the target hours, ercot226_helddepth_phase0.json).
 ERCOT_HELD_CLASS_GROUPS: dict[str, tuple[str, ...]] = {
     "gas_cc": ("CC_REGULAR", "CC_CHP"),
-    "coal": ("COAL_LIGNITE", "COAL_PRB"),
+    # The fleet's plant_group token for coal is the single "COAL" (the
+    # COAL_LIGNITE/COAL_PRB split is the class_hourly sidecar's REPORTING
+    # vocabulary, not the fleet grain — measured on the armed run's own
+    # skip log, ercot-226).
+    "coal": ("COAL",),
     "gas_st": ("ST_GAS", "ST_CHP"),
 }
 
