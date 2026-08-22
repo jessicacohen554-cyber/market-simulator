@@ -756,7 +756,11 @@
           </p>
 
           <p>
-            This vectorization is <strong>non-negotiable</strong> in the codebase (§2 of CLAUDE.md). It keeps memory footprint down and makes the LP solve fast. A 7-zone, multi-thousand-unit model with 8,760 hours still fits in a few GB of RAM and solves in minutes.
+            This vectorization is <strong>non-negotiable</strong> in the codebase (§2 of CLAUDE.md). It keeps the memory footprint down and makes the LP solve fast — but "down" is relative. A full 8,760-hour year is a <strong>memory-bound</strong> solve: measured peaks are <strong>5.7–5.9 GB</strong> for plant-level ERCOT (7 zones, 13.2M LP columns) and <strong>12.4 GB</strong> for plant-level MISO (25.4M columns, 50.3M non-zeros), against a 15 GB host. MISO's peak was <em>13.95 GB</em> until a 2026-08-19 solution-marshalling fix; it is why project rule 12 caps concurrent per-plant multi-zone runs at about two. It does solve in minutes — 3–6 per year on the plain calibration recipe.
+          </p>
+          <p style="font-size: 0.86rem; color: var(--text-muted);">
+            Sources: <code>docs/handoffs/wallclock-baseline-2026-07.md</code> (ERCOT/MISO peaks and per-year walls);
+            <code>results/calibration/FINDING-miso169-15gb-memory-fit-2026-08-19.md</code> (the MISO LP dimensions and the 13.95 → 12.40 GB fix).
           </p>
         </div>
 
