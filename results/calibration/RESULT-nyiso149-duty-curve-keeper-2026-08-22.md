@@ -30,7 +30,7 @@ identity also proves this session's whole code footprint (the Job-1
 | **F-K3** graded conduct | **PASS** | all 21 plant-years in-band vs their own CAMPD meters; cohort 291 → 413 → 988 GWh reproduces the metered ordering into dear 2025 |
 | **F-K4** conduct rows | **PASS** | zero new failing D-1/D-2/D-4 rows; the base's **D2 ST_GAS-2024 30.4 % forced-share failure is CLEARED** |
 | **F-K5** criteria | **PASS** | C1 **14/14** — including CC_REGULAR-2024, the criterion that made the prior keeper NOT-YET — C2/C3a/C3b/C4/C8 PASS; no base-PASS criterion flips |
-| **F-K6** (reported) | — | system lw: 2023 33.32 (+3.3 %), 2024 36.53 (+1.9 %), 2025 60.57 (−8.8 %) vs base 32.73/35.84/58.36 |
+| **F-K6** (reported) | — | system lw: 2023 33.32 (+3.3 %), 2024 36.53 (−4.2 %), 2025 60.57 (−8.8 %) vs base 32.73/35.84/58.36 |
 
 **DETERMINATION: CALIBRATED** (attested C6; C3c the single ledgered caveat —
 model 1/0/0 h > $300 vs RT actual 10/13/42 h — auto-ledgered, non-downgrading,
@@ -81,8 +81,11 @@ Keeper shard → `2026-08-22-nyiso-149-duty-curve` + `build_status --iso NYISO`
 (**NYISO: CALIBRATED**); rule-22 D-5(b) marker re-key with determination
 re-verification (NOT-YET → CALIBRATED: the label improves, the
 worse-determination stop does not fire; `keeper_at_declaration` preserved;
-`rekey_history` appended); attestation with governance booleans, per-year C3c
-exceptions ledger, and the seeded DOF ledger (8 entries, all inherited from
+`rekey_history` appended); attestation with governance booleans, the C3c caveat carried by the
+rule-22 STANDING RULE (explicit exceptions deliberately empty — the
+promotion-time entries lacked a "kind" tag and mis-routed the
+classification; caught by the keeper-text audit, fixed at the source, run
+re-registered), and the seeded DOF ledger (8 entries, all inherited from
 the 146c lineage — this session adds **zero** free parameters);
 `audit_keepers --iso NYISO` PASS 0/0; NYISO matrix shard re-stamped (keeper +
 gates; `chp_btm_measured` **R → K** with the R record preserved;

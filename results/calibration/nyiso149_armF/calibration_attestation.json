@@ -205,27 +205,6 @@
    }
   ]
  },
- "exceptions": [
-  {
-   "criterion": "price_tail",
-   "year": 2023,
-   "metric": "hours RT-expressible LMP > $300/MWh (C3c scarcity tail, actual RT hourly gate)",
-   "magnitude": "RE-MEASURED on this bundle (nyiso-149 ARM F): model 1 h > $300/MWh against RT actual 10 h.",
-   "classification": "MODEL MISS (structural, UNDER-production) \u2014 ACCEPTED MODEL-CLASS LIMITATION, auto-ledgered by the C3c STANDING RULE (rule 22, rubric v3.3, non-downgrading). The energy-only LP cannot form the RT scarcity tail; the NYISO C3c lever queue is exhausted on record (frontier_basis_WITHDRAWN block of the complete marker). Reported at full magnitude; 1 of 1 caveat budget."
-  },
-  {
-   "criterion": "price_tail",
-   "year": 2024,
-   "metric": "hours RT-expressible LMP > $300/MWh (C3c scarcity tail, actual RT hourly gate)",
-   "magnitude": "RE-MEASURED on this bundle (nyiso-149 ARM F): model 0 h > $300/MWh against RT actual 13 h.",
-   "classification": "MODEL MISS (structural, UNDER-production) \u2014 ACCEPTED MODEL-CLASS LIMITATION, auto-ledgered by the C3c STANDING RULE (rule 22, rubric v3.3, non-downgrading). The energy-only LP cannot form the RT scarcity tail; the NYISO C3c lever queue is exhausted on record (frontier_basis_WITHDRAWN block of the complete marker). Reported at full magnitude; 1 of 1 caveat budget."
-  },
-  {
-   "criterion": "price_tail",
-   "year": 2025,
-   "metric": "hours RT-expressible LMP > $300/MWh (C3c scarcity tail, actual RT hourly gate)",
-   "magnitude": "RE-MEASURED on this bundle (nyiso-149 ARM F): model 0 h > $300/MWh against RT actual 42 h.",
-   "classification": "MODEL MISS (structural, UNDER-production) \u2014 ACCEPTED MODEL-CLASS LIMITATION, auto-ledgered by the C3c STANDING RULE (rule 22, rubric v3.3, non-downgrading). The energy-only LP cannot form the RT scarcity tail; the NYISO C3c lever queue is exhausted on record (frontier_basis_WITHDRAWN block of the complete marker). Reported at full magnitude; 1 of 1 caveat budget."
-  }
- ]
+ "exceptions": [],
+ "exceptions_note": "C3c (price tail) is deliberately NOT explicitly ledgered here: the rule-22 C3c STANDING RULE auto-ledgers it as an ACCEPTED MODEL-CLASS LIMITATION (lone failure, C6 PASS, supporting tier \u2014 all three guards verified on this bundle). Explicit price_tail entries written at the promotion duplicated that route without a \"kind\" tag and mis-routed the classification to the measured-input default; removed 2026-08-22 (same session, keeper-text audit) so the scorer's path matches the recorded prose. Model 1/0/0 h > $300/MWh vs RT actual 10/13/42 h, reported at full magnitude; 1 of 1 caveat budget."
 }
