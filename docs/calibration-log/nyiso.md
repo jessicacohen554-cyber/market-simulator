@@ -7682,3 +7682,22 @@ the BLOCKER-B intake class). Full statement:
 `ASSESSMENT-nyiso150-frontier-2026-08-22.md` (supersedes nyiso-148's as the
 live frontier statement). No promotion; keeper, marker, shard and status
 untouched; holdout freeze ACTIVE, every year touched 2023–2025.
+
+### 2026-08-22 addendum — the ARM C′ successor identified to the root: Allegany's heat rate is a class default behind an ORISPL split
+
+Same session, no solve. `FINDING-nyiso150-allegany-hr-identity-2026-08-22.md`:
+the "cohort's most efficient" hr 7.5 is `HEAT_RATE_BINS["gas_cc"]["older"]`
+(the class default) — the plant's own measured rate lives in eGRID under
+**ORISPL 10619** (7.99–8.68 across SEVEN vintages, pooled 8.42; identity
+proven by exact eGRID-PLNGENAN == EIA-923-7784 netgen equality in all seven
+years), and NYISO's only per-plant measured-HR channel is CAMPD, which the
+plant is absent from. The named successor is DEMOTED from a graded-duty
+mechanism build to: (1) the identity heat-rate repair (measured artifact at
+the existing `heat_rate` preference seam, default-off, NYISO-scoped, zero
+free parameters) then (2) a `cc_reserve_duty_split` re-gate on the repaired
+control. A general CAMPD-less eGRID-HR channel was sized and REFUTED on its
+own population (57 NY plants, mostly BTM cogens and micro-peakers with
+realized rates 5.7–118 MMBtu/MWh — threshold-screening it would be a rule-21
+construction). EIA-923's CHP flag is `N` every year, closing the
+CHP-framework route; Schedule-5 fuel costs 0 rows. Matrix cell record
+appended on `offer_curve_by_group`; assessment queue row 3 re-typed.
