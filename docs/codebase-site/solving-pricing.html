@@ -297,7 +297,7 @@
       <span class="header__eyebrow">The Engine</span>
       <h1 class="header__title">Solving &amp; Pricing</h1>
       <p class="header__subtitle">
-        Three LP solves per year reconcile startup economics with clearing prices.
+        Two LP solves per year reconcile startup economics with clearing prices.
         The dual on every energy-balance constraint is the zonal price — no separate pricing model needed.
       </p>
     </div>
@@ -339,7 +339,7 @@
         </div>
 
         <div class="story-section">
-          <table class="solve-table" aria-label="P0, P1, P2 pass summary">
+          <table class="solve-table" aria-label="P0 and P1 pass summary, with the archived P2 listed for the record">
             <thead>
               <tr>
                 <th>Pass</th>
@@ -405,8 +405,8 @@
             <div class="sp-stat__label">LP solves per ISO-year — P0 base-cost, then P1 bid-cost; P1 is the scored run</div>
           </div>
           <div class="sp-stat sp-stat--blue" role="listitem">
-            <div class="sp-stat__value">~5×</div>
-            <div class="sp-stat__label">Warm-start speedup — P1 inherits P0's optimal basis</div>
+            <div class="sp-stat__value">1–7×</div>
+            <div class="sp-stat__label">Measured P1-vs-P0 wall ratio — P1 inherits P0's optimal basis; the gain is recipe-dependent</div>
           </div>
           <div class="sp-stat sp-stat--amber" role="listitem">
             <div class="sp-stat__value">12</div>
@@ -424,7 +424,7 @@
     <hr class="energy-divider" aria-hidden="true">
 
     <!-- =======================================================================
-         Section 2: P0 → P1 → P2 (dark)
+         Section 2: P0 → P1 (dark)
          ======================================================================= -->
     <section class="section-dark" aria-labelledby="s2-heading">
       <div class="content-section">
@@ -433,25 +433,25 @@
           <div class="section-number">②</div>
           <div>
             <div class="section-header__title">The Engine</div>
-            <h2 id="s2-heading">P0 → P1 → P2</h2>
+            <h2 id="s2-heading">P0 → P1</h2>
           </div>
         </div>
 
         <div class="story-section">
           <p>
-            Step through each pass to see what changes in the LP's cost vector and what information
-            flows forward. Click any panel or use the Next button.
+            Step through both passes to see what changes in the LP's cost vector and what information
+            flows forward. Click either panel or use the Next button.
           </p>
         </div>
 
         <!-- V12: Animated step-through diagram -->
         <div class="story-section">
           <figure class="fig" style="background:transparent;border-color:rgba(255,255,255,0.08);"
-                  aria-label="P0 to P1 to P2 animated solve sequence">
+                  aria-label="P0 to P1 animated solve sequence">
             <div id="v12-sequence" style="padding:0 24px 24px;"></div>
             <figcaption class="fig__caption" style="border-top-color:rgba(255,255,255,0.08);color:rgba(255,255,255,0.50);">
               <strong style="color:rgba(255,255,255,0.75);">Fig V12.</strong>
-              P0→P1→P2 solve sequence. Click a panel or use Next/Prev to step through.
+              P0→P1 solve sequence — the only two passes. Click a panel or use Next/Prev to step through.
               <span class="code-ref" style="background:rgba(14,165,233,0.12);color:#7DD3FC;">model/commitment.py</span>
             </figcaption>
           </figure>
@@ -480,13 +480,17 @@
                 <circle cx="7" cy="7" r="6.5" stroke="#F59E0B" stroke-width="1.2"/>
                 <path d="M7 4v3.5L9.5 9" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              P2 adequacy backstop
+              Commitment structure enters at the P0→P1 seam
             </div>
             <p style="font-size:0.84rem;color:rgba(255,255,255,0.70);line-height:1.6;">
-              The commitment screen never creates unserved demand. If decommitting a unit would leave
-              committed capacity below P1's thermal dispatch in any zone-hour,
-              <code style="background:rgba(14,165,233,0.12);color:#7DD3FC;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:0.80em;">apply_commitment_with_coal_pin()</code>
-              restores every decommitted unit in that zone to its P1 availability, so the P1 solution stays feasible.
+              Live commitment structure never needs a third solve. Three ISO-gated
+              <strong>P1-native bridges</strong> — CAISO's RA must-offer, and the ERCOT and NYISO
+              merchant-gas bridges — read the P0 run pattern and inject a <code style="background:rgba(14,165,233,0.12);color:#7DD3FC;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:0.80em;">min_gen</code>
+              floor <em>before</em> the single P1 clearing solve
+              (<code style="background:rgba(14,165,233,0.12);color:#7DD3FC;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:0.80em;">pipeline/solve.py</code>,
+              detector <code style="background:rgba(14,165,233,0.12);color:#7DD3FC;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:0.80em;">commitment.py::caiso_ra_mustoffer_min_gen</code>).
+              The ISO keeps its commitment structure and is still scored on P1 — and none of the three
+              triggers a P2 pass.
             </p>
           </div>
         </div>
@@ -721,10 +725,20 @@
           <div class="story-section">
             <p>
               The two-solve structure pays for itself through basis reuse. P1 warm-starts
-              from the previous one's optimal basis — the set of active constraints HiGHS
-              identified. Because P0 and P1 share the same constraint structure (only the
-              objective changes), P1 typically reaches optimality in a handful of dual-simplex
-              pivots rather than a full solve.
+              from P0's optimal basis — the set of active constraints HiGHS identified.
+              P0 and P1 share the same constraint structure and differ mainly in the objective
+              (plus, where a commitment bridge is armed, the <code class="code-ref">min_gen</code>
+              floors injected at the seam), so P1 re-optimises from a good starting vertex rather
+              than from cold. It is not free: P0's own solve takes roughly 190,000 dual-simplex
+              iterations on plant-level ERCOT, and P1 still costs tens of seconds.
+            </p>
+            <p style="font-size:0.86rem;color:var(--text-muted);">
+              Every figure in this section is measured, not estimated. Plain-recipe numbers come from
+              <code class="code-ref">docs/handoffs/wallclock-baseline-2026-07.md</code> (4 vCPU / 16 GB host);
+              the at-HEAD keeper-replay numbers from that file's <em>PERF-B</em> anchor (2026-08-17) and
+              <code class="code-ref">docs/handoffs/perf-recheck-2026-08.md</code> §2.
+              Cross-run solve walls on this host class vary up to <strong>±35 %</strong>, so treat every
+              wall figure as a range, not a stopwatch reading.
             </p>
           </div>
 
@@ -737,12 +751,15 @@
                   <path d="M11 7v5l3 2"/>
                 </svg>
               </div>
-              <div class="perf-card__title">~5× warm-start speedup (P1 from P0)</div>
+              <div class="perf-card__title">P1 warm-starts from P0's basis</div>
               <div class="perf-card__body">
-                P0 solves the full ~1.8M-column LP from scratch (~8–15 min on a large plant-level ISO).
-                P1 re-enters at the P0 basis and re-optimises in minutes: only the cost
-                coefficients change, so HiGHS warm-starts the dual simplex from the previous
-                optimal basis (<code class="code-ref">getBasis()</code> / <code class="code-ref">setBasis()</code>).
+                P0 solves the LP from scratch — <strong>13.2 M columns</strong> on plant-level ERCOT,
+                <strong>25.4 M</strong> on plant-level MISO — in a measured <strong>133–219 s</strong> on the
+                plain calibration recipe. P1 then re-enters at P0's optimal basis
+                (<code class="code-ref">getBasis()</code> / <code class="code-ref">setBasis()</code>) and
+                re-optimises in <strong>23–51 s</strong>. That is a <strong>4–7× P1-vs-P0 wall ratio</strong>
+                on the plain recipe; on the heavier keeper recipes measured at HEAD it narrows to
+                <strong>1–3×</strong>, so the gain is real but recipe-dependent, not a fixed multiple.
               </div>
             </div>
 
@@ -755,9 +772,12 @@
               </div>
               <div class="perf-card__title">Sequential years, parallel ISOs</div>
               <div class="perf-card__body">
-                Years within a single run must be sequential — each year's LP uses several GB of RAM
-                and the capacity-evolution state is threaded forward. But separate ISO invocations
-                (e.g. CAISO and PJM) have no dependency and are launched as concurrent background jobs.
+                Years within a single run must be sequential — the capacity-evolution state is threaded
+                forward, and a single year's LP is <strong>memory-bound</strong>: measured peaks run
+                <strong>5.7–5.9 GB</strong> on plant-level ERCOT and <strong>12.4 GB</strong> on
+                plant-level MISO. Separate ISO invocations have no dependency and are launched
+                concurrently, but project rule 12 caps that at <strong>~2 at a time</strong> for
+                per-plant multi-zone LPs — two co-optimising ISOs side by side will OOM a 16 GB host.
               </div>
             </div>
 

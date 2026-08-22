@@ -1,6 +1,9 @@
 /**
  * viz-p012-sequence.js — V12
- * Animated P0→P1→P2 three-solve step-through diagram.
+ * Animated P0→P1 two-solve step-through diagram.
+ * P0 and P1 are the only two passes (CLAUDE.md "Dispatch & Commitment"); the
+ * historical third pass P2 is archived behind --enable-legacy-p2 and is
+ * deliberately NOT a step here.
  * Self-contained; no D3 dependency.
  */
 
@@ -16,7 +19,7 @@
       id: 'p0',
       label: 'P0',
       title: 'Base MC Dispatch',
-      eyebrow: 'Pass 1 of 3',
+      eyebrow: 'Pass 1 of 2',
       colorVar: '--wind',       // green
       colorHex: '#22C55E',
       colorBg: 'rgba(34,197,94,0.10)',
@@ -34,7 +37,7 @@
       id: 'p1',
       label: 'P1',
       title: 'Bid MC Dispatch',
-      eyebrow: 'Pass 2 of 3',
+      eyebrow: 'Pass 2 of 2',
       colorVar: '--hydro',      // blue
       colorHex: '#0EA5E9',
       colorBg: 'rgba(14,165,233,0.10)',
@@ -44,27 +47,9 @@
         'its measured run length: μ = startup_cost ÷ avg_run_length. ' +
         'P1 re-solves with bid_mc = base_mc + μ. The dual on each zone’s ' +
         'energy-balance constraint is the clearing price — the LMP.',
-      badge: 'commitment.py · bid_mc · sets LMPs',
-      arrowLabel: 'screen commitments →',
-      buildSVG: buildP1SVG,
-    },
-    {
-      id: 'p2',
-      label: 'P2',
-      title: 'Commitment Screen',
-      eyebrow: 'Pass 3 of 3 (optional)',
-      colorVar: '--solar',      // amber
-      colorHex: '#F59E0B',
-      colorBg: 'rgba(245,158,11,0.10)',
-      borderActive: '#F59E0B',
-      description:
-        'Optional (off by default). Each CC/CT run is tested: does the ' +
-        'storage-discounted P1 margin cover startup_cost × (1 + IRR)? Runs ' +
-        'shorter than min_run_hours or separated by < min_down_hours are ' +
-        'merged or dropped. Coal is pinned to its P1 dispatch.',
-      badge: 'commitment_enabled=False default · coal pinned',
+      badge: 'commitment.py · bid_mc · sets LMPs · the scored run',
       arrowLabel: null,
-      buildSVG: buildP2SVG,
+      buildSVG: buildP1SVG,
     },
   ];
 
@@ -221,85 +206,6 @@
 </svg>`;
   }
 
-  function buildP2SVG() {
-    return `
-<svg viewBox="0 0 220 118" xmlns="http://www.w3.org/2000/svg"
-     role="img" aria-label="P2 commitment screen decision tree">
-  <title>P2 commitment screen flowchart</title>
-  <defs>
-    <marker id="p2-arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-      <path d="M0,1 L6,3 L0,5 Z" fill="rgba(255,255,255,0.55)"/>
-    </marker>
-  </defs>
-
-  <!-- Background -->
-  <rect width="220" height="118" fill="transparent"/>
-
-  <!-- "Gas CC/CT run" source box -->
-  <rect x="76" y="6" width="68" height="22" rx="4"
-        fill="rgba(107,114,128,0.30)" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
-  <text x="110" y="21" font-size="8.5" fill="rgba(255,255,255,0.85)"
-        font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">Gas CC/CT run</text>
-
-  <!-- Arrow down -->
-  <line x1="110" y1="28" x2="110" y2="42"
-        stroke="rgba(255,255,255,0.40)" stroke-width="1"
-        marker-end="url(#p2-arr)"/>
-
-  <!-- Decision diamond: Profitable? -->
-  <polygon points="110,42 148,55 110,68 72,55"
-           fill="rgba(14,165,233,0.15)" stroke="#0EA5E9" stroke-width="0.9"/>
-  <text x="110" y="52" font-size="7.5" fill="#fff"
-        font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">Profitable</text>
-  <text x="110" y="62" font-size="7.5" fill="rgba(255,255,255,0.75)"
-        font-family="DM Sans,sans-serif" text-anchor="middle">at P1 prices?</text>
-
-  <!-- YES branch → right -->
-  <line x1="148" y1="55" x2="170" y2="55"
-        stroke="rgba(255,255,255,0.40)" stroke-width="1"/>
-  <text x="155" y="51" font-size="7" fill="#22C55E"
-        font-family="DM Sans,sans-serif" text-anchor="middle">YES</text>
-
-  <!-- Min-run check diamond -->
-  <polygon points="187,55 208,64 187,73 166,64"
-           fill="rgba(34,197,94,0.12)" stroke="#22C55E" stroke-width="0.8"/>
-  <text x="187" y="61" font-size="6.5" fill="#fff"
-        font-family="DM Sans,sans-serif" text-anchor="middle">min-run</text>
-  <text x="187" y="70" font-size="6.5" fill="rgba(255,255,255,0.75)"
-        font-family="DM Sans,sans-serif" text-anchor="middle">OK?</text>
-
-  <!-- YES → Commit -->
-  <line x1="187" y1="73" x2="187" y2="84"
-        stroke="rgba(255,255,255,0.40)" stroke-width="1"
-        marker-end="url(#p2-arr)"/>
-  <rect x="162" y="84" width="50" height="20" rx="4"
-        fill="rgba(34,197,94,0.22)" stroke="#22C55E" stroke-width="0.9"/>
-  <text x="187" y="97" font-size="8.5" fill="#22C55E"
-        font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="700">✓ Commit</text>
-
-  <!-- NO from profitable → Decommit -->
-  <line x1="72" y1="55" x2="48" y2="55"
-        stroke="rgba(255,255,255,0.40)" stroke-width="1"/>
-  <text x="60" y="51" font-size="7" fill="#F87171"
-        font-family="DM Sans,sans-serif" text-anchor="middle">NO</text>
-  <line x1="48" y1="55" x2="48" y2="70"
-        stroke="rgba(255,255,255,0.40)" stroke-width="1"
-        marker-end="url(#p2-arr)"/>
-  <rect x="14" y="70" width="68" height="20" rx="4"
-        fill="rgba(220,38,38,0.18)" stroke="#DC2626" stroke-width="0.9"/>
-  <text x="48" y="83" font-size="8.5" fill="#F87171"
-        font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="700">✗ Decommit</text>
-
-  <!-- Coal pinned note -->
-  <rect x="6" y="97" width="208" height="18" rx="3"
-        fill="rgba(55,65,81,0.35)" stroke="rgba(255,255,255,0.15)" stroke-width="0.7"/>
-  <text x="110" y="109" font-size="7.5" fill="rgba(255,255,255,0.70)"
-        font-family="DM Sans,sans-serif" text-anchor="middle">
-    Coal: always pinned to P1 dispatch
-  </text>
-</svg>`;
-  }
-
   /* -------------------------------------------------------------------------
      Build UI
      ----------------------------------------------------------------------- */
@@ -309,7 +215,7 @@
     if (!wrap) return;
 
     wrap.innerHTML = `
-<div class="p012-diagram" role="region" aria-label="P0 to P1 to P2 solve sequence">
+<div class="p012-diagram" role="region" aria-label="P0 to P1 solve sequence">
 
   <!-- Panels row -->
   <div class="p012-panels" id="${containerId}-panels">
@@ -373,7 +279,7 @@
     </div>
 
     <div class="p012-step-label" id="${containerId}-step-label" aria-live="polite">
-      Step 1 of 3 — ${STEPS[0].title}
+      Step 1 of ${STEPS.length} — ${STEPS[0].title}
     </div>
 
     <button class="p012-btn p012-btn--next" id="${containerId}-next"

@@ -809,7 +809,7 @@ classify_plant(                  # Canonical classifier — used identically
         "type": "bool",
         "default": "False",
         "tier": 2,
-        "description": "Master gate for P2 optional commitment screen. Decommits unprofitable CC/CT runs via IRR hurdle + min-run/min-down + storage-weighted margin discount."
+        "description": "ARCHIVED (legacy P2) — hard-errors unless --enable-legacy-p2 is passed. Master gate for the legacy P2 commitment screen: decommits unprofitable CC/CT runs via IRR hurdle + min-run/min-down + storage-weighted margin discount. P0 and P1 are the only two passes and no keeper uses P2; live commitment structure reaches P1 through the P1-native bridges instead."
       },
       {
         "name": "forecast_fossil_retirement_economic",
@@ -970,7 +970,7 @@ classify_plant(                  # Canonical classifier — used identically
         "type": "float",
         "default": "0.07",
         "tier": 3,
-        "description": "Internal rate of return threshold (7%) for accepting a unit commitment in the P2 screen."
+        "description": "ARCHIVED (legacy P2) — only reachable under --enable-legacy-p2. Internal rate of return threshold (7%) for accepting a unit commitment in the legacy P2 screen."
       },
       {
         "name": "nominal_discount_rate",
