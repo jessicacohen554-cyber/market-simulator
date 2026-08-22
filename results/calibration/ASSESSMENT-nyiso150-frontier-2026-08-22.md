@@ -91,8 +91,13 @@ hourlies:
   unions the flag across the scored span before the per-unit conduct rider
   reads it — protective direction only (it can only ever SKIP a conviction),
   threshold-free, unit-tested
-  (`tests/scoring/test_ct_only_bench_flag.py::TestCtOnlySpanUnion`). Keeper
-  bundles' COMMITTED diagnostics carry the pre-guard rows until next
+  (`tests/scoring/test_ct_only_bench_flag.py::TestCtOnlySpanUnion`).
+  **Verified live on this session's control** (a bit-identical keeper
+  replay): the regenerated D-4 fail set is the keeper's committed set MINUS
+  exactly the 7314-2025 vintage-artifact row — {2480-2023, 2480-2024,
+  54574-2024} vs the committed {…, 7314-2025} — with every other row
+  byte-identical and the guard's own note naming the 9 plants extended in
+  2025. The keeper's COMMITTED diagnostics carry the pre-guard row until next
   regeneration (the nyiso-148 §1.2 cosmetic class — no gated record moves:
   D-4 rows feed C8 only via the above-cap escalation, and NYISO's C8 is
   under cap in every year).
@@ -116,8 +121,20 @@ hourlies:
   unmetered (skip). The repair (a facility→plant attribution split of the
   nyiso-141/142 class) keeps its own prereg when a lane takes it; it is not a
   frontier blocker.
-* **Flynn's start-count excess — MEASURED on this session's control** [FILLED
-  AFTER CONTROL: C-K3 rows carry 56234's ctl starts vs metered 4/6/8].
+* **Flynn's start-count excess — RE-MEASURED on this session's control, and
+  the recorded premise no longer reproduces.** On the 149-keeper recipe Flynn
+  (56234) UNDER-starts — **3 / 2 / 4 model starts vs 4 / 6 / 8 metered**, in
+  months-long runs (median 3,000 / 3,132 / 1,980 h) — the opposite of the
+  recorded "over-starting at correct run length (~3×)" (nyiso-146bc §3.2).
+  The item stays open but RE-POINTED: a mild under-starting / over-long-run
+  conduct residual on one plant, D-4-clean, not the recorded object. Measured
+  in the same sweep: **Bethlehem (2539) reads 42 / 14 / 29 starts vs 6–7
+  metered on this recipe** — the nyiso-146c start-count closure (recorded
+  41/10/15 on its own bundle) has partially drifted under the CHP
+  capacity+conduct arms in 2024/2025's merit order; still far from the
+  pre-146 262–302, and recorded here so the CC start-count conduct object is
+  carried as OPEN at its current, modest magnitude rather than silently
+  claimed closed.
 
 ## 4. WHAT REMAINS OPEN AFTER THIS SESSION
 
