@@ -1,0 +1,10 @@
+{
+ "session": "nyiso-150",
+ "control": "nyiso150_control",
+ "arms": {},
+ "ident": {
+  "gate": "IDENT control == keeper",
+  "max_abs_dprice": 0.0,
+  "passed": true
+ }
+}
