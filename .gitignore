@@ -865,3 +865,14 @@ data/raw/campd-unit-level/*_2018.parquet
 # the working span). PJM 2019-2026, the loss surfaces and the NP6-86 parquets
 # STAY TRACKED (the NP6-86 archives have NO fetch instrument -- leg-(iv) FAIL).
 data/raw/iso-specific-transmission/PJM_2018_*.csv
+
+# ercot-226 PROBE bundles (W-2, PRECOMMIT-ercot226 §6): single-year probe
+# bundles are deliberately NOT committed — their record is the committed
+# probe JSONs (results/calibration/ercot226_*.json) + the FINDING table.
+# The registrable 3-year bundle (ercot226_arm_full) is NOT ignored.
+results/calibration/ercot226_ctl2023/
+results/calibration/ercot226_f2_ctl/
+results/calibration/ercot226_f2_arm/
+results/calibration/ercot226_f2_arm_hub/
+results/calibration/ercot226_combined2023/
+results/calibration/ercot226_arm_y2324/
