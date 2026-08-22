@@ -7614,3 +7614,71 @@ D-5(b) re-key executed (label improves, stop does not fire);
 (`chp_btm_measured` R→K — the named successor arrived). OPEN and not claimed:
 the 2025 offer-level object ($6.57, owner card pending), C3c, the zonal
 gradient, Flynn starts. Records: `RESULT-nyiso149-duty-curve-keeper-2026-08-22.md`.
+
+## 2026-08-22 — nyiso-150: the frontier directive session — both live arms tested and REJECTED on their own gates, the gradient object PROVEN LOCATIONAL, four standing items closed
+
+**Owner directive (verbatim): "Is NYISO at frontier? If not, please continue
+working thru and finalizing to reach frontier."** Keeper
+`2026-08-22-nyiso-149-duty-curve` re-verified CALIBRATED at HEAD before
+anything ran (`audit_keepers --iso NYISO` 0/0); read with the Q1 card
+(`DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md`, recommendation
+A), the directive charters the 2025-level/gradient object and the queue.
+Prereg committed and pushed before any arm solved
+(`PREREG-nyiso150-gradient-winter-and-reserve-rearm-2026-08-22.md`,
+Amendment 1 mapping the nyiso-122 refusal grounds to kill gates).
+
+**Phase 0** (`_nyiso150_gradient_phase0.json`): the model carries essentially
+no zonal gradient (annual eqh max−min $2.21/$1.47/$0.80 vs actual
+$15.73/$9.17/$14.83); the 2025 downstate miss is ~2/3 winter event months,
+~1/3 the summer heat-wave months — and the summer face is the LEDGERED C3c
+limitation measured in the mean (Jun 22–26 alone carries $24.0/MWh of the
+June system monthly mean). The winter-spread construction evaluated at both
+flag settings: NYC's gas is bit-identical on/off in every month (the annual
+offset cancels the Iroquois column's built-in spread exactly), and the
+flag-off construction gives Upstate_West PHANTOM gas at both ends (Jan-2025
+$11.01/MMBtu vs the ~$3.5 measured Tenn Z4 world; summer-2025 $0.16–0.64).
+
+**The A/Bs** (control = keeper replay, IDENT PASS max |Δprice| = 0.0 ×3
+years; both arms registered, rule 15):
+
+- **ARM C′ `cc_reserve_duty_split` re-arm** (`2026-08-22-nyiso-150-reserve-rearm`)
+  — REJECTED-AS-ARMED on C-K2, **Allegany 7784 ALONE** (70 %/60 % falls vs
+  ≥80 %; Sterling/Batavia/50744 collapse 93–98 %); every other gate passes
+  and **the nyiso-146b rejection leg (b) is RESOLVED** (C3a-2023 +5.2 % in
+  band on the arm — the CHP repair moved the root cause exactly as the
+  queue conditioned). Successor: the nyiso-149 graded-duty pattern applied
+  to the reserve cohort.
+- **ARM W `nyiso_iroquois_winter_spread`** (`2026-08-22-nyiso-150-winter-spread`)
+  — REJECTED-AS-ARMED, and **the rejection is the decisive measurement**: the
+  whole state rises together in the winter event months (Dec-24 47.8→61.9
+  statewide, UW landing ~exact on its actual; Feb-25 UW exact 87.4 vs 87.1)
+  while the downstate−upstate spread stays ≤$1.1 against $11–27 actual — an
+  $8–13/MMBtu measured zonal gas spread produces <$1 of zonal price spread,
+  so **the winter downstate premium is PROVEN LOCATIONAL at the LP** (the
+  internal west→east cutset never binds; nyiso-122's static read and
+  nyiso-124's flow-side finding confirmed from the price side). Also fails
+  W-K4 (2 new D-4 conduct rows) and W-K5 (C1-2024 CC_REGULAR +3.63 TWh
+  PASS→FAIL). Cell `O → R`; re-open ONLY as the companion of a locational
+  mechanism that lets the cutset bind.
+
+**Closed without solves**: the D-4 ct_only VINTAGE GUARD
+(`legitimacy_diagnostics.ct_only_span_union`, protective-only, unit-tested,
+live-verified on the control — the regenerated D-4 fail set is the keeper's
+committed set minus exactly the 7314-2025 vintage-artifact row); the
+`nyiso_iroquois_winter_spread` TAXONOMY SPLIT (card nyiso-143 D1 executed:
+own base row + cells in all six shards); the ASTORIA attribution adjudicated
+NON-BLOCKING (both campuses CC_REGULAR × NYC — class×zone targets invariant
+to the split; plant-grain hygiene, chartered); FLYNN re-measured and
+RE-POINTED (3/2/4 starts vs 4/6/8 metered in months-long runs — the recorded
+over-starting premise no longer reproduces; Bethlehem drift 42/14/29 vs 6–7
+recorded alongside). Parity allowlist: the three nyiso-150 dirs plus the
+omitted `nyiso149_armF_recipe` entry (pre-existing gap, repaired).
+
+**FRONTIER: STILL NOT-YET** — three testable lane objects remain (the
+reserve-cohort graded duty, the hydro RAMP10 seams, the `online_rho`
+identification) plus the re-pointed start-conduct residual; the
+2025-level/gradient object moves to owner court (blocked on identification —
+the BLOCKER-B intake class). Full statement:
+`ASSESSMENT-nyiso150-frontier-2026-08-22.md` (supersedes nyiso-148's as the
+live frontier statement). No promotion; keeper, marker, shard and status
+untouched; holdout freeze ACTIVE, every year touched 2023–2025.

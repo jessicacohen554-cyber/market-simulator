@@ -146,6 +146,37 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         # CONDITION: the citing RESULT is retired, or its reproduction section
         # is re-pointed at the registered arm bundle.
         "nyiso148_armD_recipe",
+        #
+        # SPENT — session nyiso-149 (PREREG-nyiso149-chp-duty-curve-
+        # 2026-08-22): the one-file replay input committed before ARM F
+        # solved; the arm it produced is REGISTERED and is the CURRENT NYISO
+        # KEEPER (2026-08-22-nyiso-149-duty-curve), whose RESULT §7
+        # reproduction command names this dir as its sole input. Allowlist
+        # entry added at nyiso-150 (the registering session omitted it; the
+        # parity gate surfaced the gap on the next run). REMOVAL CONDITION:
+        # the citing RESULT is retired or its reproduction section re-pointed
+        # at the registered keeper bundle.
+        "nyiso149_armF_recipe",
+        #
+        # SPENT — session nyiso-150 (PREREG-nyiso150-gradient-winter-and-
+        # reserve-rearm-2026-08-22). The two one-file recipe dirs are the same
+        # replay-input class as above: committed BEFORE their arms solved (the
+        # pre-registration discipline) and named as the sole inputs of the
+        # PREREG §7 reproduction commands. Both arms ARE registered
+        # (2026-08-22-nyiso-150-reserve-rearm / -winter-spread, both
+        # REJECTED-AS-ARMED on their pre-registered gates), so these are SPENT
+        # recipes kept only so the citation stays live. `nyiso150_control` is
+        # the A/B reference arm: verified byte-identical to the keeper
+        # (IDENT gate, max |dprice| = 0.0 over every zone-hour ×3 years,
+        # _nyiso150_ab_gates.json) and deliberately NOT registered (the
+        # nyiso-149 base-replay convention); its slim files + hourly sidecars
+        # + regenerated diagnostics (the D-4 vintage-guard live verification)
+        # are committed, and every C-K/W-K gate is defined vs it. REMOVAL
+        # CONDITION: the citing PREREG/ASSESSMENT docs are retired or their
+        # reproduction sections re-pointed at the registered arm bundles.
+        "nyiso150_armC_recipe",
+        "nyiso150_armW_recipe",
+        "nyiso150_control",
     }
 )
 
