@@ -29,8 +29,13 @@ of `spec._nyiso_design` (obligation / synchronised / spin-online all off):
 `eligible = vstack([full_elig, quick_elig])`, `online_gated = None`. With
 `nyiso_hydro_reserve_eligible` armed (it is, in the keeper), hydro is unioned
 into BOTH classes and its headroom enters the shared-headroom row at **full
-`cap × availability` — there is no ramp10 term, no supply cap, no
-deliverability envelope anywhere in the NYISO reserve LP**. Measured:
+`cap × availability` — there is no ramp10 term, no supply cap, and no
+reserve-side deliverability constraint anywhere in the NYISO reserve LP**.
+The `hydro_dispatch_envelope` the charter named is an ENERGY-side dispatch
+cap (a separate row over hydro group output, evening p95 ≈ 4.4 GW; hydro's
+`cap_mw` in the hourlies is flat, i.e. its LP availability is 1.0), so it
+bounds hydro's energy, never its headroom — capping P can only INCREASE the
+`cap − P` the headroom row grants. Measured:
 Upstate_West class-1 (10-min) eligible capacity averages 5.5–5.6 GW and its
 headroom **never drops below ~1.5 GW in any hour of any year** (min 1,521 /
 1,466 / 1,253 MW in 2023/24/25; ≥ 1,503 MW in every Allegany floor hour) —
