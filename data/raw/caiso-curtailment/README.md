@@ -11,7 +11,7 @@ alongside the daily Renewables and Curtailments reports.
 the library page itself: "As of 6/1/2025 the ISO is no longer publishing
 this report. Curtailment data can be found in the daily renewables
 reports."), so no 2026 workbook exists or ever will at this URL pattern —
-confirmed by direct fetch, not just absence.
+confirmed by direct fetch, not just absence. *(Coverage note, caiso-216 2026-08-23: the discontinuation does NOT truncate the committed 2025 workbook — it carries all 12 months, Jan 1–Dec 31 2025, 3.766 TWh summed at MW-per-5-min/12; span measured from the rows by `scripts/probes/_caiso216_belly_surplus.py` B4 `record_span`.)*
 
 **2018–2022 (rule-22 holdout intake, 2026-07-10):** all five years verified
 fetchable at the URL pattern above and committed here — full Jan1–Dec31
