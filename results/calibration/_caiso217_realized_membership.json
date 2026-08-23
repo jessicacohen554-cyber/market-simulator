@@ -1,0 +1,999 @@
+{
+ "B1_allocation": {
+  "atlas_diablo_membership": {
+   "TH_ZP26_GEN-APND": 12
+  },
+  "atlas_hub_rows": {
+   "TH_NP15_GEN-APND": 5580,
+   "TH_SP15_GEN-APND": 6700,
+   "TH_ZP26_GEN-APND": 1203
+  },
+  "atlas_name_witnesses": {
+   "ALTA_TEHACHAPI": {
+    "TH_SP15_GEN-APND": 43
+   },
+   "CALIFORNIA_VALLEY": {},
+   "DIABLO": {
+    "TH_ZP26_GEN-APND": 12
+   },
+   "GATES": {
+    "TH_ZP26_GEN-APND": 27
+   },
+   "MIDWAY": {
+    "TH_ZP26_GEN-APND": 14
+   },
+   "MUSTANG": {
+    "TH_NP15_GEN-APND": 12
+   },
+   "SOLAR_STAR": {
+    "TH_SP15_GEN-APND": 2
+   },
+   "TOPAZ": {
+    "TH_ZP26_GEN-APND": 13
+   },
+   "WHIRLWIND": {},
+   "WINDHUB": {
+    "TH_SP15_GEN-APND": 24
+   }
+  },
+  "straddle": {
+   "solar": {
+    "band_path15_pm25_mw": 1204.0,
+    "band_path26_pm25_mw": 4810.0,
+    "by_zone_mw": {
+     "LA_BASIN": 1506.7,
+     "NP15": 2866.5,
+     "SDGE": 1804.0,
+     "SP15_rest": 10564.8,
+     "ZP26": 3562.2
+    },
+    "movable_np15_band15_mw": 913.2,
+    "movable_np15_cc_lift_mw": 449.4,
+    "movable_zp26_band26_mw": 340.8,
+    "total_mw": 20304.2
+   },
+   "wind": {
+    "band_path15_pm25_mw": 14.9,
+    "band_path26_pm25_mw": 3296.1,
+    "by_zone_mw": {
+     "LA_BASIN": 619.9,
+     "NP15": 1564.2,
+     "SDGE": 459.4,
+     "SP15_rest": 2178.7,
+     "ZP26": 1441.1
+    },
+    "movable_np15_band15_mw": 2.8,
+    "movable_np15_cc_lift_mw": 14.9,
+    "movable_zp26_band26_mw": 1123.6,
+    "total_mw": 6263.3
+   }
+  }
+ },
+ "B6_verdict_rule": "ALLOCATION-CLASS if L2 surplus <= 0 through reality's south-surplus hours (the model's south has nothing to price at surplus); ABSORPTION/PRICE-FORMATION-CLASS if L2 > 0 in those hours but below path+storage absorption (the model pools/absorbs what reality strands); MECHANISM-GAP if L2 exceeds absorption yet zone lambda stays at the charge band (spill must then exist and lambda must sit on the renewable offer floor \u2014 check B3).",
+ "years": {
+  "2023": {
+   "B0_controls": {
+    "max_demand_row_err_mw": {
+     "LA_BASIN": 0.0,
+     "NP15": 0.0,
+     "SDGE": 0.0,
+     "SP15_rest": 0.0,
+     "WECC_DSW": 0.0,
+     "WECC_PNW": 0.0,
+     "ZP26": 0.0
+    },
+    "model_spill_belly_share": 0.91,
+    "model_spill_gwh": 480.02,
+    "renewable_offer_floor_range": {
+     "solar": [
+      -20.0,
+      -20.0
+     ],
+     "wind": [
+      -26.0,
+      -26.0
+     ]
+    },
+    "zone_rows_matched": [
+     "LA_BASIN",
+     "NP15",
+     "SDGE",
+     "SP15_rest",
+     "WECC_DSW",
+     "WECC_PNW",
+     "ZP26"
+    ],
+    "zone_rows_missing": []
+   },
+   "B2_surplus": {
+    "B2b_sensitivities": {
+     "S1_cut15_plus_diablo": {
+      "belly_mean_mw": -337.82,
+      "belly_p95_mw": 5433.18,
+      "hours_over_path": 121,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1570,
+      "hours_pos_belly": 1154,
+      "max_mw": 9339.36,
+      "pos_twh": 3.933,
+      "pos_twh_in_south_neg": 2.227,
+      "south_neg_hours_mean_mw": 3131.79,
+      "south_neg_hours_pos": 627,
+      "split_hours_mean_mw": -639.06,
+      "split_hours_pos": 652
+     },
+     "S2_cut15_plus_diablo_plus_crosswalk": {
+      "belly_mean_mw": 472.16,
+      "belly_p95_mw": 6402.98,
+      "hours_over_path": 239,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1839,
+      "hours_pos_belly": 1309,
+      "max_mw": 10341.78,
+      "pos_twh": 5.46,
+      "pos_twh_in_south_neg": 2.808,
+      "south_neg_hours_mean_mw": 4018.92,
+      "south_neg_hours_pos": 654,
+      "split_hours_mean_mw": 80.13,
+      "split_hours_pos": 771
+     },
+     "S3_cut26_plus_crosswalk": {
+      "belly_mean_mw": -3002.83,
+      "belly_p95_mw": 2098.74,
+      "hours_over_path": 56,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 509,
+      "hours_pos_belly": 419,
+      "max_mw": 5745.97,
+      "pos_twh": 0.724,
+      "pos_twh_in_south_neg": 0.581,
+      "south_neg_hours_mean_mw": 176.98,
+      "south_neg_hours_pos": 361,
+      "split_hours_mean_mw": -3035.54,
+      "split_hours_pos": 202
+     }
+    },
+    "cut15": {
+     "L0_renewables_only": {
+      "belly_mean_mw": -3296.08,
+      "belly_p95_mw": 2400.32,
+      "hours_over_path": 5,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 520,
+      "hours_pos_belly": 438,
+      "max_mw": 6226.24,
+      "pos_twh": 0.818,
+      "pos_twh_in_south_neg": 0.654,
+      "south_neg_hours_mean_mw": 166.94,
+      "south_neg_hours_pos": 361,
+      "split_hours_mean_mw": -3481.15,
+      "split_hours_pos": 207
+     },
+     "L1_plus_nuclear": {
+      "belly_mean_mw": -1283.95,
+      "belly_p95_mw": 4537.05,
+      "hours_over_path": 61,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1225,
+      "hours_pos_belly": 936,
+      "max_mw": 8466.24,
+      "pos_twh": 2.633,
+      "pos_twh_in_south_neg": 1.672,
+      "south_neg_hours_mean_mw": 2214.9,
+      "south_neg_hours_pos": 581,
+      "split_hours_mean_mw": -1571.9,
+      "split_hours_pos": 486
+     },
+     "L2_plus_injected": {
+      "belly_mean_mw": -337.82,
+      "belly_p95_mw": 5433.18,
+      "hours_over_path": 121,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1570,
+      "hours_pos_belly": 1154,
+      "max_mw": 9339.36,
+      "pos_twh": 3.933,
+      "pos_twh_in_south_neg": 2.227,
+      "south_neg_hours_mean_mw": 3131.79,
+      "south_neg_hours_pos": 627,
+      "split_hours_mean_mw": -639.06,
+      "split_hours_pos": 652
+     },
+     "L3_plus_hydro_floor": {
+      "belly_mean_mw": -103.89,
+      "belly_p95_mw": 5719.05,
+      "hours_over_path": 150,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1657,
+      "hours_pos_belly": 1199,
+      "max_mw": 9666.17,
+      "pos_twh": 4.339,
+      "pos_twh_in_south_neg": 2.387,
+      "south_neg_hours_mean_mw": 3382.04,
+      "south_neg_hours_pos": 636,
+      "split_hours_mean_mw": -418.03,
+      "split_hours_pos": 686
+     },
+     "demand_belly_mean_mw": 14189.12,
+     "hydro_floor_belly_mean_mw": 233.93,
+     "injected_belly_mean_mw": 946.12,
+     "nuclear_belly_mean_mw": 2012.14,
+     "reality_hours": {
+      "south_neg": 688,
+      "split_gt15": 1310
+     },
+     "renewable_pot_belly_mean_mw": 10893.04,
+     "sn_path_cap_mw": 5400.0,
+     "storage_charge_cap_mw": 6328.0,
+     "zones": [
+      "ZP26",
+      "LA_BASIN",
+      "SDGE",
+      "SP15_rest"
+     ]
+    },
+    "cut26": {
+     "L0_renewables_only": {
+      "belly_mean_mw": -4317.83,
+      "belly_p95_mw": 599.29,
+      "hours_over_path": 9,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 206,
+      "hours_pos_belly": 181,
+      "max_mw": 4062.65,
+      "pos_twh": 0.222,
+      "pos_twh_in_south_neg": 0.195,
+      "south_neg_hours_mean_mw": -1205.36,
+      "south_neg_hours_pos": 178,
+      "split_hours_mean_mw": -4316.94,
+      "split_hours_pos": 76
+     },
+     "L1_plus_nuclear": {
+      "belly_mean_mw": -4317.83,
+      "belly_p95_mw": 599.29,
+      "hours_over_path": 9,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 206,
+      "hours_pos_belly": 181,
+      "max_mw": 4062.65,
+      "pos_twh": 0.222,
+      "pos_twh_in_south_neg": 0.195,
+      "south_neg_hours_mean_mw": -1205.36,
+      "south_neg_hours_pos": 178,
+      "split_hours_mean_mw": -4316.94,
+      "split_hours_pos": 76
+     },
+     "L2_plus_injected": {
+      "belly_mean_mw": -3453.35,
+      "belly_p95_mw": 1428.84,
+      "hours_over_path": 27,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 374,
+      "hours_pos_belly": 317,
+      "max_mw": 4860.42,
+      "pos_twh": 0.458,
+      "pos_twh_in_south_neg": 0.384,
+      "south_neg_hours_mean_mw": -367.6,
+      "south_neg_hours_pos": 288,
+      "split_hours_mean_mw": -3464.59,
+      "split_hours_pos": 144
+     },
+     "L3_plus_hydro_floor": {
+      "belly_mean_mw": -3243.03,
+      "belly_p95_mw": 1653.99,
+      "hours_over_path": 39,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 428,
+      "hours_pos_belly": 361,
+      "max_mw": 5148.59,
+      "pos_twh": 0.557,
+      "pos_twh_in_south_neg": 0.458,
+      "south_neg_hours_mean_mw": -142.84,
+      "south_neg_hours_pos": 320,
+      "split_hours_mean_mw": -3264.72,
+      "split_hours_pos": 168
+     },
+     "demand_belly_mean_mw": 13047.34,
+     "hydro_floor_belly_mean_mw": 210.33,
+     "injected_belly_mean_mw": 864.48,
+     "nuclear_belly_mean_mw": 0.0,
+     "reality_hours": {
+      "south_neg": 688,
+      "split_gt15": 1310
+     },
+     "renewable_pot_belly_mean_mw": 8729.52,
+     "sn_path_cap_mw": 3000.0,
+     "storage_charge_cap_mw": 5256.7,
+     "zones": [
+      "LA_BASIN",
+      "SDGE",
+      "SP15_rest"
+     ]
+    }
+   },
+   "B3_price_state": {
+    "belly_charge_max_mw": 5348.41,
+    "belly_charge_p50_mw": 2550.13,
+    "belly_charge_p95_mw": 4691.1,
+    "belly_hours_charge_ge_90pct_power": 0,
+    "dump_hours_nonzero": 0,
+    "sdge_only_le0_hours": 206,
+    "storage_total_power_mw": 9570.0,
+    "zone_belly_p05": {
+     "LA_BASIN": -20.0,
+     "NP15": -20.0,
+     "SDGE": -20.0,
+     "SP15_rest": -20.0,
+     "ZP26": -20.0
+    },
+    "zone_belly_p50": {
+     "LA_BASIN": 41.22,
+     "NP15": 42.25,
+     "SDGE": 41.2,
+     "SP15_rest": 41.22,
+     "ZP26": 41.2
+    },
+    "zone_hours_le0": {
+     "LA_BASIN": 314,
+     "NP15": 314,
+     "SDGE": 520,
+     "SP15_rest": 314,
+     "ZP26": 314
+    },
+    "zone_hours_le5": {
+     "LA_BASIN": 414,
+     "NP15": 413,
+     "SDGE": 583,
+     "SP15_rest": 414,
+     "ZP26": 418
+    }
+   },
+   "B4_reality_curtailment": {
+    "annual_gwh": {
+     "solar": 2508.92,
+     "wind": 150.6
+    },
+    "belly_share": 0.76,
+    "model_spill_vs_reported_ratio": 0.18,
+    "reason_share_of_total": {
+     "Local": 0.78,
+     "System": 0.22
+    },
+    "record_span": [
+     "2023-01-01",
+     "2023-12-31"
+    ],
+    "top3_months_gwh": {
+     "3": 606.18,
+     "4": 702.88,
+     "5": 379.84
+    }
+   },
+   "B5_export_witness": {
+    "actual_TI_belly_p05_mw": -4112.5,
+    "actual_TI_belly_p50_mw": -519.0,
+    "actual_TI_belly_p95_mw": 3233.75,
+    "actual_belly_export_hours": 900,
+    "model_belly_export_hours": 0,
+    "model_import_belly_p05_mw": 0.0,
+    "model_import_belly_p50_mw": 3029.91
+   }
+  },
+  "2024": {
+   "B0_controls": {
+    "max_demand_row_err_mw": {
+     "LA_BASIN": 0.0,
+     "NP15": 0.0,
+     "SDGE": 0.0,
+     "SP15_rest": 0.0,
+     "WECC_DSW": 0.0,
+     "WECC_PNW": 0.0,
+     "ZP26": 0.0
+    },
+    "model_spill_belly_share": 0.84,
+    "model_spill_gwh": 1176.38,
+    "renewable_offer_floor_range": {
+     "solar": [
+      -20.0,
+      -20.0
+     ],
+     "wind": [
+      -26.0,
+      -26.0
+     ]
+    },
+    "zone_rows_matched": [
+     "LA_BASIN",
+     "NP15",
+     "SDGE",
+     "SP15_rest",
+     "WECC_DSW",
+     "WECC_PNW",
+     "ZP26"
+    ],
+    "zone_rows_missing": []
+   },
+   "B2_surplus": {
+    "B2b_sensitivities": {
+     "S1_cut15_plus_diablo": {
+      "belly_mean_mw": 1293.75,
+      "belly_p95_mw": 8318.44,
+      "hours_over_path": 480,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1900,
+      "hours_pos_belly": 1376,
+      "max_mw": 11730.22,
+      "pos_twh": 6.913,
+      "pos_twh_in_south_neg": 5.387,
+      "south_neg_hours_mean_mw": 4107.64,
+      "south_neg_hours_pos": 1089,
+      "split_hours_mean_mw": 350.65,
+      "split_hours_pos": 1026
+     },
+     "S2_cut15_plus_diablo_plus_crosswalk": {
+      "belly_mean_mw": 2060.54,
+      "belly_p95_mw": 9187.75,
+      "hours_over_path": 643,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 2116,
+      "hours_pos_belly": 1522,
+      "max_mw": 12638.8,
+      "pos_twh": 8.51,
+      "pos_twh_in_south_neg": 6.256,
+      "south_neg_hours_mean_mw": 4848.8,
+      "south_neg_hours_pos": 1112,
+      "split_hours_mean_mw": 957.21,
+      "split_hours_pos": 1084
+     },
+     "S3_cut26_plus_crosswalk": {
+      "belly_mean_mw": -1941.44,
+      "belly_p95_mw": 4643.62,
+      "hours_over_path": 318,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 917,
+      "hours_pos_belly": 707,
+      "max_mw": 8262.83,
+      "pos_twh": 2.243,
+      "pos_twh_in_south_neg": 2.119,
+      "south_neg_hours_mean_mw": 960.5,
+      "south_neg_hours_pos": 791,
+      "split_hours_mean_mw": -2416.88,
+      "split_hours_pos": 555
+     }
+    },
+    "cut15": {
+     "L0_renewables_only": {
+      "belly_mean_mw": -1653.4,
+      "belly_p95_mw": 5733.09,
+      "hours_over_path": 144,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1006,
+      "hours_pos_belly": 777,
+      "max_mw": 9772.26,
+      "pos_twh": 2.958,
+      "pos_twh_in_south_neg": 2.743,
+      "south_neg_hours_mean_mw": 1403.5,
+      "south_neg_hours_pos": 835,
+      "split_hours_mean_mw": -2526.54,
+      "split_hours_pos": 597
+     },
+     "L1_plus_nuclear": {
+      "belly_mean_mw": 423.41,
+      "belly_p95_mw": 7470.02,
+      "hours_over_path": 349,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1631,
+      "hours_pos_belly": 1206,
+      "max_mw": 10881.8,
+      "pos_twh": 5.382,
+      "pos_twh_in_south_neg": 4.463,
+      "south_neg_hours_mean_mw": 3243.95,
+      "south_neg_hours_pos": 1040,
+      "split_hours_mean_mw": -510.02,
+      "split_hours_pos": 907
+     },
+     "L2_plus_injected": {
+      "belly_mean_mw": 1293.75,
+      "belly_p95_mw": 8318.44,
+      "hours_over_path": 480,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1900,
+      "hours_pos_belly": 1376,
+      "max_mw": 11730.22,
+      "pos_twh": 6.913,
+      "pos_twh_in_south_neg": 5.387,
+      "south_neg_hours_mean_mw": 4107.64,
+      "south_neg_hours_pos": 1089,
+      "split_hours_mean_mw": 350.65,
+      "split_hours_pos": 1026
+     },
+     "L3_plus_hydro_floor": {
+      "belly_mean_mw": 1500.12,
+      "belly_p95_mw": 8499.49,
+      "hours_over_path": 517,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1966,
+      "hours_pos_belly": 1417,
+      "max_mw": 11945.81,
+      "pos_twh": 7.303,
+      "pos_twh_in_south_neg": 5.593,
+      "south_neg_hours_mean_mw": 4295.74,
+      "south_neg_hours_pos": 1097,
+      "split_hours_mean_mw": 532.54,
+      "split_hours_pos": 1043
+     },
+     "demand_belly_mean_mw": 14857.66,
+     "hydro_floor_belly_mean_mw": 206.37,
+     "injected_belly_mean_mw": 870.34,
+     "nuclear_belly_mean_mw": 2076.81,
+     "reality_hours": {
+      "south_neg": 1230,
+      "split_gt15": 1691
+     },
+     "renewable_pot_belly_mean_mw": 13204.26,
+     "sn_path_cap_mw": 5400.0,
+     "storage_charge_cap_mw": 9531.1,
+     "zones": [
+      "ZP26",
+      "LA_BASIN",
+      "SDGE",
+      "SP15_rest"
+     ]
+    },
+    "cut26": {
+     "L0_renewables_only": {
+      "belly_mean_mw": -3269.05,
+      "belly_p95_mw": 3075.87,
+      "hours_over_path": 125,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 596,
+      "hours_pos_belly": 485,
+      "max_mw": 6369.37,
+      "pos_twh": 1.143,
+      "pos_twh_in_south_neg": 1.12,
+      "south_neg_hours_mean_mw": -475.54,
+      "south_neg_hours_pos": 565,
+      "split_hours_mean_mw": -3713.48,
+      "split_hours_pos": 370
+     },
+     "L1_plus_nuclear": {
+      "belly_mean_mw": -3269.05,
+      "belly_p95_mw": 3075.87,
+      "hours_over_path": 125,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 596,
+      "hours_pos_belly": 485,
+      "max_mw": 6369.37,
+      "pos_twh": 1.143,
+      "pos_twh_in_south_neg": 1.12,
+      "south_neg_hours_mean_mw": -475.54,
+      "south_neg_hours_pos": 565,
+      "split_hours_mean_mw": -3713.48,
+      "split_hours_pos": 370
+     },
+     "L2_plus_injected": {
+      "belly_mean_mw": -2471.58,
+      "belly_p95_mw": 3858.6,
+      "hours_over_path": 214,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 769,
+      "hours_pos_belly": 607,
+      "max_mw": 7146.75,
+      "pos_twh": 1.676,
+      "pos_twh_in_south_neg": 1.615,
+      "south_neg_hours_mean_mw": 315.84,
+      "south_neg_hours_pos": 697,
+      "split_hours_mean_mw": -2924.87,
+      "split_hours_pos": 473
+     },
+     "L3_plus_hydro_floor": {
+      "belly_mean_mw": -2284.45,
+      "belly_p95_mw": 4031.92,
+      "hours_over_path": 238,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 814,
+      "hours_pos_belly": 642,
+      "max_mw": 7338.22,
+      "pos_twh": 1.811,
+      "pos_twh_in_south_neg": 1.734,
+      "south_neg_hours_mean_mw": 483.44,
+      "south_neg_hours_pos": 723,
+      "split_hours_mean_mw": -2760.93,
+      "split_hours_pos": 496
+     },
+     "demand_belly_mean_mw": 13742.52,
+     "hydro_floor_belly_mean_mw": 187.13,
+     "injected_belly_mean_mw": 797.47,
+     "nuclear_belly_mean_mw": 0.0,
+     "reality_hours": {
+      "south_neg": 1230,
+      "split_gt15": 1691
+     },
+     "renewable_pot_belly_mean_mw": 10473.46,
+     "sn_path_cap_mw": 3000.0,
+     "storage_charge_cap_mw": 8454.2,
+     "zones": [
+      "LA_BASIN",
+      "SDGE",
+      "SP15_rest"
+     ]
+    }
+   },
+   "B3_price_state": {
+    "belly_charge_max_mw": 7837.16,
+    "belly_charge_p50_mw": 4613.56,
+    "belly_charge_p95_mw": 7200.37,
+    "belly_hours_charge_ge_90pct_power": 0,
+    "dump_hours_nonzero": 0,
+    "sdge_only_le0_hours": 194,
+    "storage_total_power_mw": 13208.9,
+    "zone_belly_p05": {
+     "LA_BASIN": -20.52,
+     "NP15": -20.0,
+     "SDGE": -20.8,
+     "SP15_rest": -19.94,
+     "ZP26": -20.0
+    },
+    "zone_belly_p50": {
+     "LA_BASIN": 31.16,
+     "NP15": 30.33,
+     "SDGE": 31.14,
+     "SP15_rest": 30.47,
+     "ZP26": 29.83
+    },
+    "zone_hours_le0": {
+     "LA_BASIN": 604,
+     "NP15": 604,
+     "SDGE": 798,
+     "SP15_rest": 604,
+     "ZP26": 604
+    },
+    "zone_hours_le5": {
+     "LA_BASIN": 764,
+     "NP15": 763,
+     "SDGE": 905,
+     "SP15_rest": 768,
+     "ZP26": 769
+    }
+   },
+   "B4_reality_curtailment": {
+    "annual_gwh": {
+     "solar": 3192.6,
+     "wind": 230.78
+    },
+    "belly_share": 0.7,
+    "model_spill_vs_reported_ratio": 0.34,
+    "reason_share_of_total": {
+     "Local": 0.92,
+     "System": 0.08
+    },
+    "record_span": [
+     "2024-01-01",
+     "2024-12-31"
+    ],
+    "top3_months_gwh": {
+     "3": 730.27,
+     "4": 839.58,
+     "5": 695.37
+    }
+   },
+   "B5_export_witness": {
+    "actual_TI_belly_p05_mw": -5445.15,
+    "actual_TI_belly_p50_mw": -1207.0,
+    "actual_TI_belly_p95_mw": 3098.8,
+    "actual_belly_export_hours": 676,
+    "model_belly_export_hours": 0,
+    "model_import_belly_p05_mw": 176.98,
+    "model_import_belly_p50_mw": 3366.03
+   }
+  },
+  "2025": {
+   "B0_controls": {
+    "max_demand_row_err_mw": {
+     "LA_BASIN": 0.0,
+     "NP15": 0.0,
+     "SDGE": 0.0,
+     "SP15_rest": 0.0,
+     "WECC_DSW": 0.0,
+     "WECC_PNW": 0.0,
+     "ZP26": 0.0
+    },
+    "model_spill_belly_share": 0.86,
+    "model_spill_gwh": 852.29,
+    "renewable_offer_floor_range": {
+     "solar": [
+      -20.0,
+      -20.0
+     ],
+     "wind": [
+      -26.0,
+      -26.0
+     ]
+    },
+    "zone_rows_matched": [
+     "LA_BASIN",
+     "NP15",
+     "SDGE",
+     "SP15_rest",
+     "WECC_DSW",
+     "WECC_PNW",
+     "ZP26"
+    ],
+    "zone_rows_missing": []
+   },
+   "B2_surplus": {
+    "B2b_sensitivities": {
+     "S1_cut15_plus_diablo": {
+      "belly_mean_mw": 2720.57,
+      "belly_p95_mw": 8891.69,
+      "hours_over_path": 742,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 2311,
+      "hours_pos_belly": 1670,
+      "max_mw": 12599.59,
+      "pos_twh": 9.671,
+      "pos_twh_in_south_neg": 5.23,
+      "south_neg_hours_mean_mw": 5245.08,
+      "south_neg_hours_pos": 880,
+      "split_hours_mean_mw": 564.18,
+      "split_hours_pos": 832
+     },
+     "S2_cut15_plus_diablo_plus_crosswalk": {
+      "belly_mean_mw": 3541.41,
+      "belly_p95_mw": 9813.86,
+      "hours_over_path": 999,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 2475,
+      "hours_pos_belly": 1748,
+      "max_mw": 13656.92,
+      "pos_twh": 11.74,
+      "pos_twh_in_south_neg": 5.998,
+      "south_neg_hours_mean_mw": 6069.71,
+      "south_neg_hours_pos": 894,
+      "split_hours_mean_mw": 1225.84,
+      "split_hours_pos": 885
+     },
+     "S3_cut26_plus_crosswalk": {
+      "belly_mean_mw": -793.5,
+      "belly_p95_mw": 4778.56,
+      "hours_over_path": 368,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1274,
+      "hours_pos_belly": 1009,
+      "max_mw": 8387.2,
+      "pos_twh": 2.876,
+      "pos_twh_in_south_neg": 2.146,
+      "south_neg_hours_mean_mw": 1722.33,
+      "south_neg_hours_pos": 734,
+      "split_hours_mean_mw": -2335.9,
+      "split_hours_pos": 478
+     }
+    },
+    "cut15": {
+     "L0_renewables_only": {
+      "belly_mean_mw": 79.23,
+      "belly_p95_mw": 6338.58,
+      "hours_over_path": 183,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1569,
+      "hours_pos_belly": 1228,
+      "max_mw": 10424.87,
+      "pos_twh": 4.628,
+      "pos_twh_in_south_neg": 3.104,
+      "south_neg_hours_mean_mw": 2720.7,
+      "south_neg_hours_pos": 783,
+      "split_hours_mean_mw": -2021.75,
+      "split_hours_pos": 582
+     },
+     "L1_plus_nuclear": {
+      "belly_mean_mw": 2075.19,
+      "belly_p95_mw": 8252.59,
+      "hours_over_path": 567,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 2114,
+      "hours_pos_belly": 1552,
+      "max_mw": 11970.47,
+      "pos_twh": 8.238,
+      "pos_twh_in_south_neg": 4.668,
+      "south_neg_hours_mean_mw": 4601.33,
+      "south_neg_hours_pos": 863,
+      "split_hours_mean_mw": -78.4,
+      "split_hours_pos": 765
+     },
+     "L2_plus_injected": {
+      "belly_mean_mw": 2720.57,
+      "belly_p95_mw": 8891.69,
+      "hours_over_path": 742,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 2311,
+      "hours_pos_belly": 1670,
+      "max_mw": 12599.59,
+      "pos_twh": 9.671,
+      "pos_twh_in_south_neg": 5.23,
+      "south_neg_hours_mean_mw": 5245.08,
+      "south_neg_hours_pos": 880,
+      "split_hours_mean_mw": 564.18,
+      "split_hours_pos": 832
+     },
+     "L3_plus_hydro_floor": {
+      "belly_mean_mw": 2875.74,
+      "belly_p95_mw": 9041.76,
+      "hours_over_path": 779,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 2342,
+      "hours_pos_belly": 1687,
+      "max_mw": 12802.76,
+      "pos_twh": 10.022,
+      "pos_twh_in_south_neg": 5.36,
+      "south_neg_hours_mean_mw": 5391.48,
+      "south_neg_hours_pos": 884,
+      "split_hours_mean_mw": 697.17,
+      "split_hours_pos": 843
+     },
+     "demand_belly_mean_mw": 14331.83,
+     "hydro_floor_belly_mean_mw": 155.17,
+     "injected_belly_mean_mw": 645.37,
+     "nuclear_belly_mean_mw": 1995.96,
+     "reality_hours": {
+      "south_neg": 964,
+      "split_gt15": 1347
+     },
+     "renewable_pot_belly_mean_mw": 14411.06,
+     "sn_path_cap_mw": 5400.0,
+     "storage_charge_cap_mw": 13320.8,
+     "zones": [
+      "ZP26",
+      "LA_BASIN",
+      "SDGE",
+      "SP15_rest"
+     ]
+    },
+    "cut26": {
+     "L0_renewables_only": {
+      "belly_mean_mw": -1923.44,
+      "belly_p95_mw": 3409.79,
+      "hours_over_path": 144,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 869,
+      "hours_pos_belly": 720,
+      "max_mw": 6795.72,
+      "pos_twh": 1.554,
+      "pos_twh_in_south_neg": 1.303,
+      "south_neg_hours_mean_mw": 489.02,
+      "south_neg_hours_pos": 592,
+      "split_hours_mean_mw": -3455.27,
+      "split_hours_pos": 315
+     },
+     "L1_plus_nuclear": {
+      "belly_mean_mw": -1923.44,
+      "belly_p95_mw": 3409.79,
+      "hours_over_path": 144,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 869,
+      "hours_pos_belly": 720,
+      "max_mw": 6795.72,
+      "pos_twh": 1.554,
+      "pos_twh_in_south_neg": 1.303,
+      "south_neg_hours_mean_mw": 489.02,
+      "south_neg_hours_pos": 592,
+      "split_hours_mean_mw": -3455.27,
+      "split_hours_pos": 315
+     },
+     "L2_plus_injected": {
+      "belly_mean_mw": -1330.52,
+      "belly_p95_mw": 4025.23,
+      "hours_over_path": 228,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1065,
+      "hours_pos_belly": 862,
+      "max_mw": 7373.7,
+      "pos_twh": 2.126,
+      "pos_twh_in_south_neg": 1.676,
+      "south_neg_hours_mean_mw": 1080.45,
+      "south_neg_hours_pos": 670,
+      "split_hours_mean_mw": -2864.91,
+      "split_hours_pos": 394
+     },
+     "L3_plus_hydro_floor": {
+      "belly_mean_mw": -1191.39,
+      "belly_p95_mw": 4145.39,
+      "hours_over_path": 261,
+      "hours_over_path_plus_storage": 0,
+      "hours_pos": 1104,
+      "hours_pos_belly": 893,
+      "max_mw": 7556.85,
+      "pos_twh": 2.27,
+      "pos_twh_in_south_neg": 1.765,
+      "south_neg_hours_mean_mw": 1208.6,
+      "south_neg_hours_pos": 683,
+      "split_hours_mean_mw": -2746.6,
+      "split_hours_pos": 404
+     },
+     "demand_belly_mean_mw": 13344.76,
+     "hydro_floor_belly_mean_mw": 139.13,
+     "injected_belly_mean_mw": 592.92,
+     "nuclear_belly_mean_mw": 0.0,
+     "reality_hours": {
+      "south_neg": 964,
+      "split_gt15": 1347
+     },
+     "renewable_pot_belly_mean_mw": 11421.32,
+     "sn_path_cap_mw": 3000.0,
+     "storage_charge_cap_mw": 11386.0,
+     "zones": [
+      "LA_BASIN",
+      "SDGE",
+      "SP15_rest"
+     ]
+    }
+   },
+   "B3_price_state": {
+    "belly_charge_max_mw": 10039.98,
+    "belly_charge_p50_mw": 6367.42,
+    "belly_charge_p95_mw": 9094.28,
+    "belly_hours_charge_ge_90pct_power": 0,
+    "dump_hours_nonzero": 0,
+    "sdge_only_le0_hours": 432,
+    "storage_total_power_mw": 17526.0,
+    "zone_belly_p05": {
+     "LA_BASIN": -20.0,
+     "NP15": -20.0,
+     "SDGE": -20.28,
+     "SP15_rest": -19.44,
+     "ZP26": -19.7
+    },
+    "zone_belly_p50": {
+     "LA_BASIN": 32.79,
+     "NP15": 32.1,
+     "SDGE": 32.3,
+     "SP15_rest": 31.94,
+     "ZP26": 31.42
+    },
+    "zone_hours_le0": {
+     "LA_BASIN": 507,
+     "NP15": 507,
+     "SDGE": 939,
+     "SP15_rest": 507,
+     "ZP26": 507
+    },
+    "zone_hours_le5": {
+     "LA_BASIN": 623,
+     "NP15": 624,
+     "SDGE": 1001,
+     "SP15_rest": 625,
+     "ZP26": 625
+    }
+   },
+   "B4_reality_curtailment": {
+    "annual_gwh": {
+     "solar": 3482.32,
+     "wind": 283.31
+    },
+    "belly_share": 0.72,
+    "model_spill_vs_reported_ratio": 0.23,
+    "reason_share_of_total": {
+     "Local": 0.83,
+     "System": 0.17
+    },
+    "record_span": [
+     "2025-01-01",
+     "2025-12-31"
+    ],
+    "top3_months_gwh": {
+     "2": 502.52,
+     "3": 919.02,
+     "4": 738.18
+    }
+   },
+   "B5_export_witness": {
+    "actual_TI_belly_p05_mw": -6271.5,
+    "actual_TI_belly_p50_mw": -1336.5,
+    "actual_TI_belly_p95_mw": 2360.2,
+    "actual_belly_export_hours": 601,
+    "model_belly_export_hours": 0,
+    "model_import_belly_p05_mw": 171.09,
+    "model_import_belly_p50_mw": 3429.14
+   }
+  }
+ }
+}

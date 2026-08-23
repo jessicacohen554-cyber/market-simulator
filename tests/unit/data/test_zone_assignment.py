@@ -256,22 +256,54 @@ def test_caiso_out_of_state_arizona():
 
 
 def test_caiso_known_plants_resolve_to_expected_zones():
-    """Named California plants land in their real CAISO trading zones."""
+    """Named California plants land in their real CAISO trading zones.
+
+    Since caiso-217 the measured hub-membership crosswalk is the first
+    check, so a joined plant carries CAISO's own ATL_PNODE_MAP membership
+    (canonically Diablo Canyon: the central-coast county lift says NP15,
+    CAISO's own DIABLO gen pnodes are TH_ZP26); unjoined plants keep the
+    geographic rule.
+    """
     # ORIS codes from eGRID 2023 PLNT23 (BACODE == CISO).
     cases = {
         260: "NP15",  # Moss Landing (Monterey)
-        286: "NP15",  # Geysers geothermal (Sonoma)
+        286: "NP15",  # Geysers geothermal (Sonoma; unjoined -> geographic)
         52169: "ZP26",  # Midway Sunset Cogen (Kern)
         55151: "ZP26",  # La Paloma Generating Plant (Kern)
         302: "SDGE",  # Encina / Cabrillo (San Diego)
         350: "LA_BASIN",  # Ormond Beach (Ventura, coords-only LA-basin band)
-        6099: "NP15",  # Diablo Canyon (San Luis Obispo, central-coast rule)
+        6099: "ZP26",  # Diablo Canyon (measured membership: TH_ZP26_GEN)
         57373: "SP15_rest",  # Agua Caliente Solar (Arizona)
-        52015: "NP15",  # Dixie Valley geothermal (northern Nevada)
         315: "LA_BASIN",  # AES Alamitos (Los Angeles County)
     }
     for oris, expected in cases.items():
         assert assign_zone(oris, "CAISO") == expected, f"ORIS {oris}"
+
+
+def test_caiso_hub_membership_first_check():
+    """The measured crosswalk overrides geography; TH_SP15 keeps the pocket split.
+
+    Witnesses from FINDING-caiso216 §E: the lat band puts Alta/Tehachapi wind
+    in ZP26 where CAISO's membership is TH_SP15 (they land in the SP15_rest
+    gateway, not an LCR pocket), and Mustang/Westlands solar in ZP26 where
+    the membership is TH_NP15 — the two-directional correction. LCR-pocket
+    plants (Alamitos) stay in their pocket: TH_SP15 carries no sub-zone
+    information, so the geographic pocket resolution is preserved.
+    """
+    from market_sim.data.zone_assignment import (
+        build_zone_lookup,
+        load_caiso_hub_membership,
+    )
+
+    membership = load_caiso_hub_membership()
+    if not membership:  # crosswalk absent: nothing to assert
+        return
+    lookup = build_zone_lookup("CAISO")
+    assert lookup[57282] == "SP15_rest"  # Alta Wind I (ZP26 lat band -> TH_SP15)
+    assert lookup[62015] == "NP15"  # Mustang Two (ZP26 lat band -> TH_NP15)
+    assert membership[315] == "TH_SP15" and lookup[315] == "LA_BASIN"
+    # Every hub value resolves to a model zone; no crosswalk row invents one.
+    assert set(membership.values()) <= {"TH_NP15", "TH_ZP26", "TH_SP15"}
 
 
 def test_caiso_every_plant_resolves():

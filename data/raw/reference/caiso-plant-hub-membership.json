@@ -1,0 +1,1066 @@
+{
+ "ambiguous_substations_dropped": [
+  "ELNIDO",
+  "KCRDCT1",
+  "KCRDCT2",
+  "MAGUNDEN",
+  "SANBRN"
+ ],
+ "atlas": {
+  "atlas_rows": 13483,
+  "gen_pnodes": 1999,
+  "pnodes_with_hub_change": [
+   "DAGGET_7_N005",
+   "EDWARD_7_N005",
+   "RECTOR_6_N022",
+   "REXFRD_7_NBT1",
+   "REXFRD_7_NBT2",
+   "REXFRD_7_NSR1",
+   "REXFRD_7_NSR2",
+   "TUMBWD_7_N002",
+   "TUMBWD_7_N003"
+  ]
+ },
+ "charter": "results/calibration/FINDING-caiso216-belly-lever-plan-2026-08-23.md \u00a7F.1g",
+ "conflicts": {
+  "cross_tier_disagreements": [
+   {
+    "answers": [
+     "E1:TH_NP15 (eia-lmp-node:pnode-exact)",
+     "E3:TH_SP15 (resource-name:exact)"
+    ],
+    "plant_code": 264,
+    "plant_name": "Phoenix"
+   },
+   {
+    "answers": [
+     "E1:TH_NP15 (eia-lmp-node:pnode-exact)",
+     "E2:TH_ZP26 (reviewed-crosswalk:exact)",
+     "E3:TH_ZP26 (resource-name:exact)"
+    ],
+    "plant_code": 55807,
+    "plant_name": "Henrietta Peaker"
+   },
+   {
+    "answers": [
+     "E1:TH_ZP26 (eia-lmp-node:pnode-exact)",
+     "E3:TH_SP15 (resource-name:prefix)"
+    ],
+    "plant_code": 61846,
+    "plant_name": "Tulare BioMAT Fuel Cell"
+   }
+  ],
+  "excluded_plants": [
+   {
+    "basis": "James B Black \u2014 PG&E Pit River hydro (Shasta, NP15); the E3 name match reached Kern's BLACKWLL substation through a bare 'Black' resource-name collision.",
+    "plant_code": 249,
+    "plant_name": "James B Black",
+    "refused_hub": "TH_ZP26"
+   },
+   {
+    "basis": "Mill Creek 3 \u2014 the SCE San Bernardino hydro, not the Mendocino LOWGAP 'Mill Creek' the resource name collides with.",
+    "plant_code": 7147,
+    "plant_name": "Mill Creek 3",
+    "refused_hub": "TH_NP15"
+   },
+   {
+    "basis": "High Sierra Limited \u2014 Kern oilfield cogen; the 'Sierra' resource-name collision lands SCE's Riverside-area SIERRA substation.",
+    "plant_code": 50495,
+    "plant_name": "High Sierra Limited",
+    "refused_hub": "TH_SP15"
+   }
+  ],
+  "within_tier_conflicts": [
+   {
+    "plant_code": 52162,
+    "plant_name": "85 A"
+   },
+   {
+    "plant_code": 52163,
+    "plant_name": "85 B"
+   },
+   {
+    "plant_code": 58642,
+    "plant_name": "Tulare 1 and 2"
+   },
+   {
+    "plant_code": 63848,
+    "plant_name": "Solar Blue"
+   }
+  ]
+ },
+ "coverage_by_tech": {
+  "_total": {
+   "mw": 94263.5,
+   "mw_joined": 40572.4,
+   "mw_share": 0.4304,
+   "plants": 1989,
+   "plants_joined": 446
+  },
+  "battery": {
+   "mw": 18300.9,
+   "mw_joined": 10228.7,
+   "mw_share": 0.5589,
+   "plants": 193,
+   "plants_joined": 75
+  },
+  "biomass_other": {
+   "mw": 1065.6,
+   "mw_joined": 247.1,
+   "mw_share": 0.2319,
+   "plants": 97,
+   "plants_joined": 17
+  },
+  "coal": {
+   "mw": 62.5,
+   "mw_joined": 0.0,
+   "mw_share": 0.0,
+   "plants": 1,
+   "plants_joined": 0
+  },
+  "gas_cc": {
+   "mw": 19043.3,
+   "mw_joined": 7161.1,
+   "mw_share": 0.376,
+   "plants": 49,
+   "plants_joined": 16
+  },
+  "gas_ct": {
+   "mw": 10140.2,
+   "mw_joined": 3399.4,
+   "mw_share": 0.3352,
+   "plants": 121,
+   "plants_joined": 33
+  },
+  "gas_other": {
+   "mw": 606.8,
+   "mw_joined": 269.2,
+   "mw_share": 0.4436,
+   "plants": 90,
+   "plants_joined": 4
+  },
+  "gas_st": {
+   "mw": 2945.0,
+   "mw_joined": 1115.0,
+   "mw_share": 0.3786,
+   "plants": 3,
+   "plants_joined": 1
+  },
+  "geothermal": {
+   "mw": 2217.9,
+   "mw_joined": 0.0,
+   "mw_share": 0.0,
+   "plants": 15,
+   "plants_joined": 0
+  },
+  "hydro": {
+   "mw": 6999.3,
+   "mw_joined": 2583.4,
+   "mw_share": 0.3691,
+   "plants": 190,
+   "plants_joined": 80
+  },
+  "nuclear": {
+   "mw": 2323.0,
+   "mw_joined": 2323.0,
+   "mw_share": 1.0,
+   "plants": 1,
+   "plants_joined": 1
+  },
+  "oil": {
+   "mw": 439.9,
+   "mw_joined": 0.0,
+   "mw_share": 0.0,
+   "plants": 14,
+   "plants_joined": 0
+  },
+  "pumped_storage": {
+   "mw": 1817.1,
+   "mw_joined": 0.0,
+   "mw_share": 0.0,
+   "plants": 5,
+   "plants_joined": 0
+  },
+  "solar": {
+   "mw": 21958.2,
+   "mw_joined": 10716.5,
+   "mw_share": 0.488,
+   "plants": 744,
+   "plants_joined": 163
+  },
+  "unlisted": {
+   "mw": 0.0,
+   "mw_joined": 0.0,
+   "mw_share": null,
+   "plants": 356,
+   "plants_joined": 26
+  },
+  "wind": {
+   "mw": 6343.8,
+   "mw_joined": 2529.0,
+   "mw_share": 0.3987,
+   "plants": 110,
+   "plants_joined": 30
+  }
+ },
+ "derived_by": "scripts/data/derive_caiso_plant_hub_membership.py",
+ "excluded_substations": {
+  "CENT403": "Matches every '... Central ...' name fragment (UCI, Caltech, Central Antelope) \u2014 a generic-word trap the audit caught moving southern plants to TH_NP15.",
+  "FLOWD3-6": "Legacy FloWind aggregate \u2014 CAISO's FLOWD* ids conflate the Altamont (NP15) and Tehachapi (SP15) FloWind fleets, so a name join through them is direction-ambiguous by construction.",
+  "GEN": "GEN_BUS_* placeholder pnodes \u2014 not a real substation identity."
+ },
+ "hub_counts": {
+  "TH_NP15": 132,
+  "TH_SP15": 268,
+  "TH_ZP26": 46
+ },
+ "join_method_counts": {
+  "eia-lmp-node:base": 4,
+  "eia-lmp-node:exact": 31,
+  "eia-lmp-node:genstrip": 1,
+  "eia-lmp-node:pnode-exact": 84,
+  "eia-lmp-node:prefix": 12,
+  "resource-name:base": 10,
+  "resource-name:exact": 188,
+  "resource-name:genstrip": 9,
+  "resource-name:prefix": 67,
+  "reviewed-crosswalk:base": 1,
+  "reviewed-crosswalk:exact": 12,
+  "reviewed-crosswalk:prefix": 8,
+  "verified-pin": 19
+ },
+ "joined_plants": 446,
+ "movers": {
+  "count": 78,
+  "mw": 10561.4,
+  "note": "joined plants whose measured hub disagrees with the geographic macro-band (NP15/ZP26/south) of the current lat/county estimate \u2014 the capacity the crosswalk moves",
+  "rows": [
+   {
+    "capacity_mw": 2323.0,
+    "geo_zone": "NP15",
+    "hub": "TH_ZP26",
+    "join_method": "eia-lmp-node:prefix",
+    "plant_code": 6099,
+    "plant_name": "Diablo Canyon",
+    "pnode": "DIABLO_5_B1",
+    "tech": "nuclear"
+   },
+   {
+    "capacity_mw": 1000.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 64210,
+    "plant_name": "Bellefield Solar and Energy Storage Farm",
+    "pnode": "BELLEF_7_CN01",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 585.9,
+    "geo_zone": "NP15",
+    "hub": "TH_ZP26",
+    "join_method": "resource-name:prefix",
+    "plant_code": 57695,
+    "plant_name": "Topaz Solar Farm",
+    "pnode": "TOPAZC1_7_N021",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 540.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 64633,
+    "plant_name": "Rexford Solar Farm",
+    "pnode": "REXFRD_7_NBT1",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 440.3,
+    "geo_zone": "ZP26",
+    "hub": "TH_NP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 63727,
+    "plant_name": "Slate Hybrid",
+    "pnode": "SLATE_7_N001",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 280.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "verified-pin",
+    "plant_code": 57331,
+    "plant_name": "Mojave Solar Project",
+    "pnode": "LCKHT1_7_N003",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 249.8,
+    "geo_zone": "NP15",
+    "hub": "TH_ZP26",
+    "join_method": "resource-name:genstrip",
+    "plant_code": 57439,
+    "plant_name": "California Valley Solar Ranch",
+    "pnode": "CAVLSRGN_7_B1",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 200.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 67734,
+    "plant_name": "Silver State South Storage",
+    "pnode": "PRIMM_2_B1",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 175.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_NP15",
+    "join_method": "verified-pin",
+    "plant_code": 59150,
+    "plant_name": "RE Mustang LLC",
+    "pnode": "MUSTANGS_2_B1",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 174.5,
+    "geo_zone": "NP15",
+    "hub": "TH_SP15",
+    "join_method": "verified-pin",
+    "plant_code": 319,
+    "plant_name": "Big Creek 3",
+    "pnode": "BIGCRK1_2_B1",
+    "tech": "hydro"
+   },
+   {
+    "capacity_mw": 169.4,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 10444,
+    "plant_name": "Lockhart Solar PV, LLC",
+    "pnode": "LCKHT1_7_N003",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 168.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:base",
+    "plant_code": 57294,
+    "plant_name": "Alta Wind Energy Center V",
+    "pnode": "ALTA1G_7_B1",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 150.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:base",
+    "plant_code": 57282,
+    "plant_name": "Alta Wind Energy Center I",
+    "pnode": "ALTA1G_7_B1",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 150.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:base",
+    "plant_code": 57291,
+    "plant_name": "Alta Wind Energy Center II",
+    "pnode": "ALTA1G_7_B1",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 150.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:base",
+    "plant_code": 57835,
+    "plant_name": "Alta Wind VIII",
+    "pnode": "ALTA1G_7_B1",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 150.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:base",
+    "plant_code": 57292,
+    "plant_name": "Alta Wind Energy Center III",
+    "pnode": "ALTA1G_7_B1",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 150.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:base",
+    "plant_code": 57833,
+    "plant_name": "Mustang Hills LLC",
+    "pnode": "ALTA1G_7_B1",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 150.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_NP15",
+    "join_method": "verified-pin",
+    "plant_code": 62015,
+    "plant_name": "Mustang Two",
+    "pnode": "MUSTANGS_2_B1",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 148.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "verified-pin",
+    "plant_code": 68846,
+    "plant_name": "Edwards Sanborn 1C",
+    "pnode": "EDWARD_7_CN1",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 144.1,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 66699,
+    "plant_name": "Lockhart Solar PV II",
+    "pnode": "LCKHT1_7_N003",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 138.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:prefix",
+    "plant_code": 58394,
+    "plant_name": "Alta Wind X",
+    "pnode": "ALTA6E2_7_N002",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 133.4,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 57075,
+    "plant_name": "Ivanpah 3",
+    "pnode": "IVANPA_2_B1",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 133.4,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 57073,
+    "plant_name": "Ivanpah 2",
+    "pnode": "IVANPA_2_B1",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 131.1,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:prefix",
+    "plant_code": 60594,
+    "plant_name": "Voyager Wind I",
+    "pnode": "VOYAGRG1_7_N001",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 128.7,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:prefix",
+    "plant_code": 61582,
+    "plant_name": "Voyager Wind II",
+    "pnode": "VOYAGRG1_7_N001",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 128.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_NP15",
+    "join_method": "resource-name:prefix",
+    "plant_code": 60777,
+    "plant_name": "American Kings Solar, LLC",
+    "pnode": "AKINGS02_7_N001",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 126.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "reviewed-crosswalk:exact",
+    "plant_code": 57074,
+    "plant_name": "Ivanpah 1",
+    "pnode": "IVANPA_2_B1",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 120.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:prefix",
+    "plant_code": 57774,
+    "plant_name": "Windstar 1",
+    "pnode": "WNDSTRG1_7_B1",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 110.0,
+    "geo_zone": "NP15",
+    "hub": "TH_SP15",
+    "join_method": "verified-pin",
+    "plant_code": 322,
+    "plant_name": "Big Creek 2A",
+    "pnode": "BIGCRK1_2_B1",
+    "tech": "hydro"
+   },
+   {
+    "capacity_mw": 102.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:base",
+    "plant_code": 57293,
+    "plant_name": "Alta Wind Energy Center IV",
+    "pnode": "ALTA1G_7_B1",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 100.0,
+    "geo_zone": "NP15",
+    "hub": "TH_SP15",
+    "join_method": "verified-pin",
+    "plant_code": 320,
+    "plant_name": "Big Creek 4",
+    "pnode": "BIGCRK1_2_B1",
+    "tech": "hydro"
+   },
+   {
+    "capacity_mw": 98.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_NP15",
+    "join_method": "eia-lmp-node:pnode-exact",
+    "plant_code": 55807,
+    "plant_name": "Henrietta Peaker",
+    "pnode": "GWFGT1_7_N003",
+    "tech": "gas_ct"
+   },
+   {
+    "capacity_mw": 95.3,
+    "geo_zone": "SP15_rest",
+    "hub": "TH_ZP26",
+    "join_method": "resource-name:prefix",
+    "plant_code": 62113,
+    "plant_name": "Strauss Wind Farm",
+    "pnode": "STRAUS34_7_N001",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 90.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:prefix",
+    "plant_code": 58395,
+    "plant_name": "Alta Wind XI",
+    "pnode": "ALTA6B2_7_N003",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 88.4,
+    "geo_zone": "NP15",
+    "hub": "TH_SP15",
+    "join_method": "verified-pin",
+    "plant_code": 317,
+    "plant_name": "Big Creek 1",
+    "pnode": "BIGCRK1_2_B1",
+    "tech": "hydro"
+   },
+   {
+    "capacity_mw": 84.6,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "verified-pin",
+    "plant_code": 64929,
+    "plant_name": "Edwards Sanborn S1",
+    "pnode": "EDWARD_7_CN1",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 80.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 65933,
+    "plant_name": "Sagebrush ESS",
+    "pnode": "WSTWND_7_N003",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 80.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 66757,
+    "plant_name": "Bottleneck Energy Storage",
+    "pnode": "VESTAL_6_N006",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 75.0,
+    "geo_zone": "NP15",
+    "hub": "TH_SP15",
+    "join_method": "verified-pin",
+    "plant_code": 321,
+    "plant_name": "Big Creek 8",
+    "pnode": "BIGCRK1_2_B1",
+    "tech": "hydro"
+   },
+   {
+    "capacity_mw": 70.7,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "verified-pin",
+    "plant_code": 64928,
+    "plant_name": "Edwards Sanborn S3",
+    "pnode": "EDWARD_7_CN1",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 66.6,
+    "geo_zone": "NP15",
+    "hub": "TH_SP15",
+    "join_method": "verified-pin",
+    "plant_code": 318,
+    "plant_name": "Big Creek 2",
+    "pnode": "BIGCRK1_2_B1",
+    "tech": "hydro"
+   },
+   {
+    "capacity_mw": 64.5,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:prefix",
+    "plant_code": 63482,
+    "plant_name": "Point Wind",
+    "pnode": "TEHAPI1_6_N003",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 60.5,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "reviewed-crosswalk:exact",
+    "plant_code": 58122,
+    "plant_name": "Delano Energy Center",
+    "pnode": "VESTAL_6_N006",
+    "tech": "gas_ct"
+   },
+   {
+    "capacity_mw": 60.3,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:prefix",
+    "plant_code": 56302,
+    "plant_name": "Oasis Wind",
+    "pnode": "VOYAGRG1_7_N001",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 60.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "verified-pin",
+    "plant_code": 65677,
+    "plant_name": "Edwards Sanborn S4",
+    "pnode": "EDWARD_7_CN1",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 60.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_NP15",
+    "join_method": "eia-lmp-node:exact",
+    "plant_code": 59523,
+    "plant_name": "Five Points Solar Park",
+    "pnode": "SCHLNDLR_7_N002",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 60.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 63943,
+    "plant_name": "Coso Battery Storage",
+    "pnode": "BLM W_2_COSBT1GN",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 59.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 66950,
+    "plant_name": "Sagebrush Solar 2 ESS 59",
+    "pnode": "WSTWND_7_N003",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 45.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 66946,
+    "plant_name": "Lockhart ESS, LLC",
+    "pnode": "LCKHT1_7_N003",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 43.2,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:prefix",
+    "plant_code": 61583,
+    "plant_name": "Voyager Wind III",
+    "pnode": "VOYAGRG1_7_N001",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 40.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 66949,
+    "plant_name": "Sagebrush Solar 2 ESS 40",
+    "pnode": "WSTWND_7_N003",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 25.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 67828,
+    "plant_name": "Mordor ES1",
+    "pnode": "CALGEN_7_N001",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 23.5,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 68844,
+    "plant_name": "CalPortland Company Mojave Wind",
+    "pnode": "WSTWND_7_N003",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 21.6,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:prefix",
+    "plant_code": 61584,
+    "plant_name": "Voyager Wind IV",
+    "pnode": "VOYAGRG1_7_N001",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 20.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 59600,
+    "plant_name": "Nicolis Solar PV Plant",
+    "pnode": "VESTAL_6_N006",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 20.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_NP15",
+    "join_method": "eia-lmp-node:pnode-exact",
+    "plant_code": 57522,
+    "plant_name": "Cantua Solar Station",
+    "pnode": "CANTGEN_7_N002",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 20.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "eia-lmp-node:pnode-exact",
+    "plant_code": 59740,
+    "plant_name": "SEPV Mojave West",
+    "pnode": "SUNSPTA_7_N002",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 20.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:genstrip",
+    "plant_code": 59878,
+    "plant_name": "Windhub Solar A LLC",
+    "pnode": "SUNSPTGN_7_N001",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 20.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_NP15",
+    "join_method": "eia-lmp-node:pnode-exact",
+    "plant_code": 57891,
+    "plant_name": "Guernsey Solar Station",
+    "pnode": "GUERSEY_7_N001",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 20.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_NP15",
+    "join_method": "eia-lmp-node:pnode-exact",
+    "plant_code": 58148,
+    "plant_name": "RE Kansas South LLC",
+    "pnode": "KANSASGN_7_N002",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 19.9,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 67533,
+    "plant_name": "RB Inyokern Solar WDAT 1203 (CSG)",
+    "pnode": "INYOKN_7_N003",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 15.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_NP15",
+    "join_method": "eia-lmp-node:pnode-exact",
+    "plant_code": 57499,
+    "plant_name": "Westside Solar Station",
+    "pnode": "SCHLNDLR_7_N002",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 15.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_NP15",
+    "join_method": "eia-lmp-node:pnode-exact",
+    "plant_code": 57498,
+    "plant_name": "Five Points Solar Station",
+    "pnode": "SCHLNDLR_7_N002",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 14.4,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:prefix",
+    "plant_code": 63941,
+    "plant_name": "Oasis Alta",
+    "pnode": "VOYAGRG1_7_N001",
+    "tech": "wind"
+   },
+   {
+    "capacity_mw": 14.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:genstrip",
+    "plant_code": 59599,
+    "plant_name": "Tropico Solar PV Plant",
+    "pnode": "VALTNEGN_7_N002",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 11.9,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 67534,
+    "plant_name": "RB Inyokern Solar WDAT 1281 (CSG)",
+    "pnode": "INYOKN_7_N003",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 11.8,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 10139,
+    "plant_name": "Isabella Hydro Project",
+    "pnode": "VESTAL_6_N006",
+    "tech": "hydro"
+   },
+   {
+    "capacity_mw": 8.4,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "eia-lmp-node:pnode-exact",
+    "plant_code": 289,
+    "plant_name": "Tule River",
+    "pnode": "SPRINGVL_6_N020",
+    "tech": "hydro"
+   },
+   {
+    "capacity_mw": 7.6,
+    "geo_zone": "NP15",
+    "hub": "TH_ZP26",
+    "join_method": "resource-name:exact",
+    "plant_code": 66809,
+    "plant_name": "Avenue 26 Solar",
+    "pnode": "TULRLK_7_N015",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 6.2,
+    "geo_zone": "NP15",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 57977,
+    "plant_name": "High Sierra Cogeneration Plant",
+    "pnode": "SIERRA_7_N001",
+    "tech": "gas_other"
+   },
+   {
+    "capacity_mw": 4.6,
+    "geo_zone": "SP15_rest",
+    "hub": "TH_ZP26",
+    "join_method": "eia-lmp-node:genstrip",
+    "plant_code": 66807,
+    "plant_name": "SEPV Cuyama Hybrid",
+    "pnode": "CUYAMAGN_7_NSB1",
+    "tech": "battery"
+   },
+   {
+    "capacity_mw": 3.5,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 58309,
+    "plant_name": "Porterville Solar",
+    "pnode": "VESTAL_6_N006",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 3.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 66677,
+    "plant_name": "Visalia CSG LLC",
+    "pnode": "RECTOR_6_N013",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 3.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 59219,
+    "plant_name": "Porterville 6 and 7",
+    "pnode": "VESTAL_6_N006",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 2.3,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 337,
+    "plant_name": "Kaweah 1",
+    "pnode": "RECTOR_6_N013",
+    "tech": "hydro"
+   },
+   {
+    "capacity_mw": 1.0,
+    "geo_zone": "NP15",
+    "hub": "TH_ZP26",
+    "join_method": "eia-lmp-node:prefix",
+    "plant_code": 68840,
+    "plant_name": "Da Silva Dairy",
+    "pnode": "AVENAL_6_GN001",
+    "tech": "solar"
+   },
+   {
+    "capacity_mw": 0.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 64209,
+    "plant_name": "Bellefield 2 Solar & Energy Storage Farm",
+    "pnode": "BELLEF_7_CN01",
+    "tech": "unlisted"
+   },
+   {
+    "capacity_mw": 0.0,
+    "geo_zone": "ZP26",
+    "hub": "TH_SP15",
+    "join_method": "resource-name:exact",
+    "plant_code": 68485,
+    "plant_name": "Rexford 2 Solar Farm",
+    "pnode": "REXFRD_7_NBT1",
+    "tech": "unlisted"
+   }
+  ]
+ },
+ "session": "caiso-217",
+ "sources": [
+  "data/raw/caiso-atlas/ATL_PNODE_MAP.csv (OASIS ATL_PNODE_MAP, TH_*_GEN membership)",
+  "data/raw/eia-860/eia860_generator_operable.parquet (RTO/ISO LMP Node Designation, names, MW)",
+  "data/raw/eia-860/eia860_plant.parquet (CISO population names)",
+  "data/raw/caiso-dam-outages/caiso-dam-outage-windows.parquet (resource id<->name universe)",
+  "data/raw/reference/caiso-dam-resource-crosswalk.csv (reviewed resource->ORIS)",
+  "data/raw/reference/caiso-resource-eia-crosswalk.csv (reviewed, accepted rows)"
+ ],
+ "tier_rows": {
+  "E0_verified_pin": 19,
+  "E1_eia_lmp_node": 132,
+  "E2_reviewed_crosswalk": 34,
+  "E3_resource_name": 356
+ },
+ "verified_pins": [
+  {
+   "basis": "FINDING-caiso216 \u00a7E witness: the Westlands Mustang switchyard (resources MSTANG_2_*, CAISO drops the U; TH_NP15) \u2014 distinct from the Tehachapi 'Mustang Hills' wind plant, which E3 reaches via its own ALTA4B resource.",
+   "pattern": "^MUSTANG( TWO| 3| 4)?$|^RE MUSTANG\\b",
+   "substation": "MUSTANGS"
+  },
+  {
+   "basis": "SCE Big Creek hydro system (powerhouses 1/2/2A/3/4/8): BIGCRK* is the canonical CAISO abbreviation (atlas carries BIGCRK1/BIGCRK3 unanimously TH_SP15); the SCE system is SP15 by service territory \u2014 the geographic lat rule (37.2N -> NP15) is exactly the estimate the membership corrects.",
+   "pattern": "^BIG CREEK \\d",
+   "substation": "BIGCRK1"
+  },
+  {
+   "basis": "The Edwards & Sanborn solar+storage complex sits ON Edwards AFB (Kern); EDWARD_7_* is unanimously TH_SP15. Deliberately anchored (^) so 'Edward C Hyatt' (Oroville, NP15) can never hit this pin \u2014 that collision is why the mechanical plant-name tier was removed.",
+   "pattern": "^EDWARDS SANBORN\\b",
+   "substation": "EDWARD"
+  },
+  {
+   "basis": "Abengoa Mojave Solar interconnects at SCE Lockhart (Harper Lake) \u2014 the same substation as the Lockhart Solar PV rows, which reach TH_SP15 by resource-name:exact. Pinned because its DAM resource name collides with SCE's small 'Mojave Solar' PV cluster at Westwind, so the mechanical E3 answer, while landing the same hub, would rest on the wrong plant's resource.",
+   "pattern": "^MOJAVE SOLAR PROJECT$",
+   "substation": "LCKHT1"
+  }
+ ],
+ "witness_gates": {
+  "Alta Wind Energy Center": "PASS: ['TH_SP15'] want TH_SP15",
+  "California Valley Solar Ranch": "PASS: ['TH_ZP26'] want TH_ZP26",
+  "Diablo Canyon": "PASS: ['TH_ZP26'] want TH_ZP26",
+  "Mustang Two": "PASS: ['TH_NP15'] want TH_NP15",
+  "Topaz Solar Farm": "PASS: ['TH_ZP26'] want TH_ZP26",
+  "sub:GATES": "PASS: TH_ZP26 want TH_ZP26",
+  "sub:MIDWAY": "PASS: TH_ZP26 want TH_ZP26"
+ }
+}

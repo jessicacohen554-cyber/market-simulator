@@ -50,6 +50,7 @@ class TestConsumeReferenceParity(unittest.TestCase):
         if not (
             clean_io.clean_exists("reference", market="bin-assignments")
             and clean_io.clean_exists("reference", market="plant-registry")
+            and clean_io.clean_exists("reference", market="caiso-hub-membership")
         ):
             from scripts.data import curate_reference
 
@@ -106,6 +107,13 @@ class TestConsumeReferenceParity(unittest.TestCase):
         raw = self._raw(lambda: load_reference_hydro_nameplate("ERCOT"))
         clean = self._clean(lambda: load_reference_hydro_nameplate("ERCOT"))
         self._assert_parity(raw, clean, almost=True)
+
+    def test_caiso_hub_membership_parity(self):
+        from market_sim.data.zone_assignment import load_caiso_hub_membership
+
+        raw = self._raw(load_caiso_hub_membership)
+        clean = self._clean(load_caiso_hub_membership)
+        self._assert_parity(raw, clean)
 
 
 if __name__ == "__main__":
