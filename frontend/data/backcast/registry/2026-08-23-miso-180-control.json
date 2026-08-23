@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-23-miso-180-control",
+  "label": "miso 180 control",
+  "date": "2026-08-23",
+  "shorthand": "miso-180-control",
+  "definition": "miso-180 CONTROL: byte-faithful keeper replay at HEAD (miso_offer_spread_anchored at default off)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-23-miso-180-control.js",
+  "bundle": "results/calibration/miso180_anch_A"
+}
