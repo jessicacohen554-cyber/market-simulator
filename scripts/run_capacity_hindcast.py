@@ -136,6 +136,9 @@ if str(_ROOT) not in sys.path:
 from market_sim.config.capacity_market import (  # noqa: E402
     resolve_capacity_market_clearing,
 )
+from market_sim.config.iso_configs import (  # noqa: E402
+    apply_iso_scenario_defaults,
+)
 from market_sim.config.scenarios import (  # noqa: E402
     CROSSOVER_FORWARD_BOUNDARY_YEAR as _SRC_CROSSOVER_FORWARD_YEAR,
 )
@@ -1760,8 +1763,22 @@ def main(argv: list[str] | None = None) -> int:
         "base_year": start_year if forward_from_base else None,
         "holdout_freeze_active_at_launch": freeze_active,
         # -- 2. config-describing block (solved-sourced by construction) ---- #
+        # Built from the SEAM-RESOLVED config, not the request config: the
+        # runner applies ``apply_iso_scenario_defaults`` internally before
+        # solving (runner.run_scenario_iso), so for an ISO with
+        # ``default_scenario_overrides`` (ERCOT's D-30 stage-B five, MISO's
+        # D-26 pair) the request object under-reports the posture the solve
+        # actually ran — the FFR-2E defect class the resolver's own docstring
+        # names ("a record must report the posture it solved, not assert
+        # one"; ARM3-MEASURE hit it first). Resolution honours the caller's
+        # explicitly-set-field record (OVERRIDE-FIX 2026-08-13), so a control
+        # arm passing an explicit False still records False. First exposed by
+        # the first pass-nothing ERCOT leg after the D-30 arming
+        # (ercot-2021-2025-realized-t1h-refresh, 2026-08-22): its meta said
+        # the five stage-B flags were off while its own run_config.json — the
+        # FC-7 artifact, from the RESOLVED config the solve wrote — said on.
         **META_RECORD_SPEC.build(
-            config,
+            (record_config := apply_iso_scenario_defaults(config, iso)),
             _record_ctx,
             args_values={
                 "capacity_clearing_posture": _clearing_posture,
@@ -1776,7 +1793,7 @@ def main(argv: list[str] | None = None) -> int:
         "leakage_violations": violations,
         "started_utc": started,
     }
-    META_RECORD_SPEC.assert_sourced(meta, config, _record_ctx)
+    META_RECORD_SPEC.assert_sourced(meta, record_config, _record_ctx)
     (args.out_dir / "meta.json").write_text(json.dumps(meta, indent=2))
     # Request-side dump, kept: build_forecast_dof_ledger._load_run_config still
     # falls back to it, and the FFR-3A-3 batteries documented its scorer
