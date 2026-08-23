@@ -1,0 +1,153 @@
+{
+ "session": "miso-179",
+ "prereg": "PREREG-miso179-offer-level-dispersion-2026-08-23.md",
+ "keeper": "2026-08-22-miso-177-rho-measured",
+ "bundle": "miso177_rho_B",
+ "artifact": "miso_offer_level_dispersion.json",
+ "n_top_hours": 221,
+ "validity_2025": {
+  "V4": {
+   "n_gen": 2923,
+   "published_n_gen": 2923,
+   "carry_zones": 6,
+   "pass": true
+  },
+  "V1": {
+   "c3a_pct": -11.74207035814192,
+   "published_c3a_pct": -11.7421,
+   "delta_pp": 2.9641858079187955e-05,
+   "pass": true
+  }
+ },
+ "hstar": {
+  "n": 221,
+  "demand_min_gw": 105.796,
+  "demand_max_gw": 118.661,
+  "months": {
+   "6": 43,
+   "7": 112,
+   "8": 66
+  },
+  "congested_share": 0.3122
+ },
+ "affected_stack": {
+  "n_tranches": 1480,
+  "classes": [
+   "CC_CHP",
+   "CC_REGULAR",
+   "COAL",
+   "CT_CHP",
+   "CT_PEAKER",
+   "ST_GAS"
+  ],
+  "capacity_gw": 59.71
+ },
+ "K_PRE_a": {
+  "model_mc_base": {
+   "p10": 22.4317,
+   "p50": 34.9567,
+   "p90": 59.3695,
+   "p95": 85.289,
+   "p99": 167.9558,
+   "spread_p90_p10": 36.9378,
+   "n": 302790,
+   "weight_gw": 10140.76
+  },
+  "model_across_plant_base": {
+   "p10": 20.9676,
+   "p50": 31.0126,
+   "p90": 51.0842,
+   "p95": 58.6183,
+   "p99": 115.827,
+   "spread_p90_p10": 30.1166,
+   "n": 64953,
+   "weight_gw": 10140.76
+  },
+  "book_all": {
+   "p10": 0.0,
+   "p50": 18.9,
+   "p90": 43.3,
+   "p95": 76.0,
+   "p99": 287.14,
+   "spread_p90_p10": 43.3,
+   "n": 236351,
+   "weight_gw": 27003.95
+  },
+  "book_elig": {
+   "p10": 0.0,
+   "p50": 19.98,
+   "p90": 68.27,
+   "p95": 127.22,
+   "p99": 276.15,
+   "spread_p90_p10": 68.27,
+   "n": 147748,
+   "weight_gw": 13459.37
+  },
+  "S_mod": 36.9378,
+  "S_book_elig": 68.27,
+  "ratio_mod_over_book_elig": 0.5411,
+  "KILL_fires": true
+ },
+ "K_PRE_b": {
+  "book_all_mass_above_pmod_gwh_grain": 2244.31,
+  "eligible_mass_above_pmod_gwh_grain": 1971.1,
+  "b1_eligible_share_of_above_mass": 0.8783,
+  "b1_KILL_fires": false,
+  "b2_S_book_elig": 68.27,
+  "b2_S_book_all": 43.3,
+  "b2_ratio_elig_over_all": 1.5767,
+  "b2_KILL_fires": false,
+  "report_share_of_elig_mass_above_pmod": 0.1464,
+  "KILL_fires": false
+ },
+ "K_PRE_c_report_2025": {
+  "bench_rt_lw": 45.46,
+  "model_lw_asis": 40.1221,
+  "model_lw_predicted": 20.6932,
+  "c3a_asis_pct": -11.7421,
+  "c3a_predicted_pct": -54.4803,
+  "predicted_shift_pp": -42.7383,
+  "hours_no_affected_mass": 0,
+  "r_star_mean": 0.4822,
+  "r_star_p90": 0.6857
+ },
+ "validity_2023": {
+  "V1_pass": true,
+  "V1_c3a_pct": 1.2812640319029622,
+  "V4_pass": true
+ },
+ "K_PRE_c": {
+  "bench_rt_lw": 32.85,
+  "model_lw_asis": 33.2709,
+  "model_lw_predicted": 19.6642,
+  "c3a_asis_pct": 1.2813,
+  "c3a_predicted_pct": -40.1393,
+  "predicted_shift_pp": -41.4206,
+  "hours_no_affected_mass": 0,
+  "r_star_mean": 0.4365,
+  "r_star_p90": 0.6188,
+  "KILL_fires": true
+ },
+ "validity_2024": {
+  "V1_pass": true,
+  "V1_c3a_pct": -4.064287541238265,
+  "V4_pass": true
+ },
+ "K_PRE_c_report_2024": {
+  "bench_rt_lw": 32.3,
+  "model_lw_asis": 30.9872,
+  "model_lw_predicted": 17.2862,
+  "c3a_asis_pct": -4.0643,
+  "c3a_predicted_pct": -46.4823,
+  "predicted_shift_pp": -42.418,
+  "hours_no_affected_mass": 0,
+  "r_star_mean": 0.4452,
+  "r_star_p90": 0.6237
+ },
+ "ADJUDICATION": {
+  "K_PRE_a": "KILL",
+  "K_PRE_b": "CLEAR",
+  "K_PRE_c": "KILL",
+  "PROCEED_TO_BUILD": false
+ }
+}

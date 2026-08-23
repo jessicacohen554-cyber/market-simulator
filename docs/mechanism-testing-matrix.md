@@ -4839,7 +4839,35 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-22-miso-177-rho-measured` (**PROMOTED miso-177, 2026-08-22**, superseding `2026-08-22-miso-175-hourkey` — the measured-rho re-gate of the same-day owner RHO_CLIP band ruling; the standing miso-169/nyiso-144 floor escalation is CLOSED: refuted, deleted, re-solved), **NOT-YET on C3a-2025 (−11.7 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, miso-175 (2026-08-22) EXECUTED item 1 (the seam-envelope hour-key rotation — now the keeper); miso-176 (2026-08-22) EXECUTED item 3 (the M2M/CMP seam-class intake + binding-reality measurement — `m2m_seam_entitlement_cap` minted `G`, no LP); the remaining two (the coincident-peak seam-response object [OWNER admissibility ruling needed, now holding miso-176's binding evidence], the South under-export) stay NAMED, NOT CHARTERED — see the stamps below and the standing OWNER items. **miso-178 (2026-08-23) delivered the re-charter's measurement: the full C3a-2025 anatomy on the measured-rho keeper + the RANKED lever plan — the queue now carries the D-1 across-unit offer-level-dispersion charter ask (top), the D-2 5(i) seam-response ruling, and the D-3 South under-export evidence charter (FINDING-miso178 §7–§10; its stamp below).**
+### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-22-miso-177-rho-measured` (**PROMOTED miso-177, 2026-08-22**, superseding `2026-08-22-miso-175-hourkey` — the measured-rho re-gate of the same-day owner RHO_CLIP band ruling; the standing miso-169/nyiso-144 floor escalation is CLOSED: refuted, deleted, re-solved), **NOT-YET on C3a-2025 (−11.7 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, miso-175 (2026-08-22) EXECUTED item 1 (the seam-envelope hour-key rotation — now the keeper); miso-176 (2026-08-22) EXECUTED item 3 (the M2M/CMP seam-class intake + binding-reality measurement — `m2m_seam_entitlement_cap` minted `G`, no LP); the remaining two (the coincident-peak seam-response object [OWNER admissibility ruling needed, now holding miso-176's binding evidence], the South under-export) stay NAMED, NOT CHARTERED — see the stamps below and the standing OWNER items. **miso-178 (2026-08-23) delivered the re-charter's measurement: the full C3a-2025 anatomy on the measured-rho keeper + the RANKED lever plan — the queue now carries the D-1 across-unit offer-level-dispersion charter ask (top), the D-2 5(i) seam-response ruling, and the D-3 South under-export evidence charter (FINDING-miso178 §7–§10; its stamp below).** **miso-179 (2026-08-23) EXECUTED the granted D-1 charter and REFUTED it at its own pre-registered no-LP pre-checks — `miso_offer_level_dispersion` minted `R`, no field ever created, keeper unchanged: the model already carries 0.541× the eligible book's across-unit spread at the 2025 summer top-decile margin (kill ≥ 0.5), and the granted rank-mapped LEVEL form statically predicts C3a-2023 +1.28 → −40.1 % (the miso-145 level warning at rank grain; the miso-178 §7 kill-risk (b) population non-identifiability materialized). The queue now carries the D-2 5(i) ruling, the D-3 South evidence charter, and the NEW anchored SPREAD-ONLY successor ask (owner decision — the measured residual is a top-decile tail steepening, +$40 at p95 / +$110 at p99; its stamp below).**
+> **QUEUE STAMP miso-179 (2026-08-23) — THE D-1 CHARTER EXECUTED AND REFUTED AT ITS OWN
+> PRE-REGISTERED PRE-CHECKS. NO LP, NOTHING ARMED, NO `ScenarioConfig` FIELD EVER
+> CREATED; cell `miso_offer_level_dispersion` MINTED `R`. Keeper UNCHANGED at
+> `2026-08-22-miso-177-rho-measured`.** PREREG committed BEFORE any hour-set-conditioned
+> quantity (`PREREG-miso179-offer-level-dispersion-2026-08-23.md`, 4712ae8; the
+> miso-176 discipline). INTAKE LANDED: JJA 2023–2025 corpus refetched (552/552
+> manifest-sha256-verified, 429.6 MB), curated (awards dropped, asserted absent);
+> the measured vector identified exactly as pre-registered (pooled DA BOOK-ELIG, 881
+> units, 4.08 M unit-hours; implied-offer-HR p10/p50/p90/p95/p99 =
+> 1.10/5.33/15.11/24.46/72.61 MMBtu/MWh). **K-PRE-a KILL** ratio 0.541 (model affected
+> stack $36.94/MWh p90−p10 vs eligible book $68.27 on the 221 top-carry-demand
+> JJA-2025 hours; both disclosed biases run AGAINST the kill). **K-PRE-b CLEAR**
+> (87.8 % of above-margin book mass price-setting-eligible; eligible spread 1.58×
+> all-book — the family failed on size and form, never eligibility). **K-PRE-c KILL
+> at 4× its band** (static level replacement: C3a-2023 +1.28 → −40.14 %, 2024 −46.5,
+> 2025 −54.5 — at matched rank the book prices ~$14 BELOW the model's clearing level
+> in every year). THE DURABLE MEASUREMENT: the model is +$15 OVER the eligible book
+> at the median rank and under only above ~p90 (p95 85 vs 127, p99 168 vs 276) — the
+> residual object is a TOP-DECILE TAIL STEEPENING. NAMED SUCCESSOR, NOT OPENED (owner
+> decision): the anchored SPREAD-ONLY variant (graft Q(r) − Q(r_anchor) above an
+> interior anchor; the miso-151 shape-only pattern at across-unit grain). Fallback:
+> D-2 / D-3 / D-4 stand open. Records:
+> `FINDING-miso179-dispersion-precheck-refutation-2026-08-23.md`;
+> `_miso179_dispersion_precheck.json`;
+> `data/raw/_validation-source/miso_offer_level_dispersion.json` (sha b4e72312…);
+> derive `scripts/data/derive_miso_offer_level_dispersion.py`; probe
+> `scripts/probes/_miso179_dispersion_precheck.py`.
+
 > **QUEUE STAMP miso-178 (2026-08-23) — THE RE-CHARTER'S MEASUREMENT DELIVERED: THE
 > C3a-2025 ANATOMY IS RE-MEASURED END TO END ON THE MEASURED-RHO KEEPER AND THE LEVER
 > PLAN IS RANKED. NO LP, NOTHING ARMED, NO `ScenarioConfig` FIELD, NO CELL VERDICT

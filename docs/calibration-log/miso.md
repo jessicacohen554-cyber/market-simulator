@@ -8226,3 +8226,56 @@ R/I/G re-proposed; the maxgen $500/$1,000 slack ceiling noted as the eventual bi
 ceiling of any successful tail lever). Housekeeping discharged: the missing miso-177
 queue stamp added to matrix §5.4, and the rule-history §7.1 miso-163 entry annotated
 with the 2026-08-18 lift. Next number: **miso-179.**
+
+## miso-179 (2026-08-23) — the D-1 across-unit dispersion charter EXECUTED and REFUTED at its own pre-registered pre-checks: the model already carries half the eligible spread, and the level form would crash the body ~−41 pp in every year
+
+**Keeper UNCHANGED: `2026-08-22-miso-177-rho-measured`.** NO LP, nothing armed,
+no `ScenarioConfig` field ever created, no registration (rule 15 not engaged).
+`miso_offer_level_dispersion` matrix row ADDED and its MISO cell minted **`R`**
+by the adjudication.
+
+The owner granted FINDING-miso178 §10 **D-1** (the across-unit object, the
+conduct-distribution FORM in kind, the corpus refetch). Order of operations,
+auditable: PREREG (`PREREG-miso179-offer-level-dispersion-2026-08-23.md`,
+4712ae8 — kills and A/B gates frozen BEFORE any hour-set-conditioned quantity)
+→ intake (552/552 zips manifest-sha256-verified, 429.6 MB; curated, awards
+dropped and asserted absent) → identification derive
+(`data/raw/_validation-source/miso_offer_level_dispersion.json`: pooled JJA
+2023–25 DA BOOK-ELIG, 881 units, 4.08 M unit-hours, implied-offer-HR
+p10/p50/p90/p95/p99 = 1.10/5.33/15.11/24.46/72.61 MMBtu/MWh) → the no-LP
+pre-check probe (`_miso179_dispersion_precheck.py`; V1 reproduces the keeper's
+C3a to ≤ 3e-05 pp).
+
+* **K-PRE-a KILL (ratio 0.541 vs the frozen ≥ 0.5 line):** on the 221
+  top-carry-demand JJA-2025 hours the model's own affected stack (1,480
+  econ/peak tranches, 59.7 GW) disperses **$36.94/MWh** p90−p10 against the
+  eligible book's **$68.27**. Both disclosed biases (absent P1 markup on the
+  model side; zero-price eligible book mass on the book side) run AGAINST the
+  kill, and it fired anyway.
+* **K-PRE-b CLEAR (both legs):** 87.8 % of the above-margin book mass is
+  price-setting-eligible; the eligible spread is 1.58× the all-book spread —
+  the family failed on size and form, never on eligibility.
+* **K-PRE-c KILL (4× its band):** the granted rank-mapped LEVEL replacement
+  statically predicts C3a-2023 **+1.28 → −40.14 %** (2024 −46.5, 2025 −54.5):
+  the model clears at rank ~0.44–0.48 of its affected stack and the book's
+  level at that rank is ~$14/MWh BELOW the model's clearing level — miso-145's
+  "the real book is cheaper at matched position", quantified at rank grain;
+  miso-178 §7 kill risk (b) (masked-corpus rank non-identifiability)
+  materialized.
+
+**The durable measurement:** the model is **+$15 OVER** the eligible book at
+the median rank and under only above ~p90 (p95 85 vs 127, p99 168 vs 276
+$/MWh) — the residual object is a **top-decile tail steepening**, not an
+across-the-board dispersion deficit. **Named successor, NOT opened (owner
+decision):** the anchored SPREAD-ONLY variant (graft `Q(r) − Q(r_anchor)`
+above an interior anchor — the miso-151 shape-only pattern at across-unit
+grain), which targets exactly that residual with no body exposure by
+construction. Fallback: D-2 (5(i) seam-response ruling), D-3 (South
+under-export evidence), D-4 (posture) stand open as miso-178 left them.
+
+Records: `FINDING-miso179-dispersion-precheck-refutation-2026-08-23.md`;
+`_miso179_dispersion_precheck.json`; derive
+`scripts/data/derive_miso_offer_level_dispersion.py`; probe
+`scripts/probes/_miso179_dispersion_precheck.py`. Matrix: base row + all six
+shard cells + §5.4 queue stamp in-session (rule 26(b)/(c)). Next number:
+**miso-180.**
