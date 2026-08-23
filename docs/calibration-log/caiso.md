@@ -9468,3 +9468,107 @@ a CA state sum would overcount by LADWP/BANC/IID). Full read:
 `docs/hindcast-reports/caiso-2021-2025-realized-2026-08-22.md`.
 
 **Next number: caiso-215.**
+
+---
+
+## caiso-215 (2026-08-23) — THE ZONAL AXIS CUT (owner charter "caiso-214", 2026-08-22): the C3a 2024/25 overrun is a NORTH–SOUTH SPLIT AT PATH 15, not one zone and not uniform — the south (+ZP26, ~61 % of load) carries ~100 % of the net ISO gap while NP15 UNDER-prices; every zonal redistribution nets to ≈ 0 so the scored failure stays the COMMON term; the error is localized to the SOUTHERN SOLAR BELLY, which re-sizes the admissible-instrument envelope
+
+**Phase 0 diagnostic only. No solve, no LP, no mechanism armed, nothing
+registered, NO cell verdict moved (nothing was tested — rule 28b attaches to
+evidence appends only).** Executed as caiso-215: the chartered caiso-214
+shorthand was consumed same-day by the forecast-lane T1-H hindcast session
+(entry above, commit `bca0fa9`); precedent caiso-213 numbering note +
+caiso-203 charter-duplicate handling. Branch
+`claude/caiso-c3a-zonal-decomp-tm7bdv` from `origin/main` `fc9f9ec`.
+
+**Instruments (committed):** `scripts/probes/_caiso215_c3a_zonal_decomp.py`
+(imports the committed caiso-202 probe for the CA-wide machinery; adds the
+per-hub actual loader over `data/raw/lmp-data/CAISO/CAISO_{rtm,dam}_hourly_*.csv`
+with MCC/MCE/MCL components) + `results/calibration/_caiso215_c3a_zonal_decomp.json`.
+Controls both hold: the unmodified caiso-202 probe reproduces FINDING-caiso202
+§A/§B exactly, and the per-hub series collapsed with the deriver's stale hub
+weights (0.3969/0.0646/0.5385) reproduce the committed scalar actual to
+float32 rounding (max |Δ| ≤ 2.6e-05, NaN masks identical).
+
+**Headline measurements (2023/2024/2025):**
+- **Per-zone C3a** (model λ_z vs own trading hub, zone-demand-weighted): NP15
+  **−5.3 / −6.6 / −0.8 %** vs ZP26 +7.4/+16.8/+13.5 %, LA_BASIN
+  +8.1/**+27.1**/+25.0 %, SDGE +6.3/+22.1/+18.6 %, SP15_rest +8.1/+23.8/+21.5 %.
+  Gap shares: LA_BASIN 86.5 %/71.3 % (2024/25) — its 39 % load weight on the
+  common southern error, NOT a pocket defect (the three SP15 zones are
+  near-equal). NP15's share is NEGATIVE (−27.3 %/−2.6 %). The 2023 control
+  carries the same structure — the split is year-invariant.
+- **Weight bridge:** rubric-vs-sidecar weight term −$0.07/−$0.14/−$0.28,
+  stale-hub-collapse term −$0.09/+$0.03/+$0.15 — C3a is NOT a weighting or
+  collapse artifact.
+- **Congestion split:** gap_z = common + spread-mismatch; the mismatch column
+  NETS TO ≈ 0 under load weights (±$0.15) ⇒ **no mean-zero zonal instrument
+  can move C3a** — construction-level kill. Model spread is a small SOUTH
+  premium (loss surface working as designed); actual is a large NORTH premium,
+  **80–90 % congestion** (caiso-164 §1.1 dMCC; hub MCC means 2024: NP15 +1.95,
+  ZP26 −6.03, SP15 −6.03). ZP26 prices with the SOUTH in reality; the real cut
+  is Path 15.
+- **Belly localization:** hours with actual NP15−SP15 > $15: **1,310/1,691/
+  1,347**; model **0/0/0**. Actual belly-mean split +$17.8/+$21.2/+$12.2 vs
+  model ≈ $0. Hod-10–15 alone carries **64 %/45 %/35 %** of the south's gap-$
+  (+$302M/+$442M/+$316M of +$469M/+$971M/+$894M). South sub-$20 hour count
+  ~3× NP15's; NP15's 40–60 bucket already UNDER-priced (−4.2/−2.1). NP15 has
+  a distinct 2024 WINTER under-price (Jan −$16.4) that fades by 2025.
+- **Seam:** caiso-188's no-MIC-bind VERIFIED structurally on this keeper —
+  resolved MIC 16,055/16,452/16,148 MW EXCEEDS Σ corridor TTCs (4,800+10,623
+  = 15,423 MW) so the simultaneous limit cannot bind; corridor parity medians
+  0.00. New witness: model WECC_PNW node runs **$11.16/$8.13/$3.57 below**
+  measured MALIN while WECC_DSW tracks PALOVRDE — the northern import stack is
+  cheap at its node exactly where NP15 under-prices (evidence FOR owner-packet
+  item 2, localized north).
+- **Pocket DA cross-check** (2024/25, the only committed pocket actuals; C3a
+  basis untouched — caiso-203 ruling 1 CLOSED): model SDGE lands ON its DLAP
+  (−0.2 %/−0.6 %); LA_BASIN +8.4 %/+13.3 %; NP15 −12.2 %/−3.1 % vs own DA.
+  ~$2–5 of the south's hub-RT overrun is settlement geography (caiso-165's
+  pocket-above-hub dMCC) — reported context, not a lever.
+
+**Adjudication (kill-before-propose, vs 2024 −$0.97 / 2025 −$1.96 / 2023
+headroom −$7.4):** H1 single-zone defect — CLEAN NEGATIVE. H2 zonal
+redistribution as C3a lever — KILLED on construction (netting ±$0.15). H3
+`caiso_zonal_gas_basis` (measured, mean-zero) — NOT PROPOSED: C3a Δ≈0 by
+construction, N−S basis differential sign-flips (+0.539/−0.184/−0.491
+$/MMBtu), and the split is congestion not fuel; shard hygiene finding FILED —
+its CAISO cell reads K yet every committed run_config has the flag False (no
+verdict moved; re-adjudicate caiso-203-style). H4 south-belly surplus-pricing
+regime — REAL and MEASURED but not armable from the current lever set; no R/G
+cell re-opens on geography alone (caiso-142 absorption arithmetic, caiso-170
+foresight refutation unchanged); **what changed is the envelope**: removing
+25 % of the measured south-belly error closes 2024, ~46 % of the south's
+all-hours error closes 2025, and FULL removal costs 2023 only ≈ −$1.5 of its
+−$7.4 headroom — 2023-safe, which §G's broad level-down never was by this
+margin. H5 import-pricing (owner item 2) — evidence strengthened, localized
+north, still < 5 % direct share.
+
+**Packet:** (1) fund the south-belly surplus-pricing object (intake/design
+over `data/raw/caiso-curtailment/` + hub MCC + EIA-930 flows, rule-13 test
+stated in the FINDING §F — measured QUANTITIES admissible, price overlays
+not; partial close pre-registered: 2024-only pass ≠ determination flip);
+(2) re-score the two standing owner objects against the south-belly target
+(their 62.1 %/10.4 % and < 5 % were CA-wide); (3) clean negatives retired:
+single-zone, weights, zonal redistribution, zonal gas basis as N–S mechanism.
+**Nothing armed-admissible today; owner ruling 5 stands; NOT-YET is the
+honest state absent funding.** Gate table for any funded arm: C3b vs
+**0.098/0.179/0.182** (2025 margin 0.018, composition watch), C8, C6, DOF
+10/7 + new rows, LOYO 2023–2025, C3a-2023 in band.
+
+**Records:** `results/calibration/FINDING-caiso215-c3a-zonal-decomposition-2026-08-23.md`
+(full tables §A–§E, adjudication §F, packet §G, DO-NOT-REDO §I); probe + JSON
+committed; matrix §5.2 caiso-215 block; shard `gates` stamp + `updated` bump
++ evidence appends on `zonal_loss_surface` / `import_hub_pricing` /
+`diurnal_price_amplitude` / `capacity_deliverability` (NO verdict/fc moves).
+Census re-measured at HEAD: **K 64 / U 34 / I 15 / R 9 / O 6 / G 5 = 133,
+n/a 100** (vs caiso-213's 132/96: +`egrid_identity_heat_rates` U nyiso-151,
+three foreign rule-28c `·` cells ercot-226/227, and caiso-214's own fc move —
+zero CAISO backcast verdict moves). Filed items now SIX (adds the
+`zonal_gas_basis` K-cell hygiene item); cross-lane items: THREE remain (D1+D2,
+five-ISO bench, cccc911 citations) — item 4 (239 matrix anchors) VERIFIED
+DISCHARGED at this HEAD by ercot-227 `14ce4ce`, checker prints 0 unresolvable
+beyond the ratchet after this session's own matrix edits.
+Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
+
+**Next number: caiso-216.**
