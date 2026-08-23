@@ -1,0 +1,547 @@
+{
+ "break_even": {
+  "anchor_per_kw_yr": 0.0,
+  "rows": [
+   {
+    "annual_cost_per_mw_yr": 148485.5,
+    "capacity_value_per_mw_yr": 0.0,
+    "n_arbitrage_windows": 365,
+    "required_arbitrage_per_mw_yr": 148485.5,
+    "required_gross_spread_per_mwh": 124.33,
+    "required_net_margin_per_mwh": 101.7,
+    "tech": "li_ion_4hr"
+   },
+   {
+    "annual_cost_per_mw_yr": 260858.9,
+    "capacity_value_per_mw_yr": 0.0,
+    "n_arbitrage_windows": 365,
+    "required_arbitrage_per_mw_yr": 260858.9,
+    "required_gross_spread_per_mwh": 109.05,
+    "required_net_margin_per_mwh": 89.34,
+    "tech": "li_ion_8hr"
+   },
+   {
+    "annual_cost_per_mw_yr": 138859.3,
+    "capacity_value_per_mw_yr": 0.0,
+    "n_arbitrage_windows": 40,
+    "required_arbitrage_per_mw_yr": 138859.3,
+    "required_gross_spread_per_mwh": 36.38,
+    "required_net_margin_per_mwh": 34.71,
+    "tech": "iron_air"
+   },
+   {
+    "annual_cost_per_mw_yr": 373138.3,
+    "capacity_value_per_mw_yr": 0.0,
+    "n_arbitrage_windows": 365,
+    "required_arbitrage_per_mw_yr": 373138.3,
+    "required_gross_spread_per_mwh": 108.62,
+    "required_net_margin_per_mwh": 85.19,
+    "tech": "li_ion_12hr"
+   },
+   {
+    "annual_cost_per_mw_yr": 294319.3,
+    "capacity_value_per_mw_yr": 0.0,
+    "n_arbitrage_windows": 365,
+    "required_arbitrage_per_mw_yr": 294319.3,
+    "required_gross_spread_per_mwh": 86.47,
+    "required_net_margin_per_mwh": 80.64,
+    "tech": "flow_battery"
+   },
+   {
+    "annual_cost_per_mw_yr": 170460.0,
+    "capacity_value_per_mw_yr": 0.0,
+    "n_arbitrage_windows": 365,
+    "required_arbitrage_per_mw_yr": 170460.0,
+    "required_gross_spread_per_mwh": 62.13,
+    "required_net_margin_per_mwh": 58.38,
+    "tech": "compressed_air"
+   }
+  ]
+ },
+ "bundle": "results/hindcast/ercot-2021-2025-realized-t1h-refresh",
+ "cache_dir": "results/hindcast/ercot-2021-2025-realized-t1h-refresh/ERCOT/28cef3500ec1fd9e",
+ "decision_years": {
+  "2022": {
+   "dump": "screen_signal_diag_2021_for_2022.npz",
+   "signal_shape": {
+    "adder_max": 2971.94,
+    "adder_mean": 14.159,
+    "adder_share_of_spread": 0.8897,
+    "base_max": 55.8,
+    "base_min": 24.84,
+    "base_p50": 29.21,
+    "base_p95": 42.43,
+    "daily_spread_base_only": 8.44,
+    "daily_spread_with_adder": 76.5,
+    "thermal_margin_adder_share": {
+     "vc_20": {
+      "adder_share": 0.5547,
+      "base_only_per_mw_yr": 99564.2,
+      "energy_margin_per_mw_yr": 223597.5
+     },
+     "vc_25": {
+      "adder_share": 0.6898,
+      "base_only_per_mw_yr": 55766.0,
+      "energy_margin_per_mw_yr": 179798.7
+     },
+     "vc_30": {
+      "adder_share": 0.8361,
+      "base_only_per_mw_yr": 24160.7,
+      "energy_margin_per_mw_yr": 147396.8
+     },
+     "vc_40": {
+      "adder_share": 0.9765,
+      "base_only_per_mw_yr": 2851.8,
+      "energy_margin_per_mw_yr": 121476.6
+     },
+     "vc_60": {
+      "adder_share": 1.0,
+      "base_only_per_mw_yr": 0.0,
+      "energy_margin_per_mw_yr": 103338.8
+     }
+    }
+   },
+   "storage_screen": {
+    "allocator_result": [],
+    "budget_mw": 5000.0,
+    "per_tech_cap_mw": 3000.0,
+    "ranked": [
+     "iron_air",
+     "li_ion_4hr",
+     "compressed_air",
+     "li_ion_8hr",
+     "flow_battery",
+     "li_ion_12hr"
+    ],
+    "techs": [
+     {
+      "annual_cost_per_mw_yr": 148485.5,
+      "arbitrage_per_mw_yr": 90991.4,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -57494.1,
+      "tech": "li_ion_4hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 260858.9,
+      "arbitrage_per_mw_yr": 102660.5,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -158198.5,
+      "tech": "li_ion_8hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 138859.3,
+      "arbitrage_per_mw_yr": 90041.3,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -48818.0,
+      "tech": "iron_air"
+     },
+     {
+      "annual_cost_per_mw_yr": 373138.3,
+      "arbitrage_per_mw_yr": 97445.3,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -275693.0,
+      "tech": "li_ion_12hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 294319.3,
+      "arbitrage_per_mw_yr": 107862.8,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -186456.6,
+      "tech": "flow_battery"
+     },
+     {
+      "annual_cost_per_mw_yr": 170460.0,
+      "arbitrage_per_mw_yr": 102147.3,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -68312.7,
+      "tech": "compressed_air"
+     }
+    ]
+   },
+   "vre_capture": {
+    "flat_signal_mean": 45.52,
+    "solar": {
+     "capture_price": 79.46,
+     "capture_ratio_vs_flat_mean": 1.7455,
+     "profile_mean_over_max": 0.2699
+    },
+    "wind": {
+     "capture_price": 33.81,
+     "capture_ratio_vs_flat_mean": 0.7426,
+     "profile_mean_over_max": 0.4592
+    }
+   }
+  },
+  "2023": {
+   "dump": "screen_signal_diag_2021_for_2023.npz",
+   "signal_shape": {
+    "adder_max": 4825.23,
+    "adder_mean": 347.708,
+    "adder_share_of_spread": 0.9676,
+    "base_max": 174.77,
+    "base_min": 25.06,
+    "base_p50": 32.44,
+    "base_p95": 174.77,
+    "daily_spread_base_only": 36.47,
+    "daily_spread_with_adder": 1124.89,
+    "thermal_margin_adder_share": {
+     "vc_20": {
+      "adder_share": 0.9373,
+      "base_only_per_mw_yr": 203721.7,
+      "energy_margin_per_mw_yr": 3249640.4
+     },
+     "vc_25": {
+      "adder_share": 0.9501,
+      "base_only_per_mw_yr": 159921.7,
+      "energy_margin_per_mw_yr": 3205840.4
+     },
+     "vc_30": {
+      "adder_share": 0.9612,
+      "base_only_per_mw_yr": 122814.3,
+      "energy_margin_per_mw_yr": 3168479.9
+     },
+     "vc_40": {
+      "adder_share": 0.9727,
+      "base_only_per_mw_yr": 85291.5,
+      "energy_margin_per_mw_yr": 3128232.7
+     },
+     "vc_60": {
+      "adder_share": 0.9791,
+      "base_only_per_mw_yr": 64763.7,
+      "energy_margin_per_mw_yr": 3096913.0
+     }
+    }
+   },
+   "storage_screen": {
+    "allocator_result": [
+     {
+      "build_mw": 3000.0,
+      "tech": "iron_air"
+     },
+     {
+      "build_mw": 2000.0,
+      "tech": "flow_battery"
+     }
+    ],
+    "budget_mw": 5000.0,
+    "per_tech_cap_mw": 3000.0,
+    "ranked": [
+     "iron_air",
+     "flow_battery",
+     "li_ion_12hr",
+     "compressed_air",
+     "li_ion_8hr",
+     "li_ion_4hr"
+    ],
+    "techs": [
+     {
+      "annual_cost_per_mw_yr": 148485.5,
+      "arbitrage_per_mw_yr": 1618200.4,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": 1469714.9,
+      "tech": "li_ion_4hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 260858.9,
+      "arbitrage_per_mw_yr": 2662336.4,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": 2401477.5,
+      "tech": "li_ion_8hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 138859.3,
+      "arbitrage_per_mw_yr": 3052925.3,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": 2914066.0,
+      "tech": "iron_air"
+     },
+     {
+      "annual_cost_per_mw_yr": 373138.3,
+      "arbitrage_per_mw_yr": 3012344.1,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": 2639205.8,
+      "tech": "li_ion_12hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 294319.3,
+      "arbitrage_per_mw_yr": 2944792.1,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": 2650472.8,
+      "tech": "flow_battery"
+     },
+     {
+      "annual_cost_per_mw_yr": 170460.0,
+      "arbitrage_per_mw_yr": 2657252.1,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": 2486792.1,
+      "tech": "compressed_air"
+     }
+    ]
+   },
+   "vre_capture": {
+    "flat_signal_mean": 390.96,
+    "solar": {
+     "capture_price": 1008.97,
+     "capture_ratio_vs_flat_mean": 2.5807,
+     "profile_mean_over_max": 0.2699
+    },
+    "wind": {
+     "capture_price": 192.98,
+     "capture_ratio_vs_flat_mean": 0.4936,
+     "profile_mean_over_max": 0.4592
+    }
+   }
+  },
+  "2024": {
+   "dump": "screen_signal_diag_2023_for_2024.npz",
+   "signal_shape": {
+    "adder_max": 2217.49,
+    "adder_mean": 6.663,
+    "adder_share_of_spread": 0.8824,
+    "base_max": 32.73,
+    "base_min": 16.36,
+    "base_p50": 21.85,
+    "base_p95": 26.36,
+    "daily_spread_base_only": 4.42,
+    "daily_spread_with_adder": 37.62,
+    "thermal_margin_adder_share": {
+     "vc_20": {
+      "adder_share": 0.752,
+      "base_only_per_mw_yr": 19242.9,
+      "energy_margin_per_mw_yr": 77587.1
+     },
+     "vc_25": {
+      "adder_share": 0.9712,
+      "base_only_per_mw_yr": 1700.9,
+      "energy_margin_per_mw_yr": 59131.0
+     },
+     "vc_30": {
+      "adder_share": 0.9994,
+      "base_only_per_mw_yr": 32.3,
+      "energy_margin_per_mw_yr": 55581.3
+     },
+     "vc_40": {
+      "adder_share": 1.0,
+      "base_only_per_mw_yr": 0.0,
+      "energy_margin_per_mw_yr": 53310.2
+     },
+     "vc_60": {
+      "adder_share": 1.0,
+      "base_only_per_mw_yr": 0.0,
+      "energy_margin_per_mw_yr": 50177.0
+     }
+    }
+   },
+   "storage_screen": {
+    "allocator_result": [],
+    "budget_mw": 5000.0,
+    "per_tech_cap_mw": 3000.0,
+    "ranked": [
+     "iron_air",
+     "li_ion_4hr",
+     "compressed_air",
+     "li_ion_8hr",
+     "flow_battery",
+     "li_ion_12hr"
+    ],
+    "techs": [
+     {
+      "annual_cost_per_mw_yr": 148485.5,
+      "arbitrage_per_mw_yr": 44584.9,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -103900.6,
+      "tech": "li_ion_4hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 260858.9,
+      "arbitrage_per_mw_yr": 50550.0,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -210309.0,
+      "tech": "li_ion_8hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 138859.3,
+      "arbitrage_per_mw_yr": 43860.2,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -94999.1,
+      "tech": "iron_air"
+     },
+     {
+      "annual_cost_per_mw_yr": 373138.3,
+      "arbitrage_per_mw_yr": 47848.0,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -325290.3,
+      "tech": "li_ion_12hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 294319.3,
+      "arbitrage_per_mw_yr": 52210.5,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -242108.8,
+      "tech": "flow_battery"
+     },
+     {
+      "annual_cost_per_mw_yr": 170460.0,
+      "arbitrage_per_mw_yr": 51123.0,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -119337.0,
+      "tech": "compressed_air"
+     }
+    ]
+   },
+   "vre_capture": {
+    "flat_signal_mean": 28.22,
+    "solar": {
+     "capture_price": 38.92,
+     "capture_ratio_vs_flat_mean": 1.3792,
+     "profile_mean_over_max": 0.2699
+    },
+    "wind": {
+     "capture_price": 22.71,
+     "capture_ratio_vs_flat_mean": 0.8048,
+     "profile_mean_over_max": 0.4592
+    }
+   }
+  },
+  "2025": {
+   "dump": "screen_signal_diag_2024_for_2025.npz",
+   "signal_shape": {
+    "adder_max": 1200.7,
+    "adder_mean": 1.169,
+    "adder_share_of_spread": 0.5658,
+    "base_max": 26.1,
+    "base_min": 13.73,
+    "base_p50": 18.71,
+    "base_p95": 22.51,
+    "daily_spread_base_only": 3.83,
+    "daily_spread_with_adder": 8.83,
+    "thermal_margin_adder_share": {
+     "vc_20": {
+      "adder_share": 0.7116,
+      "base_only_per_mw_yr": 3881.7,
+      "energy_margin_per_mw_yr": 13461.6
+     },
+     "vc_25": {
+      "adder_share": 0.9996,
+      "base_only_per_mw_yr": 2.8,
+      "energy_margin_per_mw_yr": 6583.7
+     },
+     "vc_30": {
+      "adder_share": 1.0,
+      "base_only_per_mw_yr": 0.0,
+      "energy_margin_per_mw_yr": 5575.8
+     },
+     "vc_40": {
+      "adder_share": 1.0,
+      "base_only_per_mw_yr": 0.0,
+      "energy_margin_per_mw_yr": 5061.6
+     },
+     "vc_60": {
+      "adder_share": 1.0,
+      "base_only_per_mw_yr": 0.0,
+      "energy_margin_per_mw_yr": 4228.8
+     }
+    }
+   },
+   "storage_screen": {
+    "allocator_result": [],
+    "budget_mw": 5000.0,
+    "per_tech_cap_mw": 3000.0,
+    "ranked": [
+     "iron_air",
+     "li_ion_4hr",
+     "compressed_air",
+     "li_ion_8hr",
+     "flow_battery",
+     "li_ion_12hr"
+    ],
+    "techs": [
+     {
+      "annual_cost_per_mw_yr": 148485.5,
+      "arbitrage_per_mw_yr": 4489.8,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -143995.7,
+      "tech": "li_ion_4hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 260858.9,
+      "arbitrage_per_mw_yr": 4101.5,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -256757.4,
+      "tech": "li_ion_8hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 138859.3,
+      "arbitrage_per_mw_yr": 1492.1,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -137367.2,
+      "tech": "iron_air"
+     },
+     {
+      "annual_cost_per_mw_yr": 373138.3,
+      "arbitrage_per_mw_yr": 3276.0,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -369862.3,
+      "tech": "li_ion_12hr"
+     },
+     {
+      "annual_cost_per_mw_yr": 294319.3,
+      "arbitrage_per_mw_yr": 4697.3,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -289622.0,
+      "tech": "flow_battery"
+     },
+     {
+      "annual_cost_per_mw_yr": 170460.0,
+      "arbitrage_per_mw_yr": 4454.7,
+      "as_revenue_per_mw_yr": 0.0,
+      "capacity_value_per_mw_yr": 0.0,
+      "margin_per_mw_yr": -166005.3,
+      "tech": "compressed_air"
+     }
+    ]
+   },
+   "vre_capture": {
+    "flat_signal_mean": 19.47,
+    "solar": {
+     "capture_price": 19.99,
+     "capture_ratio_vs_flat_mean": 1.0269,
+     "profile_mean_over_max": 0.2699
+    },
+    "wind": {
+     "capture_price": 18.05,
+     "capture_ratio_vs_flat_mean": 0.9272,
+     "profile_mean_over_max": 0.4592
+    }
+   }
+  }
+ },
+ "existing_storage_mw": 0.0,
+ "finding": "docs/FINDING-entry-screen-t1h-2026-08.md",
+ "iso": "ERCOT",
+ "probe": "entry_screen_t1h_phase0",
+ "real_discount_rate": 0.056751
+}

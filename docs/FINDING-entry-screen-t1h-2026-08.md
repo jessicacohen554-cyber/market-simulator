@@ -449,6 +449,32 @@ iron-air/flow unless L-3 lands first. **Sequence L-3 before L-6.**
 - **Out of scope, untouched:** every keeper shard, `calibration-complete.json`,
   `holdout-freeze.json`, the backcast registry, `program-status.json`.
 
-_Reproduction scripts for §2/§3/§4/§7 are pure arithmetic over the committed
-`screen_signal_diag_*.npz` dumps and the constants cited inline; no repository state is
-required beyond this branch._
+---
+
+## 10. Reproduction
+
+Every measurement in §2/§3/§4 (and L-2/L-3's arithmetic) is re-takeable from committed
+artifacts with **numpy only** — no pandas, no highspy, no solve, and a `code` data
+profile:
+
+```
+python3 scripts/probes/entry_screen_t1h_phase0.py \
+    --bundle results/hindcast/ercot-2021-2025-realized-t1h-refresh --iso ERCOT \
+    --out results/calibration/entry_screen_t1h_phase0_ercot.json
+
+python3 scripts/probes/entry_screen_t1h_phase0.py \
+    --bundle results/hindcast/caiso-2021-2025-realized --iso CAISO \
+    --out results/calibration/entry_screen_t1h_phase0_caiso.json
+
+python3 scripts/probes/entry_screen_t1h_phase0.py \
+    --bundle results/hindcast/caiso-2021-2025-realized --iso CAISO \
+    --capacity-anchor-per-kw-yr 138.36 \
+    --out results/calibration/entry_screen_t1h_phase0_caiso_mpb.json
+```
+
+The three artifacts are committed alongside this document. The ERCOT run's
+`decision_years["2023"].storage_screen.allocator_result` is
+`iron_air 3,000 MW + flow_battery 2,000 MW` — the registered ledger, reproduced. The two
+CAISO runs carry the §4 break-even tables and a `warning` field recording that CAISO's
+bundle has **no** `screen_signal_diag_*.npz` (defect D-7), which is precisely why only
+the break-even half is populated there.
