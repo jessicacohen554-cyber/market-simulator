@@ -1,0 +1,165 @@
+{
+ "probe": "ercot230_probe_fixedpoint",
+ "factor": "SECOND ADAPTATION PASS / fixed-point iteration on the armed adaptive-expectation storage floor (ercot_adaptive_fixed_point) — the FINDING-ercot221 §4 first named successor",
+ "charter": "docs/PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md §0 (in-session owner selection lifting the W-1 fence onto the conduct object: '2nd adaptation pass') + §1 (form, parameter-free discrete stopping rule) + §4 (gates, 226 §5.5 adoption bars)",
+ "session": "ercot-230",
+ "branch_sha": "b20d0a4658a7642f975c74e3cd184b4c378012dc",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "note": "keeper pins verified before the control replay; G-REPRO numeric-identity contract (parquet sha not comparable cross-environment, per ercot-226/229)"
+ },
+ "control": {
+  "bundle": "results/calibration/ercot230_ctl2023",
+  "basis": "same-box replay of keeper 2026-08-20-ercot223-arm-eventrelease at HEAD (new code, flag off), 2023-only",
+  "grepro": {
+   "sidecar_numeric_identity_vs_keeper_committed": {
+    "system": 0.0,
+    "reserve_family": 0.0,
+    "storage": 0.0,
+    "adaptive": 0.0,
+    "class_hourly": 0.0,
+    "contract": "max|delta| per numeric column"
+   },
+   "official_reproduction": "C3a -39.7% (model 38.81 vs RT lw 64.32) | C3b NRMSE 0.729 | C3c 74 h — exact printed digits",
+   "validate_keeper_on_committed_bundle": "-39.7/0.729/74 · +0.4/0.131/22 · -7.6/0.099/1 (VALIDATION OK)",
+   "d4_machine_rows_identical_to_keeper": true,
+   "reading": "the closure refactor of the floor construction is numerically inert with the flag off — proven, not assumed"
+  },
+  "official_2023": {
+   "C3a_pct": -39.7,
+   "C3b_nrmse": 0.729,
+   "C3c_model_tail_h": 74,
+   "C3c_actual_tail_h": 181
+  }
+ },
+ "arm": {
+  "bundle": "results/calibration/ercot230_arm2023",
+  "set": {
+   "ercot_adaptive_fixed_point": true
+  },
+  "years": [
+   2023
+  ],
+  "meta_flag_verified": true,
+  "run_config_flag_verified": true
+ },
+ "iteration": {
+  "n_adapt_passes": 0,
+  "stop_reason": "converged",
+  "spike_days_by_pass": [
+   7,
+   7
+  ],
+  "floored_window_hours_by_pass": [
+   768,
+   768
+  ],
+  "released_window_hours_by_pass": [
+   9,
+   9
+  ],
+  "floor_sha_by_pass": [
+   "44f664bd275a091a",
+   "44f664bd275a091a"
+  ],
+  "reading": "the loop RAN (flag armed and verified), computed the pass-2 path's state, and found the recomputed floor bitwise identical to the floor pass 2 ran under: the pass-2 path carries EXACTLY the same 7 spike days and the same 9 in-window realized hours as pass 1, so the incumbent one-pass adaptation is ALREADY the fixed point of the within-year adaptation map. Zero additional solves."
+ },
+ "official": {
+  "2023": {
+   "C3a_pct": -39.7,
+   "C3b_nrmse": 0.729,
+   "C3c_model_tail_h": 74,
+   "model_mean_usd": 38.81,
+   "actual_rt_lw_usd": 64.32,
+   "delta_vs_control_pp": 0.0
+  }
+ },
+ "numeric_identity_vs_control": {
+  "verdict": "ARM NUMERICALLY IDENTICAL TO CONTROL ON EVERY SIDECAR",
+  "per_sidecar_max_abs_delta": {
+   "system": 0.0,
+   "reserve_family": 0.0,
+   "storage": 0.0,
+   "adaptive": 0.0,
+   "class_hourly": 0.0,
+   "network": 0.0,
+   "unit_hourly": 0.0
+  },
+  "reading": "converged at zero additional passes means the scored pass IS the incumbent pass-2 under identical floors — the same LP chain; identity is exact, not merely within float noise"
+ },
+ "probe_basis": {
+  "c3a": -29.99,
+  "c3b": 3.4476,
+  "tail": 74,
+  "model_mean": 33.856,
+  "identical_to_control": true
+ },
+ "gates": {
+  "gcap": {
+   "violations": 0,
+   "pass": true
+  },
+  "gshed": {
+   "pass": true,
+   "shed_hours_control": [],
+   "shed_hours_arm": []
+  },
+  "gspur_banded": {
+   "pass": true,
+   "control_count": 11,
+   "arm_count": 11,
+   "hour_sets_identical": true
+  },
+  "gspur_lidless": {
+   "s_nolid": 11,
+   "s_band": 11,
+   "s_top": 0,
+   "note": "identical control and arm; REPORT-ONLY (ercot-225 card unsigned, gate files untouched)"
+  },
+  "gbat": {
+   "pass": true
+  },
+  "gd2": {
+   "no_new_d4_rows": true
+  },
+  "gshortfall": {
+   "pass": true,
+   "rule": "per rigid family, arm shortfall hour-set subset of control's (Amendment-1 form); sets are equal"
+  }
+ },
+ "family_diagnostics": {
+  "withheld_shortfall_hour_sets": "identical control and arm, every family (full lists: results/calibration/ercot230_gates.json)",
+  "dual_movement": "none — arm is numerically identical"
+ },
+ "summer": {
+  "caught": 67,
+  "missed": 114,
+  "phantom": 7,
+  "identical_to_control": true,
+  "d_price_at_miss_p50": 0.0,
+  "d_price_at_miss_max": 0.0,
+  "improved_miss_hours": 0,
+  "calm_fortnight_bias_pct": 15.44,
+  "window_concentration": null
+ },
+ "adaptive": {
+  "spike_days": 7,
+  "p_hat_max": 0.37,
+  "floored_window_hours": 768,
+  "released_window_hours": 9,
+  "sidecar_note": "adaptive_2023.parquet identical to control's (max|delta| 0.0); the iteration trajectory is hourly/adaptive_iteration_2023.json in the arm bundle and is quoted verbatim in the iteration block above"
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "failed_criteria": [
+   "C3a-2023 improvement 0.00 pp vs the >= 1.5 pp bar — no movement of any kind: the fixed point of the within-year adaptation map IS the incumbent keeper"
+  ],
+  "disposition": "MEASURED-INERT-AT-FIXED-POINT — the mechanism is live (loop ran, state computed, self-reproduction verified) and establishes that iterating the adaptation cannot move the 2023 residual: the 7-event path licenses floors (<= P_hat_max 0.37 x VOLL = $1,850) that set no new >= $1,000 settle anywhere on the path, so the map converges at its first application. The bootstrap starvation (7 vs reality's 23 event days) is a property of the within-year map itself, not of the one-pass truncation (precommit §5 P-6 in its sharpest form). The remaining depth requires event experience the within-year path cannot supply — the separately-fenced cross-year (ercot-222 R) / seasonal structure, or the Door-D anchors.",
+  "promotion": "none — keeper 2026-08-20-ercot223-arm-eventrelease untouched"
+ }
+}

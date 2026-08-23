@@ -11307,3 +11307,87 @@ never as *arm ≡ control*.
 
 **Session consumed the ercot-229 shorthand.** (ercot-227/228 ran
 concurrently; ercot-199 remains unclaimed)
+
+---
+
+## ercot-230 — 2026-08-23 — THE SECOND ADAPTATION PASS (fixed-point iteration, the FINDING-ercot221 §4 first named successor): W-1 fence LIFTED onto the conduct object by in-session owner selection, the mechanism BUILT/ARMED/SOLVED — **MEASURED-INERT-AT-FIXED-POINT: the keeper is ALREADY the fixed point of the within-year adaptation map, converged after ZERO additional passes**, and the bootstrap starvation is a property of the map, not of the one-pass truncation
+
+**Charter:** the ercot-230 dispatch mandated opening with the W-1 question
+("must NOT re-enter Door D on its own authority"); the session presented
+three options (conduct lever / non-AS tightness sweep / restore Door-D rest)
+and the owner selected **"2nd adaptation pass"** — recorded verbatim in
+`docs/PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md` §0 (304 lines,
+blob `3a73cb0d`, pushed + blob-verified BEFORE any build edit and BEFORE any
+solve). The ercot-221 card's *"exactly ONE adaptation pass (no fixed-point
+iteration)"* pin was thereby amended for the adaptive P1 offer pass only.
+**FINDING:** `docs/FINDING-ercot230-adaptive-fixed-point-2026-08-23.md`.
+
+**Build (one commit with all registrations, `b92d766`):**
+`ercot_adaptive_fixed_point` (default off, ERCOT-gated inside the armed
+adaptive block; zero new identified constants; cap
+`ERCOT_ADAPTIVE_MAX_PASSES = 8` a pre-registered operational convention).
+Adaptation passes continue past the incumbent pass 2 — each re-derives the
+IDENTICAL floor arithmetic from the latest P1 (the construction factored to
+ONE closure shared with the incumbent pass) and re-solves through the same
+`p1_storage_discharge_cost` seam — until the floor vector reproduces itself
+exactly (converged), recurs non-adjacently (cycle), or hits the cap; the
+trajectory persists as `hourly/adaptive_iteration_<year>.json`. Pinned
+default cache key `603c2498bf71d21d` unmoved; armed key distinct; 4 hermetic
+tests; matrix family `def:` updated in the build commit (rule 28(c),
+ercot-223 same-family precedent).
+
+**G-REPRO (strongest form):** the control replay at HEAD (flag off, 2023)
+reproduces the keeper's committed sidecars to **max|Δ| = 0.0 on every
+numeric column** and the official scorer to the printed digit
+(−39.7 % / 0.729 / 74 h) — the closure refactor proven numerically inert.
+
+**The A/B (single `--set`, 2023-only, W-2 probe):** the loop RAN (flag
+verified in `run_config` + `meta`) and stopped **`converged` after
+`n_adapt_passes = 0`** — the pass-2 (keeper) path carries **exactly the same
+7 spike days and the same 9 in-window realized hours** as the unfloored
+pass-1 path, so its recomputed floor is **bitwise identical** (sha
+`44f664bd275a091a` both generations; 768 floored window hours both). Pass 3
+would have solved the identical LP. Consequently: **arm ≡ control at
+max|Δ| = 0.0 on ALL SEVEN sidecars**; official −39.7/0.729/74 unchanged;
+probe basis identical; **every gate PASS** (G-CAP 0, G-SHED ∅=∅, G-SPUR
+11↔11 identical hour sets + lidless 11·11·0 both, G-BAT, G-D2, G-SHORTFALL
+by equality); summer block flat (miss split 67/114/7 both,
+`d_price_at_miss` p50 = max = **0.0**, calm fortnight 15.44 % both).
+**`adoption_pass` false (0.00 pp vs the ≥1.5 pp bar) — nothing borderline,
+nothing escalated. No combined run, no registration, no promotion; keeper
+`2026-08-20-ercot223-arm-eventrelease` untouched.**
+
+**What the measurement establishes:** (1) the ercot-221 one-pass convention
+is measured **EXACT, not approximate** — the within-year adaptation map
+reaches its fixed point at the first application; (2) **the bootstrap
+starvation (7 vs reality's 23 event days) is a property of the map itself**:
+the 7-event path licenses floors ≤ P̂_max × VOLL = $1,850 which set no new
+≥$1,000 settle anywhere on the path (they withhold storage behind
+thermal-set prices rather than setting prices), so the conduct channel
+**cannot bootstrap itself out of the depth gap within a year** — the circle
+is measured closed; (3) the within-year adaptive family is now adjudicated
+at every member (static: Door A refused ×3; dynamic: armed K; cross-year:
+ercot-222 R; fixed point: **inert, this record**) — of the §4 named
+successors only the **seasonal end-of-season term** remains un-adjudicated,
+and its identified role (the Oct→Nov off-ramp) is not on its face a
+depth-count candidate; (4) with the 226/227 result (AS-procurement inputs
+unreachable, `d_price_at_miss` 0.0 under every armed factor) this leaves the
+remaining 2023 depth requiring event experience the model's own within-year
+path cannot supply — the recorded routes are the fenced cross-year structure
+(re-entry needs new evidence + an owner instrument) or the Door-D 2026 SOM
+anchors (~mid-2027). Precommit §5 P-6 in its sharpest form; the lane state
+returns to the owner.
+
+**Also this session:** the stale ERCOT matrix `gates:` stamp (head carried
+the ercot-221 numbers −39.4/0.723 against the ercot-223 keeper's actual
+−39.7/0.729) repaired, ercot-221 story preserved as prior stamp; the ERCOT
+cell of `ercot_storage_adaptive_expectation` stamped with the ercot-230
+evidence (rule 28(b)); probe bundles gitignored per W-2 (committed record =
+`results/calibration/ercot230_probe_fixedpoint.json` + `ercot230_gates.json`
++ the FINDING). Hygiene: solves in-session and sequential (rule 12), years
+{2023} only (rule 22), ERCOT-only edits (rule 25), every pushed ≥300-line
+file blob-verified (rule 27), `check_mechanism_matrix.py` exit 0 on every
+push, no CI solves, no workflows, no PR.
+
+**Session consumed the ercot-230 shorthand. Next shorthand: ercot-231**
+(ercot-199 remains unclaimed)
