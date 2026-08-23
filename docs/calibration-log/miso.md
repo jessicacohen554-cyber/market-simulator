@@ -8279,3 +8279,96 @@ Records: `FINDING-miso179-dispersion-precheck-refutation-2026-08-23.md`;
 `scripts/probes/_miso179_dispersion_precheck.py`. Matrix: base row + all six
 shard cells + §5.4 queue stamp in-session (rule 26(b)/(c)). Next number:
 **miso-180.**
+
+## miso-180 (2026-08-23) — the D-1b anchored SPREAD-ONLY successor executed end to end and measured INERT: the graft behaves exactly as designed and the LP substitutes around it — the across-unit dispersion family closes at every grain
+
+**Charter:** the owner granted FINDING-miso179 §3's named successor as D-1b in
+the session prompt (the anchored spread-only object in kind; refetch only if
+the anchor identification needed book statistics beyond the committed
+artifact — it did). **Keeper `2026-08-22-miso-177-rho-measured` UNCHANGED.**
+Verdict **`I`** on the prereg's own G-2 rule; **both A/B runs registered**
+(`2026-08-23-miso-180-control` / `2026-08-23-miso-180-anchored`, full 3-year
+bundles + hourly sidecars incl. `reserve_family`).
+
+**Order of operations (auditable):** PREREG committed 14ea321 BEFORE the
+anchor identification or any new hour-set-conditioned quantity — the ONE open
+design question (the anchor rank) adjudicated ex ante in writing: candidate
+(i), the model/book H\* crossing rank, CHOSEN (inputs-only path: frozen
+demand-side H\*, input offer surface `mc_base`, measured book — no LMP, no
+residual, no solve output anywhere); (ii) book-side curvature knee and (iii)
+conduct-boundary REJECTED with reasons; the refetch-free pooled-vector
+variant rejected on conditioning mismatch; anti-sweep clause (the anchor is
+computed ONCE, no variant ever tried). Then intake (552/552 refetch, DA
+curation; substrate BYTE-VERIFIED to be miso-179's — row counts equal the
+derive record exactly, every committed H\* statistic reproduces to its
+rounding; the prereg's manifest-digest leg disclosed unsatisfiable-by-
+construction — `fetched_utc` inside the digested file — and executed at
+intent level with strictly stronger content checks) → probe → implementation
+→ control → arm → gates → verdict, in the prereg's order.
+
+**The anchor:** r = **0.875** — a SINGLE crossing (sign changes 1), model
+$56.55 vs eligible book $55.54 at the anchor, ZERO under-gridpoints below it
+(the premise geometry — over at the median, under at the top — holds
+exactly); guards (0.50, 0.975] clear. Both 199-point H\* curves committed in
+`_miso180_anchored_spread_precheck.json`.
+
+**Phase A (kills frozen in the PREREG, all CLEAR):** K-a **0.387** (model
+mean above-anchor rise $32.92 vs eligible book $85.00; stop ≥ 0.5 — the
+tail-scoped object is ~2.6× the model's own, unlike the p90−p10 ratio 0.541
+that killed the level form); K-b 2023 predicted **+1.77 %** (as-is +1.28; 10
+exposed hours, all August; kill ±10); K-c 2025 predicted **+0.592 pp** (59
+exposed hours, mean raise $26.61; stop < +0.5 — narrowly).
+
+**The mechanism** (`miso_offer_spread_anchored`, default off, MISO-gated,
+`data.offer_curves.apply_miso_offer_spread_anchored`, BASE cost, both
+orchestrators): per calendar month, pmax-weighted midpoint ranks of the
+affected econ/peak tranches; above-anchor tranches floored raise-only at
+`A_m + (Q̂(r) − Q̂(a)) × G_ref(m)` — the model keeps its own level at and
+below the anchor. Params = the committed miso-179 vector (sha pinned) + the
+identified anchor (cited constant); cache-key drop-at-default (68 pin tests;
+armed key distinct); 7 unit tests; matrix row + six shard cells in the same
+commit as the field.
+
+**The A/B (15 GB recipe, python 3.11 + pinned stack per the bundle's
+recorded environment, solves ALONE):** **G-0 control bit-identity 12/12
+max|diff| = 0** (HEAD drift-free, default proven inert at solve grain).
+G-1/G-3 (arm 2023 +1.34 / 2024 −4.06)/G-4/G-5 (zero new D-4)/G-6
+(`n_residual` unchanged at 2)/G-7 (zero flips) ALL PASS. **G-2 INERT:
+realized ΔC3a-2025 = +0.132 pp** (−11.747 → −11.615; band ±0.25). Realized
+2023 +0.061, 2024 +0.000 — the static predictor's declared no-substitution
+overstatement measured **4.5×**.
+
+**The structural record (ungated, all committed):** the graft did exactly
+what it promised — body **+0.001 pp** (untouched; the raise-only anchored
+design held to three decimals), tail +0.03 / top-decile +0.09, max graft
+target $444–479 under the $500 ceiling (encounters unchanged) — and still
+changed nothing that matters: **Δ₁ identity +10.50 → +10.45** of a $5.28 gap
+(did NOT collapse; Δ₂/Δ₃ unchanged) and **MISO-South +16.96 → +17.15 %
+(AWAY from zero — the rule-1 falsifiable prediction FAILED)**. The model's
+clearing rank (mean 0.44–0.48, p90 0.62–0.69) never reaches the grafted top
+decile; when demand pushes toward it the LP substitutes — imports +2.1 GW /
+gas −5.3 GW at the 88 tail hours (miso-178 §5).
+
+**What closes / what opens:** the across-unit dispersion family is fully
+adjudicated at every grain (within-unit R miso-151; level R miso-179; spread
+**I** miso-180) — the 2025 summer residual is NOT an offer-surface object.
+The live named object is the mid-stack supply surplus at the binding hours:
+the **D-2 5(i) seam-response ruling is now the TOP queue item** (the
++2.1 GW binding-hour import excess, holding miso-176's FFE physics), with
+**D-3** (South under-export evidence) its sibling and D-4 unchanged. The
+field stays default-off, correct and available — re-opens only after a
+mid-stack repair moves the clearing rank into the grafted region.
+
+Records: `PREREG-miso180-anchored-spread-2026-08-23.md`;
+`FINDING-miso180-anchored-spread-inert-2026-08-23.md`;
+`_miso180_anchored_spread_precheck.json`; `_miso180_ab_gates.json`;
+`_miso180_structural_reports.json`; probes
+`scripts/probes/_miso180_{anchored_spread_precheck,ab_gates,structural_reports}.py`;
+`scripts/gen_miso180_attestation.py`. Matrix: MISO cell `I` + §5.4 queue
+stamp in-session (rule 26(b)); the base row + six shard cells landed with
+the field (rule 26(c)). Disclosures: the formatter-hook import strip
+(control relaunched, no partial bundle survived); the A/B scorer's C8 leg
+corrected to the criterion's own gated-records semantics before
+adjudication; retention prunes `2026-08-16-miso-160-wefor-shape` and
+`2026-08-19-miso-169-control`. Rule 22: 2023–2025 only; MISO holds neither
+marker; freeze untouched. Next number: **miso-181.**
