@@ -1,0 +1,56 @@
+{
+ "probe": "ercot231",
+ "factor": "N2 \u2014 outage/derate residual beyond the armed measured channels",
+ "charter": "ercot-231: the non-AS energy/tightness factor program (PRECOMMIT-ercot231-nonas-tightness-2026-08-23, blob 526401e, pushed + blob-verified before any measurement)",
+ "session": "hub",
+ "branch_sha": "8506f29",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1"
+ },
+ "control": null,
+ "arm": null,
+ "official": null,
+ "probe_basis": null,
+ "gates": null,
+ "phase0": {
+  "n2_coverage": {
+   "instrument_table": {
+    "CC_REGULAR/COAL/CT_PEAKER/ST_GAS": "60-Day DAM HSL water-fill (ercot_thermal_dam_availability family, class-hour mean PINNED to measured; + _plant site pins; + gas/coal event caps)",
+    "CC_CHP/CT_CHP/ST_CHP": "CAMPD outage windows (DAM-excluded by design, scenarios.py; item-20 record: CC_CHP slope -1.41%/degC NEGATIVE)",
+    "nuclear": "ercot_nuclear_unit_availability (measured unit availability)",
+    "non-CAMPD plants": "ercot_noncampd_plant_availability (armed)",
+    "coal seasonal": "coal_nameplate_summer_derate (armed)",
+    "partial outages": "ercot_partial_outage_shaped_derate (item 24, armed)",
+    "storage": "NO measured outage channel (bounded by G-BAT +/-25% and the n5 battery_net wedge)",
+    "wind/solar": "NP6 HSL basis (N3)",
+    "hydro/biomass/oil/OTHER": "carried as classes; no outage channel (bounded by n5)"
+   },
+   "n2a_attempt_log": [
+    {
+     "target": "public doc list, Hourly Resource Outage Capacity (NP3-233, reportTypeId 13103) \u2014 SYSTEM-grain aggregate",
+     "url": "https://www.ercot.com/misapp/servlets/IceDocListJsonWS?reportTypeId=13103",
+     "outcome": "HTTP 200, 1514 documents, PublishDate range 2026-07-23 .. 2026-08-23"
+    },
+    {
+     "target": "public doc list, Unplanned Resource Outages Report (NP1-346-ER, reportTypeId 22912) \u2014 per-unit, 60-day lag",
+     "url": "https://www.ercot.com/misapp/servlets/IceDocListJsonWS?reportTypeId=22912",
+     "outcome": "HTTP 200, 32 documents, PublishDate range 2026-07-23 .. 2026-08-23"
+    }
+   ]
+  }
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "failed_criteria": [
+   "N2-K",
+   "N2a-K"
+  ],
+  "disposition": "ALREADY-CARRIED (family) + DATA-ABSENT (N2a battery outages) + REFUTED-BY-OWN-MEASUREMENT (N2b CHP, item-20 record)"
+ },
+ "reading": "The 62-GW covered core (CC_REGULAR/COAL/CT_PEAKER/ST_GAS) has its class-hour availability PINNED to measured 60-Day DAM HSL by construction; nuclear and non-CAMPD plants carry their own measured channels; partial outages carry item 24; item 20 (temp derate) is R with the physics measured absent. No reachable measured physical outage series exists that the armed channels do not carry: the per-unit Unplanned Resource Outages report and the system-grain HROC both sit on ~30-day rolling public retention (attempt log, no 2023 vintage), the MIS archive is the F4 certificate wall, and the data.ercot.com key is the owner's standing decline. Battery availability is bounded by G-BAT and the n5 battery wedge (model 188.6 vs actual 0.0 MW p50 at the miss set - the model has MORE battery supply at the missed hours, not less)."
+}

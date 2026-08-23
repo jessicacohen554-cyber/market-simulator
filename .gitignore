@@ -910,3 +910,12 @@ results/calibration/ercot230_arm2023/
 results/calibration/ercot229_f1b_ctl/
 results/calibration/ercot229_f1b_arm/
 results/calibration/ercot229_f1b_gates.json
+
+# ercot-231 PROBE bundles (same W-2 clause, carried forward by the ercot-231
+# dispatch): the tie-zone control replay + N1a 2023-only arm. Their record is
+# the committed results/calibration/ercot231_phase0.json +
+# ercot231_probe_*.json + ercot231_*_gates.json + the FINDING
+# (PRECOMMIT-ercot231-nonas-tightness-2026-08-23.md §5.9/§7). A 3-year
+# bundle, if an arm clears adoption, is registered under its own name.
+results/calibration/ercot231_ctl/
+results/calibration/ercot231_n1a_arm/

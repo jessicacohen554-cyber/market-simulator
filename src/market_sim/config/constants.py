@@ -4118,6 +4118,29 @@ ERCOT_GTC_LINK_MAP: dict[str, list[tuple[tuple[str, str], float]]] = {
     "NE_LOB": [(("Northeast", "North"), 1.0)],
 }
 
+# ERCOT DC-tie physical locations on the reduced 7-zone topology, per EIA-930
+# directly-interconnected BA (ercot-231, N1a). ERCOT's five asynchronous ties:
+# DC-East (Monticello, ~600 MW) and DC-North (Oklaunion, ~220 MW) to SPP
+# ("SWPP"); Railroad DC (~300 MW), Eagle Pass (~36 MW) and Laredo VFT
+# (~100 MW) to CFE/CENACE ("CEN"). Ratings are ERCOT's published DC-tie
+# operational transfer capabilities ("The ERCOT DC-Tie Operations" guide /
+# CDR); zone placement follows the tie substations' physical locations —
+# Monticello sits in the EAST weather zone (model Northeast), Oklaunion in
+# NORTH (model North), and all three Mexico ties in the far-south border
+# (model South). Shares within a neighbor split by nameplate rating
+# (SWPP: 600/820 Northeast, 220/820 North; CEN: all South). Used by
+# eia930.demand.ercot_tie_zone_interchange under the
+# ercot_tie_zonal_interchange flag; measured per-neighbor flows come from the
+# EIA-930 BA-to-BA interchange product (data/raw/eia-930-interchange/).
+ERCOT_DC_TIE_ZONE_MAP: dict[str, list[tuple[str, float]]] = {
+    "SWPP": [("Northeast", 600.0 / 820.0), ("North", 220.0 / 820.0)],
+    "CEN": [("South", 1.0)],
+}
+# Total DC-tie transfer capability (MW) implied by the same published
+# ratings — Phase-0 context only (import share of capability), never an LP
+# bound: 600 + 220 + 300 + 36 + 100.
+ERCOT_DC_TIE_CAPABILITY_MW: float = 1256.0
+
 # Percentile of the per-(month × hour-of-day) measured net-import distribution
 # used as each seam's deliverability ceiling. 90 = the upper envelope minus the
 # top ~10% transient/loop-flow hours (matching measured_interchange_envelope's

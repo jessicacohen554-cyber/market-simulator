@@ -1,0 +1,79 @@
+{
+ "probe": "ercot231",
+ "factor": "N5 \u2014 measured supply the model does not carry",
+ "charter": "ercot-231: the non-AS energy/tightness factor program (PRECOMMIT-ercot231-nonas-tightness-2026-08-23, blob 526401e, pushed + blob-verified before any measurement)",
+ "session": "hub",
+ "branch_sha": "8506f29",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1"
+ },
+ "control": null,
+ "arm": null,
+ "official": null,
+ "probe_basis": null,
+ "gates": null,
+ "phase0": {
+  "n5_small_classes": {
+   "hydro": {
+    "model_at_miss_p50": 226.4,
+    "actual_at_miss_p50": 147.0,
+    "uncarried_at_miss": {
+     "p10": 0.0,
+     "p50": 0.0,
+     "p90": 82.0,
+     "min": 0.0,
+     "max": 204.4,
+     "mean": 20.5
+    }
+   },
+   "other_biomass_oil": {
+    "model_at_miss_p50": 379.7,
+    "actual_at_miss_p50": 343.5,
+    "uncarried_at_miss": {
+     "p10": 0.0,
+     "p50": 6.0,
+     "p90": 301.2,
+     "min": 0.0,
+     "max": 624.8,
+     "mean": 99.1
+    }
+   },
+   "battery_net": {
+    "model_at_miss_p50": 188.6,
+    "actual_at_miss_p50": 0.0,
+    "uncarried_at_miss": {
+     "p10": 0.0,
+     "p50": 0.0,
+     "p90": 0.0,
+     "min": 0.0,
+     "max": 135.0,
+     "mean": 3.0
+    }
+   },
+   "closure_context_model_minus_actual_p50": {
+    "gas": -1207.0,
+    "coal": 414.1,
+    "nuclear": -14.8
+   }
+  },
+  "miss_set": {
+   "tail_hours": 181,
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  }
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "failed_criteria": [
+   "N5-K"
+  ],
+  "disposition": "ALL CLASSES CARRIED / BELOW-MATERIALITY - no build"
+ },
+ "reading": "Every EIA-930 fuel class is carried by the fleet (hydro, biomass, oil, OTHER are model classes). At the miss set the 'uncarried' quantity max(0, actual - model) is p50 0.0 MW for hydro (model 226 vs actual 147 - the model OVER-dispatches hydro), p50 6.0 MW for other+biomass+oil (p90 301), p50 0.0 for battery (model 188.6 vs actual 0.0). The N5-K <100 MW p50 screen fires for every class. Closure context at the miss set (model - actual): gas -1,207, coal +414, nuclear -15 - the ercot-216 anatomy reproduced on this keeper's miss set. The model's EXTRA supply at the missed hours (renewables +396, battery +189, hydro +79, coal +414) is the counterparty of its gas shortness; none of it is missing-supply tightness."
+}

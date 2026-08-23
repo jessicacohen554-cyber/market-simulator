@@ -1,0 +1,87 @@
+{
+ "probe": "ercot231",
+ "factor": "N4 \u2014 demand-side representation residuals",
+ "charter": "ercot-231: the non-AS energy/tightness factor program (PRECOMMIT-ercot231-nonas-tightness-2026-08-23, blob 526401e, pushed + blob-verified before any measurement)",
+ "session": "hub",
+ "branch_sha": "8506f29",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1"
+ },
+ "control": null,
+ "arm": null,
+ "official": null,
+ "probe_basis": null,
+ "gates": null,
+ "phase0": {
+  "n4_demand": {
+   "p0a_raw_nan_at_miss": 0,
+   "p0a_raw_nan_annual": 0,
+   "p0a_repaired_hours_at_miss": 0,
+   "p0b_native_vs_eia930": {
+    "by_lag_hours": {
+     "-2": {
+      "wedge_at_miss_p50": -1486.0,
+      "wedge_at_miss_p90abs": 3119.3,
+      "annual_mean_abs": 1870.7
+     },
+     "-1": {
+      "wedge_at_miss_p50": -106.9,
+      "wedge_at_miss_p90abs": 320.9,
+      "annual_mean_abs": 546.4
+     },
+     "0": {
+      "wedge_at_miss_p50": 770.4,
+      "wedge_at_miss_p90abs": 2812.0,
+      "annual_mean_abs": 1240.6
+     },
+     "1": {
+      "wedge_at_miss_p50": 1152.1,
+      "wedge_at_miss_p90abs": 5593.4,
+      "annual_mean_abs": 2654.9
+     },
+     "2": {
+      "wedge_at_miss_p50": 546.2,
+      "wedge_at_miss_p90abs": 8114.4,
+      "annual_mean_abs": 4069.4
+     }
+    },
+    "best_lag": -1,
+    "native_rows_mapped": 8759,
+    "sign_consistency_share_at_best_lag": 0.737,
+    "median_sign": -1,
+    "ercot_total_col_vs_wz_sum_max_abs": 3.000008291564882e-06
+   },
+   "p0c_zonal": {
+    "measured_shares_active": true,
+    "miss_vs_annual_share_delta": {
+     "West": -0.0357,
+     "Panhandle": 0.0,
+     "North": 0.0249,
+     "Northeast": 0.0014,
+     "Houston": 0.0006,
+     "South_Central": 0.01,
+     "South": -0.0013
+    }
+   }
+  },
+  "miss_set": {
+   "tail_hours": 181,
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  }
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "failed_criteria": [
+   "N4-K (sign-consistency leg)"
+  ],
+  "disposition": "MEASURED-FAITHFUL (P0a clean; P0b wedge marginal, mixed-sign, comparator-noise order; P0c measured shares active) - N4a not built"
+ },
+ "reading": "P0a: ZERO interpolated/screened demand hours at the miss set (0 NaN in the whole 2023 raw series). P0b: the two publications of ERCOT's own load agree to p50 -106.9 MW (0.14% of ~75 GW) at the DST-aligned lag -1, with sign consistency only 73.7% and the comparison's own prevailing-vs-fixed clock residual of the same order (p90|wedge| 321 MW; parse verified to 3e-6 against the file's own ERCOT total column). The pre-registered build condition (>=100 MW p50 WITH consistent sign) does not robustly fire - 6.9 MW over the floor on a 73.7% sign share is the comparator's noise, not a meter wedge - and the pinned disclosures adjudicate the literal swap rule-14-misaligned anyway (it breaks the supply-consistent identity demand + ix = netgen that closes to <=1 MW at the miss set, and desynchronizes the renewables/benchmark clock). P0c: the measured native-load zonal shares ARE active for 2023 (miss-set-vs-annual share deltas <=3.6 pp). DR/ERS as priced demand: excluded-for-doctrine (measured load nets the response; PRC 5.7-7.7 GW, 0 EEA hours)."
+}
