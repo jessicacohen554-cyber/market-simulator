@@ -1,0 +1,70 @@
+{
+ "break_even": {
+  "anchor_per_kw_yr": 138.36,
+  "rows": [
+   {
+    "annual_cost_per_mw_yr": 148485.5,
+    "capacity_value_per_mw_yr": 83016.0,
+    "n_arbitrage_windows": 365,
+    "required_arbitrage_per_mw_yr": 65469.5,
+    "required_gross_spread_per_mwh": 67.47,
+    "required_net_margin_per_mwh": 44.84,
+    "tech": "li_ion_4hr"
+   },
+   {
+    "annual_cost_per_mw_yr": 260858.9,
+    "capacity_value_per_mw_yr": 120373.2,
+    "n_arbitrage_windows": 365,
+    "required_arbitrage_per_mw_yr": 140485.7,
+    "required_gross_spread_per_mwh": 67.83,
+    "required_net_margin_per_mwh": 48.11,
+    "tech": "li_ion_8hr"
+   },
+   {
+    "annual_cost_per_mw_yr": 138859.3,
+    "capacity_value_per_mw_yr": 138360.0,
+    "n_arbitrage_windows": 40,
+    "required_arbitrage_per_mw_yr": 499.3,
+    "required_gross_spread_per_mwh": 1.79,
+    "required_net_margin_per_mwh": 0.12,
+    "tech": "iron_air"
+   },
+   {
+    "annual_cost_per_mw_yr": 373138.3,
+    "capacity_value_per_mw_yr": 134209.2,
+    "n_arbitrage_windows": 365,
+    "required_arbitrage_per_mw_yr": 238929.1,
+    "required_gross_spread_per_mwh": 77.98,
+    "required_net_margin_per_mwh": 54.55,
+    "tech": "li_ion_12hr"
+   },
+   {
+    "annual_cost_per_mw_yr": 294319.3,
+    "capacity_value_per_mw_yr": 128674.8,
+    "n_arbitrage_windows": 365,
+    "required_arbitrage_per_mw_yr": 165644.5,
+    "required_gross_spread_per_mwh": 51.22,
+    "required_net_margin_per_mwh": 45.38,
+    "tech": "flow_battery"
+   },
+   {
+    "annual_cost_per_mw_yr": 170460.0,
+    "capacity_value_per_mw_yr": 120373.2,
+    "n_arbitrage_windows": 365,
+    "required_arbitrage_per_mw_yr": 50086.8,
+    "required_gross_spread_per_mwh": 20.9,
+    "required_net_margin_per_mwh": 17.15,
+    "tech": "compressed_air"
+   }
+  ]
+ },
+ "bundle": "results/hindcast/caiso-2021-2025-realized",
+ "cache_dir": "results/hindcast/caiso-2021-2025-realized/CAISO/408f9199a82f5814",
+ "decision_years": {},
+ "existing_storage_mw": 0.0,
+ "finding": "docs/FINDING-entry-screen-t1h-2026-08.md",
+ "iso": "CAISO",
+ "probe": "entry_screen_t1h_phase0",
+ "real_discount_rate": 0.056751,
+ "warning": "no screen_signal_diag_*.npz in this bundle -- the dump is gated on capacity_screen_unified_lookahead (runner.py:3382), so a run with that flag off cannot be diagnosed offline. Only break_even is populated. See the FINDING, defect D-7."
+}
