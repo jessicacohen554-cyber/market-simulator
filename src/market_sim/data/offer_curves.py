@@ -9,6 +9,7 @@ visualization for the calibration dashboard.
 from __future__ import annotations
 
 import logging
+import re
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -19,6 +20,8 @@ from market_sim.config.constants import (
     GAS_ST_ECON_HR_OVERRIDE_DEFAULT,
     GAS_ST_PEAK_HR_OVERRIDE_DEFAULT,
     GAS_TRANCHE_SHARES_BY_GROUP,
+    MISO_OFFER_SPREAD_ANCHOR_RANK,
+    MISO_OFFER_SPREAD_ARTIFACT_SHA256,
 )
 from market_sim.config.scenarios import ScenarioConfig
 
@@ -1380,4 +1383,243 @@ def apply_miso_offer_surface(
         float(np.median(was - mc[base_rows, :])),
         float(np.median(mc[rows, :] - was)),
         float(np.median(pos)),
+    )
+
+
+#: Parsed miso-180 spread artifact, keyed by resolved path (a solve reads one).
+_MISO_SPREAD_CACHE: dict[str, dict] = {}
+
+#: The miso-180 affected-stack selectors — VERBATIM the frozen probe scope
+#: (PREREG-miso180 §3 / PREREG-miso179 §2: econ/peak tranches of the
+#: offer-curve classes; committed/mustrun/sync bands are the model's analogue
+#: of the book's self-scheduled/must-run mass and are never repriced).
+_MISO_SPREAD_SUFFIX = re.compile(r"_(econ\w*|peak\w*)$")
+_MISO_SPREAD_CLASS = re.compile(r"^(CC_|CT_|ST_GAS|COAL)")
+
+
+def _load_miso_spread_vector() -> "tuple[np.ndarray, np.ndarray]":
+    """Load (grid, pooled vector) from the committed miso-179 artifact.
+
+    Hard-errors when the artifact is absent or its sha256 differs from the
+    pinned ``MISO_OFFER_SPREAD_ARTIFACT_SHA256`` — the graft must never
+    consume a drifted vector (rules 21/24: the offer path never falls back
+    silently and the parameter surface is pinned, not merely pathed).
+    """
+    import hashlib
+    import json
+
+    from market_sim.config import paths
+
+    path = (
+        paths.REPO_ROOT
+        / "data"
+        / "raw"
+        / "_validation-source"
+        / "miso_offer_level_dispersion.json"
+    )
+    key = str(path)
+    if key in _MISO_SPREAD_CACHE:
+        c = _MISO_SPREAD_CACHE[key]
+        return c["grid"], c["vec"]
+    if not path.is_file():
+        raise ValueError(
+            f"miso_offer_spread_anchored is armed but no artifact at {path} — "
+            "the committed miso-179 identification vector is required (rule 21: "
+            "the offer path never falls back silently)"
+        )
+    raw = path.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != MISO_OFFER_SPREAD_ARTIFACT_SHA256:
+        raise ValueError(
+            f"miso_offer_spread_anchored: artifact sha256 {digest} != pinned "
+            f"{MISO_OFFER_SPREAD_ARTIFACT_SHA256} — the vector drifted; "
+            "re-identify the anchor and re-pin deliberately (rule 23: a "
+            "re-derive commit cites the data change), never consume silently"
+        )
+    art = json.loads(raw)
+    grid = np.asarray(art["quantile_grid"], dtype=float)
+    vec = np.asarray(art["pooled"]["quantiles_mmbtu_per_mwh"], dtype=float)
+    if grid.size != vec.size or not np.all(np.diff(grid) > 0):
+        raise ValueError(f"{path} is not a valid miso-179 dispersion artifact")
+    _MISO_SPREAD_CACHE[key] = {"grid": grid, "vec": vec}
+    return grid, vec
+
+
+def _miso_spread_gref_monthly(year: int) -> "np.ndarray":
+    """(12,) delivered-gas reference: Henry Hub monthly + measured MISO basis.
+
+    The miso-156 PRIMARY construction the identification normalized by
+    (PREREG-miso180 §3: using a different reference at apply time would
+    smuggle in a level adder). Hard-errors on a missing month — a silent gap
+    would move offers without a cited data change (rule 23). A forecast year
+    with no measured rows errors here by design: wiring the forward gas
+    trajectory through this seam is a deliberate future change, never a
+    silent fallback.
+    """
+    import pandas as pd
+
+    from market_sim.config import paths
+
+    hh = pd.read_csv(paths.REPO_ROOT / "data/raw/gas-prices/henry_hub_monthly.csv")
+    hh = hh[hh["year"] == year].set_index("month")["price_usd_mmbtu"]
+    bs = pd.read_csv(paths.REPO_ROOT / "data/raw/gas_basis_by_iso_month.csv")
+    bs = bs[(bs["iso"] == "MISO") & (bs["year"] == year)].set_index("month")
+    out = np.full(12, np.nan)
+    for m in range(1, 13):
+        if m in hh.index and m in bs.index:
+            out[m - 1] = float(hh.loc[m]) + float(bs.loc[m, "basis_usd_mmbtu"])
+    if not np.all(np.isfinite(out)):
+        missing = [m + 1 for m in range(12) if not np.isfinite(out[m])]
+        raise ValueError(
+            f"miso_offer_spread_anchored: G_ref missing for {year} months "
+            f"{missing} (Henry Hub monthly + measured MISO hub basis)"
+        )
+    return out
+
+
+def apply_miso_offer_spread_anchored(
+    mc: "np.ndarray",
+    generators: list,
+    fleet_arrays: "FleetArrays",
+    config: ScenarioConfig,
+    year: int,
+) -> None:
+    """Graft the measured above-anchor offer rise onto MISO's affected stack.
+
+    The miso-180 mechanism (``config.miso_offer_spread_anchored``), the
+    owner-chartered D-1b successor of the miso-179 REFUTED level-replacement
+    form, pre-registered in
+    ``results/calibration/PREREG-miso180-anchored-spread-2026-08-23.md``.
+
+    **SPREAD only, never LEVEL.** miso-179 measured the model +$15/MWh OVER
+    the eligible book at the median rank and UNDER only in the top decile
+    (p95 −$42, p99 −$108 on the binding H\\* window) — a top-decile tail
+    steepening, not an across-the-board dispersion deficit. The graft
+    therefore transfers ONLY the measured above-anchor RISE ``Q(r) − Q(a)``
+    of the committed pooled BOOK-ELIG vector, pinned to the model's OWN
+    anchor level, so the body the model already over-prices is untouched by
+    construction (the miso-151 shape-only admissibility pattern at
+    across-unit grain).
+
+    **The rule, verbatim from the PREREG (§3).** Within each calendar month
+    ``m``, the affected tranches (econ/peak tranches of the offer-curve
+    classes — the ``_MISO_SPREAD_*`` selectors) are ranked by their
+    month-mean base marginal cost, capacity-weighted (``pmax``), stable
+    sort, each tranche at its mass MIDPOINT rank ``r_g``. With ``a`` the
+    ex-ante-identified anchor rank (``MISO_OFFER_SPREAD_ANCHOR_RANK``),
+    ``A_m`` the stack's own capacity-weighted a-quantile of month-m mc (the
+    miso-151/179 step-function estimator), ``Q̂`` monotone interpolation of
+    the committed vector, and ``G_ref(m)`` the delivered-gas monthly
+    reference, every tranche with ``r_g > a`` is floored RAISE-ONLY::
+
+        mc[g, t in m] = max(mc[g, t], A_m + (Q̂(r_g) − Q̂(a)) × G_ref(m))
+
+    and tranches at or below the anchor are untouched. The graft is
+    rank-preserving inside the affected stack (the max of two
+    monotone-in-rank curves) and applies to the BASE cost so P0 run
+    discovery and the P1 bid see the same curve; the P1 startup-amortization
+    markup stays on top unchanged (the measured levels are ENERGY offers —
+    MISO clears startup/no-load as separate components, rule 19).
+
+    Rule 13: the vector and anchor are frozen measured conduct parameters
+    (identified with zero LMP/residual anywhere in the path); the ranks,
+    the anchor level ``A_m`` and ``G_ref`` regenerate for a forward year
+    from the model's own fleet and gas trajectory. Rule 25: MISO-only, the
+    verdict never transfers. Mutates ``mc`` in place; no-op when the gate is
+    off or the ISO is not MISO.
+
+    Args:
+        mc: ``(n_gen, T)`` base marginal-cost array, modified in place.
+        generators: Generator list aligned row-for-row with ``mc``.
+        fleet_arrays: Vectorized fleet (``pmax`` supplies the rank weights —
+            the identification's own weighting).
+        config: Scenario configuration supplying the gate and ISO.
+        year: Delivery year (calendar for the month index and ``G_ref``).
+
+    Raises:
+        ValueError: armed with a missing/drifted artifact, a missing G_ref
+            month, or zero affected tranches (a wiring error, never inert).
+    """
+    if not getattr(config, "miso_offer_spread_anchored", False):
+        return
+    if str(getattr(config, "iso", "")).upper() != "MISO":
+        return  # rule 25 [R-ISO-SCOPE]: this graft is MISO's and never transfers
+
+    a = float(MISO_OFFER_SPREAD_ANCHOR_RANK)
+    grid, vec = _load_miso_spread_vector()
+    q_a = float(np.interp(a, grid, vec))
+
+    ids = np.array([str(getattr(g, "unit_id", "")) for g in generators])
+    cls = np.array(
+        [
+            str(
+                getattr(g, "plant_group", None)
+                or getattr(g, "efficiency_bin", None)
+                or ""
+            )
+            for g in generators
+        ]
+    )
+    aff = np.nonzero(
+        np.array([bool(_MISO_SPREAD_SUFFIX.search(u)) for u in ids])
+        & np.array([bool(_MISO_SPREAD_CLASS.match(c)) for c in cls])
+    )[0]
+    if aff.size == 0:
+        raise ValueError(
+            "miso_offer_spread_anchored is armed but the fleet carries zero "
+            "affected econ/peak tranches — a wiring error, never a silent no-op"
+        )
+
+    import pandas as pd
+
+    T = int(mc.shape[1])
+    months = pd.date_range(f"{year}-01-01", periods=T, freq="h").month.to_numpy()
+    pmax_aff = np.asarray(fleet_arrays.pmax, dtype=float)[aff]
+    if float(pmax_aff.sum()) <= 0.0:
+        raise ValueError(
+            "miso_offer_spread_anchored: affected tranches carry zero pmax mass"
+        )
+    gref = _miso_spread_gref_monthly(year)
+
+    n_raised = 0
+    max_target = 0.0
+    for m in np.unique(months):
+        hrs = np.nonzero(months == m)[0]
+        mc_m = mc[np.ix_(aff, hrs)].mean(axis=1)
+        order = np.argsort(mc_m, kind="stable")
+        w_sorted = pmax_aff[order]
+        cum = np.cumsum(w_sorted)
+        w_total = float(cum[-1])
+        # Mass-midpoint rank per tranche (PREREG §3 — declared deliberately:
+        # the spread form needs a threshold trigger, and the mass centroid is
+        # the estimator-consistent inversion point).
+        mid_sorted = (cum - 0.5 * w_sorted) / w_total
+        r_g = np.empty_like(mid_sorted)
+        r_g[order] = mid_sorted
+        # A_m: the stack's own a-quantile, the miso-151/179 step-function
+        # estimator (sort, cumulative weight, searchsorted).
+        idx = int(np.clip(np.searchsorted(cum / w_total, a), 0, mc_m.size - 1))
+        a_m = float(mc_m[order][idx])
+        above = r_g > a
+        if not above.any():
+            continue
+        rise = (np.interp(r_g[above], grid, vec) - q_a) * float(gref[int(m) - 1])
+        target = a_m + np.clip(rise, 0.0, None)  # raise-only by construction
+        rows = aff[above]
+        block = mc[np.ix_(rows, hrs)]
+        raised = np.maximum(block, target[:, None])
+        n_raised += int(np.any(raised > block, axis=1).sum())
+        mc[np.ix_(rows, hrs)] = raised
+        max_target = max(max_target, float(target.max()))
+
+    logger.info(
+        "MISO anchored spread graft (miso-180): %d affected tranches, anchor "
+        "r=%.3f (Q_a %.3f MMBtu/MWh), %d tranche-months raised, max graft "
+        "target %.2f $/MWh, year %d",
+        aff.size,
+        a,
+        q_a,
+        n_raised,
+        max_target,
+        year,
     )

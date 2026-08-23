@@ -3879,6 +3879,17 @@ def run_year(
             _gas_series(config, year, mc_base.shape[1]),
             config,
         )
+    # miso-180 anchored SPREAD-ONLY across-unit dispersion graft
+    # (miso_offer_spread_anchored, default off, MISO-gated): floor the
+    # above-anchor econ/peak tranches at the stack's own monthly anchor level
+    # plus the MEASURED eligible-book rise Q(r) − Q(a) × G_ref — the
+    # top-decile tail steepening miso-179 located, grafted raise-only with
+    # the model's own level kept at and below the anchor (shape, never
+    # level). Runs on the BASE cost, immediately after the offer-margin /
+    # measured-surface family, so P0 run discovery and the P1 bid see the
+    # same curve; the P1 startup markup stays on top. Byte-identical when
+    # off (no-op return).
+    apply_miso_offer_spread_anchored(mc_base, fleet, fleet_arrays, config, year)
     # CC committed-block measured offer level (cc_committed_offer_margin,
     # default off — ERCOT-139): reprice the CC_REGULAR `_committed` tranche from
     # its band multiplier to the measured RT SCED curve bottom, expressed as a
