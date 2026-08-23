@@ -368,11 +368,18 @@ def test_caiso_solar_allocated_to_trading_zones_not_import():
 def test_caiso_solar_zones_have_distinct_shapes():
     """Each CAISO solar zone gets its own clear-sky shape from its tracking mix.
 
-    NP15 (NorCal) carries the most fixed-tilt solar and ZP26/SP15_rest the most
-    tracking, so NP15's diurnal solar profile must peak more sharply (a higher
-    midday peak-to-shoulder ratio) than the more-tracking southern zones — the
-    spatial diversity the single ISO-wide shape erased.
+    The two trading-zone shapes must genuinely differ, and the zone with the
+    higher fixed-tilt capacity share must peak more sharply (a higher midday
+    peak-to-shoulder ratio) than the higher-tracking zone — the spatial
+    diversity the single ISO-wide shape erased. The expected ORDERING is
+    derived from the zones' own EIA-860 tracking mixes rather than hardcoded
+    per zone: which zone is peakier is a property of the fleet allocation
+    (the caiso-217 measured hub-membership crosswalk moved the large
+    fixed-tilt central-coast farms from NP15 to ZP26, flipping the old
+    NP15-is-peakiest snapshot).
     """
+    from market_sim.data.renewables import _eia860_zone_solar_geometry
+
     iso_config = get_iso_config("CAISO")
     zones = iso_config.zone_names
     shapes = _solar_zone_clearsky_shapes("CAISO", "solar", zones, _TEST_YEAR)
@@ -390,8 +397,17 @@ def test_caiso_solar_zones_have_distinct_shapes():
         shoulder = diurnal[peak_hour - 3]  # 3h before the midday peak
         return diurnal[peak_hour] / shoulder
 
-    # More fixed-tilt -> a narrower, peakier midday belly.
-    assert peak_to_shoulder(shapes[np15]) > peak_to_shoulder(shapes[sp15_rest])
+    geometry = _eia860_zone_solar_geometry("CAISO", zones, _TEST_YEAR)
+    assert geometry is not None
+    mix, _centroid = geometry
+    fixed_share = mix[:, 1]  # (single_axis, fixed, dual_axis) columns
+    assert fixed_share[np15] != fixed_share[sp15_rest]
+    # More fixed-tilt -> a narrower, peakier midday belly, whichever zone
+    # carries it under the current measured allocation.
+    if fixed_share[np15] > fixed_share[sp15_rest]:
+        assert peak_to_shoulder(shapes[np15]) > peak_to_shoulder(shapes[sp15_rest])
+    else:
+        assert peak_to_shoulder(shapes[np15]) < peak_to_shoulder(shapes[sp15_rest])
 
 
 def test_solar_zone_redistribution_preserves_aggregate():

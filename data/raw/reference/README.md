@@ -6,6 +6,7 @@ named clean datatype. Each file's provenance:
 | File | What it is | Producer | Source |
 |---|---|---|---|
 | `*.ACTUALSYSLOADWZNP6345_csv.zip` (19 files) | ERCOT NP6-345-CD "Actual System Load by Weather Zone" monthly-sample daily archives (2023) | manual ERCOT MIS download | ERCOT MIS |
+| `caiso-plant-hub-membership.csv` (+ `.json` sidecar: coverage, witness gates, mover table) | Measured CAISO plant → trading-hub membership crosswalk (`TH_NP15`/`TH_ZP26`/`TH_SP15`), the first-check over the geographic zone estimate in `data.zone_assignment` (caiso-217, FINDING-caiso216 §F.1g) | `scripts/data/derive_caiso_plant_hub_membership.py` | OASIS `ATL_PNODE_MAP` (committed `caiso-atlas/`) + EIA-860 LMP-node column + DAM outage resource names + the reviewed resource crosswalks |
 | `custom-bin-assignments.csv` | ERCOT's hand-curated dispatch-bin assignment table (the only ISO with a hand-curated bin file; other ISOs synthesize bins at runtime — see `_processed-legacy/bin_assignments_*.csv`) | hand-authored | — |
 | `iso_zone_weather_stations.csv` | NOAA station → model-zone weight crosswalk (`iso, zone, station_id, weight, station_name`) | hand-authored | NOAA station metadata |
 | `lcr_area_membership_CAISO.csv` | CAISO Local Capacity Requirement area assignment per thermal plant | `scripts/derive_lcr_membership.py` | EIA-860 + CAISO NQC-list overrides + geographic rules |

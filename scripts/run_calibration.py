@@ -3023,6 +3023,7 @@ def run_year(
                 measured_chp_heat_rates=config.measured_chp_heat_rates,
                 cc_steam_part_capacity=config.cc_steam_part_capacity,
                 cc_steam_part_reclass=config.cc_steam_part_reclass,
+                egrid_identity_heat_rates=config.egrid_identity_heat_rates,
             )
             + retired_units,
             iso,

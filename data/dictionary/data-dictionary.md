@@ -596,6 +596,11 @@ Crosswalk / lookup tables (heterogeneous). Schema:
 - **Keys:** `key` (+ `plant_id`/`iso`/`zone`/`node` when applicable)
 - **Reconciles:** master plant registry, bin assignments, zone/node crosswalks
   — conventions enforced, table-specific columns permitted.
+- **Tables:** `plant-registry`, `bin-assignments`, `coal-region-crosswalk`,
+  `caiso-hub-membership` (measured CAISO plant → `TH_NP15`/`TH_ZP26`/`TH_SP15`
+  trading-hub membership from OASIS `ATL_PNODE_MAP`; table-specific columns
+  `hub`, `tech`, `capacity_mw`, `eff_start`/`eff_end`, `join_method`,
+  `n_evidence`; caiso-217).
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|

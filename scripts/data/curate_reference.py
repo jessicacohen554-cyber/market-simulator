@@ -173,6 +173,34 @@ def curate_coal_region_crosswalk(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame,
     return df, _rel(src)
 
 
+# ---------------------------------------------------------------------------
+# caiso-hub-membership: measured CAISO plant -> trading-hub crosswalk
+# ---------------------------------------------------------------------------
+def curate_caiso_hub_membership(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, str]:
+    """Normalize ``caiso-plant-hub-membership.csv`` into the hub-membership lookup.
+
+    Derived by ``scripts/data/derive_caiso_plant_hub_membership.py`` (caiso-217)
+    from CAISO's own OASIS ``ATL_PNODE_MAP`` generator-hub membership — the
+    measured replacement for the lat-cut/county-lift zone estimate, consumed by
+    ``market_sim.data.zone_assignment.load_caiso_hub_membership``. The raw file
+    is already snake_case; we map the plant code onto ``plant_id``, the witness
+    pnode onto the standard ``node`` key, stamp ``iso='CAISO'``, and keep the
+    table-specific columns (``hub``, effective window, join provenance).
+    """
+    src = raw_dir / "caiso-plant-hub-membership.csv"
+    raw = pd.read_csv(src)
+
+    df = raw.rename(columns={"plant_code": "plant_id", "pnode": "node"})
+    df["plant_id"] = df["plant_id"].astype("int64")
+    df["iso"] = pd.array(["CAISO"] * len(df), dtype="string")
+    df["node"] = df["node"].astype("string")
+    df["hub"] = df["hub"].astype("string")
+    df["key"] = ("caiso-hub-membership:" + df["plant_id"].astype(str)).astype("string")
+
+    df = _order_key_first(df)
+    return df, _rel(src)
+
+
 def _order_key_first(df: pd.DataFrame) -> pd.DataFrame:
     """Put canonical keys first for readability (``key`` then standard keys)."""
     lead = [c for c in ("key", "plant_id", "iso", "zone", "node") if c in df.columns]
@@ -185,6 +213,7 @@ TABLES = {
     "plant-registry": curate_plant_registry,
     "bin-assignments": curate_bin_assignments,
     "coal-region-crosswalk": curate_coal_region_crosswalk,
+    "caiso-hub-membership": curate_caiso_hub_membership,
 }
 
 

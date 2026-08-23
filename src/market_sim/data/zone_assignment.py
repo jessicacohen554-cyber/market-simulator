@@ -22,7 +22,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from market_sim.config.paths import CAMPD_BINS_CSV, EIA_860_DIR, FLEET_DIR
+from market_sim.config.paths import (
+    CAISO_HUB_MEMBERSHIP_CSV,
+    CAMPD_BINS_CSV,
+    EIA_860_DIR,
+    FLEET_DIR,
+)
 from market_sim.data.local_capacity import (
     BOUNDARY_LAT_MAX as _LA_BASIN_BOUNDARY_LAT_MAX,
 )
@@ -930,7 +935,10 @@ def assign_zone(oris_code: int, iso: str) -> str:
     Every current ISO (ERCOT, CAISO, MISO, NYISO, NEISO, PJM) has a multi-zone
     topology, so the plant is located via the eGRID ORIS→location table; an
     ORIS code missing from eGRID falls back to the ISO's largest-load-share
-    zone with a warning.
+    zone with a warning. For CAISO the measured hub-membership crosswalk is
+    the first check, consistent with :func:`build_zone_lookup`: where CAISO's
+    own generator-hub membership is joined, it overrides the geographic
+    estimate (caiso-217, ``[R-ACCURATE]``).
     """
     iso = iso.upper()
     if iso in _SINGLE_ZONE:
@@ -951,7 +959,12 @@ def assign_zone(oris_code: int, iso: str) -> str:
         return fallback
 
     lat, lon, fips_state, fips_county = location
-    return _zone_from_location(iso, lat, lon, fips_state, fips_county)
+    geo_zone = _zone_from_location(iso, lat, lon, fips_state, fips_county)
+    if iso == "CAISO" and oris is not None:
+        hub = load_caiso_hub_membership().get(oris)
+        if hub is not None:
+            return _caiso_zone_from_hub(hub, geo_zone)
+    return geo_zone
 
 
 # ISOs whose eGRID zone lookup is supplemented from the current EIA-860
@@ -1075,6 +1088,83 @@ def load_reference_zone_crosswalk(iso: str = "ERCOT") -> dict[int, str]:
     return out
 
 
+# Measured CAISO generator->trading-hub membership (caiso-217, chartered by
+# FINDING-caiso216-belly-lever-plan-2026-08-23.md §F.1g). CAISO's own
+# ATL_PNODE_MAP puts several GW of capacity on the other side of the
+# Path 15 / Path 26 cuts from the lat/county estimate above (canonical
+# witnesses: Diablo Canyon -> TH_ZP26 where the county lift says NP15;
+# Alta/Tehachapi -> TH_SP15 where the lat band says ZP26; Mustang/Westlands
+# -> TH_NP15 where the lat cut says ZP26 — the error is two-directional, so
+# the fix is this membership crosswalk, not a boundary re-tune [R-FROZEN-DERIVE]).
+# Derived by scripts/data/derive_caiso_plant_hub_membership.py; the join
+# method and witness pnode for every row live in the CSV [R-ACCURATE].
+_CAISO_HUB_TO_ZONE: dict[str, str] = {"TH_NP15": "NP15", "TH_ZP26": "ZP26"}
+_CAISO_SOUTH_OF_PATH26: frozenset[str] = frozenset({"LA_BASIN", "SDGE", "SP15_rest"})
+
+
+def load_caiso_hub_membership() -> dict[int, str]:
+    """Return ``{plant_code: hub}`` from the measured membership crosswalk.
+
+    Reads the curated clean parquet when ``MARKET_SIM_USE_CLEAN`` is set
+    (``read_clean("reference", market="caiso-hub-membership")``) and the raw
+    ``caiso-plant-hub-membership.csv`` otherwise; both backends yield the same
+    map. Hubs are ``TH_NP15`` / ``TH_ZP26`` / ``TH_SP15``. Returns an empty
+    dict when the backing source is absent (the geographic rule then stands
+    alone). Memoized on the flag like the zone lookup itself; callers get a
+    fresh shallow copy per call.
+    """
+    return dict(_load_caiso_hub_membership_cached(_use_clean()))
+
+
+@lru_cache(maxsize=2)
+def _load_caiso_hub_membership_cached(use_clean: bool) -> dict[int, str]:
+    """Cache-bearing core of :func:`load_caiso_hub_membership`."""
+    if use_clean:
+        from scripts.lib.clean_io import read_clean
+
+        try:
+            df = read_clean(
+                "reference",
+                market="caiso-hub-membership",
+                columns=["plant_id", "hub"],
+            )
+        except FileNotFoundError:
+            return {}
+        pairs = zip(df["plant_id"], df["hub"])
+    else:
+        if not CAISO_HUB_MEMBERSHIP_CSV.exists():
+            return {}
+        raw = pd.read_csv(CAISO_HUB_MEMBERSHIP_CSV, usecols=["plant_code", "hub"])
+        pairs = zip(raw["plant_code"], raw["hub"])
+
+    out: dict[int, str] = {}
+    for code, hub in pairs:
+        oris = _to_int(code)
+        if oris is None or hub is None or hub != hub:  # None / NaN hub
+            continue
+        out[oris] = str(hub)
+    return out
+
+
+def _caiso_zone_from_hub(hub: str, geo_zone: str | None) -> str:
+    """Resolve a measured hub membership onto the CAISO model zones.
+
+    ``TH_NP15`` / ``TH_ZP26`` map directly. ``TH_SP15`` covers everything
+    south of Path 26 in CAISO's three-hub world, while the model splits that
+    region into the two LCR pockets plus the gateway (LA_BASIN / SDGE /
+    SP15_rest) — a finer resolution than the hub carries — so the geographic
+    rule keeps the sub-zone when it already lands south of Path 26, and a
+    plant the geography had placed north of the cut lands in the SP15_rest
+    gateway (the zone Path 26 feeds).
+    """
+    direct = _CAISO_HUB_TO_ZONE.get(hub)
+    if direct is not None:
+        return direct
+    if geo_zone in _CAISO_SOUTH_OF_PATH26:
+        return geo_zone
+    return "SP15_rest"
+
+
 def build_zone_lookup(iso: str) -> dict[int, str]:
     """Return ``{oris: zone_name}`` for every plant in the ISO.
 
@@ -1125,6 +1215,19 @@ def _build_zone_lookup_cached(iso: str, use_clean: bool) -> dict[int, str]:
     if iso in _EIA860_SUPPLEMENT_ISOS:
         for oris, zone in _eia860_ba_zones(iso).items():
             lookup.setdefault(oris, zone)
+
+    # CAISO measured hub-membership first-check (caiso-217): where CAISO's
+    # own generator-hub membership is joined, it OVERRIDES the geographic
+    # estimate above — measured settlement geography beats the lat/county
+    # proxy [R-ACCURATE]. Unjoined plants keep the geographic assignment,
+    # and a crosswalk row can only re-zone a plant already in the ISO's
+    # population (never widen it). Applied on both the raw and clean paths —
+    # it is the same measured input either way.
+    if iso == "CAISO":
+        for oris, hub in load_caiso_hub_membership().items():
+            geo_zone = lookup.get(oris)
+            if geo_zone is not None:
+                lookup[oris] = _caiso_zone_from_hub(hub, geo_zone)
 
     # Clean-backed reference crosswalk supplement (default OFF, gated by
     # MARKET_SIM_USE_CLEAN). When enabled, the curated ERCOT bin-assignments
