@@ -1,0 +1,207 @@
+{
+ "session": "nyiso-152",
+ "control": "nyiso152_control",
+ "arms": {
+  "SE": [
+   {
+    "gate": "SE-K1 exactness (cc_reserve_duty_split+nyiso_gas_bridge_reserve_duty_exclusions)",
+    "solve_field_diffs": [
+     "cc_reserve_duty_split",
+     "nyiso_gas_bridge_reserve_duty_exclusions"
+    ],
+    "passed": true
+   },
+   {
+    "gate": "SE-vs-armHC-K1 exactness (nyiso_gas_bridge_reserve_duty_exclusions)",
+    "solve_field_diffs": [
+     "nyiso_gas_bridge_reserve_duty_exclusions"
+    ],
+    "passed": true
+   },
+   {
+    "gate": "SE-K2 liveness (duty log line every year, 7784 named, Allegany bridge floor = 0)",
+    "duty_log_lines": 3,
+    "log_names_7784": 6,
+    "allegany_floor_by_year": {
+     "2023": {
+      "floored_hours": 0,
+      "mech": [],
+      "riding_gwh": 0.0
+     },
+     "2024": {
+      "floored_hours": 0,
+      "mech": [],
+      "riding_gwh": 0.0
+     },
+     "2025": {
+      "floored_hours": 0,
+      "mech": [],
+      "riding_gwh": 0.0
+     }
+    },
+    "passed": true
+   },
+   {
+    "gate": "SE-K3 mechanism-scoped target (floor removed; total in predicted band; split collapses reproduce)",
+    "allegany": [
+     {
+      "year": 2023,
+      "ctl_gwh": 502.8,
+      "armSE_gwh": 90.9,
+      "predicted_gwh": 90.4,
+      "band": [
+       45.2,
+       135.6
+      ],
+      "in_band": true,
+      "e923_gwh": 11.7,
+      "fall_vs_ctl_pct_REPORTED": 81.9
+     },
+     {
+      "year": 2024,
+      "ctl_gwh": 514.7,
+      "armSE_gwh": 111.9,
+      "predicted_gwh": 111.8,
+      "band": [
+       55.9,
+       167.7
+      ],
+      "in_band": true,
+      "e923_gwh": 15.5,
+      "fall_vs_ctl_pct_REPORTED": 78.3
+     },
+     {
+      "year": 2025,
+      "ctl_gwh": 0.0,
+      "armSE_gwh": 0.0,
+      "predicted_gwh": 0.0,
+      "band": [
+       0.0,
+       0.0
+      ],
+      "in_band": true,
+      "e923_gwh": 0.0,
+      "fall_vs_ctl_pct_REPORTED": null
+     }
+    ],
+    "split_plants": [
+     {
+      "plant": 50744,
+      "year": 2023,
+      "ctl_gwh": 444.3,
+      "armSE_gwh": 28.3,
+      "fall": 0.936,
+      "ok": true
+     },
+     {
+      "plant": 50744,
+      "year": 2024,
+      "ctl_gwh": 444.1,
+      "armSE_gwh": 30.5,
+      "fall": 0.931,
+      "ok": true
+     },
+     {
+      "plant": 54592,
+      "year": 2023,
+      "ctl_gwh": 495.0,
+      "armSE_gwh": 29.5,
+      "fall": 0.94,
+      "ok": true
+     },
+     {
+      "plant": 54592,
+      "year": 2024,
+      "ctl_gwh": 394.5,
+      "armSE_gwh": 20.7,
+      "fall": 0.947,
+      "ok": true
+     },
+     {
+      "plant": 54593,
+      "year": 2023,
+      "ctl_gwh": 364.0,
+      "armSE_gwh": 15.3,
+      "fall": 0.958,
+      "ok": true
+     },
+     {
+      "plant": 54593,
+      "year": 2024,
+      "ctl_gwh": 290.6,
+      "armSE_gwh": 6.5,
+      "fall": 0.978,
+      "ok": true
+     }
+    ],
+    "note_80pct_headline": "REPORTED not gated (prereg SS4): the 150/151 >=80% total-fall bar belonged to the split-as-offer-lever arms; its rejections stand",
+    "passed": true
+   },
+   {
+    "gate": "SE-K4 D-4/D-2 (K6-prime)",
+    "new_d4_failures": [],
+    "cleared_d4": [],
+    "forced_share_rises": [
+     {
+      "key": [
+       2023,
+       "hydro_min_flow",
+       "hydro"
+      ],
+      "ctl": 0.2145,
+      "arm": 0.2155
+     },
+     {
+      "key": [
+       2023,
+       "nyiso_gas_commitment_bridge",
+       "CC_REGULAR"
+      ],
+      "ctl": 0.0613,
+      "arm": 0.0626
+     },
+     {
+      "key": [
+       2024,
+       "nyiso_gas_commitment_bridge",
+       "ST_GAS"
+      ],
+      "ctl": 0.0141,
+      "arm": 0.0142
+     },
+     {
+      "key": [
+       2025,
+       "hydro_min_flow",
+       "hydro"
+      ],
+      "ctl": 0.3828,
+      "arm": 0.3839
+     },
+     {
+      "key": [
+       2025,
+       "nyiso_gas_commitment_bridge",
+       "ST_GAS"
+      ],
+      "ctl": 0.0093,
+      "arm": 0.0094
+     }
+    ],
+    "escalated": true,
+    "new_d1_misses": [],
+    "passed": true
+   },
+   {
+    "gate": "SE-K5 gated criteria",
+    "note": "calibration_verdict.py on the registered arms",
+    "passed": null
+   }
+  ]
+ },
+ "ident": {
+  "gate": "IDENT control == nyiso151_control == keeper (post-#4203 HEAD)",
+  "max_abs_dprice": 0.0,
+  "passed": true
+ }
+}

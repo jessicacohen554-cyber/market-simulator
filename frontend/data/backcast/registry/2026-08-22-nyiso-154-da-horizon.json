@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-22-nyiso-154-da-horizon",
+ "label": "nyiso 154 da horizon",
+ "date": "2026-08-22",
+ "shorthand": "nyiso-154-da-horizon",
+ "definition": "(REJECTED/INERT PROBE, adjudicated 2026-08-22 on PREREG-nyiso154's pre-registered gates) Uncapping the bridge's economic gap-glue (nyiso_gas_bridge_da_horizon True->False): the startup-restart self-commitment inequality decides gap-glue length uncapped, targeting the Bethlehem start-conduct residual (45/13/28 model starts vs 6/7/7 metered; phase-0 _nyiso154_phase0.json corrected the recorded 56234-Flynn mislabel, ruled out outage and price-trough confounds). MEASURED EFFECTIVELY INERT: one glued segment in 2023 (+29 floored hours, starts 45->44), zero in 2024/2025 — on the model's own prices and NREL startup costs, riding through the surviving 30-90h gaps is uneconomic (deficits $4-9/MWh x 0.523 x gap >> $35-50/MW restart). Criteria statuses identical to the keeper (C3a +5.2/-2.7/-8.1; C3c 1/0/0); zero new D-4/D-1. CLOSES the last testable start-conduct lever: the residual types to an owner-court cycling-cost identification intake or the ledgered trough object. Evidence: _nyiso154_ab_gates.json, RESULT-nyiso154-da-horizon-inert-2026-08-22.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-08-22-nyiso-154-da-horizon.js",
+ "bundle": "results/calibration/nyiso154_armD"
+}
