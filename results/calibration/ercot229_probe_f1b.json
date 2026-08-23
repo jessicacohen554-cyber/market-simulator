@@ -1,0 +1,716 @@
+{
+ "probe": "ercot229_probe_f1b",
+ "factor": "F1b ercot_as_held_requirement_nspin",
+ "charter": "PRECOMMIT-ercot226-held-sequestration-2026-08-22 \u00a72 F1b + \u00a75.11 Amendment 3 (owner proceed-with-all-factors order); spoke session of the ercot-226/227 program",
+ "session": "ercot-229",
+ "session_role": "spoke",
+ "branch": "claude/ercot-2023-summer-scarcity-9lg3nm",
+ "branch_sha": "29d958445569ceaf7103d93081c12cfc4a5245ad",
+ "field_commit": "705ec9b (verified ancestor of HEAD)",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1"
+ },
+ "runtime_note": "a 6 GB swapfile was enabled PREEMPTIVELY before the control solve (14 GB available vs ~12.7 GB expected peak; the ercot-226 F2 probe record shows its armed LP OOM-killed twice at the ~13.9 GB memcg ceiling). The arm additionally ran under MALLOC_ARENA_MAX=2. Neither OOM-killed; no run was retried. malloc/swap config does not change solver arithmetic.",
+ "phase0_measurement": {
+  "note": "PRECOMMIT \u00a75.4 F1b materiality screen, recomputed from the on-disk NP3-965 series. THIS CORRECTS THE PRIOR CARRIED IN THE SESSION CHARTER AND IN THE spec.py/legitimacy_diagnostics.py mechanism notes, which state held < plan EVERYWHERE on the Gen-ONLINE basis so that max(plan, held) == plan IDENTICALLY. It does not.",
+  "held_nspin_mw": {
+   "min": 0.0,
+   "p50": 623.6,
+   "max": 3936.6
+  },
+  "plan_nspin_mw": {
+   "min": 1688.0,
+   "p50": 3291.0,
+   "max": 5633.0
+  },
+  "identity_max_plan_held_equals_plan": false,
+  "exceedance_hours": 15,
+  "exceedance_max_mw": 5.625,
+  "exceedance_p50_mw_all_hours": 0.0,
+  "exceedance_total_mwh": 34.45,
+  "materiality_screen": {
+   "rule": "\u00a75.4: p50 of max(0, held_NSRS - plan_NSPIN) at the keeper miss set < 100 MW => F1b not probed (recorded)",
+   "p50_at_miss_set_mw": 0.0,
+   "screen_passed": false,
+   "note": "delta > 0 in only 15 of 8760 hours, so the median over any miss set of ~117 hours is exactly 0.000 MW, well under the 100 MW ex-ante floor. Under Amendment 3 the factor proceeds to a solve regardless and the solve MEASURES the inertness."
+  },
+  "exceedance_detail": [
+   {
+    "hour": 5175,
+    "timestamp": "2023-08-04 15:00",
+    "plan_mw": 2020.0,
+    "held_mw": 2021.9,
+    "delta_mw": 1.875,
+    "keeper_max_zonal_price": 104.16,
+    "keeper_below_200": true
+   },
+   {
+    "hour": 5176,
+    "timestamp": "2023-08-04 16:00",
+    "plan_mw": 2020.0,
+    "held_mw": 2021.9,
+    "delta_mw": 1.95,
+    "keeper_max_zonal_price": 94.28,
+    "keeper_below_200": true
+   },
+   {
+    "hour": 5177,
+    "timestamp": "2023-08-04 17:00",
+    "plan_mw": 1923.0,
+    "held_mw": 1924.8,
+    "delta_mw": 1.775,
+    "keeper_max_zonal_price": 98.51,
+    "keeper_below_200": true
+   },
+   {
+    "hour": 5247,
+    "timestamp": "2023-08-07 15:00",
+    "plan_mw": 2020.0,
+    "held_mw": 2021.7,
+    "delta_mw": 1.7,
+    "keeper_max_zonal_price": 141.44,
+    "keeper_below_200": true
+   },
+   {
+    "hour": 5248,
+    "timestamp": "2023-08-07 16:00",
+    "plan_mw": 2020.0,
+    "held_mw": 2021.6,
+    "delta_mw": 1.6,
+    "keeper_max_zonal_price": 134.37,
+    "keeper_below_200": true
+   },
+   {
+    "hour": 5249,
+    "timestamp": "2023-08-07 17:00",
+    "plan_mw": 1923.0,
+    "held_mw": 1924.7,
+    "delta_mw": 1.725,
+    "keeper_max_zonal_price": 110.95,
+    "keeper_below_200": true
+   },
+   {
+    "hour": 5271,
+    "timestamp": "2023-08-08 15:00",
+    "plan_mw": 2020.0,
+    "held_mw": 2021.0,
+    "delta_mw": 1.0,
+    "keeper_max_zonal_price": 140.29,
+    "keeper_below_200": true
+   },
+   {
+    "hour": 5656,
+    "timestamp": "2023-08-24 16:00",
+    "plan_mw": 2020.0,
+    "held_mw": 2021.5,
+    "delta_mw": 1.5,
+    "keeper_max_zonal_price": 416.21,
+    "keeper_below_200": false
+   },
+   {
+    "hour": 5657,
+    "timestamp": "2023-08-24 17:00",
+    "plan_mw": 1923.0,
+    "held_mw": 1924.5,
+    "delta_mw": 1.5,
+    "keeper_max_zonal_price": 367.25,
+    "keeper_below_200": false
+   },
+   {
+    "hour": 5967,
+    "timestamp": "2023-09-06 15:00",
+    "plan_mw": 2242.0,
+    "held_mw": 2244.2,
+    "delta_mw": 2.2,
+    "keeper_max_zonal_price": 966.44,
+    "keeper_below_200": false
+   },
+   {
+    "hour": 5968,
+    "timestamp": "2023-09-06 16:00",
+    "plan_mw": 2242.0,
+    "held_mw": 2244.1,
+    "delta_mw": 2.1,
+    "keeper_max_zonal_price": 408.59,
+    "keeper_below_200": false
+   },
+   {
+    "hour": 5969,
+    "timestamp": "2023-09-06 17:00",
+    "plan_mw": 2053.0,
+    "held_mw": 2055.9,
+    "delta_mw": 2.9,
+    "keeper_max_zonal_price": 427.64,
+    "keeper_below_200": false
+   },
+   {
+    "hour": 6016,
+    "timestamp": "2023-09-08 16:00",
+    "plan_mw": 2242.0,
+    "held_mw": 2245.1,
+    "delta_mw": 3.1,
+    "keeper_max_zonal_price": 466.96,
+    "keeper_below_200": false
+   },
+   {
+    "hour": 6017,
+    "timestamp": "2023-09-08 17:00",
+    "plan_mw": 2053.0,
+    "held_mw": 2056.9,
+    "delta_mw": 3.9,
+    "keeper_max_zonal_price": 410.32,
+    "keeper_below_200": false
+   },
+   {
+    "hour": 6378,
+    "timestamp": "2023-09-23 18:00",
+    "plan_mw": 2053.0,
+    "held_mw": 2058.6,
+    "delta_mw": 5.625,
+    "keeper_max_zonal_price": 191.79,
+    "keeper_below_200": true
+   }
+  ],
+  "exceedance_shape": "all 15 hours are Aug-Sep afternoon peak (hours 15-18 local); 8 of the 15 are hours the keeper prices <= $200 (miss territory), and the largest delta (+5.625 MW, h6378 = 2023-09-23 18:00) lands in an hour the keeper prices at $191.79 -- $8 under the tail threshold"
+ },
+ "control": {
+  "out_dir": "results/calibration/ercot229_f1b_ctl",
+  "grepro": {
+   "sidecar_sha256_match": true,
+   "numeric_identity": "max|delta| = 0.0 on EVERY numeric column of system/reserve_family/storage_2023 vs the keeper's committed sidecars; sha256 also matched byte-for-byte (stronger than the \u00a7G-REPRO(a) contract, which permitted parquet-layout drift)",
+   "official_reproduction": "EXACT: 'C3a -39.7% (model 38.81 vs RT lw 64.32) | C3b NRMSE 0.729 | C3c 74 h'",
+   "pass": true,
+   "per_file": {
+    "system_2023": {
+     "file": "system_2023",
+     "sha256_keeper": "914fe95d62b89fd27769c00da1a0f5d8ac4bb4d316c1ce6ef421aaf6acce65fb",
+     "sha256_ctl": "914fe95d62b89fd27769c00da1a0f5d8ac4bb4d316c1ce6ef421aaf6acce65fb",
+     "sha_match": true,
+     "shape_keeper": [
+      61320,
+      11
+     ],
+     "shape_ctl": [
+      61320,
+      11
+     ],
+     "columns": {
+      "year": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "pass": {
+       "numeric": false,
+       "identical": true
+      },
+      "zone": {
+       "numeric": false,
+       "identical": true
+      },
+      "hour": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "price": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "slack": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "dump": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "demand": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "reserve_price": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "rtordpa_overlay": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "ordc_adder": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      }
+     },
+     "max_abs_delta_overall": 0.0,
+     "worst_column": null,
+     "numeric_identical": true
+    },
+    "reserve_family_2023": {
+     "file": "reserve_family_2023",
+     "sha256_keeper": "aa47042fdbec031ef66189b727e70add4b73357cef338c8c3033f537015fe24d",
+     "sha256_ctl": "aa47042fdbec031ef66189b727e70add4b73357cef338c8c3033f537015fe24d",
+     "sha_match": true,
+     "shape_keeper": [
+      43800,
+      10
+     ],
+     "shape_ctl": [
+      43800,
+      10
+     ],
+     "columns": {
+      "year": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "pass": {
+       "numeric": false,
+       "identical": true
+      },
+      "family": {
+       "numeric": false,
+       "identical": true
+      },
+      "reserve_class": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "zones": {
+       "numeric": false,
+       "identical": true
+      },
+      "hour": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "dual": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "requirement_mw": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "held_mw": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "shortfall_mw": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      }
+     },
+     "max_abs_delta_overall": 0.0,
+     "worst_column": null,
+     "numeric_identical": true
+    },
+    "storage_2023": {
+     "file": "storage_2023",
+     "sha256_keeper": "c12ffecb547abce42da7d50478ece3140cc6ca08e32ecf2a49ff097685023e8b",
+     "sha256_ctl": "c12ffecb547abce42da7d50478ece3140cc6ca08e32ecf2a49ff097685023e8b",
+     "sha_match": true,
+     "shape_keeper": [
+      8760,
+      6
+     ],
+     "shape_ctl": [
+      8760,
+      6
+     ],
+     "columns": {
+      "year": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "pass": {
+       "numeric": false,
+       "identical": true
+      },
+      "tech": {
+       "numeric": false,
+       "identical": true
+      },
+      "hour": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "charge_mw": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      },
+      "discharge_mw": {
+       "numeric": true,
+       "max_abs_delta": 0.0,
+       "n_differing": 0
+      }
+     },
+     "max_abs_delta_overall": 0.0,
+     "worst_column": null,
+     "numeric_identical": true
+    }
+   }
+  }
+ },
+ "arm": {
+  "out_dir": "results/calibration/ercot229_f1b_arm",
+  "set_flags": [
+   "ercot_as_held_requirement_nspin=true"
+  ],
+  "flag_verified_in_run_config": {
+   "ercot_as_held_requirement_nspin": true,
+   "ercot_as_held_requirement": false
+  },
+  "d5_held_rows": [
+   "ercot_as_held_requirement_nspin"
+  ]
+ },
+ "arm_vs_control_identity": {
+  "headline": "NOT IDENTICAL. The arm is a REAL but PRICE-NULL perturbation: the requirement deepens in exactly the 15 predicted hours, the LP reshuffles up to 314 MW of held reserve between families, and NOT ONE PRICE MOVES -- every reserve-family dual is bit-identical (max|delta| = 0.000e+00) and the energy price differs only by 1.4e-13 float noise.",
+  "system_2023": {
+   "max_abs_delta": 1.42108547152e-13,
+   "worst_column": "price",
+   "n_differing_hours": 238,
+   "reading": "float64 round-off only; not an economic difference"
+  },
+  "reserve_family_2023": {
+   "requirement_mw": {
+    "n_hours": 15,
+    "max_abs_mw": 5.625,
+    "families": {
+     "NonSpin": 15
+    }
+   },
+   "held_mw": {
+    "n_hours": 24,
+    "max_abs_mw": 314.050049,
+    "families": {
+     "RRS_withheld": 8,
+     "RegUp_withheld": 8,
+     "NonSpin": 5,
+     "ECRS_withheld": 3
+    }
+   },
+   "shortfall_mw": {
+    "n_hours": 8,
+    "max_abs_mw": 3.900024,
+    "families": {
+     "NonSpin": 8
+    }
+   },
+   "dual": {
+    "n_hours": 0,
+    "max_abs_mw": 0.0,
+    "reading": "EXACTLY zero -- no reserve price moved anywhere"
+   }
+  },
+  "storage_2023": {
+   "max_abs_delta": 0.0001220703125,
+   "worst_column": "charge_mw",
+   "n_differing_hours": 4,
+   "reading": "float32 storage round-off"
+  },
+  "mechanism_explanation": "(1) In the 15 hours where held > plan the NSPIN requirement deepens by 1.0-5.6 MW, exactly as the Phase-0 series predicts. (2) In 8 of those hours the NonSpin family is ALREADY in large shortfall (control shortfall 490-2242 MW), so the extra requirement flows straight into shortfall (+1.5 to +3.9 MW) rather than pulling more capacity into hold. (3) At that depth the NonSpin shortfall ramp is locally flat, so the family dual is EXACTLY unchanged -- and with no reserve dual moving, no energy dual moves. (4) The 314 MW held reallocation across RRS/RegUp/ECRS_withheld is LP DEGENERACY -- an alternate optimum on the same optimal face -- proven by the identical duals and identical family held-means (1506.2 / 1927.6 / 1088.1 MW in both runs). The factor is therefore inert WHERE IT IS SCORED, and its non-identity is confined to the quantity space at a magnitude no price is sensitive to."
+ },
+ "official": {
+  "control": {
+   "c3a_2023": "-39.7%",
+   "c3b_2023": "0.729",
+   "c3c_2023_h": 74,
+   "c3a_model": 38.81,
+   "c3a_actual": 64.32
+  },
+  "arm": {
+   "c3a_2023": "-39.7%",
+   "c3b_2023": "0.729",
+   "c3c_2023_h": 74,
+   "c3a_model": 38.81,
+   "c3a_actual": 64.32
+  },
+  "c3c_actual_rt_h": 181,
+  "delta": "ZERO on every official criterion -- the printed lines are character-identical"
+ },
+ "probe_basis": {
+  "c3a_ctl": -29.99,
+  "c3a_arm": -29.99,
+  "c3b_ctl": 3.4476,
+  "c3b_arm": 3.4476,
+  "tail_ctl": 74,
+  "tail_arm": 74,
+  "model_mean_ctl": 33.856,
+  "model_mean_arm": 33.856
+ },
+ "gates": {
+  "G-CAP": {
+   "violations": 0,
+   "pass": true
+  },
+  "G-SPUR": {
+   "pass": true,
+   "bar": "+5/yr vs banded baseline (lidless REPORT-ONLY)"
+  },
+  "G-SHED": {
+   "pass": true
+  },
+  "G-BAT": {
+   "pass": true
+  },
+  "G-D2": {
+   "no_new_d4_rows": true
+  },
+  "G-SHORTFALL": {
+   "pass": true,
+   "rule": "per rigid family, arm shortfall hour-set \u2286 control's (precommit AMENDMENT 1 \u2014 no MANUFACTURED shortage; the keeper baseline itself carries 21 designed VOLL-engagement hours)"
+  }
+ },
+ "gates_detail": {
+  "spur_ctl": 11,
+  "spur_arm": 11,
+  "spur_baseline": [
+   4283,
+   4404,
+   4547,
+   4548,
+   4571,
+   4572,
+   4593,
+   4832,
+   5024
+  ],
+  "shed_ctl": [],
+  "shed_arm": [],
+  "d4_rows_identical": true,
+  "all_six_pass": true
+ },
+ "family_diagnostics": {
+  "control": {
+   "present": true,
+   "families": {
+    "ECRS_withheld": {
+     "shortfall_hour_set": [
+      4098,
+      4099,
+      5488,
+      5490,
+      5659,
+      5682,
+      5683,
+      5802,
+      5967,
+      5970,
+      5994
+     ],
+     "shortfall_hours": 11,
+     "shortfall_max_mw": 1671.694,
+     "dual_ge_voll_hours": 21,
+     "dual_max": 5000.0,
+     "requirement_mean_mw": 741.8,
+     "requirement_max_mw": 2875.0,
+     "held_mean_mw": 1506.2
+    },
+    "RRS_withheld": {
+     "shortfall_hour_set": [
+      5489,
+      5490,
+      5563,
+      5656,
+      5658,
+      5682,
+      5802,
+      5803,
+      5970
+     ],
+     "shortfall_hours": 9,
+     "shortfall_max_mw": 1284.078,
+     "dual_ge_voll_hours": 21,
+     "dual_max": 5000.0,
+     "requirement_mean_mw": 1263.1,
+     "requirement_max_mw": 2261.1,
+     "held_mean_mw": 1927.6
+    },
+    "RegUp_withheld": {
+     "shortfall_hour_set": [
+      4096,
+      5487,
+      5488,
+      5489,
+      5490,
+      5658,
+      5801,
+      5966,
+      5970,
+      5994,
+      6015
+     ],
+     "shortfall_hours": 11,
+     "shortfall_max_mw": 343.799,
+     "dual_ge_voll_hours": 21,
+     "dual_max": 5000.0,
+     "requirement_mean_mw": 241.1,
+     "requirement_max_mw": 789.0,
+     "held_mean_mw": 1088.1
+    }
+   },
+   "total_rigid_shortfall_hours": 31
+  },
+  "arm": {
+   "present": true,
+   "families": {
+    "ECRS_withheld": {
+     "shortfall_hour_set": [
+      4098,
+      4099,
+      5488,
+      5490,
+      5659,
+      5682,
+      5683,
+      5802,
+      5967,
+      5970,
+      5994
+     ],
+     "shortfall_hours": 11,
+     "shortfall_max_mw": 1671.694,
+     "dual_ge_voll_hours": 21,
+     "dual_max": 5000.0,
+     "requirement_mean_mw": 741.8,
+     "requirement_max_mw": 2875.0,
+     "held_mean_mw": 1506.2
+    },
+    "RRS_withheld": {
+     "shortfall_hour_set": [
+      5489,
+      5490,
+      5563,
+      5656,
+      5658,
+      5682,
+      5802,
+      5803,
+      5970
+     ],
+     "shortfall_hours": 9,
+     "shortfall_max_mw": 1284.078,
+     "dual_ge_voll_hours": 21,
+     "dual_max": 5000.0,
+     "requirement_mean_mw": 1263.1,
+     "requirement_max_mw": 2261.1,
+     "held_mean_mw": 1927.6
+    },
+    "RegUp_withheld": {
+     "shortfall_hour_set": [
+      4096,
+      5487,
+      5488,
+      5489,
+      5490,
+      5658,
+      5801,
+      5966,
+      5970,
+      5994,
+      6015
+     ],
+     "shortfall_hours": 11,
+     "shortfall_max_mw": 343.799,
+     "dual_ge_voll_hours": 21,
+     "dual_max": 5000.0,
+     "requirement_mean_mw": 241.1,
+     "requirement_max_mw": 789.0,
+     "held_mean_mw": 1088.1
+    }
+   },
+   "total_rigid_shortfall_hours": 31
+  },
+  "reading": "every rigid withheld family's shortfall HOUR SET is IDENTICAL between control and arm (ECRS 11 h, RRS 9 h, RegUp 11 h; 31 rigid shortfall hours both), so G-SHORTFALL passes by equality, not merely by subset. The only shortfall movement is on the non-rigid NonSpin family, +1.5 to +3.9 MW in 8 hours where it was already short by 490-2242 MW."
+ },
+ "summer": {
+  "miss_split_ctl": {
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  },
+  "miss_split_arm": {
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  },
+  "d_price_at_miss_p50": 0.0,
+  "d_price_at_miss_max": 0.0,
+  "window_concentration": null,
+  "calm_fortnight_bias_pct": {
+   "control": 15.44,
+   "arm": 15.44
+  },
+  "channel_lambda_share_at_improved_miss": null,
+  "improved_miss_hours": 0
+ },
+ "adaptive": {
+  "control": {
+   "present": true,
+   "model_spike_days": 7,
+   "p_hat_max": 0.37,
+   "floor_ge_1000_hours": 156,
+   "floor_ge_1000_by_month": {
+    "8": 22,
+    "9": 118,
+    "10": 16
+   },
+   "floor_max_usd": 1850.0
+  },
+  "arm": {
+   "present": true,
+   "model_spike_days": 7,
+   "p_hat_max": 0.37,
+   "floor_ge_1000_hours": 156,
+   "floor_ge_1000_by_month": {
+    "8": 22,
+    "9": 118,
+    "10": 16
+   },
+   "floor_max_usd": 1850.0
+  },
+  "reading": "identical -- 7 spike days, p_hat max 0.37, 156 floored hours >= $1000, both runs"
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "disposition": "MEASURED-INERT ON THE SCORED BASIS (arm != control in reserve-quantity space; identical in every price and every scored criterion)",
+  "failed_criteria": [
+   "no movement \u2014 measured inert"
+  ],
+  "passed_gates": [
+   "G-CAP",
+   "G-SPUR",
+   "G-SHED",
+   "G-BAT",
+   "G-D2",
+   "G-SHORTFALL"
+  ],
+  "complete_verdict": true,
+  "escalate": false,
+  "note": "This is a COMPLETE Amendment-3 verdict, not a probe failure. The charter predicted the arm would be NUMERICALLY IDENTICAL to the control; it is not, and that non-identity is the session's reportable discovery -- but it is confined to requirement/held/shortfall MW and vanishes entirely at the duals. No adoption criterion moved by any amount, so \u00a75.5 fails trivially rather than borderline; nothing is escalated."
+ }
+}

@@ -11111,3 +11111,199 @@ keeper stands untouched. Env verified at the keeper pins
 
 **Session consumed the ercot-228 shorthand.** (ercot-227 ran concurrently
 in the hub; ercot-199 remains unclaimed)
+
+---
+
+## ercot-227 — 2026-08-22 — THE OWNER'S PROCEED-WITH-ALL-FACTORS EXTENSION: every 2023 conservatism factor carried to a **SOLVED** verdict — F1/F1b/F1c MEASURED-INERT, F3 REJECTED-AS-ARMED at the grain, F4 DATA-ABSENT — **the AS-sequestration channel is CLOSED as an explanation for the 2023 summer miss**
+
+**Charter:** the ercot-226 owner dispatch as EXTENDED 2026-08-22 (*"Proceed with
+all the factors to test not just 1 keep going"*), recorded verbatim in
+`docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md` §5.11 (Amendment 3),
+which converts every Phase-0 kill from **probe-terminating** to
+**probe-informing**. Waivers W-1..W-5 carried forward unchanged.
+**FINDING:** `docs/FINDING-ercot227-factor-sweep-2026-08-22.md`.
+
+**Four solves on the hub box, all 2023-only, all sequential** (rule 12), all
+A/B'd against the hub's own numeric-identical control `ercot226_ctl2023`:
+
+| factor | field | verdict | evidence |
+|---|---|---|---|
+| **F1** rigid held-depth | `ercot_as_held_requirement` | **MEASURED-INERT** | requirement rises in **2 h** (h5875, h6831) by ≤ **8.33 MW**; duals and shortfall hour-sets exactly unchanged; official −39.7 %/0.729/74 h identical; all gates PASS |
+| **F1c** DAM cleared depth | (no field needed) | **MEASURED-ZERO** | RegUp/ECRS/NSPIN cleared **≡ plan** in all 8,760 h; RRS cleared **below** plan in all 8,760 h ⇒ `max(plan, cleared) ≡ plan` |
+| **F1b** NSPIN held-depth | `ercot_as_held_requirement_nspin` | **MEASURED-INERT** | requirement rises in **15 h** by ≤ **5.63 MW**; NonSpin dual and its 117 shortfall hours exactly unchanged; all gates PASS |
+| **F3** RUC/OOM commitment | `ercot_ruc_commitment_floor` (MECH id 23) | **REJECTED-AS-ARMED** (G-D2) | live and attributable — 229,598 floor cells, +0.0097 TWh — but **23 of 42 D-4 unit-conduct rows FAIL**, carrying **94 % of its floored energy** on units whose measured CEMS generation is zero in the majority of floored hours |
+| **F4** load-forecast conservatism | — | **DATA-ABSENT** | ercot-228; every ERCOT surface tried, 7-day rolling retention is ERCOT's advertised design |
+| **F5** deployment-design depth | — | **ALREADY-CARRIED** | feature-by-feature audit |
+
+**F3's cause is THE GRAIN, not the driver, and the reopening was worth it
+anyway.** The ercot-226 Phase-0 kill rested on *"no 2023 RUC MW data on disk"*
+— false: the NP3-965 `Telemetered Resource Status` **ONRUC** rows *are* the
+RUC-instructed unit-hours. The derived 2023 series carries **2,031 distinct
+ONRUC unit-hours over 96 days**, **6.7×** the ercot97 plant-grain lane's
+2024/25-subset 303 — a standing scale premise now corrected on the record
+(`results/calibration/ercot227_ruc_sizing.json`). But the instruction names
+*specific* units, and barred from the per-unit crosswalk (item 11 / Q-B FINAL)
+the mechanism spreads class MW **pro-rata over every unit in the class**,
+reproducing the class total while placing it on units the record says were
+offline — rule 17 `[R-FLOOR-WINDOW]` by its own definition. **F3 is refuted at
+the level of representability, not of data.** The only route back is a *grain*
+change, separately closed and needing its own owner instrument.
+
+**What the program established.** The ercot-217 §5 wedge (~2.7 GW of
+responsive headroom the model retains and real SCED did not) admitted exactly
+three procurement-side readings, and all three are now measured: **mis-SIZED**
+refuted by F1/F1b/F1c, **mis-LOCATED** refuted by F2 at ercot-226 (built,
+armed, negative), **mis-COMMITTED** refuted by F3. Sharper still: **every
+armed factor showed `d_price_at_miss` p50 = max = 0.0** — not one of the 114
+missed scarcity hours moved under any of them. *The 2023 summer residual is
+not reachable from the AS-procurement inputs at all.*
+
+**Disposition — precommit §5.8 else-branch, now on solved evidence:** no
+factor cleared adoption (F1 0.00 pp, F1b 0.00 pp, F3 0.00 pp with a gate FAIL,
+F2 −5.8 pp with a gate FAIL). **No combined run, no registration, no
+promotion; the keeper `2026-08-20-ercot223-arm-eventrelease` is untouched.**
+W-4's pre-authorisation went unexercised because nothing reached its
+threshold, and no verdict is borderline — every rejection is a measured null
+at 0.00 pp or a gate failure with zero accompanying benefit. Nothing was
+registered on the dashboard (W-2); probe bundles stayed local; the committed
+record is `results/calibration/ercot227_probe_{f1,f1b,f3}.json` +
+`ercot227_{f1,f1b,f3}_gates.json` + `ercot227_ruc_sizing.json`.
+
+**Matrix:** `ercot_as_held_requirement` **U → I** (F1 + F1b + F1c evidence),
+`ercot_ruc_commitment_floor` **U → R** (D-4 unit-conduct + the grain
+diagnosis). `ercot_as_held_location` stays **R** from ercot-226.
+
+**Stop-the-line repairs** made ahead of all other work: commit `08a440c` had
+referenced `MECH_ERCOT_RUC_COMMITMENT` in `scripts/legitimacy_diagnostics.py`
+without importing it (module broken at import time), and its matrix base row
+used an unknown category token (hard CI failure). Both fixed and pushed; the
+import was subsequently dropped again by a merge and re-repaired on main
+(`c06616ba`).
+
+**Also run by the hub as a fallback:** F1b was dispatched to the ercot-229
+spoke, which did not deliver (no branch, no commit, no JSON). The hub ran it —
+precommit §6 makes spokes an accelerator, never a dependency. **ercot-229 was
+therefore never consumed and remains available**, alongside ercot-199.
+
+**Session consumed the ercot-227 shorthand. Next shorthand: ercot-230**
+(ercot-199 and ercot-229 remain unclaimed)
+---
+
+## ercot-229 — 2026-08-22 — F1b NSPIN held-depth (`ercot_as_held_requirement_nspin`), the solved-verdict spoke of the ercot-226/227 Amendment-3 program: **MEASURED-INERT ON THE SCORED BASIS — but the charter's "numerically identical" prior is FALSE, and the correction is the session's finding**
+
+Owner order behind the session (PRECOMMIT-ercot226 §5.11 Amendment 3,
+verbatim): *"Proceed with all the factors to test not just 1 keep going"* —
+the §5.4 kill preconditions are reclassified from probe-terminating to
+probe-informing, so a predicted-inert factor is SOLVED and the solve is the
+measurement of its inertness. This session owned **F1b only**; the hub
+(ercot-227) owns F1/F1c/F3, ercot-228 owned F4, F2 is adjudicated R.
+
+**Phase-0 corrects the standing prior.** The charter, `spec.py`'s F1/F1b
+comment and the `legitimacy_diagnostics.py` mechanism notes all state that
+held < plan EVERYWHERE on the Gen-ONLINE NP3-965 basis, so
+`max(plan, held) == plan` **identically** and the arm must be numerically
+identical to the control. Recomputed from the on-disk series, **it is not**:
+
+| NSPIN 2023 | min | p50 | max |
+|---|---|---|---|
+| held (`nsrs`) | 0.0 | 623.6 | **3,936.6** |
+| plan | 1,688.0 | 3,291.0 | 5,633.0 |
+
+`max(plan, held) == plan` is **False**. Held exceeds plan in **15 hours**,
+every one of them an **Aug–Sep afternoon peak hour (h15–18)**, by 1.0–5.6 MW
+(34.45 MWh of extra requirement across the year). Eight of the fifteen are
+hours the keeper prices ≤ $200 (miss territory), and the largest delta
+(**+5.625 MW, h6378 = 2023-09-23 18:00**) lands in an hour the keeper prices
+at **$191.79** — $8 under the tail threshold. The prior is right that the
+depth is negligible; it is wrong that the arm is *a priori* identical.
+The §5.4 materiality screen still **fails as precommitted** — p50 at the
+miss set is exactly 0.000 MW against the 100 MW ex-ante floor (delta > 0 in
+only 15 of 8,760 hours) — which under Amendment 3 informs rather than
+terminates.
+
+**G-REPRO PASSES on both legs.** Numeric identity vs the keeper's committed
+2023 sidecars: max|Δ| = **0** on every numeric column of
+`system`/`reserve_family`/`storage`, and **sha256 matched byte-for-byte** —
+stronger than the §G-REPRO(a) contract, which permitted parquet-layout drift
+(the ercot-226 F2 control did not match sha). Official scorer reproduced the
+required line **exactly**: `C3a -39.7% (model 38.81 vs RT lw 64.32) |
+C3b NRMSE 0.729 | C3c 74 h`.
+
+**The arm is NOT identical to the control — and every price is.** Headline
+arm-vs-control numerics:
+
+| sidecar / column | n hours | max abs Δ |
+|---|---|---|
+| `reserve_family.requirement_mw` (NonSpin) | 15 | **5.625 MW** |
+| `reserve_family.held_mw` (RRS/RegUp/ECRS_withheld + NonSpin) | 24 | **314.05 MW** |
+| `reserve_family.shortfall_mw` (NonSpin) | 8 | 3.90 MW |
+| `reserve_family.dual` | **0** | **0.000e+00** |
+| `system.price` | 238 | 1.42e-13 (float64 round-off) |
+| `storage.charge_mw` | 4 | 1.2e-04 (float32 round-off) |
+
+The mechanism, end to end: (1) the requirement deepens by 1.0–5.6 MW in
+exactly the 15 predicted hours; (2) in 8 of them the NonSpin family is
+**already deeply short** (control shortfall 490–2,242 MW), so the extra
+requirement flows straight into shortfall rather than pulling capacity into
+hold; (3) at that depth the NonSpin shortfall ramp is locally flat, so the
+family dual is **exactly** unchanged — and with no reserve dual moving, no
+energy dual moves; (4) the 314 MW held reallocation across the withheld
+families is **LP degeneracy**, an alternate optimum on the same optimal
+face, proven by the identical duals and identical family held-means
+(1506.2 / 1927.6 / 1088.1 MW in both runs). The factor is inert *where it is
+scored*, and its non-identity is confined to the quantity space at a
+magnitude no price is sensitive to.
+
+**Every scored quantity is identical.** Official arm = control character for
+character (−39.7 % / 0.729 / 74 h). Probe basis identical (c3a −29.99,
+c3b 3.4476, tail 74, model mean 33.856). **All six gates PASS** — G-CAP 0
+violations, G-SPUR 11↔11, G-SHED [] both, G-BAT, G-D2 (D-4 rows identical),
+G-SHORTFALL passing **by equality, not merely by subset**: every rigid
+family's shortfall hour set is unchanged (ECRS 11 h, RRS 9 h, RegUp 11 h;
+31 rigid shortfall hours both). Summer block flat: miss split 67/114/7 both,
+Δprice at the miss set p50 = max = **0.0**, calm-fortnight bias 15.44 % both,
+improved-miss hours 0. Adaptive identical (7 spike days, p̂ max 0.37, 156
+floored hours ≥ $1,000).
+
+**Verdict: `adoption_pass` false, `failed_criteria` ["no movement — measured
+inert"]** — a COMPLETE Amendment-3 verdict, not a probe failure. No adoption
+criterion moved by any amount, so §5.5 fails trivially rather than
+borderline; **nothing is escalated**. The disposition recorded is
+*MEASURED-INERT ON THE SCORED BASIS*, deliberately not the charter's
+predicted *"arm ≡ control"*, because equality does not hold in the
+reserve-quantity space and the record should not claim it does.
+
+Env verified at the keeper pins (1.15.1/3.0.5/25.0.1/2.4.6/1.17.1,
+Python 3.11.15); `705ec9b` verified an ancestor of HEAD before any solve. A
+6 GB swapfile was enabled **preemptively** before the control (14 GB
+available vs ~12.7 GB peak; the F2 probe record shows its armed LP
+OOM-killed twice at the ~13.9 GB memcg ceiling) and the arm additionally ran
+under `MALLOC_ARENA_MAX=2` — neither run OOM-killed and no run was retried;
+malloc/swap config does not change solver arithmetic. W-2 honored: nothing
+dashboard-registered and no bundle directory committed — the probe JSON
+(`results/calibration/ercot229_probe_f1b.json`, gates JSON folded in) and
+this entry are the record. The keeper stands untouched. Per the Amendment-3
+concurrency convention the mechanism matrix was **not** edited here; the hub
+stamps the shared `ercot_as_held_requirement` cell with the combined F1+F1b
+verdict. One note for the hub: the "held < plan everywhere / bit-identical"
+prior is now measured false for the NSPIN leg, so the F1 rigid-product legs
+should not assume identity without their own check.
+
+**Reconciliation with the hub (independent replication).** The ercot-227
+entry above records that the hub ran F1b itself as a fallback, believing this
+spoke had not delivered, and on that basis declares ercot-229 "never consumed."
+That is superseded by this entry: the spoke did run, on its own control and arm
+bundles, and **the two independent solves agree** — the hub reports *"requirement
+rises in 15 h by ≤ 5.63 MW; NonSpin dual and its 117 shortfall hours exactly
+unchanged; all gates PASS"*, which matches this session's 15 hours / 5.625 MW /
+zero dual movement / six gates PASS measurement made independently. The
+duplicated work is therefore a genuine replication of the F1b verdict rather than
+a conflict, and the hub's `ercot_as_held_requirement` **U → I** matrix stamp
+stands unchanged on this evidence. One correction this spoke adds and the hub's
+row does not carry: the arm is **not** numerically identical to its control —
+requirement, held (up to 314.05 MW of degenerate reallocation) and NonSpin
+shortfall all move — so "MEASURED-INERT" should be read as *inert where scored*,
+never as *arm ≡ control*.
+
+**Session consumed the ercot-229 shorthand.** (ercot-227/228 ran
+concurrently; ercot-199 remains unclaimed)

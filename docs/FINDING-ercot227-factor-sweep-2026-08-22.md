@@ -27,7 +27,7 @@ leverage through a path the screen did not measure.
 |---|---|---|---|
 | **F1** held-depth, rigid products | `max(plan, held)` on ECRS/RRS/RegUp from NP3-965 telemetered responsibilities | field built (`ercot_as_held_requirement`), **solved 2023** vs hub control | **MEASURED-INERT** (§2) |
 | **F1c** cleared-vs-plan | `max(plan, cleared)` from the 60-day DAM awards | **measured zero**; identical to F1's arm by construction, folded into that solve | **MEASURED-ZERO** (§2.3) |
-| **F1b** held-depth, NSPIN | same, NSRS column, non-rigid family | field built (`ercot_as_held_requirement_nspin`), **solved 2023** | *(§3)* |
+| **F1b** held-depth, NSPIN | same, NSRS column, non-rigid family | field built (`ercot_as_held_requirement_nspin`), **solved 2023** | **MEASURED-INERT** (§3) |
 | **F2** held-location | measured per-class allocation of the rigid holds | built (class families + conserving credit), solved at ercot-226 | **REJECTED-AS-ARMED**, direction negative |
 | **F3** RUC / out-of-market commitment | measured ONRUC instruction state × LSL, class grain | derive + mechanism built (`ercot_ruc_commitment_floor`, MECH id 23), **solved 2023** | *(§4)* |
 | **F4** operator load-forecast conservatism | DA-forecast bias as a reserve-demand adder | fetch attempted across every ERCOT surface (ercot-228) | **DATA-ABSENT** (§5) |
@@ -103,6 +103,42 @@ published plan in 2023.** The keeper's plan-based requirement is *already* the
 ceiling of the measured procurement conservatism — on the day-ahead award side
 exactly, and on the real-time telemetered side with 2 hours and 8 MW to spare.
 The held-depth hypothesis is not merely unhelpful; its object is absent.
+
+## 3. F1b — the NSPIN variant closes the held-depth sweep
+
+Run by the hub as a fallback: the ercot-229 spoke was dispatched for this arm
+and did not deliver (no branch, no commit, no JSON), and the precommit §6
+clause makes spokes an accelerator, never a dependency.
+
+`ercot_as_held_requirement_nspin` applies the same `max(plan, held)` to the
+NSPIN family, which is deliberately **not** rigid — it releases down the
+standard ramp, matching the real design in which online Non-Spin energy is
+SCED-dispatchable at its offer. It was carried separately precisely because
+2023 NSPIN procurement was *large*: plan mean 3,349 MW, 5,052 MW in May
+falling to 2,206 MW by August.
+
+| measurement | control | F1b arm |
+|---|---|---|
+| official C3a / C3b / C3c | −39.7 % / 0.729 / 74 h | **−39.7 % / 0.729 / 74 h** |
+| NonSpin dual | — | **max\|Δ\| = 0.0** |
+| NonSpin shortfall hours | 117 | **117** |
+| `class_hourly` / `adaptive` | — | **exactly 0.0 apart** |
+| all six gates | — | **PASS** |
+
+The mechanism engages in **15 hours**, by at most **5.63 MW** (34.5 MWh over
+8,760 family-hours), and changes nothing.
+
+The size of the gap it *didn't* close is the point: telemetered online NSPIN
+responsibility averaged **757 MW** against a **3,349 MW** plan. That 2.6 GW
+gap is **offline Non-Spin and Load Resources** — outside the Gen-resource
+corpus by construction — and is emphatically *not* operator conservatism. It
+is the plan being met by providers the telemetry does not see.
+
+**With F1b, all three admissible readings of the procurement-quantity object
+are measured nulls confirmed by solve**: RT telemetered depth on the rigid
+families (F1), DAM cleared depth (F1c), and RT telemetered depth on the
+ramp-released NSPIN family (F1b). Nothing in ERCOT's 2023 AS procurement
+quantity is deeper than the plan the keeper already carries.
 
 ## 4. F3 — the RUC object is real, 6.7× larger than believed, and unrepresentable at the only admissible grain
 
@@ -229,3 +265,88 @@ is already in the keeper:
 
 There is no buildable delta here, which is why F5 is a measurement row and not
 a probe.
+
+## 7. PROGRAM DISPOSITION — the precommit §5.8 else-branch, now on solved evidence
+
+**No factor cleared adoption.** Under precommit §5.5 a factor must deliver
+C3a-2023 ≥ +1.5 pp toward zero with C3b within +0.005 and every gate clean.
+The realised deltas:
+
+| factor | C3a-2023 gain | gate state | disposition |
+|---|---|---|---|
+| F1 | **0.00 pp** | all PASS | measured-inert |
+| F1c | (identical to F1 by construction) | — | measured-zero |
+| F1b | **0.00 pp** | all PASS | measured-inert |
+| F2 (ercot-226) | **−5.8 pp** (−39.7 → −45.5) | **G-SHORTFALL FAIL** | rejected-as-armed |
+| F3 | **0.00 pp** (probe basis −0.01) | **G-D2 FAIL** | rejected-as-armed |
+| F4 | — | — | data-absent |
+| F5 | — | — | already-carried |
+
+So §5.8's else-branch stands: **no combined run, no registration, no
+promotion; the keeper `2026-08-20-ercot223-arm-eventrelease` is untouched.**
+W-4's pre-authorisation is not exercised because nothing reached its
+threshold — and per W-4 there is no borderline mechanical verdict to escalate:
+every rejection is either a measured null at 0.00 pp or a gate failure with
+zero accompanying benefit.
+
+Nothing was registered on the dashboard (W-2). Nothing on the keeper, the
+keeper shard, the status page or the gate files was touched.
+
+## 8. WHAT THE PROGRAM ACTUALLY ESTABLISHED
+
+The negative results are the deliverable, and together they close a channel.
+
+**The AS-sequestration channel is closed as an explanation for the 2023 summer
+miss.** The ercot-217 §5 wedge — the model retaining ~2.7 GW more responsive
+headroom than real SCED had — admitted exactly three readings on the
+procurement side, and all three are now measured:
+
+1. **Mis-SIZED** (the model holds too little) — refuted by F1/F1b/F1c. ERCOT
+   never held or procured materially more AS than its published plan: the DAM
+   cleared the plan exactly, and RT telemetered responsibility exceeded it in
+   2 hours by ≤ 8.3 MW.
+2. **Mis-LOCATED** (the model holds it on the wrong capacity) — refuted by F2
+   at ercot-226. Building the measured per-class carve made scarcity
+   expression *worse*, because the conserving credit relieves the system
+   withheld families faster than the class families bind.
+3. **Mis-COMMITTED** (out-of-market commitment the model lacks) — refuted by
+   F3, and refuted at the level of representability rather than of data.
+
+What remains live is the **energy/tightness channel outside AS procurement**,
+and the conduct/offer object the keeper's adaptive mechanism already reaches
+for: at the missed hours the model reproduces ERCOT's physical dispatch
+fuel-by-fuel while clearing 3–5× low, with reality's own ORDC nearly silent
+(RTORPA ≈ $1). Every one of this program's factors acted on the tightness
+side and none of them moved a single missed hour — `d_price_at_miss` p50 and
+max were **0.0 for every armed factor**. That is a sharper statement than any
+of the individual verdicts: *the 2023 summer residual is not reachable from
+the AS-procurement inputs at all.*
+
+Two ancillary corrections were forced along the way and both are now on the
+record: the **2023 RUC object is 6.7× larger** than the ercot97 lane measured,
+and **F4's data is structurally unavailable** (a 7-day rolling retention that
+is ERCOT's advertised design, not an outage) rather than merely unfetched.
+
+## 9. THE 2022 DUAL-CONFIG STANDING PROTOCOL (recorded, NOT executed)
+
+Unchanged from `FINDING-ercot226` §5 and repeated here so the program's own
+record carries it: ERCOT holds **no `complete` marker**, so 2022 may not be
+solved, scored or registered (rule 22). When a marker is granted, the
+touchpoint runs the frozen keeper recipe under the 2022-appropriate
+configuration — the pre-ECRS design (ECRS launched 2023-06-10, so a 2022 run
+carries RegUp/RRS/NonSpin only) against the same measured-overlay discipline —
+and any miss it surfaces is diagnosed as an *object*, then re-trained on
+2023–2025 and re-tested, never fitted to 2022 itself.
+
+## 10. Session hygiene
+
+- Every solve was in-session and sequential (rule 12); no CI job ran any solve
+  and no workflow was added.
+- Years stayed within {2023} (rule 22); ERCOT-only shards and curves (rule 25).
+- All probe bundles stayed local; only JSON records, the FINDING, the matrix
+  stamps and the mechanism code were pushed (W-2).
+- One stop-the-line repair was made and pushed ahead of all other work: commit
+  `08a440c` had referenced `MECH_ERCOT_RUC_COMMITMENT` in
+  `scripts/legitimacy_diagnostics.py` without importing it, breaking that
+  module at import time; and its matrix base row used an unknown category
+  token, a hard CI failure. Both are fixed.
