@@ -5438,6 +5438,9 @@ def run_year(
     # both passes; exactly ONE adaptation pass (rule 10 spirit, precommit).
     # Every non-ERCOT / gate-off run never enters this block (byte-identical).
     ercot221_adaptive = None
+    # ercot-230 fixed-point iteration trajectory (None on every flag-off /
+    # non-ERCOT run) — persisted as hourly/adaptive_iteration_<year>.json.
+    ercot230_iteration = None
     if (
         iso == "ERCOT"
         and getattr(config, "ercot_storage_adaptive_expectation", False)
@@ -5457,59 +5460,75 @@ def run_year(
 
         _t_h = int(config.hours)
         _dem_t = demand.sum(axis=0)[:_t_h]
-        _lam_t = (
-            np.asarray(energy_solve.p1.prices, dtype=float)[:, :_t_h] * demand[:, :_t_h]
-        ).sum(axis=0) / np.where(_dem_t > 0.0, _dem_t, 1.0)
-        # Event basis (precommit Amendment 4): the model's own settled-price
-        # analogue = lambda + its OWN decontaminated anchored scarcity-adder
-        # mirror — the identical arithmetic the persist path writes (cap-dual
-        # ALL tier, min'd with the ORDC total family's balance dual where
-        # present, x (VOLL - lambda)/VOLL, protocol-capped). Both terms are
-        # duals of the model's own pass-1 LP: zero measured content (rule 13;
-        # the measured RTORDPA overlay is deliberately EXCLUDED). A config
-        # with no reserve duals degrades to lambda-only, disclosed inert.
         _voll = float(config.ordc_voll)
-        _adder_t = np.zeros(_t_h)
-        _cd = getattr(energy_solve.p1, "reserve_supply_cap_dual", None)
-        _rpf = getattr(energy_solve.p1, "reserve_price_by_family", None)
-        _gam = None
-        if _cd is not None:
-            _gam = np.asarray(_cd, dtype=float)[:, :_t_h][-1]
-        if _rpf is not None:
-            _fam = np.asarray(_rpf, dtype=float)[:_t_h, -1]
-            _gam = _fam if _gam is None else np.minimum(_gam, _fam)
-        if _gam is not None:
-            _head = np.maximum(_voll - _lam_t, 0.0)
-            _adder_t = np.minimum(np.maximum(_gam, 0.0) * _head / _voll, _head)
-        _settle_t = _lam_t + _adder_t
         _n_days = _t_h // 24
-        _day_max = _settle_t[: _n_days * 24].reshape(_n_days, 24).max(axis=1)
-        _s_m = (_day_max >= ERCOT_ADAPTIVE_EVENT_USD).astype(float)
-        _p_hat = ercot_adaptive_expectation_daily(
-            _s_m,
-            half_life_days=float(config.ercot_adaptive_half_life_days),
-            beta=float(config.ercot_adaptive_beta),
-        )
         _vom_s = np.asarray(storage.vom, dtype=float)[:, None]
-        _floor_t = np.zeros(_t_h)
         _hod = np.arange(_t_h) % 24
         _day_of = np.minimum(np.arange(_t_h) // 24, _n_days - 1)
         _in_win = np.isin(_hod, ERCOT_ADAPTIVE_WINDOW_HOURS)
-        _floor_t[_in_win] = _p_hat[_day_of[_in_win]] * float(config.ordc_voll)
-        # ercot-223 EVENT-REALIZED RELEASE guard (rule 17 structural yield;
-        # PRECOMMIT-ercot223-event-release-guard-2026-08-19.md §1). The
-        # conduct floor is an offer — withhold in anticipation OF the spike;
-        # at hours the SAME pass-1 settle basis the day-max event detector
-        # reads marks the spike as REALIZED (>= ERCOT_ADAPTIVE_EVENT_USD,
-        # the existing frozen constant — zero new fitted scalars), a cleared
-        # offer does not withhold physical energy, so the floor is masked
-        # and the cost falls back to storage vom (the seam default). Without
-        # this, offer-as-cost debases the storage SOC shadow against the
-        # co-opt's floor-free reserve-headroom value and manufactures load
-        # shed at real event hours (the 2024 h3066 G-SHED defect,
-        # ercot223_shed_phase0.json). Default off: byte-identical floors.
-        if getattr(config, "ercot_adaptive_event_release", False):
-            _floor_t[_settle_t >= ERCOT_ADAPTIVE_EVENT_USD] = 0.0
+
+        def _ercot_adaptive_floor(_p1_res):
+            """The ercot-221 floor construction from one solved P1 result.
+
+            Factored (ercot-230) so the incumbent adaptation pass and the
+            gated fixed-point iteration below run the IDENTICAL arithmetic —
+            one construction, rule 19; the flag-off path calls it exactly
+            once on pass 1, reproducing the pre-refactor floats expression
+            for expression (G-REPRO validated on the keeper replay).
+            Returns ``(s_events, p_hat, floor_t, settle_t)``.
+            """
+            _lam_t = (
+                np.asarray(_p1_res.prices, dtype=float)[:, :_t_h] * demand[:, :_t_h]
+            ).sum(axis=0) / np.where(_dem_t > 0.0, _dem_t, 1.0)
+            # Event basis (precommit Amendment 4): the model's own settled-price
+            # analogue = lambda + its OWN decontaminated anchored scarcity-adder
+            # mirror — the identical arithmetic the persist path writes (cap-dual
+            # ALL tier, min'd with the ORDC total family's balance dual where
+            # present, x (VOLL - lambda)/VOLL, protocol-capped). Both terms are
+            # duals of the model's own LP pass: zero measured content (rule 13;
+            # the measured RTORDPA overlay is deliberately EXCLUDED). A config
+            # with no reserve duals degrades to lambda-only, disclosed inert.
+            _adder_t = np.zeros(_t_h)
+            _cd = getattr(_p1_res, "reserve_supply_cap_dual", None)
+            _rpf = getattr(_p1_res, "reserve_price_by_family", None)
+            _gam = None
+            if _cd is not None:
+                _gam = np.asarray(_cd, dtype=float)[:, :_t_h][-1]
+            if _rpf is not None:
+                _fam = np.asarray(_rpf, dtype=float)[:_t_h, -1]
+                _gam = _fam if _gam is None else np.minimum(_gam, _fam)
+            if _gam is not None:
+                _head = np.maximum(_voll - _lam_t, 0.0)
+                _adder_t = np.minimum(np.maximum(_gam, 0.0) * _head / _voll, _head)
+            _settle_t = _lam_t + _adder_t
+            _day_max = _settle_t[: _n_days * 24].reshape(_n_days, 24).max(axis=1)
+            _s_m = (_day_max >= ERCOT_ADAPTIVE_EVENT_USD).astype(float)
+            _p_hat = ercot_adaptive_expectation_daily(
+                _s_m,
+                half_life_days=float(config.ercot_adaptive_half_life_days),
+                beta=float(config.ercot_adaptive_beta),
+            )
+            _floor_t = np.zeros(_t_h)
+            _floor_t[_in_win] = _p_hat[_day_of[_in_win]] * float(config.ordc_voll)
+            # ercot-223 EVENT-REALIZED RELEASE guard (rule 17 structural yield;
+            # PRECOMMIT-ercot223-event-release-guard-2026-08-19.md §1). The
+            # conduct floor is an offer — withhold in anticipation OF the spike;
+            # at hours the SAME settle basis the day-max event detector reads —
+            # pass 1 for the incumbent adaptation, the immediately-preceding
+            # pass under ercot_adaptive_fixed_point (PRECOMMIT-ercot230 §1) —
+            # marks the spike as REALIZED (>= ERCOT_ADAPTIVE_EVENT_USD,
+            # the existing frozen constant — zero new fitted scalars), a cleared
+            # offer does not withhold physical energy, so the floor is masked
+            # and the cost falls back to storage vom (the seam default). Without
+            # this, offer-as-cost debases the storage SOC shadow against the
+            # co-opt's floor-free reserve-headroom value and manufactures load
+            # shed at real event hours (the 2024 h3066 G-SHED defect,
+            # ercot223_shed_phase0.json). Default off: byte-identical floors.
+            if getattr(config, "ercot_adaptive_event_release", False):
+                _floor_t[_settle_t >= ERCOT_ADAPTIVE_EVENT_USD] = 0.0
+            return _s_m, _p_hat, _floor_t, _settle_t
+
+        _s_m, _p_hat, _floor_t, _settle_t = _ercot_adaptive_floor(energy_solve.p1)
         _adaptive_cost = np.maximum(_vom_s, _floor_t[None, :])
         logger.info(
             "ERCOT adaptive-expectation offer (%d): pass-1 model spike days "
@@ -5548,6 +5567,116 @@ def run_year(
             startup_run_ratio_t=startup_run_ratio_t,
             p1_storage_discharge_cost=_adaptive_cost,
         )
+        # ercot-230 FIXED-POINT ITERATION (PRECOMMIT-ercot230-adaptive-fixed-
+        # point-2026-08-23.md §1; the FINDING-ercot221 §4 first named
+        # successor, owner-chartered). The incumbent pass-2 floors were
+        # derived from the UNFLOORED pass-1 path — the measured bootstrap
+        # starvation (7 spike days vs reality's 23). When armed, adaptation
+        # passes continue: each re-derives the identical floor arithmetic
+        # from the latest P1 and re-solves, until the floor vector reproduces
+        # itself exactly (fixed point — the next pass would solve the
+        # identical LP, so the last solved pass IS the scored fixed point),
+        # a floor recurs non-adjacently (cycle, disclosed), or the
+        # pre-registered operational cap is reached (disclosed). Zero new
+        # identified constants; the stopping rule is parameter-free discrete
+        # self-reproduction. Flag-off: this block never runs — byte-identical.
+        if getattr(config, "ercot_adaptive_fixed_point", False):
+            import hashlib as _hashlib
+
+            from market_sim.results.scarcity import ERCOT_ADAPTIVE_MAX_PASSES
+
+            def _floor_sha(_fl):
+                return _hashlib.sha256(np.ascontiguousarray(_fl).tobytes()).hexdigest()[
+                    :16
+                ]
+
+            _fp_floors = [_floor_t]
+            ercot230_iteration = {
+                "stop_reason": None,
+                "n_adapt_passes": 0,
+                # Aligned by generation step: entry i pairs the events of
+                # solved pass i+1's own path with the floor derived FROM them
+                # (the floor pass i+2 would run under). Entry 0 = pass-1
+                # events -> the incumbent pass-2 floor.
+                "spike_days_by_pass": [int(_s_m.sum())],
+                "floored_window_hours_by_pass": [int((_floor_t[_in_win] > 0.0).sum())],
+                "released_window_hours_by_pass": [
+                    int((_in_win & (_settle_t >= ERCOT_ADAPTIVE_EVENT_USD)).sum())
+                ],
+                "floor_sha_by_pass": [_floor_sha(_floor_t)],
+            }
+            for _fp_extra in range(ERCOT_ADAPTIVE_MAX_PASSES + 1):
+                _s_k, _ph_k, _fl_k, _st_k = _ercot_adaptive_floor(energy_solve.p1)
+                ercot230_iteration["spike_days_by_pass"].append(int(_s_k.sum()))
+                ercot230_iteration["floored_window_hours_by_pass"].append(
+                    int((_fl_k[_in_win] > 0.0).sum())
+                )
+                ercot230_iteration["released_window_hours_by_pass"].append(
+                    int((_in_win & (_st_k >= ERCOT_ADAPTIVE_EVENT_USD)).sum())
+                )
+                ercot230_iteration["floor_sha_by_pass"].append(_floor_sha(_fl_k))
+                if np.array_equal(_fl_k, _fp_floors[-1]):
+                    ercot230_iteration["stop_reason"] = "converged"
+                    break
+                if any(np.array_equal(_fl_k, _f) for _f in _fp_floors[:-1]):
+                    ercot230_iteration["stop_reason"] = "cycle"
+                    break
+                if _fp_extra == ERCOT_ADAPTIVE_MAX_PASSES:
+                    ercot230_iteration["stop_reason"] = "cap"
+                    break
+                logger.info(
+                    "ERCOT adaptive fixed-point (%d): pass-%d path spike days "
+                    "%d, P_hat max %.3f, floor > vom in %d window hours "
+                    "(%d released); re-solving P1 (pass %d)",
+                    year,
+                    2 + _fp_extra,
+                    int(_s_k.sum()),
+                    float(_ph_k.max()),
+                    int((_fl_k[_in_win] > float(_vom_s.max())).sum()),
+                    int((_in_win & (_st_k >= ERCOT_ADAPTIVE_EVENT_USD)).sum()),
+                    3 + _fp_extra,
+                )
+                # The audit sidecar keeps the incumbent semantics one level
+                # up: the floor-GENERATING state + the floors the scored
+                # pass ran under (PRECOMMIT-ercot230 §1).
+                ercot221_adaptive = {
+                    "s_model": _s_k,
+                    "p_hat": _ph_k,
+                    "floor_t": _fl_k,
+                }
+                energy_solve = run_energy_solve(
+                    fleet,
+                    fleet_arrays,
+                    demand,
+                    mc_base,
+                    dispatch_kwargs,
+                    config,
+                    xyear_cache=xyear_cache,
+                    p1_fleet_prep=(
+                        ra_p1_prep
+                        or ercot_bridge_prep
+                        or nyiso_bridge_prep
+                        or miso_night_floor_prep
+                        or pjm_fleet_prep
+                    ),
+                    p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
+                    mc_bid_adjust=offer_surface_mc_bid_adjust,
+                    p1_bid_adjust_prep=lowcurve_bid_adjust_prep
+                    or ercot_bridge_bid_prep,
+                    p1_bid_max_target=p1_bid_max_target,
+                    startup_run_ratio_t=startup_run_ratio_t,
+                    p1_storage_discharge_cost=np.maximum(_vom_s, _fl_k[None, :]),
+                )
+                _fp_floors.append(_fl_k)
+                ercot230_iteration["n_adapt_passes"] += 1
+            logger.info(
+                "ERCOT adaptive fixed-point (%d): stop=%s after %d additional "
+                "pass(es); final-path spike days %d",
+                year,
+                ercot230_iteration["stop_reason"],
+                ercot230_iteration["n_adapt_passes"],
+                ercot230_iteration["spike_days_by_pass"][-1],
+            )
         _t_solve_end = time.perf_counter()
     # caiso-205 ADAPTIVE-EXPECTATION storage offer — the CAISO leg of the
     # ercot-221 family (owner order caiso-205 branch 1 over the caiso-204
@@ -5748,6 +5877,11 @@ def run_year(
         # run): the pass-1 model spike days, daily P_hat and the hourly floor
         # actually applied — the committed audit trail for the A/B gates.
         "ercot221_adaptive": ercot221_adaptive,
+        # ercot-230 fixed-point iteration trajectory (None on every flag-off
+        # run): per-pass spike days / floored-released window-hour counts /
+        # floor hashes and the stop reason — persisted as
+        # ``hourly/adaptive_iteration_<year>.json`` (PRECOMMIT-ercot230 §1).
+        "ercot230_iteration": ercot230_iteration,
         # caiso-205 adaptive-expectation audit series (None on every flag-off
         # run): the CAISO leg's pass-1 spike days, daily P_hat and applied
         # evening-window floor — same columns, same "adaptive" sidecar.

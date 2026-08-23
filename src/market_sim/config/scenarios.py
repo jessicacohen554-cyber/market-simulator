@@ -952,6 +952,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario, and hashes distinctly. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "ercot_adaptive_event_release",
+    # ercot-230 fixed-point iteration on the ercot-221 floor (GATED default
+    # off): dropped from the hash at its default so every pre-existing cache
+    # key stays byte-stable (the off path never enters the iteration loop —
+    # byte-identical by construction); an armed run continues adaptation
+    # passes to the floor's fixed point, a different scenario, and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "ercot_adaptive_fixed_point",
     # ercot-226 F2 held-location (GATED default off, backcast-only measured
     # overlay): dropped from the hash at its default so every pre-existing
     # cache key stays byte-stable (the off path builds no class families —
@@ -1365,6 +1373,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-223 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_adaptive_event_release": "False",
+    # Added by ercot-230 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "ercot_adaptive_fixed_point": "False",
     # Added by ercot-226 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_as_held_location": "False",
@@ -12715,6 +12726,27 @@ class ScenarioConfig:
     # pass-1 settle >= the event threshold; everything else is unchanged.
     # Reads only inside the ERCOT adaptive block (armed alone: no-op).
     ercot_adaptive_event_release: bool = False
+    # ercot-230 SECOND ADAPTATION PASS / fixed-point iteration on the armed
+    # adaptive floor (PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md
+    # §1; the FINDING-ercot221 §4 first named successor, chartered by the
+    # in-session owner selection recorded in that precommit §0). The
+    # incumbent two-pass P1 computes the floor from the UNFLOORED pass-1
+    # path — 7 spike days vs reality's 23, the measured bootstrap
+    # starvation. When True, adaptation passes continue: each re-derives the
+    # IDENTICAL floor arithmetic (Amendment-4 settle basis, frozen
+    # constants, h17-20 window, event-release mask read from the
+    # immediately-preceding pass) from the latest P1 and re-solves through
+    # the same p1_storage_discharge_cost seam, until the floor vector
+    # reproduces itself exactly (fixed point — the scored pass's floors are
+    # computed from its own events), a floor recurs non-adjacently (cycle,
+    # disclosed), or ERCOT_ADAPTIVE_MAX_PASSES additional passes have run
+    # (cap, disclosed). Zero new identified constants: the ercot-221
+    # (half-life, beta) were fit against reality's SELF-CONSISTENT realized
+    # path, so the iteration supplies the path-consistency their
+    # identification assumed. P0 untouched; per-year reset untouched
+    # (ercot-222's cross-year seed stays refuted). Reads only inside the
+    # ERCOT adaptive block (armed alone: no-op).
+    ercot_adaptive_fixed_point: bool = False
     # caiso-205 ADAPTIVE-EXPECTATION storage offer, the CAISO leg of the
     # ercot-221 family (owner order caiso-205 branch 1 over the caiso-204
     # recorded Phase-0 G-BOOT FAIL — the ercot-188/213/215/221 pattern:
@@ -14318,6 +14350,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_adaptive_half_life_days": 2,
     "ercot_adaptive_beta": 2,
     "ercot_adaptive_event_release": 1,
+    "ercot_adaptive_fixed_point": 1,
     "caiso_storage_adaptive_expectation": 1,
     "caiso_adaptive_half_life_days": 2,
     "caiso_adaptive_beta": 2,
