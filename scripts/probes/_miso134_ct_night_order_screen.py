@@ -168,6 +168,14 @@ def build_year(cfg: ScenarioConfig, year: int):
     apply_coal_tranches(mc_base, fleet, arrays, fuel_fracs, fuel_prices, cfg,
                         year=year)
     apply_gas_offer_margin(mc_base, fleet, fuel_prices, cfg)
+    # miso-180 anchored spread graft — the pipeline seam gained one step
+    # (run_calibration.py, same position: after the offer-margin family, on
+    # the base cost). Flag-gated no-op for every committed record (the field
+    # is default-off in every prior bundle); an armed bundle's construction
+    # is faithful only with it.
+    from market_sim.data.offer_curves import apply_miso_offer_spread_anchored
+
+    apply_miso_offer_spread_anchored(mc_base, fleet, arrays, cfg, year)
     return raw_fleet, fleet, arrays, fuel_prices, mc_base, zone_names
 
 
