@@ -4941,6 +4941,11 @@ def solve_and_persist(
 
         _supply_consistent = _caiso_demand_flag("caiso_supply_consistent_demand")
         _clock_realign = _caiso_demand_flag("caiso_demand_clock_realign")
+        # ercot-231: the ERCOT tie-zone attribution flag is the same defect
+        # class (a demand-build flag arriving via prb_overrides that the
+        # pristine ``cfg`` does not carry — checking cfg alone threads RAW
+        # demand into an armed probe, silently inert and misreported).
+        _ercot_tie_zonal = _caiso_demand_flag("ercot_tie_zonal_interchange")
         # td_loss_factor is the SAME defect class as the two flags above and
         # needs the same treatment (nyiso-87). It is not a solve_and_persist
         # kwarg, so a `--set td_loss_factor=X` probe can only arrive through
@@ -4970,6 +4975,7 @@ def solve_and_persist(
             include_interchange=not priced_interchange,
             strict_demand_profile=strict_demand_profile,
             caiso_supply_consistent_demand=_supply_consistent,
+            ercot_tie_zonal_interchange=_ercot_tie_zonal,
         )
         # Must-run residual classes (biomass / other-gas / ...) are netted out
         # of demand for the LP and re-added as pseudo-units in the dispatch

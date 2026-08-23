@@ -701,9 +701,10 @@ def run_year(
             already loaded to avoid the duplicate read, but only when that
             array is byte-identical to what this function would load — i.e.
             same ``iso_config`` zones/load-shares, ``td_loss_factor``,
-            ``include_interchange`` and ``caiso_demand_clock_realign``, and
-            non-strict demand profile (this function never passes
-            ``strict_demand_profile`` to :func:`load_demand`).
+            ``include_interchange``, ``caiso_demand_clock_realign`` and
+            ``ercot_tie_zonal_interchange``, and non-strict demand profile
+            (this function never passes ``strict_demand_profile`` to
+            :func:`load_demand`).
         persist_p0_commitment: OPT-IN (default ``False``), WRITE-ONLY. When
             set, stash the P0 commitment pattern and the startup run-ratio
             series in ``p2_state`` so the caller can persist them as bundle
@@ -2335,6 +2336,7 @@ def run_year(
             caiso_supply_consistent_demand=getattr(
                 config, "caiso_supply_consistent_demand", False
             ),
+            ercot_tie_zonal_interchange=config.ercot_tie_zonal_interchange,
         )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config
