@@ -130,7 +130,10 @@ def load_year_base_rows(year: int) -> pd.DataFrame:
     path = paths.clean_path("energy-offers", iso=ISO, year=year, market=MARKET)
     df = pd.read_parquet(path, columns=_READ_COLS, filters=[("step_idx", "==", 1)])
     ts = pd.to_datetime(df["interval_start_local"])
-    df = df.assign(month=ts.dt.month.to_numpy(), year=year)
+    hour = (
+        (ts - pd.Timestamp(year=year, month=1, day=1)) // pd.Timedelta(hours=1)
+    ).astype(int)
+    df = df.assign(month=ts.dt.month.to_numpy(), year=year, hour=hour.to_numpy())
     df = df[df["month"].isin(MONTHS)]
     w_all = np.clip(df["ecomax_mw"].to_numpy(float), 0.0, None)
     w_elig = np.clip(
@@ -148,6 +151,7 @@ def load_year_base_rows(year: int) -> pd.DataFrame:
         {
             "year": df["year"].to_numpy(),
             "month": df["month"].to_numpy(),
+            "hour": df["hour"].to_numpy(),
             "unit_code": df["unit_code"].to_numpy(),
             "base_level": df["step_price_usd_per_mwh"].to_numpy(float),
             "available": df["unit_available_flag"].to_numpy(bool),
