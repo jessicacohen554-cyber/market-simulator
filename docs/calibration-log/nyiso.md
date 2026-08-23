@@ -7767,3 +7767,95 @@ and the branch auto-deleted — recreated from the new main per the
 merged-branch rule; a category-vocabulary typo the merged ERCOT row carried
 (`cat: "commitment"`) fixed to `commit` so the matrix checker runs clean for
 every lane.
+
+## 2026-08-23 — OWNER RATIFICATION OF NYISO FRONTIER STATUS (records lane; no solve, no merits re-adjudicated)
+
+**OWNER DECISION, 2026-08-23, in session with the program director: "Ratify
+NYISO."** The act ratifies the §3 recommendation of
+`results/calibration/ASSESSMENT-nyiso154-frontier-2026-08-22.md` ("AT FRONTIER
+ON THE MERITS … This assessment RECOMMENDS ratification and is written to be
+citable as its basis"), which deliberately edited no `frontier` field because
+the declaration is an owner act. **This session records the act and nothing
+else:** no LP solve, no re-scoring, no bundle regeneration, no registration, no
+determination change, no keeper change, no mechanism armed, disarmed or
+re-verdicted, and no other ISO's files touched (rule 25 `[R-ISO-SCOPE]`; the
+per-ISO keeper lane of `frontend/data/backcast/keepers/README.md`).
+
+**Recorded.** A `frontier` block added to
+`frontend/data/backcast/keepers/NYISO.json` (`declared` 2026-08-23; the owner
+act quoted with its director-session attribution; the basis, keeper, open set,
+scope and genealogy in the note). `frontier` is attached by
+`scripts/build_status.py` *after* `determine()` runs — purely declarative,
+never gating, never touching the verdict — and renders as the FRONTIER badge
+plus note on the Calibration Status page.
+
+**Keeper and determination UNCHANGED.** `2026-08-22-nyiso-152-duty-complete`,
+determination **CALIBRATED** (C1 14/14 free 10/10; C2/C3a/C3b/C4/C6/C8 PASS;
+C3a +5.3 %/−2.7 %/−8.1 %; C3c the lone ledgered caveat at 1/0/0 h vs RT
+10/13/42). `build_status.py --iso NYISO` then `--check`: in sync,
+`[NYISO:CALIBRATED]`. `audit_keepers.py --iso NYISO`: **PASS 0/0**. Independent
+`calibration-keeper-auditor` scoped `--iso NYISO`: **PASS, 0 repairs**, which
+also confirmed against disk that `final` is empty and the freeze is `active`.
+
+**What the ratification claims (§4):** the NYISO backcast lane has exhausted
+its admissible mechanism set at the current representation, and the keeper is
+the most structurally faithful configuration tested (rule 1 `[R-STRUCT]`).
+**What it does not claim (§4):** *not* that C3c is closed — it is LEDGERED,
+1/0/0 against RT 10/13/42, reported at full magnitude on every determination;
+*not* that the winter downstate locational premium is represented — blocked on
+identification; *not* that any out-of-training year has been touched — none
+has; *not* that `final` readiness follows — it does not.
+
+**FRONTIER IS NOT `final`.** Ratifying frontier grants **no locked-test
+authorization of any kind**. `frontend/data/backcast/calibration-complete.json`
+and `holdout-freeze.json` were **not touched**: `final` stays EMPTY (`_note`
+only, NYISO absent), the holdout spend freeze stays ACTIVE, and NYISO's 2019
+and H1-2026 remain **NEVER GRANTED and unspent**, as they are for every ISO.
+Assessment §2 item 6 is unchanged — `final` readiness is **NOT-YET on the
+merits**, because 2019 is unsolvable at HEAD and cannot discriminate on C3c.
+No year outside 2023–2025 was solved, scored or read (rule 22 `[R-HOLDOUT]`,
+fail-closed). No future session should read the badge as a locked-test green
+light.
+
+**Remaining open set (§2), every item owner-court or ledgered:** (1) the summer
+downstate scarcity C3c face — model-class, LEDGERED under the rule-22 standing
+rule; (2) the winter downstate locational premium, proven locational by solve at
+nyiso-150 — owner-court intake, blocked on identification (BLOCKER-B class);
+(3) the Q2 2025-level decomposition annotation — owner-court, pending; (4) the
+hydro 10-min AS certification + hour-by-hour water limit — owner-funded intake,
+now scoped only as the future `nyiso_spin_reserve_online` unlock, the
+reserve-supply half having dissolved at nyiso-152; (5) CC cycling-cost
+identification (new at nyiso-154) — owner-court identification intake, adopting
+it is an identification decision and never a residual fit (rule 13
+`[R-MEASURED]`); (6) the `final` grant — owner decision, NOT-YET on the merits.
+
+**Re-declaration genealogy — this SUPERSEDES the 2026-08-06 clearing.** NYISO
+held frontier from the nyiso-104 declaration (2026-07-31) until the owner
+CLEARED it on 2026-08-06 (session nyiso-130), because nyiso-130 opened a new,
+named, untested object that falsified the exhaustion premise: NYISO's Table 1
+note 2 of the Locality Bulk Power Transmission Capability Reports publishes that
+the Zone-K "Locality Limit" the model used as an hourly bound is NET of a 660 MW
+generation loss-of-source ("the true N-1-1 Transmission Security Limit is 940 in
+this scenario"), and 100 % of the model's C3c tail hours in all three years form
+at that one in-window bound. **That object is CLOSED** — which is why
+ASSESSMENT-nyiso154 does not carry it as an open item, and why the exhaustion
+premise stands again. Verified at this session's head in
+`docs/codebase-site/data/mechanism-matrix/NYISO.js`:
+`nyiso_li_tsl_n11_security` = **K** (nyiso-130
+`PREREG-nyiso130-li-transfer-security-limit` + `_nyiso130_li_tsl_identification.json`;
+nyiso-143 `PREREG`/`RESULT-nyiso143-zone-k-transfer-bound` + `_nyiso143_ab_gates.json`),
+`nyiso_gj_locality_tsl` = **G**, `lcr_tsl_published` = **K**,
+`tsa_transfer_derate` = **G**. The `frontier_cleared` block is **preserved
+verbatim and in place** as that genealogy — byte-identical, verified against
+`HEAD` before and against the pushed blob after — and itself preserves the
+nyiso-104 declaration note inside `withdrawn_note_preserved_verbatim`; this
+ratification is the third layer of that record, not a replacement for it.
+
+**Matrix (rule 26 `[R-MECH-MATRIX]`).** NYISO's shard header re-stamped
+(`updated` → 2026-08-23; the `gates` narrative gains the ratification stamp with
+the 152 stamp preserved verbatim) and the single `### 5.5` prose header plus its
+FRONTIER STATUS block re-stamped from "recommended, not declared" to ratified.
+**Zero cell verdicts moved** — the shard's entire `cells` block is
+byte-identical to `HEAD`, verified programmatically, because this lane tested
+nothing. `check_mechanism_matrix.py` clean on all four legs. NYISO's shard and
+§5.5 block only.
