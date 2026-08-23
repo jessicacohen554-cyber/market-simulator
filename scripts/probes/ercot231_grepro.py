@@ -42,7 +42,7 @@ def compare(replay: Path, keeper: Path = KEEPER) -> bool:
         worst = 0.0
         worst_col = ""
         for col in k.columns:
-            if not np.issubdtype(k[col].dtype, np.number):
+            if not pd.api.types.is_numeric_dtype(k[col]):
                 if not (k[col].astype(str).to_numpy() == r[col].astype(str).to_numpy()).all():
                     print(f"{name}.{col}: non-numeric mismatch")
                     ok = False
