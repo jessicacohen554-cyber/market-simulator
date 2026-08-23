@@ -1,0 +1,198 @@
+{
+ "gates": {
+  "arm": "rho_measured",
+  "years": [
+   2023,
+   2024,
+   2025
+  ],
+  "r1_coefficient": {
+   "gate": "R-1",
+   "artifact_sha_frozen": "259fdc1a46d6d97996e2995d20026da29c054dd4205b2db42bf7327f85e1da2b",
+   "artifact_sha_now": "259fdc1a46d6d97996e2995d20026da29c054dd4205b2db42bf7327f85e1da2b",
+   "sha_match": true,
+   "control_flag": false,
+   "arm_flag": true,
+   "seam_control_value": 0.5,
+   "seam_arm_value": 0.17644175978069962,
+   "frozen_control_value": 0.5,
+   "frozen_arm_value": 0.17644175978069962,
+   "passed": true
+  },
+  "r2_liveness": {
+   "gate": "R-2",
+   "total_diff_cells": 244,
+   "threshold": 50,
+   "live": true,
+   "per_year": {
+    "2023": {
+     "diff_cells": 36,
+     "dw_price_control": 33.2539,
+     "dw_price_arm": 33.2709,
+     "dw_price_delta_pct": 0.0511,
+     "summer_dw_delta_usd": 0.0459,
+     "control_bind_hours": 5,
+     "arm_bind_hours": 6,
+     "control_bind_dual_max": 98.0,
+     "arm_bind_dual_max": 98.0,
+     "bindhour_dw_delta_usd": 18.4269
+    },
+    "2024": {
+     "diff_cells": 4,
+     "dw_price_control": 30.9872,
+     "dw_price_arm": 30.9872,
+     "dw_price_delta_pct": -0.0,
+     "summer_dw_delta_usd": -0.0,
+     "control_bind_hours": 6,
+     "arm_bind_hours": 7,
+     "control_bind_dual_max": 84.306,
+     "arm_bind_dual_max": 98.0,
+     "bindhour_dw_delta_usd": -0.0017
+    },
+    "2025": {
+     "diff_cells": 204,
+     "dw_price_control": 40.0981,
+     "dw_price_arm": 40.1221,
+     "dw_price_delta_pct": 0.0597,
+     "summer_dw_delta_usd": 0.0637,
+     "control_bind_hours": 10,
+     "arm_bind_hours": 15,
+     "control_bind_dual_max": 84.472,
+     "arm_bind_dual_max": 98.0,
+     "bindhour_dw_delta_usd": 11.9137
+    }
+   }
+  },
+  "r3_conduct": {
+   "gate": "R-3",
+   "control_failures": 0,
+   "arm_failures": 0,
+   "new_failures": [],
+   "passed": true
+  },
+  "r4_c8": {
+   "gate": "R-4",
+   "arm_records": [
+    [
+     "CC_REGULAR",
+     2023,
+     "PASS"
+    ],
+    [
+     "COAL",
+     2023,
+     "PASS"
+    ],
+    [
+     "CT_PEAKER",
+     2023,
+     "PASS"
+    ],
+    [
+     "ST_GAS",
+     2023,
+     "PASS"
+    ],
+    [
+     "hydro",
+     2023,
+     "SKIPPED"
+    ],
+    [
+     "CC_REGULAR",
+     2024,
+     "PASS"
+    ],
+    [
+     "COAL",
+     2024,
+     "PASS"
+    ],
+    [
+     "CT_PEAKER",
+     2024,
+     "PASS"
+    ],
+    [
+     "ST_GAS",
+     2024,
+     "PASS"
+    ],
+    [
+     "hydro",
+     2024,
+     "SKIPPED"
+    ],
+    [
+     "CC_REGULAR",
+     2025,
+     "PASS"
+    ],
+    [
+     "COAL",
+     2025,
+     "PASS"
+    ],
+    [
+     "CT_PEAKER",
+     2025,
+     "PASS"
+    ],
+    [
+     "ST_GAS",
+     2025,
+     "PASS"
+    ],
+    [
+     "hydro",
+     2025,
+     "SKIPPED"
+    ]
+   ],
+   "passed": false
+  },
+  "r5_flips": {
+   "gate": "R-5",
+   "n_records": 67,
+   "flips": [
+    {
+     "record": [
+      "governance",
+      null,
+      null
+     ],
+     "keeper": "PASS",
+     "arm": "UNATTESTED"
+    }
+   ],
+   "passed": false
+  },
+  "determination": {
+   "keeper": "NOT-YET",
+   "arm": "NOT-YET"
+  },
+  "r6_against_interest": {
+   "gate": "R-6",
+   "c3a_keeper_pct": {
+    "2023": 1.218,
+    "2024": -4.056,
+    "2025": -11.791
+   },
+   "c3a_arm_pct": {
+    "2023": 1.279,
+    "2024": -4.056,
+    "2025": -11.747
+   },
+   "c3a_2025_reported_not_gated": true,
+   "passed": true
+  },
+  "r7_overreach": {
+   "gate": "R-7",
+   "worst_annual_dw_delta_pct": 0.0597,
+   "band_pct": 2.0,
+   "passed": true
+  },
+  "kills_silent": false,
+  "verdict": "REJECTED-AS-ARMED"
+ }
+}

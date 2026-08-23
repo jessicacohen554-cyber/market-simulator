@@ -92,7 +92,11 @@ logger = logging.getLogger(__name__)
 # which TIGHTENS its additive coupling row — the MISO lane re-gates on its
 # own schedule (docs/calibration-log/governance.md, 2026-08-22 entry).
 # History: FINDING-nyiso144-downstate-scarcity-and-rho-2026-08-18.md,
-# FINDING-nyiso143-online-rho-unidentified-2026-08-18.md.
+# FINDING-nyiso143-online-rho-unidentified-2026-08-18.md; the MISO
+# primary-source leg of the refutation (BPM-002-r25: capability is
+# ramp x deploy-time, the only 0.5 a regulation-range CEILING) and the
+# ruling's MISO re-gate:
+# FINDING-miso177-rho-clip-floor-identification-2026-08-22.md.
 RHO_CLIP: tuple[float, float] = (0.0, 4.0)
 
 

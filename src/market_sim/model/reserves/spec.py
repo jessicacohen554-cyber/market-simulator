@@ -3196,7 +3196,8 @@ def _identified_online_rho(
     if measured is not None:
         logger.info(
             "%s gated reserve class '%s': MEASURED online_rho=%.4f "
-            "(pre-clip %.4f; min-load sensitivity %.4f, full-hour %.4f) over "
+            "(RHO_CLIP banded — floorless since the 2026-08-22 owner ruling; "
+            "pre-clip %.4f; min-load sensitivity %.4f, full-hour %.4f) over "
             "%d online unit-hours, CAMPD coverage %.1f%%, vintages %s",
             iso,
             family_set,

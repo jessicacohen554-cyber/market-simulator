@@ -8131,3 +8131,33 @@ over-entitlement — not a residual-fit artifact. Base row + cells in every
 shard minted this session (MISO `G`, PJM `U` — rule 25; others `.`).
 Records: `FINDING-miso176-m2m-seam-binding-reality-2026-08-22.md`,
 `PREREG-miso176-m2m-seam-class-adjudication-2026-08-22.md`.
+
+## miso-177 (2026-08-22) — the RHO_CLIP 0.5 floor REFUTED on MISO's primary record, DELETED by the same-day owner ruling, and the re-gate PROMOTED: keeper → `2026-08-22-miso-177-rho-measured`
+
+The six-cycle standing escalation (miso-169 §5 ask 1 / nyiso-144) is CLOSED
+end to end in one session. **Identification (charter step 1): NEGATIVE on all
+three source classes** — no repo citation (the nyiso-145 card's
+min-load-estimand genealogy confirmed), and MISO's own BPM-002-r25 limits
+per-resource reserve by ramp × deploy-time (§4.2.1.46–47) with the only
+capability-role 0.5 a CEILING on the regulation range (§4.2.1.37);
+Schedule 28 / the RBDC FERC record are requirement-side
+(`FINDING-miso177-rho-clip-floor-identification-2026-08-22.md`). **Mid-session
+the owner ruled** (nyiso-151, D-5(b)): `RHO_CLIP (0.5,4.0) → (0.0,4.0)`,
+card option A, MISO handed the re-gate. **The pre-registered A/B**
+(PREREG-miso177 + frozen instrument + scorer, all committed before any
+solve) executed on one tree: control `2026-08-22-miso-177-control`
+bit-identical to the keeper (R-0 12/12 sidecars max|diff|=0.0, consumed
+0.5000), arm `2026-08-22-miso-177-rho-measured` at the measured
+0.17644175978069962 — regspin binding 5→6/6→7/10→15 h, duals to the full
+$98 step, bind-hour +$18.43/+$11.91, annual ≤0.060 %, ZERO D-4 conduct
+failures, zero solve-record flips, C3a-2023/2024 inside their
+against-interest bands, C3a-2025 −11.79 → −11.75 % (disclosed, never
+claimed). R-4/R-5 as-written fired on instrument artifacts (hydro SKIPPED
+records; the attestation-presence record) and are recorded per the miso-170
+discipline. **Promoted on the owner's standing instruction** — zero new DOF
+(ledger 33/2), the first HEAD-consistent MISO keeper since the ruling; the
+transient delivery field was removed in the same-session reconciliation
+(rule-26 replay entry `("MISO", True)`). Determination NOT-YET on C3a-2025
+ALONE, C3c the single ledgered caveat. Also repaired at HEAD in passing:
+the `MECH_ERCOT_RUC_COMMITMENT` import drop and the matrix category defect
+(both ercot-227 merge fallout).
