@@ -1,0 +1,269 @@
+{
+ "probe": "ercot231",
+ "factor": "COMBINED - ercot_tie_zonal_interchange (N1a) + the gtc-limits clean partition restored so ercot_gtc_limits_measured=True engages (FINDING SS2 rule-14 repair)",
+ "charter": "ercot-231: the non-AS energy/tightness factor program (PRECOMMIT-ercot231-nonas-tightness-2026-08-23, blob 526401e, pushed + blob-verified before any measurement); combined path per SS5.6",
+ "session": "continuation (claude/2023-ercot-config-assessment-ouhsua)",
+ "branch_sha": "015027b",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1"
+ },
+ "control": "results/calibration/ercot231_ctl",
+ "arm": "results/calibration/ercot231_combo2023",
+ "engagement_witness": {
+  "tie": "INFO: ERCOT tie-zone interchange applied for 2023: -98 MW avg",
+  "gtc": "gtc-limits 2023 applied: NE_LOB->Northeast-North x1.0 (3640 active h), PNHNDL->Panhandle-North x1.0 (1312), WESTEX->West-North x0.727 + West-South_Central x0.273 (1881); 14 unmapped constraints ignored (intra-zone pockets)"
+ },
+ "official": {
+  "control": [
+   {
+    "year": 2023,
+    "c3a_model": 38.81,
+    "c3a_actual": 64.32,
+    "c3a_magnitude": "-39.7%",
+    "c3b_nrmse": "0.729",
+    "c3c_model_h": 74,
+    "c3c_actual_rt_h": 181
+   }
+  ],
+  "arm": [
+   {
+    "year": 2023,
+    "c3a_model": 39.85,
+    "c3a_actual": 64.32,
+    "c3a_magnitude": "-38.0%",
+    "c3b_nrmse": "0.696",
+    "c3c_model_h": 93,
+    "c3c_actual_rt_h": 181
+   }
+  ]
+ },
+ "probe_basis": {
+  "control": {
+   "c3a": -29.99,
+   "c3b": 3.4476,
+   "tail": 74,
+   "model_mean": 33.856
+  },
+  "arm": {
+   "c3a": -28.54,
+   "c3b": 3.3901,
+   "tail": 91,
+   "model_mean": 34.555
+  }
+ },
+ "gates": {
+  "G-CAP": {
+   "violations": 0,
+   "pass": true
+  },
+  "G-SPUR": {
+   "pass": false,
+   "bar": "+5/yr vs banded baseline (lidless REPORT-ONLY)"
+  },
+  "G-SHED": {
+   "pass": true
+  },
+  "G-BAT": {
+   "pass": true
+  },
+  "G-D2": {
+   "no_new_d4_rows": true
+  },
+  "G-SHORTFALL": {
+   "pass": true,
+   "rule": "per rigid family, arm shortfall hour-set \u2286 control's (precommit AMENDMENT 1 \u2014 no MANUFACTURED shortage; the keeper baseline itself carries 21 designed VOLL-engagement hours)"
+  }
+ },
+ "summer": {
+  "miss_split_ctl": {
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  },
+  "miss_split_arm": {
+   "caught": 80,
+   "missed": 101,
+   "phantom": 11
+  },
+  "d_price_at_miss_p50": 8.242,
+  "d_price_at_miss_max": 54.31,
+  "window_concentration": 0.9677,
+  "calm_fortnight_bias_pct": {
+   "control": 15.44,
+   "arm": 16.28
+  },
+  "channel_lambda_share_at_improved_miss": 1.0017,
+  "improved_miss_hours": 82
+ },
+ "spur_detail": {
+  "control_hours": [
+   5251,
+   5443,
+   5660,
+   5684,
+   5731,
+   5804,
+   5821,
+   5822,
+   5874,
+   5995,
+   6450
+  ],
+  "arm_hours": [
+   5251,
+   5272,
+   5438,
+   5439,
+   5440,
+   5441,
+   5443,
+   5465,
+   5466,
+   5492,
+   5660,
+   5684,
+   5731,
+   5804,
+   5821,
+   5822,
+   5850,
+   5874,
+   5995,
+   6306,
+   6450
+  ],
+  "arm_lidless": {
+   "s_nolid": 21,
+   "s_band": 21,
+   "s_top": 0
+  },
+  "baseline": [
+   4283,
+   4404,
+   4547,
+   4548,
+   4571,
+   4572,
+   4593,
+   4832,
+   5024
+  ]
+ },
+ "family_diagnostics": {
+  "reserve_family_arm": {
+   "ECRS_withheld": {
+    "shortfall_hour_set": [
+     4098,
+     4099,
+     5488,
+     5490,
+     5659,
+     5682,
+     5683,
+     5802,
+     5967,
+     5970,
+     5994
+    ],
+    "shortfall_hours": 11,
+    "shortfall_max_mw": 1671.694,
+    "dual_ge_voll_hours": 21,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 741.8,
+    "requirement_max_mw": 2875.0,
+    "held_mean_mw": 1506.1
+   },
+   "RRS_withheld": {
+    "shortfall_hour_set": [
+     5489,
+     5490,
+     5563,
+     5656,
+     5658,
+     5682,
+     5802,
+     5803,
+     5970
+    ],
+    "shortfall_hours": 9,
+    "shortfall_max_mw": 1284.078,
+    "dual_ge_voll_hours": 21,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 1263.1,
+    "requirement_max_mw": 2261.1,
+    "held_mean_mw": 1928.2
+   },
+   "RegUp_withheld": {
+    "shortfall_hour_set": [
+     4096,
+     5487,
+     5488,
+     5489,
+     5490,
+     5658,
+     5801,
+     5966,
+     5970,
+     5994,
+     6015
+    ],
+    "shortfall_hours": 11,
+    "shortfall_max_mw": 343.799,
+    "dual_ge_voll_hours": 21,
+    "dual_max": 5000.0,
+    "requirement_mean_mw": 241.1,
+    "requirement_max_mw": 789.0,
+    "held_mean_mw": 1091.5
+   }
+  },
+  "d4_no_new_rows": true
+ },
+ "adaptive": {
+  "control": {
+   "present": true,
+   "model_spike_days": 7,
+   "p_hat_max": 0.37,
+   "floor_ge_1000_hours": 156,
+   "floor_ge_1000_by_month": {
+    "8": 22,
+    "9": 118,
+    "10": 16
+   },
+   "floor_max_usd": 1850.0
+  },
+  "arm": {
+   "present": true,
+   "model_spike_days": 7,
+   "p_hat_max": 0.37,
+   "floor_ge_1000_hours": 156,
+   "floor_ge_1000_by_month": {
+    "8": 22,
+    "9": 118,
+    "10": 16
+   },
+   "floor_max_usd": 1850.0
+  }
+ },
+ "phase0": {
+  "miss_set": {
+   "tail_hours": 181,
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  }
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "failed_criteria": [
+   "G-SPUR banded (arm 21 vs bar 14; control 11)"
+  ],
+  "mechanical_verdict": "REJECTED-AS-ARMED on G-SPUR alone - every other SS5.5 criterion clears: official C3a-2023 -39.7 -> -38.0 (+1.7 pp, bar 1.5), C3b 0.729 -> 0.696 (improves), C3c 74 -> 93 of RT 181; miss split 67/114/7 -> 80/101/11; d_price_at_miss p50 +$8.24 max +$54.31 over 82 improved miss hours, window concentration 0.9677, calm fortnight +16.28% (bar +2pp over control's +15.44% -> +0.84pp PASS), channel lambda-share 1.0017; G-CAP/G-SHED/G-BAT/G-D2/G-SHORTFALL all PASS",
+  "disposition": "KEEPER-CANDIDATE escalated to the owner (SS5.8: borderline mechanical verdicts escalate, never self-adjudicate). The combined arm carries N1a's EXACT G-SPUR signature (the identical 21-hour set, all Aug-5..Sep-26 in-season, lidless s_top 0 - none above $500) with the GTC restoration adding a small lambda-carried increment (max d_price at miss +$54.31 vs +$49.83 tie-only; improved miss hours 80 -> 82) and ZERO new gate damage; the adaptive conduct path is identical (7 spike days, same floor calendar). Flag stays default-off; nothing registered; the 3-year path (ercot231_tiegtc_full) runs only on the owner's call."
+ },
+ "reading": "The two measured-input repairs compose almost exactly additively: tie-only official 39.84 mean / GTC-only +$0.01 / combined 39.85. The GTC piece is invisible at the gate grain (the spur set is bitwise the tie arm's) because its three mapped constraints bind at export hours that overlap the tie arm's placement effect only at the top of the book. Composition confirms the two deltas are independent surfaces - no interaction term, no cross-amplification, the SS1 arithmetic's placement exception measured twice."
+}

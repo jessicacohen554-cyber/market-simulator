@@ -11391,3 +11391,82 @@ push, no CI solves, no workflows, no PR.
 
 **Session consumed the ercot-230 shorthand. Next shorthand: ercot-231**
 (ercot-199 remains unclaimed)
+
+---
+
+## ercot-231 — 2026-08-23 — THE NON-AS ENERGY/TIGHTNESS SWEEP (the last unswept surface, PRECOMMIT-ercot231 N1–N5): the sweep did NOT terminate MEASURED-EMPTY — the tie-zone attribution (N1a) CLEARS the C3a adoption bar (+1.6 pp) and fails G-SPUR alone; the keeper lineage's measured-GTC arm is discovered SILENTLY DEAD (the ERCOT-76 provenance defect, resurfaced and this time solved: restoration gates-clean, the first factor in the whole program to move a missed hour); the COMBINED candidate composes additively (−38.0 / 0.696 / 93) and is ESCALATED to the owner, not self-adopted
+
+**Two-container record.** The hub session (branch
+`claude/ercot-energy-tightness-channel-vm4w8k`) pushed the precommit (blob
+`526401e`) before any measurement, ran Phase 0, built N1a
+(`ercot_tie_zonal_interchange`, default off, zero fitted scalars, matrix row
++ all-shard cells in the build push), committed the five
+documentation-verdict JSONs (N1b/N2/N3/N4/N5 — all §5.4 kills fired), solved
+the N1a A/B, and died mid-close with four commits stranded unmerged. The
+completion session (branch `claude/2023-ercot-config-assessment-ouhsua`, this
+entry) recovered those commits unrewritten (clean fast-forward), replicated
+the control identity independently, solved the COMBINED 2023 probe, and wrote
+the FINDING: `docs/FINDING-ercot231-nonas-tightness-2026-08-23.md`.
+
+**The GTC-lineage discovery (FINDING §2).** The keeper lineage
+(ercot-215→221→223) records `ercot_gtc_limits_measured=True` and SOLVED ON
+THE STATIC-TTC FALLBACK — `data/clean/gtc-limits` is gitignored, absent in
+every fresh container, and `load_gtc_hourly` degrades silently (the ERCOT-76
+2026-07-17 provenance defect, whose recorded owner options were never taken).
+Measured twice independently: G-REPRO numeric identity vs the keeper's
+committed sidecars (max|Δ| = 0.0 every numeric column, official digits
+−39.7/0.729/74 exact) is achieved exactly and ONLY WITHOUT the partition.
+The restoration as its own single delta (curated from committed NP6-86
+archives; 2023: 13,452 (gtc,hour) rows / 17 GTCs / 3 mapped): ALL SIX GATES
+PASS incl. G-SPUR 11↔11, official +$0.01 / C3c 74→75, and **4 improved
+missed hours λ-carried (max +$6.49)** — the first factor in 226/227/230/231
+to move any missed hour (`ercot231_gtc_gates.json`). Matrix
+`measured_interface_limits` ERCOT stamp corrected (the K described the armed
+config, not the effective network).
+
+**N1a (FINDING §3).** All 114 keeper missed hours were net imports (p50
+−814 MW = 64.8 % of the 1,256 MW DC-tie capability) spread by load share;
+placing the measured per-neighbor flows at the tie-host zones moves official
+C3a-2023 −39.7 → −38.1 (+1.6 pp, bar 1.5), C3b 0.729 → 0.696, miss split
+67/114/7 → 80/101/11, d_price_at_miss p50 +$8.28 / max +$49.83, 97.4 %
+window-concentrated, λ-carried 1.0017 — REJECTED-AS-ARMED on **G-SPUR
+alone** (21 vs bar 14; all in-season, none above $500). The §1 ex-ante
+arithmetic (a quantity factor needs multi-GW) was beaten by PLACEMENT. Two
+defects found and fixed en route: the demand-threading defect (`0b72358`,
+caiso-80/nyiso-87 class — a `--set`-armed flag silently inert while
+run_config recorded it armed) and the grepro dtype fix (`7608ee0`).
+
+**The COMBINED 2023 probe (this session; FINDING §5).** Control = static-TTC
+keeper replay (G-REPRO exact); arm = + tie flag + GTC partition present (both
+engagements verified in the solve log). Official **−38.0 % / 0.696 / 93 h**
+(+1.7 pp); miss split 80/101/11; d_price_at_miss p50 +$8.24 / max +$54.31
+over 82 improved hours; adaptive conduct path IDENTICAL (7 spike days, same
+floor calendar); G-CAP/G-SHED/G-BAT/G-D2/G-SHORTFALL PASS; G-SPUR FAIL on
+the tie arm's IDENTICAL 21-hour set. Composition measured ADDITIVE (tie
+39.84 / GTC +$0.01 / combined 39.85) — two independent measured surfaces.
+Record: `ercot231_probe_combined.json` + `ercot231_combined_gates.json`.
+
+**Disposition (FINDING §6): NOTHING self-adjudicated.** No factor cleared
+§5.5 in full, so the keeper `2026-08-20-ercot223-arm-eventrelease` stands
+untouched, all flags default-off, nothing dashboard-registered (W-2). To the
+owner: (1) N1a/combined promotion under the standing structural standard
+over the lone G-SPUR kill (the ercot-188/213/215/221 shape); (2) the GTC
+restoration as the rule-14 repair + ERCOT-76's still-open trap fix
+(fail-loud on armed-but-starved, or curation as a standing solve step);
+(3) on promotion, the 3-year `ercot231_tiegtc_full` path with §5.7 explicit
+2024/2025 scoring, the X-2 keeper-prose rewrite and the C3c
+OPEN-RESIDUAL-LANE re-wording (generator committed:
+`scripts/gen_ercot231_attestation.py`); (4) else the §0 termination
+protocol — Door D restore vs the seasonal end-of-season card. The §4
+completeness claim is discharged: the 2023 tightness surface has no
+admissible un-swept input face left (FINDING §7).
+
+Hygiene: env verified at the pins (3.11.15 / 1.15.1 / 2.4.6 / 1.17.1 /
+3.0.5 / 25.0.1); scorer `--validate-keeper` OK before any probe scored; 6 GB
+swapfile preemptive + `MALLOC_ARENA_MAX=2`, no OOM, no retries; solves
+sequential (rule 12); years {2023} only (rule 22); ERCOT-only shards/curves
+(rule 25); `check_mechanism_matrix.py` exit 0 on every push; probe bundles
+local + gitignored; no CI solves, no workflows.
+
+**Session consumed the ercot-231 shorthand. Next shorthand: ercot-232**
+(ercot-199 remains unclaimed)
