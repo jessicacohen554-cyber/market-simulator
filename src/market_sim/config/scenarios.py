@@ -1057,6 +1057,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off one cache entry. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "mustrun_layup_window_mask",
+    # miso-180 anchored SPREAD-ONLY dispersion graft (GATED default off):
+    # dropped from the hash at its False default so every pre-existing cache
+    # key of all six ISOs stays byte-stable — the off path returns before
+    # touching the artifact, byte-identical by construction. An armed run
+    # reprices the above-anchor affected tranches (a different offer surface,
+    # so a different dispatch) and hashes distinctly. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "miso_offer_spread_anchored",
     # Hindcast announced-exit verification (owner directive 2026-08-22, the
     # PJM Byron/Dresden false-retire investigation): dropped from the hash at
     # its False default so every pre-existing cache key of all six ISOs stays
@@ -1286,6 +1294,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "miso_offer_surface_path": "None",
     "miso_offer_surface_netload_pcts": "(0.80, 0.90, 0.97)",
     "miso_offer_surface_position_bins": "(\n0.0,\n0.2,\n0.4,\n0.6,\n0.8,\n0.9,\n1.0,\n)",
+    "miso_offer_spread_anchored": "False",
     "coal_offer_net_revenue_margin": "False",
     "coal_offer_margin_anchor": "None",
     "coal_offer_margin_level": "None",
@@ -11033,6 +11042,28 @@ class ScenarioConfig:
         0.9,
         1.0,
     )
+    # Anchored SPREAD-ONLY across-unit dispersion graft (miso-180, default
+    # off, MISO-gated — the owner-chartered D-1b successor of the miso-179
+    # REFUTED level-replacement form). Grafts ONLY the measured above-anchor
+    # rise of MISO's eligible DA conduct book — Q(r) − Q(a) from the committed
+    # miso-179 pooled BOOK-ELIG vector (data/raw/_validation-source/
+    # miso_offer_level_dispersion.json, sha pinned in constants) — onto the
+    # affected stack's OWN offers above the interior anchor rank a
+    # (constants.MISO_OFFER_SPREAD_ANCHOR_RANK, identified ex ante by the
+    # pre-registered model/book H* crossing rule, PREREG-miso180 §2). Within
+    # each calendar month the econ/peak tranches of the offer-curve classes
+    # are pmax-weighted midpoint-ranked by mc_base; tranches above the anchor
+    # are floored RAISE-ONLY at the stack's own monthly anchor level plus the
+    # measured rise × G_ref(month) (Henry Hub monthly + measured MISO hub
+    # basis — the SAME reference the identification normalized by). The model
+    # keeps its own level at and below the anchor (the miso-151 shape-only
+    # admissibility pattern at ACROSS-unit grain); committed/mustrun/sync
+    # bands, tranche MW structure, and the P1 startup markup are untouched.
+    # Applied to the BASE cost so P0 and P1 see the same curve. Rule 13: the
+    # vector + anchor are frozen measured conduct parameters; ranks, anchor
+    # level and G_ref regenerate forward from the model's own fleet and gas.
+    # Applied in ``data.offer_curves.apply_miso_offer_spread_anchored``.
+    miso_offer_spread_anchored: bool = False
 
     # Coal-offer NET-REVENUE MARGIN form (the gas form's coal analogue,
     # ERCOT-137; owner ruling 2026-07-29: coal offers move to a measured

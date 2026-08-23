@@ -123,6 +123,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     ercot_offline_commit_offer: { cell: "." },
     measured_offer_surface: { cell: "I", ev: "neiso-58; caiso-154 §B/§D/§E/§F (input standing, no-LP: NOT LIVE — no regression family; artifact reproduces to 0.023 % at IDENTICAL 353/352/353 coverage; the caiso-153 signature is DATA-REAL counterfactually (OLS slope p50 7.4-8.1 vs TS 9.4-10.2, fast-start 630 MW splits 303/327 under OLS where TS puts all >=8.5) but admissible at $15.2-15.7 vs the $20 bar; NEW FILED EXPOSURE: tight-bin q0.7/q0.9 rungs levered +10.1-13.1 % by the 34 Algonquin fuel-tail days — unarmed artifact, charter-gated; FINDING-caiso154-xiso-ols-attenuation-not-live-2026-08-02.md)" },
     miso_offer_level_dispersion: { cell: ".", ev: "MISO-only adjudication of a MISO-corpus identification (the masked *_co conduct book). Each ISO's across-unit offer-level object is its own identification from its own disclosure corpus (rule 25) — this market's offer-conduct candidates live on its own offer-surface family rows; a dispersion-form candidate here would enter as its own cell with its own derive." },
+    miso_offer_spread_anchored: { cell: ".", ev: "MISO-only graft of a MISO-corpus identification (the committed miso-179 BOOK-ELIG vector + the miso-180 H*-crossing anchor). Rule 25: the verdict never transfers; a spread-graft candidate in this ISO enters as its own cell with its own identification from its own disclosure corpus." },
     pjm_midcurve_belt: { cell: "." },
     coal_passthrough_sigmoids: { cell: "." },
     coal_econ_bound: { cell: "." },

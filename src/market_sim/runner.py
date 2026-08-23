@@ -67,6 +67,7 @@ from market_sim.data.build_throughput import max_annual_build_gw_by_tech
 from market_sim.data.offer_curves import (
     apply_cc_committed_offer_margin,
     apply_gas_offer_margin,
+    apply_miso_offer_spread_anchored,
     apply_miso_offer_surface,
 )
 from market_sim.data.confirmed_retirements import (
@@ -2138,6 +2139,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     _gas_series(config, year, mc_base.shape[1]),
                     config,
                 )
+            # miso-180 anchored SPREAD-ONLY dispersion graft
+            # (miso_offer_spread_anchored, default off, MISO-gated): forecast
+            # parity with the backcast seam — the above-anchor econ/peak
+            # tranches are floored at the stack's own monthly anchor level
+            # plus the measured eligible-book rise (shape, never level). The
+            # measured G_ref seam hard-errors on a year with no measured gas
+            # rows rather than silently substituting a forward curve; wiring
+            # the forward trajectory through it is a deliberate future change.
+            apply_miso_offer_spread_anchored(
+                mc_base, dispatch_fleet, fleet_arrays, config, year
+            )
             # CC committed-block measured offer level (cc_committed_offer_margin,
             # default off — ERCOT-139): the CC_REGULAR `_committed` tranche is
             # repriced from its band multiplier to the measured RT SCED curve

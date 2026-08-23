@@ -4261,6 +4261,29 @@ MISO_RPE_DEMAND_VALUE: float = 200.0
 # import-node docstring flags; see transmission.extend_with_import_node.)
 MISO_SOUTH_EXTERNAL_ZONE: str = "MISO_external_South"
 
+# Anchored SPREAD-ONLY across-unit dispersion graft (miso-180,
+# ScenarioConfig.miso_offer_spread_anchored). The anchor rank is the
+# model/book distribution crossing rank on the frozen miso-179 H*
+# constructions — the last 199-grid rank at which the model's affected-stack
+# mc_base quantile sits at or above the eligible book's, identified ONCE by
+# the pre-registered rule (PREREG-miso180-anchored-spread-2026-08-23.md §2;
+# record results/calibration/_miso180_anchored_spread_precheck.json:
+# single crossing, model $56.55 vs book $55.54 at the anchor, guards clear).
+# Identified from INPUTS only (frozen demand-side H*, input offer surface,
+# measured book) — zero LMP/residual in the path (rule 13); re-identifies
+# only when the corpus/artifact updates, with the data change cited
+# (rule 23). NEVER swept: an anchor tuned against C3a is the fitted-adder
+# rule-1 violation (PREREG §2 anti-sweep clause).
+MISO_OFFER_SPREAD_ANCHOR_RANK: float = 0.875
+# sha256 of the committed identification artifact the graft consumes
+# (data/raw/_validation-source/miso_offer_level_dispersion.json, the
+# miso-179 pooled BOOK-ELIG 199-point vector). The apply path hard-errors on
+# a mismatch while armed — the graft must never consume a drifted vector
+# (rule 24: the parameter surface is pinned, not merely pathed).
+MISO_OFFER_SPREAD_ARTIFACT_SHA256: str = (
+    "b4e723127de638068cfacae84dd78c911e5c9a322b8738671c0dc1895eefde28"
+)
+
 # Exogenous EAC price reference ranges ($/MWh) by resource type, as
 # low/mid/high values. Documentation only — these are NOT used as defaults
 # (every ScenarioConfig.eac_price_* defaults to 0.0); they give plausible
