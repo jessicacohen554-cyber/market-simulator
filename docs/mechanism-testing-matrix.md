@@ -4704,7 +4704,75 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-22-miso-177-rho-measured` (**PROMOTED miso-177, 2026-08-22**, superseding `2026-08-22-miso-175-hourkey` — the measured-rho re-gate of the same-day owner RHO_CLIP band ruling; the standing miso-169/nyiso-144 floor escalation is CLOSED: refuted, deleted, re-solved), **NOT-YET on C3a-2025 (−11.7 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, miso-175 (2026-08-22) EXECUTED item 1 (the seam-envelope hour-key rotation — now the keeper); miso-176 (2026-08-22) EXECUTED item 3 (the M2M/CMP seam-class intake + binding-reality measurement — `m2m_seam_entitlement_cap` minted `G`, no LP); the remaining two (the coincident-peak seam-response object [OWNER admissibility ruling needed, now holding miso-176's binding evidence], the South under-export) stay NAMED, NOT CHARTERED — see the stamps below and the standing OWNER items.**
+### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-22-miso-177-rho-measured` (**PROMOTED miso-177, 2026-08-22**, superseding `2026-08-22-miso-175-hourkey` — the measured-rho re-gate of the same-day owner RHO_CLIP band ruling; the standing miso-169/nyiso-144 floor escalation is CLOSED: refuted, deleted, re-solved), **NOT-YET on C3a-2025 (−11.7 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, miso-175 (2026-08-22) EXECUTED item 1 (the seam-envelope hour-key rotation — now the keeper); miso-176 (2026-08-22) EXECUTED item 3 (the M2M/CMP seam-class intake + binding-reality measurement — `m2m_seam_entitlement_cap` minted `G`, no LP); the remaining two (the coincident-peak seam-response object [OWNER admissibility ruling needed, now holding miso-176's binding evidence], the South under-export) stay NAMED, NOT CHARTERED — see the stamps below and the standing OWNER items. **miso-178 (2026-08-23) delivered the re-charter's measurement: the full C3a-2025 anatomy on the measured-rho keeper + the RANKED lever plan — the queue now carries the D-1 across-unit offer-level-dispersion charter ask (top), the D-2 5(i) seam-response ruling, and the D-3 South under-export evidence charter (FINDING-miso178 §7–§10; its stamp below).**
+> **QUEUE STAMP miso-178 (2026-08-23) — THE RE-CHARTER'S MEASUREMENT DELIVERED: THE
+> C3a-2025 ANATOMY IS RE-MEASURED END TO END ON THE MEASURED-RHO KEEPER AND THE LEVER
+> PLAN IS RANKED. NO LP, NOTHING ARMED, NO `ScenarioConfig` FIELD, NO CELL VERDICT
+> MINTED, NO REGISTRATION. Keeper UNCHANGED at `2026-08-22-miso-177-rho-measured`;
+> determination UNCHANGED at NOT-YET on C3a-2025 ALONE.** Records:
+> `results/calibration/FINDING-miso178-c3a2025-anatomy-and-lever-plan-2026-08-23.md`;
+> instruments `scripts/probes/_miso178_c3a2025_anatomy.py` (+ the FULL miso-167
+> instrument re-run at this bundle and the miso-171 scarce-set bit-identity assertion)
+> and `scripts/probes/_miso178_c3a_decomposition.py` (the miso-156/161 Δ chain, third
+> application; disclosed import shim over the pruned miso148_basis_B guard); records
+> `_miso178_c3a2025_anatomy.json` / `_miso178_c3a_decomposition.json`.
+> **THE ANATOMY** (footing gate ≤0.0083 pp): the 88-hour actual RT>$200 tail carries
+> **−9.61 pp of the −11.74 (82 %)**; top-decile net-load ex-tail −3.57 pp; the remaining
+> ~7,860 h are **+1.45 pp OVER-priced** — the 2023/24 "pass by cancellation" made
+> additive (remainder +5.34 → +3.03 → +1.45 pp while the tail grows −2.98 → −4.58 →
+> −9.61). Jun −3.28 / Jul −3.69 / Sep −1.56 / Jan −1.43 pp; **May OPPOSES at +0.82 pp**
+> (+14.4 % own-month, still unexplained — miso-148 §7.1 stays open). **ZONAL IS A
+> DIPOLE, not uniform**: 2025 Midwest own-err −4.3…−15.2 % vs **MISO-South +17.0 %
+> OVER** (+18.8/+21.0 % in 2023/24 — a STANDING South over-price; actual 2025 South was
+> the CHEAPEST zone while the model prices it at an RDT premium — the premium sign is
+> wrong in 2025, plausibly DOWNSTREAM of the flat Midwest stack, rule 19). **REACH
+> MAP**: the miso-171 §6 closure is CONFIRMED CURRENT at measured rho (scarce-47 dual
+> mean $13.23 / max $98.00 = the full step; DA-foreseen model $110.32); the two-term
+> split puts the model **−13.71 pp BELOW MISO's OWN DA surface** (tail −2.02, body
+> −11.69) while the DA→RT wedge nets **+1.98 pp in the model's favor** — the ANNUAL
+> band does NOT require the RT-only class. Ceilings, computed: tail@actual-RT → C3a
+> **−2.13 %**; model@DA-everywhere → **+1.96 %** (inside ±10 in every year; 2023
+> against-interest +4.26/+4.21, inside band). Tail guard: the model meets the 88 hours
+> with **−5.3 GW less gas, +2.1 GW more imports, −1.7 GW less solar** than measured
+> (same signature 2023/24: gas −4.0/−4.7, imports +2.3/+1.6). Δ chain at this keeper:
+> 2025 gap +5.33 = **Δ₁ identity +10.50 (197 %)** + Δ₂ −6.44 + Δ₃ +1.27 $/MWh
+> (V1/V4 PASS; V2 report-only, FLOORS_OFF twins committed).
+> **THE RANKED PLAN** (FINDING §7–§10): **(1) the ACROSS-UNIT OFFER-LEVEL DISPERSION
+> object** — miso-151 §8(A)'s named successor, the structural owner of Δ₁/slope; a
+> rank-mapped markup DISTRIBUTION from the rule-13-admissible offer corpus (ex-ante
+> declarations; awards dropped; no unit/class pinning per the miso-138 refutation;
+> ercot-223 armed-conduct precedent), with the falsifiable cross-zone prediction that
+> the South dipole unwinds — **OWNER ASK D-1** (charter + conduct-form admissibility +
+> the ~430 MB JJA corpus refetch), PREREG sketch in FINDING §9 incl. two no-LP
+> pre-check kills; **(2) the coincident-peak seam-RESPONSE envelope** — the standing
+> **5(i) ruling (D-2)**, re-bounded +2.07 GW on the 88-h set, near-inert at the current
+> slope (+3.9 $/MWh, miso-174 §6) hence SEQUENCED AFTER (1); **(3) the South
+> under-EXPORT evidence charter (D-3)** — firm/JOU export-driver hunt (Manitoba-block
+> admissible shape; outside the M2M record), partly contingent on (1)'s prediction;
+> **(4)** the posture question (D-4) unchanged — and per the reach map, a refusal of
+> D-1..D-3 is a budget decision, not a model-class one. NO cell touched (nothing
+> tested); `docs/governance/rule-history.md` §7.1 now carries the 2026-08-18 LIFT
+> annotation on the miso-163 entry.
+
+> **QUEUE STAMP miso-177 (2026-08-22; recorded 2026-08-23 by miso-178 — the promoting
+> session updated this header and the MISO shard but left no stamp in this body).**
+> The RHO_CLIP escalation (miso-169 §5 ask 1 / nyiso-144) CLOSED end to end: the 0.5
+> floor REFUTED on MISO's primary record (BPM-002-r25 §4.2.1.46–47 ramp × deploy-time;
+> the only capability-role 0.5 is a regulation-range CEILING, §4.2.1.37), the same-day
+> owner ruling (nyiso-151, rule 22 D-5(b)) DELETED the floor globally
+> (`RHO_CLIP (0.5, 4.0) → (0.0, 4.0)`, card option A), and the pre-registered A/B
+> promoted the re-gate: **KEEPER → `2026-08-22-miso-177-rho-measured`** at the measured
+> 0.17644175978069962 (5.28 M CAMPD online unit-hours, 93.1 % coverage; buckets coal
+> 0.14 / CC 0.19 / CT 0.31 / ST 0.29). Control bit-identical (R-0 12/12 max|diff| =
+> 0.0); regspin binding 5→6 / 6→7 / 10→15 h, duals to the full $98 Schedule-28 step,
+> annual ≤0.06 %, ZERO D-4 conduct failures, zero solve-record flips, ZERO new DOF
+> (ledger 33/2). Determination UNCHANGED at NOT-YET on C3a-2025 ALONE (−11.75 %,
+> disclosed never claimed), C3c the single ledgered caveat. Records:
+> `FINDING-miso177-rho-clip-floor-identification-2026-08-22.md`,
+> `PREREG-miso177-rho-measured-ab-2026-08-22.md`,
+> `RESULT-miso177-rho-measured-execution-2026-08-22.md`, `_miso177_rho_instrument.json`,
+> `_miso177_rho_ab.json`; full narrative `docs/calibration-log/miso.md` miso-177.
+
 > **QUEUE STAMP miso-176 (2026-08-22) — THE M2M/CMP SEAM-CLASS RECORD IS INTAKEN AND THE
 > BINDING-REALITY MEASUREMENT IS ADJUDICATED: `m2m_seam_entitlement_cap` MINTED `G` ON THE
 > PRE-REGISTERED VERDICT MAPPING. NO LP, NOTHING ARMED, NO `ScenarioConfig` FIELD, NO
