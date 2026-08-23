@@ -250,29 +250,11 @@ def main() -> None:
         path.write_text(json.dumps(rec, indent=1))
         print("wrote", path.name)
 
+    # The N1a solved JSON is written directly by the session (the gates
+    # wrapper's real output shape differs from the early sketch here);
+    # --n1a is retained as a no-op for CLI compatibility.
     if args.n1a:
-        # Assembled after the solves: control/arm official + gates files.
-        gates = json.loads((dest / "ercot231_n1a_gates.json").read_text())
-        rec = _base(
-            "N1a — tie-zone interchange attribution (ercot_tie_zonal_interchange)",
-            {
-                "n1_interchange": p0["n1_interchange"],
-                "miss_set": p0["miss_set"],
-            },
-            gates.get("verdict", {"adoption_pass": False}),
-            {"reading": gates.get("reading", "")},
-        )
-        rec["control"] = gates.get("control")
-        rec["arm"] = gates.get("arm")
-        rec["official"] = gates.get("official")
-        rec["probe_basis"] = gates.get("probe_basis")
-        rec["gates"] = gates.get("gates")
-        rec["family_diagnostics"] = gates.get("family_diagnostics")
-        rec["summer"] = gates.get("summer")
-        rec["adaptive"] = gates.get("adaptive")
-        path = dest / "ercot231_probe_n1a.json"
-        path.write_text(json.dumps(rec, indent=1))
-        print("wrote", path.name)
+        print("n1a JSON is written directly; see results/calibration/ercot231_probe_n1a.json")
 
 
 if __name__ == "__main__":
