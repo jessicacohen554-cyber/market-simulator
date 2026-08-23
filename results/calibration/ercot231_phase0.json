@@ -1,0 +1,268 @@
+{
+ "probe": "ercot231_phase0",
+ "year": 2023,
+ "miss_set": {
+  "tail_hours": 181,
+  "caught": 67,
+  "missed": 114,
+  "phantom": 7
+ },
+ "n1_interchange": {
+  "sign_convention": "positive = net export (EIA-930)",
+  "interchange_at_miss": {
+   "p10": -815.0,
+   "p50": -814.0,
+   "p90": -546.9,
+   "min": -964.0,
+   "max": -5.0,
+   "mean": -739.4
+  },
+  "interchange_at_caught": {
+   "p10": -905.0,
+   "p50": -815.0,
+   "p90": -814.0,
+   "min": -1083.0,
+   "max": -790.0,
+   "mean": -834.7
+  },
+  "interchange_annual": {
+   "p10": -667.0,
+   "p50": -29.0,
+   "p90": 295.0,
+   "min": -1094.0,
+   "max": 1162.0,
+   "mean": -97.6
+  },
+  "import_hours_at_miss": 114,
+  "export_hours_at_miss": 0,
+  "import_p50_share_of_capability": 0.648,
+  "max_import_share_of_capability": 0.768,
+  "netting_identity_abs_mw": {
+   "at_miss_max": 1.0,
+   "annual_p50": 0.0,
+   "annual_max": 130.0
+  },
+  "by_neighbor_at_miss": {
+   "CEN": {
+    "p10": -75.8,
+    "p50": 0.0,
+    "p90": 70.8,
+    "min": -196.0,
+    "max": 172.0,
+    "mean": -1.8
+   },
+   "SWPP": {
+    "p10": -815.0,
+    "p50": -814.0,
+    "p90": -492.8,
+    "min": -815.0,
+    "max": 0.0,
+    "mean": -737.6
+   }
+  },
+  "by_neighbor_sum_vs_total_abs": {
+   "p50": 0.0,
+   "max": 1.0
+  }
+ },
+ "n3_renewables": {
+  "model_minus_actual_at_miss": {
+   "p10": -138.6,
+   "p50": 395.8,
+   "p90": 1370.4,
+   "min": -502.7,
+   "max": 2195.0,
+   "mean": 520.6
+  },
+  "wind_wedge_at_miss_p50": 410.5,
+  "solar_wedge_at_miss_p50": -12.6,
+  "measured_curtailment_at_miss": {
+   "p10": 33.4,
+   "p50": 702.7,
+   "p90": 1624.8,
+   "min": 0.0,
+   "max": 2510.6,
+   "mean": 784.8
+  },
+  "model_redelivery_vs_measured_curtailment_corr": 0.962,
+  "np6_vs_eia930_gen_basis_p50": {
+   "wind": -0.1,
+   "solar": 0.2
+  },
+  "measured_curtailment_by_region_mean_mw_at_miss": {
+   "west": 298.6,
+   "coastal": 284.8,
+   "south": 192.9,
+   "farwest": 120.3,
+   "panhandle": 73.9,
+   "fareast": 62.2,
+   "north": 40.6,
+   "centerwest": 35.9,
+   "centereast": 23.9,
+   "southeast": 20.0,
+   "northwest": 14.8
+  },
+  "west_family_share_of_curtailment": 0.465,
+  "gtc_coverage_2023": {
+   "measured_constraints": [
+    "BEARKT",
+    "EASTEX",
+    "HMLTN",
+    "MCCAMY",
+    "NELRIO",
+    "NE_LOB",
+    "N_TO_H",
+    "PNHNDL",
+    "REDTAP",
+    "RV_RH",
+    "TRDWEL",
+    "VALEXP",
+    "VALIMP",
+    "WESTEX",
+    "WHARTN",
+    "WILBRN",
+    "ZAPSTR"
+   ],
+   "mapped": [
+    "NE_LOB",
+    "PNHNDL",
+    "WESTEX"
+   ],
+   "unmapped": [
+    "BEARKT",
+    "EASTEX",
+    "HMLTN",
+    "MCCAMY",
+    "NELRIO",
+    "N_TO_H",
+    "REDTAP",
+    "RV_RH",
+    "TRDWEL",
+    "VALEXP",
+    "VALIMP",
+    "WHARTN",
+    "WILBRN",
+    "ZAPSTR"
+   ]
+  }
+ },
+ "n4_demand": {
+  "p0a_raw_nan_at_miss": 0,
+  "p0a_raw_nan_annual": 0,
+  "p0a_repaired_hours_at_miss": 0,
+  "p0b_native_vs_eia930": {
+   "by_lag_hours": {
+    "-2": {
+     "wedge_at_miss_p50": -1486.0,
+     "wedge_at_miss_p90abs": 3119.3,
+     "annual_mean_abs": 1870.7
+    },
+    "-1": {
+     "wedge_at_miss_p50": -106.9,
+     "wedge_at_miss_p90abs": 320.9,
+     "annual_mean_abs": 546.4
+    },
+    "0": {
+     "wedge_at_miss_p50": 770.4,
+     "wedge_at_miss_p90abs": 2812.0,
+     "annual_mean_abs": 1240.6
+    },
+    "1": {
+     "wedge_at_miss_p50": 1152.1,
+     "wedge_at_miss_p90abs": 5593.4,
+     "annual_mean_abs": 2654.9
+    },
+    "2": {
+     "wedge_at_miss_p50": 546.2,
+     "wedge_at_miss_p90abs": 8114.4,
+     "annual_mean_abs": 4069.4
+    }
+   },
+   "best_lag": -1,
+   "native_rows_mapped": 8759,
+   "sign_consistency_share_at_best_lag": 0.737,
+   "median_sign": -1,
+   "ercot_total_col_vs_wz_sum_max_abs": 3.000008291564882e-06
+  },
+  "p0c_zonal": {
+   "measured_shares_active": true,
+   "miss_vs_annual_share_delta": {
+    "West": -0.0357,
+    "Panhandle": 0.0,
+    "North": 0.0249,
+    "Northeast": 0.0014,
+    "Houston": 0.0006,
+    "South_Central": 0.01,
+    "South": -0.0013
+   }
+  }
+ },
+ "n5_small_classes": {
+  "hydro": {
+   "model_at_miss_p50": 226.4,
+   "actual_at_miss_p50": 147.0,
+   "uncarried_at_miss": {
+    "p10": 0.0,
+    "p50": 0.0,
+    "p90": 82.0,
+    "min": 0.0,
+    "max": 204.4,
+    "mean": 20.5
+   }
+  },
+  "other_biomass_oil": {
+   "model_at_miss_p50": 379.7,
+   "actual_at_miss_p50": 343.5,
+   "uncarried_at_miss": {
+    "p10": 0.0,
+    "p50": 6.0,
+    "p90": 301.2,
+    "min": 0.0,
+    "max": 624.8,
+    "mean": 99.1
+   }
+  },
+  "battery_net": {
+   "model_at_miss_p50": 188.6,
+   "actual_at_miss_p50": 0.0,
+   "uncarried_at_miss": {
+    "p10": 0.0,
+    "p50": 0.0,
+    "p90": 0.0,
+    "min": 0.0,
+    "max": 135.0,
+    "mean": 3.0
+   }
+  },
+  "closure_context_model_minus_actual_p50": {
+   "gas": -1207.0,
+   "coal": 414.1,
+   "nuclear": -14.8
+  }
+ },
+ "n2_coverage": {
+  "instrument_table": {
+   "CC_REGULAR/COAL/CT_PEAKER/ST_GAS": "60-Day DAM HSL water-fill (ercot_thermal_dam_availability family, class-hour mean PINNED to measured; + _plant site pins; + gas/coal event caps)",
+   "CC_CHP/CT_CHP/ST_CHP": "CAMPD outage windows (DAM-excluded by design, scenarios.py; item-20 record: CC_CHP slope -1.41%/degC NEGATIVE)",
+   "nuclear": "ercot_nuclear_unit_availability (measured unit availability)",
+   "non-CAMPD plants": "ercot_noncampd_plant_availability (armed)",
+   "coal seasonal": "coal_nameplate_summer_derate (armed)",
+   "partial outages": "ercot_partial_outage_shaped_derate (item 24, armed)",
+   "storage": "NO measured outage channel (bounded by G-BAT +/-25% and the n5 battery_net wedge)",
+   "wind/solar": "NP6 HSL basis (N3)",
+   "hydro/biomass/oil/OTHER": "carried as classes; no outage channel (bounded by n5)"
+  },
+  "n2a_attempt_log": [
+   {
+    "target": "public doc list, Hourly Resource Outage Capacity (NP3-233, reportTypeId 13103) \u2014 SYSTEM-grain aggregate",
+    "url": "https://www.ercot.com/misapp/servlets/IceDocListJsonWS?reportTypeId=13103",
+    "outcome": "HTTP 200, 1514 documents, PublishDate range 2026-07-23 .. 2026-08-23"
+   },
+   {
+    "target": "public doc list, Unplanned Resource Outages Report (NP1-346-ER, reportTypeId 22912) \u2014 per-unit, 60-day lag",
+    "url": "https://www.ercot.com/misapp/servlets/IceDocListJsonWS?reportTypeId=22912",
+    "outcome": "HTTP 200, 32 documents, PublishDate range 2026-07-23 .. 2026-08-23"
+   }
+  ]
+ }
+}

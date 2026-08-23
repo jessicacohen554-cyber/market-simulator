@@ -607,6 +607,106 @@ def _load_pjm_hourly_demand(year: int) -> np.ndarray | None:
     )
 
 
+def ercot_tie_zone_interchange(
+    year: int,
+    zone_names: list[str],
+    interchange: np.ndarray,
+    weights: np.ndarray,
+) -> np.ndarray | None:
+    """Measured per-neighbor DC-tie interchange placed at the tie-connected zones.
+
+    ercot-231 N1a (``ercot_tie_zonal_interchange``): replaces the load-share
+    spread of ERCOT's net interchange with attribution at the zones that
+    physically host the DC ties (``constants.ERCOT_DC_TIE_ZONE_MAP`` — SWPP
+    flow to Northeast/North by tie rating, CEN flow to South), the PJM
+    per-border-zone precedent (:func:`pjm_zonal_interchange`) applied to
+    ERCOT. Per-neighbor flows come from the EIA-930 BA-to-BA interchange
+    product (``data/raw/eia-930-interchange/ERCO interchange hourly.parquet``,
+    the standing keyless bulk fetch); file order per DIBA is chronological, so
+    the hour-ending window slice ``[Jan-1 01:00 .. Jan-1 00:00 of year+1]``
+    maps position -> model hour (verified vs the wide extract's total:
+    p50 0.0 / max 1.0 MW, ercot-231 phase-0). The small residual between the
+    by-neighbor sum and the wide extract's ``Total interchange`` (rounding +
+    a few extract-gap hours) is spread by the caller's demand weights, so the
+    column sums equal the netted total EXACTLY and the system energy balance
+    is unchanged by construction — only zonal placement moves.
+
+    Args:
+        year: Backcast year to slice.
+        zone_names: Model zone names, row order of the output.
+        interchange: The wide-extract net interchange series (positive =
+            export), length ``HOURS_PER_YEAR`` — the conserved column total.
+        weights: ``(n_zones, HOURS_PER_YEAR)`` demand weights used to spread
+            the residual (the same weights the load-share spread would use).
+
+    Returns:
+        ``(n_zones, HOURS_PER_YEAR)`` signed MW matrix to ADD to zonal
+        demand, or ``None`` when the by-neighbor file or a full-year slice is
+        unavailable (caller keeps the load-share spread).
+    """
+    from market_sim.config.constants import ERCOT_DC_TIE_ZONE_MAP
+
+    path = (
+        _pkg_ns().EIA_HOURLY_DIR.parent
+        / "eia-930-interchange"
+        / ("ERCO interchange hourly.parquet")
+    )
+    if not path.exists():
+        return None
+    nb = pd.read_parquet(path)
+    lo = pd.Timestamp(f"{year}-01-01 01:00:00")
+    hi = pd.Timestamp(f"{year + 1}-01-01 00:00:00")
+    zone_idx = {z: i for i, z in enumerate(zone_names)}
+    matrix = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
+    attributed = np.zeros(HOURS_PER_YEAR, dtype=float)
+    matched = False
+    for diba, g in nb.groupby("diba", observed=True):
+        placements = ERCOT_DC_TIE_ZONE_MAP.get(str(diba))
+        if placements is None:
+            logger.warning(
+                "ERCO interchange DIBA %s has no tie-zone placement; "
+                "its flow stays in the load-share residual",
+                diba,
+            )
+            continue
+        g = g[(g["local_time"] >= lo) & (g["local_time"] <= hi)]
+        if len(g) != HOURS_PER_YEAR:
+            logger.info(
+                "ERCO by-neighbor interchange %d: %s has %d rows (need %d) — "
+                "tie-zone attribution unavailable, keeping load-share spread",
+                year,
+                diba,
+                len(g),
+                HOURS_PER_YEAR,
+            )
+            return None
+        series = (
+            pd.Series(g["mw"].to_numpy(dtype=float))
+            .interpolate()
+            .bfill()
+            .ffill()
+            .to_numpy()
+        )
+        for zone, share in placements:
+            i = zone_idx.get(zone)
+            if i is None:
+                logger.warning(
+                    "tie-zone map names unknown zone %s; share dropped to the residual",
+                    zone,
+                )
+                continue
+            matrix[i] += series * share
+            attributed += series * share
+        matched = True
+    if not matched:
+        return None
+    # Conserve the netted total exactly: the residual (by-neighbor rounding,
+    # extract-gap interpolation) rides the demand weights like the load-share
+    # spread it replaces.
+    matrix += weights * (interchange - attributed)[None, :]
+    return matrix
+
+
 def _ercot_demand_source(
     year: int, ctx: dict
 ) -> tuple[np.ndarray | None, np.ndarray | None]:
@@ -707,6 +807,7 @@ def load_demand(
     strict_demand_profile: bool = False,
     caiso_demand_clock_realign: bool = False,
     caiso_supply_consistent_demand: bool = False,
+    ercot_tie_zonal_interchange: bool = False,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -785,6 +886,12 @@ def load_demand(
             (caiso-80 owner-signed Option A; see
             :func:`_load_caiso_supply_consistent_demand`). Takes precedence
             over ``caiso_demand_clock_realign``.
+        ercot_tie_zonal_interchange: ERCOT only — place the netted DC-tie
+            interchange at the tie-connected zones by the measured
+            per-neighbor split instead of the load-share spread (ercot-231
+            N1a; see :func:`ercot_tie_zone_interchange`). System total
+            unchanged by construction; falls back to the spread when the
+            by-neighbor extract is absent for the year.
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` array of zonal demand in MW, ordered
@@ -912,6 +1019,27 @@ def load_demand(
     # a transmission-level flow, so it is not loss-grossed. PJM uses per-zone
     # attribution (export at its border zone); everything else spreads the
     # scalar by the same weights as demand.
+    if (
+        iso == "ERCOT"
+        and ercot_tie_zonal_interchange
+        and include_interchange
+        and zone_interchange is None
+    ):
+        # ercot-231 N1a: place the netted DC-tie flow at the tie-connected
+        # zones (measured per-neighbor split) instead of the load-share
+        # spread; column sums equal the netted total exactly, so the system
+        # energy balance is unchanged. Falls through to the spread when the
+        # by-neighbor extract is absent for the year (data-keyed).
+        zone_interchange = ercot_tie_zone_interchange(
+            year, iso_config.zone_names, interchange, np.asarray(weights)
+        )
+        if zone_interchange is not None:
+            logger.info(
+                "ERCOT tie-zone interchange applied for %d: %+.0f MW avg "
+                "(export-positive, per DC-tie zone)",
+                year,
+                float(zone_interchange.sum(axis=0).mean()),
+            )
     if zone_interchange is not None:
         demand += zone_interchange
     else:

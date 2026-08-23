@@ -45,6 +45,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     ercot_ruc_commitment_floor: { cell: "." },
     ercot_as_held_requirement: { cell: "." },
     ercot_as_held_location: { cell: "." },
+    ercot_tie_zonal_interchange: { cell: "." },
     ercot_load_forecast_margin: { cell: "." },
     maxgen_emergency_tier_pricing: { cell: "." },
     nyiso_rcpf_family: { cell: "." },

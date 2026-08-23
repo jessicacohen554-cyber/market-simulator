@@ -973,6 +973,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "ercot_as_held_requirement",
     "ercot_as_held_requirement_nspin",
     "ercot_ruc_commitment_floor",
+    # ercot-231 N1a tie-zone interchange attribution (GATED default off):
+    # dropped from the hash at its default so every pre-existing cache key
+    # stays byte-stable (the off path never reads the by-neighbor extract —
+    # byte-identical by construction); an armed run re-places the netted
+    # DC-tie MW at the tie-connected zones, a different scenario, and
+    # hashes distinctly. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "ercot_tie_zonal_interchange",
     # caiso-205 CAISO leg of the adaptive-expectation family (GATED default
     # off) + its two rule-23 identified constants: dropped from the hash at
     # their defaults so every pre-existing cache key stays byte-stable (the
@@ -1383,6 +1391,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_as_held_requirement": "False",
     "ercot_as_held_requirement_nspin": "False",
     "ercot_ruc_commitment_floor": "False",
+    # Added by ercot-231 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "ercot_tie_zonal_interchange": "False",
     # Added by caiso-205 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "caiso_storage_adaptive_expectation": "False",
@@ -12747,6 +12758,18 @@ class ScenarioConfig:
     # (ercot-222's cross-year seed stays refuted). Reads only inside the
     # ERCOT adaptive block (armed alone: no-op).
     ercot_adaptive_fixed_point: bool = False
+    # ercot-231 N1a tie-zone interchange attribution (GATED default off,
+    # ERCOT-only, backcast-measured): place the netted DC-tie net
+    # interchange at the tie-connected zones (SWPP flow -> Northeast/North
+    # by published tie rating, CEN flow -> South;
+    # constants.ERCOT_DC_TIE_ZONE_MAP) using the measured EIA-930 BA-to-BA
+    # per-neighbor series, instead of the load-share spread — the PJM
+    # per-border-zone precedent (pjm_zonal_interchange) applied to ERCOT.
+    # System energy balance unchanged by construction (column sums equal
+    # the netted total exactly); zonal placement only. Zero fitted scalars.
+    # Data-keyed: falls back to the load-share spread when the by-neighbor
+    # extract is absent for the year. PRECOMMIT-ercot231 §2 N1a.
+    ercot_tie_zonal_interchange: bool = False
     # caiso-205 ADAPTIVE-EXPECTATION storage offer, the CAISO leg of the
     # ercot-221 family (owner order caiso-205 branch 1 over the caiso-204
     # recorded Phase-0 G-BOOT FAIL — the ercot-188/213/215/221 pattern:
@@ -14351,6 +14374,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_adaptive_beta": 2,
     "ercot_adaptive_event_release": 1,
     "ercot_adaptive_fixed_point": 1,
+    "ercot_tie_zonal_interchange": 1,
     "caiso_storage_adaptive_expectation": 1,
     "caiso_adaptive_half_life_days": 2,
     "caiso_adaptive_beta": 2,
