@@ -918,4 +918,7 @@ results/calibration/ercot229_f1b_gates.json
 # (PRECOMMIT-ercot231-nonas-tightness-2026-08-23.md §5.9/§7). A 3-year
 # bundle, if an arm clears adoption, is registered under its own name.
 results/calibration/ercot231_ctl/
+results/calibration/ercot231_ctl_gtc/
 results/calibration/ercot231_n1a_arm/
+# The registrable 3-year bundle (ercot231_tiegtc_full), if produced, is NOT
+# ignored (the ercot-226 pattern).
