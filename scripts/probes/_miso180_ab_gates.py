@@ -261,15 +261,20 @@ def gates(control: Path, arm: Path, arm_log: Path | None) -> dict:
         (r.get("key"), r.get("year"), r.get("status"))
         for r in va["criteria"]["forced_share"]["records"]
     ]
+    # PREREG G-5's C8 leg is "the scorer's own gate": gated class records all
+    # PASS. SKIPPED rows are non-gated (the keeper's own committed record
+    # carries the identical hydro SKIPPED rows and scores C8 PASS) — counting
+    # them as failures would fail the keeper itself.
+    c8_ok = all(s == "PASS" for _, _, s in c8 if s != "SKIPPED")
     fc, fa = _d4_fail_keys(control), _d4_fail_keys(arm)
     res["g5_conduct"] = {
         "gate": "G-5",
         "c8_arm_records": c8,
-        "c8_passed": all(s == "PASS" for _, _, s in c8),
+        "c8_passed": c8_ok,
         "d4_control_failures": len(fc),
         "d4_arm_failures": len(fa),
         "d4_new_failures": [list(k) for k in sorted(fa - fc)],
-        "passed": all(s == "PASS" for _, _, s in c8) and not (fa - fc),
+        "passed": c8_ok and not (fa - fc),
     }
 
     # --- G-6 DOF ------------------------------------------------------------
