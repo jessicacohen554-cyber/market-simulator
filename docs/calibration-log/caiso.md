@@ -9572,3 +9572,121 @@ beyond the ratchet after this session's own matrix edits.
 Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
 
 **Next number: caiso-216.**
+
+## caiso-216 (2026-08-23) — BELLY LEVER-IDENTIFICATION PLANNING on the caiso-215 zonal answer: the deferred Phase-0 measurement decides the lever class — the model's south-of-Path-15 HAS a belly surplus (72–85 % of reality's south-negative hours, +1.1/+2.3/+3.4 GW mean) but the lat-cut/county-lift allocation under-sizes it and the armed S→N ratings never bind (17/234/289 h); with CAISO's OWN hub membership (Diablo→TH_ZP26, Tehachapi→TH_SP15) the bound count reaches 342/742/1,143 h — reality's order, 2023-safe — so the PACKET asks the owner to fund the MEASURED GENERATOR-HUB-MEMBERSHIP CROSSWALK intake + one 3-year solve
+
+**Planning session under the owner's 2026-08-23 order ("I really really need
+you to address the 2025 overprice") — the caiso-214 charter's design
+continuation. No solve, no LP, no mechanism armed, nothing registered, NO
+cell verdict moved (nothing tested — rule 28b attaches to evidence appends
+only). Lane rest (caiso-201 Q1) undisturbed; queue EMPTY, so every candidate
+is off-queue under this charter from new Phase-0 measurement.** Branch
+`claude/caiso-belly-lever-plan-7d6rwk` from `origin/main` `55b20a5`.
+
+**Instruments (committed):** `scripts/probes/_caiso216_belly_surplus.py`
+(the licensed caiso-105/131 `run_year(fleet_only=True)` input assembly from
+the keeper's own `meta.json` — B0 control: reconstructed per-zone demand ==
+sidecar demand to 0.0 MW, 7 zones × 3 years, after mapping the meta override
+dict `coal_prb_sigmoid_overrides → prb_overrides` a naive kwargs filter
+drops; imports the committed caiso-215 probe for hub actuals + clock) +
+`results/calibration/_caiso216_belly_surplus.json`. New evidence read:
+CAISO's production-and-curtailments workbooks (5-min MW-per-interval,
+Local/System reason — units established against the published 2024 total:
+sum/12 = 3.423 TWh), `ATL_PNODE_MAP.csv` generator-hub membership, EIA-930
+CISO TI.
+
+**Phase 0 (the deciding measurement):**
+- **Cut at Path 26 (south3): NO surplus** — zero-MC+must-run net position
+  −0.5/−1.1/−1.6 GW mean through reality's south-negative hours; nothing to
+  price at that cut until allocation moves.
+- **Cut at Path 15 (south4, the cut reality splits at): surplus EXISTS** —
+  positive in 493/688, 934/1,230, 821/964 of reality's south-negative hours,
+  mean +1.1/+2.3/+3.4 GW — but over the armed 5,400 MW S→N rating in only
+  17/234/289 h (storage-power bound never touched), so it pools north and
+  into a storage fleet that never reaches 90 % of charge power (belly p95
+  4.7/7.2/9.1 GW vs 9.6/13.2/17.5 GW) at charge-parity prices.
+- **The floor only engages POOLED**: all four non-pocket zones hit λ ≤ 0
+  simultaneously (314/604/507 h) at the −$20 solar offer floor; model spill
+  480/1,176/852 GWh vs reality's reported 2.66/3.42/3.77 TWh (the 2025
+  workbook carries ALL 12 months — the corpus README's "discontinued
+  2025-06-01" line does not truncate it; span measured from the rows,
+  README annotated), which is **78/92/83 % Local-class**
+  — sub-zonal strandedness no 5-zone pool can produce. The ONE zonal
+  separation the model does form — SDGE-only λ ≤ 0 in 206/194/432 h behind
+  its armed LCT import cap — is the rule-1 witness that the machinery
+  separates the moment a real limit exists.
+- **Allocation evidence**: `ATL_PNODE_MAP` contradicts the estimate at every
+  witness — DIABLO (model NP15 by county lift) is **TH_ZP26**; ALTA/WINDHUB
+  Tehachapi (model ZP26 by lat) are **TH_SP15**; TOPAZ (model NP15) is
+  **TH_ZP26**; MUSTANG Westlands (model ZP26) is **TH_NP15** — the error is
+  TWO-DIRECTIONAL, so the fix is the measured membership crosswalk, never a
+  lat re-tune (rule 23). Movable cohorts (EIA-860 through the model's own
+  membership filter): Diablo 2.1 GW-mean nuclear + 1.29 GW cc-lift solar +
+  0.91 GW band15 solar + 2.96 GW band26 wind + 0.97 GW band26 solar.
+- **What-if arithmetic (input-side, no LP)**: with Diablo alone (S1) the
+  south4 surplus exceeds the path in 122/487/739 h; with the movable cohorts
+  (S2, upper bound) **342/742/1,143 h vs reality's 1,310/1,691/1,347 split
+  hours** — the right order, reality's year-ordering, 2023 3× below 2024/25
+  (the caiso-215 envelope's 2023-safe geometry: needed 2024 −$0.97 / 2025
+  −$1.96, 2023 headroom −$7.4). In a bound hour the south (61 % of load)
+  decouples DOWN from the pooled $30–42 band while NP15's standing
+  under-price rises toward truth.
+- **Belly boundary witness**: reality's EIA-930 TI swings to net EXPORT in
+  900/676/601 belly hours (p95 +2.4–3.2 GW) while the model imports p50
+  3.0–3.4 GW and has no export column — recorded (not proposed; caiso-142's
+  kill stands) as the post-C1 C3b contingency's named diagnosis.
+
+**Phase 1 adjudication:** **C1 — the fleet-wide measured hub-membership
+crosswalk — PROPOSED** (rule 13 PASS: published registry, quantity-side,
+zero free parameters, forward analogue; rule 14 canonical: completes the
+caiso-172 `path15_load_split` K program on the generation side; the
+caiso-215 H2 mean-zero kill does NOT apply — C1 changes the binding set, not
+the labels on a fixed λ vector; rule 19: owned by the zone-assignment layer,
+composes with the already-armed `measured_interface_limits` /
+`negative_renewable_offers` / storage machinery — nothing new armed).
+**Standing owner objects re-scored vs the SOUTH-BELLY target (charter
+obligation): both ≈ 0** — PS water-state is an NP15/tail object (its
+62.1 %/10.4 % was CA-wide; in S→N-bound hours NP15-side action cannot reach
+southern λ at all; its belly action is absorption, adverse sign) and the
+import spot-capacity derivation is a NORTHERN-corridor object (DSW tracks
+PALOVRDE; C3a-adverse in sign, < 5 %; RE-FRAMED post-C1 as a split-magnitude
+completion item to bundle into the C1 solve's diagnosis, not a standalone
+ask). **Fenced, NOT asked**: gen-pocket sub-zonal split (the Local-class
+residual's structural home — no citable collector-limit source yet);
+internal-path published OPERATING limits (admissible; realized-flow caps are
+NOT — outcome pin); the measured export sink (contingent on a C3b trip at
+the funded solve's gate — the mechanism-reality inversion caiso-215 §F H4
+requires). Killed restatements: delivered-solar cap, curtailment-share
+derates, per-zone/per-year offer objects, mean-zero instruments.
+
+**The packet (FINDING §G):** Ask 1 — fund the crosswalk INTAKE session
+(EIA-860/eGRID→pnode join over the committed atlas; name-fragment
+feasibility verified on every witness; lands
+`data/raw/reference/caiso-plant-hub-membership.csv` + curated seam +
+`_caiso_zone` first-check + coverage report; the ERCOT
+custom-bin-assignments pattern; even a null join is decisive). Ask 2 — fund
+ONE 3-year solve (keeper recipe + crosswalk) under the pre-registered gate
+table: C3a all three years with 2023 in band; **C3b MUST-NOT-REGRESS vs
+0.098/0.179/0.182** (2025 margin 0.018 — THE tripwire, and a trip reads as
+the §F.3c export-absorption diagnosis, not a C1 refutation); C8/D-gates
+unchanged (C1 adds no forcing); C6 re-attested; DOF 10/7 + one
+measured-input row, zero new tunables; the caiso-215 zonal probe re-run as
+the split witness. Partial-close pre-registration carried: a 2024-only pass
+is NOT a determination flip. Ask 3 — nothing else. If the owner funds
+nothing, NOT-YET stands and the residual attribution tightens to "south
+surplus mis-allocated by an estimate CAISO's own data can replace."
+
+**Records:** `results/calibration/FINDING-caiso216-belly-lever-plan-2026-08-23.md`
+(the packet; §I DO-NOT-REDO adds the south3-branch, lat-re-tune, H2-misread
+and premature-caiso-142 fences); probe + JSON committed; matrix §5.2
+caiso-216 block; shard `gates` stamp + `updated` bump + evidence appends on
+`measured_interface_limits` / `path15_load_split` / `solar_deliverability` /
+`negative_renewable_offers` / `import_hub_pricing` (NO verdict/fc moves).
+Shard census at this HEAD re-verified IDENTICAL to caiso-215's: **K 64 /
+U 34 / I 15 / R 9 / O 6 / G 5 = 133, n/a 100** (no commit since `24668d3`
+touches CAISO). **Filed items now SEVEN** (adds: the `solar_deliverability`
+K-cell text predates the endogenous-spill override and should note which leg
+the K rides on this keeper); cross-lane items THREE carried unchanged.
+Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
+
+**Next number: caiso-217.**
