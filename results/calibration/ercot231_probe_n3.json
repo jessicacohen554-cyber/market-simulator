@@ -1,0 +1,117 @@
+{
+ "probe": "ercot231",
+ "factor": "N3 \u2014 renewable delivery basis at the missed hours",
+ "charter": "ercot-231: the non-AS energy/tightness factor program (PRECOMMIT-ercot231-nonas-tightness-2026-08-23, blob 526401e, pushed + blob-verified before any measurement)",
+ "session": "hub",
+ "branch_sha": "8506f29",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1"
+ },
+ "control": null,
+ "arm": null,
+ "official": null,
+ "probe_basis": null,
+ "gates": null,
+ "phase0": {
+  "n3_renewables": {
+   "model_minus_actual_at_miss": {
+    "p10": -138.6,
+    "p50": 395.8,
+    "p90": 1370.4,
+    "min": -502.7,
+    "max": 2195.0,
+    "mean": 520.6
+   },
+   "wind_wedge_at_miss_p50": 410.5,
+   "solar_wedge_at_miss_p50": -12.6,
+   "measured_curtailment_at_miss": {
+    "p10": 33.4,
+    "p50": 702.7,
+    "p90": 1624.8,
+    "min": 0.0,
+    "max": 2510.6,
+    "mean": 784.8
+   },
+   "model_redelivery_vs_measured_curtailment_corr": 0.962,
+   "np6_vs_eia930_gen_basis_p50": {
+    "wind": -0.1,
+    "solar": 0.2
+   },
+   "measured_curtailment_by_region_mean_mw_at_miss": {
+    "west": 298.6,
+    "coastal": 284.8,
+    "south": 192.9,
+    "farwest": 120.3,
+    "panhandle": 73.9,
+    "fareast": 62.2,
+    "north": 40.6,
+    "centerwest": 35.9,
+    "centereast": 23.9,
+    "southeast": 20.0,
+    "northwest": 14.8
+   },
+   "west_family_share_of_curtailment": 0.465,
+   "gtc_coverage_2023": {
+    "measured_constraints": [
+     "BEARKT",
+     "EASTEX",
+     "HMLTN",
+     "MCCAMY",
+     "NELRIO",
+     "NE_LOB",
+     "N_TO_H",
+     "PNHNDL",
+     "REDTAP",
+     "RV_RH",
+     "TRDWEL",
+     "VALEXP",
+     "VALIMP",
+     "WESTEX",
+     "WHARTN",
+     "WILBRN",
+     "ZAPSTR"
+    ],
+    "mapped": [
+     "NE_LOB",
+     "PNHNDL",
+     "WESTEX"
+    ],
+    "unmapped": [
+     "BEARKT",
+     "EASTEX",
+     "HMLTN",
+     "MCCAMY",
+     "NELRIO",
+     "N_TO_H",
+     "REDTAP",
+     "RV_RH",
+     "TRDWEL",
+     "VALEXP",
+     "VALIMP",
+     "WHARTN",
+     "WILBRN",
+     "ZAPSTR"
+    ]
+   }
+  },
+  "miss_set": {
+   "tail_hours": 181,
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  }
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "failed_criteria": [
+   "N3-K (leg 2)"
+  ],
+  "disposition": "DOCUMENTATION - the wedge is the reduced-network topology-class residual; the GTC map completion branch has no representable uncarried limit to add"
+ },
+ "reading": "The wedge is real and above the magnitude screen: model renewables exceed EIA-930 actuals by p50 +396 MW at the miss set (wind +411, solar -13; p90 +1,370, max +2,195), 0.962-correlated with the MEASURED curtailment (HSL - gen, p50 703 MW) - the model redelivers what reality curtailed. But leg 2 kills the build: the curtailment is SPREAD (west-family 46.5%, coastal 285 MW, south 193 MW mean at the miss set), and every unmapped 2023 GTC (NELRIO, VALEXP, VALIMP, RV_RH, EASTEX, MCCAMY, ... 14 of 17) is adjudicated in ERCOT_GTC_LINK_MAP's own comment as unrepresentable in the 7-zone reduction (intra-zone pockets; N_TO_H deliberately absent as one of several parallel paths). An actual-generation UB pin is the rule-13 forbidden outcome form. Bound: fully closing the 0.4-0.5 GW wedge is worth ~$0.6-0.8/MWh at the measured 1.6 $/MWh/GW stack slope - under every bar. The West/Panhandle topology split stays CLOSED."
+}

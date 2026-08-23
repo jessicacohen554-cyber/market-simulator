@@ -1,0 +1,94 @@
+{
+ "probe": "ercot231",
+ "factor": "N1b \u2014 priced/elastic DC ties",
+ "charter": "ercot-231: the non-AS energy/tightness factor program (PRECOMMIT-ercot231-nonas-tightness-2026-08-23, blob 526401e, pushed + blob-verified before any measurement)",
+ "session": "hub",
+ "branch_sha": "8506f29",
+ "env": {
+  "python": "3.11.15",
+  "highspy": "1.15.1",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "pandas": "3.0.5",
+  "pyarrow": "25.0.1"
+ },
+ "control": null,
+ "arm": null,
+ "official": null,
+ "probe_basis": null,
+ "gates": null,
+ "phase0": {
+  "n1_interchange": {
+   "sign_convention": "positive = net export (EIA-930)",
+   "interchange_at_miss": {
+    "p10": -815.0,
+    "p50": -814.0,
+    "p90": -546.9,
+    "min": -964.0,
+    "max": -5.0,
+    "mean": -739.4
+   },
+   "interchange_at_caught": {
+    "p10": -905.0,
+    "p50": -815.0,
+    "p90": -814.0,
+    "min": -1083.0,
+    "max": -790.0,
+    "mean": -834.7
+   },
+   "interchange_annual": {
+    "p10": -667.0,
+    "p50": -29.0,
+    "p90": 295.0,
+    "min": -1094.0,
+    "max": 1162.0,
+    "mean": -97.6
+   },
+   "import_hours_at_miss": 114,
+   "export_hours_at_miss": 0,
+   "import_p50_share_of_capability": 0.648,
+   "max_import_share_of_capability": 0.768,
+   "netting_identity_abs_mw": {
+    "at_miss_max": 1.0,
+    "annual_p50": 0.0,
+    "annual_max": 130.0
+   },
+   "by_neighbor_at_miss": {
+    "CEN": {
+     "p10": -75.8,
+     "p50": 0.0,
+     "p90": 70.8,
+     "min": -196.0,
+     "max": 172.0,
+     "mean": -1.8
+    },
+    "SWPP": {
+     "p10": -815.0,
+     "p50": -814.0,
+     "p90": -492.8,
+     "min": -815.0,
+     "max": 0.0,
+     "mean": -737.6
+    }
+   },
+   "by_neighbor_sum_vs_total_abs": {
+    "p50": 0.0,
+    "max": 1.0
+   }
+  },
+  "miss_set": {
+   "tail_hours": 181,
+   "caught": 67,
+   "missed": 114,
+   "phantom": 7
+  }
+ },
+ "verdict": {
+  "adoption_pass": false,
+  "failed_criteria": [
+   "N1b-K"
+  ],
+  "disposition": "NO-WINDOW + DATA-ABSENT (documentation row, no build, no solve)"
+ },
+ "reading": "All 114 keeper 2023 missed hours were net IMPORTS, p50 -814 MW = 64.8% of the 1,256 MW DC-tie capability (max 76.8%), zero export hours - the >=50%-of-capability kill fires. An elastic tie could only WITHDRAW measured-delivered supply (contradicting measured flows, rule 14) to manufacture tightness reality did not have (rule 1). And the identification data is absent: no SPP or CFE price series on disk (lmp-data holds the six modeled ISOs only); neighbor_price.py is the forecast-grade seam construction, not wired for ERCOT (priced_interchange ERCOT cell '.'). The netting identity closes to <=1 MW at the miss set."
+}
