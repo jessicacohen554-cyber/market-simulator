@@ -90,6 +90,7 @@ from market_sim.data.fleet import (  # noqa: E402
 from market_sim.data.offer_curves import (  # noqa: E402
     apply_cc_committed_offer_margin,
     apply_gas_offer_margin,
+    apply_miso_offer_spread_anchored,
     apply_miso_offer_surface,
 )
 from market_sim.data.fuel import (  # noqa: E402
