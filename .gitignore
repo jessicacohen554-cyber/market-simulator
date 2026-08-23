@@ -893,6 +893,15 @@ results/calibration/ercot227_f1_arm/
 results/calibration/ercot227_f1b_arm/
 results/calibration/ercot227_f3_arm/
 
+# ercot-230 PROBE bundles (same W-2 clause, carried forward by the ercot-230
+# dispatch): the fixed-point control replay + 2023-only arm. Their record is
+# the committed results/calibration/ercot230_probe_fixedpoint.json + the
+# FINDING (PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md §3/§7). A
+# 3-year bundle, if the arm clears adoption, is registered under its own
+# (non-ignored) name.
+results/calibration/ercot230_ctl2023/
+results/calibration/ercot230_arm2023/
+
 # ercot-229 PROBE bundles + gates JSON (same W-2 clause / Amendment 3 as the
 # ercot-227 block above): the F1b control and arm single-year solves. Their
 # record is the committed results/calibration/ercot229_probe_f1b.json, which

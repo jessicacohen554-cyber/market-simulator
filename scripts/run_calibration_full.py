@@ -5645,6 +5645,18 @@ def solve_and_persist(
                 }
             )
             _write_hourly_sidecar(run_dir, year, "adaptive", [_adaf])
+        # ercot-230 fixed-point iteration trajectory (ercot_adaptive_fixed_
+        # point): per-pass spike days, floored/released window-hour counts,
+        # floor hashes and the stop reason — the committed audit record of
+        # the iteration's convergence (PRECOMMIT-ercot230-adaptive-fixed-
+        # point-2026-08-23.md §1). Absent (no file) on every flag-off run.
+        _fpj = p2_state.get("ercot230_iteration")
+        if _fpj is not None:
+            _fp_dir = run_dir / "hourly"
+            _fp_dir.mkdir(parents=True, exist_ok=True)
+            (_fp_dir / f"adaptive_iteration_{year}.json").write_text(
+                json.dumps(_fpj, indent=1) + "\n"
+            )
         del result, context, result_p1, p2_state, demand, must_run
         del must_run_total, labelled, res
         del unit_frames, network_frames, reserve_family_frames

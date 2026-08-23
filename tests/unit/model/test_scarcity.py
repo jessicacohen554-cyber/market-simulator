@@ -520,3 +520,41 @@ class TestCaisoAdaptiveConstants:
         assert cfg.caiso_storage_adaptive_expectation is False  # default off
         assert cfg.caiso_adaptive_half_life_days == 30.0
         assert cfg.caiso_adaptive_beta == 0.5945
+
+
+class TestErcotAdaptiveFixedPoint:
+    """ercot-230: the fixed-point iteration on the ercot-221 floor
+    (PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md §1). The iteration
+    itself is orchestration (scripts/run_calibration.py) validated by the
+    keeper-replay G-REPRO; what is hermetic here is the registration contract
+    and the pre-registered operational cap."""
+
+    def test_cap_is_the_preregistered_convention(self):
+        from market_sim.results.scarcity import ERCOT_ADAPTIVE_MAX_PASSES
+
+        assert ERCOT_ADAPTIVE_MAX_PASSES == 8
+
+    def test_field_default_off(self):
+        cfg = ScenarioConfig()
+        assert cfg.ercot_adaptive_fixed_point is False
+
+    def test_registered_in_all_three_tables(self):
+        from market_sim.config.scenarios import (
+            _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS,
+            _CACHE_KEY_OPTIONAL_FIELDS,
+            TIER_TAGS,
+        )
+
+        assert "ercot_adaptive_fixed_point" in _CACHE_KEY_OPTIONAL_FIELDS
+        assert _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["ercot_adaptive_fixed_point"] == "False"
+        assert TIER_TAGS["ercot_adaptive_fixed_point"] == 1
+
+    def test_default_cache_key_unmoved_and_armed_distinct(self):
+        import dataclasses
+
+        c0 = ScenarioConfig()
+        c1 = dataclasses.replace(c0, ercot_adaptive_fixed_point=True)
+        # The pinned default key (ercot-221 FINDING §5) must not move with
+        # the field at its default; an armed run is a distinct scenario.
+        assert c0.cache_key()[:16] == "603c2498bf71d21d"
+        assert c1.cache_key() != c0.cache_key()

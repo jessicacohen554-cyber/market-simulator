@@ -279,6 +279,14 @@ ERCOT_ADAPTIVE_TRAIL_DAYS: int = 120
 # it keep the incumbent storage offer (the measured lesson of ercot-219's
 # G-BAT whole-day-floor collapse, ratio 0.41).
 ERCOT_ADAPTIVE_WINDOW_HOURS: tuple[int, ...] = (17, 18, 19, 20)
+# ercot-230 fixed-point iteration cap: maximum ADDITIONAL adaptation passes
+# beyond the incumbent one when `ercot_adaptive_fixed_point` is armed
+# (PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md §1). An operational
+# bound of the conventions class (like the 120-day trail window above), never
+# an identified quantity: a converged run stops on floor self-reproduction
+# and never reaches it; a capped run is disclosed as non-converged in the
+# `adaptive_iteration_<year>.json` trajectory record.
+ERCOT_ADAPTIVE_MAX_PASSES: int = 8
 
 # --------------------------------------------------------------------------- #
 # caiso-205 adaptive-expectation storage offer — the CAISO leg of the same
