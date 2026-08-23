@@ -8161,3 +8161,68 @@ transient delivery field was removed in the same-session reconciliation
 ALONE, C3c the single ledgered caveat. Also repaired at HEAD in passing:
 the `MECH_ERCOT_RUC_COMMITMENT` import drop and the matrix category defect
 (both ercot-227 merge fallout).
+
+## miso-178 (2026-08-23) — the C3a-2025 anatomy measured end to end on the measured-rho keeper, and the lever plan RANKED: 82% of the miss is the 88-hour tail, the annual target is deterministic-reachable, the top ask is the across-unit dispersion charter
+
+**Keeper UNCHANGED: `2026-08-22-miso-177-rho-measured`.** No LP solved, nothing armed,
+no `ScenarioConfig` field, no cell verdict minted, no registration (the no-LP
+precedent; rule 15 not engaged). This is the measurement + planning deliverable the
+2026-08-18 owner re-charter requires. Records:
+`results/calibration/FINDING-miso178-c3a2025-anatomy-and-lever-plan-2026-08-23.md`;
+instruments `scripts/probes/_miso178_c3a2025_anatomy.py` (footing/zonal/buckets/
+seasonal/foreseen/ceilings + the FULL miso-167 re-run at this bundle + the miso-171
+scarce-set bit-identity) and `scripts/probes/_miso178_c3a_decomposition.py` (the
+miso-156/161 Δ chain, third application; disclosed import shim over the pruned
+miso148_basis_B guard); JSON records under the same ids. Footing gate: reproduced C3a
++1.2813/−4.0643/−11.7421 % vs registered, |Δ| ≤ 0.0083 pp.
+
+**THE ANATOMY.** Additive pp-of-C3a buckets: the 88-hour actual RT>$200 tail carries
+**−9.61 pp of −11.74 (82 %)**; top-decile net-load ex-tail −3.57; the remaining
+~7,860 h are **+1.45 pp OVER** — the 2023/24 cancellation made additive (remainder
++5.34 → +3.03 → +1.45 while the tail grows −2.98 → −4.58 → −9.61). Months: Jun −3.28,
+Jul −3.69, Sep −1.56, Jan −1.43; **May opposes at +0.82 pp** (+14.4 % own-month,
+cause still unexplained — miso-148 §7.1 stays open, and any May repair costs ~0.8 pp
+against the 2025 band). **Zonal is a DIPOLE**: 2025 Midwest own-err −4.3…−15.2 %
+(East −15.2, Indiana −15.1) vs **MISO-South +17.0 % OVER** — and South is over-priced
++18.8/+21.0 % in 2023/24 too. Actual 2025 South was the CHEAPEST zone; the model
+prices it at an RDT premium — the premium sign is wrong in 2025, plausibly DOWNSTREAM
+of the flat Midwest stack (rule 19: export pressure binds the RDT N→S and
+manufactures the premium 2025 reality inverted). Benchmark-basis wedge reported and
+parked (zone-resolved actual lw $3.33 below the scored Indiana-hub lw; report-only,
+no re-basing proposed).
+
+**THE REACH MAP.** miso-171 §6 is CONFIRMED CURRENT at measured rho: scarce-47 model
+reserve dual mean $13.23 / max $98.00 (the full Schedule-28 step), DA-foreseen model
+$110.32 — the reserve surface is saturated; the residual DA-foreseen gap is the
+ENERGY stack. Two-term split: the model sits **−13.71 pp below MISO's OWN DA surface**
+(tail −2.02, body −11.69) while the **DA→RT wedge nets +1.98 pp in the model's
+favor** — so the ANNUAL C3a-2025 band does NOT require the RT-only model class (the
+58 RT-only tail hours, −5.68 pp vs RT, stay structurally closed and are OFFSET by the
++9.57 pp of ordinary hours where DA > RT). Computed ceilings: tail@actual-RT → C3a
+**−2.13 %**; model@DA-everywhere → **+1.96 %**; both inside ±10 every year (2023
+against-interest +4.26/+4.21). Tail generation guard: the model meets the 88 hours
+with **−5.3 GW less gas, +2.1 GW more imports, −1.7 GW less solar** than measured
+(standing signature: 2023/24 gas −4.0/−4.7 GW, imports +2.3/+1.6 GW). Δ chain at this
+keeper: 2025 gap +5.33 = **Δ₁ identity +10.50 (197 %)** + Δ₂ −6.44 (−121 %) + Δ₃
++1.27 (24 %) — miso-161's attribution stands (V1/V4 PASS, V2 report-only,
+FLOORS_OFF twins committed).
+
+**THE RANKED PLAN** (FINDING §7–§10, owner decision points D-1..D-4): (1) the
+**ACROSS-UNIT OFFER-LEVEL DISPERSION object** — miso-151 §8(A)'s named successor,
+structural owner of Δ₁/slope, reach = the −13.7 pp deterministic space vs +1.75
+needed, rank-mapped markup DISTRIBUTION from the rule-13-admissible offer corpus (no
+unit/class pinning per miso-138; ercot-223 armed-conduct precedent), falsifiable
+cross-zone prediction (the South dipole unwinds without a South lever) — **D-1**:
+charter + conduct-form admissibility + the ~430 MB JJA corpus refetch; PREREG sketch
+FINDING §9 with two no-LP pre-check kills (dispersion-already-carried;
+dispersion-below-the-margin). (2) the **coincident-peak seam-RESPONSE envelope** —
+the standing **5(i) ruling (D-2)**; re-bounded +2.07 GW on the 88-h set; near-inert
+at the current slope, so SEQUENCED AFTER (1). (3) the **South under-EXPORT evidence
+charter (D-3)** — firm/JOU export-driver hunt (Manitoba-block admissible shape;
+outside the M2M record), partly contingent on (1)'s prediction. (4) the posture
+question (**D-4**) unchanged — and per the reach map, refusing D-1..D-3 would be a
+budget decision, not a model-class one. Anti-list re-affirmed in FINDING §8 (nothing
+R/I/G re-proposed; the maxgen $500/$1,000 slack ceiling noted as the eventual binding
+ceiling of any successful tail lever). Housekeeping discharged: the missing miso-177
+queue stamp added to matrix §5.4, and the rule-history §7.1 miso-163 entry annotated
+with the 2026-08-18 lift. Next number: **miso-179.**

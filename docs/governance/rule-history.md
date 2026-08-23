@@ -389,6 +389,19 @@ DO-NOT-REDO discipline exists to prevent.
   `docs/mechanism-testing-matrix.md` §5.4 queue header,
   `docs/calibration-log/miso.md` (miso-163),
   `docs/codebase-site/data/mechanism-matrix/MISO.js`.
+  **LANE CLOSURE LIFTED BY THE OWNER, 2026-08-18** *(annotated 2026-08-23, session
+  miso-178 — this entry previously read as if the closure stood)*: the owner re-opened
+  the lane in writing — *"2025 miso needs to be calibrated in summer scarcity it's
+  unacceptable that it doesn't"* — which, the closure being an owner ruling, only the
+  owner could do (unblock condition (C) of the miso-166 gate; recorded at
+  `docs/mechanism-testing-matrix.md` §5.4 header and
+  `docs/calibration-log/miso.md` miso-167). **Scope of the lift: the C3a-2025 LANE
+  re-opens; the `ordc_scarcity_overlay` cell stays `G`** on the untouched
+  external-validation §1–§4 structural grounds, and the narrowed re-opening test above
+  is unchanged — re-confirmed by measurement at miso-178
+  (`FINDING-miso178-c3a2025-anatomy-and-lever-plan-2026-08-23.md` §3: the 58 RT-only
+  tail hours remain out of deterministic reach, and the annual band does not need
+  them).
 
 ## 8. Changes to this file
 
@@ -396,6 +409,7 @@ DO-NOT-REDO discipline exists to prevent.
 |---|---|
 | 2026-08-17 | §4: recorded rubric **v3.3** — the owner's amendment that a ledgered C3c caveat is REPORTED but no longer DOWNGRADES the determination, withdrawing the "never `CALIBRATED`" half of CLAUDE.md rule 22 guard (d). 6 registered runs re-score `CALIBRATED-WITH-CAVEATS → CALIBRATED`, 2 of them keepers (NYISO, NEISO); holdout tiers untouched. |
 | 2026-08-17 | §4: recorded the first lane RESTED at `NOT-YET` (CAISO, session caiso-201, owner ruling Q1). No rule text changed — the entry exists so the precedent that an exhausted lane with a genuinely failing load-bearing criterion *rests* rather than ledgers or declares is citable. |
+| 2026-08-23 | §7.1 MISO entry annotated with the owner's 2026-08-18 LANE-CLOSURE LIFT (session miso-178): the entry previously read as if the miso-163 closure stood. Lift scope recorded — the C3a-2025 lane re-opens, the `ordc_scarcity_overlay` cell stays `G`, the narrowed re-opening test is unchanged. Decision-record annotation only; no norm touched. |
 | 2026-08-17 | Added §7.1: owner rulings adjudicated through the matrix, seeded with the 2026-08-17 MISO C3a-2025 model-class closure (session miso-163, mechanism `ordc_scarcity_overlay` cell `G`). Records the ruling, its two-half basis, the ERCOT (Q-B) precedent, and the narrowed re-opening test. No norm added, reworded or dropped — rule 28's text is unchanged and this is a decision record, not a rule. |
 | 2026-07-27 | Added §7: rule 28 `[R-MECH-MATRIX]` (cross-ISO mechanism testing matrix) — origin and canonical file locations. "Changes to this file" renumbered §7 → §8 (no external references cited §7). |
 | 2026-07-26 | Added §6: the 2026-07-22 history rewrite orphaning pre-rewrite bundle `git.sha` provenance (owner decision B close-out) — no SHA mapping saved, replay/goldens unaffected (`git_sha` in both ignore sets), the `--reuse-solved` unresolvable-SHA refusal intentional and load-bearing. "Changes to this file" renumbered §6 → §7 (no external references cited §6). |
