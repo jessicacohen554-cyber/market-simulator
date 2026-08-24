@@ -8446,3 +8446,121 @@ miso-179 no-field pattern). Rule 15 not engaged (no solve). Rule 22:
 falls back to D-3** — the South under-export evidence session (handoff
 sketch: FINDING §6) — with D-4 (posture) standing. Next number:
 **miso-182.**
+
+## miso-182 (2026-08-24) — the D-3 South under-export driver hunt: the seam is 86 % TVA, the Manitoba flat-block FORM survives its own kill, and the candidate is REFUSED ON DATA; `miso_south_firm_export_block` `G`, NO LP
+
+**Keeper UNCHANGED: `2026-08-22-miso-177-rho-measured` (`miso177_rho_B`).**
+Nothing armed, no `ScenarioConfig` field created, no run registered (rule 15
+not engaged; the miso-142…181 no-LP precedent). Determination unchanged:
+**NOT-YET on C3a-2025 alone**, C3c the single ledgered caveat. Executes the
+owner's **D-3** charter (miso-178 §7 lever 3 / §10 D-3; miso-174 §7 item 4),
+the queue head after miso-181 closed D-2. PREREG committed and pushed at
+`50efc4d` **BEFORE** any adjudicating quantity was computed.
+
+**Footing, exact.** Scarce-set sizes **11/14/47** and the committed miso-174
+South gaps **+0.633 / +0.350 / +1.191 GW** reproduce with no drift, on the
+committed **−1 h** DIBA key (frozen, not re-solved). Model-side per-seam
+numbers are *cited* from `_miso174_seam_overimport_decomposition.json` — the
+only MISO bundle with `unit_hourly` (`miso169_gated_A`) is pruned — with its
+measured vintage drift carried.
+
+**Reported first, against the close: K-1, the load-bearing FORM test,
+CLEARED 0/3.** The Manitoba-precedent annual-flat block does **not** worsen
+the scarce-set residual in any year, so the chartered form is *not* refuted.
+But the block that identification yields is **+0.185/+0.188/+0.281 GW**
+against scarce gaps of +0.633/+0.350/+1.191 — it reaches **29/54/24 %** of
+the object, i.e. it clears by being too small to do harm.
+
+**The charter's premise is corrected by the measurement.** The South seam is
+not "SOCO/TVA/AECI": it is **TVA at 79.2/85.7/85.8 %** of gross export. MISO
+is a **net importer** from SOCO in all three years and from AECI in 2024–25,
+and **essentially never exports to SOCO** (0.1–0.3 % of the pool's gross
+export) — the very BA the model's South seam names as `ba_code`. Only TVA
+clears the pre-registered ≥20 % materiality line, so the object is a
+MISO↔**TVA** object, and the pool nets opposing physical flows.
+
+**Where the object actually lives: 46–76 % of each scarce gap is stress
+RESPONSE, not level.** The model withdraws **56–76 %** of its South export in
+its own scarce hours (2025: annual 0.750 → scarce **0.177** GW) while the
+measured seam holds or expands (1.031 → **1.368**). The mechanism needs no new
+measurement: the armed South **export** ladder tops out at **$53.00/MWh** in
+2025, and the scarce set is RT > $200 with a measured mean of **$479** — the
+model exports ~nothing there **by construction**.
+
+**THE REFUSAL — G-2 criterion 2 (placeable at our grain without inventing an
+apportionment).** MISO's two footprints are non-contiguous, and its
+Midwest→South **Regional Directional Transfer is a *calculated* contract-path
+quantity** defined in the MISO/SPP/**Joint Parties** Settlement Agreement —
+Joint Parties = AECI, LG&E/KU, PowerSouth, Southern Co. and **TVA**, i.e. the
+seam's own DIBA pool — with MISO compensating them for system use above its
+1,000 MW of owned contract path. **No publication decomposes measured
+MISO↔Joint-Party interchange into (a) MISO's own internal wheel and (b) a
+genuine external sale.** Without that split a firm export block would model an
+**internal** transfer as an **external** sale (rule 14 `[R-ACCURATE]`) and
+**double-count** a transfer the keeper already carries internally
+(`miso_rdt_tcdc`, `MISO_RDT_CONTRACT_N_TO_S_MW` = 3000) — rule 19
+`[R-ONE-MECH]`. This is the miso-77 §5.2 / miso-176 K-2 objection for the
+third time, at the same seam, for the same reason.
+
+Three corroborations that the contamination is not hypothetical: measured
+MISO→TVA in the 47 scarcest hours of 2025 is **2,720 MW** against the keeper's
+own **derated** N→S limit 0.92 × 3000 = **2,760 MW** (1.4 % below); the
+counterparty pattern is a wheel's (a large export to **one** neighbour with
+offsetting imports from the others — SOCO −0.67, AECI −0.44 GW); and 2025 is
+the year MISO's RDT bound N→S for **5,086 hours** (miso-174 §5). **Not claimed
+as established:** the decomposition was deliberately **not** computed under the
+session's own anti-sweep clause, and a pure wheel would partly net out inside
+the MISO↔TVA pair. Criteria 3–4 are **not reached** — criterion 2 is
+dispositive.
+
+**Against interest, on my own instrument.** The *supporting* G-1b anchored
+signature fails TVA in 2 of 3 years (3/6, 0/5, 1/6) — and that verdict is
+**unreliable and is not used**. It penalises TVA for being unlike the
+**measured MHEB series** (a volatile, strongly seasonal, drought-affected hydro
+seam: 2024 seasonality CV 1.09, volatility/level 0.415, |r| 0.203) when the
+Manitoba precedent is a fact about the model's **representation** (a flat
+block). On intrinsic firmness TVA beats the anchor on every dimension (2024:
+CV **0.10**, vol/level **0.073**, |r| **0.018**) — it is the most block-like
+series in the table. The instrument was mis-designed; the PREREG's
+supporting-only status for G-1b is the only reason it does not matter. The one
+substantive PJM-side dimension is **S-3, the stress response** (TVA
+−0.06/−0.08/**−0.81** GW vs MHEB +0.57/+0.48/+1.19).
+
+**What this opens.** The queue head is now **not a mechanism** but the
+**South-seam MEASUREMENT-BASIS question**: what share of measured
+MISO↔{TVA, SOCO, AECI, LGEE} interchange is the RDT wheel. It costs no LP, is
+admissible (it touches no forecast input), and **can invalidate the object
+rather than tune it** — and it needs only MISO's **aggregate** RDT flow, no
+counterparty split. That series exists but is counterparty-unresolved and its
+access is already adjudicated shut (RT Data Broker RDT endpoint deprecated
+without archive, Data Exchange key-gated — miso-77 §2c, miso-174 K-PRE-4).
+
+**Re-open for the mechanism, stated precisely:** either an **EQR**-based
+firm-sale series for MISO-South→{TVA, SOCO, AECI, LGEE} clearing (a) a
+delivery-point→seam crosswalk, (b) rule-13 forward-regenerability — EQR is a
+backward-looking record of *executed transactions*, so a long-term firm contract
+with stated term and MW clears while a pile of short-term spot sales does not,
+and **which it is here is unmeasured** — and (c) the ~100 GB / 90-day-lag cost;
+or any published series resolving the contract-path schedules **by
+counterparty**. **Hunt coverage disclosed:** a delegated broad sweep of the seven
+candidate sources died on a provider API error and is **not quoted**; GFAs,
+legacy Entergy unit-power-sale agreements, pseudo-tie inventories and MISO OASIS
+archive depth were **not** systematically established, and **FERC EQR was not
+exhausted**. The `G` rests on criterion 2 alone — which none of those four would
+supply — and is chosen over an `R` precisely because **K-1 cleared**, so the
+refusal is reversible and the candidate stays available to a successor who
+brings the apportionment. Also named, not stamped: the model's South seam carries
+`ba_code="SOCO"` while SOCO is the one counterparty MISO essentially never
+exports to — under the armed `miso_seam_measured_ladder` the pricing role is
+largely superseded, this session did **not** measure whether it is live, and no
+defect is claimed (handed forward in the miso-174 §4 pattern).
+
+Records: `FINDING-miso182-south-export-driver-2026-08-24.md`;
+`PREREG-miso182-south-export-driver-2026-08-24.md`;
+`_miso182_south_export_driver.json`; probe
+`scripts/probes/_miso182_south_export_driver.py`. Matrix: NEW base row
+`miso_south_firm_export_block` + all six shard cells (MISO `G`, five `·`) +
+§5.4 queue stamp, in-session (rule 26(b); the miso-179/181 no-field pattern).
+Rule 22: 2023–2025 only; MISO holds neither marker; freeze untouched.
+**Every named lever in MISO's queue is now adjudicated with no mechanism
+surviving**; D-4 (posture) stands. Next number: **miso-183.**
