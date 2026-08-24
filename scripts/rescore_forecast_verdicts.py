@@ -38,10 +38,17 @@ Nothing here re-grades, widens a band, or hand-edits a determination
 (CLAUDE.md rule 1 ``[R-STRUCT]``): every value written is the scorer's own output
 on committed artifacts.
 
+It also normalizes the board's short ``scored_at_sha`` values to the 12-char
+``forecast-provenance/v1`` convention, but only where the prefix provably names
+one commit (:data:`SHA_EXPANSIONS`) — an unresolvable prefix is left alone and
+reported, because an unreachable true sha beats a reachable false one.
+
 Usage::
 
     python scripts/rescore_forecast_verdicts.py            # dry run (default)
     python scripts/rescore_forecast_verdicts.py --apply    # write ff-verdicts.json
+    # expand short shas on an already-re-scored board, without re-stamping it:
+    python scripts/rescore_forecast_verdicts.py --no-rescore --normalize-shas --apply
 
 Stdlib-only, so it runs on the bare ``python3`` the stdlib CI jobs use.
 """
@@ -60,6 +67,9 @@ if str(REPO) not in sys.path:  # resolve ``scripts.lib`` when run as a plain scr
     sys.path.insert(0, str(REPO))
 
 VERDICTS = REPO / "frontend/data/forecast/ff-verdicts.json"
+#: The §2.1b board seed. A committed board input that carries its own
+#: ``scored_at_sha``, so sha normalization must cover it too.
+SEED = REPO / "frontend/data/forecast/program-status.json"
 HINDCAST_ROOT = REPO / "results/hindcast"
 
 #: Score-artifact filename per tier. FC-3 (t1h) reads ``score.json``; FC-4 (t1x)
@@ -77,6 +87,34 @@ SCORE_FLAG_BY_TIER = {"t1h": "--hindcast-score", "t1x": "--crossover-score"}
 #: scored (``scripts/lib/holdout_policy`` HINDCAST_SEED_YEARS / _BRIDGE_YEARS),
 #: which is why a 2021-2025 bundle still passes this check.
 SCORED_YEARS_ALLOWED = frozenset({2023, 2024, 2025})
+
+#: 8-char scored-at shas on the board, expanded to the 12-char
+#: ``forecast_provenance`` convention. Both were written by tools that stamp with
+#: ``git rev-parse --short HEAD`` (``scripts/merge_ffr3a2_verdicts._sha`` and
+#: ``scripts/build_ffr3a2_scorecard.scored_at_sha``) instead of
+#: ``forecast_provenance.head_sha()``, which is why they are short.
+#:
+#: These are EXPANSIONS OF THE SAME COMMIT, never substitutions. Each prefix was
+#: resolved against the GitHub commit API on 2026-08-24 and returned exactly one
+#: 40-char sha whose commit corroborates the stamping session — an ambiguous
+#: prefix returns an error rather than a commit, so a unique resolution is proof:
+#:
+#:   8ba59281 -> 8ba592814d921122cf9cb1121a0f3c080f7c6938
+#:       "FFR-3A-2: the per-ISO section-2.1b gate scorecard", 2026-08-04, which
+#:       is the session recorded in those 13 verdicts' own ``session`` field.
+#:   e2a422c1 -> e2a422c191aa693a3fbc4f94b407deee99b8268f
+#:       "FFR-3A-3: PJM T1-X post-FFR-3F", 2026-08-04, the FFR-3A-3 session
+#:       recorded in those 6 verdicts' ``session`` field.
+#:
+#: Neither is reachable in a shallow checkout and neither appears in
+#: ``docs/governance/citation-commit-map.txt``, so local absence proves nothing
+#: either way (docs/FINDING-history-rewrite-2026-08-16.md). A prefix that cannot
+#: be resolved to exactly one commit is NOT listed here and stays 8 chars: an
+#: unreachable true sha beats a reachable false one.
+SHA_EXPANSIONS = {
+    "8ba59281": "8ba592814d92",
+    "e2a422c1": "e2a422c191aa",
+}
 
 
 def _load_registrar():
@@ -201,6 +239,57 @@ def plan() -> list[dict]:
     return out
 
 
+def normalize_shas(doc, where: str = "") -> list[tuple[str, str, str]]:
+    """Expand short ``scored_at_sha`` values in ``doc`` in place, recursively.
+
+    Walks any nested dict/list so one code path covers both board inputs
+    (``ff-verdicts.json``'s per-verdict ``provenance`` blocks and
+    ``program-status.json``'s ``refresh`` block). Only ``scored_at_sha`` is
+    touched, and only for a prefix with a proven unique expansion in
+    :data:`SHA_EXPANSIONS`; every other short sha is left exactly as written.
+    ``derived_at_sha`` is deliberately NOT touched — the records lane keeps those
+    field names outside ``forecast-provenance/v1`` precisely so a re-key can
+    never be misread as a re-score (docs/FINDING-fr21-provenance-not-lost).
+
+    Returns ``(location, before, after)`` per change, so the caller reports each
+    one rather than making it silently.
+    """
+    changed: list[tuple[str, str, str]] = []
+    if isinstance(doc, dict):
+        for key in sorted(doc):
+            value = doc[key]
+            if key == "scored_at_sha" and isinstance(value, str):
+                new = SHA_EXPANSIONS.get(value)
+                if new and new != value:
+                    doc[key] = new
+                    changed.append((where or key, value, new))
+            else:
+                changed += normalize_shas(value, f"{where}.{key}" if where else key)
+    elif isinstance(doc, list):
+        for i, value in enumerate(doc):
+            changed += normalize_shas(value, f"{where}[{i}]")
+    return changed
+
+
+def remaining_short_shas(doc) -> list[str]:
+    """Return every ``scored_at_sha`` in ``doc`` still shorter than 12 chars.
+
+    Reported rather than fixed: a short sha with no proven unique expansion is
+    left alone deliberately, and naming it is how that stays visible.
+    """
+    out: list[str] = []
+    if isinstance(doc, dict):
+        for key, value in doc.items():
+            if key == "scored_at_sha" and isinstance(value, str) and len(value) < 12:
+                out.append(value)
+            else:
+                out += remaining_short_shas(value)
+    elif isinstance(doc, list):
+        for value in doc:
+            out += remaining_short_shas(value)
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI: report the re-score plan and, with ``--apply``, write the board."""
     ap = argparse.ArgumentParser(
@@ -208,6 +297,19 @@ def main(argv: list[str] | None = None) -> int:
     )
     ap.add_argument(
         "--apply", action="store_true", help="write ff-verdicts.json (default: dry run)"
+    )
+    ap.add_argument(
+        "--normalize-shas",
+        action="store_true",
+        help="also expand the short scored-at shas with a proven unique "
+        "expansion (SHA_EXPANSIONS) to the 12-char convention",
+    )
+    ap.add_argument(
+        "--no-rescore",
+        action="store_true",
+        help="skip the re-score pass. Use with --normalize-shas to expand shas "
+        "on an already-re-scored board without re-stamping it with a fresh "
+        "timestamp for no change in content.",
     )
     args = ap.parse_args(argv)
 
@@ -225,7 +327,7 @@ def main(argv: list[str] | None = None) -> int:
     print("-" * 78)
 
     written = 0
-    for r in doable:
+    for r in [] if args.no_rescore else doable:
         sidecar = rescore(r["artifact"], r["tier"], r["run_id"])
         if sidecar is None:
             print(f"  SCORER FAILED {r['id']} — left untouched")
@@ -248,12 +350,36 @@ def main(argv: list[str] | None = None) -> int:
         board[r["id"]] = sidecar
         written += 1
 
+    seed_doc = None
+    if args.normalize_shas:
+        print("-" * 78)
+        expanded = normalize_shas(board)
+        # The seed carries the same prefix in its own `refresh` block and is a
+        # watched board input, so it is normalized in the same pass.
+        seed_doc = json.loads(SEED.read_text())
+        seed_changes = normalize_shas(seed_doc, SEED.name)
+        for where, old, new in expanded + seed_changes:
+            print(f"  sha {old} -> {new}  ({where})")
+        still_short = sorted(
+            set(remaining_short_shas(board)) | set(remaining_short_shas(seed_doc))
+        )
+        print(
+            f"  expanded {len(expanded) + len(seed_changes)} stamp(s); "
+            f"still short: {still_short or 'none'}"
+        )
+
     if args.apply:
         # indent=1 + sort_keys is the board file's canonical on-disk format
         # (scripts/merge_ffr3a2_verdicts.py writes it the same way), so the diff
         # shows only the re-scored entries instead of reflowing all 39.
         VERDICTS.write_text(json.dumps(board, indent=1, sort_keys=True) + "\n")
         print(f"\nwrote {VERDICTS.relative_to(REPO)} ({written} verdict(s) re-scored)")
+        if seed_doc is not None:
+            # The seed's own canonical format (indent=1, key order preserved —
+            # NOT sort_keys, unlike the verdicts file), matched so the diff is
+            # the sha line alone rather than a whole-file reflow.
+            SEED.write_text(json.dumps(seed_doc, indent=1) + "\n")
+            print(f"wrote {SEED.relative_to(REPO)}")
     else:
         print(f"\nDRY RUN — {written} verdict(s) would be re-scored. Pass --apply.")
     return 0
