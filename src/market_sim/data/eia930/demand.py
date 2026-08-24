@@ -670,6 +670,14 @@ def ercot_tie_zone_interchange(
             )
             continue
         g = g[(g["local_time"] >= lo) & (g["local_time"] <= hi)]
+        # Model clock drops Feb 29 (every loader's convention); the
+        # hour-ending stamps for Feb-29 run 02-29 01:00 .. 03-01 00:00, so
+        # filter on the hour-BEGINNING clock (stamp - 1h) to excise exactly
+        # the leap day. Without this a leap year has 8,784 rows and the
+        # attribution silently fell back to the spread (caught on the first
+        # authorized 3-year solve, 2024).
+        hb = g["local_time"] - pd.Timedelta(hours=1)
+        g = g[~((hb.dt.month == 2) & (hb.dt.day == 29))]
         if len(g) != HOURS_PER_YEAR:
             logger.info(
                 "ERCO by-neighbor interchange %d: %s has %d rows (need %d) — "

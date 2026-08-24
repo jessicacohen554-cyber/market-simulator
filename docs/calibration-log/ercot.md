@@ -11470,3 +11470,19 @@ local + gitignored; no CI solves, no workflows.
 
 **Session consumed the ercot-231 shorthand. Next shorthand: ercot-232**
 (ercot-199 remains unclaimed)
+
+### ercot-231 PROMOTION ADDENDUM (2026-08-23, the hub session, post-close)
+
+**The owner answered the FINDING §6 escalation (verbatim): "Try 3 year but
+you can do a 1 year keeper on ERCOT 2023 because it is a fundamentally
+different market design than 2024 and 2025… that's the whole point of this
+exercise rule 16 be damned."** Options 1+2 taken together (N1a promotion
+under the standing structural standard over the G-SPUR mechanical kill, +
+the GTC restoration as the rule-14 repair); the combined 3-year path is GO;
+**rule 16 [R-ALLYEARS] owner-waived for ERCOT 2023** — a 2023-only keeper is
+pre-authorized if 2024/2025 retention degrades (decision rule fixed before
+the result: retention holds → 3-year keeper; degrades → 2023-only keeper
+under the waiver, 2024/2025 reported at full magnitude alongside). A first
+3-year launch was killed inside 2024's LP build under the owner's interim
+2023-only instruction (nothing written), then relaunched on the explicit
+GO. Outcome recorded below when the solve lands.
