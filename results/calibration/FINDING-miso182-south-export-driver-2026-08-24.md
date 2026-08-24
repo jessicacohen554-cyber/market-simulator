@@ -251,7 +251,9 @@ same reason.
 **Criteria 3 (forward-regenerable) and 4 (free of measured-outcome content)** are
 **not reached** — criterion 2 is dispositive, and a series that cannot be placed
 cannot be evaluated for forward regeneration. Reported so no successor mistakes
-silence for a pass.
+silence for a pass. (§6b(ii) then raises criterion 3 again in a *different*
+frame: not for the candidate as it stands, but as the question a successor
+bringing **EQR** would have to answer for that specific series.)
 
 ## 6b. The two candidate sources that DO exist, and why they do not lift the refusal today
 
