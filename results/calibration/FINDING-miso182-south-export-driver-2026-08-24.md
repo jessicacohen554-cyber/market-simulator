@@ -253,13 +253,65 @@ same reason.
 cannot be evaluated for forward regeneration. Reported so no successor mistakes
 silence for a pass.
 
-**What would re-open the cell** (new evidence, not a variant sweep): a published
-series that separates MISO's Midwest↔South contract-path schedules from
-third-party sales at the counterparty grain — e.g. MISO's own RDT flow published
-with counterparty resolution, or Settlement-Agreement schedule data at MW grain
-with the wheel identified. FERC EQR firm-sale records and MISO OASIS firm
-point-to-point reservations are the named places to look; neither was
-established here as providing the **split**, which is the binding requirement.
+## 6b. The two candidate sources that DO exist, and why they do not lift the refusal today
+
+Reported at this length because a `G` cell is only as useful as the precision of
+its re-open condition, and because both sources are live enough that a successor
+must not read this finding as "nothing exists".
+
+**(i) MISO's own RDT flow series EXISTS — but counterparty-unresolved, and
+behind the gate this repo already adjudicated.** MISO reports Regional
+Directional Transfer flows within its market reporting. Two independent
+problems:
+
+* **It is a single aggregate Midwest↔South MW quantity.** It does not resolve by
+  counterparty, so it cannot say how much of the wheel crossed **TVA's** meters
+  rather than SOCO's or AECI's — which is exactly the apportionment a per-seam
+  mechanism needs. Placing an aggregate RDT number onto one counterparty's seam
+  *is* the invented apportionment.
+* **Access is already adjudicated shut in this repo.** MISO retired the market
+  reports in favour of the **MISO Data Exchange API**, and the RT Data Broker RDT
+  endpoint is **deprecated without archive** while Data Exchange is
+  **key-gated** — adjudicated 2026-07-11, re-verified 2026-07-12
+  (`data/raw/transfer-constraint-binding/MISO/README.md`), re-confirmed at
+  miso-77 §2c and again at miso-174 §2 (K-PRE-4). This session adds no new
+  access claim.
+
+**An important asymmetry, in the successor's favour:** the aggregate RDT series
+would be **insufficient for a mechanism but sufficient for the diagnostic**. To
+test whether the measured MISO→TVA export *is* the wheel, one needs only to
+compare the aggregate RDT flow against the measured seam — no counterparty split
+required. That is why §7's named successor is a **basis question**, not a
+mechanism, and why it is worth doing even under the access constraint.
+
+**(ii) FERC EQR exists and is bulk-retrievable — and is the concrete re-open
+path.** EQR carries seller-provided **contract and transaction** records for
+jurisdictional sales *and* transmission service, with **buyer, seller, price,
+quantity and location**, published quarterly as bulk CSV/XML. Crucially, MISO's
+own internal Midwest→South market transfer is **not a sale** and would not
+appear as an EQR transaction, whereas genuine third-party firm sales from
+MISO-South entities to TVA/SOCO/AECI **would** — so EQR could in principle
+deliver the "external sale" leg directly, leaving the wheel by subtraction. It
+is the most promising source found, and **this session did not exhaust it.**
+
+Three questions a successor must answer before it becomes admissible, none of
+which this session settled:
+
+1. **Grain / crosswalk.** EQR delivery points must map onto the model's
+   seam-aggregate boundary. That is a crosswalk, not necessarily an invented
+   apportionment — but it has to be demonstrated, not assumed.
+2. **Criterion 3, forward-regenerability — the likely binding one.** EQR is a
+   *backward-looking record of executed transactions*. A long-term firm contract
+   with a stated term and MW is a forward-knowable obligation and would clear;
+   a pile of short-term spot sales is a measured outcome and would **not** (rule
+   13). Which of the two the MISO-South→TVA record actually is, is unmeasured.
+3. **Cost and lag.** ~100 GB full corpus, quarterly filings at a ~90-day lag.
+
+**What would re-open the cell** (new evidence, not a variant sweep), now stated
+precisely: **either** an EQR-based firm-sale series for MISO-South→{TVA, SOCO,
+AECI, LGEE} that clears (1)–(3) above, **or** any published series resolving
+MISO's Midwest↔South contract-path schedules **by counterparty**. The aggregate
+RDT flow alone re-opens the **basis diagnostic** (§7), not the mechanism.
 
 ## 7. What this closes and what it opens
 
@@ -311,6 +363,28 @@ established here as providing the **split**, which is the binding requirement.
   measurement.** Three independent corroborations (§6) point one way; none is
   proof, and the confirming decomposition was deliberately **not** computed
   under this session's own anti-sweep clause.
+* **THE RECORDS HUNT IS NOT EXHAUSTIVE, and the gaps are named rather than
+  papered over.** A delegated broad sweep of the seven candidate sources
+  terminated early on a provider-side API error and returned no usable report;
+  **nothing from it is quoted or relied on here.** Every source statement in §6
+  and §6b is one I verified directly against primary or near-primary sources.
+  Consequently the following legs were **NOT** systematically established, and a
+  successor must not treat their absence here as a negative finding:
+  **grandfathered agreements (GFAs)** carried into MISO at the 2013 Entergy
+  integration; **legacy Entergy unit-power-sale agreements** persisting into
+  2023–25; **pseudo-tie / dynamic-schedule inventories** at the southern seam;
+  and the **archive depth and retrievability of MISO OASIS firm point-to-point
+  reservations**. The `G` verdict does not rest on any of them — it rests on
+  criterion 2, the missing wheel-vs-sale apportionment, which none of these four
+  would supply on its own — but the hunt is incomplete and is recorded as such.
+* **FERC EQR was not exhausted** (§6b(ii)), and it is the one source that could
+  plausibly clear criterion 2. Refusing now is correct on the evidence in hand;
+  it is **not** a finding that EQR fails.
+* **A `G` on an incomplete hunt is the weaker of the two available closes**, and
+  it is chosen deliberately over an `R`: nothing measured here refutes the
+  mechanism-in-kind (K-1 cleared), so refusing on data — reversibly, with a
+  specified re-open — is the honest verdict, and it leaves the candidate
+  available to a successor who brings the apportionment.
 * **A pure wheel would partly net out inside the MISO↔TVA DIBA pair** (out at one
   tie, back at another, both booked to the same counterparty), so contamination
   cannot be inferred from the TVA level alone — which is precisely why the

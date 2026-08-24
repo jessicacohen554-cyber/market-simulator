@@ -8530,7 +8530,26 @@ substantive PJM-side dimension is **S-3, the stress response** (TVA
 **South-seam MEASUREMENT-BASIS question**: what share of measured
 MISO↔{TVA, SOCO, AECI, LGEE} interchange is the RDT wheel. It costs no LP, is
 admissible (it touches no forecast input), and **can invalidate the object
-rather than tune it**. Also named, not stamped: the model's South seam carries
+rather than tune it** — and it needs only MISO's **aggregate** RDT flow, no
+counterparty split. That series exists but is counterparty-unresolved and its
+access is already adjudicated shut (RT Data Broker RDT endpoint deprecated
+without archive, Data Exchange key-gated — miso-77 §2c, miso-174 K-PRE-4).
+
+**Re-open for the mechanism, stated precisely:** either an **EQR**-based
+firm-sale series for MISO-South→{TVA, SOCO, AECI, LGEE} clearing (a) a
+delivery-point→seam crosswalk, (b) rule-13 forward-regenerability — EQR is a
+backward-looking record of *executed transactions*, so a long-term firm contract
+with stated term and MW clears while a pile of short-term spot sales does not,
+and **which it is here is unmeasured** — and (c) the ~100 GB / 90-day-lag cost;
+or any published series resolving the contract-path schedules **by
+counterparty**. **Hunt coverage disclosed:** a delegated broad sweep of the seven
+candidate sources died on a provider API error and is **not quoted**; GFAs,
+legacy Entergy unit-power-sale agreements, pseudo-tie inventories and MISO OASIS
+archive depth were **not** systematically established, and **FERC EQR was not
+exhausted**. The `G` rests on criterion 2 alone — which none of those four would
+supply — and is chosen over an `R` precisely because **K-1 cleared**, so the
+refusal is reversible and the candidate stays available to a successor who
+brings the apportionment. Also named, not stamped: the model's South seam carries
 `ba_code="SOCO"` while SOCO is the one counterparty MISO essentially never
 exports to — under the armed `miso_seam_measured_ladder` the pricing role is
 largely superseded, this session did **not** measure whether it is live, and no

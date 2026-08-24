@@ -4943,8 +4943,21 @@ loss.
 > vs MHEB +0.57/+0.48/+1.19). **THE QUEUE HEAD IS NOW NOT A MECHANISM BUT THE
 > SOUTH-SEAM MEASUREMENT-BASIS QUESTION** — what share of measured
 > MISO↔{TVA, SOCO, AECI, LGEE} interchange is the RDT wheel — which costs no LP, is
-> admissible, and **can invalidate the object rather than tune it**; plus the standing
-> D-4 posture question. Every named lever in MISO's queue is now adjudicated with no
+> admissible, and **can invalidate the object rather than tune it** — and it needs
+> only MISO's AGGREGATE RDT flow, no counterparty split (that series exists but is
+> counterparty-unresolved and its access is already adjudicated shut: RT Data Broker
+> RDT endpoint deprecated without archive, Data Exchange key-gated — miso-77 §2c,
+> miso-174 K-PRE-4). **RE-OPEN for the mechanism, precisely:** either an EQR-based
+> firm-sale series clearing a delivery-point→seam crosswalk, rule-13
+> forward-regenerability (EQR is a backward-looking record of executed transactions;
+> a long-term firm contract clears, short-term spot sales do not, and which it is
+> here is UNMEASURED) and the ~100 GB / 90-day-lag cost; or any published series
+> resolving the contract-path schedules BY COUNTERPARTY. **HUNT COVERAGE DISCLOSED:**
+> a delegated broad sweep died on a provider API error and is NOT quoted; GFAs,
+> legacy Entergy unit-power-sale agreements, pseudo-tie inventories and MISO OASIS
+> archive depth were NOT systematically established and FERC EQR was NOT exhausted —
+> the `G` rests on criterion 2 alone, and is chosen over an `R` precisely because
+> K-1 cleared, so the refusal is reversible. Plus the standing D-4 posture question. Every named lever in MISO's queue is now adjudicated with no
 > mechanism surviving. Records:
 > `FINDING-miso182-south-export-driver-2026-08-24.md`,
 > `_miso182_south_export_driver.json`.**
