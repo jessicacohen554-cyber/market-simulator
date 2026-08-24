@@ -24,6 +24,7 @@ from market_sim.config.constants import (
     HYDRO_ACCREDITATION_CREDIT_BY_ISO,
     RENEWABLE_CAPACITY_CREDIT,
 )
+from market_sim.data.eia923 import EIA923_LATEST_FINAL_VINTAGE
 from market_sim.data.fleet import Generator
 from market_sim.model.capacity import (
     accredited_firm_capacity_mw,
@@ -128,6 +129,67 @@ class TestModelledHydroNameplate(unittest.TestCase):
     def test_unknown_iso_credits_zero(self):
         modelled_hydro_nameplate_mw.cache_clear()
         self.assertEqual(modelled_hydro_nameplate_mw("NOT_AN_ISO", 2026), 0.0)
+
+
+class TestForecastVintageClampIsStable(unittest.TestCase):
+    """The forecast hydro basis never falls off the EIA-923 vintage cliff.
+
+    Open-frontier item 6 feared the accredited hydro fleet "silently drops"
+    past the last EIA-923 final vintage — vintages after
+    :data:`~market_sim.data.eia923.EIA923_LATEST_FINAL_VINTAGE` are monthly
+    EARLY releases carrying only the large reporters, so an unclamped forecast
+    year would accredit a partial census and the adequacy ledger would shrink
+    for a purely bookkeeping reason. :func:`modelled_hydro_nameplate_mw` clamps
+    the census year, which is what makes the basis stable; this is the
+    regression guard for that clamp (capx D-2, 2026-08-24).
+
+    Hermetic and year-SENSITIVE by construction: the patched loader serves the
+    FULL plant census only at or before the final vintage and a partial
+    (large-reporters-only) census after it, so the assertions below fail if the
+    clamp is ever removed rather than passing trivially.
+    """
+
+    # Full final-release census vs the partial early-release census that a
+    # post-vintage year would see without the clamp.
+    _FULL = [(1, "Upstate_West", 700.0, 1e6), (2, "Capital_Hudson", 300.0, 5e5)]
+    _PARTIAL = [(1, "Upstate_West", 700.0, 1e6)]
+
+    def _patch_vintage_sensitive(self):
+        modelled_hydro_nameplate_mw.cache_clear()
+
+        def _loader(iso, year, **kw):
+            rows = self._FULL if year <= EIA923_LATEST_FINAL_VINTAGE else self._PARTIAL
+            return _FakeBudget(rows)
+
+        return mock.patch("market_sim.data.hydro.load_hydro_budget", _loader)
+
+    def test_every_forecast_year_sees_the_full_final_release_census(self):
+        # 1,000 MW = the full census. Without the clamp the post-vintage years
+        # would each report 700 MW — the "silent drop" this guards.
+        with self._patch_vintage_sensitive():
+            for year in (2026, 2027, 2030, 2040, 2050):
+                with self.subTest(year=year):
+                    self.assertAlmostEqual(
+                        modelled_hydro_nameplate_mw("NYISO", year), 1_000.0
+                    )
+
+    def test_year_none_matches_the_clamped_forecast_basis(self):
+        # The callers that thread no solve year must resolve the same basis as
+        # the ones that do, or the ledger and the backstop could disagree.
+        with self._patch_vintage_sensitive():
+            self.assertAlmostEqual(
+                modelled_hydro_nameplate_mw("NYISO", None),
+                modelled_hydro_nameplate_mw("NYISO", 2026),
+            )
+
+    def test_a_pre_vintage_hindcast_year_is_not_clamped_forward(self):
+        # The clamp is a ceiling, not a pin: a backcast year at or below the
+        # final vintage still resolves its OWN census.
+        with self._patch_vintage_sensitive():
+            self.assertAlmostEqual(
+                modelled_hydro_nameplate_mw("NYISO", EIA923_LATEST_FINAL_VINTAGE),
+                1_000.0,
+            )
 
 
 class TestAccreditedLedgerFuelComposition(unittest.TestCase):
