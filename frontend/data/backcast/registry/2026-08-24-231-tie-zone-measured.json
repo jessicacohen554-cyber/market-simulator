@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-24-231-tie-zone-measured",
+  "label": "231 tie zone measured",
+  "date": "2026-08-24",
+  "shorthand": "231-tie-zone-measured",
+  "definition": "ercot-231 combined keeper candidate: tie-zone interchange attribution (leap-fixed, all three years) + measured GTC limits restored; 3-year run authorized by owner 2026-08-23, rule-16 waiver for a 2023-only fallback recorded",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-24-231-tie-zone-measured.js",
+  "bundle": "results/calibration/ercot231_tiegtc_full"
+}
