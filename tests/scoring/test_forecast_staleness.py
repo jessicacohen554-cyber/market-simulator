@@ -242,5 +242,56 @@ class WarnOnlyContractTests(unittest.TestCase):
         self.assertNotIn("--fail-on-stale", line)
 
 
+class BoardInputPresenceTests(unittest.TestCase):
+    """An ABSENT board must never read as an UNSTAMPED board.
+
+    The FR-21 provenance-restore session opened on a reading of "0 stamped, 0
+    scored — the board carries NO provenance stamps at all" taken against a tree
+    that did not hold the board files. Direct measurement on the same commit,
+    from the commit's own tree, read 39 stamped / 8 scored: the stamps were
+    never lost. These tests keep the two states distinguishable.
+    """
+
+    def test_absent_input_is_a_measurement_failure_not_an_unstamped_board(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ghost = Path(tmp) / "not-here.json"
+            rep = cs.evaluate(paths=[ghost])
+        self.assertTrue(rep["stale"])
+        self.assertEqual(rep["position"]["n_stamps"], 0)
+        joined = " ".join(rep["warnings"])
+        self.assertIn("BOARD INPUT(S) MISSING", joined)
+        # The false claim must be suppressed, not merely out-ranked.
+        self.assertNotIn("NO provenance stamps", joined)
+
+    def test_present_but_empty_board_still_reads_as_unstamped(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            rep = cs.evaluate(paths=[Path(tmp)])
+        self.assertEqual(rep["position"]["missing_inputs"], [])
+        self.assertIn("NO provenance stamps", " ".join(rep["warnings"]))
+
+    def test_generated_inputs_are_never_reported_missing(self):
+        # registry/ is gitignored and the Pages deploy is its single writer, so
+        # it is absent in a normal checkout. That must stay silent.
+        self.assertIn("frontend/data/forecast/registry", cs.BOARD_INPUTS_GENERATED)
+        absent = cs.missing_inputs(
+            [cs.REPO / g for g in cs.BOARD_INPUTS_GENERATED]
+        )
+        self.assertEqual(absent, [])
+
+    def test_the_records_lane_file_is_watched(self):
+        # program-status.json is what a gate-(a) re-key rewrites. Watching it is
+        # what makes a re-key that drops its stamp visible instead of silent.
+        self.assertIn(
+            "frontend/data/forecast/program-status.json", cs.BOARD_INPUTS_COMMITTED
+        )
+
+    def test_this_checkout_holds_every_committed_board_input(self):
+        # The standing regression guard: a records-lane edit that deletes or
+        # relocates a tracked board input fails here instead of silently
+        # reappearing as "the board has no stamps".
+        for rel in cs.BOARD_INPUTS_COMMITTED:
+            self.assertTrue((cs.REPO / rel).exists(), f"missing board input: {rel}")
+
+
 if __name__ == "__main__":
     unittest.main()
