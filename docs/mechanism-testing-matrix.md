@@ -4895,6 +4895,59 @@ loss.
 
 ### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-22-miso-177-rho-measured` (**PROMOTED miso-177, 2026-08-22**, superseding `2026-08-22-miso-175-hourkey` — the measured-rho re-gate of the same-day owner RHO_CLIP band ruling; the standing miso-169/nyiso-144 floor escalation is CLOSED: refuted, deleted, re-solved), **NOT-YET on C3a-2025 (−11.7 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, miso-175 (2026-08-22) EXECUTED item 1 (the seam-envelope hour-key rotation — now the keeper); miso-176 (2026-08-22) EXECUTED item 3 (the M2M/CMP seam-class intake + binding-reality measurement — `m2m_seam_entitlement_cap` minted `G`, no LP); the remaining two (the coincident-peak seam-response object [OWNER admissibility ruling needed, now holding miso-176's binding evidence], the South under-export) stay NAMED, NOT CHARTERED — see the stamps below and the standing OWNER items. **miso-178 (2026-08-23) delivered the re-charter's measurement: the full C3a-2025 anatomy on the measured-rho keeper + the RANKED lever plan — the queue now carries the D-1 across-unit offer-level-dispersion charter ask (top), the D-2 5(i) seam-response ruling, and the D-3 South under-export evidence charter (FINDING-miso178 §7–§10; its stamp below).** **miso-179 (2026-08-23) EXECUTED the granted D-1 charter and REFUTED it at its own pre-registered no-LP pre-checks — `miso_offer_level_dispersion` minted `R`, no field ever created, keeper unchanged: the model already carries 0.541× the eligible book's across-unit spread at the 2025 summer top-decile margin (kill ≥ 0.5), and the granted rank-mapped LEVEL form statically predicts C3a-2023 +1.28 → −40.1 % (the miso-145 level warning at rank grain; the miso-178 §7 kill-risk (b) population non-identifiability materialized). The queue now carries the D-2 5(i) ruling, the D-3 South evidence charter, and the NEW anchored SPREAD-ONLY successor ask (owner decision — the measured residual is a top-decile tail steepening, +$40 at p95 / +$110 at p99; its stamp below).** **miso-180 (2026-08-23) EXECUTED the granted D-1b successor charter end to end and measured it INERT — `miso_offer_spread_anchored` minted `I` (built, gated default-off, both A/B runs registered), keeper unchanged: the ex-ante-identified anchor (r = 0.875, the model/book H* crossing) grafted the measured above-anchor rise exactly as designed (body untouched to 3 decimals, ceilings respected) and the LP realized only +0.132 pp of the predicted +0.592 on C3a-2025 — Δ₁ did not collapse (+10.50 → +10.45) and the South dipole moved AWAY from zero (+16.96 → +17.15%). The across-unit dispersion family is now fully adjudicated (level R / spread I); the residual is NOT an offer-surface object — the queue carries the D-2 5(i) seam-response ruling (the +2.1 GW binding-hour import excess, now the largest named object) and the D-3 South evidence charter (its stamp below).**
 
+> **QUEUE STAMP miso-182 (2026-08-24) — THE D-3 CHARTER EXERCISED AS AN EVIDENCE
+> SESSION; THE SEAM IS 86 % TVA (NOT SOCO/TVA/AECI), THE MANITOBA FLAT-BLOCK FORM
+> SURVIVES ITS OWN KILL, AND THE CANDIDATE IS REFUSED ON DATA. NO LP, NO FIELD;
+> new row `miso_south_firm_export_block` minted `G`. Keeper UNCHANGED at
+> `2026-08-22-miso-177-rho-measured`.** PREREG committed BEFORE any adjudicating
+> quantity (`PREREG-miso182-south-export-driver-2026-08-24.md`, 50efc4d). **Reported
+> first, against the close: the load-bearing K-1 FORM test CLEARED 0/3** — the
+> Manitoba annual-flat block does NOT worsen the scarce-set residual in any year, so
+> the form is *not* refuted; but the block the Manitoba identification yields is
+> +0.185/+0.188/+0.281 GW against scarce gaps of +0.633/+0.350/+1.191, reaching only
+> **29/54/24 %** of the object — it clears by being too small to do harm. **THE
+> CHARTER'S PREMISE IS CORRECTED BY THE MEASUREMENT:** the seam is **TVA at
+> 79.2/85.7/85.8 %** of gross export; MISO is a NET IMPORTER from SOCO in all three
+> years and from AECI in 2024–25, and **essentially never exports to SOCO**
+> (0.1–0.3 % of gross export) — the very BA the model's South seam names as
+> `ba_code`. **WHERE THE OBJECT LIVES: 46–76 % of each scarce gap is stress
+> RESPONSE, not level.** The MODEL withdraws 56–76 % of its South export in its own
+> scarce hours (2025: annual 0.750 → scarce 0.177 GW) while the measured seam holds
+> or expands (1.031 → 1.368) — because the armed South EXPORT ladder tops out at
+> **$53.00/MWh** in 2025 and the scarce set is RT > $200 (measured mean $479), so the
+> model exports ~nothing there BY CONSTRUCTION. **THE REFUSAL (G-2 criterion 2 —
+> placeable at our grain without inventing an apportionment):** MISO's two footprints
+> are non-contiguous and its Midwest→South **Regional Directional Transfer is a
+> CALCULATED contract-path quantity** defined in the MISO/SPP/**Joint Parties**
+> Settlement Agreement — Joint Parties = AECI, LG&E/KU, PowerSouth, Southern Co. and
+> **TVA**, i.e. the seam's own DIBA pool — with MISO compensating them for system use
+> above its 1,000 MW of owned contract path. **Nothing published decomposes measured
+> MISO↔Joint-Party interchange into MISO's own internal wheel vs a genuine external
+> sale**, so a firm export block here would model an INTERNAL transfer as an EXTERNAL
+> sale (rule 14) and DOUBLE-COUNT a transfer the keeper already carries internally
+> (`miso_rdt_tcdc`, `MISO_RDT_CONTRACT_N_TO_S_MW` = 3000) — rule 19. Three
+> corroborations: measured MISO→TVA in the 47 scarcest hours of 2025 is **2,720 MW**
+> against the keeper's own DERATED N→S limit 0.92 × 3000 = **2,760 MW** (1.4 % below);
+> the counterparty pattern is a wheel's (large export to ONE neighbour, offsetting
+> imports from the others); 2025 is the year the RDT bound N→S for 5,086 hours
+> (miso-174 §5). **NOT claimed as established** — the decomposition was deliberately
+> NOT computed under the session's own anti-sweep clause, and a pure wheel would
+> partly net out inside the MISO↔TVA pair. **AGAINST INTEREST ON MY OWN INSTRUMENT:**
+> the supporting G-1b anchored signature fails TVA in 2 of 3 years (3/6, 0/5, 1/6) but
+> that verdict is UNRELIABLE and is not used — it penalises TVA for being unlike the
+> MEASURED MHEB series (a volatile, seasonal, drought-affected hydro seam) when the
+> Manitoba precedent is a fact about the model's REPRESENTATION (a flat block); on
+> intrinsic firmness TVA beats the anchor on every dimension (2024 seasonality CV 0.10
+> vs 1.09, volatility/level 0.073 vs 0.415, |r| vs price 0.018 vs 0.203). The one
+> substantive PJM-side dimension is S-3, the stress response (TVA −0.06/−0.08/−0.81 GW
+> vs MHEB +0.57/+0.48/+1.19). **THE QUEUE HEAD IS NOW NOT A MECHANISM BUT THE
+> SOUTH-SEAM MEASUREMENT-BASIS QUESTION** — what share of measured
+> MISO↔{TVA, SOCO, AECI, LGEE} interchange is the RDT wheel — which costs no LP, is
+> admissible, and **can invalidate the object rather than tune it**; plus the standing
+> D-4 posture question. Every named lever in MISO's queue is now adjudicated with no
+> mechanism surviving. Records:
+> `FINDING-miso182-south-export-driver-2026-08-24.md`,
+> `_miso182_south_export_driver.json`.**
 > **QUEUE STAMP miso-181 (2026-08-24) — THE D-2 5(i) RULING EXERCISED AND THE
 > COINCIDENT-PEAK SEAM-RESPONSE ENVELOPE REFUTED AT ITS OWN PRE-REGISTERED
 > CONDITIONING-SANITY KILL. NO LP, NO FIELD; new row `miso_seam_coincident_envelope`
