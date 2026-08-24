@@ -8372,3 +8372,77 @@ corrected to the criterion's own gated-records semantics before
 adjudication; retention prunes `2026-08-16-miso-160-wefor-shape` and
 `2026-08-19-miso-169-control`. Rule 22: 2023–2025 only; MISO holds neither
 marker; freeze untouched. Next number: **miso-181.**
+
+## miso-181 (2026-08-24) — the D-2 5(i) ruling exercised and the coincident-peak seam-response envelope REFUTED at its own conditioning-sanity kill: the measured p90 seam delivery is FLAT in the neighbour's own load state — `miso_seam_coincident_envelope` minted `R`, NO LP
+
+**Charter:** the owner ruled on 5(i) in the session prompt and GRANTED D-2 —
+a seam-import RESPONSE envelope conditioned on the NEIGHBOUR'S OWN
+coincident load, admissible in kind (forward driver; miso-176's measured
+JOA/FFE physics), every parameter seam/neighbour-side, the correlation with
+MISO scarcity disclosed. The PREREG
+(`PREREG-miso181-seam-coincident-envelope-2026-08-24.md`, commit `9e9d1a1`
+BEFORE any measurement) froze the form — the armed PJM-seam p90 envelope
+(`miso_seam_flow_limit`, merit-cap, hour-ending key) CONDITIONED on PJM's
+own within-year load percentile: `cap′(t) = min(bucket p90,
+cond_cap(b(t)))`, declared bin grid [0,50,75,90,95,97.5,99,100], the
+existing p90 constant, zero fitted scalars, zero LMP/residual in the path
+(rule 19: extend the armed envelope, never stack) — plus the kills, the
+combination-arm condition (the `miso_offer_spread_anchored` re-open
+clause), the A/B gates and the promotion rule.
+
+**Phase A (probe `_miso181_seam_response_precheck.py` →
+`_miso181_seam_response_precheck.json`; keeper hourlies + measured series,
+no LP):** V1 reproduced C3a +1.2813/−4.0643/−11.7421 % exactly; DIBA −1 h
+key re-verified at r = 1.0000 (2023/2025). **K-c FIRED IN ALL THREE YEARS,
+at full strength:** the conditional p90 of PJM-seam delivery is FLAT in the
+neighbour's load state (2025 bin caps 5,526 → 5,438 MW bottom-to-top,
+−1.6 %; 2023's 95–99th-pctile bins the HIGHEST in the table; only 2024 —
+the year with the published EIA-930 DIBA↔TI inconsistency — shows a
+decline). The tightening the min-composition generates is therefore
+driver-blind bucket-vs-bin arithmetic: share in neighbour-peak (≥p90)
+hours **13.2/8.9/9.3 %** vs the frozen ≥50 % line, share BELOW the median
+state **35.6/30.4/44.7 %** vs ≤10 %, and 2024's largest tightening month
+is JANUARY (1,009 GWh). A level lever in costume — the charter's own named
+failure mode. Verdict per the frozen mapping: **`R`, no LP, no field,
+keeper UNCHANGED** at `2026-08-22-miso-177-rho-measured` (NOT-YET on
+C3a-2025 alone; C3c the single ledgered caveat).
+
+**Against interest, in full:** K-a did NOT fire — the I-on-arrival stop
+stayed silent (the refutation is structural, not size): removing the FULL
+aggregate excess (R_bound, the inadmissible outcome-pin ceiling; 4,553 h
+of 2025, mean +2.10 GW) predicts C3a-2025 +5.44/+6.13 pp — but year-blind
+(+5.59/+6.34/+5.44), itself a level object. The mechanism's OWN overstated
+ceiling (R_hi) reaches only +0.98/+1.42 pp on 2025 (need +1.75) with the
+forbidden shape (2024 +1.41 > 2025 +0.98 ungrafted; tail contribution
++0.001/+0.004/+0.32 pp — body hours, where miso-178 §4 measures the model
+already over). K-b cleared (2023 +2.02 % under R_hi). **The combination
+arm was NOT built and the `miso_offer_spread_anchored` re-open clause NOT
+spent:** C-3 fired (13 hours of 2025 displace the clearing rank to ≥0.875
+at the intersected estimate, vs ≥20 frozen; 43 at R_hi, 74 even at the
+R_bound ceiling) — the coupling hypothesis measured real in sign,
+sub-material in count; C-2 (+2.34 %) and C-4 (+0.343 pp) passed; the graft
+cell stays `I`.
+
+**The structural close:** the pull-back is real (miso-174 §3b) but
+concentrates in the M2M-BINDING subset (miso-176 §4) — a
+p90-of-driver-state statistic cannot see a phenomenon carried by the bound
+half of a state's hours; the binding state itself is answer-class
+(miso-176 K-1); flow-pinning is the rule-13 outcome pin. **The admissible
+driver does not encode the phenomenon; the driver that encodes it is not
+admissible.** The D-2 lane closes end to end; the +2.07 GW binding-hour
+import excess stands as a disclosed structural defect, quotable as a
+defect, never as a lever. Re-opens only on new evidence (a published
+forward-knowable series separating the binding state at seam grain — the
+K-2 `G` cell's own re-open — or a demonstrated admissible driver with a
+real conditional-envelope gradient); never a variant sweep.
+
+Records: `FINDING-miso181-seam-response-refutation-2026-08-24.md`;
+`_miso181_seam_response_precheck.json`; probe
+`scripts/probes/_miso181_seam_response_precheck.py`. Matrix: NEW base row
+`miso_seam_coincident_envelope` + all six shard cells (MISO `R`, five `·`)
++ §5.4 queue stamp + shard re-stamp log, in-session (rule 26(b); the
+miso-179 no-field pattern). Rule 15 not engaged (no solve). Rule 22:
+2023–2025 only; MISO holds neither marker; freeze untouched. **The queue
+falls back to D-3** — the South under-export evidence session (handoff
+sketch: FINDING §6) — with D-4 (posture) standing. Next number:
+**miso-182.**
