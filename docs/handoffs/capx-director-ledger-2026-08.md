@@ -8,8 +8,37 @@ edits `src/market_sim/`, and never charters backcast-calibration work (that
 track is the owner's own CAISO/ERCOT/MISO sessions, watched here for
 deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-24 (refresh #2) ·
-**HEAD at refresh:** `d84a95e`
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-24 (refresh #3) ·
+**HEAD at refresh:** `8fd031d`
+
+---
+
+## 0a. Refresh #3 — no chartered lane has started; the ERCOT arc put its own termination card to the owner
+
+**Neither D2-REMEASURE nor D5 exists as a branch** (`git ls-remote` 2026-08-24: the only
+`capx` ref is this ledger). Both prompts stand unchanged and are still the open batch; the
+only thing that moved under them is `main` (`7cf572e` → `8fd031d`), so both must fetch fresh.
+
+**Q1 now has an instrument, and it is not mine to sign.** The ERCOT backcast lane opened
+`docs/DECISION-CARD-ercot233-2023-object-closure-2026-08-24.md` — **OPEN, awaiting owner
+signature** — asking whether the ERCOT 2023 price object is *formally closed as an adjudicated
+model-class limitation*, with the lane RESTING at the current keeper until **Door D**
+(2026 SOM RTC+B-era anchors, ~mid-2027). Its own recommendation is **Y-A: CLOSE and REST, and
+re-point ERCOT session bandwidth to the other ISOs' queues**; Y-B adds one read-only NE_LOB
+Phase-0 epilogue; Y-C (hold open) is recommended against on an empty admissible-candidate list.
+
+**Whichever way the owner signs it answers Q1 for this track**, because the card is exactly
+the "has the arc settled?" question in the ERCOT lane's own words. Reading for D4:
+- **Y-A or Y-B → D4 is chartered IN FULL.** A closed object is a settled record: the forecast
+  net-revenue half consumes the adjudicated scarcity representation (Door A conduct closed and
+  non-transferable, the ORDC/RTORPA decontamination lineage ercot-213/215, C3c as the ledgered
+  model-class limit) rather than competing with a live arc. Card Y explicitly re-points
+  bandwidth away from ERCOT backcast, which removes the collision risk the D4 hold was for.
+- **Y-C → D4 stays at the I3-invariant half only**, exactly as the original charter said.
+The keeper this rests on now reads 2023 **−38.0 % / 0.696 / 93** — and **C3c-2023 is a clean
+PASS, the first ERCOT keeper ever to clear the 2023 tail criterion** (93 of 181 = 0.51×).
+
+**A forecast-lane item was handed to this track by a backcast session** — see D9 below.
 
 ---
 
@@ -61,8 +90,9 @@ but not slow. All six re-run in roughly one session.
 | **D6 FC-3 CURVE-ON OVER-FIRE (T1-H)** | Four curve legs FAIL on curve-ON over-build | QUEUED | — | Fable | All four re-scored 2026-08-24 by the FFR-3A tool (`c0562d9`) — determinations unmoved (HOLD), now provenance-stamped. Note the new FC-7 FAIL (below) applies to these legs. |
 | **D7 T2 GATE RE-SCORE** | Re-run FF-2D per ISO once lanes land; move gate-openers to T2 scheduling | QUEUED | — | Opus | Re-order after D2-REMEASURE: if I7 closes for PJM/NYISO/NEISO, D7 becomes the immediate next lane for those three. |
 | **D8 FORECAST PROVENANCE DEBT** (NEW) | 7 forecast bundles track no `run_config.json` → FC-7 FAIL on every one; 3 `t1x-ffr2a` legs' FC-1/FC-2 are unreproducible from any checkout | QUEUED | — | Fable | Surfaced by `c0562d9` (not a lane I chartered). FC-7 is a *required* category — this is a standing provenance failure across the T1-H/T1-X evidence base, and it will block any clean gate reading later. Cheap to fix at registration time. |
+| **D9 MISO FORECAST INTERCHANGE FALLBACK — `ba_code="SOCO"`** (NEW, handed in) | The forecast fallback routes MISO-South interchange through `ba_code="SOCO"` — the one counterparty MISO **essentially never exports to** (0.1–0.3 % of the pool's gross). Superseded in the keeper's BACKCAST years (the armed ladder overwrites every South band row) but **live in the FORECAST path** | QUEUED — **NEW** | — | Fable | Handed to this program explicitly by the MISO backcast lane (miso-183, `cbfc9a6`, calibration-log/miso.md ~L8618): *"live only in the forecast fallback — a forecast-lane rule-14 item, handed to that program."* Trace: `model/interchange/miso.py:280` → `import_nodes.py:598–628`. Rule 14 [R-ACCURATE]. **Likely bears on MISO's I7/I12** — import accounting feeds adequacy — so sequence it WITH the D2-A2 MISO follow-up, not before D2-REMEASURE. |
 
-## 2. Backcast-track watch (deconfliction; last seen 2026-08-24 @ `d84a95e`)
+## 2. Backcast-track watch (deconfliction; last seen 2026-08-24 @ `8fd031d`, refresh #3)
 
 | item | state | Δ since refresh #1 |
 |---|---|---|
@@ -73,6 +103,7 @@ but not slow. All six re-run in roughly one session.
 | PJM / NYISO / NEISO | CALIBRATED, `complete` held: `pjm-162-inputclock`, `nyiso-152-duty-complete`, `neiso-99-joint-p1` | unchanged |
 | Markers / freeze | `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY; holdout spend freeze **ACTIVE** | unchanged |
 | Gate-(a) reading | pass: PJM, NYISO, NEISO (= `complete` membership); fail on marker: ERCOT, CAISO, MISO | unchanged — no ISO's gate (a) moved |
+| **Refresh #3 movements (all backcast, none moved a keeper, marker or forecast gate)** | **ERCOT** ercot-232 exhaustion record + ercot-233 **card Y OPEN, awaiting owner signature** (§0a). **MISO** miso-183 South-seam basis adjudicated **V-TRADE — a real defect on a new basis-free measure** (measured MISO-South pushed ~2.4 GW out across its boundaries in the 2025 scarce set; the real RDT bound South→North in 32 of 2025's 47 scarce hours — *the keeper's internal posture runs backward*; object survives at ≥0.93 GW; wheel/basis-artifact hypothesis refuted three ways). **CAISO** caiso-219 §F.3a gen-pocket export-limit Phase-0 — **second decisive null** (no citable Kern/Tehachapi collector export limit in flow MW exists; the sub-zonal record is accreditation headroom, not a flow rating). **Entry-signal** L-1 dual-replay probe parameterized by ISO, CAISO arm added. | **NEW** |
 
 **Deconfliction status: clean.** No chartered capacity-expansion lane has touched backcast
 territory, and no backcast session has moved a forecast gate. The ERCOT keeper promotion
