@@ -1,0 +1,482 @@
+{
+  "session": "miso-183",
+  "prereg": "PREREG-miso183-south-basis-decomposition-2026-08-24.md",
+  "keeper_bundle": "miso177_rho_B (unchanged; no LP spent)",
+  "hunt": {
+    "H1_rdt_flow_series": "NEGATIVE \u2014 Leg 3 falls away (reduced mapping)",
+    "H2_regional_load": "rf_al (docs.misoenergy.org) intaken",
+    "H3_regional_gen": "sr_gfm RT State Estimator sheet intaken"
+  },
+  "model_side_source": {
+    "seam_net": "_miso174_seam_overimport_decomposition.json (miso169_gated_A, PRUNED; drift carried)",
+    "rdt_interval": "miso177_rho_B system sidecar spread classifier (PREREG Leg-2 bands)"
+  },
+  "sign_convention": "net_import = -mw; E_pool = pool net EXPORT; N_S + into South; RDT^m + North->South",
+  "stage0_footing": {
+    "2023": {
+      "n_scarce": 11,
+      "measured_south_net_import_gw_annual": -1.0709795662100456,
+      "m174_committed": -1.0709795662100456,
+      "duplicate_hour_diba_rows": 0,
+      "pair_level_premise": "one row per (hour, diba)"
+    },
+    "2024": {
+      "n_scarce": 14,
+      "measured_south_net_import_gw_annual": -1.3540425970456889,
+      "m174_committed": -1.3540425970456889,
+      "duplicate_hour_diba_rows": 0,
+      "pair_level_premise": "one row per (hour, diba)"
+    },
+    "2025": {
+      "n_scarce": 47,
+      "measured_south_net_import_gw_annual": -1.030775799086758,
+      "m174_committed": -1.030775799086758,
+      "duplicate_hour_diba_rows": 0,
+      "pair_level_premise": "one row per (hour, diba)"
+    }
+  },
+  "stageL2_south_intake": {
+    "2023": {
+      "classifier_counts": {
+        "unconstrained": 6915,
+        "rpe_only": 0,
+        "n2s_binding": 1406,
+        "s2n_binding": 439
+      },
+      "classifier_counts_by_set": {
+        "annual": {
+          "unconstrained": 6915,
+          "rpe_only": 0,
+          "n2s_binding": 1406,
+          "s2n_binding": 439
+        },
+        "summer": {
+          "unconstrained": 2300,
+          "rpe_only": 0,
+          "n2s_binding": 514,
+          "s2n_binding": 114
+        },
+        "scarce": {
+          "unconstrained": 8,
+          "rpe_only": 0,
+          "n2s_binding": 3,
+          "s2n_binding": 0
+        }
+      },
+      "m174_separation_hours_note": "miso-174 section 5 counted 2432/2705/5086 nonzero South-Midwest separation hours; this classifier's nonzero-spread total differs slightly (the +-$1 dead band) and is reported per set above",
+      "midwest_copperplate_max_spread": 1.4210854715202004e-14,
+      "spread_levels_top": {
+        "2.0": 282,
+        "3.0": 239,
+        "4.0": 177,
+        "1.0": 157,
+        "5.0": 143,
+        "-2.0": 108,
+        "7.0": 103,
+        "6.0": 99
+      },
+      "identity_wedge_gw_by_set": {
+        "annual": 0.17345533736728047,
+        "summer": 0.08237535860655815,
+        "scarce": 0.9395836363636362
+      },
+      "sets": {
+        "annual": {
+          "measured_N_S_gw": -0.9358680420139285,
+          "measured_N_S_gw_shift_p1": -0.935884810502283,
+          "measured_N_S_gw_shift_m1": -0.9358642327015299,
+          "model_N_S_gw_interval": [
+            -2.3834659343005313,
+            1.6593582666127102
+          ],
+          "model_seam_net_import_gw_cited": -0.8855846557617187,
+          "coverage_hours": 8759,
+          "n_hours": 8760
+        },
+        "summer": {
+          "measured_N_S_gw": -1.068755969945355,
+          "measured_N_S_gw_shift_p1": -1.069252049180328,
+          "measured_N_S_gw_shift_m1": -1.0684727937158471,
+          "model_N_S_gw_interval": [
+            -2.2815196606578723,
+            1.743125148085297
+          ],
+          "model_seam_net_import_gw_cited": -0.861997802734375,
+          "coverage_hours": 2928,
+          "n_hours": 2928
+        },
+        "scarce": {
+          "measured_N_S_gw": -1.4382445454545456,
+          "measured_N_S_gw_shift_p1": -1.2964163636363626,
+          "measured_N_S_gw_shift_m1": -1.2646436363636364,
+          "model_N_S_gw_interval": [
+            -1.2908636474609376,
+            2.454590897993608
+          ],
+          "model_seam_net_import_gw_cited": -0.3708636474609375,
+          "coverage_hours": 11,
+          "n_hours": 11
+        }
+      },
+      "s2": {
+        "delta_N_scarce_gw": -2.0201081707208806,
+        "O_y_gw": 0.633,
+        "s2_mid": -3.1913241243615804,
+        "s2_ends": [
+          -6.149819025984445,
+          -0.2328292227387172
+        ],
+        "s2_mid_wedge_minus": -4.675658463008715,
+        "s2_mid_wedge_plus": -1.7069897857144458
+      }
+    },
+    "2024": {
+      "classifier_counts": {
+        "unconstrained": 6587,
+        "rpe_only": 0,
+        "n2s_binding": 2109,
+        "s2n_binding": 64
+      },
+      "classifier_counts_by_set": {
+        "annual": {
+          "unconstrained": 6587,
+          "rpe_only": 0,
+          "n2s_binding": 2109,
+          "s2n_binding": 64
+        },
+        "summer": {
+          "unconstrained": 2175,
+          "rpe_only": 0,
+          "n2s_binding": 739,
+          "s2n_binding": 14
+        },
+        "scarce": {
+          "unconstrained": 13,
+          "rpe_only": 0,
+          "n2s_binding": 1,
+          "s2n_binding": 0
+        }
+      },
+      "m174_separation_hours_note": "miso-174 section 5 counted 2432/2705/5086 nonzero South-Midwest separation hours; this classifier's nonzero-spread total differs slightly (the +-$1 dead band) and is reported per set above",
+      "midwest_copperplate_max_spread": 7.105427357601002e-15,
+      "spread_levels_top": {
+        "2.0": 387,
+        "3.0": 336,
+        "4.0": 234,
+        "1.0": 222,
+        "5.0": 185,
+        "6.0": 155,
+        "7.0": 123,
+        "8.0": 111
+      },
+      "identity_wedge_gw_by_set": {
+        "annual": -0.06036921781951358,
+        "summer": -0.38216868457300207,
+        "scarce": 0.35331642857142703
+      },
+      "sets": {
+        "annual": {
+          "measured_N_S_gw": -1.3898558020321952,
+          "measured_N_S_gw_shift_p1": -1.3896770422374427,
+          "measured_N_S_gw_shift_m1": -1.3901032998401461,
+          "model_N_S_gw_interval": [
+            -2.2489253721193636,
+            1.615136271716253
+          ],
+          "model_seam_net_import_gw_cited": -1.165676513671875,
+          "coverage_hours": 8759,
+          "n_hours": 8760
+        },
+        "summer": {
+          "measured_N_S_gw": -1.531922339480874,
+          "measured_N_S_gw_shift_p1": -1.532194706284153,
+          "measured_N_S_gw_shift_m1": -1.531657469262295,
+          "model_N_S_gw_interval": [
+            -2.1715095581721737,
+            1.6487295128660775
+          ],
+          "model_seam_net_import_gw_cited": -1.1476502685546874,
+          "coverage_hours": 2928,
+          "n_hours": 2928
+        },
+        "scarce": {
+          "measured_N_S_gw": -2.2222728571428574,
+          "measured_N_S_gw_shift_p1": -2.138146428571429,
+          "measured_N_S_gw_shift_m1": -2.073040714285715,
+          "model_N_S_gw_interval": [
+            -2.4499999869210383,
+            2.265714298793248
+          ],
+          "model_seam_net_import_gw_cited": -0.5114285583496094,
+          "coverage_hours": 14,
+          "n_hours": 14
+        }
+      },
+      "s2": {
+        "delta_N_scarce_gw": -2.130130013078962,
+        "O_y_gw": 0.35,
+        "s2_mid": -6.086085751654178,
+        "s2_ends": [
+          -12.82282044553173,
+          0.650648942223374
+        ],
+        "s2_mid_wedge_minus": -7.095561261858256,
+        "s2_mid_wedge_plus": -5.076610241450101
+      }
+    },
+    "2025": {
+      "classifier_counts": {
+        "unconstrained": 4089,
+        "rpe_only": 0,
+        "n2s_binding": 4662,
+        "s2n_binding": 9
+      },
+      "classifier_counts_by_set": {
+        "annual": {
+          "unconstrained": 4089,
+          "rpe_only": 0,
+          "n2s_binding": 4662,
+          "s2n_binding": 9
+        },
+        "summer": {
+          "unconstrained": 2039,
+          "rpe_only": 0,
+          "n2s_binding": 889,
+          "s2n_binding": 0
+        },
+        "scarce": {
+          "unconstrained": 38,
+          "rpe_only": 0,
+          "n2s_binding": 9,
+          "s2n_binding": 0
+        }
+      },
+      "m174_separation_hours_note": "miso-174 section 5 counted 2432/2705/5086 nonzero South-Midwest separation hours; this classifier's nonzero-spread total differs slightly (the +-$1 dead band) and is reported per set above",
+      "midwest_copperplate_max_spread": 4.263256414560601e-14,
+      "spread_levels_top": {
+        "2.0": 428,
+        "6.0": 408,
+        "3.0": 397,
+        "7.0": 381,
+        "5.0": 380,
+        "4.0": 378,
+        "8.0": 334,
+        "9.0": 243
+      },
+      "identity_wedge_gw_by_set": {
+        "annual": 0.31499793465844284,
+        "summer": -0.277699484289617,
+        "scarce": 0.48611276595744596
+      },
+      "sets": {
+        "annual": {
+          "measured_N_S_gw": -1.1659128964493661,
+          "measured_N_S_gw_shift_p1": -1.165671319634703,
+          "measured_N_S_gw_shift_m1": -1.166199829869833,
+          "model_N_S_gw_interval": [
+            -0.3573649342158069,
+            2.132477531537618
+          ],
+          "model_seam_net_import_gw_cited": -0.7500498657226562,
+          "coverage_hours": 8759,
+          "n_hours": 8760
+        },
+        "summer": {
+          "measured_N_S_gw": -1.8372993374316942,
+          "measured_N_S_gw_shift_p1": -1.8369439105191254,
+          "measured_N_S_gw_shift_m1": -1.8375086953551913,
+          "model_N_S_gw_interval": [
+            -1.627702201801571,
+            1.9688483446465166
+          ],
+          "model_seam_net_import_gw_cited": -0.8640205078125,
+          "coverage_hours": 2928,
+          "n_hours": 2928
+        },
+        "scarce": {
+          "measured_N_S_gw": -2.4412125531914888,
+          "measured_N_S_gw_shift_p1": -2.453679574468085,
+          "measured_N_S_gw_shift_m1": -2.2322585106382977,
+          "model_N_S_gw_interval": [
+            -1.5078579429464136,
+            2.6291633336493305
+          ],
+          "model_seam_net_import_gw_cited": -0.1767941131591797,
+          "coverage_hours": 47,
+          "n_hours": 47
+        }
+      },
+      "s2": {
+        "delta_N_scarce_gw": -3.001865248542947,
+        "O_y_gw": 1.191,
+        "s2_mid": -2.5204578073408457,
+        "s2_ends": [
+          -4.257242558220671,
+          -0.7836730564610203
+        ],
+        "s2_mid_wedge_minus": -2.9286129424856364,
+        "s2_mid_wedge_plus": -2.112302672196055
+      }
+    }
+  },
+  "stageL4_binding_contrast": {
+    "2023": {
+      "n_binding_maj_annual": 12,
+      "n_binding_any_annual": 29,
+      "n_binding_maj_summer": 6,
+      "scarce_and_binding_maj": 0,
+      "scarce_and_binding_any": 0,
+      "s2n_binding_maj_annual_reported": 112,
+      "s2n_binding_any_annual_reported": 1197,
+      "scarce_and_s2n_maj_reported": 0,
+      "scarce_and_s2n_any_reported": 5,
+      "model_n2s_binding_hours": 1406,
+      "E_pool_binding_mean_gw": 0.4983333333333333,
+      "E_pool_nonbinding_mean_gw": 1.0079893908281998,
+      "D4_gw": -0.5096560574948665,
+      "D4_gw_any_variant_reported": -0.717490728021978,
+      "per_leg_net_export": {
+        "AECI": {
+          "binding_mean_gw": 0.17633333333333334,
+          "nonbinding_mean_gw": 0.22227926078028748
+        },
+        "LGEE": {
+          "binding_mean_gw": 0.302,
+          "nonbinding_mean_gw": 0.09263244353182752
+        },
+        "SOCO": {
+          "binding_mean_gw": -0.8631666666666666,
+          "nonbinding_mean_gw": -0.6885335386721424
+        },
+        "TVA": {
+          "binding_mean_gw": 0.8831666666666667,
+          "nonbinding_mean_gw": 1.3816112251882273
+        }
+      }
+    },
+    "2024": {
+      "n_binding_maj_annual": 37,
+      "n_binding_any_annual": 66,
+      "n_binding_maj_summer": 1,
+      "scarce_and_binding_maj": 0,
+      "scarce_and_binding_any": 0,
+      "s2n_binding_maj_annual_reported": 370,
+      "s2n_binding_any_annual_reported": 2401,
+      "scarce_and_s2n_maj_reported": 4,
+      "scarce_and_s2n_any_reported": 6,
+      "model_n2s_binding_hours": 2109,
+      "E_pool_binding_mean_gw": 0.49,
+      "E_pool_nonbinding_mean_gw": 1.0870420254908715,
+      "D4_gw": -0.5970420254908715,
+      "D4_gw_any_variant_reported": -1.0719325726141078,
+      "per_leg_net_export": {
+        "AECI": {
+          "binding_mean_gw": -0.198,
+          "nonbinding_mean_gw": -0.4407295900792284
+        },
+        "LGEE": {
+          "binding_mean_gw": 0.381,
+          "nonbinding_mean_gw": 0.18355356527729935
+        },
+        "SOCO": {
+          "binding_mean_gw": -0.848,
+          "nonbinding_mean_gw": -0.632774371339993
+        },
+        "TVA": {
+          "binding_mean_gw": 1.155,
+          "nonbinding_mean_gw": 1.9769924216327937
+        }
+      }
+    },
+    "2025": {
+      "n_binding_maj_annual": 2,
+      "n_binding_any_annual": 43,
+      "n_binding_maj_summer": 1,
+      "scarce_and_binding_maj": 0,
+      "scarce_and_binding_any": 0,
+      "s2n_binding_maj_annual_reported": 57,
+      "s2n_binding_any_annual_reported": 1395,
+      "scarce_and_s2n_maj_reported": 9,
+      "scarce_and_s2n_any_reported": 32,
+      "model_n2s_binding_hours": 4662,
+      "E_pool_binding_mean_gw": -2.014,
+      "E_pool_nonbinding_mean_gw": 0.7550652545268192,
+      "D4_gw": -2.769065254526819,
+      "D4_gw_any_variant_reported": -2.457303931623932,
+      "per_leg_net_export": {
+        "AECI": {
+          "binding_mean_gw": 0.267,
+          "nonbinding_mean_gw": -0.4497010591048855
+        },
+        "LGEE": {
+          "binding_mean_gw": -0.092,
+          "nonbinding_mean_gw": 0.13347933037239493
+        },
+        "SIKE": {
+          "binding_mean_gw": NaN,
+          "nonbinding_mean_gw": NaN
+        },
+        "SOCO": {
+          "binding_mean_gw": -1.302,
+          "nonbinding_mean_gw": -0.8409545609839426
+        },
+        "TVA": {
+          "binding_mean_gw": -0.887,
+          "nonbinding_mean_gw": 1.9122415442432525
+        }
+      }
+    }
+  },
+  "verdict": {
+    "leg3": "unavailable (H-1 negative) \u2014 V-BASIS unreachable by construction",
+    "verdict_2025": "V-TRADE",
+    "components_2025": {
+      "s2": {
+        "delta_N_scarce_gw": -3.001865248542947,
+        "O_y_gw": 1.191,
+        "s2_mid": -2.5204578073408457,
+        "s2_ends": [
+          -4.257242558220671,
+          -0.7836730564610203
+        ],
+        "s2_mid_wedge_minus": -2.9286129424856364,
+        "s2_mid_wedge_plus": -2.112302672196055
+      },
+      "D4_gw": -2.769065254526819,
+      "exonerated": false,
+      "south_surplus": true,
+      "transfer": false,
+      "wheel_clean": true,
+      "wheel_suggest": false
+    },
+    "concurrence_2023": {
+      "s2": {
+        "delta_N_scarce_gw": -2.0201081707208806,
+        "O_y_gw": 0.633,
+        "s2_mid": -3.1913241243615804,
+        "s2_ends": [
+          -6.149819025984445,
+          -0.2328292227387172
+        ],
+        "s2_mid_wedge_minus": -4.675658463008715,
+        "s2_mid_wedge_plus": -1.7069897857144458
+      },
+      "D4_gw": -0.5096560574948665
+    },
+    "reported_only_2024": {
+      "s2": {
+        "delta_N_scarce_gw": -2.130130013078962,
+        "O_y_gw": 0.35,
+        "s2_mid": -6.086085751654178,
+        "s2_ends": [
+          -12.82282044553173,
+          0.650648942223374
+        ],
+        "s2_mid_wedge_minus": -7.095561261858256,
+        "s2_mid_wedge_plus": -5.076610241450101
+      },
+      "D4_gw": -0.5970420254908715,
+      "note": "EIA-930 internal inconsistency year (r=0.8286)"
+    }
+  }
+}
