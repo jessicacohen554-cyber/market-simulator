@@ -1,4 +1,4 @@
-> Status: OPEN — awaiting owner signature.
+> Status: RECORD — card Y SIGNED **(Y-C)** by the owner, 2026-08-24, in-session (see RESOLUTIONS at the foot).
 
 # DECISION CARD — ercot-233: formal closure of the ERCOT 2023 price object — is Door D now the only forward route?
 
@@ -174,3 +174,40 @@ solve, no C3a/C3b-2023 spend (Q-B/R-A stand), no C3c ledger change, no rubric
 or gate-file edit (the ercot-225 card stays open as put), no holdout marker
 granted or spent, no keeper change, no matrix cell edit. The ercot-188/E2 P0
 bit-identity forfeiture is inherited unexpired and untouched.*
+
+---
+
+## RESOLUTIONS — CARD Y SIGNED BY THE OWNER, 2026-08-24 (in-session)
+
+The card body above is preserved AS PUT, unedited by the outcome.
+
+| card | decision | **SIGNED** | vs. recommendation |
+|---|---|---|---|
+| **Y** | Formal closure of the ERCOT 2023 price object vs opening the un-adjudicated `NE_LOB`-timing object | **(Y-C) — HOLD THE LANE OPEN for further 2023-price work** | **Against** the card's Y-A recommendation; both records stand |
+
+Consequences adopted with the signature, per the card's own text and the
+standing fences, which the signature does NOT lift:
+
+- **The 2023 price object is NOT formally closed**; the ERCOT backcast lane
+  stays chartered. The determination remains NOT-YET on {C3a-2023 −38.0 %,
+  C3b-2023 0.696} and the misses keep reporting at full magnitude.
+- **Q-B and R-A remain in force** — they are separately-signed rulings this
+  card never re-opened: no C3a-2023-targeted spend, no C3b-2023-targeted
+  determination rounds. Lane work therefore proceeds only on
+  structurally-motivated objects with any 2023-price movement
+  side-effect-reported (rule 1).
+- **The `R`/`I`/`G` cell adjudications and the DO-NOT-REDO list are
+  untouched** (rule 28): holding the lane open licenses NO re-test of an
+  adjudicated cell without new evidence, and NO invented lever against the
+  residual (rules 1/13). An open lane with an empty admissible queue works
+  its named-unmeasured objects or waits for new evidence.
+- **Immediate execution:** the one named-unmeasured object — the §2
+  `NE_LOB` binding-hour-timing Phase-0 — is executed in this session under
+  §2's bounds exactly (read-only, zero fitted scalars, precommit pushed and
+  blob-verified before any measurement, borderline verdicts escalated,
+  never self-adopted). Record:
+  `docs/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md` →
+  `docs/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md`.
+- Door D (card W) remains the recorded data horizon for the scarcity-
+  formation object itself; Y-C keeps the lane open in the meantime, it does
+  not manufacture admissibility.

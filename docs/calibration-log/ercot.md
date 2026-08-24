@@ -11653,6 +11653,55 @@ ERCOT cell verdicts read first), keeper `2026-08-24-231-tie-zone-measured`
 untouched, Q-B/R-A fences intact, the ercot-225 gate-revision card stays OPEN
 as put. §5.1 carries the card's blockquote pointer.
 
+### ercot-233 SIGNATURE ADDENDUM (2026-08-24, same session)
+
+**The owner signed card Y in-session: (Y-C) — HOLD THE LANE OPEN, against
+the card's Y-A recommendation.** Both records stand; the card body is
+preserved as put with the RESOLUTIONS block appended. What the signature
+does and does not do (per the card's own text): the 2023 price object is
+NOT formally closed and the ERCOT backcast lane stays chartered; Q-B and
+R-A remain in force (they are separately-signed rulings this card never
+re-opened — no C3a/C3b-2023-targeted spend; structurally-motivated objects
+only, price movement side-effect-reported); the `R`/`I`/`G` DO-NOT-REDO
+list is untouched (rule 28) and the signature manufactures NO
+admissibility — an open lane with an empty admissible queue works its
+named-unmeasured objects or waits for new evidence. **Execution under the
+signature, this session:** the one named-unmeasured object — the card §2
+`NE_LOB` binding-hour-timing Phase-0 — run under its bounds exactly
+(read-only, zero fitted scalars, precommit pushed + blob-verified BEFORE
+any measurement, borderline escalated, never self-adopted). Record:
+`docs/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md` →
+`docs/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md` (outcome in the
+execution addendum below).
+
+### ercot-233 EXECUTION ADDENDUM (2026-08-24, same session) — the NE_LOB TIMING object CLOSES AT ZONAL GRAIN, on measurement
+
+**Precommit pushed + blob-verified (blob `b09116f`) BEFORE any measurement**,
+fixing four drivers, directions, metrics and bars (NAMED AUC ≥ 0.70 with
+lift ≥ 1.5; BORDERLINE ≥ 0.65; at-bar tolerance ±0.02; escalate, never
+self-adopt). Probe `scripts/probes/ercot233_nelob_timing_phase0.py` imports
+the ercot-232 target constructions verbatim and STOPs on mismatch — it
+reproduced the adjudicated record exactly (2,408 measured binding h, dual
+$69,932, 3,640 active h). **ALL FOUR DRIVERS CLOSE, clear of tolerance:**
+d1 measured limit level AUC **0.551** (lift 1.14, the best); d2 lobe
+CAMPD-available thermal MW **0.436**; d3 export-pressure margin **0.415**;
+d4 placed SWPP tie import **0.496** (Spearman vs dual **−0.0006** — the
+placement carries ZERO timing information, sharpening ercot-232). d2/d3
+land BELOW 0.5 — the capability-side physics runs BACKWARDS at zonal grain
+(more available lobe capability → less measured binding), exactly what §10
+predicts if binding is set by sub-zonal element conditions co-moving with
+maintenance seasons. Model-indicator context: implied AUC 0.4715, below
+chance. The pre-registered d3 renewables-omission consequence rule never
+fires (0.215 below the bar). **VERDICT: CLOSES AT ZONAL GRAIN — the card-Y
+§2 prior confirmed on measurement, not assumed; the §10/ERCOT-117 `G`
+adjudication is re-affirmed and completed, not re-opened. DO-NOT-REDO
+without genuinely sub-zonal admissible data.** With the lane's one
+named-unmeasured object closed, the ERCOT 2023 admissible queue is EMPTY
+under the owner's open lane (Y-C): new evidence or Door D. Keeper
+UNCHANGED; nothing armed; no cell edit (28(b) — no mechanism tested).
+Record: `docs/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md` +
+`results/calibration/ercot233_nelob_timing_phase0.json`.
+
 **Hygiene:** years referenced ⊂ {2023, 2024, 2025}, no marker touched (rule
 22); ERCOT-only docs (rule 25); no CI job, no workflow; branch
 `claude/ercot-backcast-calibration-ymnkad` off main `7cf572e` (the ercot-232

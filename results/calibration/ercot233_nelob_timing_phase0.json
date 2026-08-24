@@ -1,0 +1,80 @@
+{
+ "probe": "ercot233_nelob_timing_phase0",
+ "precommit": "docs/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md",
+ "authorization": "card Y signed (Y-C) 2026-08-24; RESOLUTIONS item",
+ "keeper": "ercot231_tiegtc_full",
+ "year": 2023,
+ "target": {
+  "binding_hours": 2408,
+  "annual_dual_sum": 69932.0,
+  "active_hours": 3640
+ },
+ "drivers": [
+  {
+   "driver": "d1_measured_limit_level",
+   "scored_hours": 3640,
+   "binding_base_rate": 0.6615,
+   "auc_presigned": 0.5509,
+   "auc_raw_direction": -1,
+   "top_decile_lift": 1.142,
+   "spearman_vs_dual": 0.222,
+   "verdict": "CLOSES"
+  },
+  {
+   "driver": "d2_lobe_campd_available_mw",
+   "scored_hours": 8760,
+   "binding_base_rate": 0.2749,
+   "auc_presigned": 0.4363,
+   "auc_raw_direction": 1,
+   "top_decile_lift": 0.854,
+   "spearman_vs_dual": -0.1054,
+   "verdict": "CLOSES"
+  },
+  {
+   "driver": "d3_export_pressure_margin",
+   "scored_hours": 8754,
+   "binding_base_rate": 0.275,
+   "auc_presigned": 0.415,
+   "auc_raw_direction": 1,
+   "top_decile_lift": 0.423,
+   "spearman_vs_dual": -0.1276,
+   "verdict": "CLOSES"
+  },
+  {
+   "driver": "d4_placed_tie_import_mw",
+   "scored_hours": 8754,
+   "binding_base_rate": 0.275,
+   "auc_presigned": 0.4962,
+   "auc_raw_direction": 1,
+   "top_decile_lift": 0.949,
+   "spearman_vs_dual": -0.0006,
+   "verdict": "CLOSES"
+  }
+ ],
+ "d2_provenance": {
+  "plants": {
+   "3504": {
+    "name": "Stryker Creek",
+    "nameplate_mw": 713.4
+   },
+   "55132": {
+    "name": "Tenaska Gateway Generating Station",
+    "nameplate_mw": 939.6
+   },
+   "6146": {
+    "name": "Martin Lake",
+    "nameplate_mw": 2379.6
+   }
+  },
+  "total_nameplate_mw": 4032.6,
+  "events_overlapping_year": 16
+ },
+ "model_indicator_context": {
+  "model_binding_hours": 1974,
+  "sensitivity": 0.184,
+  "specificity": 0.759,
+  "implied_auc": 0.4715,
+  "corr_model_vs_measured_dual": -0.0421
+ },
+ "object_verdict": "CLOSES AT ZONAL GRAIN \u2014 no admissible zonal-grain driver reaches the precommit bars"
+}
