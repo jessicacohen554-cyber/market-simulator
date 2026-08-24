@@ -280,8 +280,19 @@ repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 > signature does NOT lift Q-B/R-A, license any `R`/`I`/`G` re-test, or
 > manufacture admissibility (card RESOLUTIONS) — the lane's one
 > named-unmeasured object, the `NE_LOB` binding-hour-timing Phase-0, was then
-> executed in-session under its precommitted bounds (see the ercot-233
-> execution record in `docs/calibration-log/ercot.md`).**
+> executed in-session under its precommitted bounds
+> (`docs/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md`, blob-verified
+> before measurement) and **CLOSED AT ZONAL GRAIN: all four precommitted
+> drivers CLOSE clear of tolerance** — measured limit level AUC 0.551, lobe
+> CAMPD availability 0.436 and export-pressure margin 0.415 (both BELOW 0.5 —
+> the capability physics runs backwards at this grain), placed tie import
+> 0.496 (Spearman vs dual −0.0006, zero timing information) vs bars 0.70/0.65.
+> The §10/ERCOT-117 `internal_congestion_split` `G` is re-affirmed and
+> measured-complete, NOT re-opened; DO-NOT-REDO without genuinely sub-zonal
+> admissible data. With that object closed the ERCOT 2023 admissible queue is
+> EMPTY under the open lane: new evidence or Door D. Keeper UNCHANGED.
+> Record: `docs/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md` +
+> `results/calibration/ercot233_nelob_timing_phase0.json`.**
 
 > **ercot-232 (2026-08-24) — THE KEEPER'S 21 SPURIOUS MID-BAND HOURS ARE A
 > NORTHEAST **DELIVERABILITY** ARTIFACT; A TIE-PLACEMENT REFINEMENT IS MEASURED-
