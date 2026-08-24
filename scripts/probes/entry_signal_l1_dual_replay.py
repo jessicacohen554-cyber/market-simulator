@@ -141,6 +141,22 @@ ISO_STEPS = {
     "CAISO": (CAISO_STEP_PRIOR_SOLVE, CAISO_STEP_DRIVER_YEAR),
 }
 
+# Zones the DUAL arm cannot price, excluded from BOTH arms so the cross-arm
+# delta stays like-for-like (rule 1: the comparison object is the signal, not
+# the zone set).
+#
+# CAISO only, and it is a real topology difference between the two lanes, not
+# a naming mismatch: the forecast lane's ISOConfig carries ONE seam node
+# (`WECC_import`), while the backcast keeper caiso200_h1_memberpanel resolves
+# the same seam as TWO external hub nodes (`WECC_DSW`, `WECC_PNW`). The five
+# in-state zones — NP15, ZP26, LA_BASIN, SDGE, SP15_rest — match exactly, and
+# they are the only zones an entry candidate can build in: `get_renewable_zone`
+# returns an in-state zone, and a seam node's dual is an external hub price,
+# not a CAISO clearing price a new CAISO unit would earn. Aggregating the two
+# hub rows into a synthetic `WECC_import` row would invent a price the model
+# never formed, so the node is dropped from both arms instead.
+ISO_DUAL_ZONE_EXCLUDE = {"CAISO": ("WECC_import",)}
+
 
 def load_config(bundle: Path) -> ScenarioConfig:
     """Rebuild the run's exact ScenarioConfig from its committed run_config."""
@@ -510,7 +526,9 @@ def main() -> None:
     step_prior, step_driver = ISO_STEPS[iso]
 
     config = load_config(bundle)
-    zone_names = list(get_iso_config(iso).zone_names)
+    all_zone_names = list(get_iso_config(iso).zone_names)
+    excluded = [z for z in ISO_DUAL_ZONE_EXCLUDE.get(iso, ()) if z in all_zone_names]
+    zone_names = [z for z in all_zone_names if z not in excluded]
 
     result: dict = {
         "probe": "entry_signal_l1_dual_replay",
@@ -520,6 +538,7 @@ def main() -> None:
         "duals_bundle": str(args.duals_bundle),
         "cache_key": config.cache_key(),
         "zone_names": zone_names,
+        "zones_excluded_from_both_arms": excluded,
         "cost_state": "entry seed (cumulative_gw=None), identical across arms",
         "steps": {},
     }

@@ -1,0 +1,321 @@
+{
+ "probe": "entry_signal_disarm_ledger_compare",
+ "finding": "docs/FINDING-entry-signal-disarm-2026-08.md",
+ "charter": "docs/FINDING-entry-signal-l1-2026-08.md \u00a74 item 2 / \u00a75",
+ "iso": "ERCOT",
+ "arms": {
+  "disarm": {
+   "bundle": "results/hindcast/ercot-2021-2025-realized-t1h-disarm",
+   "cache_key": "2eab21467a4214c7",
+   "entry_lookahead_reprice": false,
+   "capacity_screen_unified_lookahead": true,
+   "capacity_screen_scarcity_restoration": true,
+   "solved_years": [
+    2021,
+    2023,
+    2024,
+    2025
+   ],
+   "bridged_years": [
+    2022
+   ]
+  },
+  "control": {
+   "bundle": "results/hindcast/ercot-2021-2025-realized-t1h-control",
+   "cache_key": "28cef3500ec1fd9e",
+   "entry_lookahead_reprice": true,
+   "solved_years": [
+    2021,
+    2023,
+    2024,
+    2025
+   ],
+   "bridged_years": [
+    2022
+   ]
+  },
+  "registered": {
+   "bundle": "results/hindcast/ercot-2021-2025-realized-t1h-refresh",
+   "cache_key": "28cef3500ec1fd9e",
+   "entry_lookahead_reprice": true
+  }
+ },
+ "posture_check": {
+  "control_reproduces_registered_key": true,
+  "disarm_differs_only_in_reprice": true,
+  "same_solve_span": true
+ },
+ "ledger": {
+  "disarm": {
+   "2021": {
+    "bridge": false,
+    "reserve_margin_pct": 19.0,
+    "entry_decided_mw_by_tech": {},
+    "storage_decided_mw_by_tech": {},
+    "peak_demand_mw": 72776.0,
+    "n_retirements": 0
+   },
+   "2022": {
+    "bridge": true,
+    "reserve_margin_pct": null,
+    "entry_decided_mw_by_tech": {
+     "gas_cc": 3000.0,
+     "gas_ct": 1571.0,
+     "solar": 4946.6,
+     "wind": 1092.2
+    },
+    "storage_decided_mw_by_tech": {
+     "compressed_air": 2000.0,
+     "iron_air": 3000.0
+    },
+    "peak_demand_mw": null,
+    "n_retirements": 0
+   },
+   "2023": {
+    "bridge": false,
+    "reserve_margin_pct": 14.0,
+    "entry_decided_mw_by_tech": {
+     "gas_cc": 3000.0,
+     "gas_ct": 3000.0,
+     "solar": 5550.0
+    },
+    "storage_decided_mw_by_tech": {
+     "compressed_air": 2000.0,
+     "iron_air": 3000.0
+    },
+    "peak_demand_mw": 84617.0,
+    "n_retirements": 0
+   },
+   "2024": {
+    "bridge": false,
+    "reserve_margin_pct": 25.92,
+    "entry_decided_mw_by_tech": {
+     "gas_cc": 3000.0,
+     "gas_ct": 1000.0,
+     "solar": 8000.0
+    },
+    "storage_decided_mw_by_tech": {
+     "compressed_air": 2000.0,
+     "iron_air": 3000.0
+    },
+    "peak_demand_mw": 85000.0,
+    "n_retirements": 0
+   },
+   "2025": {
+    "bridge": false,
+    "reserve_margin_pct": 40.24,
+    "entry_decided_mw_by_tech": {},
+    "storage_decided_mw_by_tech": {
+     "iron_air": 3000.0
+    },
+    "peak_demand_mw": 83573.0,
+    "n_retirements": 0
+   }
+  },
+  "control": {
+   "2021": {
+    "bridge": false,
+    "reserve_margin_pct": 19.0,
+    "entry_decided_mw_by_tech": {},
+    "storage_decided_mw_by_tech": {},
+    "peak_demand_mw": 72776.0,
+    "n_retirements": 0
+   },
+   "2022": {
+    "bridge": true,
+    "reserve_margin_pct": null,
+    "entry_decided_mw_by_tech": {
+     "gas_cc": 3000.0,
+     "gas_ct": 1571.0,
+     "solar": 4946.6
+    },
+    "storage_decided_mw_by_tech": {},
+    "peak_demand_mw": null,
+    "n_retirements": 0
+   },
+   "2023": {
+    "bridge": false,
+    "reserve_margin_pct": 8.54,
+    "entry_decided_mw_by_tech": {
+     "gas_cc": 3000.0,
+     "gas_ct": 3000.0,
+     "solar": 5550.0
+    },
+    "storage_decided_mw_by_tech": {
+     "flow_battery": 2000.0,
+     "iron_air": 3000.0
+    },
+    "peak_demand_mw": 84617.0,
+    "n_retirements": 0
+   },
+   "2024": {
+    "bridge": false,
+    "reserve_margin_pct": 14.65,
+    "entry_decided_mw_by_tech": {
+     "gas_cc": 3000.0,
+     "gas_ct": 3000.0,
+     "solar": 6000.0
+    },
+    "storage_decided_mw_by_tech": {},
+    "peak_demand_mw": 85000.0,
+    "n_retirements": 0
+   },
+   "2025": {
+    "bridge": false,
+    "reserve_margin_pct": 25.19,
+    "entry_decided_mw_by_tech": {},
+    "storage_decided_mw_by_tech": {},
+    "peak_demand_mw": 83573.0,
+    "n_retirements": 0
+   }
+  }
+ },
+ "reserve_margin_reconstructed_registered": {
+  "2022": 19.0,
+  "2023": 8.5,
+  "2024": 14.7,
+  "2025": 25.2
+ },
+ "additions": {
+  "wind": {
+   "actual_gw": 12.663,
+   "registered": {
+    "model_gw": 0.35,
+    "err_frac": -0.972,
+    "band": "FAIL",
+    "abs_err_gw": 12.313
+   },
+   "control": {
+    "model_gw": 0.35,
+    "err_frac": -0.972,
+    "band": "FAIL",
+    "abs_err_gw": 12.313
+   },
+   "disarm": {
+    "model_gw": 1.442,
+    "err_frac": -0.886,
+    "band": "FAIL",
+    "abs_err_gw": 11.221
+   }
+  },
+  "solar": {
+   "actual_gw": 25.08,
+   "registered": {
+    "model_gw": 17.987,
+    "err_frac": -0.283,
+    "band": "FAIL",
+    "abs_err_gw": 7.093
+   },
+   "control": {
+    "model_gw": 17.987,
+    "err_frac": -0.283,
+    "band": "FAIL",
+    "abs_err_gw": 7.093
+   },
+   "disarm": {
+    "model_gw": 19.987,
+    "err_frac": -0.203,
+    "band": "FAIL",
+    "abs_err_gw": 5.093
+   }
+  },
+  "gas_cc": {
+   "actual_gw": 0.244,
+   "registered": {
+    "model_gw": 9.0,
+    "err_frac": 35.885,
+    "band": "FAIL",
+    "abs_err_gw": 8.756
+   },
+   "control": {
+    "model_gw": 9.0,
+    "err_frac": 35.885,
+    "band": "FAIL",
+    "abs_err_gw": 8.756
+   },
+   "disarm": {
+    "model_gw": 9.0,
+    "err_frac": 35.885,
+    "band": "FAIL",
+    "abs_err_gw": 8.756
+   }
+  },
+  "gas_ct": {
+   "actual_gw": 3.692,
+   "registered": {
+    "model_gw": 7.571,
+    "err_frac": 1.05,
+    "band": "FAIL",
+    "abs_err_gw": 3.879
+   },
+   "control": {
+    "model_gw": 7.571,
+    "err_frac": 1.05,
+    "band": "FAIL",
+    "abs_err_gw": 3.879
+   },
+   "disarm": {
+    "model_gw": 5.571,
+    "err_frac": 0.509,
+    "band": "FAIL",
+    "abs_err_gw": 1.879
+   }
+  },
+  "storage": {
+   "actual_gw": 13.691,
+   "registered": {
+    "model_gw": 5.0,
+    "err_frac": -0.635,
+    "band": "FAIL",
+    "abs_err_gw": 8.691
+   },
+   "control": {
+    "model_gw": 5.0,
+    "err_frac": -0.635,
+    "band": "FAIL",
+    "abs_err_gw": 8.691
+   },
+   "disarm": {
+    "model_gw": 18.0,
+    "err_frac": 0.315,
+    "band": "FAIL",
+    "abs_err_gw": 4.309
+   }
+  }
+ },
+ "retirements_total_gw": {
+  "actual": 2.294,
+  "registered": 0.0,
+  "control": 0.0,
+  "disarm": 0.0
+ },
+ "resolve_determinism_control": {
+  "same_cache_key": null,
+  "co2_by_year": {
+   "2023": {
+    "registered_t": 167517105.0323072,
+    "control_t": 167517105.0323072,
+    "delta_t": 0.0,
+    "rel_delta": 0.0
+   },
+   "2024": {
+    "registered_t": 155434439.529606,
+    "control_t": 155434439.529606,
+    "delta_t": 0.0,
+    "rel_delta": 0.0
+   },
+   "2025": {
+    "registered_t": 188202977.75681672,
+    "control_t": 188202977.75681672,
+    "delta_t": 0.0,
+    "rel_delta": 0.0
+   }
+  },
+  "fleet_metrics_identical": true
+ },
+ "dump_production": {
+  "registered_npz": 4,
+  "disarm_npz": 0,
+  "note": "the screen-signal dump is emitted inside the reprice gate (runner.py: the `_screen_signal_for` body), so a disarmed run emits none \u2014 the signal the screens read becomes econ_prices itself, recoverable from the run's own hourly outputs rather than from a dedicated dump"
+ }
+}
