@@ -923,3 +923,10 @@ results/calibration/ercot231_n1a_arm/
 results/calibration/ercot231_combo2023/
 # The registrable 3-year bundle (ercot231_tiegtc_full), if produced, is NOT
 # ignored (the ercot-226 pattern).
+
+# MISO regional-balance daily xls/xlsx staging (miso-183): ~2,190 files /
+# ~60 MB for 2023-2025. Gitignored per the neiso-operable-capacity /
+# caiso-dam-outages precedent; the committed per-year consolidated
+# miso_regional_{load,genmix}_<year>.csv.gz are the deliverable and
+# scripts/data/fetch_miso_regional_balance.py is the reproducibility path.
+data/raw/miso-regional-balance/_daily/
