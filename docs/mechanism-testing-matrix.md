@@ -275,7 +275,13 @@ repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 > read-only Phase-0 epilogue / Y-C hold open (recommended against). NOTHING
 > SELF-ADJUDICATED: no measurement, no LP, no solve, no lever, no cell verdict
 > minted (28(b) — nothing tested), keeper UNCHANGED, Q-B/R-A fences intact,
-> the ercot-225 gate card stays open as put. AWAITING OWNER SIGNATURE.**
+> the ercot-225 gate card stays open as put. **SIGNED same-session: (Y-C) —
+> HOLD THE LANE OPEN**, against the recommendation; both records stand. The
+> signature does NOT lift Q-B/R-A, license any `R`/`I`/`G` re-test, or
+> manufacture admissibility (card RESOLUTIONS) — the lane's one
+> named-unmeasured object, the `NE_LOB` binding-hour-timing Phase-0, was then
+> executed in-session under its precommitted bounds (see the ercot-233
+> execution record in `docs/calibration-log/ercot.md`).**
 
 > **ercot-232 (2026-08-24) — THE KEEPER'S 21 SPURIOUS MID-BAND HOURS ARE A
 > NORTHEAST **DELIVERABILITY** ARTIFACT; A TIE-PLACEMENT REFINEMENT IS MEASURED-
