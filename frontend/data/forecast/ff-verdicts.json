@@ -124,7 +124,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -336,7 +336,7 @@
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c1",
+   "scored_at_sha": "e2a422c191aa",
    "session": "FFR-3A-3",
    "solved_at_sha": "941f4983"
   },
@@ -482,7 +482,7 @@
   ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -693,7 +693,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -1122,7 +1122,7 @@
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c1",
+   "scored_at_sha": "e2a422c191aa",
    "session": "FFR-3A-3",
    "solved_at_sha": "941f4983"
   },
@@ -1410,7 +1410,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -1582,7 +1582,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -1829,7 +1829,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -2185,7 +2185,7 @@
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c1",
+   "scored_at_sha": "e2a422c191aa",
    "session": "FFR-3A-3",
    "solved_at_sha": "941f4983"
   },
@@ -2323,7 +2323,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -2475,7 +2475,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -2781,7 +2781,7 @@
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c1",
+   "scored_at_sha": "e2a422c191aa",
    "session": "FFR-3A-3",
    "solved_at_sha": "941f4983"
   },
@@ -2919,7 +2919,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -3078,7 +3078,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -3384,7 +3384,7 @@
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c1",
+   "scored_at_sha": "e2a422c191aa",
    "session": "FFR-3A-3",
    "solved_at_sha": "941f4983"
   },
@@ -3533,7 +3533,7 @@
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c1",
+   "scored_at_sha": "e2a422c191aa",
    "session": "FFR-3A-3",
    "solved_at_sha": "941f4983"
   },
@@ -3673,7 +3673,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -3832,7 +3832,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [
@@ -4079,7 +4079,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba59281",
+   "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
   "reasons": [

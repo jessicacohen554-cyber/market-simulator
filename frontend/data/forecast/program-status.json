@@ -567,7 +567,7 @@
  ],
  "refresh": {
   "session": "FFR-3A-3",
-  "scored_at_sha": "e2a422c1",
+  "scored_at_sha": "e2a422c191aa",
   "solved_at_sha": "941f4983",
   "what_was_refreshed": "Criterion (a) keeper + marker + determination for all six ISOs, read LIVE from frontend/data/backcast/keepers/*.json and calibration-complete.json (the prior seed was generated 2026-07-20 and had gone materially stale \u2014 it recorded PJM as having no calibration-complete marker, which is no longer true). Criterion (b) t1h/t1x determinations for the SIX legs re-solved at the post-FFR-3F HEAD.",
   "what_was_CARRIED_not_remeasured": "Every t1f determination, all blocking_rows, flip notes and per-ISO FC maps for legs this session did not solve. These date from FF-2D/FFR-3A-2 and are NOT re-verified here. MISO T1-X was launched twice and killed twice (the second time by this session's own concurrent git activity) and is explicitly NOT measured \u2014 its t1x cell is null rather than carrying a stale value.",
