@@ -11501,7 +11501,11 @@ OPEN-RESIDUAL-LANE re-wording DISCHARGED), DOF ledger, dashboard
 registration, keeper shard with the X-2 note REWRITTEN to this keeper's
 magnitudes (discharging the prose debt carried since ercot-223),
 `build_status.py --iso ERCOT`, matrix keeper/gates stamps + tie cell → K.
-Determination NOT-YET on {C3a-2023 −38.0 %, C3b-2023 0.696}; C3c ledgered
-×3 (93/181, 22/53, 1/31). Replay rule: THIS keeper's replays REQUIRE the
+Determination NOT-YET on {C3a-2023 −38.0 %, C3b-2023 0.696}; **C3c-2023
+is a clean PASS (93/181 = 0.51×, over the band's lower edge — the first
+ERCOT keeper passing the 2023 tail criterion; the auditor caught the
+stale ×3 prose and repaired shard note + status; the spent 2023
+attestation entry pruned via the generator's band-met clause)**; C3c
+ledgered ×2 (2024 22/53, 2025 1/31). Replay rule: THIS keeper's replays REQUIRE the
 gtc-limits clean partition; ercot-223-and-earlier replays require its
 ABSENCE.

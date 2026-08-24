@@ -256,8 +256,13 @@ verified PASS against the 3-year keeper comparator (24 = 24 rows — the
 dismissed); 2024 spur 11 = baseline, shed {3067} = baseline; 2025 spur
 1 = baseline, shed ∅. Registered as
 **`2026-08-24-231-tie-zone-measured`** (determination NOT-YET on
-{C3a-2023, C3b-2023}, C3c ledgered ×3 at 93/181, 22/53, 1/31 with the
-OPEN-RESIDUAL-LANE re-wording discharged in the attestation) and
+{C3a-2023, C3b-2023}, C3c-2023 a clean PASS at 93/181 = 0.51× — the tie-zone/GTC hours carried
+2023 over the band's lower edge, the first ERCOT keeper on which the 2023
+tail criterion passes — with the caveat now ledgered ×2 (2024 22/53,
+2025 1/31) and the OPEN-RESIDUAL-LANE re-wording discharged in the
+attestation (the spent 2023 entry dropped per the generator's own
+band-met clause; caught by the keeper auditor, which repaired the shard
+note and status page)) and
 **PROMOTED TO KEEPER**, with the keeper shard's X-2 note rewritten to this
 keeper's magnitudes (discharging the prose debt carried since ercot-223),
 the status page rebuilt, and the matrix keeper/gates/cell stamps landed.
