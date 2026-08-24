@@ -223,6 +223,26 @@ flags default-off, and the handback puts the open questions to the owner:
    the 2026 SOM RTC+B-era anchors, ~mid-2027) vs the seasonal end-of-season
    term card, the only un-adjudicated named successor of the adaptive family.
 
+**AMENDMENT — THE OWNER'S ANSWER (2026-08-23, in the hub session, verbatim):**
+*"Try 3 year but you can do a 1 year keeper on ERCOT 2023 because it is a
+fundamentally different market design than 2024 and 2025… that's the whole
+point of this exercise rule 16 be damned."* Effect: options 1+2 are TAKEN
+TOGETHER — the combined 3-year path (option 3) is GO — and **rule 16
+[R-ALLYEARS] is owner-waived for ERCOT 2023 specifically**, pre-authorizing
+a 2023-only keeper registration if the 3-year run degrades 2024/2025
+retention, on the regime ground the record itself carries (2023 is the
+pre-reform ECRS / no-release design; the armed regime machinery is
+date-gated for exactly this reason). Decision rule fixed before the 3-year
+result was seen: **2024/2025 official C3a/C3b remain PASS → promote the
+3-year bundle (standard rule-16 form); either year degrades past its band →
+register and promote the 2023-only bundle under the waiver, with the
+2024/2025 results reported at full magnitude alongside and the waiver
+recorded verbatim in the attestation, the keeper note and the log.** The
+termination protocol (option 4) is moot in its measured-empty form. The
+3-year invocation (`ercot231_tiegtc_full`) executes in the hub container;
+its outcome, the registration and the keeper workflow are recorded in the
+log entry's promotion addendum.
+
 What is different from every prior handback in this program: the sweep did
 **not** terminate MEASURED-EMPTY. The pre-registered §1 arithmetic said a
 quantity factor could not reach the bar without multi-GW magnitude; N1a
