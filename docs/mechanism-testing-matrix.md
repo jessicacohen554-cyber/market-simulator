@@ -4840,6 +4840,39 @@ zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
 ### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-22-miso-177-rho-measured` (**PROMOTED miso-177, 2026-08-22**, superseding `2026-08-22-miso-175-hourkey` — the measured-rho re-gate of the same-day owner RHO_CLIP band ruling; the standing miso-169/nyiso-144 floor escalation is CLOSED: refuted, deleted, re-solved), **NOT-YET on C3a-2025 (−11.7 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, miso-175 (2026-08-22) EXECUTED item 1 (the seam-envelope hour-key rotation — now the keeper); miso-176 (2026-08-22) EXECUTED item 3 (the M2M/CMP seam-class intake + binding-reality measurement — `m2m_seam_entitlement_cap` minted `G`, no LP); the remaining two (the coincident-peak seam-response object [OWNER admissibility ruling needed, now holding miso-176's binding evidence], the South under-export) stay NAMED, NOT CHARTERED — see the stamps below and the standing OWNER items. **miso-178 (2026-08-23) delivered the re-charter's measurement: the full C3a-2025 anatomy on the measured-rho keeper + the RANKED lever plan — the queue now carries the D-1 across-unit offer-level-dispersion charter ask (top), the D-2 5(i) seam-response ruling, and the D-3 South under-export evidence charter (FINDING-miso178 §7–§10; its stamp below).** **miso-179 (2026-08-23) EXECUTED the granted D-1 charter and REFUTED it at its own pre-registered no-LP pre-checks — `miso_offer_level_dispersion` minted `R`, no field ever created, keeper unchanged: the model already carries 0.541× the eligible book's across-unit spread at the 2025 summer top-decile margin (kill ≥ 0.5), and the granted rank-mapped LEVEL form statically predicts C3a-2023 +1.28 → −40.1 % (the miso-145 level warning at rank grain; the miso-178 §7 kill-risk (b) population non-identifiability materialized). The queue now carries the D-2 5(i) ruling, the D-3 South evidence charter, and the NEW anchored SPREAD-ONLY successor ask (owner decision — the measured residual is a top-decile tail steepening, +$40 at p95 / +$110 at p99; its stamp below).** **miso-180 (2026-08-23) EXECUTED the granted D-1b successor charter end to end and measured it INERT — `miso_offer_spread_anchored` minted `I` (built, gated default-off, both A/B runs registered), keeper unchanged: the ex-ante-identified anchor (r = 0.875, the model/book H* crossing) grafted the measured above-anchor rise exactly as designed (body untouched to 3 decimals, ceilings respected) and the LP realized only +0.132 pp of the predicted +0.592 on C3a-2025 — Δ₁ did not collapse (+10.50 → +10.45) and the South dipole moved AWAY from zero (+16.96 → +17.15%). The across-unit dispersion family is now fully adjudicated (level R / spread I); the residual is NOT an offer-surface object — the queue carries the D-2 5(i) seam-response ruling (the +2.1 GW binding-hour import excess, now the largest named object) and the D-3 South evidence charter (its stamp below).**
+
+> **QUEUE STAMP miso-181 (2026-08-24) — THE D-2 5(i) RULING EXERCISED AND THE
+> COINCIDENT-PEAK SEAM-RESPONSE ENVELOPE REFUTED AT ITS OWN PRE-REGISTERED
+> CONDITIONING-SANITY KILL. NO LP, NO FIELD; new row `miso_seam_coincident_envelope`
+> minted `R`. Keeper UNCHANGED at `2026-08-22-miso-177-rho-measured`.** The owner
+> granted D-2 in the session prompt (the neighbour's own load admissible in kind);
+> the PREREG (`PREREG-miso181-seam-coincident-envelope-2026-08-24.md`, commit 9e9d1a1
+> BEFORE any measurement) froze the only admissible form — the armed PJM-seam p90
+> envelope CONDITIONED on PJM's own within-year load percentile (declared bin grid,
+> the existing p90 constant, zero fitted scalars, zero LMP in the path) — and the
+> measurement refuted it: the conditional p90 of seam delivery is FLAT in the
+> neighbour's load state (2025 top bin 5,438 vs bottom 5,526 MW; 2023's 95–99th-pctile
+> bins the HIGHEST in the table), so the envelope's tightening lands driver-blind
+> (13.2/8.9/9.3 % in ≥p90 driver hours vs ≥50 % required; 35.6/30.4/44.7 % below the
+> median state vs ≤10 %; 2024's largest tightening month is JANUARY, 1,009 GWh) —
+> K-c fired all three years: a level lever in costume, the charter's own named
+> failure mode. Against interest, in full: K-a did NOT fire (removing the FULL
+> aggregate excess predicts +5.44/+6.13 pp on 2025 — but year-blind and inadmissible,
+> the class ceiling only), and the mechanism's OWN overstated ceiling reaches just
+> +0.98/+1.42 pp with the forbidden body-hours shape (tail contribution
+> +0.001/+0.004/+0.32 pp). The `miso_offer_spread_anchored` re-open clause did NOT
+> fire (C-3: 13 < 20 crossing hours at the intersected estimate; 74 even at the
+> R_bound ceiling) — the graft coupling is real in sign, sub-material in count; the
+> cell stays `I`, clause unspent. STRUCTURAL CLOSE: the pull-back is real (miso-174
+> §3b) but lives in the M2M-BINDING subset (miso-176 §4) — a p90-of-driver-state
+> statistic cannot see it, the binding state is answer-class (miso-176 K-1), and
+> flow-pinning is the rule-13 outcome pin. The admissible driver does not encode the
+> phenomenon; the driver that encodes it is not admissible. THE QUEUE NOW CARRIES
+> D-3 (the South under-export evidence session — the driver hunt for a firm/JOU
+> export block to SOCO/TVA/AECI, the Manitoba-precedent shape; handoff sketch in the
+> FINDING §6) and the standing D-4 posture question. Records:
+> `FINDING-miso181-seam-response-refutation-2026-08-24.md`,
+> `_miso181_seam_response_precheck.json`.**
 > **QUEUE STAMP miso-180 (2026-08-23) — THE D-1b ANCHORED SPREAD-ONLY SUCCESSOR EXECUTED
 > END TO END AND MEASURED INERT. BUILT (gated `miso_offer_spread_anchored`, default off),
 > SOLVED (full A/B on the 15 GB recipe), BOTH RUNS REGISTERED
