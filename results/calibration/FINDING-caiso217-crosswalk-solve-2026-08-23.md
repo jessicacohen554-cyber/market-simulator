@@ -129,16 +129,63 @@ the strict input-completeness guard — the fresh container's derived
 via its own curate script and relaunched. The guard working as designed,
 caiso-188/157 lineage.)
 
-<!-- PHASE B/C RESULTS FILLED AFTER THE SOLVE -->
+## §D–§F — NEVER FILLED: THE SESSION'S RESULTS DID NOT LAND (recorded by caiso-218, 2026-08-24)
 
-## §D — Gates (§G pre-registered; scored, not judged, first)
+**This section replaces the §D/§E/§F placeholders with the honest record of
+what happened, written by the caiso-218 session — it does NOT reconstruct the
+solve results, which were lost with the caiso-217 container.**
 
-<!-- gate table with realized numbers -->
+What the caiso-217 session landed on `main` (its complete committed record):
 
-## §E — Determination and promotion decision
+1. PR #4224-era commit `f0dd328` — Phase A, the crosswalk intake (§A above).
+2. PR #4226 / commit `5b70419` — this FINDING draft (§A–§C final, §D–§F
+   placeholders) + `scripts/probes/_caiso217_zonal_decomp.py` (the
+   split-witness wrapper, never run against a committed bundle) +
+   `results/calibration/_caiso217_realized_membership.json` (§B).
+3. PR #4230 / commit `6132867` — "solve-in-progress checkpoint": the 2023
+   hourly sidecars only (`caiso217_crosswalk/hourly/{class_hourly,storage}_
+   2023.parquet`). **The last caiso-217 commit that ever landed
+   (2026-08-23 19:58 UTC).**
 
-<!-- verdict + owner-standard evaluation -->
+What did NOT land, anywhere (verified at caiso-218 against `main`, every
+remote branch, and the closed-PR record): the completed 3-year solve bundle
+(no `meta.json`, no 2024/2025 sidecars, no gate records), the §D gate table,
+the §E determination, the rule-15 registration (no registry sidecar, no run
+payload, no bench update), any keeper-shard edit, any calibration-log entry,
+any matrix stamp, and the `_caiso217_zonal_decomp.json` artifact.
 
-## §F — Records (rule 28b — CAISO shard only)
+**The solve evidently COMPLETED inside the caiso-217 container after the
+checkpoint**: the caiso-218 handoff prompt (authored by the caiso-217 session)
+quotes scored results — C3a +4.0 PASS / +12.5 / +15.5; C3b 0.100/0.177/0.180;
+model split hours 50/40/17 >$15; belly split depth $0.8–1.4; a keeper id
+`2026-08-23-caiso-217-crosswalk` — but the session ended before pushing any of
+it, so those numbers exist ONLY in the handoff text. They are SECONDARY
+EVIDENCE: quotable as the caiso-217 session's claim, never as committed
+measurement, and no determination, promotion, or gate baseline may rest on
+them. **At HEAD the CAISO keeper remains `2026-08-17-caiso-200-h1-memberpanel`
+and the committed C3b baseline remains 0.098/0.179/0.182** (caiso-209
+correction, caiso-213 re-verification).
 
-<!-- matrix stamps, log entry, filed items carry -->
+Standing consequences (adjudicated by caiso-218):
+
+* The rule-15 registration debt cannot be repaired from committed bytes — the
+  run's outputs are gone. The only repair is a RE-SOLVE of the same recipe,
+  which at HEAD is exactly a `caiso200_h1_memberpanel` replay (the crosswalk
+  entered as data at `f0dd328` and is active for any new CAISO solve), and
+  which remains SUBJECT TO OWNER FUNDING under the caiso-201 rest. Until then
+  the crosswalk's solve-side effect is UNSCORED on the record, and the partial
+  `caiso217_crosswalk/hourly/` 2023 checkpoint is a stranded artifact of a
+  run with no bundle — retained as the only committed trace of the solve.
+* `_caiso217_realized_membership.json` (§B) is unaffected: it is input-side
+  arithmetic, fully committed, and remains the post-crosswalk baseline the
+  caiso-218 what-if builds on.
+* The caiso-218 handoff's "READ FIRST" citations of this FINDING's "§D gate
+  table, §E residual attribution, §G fences" refer to content that was never
+  committed; the fences it enumerates inline (rule-13 admissibility of
+  published operating limits; realized-flow caps forbidden; no solve without
+  a packet gate table) are carried by the handoff itself and by
+  FINDING-caiso216 §F.3/§I, and caiso-218 honours them from those sources.
+
+Record trail: `results/calibration/FINDING-caiso218-path-limit-survey-2026-08-24.md`
+§A (the gap verification), `docs/calibration-log/caiso.md` caiso-218 entry,
+matrix §5.2 caiso-218 block.

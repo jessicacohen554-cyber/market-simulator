@@ -1,0 +1,1019 @@
+{
+ "cut15_hours_by_cap_2023_2024_2025": {
+  "0": [
+   1570,
+   1900,
+   2311
+  ],
+  "1000": [
+   1199,
+   1574,
+   2039
+  ],
+  "1250": [
+   1102,
+   1489,
+   1973
+  ],
+  "1500": [
+   1007,
+   1403,
+   1907
+  ],
+  "1600": [
+   967,
+   1378,
+   1882
+  ],
+  "1750": [
+   923,
+   1334,
+   1834
+  ],
+  "2000": [
+   838,
+   1252,
+   1755
+  ],
+  "2100": [
+   815,
+   1229,
+   1733
+  ],
+  "2250": [
+   758,
+   1184,
+   1680
+  ],
+  "250": [
+   1493,
+   1828,
+   2238
+  ],
+  "2500": [
+   682,
+   1124,
+   1601
+  ],
+  "2750": [
+   597,
+   1057,
+   1533
+  ],
+  "3000": [
+   523,
+   981,
+   1456
+  ],
+  "3250": [
+   463,
+   921,
+   1375
+  ],
+  "3265": [
+   462,
+   916,
+   1368
+  ],
+  "340": [
+   1454,
+   1800,
+   2212
+  ],
+  "3500": [
+   413,
+   863,
+   1288
+  ],
+  "3750": [
+   363,
+   816,
+   1217
+  ],
+  "4000": [
+   318,
+   765,
+   1138
+  ],
+  "4250": [
+   271,
+   707,
+   1065
+  ],
+  "4500": [
+   232,
+   651,
+   997
+  ],
+  "4750": [
+   199,
+   607,
+   927
+  ],
+  "500": [
+   1395,
+   1752,
+   2160
+  ],
+  "5000": [
+   163,
+   555,
+   846
+  ],
+  "5250": [
+   137,
+   507,
+   776
+  ],
+  "5400": [
+   121,
+   480,
+   742
+  ],
+  "5500": [
+   117,
+   460,
+   710
+  ],
+  "5750": [
+   97,
+   425,
+   653
+  ],
+  "6000": [
+   78,
+   389,
+   581
+  ],
+  "750": [
+   1300,
+   1671,
+   2092
+  ]
+ },
+ "dmm_marks": {
+  "1600": "Tesla-Los Banos #1 500kV / 6410_CP1_NG (DMM 2023)",
+  "200": "Panoche-Gates #2 230kV (DMM 2023 avg binding limit)",
+  "2100": "Midway-Vincent #2 500kV (DMM 2023 avg binding limit)",
+  "2500": "Gates-Midway #1 500kV (DMM 2023 avg binding limit)",
+  "3000": "Path 26 S->N WECC catalog rating (armed)",
+  "3265": "Path 15 N->S WECC catalog rating",
+  "340": "Moss Landing-Las Aguilas 230kV (DMM 2023 avg binding limit)",
+  "5400": "Path 15 S->N WECC catalog rating (armed)"
+ },
+ "grids_mw": {
+  "cut15": [
+   0,
+   250,
+   340,
+   500,
+   750,
+   1000,
+   1250,
+   1500,
+   1600,
+   1750,
+   2000,
+   2100,
+   2250,
+   2500,
+   2750,
+   3000,
+   3250,
+   3265,
+   3500,
+   3750,
+   4000,
+   4250,
+   4500,
+   4750,
+   5000,
+   5250,
+   5400,
+   5500,
+   5750,
+   6000
+  ],
+  "cut26": [
+   0,
+   200,
+   250,
+   500,
+   750,
+   1000,
+   1250,
+   1500,
+   1600,
+   1750,
+   2000,
+   2100,
+   2250,
+   2500,
+   2750,
+   3000,
+   3250,
+   3500,
+   3750,
+   4000
+  ]
+ },
+ "reality_split_gt15_committed": [
+  1310,
+  1691,
+  1347
+ ],
+ "years": {
+  "2023": {
+   "controls": {
+    "cut15": {
+     "belly_mean_mw": [
+      -337.82,
+      -337.82,
+      true
+     ],
+     "hours_over_path": [
+      121,
+      121,
+      true
+     ],
+     "hours_pos": [
+      1570,
+      1570,
+      true
+     ],
+     "max_mw": [
+      9339.36,
+      9339.36,
+      true
+     ]
+    },
+    "cut26": {
+     "belly_mean_mw": [
+      -3453.35,
+      -3453.35,
+      true
+     ],
+     "hours_over_path": [
+      27,
+      27,
+      true
+     ],
+     "hours_pos": [
+      374,
+      374,
+      true
+     ],
+     "max_mw": [
+      4860.42,
+      4860.42,
+      true
+     ]
+    }
+   },
+   "curves": {
+    "cut15": {
+     "0": {
+      "hours_all": 1570,
+      "hours_belly": 1154
+     },
+     "1000": {
+      "hours_all": 1199,
+      "hours_belly": 921
+     },
+     "1250": {
+      "hours_all": 1102,
+      "hours_belly": 856
+     },
+     "1500": {
+      "hours_all": 1007,
+      "hours_belly": 798
+     },
+     "1600": {
+      "hours_all": 967,
+      "hours_belly": 771
+     },
+     "1750": {
+      "hours_all": 923,
+      "hours_belly": 743
+     },
+     "2000": {
+      "hours_all": 838,
+      "hours_belly": 673
+     },
+     "2100": {
+      "hours_all": 815,
+      "hours_belly": 654
+     },
+     "2250": {
+      "hours_all": 758,
+      "hours_belly": 609
+     },
+     "250": {
+      "hours_all": 1493,
+      "hours_belly": 1112
+     },
+     "2500": {
+      "hours_all": 682,
+      "hours_belly": 555
+     },
+     "2750": {
+      "hours_all": 597,
+      "hours_belly": 492
+     },
+     "3000": {
+      "hours_all": 523,
+      "hours_belly": 435
+     },
+     "3250": {
+      "hours_all": 463,
+      "hours_belly": 391
+     },
+     "3265": {
+      "hours_all": 462,
+      "hours_belly": 390
+     },
+     "340": {
+      "hours_all": 1454,
+      "hours_belly": 1089
+     },
+     "3500": {
+      "hours_all": 413,
+      "hours_belly": 351
+     },
+     "3750": {
+      "hours_all": 363,
+      "hours_belly": 313
+     },
+     "4000": {
+      "hours_all": 318,
+      "hours_belly": 279
+     },
+     "4250": {
+      "hours_all": 271,
+      "hours_belly": 241
+     },
+     "4500": {
+      "hours_all": 232,
+      "hours_belly": 204
+     },
+     "4750": {
+      "hours_all": 199,
+      "hours_belly": 180
+     },
+     "500": {
+      "hours_all": 1395,
+      "hours_belly": 1049
+     },
+     "5000": {
+      "hours_all": 163,
+      "hours_belly": 147
+     },
+     "5250": {
+      "hours_all": 137,
+      "hours_belly": 127
+     },
+     "5400": {
+      "hours_all": 121,
+      "hours_belly": 112
+     },
+     "5500": {
+      "hours_all": 117,
+      "hours_belly": 108
+     },
+     "5750": {
+      "hours_all": 97,
+      "hours_belly": 89
+     },
+     "6000": {
+      "hours_all": 78,
+      "hours_belly": 73
+     },
+     "750": {
+      "hours_all": 1300,
+      "hours_belly": 990
+     }
+    },
+    "cut26": {
+     "0": {
+      "hours_all": 374,
+      "hours_belly": 317
+     },
+     "1000": {
+      "hours_all": 183,
+      "hours_belly": 161
+     },
+     "1250": {
+      "hours_all": 146,
+      "hours_belly": 134
+     },
+     "1500": {
+      "hours_all": 113,
+      "hours_belly": 102
+     },
+     "1600": {
+      "hours_all": 103,
+      "hours_belly": 94
+     },
+     "1750": {
+      "hours_all": 95,
+      "hours_belly": 87
+     },
+     "200": {
+      "hours_all": 332,
+      "hours_belly": 284
+     },
+     "2000": {
+      "hours_all": 78,
+      "hours_belly": 72
+     },
+     "2100": {
+      "hours_all": 74,
+      "hours_belly": 68
+     },
+     "2250": {
+      "hours_all": 64,
+      "hours_belly": 61
+     },
+     "250": {
+      "hours_all": 318,
+      "hours_belly": 275
+     },
+     "2500": {
+      "hours_all": 50,
+      "hours_belly": 48
+     },
+     "2750": {
+      "hours_all": 38,
+      "hours_belly": 37
+     },
+     "3000": {
+      "hours_all": 27,
+      "hours_belly": 27
+     },
+     "3250": {
+      "hours_all": 21,
+      "hours_belly": 21
+     },
+     "3500": {
+      "hours_all": 11,
+      "hours_belly": 11
+     },
+     "3750": {
+      "hours_all": 10,
+      "hours_belly": 10
+     },
+     "4000": {
+      "hours_all": 8,
+      "hours_belly": 8
+     },
+     "500": {
+      "hours_all": 262,
+      "hours_belly": 230
+     },
+     "750": {
+      "hours_all": 220,
+      "hours_belly": 193
+     }
+    }
+   },
+   "reality_hours_committed": {
+    "cut15": {
+     "south_neg": 688,
+     "split_gt15": 1310
+    },
+    "cut26": {
+     "south_neg": 688,
+     "split_gt15": 1310
+    }
+   }
+  },
+  "2024": {
+   "controls": {
+    "cut15": {
+     "belly_mean_mw": [
+      1293.75,
+      1293.75,
+      true
+     ],
+     "hours_over_path": [
+      480,
+      480,
+      true
+     ],
+     "hours_pos": [
+      1900,
+      1900,
+      true
+     ],
+     "max_mw": [
+      11730.22,
+      11730.22,
+      true
+     ]
+    },
+    "cut26": {
+     "belly_mean_mw": [
+      -2471.58,
+      -2471.58,
+      true
+     ],
+     "hours_over_path": [
+      214,
+      214,
+      true
+     ],
+     "hours_pos": [
+      769,
+      769,
+      true
+     ],
+     "max_mw": [
+      7146.75,
+      7146.75,
+      true
+     ]
+    }
+   },
+   "curves": {
+    "cut15": {
+     "0": {
+      "hours_all": 1900,
+      "hours_belly": 1376
+     },
+     "1000": {
+      "hours_all": 1574,
+      "hours_belly": 1170
+     },
+     "1250": {
+      "hours_all": 1489,
+      "hours_belly": 1119
+     },
+     "1500": {
+      "hours_all": 1403,
+      "hours_belly": 1061
+     },
+     "1600": {
+      "hours_all": 1378,
+      "hours_belly": 1043
+     },
+     "1750": {
+      "hours_all": 1334,
+      "hours_belly": 1011
+     },
+     "2000": {
+      "hours_all": 1252,
+      "hours_belly": 953
+     },
+     "2100": {
+      "hours_all": 1229,
+      "hours_belly": 937
+     },
+     "2250": {
+      "hours_all": 1184,
+      "hours_belly": 911
+     },
+     "250": {
+      "hours_all": 1828,
+      "hours_belly": 1333
+     },
+     "2500": {
+      "hours_all": 1124,
+      "hours_belly": 873
+     },
+     "2750": {
+      "hours_all": 1057,
+      "hours_belly": 826
+     },
+     "3000": {
+      "hours_all": 981,
+      "hours_belly": 778
+     },
+     "3250": {
+      "hours_all": 921,
+      "hours_belly": 738
+     },
+     "3265": {
+      "hours_all": 916,
+      "hours_belly": 735
+     },
+     "340": {
+      "hours_all": 1800,
+      "hours_belly": 1316
+     },
+     "3500": {
+      "hours_all": 863,
+      "hours_belly": 693
+     },
+     "3750": {
+      "hours_all": 816,
+      "hours_belly": 664
+     },
+     "4000": {
+      "hours_all": 765,
+      "hours_belly": 626
+     },
+     "4250": {
+      "hours_all": 707,
+      "hours_belly": 580
+     },
+     "4500": {
+      "hours_all": 651,
+      "hours_belly": 538
+     },
+     "4750": {
+      "hours_all": 607,
+      "hours_belly": 507
+     },
+     "500": {
+      "hours_all": 1752,
+      "hours_belly": 1281
+     },
+     "5000": {
+      "hours_all": 555,
+      "hours_belly": 474
+     },
+     "5250": {
+      "hours_all": 507,
+      "hours_belly": 441
+     },
+     "5400": {
+      "hours_all": 480,
+      "hours_belly": 421
+     },
+     "5500": {
+      "hours_all": 460,
+      "hours_belly": 406
+     },
+     "5750": {
+      "hours_all": 425,
+      "hours_belly": 376
+     },
+     "6000": {
+      "hours_all": 389,
+      "hours_belly": 347
+     },
+     "750": {
+      "hours_all": 1671,
+      "hours_belly": 1233
+     }
+    },
+    "cut26": {
+     "0": {
+      "hours_all": 769,
+      "hours_belly": 607
+     },
+     "1000": {
+      "hours_all": 553,
+      "hours_belly": 457
+     },
+     "1250": {
+      "hours_all": 512,
+      "hours_belly": 431
+     },
+     "1500": {
+      "hours_all": 465,
+      "hours_belly": 397
+     },
+     "1600": {
+      "hours_all": 446,
+      "hours_belly": 382
+     },
+     "1750": {
+      "hours_all": 415,
+      "hours_belly": 361
+     },
+     "200": {
+      "hours_all": 718,
+      "hours_belly": 571
+     },
+     "2000": {
+      "hours_all": 371,
+      "hours_belly": 328
+     },
+     "2100": {
+      "hours_all": 355,
+      "hours_belly": 314
+     },
+     "2250": {
+      "hours_all": 333,
+      "hours_belly": 294
+     },
+     "250": {
+      "hours_all": 709,
+      "hours_belly": 564
+     },
+     "2500": {
+      "hours_all": 290,
+      "hours_belly": 260
+     },
+     "2750": {
+      "hours_all": 250,
+      "hours_belly": 224
+     },
+     "3000": {
+      "hours_all": 214,
+      "hours_belly": 190
+     },
+     "3250": {
+      "hours_all": 181,
+      "hours_belly": 167
+     },
+     "3500": {
+      "hours_all": 158,
+      "hours_belly": 146
+     },
+     "3750": {
+      "hours_all": 131,
+      "hours_belly": 121
+     },
+     "4000": {
+      "hours_all": 103,
+      "hours_belly": 96
+     },
+     "500": {
+      "hours_all": 656,
+      "hours_belly": 529
+     },
+     "750": {
+      "hours_all": 604,
+      "hours_belly": 490
+     }
+    }
+   },
+   "reality_hours_committed": {
+    "cut15": {
+     "south_neg": 1230,
+     "split_gt15": 1691
+    },
+    "cut26": {
+     "south_neg": 1230,
+     "split_gt15": 1691
+    }
+   }
+  },
+  "2025": {
+   "controls": {
+    "cut15": {
+     "belly_mean_mw": [
+      2720.57,
+      2720.57,
+      true
+     ],
+     "hours_over_path": [
+      742,
+      742,
+      true
+     ],
+     "hours_pos": [
+      2311,
+      2311,
+      true
+     ],
+     "max_mw": [
+      12599.59,
+      12599.59,
+      true
+     ]
+    },
+    "cut26": {
+     "belly_mean_mw": [
+      -1330.52,
+      -1330.52,
+      true
+     ],
+     "hours_over_path": [
+      228,
+      228,
+      true
+     ],
+     "hours_pos": [
+      1065,
+      1065,
+      true
+     ],
+     "max_mw": [
+      7373.7,
+      7373.7,
+      true
+     ]
+    }
+   },
+   "curves": {
+    "cut15": {
+     "0": {
+      "hours_all": 2311,
+      "hours_belly": 1670
+     },
+     "1000": {
+      "hours_all": 2039,
+      "hours_belly": 1517
+     },
+     "1250": {
+      "hours_all": 1973,
+      "hours_belly": 1485
+     },
+     "1500": {
+      "hours_all": 1907,
+      "hours_belly": 1447
+     },
+     "1600": {
+      "hours_all": 1882,
+      "hours_belly": 1433
+     },
+     "1750": {
+      "hours_all": 1834,
+      "hours_belly": 1402
+     },
+     "2000": {
+      "hours_all": 1755,
+      "hours_belly": 1361
+     },
+     "2100": {
+      "hours_all": 1733,
+      "hours_belly": 1344
+     },
+     "2250": {
+      "hours_all": 1680,
+      "hours_belly": 1305
+     },
+     "250": {
+      "hours_all": 2238,
+      "hours_belly": 1630
+     },
+     "2500": {
+      "hours_all": 1601,
+      "hours_belly": 1251
+     },
+     "2750": {
+      "hours_all": 1533,
+      "hours_belly": 1203
+     },
+     "3000": {
+      "hours_all": 1456,
+      "hours_belly": 1159
+     },
+     "3250": {
+      "hours_all": 1375,
+      "hours_belly": 1103
+     },
+     "3265": {
+      "hours_all": 1368,
+      "hours_belly": 1097
+     },
+     "340": {
+      "hours_all": 2212,
+      "hours_belly": 1613
+     },
+     "3500": {
+      "hours_all": 1288,
+      "hours_belly": 1042
+     },
+     "3750": {
+      "hours_all": 1217,
+      "hours_belly": 992
+     },
+     "4000": {
+      "hours_all": 1138,
+      "hours_belly": 937
+     },
+     "4250": {
+      "hours_all": 1065,
+      "hours_belly": 884
+     },
+     "4500": {
+      "hours_all": 997,
+      "hours_belly": 829
+     },
+     "4750": {
+      "hours_all": 927,
+      "hours_belly": 780
+     },
+     "500": {
+      "hours_all": 2160,
+      "hours_belly": 1583
+     },
+     "5000": {
+      "hours_all": 846,
+      "hours_belly": 723
+     },
+     "5250": {
+      "hours_all": 776,
+      "hours_belly": 674
+     },
+     "5400": {
+      "hours_all": 742,
+      "hours_belly": 643
+     },
+     "5500": {
+      "hours_all": 710,
+      "hours_belly": 617
+     },
+     "5750": {
+      "hours_all": 653,
+      "hours_belly": 569
+     },
+     "6000": {
+      "hours_all": 581,
+      "hours_belly": 510
+     },
+     "750": {
+      "hours_all": 2092,
+      "hours_belly": 1542
+     }
+    },
+    "cut26": {
+     "0": {
+      "hours_all": 1065,
+      "hours_belly": 862
+     },
+     "1000": {
+      "hours_all": 728,
+      "hours_belly": 616
+     },
+     "1250": {
+      "hours_all": 652,
+      "hours_belly": 556
+     },
+     "1500": {
+      "hours_all": 581,
+      "hours_belly": 502
+     },
+     "1600": {
+      "hours_all": 554,
+      "hours_belly": 479
+     },
+     "1750": {
+      "hours_all": 517,
+      "hours_belly": 449
+     },
+     "200": {
+      "hours_all": 1001,
+      "hours_belly": 818
+     },
+     "2000": {
+      "hours_all": 450,
+      "hours_belly": 389
+     },
+     "2100": {
+      "hours_all": 426,
+      "hours_belly": 370
+     },
+     "2250": {
+      "hours_all": 391,
+      "hours_belly": 340
+     },
+     "250": {
+      "hours_all": 984,
+      "hours_belly": 807
+     },
+     "2500": {
+      "hours_all": 337,
+      "hours_belly": 298
+     },
+     "2750": {
+      "hours_all": 276,
+      "hours_belly": 245
+     },
+     "3000": {
+      "hours_all": 228,
+      "hours_belly": 204
+     },
+     "3250": {
+      "hours_all": 190,
+      "hours_belly": 175
+     },
+     "3500": {
+      "hours_all": 153,
+      "hours_belly": 143
+     },
+     "3750": {
+      "hours_all": 139,
+      "hours_belly": 130
+     },
+     "4000": {
+      "hours_all": 119,
+      "hours_belly": 111
+     },
+     "500": {
+      "hours_all": 897,
+      "hours_belly": 743
+     },
+     "750": {
+      "hours_all": 807,
+      "hours_belly": 673
+     }
+    }
+   },
+   "reality_hours_committed": {
+    "cut15": {
+     "south_neg": 964,
+     "split_gt15": 1347
+    },
+    "cut26": {
+     "south_neg": 964,
+     "split_gt15": 1347
+    }
+   }
+  }
+ }
+}
