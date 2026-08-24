@@ -1043,6 +1043,60 @@ rule-13-admissible mechanism available to carry it.
 > `results/calibration/FINDING-caiso216-belly-lever-plan-2026-08-23.md`.
 > Next number: caiso-217.**
 
+> **caiso-218 (2026-08-24) — THE PATH-15/26 MEASURED OPERATING-LIMIT PHASE-0
+> SURVEY (the caiso-216 §F.3b contingency): DECISIVE NULL, and the lever
+> class itself is measured insufficient. NO SOLVE, NO LP, NOTHING ARMED,
+> NOTHING REGISTERED, NO CELL VERDICT MOVES (nothing tested; rule 28b
+> attaches to the `measured_interface_limits` evidence append only). KEEPER
+> UNCHANGED at `2026-08-17-caiso-200-h1-memberpanel`; NOT-YET stands.
+> FIRST, THE STANDING-STATE CORRECTION THE LANE NEEDS ON RECORD: the
+> caiso-217 session's funded solve COMPLETED IN ITS CONTAINER BUT NEVER
+> LANDED — its whole committed record is the crosswalk intake (`f0dd328`,
+> ACTIVE as data for every CAISO solve since), the FINDING §A–§C draft +
+> realized S1′ JSON (bound hours 121/480/742 over the armed 5,400 MW
+> Path-15 S→N rating), and a 2023-sidecar checkpoint; the handoff-quoted
+> gates (C3a +4.0/+12.5/+15.5, C3b 0.100/0.177/0.180) and keeper id
+> `2026-08-23-caiso-217-crosswalk` are SECONDARY, uncommitted; the
+> committed C3b baseline stays 0.098/0.179/0.182; repair = a funded
+> `caiso200_h1_memberpanel` replay under the already-committed caiso-216 §G
+> gate table (filed item 8). SURVEY (live fetch tests; FINDING §B): the
+> chartered object does not exist — CAISO discontinued Path 15/26 TTC/ATC
+> effective 2018-11-01 because it NO LONGER ENFORCES the internal path
+> branch groups; the live OASIS TI universe (56 ids, 2025-06-02 census) and
+> the July-2024 FNM ITC/BG reference are boundary-only; the hourly
+> `TRNS_RATING_OTC/TTC` stack and `TRNS_OUTAGE`'s `CURTAILED_OTC_MW` derate
+> record are exactly the right instrument type FOR INTERTIES (PATH_WOR
+> appears; PATH15/26_BG → ERR 1000); the constraint reports
+> (`PRC_NOMOGRAM`/`PRC_CNSTR`/`PRC_RTM_FLOWGATE`) carry the REAL corridor
+> elements but shadow prices only (no limit field, live column check);
+> OASIS retention ~39 months (2023-06 serves, 2023-01 refuses). Reality's
+> corridor binds ELEMENT-BY-ELEMENT (DMM census, avg binding limits
+> published 2023-annual only): Gates–Midway #1 2,500 MW S→N (9 % of 2024
+> hours), Moss Landing–Las Aguilas 340 MW (24 %/27 %), Tesla–Los Banos
+> 1,600, Panoche–Gates #2 200, Midway–Vincent #2 ≈2,100 N→S, 6410_CP1_NG
+> 1,600 N→S — element grain, not convertible to our single-link cut without
+> restricted FNM shift factors or forbidden realized flows. WHAT-IF
+> (`_caiso218_limit_whatif.py` + committed JSON; controls reproduce the
+> committed caiso-217 recon EXACTLY): THE IDENTIFIABILITY KILL — recon
+> exceedance hours are strictly year-ordered at every cap while reality's
+> split vector [1,310/1,691/1,347] is non-monotone; X≈3,265 matches 2025
+> alone (1,368 vs 462/916 in 2023/24), matching 2023/24 needs X≈400–600
+> which overshoots 2025 past 2,100 h — NO static cut limit, measured or
+> otherwise, lands all three years, so the missing structure is
+> year-varying element geometry and/or §F.3a sub-zonal strandedness.
+> SECONDARY TRACK half-met: the Tehachapi collector export instrument is
+> NAMED (`30060_MIDWAY_500_29402_WIRLWIND_500_BR_1_1`, DMM 2023 top-25,
+> managed by the 6410_CP*_NG family) but carries no published LIMIT value;
+> absent from 2024/Q3-25 top-25. ASK: NOTHING for this lever (the null is
+> decisive; owner ruling 5 stands); the caiso-217 replay is surfaced as a
+> separate owner decision. DO-NOT-REDO adds: never re-survey for an
+> internal-path limit series absent a market-design change; never arm a cap
+> from the exceedance curves or binding/split counts (outcome pin); the
+> static single-link limit lever CLASS is dead — future limit-side
+> proposals must be year-varying + element-grounded or sub-zonal. Evidence:
+> `results/calibration/FINDING-caiso218-path-limit-survey-2026-08-24.md`.
+> Next number: caiso-219.**
+
 > **caiso-215 (2026-08-23) — THE ZONAL AXIS CUT (the owner's "caiso-214"
 > charter of 2026-08-22, renumbered — the shorthand was consumed same-day by
 > the forecast-lane T1-H hindcast session): the ONE axis caiso-202 never cut is

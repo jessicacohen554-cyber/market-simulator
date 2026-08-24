@@ -9689,4 +9689,88 @@ K-cell text predates the endogenous-spill override and should note which leg
 the K rides on this keeper); cross-lane items THREE carried unchanged.
 Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
 
-**Next number: caiso-217.**
+## caiso-217 (2026-08-23) — THE FUNDED caiso-216 PACKET, PARTIALLY LANDED: the measured generator-hub-membership crosswalk intake (Phase A) and the realized S1′ table are COMMITTED; the funded 3-year solve COMPLETED IN-CONTAINER BUT ITS RESULTS NEVER LANDED — no bundle, no gates, no registration, no promotion (entry written by caiso-218; the caiso-217 session ended after its mid-solve checkpoint push)
+
+- **Committed** (the session's whole landed record): `f0dd328` the crosswalk
+  intake — `data/raw/reference/caiso-plant-hub-membership.csv` (446 plants /
+  41.1 GW joined, 78 movers / 10,561 MW; witness gates ALL PASS) + frozen
+  derive + curated seam + the `zone_assignment` CAISO first-check, ACTIVE for
+  every CAISO solve since; `5b70419` the FINDING draft (§A–§C) + the
+  split-witness probe wrapper + `_caiso217_realized_membership.json` (realized
+  S1′: bound hours **121/480/742** over the armed 5,400 MW Path-15 S→N
+  rating, on the caiso-216 S1 floor in 2023 and between S1/S2 in 2024/25;
+  demand row-match 0.000 MW ×7×3 — generation moved, load untouched);
+  `6132867` a solve-in-progress checkpoint (2023 hourly sidecars only).
+- **Lost with the container**: the completed 3-year solve, its §D gate table
+  and determination, the rule-15 registration, any keeper decision, matrix
+  stamps, `_caiso217_zonal_decomp.json`. The caiso-218 handoff (authored by
+  this session) quotes the scored results — C3a +4.0 PASS/+12.5/+15.5, C3b
+  0.100/0.177/0.180, model split 50/40/17 h, keeper id
+  `2026-08-23-caiso-217-crosswalk` — **SECONDARY evidence only; nothing at
+  HEAD rests on it**. Keeper UNCHANGED at
+  `2026-08-17-caiso-200-h1-memberpanel`; committed C3b baseline UNCHANGED at
+  0.098/0.179/0.182. Gap record: the caiso-217 FINDING's §D–§F addendum
+  (written by caiso-218) + FINDING-caiso218 §A. Repair = a funded
+  `caiso200_h1_memberpanel` replay (the crosswalk is data, auto-active);
+  filed as item 8.
+
+## caiso-218 (2026-08-24) — THE PATH-15/26 MEASURED OPERATING-LIMIT PHASE-0 SURVEY (caiso-216 §F.3b, the ranked C3a successor): DECISIVE NULL — the internal-path operating limit CEASED TO EXIST as a public market object on 2018-11-01; reality binds the corridor's ELEMENTS (published only as DMM annual scalars, element grain); and the bounding what-if PROVES no static cut limit, measured or otherwise, reproduces reality's split-hour year pattern — the lever class is dead, the attribution tightens onto §F.3a/strandedness with measured weight
+
+- **NO LP, NO SOLVE, nothing armed, nothing registered, NO cell verdict
+  moves.** Keeper UNCHANGED; NOT-YET stands (owner ruling 5). Off-queue under
+  the caiso-216 §F.3b fence (published operating limits admissible;
+  realized-flow caps NOT).
+- **Survey (live fetch tests, all routes walled or dead —
+  FINDING-caiso218 §B):** CAISO discontinued Path 15/26 TTC/ATC effective
+  **2018-11-01** ("no longer enforcing the internal Path Branch Group");
+  the live OASIS TI universe (56 ids, day census 2025-06-02) and the
+  July-2024 FNM ITC/BG reference doc are boundary-only — the hourly
+  `TRNS_RATING_OTC`/`TTC` machinery and the `TRNS_OUTAGE`
+  `CURTAILED_OTC_MW` derate record are EXACTLY the right instrument type,
+  for interties only (`PATH_WOR` appears; PATH15/26_BG return ERR 1000);
+  constraint reports (`PRC_NOMOGRAM`/`PRC_CNSTR`/`PRC_RTM_FLOWGATE`) carry
+  the REAL corridor elements but shadow prices ONLY (no limit field, live
+  column check); OASIS retention ~39 months (serves 2023-06-15, refuses
+  2023-01-15) would anyway have orphaned early 2023. DMM reports publish the
+  element census with **average binding limits (2023 annual only)**:
+  Gates–Midway #1 2,500 MW S→N (bound 9 % of 2024 hours), Moss Landing–Las
+  Aguilas 340 MW (24 %/27 % of 2024/Q3-25 hours), Tesla–Los Banos 1,600,
+  Panoche–Gates #2 200, Midway–Vincent #2 ≈2,100 N→S, `6410_CP1_NG` 1,600
+  N→S — element grain; cut-grain conversion needs restricted FNM shift
+  factors or forbidden realized flows. `ENE_SLRS` adjudicated NOT a limit.
+- **Bounding what-if (`_caiso218_limit_whatif.py` + committed JSON; controls
+  reproduce the committed caiso-217 recon EXACTLY, both cuts ×3 years): the
+  IDENTIFIABILITY KILL.** Recon exceedance hours are strictly year-ordered
+  (2023<2024<2025 at every cap) while reality's split vector
+  [1,310/1,691/1,347] is non-monotone: X≈3,265 matches 2025 alone (1,368)
+  but gives 462/916 in 2023/24; matching 2023/24 needs X≈400–600 which
+  overshoots 2025 past 2,100 h. **No single static cap lands all three
+  years** — the missing structure is year-varying element geometry and/or
+  §F.3a sub-zonal strandedness, NOT a limit value. Cut-26: south3 exceeds
+  even X=200 in only 332/718/1,001 h vs reality's 688/1,230/964
+  south-negative hours (caiso-216's allocation verdict re-confirmed).
+- **Secondary track (§F.3a prerequisite): HALF-met.** The Tehachapi
+  collector export instrument EXISTS by name —
+  `30060_MIDWAY_500_29402_WIRLWIND_500_BR_1_1` (DMM 2023 top-25) managed by
+  the `6410_CP*_NG` family ("CP1 mitigates Midway–Whirlwind under
+  Midway–Vincent #1+#2 contingency", 1,600 MW avg 2023) — but no published
+  LIMIT value; absent from 2024/Q3-25 top-25 (episodic, consistent with the
+  Local-class attribution). No topology proposed.
+- **Ask: NOTHING for this lever** (the null is decisive). Surfaced
+  separately: the caiso-217 registration debt and its one-replay repair
+  under the ALREADY-COMMITTED caiso-216 §G gate table (C3b baseline the
+  committed 0.098/0.179/0.182) — owner decision, no default.
+- **DO-NOT-REDO adds (FINDING §F):** (1) never re-survey for an
+  internal-path limit series absent a CAISO market-design change; (2) never
+  arm a cap from the exceedance curves or reality's binding/split counts
+  (outcome pin); (3) the static single-link limit lever CLASS is measured
+  insufficient — future limit-side proposals must be year-varying +
+  element-grounded, or sub-zonal (§F.3a).
+- **Records:** `results/calibration/FINDING-caiso218-path-limit-survey-2026-08-24.md`;
+  probe + JSON committed; caiso-217 FINDING §D–§F gap addendum; matrix §5.2
+  caiso-218 block; CAISO shard `gates` stamp + `measured_interface_limits`
+  evidence append (no verdict moves). Filed items: committed census SEVEN
+  (caiso-216) **+ item 8, the caiso-217 registration debt**; cross-lane THREE
+  + the caiso-213-routed matrix anchor item unchanged.
+
+**Next number: caiso-219.**
