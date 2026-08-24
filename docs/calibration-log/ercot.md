@@ -11610,3 +11610,53 @@ splits (ERCOT-117 `G`).
 
 **Session consumed the ercot-232 shorthand. Next shorthand: ercot-233**
 (ercot-199 remains unclaimed)
+
+---
+
+## ercot-233 (2026-08-24) — THE TERMINATION QUESTION CARDED TO THE OWNER (card Y): formal closure of the 2023 price object vs the one un-adjudicated NE_LOB-timing Phase-0. NO MEASUREMENT, NO LP, NO SOLVE, NO LEVER, KEEPER UNCHANGED. AWAITING OWNER SIGNATURE.
+
+**Charter (handoff priority A):** the ercot-232 handoff list is exhausted and
+its own conclusion is that the remaining route is Door D — so the session's
+deliverable is the termination question put to the owner on that evidence,
+carded, not self-adjudicated. Executed exactly that:
+`docs/DECISION-CARD-ercot233-2023-object-closure-2026-08-24.md` (card Y —
+letters A–X consumed or skipped in the ERCOT lane; U/V skipped for glyph
+collisions at card W).
+
+**The card, in one line:** with every admissible face of the 2023 price
+object now carrying a committed, mostly *measured* closure verdict — Q-B
+FINAL (C3a-2023 spend), R-A (C3b-2023 rounds), the conduct family's ercot-230
+fixed point with its last successor measured inert at ercot-232, the
+tightness/quantity faces swept (ercot-213/215, -219, -226/227, -231), the
+post-promotion admissible list exhausted on measurement (ercot-232: tie
+refinement counter-indicated, end-of-season term inert), topology closed
+(ERCOT-117 `G`) — is the object formally CLOSED as a model-class limitation,
+the lane RESTING at `2026-08-24-231-tie-zone-measured` until **Door D** (2026
+SOM RTC+B-era anchors, ~mid-2027, card W), with ERCOT bandwidth re-pointed to
+the other ISOs' queues (rule 25)? Options: **Y-A** CLOSE+REST (RECOMMENDED) /
+**Y-B** CLOSE+REST plus ONE bounded read-only epilogue — the `NE_LOB`
+binding-hour TIMING Phase-0, the single object ercot-232 identified without
+adjudicating (corr −0.059 → −0.042 across keepers, 1,531 model-only vs 1,965
+measured-only binding hours, under-deep $8.71 vs $25.91 on the 443 agreeing
+hours; admissible zonal-grain drivers to test: NE-lobe net export vs the
+measured hourly limit, CAMPD NE plant availability; stated prior per
+§10/ERCOT-117: closes at zonal grain) / **Y-C** hold the lane open
+(RECOMMENDED AGAINST — the admissible list is measured-empty and holding it
+open only manufactures pressure on `R`/`I`/`G` cells, rule 28).
+
+**Nothing self-adjudicated.** Zero new measurements (every number in the card
+is read from committed artifacts — chiefly FINDING-ercot232 and
+FINDING-ercot231); no probe, no solve, no `ScenarioConfig` field, no run
+registered (rule 15 not engaged — no run produced), no matrix cell verdict
+minted (rule 28(b) — no mechanism tested; duty (a) discharged: queue + all
+ERCOT cell verdicts read first), keeper `2026-08-24-231-tie-zone-measured`
+untouched, Q-B/R-A fences intact, the ercot-225 gate-revision card stays OPEN
+as put. §5.1 carries the card's blockquote pointer.
+
+**Hygiene:** years referenced ⊂ {2023, 2024, 2025}, no marker touched (rule
+22); ERCOT-only docs (rule 25); no CI job, no workflow; branch
+`claude/ercot-backcast-calibration-ymnkad` off main `7cf572e` (the ercot-232
+branch was already merged via PR #4243 — no rebase debt).
+
+**Session consumed the ercot-233 shorthand. Next shorthand: ercot-234**
+(ercot-199 remains unclaimed)
