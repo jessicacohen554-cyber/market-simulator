@@ -1143,6 +1143,57 @@ rule-13-admissible mechanism available to carry it.
 > `results/calibration/FINDING-caiso218-path-limit-survey-2026-08-24.md`.
 > Next number: caiso-219.**
 
+> **caiso-219 (2026-08-24) — THE §F.3a GEN-POCKET EXPORT-LIMIT PHASE-0
+> SURVEY (owner 2026-08-24 chose this lane over the caiso-217 replay):
+> SECOND DECISIVE NULL on the prerequisite. NO SOLVE, NO LP, NOTHING ARMED,
+> NOTHING REGISTERED, NO CELL VERDICT MOVES (nothing tested; rule 28b
+> attaches to the `measured_interface_limits` evidence append only). KEEPER
+> UNCHANGED at `2026-08-17-caiso-200-h1-memberpanel`; NOT-YET stands (C3a
+> +4.1/+12.8/+15.7; committed C3b baseline 0.098/0.179/0.182). caiso-218's
+> routes were NOT re-walked (its DO-NOT-REDO item 1); this covers only the
+> *deliverability* class caiso-218 §D left open. SURVEY: CAISO's sub-zonal
+> record is censused COMPLETE — 93 named deliverability constraints ×
+> affected location × **On-Peak/Off-Peak flag** with FCDS/EODS MW
+> (Attachment A of the annual Transmission Capability Estimates; series
+> 2019/2021/2023/**2024**) — and every MW in it is **accreditation headroom
+> for additional queued generation**, never a flow rating. Four independent
+> misalignment axes, ALL stated by CAISO itself: **currency** (on-peak solar
+> SCE 13 %/PG&E 15 % of nameplate, off-peak 77–79 %, thermal 0 %; off-peak
+> deliverability not performed at all in the 2024 TPD study — so the number
+> is ~6× off in exactly the belly hours C3a lives in); **scope** (OTC/
+> existing deliverability deliberately not added back, so `existing output +
+> headroom` is unrecoverable); **nesting** (Tehachapi sits behind three
+> overlapping constraints, FCDS 6,149.1/6,733.2/1,333.6 MW); **vintage**
+> (includes approved-but-unbuilt upgrades; an IRP forward planning input,
+> not the as-operated 2023–25 grid). The TPD Allocation Reports publish only
+> **Overload % of an UNPUBLISHED rating** (100–122 % across every constraint
+> table in the 2025 report; sections year-varying — Windhub Total TPD
+> 2,400.0/1,754.1 → 2,448.0/1,816.7); the ratings themselves are CEII, the
+> same wall as caiso-218 route 7. Cluster-15 "Zonal Capacity Study Limits"
+> adjudicated NO (a 2034 CPUC generic portfolio, not a limit). SUBSTANTIVE
+> SIDE-RESULT — **§F.3a's pocket is MIS-LOCATED**: the same record's
+> off-peak flag puts belly-hour binding at PG&E Fresno **14/19** and PG&E
+> Kern **7/10**, dominated by the **GATES–MIDWAY** complex (Path 15's
+> southern terminus, ZP26 side), while **Tehachapi is 0/3 off-peak** and SCE
+> Northern only 2/8 (its two are South of Magunden and Antelope–Neenach,
+> neither the collector). This independently corroborates caiso-218 §C
+> (reality binds the corridor's ELEMENTS, not the cut) and the committed
+> caiso-217 zonal fact that ZP26 reads below SP15 (MCC −4.7 vs −2.8). The
+> §F.3a *mechanism* survives and strengthens; its *location* does not. ASK:
+> NOTHING (the null is decisive). Both ranked C3a successor levers — §F.3b
+> (caiso-218) and §F.3a (here) — are now blocked on the SAME single CEII
+> object, a published transmission RATING for internal CAISO elements: a
+> structural wall, not a work backlog (filed item 9). DO-NOT-REDO adds:
+> never re-survey CAISO's deliverability record for a gen-pocket export
+> limit (censused, complete); never arm a MW from Attachment A / a TPD
+> allocation table / the Cluster-15 portfolio as a transmission limit, and
+> never back a rating out of flow ÷ Overload %; never propose the §F.3a
+> pocket at Tehachapi/SP15 on the caiso-216 wording alone — derive it from
+> `_caiso219_deliverability_census.json`. Evidence:
+> `results/calibration/FINDING-caiso219-gen-pocket-limit-survey-2026-08-24.md`.
+> Next number: caiso-220.**
+
+
 > **caiso-215 (2026-08-23) — THE ZONAL AXIS CUT (the owner's "caiso-214"
 > charter of 2026-08-22, renumbered — the shorthand was consumed same-day by
 > the forecast-lane T1-H hindcast session): the ONE axis caiso-202 never cut is
