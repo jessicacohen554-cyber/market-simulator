@@ -11485,4 +11485,27 @@ the result: retention holds → 3-year keeper; degrades → 2023-only keeper
 under the waiver, 2024/2025 reported at full magnitude alongside). A first
 3-year launch was killed inside 2024's LP build under the owner's interim
 2023-only instruction (nothing written), then relaunched on the explicit
-GO. Outcome recorded below when the solve lands.
+GO.
+
+**OUTCOME (2026-08-24): PROMOTED — keeper `2026-08-24-231-tie-zone-measured`.**
+The first authorized 3-year run surfaced a leap-year silent inert (2024's
+8,784-row by-neighbor slice refused attribution → spread fallback); fixed
+by Feb-29 excision (hermetic test) and re-solved with the attribution live
+in all three years. Final: **2023 −38.0 %/0.696/93 · 2024 +0.4 %/0.130/22
+· 2025 −7.7 %/0.099/1** — retention PASS both guard years, the standard
+3-year branch fired, **the rule-16 waiver UNUSED**. G-SPUR-only regression
+(21 in-season, s_top 0, the pre-authorized posture); G-D2 PASS against the
+3-year keeper comparator (24 = 24). Registered + promoted with the full
+workflow: attestation (`gen_ercot231_attestation.py` — the C3c
+OPEN-RESIDUAL-LANE re-wording DISCHARGED), DOF ledger, dashboard
+registration, keeper shard with the X-2 note REWRITTEN to this keeper's
+magnitudes (discharging the prose debt carried since ercot-223),
+`build_status.py --iso ERCOT`, matrix keeper/gates stamps + tie cell → K.
+Determination NOT-YET on {C3a-2023 −38.0 %, C3b-2023 0.696}; **C3c-2023
+is a clean PASS (93/181 = 0.51×, over the band's lower edge — the first
+ERCOT keeper passing the 2023 tail criterion; the auditor caught the
+stale ×3 prose and repaired shard note + status; the spent 2023
+attestation entry pruned via the generator's band-met clause)**; C3c
+ledgered ×2 (2024 22/53, 2025 1/31). Replay rule: THIS keeper's replays REQUIRE the
+gtc-limits clean partition; ercot-223-and-earlier replays require its
+ABSENCE.

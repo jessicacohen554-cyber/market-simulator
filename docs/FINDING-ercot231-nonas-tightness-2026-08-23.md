@@ -238,10 +238,37 @@ result was seen: **2024/2025 official C3a/C3b remain PASS → promote the
 register and promote the 2023-only bundle under the waiver, with the
 2024/2025 results reported at full magnitude alongside and the waiver
 recorded verbatim in the attestation, the keeper note and the log.** The
-termination protocol (option 4) is moot in its measured-empty form. The
-3-year invocation (`ercot231_tiegtc_full`) executes in the hub container;
-its outcome, the registration and the keeper workflow are recorded in the
-log entry's promotion addendum.
+termination protocol (option 4) is moot in its measured-empty form.
+
+**EXECUTED (2026-08-24).** The 3-year invocation surfaced one more silent
+inert on its first run — 2024 is a leap year and the by-neighbor slice
+(8,784 hour-ending rows) refused attribution, falling back to the spread —
+fixed by Feb-29 excision on the hour-beginning clock (hermetic test added)
+and the full 3-year re-solved with the attribution live in all three years
+(2023 −98 / 2024 +14 / 2025 −34 MW avg). Final bundle
+(`ercot231_tiegtc_full`): **2023 −38.0 % / 0.696 / 93** (keeper
+−39.7/0.729/74), **2024 +0.4 % / 0.130 / 22** and **2025 −7.7 % / 0.099 /
+1** — retention PASS in both guard years, so the STANDARD 3-year branch
+fired and **the rule-16 waiver was left unused**. Gates: G-SPUR-only
+regression (the pre-authorized posture; 21 in-season, s_top 0); G-D2
+verified PASS against the 3-year keeper comparator (24 = 24 rows — the
+1-year-control comparison's 2024/2025 rows are an artifact, listed and
+dismissed); 2024 spur 11 = baseline, shed {3067} = baseline; 2025 spur
+1 = baseline, shed ∅. Registered as
+**`2026-08-24-231-tie-zone-measured`** (determination NOT-YET on
+{C3a-2023, C3b-2023}, C3c-2023 a clean PASS at 93/181 = 0.51× — the tie-zone/GTC hours carried
+2023 over the band's lower edge, the first ERCOT keeper on which the 2023
+tail criterion passes — with the caveat now ledgered ×2 (2024 22/53,
+2025 1/31) and the OPEN-RESIDUAL-LANE re-wording discharged in the
+attestation (the spent 2023 entry dropped per the generator's own
+band-met clause; caught by the keeper auditor, which repaired the shard
+note and status page)) and
+**PROMOTED TO KEEPER**, with the keeper shard's X-2 note rewritten to this
+keeper's magnitudes (discharging the prose debt carried since ercot-223),
+the status page rebuilt, and the matrix keeper/gates/cell stamps landed.
+**Replay-reproduction rule, now keeper-binding: replays of THIS keeper
+require the `gtc-limits` clean partition; replays of ercot-223 and earlier
+require its absence.**
 
 What is different from every prior handback in this program: the sweep did
 **not** terminate MEASURED-EMPTY. The pre-registered §1 arithmetic said a
