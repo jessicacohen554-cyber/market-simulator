@@ -15,9 +15,25 @@ Nothing detected it because nothing was looking. This check looks::
 
 It reads the ``provenance`` stamps written by ``scripts/lib/forecast_provenance``
 (on every forecast registry sidecar, run payload, verdict sidecar and the
-manifest meta), takes the NEWEST ``scored_at_sha`` on the board, and counts the
-commits touching **solve-affecting paths** that have landed since. Past the
-threshold it prints a warning.
+manifest meta), takes the newest ``scored_at_sha`` **on the gate-evidence class**,
+and counts the commits touching **solve-affecting paths** that have landed since.
+Past the threshold it prints a warning.
+
+**Per class, not one headline (FFR-3A).** The board holds several kinds of
+stamped artifact and they go stale independently, so collapsing them into a
+single "newest scored sha" lets a fresh artifact of one kind hide staleness in
+another. Measured 2026-08-24: the board's newest scored stamp was a hindcast
+sidecar re-registered on 2026-08-22, so the headline read fresh while 31 of the
+32 verdict stamps were UNSCORED and FF-2D's verdicts dated from 2026-07-20 —
+the FR-21 failure mode reproducing inside the FR-21 detector. The position is
+now measured per class (:data:`CLASS_BY_INPUT`), rendered per class, and the
+staleness warning is driven off :data:`GATING_CLASS` — the FC verdicts, which
+are what gates (b) and (c) of the §2.1b board actually rest on. A hindcast
+sidecar is an INPUT to a future verdict, never a substitute for one; when one is
+scored more recently than the verdicts, that is reported as a separate
+``FRESHER NON-GATE ARTIFACTS`` warning rather than being allowed to front them.
+Partly-scored gate evidence is named too: one re-scored verdict beside thirty
+unscored ones is not a scored board.
 
 **WARN, never FAIL — by design.** Backcast calibration velocity must not be
 blocked by forecast-board freshness: the two lanes run concurrently and the
@@ -108,6 +124,42 @@ BOARD_INPUTS_GENERATED = ("frontend/data/forecast/registry",)
 #: meaning.
 BOARD_PATHS = BOARD_INPUTS_GENERATED + BOARD_INPUTS_COMMITTED
 
+# --- artifact classes (FFR-3A) ---------------------------------------------
+# The board holds several KINDS of stamped artifact, and they go stale
+# independently. Collapsing them into one "newest scored sha" lets a fresh
+# artifact of one kind hide staleness in another: measured 2026-08-24, the
+# board's newest scored stamp was a hindcast sidecar refreshed 2026-08-22, so
+# the headline read fresh while 31 of 32 verdict stamps were UNSCORED and
+# FF-2D's verdicts dated from 2026-07-20. That is the FR-21 failure mode
+# reproducing inside the FR-21 detector, so the position is now measured per
+# class and the warning is driven off the class that actually carries the gate
+# evidence.
+BOARD_CLASS_VERDICTS = "verdicts"
+BOARD_CLASS_HINDCAST = "hindcast sidecars"
+BOARD_CLASS_SEED = "seed"
+BOARD_CLASS_REGISTRY = "registry"
+BOARD_CLASS_OTHER = "other"
+
+#: Repo-relative path (or path prefix) -> artifact class. A path under a listed
+#: directory inherits its class; anything unrecognised is ``other`` so a new
+#: board input is visible as unclassified rather than silently folded into the
+#: gate evidence.
+CLASS_BY_INPUT = {
+    "frontend/data/forecast/ff-verdicts.json": BOARD_CLASS_VERDICTS,
+    "frontend/data/forecast/program-status.json": BOARD_CLASS_SEED,
+    "frontend/data/forecast/registry": BOARD_CLASS_REGISTRY,
+    "frontend/data/hindcast": BOARD_CLASS_HINDCAST,
+}
+
+#: The class whose freshness IS the gate evidence's freshness. Gates (b) and (c)
+#: of the §2.1b board rest on FC verdicts; a hindcast sidecar is an INPUT to a
+#: future verdict, never a substitute for one, so re-registering a hindcast run
+#: must not make the gate evidence look re-scored. When the measured target set
+#: holds no verdict artifact at all the whole board is used instead — a check
+#: pointed at something other than the board should still report on what it was
+#: given rather than silently find nothing.
+GATING_CLASS = BOARD_CLASS_VERDICTS
+
 #: Default commit-distance threshold. Set from the FR-21 incident itself rather
 #: than picked round: the ten-day dark window carried well past this many
 #: solve-affecting commits, so the observed failure would have tripped this
@@ -166,6 +218,41 @@ def missing_inputs(targets: list[Path]) -> list[str]:
     return out
 
 
+def classify(path: Path) -> str:
+    """Return the board artifact class ``path`` belongs to.
+
+    Matches on the repo-relative path, so a file inside a classified directory
+    (a hindcast sidecar, a generated registry entry) inherits that directory's
+    class. Anything unrecognised — including a path outside the repo, which a
+    test fixture tree is — reads :data:`BOARD_CLASS_OTHER` rather than being
+    folded into the gate evidence.
+    """
+    try:
+        rel = path.resolve().relative_to(REPO).as_posix()
+    except ValueError:
+        return BOARD_CLASS_OTHER
+    for prefix, cls in CLASS_BY_INPUT.items():
+        if rel == prefix or rel.startswith(prefix + "/"):
+            return cls
+    return BOARD_CLASS_OTHER
+
+
+def _class_position(stamps: list[dict]) -> dict:
+    """Summarize one class's stamps: how many, how many scored, and the newest.
+
+    ``stamps`` is that class's stamp list; an empty list yields zero counts and
+    ``None`` shas, never a fabricated position.
+    """
+    dated = [s for s in stamps if s.get("scored_at_date") and s.get("scored_at_sha")]
+    newest = max(dated, key=lambda s: s["scored_at_date"], default=None)
+    return {
+        "n_stamps": len(stamps),
+        "n_scored": len(dated),
+        "newest_scored_at_sha": (newest or {}).get("scored_at_sha"),
+        "newest_scored_at_date": (newest or {}).get("scored_at_date"),
+    }
+
+
 def board_position(paths: list[Path] | None = None) -> dict:
     """Summarize the board's staleness position from its provenance stamps.
 
@@ -176,19 +263,30 @@ def board_position(paths: list[Path] | None = None) -> dict:
     """
     targets = paths if paths is not None else [REPO / p for p in BOARD_PATHS]
     absent = missing_inputs(targets)
-    stamps = [s for _, s in fp.collect_stamps(targets)]
-    dated = [s for s in stamps if s.get("scored_at_date") and s.get("scored_at_sha")]
-    newest = max(dated, key=lambda s: s["scored_at_date"], default=None)
-    epochs = sorted({s["cache_epoch"] for s in stamps if s.get("cache_epoch")})
-    return {
-        "n_stamps": len(stamps),
-        "n_scored": len(dated),
-        "newest_scored_at_sha": (newest or {}).get("scored_at_sha"),
-        "newest_scored_at_date": (newest or {}).get("scored_at_date"),
-        "cache_epochs": epochs,
+    found = fp.collect_stamps(targets)
+    stamps = [s for _, s in found]
+    by_class: dict[str, list[dict]] = {}
+    for path, stamp in found:
+        by_class.setdefault(classify(path), []).append(stamp)
+    classes = {name: _class_position(rows) for name, rows in sorted(by_class.items())}
+    # The gating position drives the staleness warning. It is the verdict class
+    # whenever verdicts are among the measured artifacts; otherwise the whole
+    # board, so a check pointed at some other tree still reports on what it was
+    # given (see GATING_CLASS).
+    gating = GATING_CLASS if GATING_CLASS in classes else None
+    overall = _class_position(stamps)
+    pos = {
+        **overall,
+        "cache_epochs": sorted(
+            {s["cache_epoch"] for s in stamps if s.get("cache_epoch")}
+        ),
         "head_sha": fp.head_sha(),
         "missing_inputs": absent,
+        "by_class": classes,
+        "gating_class": gating,
     }
+    pos["gating"] = classes[gating] if gating else overall
+    return pos
 
 
 def evaluate(max_commits: int = DEFAULT_MAX_COMMITS, paths=None) -> dict:
@@ -196,6 +294,14 @@ def evaluate(max_commits: int = DEFAULT_MAX_COMMITS, paths=None) -> dict:
     pos = board_position(paths)
     warnings: list[str] = []
     distance = None
+
+    # Staleness is measured on the GATING class (the FC verdicts), not on the
+    # whole board — see GATING_CLASS. ``gate`` falls back to the board-wide
+    # position when no verdict artifact was measured, so every existing caller
+    # that points the check at some other tree behaves exactly as before.
+    gating = pos.get("gating_class")
+    gate = pos.get("gating") or pos
+    label = gating or "board"
 
     absent = pos.get("missing_inputs") or []
     if absent:
@@ -219,32 +325,64 @@ def evaluate(max_commits: int = DEFAULT_MAX_COMMITS, paths=None) -> dict:
         )
     elif not pos["n_stamps"]:
         pass  # already explained by the missing-input warning above
-    elif not pos["newest_scored_at_sha"]:
+    elif not gate["newest_scored_at_sha"]:
         warnings.append(
-            f"{pos['n_stamps']} board artifact(s) are stamped but NONE records a "
-            "scored-at sha — every stamp is UNSCORED (predates the machinery, or "
-            "its verdict was never re-scored through the stamped scorer). Absence "
-            "of a scoring record is not evidence of freshness."
+            f"{gate['n_stamps']} {label} artifact(s) are stamped but NONE records "
+            "a scored-at sha — every stamp is UNSCORED (predates the machinery, "
+            "or its verdict was never re-scored through the stamped scorer). "
+            "Absence of a scoring record is not evidence of freshness."
         )
     else:
-        distance = solve_affecting_commits_since(pos["newest_scored_at_sha"])
+        distance = solve_affecting_commits_since(gate["newest_scored_at_sha"])
         if distance is None:
             warnings.append(
-                f"Cannot measure distance from the newest scored sha "
-                f"{pos['newest_scored_at_sha']} — it is not reachable in this "
+                f"Cannot measure distance from the newest scored {label} sha "
+                f"{gate['newest_scored_at_sha']} — it is not reachable in this "
                 "checkout (shallow clone, or scored on an unmerged branch). "
                 "Staleness is UNKNOWN, which is not the same as fresh."
             )
         elif distance > max_commits:
             warnings.append(
-                f"The forecast board's newest evidence was scored at "
-                f"{pos['newest_scored_at_sha']} ({pos['newest_scored_at_date']}), "
+                f"The forecast board's newest {label} evidence was scored at "
+                f"{gate['newest_scored_at_sha']} ({gate['newest_scored_at_date']}), "
                 f"and {distance} solve-affecting commit(s) have landed since "
                 f"(threshold {max_commits}). The verdicts on the board may no "
                 "longer describe this code — this is the FR-21 'ten days dark' "
                 "failure mode. Re-score the battery, or record why the drift is "
                 "immaterial."
             )
+
+    # The masking check (FFR-3A). Any class scored more recently than the gate
+    # evidence would, under a single collapsed headline, make the board read as
+    # fresh as its freshest artifact — which is how a hindcast sidecar
+    # re-registered on 2026-08-22 came to front verdicts last scored 2026-07-20.
+    if gating and gate["newest_scored_at_date"]:
+        newer = [
+            f"{name} ({p['newest_scored_at_sha']} @ {p['newest_scored_at_date']})"
+            for name, p in pos["by_class"].items()
+            if name != gating
+            and p["newest_scored_at_date"]
+            and p["newest_scored_at_date"] > gate["newest_scored_at_date"]
+        ]
+        if newer:
+            warnings.append(
+                f"FRESHER NON-GATE ARTIFACTS on the board: {', '.join(newer)} are "
+                f"scored more recently than the {label} evidence "
+                f"({gate['newest_scored_at_sha']} @ {gate['newest_scored_at_date']}). "
+                "They are inputs to a future verdict, never a substitute for one, "
+                "so they do NOT make the gate evidence fresher. The staleness "
+                "reading above is driven off the verdict class alone."
+            )
+
+    # Unscored gate evidence is worth naming even when SOME of it is scored: a
+    # single re-scored verdict beside thirty unscored ones is not a scored board.
+    if gating and gate["n_stamps"] and gate["n_scored"] < gate["n_stamps"]:
+        warnings.append(
+            f"{gate['n_stamps'] - gate['n_scored']} of {gate['n_stamps']} {label} "
+            "stamps record no scored-at date — those verdicts have never been "
+            "re-scored through the stamped scorer, so their freshness is UNKNOWN "
+            "regardless of what the newest scored one says."
+        )
 
     if len(pos["cache_epochs"]) > 1:
         # Reported, never a warning on its own: a board spanning several waves
@@ -268,14 +406,18 @@ def evaluate(max_commits: int = DEFAULT_MAX_COMMITS, paths=None) -> dict:
 def render(report: dict) -> str:
     """Human-readable report (the CI log surface)."""
     pos = report["position"]
+    gating = pos.get("gating_class")
+    gate = pos.get("gating") or pos
     lines = [
         "=" * 72,
         "FORECAST BOARD STALENESS (FR-21) — WARN-level, never blocking",
         "=" * 72,
         f"  HEAD                : {pos['head_sha']}",
-        f"  newest scored sha   : {pos['newest_scored_at_sha'] or '(none recorded)'}",
-        f"  newest scored date  : {pos['newest_scored_at_date'] or '(none recorded)'}",
-        f"  stamped / scored    : {pos['n_stamps']} stamped, {pos['n_scored']} scored",
+        f"  gate evidence       : {gating or '(no verdict artifact — whole board)'}",
+        f"  newest scored sha   : {gate['newest_scored_at_sha'] or '(none recorded)'}",
+        f"  newest scored date  : {gate['newest_scored_at_date'] or '(none recorded)'}",
+        f"  stamped / scored    : {pos['n_stamps']} stamped, {pos['n_scored']} scored"
+        " (whole board)",
         "  solve-affecting Δ   : "
         + (
             "(unknown)"
@@ -292,6 +434,19 @@ def render(report: dict) -> str:
             f"({', '.join(pos['missing_inputs'])})"
         ),
     ]
+    # Per-class breakdown: the whole point of the FFR-3A split is that these
+    # numbers move independently, so they are printed independently.
+    by_class = pos.get("by_class") or {}
+    if by_class:
+        lines.append("  per class           :")
+        for name, cls in by_class.items():
+            marker = " <- gate evidence" if name == gating else ""
+            lines.append(
+                f"      {name:<20s} {cls['n_stamps']:>3d} stamped, "
+                f"{cls['n_scored']:>3d} scored, newest "
+                f"{cls['newest_scored_at_sha'] or '(none)'} "
+                f"@ {cls['newest_scored_at_date'] or '(none)'}{marker}"
+            )
     if pos.get("epoch_spread_note"):
         lines.append(f"  note: {pos['epoch_spread_note']}")
     lines.append("-" * 72)

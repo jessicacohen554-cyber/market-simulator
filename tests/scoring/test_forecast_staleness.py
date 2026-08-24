@@ -273,9 +273,7 @@ class BoardInputPresenceTests(unittest.TestCase):
         # registry/ is gitignored and the Pages deploy is its single writer, so
         # it is absent in a normal checkout. That must stay silent.
         self.assertIn("frontend/data/forecast/registry", cs.BOARD_INPUTS_GENERATED)
-        absent = cs.missing_inputs(
-            [cs.REPO / g for g in cs.BOARD_INPUTS_GENERATED]
-        )
+        absent = cs.missing_inputs([cs.REPO / g for g in cs.BOARD_INPUTS_GENERATED])
         self.assertEqual(absent, [])
 
     def test_the_records_lane_file_is_watched(self):
@@ -291,6 +289,124 @@ class BoardInputPresenceTests(unittest.TestCase):
         # reappearing as "the board has no stamps".
         for rel in cs.BOARD_INPUTS_COMMITTED:
             self.assertTrue((cs.REPO / rel).exists(), f"missing board input: {rel}")
+
+
+class ArtifactClassTests(unittest.TestCase):
+    """FFR-3A: staleness is measured per class, off the VERDICT class.
+
+    The defect these pin: the board's "newest scored" headline was a single
+    max over every stamped artifact, so a hindcast sidecar re-registered on
+    2026-08-22 fronted FC verdicts last scored 2026-07-20 — a fresh artifact of
+    one class hiding staleness in another, which is the FR-21 failure mode
+    reproducing inside the FR-21 detector.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self._tmp.name)
+        self._real_distance = cs.solve_affecting_commits_since
+        self._real_head = cs.fp.head_sha
+        # Write into the REAL repo-relative layout so classify() sees the same
+        # paths it will in production; the files themselves are cleaned up.
+        self.verdicts = cs.REPO / "frontend/data/forecast/ff-verdicts.json"
+        self.hindcast = cs.REPO / "frontend/data/hindcast"
+
+    def tearDown(self):
+        cs.solve_affecting_commits_since = self._real_distance
+        cs.fp.head_sha = self._real_head
+        self._tmp.cleanup()
+
+    def _stamp(self, sha, date):
+        return {
+            "schema": fp.SCHEMA,
+            "scored_at_sha": sha,
+            "scored_at_date": date,
+            "cache_epoch": None,
+        }
+
+    def test_classify_maps_each_board_input_to_its_class(self):
+        self.assertEqual(cs.classify(self.verdicts), cs.BOARD_CLASS_VERDICTS)
+        self.assertEqual(
+            cs.classify(cs.REPO / "frontend/data/forecast/program-status.json"),
+            cs.BOARD_CLASS_SEED,
+        )
+        self.assertEqual(
+            cs.classify(self.hindcast / "pjm-2021-2025-realized-k162.json"),
+            cs.BOARD_CLASS_HINDCAST,
+        )
+        self.assertEqual(
+            cs.classify(cs.REPO / "frontend/data/forecast/registry/x.json"),
+            cs.BOARD_CLASS_REGISTRY,
+        )
+
+    def test_an_unrecognised_path_is_other_not_gate_evidence(self):
+        # A new board input must show up as unclassified rather than being
+        # silently folded into the evidence the gate reading is driven off.
+        self.assertEqual(cs.classify(self.root / "whatever.json"), cs.BOARD_CLASS_OTHER)
+
+    def test_a_fresh_sidecar_beside_stale_verdicts_still_warns(self):
+        # THE REGRESSION THIS LANE OWNS. Verdicts scored long ago and far
+        # behind HEAD; a hindcast sidecar scored today. The board must warn on
+        # the VERDICTS, and must not read as fresh because of the sidecar.
+        cs.solve_affecting_commits_since = lambda sha: 0 if sha == "fresh" * 2 else 99
+        vdir = self.root / "frontend/data/forecast"
+        hdir = self.root / "frontend/data/hindcast"
+        vdir.mkdir(parents=True)
+        hdir.mkdir(parents=True)
+        (vdir / "ff-verdicts.json").write_text(
+            json.dumps(
+                {"a-t1f": {fp.PROVENANCE_KEY: self._stamp("stale" * 2, "2026-07-20")}}
+            )
+        )
+        (hdir / "iso-realized.json").write_text(
+            json.dumps({fp.PROVENANCE_KEY: self._stamp("fresh" * 2, "2026-08-22")})
+        )
+        # classify() is repo-relative, so point it at the fixture tree.
+        real_repo = cs.REPO
+        try:
+            cs.REPO = self.root
+            rep = cs.evaluate(max_commits=10, paths=[vdir, hdir])
+        finally:
+            cs.REPO = real_repo
+        pos = rep["position"]
+        self.assertEqual(pos["gating_class"], cs.BOARD_CLASS_VERDICTS)
+        self.assertEqual(pos["gating"]["newest_scored_at_sha"], "stale" * 2)
+        self.assertTrue(rep["stale"], "a fresh sidecar must not clear the warning")
+        joined = " ".join(rep["warnings"])
+        self.assertIn("99 solve-affecting commit(s)", joined)
+        self.assertIn("FRESHER NON-GATE ARTIFACTS", joined)
+
+    def test_partly_scored_verdicts_are_named_not_averaged_away(self):
+        # One re-scored verdict beside many unscored ones is not a scored board.
+        cs.solve_affecting_commits_since = lambda sha: 0
+        vdir = self.root / "frontend/data/forecast"
+        vdir.mkdir(parents=True)
+        (vdir / "ff-verdicts.json").write_text(
+            json.dumps(
+                {
+                    "scored": {fp.PROVENANCE_KEY: self._stamp("a" * 12, "2026-08-24")},
+                    "unscored": {fp.PROVENANCE_KEY: self._stamp(None, None)},
+                }
+            )
+        )
+        real_repo = cs.REPO
+        try:
+            cs.REPO = self.root
+            rep = cs.evaluate(paths=[vdir])
+        finally:
+            cs.REPO = real_repo
+        self.assertTrue(rep["stale"])
+        self.assertIn(
+            "1 of 2 verdicts stamps record no scored-at date", " ".join(rep["warnings"])
+        )
+
+    def test_the_live_board_reports_a_per_class_breakdown(self):
+        # Against the committed board, not a fixture: the per-class position
+        # must exist and the gate evidence must be the verdict class.
+        pos = cs.board_position()
+        self.assertEqual(pos["gating_class"], cs.BOARD_CLASS_VERDICTS)
+        self.assertIn(cs.BOARD_CLASS_HINDCAST, pos["by_class"])
+        self.assertIsInstance(cs.render(cs.evaluate()), str)
 
 
 if __name__ == "__main__":
