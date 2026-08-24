@@ -1,0 +1,392 @@
+{
+ "probe": "entry_signal_l1b_allocator_counterfactual",
+ "finding": "docs/FINDING-entry-screen-t1h-2026-08.md \u00a77 L-1b",
+ "iso": "ERCOT",
+ "bundle": "results/hindcast/ercot-2021-2025-realized-t1h-refresh",
+ "cache_key": "28cef3500ec1fd9e",
+ "tranche_mw": 250.0,
+ "rule_21_r_dof": "no elasticity or damping parameter exists in this probe; the volume rule is margin exhaustion under the model's own repriced signal, bounded by the same caps \u2014 the only admissible closure. Any tuned coefficient here would be an open root-cause issue, not a parameter.",
+ "registered_rm_pct": {
+  "2022": 19.0,
+  "2023": 8.5,
+  "2024": 14.7,
+  "2025": 25.2
+ },
+ "shipped_reconstruction": {
+  "thermal": {
+   "2022": {
+    "gas_cc": 3000.0,
+    "gas_ct": 1571.0
+   },
+   "2023": {
+    "gas_cc": 3000.0,
+    "gas_ct": 3000.0
+   },
+   "2024": {
+    "gas_cc": 3000.0,
+    "gas_ct": 3000.0
+   },
+   "2025": {}
+  },
+  "storage": {
+   "2023": {
+    "iron_air": 3000.0,
+    "flow_battery": 2000.0
+   }
+  }
+ },
+ "validation": {
+  "reproduction": [
+   {
+    "step": 2022,
+    "adder_max_abs_err": 0.0,
+    "adder_ok": true,
+    "shave_max_abs_err": 0.0,
+    "shave_ok": true
+   },
+   {
+    "step": 2023,
+    "adder_max_abs_err": 0.0,
+    "adder_ok": true,
+    "shave_max_abs_err": 0.0,
+    "shave_ok": true
+   },
+   {
+    "step": 2024,
+    "adder_max_abs_err": 0.0,
+    "adder_ok": true,
+    "shave_max_abs_err": 0.0,
+    "shave_ok": true
+   },
+   {
+    "step": 2025,
+    "adder_max_abs_err": 0.0,
+    "adder_ok": true,
+    "shave_max_abs_err": 0.0,
+    "shave_ok": true
+   }
+  ]
+ },
+ "arms": {
+  "vre_budget_0gw": {
+   "iso_thermal_budget_mw": 12000.0,
+   "steps": {
+    "2022": {
+     "walk": {
+      "thermal_built_mw": {
+       "gas_cc": 1000.0,
+       "gas_ct": 0.0
+      },
+      "storage_built_mw": {},
+      "final_adder_mean": 9.203,
+      "tranches": 4,
+      "last_tranche_margins": [
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 32159.2,
+        "mw": 250.0
+       },
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 19111.5,
+        "mw": 250.0
+       },
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 8247.6,
+        "mw": 250.0
+       }
+      ],
+      "exhausted": true
+     },
+     "cross_year_delta_thermal_mw": {},
+     "cross_year_delta_storage_mw": 0.0,
+     "peak_demand_mw": 72203.7
+    },
+    "2023": {
+     "walk": {
+      "thermal_built_mw": {
+       "gas_cc": 3000.0,
+       "gas_ct": 1500.0
+      },
+      "storage_built_mw": {
+       "compressed_air": 2000.0,
+       "iron_air": 3000.0
+      },
+      "final_adder_mean": 95.759,
+      "tranches": 38,
+      "last_tranche_margins": [
+       {
+        "tech": "compressed_air",
+        "margin_at_entry": 813471.4,
+        "mw": 250.0
+       },
+       {
+        "tech": "compressed_air",
+        "margin_at_entry": 781485.6,
+        "mw": 250.0
+       },
+       {
+        "tech": "compressed_air",
+        "margin_at_entry": 746995.1,
+        "mw": 250.0
+       }
+      ],
+      "exhausted": true
+     },
+     "cross_year_delta_thermal_mw": {},
+     "cross_year_delta_storage_mw": 0.0,
+     "peak_demand_mw": 84617.0
+    },
+    "2024": {
+     "walk": {
+      "thermal_built_mw": {
+       "gas_cc": 3000.0,
+       "gas_ct": 0.0
+      },
+      "storage_built_mw": {},
+      "final_adder_mean": 8.979,
+      "tranches": 12,
+      "last_tranche_margins": [
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 46102.2,
+        "mw": 250.0
+       },
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 32198.1,
+        "mw": 250.0
+       },
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 19887.2,
+        "mw": 250.0
+       }
+      ],
+      "exhausted": true
+     },
+     "cross_year_delta_thermal_mw": {
+      "gas_cc": -2000.0,
+      "gas_ct": -1571.0
+     },
+     "cross_year_delta_storage_mw": 0.0,
+     "peak_demand_mw": 80053.4
+    },
+    "2025": {
+     "walk": {
+      "thermal_built_mw": {
+       "gas_cc": 0.0,
+       "gas_ct": 0.0
+      },
+      "storage_built_mw": {},
+      "final_adder_mean": 3.809,
+      "tranches": 0,
+      "last_tranche_margins": [],
+      "exhausted": true
+     },
+     "cross_year_delta_thermal_mw": {
+      "gas_cc": -2000.0,
+      "gas_ct": -3071.0
+     },
+     "cross_year_delta_storage_mw": 0.0,
+     "peak_demand_mw": 79959.0
+    }
+   },
+   "rm_trajectory": {
+    "2022": {
+     "registered_rm_pct": 19.0,
+     "delta_firm_mw": 0.0,
+     "counterfactual_rm_pct": 19.0
+    },
+    "2023": {
+     "registered_rm_pct": 8.5,
+     "delta_firm_mw": 0.0,
+     "counterfactual_rm_pct": 8.5
+    },
+    "2024": {
+     "registered_rm_pct": 14.7,
+     "delta_firm_mw": -3690.1,
+     "counterfactual_rm_pct": 10.09
+    },
+    "2025": {
+     "registered_rm_pct": 25.2,
+     "delta_firm_mw": -5190.1,
+     "counterfactual_rm_pct": 18.71
+    }
+   },
+   "rm_swings_pp": {
+    "registered": [
+     -10.5,
+     6.2,
+     10.5
+    ],
+    "counterfactual": [
+     -10.5,
+     1.59,
+     8.62
+    ]
+   }
+  },
+  "vre_budget_8gw": {
+   "iso_thermal_budget_mw": 4000.0,
+   "steps": {
+    "2022": {
+     "walk": {
+      "thermal_built_mw": {
+       "gas_cc": 1000.0,
+       "gas_ct": 0.0
+      },
+      "storage_built_mw": {},
+      "final_adder_mean": 9.203,
+      "tranches": 4,
+      "last_tranche_margins": [
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 32159.2,
+        "mw": 250.0
+       },
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 19111.5,
+        "mw": 250.0
+       },
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 8247.6,
+        "mw": 250.0
+       }
+      ],
+      "exhausted": true
+     },
+     "cross_year_delta_thermal_mw": {},
+     "cross_year_delta_storage_mw": 0.0,
+     "peak_demand_mw": 72203.7
+    },
+    "2023": {
+     "walk": {
+      "thermal_built_mw": {
+       "gas_cc": 3000.0,
+       "gas_ct": 1000.0
+      },
+      "storage_built_mw": {
+       "compressed_air": 2000.0,
+       "iron_air": 3000.0
+      },
+      "final_adder_mean": 108.026,
+      "tranches": 36,
+      "last_tranche_margins": [
+       {
+        "tech": "compressed_air",
+        "margin_at_entry": 915691.6,
+        "mw": 250.0
+       },
+       {
+        "tech": "compressed_air",
+        "margin_at_entry": 879464.2,
+        "mw": 250.0
+       },
+       {
+        "tech": "compressed_air",
+        "margin_at_entry": 843939.5,
+        "mw": 250.0
+       }
+      ],
+      "exhausted": true
+     },
+     "cross_year_delta_thermal_mw": {},
+     "cross_year_delta_storage_mw": 0.0,
+     "peak_demand_mw": 84617.0
+    },
+    "2024": {
+     "walk": {
+      "thermal_built_mw": {
+       "gas_cc": 3000.0,
+       "gas_ct": 0.0
+      },
+      "storage_built_mw": {},
+      "final_adder_mean": 8.979,
+      "tranches": 12,
+      "last_tranche_margins": [
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 46102.2,
+        "mw": 250.0
+       },
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 32198.1,
+        "mw": 250.0
+       },
+       {
+        "tech": "gas_cc",
+        "margin_at_entry": 19887.2,
+        "mw": 250.0
+       }
+      ],
+      "exhausted": true
+     },
+     "cross_year_delta_thermal_mw": {
+      "gas_cc": -2000.0,
+      "gas_ct": -1571.0
+     },
+     "cross_year_delta_storage_mw": 0.0,
+     "peak_demand_mw": 80053.4
+    },
+    "2025": {
+     "walk": {
+      "thermal_built_mw": {
+       "gas_cc": 0.0,
+       "gas_ct": 0.0
+      },
+      "storage_built_mw": {},
+      "final_adder_mean": 4.308,
+      "tranches": 0,
+      "last_tranche_margins": [],
+      "exhausted": true
+     },
+     "cross_year_delta_thermal_mw": {
+      "gas_cc": -2000.0,
+      "gas_ct": -3571.0
+     },
+     "cross_year_delta_storage_mw": 0.0,
+     "peak_demand_mw": 79959.0
+    }
+   },
+   "rm_trajectory": {
+    "2022": {
+     "registered_rm_pct": 19.0,
+     "delta_firm_mw": 0.0,
+     "counterfactual_rm_pct": 19.0
+    },
+    "2023": {
+     "registered_rm_pct": 8.5,
+     "delta_firm_mw": 0.0,
+     "counterfactual_rm_pct": 8.5
+    },
+    "2024": {
+     "registered_rm_pct": 14.7,
+     "delta_firm_mw": -3690.1,
+     "counterfactual_rm_pct": 10.09
+    },
+    "2025": {
+     "registered_rm_pct": 25.2,
+     "delta_firm_mw": -5690.1,
+     "counterfactual_rm_pct": 18.08
+    }
+   },
+   "rm_swings_pp": {
+    "registered": [
+     -10.5,
+     6.2,
+     10.5
+    ],
+    "counterfactual": [
+     -10.5,
+     1.59,
+     7.99
+    ]
+   }
+  }
+ }
+}
