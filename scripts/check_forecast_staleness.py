@@ -39,6 +39,17 @@ says so plainly: absence of a scoring record is not evidence of freshness. That
 is the board's state until FFR-3A re-scores the battery through the stamped
 scorer.
 
+A board that is simply **not in this tree** is reported separately, and this
+distinction is load-bearing. The tracked board inputs are listed in
+``BOARD_INPUTS_COMMITTED``; when one is absent the check says
+``BOARD INPUT(S) MISSING`` and suppresses the "no stamps at all" claim, because
+that claim would be false. Before this split, a checkout missing
+``ff-verdicts.json`` and ``frontend/data/hindcast`` printed the alarming
+"carries NO provenance stamps at all" for a board whose stamps were fully
+intact — the reading that opened the FR-21 provenance-restore session, and which
+one direct measurement (39 stamped / 8 scored on the same commit, from the
+commit's own tree) refuted.
+
 Stdlib-only (json/subprocess/argparse) so it runs on the bare ``python3`` the
 stdlib CI jobs use — no numpy, no model import, no LP.
 """
@@ -72,12 +83,30 @@ SOLVE_AFFECTING_PATHS = (
     "scripts/score_crossover.py",
 )
 
-#: Board artifacts carrying provenance stamps (repo-relative).
-BOARD_PATHS = (
-    "frontend/data/forecast/registry",
+#: Board artifacts carrying provenance stamps, split by whether THIS CHECKOUT is
+#: expected to hold them. The split is the point: a stamp count of zero means two
+#: entirely different things — "the board is unstamped" and "the board is not in
+#: this tree" — and only the split can tell them apart.
+#:
+#: Tracked inputs, present in every checkout (plan §7.5). One missing means the
+#: check is reading a tree that does not hold the board, so its counts describe
+#: the tree and not the board. ``program-status.json`` is watched because it is
+#: the file the records lane re-keys: watching it is what makes a re-key that
+#: drops its stamp visible instead of silent.
+BOARD_INPUTS_COMMITTED = (
     "frontend/data/forecast/ff-verdicts.json",
+    "frontend/data/forecast/program-status.json",
     "frontend/data/hindcast",
 )
+
+#: Generated and gitignored — the Pages deploy is their single writer (plan
+#: §7.5), and locally they exist only after ``register_forecast_run.py
+#: --reindex``. Absence is the normal state and is never warned about.
+BOARD_INPUTS_GENERATED = ("frontend/data/forecast/registry",)
+
+#: Everything the check reads. Order is immaterial; the split above carries the
+#: meaning.
+BOARD_PATHS = BOARD_INPUTS_GENERATED + BOARD_INPUTS_COMMITTED
 
 #: Default commit-distance threshold. Set from the FR-21 incident itself rather
 #: than picked round: the ten-day dark window carried well past this many
@@ -117,9 +146,36 @@ def solve_affecting_commits_since(sha: str) -> int | None:
         return None
 
 
+def missing_inputs(targets: list[Path]) -> list[str]:
+    """Return the board inputs in ``targets`` that are not in this tree.
+
+    Paths in :data:`BOARD_INPUTS_GENERATED` are excluded: they are gitignored
+    build products, so their absence is the normal state of a checkout and says
+    nothing about the board. Everything else is a tracked input whose absence
+    means the check is looking at a tree that does not hold the board.
+    """
+    optional = {REPO / g for g in BOARD_INPUTS_GENERATED}
+    out = []
+    for t in targets:
+        if t in optional or t.exists():
+            continue
+        try:
+            out.append(str(t.relative_to(REPO)))
+        except ValueError:  # a path outside the repo (a test fixture tree)
+            out.append(str(t))
+    return out
+
+
 def board_position(paths: list[Path] | None = None) -> dict:
-    """Summarize the board's staleness position from its provenance stamps."""
+    """Summarize the board's staleness position from its provenance stamps.
+
+    Also records which board inputs were readable. Without that, a board that is
+    simply *absent from the tree* reads identically to a board that is present
+    and unstamped — the FR-21 restore session's opening measurement was exactly
+    that confusion, and it cost a full attribution pass to unwind.
+    """
     targets = paths if paths is not None else [REPO / p for p in BOARD_PATHS]
+    absent = missing_inputs(targets)
     stamps = [s for _, s in fp.collect_stamps(targets)]
     dated = [s for s in stamps if s.get("scored_at_date") and s.get("scored_at_sha")]
     newest = max(dated, key=lambda s: s["scored_at_date"], default=None)
@@ -131,6 +187,7 @@ def board_position(paths: list[Path] | None = None) -> dict:
         "newest_scored_at_date": (newest or {}).get("scored_at_date"),
         "cache_epochs": epochs,
         "head_sha": fp.head_sha(),
+        "missing_inputs": absent,
     }
 
 
@@ -140,12 +197,28 @@ def evaluate(max_commits: int = DEFAULT_MAX_COMMITS, paths=None) -> dict:
     warnings: list[str] = []
     distance = None
 
-    if not pos["n_stamps"]:
+    absent = pos.get("missing_inputs") or []
+    if absent:
+        # Reported FIRST and unconditionally: every count below is a property of
+        # the tree, not of the board, once an input is missing.
+        warnings.append(
+            "BOARD INPUT(S) MISSING from this checkout: "
+            + ", ".join(absent)
+            + ". These are tracked files, so their absence means this check is "
+            "reading a tree that does not hold the board — the stamp counts "
+            "below measure the tree, not the board, and a zero here is a "
+            "MEASUREMENT failure, NOT an unstamped board. Restore the checkout "
+            "before reading anything into the numbers."
+        )
+
+    if not pos["n_stamps"] and not absent:
         warnings.append(
             "The forecast board carries NO provenance stamps at all — nothing on "
             "it records when or against what it was scored. Re-score through "
             "scripts/forecast_verdict.py (FFR-3A) to populate them."
         )
+    elif not pos["n_stamps"]:
+        pass  # already explained by the missing-input warning above
     elif not pos["newest_scored_at_sha"]:
         warnings.append(
             f"{pos['n_stamps']} board artifact(s) are stamped but NONE records a "
@@ -211,6 +284,13 @@ def render(report: dict) -> str:
             f"(threshold {report['max_commits']})"
         ),
         f"  distinct epochs     : {len(pos['cache_epochs'])}",
+        "  board inputs        : "
+        + (
+            "all present"
+            if not pos.get("missing_inputs")
+            else f"{len(pos['missing_inputs'])} MISSING "
+            f"({', '.join(pos['missing_inputs'])})"
+        ),
     ]
     if pos.get("epoch_spread_note"):
         lines.append(f"  note: {pos['epoch_spread_note']}")
