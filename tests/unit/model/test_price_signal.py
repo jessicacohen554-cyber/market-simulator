@@ -129,6 +129,44 @@ class TestLookaheadReprice(unittest.TestCase):
         self.assertGreater(signal[0, 3], 50.0)
         self.assertLess(signal[0, 0] - 10.0, 1.0)
 
+    def test_diagnostics_dict_is_write_only(self):
+        # L-5 (FINDING-entry-screen-t1h-2026-08 D-7): the diagnostics dict is
+        # pure output — passing one must not change the returned signal by a
+        # byte, on both the plain and the scarcity-tail path. This is the
+        # function-level half of the proof that gating the screen-signal dump
+        # on entry_screen_diagnostics (runner.py, the `_diag` gate) can change
+        # no dispatch or entry outcome.
+        for scarcity in (False, True):
+            fleet_arrays, mc_cost, result, base_demand = self._fixture()
+            config = ScenarioConfig(
+                iso="ERCOT",
+                mode="forecast",
+                scarcity_pricing_enabled=scarcity,
+                scarcity_price_overlay=scarcity,
+            )
+            plain = _lookahead_reprice_signal(
+                config, 2024, base_demand, fleet_arrays, mc_cost, result, n_zones=2
+            )
+            diag: dict = {}
+            with_diag = _lookahead_reprice_signal(
+                config,
+                2024,
+                base_demand,
+                fleet_arrays,
+                mc_cost,
+                result,
+                n_zones=2,
+                diagnostics=diag,
+            )
+            np.testing.assert_array_equal(with_diag, plain)
+            # The dict was populated (it is the dump payload)...
+            for key in ("price_base_usd_mwh", "adder_usd_mwh", "net_load_mw"):
+                self.assertIn(key, diag)
+            # ...and records the signal the caller got, not a different one.
+            np.testing.assert_array_equal(
+                diag["price_base_usd_mwh"] + diag["adder_usd_mwh"], plain[0]
+            )
+
 
 class TestScreensConsumeSignal(unittest.TestCase):
     """The screens read price_signal in place of raw prices (screens-only)."""

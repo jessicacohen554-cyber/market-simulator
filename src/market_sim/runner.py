@@ -3391,7 +3391,27 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         "sigma_r_mw": scarcity_sigma_r,
                         "storage_as_mw": _scar_storage_as,
                     }
-                _diag: dict | None = {} if unified_screens else None
+                # L-5 (FINDING-entry-screen-t1h-2026-08 defect D-7): the
+                # screen-signal dump is DIAGNOSTIC output, so it also arms on
+                # the diagnostics gate — ``entry_screen_diagnostics``, the
+                # RC-0C flag that already gates the per-candidate screen
+                # ledger — not only on the behavioural
+                # ``capacity_screen_unified_lookahead`` flag. Without this, an
+                # ISO running the shipped (non-unified) lookahead cannot be
+                # diagnosed offline at all. Output-only either way: the dict
+                # is write-only inside ``_lookahead_reprice_signal`` (tested)
+                # and this block only reads existing state and writes the npz,
+                # so arming it changes no dispatch or entry outcome. At the
+                # flag's default this expression is byte-identical to the old
+                # ``{} if unified_screens else None``.
+                _diag: dict | None = (
+                    {}
+                    if (
+                        unified_screens
+                        or getattr(config, "entry_screen_diagnostics", False)
+                    )
+                    else None
+                )
                 sig = _lookahead_reprice_signal(
                     wx_config,
                     entering_year,
