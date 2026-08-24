@@ -11509,3 +11509,104 @@ attestation entry pruned via the generator's band-met clause)**; C3c
 ledgered ×2 (2024 22/53, 2025 1/31). Replay rule: THIS keeper's replays REQUIRE the
 gtc-limits clean partition; ercot-223-and-earlier replays require its
 ABSENCE.
+
+### ercot-232 (2026-08-24) — the keeper's 21 spurious hours diagnosed to Northeast DELIVERABILITY; tie-placement refinement measured-COUNTERINDICATED; the seasonal end-of-season term measured INERT. NO SOLVE, NO LEVER, KEEPER UNCHANGED.
+
+**Charter:** the two admissible post-promotion moves, in order — (1) G-SPUR
+diagnosis on the new keeper from committed sidecars, with a measured refinement
+of tie placement admissible ONLY if phase-0 names it; (2) the seasonal
+end-of-season term, the last un-adjudicated adaptive successor, carded
+honestly. Both answered on committed artifacts alone: no LP, no solve, no
+mechanism built, no `ScenarioConfig` field (28(c) not engaged), no run
+registered, keeper `2026-08-24-231-tie-zone-measured` untouched. Probe
+`scripts/probes/ercot232_gspur_phase0.py` →
+`results/calibration/ercot232_gspur_phase0.json`; record
+`docs/FINDING-ercot232-gspur-tie-deliverability-2026-08-24.md`.
+
+**STEP 0 — the ercot-231 combined promotion VERIFIED COMPLETE** against main:
+keeper shard flipped, registry sidecar + 1.66 MB run payload, `status/ERCOT.js`
+rebuilt, the full 3-year bundle with all 15 `hourly/` sidecars committed,
+attestation (2 exceptions — 2023 pruned as a clean PASS — and the C3c
+OPEN-RESIDUAL-LANE re-wording DISCHARGED), DOF ledger (`n_entries` 9 /
+`n_residual` 6, identical to the ercot-223 keeper), matrix shard keeper+gates
+stamps and `ercot_tie_zonal_interchange` → `K`, log addendum outcome line.
+`scripts/audit_keepers.py --iso ERCOT` **PASS, 0 failures / 0 warnings**. ONE
+GAP FOUND AND CLOSED HERE: the `docs/mechanism-testing-matrix.md` §5.1 header
+still named the superseded `2026-08-20-ercot223-arm-eventrelease` (the shard was
+re-stamped, the queue doc was not) — re-stamped in this session.
+
+**Move (1) — the anatomy.** The 21 hours reproduce exactly off the committed
+sidecars (10 new vs the prior keeper's 11), are **λ-made not adder-carried**
+(19/21 λ ≥ $150; ORDC adder p50 ≈ $1.3), carry **zero shed**, and sit wholly
+in-season (2023-08-07 .. 09-26, hod 13–20). In **every one** the six
+non-Northeast zones price identically while **Northeast prices $24–126** — the
+`NE_LOB` export dual. Mechanism: the EAST lobe holds ~8 GW of generation behind
+a ~1,300 MW export limit serving 3.51 % of load; `ercot_tie_zonal_interchange`
+places 600/820 of the measured SWPP flow *into that zone*, where it displaces
+local generation 1:1 and delivers nothing to the rest of ERCOT. The arm's
+measured gain and its G-SPUR cost are **the same mechanism in different hours**.
+
+**Move (1) — the whole-year object, measured against NP6-86 `NE_LOB`** (hourly
+-equivalent dual: shadow price over ALL SCED intervals in the hour, non-binding
+at 0; measured 2,408 binding h, annual dual $69,932). Prior keeper → new
+keeper: model congested hours **918 → 1,974** (measured 2,408); annual dual
+**$13,719 (19.6 %) → $55,816 (79.8 %)** of measured; hour-agreement **71 →
+443**; p50 on agreeing hours **$3.43 → $8.71** vs measured **$25.91** (the
+model is **under**-deep, not over-deep — the spur hours read the other way only
+as a selected tail); and **corr(model, measured) = −0.059 → −0.042**. At the 21
+spur hours `NE_LOB` was measured binding in **2/21** (1/10 of the new) at
+measured p50 **$0.00** vs the model's **$149.68**.
+
+**Move (1) — VERDICT: NO ADMISSIBLE REFINEMENT, AFFIRMATIVELY
+COUNTER-INDICATED.** Any refinement that buys back the spur hours must strand
+less import in the lobe, which reduces the model's NE congestion magnitude,
+frequency and agreement — all three just moved *toward* measured. Trading a
+79.8 %-of-measured aggregate for a gate count on a residual the mechanism is
+not identified against is exactly what rule 1 `[R-STRUCT]` forbids and what
+rule 14 `[R-ACCURATE]` calls burying the error back inside an inaccurate input.
+Phase-0 does not name a refinement, so the handoff licence is NOT met: no
+precommit opened, no flag proposed, `ERCOT_DC_TIE_ZONE_MAP` untouched. The
+residual **re-attributes to `NE_LOB` binding-hour TIMING**, ~zero-correlated in
+BOTH keepers — a pre-existing defect the load-share spread was masking, not a
+defect of the placement. That object is the §10 / ERCOT-117 sub-zonal one
+(cell `internal_congestion_split` = `G`: nodal-only binding 36–47 % of
+intervals, 138 kV single elements at 66–83 %), already refused because a
+sub-zonal link TTC would have to be invented against its own residual.
+**DO-NOT-REDO as a topology change.** Keeper unaffected; the G-SPUR
+REJECTED-AS-ARMED record stands unrewritten — but the gate was counting
+spurious mid-band hours against a mechanism whose measured effect on the very
+constraint it perturbs is a 4× move toward published truth, which is the
+owner's standing structural standard vindicated on measurement after the fact.
+
+**Move (2) — carded honestly, both directions.** The defect is REAL and named
+concretely for the first time: the adaptive floor's seasonal envelope lags the
+season and outlives it — mean floor Jun $18 → Jul $35 → Aug $62 → **Sep $232
+(peak)** → Oct $130 → Nov $63 → Dec $27, still armed in 124 December hours —
+while the market de-scarcifies after August (actual h > $200: 100/32/4/3/2 for
+Aug–Dec). **But it is MEASURED INERT as a lever:** the 2023 residual is a
+summer-depth object (**Aug 60.0 %**, Sep 18.8 %, Jun 14.1 %, Jul 4.2 % —
+Jun–Sep **97.1 %** of the annual under-pricing; Oct 0.4 %, Nov 0.4 %); Oct–Dec
+is the best-calibrated stretch of the second half-year (−4.1 / −4.1 / +3.0 %,
+together **−2.2 %** and **0.6 %** of the under-pricing); and across Oct–Dec the
+floor is armed **368 h** but pins price in **4**. Where it is not inert the
+direction is wrong (Oct/Nov are already under-priced; a decay term lowers them
+further). **VERDICT: NON-VIABLE ON MATERIALITY, not on premise** — if ever
+built it is structural hygiene on a measured seasonal expectation, judged under
+rule 1 on faithfulness alone, and provably cannot move C3a/C3b-2023. Removed
+from the lever queue as a live item.
+
+**Disposition.** Both chartered moves close on measurement; the handoff's
+admissible list is exhausted and **the remaining route is Door D** (2026 SOM
+RTC+B anchors, ~mid-2027), as anticipated. The 2023 price object stands where
+card R / Q-B FINAL / R-A left it: `{C3a-2023 −38.0 %, C3b-2023 0.696}`,
+C3c ledgered ×2, determination **NOT-YET**. Closed cells confirmed and NOT
+re-tested: ORDC/adder channel, aggregate capability (ercot-219 `R`), per-unit
+crosswalk (item 11 / Q-B FINAL), cross-year seed (ercot-222 `R`), topology
+splits (ERCOT-117 `G`).
+
+**Hygiene:** no LP, no solve, no CI job, no workflow; committed artifacts and
+`data/raw` reads only; years {2023} only (rule 22); ERCOT-only shards/cells
+(rule 25); `check_mechanism_matrix.py` clean.
+
+**Session consumed the ercot-232 shorthand. Next shorthand: ercot-233**
+(ercot-199 remains unclaimed)
