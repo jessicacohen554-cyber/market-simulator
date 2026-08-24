@@ -122,6 +122,25 @@ STEP_DRIVER_YEAR = {2022: 2021, 2023: 2023, 2024: 2024, 2025: 2025}
 _THERMAL = ("gas_cc", "gas_ct")
 _VRE = ("wind", "solar")
 
+# --- CAISO extension (rule 25 [R-ISO-SCOPE]: CAISO derives its own numbers;
+# nothing transfers from ERCOT except the probe's ARITHMETIC). ----------------
+#
+# The step maps are NOT copied from ERCOT: CAISO's registered bundle
+# (caiso-2021-2025-realized, key 408f9199a82f5814) ships
+# ``capacity_screen_unified_lookahead=False``, so its lookahead is suppressed
+# whenever the entering year is a bridge year (runner.py ``lookahead_next_ok``:
+# ``unified_screens or next_year not in HINDCAST_BRIDGE_YEARS``). ERCOT's
+# refresh ran unified-ON and therefore priced the bridge steps too. CAISO's
+# dumps are consequently the NON-BRIDGE entering years only — the maps below
+# are asserted against the dumps actually present, never assumed.
+CAISO_STEP_PRIOR_SOLVE = {2024: 2023, 2025: 2024}
+CAISO_STEP_DRIVER_YEAR = {2024: 2024, 2025: 2025}
+
+ISO_STEPS = {
+    "ERCOT": (STEP_PRIOR_SOLVE, STEP_DRIVER_YEAR),
+    "CAISO": (CAISO_STEP_PRIOR_SOLVE, CAISO_STEP_DRIVER_YEAR),
+}
+
 
 def load_config(bundle: Path) -> ScenarioConfig:
     """Rebuild the run's exact ScenarioConfig from its committed run_config."""
@@ -136,11 +155,11 @@ def load_config(bundle: Path) -> ScenarioConfig:
     return cfg
 
 
-def load_dump(bundle: Path, prior: int, step: int) -> dict:
+def load_dump(bundle: Path, prior: int, step: int, iso: str = ISO) -> dict:
     """Load one committed screen-signal dump as plain arrays."""
-    key_dirs = [p for p in sorted((bundle / ISO).iterdir()) if p.is_dir()]
+    key_dirs = [p for p in sorted((bundle / iso).iterdir()) if p.is_dir()]
     if len(key_dirs) != 1:
-        raise SystemExit(f"expected one cache key under {bundle / ISO}")
+        raise SystemExit(f"expected one cache key under {bundle / iso}")
     path = key_dirs[0] / f"screen_signal_diag_{prior}_for_{step}.npz"
     with np.load(path, allow_pickle=True) as z:
         return {k: z[k] for k in z.files}
@@ -215,6 +234,7 @@ def vre_capture(
     config: ScenarioConfig,
     step: int,
     zone_names: list[str],
+    iso: str = ISO,
 ) -> dict:
     """Capture prices/ratios + margin sign for wind/solar on one price array.
 
@@ -232,7 +252,7 @@ def vre_capture(
             continue
         flat_mean = float(prices.mean())
         sys_price = prices.mean(axis=0)
-        zone = get_renewable_zone(ISO, tech)
+        zone = get_renewable_zone(iso, tech)
         zrow = prices[zone_names.index(zone)]
         cap_sys = float((sys_price * pot).sum() / pot.sum())
         cap_zone = float((zrow * pot).sum() / pot.sum())
@@ -255,7 +275,11 @@ def vre_capture(
 
 
 def storage_screen(
-    prices: np.ndarray, config: ScenarioConfig, step: int, existing_mw: float
+    prices: np.ndarray,
+    config: ScenarioConfig,
+    step: int,
+    existing_mw: float,
+    iso: str = ISO,
 ) -> dict:
     """The real storage value stack + merit allocator on one price array.
 
@@ -274,7 +298,7 @@ def storage_screen(
             degradation_cost_per_mwh=_degradation_cost_per_mwh(tech_name, config),
         )
         cap = estimate_capacity_value(
-            tech_name, existing_mw, config, ISO, None, year=step
+            tech_name, existing_mw, config, iso, None, year=step
         )
         as_rev = as_revenue_per_mw_yr("storage", existing_mw, config)
         cost = compute_storage_annual_cost(tech_name, step, config, cumulative_gw=None)
@@ -291,8 +315,8 @@ def storage_screen(
             margins.append((margin, tech_name))
     margins.sort(key=lambda m: m[0], reverse=True)
     budget = min(
-        STORAGE_ANNUAL_BUILD_CAP_MW[ISO],
-        max(0.0, STORAGE_DEPLOYMENT_CEILING_MW[ISO] - existing_mw),
+        STORAGE_ANNUAL_BUILD_CAP_MW[iso],
+        max(0.0, STORAGE_DEPLOYMENT_CEILING_MW[iso] - existing_mw),
     )
     per_tech_cap = budget * STORAGE_TECH_BUILD_SHARE_CAP
     remaining = budget
@@ -408,38 +432,124 @@ def _validate_storage_vs_phase0(shipped_steps: dict) -> dict:
     return {"checks": checks, "all_match": all(c["match"] for c in checks)}
 
 
+def _validate_break_even_vs_phase0(
+    config: ScenarioConfig, iso: str, step: int, existing_mw: float = 0.0
+) -> dict:
+    """Reproduce a committed phase-0 artifact's ``break_even`` rows (gate).
+
+    CAISO's phase-0 artifact carries NO ``decision_years`` — it was produced
+    before the L-5 gate existed, so the bundle had no
+    ``screen_signal_diag_*.npz`` to replay (defect D-7) and only ``break_even``
+    is populated. That block is therefore the ONLY committed overlap available
+    as a gate, and it is a real one: its two columns are exactly the
+    price-independent legs of this probe's storage stack — the model's own
+    :func:`compute_storage_annual_cost` and :func:`estimate_capacity_value`.
+    Reproducing them proves the cost/RA-credit half of the CAISO screen is
+    being replayed at the run's own config before any dual-arm delta is read.
+
+    ``existing_mw`` defaults to 0.0 because that is the basis phase-0 priced on
+    (its ``--existing-storage-mw`` default). The RA credit tapers toward the
+    per-ISO deployment ceiling, so passing the run's ACTUAL entering storage
+    would compare two different quantities and fail the gate spuriously — the
+    gate's job is to check the arithmetic, not the fleet state.
+    """
+    ref_path = (
+        REPO / f"results/calibration/entry_screen_t1h_phase0_{iso.lower()}.json"
+    )
+    if not ref_path.exists():
+        return {"checks": [], "all_match": True, "skipped": f"no {ref_path.name}"}
+    ref = json.loads(ref_path.read_text())
+    rows = {r["tech"]: r for r in ref["break_even"]["rows"]}
+    checks = []
+    for tech_name in STORAGE_TECHS:
+        want = rows.get(tech_name)
+        if want is None:
+            continue
+        got_cost = compute_storage_annual_cost(
+            tech_name, step, config, cumulative_gw=None
+        )
+        got_cap = estimate_capacity_value(
+            tech_name, existing_mw, config, iso, None, year=step
+        )
+        checks.append(
+            {
+                "tech": tech_name,
+                "phase0_annual_cost": want["annual_cost_per_mw_yr"],
+                "replay_annual_cost": round(got_cost, 1),
+                "phase0_capacity_value": want["capacity_value_per_mw_yr"],
+                "replay_capacity_value": round(got_cap, 1),
+                "match": (
+                    abs(got_cost - want["annual_cost_per_mw_yr"]) <= 1.0
+                    and abs(got_cap - want["capacity_value_per_mw_yr"]) <= 1.0
+                ),
+            }
+        )
+    return {
+        "checks": checks,
+        "all_match": bool(checks) and all(c["match"] for c in checks),
+        "break_even_step": step,
+        "note": (
+            "phase-0 break-even is priced at the probe's own decision step; a "
+            "cost/credit vintage mismatch shows up here rather than silently "
+            "in the margins"
+        ),
+    }
+
+
 def main() -> None:
     """CLI entry point: emit both arms + deltas as one JSON artifact."""
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--iso", default=ISO, choices=sorted(ISO_STEPS))
     ap.add_argument("--bundle", default="results/hindcast/ercot-2021-2025-realized-t1h-refresh")
     ap.add_argument("--duals-bundle", default="results/calibration/ercot223_release_arm")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
+    iso = args.iso.upper()
     bundle = REPO / args.bundle
     duals_bundle = REPO / args.duals_bundle
+    step_prior, step_driver = ISO_STEPS[iso]
 
     config = load_config(bundle)
-    zone_names = list(get_iso_config(ISO).zone_names)
+    zone_names = list(get_iso_config(iso).zone_names)
 
     result: dict = {
         "probe": "entry_signal_l1_dual_replay",
         "finding": "docs/FINDING-entry-screen-t1h-2026-08.md §7 L-1",
-        "iso": ISO,
+        "iso": iso,
         "bundle": str(args.bundle),
         "duals_bundle": str(args.duals_bundle),
         "cache_key": config.cache_key(),
+        "zone_names": zone_names,
         "cost_state": "entry seed (cumulative_gw=None), identical across arms",
         "steps": {},
     }
 
-    for step, prior in STEP_PRIOR_SOLVE.items():
-        dump = load_dump(bundle, prior, step)
+    # The step map is a CLAIM about which entering years this bundle priced.
+    # Assert it against the dumps actually on disk, so a posture difference
+    # (CAISO's unified-OFF bridge suppression) fails loudly instead of
+    # silently reporting fewer steps than the reader expects.
+    key_dirs = [p for p in sorted((bundle / iso).iterdir()) if p.is_dir()]
+    if len(key_dirs) != 1:
+        raise SystemExit(f"expected one cache key under {bundle / iso}")
+    on_disk = sorted(
+        (int(p.stem.split("_")[3]), int(p.stem.split("_")[5]))
+        for p in key_dirs[0].glob("screen_signal_diag_*_for_*.npz")
+    )
+    claimed = sorted((prior, step) for step, prior in step_prior.items())
+    if on_disk != claimed:
+        raise SystemExit(
+            f"{iso} step map {claimed} != dumps on disk {on_disk} — refuse to "
+            "replay a step set the bundle did not produce"
+        )
+
+    for step, prior in step_prior.items():
+        dump = load_dump(bundle, prior, step, iso)
         sig = dump["price_base_usd_mwh"] + dump["adder_usd_mwh"]
         adder = dump["adder_usd_mwh"]
         shipped = np.tile(sig[None, :], (len(zone_names), 1))
         storage_mw = float(dump["storage_power_mw"])
-        gas = resolve_annual_gas_price(config, STEP_DRIVER_YEAR[step])
-        carbon = resolve_carbon_price(config, STEP_DRIVER_YEAR[step])
+        gas = resolve_annual_gas_price(config, step_driver[step])
+        carbon = resolve_carbon_price(config, step_driver[step])
 
         arms: dict = {}
 
@@ -450,8 +560,8 @@ def main() -> None:
                 "thermal_r_dump_adder": thermal_margins(
                     prices, gas, carbon, config, adder
                 ),
-                "vre": vre_capture(prices, dump, config, step, zone_names),
-                "storage": storage_screen(prices, config, step, storage_mw),
+                "vre": vre_capture(prices, dump, config, step, zone_names, iso),
+                "storage": storage_screen(prices, config, step, storage_mw, iso),
             }
 
         arms["shipped_signal"] = one_arm(shipped, "shipped")
@@ -473,7 +583,7 @@ def main() -> None:
                 )
         body = {
             "prior_solve": prior,
-            "driver_year": STEP_DRIVER_YEAR[step],
+            "driver_year": step_driver[step],
             "gas_price_per_mmbtu": round(float(gas), 4),
             "carbon_price": float(carbon),
             "storage_power_entering_mw": round(storage_mw, 1),
@@ -512,23 +622,30 @@ def main() -> None:
             }
         result["steps"][str(step)] = body
 
-    result["validation"] = {
-        "thermal_vs_ffr9b": _validate_thermal_vs_ffr9b(),
-        "storage_vs_phase0": _validate_storage_vs_phase0(
-            {
-                s: {"storage": b["arms"]["shipped_signal"]["storage"]}
-                for s, b in result["steps"].items()
-            }
-        ),
-    }
+    if iso == "ERCOT":
+        # The two ERCOT gates are ERCOT-specific by construction (the FFR-9B
+        # replay bundle and the ERCOT phase-0 decision_years), so they stay
+        # bound to ERCOT rather than being generalized into vacuous no-ops.
+        result["validation"] = {
+            "thermal_vs_ffr9b": _validate_thermal_vs_ffr9b(),
+            "storage_vs_phase0": _validate_storage_vs_phase0(
+                {
+                    s: {"storage": b["arms"]["shipped_signal"]["storage"]}
+                    for s, b in result["steps"].items()
+                }
+            ),
+        }
+    else:
+        result["validation"] = {
+            "break_even_vs_phase0": _validate_break_even_vs_phase0(
+                config, iso, min(step_prior)
+            )
+        }
 
     out_path = REPO / args.out if not Path(args.out).is_absolute() else Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(result, indent=1, sort_keys=False) + "\n")
-    ok = (
-        result["validation"]["thermal_vs_ffr9b"]["all_match"]
-        and result["validation"]["storage_vs_phase0"]["all_match"]
-    )
+    ok = all(v["all_match"] for v in result["validation"].values())
     print(f"wrote {out_path}  validation_all_match={ok}")
     if not ok:
         raise SystemExit("validation gates FAILED — deltas are not reportable")
