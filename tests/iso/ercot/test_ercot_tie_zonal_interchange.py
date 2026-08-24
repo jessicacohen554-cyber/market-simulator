@@ -113,3 +113,28 @@ def test_flag_moves_placement_never_the_system_total():
     delta = armed - base
     assert np.abs(delta[z["Northeast"]]).max() > 50.0
     assert np.abs(delta).max() < 2000.0  # bounded by the tie capability
+
+
+def test_tie_zone_matrix_leap_year_drops_feb29(tmp_path):
+    """A leap-year extract (8,784 hour-ending rows) attributes after Feb-29 excision."""
+    year = 2024
+    hourly_dir = tmp_path / "eia-930-hourly"
+    hourly_dir.mkdir(parents=True)
+    nb_dir = tmp_path / "eia-930-interchange"
+    nb_dir.mkdir()
+    stamps = pd.date_range(f"{year}-01-01 01:00:00", periods=8784, freq="h")
+    frame = pd.concat(
+        [
+            pd.DataFrame({"diba": d, "mw": np.float32(mw), "local_time": stamps})
+            for d, mw in (("SWPP", -820.0), ("CEN", 0.0))
+        ],
+        ignore_index=True,
+    )
+    frame.to_parquet(nb_dir / "ERCO interchange hourly.parquet")
+    interchange = np.full(HOURS_PER_YEAR, -820.0)
+    weights = np.full((len(_ZONES), HOURS_PER_YEAR), 1.0 / len(_ZONES))
+    with mock.patch.object(eia_loader, "EIA_HOURLY_DIR", hourly_dir):
+        m = ercot_tie_zone_interchange(year, _ZONES, interchange, weights)
+    assert m is not None
+    np.testing.assert_allclose(m.sum(axis=0), interchange, atol=1e-9)
+    np.testing.assert_allclose(m[_ZONES.index("Northeast")], -600.0, atol=1e-9)
