@@ -1,17 +1,20 @@
 {
  "program": "Forecast Finalization Program (FF)",
- "generated": "2026-08-22",
+ "generated": "2026-08-24",
  "sources": [
+  "frontend/data/forecast/ff-verdicts.json \u2014 THE COMMITTED CARRIER of the FC-1..FC-8 verdicts. Un-suffixed per-tier keys (`<iso>-t1f`, `<iso>-t1h`, `<iso>-t1x`) are the LIVE vintage; '-ff2d'-suffixed keys are the PRESERVED SUPERSEDED FF-2D baseline. Read at 3ca40e9b6534; all six t1f records carry provenance session=FFR-3A-2, scored_at_sha=8ba59281.",
+  "PATH CORRECTION: docs/handoffs/neiso-88-forecast-readiness-2026-08-06.md \u00a71.1 cites frontend/data/hindcast/<iso>-2026-2030-ffr3a2-t1f.json. Those sidecars are absent at HEAD and, verified with `git log --all --name-only`, were NEVER committed at any point in this repository's history \u2014 zero paths matching '2026-2030' exist in the full history. The verdicts are real and committed; only the path is wrong. Cite ff-verdicts.json.",
+  "docs/handoffs/FINDING-capx-d1-board-refresh-2026-08-23.md \u2014 the cross-ISO A1/I4 close-out adjudication and the per-row before/after for this refresh",
+  "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md (FFR-1A / FR-1 \u2014 the confirmed-derate recorder that closed I4) + frontend/data/hindcast/invariant-failures.json `wave1_note` + scripts/check_forecast_invariants.py::check_i4_capacity_accounting docstring",
+  "docs/handoffs/neiso-88-forecast-readiness-2026-08-06.md \u00a71.1/\u00a77 (the four-ISO adjudication this refresh extends and closes cross-ISO)",
   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md (FFR-3A-3 \u2014 post-FFR-3F re-measurement of the T1-H/T1-X halves)",
   "docs/handoffs/ff-t1-gate-2026-07.md (FF-2D \u2014 T1 gate battery, six ISOs)",
   "docs/handoffs/ff-poc-closeout-2026-07.md (FF-3E \u2014 full-solve readiness + \u00a72.1b scorecard)",
-  "docs/handoffs/ff-t1-gate-verdicts.json (FC-1..FC-8 rubric verdicts)",
-  "docs/forecast-development-plan-2026-07.md \u00a71.2 / \u00a72.1 / \u00a72.1b",
-  "docs/forecast-development-plan-2026-07.md \u00a72.1b(2)(a) (gate (a) pass criterion)",
-  "FR-21 gate-(a) refresh 2026-08-22 at cb7aadf8408a (keepers/status/markers re-read live)"
+  "docs/forecast-development-plan-2026-07.md \u00a71.2 / \u00a72.1 / \u00a72.1b, and \u00a72.1b(2)(a) (gate (a) pass criterion)",
+  "frontend/data/backcast/keepers/<ISO>.json + status/<ISO>.js + calibration-complete.json \u2014 READ-ONLY here (rule 15): the gate-(a) keeper/determination/marker re-derivation"
  ],
- "headline": "No ISO clears the T1->T2 rubric gate at HEAD \u2014 all six read HOLD, unchanged from FF-2D and unchanged after FFR-3A-3 re-measured the T1-H and T1-X halves at the post-FFR-3F HEAD. No ISO clears the \u00a72.1b full-solve authorization gate either. NO DETERMINATION MOVED, but two band-level results did: MISO's retire.total_gw flipped PASS -> FAIL (its 3/3 retirement sweep does not survive the G3 cap-grain fix) and PJM's retirement depth improved 22.415 -> 18.862 GW. Both PJM and MISO now land exactly on the values FFR-2B measured against a paired control. This board is the \u00a72.1b evidence, not a green-wash: every remaining blocker is structural (rule 1).",
- "gate_reading": "The dominant T1-F blocker is FC-1 structural \u2014 the I4 capacity-accounting leak (the FF-0B \"A1\" finding, still open) for CAISO/PJM/MISO/NEISO, plus I7 base-year adequacy (A2) for CAISO/MISO/NYISO and ERCOT's I3 scarcity slack. PJM and NEISO are closest \u2014 their only T1-F blocker is the single I4 leak invariant; fix A1 and both clear FC-1. The FF-2C capacity-clearing flip is the structurally-correct mechanism and is working; the residuals it exposes are the open retirement-rule / backstop / capacity-accounting lanes, not tuning targets.",
+ "headline": "No ISO clears the T1->T2 rubric gate at HEAD \u2014 all six read HOLD \u2014 and no ISO clears the \u00a72.1b full-solve authorization gate. THIS REFRESH MOVED NO DETERMINATION, NO VERDICT AND NO GATE OUTCOME. It re-derives the board's rows and prose from the LIVE committed verdict records in frontend/data/forecast/ff-verdicts.json (the un-suffixed per-tier keys, session FFR-3A-2, scored_at_sha 8ba59281), which most rows had drifted behind: they still quoted the preserved SUPERSEDED '-ff2d' vintage. THE HEADLINE CORRECTION IS CROSS-ISO. The I4/A1 capacity-accounting leak this board named as the dominant T1-F blocker is CLOSED \u2014 it appears in no live FC-1 fail set in any ISO, closed by the FFR-1A confirmed-derate recorder on 2026-07-31 \u2014 and closing it cleared FC-1 nowhere, because ADEQUACY ACCOUNTING was underneath it: I7 in CAISO/PJM/MISO/NYISO/NEISO and I12 in ERCOT/CAISO, 6 of 6 ISOs. PJM and NEISO are closest (one small I7 miss each: 366 MW and 218 MW); NYISO is on the cusp at 36/51 MW. Two corrections run AGAINST the board's favour and are reported at full magnitude (rule 1): ERCOT's I3 slack is 0.08-0.41% of load, not 0.01-0.03%, and its T1-X 2025 price no longer converges (22.5% FAIL, not 8.6% PASS). This board is the \u00a72.1b evidence, not a green-wash: every remaining blocker is structural (rule 1).",
+ "gate_reading": "The dominant T1-F blocker is FC-1 ADEQUACY ACCOUNTING \u2014 not the I4 leak, which is CLOSED (see honest_unfit 'I4 / A1'). I7 (accredited firm capacity below the reliability requirement) FAILs in CAISO, PJM, MISO, NYISO and NEISO; I12 (reserve-margin band) FAILs in ERCOT and CAISO. Together that is 6 of 6 ISOs, and in PJM, NEISO and NYISO it is the ONLY FC-1 failure left. PJM and NEISO are closest \u2014 a single small I7 miss each (PJM 2030, 366 MW = 0.24% of requirement; NEISO 2028, 218 MW = 0.85%). NYISO is on the cusp: 36 MW (2026) and 51 MW (2027), under 0.16% of requirement in both years. MISO is the same shape one order larger (6,037 / 3,659 MW). ERCOT and CAISO are furthest and differ in kind: both carry I12 band failures plus I3 scarcity slack, and CAISO additionally fails I7 in four consecutive years (to 9.2 GW) with a 65.5% backstop share \u2014 an administrative over-build, not a fleet the screen chose. The FF-2C capacity-clearing flip is the structurally-correct mechanism and is working; the residuals it exposes are the open adequacy-accounting / retirement-rule / backstop lanes, not tuning targets. WHAT THIS READING IS NOT: it is not a re-score. Every verdict quoted here already existed in a committed record; this refresh only stopped the board from describing a superseded one.",
  "readiness": "The FF-3E full-horizon readiness battery is GREEN for all six ISOs \u2014 the path is bug-free (input-resolution walk, config round-trip, kill-resume drill all clean; wall/RSS projected). Ten hours of compute today would buy a mechanically-clean but structurally-flawed golden run. Compute is not the binding constraint; the T1-F structural blockers are.",
  "tier_ladder": [
   {
@@ -68,29 +71,31 @@
    "flip": "energy-only (capacity clearing OFF)",
    "fc": {
     "FC-1": "FAIL",
-    "FC-2": "CAVEAT",
+    "FC-2": "FAIL",
     "FC-4": "FAIL",
     "FC-7": "CAVEAT",
     "FC-8": "PASS"
    },
    "blocking_rows": [
-    "FC-1 I3 scarcity slack 2027\u20132030 (0.01\u20130.03% of load)",
-    "FC-4 crossover dispatch skill (CO2 43\u201350%; price converges 69%\u21929%)"
+    "FC-1 I12 reserve-margin band FAIL: scalar floor [13.8%, 28.7%]; out 2027:9.1%, 2028:3.8%, 2029:3.0%, 2030:-1.5%",
+    "FC-1 I3 scarcity slack 2027-2030 (0.08% / 0.14% / 0.13% / 0.41% of load) [CORRECTED 2026-08-24: read '0.01-0.03% of load', the superseded FF-2D vintage; the live slack is 2.7x (2027) to 20.5x (2030) larger, year for year]",
+    "FC-2 sustained-VOLL (report row, non-gating): hours_ge_500 peaks 1137 h/yr > 800",
+    "FC-4 crossover dispatch skill: price 68.7% / 41.2% / 22.5%, co2 49.2% / 42.7% / 50.6% (all six FAIL at K_iso=1.5) [CORRECTED 2026-08-24: read 'CO2 43-50%; price converges 69%->9%'. The convergence claim was the FF-2D vintage, in which 2025 price PASSED at 8.6%; on the live record 2025 price is 22.5% and FAILS]"
    ],
    "gate": {
     "a_keeper_marker": {
      "status": "fail",
-     "detail": "keeper 2026-08-20-ercot223-arm-eventrelease (full-span 2023-2025, rule 16); determination NOT-YET; marker complete=False final=False. Absent from the `complete` block, so gate (a) is closed on the marker; the NOT-YET determination is concurring evidence, not the gate test. Gate (a) test is charter \u00a72.1b(2)(a): designated full-span keeper AND an entry in the `complete` block; `final` is never required for forecast work.",
-     "read_live_at": "cb7aadf8408a",
-     "corrected_by": "forecast-gate-refresh (2026-08-22, FR-21)"
+     "detail": "keeper 2026-08-24-231-tie-zone-measured (full-span 2023-2025, rule 16); determination NOT-YET; marker complete=False final=False. Absent from the `complete` block, so gate (a) is closed on the marker; the NOT-YET determination is concurring evidence, not the gate test. RE-KEYED 2026-08-24 (capx-D1 board refresh) from 2026-08-20-ercot223-arm-eventrelease, which was one promotion stale: the ercot-231 tie-zone/GTC-partition promotion landed 2026-08-24, after the director-records v12 stamp at 1b8ddaca2165 was taken. THE GATE VERDICT IS UNAFFECTED -- both keepers are NOT-YET (read live from frontend/data/backcast/status/ERCOT.js) and ERCOT is absent from `complete` on both sides, so gate (a) fails identically before and after; nothing opened, nothing closed, and no forecast run was solved or re-scored. Gate (a) test is charter \u00a72.1b(2)(a): designated full-span keeper AND an entry in the `complete` block; `final` is never required for forecast work.",
+     "read_live_at": "3ca40e9b6534",
+     "corrected_by": "capx-D1 board refresh (2026-08-24)"
     },
     "b_t1f_verdict": {
      "status": "fail",
-     "detail": "HOLD \u2014 FC-1 FAIL I3 (scarcity slack 2027\u201330)."
+     "detail": "HOLD \u2014 FC-1 FAIL on I12 (reserve-margin band, 2027-2030) and I3 (scarcity slack 2027-2030, 0.08-0.41% of load); FC-2 FAIL on the same I12 row plus a non-gating sustained-VOLL report row (1137 h/yr \u2265 $500 > 800). Corrected 2026-08-24 from 'FC-1 FAIL I3' alone (the superseded FF-2D vintage)."
     },
     "c_crossover_gap": {
      "status": "fail",
-     "detail": "FC-4 FAIL \u2014 price 69%\u21929% (converges), CO2 43\u201350% (partly reconstruction-basis)."
+     "detail": "FC-4 FAIL \u2014 price 68.7% / 41.2% / 22.5% and co2 49.2% / 42.7% / 50.6%, all six over the K_iso=1.5 band; gas_twh 2023 19.6% / 2024 10.0% and coal_twh 2023 35.0% / 2024 44.1% also FAIL. Read live from `ercot-2023-2027-crossover-ffr3a3-t1x` (the FFR-3A-3 re-measurement this cell's own t1x_provenance names; identical, metric for metric, to the un-suffixed `ercot-t1x`). CORRECTED 2026-08-24: the cell read 'price 69%\u21929% (converges), CO2 43-50%', which is the FF-2D vintage (`ercot-t1x-ff2d`) in which 2025 price PASSED at 8.6%. IT NO LONGER CONVERGES: on the live record 2025 price is 22.5% and FAILS. FC-4 was FAIL before and is FAIL after \u2014 the leg verdict does not move."
     },
     "c_readiness": {
      "status": "green",
@@ -112,7 +117,7 @@
    },
    "golden": "deferred (Wave 4, \u00a72.1b); fixture tests/golden/ercot_2026_2040.json is FROZEN (seeded f0f7c67, bands moved).",
    "candidate": null,
-   "keeper": "2026-08-03-ercot158-pool-arm",
+   "keeper": "2026-08-24-231-tie-zone-measured",
    "marker_complete": false,
    "marker_final": false,
    "t1x_provenance": "FFR-3A-3 re-measured post-FFR-3F @ e2a422c1"
@@ -124,12 +129,16 @@
    "flip": "curve-ON (capacity clearing) \u2014 but a pricing no-op for CAISO",
    "fc": {
     "FC-1": "FAIL",
-    "FC-2": "CAVEAT",
+    "FC-2": "FAIL",
     "FC-7": "CAVEAT",
     "FC-8": "PASS"
    },
    "blocking_rows": [
-    "FC-1 I3 (2030 slack 0.02%), I4 (2027 gas_st off 1333 MW, A1), I7 (2026/2027 base-year adequacy, A2), I9 (2030 sim chg+dis 0.26%)"
+    "FC-1 I12 reserve-margin band FAIL: requirement-implied floor [15.0%, 30.0%]; out 2026:1.8%, 2027:-3.1%, 2028:-0.3%, 2029:12.3%",
+    "FC-1 I7 base-year adequacy (A2), four consecutive years: 2026 50,729 < 57,306; 2027 49,428 < 58,671; 2028 52,081 < 60,082; 2029 60,119 < 61,539 MW",
+    "FC-1 I3 (2030 slack 0.02% of load)",
+    "FC-2 backstop share 65.5% > 30% (administrative over-build) FAIL",
+    "[REMOVED 2026-08-24: 'I4 (2027 gas_st off 1333 MW, A1)' and 'I9 (2030 sim chg+dis 0.26%)'. Both were the superseded FF-2D vintage; neither appears in the live FC-1 fail set, which is exactly {I12, I3, I7}]"
    ],
    "gate": {
     "a_keeper_marker": {
@@ -140,7 +149,7 @@
     },
     "b_t1f_verdict": {
      "status": "fail",
-     "detail": "HOLD \u2014 FC-1 FAIL I3, I4, I7, I9."
+     "detail": "HOLD \u2014 FC-1 FAIL on I12, I3, I7; FC-2 FAIL on I12 plus backstop share 65.5% > 30%. Corrected 2026-08-24 from 'FC-1 FAIL I3, I4, I7, I9': I4 and I9 both CLOSE on the live record and I12 is new to the fail set."
     },
     "c_crossover_gap": {
      "status": "na",
@@ -166,7 +175,7 @@
    },
    "golden": "deferred (\u00a72.1b).",
    "candidate": null,
-   "keeper": "2026-08-04-caiso164-zonal-loss-surface",
+   "keeper": "2026-08-17-caiso-200-h1-memberpanel",
    "marker_complete": false,
    "marker_final": false
   },
@@ -177,14 +186,14 @@
    "flip": "curve-ON (capacity clearing) \u2014 position past zero-cross pays $0 (BLK-3 open)",
    "fc": {
     "FC-1": "FAIL",
-    "FC-2": "PASS",
+    "FC-2": "CAVEAT",
     "FC-4": "FAIL",
     "FC-7": "CAVEAT",
     "FC-8": "CAVEAT"
    },
    "blocking_rows": [
-    "FC-1 I4 (2029 coal off 743 MW, A1) \u2014 sole T1-F blocker",
-    "FC-4 crossover CO2 43\u201358% (price in-band except 2025 CAVEAT)"
+    "FC-1 I7 (2030: accredited firm 150,088 < requirement 150,454 MW -- a 366 MW miss) -- sole T1-F blocker [CORRECTED 2026-08-24: read 'I4 (2029 coal off 743 MW, A1)'. I4 CLOSES on the live record; the sole blocker is now I7, not the A1 leak]",
+    "FC-4 crossover co2 45.1% / 40.4% / 54.2% > 30% band; price 2025 15.7% CAVEAT; coal_twh 2024 23.9% FAIL [CORRECTED 2026-08-24 from the FF-2D vintage 'CO2 43-58%; price 2025 17.5%']"
    ],
    "gate": {
     "a_keeper_marker": {
@@ -195,11 +204,11 @@
     },
     "b_t1f_verdict": {
      "status": "fail",
-     "detail": "HOLD \u2014 FC-1 FAIL I4 (2029 coal off 743 MW)."
+     "detail": "HOLD \u2014 FC-1 FAIL on I7 alone (2030: accredited firm 150,088 < requirement 150,454 MW, a 366 MW miss). Corrected 2026-08-24 from 'FC-1 FAIL I4 (2029 coal off 743 MW)': the A1/I4 leak CLOSES on the live record."
     },
     "c_crossover_gap": {
      "status": "fail",
-     "detail": "FC-4 FAIL \u2014 CO2 43\u201358% > 30% band; price 2025 17.5% CAVEAT."
+     "detail": "FC-4 FAIL \u2014 co2 45.1% / 40.4% / 54.2% > the K_iso=3.0 band; coal_twh 2024 23.9% FAIL; price 2025 15.7% CAVEAT, coal_twh 2023 13.0% and gas_twh 2024 6.7% CAVEAT. Read live from `pjm-2023-2027-crossover-ffr3a3-t1x`. CORRECTED 2026-08-24 from the FF-2D vintage 'CO2 43-58% > 30% band; price 2025 17.5% CAVEAT'. FC-4 was FAIL before and is FAIL after."
     },
     "c_readiness": {
      "status": "green",
@@ -220,7 +229,7 @@
    },
    "golden": "deferred (\u00a72.1b).",
    "candidate": null,
-   "keeper": "2026-08-03-pjm-151-seam-envelope",
+   "keeper": "2026-08-15-pjm-162-inputclock",
    "marker_complete": true,
    "marker_final": false,
    "t1h_determination": "HOLD",
@@ -234,13 +243,16 @@
    "flip": "curve-ON (capacity clearing) \u2014 enabled cap-market storage entry (+4 GW)",
    "fc": {
     "FC-1": "FAIL",
-    "FC-2": "FAIL",
+    "FC-2": "CAVEAT",
+    "FC-4": "FAIL",
     "FC-7": "CAVEAT",
     "FC-8": "CAVEAT"
    },
    "blocking_rows": [
-    "FC-1 I4 (2029 coal off 1640 MW, A1), I7 (2026 base-year adequacy)",
-    "FC-2 I13 gas_ct cobweb (NEW, flip-induced)"
+    "FC-1 I7 base-year adequacy: 2026 135,304 < 141,341 MW (6,037 MW); 2027 139,147 < 142,806 MW (3,659 MW) [CORRECTED 2026-08-24: the row also named 'I4 (2029 coal off 1640 MW, A1)', which CLOSES on the live record, and understated I7 as 2026-only]",
+    "[REMOVED 2026-08-24: 'FC-2 I13 gas_ct cobweb (NEW, flip-induced)'. I13 PASSES on the live record ('no cobweb (I13 PASS)') and FC-2 is CAVEAT, not FAIL -- the cobweb row was the superseded FF-2D vintage]",
+    "FC-2 CAVEAT (non-blocking): I12 WARN, floor [10.0%, 25.0%]; out 2026:5.3%, 2027:7.1%. Backstop share 9.2% PASSES.",
+    "FC-4 crossover co2 63.3% / 58.9% / 75.5% and gas_twh 2024 15.1% FAIL; price 13.6% / 13.9% / 27.4% CAVEAT (FFR-3A-4 measurement)"
    ],
    "gate": {
     "a_keeper_marker": {
@@ -251,7 +263,7 @@
     },
     "b_t1f_verdict": {
      "status": "fail",
-     "detail": "HOLD \u2014 FC-1 FAIL I4, I7 + FC-2 FAIL I13 cobweb."
+     "detail": "HOLD \u2014 FC-1 FAIL on I7 alone (2026: 6,037 MW; 2027: 3,659 MW). FC-2 is CAVEAT, not FAIL. Corrected 2026-08-24 from 'FC-1 FAIL I4, I7 + FC-2 FAIL I13 cobweb': I4 CLOSES and I13 PASSES ('no cobweb') on the live record."
     },
     "c_crossover_gap": {
      "status": "fail",
@@ -279,7 +291,7 @@
    },
    "golden": "deferred (\u00a72.1b).",
    "candidate": null,
-   "keeper": "2026-08-04-miso-124-dualfuel-rearm",
+   "keeper": "2026-08-22-miso-177-rho-measured",
    "marker_complete": false,
    "marker_final": false,
    "t1h_determination": "HOLD",
@@ -298,7 +310,8 @@
     "FC-8": "PASS"
    },
    "blocking_rows": [
-    "FC-1 I7 (2026 base-year adequacy: firm 30.3 < 32.1 GW, A2)"
+    "FC-1 I7 base-year adequacy (A2): 2026 32,085 < 32,121 MW (36 MW); 2027 32,339 < 32,390 MW (51 MW) -- sole T1-F blocker, and the smallest adequacy gap of any ISO (<0.16% of requirement) [CORRECTED 2026-08-24: read 'firm 30.3 < 32.1 GW', the superseded FF-2D vintage, a 1,799 MW gap. The live gap is 50x smaller and the board's number materially overstated it]",
+    "FC-2 CAVEAT (non-blocking): I12 WARN, floor [8.0%, 23.0%]; out 2026:7.8%, 2027:7.8%. Backstop share 23.8% CAVEAT."
    ],
    "gate": {
     "a_keeper_marker": {
@@ -309,7 +322,7 @@
     },
     "b_t1f_verdict": {
      "status": "fail",
-     "detail": "HOLD \u2014 FC-1 FAIL I7 (2026 firm 30.3 < 32.1 GW)."
+     "detail": "HOLD \u2014 FC-1 FAIL on I7 alone: 2026 32,085 < 32,121 MW (36 MW) and 2027 32,339 < 32,390 MW (51 MW). Corrected 2026-08-24 from 'firm 30.3 < 32.1 GW' (the superseded FF-2D vintage, a 1,799 MW gap)."
     },
     "c_crossover_gap": {
      "status": "na",
@@ -334,7 +347,7 @@
    },
    "golden": "deferred (\u00a72.1b).",
    "candidate": null,
-   "keeper": "2026-08-04-nyiso-120-c119-scope",
+   "keeper": "2026-08-22-nyiso-152-duty-complete",
    "marker_complete": true,
    "marker_final": false,
    "t1h_determination": "HOLD",
@@ -352,7 +365,8 @@
     "FC-8": "PASS"
    },
    "blocking_rows": [
-    "FC-1 I7 (2028: accredited firm 25,386 < requirement 25,604 MW) \u2014 sole T1-F blocker. CORRECTED at neiso-88 (2026-08-06, HEAD 7c857c51): this row read 'FC-1 I4 (2028 coal off 54 MW, A1)'. I4 PASSES ('closes') on the live FFR-3A-2 sidecar frontend/data/hindcast/neiso-2026-2030-ffr3a2-t1f.json \u2014 and on PJM/MISO/CAISO's too, so the A1 leak is CLOSED in all four ISOs this board still lists under honest_unfit 'I4 / A1' (that cross-ISO row and gate_reading are left for the cross-ISO lane). docs/handoffs/neiso-88-forecast-readiness-2026-08-06.md \u00a71.1."
+    "FC-1 I7 (2028: accredited firm 25,386 < requirement 25,604 MW -- a 218 MW miss) -- sole T1-F blocker. CORRECTED at neiso-88 (2026-08-06) from 'FC-1 I4 (2028 coal off 54 MW, A1)'. [CITATION REPAIRED 2026-08-24 by the capx-D1 board refresh: neiso-88 \u00a71.1 cited frontend/data/hindcast/neiso-2026-2030-ffr3a2-t1f.json, which does not exist at HEAD and -- verified with `git log --all` -- has NEVER been committed at any point in this repository's history. The committed carrier of the FFR-3A-2 verdicts is frontend/data/forecast/ff-verdicts.json, key `neiso-t1f`. The cross-ISO half neiso-88 \u00a77 left open ('the board's cross-ISO gate_reading and honest_unfit I4/A1 prose') is now CLOSED by this refresh -- see honest_unfit 'I4 / A1'.] docs/handoffs/FINDING-capx-d1-board-refresh-2026-08-23.md.",
+    "FC-2 CAVEAT (non-blocking): I12 WARN, floor [0.2%, 15.2%]; out 2026:15.3%, 2028:-0.6%. Backstop share 11.7% CAVEAT."
    ],
    "gate": {
     "a_keeper_marker": {
@@ -391,7 +405,7 @@
    },
    "golden": "deferred (\u00a72.1b).",
    "candidate": null,
-   "keeper": "2026-08-05-neiso-83-ca1-reclass",
+   "keeper": "2026-08-17-neiso-99-joint-p1",
    "marker_complete": true,
    "marker_final": false,
    "t1h_determination": "HOLD",
@@ -401,44 +415,57 @@
  "honest_unfit": [
   {
    "id": "I4 / A1",
-   "title": "Capacity-accounting leak",
+   "title": "Capacity-accounting leak \u2014 CLOSED",
+   "status": "CLOSED",
    "isos": [
+    "none - CLOSED"
+   ],
+   "isos_formerly": [
     "CAISO",
     "PJM",
     "MISO",
     "NEISO"
    ],
-   "lane": "L-CAP (model/capacity.py + results/evolution_ledger.py)",
-   "detail": "Steam/coal MW removed with no matching ledger retirements record \u2014 the dominant T1-F blocker (4/6 ISOs). Fix A1 and NEISO + PJM clear FC-1. Un-actioned since FF-0B; the ledger_version stamp did NOT touch it."
+   "lane": "L-CAP (model/capacity_evolution/evolve.py + results/evolution_ledger.py) \u2014 closed by FFR-1A / FR-1",
+   "detail": "CLOSED. I4 (fleet_after = fleet_before \u2212 retirements \u2212 confirmed_derates + builds, per fuel) appears in NO live FC-1 fail set, in any of the six ISOs. The live sets are exactly: ERCOT {I12, I3} \u00b7 CAISO {I12, I3, I7} \u00b7 PJM {I7} \u00b7 MISO {I7} \u00b7 NYISO {I7} \u00b7 NEISO {I7}. WHERE THE CLOSURE IS RECORDED: the FFR-1A confirmed-exit derate recorder (finding FR-1), landed 2026-07-31 \u2014 `apply_confirmed_exits` shrinks a plant-binned tranche IN PLACE, so the surviving unit_id was invisible to the old set-diff events recorder and its MW left the fleet with no ledger row; `evolve.py` now emits the `confirmed_derates` rows that `check_i4_capacity_accounting` subtracts (see that function's own docstring: 'the FFR-1A confirmed_derates recorder ... which is exactly the A1 leak this invariant exists to catch'). SINCE WHEN: the repair is visible in frontend/data/hindcast/invariant-failures.json `wave1_note` \u2014 'pjm-2026-2030-ffr1a-before and neiso-2026-2030-ffr1a-before carry I4, and neither of their arm1/arm2 successors does \u2014 the confirmed-exit derate ledgering (FR-1) closed I4 on both ISOs' \u2014 and in the before/after inside ff-verdicts.json itself: the preserved '-ff2d' vintage carries I4 in CAISO (2027 gas_st 1,333.0 MW), PJM (2029 coal 742.6 MW), MISO (2029 coal 1,639.8 MW) and NEISO (2028 coal 54.0 MW); the live FFR-3A-2 records carry it nowhere. FOUR of the six are REPAIRED leaks; ERCOT and NYISO never carried an I4 failure in either vintage, so their 'closed' reading is never-leaked, not leak-repaired \u2014 stated precisely rather than folded into a '6/6 closed' claim. ADJUDICATION: neiso-88 \u00a71.1 (2026-08-06) found this for four ISOs and left the cross-ISO row for this lane (its \u00a77); the cross-ISO close-out is docs/handoffs/FINDING-capx-d1-board-refresh-2026-08-23.md. No run was solved or re-scored to reach it. The former text \u2014 'the dominant T1-F blocker (4/6 ISOs); fix A1 and NEISO + PJM clear FC-1; un-actioned since FF-0B' \u2014 was wrong on every clause by the time it was read: A1 was actioned at FFR-1A, and closing it did not clear FC-1 anywhere, because I7 was underneath it."
   },
   {
-   "id": "I7 / A2",
-   "title": "Base-year adequacy",
+   "id": "I7 / I12 \u2014 A2",
+   "title": "Adequacy accounting \u2014 THE dominant T1-F blocker (6/6 ISOs)",
+   "status": "OPEN \u2014 dominant",
    "isos": [
+    "ERCOT",
     "CAISO",
+    "PJM",
     "MISO",
-    "NYISO"
+    "NYISO",
+    "NEISO"
    ],
-   "lane": "FF-1C (hydro-in-ledger) + CR-3.1 (VRE/storage ELCC)",
-   "detail": "Hydro dispatched but excluded from the accredited firm-capacity ledger (accredited_firm_capacity_mw reads the persistent fleet, which never contains hydro). NEISO closed via the FF-2C flip."
+   "lane": "FF-1C (hydro-in-ledger) + CR-3.1 (VRE/storage ELCC) + BLK-10 (entry sizing)",
+   "detail": "PROMOTED 2026-08-24 to the dominant-blocker row, replacing I4/A1. Adequacy accounting is the ONLY FC-1 family still failing, and it reaches every ISO: I7 (accredited firm capacity below the reliability requirement) FAILs in FIVE \u2014 CAISO (2026-2029, up to 9,243 MW), MISO (2026 6,037 MW; 2027 3,659 MW), NEISO (2028 218 MW), PJM (2030 366 MW), NYISO (2026 36 MW; 2027 51 MW) \u2014 and I12 (reserve-margin band) FAILs in TWO, ERCOT (2027-2030, to -1.5%) and CAISO (2026-2029, to -3.1%). Union = 6 of 6. The magnitudes span four orders: NYISO's 36 MW is 0.11% of its requirement, CAISO's 2027 miss is 15.8% of its. ROOT CAUSE (unchanged, and still the live one): hydro is dispatched but excluded from the accredited firm-capacity ledger \u2014 accredited_firm_capacity_mw reads the persistent fleet, which never contains hydro. CORRECTED 2026-08-24: this row read 'CAISO, MISO, NYISO' and claimed 'NEISO closed via the FF-2C flip'. NEISO is NOT closed \u2014 I7 (2028) is its sole live T1-F blocker \u2014 and PJM, whose I4 leak this board called its only blocker, fails I7 too. In PJM, NEISO and NYISO it is now the ONLY thing between the ISO and a clean FC-1."
   },
   {
    "id": "I3",
    "title": "ERCOT scarcity slack",
    "isos": [
-    "ERCOT"
+    "ERCOT",
+    "CAISO"
    ],
    "lane": "L-CAP / L-SCAR",
-   "detail": "Slack 0.01\u20130.03% of load 2027\u20132030, plus the #2064 non-monotone scarcity signature \u2014 one-pass discreteness + cfo/AEO fuel."
+   "detail": "ERCOT: slack 0.08% / 0.14% / 0.13% / 0.41% of load in 2027 / 2028 / 2029 / 2030, plus the #2064 non-monotone scarcity signature \u2014 one-pass discreteness + cfo/AEO fuel. CAISO carries a single I3 year (2030, 0.02% of load). CORRECTED 2026-08-24: the row read '0.01-0.03% of load 2027-2030', which is the superseded FF-2D vintage; the live ERCOT slack is 2.7x (2027) to 20.5x (2030) larger, year for year, and its worst year is the last. This is a WORSE reading than the board carried, reported at full magnitude (rule 1) \u2014 it moves no verdict, since I3 was and is an FC-1 FAIL."
   },
   {
    "id": "I13",
-   "title": "MISO gas_ct cobweb",
+   "title": "MISO gas_ct cobweb \u2014 CLOSED",
+   "status": "CLOSED",
    "isos": [
+    "none - CLOSED"
+   ],
+   "isos_formerly": [
     "MISO"
    ],
    "lane": "L-CAP entry-sizing (BLK-10 / FF-1A)",
-   "detail": "NEW, FF-2C flip-induced \u2192 FC-2 FAIL. Alternating gas_ct entry loop under the priced curve."
+   "detail": "CLOSED. The live MISO t1f record reads FC-2 row3 PASS, 'no cobweb (I13 PASS)', and MISO's FC-2 is CAVEAT (on the I12 WARN row alone), not FAIL. CORRECTED 2026-08-24: the row read 'NEW, FF-2C flip-induced \u2192 FC-2 FAIL. Alternating gas_ct entry loop under the priced curve', which is the superseded FF-2D vintage ('cobweb (I13 WARN => row FAIL): gas_ct(3)'). The alternating entry loop is not present on the live record. NOTE FOR THE D3 LANE: this closure is a SCORER-READ, not an attribution \u2014 no session in the record claims to have fixed the cobweb, and no control arm isolates what closed it, so D3 should treat 'why did I13 close' as an open question rather than a settled repair. It is NOT the G3 cap-grain regression: MISO's separate t1h retire.total_gw PASS\u2192FAIL flip from FFR-3A-3 stands untouched and is a different finding on a different tier."
   },
   {
    "id": "golden",
@@ -479,7 +506,7 @@
    "rank": 5,
    "title": "Base-year adequacy accounting",
    "lane": "FF-1C (hydro-in-ledger), CR-3.1 (ELCC)",
-   "detail": "FF-2B partially closed (NEISO I7 now PASSES); CAISO/NYISO I7 stay FAIL, dominated by hydro dispatched-but-unaccredited. Same family as honest-unfit I7/A2."
+   "detail": "The A2 family, now the program's dominant T1-F blocker \u2014 see honest_unfit 'I7 / I12 \u2014 A2'. I7 FAILs live in FIVE ISOs (CAISO, MISO, NEISO, PJM, NYISO) and I12 in TWO (ERCOT, CAISO); dominated by hydro dispatched-but-unaccredited. CORRECTED 2026-08-24: this read 'FF-2B partially closed (NEISO I7 now PASSES); CAISO/NYISO I7 stay FAIL'. NEISO's I7 does NOT pass on the live record \u2014 it is NEISO's sole T1-F blocker (2028, 218 MW) \u2014 and PJM and MISO fail it too."
   },
   {
    "rank": 6,
@@ -557,5 +584,15 @@
    "frontend/data/backcast/registry/<keeper-id>.json",
    "frontend/data/backcast/calibration-complete.json"
   ]
+ },
+ "d1_board_refresh": {
+  "note": "RECORDS-ONLY REFRESH \u2014 NOT A SCORING STAMP. No LP was built, no year was solved, no forecast run was re-scored, and nothing was registered on either dashboard. Like `gate_a_provenance`, this block deliberately avoids the forecast-provenance/v1 field names (`scored_at_sha`, `scored_at_date`, `schema`) so scripts/check_forecast_staleness.py can never read a records refresh as evidence of a re-score. Every verdict on this board still carries its own FF-2D / FFR-3A-2 / FFR-3A-3 / FFR-3A-4 scoring provenance, unmoved.",
+  "session": "capx-D1 board refresh",
+  "date": "2026-08-24",
+  "derived_at_sha": "3ca40e9b6534",
+  "derived_from": "frontend/data/forecast/ff-verdicts.json un-suffixed per-tier keys (t1f: session FFR-3A-2, scored_at_sha 8ba59281; t1x/t1h: the FFR-3A-3/3A-4 re-measurements each cell's own *_provenance note already names, scored_at_sha e2a422c1 / 6fbd3f28eb9a).",
+  "what_changed": "Per-ISO fc maps, blocking_rows, gate (b) verdict details and the ERCOT/PJM gate (c) crossover details, re-derived from the live records (most had been carrying the preserved superseded '-ff2d' vintage); the honest_unfit I4/A1 row rewritten as CLOSED and I7/I12 promoted to the dominant-blocker row; the MISO I13 row corrected to CLOSED; open_frontier rank 5 aligned to the same I7 fact; headline and gate_reading rewritten; all six top-level `keeper` display fields re-keyed; ERCOT's gate-(a) keeper id re-keyed to the 2026-08-24 ercot-231 promotion.",
+  "what_did_NOT_change": "EVERY determination, verdict and gate outcome. All six ISOs still read HOLD; gate (a) still passes for PJM/NYISO/NEISO (the full `complete` membership) and fails for ERCOT/CAISO/MISO on the marker; every gate leg's pass/fail/na status is byte-unchanged. The backcast registry, keeper shards, status/*.js and calibration-complete.json were read but never written (rule 15). No mechanism-matrix cell was minted (rule 28d). No out-of-training year was solved, scored or registered (rule 22; the holdout spend freeze is ACTIVE).",
+  "escalated_not_edited": "CAISO and NYISO gate (c) `c_crossover_gap` still read status='na' / 'not run'. NEITHER ISO HAS A T1-X RUN \u2014 no `caiso-t1x` or `nyiso-t1x` key exists in ff-verdicts.json and FC-4 reads n/a in every one of their verdicts \u2014 which is the IDENTICAL fact pattern neiso-88 used to move NEISO's leg (c) from 'na' to 'fail', since \u00a72.1b(c) requires the crossover input gap MEASURED, and an unrun leg is not a measured one. Applying that reading here would move two gate legs from na to fail and add 'c' to both ISOs' closed_on. THAT IS A GATE OUTCOME, outside this refresh's records-only remit, so it is ESCALATED, NOT EDITED. See the FINDING \u00a75."
  }
 }
