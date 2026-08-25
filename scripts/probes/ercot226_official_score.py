@@ -27,14 +27,15 @@ Replication chain (verbatim constructions, never re-derived conceptually):
   overlay branch this scorer deliberately refuses rather than mis-scores.)
 
 VALIDATION GATE (precommit §5.1): ``--validate-keeper`` runs the scorer on
-``results/calibration/ercot235_r10`` and hard-asserts the keeper's
-registered values: 2023 −13.5 % / 0.186 / 180 h (the keeper is 2023-only
-under the owner's invoked rule-16 waiver — see the ercot-235 log entry).
-No probe may be scored before this passes.
-(Re-pointed at ercot-236 from the superseded ``ercot231_tiegtc_full``
-expectations, which the ercot-235 promotion left stale — the ercot-234
-precedent; the scorer itself is unchanged and reproduced both keepers'
-registered values exactly.)
+``results/calibration/ercot236_k33_clip`` and hard-asserts the keeper's
+registered values: 2023 −7.3 % / 0.102 / 180 h (the keeper is 2023-only
+under the owner's invoked rule-16 waiver — see the ercot-235/236 log
+entries). No probe may be scored before this passes.
+(Re-pointed twice at ercot-236 — first from the superseded
+``ercot231_tiegtc_full`` expectations to the ercot-235 keeper, then to this
+session's own promoted winner at close — the ercot-234 precedent; the
+scorer itself is unchanged and reproduced every keeper's registered values
+exactly.)
 
 Run:
     python scripts/probes/ercot226_official_score.py --validate-keeper
@@ -54,17 +55,17 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 BENCH_DIR = REPO / "frontend" / "data" / "backcast" / "bench" / "ERCOT"
 TAIL_JSON = REPO / "frontend" / "data" / "backcast" / "tail" / "actual_tail.json"
-KEEPER_BUNDLE = REPO / "results" / "calibration" / "ercot235_r10"
+KEEPER_BUNDLE = REPO / "results" / "calibration" / "ercot236_k33_clip"
 
 #: Non-leap cumulative month-start hours (render_calibration_html._CUM).
 _CUM = np.cumsum([0] + [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]) * 24
 TAIL_THRESHOLD = 200.0  # ERCOT (calibration_verdict.TAIL_THRESHOLD default)
 
 #: The keeper's registered official values (frontend payload + bench,
-#: reproduced 2026-08-25 on ercot235_r10 — 2023-only keeper, owner's
+#: reproduced 2026-08-25 on ercot236_k33_clip — 2023-only keeper, owner's
 #: invoked rule-16 waiver): {year: (c3a magnitude, c3b nrmse, c3c model h)}.
 KEEPER_EXPECT = {
-    2023: ("-13.5%", "0.186", 180),
+    2023: ("-7.3%", "0.102", 180),
 }
 
 
