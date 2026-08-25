@@ -273,7 +273,14 @@ def main() -> int:
         f"MAX_LEDGERED_CAVEATS={CV.MAX_LEDGERED_CAVEATS}   "
         f"LEDGERABLE_CRITERIA={set(CV.LEDGERABLE_CRITERIA)}"
     )
-    print("SCORER NOT CHANGED — imported read-only; every hypothetical is re-derived here.")
+    print(
+        "THIS PROBE CHANGES NOTHING — calibration_verdict is imported read-only and every\n"
+        "hypothetical is re-derived here. (The owner ruled option B on 2026-08-25: the\n"
+        "measurement is now published as the BAND-FREE REPORTED-ONLY D-A row at rubric\n"
+        "v3.5. NO GATING criterion was added — the CRITERIA / LEDGERABLE_CRITERIA /\n"
+        "MAX_LEDGERED_CAVEATS values printed above are the untouched originals, and the\n"
+        "band sweep below remains a HYPOTHETICAL that no determination has ever used.)"
+    )
 
     # ------------------------------------------------------------------ part A
     hdr("A. amplitude re-taken at HEAD (all six CURRENT keepers)")
