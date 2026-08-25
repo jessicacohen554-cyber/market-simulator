@@ -265,10 +265,9 @@ def _verdict_json(bundle: Path) -> dict:
 def _d4_fail_keys(bundle: Path) -> set[tuple]:
     led = json.loads((bundle / "legitimacy_diagnostics.json").read_text())
     out = set()
-    for year, rec in (led.get("years") or {}).items():
-        for r in (rec.get("D4") or {}).get("rows", []) or []:
-            if r.get("verdict") == "FAIL":
-                out.add((year, r.get("mechanism"), r.get("klass"), r.get("zone")))
+    for r in ((led.get("diagnostics") or {}).get("D4") or {}).get("rows", []) or []:
+        if str(r.get("verdict", "pass")).lower() != "pass":
+            out.add((r.get("year"), r.get("check"), r.get("floor"), r.get("plant")))
     return out
 
 
@@ -283,10 +282,12 @@ def _crit_status(verdict: dict) -> dict:
 
 
 def _c3a(verdict: dict) -> dict:
+    """C3a (RT, %) per year from the verdict's price_mean RT-benchmark rows."""
     out = {}
     for rec in verdict["criteria"]["price_mean"]["records"]:
-        if rec.get("key") == "rt":
-            out[int(rec["year"])] = float(rec["model_vs_actual_pct"])
+        if rec.get("benchmark") == "RT" and rec.get("key") is None:
+            m, a = float(rec["model"]), float(rec["actual"])
+            out[int(rec["year"])] = 100.0 * (m - a) / a
     return out
 
 
@@ -301,10 +302,7 @@ def s4_s5() -> dict:
         for k in set(sc) | set(sa)
         if sc.get(k) != sa.get(k)
     }
-    c8_ok = all(
-        (va["criteria"].get("forced_budget") or {}).get("status", "PASS") != "FAIL"
-        for _ in (1,)
-    )
+    c8_ok = (va["criteria"].get("forced_share") or {}).get("status") != "FAIL"
     out["S4"] = {
         "gate": "S-4",
         "d4_fail_control": sorted(map(list, d4_c)),
