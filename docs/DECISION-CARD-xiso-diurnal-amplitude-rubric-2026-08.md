@@ -1,8 +1,37 @@
 # DECISION CARD — should the rubric gain a DIURNAL PRICE-AMPLITUDE criterion?
 
+> **RULED 2026-08-25 (session `xiso-amplitude-rubric-card`): OPTION B — ADDED AS
+> REPORTED-ONLY, AND BAND-FREE.** The owner selected (B), the recommendation
+> below. **Rubric v3.5** adds **D-A** (`calibration_verdict.score_diurnal_amplitude`,
+> rubric §D-A): the hour-of-day amplitude ratio, phase check and profile
+> correlation are published on every run and contribute **no status and no
+> caveat budget**. Band-free per §5(B): no external comparable exists to anchor
+> a threshold, so the number is published without a verdict. **`CRITERIA`,
+> `LEDGERABLE_CRITERIA` (`{price_tail}`) and `MAX_LEDGERED_CAVEATS` (1) are
+> UNCHANGED, and no determination moved** — verified by re-scoring all 55
+> registered runs before and after (zero diffs; 161 D-A records, 0 skipped),
+> pinned by `test_IT_CANNOT_GATE`. Scorer-only: every already-registered run
+> scores in place, no solve and no bundle regeneration.
+>
+> **Two things the ruling deliberately does NOT do**, both established below and
+> unchanged by it: **§6 stands — NEISO's PS lane is NOT unblocked** (the
+> DO-NOT-REDO is a mechanism finding; a criterion changes no dispatch), and the
+> open act there remains a charter for the neiso-76 stack-traversal route. And
+> **the defect itself is not closed** — (B) is a disclosure, so nothing is
+> obliged to close it; §5(C)'s cost is mitigated, not paid.
+>
+> Carried in the same amendment, found while implementing and reported rather
+> than buried: `REPORTED_ONLY` records were **computed and silently dropped**
+> since v2.9 (so C5a `co2` reported nothing) — now surfaced in a `reported`
+> block; and `lmpDeltaHr`'s `-32768` NaN sentinel, unmasked, inflates MISO 2025's
+> amplitude from 20.8 % to 186.9 % — masked here, and **filed for other lanes:
+> at least seven committed probes decode that field directly.**
+
 **Raised by session `xiso-amplitude-rubric-card`, 2026-08-25.** The call was
 filed first by **neiso-74** (2026-08-01) and re-filed by **xiso-1** (2026-08-01);
-it has never been answered. **NOTHING IS DECIDED BY THIS CARD.**
+it has never been answered. **THE CARD ITSELF DECIDED NOTHING** — the ruling
+above was taken by the owner on the analysis below, which is preserved verbatim
+as the basis for it.
 
 **No solve was spent.** Every number is measured on committed artifacts
 (`scripts/probes/_xiso6_amplitude_criterion_band_probe.py`, transcript
