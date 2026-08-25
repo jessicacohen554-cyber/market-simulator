@@ -1,0 +1,468 @@
+{
+ "probe": "nyiso-155 hydro truncation repair RE-ARM A/B",
+ "prereg": "results/calibration/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md",
+ "arms": {
+  "A_control": "nyiso155_hydro_control",
+  "B_repair": "nyiso155_hydro_repair",
+  "keeper": "nyiso152_armSE"
+ },
+ "gates": {
+  "G1_ident": {
+   "per_year": {
+    "2023": {
+     "max_abs_dispatch_mw": 658.403076,
+     "max_abs_price": 2.184513
+    },
+    "2024": {
+     "max_abs_dispatch_mw": 457.894409,
+     "max_abs_price": 2.60594
+    },
+    "2025": {
+     "max_abs_dispatch_mw": 0.0,
+     "max_abs_price": 0.0
+    }
+   },
+   "bar": 0.0,
+   "passed": false
+  },
+  "G2_single_delta": {
+   "differing_keys": {
+    "hydro_backfill_year": {
+     "A": null,
+     "B": 2024
+    },
+    "hydro_eia930_monthly": {
+     "A": false,
+     "B": true
+    }
+   },
+   "n_differing": 2,
+   "expected": [
+    "hydro_backfill_year",
+    "hydro_eia930_monthly"
+   ],
+   "passed": true
+  },
+  "G8_legitimacy": {
+   "control_failing": [
+    "diagnostics/D4/rows[33]",
+    "diagnostics/D4/rows[44]",
+    "diagnostics/D4/rows[4]"
+   ],
+   "arm_failing": [
+    "diagnostics/D4/rows[33]",
+    "diagnostics/D4/rows[44]",
+    "diagnostics/D4/rows[4]"
+   ],
+   "new_failing_on_arm": [],
+   "passed": true
+  }
+ },
+ "report": {
+  "G3_input_effect": {
+   "per_year": {
+    "2023": {
+     "A_twh": 28.38330078125,
+     "B_twh": 26.832799911499023,
+     "delta_twh": -1.5505,
+     "expected_budget_delta_twh": -1.5668
+    },
+    "2024": {
+     "A_twh": 27.82939910888672,
+     "B_twh": 26.73900032043457,
+     "delta_twh": -1.0904,
+     "expected_budget_delta_twh": -1.1287
+    },
+    "2025": {
+     "A_twh": 21.048200607299805,
+     "B_twh": 24.058900833129883,
+     "delta_twh": 3.0107,
+     "expected_budget_delta_twh": 3.0143
+    }
+   },
+   "note": "report-class; deviations explained, never tuned"
+  },
+  "G4_volume_TAUTOLOGICAL_BY_CONSTRUCTION": {
+   "per_year": {
+    "2023": {
+     "A_twh": 28.38330078125,
+     "B_twh": 26.832799911499023,
+     "A_vs_bench_pct": 1.26,
+     "B_vs_bench_pct_TAUTOLOGICAL": -4.28,
+     "A_vs_p63_pct": 4.41,
+     "B_vs_p63_pct": -1.29
+    },
+    "2024": {
+     "A_twh": 27.82939910888672,
+     "B_twh": 26.73900032043457,
+     "A_vs_bench_pct": 1.33,
+     "B_vs_bench_pct_TAUTOLOGICAL": -2.64,
+     "A_vs_p63_pct": 3.16,
+     "B_vs_p63_pct": -0.88
+    },
+    "2025": {
+     "A_twh": 21.048200607299805,
+     "B_twh": 24.058900833129883,
+     "A_vs_bench_pct": -12.68,
+     "B_vs_bench_pct_TAUTOLOGICAL": -0.19,
+     "A_vs_p63_pct": -13.2,
+     "B_vs_p63_pct": -0.78
+    }
+   },
+   "note": "TAUTOLOGICAL BY CONSTRUCTION under the 930 level pin \u2014 budget and benchmark are the same series. Declared plumbing (prereg \u00a74); no skill claim is made from it and no promotion argument may lean on it, in any direction."
+  },
+  "G5_shape": {
+   "per_year": {
+    "2023": {
+     "hourly_r": {
+      "A": 0.7392,
+      "B": 0.6908
+     },
+     "daily_r": {
+      "A": 0.5157,
+      "B": 0.4312
+     },
+     "hod_profile_r": {
+      "A": 0.9856,
+      "B": 0.9707
+     },
+     "hod_swing_mw": {
+      "measured": 1304.7,
+      "A": 1560.9,
+      "B": 1643.5
+     },
+     "monthly_shape_r_vs_p63": {
+      "A": 0.9925,
+      "B": 0.988
+     },
+     "annual_peak_month": {
+      "p63": 1,
+      "A": 1,
+      "B": 1
+     }
+    },
+    "2024": {
+     "hourly_r": {
+      "A": 0.7946,
+      "B": 0.7555
+     },
+     "daily_r": {
+      "A": 0.7203,
+      "B": 0.6451
+     },
+     "hod_profile_r": {
+      "A": 0.9885,
+      "B": 0.9788
+     },
+     "hod_swing_mw": {
+      "measured": 1404.6,
+      "A": 1633.0,
+      "B": 1652.1
+     },
+     "monthly_shape_r_vs_p63": {
+      "A": 0.9851,
+      "B": 0.9911
+     },
+     "annual_peak_month": {
+      "p63": 3,
+      "A": 3,
+      "B": 3
+     }
+    },
+    "2025": {
+     "hourly_r": {
+      "A": 0.5621,
+      "B": 0.7118
+     },
+     "daily_r": {
+      "A": 0.3161,
+      "B": 0.4367
+     },
+     "hod_profile_r": {
+      "A": 0.9879,
+      "B": 0.9838
+     },
+     "hod_swing_mw": {
+      "measured": 1829.7,
+      "A": 1049.3,
+      "B": 1902.9
+     },
+     "monthly_shape_r_vs_p63": {
+      "A": 0.9251,
+      "B": 0.9943
+     },
+     "annual_peak_month": {
+      "p63": 5,
+      "A": 5,
+      "B": 5
+     }
+    }
+   },
+   "note": "direction-blind, full magnitude (prereg G5)"
+  },
+  "G6_G7_scorecards": {
+   "keeper": {
+    "determination": "NOT-YET",
+    "reasons": [
+     "governance gate UNATTESTED: no governance attestation in bundle"
+    ],
+    "criteria": {
+     "fuelmix": "PASS",
+     "sysvol": "PASS",
+     "price_mean": "PASS",
+     "price_shape": "PASS",
+     "price_tail": "FAIL",
+     "dispatch_corr": "PASS",
+     "governance": "UNATTESTED",
+     "forced_share": "PASS"
+    },
+    "caveats": {
+     "protective": [],
+     "ledgered": [],
+     "commercial_band": [],
+     "budget": {
+      "protective_max": 0,
+      "ledgered_max": 1
+     }
+    },
+    "free_class_headline": "C1 all 14/14 \u00b7 free 10/10"
+   },
+   "A_control": {
+    "determination": "CALIBRATED",
+    "reasons": [
+     "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+    ],
+    "criteria": {
+     "fuelmix": "PASS",
+     "sysvol": "PASS",
+     "price_mean": "PASS",
+     "price_shape": "PASS",
+     "price_tail": "CAVEAT",
+     "dispatch_corr": "PASS",
+     "governance": "PASS",
+     "forced_share": "PASS"
+    },
+    "caveats": {
+     "protective": [],
+     "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+     ],
+     "commercial_band": [],
+     "budget": {
+      "protective_max": 0,
+      "ledgered_max": 1
+     }
+    },
+    "free_class_headline": "C1 all 14/14 \u00b7 free 10/10"
+   },
+   "B_repair": {
+    "determination": "NOT-YET",
+    "reasons": [
+     "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_tail"
+    ],
+    "criteria": {
+     "fuelmix": "PASS",
+     "sysvol": "PASS",
+     "price_mean": "FAIL",
+     "price_shape": "PASS",
+     "price_tail": "FAIL",
+     "dispatch_corr": "PASS",
+     "governance": "PASS",
+     "forced_share": "PASS"
+    },
+    "caveats": {
+     "protective": [],
+     "ledgered": [],
+     "commercial_band": [],
+     "budget": {
+      "protective_max": 0,
+      "ledgered_max": 1
+     }
+    },
+    "free_class_headline": "C1 all 14/14 \u00b7 free 10/10"
+   }
+  },
+  "side_effects_full_magnitude": {
+   "2023": {
+    "mean_lambda": {
+     "A": 33.9606,
+     "B": 34.4465
+    },
+    "tail_hours_gt_300_probe_basis": {
+     "A": 0,
+     "B": 0
+    },
+    "class_twh": {
+     "A": {
+      "CC_CHP": 15.572600364685059,
+      "CC_REGULAR": 30.90410041809082,
+      "CT_CHP": 1.398900032043457,
+      "CT_PEAKER": 0.3294000029563904,
+      "OTHER": 2.1972999572753906,
+      "ST_CHP": 1.0809999704360962,
+      "ST_GAS": 10.035099983215332,
+      "biomass": 0.8395000100135803,
+      "hydro": 28.38330078125,
+      "import": 23.922800064086914,
+      "nuclear": 27.48710060119629,
+      "oil": 0.11249999701976776,
+      "solar": 0.28110000491142273,
+      "wind": 4.600900173187256
+     },
+     "B": {
+      "CC_CHP": 16.02359962463379,
+      "CC_REGULAR": 31.594499588012695,
+      "CT_CHP": 1.4652999639511108,
+      "CT_PEAKER": 0.33709999918937683,
+      "OTHER": 2.1972999572753906,
+      "ST_CHP": 1.104599952697754,
+      "ST_GAS": 10.36620044708252,
+      "biomass": 0.8395000100135803,
+      "hydro": 26.832799911499023,
+      "import": 23.922800064086914,
+      "nuclear": 27.48710060119629,
+      "oil": 0.11249999701976776,
+      "solar": 0.28110000491142273,
+      "wind": 4.600900173187256
+     }
+    },
+    "max_by_class_delta_mw": {
+     "CC_CHP": 914.3809,
+     "CC_REGULAR": 1310.8828,
+     "CT_CHP": 113.2893,
+     "CT_PEAKER": 207.0153,
+     "OTHER": 0.0,
+     "ST_CHP": 140.263,
+     "ST_GAS": 724.7398,
+     "biomass": 0.0,
+     "hydro": 1881.0837,
+     "import": 1823.0405,
+     "nuclear": 0.0,
+     "oil": 98.7153,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   },
+   "2024": {
+    "mean_lambda": {
+     "A": 37.1266,
+     "B": 37.4554
+    },
+    "tail_hours_gt_300_probe_basis": {
+     "A": 0,
+     "B": 0
+    },
+    "class_twh": {
+     "A": {
+      "CC_CHP": 17.75950050354004,
+      "CC_REGULAR": 36.25210189819336,
+      "CT_CHP": 1.2059999704360962,
+      "CT_PEAKER": 0.23639999330043793,
+      "OTHER": 2.2014000415802,
+      "ST_CHP": 1.0944000482559204,
+      "ST_GAS": 8.627799987792969,
+      "biomass": 0.7597000002861023,
+      "hydro": 27.82939910888672,
+      "import": 20.753799438476562,
+      "nuclear": 26.95319938659668,
+      "oil": 0.3407000005245209,
+      "solar": 0.5860999822616577,
+      "wind": 6.011600017547607
+     },
+     "B": {
+      "CC_CHP": 18.176599502563477,
+      "CC_REGULAR": 36.77109909057617,
+      "CT_CHP": 1.228700041770935,
+      "CT_PEAKER": 0.24079999327659607,
+      "OTHER": 2.2014000415802,
+      "ST_CHP": 1.1140999794006348,
+      "ST_GAS": 8.755599975585938,
+      "biomass": 0.7597000002861023,
+      "hydro": 26.73900032043457,
+      "import": 20.753799438476562,
+      "nuclear": 26.95319938659668,
+      "oil": 0.3425999879837036,
+      "solar": 0.5860999822616577,
+      "wind": 6.011600017547607
+     }
+    },
+    "max_by_class_delta_mw": {
+     "CC_CHP": 819.9078,
+     "CC_REGULAR": 1254.4382,
+     "CT_CHP": 185.5615,
+     "CT_PEAKER": 410.0984,
+     "OTHER": 0.0,
+     "ST_CHP": 149.3955,
+     "ST_GAS": 736.2346,
+     "biomass": 0.0,
+     "hydro": 2029.8713,
+     "import": 2171.1252,
+     "nuclear": 0.0,
+     "oil": 228.1074,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   },
+   "2025": {
+    "mean_lambda": {
+     "A": 61.0358,
+     "B": 59.241
+    },
+    "tail_hours_gt_300_probe_basis": {
+     "A": 0,
+     "B": 0
+    },
+    "class_twh": {
+     "A": {
+      "CC_CHP": 20.246400833129883,
+      "CC_REGULAR": 36.52909851074219,
+      "CT_CHP": 1.872499942779541,
+      "CT_PEAKER": 1.080199956893921,
+      "OTHER": 1.9483000040054321,
+      "ST_CHP": 1.5145000219345093,
+      "ST_GAS": 10.125200271606445,
+      "biomass": 0.6723999977111816,
+      "hydro": 21.048200607299805,
+      "import": 19.376100540161133,
+      "nuclear": 28.34160041809082,
+      "oil": 1.1642999649047852,
+      "solar": 0.9812999963760376,
+      "wind": 7.048699855804443
+     },
+     "B": {
+      "CC_CHP": 19.513700485229492,
+      "CC_REGULAR": 35.23680114746094,
+      "CT_CHP": 1.7329000234603882,
+      "CT_PEAKER": 0.9207000136375427,
+      "OTHER": 1.9483000040054321,
+      "ST_CHP": 1.440600037574768,
+      "ST_GAS": 9.377099990844727,
+      "biomass": 0.6723999977111816,
+      "hydro": 24.058900833129883,
+      "import": 19.342199325561523,
+      "nuclear": 28.34160041809082,
+      "oil": 1.1220999956130981,
+      "solar": 0.9812999963760376,
+      "wind": 7.048699855804443
+     }
+    },
+    "max_by_class_delta_mw": {
+     "CC_CHP": 871.7478,
+     "CC_REGULAR": 2173.2651,
+     "CT_CHP": 197.1326,
+     "CT_PEAKER": 1151.2477,
+     "OTHER": 0.0,
+     "ST_CHP": 193.0891,
+     "ST_GAS": 1886.6719,
+     "biomass": 0.0,
+     "hydro": 2845.1003,
+     "import": 2312.1211,
+     "nuclear": 0.0,
+     "oil": 1544.3999,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   }
+  }
+ }
+}

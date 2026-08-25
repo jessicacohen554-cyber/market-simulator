@@ -179,7 +179,8 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     hydro_ror_split: { cell: "G", ev: "nyiso-111 (classifier review ANSWERED, falsified ex-ante, no solve — FINDING-nyiso111-ramp-envelopes-2026-08-02.md §3)" },
     hydro_budget_nameplate_aware: { cell: "I", ev: "nyiso-106 (basis audit, no solve) / nyiso-107 (I: provably inert, input truncation found — FINDING-nyiso107-hydro-input-truncation-2026-07-31.md)" },
     hydro_level_923_hy: { cell: ".", ev: "neiso-72 (FINDING-neiso72-hydro-ps-window-2026-07-31.md; probe _neiso72_ps_window_audit.py)" },
-    hydro_vintage_input_repair: { cell: "K", ev: "nyiso-107 (defect found, chartered) / nyiso-108 (K, promoted — FINDING-nyiso108-hydro-input-repair-2026-07-31.md)" },
+    hydro_vintage_input_repair: { cell: "O", ev: "nyiso-107 (defect found, chartered) / nyiso-108 (K, promoted by owner override — FINDING-nyiso108-hydro-input-repair-2026-07-31.md) / nyiso-155 (2026-08-25, the chartered re-arm: K -> O — FINDING-nyiso-hydro-truncation-repair-2026-08.md, PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md, _nyiso155_hydro_repair_ab.json; runs 2026-08-25-nyiso-155-hydro-control / -hydro-repair)",
+      note: "O = LIVE, UNREFUTED, ARMED ON NO KEEPER (the nyiso-128 solar-basis convention), with an OWNER ESCALATION PENDING. nyiso-155 discovered the pair had been armed+promoted at nyiso-108 (2026-07-31) and then fell out of the keeper lineage SILENTLY between nyiso-114 (2026-08-02, recipe still 2024/true) and nyiso-144 (2026-08-18, None/false) — no de-arm decision anywhere in the record; the two flags are solve_and_persist kwargs, structurally invisible to the ScenarioConfig-field lineage-fidelity checks (miso-50..53 lossy-reconstruction class, in the keeper lineage itself). The nyiso-155 pre-registered re-arm A/B on the nyiso-152 keeper reproduces the nyiso-108 deltas EXACTLY (-1.5505/-1.0904/+3.0107 TWh; 2025 fleet 3 -> 147 units) and lands: 2025 SHAPE improves on every statistic (hourly r 0.562->0.712, monthly-vs-P63 r 0.925->0.994, hod swing 1049->1903 MW vs measured 1830); volume -4.28/-2.64/-0.19 % TAUTOLOGICAL BY CONSTRUCTION under the 930 pin (declared, never banked); C3a 2024 improves -2.6->-1.7, 2023 +5.3->+6.8 in-band, and 2025 -8.1 -> -10.8 % FAILS the +/-10 band — the truncated input was MASKING ~2.7 pp of the real, already-owner-court 2025 offer-level object (DECISION-CARD-nyiso148-2025-level-remainder), whose magnitude is ~$1.79/MWh larger than the truncated baseline showed. Determination CALIBRATED -> NOT-YET, so per the prereg the promotion is ESCALATED TO THE OWNER, never self-adjudicated (the exact nyiso-108 owner-override precedent, transposed to 2025). G1 also on the record: the zero-delta control is NOT bit-identical to the committed keeper in 2023/2024 (max hourly |dlambda| 2.18/2.61, annual mean +0.016/+0.018 $/MWh; 2025 exact; all pinned inputs + demand + reserve requirements bit-identical; degenerate alternative-optima reshuffle class) while remaining determination-identical (CALIBRATED). Rule 14 stands in both directions: the accurate input is right, the 2025 miss it reveals is a discovered defect of the 2025 price level, and neither reverting the input nor overwriting a CALIBRATED frontier-ratified keeper is this lane's call." },
     ercot_wind_zone_shape: { cell: "K" },
     battery_dispatch_adder: { cell: "." },
     ercot_storage_rt_offer_surface: { cell: "." },
@@ -735,4 +736,35 @@ window.MECH_MATRIX_SHARDS.NYISO = {
  * Evidence: results/calibration/FINDING-nyiso137-rtd-clock-graded-against-zone-k-gates-2026-08-16.md,
  * docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md,
  * docs/calibration-log/nyiso.md 2026-08-16.
+ */
+
+/* 2026-08-25 (nyiso-155) — hydro_vintage_input_repair K -> O; the chartered
+ * re-arm A/B executed and ESCALATED.
+ *
+ * ONE cell moves, and it moves for RECORD-TRUTH, not adjudication: K claimed
+ * the pair was a keeper mechanism, and no keeper has carried it since the
+ * lineage silently dropped it between nyiso-114 (2026-08-02) and nyiso-144
+ * (2026-08-18) — no de-arm decision anywhere; the two flags are
+ * solve_and_persist kwargs, invisible to the "all 680 scenario_config fields
+ * identical" lineage-fidelity checks (the miso-50..53 lossy-reconstruction
+ * class, landed in the keeper lineage itself). The current keeper's own
+ * committed sidecars sum hydro to the UNREPAIRED 28.3833/27.8294/21.0482 TWh.
+ *
+ * The pre-registered re-arm (PREREG pushed + blob-verified BEFORE any
+ * measurement) reproduces the nyiso-108 deltas exactly and lands the
+ * nyiso-108 trade transposed to 2025: shape strongly better in the repaired
+ * year, volume tautological-by-construction (declared, never banked), C3a
+ * 2025 -8.1 -> -10.8 % FAIL — the truncation was masking ~2.7 pp of the
+ * already-owner-court 2025 offer-level object. CALIBRATED -> NOT-YET, so
+ * promotion is ESCALATED per the prereg; keeper, keeper stamp, gates header
+ * and frontier block are all UNCHANGED by this session. G1 drift also on
+ * record: the zero-delta control is not bit-identical to the keeper in
+ * 2023/2024 (degenerate alternative-optima class; determination-identical,
+ * CALIBRATED).
+ *
+ * Evidence: docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md,
+ * results/calibration/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md,
+ * results/calibration/_nyiso155_hydro_repair_ab.json,
+ * runs 2026-08-25-nyiso-155-hydro-control / 2026-08-25-nyiso-155-hydro-repair,
+ * docs/calibration-log/nyiso.md 2026-08-25.
  */

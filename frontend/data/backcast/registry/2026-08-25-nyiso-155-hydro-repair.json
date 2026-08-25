@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-25-nyiso-155-hydro-repair",
+  "label": "nyiso 155 hydro repair",
+  "date": "2026-08-25",
+  "shorthand": "nyiso-155-hydro-repair",
+  "definition": "nyiso-155 hydro truncation repair arm (backfill 2024 + EIA-930 monthly level pin; PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-25-nyiso-155-hydro-repair.js",
+  "bundle": "results/calibration/nyiso155_hydro_repair"
+}
