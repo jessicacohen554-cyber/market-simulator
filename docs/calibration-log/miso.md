@@ -8712,3 +8712,96 @@ model-class concession inside C3a-2025.
 Rule 22: 2023–2025 only; MISO holds neither marker; freeze untouched; no
 re-key owed. Rule 23: the ladder stands NOT re-derived. Rule 27: exact
 bytes, every pushed blob ≥ 300 lines verified. Next number: **miso-185.**
+
+## miso-185 (2026-08-25) — the SOUTH FIRM-EXPORT EVIDENCE HUNT closes V-NEG-ABSENT: the miso-182 §6b re-open data does not exist — `miso_south_firm_export_block` stays `G` with the re-open NARROWED, and the D-4 posture question goes to the owner with the ~1.3 GW model-class concession. NO LP
+
+Executes `PREREG-miso185-south-firm-export-evidence-hunt-2026-08-25.md`
+(committed 9b1b2b4 BEFORE any source was touched; probe 1208d3d; the
+698-report evidence corpus ac0ad78, in the prereg's own order). NO LP;
+keeper `2026-08-22-miso-177-rho-measured` unchanged; determination unchanged
+(NOT-YET on C3a-2025 alone, C3c the single ledgered caveat); no cell minted
+(the conditional build's license never fired).
+
+**E-1, the load-bearing rung.** The FERC EQR Report Viewer serves per-seller
+summary reports as session-free PDFs (`Summary_Report.aspx`: Company =
+energy sales and bookouts by customer, top-10 with coverage row; Region =
+by delivery-point Balancing Authority, EXHAUSTIVE); the Selective-Filings
+full-CSV route is email-gated and unreachable here. Seller CIDs are
+PERIOD-SPECIFIC — the v1 sweep applied 2025Q3 CIDs everywhere and silently
+rendered every other quarter's header over an empty body; caught,
+preserved in the JSON (`e1_v1_defective_period_cids`), corrected via the
+per-period seller-list dance. The corrected screen: **698 seller-quarter
+reports, 12/12 quarters 2023Q1–2025Q4, 0 fetch failures** over the E-0
+panel (326 MISO-South plants, 57.9 GW; the six Entergy opcos +
+Power/Services + SERI, Cleco Power/Cajun, LaGen, the NRG fleet + marketing
+arm, Plum Point, Carville, Bayou Cove, and the co-op G&Ts AECC +
+Cooperative Energy (MS)). **Every MISO-South jurisdictional seller sells to
+MISO + affiliates ONLY — no pool customer, no pool delivery-BA, any
+quarter.** The largest cross-seam trace: EAL→AECI at $1,188–$1,919 per
+quarter (3 lines, every quarter — the 1957-fence interconnection class,
+five orders below the object). All 72 pool-token hits classify to four
+non-qualifying families: AECI's own filing (the IMPORT side, ~1.0–1.1
+TWh/qtr INTO the EAI BA — the −0.44 GW pool leg corroborated), TVA's own
+fence sales (~0.05–0.12 TWh/qtr, in TVA's BA), a Georgia-side name
+collision (C001933, SOCO-internal), and the EAL trivia. Where top-10
+coverage < 100 % (NRG Business Marketing 34–85 %), the exhaustive Region
+leg closes the gap: no pool BA appears.
+
+**The other rungs.** E-3 GFAs: MISO Attachment P (eff. 2026-04-19, 101 pp)
+carries ZERO Entergy-legacy/TVA/PowerSouth rows (its AECI/LG&E/KU entries
+are Midwest transmission contracts). E-4 legacy UPS: the survivors are the
+internal Grand Gulf UPSA, the MISO–TVA EMERGENCY-energy agreement
+(2024-10-24; adjudicated not-a-block at miso-182 §6), and the 1957-fence
+exchanges. E-5 pseudo-ties: no by-counterparty inventory exists
+(name-probe bounded), and pseudo-tie flow is a component INSIDE the
+unapportionable RDT calculation. E-2 OASIS: OATI certificate-gated at
+transport, UNREACHABLE — corrob-class by the PREREG regardless. E-6 TVA
+10-Ks FY2022–FY2025: **no MISO-South PPA in any year** (the
+Coal-Mississippi 500 MW row is the SOCO-side Plant-Daniel class; the
+MISO-facing rows are MIDWEST wind/gas — outside the South boundary-complex
+measure); TVA's actual MISO-facing construct is 2,792→4,750→3,750 MW of
+reserved RTO TRANSMISSION "to support purchases from the market" — the
+**V-NEG-SPOT sharpening**: the real scarce export's external face is spot
+purchases over firm transmission — price-inelastic from MISO's side
+(exactly the miso-184 mechanism signature) yet contract-FORMLESS, with no
+term × MW to regenerate under rule 13 — plus an FY2023-ONLY sub-year
+1,050 MW "Delivered Energy" bridge class (absent FY2022 and FY2024).
+
+**Verdict, by the frozen mapping: V-NEG-ABSENT.** B_y = 0 in all years;
+the conditional build (Manitoba form, PREREG-miso184 §6 gates verbatim)
+was never licensed; no A/B, no field, no re-derive. The cell stays `G`
+with the re-open NARROWED: the seller-scoped EQR summary route is
+EXHAUSTED — only contract-grain evidence (term × MW naming a MISO-South
+resource obligated to a pool counterparty: the full-CSV EQR corpus, a FERC
+docket, a counterparty disclosure) or a published by-counterparty
+contract-path series can re-open; another transaction summary cannot.
+Bounds disclosed against the close: 24–34 un-enumerated EQR sellers
+deliver in the TVA BA per quarter (TVA's own PPA tables account for the
+class); the RTO's resale side is invisible (MISO Inc.'s seller-side
+summaries EMPTY all quarters — the spot leg is corroborated by TVA's
+disclosures, never quantified here); SERI/Entergy-Services report no
+energy lines (internal constructs); capacity-only sales are invisible
+(move no scarce-hour energy); the FilingInquiries tab was not drilled
+(NOT-EXHAUSTED).
+
+**What this hands the owner (D-4, fully briefed):** C3a-2025 (−11.7 %)
+stays the sole failing criterion on a zero-conduct-failure keeper; the
+offer family is exhausted (miso-179/180), the import-side seam family
+adjudicated end to end, the export-ladder tail unrepairable in its class
+(miso-184), and the one named data road now closed negative. The honest
+residual is ≈1.3 GW of scarce-set South export (GAP +1.272 GW; basis-free
+floor ≥0.93 GW) the model class cannot currently carry. Remaining roads:
+the Midwest-stack internal-direction object (prediction unchanged: flip
+the scarce-hour RDT toward the measured 32/47 S→N record), a
+state-conditioned export mechanism-in-kind (owner charter — this finding
+is affirmative evidence FOR it), or the ledgered concession. This session
+recommends none over another and decides nothing.
+
+Rule 22: 2023–2025 only (every EQR retrieval bounded to 2023Q1–2025Q4);
+MISO holds neither marker; freeze untouched; no re-key owed. Rule 26(b):
+this entry + the §5.4 queue stamp + the `miso_south_firm_export_block`
+evidence-line update in MISO's shard; `check_mechanism_matrix.py` run
+before the push. Rule 27: exact bytes, every pushed blob ≥ 300 lines
+verified. Records: `FINDING-miso185-south-firm-export-evidence-hunt-2026-08-25.md`,
+`_miso185_firm_export_hunt.json`, `_miso185_eqr_pdfs/` (698 PDFs),
+`scripts/probes/_miso185_firm_export_hunt.py`. Next number: **miso-186.**
