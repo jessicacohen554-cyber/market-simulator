@@ -6,8 +6,55 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-25 (refresh #5) ·
-**HEAD at refresh:** `99c8cf5` · **Owner cards A/B/C SIGNED 2026-08-25** (§3)
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-25 (refresh #6) ·
+**HEAD at refresh:** `6af12ee` · **Owner cards A/B/C SIGNED 2026-08-25** (§3)
+
+---
+
+## 0c. Refresh #6 — no lane started; three keeper promotions, and NYISO's gate-(a) BASIS moved under us
+
+**1. NONE OF THE SIX PROMPTS HAS BEEN STARTED.** `git ls-remote` at `6af12ee`: no `capx-*` branch
+exists except this ledger. D7, D10, D11, S-123, S-4 and S-5 all stand as written
+(`docs/handoffs/capx-director-prompt-pack-2026-08.md`); the only thing that moved under them is
+`main` (`99c8cf5` → `6af12ee`), which every prompt already handles by fetching fresh.
+
+**2. NYISO'S KEEPER IS NOW NOT-YET, AND IT STILL HOLDS `complete`.** Promoted 2026-08-25:
+**`2026-08-25-nyiso-155-hydro-repair`** (the hydro truncated-vintage repair pair
+`hydro_backfill_year=2024` + `hydro_eia930_monthly=true`, zero fitted scalars), **NOT-YET on
+price_mean + price_tail**. Promoted BY OWNER RULING on structural integrity over gate regression,
+with **the D-5(b) worse-determination stop FIRED, ESCALATED, and resolved by that ruling**; the
+determination is written explicitly into the marker (nyiso-120 precedent). C3a-2025 −8.1 → −10.8 %
+because the truncation had been **masking ~2.7 pp of the real 2025 offer-level object**. **Frontier
+status returned to the owner** — the 2026-08-23 ratification's CALIBRATED premise no longer holds.
+
+→ **This moves the BASIS under my refresh-#5 headline, and I state it plainly rather than let it
+stand.** Gate (a)'s literal test (charter §2.1b(2)(a)) is *a designated full-span keeper AND an
+entry in the `complete` block*, and NYISO still satisfies both, so **gate (a) reads pass on the
+test as written**. But the marker now rests on a NOT-YET keeper — **precisely the fact pattern that
+withdrew CAISO's marker on 2026-08-06** ("a `complete` marker cannot stand on a NOT-YET keeper").
+The two are reconciled only by the owner's explicit ruling. **That is an owner-tier question, not
+mine: it is Q5.** Leg (b) is untouched — it is the forecast `nyiso-t1f` verdict
+(PROMOTE-WITH-CAVEATS), which no backcast promotion can move.
+
+**3. THE HYDRO TRUNCATION DOES NOT REACH OUR I7 PASS — verified, not assumed.** The backcast repair
+fixes a 2025 hydro census truncated to **3 plants of ~147**. The forecast accreditation was already
+immune by construction: `modelled_hydro_nameplate_mw` clamps the census to
+`EIA923_LATEST_FINAL_VINTAGE`, and its docstring names this exact hazard — *"vintages after it are
+monthly early releases carrying only the large reporters … so an unclamped year would accredit a
+partial fleet."* So NYISO's forecast hydro credit (1,763.3 MW) was never computed on the 3-plant
+vintage, and the extcap I7 PASS stands. **Also verified: the NYISO extcap registry entry survives
+intact** at `capacity_market.py:2574` (`3_168.5 * (1.0 - 0.1321)`); the only change to that file
+this cycle was CAISO's AS-revenue row.
+**A consistency item for D7/D10, flagged not resolved:** the backcast now consumes the *repaired*
+hydro input (147 plants, EIA-930 monthly pin) while the forecast consumes the *clamped complete
+census*. Two constructions of one physical quantity. Not a defect I have established — a question
+worth one paragraph in the next NYISO lane.
+
+**4. ERCOT's keeper is now 2023-ONLY** — `2026-08-25-235-2023-discrete-k24`, NOT-YET on price_mean
+(C3a-2023) alone, and **the first ERCOT run with C3b-2023 AND C3c-2023 both PASS**. It is registered
+under the **rule-16 waiver the owner granted 2026-08-23, now SPENT**. No gate reading changes
+(ERCOT fails gate (a) on the marker regardless) — but note for any future ERCOT declaration that
+gate (a) also requires a **full-span** keeper, which a 2023-only keeper is not.
 
 ---
 
@@ -105,13 +152,14 @@ the gap.
 | **D9 MISO SOCO FORECAST FALLBACK** | `ba_code="SOCO"` live only in the forecast path | QUEUED — **rides with S-123** | — | Fable | Handed in by miso-183. |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
-## 2. Backcast-track watch (last seen 2026-08-25 @ `99c8cf5`)
+## 2. Backcast-track watch (last seen 2026-08-25 @ `6af12ee`, refresh #6)
 
 | item | state |
 |---|---|
-| Keepers | ERCOT `2026-08-24-231-tie-zone-measured` · CAISO `2026-08-17-caiso-200-h1-memberpanel` · MISO `2026-08-22-miso-177-rho-measured` · NEISO `2026-08-17-neiso-99-joint-p1` · NYISO `2026-08-22-nyiso-152-duty-complete` · PJM `2026-08-15-pjm-162-inputclock` |
+| Keepers (refresh #6 — **three promotions**) | **ERCOT `2026-08-25-235-2023-discrete-k24`** (NOT-YET, price_mean; **2023-ONLY**, rule-16 waiver SPENT) · CAISO `2026-08-17-caiso-200-h1-memberpanel` (unchanged) · **MISO `2026-08-25-miso-186-statusscope`** (NOT-YET, **fuelmix + price_mean** — two criteria, was C3a-2025 alone) · NEISO `2026-08-17-neiso-99-joint-p1` (unchanged) · **NYISO `2026-08-25-nyiso-155-hydro-repair`** (NOT-YET, price_mean + price_tail) · PJM `2026-08-15-pjm-162-inputclock` (unchanged) |
 | Markers / freeze | `complete` = {NEISO, NYISO, PJM}; `final` EMPTY; holdout spend freeze **ACTIVE** |
-| Gate (a) | pass: PJM, NYISO, NEISO. fail on marker: ERCOT, CAISO, MISO. **Unchanged.** |
+| Gate (a) | pass on the literal test: PJM, NYISO, NEISO. fail on marker: ERCOT, CAISO, MISO. **NYISO's BASIS CHANGED** — its marker now rests on a NOT-YET keeper (§0c.2, Q5). |
+| Other refresh-#6 movement | xiso-6 opened a **DECISION CARD on the diurnal price-amplitude rubric** (a cross-ISO rubric question — watch it, it could touch six determinations). CAISO AS-revenue registry row populated (storage 14.82 $/kW-yr @ ref 5.517 GW). xiso-5/6 landed a thermal-tranche vintage sidecar + an arm-over-gap guard at the `bins_to_fleet` seam. |
 | ERCOT | Card Y signed **Y-C** (hold open). Card Z signed **Z-A**: crosswalk repair — **EASTEX (East Texas GTC) replaces the mis-attributed NE_LOB** on Northeast→North, static 1300 → 2300. ercot-234 also re-pointed the official scorer's validation gate at the ercot-231 keeper (stale since promotion). |
 | MISO | miso-184 **V-DEFECT-COUPLING** (matrix cell R). miso-185 **V-NEG-ABSENT** — the §6b firm-export re-open data does not exist (698 EQR seller-quarter reports, no qualifying firm-export obligation); re-open narrowed to contract-grain. **~1.3 GW scarce-export model-class concession** is the honest residual; a D-4 posture question goes to the owner. |
 | CAISO | Quiet this cycle. |
@@ -133,6 +181,28 @@ Full signature record and the consequences adopted:
 
 **None of the four signatures** touched a backcast keeper, marker or matrix cell, lifted the
 holdout freeze, authorized a §2.1b full-solve, or opened any ISO's gate.
+
+### Q5 (NEW, refresh #6) — NYISO's `complete` marker now rests on a NOT-YET keeper
+
+**PENDING — owner.** NYISO's keeper moved to `2026-08-25-nyiso-155-hydro-repair` (NOT-YET on
+price_mean + price_tail) and the marker was re-keyed to it, with the D-5(b) worse-determination
+stop fired, escalated and resolved by an explicit owner ruling on structural integrity over gate
+regression. **On 2026-08-06 the identical fact pattern — a `complete` marker whose keeper scored
+NOT-YET — withdrew CAISO's marker outright**, on the reading that "a `complete` marker cannot stand
+on a NOT-YET keeper". Both are now on the record and they point opposite ways.
+
+**Why this track cares:** gate (a) is the only §2.1b leg that reads off the backcast marker, and
+NYISO is the program's lead ISO — the one ISO whose legs (a) and (b) both pass. On the charter's
+literal test (*designated full-span keeper AND an entry in `complete`*) gate (a) still passes, and
+this director is NOT re-reading it downward on its own initiative. But the question of whether the
+marker is sound is the owner's, and its answer decides whether NYISO's lead position is real.
+**Director recommendation: state the reconciliation explicitly** — either (i) affirm that the
+owner's structural-integrity standard permits a `complete` marker on a NOT-YET keeper, which
+distinguishes the CAISO withdrawal on its own facts (CAISO's was a rubric re-score with no
+compensating structural gain), or (ii) apply the CAISO precedent uniformly and withdraw. Option (i)
+is the more defensible on this record, but either way the reconciliation should be **written**,
+because the two precedents currently contradict each other and gate (a) hangs on which governs.
+NYISO's **frontier** status has already returned to the owner on the same promotion.
 
 ## 4. Prompt issuance record
 
