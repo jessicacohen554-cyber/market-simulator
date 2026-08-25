@@ -1290,6 +1290,128 @@ def thermal_tranche_online_frac(iso: str) -> dict[tuple[int, str], float]:
     return out
 
 
+# Arm-over-gap guard table (xiso-6). One row per ScenarioConfig gate that reads
+# a per-plant column of ``thermal_tranches_<ISO>.csv``:
+# ``(gate, candidate columns, plant groups the mechanism engages on)``.
+# Candidate columns are tried in order and the first present is the one the
+# runtime loader reads (the two-entry ``chp_steam_floor_p25`` row mirrors
+# :func:`thermal_tranche_chp_steam_level`'s pre-WP-3 ``p25_allhr_cf`` fallback).
+# The target groups are EXACTLY the groups the consumer gates on — e.g. the
+# ``online_frac`` gates never list a CHP group, so the by-design CHP blanks
+# ("their floor is the steam host", rule 19 [R-ONE-MECH]) can never be flagged.
+# ``coal_sync_srmc_tranche`` engages only when ``coal_mustrun_online_pmin`` is
+# also armed (mirrored from the assembly consumer), handled in the guard body.
+_TRANCHE_GATE_COLUMNS: tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...] = (
+    ("cc_mustrun_per_plant", ("online_frac",), ("CC_REGULAR",)),
+    ("st_gas_mustrun_per_plant", ("online_frac",), ("ST_GAS",)),
+    ("coal_sync_srmc_tranche", ("online_frac",), ("COAL",)),
+    ("coal_mustrun_online_pmin", ("mustrun_online_pct",), ("COAL",)),
+    ("st_gas_mustrun_p25_level", ("p25_cf",), ("ST_GAS",)),
+    ("cc_peaking_per_plant", ("peaking_pct",), ("CC_REGULAR", "CC_CHP")),
+    (
+        "chp_steam_floor_p25",
+        ("steam_level_cf", "p25_allhr_cf"),
+        ("CC_CHP", "CT_CHP", "ST_CHP"),
+    ),
+)
+
+
+def assert_thermal_tranche_coverage(iso: str, config: ScenarioConfig) -> None:
+    """Fail loudly when an ARMED tranche gate reads a vintage gap (xiso-6).
+
+    The per-plant tranche loaders above are deliberately self-targeting: a row
+    with a blank cell is silently skipped (no floor), so a mechanism armed at
+    an ISO whose committed artifact predates the column's emitting vintage
+    engages on NOTHING and reads as inert on the merits — a false negative the
+    matrix would then mint as a DO-NOT-REDO ``I`` verdict (rule 26
+    [R-MECH-MATRIX]). That is the trap
+    ``results/calibration/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md``
+    §4.3 documents (166 ``status="ok"`` rows blank in groups a HEAD
+    re-derivation would populate, across CAISO/PJM/NYISO/NEISO).
+
+    For every gate in :data:`_TRANCHE_GATE_COLUMNS` the running ``config``
+    arms, this preflight reads the ISO's artifact bytes directly (never the
+    cached loaders) and raises ``ValueError`` when, in any target group with
+    at least one ``status="ok"`` row, the consumed column is absent from the
+    file or blank in any of those rows — at HEAD the emit path cannot produce
+    such a blank, so it is an artifact-vintage defect, never a measurement.
+    Scoped strictly to the arm-over-a-gap case: unarmed gates are never
+    checked, groups with no ``ok`` rows are skipped (a class the CEMS extracts
+    cannot see is the self-targeting design, not a gap), and the by-design
+    blanks (CHP ``online_frac``, non-CC ``peaking_pct``, …) are unreachable
+    because the target groups mirror each consumer's own group gate.
+
+    Measured a no-op at all six current keepers (every armed gate sits over a
+    fully populated column — xiso-5 §4.3(i), re-verified in
+    ``tests/unit/data/test_thermal_tranche_guard.py``); the remedy for a hit
+    is that ISO's own pre-registered keeper-grade re-derivation (rule 23
+    [R-FROZEN-DERIVE]), never a silent skip. Rule-24 precedent: armed without
+    the resolved map is a hard error, never a silent fallback.
+    """
+    armed: list[tuple[str, tuple[str, ...], tuple[str, ...]]] = []
+    for gate, columns, groups in _TRANCHE_GATE_COLUMNS:
+        if not getattr(config, gate, False):
+            continue
+        if gate == "coal_sync_srmc_tranche" and not getattr(
+            config, "coal_mustrun_online_pmin", False
+        ):
+            # The sync split engages only under the online-Pmin sizing
+            # (assembly consumer's own conjunction); armed alone it is inert
+            # by construction, not an arm-over-a-gap.
+            continue
+        armed.append((gate, columns, groups))
+    if not armed:
+        return
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        raise ValueError(
+            f"thermal-tranche coverage guard: ISO {iso!r} arms "
+            f"{sorted(g for g, _, _ in armed)} but has no per-plant tranche "
+            f"artifact at {path}. The mechanism(s) would engage on NOTHING "
+            "and read as inert on the merits (FINDING-xiso5 §4.3). ERCOT has "
+            "no artifact BY DESIGN (custom-bin-assignments.csv + hardcoded "
+            "fleet maps) and cannot arm these per-plant artifact gates; any "
+            "other ISO needs its artifact derived in its own lane first."
+        )
+    df = pd.read_csv(path)
+    ok = df[df["status"] == "ok"] if "status" in df.columns else df
+    problems: list[str] = []
+    for gate, columns, groups in armed:
+        col = next((c for c in columns if c in df.columns), None)
+        for group in groups:
+            sub = ok[ok["plant_group"] == group]
+            if sub.empty:
+                continue
+            if col is None:
+                problems.append(
+                    f"  - {gate} reads {'/'.join(columns)!r} for {group}: "
+                    f"COLUMN ABSENT ({len(sub)} status='ok' rows would be "
+                    "silently skipped)"
+                )
+                continue
+            filled = sub[col].notna() & (sub[col].astype(str).str.strip() != "")
+            blank = int((~filled).sum())
+            if blank:
+                problems.append(
+                    f"  - {gate} reads {col!r} for {group}: {blank} of "
+                    f"{len(sub)} status='ok' rows are BLANK and would be "
+                    "silently skipped"
+                )
+    if problems:
+        raise ValueError(
+            f"thermal-tranche coverage guard: ISO {iso!r} arms mechanism "
+            f"gate(s) over vintage gaps in {path.name}:\n"
+            + "\n".join(problems)
+            + "\nAt HEAD the deriver cannot emit a blank status='ok' row in "
+            "an emitting group, so these are artifact-VINTAGE gaps "
+            "(FINDING-xiso5 §3; see the artifact's .meta.json sidecar). The "
+            "mechanism would engage on nothing and read as inert on the "
+            "merits. Remedy: this ISO's own pre-registered keeper-grade "
+            "re-derivation under rule 23 [R-FROZEN-DERIVE] — never a silent "
+            "skip, never another ISO's artifact (rule 25 [R-ISO-SCOPE])."
+        )
+
+
 def thermal_tranche_p25_level(iso: str) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): p25_level_mw}`` for an ISO's gas plants.
 
