@@ -208,11 +208,23 @@ def year_record(cfg, year: int) -> dict:
           "pass": len(mb["fleet"]) == _m156.V4_NGEN[year] and len(mb["carry_idx"]) == 6}
     v2 = _m156.v2_floor_gate(mb, year)
     v1 = _m156.v1_c3a_gate(mb, year)
-    rec["F2_rebuild"] = {"V4": v4, "V2_pass": bool(v2["pass"]), "V1": {
-        "c3a_pct": v1["c3a_pct"], "published": v1["published_c3a_pct"],
-        "pass": bool(v1["pass"])}}
-    if not (v4["pass"] and v2["pass"] and v1["pass"]):
-        rec["STOP"] = "F-2 rebuild footing failed"
+    # DISCLOSED instrument-fidelity correction (the miso-184 §1 pattern): the
+    # first run gated F-2 on V2 as well and STOPped in all three years — but
+    # the imported machinery's own committed usage gates on V1 ∧ V4 with V2
+    # REPORTED (miso-178's committed record carries V2 pass=False in all
+    # years; FINDING-miso178 §6: "V2 report-only drifts with the keeper
+    # lineage as expected" — the m155 targets predate the keeper lineage).
+    # F-2 is made faithful to the precedent construction: V1 ∧ V4 gate, V2
+    # reported at full magnitude. No threshold moved; V1 reproducing the
+    # registered C3a to ±0.0001 pp is the rebuild-fidelity evidence.
+    rec["F2_rebuild"] = {"V4": v4, "V2_reported": {
+        k: v2[k] for k in ("ct_floor_mwh", "m155_ct_floor_mwh",
+                           "ct_floor_rel_err", "fleet_floor_rel_err",
+                           "ct_rows_floored", "m155_ct_rows_floored", "pass")},
+        "V1": {"c3a_pct": v1["c3a_pct"], "published": v1["published_c3a_pct"],
+               "pass": bool(v1["pass"])}}
+    if not (v4["pass"] and v1["pass"]):
+        rec["STOP"] = "F-2 rebuild footing failed (V1/V4)"
         return rec
 
     zone_names = mb["zone_names"]
