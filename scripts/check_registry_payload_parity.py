@@ -88,6 +88,26 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         # MISO-inert), so they legitimately outlive their sidecars.
         "miso170_layup_A",
         "miso170_layup_B",
+        # ercot-235 2023-discrete offer-sweep GRID POINTS (2026-08-25): the
+        # ten non-winner points of the precommitted 4-round kill-gated grid
+        # (PRECOMMIT-ercot235-2023-discrete-offer-sweep-2026-08-25.md; winner
+        # ercot235_r10 IS sidecar-mapped as 2026-08-25-235-2023-discrete-k24).
+        # Each dir keeps exactly one committed file — ercot235_point_score.json,
+        # the record FINDING-ercot235 quotes (heavy contents gitignored by the
+        # ercot235_r[0-9]/ scratch rule). They are the campaign's rejected/
+        # killed evidence (rule 15 spirit) and legitimately outlive sidecars
+        # they never had. Delete these entries when the campaign record is
+        # superseded.
+        "ercot235_r1",
+        "ercot235_r2",
+        "ercot235_r3",
+        "ercot235_r4",
+        "ercot235_r5",
+        "ercot235_r6",
+        "ercot235_r7",
+        "ercot235_r8",
+        "ercot235_r9",
+        "ercot235_r11",
         # --- NYISO A/B RECIPE DIRS (ws6-parity-repair, 2026-08-20) ----------
         # A SECOND admissible class, adjudicated on the merits rather than on
         # the `_recipe` naming pattern: a `--replay-bundle` RECIPE dir. These
