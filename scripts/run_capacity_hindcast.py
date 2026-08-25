@@ -477,6 +477,11 @@ META_RECORD_SPEC = RecordSpec(
         # FFR-9C measurement lane. FromConfig so the record reads the SOLVED
         # gate (FFR-3R: a meta may never claim an arming the solve lacked).
         "entry_pipeline_aware_signal": FromConfig(cast=bool),
+        # ENTRY-SIGNAL forward-expectation construction (the disarm finding
+        # §6 rung): the screens' price object becomes the zonal dual surface
+        # re-leveled against the entering year's stack. FromConfig so the
+        # record reads the SOLVED gate (FFR-3R).
+        "entry_forward_expectation_signal": FromConfig(cast=bool),
         # FFR-9C R-b SMR availability-year gate (None = shipped ungated).
         "smr_available_year": FromConfig(),
         # Announced-exit verification posture (owner directive 2026-08-22).
@@ -586,6 +591,7 @@ def build_config(
     capacity_screen_scarcity_restoration: "bool | None" = None,
     vre_procurement_additions: "bool | None" = None,
     entry_pipeline_aware_signal: "bool | None" = None,
+    entry_forward_expectation_signal: "bool | None" = None,
     smr_available_year: "int | None" = None,
     ptc_window: "int | str | None" = None,
     verified_announced_exits: bool = True,
@@ -838,6 +844,14 @@ def build_config(
                 # default-off in ScenarioConfig; OMIT inherits that shipped
                 # default so the control arm's cache key is untouched.
                 "entry_pipeline_aware_signal": entry_pipeline_aware_signal,
+                # ENTRY-SIGNAL forward-expectation construction (the disarm
+                # finding §6 rung, GATED default-off in ScenarioConfig): the
+                # capacity screens' price object becomes the run's own
+                # prior-year hourly zonal LP duals re-leveled against the
+                # entering year's stack, replacing the zone-flat MC step.
+                # OMIT inherits the shipped default so the control arm's
+                # cache key is untouched.
+                "entry_forward_expectation_signal": (entry_forward_expectation_signal),
                 # FFR-9C R-b SMR availability-year gate: when set, nuclear_smr
                 # joins the entry candidate pool only from this year (ATB
                 # costs new nuclear from 2030 only). OMIT inherits the shipped
@@ -1437,6 +1451,26 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--entry-forward-expectation-signal",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "ENTRY-SIGNAL forward-expectation MEASUREMENT arm (the rung "
+            "named by docs/FINDING-entry-signal-disarm-2026-08.md §6): the "
+            "capacity screens' price object becomes the run's own prior-year "
+            "hourly ZONAL LP dual surface re-leveled hour-by-hour against "
+            "the ENTERING year's stack (the same lookahead instrument "
+            "evaluated at the entering demand minus at the current dispatched "
+            "demand), replacing the zone-flat MC-step object — locational "
+            "AND forward-looking, zero fitted parameters. Requires the "
+            "reprice (entry_lookahead_reprice). OMIT to inherit the shipped "
+            "ScenarioConfig default (GATED OFF — this is a measurement, not "
+            "an arming); --entry-forward-expectation-signal arms the "
+            "treatment and --no-entry-forward-expectation-signal forces the "
+            "control explicitly."
+        ),
+    )
+    parser.add_argument(
         "--vre-procurement-additions",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -1654,6 +1688,7 @@ def main(argv: list[str] | None = None) -> int:
         ),
         vre_procurement_additions=args.vre_procurement_additions,
         entry_pipeline_aware_signal=args.entry_pipeline_aware_signal,
+        entry_forward_expectation_signal=args.entry_forward_expectation_signal,
         smr_available_year=args.smr_available_year,
         ptc_window=args.ptc_window,
         verified_announced_exits=args.verified_announced_exits,

@@ -1088,6 +1088,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # very end of the tuple per the HOUSE-3 insertion convention. Registered
     # IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "hindcast_verified_announced_exits",
+    # ENTRY-SIGNAL forward-expectation construction (GATED default-off):
+    # dropped from the hash at its default so every pre-existing cache key is
+    # byte-stable; an armed run replaces the capacity screens' price object
+    # (the run's own prior-year zonal dual surface re-leveled against the
+    # entering year's stack, instead of the zone-flat MC step) and hashes
+    # distinctly. SHARED field, so it goes at the very end of the tuple per
+    # the HOUSE-3 insertion convention. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "entry_forward_expectation_signal",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1452,6 +1461,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added 2026-08-22 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "hindcast_verified_announced_exits": "False",
+    # Added by the ENTRY-SIGNAL forward-expectation lane WITH the field, in
+    # the same commit as its _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119
+    # discipline). Shared field — very end, per HOUSE-3.
+    "entry_forward_expectation_signal": "False",
 }
 
 
@@ -4068,6 +4081,52 @@ class ScenarioConfig:
     # committed-capability tables are ERCOT-identified; rule 25 — other ISOs
     # enter the matrix as U). Screens-only: dispatch, results and persisted
     # prices never see it. Default off is byte-identical.
+    entry_forward_expectation_signal: bool = False  # GATED default-OFF
+    # (ENTRY-SIGNAL lane; the rung named by
+    # docs/FINDING-entry-signal-disarm-2026-08.md §6: the forward-expectation
+    # object — locational AND forward-looking, the one cell neither measured
+    # arm of the disarm probe tested). REPLACES the lookahead signal's
+    # zone-flat MC-step OBJECT with the run's own prior-year hourly ZONAL LP
+    # dual surface re-leveled against the ENTERING year's stack (rule 19
+    # [R-ONE-MECH]: the construction is replaced, never a shape correction
+    # stacked on it):
+    #     signal[z, t] = econ_prices[z, t] + (S_entering[t] - S_current[t])
+    # econ_prices is the prior year's hourly zonal LP duals plus the same
+    # post-solve scarcity overlay the screens' disarm fallback reads —
+    # locational congestion, real intraday shape, realized scarcity: the
+    # price a unit at that node was actually paid. S(.) is the EXISTING
+    # lookahead stack instrument (runner._lookahead_reprice_signal) evaluated
+    # twice with IDENTICAL settings (same merit stack, same unified level
+    # repairs, same pro-forma ORDC tail): S_entering exactly as shipped (the
+    # entering year's demand, plus the committed pipeline when
+    # entry_pipeline_aware_signal is armed); S_current at the CURRENT year's
+    # own dispatched demand with NO pipeline terms. The hourly delta is
+    # therefore the stack's own forward view of exactly what changes between
+    # this year and the entering year — load growth, committed fleet, ORDC
+    # curve vintage — and nothing else. ZERO fitted parameters (rule 21
+    # [R-DOF]): both terms are objects the model already produces and the
+    # composition is exact arithmetic — no elasticity, damping or scaling
+    # coefficient anywhere. Why both prior corners fail alone (measured,
+    # disarm finding §4): the shipped reprice is forward-looking but
+    # zone-flat by construction (defect D-8 — no developer prices a project
+    # off a system scalar that ignores their interconnection node); the
+    # disarm's raw duals are locational but read LAST year's realized prices
+    # as next year's expectation (naive expectations — the textbook cobweb).
+    # A developer pro-forma is both at once: today's observed price surface,
+    # adjusted by a fundamentals model of what changes. Requires
+    # entry_lookahead_reprice (this field re-levels the reprice's own
+    # object; with the reprice disarmed there is nothing to re-level —
+    # refused in __post_init__ rather than silently inert, the FFR-8A
+    # pattern). Screens-only: dispatch, results and persisted prices never
+    # see it. The L-5 screen_signal_diag dumps stay ALIVE (the reprice gate
+    # still runs) and additionally record the composed zonal signal, the
+    # forward delta and the S_current internals — the relocation the disarm
+    # finding §3.3 named, carried deliberately. Forecast machinery only;
+    # coerced off in a plain backcast alongside entry_lookahead_reprice.
+    # Default off is byte-identical. Adjudicating A/B (pre-registered): an
+    # ERCOT T1-H arm at the registered t1h posture plus this ONE field,
+    # scored against the committed bracketing pair
+    # results/hindcast/ercot-2021-2025-realized-t1h-{control,disarm}.
     vre_procurement_additions_enabled: bool = False  # GATED default-OFF
     # (FFR-5E, owner decision D-18(a), sitting Addendum S.2/S.5 signed
     # 2026-08-05; design docs/handoffs/ffr-5b-procurement-channel-design-
@@ -13240,6 +13299,30 @@ class ScenarioConfig:
         # screen, so probe legs stay armable and existing legs byte-identical.
         if self.mode == "backcast":
             self.entry_lookahead_reprice = False
+            # The forward-expectation construction rides the reprice's own
+            # object (screens-only forecast machinery — a backcast runs no
+            # capacity evolution), so it coerces off with it: same
+            # byte-stability rationale, and the requires-reprice refusal
+            # below then cannot misfire on a backcast inheriting a forecast
+            # arming.
+            self.entry_forward_expectation_signal = False
+
+        # ENTRY-SIGNAL forward-expectation signal: the field re-levels the
+        # lookahead reprice's OWN object; with the reprice disarmed the
+        # screens read raw econ_prices and there is nothing to re-level. An
+        # armed combination is an untested posture and is refused rather
+        # than silently inert (the FFR-8A refusal pattern; rule 19
+        # [R-ONE-MECH] — exactly one entry-signal construction is in play,
+        # and it must be the one this field claims to replace).
+        if self.entry_forward_expectation_signal and not self.entry_lookahead_reprice:
+            raise ValueError(
+                "entry_forward_expectation_signal requires "
+                "entry_lookahead_reprice: the forward-expectation construction "
+                "re-levels the lookahead reprice's own signal object "
+                "(docs/FINDING-entry-signal-disarm-2026-08.md §6); with the "
+                "reprice disarmed the screens read raw econ_prices and there "
+                "is nothing to re-level."
+            )
 
         # FF-1B correlated cold-event forced-outage derate: the mechanism is
         # gated forecast/hindcast-only inside

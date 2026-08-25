@@ -246,6 +246,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     entry_pipeline_aware_signal: { cell: "U", fc: "U" },
     capacity_screen_unified_lookahead: { cell: "U", fc: "U" },
     capacity_screen_scarcity_restoration: { cell: "U", fc: "U" },
+    entry_forward_expectation_signal: { cell: "U", fc: "U" },
     entry_vre_capacity_revenue: { cell: "U", fc: "U" },
     vre_procurement_additions: { cell: "U", fc: "U" },
     smr_available_year: { cell: "U", fc: "U" },

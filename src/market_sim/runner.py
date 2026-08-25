@@ -836,6 +836,32 @@ def _lookahead_reprice_signal(
     return np.tile(prices_h[None, :], (n_zones, 1))
 
 
+def _forward_expectation_signal(
+    econ_prices: np.ndarray,
+    sig_next_flat: np.ndarray,
+    sig_curr_flat: np.ndarray,
+) -> np.ndarray:
+    """Compose the forward-expectation capacity-screen signal (zero-DOF).
+
+    ``signal[z, t] = econ_prices[z, t] + (sig_next[t] - sig_curr[t])`` — the
+    run's own prior-year hourly zonal LP dual surface (with the same
+    post-solve scarcity overlay the screens' disarm fallback reads) re-leveled
+    hour by hour by the lookahead stack instrument's own forward delta: the
+    SAME stack / VRE / storage / ORDC-tail basis evaluated at the entering
+    year's demand (plus the committed pipeline, when armed) minus the same
+    instrument at the current year's dispatched demand. Locational AND
+    forward-looking — the developer-pro-forma corner neither measured arm of
+    the disarm probe tested (``docs/FINDING-entry-signal-disarm-2026-08.md``
+    §6). Exact arithmetic, no coefficient anywhere (rule 21 ``[R-DOF]``);
+    returns a NEW array — the duals are never mutated. Gated by
+    ``entry_forward_expectation_signal`` at the ``_screen_signal_for`` seam.
+    """
+    delta = np.asarray(sig_next_flat, dtype=float) - np.asarray(
+        sig_curr_flat, dtype=float
+    )
+    return np.asarray(econ_prices, dtype=float) + delta[None, :]
+
+
 def _pipeline_lookahead_terms(
     config: ScenarioConfig,
     fleet_config: ScenarioConfig,
@@ -3277,6 +3303,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         else:
             lookahead_next_ok = year < END_YEAR
         unified_signals = {}
+        # ENTRY-SIGNAL forward-expectation state: the S_current evaluation
+        # depends only on THIS solved year (its dispatched demand, its stack
+        # basis), never on the entering year, so one evaluation serves every
+        # ``_screen_signal_for`` call this year makes (next_year and the
+        # bridge-adjacent year alike).
+        _fwd_curr_state: dict = {}
         if (
             config.entry_lookahead_reprice
             and config.mode == "forecast"
@@ -3430,6 +3462,77 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     scarcity_restoration=_scar_bundle,
                     diagnostics=_diag,
                 )
+                # ENTRY-SIGNAL forward-expectation composition (GATED
+                # default-OFF, entry_forward_expectation_signal;
+                # docs/FINDING-entry-signal-disarm-2026-08.md §6). The
+                # screens' price object becomes the run's own prior-year
+                # hourly ZONAL LP dual surface (econ_prices — locational,
+                # real intraday shape, realized scarcity) re-leveled hour by
+                # hour against the ENTERING year's stack. The re-level is
+                # the same lookahead instrument evaluated twice: S_entering
+                # is ``sig`` above, exactly as shipped; S_current prices
+                # THIS year's own dispatched demand on the same stack /
+                # VRE / storage / tail basis with NO pipeline terms — the
+                # committed pipeline is part of what CHANGES between the
+                # two years, so it belongs to the delta, not the baseline.
+                # Exact arithmetic, zero fitted parameters (rule 21
+                # [R-DOF]); replaces the zone-flat object rather than
+                # stacking a correction on it (rule 19 [R-ONE-MECH]).
+                if getattr(config, "entry_forward_expectation_signal", False):
+                    if "sig" not in _fwd_curr_state:
+                        _diag_curr: dict | None = {} if _diag is not None else None
+                        _fwd_curr_state["sig"] = _lookahead_reprice_signal(
+                            wx_config,
+                            year,
+                            base_demand,
+                            fleet_arrays,
+                            mc_cost,
+                            result,
+                            len(zone_names),
+                            demand_next_total=year_demand.sum(axis=0),
+                            vre_capacity_potential=_uni_vre,
+                            storage_shave=_uni_storage,
+                            hourly_availability=unified_screens,
+                            scarcity_restoration=_scar_bundle,
+                            diagnostics=_diag_curr,
+                        )
+                        _fwd_curr_state["diag"] = _diag_curr
+                    _sig_curr_flat = _fwd_curr_state["sig"][0]
+                    _fwd_delta = sig[0] - _sig_curr_flat
+                    sig = _forward_expectation_signal(
+                        econ_prices, sig[0], _sig_curr_flat
+                    )
+                    if _diag is not None:
+                        # L-5 relocation carried deliberately (disarm §3.3):
+                        # the dump keeps the S_entering internals above AND
+                        # records the S_current internals, the forward delta
+                        # and the composed zonal signal, so the object the
+                        # screens actually consumed stays offline-diagnosable
+                        # without a solve.
+                        _diag["fwd_delta_usd_mwh"] = np.asarray(_fwd_delta, dtype=float)
+                        _diag["signal_zonal_usd_mwh"] = np.asarray(sig, dtype=float)
+                        _dc = _fwd_curr_state.get("diag") or {}
+                        for _k in (
+                            "price_base_usd_mwh",
+                            "adder_usd_mwh",
+                            "net_load_mw",
+                        ):
+                            if _k in _dc:
+                                _diag[f"fwd_curr_{_k}"] = _dc[_k]
+                    _zspread = float((sig.max(axis=0) - sig.min(axis=0)).mean())
+                    logger.info(
+                        "year %d: forward-expectation signal for %d -- "
+                        "duals re-leveled by stack delta mean $%+.2f/MWh "
+                        "(p05 %+.2f / p95 %+.2f); mean hourly cross-zone "
+                        "spread $%.2f/MWh (the zone-flat object's is 0.0 "
+                        "by construction)",
+                        year,
+                        entering_year,
+                        float(_fwd_delta.mean()),
+                        float(np.percentile(_fwd_delta, 5)),
+                        float(np.percentile(_fwd_delta, 95)),
+                        _zspread,
+                    )
                 if _diag:
                     # FFR-8A diagnostic dump: the lookahead stack internals,
                     # next to the year's evolution ledger. Output-only — no
@@ -3476,7 +3579,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     )
                     _diag_path.parent.mkdir(parents=True, exist_ok=True)
                     np.savez_compressed(_diag_path, **_diag)
-                _sig_h = sig[0]  # system row; every zone identical
+                # Unarmed: system row (every zone identical). Under the
+                # forward-expectation composition the surface is zonal, so
+                # the scarcity-hour log counts read the cross-zone mean.
+                _sig_h = (
+                    sig.mean(axis=0)
+                    if getattr(config, "entry_forward_expectation_signal", False)
+                    else sig[0]
+                )
                 logger.info(
                     "year %d: lookahead stack re-price for %d capacity "
                     "screens -- mean $%.2f/MWh (raw duals+overlay mean "
