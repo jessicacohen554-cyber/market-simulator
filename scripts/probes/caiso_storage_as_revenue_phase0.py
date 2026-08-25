@@ -18,10 +18,12 @@ Measurement = award-weighted DAM AS revenue of the CAISO battery fleet:
   DA battery award means reproduce the DMM-published ~1,040 MW (2023) /
   ~1,500 MW (2024) hourly battery AS procurement to ~1%): hourly IFM award MW
   held by battery (LESR) + hybrid (HYBD) resources, products RU/RD/SR/NR.
-* **Prices** — `data/raw/CAISO-AS/asprc_ALL_*.csv` (OASIS `PRC_AS` DAM, fetched
-  by `scripts/data/fetch_caiso_oasis.py --datasets asprc`; OASIS caps PRC_AS at
-  one trade day per request, hence day files): hourly $/MW clearing-price
-  contribution per AS region and product. CAISO's AS regions NEST
+* **Prices** — `data/raw/CAISO-AS/asprc_{ru,rd,sr,nr}_ALL_*.csv` (OASIS
+  `PRC_AS` DAM, fetched per product by `scripts/data/fetch_caiso_oasis.py
+  --datasets asprc_ru asprc_rd asprc_sr asprc_nr`; an `anc_type=ALL` request
+  is silently truncated to one trade day, a single-product request returns
+  complete ≤25-day windows): hourly $/MW clearing-price contribution per AS
+  region and product. CAISO's AS regions NEST
   (`AS_CAISO_EXP` ⊃ `AS_CAISO` ⊃ {`AS_NP26[_EXP]`, `AS_SP26[_EXP]`}) and the
   published rows are per-constraint shadow-price contributions — verified in
   the data itself: sub-region rows are usually 0 and always small relative to
@@ -99,7 +101,7 @@ def _load_prices(raw_dir: Path, year: int) -> pd.DataFrame:
     contribution (AS_CAISO + AS_CAISO_EXP) every internal resource earns;
     ``np26``/``sp26`` are the sub-region adders (internal + _EXP rows summed).
     """
-    files = sorted(glob.glob(str(raw_dir / f"asprc_ALL_{year}*.csv")))
+    files = sorted(glob.glob(str(raw_dir / f"asprc_*_ALL_{year}*.csv")))
     if not files:
         raise FileNotFoundError(f"no asprc files for {year} under {raw_dir}")
     frames = []

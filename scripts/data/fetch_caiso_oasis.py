@@ -189,23 +189,29 @@ DATASETS: dict[str, dict] = {
     },
     # DAM ancillary-service clearing prices (PRC_AS): hourly $/MW marginal
     # price per AS region (AS_CAISO/AS_NP26/AS_SP26 + _EXP variants) and
-    # product (SR/NR/RU/RD; RMU/RMD on the EXP region), XML_DATA_ITEM
-    # {SP,NS,RU,RD,RMU,RMD}_CLR_PRC with the price in the MW column (OASIS
-    # reuses the numeric column name). The measured price leg for the CAISO
-    # storage AS-revenue identification (D-9 value-stack lane): battery award
-    # MW (data/raw/storage-as-awards) × these prices = measured battery AS
-    # revenue. Verified reachable for Jan-2023 (2026-08-25), same retention
-    # depth as AS_REQ.
-    "asprc": {
-        "params": {
-            "queryname": "PRC_AS",
-            "market_run_id": "DAM",
-            "version": "1",
-            "anc_type": "ALL",
-            "anc_region": "ALL",
-        },
-        "out_dir": paths.RAW_DATA_DIR / "CAISO-AS",
-        "per_node": False,
+    # product, XML_DATA_ITEM {SP,NS,RU,RD}_CLR_PRC with the price in the MW
+    # column (OASIS reuses the numeric column name). The measured price leg
+    # for the CAISO storage AS-revenue identification (D-9 value-stack lane):
+    # battery award MW (data/raw/storage-as-awards) × these prices = measured
+    # battery AS revenue. ONE dataset PER PRODUCT, deliberately: PRC_AS with
+    # anc_type=ALL is silently truncated to ONE trade day per request (a
+    # 2-day ALL window returns only day 1 — measured 2026-08-25), while a
+    # single-product request returns complete ≤25-day windows (25 d × 24 h ×
+    # 6 regions = 3,600 rows, verified complete), 44 windows per product for
+    # 2023-2025 instead of 1,096 day files. Same retention depth as AS_REQ.
+    **{
+        f"asprc_{t.lower()}": {
+            "params": {
+                "queryname": "PRC_AS",
+                "market_run_id": "DAM",
+                "version": "1",
+                "anc_type": t,
+                "anc_region": "ALL",
+            },
+            "out_dir": paths.RAW_DATA_DIR / "CAISO-AS",
+            "per_node": False,
+        }
+        for t in ("RU", "RD", "SR", "NR")
     },
 }
 

@@ -24,11 +24,14 @@ caiso-70 FINDING probe-#2 redirect). Immutable raw — never modified in place; 
 
 ## asprc — DAM ancillary-service clearing prices (OASIS PRC_AS)
 
-Fetched 2026-08-25 by `scripts/data/fetch_caiso_oasis.py --datasets asprc --years 2023 2024 2025`
-(`SingleZip?queryname=PRC_AS&market_run_id=DAM&version=1&anc_type=ALL&anc_region=ALL`).
-**OASIS caps PRC_AS at ONE trade day per request** (a 2-day window silently returns only day 1
-— measured 2026-08-25), so this series is 1,096 single-day CSVs (`asprc_ALL_<d>_<d+1>.csv`),
-not the ≤25-day windows AS_REQ uses. Train years 2023–2025.
+Fetched 2026-08-25 by `scripts/data/fetch_caiso_oasis.py --datasets asprc_ru asprc_rd
+asprc_sr asprc_nr --years 2023 2024 2025`
+(`SingleZip?queryname=PRC_AS&market_run_id=DAM&version=1&anc_type=<RU|RD|SR|NR>&anc_region=ALL`).
+**A PRC_AS request with `anc_type=ALL` is silently truncated to ONE trade day** (a 2-day ALL
+window returns only day 1 — measured 2026-08-25), while a single-product request returns
+complete ≤25-day windows (25 d × 24 h × 6 regions = 3,600 rows, verified) — so this series is
+one file set PER PRODUCT (`asprc_{ru,rd,sr,nr}_ALL_<start>_<end>.csv`, ~44 windows each),
+not the day files the ALL form would force. Train years 2023–2025.
 
 Content: hourly `$/MW` clearing-price **contribution** per AS region and product,
 `XML_DATA_ITEM` `{SP,NS,RU,RD,RMU,RMD}_CLR_PRC` (the price sits in the `MW` column — OASIS
