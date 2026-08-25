@@ -78,7 +78,11 @@ the matrix cell claimed K against keepers that did not carry the flags for
 ~three weeks. A durable guard would extend the lineage-fidelity check from the
 scenario block to the full `solve_and_persist` kwarg surface (the
 `_config_block` merge in this session's gates probe is the pattern); left for
-its own charter.
+its own charter. *(LANDED 2026-08-25, session nyiso-156:
+`scripts/audit_keepers.py` check E11 — the full-surface diff of the current
+vs former keeper bundle, driven by the shard's `superseded.former_keeper`
+record; undeclared kwarg changes FAIL at promotion time. Record:
+`docs/calibration-log/governance.md` 2026-08-25.)*
 
 ## §3 — The A/B: arms, gates, and the drift audit
 
