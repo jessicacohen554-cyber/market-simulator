@@ -177,6 +177,33 @@ NRC_TO_EIA: dict[str, dict[str, tuple[int, int]]] = {
         "Millstone 3": (566, 3),
         "Seabrook 1": (6115, 1),
     },
+    # MISO (miso-187, matrix §5.4 — the named next arm from miso-186 §3).
+    # The 10-plant / 13-reactor EIA-860 operable fleet, the same units
+    # NUCLEAR_MONTHLY_CF_BY_YEAR["MISO"] anchors: South (5 reactors,
+    # 5,258.9 MW) = Waterford 3, Grand Gulf, River Bend, Arkansas Nuclear
+    # One 1+2; Midwest (8 reactors, 6,261.4 MW) = Clinton (Illinois),
+    # Fermi 2 + Point Beach 1+2 (East), Monticello + Prairie Island 1+2
+    # (West), Callaway (Plains). Palisades reports to NRC (Holtec
+    # restart era) but carries NO model fleet unit — its EIA-860 status is
+    # non-OP in the operable vintages the fleet loader keeps, so it is
+    # deliberately absent here (the Crane/TMI-1 comment discipline above);
+    # Duane Arnold (retired 2020) carries neither NRC 2023-2025 rows nor a
+    # fleet unit.
+    "MISO": {
+        "Arkansas Nuclear 1": (8055, 1),
+        "Arkansas Nuclear 2": (8055, 2),
+        "Callaway": (6153, 1),
+        "Clinton": (204, 1),
+        "Fermi 2": (1729, 2),
+        "Grand Gulf 1": (6072, 1),
+        "Monticello": (1922, 1),
+        "Point Beach 1": (4046, 1),
+        "Point Beach 2": (4046, 2),
+        "Prairie Island 1": (1925, 1),
+        "Prairie Island 2": (1925, 2),
+        "River Bend Station 1": (6462, 1),
+        "Waterford 3": (4270, 3),
+    },
 }
 
 
