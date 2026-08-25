@@ -5057,6 +5057,51 @@ loss.
 
 ### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-22-miso-177-rho-measured` (**PROMOTED miso-177, 2026-08-22**, superseding `2026-08-22-miso-175-hourkey` — the measured-rho re-gate of the same-day owner RHO_CLIP band ruling; the standing miso-169/nyiso-144 floor escalation is CLOSED: refuted, deleted, re-solved), **NOT-YET on C3a-2025 (−11.7 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, miso-175 (2026-08-22) EXECUTED item 1 (the seam-envelope hour-key rotation — now the keeper); miso-176 (2026-08-22) EXECUTED item 3 (the M2M/CMP seam-class intake + binding-reality measurement — `m2m_seam_entitlement_cap` minted `G`, no LP); the remaining two (the coincident-peak seam-response object [OWNER admissibility ruling needed, now holding miso-176's binding evidence], the South under-export) stay NAMED, NOT CHARTERED — see the stamps below and the standing OWNER items. **miso-178 (2026-08-23) delivered the re-charter's measurement: the full C3a-2025 anatomy on the measured-rho keeper + the RANKED lever plan — the queue now carries the D-1 across-unit offer-level-dispersion charter ask (top), the D-2 5(i) seam-response ruling, and the D-3 South under-export evidence charter (FINDING-miso178 §7–§10; its stamp below).** **miso-179 (2026-08-23) EXECUTED the granted D-1 charter and REFUTED it at its own pre-registered no-LP pre-checks — `miso_offer_level_dispersion` minted `R`, no field ever created, keeper unchanged: the model already carries 0.541× the eligible book's across-unit spread at the 2025 summer top-decile margin (kill ≥ 0.5), and the granted rank-mapped LEVEL form statically predicts C3a-2023 +1.28 → −40.1 % (the miso-145 level warning at rank grain; the miso-178 §7 kill-risk (b) population non-identifiability materialized). The queue now carries the D-2 5(i) ruling, the D-3 South evidence charter, and the NEW anchored SPREAD-ONLY successor ask (owner decision — the measured residual is a top-decile tail steepening, +$40 at p95 / +$110 at p99; its stamp below).** **miso-180 (2026-08-23) EXECUTED the granted D-1b successor charter end to end and measured it INERT — `miso_offer_spread_anchored` minted `I` (built, gated default-off, both A/B runs registered), keeper unchanged: the ex-ante-identified anchor (r = 0.875, the model/book H* crossing) grafted the measured above-anchor rise exactly as designed (body untouched to 3 decimals, ceilings respected) and the LP realized only +0.132 pp of the predicted +0.592 on C3a-2025 — Δ₁ did not collapse (+10.50 → +10.45) and the South dipole moved AWAY from zero (+16.96 → +17.15%). The across-unit dispersion family is now fully adjudicated (level R / spread I); the residual is NOT an offer-surface object — the queue carries the D-2 5(i) seam-response ruling (the +2.1 GW binding-hour import excess, now the largest named object) and the D-3 South evidence charter (its stamp below).**
 
+> **QUEUE STAMP miso-185 (2026-08-25) — THE miso-182 §6b RE-OPEN LADDER (the
+> miso-184 §5 road-1 queue head) EXECUTED AND CLOSED V-NEG-ABSENT: THE FIRM
+> EXPORT'S DRIVER DATA DOES NOT EXIST. NO LP, NO FIELD, NO NEW CELL (the
+> conditional build's license never fired — the standing
+> `miso_south_firm_export_block` `G` keeps its verdict with the re-open
+> NARROWED); keeper UNCHANGED at `2026-08-22-miso-177-rho-measured`.** PREREG
+> committed BEFORE any source was touched
+> (`PREREG-miso185-south-firm-export-evidence-hunt-2026-08-25.md`, 9b1b2b4).
+> **The screen:** seller-scoped FERC EQR via the Report Viewer's session-free
+> summary PDFs (by-customer + by-delivery-BA, the Region leg exhaustive), 698
+> reports, 12/12 quarters 2023Q1–2025Q4, 0 fetch failures, over the E-0
+> panel (Entergy opcos + Power/Services + SERI, Cleco, LaGen, the NRG fleet,
+> Plum Point, Carville, Bayou Cove, AECC, Cooperative Energy (MS)) — **every
+> MISO-South jurisdictional seller sells to MISO + affiliates ONLY**; the
+> largest cross-seam trace is EAL→AECI at **$1.2–1.9K per quarter** (the
+> 1957-fence class). All 72 pool-token hits classify to four non-qualifying
+> families (AECI's own filing = the import side; TVA's own fence sales; a
+> Georgia-side name collision; the EAL trivia). **The other rungs:** GFA —
+> Attachment P carries zero Entergy-legacy/TVA/PowerSouth rows; legacy UPS —
+> only the internal Grand Gulf UPSA, the MISO–TVA EMERGENCY agreement and
+> the fence exchanges survive; pseudo-ties — no by-counterparty inventory
+> (and the flow is a component INSIDE the unapportionable RDT calculation);
+> OASIS — certificate-gated, unreachable, corrob-class regardless; TVA
+> 10-Ks FY2022–25 — **no MISO-South PPA in any year**, and TVA's actual
+> MISO-facing construct is 2,792→4,750→3,750 MW of reserved RTO
+> TRANSMISSION supporting **market (SPOT) purchases** — the V-NEG-SPOT
+> sharpening: the real scarce export's external face is price-inelastic
+> from MISO's side yet contract-FORMLESS (no term × MW to regenerate, rule
+> 13), plus an FY2023-only sub-year 1,050 MW bridge class. B_y = 0 all
+> years; the PREREG-miso184-§6-gated conditional A/B never licensed.
+> **Instrument defect disclosed against the screen itself:** seller CIDs are
+> PERIOD-SPECIFIC — the v1 sweep applied 2025Q3 CIDs to all quarters and
+> silently rendered empty bodies; caught, preserved in the JSON, re-run
+> correctly (the two sweeps agree on 2025Q3, the scarce-set quarter).
+> **RE-OPEN NARROWED:** only contract-grain evidence (term × MW naming a
+> MISO-South resource obligated to a pool counterparty) or a published
+> by-counterparty contract-path series can re-open the cell; another
+> transaction summary cannot. **The D-4 posture question goes to the owner
+> with the ~1.3 GW scarce-export model-class concession as the honest
+> residual** (miso-184 §5 road 4); the finding is affirmative evidence FOR
+> the state-conditioned road-3 charter and AGAINST any further firm-block
+> hunt. Records:
+> `FINDING-miso185-south-firm-export-evidence-hunt-2026-08-25.md`,
+> `_miso185_firm_export_hunt.json`, `_miso185_eqr_pdfs/` (698 PDFs),
+> `scripts/probes/_miso185_firm_export_hunt.py`.**
 > **QUEUE STAMP miso-184 (2026-08-24) — THE RULE-23 LADDER-TAIL QUEUE HEAD
 > EXECUTED AND ADJUDICATED V-DEFECT-COUPLING: THE SCARCE-TAIL FAILURE IS REAL
 > AND ESTABLISHED ON THE DERIVATION'S OWN CONSTRUCTION, BUT IT IS NOT THE
