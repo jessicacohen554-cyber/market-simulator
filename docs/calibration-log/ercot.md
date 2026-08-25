@@ -11800,5 +11800,71 @@ regressions (new shed) ESCALATE rather than auto-promote. Record:
 RESOLUTIONS + `docs/PRECOMMIT-ercot234-eastex-identity-repair-2026-08-25.md`
 (outcome in the execution addendum below).
 
+### ercot-234 EXECUTION ADDENDUM (2026-08-25, same session window) — Z-A EXECUTED, REGISTERED, AND PROMOTED: keeper `2026-08-25-234-eastex-identity`
+
+**Precommit `docs/PRECOMMIT-ercot234-eastex-identity-repair-2026-08-25.md`
+pushed + blob-verified (blob `ddbcde2`) BEFORE any derivation.** Its P-1
+instrument-reproduction leg FIRED on NE_LOB (measured 1,107.3 vs the 1,300
+seed, −14.8 %) and is recorded as **Amendment 1, not quietly applied**: the
+two statics the instrument actually derives reproduce essentially exactly
+(WESTEX +0.20 %, PNHNDL +0.05 %), so the instrument and the parquet record
+are validated and the firing is itself further evidence of the NE_LOB
+attribution's sloppiness — no natural statistic of the record yields 1,300;
+the "~1,300 MW" static was a hand-rounded eyeball. **Phase-0 verdict: Z-A**
+(boundary corroborated: EASTEX was created for "transmission outages on the
+345kV system in East Texas around Tyler, Lufkin and Nacogdoches", market
+notice #1557 — inside the model's Northeast carve; static **2,300 MW** =
+mean-limit-at-bind pooled 2023+2024, per-year 2,386.5 / 1,916.7, 2025
+context 1,524.9 on 3 binding rows).
+
+**The repair** (zero fitted scalars): `EASTEX → (Northeast, North)` replaces
+`NE_LOB` in `ERCOT_GTC_LINK_MAP` (the Valley family — NE_LOB, VALEXP,
+NELRIO, RV_RH — is excluded as intra-South pockets); static 1,300 → 2,300;
+import side (1,788, ERCOT-76) untouched; gloss sweep across 11 files; 113
+targeted tests pass. **Control = the committed ercot-231 bundle BY
+IDENTITY** (P-5 drift audit: two files changed since `c9a07b9`, both
+provably inert at the keeper's flags). 3-year replay solved sequentially;
+official scorer first validated to reproduce the keeper's registered values
+exactly (−38.0/0.696/93 · +0.4/0.130/22 · −7.7/0.099/1; its stale
+ercot-223-era validation gate re-pointed in the same session).
+
+**ALL P-6 GATES PASS — no STOP leg fired** (`ercot234_gates.json`): zero new
+shed hours; coal rise +0.066/+0.210/+0.203 TWh (under even the 0.5 TWh
+report bar — the feared Martin-Lake blowout did not materialize); **G-SPUR
+2023 21 → 11, lidless identical** — the ercot-231 promotion's named cost
+dissolves, the 10 extra spurious hours WERE the mis-attributed congestion;
+G-SPAN max 0.071 %; G-DOF unchanged; D-4 FAIL rows byte-identical. **NE|N
+price separation collapses 2,155/1,128/1,354 → 29/45/45 h** — the real
+EASTEX scale (~69/16/<1 measured h-equivalents; the keeper was 25–50×
+over). **Official side-effects (Q-B/R-A, full magnitude, never the
+basis):** 2023 C3a −38.0 → **−39.7 %**, C3b 0.696 → **0.730**, C3c 93 →
+**72** (back under band, RE-LEDGERED — ×3 total, the 2026-08-05 owner
+directive was 'across all 3 years'); 2024 +0.4 → −0.2 % / 0.130 → 0.131 /
+22 (PASS); 2025 −7.7 → −7.9 % / 0.099 → 0.101 / 1 (PASS). The 2023 arm
+lands almost exactly on the ercot-223-era officials: the ercot-231 keeper's
+2023 gain was substantially the mis-attributed congestion, and rule 14 keeps
+the accurate input. Fresh C6 attestation written (governance PASSES);
+determination **NOT-YET {C3a-2023, C3b-2023}**, unchanged in kind,
+un-flattered.
+
+**Registered** `2026-08-25-234-eastex-identity` (bundle
+`results/calibration/ercot234_eastex_identity`, keeper-convention slim set +
+hourly sidecars committed) and **PROMOTED per the card Z-A signature and the
+owner's advance standing standard — with the mechanical verdict itself
+KEEPER-CANDIDATE** (the first since ercot-223: no gate regressed; only the
+reported officials moved, in the direction honesty demands). Keeper shard
+re-keyed + status part rebuilt + §5.1 header re-stamped +
+`measured_interface_limits` cell stamped (rule 28(b)); prior keeper
+`2026-08-24-231-tie-zone-measured` retained as the immediate-prior
+comparison. **REPLAY RULE: this keeper's replays require the gtc-limits
+clean partition AND the repaired crosswalk; ercot-231 replays require the
+pre-repair map — replay each bundle from its own HEAD.** Records:
+`docs/FINDING-ercot234-eastex-identity-repair-2026-08-25.md`,
+`results/calibration/ercot234_gates.json`,
+`results/calibration/ercot234_official_score.json`. Parity-check note: the
+pre-existing tracked `results/calibration/caiso217_crosswalk` orphan (another
+lane's dead solve output, flagged by `check_registry_payload_parity.py`) is
+NOT touched — rule 25 lane isolation; left for the CAISO lane.
+
 **Session consumed the ercot-234 shorthand. Next shorthand: ercot-235**
 (ercot-199 remains unclaimed)

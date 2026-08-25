@@ -162,3 +162,10 @@ Consequences adopted with the signature, per the card's own text:
   does not decide it; the executing session reports G-SPUR in BOTH the
   standing banded form and the lidless decomposition so either later ruling
   reads cleanly.
+
+**EXECUTED same session (2026-08-25): Z-A ran to completion — phase-0 Z-A
+verdict (with precommit Amendment 1 recording the P-1 NE_LOB-seed firing),
+all P-6 gates PASS with no STOP leg, run
+`2026-08-25-234-eastex-identity` registered and PROMOTED to keeper. Records:
+`docs/FINDING-ercot234-eastex-identity-repair-2026-08-25.md` and the
+ercot-234 execution addendum in `docs/calibration-log/ercot.md`.**
