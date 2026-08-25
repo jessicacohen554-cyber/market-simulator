@@ -223,3 +223,45 @@ the clip is armed).
   next round runs — never silently applied.
 
 ## ROUND RESULTS (amendments below — none at initial push)
+
+### AMENDMENT 1 — D-0/D-1 measured (recorded before any V-leg ran): O1 CONFIRMS H-OFFER
+
+**D-0 (reproduction): PASS, exact.** The diag solve (`ercot236_diag_k30`,
+k=30 at HEAD) reproduces R8's committed record to the digit: shed set
+**{4097}**, magnitude **35.948 MWh** (R8: 35.95), officials **−9.3 % /
+0.119 / 180** — zero HEAD drift since the campaign.
+
+**D-1 (attribution): O1 — H-OFFER CONFIRMED.** The h4097 energy-balance
+decomposition (k=30 diag minus k=24 keeper; `ercot236_d1_diagnosis.json`):
+
+- **Δthermal = −48.28 MW** — thermal supply the k=24 solve dispatched at
+  this hour goes UNDISPATCHED at k=30 while every zone prices exactly
+  **$5,000.00 = VOLL** (zone min = max = 5000.0; no transmission
+  separation). By LP optimality, undispatched headroom at a $5,000 price
+  carries an offer ≥ $5,000 — the offer domain, not capacity, is what ran
+  out. |Δthermal| = 134 % of the shed, clearing both the −(shed − tol) bar
+  and the single-component-≥ 80 % reading.
+- **Δ(net storage discharge) = +12.33 MW** — storage discharges MORE at
+  k=30, the OPPOSITE of H-STORAGE's starvation signature. S1 REFUTED.
+- **Δrenewables = 0.0.** Balance closes exactly:
+  −48.28 + 12.33 = −35.95 = −shed.
+- **Δ(total reserve held) = 0.0** — R1 REFUTED. Reported color: the co-opt
+  swaps exactly 35.95 MW from NonSpin to RegUp at the boundary (net zero);
+  a reallocation at the cap, not withholding.
+- The §1 max-offer report on the diag point: max energy λ **$5,000.0**,
+  hours λ ≥ $4,999: **1** (h4097 itself — the shed hour prices at VOLL).
+
+The §1 zero-solve crossing prediction (k\* = 25.15 ∈ (24, 27]) stands
+corroborated. **§3 is LIVE**: the repair was built exactly as specified
+(commit 63750d3 — `ercot_offer_swcap_clip` default off,
+`ERCOT_SWCAP_SHED_TIEBREAK_EPS` 0.01, the two `run_energy_solve` clips,
+unit tests 7/7, matrix row + shard cells). Two recorded deviations, neither
+substantive: (a) the non-ERCOT shard cells are stamped `·` (n/a) per the
+ISO-exclusive convention (the `ercot_tie_zonal_interchange` precedent), not
+`U` as §5 sketched — the mechanism is ERCOT-gated, so n/a is the truthful
+mark; (b) the repair CODE was committed (default-off, byte-identical off,
+provably inert on every existing bundle) before this amendment's push, to
+keep the tree clean under the session's push discipline — ARMING waited for
+this verdict, no solve with the flag on preceded it. The §4 V-legs launch
+next, gated mechanically (V-0 STOP on any moved official; V-1 STOP on any
+shed; re-bracket only after both pass).
