@@ -34,6 +34,11 @@ GRID = {
     "R1": {"k_peak": 3.0, "k_eh": 1.0},
     "R2": {"k_peak": 3.0, "k_eh": 1.75},
     "R3": {"k_peak": 5.0, "k_eh": 2.5},
+    # Round 2 (precommit amendment): econ_high excluded (the corrupt lever,
+    # G-COAL148 kills at 1.75/2.5); peak-band family alone, pushed harder.
+    "R4": {"k_peak": 6.0, "k_eh": 1.0},
+    "R5": {"k_peak": 10.0, "k_eh": 1.0},
+    "R6": {"k_peak": 14.0, "k_eh": 1.0},
 }
 PEAK_KEYS = ("peak", "phys_peak")
 EH_KEYS = ("econ_high", "phys_econ_high")
