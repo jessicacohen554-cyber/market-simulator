@@ -1,0 +1,196 @@
+
+==============================================================================
+xiso-6 — what a diurnal-amplitude criterion WOULD do to six determinations
+==============================================================================
+keepers scored (live keeper store at HEAD):
+  ERCOT  2026-08-25-234-eastex-identity               results/calibration/ercot234_eastex_identity
+  PJM    2026-08-15-pjm-162-inputclock                results/calibration/pjm_debugb_inputclock_A
+  CAISO  2026-08-17-caiso-200-h1-memberpanel          results/calibration/caiso200_h1_memberpanel
+  NYISO  2026-08-22-nyiso-152-duty-complete           results/calibration/nyiso152_armSE
+  NEISO  2026-08-17-neiso-99-joint-p1                 results/calibration/neiso99_joint_B
+  MISO   2026-08-22-miso-177-rho-measured             results/calibration/miso177_rho_B
+
+rubric at HEAD: v3.4   MAX_PROTECTIVE_CAVEATS=0   MAX_LEDGERED_CAVEATS=1   LEDGERABLE_CRITERIA={'price_tail'}
+SCORER NOT CHANGED — imported read-only; every hypothetical is re-derived here.
+
+==============================================================================
+A. amplitude re-taken at HEAD (all six CURRENT keepers)
+==============================================================================
+
+  vs measured DA  (hour-of-day range, model as % of actual)
+  ISO       2023     2024     2025    worst
+  ERCOT    39.0%    72.0%    45.2%     39.0%
+  PJM      30.2%    33.6%    34.4%     30.2%
+  CAISO    47.1%    53.0%    73.4%     47.1%
+  NYISO    49.1%    49.3%    42.9%     42.9%
+  NEISO    26.9%    23.5%    29.0%     23.5%
+  MISO     35.1%    36.1%    26.3%     26.3%
+  ALL    mean  41.5%   min  23.5%   max  73.4%
+
+  vs measured RT  (hour-of-day range, model as % of actual)
+  ISO       2023     2024     2025    worst
+  ERCOT    41.0%    77.3%    49.0%     41.0%
+  PJM      31.2%    29.5%    32.0%     29.5%
+  CAISO    67.0%    73.3%    89.2%     67.0%
+  NYISO    58.5%    46.5%    38.7%     38.7%
+  NEISO    27.1%    22.9%    33.2%     22.9%
+  MISO     36.3%    32.0%    20.8%     20.8%
+  ALL    mean  44.8%   min  20.8%   max  89.2%
+
+==============================================================================
+B. base determinations at HEAD (the scorer's own, unmodified)
+==============================================================================
+  ERCOT  NOT-YET                  (target 5/8, band 0, ledgered 1, fails 2)   2026-08-25-234-eastex-identity
+           price_mean     FAIL     
+           price_shape    FAIL     
+           price_tail     CAVEAT   ledgered
+[!] STALE BENCHMARK: PJM part(s) 2022.json.gz, 2023.json.gz, 2024.json.gz, 2025.json.gz were NOT written by the builder at HEAD (fingerprint dbea7bf45111). C1's metered actuals below may not be reproducible — regenerate the part (run_calibration_full.py --rebuild-benchmark <bundle>, then dashboard_add_run.py) before relying on this verdict. See scripts/check_bench_freshness.py.
+  PJM    CALIBRATED               (target 8/8, band 0, ledgered 0, fails 0)   2026-08-15-pjm-162-inputclock
+[!] STALE BENCHMARK: CAISO part(s) 2023.json.gz, 2024.json.gz, 2025.json.gz were NOT written by the builder at HEAD (fingerprint dbea7bf45111). C1's metered actuals below may not be reproducible — regenerate the part (run_calibration_full.py --rebuild-benchmark <bundle>, then dashboard_add_run.py) before relying on this verdict. See scripts/check_bench_freshness.py.
+  CAISO  NOT-YET                  (target 6/8, band 0, ledgered 1, fails 1)   2026-08-17-caiso-200-h1-memberpanel
+           price_mean     FAIL     
+           price_tail     CAVEAT   ledgered
+  NYISO  CALIBRATED               (target 7/8, band 0, ledgered 1, fails 0)   2026-08-22-nyiso-152-duty-complete
+           price_tail     CAVEAT   ledgered
+[!] STALE BENCHMARK: NEISO part(s) 2022.json.gz, 2023.json.gz, 2024.json.gz, 2025.json.gz were NOT written by the builder at HEAD (fingerprint dbea7bf45111). C1's metered actuals below may not be reproducible — regenerate the part (run_calibration_full.py --rebuild-benchmark <bundle>, then dashboard_add_run.py) before relying on this verdict. See scripts/check_bench_freshness.py.
+  NEISO  CALIBRATED               (target 7/8, band 0, ledgered 1, fails 0)   2026-08-17-neiso-99-joint-p1
+           price_tail     CAVEAT   ledgered
+  MISO   NOT-YET                  (target 6/8, band 0, ledgered 1, fails 1)   2026-08-22-miso-177-rho-measured
+           price_mean     FAIL     
+           price_tail     CAVEAT   ledgered
+
+==============================================================================
+C. THE DECISIVE TABLE — band x ISO -> criterion status -> determination
+==============================================================================
+
+  ### benchmark: measured RT   (PRIMARY — the basis C3a gates on)
+
+  --- hypothetical criterion at LOAD-BEARING tier 
+  target/comm   amp floor  ERCOT      PJM        CAISO      NYISO      NEISO      MISO        CALIBRATED lost
+  ±0.20/±0.35  ≥ 80%/≥ 65%  FAIL/NOT-  FAIL/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.30/±0.45  ≥ 70%/≥ 55%  FAIL/NOT-  FAIL/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.40/±0.55  ≥ 60%/≥ 45%  FAIL/NOT-  FAIL/NOT-  PASS/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.50/±0.65  ≥ 50%/≥ 35%  CAVE/NOT-  FAIL/NOT-  PASS/NOT-  CAVE/CWC   FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.55/±0.70  ≥ 45%/≥ 30%  CAVE/NOT-  FAIL/NOT-  PASS/NOT-  CAVE/CWC   FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.60/±0.75  ≥ 40%/≥ 25%  PASS/NOT-  CAVE/CWC   PASS/NOT-  CAVE/CWC   FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.65/±0.80  ≥ 35%/≥ 20%  PASS/NOT-  CAVE/CWC   PASS/NOT-  PASS/CAL   CAVE/CWC   CAVE/NOT-   2/3
+  ±0.70/±0.85  ≥ 30%/≥ 15%  PASS/NOT-  CAVE/CWC   PASS/NOT-  PASS/CAL   CAVE/CWC   CAVE/NOT-   2/3
+  ±0.75/±0.90  ≥ 25%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   CAVE/CWC   CAVE/NOT-   1/3
+  ±0.80/±0.90  ≥ 20%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   PASS/CAL   PASS/NOT-   0/3
+    (cell = criterion status / resulting determination; 'CALIBRATED lost' counts how many of the 3 currently-CALIBRATED ISOs stop being CALIBRATED)
+
+  --- hypothetical criterion at SUPPORTING tier 
+  target/comm   amp floor  ERCOT      PJM        CAISO      NYISO      NEISO      MISO        CALIBRATED lost
+  ±0.20/±0.35  ≥ 80%/≥ 65%  FAIL/NOT-  FAIL/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.30/±0.45  ≥ 70%/≥ 55%  FAIL/NOT-  FAIL/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.40/±0.55  ≥ 60%/≥ 45%  FAIL/NOT-  FAIL/NOT-  PASS/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.50/±0.65  ≥ 50%/≥ 35%  CAVE/NOT-  FAIL/NOT-  PASS/NOT-  CAVE/CWC   FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.55/±0.70  ≥ 45%/≥ 30%  CAVE/NOT-  FAIL/NOT-  PASS/NOT-  CAVE/CWC   FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.60/±0.75  ≥ 40%/≥ 25%  PASS/NOT-  CAVE/CWC   PASS/NOT-  CAVE/CWC   FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.65/±0.80  ≥ 35%/≥ 20%  PASS/NOT-  CAVE/CWC   PASS/NOT-  PASS/CAL   CAVE/CWC   CAVE/NOT-   2/3
+  ±0.70/±0.85  ≥ 30%/≥ 15%  PASS/NOT-  CAVE/CWC   PASS/NOT-  PASS/CAL   CAVE/CWC   CAVE/NOT-   2/3
+  ±0.75/±0.90  ≥ 25%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   CAVE/CWC   CAVE/NOT-   1/3
+  ±0.80/±0.90  ≥ 20%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   PASS/CAL   PASS/NOT-   0/3
+    (cell = criterion status / resulting determination; 'CALIBRATED lost' counts how many of the 3 currently-CALIBRATED ISOs stop being CALIBRATED)
+
+  --- hypothetical criterion at PROTECTIVE tier (protective caveat budget is 0 -> a caveat is NOT-YET)
+  target/comm   amp floor  ERCOT      PJM        CAISO      NYISO      NEISO      MISO        CALIBRATED lost
+  ±0.20/±0.35  ≥ 80%/≥ 65%  FAIL/NOT-  FAIL/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.30/±0.45  ≥ 70%/≥ 55%  FAIL/NOT-  FAIL/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.40/±0.55  ≥ 60%/≥ 45%  FAIL/NOT-  FAIL/NOT-  PASS/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.50/±0.65  ≥ 50%/≥ 35%  CAVE/NOT-  FAIL/NOT-  PASS/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.55/±0.70  ≥ 45%/≥ 30%  CAVE/NOT-  FAIL/NOT-  PASS/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.60/±0.75  ≥ 40%/≥ 25%  PASS/NOT-  CAVE/NOT-  PASS/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.65/±0.80  ≥ 35%/≥ 20%  PASS/NOT-  CAVE/NOT-  PASS/NOT-  PASS/CAL   CAVE/NOT-  CAVE/NOT-   2/3
+  ±0.70/±0.85  ≥ 30%/≥ 15%  PASS/NOT-  CAVE/NOT-  PASS/NOT-  PASS/CAL   CAVE/NOT-  CAVE/NOT-   2/3
+  ±0.75/±0.90  ≥ 25%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   CAVE/NOT-  CAVE/NOT-   1/3
+  ±0.80/±0.90  ≥ 20%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   PASS/CAL   PASS/NOT-   0/3
+    (cell = criterion status / resulting determination; 'CALIBRATED lost' counts how many of the 3 currently-CALIBRATED ISOs stop being CALIBRATED)
+
+  ### benchmark: measured DA   (reported alongside)
+
+  --- hypothetical criterion at LOAD-BEARING tier 
+  target/comm   amp floor  ERCOT      PJM        CAISO      NYISO      NEISO      MISO        CALIBRATED lost
+  ±0.20/±0.35  ≥ 80%/≥ 65%  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.30/±0.45  ≥ 70%/≥ 55%  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.40/±0.55  ≥ 60%/≥ 45%  FAIL/NOT-  FAIL/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.50/±0.65  ≥ 50%/≥ 35%  CAVE/NOT-  FAIL/NOT-  CAVE/NOT-  CAVE/CWC   FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.55/±0.70  ≥ 45%/≥ 30%  CAVE/NOT-  CAVE/CWC   PASS/NOT-  CAVE/CWC   FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.60/±0.75  ≥ 40%/≥ 25%  CAVE/NOT-  CAVE/CWC   PASS/NOT-  PASS/CAL   FAIL/NOT-  CAVE/NOT-   2/3
+  ±0.65/±0.80  ≥ 35%/≥ 20%  PASS/NOT-  CAVE/CWC   PASS/NOT-  PASS/CAL   CAVE/CWC   CAVE/NOT-   2/3
+  ±0.70/±0.85  ≥ 30%/≥ 15%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   CAVE/CWC   CAVE/NOT-   1/3
+  ±0.75/±0.90  ≥ 25%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   CAVE/CWC   PASS/NOT-   1/3
+  ±0.80/±0.90  ≥ 20%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   PASS/CAL   PASS/NOT-   0/3
+    (cell = criterion status / resulting determination; 'CALIBRATED lost' counts how many of the 3 currently-CALIBRATED ISOs stop being CALIBRATED)
+
+  --- hypothetical criterion at SUPPORTING tier 
+  target/comm   amp floor  ERCOT      PJM        CAISO      NYISO      NEISO      MISO        CALIBRATED lost
+  ±0.20/±0.35  ≥ 80%/≥ 65%  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.30/±0.45  ≥ 70%/≥ 55%  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.40/±0.55  ≥ 60%/≥ 45%  FAIL/NOT-  FAIL/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.50/±0.65  ≥ 50%/≥ 35%  CAVE/NOT-  FAIL/NOT-  CAVE/NOT-  CAVE/CWC   FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.55/±0.70  ≥ 45%/≥ 30%  CAVE/NOT-  CAVE/CWC   PASS/NOT-  CAVE/CWC   FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.60/±0.75  ≥ 40%/≥ 25%  CAVE/NOT-  CAVE/CWC   PASS/NOT-  PASS/CAL   FAIL/NOT-  CAVE/NOT-   2/3
+  ±0.65/±0.80  ≥ 35%/≥ 20%  PASS/NOT-  CAVE/CWC   PASS/NOT-  PASS/CAL   CAVE/CWC   CAVE/NOT-   2/3
+  ±0.70/±0.85  ≥ 30%/≥ 15%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   CAVE/CWC   CAVE/NOT-   1/3
+  ±0.75/±0.90  ≥ 25%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   CAVE/CWC   PASS/NOT-   1/3
+  ±0.80/±0.90  ≥ 20%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   PASS/CAL   PASS/NOT-   0/3
+    (cell = criterion status / resulting determination; 'CALIBRATED lost' counts how many of the 3 currently-CALIBRATED ISOs stop being CALIBRATED)
+
+  --- hypothetical criterion at PROTECTIVE tier (protective caveat budget is 0 -> a caveat is NOT-YET)
+  target/comm   amp floor  ERCOT      PJM        CAISO      NYISO      NEISO      MISO        CALIBRATED lost
+  ±0.20/±0.35  ≥ 80%/≥ 65%  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.30/±0.45  ≥ 70%/≥ 55%  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.40/±0.55  ≥ 60%/≥ 45%  FAIL/NOT-  FAIL/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.50/±0.65  ≥ 50%/≥ 35%  CAVE/NOT-  FAIL/NOT-  CAVE/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.55/±0.70  ≥ 45%/≥ 30%  CAVE/NOT-  CAVE/NOT-  PASS/NOT-  CAVE/NOT-  FAIL/NOT-  FAIL/NOT-   3/3
+  ±0.60/±0.75  ≥ 40%/≥ 25%  CAVE/NOT-  CAVE/NOT-  PASS/NOT-  PASS/CAL   FAIL/NOT-  CAVE/NOT-   2/3
+  ±0.65/±0.80  ≥ 35%/≥ 20%  PASS/NOT-  CAVE/NOT-  PASS/NOT-  PASS/CAL   CAVE/NOT-  CAVE/NOT-   2/3
+  ±0.70/±0.85  ≥ 30%/≥ 15%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   CAVE/NOT-  CAVE/NOT-   1/3
+  ±0.75/±0.90  ≥ 25%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   CAVE/NOT-  PASS/NOT-   1/3
+  ±0.80/±0.90  ≥ 20%/≥ 10%  PASS/NOT-  PASS/CAL   PASS/NOT-  PASS/CAL   PASS/CAL   PASS/NOT-   0/3
+    (cell = criterion status / resulting determination; 'CALIBRATED lost' counts how many of the 3 currently-CALIBRATED ISOs stop being CALIBRATED)
+
+==============================================================================
+C2. option (B) REPORTED-ONLY — the same criterion contributing no status
+==============================================================================
+  A REPORTED_ONLY criterion is scored and published but is not aggregated into
+  the determination and consumes no caveat budget (calibration_verdict.REPORTED_ONLY,
+  the posture C5a `co2` already holds). By construction every determination below is
+  the base determination, at EVERY band:
+    ERCOT  NOT-YET  (unchanged at all 10 bands)
+    PJM    CALIBRATED  (unchanged at all 10 bands)
+    CAISO  NOT-YET  (unchanged at all 10 bands)
+    NYISO  CALIBRATED  (unchanged at all 10 bands)
+    NEISO  CALIBRATED  (unchanged at all 10 bands)
+    MISO   NOT-YET  (unchanged at all 10 bands)
+
+==============================================================================
+D. THE CANCELLATION TRAP — what an amplitude repair does to C3a
+==============================================================================
+  Accounting decomposition, NOT a mechanism. Hour-of-day profile split into the 12
+  hours the MEASURED profile ranks highest / lowest. 'peak-only' repairs the peak half
+  to measured and leaves the trough; 'trough-only' is the mirror. Any successor that
+  closes amplitude lands BETWEEN these two level errors (or outside, if it overshoots).
+  C3a band at HEAD: PASS iff |level err| <= 10% (target and commercial are COINCIDENT, so
+  there is no commercial-band caveat for C3a — it is PASS or FAIL).
+
+  ISO    yr    level     peak half   trough half  peak-only   trough-only  C3a@repair
+  ERCOT  2023    -30.1%      -41.7%       +13.0%       +2.8%       -32.8%   peak-only PASS / trough-only FAIL
+  ERCOT  2024     +8.3%       +0.4%       +23.6%       +8.1%        +0.2%   peak-only PASS / trough-only PASS
+  ERCOT  2025     +0.3%       -8.7%       +15.7%       +5.8%        -5.5%   peak-only PASS / trough-only PASS
+  PJM    2023     +8.7%       -2.5%       +24.7%      +10.2%        -1.4%   peak-only FAIL / trough-only PASS
+  PJM    2024     +1.9%      -10.1%       +20.4%       +8.1%        -6.1%   peak-only PASS / trough-only PASS
+  PJM    2025     -4.9%      -15.3%       +10.2%       +4.1%        -9.1%   peak-only PASS / trough-only PASS
+  CAISO  2023     +4.7%       -1.8%       +15.1%       +5.8%        -1.1%   peak-only PASS / trough-only PASS
+  CAISO  2024    +12.9%       +3.8%       +30.4%      +10.5%        +2.5%   peak-only FAIL / trough-only PASS
+  CAISO  2025    +13.7%       +6.9%       +25.9%       +9.3%        +4.4%   peak-only PASS / trough-only PASS
+  NYISO  2023     +8.4%       +2.6%       +16.0%       +6.9%        +1.5%   peak-only PASS / trough-only PASS
+  NYISO  2024     -0.7%       -6.9%        +7.5%       +3.2%        -3.9%   peak-only PASS / trough-only PASS
+  NYISO  2025     -4.3%      -11.6%        +5.6%       +2.4%        -6.7%   peak-only PASS / trough-only PASS
+  NEISO  2023     +7.6%       -1.0%       +18.7%       +8.1%        -0.6%   peak-only PASS / trough-only PASS
+  NEISO  2024    +10.5%       +0.7%       +23.3%      +10.1%        +0.4%   peak-only FAIL / trough-only PASS
+  NEISO  2025     +5.2%       -2.8%       +15.5%       +6.7%        -1.6%   peak-only PASS / trough-only PASS
+  MISO   2023     +2.9%       -5.2%       +13.9%       +5.9%        -3.0%   peak-only PASS / trough-only PASS
+  MISO   2024     -2.2%      -11.8%       +11.5%       +4.7%        -6.9%   peak-only PASS / trough-only PASS
+  MISO   2025     -8.4%      -18.1%        +5.5%       +2.3%       -10.7%   peak-only PASS / trough-only FAIL
