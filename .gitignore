@@ -309,6 +309,16 @@ frontend/data/forecast/program-status.js
 # without a re-solve) and the per-year evolution ledgers. Only the regenerable
 # dispatch parquet is excluded, per the pack-size rule in Git & Pushing.
 /results/ffr4f/*/*/*/*.parquet
+# capx-D2 NYISO external-capacity T1-F re-score (run_full_horizon --out-dir;
+# registered run nyiso-2026-2030-extcap-capxd2). Exactly the FFR-4E/FFR-4F
+# class above: the SLIM artifacts ARE committed and cited by
+# docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md §4 — the
+# full_horizon_summary.json + run_config.json (FC-7's requirement), the
+# per-year evolution ledgers (the I7 accredited/requirement trail) and the
+# resolved config.yaml. Only the regenerable per-year dispatch parquets and
+# floor-retention scratch are excluded, per the pack-size rule in Git & Pushing.
+/results/ff-t1f-extcap/*/*/*/*.parquet
+/results/ff-t1f-extcap/*/*/*/year_*_floor_retentions.json
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
 # D-28 option A step 3). Same class as /results/ffr7b2/ above, of which this is

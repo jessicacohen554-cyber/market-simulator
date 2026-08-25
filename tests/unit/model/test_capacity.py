@@ -2475,6 +2475,79 @@ class TestFF2BAdequacyBasis(unittest.TestCase):
             )
 
 
+class TestNyisoExternalCapacityIntake(unittest.TestCase):
+    """capx D-2 (2026-08-25): NYISO external-capacity accreditation intake.
+
+    Closes the FC-1 I7 base-year accounting gap adjudicated by
+    FINDING-capx-d2-adequacy-nyiso-2026-08-24.md §4b: NYISO credited zero
+    external firm capacity while every peer ISO carried a registry entry. The
+    value is NYISO's own published external capacity — 2026 Gold Book Table
+    V-1, Summer 2026 net capacity purchases from external control areas,
+    3,168.5 MW on the schedule's seasonal-capability (ICAP) basis — converted
+    to the model's UCAP requirement basis with the SAME published NYCA
+    ICAP->UCAP translation factor the requirement side applies (rule 19 one
+    basis; the rule-14 reconciliation pattern of the PJM DR entry). Published
+    operands only, never a number tuned to clear I7 (rules 5/13/21): the
+    entry overshoots the 35.7 MW I7 residual by ~77x, the pre-declared
+    honesty signature of a real accreditation rather than a fit.
+    """
+
+    # Gold Book Table V-1, Summer 2026 column (seasonal capability, ICAP MW).
+    GOLD_BOOK_SUMMER_2026_ICAP_MW = 3_168.5
+
+    def test_registry_reconstructs_gold_book_times_translation(self):
+        from market_sim.config.constants import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+
+        # Table V-1's own component sum reconciles the summer total.
+        self.assertAlmostEqual(67.3 + 2_443.0 + 3.3 + 654.9, 3_168.5, places=6)
+        self.assertAlmostEqual(
+            ADEQUACY_EXTERNAL_TIE_FIRM_MW["NYISO"],
+            self.GOLD_BOOK_SUMMER_2026_ICAP_MW * (1.0 - 0.1321),
+            places=6,
+        )
+
+    def test_ucap_conversion_uses_the_requirement_side_factor(self):
+        # One basis across both sides of I7 (rule 19): the entry's ICAP->UCAP
+        # conversion IS the registered requirement-side ratio, never a second
+        # independently-typed factor that could silently diverge.
+        from market_sim.config.constants import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+
+        self.assertAlmostEqual(
+            ADEQUACY_EXTERNAL_TIE_FIRM_MW["NYISO"] / self.GOLD_BOOK_SUMMER_2026_ICAP_MW,
+            PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"],
+            places=9,
+        )
+
+    def test_accredited_ledger_includes_nyiso_external_firm(self):
+        from market_sim.config.constants import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+        from market_sim.model.capacity import (
+            _firm_import_mw,
+            accredited_firm_capacity_mw,
+        )
+
+        expected = ADEQUACY_EXTERNAL_TIE_FIRM_MW["NYISO"]
+        # One resolver (rule 19), and the credit is additive to the hydro
+        # pool — the ledger's only non-fleet, non-pool supply terms.
+        self.assertAlmostEqual(_firm_import_mw("NYISO"), expected, places=6)
+        with no_hydro_accreditation():
+            self.assertAlmostEqual(
+                accredited_firm_capacity_mw([], iso="NYISO"), expected, places=6
+            )
+
+    def test_entry_is_not_a_deliverability_limit_or_the_dispatch_floor(self):
+        # The two rejected bases, pinned so a future edit cannot silently
+        # swap them in: the 4,350 MW Simultaneous Import Limit (a
+        # deliverability LIMIT — the exact error the CAISO entry rejects for
+        # the MIC) and the model's 900 MW HQ firm dispatch floor (an
+        # inherited ladder constant, not a published RA accreditation).
+        from market_sim.config.constants import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+
+        value = ADEQUACY_EXTERNAL_TIE_FIRM_MW["NYISO"]
+        self.assertNotAlmostEqual(value, 4_350.0, places=0)
+        self.assertNotAlmostEqual(value, 900.0, places=0)
+        self.assertLess(value, 4_350.0)
+
+
 class TestReserveMarginBuild(unittest.TestCase):
     """The adequacy backstop: force-build firm capacity to the reserve margin."""
 

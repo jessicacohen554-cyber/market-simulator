@@ -12,7 +12,12 @@ Manually-collected NYISO planning and market reference documents:
   — the same URL pattern this README documents for 2024 — closing FF-G4 §8-D4
   item 3. It is the source of the NYISO row of
   `constants.DEMAND_GROWTH_RATES` (Table I-1a, NYCA Baseline Energy and Demand
-  Forecasts, Energy-GWh Lower/Baseline/Higher columns).
+  Forecasts, Energy-GWh Lower/Baseline/Higher columns) and of the NYISO row of
+  `capacity_market.ADEQUACY_EXTERNAL_TIE_FIRM_MW` (Table V-1, Summary of
+  Projected Net Capacity Purchases from External Control Areas, Summer 2026
+  total 3,168.5 MW ICAP, converted to UCAP with the published NYCA translation
+  factor — capx D-2 external-capacity intake 2026-08-25; the 2025 SOM report
+  below corroborates the UCAP basis and magnitude, Figure A-97).
 - `<year>-NYCA-Generators.xlsx` / `2025-NYCA-Existing-Generating-Facilities.xlsx`
   — NYCA generator lists.
 - `NYISO-<year>-SOM-*Report*.pdf` (2020, 2022–2025) — NYISO annual State of the

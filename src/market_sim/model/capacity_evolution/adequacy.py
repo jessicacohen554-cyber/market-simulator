@@ -123,7 +123,11 @@ def _firm_import_mw(iso: str | None) -> float:
     provenance cases share it:
 
     * ISOs the model has **no** import node for (ERCOT DC ties, PJM cleared BRA
-      capacity imports) — the firm tie is otherwise absent from the model.
+      capacity imports, NYISO Gold Book net capacity purchases — capx D-2) —
+      the firm tie is otherwise absent from the persistent fleet. NYISO's
+      dispatch-side imports flow through the interchange model
+      (``model/interchange/nyiso.py``), never fleet units, so its credit is
+      likewise additive.
     * ISOs whose import node **does** live in the dispatch topology (CAISO's
       WECC_import, NEISO's HQ_import — FF-2B). For these the adequacy credit is
       the ISO's RA/FCM firm-import product and is **additive, not
@@ -284,8 +288,9 @@ def accredited_firm_capacity_mw(
     never contains hydro; FFR-1C, audit FR-3),
     plus the firm import capacity the ISO's own adequacy ledger counts
     (:func:`_firm_import_mw` / :data:`ADEQUACY_EXTERNAL_TIE_FIRM_MW` — ERCOT's DC
-    ties, PJM's CIL-governed cleared BRA imports, and the RA/FCM firm imports of
-    the import-node ISOs CAISO/NEISO, credited additively without
+    ties, PJM's CIL-governed cleared BRA imports, NYISO's Gold Book net
+    capacity purchases on the UCAP requirement basis, and the RA/FCM firm
+    imports of the import-node ISOs CAISO/NEISO, credited additively without
     double-counting the dispatch import node). Wind/solar
     held in the zonal pools (not Generators) are passed as ``wind_pool_mw``
     / ``solar_pool_mw``.

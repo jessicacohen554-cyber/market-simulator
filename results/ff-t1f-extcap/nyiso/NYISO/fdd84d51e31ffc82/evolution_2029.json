@@ -1,0 +1,243 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [
+    {
+      "from_fuel": "gas_cc",
+      "mw": 104.43400000000003,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_NYC_p2500_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 54.72,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Capital_Hudson_p10190_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 7.182,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_Upstate_West_p10617_peak"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 86.16532000000001,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Long_Island_p50292_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 35.4594,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_Upstate_West_p50449_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 17.967,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_Upstate_West_p50450_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 46.5206,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_Upstate_West_p50451_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 33.983200000000004,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Capital_Hudson_p54034_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 26.927999999999997,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_Upstate_West_p54076_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 194.298,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_Upstate_West_p54547_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 767.228,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_Upstate_West_p54547_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 2.9160000000000004,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Upstate_West_p54592_peak"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 151.77599999999998,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_NYC_p55375_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 38.144,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Long_Island_p56188_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 166.88,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_NYC_p56196_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 390.88,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_NYC_p56196_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 335.82,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_Capital_Hudson_p56259_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 295.69388000000004,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Capital_Hudson_p56940_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 243.0,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_NYC_p57664_committed"
+    }
+  ],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 1000.0,
+    "wind": 1000.0
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 1000.0,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "Upstate_West"
+    },
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 1000.0,
+      "seq": 1,
+      "tech": "gas_cc",
+      "zone": "Upstate_West"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 1000.0,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "Upstate_West"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "thermal",
+      "mw": 1000.0,
+      "seq": 1,
+      "tech": "gas_cc",
+      "zone": "Upstate_West"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 1843.4,
+      "seq": 2,
+      "tech": "solar",
+      "zone": "Upstate_West"
+    }
+  ],
+  "firm_clean_accredited_mw": 1763.281,
+  "firm_clean_mw": 4587.1,
+  "fleet_by_fuel_after": {
+    "biomass": 384.4,
+    "gas_cc": 6199.39885,
+    "gas_cc_ccs": 5999.64115,
+    "gas_ct": 3053.611,
+    "gas_st": 9372.5,
+    "nuclear": 3325.9,
+    "oil": 2905.5
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 384.4,
+    "gas_cc": 8199.39425,
+    "gas_cc_ccs": 2999.64575,
+    "gas_ct": 3053.611,
+    "gas_st": 9372.5,
+    "nuclear": 3325.9,
+    "oil": 2905.5
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "NYISO",
+  "ledger_version": 1,
+  "mode": "forecast",
+  "peak_demand_mw": 29633.821,
+  "pipeline_events": [],
+  "renewable_additions": [
+    {
+      "mw": 1000.0,
+      "tech": "wind",
+      "zone": "Upstate_West"
+    },
+    {
+      "mw": 1843.4,
+      "tech": "solar",
+      "zone": "Upstate_West"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.1224,
+    "wind": 0.1684
+  },
+  "reserve_margin": 0.220636,
+  "retirements": [],
+  "rps_dual": 40.0,
+  "solar_cap_mw": 3343.4,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 1306.475,
+  "storage_power_mw": 1470.0,
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_cc",
+      "mw": 1000.0,
+      "source": "economic",
+      "unit_id": "gas_cc_new_2027c2029_1",
+      "zone": "Upstate_West"
+    }
+  ],
+  "wind_cap_mw": 3400.0,
+  "year": 2029
+}

@@ -17,6 +17,7 @@ from types import SimpleNamespace
 import numpy as np
 
 from market_sim.config.constants import (
+    ADEQUACY_EXTERNAL_TIE_FIRM_MW,
     MARKET_DESIGN,
     MARKET_DESIGN_VINTAGES,
     MISO_SEASONAL_RBDC,
@@ -251,7 +252,10 @@ class TestReservePosition(unittest.TestCase):
         )
         peak = 1000.0
         config = ScenarioConfig(iso=iso)
-        firm = 1000.0 * (1.0 - 0.05)  # UCAP
+        # UCAP thermal plus the capx D-2 external firm-import credit (2026
+        # Gold Book Table V-1 x the NYCA translation factor) — the ledger's
+        # only other supply term once the hydro pool is zeroed below.
+        firm = 1000.0 * (1.0 - 0.05) + ADEQUACY_EXTERNAL_TIE_FIRM_MW[iso]
         ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO[iso]
         requirement = peak * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO[iso]) * ratio
         # Hand-computed: zero the FFR-1C hydro pool so NYISO's real EIA hydro
