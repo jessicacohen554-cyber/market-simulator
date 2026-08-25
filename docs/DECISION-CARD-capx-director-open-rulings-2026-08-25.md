@@ -1,6 +1,8 @@
 # DECISION CARD — capx director: three open owner rulings (leg-(c) consistency · ERCOT entry-signal default · PJM requirement horizon-edge)
 
-> Status: **OPEN — awaiting owner signature.** Three independently signable cards (A, B, C).
+> Status: **SIGNED — 2026-08-25.** All three cards signed by the owner **at the recommendation**
+> (A-A, B-C, C-A). See §5 RESOLUTIONS for the decisions and the consequences adopted with them.
+> The card body below is preserved **as put**, unedited.
 
 **For the owner. Capacity-expansion director session, 2026-08-25, HEAD `99c8cf5`.
 NOTHING IS DECIDED HERE.** This card performs **zero new measurements**: every number is read
@@ -232,15 +234,47 @@ measuring against a bar we already know is wrong.
 
 ---
 
-## 5. RESOLUTIONS — to be completed at signature
+## 5. RESOLUTIONS — ALL THREE CARDS SIGNED BY THE OWNER, 2026-08-25 (in-session)
 
-| card | decision | signed | vs. recommendation |
+| card | decision | **SIGNED** | vs. recommendation |
 |---|---|---|---|
-| **A** | leg-(c) consistency | _pending_ | — |
-| **B** | `entry_lookahead_reprice` disarm default | _pending_ | — |
-| **C** | PJM beyond-last-FPR convention | _pending_ | — |
+| **A** | leg-(c) consistency | **(A-A) HARMONISE TO `fail`, THEN CLOSE NYISO'S ON MEASUREMENT** | **At** the recommendation |
+| **B** | `entry_lookahead_reprice` disarm default | **(B-C) HOLD THE SHIPPED DEFAULT AND CHARTER THE DEVELOPER-PRO-FORMA SUCCESSOR** | **At** the recommendation |
+| **C** | PJM beyond-last-FPR convention | **(C-A) ADOPT HOLD-LAST-FPR, BUNDLED WITH THE D-1 CHECKER REPAIR** | **At** the recommendation |
 
-Signature is recorded here verbatim, with the consequences adopted alongside it, and the
-director's ledger (`docs/handoffs/capx-director-ledger-2026-08.md` §3) is updated in the same
-session. A decision **against** a recommendation is recorded the same way, with both records
-standing — the ercot-233 card Y pattern.
+### 5.1 Consequences adopted with the signatures
+
+**A-A.** CAISO and NYISO gate leg (c) moves `na` → `fail`, with `"c"` added to both `closed_on`
+lists; NEISO's `fail` stands unchanged. The reading is now uniform across all three ISOs that
+have no T1-X run. **A NYISO T1-X crossover run is chartered** (director lane **D10**) so leg (c)
+closes on a measured FC-4 rather than on an unscored cell. The scoring edit itself is carried by
+the already-issued **D7-NYISO** gate re-score, which now also applies the harmonisation.
+*Nothing opened:* all three gates remain `open: false` on other legs, so no ISO's schedulability
+changed on the day of signature, and leg (d) is untouched.
+
+**B-C.** The ERCOT shipped default **holds** — `entry_lookahead_reprice=True` stays the forecast
+posture and the matrix cell stays **`O`**; no cell verdict is minted by this signature (rule 28:
+nothing was tested here). The **developer-pro-forma entry-signal construction is chartered as the
+named successor** (director lane **D11**), with the L-1 measurements as its specification. The
+signature explicitly does **not** ratify either known-wrong construction as correct.
+
+**C-A.** **Hold-last-FPR is adopted as the declared convention** beyond the last published FPR
+table, on the `forward_net_cone_anchor` precedent. Adopted with it, and stated plainly because it
+is the point: **PJM's reported I7 miss restates from 366 MW to ~5.9 GW, and 2029 plausibly joins
+2030 as a failing year.** This is a worse reported result, taken because it is the more honest
+bar. The **D-1 checker repair** (the dropped `year` argument, live for 2026–2028, inert for 2030)
+is bundled into the same scorer/governance round. **S-5 is unblocked**; **S-6** (the PJM ledger
+run, solo heavy slot) runs only *after* S-5 lands, so it measures against the corrected bar.
+PJM's 2029/30 planning parameters are intaken **on publication** (rule 23), never against a
+residual.
+
+### 5.2 What the signatures did NOT do
+
+Unchanged by all three, per §4: no backcast keeper, marker, `status/*.js`,
+`calibration-complete.json`, offer curve, commitment bridge or backcast matrix cell touched; the
+**holdout spend freeze stays ACTIVE** and `final` stays empty; **no §2.1b full-solve is
+authorized** and no ISO's gate opened; no `R`/`I`/`G` cell is licensed for re-test. No solve, no
+scoring and no registration was performed to produce this signature record.
+
+The director's ledger (`docs/handoffs/capx-director-ledger-2026-08.md` §3) is updated in the same
+session, and the card body above is preserved **as put** — the ercot-233 card Y pattern.
