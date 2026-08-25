@@ -523,6 +523,11 @@ results/calibration/*/clean_*/
 #    their heavy contents are already ignored by §8.
 # -----------------------------------------------------------------------------
 results/calibration/*probe*/
+# ercot-235 2023-discrete offer-sweep grid points (PRECOMMIT-ercot235: local
+# W-2 probe bundles; each point's record is its ercot235_point_score.json +
+# official_2023.json, quoted in the FINDING/log; the selected WINNER is
+# registered via `git add -f` of its slim set, overriding this rule).
+results/calibration/ercot235_r[0-9]/
 results/calibration/_diag_*
 results/calibration/caiso_diag_*/
 results/calibration/miso_diag_*
