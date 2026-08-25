@@ -278,6 +278,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # Found by FFR-8A Phase 3's pin-test run and repaired 2026-08-08
     # (single-field drop scan blamed exactly this field).
     "unit_outage_lp_capacity_basis",
+    # miso-186 unit-outage EVENT scope on the fleet's own capacity basis
+    # (GATED default-off; every consumer reads it via
+    # ``getattr(config, "unit_outage_fleet_status_scope", False)`` in
+    # data/fleet/arrays.py, so the off path is byte-inert). Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_fleet_status_scope",
     # caiso-186 published seasonal capability basis for combined cycles (GATED
     # default-off; every consumer reads it via getattr, and it additionally
     # requires cc_nameplate_summer_derate, so the off path is byte-inert).
@@ -1191,6 +1197,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # above: caiso-184 landed the field unregistered, moving the pinned
     # default key (nyiso-128 pattern, third occurrence).
     "unit_outage_lp_capacity_basis": "False",
+    # Added by miso-186 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_fleet_status_scope": "False",
     # Added by caiso-186 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "cc_winter_capability_basis": "False",
@@ -1481,6 +1490,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "caiso_dam_outages": "CAISO's published DAM outage record for the year",
     "miso_native_outage_source": "MISO's published outage record for the year",
     "unit_outage_short_windows": "measured unit-grain outage windows",
+    "unit_outage_fleet_status_scope": "EIA-860 operable generator status",
     "unit_partial_outage_windows": "measured unit-grain partial-derate plateaus",
     "unit_outage_maxgen_events": "measured declared-event unit derates",
     "ercot_thermal_dam_availability": "measured ERCOT 60-Day DAM awards",
@@ -10590,6 +10600,35 @@ class ScenarioConfig:
     # EXACTLY on every EIA-sourced CC bin (median ratio 1.000 vs 1.072 unraised).
     # Per-ISO adoptable and byte-inert while off; no other ISO moves.
     unit_outage_lp_capacity_basis: bool = False
+
+    # Unit-outage EVENTS scoped to the fleet's own capacity basis
+    # (unit_outage_fleet_status_scope, off by default; miso-186). A consistency
+    # repair, not a market feature — the sibling of
+    # unit_outage_lp_capacity_basis one level up: that flag aligns the derate's
+    # DENOMINATOR with the LP capacity; this one aligns the EVENT SET. The
+    # CAMPD unit-outage accumulator charges every detected unit window against
+    # the plant's (plant_code, plant_group) fleet capacity — including windows
+    # of units the fleet does not model, because their EIA-860 operable Status
+    # is non-OP (OA/SB mothballs) and data/fleet/eia860.py keeps OP rows only.
+    # A mothballed unit's terminal CEMS darkness is then a double-count: its
+    # capacity is already absent from the denominator AND its "outage" derates
+    # the units that remain. Measured case (FINDING-miso186): Cottonwood
+    # (55358, MISO-South) — the two OA trains' 2025 wind-down windows sum to
+    # 1.23 of the modeled OP half (580.4 MW) and clip it to availability 0.0
+    # July-November, while the plant's own CAMPD record shows the OP trains
+    # (CT3/CT4) at ~526 MW in ALL 47 of the 2025 scarce hours. When True, the
+    # shared accumulator (std >= 5-day / short / partial layers) drops event
+    # rows whose unit id matches a non-OP generator in the SAME active EIA-860
+    # operable snapshot the fleet loader reads; unmatched ids fail OPEN so
+    # retired-within-window units (dispatched, but absent from the operable
+    # parquet) keep their legitimate windows. MEASURED (EIA-860 published
+    # generator status), ZERO fitted scalars, rule-13 forward-regenerable (the
+    # status sheet is a forward input) and byte-inert while off; non-ERCOT
+    # accumulator branch only (ERCOT caps on its own CAMPD bin sheet). The
+    # declared-event maxgen layer and the layup floor mask are OUT of scope
+    # (different accumulation semantics; no adjudicated case) — documented
+    # boundary, not an oversight.
+    unit_outage_fleet_status_scope: bool = False
 
     # PUBLISHED seasonal capability basis for combined cycles
     # (cc_winter_capability_basis, off by default; caiso-186). Acts ONLY

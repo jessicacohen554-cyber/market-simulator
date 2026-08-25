@@ -1,0 +1,2840 @@
+{
+ "prereg": "PREREG-miso186-midwest-stack-direction-2026-08-25.md",
+ "keeper": "2026-08-22-miso-177-rho-measured",
+ "bundle": "miso177_rho_B",
+ "machinery": {
+  "model_side": "_miso156.model_year repointed (the _miso178 pattern)",
+  "measured_side": "_miso183 loaders verbatim; per-fuel genmix on the same clock"
+ },
+ "years": {
+  "2023": {
+   "F1_scarce_n": 11,
+   "F2_rebuild": {
+    "V4": {
+     "n_gen": 2929,
+     "published": 2929,
+     "pass": true
+    },
+    "V2_reported": {
+     "ct_floor_mwh": 2612614.4182337085,
+     "m155_ct_floor_mwh": 2845651.1787029505,
+     "ct_floor_rel_err": 0.08189224393112732,
+     "fleet_floor_rel_err": 0.03621850544613167,
+     "ct_rows_floored": 160,
+     "m155_ct_rows_floored": 158,
+     "pass": false
+    },
+    "V1": {
+     "c3a_pct": 1.2812640319029622,
+     "published": 1.2812999999999999,
+     "pass": true
+    }
+   },
+   "F3_classifier": {
+    "n2s": 3,
+    "s2n": 0,
+    "unconstrained": 8,
+    "midwest_copper_max_spread": 1.4210854715202004e-14
+   },
+   "genmix_fuel_labels": [
+    "Coal",
+    "Gas",
+    "Hydro",
+    "Nuclear",
+    "Other",
+    "Solar",
+    "Wind"
+   ],
+   "F4_NS_scarce_gw": {
+    "value": -1.4382445454545456,
+    "committed": -1.438,
+    "pass": true
+   },
+   "legR_reserves_scarce": {
+    "miso_rbdc": {
+     "held": 2459.7129128196025,
+     "req": 2459.7129128196025,
+     "dual": 0.0,
+     "short": 0.0
+    },
+    "miso_rbdc_regspin": {
+     "held": 1308.3683915571733,
+     "req": 1424.0816095525568,
+     "dual": 8.909090909090908,
+     "short": 115.71321244673295
+    },
+    "miso_subregional_or_midwest": {
+     "held": 2155.217451615767,
+     "req": 2155.217451615767,
+     "dual": 0.812357555736195,
+     "short": 0.0
+    },
+    "miso_zonal_or_miso_south": {
+     "held": 304.49545149369675,
+     "req": 304.49545149369675,
+     "dual": 0.0,
+     "short": 0.0
+    }
+   },
+   "legL": {
+    "D_S_scarce_gw": 27.6444756330358,
+    "L_S_scarce_gw": 28.55191,
+    "dD_total_scarce_gw": -0.907434366964196,
+    "dD_wiring_scarce_gw": 0.0,
+    "dD_source_scarce_gw": -0.907434366964196,
+    "share_930_S_scarce": 0.2898389417439111,
+    "share_rfal_S_scarce": 0.29121284709105727,
+    "share_930_S_annual": 0.2698790028732285,
+    "share_rfal_S_annual": 0.27184577182785097,
+    "share_delta_x_Dtot_scarce_gw": -0.12686956724755807,
+    "whole_miso_wedge_scarce_gw": -2.6992290909090912,
+    "midwest_mirror_scarce_gw": -1.7917947239448933,
+    "dD_total_annual_gw": -0.5978867922741911,
+    "dD_total_summer_gw": -0.7598986443726469,
+    "dD_total_scarce_gw_shift_p1": -0.4686989124187428,
+    "dD_total_scarce_gw_shift_m1": -1.0239716396914684
+   },
+   "legA": {
+    "south": {
+     "Coal": {
+      "cap_scarce_gw": 3.5273280181818185,
+      "gen_meas_scarce_gw": 3.5583636363636364,
+      "dA_scarce_gw": 0.19560627272727246,
+      "gen_minus_cap_signed_gw": 0.031035618181817715
+     },
+     "Gas": {
+      "cap_scarce_gw": 20.238227700409073,
+      "gen_meas_scarce_gw": 20.028899999999997,
+      "dA_scarce_gw": 0.8813505904401235,
+      "gen_minus_cap_signed_gw": -0.20932770040907187
+     },
+     "Nuclear": {
+      "cap_scarce_gw": 5.038982363636364,
+      "gen_meas_scarce_gw": 5.3118727272727275,
+      "dA_scarce_gw": 0.2742721818181817,
+      "gen_minus_cap_signed_gw": 0.2728903636363635
+     },
+     "Hydro": {
+      "cap_scarce_gw": 0.7201000000000002,
+      "gen_meas_scarce_gw": 0.20467272727272723,
+      "dA_scarce_gw": 0.0,
+      "gen_minus_cap_signed_gw": -0.5154272727272727
+     },
+     "Other": {
+      "cap_scarce_gw": 1.3899560000000015,
+      "gen_meas_scarce_gw": 0.5209909090909091,
+      "dA_scarce_gw": 0.0,
+      "gen_minus_cap_signed_gw": -0.8689650909090922
+     },
+     "Wind": {
+      "cap_scarce_gw": 0.0,
+      "gen_meas_scarce_gw": 0.0,
+      "dA_scarce_gw": 0.0,
+      "gen_minus_cap_signed_gw": 0.0
+     },
+     "Solar": {
+      "cap_scarce_gw": 0.22639698455137322,
+      "gen_meas_scarce_gw": 0.3653545454545455,
+      "dA_scarce_gw": 0.14162217731081483,
+      "gen_minus_cap_signed_gw": 0.13895756090317227
+     }
+    },
+    "midwest_mirror": {
+     "Coal": {
+      "cap_scarce_gw": 28.9634264296899,
+      "gen_meas_scarce_gw": 26.94861818181818,
+      "dA_scarce_gw": 0.12787048035522125
+     },
+     "Gas": {
+      "cap_scarce_gw": 30.997989419618655,
+      "gen_meas_scarce_gw": 20.9788,
+      "dA_scarce_gw": 0.22185370276589045
+     },
+     "Nuclear": {
+      "cap_scarce_gw": 5.998601454545454,
+      "gen_meas_scarce_gw": 5.757336363636364,
+      "dA_scarce_gw": 0.07078690909090933
+     },
+     "Hydro": {
+      "cap_scarce_gw": 1.7447720430107538,
+      "gen_meas_scarce_gw": 1.8505181818181817,
+      "dA_scarce_gw": 0.45005161290322543
+     },
+     "Other": {
+      "cap_scarce_gw": 3.2774080000000003,
+      "gen_meas_scarce_gw": 0.3808727272727273,
+      "dA_scarce_gw": 0.0
+     },
+     "Wind": {
+      "cap_scarce_gw": 4.978023159508729,
+      "gen_meas_scarce_gw": 4.7342818181818185,
+      "dA_scarce_gw": 0.0
+     },
+     "Solar": {
+      "cap_scarce_gw": 1.7056030154486268,
+      "gen_meas_scarce_gw": 1.566609090909091,
+      "dA_scarce_gw": 0.0026737073167335604
+     }
+    },
+    "drill": {
+     "Coal": [
+      {
+       "unit_id": "COAL_MISO-South_p6055_committed",
+       "klass": "COAL",
+       "pmax_mw": 369.7017799999999,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_committed",
+       "klass": "COAL",
+       "pmax_mw": 450.36242239999996,
+       "availcap_scarce_mw": 238.9467421090909,
+       "avail_frac_scarce": 0.5305654517882149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 118.83271499999998,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 212.0057148,
+       "availcap_scarce_mw": 112.48290785454546,
+       "avail_frac_scarce": 0.5305654517882149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p56456_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 319.2464,
+       "availcap_scarce_mw": 223.25907999999998,
+       "avail_frac_scarce": 0.699331550802139
+      },
+      {
+       "unit_id": "COAL_MISO-South_p56456_committed",
+       "klass": "COAL",
+       "pmax_mw": 319.2464,
+       "availcap_scarce_mw": 223.25907999999998,
+       "avail_frac_scarce": 0.699331550802139
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc00",
+       "klass": "COAL",
+       "pmax_mw": 85.24146913333333,
+       "availcap_scarce_mw": 45.226178581818175,
+       "avail_frac_scarce": 0.5305654517882149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc01",
+       "klass": "COAL",
+       "pmax_mw": 85.24146913333333,
+       "availcap_scarce_mw": 45.226178581818175,
+       "avail_frac_scarce": 0.5305654517882149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc02",
+       "klass": "COAL",
+       "pmax_mw": 85.24146913333333,
+       "availcap_scarce_mw": 45.226178581818175,
+       "avail_frac_scarce": 0.5305654517882149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc03",
+       "klass": "COAL",
+       "pmax_mw": 85.24146913333333,
+       "availcap_scarce_mw": 45.226178581818175,
+       "avail_frac_scarce": 0.5305654517882149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc04",
+       "klass": "COAL",
+       "pmax_mw": 85.24146913333333,
+       "availcap_scarce_mw": 45.226178581818175,
+       "avail_frac_scarce": 0.5305654517882149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc05",
+       "klass": "COAL",
+       "pmax_mw": 85.24146913333333,
+       "availcap_scarce_mw": 45.226178581818175,
+       "avail_frac_scarce": 0.5305654517882149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 156.87425,
+       "availcap_scarce_mw": 127.85175,
+       "avail_frac_scarce": 0.8149951314508276
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_committed",
+       "klass": "COAL",
+       "pmax_mw": 156.87425,
+       "availcap_scarce_mw": 127.85175,
+       "avail_frac_scarce": 0.8149951314508276
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_peak",
+       "klass": "COAL",
+       "pmax_mw": 23.955448,
+       "availcap_scarce_mw": 12.70993309090909,
+       "avail_frac_scarce": 0.5305654517882149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_peak",
+       "klass": "COAL",
+       "pmax_mw": 10.562908,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc00",
+       "klass": "COAL",
+       "pmax_mw": 26.54795,
+       "availcap_scarce_mw": 21.63645,
+       "avail_frac_scarce": 0.8149951314508276
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc01",
+       "klass": "COAL",
+       "pmax_mw": 26.54795,
+       "availcap_scarce_mw": 21.63645,
+       "avail_frac_scarce": 0.8149951314508276
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc02",
+       "klass": "COAL",
+       "pmax_mw": 26.54795,
+       "availcap_scarce_mw": 21.63645,
+       "avail_frac_scarce": 0.8149951314508276
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc03",
+       "klass": "COAL",
+       "pmax_mw": 26.54795,
+       "availcap_scarce_mw": 21.63645,
+       "avail_frac_scarce": 0.8149951314508276
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc04",
+       "klass": "COAL",
+       "pmax_mw": 26.54795,
+       "availcap_scarce_mw": 21.63645,
+       "avail_frac_scarce": 0.8149951314508276
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc05",
+       "klass": "COAL",
+       "pmax_mw": 26.54795,
+       "availcap_scarce_mw": 21.63645,
+       "avail_frac_scarce": 0.8149951314508276
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc00",
+       "klass": "COAL",
+       "pmax_mw": 4.841332833333337,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc01",
+       "klass": "COAL",
+       "pmax_mw": 4.841332833333337,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc02",
+       "klass": "COAL",
+       "pmax_mw": 4.841332833333337,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc03",
+       "klass": "COAL",
+       "pmax_mw": 4.841332833333337,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc04",
+       "klass": "COAL",
+       "pmax_mw": 4.841332833333337,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc05",
+       "klass": "COAL",
+       "pmax_mw": 4.841332833333337,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "COAL_MISO-South_p56456_peak",
+       "klass": "COAL",
+       "pmax_mw": 13.192,
+       "availcap_scarce_mw": 9.22558181818182,
+       "avail_frac_scarce": 0.699331550802139
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_peak",
+       "klass": "COAL",
+       "pmax_mw": 9.653799999999999,
+       "availcap_scarce_mw": 7.8678,
+       "avail_frac_scarce": 0.8149951314508276
+      },
+      {
+       "unit_id": "COAL_MISO-South_p56456_econc00",
+       "klass": "COAL",
+       "pmax_mw": 1.3191999999999986,
+       "availcap_scarce_mw": 0.9225581818181808,
+       "avail_frac_scarce": 0.699331550802139
+      },
+      {
+       "unit_id": "COAL_MISO-South_p56456_econc01",
+       "klass": "COAL",
+       "pmax_mw": 1.3191999999999986,
+       "availcap_scarce_mw": 0.9225581818181808,
+       "avail_frac_scarce": 0.699331550802139
+      },
+      {
+       "unit_id": "COAL_MISO-South_p56456_econc02",
+       "klass": "COAL",
+       "pmax_mw": 1.3191999999999986,
+       "availcap_scarce_mw": 0.9225581818181808,
+       "avail_frac_scarce": 0.699331550802139
+      },
+      {
+       "unit_id": "COAL_MISO-South_p56456_econc03",
+       "klass": "COAL",
+       "pmax_mw": 1.3191999999999986,
+       "availcap_scarce_mw": 0.9225581818181808,
+       "avail_frac_scarce": 0.699331550802139
+      },
+      {
+       "unit_id": "COAL_MISO-South_p56456_econc04",
+       "klass": "COAL",
+       "pmax_mw": 1.3191999999999986,
+       "availcap_scarce_mw": 0.9225581818181808,
+       "avail_frac_scarce": 0.699331550802139
+      },
+      {
+       "unit_id": "COAL_MISO-South_p56456_econc05",
+       "klass": "COAL",
+       "pmax_mw": 1.3191999999999986,
+       "availcap_scarce_mw": 0.9225581818181808,
+       "avail_frac_scarce": 0.699331550802139
+      }
+     ],
+     "Gas": [
+      {
+       "unit_id": "ST_GAS_MISO-South_p1402_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 250.7681001906294,
+       "availcap_scarce_mw": 59.486004883650025,
+       "avail_frac_scarce": 0.23721519937515909
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p1402_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 250.7681001906294,
+       "availcap_scarce_mw": 59.486004883650025,
+       "avail_frac_scarce": 0.23721519937515909
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55358_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 378.8106656810457,
+       "availcap_scarce_mw": 249.54321787757652,
+       "avail_frac_scarce": 0.6587544662422181
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 228.97851400000002,
+       "availcap_scarce_mw": 119.24778061666912,
+       "avail_frac_scarce": 0.5207815289458516
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p170_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 143.4685474332,
+       "availcap_scarce_mw": 39.0528282198,
+       "avail_frac_scarce": 0.2722048066875653
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p170_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 143.4685474332,
+       "availcap_scarce_mw": 39.0528282198,
+       "avail_frac_scarce": 0.2722048066875653
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p1402_peak",
+       "klass": "ST_GAS",
+       "pmax_mw": 101.52554663588235,
+       "availcap_scarce_mw": 24.08340278690284,
+       "avail_frac_scarce": 0.23721519937515909
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p1403_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 256.9970292617647,
+       "availcap_scarce_mw": 183.4758383338636,
+       "avail_frac_scarce": 0.7139220202696742
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc00",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.427511,
+       "availcap_scarce_mw": 72.61127235569455,
+       "avail_frac_scarce": 0.5207815289458516
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc01",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.427511,
+       "availcap_scarce_mw": 72.61127235569455,
+       "avail_frac_scarce": 0.5207815289458516
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc02",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.427511,
+       "availcap_scarce_mw": 72.61127235569455,
+       "avail_frac_scarce": 0.5207815289458516
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc03",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.427511,
+       "availcap_scarce_mw": 72.61127235569455,
+       "avail_frac_scarce": 0.5207815289458516
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc04",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.427511,
+       "availcap_scarce_mw": 72.61127235569455,
+       "avail_frac_scarce": 0.5207815289458516
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc05",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.427511,
+       "availcap_scarce_mw": 72.61127235569455,
+       "avail_frac_scarce": 0.5207815289458516
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55467_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 226.26069592236442,
+       "availcap_scarce_mw": 159.4717550531638,
+       "avail_frac_scarce": 0.70481421619901
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55173_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 445.2029514731922,
+       "availcap_scarce_mw": 384.99465431212866,
+       "avail_frac_scarce": 0.8647621338496698
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p1402_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 73.77523055540784,
+       "availcap_scarce_mw": 17.500606025149402,
+       "avail_frac_scarce": 0.23721519937515909
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 486.2241138279411,
+       "availcap_scarce_mw": 433.05522770939456,
+       "avail_frac_scarce": 0.8906494256322276
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55467_peak",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 159.71343241578663,
+       "availcap_scarce_mw": 112.5682976845862,
+       "avail_frac_scarce": 0.70481421619901
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55418_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 168.44834811885858,
+       "availcap_scarce_mw": 122.69880576865663,
+       "avail_frac_scarce": 0.7284061086908334
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55620_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 246.91910886046955,
+       "availcap_scarce_mw": 202.7892661748247,
+       "avail_frac_scarce": 0.8212781388637604
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55714_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 335.54925317833334,
+       "availcap_scarce_mw": 293.33172864750003,
+       "avail_frac_scarce": 0.8741838221037668
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p170_peak",
+       "klass": "ST_GAS",
+       "pmax_mw": 57.54086127,
+       "availcap_scarce_mw": 15.662899018636363,
+       "avail_frac_scarce": 0.2722048066875653
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55358_peak",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 104.4435121092026,
+       "availcap_scarce_mw": 68.8026300719604,
+       "avail_frac_scarce": 0.6587544662422181
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55173_peak",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 241.68160222830434,
+       "availcap_scarce_mw": 208.99709805515565,
+       "avail_frac_scarce": 0.8647621338496699
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_peak",
+       "klass": "ST_GAS",
+       "pmax_mw": 68.01342000000001,
+       "availcap_scarce_mw": 35.420132856436375,
+       "avail_frac_scarce": 0.5207815289458517
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55418_peak",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 118.07633405116131,
+       "availcap_scarce_mw": 86.00752301468536,
+       "avail_frac_scarce": 0.7284061086908333
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc00",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 279.1286579382625,
+       "availcap_scarce_mw": 248.60577887020793,
+       "avail_frac_scarce": 0.8906494256322275
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc01",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 279.1286579382625,
+       "availcap_scarce_mw": 248.60577887020793,
+       "avail_frac_scarce": 0.8906494256322275
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc02",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 279.1286579382625,
+       "availcap_scarce_mw": 248.60577887020793,
+       "avail_frac_scarce": 0.8906494256322275
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc03",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 279.1286579382625,
+       "availcap_scarce_mw": 248.60577887020793,
+       "avail_frac_scarce": 0.8906494256322275
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc04",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 279.1286579382625,
+       "availcap_scarce_mw": 248.60577887020793,
+       "avail_frac_scarce": 0.8906494256322275
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc05",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 279.1286579382625,
+       "availcap_scarce_mw": 248.60577887020793,
+       "avail_frac_scarce": 0.8906494256322275
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8056_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 102.1154128074294,
+       "availcap_scarce_mw": 72.34086512489885,
+       "avail_frac_scarce": 0.708422589069098
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p170_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 39.1277856636,
+       "availcap_scarce_mw": 10.65077133267273,
+       "avail_frac_scarce": 0.2722048066875653
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p6055_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 132.9969070497255,
+       "availcap_scarce_mw": 106.00397974854545,
+       "avail_frac_scarce": 0.797040939522843
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8056_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 89.39229503045196,
+       "availcap_scarce_mw": 63.32752108830145,
+       "avail_frac_scarce": 0.708422589069098
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8056_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 89.39229503045196,
+       "availcap_scarce_mw": 63.32752108830145,
+       "avail_frac_scarce": 0.708422589069098
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p6055_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 121.9138314622484,
+       "availcap_scarce_mw": 97.17031476950002,
+       "avail_frac_scarce": 0.7970409395228433
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p6055_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 121.9138314622484,
+       "availcap_scarce_mw": 97.17031476950002,
+       "avail_frac_scarce": 0.7970409395228433
+      }
+     ],
+     "Nuclear": [],
+     "Solar": []
+    }
+   },
+   "legM": {
+    "idle_by_class_scarce_gw": {
+     "CT_PEAKER": 2.0146843322254715,
+     "ST_GAS": 1.0652793185527247,
+     "CC_REGULAR": 0.8689513681134713,
+     "oil": 0.7484400000000002,
+     "CT_CHP": 0.0765185268091044,
+     "COAL": 0.044826224000000005,
+     "ST_CHP": 0.04431583948911582,
+     "CC_CHP": 0.029797992724,
+     "biomass": 0.012567200000000002
+    },
+    "pi_mw_scarce": 58.51805404097035,
+    "pi_s_scarce": 59.44440700073117,
+    "marginal_class_midwest": {
+     "CT_PEAKER": 7,
+     "CT_CHP": 1,
+     "CC_REGULAR": 1,
+     "oil": 1,
+     "biomass": 1
+    },
+    "marginal_class_south": {
+     "CT_PEAKER": 9,
+     "ST_GAS": 2
+    },
+    "class_mc_south": {
+     "CC_CHP": {
+      "mc_p10": 23.096116179164472,
+      "mc_p50": 25.903956719392827,
+      "mc_p90": 33.141154889392524,
+      "hr_p50": 8.141699999999998,
+      "fuel_price_p50": 2.8927301580723417,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -4.005809268528382,
+      "availcap_scarce_gw": 1.220240131709899
+     },
+     "CC_REGULAR": {
+      "mc_p10": 20.46170554081723,
+      "mc_p50": 23.008980327569724,
+      "mc_p90": 28.13477667084717,
+      "hr_p50": 7.551995296745,
+      "fuel_price_p50": 2.8259285426090224,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -4.701945951781175,
+      "availcap_scarce_gw": 11.664253139222053
+     },
+     "COAL": {
+      "mc_p10": 4.5,
+      "mc_p50": 4.5,
+      "mc_p90": 28.926079310210277,
+      "hr_p50": 12.232889161037916,
+      "fuel_price_p50": 1.7794069072346907,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -4.4158050751427815,
+      "availcap_scarce_gw": 3.5273280181818185
+     },
+     "CT_CHP": {
+      "mc_p10": 17.908079714073832,
+      "mc_p50": 21.787005927997754,
+      "mc_p90": 35.388542200137856,
+      "hr_p50": 5.2931789280000014,
+      "fuel_price_p50": 2.8590668810236566,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -6.9393173011159135,
+      "availcap_scarce_gw": 0.5100147553687389
+     },
+     "CT_PEAKER": {
+      "mc_p10": 33.80359798055916,
+      "mc_p50": 43.236309001477196,
+      "mc_p90": 56.072380646210654,
+      "hr_p50": 12.378299999999998,
+      "fuel_price_p50": 3.4038773153758024,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -1.2345592722339218,
+      "availcap_scarce_gw": 2.6758662209080217
+     },
+     "ST_CHP": {
+      "mc_p10": 19.844701009387904,
+      "mc_p50": 22.550861730262902,
+      "mc_p90": 37.62793700411085,
+      "hr_p50": 6.076908886,
+      "fuel_price_p50": 2.8927301580723417,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -5.918665720588434,
+      "availcap_scarce_gw": 0.10510799904885017
+     },
+     "ST_GAS": {
+      "mc_p10": 30.08022192101035,
+      "mc_p50": 35.10940544263453,
+      "mc_p90": 40.72736308175135,
+      "hr_p50": 11.272008754000002,
+      "fuel_price_p50": 2.8628186869254506,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -2.0767060343196584,
+      "availcap_scarce_gw": 4.062745454151494
+     },
+     "biomass": {
+      "mc_p10": 17.95434643,
+      "mc_p50": 18.9359383075,
+      "mc_p90": 19.4235348325,
+      "hr_p50": 5.710246726,
+      "fuel_price_p50": 2.5,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -6.931769787327109,
+      "availcap_scarce_gw": 0.6415159999999998
+     },
+     "hydro": {
+      "mc_p10": 1.4,
+      "mc_p50": 1.4,
+      "mc_p90": 1.4,
+      "hr_p50": 0.0,
+      "fuel_price_p50": 0.0,
+      "delta_fuel_to_clear_pi_usd_mmbtu": null,
+      "availcap_scarce_gw": 0.7201000000000002
+     },
+     "nuclear": {
+      "mc_p10": 2.5,
+      "mc_p50": 2.5,
+      "mc_p90": 2.5,
+      "hr_p50": 0.0,
+      "fuel_price_p50": 0.5568,
+      "delta_fuel_to_clear_pi_usd_mmbtu": null,
+      "availcap_scarce_gw": 5.038982363636364
+     },
+     "oil": {
+      "mc_p10": 206.7627490095753,
+      "mc_p50": 274.61860324415125,
+      "mc_p90": 316.08275322213797,
+      "hr_p50": 13.5,
+      "fuel_price_p50": 23.080203942380592,
+      "delta_fuel_to_clear_pi_usd_mmbtu": 16.00744808912451,
+      "availcap_scarce_gw": 0.7484400000000002
+     }
+    },
+    "gas_delivered_by_zone_scarce": {
+     "MISO-West": 4.7568611630101385,
+     "MISO-Plains": 3.963018643264974,
+     "MISO-Illinois": 9.290179278294737,
+     "MISO-Indiana": 2.9142672137262764,
+     "MISO-East": 2.8242817372847604,
+     "MISO-South": 2.9335858015400493
+    },
+    "floored_above_price_scarce_gw": {
+     "south": 0.16970384111613251,
+     "midwest": 0.6557445896787155
+    }
+   },
+   "legS_seam_context": {
+    "implied_import_at_pi_s_scarce_gw": 0.27272727272727276,
+    "implied_export_at_pi_s_scarce_gw": 0.375,
+    "import_bands": [
+     50.99,
+     63.58,
+     85.76,
+     112.47,
+     204.68,
+     204.68,
+     204.68,
+     204.68
+    ],
+    "export_bands": [
+     43.04,
+     36.49,
+     31.69,
+     27.69,
+     24.74,
+     22.09,
+     19.7,
+     17.34
+    ]
+   },
+   "headline": {
+    "H_meas_gw": 1.4382445454545456,
+    "H_cap_gw": 3.1920199822491293,
+    "H_econ_gw": -1.2149766810920852,
+    "H_econ_p25_gw": 2.2409428552021544,
+    "H_econ_479_gw": 3.192019982249108,
+    "bridge": {
+     "dD_load_gw": -0.907434366964196,
+     "gen_minus_econcap_gw": 3.25616014201713,
+     "reserve_held_gw": 0.3044954514936967,
+     "sum_gw": 2.6532212265466306,
+     "H_meas_minus_H_econ_gw": 2.6532212265466306
+    }
+   },
+   "candidates_static_reach": {
+    "L_wiring": {
+     "reach_2025_basis_gw": 0.0
+    },
+    "L_source": {
+     "reach_2025_basis_gw": -0.12686956724755807
+    },
+    "A_Coal": {
+     "reach_2025_basis_gw": 0.19560627272727246
+    },
+    "A_Gas": {
+     "reach_2025_basis_gw": 0.8813505904401235
+    },
+    "A_Nuclear": {
+     "reach_2025_basis_gw": 0.2742721818181817
+    },
+    "A_Solar": {
+     "reach_2025_basis_gw": 0.14162217731081483
+    }
+   }
+  },
+  "2024": {
+   "F1_scarce_n": 14,
+   "F2_rebuild": {
+    "V4": {
+     "n_gen": 2923,
+     "published": 2923,
+     "pass": true
+    },
+    "V2_reported": {
+     "ct_floor_mwh": 2610865.9805181073,
+     "m155_ct_floor_mwh": 2877270.772639036,
+     "ct_floor_rel_err": 0.09258940613245867,
+     "fleet_floor_rel_err": 0.03402120138989903,
+     "ct_rows_floored": 149,
+     "m155_ct_rows_floored": 150,
+     "pass": false
+    },
+    "V1": {
+     "c3a_pct": -4.064287541238265,
+     "published": -4.0643,
+     "pass": true
+    }
+   },
+   "F3_classifier": {
+    "n2s": 1,
+    "s2n": 0,
+    "unconstrained": 13,
+    "midwest_copper_max_spread": 7.105427357601002e-15
+   },
+   "genmix_fuel_labels": [
+    "Coal",
+    "Gas",
+    "Hydro",
+    "Nuclear",
+    "Other",
+    "Solar",
+    "Wind"
+   ],
+   "F4_NS_scarce_gw": {
+    "value": -2.2222728571428574,
+    "committed": -2.222,
+    "pass": true
+   },
+   "legR_reserves_scarce": {
+    "miso_rbdc": {
+     "held": 2634.6316266741073,
+     "req": 2634.6316266741073,
+     "dual": 6.221356528145926,
+     "short": 0.0
+    },
+    "miso_rbdc_regspin": {
+     "held": 1596.1390119280134,
+     "req": 1652.936802455357,
+     "dual": 7.0,
+     "short": 56.79779488699777
+    },
+    "miso_subregional_or_midwest": {
+     "held": 2283.979178292411,
+     "req": 2283.979178292411,
+     "dual": 13.495559692382812,
+     "short": 0.0
+    },
+    "miso_zonal_or_miso_south": {
+     "held": 350.6524767194475,
+     "req": 350.6524767194475,
+     "dual": 14.285714285714286,
+     "short": 3.3497014685833295e-14
+    }
+   },
+   "legL": {
+    "D_S_scarce_gw": 26.41299193755349,
+    "L_S_scarce_gw": 26.90359857142857,
+    "dD_total_scarce_gw": -0.49060663387508296,
+    "dD_wiring_scarce_gw": 0.0,
+    "dD_source_scarce_gw": -0.49060663387508296,
+    "share_930_S_scarce": 0.27119894986962567,
+    "share_rfal_S_scarce": 0.27000761925813305,
+    "share_930_S_annual": 0.2710387517953834,
+    "share_rfal_S_annual": 0.2701029527345923,
+    "share_delta_x_Dtot_scarce_gw": 0.07968206583857214,
+    "whole_miso_wedge_scarce_gw": -2.1018021428571423,
+    "midwest_mirror_scarce_gw": -1.6111955089820589,
+    "dD_total_annual_gw": -0.349502625228941,
+    "dD_total_summer_gw": -0.38345009134071123,
+    "dD_total_scarce_gw_shift_p1": -0.6476973481607972,
+    "dD_total_scarce_gw_shift_m1": 0.003496937553488741
+   },
+   "legA": {
+    "south": {
+     "Coal": {
+      "cap_scarce_gw": 3.1430416254703863,
+      "gen_meas_scarce_gw": 3.179278571428571,
+      "dA_scarce_gw": 0.20595914595818438,
+      "gen_minus_cap_signed_gw": 0.03623694595818473
+     },
+     "Gas": {
+      "cap_scarce_gw": 19.27905087280901,
+      "gen_meas_scarce_gw": 19.57539285714286,
+      "dA_scarce_gw": 1.0651236981665462,
+      "gen_minus_cap_signed_gw": 0.29634198433385295
+     },
+     "Nuclear": {
+      "cap_scarce_gw": 5.1499656428571425,
+      "gen_meas_scarce_gw": 5.007007142857144,
+      "dA_scarce_gw": 0.027184214285714266,
+      "gen_minus_cap_signed_gw": -0.14295850000000018
+     },
+     "Hydro": {
+      "cap_scarce_gw": 0.6311000000000001,
+      "gen_meas_scarce_gw": 0.34775000000000006,
+      "dA_scarce_gw": 0.0,
+      "gen_minus_cap_signed_gw": -0.28335000000000005
+     },
+     "Other": {
+      "cap_scarce_gw": 1.3899560000000015,
+      "gen_meas_scarce_gw": 0.04033571428571428,
+      "dA_scarce_gw": 0.0,
+      "gen_minus_cap_signed_gw": -1.3496202857142872
+     },
+     "Wind": {
+      "cap_scarce_gw": 0.04025423786864799,
+      "gen_meas_scarce_gw": 0.03565,
+      "dA_scarce_gw": 0.011234484424271001,
+      "gen_minus_cap_signed_gw": -0.004604237868647993
+     },
+     "Solar": {
+      "cap_scarce_gw": 0.6357735130045523,
+      "gen_meas_scarce_gw": 0.9404571428571429,
+      "dA_scarce_gw": 0.31625690009069796,
+      "gen_minus_cap_signed_gw": 0.3046836298525905
+     }
+    },
+    "midwest_mirror": {
+     "Coal": {
+      "cap_scarce_gw": 29.38486962180221,
+      "gen_meas_scarce_gw": 26.72123571428572,
+      "dA_scarce_gw": 0.02400248093053181
+     },
+     "Gas": {
+      "cap_scarce_gw": 31.212957554732238,
+      "gen_meas_scarce_gw": 24.465685714285712,
+      "dA_scarce_gw": 0.24650900295555478
+     },
+     "Nuclear": {
+      "cap_scarce_gw": 6.130720285714285,
+      "gen_meas_scarce_gw": 6.186649999999999,
+      "dA_scarce_gw": 0.11922600000000018
+     },
+     "Hydro": {
+      "cap_scarce_gw": 1.7404097222222228,
+      "gen_meas_scarce_gw": 2.40575,
+      "dA_scarce_gw": 0.7842637896825391
+     },
+     "Other": {
+      "cap_scarce_gw": 3.2774080000000008,
+      "gen_meas_scarce_gw": 0.40845,
+      "dA_scarce_gw": 0.0
+     },
+     "Wind": {
+      "cap_scarce_gw": 4.804376100888622,
+      "gen_meas_scarce_gw": 4.571842857142856,
+      "dA_scarce_gw": 0.0
+     },
+     "Solar": {
+      "cap_scarce_gw": 1.780512201281162,
+      "gen_meas_scarce_gw": 1.4757142857142855,
+      "dA_scarce_gw": 0.011537246384699457
+     }
+    },
+    "drill": {
+     "Coal": [
+      {
+       "unit_id": "COAL_MISO-South_p6055_committed",
+       "klass": "COAL",
+       "pmax_mw": 368.92995999999994,
+       "availcap_scarce_mw": 0.32981999999998973,
+       "avail_frac_scarce": 0.0008939908268767056
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_committed",
+       "klass": "COAL",
+       "pmax_mw": 449.4202416,
+       "availcap_scarce_mw": 139.06441645714284,
+       "avail_frac_scarce": 0.309430692222615
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 211.5621882,
+       "availcap_scarce_mw": 65.46383434285714,
+       "avail_frac_scarce": 0.309430692222615
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 118.58462999999998,
+       "availcap_scarce_mw": 0.10601357142856813,
+       "avail_frac_scarce": 0.0008939908268767052
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc00",
+       "klass": "COAL",
+       "pmax_mw": 85.0631397,
+       "availcap_scarce_mw": 26.321146200000005,
+       "avail_frac_scarce": 0.309430692222615
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc01",
+       "klass": "COAL",
+       "pmax_mw": 85.0631397,
+       "availcap_scarce_mw": 26.321146200000005,
+       "avail_frac_scarce": 0.309430692222615
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc02",
+       "klass": "COAL",
+       "pmax_mw": 85.0631397,
+       "availcap_scarce_mw": 26.321146200000005,
+       "avail_frac_scarce": 0.309430692222615
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc03",
+       "klass": "COAL",
+       "pmax_mw": 85.0631397,
+       "availcap_scarce_mw": 26.321146200000005,
+       "avail_frac_scarce": 0.309430692222615
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc04",
+       "klass": "COAL",
+       "pmax_mw": 85.0631397,
+       "availcap_scarce_mw": 26.321146200000005,
+       "avail_frac_scarce": 0.309430692222615
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc05",
+       "klass": "COAL",
+       "pmax_mw": 85.0631397,
+       "availcap_scarce_mw": 26.321146200000005,
+       "avail_frac_scarce": 0.309430692222615
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 156.540475,
+       "availcap_scarce_mw": 100.6331625,
+       "avail_frac_scarce": 0.6428571428571429
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_committed",
+       "klass": "COAL",
+       "pmax_mw": 156.540475,
+       "availcap_scarce_mw": 100.6331625,
+       "avail_frac_scarce": 0.6428571428571429
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_committed",
+       "klass": "COAL",
+       "pmax_mw": 478.75092,
+       "availcap_scarce_mw": 423.2860276411162,
+       "avail_frac_scarce": 0.8841466615690602
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 239.37546000000003,
+       "availcap_scarce_mw": 211.64301382055814,
+       "avail_frac_scarce": 0.8841466615690602
+      },
+      {
+       "unit_id": "COAL_MISO-South_p56456_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 319.2464,
+       "availcap_scarce_mw": 296.4430857142857,
+       "avail_frac_scarce": 0.9285714285714286
+      },
+      {
+       "unit_id": "COAL_MISO-South_p56456_committed",
+       "klass": "COAL",
+       "pmax_mw": 319.2464,
+       "availcap_scarce_mw": 296.4430857142857,
+       "avail_frac_scarce": 0.9285714285714286
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6190_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 260.87480700000003,
+       "availcap_scarce_mw": 242.2408922142858,
+       "avail_frac_scarce": 0.9285714285714286
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_peak",
+       "klass": "COAL",
+       "pmax_mw": 23.905331999999998,
+       "availcap_scarce_mw": 7.39704342857143,
+       "avail_frac_scarce": 0.309430692222615
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc00",
+       "klass": "COAL",
+       "pmax_mw": 140.96554866666668,
+       "availcap_scarce_mw": 124.63421924988423,
+       "avail_frac_scarce": 0.8841466615690602
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc01",
+       "klass": "COAL",
+       "pmax_mw": 140.96554866666668,
+       "availcap_scarce_mw": 124.63421924988423,
+       "avail_frac_scarce": 0.8841466615690602
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc02",
+       "klass": "COAL",
+       "pmax_mw": 140.96554866666668,
+       "availcap_scarce_mw": 124.63421924988423,
+       "avail_frac_scarce": 0.8841466615690602
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc03",
+       "klass": "COAL",
+       "pmax_mw": 140.96554866666668,
+       "availcap_scarce_mw": 124.63421924988423,
+       "avail_frac_scarce": 0.8841466615690602
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc04",
+       "klass": "COAL",
+       "pmax_mw": 140.96554866666668,
+       "availcap_scarce_mw": 124.63421924988423,
+       "avail_frac_scarce": 0.8841466615690602
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc05",
+       "klass": "COAL",
+       "pmax_mw": 140.96554866666668,
+       "availcap_scarce_mw": 124.63421924988423,
+       "avail_frac_scarce": 0.8841466615690602
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6190_committed",
+       "klass": "COAL",
+       "pmax_mw": 203.113053,
+       "availcap_scarce_mw": 188.60497778571428,
+       "avail_frac_scarce": 0.9285714285714286
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_peak",
+       "klass": "COAL",
+       "pmax_mw": 10.540856,
+       "availcap_scarce_mw": 0.00942342857142828,
+       "avail_frac_scarce": 0.0008939908268767052
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc00",
+       "klass": "COAL",
+       "pmax_mw": 26.491465,
+       "availcap_scarce_mw": 17.030227500000002,
+       "avail_frac_scarce": 0.6428571428571429
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc01",
+       "klass": "COAL",
+       "pmax_mw": 26.491465,
+       "availcap_scarce_mw": 17.030227500000002,
+       "avail_frac_scarce": 0.6428571428571429
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc02",
+       "klass": "COAL",
+       "pmax_mw": 26.491465,
+       "availcap_scarce_mw": 17.030227500000002,
+       "avail_frac_scarce": 0.6428571428571429
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc03",
+       "klass": "COAL",
+       "pmax_mw": 26.491465,
+       "availcap_scarce_mw": 17.030227500000002,
+       "avail_frac_scarce": 0.6428571428571429
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc04",
+       "klass": "COAL",
+       "pmax_mw": 26.491465,
+       "availcap_scarce_mw": 17.030227500000002,
+       "avail_frac_scarce": 0.6428571428571429
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc05",
+       "klass": "COAL",
+       "pmax_mw": 26.491465,
+       "availcap_scarce_mw": 17.030227500000002,
+       "avail_frac_scarce": 0.6428571428571429
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc00",
+       "klass": "COAL",
+       "pmax_mw": 4.83122566666667,
+       "availcap_scarce_mw": 0.004319071428571298,
+       "avail_frac_scarce": 0.0008939908268767052
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc01",
+       "klass": "COAL",
+       "pmax_mw": 4.83122566666667,
+       "availcap_scarce_mw": 0.004319071428571298,
+       "avail_frac_scarce": 0.0008939908268767052
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc02",
+       "klass": "COAL",
+       "pmax_mw": 4.83122566666667,
+       "availcap_scarce_mw": 0.004319071428571298,
+       "avail_frac_scarce": 0.0008939908268767052
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc03",
+       "klass": "COAL",
+       "pmax_mw": 4.83122566666667,
+       "availcap_scarce_mw": 0.004319071428571298,
+       "avail_frac_scarce": 0.0008939908268767052
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc04",
+       "klass": "COAL",
+       "pmax_mw": 4.83122566666667,
+       "availcap_scarce_mw": 0.004319071428571298,
+       "avail_frac_scarce": 0.0008939908268767052
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc05",
+       "klass": "COAL",
+       "pmax_mw": 4.83122566666667,
+       "availcap_scarce_mw": 0.004319071428571298,
+       "avail_frac_scarce": 0.0008939908268767052
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_peak",
+       "klass": "COAL",
+       "pmax_mw": 31.916728000000003,
+       "availcap_scarce_mw": 28.219068509407748,
+       "avail_frac_scarce": 0.8841466615690602
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_peak",
+       "klass": "COAL",
+       "pmax_mw": 9.633259999999998,
+       "availcap_scarce_mw": 6.192809999999999,
+       "avail_frac_scarce": 0.6428571428571429
+      }
+     ],
+     "Gas": [
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55358_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 378.0369163082876,
+       "availcap_scarce_mw": 75.76659558399999,
+       "avail_frac_scarce": 0.2004211554889857
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p170_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 146.07257748159998,
+       "availcap_scarce_mw": 5.048774926799999,
+       "avail_frac_scarce": 0.03456346847467635
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p170_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 146.07257748159998,
+       "availcap_scarce_mw": 5.048774926799999,
+       "avail_frac_scarce": 0.03456346847467635
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p1403_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 256.14812435647053,
+       "availcap_scarce_mw": 130.24446733542854,
+       "avail_frac_scarce": 0.5084732424359775
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p6190_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 109.26750000000001,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p6190_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 100.161875,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p6190_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 100.161875,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 485.23096438105875,
+       "availcap_scarce_mw": 386.7384507015132,
+       "avail_frac_scarce": 0.7970193146985609
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55358_peak",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 104.23017835357071,
+       "availcap_scarce_mw": 20.889932782445708,
+       "avail_frac_scarce": 0.20042115548898573
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55620_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 246.4137256627953,
+       "availcap_scarce_mw": 173.47213342474973,
+       "avail_frac_scarce": 0.7039873000505563
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55220_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 197.78797603015107,
+       "availcap_scarce_mw": 125.68973830640665,
+       "avail_frac_scarce": 0.635477144916263
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8056_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 100.57764599999999,
+       "availcap_scarce_mw": 32.02321778541428,
+       "avail_frac_scarce": 0.31839299346312283
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55714_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 335.54925317833334,
+       "availcap_scarce_mw": 267.0084284528572,
+       "avail_frac_scarce": 0.7957354275825222
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p1402_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 249.11894002530292,
+       "availcap_scarce_mw": 185.71774486109462,
+       "avail_frac_scarce": 0.7454982942775502
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p1402_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 249.11894002530292,
+       "availcap_scarce_mw": 185.71774486109462,
+       "avail_frac_scarce": 0.7454982942775502
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p1396_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 333.47988589402667,
+       "availcap_scarce_mw": 272.9999386570768,
+       "avail_frac_scarce": 0.8186398946526893
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8056_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 88.04612700000001,
+       "availcap_scarce_mw": 28.033269938364292,
+       "avail_frac_scarce": 0.31839299346312283
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8056_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 88.04612700000001,
+       "availcap_scarce_mw": 28.033269938364292,
+       "avail_frac_scarce": 0.31839299346312283
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8054_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 179.8108501567577,
+       "availcap_scarce_mw": 121.61226437705719,
+       "avail_frac_scarce": 0.6763344051320406
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55173_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 444.2917296067764,
+       "availcap_scarce_mw": 387.03346485536855,
+       "avail_frac_scarce": 0.8711246216487425
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 229.86674567064998,
+       "availcap_scarce_mw": 173.17318363674653,
+       "avail_frac_scarce": 0.7533633589821938
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p170_peak",
+       "klass": "ST_GAS",
+       "pmax_mw": 58.58525834823529,
+       "availcap_scarce_mw": 2.02490973,
+       "avail_frac_scarce": 0.03456346847467635
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc00",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 278.5585165891263,
+       "availcap_scarce_mw": 222.0165179953132,
+       "avail_frac_scarce": 0.7970193146985609
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc01",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 278.5585165891263,
+       "availcap_scarce_mw": 222.0165179953132,
+       "avail_frac_scarce": 0.7970193146985609
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc02",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 278.5585165891263,
+       "availcap_scarce_mw": 222.0165179953132,
+       "avail_frac_scarce": 0.7970193146985609
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc03",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 278.5585165891263,
+       "availcap_scarce_mw": 222.0165179953132,
+       "avail_frac_scarce": 0.7970193146985609
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc04",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 278.5585165891263,
+       "availcap_scarce_mw": 222.0165179953132,
+       "avail_frac_scarce": 0.7970193146985609
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc05",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 278.5585165891263,
+       "availcap_scarce_mw": 222.0165179953132,
+       "avail_frac_scarce": 0.7970193146985609
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p6190_peak",
+       "klass": "ST_GAS",
+       "pmax_mw": 54.633750000000006,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8054_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 140.27412708012116,
+       "availcap_scarce_mw": 94.87221829415002,
+       "avail_frac_scarce": 0.6763344051320406
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8054_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 140.27412708012116,
+       "availcap_scarce_mw": 94.87221829415002,
+       "avail_frac_scarce": 0.6763344051320406
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55418_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 168.10357543112235,
+       "availcap_scarce_mw": 128.49238221702493,
+       "avail_frac_scarce": 0.7643643621945003
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p170_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 39.8379756768,
+       "availcap_scarce_mw": 1.3769386164000001,
+       "avail_frac_scarce": 0.034563468474676354
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc00",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.96836493806904,
+       "availcap_scarce_mw": 105.44703756098924,
+       "avail_frac_scarce": 0.7533633589821941
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc01",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.96836493806904,
+       "availcap_scarce_mw": 105.44703756098924,
+       "avail_frac_scarce": 0.7533633589821941
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc02",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.96836493806904,
+       "availcap_scarce_mw": 105.44703756098924,
+       "avail_frac_scarce": 0.7533633589821941
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc03",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.96836493806904,
+       "availcap_scarce_mw": 105.44703756098924,
+       "avail_frac_scarce": 0.7533633589821941
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc04",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.96836493806904,
+       "availcap_scarce_mw": 105.44703756098924,
+       "avail_frac_scarce": 0.7533633589821941
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p3459_econc05",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.96836493806904,
+       "availcap_scarce_mw": 105.44703756098924,
+       "avail_frac_scarce": 0.7533633589821941
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8056_peak",
+       "klass": "ST_GAS",
+       "pmax_mw": 48.8241,
+       "availcap_scarce_mw": 15.545251352142856,
+       "avail_frac_scarce": 0.31839299346312283
+      }
+     ],
+     "Solar": []
+    }
+   },
+   "legM": {
+    "idle_by_class_scarce_gw": {
+     "CT_PEAKER": 1.5425754363727233,
+     "ST_GAS": 1.3521321462721703,
+     "oil": 0.7484400000000003,
+     "CC_REGULAR": 0.6561122356988609,
+     "CT_CHP": 0.14392868890669192,
+     "CC_CHP": 0.1171485719558,
+     "ST_CHP": 0.04434160445802882,
+     "COAL": 0.043832588,
+     "biomass": 0.012754545454545456
+    },
+    "pi_mw_scarce": 71.93322930632192,
+    "pi_s_scarce": 72.14291551964494,
+    "marginal_class_midwest": {
+     "CT_PEAKER": 5,
+     "biomass": 4,
+     "ST_GAS": 2,
+     "COAL": 2,
+     "oil": 1
+    },
+    "marginal_class_south": {
+     "CT_PEAKER": 6,
+     "ST_GAS": 4,
+     "CC_REGULAR": 2,
+     "CC_CHP": 1,
+     "oil": 1
+    },
+    "class_mc_south": {
+     "CC_CHP": {
+      "mc_p10": 19.660462912337103,
+      "mc_p50": 24.72070469079087,
+      "mc_p90": 32.065531614191535,
+      "hr_p50": 8.141699999999998,
+      "fuel_price_p50": 2.5974102166100925,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -5.7988533863359075,
+      "availcap_scarce_gw": 1.2280548695718576
+     },
+     "CC_REGULAR": {
+      "mc_p10": 16.223834549222715,
+      "mc_p50": 20.290344636962143,
+      "mc_p90": 29.46072813004024,
+      "hr_p50": 7.551995296745,
+      "fuel_price_p50": 2.5362209756990057,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -6.838309961821411,
+      "availcap_scarce_gw": 10.740615405297577
+     },
+     "COAL": {
+      "mc_p10": 4.5,
+      "mc_p50": 4.5,
+      "mc_p90": 28.63239679594341,
+      "hr_p50": 12.232889161037916,
+      "fuel_price_p50": 1.7468225238019235,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -5.512453224958384,
+      "availcap_scarce_gw": 3.1430416254703863
+     },
+     "CT_CHP": {
+      "mc_p10": 16.117041774448698,
+      "mc_p50": 20.374878589969427,
+      "mc_p90": 32.122737134352505,
+      "hr_p50": 5.2931789280000014,
+      "fuel_price_p50": 2.58564033890387,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -9.740526707611892,
+      "availcap_scarce_gw": 0.5083158315311039
+     },
+     "CT_PEAKER": {
+      "mc_p10": 30.42802004951039,
+      "mc_p50": 39.65961274805709,
+      "mc_p90": 60.73558778181155,
+      "hr_p50": 12.378299999999998,
+      "fuel_price_p50": 3.0730064349371133,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -2.607273741811463,
+      "availcap_scarce_gw": 2.6625804134655695
+     },
+     "ST_CHP": {
+      "mc_p10": 17.37195863854162,
+      "mc_p50": 21.412694129139737,
+      "mc_p90": 36.75935132310194,
+      "hr_p50": 6.076908886,
+      "fuel_price_p50": 2.5974102166100925,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -8.313525202520568,
+      "availcap_scarce_gw": 0.1048554147200485
+     },
+     "ST_GAS": {
+      "mc_p10": 26.344500729790376,
+      "mc_p50": 34.15249728171939,
+      "mc_p90": 42.44820474888592,
+      "hr_p50": 11.272008754000002,
+      "fuel_price_p50": 2.7300879620818312,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -3.351730188392162,
+      "availcap_scarce_gw": 4.034628938222869
+     },
+     "biomass": {
+      "mc_p10": 17.95434643,
+      "mc_p50": 18.9359383075,
+      "mc_p90": 19.4235348325,
+      "hr_p50": 5.710246726,
+      "fuel_price_p50": 2.5,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -9.281086009386195,
+      "availcap_scarce_gw": 0.6415159999999998
+     },
+     "hydro": {
+      "mc_p10": 1.4,
+      "mc_p50": 1.4,
+      "mc_p90": 1.4,
+      "hr_p50": 0.0,
+      "fuel_price_p50": 0.0,
+      "delta_fuel_to_clear_pi_usd_mmbtu": null,
+      "availcap_scarce_gw": 0.6311000000000001
+     },
+     "nuclear": {
+      "mc_p10": 2.5,
+      "mc_p50": 2.5,
+      "mc_p90": 2.5,
+      "hr_p50": 0.0,
+      "fuel_price_p50": 0.576,
+      "delta_fuel_to_clear_pi_usd_mmbtu": null,
+      "availcap_scarce_gw": 5.1499656428571425
+     },
+     "oil": {
+      "mc_p10": 188.75951954726403,
+      "mc_p50": 217.044,
+      "mc_p90": 247.5,
+      "hr_p50": 13.5,
+      "fuel_price_p50": 16.840999999999998,
+      "delta_fuel_to_clear_pi_usd_mmbtu": 10.748945977309488,
+      "availcap_scarce_gw": 0.7484400000000003
+     }
+    },
+    "gas_delivered_by_zone_scarce": {
+     "MISO-West": 4.467958480046591,
+     "MISO-Plains": 3.4882381597335548,
+     "MISO-Illinois": 5.654513003764068,
+     "MISO-Indiana": 2.5204045341285783,
+     "MISO-East": 2.343932076741056,
+     "MISO-South": 2.723748220580194
+    },
+    "floored_above_price_scarce_gw": {
+     "south": 0.34437125044388167,
+     "midwest": 0.6173281246856792
+    }
+   },
+   "legS_seam_context": {
+    "implied_import_at_pi_s_scarce_gw": 0.21428571428571427,
+    "implied_export_at_pi_s_scarce_gw": 0.5357142857142857,
+    "import_bands": [
+     57.86,
+     82.81,
+     163.02,
+     241.36,
+     260.66,
+     284.59,
+     284.59,
+     284.59
+    ],
+    "export_bands": [
+     46.72,
+     38.67,
+     32.32,
+     27.61,
+     23.77,
+     20.81,
+     18.47,
+     16.0
+    ]
+   },
+   "headline": {
+    "H_meas_gw": 2.2222728571428574,
+    "H_cap_gw": 3.505497477736799,
+    "H_econ_gw": -0.6229579437784871,
+    "H_econ_p25_gw": 2.462064017836797,
+    "H_econ_479_gw": 3.5054974777368186,
+    "bridge": {
+     "dD_load_gw": -0.49060663387508296,
+     "gen_minus_econcap_gw": 2.9851849580769803,
+     "reserve_held_gw": 0.35065247671944755,
+     "sum_gw": 2.8452308009213447,
+     "H_meas_minus_H_econ_gw": 2.8452308009213443
+    }
+   },
+   "candidates_static_reach": {
+    "L_wiring": {
+     "reach_2025_basis_gw": 0.0
+    },
+    "L_source": {
+     "reach_2025_basis_gw": 0.07968206583857214
+    },
+    "A_Coal": {
+     "reach_2025_basis_gw": 0.20595914595818438
+    },
+    "A_Gas": {
+     "reach_2025_basis_gw": 1.0651236981665462
+    },
+    "A_Solar": {
+     "reach_2025_basis_gw": 0.31625690009069796
+    }
+   }
+  },
+  "2025": {
+   "F1_scarce_n": 47,
+   "F2_rebuild": {
+    "V4": {
+     "n_gen": 2923,
+     "published": 2923,
+     "pass": true
+    },
+    "V2_reported": {
+     "ct_floor_mwh": 2591090.368741814,
+     "m155_ct_floor_mwh": 2867716.6446470916,
+     "ct_floor_rel_err": 0.09646220676008242,
+     "fleet_floor_rel_err": 0.03966526025329398,
+     "ct_rows_floored": 150,
+     "m155_ct_rows_floored": 153,
+     "pass": false
+    },
+    "V1": {
+     "c3a_pct": -11.74207035814192,
+     "published": -11.7421,
+     "pass": true
+    }
+   },
+   "F3_classifier": {
+    "n2s": 9,
+    "s2n": 0,
+    "unconstrained": 38,
+    "midwest_copper_max_spread": 4.263256414560601e-14
+   },
+   "genmix_fuel_labels": [
+    "Coal",
+    "Gas",
+    "Hydro",
+    "Nuclear",
+    "Other",
+    "Solar",
+    "Wind"
+   ],
+   "F4_NS_scarce_gw": {
+    "value": -2.4412125531914888,
+    "committed": -2.441,
+    "pass": true
+   },
+   "legR_reserves_scarce": {
+    "miso_rbdc": {
+     "held": 2630.6609510056514,
+     "req": 2603.62285987367,
+     "dual": 0.0,
+     "short": 0.0
+    },
+    "miso_rbdc_regspin": {
+     "held": 1794.7960724526263,
+     "req": 1853.5309253449136,
+     "dual": 13.225009187738946,
+     "short": 63.1491627794631
+    },
+    "miso_subregional_or_midwest": {
+     "held": 1936.582992229056,
+     "req": 1910.5518188476562,
+     "dual": 0.0,
+     "short": 0.0
+    },
+    "miso_zonal_or_miso_south": {
+     "held": 694.0779563416826,
+     "req": 693.0710343705847,
+     "dual": 1.2584854288304106,
+     "short": 0.0
+    }
+   },
+   "legL": {
+    "D_S_scarce_gw": 27.346989547046615,
+    "L_S_scarce_gw": 27.821298085106385,
+    "dD_total_scarce_gw": -0.4743085380597735,
+    "dD_wiring_scarce_gw": -3.0961521762482665e-16,
+    "dD_source_scarce_gw": -0.4743085380597732,
+    "share_930_S_scarce": 0.26570224160905054,
+    "share_rfal_S_scarce": 0.26572762321326737,
+    "share_930_S_annual": 0.27070337022330165,
+    "share_rfal_S_annual": 0.270056455241278,
+    "share_delta_x_Dtot_scarce_gw": 0.01726553732497332,
+    "whole_miso_wedge_scarce_gw": -1.894838297872339,
+    "midwest_mirror_scarce_gw": -1.4205297598125677,
+    "dD_total_annual_gw": -0.4807180496905144,
+    "dD_total_summer_gw": -0.43186918661031454,
+    "dD_total_scarce_gw_shift_p1": -0.7752521550810502,
+    "dD_total_scarce_gw_shift_m1": 0.07863741938703499
+   },
+   "legA": {
+    "south": {
+     "Coal": {
+      "cap_scarce_gw": 2.849575799944638,
+      "gen_meas_scarce_gw": 2.9365510638297865,
+      "dA_scarce_gw": 0.21190742711565044,
+      "gen_minus_cap_signed_gw": 0.08697526388514927
+     },
+     "Gas": {
+      "cap_scarce_gw": 19.341629444416252,
+      "gen_meas_scarce_gw": 19.969131914893616,
+      "dA_scarce_gw": 1.0826898402774632,
+      "gen_minus_cap_signed_gw": 0.6275024704773626
+     },
+     "Nuclear": {
+      "cap_scarce_gw": 4.718464106382978,
+      "gen_meas_scarce_gw": 5.08357659574468,
+      "dA_scarce_gw": 0.4405981276595746,
+      "gen_minus_cap_signed_gw": 0.36511248936170243
+     },
+     "Hydro": {
+      "cap_scarce_gw": 0.6310999999999998,
+      "gen_meas_scarce_gw": 0.41009361702127656,
+      "dA_scarce_gw": 0.0,
+      "gen_minus_cap_signed_gw": -0.2210063829787235
+     },
+     "Other": {
+      "cap_scarce_gw": 1.3899560000000009,
+      "gen_meas_scarce_gw": 0.3062829787234042,
+      "dA_scarce_gw": 0.0,
+      "gen_minus_cap_signed_gw": -1.0836730212765973
+     },
+     "Wind": {
+      "cap_scarce_gw": 0.02841120106140948,
+      "gen_meas_scarce_gw": 0.03341914893617021,
+      "dA_scarce_gw": 0.013414588022347889,
+      "gen_minus_cap_signed_gw": 0.00500794787476074
+     },
+     "Solar": {
+      "cap_scarce_gw": 1.341633802685636,
+      "gen_meas_scarce_gw": 1.5234553191489362,
+      "dA_scarce_gw": 0.22436593952758638,
+      "gen_minus_cap_signed_gw": 0.18182151646330014
+     }
+    },
+    "midwest_mirror": {
+     "Coal": {
+      "cap_scarce_gw": 28.69348634105584,
+      "gen_meas_scarce_gw": 26.04187872340425,
+      "dA_scarce_gw": 0.0
+     },
+     "Gas": {
+      "cap_scarce_gw": 29.63907697193293,
+      "gen_meas_scarce_gw": 26.761131914893618,
+      "dA_scarce_gw": 0.9558436000091637
+     },
+     "Nuclear": {
+      "cap_scarce_gw": 5.617044000000001,
+      "gen_meas_scarce_gw": 5.480034042553191,
+      "dA_scarce_gw": 0.05535872340425545
+     },
+     "Hydro": {
+      "cap_scarce_gw": 1.7404097222222223,
+      "gen_meas_scarce_gw": 2.0563808510638295,
+      "dA_scarce_gw": 0.4566819148936164
+     },
+     "Other": {
+      "cap_scarce_gw": 3.2774079999999994,
+      "gen_meas_scarce_gw": 0.8036936170212765,
+      "dA_scarce_gw": 0.0
+     },
+     "Wind": {
+      "cap_scarce_gw": 5.548006028615707,
+      "gen_meas_scarce_gw": 5.269953191489361,
+      "dA_scarce_gw": 0.0
+     },
+     "Solar": {
+      "cap_scarce_gw": 4.058600239867555,
+      "gen_meas_scarce_gw": 3.8767382978723397,
+      "dA_scarce_gw": 0.04255293370258413
+     }
+    },
+    "drill": {
+     "Coal": [
+      {
+       "unit_id": "COAL_MISO-South_p6055_committed",
+       "klass": "COAL",
+       "pmax_mw": 316.06028999999995,
+       "availcap_scarce_mw": 76.1504529732045,
+       "avail_frac_scarce": 0.240936477572695
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_committed",
+       "klass": "COAL",
+       "pmax_mw": 448.4780608,
+       "availcap_scarce_mw": 242.1530047999999,
+       "avail_frac_scarce": 0.5399439258367394
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_committed",
+       "klass": "COAL",
+       "pmax_mw": 477.75144,
+       "availcap_scarce_mw": 285.00922986417606,
+       "avail_frac_scarce": 0.5965638321554324
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6190_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 260.87480700000003,
+       "availcap_scarce_mw": 77.70738931914896,
+       "avail_frac_scarce": 0.2978723404255319
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6190_committed",
+       "klass": "COAL",
+       "pmax_mw": 203.113053,
+       "availcap_scarce_mw": 60.50176046808511,
+       "avail_frac_scarce": 0.2978723404255319
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 211.1186616,
+       "availcap_scarce_mw": 113.99223896170213,
+       "avail_frac_scarce": 0.5399439258367394
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 238.87572000000003,
+       "availcap_scarce_mw": 142.50461493208806,
+       "avail_frac_scarce": 0.5965638321554324
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 101.59080749999997,
+       "availcap_scarce_mw": 24.476931312815726,
+       "avail_frac_scarce": 0.24093647757269504
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc00",
+       "klass": "COAL",
+       "pmax_mw": 140.67125733333333,
+       "availcap_scarce_mw": 83.91938434889634,
+       "avail_frac_scarce": 0.5965638321554324
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc01",
+       "klass": "COAL",
+       "pmax_mw": 140.67125733333333,
+       "availcap_scarce_mw": 83.91938434889634,
+       "avail_frac_scarce": 0.5965638321554324
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc02",
+       "klass": "COAL",
+       "pmax_mw": 140.67125733333333,
+       "availcap_scarce_mw": 83.91938434889634,
+       "avail_frac_scarce": 0.5965638321554324
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc03",
+       "klass": "COAL",
+       "pmax_mw": 140.67125733333333,
+       "availcap_scarce_mw": 83.91938434889634,
+       "avail_frac_scarce": 0.5965638321554324
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc04",
+       "klass": "COAL",
+       "pmax_mw": 140.67125733333333,
+       "availcap_scarce_mw": 83.91938434889634,
+       "avail_frac_scarce": 0.5965638321554324
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_econc05",
+       "klass": "COAL",
+       "pmax_mw": 140.67125733333333,
+       "availcap_scarce_mw": 83.91938434889634,
+       "avail_frac_scarce": 0.5965638321554324
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_mustrun",
+       "klass": "COAL",
+       "pmax_mw": 156.20669999999998,
+       "availcap_scarce_mw": 113.00059148936168,
+       "avail_frac_scarce": 0.723404255319149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_committed",
+       "klass": "COAL",
+       "pmax_mw": 156.20669999999998,
+       "availcap_scarce_mw": 113.00059148936168,
+       "avail_frac_scarce": 0.723404255319149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc00",
+       "klass": "COAL",
+       "pmax_mw": 84.88481026666666,
+       "availcap_scarce_mw": 45.83303769929079,
+       "avail_frac_scarce": 0.5399439258367394
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc01",
+       "klass": "COAL",
+       "pmax_mw": 84.88481026666666,
+       "availcap_scarce_mw": 45.83303769929079,
+       "avail_frac_scarce": 0.5399439258367394
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc02",
+       "klass": "COAL",
+       "pmax_mw": 84.88481026666666,
+       "availcap_scarce_mw": 45.83303769929079,
+       "avail_frac_scarce": 0.5399439258367394
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc03",
+       "klass": "COAL",
+       "pmax_mw": 84.88481026666666,
+       "availcap_scarce_mw": 45.83303769929079,
+       "avail_frac_scarce": 0.5399439258367394
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc04",
+       "klass": "COAL",
+       "pmax_mw": 84.88481026666666,
+       "availcap_scarce_mw": 45.83303769929079,
+       "avail_frac_scarce": 0.5399439258367394
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_econc05",
+       "klass": "COAL",
+       "pmax_mw": 84.88481026666666,
+       "availcap_scarce_mw": 45.83303769929079,
+       "avail_frac_scarce": 0.5399439258367394
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6641_peak",
+       "klass": "COAL",
+       "pmax_mw": 31.850096,
+       "availcap_scarce_mw": 19.000615324278417,
+       "avail_frac_scarce": 0.5965638321554324
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6009_peak",
+       "klass": "COAL",
+       "pmax_mw": 23.855216,
+       "availcap_scarce_mw": 12.880478978723398,
+       "avail_frac_scarce": 0.5399439258367394
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc00",
+       "klass": "COAL",
+       "pmax_mw": 26.434980000000003,
+       "availcap_scarce_mw": 19.123177021276597,
+       "avail_frac_scarce": 0.723404255319149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc01",
+       "klass": "COAL",
+       "pmax_mw": 26.434980000000003,
+       "availcap_scarce_mw": 19.123177021276597,
+       "avail_frac_scarce": 0.723404255319149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc02",
+       "klass": "COAL",
+       "pmax_mw": 26.434980000000003,
+       "availcap_scarce_mw": 19.123177021276597,
+       "avail_frac_scarce": 0.723404255319149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc03",
+       "klass": "COAL",
+       "pmax_mw": 26.434980000000003,
+       "availcap_scarce_mw": 19.123177021276597,
+       "avail_frac_scarce": 0.723404255319149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc04",
+       "klass": "COAL",
+       "pmax_mw": 26.434980000000003,
+       "availcap_scarce_mw": 19.123177021276597,
+       "avail_frac_scarce": 0.723404255319149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_econc05",
+       "klass": "COAL",
+       "pmax_mw": 26.434980000000003,
+       "availcap_scarce_mw": 19.123177021276597,
+       "avail_frac_scarce": 0.723404255319149
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_peak",
+       "klass": "COAL",
+       "pmax_mw": 9.030294,
+       "availcap_scarce_mw": 2.175727227805843,
+       "avail_frac_scarce": 0.240936477572695
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6190_peak",
+       "klass": "COAL",
+       "pmax_mw": 9.46914,
+       "availcap_scarce_mw": 2.8205948936170206,
+       "avail_frac_scarce": 0.2978723404255319
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc00",
+       "klass": "COAL",
+       "pmax_mw": 4.138884750000003,
+       "availcap_scarce_mw": 0.9972083127443455,
+       "avail_frac_scarce": 0.240936477572695
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc01",
+       "klass": "COAL",
+       "pmax_mw": 4.138884750000003,
+       "availcap_scarce_mw": 0.9972083127443455,
+       "avail_frac_scarce": 0.240936477572695
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc02",
+       "klass": "COAL",
+       "pmax_mw": 4.138884750000003,
+       "availcap_scarce_mw": 0.9972083127443455,
+       "avail_frac_scarce": 0.240936477572695
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc03",
+       "klass": "COAL",
+       "pmax_mw": 4.138884750000003,
+       "availcap_scarce_mw": 0.9972083127443455,
+       "avail_frac_scarce": 0.240936477572695
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc04",
+       "klass": "COAL",
+       "pmax_mw": 4.138884750000003,
+       "availcap_scarce_mw": 0.9972083127443455,
+       "avail_frac_scarce": 0.240936477572695
+      },
+      {
+       "unit_id": "COAL_MISO-South_p6055_econc05",
+       "klass": "COAL",
+       "pmax_mw": 4.138884750000003,
+       "availcap_scarce_mw": 0.9972083127443455,
+       "avail_frac_scarce": 0.240936477572695
+      },
+      {
+       "unit_id": "COAL_MISO-South_p1393_peak",
+       "klass": "COAL",
+       "pmax_mw": 9.61272,
+       "availcap_scarce_mw": 6.953882553191491,
+       "avail_frac_scarce": 0.723404255319149
+      }
+     ],
+     "Gas": [
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55358_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 376.21527999999995,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p67005_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 284.03595,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p60927_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 564.3350260030327,
+       "availcap_scarce_mw": 368.2335241621031,
+       "avail_frac_scarce": 0.6525087176852359
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55714_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 335.54925317833334,
+       "availcap_scarce_mw": 172.4186401364362,
+       "avail_frac_scarce": 0.5138400354144174
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p1402_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 247.46977985997648,
+       "availcap_scarce_mw": 120.1513248839026,
+       "avail_frac_scarce": 0.485519181177947
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p1402_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 247.46977985997648,
+       "availcap_scarce_mw": 120.1513248839026,
+       "avail_frac_scarce": 0.485519181177947
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55358_peak",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 103.72792719999998,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p6061_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 318.0694924401176,
+       "availcap_scarce_mw": 236.36153049700818,
+       "avail_frac_scarce": 0.7431128609151588
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8054_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 178.68037712790593,
+       "availcap_scarce_mw": 100.34275997290213,
+       "avail_frac_scarce": 0.5615768311316756
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p1396_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 332.38557449621334,
+       "availcap_scarce_mw": 259.25349956903375,
+       "avail_frac_scarce": 0.779978192380871
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p6190_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 109.29400835431373,
+       "availcap_scarce_mw": 38.006259706014426,
+       "avail_frac_scarce": 0.347743305221309
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p6190_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 100.18617432478757,
+       "availcap_scarce_mw": 34.839071397179886,
+       "avail_frac_scarce": 0.3477433052213091
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p6190_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 100.18617432478757,
+       "availcap_scarce_mw": 34.839071397179886,
+       "avail_frac_scarce": 0.3477433052213091
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 484.2378149341764,
+       "availcap_scarce_mw": 421.18766471877467,
+       "avail_frac_scarce": 0.8697950712007643
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8054_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.39222191604705,
+       "availcap_scarce_mw": 78.27944226801701,
+       "avail_frac_scarce": 0.5615768311316757
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8054_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 139.39222191604705,
+       "availcap_scarce_mw": 78.27944226801701,
+       "avail_frac_scarce": 0.5615768311316757
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55620_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 245.90834246512102,
+       "availcap_scarce_mw": 187.96296721442866,
+       "avail_frac_scarce": 0.764361897323954
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55218_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 208.57437745648,
+       "availcap_scarce_mw": 153.7497834327477,
+       "avail_frac_scarce": 0.7371460737780625
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8056_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 100.86290911670235,
+       "availcap_scarce_mw": 49.06227937486213,
+       "avail_frac_scarce": 0.4864253847575935
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p1402_peak",
+       "klass": "ST_GAS",
+       "pmax_mw": 100.19019427529412,
+       "availcap_scarce_mw": 48.64426108660027,
+       "avail_frac_scarce": 0.485519181177947
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p67005_econc00",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 51.4420665,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p67005_econc01",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 51.4420665,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p67005_econc02",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 51.4420665,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p67005_econc03",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 51.4420665,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p67005_econc04",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 51.4420665,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p67005_econc05",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 51.4420665,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p1403_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 255.29921945117644,
+       "availcap_scarce_mw": 208.34058839208515,
+       "avail_frac_scarce": 0.8160643375250436
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8056_econlo",
+       "klass": "ST_GAS",
+       "pmax_mw": 88.29584762481551,
+       "availcap_scarce_mw": 42.94934165339874,
+       "avail_frac_scarce": 0.4864253847575934
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p8056_econhi",
+       "klass": "ST_GAS",
+       "pmax_mw": 88.29584762481551,
+       "availcap_scarce_mw": 42.94934165339874,
+       "avail_frac_scarce": 0.4864253847575934
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55714_peak",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 83.73778154183006,
+       "availcap_scarce_mw": 43.02782463297873,
+       "avail_frac_scarce": 0.5138400354144176
+      },
+      {
+       "unit_id": "CC_CHP_MISO-South_p55075_committed",
+       "klass": "CC_CHP",
+       "pmax_mw": 108.70494902901962,
+       "availcap_scarce_mw": 69.00234285957445,
+       "avail_frac_scarce": 0.6347672619868833
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p67005_peak",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 38.502651,
+       "availcap_scarce_mw": 0.0,
+       "avail_frac_scarce": 0.0
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p2070_committed",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 126.66728940649413,
+       "availcap_scarce_mw": 89.20939901408805,
+       "avail_frac_scarce": 0.7042812665533706
+      },
+      {
+       "unit_id": "ST_GAS_MISO-South_p1402_committed",
+       "klass": "ST_GAS",
+       "pmax_mw": 72.80487450671373,
+       "availcap_scarce_mw": 35.34816305626286,
+       "avail_frac_scarce": 0.485519181177947
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc00",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 277.98837523999015,
+       "availcap_scarce_mw": 241.79291863485219,
+       "avail_frac_scarce": 0.8697950712007643
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc01",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 277.98837523999015,
+       "availcap_scarce_mw": 241.79291863485219,
+       "avail_frac_scarce": 0.8697950712007643
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc02",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 277.98837523999015,
+       "availcap_scarce_mw": 241.79291863485219,
+       "avail_frac_scarce": 0.8697950712007643
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc03",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 277.98837523999015,
+       "availcap_scarce_mw": 241.79291863485219,
+       "avail_frac_scarce": 0.8697950712007643
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc04",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 277.98837523999015,
+       "availcap_scarce_mw": 241.79291863485219,
+       "avail_frac_scarce": 0.8697950712007643
+      },
+      {
+       "unit_id": "CC_REGULAR_MISO-South_p55380_econc05",
+       "klass": "CC_REGULAR",
+       "pmax_mw": 277.98837523999015,
+       "availcap_scarce_mw": 241.79291863485219,
+       "avail_frac_scarce": 0.8697950712007643
+      }
+     ],
+     "Nuclear": [
+      {
+       "unit_id": "6072_1",
+       "klass": "nuclear",
+       "pmax_mw": 1396.7,
+       "availcap_scarce_mw": 1253.166787234043,
+       "avail_frac_scarce": 0.897234042553191
+      },
+      {
+       "unit_id": "4270_3",
+       "klass": "nuclear",
+       "pmax_mw": 1086.9,
+       "availcap_scarce_mw": 975.2036808510636,
+       "avail_frac_scarce": 0.897234042553191
+      },
+      {
+       "unit_id": "8055_2",
+       "klass": "nuclear",
+       "pmax_mw": 981.5,
+       "availcap_scarce_mw": 880.6352127659575,
+       "avail_frac_scarce": 0.897234042553191
+      },
+      {
+       "unit_id": "6462_1",
+       "klass": "nuclear",
+       "pmax_mw": 968.3,
+       "availcap_scarce_mw": 868.7917234042551,
+       "avail_frac_scarce": 0.897234042553191
+      },
+      {
+       "unit_id": "8055_1",
+       "klass": "nuclear",
+       "pmax_mw": 825.5,
+       "availcap_scarce_mw": 740.6667021276597,
+       "avail_frac_scarce": 0.897234042553191
+      }
+     ],
+     "Solar": []
+    }
+   },
+   "legM": {
+    "idle_by_class_scarce_gw": {
+     "ST_GAS": 1.3899318078594323,
+     "CT_PEAKER": 1.093278967899089,
+     "oil": 0.736295744680851,
+     "CC_REGULAR": 0.655631001100008,
+     "CT_CHP": 0.06373119764574754,
+     "CC_CHP": 0.056167395516313515,
+     "ST_CHP": 0.043874339225422776,
+     "biomass": 0.010212
+    },
+    "pi_mw_scarce": 73.36580088237456,
+    "pi_s_scarce": 75.286896021247,
+    "marginal_class_midwest": {
+     "CT_PEAKER": 32,
+     "ST_GAS": 5,
+     "oil": 5,
+     "biomass": 2,
+     "ST_CHP": 1,
+     "CC_REGULAR": 1,
+     "COAL": 1
+    },
+    "marginal_class_south": {
+     "CT_PEAKER": 30,
+     "CC_REGULAR": 9,
+     "ST_GAS": 6,
+     "oil": 1,
+     "CT_CHP": 1
+    },
+    "class_mc_south": {
+     "CC_CHP": {
+      "mc_p10": 28.789136851376966,
+      "mc_p50": 33.19853225579623,
+      "mc_p90": 43.73379916248064,
+      "hr_p50": 8.141699999999998,
+      "fuel_price_p50": 3.665457372373399,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -4.933523542574442,
+      "availcap_scarce_gw": 1.1731369291076175
+     },
+     "CC_REGULAR": {
+      "mc_p10": 25.192965600375963,
+      "mc_p50": 28.455408494494954,
+      "mc_p90": 37.82086745830447,
+      "hr_p50": 7.551995296745,
+      "fuel_price_p50": 3.6398390356028365,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -5.946824729517048,
+      "availcap_scarce_gw": 10.632776592452034
+     },
+     "COAL": {
+      "mc_p10": 4.5,
+      "mc_p50": 4.5,
+      "mc_p90": 25.752987452070332,
+      "hr_p50": 12.232889161037916,
+      "fuel_price_p50": 1.564160620022747,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -5.629561420511681,
+      "availcap_scarce_gw": 2.849575799944638
+     },
+     "CT_CHP": {
+      "mc_p10": 20.85242555640366,
+      "mc_p50": 25.962393186894474,
+      "mc_p90": 42.561640877789166,
+      "hr_p50": 5.2931789280000014,
+      "fuel_price_p50": 3.5502446673450807,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -8.955564952608016,
+      "availcap_scarce_gw": 0.49707127692356157
+     },
+     "CT_PEAKER": {
+      "mc_p10": 39.63729096802221,
+      "mc_p50": 50.29380688556465,
+      "mc_p90": 69.07325712174698,
+      "hr_p50": 12.378299999999998,
+      "fuel_price_p50": 4.1213242552574,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -1.8639065135608213,
+      "availcap_scarce_gw": 2.6459004743613352
+     },
+     "ST_CHP": {
+      "mc_p10": 23.99180265001591,
+      "mc_p50": 43.17564065355871,
+      "mc_p90": 48.13141197025748,
+      "hr_p50": 6.076908886,
+      "fuel_price_p50": 3.665457372373399,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -4.968012651690077,
+      "availcap_scarce_gw": 0.08297389787465259
+     },
+     "ST_GAS": {
+      "mc_p10": 37.836675172679804,
+      "mc_p50": 44.299734550619156,
+      "mc_p90": 68.06857527173062,
+      "hr_p50": 11.272008754000002,
+      "fuel_price_p50": 3.827471727112481,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -2.5786057273457117,
+      "availcap_scarce_gw": 4.309770273697031
+     },
+     "biomass": {
+      "mc_p10": 17.95434643,
+      "mc_p50": 18.9359383075,
+      "mc_p90": 19.4235348325,
+      "hr_p50": 5.710246726,
+      "fuel_price_p50": 2.5,
+      "delta_fuel_to_clear_pi_usd_mmbtu": -9.531963361065207,
+      "availcap_scarce_gw": 0.6415159999999998
+     },
+     "hydro": {
+      "mc_p10": 1.4,
+      "mc_p50": 1.4,
+      "mc_p90": 1.4,
+      "hr_p50": 0.0,
+      "fuel_price_p50": 0.0,
+      "delta_fuel_to_clear_pi_usd_mmbtu": null,
+      "availcap_scarce_gw": 0.6310999999999998
+     },
+     "nuclear": {
+      "mc_p10": 2.5,
+      "mc_p50": 2.5,
+      "mc_p90": 2.5,
+      "hr_p50": 0.0,
+      "fuel_price_p50": 0.576,
+      "delta_fuel_to_clear_pi_usd_mmbtu": null,
+      "availcap_scarce_gw": 4.718464106382978
+     },
+     "oil": {
+      "mc_p10": 212.53605600796377,
+      "mc_p50": 215.16256045800003,
+      "mc_p90": 247.5,
+      "hr_p50": 13.5,
+      "fuel_price_p50": 18.0,
+      "delta_fuel_to_clear_pi_usd_mmbtu": 10.503463672268552,
+      "availcap_scarce_gw": 0.7484400000000002
+     }
+    },
+    "gas_delivered_by_zone_scarce": {
+     "MISO-West": 2.678694213264374,
+     "MISO-Plains": 2.664903868449656,
+     "MISO-Illinois": 8.217869437404165,
+     "MISO-Indiana": 3.6038759562989227,
+     "MISO-East": 3.406875717828318,
+     "MISO-South": 3.8259132148068704
+    },
+    "floored_above_price_scarce_gw": {
+     "south": 0.11970095447334811,
+     "midwest": 0.24052094047979042
+    }
+   },
+   "legS_seam_context": {
+    "implied_import_at_pi_s_scarce_gw": 0.2712765957446808,
+    "implied_export_at_pi_s_scarce_gw": 0.1675531914893617,
+    "import_bands": [
+     68.46,
+     87.9,
+     121.12,
+     155.42,
+     258.05,
+     327.25,
+     433.12,
+     433.12
+    ],
+    "export_bands": [
+     53.0,
+     44.14,
+     37.04,
+     32.38,
+     29.43,
+     26.61,
+     24.29,
+     22.35
+    ]
+   },
+   "headline": {
+    "H_meas_gw": 2.4412125531914888,
+    "H_cap_gw": 2.2597028511026247,
+    "H_econ_gw": -1.3536584621536047,
+    "H_econ_p25_gw": 1.0993771658485758,
+    "H_econ_479_gw": 2.259702851102597,
+    "bridge": {
+     "dD_load_gw": -0.4743085380597735,
+     "gen_minus_econcap_gw": 3.575101597063184,
+     "reserve_held_gw": 0.6940779563416826,
+     "sum_gw": 3.794871015345093,
+     "H_meas_minus_H_econ_gw": 3.7948710153450937
+    }
+   },
+   "candidates_static_reach": {
+    "L_wiring": {
+     "reach_2025_basis_gw": -3.0961521762482665e-16
+    },
+    "L_source": {
+     "reach_2025_basis_gw": 0.01726553732497332
+    },
+    "A_Coal": {
+     "reach_2025_basis_gw": 0.21190742711565044
+    },
+    "A_Gas": {
+     "reach_2025_basis_gw": 1.0826898402774632
+    },
+    "A_Nuclear": {
+     "reach_2025_basis_gw": 0.4405981276595746
+    },
+    "A_Solar": {
+     "reach_2025_basis_gw": 0.22436593952758638
+    }
+   }
+  }
+ },
+ "candidate_reach": {
+  "candidate": "unit_outage_fleet_status_scope",
+  "years": {
+   "2023": {
+    "d_econcap_south_scarce_gw": 0.008146693712409616,
+    "d_econcap_midwest_scarce_gw": 0.012230866672682169
+   },
+   "2024": {
+    "d_econcap_south_scarce_gw": 0.18354954671856102,
+    "d_econcap_midwest_scarce_gw": 0.15132189480656963
+   },
+   "2025": {
+    "d_econcap_south_scarce_gw": 0.47978332344529917,
+    "d_econcap_midwest_scarce_gw": 0.0041647513659481775
+   }
+  }
+ }
+}

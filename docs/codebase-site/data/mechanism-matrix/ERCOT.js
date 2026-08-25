@@ -99,6 +99,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     summer_wefor_share_override: { cell: "U", ev: "the 0.30 constant's seasonal split stays ERCOT's live treatment; the per-ISO measured override (miso-160 construction) is unarmed here — rule 25/28(d): no value transfers, this lane derives its own from its own admissible ticket-based record before arming" },
     coal_nameplate_summer_derate: { cell: "K", ev: "docs/handoffs/ercot-coal-nameplate-summer-derate-2026-07.md; armed on the ERCOT keeper; row split out at ercot-177 (results/calibration/FINDING-ercot177-temp-derate-refused-2026-08-07.md §5)" },
     unit_outage_lp_capacity_basis: { cell: "U" },
+    unit_outage_fleet_status_scope: { cell: "." },
     wefor_residual: { cell: "K", ev: "registration only — read from the ERCOT keeper's run_config.json (0.02); no ERCOT evidence, no verdict" },
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "U" },

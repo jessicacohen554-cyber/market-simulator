@@ -1102,6 +1102,9 @@ def _apply_outage_overlays(
             iso=_iso or "ERCOT",
             cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
             cc_nameplate_basis=getattr(config, "unit_outage_lp_capacity_basis", False),
+            fleet_status_scope=getattr(
+                config, "unit_outage_fleet_status_scope", False
+            ),
         )
         # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
         # ISO publishes its own availability instrument, use it IN PLACE OF the
@@ -1233,6 +1236,9 @@ def _apply_outage_overlays(
                 cc_nameplate_basis=getattr(
                     config, "unit_outage_lp_capacity_basis", False
                 ),
+                fleet_status_scope=getattr(
+                    config, "unit_outage_fleet_status_scope", False
+                ),
             )
             if sfac:
                 applied_s = 0
@@ -1271,6 +1277,9 @@ def _apply_outage_overlays(
                 cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
                 cc_nameplate_basis=getattr(
                     config, "unit_outage_lp_capacity_basis", False
+                ),
+                fleet_status_scope=getattr(
+                    config, "unit_outage_fleet_status_scope", False
                 ),
             )
             if ppfac:
