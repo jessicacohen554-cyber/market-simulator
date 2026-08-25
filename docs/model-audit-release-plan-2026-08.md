@@ -3128,3 +3128,263 @@ your branch when done.
     (byte-identical) rather than by inspection, each commit blob-verified before
     the next was made. **No `src/`, no keeper shard, no holdout file, no backcast
     registry file and no `.github/workflows/` file was touched by this lane.**
+- 2026-08-25 — **DIRECTOR REFRESH v13 — the adjudication cycle.** Board refreshed
+  to **v13** by a dispatched records lane (`claude/audit-board-records-v13-6g2s9g`)
+  at a **re-derived** HEAD. **BASE SHA FOR EVERY FIGURE: `99c8cf5`** (merge of
+  #4261). **The dispatch's stated base `b2fef73` was REACHABLE BUT STALE** —
+  `origin/main` had advanced **18 commits / 4 merged PRs** past it before this
+  lane started, and the single largest item in that gap is the ercot-234 Z-A
+  repair **merging** (#4260), which the dispatch describes as *"MID-FLIGHT, do
+  not disturb"*. **Two windows are reported separately** because collapsing them
+  would manufacture a false *"nothing moved"*: **since v12 LANDED**
+  (`a6886de..99c8cf5`) = **141 commits / 99 non-merge / 42 merged PRs
+  (#4220–#4261)**; **since the dispatch base** (`b2fef73..99c8cf5`) = **18 / 14
+  / 4 (#4258–#4261)**.
+  - **🟢 THE HEADLINE — THE ENTRY-SIGNAL THREAD IS ADJUDICATED.**
+    `entry_lookahead_reprice`, ERCOT `fc` column: **K → O**, on **four LP
+    solves** (ERCOT disarm + same-tree control; CAISO dump-production +
+    same-tree control), `docs/FINDING-entry-signal-disarm-2026-08.md`. Recorded
+    as what it is — **NEITHER a promotion NOR a rejection.** **The disarm hit
+    L-1's storage prediction TO THE MEGAWATT** (iron_air at **exactly 3,000 MW
+    in every step**; flow_battery → compressed_air as predicted; **wind enters
+    economically for the first time**) **and FAILED L-1's gas prediction in the
+    opposite direction** (entering-2024 gas_ct falls from its 3,000 MW cap to
+    1,000 MW where L-1 predicted margins turn positive) — **which is precisely
+    what MEASURED the fleet/run-identity residual L-1 §1.1 declared but could
+    not size.** **The failed prediction was the informative half**, and it is
+    only legible as a measurement because the bound was stated in advance
+    rather than buried. **Four of five addition metrics improve; ALL FIVE still
+    FAIL their bands.** **The cobweb survives and the recovery overshoot
+    WORSENS** — terminal RM **25.19 → 40.24 %**. **The verdict's basis:** the
+    disarm trades a **forward-looking-but-structurally-wrong** object (zone-flat
+    by construction — cross-zone spread measures exactly 0.0, ~90 % of its
+    dispersion being the ORDC adder) for a
+    **structurally-right-but-backward-looking** one (last year's realized duals
+    = naive-expectations cobweb), **and neither is the developer pro-forma.**
+    **CAISO DIVERGES FROM ERCOT AND THAT IS RULE 25 `[R-ISO-SCOPE]` WORKING:**
+    signal replacement closes **63–85 %** of the iron-air arbitrage requirement
+    and **still does not build storage**, so CAISO's **0-MW-vs-15,147-actual**
+    miss is **LARGER than the signal defect** and its next rung is the **VALUE
+    STACK** (D-9's missing AS credit), **not a CAISO disarm**. **The
+    stop-the-line method is recorded because it resolved the other way:** the
+    lane hit an apparent CAISO byte-identity failure, **treated it as
+    stop-the-line and pushed nothing on the item**, and **proved by CONTROL ARM
+    that it was source-tree drift, not the flag** — without the control the
+    honest reading would have been *"the flag is not output-only"*, which is
+    false. **The terminal-RM overshoot is NAMED AND DELIBERATELY NOT CHASED**
+    (rule 21 `[R-DOF]`): no elasticity, no damping coefficient, held as an open
+    root-cause issue under D-1. **Recording the restraint matters as much as
+    recording the result**, because closing that residual would have been easy
+    and wrong.
+  - **🔴 ERCOT — TWO CARDS SIGNED, A REAL DEFECT FOUND, AND THE REPAIR NOW
+    HALF-LANDED.** **(a) Card Y SIGNED (Y-C)**, in-session 2026-08-24 — formal
+    closure of the ERCOT 2023 price object
+    (`docs/DECISION-CARD-ercot233-2023-object-closure-2026-08-24.md`). **(b)
+    Card Z SIGNED (Z-A)**
+    (`docs/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`).
+    **THE SUBSTANCE IS NOT COMPRESSIBLE TO "a crosswalk fix":** ERCOT defines
+    **`NE_LOB` as "North Edinburg – Lobo", a SOUTH TEXAS / Rio Grande Valley
+    stability corridor**; **the model read it as "NORTHEAST LOBE"** and on that
+    reading carved a zone out of North, set a 1,300 MW static rating, overlaid
+    NE_LOB's measured hourly limits in every keeper year, and dismissed
+    **EASTEX — the model boundary's true counterpart — as "unrepresentable"**.
+    **So A KNOWN-WRONG MEASURED INPUT WAS ARMED IN THE DESIGNATED ERCOT
+    KEEPER**, and **rule 14 `[R-ACCURATE]` is exactly the rule that refuses the
+    rest-as-is option (Z-C)**. The owner signed the **FULL identity repair
+    including a rule-16 three-year re-solve**. **THE DEFECT CLASS IS THE
+    REUSABLE LESSON, NOT AN ERCOT ANECDOTE: a measured input whose NAME was
+    mis-read as GEOGRAPHY.** Nothing in the pipeline broke — the data was real,
+    the intake clean, the citation present; what failed is that **the
+    crosswalk's own citation never defines the identifier**, so a plausible
+    expansion of an abbreviation propagated into topology. **No existing gate
+    detects that.** **NEW AT THIS PIN AND NOT IN THE DISPATCH:** the repair's
+    **code MERGED (#4260, `dc84600`; EASTEX replaces NE_LOB, static 1,300 →
+    2,300 MW on the phase-0 verdict) but the rule-16 THREE-YEAR RE-SOLVE HAS
+    NOT** — `results/calibration/ercot234_eastex_identity` does not exist at
+    HEAD, no sidecar is registered, the keeper is not re-keyed. **Consequence,
+    reported because no gate reports it: HEAD's ERCOT topology no longer matches
+    the designated keeper's solved topology.**
+  - **🔵 A NEW STANDING FACT THE BOARD NOW CARRIES: TWO OF SIX ISOs' COMMITTED
+    KEEPER BUNDLES NO LONGER REPRODUCE AT HEAD** — **CAISO** by unbisected
+    source-tree drift (+68.4 / −49,190.1 / −44,077.4 t CO2; nine `src/` commits
+    intervene, `caiso-217`'s crosswalk intake the likeliest candidate but **not
+    asserted as the cause**) and **ERCOT** by the deliberate card-Z topology
+    repair. **Any lane treating either as a reproduction baseline must re-solve
+    first.** ERCOT's dispatch was otherwise verified **bit-reproducible at one
+    thread**, which is what makes the CAISO drift diagnosable rather than
+    ambient. Added to the RESTART CHECKLIST as step **0b**.
+  - **🟢 NYISO FRONTIER RATIFIED** — owner decision **2026-08-23**, in session:
+    *"Ratify NYISO."* Recorded in `keepers/NYISO.json` `frontier`. **Retires
+    v12's owner-queue item 7** and unblocks the desk's own director session,
+    which v12 recorded as idle-blocked on exactly it. **Frontier set is now
+    {PJM, NYISO, NEISO}** — again exactly the `complete` set, again exactly the
+    CALIBRATED set, again exactly the forecast gate-(a) passer set. **Four
+    independent instruments, same three ISOs, five boards running.**
+  - **🟢 OTHER LANES CLOSED, recorded so the DO-NOT-REDO discipline holds.**
+    **MISO 181–185**, keeper unchanged throughout and **zero LP spent across all
+    five rungs**: `miso_seam_coincident_envelope` **`R`**;
+    `miso_south_firm_export_block` **`G`**; the South-seam basis question
+    **V-TRADE — a real ≥0.93 GW defect, NOT bookkeeping**; miso-184
+    **V-DEFECT-COUPLING** (scarce-tail failure real but **NOT** the price basis,
+    repair licence **refused**); and **miso-185 (2026-08-25, landed after the
+    dispatch was written)** closing the §6b re-open as **V-NEG-ABSENT** on
+    **698 seller-quarter FERC EQR reports** — every MISO-South seller selling to
+    MISO + affiliates only, zero Entergy-legacy GFA rows, and TVA's own 10-Ks
+    putting the real MISO→TVA leg on **reserved-transmission + SPOT purchases,
+    the rule-13-inadmissible form**. **Proving the data does not exist is a
+    stronger close than a refutation.** **CAISO 218 and 219: TWO DECISIVE
+    NULLS** — 218 foreclosing the whole static-cut-limit lever family (no static
+    limit, measured or otherwise, reproduces reality's split-hour year pattern),
+    219 delivering a second decisive null **plus a RE-LOCATION of the hypothesis
+    to the GATES–MIDWAY complex on the ZP26 side**, with Tehachapi (SP15)
+    carrying zero off-peak constraints. **Nulls are results and are recorded as
+    such.**
+  - **GATES — RUN AT `99c8cf5`, NEVER QUOTED**, in a sparse worktree at
+    `origin/main` with exit codes captured directly rather than through a pipe.
+    **MATRIX 🟢 GREEN (`exit 0`)** — integrity OK across base + 6 ISO shards,
+    anchors 191 field / 49 row / 154 path with 0 unresolvable beyond the
+    ratchet, keeper stamps match, **and the v12-era WARN IS CLEARED: "§5.x prose
+    headers match every `keepers/<ISO>.json`"** — repaired by the ERCOT lane.
+    **Recorded as CLOSED so the next director does not re-report a cleared
+    warning.** **STALENESS 🟢 OK (`exit 0`)** — **50 stamped / 18 scored, 10
+    epochs, board inputs all present, solve-affecting delta 2** (threshold 10),
+    per class **hindcast 9/9 · seed 1/0 · verdicts 40/9**. **Every figure is
+    HIGHER than the dispatch's expectation (48/16, 9 epochs, delta 1, 39/8)** —
+    the board moved between prompt and launch, which is the whole case for
+    re-deriving. **THE MEASUREMENT TRAP IS RECORDED because it caught the
+    director last cycle: run it with `frontend/data/hindcast` PRESENT** — a
+    sparse tree missing it reports a lower count and the script's own WARN says
+    so, **so a zero here is a MEASUREMENT failure, not an unstamped board**
+    (verified present before the number was taken). **PARITY 🔴 RED (`exit 1`)
+    on exactly ONE dir**, `results/calibration/caiso217_crosswalk` — the
+    documented caiso-217 registration debt. **NEW CONTEXT THAT CHANGES HOW THE
+    RED READS: the caiso-219 record shows the owner CHOSE that lane OVER the
+    caiso-217 replay on 2026-08-24**, so this is a **DEPRIORITIZED decision, not
+    an unserved one, and the red gate is its accepted cost. NEVER prune it.**
+    Scale: **54 sidecars / 83 bundle dirs / allowlist 26** (v12: 53 / 76 / 24) —
+    **the allowlist grew again and the class-level carve-out still does not
+    exist** (v12's B-6, unrepaired). **v12 predicted parity would re-red on the
+    next NYISO A/B; it re-redded on a CAISO registration debt — right mechanism,
+    wrong ISO.**
+  - **STAGE-0 GOLDENS — RECOMPUTED AT HEAD against the live keeper bundles,
+    never trusted from a table.** **0 OF 6 CURRENT for a FOURTH consecutive
+    cycle: PJM NEVER CAPTURED, five DRIFTED**, golden sha **`af1ccb6`**
+    (manifest byte-unmoved across three cycles; its provenance sha still does
+    not resolve at HEAD). **The gap WIDENED at ERCOT this cycle** (223 → 231,
+    v12's four promotions past capture becoming five), so **every ISO on the
+    board has now outrun its capture at least once**. **CONSEQUENCE STATED
+    PLAINLY AS v11 AND v12 DID: BYTE-GREEN CANNOT BE CLAIMED, so G2 leg 1 has
+    TWO parked dependencies — WS3/PERF-B and the golden tier — not one.** And a
+    v13 addition: with two ISOs' bundles no longer reproducing at HEAD, whoever
+    un-parks WS3 must decide **per ISO which tree the golden is a golden OF.**
+  - **KEEPER STATE, re-read from `frontend/data/backcast/keepers/<ISO>.json`,
+    never from a PR title.** ERCOT **`2026-08-24-231-tie-zone-measured`**
+    NOT-YET (8/5/2/1; C3a-RT −38.0 % F / +0.4 % / −7.7 %) · PJM
+    `2026-08-15-pjm-162-inputclock` **CALIBRATED** (8/8/0/0) · CAISO
+    `2026-08-17-caiso-200-h1-memberpanel` NOT-YET · NYISO
+    `2026-08-22-nyiso-152-duty-complete` **CALIBRATED** · NEISO
+    `2026-08-17-neiso-99-joint-p1` **CALIBRATED** · MISO
+    `2026-08-22-miso-177-rho-measured` NOT-YET. **CORRECTION TO THE DISPATCH,
+    from the shards: "NO KEEPER MOVED THIS CYCLE" is TRUE on the narrow
+    `b2fef73..` window and FALSE on the board's own window — ERCOT promoted
+    `ercot223-arm-eventrelease` → `231-tie-zone-measured` inside
+    `a6886de..99c8cf5`**, improving C3a-2023 from −39.7 % to −38.0 % **without
+    clearing the band**. The other five are genuinely unmoved. Markers re-read
+    live: `complete` = **{NEISO, NYISO, PJM}** · **`final` = `_note` ONLY
+    (EMPTY)** · `withdrawn` = {NYISO, CAISO} · **`holdout-freeze.json`
+    `active: true`** and it outranks both marker blocks. All three `complete`
+    entries are **correctly re-keyed to their live keepers** (rule 22 D-5(b)),
+    and **`audit_keepers.py` returns PASS: 0 failures, 0 warnings.** **NO ISO
+    HAS EVER SPENT A LOCKED-TEST YEAR** — across all **54** sidecars the
+    solve-year histogram is **{2022: 2, 2023: 52, 2024: 52, 2025: 52}**; no
+    2019, no H1-2026, for any ISO.
+  - **PROGRAM POSTURE — UNCHANGED, AND THAT IS NOT DRIFT.** **Parked at G1.**
+    WS3/PERF-B **paused by owner** pending a calibration freeze the owner has
+    **DEFERRED to keep calibration running on all six ISOs**. **DOCS-B (G2),
+    SITE-A (G3), AUDIT-B (G3) wait BY DESIGN.** **Golden tier PARKED.** The FFR
+    desk's **Q.2 supersession battery does not commission** (AS.6). **WS1 ~91 %**
+    (O4/O6/O7 open) · **WS2 COMPLETE** · **WS4 ~60 %** · **WS5 Job 1 complete** ·
+    **WS6 COMPLETE (charter) but its gate is RED in fact.** **Verified rather
+    than assumed over all 141 commits:** `git diff --name-status` returns
+    **empty** for `.github/workflows/`, for `results/regression-goldens/`, **and
+    for this plan and the board themselves** — so **WS1–WS6 are byte-unmoved**
+    and the percentages are unchanged by construction.
+  - **OWNER QUEUE as re-served.** (1) **validation-freeze lift**, recommendation
+    **(A)** — close with cause, lift **VALIDATION ONLY**, leave `final` empty
+    (**fifth cycle unmoved**); (2) **calibration freeze + WS3 restart** —
+    **DEFERRED by owner direction, served not pressed**; (3) **NEISO `final`
+    grant** (2025 EIA-923 FINAL vintage still not landed; the one-shot is
+    **NEVER GRANTED, not spent**); (4) **O6 locked-test scheduling** — the
+    owner's alone; (5) **O7 ERCOT P0 bit-identity forfeiture**; (6)
+    **decision-1 ack — outstanding EIGHTEEN cycles**, the cheapest item on the
+    board and now outlasting every item open when it was raised; (7) **NEW AND
+    TIME-CRITICAL — the ercot-225 G-SPUR band-top gate card**
+    (`results/calibration/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`),
+    **Option A recommended, AWAITING SIGNATURE SINCE 2026-08-21** with no
+    RESOLUTION block recorded at this pin, **scorer-only** (no LP, no re-bundle,
+    no verdict of any standing run changes). **It is time-critical rather than
+    merely old because card Z's own record notes that signing it BEFORE the Z-A
+    re-solve's gates run makes that repair's G-SPUR reading LIDLESS FROM THE
+    START** — and the Z-A re-solve is the ERCOT lane's immediate next
+    deliverable; a signer should also note the card names the **pre-ercot-231**
+    keeper; (12) **NEW — the caiso-217 registration debt**, recommendation **(a)
+    authorize the one-replay registration**, recorded as a **deprioritized owner
+    decision** whose accepted cost is the red parity gate — **never a prune
+    candidate**. **RETIRED THIS CYCLE, do not re-serve:** the **ercot-231
+    keeper-candidate escalation** (promoted), **card Y** (signed **Y-C**),
+    **card Z** (signed **Z-A** — retired as a DECISION, not as work: the
+    re-solve is still owed), and **NYISO frontier ratification** (**SIGNED**).
+  - **🔴 THE DISPATCH-VS-LAUNCH CHECK FAILED A THIRD TIME, AND THE PATTERN IS
+    NOW THE FINDING.** Re-derived from git rather than recalled: prompts 7 and 8
+    (2026-08-23) went unlaunched one cycle, then **launched and merged (#4239,
+    #4237)**; the two entry-signal prompts issued 2026-08-24 **launched and
+    merged (#4248, #4253) — one lane executed BOTH**; **and THIS board-refresh
+    prompt, issued in the SAME batch, did NOT launch**, which is why the board
+    sat at v12 for two more director cycles. **v12 had already made the fix
+    mechanical (call `list_sessions` at the end of every refresh) and it failed
+    anyway**, so v13 records the sharper check that actually catches it: **LOOK
+    FOR THE BRANCH, NOT A PLAUSIBLE-SOUNDING COMMIT.** This cycle
+    **`claude/capx-director-ledger` — a DIFFERENT PROGRAM's director ledger —
+    moved and merged**, and a commit-list scan would have shown *"director
+    ledger updated"* and passed. **Only asking whether a branch exists for THIS
+    board's prompt separates them.** `docs/handoffs/capx-director-ledger-2026-08.md`
+    is not this program's ledger, and **that conflation is part of why the audit
+    board went unrefreshed.**
+  - **LANE STATE at `99c8cf5`, derived from `git ls-remote` branch tips** (this
+    records lane holds no session-listing authority and **states that limit
+    rather than inheriting v12's claim**): **ZERO branches ahead of `main`, ZERO
+    open PRs.** `claude/ercot-backcast-calibration-00mjs2` is **at `main`** — the
+    dispatch's *"MID-FLIGHT"* ercot-234 lane **merged as #4260 before this lane
+    started**, and everything it had is pushed; `claude/south-firm-export-hunt-23l7er`
+    (miso-185, merged #4261) and `claude/ercot-backcast-calibration-9wkxrg`
+    (70 behind) are **STALE branches, not live lanes**. **So the honest reading
+    is that NO audit-program lane is running at this pin**, and the one genuinely
+    outstanding piece of work — **the ercot-234 Z-A re-solve** — is outstanding
+    **without a branch carrying it.**
+  - **DEVIATIONS.** (1) **The standing one, restated as every director entry
+    does: the director session creates no sessions and pushes NOTHING from the
+    director container, by standing owner direction (*"issue prompts, I don't
+    want you doing it from here"*)** — after prior attempts caused usage-window
+    trips, a session stalled on an invisible permission prompt, and two duplicate
+    lanes executing the same work. **Durable records therefore land via this
+    dispatched lane.** (2) **The session-read deviation is REOPENED in kind, and
+    stated rather than papered over:** this lane did **not** re-run
+    `list_sessions` and derives lane state from **git**, which is the stronger
+    instrument for the only question that matters here (did a dispatched prompt
+    produce work?). **No roster row is trailer-rebuilt and none is carried from
+    v12 unverified.** (3) **A RECORDS-LANE SAFETY CHECK was run because v12's own
+    gate-(a) re-key wiped 39 forecast provenance stamps and only a WARN-level
+    check noticed:** every count this lane touched was compared against v12's
+    published figure **for direction** — verdicts stamped **39 → 40**, hindcast
+    sidecars **8 → 9**, stamped/scored **48/16 → 50/18**, registered sidecars
+    **53 → 54**. **Every one went UP; nothing was silently destroyed.**
+    **Transport:** `git push` on a freshly-fetched base, **no HTTP 408/500 and no
+    `push_files` fallback needed**; both files re-fetched and **BLOB-VERIFIED**
+    after push per rule 27 `[R-PUSH]` (git blob sha compared local vs on-disk vs
+    remote, plus line count and sha256), **each commit verified before the next
+    was made**, and **both files GREW — board 936 → 1,417 lines, plan 3,130 →
+    3,390 lines, neither shrank.** The §8 append was verified **APPEND-ONLY by
+    DIFFING THE FULL 3,130-line PRE-EDIT PREFIX against the prior blob for
+    byte-identity, not by inspection.** **No `src/`, no keeper shard, no holdout
+    file, no backcast registry file, no `.github/workflows/` file and no ISO
+    mechanism-matrix shard was touched by this lane.**
