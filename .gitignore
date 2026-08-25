@@ -528,6 +528,11 @@ results/calibration/*probe*/
 # official_2023.json, quoted in the FINDING/log; the selected WINNER is
 # registered via `git add -f` of its slim set, overriding this rule).
 results/calibration/ercot235_r[0-9]*/
+# ercot-236 h4097 shed-repair grid (PRECOMMIT-ercot236: local probe bundles;
+# each point's record is its ercot236_point_score.json + official_2023.json;
+# the selected WINNER is registered via `git add -f` of its slim set,
+# overriding this rule — the ercot-235 pattern).
+results/calibration/ercot236_*/
 results/calibration/_diag_*
 results/calibration/caiso_diag_*/
 results/calibration/miso_diag_*
