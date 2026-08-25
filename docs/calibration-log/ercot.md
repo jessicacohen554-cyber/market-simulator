@@ -11948,4 +11948,82 @@ SUCCESSOR at the head of the queue: **the h4097 manufactured-shed object**
 object between this keeper and a clean C3a-2023 PASS (killed R8/R9 measured
 −9.3 % and +0.8 % inside the band).
 
-**Next shorthand: ercot-236** (ercot-199 remains unclaimed)
+---
+
+## ercot-236 (2026-08-25) — THE h4097 SHED OBJECT REPAIRED (offers past the cap, not storage) AND THE RE-BRACKET REACHES THE BAND: `2026-08-25-236-swcap-clip-k33` IS THE FIRST ERCOT `CALIBRATED` DETERMINATION IN PROGRAM HISTORY — every criterion PASSES, zero caveats
+
+**Charter:** the ercot-235 promotion addendum's NAMED SUCCESSOR, worked
+under the owner's standing 2023-DISCRETE-CONFIG order (rule-16 waiver
+INVOKED; Q-B/R-A superseded by the owner — cited from the ercot-235 entry,
+never re-derived). Precommit
+`docs/PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md` pushed +
+blob-verified BEFORE any solve; Amendments 1–2 record each round before the
+next ran. Full record:
+`docs/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md`.
+
+**The diagnosis (1 solve).** D-0: the k=30 grid point re-solved at HEAD
+reproduces R8 to the digit (shed {4097}, 35.948 MWh; −9.3 %/0.119/180 —
+zero HEAD drift). D-1, the h4097 energy-balance A/B vs the k=24 keeper:
+**thermal −48.28 MW goes undispatched while every zone prices exactly
+$5,000 = VOLL** — by LP optimality the undispatched headroom's offer
+≥ $5,000, so the offer DOMAIN ran out, not capacity. Storage +12.33
+(REFUTES the handoff's SOC-starvation hypothesis), net reserve held 0.0
+(REFUTES withholding). The zero-solve prediction had already located it:
+the keeper's h4097 energy λ $4,770.55 puts the VOLL crossing at
+k\* = 25.15, inside the measured onset (24, 27].
+
+**The repair (zero fitted scalars).** `ercot_offer_swcap_clip` — the
+system-wide offer cap made structural: every real SCED energy offer is
+capped at SWCAP ($5,000 = VOLL, the existing iso_configs identity), and
+firm-load shed is an EEA action, never the economic outcome of a high
+offer. Armed, `run_energy_solve` clips the thermal offer at
+voll − `ERCOT_SWCAP_SHED_TIEBREAK_EPS` (0.01 $/MWh, R-EPSILON-class
+dispatch-before-shed tiebreaker) — mc_base at entry, the assembled P1 bid
+last. Default off, byte-identical off, ERCOT-gated (rule 25), no window/no
+hour selection (rule 17 by construction), unit-tested at trivial scale.
+**V-0 identity leg: k=24+clip reproduces the keeper's officials TO THE
+DIGIT** (−13.5 %/0.186/180; max λ 4,770.55 — the clip never binds below the
+cap). **V-1: the killed R8 officials reproduce EXACTLY with the shed GONE**
+(−9.3 %/0.119/180; h4097 slack 0.0; the hour prices at the cap $4,999.99).
+
+**The re-bracket ({27, 30, 33} + clip, kills per PRECOMMIT-ercot235, all
+clean):** k=27 −11.4 %/0.149 · k=30 −9.3 %/0.119 · **k=33 −7.3 %/0.102 —
+WINNER** (min |C3a-2023|, also min C3b). Every point: zero shed, off-season
+intact, coal +0.0993 TWh vs the ercot-234 baseline (+0.0001 vs the k24
+keeper), spur 68 banded / 74 lidless (unchanged — the lift saturated), D-4
+FAIL rows inherited-identical. August $221.18 vs actual $220.16 (within
+$1); the ≥$1,000 tail EXACT (59 vs 59); reported structure residual:
+[500,1000) under 18 vs 43, [200,500) over 103 vs 77.
+
+### ercot-236 PROMOTION ADDENDUM (same session) — `2026-08-25-236-swcap-clip-k33` PROMOTED TO KEEPER on the owner's standing signature
+
+**Signature basis, recorded as the ercot-235 addendum did:** the handoff's
+priority B pre-authorized promotion of a clean band-reaching winner under
+the owner's standing signature (*"If structural integrity improves but
+gates regress that may still be a keeper.."*, renewed in-session at
+ercot-235). Applied here the standard is over-satisfied: structural
+integrity IMPROVES (a documented market rule replaces an uncapped tuned
+surface; a manufactured-shed class is closed by mechanism, not mask; the
+V-0 identity leg proves the clip inert below the cap) and NO gate
+regresses (all kills clean; spur unchanged; D-4 inherited-identical) —
+and the determination moves NOT-YET → **CALIBRATED** (rubric v3.4: C1, C2,
+C3a −7.3 %, C3b 0.102, C3c 180/181, C4, C6, C8 ALL PASS; no ledger entry,
+no reason line — the first ERCOT run to pass all three 2023 price criteria
+and the first ERCOT `CALIBRATED` in program history). **The keeper is
+2023-ONLY under the owner's invoked rule-16 waiver; 2024/2025 stay
+referenced to the cross-year `2026-08-25-234-eastex-identity` keeper**
+(3-year, zero fitted scalars, untouched). Honest costs carried at full
+magnitude: the k_peak identification is in-sample 2023-only (no held-out
+validation exists under the owner's charter); 68 banded / 74 lidless
+spurious mid-band hours (the ercot-225 G-SPUR band-top gate card is
+**STILL AWAITING OWNER SIGN-OFF**, re-surfaced); the band-structure
+residual above. Keeper shard re-keyed + standing note rewritten, status
+part rebuilt [ERCOT:CALIBRATED], matrix §5.1 + ERCOT.js keeper/gates
+stamps re-stamped, `ercot_offer_swcap_clip` cell stamped `K` (rule 28(b));
+`audit_keepers --iso ERCOT` PASS 0/0; non-winner campaign dirs
+keep-required with committed point-score/diagnosis JSONs (the ercot-235
+pattern). **The h4097 successor-queue head is CLOSED; no named successor
+is queued.** Standing opens: the ercot-225 gate card (owner signature) and
+the reported band-structure residual.
+
+**Next shorthand: ercot-237** (ercot-199 remains unclaimed)

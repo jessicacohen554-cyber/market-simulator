@@ -55,8 +55,8 @@ over-VOLL offer sheds with the flag off, dispatches with it on).
 | keeper r10 | 24 | — | −13.5 % | 0.186 | 180 | none | 4,770.55 | (incumbent) |
 | V-0 | 24 | on | **−13.5 %** | **0.186** | **180** | none | 4,770.55 | clean — **IDENTICAL officials: clip provably inert below the cap** |
 | V-1 | 30 | on | **−9.3 %** | **0.119** | 180 | **none** | 4,999.99 | clean — **the killed R8 scores, now shed-free** |
-| R-27 | 27 | on | TBD | TBD | TBD | TBD | TBD | TBD |
-| R-33 | 33 | on | TBD | TBD | TBD | TBD | TBD | TBD |
+| R-27 | 27 | on | −11.4 % | 0.149 | 180 | none | 4,999.99 | clean (R11's killed scores, now clean) |
+| **R-33** | **33** | on | **−7.3 %** | **0.102** | **180** | **none** | 4,999.99 | **clean — WINNER** |
 
 Every clip leg: G-OFFSEASON clean, G-COAL148 +0.099 TWh vs the ercot-234
 baseline (bar 0.5; +0.0001 vs the r10 keeper), spur unchanged at 68 banded
@@ -66,8 +66,22 @@ new — the ercot-234 G-D2 standard).
 
 ## 4. Selection and the winner
 
-(TBD after R-27/R-33 land: min |official C3a-2023| among clean clip-armed
-candidates and the incumbent, C3b tiebreak, per the precommit §4.)
+Min |official C3a-2023| over clean candidates {24: 13.5, 27: 11.4, 30: 9.3,
+**33: 7.3**} → **k_peak = 33 with the clip armed**, registered as
+**`2026-08-25-236-swcap-clip-k33`** (bundle
+`results/calibration/ercot236_k33_clip`). **The first ERCOT configuration in
+program history to land ALL THREE 2023 price criteria inside their bands:
+C3a −7.3 % PASS · C3b 0.102 PASS · C3c 180/181 PASS.** August lands $221.18
+vs actual $220.16 (within $1); the ≥$1,000 deep tail is EXACT (59 model vs
+59 actual hours); the k→C3a response on the clipped surface is monotone
+(−13.5 → −11.4 → −9.3 → −7.3 across 24/27/30/33) and the charter's (24, 33]
+bracket ends in the band's interior. Reported structure residual: the
+[500, 1000) band under-fills (18 vs 43) while [200, 500) over-fills (103 vs
+77) — the shape criterion nonetheless passes at its best-ever 0.102.
+At k=33 the clip binds on the top tranches (they saturate at $4,999.99 —
+exactly where the measured 2023 asks saturate, the $5k cap), so the tuned
+surface now expresses the documented conduct: a scarcity wall AT the cap,
+not past it.
 
 ## 5. Honest costs and open objects
 

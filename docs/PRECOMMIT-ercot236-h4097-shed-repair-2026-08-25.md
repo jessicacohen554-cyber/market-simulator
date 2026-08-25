@@ -265,3 +265,34 @@ keep the tree clean under the session's push discipline — ARMING waited for
 this verdict, no solve with the flag on preceded it. The §4 V-legs launch
 next, gated mechanically (V-0 STOP on any moved official; V-1 STOP on any
 shed; re-bracket only after both pass).
+
+### AMENDMENT 2 — the §4 round measured (V-legs + re-bracket, all four solves; selection applied as fixed)
+
+| point | k | clip | C3a-2023 | C3b | C3c | shed | max λ | kills |
+|---|---|---|---|---|---|---|---|---|
+| V-0 | 24 | on | **−13.5 %** | **0.186** | **180** | none | 4,770.55 | clean |
+| V-1 | 30 | on | −9.3 % | 0.119 | 180 | **none** | 4,999.99 | clean |
+| R-27 | 27 | on | −11.4 % | 0.149 | 180 | none | 4,999.99 | clean |
+| R-33 | 33 | on | **−7.3 %** | **0.102** | 180 | none | 4,999.99 | clean |
+
+**V-0 PASS at the identity bar** — officials equal the keeper's to the digit
+and the clip never binds (max λ = the keeper's own 4,770.55): the clip is
+measured inert below the cap. **V-1 PASS** — the killed R8 point's officials
+(−9.3 %/0.119) reproduce exactly with the shed GONE (h4097 slack 0.0; the
+hour prices at the cap, λ 4,999.99). Both re-bracket points clean on every
+kill (G-SHED-NEW empty, G-OFFSEASON false, G-COAL148 +0.0993 TWh vs the
+ercot-234 baseline / +0.0001 vs the r10 keeper — identical at every point;
+spur 68 banded / 74 lidless at every point, unchanged from the keeper). D-4
+FAIL row identity sets equal the keeper's own in all four bundles
+(inherited, none new — the ercot-234 G-D2 standard).
+
+**Selection (as fixed ex ante):** min |official C3a-2023| over clean
+candidates {24 incumbent: 13.5, 27: 11.4, 30: 9.3, **33: 7.3**} →
+**K33_CLIP** (C3b tiebreak unneeded; its 0.102 is also the minimum).
+August lands $221.18 vs actual $220.16; the ≥$1,000 band is exact (59 vs
+59); the [500,1000) band is under (18 vs 43) and [200,500) over (103 vs
+77) — reported. The winner is REGISTERED per §4 and put to the owner under
+the standing signature; the k→C3a response on the clipped surface
+(−13.5 → −11.4 → −9.3 → −7.3 across 24/27/30/33) is monotone and the
+charter's (24, 33] bracket ends at the band's interior — any further k is a
+new owner-visible round, not this session's.
