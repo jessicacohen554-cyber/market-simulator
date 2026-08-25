@@ -45,6 +45,10 @@ GRID = {
     "R7": {"k_peak": 20.0, "k_eh": 1.0},
     "R8": {"k_peak": 30.0, "k_eh": 1.0},
     "R9": {"k_peak": 45.0, "k_eh": 1.0},
+    # Round 4 (precommit amendment 3, LAST round this session): bracket the
+    # clean frontier between R7 (20, clean) and R8 (30, h4097 shed kill).
+    "R10": {"k_peak": 24.0, "k_eh": 1.0},
+    "R11": {"k_peak": 27.0, "k_eh": 1.0},
 }
 PEAK_KEYS = ("peak", "phys_peak")
 EH_KEYS = ("econ_high", "phys_econ_high")

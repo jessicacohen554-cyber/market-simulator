@@ -98,3 +98,22 @@ breach is a REPORT naming the clip, not a kill; the LP price is
 VOLL-bounded regardless). Selection unchanged: over ALL clean points from
 all three rounds, min |official C3a-2023|, C3b tiebreak; register the
 overall winner.
+
+## ROUND 3 RESULT + ROUND 4 GRID (amendment, fixed before any round-4 solve)
+
+Round-3 measured: R7 (20.0) **−16.6 % / 0.246 / 180 — CLEAN**; R8 (30.0)
+−9.3 % / 0.119 / 180 — **KILLED, G-SHED-NEW h4097 (35.95 MWh)**; R9 (45.0)
++0.8 % / 0.189 / 180 — **KILLED, G-SHED-NEW h4097 (310.87 MWh)**. R8/R9
+REACH both 2023 bands but each manufactures the same single June-20 17:00
+shed hour, growing with k — the ercot-221 G-SHED pattern (the price path
+reshapes storage/commitment state until one hour comes up short). The kill
+stands as precommitted.
+
+**Round 4 (LAST round this session; two 2023-only solves): k_eh = 1.0
+fixed; k_peak ∈ {24.0, 27.0}** — bracketing the clean frontier between the
+last clean point (20) and the first shed point (30). Same kills, same
+reporting, plus each point reports slack at h4097 explicitly. Final
+selection after round 4: over ALL clean points from all four rounds, min
+|official C3a-2023|, C3b tiebreak; register the overall winner; the full
+k→(C3a, C3b, kills) table is the round record either way, and any further
+refinement is a new owner-visible round, not this session's.

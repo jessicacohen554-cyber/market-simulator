@@ -1,0 +1,99 @@
+{
+ "point": "R3",
+ "k_peak": 5.0,
+ "k_eh": 2.5,
+ "official": [
+  {
+   "year": 2023,
+   "c3a_model": 53.52,
+   "c3a_actual": 64.32,
+   "c3a_magnitude": "-16.8%",
+   "c3b_nrmse": "0.465",
+   "c3c_model_h": 175,
+   "c3c_actual_rt_h": 181
+  }
+ ],
+ "monthly_lw": {
+  "1": {
+   "model": 30.81,
+   "actual": 23.69,
+   "keeper": 25.01
+  },
+  "2": {
+   "model": 28.0,
+   "actual": 19.1,
+   "keeper": 21.25
+  },
+  "3": {
+   "model": 30.93,
+   "actual": 26.34,
+   "keeper": 23.68
+  },
+  "4": {
+   "model": 31.74,
+   "actual": 20.13,
+   "keeper": 23.58
+  },
+  "5": {
+   "model": 37.54,
+   "actual": 30.95,
+   "keeper": 27.45
+  },
+  "6": {
+   "model": 54.63,
+   "actual": 72.79,
+   "keeper": 38.81
+  },
+  "7": {
+   "model": 52.31,
+   "actual": 47.08,
+   "keeper": 37.46
+  },
+  "8": {
+   "model": 138.12,
+   "actual": 220.16,
+   "keeper": 93.02
+  },
+  "9": {
+   "model": 82.71,
+   "actual": 106.99,
+   "keeper": 60.51
+  },
+  "10": {
+   "model": 35.61,
+   "actual": 29.1,
+   "keeper": 27.88
+  },
+  "11": {
+   "model": 37.42,
+   "actual": 30.07,
+   "keeper": 28.54
+  },
+  "12": {
+   "model": 27.96,
+   "actual": 21.68,
+   "keeper": 22.29
+  }
+ },
+ "kills": {
+  "g_shed_new": [],
+  "g_offseason": true,
+  "g_coal148_rise_twh": 8.3797
+ },
+ "spur_band": 70,
+ "spur_nolid": 71,
+ "model_band_hours_vs_actual": {
+  "200_500": [
+   138,
+   77
+  ],
+  "500_1000": [
+   22,
+   43
+  ],
+  "ge_1000": [
+   15,
+   59
+  ]
+ }
+}

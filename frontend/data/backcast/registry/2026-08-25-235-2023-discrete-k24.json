@@ -1,0 +1,13 @@
+{
+ "id": "2026-08-25-235-2023-discrete-k24",
+ "label": "235 2023 discrete k24",
+ "date": "2026-08-25",
+ "shorthand": "235-2023-discrete-k24",
+ "definition": "ercot-235 2023-DISCRETE-CONFIG run (owner order 2026-08-25: solve 2023 for its own ECRS-era conditions; rule-16 waiver invoked; Q-B/R-A superseded by the owner \u2014 see the ercot-235 log entry). The ercot-234 keeper recipe + ONE residual-identified 2023 scalar: k_peak=24.0 on the gas-group peak-band offer multipliers (DOF-ledgered, n_residual 7), selected by the precommitted 4-round 11-solve kill-gated grid; econ_high REFUSED on its measured coal kill. 2023 officials: C3a -13.5% (from the keeper's -39.7%), C3b 0.186 (PASS, bar 0.20 \u2014 the first ERCOT config to pass C3b-2023), C3c 180/181 (PASS). Clean kills: zero shed, coal +0.10 TWh, off-season intact; cost: 68 banded spurious mid-band hours (keeper 11). NOT-YET on C3a-2023 alone. 2023-only by owner order; the cross-year keeper 2026-08-25-234-eastex-identity carries 2024/2025.",
+ "years": [
+  2023
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-08-25-235-2023-discrete-k24.js",
+ "bundle": "results/calibration/ercot235_r10"
+}
