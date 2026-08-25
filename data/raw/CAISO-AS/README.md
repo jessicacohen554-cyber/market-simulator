@@ -1,4 +1,4 @@
-# CAISO-AS — DAM ancillary-service regional requirements (OASIS AS_REQ)
+# CAISO-AS — DAM ancillary-service regional requirements (OASIS AS_REQ) + clearing prices (PRC_AS)
 
 Fetched 2026-07-10 by `scripts/fetch_caiso_oasis.py --datasets asreq --years 2023 2024 2025`
 (CAISO OASIS `SingleZip?queryname=AS_REQ&market_run_id=DAM&version=1&anc_type=ALL&anc_region=ALL`,
@@ -21,3 +21,21 @@ including participating interties). Purpose: the measured requirement series for
 sub-regional reserve families (`docs/handoffs/caiso-locational-as-mechanism-2026-07-10.md`;
 caiso-70 FINDING probe-#2 redirect). Immutable raw — never modified in place; curation to
 `data/clean/` goes through the data-dictionary contract.
+
+## asprc — DAM ancillary-service clearing prices (OASIS PRC_AS)
+
+Fetched 2026-08-25 by `scripts/data/fetch_caiso_oasis.py --datasets asprc --years 2023 2024 2025`
+(`SingleZip?queryname=PRC_AS&market_run_id=DAM&version=1&anc_type=ALL&anc_region=ALL`).
+**OASIS caps PRC_AS at ONE trade day per request** (a 2-day window silently returns only day 1
+— measured 2026-08-25), so this series is 1,096 single-day CSVs (`asprc_ALL_<d>_<d+1>.csv`),
+not the ≤25-day windows AS_REQ uses. Train years 2023–2025.
+
+Content: hourly `$/MW` clearing-price **contribution** per AS region and product,
+`XML_DATA_ITEM` `{SP,NS,RU,RD,RMU,RMD}_CLR_PRC` (the price sits in the `MW` column — OASIS
+reuses the numeric column name). The AS regions NEST, and the rows are per-constraint
+shadow-price contributions, not totals: a resource's settlement ASMP is the SUM over the
+regions containing it (`AS_CAISO + AS_CAISO_EXP` + its own sub-region's `AS_NP26[_EXP]` or
+`AS_SP26[_EXP]` adder). Verified in-data: the sub-region rows are near-always 0 and always
+small against the system row, impossible were rows totals. Purpose: the measured price leg of
+the CAISO storage AS-revenue identification (D-9 value-stack lane,
+`scripts/probes/caiso_storage_as_revenue_phase0.py`, joined to `data/raw/storage-as-awards/CAISO`).
