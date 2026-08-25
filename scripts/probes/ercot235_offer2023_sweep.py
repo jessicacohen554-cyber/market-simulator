@@ -39,6 +39,12 @@ GRID = {
     "R4": {"k_peak": 6.0, "k_eh": 1.0},
     "R5": {"k_peak": 10.0, "k_eh": 1.0},
     "R6": {"k_peak": 14.0, "k_eh": 1.0},
+    # Round 3 (precommit amendment 2): the peak-only response is monotone and
+    # kill-clean through k=14; extend toward the measured 2023 ask range
+    # ($3.4-5k at k~40-50).
+    "R7": {"k_peak": 20.0, "k_eh": 1.0},
+    "R8": {"k_peak": 30.0, "k_eh": 1.0},
+    "R9": {"k_peak": 45.0, "k_eh": 1.0},
 }
 PEAK_KEYS = ("peak", "phys_peak")
 EH_KEYS = ("econ_high", "phys_econ_high")

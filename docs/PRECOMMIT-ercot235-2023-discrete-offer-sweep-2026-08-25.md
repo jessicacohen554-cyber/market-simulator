@@ -79,3 +79,22 @@ C3a-2023|, C3b tiebreak; the overall winner is the run registered under
 round 1's registration clause (R1's conditional winner status transfers —
 nothing is registered until the campaign's rounds in this session
 conclude).
+
+## ROUND 2 RESULT + ROUND 3 GRID (amendment, fixed before any round-3 solve)
+
+Round-2 measured, ALL CLEAN (no kill fired; coal +0.10 TWh flat across all
+peak-only points; off-season intact; zero shed; spur band saturated at
+~68 h): R4 (6.0) −30.0 %/0.526/173 · R5 (10.0) −25.6 %/0.434/173 · R6
+(14.0) −21.3 %/0.344/180. The response is monotone ~+4.4 pp per Δk_peak=4
+with no structural cost, and at k_peak ≈ 40–50 the peak-tranche offers land
+at $3.5–4.5k — the measured 2023 evening ask range the record documents
+(ercot-161/162 SCED asks $3.4–5k), so the fitted scalar converges toward
+the measured conduct level rather than past it.
+
+**Round 3 (three further 2023-only solves): k_eh = 1.0 fixed; k_peak ∈
+{20.0, 30.0, 45.0}.** Same kills, same reporting, plus one added
+sanity report: max peak-tranche offer $/MWh (must stay ≤ VOLL $5,000 — a
+breach is a REPORT naming the clip, not a kill; the LP price is
+VOLL-bounded regardless). Selection unchanged: over ALL clean points from
+all three rounds, min |official C3a-2023|, C3b tiebreak; register the
+overall winner.
