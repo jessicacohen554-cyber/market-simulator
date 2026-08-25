@@ -1,0 +1,29 @@
+[
+ {
+  "year": 2023,
+  "c3a_model": 38.75,
+  "c3a_actual": 64.32,
+  "c3a_magnitude": "-39.7%",
+  "c3b_nrmse": "0.730",
+  "c3c_model_h": 72,
+  "c3c_actual_rt_h": 181
+ },
+ {
+  "year": 2024,
+  "c3a_model": 30.92,
+  "c3a_actual": 30.99,
+  "c3a_magnitude": "-0.2%",
+  "c3b_nrmse": "0.131",
+  "c3c_model_h": 22,
+  "c3c_actual_rt_h": 53
+ },
+ {
+  "year": 2025,
+  "c3a_model": 33.41,
+  "c3a_actual": 36.29,
+  "c3a_magnitude": "-7.9%",
+  "c3b_nrmse": "0.101",
+  "c3c_model_h": 1,
+  "c3c_actual_rt_h": 31
+ }
+]
