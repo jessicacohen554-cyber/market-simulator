@@ -1,0 +1,262 @@
+{
+ "prereg": "PREREG-miso186-midwest-stack-direction-2026-08-25.md \u00a75 (PREREG-miso184 \u00a76 gates verbatim)",
+ "keeper": "2026-08-22-miso-177-rho-measured",
+ "control": "miso186_dir_A",
+ "arm": "miso186_dir_B",
+ "S0": {
+  "gate": "S-0",
+  "files": [
+   {
+    "file": "class_hourly_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   }
+  ],
+  "passed": true
+ },
+ "S1": {
+  "gate": "S-1",
+  "arm_flag": true,
+  "control_flag": false,
+  "arm_overrides": {},
+  "control_overrides": {},
+  "cottonwood_2025_scarce_mw": {
+   "control": 0.0,
+   "arm": 448.7020568847656
+  },
+  "passed": true
+ },
+ "S2": {
+  "gate": "S-2",
+  "years": {
+   "2023": {
+    "control": {
+     "n2s": 3,
+     "s2n": 0,
+     "unconstrained": 8
+    },
+    "arm": {
+     "n2s": 3,
+     "s2n": 0,
+     "unconstrained": 8
+    }
+   },
+   "2024": {
+    "control": {
+     "n2s": 1,
+     "s2n": 0,
+     "unconstrained": 13
+    },
+    "arm": {
+     "n2s": 1,
+     "s2n": 0,
+     "unconstrained": 13
+    }
+   },
+   "2025": {
+    "control": {
+     "n2s": 9,
+     "s2n": 0,
+     "unconstrained": 38
+    },
+    "arm": {
+     "n2s": 7,
+     "s2n": 0,
+     "unconstrained": 40
+    }
+   }
+  },
+  "control_2025_n2s": 9,
+  "arm_2025_n2s": 7,
+  "passed": true
+ },
+ "S3": {
+  "gate": "S-3",
+  "years": {
+   "2023": {
+    "control": {
+     "links_into": [
+      "MISO-Plains",
+      "MISO_external_South"
+     ],
+     "links_outof": [
+      "MISO-Plains"
+     ],
+     "ns_m_scarce_gw": 0.8996885732351892,
+     "ns_m_annual_gw": -0.15598589966273646,
+     "balance_max_abs_resid_mw": 0.001171552503365092
+    },
+    "arm": {
+     "links_into": [
+      "MISO-Plains",
+      "MISO_external_South"
+     ],
+     "links_outof": [
+      "MISO-Plains"
+     ],
+     "ns_m_scarce_gw": 0.8980725101648138,
+     "ns_m_annual_gw": -0.16716326217709612,
+     "balance_max_abs_resid_mw": 0.001171112060546875
+    }
+   },
+   "2024": {
+    "control": {
+     "links_into": [
+      "MISO-Plains",
+      "MISO_external_South"
+     ],
+     "links_outof": [
+      "MISO-Plains"
+     ],
+     "ns_m_scarce_gw": 0.4276928945622999,
+     "ns_m_annual_gw": 0.14967850218041642,
+     "balance_max_abs_resid_mw": 0.0012054457147314679
+    },
+    "arm": {
+     "links_into": [
+      "MISO-Plains",
+      "MISO_external_South"
+     ],
+     "links_outof": [
+      "MISO-Plains"
+     ],
+     "ns_m_scarce_gw": 0.16529835112408925,
+     "ns_m_annual_gw": 0.03621774276881753,
+     "balance_max_abs_resid_mw": 0.0011880080928676762
+    }
+   },
+   "2025": {
+    "control": {
+     "links_into": [
+      "MISO-Plains",
+      "MISO_external_South"
+     ],
+     "links_outof": [
+      "MISO-Plains"
+     ],
+     "ns_m_scarce_gw": 0.9686735089519096,
+     "ns_m_annual_gw": 1.3586573387280327,
+     "balance_max_abs_resid_mw": 0.0012402488209772855
+    },
+    "arm": {
+     "links_into": [
+      "MISO-Plains",
+      "MISO_external_South"
+     ],
+     "links_outof": [
+      "MISO-Plains"
+     ],
+     "ns_m_scarce_gw": 0.6823798942505758,
+     "ns_m_annual_gw": 1.2379562174749228,
+     "balance_max_abs_resid_mw": 0.0012012452280032448
+    }
+   }
+  },
+  "control_2025_ns_gw": 0.9686735089519096,
+  "arm_2025_ns_gw": 0.6823798942505758,
+  "move_toward_measured_gw": 0.28629361470133385,
+  "balance_verified": true,
+  "passed": true
+ },
+ "S4": {
+  "gate": "S-4",
+  "d4_fail_control": [],
+  "d4_fail_arm": [],
+  "new_d4_fails": [],
+  "c8_arm_not_fail": true,
+  "passed": true
+ },
+ "S5": {
+  "gate": "S-5 (report + escalation, not a kill)",
+  "c3a_control_pct": {
+   "2023": 1.2785,
+   "2024": -4.0557,
+   "2025": -11.7466
+  },
+  "c3a_arm_pct": {
+   "2023": 1.2177,
+   "2024": -4.6749,
+   "2025": -12.3185
+  },
+  "criterion_status_flips": {
+   "fuelmix|CC_REGULAR|2024": "PASS -> FAIL"
+  },
+  "band_exit_2023_2024": {
+   "2023": false,
+   "2024": false
+  },
+  "determination_control": "NOT-YET",
+  "determination_arm": "NOT-YET",
+  "escalation_fires": true
+ },
+ "_c3a_2025_improves": false,
+ "charter_kill_fires": false,
+ "verdict": "STRUCTURAL PASS (S-2 + S-3); owner escalation per S-5"
+}

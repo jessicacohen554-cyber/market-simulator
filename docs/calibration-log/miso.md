@@ -8805,3 +8805,85 @@ before the push. Rule 27: exact bytes, every pushed blob ≥ 300 lines
 verified. Records: `FINDING-miso185-south-firm-export-evidence-hunt-2026-08-25.md`,
 `_miso185_firm_export_hunt.json`, `_miso185_eqr_pdfs/` (698 PDFs),
 `scripts/probes/_miso185_firm_export_hunt.py`. Next number: **miso-186.**
+
+## miso-186 (2026-08-25) — the MIDWEST-STACK DIRECTION DIAGNOSIS finds a CAMPD-falsified availability input, its zero-parameter repair FLIPS the direction gates, and the arm is PROMOTED KEEPER under the owner posture directive: `2026-08-25-miso-186-statusscope`
+
+**Charter:** the miso-185 §6 queue head — diagnose WHY the keeper runs the RDT
+N→S in its 2025 scarce hours (9/47) where the measured record ran S→N at the
+limit (32/47 any; N→S 0/47). Object-first; PREREG
+(`PREREG-miso186-midwest-stack-direction-2026-08-25.md`, pushed 3f0d9f0)
+committed BEFORE any adjudicating quantity; NO LP until the frozen §4 mapping
+licensed the conditional A/B.
+
+**The decomposition** (committed keeper sidecars + measured in-repo series;
+instrument `scripts/probes/_miso186_direction_decomposition.py`, record
+`_miso186_direction_decomposition.json`; footing: rebuild reproduces C3a to
+±0.0001 pp, classifier reproduces 9/0/38, measured side reproduces −2.441 GW
+exactly): measured South scarce surplus **+2.441 GW** vs the keeper's economic
+surplus at the Midwest price **−1.354 GW** (physical ceiling +2.260). The
+bridge is exact: load leg **exonerated** (wiring 0.000 — the sub-BA share path
+is faithful; source −0.474 GW, inside the ±1h alignment envelope and
+wrong-signed for the object), reserves +0.694 report-only, and the dominant
+term is generation-side (~3.6 GW of South capacity idles above π_MW; the
+model's available gas capacity sits BELOW the real South gas fleet's measured
+scarce output, 19.34 vs 19.97 GW).
+
+**The defect** (Leg-A drill, adjudicated against the same source's own
+record): `_unit_outage_factors_from_events` charges NON-OP (OA/SB/OS) units'
+outage windows against the plant's modeled OP capacity — the numerator is the
+dark unit's CAMPD capacity while the denominator already excludes it.
+Cottonwood (55358, MISO-South): the two OA trains' 2025 wind-down windows sum
+to 1.23 of the modeled 580.4 MW OP half and clip it to availability 0.0
+Jul–Nov, against the plant's own CAMPD record of ~526 MW in ALL 47 of the
+2025 scarce hours. Full dropped-event audit (also Waterford-1&2 8056 SB,
+Valley 4042 SB, Warrick 6705 OS): FINDING-miso186.
+
+**The repair and the A/B** (PREREG-miso184 §6 gates VERBATIM; both legs
+registered, rule 15): `unit_outage_fleet_status_scope` (gated default-off,
+zero fitted scalars; cache-key + pinned default registered in the same
+commit; matrix row + cell line in every shard, duty 26(c)). S-0
+value-identical control (max|diff|=0.0, 12/12 sidecars); S-1 exact
+(Cottonwood scarce dispatch 0 → 448.7 MW vs CAMPD 525.8); **S-2 PASS — 2025
+scarce N→S binding 9/47 → 7/47**, the first MISO mechanism ever to move the
+scarce-hour RDT direction toward the measured record; **S-3 PASS — South net
+inflow +0.969 → +0.682 GW (+0.286 toward the measured −2.441,
+balance-verified < 0.002 MW)**; S-4 zero D-4 conduct failures, C8 PASS all
+years; charter kill silent. **Scored face at full magnitude (S-5):**
+C3a-2025 −11.75 → −12.32 % (−0.57 pp), C3a-2024 −4.06 → −4.67 %, C3a-2023
++1.28 → +1.22 %; C1 fuelmix CC_REGULAR 2024 PASS→FAIL (+8.09 vs ±8.00 TWh;
+control +6.65 — restored real capacity tips an already-over-dispatched
+class 0.09 TWh past the band edge).
+
+**PROMOTED** under the owner posture directive (PREREG-miso184 preamble
+2026-08-24; re-affirmed in writing this session: *"If structural integrity
+improves but gates regress that may still be a keeper"*, with *"plz
+promote"*): rule 1/14 — the control is KNOWN to carry a CAMPD-falsified
+availability input; the worse fit under the accurate input is the signal
+that the residual's root cause lies elsewhere (the adjudicated
+flat-stack/tail family). Determination NOT-YET on {price_mean, fuelmix}; C6
+attested (`gen_miso186_attestation.py`, ledger 34 entries / n_residual 2
+unchanged); C3c the single ledgered caveat. LOYO 2023–2025: zero fitted
+parameters, year-independent identification. Keeper shard + status/MISO.js
+rebuilt; matrix §5.4 header + queue stamp + MISO shard re-stamped (cell
+`unit_outage_fleet_status_scope` = K); calibration-keeper-auditor fired.
+
+**Named next arm:** the missing MISO measured-nuclear availability layer
+(`nuclear_unit_availability` U in MISO's shard; no
+`NUCLEAR_MONTHLY_CF_BY_YEAR["MISO"]` entry, no
+`nuclear-availability-MISO.csv`, MISO absent from `NRC_TO_EIA` while
+PJM/NYISO/CAISO/NEISO all carry the overlay). Static reach +0.299 GW South
+(NRC scarce-date record 0.954 vs the 0.897 smear); Midwest −0.075 GW, also
+direction-correct. Second-largest admissible candidate of this session's
+frozen screen; enters as its own single-delta arm.
+
+**Disclosures (against interest):** three instrument-fidelity corrections,
+each disclosed in the finding (F-2 gate made faithful to the imported
+machinery's committed usage — V1∧V4 with V2 reported, the miso-178 lineage
+drift; the fuel-family crosswalk re-keyed to the fleet's actual fuel_type
+vocabulary after the first run attributed South coal/nuclear to Other; the
+S-3 balance identity gained the LP's own zonal storage term after a spurious
+46 MW residual). The §6 provisional cell name (`miso_south_availability_repair`)
+was superseded by the code-truthful field name — the mechanism is not
+South-specific; naming deviation disclosed, no threshold moved. Registration
+prunes under top-15 retention removed `2026-08-19-miso-169-online-gated` and
+`2026-08-19-miso-170-control`.

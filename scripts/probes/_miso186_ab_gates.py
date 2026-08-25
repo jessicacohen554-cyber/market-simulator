@@ -195,7 +195,23 @@ def _south_net_inflow(bundle: Path, year: int) -> dict:
         df[df["zone"] == "MISO-South"].groupby("hour", observed=True)["mw"].sum()
         .reindex(range(HOURS)).fillna(0.0).to_numpy()
     )
-    resid = gen + net_in + slack - dump - dem
+    # Zonal storage net (root storage.parquet is zone-resolved; the slim
+    # hourly/storage_* sidecar is tech-level only). DISCLOSED instrument
+    # completion (the miso-184 §1 pattern): the first run's balance identity
+    # omitted the LP's own storage term and read a spurious 46 MW max
+    # residual; the identity is gen + net_inflow + (dis - chg) + slack - dump
+    # = demand, exactly the LP's zonal energy-balance row.
+    st = pd.read_parquet(
+        bundle / "storage.parquet",
+        columns=["year", "pass", "zone", "hour", "charge_mw", "discharge_mw"],
+    )
+    st = st[(st["year"] == year) & (st["pass"] == "P1") & (st["zone"] == "MISO-South")]
+    st_net = (
+        (st.groupby("hour", observed=True)["discharge_mw"].sum()
+         - st.groupby("hour", observed=True)["charge_mw"].sum())
+        .reindex(range(HOURS)).fillna(0.0).to_numpy()
+    )
+    resid = gen + net_in + st_net + slack - dump - dem
     sc = _m183.hour_sets(year)["scarce"]
     return {
         "links_into": sorted(into.columns.tolist()),
