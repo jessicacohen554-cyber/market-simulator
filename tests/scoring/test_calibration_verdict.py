@@ -1783,6 +1783,126 @@ class Co2ScoreTests(unittest.TestCase):
 # with the criterion by the rubric v2.7 owner amendment 2026-07-16.)
 
 
+def _i16_b64(vals):
+    """Encode a list of ints as the payload's little-endian int16 base64 blob.
+
+    Mirrors ``render_calibration_html._b64_i16``: ``None`` becomes the -32768
+    NOT-A-NUMBER sentinel, and the series is padded to 8760 with sentinels.
+    """
+    import array as _array
+    import base64 as _b64
+    import sys as _sys
+
+    a = _array.array("h", [(-32768 if v is None else int(v)) for v in vals])
+    a.extend([-32768] * (8760 - len(a)))
+    if _sys.byteorder != "little":  # pragma: no cover
+        a.byteswap()
+    return _b64.b64encode(a[:8760].tobytes()).decode()
+
+
+class DiurnalAmplitudeReportedOnlyTests(unittest.TestCase):
+    """D-A (v3.5) — the BAND-FREE reported-only diurnal price-amplitude measure.
+
+    The load-bearing property is the LAST test: this measurement must be
+    incapable of gating. It is reported-only by owner decision 2026-08-25
+    (option B of docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md),
+    because the xiso-6 band sweep found a gating criterion is vacuous below a
+    25 % amplitude floor and universal above 45 %, with no external comparable
+    to anchor a band.
+    """
+
+    # A measured profile with a $10 hour-of-day range (trough h00, peak h12).
+    ACTUAL_HOD = [20.0] * 12 + [30.0] * 12
+
+    def _part(self, hod=None):
+        return {"PJM": {"2024": {"rt_hod": list(hod or self.ACTUAL_HOD)}}}
+
+    def _score(self, delta_day, part=None, monkey=True):
+        """Score one year whose hourly delta repeats ``delta_day`` all year."""
+        blob = _i16_b64(list(delta_day) * 365)
+        saved = cv._AMPLITUDE_CACHE
+        cv._AMPLITUDE_CACHE = self._part() if part is None else part
+        try:
+            return cv.score_diurnal_amplitude(2024, {"lmpDeltaHr": blob}, "PJM")
+        finally:
+            cv._AMPLITUDE_CACHE = saved
+
+    def test_zero_delta_reproduces_the_measured_amplitude(self):
+        """A model equal to the actual reads 100 % amplitude, phase exact."""
+        r = self._score([0] * 24)
+        self.assertEqual(r["status"], cv.REPORTED)
+        self.assertAlmostEqual(r["amplitude_pct"], 100.0, places=1)
+        self.assertTrue(r["phase_ok"])
+        self.assertEqual(r["days"], 365)
+
+    def test_compressed_amplitude_is_measured(self):
+        """Halving the swing (peak -$5) reads 50 %, and stays band-free."""
+        r = self._score([0] * 12 + [-5] * 12)
+        self.assertAlmostEqual(r["amplitude_pct"], 50.0, places=1)
+        self.assertIsNone(r["tol"])  # BAND-FREE: no threshold to state
+        self.assertIsNone(r["classification"])
+
+    def test_sentinel_hours_drop_their_whole_day(self):
+        """A -32768 sentinel masks its day rather than corrupting the profile.
+
+        This is the MISO-2025 defect: one NaN actual hour (h8759) encodes as the
+        sentinel, and reading it as a value blows the amplitude from 20.8 % to
+        186.9 %. The day-drop is what keeps the statistic honest.
+        """
+        blob = _i16_b64([0] * 8759 + [None])
+        saved = cv._AMPLITUDE_CACHE
+        cv._AMPLITUDE_CACHE = self._part()
+        try:
+            r = cv.score_diurnal_amplitude(2024, {"lmpDeltaHr": blob}, "PJM")
+        finally:
+            cv._AMPLITUDE_CACHE = saved
+        self.assertEqual(r["status"], cv.REPORTED)
+        self.assertEqual(r["days"], 364)  # the sentinel-bearing day dropped
+        self.assertAlmostEqual(r["amplitude_pct"], 100.0, places=1)
+
+    def test_phase_error_is_reported_not_penalised(self):
+        """A shifted peak reports phase OFF — and still carries no verdict."""
+        r = self._score([10] * 6 + [0] * 18)  # pushes the model peak to h00-h05
+        self.assertEqual(r["status"], cv.REPORTED)
+        self.assertFalse(r["phase_ok"])
+        self.assertIsNone(r["tol"])
+
+    def test_skips_without_a_committed_part(self):
+        r = self._score([0] * 24, part={})
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+    def test_skips_when_payload_predates_the_field(self):
+        saved = cv._AMPLITUDE_CACHE
+        cv._AMPLITUDE_CACHE = self._part()
+        try:
+            r = cv.score_diurnal_amplitude(2024, {}, "PJM")
+        finally:
+            cv._AMPLITUDE_CACHE = saved
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+    def test_degenerate_measured_range_skips(self):
+        """A flat measured profile has no amplitude to be a fraction of."""
+        r = self._score([0] * 24, part={"PJM": {"2024": {"rt_hod": [25.0] * 24}}})
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+    def test_IT_CANNOT_GATE(self):
+        """The load-bearing guarantee: D-A can never touch a determination.
+
+        It is absent from CRITERIA (so it never reaches per_criterion, any
+        caveat budget or grade_summary) and absent from LEDGERABLE_CRITERIA,
+        and REPORTED is not one of the four scored statuses.
+        """
+        self.assertIn("diurnal_amplitude", cv.REPORTED_ONLY)
+        self.assertNotIn("diurnal_amplitude", cv.CRITERIA)
+        self.assertNotIn("diurnal_amplitude", cv.LEDGERABLE_CRITERIA)
+        self.assertEqual(cv.LEDGERABLE_CRITERIA, frozenset({"price_tail"}))
+        self.assertEqual(cv.MAX_LEDGERED_CAVEATS, 1)
+        self.assertEqual(cv.MAX_PROTECTIVE_CAVEATS, 0)
+        self.assertNotIn(cv.REPORTED, (cv.PASS, cv.CAVEAT, cv.FAIL, cv.SKIPPED))
+        # A REPORTED record aggregates to nothing a criterion could read.
+        self.assertEqual(cv._agg_status([{"status": cv.REPORTED}]), cv.SKIPPED)
+
+
 def _fm(klass, status="PASS"):
     return {"criterion": "fuelmix", "key": klass, "status": status}
 

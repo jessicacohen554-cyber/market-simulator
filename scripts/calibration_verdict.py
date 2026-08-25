@@ -41,6 +41,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import array
 import base64
 import json
 import math
@@ -343,10 +344,25 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       miss, +12.8/+15.7% in 2024/2025). NO OTHER RECORD of any run of any
 #       ISO changes status, and no determination label changes anywhere.
 #       NO SOLVE RAN — scorer-side only; every keeper re-scores in place.
-RUBRIC_VERSION = 3.4
+# v3.5 (2026-08-25, owner decision — option B of
+#       docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md): adds the
+#       BAND-FREE REPORTED-ONLY diurnal price-amplitude measurement (D-A,
+#       score_diurnal_amplitude) and surfaces the reported-only block that had
+#       been computed and silently dropped since v2.9. NO CRITERION IS ADDED to
+#       CRITERIA, LEDGERABLE_CRITERIA and MAX_LEDGERED_CAVEATS are UNCHANGED,
+#       and no determination moves — verified over every registered run.
+#       NO SOLVE RAN — scorer-side only; every keeper re-scores in place.
+RUBRIC_VERSION = 3.5
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
+# v3.5: the status of a BAND-FREE reported-only measurement — a number published
+# with no verdict attached, because no external comparable exists to band it
+# against (see REPORTED_ONLY and score_diurnal_amplitude). It is deliberately
+# NOT one of the four scored statuses: a REPORTED record never reaches
+# ``_agg_status``, ``per_criterion``, any caveat budget or ``grade_summary``,
+# because its criterion is not in ``CRITERIA`` at all. Nothing may gate on it.
+REPORTED = "REPORTED"
 # Failure classifications (rubric §1). A CAVEAT is one of:
 #  - MEASURED_LIMIT: an out-of-tolerance criterion reclassified by an explicit
 #    exceptions-ledger entry (the actual is the limitation) — BUDGETED, and
@@ -764,6 +780,27 @@ CRITERIA = {
 # label — membership in this dict is what makes a criterion reported-only.
 REPORTED_ONLY = {
     "co2": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 — see the CRITERIA note)",
+    # v3.5 (owner decision 2026-08-25, option B of
+    # docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md). xiso-1
+    # measured diurnal price-amplitude compression in 36/36 ISO x year x
+    # benchmark cells — daily MAX under-priced and daily MIN over-priced
+    # everywhere, amplitude a mean ~45 % of measured vs RT — while the annual
+    # LEVEL passes BY CANCELLATION and NO criterion sees it: C3a is a level
+    # test, C3b a 12-month NRMSE structurally blind to hour-of-day, C3c a tail
+    # count, and C7 (the one criterion that ever scored a diurnal shape) was
+    # RETIRED at v3.1. The owner ruled it REPORTED-ONLY and BAND-FREE rather
+    # than gating: the xiso-6 band sweep found a gating criterion is VACUOUS
+    # below a 25 % amplitude floor and UNIVERSAL above 45 %, with no external
+    # comparable anywhere in the 20-45 % window to anchor a band — the exact
+    # ground C7 was retired on (rubric §8's comparables row: a diurnal-shape
+    # ACCURACY gate with no published counterpart). This is therefore the SAME
+    # disposition v3.1 gave diurnal DISPATCH shape — gate deleted, measurement
+    # kept — applied to prices. It publishes a number and CANNOT change a
+    # determination.
+    "diurnal_amplitude": (
+        "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, "
+        "v3.5 — no external comparable exists to band it; see the note)"
+    ),
 }
 
 
@@ -1083,6 +1120,27 @@ def _band_result(err_abs: float, target: float, commercial: float):
 # ---------------------------------------------------------------------------
 # Actual scarcity-tail part (committed, scripts/data/derive_actual_tail.py)
 # ---------------------------------------------------------------------------
+AMPLITUDE_DIR = DATA_DIR / "amplitude"
+_AMPLITUDE_CACHE: dict | None = None
+
+
+def _amplitude_part() -> dict:
+    """Committed measured hour-of-day profiles (``amplitude/actual_amplitude.json``).
+
+    ``{iso: {year(str): {rt_hod[24], rt_days, rt_range, rt_peak_hour, ...}}}`` —
+    the actual side of the v3.5 REPORTED-ONLY diurnal-amplitude measurement,
+    written by ``scripts/data/derive_actual_amplitude.py``. Empty when the part
+    is absent, in which case the measurement records SKIPPED — it never gates,
+    so an absent part costs nothing but the disclosure.
+    """
+    global _AMPLITUDE_CACHE
+    if _AMPLITUDE_CACHE is not None:
+        return _AMPLITUDE_CACHE
+    p = AMPLITUDE_DIR / "actual_amplitude.json"
+    _AMPLITUDE_CACHE = json.loads(p.read_text()).get("isos", {}) if p.exists() else {}
+    return _AMPLITUDE_CACHE
+
+
 TAIL_DIR = DATA_DIR / "tail"
 _TAIL_CACHE: dict | None = None
 
@@ -2107,6 +2165,144 @@ def score_co2(year: int, ypay: dict, ybench: dict) -> dict:
     }
 
 
+_I16_NAN = -32768  # render_calibration_html._b64_i16's documented NaN sentinel
+
+
+def _decode_i16(b64: str) -> list[float] | None:
+    """Decode a payload ``_b64_i16`` series to floats, sentinel -> ``None``.
+
+    ``render_calibration_html._b64_i16`` writes little-endian int16 with
+    ``-32768`` reserved as NOT-A-NUMBER (no model dual or no actual price for
+    that hour). Returns ``None`` when the blob is unusable, so the caller SKIPs
+    rather than scoring garbage.
+    """
+    try:
+        raw = base64.b64decode(b64)
+    except Exception:  # pragma: no cover - defensive
+        return None
+    vals = array.array("h")
+    if vals.itemsize != 2:  # pragma: no cover - not reachable on CPython
+        return None
+    try:
+        vals.frombytes(raw[: len(raw) // 2 * 2])
+    except Exception:  # pragma: no cover - defensive
+        return None
+    if sys.byteorder != "little":  # pragma: no cover - x86/arm are little
+        vals.byteswap()
+    return [None if v == _I16_NAN else float(v) for v in vals]
+
+
+def _hod_profile(series: list, days: int = 365, width: int = 24):
+    """Hour-of-day mean profile over COMPLETE days, and the day count.
+
+    A day carrying any missing (``None``) hour is DROPPED, never interpolated —
+    the ``_xiso1_diurnal_amplitude_audit`` convention, and the same rule
+    ``derive_actual_amplitude`` applies to the measured side, so the two masks
+    coincide (the model side is never missing, so a sentinel hour is exactly an
+    hour with no committed actual). Returns ``(None, 0)`` when no complete day
+    survives.
+    """
+    kept, total = [0.0] * width, 0
+    for d in range(days):
+        base = d * width
+        if base + width > len(series):
+            break
+        day = series[base : base + width]
+        if any(v is None for v in day):
+            continue
+        for h in range(width):
+            kept[h] += day[h]
+        total += 1
+    if not total:
+        return None, 0
+    return [v / total for v in kept], total
+
+
+def score_diurnal_amplitude(year: int, ypay: dict, iso: str) -> dict:
+    """D-A — diurnal price amplitude, hour-of-day. **REPORTED-ONLY, BAND-FREE.**
+
+    Publishes the model's hour-of-day price amplitude as a fraction of the
+    measured one, with the phase check alongside. It carries **no band, no
+    threshold and no verdict**, is not a member of ``CRITERIA``, and therefore
+    **cannot contribute a status to any determination or consume any caveat
+    budget** (owner decision 2026-08-25, option B of
+    ``docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md``).
+
+    **Why band-free.** The xiso-6 sweep measured what a gating criterion would
+    do at ten candidate bands: it is VACUOUS below a 25 % amplitude floor (every
+    keeper passes, including one at 20.8 %) and UNIVERSAL above 45 % (five or
+    six of six ISOs fail and every CALIBRATED determination is lost), and no
+    external comparable exists anywhere in that window to anchor a band. That
+    is the same ground C7 diurnal shape was retired on at v3.1 (rubric §8's
+    comparables row: a diurnal-shape ACCURACY gate with no published
+    counterpart). So the measurement is kept and the gate is not built.
+
+    **Construction, and why it costs nothing.** The hour-of-day mean is linear,
+    so ``hod(model) = hod(actual) + hod(delta)``. The measured profile comes
+    from the committed part (``_amplitude_part``); the delta is the payload's
+    own ``lmpDeltaHr`` (``model − actual RT``, load-weighted, already written by
+    every render since the field was added). **No LP solve, no bundle
+    regeneration, no re-registration** — every already-registered run carrying
+    the field scores in place. A run predating the field, or an ISO-year with no
+    committed part, records SKIPPED.
+
+    Validated against the parquet-based reference implementation
+    (``scripts/probes/_xiso1_diurnal_amplitude_audit.py``) on all six keepers x
+    three years: **worst deviation 0.31 pp**, the residual being the $1 int16
+    quantization and a padding edge case, both far below anything this
+    band-free number is read for.
+    """
+    part = (_amplitude_part().get(iso) or {}).get(str(year)) or {}
+    a_hod = part.get("rt_hod")
+    if not a_hod:
+        return _skip("diurnal_amplitude", year, "no committed measured hod profile")
+    blob = ypay.get("lmpDeltaHr")
+    if not blob:
+        return _skip("diurnal_amplitude", year, "payload predates the lmpDeltaHr field")
+    delta = _decode_i16(blob)
+    if delta is None:
+        return _skip("diurnal_amplitude", year, "undecodable lmpDeltaHr blob")
+    d_hod, ndays = _hod_profile(delta)
+    if d_hod is None:
+        return _skip("diurnal_amplitude", year, "no complete day in the hourly delta")
+    m_hod = [a + d for a, d in zip(a_hod, d_hod)]
+    a_range = max(a_hod) - min(a_hod)
+    m_range = max(m_hod) - min(m_hod)
+    if a_range <= 0:
+        return _skip("diurnal_amplitude", year, "measured hod range is degenerate")
+    amp = 100.0 * m_range / a_range
+    r, _ = _pearson_nrmse(m_hod, a_hod)
+    m_peak, a_peak = m_hod.index(max(m_hod)), a_hod.index(max(a_hod))
+    m_trough, a_trough = m_hod.index(min(m_hod)), a_hod.index(min(a_hod))
+    phase_ok = abs(m_peak - a_peak) <= 1 and abs(m_trough - a_trough) <= 1
+    return {
+        "criterion": "diurnal_amplitude",
+        "key": None,
+        "year": year,
+        "status": REPORTED,
+        "classification": None,
+        "metric": (
+            "hour-of-day price amplitude, model as % of measured RT "
+            "(BAND-FREE: reported, never gated)"
+        ),
+        "benchmark": "RT",
+        "model": round(m_range, 2),
+        "actual": round(a_range, 2),
+        "tol": None,  # band-free by construction — there is no band to state
+        "magnitude": (
+            f"amplitude {amp:.1f}% of measured "
+            f"(hod range ${m_range:.2f} vs ${a_range:.2f}); "
+            f"peak h{m_peak:02d} vs h{a_peak:02d}, trough h{m_trough:02d} vs "
+            f"h{a_trough:02d} — phase {'OK' if phase_ok else 'OFF'}; "
+            f"hod r {r:+.3f}; {ndays} complete days"
+        ),
+        "amplitude_pct": round(amp, 1),
+        "phase_ok": phase_ok,
+        "hod_r": round(r, 3),
+        "days": ndays,
+    }
+
+
 # (score_storage / score_storage_shape — the C5b/C5c scorers — were removed
 # with the criteria by the v2.7 owner amendment 2026-07-16. The storage
 # payload/bench diagnostics they read stay committed and rendered on the
@@ -2602,6 +2798,10 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         records += score_dispatch_corr(year, ypay, ybench, iso)
         records.append(score_co2(year, ypay, ybench))
         # (No C7 row: retired outright by the v3.1 owner amendment 2026-08-06.)
+        # D-A: REPORTED-ONLY, band-free (v3.5). Not in CRITERIA, so it can never
+        # reach per_criterion, a caveat budget or grade_summary — it publishes a
+        # number and nothing else.
+        records.append(score_diurnal_amplitude(year, ypay, iso))
         records += score_forced_share(year, art.get("legitimacy"), ypay, ybench)
 
     # Apply the exceptions ledger (FAIL -> CAVEAT where documented).
@@ -2784,11 +2984,25 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         "fails": len(fails),
     }
 
+    # REPORTED-ONLY block (v3.5). Before this, a reported-only criterion's
+    # records were computed and then SILENTLY DROPPED: only ``CRITERIA`` members
+    # reach ``per_criterion``, so C5a `co2` has been scored and discarded by the
+    # verdict since v2.9 — "reported-only" reported nothing. Surfacing them is
+    # what makes the posture mean what it says, and it is determination-neutral
+    # by construction: this block is assembled AFTER the determination above and
+    # feeds nothing back into it.
+    reported: dict[str, dict] = {}
+    for cid, label in REPORTED_ONLY.items():
+        recs = [r for r in records if r["criterion"] == cid]
+        if recs:
+            reported[cid] = {"label": label, "records": recs}
+
     return {
         "run_id": run_id,
         "iso": iso,
         "label": sidecar.get("label", run_id),
         "rubric_version": RUBRIC_VERSION,
+        "reported": reported,
         "target_years": target_years,
         "scorable_years": scorable_years,
         "data_blocked_years": data_blocked,
@@ -2851,6 +3065,11 @@ def render_text(v: dict) -> str:
             lines.append(f"        {r['status']:7s}{yr}{key}: {r['magnitude']}{cls}")
             if r.get("ledger_reason"):
                 lines.append(f"          ledger: {r['ledger_reason']}")
+    for cid, rep in (v.get("reported") or {}).items():
+        lines.append(f"[·] REPORT  ----  {rep['label']}")
+        for r in rep["records"]:
+            yr = f" {r['year']}" if r.get("year") else ""
+            lines.append(f"        {r['status']:7s}{yr}: {r['magnitude']}")
     lines.append("-" * 72)
     fcs = v.get("free_class_score")
     if fcs:
@@ -2913,6 +3132,20 @@ def condensed_metrics(v: dict) -> dict:
         },
         "caveats": v["caveats"],
         "grade_summary": v.get("grade_summary"),
+        # Reported-only measurements (v3.5): the headline magnitude per year,
+        # kept in the condensed sidecar so the disclosure travels with the run.
+        # Contributes no status to the determination by construction.
+        "reported": {
+            cid: {
+                "label": rep["label"],
+                "years": {
+                    str(r["year"]): r["magnitude"]
+                    for r in rep["records"]
+                    if r.get("year")
+                },
+            }
+            for cid, rep in (v.get("reported") or {}).items()
+        },
         "free_class_score": v["free_class_score"],
     }
 
