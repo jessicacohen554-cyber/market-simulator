@@ -1,15 +1,16 @@
 {
-  "id": "2026-08-25-nyiso-155-hydro-repair",
-  "label": "nyiso 155 hydro repair",
-  "date": "2026-08-25",
-  "shorthand": "nyiso-155-hydro-repair",
-  "definition": "nyiso-155 hydro truncation repair arm (backfill 2024 + EIA-930 monthly level pin; PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md)",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "NYISO",
-  "file": "frontend/data/backcast/runs/2026-08-25-nyiso-155-hydro-repair.js",
-  "bundle": "results/calibration/nyiso155_hydro_repair"
+ "id": "2026-08-25-nyiso-155-hydro-repair",
+ "label": "nyiso 155 hydro repair",
+ "date": "2026-08-25",
+ "shorthand": "nyiso-155-hydro-repair",
+ "definition": "(KEEPER, OWNER-PROMOTED 2026-08-25 on the nyiso-155 escalation — structural integrity over gate regression, the nyiso-108/nyiso-120 override class) The nyiso-152 recipe + the hydro truncated-vintage input repair pair (hydro_backfill_year=2024 + hydro_eia930_monthly=true, zero fitted scalars): restores the 2025 LP hydro fleet 3 -> 147 plants / 21.0482 -> 24.0589 TWh on the sole material-hydro ISO that ran unrepaired. 2025 hydro SHAPE improves on every statistic (hourly r 0.562->0.712, monthly-vs-P63 r 0.925->0.994, hod swing 1049->1903 MW vs measured 1830); hydro VOLUME -0.19% is TAUTOLOGICAL BY CONSTRUCTION under the 930 pin (declared, never banked). DETERMINATION NOT-YET, owner-accepted: C3a-2025 -8.1 -> -10.8% FAIL — the truncation was masking ~2.7pp of the real 2025 offer-level object (owner-court, DECISION-CARD-nyiso148); C3c counts bit-identical to the prior ledgered caveat (1/0/0), FAIL only via the silenced lone-failure guard. C1 14/14 free 10/10; C2/C3b/C4/C6/C8 PASS. A/B control: 2026-08-25-nyiso-155-hydro-control (CALIBRATED). Prereg pushed before measurement; records: FINDING-nyiso-hydro-truncation-repair-2026-08.md, _nyiso155_hydro_repair_ab.json.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-08-25-nyiso-155-hydro-repair.js",
+ "bundle": "results/calibration/nyiso155_hydro_repair",
+ "market_story": "hydro: NY hydro genuinely produced ~24.1 TWh in 2025 (NYISO P-63 24.25, EIA-930 24.10, agreeing to 0.6%) — the prior keeper's 21.05 was a truncated preliminary-vintage survey artifact (2.0% plant retention), not hydrology. The repaired budget is an inflow constraint that regenerates forward (forecast_monthly_hydro); the LP dispatches it at MC 0 under the measured deliverability envelope, and the restored 147-plant fleet is what physically produces the real ~1.8-1.9 GW diurnal swing the 3-plant fleet could not. gas (CC_REGULAR/CC_CHP/ST_GAS): the 1:1 fossil displacement is the real merit-order consequence of putting the missing zero-MC energy back — 2023/24 +1.6/+1.1 TWh (phantom hydro removed), 2025 -3.15 TWh (real hydro restored); the resulting 2025 price softening (-$1.79/MWh) is the true face of the already-open 2025 offer-level object, not a hydro artifact."
 }

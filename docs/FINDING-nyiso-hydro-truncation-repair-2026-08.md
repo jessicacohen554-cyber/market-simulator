@@ -285,3 +285,31 @@ Evidence in-repo: `results/calibration/_nyiso155_hydro_repair_ab.json`,
 `scripts/probes/_nyiso155_hydro_repair_ab.py`,
 `results/calibration/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md`,
 registered bundles `nyiso155_hydro_control` / `nyiso155_hydro_repair`.
+
+---
+
+## §7 — ADDENDUM 2026-08-25: the escalation is RESOLVED — OWNER RULED PROMOTE
+
+Owner decision on the §5 escalation, same day, verbatim: *"Is this a
+recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper.."* The arm **is** the
+recommended candidate on the rules-14+1 basis (§5), and it is **PROMOTED**:
+NYISO keeper → `2026-08-25-nyiso-155-hydro-repair`, superseding
+`2026-08-22-nyiso-152-duty-complete` — the nyiso-108/nyiso-120 override class,
+recorded as an override, never as the prereg's verdict. The determination
+**NOT-YET is written explicitly on owner instruction** (nyiso-120 precedent):
+the D-5(b) worse-determination stop fired, was escalated (§5), and this ruling
+resolves it — nothing was silently written. Executed in the promotion commit:
+keeper shard re-key + chained promotion note; `calibration-complete.json`
+NYISO entry re-keyed with the explicit NOT-YET; registry sidecar re-defined as
+KEEPER with a `market_story`; matrix cell `hydro_vintage_input_repair`
+**O → K**; shard keeper/gates stamps and the §5.5 prose header re-stamped
+(prior records preserved verbatim); `status/NYISO.js` rebuilt
+[NYISO: NOT-YET]; `audit_keepers --iso NYISO` run via the keeper-auditor.
+**Frontier:** the 2026-08-23 ratification's basis keeper is superseded and its
+CALIBRATED premise does not hold on the new keeper — the ratification record
+is preserved verbatim as the owner-act genealogy and the frontier status
+question returns to the owner. **Named successor, unchanged:** the 2025
+offer-level object (`DECISION-CARD-nyiso148-2025-level-remainder`, owner Q1
+pending), whose true magnitude this repair revealed; the hydro input is now
+correct and must not be re-tuned to bury that miss (rule 14).
