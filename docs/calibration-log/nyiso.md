@@ -7952,3 +7952,49 @@ correct and stays (rule 14). Freeze ACTIVE, untouched; no locked-test grant of
 any kind. `docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md` §7.
 
 Next shorthand: nyiso-156.
+
+---
+
+## 2026-08-25 — nyiso-156: the 2025 offer-level object measured to COMPLETION on the promoted keeper — no third component; either adjudicated face alone would restore the band; sharpened decision card filed
+
+**NO SOLVE.** Precommit pushed + blob-verified BEFORE any measurement
+(`PRECOMMIT-nyiso156-offer-level-phase0-2026-08-25.md`); every number read
+from the two registered nyiso-155 bundles (same-HEAD pair — arm−control is
+exactly the hydro repair, no G1 drift inside it) and the committed actuals.
+Probe `scripts/probes/_nyiso156_offer_level_phase0.py`, record
+`_nyiso156_offer_level_phase0.json`; model lw anchors reproduce the recorded
+61.04 / 59.24 exactly.
+
+**The C3a-2025 gap (−$7.19 lw, −10.8 %) decomposes to the two
+already-adjudicated faces and NOTHING ELSE:** Jan+Feb winter downstate
+**−3.92** (whole-month, sustained; upstate near-exact — Jan UW 87 vs 90,
+NYC 87 vs 134; gradient $0.81 vs $14.83 actual) + **ten summer
+scarcity-event days −3.94** (Jun 22–26: model 86.89 vs actual **214.25** lw;
+Jul 1/25/28–30: 80.47 vs 159.71) − a +0.59 shoulder over-pricing offset.
+**Both faces pre-exist the repair** (control −3.49/−3.87); the hydro
+increment's −$1.79 spreads across ALL twelve months (−0.04..−0.27 gap
+contribution each) — the repair unmasked, it did not create. **New
+load-conditional typing:** the model−actual error is monotone in demand
+decile in ALL THREE years (2025 +6.9 → −33.7 $/MWh, top two deciles = the
+whole gap; 2023 +6.8 → −5.2; 2024 +4.9 → −6.8, whose eqh hub gap is −$0.03)
+— 2023/2024 pass by trough/peak cancellation the dear-gas year outgrows.
+
+**The decisive arithmetic (new):** the band edge is −$6.64; each face is
+~$3.9; closing EITHER alone puts 2025 at ≈ −5.3 % — IN BAND — whereupon C3c
+reverts to the lone failure and its ledgered CAVEAT, i.e. the determination
+returns CALIBRATED through structure. **Card filed:**
+`docs/DECISION-CARD-nyiso156-2025-offer-level-2026-08-25.md` — supersedes
+the nyiso-148 card's numbers; Q2 (the −2.2 % cancellation annotation)
+DISSOLVED (its subject no longer exists); Q1 restated as **authorize the
+BLOCKER-B winter identification intake (recommended) vs leave the keeper
+standing NOT-YET** — "charter a lane" is overtaken: the summer face is the
+closed/ledgered C3c queue, the winter face is access-walled (nyiso-97/122/150
+adjudications standing), the offer-side queue stays closed (nyiso-151), and
+no admissible lane lever exists until new data does.
+
+Rule 22: years read ∈ {2023, 2024, 2025}; freeze ACTIVE, untouched. Matrix
+UNTOUCHED (no mechanism tested — phase-0 measurement only). Zero fitted
+scalars; hydro input pair untouched (rule 14; volume statistics quoted
+nowhere).
+
+Next shorthand: nyiso-157.
