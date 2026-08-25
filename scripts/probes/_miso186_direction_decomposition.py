@@ -90,13 +90,27 @@ LEGA_FIRE_GW = 0.10  # per-family availability firing line (PREREG §2 Leg A)
 MATERIALITY_GW = 0.25  # §4 clause (v) static-reach line
 DEADBAND = 1.0  # the miso-183 classifier's ±$1 RPE dead band
 
-# PREREG §2 fuel-family crosswalk (frozen).
+# PREREG §2 fuel-family crosswalk (frozen partition). DISCLOSED fidelity note
+# (the miso-184 §1 pattern): the PREREG spelled the crosswalk in the SIDECAR
+# klass vocabulary; the rebuilt fleet's own vocabulary differs (South coal is
+# plant_group="COAL"; nuclear/oil/biomass rows carry an EMPTY plant_group with
+# the class in fuel_type) — the first run therefore attributed South
+# coal/nuclear to "Other" with 0.000 in their own rows. The mapping below
+# implements the SAME intended partition on the fleet's actual fuel_type
+# vocabulary (coal→Coal, gas_*→Gas, nuclear→Nuclear, hydro→Hydro,
+# oil/biomass→Other); no family's definition changed.
 KLASS_FAMILY = {
     "COAL_BIT": "Coal", "COAL_LIGNITE": "Coal", "COAL_PRB": "Coal",
+    "COAL": "Coal", "COAL_WC": "Coal",
     "CC_CHP": "Gas", "CC_REGULAR": "Gas", "CT_CHP": "Gas", "CT_PEAKER": "Gas",
     "ST_CHP": "Gas", "ST_GAS": "Gas",
     "nuclear": "Nuclear", "hydro": "Hydro", "wind": "Wind", "solar": "Solar",
     "biomass": "Other", "oil": "Other", "OTHER": "Other",
+}
+FUELTYPE_FAMILY = {
+    "gas_cc": "Gas", "gas_ct": "Gas", "gas_st": "Gas", "gas": "Gas",
+    "coal": "Coal", "nuclear": "Nuclear", "hydro": "Hydro",
+    "oil": "Other", "biomass": "Other", "wind": "Wind", "solar": "Solar",
 }
 # Committed miso-183 Leg-2 scarce means of N_S = L_S - G_S (F-4 targets; GW).
 F4_NS = {2023: -1.438, 2024: -2.222, 2025: -2.441}
@@ -325,7 +339,12 @@ def year_record(cfg, year: int) -> dict:
     rec["legL"] = legL
 
     # ---- Leg A: availability vs the measured record (per family) ----------
-    fam_of = np.array([KLASS_FAMILY.get(str(k), "Other") for k in labels])
+    fuels = np.array([str(getattr(g, "fuel_type", "") or "") for g in mb["fleet"]])
+    fam_of = np.array([
+        FUELTYPE_FAMILY.get(f, KLASS_FAMILY.get(str(k), "Other"))
+        for f, k in zip(fuels, labels)])
+    # effective class label for Leg M: plant_group, else fuel_type.
+    labels = np.where(labels == "", fuels, labels)
     cap_S_fam: dict[str, np.ndarray] = {}
     cap_MW_fam: dict[str, np.ndarray] = {}
     for fam in ("Coal", "Gas", "Nuclear", "Hydro", "Other"):
@@ -516,6 +535,46 @@ def year_record(cfg, year: int) -> dict:
     return rec
 
 
+def candidate_reach() -> dict:
+    """PREREG §4 clause-(v) static reach of the SELECTED candidate, recorded.
+
+    Computed AFTER the leg screen fired (the declared order: the screen names
+    the deviation, this implements the clause-(v) re-evaluation for the named
+    repair `unit_outage_fleet_status_scope`): rebuild each year with the field
+    on and difference the scarce-hour economic capacity at the committed
+    Midwest price, South and Midwest separately. Also records the mechanism's
+    full event-drop footprint (plants/units/statuses) for the finding.
+    """
+    import dataclasses as _dc
+
+    cfg0 = _m156.keeper_config()
+    cfg1 = _dc.replace(cfg0, unit_outage_fleet_status_scope=True)
+    out = {"candidate": "unit_outage_fleet_status_scope", "years": {}}
+    for year in YEARS:
+        sc = _m183.hour_sets(year)["scarce"]
+        mb0 = _m156.model_year(cfg0, year)
+        mb1 = _m156.model_year(cfg1, year)
+        zn = mb0["zone_names"]
+        iS = zn.index(SOUTH)
+        iMW = [zn.index(z) for z in MIDWEST]
+        pi = mb0["price"]["MISO-East"].to_numpy(dtype=float)
+
+        def _econ(mb, sel):
+            z = (np.isin(mb["zone_of"], sel) if isinstance(sel, list)
+                 else (mb["zone_of"] == sel))
+            vals = []
+            for t in np.nonzero(sc)[0]:
+                below = mb["mc_base"][:, t] <= pi[t]
+                vals.append(float(mb["availcap"][z & below, t].sum()))
+            return float(np.mean(vals)) if vals else float("nan")
+
+        out["years"][str(year)] = {
+            "d_econcap_south_scarce_gw": (_econ(mb1, iS) - _econ(mb0, iS)) / 1e3,
+            "d_econcap_midwest_scarce_gw": (_econ(mb1, iMW) - _econ(mb0, iMW)) / 1e3,
+        }
+    return out
+
+
 def main() -> dict:
     cfg = _m156.keeper_config()
     out = {
@@ -559,6 +618,10 @@ def main() -> dict:
         if isinstance(o, float) and not np.isfinite(o):
             return None
         return o
+
+    if "--candidate-reach" in sys.argv:
+        out["candidate_reach"] = candidate_reach()
+        print("candidate_reach:", json.dumps(out["candidate_reach"]), flush=True)
 
     OUT.write_text(json.dumps(_clean(out), indent=1))
     print(f"wrote {OUT}")
