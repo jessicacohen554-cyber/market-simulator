@@ -122,16 +122,8 @@ def s1_exactness() -> dict:
         if not dp.exists():
             act[tag] = None
             continue
-        df = pd.read_parquet(dp, columns=["unit", "hour", "mw"]) if _has_col(
-            dp, "unit"
-        ) else pd.read_parquet(dp)
-        ucol = "unit" if "unit" in df.columns else (
-            "unit_id" if "unit_id" in df.columns else None
-        )
-        if ucol is None:
-            act[tag] = "no-unit-column"
-            continue
-        cw = df[df[ucol].astype(str).str.contains("p55358")]
+        df = pd.read_parquet(dp, columns=["plant_code", "hour", "mw"])
+        cw = df[df["plant_code"] == 55358]
         v = cw.groupby("hour")["mw"].sum().reindex(np.nonzero(sc)[0]).fillna(0.0)
         act[tag] = float(v.mean())
     return {
@@ -198,13 +190,10 @@ def _south_net_inflow(bundle: Path, year: int) -> dict:
     slack = s["slack"].to_numpy(dtype=float)
     dump = s["dump"].to_numpy(dtype=float)
     dp = bundle / "dispatch" / f"{year}_P1.parquet"
-    df = pd.read_parquet(dp)
-    zcol = "zone" if "zone" in df.columns else None
+    df = pd.read_parquet(dp, columns=["zone", "hour", "mw"])
     gen = (
-        df[df[zcol] == "MISO-South"].groupby("hour")["mw"].sum()
+        df[df["zone"] == "MISO-South"].groupby("hour", observed=True)["mw"].sum()
         .reindex(range(HOURS)).fillna(0.0).to_numpy()
-        if zcol
-        else np.full(HOURS, np.nan)
     )
     resid = gen + net_in + slack - dump - dem
     sc = _m183.hour_sets(year)["scarce"]
