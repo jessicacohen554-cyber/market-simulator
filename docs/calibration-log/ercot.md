@@ -11925,4 +11925,27 @@ self-adjudicated); (2) round 5 = the bounded h4097 shed object. The
 3-year keeper `2026-08-25-234-eastex-identity` and all its records are
 untouched.
 
+### ercot-235 PROMOTION ADDENDUM (2026-08-25, same session window) — `2026-08-25-235-2023-discrete-k24` PROMOTED TO KEEPER on the owner's renewed signature
+
+**The owner renewed the standing signature in-session** (*"Is this a
+recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper.."*) against the open
+keeper-structure question the campaign report put to them. Adjudication:
+YES, recommended — the best 2023 record in program history (first
+C3b-2023 PASS at 0.186, C3c-2023 PASS at 180/181, C3a-2023 −13.5 % the
+sole failing criterion), kill-clean on every precommitted gate, one
+honestly-ledgered scalar converging to the measured 2023 ask range. The
+"gates regress" half of the standard covers the two honest costs: spur 68
+vs the prior keeper's 11 (report gate) and n_residual 6 → 7. **The keeper
+is 2023-ONLY under the owner's invoked rule-16 waiver; 2024/2025 stay
+referenced to the immediate-prior cross-year keeper
+`2026-08-25-234-eastex-identity`** (3-year, zero fitted scalars, untouched
+on the dashboard). Keeper shard re-keyed + standing note re-headed, status
+part rebuilt, matrix §5.1 + ERCOT.js keeper/gates stamps re-stamped,
+`audit_keepers --iso ERCOT` + the keeper-auditor agent run at close. NAMED
+SUCCESSOR at the head of the queue: **the h4097 manufactured-shed object**
+(June-20 17:00; 35.9 → 310.9 MWh as k rises past 24) — the one bounded
+object between this keeper and a clean C3a-2023 PASS (killed R8/R9 measured
+−9.3 % and +0.8 % inside the band).
+
 **Next shorthand: ercot-236** (ercot-199 remains unclaimed)
