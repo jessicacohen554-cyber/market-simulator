@@ -1,189 +1,151 @@
 # Capacity-Expansion Workstream Director — Ledger
 
-Standing coordination ledger for the capacity-expansion (Forecast Finalization
-Program) track. Maintained by the director session on branch
-`claude/capx-director-ledger`; one refresh = one commit when anything changes.
-The director charters sessions and tracks state — it never runs solves, never
-edits `src/market_sim/`, and never charters backcast-calibration work (that
-track is the owner's own CAISO/ERCOT/MISO sessions, watched here for
-deconfliction only).
+Standing coordination ledger for the capacity-expansion (Forecast Finalization Program) track.
+Maintained by the director session on branch `claude/capx-director-ledger`; one refresh = one
+commit when anything changes. The director charters sessions and tracks state — it never runs
+solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
+is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-24 (refresh #4) ·
-**HEAD at refresh:** `d0c426b`
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-25 (refresh #5) ·
+**HEAD at refresh:** `99c8cf5`
 
 ---
 
-## 0b. Refresh #4 — Q1 ANSWERED (Y-C); D2-NYISO landed and REFUTED half of the director's own §0 hypothesis
+## 0. Refresh #5 — NYISO CLEARS FC-1. The program has its first ISO with legs (a) and (b) both passing.
 
-**1. Card Y signed (Y-C) — HOLD THE LANE OPEN**, against the ERCOT lane's own Y-A
-recommendation; both records stand (`0e53012`). The signature does NOT lift Q-B/R-A, does not
-license any `R`/`I`/`G` re-test, and leaves the ercot-225 gate card open. Same session then
-measured the one named-unmeasured object anyway: the **`NE_LOB` timing Phase-0 CLOSES on all
-four zonal-grain drivers** (`144599b`, `33d7b70`).
-→ **Q1 IS ANSWERED. The ERCOT 2023 arc stays LIVE, so D4 is chartered at the I3-INVARIANT HALF
-ONLY** and the forecast net-revenue half stays held — exactly the original charter's fallback.
+**1. D2-NYISO-INTAKE LANDED and it worked** (PR #4259). NYISO added to
+`ADEQUACY_EXTERNAL_TIE_FIRM_MW` on its **own published** external capacity — 2026 Gold Book
+Table V-1, Summer-2026 net capacity purchases from external control areas, **3,168.5 MW ICAP,
+sha-verified source** — converted to the model's UCAP requirement basis with the **same published
+NYCA ICAP→UCAP factor the requirement side applies** (rule 19, one basis): 3,168.5 × (1 − 0.1321)
+= **2,749.9 MW**. Corroborated against NYISO 2025 SOM Fig. A-97. Deliberately NOT the 900 MW HQ
+dispatch floor, NOT the 4,350 MW Simultaneous Import Limit.
+**The pre-declared honesty test passed: the value overshoots the 35.7 MW residual ~77×** — a real
+accreditation, not a number tuned to the invariant.
+**Re-scored leg `nyiso-2026-2030-extcap-capxd2`: 5/5 years, 14/14 invariants PASS.
+FC-1 FAIL['I7'] → PASS. FC-2 CAVEAT → PASS. Determination HOLD → PROMOTE-WITH-CAVEATS.**
+The 2026 accredited firm reproduced the pre-solve prediction to the digit (32,085.5 + 2,749.9 =
+34,835.4 MW). Honest decomposition disclosed in the finding: HEAD demand drift since the FFR-3A-2
+epoch (−341.4 MW peak) alone would have passed 2026 by a thin +333 MW; **the intake moves every
+year to a structural +2.9–4.2 GW surplus.** Only remaining caveat is FC-7 — the program-wide
+missing DOF-ledger instrument (lane D8).
 
-**2. A D2-NYISO session ran** (PR #4251, branch `claude/capx-d2-adequacy-nyiso-yxv6v0`) on the
-prompt issued at refresh #1, which refresh #2 had marked withdrawn. It was worth running, and
-its finding (`docs/handoffs/FINDING-capx-d2-adequacy-nyiso-2026-08-24.md`) is the best evidence
-this track has produced:
+**2. NYISO's §2.1b gate now reads (a) PASS · (b) PASS · (c) `na` · (d) none — and the board does
+not know it.** `frontend/data/forecast/program-status.json` was last touched 2026-08-24 05:55
+and still carries NYISO as FC-1 FAIL / gate (b) fail. **This is the D7 trigger, and it is
+immediate.** NYISO is the first ISO in the program to clear both of the legs that depend on model
+quality. What stands between it and an open gate is now (c) — which is exactly **Q2**, the
+leg-(c) consistency question that has been pending since refresh #2 — and (d), owner authorization.
 
-- **THE DIRECTOR'S §0 HYPOTHESIS IS REFUTED FOR NYISO, and I record that against interest.**
-  FFR-1C hydro accreditation is **already inside** the FFR-3A-2 verdicts, worth **1,763.3 MW**,
-  reproduced to the digit: the pre-hydro ledger is **30,322.2 MW** — which *is* the board's
-  stale "firm 30.3 GW" figure. So the 1.8 GW that closed between FF-2D and FFR-3A-2 IS the
-  hydro fix. The I7 verdicts are **not** pre-fix, and a blanket six-ISO re-run is no longer
-  justified on that ground. What survives from §0 is narrower and still true: the board's
-  *stated root cause* is stale prose.
-- **The residual 35.7 MW (0.111 %) is a BASE-YEAR SNAPSHOT result.** `evolve_fleet` is skipped
-  when `fleet is None`, so the base year runs **no capacity evolution at all** — no adequacy
-  backstop, no retirement screen, no entry. **No capacity mechanism can respond to it, by
-  construction.** That reframes base-year I7 program-wide: it is not a capacity-evolution defect.
-- **Forks 2 (fleet vintage) and 3 (requirement mismatch) are CLOSED on evidence.**
-- **The one provable gap:** NYISO credits **ZERO external firm capacity**, while
-  ERCOT/PJM/CAISO/NEISO all carry an `ADEQUACY_EXTERNAL_TIE_FIRM_MW` entry — and the model
-  itself floors **900 MW of always-on HQ firm import** in NYISO dispatch.
-- **No I7-closing fix was shipped, deliberately and correctly.** The in-repo 900 MW candidate is
-  an inherited ladder constant, not a published RA accreditation; shipping it would breach
-  rules 5 and 13 "in the one place where a wrong number is invisible: an invariant it happens to
-  clear." Only a test-only hydro-vintage-clamp guard was committed (`7176c6d`).
-- **Its pre-stated successor** is a bounded, unrestricted data intake — NYISO Gold Book external
-  capacity — with the honesty test declared in advance: any real value is O(10²–10³) MW against a
-  36 MW gap, **and that overshoot is the evidence it is honest rather than tuned**.
+**3. D2-B LANDED** (PR #4258) and is the most substantial diagnosis this track has produced.
+Three of four legs reproduced from committed artifacts with no solve — MISO 2026 and CAISO
+2026–2030 **to the MW**, NEISO to the verdict's own rounding. Headlines:
 
-**3. Lane consequence.** D2-REMEASURE's blanket six-ISO re-run is **superseded by D2-B**: the
-NYISO session proved the question is answerable from **committed artifacts with no solve at all**
-(`results/ffr1c/{before,after}-{caiso,miso,nyiso}/` are committed; PJM/NEISO/ERCOT are not).
-Records first, solves only where the records cannot answer.
+- **MISO IS THE SECOND NYISO.** It credits **zero** external firm capacity while the forecast path
+  floors a **1,400 MW Manitoba firm-hydro block at 100 % in every hour, default-on**. The registry
+  now omits **exactly the two ISOs** that fail I7 with a default-on firm-import floor behind the
+  miss. The registry's failure mode is **coverage, not basis** — every populated entry is
+  accreditation-based and consistent with dispatch.
+- **A second MISO defect, provable from the repo's own citation blocks:** the fallback requirement
+  multiplies the **PY 2024-25** ICAP PRM (0.179) by the **PY 2025-26** ICAP→UCAP ratio, and that
+  ratio's own cited source publishes ICAP 15.7 % / UCAP 7.9 % — contradicting the PRM it is
+  multiplied with. Same-document PY 2025-26 pairing puts the requirement **2,637.4 MW lower = 44 %
+  of MISO's 6,037 MW gap.** Correctly NOT shipped (solve-affecting, shares machinery with the
+  backcast-reachable retirement floor), and routed with its expected effect stated in advance so it
+  cannot be back-fitted.
+- **NEISO's hydro fallback is load-bearing and decides the verdict's sign.** The generic
+  `RENEWABLE_CAPACITY_CREDIT["hydro"] = 0.50` (no ISO-published NEISO factor exists — an FFR-1C
+  open item) contributes **949.75 MW against a 218 MW gap — 4.4×**. A class factor of 0.39 flips
+  2027 to FAIL; 0.62 clears 2028 outright. **NEISO 2028 is not decidable at current input
+  fidelity** and must be read as "within input uncertainty", not as a capacity-evolution defect.
+- **PJM's 366 MW is an UNDERSTATEMENT, and my "PJM is the shortest path to T2" thesis is REFUTED.**
+  The requirement factor falls **discontinuously at the published-FPR table edge** (2028→2029):
+  beyond delivery year 2028/29 the model falls back to a composite whose IRM half is two vintages
+  stale, dropping the bar **3.18 % of peak = 5,492 MW** at the 2030 peak. Against a hold-last-FPR
+  requirement — the convention `forward_net_cone_anchor` already establishes elsewhere — 2030's miss
+  is **~5.9 GW, not 366 MW, and 2029 plausibly fails too.** Every correction on both sides runs
+  against leniency. PJM's supply side is **the one leg no committed artifact can reproduce.**
+- **CAISO's forks were already adjudicated by FFR-3P** and stand: fork 2 (fleet-snapshot vintage)
+  dominates — base-year battery fleet 8,000 MW against a published **14,131 MW NDC**, ≥5,933 MW =
+  **90 % of the base-year deficit**. D2-B adds the horizon evidence: the **14,043.6 MW
+  administrative-CT backstop ladder and the 65.5 % backstop share are DOWNSTREAM artifacts of the
+  input-vintage deficit, not independent defects.** Fix B-1 and most of the ladder never fires.
+- **Program-wide:** no base-year I7 leg is a capacity-evolution defect, and neither backstop tuning
+  nor floor relaxation is ever the answer to one. Carried into D7 as a scoring instruction.
 
----
-
-## 0a. Refresh #3 — no chartered lane has started; the ERCOT arc put its own termination card to the owner
-
-**Neither D2-REMEASURE nor D5 exists as a branch** (`git ls-remote` 2026-08-24: the only
-`capx` ref is this ledger). Both prompts stand unchanged and are still the open batch; the
-only thing that moved under them is `main` (`7cf572e` → `8fd031d`), so both must fetch fresh.
-
-**Q1 now has an instrument, and it is not mine to sign.** The ERCOT backcast lane opened
-`docs/DECISION-CARD-ercot233-2023-object-closure-2026-08-24.md` — **OPEN, awaiting owner
-signature** — asking whether the ERCOT 2023 price object is *formally closed as an adjudicated
-model-class limitation*, with the lane RESTING at the current keeper until **Door D**
-(2026 SOM RTC+B-era anchors, ~mid-2027). Its own recommendation is **Y-A: CLOSE and REST, and
-re-point ERCOT session bandwidth to the other ISOs' queues**; Y-B adds one read-only NE_LOB
-Phase-0 epilogue; Y-C (hold open) is recommended against on an empty admissible-candidate list.
-
-**Whichever way the owner signs it answers Q1 for this track**, because the card is exactly
-the "has the arc settled?" question in the ERCOT lane's own words. Reading for D4:
-- **Y-A or Y-B → D4 is chartered IN FULL.** A closed object is a settled record: the forecast
-  net-revenue half consumes the adjudicated scarcity representation (Door A conduct closed and
-  non-transferable, the ORDC/RTORPA decontamination lineage ercot-213/215, C3c as the ledgered
-  model-class limit) rather than competing with a live arc. Card Y explicitly re-points
-  bandwidth away from ERCOT backcast, which removes the collision risk the D4 hold was for.
-- **Y-C → D4 stays at the I3-invariant half only**, exactly as the original charter said.
-The keeper this rests on now reads 2023 **−38.0 % / 0.696 / 93** — and **C3c-2023 is a clean
-PASS, the first ERCOT keeper ever to clear the 2023 tail criterion** (93 of 181 = 0.51×).
-
-**A forecast-lane item was handed to this track by a backcast session** — see D9 below.
-
----
-
-## 0. Refresh #2 headline — the I7 blocker is measured on a pre-fix HEAD
-
-**D1 landed and did its job** (PR #4242, `c02f766`): 36 board fields corrected, 0
-determinations moved, and the A1/I4 leak adjudicated CLOSED cross-ISO. It promoted
-**I7/I12 adequacy accounting** to the dominant-blocker row (6/6 ISOs) in I4's place.
-
-**The director's own re-read says that row is repeating I4's mistake one level down.**
-The board states the I7 root cause as *"unchanged, and still the live one: hydro is
-dispatched but excluded from the accredited firm-capacity ledger —
-`accredited_firm_capacity_mw` reads the persistent fleet, which never contains hydro."*
-At HEAD that is **false**:
-
-- `src/market_sim/model/capacity_evolution/adequacy.py:328` calls `_hydro_firm_mw(fleet, iso, year)`
-  **unconditionally** — no gate, no flag. Its docstring names the fix: hydro is credited from the
-  hydro-budget loader, *"never from the persistent `fleet`, which structurally never contains
-  hydro; **FFR-1C, audit FR-3**"*.
-- `HYDRO_ACCREDITATION_CREDIT_BY_ISO` ships published per-ISO credits with citations —
-  CAISO 0.7041 (CPUC/CAISO CY2025 NQC), NYISO 0.3844 (NYISO 2025-26 Final CAF),
-  MISO 0.62 (PY2025-26 Indicative DLOL), PJM 0.38 (2026/27 BRA ELCC class rating);
-  NEISO falls back to the generic `RENEWABLE_CAPACITY_CREDIT["hydro"]`.
-- **It landed 2026-08-19** (`15b107f`, PR #4162). **Every I7 FAIL on the board is scored at
-  `8ba59281` = FFR-3A-2, 2026-08-03** — sixteen days earlier.
-
-**Magnitude check:** NYISO's miss is 36 / 51 MW; PJM's 366 MW; NEISO's 218 MW. NYISO alone
-carries multi-GW conventional hydro. An un-credited hydro fleet is orders of magnitude larger
-than all three misses combined.
-
-**Consequence for the lane plan:** the first move on adequacy is **NOT a code fix — it is a
-re-measurement**. D2's per-ISO charters are superseded by **D2-REMEASURE**, and the T1-F legs
-are cheap enough to make this near-free: recorded FC-8 wall times are ERCOT 0.8 min, CAISO
-0.7, NYISO 0.7, NEISO 9.2; PJM and MISO are memory-bound (8.8 / 9.6 GB peak RSS, no co-run)
-but not slow. All six re-run in roughly one session.
+**4. Method note worth carrying:** an evolution ledger's exits live in **two keys** —
+`retirements` *plus* `confirmed_derates`. CAISO 2027 reads 1,491.0 MW in the first and 1,333.0 MW
+in the second; summing only `retirements` under-counts the exit wave by 47 %. That is the repaired
+I4/A1 leak working as designed — but any decomposition that forgets the second key mis-attributes
+the gap.
 
 ---
 
 ## 1. Lane scoreboard
 
-| lane | scope | status | branch (session) | model | evidence / notes |
+| lane | scope | status | branch | model | evidence / notes |
 |---|---|---|---|---|---|
-| **D1 BOARD-REFRESH** | Correct `program-status.json` against live verdict records; adjudicate A1/I4 cross-ISO | **LANDED `c02f766`** (PR #4242, 2026-08-24) | `claude/capx-d1-board-refresh-nfb31y` | Opus | `docs/handoffs/FINDING-capx-d1-board-refresh-2026-08-23.md`. 36 fields, 0 determinations/verdicts/gates moved. Two against-interest corrections kept at full magnitude: ERCOT I3 slack 0.08–0.41% (not 0.01–0.03%), ERCOT T1-X 2025 price no longer converges (22.5% FAIL). Handed back: 1 escalation (→ Q2), 2 out-of-lane staleness flags, 1 D3 posture note. |
-| **D2-REMEASURE** ~~(supersedes the per-ISO D2 charters)~~ **SUPERSEDED at refresh #4 by D2-B** | Re-run all six T1-F legs (2026–2030, forecast mode) at HEAD and re-score FC-1, so the I7/I12 verdicts sit on the post-FFR-1C hydro-accreditation code | **RETIRED, never run** | `claude/capx-d2-remeasure-t1f` | Fable | Retired because its premise was refuted (§0b.2): hydro accreditation is already in the FFR-3A-2 verdicts, so there is no pre-fix HEAD to re-measure off. §0 above. Forecast-mode 2026+ = unrestricted (rule 22). Register on the FORECAST namespace (rule 15). Expected: NYISO/PJM/NEISO I7 may close outright → three gate-(a) passers clear FC-1. |
-| **D2-A2 per-ISO follow-ups** (NYISO / MISO / CAISO) | Root-cause whatever I7/I12 residual SURVIVES the re-measurement | **QUEUED — deliberately held** | — | Fable | Chartering a fix before the re-measurement would risk fixing what FFR-1C already fixed — the exact error D1 just caught on I4. CAISO is the deepest (I7 2026–2029 to 9,243 MW + I12 + 65.5% backstop share); MISO next (6,037 / 3,659 MW). |
-| **D3 MISO RETIREMENT / G3** | The G3 cap-grain `retire.total_gw` PASS→FAIL t1h regression | QUEUED — re-scoped, confirmed | — | Fable | D1 §6 CONFIRMS the FC-2 I13 cobweb half is superseded (live `miso-t1f` reads I13 PASS, FC-2 CAVEAT). Carry I13 as **closed-but-unattributed** — no session claims the repair, no control isolates it, the inducing FF-2C flip is still on. The G3 t1h regression stands untouched and is D3's real scope. |
-| **D4-I3 ERCOT SCARCITY-SLACK INVARIANT** (net-revenue half HELD) | I3 slack (now 0.08–0.41% of load) + I12 band; forecast-year scarcity-rent treatment in the entry/retirement screens | **UNBLOCKED at HALF scope — chartering next batch** | — | Fable | **Q1 ANSWERED 2026-08-24: card Y signed Y-C, hold the lane open** → the arc is live, so the net-revenue half STAYS HELD and only the I3 invariant is in scope. Prior note: keeper promoted 2026-08-24 (`231-tie-zone-measured`), and the owner granted a **rule-16 waiver for a 2023-only ERCOT keeper** on 2026-08-23 (regime-difference ground). D1's correction makes ERCOT's I3 miss 2.7×–20.5× worse than the board carried. |
-| **D5 FC-4 CO2 CROSSOVER (PJM first, then ERCOT)** | Attribute the crossover CO2 miss; fix the input derivation, not the score | **ISSUED 2026-08-24** | `claude/capx-d5-crossover-co2` | Fable | PJM is the shortest path to the program's first T2 candidate: gate (a) already PASSES, leg (b) is one I7 miss (D2-REMEASURE), leg (c) fails on FC-4 CO2 **alone**. Close both and only (d) owner auth remains. |
-| **D6 FC-3 CURVE-ON OVER-FIRE (T1-H)** | Four curve legs FAIL on curve-ON over-build | QUEUED | — | Fable | All four re-scored 2026-08-24 by the FFR-3A tool (`c0562d9`) — determinations unmoved (HOLD), now provenance-stamped. Note the new FC-7 FAIL (below) applies to these legs. |
-| **D7 T2 GATE RE-SCORE** | Re-run FF-2D per ISO once lanes land; move gate-openers to T2 scheduling | QUEUED | — | Opus | Re-order after D2-REMEASURE: if I7 closes for PJM/NYISO/NEISO, D7 becomes the immediate next lane for those three. |
-| **D8 FORECAST PROVENANCE DEBT** (NEW) | 7 forecast bundles track no `run_config.json` → FC-7 FAIL on every one; 3 `t1x-ffr2a` legs' FC-1/FC-2 are unreproducible from any checkout | QUEUED | — | Fable | Surfaced by `c0562d9` (not a lane I chartered). FC-7 is a *required* category — this is a standing provenance failure across the T1-H/T1-X evidence base, and it will block any clean gate reading later. Cheap to fix at registration time. |
-| **D9 MISO FORECAST INTERCHANGE FALLBACK — `ba_code="SOCO"`** (NEW, handed in) | The forecast fallback routes MISO-South interchange through `ba_code="SOCO"` — the one counterparty MISO **essentially never exports to** (0.1–0.3 % of the pool's gross). Superseded in the keeper's BACKCAST years (the armed ladder overwrites every South band row) but **live in the FORECAST path** | QUEUED — **NEW** | — | Fable | Handed to this program explicitly by the MISO backcast lane (miso-183, `cbfc9a6`, calibration-log/miso.md ~L8618): *"live only in the forecast fallback — a forecast-lane rule-14 item, handed to that program."* Trace: `model/interchange/miso.py:280` → `import_nodes.py:598–628`. Rule 14 [R-ACCURATE]. **Likely bears on MISO's I7/I12** — import accounting feeds adequacy — so sequence it WITH the D2-A2 MISO follow-up, not before D2-REMEASURE. |
-| **D2-B I7 LEDGER DECOMPOSITION** (NEW — replaces D2-REMEASURE) | Apply the NYISO session's method to the four other I7 ISOs (PJM, NEISO, MISO, CAISO): reproduce each I7 leg from committed ledgers, decompose the gap, adjudicate the same three forks. **Records first; a solve only where records cannot answer.** | **ISSUED 2026-08-24** | `claude/capx-d2b-i7-ledger` | Fable | `results/ffr1c/{before,after}-{caiso,miso,nyiso}/` are COMMITTED; PJM/NEISO/ERCOT are not, so those need another route. Carries the base-year no-evolution reframing (§0b.2) as a program-wide question, not a NYISO quirk. |
-| **D2-NYISO** | Root-cause NYISO's I7 base-year miss | **LANDED** (PR #4251, `0a2238c`) | `claude/capx-d2-adequacy-nyiso-yxv6v0` | Opus | `FINDING-capx-d2-adequacy-nyiso-2026-08-24.md`. Root cause adjudicated; no I7-closing fix shipped, deliberately (§0b.2). Successor = D2-NYISO-INTAKE. |
-| **D2-NYISO-INTAKE** (NEW) | Fetch the NYISO Gold Book external-capacity accreditation and add NYISO to `ADEQUACY_EXTERNAL_TIE_FIRM_MW` on the FF-2B construction | **ISSUED 2026-08-24** | `claude/capx-d2-nyiso-extcap-intake` | Fable | The pre-stated successor of the D2-NYISO finding §6. Data intake is UNRESTRICTED (rule 22 channel 1, no marker). Gold Book payloads are gitignored — re-fetch per `data/raw/NYISO/README.md`. NEVER the 4,350 MW Simultaneous Import Limit (a deliverability limit, the error CAISO's own entry explicitly rejects). |
+| **D1 BOARD-REFRESH** | Board vs live verdict records; A1/I4 cross-ISO | **LANDED** `c02f766` | `capx-d1-board-refresh-nfb31y` | Opus | 36 fields, 0 gates moved. |
+| **D2-NYISO** | Root-cause NYISO I7 | **LANDED** `0a2238c` | `capx-d2-adequacy-nyiso-yxv6v0` | Opus | Adjudicated; shipped no fix, deliberately. |
+| **D2-NYISO-INTAKE** | Gold Book external capacity | **LANDED — I7 CLEARED** `3786191` | `capx-d2-nyiso-extcap-sewmyx` | Fable | §0.1. First FC-1 PASS in the program. |
+| **D2-B I7 LEDGER DECOMPOSITION** | Reproduce/decompose MISO, CAISO, NEISO, PJM | **LANDED** `5dda152` | `capx-d2b-i7-ledger-xaakeu` | Fable | §0.3. Six successor lanes named (S-1..S-6). |
+| **D7-NYISO GATE RE-SCORE** | Refresh the board to the extcap re-score; re-read NYISO's four legs; state what remains | **ISSUED 2026-08-25** | `claude/capx-d7-nyiso-gate` | Opus | §0.2. Board is stale by one landed re-score. Carries the Q2 disposition and the base-year scoring instruction. |
+| **S-123 MISO ADEQUACY PACKAGE** | S-1 requirement re-vintage + S-2 external-capacity intake + S-3 ledger differencing | **ISSUED 2026-08-25** | `claude/capx-s123-miso-adequacy` | Fable | D2-B's own top recommendation: three independent published-source terms, none sized against the residual. Rides with **D9** (SOCO forecast fallback). |
+| **S-4 NEISO HYDRO ACCREDITATION** | Per-resource ISO-NE SCC → class factor, replacing the generic 0.50 | **ISSUED 2026-08-25** | `claude/capx-s4-neiso-hydro` | Fable | Decides NEISO 2028's sign. Until it lands, 2028 reads within-input-uncertainty. |
+| **S-5 PJM REQUIREMENT HORIZON-EDGE** | Declare the beyond-last-FPR convention (hold-last vs stale composite) | **BLOCKED — Q4 (owner)** | — | Fable | Changes PJM's FC-1 verdict ⇒ scorer/governance round. Must precede S-6. |
+| **S-6 PJM T1-F LEDGER RUN** | The minimum run that makes PJM's supply side observable | QUEUED — after S-5 | — | Fable | Solo heavy slot (8.8 GB, no co-run). Running it before S-5 would measure against the wrong bar. |
+| **D5 FC-4 CO2 CROSSOVER** | Attribute the crossover CO2 miss | **RE-SCOPED, still not started** | `claude/capx-d5-crossover-co2` | Fable | **Its PJM-first rationale is refuted** (§0.3): PJM is no longer closest. Re-point to the ISO whose gate is actually live, or run it as a three-ISO derivation question (ERCOT 43–50 %, PJM 43–58 %, MISO 63–76 %). |
+| **D3 MISO RETIREMENT / G3** | G3 cap-grain `retire.total_gw` t1h regression | QUEUED | — | Fable | I13 cobweb half confirmed superseded. |
+| **D4-I3 ERCOT** | I3 scarcity-slack invariant (net-revenue half HELD) | QUEUED at half scope | — | Fable | Q1 answered: card Y signed **Y-C**, arc stays open. |
+| **D6 FC-3 CURVE-ON OVER-FIRE** | Four T1-H curve legs | QUEUED | — | Fable | — |
+| **D8 FORECAST PROVENANCE DEBT** | Bundles tracking no `run_config.json` → FC-7 FAIL | QUEUED — **now NYISO's only caveat** | — | Fable | Promoted in relevance: FC-7 is the sole remaining caveat on the program's best ISO. |
+| **D9 MISO SOCO FORECAST FALLBACK** | `ba_code="SOCO"` live only in the forecast path | QUEUED — **rides with S-123** | — | Fable | Handed in by miso-183. |
+| **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
-## 2. Backcast-track watch (deconfliction; last seen 2026-08-24 @ `d0c426b`, refresh #4)
+## 2. Backcast-track watch (last seen 2026-08-25 @ `99c8cf5`)
 
-| item | state | Δ since refresh #1 |
-|---|---|---|
-| ERCOT keeper | **`2026-08-24-231-tie-zone-measured`** — full-span 2023–2025, det **NOT-YET** (fails `price_mean` + `price_shape`; C3c ledgered ×1, **C3c-2023 now PASSES** — spent caveat pruned) | **CHANGED** (was `ercot223-arm-eventrelease`). Tie-zone interchange + measured-GTC restoration. |
-| ERCOT governance | **Owner waived rule 16 [R-ALLYEARS] for ERCOT 2023 specifically** (2026-08-23, verbatim: *"you can do a 1 year keeper on ERCOT 2023 because it is a fundamentally different market design… rule 16 be damned"*), pre-authorizing a 2023-only keeper if 3-yr retention degraded. Retention **held**, so the promoted keeper is the standard 3-year form and the waiver went unspent. | **NEW** |
-| CAISO keeper | `2026-08-17-caiso-200-h1-memberpanel` — det NOT-YET (C3a sole) | unchanged. caiso-217 partial landing + caiso-218 Path-15/26 operating-limit survey → **decisive null + identifiability kill**. |
-| MISO keeper | `2026-08-22-miso-177-rho-measured` — det NOT-YET (C3a-2025 sole) | unchanged. miso-180 anchored-spread → verdict **I** (inert); miso-181 coincident-peak seam envelope → **R** (refuted at its K-c conditioning kill). Queue fell back to D-3. |
-| PJM / NYISO / NEISO | CALIBRATED, `complete` held: `pjm-162-inputclock`, `nyiso-152-duty-complete`, `neiso-99-joint-p1` | unchanged |
-| Markers / freeze | `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY; holdout spend freeze **ACTIVE** | unchanged |
-| Gate-(a) reading | pass: PJM, NYISO, NEISO (= `complete` membership); fail on marker: ERCOT, CAISO, MISO | unchanged — no ISO's gate (a) moved |
-| **Refresh #3 movements (all backcast, none moved a keeper, marker or forecast gate)** | **ERCOT** ercot-232 exhaustion record + ercot-233 **card Y OPEN, awaiting owner signature** (§0a). **MISO** miso-183 South-seam basis adjudicated **V-TRADE — a real defect on a new basis-free measure** (measured MISO-South pushed ~2.4 GW out across its boundaries in the 2025 scarce set; the real RDT bound South→North in 32 of 2025's 47 scarce hours — *the keeper's internal posture runs backward*; object survives at ≥0.93 GW; wheel/basis-artifact hypothesis refuted three ways). **CAISO** caiso-219 §F.3a gen-pocket export-limit Phase-0 — **second decisive null** (no citable Kern/Tehachapi collector export limit in flow MW exists; the sub-zonal record is accreditation headroom, not a flow rating). **Entry-signal** L-1 dual-replay probe parameterized by ISO, CAISO arm added. | **NEW** |
+| item | state |
+|---|---|
+| Keepers | ERCOT `2026-08-24-231-tie-zone-measured` · CAISO `2026-08-17-caiso-200-h1-memberpanel` · MISO `2026-08-22-miso-177-rho-measured` · NEISO `2026-08-17-neiso-99-joint-p1` · NYISO `2026-08-22-nyiso-152-duty-complete` · PJM `2026-08-15-pjm-162-inputclock` |
+| Markers / freeze | `complete` = {NEISO, NYISO, PJM}; `final` EMPTY; holdout spend freeze **ACTIVE** |
+| Gate (a) | pass: PJM, NYISO, NEISO. fail on marker: ERCOT, CAISO, MISO. **Unchanged.** |
+| ERCOT | Card Y signed **Y-C** (hold open). Card Z signed **Z-A**: crosswalk repair — **EASTEX (East Texas GTC) replaces the mis-attributed NE_LOB** on Northeast→North, static 1300 → 2300. ercot-234 also re-pointed the official scorer's validation gate at the ercot-231 keeper (stale since promotion). |
+| MISO | miso-184 **V-DEFECT-COUPLING** (matrix cell R). miso-185 **V-NEG-ABSENT** — the §6b firm-export re-open data does not exist (698 EQR seller-quarter reports, no qualifying firm-export obligation); re-open narrowed to contract-grain. **~1.3 GW scarce-export model-class concession** is the honest residual; a D-4 posture question goes to the owner. |
+| CAISO | Quiet this cycle. |
 
-**Deconfliction status: clean.** No chartered capacity-expansion lane has touched backcast
-territory, and no backcast session has moved a forecast gate. The ERCOT keeper promotion
-re-keyed the board's ERCOT display field (D1 picked it up) without moving gate (a).
+**Deconfliction: clean.** D2-B explicitly stopped at a FINDING on the one MISO root cause that
+reaches shared solve machinery (S-1), per its charter.
 
 ## 3. Owner-tier questions on file
 
-| # | question | asked | answer |
-|---|---|---|---|
-| ~~**Q1**~~ **ANSWERED** (D4 coordination) | Has the ERCOT 2023 backcast scarcity arc settled a scarcity representation the forecast net-revenue lane should build on, or is it still in flight (→ charter the I3-invariant half only)? Evidence since asking says **still in flight** — a keeper promoted 2026-08-24 and a rule-16 waiver granted 2026-08-23. | 2026-08-23, re-put 2026-08-24 | **ANSWERED 2026-08-24 — card Y signed (Y-C), hold the lane open, against the lane's own recommendation. D4 = I3-invariant half only; net-revenue half held.** |
-| **Q2** (D1 escalation, §5 of its FINDING) | Gate leg (c) consistency: three ISOs have **no T1-X run at all** — NEISO scored `fail` on that basis (neiso-88 precedent), CAISO and NYISO still scored `na`. Apply the NEISO reading uniformly (→ both move `na`→`fail`, `"c"` added to `closed_on`)? **Director recommendation: YES, uniformly.** It is a gate outcome, so it is put to the owner rather than edited. **Zero schedulability impact** — both gates are already `open: false` on other legs. | 2026-08-24 | **PENDING** |
-
-### Q3 (NEW, refresh #4) — `entry_lookahead_reprice` disarm, ERCOT forecast default
-
-The ERCOT entry-signal disarm probe adjudicated the cell **fc K → O** (`2aaaffa`) and states
-plainly: **"Arming the disarm as the lane default is the owner's decision."** The trade is
-real in both directions — the disarm repairs measured signal defects L-1 attributed to this
-mechanism (locational dispersion where the shipped object is zone-flat by construction, steady
-long-duration storage entry, wind entering at all) but swaps a forward-looking-but-structurally-
-wrong object for a structurally-right-but-backward-looking one, and worsens the terminal reserve
-margin 25.19 % → 40.24 %. Neither construction is the developer pro-forma, so rule 1 cuts both
-ways and the probe correctly refused to self-adopt. `entry_lookahead_reprice=True` is one of the
-FF-2C shipping posture flips, so this is a **forecast-track default**. **PENDING — owner.**
+| # | question | status |
+|---|---|---|
+| ~~Q1~~ | ERCOT 2023 arc settled? | **ANSWERED** — card Y signed **Y-C**, hold open ⇒ D4 = I3-invariant half only. |
+| **Q2** | **Leg-(c) consistency — NOW ON THE CRITICAL PATH.** Three ISOs have no T1-X run; NEISO is scored `fail` on that basis (neiso-88), CAISO and NYISO still `na`. It was zero-impact when every gate was closed elsewhere. **It is no longer:** NYISO now passes (a) and (b), so leg (c) is one of the two things left. Director recommendation **unchanged — apply the NEISO reading uniformly** (both move `na`→`fail`), and then **close NYISO's leg (c) on measurement by running its T1-X crossover**, rather than leaving the program's lead ISO gated on an unscored cell. | **PENDING** |
+| **Q3** | Arm the `entry_lookahead_reprice` disarm as the ERCOT forecast default? Probe adjudicated fc K→O and refused to self-adopt; repairs real signal defects but worsens terminal reserve margin 25.19 % → 40.24 %. | **PENDING** |
+| **Q4** (NEW) | **PJM beyond-last-FPR requirement convention.** Past delivery year 2028/29 the model falls back to a composite whose IRM half is two vintages stale, dropping the requirement 3.18 % of peak (5,492 MW at the 2030 peak). Hold-last-FPR — the convention `forward_net_cone_anchor` already establishes — would make PJM's 2030 miss **~5.9 GW instead of 366 MW**, and 2029 plausibly fails too. This is a **declared construction choice that changes an FC-1 verdict**, so it is the owner's, not a lane's. Director recommendation: **adopt hold-last** (it is the less lenient and already-precedented reading) and re-score. | **PENDING** |
 
 ## 4. Prompt issuance record
 
 | date | lane | branch | model | profile | outcome |
 |---|---|---|---|---|---|
-| 2026-08-23 | D1 BOARD-REFRESH | `claude/capx-d1-board-refresh` | Opus | code | **LANDED** `c02f766` |
-| 2026-08-23 | D2 ADEQUACY — NYISO | `claude/capx-d2-adequacy-nyiso` | Fable | nyiso | **WITHDRAWN, never run** — superseded by D2-REMEASURE (§0). Re-charter only for a residual that survives the re-measurement. |
-| 2026-08-24 | D2-REMEASURE | `claude/capx-d2-remeasure-t1f` | Fable | all | issued |
-| 2026-08-24 | D5 CROSSOVER CO2 | `claude/capx-d5-crossover-co2` | Fable | pjm | issued r#2; **NOT STARTED — re-issued r#4** |
-| 2026-08-24 | D2-REMEASURE | `claude/capx-d2-remeasure-t1f` | Fable | all | **RETIRED r#4, never run** — premise refuted |
-| 2026-08-24 | **D2-B I7 LEDGER DECOMPOSITION** | `claude/capx-d2b-i7-ledger` | Fable | code | issued r#4 |
-| 2026-08-24 | **D2-NYISO-INTAKE** (Gold Book external capacity) | `claude/capx-d2-nyiso-extcap-intake` | Fable | nyiso | issued r#4 |
+| 2026-08-23 | D1 BOARD-REFRESH | `capx-d1-board-refresh` | Opus | code | **LANDED** |
+| 2026-08-23 | D2 ADEQUACY — NYISO | `capx-d2-adequacy-nyiso` | Fable→Opus | nyiso | **LANDED** |
+| 2026-08-24 | D2-REMEASURE | `capx-d2-remeasure-t1f` | Fable | all | **RETIRED unrun** |
+| 2026-08-24 | D2-B I7 LEDGER | `capx-d2b-i7-ledger` | Fable | code | **LANDED** |
+| 2026-08-24 | D2-NYISO-INTAKE | `capx-d2-nyiso-extcap-intake` | Fable | nyiso | **LANDED — I7 CLEARED** |
+| 2026-08-24 | D5 CROSSOVER CO2 | `capx-d5-crossover-co2` | Fable | pjm | not started; **re-scoped r#5** |
+| 2026-08-25 | **D7-NYISO GATE RE-SCORE** | `capx-d7-nyiso-gate` | Opus | code | issued |
+| 2026-08-25 | **S-123 MISO ADEQUACY PACKAGE** | `capx-s123-miso-adequacy` | Fable | miso | issued |
+| 2026-08-25 | **S-4 NEISO HYDRO ACCREDITATION** | `capx-s4-neiso-hydro` | Fable | neiso | issued |
+
+## 5. History (compacted)
+
+- **Refresh #1 (08-23):** charter; first state read; D1 + D2-NYISO issued.
+- **Refresh #2 (08-24):** D1 landed. Director hypothesised the I7 verdicts sat on a pre-FFR-1C
+  HEAD; chartered D2-REMEASURE on it. **Later refuted — see #4.**
+- **Refresh #3 (08-24):** no lane started; ercot-233 opened card Y; D9 handed in by miso-183.
+- **Refresh #4 (08-24):** Q1 answered (Y-C). D2-NYISO landed and **refuted the pre-fix-HEAD
+  hypothesis** — FFR-1C hydro was already inside the FFR-3A-2 verdicts (1,763.3 MW; pre-hydro
+  ledger 30,322.2 MW = the board's stale "30.3 GW"). D2-REMEASURE retired unrun; D2-B and
+  D2-NYISO-INTAKE issued in its place. Recorded against interest.
