@@ -5025,6 +5025,49 @@ loss.
 
 ### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-22-miso-177-rho-measured` (**PROMOTED miso-177, 2026-08-22**, superseding `2026-08-22-miso-175-hourkey` — the measured-rho re-gate of the same-day owner RHO_CLIP band ruling; the standing miso-169/nyiso-144 floor escalation is CLOSED: refuted, deleted, re-solved), **NOT-YET on C3a-2025 (−11.7 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, miso-175 (2026-08-22) EXECUTED item 1 (the seam-envelope hour-key rotation — now the keeper); miso-176 (2026-08-22) EXECUTED item 3 (the M2M/CMP seam-class intake + binding-reality measurement — `m2m_seam_entitlement_cap` minted `G`, no LP); the remaining two (the coincident-peak seam-response object [OWNER admissibility ruling needed, now holding miso-176's binding evidence], the South under-export) stay NAMED, NOT CHARTERED — see the stamps below and the standing OWNER items. **miso-178 (2026-08-23) delivered the re-charter's measurement: the full C3a-2025 anatomy on the measured-rho keeper + the RANKED lever plan — the queue now carries the D-1 across-unit offer-level-dispersion charter ask (top), the D-2 5(i) seam-response ruling, and the D-3 South under-export evidence charter (FINDING-miso178 §7–§10; its stamp below).** **miso-179 (2026-08-23) EXECUTED the granted D-1 charter and REFUTED it at its own pre-registered no-LP pre-checks — `miso_offer_level_dispersion` minted `R`, no field ever created, keeper unchanged: the model already carries 0.541× the eligible book's across-unit spread at the 2025 summer top-decile margin (kill ≥ 0.5), and the granted rank-mapped LEVEL form statically predicts C3a-2023 +1.28 → −40.1 % (the miso-145 level warning at rank grain; the miso-178 §7 kill-risk (b) population non-identifiability materialized). The queue now carries the D-2 5(i) ruling, the D-3 South evidence charter, and the NEW anchored SPREAD-ONLY successor ask (owner decision — the measured residual is a top-decile tail steepening, +$40 at p95 / +$110 at p99; its stamp below).** **miso-180 (2026-08-23) EXECUTED the granted D-1b successor charter end to end and measured it INERT — `miso_offer_spread_anchored` minted `I` (built, gated default-off, both A/B runs registered), keeper unchanged: the ex-ante-identified anchor (r = 0.875, the model/book H* crossing) grafted the measured above-anchor rise exactly as designed (body untouched to 3 decimals, ceilings respected) and the LP realized only +0.132 pp of the predicted +0.592 on C3a-2025 — Δ₁ did not collapse (+10.50 → +10.45) and the South dipole moved AWAY from zero (+16.96 → +17.15%). The across-unit dispersion family is now fully adjudicated (level R / spread I); the residual is NOT an offer-surface object — the queue carries the D-2 5(i) seam-response ruling (the +2.1 GW binding-hour import excess, now the largest named object) and the D-3 South evidence charter (its stamp below).**
 
+> **QUEUE STAMP miso-184 (2026-08-24) — THE RULE-23 LADDER-TAIL QUEUE HEAD
+> EXECUTED AND ADJUDICATED V-DEFECT-COUPLING: THE SCARCE-TAIL FAILURE IS REAL
+> AND ESTABLISHED ON THE DERIVATION'S OWN CONSTRUCTION, BUT IT IS NOT THE
+> PRICE BASIS — NO ADMISSIBLE REBASIS REPAIRS IT. NO LP, NO FIELD; cell
+> `miso_south_export_ladder_rt_tail` minted `R` (+ its new mechanism row);
+> keeper UNCHANGED at `2026-08-22-miso-177-rho-measured`.** PREREG committed
+> BEFORE any adjudicating quantity
+> (`PREREG-miso184-south-export-ladder-tail-2026-08-24.md`, 06bd675; the
+> owner engagement of miso-183 §8 item (5) recorded there). **Leg A (the
+> defect):** the registered ladder, driven by the DA it was derived against,
+> reproduces **7.0 %** of its own target flow in the 2025 scarce set (sim
+> +0.096 vs measured +1.368 GW, GAP +1.272; 2023 23.8 %, 2024 21.8 %) while
+> matching the ANNUAL flow near-perfectly (+1.081 vs +1.031 GW) —
+> tail-specific by construction, exactly as miso-183 §5 suspected. **Leg C
+> (the basis):** every admissible zero-parameter rebasis LOWERS every export
+> band in every year (2025 top band: RT-hub $47.08 / South-DA $42.08 /
+> South-RT $37.23 vs the registered $53.00); the charter's named RT-hub
+> candidate carries **0.000 GW** of scarce-tail export in all three years (an
+> anti-repair — every sink strictly lower, so the LP export set shrinks at
+> any internal price) and the best candidate (South-zone DA) reaches 11 % of
+> the measured tail vs the 50 % repair line; the no-wash clamp never fired.
+> **The mechanism:** the measured South export is price-INELASTIC (Spearman
+> |r| ≤ 0.19 against every basis; the derive's own P9 hourly corr ~0) and
+> DEEPENS under scarcity (2025 conditional depth > unconditional at all 8
+> bands) — no monotone willingness-to-pay sink ladder driven by any single
+> price series can carry it (a Q-Q band follows the scarce set only at
+> measured duration ≥ ~0.995; the deepest measured is 0.90 — the PREREG's
+> a-priori representability frame, confirmed). The frozen mapping REFUSES
+> the repair license: no re-derive, no arm, no LP — arming would be the
+> "level adder wearing a repair's name" the charter kills. **Import side
+> NAMED, not built:** the same coupling defect mirrored (DA-driven +0.957 GW
+> of 2025 scarce import, net +0.862 GW INTO MISO vs measured −1.368 OUT — a
+> ~2.2 GW tail miss on the derive's own diagnostic; RT-driven +2.202 GW, the
+> offline mirror of the keeper's +2.1 GW tail over-import). **Successor
+> roads, all outside the license:** the miso-182 §6b data re-open of
+> `miso_south_firm_export_block` `G`; the upstream Midwest-stack
+> internal-direction object (prediction unchanged: flip the scarce-hour RDT
+> toward the measured 32/47 S→N record); a new state-conditioned export
+> mechanism-in-kind (owner charter); or the honest ~1.3 GW model-class
+> concession inside C3a-2025. Records:
+> `FINDING-miso184-export-ladder-tail-adjudication-2026-08-24.md`,
+> `_miso184_ladder_tail_methodology.json`,
+> `scripts/probes/_miso184_ladder_tail_methodology.py`.**
 > **QUEUE STAMP miso-183 (2026-08-24) — THE SOUTH-SEAM MEASUREMENT-BASIS QUEUE
 > HEAD EXECUTED AND ADJUDICATED V-TRADE: THE "+1.19 GW" IS A REAL DEFECT, NOT
 > BOOKKEEPING. NO LP, NO FIELD, NO CELL (no mechanism-in-kind tested — bound in

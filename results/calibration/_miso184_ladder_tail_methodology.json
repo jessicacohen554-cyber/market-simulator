@@ -1,0 +1,638 @@
+{
+  "session": "miso-184",
+  "prereg": "PREREG-miso184-south-export-ladder-tail-2026-08-24.md",
+  "keeper_bundle": "miso177_rho_B (unchanged by this probe; no LP spent here)",
+  "sign_convention": "seam flow import-positive; E/X net-export-positive GW",
+  "band_grid_mw": {
+    "step": 375.0,
+    "midpoints": [
+      187.5,
+      562.5,
+      937.5,
+      1312.5,
+      1687.5,
+      2062.5,
+      2437.5,
+      2812.5
+    ]
+  },
+  "footing": {
+    "2023": {
+      "n_scarce": 11,
+      "rederive_max_abs_dev_usd": 0.010000000000001563,
+      "rederive_dev_where": "PJM/import",
+      "derive_notes": [],
+      "p9_south_annual": {
+        "sim_twh": -9.319875,
+        "act_twh": -9.381781,
+        "dur_rmse": 129.39780438949464,
+        "imp_hrs_sim": 6.073059360730594,
+        "imp_hrs_act": 9.372146118721462,
+        "hourly_corr": 0.02273003637647879
+      }
+    },
+    "2024": {
+      "n_scarce": 14,
+      "rederive_max_abs_dev_usd": 0.00999999999999801,
+      "rederive_dev_where": "South/export",
+      "derive_notes": [],
+      "p9_south_annual": {
+        "sim_twh": -11.72325,
+        "act_twh": -11.824854,
+        "dur_rmse": 154.60872546809117,
+        "imp_hrs_sim": 4.840182648401827,
+        "imp_hrs_act": 6.963470319634703,
+        "hourly_corr": 0.04373304708643721
+      }
+    },
+    "2025": {
+      "n_scarce": 47,
+      "rederive_max_abs_dev_usd": 0.0,
+      "rederive_dev_where": "",
+      "derive_notes": [],
+      "p9_south_annual": {
+        "sim_twh": -8.883375,
+        "act_twh": -9.029596,
+        "dur_rmse": 150.15215836643992,
+        "imp_hrs_sim": 10.251141552511415,
+        "imp_hrs_act": 14.851598173515981,
+        "hourly_corr": -0.1161619489416979
+      }
+    }
+  },
+  "legA_tail_reproduction": {
+    "2023": {
+      "rows_base": 8760,
+      "rows_dropped_for_rt": 0,
+      "scarce_rows_covered": 11,
+      "E_meas_scarce_gw": 1.004,
+      "X_DA_scarce_gw": 0.23863636363636362,
+      "GAP_DA_gw": 0.7653636363636364,
+      "X_DA_frac_of_meas": 0.2376856211517566,
+      "net_sim_scarce_gw_reported": -0.03409090909090909,
+      "import_side_DA_scarce_gw_reported": 0.20454545454545453,
+      "E_meas_annual_gw": 1.0709795662100456,
+      "X_DA_annual_gw": 1.0983732876712329
+    },
+    "2024": {
+      "rows_base": 8760,
+      "rows_dropped_for_rt": 0,
+      "scarce_rows_covered": 14,
+      "E_meas_scarce_gw": 0.8612142857142857,
+      "X_DA_scarce_gw": 0.1875,
+      "GAP_DA_gw": 0.6737142857142857,
+      "X_DA_frac_of_meas": 0.21771584971385918,
+      "net_sim_scarce_gw_reported": 0.08035714285714285,
+      "import_side_DA_scarce_gw_reported": 0.26785714285714285,
+      "E_meas_annual_gw": 1.3498691780821919,
+      "X_DA_annual_gw": 1.3663527397260276
+    },
+    "2025": {
+      "rows_base": 8760,
+      "rows_dropped_for_rt": 0,
+      "scarce_rows_covered": 47,
+      "E_meas_scarce_gw": 1.3675531914893617,
+      "X_DA_scarce_gw": 0.09574468085106383,
+      "GAP_DA_gw": 1.271808510638298,
+      "X_DA_frac_of_meas": 0.07001166861143523,
+      "net_sim_scarce_gw_reported": 0.8617021276595745,
+      "import_side_DA_scarce_gw_reported": 0.9574468085106383,
+      "E_meas_annual_gw": 1.030775799086758,
+      "X_DA_annual_gw": 1.0805650684931507
+    }
+  },
+  "legB_orientation": {
+    "2023": {
+      "d_k_unconditional": [
+        0.8577625570776256,
+        0.7147260273972603,
+        0.5447488584474885,
+        0.37203196347031964,
+        0.23036529680365297,
+        0.12351598173515982,
+        0.06095890410958904,
+        0.026940639269406392
+      ],
+      "c_k_scarce_conditional": [
+        0.8181818181818182,
+        0.6363636363636364,
+        0.5454545454545454,
+        0.45454545454545453,
+        0.2727272727272727,
+        0.09090909090909091,
+        0.0,
+        0.0
+      ],
+      "orientation_line_c1_ge_d1": false,
+      "spearman_flow_vs": {
+        "da": 0.06683237245177874,
+        "rt": 0.058071012740307584,
+        "south_da": 0.19251480888593595,
+        "south_rt": 0.17819140632147604
+      }
+    },
+    "2024": {
+      "d_k_unconditional": [
+        0.9029680365296804,
+        0.8264840182648402,
+        0.704337899543379,
+        0.5364155251141552,
+        0.34748858447488584,
+        0.1908675799086758,
+        0.09440639269406392,
+        0.03949771689497717
+      ],
+      "c_k_scarce_conditional": [
+        0.8571428571428571,
+        0.7142857142857143,
+        0.35714285714285715,
+        0.14285714285714285,
+        0.07142857142857142,
+        0.07142857142857142,
+        0.07142857142857142,
+        0.0
+      ],
+      "orientation_line_c1_ge_d1": false,
+      "spearman_flow_vs": {
+        "da": 0.06392318442980564,
+        "rt": 0.020160766299907644,
+        "south_da": 0.17627876961609765,
+        "south_rt": 0.12125223079096784
+      }
+    },
+    "2025": {
+      "d_k_unconditional": [
+        0.7934931506849315,
+        0.6670091324200913,
+        0.5141552511415525,
+        0.3680365296803653,
+        0.2495433789954338,
+        0.15662100456621006,
+        0.0884703196347032,
+        0.044634703196347034
+      ],
+      "c_k_scarce_conditional": [
+        0.851063829787234,
+        0.8297872340425532,
+        0.6808510638297872,
+        0.5106382978723404,
+        0.3404255319148936,
+        0.2553191489361702,
+        0.1702127659574468,
+        0.10638297872340426
+      ],
+      "orientation_line_c1_ge_d1": true,
+      "spearman_flow_vs": {
+        "da": -0.08246724489358435,
+        "rt": -0.12934167059435683,
+        "south_da": 0.0007378711524664108,
+        "south_rt": -0.040189134248968326
+      }
+    }
+  },
+  "legC_candidates": {
+    "2023": {
+      "B1_rt_hub": {
+        "rows": 8760,
+        "scarce_rows_covered": 11,
+        "d_k": [
+          0.8577625570776256,
+          0.7147260273972603,
+          0.5447488584474885,
+          0.37203196347031964,
+          0.23036529680365297,
+          0.12351598173515982,
+          0.06095890410958904,
+          0.026940639269406392
+        ],
+        "sigma_preclamp": [
+          39.31,
+          32.5,
+          28.02,
+          24.89,
+          22.36,
+          19.43,
+          16.96,
+          14.93
+        ],
+        "sigma_armable": [
+          39.31,
+          32.5,
+          28.02,
+          24.89,
+          22.36,
+          19.43,
+          16.96,
+          14.93
+        ],
+        "no_wash_lim": 50.98,
+        "bands_clamped": [],
+        "clamp_duration_distortion": [],
+        "X_B_armable_scarce_gw": 0.0,
+        "X_B_preclamp_scarce_gw": 0.0,
+        "X_B_frac_of_meas": 0.0,
+        "net_sim_scarce_gw_reported": 3.0,
+        "import_side_scarce_gw_reported": 3.0,
+        "X_B_annual_gw": 1.099015410958904,
+        "E_meas_annual_gw_this_rowset": 1.0709795662100456
+      },
+      "B2_south_da": {
+        "rows": 8760,
+        "scarce_rows_covered": 11,
+        "d_k": [
+          0.8577625570776256,
+          0.7147260273972603,
+          0.5447488584474885,
+          0.37203196347031964,
+          0.23036529680365297,
+          0.12351598173515982,
+          0.06095890410958904,
+          0.026940639269406392
+        ],
+        "sigma_preclamp": [
+          37.09,
+          30.65,
+          26.52,
+          23.59,
+          21.18,
+          18.73,
+          17.07,
+          15.65
+        ],
+        "sigma_armable": [
+          37.09,
+          30.65,
+          26.52,
+          23.59,
+          21.18,
+          18.73,
+          17.07,
+          15.65
+        ],
+        "no_wash_lim": 50.98,
+        "bands_clamped": [],
+        "clamp_duration_distortion": [],
+        "X_B_armable_scarce_gw": 0.20454545454545453,
+        "X_B_preclamp_scarce_gw": 0.20454545454545453,
+        "X_B_frac_of_meas": 0.20373053241579137,
+        "net_sim_scarce_gw_reported": 0.0,
+        "import_side_scarce_gw_reported": 0.20454545454545453,
+        "X_B_annual_gw": 1.0987585616438358,
+        "E_meas_annual_gw_this_rowset": 1.0709795662100456
+      },
+      "B3_south_rt": {
+        "rows": 8760,
+        "scarce_rows_covered": 11,
+        "d_k": [
+          0.8577625570776256,
+          0.7147260273972603,
+          0.5447488584474885,
+          0.37203196347031964,
+          0.23036529680365297,
+          0.12351598173515982,
+          0.06095890410958904,
+          0.026940639269406392
+        ],
+        "sigma_preclamp": [
+          33.62,
+          28.32,
+          24.99,
+          22.45,
+          19.98,
+          17.49,
+          15.87,
+          14.18
+        ],
+        "sigma_armable": [
+          33.62,
+          28.32,
+          24.99,
+          22.45,
+          19.98,
+          17.49,
+          15.87,
+          14.18
+        ],
+        "no_wash_lim": 50.98,
+        "bands_clamped": [],
+        "clamp_duration_distortion": [],
+        "X_B_armable_scarce_gw": 0.0,
+        "X_B_preclamp_scarce_gw": 0.0,
+        "X_B_frac_of_meas": 0.0,
+        "net_sim_scarce_gw_reported": 1.9431818181818183,
+        "import_side_scarce_gw_reported": 1.9431818181818183,
+        "X_B_annual_gw": 1.0991010273972601,
+        "E_meas_annual_gw_this_rowset": 1.0709795662100456
+      }
+    },
+    "2024": {
+      "B1_rt_hub": {
+        "rows": 8760,
+        "scarce_rows_covered": 14,
+        "d_k": [
+          0.9029680365296804,
+          0.8264840182648402,
+          0.704337899543379,
+          0.5364155251141552,
+          0.34748858447488584,
+          0.1908675799086758,
+          0.09440639269406392,
+          0.03949771689497717
+        ],
+        "sigma_preclamp": [
+          46.08,
+          35.8,
+          29.71,
+          25.28,
+          22.05,
+          18.83,
+          16.1,
+          13.54
+        ],
+        "sigma_armable": [
+          46.08,
+          35.8,
+          29.71,
+          25.28,
+          22.05,
+          18.83,
+          16.1,
+          13.54
+        ],
+        "no_wash_lim": 57.85,
+        "bands_clamped": [],
+        "clamp_duration_distortion": [],
+        "X_B_armable_scarce_gw": 0.0,
+        "X_B_preclamp_scarce_gw": 0.0,
+        "X_B_frac_of_meas": 0.0,
+        "net_sim_scarce_gw_reported": 2.330357142857143,
+        "import_side_scarce_gw_reported": 2.330357142857143,
+        "X_B_annual_gw": 1.3660958904109588,
+        "E_meas_annual_gw_this_rowset": 1.3498691780821919
+      },
+      "B2_south_da": {
+        "rows": 8760,
+        "scarce_rows_covered": 14,
+        "d_k": [
+          0.9029680365296804,
+          0.8264840182648402,
+          0.704337899543379,
+          0.5364155251141552,
+          0.34748858447488584,
+          0.1908675799086758,
+          0.09440639269406392,
+          0.03949771689497717
+        ],
+        "sigma_preclamp": [
+          37.24,
+          31.55,
+          26.58,
+          22.92,
+          19.8,
+          17.11,
+          15.28,
+          13.91
+        ],
+        "sigma_armable": [
+          37.24,
+          31.55,
+          26.58,
+          22.92,
+          19.8,
+          17.11,
+          15.28,
+          13.91
+        ],
+        "no_wash_lim": 57.85,
+        "bands_clamped": [],
+        "clamp_duration_distortion": [],
+        "X_B_armable_scarce_gw": 0.375,
+        "X_B_preclamp_scarce_gw": 0.375,
+        "X_B_frac_of_meas": 0.43543169942771837,
+        "net_sim_scarce_gw_reported": -0.3482142857142857,
+        "import_side_scarce_gw_reported": 0.026785714285714284,
+        "X_B_annual_gw": 1.3657962328767124,
+        "E_meas_annual_gw_this_rowset": 1.3498691780821919
+      },
+      "B3_south_rt": {
+        "rows": 8760,
+        "scarce_rows_covered": 14,
+        "d_k": [
+          0.9029680365296804,
+          0.8264840182648402,
+          0.704337899543379,
+          0.5364155251141552,
+          0.34748858447488584,
+          0.1908675799086758,
+          0.09440639269406392,
+          0.03949771689497717
+        ],
+        "sigma_preclamp": [
+          33.74,
+          28.57,
+          24.82,
+          21.89,
+          18.74,
+          16.24,
+          14.24,
+          12.49
+        ],
+        "sigma_armable": [
+          33.74,
+          28.57,
+          24.82,
+          21.89,
+          18.74,
+          16.24,
+          14.24,
+          12.49
+        ],
+        "no_wash_lim": 57.85,
+        "bands_clamped": [],
+        "clamp_duration_distortion": [],
+        "X_B_armable_scarce_gw": 0.05357142857142857,
+        "X_B_preclamp_scarce_gw": 0.05357142857142857,
+        "X_B_frac_of_meas": 0.062204528489674046,
+        "net_sim_scarce_gw_reported": 1.5803571428571428,
+        "import_side_scarce_gw_reported": 1.6339285714285714,
+        "X_B_annual_gw": 1.3657534246575342,
+        "E_meas_annual_gw_this_rowset": 1.3498691780821919
+      }
+    },
+    "2025": {
+      "B1_rt_hub": {
+        "rows": 8760,
+        "scarce_rows_covered": 47,
+        "d_k": [
+          0.7934931506849315,
+          0.6670091324200913,
+          0.5141552511415525,
+          0.3680365296803653,
+          0.2495433789954338,
+          0.15662100456621006,
+          0.0884703196347032,
+          0.044634703196347034
+        ],
+        "sigma_preclamp": [
+          47.08,
+          39.09,
+          33.2,
+          29.49,
+          26.48,
+          24.26,
+          22.16,
+          19.95
+        ],
+        "sigma_armable": [
+          47.08,
+          39.09,
+          33.2,
+          29.49,
+          26.48,
+          24.26,
+          22.16,
+          19.95
+        ],
+        "no_wash_lim": 68.45,
+        "bands_clamped": [],
+        "clamp_duration_distortion": [],
+        "X_B_armable_scarce_gw": 0.0,
+        "X_B_preclamp_scarce_gw": 0.0,
+        "X_B_frac_of_meas": 0.0,
+        "net_sim_scarce_gw_reported": 2.202127659574468,
+        "import_side_scarce_gw_reported": 2.202127659574468,
+        "X_B_annual_gw": 1.0809075342465753,
+        "E_meas_annual_gw_this_rowset": 1.030775799086758
+      },
+      "B2_south_da": {
+        "rows": 8759,
+        "scarce_rows_covered": 47,
+        "d_k": [
+          0.7934695741523005,
+          0.6669711154241352,
+          0.5140997830802603,
+          0.3679643794953762,
+          0.24945770065075923,
+          0.15652471743349697,
+          0.08848042013928531,
+          0.04463979906382007
+        ],
+        "sigma_preclamp": [
+          42.08,
+          36.35,
+          31.52,
+          28.12,
+          25.81,
+          23.99,
+          22.52,
+          21.01
+        ],
+        "sigma_armable": [
+          42.08,
+          36.35,
+          31.52,
+          28.12,
+          25.81,
+          23.99,
+          22.52,
+          21.01
+        ],
+        "no_wash_lim": 68.45,
+        "bands_clamped": [],
+        "clamp_duration_distortion": [],
+        "X_B_armable_scarce_gw": 0.15159574468085105,
+        "X_B_preclamp_scarce_gw": 0.15159574468085105,
+        "X_B_frac_of_meas": 0.11085180863477245,
+        "net_sim_scarce_gw_reported": 0.20744680851063832,
+        "import_side_scarce_gw_reported": 0.35904255319148937,
+        "X_B_annual_gw": 1.0802603036876355,
+        "E_meas_annual_gw_this_rowset": 1.030655325950451
+      },
+      "B3_south_rt": {
+        "rows": 8759,
+        "scarce_rows_covered": 47,
+        "d_k": [
+          0.7934695741523005,
+          0.6669711154241352,
+          0.5140997830802603,
+          0.3679643794953762,
+          0.24945770065075923,
+          0.15652471743349697,
+          0.08848042013928531,
+          0.04463979906382007
+        ],
+        "sigma_preclamp": [
+          37.23,
+          32.3,
+          28.83,
+          26.16,
+          24.2,
+          22.67,
+          20.87,
+          18.9
+        ],
+        "sigma_armable": [
+          37.23,
+          32.3,
+          28.83,
+          26.16,
+          24.2,
+          22.67,
+          20.87,
+          18.9
+        ],
+        "no_wash_lim": 68.45,
+        "bands_clamped": [],
+        "clamp_duration_distortion": [],
+        "X_B_armable_scarce_gw": 0.03191489361702128,
+        "X_B_preclamp_scarce_gw": 0.03191489361702128,
+        "X_B_frac_of_meas": 0.023337222870478416,
+        "net_sim_scarce_gw_reported": 1.2606382978723405,
+        "import_side_scarce_gw_reported": 1.2925531914893618,
+        "X_B_annual_gw": 1.0804315561137117,
+        "E_meas_annual_gw_this_rowset": 1.030655325950451
+      }
+    }
+  },
+  "verdict": {
+    "defect_line_components": {
+      "E_meas_2025": 1.3675531914893617,
+      "X_DA_2025": 0.09574468085106383,
+      "GAP_DA_2025": 1.271808510638298,
+      "defect_established": true
+    },
+    "candidates": {
+      "B1_rt_hub": {
+        "X_B_2025_armable": 0.0,
+        "repair_line": false,
+        "noninversion_2023": false,
+        "clears": false
+      },
+      "B2_south_da": {
+        "X_B_2025_armable": 0.15159574468085105,
+        "repair_line": false,
+        "noninversion_2023": true,
+        "clears": false
+      },
+      "B3_south_rt": {
+        "X_B_2025_armable": 0.03191489361702128,
+        "repair_line": false,
+        "noninversion_2023": false,
+        "clears": false
+      }
+    },
+    "verdict_2025": "V-DEFECT-COUPLING",
+    "winner": null,
+    "concurrence_2023": {
+      "E_meas": 1.004,
+      "X_DA": 0.23863636363636362,
+      "GAP": 0.7653636363636364
+    },
+    "reported_only_2024": {
+      "E_meas": 0.8612142857142857,
+      "X_DA": 0.1875,
+      "GAP": 0.6737142857142857,
+      "note": "EIA-930 internal-inconsistency year (r=0.8286)"
+    }
+  }
+}
