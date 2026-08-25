@@ -1,0 +1,184 @@
+{
+  "probe": "caiso_storage_as_revenue_phase0",
+  "lane": "caiso-value-stack-d9",
+  "method": "DAM battery+hybrid AS award MW (Daily Energy Storage Report, curated) x DAM per-product ASMP (OASIS PRC_AS, nested-region contributions summed: sys=AS_CAISO+AS_CAISO_EXP; sub-region adders bracketed LOW/CENTRAL/HIGH), / measured EIA-860 CAISO battery fleet (monthly-average, li-ion only)",
+  "years": {
+    "2023": {
+      "products": {
+        "reg_up": {
+          "dam_award_mean_mw": 353.6,
+          "dam_price_sys_mean_usd_mw": 5.172,
+          "np26_adder_mean": 1.9594,
+          "sp26_adder_mean": 1.1243,
+          "revenue_central_usd_m": 29.14,
+          "rtm_award_mean_mw": 355.8
+        },
+        "reg_down": {
+          "dam_award_mean_mw": 584.6,
+          "dam_price_sys_mean_usd_mw": 6.946,
+          "np26_adder_mean": 1.8318,
+          "sp26_adder_mean": 0.3897,
+          "revenue_central_usd_m": 46.95,
+          "rtm_award_mean_mw": 575.0
+        },
+        "spin": {
+          "dam_award_mean_mw": 73.3,
+          "dam_price_sys_mean_usd_mw": 3.458,
+          "np26_adder_mean": 0.8758,
+          "sp26_adder_mean": 0.7193,
+          "revenue_central_usd_m": 4.99,
+          "rtm_award_mean_mw": 114.6
+        },
+        "nonspin": {
+          "dam_award_mean_mw": 19.2,
+          "dam_price_sys_mean_usd_mw": 1.976,
+          "np26_adder_mean": 0.314,
+          "sp26_adder_mean": 0.6169,
+          "revenue_central_usd_m": 0.71,
+          "rtm_award_mean_mw": 16.9
+        }
+      },
+      "n_price_hours": 8752,
+      "dam_as_revenue_usd_m": {
+        "low": 69.8,
+        "central": 81.78,
+        "high": 93.76
+      },
+      "fleet_avg_mw_eia860": 5517.0,
+      "rate_usd_per_kw_yr": {
+        "low": 12.65,
+        "central": 14.82,
+        "high": 16.99
+      }
+    },
+    "2024": {
+      "products": {
+        "reg_up": {
+          "dam_award_mean_mw": 460.3,
+          "dam_price_sys_mean_usd_mw": 2.977,
+          "np26_adder_mean": 1.3963,
+          "sp26_adder_mean": 0.2748,
+          "revenue_central_usd_m": 18.85,
+          "rtm_award_mean_mw": 454.7
+        },
+        "reg_down": {
+          "dam_award_mean_mw": 756.7,
+          "dam_price_sys_mean_usd_mw": 5.525,
+          "np26_adder_mean": 0.5062,
+          "sp26_adder_mean": 0.5569,
+          "revenue_central_usd_m": 40.97,
+          "rtm_award_mean_mw": 751.4
+        },
+        "spin": {
+          "dam_award_mean_mw": 193.0,
+          "dam_price_sys_mean_usd_mw": 1.9,
+          "np26_adder_mean": 0.5939,
+          "sp26_adder_mean": 0.0966,
+          "revenue_central_usd_m": 7.07,
+          "rtm_award_mean_mw": 242.1
+        },
+        "nonspin": {
+          "dam_award_mean_mw": 91.3,
+          "dam_price_sys_mean_usd_mw": 1.781,
+          "np26_adder_mean": 0.4214,
+          "sp26_adder_mean": 0.0886,
+          "revenue_central_usd_m": 1.82,
+          "rtm_award_mean_mw": 88.4
+        }
+      },
+      "n_price_hours": 8784,
+      "dam_as_revenue_usd_m": {
+        "low": 59.62,
+        "central": 68.71,
+        "high": 77.81
+      },
+      "fleet_avg_mw_eia860": 9267.0,
+      "rate_usd_per_kw_yr": {
+        "low": 6.43,
+        "central": 7.41,
+        "high": 8.4
+      }
+    },
+    "2025": {
+      "products": {
+        "reg_up": {
+          "dam_award_mean_mw": 442.8,
+          "dam_price_sys_mean_usd_mw": 2.292,
+          "np26_adder_mean": 2.1213,
+          "sp26_adder_mean": 0.0589,
+          "revenue_central_usd_m": 13.81,
+          "rtm_award_mean_mw": 440.7
+        },
+        "reg_down": {
+          "dam_award_mean_mw": 823.2,
+          "dam_price_sys_mean_usd_mw": 4.953,
+          "np26_adder_mean": 4.2203,
+          "sp26_adder_mean": 0.0292,
+          "revenue_central_usd_m": 58.38,
+          "rtm_award_mean_mw": 816.1
+        },
+        "spin": {
+          "dam_award_mean_mw": 242.7,
+          "dam_price_sys_mean_usd_mw": 0.752,
+          "np26_adder_mean": 0.4872,
+          "sp26_adder_mean": 0.0036,
+          "revenue_central_usd_m": 1.6,
+          "rtm_award_mean_mw": 266.0
+        },
+        "nonspin": {
+          "dam_award_mean_mw": 158.2,
+          "dam_price_sys_mean_usd_mw": 0.703,
+          "np26_adder_mean": 0.3708,
+          "sp26_adder_mean": 0.0022,
+          "revenue_central_usd_m": 0.97,
+          "rtm_award_mean_mw": 156.2
+        }
+      },
+      "n_price_hours": 8760,
+      "dam_as_revenue_usd_m": {
+        "low": 48.35,
+        "central": 74.76,
+        "high": 101.18
+      },
+      "fleet_avg_mw_eia860": 13161.0,
+      "rate_usd_per_kw_yr": {
+        "low": 3.67,
+        "central": 5.68,
+        "high": 7.69
+      }
+    }
+  },
+  "saturation": {
+    "2023->2024": {
+      "rate_ratio": 0.5,
+      "fleet_ratio": 1.68,
+      "implied_exponent": 1.34
+    },
+    "2024->2025": {
+      "rate_ratio": 0.766,
+      "fleet_ratio": 1.42,
+      "implied_exponent": 0.76
+    }
+  },
+  "dmm_cross_validation": {
+    "battery_net_market_revenue_usd_per_kw_yr": {
+      "2022": 103,
+      "2023": 78,
+      "2024": 53
+    },
+    "energy_share": {
+      "2023": 0.62,
+      "2024": 0.82
+    },
+    "rt_bcr_share_of_total": {
+      "2023": 0.07,
+      "2024": 0.04
+    },
+    "implied_as_plus_other_usd_per_kw_yr": {
+      "2023": 24.1,
+      "2024": 7.4
+    },
+    "source": "CAISO DMM, 2023 Special Report on Battery Storage (Jul 16 2024) \u00a71.2/\u00a72.8.1; 2024 Special Report on Battery Storage (May 29 2025) \u00a71.2/\u00a72.9.1",
+    "note": "implied = total x (1 - energy share) - RT BCR; includes the 'other' settlement bucket, so it is an UPPER bound on AS capacity revenue \u2014 the probe's DA-leg central rate must land at or below it and reproduce the 2023->2024 collapse."
+  }
+}

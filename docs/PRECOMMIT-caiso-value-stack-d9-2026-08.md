@@ -89,4 +89,34 @@ in the DESR).
 
 ## 3. Stage 2 — the measured value
 
-_Appended by the stage-2 commit; absent in stage 1 by construction._
+_Appended 2026-08-25, after the probe ran on complete 2023–2025 price coverage and
+BEFORE any effect-on-entry arithmetic. Artifact:
+`results/calibration/caiso_storage_as_revenue_phase0.json`._
+
+**The identified CAISO storage AS revenue rate (per §2 rule 1):**
+
+    AS_REVENUE_PER_KW_YR_BY_ISO["CAISO"]["storage"] candidate = 14.82 $/kW-yr
+        (CENTRAL, 2023; bracket LOW 12.65 / HIGH 16.99)
+    AS_SATURATION_REF_GW_BY_ISO["CAISO"] candidate = 5.517 GW
+        (2023 average measured EIA-860 CAISO battery fleet)
+
+| year | DAM battery AS revenue ($M, central [low–high]) | fleet avg (MW) | rate ($/kW-yr, central [low–high]) |
+|---|---|--:|--:|
+| 2023 | 81.8 [69.8–93.8] | 5,517 | **14.82** [12.65–16.99] |
+| 2024 | 68.7 [59.6–77.8] | 9,267 | 7.41 [6.43–8.40] |
+| 2025 | 74.8 [48.4–101.2] | 13,161 | 5.68 [3.67–7.69] |
+
+Cross-validation (§1 gate): 2023 central $14.82 sits comfortably below the DMM-implied
+AS+other upper bound of $24.1/kW-yr; 2024's $7.41 equals its $7.4 bound within the
+rounding of the DMM percentages; the 2023→2024 collapse (rate ratio 0.50 at fleet
+ratio 1.68) reproduces the DMM-reported decline. Gate PASSED.
+
+**Saturation-shape check (§2 rule 2):** measured implied exponents are 1.34
+(2023→2024) and 0.76 (2024→2025) — both BELOW the shared
+`ERCOT_AS_SATURATION_EXPONENT = 2.5`. Per the pre-registered rule this discrepancy is
+REPORTED, not refit: keeping the shared 2.5 makes the forward credit *smaller* past
+the reference fleet (conservative in the gap-closing direction), and a CAISO-specific
+exponent would be a new DOF requiring its own identification. Escalated to the owner
+in the FINDING.
+
+Per §2 rule 3, no number above may change after the entry-gap effect is computed.

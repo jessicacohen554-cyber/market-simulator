@@ -101,7 +101,16 @@ def _load_prices(raw_dir: Path, year: int) -> pd.DataFrame:
     contribution (AS_CAISO + AS_CAISO_EXP) every internal resource earns;
     ``np26``/``sp26`` are the sub-region adders (internal + _EXP rows summed).
     """
-    files = sorted(glob.glob(str(raw_dir / f"asprc_*_ALL_{year}*.csv")))
+    # Select by window SPAN, not filename year: the ≤25-day windows tile the
+    # full 2023–2025 range continuously, so a year's first days can live in
+    # the previous year's boundary window (e.g. 2024-01-01..10 sit in
+    # asprc_ru_ALL_20231217_20240111.csv).
+    files = []
+    for f in sorted(glob.glob(str(raw_dir / "asprc_*_ALL_*.csv"))):
+        span = os.path.basename(f).rsplit("_ALL_", 1)[1].replace(".csv", "")
+        y0, y1 = int(span[:4]), int(span[9:13])
+        if y0 <= year <= y1:
+            files.append(f)
     if not files:
         raise FileNotFoundError(f"no asprc files for {year} under {raw_dir}")
     frames = []
