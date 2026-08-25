@@ -1,0 +1,1342 @@
+{
+ "session": "nyiso-156",
+ "phase": 0,
+ "precommit": "PRECOMMIT-nyiso156-offer-level-phase0-2026-08-25.md",
+ "bundles": {
+  "control": "nyiso155_hydro_control",
+  "arm": "nyiso155_hydro_repair"
+ },
+ "zones": [
+  "Upstate_West",
+  "Capital_Hudson",
+  "Lower_Hudson",
+  "NYC",
+  "Long_Island"
+ ],
+ "anchors": {
+  "2023": {
+   "actual_rt_lw_recomputed": 32.05,
+   "actual_rt_lw_committed": 32.25,
+   "actual_anchor_ok": false,
+   "model_lw_control": 33.96,
+   "model_lw_control_recorded": 33.96,
+   "model_anchor_control_ok": true,
+   "model_lw_arm": 34.45,
+   "model_lw_arm_recorded": 34.45,
+   "model_anchor_arm_ok": true
+  },
+  "2024": {
+   "actual_rt_lw_recomputed": 38.13,
+   "actual_rt_lw_committed": 38.12,
+   "actual_anchor_ok": true,
+   "model_lw_control": 37.13,
+   "model_lw_control_recorded": 37.13,
+   "model_anchor_control_ok": true,
+   "model_lw_arm": 37.46,
+   "model_lw_arm_recorded": 37.46,
+   "model_anchor_arm_ok": true
+  },
+  "2025": {
+   "actual_rt_lw_recomputed": 66.34,
+   "actual_rt_lw_committed": 66.43,
+   "actual_anchor_ok": true,
+   "model_lw_control": 61.04,
+   "model_lw_control_recorded": 61.04,
+   "model_anchor_control_ok": true,
+   "model_lw_arm": 59.24,
+   "model_lw_arm_recorded": 59.24,
+   "model_anchor_arm_ok": true
+  }
+ },
+ "m1_lw_monthly": {
+  "2023": {
+   "months": {
+    "1": {
+     "actual_rt_lw": 38.88,
+     "control": 39.79,
+     "arm": 40.46,
+     "arm_minus_control": 0.67,
+     "arm_err": 1.58
+    },
+    "2": {
+     "actual_rt_lw": 44.5,
+     "control": 38.43,
+     "arm": 38.82,
+     "arm_minus_control": 0.39,
+     "arm_err": -5.68
+    },
+    "3": {
+     "actual_rt_lw": 27.22,
+     "control": 33.82,
+     "arm": 34.42,
+     "arm_minus_control": 0.6,
+     "arm_err": 7.2
+    },
+    "4": {
+     "actual_rt_lw": 26.58,
+     "control": 28.71,
+     "arm": 29.64,
+     "arm_minus_control": 0.93,
+     "arm_err": 3.06
+    },
+    "5": {
+     "actual_rt_lw": 20.41,
+     "control": 26.52,
+     "arm": 27.16,
+     "arm_minus_control": 0.64,
+     "arm_err": 6.75
+    },
+    "6": {
+     "actual_rt_lw": 28.04,
+     "control": 31.08,
+     "arm": 31.29,
+     "arm_minus_control": 0.21,
+     "arm_err": 3.25
+    },
+    "7": {
+     "actual_rt_lw": 37.92,
+     "control": 40.69,
+     "arm": 40.93,
+     "arm_minus_control": 0.24,
+     "arm_err": 3.01
+    },
+    "8": {
+     "actual_rt_lw": 29.65,
+     "control": 31.9,
+     "arm": 32.45,
+     "arm_minus_control": 0.55,
+     "arm_err": 2.8
+    },
+    "9": {
+     "actual_rt_lw": 41.51,
+     "control": 36.71,
+     "arm": 37.07,
+     "arm_minus_control": 0.36,
+     "arm_err": -4.44
+    },
+    "10": {
+     "actual_rt_lw": 28.14,
+     "control": 28.54,
+     "arm": 29.02,
+     "arm_minus_control": 0.48,
+     "arm_err": 0.88
+    },
+    "11": {
+     "actual_rt_lw": 30.97,
+     "control": 34.03,
+     "arm": 34.33,
+     "arm_minus_control": 0.3,
+     "arm_err": 3.36
+    },
+    "12": {
+     "actual_rt_lw": 29.73,
+     "control": 33.72,
+     "arm": 34.28,
+     "arm_minus_control": 0.56,
+     "arm_err": 4.55
+    }
+   },
+   "demand_share": {
+    "1": 0.0864,
+    "2": 0.0777,
+    "3": 0.0817,
+    "4": 0.0713,
+    "5": 0.0737,
+    "6": 0.0817,
+    "7": 0.1061,
+    "8": 0.0949,
+    "9": 0.0854,
+    "10": 0.0773,
+    "11": 0.0788,
+    "12": 0.085
+   },
+   "delta_contrib": {
+    "1": 0.058,
+    "2": 0.03,
+    "3": 0.049,
+    "4": 0.066,
+    "5": 0.047,
+    "6": 0.017,
+    "7": 0.025,
+    "8": 0.052,
+    "9": 0.031,
+    "10": 0.037,
+    "11": 0.024,
+    "12": 0.048
+   },
+   "gap_contrib_arm": {
+    "1": 0.136,
+    "2": -0.442,
+    "3": 0.588,
+    "4": 0.218,
+    "5": 0.498,
+    "6": 0.266,
+    "7": 0.319,
+    "8": 0.266,
+    "9": -0.379,
+    "10": 0.068,
+    "11": 0.265,
+    "12": 0.387
+   }
+  },
+  "2024": {
+   "months": {
+    "1": {
+     "actual_rt_lw": 52.63,
+     "control": 60.4,
+     "arm": 61.16,
+     "arm_minus_control": 0.76,
+     "arm_err": 8.53
+    },
+    "2": {
+     "actual_rt_lw": 30.05,
+     "control": 30.96,
+     "arm": 31.63,
+     "arm_minus_control": 0.67,
+     "arm_err": 1.58
+    },
+    "3": {
+     "actual_rt_lw": 26.15,
+     "control": 28.88,
+     "arm": 29.25,
+     "arm_minus_control": 0.37,
+     "arm_err": 3.1
+    },
+    "4": {
+     "actual_rt_lw": 27.18,
+     "control": 28.57,
+     "arm": 29.11,
+     "arm_minus_control": 0.54,
+     "arm_err": 1.93
+    },
+    "5": {
+     "actual_rt_lw": 26.45,
+     "control": 28.91,
+     "arm": 29.16,
+     "arm_minus_control": 0.25,
+     "arm_err": 2.71
+    },
+    "6": {
+     "actual_rt_lw": 35.26,
+     "control": 36.85,
+     "arm": 37.08,
+     "arm_minus_control": 0.23,
+     "arm_err": 1.82
+    },
+    "7": {
+     "actual_rt_lw": 46.55,
+     "control": 41.31,
+     "arm": 41.4,
+     "arm_minus_control": 0.09,
+     "arm_err": -5.15
+    },
+    "8": {
+     "actual_rt_lw": 36.44,
+     "control": 35.91,
+     "arm": 36.13,
+     "arm_minus_control": 0.22,
+     "arm_err": -0.31
+    },
+    "9": {
+     "actual_rt_lw": 32.09,
+     "control": 34.11,
+     "arm": 34.19,
+     "arm_minus_control": 0.08,
+     "arm_err": 2.1
+    },
+    "10": {
+     "actual_rt_lw": 32.59,
+     "control": 30.78,
+     "arm": 31.17,
+     "arm_minus_control": 0.39,
+     "arm_err": -1.42
+    },
+    "11": {
+     "actual_rt_lw": 33.14,
+     "control": 31.6,
+     "arm": 31.7,
+     "arm_minus_control": 0.1,
+     "arm_err": -1.44
+    },
+    "12": {
+     "actual_rt_lw": 68.99,
+     "control": 49.74,
+     "arm": 50.04,
+     "arm_minus_control": 0.3,
+     "arm_err": -18.95
+    }
+   },
+   "demand_share": {
+    "1": 0.0893,
+    "2": 0.0788,
+    "3": 0.0772,
+    "4": 0.0707,
+    "5": 0.0756,
+    "6": 0.0911,
+    "7": 0.1074,
+    "8": 0.0955,
+    "9": 0.0786,
+    "10": 0.0743,
+    "11": 0.0753,
+    "12": 0.0862
+   },
+   "delta_contrib": {
+    "1": 0.068,
+    "2": 0.053,
+    "3": 0.029,
+    "4": 0.038,
+    "5": 0.019,
+    "6": 0.021,
+    "7": 0.01,
+    "8": 0.021,
+    "9": 0.006,
+    "10": 0.029,
+    "11": 0.008,
+    "12": 0.026
+   },
+   "gap_contrib_arm": {
+    "1": 0.762,
+    "2": 0.124,
+    "3": 0.239,
+    "4": 0.136,
+    "5": 0.205,
+    "6": 0.166,
+    "7": -0.553,
+    "8": -0.03,
+    "9": 0.165,
+    "10": -0.106,
+    "11": -0.108,
+    "12": -1.633
+   }
+  },
+  "2025": {
+   "months": {
+    "1": {
+     "actual_rt_lw": 111.2,
+     "control": 91.92,
+     "arm": 89.07,
+     "arm_minus_control": -2.85,
+     "arm_err": -22.13
+    },
+    "2": {
+     "actual_rt_lw": 99.4,
+     "control": 78.68,
+     "arm": 76.66,
+     "arm_minus_control": -2.02,
+     "arm_err": -22.74
+    },
+    "3": {
+     "actual_rt_lw": 46.98,
+     "control": 49.51,
+     "arm": 47.5,
+     "arm_minus_control": -2.01,
+     "arm_err": 0.52
+    },
+    "4": {
+     "actual_rt_lw": 40.65,
+     "control": 43.18,
+     "arm": 41.33,
+     "arm_minus_control": -1.85,
+     "arm_err": 0.68
+    },
+    "5": {
+     "actual_rt_lw": 33.73,
+     "control": 39.3,
+     "arm": 37.78,
+     "arm_minus_control": -1.52,
+     "arm_err": 4.05
+    },
+    "6": {
+     "actual_rt_lw": 78.42,
+     "control": 53.68,
+     "arm": 51.98,
+     "arm_minus_control": -1.7,
+     "arm_err": -26.44
+    },
+    "7": {
+     "actual_rt_lw": 79.63,
+     "control": 67.13,
+     "arm": 65.4,
+     "arm_minus_control": -1.73,
+     "arm_err": -14.23
+    },
+    "8": {
+     "actual_rt_lw": 45.63,
+     "control": 49.1,
+     "arm": 48.21,
+     "arm_minus_control": -0.89,
+     "arm_err": 2.58
+    },
+    "9": {
+     "actual_rt_lw": 40.43,
+     "control": 43.03,
+     "arm": 42.53,
+     "arm_minus_control": -0.5,
+     "arm_err": 2.1
+    },
+    "10": {
+     "actual_rt_lw": 45.68,
+     "control": 45.25,
+     "arm": 44.52,
+     "arm_minus_control": -0.73,
+     "arm_err": -1.16
+    },
+    "11": {
+     "actual_rt_lw": 55.07,
+     "control": 56.45,
+     "arm": 53.72,
+     "arm_minus_control": -2.73,
+     "arm_err": -1.35
+    },
+    "12": {
+     "actual_rt_lw": 98.12,
+     "control": 97.89,
+     "arm": 95.17,
+     "arm_minus_control": -2.72,
+     "arm_err": -2.95
+    }
+   },
+   "demand_share": {
+    "1": 0.0935,
+    "2": 0.0813,
+    "3": 0.0773,
+    "4": 0.0708,
+    "5": 0.0727,
+    "6": 0.0873,
+    "7": 0.1073,
+    "8": 0.0903,
+    "9": 0.0776,
+    "10": 0.0735,
+    "11": 0.0766,
+    "12": 0.0918
+   },
+   "delta_contrib": {
+    "1": -0.267,
+    "2": -0.164,
+    "3": -0.155,
+    "4": -0.131,
+    "5": -0.111,
+    "6": -0.148,
+    "7": -0.186,
+    "8": -0.08,
+    "9": -0.039,
+    "10": -0.054,
+    "11": -0.209,
+    "12": -0.25
+   },
+   "gap_contrib_arm": {
+    "1": -2.069,
+    "2": -1.85,
+    "3": 0.04,
+    "4": 0.048,
+    "5": 0.295,
+    "6": -2.308,
+    "7": -1.527,
+    "8": 0.233,
+    "9": 0.163,
+    "10": -0.085,
+    "11": -0.103,
+    "12": -0.271
+   }
+  }
+ },
+ "m2_eqh_vs_lw": {
+  "2023": {
+   "actual_eqh": 30.29,
+   "actual_lw": 32.25,
+   "control": {
+    "model_eqh_hub": 32.67,
+    "model_eqh_5zone_mean": 32.97,
+    "model_lw": 33.96,
+    "eqh_gap": 2.38,
+    "lw_gap": 1.71,
+    "covariance_term": -0.67
+   },
+   "arm": {
+    "model_eqh_hub": 33.21,
+    "model_eqh_5zone_mean": 33.46,
+    "model_lw": 34.45,
+    "eqh_gap": 2.92,
+    "lw_gap": 2.2,
+    "covariance_term": -0.72
+   }
+  },
+  "2024": {
+   "actual_eqh": 35.95,
+   "actual_lw": 38.12,
+   "control": {
+    "model_eqh_hub": 35.57,
+    "model_eqh_5zone_mean": 35.8,
+    "model_lw": 37.13,
+    "eqh_gap": -0.38,
+    "lw_gap": -0.99,
+    "covariance_term": -0.61
+   },
+   "arm": {
+    "model_eqh_hub": 35.92,
+    "model_eqh_5zone_mean": 36.14,
+    "model_lw": 37.46,
+    "eqh_gap": -0.03,
+    "lw_gap": -0.66,
+    "covariance_term": -0.63
+   }
+  },
+  "2025": {
+   "actual_eqh": 60.74,
+   "actual_lw": 66.43,
+   "control": {
+    "model_eqh_hub": 57.97,
+    "model_eqh_5zone_mean": 58.11,
+    "model_lw": 61.04,
+    "eqh_gap": -2.77,
+    "lw_gap": -5.39,
+    "covariance_term": -2.62
+   },
+   "arm": {
+    "model_eqh_hub": 56.2,
+    "model_eqh_5zone_mean": 56.33,
+    "model_lw": 59.24,
+    "eqh_gap": -4.54,
+    "lw_gap": -7.19,
+    "covariance_term": -2.65
+   }
+  }
+ },
+ "m3_demand_decile": {
+  "2023": {
+   "control": {
+    "mean_err_by_decile": [
+     5.79,
+     5.72,
+     4.48,
+     4.84,
+     3.42,
+     3.15,
+     2.71,
+     0.32,
+     0.55,
+     -5.44
+    ],
+    "lw_gap_contrib_by_decile": [
+     0.443,
+     0.477,
+     0.395,
+     0.446,
+     0.325,
+     0.314,
+     0.281,
+     0.032,
+     0.062,
+     -0.861
+    ]
+   },
+   "arm": {
+    "mean_err_by_decile": [
+     6.83,
+     6.52,
+     5.1,
+     5.31,
+     3.9,
+     3.64,
+     3.17,
+     0.68,
+     0.83,
+     -5.22
+    ],
+    "lw_gap_contrib_by_decile": [
+     0.522,
+     0.543,
+     0.449,
+     0.489,
+     0.37,
+     0.363,
+     0.329,
+     0.07,
+     0.095,
+     -0.832
+    ]
+   }
+  },
+  "2024": {
+   "control": {
+    "mean_err_by_decile": [
+     4.5,
+     3.48,
+     3.65,
+     0.97,
+     2.12,
+     -0.08,
+     -2.54,
+     -2.07,
+     -5.46,
+     -6.87
+    ],
+    "lw_gap_contrib_by_decile": [
+     0.341,
+     0.287,
+     0.318,
+     0.088,
+     0.202,
+     -0.008,
+     -0.261,
+     -0.226,
+     -0.635,
+     -1.113
+    ]
+   },
+   "arm": {
+    "mean_err_by_decile": [
+     4.86,
+     3.95,
+     4.12,
+     1.4,
+     2.47,
+     0.24,
+     -2.11,
+     -1.75,
+     -5.26,
+     -6.77
+    ],
+    "lw_gap_contrib_by_decile": [
+     0.368,
+     0.325,
+     0.359,
+     0.128,
+     0.235,
+     0.024,
+     -0.216,
+     -0.191,
+     -0.611,
+     -1.1
+    ]
+   }
+  },
+  "2025": {
+   "control": {
+    "mean_err_by_decile": [
+     8.29,
+     6.52,
+     4.86,
+     3.77,
+     3.36,
+     -0.44,
+     -2.99,
+     -5.37,
+     -12.16,
+     -32.12
+    ],
+    "lw_gap_contrib_by_decile": [
+     0.622,
+     0.531,
+     0.421,
+     0.342,
+     0.32,
+     -0.043,
+     -0.312,
+     -0.596,
+     -1.445,
+     -5.149
+    ]
+   },
+   "arm": {
+    "mean_err_by_decile": [
+     6.9,
+     5.37,
+     3.55,
+     2.0,
+     1.51,
+     -2.34,
+     -4.98,
+     -7.6,
+     -14.58,
+     -33.71
+    ],
+    "lw_gap_contrib_by_decile": [
+     0.518,
+     0.437,
+     0.307,
+     0.181,
+     0.144,
+     -0.231,
+     -0.52,
+     -0.843,
+     -1.73,
+     -5.366
+    ]
+   }
+  }
+ },
+ "m4_zonal_continuity": {
+  "2023": {
+   "control": {
+    "zones": {
+     "Upstate_West": {
+      "model_eqh": 32.19,
+      "actual_rt": 25.32,
+      "err_pct": 27.1
+     },
+     "Capital_Hudson": {
+      "model_eqh": 32.88,
+      "actual_rt": 34.58,
+      "err_pct": -4.9
+     },
+     "Lower_Hudson": {
+      "model_eqh": 32.88,
+      "actual_rt": 32.49,
+      "err_pct": 1.2
+     },
+     "NYC": {
+      "model_eqh": 32.96,
+      "actual_rt": 33.47,
+      "err_pct": -1.5
+     },
+     "Long_Island": {
+      "model_eqh": 33.91,
+      "actual_rt": 41.05,
+      "err_pct": -17.4
+     }
+    },
+    "gradient_model": 1.72,
+    "gradient_actual": 15.73
+   },
+   "arm": {
+    "zones": {
+     "Upstate_West": {
+      "model_eqh": 32.84,
+      "actual_rt": 25.32,
+      "err_pct": 29.7
+     },
+     "Capital_Hudson": {
+      "model_eqh": 33.34,
+      "actual_rt": 34.58,
+      "err_pct": -3.6
+     },
+     "Lower_Hudson": {
+      "model_eqh": 33.34,
+      "actual_rt": 32.49,
+      "err_pct": 2.6
+     },
+     "NYC": {
+      "model_eqh": 33.43,
+      "actual_rt": 33.47,
+      "err_pct": -0.1
+     },
+     "Long_Island": {
+      "model_eqh": 34.35,
+      "actual_rt": 41.05,
+      "err_pct": -16.3
+     }
+    },
+    "gradient_model": 1.51,
+    "gradient_actual": 15.73
+   },
+   "winter_zone_months": {
+    "1": {
+     "Upstate_West": {
+      "control": 39.04,
+      "arm": 39.9,
+      "actual": 32.27
+     },
+     "Capital_Hudson": {
+      "control": 39.4,
+      "arm": 40.05,
+      "actual": 43.6
+     },
+     "Lower_Hudson": {
+      "control": 39.4,
+      "arm": 40.05,
+      "actual": 40.44
+     },
+     "NYC": {
+      "control": 39.4,
+      "arm": 40.05,
+      "actual": 40.54
+     },
+     "Long_Island": {
+      "control": 39.4,
+      "arm": 40.05,
+      "actual": 49.2
+     }
+    },
+    "2": {
+     "Upstate_West": {
+      "control": 36.66,
+      "arm": 37.11,
+      "actual": 26.56
+     },
+     "Capital_Hudson": {
+      "control": 38.09,
+      "arm": 38.48,
+      "actual": 59.78
+     },
+     "Lower_Hudson": {
+      "control": 38.09,
+      "arm": 38.48,
+      "actual": 47.82
+     },
+     "NYC": {
+      "control": 38.09,
+      "arm": 38.48,
+      "actual": 48.35
+     },
+     "Long_Island": {
+      "control": 38.09,
+      "arm": 38.48,
+      "actual": 70.23
+     }
+    },
+    "12": {
+     "Upstate_West": {
+      "control": 33.33,
+      "arm": 33.9,
+      "actual": 27.35
+     },
+     "Capital_Hudson": {
+      "control": 33.33,
+      "arm": 33.9,
+      "actual": 29.38
+     },
+     "Lower_Hudson": {
+      "control": 33.33,
+      "arm": 33.9,
+      "actual": 29.64
+     },
+     "NYC": {
+      "control": 33.33,
+      "arm": 33.9,
+      "actual": 30.5
+     },
+     "Long_Island": {
+      "control": 33.43,
+      "arm": 34.0,
+      "actual": 35.05
+     }
+    }
+   }
+  },
+  "2024": {
+   "control": {
+    "zones": {
+     "Upstate_West": {
+      "model_eqh": 35.28,
+      "actual_rt": 33.06,
+      "err_pct": 6.7
+     },
+     "Capital_Hudson": {
+      "model_eqh": 35.58,
+      "actual_rt": 36.79,
+      "err_pct": -3.3
+     },
+     "Lower_Hudson": {
+      "model_eqh": 35.59,
+      "actual_rt": 37.22,
+      "err_pct": -4.4
+     },
+     "NYC": {
+      "model_eqh": 35.93,
+      "actual_rt": 39.52,
+      "err_pct": -9.1
+     },
+     "Long_Island": {
+      "model_eqh": 36.61,
+      "actual_rt": 42.23,
+      "err_pct": -13.3
+     }
+    },
+    "gradient_model": 1.33,
+    "gradient_actual": 9.17
+   },
+   "arm": {
+    "zones": {
+     "Upstate_West": {
+      "model_eqh": 35.64,
+      "actual_rt": 33.06,
+      "err_pct": 7.8
+     },
+     "Capital_Hudson": {
+      "model_eqh": 35.93,
+      "actual_rt": 36.79,
+      "err_pct": -2.3
+     },
+     "Lower_Hudson": {
+      "model_eqh": 35.94,
+      "actual_rt": 37.22,
+      "err_pct": -3.4
+     },
+     "NYC": {
+      "model_eqh": 36.27,
+      "actual_rt": 39.52,
+      "err_pct": -8.2
+     },
+     "Long_Island": {
+      "model_eqh": 36.93,
+      "actual_rt": 42.23,
+      "err_pct": -12.6
+     }
+    },
+    "gradient_model": 1.29,
+    "gradient_actual": 9.17
+   },
+   "winter_zone_months": {
+    "1": {
+     "Upstate_West": {
+      "control": 56.62,
+      "arm": 57.44,
+      "actual": 43.89
+     },
+     "Capital_Hudson": {
+      "control": 59.99,
+      "arm": 60.76,
+      "actual": 56.14
+     },
+     "Lower_Hudson": {
+      "control": 59.99,
+      "arm": 60.76,
+      "actual": 55.15
+     },
+     "NYC": {
+      "control": 60.33,
+      "arm": 61.1,
+      "actual": 66.77
+     },
+     "Long_Island": {
+      "control": 60.38,
+      "arm": 61.14,
+      "actual": 64.57
+     }
+    },
+    "2": {
+     "Upstate_West": {
+      "control": 30.57,
+      "arm": 31.28,
+      "actual": 27.52
+     },
+     "Capital_Hudson": {
+      "control": 30.57,
+      "arm": 31.28,
+      "actual": 29.64
+     },
+     "Lower_Hudson": {
+      "control": 30.57,
+      "arm": 31.28,
+      "actual": 30.35
+     },
+     "NYC": {
+      "control": 30.57,
+      "arm": 31.28,
+      "actual": 32.05
+     },
+     "Long_Island": {
+      "control": 31.16,
+      "arm": 31.84,
+      "actual": 35.02
+     }
+    },
+    "12": {
+     "Upstate_West": {
+      "control": 48.97,
+      "arm": 49.29,
+      "actual": 60.89
+     },
+     "Capital_Hudson": {
+      "control": 48.97,
+      "arm": 49.29,
+      "actual": 71.91
+     },
+     "Lower_Hudson": {
+      "control": 48.97,
+      "arm": 49.29,
+      "actual": 71.99
+     },
+     "NYC": {
+      "control": 49.15,
+      "arm": 49.46,
+      "actual": 74.45
+     },
+     "Long_Island": {
+      "control": 49.89,
+      "arm": 50.15,
+      "actual": 79.02
+     }
+    }
+   }
+  },
+  "2025": {
+   "control": {
+    "zones": {
+     "Upstate_West": {
+      "model_eqh": 57.78,
+      "actual_rt": 55.52,
+      "err_pct": 4.1
+     },
+     "Capital_Hudson": {
+      "model_eqh": 58.01,
+      "actual_rt": 63.46,
+      "err_pct": -8.6
+     },
+     "Lower_Hudson": {
+      "model_eqh": 58.01,
+      "actual_rt": 63.17,
+      "err_pct": -8.2
+     },
+     "NYC": {
+      "model_eqh": 58.23,
+      "actual_rt": 67.16,
+      "err_pct": -13.3
+     },
+     "Long_Island": {
+      "model_eqh": 58.52,
+      "actual_rt": 70.35,
+      "err_pct": -16.8
+     }
+    },
+    "gradient_model": 0.74,
+    "gradient_actual": 14.83
+   },
+   "arm": {
+    "zones": {
+     "Upstate_West": {
+      "model_eqh": 56.07,
+      "actual_rt": 55.52,
+      "err_pct": 1.0
+     },
+     "Capital_Hudson": {
+      "model_eqh": 56.12,
+      "actual_rt": 63.46,
+      "err_pct": -11.6
+     },
+     "Lower_Hudson": {
+      "model_eqh": 56.12,
+      "actual_rt": 63.17,
+      "err_pct": -11.2
+     },
+     "NYC": {
+      "model_eqh": 56.43,
+      "actual_rt": 67.16,
+      "err_pct": -16.0
+     },
+     "Long_Island": {
+      "model_eqh": 56.88,
+      "actual_rt": 70.35,
+      "err_pct": -19.1
+     }
+    },
+    "gradient_model": 0.81,
+    "gradient_actual": 14.83
+   },
+   "winter_zone_months": {
+    "1": {
+     "Upstate_West": {
+      "control": 88.73,
+      "arm": 86.99,
+      "actual": 90.17
+     },
+     "Capital_Hudson": {
+      "control": 90.86,
+      "arm": 87.27,
+      "actual": 127.03
+     },
+     "Lower_Hudson": {
+      "control": 90.86,
+      "arm": 87.27,
+      "actual": 119.23
+     },
+     "NYC": {
+      "control": 90.88,
+      "arm": 87.42,
+      "actual": 134.45
+     },
+     "Long_Island": {
+      "control": 91.19,
+      "arm": 88.08,
+      "actual": 130.84
+     }
+    },
+    "2": {
+     "Upstate_West": {
+      "control": 77.31,
+      "arm": 75.29,
+      "actual": 87.14
+     },
+     "Capital_Hudson": {
+      "control": 77.37,
+      "arm": 75.29,
+      "actual": 114.23
+     },
+     "Lower_Hudson": {
+      "control": 77.37,
+      "arm": 75.29,
+      "actual": 100.12
+     },
+     "NYC": {
+      "control": 77.39,
+      "arm": 75.33,
+      "actual": 111.78
+     },
+     "Long_Island": {
+      "control": 77.65,
+      "arm": 76.01,
+      "actual": 111.55
+     }
+    },
+    "12": {
+     "Upstate_West": {
+      "control": 96.8,
+      "arm": 94.08,
+      "actual": 89.43
+     },
+     "Capital_Hudson": {
+      "control": 96.8,
+      "arm": 94.08,
+      "actual": 100.58
+     },
+     "Lower_Hudson": {
+      "control": 96.8,
+      "arm": 94.08,
+      "actual": 97.89
+     },
+     "NYC": {
+      "control": 96.8,
+      "arm": 94.09,
+      "actual": 98.22
+     },
+     "Long_Island": {
+      "control": 97.0,
+      "arm": 94.59,
+      "actual": 111.02
+     }
+    }
+   }
+  }
+ },
+ "m5_hydro_monthly": {
+  "2023": {
+   "control_twh": [
+    2.6619,
+    2.2622,
+    2.4524,
+    2.3585,
+    2.4173,
+    2.0804,
+    2.3774,
+    2.462,
+    2.1662,
+    2.2414,
+    2.3144,
+    2.5891
+   ],
+   "arm_twh": [
+    2.4801,
+    2.1227,
+    2.3093,
+    2.1722,
+    2.2337,
+    2.0077,
+    2.3076,
+    2.3348,
+    2.1076,
+    2.1287,
+    2.1818,
+    2.4466
+   ],
+   "delta_twh": [
+    -0.1819,
+    -0.1395,
+    -0.1431,
+    -0.1863,
+    -0.1836,
+    -0.0727,
+    -0.0699,
+    -0.1272,
+    -0.0586,
+    -0.1127,
+    -0.1326,
+    -0.1425
+   ],
+   "annual_delta_twh": -1.5505
+  },
+  "2024": {
+   "control_twh": [
+    2.6316,
+    2.5963,
+    2.7107,
+    2.5207,
+    2.3524,
+    2.19,
+    2.404,
+    2.2566,
+    1.961,
+    1.9019,
+    2.0447,
+    2.2596
+   ],
+   "arm_twh": [
+    2.5142,
+    2.4021,
+    2.5704,
+    2.3472,
+    2.2201,
+    2.1355,
+    2.379,
+    2.1883,
+    1.942,
+    1.8259,
+    2.0049,
+    2.2095
+   ],
+   "delta_twh": [
+    -0.1174,
+    -0.1942,
+    -0.1403,
+    -0.1734,
+    -0.1323,
+    -0.0545,
+    -0.025,
+    -0.0683,
+    -0.019,
+    -0.076,
+    -0.0399,
+    -0.0501
+   ],
+   "annual_delta_twh": -1.0904
+  },
+  "2025": {
+   "control_twh": [
+    1.8286,
+    1.5365,
+    1.8689,
+    1.7241,
+    1.9124,
+    1.8137,
+    1.8213,
+    1.7447,
+    1.6002,
+    1.6177,
+    1.7599,
+    1.8203
+   ],
+   "arm_twh": [
+    2.1321,
+    1.7441,
+    2.2287,
+    2.0966,
+    2.3116,
+    2.0655,
+    2.0435,
+    1.8796,
+    1.6913,
+    1.7046,
+    2.0241,
+    2.1371
+   ],
+   "delta_twh": [
+    0.3036,
+    0.2076,
+    0.3597,
+    0.3726,
+    0.3992,
+    0.2519,
+    0.2223,
+    0.1349,
+    0.0911,
+    0.0868,
+    0.2642,
+    0.3168
+   ],
+   "annual_delta_twh": 3.0106
+  }
+ },
+ "m6_event_windows_2025": {
+  "month_01": {
+   "hours": 744,
+   "control": {
+    "model_lw": 91.92,
+    "actual_lw": 111.92,
+    "annual_lw_gap_contrib": -1.87
+   },
+   "arm": {
+    "model_lw": 89.07,
+    "actual_lw": 111.92,
+    "annual_lw_gap_contrib": -2.137
+   }
+  },
+  "month_02": {
+   "hours": 672,
+   "control": {
+    "model_lw": 78.68,
+    "actual_lw": 99.94,
+    "annual_lw_gap_contrib": -1.729
+   },
+   "arm": {
+    "model_lw": 76.66,
+    "actual_lw": 99.94,
+    "annual_lw_gap_contrib": -1.894
+   }
+  },
+  "month_12": {
+   "hours": 744,
+   "control": {
+    "model_lw": 97.89,
+    "actual_lw": 97.77,
+    "annual_lw_gap_contrib": 0.011
+   },
+   "arm": {
+    "model_lw": 95.17,
+    "actual_lw": 97.77,
+    "annual_lw_gap_contrib": -0.239
+   }
+  },
+  "month_06": {
+   "hours": 720,
+   "control": {
+    "model_lw": 53.68,
+    "actual_lw": 77.24,
+    "annual_lw_gap_contrib": -2.056
+   },
+   "arm": {
+    "model_lw": 51.98,
+    "actual_lw": 77.24,
+    "annual_lw_gap_contrib": -2.205
+   }
+  },
+  "month_07": {
+   "hours": 744,
+   "control": {
+    "model_lw": 67.13,
+    "actual_lw": 78.13,
+    "annual_lw_gap_contrib": -1.181
+   },
+   "arm": {
+    "model_lw": 65.4,
+    "actual_lw": 78.13,
+    "annual_lw_gap_contrib": -1.367
+   }
+  },
+  "jun22_26_heat": {
+   "hours": 120,
+   "control": {
+    "model_lw": 89.34,
+    "actual_lw": 214.25,
+    "annual_lw_gap_contrib": -2.37
+   },
+   "arm": {
+    "model_lw": 86.89,
+    "actual_lw": 214.25,
+    "annual_lw_gap_contrib": -2.417
+   }
+  },
+  "jul_event_days": {
+   "hours": 120,
+   "control": {
+    "model_lw": 81.88,
+    "actual_lw": 159.71,
+    "annual_lw_gap_contrib": -1.5
+   },
+   "arm": {
+    "model_lw": 80.47,
+    "actual_lw": 159.71,
+    "annual_lw_gap_contrib": -1.527
+   }
+  }
+ }
+}
