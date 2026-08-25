@@ -2770,7 +2770,22 @@ ERCOT_AS_SATURATION_EXPONENT: float = 2.5
 # evolution is forecast-only, so nothing here touches a backcast keeper.
 AS_REVENUE_PER_KW_YR_BY_ISO: dict[str, dict[str, float]] = {
     "ERCOT": ERCOT_AS_REVENUE_PER_KW_YR,
-    # "CAISO": {"storage": ...},   # pending cited SOM/DMM AS-revenue intake
+    # CAISO: measured DAM battery AS revenue at the 2023 reference fleet —
+    # Daily Energy Storage Report battery awards × OASIS PRC_AS DAM clearing
+    # prices (nested-region settlement), over the measured EIA-860 CAISO
+    # battery fleet (monthly-avg 5,517 MW): $81.8M central → 14.82 $/kW-yr
+    # (bracket 12.65–16.99; 2024 7.41, 2025 5.68 — the saturation check).
+    # Cross-validated against DMM 2023/2024 Special Reports on Battery
+    # Storage (net revenue $78/$53 per kW-yr, energy 62 %/82 %, RT-BCR
+    # 7 %/4 % ⇒ AS+other ≤ $24.1/$7.4). Storage only — CAISO thermal AS is
+    # unidentified (no per-resource-type award series) and earns 0. DA-leg
+    # only (no mileage, no RT increment), so conservatively low.
+    # Identification precommit-staged before its entry-screen effect was
+    # computed; the measured effect flips no storage tech's entry sign.
+    # Source: docs/FINDING-caiso-value-stack-d9-2026-08.md +
+    # results/calibration/caiso_storage_as_revenue_phase0.json (probe
+    # scripts/probes/caiso_storage_as_revenue_phase0.py).
+    "CAISO": {"storage": 14.82},
     # "PJM": {...}, "NYISO": {...}, "NEISO": {...}, "MISO": {...}
 }
 
@@ -2782,6 +2797,14 @@ AS_REVENUE_PER_KW_YR_BY_ISO: dict[str, dict[str, float]] = {
 # ISO that has a rate above (enforced in as_revenue_per_mw_yr).
 AS_SATURATION_REF_GW_BY_ISO: dict[str, float] = {
     "ERCOT": ERCOT_AS_SATURATION_REF_GW,
+    # CAISO: the 2023 average measured EIA-860 battery fleet the 14.82 rate
+    # was measured at. The shared 2.5 exponent is KEPT deliberately: CAISO's
+    # own measured decline is milder (implied 1.34 for 2023→24, 0.76 for
+    # 2024→25 — requirement growth offsets fleet growth), so 2.5 UNDER-credits
+    # AS past the reference — conservative, and a CAISO-fitted exponent would
+    # be 2 DOF on 3 observations (owner-ratified 2026-08-25; see
+    # docs/FINDING-caiso-value-stack-d9-2026-08.md §2.4).
+    "CAISO": 5.517,
 }
 
 # ISOs that have a per-plant CAMPD bin artifact and therefore take the
