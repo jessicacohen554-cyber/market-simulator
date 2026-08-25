@@ -11709,3 +11709,78 @@ branch was already merged via PR #4243 — no rebase debt).
 
 **Session consumed the ercot-233 shorthand. Next shorthand: ercot-234**
 (ercot-199 remains unclaimed)
+
+---
+
+## ercot-234 (2026-08-24) — THE SUB-ZONAL ADMISSIBLE-DATA SURVEY (handoff path A under the open Y-C lane) — AND WHAT IT SURFACED: `NE_LOB` IS NOT A NORTHEAST-TEXAS CONSTRAINT. NO SOLVE, NO LP, NO MECHANISM TESTED, KEEPER UNCHANGED. REPAIR CARDED TO THE OWNER (card Z), AWAITING SIGNATURE.
+
+**Charter:** the FINDING-ercot233 §3 new-evidence route — survey what ERCOT
+publishes at ELEMENT grain that passes rule 13's forward test. Executed
+read-only (public-web documentary reads + descriptive reads of the committed
+NP6-86 archives; no bar-bearing measurement, so no precommit owed; nothing
+tested, so no matrix cell verdict — rule 28(b) not engaged).
+
+**Survey half (the chartered question): NO public admissible sub-zonal
+DRIVER source exists.** Planned transmission outage schedules are SECURE +
+ECEII (NP3-157-CD "Consolidated Transmission Outage Report", reportTypeId
+13446, wrapping NP3-150/424/754/755-CD; certificate roles required); element
+ratings live in the secure Network Operations Model; the GTC Methodology
+with element lists + GTLs (NP3-770-M) is MIS-secure; CMPs and the SOL
+methodology (PG7-225-M, public) are methodology, not time series; NP6-86 is
+public but an OUTCOME record (target only). The ercot-233 reopen condition is
+NOT met by any public product — meeting it needs secure-MIS access (an
+owner-level acquisition decision). The zonal-grain closure and the
+§10/ERCOT-117 `internal_congestion_split` `G` stand un-reopened.
+
+**Discovery half (new evidence, rule 28): the keeper's measured-GTC overlay
+is geographically mis-attributed.** ERCOT's own public GTC definitions deck
+(2020-02-24) identifies `NE_LOB` as **North Edinburg – Lobo — a SOUTH-TEXAS
+/ Rio Grande Valley stability corridor** ("South Texas wind farms … along
+the North Edinburg – Lobo 345 kV line"), still grouped under "Valley Area"
+in the July-2024 ROS GTC update; the crosswalk's own citation ("The Use of
+GTCs in ERCOT", July 2020) never defines NE_LOB at all. The model read the
+name as "Northeast lobe": it carved the Northeast zone expressly to capture
+this GTC, set the Northeast→North static export rating (1,300 MW — also the
+FORECAST topology's East-Texas interface rating) from its limit-at-bind, and
+overlays its measured hourly limits (p50 1,245/1,260/1,549 MW) on that link
+in every keeper year — while dismissing **EASTEX, ERCOT's actual "flows out
+of the East Texas area" GTC (binding 828 → 191 → 3 intervals 2023→2025 at
+~2× the limit; 2025 parked at ~43 GW), as "intra-zone, unrepresentable"** —
+the exact inverse of the truth, since the model's own zone map puts the
+Valley inside its South zone (NE_LOB is the intra-South pocket, VALEXP's
+class). The mis-identity is the parsimonious root cause behind the
+ercot-232/233 anomalies (timing corr ≈ −0.04, capability physics "backwards"
+at 0.436/0.415, tie placement carrying zero timing information — the
+expected outcome of scoring NE-Texas drivers against a South-Texas binding
+record), and the 21 G-SPUR spurious hours are hours this manufactured NE
+congestion prices Northeast $24–126 apart. The measured records of
+ercot-231/232/233 stand as measured; Q-B/R-A, the timing closure, the `G`
+cell and the tie placement are all NOT re-opened (FINDING §II.4 walks each
+fence). Record:
+`docs/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md`.
+
+**Carded, not executed:** card Z
+(`docs/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`) puts the
+repair to the owner — **Z-A (RECOMMENDED)**: boundary-reconciliation phase 0,
+then the crosswalk repair (NE_LOB out as intra-South; EASTEX in at
+Northeast→North; static rating re-derived per rule 23; zero fitted scalars),
+then a full rule-16 3-year re-solve under precommitted gates with all
+C3a/C3b movement side-effect-reported under Q-B/R-A; **Z-B**
+attribution-removal-only fallback; **Z-C** rest-as-is (stated for
+completeness; rule 14 exists to refuse it). Promotion, if any, is a separate
+owner adjudication on the executed record.
+
+**Also surfaced to the owner, still pending:** the ercot-225 G-SPUR band-top
+gate card (Option A recommended, AWAITING SIGN-OFF since 2026-08-21,
+scorer-only) — worth signing BEFORE any Z-A re-solve so its gates read
+lidless from the start; independent of card Z either way.
+
+**Hygiene:** years referenced ⊂ {2023, 2024, 2025}, no marker touched (rule
+22); ERCOT-only artifacts (rule 25); no CI job, no workflow; no run produced
+(rule 15 not engaged); `audit_keepers --iso ERCOT` and
+`check_mechanism_matrix.py` clean at close; branch
+`claude/ercot-backcast-calibration-00mjs2` off main `d0c426b` (the four
+ercot-233 commits were already merged via PR #4254 — no rebase debt).
+
+**Session consumed the ercot-234 shorthand. Next shorthand: ercot-235**
+(ercot-199 remains unclaimed)
