@@ -46,6 +46,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     ercot_as_held_requirement: { cell: "." },
     ercot_as_held_location: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
+    ercot_offer_swcap_clip: { cell: "." },
     ercot_load_forecast_margin: { cell: "." },
     maxgen_emergency_tier_pricing: { cell: "." },
     nyiso_rcpf_family: { cell: "." },

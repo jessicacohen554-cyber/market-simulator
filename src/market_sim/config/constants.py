@@ -4564,6 +4564,19 @@ STRUCTURAL_PRIOR_CARBON_PRICED_ISOS: tuple[str, ...] = ("CAISO", "NEISO", "NYISO
 # over idle headroom.
 ERCOT_AS_PLAN_HOLD_EPS: float = 0.001
 
+# --- ERCOT SWCAP offer-clip dispatch-before-shed tiebreaker ($/MWh) ----------
+# The ercot_offer_swcap_clip clip level is voll − this ε, never voll exactly:
+# an offer clipped to precisely VOLL is LP-degenerate against the slack
+# (shed) column, whose cost IS voll, and the real design breaks that tie in
+# dispatch's favor — SCED dispatches every offered MW (all capped at the
+# system-wide offer cap) before firm load is shed, which is an EEA emergency
+# action, never an economic outcome (Nodal Protocols §6.5.9). Same magnitude
+# class as the storage degeneracy tiebreaker ε (CLAUDE.md rule 9
+# [R-EPSILON]) — a strict-preference tiebreak, not a fitted value; 0.01
+# rather than 0.001 only to sit comfortably above HiGHS dual-feasibility
+# tolerance at the $5,000 scale.
+ERCOT_SWCAP_SHED_TIEBREAK_EPS: float = 0.01
+
 # --- Federal §45 wind PTC, statutory inflation-adjusted credit ($/MWh) -------
 # The IRS-published renewable-electricity production credit for WIND, by
 # production (sale) calendar year, for facilities placed in service before

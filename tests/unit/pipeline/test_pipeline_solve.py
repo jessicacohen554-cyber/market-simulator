@@ -158,3 +158,54 @@ def test_cold_path_skips_model_and_cache(monkeypatch):
     cache: list = []
     run_energy_solve(gens, fa, demand, mc_base, dk, _Cfg(), xyear_cache=cache)
     assert cache == []
+
+
+class _ClipCfg(_Cfg):
+    """_Cfg plus the SWCAP-clip fields (ercot-236)."""
+
+    iso = "ERCOT"
+    voll = 5000.0
+    ercot_offer_swcap_clip = True
+
+
+def test_swcap_clip_dispatches_instead_of_shedding(monkeypatch):
+    """An offer above VOLL sheds with the clip off and dispatches with it on.
+
+    CLAUDE.md testing pattern (trivial first): 1 zone carries the load, one
+    cheap gen, one gen offered ABOVE voll. Flag off, the LP prefers slack
+    (voll) to the over-cap offer — the manufactured-shed defect
+    (PRECOMMIT-ercot236 §3). Flag on, the offer is clipped to voll − ε and
+    the LP serves the load with zero slack.
+    """
+    monkeypatch.setenv("MARKET_SIM_WARMSTART", "0")
+    gens, fa, demand, mc_base, dk = _trivial_inputs()
+    # Re-peak demand so the fleet is PHYSICALLY sufficient (the builder's 550
+    # peak exceeds total capacity and sheds physically in every test): zone-0
+    # peak 250 → system 610 at h18 vs 700 MW capacity, needing ~110 MW from
+    # G1. Price G1 above VOLL — inadmissible in the real market.
+    demand = demand.copy()
+    demand[0, 18] = 250.0
+    mc_hot = mc_base.copy()
+    mc_hot[1, :] = 6000.0  # > voll 5000
+
+    off = run_energy_solve(gens, fa, demand, mc_hot, dk, _Cfg())
+    assert float(off.p1.slack.sum()) > 0.0  # the defect: economic shed
+
+    on = run_energy_solve(gens, fa, demand, mc_hot, dk, _ClipCfg())
+    assert float(on.p1.slack.sum()) == 0.0  # capped offer dispatches
+    assert float(on.r0.slack.sum()) == 0.0  # P0 sees the same admissible domain
+    # The clipped bid is voll − ε, strictly below the slack cost.
+    assert float(on.mc_bid[1].max()) < 5000.0
+
+
+def test_swcap_clip_gates_off_outside_ercot():
+    """The clip is ERCOT-gated (rule 25): another ISO's config is a no-op."""
+    from market_sim.pipeline.solve import _swcap_clip_level
+
+    class _Other(_ClipCfg):
+        iso = "PJM"
+
+    assert _swcap_clip_level(_Other()) is None
+    assert _swcap_clip_level(_Cfg()) is None  # default-off path
+    lvl = _swcap_clip_level(_ClipCfg())
+    assert lvl is not None and 4999.0 < lvl < 5000.0
