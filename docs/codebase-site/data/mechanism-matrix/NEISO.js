@@ -99,6 +99,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     summer_wefor_share_override: { cell: "U", ev: "the 0.30 constant's seasonal split stays this lane's live treatment; the per-ISO measured override (miso-160 construction) is unarmed here — rule 25/28(d): no value transfers, this lane derives its own from its own admissible ticket-based record before arming" },
     coal_nameplate_summer_derate: { cell: "." },
     unit_outage_lp_capacity_basis: { cell: "U" },
+    unit_outage_fleet_status_scope: { cell: "U" },
     wefor_residual: { cell: "U" },
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "U" },

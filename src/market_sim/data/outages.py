@@ -532,6 +532,7 @@ def unit_outage_derate_factors(
     iso: str = "ERCOT",
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
+    fleet_status_scope: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -563,8 +564,51 @@ def unit_outage_derate_factors(
         return {}
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
     return _unit_outage_factors_from_events(
-        df, year, hours, bins_path, iso, cc_steam_part_reclass, cc_nameplate_basis
+        df,
+        year,
+        hours,
+        bins_path,
+        iso,
+        cc_steam_part_reclass,
+        cc_nameplate_basis,
+        fleet_status_scope,
     )
+
+
+@lru_cache(maxsize=None)
+def _fleet_status_index(iso: str) -> dict[int, dict[str, str]] | None:
+    """Return ``{plant_code: {GENERATOR_ID: STATUS}}`` from the active EIA-860
+    operable snapshot, or ``None`` when the parquet is unavailable.
+
+    Support for the ``fleet_status_scope`` event filter (miso-186,
+    ``unit_outage_fleet_status_scope``): the dispatch fleet keeps only
+    ``Status == "OP"`` generators (``fleet/eia860.py``), so this index lets the
+    outage accumulator recognize event rows whose unit the fleet does NOT
+    model. Reads the SAME active snapshot the fleet loader resolves
+    (:func:`market_sim.config.paths.active_eia860_dir`), so the scope always
+    matches the fleet's own capacity basis, vintage runs included. Ids are
+    normalized ``strip().upper()``. ``iso`` participates in the cache key only
+    (the snapshot is ISO-agnostic).
+    """
+    del iso  # cache-key only; the snapshot is shared across ISOs
+    from market_sim.config.paths import active_eia860_dir
+
+    path = Path(active_eia860_dir()) / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return None
+    try:
+        df = pd.read_parquet(path, columns=["Plant Code", "Generator ID", "Status"])
+    except Exception:  # pragma: no cover - schema drift falls open
+        logger.warning("fleet-status index unavailable (%s); filter inert", path)
+        return None
+    out: dict[int, dict[str, str]] = {}
+    for code, gid, st in zip(df["Plant Code"], df["Generator ID"], df["Status"]):
+        try:
+            c = int(code)
+        except (TypeError, ValueError):
+            continue
+        out.setdefault(c, {})[str(gid).strip().upper()] = str(st).strip().upper()
+    return out
 
 
 def _unit_outage_factors_from_events(
@@ -575,6 +619,7 @@ def _unit_outage_factors_from_events(
     iso: str,
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
+    fleet_status_scope: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
 
@@ -594,6 +639,22 @@ def _unit_outage_factors_from_events(
     plant. The two paths share this accumulator so the partial derate uses the
     identical unit-capacity-share / concurrent-sum / clip-at-full aggregation
     as the >= 5-day overlay.
+
+    ``fleet_status_scope`` (GATED default-off; miso-186,
+    ``ScenarioConfig.unit_outage_fleet_status_scope``): drop event rows whose
+    unit the dispatch fleet does not model — the unit's EIA-860 operable
+    ``Status`` is non-``OP`` in the SAME active snapshot the fleet loader
+    keeps ``OP``-only rows from — before accumulating shares. Without it, a
+    mothballed (``OA``) unit's terminal CEMS darkness is charged as an outage
+    of the plant's OPERATING capacity: the numerator is the dark unit's
+    capacity while ``cap[tgt]`` already excludes it, a double-count that can
+    zero a running plant (Cottonwood 55358, 2025: the two OA trains' windows
+    sum to 1.23 of the modeled OP half and clip it to 0.0 through the scarce
+    set, against the plant's own CAMPD record of 526 MW in all 47 scarce
+    hours — FINDING-miso186). Unmatched unit ids fail OPEN (row kept), so
+    retirees dispatched from the retired-within-window sheet — absent from
+    the operable parquet — keep their legitimate windows. Non-ERCOT only (the
+    ERCOT branch caps on its own CAMPD bin sheet, a different basis).
     """
     if iso == "ERCOT":
         from market_sim.data.fleet import load_campd_bins
@@ -615,11 +676,20 @@ def _unit_outage_factors_from_events(
     # detected window in hours, otherwise the day-granular reconstruction stands
     # (caiso-183; see :func:`unit_outage_event_window`).
     has_hours = _has_hour_grain(df)
+    status_idx = (
+        _fleet_status_index(iso) if (fleet_status_scope and iso != "ERCOT") else None
+    )
     sums: dict[tuple[int, str], np.ndarray] = {}
     for r in df.itertuples(index=False):
         tgt = target_fn(int(r.facility_id), r.unit_id, r.plant_group)
         if tgt is None or tgt not in cap:
             continue
+        if status_idx is not None:
+            st = status_idx.get(int(r.facility_id), {}).get(
+                str(r.unit_id).strip().upper()
+            )
+            if st is not None and st != "OP":
+                continue  # unit not in the fleet's OP capacity basis
         ucap = r.unit_capacity_mw
         if pd.isna(ucap) or float(ucap) <= 0.0:
             continue
@@ -650,6 +720,7 @@ def unit_outage_short_derate_factors(
     iso: str = "ERCOT",
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
+    fleet_status_scope: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -673,7 +744,14 @@ def unit_outage_short_derate_factors(
         (df["duration_days"] < UNIT_OUTAGE_MIN_DAYS) & (df["plant_group"] == "COAL")
     ]
     return _unit_outage_factors_from_events(
-        df, year, hours, bins_path, iso, cc_steam_part_reclass, cc_nameplate_basis
+        df,
+        year,
+        hours,
+        bins_path,
+        iso,
+        cc_steam_part_reclass,
+        cc_nameplate_basis,
+        fleet_status_scope,
     )
 
 
@@ -762,6 +840,7 @@ def unit_partial_outage_derate_factors(
     iso: str = "ERCOT",
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
+    fleet_status_scope: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return unit-grain partial-derate plateau availability multipliers.
 
@@ -792,7 +871,14 @@ def unit_partial_outage_derate_factors(
         return {}
     df = pd.read_csv(csv_path)
     return _unit_outage_factors_from_events(
-        df, year, hours, bins_path, iso, cc_steam_part_reclass, cc_nameplate_basis
+        df,
+        year,
+        hours,
+        bins_path,
+        iso,
+        cc_steam_part_reclass,
+        cc_nameplate_basis,
+        fleet_status_scope,
     )
 
 

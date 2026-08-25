@@ -99,6 +99,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     summer_wefor_share_override: { cell: "U", ev: "the 0.30 constant's seasonal split stays this lane's live treatment; the per-ISO measured override (miso-160 construction) is unarmed here — a candidate record exists (data/raw/pjm-outages) but rule 25/28(d): no value transfers, this lane derives and adjudicates its own before arming" },
     coal_nameplate_summer_derate: { cell: "U" },
     unit_outage_lp_capacity_basis: { cell: "U" },
+    unit_outage_fleet_status_scope: { cell: "U" },
     wefor_residual: { cell: "K", ev: "registration only — read from the PJM keeper's run_config.json (0.015); no PJM evidence, no verdict" },
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "K", ev: "registration only — read from pjm152_collapse_A/run_config.json; no PJM evidence, no verdict" },
