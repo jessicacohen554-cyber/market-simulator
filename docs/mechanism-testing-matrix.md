@@ -12471,6 +12471,16 @@ charter with a new measured identification** before a solve:
   **Recommended cheapest unblock**, added to miso-95 §4's three options as a
   fourth: stamp `_ONLINE_FRAC_GROUPS` + the schema generation into a header or
   sidecar, so one read answers "which groups was this vintage emitting?".
+  **LANDED at xiso-6 (2026-08-25,
+  `results/calibration/FINDING-xiso6-tranche-vintage-sidecar-2026-08-25.md`):**
+  the deriver emits `thermal_tranches_<ISO>.meta.json` on every derive; the
+  five committed artifacts carry descriptive backfills (vintage honestly
+  recorded as UNKNOWN, CSVs byte-identical — hashes in the finding);
+  `campd_bins.assert_thermal_tranche_coverage`, called from `bins_to_fleet`,
+  hard-errors any config arming one of the seven tranche gates over a vintage
+  gap (the `campd_bins.py:1287` silent skip can no longer mint a false `I`);
+  and the census probe is sidecar-aware with a sha256 staleness check. Cells
+  unchanged — the 166-row gap itself remains owner-gated per-ISO.
   Matrix row `thermal_tranche_artifact_coverage`, cells `.OOIOO`.
   *Flagged not edited (rule 28(e), NEISO's lane): the matrix header's
   `keepers.NEISO` is stale at `2026-08-03-neiso-caiso156-meter-screen` against a
