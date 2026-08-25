@@ -7931,3 +7931,24 @@ Rule 22: every solved year ∈ {2023, 2024, 2025}; the spend freeze untouched.
 Zero fitted scalars; DOF ledger +1 measured entry (n_residual unchanged at 6).
 
 Next shorthand: nyiso-156.
+
+---
+
+## 2026-08-25 — nyiso-155b: OWNER RULED PROMOTE on the escalation — keeper → `2026-08-25-nyiso-155-hydro-repair`, determination NOT-YET written explicitly
+
+**NO SOLVE.** Owner decision, verbatim: *"If structural integrity improves but
+gates regress that may still be a keeper.."* — the nyiso-108/nyiso-120
+override class. Keeper re-keyed (152 → 155-hydro-repair), promotion note
+chained, `calibration-complete.json` NYISO entry re-keyed with the **explicit
+NOT-YET** (D-5(b) stop fired → escalated → resolved by this ruling; never
+silently written). Matrix cell `hydro_vintage_input_repair` **O → K**; shard
+keeper/gates stamps + §5.5 prose header re-stamped (priors preserved
+verbatim); `build_status --iso NYISO` [NOT-YET]; keeper-auditor run. Frontier:
+the 2026-08-23 ratification's basis keeper is superseded — status returns to
+the owner; record preserved. **Named successor: the 2025 offer-level object**
+(`DECISION-CARD-nyiso148-2025-level-remainder`, Q1 pending) — now measured
+~$1.79/MWh larger than the truncated baseline showed; the hydro input is
+correct and stays (rule 14). Freeze ACTIVE, untouched; no locked-test grant of
+any kind. `docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md` §7.
+
+Next shorthand: nyiso-156.
