@@ -1,0 +1,14 @@
+{
+ "id": "2026-08-25-236-swcap-clip-k33",
+ "label": "236 swcap clip k33",
+ "date": "2026-08-25",
+ "shorthand": "236-swcap-clip-k33",
+ "definition": "ercot-236 h4097 SHED REPAIR + re-selection \u2014 THE FIRST ERCOT RUN TO PASS ALL THREE 2023 PRICE CRITERIA (C3a -7.3% / C3b 0.102 / C3c 180 of 181), DETERMINATION CALIBRATED, zero caveats. 2023-only under the owner's invoked rule-16 waiver (the ercot-235 2023-DISCRETE-CONFIG charter, cited from the log entry). The ercot-235 keeper recipe + TWO deltas: (1) ercot_offer_swcap_clip=true \u2014 the STRUCTURAL system-wide offer cap (every real SCED energy offer is capped at SWCAP $5,000 = VOLL; the uncapped tuned surface at k_peak > 24 walked implied offers past VOLL and manufactured the June-20 h4097 shed against physically-available capacity \u2014 D-1 measured: thermal -48.28 MW undispatched at all-zone $5,000, storage +12.33 refutes SOC starvation, net reserve held 0.0 refutes withholding; zero fitted values, measured INERT below the cap: V-0 k24+clip reproduces the prior keeper's officials to the digit); (2) k_peak 24 -> 33.0, re-selected on the repaired surface by the precommitted kill-gated {27, 30, 33} re-bracket (all clean: zero shed, off-season intact, coal +0.099 TWh vs the ercot-234 baseline). August lands $221.18 vs actual $220.16; the >=$1,000 tail is EXACT (59 vs 59 h); reported structure residual: [500,1000) under (18 vs 43), [200,500) over (103 vs 77); spur 68 banded / 74 lidless (unchanged from k24). PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md (Amendments 1-2) + docs/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md.",
+ "years": [
+  2023
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-08-25-236-swcap-clip-k33.js",
+ "bundle": "results/calibration/ercot236_k33_clip",
+ "market_story": "The 2023 ECRS-era scarcity price level the LP cannot form competitively is carried by the DOF-ledgered k_peak scalar on the gas peak bands \u2014 at k=33 the top tranches saturate at the offer cap ($4,999.99 clip), which is exactly the documented 2023 conduct: submitted evening asks clustered at the $5,000 SWCAP (ercot-161/162). The SWCAP clip is the market's own rule (offers cannot exceed the cap; firm-load shed is an EEA action, never an economic outcome), so scarce hours price AT the cap through dispatched supply instead of shedding. Gas peak tranches clear the Jun-Sep afternoon-evening ramps at the lifted band levels; coal, storage and renewables carry their measured curves unchanged (coal within 0.1 TWh of the pre-lift recipe in every leg); storage cycles into the same evening scarcity windows the adaptive-expectation floor prices."
+}

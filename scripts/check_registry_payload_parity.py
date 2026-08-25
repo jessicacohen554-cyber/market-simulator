@@ -108,6 +108,21 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         "ercot235_r8",
         "ercot235_r9",
         "ercot235_r11",
+        # ercot-236 h4097 shed-repair campaign (2026-08-25): the D-1 diagnosis
+        # solve + the three non-winner verification/re-bracket points of the
+        # precommitted chain (PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md;
+        # winner ercot236_k33_clip IS sidecar-mapped as
+        # 2026-08-25-236-swcap-clip-k33). Each dir keeps its committed
+        # ercot236_point_score.json + official_2023.json (the diag dir also
+        # ercot236_d1_diagnosis.json — the D-1 attribution record the FINDING
+        # quotes); heavy contents gitignored by the ercot236_*/ scratch rule.
+        # V-0 (k24_clip) is the clip-inertness identity leg; the diag dir is
+        # the O1-confirmation evidence. Delete these entries when the campaign
+        # record is superseded.
+        "ercot236_diag_k30",
+        "ercot236_k24_clip",
+        "ercot236_k27_clip",
+        "ercot236_k30_clip",
         # --- NYISO A/B RECIPE DIRS (ws6-parity-repair, 2026-08-20) ----------
         # A SECOND admissible class, adjudicated on the merits rather than on
         # the `_recipe` naming pattern: a `--replay-bundle` RECIPE dir. These
