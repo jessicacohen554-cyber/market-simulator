@@ -11782,5 +11782,23 @@ lidless from the start; independent of card Z either way.
 `claude/ercot-backcast-calibration-00mjs2` off main `d0c426b` (the four
 ercot-233 commits were already merged via PR #4254 — no rebase debt).
 
+### ercot-234 SIGNATURE ADDENDUM (2026-08-25, same session window)
+
+**The owner signed card Z in-session: (Z-A) — CHARTER THE FULL IDENTITY
+REPAIR, with promotion authorized in advance under the standing structural
+standard** (verbatim: *"Is this a recommended keeper candidate? If so plz
+promote. If structural integrity improves but gates regress that may still
+be a keeper.."* — at signature time no candidate run existed, so the
+instruction is recorded as the Z-A signature plus the advance promotion
+standard, the ercot-215/221/231 pattern). Execution in this session under
+the card's own bounds: precommit pushed + blob-verified BEFORE any phase-0
+measurement; phase-0 boundary reconciliation with the Z-B fallback live;
+zero fitted scalars; rule-16 3-year re-solve registered whatever it shows;
+C3a/C3b movement side-effect-reported under Q-B/R-A; catastrophic physical
+regressions (new shed) ESCALATE rather than auto-promote. Record:
+`docs/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`
+RESOLUTIONS + `docs/PRECOMMIT-ercot234-eastex-identity-repair-2026-08-25.md`
+(outcome in the execution addendum below).
+
 **Session consumed the ercot-234 shorthand. Next shorthand: ercot-235**
 (ercot-199 remains unclaimed)
