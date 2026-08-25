@@ -7859,3 +7859,75 @@ FRONTIER STATUS block re-stamped from "recommended, not declared" to ratified.
 byte-identical to `HEAD`, verified programmatically, because this lane tested
 nothing. `check_mechanism_matrix.py` clean on all four legs. NYISO's shard and
 §5.5 block only.
+
+---
+
+## 2026-08-25 — nyiso-155: the chartered hydro truncation repair RE-ARMED and A/B'd; it had been armed at nyiso-108 and SILENTLY LOST from the lineage; the re-arm is ESCALATED on a determination downgrade (C3a-2025)
+
+**2 solves** (zero-delta control + the pair, three years each, concurrent per
+rule 12). **HEAD `ac194ba`.** **KEEPER UNCHANGED**
+(`2026-08-22-nyiso-152-duty-complete`) — the promotion is **ESCALATED TO THE
+OWNER** under the prereg's pre-committed rule. Prereg pushed + blob-verified
+BEFORE any measurement (`PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md`).
+Registered (rule 15): `2026-08-25-nyiso-155-hydro-control` (**CALIBRATED**),
+`2026-08-25-nyiso-155-hydro-repair` (**NOT-YET**). Full write-up:
+`docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md`; gates record
+`results/calibration/_nyiso155_hydro_repair_ab.json`.
+
+### (1) Discovered before measurement: nyiso-108's arm was SILENTLY DE-ARMED
+
+The charter (nyiso-107's carried item) was already executed once — nyiso-108
+(2026-07-31) armed the pair and was promoted by owner override. The pair then
+fell out of the keeper lineage with **no de-arm decision anywhere**: in the
+recipe at nyiso-114 (2026-08-02), gone by nyiso-144 (2026-08-18). Mechanism:
+the two flags are `solve_and_persist` **kwargs, not ScenarioConfig fields**, so
+the "all 680 scenario_config fields identical" lineage-fidelity checks were
+structurally blind to them (miso-50..53 lossy-reconstruction class, in the
+keeper lineage itself). The keeper's own sidecars confirm unrepaired hydro
+(28.3833 / 27.8294 / **21.0482** TWh — the truncated 3-plant 2025 budget spent
+exactly). Matrix cell `hydro_vintage_input_repair` **K → O** (record-truth: K
+cited a keeper arm no keeper carries; the nyiso-128 solar-basis convention).
+
+### (2) The A/B reproduces nyiso-108 exactly; the trade lands on 2025 this time
+
+Hydro Δ **−1.5505 / −1.0904 / +3.0107 TWh** — nyiso-108's measured deltas to
+4 dp; 2025 fleet **3 → 147 units**. Volume lands **−4.28 / −2.64 / −0.19 %**
+— **TAUTOLOGICAL BY CONSTRUCTION** under the 930 pin (declared, never banked;
+vs P-63: −1.29 / −0.88 / −0.78 %). **SHAPE (the only load-bearing hydro
+evidence): 2025 improves on every statistic** — hourly r 0.562 → 0.712,
+daily r 0.316 → 0.437, monthly-vs-P-63 r 0.925 → **0.994**, hod swing
+1,049 → 1,903 MW vs measured 1,830 (the 3-plant fleet physically could not
+produce the real diurnal swing); 2023/2024 hourly r degrade moderately
+(0.739 → 0.691, 0.795 → 0.756), reported at full magnitude.
+
+### (3) THE COST: C3a-2025 −8.1 → −10.8 % FAIL; determination NOT-YET; ESCALATED
+
+Removing phantom 2023/24 hydro lifts those years (+5.3 → +6.8 in-band — the
+nyiso-109 anchor holds; 2024 **improves** −2.6 → −1.7). Restoring the real
+3.01 TWh of 2025 hydro softens 2025 by −$1.79/MWh, crossing the band. **The
+truncated input was masking ~2.7 pp of the real, already-owner-court 2025
+offer-level object** (`DECISION-CARD-nyiso148-2025-level-remainder`, Q1
+pending) — its true magnitude is ~$1.79/MWh larger than the truncated
+baseline showed. C3c counts BIT-IDENTICAL (1/0/0); it reads FAIL on the arm
+only because the standing rule's lone-failure guard is silenced by C3a. C1/C2/
+C3b/C4/C6/C8 PASS both arms; zero new D-rows; fossil displacement 1:1. Rule
+14 in both directions: the accurate input is right and stays right; the 2025
+miss is a **discovered defect** of the price level; and neither reverting the
+input nor overwriting a CALIBRATED frontier-ratified keeper is this lane's
+call — the exact nyiso-108 precedent, transposed to 2025, back to the owner.
+
+### (4) G1 drift, reported: the keeper does not reproduce bit-identically at HEAD
+
+The zero-delta control differs from the committed keeper in 2023/2024 (max
+hourly |Δλ| 2.18 / 2.61 $/MWh, annual mean +0.016 / +0.018; **2025 exactly
+0.0**) with all nine pinned inputs content-identical, demand + reserve
+requirements bit-identical, identical package environment — the degenerate
+alternative-optima reshuffle class, and **determination-identical**
+(CALIBRATED, criterion for criterion). Owner options framed in the finding §5:
+promote the arm (nyiso-108 precedent), hold + charter the 2025 level object
+first, and/or re-key to the control (nyiso-128b stale-baseline precedent).
+
+Rule 22: every solved year ∈ {2023, 2024, 2025}; the spend freeze untouched.
+Zero fitted scalars; DOF ledger +1 measured entry (n_residual unchanged at 6).
+
+Next shorthand: nyiso-156.

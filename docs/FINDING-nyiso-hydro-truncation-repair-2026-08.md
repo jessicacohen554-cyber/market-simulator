@@ -95,44 +95,189 @@ its own charter.
 caiso-217, entry-signal L-5, capx-d2); NYISO-relevant data drift nil.
 Inertness was **not assumed** — gate G1 decided it empirically:
 
-- **G1 IDENT:** <G1_RESULT — control vs committed keeper, max |Δdispatch| and
-  max |Δprice| per year>
-- **G2 SINGLE-DELTA:** <G2_RESULT>
-- **G8 LEGITIMACY:** <G8_RESULT>
+- **G1 IDENT: FAIL.** The control is NOT bit-identical to the committed keeper
+  in 2023/2024; 2025 is EXACTLY identical:
+
+  | year | max \|Δdispatch\| MW | max hourly \|Δλ\| $/MWh | annual mean λ Δ |
+  |---|---|---|---|
+  | 2023 | 658.4 | 2.18 | **+0.016** |
+  | 2024 | 457.9 | 2.61 | **+0.018** |
+  | 2025 | **0.0** | **0.0** | 0.000 |
+
+  **Attribution, measured:** all nine pinned input extracts (EIA-930, EIA-923,
+  CAMPD, five outage extracts, capacity deliverability) are content-identical
+  by hash; zonal demand, reserve requirements, slack and dump are
+  bit-identical; hydro and import annual energies are identical to 4 dp and
+  only **reshuffle within the year** (January-2023 shuffles at unchanged
+  prices); net class-energy moves are ≤ 0.027 TWh; the recorded package
+  environment (highspy 1.14.0, numpy 2.4.6, scipy 1.17.1) is identical. This
+  is the **same-objective alternative-optima signature** — a
+  matrix-construction-order perturbation from the HEAD drift selecting a
+  different vertex of the same optimal face, with dual degeneracy repricing
+  tied hours by ladder-rung gaps — NOT an input-series change (every measured
+  input surface checked is identical) and not a solver-version change. At the
+  **scorecard basis** the control is determination-identical to the keeper:
+  **CALIBRATED**, C3a +5.3 / −2.6 / −8.1 % (keeper recorded +5.3 / −2.7 /
+  −8.1), C3c 1/0/0 h ledgered. The prereg's pre-committed G1 failure branch
+  applies: measurement completed, both runs registered, drift reported —
+  **no promotion self-adjudicated.**
+- **G2 SINGLE-DELTA: PASS** — the arms' recorded configs (meta ∪ scenario
+  block) differ in exactly `{hydro_backfill_year: None→2024,
+  hydro_eia930_monthly: False→True}`.
+- **G8 LEGITIMACY: PASS** — zero new failing D-rows on the arm; C8 PASS both
+  arms.
 
 ## §4 — Results
 
 ### §4.1 Input effect (G3, report-class)
 
-<TABLE: per-year hydro TWh A/B, delta vs the nyiso-107 §E expectations
-−1.5668 / −1.1287 / +3.0143>
+| year | control hydro TWh | arm hydro TWh | Δ TWh | nyiso-107 §E expected (budget) |
+|---|---|---|---|---|
+| 2023 | 28.3833 (154 units) | 26.8328 (155 units) | **−1.5505** | −1.5668 |
+| 2024 | 27.8294 (147 units) | 26.7390 (147 units) | **−1.0904** | −1.1287 |
+| 2025 | 21.0482 (**3 units**) | 24.0589 (**147 units**) | **+3.0107** | +3.0143 |
+
+The measured deltas match the nyiso-108 A/B's measured dispatch deltas
+(−1.5505 / −1.0904 / +3.0107) **exactly** — the re-arm reproduces the
+2026-07-31 arm to 4 decimals. The 2025 LP hydro fleet is restored 3 → 147
+units.
 
 ### §4.2 Hydro volume (G4 — TAUTOLOGICAL BY CONSTRUCTION, never banked)
 
-<TABLE: A/B vs as-scored benchmark and vs P-63; every number labelled
-(tautological by construction) on the arm side>
+| year | control vs bench | arm vs bench *(tautological by construction)* | control vs P-63 | arm vs P-63 |
+|---|---|---|---|---|
+| 2023 | +1.26 % | −4.28 % *(tautological by construction)* | +4.41 % | −1.29 % |
+| 2024 | +1.33 % | −2.64 % *(tautological by construction)* | +3.16 % | −0.88 % |
+| 2025 | −12.68 % | −0.19 % *(tautological by construction)* | −13.20 % | −0.78 % |
+
+Under the 930 pin the budget and the benchmark are the same series, so the
+arm-side numbers are **plumbing, not skill** — no claim is made from them in
+any direction. (The scorer already treats hydro as a D-10 pinned class; C1
+gates only the gas/coal families. The benchmark itself did not move with the
+registration — the nyiso-149 `btm_bench_twh` flag-independence pin held: zero
+`bench/NYISO/` diffs.)
 
 ### §4.3 Hydro dispatch SHAPE (G5 — the only load-bearing hydro evidence)
 
-<TABLE: hourly r, daily r, hour-of-day profile r + swing vs gap-masked EIA-930
-NG: WAT; monthly seasonal shape r vs P-63; annual peak month>
+Against gap-masked EIA-930 `NG: WAT` (the scorer's own series) and NYISO MIS
+P-63 (EIA-independent):
+
+| year | hourly r A→B | daily r A→B | hod profile r A→B | hod swing MW (meas / A / B) | monthly r vs P-63 A→B | peak month (P-63 / A / B) |
+|---|---|---|---|---|---|---|
+| 2023 | 0.7392 → 0.6908 | 0.5157 → 0.4312 | 0.9856 → 0.9707 | 1305 / 1561 / 1644 | 0.9925 → 0.9880 | 1 / 1 / 1 |
+| 2024 | 0.7946 → 0.7555 | 0.7203 → 0.6451 | 0.9885 → 0.9788 | 1405 / 1633 / 1652 | 0.9851 → 0.9911 | 3 / 3 / 3 |
+| 2025 | **0.5621 → 0.7118** | **0.3161 → 0.4367** | 0.9879 → 0.9838 | **1830 / 1049 / 1903** | **0.9251 → 0.9943** | 5 / 5 / 5 |
+
+Direction-blind reading: **2025 — the repaired year — improves on every shape
+statistic**: hourly r +0.15, daily r +0.12, monthly seasonal r 0.925 → 0.994,
+and the hour-of-day swing recovers from 1,049 MW (the truncated 3-plant fleet
+physically could not produce the real diurnal swing) to 1,903 MW against a
+measured 1,830. **2023/2024 shape degrades moderately** (hourly r −0.048 /
+−0.039, daily r −0.085 / −0.075): re-allocating those years' budgets to the
+930 monthly levels shifts within-year timing away from the 923 monthly pattern
+the control followed. Reported at full magnitude; not patched (rule 14).
 
 ### §4.4 Scorecards and side effects at full magnitude (G6/G7, rule 14)
 
-<TABLE: determination + per-criterion statuses, keeper / control / arm;
-C3a per year; C3c counts; per-class TWh deltas (the 1:1 fossil displacement);
-mean λ>
+| | control | arm |
+|---|---|---|
+| **Determination** | **CALIBRATED** (C3c the lone ledgered caveat) | **NOT-YET** (`price_mean`, `price_tail`) |
+| C1 / C2 / C3b / C4 / C6 / C8 | PASS | PASS |
+| C3a mean LMP | +5.3 / −2.6 / −8.1 % (all PASS) | +6.8 / −1.7 / **−10.8 % FAIL (2025)** |
+| C3c >$300 h (model vs RT) | 1/0/0 vs 10/13/42 — CAVEAT (ledgered) | 1/0/0 vs 10/13/42 — **FAIL** |
+| mean λ $/MWh | 33.96 / 37.13 / 61.04 | 34.45 / 37.46 / 59.24 |
 
-## §5 — Determination and the pre-registered promotion rule
+**C3c's evidence is BIT-IDENTICAL between the arms** (1/0/0 h in both). It
+reads FAIL on the arm only because the rule-22 standing rule's guard (a) —
+*lone failure only* — is silenced by the C3a failure. No C3c evidence moved.
 
-<VERDICT under prereg §5: G1/G2/G6/G8 status; the promotion decision;
-escalation state if any. The basis is INPUT ACCURACY (rules 14 + 1), not the
-residual and not the volume statistic.>
+**The C3a story is the nyiso-108 pattern, transposed to 2025.** Removing
+phantom 2023/2024 hydro lifts those years' prices (+$0.49 / +$0.33): 2023
++5.3 → +6.8 % (in-band — nyiso-109's zonal margin anchor, which closed the
++10.2 % breach the 2026-07-31 arm exposed, holds), 2024 **improves** −2.6 →
+−1.7 %. Restoring the missing 3.01 TWh of real 2025 hydro softens 2025 by
+−$1.79/MWh: −8.1 → **−10.8 %**, 0.8 pp past the −10 % band edge. The
+truncated input was **masking ~2.7 pp of a real, pre-existing 2025
+under-pricing**: the keeper's in-band C3a-2025 was partly an artifact of
+3 TWh of missing zero-MC energy being priced by fossil units. The root cause
+is not the hydro input — it is the **already-open 2025 offer-level object**
+(`DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md`, owner Q1
+pending: $6.57 of an $8.07/MWh gap), whose true magnitude this repair
+reveals to be ~$1.79/MWh larger than the truncated-input keeper showed.
+
+Side effects: fossil displacement is 1:1 with the hydro delta in every year —
+2023 +1.57 TWh gas (CC_REGULAR +0.69, CC_CHP +0.45, ST_GAS +0.33), 2024
++1.11 TWh gas, 2025 −3.15 TWh fossil (CC_REGULAR −1.29, ST_GAS −0.75,
+CC_CHP −0.73, CT/ST/oil/import the remainder). Slack and dump 0.0 in both
+arms.
+
+## §5 — Determination under the pre-registered promotion rule: NO PROMOTION — ESCALATED TO THE OWNER
+
+Prereg §5: promote iff G1, G2, G6, G8 all pass. **G1 FAILS** (HEAD drift live
+on 2023/2024, degenerate-reshuffle class) and **G6 FAILS** (determination
+downgrade CALIBRATED → NOT-YET on C3a-2025). Per the prereg's §5.3 — *any
+determination downgrade or loss of the frontier basis escalates to the owner
+and is never self-adjudicated* — **the keeper is UNCHANGED**
+(`2026-08-22-nyiso-152-duty-complete`), no re-key, no D-5(b) write, the
+frontier block untouched, and the decision is the owner's. Both runs are
+registered either way (rule 15).
+
+**What rule 14 says, and what it does not.** The basis of this repair is
+INPUT ACCURACY: the truncated 2025 vintage is *wrong* (2.0 % plant retention,
+falsified independently by P-63 to within 0.6–1.3 % of EIA-930), and the
+worse 2025 fit under the accurate input is a **discovered defect** in the 2025
+price level, not a reason to keep the wrong input. This session does not
+revert the finding, soften the backfill, or add any compensating adjustment —
+and equally it does not overwrite a CALIBRATED, frontier-ratified keeper with
+a NOT-YET run on its own authority. The precedent is exact: nyiso-108's
+identical trade (C3a-2023 +8.6 → +10.2 %) was promoted only by **explicit
+owner override** of its own prereg, and the successor session (nyiso-109)
+closed the exposed root cause on measured grounds within a day.
+
+**The owner's decision, framed:**
+
+1. **Promote the arm** (the nyiso-108 precedent): accept NOT-YET on C3a-2025
+   −10.8 % as a discovered defect carried openly, with the 2025 offer-level
+   object (already owner-court) as the named successor — its magnitude is now
+   known to be ~$1.79/MWh larger than the truncated-input baseline showed.
+   This is the rule-1/rule-14 structurally-faithful choice; it costs the
+   CALIBRATED determination and the frontier basis until the 2025 level
+   object closes.
+2. **Hold the keeper, charter the 2025 level root cause first** (the
+   sequencing choice): the keeper stays CALIBRATED on the truncated input —
+   with this finding on record explicitly stating that its C3a-2025 −8.1 %
+   carries ~2.7 pp of truncation masking — and the repair is re-armed
+   in the same A/B as the 2025 offer-level fix, where the two together are
+   expected to land in-band. Honest only because this finding is registered
+   and the masking is now on the record.
+3. Also on the table: the **G1 drift** — the control (registered,
+   CALIBRATED, determination-identical to the keeper criterion-for-criterion)
+   is a valid re-key target under the nyiso-128b stale-baseline precedent if
+   the owner wants the designated keeper to reproduce at HEAD.
 
 ## §6 — What this changes on the record
 
-<matrix cell update; keeper re-key if promoted (D-5(b) re-verification);
-registration ids; what remains open>
+* **Registered:** `2026-08-25-nyiso-155-hydro-control` (CALIBRATED) and
+  `2026-08-25-nyiso-155-hydro-repair` (NOT-YET), full 2023–2025 span each
+  (rule 16), bundles `nyiso155_hydro_control` / `nyiso155_hydro_repair`.
+  Automatic top-15 retention pruned `2026-08-19-nyiso-146b-reserve-duty` and
+  `-reserve-inert`.
+* **Keeper UNCHANGED**; no shard re-key; frontier block untouched; the
+  promotion decision is escalated to the owner (§5).
+* **Matrix:** `hydro_vintage_input_repair` NYISO cell **K → O** (LIVE,
+  unrefuted, armed on no keeper — the nyiso-128 solar-basis convention), with
+  the silent de-arm and this A/B in the evidence. The keeper never stopped
+  being *scored* correctly — the cell letter was what had gone stale.
+* **The silent de-arm is on the record** (§2): an armed keeper mechanism
+  left the lineage with no decision, because the lineage-fidelity checks are
+  blind to `solve_and_persist` kwargs. Successor guard (own charter): extend
+  keeper-lineage fidelity checks to the full kwarg surface.
+* **The 2025 offer-level object's true magnitude** is ~$1.79/MWh larger than
+  the truncated-input baseline showed (§4.4) — recorded for the owner's
+  pending Q1 on `DECISION-CARD-nyiso148-2025-level-remainder`.
+* **No out-of-training year touched**; the holdout spend freeze is ACTIVE and
+  untouched; zero fitted scalars; no new `ScenarioConfig` field; no derive
+  script edited.
 
 ---
 
