@@ -11868,3 +11868,39 @@ NOT touched — rule 25 lane isolation; left for the CAISO lane.
 
 **Session consumed the ercot-234 shorthand. Next shorthand: ercot-235**
 (ercot-199 remains unclaimed)
+
+---
+
+## ercot-235 (2026-08-25) — THE 2023-DISCRETE-CONFIG CHARTER (owner order, in-session): solve 2023 FOR ITS OWN CONDITIONS; rule-16 waiver INVOKED; Q-B/R-A SUPERSEDED BY THE OWNER for 2023-targeted rounds
+
+**The owner's order, verbatim (2026-08-25, in-session):** *"We are only
+supposed to be testing 2023.. ignore rule 16 in the handoff 2023 can have
+its own discrete config bc of ECRS 2023 different market conditions ugh why
+can't you just try to solve 2023 for its own conditions and ignore
+2024/2025."*
+
+**What this changes, recorded before any execution:**
+- **Rule 16 `[R-ALLYEARS]` is WAIVED for this lane by owner order** — the
+  waiver pre-granted on regime grounds at ercot-231 (ECRS introduced
+  2023-06-10; 2023's price-formation regime differs from 2024/2025) and
+  UNUSED there is now INVOKED: 2023-only solves and a 2023-only registered
+  run are licensed.
+- **Q-B FINAL and R-A are SUPERSEDED BY THE OWNER for this charter.** Both
+  were owner-signed rulings barring C3a/C3b-2023-targeted rounds; the
+  owner's direct order to "try to solve 2023 for its own conditions" is a
+  later owner decision that re-opens exactly that spend. Recorded here as
+  the supersession record; the rulings' text stays in their cards unedited.
+- **"Discrete config"** = the 2023 run carries its OWN ScenarioConfig values
+  (the run_config records them — rule 24's registry is the run itself);
+  2024/2025 are neither solved nor scored in this lane and the 3-year keeper
+  `2026-08-25-234-eastex-identity` stands untouched as the cross-year
+  recipe.
+- Rules 22 (years ⊂ training window), 25 (ERCOT-only), 27 (push
+  integrity), 15 (register every run) and the rule-1 discipline that the
+  sanctioned tuning surface is the offer curve REMAIN in force. DOF entries
+  identified on the 2023 residual are ledgered as residual-identified, per
+  the existing ledger convention.
+
+(Entry continues below with the campaign's rounds.)
+
+**Next shorthand: ercot-236** (ercot-199 remains unclaimed)
