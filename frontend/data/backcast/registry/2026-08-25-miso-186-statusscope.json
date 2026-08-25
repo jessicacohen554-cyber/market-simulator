@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-25-miso-186-statusscope",
+  "label": "miso 186 statusscope",
+  "date": "2026-08-25",
+  "shorthand": "miso-186-statusscope",
+  "definition": "miso-186 ARM: unit-outage events scoped to the fleet's OP capacity basis (single delta; adjudication PREREG-miso186)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-25-miso-186-statusscope.js",
+  "bundle": "results/calibration/miso186_dir_B"
+}

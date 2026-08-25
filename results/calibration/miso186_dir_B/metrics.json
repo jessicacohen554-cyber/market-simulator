@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-19-miso-170-control",
+  "run_id": "2026-08-25-miso-186-statusscope",
   "iso": "MISO",
-  "label": "miso 170 control",
+  "label": "miso 186 statusscope",
   "target_years": [
     2023,
     2024,
@@ -18,12 +18,14 @@
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
   ],
-  "notes": [],
+  "notes": [
+    "C8 2025 ST_GAS: grounded above budget \u2014 33.7% forced (6.537 of 19.3913 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.979 (\u22650.8) & off-peak CV ratio 1.482 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -58,7 +60,7 @@
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "FAIL"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -94,13 +96,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 16,
+      "pass": 15,
       "total": 16
     },
     "free": {
-      "pass": 12,
+      "pass": 11,
       "total": 12
     },
-    "headline": "C1 all 16/16 \u00b7 free 12/12"
+    "headline": "C1 all 15/16 \u00b7 free 11/12"
   }
 }
