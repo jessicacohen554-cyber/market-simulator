@@ -60,3 +60,22 @@ scaled `offer_curve_by_group`, replays the keeper meta 2023-only via
 `replay_keeper.py --set`, scores officially). Official scorer already
 validated against the keeper this session. Sweep bundles are LOCAL
 probe bundles (W-2, gitignored) except the registered winner.
+
+## ROUND 1 RESULT + ROUND 2 GRID (amendment, fixed before any round-2 solve)
+
+Round-1 measured: R1 (3.0/1.0) **C3a −34.5 % / C3b 0.622 / C3c 155** —
+CLEAN on all kills (coal +0.094 TWh, no new shed, off-season intact; spur
+band 60 reported); R2 (3.0/1.75) −27.6 %/0.580 — **KILLED, G-COAL148
++6.04 TWh**; R3 (5.0/2.5) −16.8 %/0.465 — **KILLED, G-COAL148 +8.38 TWh +
+G-OFFSEASON**. Diagnosis: `econ_high` scaling buys level by re-ordering the
+merit stack (coal over-runs measured generation by 6–8 TWh) — the corrupt
+lever, excluded from round 2; the `peak`-band family is clean and the
+remaining gap is the deep tail (model 24 h ≥ $500 vs actual 102).
+
+**Round 2 (three further 2023-only solves): k_eh = 1.0 fixed; k_peak ∈
+{6.0, 10.0, 14.0}.** Same kills, same reporting. **Selection: over ALL
+clean points from both rounds** (R1 + round-2 survivors), min |official
+C3a-2023|, C3b tiebreak; the overall winner is the run registered under
+round 1's registration clause (R1's conditional winner status transfers —
+nothing is registered until the campaign's rounds in this session
+conclude).
