@@ -11438,7 +11438,7 @@ class ScenarioConfig:
     # True in backcast mode, the export-direction capability of the transfer
     # links that carry ERCOT's published Generic Transmission Constraints
     # (PNHNDL -> Panhandle->North, WESTEX -> the two West export links,
-    # NE_LOB -> Northeast->North; constants.ERCOT_GTC_LINK_MAP) follows the
+    # EASTEX -> Northeast->North; constants.ERCOT_GTC_LINK_MAP) follows the
     # measured hourly GTC limit series curated from the NP6-86 "SCED Shadow
     # Prices and Binding Transmission Constraints" archive (gtc-limits clean
     # datatype) instead of the single static ttc_mw. Hours where a constraint

@@ -72,7 +72,8 @@ WZ = ["COAST", "EAST", "FAR_WEST", "NORTH", "NORTH_C", "SOUTHERN", "SOUTH_C", "W
 # eia_loader._ERCOT_LOAD_ZONE_GROUPS (the NP6-345 archive column names differ
 # from the eia_loader keys: FAR_WEST==FWEST, NORTH_C==NCENT, SOUTH_C==SCENT,
 # SOUTHERN==SOUTH). The EAST weather zone is carved out as its own Northeast
-# model zone (behind the NE_LOB export limit), not folded into North. ERCOT has
+# model zone (behind the EASTEX East-Texas export limit), not folded into
+# North. ERCOT has
 # no Panhandle weather zone, so the Panhandle transmission zone receives no load
 # here (its share stays 0.0). FAR_WEST stays folded into West: the Far_West
 # (Permian) split was investigated and rejected, so the committed topology keeps

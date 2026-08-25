@@ -148,8 +148,8 @@ def _ercot_config() -> ISOConfig:
     exporters sit behind explicit stability limits and can congest. Load
     shares are derived from ERCOT NP6-345-CD actual load by weather zone
     by aggregating the 8 weather zones onto the 7 transmission zones (the
-    EAST weather zone forms its own Northeast zone behind the NE_LOB export
-    limit; see below); see scripts/data/derive_load_shares.py. Panhandle
+    EAST weather zone forms its own Northeast zone behind the EASTEX
+    East-Texas export limit; see below); see scripts/data/derive_load_shares.py. Panhandle
     carries no modeled load: ERCOT has no Panhandle weather zone, and the
     small Lubbock load it would hold is reported inside the West weather
     zone and therefore currently lands in the West transmission zone.
@@ -175,14 +175,20 @@ def _ercot_config() -> ISOConfig:
     # absorbed into South (true 0.079948 -> 0.0800, largest-remainder) so the
     # literals still sum to exactly 1.0. Fallback-only, so this is low-risk.
     #
-    # Northeast is split out of the old North zone to capture the NE_LOB generic
-    # transmission constraint -- a ~1,300 MW export limit (binds 17.4% of SCED
-    # intervals, 2023-24) on a generation-rich lobe of NE Texas (the EAST weather
-    # zone): ~4.2 GW of coal (Martin Lake, Welsh, Pirkey) + ~3.9 GW of gas
-    # (Tenaska Gateway CC, Wilkes, ...) serving only ~3.4% of system load. The
-    # six-zone model let all of that pour into North as if unconstrained, over-
-    # running Martin Lake (PRB) and mis-dispatching the NE CCs; the explicit
-    # zone + NE_LOB link makes the trapped-generation congestion physical.
+    # Northeast is split out of the old North zone to make the East-Texas
+    # trapped-generation congestion physical: a generation-rich lobe of NE
+    # Texas (the EAST weather zone) -- ~4.2 GW of coal (Martin Lake, Welsh,
+    # Pirkey) + ~3.9 GW of gas (Tenaska Gateway CC, Wilkes, ...) serving only
+    # ~3.4% of system load -- behind ERCOT's East Texas GTC (EASTEX, "a
+    # voltage stability limit associated with flows out of the East Texas
+    # area", i.e. around Tyler/Lufkin/Nacogdoches; market notice #1557). The
+    # six-zone model let all of that pour into North as if unconstrained,
+    # over-running Martin Lake (PRB) and mis-dispatching the NE CCs. (The
+    # split was ORIGINALLY built around the NE_LOB series under a name
+    # misreading — NE_LOB is the Valley's North Edinburg-Lobo corridor —
+    # repaired at ercot-234 under signed card Z-A; the zone itself stands on
+    # the EASTEX physics + the ERCOT-76 measured import evidence. See
+    # docs/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md.)
     zones = [
         Zone(name="West", iso="ERCOT", load_share=0.1494),
         Zone(name="Panhandle", iso="ERCOT", load_share=0.0),
@@ -215,20 +221,28 @@ def _ercot_config() -> ISOConfig:
     # have no clean zonal-GTC match (ERCOT 2022 Constraints and Needs Report).
     #
     # Caveat: some ERCOT GTCs are intra-zone pockets this topology still cannot
-    # represent -- VALEXP (Rio Grande Valley, binds 5.9%), EASTEX (0.5%), TRDWEL
-    # (a single line). The biggest one, NE_LOB (NE Texas export, ~1,300 MW, binds
-    # 17.4%), is now modeled explicitly as the Northeast->North link below.
+    # represent -- the Valley family inside South (NE_LOB "North Edinburg -
+    # Lobo", the record's most-binding GTC; VALEXP; NELRIO; RV_RH), TRDWEL
+    # (a single line), MCCAMY. The East Texas GTC (EASTEX) IS representable
+    # and is modeled explicitly as the Northeast->North link below
+    # (ercot-234 card Z-A repair; before 2026-08 this link wrongly carried
+    # the NE_LOB series under a name misreading).
     # Sources: ERCOT NP6-86-CD SCED Shadow Prices and Binding Transmission
-    # Constraints (2023-2024); ERCOT 2022 Constraints and Needs Report.
+    # Constraints (2023-2024); ERCOT 2022 Constraints and Needs Report; ERCOT
+    # GTC Workshop definitions (2020-02-24) + market notice #1557 for EASTEX.
     links = [
         TransferLink(from_zone="West", to_zone="North", ttc_mw=7300.0),
         TransferLink(from_zone="West", to_zone="South_Central", ttc_mw=2700.0),
         TransferLink(from_zone="Panhandle", to_zone="North", ttc_mw=2680.0),
-        # NE_LOB: the NE-Texas export limit (~1,300 MW, binds 17.4% of 2023-24
-        # SCED intervals) capping the trapped Martin Lake / NE-CC lobe. A GTC
+        # EASTEX: the East Texas export limit capping the trapped Martin Lake
+        # / NE-CC lobe (2,300 MW = the NP6-86 mean-limit-at-bind pooled
+        # 2023+2024, per-year 2,386.5 / 1,916.7, derived per
+        # PRECOMMIT-ercot234 P-2 with the instrument validated on
+        # WESTEX +0.20% / PNHNDL +0.05%; 2025 context: 3 binding rows —
+        # ERCOT ran the constraint effectively unconstrained). A GTC
         # is an EXPORT stability limit, not an import rating (data/gtc.py), so
         # the boundary is a one-way pair (the Far_West aad79c1 asymmetric-
-        # rating recipe): export keeps the measured NE_LOB limit-at-bind;
+        # rating recipe): export keeps the measured EASTEX limit-at-bind;
         # import carries the boundary's measured carrying capability. The old
         # symmetric 1,300 MW import bound was directly measured-refuted
         # (ERCOT-76): on 2024-05-07 h20 the real lobe imported >= 1,317 MW
@@ -245,7 +259,7 @@ def _ercot_config() -> ISOConfig:
         TransferLink(
             from_zone="Northeast",
             to_zone="North",
-            ttc_mw=1300.0,
+            ttc_mw=2300.0,
             is_bidirectional=False,
         ),
         TransferLink(

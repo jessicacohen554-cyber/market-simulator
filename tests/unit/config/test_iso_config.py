@@ -31,12 +31,14 @@ class TestISOConfig(unittest.TestCase):
         ercot = get_iso_config("ERCOT")
         self.assertEqual(ercot.n_links, 10)
 
-    def test_ercot_ne_lob_link_present(self):
+    def test_ercot_northeast_link_present(self):
         """The NE boundary is an asymmetric one-way pair (ERCOT-76).
 
-        Export keeps the measured NE_LOB stability limit (~1,300 MW); import
-        carries the measured dark-hour carrying capability (1,788 MW pooled
-        2023-2025 maximum of EAST-zone load minus CAMPD local gross).
+        Export keeps the measured EASTEX (East Texas GTC) limit-at-bind
+        (2,300 MW pooled 2023+2024, ercot-234 card Z-A — formerly the
+        mis-attributed NE_LOB series' 1,300); import carries the measured
+        dark-hour carrying capability (1,788 MW pooled 2023-2025 maximum of
+        EAST-zone load minus CAMPD local gross).
         """
         ercot = get_iso_config("ERCOT")
         ne = {
@@ -47,7 +49,7 @@ class TestISOConfig(unittest.TestCase):
         self.assertEqual(len(ne), 2)
         exp = ne[("Northeast", "North")]
         imp = ne[("North", "Northeast")]
-        self.assertEqual(exp.ttc_mw, 1300.0)
+        self.assertEqual(exp.ttc_mw, 2300.0)
         self.assertFalse(exp.is_bidirectional)
         self.assertEqual(imp.ttc_mw, 1788.0)
         self.assertFalse(imp.is_bidirectional)

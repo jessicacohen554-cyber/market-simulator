@@ -10,10 +10,14 @@ in ``iso_configs._ercot_config``:
     WESTEX  -> West->North + West->South_Central (split ~8:3)
     PNHNDL  -> Panhandle->North
     N_TO_H  -> North->Houston
+    EASTEX  -> Northeast->North (the East Texas GTC; ercot-234 card Z-A)
 
-The most-binding ERCOT GTCs (NE_LOB, VALEXP, EASTEX, TRDWEL) are intra-zone
-pockets the six-zone aggregation cannot represent; they are reported for
-context but do not map to an inter-zone link.
+The most-binding ERCOT GTCs (NE_LOB "North Edinburg - Lobo" and the rest of
+the Valley family, plus TRDWEL) are intra-zone pockets the zonal aggregation
+cannot represent; they are reported for context but do not map to an
+inter-zone link. (NE_LOB was mapped to Northeast->North until 2026-08 under
+a name misreading — repaired at ercot-234, see
+docs/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md.)
 
 Archives are read from ``data/raw/iso-specific-transmission`` (the full
 2023-2024 monthly set) and, for backward compatibility, ``data/reference``.
@@ -53,7 +57,11 @@ _USECOLS = ["SCEDTimeStamp", "ConstraintName", "ShadowPrice", "Limit", "FromStat
 # (West->North and West->South_Central) in this ratio.
 WESTEX_SPLIT = {"West->North": 8.0 / 11.0, "West->South_Central": 3.0 / 11.0}
 # GTC -> the single model link it maps to (WESTEX handled separately above).
-GTC_TO_LINK = {"PNHNDL": "Panhandle->North", "N_TO_H": "North->Houston"}
+GTC_TO_LINK = {
+    "PNHNDL": "Panhandle->North",
+    "N_TO_H": "North->Houston",
+    "EASTEX": "Northeast->North",
+}
 
 
 def _archive_paths() -> list[Path]:
