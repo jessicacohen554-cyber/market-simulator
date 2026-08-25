@@ -121,6 +121,46 @@ promotion basis (the ercot-215/221/231 pattern). Run id
 `2026-08-25-ercot234-eastex-identity`; registration, keeper re-key, matrix
 §5.1 + ERCOT-shard stamps, and `audit_keepers` follow in the same session.
 
+## AMENDMENT 1 (recorded, not quietly applied — the ercot-192 convention): the P-1 NE_LOB leg FIRED, and its own premise is what failed
+
+Executed after push (blob `ddbcde2`), the P-1 reproduction read: WESTEX
+**10,020.2 (+0.20 %) PASS**, PNHNDL **2,681.3 (+0.05 %) PASS**, NE_LOB
+**1,107.3 (−14.82 %) FAIL** vs the 1,300 seed. Diagnosis, at full magnitude:
+the two statics that `derive_ttc_limits.py` actually derives
+(`GTC_TO_LINK`/`WESTEX_SPLIT` cover WESTEX, PNHNDL, N_TO_H only) reproduce
+essentially exactly, validating the instrument AND the parquet form of the
+record. **NE_LOB was never in the script's derived-links set, and NO natural
+statistic of this record yields 1,300** (mean@bind pooled 1,107.3; p50@bind
+1,245.3; mean-active 1,161.2; p50-active 1,259.9; per-year maxima
+1,408/1,655): the "~1,300 MW" static was a hand-rounded eyeball, not an
+instrument output. The leg's premise — that 1,300 was instrument-derived and
+so must reproduce — is false; what the leg was protecting (parquet record ≡
+the record that seeded the derived statics) is PROVEN by the two true
+reproductions. The firing is therefore recorded as **additional evidence of
+the NE_LOB attribution's sloppiness** (an unsourced static beside a
+misread name), the instrument is adjudicated VALIDATED, and P-2 proceeds.
+The fired leg is named again in the FINDING and the promotion record. (The
+replaced static is moot in the arm either way — the link's static becomes
+the EASTEX-derived value.)
+
+## PHASE-0 VERDICT (executed after push, per P-2/P-3)
+
+- **P-2 static:** EASTEX mean-limit-at-bind pooled 2023+2024 = **2,298.4 →
+  2,300 MW** (per-year: 2023 2,386.5 on 828 binding rows; 2024 1,916.7 on
+  191; 2025 context 1,524.9 on 3).
+- **P-3 verdict: (a)+(b) MET → Z-A, overlay armed.** (a) the definitions
+  deck (2020-02-24): "a voltage stability limit associated with flows out of
+  the East Texas area". (b) ERCOT market notice archive #1557 (EASTEX
+  creation, effective 2017-11-02): the GTC manages "voltage instability
+  during various double-circuit outages" arising from "transmission outages
+  on the 345kV system in East Texas **around Tyler, Lufkin and
+  Nacogdoches**" — all inside the model's Northeast carve
+  (`zone_assignment.py`: Tyler / Longview / Texarkana / Paris / Lufkin;
+  lat 31.3–34.0, lon −95.55–−93.0), placing the boundary on no other model
+  zone. A further notice (W-A111821-01, 2021-12-02) moved EASTEX GTLs to
+  real-time VSAT calculation — consistent with the measured record's
+  wide hourly limit variation.
+
 ## Fences
 
 Years ⊂ {2023, 2024, 2025} (rule 22); ERCOT-only (rule 25); Q-B/R-A stand;
