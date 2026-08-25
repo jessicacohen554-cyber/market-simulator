@@ -8631,3 +8631,84 @@ only; MISO holds neither marker; freeze untouched. D-4 sharpened in BOTH
 directions: NOT-YET rests on a real, floor-quantified defect (not an
 artifact), AND the queue is no longer empty (the rule-23-gated ladder-tail
 question + the owner adjudication it needs). Next number: **miso-184.**
+
+## miso-184 (2026-08-24) — the rule-23 ladder-tail adjudication EXECUTED: the scarce-tail failure is REAL (the ladder reproduces 7% of its own target flow in the 2025 scarce set) but it is NOT the price basis — V-DEFECT-COUPLING, the repair license REFUSED by the frozen mapping. Keeper UNCHANGED
+
+**Keeper UNCHANGED: `2026-08-22-miso-177-rho-measured` (`miso177_rho_B`).**
+NO LP, nothing armed, no `ScenarioConfig` field, the ladder NOT re-derived,
+no run registered (rule 15 not engaged). Determination unchanged: NOT-YET on
+C3a-2025 alone, C3c the single ledgered caveat. Executes the miso-183 §8
+item (5) queue head as the owner-chartered rule-23 adjudication; the owner
+engagement and the conditional repair + A/B license are recorded in
+`PREREG-miso184-south-export-ladder-tail-2026-08-24.md` (committed `06bd675`
+BEFORE any adjudicating quantity; frozen instrument `1cc85a4` before it ran).
+Records: `FINDING-miso184-export-ladder-tail-adjudication-2026-08-24.md`;
+probe `scripts/probes/_miso184_ladder_tail_methodology.py` →
+`_miso184_ladder_tail_methodology.json`. Matrix: new row + MISO cell
+**`miso_south_export_ladder_rt_tail` = `R`** + §5.4 queue stamp, in-session.
+
+**Leg A — the defect is ESTABLISHED on the derivation's own construction.**
+The registered South export ladder, driven by the measured DA it was derived
+against (the derive's own offline-P9 convention), reproduces **7.0 %** of its
+own target flow in the 2025 scarce set — sim +0.096 vs measured +1.368 GW,
+GAP **+1.272 GW** (lines: ≥ 0.5 GW and ≤ 50 %) — while matching the ANNUAL
+flow near-perfectly (+1.081 vs +1.031 GW; P9 volume within 1.7 %, duration
+RMSE 129–155 MW). 2023 concurs (GAP +0.765, 23.8 %); 2024 reported-only
+concurs (+0.674, 21.8 %). The failure is purely the scored tail — exactly
+the miso-183 §5 suspicion, now measured.
+
+**Leg C — but the basis is NOT the defect.** As-armable re-derivations under
+the frozen Q-Q machinery (cents rounding, no-wash clamp vs the unchanged DA
+import ladder): every admissible zero-parameter rebasis **LOWERS every
+export band in every year** — 2025 top band RT-hub $47.08 / South-zone-DA
+$42.08 / South-zone-RT $37.23 vs the registered $53.00 — because at the
+measured export-depth durations (d₁ = 0.79–0.90) every admissible price
+distribution's quantile sits below the hub DA's. The charter's named RT-hub
+candidate carries **0.000 GW** of scarce-tail export in all three years (an
+anti-repair: every sink strictly lower, so the LP export set shrinks at any
+internal price; it also fails 2023 non-inversion), and the best candidate
+(South-zone DA) reaches **11 %** of the measured tail against the 50 %
+repair line. The no-wash clamp never fired.
+
+**The mechanism, measured:** the South seam's export is **price-INELASTIC**
+(Spearman |r| ≤ 0.19 against hub DA/RT and South-zone DA/RT alike; the
+derive's own P9 hourly correlation was already ~0) and **DEEPENS under
+scarcity at every band** in 2025 (c_k > d_k for all 8; c₁ 0.851 vs d₁
+0.793). No monotone willingness-to-pay sink ladder driven by any single
+price series can represent an export that persists at the top of every
+price distribution — the PREREG §1 a-priori representability frame,
+confirmed arithmetically (a Q-Q band follows the scarce set only at
+measured duration ≥ ~0.995; the deepest measured is 0.90).
+
+**Also NAMED, not built — the import side is the same defect mirrored:** the
+DA import ladder simulates +0.957 GW of 2025 scarce-set IMPORT (pair net
++0.862 GW INTO MISO vs measured −1.368 OUT, a ~2.2 GW tail miss on the
+derive's own diagnostic); driven by RT it reaches +2.202 GW — the offline
+mirror of the keeper's +2.1 GW tail over-import (miso-178).
+
+**Disclosures against interest:** the A/B never ran, so the charter's
+structural predictions were not LP-measured (the refusal rests on the
+derivation's own identification test, failed by 89–100 %; for B1/B3 the LP
+direction is bounded without solving); the orientation line c₁ ≥ d₁ fires
+only in 2025 (2023/24 thin slightly instead); three registered band values
+deviate from a fresh re-derivation by exactly one cent (quantile float
+jitter at the cents boundary — two on South/export, disclosed, registered
+values scored throughout); the probe's first run STOPped on those flips via
+a bare float `>` and was corrected to the PREREG's strict "> $0.01" line
+(`c584d08`, all other numbers identical); a max(DA,RT) composite was
+excluded by declaration, not measurement.
+
+**Successor roads (owner decision points), all outside this license:** (1)
+the miso-182 §6b data re-open of `miso_south_firm_export_block` `G` (this
+finding strengthens the case for that hunt without changing the refusal's
+grounds); (2) the upstream Midwest-stack internal-direction object — its
+falsifiable prediction unchanged (flip the scarce-hour RDT toward the
+measured 32/47 S→N record), with this session's PREREG §6 S-2/S-3 gate
+constructions ready-made for whichever session arms a candidate there; (3)
+a new state-conditioned export mechanism-in-kind (an owner charter, not a
+derive fix); (4) failing all three, the honest ~1.3 GW scarce-export
+model-class concession inside C3a-2025.
+
+Rule 22: 2023–2025 only; MISO holds neither marker; freeze untouched; no
+re-key owed. Rule 23: the ladder stands NOT re-derived. Rule 27: exact
+bytes, every pushed blob ≥ 300 lines verified. Next number: **miso-185.**
