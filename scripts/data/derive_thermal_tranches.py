@@ -59,6 +59,16 @@ per ``(plant_code, plant_group)``. Plants with too little run-time to set a
 reliable floor are written with ``status != ok`` and keep the model's CSV/class
 default.
 
+Every derive additionally writes a **vintage sidecar**
+``thermal_tranches_{ISO}.meta.json`` next to the CSV (xiso-6): the emitting
+group sets in force (:data:`_ONLINE_FRAC_GROUPS` et al.), the column set, the
+per-group coverage census and the CSV's sha256 — so "which groups was this
+file's vintage emitting?" is a one-line read (see
+``results/calibration/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md``).
+``--backfill-sidecar`` writes the DESCRIPTIVE form of the same sidecar for an
+already-committed artifact without touching its bytes or running any
+derivation.
+
 ``--chp-floors-from PATH`` consumes the CHP steam-following floors
 (``chp_pmin_cf`` / ``chp_sector`` and the ``eia923_cf`` fallback rows) from a
 previously committed artifact instead of re-deriving them, so a re-derivation
@@ -71,6 +81,7 @@ Usage:
     python scripts/data/derive_thermal_tranches.py --iso ERCOT --years 2023 2024
     python scripts/data/derive_thermal_tranches.py --iso CAISO --years 2024 2025 \
         --chp-floors-from data/raw/_processed-legacy/thermal_tranches_CAISO.csv
+    python scripts/data/derive_thermal_tranches.py --iso PJM --backfill-sidecar
 """
 
 from __future__ import annotations
@@ -420,6 +431,126 @@ _PEAKING_CAP: float = 25.0
 _PEAKING_BASE_PCTILE: float = 95.0
 _PEAKING_MAX_PCTILE: float = 99.5
 
+# ---------------------------------------------------------------------------
+# Vintage sidecar (xiso-6). Every derive writes thermal_tranches_<ISO>.meta.json
+# next to the CSV, recording WHICH group sets the deriver was emitting when the
+# file was written — the question whose unanswerability produced the xiso-5
+# non-monotone vintage ladder (166 status="ok" rows blank in groups a HEAD
+# re-derivation would populate; FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md
+# §1/§3, and its §6 option 4 names this stamp as the cheapest unblock). A
+# SIDECAR, not an in-file header: `campd_bins.thermal_tranche_overrides` reads
+# the CSV unconditionally under use_campd_bins (armed in every keeper), so any
+# change to the CSV bytes is a keeper-moving change in that ISO — the metadata
+# therefore lives in a separate file and the CSV stays byte-identical.
+_SIDECAR_SCHEMA_VERSION: int = 1
+
+# Columns that identify a row rather than carry a derived statistic; excluded
+# from the sidecar's per-column coverage census.
+_SIDECAR_IDENTITY_COLUMNS: tuple[str, ...] = (
+    "plant_code",
+    "plant_group",
+    "name",
+    "status",
+)
+
+# Vintage note stamped by `--backfill-sidecar` (descriptive mode). The
+# emitting-group sets in force when a legacy artifact was derived are NOT
+# recoverable from its bytes — recorded honestly as unknown, never inferred.
+_BACKFILL_NOTE: str = (
+    "DESCRIPTIVE BACKFILL (xiso-6, 2026-08-25): this sidecar records the "
+    "observed column set and per-group populated counts of the committed CSV "
+    "bytes only. The deriver group sets in force when the CSV was derived are "
+    "UNKNOWN — not recoverable from the file itself; see "
+    "results/calibration/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md "
+    "for the vintage adjudication. It makes no claim about what HEAD would emit."
+)
+
+
+def _sidecar_coverage(df: pd.DataFrame) -> dict[str, dict[str, list[int]]]:
+    """Per-column, per-group populated counts over the ``status == "ok"`` rows.
+
+    Returns ``{column: {plant_group: [populated, ok_rows]}}`` for every column
+    except the row-identity set (:data:`_SIDECAR_IDENTITY_COLUMNS`). "Populated"
+    means a non-null, non-empty cell as read back from the CSV, so the census
+    describes exactly what a consumer's ``pd.read_csv`` sees. Only ``ok`` rows
+    are counted: they are the rows that reached the deriver's full emit path,
+    so a blank there in an emitting group is the xiso-5 vintage signature
+    (``eia923_cf`` / ``chp_floor_only`` rows blank by design in most columns).
+    """
+    ok = df[df["status"] == "ok"]
+    out: dict[str, dict[str, list[int]]] = {}
+    for col in df.columns:
+        if col in _SIDECAR_IDENTITY_COLUMNS:
+            continue
+        by_group: dict[str, list[int]] = {}
+        for group, sub in ok.groupby("plant_group"):
+            filled = sub[col].notna() & (sub[col].astype(str).str.strip() != "")
+            by_group[str(group)] = [int(filled.sum()), int(len(sub))]
+        out[col] = by_group
+    return out
+
+
+def write_tranche_sidecar(
+    csv_path: Path,
+    *,
+    provenance: str,
+    groups_in_force: dict[str, list[str]] | None,
+    derive_invocation: dict | None,
+    note: str,
+) -> Path:
+    """Write ``<csv_path stem>.meta.json`` describing the artifact's vintage.
+
+    Reads the CSV back from disk (never the in-memory frame), so the sidecar
+    describes — and is hash-bound to, via ``artifact_sha256`` — the exact
+    committed bytes. Contents: the sidecar schema version, the artifact's
+    sha256 / row count / column order, the per-column ``ok``-row coverage
+    census (:func:`_sidecar_coverage`), the deriver identity, and a
+    ``vintage`` block. Two provenances:
+
+    - ``"derived"`` — written by a real deriver run: ``groups_in_force``
+      carries the emitting group sets (:data:`_ONLINE_FRAC_GROUPS` et al.) in
+      force at emit time, and ``derive_invocation`` the CLI parameters.
+    - ``"backfill-descriptive"`` — written by ``--backfill-sidecar`` over a
+      committed legacy artifact: both are ``None`` (recorded as unknown, per
+      :data:`_BACKFILL_NOTE` — a descriptive record, never an inference).
+
+    The JSON is deterministic (sorted keys, no timestamps): re-running the
+    same derive on the same inputs reproduces the same sidecar bytes.
+    """
+    import hashlib
+    import json
+
+    raw = csv_path.read_bytes()
+    df = pd.read_csv(csv_path)
+    vintage: dict[str, object] = {
+        "online_frac_groups": None,
+        "chp_groups": None,
+        "peaking_groups": None,
+        "thermal_groups": None,
+    }
+    if groups_in_force is not None:
+        vintage.update(groups_in_force)
+    vintage["note"] = note
+    record = {
+        "sidecar_schema_version": _SIDECAR_SCHEMA_VERSION,
+        "artifact": csv_path.name,
+        "artifact_sha256": hashlib.sha256(raw).hexdigest(),
+        "artifact_rows": int(len(df)),
+        "columns": [str(c) for c in df.columns],
+        "row_counts_by_status": {
+            str(k): int(v) for k, v in df["status"].value_counts().items()
+        },
+        "coverage_ok_rows": _sidecar_coverage(df),
+        "deriver": "scripts/data/derive_thermal_tranches.py",
+        "provenance": provenance,
+        "derive_invocation": derive_invocation,
+        "vintage": vintage,
+    }
+
+    side_path = csv_path.with_suffix(".meta.json")
+    side_path.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
+    return side_path
+
 
 def _parasitic_factor_map() -> dict[int, float]:
     """Return ``{plant_id: net/gross factor}`` from the derived artifact."""
@@ -531,6 +662,14 @@ def main() -> None:
         "(chp_pmin_cf / chp_sector, incl. eia923_cf rows) are consumed "
         "verbatim instead of re-derived.",
     )
+    ap.add_argument(
+        "--backfill-sidecar",
+        action="store_true",
+        help="Write the DESCRIPTIVE vintage sidecar for an existing committed "
+        "artifact and exit — reads the CSV bytes only (no CAMPD, no "
+        "re-derivation, CSV untouched); the deriver group sets in force at "
+        "its derive time are recorded as unknown (xiso-6).",
+    )
     args = ap.parse_args()
     iso = args.iso.upper()
     from market_sim.config.paths import PROCESSED_DIR
@@ -538,6 +677,22 @@ def main() -> None:
     out_path = (
         Path(args.out) if args.out else (PROCESSED_DIR / f"thermal_tranches_{iso}.csv")
     )
+
+    if args.backfill_sidecar:
+        # Descriptive-only mode: stamps what is ON DISK. Rule 23
+        # [R-FROZEN-DERIVE] stays untouched — nothing is derived, the CSV
+        # bytes are read, hashed and left byte-identical.
+        if not out_path.exists():
+            ap.error(f"--backfill-sidecar: no artifact at {out_path}")
+        side = write_tranche_sidecar(
+            out_path,
+            provenance="backfill-descriptive",
+            groups_in_force=None,
+            derive_invocation=None,
+            note=_BACKFILL_NOTE,
+        )
+        print(f"wrote descriptive sidecar {side} (CSV bytes untouched)")
+        return
 
     states = campd.states_for_iso(iso)
     if not states:
@@ -804,6 +959,33 @@ def main() -> None:
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     ok.to_csv(out_path, index=False)
+    # Vintage sidecar (xiso-6): stamp WHICH group sets this run was emitting,
+    # so the artifact's vintage is a one-line read instead of source
+    # archaeology (the xiso-5 §3 proof re-derived it from the emit expression;
+    # its §6 option 4 names this stamp as the cheapest unblock). Written from
+    # the on-disk bytes just emitted, so the sha256 binds sidecar to CSV.
+    write_tranche_sidecar(
+        out_path,
+        provenance="derived",
+        groups_in_force={
+            "online_frac_groups": sorted(_ONLINE_FRAC_GROUPS),
+            "chp_groups": sorted(_CHP_GROUPS),
+            "peaking_groups": sorted(_PEAKING_GROUPS),
+            "thermal_groups": sorted(_THERMAL_GROUPS),
+        },
+        derive_invocation={
+            "iso": iso,
+            "years": [int(y) for y in args.years],
+            "chp_floors_from": args.chp_floors_from,
+        },
+        note=(
+            "group sets in force in scripts/data/derive_thermal_tranches.py "
+            "at emit time; blank cells in groups OUTSIDE online_frac_groups / "
+            "peaking_groups / chp_groups are BY DESIGN (e.g. CHP online_frac "
+            "stays blank — the CHP floor is the steam host, rule 19 "
+            "[R-ONE-MECH])"
+        ),
+    )
 
     pd.set_option("display.width", 200)
     pd.set_option("display.max_rows", 400)

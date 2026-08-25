@@ -1,0 +1,327 @@
+{
+  "artifact": "thermal_tranches_CAISO.csv",
+  "artifact_rows": 156,
+  "artifact_sha256": "4ed8ae722473634768483b47b5fd58425116905c90baafed2da21e94c91de3c3",
+  "columns": [
+    "plant_code",
+    "plant_group",
+    "name",
+    "status",
+    "online_hours",
+    "nameplate_mw",
+    "committed_pct",
+    "mustrun_pct",
+    "mustrun_online_pct",
+    "online_frac",
+    "p25_cf",
+    "median_cf",
+    "peaking_pct",
+    "chp_pmin_cf",
+    "chp_sector",
+    "chp_btm_pct",
+    "steam_level_cf"
+  ],
+  "coverage_ok_rows": {
+    "chp_btm_pct": {
+      "CC_CHP": [
+        0,
+        6
+      ],
+      "CC_REGULAR": [
+        0,
+        23
+      ],
+      "CT_CHP": [
+        0,
+        7
+      ],
+      "CT_PEAKER": [
+        0,
+        44
+      ],
+      "ST_GAS": [
+        0,
+        3
+      ]
+    },
+    "chp_pmin_cf": {
+      "CC_CHP": [
+        6,
+        6
+      ],
+      "CC_REGULAR": [
+        0,
+        23
+      ],
+      "CT_CHP": [
+        7,
+        7
+      ],
+      "CT_PEAKER": [
+        0,
+        44
+      ],
+      "ST_GAS": [
+        0,
+        3
+      ]
+    },
+    "chp_sector": {
+      "CC_CHP": [
+        6,
+        6
+      ],
+      "CC_REGULAR": [
+        0,
+        23
+      ],
+      "CT_CHP": [
+        7,
+        7
+      ],
+      "CT_PEAKER": [
+        0,
+        44
+      ],
+      "ST_GAS": [
+        0,
+        3
+      ]
+    },
+    "committed_pct": {
+      "CC_CHP": [
+        6,
+        6
+      ],
+      "CC_REGULAR": [
+        23,
+        23
+      ],
+      "CT_CHP": [
+        7,
+        7
+      ],
+      "CT_PEAKER": [
+        44,
+        44
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "median_cf": {
+      "CC_CHP": [
+        6,
+        6
+      ],
+      "CC_REGULAR": [
+        23,
+        23
+      ],
+      "CT_CHP": [
+        7,
+        7
+      ],
+      "CT_PEAKER": [
+        44,
+        44
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "mustrun_online_pct": {
+      "CC_CHP": [
+        6,
+        6
+      ],
+      "CC_REGULAR": [
+        23,
+        23
+      ],
+      "CT_CHP": [
+        7,
+        7
+      ],
+      "CT_PEAKER": [
+        44,
+        44
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "mustrun_pct": {
+      "CC_CHP": [
+        6,
+        6
+      ],
+      "CC_REGULAR": [
+        23,
+        23
+      ],
+      "CT_CHP": [
+        7,
+        7
+      ],
+      "CT_PEAKER": [
+        44,
+        44
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "nameplate_mw": {
+      "CC_CHP": [
+        6,
+        6
+      ],
+      "CC_REGULAR": [
+        23,
+        23
+      ],
+      "CT_CHP": [
+        7,
+        7
+      ],
+      "CT_PEAKER": [
+        44,
+        44
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "online_frac": {
+      "CC_CHP": [
+        0,
+        6
+      ],
+      "CC_REGULAR": [
+        0,
+        23
+      ],
+      "CT_CHP": [
+        0,
+        7
+      ],
+      "CT_PEAKER": [
+        0,
+        44
+      ],
+      "ST_GAS": [
+        0,
+        3
+      ]
+    },
+    "online_hours": {
+      "CC_CHP": [
+        6,
+        6
+      ],
+      "CC_REGULAR": [
+        23,
+        23
+      ],
+      "CT_CHP": [
+        7,
+        7
+      ],
+      "CT_PEAKER": [
+        44,
+        44
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "p25_cf": {
+      "CC_CHP": [
+        6,
+        6
+      ],
+      "CC_REGULAR": [
+        23,
+        23
+      ],
+      "CT_CHP": [
+        7,
+        7
+      ],
+      "CT_PEAKER": [
+        44,
+        44
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "peaking_pct": {
+      "CC_CHP": [
+        6,
+        6
+      ],
+      "CC_REGULAR": [
+        23,
+        23
+      ],
+      "CT_CHP": [
+        0,
+        7
+      ],
+      "CT_PEAKER": [
+        0,
+        44
+      ],
+      "ST_GAS": [
+        0,
+        3
+      ]
+    },
+    "steam_level_cf": {
+      "CC_CHP": [
+        6,
+        6
+      ],
+      "CC_REGULAR": [
+        0,
+        23
+      ],
+      "CT_CHP": [
+        7,
+        7
+      ],
+      "CT_PEAKER": [
+        0,
+        44
+      ],
+      "ST_GAS": [
+        0,
+        3
+      ]
+    }
+  },
+  "derive_invocation": null,
+  "deriver": "scripts/data/derive_thermal_tranches.py",
+  "provenance": "backfill-descriptive",
+  "row_counts_by_status": {
+    "eia923_cf": 73,
+    "ok": 83
+  },
+  "sidecar_schema_version": 1,
+  "vintage": {
+    "chp_groups": null,
+    "note": "DESCRIPTIVE BACKFILL (xiso-6, 2026-08-25): this sidecar records the observed column set and per-group populated counts of the committed CSV bytes only. The deriver group sets in force when the CSV was derived are UNKNOWN \u2014 not recoverable from the file itself; see results/calibration/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md for the vintage adjudication. It makes no claim about what HEAD would emit.",
+    "online_frac_groups": null,
+    "peaking_groups": null,
+    "thermal_groups": null
+  }
+}

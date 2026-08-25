@@ -28,7 +28,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     cc_steam_part_capacity: { cell: "." },
     cc_steam_part_reclass: { cell: "." },
     use_campd_bins: { cell: "K" },
-    thermal_tranche_artifact_coverage: { cell: ".", ev: "xiso-5 §4.4 (no artifact — hardcoded ERCOT maps)" },
+    thermal_tranche_artifact_coverage: { cell: ".", ev: "xiso-5 §4.4 (no artifact — hardcoded ERCOT maps); xiso-6 2026-08-25 (FINDING-xiso6-tranche-vintage-sidecar-2026-08-25.md): guard now hard-errors any per-plant artifact gate armed here (no artifact by design) — cell UNCHANGED" },
     plant_level_fleet: { cell: "." },
     p1_bidcost_pass: { cell: "K" },
     legacy_p2: { cell: "G" },

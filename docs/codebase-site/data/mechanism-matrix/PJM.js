@@ -28,7 +28,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     cc_steam_part_capacity: { cell: "." },
     cc_steam_part_reclass: { cell: "." },
     use_campd_bins: { cell: "K" },
-    thermal_tranche_artifact_coverage: { cell: "O", ev: "xiso-5 §3 (ST_GAS 0/10 code-proven vintage) + §4.3" },
+    thermal_tranche_artifact_coverage: { cell: "O", ev: "xiso-5 §3 (ST_GAS 0/10 code-proven vintage) + §4.3; xiso-6 2026-08-25 (FINDING-xiso6-tranche-vintage-sidecar-2026-08-25.md): vintage sidecar backfilled + arm-over-gap guard armed at bins_to_fleet — cell UNCHANGED" },
     plant_level_fleet: { cell: "K" },
     p1_bidcost_pass: { cell: "K" },
     legacy_p2: { cell: "." },

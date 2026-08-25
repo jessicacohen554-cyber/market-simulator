@@ -515,6 +515,7 @@ from market_sim.data.fleet.campd_bins import (  # noqa: F401
     _reserve_duty_cohort,
     apply_plant_emission_rates,
     apply_plant_emission_rates_v2,
+    assert_thermal_tranche_coverage,
     build_ramp_groups,
     campd_ct_run_band_ratios,
     campd_ct_run_lengths,

@@ -1,0 +1,271 @@
+{
+  "artifact": "thermal_tranches_NYISO.csv",
+  "artifact_rows": 78,
+  "artifact_sha256": "0dae176b8a46e24f0a887df9f730ee7bc6e1170c0719e036c440927d34bf497f",
+  "columns": [
+    "plant_code",
+    "plant_group",
+    "name",
+    "status",
+    "nameplate_mw",
+    "online_hours",
+    "committed_pct",
+    "mustrun_pct",
+    "p25_cf",
+    "median_cf",
+    "chp_pmin_cf",
+    "chp_sector",
+    "peaking_pct"
+  ],
+  "coverage_ok_rows": {
+    "chp_pmin_cf": {
+      "CC_CHP": [
+        14,
+        14
+      ],
+      "CC_REGULAR": [
+        0,
+        19
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        0,
+        17
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        0,
+        11
+      ]
+    },
+    "chp_sector": {
+      "CC_CHP": [
+        14,
+        14
+      ],
+      "CC_REGULAR": [
+        0,
+        19
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        0,
+        17
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        0,
+        11
+      ]
+    },
+    "committed_pct": {
+      "CC_CHP": [
+        14,
+        14
+      ],
+      "CC_REGULAR": [
+        19,
+        19
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        17,
+        17
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        11,
+        11
+      ]
+    },
+    "median_cf": {
+      "CC_CHP": [
+        14,
+        14
+      ],
+      "CC_REGULAR": [
+        19,
+        19
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        17,
+        17
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        11,
+        11
+      ]
+    },
+    "mustrun_pct": {
+      "CC_CHP": [
+        14,
+        14
+      ],
+      "CC_REGULAR": [
+        19,
+        19
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        17,
+        17
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        11,
+        11
+      ]
+    },
+    "nameplate_mw": {
+      "CC_CHP": [
+        14,
+        14
+      ],
+      "CC_REGULAR": [
+        19,
+        19
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        17,
+        17
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        11,
+        11
+      ]
+    },
+    "online_hours": {
+      "CC_CHP": [
+        14,
+        14
+      ],
+      "CC_REGULAR": [
+        19,
+        19
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        17,
+        17
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        11,
+        11
+      ]
+    },
+    "p25_cf": {
+      "CC_CHP": [
+        14,
+        14
+      ],
+      "CC_REGULAR": [
+        19,
+        19
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        17,
+        17
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        11,
+        11
+      ]
+    },
+    "peaking_pct": {
+      "CC_CHP": [
+        14,
+        14
+      ],
+      "CC_REGULAR": [
+        19,
+        19
+      ],
+      "CT_CHP": [
+        0,
+        1
+      ],
+      "CT_PEAKER": [
+        0,
+        17
+      ],
+      "ST_CHP": [
+        0,
+        1
+      ],
+      "ST_GAS": [
+        0,
+        11
+      ]
+    }
+  },
+  "derive_invocation": null,
+  "deriver": "scripts/data/derive_thermal_tranches.py",
+  "provenance": "backfill-descriptive",
+  "row_counts_by_status": {
+    "eia923_cf": 15,
+    "ok": 63
+  },
+  "sidecar_schema_version": 1,
+  "vintage": {
+    "chp_groups": null,
+    "note": "DESCRIPTIVE BACKFILL (xiso-6, 2026-08-25): this sidecar records the observed column set and per-group populated counts of the committed CSV bytes only. The deriver group sets in force when the CSV was derived are UNKNOWN \u2014 not recoverable from the file itself; see results/calibration/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md for the vintage adjudication. It makes no claim about what HEAD would emit.",
+    "online_frac_groups": null,
+    "peaking_groups": null,
+    "thermal_groups": null
+  }
+}

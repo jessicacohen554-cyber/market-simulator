@@ -1,0 +1,325 @@
+{
+  "artifact": "thermal_tranches_PJM.csv",
+  "artifact_rows": 256,
+  "artifact_sha256": "497c4844eb0c8f057848dca082cf3d40c26212c60cac9a1364c04bbaee367cd5",
+  "columns": [
+    "plant_code",
+    "plant_group",
+    "name",
+    "status",
+    "nameplate_mw",
+    "online_hours",
+    "committed_pct",
+    "mustrun_pct",
+    "mustrun_online_pct",
+    "online_frac",
+    "p25_cf",
+    "median_cf",
+    "peaking_pct",
+    "chp_pmin_cf",
+    "chp_sector"
+  ],
+  "coverage_ok_rows": {
+    "chp_pmin_cf": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        0,
+        69
+      ],
+      "COAL": [
+        0,
+        29
+      ],
+      "CT_CHP": [
+        3,
+        3
+      ],
+      "CT_PEAKER": [
+        0,
+        70
+      ],
+      "ST_GAS": [
+        0,
+        10
+      ]
+    },
+    "chp_sector": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        0,
+        69
+      ],
+      "COAL": [
+        0,
+        29
+      ],
+      "CT_CHP": [
+        3,
+        3
+      ],
+      "CT_PEAKER": [
+        0,
+        70
+      ],
+      "ST_GAS": [
+        0,
+        10
+      ]
+    },
+    "committed_pct": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        69,
+        69
+      ],
+      "COAL": [
+        29,
+        29
+      ],
+      "CT_CHP": [
+        3,
+        3
+      ],
+      "CT_PEAKER": [
+        70,
+        70
+      ],
+      "ST_GAS": [
+        10,
+        10
+      ]
+    },
+    "median_cf": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        69,
+        69
+      ],
+      "COAL": [
+        29,
+        29
+      ],
+      "CT_CHP": [
+        3,
+        3
+      ],
+      "CT_PEAKER": [
+        70,
+        70
+      ],
+      "ST_GAS": [
+        10,
+        10
+      ]
+    },
+    "mustrun_online_pct": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        69,
+        69
+      ],
+      "COAL": [
+        29,
+        29
+      ],
+      "CT_CHP": [
+        3,
+        3
+      ],
+      "CT_PEAKER": [
+        70,
+        70
+      ],
+      "ST_GAS": [
+        10,
+        10
+      ]
+    },
+    "mustrun_pct": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        69,
+        69
+      ],
+      "COAL": [
+        29,
+        29
+      ],
+      "CT_CHP": [
+        3,
+        3
+      ],
+      "CT_PEAKER": [
+        70,
+        70
+      ],
+      "ST_GAS": [
+        10,
+        10
+      ]
+    },
+    "nameplate_mw": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        69,
+        69
+      ],
+      "COAL": [
+        29,
+        29
+      ],
+      "CT_CHP": [
+        3,
+        3
+      ],
+      "CT_PEAKER": [
+        70,
+        70
+      ],
+      "ST_GAS": [
+        10,
+        10
+      ]
+    },
+    "online_frac": {
+      "CC_CHP": [
+        0,
+        7
+      ],
+      "CC_REGULAR": [
+        69,
+        69
+      ],
+      "COAL": [
+        29,
+        29
+      ],
+      "CT_CHP": [
+        0,
+        3
+      ],
+      "CT_PEAKER": [
+        70,
+        70
+      ],
+      "ST_GAS": [
+        0,
+        10
+      ]
+    },
+    "online_hours": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        69,
+        69
+      ],
+      "COAL": [
+        29,
+        29
+      ],
+      "CT_CHP": [
+        3,
+        3
+      ],
+      "CT_PEAKER": [
+        70,
+        70
+      ],
+      "ST_GAS": [
+        10,
+        10
+      ]
+    },
+    "p25_cf": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        69,
+        69
+      ],
+      "COAL": [
+        29,
+        29
+      ],
+      "CT_CHP": [
+        3,
+        3
+      ],
+      "CT_PEAKER": [
+        70,
+        70
+      ],
+      "ST_GAS": [
+        10,
+        10
+      ]
+    },
+    "peaking_pct": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        69,
+        69
+      ],
+      "COAL": [
+        0,
+        29
+      ],
+      "CT_CHP": [
+        0,
+        3
+      ],
+      "CT_PEAKER": [
+        0,
+        70
+      ],
+      "ST_GAS": [
+        0,
+        10
+      ]
+    }
+  },
+  "derive_invocation": null,
+  "deriver": "scripts/data/derive_thermal_tranches.py",
+  "provenance": "backfill-descriptive",
+  "row_counts_by_status": {
+    "eia923_cf": 68,
+    "ok": 188
+  },
+  "sidecar_schema_version": 1,
+  "vintage": {
+    "chp_groups": null,
+    "note": "DESCRIPTIVE BACKFILL (xiso-6, 2026-08-25): this sidecar records the observed column set and per-group populated counts of the committed CSV bytes only. The deriver group sets in force when the CSV was derived are UNKNOWN \u2014 not recoverable from the file itself; see results/calibration/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md for the vintage adjudication. It makes no claim about what HEAD would emit.",
+    "online_frac_groups": null,
+    "peaking_groups": null,
+    "thermal_groups": null
+  }
+}

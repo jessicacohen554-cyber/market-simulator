@@ -73,6 +73,7 @@ from market_sim.data.fleet.eia860 import (
     get_vom,
 )
 from market_sim.data.fleet.campd_bins import (
+    assert_thermal_tranche_coverage,
     campd_ct_run_lengths,
     cc_duct_burner_peak_mult,
     cc_duct_peaking_pct,
@@ -188,6 +189,15 @@ def bins_to_fleet(
     """
     valid_zones = set(zone_names)
     fleet: list[Generator] = []
+
+    # Arm-over-gap preflight (xiso-6): a per-plant tranche gate armed at an
+    # ISO whose committed thermal_tranches_<ISO>.csv predates the consumed
+    # column's emitting vintage would engage on nothing — the loaders skip
+    # blank rows silently — and read as inert on the merits. Hard error here,
+    # at the one seam every CAMPD-binned fleet build passes through, before
+    # any tranche is assembled. No-op unless a guarded gate is armed (all
+    # default off; measured a no-op at all six current keepers).
+    assert_thermal_tranche_coverage(getattr(config, "iso", "ERCOT") or "ERCOT", config)
 
     # nyiso-109 zone-resolved gas-offer margin anchors. Empty (and byte-
     # identical) unless the gate is armed; armed without the resolved map is a

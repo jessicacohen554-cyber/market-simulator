@@ -24,6 +24,14 @@ Four questions, one per section of the finding:
   consumes, from that keeper's own ``run_config.json`` gates, plus the forced
   energy the artifact-fed mechanisms carry in its committed D-2 rows.
 
+Since xiso-6 the census also reads each artifact's **vintage sidecar**
+(``thermal_tranches_<ISO>.meta.json``, written by the deriver on every emit
+and backfilled descriptively for the committed legacy artifacts): provenance,
+the recorded emitting-group sets (or UNKNOWN for a descriptive backfill), and
+a staleness check (the sidecar's ``artifact_sha256`` against the current CSV
+bytes) — so "which groups was this vintage emitting?" is answered by this one
+command instead of the source-parsing archaeology §3 of the finding needed.
+
 Usage:
     python scripts/probes/_xiso5_thermal_tranche_coverage.py
     python scripts/probes/_xiso5_thermal_tranche_coverage.py --json OUT.json
@@ -210,6 +218,42 @@ def coverage_census(emit_groups: list[str]) -> dict[str, dict]:
     return out
 
 
+def sidecar_census() -> dict[str, dict]:
+    """Per-ISO vintage-sidecar read: provenance, recorded groups, staleness.
+
+    Reads ``thermal_tranches_<ISO>.meta.json`` (xiso-6) next to each artifact.
+    ``stale=True`` means the sidecar's ``artifact_sha256`` no longer matches
+    the CSV bytes — the CSV moved without a re-stamp, which the deriver's
+    unconditional sidecar write should make impossible; report it loudly.
+    ``online_frac_groups=None`` is an honest UNKNOWN (descriptive backfill of
+    a legacy artifact whose derive-time group sets are not recoverable).
+    """
+    import hashlib
+
+    out: dict[str, dict] = {}
+    for iso in ISOS:
+        csv_path = TRANCHES / f"thermal_tranches_{iso}.csv"
+        side_path = TRANCHES / f"thermal_tranches_{iso}.meta.json"
+        if not csv_path.exists():
+            out[iso] = {"sidecar": None, "note": "no artifact"}
+            continue
+        if not side_path.exists():
+            out[iso] = {"sidecar": None, "note": "NO SIDECAR — pre-xiso-6 state"}
+            continue
+        rec = json.loads(side_path.read_text())
+        actual_sha = hashlib.sha256(csv_path.read_bytes()).hexdigest()
+        out[iso] = {
+            "sidecar": side_path.relative_to(REPO).as_posix(),
+            "provenance": rec.get("provenance"),
+            "online_frac_groups": (rec.get("vintage") or {}).get(
+                "online_frac_groups"
+            ),
+            "sidecar_schema_version": rec.get("sidecar_schema_version"),
+            "stale": rec.get("artifact_sha256") != actual_sha,
+        }
+    return out
+
+
 def keeper_gates(bundles: dict[str, Path]) -> dict[str, dict[str, object]]:
     """Per-ISO armed state of every gate that reads a thermal-tranche column."""
     out: dict[str, dict[str, object]] = {}
@@ -293,6 +337,7 @@ def main() -> None:
     keepers = keeper_ids()
     bundles = keeper_bundles(keepers)
     cov = coverage_census(emit_groups)
+    sidecars = sidecar_census()
     gates = keeper_gates(bundles)
     radius = blast_radius(gates, cov)
     d2 = forced_energy(bundles)
@@ -347,6 +392,23 @@ def main() -> None:
 
     print()
     print("=" * 78)
+    print("VINTAGE SIDECARS (xiso-6) — thermal_tranches_<ISO>.meta.json")
+    print("=" * 78)
+    for iso in ISOS:
+        s = sidecars[iso]
+        if s.get("sidecar") is None:
+            print(f"  {iso:6s} {s['note']}")
+            continue
+        of = s["online_frac_groups"]
+        of_txt = "UNKNOWN (descriptive backfill)" if of is None else ",".join(of)
+        stale = "  ** STALE: CSV bytes moved without a re-stamp **" if s["stale"] else ""
+        print(
+            f"  {iso:6s} provenance={s['provenance']:22s} "
+            f"online_frac_groups={of_txt}{stale}"
+        )
+
+    print()
+    print("=" * 78)
     print("Q3 — rule 23 [R-FROZEN-DERIVE] gate")
     print("=" * 78)
     print("  A re-derivation needs a CITED SOURCE-DATA change. Precedent: miso-95")
@@ -393,6 +455,7 @@ def main() -> None:
         "deriver_online_frac_groups": emit_groups,
         "keepers": keepers,
         "coverage": cov,
+        "sidecars": sidecars,
         "keeper_gates": gates,
         "blast_radius": radius,
         "artifact_fed_d2_rows": d2,
