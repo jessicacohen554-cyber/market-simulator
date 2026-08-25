@@ -135,17 +135,26 @@ def _load_prices(raw_dir: Path, year: int) -> pd.DataFrame:
     }
     df["grp"] = df["ANC_REGION"].map(group_of)
     df = df.dropna(subset=["grp"])
-    out = (
-        df.pivot_table(
-            index="ts",
-            columns=["ANC_TYPE", "grp"],
-            values="MW",
-            aggfunc="sum",
-        )
-        .sort_index()
-        .fillna(0.0)
-    )
-    return out
+    out = df.pivot_table(
+        index="ts",
+        columns=["ANC_TYPE", "grp"],
+        values="MW",
+        aggfunc="sum",
+    ).sort_index()
+    # Per-product completeness BEFORE zero-filling: a product whose price
+    # series is absent or partial must fail loud, never be silently read as
+    # $0 (the pivot's NaN would otherwise become 0.0 for every missing hour).
+    hours_expected = 8784 if year % 4 == 0 else 8760
+    in_year = out.index.year == year
+    for code in PRODUCTS:
+        col = (code, "sys")
+        n = int(out.loc[in_year, col].notna().sum()) if col in out.columns else 0
+        if n < hours_expected - 24:
+            raise SystemExit(
+                f"{year}: product {code} has {n}/{hours_expected} system price "
+                "hours on disk — asprc fetch incomplete; refusing a partial rate."
+            )
+    return out.fillna(0.0)
 
 
 def _load_req_weights(raw_dir: Path, year: int) -> pd.DataFrame:
@@ -251,14 +260,8 @@ def main() -> None:
     rates_central = {}
     fleets = {}
     for year in args.years:
-        prices = _load_prices(raw_dir, year)
-        hours_expected = 8784 if year % 4 == 0 else 8760
-        n_price_hours = len(prices)
-        if n_price_hours < hours_expected - 24:
-            raise SystemExit(
-                f"{year}: only {n_price_hours}/{hours_expected} price hours on disk "
-                "— asprc fetch incomplete; refusing to report a partial-year rate."
-            )
+        prices = _load_prices(raw_dir, year)  # fails loud on partial coverage
+        n_price_hours = int((prices.index.year == year).sum())
         weights = _load_req_weights(raw_dir, year)
         awards = _load_awards(clean_dir, year)
         dam = awards[awards["market"] == "DAM"]
