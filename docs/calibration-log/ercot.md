@@ -11901,6 +11901,28 @@ can't you just try to solve 2023 for its own conditions and ignore
   identified on the 2023 residual are ledgered as residual-identified, per
   the existing ledger convention.
 
-(Entry continues below with the campaign's rounds.)
+### ercot-235 CAMPAIGN RECORD (same session) — 4 precommitted rounds, 11 kill-gated 2023-only solves; winner `2026-08-25-235-2023-discrete-k24` REGISTERED: the FIRST ERCOT config to PASS C3b-2023 (0.186) and C3c-2023 (180/181), NOT-YET on C3a-2023 ALONE (−13.5 %)
+
+Full table, structure lessons and honest costs:
+`docs/FINDING-ercot235-2023-discrete-offer-sweep-2026-08-25.md`; grid,
+kills and selection were fixed in
+`docs/PRECOMMIT-ercot235-2023-discrete-offer-sweep-2026-08-25.md` before
+each round ran (amendments 1–3 record each round's result before the next
+grid). Headlines: the ercot-234 keeper recipe + ONE residual-identified
+2023 scalar (k_peak 24.0 on the gas peak bands, DOF-ledgered, n_residual
+6 → 7) moves 2023 from −39.7 %/0.730/72 to **−13.5 %/0.186 PASS/180
+PASS**, kill-clean (zero shed, coal +0.10 TWh, off-season untouched; spur
+cost 68 vs keeper 11, reported). `econ_high` REFUSED on its measured coal
+kill (+6–8 TWh); the clean frontier ends between k 24 and 27 where a
+single June-20 h4097 shed hour appears and grows (35.9 → 310.9 MWh by
+k=45) — the killed R8/R9 show the C3a band is REACHABLE on this surface
+(−9.3 %, +0.8 %) once that one object is repaired. The tuned level lands
+the peak-tranche offers inside the measured 2023 evening ask range
+(ercot-161/162), converging toward documented conduct, not past it. OPEN
+TO THE OWNER: (1) keeper structure — a cross-year + 2023-discrete PAIR, or
+the 2023-discrete run as the 2023 keeper (registered, not
+self-adjudicated); (2) round 5 = the bounded h4097 shed object. The
+3-year keeper `2026-08-25-234-eastex-identity` and all its records are
+untouched.
 
 **Next shorthand: ercot-236** (ercot-199 remains unclaimed)

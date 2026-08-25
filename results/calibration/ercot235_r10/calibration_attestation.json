@@ -1,0 +1,209 @@
+{
+ "schema": "calibration-attestation/v1",
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 10,
+  "n_residual": 7,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ]
+    },
+    "n_scalars": 107,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_mid": 0.35,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 3,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "coal_perplant_offer_curves (per-plant measured TPO curves)",
+    "where": "constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO via run_config.scenario_config.coal_perplant_offer_curves; applied in fleet.legacy_bins.apply_coal_tranches",
+    "identification": "measured-physical",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "n_scalars": 0,
+    "source": "each plant's merged modal 60-Day SCED Submitted TPO supply curve, pooled over the four 2024-2025 disclosure subsets \u2014 verbatim submitted conduct, zero fitted parameters (frozen scripts/data/derive_coal_perplant_offer.py; provenance data/raw/_processed-legacy/coal_perplant_offer_curves_ERCOT.json; ERCOT-144, chartered by ERCOT-143 \u00a72's per-plant measurement)",
+    "note": "re-derive trigger is a new SCED disclosure subset only (rule 23), never a residual; representation bounds declared in the ERCOT-144 precommit: the 2023 application is an extrapolation (no 2023 SCED exists), levels are fuel-invariant by measurement (mid-band only \u2014 _mustrun/_peak keep their measured fuel/gas responses), and within-tranche measured dispersion is capacity-weight averaged at the CAMPD tranche grain"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_residual",
+    "where": "run_config.scenario_config.wefor_residual (groups ['ST_CHP', 'ST_GAS'])",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 0.02,
+    "source": "wind-EFOR residual relief term (audit C-15) \u2014 residual-identified by name",
+    "root_cause": "audit C-15 open item; statistical mode turns this off and the fit degrades (docs/statistical-mode-results-2026-07.md); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "battery_dispatch_adder",
+    "where": "run_config.scenario_config.battery_dispatch_adder",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 10.0,
+    "source": "grid-battery throughput/cycling adder $/MWh \u2014 inside the literature range (NREL ATB 2024 cycle-life ~$15-25/MWh; Xu et al. 2018 $25-50/MWh) but the specific value is calibrated",
+    "root_cause": "reduced-form stand-in for cycling degradation + AS opportunity cost; forward-valid replacement is the measured AS power reservation (storage_as_commitment) + an ATB-derived degradation cost \u2014 open item to re-derive from those"
+   },
+   {
+    "name": "ercot_adaptive_half_life_days / ercot_adaptive_beta",
+    "where": "run_config.scenario_config.ercot_adaptive_*",
+    "identification": "measured-physical",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": [
+     30.0,
+     3.0077
+    ],
+    "n_scalars": 2,
+    "source": "EWMA half-life (days) and gain beta of the daily spike-frequency expectation P_hat, SSE-fit of implied_P(d) = evening storage offer p50 / ordc_voll on P_hat(d) over admissible days 2023-06-10..12-31 on the pre-registered grid (PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md Amendment 1 family v2; artifact results/calibration/ercot221_adaptive_phase0.json). The armed path consumes only the model's own pass-1 price path (Amendment 4) \u2014 the measured surface is identification evidence only. Phase-0 v1+v2 FAILED their gates; Phase-1 entered on owner instruction (recorded in the precommit Amendment 2), so these constants are additionally flagged by that standing record."
+   },
+   {
+    "name": "CHP_BTM_PCT_BY_SECTOR['merchant']",
+    "where": "constants.py CHP_BTM_PCT_BY_SECTOR",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 35.0,
+    "source": "merchant CHP behind-the-meter share \u2014 industrial/commercial re-derived from EIA-923 Schedule-8 (S3), merchant retained at its prior fitted value (audit C-4; W1d marker)",
+    "root_cause": "no independent merchant-CHP host-load source found yet \u2014 replace when one exists (constants.py comment); survey of candidate sources + recommended EIA-923 Schedule-8 intake path: docs/handoffs/merchant-chp-host-load-memo-2026-07.md; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_ERCOT.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
+    "name": "offer_2023_discrete_peak_scale (ercot-235 k_peak)",
+    "where": "run_config.scenario_config.offer_curve_by_group (2023-discrete values: gas-group peak/phys_peak/peak_ladder multipliers x24.0 vs the cross-year keeper recipe)",
+    "identification": "residual",
+    "lineage_solves": "11 solves (ercot-235 rounds 1-4, PRECOMMIT-ercot235-2023-discrete-offer-sweep-2026-08-25.md)",
+    "value": {
+     "k_peak": 24.0,
+     "k_eh": 1.0
+    },
+    "n_scalars": 1,
+    "source": "rule-1-sanctioned offer-curve tuning surface, 2023-discrete under the OWNER ORDER of 2026-08-25 (ercot-235 log entry: solve 2023 for its own conditions; rule-16 waiver invoked; Q-B/R-A superseded by the owner). Identified on the 2023 C3a residual via a precommitted 9-point kill-gated grid; the selected k lands the gas peak-tranche offers at $1.7-4.4k, inside the MEASURED 2023 evening ask range (ercot-161/162: SCED asks $3.4-5k) rather than past it",
+    "root_cause": "the adjudicated 2023 model-class conduct object (C3c exceptions ledger lineage; ercot-209/211/216): an LP with competitive offers cannot form the ECRS-era scarcity equilibrium, so the 2023-discrete level is carried as an explicit tuned parameter, identified in-sample on 2023 only; no held-out validation exists"
+   }
+  ]
+ },
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "ercot-235 session (2026-08-25): the 2023-DISCRETE-CONFIG run under the owner order of 2026-08-25 (verbatim in the ercot-235 log entry; rule-16 waiver invoked, Q-B/R-A superseded by the owner). The ercot-234 keeper recipe (EASTEX identity repair included) with ONE added residual-identified scalar: k_peak=24.0 scaling the gas-group peak-band offer multipliers, selected by the precommitted kill-gated grid (PRECOMMIT-ercot235, 4 rounds, 11 solves; kills: no new shed, off-season months protected at $5, coal 0.5 TWh \u2014 the selected point is CLEAN on all) with the econ_high lever REFUSED on its measured G-COAL148 kill (+6-8 TWh coal over-run). The tuned scalar is declared in the DOF ledger (n_residual 6 -> 7), the identification is the 2023 residual and is stated as such \u2014 this is the rule-1 sanctioned tuning surface, not a hidden channel; no output is pinned to actuals and no measured outcome is fed back as an input. 2023-only by owner order; 2024/2025 deliberately not solved (the cross-year keeper 2026-08-25-234-eastex-identity carries them). Prior attestation (ercot-234) preserved in lineage."
+ },
+ "exceptions": []
+}
