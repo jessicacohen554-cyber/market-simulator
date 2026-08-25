@@ -175,7 +175,11 @@ def main() -> None:
                 d = float(np.max(np.abs(np.asarray(got) - np.asarray(vals))))
                 if d > max_dev:
                     max_dev, dev_where = d, f"{seam}/{side}"
-        if max_dev > FOOTING_TOL:
+        # The PREREG line is strictly "> $0.01": a one-cent flip at the
+        # cents-rounding boundary (np.quantile float jitter) is disclosed,
+        # never a STOP. The epsilon keeps the float compare faithful to the
+        # declared line (0.010000000000001 is one cent, not more).
+        if max_dev > FOOTING_TOL + 1e-9:
             stop.append(f"{y}: F-2 re-derivation deviates {max_dev:.2f} at {dev_where}")
         if n_sc != EXPECTED_SCARCE[y]:
             stop.append(f"{y}: F-1 scarce set {n_sc} != {EXPECTED_SCARCE[y]}")
