@@ -2471,8 +2471,10 @@ ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
 # :func:`market_sim.model.capacity._firm_import_mw`) exactly where each ISO's
 # own ledger counts it. Two provenance cases share this one registry (rule 19,
 # one mechanism per phenomenon — "firm import the adequacy ledger counts"):
-#   (a) ISOs the model has NO import node for (ERCOT, PJM) — the firm tie is
-#       otherwise entirely absent from the model, so this is its only entry.
+#   (a) ISOs the model has NO import node for (ERCOT, PJM, NYISO) — the firm
+#       tie is otherwise entirely absent from the persistent fleet, so this is
+#       its only adequacy entry (NYISO's dispatch-side imports flow through the
+#       interchange model, not fleet units — see its bullet below).
 #   (b) ISOs whose import node DOES live in the dispatch topology (CAISO's
 #       WECC_import, NEISO's HQ_import — FF-2B, 2026-07-19). This adequacy
 #       credit does NOT double-count the dispatch node: the accredited ledger
@@ -2523,11 +2525,53 @@ ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
 #   PLANNING_RESERVE_MARGIN entry) and is NOT double-counted here. The model's
 #   HQ_import node hosts imports in dispatch but the accredited ledger omits the
 #   cleared import CSOs — case (b) above. Recurring FCM product (rule 13).
+# * NYISO (capx D-2 external-capacity intake, 2026-08-25, closing the FC-1 I7
+#   base-year gap of FINDING-capx-d2-adequacy-nyiso-2026-08-24.md §6):
+#   2,749.9 MW UCAP = 3,168.5 MW ICAP × (1 − 0.1321). The 3,168.5 MW is
+#   NYISO's own published external capacity: 2026 Gold Book (Load & Capacity
+#   Data Report, April 2026 — data/raw/NYISO/2026-Gold-Book-Public.pdf,
+#   sha256 in that directory's SHA256SUMS.txt), Table V-1 "Summary of
+#   Projected Net Capacity Purchases from External Control Areas", Summer
+#   2026 total (ISO-NE 67.3 + HQ 2,443.0 + IESO 3.3 + PJM 654.9), NET of
+#   capacity exports. These purchases are the UDR / External-CRIS / ETCNL /
+#   FCFSR-backed ICAP-market products (table note 2) that NYISO's own NYCA
+#   Capacity Schedule counts toward Total Resource Capability (Table V-2a:
+#   37,697.7 + 3,168.5 = 40,866.2 MW, Summer 2026). Basis: the Gold Book
+#   schedule states seasonal capability (ICAP), while the model's NYISO
+#   requirement is UCAP — peak × (1 + IRM) × (1 − 0.1321), see
+#   PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO — so the entry converts
+#   with the SAME published NYCA ICAP→UCAP translation factor the requirement
+#   side applies (NYSRC 2025-2026 IRM Study Technical Appendices, App. D
+#   Table D.2): one basis across both sides of the adequacy comparison
+#   (rule 19), the same documented rule-14 reconciliation pattern as the PJM
+#   DR entry. Conservative direction: NYISO's actual ledger derates each
+#   external resource by its OWN EFORd / UDR line availability (ICAP Manual
+#   §4.5), typically below the NYCA-wide 13.21 % fleet derate applied here,
+#   so this construction can only under-credit, never manufacture firm MW.
+#   Corroboration: NYISO 2025 SOM (Potomac Economics, May 2026 — same
+#   directory, sha-recorded) Figure A-97 shows net capacity imports
+#   transacting in UCAP at O(1,500–2,500) MW monthly, May 2023–Apr 2026.
+#   NYISO's model topology has NO import node (five internal zones only);
+#   dispatch-side imports enter through the interchange model
+#   (model/interchange/nyiso.py), never the persistent fleet, so the credit
+#   is additive with no double-count — the ERCOT/PJM provenance case (a).
+#   It is deliberately NOT the model's 900 MW HQ firm dispatch floor (an
+#   inherited ladder constant, not a published RA accreditation — see
+#   scripts/data/derive_nyiso_import_tranches.py) and NOT the 4,350 MW
+#   Simultaneous Import Limit (a deliverability LIMIT — the exact error the
+#   CAISO entry rejects for the MIC). Rule 13: Gold Book capacity purchases
+#   are re-published annually and respond to conditions (Table V-1: 3,168.5
+#   in 2026 → 3,149.3 in 2027 → 3,299.9 in 2028) — a recurring ICAP-market
+#   product, never an outcome pin.
 ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
     "ERCOT": 817.0,
     "PJM": 1_281.7,  # 2026/2027 BRA Report Table 7 (cleared import UCAP)
     "CAISO": 3_371.0,  # DMM 2024 Table 15.6 RA Imports (= model firm import tranches)
     "NEISO": 567.0,  # FCA 17 cleared imports (NY/QC/NB), CSO-holding supply
+    # 2026 Gold Book Table V-1 Summer-2026 external purchases (ICAP) × the
+    # published NYCA ICAP→UCAP translation factor — same factor as the
+    # requirement side (one basis, rule 19); see the citation block above.
+    "NYISO": 3_168.5 * (1.0 - 0.1321),
 }
 
 # Conventional-hydro accreditation for the same adequacy ledger, per ISO — the
