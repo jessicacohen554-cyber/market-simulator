@@ -4101,21 +4101,35 @@ ERCOT_SCED_INTERVALS_PER_HOUR: int = 12
 # network splits into two parallel links, apportioned in the same ~8:3 ratio
 # as the static ttc_mw values (7,300 / 2,700 of the ~10,000 MW measured
 # limit-at-bind) — a rule-#14 misalignment reconciliation, documented there.
-# PNHNDL (Panhandle export) and NE_LOB (Northeast Texas export lobe) map 1:1.
+# PNHNDL (Panhandle export) and EASTEX (the East Texas GTC — "a voltage
+# stability limit associated with flows out of the East Texas area", created
+# for "transmission outages on the 345kV system in East Texas around Tyler,
+# Lufkin and Nacogdoches", ERCOT market notice archive #1557, effective
+# 2017-11-02) map 1:1. EASTEX is the model Northeast zone's boundary: the
+# zone IS the EAST weather zone (Tyler/Longview/Texarkana/Lufkin).
 # N_TO_H is deliberately ABSENT: the single N_TO_H GTC is one of several
 # parallel 345 kV North->Houston paths this reduction collapses into one link,
 # so its limit alone would understate the interface (see iso_configs).
-# Intra-zone GTCs (VALEXP, EASTEX, TRDWEL, MCCAMY, ...) have no representable
-# link in this topology and are ignored by the crosswalk.
-# Source: ERCOT NP6-86-CD archives via scripts/data/derive_ttc_limits.py; ERCOT
-# "The Use of GTCs in ERCOT" (July 2020) for the GTC definitions.
+# Intra-zone GTCs (NE_LOB, VALEXP, NELRIO, RV_RH, TRDWEL, MCCAMY, ...) have no
+# representable link in this topology and are ignored by the crosswalk.
+# NE_LOB in particular is "North Edinburg - Lobo" — a SOUTH-TEXAS / Rio
+# Grande Valley stability corridor ("South Texas wind farms ... along the
+# North Edinburg - Lobo 345 kV line", ERCOT GTC Workshop definitions
+# 2020-02-24; "Valley Area" in the July-2024 ROS GTC update), and the Valley
+# sits inside the model's South zone. Until 2026-08 the name was misread as
+# "Northeast lobe" and its series crosswalked to Northeast->North — the
+# rule-14 mis-attribution repaired under signed card Z-A (ercot-234;
+# docs/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md).
+# Source: ERCOT NP6-86-CD archives via scripts/data/derive_ttc_limits.py;
+# ERCOT GTC Workshop "Current Generic Transmission Constraint Definitions"
+# (2020-02-24) for the GTC identities.
 ERCOT_GTC_LINK_MAP: dict[str, list[tuple[tuple[str, str], float]]] = {
     "PNHNDL": [(("Panhandle", "North"), 1.0)],
     "WESTEX": [
         (("West", "North"), 8.0 / 11.0),
         (("West", "South_Central"), 3.0 / 11.0),
     ],
-    "NE_LOB": [(("Northeast", "North"), 1.0)],
+    "EASTEX": [(("Northeast", "North"), 1.0)],
 }
 
 # ERCOT DC-tie physical locations on the reduced 7-zone topology, per EIA-930

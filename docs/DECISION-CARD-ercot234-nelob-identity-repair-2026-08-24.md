@@ -1,7 +1,10 @@
 # OWNER DECISION CARD — ercot-234 (card Z): repair the `NE_LOB` geographic mis-attribution in the keeper's measured-GTC crosswalk?
 
-**For the owner. Session ercot-234, 2026-08-24. Status: AWAITING OWNER
-SIGNATURE — NOTHING IS REPAIRED, SOLVED, OR ARMED BY THIS CARD.** Evidence
+> Status: RECORD — card Z SIGNED **(Z-A)** by the owner, 2026-08-25,
+> in-session (see RESOLUTIONS at the foot).
+
+**For the owner. Session ercot-234, 2026-08-24. Status at assembly: AWAITING
+OWNER SIGNATURE — NOTHING IS REPAIRED, SOLVED, OR ARMED BY THIS CARD.** Evidence
 basis: `docs/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md`
 (primary-source documentary facts + descriptive reads of the committed NP6-86
 archives; no solve, no LP, no bar-bearing measurement, keeper untouched).
@@ -118,3 +121,44 @@ committed measured source.
 mechanism tested, no matrix cell verdict, no gate-file edit, no keeper
 change, no holdout marker touched, no C3a/C3b-2023 spend. The ercot-188/E2
 P0 bit-identity forfeiture is inherited unexpired and untouched.*
+
+---
+
+## RESOLUTIONS — CARD Z SIGNED BY THE OWNER, 2026-08-25 (in-session)
+
+The card body above is preserved AS PUT, unedited by the outcome.
+
+| card | decision | **SIGNED** | vs. recommendation |
+|---|---|---|---|
+| **Z** | Repair the `NE_LOB` geographic mis-attribution | **(Z-A) — CHARTER THE FULL IDENTITY REPAIR**, with promotion authorized in advance under the owner's standing structural standard | **With** the card's recommendation |
+
+The owner's signature, verbatim: *"Is this a recommended keeper candidate?
+If so plz promote. If structural integrity improves but gates regress that
+may still be a keeper.."* Read with the card: at signature time no candidate
+run existed — the card's recommended route (Z-A) is what produces one — so
+the instruction is taken as (a) the Z-A signature, and (b) the standing
+structural standard granted IN ADVANCE for the resulting run's promotion
+(the ercot-215/221/231 pattern: structural-integrity improvement can carry a
+promotion over regressed score gates, with both records preserved).
+
+Consequences adopted with the signature, per the card's own text:
+
+- The executing session runs Z-A's numbered steps exactly: precommit first
+  (pushed + blob-verified before any phase-0 measurement or derivation),
+  phase-0 boundary reconciliation with the Z-B fallback live, the
+  zero-fitted-scalar crosswalk repair, the rule-23 static re-derivation,
+  and the full rule-16 3-year re-solve, registered whatever it shows
+  (rule 15), with all C3a/C3b movement side-effect-reported under Q-B/R-A.
+- **Promotion**: the repair candidate is promoted on the owner's standing
+  standard EVEN IF score gates regress, PROVIDED the precommit's
+  catastrophic-regression escalations do not fire (a physical breakage —
+  e.g. new load shed — escalates back to the owner rather than
+  auto-promoting; the standard is about score gates, not physical
+  plausibility). Both the mechanical gate verdict and the promotion basis
+  are recorded unrewritten.
+- Q-B/R-A, the ercot-233 zonal-grain closure, `internal_congestion_split`
+  `G`, and the tie placement remain untouched, as the card states.
+- The **ercot-225 gate card remains a separate signature** — this signature
+  does not decide it; the executing session reports G-SPUR in BOTH the
+  standing banded form and the lidless decomposition so either later ruling
+  reads cleanly.

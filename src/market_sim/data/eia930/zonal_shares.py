@@ -39,7 +39,7 @@ _PJM_ZONAL_LOAD_DIR: Path = _ZONAL_LOAD_DIR
 # load here (its share stays 0.0, matching the static config); the small Lubbock
 # load it would hold sits inside the WEST weather zone and lands in the West
 # model zone. The EAST weather zone is its own Northeast model zone (behind the
-# NE_LOB export limit). The ERCOT system-total column is dropped. Mirrors the
+# EASTEX East-Texas export limit). The ERCOT system-total column is dropped. Mirrors the
 # aggregation in scripts/data/derive_load_shares.py that seeded the load_share values.
 _ERCOT_LOAD_ZONE_GROUPS: dict[str, str] = {
     "COAST": "Houston",

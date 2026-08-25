@@ -62,7 +62,7 @@ DATATYPE = "transmission-expansion"
 # like model/transmission.CAISO_PATH_DIRECTIONAL_RATINGS — a documented
 # property of the static sources cited in config/iso_configs.py, never a
 # tunable (rule 24). Vintages trace those static sources:
-#   ERCOT 2024 — measured 2023-24 NP6-86 GTC limits (WESTEX/PNHNDL/NE_LOB)
+#   ERCOT 2024 — measured 2023-24 NP6-86 GTC limits (WESTEX/PNHNDL/EASTEX)
 #     + 2022 Constraints & Needs interior estimates.
 #   CAISO 2023 — WECC Path Rating Catalog ratings + LCT 2023 pocket caps.
 #   MISO  2025 — PY2025-26 LOLE CIL/CEL groups + JOA RDT limits.
