@@ -8887,3 +8887,81 @@ was superseded by the code-truthful field name — the mechanism is not
 South-specific; naming deviation disclosed, no threshold moved. Registration
 prunes under top-15 retention removed `2026-08-19-miso-169-online-gated` and
 `2026-08-19-miso-170-control`.
+
+## miso-187 (2026-08-26) — the MEASURED-NUCLEAR AVAILABILITY ARM executed end to end; the pre-registered structural gates SPLIT (S-3 +0.298 GW toward the measured South outflow / S-2 unchanged 7/47) and the arm is PROMOTED KEEPER under the owner's in-session directive: `2026-08-26-miso-187-nucavail`
+
+**Charter:** the miso-186 §3/§6 named next arm — the second candidate that
+cleared every PREREG-miso186 §4 admissibility clause (static reach +0.299 GW
+2025-scarce South / −0.075 GW Midwest, both direction-correct), unarmed
+there only by the single-delta rule. PREREG
+(`PREREG-miso187-measured-nuclear-availability-2026-08-25.md`, db0f1d9)
+committed before any adjudicating quantity; gates PREREG-miso184 §6 verbatim
+re-keyed to the miso-186 keeper's baselines (S-2: N→S must fall below 7/47;
+S-3: N_S^m +0.682 → toward −2.441 by ≥0.1 GW).
+
+**The data.** Disclosed correction: `NUCLEAR_MONTHLY_CF_BY_YEAR["MISO"]`
+EXISTS at HEAD and IS the active smear (scarce-set mean 0.8972 = the
+committed 0.897; the miso-186 §3 "no entry / static pattern × (1−EFORD)"
+sub-claim was false) — charter step 1 became a `--check` verification, which
+passed exactly. The genuinely missing layer: the 13-reactor
+`NRC_TO_EIA["MISO"]` crosswalk (Palisades/Duane Arnold deliberately absent —
+no EIA-860 OP fleet unit) and `data/raw/nuclear-availability-MISO.csv`
+(`derive_nuclear_availability.py --iso MISO`; 6,760 rows, 13 reactors;
+every Jun–Sep month 2023–2025 reconciles to the anchor within tolerance —
+2025 Jun/Jul/Aug/Oct exact — while 14 winter/shoulder months hit the
+thermal-vs-net wedge and keep the smear; frozen sister-ISO scalars, rule 23;
+`--check` reproduces byte-for-byte).
+
+**The A/B** (replay_keeper on `miso186_dir_B`, full span, legs sequential;
+both registered: `2026-08-25-miso-187-control` / `2026-08-26-miso-187-
+nucavail` — the arm's 08-26 date is the relaunched solve crossing midnight
+UTC, a disclosed deviation from the PREREG's declared id):
+
+* S-0 PASS — control value-identical to the committed keeper (max|diff|=0
+  every scored sidecar, every year).
+* S-1 PASS — single delta; Callaway (6153) 2025 scarce dispatch 1067.7 →
+  615.2 MW and the South 5-reactor aggregate 4718.5 → 5114.5 MW, both
+  exactly the direction the NRC record predicted.
+* **S-2 FAIL — N→S binding 7/47 → 7/47** (S→N 0, unconstrained 40;
+  composition untouched).
+* **S-3 PASS — N_S^m +0.682 → +0.385 GW** scarce (move +0.298 ≥ 0.1 toward
+  the measured −2.441, matching the +0.299 ex-ante static reach; zonal
+  balance verified < 1 MW).
+* Charter kill SILENT (C3a-2025 did not improve); S-4 PASS (zero D-4 fails,
+  zero new; C8 PASS all years, the 2025 ST_GAS grounded note carries over).
+* S-5: C3a-2025 −12.3185% UNCHANGED to 4 dp; C3a-2023 +1.2177 → +2.4049%
+  (the sole regression, in-band); C3a-2024 −4.6749 → −4.6440% and C1
+  CC_REGULAR 2024 +8.089 → +8.037 TWh (both hair better; C1 2024 still
+  FAIL vs ±8.00); ZERO criterion flips — the S-5 escalation condition never
+  fired. Record: `_miso187_ab_gates.json`.
+
+**The promotion.** The PREREG's frozen split rule routes a one-gate pass to
+owner escalation; the owner answered in-session and in writing (2026-08-25:
+*"Is this a recommended keeper candidate? If so plz promote. If structural
+integrity improves but gates regress that may still be a keeper."*). The
+recommendation was YES on rules 1/14: the control keeps a uniform
+fleet-month smear where an admissible measured per-reactor record exists
+(adjudicated at miso-186; MISO was the ONLY multi-reactor ISO without the
+overlay all four sister ISOs carry), and the arm restores the measured
+record at essentially zero scored cost with zero fitted parameters.
+Determination NOT-YET on {C3a-2025, C1 fuelmix CC_REGULAR 2024}, C6
+attested (`gen_miso187_attestation.py`; ledger 35 entries, n_residual 2),
+C3c the single ledgered caveat. LOYO trivially clean. Keeper shard
+re-keyed, `status/MISO.js` rebuilt, matrix §5.4 + MISO shard re-stamped
+(cell `nuclear_unit_availability` U → K), keeper-auditor fired. MISO holds
+no marker; no re-key owed; freeze untouched.
+
+**The remainder.** After the repair the model still runs the wheel N→S in
+7/47 scarce hours holding +0.385 GW INTO the South vs the measured 32/47
+S→N / −2.441 GW out. The availability road is now exhausted at the named
+candidates; the formation is the adjudicated ~3.3 GW mc-idled/flat-stack
+model-class residual (offer family EXHAUSTED at both grains), folding back
+into the standing owner D-4 posture question with the ~1.3 GW scarce-export
+concession (miso-184 GAP). Also disclosed: the arm leg was killed once
+mid-solve on a misread assembly-stage log line ("0 reactor(s)" — that
+build's cache-id generators list is output-inert; the dispatch-fleet build
+applied 13/13 in every year), deleted unread, relaunched clean; the NYISO
+matrix shard arrived syntax-broken from main and got a mechanical
+quote-swap repair (content unchanged) so the matrix guard could run.
+
+Finding: `FINDING-miso187-measured-nuclear-availability-2026-08-26.md`.
