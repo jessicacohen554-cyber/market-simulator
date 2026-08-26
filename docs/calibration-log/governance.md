@@ -1845,3 +1845,66 @@ pools) — rule 25 `[R-ISO-SCOPE]`, each lane decides on its own evidence:
 
 No lane's verdict, keeper or matrix cell is touched by this note; it is
 discovery hand-off only.
+
+---
+
+## 2026-08-25 — rubric v3.5: the diurnal price-amplitude call is ANSWERED (owner, option B)
+
+Session `xiso-amplitude-rubric-card`. **No LP solved, no keeper moved, no
+determination re-written, no dashboard registration.**
+
+The owner call filed by **neiso-74** and re-filed by **xiso-1** on 2026-08-01 —
+should the rubric gain a diurnal price-amplitude criterion? — is **answered:
+OPTION B, REPORTED-ONLY and BAND-FREE** (card
+`docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md`, ruled 2026-08-25).
+
+**What made it answerable** was measuring what the answer would *do*, which
+neither prior filing had: `scripts/probes/_xiso6_amplitude_criterion_band_probe.py`
+swept 10 candidate bands × 6 ISOs × 3 candidate tiers offline over the committed
+records. A *gating* criterion is **vacuous** below a 25 % amplitude floor (every
+keeper passes, one at 20.8 %) and **universal** above 45 % (5–6 of 6 ISOs FAIL,
+all three `CALIBRATED` determinations lost), with **no external comparable**
+anywhere in the 20–45 % window to anchor a band — the same ground **C7 was
+retired on at v3.1**. v3.5 therefore applies v3.1's own disposition to prices:
+**gate not built, measurement kept.**
+
+**Cross-lane facts established, none of them transferred (rule 25):**
+
+* **It is one STATISTIC, not one OBJECT** (rule 19 `[R-ONE-MECH]`). Four ISOs
+  have now decomposed their own cell and they **disagree** — NYISO
+  reserve-dominated (reserve-stripped energy swing 117/97/107 %, i.e. essentially
+  no energy-side defect), NEISO explicitly *not* NYISO's (reserve 33/43/32 %,
+  over-dear trough), MISO a two-sided night floor, CAISO south-concentrated with
+  NP15 **under**-priced in its mid bucket. ERCOT and CAISO carry no ISO-local
+  amplitude decomposition. This is why one criterion could not have graded them.
+* **The cancellation coupling**, measured for the first time: trough over-priced
+  in **18/18** ISO-years, and a peak-only repair flips **load-bearing,
+  non-ledgerable C3a** PASS → FAIL at PJM 2023, CAISO 2024 and NEISO 2024.
+* **NEISO's PS DO-NOT-REDO is NOT lifted by this ruling**, in either direction —
+  it is a mechanism finding (the storage block is already optimal for the price
+  signal it is shown), and a rubric disclosure changes no dispatch. The open act
+  there is a **charter for the neiso-76 stack-traversal route**, put to the owner
+  and not opened here.
+
+**Two defects fixed in passing, filed rather than buried:**
+
+* `REPORTED_ONLY` records were **computed and silently dropped** since v2.9 —
+  only `CRITERIA` members reach `per_criterion`, so C5a `co2` reported nothing.
+  A `reported` block now carries them into the verdict, `render_text` and
+  `metrics.json`.
+* **`lmpDeltaHr`'s `-32768` NaN sentinel**, read unmasked, inflates MISO 2025's
+  amplitude from 20.8 % to **186.9 %** (hour 8759 has no committed actual). The
+  scorer masks it and drops the day. **FILED FOR OTHER LANES:** at least seven
+  committed probes decode `lmpDeltaHr` directly and may carry the same
+  corruption wherever an actual is missing — each lane should check its own.
+
+**Determination-neutrality is verified, not asserted:** all 55 registered runs
+re-scored before and after — zero determination diffs, zero per-criterion status
+diffs, zero caveat/grade-summary diffs; 161 D-A records, 0 skipped. Pinned by
+`DiurnalAmplitudeReportedOnlyTests.test_IT_CANNOT_GATE`.
+
+Pre-existing at HEAD and **not touched** (verified identical on a clean
+baseline, forecast lane): 5 failures in `tests/scoring/test_ff_readiness_battery.py`
+and `tests/scoring/test_forecast_parity.py`.
+
+No lane's verdict, keeper or matrix cell verdict is touched by this amendment.

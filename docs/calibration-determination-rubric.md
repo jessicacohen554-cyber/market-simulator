@@ -716,6 +716,45 @@ way FAILs C6 regardless.
   history; re-introducing storage as a criterion is a future owner decision
   and would re-enter as a new amendment.
 
+### D-A — Diurnal price amplitude  *(REPORTED-ONLY and BAND-FREE as of v3.5; never a criterion)*
+
+> **This is a disclosure, not a gate.** D-A is **not** a member of `CRITERIA`.
+> It contributes **no status** to the determination, consumes **no caveat
+> budget**, is **not** in `LEDGERABLE_CRITERIA`, and its status value
+> (`REPORTED`) is deliberately none of the four scored statuses. It exists so
+> that a defect present in 36/36 measured cells is visible on every run rather
+> than invisible to the model's own quality gate. **Nothing may gate on it**
+> — making it gating is an owner amendment, and §9's v3.5 entry records what
+> the band sweep found about attempting that.
+
+- **Metric:** the model's **hour-of-day mean price profile range** as a
+  percentage of the measured one, plus the phase check (model vs measured peak
+  and trough hour, ±1 h) and the hour-of-day profile correlation.
+- **Basis:** **RT**, the same benchmark C3a gates the price level on — the model
+  is structurally a real-time analogue, so RT is the honest comparison. The
+  measured DA profile is carried in the part as the companion.
+- **Actual:** committed part `frontend/data/backcast/amplitude/actual_amplitude.json`
+  (`scripts/data/derive_actual_amplitude.py`), the measured hour-of-day profile
+  per ISO-year over **complete days only** — a day with any missing hour is
+  dropped and counted, never interpolated.
+- **Model:** reconstructed from the run payload's own `lmpDeltaHr` (hourly
+  `model − actual RT`). The hour-of-day mean is linear, so
+  `hod(model) = hod(actual) + hod(delta)`. **This is what makes D-A
+  scorer-only:** no LP solve, no bundle regeneration and no re-registration —
+  every already-registered run scores in place, the same property that made the
+  C3c standing rule scorer-only. Hours carrying the `-32768` NOT-A-NUMBER
+  sentinel drop their whole day.
+- **Tolerance:** **none — band-free by construction.** No external comparable
+  exists to anchor one (§9, v3.5), so the number is published without a verdict.
+  `tol` is `None` and `classification` is `None` on every record.
+- **`SKIPPED`** when no measured part is committed for the ISO-year, when the
+  payload predates the `lmpDeltaHr` field, or when the measured profile is
+  degenerate. A skip here costs nothing but the disclosure — D-A never gates, so
+  it can never turn a skip into a determination effect.
+- **Validation:** agrees with the parquet-based reference implementation
+  (`scripts/probes/_xiso1_diurnal_amplitude_audit.py`) to a **worst 0.31 pp**
+  across all six keepers × three years.
+
 ### C6 — Governance gate  *(PROTECTIVE, pass/fail only — never graded, never caveatable; UNCHANGED in v2)*
 
 This is the `claude.md` rule made executable. **A run that fits to residuals
@@ -1206,6 +1245,87 @@ down to.
 > change. Ratifying this one after the fact does not license the next one.
 
 ## 9. Version history
+
+- **v3.5 (2026-08-25, owner decision — session xiso-amplitude-rubric-card;
+  the owner selected option (B) of
+  `docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md`)** — adds
+  **D-A, the BAND-FREE REPORTED-ONLY diurnal price-amplitude measurement**
+  (`calibration_verdict.score_diurnal_amplitude`, §5a below). **No criterion is
+  added to `CRITERIA`; `LEDGERABLE_CRITERIA` (`{price_tail}`) and
+  `MAX_LEDGERED_CAVEATS` (1) are UNCHANGED; no determination moves.**
+
+  **The defect it discloses.** xiso-1 (2026-08-01) measured diurnal price-
+  amplitude compression in **36 of 36** ISO × year × benchmark cells: daily MAX
+  under-priced and daily MIN over-priced *everywhere*, hour-of-day amplitude a
+  mean **~45 % of measured vs RT**, while the annual LEVEL is right to ~7 % and
+  the PHASE is right in 34/36 rows. The level **passes by cancellation** — the
+  trough is over-priced by about as much as the peak is under-priced — and **no
+  criterion sees it**: C3a is a level test, C3b a 12-month load-weighted NRMSE
+  structurally blind to hour-of-day for every ISO, C3c a tail count, and C7 —
+  the one criterion that ever scored a diurnal shape — was retired at v3.1. A
+  keeper can read `CALIBRATED` on 8/8 criteria while reproducing **29.5 %** of
+  the measured daily price swing, which is PJM's today.
+
+  **Why REPORTED-ONLY and BAND-FREE rather than a gate.** The xiso-6 sweep
+  (`scripts/probes/_xiso6_amplitude_criterion_band_probe.py`, transcript
+  `results/calibration/PROBE-xiso6-amplitude-criterion-bands-2026-08-25.txt`)
+  measured what a *gating* criterion would do at ten candidate bands × six ISOs
+  × three candidate tiers, offline over the committed records. It is **vacuous**
+  below a 25 % amplitude floor — every keeper passes, including one at 20.8 % —
+  and **universal** above 45 %, where five or six of six ISOs FAIL and all three
+  `CALIBRATED` determinations are lost. The entire dynamic range is floors
+  **20–45 %**, and **no external comparable exists** anywhere in it: every graded
+  criterion here is two-band scored against a published anchor (C3a's ±10 % is
+  SEM-20-004; C3b's 0.20 NRMSE is SEM's accepted backcast), and there is no
+  published counterpart for diurnal price amplitude. That is **precisely the
+  ground C7 was retired on at v3.1** (§8's comparables row: *"a diurnal-shape
+  ACCURACY gate with no published counterpart"*). So v3.5 applies v3.1's own
+  disposition to prices: **the gate is not built and the measurement is kept.**
+  The measurement therefore carries **no band, no threshold and no verdict** —
+  its status is `REPORTED`, which is not one of the four scored statuses.
+
+  Three further findings from the sweep, recorded because they bear on any
+  future attempt to gate this:
+  - **Tier is nearly inert.** Load-bearing and supporting tier give *identical*
+    determination tables (a FAIL forces `NOT-YET` at every tier; a
+    commercial-band caveat downgrades identically), and protective is strictly
+    harsher (`MAX_PROTECTIVE_CAVEATS` = 0). Supporting tier's only benefit —
+    model-class ledgering — is unreachable twice over: `LEDGERABLE_CRITERIA` is
+    `{price_tail}` alone since v3.1, and the single ledger slot is **already
+    occupied by a ledgered C3c at five of six ISOs**.
+  - **It would gate at least four different objects with one number** (rule 19
+    `[R-ONE-MECH]`). The four ISOs that have decomposed their own cell disagree:
+    NYISO's is reserve-price formation (its reserve-stripped energy swing is
+    117/97/107 % of actual — essentially *no* energy-side defect), NEISO's is
+    explicitly *not* NYISO's (reserve owns 33/43/32 %; the miss is an
+    over-dear trough), MISO's is a two-sided night floor, and CAISO's is
+    south-concentrated with NP15 **under**-priced in its mid bucket — opposite
+    sign. Marking NYISO down on a statistic its own decomposition explains away
+    would be a false negative the rubric could not detect.
+  - **The cancellation coupling.** The trough half is over-priced in **18 of 18**
+    ISO-years; a peak-only repair moves the C3a level error up 3–13 pp and flips
+    **load-bearing, non-ledgerable** C3a from PASS to FAIL at PJM 2023, CAISO
+    2024 and NEISO 2024. A gate rewarding closed amplitude would price a real
+    criterion against a synthetic one.
+
+  **Verified, not asserted.** All 55 registered runs were re-scored before and
+  after: **zero determination diffs, zero per-criterion status diffs, zero
+  caveat/grade-summary diffs**, with 161 D-A records produced and 0 skipped.
+  Pinned by `DiurnalAmplitudeReportedOnlyTests.test_IT_CANNOT_GATE`.
+
+  **Two fixes carried in the same amendment, reported rather than buried:**
+  - `REPORTED_ONLY` records were **computed and then silently dropped** — only
+    `CRITERIA` members reach `per_criterion`, so C5a `co2` has been scored and
+    discarded by the verdict since v2.9. "Reported-only" reported nothing. The
+    verdict now carries a `reported` block, rendered in `render_text` and
+    condensed into `metrics.json`, assembled *after* the determination and
+    feeding nothing back into it.
+  - **A latent instrument defect:** `lmpDeltaHr` reserves `-32768` as its
+    NOT-A-NUMBER sentinel, and MISO 2025 hour 8759 has no committed actual.
+    Read as a value it blows that ISO-year's amplitude from 20.8 % to 186.9 %.
+    The scorer masks the sentinel and drops the whole day. *Filed for other
+    lanes, not acted on here (rule 25): at least seven committed probes decode
+    `lmpDeltaHr` directly and may carry the same corruption.*
 
 - **v3.4 (2026-08-18, owner amendment — session caiso-c1-lmp-pricing;
   directive verbatim: "Ccgt is fine at -1.8% for passing c1 gate … I want … a
