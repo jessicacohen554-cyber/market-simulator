@@ -12027,3 +12027,68 @@ is queued.** Standing opens: the ercot-225 gate card (owner signature) and
 the reported band-structure residual.
 
 **Next shorthand: ercot-237** (ercot-199 remains unclaimed)
+
+---
+
+## ercot-237 — 2026-08-26 — POST-CALIBRATED CONTINUATION: the ercot-236 merge VERIFIED LIVE; the band-structure residual characterized Phase-0 (ZERO-SOLVE, precommitted): NOT a pairwise swap — [500,1000) is a CRUSHED TRANSITION (2/43 in-band; 28 below, 13 overshoot to ≥$1,000) plus a 14-hour missed-event family; and the registered "≥$1,000 tail EXACT (59 vs 59)" is WRONG (actual = 61; hour-identity 36/59)
+
+**Branch `claude/ercot-236-merge-owner-queue-k97n01`. No solve, no lever,
+no gate change, no matrix stamp; keeper `2026-08-25-236-swcap-clip-k33`
+(CALIBRATED, zero caveats) untouched.**
+
+**A. Merge verification (handoff priority A) — DONE.** PR #4288
+(`claude/ercot-h4097-shed-repair-s884k9`, the 8 rebased commits) is merged
+into main (`bcb2521`); the Pages deploy on that commit ran green (run
+32918510447) and the LIVE manifest serves `2026-08-25-236-swcap-clip-k33`
+(fetched from the deployed site and grep-verified); keeper shard + status
+part read [ERCOT:CALIBRATED]. The blocking step is closed.
+
+**B. Phase-0 band-swap characterization (handoff item C), precommitted
+before any measurement** (`docs/PRECOMMIT-ercot237-bandswap-phase0-2026-08-26.md`,
+pushed + blob-verified; probe `scripts/probes/ercot237_bandswap_phase0.py`
+→ `results/calibration/ercot237_bandswap_phase0.json`; full record
+`docs/FINDING-ercot237-bandswap-phase0-2026-08-26.md`). **The V-0
+identity gate FIRED — and caught a real registered-record defect
+(Amendment 1, recorded before proceeding):** the actual ≥$1,000 band
+count was HARDCODED at 59 in `ercot235_offer2023_sweep.py`, copied into
+the ercot-236 scorer, and is wrong — the true count is **61**
+(77+43+61 = 181 = `actual_tail.json` rt_gt; the registered sum is
+179 ≠ 181). No scored criterion moves; the "EXACT (59 vs 59)" PROSE on
+the keeper's promotion-record surfaces (log entries, keeper shard,
+registry sidecar, status part, matrix §5.1 + ERCOT.js) awaits an
+owner-authorized correction pass — NOT edited this round. Corrected
+residual: [200,500) 103 vs 77 · [500,1000) 18 vs 43 · ≥1000 59 vs 61.
+
+**The characterization (joint 4×4 band matrix, hour lists committed):**
+(1) the 43 actual-[500,1000) hours split 13 modeled <$200 (with corner
+hour h4578 a **14-hour missed-event family** — Mar/May/Jul/Aug/Sep/Oct/Nov
+shoulder events, actual $537–2,014, model $35–175, 10+ hours outside the
+August core), 15 modeled [200,500) (August event-day shoulders), **13
+modeled ≥$1,000** (August afternoons overshot THROUGH the band), only 2
+in-band — the k=33 surface transitions [200,500)→≥$1,000 too steeply to
+populate the band between; (2) the [200,500) over-fill's spurious cell
+(46 h actual <$200) is 85 % the known G-SPUR population (39/68 spur
+hours; the level lift wearing a second label); (3) the deep tail is
+count-EXACT but hour-level only 36/59 — within August the surface puts
+deep prices on partially wrong afternoons (h5726–31 deep vs actual
+~$300; h5175–78 mid vs actual $1,246–2,100), netting the monthly mean
+within $1; (4) the clip is NOT implicated (1 λ≥$4,999 hour, 0 overlap).
+Priors: P1 CONFIRMED (65 % below $500 — with the honest bimodality
+addendum), P2 CONFIRMED (57 % spur overlap), P3 PARTIAL (month leg
+confirmed 84 % Aug+Sep; hod leg refuted-as-stated — the under-fill peaks
+hod 13–18, not HE 17–21).
+
+**Named candidate objects (owner-visible, NOT chartered):** (1) the
+14-hour missed-event family — availability/outage/ramp representation,
+not offer-curve; (2) the August steepness object — offer-surface SHAPE
+work under rule 1 discipline (the spur cost already binds the same
+lift); (3) the 59→61 prose-correction pass. **Standing owner queue
+re-surfaced with the handoff:** the ercot-225 G-SPUR band-top gate card
+(AWAITING SIGN-OFF since 2026-08-21; Option A recommended in the card,
+and this session's §5 result — h5684/h5731 deep-spurious, band-top-blind
+— is fresh evidence FOR the lidless read), and the `complete`-marker
+question (whether ERCOT opens the 2022 validation touchpoint; the
+k_peak scalar is in-sample-2023-only, so 2022 would be the first
+held-out evidence on this surface — put to the owner, not taken).
+
+**Next shorthand: ercot-238** (ercot-199 remains unclaimed)
