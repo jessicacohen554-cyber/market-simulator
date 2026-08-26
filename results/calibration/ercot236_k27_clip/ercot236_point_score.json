@@ -1,0 +1,116 @@
+{
+ "point": "K27_CLIP",
+ "k_peak": 27.0,
+ "clip": true,
+ "official": [
+  {
+   "year": 2023,
+   "c3a_model": 57.0,
+   "c3a_actual": 64.32,
+   "c3a_magnitude": "-11.4%",
+   "c3b_nrmse": "0.149",
+   "c3c_model_h": 180,
+   "c3c_actual_rt_h": 181
+  }
+ ],
+ "monthly_lw": {
+  "1": {
+   "model": 25.03,
+   "actual": 23.69,
+   "baseline234": 25.01,
+   "keeper_k24": 25.03
+  },
+  "2": {
+   "model": 21.28,
+   "actual": 19.1,
+   "baseline234": 21.25,
+   "keeper_k24": 21.28
+  },
+  "3": {
+   "model": 23.7,
+   "actual": 26.34,
+   "baseline234": 23.68,
+   "keeper_k24": 23.7
+  },
+  "4": {
+   "model": 23.66,
+   "actual": 20.13,
+   "baseline234": 23.58,
+   "keeper_k24": 23.66
+  },
+  "5": {
+   "model": 27.47,
+   "actual": 30.95,
+   "baseline234": 27.45,
+   "keeper_k24": 27.47
+  },
+  "6": {
+   "model": 59.62,
+   "actual": 72.79,
+   "baseline234": 38.81,
+   "keeper_k24": 57.78
+  },
+  "7": {
+   "model": 40.28,
+   "actual": 47.08,
+   "baseline234": 37.46,
+   "keeper_k24": 40.28
+  },
+  "8": {
+   "model": 204.42,
+   "actual": 220.16,
+   "baseline234": 93.02,
+   "keeper_k24": 196.27
+  },
+  "9": {
+   "model": 95.73,
+   "actual": 106.99,
+   "baseline234": 60.51,
+   "keeper_k24": 93.07
+  },
+  "10": {
+   "model": 27.9,
+   "actual": 29.1,
+   "baseline234": 27.88,
+   "keeper_k24": 27.9
+  },
+  "11": {
+   "model": 28.72,
+   "actual": 30.07,
+   "baseline234": 28.54,
+   "keeper_k24": 28.72
+  },
+  "12": {
+   "model": 22.32,
+   "actual": 21.68,
+   "baseline234": 22.29,
+   "keeper_k24": 22.32
+  }
+ },
+ "kills": {
+  "g_shed_new": [],
+  "g_offseason": false,
+  "g_coal148_rise_twh": 0.0993
+ },
+ "coal_rise_vs_keeper_k24_twh": 0.0001,
+ "h4097_slack_mwh": 0.0,
+ "shed_hours_mwh": {},
+ "max_energy_lambda": 4999.99,
+ "hours_lambda_ge_4999": 1,
+ "spur_band": 68,
+ "spur_nolid": 74,
+ "model_band_hours_vs_actual": {
+  "200_500": [
+   103,
+   77
+  ],
+  "500_1000": [
+   19,
+   43
+  ],
+  "ge_1000": [
+   58,
+   59
+  ]
+ }
+}

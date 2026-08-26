@@ -54,6 +54,7 @@ from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 
+from market_sim.config.constants import ERCOT_SWCAP_SHED_TIEBREAK_EPS
 from market_sim.model.commitment import compute_monthly_markup
 from market_sim.model.dispatch import DispatchModel, solve_dispatch
 from market_sim.model.lp.inplace_floor import (
@@ -119,6 +120,25 @@ def apply_bid_max_target(mc_bid: np.ndarray, target: np.ndarray) -> np.ndarray:
     """
     binding = np.isfinite(target) & (target > 0.0)
     return np.where(binding, np.maximum(mc_bid, target), mc_bid)
+
+
+def _swcap_clip_level(config) -> Optional[float]:
+    """The armed SWCAP offer-clip level ($/MWh), or ``None`` when off.
+
+    ``ercot_offer_swcap_clip`` (see the ScenarioConfig field's docstring for
+    the market grounding): every real SCED energy offer is capped at the
+    system-wide offer cap, which ERCOT's energy-only design sets equal to
+    VOLL — so no admissible thermal offer may reach the LP above
+    ``voll − ERCOT_SWCAP_SHED_TIEBREAK_EPS`` (the ε keeps dispatch strictly
+    preferred to the slack column at the cap; [R-EPSILON] class). ERCOT-gated:
+    the seam is ISO-agnostic and other ISOs' offer caps are not the VOLL
+    identity (rule 25 [R-ISO-SCOPE]).
+    """
+    if not getattr(config, "ercot_offer_swcap_clip", False):
+        return None
+    if getattr(config, "iso", "") != "ERCOT":
+        return None
+    return float(config.voll) - ERCOT_SWCAP_SHED_TIEBREAK_EPS
 
 
 def run_energy_solve(
@@ -228,6 +248,13 @@ def run_energy_solve(
         :class:`EnergySolveResult` with the P0/P1 results, the bid MC, and the
         ``FleetArrays`` P1 solved on.
     """
+    # ERCOT SWCAP offer-domain clip (ercot_offer_swcap_clip): applied to the
+    # P0 base cost HERE and to the fully-assembled P1 bid below, so "no
+    # thermal energy offer above the cap" is the invariant the LP receives in
+    # both passes. Off path (_swcap None) byte-identical.
+    _swcap = _swcap_clip_level(config)
+    if _swcap is not None:
+        mc_base = np.minimum(mc_base, _swcap)
     _warm = os.environ.get("MARKET_SIM_WARMSTART", "1") != "0"
     model = DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
     # Cross-year gate: an explicit ``xyear_warmstart`` bool is the caller's own
@@ -308,6 +335,12 @@ def run_energy_solve(
     # Zero/absent entries are no-ops; None (every flag-off path) is byte-identical.
     if p1_bid_max_target is not None:
         mc_bid = apply_bid_max_target(mc_bid, p1_bid_max_target)
+    # ERCOT SWCAP clip, P1 half: the assembled bid (base + markup + additive
+    # adjusts + bid-max target) is capped LAST, mirroring the market's own
+    # order — every construction feeds the offer, the cap bounds what may be
+    # submitted (see _swcap_clip_level).
+    if _swcap is not None:
+        mc_bid = np.minimum(mc_bid, _swcap)
     # P1-native floor injection (CAISO RA must-offer bridge, ERCOT gas
     # commitment bridge): the hook reads the P0 solution and returns a floored
     # fleet for the P1 clearing solve. The floor enters the LP only as the

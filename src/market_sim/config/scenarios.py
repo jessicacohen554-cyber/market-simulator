@@ -987,6 +987,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hashes distinctly. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "ercot_tie_zonal_interchange",
+    # ercot-236 SWCAP offer clip (GATED default off): dropped from the hash
+    # at its default so every pre-existing cache key stays byte-stable (the
+    # off path never enters the clip block — byte-identical by construction);
+    # an armed run caps the thermal offer domain at voll − eps, a different
+    # scenario, and hashes distinctly. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "ercot_offer_swcap_clip",
     # caiso-205 CAISO leg of the adaptive-expectation family (GATED default
     # off) + its two rule-23 identified constants: dropped from the hash at
     # their defaults so every pre-existing cache key stays byte-stable (the
@@ -1412,6 +1419,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-231 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_tie_zonal_interchange": "False",
+    # Added by ercot-236 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "ercot_offer_swcap_clip": "False",
     # Added by caiso-205 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "caiso_storage_adaptive_expectation": "False",
@@ -9187,6 +9197,38 @@ class ScenarioConfig:
     # the mechanism is a no-op even when the flag is on.
     ercot_offer_surface_lowcurve_path: str | None = None
 
+    # ERCOT system-wide offer cap (SWCAP) clip (ercot-236, default off,
+    # ERCOT-gated; rule 1 [R-STRUCT]): every SCED energy offer in the real
+    # market is capped at the system-wide offer cap — $5,000/MWh in the
+    # backcast years, the PUCT post-Uri Phase-1 HCAP, which the energy-only
+    # design sets equal to VOLL (see the iso_configs ERCOT voll citation:
+    # "matches the day-ahead system-wide offer cap"). The model's tuned offer
+    # surface (tranche multipliers x heat rate x fuel) carries no such cap, so
+    # a large enough peak-band multiplier walks implied offers PAST the LP's
+    # slack cost (VOLL) — at which point shedding becomes economically optimal
+    # against physically-available capacity, a manufactured shed with no
+    # market analogue (firm-load shed is an EEA emergency action, never the
+    # economic outcome of a high offer; SCED dispatches every offered MW
+    # first). Measured instance: the ercot-235 campaign's h4097 June-20-2023
+    # object — the k_peak > 24 grid points shed exactly the load slice whose
+    # marginal offer crossed $5,000 (keeper h4097 energy lambda $4,770.55
+    # predicts the crossing at k* = 25.15, inside the measured onset (24, 27];
+    # PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md §1-§3).
+    # Armed, pipeline/solve.py::run_energy_solve clips the thermal marginal
+    # cost at voll − constants.ERCOT_SWCAP_SHED_TIEBREAK_EPS — mc_base at
+    # entry (P0 sees the same admissible offer domain; the offer-surface
+    # family's P0 bit-identity proof is already forfeited, ercot-188/E2) and
+    # the fully-assembled P1 bid last, so "no thermal energy offer above the
+    # cap" is the invariant the LP receives. No window, no hour selection —
+    # the cap is an offer-domain constraint on all 8,760 hours identically
+    # (rule 17 by construction: driver = the PUCT SWCAP; window = every hour,
+    # by market design; forward story = regenerates from the configured cap).
+    # Off path byte-identical (the clip block is never entered). ERCOT-gated
+    # (rule 25): the seam is ISO-agnostic, so the flag is ANDed with
+    # config.iso == "ERCOT"; other ISOs' offer caps are not the VOLL identity
+    # and need their own identification before any transfer.
+    ercot_offer_swcap_clip: bool = False
+
     # ERCOT gas-CC COMMITMENT BRIDGE (default off, ERCOT-gated): the committed-
     # STATE half of the trough-price-formation circle, promoted from the
     # ERCOT-62b probe (docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md
@@ -14445,6 +14487,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_adaptive_event_release": 1,
     "ercot_adaptive_fixed_point": 1,
     "ercot_tie_zonal_interchange": 1,
+    "ercot_offer_swcap_clip": 1,
     "caiso_storage_adaptive_expectation": 1,
     "caiso_adaptive_half_life_days": 2,
     "caiso_adaptive_beta": 2,

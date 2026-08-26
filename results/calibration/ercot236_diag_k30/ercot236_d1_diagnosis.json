@@ -1,0 +1,213 @@
+{
+ "point": "DIAG_K30",
+ "h": 4097,
+ "shed_mwh": 35.948,
+ "delta_at_h4097": {
+  "thermal": -48.28,
+  "net_storage_discharge": 12.33,
+  "renewables": 0.0,
+  "reserve_held_by_family": {
+   "ECRS_withheld": 0.0,
+   "NonSpin": -35.95,
+   "RRS_withheld": 0.0,
+   "RegUp_withheld": 35.95,
+   "ercot_ordc_total": 0.0
+  },
+  "reserve_held_total": -0.0
+ },
+ "zone_price_min_max_at_h4097": [
+  5000.0,
+  5000.0
+ ],
+ "window": {
+  "4085": {
+   "thermal_d": 39291.5,
+   "thermal_k": 39291.5,
+   "netdis_d": 0.0,
+   "netdis_k": 0.0,
+   "slack_d": 0.0,
+   "price_d": 24.9,
+   "price_k": 24.9
+  },
+  "4086": {
+   "thermal_d": 40541.4,
+   "thermal_k": 40541.4,
+   "netdis_d": -452.6,
+   "netdis_k": -452.6,
+   "slack_d": 0.0,
+   "price_d": 26.7,
+   "price_k": 26.7
+  },
+  "4087": {
+   "thermal_d": 40461.2,
+   "thermal_k": 40461.2,
+   "netdis_d": -181.7,
+   "netdis_k": -181.7,
+   "slack_d": 0.0,
+   "price_d": 26.7,
+   "price_k": 26.7
+  },
+  "4088": {
+   "thermal_d": 42325.4,
+   "thermal_k": 42325.4,
+   "netdis_d": 0.0,
+   "netdis_k": 0.0,
+   "slack_d": 0.0,
+   "price_d": 28.6,
+   "price_k": 28.6
+  },
+  "4089": {
+   "thermal_d": 44974.6,
+   "thermal_k": 44974.6,
+   "netdis_d": -62.1,
+   "netdis_k": -62.1,
+   "slack_d": 0.0,
+   "price_d": 29.7,
+   "price_k": 29.7
+  },
+  "4090": {
+   "thermal_d": 47377.2,
+   "thermal_k": 47377.2,
+   "netdis_d": 0.0,
+   "netdis_k": 0.0,
+   "slack_d": 0.0,
+   "price_d": 32.6,
+   "price_k": 32.6
+  },
+  "4091": {
+   "thermal_d": 51999.4,
+   "thermal_k": 51999.4,
+   "netdis_d": 0.0,
+   "netdis_k": 0.0,
+   "slack_d": 0.0,
+   "price_d": 41.1,
+   "price_k": 41.1
+  },
+  "4092": {
+   "thermal_d": 56235.4,
+   "thermal_k": 56235.4,
+   "netdis_d": -15.9,
+   "netdis_k": -15.9,
+   "slack_d": 0.0,
+   "price_d": 61.9,
+   "price_k": 61.9
+  },
+  "4093": {
+   "thermal_d": 59028.8,
+   "thermal_k": 59028.8,
+   "netdis_d": 10.4,
+   "netdis_k": 10.4,
+   "slack_d": 0.0,
+   "price_d": 211.0,
+   "price_k": 211.0
+  },
+  "4094": {
+   "thermal_d": 60447.4,
+   "thermal_k": 60447.4,
+   "netdis_d": -12.0,
+   "netdis_k": -12.0,
+   "slack_d": 0.0,
+   "price_d": 385.3,
+   "price_k": 385.3
+  },
+  "4095": {
+   "thermal_d": 61484.7,
+   "thermal_k": 61484.7,
+   "netdis_d": 94.8,
+   "netdis_k": 94.8,
+   "slack_d": 0.0,
+   "price_d": 2250.3,
+   "price_k": 1847.8
+  },
+  "4096": {
+   "thermal_d": 61765.3,
+   "thermal_k": 61749.5,
+   "netdis_d": 587.3,
+   "netdis_k": 603.2,
+   "slack_d": 0.0,
+   "price_d": 2476.2,
+   "price_k": 2092.9
+  },
+  "4097": {
+   "thermal_d": 61868.2,
+   "thermal_k": 61916.5,
+   "netdis_d": 1037.4,
+   "netdis_k": 1025.1,
+   "slack_d": 35.95,
+   "price_d": 5000.0,
+   "price_k": 4778.3
+  },
+  "4098": {
+   "thermal_d": 62547.2,
+   "thermal_k": 62538.8,
+   "netdis_d": 698.2,
+   "netdis_k": 706.5,
+   "slack_d": 0.0,
+   "price_d": 2683.5,
+   "price_k": 2332.2
+  },
+  "4099": {
+   "thermal_d": 62658.5,
+   "thermal_k": 62670.4,
+   "netdis_d": 511.9,
+   "netdis_k": 500.0,
+   "slack_d": 0.0,
+   "price_d": 2508.8,
+   "price_k": 2125.6
+  },
+  "4100": {
+   "thermal_d": 59910.9,
+   "thermal_k": 59910.9,
+   "netdis_d": 118.5,
+   "netdis_k": 118.5,
+   "slack_d": 0.0,
+   "price_d": 211.7,
+   "price_k": 211.7
+  },
+  "4101": {
+   "thermal_d": 55360.0,
+   "thermal_k": 55360.0,
+   "netdis_d": -102.0,
+   "netdis_k": -102.0,
+   "slack_d": 0.0,
+   "price_d": 53.7,
+   "price_k": 53.7
+  },
+  "4102": {
+   "thermal_d": 49876.6,
+   "thermal_k": 49876.6,
+   "netdis_d": 0.0,
+   "netdis_k": 0.0,
+   "slack_d": 0.0,
+   "price_d": 36.2,
+   "price_k": 36.2
+  },
+  "4103": {
+   "thermal_d": 45221.1,
+   "thermal_k": 45221.1,
+   "netdis_d": -368.6,
+   "netdis_k": -368.6,
+   "slack_d": 0.0,
+   "price_d": 29.7,
+   "price_k": 29.7
+  },
+  "4104": {
+   "thermal_d": 43354.5,
+   "thermal_k": 43354.5,
+   "netdis_d": -1357.7,
+   "netdis_k": -1357.7,
+   "slack_d": 0.0,
+   "price_d": 27.8,
+   "price_k": 27.8
+  },
+  "4105": {
+   "thermal_d": 41222.4,
+   "thermal_k": 41222.4,
+   "netdis_d": -655.6,
+   "netdis_k": -655.6,
+   "slack_d": 0.0,
+   "price_d": 25.7,
+   "price_k": 25.7
+  }
+ }
+}
