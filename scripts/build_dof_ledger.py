@@ -529,6 +529,35 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "scripts/probes/_caiso172_subtac_load_survey.py).",
             )
         )
+        out.append(
+            _entry(
+                "caiso-plant-hub-membership crosswalk",
+                "data/raw/reference/caiso-plant-hub-membership.csv "
+                "(zone_assignment CAISO first-check)",
+                "measured",
+                iso,
+                value={"plants": 446, "gw_joined": 41.1, "movers": 78},
+                source="generator -> trading-hub membership, CAISO's own "
+                "geography — MEASURED (caiso-217 intake, 2026-08-23; the "
+                "caiso-216 §F.1 packet item C1, completing the caiso-172 "
+                "path15_load_split program on the generation side). Derived "
+                "by scripts/data/derive_caiso_plant_hub_membership.py (rule "
+                "23 [R-FROZEN-DERIVE]) from the committed ATL_PNODE_MAP "
+                "(pnode -> TH_NP15/TH_ZP26/TH_SP15 membership at latest "
+                "effective window) joined to EIA-860 plants through four "
+                "evidence tiers (verified-pin / eia-lmp-node / "
+                "reviewed-crosswalk / resource-name), hub-unanimity enforced, "
+                "precision-over-recall (two looser channels built, audited, "
+                "REMOVED). ZERO free scalars: measured membership overrides "
+                "the lat-cut/county-lift estimate wherever joined "
+                "[R-ACCURATE]; unjoined plants keep the geographic rule; "
+                "TH_SP15 carries no sub-zone information so LCR-pocket "
+                "resolution is preserved. Witness gates (caiso-216 §E) ALL "
+                "PASS: DIABLO->TH_ZP26, ALTA/WINDHUB->TH_SP15, "
+                "TOPAZ->TH_ZP26, MUSTANG->TH_NP15. Artifact sidecar carries "
+                "the full mover table as the committed review surface.",
+            )
+        )
         # C-5 (audit): the 7,500 MW WECC_import_simultaneous cap. Superseded in
         # the caiso-51 keeper (published MIC sum + measured p95 corridor
         # envelopes), retained ONLY as the capacity_deliverability_limits-off
