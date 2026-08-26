@@ -1,0 +1,16 @@
+{
+ "id": "2026-08-26-miso-187-nucavail",
+ "label": "miso 187 nucavail",
+ "date": "2026-08-26",
+ "shorthand": "miso-187-nucavail",
+ "definition": "miso-187 ARM \u2014 THE KEEPER: per-reactor NRC-daily nuclear availability (nuclear_unit_availability=true, single delta vs 2026-08-25-miso-186-statusscope; PREREG-miso187). Replaces the uniform fleet-month smear (0.897 in the 2025 scarce set) with the measured 13-reactor record reconciled to the EIA-923 anchor: South fleet 0.954, Midwest 0.885. S-3 PASS (+0.298 GW toward the measured South outflow), S-2 unchanged 7/47 (disclosed), C3a-2025 unchanged, zero criterion flips. Determination NOT-YET on {C3a-2025, C1 CC_REGULAR 2024}, C3c ledgered.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-08-26-miso-187-nucavail.js",
+ "bundle": "results/calibration/miso187_nuc_B",
+ "market_story": "nuclear: MISO's 13 reactors do not refuel or trip in unison \u2014 the NRC daily record shows the 2025 scarce weeks with the South fleet (Waterford 3, Grand Gulf, River Bend, ANO 1+2) near full power (0.954 capacity-weighted) while the Midwest carried the real concentrated outages (Callaway 68.9%, Clinton 77.2%, Monticello 86.8%). The uniform fleet-month smear under-supplied the South and over-supplied the Midwest in exactly the hours that decide the regional direction transfer; the overlay posts each reactor's measured daily availability (monthly energy still anchored to EIA-923), so the LP's baseload floor sits where the real fleet actually was. Wind/solar/gas classes are untouched; annual nuclear energy moves <0.2 TWh/yr."
+}
