@@ -49,6 +49,24 @@ parsed as a fallback) it verifies:
       scored C6 UNATTESTED and forced NOT-YET, and the incumbent's C3c exceptions
       never carried forward. E8 alone can never catch that, because the missing
       blocks are exactly the ones it does not look at.
+  E11 keeper-lineage recipe fidelity over the FULL ``solve_and_persist`` kwarg
+      surface. The nyiso-108→155 silent-de-arm class
+      (``docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md`` §2): the hydro
+      repair pair are solve kwargs, NOT ``ScenarioConfig`` fields, so
+      "all scenario_config fields identical" lineage checks were structurally
+      blind to them and an armed keeper mechanism left the lineage with no
+      de-arm decision anywhere. Whenever a shard records a structured lineage
+      (``superseded.former_keeper`` — the NYISO convention) and both bundles
+      are on disk, the CURRENT keeper's full recorded recipe (run_config.json
+      scenario block ∪ meta.json solve-kwarg surface) is diffed against the
+      FORMER keeper's, and every kwarg whose recorded value CHANGED must be
+      declared somewhere in the shard's prose — an undeclared change FAILs.
+      A kwarg present only in the former bundle (a field deleted from the
+      codebase between the solves — the rule-26 class) WARNs; keys present
+      only in the current bundle (fields born between the solves, recorded at
+      their defaults across HEAD drift) are reported, never failed. Shards
+      with no structured lineage record pass with an explanatory note — the
+      guard arms lane-by-lane as shards adopt the convention.
   M1  ``complete``-marker currency + determination re-verification (owner
       decision D-5(b), signed 2026-08-02): every ISO holding a ``complete``
       entry in ``calibration-complete.json`` has that entry's ``keeper`` field
@@ -367,6 +385,172 @@ def _bundle_flags(bundle: Path) -> dict | None:
     return (cfg or {}).get("calibration_flags") if cfg else None
 
 
+# E11 — meta.json keys that are provenance rather than solve kwargs, so a
+# cross-promotion difference in them is never a recipe change. Mirrors
+# ``scripts.replay_keeper._IGNORE`` plus the free-text ``note`` (duplicated
+# because replay_keeper imports the numpy/model stack and this module is
+# stdlib-only; ``tests/scoring/test_audit_keepers_lineage.py`` pins the two
+# sets against each other so they cannot drift).
+E11_META_PROVENANCE = {
+    "timestamp",
+    "note",
+    "gas_prices",
+    "passes",
+    "td_loss_factor",
+    "shared_inputs",
+    "git_sha",
+    "basis_sha",
+    "highspy_version",
+    "environment",
+    "iso",
+    "years",
+    "hours",
+    "reuse",
+}
+
+_E11_ABSENT = object()
+
+
+def _recipe_block(bundle: Path) -> dict | None:
+    """The bundle's full recorded recipe: scenario block ∪ solve-kwarg surface.
+
+    ``meta.json`` is the authoritative snapshot of the kwargs
+    ``solve_and_persist`` was called with (resolved defaults included), and
+    ``run_config.json``'s ``scenario_config`` records the resolved
+    ``ScenarioConfig``. A lineage diff must read BOTH: the nyiso-108→155
+    silent de-arm lived exactly in the meta-only half (the
+    ``_config_block`` merge of ``scripts/probes/_nyiso155_hydro_repair_ab.py``
+    is the pattern this generalizes). Keys are namespaced ``sc.<field>`` /
+    ``meta.<kwarg>`` so the two surfaces can never shadow each other.
+
+    Returns None when neither file is readable (no recipe to diff).
+    """
+    block: dict = {}
+    cfg = _load_json(bundle / "run_config.json")
+    for k, v in ((cfg or {}).get("scenario_config") or {}).items():
+        block[f"sc.{k}"] = v
+    meta = _load_json(bundle / "meta.json")
+    for k, v in (meta or {}).items():
+        if k not in E11_META_PROVENANCE:
+            block[f"meta.{k}"] = v
+    return block if (cfg or meta) else None
+
+
+def _shard_prose(node) -> str:
+    """Every string value in the shard, recursively — the declaration corpus.
+
+    A recipe delta counts as declared when its bare kwarg/field name appears
+    anywhere in the shard's prose (promotion_note, determination_note, nested
+    superseded reasons, …). Substring match on the bare name is deliberate:
+    the promotion note writes e.g. ``hydro_backfill_year=2024`` and the check
+    must not depend on its phrasing.
+    """
+    if isinstance(node, str):
+        return node
+    if isinstance(node, dict):
+        return "\n".join(_shard_prose(v) for v in node.values())
+    if isinstance(node, list):
+        return "\n".join(_shard_prose(v) for v in node)
+    return ""
+
+
+def lineage_recipe_finding(
+    shard: dict, registry_dir: Path, repo_root: Path
+) -> tuple[str, str]:
+    """E11 — decide OK / WARN / FAIL for one shard's keeper-lineage recipe diff.
+
+    Tiering by blast radius (module docstring E11):
+
+    * value changed on a key BOTH bundles record → the silent-de-arm/re-arm
+      class (solve kwargs record resolved defaults, so a kwarg no longer
+      passed shows as a VALUE change, e.g. ``hydro_backfill_year`` 2024→None)
+      → FAIL unless declared in the shard prose;
+    * key only in the FORMER bundle → the field was deleted from the codebase
+      between the solves (rule-26 class) → WARN unless declared;
+    * key only in the CURRENT bundle → a field born between the solves,
+      recorded at its default across HEAD drift — indistinguishable from an
+      armed new mechanism without importing ``ScenarioConfig`` (this module is
+      stdlib-only), and new solve-affecting mechanisms are already guarded by
+      the rule-28 matrix CI — reported in the OK note, never failed.
+    """
+    former = (shard.get("superseded") or {}).get("former_keeper")
+    cur = shard.get("keeper")
+    if not former or not cur:
+        return (
+            "OK",
+            "no structured former-keeper lineage recorded "
+            "(superseded.former_keeper) — recipe diff not applicable; the "
+            "guard arms when the shard adopts the convention",
+        )
+    bundles: dict[str, Path] = {}
+    for label, rid in (("current", cur), ("former", former)):
+        side = _load_json(registry_dir / f"{rid}.json")
+        bundle = repo_root / (side or {}).get("bundle", "")
+        if not side or not side.get("bundle") or not bundle.exists():
+            return (
+                "WARN",
+                f"lineage recipe diff not computable: {label} keeper {rid} has "
+                "no resolvable bundle on disk — the full-kwarg-surface guard "
+                "has no baseline (a promotion should run before the former "
+                "bundle is retention-pruned)",
+            )
+        bundles[label] = bundle
+    blocks = {label: _recipe_block(b) for label, b in bundles.items()}
+    for label, blk in blocks.items():
+        if blk is None:
+            return (
+                "WARN",
+                f"lineage recipe diff not computable: {label} keeper bundle "
+                "has neither run_config.json nor meta.json",
+            )
+    prose = _shard_prose(shard)
+    changed_undeclared: list[str] = []
+    changed_declared: list[str] = []
+    deleted_undeclared: list[str] = []
+    born: list[str] = []
+    a, b = blocks["former"], blocks["current"]
+    for key in sorted(set(a) | set(b)):
+        va, vb = a.get(key, _E11_ABSENT), b.get(key, _E11_ABSENT)
+        if va is not _E11_ABSENT and vb is not _E11_ABSENT:
+            if va != vb:
+                bare = key.split(".", 1)[1]
+                delta = f"{bare} ({va!r} -> {vb!r})"
+                (changed_declared if bare in prose else changed_undeclared).append(
+                    delta
+                )
+        elif vb is _E11_ABSENT:
+            bare = key.split(".", 1)[1]
+            if bare not in prose:
+                deleted_undeclared.append(f"{bare} (was {va!r})")
+        else:
+            born.append(key.split(".", 1)[1])
+    if changed_undeclared:
+        return (
+            "FAIL",
+            "UNDECLARED keeper-recipe change(s) vs former keeper "
+            f"{former}: {'; '.join(changed_undeclared)} — the silent-de-arm "
+            "class (FINDING-nyiso-hydro-truncation-repair-2026-08.md §2): "
+            "declare each in the shard's promotion prose or revert it",
+        )
+    if deleted_undeclared:
+        return (
+            "WARN",
+            f"kwarg(s) recorded by former keeper {former} are absent from the "
+            f"current bundle's surface: {'; '.join(deleted_undeclared)} — a "
+            "codebase field deletion (rule-26 class) or a lost channel; "
+            "declare it in the shard prose to silence",
+        )
+    note = f"recipe faithful to former keeper {former}"
+    if changed_declared:
+        note += f"; declared change(s): {'; '.join(changed_declared)}"
+    if born:
+        note += (
+            f"; {len(born)} field(s) born since the former solve "
+            f"(recorded, not gated): {', '.join(born)}"
+        )
+    return ("OK", note)
+
+
 def _asserted_determination(definition: str) -> str | None:
     """Return the determination token the definition prose claims, if any.
 
@@ -642,6 +826,14 @@ def audit(isos: list[str] | None) -> Report:
         if want and shard_iso.upper() not in want:
             continue
         audit_keeper(run_id, rep)
+        # E11: keeper-lineage recipe fidelity over the full solve kwarg
+        # surface (the nyiso-108→155 silent-de-arm class), driven by the
+        # shard's structured ``superseded.former_keeper`` record.
+        shard = keeper_store.load_shard(shard_iso) or {}
+        level, msg = lineage_recipe_finding(shard, cv.REGISTRY_DIR, REPO)
+        {"OK": rep.ok, "WARN": rep.warn, "FAIL": rep.fail}[level](
+            run_id, shard_iso, "E11", msg
+        )
 
     # H1: holdout quarantine across EVERY registered bundle (keeper or probe).
     for msg in holdout_quarantine_failures():

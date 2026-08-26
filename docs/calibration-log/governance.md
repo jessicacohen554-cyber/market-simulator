@@ -1908,3 +1908,41 @@ baseline, forecast lane): 5 failures in `tests/scoring/test_ff_readiness_battery
 and `tests/scoring/test_forecast_parity.py`.
 
 No lane's verdict, keeper or matrix cell verdict is touched by this amendment.
+
+---
+
+## 2026-08-25 — audit_keepers E11: keeper-lineage recipe fidelity extended to the FULL `solve_and_persist` kwarg surface (the nyiso-108→155 silent-de-arm guard)
+
+Chartered by `docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md` §2/§6
+(the "own charter" successor item), landed from session nyiso-156. The
+incident class: `hydro_backfill_year`/`hydro_eia930_monthly` are
+`solve_and_persist` kwargs, not `ScenarioConfig` fields, so the
+"all scenario_config fields identical" lineage-fidelity checks used across
+the nyiso-125..133 window were structurally blind to them, and an armed,
+owner-promoted keeper mechanism (nyiso-108) fell out of the keeper lineage
+with no de-arm decision anywhere — the miso-50..53 lossy-reconstruction
+class landing in the keeper lineage itself.
+
+**The guard:** `scripts/audit_keepers.py` check **E11**. Whenever an ISO's
+keeper shard records a structured lineage (`superseded.former_keeper` — the
+NYISO convention), the auditor diffs the current keeper bundle's full
+recorded recipe — `run_config.json`'s scenario block ∪ `meta.json`'s
+solve-kwarg surface (the `_config_block` merge pattern of
+`scripts/probes/_nyiso155_hydro_repair_ab.py`, generalized) — against the
+former keeper's bundle. A kwarg whose recorded value changed **FAILs unless
+declared in the shard's prose**; a kwarg recorded only by the former bundle
+(codebase field deletion, the rule-26 class) WARNs; fields born between the
+solves are reported, never gated (their declaration duty belongs to the
+rule-28 matrix CI). Meta provenance keys mirror `replay_keeper._IGNORE`,
+pinned by `tests/scoring/test_audit_keepers_lineage.py` so the duplicated
+stdlib-only set cannot drift. Because the auditor runs on every keeper-shard
+edit (the `calibration-keeper-auditor` agent), the check fires exactly at
+promotion time, when both bundles are on disk.
+
+**Live behaviour at introduction:** NYISO (the one shard with the structured
+record) reads OK — the 152→155 diff is exactly the two DECLARED hydro-repair
+keys plus 4 born-at-default fields; every other lane reads OK with a
+"not applicable" note. **The guard arms lane-by-lane as shards adopt the
+`superseded.former_keeper` convention at their next promotion** — a lane
+that wants the protection writes the structured block instead of (or beside)
+its free-form supersession prose. No verdict, keeper, or matrix cell moves.
