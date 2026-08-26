@@ -772,8 +772,8 @@ window.MECH_MATRIX_SHARDS.NYISO = {
 /* 2026-08-25 (nyiso-155b) — OWNER RULED PROMOTE on the same-day escalation:
  * keeper -> 2026-08-25-nyiso-155-hydro-repair; hydro_vintage_input_repair
  * O -> K. Determination NOT-YET written explicitly on owner instruction
- * (nyiso-120 precedent; verbatim: "If structural integrity improves but gates
- * regress that may still be a keeper.."). Keeper + gates stamps re-stamped
+ * (nyiso-120 precedent; verbatim: 'If structural integrity improves but gates
+ * regress that may still be a keeper..'). Keeper + gates stamps re-stamped
  * above with the prior ratification stamp preserved verbatim; §5.5 prose
  * header re-stamped; status/NYISO.js rebuilt [NOT-YET]; calibration-complete
  * NYISO entry re-keyed with the explicit NOT-YET. Named successor: the 2025
