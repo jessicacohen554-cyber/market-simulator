@@ -98,3 +98,45 @@ Any deviation from §1's constructions discovered mid-round (e.g. an
 actual-side count that does not reproduce 77/43/59) is recorded as an
 Amendment to this precommit BEFORE any further measurement, pushed, and
 the FINDING cites it — never silently absorbed.
+
+## Amendment 1 (2026-08-26, recorded before any characterization ran) —
+## the V-0 gate FIRED on the ACTUAL side: the registered actual ≥$1,000
+## band count "59" is WRONG; the correct count is 61
+
+The probe's V-0 identity gate hard-stopped on first run: the recomputed
+actual band counts are **77 / 43 / 61**, not the registered 77 / 43 / 59.
+The model side reproduced exactly (103 / 18 / 59 — no drift). Diagnosis,
+before any further measurement:
+
+* The actual series (`actual_lmp_hourly_ERCOT.parquet`, 2023 `rt`, zero
+  NaNs) has **61** hours ≥ $1,000 under EVERY edge convention (≥, >, and
+  ≥ 1000.005 all give 61); the two hours separating the counts are
+  borderline-band members h5343 ($1,007.94) and h5563 ($1,001.54).
+* **Consistency proof that 61 is correct:** 77 + 43 + 61 = **181** = the
+  committed `actual_tail.json` `rt_gt` count for ERCOT-2023 (threshold
+  $200, coverage 1.0). The registered decomposition sums to 179 ≠ 181.
+* **Provenance of the defect:** the actual-side band constants were
+  HARDCODED in `scripts/probes/ercot235_offer2023_sweep.py` (`"ge_1000":
+  [.., 59]`) and copied verbatim into `ercot236_h4097_repair.py`; the
+  actual side was never computed from data in either probe. The model
+  side of every registered count is unaffected.
+* **Blast radius (report-only, NO scored criterion moves):** C3a/C3b/C3c
+  come from the official scorer and never touched these constants (C3c
+  is 180 vs 181 at the $200 threshold, both reproduced). What is wrong
+  is the PROSE claim "the ≥$1,000 tail EXACT (59 vs 59)" — the true
+  reading is **59 vs 61**, an under-fill of 2 h — carried on:
+  `docs/calibration-log/ercot.md` (ercot-235 + ercot-236 entries),
+  `frontend/data/backcast/keepers/ERCOT.json` (standing note),
+  `frontend/data/backcast/registry/2026-08-25-236-swcap-clip-k33.json`,
+  `frontend/data/backcast/status/ERCOT.js`, `docs/mechanism-testing-matrix.md`
+  §5.1, `docs/codebase-site/data/mechanism-matrix/ERCOT.js`. The
+  determination (CALIBRATED, zero caveats) is untouched; the band-
+  structure residual this round characterizes gains a third (small) leg.
+* **Correction of the keeper's registered prose is an owner-visible
+  queue item, not this round's edit** — those are promotion-record
+  surfaces; this amendment records the fact, the FINDING carries the
+  measurement, and the owner report lists the affected surfaces.
+
+**Amended V-0 expectation:** actual = 77 / 43 / **61** (model unchanged
+103 / 18 / 59). The probe's `EXPECT_ACTUAL` is corrected to match, citing
+this amendment. No other change to §1's constructions or §2's priors.
