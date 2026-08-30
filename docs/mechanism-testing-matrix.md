@@ -954,6 +954,34 @@ rule-13-admissible mechanism available to carry it.
    OWNER same-day** (the ercot-159 addendum redirect): the 2023 −30 % is ~100
    Aug/Sep hours, 98 % ENERGY-stack
    (`results/calibration/FINDING-ercot-2023-summer-underrun-2026-08-04.md`).
+   **▶ RE-OPENED UNDER OWNER CHARTER AND KILLED AT CENSUS AT ERCOT-244
+   (2026-08-30, zero-solve, precommitted; cell stays `R`, A/B license NOT
+   spent).** The charter's rtolhsl-based hourly ceiling, re-identified on the
+   FORWARD keeper against the forward span's ledgered C3c (2024 22/53, 2025
+   1/31): K-B reach 3/36 and 3/31 missed hours (8.3/9.7 % vs the 0.20 floor)
+   and K-C on all three legs in BOTH years (ordinary binds 979/858 vs bar
+   150; away-binds > ⅓), with K-A CLEAN and every V-0 anchor exact (rtolhsl
+   hod-17–21 means reproduce this card's 58.87/62.64/67.81 GW to the
+   hundredth). The structural adjudication: on a composition-correct keeper
+   an AGGREGATE ceiling has nothing to grab at the events — the model sits
+   UNDER the measured ceiling at 33/36 and 28/31 missed hours, so the
+   ercot-159 reach was that era's composition error (C3a −24.5 %), since
+   repaired by other means — while the defect this card measures is HEADROOM
+   ACCESS (which cold slow units are reachable within the hour), which no
+   utilization cap expresses. **DO-NOT-REDO any aggregate-RHS variant**
+   (envelope / hourly / credit-augmented / subtraction-set — the disclosed
+   variants reproduce the same ordinary-dominated shape). Standing
+   measurement left behind: the model's slow+held fast-tier point exceeds
+   ERCOT's measured TOTAL online capability net of non-thermal gen in ~11 %
+   of forward-span hours (p50 1.3–1.7 GW, loose-side construction so
+   a-fortiori real) — the ercot-159 "commitment level in ordinary hours"
+   object on the current keeper. The named successor (unowned, unchartered,
+   an OWNER charter): a per-unit/per-class commitment-state representation
+   of slow-start reachability — the ercot-241/242 participation residue
+   arrived at from the quantity side. Records:
+   `docs/PRECOMMIT-ercot244-online-cap-phase0-2026-08-30.md` +
+   `docs/FINDING-ercot244-online-cap-phase0-2026-08-30.md` +
+   `results/calibration/ercot244_online_cap_phase0.json`.
 9b. **THE ERCOT-161 PHASE-0 ADJUDICATION OF THE RE-POINTED OBJECT (2026-08-04,
    no LP, no solve, keeper UNCHANGED) — the armed RT wall is EXONERATED on its
    own population, and the object moves to the STORAGE fleet's offer
