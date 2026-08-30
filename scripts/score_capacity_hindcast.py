@@ -1214,6 +1214,33 @@ def actual_co2_by_year(iso: str) -> dict[int, float]:
     return out
 
 
+def actual_co2_basis(iso: str) -> str:
+    """One-line provenance label for the capacity-track CO2 ``actual``.
+
+    The capacity-track actual is a CAMPD footprint sum, NOT the eGRID
+    ISO-basis actual the FC-4 dispatch-skill co2 metric in the same score
+    file scores against; the two were conflated once
+    (``docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md`` §2.3), so
+    the basis is now stated in the artifact itself. The ERCOT/PJM STATE sums
+    overcount their ISO footprint (whole-TX ≈ +11 % vs ERCOT eGRID; the
+    PJM state sum ≈ +54 % vs PJM eGRID) — never decompose across the two
+    co2 blocks.
+    """
+    if iso in ISO_CAMPD_FACILITY:
+        return (
+            "CAMPD unit-level co2Mass, facility-exact EIA-860 BA crosswalk "
+            f"({iso} plants only; metric tonnes) — capacity-track basis, not "
+            "the FC-4 eGRID basis"
+        )
+    states = "/".join(ISO_CAMPD_STATES.get(iso, [])) or "none"
+    return (
+        f"CAMPD unit-level co2Mass STATE SUM over {states} (whole-state "
+        f"footprint, metric tonnes) — overstates the {iso} BA and is NOT the "
+        "FC-4 eGRID ISO basis in the same score file; never compare across "
+        "the two co2 blocks"
+    )
+
+
 # --------------------------------------------------------------------------- #
 # Baselines
 # --------------------------------------------------------------------------- #
@@ -2361,6 +2388,7 @@ def main(argv: list[str] | None = None) -> int:
     co2 = {
         "model": {str(k): v for k, v in model_co2_by_year(cache_dir).items()},
         "actual": {str(k): v for k, v in actual_co2_by_year(iso).items()},
+        "actual_basis": actual_co2_basis(iso),
     }
     baselines = {"announced": baseline_announced(iso)}
 

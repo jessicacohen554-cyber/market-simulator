@@ -133,21 +133,36 @@ def build_sidecar(bundle_dir: Path, preserve_invariants: bool = False) -> dict:
     )
     score_path = cache_dir / score_name
     score = json.loads(score_path.read_text()) if score_path.exists() else None
-    if preserve_invariants and existing.exists():
-        invariants = json.loads(existing.read_text()).get("invariants", [])
+    if preserve_invariants:
+        # Scoring-only registration: NEVER recompute invariants. The dispatch
+        # parquets are intentionally uncommitted, and running the checker over
+        # an absent cache emits vacuously-PASS rows — evidence that is not.
+        # Reuse the committed block when one exists; otherwise omit the block
+        # entirely, the audit-tolerated scoring-only shape
+        # (``check_forecast_invariants.audit_sidecars``: ``records is None``
+        # is a declared scoring-only registration; an empty/partial list is
+        # flagged as an undeclared partial battery).
+        invariants = (
+            json.loads(existing.read_text()).get("invariants", [])
+            if existing.exists()
+            else None
+        )
     else:
         # Forecast-invariant summary over the hindcast cache.
         invariants = [
             {"ident": r.ident, "name": r.name, "status": r.status, "detail": r.detail}
             for r in CI.run_single(cache_dir)
         ]
-    return {
+    out = {
         "run_id": run_id,
         "meta": meta,
         "score": score,
         "invariants": invariants,
         "registered_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
+    if invariants is None:
+        del out["invariants"]  # scoring-only: no block, never a fabricated one
+    return out
 
 
 def _load_all_sidecars() -> list[dict]:
