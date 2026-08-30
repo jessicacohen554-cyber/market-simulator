@@ -12268,3 +12268,69 @@ HTTP-500 storm resolved by re-deriving the head on the moved main — the
 fresh-base rule, not a transport conclusion).
 
 **Next shorthand: ercot-240** (ercot-199 remains unclaimed)
+
+## ercot-240 — 2026-08-30 — THE EVENT-HOUR DEMAND GAP ADJUDICATED (ZERO-SOLVE, precommitted; FINDING-ercot239 §6 OBJECT 2, owner PM charter): the +651…+873 MW "demand gap" is the DC-TIE NET IMPORT IDENTITY — exactly, at every finite 2023 hour (residual 0.0 MW, share 1.000) — the model's demand input serves the measured NET-GENERATION boundary correctly; all three chartered demand-source candidates (4CP/load response, 930-vs-MIS boundary, weather-hour alignment) REFUTED as gap carriers; the phase-0 "demand understatement" framing WITHDRAWN by measurement
+
+**Designated branch `claude/ercot-240-demand-gap-xbdwn5`. ZERO-SOLVE.**
+Charter: ercot-239 §6 object 2 ONLY (objects 1/3 untouched). Precommit
+`docs/PRECOMMIT-ercot240-eventhour-demandgap-2026-08-30.md` pushed +
+blob-verified (538c30c6) BEFORE any measurement, declaring the three
+chartered candidates PLUS a pre-registered fourth from design reading —
+(d) the comparison-frame identity: `_load_ercot_hourly`/`load_demand`
+serve `EIA-930 Demand + Total interchange`, and the committed ercot-239
+rows already showed `gap_components.demand + interchange = 0` in all 14.
+Probe `scripts/probes/ercot240_eventhour_demandgap.py` →
+`results/calibration/ercot240_eventhour_demandgap.json`; full record
+`docs/FINDING-ercot240-eventhour-demandgap-2026-08-30.md`. No amendments
+(one within-convention join-mechanics note, FINDING §1).
+
+**What the measurements showed (V-0 exact; V-1 loader≡sidecar at 0.0 MW):**
+(1) gap(t) ≡ −TI(t) with residual 0.0 MW at p50/p95/p99/MAX over every
+finite 2023 hour — identity share 1.000 over the 14 hours, 14/14 within
+the 25 MW tolerance, year-mean gap 97.6 MW = year-mean net import
+97.6 MW; and `Demand = Net generation − TI` holds to ≤ 1 MW (p95), so the
+model's served demand ≡ measured net generation — what the real internal
+fleet produced. Reality met these hours with the DC ties importing near
+capability (SWPP at 807–815 MW in 10/14; import ≥ p85 of load-matched
+controls in 9/14); the two sub-651 gap hours (h2971 +218, h7001 +111) are
+exactly the two hours the ties were NOT near max. (2) The 930-vs-MIS
+settlement wedge is REAL but NOT the carrier: 930 `Demand` runs +260 MW
+(p50) above the NP3-565-CD native total, seasonal, load-level-flat — and
+it COLLAPSES under scarcity (+274 MW at RT < $50 → +30 MW at RT ≥ $500;
+event median +100, event excess vs month/hod/load-matched controls
+NEGATIVE, −143 MW median) — the storage/WSL-treatment signature, the
+wrong sign for a gap carrier (A-b refuted). (3) Alignment clean: best lag
+0 in every DST regime on both level joins (native↔930 tz-aware join gates
+8,760/8,760 exact), event-local lag 0 in 14/14 (A-c refuted); the one
+predicted artifact confirmed — `parse_ercot_shares`' wall-clock grid
+rides +1 h vs the positional clock for the 5,710 CDT hours,
+system-neutral (shares normalize per hour). (4) 4CP/load-response does
+not separate the boundaries: 4CP-window wedge SHRINKS (+108 vs +206
+non-window), event dips agree across boundaries (median |Δdip| 56 MW)
+(A-a refuted). All five declared priors CONFIRMED as declared.
+
+**Re-adjudication:** ercot-239 §0.5/§4's "~0.7–0.9 GW of the tightness
+reality priced is absent from the model's energy balance" is WITHDRAWN —
+the ties served those MW in reality too; there is no demand-side
+contribution to the 14-hour miss family, which stands fully on the
+conduct/renewables adjudication (objects 1/3). The +98 MW "year mean gap"
+base rate is the year-mean net import, not a bias.
+
+**Owner-visible queue out of this round (FINDING §5):** (1) metric
+hygiene — future demand-gap diagnostics compare like boundaries (served
+demand vs `Demand + TI`); (2) the one substantive item: does the
+FORECAST-lane priced-interchange/import-node reproduce scarcity-coupled
+near-max DC-tie imports? (matrix duty falls to whoever picks it up —
+nothing tested here); (3) the zonal-shares CDT +1 h wall-clock offset — a
+small [R-ACCURATE] data-handling repair candidate for its own
+owner-visible round (zonal weights only; other ISOs' parsers share the
+formula — check each); (4) the +260 MW 930-vs-native level wedge,
+document-only unless a demand-basis swap is ever proposed.
+
+**Hygiene:** zero solves; years ⊂ {2023}; no `--holdout-authorized`, no
+marker (rule 22; spend freeze respected); ERCOT surfaces only (rule 25);
+no run produced ⇒ rule 15 not triggered; no matrix stamp (no mechanism
+tested); no derive re-run, no input change (rules 23/13); push integrity
+per rule 27 (precommit, probe and JSON each blob-verified after push).
+
+**Next shorthand: ercot-241** (ercot-199 remains unclaimed)
