@@ -339,5 +339,17 @@ python3 scripts/register_forecast_run.py --reindex
 python3 scripts/check_forecast_staleness.py
 ```
 
-Post-push blob verification (rule 27), recorded at push time: line count and SHA-256 of the
-fetched `frontend/data/forecast/program-status.json` compared against the local on-disk bytes.
+**Post-push blob verification (rule 27)** — every pushed file fetched back from
+`origin/claude/capx-d13-board-reconcile-fs66gh` and compared to the local on-disk bytes; all
+three **MATCH** on line count, byte count and SHA-256:
+
+| file | lines | bytes | sha256 (first 16) |
+|---|---:|---:|---|
+| `frontend/data/forecast/program-status.json` | 706 | 106,266 | `e86f65d6b3130f7d` |
+| `docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` | 434 | 26,672 | `d029347dc0460f37` |
+| `docs/FINDING-capx-d13-board-reconcile-2026-08-30.md` | 343 | 21,496 | `e2dcb118c5fd7032` |
+
+(The finding's own row is the pre-append blob; this table is added in the follow-up commit that
+carries it.) All three files were edited **on disk** and pushed as the exact local bytes — no
+file was regenerated from response content, and nothing was staged as a partial or placeholder
+version.
