@@ -1091,11 +1091,18 @@ measured on every registered run) but its keeper reference is stale.
    (D-23), and 2019 is unsolvable at HEAD on the Pilgrim gap regardless — so the
    readiness answer stays **NOT YET on the merits**, which is a different
    question from the grant.
-4. **🟠 O6 — LOCKED-TEST SCHEDULING.** Re-verified exhaustively at this pin
-   across all **54** registered sidecars (year histogram {2022: 2, 2023: 52,
-   2024: 52, 2025: 52}). `complete` = {NEISO, NYISO, PJM}; `final` holds only its
-   `_note`; the freeze is `active: true` and outranks both. **Never let a lane
-   spend one**; scheduling is the owner's alone.
+4. **🟢 O6 — LOCKED-TEST SCHEDULING — STANDING POLICY RECORDED 2026-08-26
+   (owner ruling, card 7); retire from the queue as a decision, the one-shots
+   stay unspent.** The precondition for any future `final` grant is now on
+   record: an ISO becomes eligible to be *considered* only after its 2020–2022
+   touchpoints have been run AND the loop has stopped surfacing repairs;
+   eligibility is not a grant — `final` remains an owner act, per ISO, every
+   time. No marker changed: `final` still holds only its `_note`, **no ISO has
+   ever spent a locked-test year**, and the freeze (now tier-scoped, card 6)
+   still refuses 2019/H1-2026 for every ISO. Prior pin re-verification (54
+   sidecars, year histogram {2022: 2, 2023: 52, 2024: 52, 2025: 52}) stands.
+   **Never let a lane spend one.** Record: CLAUDE.md rule 22 locked-test
+   bullet; `rule-history.md` §4; `docs/FINDING-holdout-governance-2026-08-26.md`.
 5. **🟠 O7 — ERCOT P0 bit-identity proof forfeited** (accept-and-document, or
    charter restoration). Unmoved two cycles.
 6. **🟠 decision-1 ack** — warm-start closed-overtaken; **still unacked, now
