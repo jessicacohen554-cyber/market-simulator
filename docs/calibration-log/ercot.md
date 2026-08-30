@@ -12334,3 +12334,63 @@ tested); no derive re-run, no input change (rules 23/13); push integrity
 per rule 27 (precommit, probe and JSON each blob-verified after push).
 
 **Next shorthand: ercot-241** (ercot-199 remains unclaimed)
+
+## ercot-241 — 2026-08-30 — THE OFF-CORE CONDUCT SCREEN MEASURED (ZERO-SOLVE, precommitted; FINDING-ercot239 §6 OBJECT 1): all three kills CLEAR and the PHASE-1 GATE IS OPEN (12/12 reach, CC 4 / CT 3 contrast bins, occupancy ×351/×671 over floor) — but the measured room dependence is POSITION/PARTICIPATION-carried, not within-resource repricing (paired position-fixed Δ ≈ +$0.2–0.5 at 0.9×HSL); P1a/P2 MISSED (real shoulder-hour gas mass beyond the ercot-161 base rates), P3 refuted on its ratio leg, P4/P5 confirmed
+
+**Designated branch `claude/ercot-241-backcast-8horad` (pickup session —
+the original ercot-241 session failed after landing only the merged
+precommit, PR #4349). ZERO-SOLVE.** Charter: ercot-239 §6 object 1 ONLY
+(wind pair queued, untouched). Precommit
+`docs/PRECOMMIT-ercot241-offcore-conduct-phase0-2026-08-30.md` pushed +
+blob-verified BEFORE any measurement; NO amendments (three
+within-convention notes, FINDING §1). Probe
+`scripts/probes/ercot241_offcore_conduct_phase0.py` →
+`results/calibration/ercot241_offcore_conduct_phase0.json`; full record
+`docs/FINDING-ercot241-offcore-conduct-phase0-2026-08-30.md`.
+
+**What the measurements showed (V-0 exact; 306/323 shards with 2023 rows;
+corpus grain 4 SCED snapshots/hour):** (1) M-1 census: the family is NOT
+one population — the July/Sep core is storage-carried (wall-scope λ-band
+share 0.00 in 5 hours, PWRSTR largest in 9/12) but the shoulder hours are
+gas-carried (h2971 0.97, h7001 1.00, h5484 0.62), so K-1 missed its ≥8
+kill line at 7/12. (2) M-2 vs M-3, the round's central fact: event-hour
+spare ladders sit 7–65× control ladders at p90 (CT $5,000 vs $76) — yet
+the SAME resources at FIXED 0.5/0.9×HSL positions vs their matched-control
+selves moved +$0.20 (CC, n=612) / +$0.52 (CT, n=1,094). Resources do not
+reprice when room tightens; the elevation is where the Base-Point→HASL
+spare WINDOW sits and who participates. (3) M-4 candidate surface
+(class × armed net-load bin × declared room bin, MW-weighted histogram
+quantiles): tight(≤0.10)/loose(0.30–0.70) p90 contrast 2.26–7.13× (CC,
+bins 2–5) and 6.53–22.5× (CT, bins 4–6), NON-MONOTONE with inversions (CT
+0.26–0.29 in bins 2–3 — loose-room near-cap posting; CC 0.876 in bin 6);
+occupancy 3,986–21,974 resource-intervals and 36–77 days per graded cell.
+(4) Controls: 11/12 matched (8–36 controls); h2058 UNMATCHED (5 after the
+declared month±1 widening) and excluded from paired aggregates as
+declared; P4 confirms it differs compositionally (coal+ST_GAS band share
+0.397 vs 0.000 median — March outage season).
+
+**Kills & gate (direction-blind, as declared):** K-1 clear (7 < 8, one
+hour short); K-2 clear (its (a) leg holds at ≈$0 but (b) fails at ratios
+up to 22.5× ≫ 1.15 — needs both); K-3 clear (35,138 CC / 67,130 CT pooled
+tight resource-intervals, 157 days). Gate: (ii) 12/12 hours' (declared
+bin, tight) cell p90 ≥ $500 (CT everywhere; CC bins 3–6); (iii) CC 4 /
+CT 3 bins > 1.25×; (iv) both classes clear ⇒ **PHASE-1 OPENS** under the
+precommit's own terms: separate pushed precommit, ONE 2023 probe solve on
+the k33 carve-out, full gates, rule-15 registration as probe/candidate,
+keeper consequence ESCALATED to the owner, never self-adopted. Phase-1
+design constraints inherited from the measurement (FINDING §5): room axis
+as an EXTENSION of the armed RT wall (rule 19), the whole M-4 table
+inversions included (zero fitted scalars), the forward-driver analogue
+(model's own reserve-room state) declared under rule 13, the
+double-counting risk (LP position is endogenous; M-3 says curves don't
+move) tested by the solve's own gates, h2058 graded but not load-bearing.
+
+**Hygiene:** zero solves; years ⊂ {2023}; no `--holdout-authorized`, no
+marker (rule 22; spend freeze respected); ERCOT surfaces only (rule 25);
+no run produced ⇒ rule 15 not triggered; no matrix stamp (no mechanism
+tested — the Phase-1 session that arms the room axis stamps its cell);
+no derive re-run, no input change (rules 23/13); push integrity per rule
+27 (probe, JSON and FINDING blob-verified after push on the designated
+branch, rebased fresh on main).
+
+**Next shorthand: ercot-242** (ercot-199 remains unclaimed)
