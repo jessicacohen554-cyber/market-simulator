@@ -165,6 +165,13 @@ VERDICT_MAP = {
     # other run's score. Chartered by owner card A (A-A, 2026-08-25) so §2.1b
     # leg (c) closes on a MEASURED FC-4 rather than an absent one.
     "nyiso-2023-2027-crossover-capxd10": "nyiso-t1x",
+    # capx-D14 (2026-08-30) measured NEISO's FIRST-EVER T1-X crossover — no
+    # prior `neiso-t1x` key existed anywhere, so the bare per-tier key IS this
+    # run's own verdict (the same LIVE-vintage convention as capx-D10 above)
+    # and cannot contradict any other run's score. Chartered at director
+    # refresh #13 under the owner's Q7 ruling (leg (c) closes on a MEASURED
+    # FC-4, whatever it says).
+    "neiso-2023-2027-crossover-capxd14": "neiso-t1x",
 }
 
 

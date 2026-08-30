@@ -2861,6 +2861,163 @@
   "schema": "forecast-verdict/v1",
   "tier": "t1h"
  },
+ "neiso-t1x": {
+  "categories": {
+   "FC-1": {
+    "applicability": "required",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "optional",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [
+     {
+      "detail": "reserve-margin band: I12 absent from invariant record",
+      "gating": true,
+      "row": "row1",
+      "status": "SKIPPED"
+     },
+     {
+      "detail": "cobweb: I13 absent from invariant record",
+      "gating": true,
+      "row": "row3",
+      "status": "SKIPPED"
+     },
+     {
+      "detail": "backstop share 0% (reserve_margin_build_enabled off \u2014 no backstop channel, and no per-channel split to check it against)",
+      "gating": true,
+      "row": "row4",
+      "status": "PASS"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-3": {
+    "applicability": "report",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "no committed capacity-hindcast score for the ISO",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-4": {
+    "applicability": "required",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [
+     {
+      "detail": "\u22652026 refusal marker present and clean",
+      "gating": true,
+      "row": "quarantine",
+      "status": "PASS"
+     },
+     {
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |10.6%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+      "gating": true,
+      "row": "dispatch skill",
+      "status": "FAIL"
+     },
+     {
+      "detail": "forecast/keeper input-gap ratios reported (report-only)",
+      "gating": false,
+      "row": "input-gap ratio",
+      "status": "PASS"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-5": {
+    "applicability": "report",
+    "label": "FC-5 external corridor",
+    "rows": [
+     {
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true,
+      "row": "corridor",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "mode=forecast; 760 config keys; gates ['capacity_market_clearing']",
+      "gating": true,
+      "row": "run_config",
+      "status": "PASS"
+     },
+     {
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "determination": "HOLD",
+  "iso": "NEISO",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "07e416f3f8072e7c",
+   "schema": "forecast-provenance/v1",
+   "scored_at_date": "2026-08-30T20:47:09Z",
+   "scored_at_sha": "8412c3f623e7",
+   "session": "capx-D14-neiso-t1x"
+  },
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+   "FC-4 crossover dispatch skill (T1-X) FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1x"
+ },
  "nyiso-2021-2025-curve-t1h": {
   "categories": {
    "FC-1": {
