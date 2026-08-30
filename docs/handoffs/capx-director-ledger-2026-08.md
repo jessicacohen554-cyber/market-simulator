@@ -6,11 +6,82 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #17) ·
-**HEAD at refresh:** `83c1c5a` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #18) ·
+**HEAD at refresh:** `d2cd019` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (REWRITTEN at r#16 — the four-lane wave in flight, the Q10 auto-arm authorization, and the standing leg-(d) re-present duty; r#17 amends its in-flight list: D5-R LANDED-VERIFIED)
 
 ---
+
+## 0o. Refresh #18 (2026-08-30, HEAD `d2cd019`) — D12-C CONCLUDED: CONTRADICTION, nothing armed, Q15 card presented; D5-R completion CORRECTS the director's r#17 fifth-bundle call; S-123 lands 3 terms (verification pending the slot); the golden is mid-solve
+
+**1. D12-C CONCLUDED — the CONTRADICTION branch executed, mechanically and honorably (PR
+#4406; `FINDING-capx-d12c-confirm-pair-2026-08-30.md`).** G-1/G-2 EXACT (control reproduces
+the committed bracket to the cent — the whole margin machinery byte-stable; armed cache key
+bit-equal to the ex-ante prediction `f061b2646bfaac8b`). V-1/V-3/V-4/V-5 PASS: no phantom
+(2025 builds nothing on −$34.5k/−$20.9k, D12's reason exactly), terminal RM 15.84 inside the
+ex-ante [15.0, 21.0] (walk bracket carried down by exactly the pre-named live-VRE feedback),
+2023/24 cc as declared, gas bands improve (cc lands EXACTLY on the 6.000 GW charter anchor,
+err 8.756 → 5.756; ct err 3.879 → 1.621), B-2 survives (−12.95/+0.74/+9.05), and the gas half
+of the exhaustion rule is LIVE for the first time (2024 ct exhausts at 500 MW sub-cap).
+**The single miss — V-2: entering-2022 gas_cc 0 vs the declared [750, 1,250]** — is
+decomposed at full magnitude: NOT a construction defect (start margin bit-identical
++$45,930.9), NOT a phantom; the offline walk that produced the window fielded ONLY
+gas+storage, while the live walk fields every candidate class, so solar wins the early
+tranches and exhausts cc's margin first — **MORE exhaustion by the same mechanism on the same
+one-object margin**. A pre-declaration derivation error (§1 named the artifact for V-4's band
+and failed to carry it into V-2), discovered after the arm ran, so it stands: tolerance NOT
+widened post hoc (rule 21), nothing armed, cells stay `O`, both bundles registered
+(`…-t1h-d12c-{control,armed}`). **The owner re-decides — Q15 card presented this sitting.**
+
+**2. D5-R COMPLETION PASS (PR #4403, the original issued branch) — and it CORRECTS THE
+DIRECTOR'S r#17 CALL, recorded here against interest:** the fifth bundle
+(`neiso-2023-2027-crossover-capxd14`) was rescored after all via `--rescore-co2-grain`:
+co2 +12.8/+10.6/−2.3 → **+12.8/+11.1/−1.8 %** — my r#17 "~0.004 % bound, no follow-up owed"
+adjudication had read the 2023 family row alone (0.001 TWh); 2024/25 carry 0.085/0.082 TWh
+of unsplit COAL → **+0.49 pp each**, seam-only, banded statuses unchanged. Pre-repair
+baseline preserved as `neiso-t1x-pre-d5r` (the handoff's predicted suffix). The lane ALSO
+executed the §0n.3 deferred records item itself: **[D5-R 2026-08-30] annotations now stand
+on all three board co2 cells AND `gate_reading`** — that records item is CLOSED. Exit record
+`FINDING-capx-d5r-scorer-coal-grain-2026-08-30.md`. Lesson stamped: a bound asserted from
+one year's row of a three-year artifact is not a bound.
+
+**3. S-123 LANDED-PARTIAL (PRs #4397/#4398/#4402; `FINDING-capx-s123-miso-adequacy-2026-08-30.md`):
+all three terms SHIPPED from single published operands** — S-1 PRM re-vintage 0.179→0.157
+(PY 2025-26 LOLE Module E-1 pair, −2,637.4 MW exactly the charter's number), S-2 external-ZRC
++3,505.9 MW (PRA posting p.22), S-3a LMR/DR fraction 0.0665940 (−9,236.8 MW) — 2026 position
+−6,037.0 → +9,343.2 MW pre-solve, a 2.5× overshoot (the NYISO-intake honesty signature, not a
+tuned closure). **§6 verification (the solo MISO 9.6 GB T1-F re-measure + FC-1 re-score) is
+TBD — holding for the heavy slot.** D9 adjudicated UNREACHABLE at HEAD and routed (TVA
+re-point + data prerequisite). **NEW DEFECT ROUTED TO THE DIRECTOR** (finding §5/§7 item 5):
+armed-interface forecast years leave seam rows at their **mc=0 build placeholder** — queued
+as a mechanism-decision candidate (D16) below.
+
+**4. T3-NEISO-GOLDEN MID-SOLVE:** PREDECL §§1–4 merged (PR #4405 — Q13 cited verbatim, gate
+legs re-verified live, budget declared) + registration-prep (PR #4408: t3-golden
+classification + campaign gitignore block, S-4b slim-vs-heavy pattern). Branch open with no
+further commits — the 25-year solve is running. Stamp on landing.
+
+**5. CAISO-224-FIN NOT LANDED** (zero caiso-224 registrations; PR #4401 patched the
+registry/payload parity CI gate to tolerate the two interim unregistered bundles — an
+interim-state accommodation, not the finisher). **S-6 stays RELEASED-CONDITIONAL.**
+**HEAVY-SLOT QUEUE (explicit, for dispatch):** golden (running, ~4.3 GB) → S-123's §6
+verification (9.6 GB no-co-run) → S-6 (8.8 GB no-co-run; ALSO gated on CAISO-224-FIN
+landing). The two no-co-run measures must not overlap each other either.
+
+**6. BACKCAST/AUDIT (watch only):** ercot-244 opened AND **KILLED AT CENSUS** in one arc
+(PRs #4404/#4407 — rtolhsl online-capability ceiling; precommit-first discipline again;
+branch deleted). Keepers ×6, `complete`={NEISO, PJM}, `final` EMPTY, freeze tier-scoped:
+ALL verified unchanged at `d2cd019`.
+
+**7. THE r#18 SITTING — Q15 RULED: ARM BOTH FIELDS (§3).** The owner judged the D12-C record
+confirming-in-substance under the finding's own §4.3 clause and directed the arming. Lane
+**D12-A** issued (pack-canonical): zero-solve execution of exactly the §1.4 confirmation list
+— ISOConfig `default_scenario_overrides` route (FFR-9C stage-B pattern), Q10+Q15 cited
+verbatim with the V-2 miss described honestly, ERCOT matrix cells O → K-forecast-armed on
+the registered pair, sister cells U, no re-registration (both bundles already registered).
+Cross-track note carried into the prompt: the arming moves ERCOT forecast defaults under the
+audit track's T1-H capacity-entry lane — their registered-posture controls are unaffected,
+but any FUTURE bare invocation lands on the armed defaults; ERCOT matrix-shard rebase care.
 
 ## 0n. Refresh #17 (2026-08-30, HEAD `83c1c5a` → `a305f46` mid-refresh) — D5-R and S-4b BOTH LANDED-VERIFIED; NEISO leg (b) STRENGTHENS on the ARA-3 bar; leg-(d) card DUE THIS SITTING; D12-C mid-execution (PREDECL in)
 
@@ -834,22 +905,23 @@ the gap.
 | **Q5-W NYISO MARKER WITHDRAWAL** | Execute the r#12 Q5 ruling: withdraw NYISO from `complete` (CAISO precedent, uniform), flip board gate (a), FINDING + audit | **LANDED** PR #4343 (`ecc2d60`) — both surfaces one session; `complete` = {NEISO, PJM}; NYISO gate (a) → fail | `claude/q5w-nyiso-marker-withdrawal` | Fable/Opus | Keeper untouched (nyiso-157 stands). Re-entry = new owner declaration on a CALIBRATED keeper. Validation-tier authorization lapsed. |
 | **D11-R ENTRY VOLUME RULE (D-1)** | Productionize the L-1b margin-exhaustion closure — the measured zero-DOF volume rule — behind a default-OFF field; A/B on ERCOT T1-H | **LANDED** PR #4355 — `entry_margin_exhaustion` shipped default-OFF, zero-DOF confirmed; live arm 22.02 % vs shipped 25.19 (−3.17 pp), B-2 survives; gas half inert on the live reserve leg; matrix cell **O**; **arming RULED Q8: HOLD until D12** | `claude/capx-d11r-entry-volume-rule` | Fable | §0j.1. Both A/B arms registered on the forecast namespace with run_config.json. |
 | **D12 SCARCITY-CONSISTENT DELTA BASIS** | Both `S` evaluations on one scarcity basis | **LANDED** PR #4373 — decisive, zero-solve: realized-r leg adjudicated a cross-year PHANTOM; `entry_forward_reserve_leg` shipped default-OFF; exhaustion's gas half goes live via exact identity; recommended arm-both (§7) → **Q10 ruled: confirm-pair then arm (lane D12-C)** | `claude/capx-d12-scarcity-basis` | Fable | Bang-bang RM path unchanged under the consistent basis; CT band \|err\| 3.879→0.879. |
-| **D12-C ARMING CONFIRMATION PAIR** | ONE arm-vs-control A/B on ERCOT T1-H, the TWO fields as a single logical delta; **arming auto-executes on a confirming record** (Q10); a contradiction returns to the owner unarmed | **MID-EXECUTION at r#17** — PREDECL landed (PR #4394, `bf5e08f`): V-1…V-5 ex-ante criteria, $0.05/MW-yr tolerance, `--expect-delta` two-field hard gate; pair record still to come | `claude/capx-d12c-confirm-pair-oji8wv` | Fable | Pre-declared from D12's open-loop arithmetic: terminal ≈18.7/18.08 %, tranche-for-tranche walk reproduction, gas bands improve, B-2 posture re-measured. Verify armed-vs-contradiction branch when it lands. |
+| **D12-C ARMING CONFIRMATION PAIR** | ONE arm-vs-control A/B on ERCOT T1-H, the TWO fields as a single logical delta; **arming auto-executes on a confirming record** (Q10); a contradiction returns to the owner unarmed | **CONCLUDED — CONTRADICTION** PR #4406: V-2 cc window missed (0 vs [750, 1,250]); V-1/V-3/V-4/V-5 + G-1/G-2 all pass; divergence = pre-declaration derivation error (offline walk's restricted candidate set; live solar competition ⇒ MORE exhaustion, same mechanism); nothing armed, cells `O`, both bundles registered; tolerance NOT widened (rule 21) | `claude/capx-d12c-confirm-pair-oji8wv` | Fable | §0o.1. **Q15 re-decision card presented at r#18** — the protocol's own "owner may judge confirming-in-substance" clause. |
 | **D13 BOARD RECONCILE** | Q7 execution + S-5 PJM restatement + landed-lane currency + stale-prose repair | **LANDED** PR #4372 — all five edits in; no gate opened; blob verification recorded | `claude/capx-d13-board-reconcile` | Fable/Opus | Board internally consistent again. |
 | **D14 NEISO T1-X CROSSOVER** | NEISO's first-ever T1-X | **LANDED** PR #4376 — FC-4 measured FAIL (price +13.3/+7.9/−21.8 %; co2 +12.8/+10.6/−2.3 % — second no-coal control for D5), quarantine PASS, `neiso-t1x` registered; **NEISO = FIRST (a)+(b)+(c) ISO; leg (d) held for S-4b (Q11)** | `claude/capx-d14-neiso-t1x` | Fable | First T1-X with in-window economic exits: retirement COMPOSITION miss surfaced (recall 2/6) — a real successor object. |
-| **S-123 MISO ADEQUACY PACKAGE** | S-1 requirement re-vintage + S-2 external-capacity intake + S-3 ledger differencing | **RELEASED r#15** — the start-time check PASSES at last (miso-190 concluded, arm rejected, branch deleted; six prior fails) | `claude/capx-s123-miso-adequacy` | Fable | D2-B's top recommendation: three independent published-source terms, none sized against the residual. Rides with **D9**. |
+| **S-123 MISO ADEQUACY PACKAGE** | S-1 requirement re-vintage + S-2 external-capacity intake + S-3 ledger differencing | **LANDED-PARTIAL** PRs #4397/#4398/#4402 — three terms SHIPPED from single published operands (S-1 −2,637.4 MW exactly as pre-declared; S-2 +3,505.9; S-3a −9,236.8): 2026 position −6,037 → +9,343 MW, 2.5× overshoot (honest, not fitted); **§6 verification re-measure (MISO 9.6 GB solo) PENDING the heavy slot**; D9 adjudicated UNREACHABLE + routed | `claude/capx-s123-miso-adequacy-ukgiow` | Fable | §0o.3. Routed to director: the armed-interface **mc=0 seam placeholder** defect (→ D16 queued). Verify §6 fills on its next landing. |
 | **S-4 NEISO HYDRO ACCREDITATION** | Per-resource ISO-NE SCC → class factor, replacing the generic 0.50 | **LANDED** PR #4312 — verification half chartered as **S-4V** (r#11) | `claude/capx-s4-neiso-hydro-syqu7m` | Fable | Factor 0.7352 sourced, above the pre-declared 0.62 clearing threshold. Finding §5/§8 TBDs are S-4V's to fill. |
 | **S-4V NEISO VERIFICATION** | Complete S-4's owed §5: control/treatment T1-F pair at one HEAD, FC-1 re-score, forecast registration (preserve-then-overwrite on bare `neiso-t1f`), finding TBDs, NEISO `hydro_accreditation` cell re-stamp, NEISO board block refresh | **LANDED** PRs #4337/#4353 — bare `neiso-t1f` HOLD → **PROMOTE-WITH-CAVEATS** (I7 PASS ×5, sole WARN the pre-declared I12-2026); control preserved as `neiso-t1f-s4control`; matrix cell O → K; board block refreshed | `claude/capx-s4v-neiso-verification` | Fable | **Honest attribution: the control ALSO clears 2028 — epoch drift alone flips the year; the factor's isolated effect is exact.** NEISO takes the (a)+(b) lead. |
 | **S-4b NEISO REQUIREMENT RE-VINTAGE** | Adopt the published Nov 21 2025 ARA filing pair | **LANDED** PRs #4392/#4396 — companion LOCATED (2026 CELT 4.1 "Incl. ARA 3"); 4-value zero-DOF intake (factor 1.02861, DR 0.08784, imports 409.31); move +651…686 MW/yr, LARGER than declared; **I7 holds PASS ×5** (floor retains 699.3 MW of gas-CC exits — decomposition ≤0.1 MW, zero-drift control, exact 2026 isolation); **leg (b) STRENGTHENS** (FC-1/FC-2 CAVEAT→PASS); 2028/29 margins floor-dependent, noted at full magnitude | `claude/capx-s4b-neiso-ara-3jhedd` | Fable | §0n.5. Q11's hold RESOLVED ⇒ leg-(d) card presented at r#17 (§3 Q13). |
 | **S-5 PJM REQUIREMENT HORIZON-EDGE** | Implement hold-last-FPR + the D-1 checker repair; re-score PJM's T1-F leg | **LANDED** PR #4340 — hold-last-FPR in `resolve_forecast_pool_requirement` (zero DOF), checker year-threading repaired, **I7 2030 restates 366 MW → 5,858 MW, 2029 plausibly joins**; no solve, no registration; board restatement carried by D13 | `claude/capx-s5-pjm-horizon-edge` | Fable | The worse reported result, produced on purpose (the card's own arithmetic). 2029/30 intake pointer at the table edge (BRA Dec 2026). **S-6 unblocked.** |
 | **S-6 PJM T1-F LEDGER RUN** | The minimum run that makes PJM's supply side observable, against the corrected (hold-last) bar | **RELEASED-CONDITIONAL at r#17 (Q14)** — dispatch strictly AFTER CAISO-224-FIN lands; caiso-224's solves are complete (zero-solve finisher only), so the heavy slot frees on its landing; no-co-run vs the NEISO golden stated in both prompts | — | Fable | Measures whether 2029 actually joins the fail set and the true 2030 magnitude on the supply side. |
 | **D5 FC-4 CO2 CROSSOVER** | Attribute the three-ISO crossover CO2 miss | **LANDED** PR #4374 — miss is a SCORING-TAXONOMY DROP (unmapped model-`COAL` → zero scored CO2): MISO 97–117 %, PJM 75–98 %, ERCOT 46–103 % of the miss; rate derivation EXONERATED (±5 %); controls clean → **Q12 ruled: D5-R full fix chartered** | `claude/capx-d5-crossover-co2` | Fable | Third instance of the known class-grain seam. |
-| **D5-R SCORER COAL-GRAIN REPAIR** | Fix the seam at gmModel build (canonical taxonomy chain, rule 19 — also repairs the C1 fuelmix coal-row phantom), zero-solve re-score the committed crossover bundles | **LANDED** PR #4388 — every cell within ±0.2 pp of the §5.2 table; ALL hard controls pass (NYISO byte-identical, family rows deep-equal); PJM+MISO co2 leave the FC-4 FAIL sets, ERCOT 2023/24 stay FAIL honest; fifth bundle (neiso-capxd14) skip adjudicated sound at r#17 (generic-COAL 0.001 TWh ⇒ ~0.004 % bound) | `claude/crossover-co2-grain-repair-oycsy6` | Fable | §0n.1–2. Live gate keys (ffr3a3/-3a4) still carry the mismeasured rows — bundles never committed, not re-scorable; board annotation = named records item (§0n.3). |
+| **D5-R SCORER COAL-GRAIN REPAIR** | Fix the seam at gmModel build (canonical taxonomy chain, rule 19 — also repairs the C1 fuelmix coal-row phantom), zero-solve re-score the committed crossover bundles | **LANDED** PR #4388 — every cell within ±0.2 pp of the §5.2 table; ALL hard controls pass (NYISO byte-identical, family rows deep-equal); PJM+MISO co2 leave the FC-4 FAIL sets, ERCOT 2023/24 stay FAIL honest; fifth bundle (neiso-capxd14) skip adjudicated sound at r#17 (generic-COAL 0.001 TWh ⇒ ~0.004 % bound) | `claude/crossover-co2-grain-repair-oycsy6` + completion `…-t6hoe2` | Fable | §0n.1–2 + §0o.2. **COMPLETION PASS PR #4403**: fifth bundle rescored (+0.49 pp 2024/25 — corrects the director's r#17 one-year-row bound), `neiso-t1x-pre-d5r` preserved, board co2 annotations EXECUTED (§0n.3 records item CLOSED). Live gate keys (ffr3a3/-3a4) still carry the mismeasured rows — bundles never committed, annotated in place. |
 | **D3 MISO RETIREMENT / G3** | G3 cap-grain `retire.total_gw` t1h regression | QUEUED | — | Fable | I13 cobweb half confirmed superseded. |
 | **D4-I3 ERCOT** | I3 scarcity-slack invariant (net-revenue half HELD) | QUEUED at half scope | — | Fable | Q1 answered: card Y signed **Y-C**, arc stays open. |
 | **D6 FC-3 CURVE-ON OVER-FIRE** | Four T1-H curve legs | QUEUED | — | Fable | — |
 | **D8 FORECAST PROVENANCE DEBT** | Bundles tracking no `run_config.json` → FC-7 FAIL | QUEUED — **now NYISO's only caveat** | — | Fable | Promoted in relevance: FC-7 is the sole remaining caveat on the program's best ISO. |
-| **D9 MISO SOCO FORECAST FALLBACK** | `ba_code="SOCO"` live only in the forecast path | QUEUED — **rides with S-123** | — | Fable | Handed in by miso-183. |
+| **D9 MISO SOCO FORECAST FALLBACK** | `ba_code="SOCO"` live only in the forecast path | **ADJUDICATED UNREACHABLE at HEAD, ROUTED** (S-123 finding §5 — TVA re-point + data prerequisite named) | — | Fable | Handed in by miso-183; closed as a lane, lives on as a routed intake item. |
+| **D16 ARMED-INTERFACE mc=0 SEAM** (candidate) | Armed-interface forecast years leave seam rows at their mc=0 build placeholder (S-123 finding §5/§7-5) | QUEUED — mechanism decision owed by the director; propose with the post-wave batch | — | Fable | New defect found on the D9 trace, routed to this track 2026-08-30. |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
 ## 2. Backcast-track watch (last seen 2026-08-30 @ `83c1c5a`, refresh #17)
@@ -894,7 +966,7 @@ the gap.
 **Deconfliction: clean.** D2-B explicitly stopped at a FINDING on the one MISO root cause that
 reaches shared solve machinery (S-1), per its charter.
 
-## 3. Owner-tier questions — FOURTEEN ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17 — all 2026-08-30)
+## 3. Owner-tier questions — FIFTEEN ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30)
 
 Full signature record and the consequences adopted:
 **`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5** (cards A/B/C/Y);
@@ -905,6 +977,7 @@ Q7–Q9 were ruled via in-session decision cards at r#13 and are recorded here +
 |---|---|---|
 | ~~Q7~~ | Leg-(c) semantics: the board carried BOTH readings (D7 wrote ERCOT/PJM/MISO fail-on-band; D10 wrote NYISO pass-on-measurement) | **RULED 2026-08-30 (r#13 sitting) — MEASURED CLOSES THE LEG**, per the charter-literal §2.1b(c) test ("measured and reported" + readiness green) and card A-A as signed ("closes on a measured FC-4"). ERCOT/PJM/MISO leg (c) → pass-on-measurement, FC-4 FAIL magnitudes stay at full magnitude; NYISO's PASS stands; the in-band reading is superseded. Execution = lane D13. No §2.1b gate opens (all three fail other legs). |
 | ~~Q8~~ | Arm `entry_margin_exhaustion` as the ERCOT forecast default? (D11-R's escalation) | **RULED 2026-08-30 (r#13 sitting) — HOLD UNTIL D12**, at the finding's §5 recommendation. The gas half is inert on the live reserve leg, so arming now would bake in the VRE/storage-only split; D12 adjudicates the scarcity basis first and its report re-opens the decision. Matrix cell stays **O**. |
+| ~~Q15~~ | The D12-C re-decision (Q10's contradiction branch): one V-2 window missed on a pre-declaration derivation error, every structural claim confirmed, conservative direction — arm? | **RULED 2026-08-30 (r#18 sitting) — ARM BOTH FIELDS** (`entry_margin_exhaustion` + `entry_forward_reserve_leg` → ERCOT forecast defaults), the owner judging the record confirming-in-substance per the finding's own §4.3 clause. The V-2 miss is described honestly in the arming citation; matrix cells O → K-forecast-armed on the registered pair's evidence; sister-ISO cells stay U (rule 26). Execution = lane **D12-A** (zero-solve; prompt in the pack). |
 | ~~Q13~~ | NEISO §2.1b leg (d): first-ever full-solve authorization, presented on S-4b's measured result per Q11 | **RULED 2026-08-30 (r#17 sitting) — AUTHORIZED: the T3 BAU GOLDEN, NEISO, 2026–2050, budget ~1.0 h / ~4.3 GB (FF-3E), THIS CAMPAIGN ONLY.** The first §2.1b gate opening in program history. Caveats carried verbatim into the campaign record (floor-dependent 2028/29 I7; D14 exit-composition recall 2/6; FC-7 DOF gap); a gate-condition regression re-closes. Execution = lane T3-NEISO-GOLDEN (prompt in the pack). |
 | ~~Q14~~ | caiso-224 / the S-6 heavy slot: is the CAISO session still solving? | **ANSWERED 2026-08-30 (r#17 sitting) — the caiso-224 session RAN OUT mid-completion** ("mid keeper promotion I think"); the owner directs the DIRECTOR to draft a finisher prompt (a recorded backcast-track boundary exception, owner-requested), then S-6 unblocks. Lane CAISO-224-FIN issued — zero-solve; it executes the PRECOMMIT's own §5 adjudication (measured record: F1 fires ×3 + F2 fires ⇒ R for keeper purposes, never auto-promoted), registers both bundles, stamps the matrix. **S-6 = RELEASED-CONDITIONAL on CAISO-224-FIN landing.** |
 | ~~Q10~~ | The Q8 re-decision: D12 reported (phantom leg adjudicated; recommended arm-both) — arm? | **RULED 2026-08-30 (r#15 sitting) — CONFIRM-PAIR, THEN ARM.** Lane D12-C runs ONE arm-vs-control A/B (two fields, single logical delta) measuring the closed loop; **arming auto-executes on a confirming record**; a contradiction returns unarmed at full magnitude. |
@@ -999,6 +1072,7 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-08-30 | **CAISO-224-FIN** | `claude/caiso-224-fsno-finisher` | Fable | code | r#17 — owner-requested (Q14) backcast-track completion, boundary exception recorded; zero-solve; executes the precommit's §5 adjudication (F1+F2 fire ⇒ R expected); gates S-6's release |
 | 2026-08-30 | **T3-NEISO-GOLDEN** | `claude/capx-t3-neiso-golden` | Fable | neiso | r#17 — executes the Q13 authorization: the program's FIRST §2.1b full-horizon campaign (NEISO 2026–2050 BAU golden, ~1.0 h / ~4.3 GB, this campaign only) |
 | 2026-08-30 | **S-6 (released, conditional)** | pack prompt | Fable | pjm | r#17 — RELEASED-CONDITIONAL: dispatch strictly AFTER CAISO-224-FIN lands (Q14); no-co-run discipline vs the golden stated in both prompts |
+| 2026-08-30 | **D12-A ARMING EXECUTION** | `claude/capx-d12a-arming` | Fable | code | r#18 — executes Q15 (ARM BOTH on the D12-C record judged confirming-in-substance); zero-solve; cache-key verification f061b2646bfaac8b; V-2 miss described honestly; ERCOT cells O → K-forecast-armed |
 
 ## 5. History (compacted)
 
