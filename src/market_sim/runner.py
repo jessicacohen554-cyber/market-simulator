@@ -2738,7 +2738,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                                 iso_config.links, iso, year, int(base_demand.shape[1])
                             )
                             if getattr(config, "caiso_zonal_loss_surface", False)
-                            else UNSET
+                            else (
+                                build_nyiso_link_loss(
+                                    iso_config.links,
+                                    iso,
+                                    year,
+                                    int(base_demand.shape[1]),
+                                )
+                                if getattr(config, "nyiso_zonal_loss_surface", False)
+                                else UNSET
+                            )
                         )
                     )
                 ),

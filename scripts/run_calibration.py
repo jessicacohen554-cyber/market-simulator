@@ -153,6 +153,7 @@ from market_sim.model.transmission import (  # noqa: E402
     build_interface_groups,
     build_caiso_link_loss,
     build_miso_link_loss,
+    build_nyiso_link_loss,
     build_pjm_link_loss,
     get_link_bidirectional_array,
     get_link_flow_cost_array,
@@ -5008,7 +5009,13 @@ def run_year(
                         iso_config.links, iso, year, int(demand.shape[1])
                     )
                     if getattr(config, "caiso_zonal_loss_surface", False)
-                    else None
+                    else (
+                        build_nyiso_link_loss(
+                            iso_config.links, iso, year, int(demand.shape[1])
+                        )
+                        if getattr(config, "nyiso_zonal_loss_surface", False)
+                        else None
+                    )
                 )
             )
         ),

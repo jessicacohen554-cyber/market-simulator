@@ -2355,4 +2355,28 @@ def apply_interchange_topology(
             "one-way loss pairs (marginal delivery-factor physics, caiso-164)",
             year,
         )
+    # 10. ``config.nyiso_zonal_loss_surface`` — the NYISO twin of steps 7-9:
+    #     split the four internal chain links (UW↔CH, CH↔LH, LH↔NYC, NYC↔LI)
+    #     into one-way loss pairs so NYISO's own measured marginal
+    #     delivery-factor surface can enter the energy balance as
+    #     month-varying receiving-side loss fractions (nyiso-159; the
+    #     fractions are built per solve year by
+    #     interchange.build_nyiso_link_loss from NYISO_loss_surface.csv).
+    #     Internal links only — the seam mechanisms (PAR attribution,
+    #     deliverability envelope), import generators and every LCR/TSL cap
+    #     act on generators/availability rather than these links and are
+    #     untouched (rule 19). Runs LAST so it splits the topology every
+    #     earlier step has already settled; the interface TTCs (incl. the
+    #     year-varying Central-East overrides) ride on the links and
+    #     transplant to both directions of each pair.
+    if getattr(config, "nyiso_zonal_loss_surface", False) and iso == "NYISO":
+        from market_sim.model.interchange.nyiso import apply_nyiso_zonal_loss_links
+
+        iso_config = apply_nyiso_zonal_loss_links(iso_config)
+        logger.info(
+            "NYISO %d: nyiso_zonal_loss_surface — internal chain links split "
+            "into one-way loss pairs (marginal delivery-factor physics, "
+            "nyiso-159)",
+            year,
+        )
     return iso_config

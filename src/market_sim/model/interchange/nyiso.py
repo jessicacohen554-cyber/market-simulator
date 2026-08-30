@@ -751,3 +751,168 @@ def apply_nyiso_firm_import_injections(
                 iso,
                 year,
             )
+
+
+# --------------------------------------------------------------------------
+# Marginal transmission-loss physics (nyiso_zonal_loss_surface, nyiso-159)
+# --------------------------------------------------------------------------
+
+# Non-leap month lengths in hours. The model's fixed 8760-hour clock drops
+# Feb 29, so non-leap month boundaries align exactly in every year.
+_NYISO_MONTH_HOURS: tuple[int, ...] = tuple(
+    d * 24 for d in (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+)
+
+# Loss-pair flow tiebreaker (``nyiso_zonal_loss_surface``): the same role and
+# magnitude as the storage ε = 0.001 $/MWh (CLAUDE.md rule 9 ``[R-EPSILON]``),
+# charged on BOTH one-way directions of each lossy internal NYISO link so that
+# (a) a degenerate lossless-direction wash nets to one direction per hour, and
+# (b) circulating flow (both directions at once — free disposal through the
+# per-direction loss) is strictly cost-positive whenever
+# |zonal dual| × loss fraction < this charge. A numerical device, not a hurdle
+# rate and not a fitted level (rule 13 ``[R-MEASURED]``: the separation comes
+# from measured loss physics in the energy balance, never a cost adder tuned
+# to a price residual). Identical in construction and value to
+# ``PJM_LOSS_LINK_TIEBREAK_EPS`` / ``CAISO_LOSS_LINK_TIEBREAK_EPS``; declared
+# here rather than imported because a per-ISO mechanism never reads another
+# market's module (rule 25 ``[R-ISO-SCOPE]``).
+NYISO_LOSS_LINK_TIEBREAK_EPS = 1e-3
+
+# The five internal NYISO model zones (the A-K aggregation). The chain links
+# joining them are the ONLY lossy candidates: NYISO's topology carries no
+# external zones (imports are priced generators at the seams), and every
+# interface/TSL cap and seam mechanism keys on zone pairs or generators, so
+# the internal test is membership of both endpoints in this set.
+_NYISO_INTERNAL_ZONES: frozenset[str] = frozenset(
+    {"Upstate_West", "Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"}
+)
+
+
+def _nyiso_internal(from_zone: str, to_zone: str) -> bool:
+    """Whether a link joins two internal NYISO zones.
+
+    NYISO's five model zones are all internal (the seams enter as priced
+    import generators, not zones), so this is a straight membership test —
+    kept explicit so any future external node is excluded by default, the
+    same fail-closed posture as PJM's star node and CAISO's WECC nodes.
+    """
+    return from_zone in _NYISO_INTERNAL_ZONES and to_zone in _NYISO_INTERNAL_ZONES
+
+
+def apply_nyiso_zonal_loss_links(iso_config):
+    """Split each internal NYISO chain link into a one-way loss pair.
+
+    The nyiso-159 topology transform (gated on
+    ``ScenarioConfig.nyiso_zonal_loss_surface``; charter
+    ``results/calibration/PREREG-nyiso159-zonal-loss-surface-2026-08-30.md``
+    §1): each of the four bidirectional internal chain links (UW↔CH, CH↔LH,
+    LH↔NYC, NYC↔LI) becomes TWO one-way links (``is_bidirectional=False``,
+    same TTC each way), each charged the
+    :data:`NYISO_LOSS_LINK_TIEBREAK_EPS` flow cost. The per-direction marginal
+    loss fractions themselves are month-varying and enter the energy balance
+    via :func:`build_nyiso_link_loss` +
+    ``dispatch.build_constraints(link_loss=...)``; the split exists because a
+    loss coefficient on a SIGNED link would create energy on reverse flow, so
+    each direction must be its own nonnegative column.
+
+    Composition with NYISO's existing network mechanisms is by construction:
+    the interface TTCs (Central-East / UPNY-SENY / Dunwoodie-South / LI
+    import, incl. the year-varying ``NYISO_INTERFACE_TTC_BY_YEAR`` overrides)
+    ride on the links themselves and transplant to both directions of each
+    pair; the seam mechanisms (``nyiso_seam_par_attribution`` armed,
+    ``nyiso_seam_deliverability_envelope`` armed-but-shadowed) and every
+    LCR/TSL cap act on import generators/availability, not on these links,
+    and are untouched — losses apply to INTERNAL links only, the same
+    exclusion PJM's star node and CAISO's WECC nodes carry (rule 19
+    ``[R-ONE-MECH]``).
+
+    Returns a validated copy; a config with no internal bidirectional NYISO
+    links (already split, or not NYISO) is returned unchanged.
+    """
+    new_links = []
+    changed = False
+    for ln in iso_config.links:
+        if ln.is_bidirectional and _nyiso_internal(ln.from_zone, ln.to_zone):
+            for frm, to in ((ln.from_zone, ln.to_zone), (ln.to_zone, ln.from_zone)):
+                new_links.append(
+                    ln.model_copy(
+                        update={
+                            "from_zone": frm,
+                            "to_zone": to,
+                            "is_bidirectional": False,
+                            "flow_cost": ln.flow_cost + NYISO_LOSS_LINK_TIEBREAK_EPS,
+                        }
+                    )
+                )
+            changed = True
+        else:
+            new_links.append(ln)
+    if not changed:
+        return iso_config
+    extended = iso_config.model_copy(update={"links": new_links})
+    extended.validate_topology()
+    return extended
+
+
+def build_nyiso_link_loss(links, iso: str, year: int, hours: int):
+    """Return the ``(n_links, hours)`` per-link marginal loss fractions for NYISO.
+
+    For each one-way internal link ``x -> y`` and month ``m``, the
+    receiving-side loss fraction is::
+
+        eps_(x->y),m = max(0, (dev_y,m - dev_x,m) / (1 + dev_y,m))
+
+    so an interior, uncongested flow ``x -> y`` prices the receiving zone at
+    ``lambda_y = lambda_x x (1 + dev_y,m)/(1 + dev_x,m)`` — exactly the
+    measured marginal delivery-factor ratio NYISO's own LBMPs carry
+    (``LBMP = E + MCL - MCC``, NYISO MST §17.1 / Manual 12; the derive's
+    ``dev_z = sum(MCL_z)/sum(E)`` estimator reproduces the measured MCL when
+    re-multiplied by the measured E). The reverse direction of the pair clamps
+    to 0 for that month — the marginal-DF linearization is oriented by the
+    month's persistent gradient, and the clamp is conservative:
+    atypical-direction hours carry no separation rather than a fabricated
+    inverted one. A month whose measured gradient flips sign would swap the
+    lossy direction automatically (phase-0: no NYISO month flips — the
+    gradient is monotone UW < CH < LH < NYC < LI in 36/36 months, so the
+    lossy direction is uniformly north-to-south).
+
+    The monthly surface comes from
+    :func:`market_sim.data.loss_surface.load_zone_month_deviation` (NYISO's
+    own ``NYISO_loss_surface.csv`` — year rows for a train backcast year,
+    pooled rows otherwise) and expands to hours on the model's fixed non-leap
+    calendar. Fails loud if any internal link is still bidirectional (the
+    loss coefficient would create energy on reverse flow — apply
+    :func:`apply_nyiso_zonal_loss_links` first), or if a NYISO zone is
+    missing from the surface.
+
+    Returns ``None`` for a non-NYISO ``iso`` (byte-identical elsewhere,
+    rule 24 ``[R-REGISTRY]``).
+    """
+    if iso.upper() != "NYISO":
+        return None
+    from market_sim.data.loss_surface import load_zone_month_deviation
+
+    surface = load_zone_month_deviation(iso, year)
+    month_of_hour = np.repeat(np.arange(12), _NYISO_MONTH_HOURS)[:hours]
+    loss = np.zeros((len(links), hours), dtype=float)
+    for i, ln in enumerate(links):  # i: link column (few links, not hours)
+        if not _nyiso_internal(ln.from_zone, ln.to_zone):
+            continue
+        if ln.is_bidirectional:
+            raise ValueError(
+                f"link {ln.from_zone}->{ln.to_zone} is bidirectional; "
+                "apply_nyiso_zonal_loss_links must run before "
+                "build_nyiso_link_loss (a signed lossy link would create "
+                "energy on reverse flow)"
+            )
+        try:
+            dev_from = np.asarray(surface[ln.from_zone], dtype=float)
+            dev_to = np.asarray(surface[ln.to_zone], dtype=float)
+        except KeyError as exc:
+            raise ValueError(
+                f"loss surface has no zone {exc.args[0]!r} — regenerate "
+                "scripts/data/derive_nyiso_loss_surface.py"
+            ) from exc
+        eps_m = np.maximum(0.0, (dev_to - dev_from) / (1.0 + dev_to))
+        loss[i, :] = eps_m[month_of_hour]
+    return loss if np.any(loss > 0.0) else None
