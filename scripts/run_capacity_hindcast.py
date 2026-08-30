@@ -492,6 +492,11 @@ META_RECORD_SPEC = RecordSpec(
         # adder instead of the prior year's realized post-solve adder.
         # FromConfig so the record reads the SOLVED gate (FFR-3R).
         "entry_forward_reserve_leg": FromConfig(cast=bool),
+        # T1-H capacity-entry Phase-1 Leg A storage pair: D-2 availability-
+        # year gate + D-3 cost-normalized rank on the storage entry screen.
+        # FromConfig so the record reads the SOLVED gates (FFR-3R).
+        "storage_entry_availability_gate": FromConfig(cast=bool),
+        "storage_entry_cost_normalized_rank": FromConfig(cast=bool),
         # FFR-9C R-b SMR availability-year gate (None = shipped ungated).
         "smr_available_year": FromConfig(),
         # Announced-exit verification posture (owner directive 2026-08-22).
@@ -604,6 +609,8 @@ def build_config(
     entry_forward_expectation_signal: "bool | None" = None,
     entry_margin_exhaustion: "bool | None" = None,
     entry_forward_reserve_leg: "bool | None" = None,
+    storage_entry_availability_gate: "bool | None" = None,
+    storage_entry_cost_normalized_rank: "bool | None" = None,
     smr_available_year: "int | None" = None,
     ptc_window: "int | str | None" = None,
     verified_announced_exits: bool = True,
@@ -879,6 +886,20 @@ def build_config(
                 # shipped default so the control arm's cache key is
                 # untouched.
                 "entry_forward_reserve_leg": entry_forward_reserve_leg,
+                # T1-H capacity-entry Phase-1 Leg A storage pair (GATED
+                # default-off in ScenarioConfig): the D-2 availability-year
+                # gate restricts the storage entry candidate pool to
+                # technologies at/after their measured first-US-operating
+                # year (STORAGE_TECH_AVAILABLE_YEAR, fail-closed), and the
+                # D-3 rank repair selects clearing technologies on margin
+                # per unit capital cost instead of absolute $/MW-yr — both
+                # on BOTH storage allocation rules. OMIT inherits the
+                # shipped defaults so the control arm's cache key is
+                # untouched.
+                "storage_entry_availability_gate": storage_entry_availability_gate,
+                "storage_entry_cost_normalized_rank": (
+                    storage_entry_cost_normalized_rank
+                ),
                 # FFR-9C R-b SMR availability-year gate: when set, nuclear_smr
                 # joins the entry candidate pool only from this year (ATB
                 # costs new nuclear from 2030 only). OMIT inherits the shipped
@@ -1534,6 +1555,44 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--storage-entry-availability-gate",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "T1-H capacity-entry D-2 storage availability-year gate "
+            "MEASUREMENT arm (docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md "
+            "Phase-1 Leg A): the storage entry screen admits a technology "
+            "only at/after its measured first-US-operating year "
+            "(constants.STORAGE_TECH_AVAILABLE_YEAR, derived from the "
+            "EIA-860 energy-storage schedule, fail-closed for a class with "
+            "zero national base ever) — the same availability-year gate the "
+            "thermal path already carries, on BOTH storage allocation "
+            "rules. OMIT to inherit the shipped ScenarioConfig default "
+            "(GATED OFF — this is a measurement, not an arming); "
+            "--storage-entry-availability-gate arms the treatment and "
+            "--no-storage-entry-availability-gate forces the control "
+            "explicitly."
+        ),
+    )
+    parser.add_argument(
+        "--storage-entry-cost-normalized-rank",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "T1-H capacity-entry D-3 cost-normalized storage tech selection "
+            "MEASUREMENT arm (same charter as "
+            "--storage-entry-availability-gate): clearing storage "
+            "technologies are ranked on margin per unit capital cost "
+            "(margin / STORAGE_TECHS[tech]['capex_per_kw']) instead of "
+            "absolute $/MW-yr, on BOTH storage allocation rules. "
+            "Sign-preserving — which technologies clear is unchanged. OMIT "
+            "to inherit the shipped ScenarioConfig default (GATED OFF); "
+            "--storage-entry-cost-normalized-rank arms the treatment and "
+            "--no-storage-entry-cost-normalized-rank forces the control "
+            "explicitly."
+        ),
+    )
+    parser.add_argument(
         "--vre-procurement-additions",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -1754,6 +1813,8 @@ def main(argv: list[str] | None = None) -> int:
         entry_forward_expectation_signal=args.entry_forward_expectation_signal,
         entry_margin_exhaustion=args.entry_margin_exhaustion,
         entry_forward_reserve_leg=args.entry_forward_reserve_leg,
+        storage_entry_availability_gate=args.storage_entry_availability_gate,
+        storage_entry_cost_normalized_rank=(args.storage_entry_cost_normalized_rank),
         smr_available_year=args.smr_available_year,
         ptc_window=args.ptc_window,
         verified_announced_exits=args.verified_announced_exits,
