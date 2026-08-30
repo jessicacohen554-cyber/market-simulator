@@ -1,21 +1,19 @@
 {
-  "timestamp": "2026-08-16T21:25:31",
+  "timestamp": "2026-08-30T20:47:44",
   "git": {
-    "sha": "7246272",
-    "basis_sha": "7c723fac9f188c653f55cddc38314b8e1a37bbfe",
-    "branch": "claude/ercot-reserve-anchoring-fix-p6c55p",
+    "sha": "40d5f59",
+    "basis_sha": "8412c3f623e7b61fa841fcbd6c9089e96327b44a",
+    "branch": "claude/ercot-242-sced-phase1-sb3zj7",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "ercot-213 ARMED (Run B): keeper recipe + ercot_reserve_supply_cap_net_credits (the ercot-212 validated identification) + ercot_ordc_adder_published_anchor (the anchoring repair: cap-additive RTORPA on the published (VOLL - lambda) anchor from the single all-tier total-reserve cap counterpart, capped at VOLL - lambda). Zero fitted scalars. Solved on the keeper's TRUE environment (highspy 1.15.1 / pandas 3.0.5 / pyarrow 25.0.1). PRECOMMIT-ercot213-published-anchor-2026-08-16.md.",
+  "model_changes_note": "ercot-242 Phase-1: room-axis extension of the armed RT wall (PRECOMMIT-ercot242-room-axis-phase1 section 1)",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
-      2023,
-      2024,
-      2025
+      2023
     ],
     "hours": 8760,
     "passes": [
@@ -24,9 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54,
-      "2024": 2.19,
-      "2025": 3.52
+      "2023": 2.54
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -89,7 +85,185 @@
       "ercot_partial_outage_shaped_derate": true,
       "ercot_econ_curve_top_refine": true,
       "coal_peak_offer_yearly_level": true,
-      "ercot_reserve_supply_cap_net_credits": true
+      "ercot_reserve_supply_cap_net_credits": true,
+      "ercot_storage_adaptive_expectation": true,
+      "ercot_adaptive_event_release": true,
+      "ercot_tie_zonal_interchange": true,
+      "offer_curve_by_group": {
+        "CC_REGULAR": {
+          "committed": 0.998,
+          "econ_low": 0.723,
+          "econ_high": 1.324,
+          "peak": 151.008,
+          "econ_low_share": 0.5,
+          "pct_peaking": 8.0,
+          "phys_committed": 1.006,
+          "phys_econ_low": 0.825,
+          "phys_econ_high": 0.95,
+          "phys_peak": 74.25,
+          "peak_ladder": [
+            [
+              0.2,
+              151.008
+            ],
+            [
+              0.2,
+              151.008
+            ],
+            [
+              0.2,
+              151.008
+            ],
+            [
+              0.2,
+              151.008
+            ],
+            [
+              0.2,
+              151.008
+            ]
+          ]
+        },
+        "CC_INTERMEDIATE": {
+          "committed": 0.92,
+          "econ_low": 0.95,
+          "econ_high": 1.08,
+          "peak": 74.25,
+          "econ_low_share": 0.5,
+          "pct_peaking": 8.0
+        },
+        "CC_CHP": {
+          "committed": 1.029,
+          "econ_low": 0.946,
+          "econ_high": 1.857,
+          "peak": 123.684,
+          "econ_low_share": 0.5,
+          "pct_peaking": 4.0,
+          "phys_committed": 0.982,
+          "phys_econ_low": 0.793,
+          "phys_econ_high": 0.941,
+          "phys_peak": 74.25,
+          "peak_ladder": [
+            [
+              0.2,
+              123.684
+            ],
+            [
+              0.2,
+              123.684
+            ],
+            [
+              0.2,
+              123.684
+            ],
+            [
+              0.2,
+              123.684
+            ],
+            [
+              0.2,
+              123.684
+            ]
+          ]
+        },
+        "CT_CHP": {
+          "committed": 0.9000000000000001,
+          "econ_low": 1.1199999999999999,
+          "econ_high": 1.3,
+          "peak": 43.56,
+          "econ_low_share": 0.5,
+          "phys_committed": 1.556,
+          "phys_econ_low": 0.948,
+          "phys_econ_high": 0.921,
+          "phys_peak": 33.0
+        },
+        "CT_PEAKER": {
+          "committed": 1.14,
+          "econ_low": 1.27,
+          "econ_high": 2.18,
+          "peak": 433.95,
+          "econ_low_share": 0.526,
+          "pct_peaking": 7.0,
+          "phys_committed": 1.022,
+          "phys_econ_low": 0.723,
+          "phys_econ_high": 0.727,
+          "phys_peak": 33.0,
+          "peak_ladder": [
+            [
+              0.2,
+              433.95
+            ],
+            [
+              0.2,
+              433.95
+            ],
+            [
+              0.2,
+              433.95
+            ],
+            [
+              0.2,
+              433.95
+            ],
+            [
+              0.2,
+              433.95
+            ]
+          ]
+        },
+        "CT_INTERMEDIATE": {
+          "committed": 1.0,
+          "econ_low": 1.0,
+          "econ_high": 1.2,
+          "peak": 99.0,
+          "econ_low_share": 0.5,
+          "pct_peaking": 5.0
+        },
+        "ST_GAS": {
+          "committed": 0.91,
+          "econ_low": 1.02,
+          "econ_high": 1.2,
+          "peak": 105.6,
+          "econ_low_share": 0.5,
+          "pct_peaking": 15.0,
+          "phys_committed": 1.36,
+          "phys_econ_low": 0.815,
+          "phys_econ_high": 0.871,
+          "phys_peak": 33.0,
+          "peak_ladder": [
+            [
+              0.2,
+              105.6
+            ],
+            [
+              0.2,
+              105.6
+            ],
+            [
+              0.2,
+              105.6
+            ],
+            [
+              0.2,
+              105.6
+            ],
+            [
+              0.2,
+              105.6
+            ]
+          ]
+        },
+        "ST_GAS_INTERMEDIATE": {
+          "committed": 1.0,
+          "econ_low": 1.0,
+          "econ_high": 1.15,
+          "peak": 72.6,
+          "econ_low_share": 0.5,
+          "pct_peaking": 6.0
+        }
+      },
+      "ercot_offer_swcap_clip": true,
+      "ercot_offer_surface_cleared_share_rt_room": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -158,7 +332,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "7246272"
+    "git_sha": "40d5f59"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -170,6 +344,7 @@
     "end_year": null,
     "hindcast": false,
     "hindcast_fuel_variant": "realized",
+    "hindcast_verified_announced_exits": false,
     "crossover_forward_year": null,
     "crossover_forward_gas_path": "mid",
     "crossover_solve_year_weather": false,
@@ -333,6 +508,7 @@
     "plant_emission_rates_v2_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
     "measured_ct_heat_rates": false,
     "measured_chp_heat_rates": false,
+    "egrid_identity_heat_rates": false,
     "cc_steam_part_capacity": false,
     "cc_steam_part_reclass": false,
     "control_retrofit_forward": false,
@@ -400,6 +576,8 @@
     "entry_pipeline_aware_signal": false,
     "capacity_screen_unified_lookahead": false,
     "capacity_screen_scarcity_restoration": false,
+    "entry_forward_expectation_signal": false,
+    "entry_margin_exhaustion": false,
     "vre_procurement_additions_enabled": false,
     "interchange_shaping": false,
     "interchange_shaping_export_only": false,
@@ -463,7 +641,13 @@
     "nyiso_gas_bridge_st_min_run_hours": null,
     "nyiso_gas_bridge_ct": false,
     "nyiso_gas_bridge_ct_min_load_frac": 0.238,
+    "nyiso_gas_bridge_plant_exclusions": false,
+    "nyiso_gas_bridge_reserve_duty_exclusions": false,
     "nyiso_gas_bridge_ct_min_run_hours": 2.0,
+    "nyiso_gas_bridge_plant_min_run": false,
+    "nyiso_gas_bridge_online_hours": false,
+    "nyiso_gas_bridge_state_floor_min_run": false,
+    "nyiso_chp_btm_measured": false,
     "nyiso_spin_reserve_online": false,
     "nyiso_synchronised_reserve": false,
     "nyiso_spin_headroom_frac": 1.0,
@@ -474,6 +658,7 @@
     "miso_pjm_border_anchor": false,
     "miso_seam_export_limit": false,
     "miso_seam_envelope_merit_cap": false,
+    "miso_seam_envelope_hour_ending_key": false,
     "miso_firm_import_floor": false,
     "miso_cc_coal_rebalance": false,
     "miso_pjm_lmp_import_pricing": false,
@@ -507,6 +692,7 @@
     "caiso_storage_shape_anchor": false,
     "caiso_ps_plant_params": false,
     "caiso_charge_allocation_schedule": false,
+    "caiso_fsno_subzonal_topology": false,
     "caiso_intertie_reference_price": false,
     "caiso_corridor_atc_forward": false,
     "caiso_reference_price_seam": false,
@@ -518,6 +704,7 @@
     "miso_reserve_pergen": false,
     "miso_commitment_posture": false,
     "miso_measured_reserve_requirements": false,
+    "miso_reserve_online_gated": false,
     "miso_south_seam_split": false,
     "miso_rdt_tcdc": false,
     "miso_rpe_pricing": false,
@@ -538,6 +725,10 @@
     "ercot_multiproduct_as_coopt": true,
     "ercot_ecrs_conservative_deployment": true,
     "ercot_nonreleasable_as_withholding": true,
+    "ercot_as_held_location": false,
+    "ercot_as_held_requirement": false,
+    "ercot_as_held_requirement_nspin": false,
+    "ercot_ruc_commitment_floor": false,
     "ercot_ordc_total_reserve": true,
     "ercot_storage_as_product_credit": true,
     "ercot_as_critical_frac": 0.0,
@@ -620,6 +811,9 @@
     "st_gas_intermediate_cf_threshold": 50.0,
     "cc_intermediate_split": false,
     "cc_intermediate_cf_threshold": 50.0,
+    "cc_reserve_duty_split": false,
+    "chp_layup_duty_split": false,
+    "chp_layup_duty_curve": false,
     "gas_st_startup_cost": true,
     "tranche_startup_amortization": false,
     "tranche_startup_measured_runs": false,
@@ -691,6 +885,8 @@
     "ercot_offer_surface_cleared_share_rt": true,
     "ercot_offer_surface_cleared_share_rt_path": null,
     "ercot_offer_surface_cleared_share_rt_mode": "replace",
+    "ercot_offer_surface_cleared_share_rt_room": true,
+    "ercot_offer_surface_cleared_share_rt_room_path": null,
     "ercot_faststart_pool_offer": true,
     "ercot_faststart_pool_offer_path": null,
     "ercot_offline_commit_offer": false,
@@ -713,6 +909,7 @@
     "ercot_econ_curve_top_refine": true,
     "ercot_offer_surface_lowcurve": false,
     "ercot_offer_surface_lowcurve_path": null,
+    "ercot_offer_swcap_clip": true,
     "ercot_gas_commitment_bridge": true,
     "ercot_gas_bridge_min_load_frac": 0.574,
     "ercot_gas_bridge_startup": true,
@@ -781,6 +978,10 @@
     "cc_mustrun_per_plant": false,
     "st_gas_mustrun_per_plant": false,
     "st_gas_mustrun_p25_level": false,
+    "mustrun_online_frac_per_year": false,
+    "st_gas_mustrun_p25_measured_level": false,
+    "mustrun_layup_window_mask": false,
+    "mustrun_plant_exclusions": false,
     "cc_capacity_reconcile": false,
     "cc_capacity_reconcile_path": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
     "cc_peaking_per_plant": false,
@@ -789,7 +990,11 @@
     "cc_nameplate_summer_derate": false,
     "summer_derate_basis_aware": false,
     "commission_year_cod_fallback": false,
+    "summer_wefor_share_override": null,
     "unit_outage_lp_capacity_basis": false,
+    "unit_outage_fleet_status_scope": false,
+    "retiree_vintage_status_scope": false,
+    "partial_plant_exit_carry": false,
     "cc_winter_capability_basis": false,
     "coal_nameplate_summer_derate": true,
     "gt_ambient_derate": false,
@@ -816,34 +1021,34 @@
       "CC_REGULAR": {
         "committed": 0.998,
         "econ_low": 0.723,
-        "econ_high": 1.3239999999999998,
-        "peak": 4.576,
+        "econ_high": 1.324,
+        "peak": 151.008,
         "econ_low_share": 0.5,
         "pct_peaking": 8.0,
         "phys_committed": 1.006,
         "phys_econ_low": 0.825,
         "phys_econ_high": 0.95,
-        "phys_peak": 2.25,
+        "phys_peak": 74.25,
         "peak_ladder": [
           [
             0.2,
-            4.576
+            151.008
           ],
           [
             0.2,
-            4.576
+            151.008
           ],
           [
             0.2,
-            4.576
+            151.008
           ],
           [
             0.2,
-            4.576
+            151.008
           ],
           [
             0.2,
-            4.576
+            151.008
           ]
         ]
       },
@@ -851,7 +1056,7 @@
         "committed": 0.92,
         "econ_low": 0.95,
         "econ_high": 1.08,
-        "peak": 2.25,
+        "peak": 74.25,
         "econ_low_share": 0.5,
         "pct_peaking": 8.0
       },
@@ -859,33 +1064,33 @@
         "committed": 1.029,
         "econ_low": 0.946,
         "econ_high": 1.857,
-        "peak": 3.748,
+        "peak": 123.684,
         "econ_low_share": 0.5,
         "pct_peaking": 4.0,
         "phys_committed": 0.982,
         "phys_econ_low": 0.793,
         "phys_econ_high": 0.941,
-        "phys_peak": 2.25,
+        "phys_peak": 74.25,
         "peak_ladder": [
           [
             0.2,
-            3.748
+            123.684
           ],
           [
             0.2,
-            3.748
+            123.684
           ],
           [
             0.2,
-            3.748
+            123.684
           ],
           [
             0.2,
-            3.748
+            123.684
           ],
           [
             0.2,
-            3.748
+            123.684
           ]
         ]
       },
@@ -893,44 +1098,44 @@
         "committed": 0.9000000000000001,
         "econ_low": 1.1199999999999999,
         "econ_high": 1.3,
-        "peak": 1.3199999999999998,
+        "peak": 43.56,
         "econ_low_share": 0.5,
         "phys_committed": 1.556,
         "phys_econ_low": 0.948,
         "phys_econ_high": 0.921,
-        "phys_peak": 1.0
+        "phys_peak": 33.0
       },
       "CT_PEAKER": {
         "committed": 1.14,
         "econ_low": 1.27,
         "econ_high": 2.18,
-        "peak": 13.15,
+        "peak": 433.95,
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
         "phys_committed": 1.022,
         "phys_econ_low": 0.723,
         "phys_econ_high": 0.727,
-        "phys_peak": 1.0,
+        "phys_peak": 33.0,
         "peak_ladder": [
           [
             0.2,
-            13.15
+            433.95
           ],
           [
             0.2,
-            13.15
+            433.95
           ],
           [
             0.2,
-            13.15
+            433.95
           ],
           [
             0.2,
-            13.15
+            433.95
           ],
           [
             0.2,
-            13.15
+            433.95
           ]
         ]
       },
@@ -938,41 +1143,41 @@
         "committed": 1.0,
         "econ_low": 1.0,
         "econ_high": 1.2,
-        "peak": 3.0,
+        "peak": 99.0,
         "econ_low_share": 0.5,
         "pct_peaking": 5.0
       },
       "ST_GAS": {
         "committed": 0.91,
         "econ_low": 1.02,
-        "econ_high": 1.2000000000000002,
-        "peak": 3.2,
+        "econ_high": 1.2,
+        "peak": 105.6,
         "econ_low_share": 0.5,
         "pct_peaking": 15.0,
         "phys_committed": 1.36,
         "phys_econ_low": 0.815,
         "phys_econ_high": 0.871,
-        "phys_peak": 1.0,
+        "phys_peak": 33.0,
         "peak_ladder": [
           [
             0.2,
-            3.2
+            105.6
           ],
           [
             0.2,
-            3.2
+            105.6
           ],
           [
             0.2,
-            3.2
+            105.6
           ],
           [
             0.2,
-            3.2
+            105.6
           ],
           [
             0.2,
-            3.2
+            105.6
           ]
         ]
       },
@@ -980,7 +1185,7 @@
         "committed": 1.0,
         "econ_low": 1.0,
         "econ_high": 1.15,
-        "peak": 2.2,
+        "peak": 72.6,
         "econ_low_share": 0.5,
         "pct_peaking": 6.0
       }
@@ -1012,6 +1217,7 @@
       0.9,
       1.0
     ],
+    "miso_offer_spread_anchored": false,
     "coal_offer_net_revenue_margin": true,
     "coal_offer_margin_anchor": 1.7387,
     "coal_offer_margin_level": 15.8807,
@@ -15870,6 +16076,7 @@
     "pjm_external_net_position_cut": false,
     "pjm_zonal_loss_surface": false,
     "caiso_zonal_loss_surface": false,
+    "nyiso_zonal_loss_surface": false,
     "ercot_wtx_curtailment_driver": true,
     "ercot_wtx_curtail_depth_wind": 0.1354,
     "ercot_wtx_curtail_depth_solar": 0.1614,
@@ -15928,18 +16135,30 @@
     "forecast_xyear_warmstart": true,
     "gas_price_override": 2.54,
     "ercot_offer_hrmult_ep_rebasis": false,
-    "ercot_offer_hrmult_ep_rebasis_bands": null
+    "ercot_offer_hrmult_ep_rebasis_bands": null,
+    "ercot_capability_reconciliation": false,
+    "ercot_exhaustion_expectation": false,
+    "ercot_storage_reservation_offer": false,
+    "ercot_storage_adaptive_expectation": true,
+    "ercot_adaptive_half_life_days": 30.0,
+    "ercot_adaptive_beta": 3.0077,
+    "ercot_adaptive_event_release": true,
+    "ercot_adaptive_fixed_point": false,
+    "ercot_tie_zonal_interchange": true,
+    "caiso_storage_adaptive_expectation": false,
+    "caiso_adaptive_half_life_days": 30.0,
+    "caiso_adaptive_beta": 0.5945
   },
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-fc-v20-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v22-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
       "pandas": "3.0.5",
       "pyarrow": "25.0.1",
-      "pydantic": "2.13.4"
+      "pydantic": "2.13.5"
     }
   },
   "resolved_inputs": {

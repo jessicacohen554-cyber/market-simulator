@@ -1,19 +1,15 @@
 {
-  "run_id": "2026-08-16-ercot213-arm-pubanchor",
+  "run_id": "2026-08-30-run242-room-axis",
   "iso": "ERCOT",
-  "label": "ercot213 arm pubanchor",
+  "label": "run242 room axis",
   "target_years": [
-    2023,
-    2024,
-    2025
+    2023
   ],
   "scorable_years": [
-    2023,
-    2024,
-    2025
+    2023
   ],
   "data_blocked_years": [],
-  "rubric_version": 3.2,
+  "rubric_version": 3.5,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
@@ -43,7 +39,7 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -72,10 +68,24 @@
   },
   "grade_summary": {
     "scored": 7,
-    "target_grade": 5,
+    "target_grade": 6,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 2
+    "fails": 1
+  },
+  "reported": {
+    "co2": {
+      "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
+      "years": {
+        "2023": "+1.0%"
+      }
+    },
+    "diurnal_amplitude": {
+      "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
+      "years": {
+        "2023": "amplitude 91.8% of measured (hod range $162.90 vs $177.51); peak h18 vs h18, trough h02 vs h02 \u2014 phase OK; hod r +0.979; 365 complete days"
+      }
+    }
   },
   "free_class_score": {
     "iso": "ERCOT",
@@ -93,13 +103,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 16,
-      "total": 16
+      "pass": 7,
+      "total": 7
     },
     "free": {
-      "pass": 12,
-      "total": 12
+      "pass": 5,
+      "total": 5
     },
-    "headline": "C1 all 16/16 \u00b7 free 12/12"
+    "headline": "C1 all 7/7 \u00b7 free 5/5"
   }
 }
