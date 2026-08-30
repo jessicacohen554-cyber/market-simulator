@@ -254,7 +254,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     smr_available_year: { cell: "U", fc: "U" },
     elcc_accreditation: { cell: "K", fc: "K" },
     caiso_nqc_accreditation: { cell: ".", fc: "." },
-    hydro_accreditation: { cell: "O", fc: "O" },
+    hydro_accreditation: { cell: "K", fc: "K", ev: "capx-S4 sourced factor 0.7352 (ISO-NE Aug-2026 per-resource SCC aggregate / model basis, closes the FFR-1C open item) + S-4V control/treatment verification pair 2026-08-30: 2026 isolation +446.7 MW exact, I7 PASS 2026-2030, bare neiso-t1f HOLD->PROMOTE-WITH-CAVEATS; honesty note - at that HEAD the 2028 sign is over-determined by epoch drift, the factor buys input fidelity + 121.8 MW equilibrium margin (docs/handoffs/FINDING-capx-s4-neiso-hydro-2026-08-30.md §3/§5; runs neiso-2026-2030-s4hydro{,-control})" },
     datacenter_load_block: { cell: "K", fc: "K" },
     electrification_layers: { cell: ".", fc: "O", ev: "FFR-SA T0 smoke 2026-08-03 (docs/handoffs/ffr-sa-load-shape-implementation-2026-08.md §4)" },
     transmission_expansion: { cell: ".", fc: "U" },
