@@ -1,6 +1,15 @@
 # PERF-A owner decision memo — `forecast_xyear_warmstart` default (plan §6 decision 1)
 
-**STATUS: DECISION INPUT — for the owner at gate G1.**
+**STATUS: CLOSED — OVERTAKEN BY EVENTS, ACKNOWLEDGED BY THE OWNER 2026-08-26**
+(program-director sitting, card 10). The owner acknowledged decision-1 as
+CLOSED-OVERTAKEN per §3 option (A) — the decision was made at K.3 (D-9 flipped
+the default, D-10 disarmed the forecast lane; no flip ships) — and dropped it
+from the owner decision queue after twenty-one director cycles. A records
+acknowledgement only: no code, no config, no determination changed. Queue
+removals: plan §6 item 1 + §8 ledger, director-board item 6. Record:
+`docs/FINDING-holdout-governance-2026-08-26.md`.
+
+*Original header:* **STATUS: DECISION INPUT — for the owner at gate G1.**
 Written 2026-08-15 by PERF-A (`claude/ci-infrastructure-blocker-bp3zv3`), chartered by
 `docs/model-audit-release-plan-2026-08.md` §3/WS3 item 4: *"Write the owner decision memo
 for flipping `forecast_xyear_warmstart` default ON … the owner declined pre-authorization
