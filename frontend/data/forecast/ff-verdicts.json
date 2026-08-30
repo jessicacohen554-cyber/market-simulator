@@ -690,7 +690,9 @@
   "caveats": [],
   "determination": "HOLD",
   "iso": "ERCOT",
-  "notes": [],
+  "notes": [
+   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md \u00a70/\u00a75.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (\u221249.2/\u221242.7/\u221250.6 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect \u2014 the DROP term is 46\u2013103 % of the miss per the FINDING \u00a72.2 \u2014 not dispatch error and not the emission-rate derivation, which is exonerated within \u00b15 %). The backing FFR-3A-2 bundle was never committed (results/ffr3a2 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same ERCOT crossover question is `ercot-t1x-ffr2a` (co2 \u221225.2/\u221223.2/+1.3 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error \u2014 the rate leg is measured separately (FINDING \u00a72, own-rate comparison)."
+  ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",
@@ -1267,7 +1269,9 @@
   "caveats": [],
   "determination": "HOLD",
   "iso": "MISO",
-  "notes": [],
+  "notes": [
+   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md \u00a70/\u00a75.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (\u221263.3/\u221258.9/\u221275.5 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect \u2014 the DROP term is 97\u2013117 % of the miss per the FINDING \u00a72.2 \u2014 not dispatch error and not the emission-rate derivation, which is exonerated within \u00b15 %). The backing FFR-3A-4 bundle was never committed (results/ffr3a4 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same MISO crossover question is `miso-t1x-ffr2a` (co2 +1.2/\u22121.8/+13.4 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error \u2014 the rate leg is measured separately (FINDING \u00a72, own-rate comparison)."
+  ],
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
@@ -2198,139 +2202,139 @@
   "tier": "t1h"
  },
  "neiso-t1f": {
-  "schema": "forecast-verdict/v1",
-  "rubric_version": "1.0",
-  "provenance": {
-   "schema": "forecast-provenance/v1",
-   "scored_at_sha": "88baa9d5c71b",
-   "scored_at_date": "2026-08-30T22:25:51Z",
-   "cache_epoch": "9a7f68fc7dcac931",
-   "session": "capx-S4b-neiso-ara"
+  "categories": {
+   "FC-1": {
+    "applicability": "required",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "all 14 invariants PASS",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   },
+   "FC-2": {
+    "applicability": "required",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [
+     {
+      "detail": "reserve-margin band (I12 PASS)",
+      "gating": true,
+      "row": "row1",
+      "status": "PASS"
+     },
+     {
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true,
+      "row": "row3",
+      "status": "PASS"
+     },
+     {
+      "detail": "backstop share 0.0% \u2264 10%",
+      "gating": true,
+      "row": "row4",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   },
+   "FC-3": {
+    "applicability": "n/a",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "report",
+    "label": "FC-5 external corridor",
+    "rows": [
+     {
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true,
+      "row": "corridor",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "applicability": "optional",
+    "label": "FC-6 driver response",
+    "rows": [
+     {
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true,
+      "row": "driver response",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "mode=forecast; 763 config keys; gates ['capacity_market_clearing']",
+      "gating": true,
+      "row": "run_config",
+      "status": "PASS"
+     },
+     {
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "wall 8.0 min within budget",
+      "gating": true,
+      "row": "runtime",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   }
   },
-  "tier": "t1f",
-  "iso": "NEISO",
-  "determination": "PROMOTE-WITH-CAVEATS",
-  "reasons": [],
   "caveats": [
    "FC-7 provenance & DOF"
   ],
+  "determination": "PROMOTE-WITH-CAVEATS",
+  "iso": "NEISO",
   "notes": [],
-  "categories": {
-   "FC-1": {
-    "label": "FC-1 structural integrity (I1-I14)",
-    "applicability": "required",
-    "status": "PASS",
-    "rows": [
-     {
-      "row": "invariants I1-I14",
-      "status": "PASS",
-      "detail": "all 14 invariants PASS",
-      "gating": true
-     }
-    ]
-   },
-   "FC-2": {
-    "label": "FC-2 adequacy & equilibrium behavior",
-    "applicability": "required",
-    "status": "PASS",
-    "rows": [
-     {
-      "row": "row1",
-      "status": "PASS",
-      "detail": "reserve-margin band (I12 PASS)",
-      "gating": true
-     },
-     {
-      "row": "row3",
-      "status": "PASS",
-      "detail": "no cobweb (I13 PASS)",
-      "gating": true
-     },
-     {
-      "row": "row4",
-      "status": "PASS",
-      "detail": "backstop share 0.0% \u2264 10%",
-      "gating": true
-     }
-    ]
-   },
-   "FC-3": {
-    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
-    "applicability": "n/a",
-    "status": "n/a",
-    "rows": []
-   },
-   "FC-4": {
-    "label": "FC-4 crossover dispatch skill (T1-X)",
-    "applicability": "n/a",
-    "status": "n/a",
-    "rows": []
-   },
-   "FC-5": {
-    "label": "FC-5 external corridor",
-    "applicability": "report",
-    "status": "SKIPPED",
-    "rows": [
-     {
-      "row": "corridor",
-      "status": "SKIPPED",
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
-      "gating": true
-     }
-    ]
-   },
-   "FC-6": {
-    "label": "FC-6 driver response",
-    "applicability": "optional",
-    "status": "SKIPPED",
-    "rows": [
-     {
-      "row": "driver response",
-      "status": "SKIPPED",
-      "detail": "no committed driver-battery or paired-invariant output",
-      "gating": true
-     }
-    ]
-   },
-   "FC-7": {
-    "label": "FC-7 provenance & DOF",
-    "applicability": "required",
-    "status": "CAVEAT",
-    "rows": [
-     {
-      "row": "run_config",
-      "status": "PASS",
-      "detail": "mode=forecast; 763 config keys; gates ['capacity_market_clearing']",
-      "gating": true
-     },
-     {
-      "row": "overlay-off",
-      "status": "PASS",
-      "detail": "no backcast overlay armed (outage_source='statistical')",
-      "gating": true
-     },
-     {
-      "row": "dof ledger",
-      "status": "CAVEAT",
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true
-     }
-    ]
-   },
-   "FC-8": {
-    "label": "FC-8 runtime feasibility",
-    "applicability": "runtime",
-    "status": "PASS",
-    "rows": [
-     {
-      "row": "runtime",
-      "status": "PASS",
-      "detail": "wall 8.0 min within budget",
-      "gating": true
-     }
-    ]
-   }
-  }
+  "provenance": {
+   "cache_epoch": "9a7f68fc7dcac931",
+   "schema": "forecast-provenance/v1",
+   "scored_at_date": "2026-08-30T22:25:51Z",
+   "scored_at_sha": "88baa9d5c71b",
+   "session": "capx-S4b-neiso-ara"
+  },
+  "reasons": [],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1f"
  },
  "neiso-t1f-ff2d": {
   "categories": {
@@ -2520,6 +2524,143 @@
   "schema": "forecast-verdict/v1",
   "tier": "t1f"
  },
+ "neiso-t1f-s4bcontrol": {
+  "categories": {
+   "FC-1": {
+    "applicability": "required",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "WARN ['I12']: I12: requirement-implied floor [0.2%, 15.2%]; out: 2026:17.1% (band [0.2%, 15.2%])",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-2": {
+    "applicability": "required",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [
+     {
+      "detail": "reserve-margin band (I12 WARN): requirement-implied floor [0.2%, 15.2%]; out: 2026:17.1% (band [0.2%, 15.2%])",
+      "gating": true,
+      "row": "row1",
+      "status": "CAVEAT"
+     },
+     {
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true,
+      "row": "row3",
+      "status": "PASS"
+     },
+     {
+      "detail": "backstop share 0.0% \u2264 10%",
+      "gating": true,
+      "row": "row4",
+      "status": "PASS"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-3": {
+    "applicability": "n/a",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "report",
+    "label": "FC-5 external corridor",
+    "rows": [
+     {
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true,
+      "row": "corridor",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "applicability": "optional",
+    "label": "FC-6 driver response",
+    "rows": [
+     {
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true,
+      "row": "driver response",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "mode=forecast; 763 config keys; gates ['capacity_market_clearing']",
+      "gating": true,
+      "row": "run_config",
+      "status": "PASS"
+     },
+     {
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "wall 7.5 min within budget",
+      "gating": true,
+      "row": "runtime",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   }
+  },
+  "caveats": [
+   "FC-1 structural integrity (I1-I14)",
+   "FC-2 adequacy & equilibrium behavior",
+   "FC-7 provenance & DOF"
+  ],
+  "determination": "PROMOTE-WITH-CAVEATS",
+  "iso": "NEISO",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "9a7f68fc7dcac931",
+   "schema": "forecast-provenance/v1",
+   "scored_at_date": "2026-08-30T22:25:59Z",
+   "scored_at_sha": "88baa9d5c71b",
+   "session": "capx-S4b-neiso-ara (CONTROL arm: the three NEISO requirement registry values locally reverted to the FCA-17 prints \u2014 PRM 30,305/27,298-1, DR 2,940/30,305, import 567.0 \u2014 uncommitted diagnostic for attribution only, never a shippable configuration)"
+  },
+  "reasons": [],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1f"
+ },
  "neiso-t1f-s4control": {
   "categories": {
    "FC-1": {
@@ -2651,6 +2792,144 @@
    "scored_at_date": "2026-08-30T18:31:28Z",
    "scored_at_sha": "60e19610e454",
    "session": "capx-S4V-neiso-verification (CONTROL arm: HYDRO_ACCREDITATION_CREDIT_BY_ISO['NEISO'] locally reverted to the generic 0.50 fallback \u2014 uncommitted diagnostic for attribution only, never a shippable configuration)"
+  },
+  "reasons": [],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1f"
+ },
+ "neiso-t1f-s4hydro": {
+  "categories": {
+   "FC-1": {
+    "applicability": "required",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "WARN ['I12']: I12: requirement-implied floor [0.2%, 15.2%]; out: 2026:17.1% (band [0.2%, 15.2%])",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-2": {
+    "applicability": "required",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [
+     {
+      "detail": "reserve-margin band (I12 WARN): requirement-implied floor [0.2%, 15.2%]; out: 2026:17.1% (band [0.2%, 15.2%])",
+      "gating": true,
+      "row": "row1",
+      "status": "CAVEAT"
+     },
+     {
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true,
+      "row": "row3",
+      "status": "PASS"
+     },
+     {
+      "detail": "backstop share 0.0% \u2264 10%",
+      "gating": true,
+      "row": "row4",
+      "status": "PASS"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-3": {
+    "applicability": "n/a",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "report",
+    "label": "FC-5 external corridor",
+    "rows": [
+     {
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true,
+      "row": "corridor",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "applicability": "optional",
+    "label": "FC-6 driver response",
+    "rows": [
+     {
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true,
+      "row": "driver response",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "mode=forecast; 757 config keys; gates ['capacity_market_clearing']",
+      "gating": true,
+      "row": "run_config",
+      "status": "PASS"
+     },
+     {
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "wall 7.5 min within budget",
+      "gating": true,
+      "row": "runtime",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   }
+  },
+  "caveats": [
+   "FC-1 structural integrity (I1-I14)",
+   "FC-2 adequacy & equilibrium behavior",
+   "FC-7 provenance & DOF"
+  ],
+  "determination": "PROMOTE-WITH-CAVEATS",
+  "iso": "NEISO",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "9a7f68fc7dcac931",
+   "note": "S-4V verification-pair measurement, preserved verbatim by capx-S4b-neiso-ara before the bare key was overwritten with the ARA-3 requirement re-vintage re-score. Quotable as the pre-re-vintage baseline.",
+   "schema": "forecast-provenance/v1",
+   "scored_at_date": "2026-08-30T18:31:20Z",
+   "scored_at_sha": "60e19610e454",
+   "session": "capx-S4V-neiso-verification"
   },
   "reasons": [],
   "rubric_version": "1.0",
@@ -2923,6 +3202,162 @@
       "status": "PASS"
      },
      {
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+      "gating": true,
+      "row": "dispatch skill",
+      "status": "FAIL"
+     },
+     {
+      "detail": "forecast/keeper input-gap ratios reported (report-only)",
+      "gating": false,
+      "row": "input-gap ratio",
+      "status": "PASS"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-5": {
+    "applicability": "report",
+    "label": "FC-5 external corridor",
+    "rows": [
+     {
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true,
+      "row": "corridor",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "mode=forecast; 760 config keys; gates ['capacity_market_clearing']",
+      "gating": true,
+      "row": "run_config",
+      "status": "PASS"
+     },
+     {
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "determination": "HOLD",
+  "iso": "NEISO",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "07e416f3f8072e7c",
+   "schema": "forecast-provenance/v1",
+   "scored_at_date": "2026-08-30T22:48:52Z",
+   "scored_at_sha": "bd97c6ebaa68"
+  },
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+   "FC-4 crossover dispatch skill (T1-X) FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1x"
+ },
+ "neiso-t1x-pre-d5r": {
+  "categories": {
+   "FC-1": {
+    "applicability": "required",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "optional",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [
+     {
+      "detail": "reserve-margin band: I12 absent from invariant record",
+      "gating": true,
+      "row": "row1",
+      "status": "SKIPPED"
+     },
+     {
+      "detail": "cobweb: I13 absent from invariant record",
+      "gating": true,
+      "row": "row3",
+      "status": "SKIPPED"
+     },
+     {
+      "detail": "backstop share 0% (reserve_margin_build_enabled off \u2014 no backstop channel, and no per-channel split to check it against)",
+      "gating": true,
+      "row": "row4",
+      "status": "PASS"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-3": {
+    "applicability": "report",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "no committed capacity-hindcast score for the ISO",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-4": {
+    "applicability": "required",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [
+     {
+      "detail": "\u22652026 refusal marker present and clean",
+      "gating": true,
+      "row": "quarantine",
+      "status": "PASS"
+     },
+     {
       "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |10.6%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
       "gating": true,
       "row": "dispatch skill",
@@ -3003,6 +3438,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "07e416f3f8072e7c",
+   "note": "pre-D5-R baseline, preserved verbatim by capx-d5r-scorer-coal-grain before the bare key was overwritten with the co2 class-grain-repaired re-score (FINDING-capx-d5-crossover-co2-2026-08-30 \u00a75.1; owner ruling Q12, r#15 sitting): its FC-4 co2 rows (+12.8/+10.6/\u22122.3 %) carry the pre-repair instrument, in which the model's unsplit COAL family energy (0.001/0.085/0.082 TWh) was dropped from the scored CO2",
    "schema": "forecast-provenance/v1",
    "scored_at_date": "2026-08-30T21:35:36Z",
    "scored_at_sha": "74775c4d661f"
@@ -4250,7 +4686,9 @@
   "caveats": [],
   "determination": "HOLD",
   "iso": "PJM",
-  "notes": [],
+  "notes": [
+   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md \u00a70/\u00a75.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (\u221245.1/\u221240.4/\u221254.2 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect \u2014 the DROP term is 75\u201398 % of the miss per the FINDING \u00a72.2 \u2014 not dispatch error and not the emission-rate derivation, which is exonerated within \u00b15 %). The backing FFR-3A-3 bundle was never committed (results/ffr3a3 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same PJM crossover question is `pjm-t1x-ffr2a` (co2 \u22127.4/\u221210.3/\u22121.1 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error \u2014 the rate leg is measured separately (FINDING \u00a72, own-rate comparison)."
+  ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
@@ -5011,280 +5449,5 @@
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
   "tier": "t1x"
- },
- "neiso-t1f-s4hydro": {
-  "categories": {
-   "FC-1": {
-    "applicability": "required",
-    "label": "FC-1 structural integrity (I1-I14)",
-    "rows": [
-     {
-      "detail": "WARN ['I12']: I12: requirement-implied floor [0.2%, 15.2%]; out: 2026:17.1% (band [0.2%, 15.2%])",
-      "gating": true,
-      "row": "invariants I1-I14",
-      "status": "CAVEAT"
-     }
-    ],
-    "status": "CAVEAT"
-   },
-   "FC-2": {
-    "applicability": "required",
-    "label": "FC-2 adequacy & equilibrium behavior",
-    "rows": [
-     {
-      "detail": "reserve-margin band (I12 WARN): requirement-implied floor [0.2%, 15.2%]; out: 2026:17.1% (band [0.2%, 15.2%])",
-      "gating": true,
-      "row": "row1",
-      "status": "CAVEAT"
-     },
-     {
-      "detail": "no cobweb (I13 PASS)",
-      "gating": true,
-      "row": "row3",
-      "status": "PASS"
-     },
-     {
-      "detail": "backstop share 0.0% \u2264 10%",
-      "gating": true,
-      "row": "row4",
-      "status": "PASS"
-     }
-    ],
-    "status": "CAVEAT"
-   },
-   "FC-3": {
-    "applicability": "n/a",
-    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
-    "rows": [],
-    "status": "n/a"
-   },
-   "FC-4": {
-    "applicability": "n/a",
-    "label": "FC-4 crossover dispatch skill (T1-X)",
-    "rows": [],
-    "status": "n/a"
-   },
-   "FC-5": {
-    "applicability": "report",
-    "label": "FC-5 external corridor",
-    "rows": [
-     {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
-      "gating": true,
-      "row": "corridor",
-      "status": "SKIPPED"
-     }
-    ],
-    "status": "SKIPPED"
-   },
-   "FC-6": {
-    "applicability": "optional",
-    "label": "FC-6 driver response",
-    "rows": [
-     {
-      "detail": "no committed driver-battery or paired-invariant output",
-      "gating": true,
-      "row": "driver response",
-      "status": "SKIPPED"
-     }
-    ],
-    "status": "SKIPPED"
-   },
-   "FC-7": {
-    "applicability": "required",
-    "label": "FC-7 provenance & DOF",
-    "rows": [
-     {
-      "detail": "mode=forecast; 757 config keys; gates ['capacity_market_clearing']",
-      "gating": true,
-      "row": "run_config",
-      "status": "PASS"
-     },
-     {
-      "detail": "no backcast overlay armed (outage_source='statistical')",
-      "gating": true,
-      "row": "overlay-off",
-      "status": "PASS"
-     },
-     {
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true,
-      "row": "dof ledger",
-      "status": "CAVEAT"
-     }
-    ],
-    "status": "CAVEAT"
-   },
-   "FC-8": {
-    "applicability": "runtime",
-    "label": "FC-8 runtime feasibility",
-    "rows": [
-     {
-      "detail": "wall 7.5 min within budget",
-      "gating": true,
-      "row": "runtime",
-      "status": "PASS"
-     }
-    ],
-    "status": "PASS"
-   }
-  },
-  "caveats": [
-   "FC-1 structural integrity (I1-I14)",
-   "FC-2 adequacy & equilibrium behavior",
-   "FC-7 provenance & DOF"
-  ],
-  "determination": "PROMOTE-WITH-CAVEATS",
-  "iso": "NEISO",
-  "notes": [],
-  "provenance": {
-   "cache_epoch": "9a7f68fc7dcac931",
-   "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T18:31:20Z",
-   "scored_at_sha": "60e19610e454",
-   "session": "capx-S4V-neiso-verification",
-   "note": "S-4V verification-pair measurement, preserved verbatim by capx-S4b-neiso-ara before the bare key was overwritten with the ARA-3 requirement re-vintage re-score. Quotable as the pre-re-vintage baseline."
-  },
-  "reasons": [],
-  "rubric_version": "1.0",
-  "schema": "forecast-verdict/v1",
-  "tier": "t1f"
- },
- "neiso-t1f-s4bcontrol": {
-  "schema": "forecast-verdict/v1",
-  "rubric_version": "1.0",
-  "provenance": {
-   "schema": "forecast-provenance/v1",
-   "scored_at_sha": "88baa9d5c71b",
-   "scored_at_date": "2026-08-30T22:25:59Z",
-   "cache_epoch": "9a7f68fc7dcac931",
-   "session": "capx-S4b-neiso-ara (CONTROL arm: the three NEISO requirement registry values locally reverted to the FCA-17 prints \u2014 PRM 30,305/27,298-1, DR 2,940/30,305, import 567.0 \u2014 uncommitted diagnostic for attribution only, never a shippable configuration)"
-  },
-  "tier": "t1f",
-  "iso": "NEISO",
-  "determination": "PROMOTE-WITH-CAVEATS",
-  "reasons": [],
-  "caveats": [
-   "FC-1 structural integrity (I1-I14)",
-   "FC-2 adequacy & equilibrium behavior",
-   "FC-7 provenance & DOF"
-  ],
-  "notes": [],
-  "categories": {
-   "FC-1": {
-    "label": "FC-1 structural integrity (I1-I14)",
-    "applicability": "required",
-    "status": "CAVEAT",
-    "rows": [
-     {
-      "row": "invariants I1-I14",
-      "status": "CAVEAT",
-      "detail": "WARN ['I12']: I12: requirement-implied floor [0.2%, 15.2%]; out: 2026:17.1% (band [0.2%, 15.2%])",
-      "gating": true
-     }
-    ]
-   },
-   "FC-2": {
-    "label": "FC-2 adequacy & equilibrium behavior",
-    "applicability": "required",
-    "status": "CAVEAT",
-    "rows": [
-     {
-      "row": "row1",
-      "status": "CAVEAT",
-      "detail": "reserve-margin band (I12 WARN): requirement-implied floor [0.2%, 15.2%]; out: 2026:17.1% (band [0.2%, 15.2%])",
-      "gating": true
-     },
-     {
-      "row": "row3",
-      "status": "PASS",
-      "detail": "no cobweb (I13 PASS)",
-      "gating": true
-     },
-     {
-      "row": "row4",
-      "status": "PASS",
-      "detail": "backstop share 0.0% \u2264 10%",
-      "gating": true
-     }
-    ]
-   },
-   "FC-3": {
-    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
-    "applicability": "n/a",
-    "status": "n/a",
-    "rows": []
-   },
-   "FC-4": {
-    "label": "FC-4 crossover dispatch skill (T1-X)",
-    "applicability": "n/a",
-    "status": "n/a",
-    "rows": []
-   },
-   "FC-5": {
-    "label": "FC-5 external corridor",
-    "applicability": "report",
-    "status": "SKIPPED",
-    "rows": [
-     {
-      "row": "corridor",
-      "status": "SKIPPED",
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
-      "gating": true
-     }
-    ]
-   },
-   "FC-6": {
-    "label": "FC-6 driver response",
-    "applicability": "optional",
-    "status": "SKIPPED",
-    "rows": [
-     {
-      "row": "driver response",
-      "status": "SKIPPED",
-      "detail": "no committed driver-battery or paired-invariant output",
-      "gating": true
-     }
-    ]
-   },
-   "FC-7": {
-    "label": "FC-7 provenance & DOF",
-    "applicability": "required",
-    "status": "CAVEAT",
-    "rows": [
-     {
-      "row": "run_config",
-      "status": "PASS",
-      "detail": "mode=forecast; 763 config keys; gates ['capacity_market_clearing']",
-      "gating": true
-     },
-     {
-      "row": "overlay-off",
-      "status": "PASS",
-      "detail": "no backcast overlay armed (outage_source='statistical')",
-      "gating": true
-     },
-     {
-      "row": "dof ledger",
-      "status": "CAVEAT",
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true
-     }
-    ]
-   },
-   "FC-8": {
-    "label": "FC-8 runtime feasibility",
-    "applicability": "runtime",
-    "status": "PASS",
-    "rows": [
-     {
-      "row": "runtime",
-      "status": "PASS",
-      "detail": "wall 7.5 min within budget",
-      "gating": true
-     }
-    ]
-   }
-  }
  }
 }

@@ -64,3 +64,13 @@ No target exit is classified unreachable on committed evidence (fail-closed: the
 |---|--:|--:|:--|:--|
 | 2026 | 22.5351 | 106.116 | True | True |
 | 2027 | 22.394 | 105.499 | True | True |
+
+## Re-score — FC-4 co2 class-grain repair (2026-08-30)
+
+Zero-solve rescore of the committed score: the model's unsplit `COAL` family energy (dropped from the scored CO2 by the bench-intensity-key iteration) is valued at the bench's actual-coal-CO2-weighted mean coal intensity. Volume/price rows untouched. See `rescore_co2_grain` in `crossover_score.json`.
+
+| year | co2 signed before | after | unsplit COAL TWh | ī_coal | status |
+|---|--:|--:|--:|--:|:--|
+| 2023 | +12.8% | +12.8% | 0.001 | 0.8573 | FAIL |
+| 2024 | +10.6% | +11.1% | 0.085 | 1.3862 | FAIL |
+| 2025 | -2.3% | -1.8% | 0.082 | 1.3862 | PASS |
