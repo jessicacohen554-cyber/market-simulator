@@ -101,6 +101,7 @@ window.MECH_MATRIX_SHARDS.MISO = {
     coal_nameplate_summer_derate: { cell: "U" },
     unit_outage_lp_capacity_basis: { cell: "U" },
     unit_outage_fleet_status_scope: { cell: "K", ev: "miso-186 KEEPER (PREREG-miso186-midwest-stack-direction-2026-08-25.md; FINDING-miso186-direction-decomposition-2026-08-25.md; records _miso186_direction_decomposition.json / _miso186_ab_gates.json; runs 2026-08-25-miso-186-control / 2026-08-25-miso-186-statusscope)" },
+    retiree_vintage_status_scope: { cell: "U", ev: "miso-188 IN FLIGHT (PREREG-miso188-retiree-vintage-status-scope-2026-08-30.md pushed + blob-verified before the mechanism landed; A/B pending)" },
     wefor_residual: { cell: "I", ev: "miso-149 (results/calibration/PREREG-miso149-overlay-contradiction-2026-08-10.md @ 318c0542 pushed and blob-verified against the FETCHED remote ref before any adjudicating statistic, FINDING-miso149-the-object-is-the-price-level-2026-08-10.md; probes scripts/probes/_miso149_{overlay,clean_scope,displacement}.py; records results/calibration/_miso149_{overlay,clean_scope,displacement}.json)" },
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "K", ev: "registration only — read from miso132_ccmin_B/run_config.json; no MISO evidence, no verdict" },

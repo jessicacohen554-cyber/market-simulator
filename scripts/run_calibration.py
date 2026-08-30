@@ -2957,7 +2957,16 @@ def run_year(
     # carries these exits in its own operable file and ships no retiree parquet,
     # so this returns nothing there (no double-count).
     retired_units = (
-        load_retired_within_window(iso, iso_config, year=year)
+        load_retired_within_window(
+            iso,
+            iso_config,
+            year=year,
+            # miso-188 vintage-status oracle: drop retiree-channel units
+            # EIA's own contemporaneous vintage marks non-OP (deactivated
+            # before their formal retirement date). Default-off; byte-inert
+            # while off.
+            vintage_status_scope=getattr(config, "retiree_vintage_status_scope", False),
+        )
         if config.mode == "backcast"
         else []
     )

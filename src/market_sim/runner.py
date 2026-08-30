@@ -1235,7 +1235,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # are synthesized so the retirees are binned with the rest of the fleet.
     retired_within_window: list[Generator] = []
     if config.mode == "backcast":
-        retired_within_window = load_retired_within_window(iso, iso_config)
+        # miso-188 vintage-status oracle (retiree_vintage_status_scope,
+        # default off): in a backcast the weather-year pin IS the solve
+        # year, so it keys the oracle. The year kwarg is threaded only when
+        # the scope is armed so the off path stays byte-identical (the
+        # CHP-flag join reads the year too).
+        _rvs = getattr(config, "retiree_vintage_status_scope", False)
+        retired_within_window = load_retired_within_window(
+            iso,
+            iso_config,
+            year=int(config.weather_year) if _rvs else None,
+            vintage_status_scope=_rvs,
+        )
 
     campd_bins = load_or_synthesize_bins(config, iso, iso_config, retired_within_window)
 
