@@ -248,6 +248,12 @@ class TestPriceSignalByteIdentity(RunnerTestBase):
     FF-2A owner sign-off (2026-07-18) flipped the forecast default ON, so the
     pass-through premise now needs the flag pinned — the same treatment
     e0a2e20 gave ``datacenter_load_path`` in this file for the FF-1F flip.
+    Since the D12-A arming (owner ruling Q15, 2026-08-30) ERCOT's ISO
+    overrides also arm ``entry_margin_exhaustion`` +
+    ``entry_forward_reserve_leg``, both of which ``__post_init__`` refuses
+    without the reprice, so disarming the reprice now requires pinning the
+    pair off WITH it (the dependency wall
+    ``test_ercot_stageb_arming.py::TestD12AArming`` pins deliberately).
     The assertion itself is unchanged.
     """
 
@@ -259,7 +265,12 @@ class TestPriceSignalByteIdentity(RunnerTestBase):
             captured.append(kwargs)
             return original(**kwargs)
 
-        config = ScenarioConfig(iso="ERCOT", entry_lookahead_reprice=False)
+        config = ScenarioConfig(
+            iso="ERCOT",
+            entry_lookahead_reprice=False,
+            entry_margin_exhaustion=False,
+            entry_forward_reserve_leg=False,
+        )
         with (
             patch.object(runner, "END_YEAR", 2027),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),

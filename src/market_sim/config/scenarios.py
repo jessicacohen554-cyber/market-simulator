@@ -4257,6 +4257,10 @@ class ScenarioConfig:
     # silently inert, the FFR-8A pattern). Forecast machinery only; coerced
     # off in a plain backcast alongside entry_lookahead_reprice. Default off
     # is byte-identical (the allocators' bang-bang paths are untouched).
+    # FIELD default stays False; ERCOT's ISOConfig.default_scenario_overrides
+    # arms it as the ERCOT forecast default (owner ruling Q15, 2026-08-30,
+    # with entry_forward_reserve_leg as one unit — the D12-A citation block
+    # in iso_configs.py; rule 25: no other ISO).
     entry_forward_reserve_leg: bool = False  # GATED default-OFF (D12
     # scarcity-consistent entry reserve leg;
     # docs/handoffs/FINDING-capx-d12-scarcity-basis-2026-08-30.md — the
@@ -4308,6 +4312,10 @@ class ScenarioConfig:
     # neighbour) falls back to the shipped realized leg for that year —
     # degrade-to-shipped, never a third construction. Default off is
     # byte-identical (the realized-leg threading is untouched).
+    # FIELD default stays False; ERCOT's ISOConfig.default_scenario_overrides
+    # arms it as the ERCOT forecast default (owner ruling Q15, 2026-08-30,
+    # with entry_margin_exhaustion as one unit — the D12-A citation block in
+    # iso_configs.py; rule 25: no other ISO).
     storage_entry_availability_gate: bool = False  # GATED default-OFF (D-2
     # storage availability-year gate; charter
     # docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md Phase-1 Leg A, defect
