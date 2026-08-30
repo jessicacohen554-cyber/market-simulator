@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-30-miso-190-ppexit",
+  "label": "miso 190 ppexit",
+  "date": "2026-08-30",
+  "shorthand": "miso-190-ppexit",
+  "definition": "miso-190 ARM: partial-plant mid-window exit carry (single delta; PREREG-miso190)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-30-miso-190-ppexit.js",
+  "bundle": "results/calibration/miso190_ppx_B"
+}
