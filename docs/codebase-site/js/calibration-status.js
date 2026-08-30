@@ -64,6 +64,7 @@
       if (s === 'FAIL')    return { glyph: '✗', cls: 'clr-bad' };
       if (s === 'CAVEAT')  return { glyph: '!',      cls: 'clr-ok' };
       if (s === 'SKIPPED') return { glyph: '—',  cls: 'bc-mute' };
+      if (s === 'REPORTED') return { glyph: '·', cls: 'bc-mute' };
       return { glyph: '?', cls: '' };
     }
 
@@ -440,6 +441,28 @@
           html += `<p class="bc-mute" style="font-size: 0.82rem;">No test records available.</p>`;
         }
 
+        html += `</div></details>`;
+      }
+
+      // Reported-only streams (rubric v3.5 `reported` block: C5a co2 since
+      // v2.9, D-A diurnal amplitude since v3.5). Same expandable presentation
+      // as the criteria above; the REPORTED badge is a disclosure, never a
+      // verdict — these contribute no status and no caveat budget, so they
+      // render after every gating criterion and outside the marks strip.
+      for (const [key, rep] of Object.entries(keeper.reported || {})) {
+        html += `
+        <details class="cs-detail">
+          <summary>
+            <span>${esc(rep.label || key)}</span>
+            <span class="cs-gate">REPORTED-ONLY</span>
+            <span class="cs-badge det-rep">REPORTED</span>
+          </summary>
+          <div style="padding: 14px;">`;
+        if (rep.records && rep.records.length) {
+          html += renderRecordsTable(rep.records);
+        } else {
+          html += `<p class="bc-mute" style="font-size: 0.82rem;">No records available.</p>`;
+        }
         html += `</div></details>`;
       }
 

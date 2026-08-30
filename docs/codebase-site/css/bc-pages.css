@@ -707,6 +707,8 @@ canvas.heat {
 .cs-badge.det-not { background: var(--negative); }
 /* Owner-declared "frontier achieved" designation (declarative, never gating) */
 .cs-badge.det-frontier { background: #4c5fd5; }
+/* Reported-only streams (rubric v3.5 `reported` block) — disclosure, never a verdict */
+.cs-badge.det-rep { background: #8b8f98; }
 
 .cs-badges {
   display: inline-flex;
