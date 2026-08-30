@@ -160,22 +160,164 @@ divergence decomposed at full magnitude, and the owner re-decides.
 
 ---
 
-## 2. Control gate (measured)
+## 2. Control gate (measured) — G-1 and G-2 PASS EXACTLY
 
-_TO BE FILLED after the solves; nothing below §1 existed when §1 was
-committed._
+Both invocations solved by this session at one HEAD (`origin/main` @
+`e65bbba` + the §1 pre-declaration commit `bf5e08f`; no solve-path file
+differs from the §1 commit), concurrently, years sequential within each;
+both solved [2021, 2023, 2024, 2025], bridged [2022], zero leakage
+violations.
+
+- **G-1**: the control reproduces the committed registered bracket EXACTLY —
+  cache key `28cef3500ec1fd9e`; RM path 19.00 → 8.54 → 14.65 → 25.19 to the
+  basis point; per-step decisions row-for-row (2022: gas 3,000/1,571 + solar
+  4,946.6; 2023: gas 3,000/3,000 + solar 5,550 + iron_air 3,000 + flow
+  2,000; 2024: gas 3,000/3,000 + solar 6,000; 2025: nothing); scored
+  additions verbatim (0.350 / 17.987 / 9.000 / 7.571 / 5.000 GW). Zero HEAD
+  drift on the fleet side — every committed bracket is a valid anchor.
+  Deeper still: the control bundle's own dumps reproduce the committed
+  dual-replay basis-B margins to the cent on every step (+45,930.9 /
+  +8,642.8 / +3,147,581.4 / +3,105,235.2 / −10,730.3 / −42,669.7 /
+  −135,210.3 / −117,875.4 $/MW-yr) — the whole margin machinery is
+  byte-stable at this HEAD.
+- **G-2**: the probe (`--expect-delta` two-field gate) verifies the delta is
+  exactly {`entry_margin_exhaustion`, `entry_forward_reserve_leg`}, each
+  False→True; the armed cache key is **`f061b2646bfaac8b`** — the ex-ante
+  §1.1 prediction, bit-equal. Artifact:
+  `results/calibration/entry_confirm_pair_d12c_ercot.json`.
 
 ## 3. The armed record (measured)
 
-_TO BE FILLED._
+Ledger (armed): 2022 bridge — solar 4,946.6, **NO gas**; 2023 — gas_cc
+3,000 (cap) + gas_ct 1,571 (its ladder cap at zero prior ct build) + solar
+6,979 + iron_air 2,750; 2024 — gas_cc 3,000 (cap) + gas_ct 500 (exhausted
+sub-cap) + solar 3,250; 2025 — **nothing**. RM path **19.00 → 6.05 → 6.79 →
+15.84**; swings **−12.95 / +0.74 / +9.05** (B-2 SURVIVES: −/+/+ with
+amplitude, the probe's own test). Scored decision-basis additions: wind
+0.350 / solar 16.666 / **gas_cc 6.000** / **gas_ct 2.071** / storage 2.75
+GW.
 
-## 4. Adjudication
+Dump-recomputed one-object margins at walk start (the §1.2 method,
+validated on the control to ≤ $0.05):
 
-_TO BE FILLED._
+| entering (armed state) | Σadder | gas_cc B | gas_ct B | decision |
+|---|--:|--:|--:|---|
+| 2022 (≡ seed state) | 124,033 | **+45,930.9** (bit-equal to committed) | +8,642.8 | **0 / 0** — walked out by solar competition (§4.2) |
+| 2023 | 3,045,919 | +3,147,581 | +3,105,235 | 3,000 (cap) / 1,571 (ladder cap) |
+| 2024 (thin state) | 685,833 | +637,248 | +603,754 | 3,000 (cap) / 500 (exhausted) — expectation-carried |
+| 2025 | 106,927 | **−34,524** | **−20,898** | **nothing — V-5's prediction, exactly** |
+
+## 4. Adjudication — the record CONTRADICTS on ONE pre-declared window; NOTHING ARMS
+
+### 4.1 The scorecard
+
+| check | declared (§1, ex ante) | measured | verdict |
+|---|---|---|---|
+| G-1 control | exact bracket | exact, to the cent | **PASS** |
+| G-2 posture | two-field delta; key `f061b2646bfaac8b` | exact | **PASS** |
+| V-1 2025-step gas | 0 / 0, exact | 0 / 0 | **PASS** |
+| V-2 2022-step gas | cc ∈ [750, 1,250]; ct ≤ 250; both sub-cap | ct 0 ✓; **cc 0 — OUTSIDE [750, 1,250]** | **FAIL (cc window)** |
+| V-3 2023/2024 cc | 3,000; [2,500, 3,000] | 3,000; 3,000 | **PASS** |
+| V-4 terminal RM | [15.0, 21.0] | 15.84 | **PASS** |
+| V-5 2025 margins negative | both, ±$0.05 method | −34,524 / −20,898 | **PASS** |
+| R-1 gas bands improve (non-gating) | cc err < 8.756; ct err < 3.879 | cc 5.756 (6.000 GW — exactly the charter's anchor); ct 1.621 (2.071 GW) | confirmed |
+| R-2 B-2 (non-gating, report) | −/+/+ survives; middle shrinks toward +1.59 | −12.95 / +0.74 / +9.05 | confirmed |
+| R-3/R-4/R-5 (report) | state-dependent | 2024 ct 500 on +603.8k start; 2023 ct ladder-capped 1,571; iron_air-only 2,750; wind 0.350; no li-ion | reported |
+
+**Verdict: CONTRADICTING**, mechanically, per §1.2's own rule ("a miss on
+any single one is a CONTRADICTION"). Q10's auto-arm executes only on a
+fully confirming record; this is not one. **Nothing arms. Both fields stay
+default-OFF. The ERCOT matrix cells stay `O`. The owner re-decides.**
+
+### 4.2 The one divergence, decomposed at full magnitude
+
+The miss is the entering-2022 gas_cc build: **0 MW vs the declared window
+[750, 1,250]** (the offline B-walk's 1,000 ± 1 tranche). What it is and is
+not:
+
+1. **Not a construction defect.** The armed run's entering-2022 start margin
+   is **bit-identical to the committed control-state value (+$45,930.9)** —
+   same seed state, same instrument, same arithmetic. The screen priced cc
+   exactly as D12's committed reconstruction says it should.
+2. **Not the phantom, and not a regression toward either committed
+   alternative.** V-1/V-5 hold exactly (the post-tight step builds nothing,
+   for D12's reason, at the declared tolerance); terminal 15.84 is 6.2 pp
+   below the A-exhaustion arm (22.02) and 9.4 below shipped (25.19).
+3. **What it is: the live walk competes candidates the offline walk never
+   fielded.** The L-1b machinery — the source of the "cc 1,000" prediction —
+   held VRE at shipped and walked ONLY {gas_cc, gas_ct} + storage (its
+   declared offline-harness artifact). The LIVE walk fields every candidate
+   class (D11-R §1.2 item 5). At 2022, solar wins the early tranches and
+   builds to its full 4,946.6 (in the D11-R basis-A arm, 4,571 MW of
+   reserve-carried gas went first and solar exhausted at 1,250; here the
+   order inverts), repricing the signal so cc's +45.9k margin is exhausted
+   before any cc tranche clears. **Direction: MORE exhaustion by the same
+   mechanism on the same one-object margin.** §1 named this exact artifact
+   for V-4's RM derivation ("VRE held at shipped offline while the live
+   pair exhausts VRE") and failed to carry it into V-2's window — a
+   pre-declaration calibration error of the same class as D12's owned
+   P-D3, except discovered after the arm ran, so it stands as a miss and
+   the contradiction branch executes. The tolerance is not widened after
+   the fact (rule 21): that discipline is worth more than this arming.
+
+### 4.3 What the record establishes for the owner's re-decision (evidence, not a recommendation to bypass the protocol)
+
+Every expectation **the Q10 charter itself pre-declared** is confirmed on
+the closed loop: the exhaustion walk on the consistent leg lands where
+D12's reconstruction pointed (terminal 15.84 = the walk bracket carried
+down by exactly the pre-named live-VRE feedback, inside the ex-ante band);
+**no phantom gas** at the entering-2024/2025 steps (2024's 3.5 GW is
+expectation-carried at +$603–637k start margins on its own thin state —
+D12 §4.2's case, live; 2025 builds nothing on negative margins); the
+scored gas bands improve with **gas_cc landing exactly on the charter's
+6 GW anchor** and gas_ct |err| 3.879 → 1.621; B-2 re-measured and
+surviving. The gas half of the exhaustion rule is LIVE — 2024 ct stops at
+500 MW sub-cap on a repriced margin, and 2022 gas is margin-bounded
+(harder than predicted). The sole divergence from the pre-declared record
+is one window whose derivation imported the offline walk's restricted
+candidate set. The owner may judge that confirming-in-substance and direct
+the arming, or hold; **this lane executes the protocol as written and arms
+nothing.**
 
 ## 5. Rule compliance
 
-_TO BE FILLED._
+- **Rule 1 `[R-STRUCT]`** — the verdict is the pre-declared protocol's,
+  not the bands' (which improved and are reported as attached evidence
+  only); the contradiction is declared even though every structural claim
+  of D12 is supported, because the declared tolerance is the adjudicator.
+- **Rule 12 `[R-PARALLEL]`** — the two invocations ran concurrently, years
+  sequential within each; `git ls-remote` deconfliction at session start
+  (no other capx branch); nothing larger launched.
+- **Rule 13 `[R-MEASURED]`** — no measured outcome enters any model path;
+  both runs are forecast-machinery T1-H on the registered training window.
+- **Rule 21 `[R-DOF]`** — zero parameters anywhere; the confirmation
+  tolerance was committed and PUSHED (bf5e08f) before either solve
+  launched, and is not revised after the record.
+- **Rule 22 `[R-HOLDOUT]`** — solves span 2021 seed + 2023–2025 (2022
+  bridged) only; the freeze's tier scope untouched; `--holdout-authorized`
+  never passed; harness governance banner verified on both logs.
+- **Rule 15/24** — both bundles registered on the FORECAST namespace with
+  `run_config.json` committed
+  (`ercot-2021-2025-realized-t1h-d12c-{control,armed}`); backcast registry,
+  keeper shards, `calibration-complete.json`, offer curves, commitment
+  bridges untouched.
+- **Rule 25/26** — every number is ERCOT's; no sister-ISO cell moves.
+- **Rule 28(b)** — both tested cells' evidence updated in this session with
+  the pair's citation; **status stays `O`** per the contradiction branch.
+- **Rule 27 `[R-PUSH]`** — all edits local; pushes carry on-disk bytes with
+  post-push blob verification on every ≥300-line file; no CI workflows
+  added; all solves ran in-session.
+
+## 5b. Session-observed operational notes (not findings)
+
+- The first launch attempt deadlocked: two background launcher shells each
+  waited on `pgrep -f regenerate_clean.py`, which matched the OTHER
+  launcher's own command line (both embedded the string). Killed and
+  relaunched directly; the solves themselves were unaffected.
+- `git push` through the session's egress proxy failed 5× mid-upload
+  (connection reset / HTTP 500, tiny pack, HTTP/1.1 included) until the
+  remote branch existed, then succeeded first-try. Recorded for the next
+  lane's expectations; not a pack-size issue.
 
 ## 6. Reproduction
 
