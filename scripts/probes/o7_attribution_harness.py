@@ -190,9 +190,10 @@ def build_deladder_map(coarse_ids: list[str], refined_ids: list[str]) -> dict:
     Returns a dict with integer index arrays into each fleet:
     ``target_refined`` / ``target_parent_coarse`` (the Δ rows and their coarse
     parents, aligned), ``equal_pairs_coarse`` / ``equal_pairs_refined`` (every
-    row-pair that must be bitwise-equal in mc_base: body rows, unrefined
-    candidates, and all non-candidates), and ``refined_plants`` (prefixes where
-    R1 fired).
+    row-pair the equality control checks: body rows, unrefined candidates, and
+    all non-candidates — candidate pairs first, then non-candidates, with the
+    boundary recorded in ``n_candidate_equal_pairs``), and ``refined_plants``
+    (prefixes where R1 fired).
     """
     c_idx: dict[str, int] = {u: i for i, u in enumerate(coarse_ids)}
     r_idx: dict[str, int] = {u: i for i, u in enumerate(refined_ids)}
@@ -266,6 +267,7 @@ def build_deladder_map(coarse_ids: list[str], refined_ids: list[str]) -> dict:
                 "neither the unrefined (m'==m) nor the SCHEME R1 (m'==2m-1) "
                 "geometry — stop-report condition, no fallback"
             )
+    n_candidate_pairs = len(eq_c)
     for u in sorted(c_other):
         eq_c.append(c_idx[u])
         eq_r.append(r_idx[u])
@@ -275,6 +277,7 @@ def build_deladder_map(coarse_ids: list[str], refined_ids: list[str]) -> dict:
         "target_parent_coarse": np.asarray(tgt_parent, dtype=int),
         "equal_pairs_coarse": np.asarray(eq_c, dtype=int),
         "equal_pairs_refined": np.asarray(eq_r, dtype=int),
+        "n_candidate_equal_pairs": n_candidate_pairs,
         "refined_plants": refined_plants,
     }
 
@@ -287,13 +290,28 @@ def compute_deladder_delta(
     refined_pmax: np.ndarray,
     *,
     cap_atol_mw: float = 1e-6,
+    noncandidate_fp_atol_usd_mwh: float = 1e-9,
 ) -> tuple[np.ndarray, dict]:
     """Build Δmc from the two mc_base matrices, enforcing the precommit asserts.
 
     Asserts (each a hard ``ValueError`` — stop-report conditions):
 
-    * every ``equal_pairs`` row-pair is bitwise-equal in mc_base and equal in
-      pmax — the internal control that the builds differ by SCHEME R1 alone;
+    * every CANDIDATE ``equal_pairs`` row-pair (body rows and unrefined econc
+      rows — every coarse row Δmc reads and every refined row it aligns to) is
+      **bitwise-equal** in mc_base — the internal control that the builds
+      differ by SCHEME R1 alone, at full precommit-§1.2 strength on Δmc's own
+      support;
+    * every NON-candidate row-pair agrees within
+      ``noncandidate_fp_atol_usd_mwh`` (default 1e-9 $/MWh), with any nonzero
+      pair DISCLOSED in the diagnostics at full magnitude. Measured need
+      (2026-08-30 real-year run, the o7 finding): the coal ``_peak``
+      gas-anchored margin path composes plant-level aggregates that R1
+      conserves exactly in VALUE (the refinement is capacity-weighted-mean-
+      preserving) but reassociates in floating point — 10 coal peak rows
+      differing by max 8.5e-14 $/MWh (1 ULP, relative 1e-15). Those rows are
+      outside Δmc's support (their Δ rows are zero and no Δ value reads
+      them), so a bitwise control there measures summation order, not the
+      construction; anything beyond FP-reassociation magnitude still stops.
     * per refined plant, each sub-slice's pmax equals ``parent / n_sub`` and
       their sum equals the parent top block (``cap_atol_mw``).
 
@@ -303,15 +321,41 @@ def compute_deladder_delta(
     """
     eq_c = mapping["equal_pairs_coarse"]
     eq_r = mapping["equal_pairs_refined"]
-    if not np.array_equal(coarse_mc[eq_c], refined_mc[eq_r]):
+    n_cand = int(mapping["n_candidate_equal_pairs"])
+    cand_c, cand_r = eq_c[:n_cand], eq_r[:n_cand]
+    if not np.array_equal(coarse_mc[cand_c], refined_mc[cand_r]):
         bad = np.flatnonzero(
-            ~np.all(coarse_mc[eq_c] == refined_mc[eq_r], axis=1)
+            ~np.all(coarse_mc[cand_c] == refined_mc[cand_r], axis=1)
         )[:5]
         raise ValueError(
-            "mc_base differs on rows the refinement cannot touch (pair "
+            "mc_base differs on econc rows the refinement cannot touch (pair "
             f"indices {bad.tolist()}) — the two builds differ by more than "
-            "SCHEME R1; stop-report condition"
+            "SCHEME R1 on Δmc's own support; stop-report condition"
         )
+    other_c, other_r = eq_c[n_cand:], eq_r[n_cand:]
+    fp_pairs: list[dict] = []
+    if other_c.size:
+        other_diff = coarse_mc[other_c] - refined_mc[other_r]
+        neq = np.flatnonzero(np.any(other_diff != 0.0, axis=1))
+        if neq.size:
+            max_abs = np.abs(other_diff[neq]).max(axis=1)
+            if max_abs.max() > noncandidate_fp_atol_usd_mwh:
+                worst = neq[np.argsort(max_abs)[::-1][:5]]
+                raise ValueError(
+                    "mc_base differs on non-econc rows beyond FP-reassociation "
+                    f"magnitude (max |diff| {max_abs.max():.3e} $/MWh > "
+                    f"{noncandidate_fp_atol_usd_mwh:g}; worst pair indices "
+                    f"{worst.tolist()}) — the two builds differ by more than "
+                    "SCHEME R1; stop-report condition"
+                )
+            fp_pairs = [
+                {
+                    "coarse_row": int(other_c[i]),
+                    "refined_row": int(other_r[i]),
+                    "max_abs_diff_usd_mwh": float(np.abs(other_diff[i]).max()),
+                }
+                for i in neq
+            ]
     if not np.allclose(coarse_pmax[eq_c], refined_pmax[eq_r], atol=cap_atol_mw):
         raise ValueError("pmax differs on rows the refinement cannot touch")
 
@@ -340,6 +384,9 @@ def compute_deladder_delta(
         "rows_targeted": int(tgt_r.size),
         "plants_refined": len(mapping["refined_plants"]),
         "rows_equal_asserted": int(eq_c.size),
+        "rows_bitwise_asserted_candidate": int(n_cand),
+        "noncandidate_fp_atol_usd_mwh": noncandidate_fp_atol_usd_mwh,
+        "noncandidate_fp_pairs": fp_pairs,
         "delta_abs_max_usd_mwh": float(np.abs(delta[tgt_r]).max()) if tgt_r.size else 0.0,
         "delta_capwtd_mean_usd_mwh": (
             float(
@@ -437,6 +484,8 @@ class HarnessSpy:
                 coarse["pmax"],
                 pmax,
             )
+            for pair in self._delta_diag.get("noncandidate_fp_pairs", []):
+                pair["unit_id"] = coarse["unit_ids"][pair["coarse_row"]]
             # SWCAP composition guard (precommit §1.3): Δmc is computed on the
             # pre-clip mc_base, valid because every econc row sits strictly
             # below the clip level so the pre-P0 clip is a no-op on them.
