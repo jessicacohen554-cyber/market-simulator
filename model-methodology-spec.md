@@ -781,7 +781,7 @@ Revenue and cost definitions:
 
 These thresholds and multipliers are no longer hardcoded — they are `ScenarioConfig` fields (`retirement_years_{coal,gas_ct,gas_cc}` = 1/2/3, `retirement_fom_multiplier_{coal,gas_ct,gas_cc}` = 1.3/1.0/1.0), so retirement aggressiveness is a Tier-1 sensitivity lever. The defaults above are the as-built values. (`retirement_reserve_margin` was DELETED with the floor-accreditation rebuild — the floor and the build backstop now share `PLANNING_RESERVE_MARGIN_BY_ISO`.)
 
-**Reliability floor (accredited basis):** the surviving fleet's `accredited_firm_capacity_mw` (thermal at its ISO's published basis via `thermal_accreditation_fraction` — UCAP = 1 − EFORd, PJM's ELCC class rating, or ERCOT's seasonal rating; wind/solar pools at their **penetration-indexed published ELCC** — see below; storage at duration-ELCC) cannot fall below the shared adequacy requirement (`resolve_adequacy_requirement_mw` — the published FPR where one exists, else `peak_demand × (1 + PLANNING_RESERVE_MARGIN_BY_ISO)`) — the same requirement the step-6 build backstop tests (one requirement, two verbs). If economic retirements would breach it, eligible units are un-retired cheapest-firm-adequacy-first ($/firm-MW-yr ascending, CO₂-rate tie-break), and every retention is recorded in the `floor_retention_log` persisted per year (`floor_retentions.json`).
+**Reliability floor (accredited basis):** the surviving fleet's `accredited_firm_capacity_mw` (thermal at its ISO's published basis via `thermal_accreditation_fraction` — UCAP = 1 − EFORd, PJM's ELCC class rating, or ERCOT's seasonal rating; wind/solar pools at their **penetration-indexed published ELCC** — see below; storage at duration-ELCC) cannot fall below the shared adequacy requirement (`resolve_adequacy_requirement_mw` — the published FPR where one exists, held-last beyond the last published delivery year (card C-A 2026-08-25), else `peak_demand × (1 + PLANNING_RESERVE_MARGIN_BY_ISO)`) — the same requirement the step-6 build backstop tests (one requirement, two verbs). If economic retirements would breach it, eligible units are un-retired cheapest-firm-adequacy-first ($/firm-MW-yr ascending, CO₂-rate tie-break), and every retention is recorded in the `floor_retention_log` persisted per year (`floor_retentions.json`).
 
 **VRE accreditation (CR-3.1, penetration-indexed ELCC):** wind/solar (and any published VRE class) accredit through one resolver (`capacity.resolve_renewable_capacity_credit`, gate `ScenarioConfig.renewable_elcc_curves`, default **on**) with a three-step ladder: (1) the ISO's own published penetration-indexed ELCC curve (`RENEWABLE_ELCC_CURVES_BY_ISO`, digitized from the P-0B `capacity-market-elcc` datatype — PJM BRA final class ratings on an installed-MW axis, MISO's capacity-credit-vs-penetration-of-peak curve, NYISO's single-point CAFs), evaluated piecewise-linearly (flat-clamped beyond the published domain) at the **model's own installed share** — the class's ISO-wide nameplate (pools + fleet units) against the year's peak — so accreditation responds to modeled build and VRE saturates its own capacity value (rule 13, zero fitted parameters); (2) a published single-point per-ISO override (`RENEWABLE_CAPACITY_CREDIT_BY_ISO` — ERCOT's CDR ELCC basis, unchanged); (3) the generic flat constants (`RENEWABLE_CAPACITY_CREDIT`, wind 0.16 / solar 0.18) as the cited neutral fallback for ISOs with no ISO-published study (NEISO — third-party studies only; CAISO — the CPUC study publishes incremental-basis values misaligned to a fleet-average ledger). All four consumers move together off the one resolver: `accredited_firm_capacity_mw`, the reliability floor, the reserve-margin backstop, and the CR-1 reserve position. `renewable_elcc_curves=False` is the frozen-penetration byte-compat mode (pre-CR-3.1 flat credits — the capacity-hindcast baseline arm). Storage is deliberately untouched: its accreditation keeps its own single stack (duration-ELCC × entry-screen saturation derate × portfolio dilution, §5.5) — one mechanism per phenomenon (rule 19).
 
@@ -1035,9 +1035,15 @@ ISO's published duration→credit ratings where one exists
 else the generic table — one mechanism, no double-derate. The requirement is
 devintaged onto the ISO's published **Forecast Pool Requirement** of the matching
 delivery year where one is published (`resolve_adequacy_requirement_mw` prefers
-`firm_peak × FPR`; PJM 2025/26 = 0.9380, 2026/27 = 0.9170, 2027/28 = 0.9260),
-falling back to `firm_peak × (1 + PRM) × icap_to_ucap_ratio` otherwise — so an ISO
-with no published FPR is byte-identical to the pre-migration construction.
+`firm_peak × FPR`; PJM 2025/26 = 0.9380, 2026/27 = 0.9170, 2027/28 = 0.9260,
+2028/29 = 0.9401). Beyond the ISO's **last** published FPR the resolver
+**HOLDS-LAST** (owner-signed convention, card C-A 2026-08-25 — the
+`resolve_demand_curve_vintage`/`forward_net_cone_anchor` forward-carry precedent),
+so a forecast horizon never drops off the published series onto the stale
+composite mid-horizon; the hold is superseded per delivery year on publication
+(rule 23). It falls back to `firm_peak × (1 + PRM) × icap_to_ucap_ratio` only for
+an ISO with no FPR table or a delivery year before the table's first entry — so
+those cases are byte-identical to the pre-migration construction.
 
 **Fixed mode.** The seam returns the flat `net_cone_per_kw_yr × 1000`, the
 per-ISO net-CONE anchor every qualifying MW earns when the clearing gate is off.
@@ -1077,7 +1083,8 @@ to the same published basis as the curve anchor for every curve ISO.** The
 `requirement_mw` and the accreditation are the **exact same** ones the
 retirement reliability floor and the reserve-margin backstop compute
 (`capacity_reserve_position` calls `resolve_adequacy_requirement_mw` — published
-FPR where available, else `(1 + PRM) × ratio` — and `accredited_firm_capacity_mw`
+FPR where available, held-last beyond the table (card C-A), else `(1 + PRM) ×
+ratio` — and `accredited_firm_capacity_mw`
 — one requirement, one basis, rule 19); the runner computes the position **once**
 on the entering-year fleet and threads the one value into all three screens. So the capacity price now *responds to the fleet*
 the way real markets do — it collapses toward zero when the system is long (RA
