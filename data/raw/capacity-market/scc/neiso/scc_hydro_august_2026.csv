@@ -1,0 +1,245 @@
+asset_id,name,unit_type,settlement_only,intermittent,dispatchable,scc_determination,state,load_zone,fuel,summer_establish_mw,summer_scc_mw,winter_establish_mw,winter_scc_mw
+327,AMOSKEAG,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,NH,NH,WAT,16.781,9.001,17.5,5.959
+328,GULF ISLAND COMPOSITE,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,ME,ME,WAT,33.44,32.614,33.44,32.89
+330,AYERS ISLAND,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,NH,NH,WAT,8.474,4.327,9.08,4.279
+331,AZISCOHOS HYDRO,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,ME,ME,WAT,6.8,6.645,6.8,6.645
+335,BELLOWS FALLS,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,VT,NH,WAT,48.54,46.445,48.54,46.445
+346,BOLTON FALLS,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,VT,VT,WAT,0.0,1.244,0.0,0.621
+348,BOOT MILLS,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,9.384,0.0,7.253
+358,BRUNSWICK,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,7.618,0.0,6.803
+362,BULLS BRIDGE,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,3.849
+369,CATARACT EAST,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,ME,ME,WAT,7.775,7.716,8.0,8.0
+379,COBBLE MOUNTAIN,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,MA,West/Central Mass (WCMA),WAT,31.989,13.131,31.989,13.184
+389,DERBY DAM,HDR,EMS,Intermittent,Non-dispatchable,Median Reliability Hours Calculation,CT,CT,WAT,7.05,0.635,7.05,5.483
+393,DEERFIELD 5,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,MA,West/Central Mass (WCMA),WAT,13.703,12.595,13.99,13.99
+401,EASTMAN FALLS,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,NH,NH,WAT,5.582,2.653,6.47,2.401
+405,ELLSWORTH HYDRO,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,ME,ME,WAT,9.044,6.713,9.05,6.72
+410,ESSEX 19 HYDRO,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,VT,VT,WAT,0.0,4.776,0.0,5.21
+412,FALLS VILLAGE,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,2.61
+413,FIFE BROOK,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,6.089,2.669,9.9,0.0
+424,GREAT LAKES - MILLINOCKET,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,ME,ME,WAT,106.0,103.808,106.0,101.908
+427,GORHAM,HDR,EMS,Intermittent,Non-dispatchable,Median Reliability Hours Calculation,NH,NH,WAT,0.0,1.011,0.0,0.863
+432,HARRIS 1,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,ME,ME,WAT,16.79,16.522,16.776,16.508
+433,HARRIS 2,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,ME,ME,WAT,34.865,33.745,34.5,34.5
+434,HARRIS 3,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,ME,ME,WAT,34.0,33.84,33.905,33.84
+435,HARRIMAN,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,VT,West/Central Mass (WCMA),WAT,40.943,40.943,38.663,38.663
+440,HIRAM,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,ME,ME,WAT,11.189,10.315,11.6,11.24
+449,JACKMAN,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,NH,NH,WAT,3.6,3.6,3.541,2.582
+457,LAWRENCE HYDRO,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,6.891,0.0,6.701
+460,LOCKWOOD,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,1.485,0.0,2.046
+465,DEERFIELD 2/LWR DRFIELD,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,MA,West/Central Mass (WCMA),WAT,19.275,17.797,19.5,19.019
+468,MARSHFIELD 6 HYDRO,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,VT,VT,WAT,4.65,2.504,4.65,3.349
+473,MCINDOES,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,VT,NH,WAT,10.066,10.175,10.571,10.577
+487,WORUMBO HYDRO,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,6.892,0.0,7.156
+495,MONTY,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,ME,ME,WAT,28.0,26.96,28.0,26.96
+532,PEJEPSCOT,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,6.003,0.0,5.802
+539,PONTOOK HYDRO,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,NH,NH,WAT,0.0,5.975,0.0,5.306
+541,PROCTOR,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,VT,VT,WAT,0.0,3.421,0.0,3.866
+561,SEARSBURG,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,VT,West/Central Mass (WCMA),WAT,4.755,4.407,4.96,4.533
+565,SHELDON SPRINGS,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,VT,VT,WAT,0.0,0.382,0.0,5.119
+566,SHEPAUG,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,CT,CT,WAT,41.511,41.026,42.559,42.559
+567,SHERMAN,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,MA,West/Central Mass (WCMA),WAT,6.154,6.154,6.22,6.22
+569,SKELTON,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,ME,ME,WAT,21.6,21.6,21.6,21.6
+570,SMITH,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,8.822
+587,STEVENSON,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,CT,CT,WAT,28.311,21.108,28.9,28.354
+599,VERNON,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,VT,West/Central Mass (WCMA),WAT,32.0,34.9,32.0,34.9
+614,WATERBURY 22,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,VT,VT,WAT,5.0,1.286,5.0,1.385
+616,WEST ENFIELD,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,7.932,0.0,8.53
+617,WESTON,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,6.314,0.0,7.21
+620,WILDER,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,VT,NH,WAT,40.92,40.92,40.92,40.92
+621,WILLIAMS,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,ME,ME,WAT,14.9,14.9,14.9,14.9
+622,WINOOSKI 1,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,VT,VT,WAT,0.0,2.495,0.0,2.741
+636,WYMAN HYDRO 1,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,ME,ME,WAT,29.12,27.916,29.12,28.998
+637,WYMAN HYDRO 2,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,ME,ME,WAT,29.9,28.706,29.9,29.882
+638,WYMAN HYDRO 3,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,ME,ME,WAT,29.13,28.386,29.13,28.836
+737,SIMPSON G LOAD REDUCER,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,VT,VT,WAT,0.0,2.665,0.0,2.098
+755,BONNY EAGLE/W. BUXTON,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,16.151,6.25,17.5,5.16
+757,HARRIS 4,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,ME,ME,WAT,1.436,1.385,1.249,1.249
+759,OAKLAND,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+761,SHAWMUT,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,3.347,0.0,2.823
+768,GARVINS,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.812,0.0,2.503
+769,HADLEY FALLS 1&2,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,17.565,0.0,23.338
+774,LOWER LAMOILLE COMPOSITE,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,VT,VT,WAT,15.8,15.8,16.0,15.533
+781,WEST DANVILLE 1,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,VT,VT,WAT,0.0,0.0,0.0,0.0
+789,CEC 002 PAWTUCKET U5,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,RI,RI,WAT,0.0,0.0,0.0,0.433
+792,LOWELL HYDROPOWER CO LLC,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.221
+793,METHUEN HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,NEMA ,WAT,0.0,0.0,0.0,0.067
+794,MINIWAWA,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.115,0.0,0.178
+795,RIVER MILL HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+796,GOODWIN DAM,HDP,SOG,Non-intermittent,,Historical Performance,CT,CT,WAT,3.0,2.72,3.0,2.8
+797,WYRE WYND HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.072,0.0,0.708
+803,TOUTANT,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.251,0.0,0.396,0.23
+804,PUTNAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.065,0.0,0.309
+806,MECHANICSVILLE,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,0.102
+807,CEC 004 DAYVILLE POND U5,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,0.0
+808,SANDY HOOK HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,0.022
+810,QUINEBAUG,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,0.679
+813,TUNNEL,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,0.934
+824,BATH ELECTRIC HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.088,0.0,0.04
+849,CRESCENT DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.134,0.0,0.301
+850,GLENDALE HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.108,0.0,0.419
+851,GARDNER FALLS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.041,0.0,1.617
+852,SOUTH BARRE HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.0
+854,ORANGE HYDRO 1,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.0
+855,ORANGE HYDRO 2,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.071,0.0,0.101
+856,HUNT'S POND,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.027
+857,OAKDALE HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.0
+859,BOATLOCK,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,1.263,0.0,1.091
+860,BRIAR HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,1.035,0.0,1.235
+861,CANAAN,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,VT,NH,WAT,0.0,0.873,0.0,0.761
+862,CHEMICAL,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.586,0.0,0.675
+863,CLEMENT DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,1.62,0.0,0.0
+864,DWIGHT,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.567
+865,ERROL,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,1.835,0.0,1.387
+866,GREGGS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.189,0.0,0.401
+867,INDIAN ORCHARD,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.0
+868,MILTON MILLS HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.598
+869,MINE FALLS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.66
+870,PEMBROKE,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.416,0.0,0.564
+871,PENNACOOK FALLS LOWER,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,1.198,0.0,1.439
+872,PENNACOOK FALLS UPPER,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.806,0.0,0.944
+873,PUTTS BRIDGE,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,1.017
+874,RED BRIDGE,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.0
+875,RIVER BEND,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.932,0.0,0.0
+876,ROBERTSVILLE,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,0.0
+877,SCOTLAND,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,0.245
+878,SKINNER,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.0
+879,TAFTVILLE  CT,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,0.365
+882,FRANKLIN FALLS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.609,0.0,0.143
+883,SALMON FALLS HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.205
+886,COCHECO FALLS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.146,0.0,0.255
+887,CHINA MILLS DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.089,0.0,0.235
+888,NEWFOUND HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.097,0.0,0.572
+889,SUNAPEE HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.149,0.0,0.0
+890,NASHUA HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.132,0.0,0.456
+891,HILLSBORO MILLS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+892,LAKEPORT DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.391,0.0,0.0
+893,WEST HOPKINTON HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.231,0.0,0.292
+894,LISBON HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.269,0.0,0.27
+895,LOWER ROBERTSON DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.176,0.0,0.304
+897,OLD NASH DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.046
+900,GREAT FALLS LOWER,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+902,HOSIERY MILL DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.155,0.0,0.363
+903,WYANDOTTE HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+904,LOCHMERE DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.687,0.0,0.0
+905,ASHUELOT HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.196,0.0,0.255
+906,ROLLINSFORD HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.321
+908,OTIS MILL HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+909,STEELS POND HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.039,0.0,0.254
+910,CAMPTON DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+913,GOODRICH FALLS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.24,0.0,0.163
+914,CHAMBERLAIN FALLS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+915,MONADNOCK PAPER MILLS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+919,HOPKINTON HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.076,0.0,0.109
+926,PETERBOROUGH LOWER HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.021
+928,SALMON BROOK STATION 3,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+931,AVERY DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.207,0.0,0.091
+932,WATSON DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.055
+933,WESTON DAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.215,0.0,0.187
+935,SUNNYBROOK HYDRO 2,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.025,0.0,0.005
+941,PETERBOROUGH UPPER HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.02,0.0,0.032
+947,RIVERDALE MILLS - QF,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,SEMA,WAT,0.0,0.0,0.0,0.0
+948,PEPPERELL HYDRO COMPANY LLC,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.199
+951,BALTIC MILLS - QF,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.054,0.0,0.058
+957,HG&E HYDRO/CABOT 1-4,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.687,0.0,0.0
+969,POWDER MILL HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.0
+970,DUDLEY HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.08
+1034,RIVERSIDE 4-7,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.721,0.0,0.68
+1035,RIVERSIDE 8,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,3.062,0.0,0.0
+1047,FAIRFAX,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,VT,VT,WAT,0.0,1.927,0.0,2.102
+1048,WARE HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.217
+1049,COLLINS HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.0
+1054,BLACKSTONE HYDRO ASSOC,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,RI,RI,WAT,0.0,0.0,0.0,0.157
+1057,BLACKSTONE HYDRO LOAD REDUCER,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,RI,RI,WAT,0.0,0.0,0.0,0.342
+1061,MASCOMA HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+1062,MWRA COSGROVE,HW,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.0
+1113,BRASSUA HYDRO,HDP,SOG,Non-intermittent,,Historical Performance,ME,ME,WAT,4.203,4.203,4.203,4.203
+1117,GREAT WORKS COMPOSITE,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+1119,KENNEBAGO HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.229,0.0,0.169
+1122,CASCADE-DIAMOND-QF,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.036,0.0,0.0
+1270,SYSKO STONY BROOK,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+1273,AUTOMATIC HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+1368,ROCKY GORGE CORPORATION,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.089,0.0,0.085
+2278,BARKER LOWER HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.563
+2279,BARKER UPPER HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.256,0.0,0.444
+2280,BENTON FALLS HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.385,0.0,0.691
+2281,BROWNS MILL HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.342
+2282,DAMARISCOTTA HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.208
+2283,EUSTIS HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+2284,GARDINER HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+2285,GREENVILLE HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.082
+2286,HACKETT MILLS HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+2287,MECHANIC FALLS HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.051
+2290,PITTSFIELD HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.38
+2292,YORK HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.256
+2426,HYDRO KENNEBEC,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,5.555,0.0,4.143
+2431,DODGE FALLS-NEW,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,NH,VT,WAT,0.0,3.133,0.0,2.413
+2432,HUNTINGTON FALLS-NEW,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,VT,VT,WAT,0.0,2.7,0.0,2.2
+10401,CELLEY MILL U5,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+10403,EASTMAN BROOK U5,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.013,0.0,0.008
+10406,LOWER VALLEY HYDRO U5,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.343,0.0,0.26
+10409,SWEETWATER HYDRO U5,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.182,0.0,0.18
+10424,GREAT LAKES - BERLIN,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,NH,NH,WAT,0.0,15.858,0.0,11.985
+10770,WEST SPRINGFIELD HYDRO U5,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.135,0.0,0.738
+11126,NORTH HARTLAND HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,VT,VT,WAT,0.0,1.238,0.0,1.34
+11424,RUMFORD FALLS,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,31.17,0.0,27.021
+13975,CORRIVEAU HYDROELECTRIC LLC,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+14623,VALLEY HYDRO (STATION NO. 5),HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.499
+14801,CABOT,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,MA,West/Central Mass (WCMA),WAT,61.481,61.8,61.8,61.8
+14808,TURNERSFALLS,HDP,EMS,Non-intermittent,Dispatchable,Historical Performance,MA,West/Central Mass (WCMA),WAT,6.4,6.4,6.4,6.4
+14925,ICE HOUSE PARTNERS INC.,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.059
+14937,UNION GAS STATION,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+15201,FISKE HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+15787,WORONOCO HYDRO LLC,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.35,0.0,0.824
+16089,TURNERS FALLS HYDRO LLC,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.789,0.0,0.0
+16296,MILFORD HYDRO,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,4.585,0.0,5.197
+16523,STILLWATER,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.363,0.0,0.476
+16525,MEDWAY,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,3.864,0.0,2.415
+16926,THUNDERMIST HYDRO QF,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,RI,RI,WAT,0.0,0.0,0.0,0.0
+17223,SUGAR RIVER 2,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+35379,SPAULDING POND HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+37823,INDIAN RIVER POWER SUPPLY LLC,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.24
+38084,STILLWATER B HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.895,0.0,0.703
+39738,MWRA_LORING_RD_ID1400,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,NEMA ,WAT,0.0,0.133,0.0,0.119
+40207,KEZAR UPPER FALLS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+40208,KEZAR LOWER FALLS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+40209,LEDGEMERE,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.078,0.0,0.0
+42114,PUMPKIN HILL,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.291
+42123,KEZAR MIDDLE FALLS ,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+42598,NEW BARRE HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.0
+46206,ENERGY STREAM HYDRO ,HDP,SOG,Intermittent,,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.06,0.0,0.056
+47125,BOW STREET HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.205,0.0,0.0
+47366,COMERFORD 1,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,NH,NH,WAT,21.789,21.789,22.0,21.914
+47367,COMERFORD 2,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,NH,NH,WAT,48.531,48.377,49.0,48.698
+47368,COMERFORD 3,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,NH,NH,WAT,48.531,48.338,49.0,48.727
+47369,COMERFORD 4,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,NH,NH,WAT,48.531,48.27,49.0,48.304
+47370,MOORE 1,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,NH,NH,WAT,47.808,47.436,47.808,47.808
+47371,MOORE 2,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,NH,NH,WAT,47.825,47.825,47.825,47.825
+47372,MOORE 3,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,NH,NH,WAT,47.825,47.825,47.825,47.825
+47373,MOORE 4,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,NH,NH,WAT,47.825,47.825,47.825,47.825
+47752,AMPERSAND BROOKLYN DAM HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+49405,SFP&L HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.048,0.0,0.035
+49693,LOWER VILLAGE,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.412,0.0,0.281
+50120,MWRAFISHHATCHERY-01082PV65NM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.04,0.0,0.043
+50636,MADISON HYDRO,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,9.249,0.0,9.674
+68671,BELL MILL HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,0.0,0.0,0.0
+68727,ORONO A,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.878
+68728,ORONO B,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,2.209,0.0,1.355
+69102,MILO_HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.212
+69180,RAINBOW 1 HYDRO,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,3.299
+69181,RAINBOW 2 HYDRO,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,CT,CT,WAT,0.0,0.0,0.0,0.0
+69387,WHITMAN01473HYDRO174NM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.045
+69643,RICE RIPS,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+69828,MOORE 5,HW,EMS,Non-intermittent,Dispatchable,Seasonal Audits Required,NH,NH,WAT,4.47,4.47,4.47,4.47
+73598,NORWAY HYDRO_KEI,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+73686,SACO RIVER HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.261,0.0,0.0
+73724,HOOKSETT,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,NH,NH,WAT,0.0,1.234,0.0,1.1
+74575,ASHBIONHYDRO02864HYDRO480RE,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,RI,RI,WAT,0.0,0.0,0.0,0.271
+74615,RJOL HYDRO,HDR,EMS,Intermittent,Dispatchable,Median Reliability Hours Calculation,ME,ME,WAT,0.0,10.051,0.0,11.605
+74935,GRIVER01350HYDRO230NM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.114,0.0,0.127
+74993,NORTH GORHAM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,1.056,0.0,0.729
+75034,GREEN LAKE HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.302
+75265,SEBEC HYDRO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,0.0,0.0,0.0
+75504,PRESUMPSCOT HYDRO LLC - GAMBO,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,1.411,0.0,1.119
+75520,WEBSTER01570HYDRO250NM,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,MA,West/Central Mass (WCMA),WAT,0.0,0.0,0.0,0.093
+77517,PRESUMPSCOT NORTH - EEL WEIR,HDR,SOG,Intermittent,,Median Reliability Hours Calculation,ME,ME,WAT,0.0,2.109,0.0,1.238

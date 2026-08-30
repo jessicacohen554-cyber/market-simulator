@@ -82,15 +82,24 @@ class TestHydroAccreditationCredits(unittest.TestCase):
         self.assertAlmostEqual(HYDRO_ACCREDITATION_CREDIT_BY_ISO["NYISO"], 0.3844)
         self.assertAlmostEqual(HYDRO_ACCREDITATION_CREDIT_BY_ISO["MISO"], 0.62)
         self.assertAlmostEqual(HYDRO_ACCREDITATION_CREDIT_BY_ISO["PJM"], 0.38)
+        # NEISO (capx-S4): Σ summer SCC of ISO-NE's ACTIVE conventional-hydro
+        # fleet (Aug-2026 SCC Monthly Report, 1,396.472 MW) over the model's
+        # own accreditation basis (1,899.5 MW) — both halves published/derived,
+        # never tuned; see the constant's citation block.
+        self.assertAlmostEqual(
+            HYDRO_ACCREDITATION_CREDIT_BY_ISO["NEISO"], 1_396.472 / 1_899.5
+        )
         for iso, credit in HYDRO_ACCREDITATION_CREDIT_BY_ISO.items():
             with self.subTest(iso=iso):
                 self.assertEqual(resolve_hydro_capacity_credit(iso), credit)
 
     def test_unpublished_isos_take_the_generic_class_derate(self):
-        # NEISO/ERCOT have no located published hydro class factor: they take
-        # the generic published derate, never another ISO's value (rule 25).
+        # ERCOT has no published hydro accreditation product (energy-only): it
+        # takes the generic published derate, never another ISO's value
+        # (rule 25). NEISO left this list at capx-S4 (2026-08-30) when its
+        # per-resource SCC aggregate landed in the registry.
         generic = RENEWABLE_CAPACITY_CREDIT["hydro"]
-        for iso in ("NEISO", "ERCOT"):
+        for iso in ("ERCOT",):
             with self.subTest(iso=iso):
                 self.assertNotIn(iso, HYDRO_ACCREDITATION_CREDIT_BY_ISO)
                 self.assertEqual(resolve_hydro_capacity_credit(iso), generic)
@@ -266,8 +275,8 @@ class TestFF2BGapMagnitudes(unittest.TestCase):
             "CAISO": 3_601.0 * 0.7041,
             # NYISO: 2025-26 Final CAF, Limited Control Run of River (RoS).
             "NYISO": 3_343.0 * 0.3844,
-            # NEISO: no published class factor — generic class derate.
-            "NEISO": 30.0 * RENEWABLE_CAPACITY_CREDIT["hydro"],
+            # NEISO (capx-S4): the ISO-NE per-resource SCC aggregate factor.
+            "NEISO": 30.0 * (1_396.472 / 1_899.5),
         }
         zone = {"CAISO": "NP15", "NYISO": "Upstate_West", "NEISO": "North"}
         for iso, nameplate in FF2B_HYDRO_NAMEPLATE_MW.items():

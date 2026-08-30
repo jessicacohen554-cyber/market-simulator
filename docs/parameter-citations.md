@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1766 parameters registered** (933 flagged `needs-citation`).
+**1767 parameters registered** (933 flagged `needs-citation`).
 
 
 ## Calibration
@@ -815,6 +815,7 @@ inline comment and still need a dated primary source — search the table for
 | `historic_outage_overlay_by_iso.PJM` | False | 2 | Effective default for the historic (facility-summed) CAMPD outage o… |  | auto-generated, needs-citation |
 | `hydro_accreditation_credit_by_iso.CAISO` | 0.7041 | 2 | CPUC/CAISO published 'Non-dispatchable Hydro' Net Qualifying Capaci… | 2025-02 |  |
 | `hydro_accreditation_credit_by_iso.MISO` | 0.62 | 2 | MISO Planning Year 2025-2026 Indicative Resource Class-level UCAP u… | 2025 |  |
+| `hydro_accreditation_credit_by_iso.NEISO` | 0.7351787312450645 | 2 | ISO-NE publishes NO hydro class rating (the FCM qualifies hydro PER… | 2026-08-06 |  |
 | `hydro_accreditation_credit_by_iso.NYISO` | 0.3844 | 2 | NYISO 2025-2026 FINAL Capacity Accreditation Factors (ICAPWG/MIWG, … | 2025-02-04 |  |
 | `hydro_accreditation_credit_by_iso.PJM` | 0.38 | 2 | PJM 2026/2027 Base Residual Auction official/final ELCC class ratin… | 2025 |  |
 | `hydrogen_turbine_params.h2_ccgt.eford` | 0.06 | 2 | above gas CT — immature fleet. Engineering judgment |  | auto-generated, needs-citation |

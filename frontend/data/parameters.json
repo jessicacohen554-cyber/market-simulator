@@ -3911,6 +3911,22 @@
       "flags": []
     },
     {
+      "param_id": "hydro_accreditation_credit_by_iso.NEISO",
+      "display_name": "Hydro Accreditation Credit By Iso / Neiso",
+      "value": 0.7351787312450645,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "ISO-NE publishes NO hydro class rating (the FCM qualifies hydro PER-RESOURCE: summer Qualified Capacity = the 5-yr median of the resource's summer Seasonal Claimed Capability ratings, Market Rule 1 §III.13.1.2.2.1.1 eff. 2025-05-03; intermittent resources at a median-reliability-hours output construction), so the class factor is the AGGREGATE of ISO-NE's own per-resource summer claimed capability over its ACTIVE conventional-hydro fleet — SCC Monthly Report, August 2026 vintage (published 2026-08-06), sheet SCC_Report_Current, hydraulic-turbine unit types HDP/HDR/HW/HL (type PS reversible = pumped storage EXCLUDED): 244 assets, 1,396.472 MW summer SCC — divided by the model's own NEISO accreditation basis modelled_hydro_nameplate_mw = 1,899.5 MW (2024 final EIA-923 census), the SAME population the factor multiplies in _hydro_firm_mw, so the credited ledger term equals ISO-NE's own published aggregate capability by construction. Season = SUMMER, matching the Net-ICR/summer-50/50-peak requirement basis of every other NEISO adequacy anchor. Vintage-stable: August 2024 / August 2025 reports give 0.7389 / 0.7063. Zero free parameters; never a value tuned to clear I7 (rules 5/13/21).",
+      "source_date": "2026-08-06",
+      "page_or_table": "SCC_Report_Current sheet, summer 'SCC (MW)' column; season blocks verified against SCC_Report_Summary totals",
+      "url": "https://www.iso-ne.com/static-assets/documents/100038/scc_august_2026.xlsx",
+      "notes": "capx-S4 intake closing the FFR-1C open item (docs/handoffs/FINDING-capx-s4-neiso-hydro-2026-08-30.md). Committed per-asset extract + provenance: data/raw/capacity-market/scc/neiso/ (re-fetch: scripts/data/fetch_isone_scc_hydro.py). Consumed via resolve_hydro_capacity_credit; guarded by tests/unit/model/test_hydro_accreditation.py. Re-derive on a newer SCC vintage or EIA census (rule 23), never a residual. ERCOT remains the only registry absence (generic 0.50 fallback).",
+      "old_repo_location": "",
+      "last_verified": "2026-08-30",
+      "flags": []
+    },
+    {
       "param_id": "hydro_accreditation_credit_by_iso.NYISO",
       "display_name": "Hydro Accreditation Credit By Iso / Nyiso",
       "value": 0.3844,

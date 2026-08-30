@@ -2587,9 +2587,12 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
 # §2.2/§2.3/§4).
 #
 # **Every value below is an ISO-published accreditation factor, never a value
-# tuned to clear the I7 adequacy invariant (rules 5/13/21).** Each ISO's
-# published construction splits hydro into a controllable/reservoir class and a
-# limited-control / run-of-river class, at materially different factors. The
+# tuned to clear the I7 adequacy invariant (rules 5/13/21).** Each class-rating
+# ISO's published construction splits hydro into a controllable/reservoir class
+# and a limited-control / run-of-river class, at materially different factors
+# (NEISO is the exception: ISO-NE publishes no class rating at all, so its
+# entry aggregates the ISO's own per-resource qualified-capability record —
+# see its bullet). The
 # model carries NO per-plant RA class assignment for its hydro fleet (the
 # ORNL-EHA ``hydro-plant-modes`` classifier behind ``hydro_ror_split`` is a
 # curated CLEAN partition, absent from a default raw-path run and reviewed only
@@ -2644,19 +2647,54 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
 #   read, and the same 2026/27 vintage they are anchored to). PJM's controllable
 #   class "Hydro with Non-Pumped Storage" rated 96% in the predecessor Dec-2021
 #   ELCC report; the 2027/28 final vintage moves Hydro Intermittent to 39%.
-# * NEISO / ERCOT — ABSENT, so they fall back to the generic published class
-#   derate :data:`RENEWABLE_CAPACITY_CREDIT`\\ ["hydro"] = 0.50 (the same
-#   fallback every uncredited class already takes, rule 25 spirit — never a
-#   foreign ISO's factor). No ISO-published hydro class factor was located for
-#   either this session: ISO-NE's FCM qualifies hydro at Seasonal Claimed
-#   Capability with intermittent hydro at a median-output construction
-#   (per-resource, no published class rating), and ERCOT is energy-only with no
-#   accreditation product. Both are open items in the FFR-1C findings doc.
+# * NEISO — 1,396.472 / 1,899.5 = 0.7352 (capx-S4, 2026-08-30; closes the
+#   FFR-1C open item). ISO-NE publishes NO hydro class rating — the FCM
+#   qualifies hydro PER-RESOURCE (summer Qualified Capacity = the 5-yr median
+#   of the resource's summer Seasonal Claimed Capability ratings, Market Rule 1
+#   §III.13.1.2.2.1.1; intermittent resources at a median-reliability-hours
+#   output construction) — so the class factor is the AGGREGATE of ISO-NE's own
+#   per-resource summer claimed capability over its ACTIVE conventional-hydro
+#   fleet, divided by the model's own accreditation basis. Numerator: ISO-NE
+#   SCC Monthly Report, August 2026 vintage (published 2026-08-06), sheet
+#   SCC_Report_Current, ACTIVE assets of hydraulic-turbine unit types
+#   HDP/HDR/HW/HL (conventional pondage/run-of-river/tidal; type PS reversible
+#   = pumped storage EXCLUDED, a storage resource in this model), summer SCC
+#   column: 244 assets, 1,396.472 MW. The 200 intermittent run-of-river assets
+#   enter at ISO-NE's own "Median Reliability Hours Calculation" values, so the
+#   tariff's intermittent-hydro construction is applied by ISO-NE itself, not
+#   approximated here. Denominator: the model's NEISO hydro accreditation basis
+#   modelled_hydro_nameplate_mw = 1,899.5 MW (2024 final EIA-923 census) — the
+#   SAME population and MW total this factor multiplies in _hydro_firm_mw, so
+#   the credited ledger term equals ISO-NE's own published aggregate capability
+#   (1,396.5 MW) by construction, and model plants absent from the FCM record
+#   enter at zero (conservative floor, the registry-wide discipline).
+#   Season: SUMMER, matching the Net-ICR/summer-50/50-peak requirement basis
+#   every other NEISO adequacy anchor uses. Vintage-stable: the same
+#   aggregation on the August 2024 / August 2025 reports gives 0.7389 / 0.7063.
+#   Rule 13: SCC is re-published monthly per-resource and responds to fleet and
+#   hydrology changes; re-derive on a newer vintage (rule 23), never a residual.
+#   Population bound: SCC assets below the ~1 MW EIA census threshold total
+#   16.7 MW (0.9% of the numerator) — the only overstatement channel, documented
+#   in docs/handoffs/FINDING-capx-s4-neiso-hydro-2026-08-30.md.
+#   Source: https://www.iso-ne.com/static-assets/documents/100038/scc_august_2026.xlsx
+#   (per-asset extract + provenance: data/raw/capacity-market/scc/neiso/).
+# * ERCOT — ABSENT, so it falls back to the generic published class derate
+#   :data:`RENEWABLE_CAPACITY_CREDIT`\\ ["hydro"] = 0.50 (the same fallback
+#   every uncredited class already takes, rule 25 spirit — never a foreign
+#   ISO's factor). ERCOT is energy-only with no accreditation product; open
+#   item in the FFR-1C findings doc. Effect is confined to the ledger's
+#   reported reserve margin (ERCOT's reliability floor is skipped by market
+#   design and its backstop is off).
 HYDRO_ACCREDITATION_CREDIT_BY_ISO: dict[str, float] = {
     "CAISO": 0.7041,  # CPUC/CAISO CY2025 NQC tech factor, non-disp. hydro, Sep
     "NYISO": 0.3844,  # NYISO 2025-26 Final CAF, Limited Control Run of River, RoS
     "MISO": 0.62,  # MISO PY2025-26 Indicative DLOL, Run-of-River Hydro, Summer
     "PJM": 0.38,  # PJM 2026/27 BRA final ELCC class rating, Hydro Intermittent
+    # ISO-NE Aug-2026 SCC report Σ(summer SCC, ACTIVE conventional hydro) over
+    # the model's own accreditation basis (rule 5: explicit expression so both
+    # published MW values stay traceable, the PLANNING_RESERVE_MARGIN_BY_ISO
+    # ["NEISO"] precedent).
+    "NEISO": 1_396.472 / 1_899.5,  # = 0.7352
 }
 
 # ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP
