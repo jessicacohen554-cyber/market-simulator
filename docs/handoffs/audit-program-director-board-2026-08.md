@@ -449,7 +449,15 @@ untouched; **keeper-moving restoration DECLINED; accept-as-limitation
 DECLINED.** Lane dispatched the same sitting (src/ + ERCOT probes surface; no
 branch visible yet at the pin). **⚡ Post-pin: the lane ran** — ex-ante
 precommit (#4332, HP-1..HP-3, capture-dir discipline) and the harness probe +
-toy-system tests (#4334) merged by `def338e`.
+toy-system tests (#4334) merged by `def338e`. **⚡⚡ 2026-08-30 (later
+sitting, `claude/o7-attribution-harness-fjuvgd`): the precommitted real-year
+exercise RAN AND CLOSED THE ROW — HP-1 PASS (de-laddered leg's P0 / markup /
+bridge floors hash-identical to the keeper's, both adaptive passes), and the
+decomposition split the 2023 236-recipe A/B into pricing −$0.02/MWh vs
+commitment+interaction +$2.26/MWh of a +$2.24 whole (74/132 committed rows /
+12,380 MW fresh at 236). Audit row O7 CLOSED; keeper untouched.**
+(`docs/FINDING-o7-attribution-harness-2026-08-30.md`;
+`results/calibration/o7_attribution_harness_2023.json`.)
 
 ### D-5 · 🟢 BENCH FINGERPRINTS — RULED, AND EXECUTED BEFORE THIS BOARD LANDED
 
