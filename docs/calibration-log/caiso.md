@@ -10257,3 +10257,57 @@ freeze ACTIVE. Method + gates fixed ex ante and pushed first
   fences intact; never a re-tune of these caps.
 
 **Next number: caiso-225.**
+
+## caiso-225 (2026-08-30) — THE POST-caiso-224 WATCH SWEEP (owner handoff; the caiso-222 §9 armed watches' first scheduled execution): **EVERY WATCH NULL** — W-1 (PATH15_BG/PATH26_BG still ERR 1000; TI universe still zero-internal: 58 = caiso-218's 56 + SunZia + Pinal Central, both new BOUNDARY interties), W-2 (live columns of PRC_CNSTR/PRC_NOMOGRAM/PRC_RTM_FLOWGATE still shadow-price-only; spec still Fall-2017 v5.1.x; corridor causes present), W-3 (TWO new DMM documents — Q4-2025 of 2026-03-31 + the **2025 ANNUAL of 2026-06-26** — and NEITHER prints element limit MW; 2023 annual stays the only MW vintage), the caiso-224 F2 derate WATCH null (TRNS_OUTAGE boundary-only; the 7-day/1000-day outage reports certificate-walled; **Order 881 AARs participant-facing, effective ≤ 2026-12-01 — the dated next-sweep trigger**). The caiso-131 A3 SoCalGas OFO record **CONFIRMED AVAILABLE + TRIVIALLY FEASIBLE** (public Envoy event histories: High 1997–2026, Low/EFO 2015–2026 with 43/34/25 events 2023/24/25 incl. the Jan-2023 cluster) — intake UNFUNDED. NOTHING FIRES; no intake charter opens; the terminal rest re-affirmed; the Q1 disposition question back to the owner as the sole remaining route at this grain. ZERO SOLVES
+
+- **Charter compliance:** zero solves, nothing armed, nothing registered, no
+  cell verdict, no matrix touch (no status changed — the watches stay armed,
+  the fsno R and its re-arm feeds unchanged), no `ScenarioConfig` field, no
+  derive. Keeper `2026-08-26-caiso-220-c1-crosswalk` UNCHANGED (NOT-YET on
+  C3a alone +4.0 PASS/+12.5/+15.5 %; C3c the single ledgered caveat);
+  markers and freeze untouched; reads stayed publication-side (rule 22 — no
+  model year, no actuals).
+- **The sweep** (all measured outputs committed in
+  `results/calibration/_caiso225_watch_results.json`; adjudication in
+  `ASSESSMENT-caiso225-watch-sweep-2026-08-30.md`): W-1 ERR-1000 signature
+  byte-identical to caiso-218 on both BGs, the 2025-06-02 census reproduces
+  caiso-218's 56 exactly (zero dropped), and the 56 → 58 delta at 2026-08-25
+  is adjudicated external new-build (`SUNZIA_ITC`, `PINALCENT500_ITC`). W-2
+  column censuses on a live 2026-08-25 pull of all three reports: no
+  limit/flow field anywhere; nomogram day-list still carries the corridor
+  (`PG1 GATES-LOSBNS_1 500`, `PG1 MOSSLD-LOSBNS 500`, Moss Landing–Las
+  Aguilas, Los Banos–Panoche, Midway–Vincent/Whirlwind) as shadow prices
+  only. W-3: the 2025 annual + Q4-2025 print identities, binding shares,
+  per-LAP price impacts and HE-windows — no MW; enrichment: Moss
+  Landing–Las Aguilas ~24 % of hours (DA 2025) keeps the caiso-224 F1 0.27
+  ceiling class current for 2025. F2: TRNS_OUTAGE universe 28 boundary
+  objects over 2026-08-10..26, corridor elements absent from TI_IDs and
+  from all 68 distinct OMS note strings (internal equipment appears only
+  where it curtails a boundary OTC — Table Mountain–Tesla on MALIN500_ISL
+  is the COI, not our corridor).
+- **A3 (availability/feasibility report only, per charter):** the OFO
+  declaration record caiso-131 §6 required exists PUBLIC on Envoy —
+  `/Public/ViewExternalLowOFO.getLowOFOEvent` (2015–2026; date + stage
+  1/2/3/3.1/3.2/3.3/EFO + tolerance % + waived flags; 2023: 43 with Jan
+  3/4/5/12/13/19 at stages 3.1–3.3 = the citygate-blowout window) and
+  `/Public/ViewExternalOFO.getOFOEvent` (1997–2026; 196/102/189 events
+  2023/24/25); per-day calculation pages accept historical `gasFlowDate`
+  (verified 2024-01-15, full per-cycle detail) with CSV export. Feasibility:
+  two GETs + a table parse — the funded intake's remaining work is the
+  rule-13/24 adjudication + schema + precommit, not source archaeology.
+  C3c-side, orthogonal to C3a; funding stays an owner decision (new filed
+  item 10).
+- **Disposition:** with every data route null — (i) watches null, (ii) CEII
+  declined, (iii) sub-zonal re-arm blocked on the same (i)-class data — the
+  caiso-222 Q1 C3a disposition question returns to the owner as the sole
+  remaining route at this grain; the terminal rest (Q1 = option 3) stands
+  re-affirmed, this sweep its first heartbeat. **Next sweep is DATED**:
+  post-Order-881-effective (≤ 2026-12-01) or the next DMM publication,
+  whichever first — earlier re-runs are the re-survey the fences forbid.
+  DO-NOT-REDO adds (ASSESSMENT §9): the sweep is dated; the Envoy
+  availability answer is final; the 56 → 58 delta is adjudicated; the watch
+  tests remain the ONLY sanctioned wall re-checks (caiso-222 §8.2 live).
+- Filed items: 4 carried; 9 carried (its Q2 map now carries this null as
+  first execution); **10 NEW** (A3 available+feasible, unfunded).
+
+**Next number: caiso-226.**
