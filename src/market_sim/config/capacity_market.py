@@ -2755,9 +2755,13 @@ PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO: dict[str, float] = {
 # already folds BOTH the reserve margin AND the ICAP->UCAP conversion into one
 # published number; the UCAP requirement is simply firm_peak x FPR.
 # :func:`market_sim.model.capacity.resolve_adequacy_requirement_mw` PREFERS a
-# published FPR for the matching delivery year and falls back to the
-# (1 + PRM) x icap_to_ucap_ratio construction otherwise (so an ISO/year absent
-# here is byte-identical to the pre-R2 behaviour). Devintaging the requirement
+# published FPR for the matching delivery year, HOLDS-LAST beyond the table's
+# final entry (owner-signed convention, card C-A 2026-08-25 — the
+# `resolve_demand_curve_vintage`/`forward_net_cone_anchor` forward-carry
+# precedent; see resolve_forecast_pool_requirement's docstring), and falls
+# back to the (1 + PRM) x icap_to_ucap_ratio construction otherwise (so an ISO
+# absent here, or a delivery year BEFORE the table's first entry, is
+# byte-identical to the pre-R2 behaviour). Devintaging the requirement
 # onto the published FPR replaces the mixed-vintage composite the fallback
 # builds (PJM 1.178 x 0.7699 = 0.907 vs the published 2026/2027 FPR 0.9170).
 # Values are digitized from the committed demand-curve rows
@@ -2776,6 +2780,11 @@ FORECAST_POOL_REQUIREMENT_BY_ISO: dict[str, dict[str, float]] = {
         # both endorsed at the 2026-02-19 MRC meeting. Workbook
         # 'Planning Parameters' sheet, FPR row, RTO column.
         "2028/2029": 0.9401,
+        # 2029/2030: NOT YET PUBLISHED (capx S-5 check 2026-08-30; the
+        # 2029/30 BRA is scheduled for Dec 2026). Until intake, 2029/30+
+        # HOLD-LAST to 0.9401 in resolve_forecast_pool_requirement (card C-A
+        # convention). Add the row here on publication (rule 23
+        # [R-FROZEN-DERIVE]) — the hold supersedes itself automatically.
     },
 }
 

@@ -390,6 +390,40 @@ def test_i7_capacity_market_skips_year_without_reserve_margin():
     assert C.check_i7_reliability_floor(run).status == C.PASS
 
 
+# D-1 checker repair (owner card C-A, 2026-08-25): the ledger year is threaded
+# to resolve_adequacy_requirement_mw, so the checker grades the SAME bar the
+# model builds to — the published FPR of the matching delivery year (2026-2028)
+# or the held-last FPR beyond the table (2029+), never the lower year-less
+# fallback composite. Bars at peak 5000, PJM (DR-netted firm peak x factor):
+#   year-less fallback composite  0.871017 x peak = 4355.1 MW  (the old bar)
+#   2026/27 published FPR 0.9170  0.880629 x peak = 4403.1 MW
+#   2028/29 FPR 0.9401 held-last  0.902813 x peak = 4514.1 MW  (2029+)
+def test_i7_capacity_market_grades_published_fpr_bar_not_fallback():
+    # rm -12.2% -> accredited firm 4390 MW: above the stale fallback bar the
+    # year-less checker graded (the D-1 defect would PASS this), below the
+    # published 2026/27 FPR bar the model actually builds to -> FAIL.
+    led = _ledger(
+        2026, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=5000, reserve_margin=-0.122
+    )
+    run = _mk_run([led], iso="PJM")
+    res = C.check_i7_reliability_floor(run)
+    assert res.status == C.FAIL, res.detail
+
+
+def test_i7_capacity_market_holds_last_fpr_beyond_table():
+    # HOLD-LAST-FPR (card C-A): 2030 -> delivery 2030/2031, beyond the last
+    # published table entry -> bar holds the 2028/29 FPR (4514 MW at peak
+    # 5000), never dropping back to the stale composite (4355 MW). rm -11%
+    # (firm 4450 MW) sits between the two: the pre-C-A checker PASSed it; the
+    # held-last bar FAILs it.
+    led = _ledger(
+        2030, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=5000, reserve_margin=-0.11
+    )
+    run = _mk_run([led], iso="PJM")
+    res = C.check_i7_reliability_floor(run)
+    assert res.status == C.FAIL, res.detail
+
+
 # --------------------------------------------------------------------------- #
 # I8 planned-additions mode gating
 # --------------------------------------------------------------------------- #
@@ -562,6 +596,26 @@ def test_i12_capacity_market_skips_year_without_peak():
     )
     run = _mk_run([led], iso="PJM")
     assert C.check_i12_reserve_margin(run).status == C.PASS
+
+
+def test_i12_capacity_market_floor_threads_year():
+    # D-1 repair + hold-last (card C-A): the requirement-implied floor moves
+    # with the delivery year's FPR. rm -12.5% is INSIDE the stale year-less
+    # band (floor -12.90%) but below both the 2026 published-FPR floor
+    # (-11.94%) and the 2029+ held-last floor (-9.72%) -> two excursions
+    # (WARN; FAIL needs 3 consecutive), and the summary shows the per-year
+    # band drift (first..last).
+    leds = [
+        _ledger(
+            y, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=5000, reserve_margin=-0.125
+        )
+        for y in (2026, 2030)
+    ]
+    run = _mk_run(leds, iso="PJM")
+    res = C.check_i12_reserve_margin(run)
+    assert res.status == C.WARN, res.detail
+    assert "2026" in res.detail and "2030" in res.detail
+    assert ".." in res.detail  # first-year band != last-year band, both shown
 
 
 def test_i12_fails_sustained_excursion():
