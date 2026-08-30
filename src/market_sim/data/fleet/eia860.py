@@ -1969,12 +1969,142 @@ def _retiree_vintage_status(plant_id: int, generator_id: str, year: int) -> str 
     return None
 
 
+# Raw EIA-860 "Retired and Canceled" sheet parquet + plant sheet, read only by
+# the gated partial-plant exit carry (miso-190). Column map mirrors
+# scripts/data/process_eia860.py::_GENERATOR_COLUMN_MAP (the raw headers carry
+# parentheses that _normalize_columns' snake_case aliases do not match).
+_RETIRED_CANCELED_PARQUET_NAME = "eia860_generator_retired_and_canceled.parquet"
+_PLANT_PARQUET_NAME = "eia860_plant.parquet"
+# Mirrors process_eia860.RETIREMENT_WINDOW_START (the backcast window start):
+# a unit retired in or after this year operated during the window.
+_PARTIAL_EXIT_WINDOW_START = 2023
+_PARTIAL_EXIT_COLUMN_MAP: dict[str, str] = {
+    "Plant Code": "plant_id",
+    "Generator ID": "generator_id",
+    "Plant Name": "plant_name",
+    "State": "state",
+    "Technology": "technology",
+    "Energy Source 1": "energy_source",
+    "Prime Mover": "prime_mover",
+    "Nameplate Capacity (MW)": "nameplate_capacity_mw",
+    "Summer Capacity (MW)": "net_summer_capacity_mw",
+    "Operating Year": "operating_year",
+    "Operating Month": "operating_month",
+    "Retirement Year": "planned_retirement_year",
+    "Retirement Month": "planned_retirement_month",
+}
+
+
+def _partial_plant_exit_rows(
+    data_dir: Path, ba_code: str | None
+) -> "pd.DataFrame | None":
+    """Partial-plant mid-window exits in the canonical retiree-channel schema.
+
+    The gated complement of ``build_within_window_retirees``' whole-plant
+    filter (miso-190, ``ScenarioConfig.partial_plant_exit_carry``,
+    PREREG-miso190-partial-plant-exit-carry-2026-08-30): units on the
+    committed raw "Retired and Canceled" sheet with an ACTUAL retirement in
+    or after :data:`_PARTIAL_EXIT_WINDOW_START` whose plant IS still present
+    in the operable snapshot. The builder drops exactly these rows because
+    the plant-keyed COD map cannot time out a single unit — but
+    ``cod_ramp.effective_cod`` prefers a generator's OWN per-unit retirement
+    over the plant-collapsed date (the Homer City seam), so a row built here
+    with its actual retirement in ``planned_retirement_*`` ages out at unit
+    grain while its plant siblings keep running (Sherco-2, 682 MW, ret
+    2023-12, in a surviving three-unit plant).
+
+    Rows come back in the canonical channel schema with ``status`` forced to
+    ``OP`` (the unit operated during the window; the COD ramp owns the
+    exit), exactly as the whole-plant builder emits. Zero overlap with the
+    whole-plant parquet by construction (a plant cannot be both present in
+    and absent from the operable snapshot). Returns ``None`` when any of the
+    three source parquets is absent (a year-matched native vintage dir
+    ships none of them — the channel self-neutralizes there exactly as the
+    whole-plant path does).
+    """
+    ret_path = data_dir / _RETIRED_CANCELED_PARQUET_NAME
+    op_path = data_dir / EIA_860_PARQUET_NAME
+    plant_path = data_dir / _PLANT_PARQUET_NAME
+    if not (ret_path.exists() and op_path.exists() and plant_path.exists()):
+        return None
+
+    raw = pd.read_parquet(ret_path)
+    cols = [c for c in _PARTIAL_EXIT_COLUMN_MAP if c in raw.columns]
+    df = raw[cols].rename(columns=_PARTIAL_EXIT_COLUMN_MAP)
+    df["plant_id"] = pd.to_numeric(df["plant_id"], errors="coerce")
+    df = df[df["plant_id"].notna()].copy()
+    df["plant_id"] = df["plant_id"].astype("int64")
+
+    plant = pd.read_parquet(plant_path)
+    ba_by_plant = (
+        plant[pd.to_numeric(plant["Plant Code"], errors="coerce").notna()]
+        .drop_duplicates("Plant Code")
+        .set_index("Plant Code")["Balancing Authority Code"]
+    )
+    ba_by_plant.index = pd.to_numeric(ba_by_plant.index, errors="coerce").astype(
+        "int64"
+    )
+    df["balancing_authority_code"] = (
+        df["plant_id"].map(ba_by_plant).astype("string").str.strip()
+    )
+    if ba_code is not None:
+        df = df[df["balancing_authority_code"] == ba_code]
+
+    df["planned_retirement_year"] = pd.to_numeric(
+        df["planned_retirement_year"], errors="coerce"
+    )
+    df = df[df["planned_retirement_year"] >= _PARTIAL_EXIT_WINDOW_START]
+
+    # The canonical fleet snapshot (snake_case schema) — the same membership
+    # the dispatch fleet actually reads: a plant with any surviving row is
+    # "present", exactly the builder's whole-plant test.
+    op = pd.read_parquet(op_path, columns=["plant_id"])
+    op_ids = set(pd.to_numeric(op["plant_id"], errors="coerce").dropna().astype(int))
+    df = df[df["plant_id"].isin(op_ids)]
+    if df.empty:
+        return df
+
+    df = df.copy()
+    # The unit operated during the window; OP keeps it through
+    # _rows_to_generators' status filter — the COD ramp owns the exit.
+    df["status"] = "OP"
+    return df
+
+
+def _register_partial_exit_coal_supply(df: pd.DataFrame) -> None:
+    """Register injected coal units' supply classes from their own codes.
+
+    The reporting seam of the partial-plant exit carry (miso-190): a coal
+    plant unresolved by ``coal.coal_supply_class`` lands its dispatch in a
+    bare ``COAL`` class the EIA-923 benchmark never has. Each injected coal
+    unit carries its own committed ``Energy Source 1`` code, mapped through
+    the canonical ``COAL_CODE_TO_SUPPLY`` — the identical fallback the
+    whole-plant channel applies at build time (``_join_egrid_heat_rate``'s
+    sibling) and the benchmark applies at class time. Registered into the
+    flag-gated registry (``coal.register_partial_exit_coal_supply``), which
+    is consulted LAST (after the curated map, the receipt-derived map and
+    the whole-plant retiree fallback) so it can never override an existing
+    resolution; empty (and every path byte-identical) while the flag is off.
+    """
+    from market_sim.config.plant_taxonomy import COAL_CODE_TO_SUPPLY
+    from market_sim.data.coal import register_partial_exit_coal_supply
+
+    mapping: dict[int, str] = {}
+    for pid, src in zip(df["plant_id"], df.get("energy_source", df["plant_id"] * 0)):
+        supply = COAL_CODE_TO_SUPPLY.get(str(src).strip().upper())
+        if supply:
+            mapping.setdefault(int(pid), supply)
+    if mapping:
+        register_partial_exit_coal_supply(mapping)
+
+
 def load_retired_within_window(
     iso: str,
     iso_config: ISOConfig | None = None,
     data_dir: Path | None = None,
     year: int | None = None,
     vintage_status_scope: bool = False,
+    partial_plant_exit_carry: bool = False,
 ) -> list[Generator]:
     """Load whole-plant exits that retired mid-backcast for an ISO.
 
@@ -2018,6 +2148,21 @@ def load_retired_within_window(
     units fail OPEN (kept), so a retiree the record never marks non-OP
     (Rush Island 6155 — OP, ran through Oct-2024) keeps its window.
     Measured, zero fitted scalars, byte-inert while off.
+
+    ``partial_plant_exit_carry`` (GATED default-off; miso-190,
+    ``ScenarioConfig.partial_plant_exit_carry``,
+    PREREG-miso190-partial-plant-exit-carry-2026-08-30): widens the
+    channel's MEMBERSHIP with the builder's deliberate complement — units
+    on the committed raw "Retired and Canceled" sheet with an actual
+    retirement in the window whose plant SURVIVES in the operable snapshot
+    (:func:`_partial_plant_exit_rows`; Sherco-2 682 MW, ret 2023-12, in a
+    surviving three-unit plant). Each carries its own actual retirement in
+    ``planned_retirement_*``, which ``cod_ramp.effective_cod`` prefers over
+    the plant-collapsed date, so it ages out at unit grain while its plant
+    siblings keep running. The union happens BEFORE the vintage-status
+    oracle above, so an armed ``vintage_status_scope`` scopes both
+    memberships uniformly (Dallman-3, OS in vintage_2023 and CAMPD-dark,
+    stays out). Measured, zero fitted scalars, byte-inert while off.
     """
     iso = iso.upper()
     data_dir = active_eia860_dir() if data_dir is None else Path(data_dir)
@@ -2028,15 +2173,37 @@ def load_retired_within_window(
             iso_config = None
 
     path = data_dir / EIA_860_RETIRED_WINDOW_PARQUET_NAME
-    if not path.exists():
-        return []
-
-    df = _normalize_columns(pd.read_parquet(path))
     ba_code = ISO_TO_BA_CODE.get(iso)
-    if ba_code is not None and "balancing_authority_code" in df.columns:
-        df = df[df["balancing_authority_code"].astype(str).str.strip() == ba_code]
-    if df.empty:
+
+    frames: list[pd.DataFrame] = []
+    if path.exists():
+        whole = _normalize_columns(pd.read_parquet(path))
+        if ba_code is not None and "balancing_authority_code" in whole.columns:
+            whole = whole[
+                whole["balancing_authority_code"].astype(str).str.strip() == ba_code
+            ]
+        if not whole.empty:
+            frames.append(whole)
+
+    if partial_plant_exit_carry:
+        partial = _partial_plant_exit_rows(data_dir, ba_code)
+        if partial is not None and not partial.empty:
+            _register_partial_exit_coal_supply(partial)
+            logger.info(
+                "partial-plant exit carry (%s): injecting %d unit(s), %.0f MW "
+                "— plants %s",
+                iso,
+                len(partial),
+                pd.to_numeric(partial["net_summer_capacity_mw"], errors="coerce")
+                .fillna(0.0)
+                .sum(),
+                sorted(set(partial["plant_id"].astype(int))),
+            )
+            frames.append(partial)
+
+    if not frames:
         return []
+    df = pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0]
 
     df = df.copy()
     if vintage_status_scope and year is not None:
@@ -2085,6 +2252,7 @@ def load_mothballed_but_operating(
     iso_config: ISOConfig | None = None,
     data_dir: Path | None = None,
     year: int | None = None,
+    partial_plant_exit_carry: bool = False,
 ) -> list[Generator]:
     """Re-carry OA (mothballed) units that were OP in the year-matched vintage.
 
@@ -2127,6 +2295,19 @@ def load_mothballed_but_operating(
     are OA in the oracle file too, so nothing qualifies (no double-count —
     the vintage fleet already carries its own OP units natively).
 
+    ``partial_plant_exit_carry`` (GATED default-off; miso-190,
+    ``ScenarioConfig.partial_plant_exit_carry``,
+    PREREG-miso190-partial-plant-exit-carry-2026-08-30) widens the snapshot
+    status set from ``{OA}`` to ``{OA, OS, SB}`` — the extension the
+    OA-only comment below deliberately reserved for its own probe, which
+    that PREREG is. Same vintage-OP oracle, same per-unit vintage-row
+    build, same no-``vintage_2025``-carries-nothing owner default. The
+    adjudicated case: Big Cajun 2-1 (6055, 517 MW coal) — OS in the
+    canonical snapshot so the OP filter drops it from every year, yet OP
+    in vintage_2023 AND vintage_2024 with measured 2023/2024 generation;
+    Warrick-2 (6705, 126 MW) OP in vintage_2023 only (OA in
+    vintage_2024, so 2023-only). Byte-inert while off.
+
     Returns an empty list when ``year`` is ``None``, either parquet is
     absent, or nothing qualifies.
     """
@@ -2153,10 +2334,14 @@ def load_mothballed_but_operating(
         ba = snap["balancing_authority_code"].astype(str).str.strip()
         snap = snap[ba == ba_code]
     status = snap["status"].astype(str).str.strip().str.upper()
-    # OA only (out of service, expected to return — the mothball status the
-    # charter scopes this channel to). OS/SB/retired statuses are deliberately
-    # out of scope: extending the channel needs its own probe.
-    oa = snap[status == "OA"]
+    # OA only by default (out of service, expected to return — the mothball
+    # status the Cottonwood charter scopes this channel to); OS/SB join the
+    # set only under the gated partial-plant exit carry (miso-190), the
+    # "own probe" the original boundary comment reserved. Retired statuses
+    # never qualify (retired units leave the operable sheet entirely and are
+    # the retiree channel's domain).
+    scope = {"OA", "OS", "SB"} if partial_plant_exit_carry else {"OA"}
+    oa = snap[status.isin(scope)]
     if oa.empty:
         return []
 

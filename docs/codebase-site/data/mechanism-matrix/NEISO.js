@@ -102,6 +102,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     unit_outage_lp_capacity_basis: { cell: "U" },
     unit_outage_fleet_status_scope: { cell: "U" },
     retiree_vintage_status_scope: { cell: "U" },
+    partial_plant_exit_carry: { cell: "U" },
     wefor_residual: { cell: "U" },
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "U" },

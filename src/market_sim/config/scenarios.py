@@ -290,6 +290,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # byte-inert). Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 / caiso-186 discipline).
     "retiree_vintage_status_scope",
+    # miso-190 partial-plant mid-window exit carry (GATED default-off; the
+    # consumers thread it via getattr into data/fleet/eia860.py::
+    # load_retired_within_window and load_mothballed_but_operating, and the
+    # coal supply registry is populated only by the gated channel, so the
+    # off path is byte-inert). Registered IN THE SAME COMMIT as the field
+    # (the nyiso-119 / caiso-186 discipline).
+    "partial_plant_exit_carry",
     # caiso-186 published seasonal capability basis for combined cycles (GATED
     # default-off; every consumer reads it via getattr, and it additionally
     # requires cc_nameplate_summer_derate, so the off path is byte-inert).
@@ -1225,6 +1232,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-188 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "retiree_vintage_status_scope": "False",
+    # Added by miso-190 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "partial_plant_exit_carry": "False",
     # Added by caiso-186 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "cc_winter_capability_basis": "False",
@@ -1524,6 +1534,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "unit_outage_short_windows": "measured unit-grain outage windows",
     "unit_outage_fleet_status_scope": "EIA-860 operable generator status",
     "retiree_vintage_status_scope": "EIA-860 vintage generator status",
+    "partial_plant_exit_carry": "EIA-860 actual retirement + vintage status",
     "unit_partial_outage_windows": "measured unit-grain partial-derate plateaus",
     "unit_outage_maxgen_events": "measured declared-event unit derates",
     "ercot_thermal_dam_availability": "measured ERCOT 60-Day DAM awards",
@@ -10766,6 +10777,36 @@ class ScenarioConfig:
     # drops event rows of units the fleet does not model; this drops
     # units the paper retirement date wrongly carries.
     retiree_vintage_status_scope: bool = False
+
+    # Partial-plant mid-window exit carry (partial_plant_exit_carry, off by
+    # default; miso-190, PREREG-miso190-partial-plant-exit-carry-2026-08-30
+    # — the FINDING-miso188 §6.6 charter). Completes the
+    # membership-by-contemporaneous-status family with its two remaining
+    # blind spots. LEG 1: a unit retired mid-window whose plant SURVIVES is
+    # in neither the operable snapshot (retired rows leave the operable
+    # sheet) nor the whole-plant retiree channel (the builder drops any
+    # plant still in the snapshot because the plant-keyed COD map cannot
+    # time out a single unit) — but cod_ramp.effective_cod already prefers
+    # a generator's OWN per-unit retirement (the Homer City seam), so when
+    # True load_retired_within_window ALSO injects the committed
+    # Retired-and-Canceled rows with actual retirement >= 2023 and a
+    # surviving plant, each timed out at unit grain on its own actual
+    # retirement month (Sherco-2 682 MW ret 2023-12; SOC 5+6; A B Brown
+    # 1+2; Dan E Karn x4; Petersburg-ST2; Teche-3 — 7.68 TWh of measured
+    # 2023 generation the fleet otherwise cannot carry). The armed
+    # retiree_vintage_status_scope oracle scopes the widened membership
+    # uniformly (Dallman-3, OS in vintage_2023 and CAMPD-dark, stays out).
+    # LEG 2: load_mothballed_but_operating's snapshot status set widens
+    # {OA} -> {OA, OS, SB} under the same vintage-OP oracle (Big Cajun 2-1,
+    # OS in snapshot yet OP in vintage_2023/2024; Warrick-2 2023-only).
+    # Reporting seam: injected coal plants unresolved by coal_supply_class
+    # register their own Energy Source 1 codes via the flag-gated
+    # data/coal.py registry (A B Brown -> bituminous, Dan E Karn -> prb) so
+    # dispatch lands in bench-matched COAL_* classes. MEASURED (published
+    # EIA-860 actual retirement record + vintage status + energy-source
+    # codes), ZERO fitted scalars, no size threshold, rule-13
+    # forward-regenerable, byte-inert while off, backcast-only.
+    partial_plant_exit_carry: bool = False
 
     # PUBLISHED seasonal capability basis for combined cycles
     # (cc_winter_capability_basis, off by default; caiso-186). Acts ONLY

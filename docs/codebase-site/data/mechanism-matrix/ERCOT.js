@@ -102,6 +102,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     unit_outage_lp_capacity_basis: { cell: "U" },
     unit_outage_fleet_status_scope: { cell: "." },
     retiree_vintage_status_scope: { cell: "U" },
+    partial_plant_exit_carry: { cell: "U" },
     wefor_residual: { cell: "K", ev: "registration only — read from the ERCOT keeper's run_config.json (0.02); no ERCOT evidence, no verdict" },
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "U" },
