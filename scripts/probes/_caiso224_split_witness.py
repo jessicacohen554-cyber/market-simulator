@@ -101,11 +101,15 @@ def _boundary_binding(year: int) -> dict:
             out[pair] = {"missing": True}
             continue
         # A boundary-hour binds when any of its directional legs sits at its
-        # limit (0.1 % tolerance) or carries a positive congestion dual.
-        at_cap = (
-            (rows["mw"].abs() >= 0.999 * rows["limit_up"].abs())
-            & (rows["limit_up"].abs() > 0)
-        ) | (rows["dual"].abs() > 1e-4)
+        # limit (0.1 % tolerance). The sidecar's ``dual`` column is NOT a
+        # congestion test: under the armed zonal loss surface every link-hour
+        # carries the loss toll in it (measured p50 $0.002 on the NP15<->FSNO
+        # legs across all hours), so a dual-based criterion reads 1.0
+        # everywhere — the first run of this probe made exactly that error
+        # and is superseded by this at-cap-only measure.
+        at_cap = (rows["mw"].abs() >= 0.999 * rows["limit_up"].abs()) & (
+            rows["limit_up"].abs() > 0
+        )
         share = rows.assign(b=at_cap).groupby("hour")["b"].any().mean()
         out[pair] = {
             "binding_share": round(float(share), 4),
