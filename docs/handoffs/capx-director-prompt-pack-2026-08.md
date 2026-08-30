@@ -11,6 +11,11 @@ marker + --holdout-authorized; nothing a capx lane touches either way).
 Revision at r#11: **S-4V added** — S-4 landed its intake (PR #4312) but ended before its
 verification pair ran; the owed §5 (pair + FC-1 re-score + registration + finding TBDs + cell
 re-stamp + board refresh) is chartered as its own lane below.
+Revision at r#12: **Q5-W added** (governance RECORDS lane, not a capx lane) — the owner's
+r#12 decision-card ruling on Q5's recurrence: WITHDRAW the NYISO `complete` marker (CAISO
+precedent, applied uniformly). **Once Q5-W lands, `complete` = {NEISO, PJM}** and every
+guardrail line below reading "`complete` = {NEISO, NYISO, PJM}" is superseded accordingly
+(in-flight lanes fetch fresh state and are unaffected — no capx lane touches either tier).
 
 | lane | status | branch | model | profile | heavy slot? |
 |---|---|---|---|---|---|
@@ -20,6 +25,7 @@ re-stamp + board refresh) is chartered as its own lane below.
 | **S-4** NEISO hydro accreditation | **LANDED r#10** (PR #4312; factor 0.7352) — historical prompt below; its owed verification is lane **S-4V** | `claude/capx-s4-neiso-hydro-syqu7m` | Fable | neiso | no |
 | **S-4V** NEISO verification | **NEW at r#11** — completes S-4's §5: pair, re-score, registration, finding TBDs, cell re-stamp, board refresh | `claude/capx-s4v-neiso-verification` | Fable | neiso | no (9.2 min/leg) |
 | **S-5** PJM requirement horizon-edge | issued r#5, not started — ready when a heavy slot frees | `claude/capx-s5-pjm-horizon-edge` | Fable | pjm | no (S-6 is the heavy one, strictly after) |
+| **Q5-W** NYISO marker withdrawal | **NEW at r#12** — governance records lane executing the owner's Q5 ruling (WITHDRAW, CAISO precedent) | `claude/q5w-nyiso-marker-withdrawal` | Fable/Opus | code | no (records only) |
 
 **Suggested order (r#11):** S-4V + D10 now (both light; S-4V unblocks S-4b and possibly a
 second (a)+(b)-PASS ISO). S-5 as a heavy slot frees (its re-score self-gates; PJM quiet on the
@@ -452,6 +458,93 @@ EXIT: docs/handoffs/FINDING-capx-s4-neiso-hydro-<date>.md — the sourced class 
 primary citation (or the explicit could-not-source verdict), the pre-declared direction statement,
 the re-scored I7 for 2026-2028, and a clear answer to whether NEISO's 2028 leg is now decidable.
 Report to the owner.
+```
+
+---
+
+## Q5-W — NYISO marker withdrawal (new at r#12; governance RECORDS lane, not a capx lane)
+
+```
+You are the Q5-W NYISO MARKER WITHDRAWAL records session, executing an owner ruling delivered
+2026-08-30 at the capacity-expansion director's refresh-#12 decision card (recorded:
+docs/handoffs/capx-director-ledger-2026-08.md §0i and §3 Q5). RECORDS ONLY — no solve, no
+re-score, no keeper change.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable or Opus (governance records — NEVER Sonnet, rule 27 posture).
+BRANCH: claude/q5w-nyiso-marker-withdrawal — create FRESH off origin/main (git fetch origin
+main first) and rebase before pushing. DECONFLICTION: the capx S-4V lane may land a
+NEISO-block edit to frontend/data/forecast/program-status.json concurrently — edit ONLY your
+own blocks and rebase before pushing.
+
+THE RULING (the option selected on the director's card, verbatim label: "Withdraw the marker
+(CAISO precedent)"): apply the 2026-08-06 CAISO precedent uniformly — a `complete` marker
+cannot stand on a NOT-YET keeper. NYISO's marker withdraws; re-entry is a NEW explicit owner
+declaration once NYISO's designated keeper again scores CALIBRATED (expected route: the
+nyiso-156 winter intake Leg 2 + the C3c standing rule, per the marker's own successor note).
+This resolves ledger Q5: the reconciliation is now WRITTEN AND UNIFORM — the
+structural-integrity formula remains the standard for KEEPER promotions (nyiso-155 and
+nyiso-157 stand untouched as keepers) but no longer sustains a `complete` marker on a NOT-YET
+determination.
+
+READ FIRST:
+- frontend/data/backcast/calibration-complete.json — NYISO's entry as it stands (keeper
+  2026-08-30-nyiso-157-par-attribution; determination NOT-YET on C3a/C3b/C3c, D-5(b)
+  re-verified 2026-08-30; keeper_at_declaration preserved).
+- The CAISO withdrawal precedent's recorded form (2026-08-06): docs/governance/rule-history.md
+  §4 and whatever the marker file/docs retained of that withdrawal — MIRROR its form.
+- docs/handoffs/capx-director-ledger-2026-08.md §3 (Q5's full genealogy, r#8 WAIT → r#12
+  WITHDRAW).
+- CLAUDE.md rule 22 (the `complete` block's role: validation-tier authorization).
+
+TASK:
+1. WITHDRAW NYISO from the `complete` block of
+   frontend/data/backcast/calibration-complete.json, following the CAISO precedent's own
+   recorded form. Absence must NOT be self-explaining: record — in the file's convention if
+   it carries withdrawal notes, else in the FINDING and the governance docs the precedent
+   used — WHY (the ruling + its verbatim basis), the date, the provenance (capx director
+   r#12 decision card), the keeper + determination it stood on at withdrawal, what happens
+   to the prior declaration record (preserve keeper_at_declaration history, never erase it),
+   and the explicit re-entry condition (new owner declaration on a CALIBRATED keeper).
+2. STATE THE VALIDATION-TIER CONSEQUENCE in the record: NYISO's 2020-2022 touchpoint
+   authorization lapses with the marker (rule 22: `complete` marker + --holdout-authorized
+   govern validation spends; the tier-scoped freeze itself is UNTOUCHED — do not edit
+   holdout-freeze.json). Verify from the committed registry sidecars whether any NYISO
+   out-of-training year was ever solved/registered (none is expected) and state what you
+   find; report any surprise, do not adjudicate it.
+3. FLIP THE FORECAST BOARD IN THE SAME SESSION (so the two surfaces cannot disagree): NYISO
+   gate leg (a) in frontend/data/forecast/program-status.json moves PASS → fail on the
+   marker, citing the ruling. Leg (b) is UNTOUCHED (it is the bare nyiso-t1f verdict,
+   PROMOTE-WITH-CAVEATS — no marker moves a bare verdict); legs (c)/(d) untouched. Update
+   any board prose that names NYISO's marker or its (a)+(b) lead position. This is a records
+   flip with a citation, never a re-score — do not write forecast-provenance stamp fields
+   (the D7 discipline).
+4. CHECK WHAT RENDERS the marker (backcast dashboard/status surfaces that bake
+   calibration-complete.json) and rebuild exactly what the CAISO withdrawal precedent
+   rebuilt — nothing more.
+5. RUN scripts/audit_keepers.py and report it clean (M1 has no NYISO `complete` entry to
+   verify once absent; nothing else should move).
+6. FINDING: docs/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md — the ruling verbatim
+   with its card provenance, before/after of every changed field on both surfaces, the
+   written reconciliation statement, the re-entry condition, the validation-tier
+   consequence, and the audit result.
+
+DO NOT TOUCH: frontend/data/backcast/keepers/<ISO>.json (nyiso-157 REMAINS the keeper — the
+ruling moves the marker, not the keeper), any run registry/bundle, ff-verdicts.json, any
+mechanism-matrix shard, holdout-freeze.json, any other ISO's marker entry ({NEISO, PJM}
+stand), and no solve of any kind. If executing the withdrawal surfaces a question this
+prompt does not answer (e.g. the file's schema forces a choice the CAISO precedent does not
+cover), STOP and route it back to the director rather than improvising governance state.
+
+GUARDRAILS: records only — no LP, no solve, no registration, no out-of-training year
+touched in any way. No new GitHub Actions workflows, no CI offloading (private repo, billed
+minutes). Push per CLAUDE.md Git & Pushing (on HTTP 408 set `git config http.version
+HTTP/1.1` and retry before concluding anything about pack size); blob-verify any >=300-line
+file after push (rule 27) — calibration-complete.json and program-status.json both qualify.
+
+EXIT: the withdrawal landed on both surfaces + the FINDING + audit_keepers clean + a
+one-line statement of what NYISO's gate now reads (expected: (a) fail on marker · (b) PASS ·
+(c) fail · (d) none) and what re-entry requires. Report to the owner.
 ```
 
 ---
