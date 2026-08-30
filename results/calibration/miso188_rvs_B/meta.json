@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-20T05:22:03",
+  "timestamp": "2026-08-30T02:49:33",
   "iso": "MISO",
   "years": [
     2023,
@@ -207,7 +207,12 @@
     "miso_reserve_online_gated": true,
     "reliability_floor_plant_exclusions": true,
     "mustrun_plant_exclusions": true,
-    "st_gas_mustrun_p25_measured_level": true
+    "st_gas_mustrun_p25_measured_level": true,
+    "mustrun_layup_window_mask": true,
+    "miso_seam_envelope_hour_ending_key": true,
+    "unit_outage_fleet_status_scope": true,
+    "nuclear_unit_availability": true,
+    "retiree_vintage_status_scope": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -317,7 +322,7 @@
   "caiso_offer_surface_conditional": false,
   "pjm_offer_midcurve_segments": null,
   "ercot_nuclear_unit_availability": false,
-  "nuclear_unit_availability": false,
+  "nuclear_unit_availability": true,
   "ercot_thermal_dam_availability": false,
   "ercot_thermal_dam_availability_hourly": false,
   "ercot_thermal_dam_availability_plant": false,
@@ -405,11 +410,15 @@
   "nyiso_gas_bridge_da_horizon": null,
   "nyiso_gas_bridge_min_run": null,
   "nyiso_gas_bridge_plant_exclusions": null,
+  "nyiso_gas_bridge_reserve_duty_exclusions": null,
   "nyiso_gas_bridge_plant_min_run": null,
   "nyiso_gas_bridge_online_hours": null,
   "nyiso_gas_bridge_state_floor_min_run": null,
   "nyiso_chp_btm_measured": null,
   "cc_reserve_duty_split": null,
+  "chp_layup_duty_split": null,
+  "chp_layup_duty_curve": null,
+  "egrid_identity_heat_rates": null,
   "nyiso_gas_bridge_cc_min_run_hours": null,
   "nyiso_gas_bridge_st_min_run_hours": null,
   "nyiso_spin_reserve_online": null,
@@ -423,6 +432,7 @@
   "miso_seam_flow_percentile": null,
   "miso_seam_export_limit": true,
   "miso_seam_envelope_merit_cap": false,
+  "miso_seam_envelope_hour_ending_key": true,
   "nyiso_seam_deliverability_envelope": false,
   "nyiso_seam_par_attribution": false,
   "miso_pjm_border_anchor": true,
@@ -454,19 +464,19 @@
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
     "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
   },
-  "git_sha": "e0aa651",
-  "basis_sha": "b12ad140f70d0f03ad33d5c815d27248420f00de",
-  "highspy_version": "1.14.0",
+  "git_sha": "66c584c",
+  "basis_sha": "3f7388e8d46b2375394953d04a41b34abe599bb1",
+  "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-fc-v20-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v22-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
-      "pydantic": "2.13.4"
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.1",
+      "pydantic": "2.13.5"
     }
   }
 }
