@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-30-miso-188-control",
+ "label": "miso 188 control",
+ "date": "2026-08-30",
+ "shorthand": "miso-188-control",
+ "definition": "miso-188 CONTROL (zero-delta): byte-faithful replay_keeper re-solve of the 2026-08-26-miso-187-nucavail keeper recipe at HEAD (retiree_vintage_status_scope default off), --years 2023 2024 2025 in one invocation. S-0 value-identical to the committed keeper on every scored sidecar (max|diff| = 0.0 x 12), despite the disclosed numpy/scipy/pydantic/platform point-version drift \u2014 the miso-188 A/B's attribution baseline, never a keeper candidate (unattested by design; PREREG-miso188 \u00a75).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-08-30-miso-188-control.js",
+ "bundle": "results/calibration/miso188_rvs_A"
+}

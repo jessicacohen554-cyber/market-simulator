@@ -8965,3 +8965,43 @@ matrix shard arrived syntax-broken from main and got a mechanical
 quote-swap repair (content unchanged) so the matrix guard could run.
 
 Finding: `FINDING-miso187-measured-nuclear-availability-2026-08-26.md`.
+
+## miso-188 (2026-08-30) — the C1 CC_REGULAR-2024 charter executed: the phase-0 audit finds the retiree channel dispatching a CC that was DARK FOR THREE YEARS, the vintage-status oracle drops it, and the arm is PROMOTED ON THE PREREG'S OWN RULE: `2026-08-30-miso-188-rvsscope`
+
+**Keeper → `2026-08-30-miso-188-rvsscope`** (bundle `miso188_rvs_B`; control
+`2026-08-30-miso-188-control` = `miso188_rvs_A`, S-0 value-identical to the
+superseded keeper). Single delta vs `2026-08-26-miso-187-nucavail`:
+`retiree_vintage_status_scope=true` — a NEW gated field (row + cells minted
+per rule 28c, default cache key unmoved): a within-window retiree unit is
+dropped for backcast solve year Y iff its status in the latest committed
+EIA-860 vintage ≤ Y listing it is non-OP, fail-open. The phase-0 zero-solve
+audit (ask B of the handoff charter) localized the C1 CC_REGULAR-2024
++8.037 TWh FAIL to the 2024 shoulder, verified the CC availability input
+sound at the LP grain, exonerated the import seam — and found **Grand Tower
+(862, 511 MW CC, MISO-Illinois): OS in vintage_2023, CAMPD 0.0 GWh for
+2022, 2023 AND 2024, yet carried by the retiree channel to its paper
+retirement date of 2024-04 and dispatched in-merit for 3.55 TWh (2023) +
+1.23 TWh (Jan–Apr 2024) — exactly the excess window.** The scope drops 28
+dark units / 1,434 MW (with Carl Bailey OS, Baxter Wilson SB, Taconite
+Harbor SB) and keeps Rush Island (OP — really ran 892/612 GWh to its
+Oct-2024 exit) and Lansing (OP-but-dark 2023, the disclosed accepted miss —
+the oracle is status-only, never CEMS-as-membership). PREREG pushed +
+blob-verified BEFORE the mechanism existed (1c00633); all gates clean:
+S-0/S-1/S-2 (CC_REGULAR-2024 −1.2114 TWh ≈ the full phantom)/S-4; charter
+kill silent; **C1 fuelmix CC_REGULAR-2024 +8.037 FAIL → +6.820 PASS** (C1
+16/16 · free 12/12), C3a-2024 −4.64 → −4.30 %, C3a-2023 +2.40 → +3.50 %
+(the declared in-band adverse face), C3a-2025 −12.3185 → −12.2965 % (no
+2025 claim; ask C's object stays in owner D-4 posture court). Determination
+narrows to **NOT-YET on {C3a-2025} ALONE**; C3c the single ledgered caveat;
+ledger 36/2 (new entry MEASURED: published EIA-860 vintage status); LOYO
+structural (zero fitted scalars, year-independent identification).
+Keeper-auditor PASS 0/0. Named-not-built successor (its own charter): the
+partial-plant mid-window exit gap — 5.93 TWh (2023) / 0.57 TWh (2024) of
+measured generation from units in neither the operable snapshot nor the
+whole-plant retiree channel (Sherco-2, South Oak Creek 5+6, A B Brown, Dan
+E Karn, Petersburg-ST2, Teche-3, Dallman-3; Big Cajun 2-1 OS); needs
+unit-grain exit timing in the plant-keyed COD mechanism. Records:
+`results/calibration/FINDING-miso188-retiree-vintage-status-scope-2026-08-30.md`,
+`PREREG-miso188-retiree-vintage-status-scope-2026-08-30.md`,
+`_miso188_ab_gates.json`; probe `scripts/probes/_miso188_ab_gates.py`;
+attestation `scripts/gen_miso188_attestation.py`.

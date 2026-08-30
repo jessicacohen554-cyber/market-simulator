@@ -101,6 +101,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     coal_nameplate_summer_derate: { cell: "U" },
     unit_outage_lp_capacity_basis: { cell: "U" },
     unit_outage_fleet_status_scope: { cell: "U" },
+    retiree_vintage_status_scope: { cell: "U" },
     wefor_residual: { cell: "K", ev: "registration only — read from the PJM keeper's run_config.json (0.015); no PJM evidence, no verdict" },
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "K", ev: "registration only — read from pjm152_collapse_A/run_config.json; no PJM evidence, no verdict" },

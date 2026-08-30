@@ -284,6 +284,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # data/fleet/arrays.py, so the off path is byte-inert). Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline).
     "unit_outage_fleet_status_scope",
+    # miso-188 retiree-channel vintage-status scope (GATED default-off; the
+    # sole consumer threads it via getattr into
+    # data/fleet/eia860.py::load_retired_within_window, so the off path is
+    # byte-inert). Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 / caiso-186 discipline).
+    "retiree_vintage_status_scope",
     # caiso-186 published seasonal capability basis for combined cycles (GATED
     # default-off; every consumer reads it via getattr, and it additionally
     # requires cc_nameplate_summer_derate, so the off path is byte-inert).
@@ -1216,6 +1222,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-186 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_fleet_status_scope": "False",
+    # Added by miso-188 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "retiree_vintage_status_scope": "False",
     # Added by caiso-186 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "cc_winter_capability_basis": "False",
@@ -1514,6 +1523,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "miso_native_outage_source": "MISO's published outage record for the year",
     "unit_outage_short_windows": "measured unit-grain outage windows",
     "unit_outage_fleet_status_scope": "EIA-860 operable generator status",
+    "retiree_vintage_status_scope": "EIA-860 vintage generator status",
     "unit_partial_outage_windows": "measured unit-grain partial-derate plateaus",
     "unit_outage_maxgen_events": "measured declared-event unit derates",
     "ercot_thermal_dam_availability": "measured ERCOT 60-Day DAM awards",
@@ -10730,6 +10740,32 @@ class ScenarioConfig:
     # (different accumulation semantics; no adjudicated case) — documented
     # boundary, not an oversight.
     unit_outage_fleet_status_scope: bool = False
+
+    # Retiree-channel injection scoped by the EIA-860 vintage status oracle
+    # (retiree_vintage_status_scope, off by default; miso-188,
+    # PREREG-miso188-retiree-vintage-status-scope-2026-08-30). The
+    # within-window retiree channel (data/fleet/eia860.py::
+    # load_retired_within_window) injects whole-plant exits and lets the COD
+    # ramp dispatch each through its FORMAL EIA-860 retirement month — but
+    # several plants were deactivated years before their paper date, and
+    # EIA's own contemporaneous record says so: the year-matched vintage
+    # snapshots (the identical oracle carry_operating_mothballs reads) mark
+    # them non-OP while their CAMPD record is an unbroken string of zeros
+    # (Grand Tower 862, 511 MW CC: OS in vintage_2023, 0.0 GWh 2022-2024,
+    # yet carried in-merit Jan-Apr 2024 for 1.23 TWh of phantom CC
+    # availability). When True, a retiree-channel unit is dropped for
+    # backcast solve year Y iff its status in the latest committed vintage
+    # <= Y whose operable sheet lists it is non-OP (OA/OS/SB); unlisted
+    # units fail OPEN (kept), so a retiree the record never marks non-OP
+    # (Rush Island 6155 — OP, ran through Oct-2024) keeps its legitimate
+    # window. MEASURED (published EIA-860 vintage status), ZERO fitted
+    # scalars, rule-13 forward-regenerable (contemporaneous fleet status is
+    # a forward input), byte-inert while off. The symmetric third leg of
+    # the status-basis family: carry_operating_mothballs ADDS what the
+    # snapshot's OP filter wrongly drops; unit_outage_fleet_status_scope
+    # drops event rows of units the fleet does not model; this drops
+    # units the paper retirement date wrongly carries.
+    retiree_vintage_status_scope: bool = False
 
     # PUBLISHED seasonal capability basis for combined cycles
     # (cc_winter_capability_basis, off by default; caiso-186). Acts ONLY

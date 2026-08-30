@@ -1887,11 +1887,94 @@ def _correct_mixed_facility_steam_hr(generators: list[Generator]) -> None:
             gen.heat_rate = target
 
 
+@lru_cache(maxsize=None)
+def _committed_vintage_years_for(base: Path) -> tuple[int, ...]:
+    """Return the committed ``vintage_<year>/`` snapshot years under ``base``.
+
+    Support for the retiree vintage-status oracle (miso-188,
+    ``ScenarioConfig.retiree_vintage_status_scope``). Scans once per base
+    path; a repo with no vintage dirs yields an empty tuple (the oracle
+    then fails open — nothing is ever dropped).
+    """
+    years: list[int] = []
+    if base.exists():
+        for p in base.iterdir():
+            name = p.name
+            if p.is_dir() and name.startswith("vintage_"):
+                try:
+                    years.append(int(name.removeprefix("vintage_")))
+                except ValueError:
+                    continue
+    return tuple(sorted(years))
+
+
+def _committed_vintage_years() -> tuple[int, ...]:
+    """The committed vintage years under the canonical EIA-860 root."""
+    return _committed_vintage_years_for(_pkg_ns().EIA_860_DIR)
+
+
+@lru_cache(maxsize=None)
+def _vintage_status_index_for(
+    base: Path, vintage_year: int
+) -> dict[tuple[int, str], str] | None:
+    """Return ``{(plant_id, GENERATOR_ID): STATUS}`` from one committed
+    ``vintage_<vintage_year>/`` operable snapshot under ``base``, or
+    ``None`` when absent.
+
+    Support for the retiree vintage-status oracle (miso-188): the SAME
+    year-matched vintage record :func:`load_mothballed_but_operating`
+    already reads as its status oracle, indexed per unit. Ids are
+    normalized ``strip().upper()``.
+    """
+    path = base / f"vintage_{int(vintage_year)}" / EIA_860_PARQUET_NAME
+    if not path.exists():
+        return None
+    try:
+        df = _normalize_columns(pd.read_parquet(path))
+    except Exception:  # pragma: no cover - schema drift falls open
+        logger.warning("vintage-status index unavailable (%s); oracle open", path)
+        return None
+    if "status" not in df.columns:
+        return None
+    codes = pd.to_numeric(df["plant_id"], errors="coerce")
+    out: dict[tuple[int, str], str] = {}
+    for code, gid, st in zip(codes, df["generator_id"], df["status"]):
+        if pd.isna(code):
+            continue
+        out[(int(code), str(gid).strip().upper())] = str(st).strip().upper()
+    return out
+
+
+def _retiree_vintage_status(plant_id: int, generator_id: str, year: int) -> str | None:
+    """Latest committed vintage ≤ ``year`` status for one retiree unit.
+
+    The miso-188 oracle lookup: walk the committed vintages at or before the
+    backcast solve year, newest first, and return the first status that
+    lists ``(plant_id, generator_id)`` on its operable sheet — EIA's own
+    contemporaneous judgment of the unit closest to (and never after) the
+    solve year. ``None`` when no committed vintage lists the unit (the
+    caller fails OPEN and keeps it).
+    """
+    gid = str(generator_id).strip().upper()
+    base = _pkg_ns().EIA_860_DIR
+    for v in reversed(_committed_vintage_years_for(base)):
+        if v > int(year):
+            continue
+        idx = _vintage_status_index_for(base, v)
+        if idx is None:
+            continue
+        st = idx.get((int(plant_id), gid))
+        if st is not None:
+            return st
+    return None
+
+
 def load_retired_within_window(
     iso: str,
     iso_config: ISOConfig | None = None,
     data_dir: Path | None = None,
     year: int | None = None,
+    vintage_status_scope: bool = False,
 ) -> list[Generator]:
     """Load whole-plant exits that retired mid-backcast for an ISO.
 
@@ -1921,6 +2004,20 @@ def load_retired_within_window(
     native vintage carries its within-window exits in its own operable file and
     ships no retiree parquet, so this returns an empty list there — the operable
     fleet already has them, and injecting again would double-count.
+
+    ``vintage_status_scope`` (GATED default-off; miso-188,
+    ``ScenarioConfig.retiree_vintage_status_scope``,
+    PREREG-miso188-retiree-vintage-status-scope-2026-08-30): the channel
+    carries each unit to its FORMAL retirement month, but several plants
+    were deactivated years before their paper date and EIA's own
+    contemporaneous vintage record says so (Grand Tower 862: OS in
+    vintage_2023, CAMPD 0.0 GWh 2022–2024, yet carried in-merit Jan–Apr
+    2024). When True and ``year`` is given, a unit is dropped iff its
+    status in the latest committed vintage ≤ ``year`` whose operable sheet
+    lists it (:func:`_retiree_vintage_status`) is non-``OP``; unlisted
+    units fail OPEN (kept), so a retiree the record never marks non-OP
+    (Rush Island 6155 — OP, ran through Oct-2024) keeps its window.
+    Measured, zero fitted scalars, byte-inert while off.
     """
     iso = iso.upper()
     data_dir = active_eia860_dir() if data_dir is None else Path(data_dir)
@@ -1942,6 +2039,34 @@ def load_retired_within_window(
         return []
 
     df = df.copy()
+    if vintage_status_scope and year is not None:
+        codes = pd.to_numeric(df["plant_id"], errors="coerce")
+        keep_mask = []
+        dropped: list[tuple[int, str, str, float]] = []
+        for code, gid, cap in zip(
+            codes, df["generator_id"], df.get("net_summer_capacity_mw", codes * 0)
+        ):
+            if pd.isna(code):
+                keep_mask.append(True)
+                continue
+            st = _retiree_vintage_status(int(code), str(gid), int(year))
+            drop = st is not None and st != "OP"
+            keep_mask.append(not drop)
+            if drop:
+                dropped.append((int(code), str(gid).strip(), st, float(cap or 0.0)))
+        if dropped:
+            logger.info(
+                "retiree vintage-status scope (%s %d): dropped %d unit(s), "
+                "%.0f MW — %s",
+                iso,
+                int(year),
+                len(dropped),
+                sum(d[3] for d in dropped),
+                sorted({(d[0], d[1], d[2]) for d in dropped}),
+            )
+            df = df[pd.Series(keep_mask, index=df.index)]
+            if df.empty:
+                return []
     df["chp"] = df["plant_id"].map(_chp_by_plant(path.parent, year)).fillna("N")
     generators = _rows_to_generators(df, iso, iso_config)
     if generators:

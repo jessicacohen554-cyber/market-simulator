@@ -101,6 +101,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     coal_nameplate_summer_derate: { cell: "K", ev: "docs/handoffs/ercot-coal-nameplate-summer-derate-2026-07.md; armed on the ERCOT keeper; row split out at ercot-177 (results/calibration/FINDING-ercot177-temp-derate-refused-2026-08-07.md §5)" },
     unit_outage_lp_capacity_basis: { cell: "U" },
     unit_outage_fleet_status_scope: { cell: "." },
+    retiree_vintage_status_scope: { cell: "U" },
     wefor_residual: { cell: "K", ev: "registration only — read from the ERCOT keeper's run_config.json (0.02); no ERCOT evidence, no verdict" },
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "U" },
