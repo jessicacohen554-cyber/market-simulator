@@ -47,19 +47,19 @@
     {
       "metric": "co2",
       "year": 2023,
-      "forecast_abs_err_frac": 0.6333,
+      "forecast_abs_err_frac": 0.0118,
       "keeper_abs_err_frac": null
     },
     {
       "metric": "co2",
       "year": 2024,
-      "forecast_abs_err_frac": 0.5985,
+      "forecast_abs_err_frac": 0.0181,
       "keeper_abs_err_frac": null
     },
     {
       "metric": "co2",
       "year": 2025,
-      "forecast_abs_err_frac": 0.7711,
+      "forecast_abs_err_frac": 0.1344,
       "keeper_abs_err_frac": null
     },
     {
@@ -275,31 +275,31 @@
       },
       "co2": {
         "2023": {
-          "forecast_err": 0.6333,
-          "forecast_signed": -0.6333,
+          "forecast_err": 0.0118,
+          "forecast_signed": 0.0118,
           "keeper_backcast_err": null,
           "input_gap": null,
           "unit": "frac (|\u0394|/actual)",
-          "forecast_status": "FAIL",
-          "basis": "full-plant (bench intensities, BTM added back)"
+          "forecast_status": "PASS",
+          "basis": "full-plant (bench intensities, BTM added back); unsplit model COAL valued at the bench's actual-coal-CO2-weighted mean coal intensity (class-grain rescore)"
         },
         "2024": {
-          "forecast_err": 0.5985,
-          "forecast_signed": -0.5985,
+          "forecast_err": 0.0181,
+          "forecast_signed": -0.0181,
           "keeper_backcast_err": null,
           "input_gap": null,
           "unit": "frac (|\u0394|/actual)",
-          "forecast_status": "FAIL",
-          "basis": "full-plant (bench intensities, BTM added back)"
+          "forecast_status": "PASS",
+          "basis": "full-plant (bench intensities, BTM added back); unsplit model COAL valued at the bench's actual-coal-CO2-weighted mean coal intensity (class-grain rescore)"
         },
         "2025": {
-          "forecast_err": 0.7711,
-          "forecast_signed": -0.7711,
+          "forecast_err": 0.1344,
+          "forecast_signed": 0.1344,
           "keeper_backcast_err": null,
           "input_gap": null,
           "unit": "frac (|\u0394|/actual)",
           "forecast_status": "FAIL",
-          "basis": "full-plant (bench intensities, BTM added back)"
+          "basis": "full-plant (bench intensities, BTM added back); unsplit model COAL valued at the bench's actual-coal-CO2-weighted mean coal intensity (class-grain rescore)"
         }
       }
     },
@@ -747,7 +747,8 @@
       "2023": 288908845.0266705,
       "2024": 281955604.5400311,
       "2025": 301371082.1876773
-    }
+    },
+    "actual_basis": "CAMPD unit-level co2Mass, facility-exact EIA-860 BA crosswalk (MISO plants only; metric tonnes) \u2014 capacity-track basis, not the FC-4 eGRID basis"
   },
   "bands": {
     "thermal_gw_retired_total_frac": 0.1,
@@ -785,6 +786,40 @@
         "dispatch_nonneg": true,
         "price_finite": true,
         "n_gen": 1307
+      }
+    }
+  },
+  "rescore_co2_grain": {
+    "task": "crossover-co2-grain-repair",
+    "note": "FC-4 co2 class-grain repair (FINDING-capx-d5-crossover-co2 2026-08-30 \u00a75.1): the model's unsplit COAL family energy, dropped by the bench-intensity-key iteration, valued at the bench's actual-coal-CO2-weighted mean coal intensity. Zero solve; committed artifacts only; family volume rows and C1 records untouched.",
+    "utc": "2026-08-30T21:34:48Z",
+    "per_year": {
+      "2023": {
+        "unsplit_coal_twh": 187.628,
+        "coal_intensity_t_per_mwh": 1.0029,
+        "model_co2_mt_before": 106.962,
+        "model_co2_mt_after": 295.1394,
+        "signed_before": -0.6333,
+        "signed_after": 0.0118,
+        "status_after": "PASS"
+      },
+      "2024": {
+        "unsplit_coal_twh": 167.623,
+        "coal_intensity_t_per_mwh": 0.9891,
+        "model_co2_mt_before": 114.6909,
+        "model_co2_mt_after": 280.4922,
+        "signed_before": -0.5985,
+        "signed_after": -0.0181,
+        "status_after": "PASS"
+      },
+      "2025": {
+        "unsplit_coal_twh": 272.622,
+        "coal_intensity_t_per_mwh": 0.993,
+        "model_co2_mt_before": 68.4319,
+        "model_co2_mt_after": 339.135,
+        "signed_before": -0.7711,
+        "signed_after": 0.1344,
+        "status_after": "FAIL"
       }
     }
   }

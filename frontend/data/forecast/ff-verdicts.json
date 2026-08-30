@@ -842,7 +842,7 @@
       "status": "PASS"
      },
      {
-      "detail": "K_iso=1.5; price 2023 |68.7%|>15.0%=K1.5\u00d710% FAIL; price 2024 |41.9%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |49.2%|>15.0%=K1.5\u00d710% FAIL; co2 2024 |42.7%|>15.0%=K1.5\u00d710% FAIL; co2 2025 |51.2%|>15.0%=K1.5\u00d710% FAIL; gas_twh 2023 |19.6%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |10.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |35.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |44.1%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2025 |38.1%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |68.7%|>15.0%=K1.5\u00d710% FAIL; price 2024 |41.9%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |25.2%|>15.0%=K1.5\u00d710% FAIL; co2 2024 |23.2%|>15.0%=K1.5\u00d710% FAIL; gas_twh 2023 |19.6%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |10.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |35.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |44.1%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2025 |38.1%|>7.5%=K1.5\u00d75% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -915,8 +915,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T17:18:17Z",
-   "scored_at_sha": "67f1557422ce"
+   "scored_at_date": "2026-08-30T21:35:36Z",
+   "scored_at_sha": "74775c4d661f"
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
@@ -1019,8 +1019,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T17:18:18Z",
-   "scored_at_sha": "67f1557422ce"
+   "scored_at_date": "2026-08-30T21:35:36Z",
+   "scored_at_sha": "74775c4d661f"
   },
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
@@ -1905,7 +1905,7 @@
       "status": "PASS"
      },
      {
-      "detail": "K_iso=3.0; price 2023 |13.6%| in (10%, 30.0%] CAVEAT; price 2024 |15.3%| in (10%, 30.0%] CAVEAT; price 2025 |30.3%|>30.0%=K3.0\u00d710% FAIL; co2 2023 |63.3%|>30.0%=K3.0\u00d710% FAIL; co2 2024 |59.9%|>30.0%=K3.0\u00d710% FAIL; co2 2025 |77.1%|>30.0%=K3.0\u00d710% FAIL; gas_twh 2023 |9.5%| in (5%, 15.0%] CAVEAT; gas_twh 2024 |12.1%| in (5%, 15.0%] CAVEAT",
+      "detail": "K_iso=3.0; price 2023 |13.6%| in (10%, 30.0%] CAVEAT; price 2024 |15.3%| in (10%, 30.0%] CAVEAT; price 2025 |30.3%|>30.0%=K3.0\u00d710% FAIL; co2 2025 |13.4%| in (10%, 30.0%] CAVEAT; gas_twh 2023 |9.5%| in (5%, 15.0%] CAVEAT; gas_twh 2024 |12.1%| in (5%, 15.0%] CAVEAT",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -1978,8 +1978,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T17:18:18Z",
-   "scored_at_sha": "67f1557422ce"
+   "scored_at_date": "2026-08-30T21:35:36Z",
+   "scored_at_sha": "74775c4d661f"
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
@@ -2082,8 +2082,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T17:18:18Z",
-   "scored_at_sha": "67f1557422ce"
+   "scored_at_date": "2026-08-30T21:35:36Z",
+   "scored_at_sha": "74775c4d661f"
   },
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
@@ -3006,9 +3006,8 @@
   "provenance": {
    "cache_epoch": "07e416f3f8072e7c",
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T20:47:09Z",
-   "scored_at_sha": "8412c3f623e7",
-   "session": "capx-D14-neiso-t1x"
+   "scored_at_date": "2026-08-30T21:35:36Z",
+   "scored_at_sha": "74775c4d661f"
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
@@ -3110,8 +3109,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T17:18:18Z",
-   "scored_at_sha": "67f1557422ce"
+   "scored_at_date": "2026-08-30T21:35:36Z",
+   "scored_at_sha": "74775c4d661f"
   },
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
@@ -3902,9 +3901,8 @@
   "provenance": {
    "cache_epoch": "7323dc2ddabc95c7",
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T18:25:26Z",
-   "scored_at_sha": "3ebbd466fc4f",
-   "session": "capx-D10-nyiso-t1x"
+   "scored_at_date": "2026-08-30T21:35:36Z",
+   "scored_at_sha": "74775c4d661f"
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
@@ -4006,8 +4004,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T17:18:18Z",
-   "scored_at_sha": "67f1557422ce"
+   "scored_at_date": "2026-08-30T21:35:36Z",
+   "scored_at_sha": "74775c4d661f"
   },
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
@@ -4931,7 +4929,7 @@
       "status": "PASS"
      },
      {
-      "detail": "K_iso=3.0; price 2025 |17.2%| in (10%, 30.0%] CAVEAT; co2 2023 |45.1%|>30.0%=K3.0\u00d710% FAIL; co2 2024 |42.2%|>30.0%=K3.0\u00d710% FAIL; co2 2025 |57.3%|>30.0%=K3.0\u00d710% FAIL; coal_twh 2023 |13.0%| in (5%, 15.0%] CAVEAT; coal_twh 2024 |25.2%|>15.0%=K3.0\u00d75% FAIL",
+      "detail": "K_iso=3.0; price 2025 |17.2%| in (10%, 30.0%] CAVEAT; co2 2024 |10.3%| in (10%, 30.0%] CAVEAT; coal_twh 2023 |13.0%| in (5%, 15.0%] CAVEAT; coal_twh 2024 |25.2%|>15.0%=K3.0\u00d75% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -5004,8 +5002,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T17:18:18Z",
-   "scored_at_sha": "67f1557422ce"
+   "scored_at_date": "2026-08-30T21:35:36Z",
+   "scored_at_sha": "74775c4d661f"
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
