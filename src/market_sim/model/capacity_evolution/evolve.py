@@ -341,6 +341,21 @@ def evolve_fleet(
         reserve_price_signal_slow = _prior_attr(
             prior_results, "reserve_price_signal_slow", None
         )
+    # D12 scarcity-consistent ENTRY reserve leg (GATED entry_forward_reserve_leg,
+    # default OFF ⇒ None, byte-identical): the entering year's own expected-ORDC
+    # adder, threaded by the runner per entering year. When present it replaces
+    # BOTH of the thermal NEW-ENTRY screen's reserve tiers below (mirroring the
+    # shipped wiring, where both tiers carry the one overlay adder) — one
+    # scarcity object for the whole entry margin. The RETIREMENT screens above
+    # keep the realized pair: their energy leg is the realized year's prices
+    # too, an internally consistent backward pair (rule 19 [R-ONE-MECH]). An
+    # entering year with no captured adder falls back to the shipped realized
+    # legs — degrade-to-shipped, never a third construction.
+    entry_reserve_leg = None
+    if getattr(config, "entry_forward_reserve_leg", False):
+        entry_reserve_leg = _prior_attr(
+            prior_results, "entry_reserve_price_signal", None
+        )
     # Zonal hourly CF profiles + zone ordering for the shape-aware VRE
     # new-entry revenue (plan §6 CX-6c); None falls back to the scalar screen.
     screen_zone_names = _prior_attr(prior_results, "zone_names", None)
@@ -729,8 +744,19 @@ def evolve_fleet(
             storage_power_mw=storage_power_mw,
             deliverability_headroom=deliverability_headroom,
             thermal_as_revenue_per_mw_yr=thermal_as_revenue_per_mw_yr,
-            reserve_price_signal=reserve_price_signal,
-            reserve_price_signal_slow=reserve_price_signal_slow,
+            # D12: the entry screen's reserve legs — the entering year's own
+            # expected-ORDC adder when armed and captured (both tiers, like
+            # the shipped one-overlay wiring), else the shipped realized pair.
+            reserve_price_signal=(
+                entry_reserve_leg
+                if entry_reserve_leg is not None
+                else reserve_price_signal
+            ),
+            reserve_price_signal_slow=(
+                entry_reserve_leg
+                if entry_reserve_leg is not None
+                else reserve_price_signal_slow
+            ),
             zone_names=screen_zone_names,
             wind_cf=screen_wind_cf,
             solar_cf=screen_solar_cf,

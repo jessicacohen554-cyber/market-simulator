@@ -487,6 +487,11 @@ META_RECORD_SPEC = RecordSpec(
         # bang-bang full-cap allocation. FromConfig so the record reads the
         # SOLVED gate (FFR-3R).
         "entry_margin_exhaustion": FromConfig(cast=bool),
+        # D12 scarcity-consistent entry reserve leg: the entry screens'
+        # hourly reserve legs read the entering year's own expected-ORDC
+        # adder instead of the prior year's realized post-solve adder.
+        # FromConfig so the record reads the SOLVED gate (FFR-3R).
+        "entry_forward_reserve_leg": FromConfig(cast=bool),
         # FFR-9C R-b SMR availability-year gate (None = shipped ungated).
         "smr_available_year": FromConfig(),
         # Announced-exit verification posture (owner directive 2026-08-22).
@@ -598,6 +603,7 @@ def build_config(
     entry_pipeline_aware_signal: "bool | None" = None,
     entry_forward_expectation_signal: "bool | None" = None,
     entry_margin_exhaustion: "bool | None" = None,
+    entry_forward_reserve_leg: "bool | None" = None,
     smr_available_year: "int | None" = None,
     ptc_window: "int | str | None" = None,
     verified_announced_exits: bool = True,
@@ -865,6 +871,14 @@ def build_config(
                 # bang-bang full-cap allocation. OMIT inherits the shipped
                 # default so the control arm's cache key is untouched.
                 "entry_margin_exhaustion": entry_margin_exhaustion,
+                # D12 scarcity-consistent entry reserve leg (GATED
+                # default-off in ScenarioConfig): the entry screens' hourly
+                # reserve legs become the entering year's own expected-ORDC
+                # adder — one scarcity object per margin — instead of the
+                # prior year's realized post-solve adder. OMIT inherits the
+                # shipped default so the control arm's cache key is
+                # untouched.
+                "entry_forward_reserve_leg": entry_forward_reserve_leg,
                 # FFR-9C R-b SMR availability-year gate: when set, nuclear_smr
                 # joins the entry candidate pool only from this year (ATB
                 # costs new nuclear from 2030 only). OMIT inherits the shipped
@@ -1501,6 +1515,25 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--entry-forward-reserve-leg",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "D12 scarcity-consistent entry reserve leg MEASUREMENT arm "
+            "(docs/handoffs/FINDING-capx-d12-scarcity-basis-2026-08-30.md): "
+            "the thermal entry screens' hourly reserve legs read the "
+            "entering year's OWN expected-ORDC adder — the same instrument "
+            "invocation that priced the energy leg — instead of the prior "
+            "solved year's realized post-solve adder, so the whole margin "
+            "carries ONE scarcity object. Requires the reprice "
+            "(entry_lookahead_reprice) and screen_reserve_value_enabled. "
+            "OMIT to inherit the shipped ScenarioConfig default (GATED OFF "
+            "— this is a measurement, not an arming); "
+            "--entry-forward-reserve-leg arms the treatment and "
+            "--no-entry-forward-reserve-leg forces the control explicitly."
+        ),
+    )
+    parser.add_argument(
         "--vre-procurement-additions",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -1720,6 +1753,7 @@ def main(argv: list[str] | None = None) -> int:
         entry_pipeline_aware_signal=args.entry_pipeline_aware_signal,
         entry_forward_expectation_signal=args.entry_forward_expectation_signal,
         entry_margin_exhaustion=args.entry_margin_exhaustion,
+        entry_forward_reserve_leg=args.entry_forward_reserve_leg,
         smr_available_year=args.smr_available_year,
         ptc_window=args.ptc_window,
         verified_announced_exits=args.verified_announced_exits,

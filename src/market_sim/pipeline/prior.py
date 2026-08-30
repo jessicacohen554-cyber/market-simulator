@@ -84,6 +84,17 @@ class PriorYearResults:
     # entering year the seam never priced) keeps both allocators on their
     # bang-bang paths byte-identically.
     entry_reprice: "object | None" = None
+    # D12 scarcity-consistent ENTRY reserve leg (GATED entry_forward_reserve_leg
+    # — one (T,) array per priced entering year, rebound per entering year like
+    # entry_reprice): the entering year's own expected-ORDC adder from the same
+    # _lookahead_reprice_signal invocation that priced the entry screens'
+    # energy leg. When present, evolve_fleet threads it as BOTH of the
+    # thermal new-entry screen's reserve tiers in place of the prior year's
+    # realized adder above; the retirement screens keep the realized pair
+    # (their energy leg is realized too — an internally consistent backward
+    # pair). ``None`` (unarmed, or an entering year the seam never priced)
+    # keeps the entry screens on the shipped realized legs byte-identically.
+    entry_reserve_price_signal: "np.ndarray | None" = None
     # Zonal hourly renewable CF profiles ((n_zones, T), rows ordered as
     # ``zone_names``) so the VRE new-entry screen values a candidate's actual
     # capture shape against its build zone's prices instead of a flat mean

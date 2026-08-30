@@ -1138,6 +1138,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as
     # the field (the nyiso-119 discipline).
     "entry_margin_exhaustion",
+    # D12 scarcity-consistent entry reserve leg (GATED default-off): dropped
+    # from the hash at its False default so every pre-existing cache key is
+    # byte-stable — the off path threads the prior year's realized post-solve
+    # ORDC adder into the entry screens exactly as before, byte-identical by
+    # construction. An armed run swaps the ENTRY screens' hourly reserve legs
+    # to the entering year's own expected-ORDC adder (a different margin, so
+    # different entry decisions) and hashes distinctly. SHARED field — very
+    # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "entry_forward_reserve_leg",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1524,6 +1534,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # commit as its _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119
     # discipline). Shared field — very end, per HOUSE-3.
     "entry_margin_exhaustion": "False",
+    # Added by the D12 scarcity-basis lane WITH the field, in the same commit
+    # as its _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    # Shared field — very end, per HOUSE-3.
+    "entry_forward_reserve_leg": "False",
 }
 
 
@@ -4227,6 +4241,57 @@ class ScenarioConfig:
     # silently inert, the FFR-8A pattern). Forecast machinery only; coerced
     # off in a plain backcast alongside entry_lookahead_reprice. Default off
     # is byte-identical (the allocators' bang-bang paths are untouched).
+    entry_forward_reserve_leg: bool = False  # GATED default-OFF (D12
+    # scarcity-consistent entry reserve leg;
+    # docs/handoffs/FINDING-capx-d12-scarcity-basis-2026-08-30.md — the
+    # owner-gated successor rung the D11-R finding §4 named). The shipped
+    # thermal ENTRY margin mixes two scarcity objects in one max():
+    # sum_t max(S_next(t) - vc, r(t)) prices the energy leg on the ENTERING
+    # year's lookahead signal (base merit price + the model's own
+    # expected-ORDC adder) but floors it at r(t) = the PRIOR solved year's
+    # REALIZED post-solve ORDC adder (runner.py, the screen_reserve_value
+    # seam) — the same cross-basis mix the forward-expectation finding §4
+    # measured as a defect on the signal side, here on the margin side. After
+    # a modeled tight year the realized leg books last year's scarcity as
+    # next year's revenue floor even where the screen's own forward view says
+    # the scarcity is gone: measured on the committed dumps, the entering-2024
+    # control-state gas margins are NEGATIVE under the entering year's own
+    # expectation (gas_cc -$10.7k, gas_ct -$42.7k /MW-yr, the committed
+    # dual-replay rows) yet the shipped screen built 6 GW there, and the
+    # D11-R exhaustion arm's entering-2025 step repeats the pattern
+    # (-$118.6k/-$111.4k, 6 GW built) — the realized leg, not the market's
+    # forward story, is the sole driver of both builds, and it is why the
+    # margin-exhaustion rule's gas half is inert (D11-R §4). ARMED: the entry
+    # screens' hourly reserve legs (both tiers — synchronized and offline
+    # quick-start, mirroring the shipped wiring where both carry the overlay
+    # adder) become the entering year's OWN expected-ORDC adder from the SAME
+    # _lookahead_reprice_signal invocation that priced the energy leg — one
+    # scarcity object, so the hourly best-use value is exactly
+    # adder(t) + max(base(t) - vc, 0): the textbook expected-ORDC revenue
+    # (every MW earns the expected reserve price every hour, in merit through
+    # the energy adder, out of merit as the reserve payment — ERCOT pays
+    # RTORPA/RTOFFPA on the delivery year's reserve state, Nodal Protocols
+    # §6.5.7.5, and a developer pro-forma projects AS revenue forward, never
+    # by flooring at last year's outturn). Zero new constructions and zero
+    # fitted parameters (rule 21 [R-DOF]): the adder already exists in the
+    # seam's own call; the swap is which committed object the legs read.
+    # Composes exactly with entry_margin_exhaustion: the walk's existing
+    # r_walk = max(0, r + delta_adder) closure becomes the identity
+    # r_walk = adder_current (seed r = adder at zero additions), so the leg
+    # reprices with the walk and the gas half of the volume rule goes live —
+    # no walk code changes. RETIREMENT screens are untouched: their energy
+    # and reserve legs are BOTH the prior realized year's (an internally
+    # consistent backward pair); only the entry screens mixed bases (rule 19
+    # [R-ONE-MECH] — one scarcity object per construction). Requires
+    # entry_lookahead_reprice (the adder is the instrument's own output) and
+    # screen_reserve_value_enabled (this field re-founds that mechanism's
+    # entry leg, not adds a second one) — both refused in __post_init__
+    # rather than silently inert (the FFR-8A pattern). Forecast machinery
+    # only; coerced off in a plain backcast alongside entry_lookahead_reprice.
+    # An entering year the seam never priced (e.g. a non-unified bridge
+    # neighbour) falls back to the shipped realized leg for that year —
+    # degrade-to-shipped, never a third construction. Default off is
+    # byte-identical (the realized-leg threading is untouched).
     vre_procurement_additions_enabled: bool = False  # GATED default-OFF
     # (FFR-5E, owner decision D-18(a), sitting Addendum S.2/S.5 signed
     # 2026-08-05; design docs/handoffs/ffr-5b-procurement-channel-design-
@@ -13547,6 +13612,13 @@ class ScenarioConfig:
             # below then cannot misfire on a backcast inheriting a forecast
             # arming.
             self.entry_margin_exhaustion = False
+            # The forward reserve leg reads the reprice instrument's own
+            # expected-ORDC adder (screens-only forecast machinery — a
+            # backcast runs no capacity evolution), so it coerces off with
+            # it: same byte-stability rationale, and the requires-reprice
+            # refusal below then cannot misfire on a backcast inheriting a
+            # forecast arming.
+            self.entry_forward_reserve_leg = False
 
         # ENTRY-SIGNAL forward-expectation signal: the field re-levels the
         # lookahead reprice's OWN object; with the reprice disarmed the
@@ -13580,6 +13652,34 @@ class ScenarioConfig:
                 "(docs/FINDING-entry-signal-l1-2026-08.md §2); with the "
                 "reprice disarmed there is no repricing instrument and the "
                 "walk would silently reproduce the bang-bang allocation."
+            )
+
+        # D12 scarcity-consistent entry reserve leg: the leg IS the lookahead
+        # instrument's own expected-ORDC adder, and it re-founds the
+        # screen-reserve-value mechanism's entry half. With the reprice
+        # disarmed no adder exists; with screen_reserve_value_enabled off the
+        # entry screens carry no hourly reserve leg to re-found, and arming
+        # this field would introduce one where the posture says none — a
+        # second mechanism, not a basis swap. Both combinations are untested
+        # postures, refused rather than silently inert (the FFR-8A refusal
+        # pattern; rule 19 [R-ONE-MECH]).
+        if self.entry_forward_reserve_leg and not self.entry_lookahead_reprice:
+            raise ValueError(
+                "entry_forward_reserve_leg requires entry_lookahead_reprice: "
+                "the forward reserve leg is the lookahead instrument's own "
+                "expected-ORDC adder for the entering year "
+                "(docs/handoffs/FINDING-capx-d12-scarcity-basis-2026-08-30.md); "
+                "with the reprice disarmed the instrument never runs and "
+                "there is no adder to thread."
+            )
+        if self.entry_forward_reserve_leg and not self.screen_reserve_value_enabled:
+            raise ValueError(
+                "entry_forward_reserve_leg requires screen_reserve_value_enabled: "
+                "the field re-founds the entry screens' hourly reserve leg on "
+                "the entering year's expected-ORDC basis; with the "
+                "screen-reserve-value mechanism disarmed there is no leg to "
+                "re-found, and arming this field would introduce a second "
+                "mechanism instead of swapping the basis of the existing one."
             )
 
         # FF-1B correlated cold-event forced-outage derate: the mechanism is
