@@ -6,6 +6,27 @@ remains `2026-08-25-nyiso-155-hydro-repair` (determination **NOT-YET**, written
 explicitly on owner instruction; failing C3a-2025 −10.8 % and, via the
 silenced lone-failure guard, C3c).
 
+> **RULED 2026-08-30 — Q1: OPTION A, the winter identification intake is
+> AUTHORIZED.** Owner ruling delivered in-session (nyiso-156 continuation) on
+> this card's §5 options as presented: **"A: Authorize winter intake"** — the
+> option text named both sources: *"MyNYISO-grade access to the as-enforced
+> sub-zonal in-city commitment / AORR parameters (and/or a source splitting
+> the Capital_Hudson seam leg)"*. Execution spec, converting the ruling into
+> two legs with gates and owners:
+> `docs/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`. Q2 remains
+> dissolved as filed.
+>
+> **Correction recorded with the ruling:** §3 item 1 below repeats
+> nyiso-150 §4's *"the seam split UNIDENTIFIABLE from public data …
+> nyiso-125's rule-20 refusal, standing"*. That phrasing was STALE when
+> written: the nyiso-125 refusal was discharged on identification the same
+> day by nyiso-126 (the published NY-NJ PAR interchange percentages, zero
+> free parameters; `PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md`,
+> left owner-gated, never executed). The seam leg was therefore
+> authorization-blocked, not identification-blocked — which is exactly what
+> this ruling now unblocks. The original §3 text is preserved unedited below;
+> the spec's §0 carries the full correction.
+
 This card **supersedes the numbers** of
 `docs/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md` (filed
 against the pre-CHP, pre-hydro-repair keeper); the questions it put to the
