@@ -6,8 +6,60 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-25 (refresh #6) ·
-**HEAD at refresh:** `6af12ee` · **Owner cards A/B/C SIGNED 2026-08-25** (§3)
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-26 (refresh #7) ·
+**HEAD at refresh:** `3f7388e` · **Owner cards A/B/C SIGNED 2026-08-25** (§3)
+**Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-26.md`
+
+---
+
+## 0d. Refresh #7 (2026-08-26) — D7 LANDED; ERCOT is CALIBRATED but 2023-ONLY; D11's premise is undercut
+
+**1. D7 LANDED** (PR #4289, `ca8b749`) — the first dispatched capx lane to complete. Records-only,
+two files, no solve. It carried the NYISO re-score onto the board **with the source finding's own
+honesty note attached** (the 2026 leg was also flipped by −341.4 MW of epoch demand drift and would
+have passed by a thin +332.9 MW without the intake, so the 2,749.9 MW credit buys structural margin,
+not the sign), applied the signed card-A leg-(c) harmonisation, and carried the base-year I7
+scoring instruction into the board's prose. **It re-read NYISO's four legs against the criteria
+rather than asserting them** — including verifying full-span at the keeper's registry years — and
+**recorded the Q5 tension while leaving the verdict unmoved**, exactly as chartered.
+**NYISO's board gate now reads (a) PASS · (b) PASS · (c) fail · (d) none, `open: false`. No gate
+opened; leg (d) is byte-unchanged for all six ISOs.**
+
+**2. ERCOT IS NOW `CALIBRATED` — AND ITS KEEPER IS 2023-ONLY.** Keeper
+`2026-08-25-236-swcap-clip-k33` (−7.3 % / 0.102 / 180) scores **CALIBRATED with an EMPTY failing
+set** — the 2023 price object that card Y held open on 2026-08-24 has closed. But
+`registry/2026-08-25-236-swcap-clip-k33.json` declares **`years: [2023]`**.
+→ **Gate (a) now fails for ERCOT on TWO independent counts**: it is absent from `complete`, *and*
+§2.1b(2)(a) requires a **FULL-SPAN** keeper (rule 16), which a 2023-only run is not. **This is the
+note from refresh #6 becoming load-bearing.** A CALIBRATED determination is necessary but not
+sufficient: **declaring ERCOT `complete` would NOT open its gate (a) while the designated keeper
+covers one year.** ERCOT would need a full-span (2023–2025) keeper carrying the swcap-clip recipe
+first. That is an owner-tier sequencing point, not a director action — **Q6**.
+
+**3. D11's PREMISE IS SUBSTANTIALLY UNDERCUT by a lane I did not charter.** The ERCOT
+`entry_forward_expectation_signal` A/B (`94463db`) built and measured a **THIRD** entry-signal
+construction. Its result: P1 CONFIRMED (iron_air 3,000 MW enters all four steps), P2 CONFIRMED
+(wind 1,092.2 MW enters), but **P3 OVERSHOOT SURVIVES — terminal RM 40.38 % vs disarm 40.24 % vs
+control 25.19 %** — and its adjudication is the finding that matters:
+**"the trajectory is invariant across all three measured signal constructions and D-1's bang-bang
+volume rule owns it."** It also surfaced an unpredicted measured defect: *S_current's pro-forma tail
+and the duals' realized overlay are two different scarcity objects*, making the entering-2024
+composed level unphysical (mean −$48.22/MWh; solar capture −$185/MWh). Cell stays `O`;
+owner decides the next rung.
+→ **D11 as chartered would build a FOURTH signal construction against evidence that the signal is
+not what owns the outcome.** Its Phase 0 must now absorb this: either re-point at **D-1's bang-bang
+volume rule** (the thing measured to own the trajectory) or justify in writing why a pro-forma
+construction still earns a session. The B-C signature chartered *the object*, not a particular
+lane; re-scoping it on new measured evidence is within the director's remit and is recorded here.
+**The "two scarcity objects" defect is itself a strong candidate lane** — it is a physical-coherence
+problem in the entry screen's own inputs, not a signal-shape question.
+
+**4. Also landed:** `audit_keepers` gained **check E11 — keeper-lineage recipe fidelity over the
+full `solve_and_persist` kwarg surface**, which closes the "silently lost from the keeper lineage"
+class that the nyiso-155 hydro repair was a victim of. MISO keeper re-keyed to
+`2026-08-26-miso-187-nucavail` (NOT-YET, fuelmix + price_mean; `nuclear_unit_availability` U→K).
+CAISO's caiso-220 replay is mid-solve (checkpoints only). ercot-237 Phase-0 band-swap
+characterization is zero-solve.
 
 ---
 
@@ -152,11 +204,12 @@ the gap.
 | **D9 MISO SOCO FORECAST FALLBACK** | `ba_code="SOCO"` live only in the forecast path | QUEUED — **rides with S-123** | — | Fable | Handed in by miso-183. |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
-## 2. Backcast-track watch (last seen 2026-08-25 @ `6af12ee`, refresh #6)
+## 2. Backcast-track watch (last seen 2026-08-26 @ `3f7388e`, refresh #7)
 
 | item | state |
 |---|---|
-| Keepers (refresh #6 — **three promotions**) | **ERCOT `2026-08-25-235-2023-discrete-k24`** (NOT-YET, price_mean; **2023-ONLY**, rule-16 waiver SPENT) · CAISO `2026-08-17-caiso-200-h1-memberpanel` (unchanged) · **MISO `2026-08-25-miso-186-statusscope`** (NOT-YET, **fuelmix + price_mean** — two criteria, was C3a-2025 alone) · NEISO `2026-08-17-neiso-99-joint-p1` (unchanged) · **NYISO `2026-08-25-nyiso-155-hydro-repair`** (NOT-YET, price_mean + price_tail) · PJM `2026-08-15-pjm-162-inputclock` (unchanged) |
+| Keepers (refresh #7) | **ERCOT `2026-08-25-236-swcap-clip-k33` — CALIBRATED, empty fail set, but `years: [2023]` (2023-ONLY; see §0d.2 / Q6)** · CAISO `2026-08-17-caiso-200-h1-memberpanel` (caiso-220 replay mid-solve) · **MISO `2026-08-26-miso-187-nucavail`** (NOT-YET) · NEISO `2026-08-17-neiso-99-joint-p1` · NYISO `2026-08-25-nyiso-155-hydro-repair` (NOT-YET) · PJM `2026-08-15-pjm-162-inputclock` |
+| Keepers (refresh #6 — superseded) | **ERCOT `2026-08-25-235-2023-discrete-k24`** (NOT-YET, price_mean; **2023-ONLY**, rule-16 waiver SPENT) · CAISO `2026-08-17-caiso-200-h1-memberpanel` (unchanged) · **MISO `2026-08-25-miso-186-statusscope`** (NOT-YET, **fuelmix + price_mean** — two criteria, was C3a-2025 alone) · NEISO `2026-08-17-neiso-99-joint-p1` (unchanged) · **NYISO `2026-08-25-nyiso-155-hydro-repair`** (NOT-YET, price_mean + price_tail) · PJM `2026-08-15-pjm-162-inputclock` (unchanged) |
 | Markers / freeze | `complete` = {NEISO, NYISO, PJM}; `final` EMPTY; holdout spend freeze **ACTIVE** |
 | Gate (a) | pass on the literal test: PJM, NYISO, NEISO. fail on marker: ERCOT, CAISO, MISO. **NYISO's BASIS CHANGED** — its marker now rests on a NOT-YET keeper (§0c.2, Q5). |
 | Other refresh-#6 movement | xiso-6 opened a **DECISION CARD on the diurnal price-amplitude rubric** (a cross-ISO rubric question — watch it, it could touch six determinations). CAISO AS-revenue registry row populated (storage 14.82 $/kW-yr @ ref 5.517 GW). xiso-5/6 landed a thermal-tranche vintage sidecar + an arm-over-gap guard at the `bins_to_fleet` seam. |
@@ -182,7 +235,20 @@ Full signature record and the consequences adopted:
 **None of the four signatures** touched a backcast keeper, marker or matrix cell, lifted the
 holdout freeze, authorized a §2.1b full-solve, or opened any ISO's gate.
 
-### Q5 (NEW, refresh #6) — NYISO's `complete` marker now rests on a NOT-YET keeper
+### Q6 (NEW, refresh #7) — ERCOT is CALIBRATED but its keeper is 2023-only
+
+**PENDING — owner.** `2026-08-25-236-swcap-clip-k33` scores **CALIBRATED with an empty failing
+set**, closing the 2023 price object card Y held open two days earlier. But its registry declares
+`years: [2023]`, so gate (a) fails on **two** counts: ERCOT is absent from `complete`, and
+§2.1b(2)(a) requires a **full-span** keeper (rule 16), which this is not. **Declaring ERCOT
+`complete` would therefore NOT open its gate (a).** To convert the CALIBRATED result into forecast
+progress ERCOT needs a **full-span 2023–2025 keeper carrying the swcap-clip recipe**. Director
+recommendation: **before spending any `complete` declaration, have the ERCOT lane re-solve the
+swcap-clip recipe full-span** — the rule-16 waiver that licensed the 2023-only form was for the
+backcast lane's regime argument and was never a forecast-gate instrument. Sequencing only; no
+determination is questioned here.
+
+### Q5 (refresh #6) — NYISO's `complete` marker now rests on a NOT-YET keeper
 
 **PENDING — owner.** NYISO's keeper moved to `2026-08-25-nyiso-155-hydro-repair` (NOT-YET on
 price_mean + price_tail) and the marker was re-keyed to it, with the D-5(b) worse-determination
