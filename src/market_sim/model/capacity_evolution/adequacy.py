@@ -149,8 +149,11 @@ def resolve_hydro_capacity_credit(iso: str | None) -> float:
     reading :data:`HYDRO_ACCREDITATION_CREDIT_BY_ISO` — each ISO's published
     limited-control / run-of-river / non-dispatchable class factor (CPUC NQC
     technology factor, NYISO CAF, MISO DLOL class UCAP, PJM ELCC class
-    rating; see the constant's citation block). ISOs with no published hydro
-    class factor — and ``iso=None`` — fall back to the generic published
+    rating), or, for ISO-NE which publishes no class rating, the aggregate of
+    its own per-resource summer Seasonal Claimed Capability record over the
+    model's accreditation basis (see the constant's citation block). ISOs with
+    no published hydro accreditation — and ``iso=None`` — fall back to the
+    generic published
     class derate :data:`RENEWABLE_CAPACITY_CREDIT`\\ ["hydro"], the same
     neutral fallback every unpublished class already takes (rule 25 spirit).
     """
