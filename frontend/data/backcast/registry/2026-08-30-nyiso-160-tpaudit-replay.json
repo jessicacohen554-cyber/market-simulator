@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-30-nyiso-160-tpaudit-replay",
+  "label": "nyiso 160 tpaudit replay",
+  "date": "2026-08-30",
+  "shorthand": "nyiso-160-tpaudit-replay",
+  "definition": "nyiso-160 touchpoint-prep audit: zero-delta replay of keeper 2026-08-30-nyiso-159-loss-surface at HEAD. Leg 2 stopped with cause: owner cannot produce the MyNYISO AORR files (INTAKE-SPEC-nyiso156 \u00a72).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-30-nyiso-160-tpaudit-replay.js",
+  "bundle": "results/calibration/nyiso160_tpaudit_replay"
+}
