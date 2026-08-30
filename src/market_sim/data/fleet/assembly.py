@@ -673,6 +673,25 @@ def bins_to_fleet(
         # One bin = one plant, so the unit id is anchored on the plant
         # code; the tranche suffix keeps the four sub-generators distinct.
         bin_id = f"{group}_{zone}_p{plant_code}"
+        # Exit-cohort bin (miso-191, PREREG-miso191 §1-§2): a synthesized bin
+        # carrying its own retirement (fleet_to_bins' date-scoped cohort of
+        # leg-1 partial-exit units) keeps the `_p{plant}_` token — every
+        # plant-grain consumer still resolves the plant — and appends an
+        # `_r{yyyy}{mm}` tag so its tranches never collide with the surviving
+        # plant's. The retirement is stamped on each tranche Generator below;
+        # cod_ramp.effective_cod prefers it over the plant-collapsed date, so
+        # the cohort ages out on its real EIA-860 month. Absent (None/NaN)
+        # on every ordinary row and on the ERCOT curated-CSV path.
+        _b_ry = b.get("Retirement_Year")
+        _b_rm = b.get("Retirement_Month")
+        cohort_ry: int | None = (
+            int(_b_ry) if _b_ry is not None and not pd.isna(_b_ry) else None
+        )
+        cohort_rm: int | None = (
+            int(_b_rm) if _b_rm is not None and not pd.isna(_b_rm) else None
+        )
+        if cohort_ry is not None:
+            bin_id = f"{bin_id}_r{cohort_ry}{(cohort_rm or 12):02d}"
 
         coal_supply = ""
         if fuel == "coal":
@@ -1319,6 +1338,11 @@ def bins_to_fleet(
                     nox_rate=get_nox_rate(fuel),
                     eford=get_eford(fuel),
                     online_year=commission_year,
+                    # Exit-cohort timing (miso-191): None on ordinary bins;
+                    # on a cohort bin the unit's own EIA-860 retirement, which
+                    # effective_cod prefers over the plant-collapsed date.
+                    retirement_year=cohort_ry,
+                    retirement_month=cohort_rm,
                     is_campd_bin=True,
                     plant_group=group,
                     bin_label=label,

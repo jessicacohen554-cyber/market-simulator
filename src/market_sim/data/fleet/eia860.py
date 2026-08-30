@@ -2185,9 +2185,11 @@ def load_retired_within_window(
         if not whole.empty:
             frames.append(whole)
 
+    partial_frame: pd.DataFrame | None = None
     if partial_plant_exit_carry:
         partial = _partial_plant_exit_rows(data_dir, ba_code)
         if partial is not None and not partial.empty:
+            partial_frame = partial
             _register_partial_exit_coal_supply(partial)
             logger.info(
                 "partial-plant exit carry (%s): injecting %d unit(s), %.0f MW "
@@ -2236,6 +2238,22 @@ def load_retired_within_window(
                 return []
     df["chp"] = df["plant_id"].map(_chp_by_plant(path.parent, year)).fillna("N")
     generators = _rows_to_generators(df, iso, iso_config)
+    if partial_frame is not None:
+        # Provenance stamp for the binning-aware exit-cohort routing
+        # (miso-191, PREREG-miso191 §1-§2): mark exactly the leg-1
+        # partial-exit units, keyed the same way _rows_to_generators keys a
+        # unit (plant_code + stripped generator id), so fleet_to_bins can
+        # give them their own date-scoped bins. The whole-plant channel and
+        # everything else stays unstamped — cohort routing must not touch
+        # plants that keep their plant-collapsed COD timing.
+        _partial_keys = {
+            (int(p), str(g).strip())
+            for p, g in zip(partial_frame["plant_id"], partial_frame["generator_id"])
+        }
+        for g in generators:
+            _gid = g.unit_id.split("_", 1)[1].strip() if "_" in g.unit_id else ""
+            if (int(g.plant_code), _gid) in _partial_keys:
+                g.partial_exit_unit = True
     if generators:
         logger.info(
             "loaded %d within-window retiree units for %s (%.0f MW, plants %s)",
