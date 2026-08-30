@@ -1318,8 +1318,8 @@ workflows/CI offloading; push per CLAUDE.md Git & Pushing, blob-verify every ≥
 after push on either transport (rule 27). THE OWNER MERGES.
 
 EXIT: registration + finding + log + matrix stamp committed and pushed; report the verdict
-and the C3a movement to the owner. Your landing RELEASES lane S-6 (the director sequences
-it) — say so in your report.
+and the C3a movement to the owner. [SUPERSEDED at r#19: S-6 no longer waits on this lane —
+the owner voided the cross-session heavy-slot queue; sessions run in isolated containers.]
 ```
 
 ## T3-NEISO-GOLDEN — the FIRST §2.1b-authorized full-horizon campaign (r#17; owner ruling Q13)
@@ -1455,4 +1455,246 @@ the API first, then push); blob-verify every ≥300-line file after push (rule 2
 EXIT: docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md — the edit, the cache-key
 verification, the honest posture description with the V-2 miss, the cross-track flag, test
 results. Report to the owner; the director stamps board + ledger on its refresh.
+```
+
+## S-6 — PJM T1-F ledger run (r#19; the first supply-side measure against the corrected hold-last bar)
+
+```
+You are the S-6 PJM T1-F LEDGER RUN session of the capacity-expansion (Forecast Finalization
+Program) track. ONE five-year solve, PJM's own container. Charter: S-5 (LANDED PR #4340)
+restated PJM's I7 2030 miss 366 MW → 5,858 MW scorer-side by adopting hold-last-FPR (owner
+card C-A) and repairing the checker's year-threading — but it ran NO solve, so the SUPPLY
+side has never been measured against the corrected bar. You run the minimum solve that makes
+it observable: does 2029 actually join the fail set, and what is the true 2030 magnitude once
+the fleet responds?
+DATA PROFILE: pjm
+MODEL: Opus/Fable (rule 27). BRANCH: claude/capx-s6-pjm-ledger — fresh off origin/main
+(git fetch origin main first); check `git ls-remote --heads origin` for in-flight branches
+(expect the T3 NEISO golden and possibly others — different ISOs, different surfaces; the
+shared files you both touch are ff-verdicts.json and program-status.json on DISTINCT
+keys/blocks: rebase before pushing, never resolve another lane's block).
+
+READ FIRST: docs/handoffs/FINDING-capx-s5-pjm-horizon-edge-2026-08-30.md (the corrected bar,
+its restatement arithmetic, the 2029/30 intake pointer); FINDING-capx-s4b-neiso-ara §5.2-5.3
+(the floor-retention response pattern you may see the PJM analogue of — pre-declare it);
+the PJM block of program-status.json; docs/handoffs/FINDING-capx-d2b-i7-ledger (PJM leg).
+
+PRE-DECLARE BEFORE THE SOLVE (commit §§1-N of your finding first — the S-4b discipline):
+- The solve: MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1 \
+    python scripts/run_full_horizon.py --iso PJM --start-year 2026 --end-year 2030 \
+    --golden-posture --out-dir results/ff-t1f-s6-pjm/ledger
+  (5 solve-years — inside the §2.1b window cap, no authorization flag needed; years
+  sequential within the run, rule 12.)
+- ONE run, no control pair: nothing changed since S-5 landed at HEAD — this is the FIRST
+  measure on the corrected bar, decomposed against the COMMITTED pjm-t1f ledger (requirement
+  delta = S-5's scorer-side restatement, already quantified; what this run adds is the
+  supply-side response). Any epoch drift vs the committed bundle is decomposed and named,
+  the S-4V/NYISO-lane discipline.
+- Pre-declare directions, not targets: S-5's arithmetic says 2030 I7 ≈ −5.9 GW on a static
+  supply; the known endogenous response is reliability-floor exit retention (the S-4b
+  mirror — declare its direction, let the run measure the net); 2029 "plausibly joins" is
+  S-5's language — the run answers it. A result landing just clear of a gap is the
+  suspicious one (rule 21); an honest FAIL is a finding, not a problem.
+- I12 and the backstop row are re-read as consequences, never targets; a clearance bought
+  by backstop builds is REPORTED AS SUCH.
+
+REGISTRATION (rule 15, FORECAST namespace only): register_forecast_run.py --summary, run id
+pjm-2026-2030-s6-ledger, committing run_config.json + summary + per-year evolution +
+resolved config. Preserve-then-overwrite: the current bare pjm-t1f vintage is preserved
+under a dated suffix key before the bare key moves. Refresh the PJM board block (T1-F rows,
+fc map, gate leg (b) detail) with the S-5 restatement provenance kept verbatim; touch no
+other ISO's block.
+
+GUARDRAILS: forecast-mode 2026-2030 — no out-of-training backcast year solved, scored or
+registered (freeze TIER-SCOPED; you touch neither tier); no measured-outcome feedback (rule
+13); no config change, no new mechanism, no matrix duty (shipped defaults at golden
+posture — a config urge is a different lane); no backcast surface. No new workflows. Push
+per CLAUDE.md Git & Pushing (HTTP/1.1 retry on 408/500; if push to a new remote branch 500s
+persistently, create the branch via the API first, then push); blob-verify ≥300-line files
+(rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-s6-pjm-ledger-<date>.md — pre-declaration, the measured
+per-year I7 ledger with the supply-side decomposition vs the committed bundle, whether 2029
+joins, the true 2030 magnitude, FC re-score, registration + board confirmation. Report to
+the owner; the director stamps the ledger on its refresh.
+```
+
+## S-123-V — the MISO verification re-measure (r#19; fills S-123's §6, the lane's owed half)
+
+```
+You are the S-123-V session of the capacity-expansion (Forecast Finalization Program) track,
+completing lane S-123's owed verification half. S-123 (LANDED PRs #4397/#4398/#4402) shipped
+the three-term MISO adequacy package — S-1 PRM re-vintage 0.179→0.157, S-2 external-ZRC
++3,505.9 MW, S-3a DR fraction 0.0665940 — with pre-solve arithmetic moving the 2026 position
+−6,037.0 → +9,343.2 MW, and committed its finding with §6 "RESULTS: TBD". You run the solo
+MISO T1-F re-measure §6 pre-declares, fill it, and register. If the original S-123 session is
+still alive and mid-run, STOP at start (ls-remote + a fresh commit check) and report instead
+of duplicating.
+DATA PROFILE: miso
+MODEL: Opus/Fable (rule 27). BRANCH: claude/capx-s123v-miso-verify — fresh off origin/main;
+check `git ls-remote --heads origin` (the T3 NEISO golden and S-6 PJM may be in flight —
+different ISOs; shared-file rebase care on ff-verdicts.json / program-status.json, distinct
+keys/blocks only).
+
+READ FIRST: docs/handoffs/FINDING-capx-s123-miso-adequacy-2026-08-30.md — §6's pre-solve
+predictions ARE your pre-registration (2026 requirement 141,341.4 → 129,467.1; accredited
+135,304.4 → 138,810.3; position → +9,343.2; I7 2026 → PASS; I12 floor +0.71%, rm +7.98%
+in-band; 2027 backstop fires less or not at all). Do not restate them — run against them.
+Any HEAD demand-path drift is decomposed separately, the NYISO-lane discipline.
+
+THE RUN: MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1 \
+  python scripts/run_full_horizon.py --iso MISO --start-year 2026 --end-year 2030 \
+  --golden-posture --out-dir results/ff-t1f-s123/verify
+(5 solve-years, years sequential, rule 12; the ff-t1f-s123 slim-vs-heavy gitignore block is
+already committed.)
+
+THEN: fill §6 RESULTS in the finding (run id, cache key, wall/RSS, per-year ledger with the
+three-term intake decomposition, FC-1/FC-2 re-score); register on the FORECAST namespace
+(register_forecast_run.py --summary, run id miso-2026-2030-s123-ara... use the §4-declared id
+if the finding names one, else miso-2026-2030-s123-verify), committing run_config.json;
+preserve-then-overwrite — the current bare miso-t1f vintage preserved under a dated suffix
+key; refresh the MISO board block (FC-1 rows, I7/I12 detail, the S-123 provenance) and no
+other ISO's. An I7 that does NOT close as the arithmetic predicts is the headline, reported
+at full magnitude — never absorbed (the package is 2.5× over-determined; a miss means an
+endogenous response or a defect, and you name which).
+
+GUARDRAILS: forecast-mode 2026-2030 only; freeze TIER-SCOPED, touch neither tier; no
+measured-outcome feedback (rule 13); no config change beyond what S-123 already shipped —
+zero new values (rule 21); no backcast surface; no new workflows. Push per CLAUDE.md
+(HTTP/1.1 retry; API-create a stubborn new branch); blob-verify ≥300-line files (rule 27).
+
+EXIT: §6 filled + registration + board refresh committed and pushed; report the measured
+position table vs the §6 predictions to the owner.
+```
+
+## NEISO-RC — retirement-composition Phase-0 diagnosis (r#19; the D14 successor object, zero-solve)
+
+```
+You are the NEISO-RC PHASE-0 session of the capacity-expansion (Forecast Finalization
+Program) track. ZERO SOLVES. Object (D14, FINDING-capx-d14-neiso-t1x-2026-08-30.md): the
+first crossover window to execute in-window economic exits produced a retirement
+COMPOSITION miss — gas_cc over-retired 3.128 vs 1.884 GW actual, while biomass, coal,
+gas_ct and oil exits were missed entirely (recall 2 of 6). Your job is ATTRIBUTION from the
+committed artifacts, not repair: why does the economic screen concentrate exits in gas_cc
+and never reach the other fuels?
+DATA PROFILE: code (widen to neiso only if a required committed artifact is missing).
+MODEL: Opus/Fable (rule 27). BRANCH: claude/capx-neiso-rc-phase0 — fresh off origin/main;
+check `git ls-remote --heads origin` (the T3 NEISO golden may be in flight — it writes the
+NEISO BOARD block and t3 verdict key; you write NEITHER: finding-only lane, no shared
+surface).
+
+READ FIRST: the D14 finding (the miss, per-fuel); the committed
+neiso-2023-2027-crossover-capxd14 bundle — its evolution ledgers (exits live in TWO keys,
+`retirements` AND `confirmed_derates` — the established fact, do not re-derive it), its
+per-year screen diagnostics; model-methodology-spec.md §5.2 (the economic screen: attainable
+pro-forma inframarginal margin vs FOM-only going-forward cost, per-fuel thresholds,
+reliability floor); FINDING-capx-s4b §5.2 (the floor-retention mechanics on these exact
+gas-CC tranches).
+
+PRE-DECLARE (commit before measuring): the candidate drivers you will test, e.g. (a) the
+screen prices only classes with meaningful energy margins — small biomass/oil/ct classes
+may never clear the screen's materiality path; (b) per-fuel FOM/threshold inputs
+(gas_ct=2yr, coal=3yr etc.) vs NEISO's actual exit economics; (c) actual exits driven by
+non-economic instruments (age/permit/RMR) the forecast has no channel for — a
+REPRESENTATION gap, not a tuning gap; (d) the gas_cc over-retirement as the mirror of
+(a)-(c): the screen concentrating ALL exit pressure on the one fuel it prices richly.
+State ex ante what evidence would distinguish them.
+
+MEASURE from the committed artifacts: per-fuel, the screen's margin inputs, threshold
+verdicts and floor interactions for every actual-exit unit the model kept and every modeled
+exit the actuals kept; name each miss to a driver. The 2025 price sign-flip year (−21.8%)
+overlaps — note any coupling, chase nothing.
+
+DELIVERABLE: docs/handoffs/FINDING-capx-neiso-rc-phase0-<date>.md — the attribution table,
+the distinguished driver(s), and ROUTED repair candidates (each named with its admissibility
+under rules 13/21/23 — e.g. an announced-retirement instrument intake is rule-23
+publication-driven; a tuned threshold is refused on its face). NO mechanism change, NO
+ScenarioConfig field, NO matrix cell, NO board edit, NO verdict touch in this phase. Push
+per CLAUDE.md; blob-verify ≥300-line files (rule 27). Report to the owner; repair chartering
+is the director's next-batch decision on your finding.
+```
+
+## D16 — armed-interface mc=0 seam guard (r#19; the S-123-routed latent defect, fail-closed)
+
+```
+You are the D16 session of the capacity-expansion (Forecast Finalization Program) track.
+Object (S-123 finding §5, routed to the director 2026-08-30): in an armed-interface
+FORECAST solve year with no resolvable seam load shape (every year ≥ 2026 at HEAD),
+`inject_reference_price_mc` prices nothing and returns False, and the seam band rows keep
+the mc = 0 placeholder from `build_reference_price_node` with LIVE bounds — up to ~14.3 GW
+of free import capacity (and free export sinks) in the LP. No default or keeper config
+reaches this today; any future "arm the reference interface in forecast" experiment would
+silently solve on free seams.
+THE DIRECTOR'S MECHANISM DECISION, which you execute: FAIL CLOSED — a hard, loud refusal
+when an armed reference interface resolves no seam shape for a solve year, in the
+established fail-closed pattern (holdout_policy's precedent). The alternative (a flat
+gas × HR fallback price) is deliberately NOT built: it would synthesize a price input
+needing its own identification and matrix row (rules 5/21/28) — if a future lane wants it,
+that is its own charter. A guard that refuses is not a mechanism: no ScenarioConfig field,
+no matrix row.
+DATA PROFILE: code
+MODEL: Opus/Fable (rule 27 — src/market_sim edit). BRANCH: claude/capx-d16-seam-guard —
+fresh off origin/main; check `git ls-remote --heads origin` (no in-flight lane touches the
+seam path; the golden solves NEISO on its own checkout, unaffected).
+
+THE EDIT: at the seam where `inject_reference_price_mc` returns False for an
+armed-interface year (data/neighbor_price.py / import_nodes.py — read the actual seam
+before deciding the exact raise site), raise a hard error naming the ISO, year, and the
+unresolvable shape (and citing S-123 finding §5) INSTEAD of leaving mc=0 rows with live
+bounds. Backcast-armed years covered by the measured seam ladder are UNTOUCHED (the ladder
+displaces these rows — verify that path still passes). Regression tests: (a) trivial-case
+first (rule: 1 zone/small system) — armed interface + no shape ⇒ the refusal fires; (b)
+the ladder-covered backcast path still builds byte-identically; (c) default-OFF forecast
+path untouched. Run the repo's fast checks + the touched module's test file.
+
+GUARDRAILS: zero solves; no behavior change on ANY reachable default/keeper path (prove it
+via (b)/(c) — byte-identity where feasible); no new tunable (rule 21); no backcast surface
+beyond the untouched-path verification; docstrings per rule 11; cite [R-NO-MAGIC]/S-123 §5
+at the raise site. Push per CLAUDE.md (HTTP/1.1 retry; API-create a stubborn new branch);
+blob-verify ≥300-line files (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-d16-seam-guard-<date>.md — the raise site, the
+unreachability re-verification (the three S-123 lanes), tests. Report to the owner; the
+director stamps the ledger.
+```
+
+## D8 — forecast DOF-ledger instrument + provenance debt (r#19; FC-7's two halves; verdict re-emission DEFERRED)
+
+```
+You are the D8 session of the capacity-expansion (Forecast Finalization Program) track.
+ZERO SOLVES. FC-7 has two halves, and you build both WITHOUT re-emitting any verdict:
+(1) THE DOF-LEDGER INSTRUMENT — the program-wide gap every T1-F leg carries as its
+CAVEAT (now NEISO's ONLY caveat, so this instrument is what stands between the program's
+best ISO and a clean FC map). Build scripts/build_forecast_dof_ledger.py: for a registered
+forecast bundle (its committed run_config.json + resolved config), enumerate every free
+parameter that entered the solve with its identification source — the rule-21 keeper
+discipline, forecast-side: registry citation (constants.py/ScenarioConfig cite comments),
+derive-script provenance, or published-source intake finding. A parameter with NO
+identifiable source is listed as UNIDENTIFIED — that is the instrument's point, never
+paper over one. Emit a committed per-bundle ledger artifact (dof_ledger.json beside the
+sidecar) + a human-readable table in the finding. Generate ledgers for the LIVE t1f
+bundles (NEISO s4b-ara, NYISO, MISO, PJM — and the s6/s123v bundles if they have landed
+by your start; skip in-flight ones).
+(2) THE LEGACY PROVENANCE DEBT — the seven legacy legs tracking no run_config.json
+(FC-7 FAIL shape). For each: reconstruct the run_config from committed evidence (sidecar
+meta, resolved config, finding) where honestly recoverable — labelled RECONSTRUCTED with
+its evidence chain, never presented as original — else document IRRECOVERABLE with what
+is missing. Commit what is recoverable.
+DEFERRED, EXPLICITLY: NO FC-7 re-score, NO ff-verdicts.json write, NO board edit — three
+in-flight lanes (golden, S-6, S-123-V) are writing those files on other keys; the
+re-emission is a small follow-up the director charters once they land. Your deliverable
+is the instrument + artifacts + finding.
+DATA PROFILE: code
+MODEL: Opus/Fable (rule 27 — new scripts/ instrument). BRANCH: claude/capx-d8-dof-ledger —
+fresh off origin/main; check `git ls-remote --heads origin`.
+
+GUARDRAILS: zero solves; read-only against every model surface; no measured-outcome
+feedback (rule 13); the ledger REPORTS identification, it never supplies one (rule 21); no
+verdict/board/backcast surface; tests for the instrument (trivial fixture bundle first);
+docstrings (rule 11). Push per CLAUDE.md (HTTP/1.1 retry; API-create a stubborn new
+branch); blob-verify ≥300-line files (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-d8-dof-ledger-<date>.md — the instrument's contract, the
+per-bundle ledger tables (UNIDENTIFIED rows highlighted), the legacy-leg
+recovered/irrecoverable table, and the deferred re-emission note. Report to the owner.
 ```
