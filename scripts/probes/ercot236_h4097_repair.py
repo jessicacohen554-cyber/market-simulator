@@ -196,6 +196,14 @@ def score_point(name: str) -> dict:
     coal = coal_twh(out)
     mm_ = np.nan_to_num(m)
     aa = np.nan_to_num(a, nan=1e9)
+    # ercot-237 Amendment 1 / owner correction pass 2026-08-26: the actual
+    # band counts were hardcoded 77/43/59 (copied from the ercot-235 sweep;
+    # the >=$1,000 literal was wrong — true 2023 count 61). Derived at the
+    # single source, cross-checked against actual_tail.json [R-NO-MAGIC].
+    sys.path.insert(0, str(REPO / "scripts/probes"))
+    from ercot235_offer2023_sweep import actual_band_counts
+
+    act = actual_band_counts(a)
     # The round-3 promised max-offer report (PRECOMMIT-ercot236 §1/§4): the
     # max zonal energy lambda (price − ordc adder) and the cap-adjacent count.
     lam = pmax_z - adder
@@ -217,9 +225,9 @@ def score_point(name: str) -> dict:
         "spur_band": int(((mm_ >= 150) & (mm_ <= 500) & (aa < 150)).sum()),
         "spur_nolid": int(((mm_ >= 150) & (aa < 150)).sum()),
         "model_band_hours_vs_actual": {
-            "200_500": [int(((mm_ >= 200) & (mm_ < 500)).sum()), 77],
-            "500_1000": [int(((mm_ >= 500) & (mm_ < 1000)).sum()), 43],
-            "ge_1000": [int((mm_ >= 1000).sum()), 59],
+            "200_500": [int(((mm_ >= 200) & (mm_ < 500)).sum()), act["200_500"]],
+            "500_1000": [int(((mm_ >= 500) & (mm_ < 1000)).sum()), act["500_1000"]],
+            "ge_1000": [int((mm_ >= 1000).sum()), act["ge_1000"]],
         },
     }
     (out / "ercot236_point_score.json").write_text(json.dumps(res, indent=1))

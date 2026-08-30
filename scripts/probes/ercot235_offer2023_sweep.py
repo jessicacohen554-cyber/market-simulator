@@ -54,6 +54,37 @@ PEAK_KEYS = ("peak", "phys_peak")
 EH_KEYS = ("econ_high", "phys_econ_high")
 
 
+def actual_band_counts(a) -> dict:
+    """Actual-side 2023 RT band counts, DERIVED from the loaded actual series.
+
+    ercot-237 Amendment 1 / owner correction pass 2026-08-26: these counts
+    were previously HARDCODED here as 77/43/59 and copied into the ercot-236
+    scorer — the actual side was never computed from data, and the >=$1,000
+    literal was WRONG (true 2023 count: 61; 77+43+61 = 181). Derivation
+    replaces the literals so a stale constant cannot propagate again
+    [R-NO-MAGIC]; the band sum is cross-checked against the committed tail
+    record (frontend/data/backcast/tail/actual_tail.json, ERCOT 2023 rt_gt,
+    threshold $200) and any mismatch fails loudly rather than scoring.
+    """
+    import numpy as np
+
+    af = a[np.isfinite(a)]
+    counts = {
+        "200_500": int(((af >= 200) & (af < 500)).sum()),
+        "500_1000": int(((af >= 500) & (af < 1000)).sum()),
+        "ge_1000": int((af >= 1000).sum()),
+    }
+    tail = json.loads(
+        (REPO / "frontend/data/backcast/tail/actual_tail.json").read_text()
+    )["isos"]["ERCOT"]["2023"]
+    if sum(counts.values()) != tail["rt_gt"]:
+        raise AssertionError(
+            f"actual band counts {counts} sum to {sum(counts.values())} != "
+            f"actual_tail.json ERCOT 2023 rt_gt {tail['rt_gt']}"
+        )
+    return counts
+
+
 def scaled_ocg(k_peak: float, k_eh: float) -> dict:
     """The keeper's offer_curve_by_group with top bands scaled (all groups)."""
     rc = json.loads((KEEPER / "run_config.json").read_text())
@@ -163,10 +194,11 @@ def score_point(name: str) -> dict:
     coal_rise = coal_twh(out) - coal_twh(KEEPER)
     mm_ = np.nan_to_num(m)
     aa = np.nan_to_num(a, nan=1e9)
+    act = actual_band_counts(a)
     bands = {
-        "200_500": [int(((mm_ >= 200) & (mm_ < 500)).sum()), 77],
-        "500_1000": [int(((mm_ >= 500) & (mm_ < 1000)).sum()), 43],
-        "ge_1000": [int((mm_ >= 1000).sum()), 59],
+        "200_500": [int(((mm_ >= 200) & (mm_ < 500)).sum()), act["200_500"]],
+        "500_1000": [int(((mm_ >= 500) & (mm_ < 1000)).sum()), act["500_1000"]],
+        "ge_1000": [int((mm_ >= 1000).sum()), act["ge_1000"]],
     }
     res = {
         "point": name,
