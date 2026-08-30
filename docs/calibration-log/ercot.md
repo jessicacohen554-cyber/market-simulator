@@ -12510,3 +12510,87 @@ no derive re-run, no input change (rules 23/13); push integrity per rule
 branch, rebased fresh on main).
 
 **Next shorthand: ercot-242** (ercot-199 remains unclaimed)
+
+## ercot-242 — 2026-08-30 — PHASE-1 OF THE SCED ROOM-CONDUCT LANE EXECUTED (the ercot-241 gate's licensed round): the room-axis extension of the armed RT wall BUILT as precommitted (zero fitted scalars, parent ladders byte-identical to the frozen wall) and REJECTED-AS-ARMED on K-SPUR (74 → 75 lidless) with the officials collapsing out of PASS on the OVERSHOOT side (C3a −7.3 % → +7.6 %, C3b 0.102 → 0.256, ≥$1,000 tail 59 → 71 vs 61) and the declared reach NOT achieved — the §1.5 double-counting risk REALIZED and adjudicated STRUCTURAL: the room-conditioned offer surface is the wrong home for a position/participation-carried dependence; matrix cell minted **R**; keeper untouched; ESCALATED
+
+**Precommit `docs/PRECOMMIT-ercot242-room-axis-phase1-2026-08-30.md`**
+pushed + blob-verified (4a26a261) BEFORE any derive or solve; **no
+amendments** (two environment installs — openpyxl, tzdata — hit before any
+solve started; the declared drift-contingency control replay was never
+needed). Full record:
+`docs/FINDING-ercot242-room-axis-phase1-2026-08-30.md`; A/B
+`results/calibration/ercot242_room_ab.json`; registered
+`2026-08-30-run242-room-axis` (REJECTED PROBE — escalated; retention
+auto-pruned the superseded ex-keeper 2026-08-16-ercot213-arm-pubanchor).
+
+**Build (as declared, §1):** `derive_ercot_sced_offer_wall.py
+--room-binned` → `ercot_sced_offer_wall_roombinned.json` — (class × armed
+net-load bin × measured RTOLCAP room bin) MW-weighted spare ladders +
+per-cell ercot-181 tails, ungrouped parent ladders REPRODUCING the frozen
+stepped artifact byte-exactly on the first run (the corpus-integrity
+anchor), embedded measured hourly room-bin index (8,760 h, zero NaN), 55/64
+cells per class. New GATED default-off
+`ercot_offer_surface_cleared_share_rt_room` (+`_path`) registered in the
+cache-key tables in the same commit (pinned default key unchanged
+603c2498bf71d21d); room leg extends the RT read in
+`build_ercot_offer_surface_cleared_share_markup` (same boundary/rel/interp;
+NaN-room hours, unmeasured cells, absent years byte-identical); matrix row
++ cell line in every ISO shard; 21 trivial-case tests.
+
+**The ONE solve:** `replay_keeper` on `ercot236_k33_clip`, 2023-only,
+single delta, keeper env verified (highspy 1.15.1 / pandas 3.0.5 / pyarrow
+25.0.1). Control = the COMMITTED keeper bundle, V-0k validated zero-solve
+(officials reproduced to the digit — no drift, no control solve spent).
+
+**Result (kills the ercot-239 r2 set verbatim, vs control):** K-SHED 0 new;
+K-OFFSEASON intact (all 8 months inside +$5); K-COAL148 +0.324 TWh;
+K-CTST +0.411/+0.918 TWh; **K-SPUR FIRES** — lidless 74 → 75 (churn: 12
+new mid-band spur hours lifted to ~$170–226 against 11 dissolved by
+loose-room cells reading BELOW the year ladder; banded flat 68/68).
+Officials: C3a −7.3 % → **+7.6 %** ($59.60 → $69.18 vs $64.32 — the first
+overshoot in the lineage), C3b 0.102 → **0.256**, C3c 180 → 190 h,
+≥$1,000 59 → 71 vs actual 61, August lw $221.18 → **$265.42** vs $220.16,
+2 clip-saturated hours. Reach: 2 of 12 object hours cross the $200 census
+line (h5484 → $200.37, h5777 → $238.07 — still $300+ below their actual
+band); every other object hour +$2–37; ONE new missed hour minted (h5344:
+$200.4 → $195.7 vs actual $1,517); family 14 → 13; h2058 unmoved as
+predicted. D-4 FAIL rows inherited-identical (the keeper's own 22, none
+new); D-9/D-10 PASS.
+
+**Adjudication (FINDING §3, [R-STRUCT] applied honestly):** the structure
+case runs AGAINST the mechanism, so no gates-vs-structure defense is
+entered. Phase-0's own M-3 (paired position-fixed Δ ≈ +$0.2–0.5) says
+resources do not reprice with room; the measured tight-room elevation is
+POSITION/PARTICIPATION — and in the LP, position is endogenous: dispatch
+rides the same ladder as room tightens, so the room-conditioned offer
+STACKS the position effect twice. The solve shows it in both directions
+(at-the-wall August/tail overshoot; loose-room cells pulling mid-band
+hours down) while the object family — storage-carried per M-1 — stays
+unreached. **The room-conditioned OFFER surface is the wrong structural
+home for the measured room dependence; the dependence is an emergent
+dispatch property the LP already carries.** Cell
+`ercot_offer_surface_cleared_share_rt_room` minted **R** (rule 28(b));
+the artifact and derive mode stand as the measured record.
+
+**Outcome rule 1 executed + ESCALATION:** registered, stamped, logged;
+keeper and `config_partition` UNTOUCHED; escalated to the owner with the
+A/B table and the structure case side by side. Session recommendation: NO
+promotion; the refuted-gate deletion question (rule 26: keep the
+default-off field vs delete) is the owner's. Queue: the 11-hour conduct
+core now carries THREE offer-surface negatives (graded ladder R, room axis
+R, the ercot-161/217 closures) — any further repair direction points at
+the populations carrying the λ-band (storage conduct CLOSED per Door A/D;
+participation/commitment state), not CC/CT offer re-pricing. The FORWARD
+per-regime round (precommit §6) stays its own charter, now with this R on
+record; lane 2 (the ercot-223 release-guard exit condition, h3068) and
+lane 3 (per-rung contract generalization) remain queued, untouched this
+session.
+
+**Hygiene:** ONE armed solve; years ⊂ {2023}; no `--holdout-authorized`,
+no marker, freeze respected (rule 22); ERCOT only (rule 25); frozen
+artifacts untouched (rule 23); zero fitted scalars (rule 21); rule-15
+registration incl. rejection; parity check OK; push integrity per rule 27
+(every ≥300-line file blob-verified on push, small packs off a fresh main
+base); no workflows, no CI solves.
+
+**Next shorthand: ercot-243** (ercot-199 remains unclaimed)
