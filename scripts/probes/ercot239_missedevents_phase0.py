@@ -166,6 +166,8 @@ def _outage_legs(dates: pd.Series) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     cap = cu.drop_duplicates(["facility_id", "unit_id"])[
         ["facility_id", "unit_id", "unit_capacity_mw"]
     ]
+    cap = cap.assign(unit_id=cap["unit_id"].astype(str))
+    eo = eo.assign(unit=eo["unit"].astype(str))
     fac_mean = cap.groupby("facility_id")["unit_capacity_mw"].mean()
     eo = eo.merge(
         cap,
@@ -265,10 +267,89 @@ def main() -> None:
     rf = pd.read_parquet(KEEPER_BUNDLE / "hourly" / "reserve_family_2023.parquet")
     rf = rf[(rf["year"] == 2023) & (rf["pass"] == "P1")]
 
+    # M-2 context (percentile framings of the same declared artifacts): the
+    # sidecar rtordpa_overlay column and the reserve-family base rates that
+    # make the per-hour reserve state interpretable.
+    sys_df = pd.read_parquet(KEEPER_BUNDLE / "hourly" / "system_2023.parquet")
+    sys_df = sys_df[(sys_df["year"] == 2023) & (sys_df["pass"] == "P1")]
+    rto = np.nan_to_num(
+        sys_df.groupby("hour")["rtordpa_overlay"].max().reindex(range(8760)).to_numpy(float)
+    ) if "rtordpa_overlay" in sys_df.columns else np.zeros(8760)
+    fam_wide = {
+        fam: g.set_index("hour").reindex(range(8760))
+        for fam, g in rf.groupby("family")
+    }
+    rp_sum = np.zeros(8760)
+    fam_base = {}
+    for fam, g in fam_wide.items():
+        dual = np.nan_to_num(g["dual"].to_numpy(float))
+        rp_sum += dual
+        fam_base[fam] = {
+            "hours_dual_ge_800": int((dual >= 800.0).sum()),
+            "hours_dual_ge_100": int((dual >= 100.0).sum()),
+            "hours_shortfall_pos": int(
+                (np.nan_to_num(g["shortfall_mw"].to_numpy(float)) > 0).sum()
+            ),
+        }
+    actual_ge_500 = np.where(a >= 500.0)[0]
+    ev_hours = np.array(EXPECT_HOURS)
+    context = {
+        "rtordpa_overlay": {
+            "nonzero_hours": int((rto > 0).sum()),
+            "max": round(float(rto.max()), 2),
+            "at_event_hours": {int(h): round(float(rto[h]), 2) for h in EXPECT_HOURS},
+        },
+        "family_base_rates": fam_base,
+        "reserve_price_sum_base": {
+            "hours_ge_833": int((rp_sum >= 833.0).sum()),
+            "hours_ge_1600": int((rp_sum >= 1600.0).sum()),
+            "hours_ge_2500": int((rp_sum >= 2500.0).sum()),
+            "ge_1600_with_actual_ge_500": int(
+                len(np.intersect1d(np.where(rp_sum >= 1600.0)[0], actual_ge_500))
+            ),
+            "ge_1600_in_event_family": int(
+                len(np.intersect1d(np.where(rp_sum >= 1600.0)[0], ev_hours))
+            ),
+        },
+        "ordc_total_held_pctl_year": {
+            int(h): _pctl(
+                np.nan_to_num(
+                    fam_wide["ercot_ordc_total"]["held_mw"].to_numpy(float)
+                ),
+                float(fam_wide["ercot_ordc_total"]["held_mw"].iloc[h]),
+            )
+            for h in EXPECT_HOURS
+            if "ercot_ordc_total" in fam_wide
+        },
+        "gap_base_rates_mw": {
+            "demand_gap_mean": round(float(np.mean(act_d - mdl["demand"])), 0),
+            "demand_gap_p50": round(float(np.median(act_d - mdl["demand"])), 0),
+            "wind_gap_mean": round(
+                float(np.mean(mdl["wind"] - np.nan_to_num(act_w))), 0
+            ),
+            "solar_gap_mean": round(
+                float(np.mean(mdl["solar"] - np.nan_to_num(act_s))), 0
+            ),
+            "netload_gap_mean": round(float(np.mean(act_nl - mdl_nl)), 0),
+            "netload_gap_p90": round(
+                float(np.percentile(act_nl - mdl_nl, 90)), 0
+            ),
+        },
+    }
+
     rows = []
     for h in EXPECT_HOURS:
         day = int(h // 24)
         fam = rf[rf["hour"] == h]
+        fam_rows = {
+            r["family"]: {
+                "dual": round(float(r["dual"]), 2),
+                "req": round(float(r["requirement_mw"]), 0),
+                "held": round(float(r["held_mw"]), 0),
+                "short": round(float(r["shortfall_mw"]), 0),
+            }
+            for _, r in fam.iterrows()
+        }
         gap = float(act_nl[h] - mdl_nl[h])
         comp = {
             "demand": float(act_d[h] - mdl["demand"][h]),
@@ -333,6 +414,8 @@ def main() -> None:
                     "max_family_dual": round(float(fam["dual"].max()), 2)
                     if len(fam)
                     else 0.0,
+                    "families": fam_rows,
+                    "rtordpa_overlay": round(float(rto[h]), 2),
                 },
                 "netload_gap_mw": round(gap, 0),
                 "gap_components_mw": {k: round(v, 0) for k, v in comp.items()},
@@ -407,6 +490,7 @@ def main() -> None:
             "short_outage_mw": SHORT_OUTAGE_MW,
             "tie_export_mw": TIE_EXPORT_MW,
         },
+        "context": context,
         "rows": rows,
         "driver_counts": {
             "netload_gap": n_gap,

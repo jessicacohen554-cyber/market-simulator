@@ -1,0 +1,1381 @@
+{
+ "session": "ercot-239",
+ "keeper": "2026-08-25-236-swcap-clip-k33",
+ "precommit": "docs/PRECOMMIT-ercot239-missedevents-phase0-2026-08-30.md",
+ "v0_identity": {
+  "hours": [
+   2058,
+   2971,
+   4578,
+   4623,
+   4626,
+   5369,
+   5484,
+   5777,
+   5943,
+   5945,
+   6399,
+   7001,
+   7145,
+   7480
+  ],
+  "pass": true
+ },
+ "alignment_lag_corr": {
+  "-2": 0.9489,
+  "-1": 0.9863,
+  "0": 0.9997,
+  "1": 0.9865,
+  "2": 0.9493
+ },
+ "conventions": {
+  "interchange_sign": "EIA-930: positive = net exports",
+  "tie_columns": "CEN/CFE/SWPP = interchange with that BA, positive = export",
+  "outage_leg_i": "campd-unit-outages.csv duration_days >= 5, date-grain start <= d <= end; approximation to the solve derate input (before fleet matching)",
+  "outage_leg_ii": "ercot-outages.csv all durations, naive-local hour stamps, coverage start <= ts <= stop; capacity via (facility_id, unit_id) exact join else facility mean (estimated)"
+ },
+ "outage_join_stats": {
+  "events_2023": 2463,
+  "joined_exact": 116,
+  "joined_facility_mean": 445,
+  "unjoined": 1902
+ },
+ "attribution_thresholds": {
+  "netload_gap_mw": 1500.0,
+  "ramp_pctl_month": 90.0,
+  "outage_pctl_year": 90.0,
+  "short_outage_mw": 1000.0,
+  "tie_export_mw": 300.0
+ },
+ "context": {
+  "rtordpa_overlay": {
+   "nonzero_hours": 988,
+   "max": 2113.65,
+   "at_event_hours": {
+    "2058": 4.22,
+    "2971": 2.77,
+    "4578": 1.82,
+    "4623": 0.0,
+    "4626": 0.0,
+    "5369": 0.0,
+    "5484": 0.0,
+    "5777": 0.0,
+    "5943": 2.49,
+    "5945": 5.44,
+    "6399": 0.0,
+    "7001": 0.33,
+    "7145": 0.0,
+    "7480": 0.0
+   }
+  },
+  "family_base_rates": {
+   "ECRS_withheld": {
+    "hours_dual_ge_800": 85,
+    "hours_dual_ge_100": 112,
+    "hours_shortfall_pos": 11
+   },
+   "NonSpin": {
+    "hours_dual_ge_800": 90,
+    "hours_dual_ge_100": 118,
+    "hours_shortfall_pos": 117
+   },
+   "RRS_withheld": {
+    "hours_dual_ge_800": 90,
+    "hours_dual_ge_100": 118,
+    "hours_shortfall_pos": 9
+   },
+   "RegUp_withheld": {
+    "hours_dual_ge_800": 90,
+    "hours_dual_ge_100": 118,
+    "hours_shortfall_pos": 12
+   },
+   "ercot_ordc_total": {
+    "hours_dual_ge_800": 7,
+    "hours_dual_ge_100": 37,
+    "hours_shortfall_pos": 573
+   }
+  },
+  "reserve_price_sum_base": {
+   "hours_ge_833": 117,
+   "hours_ge_1600": 116,
+   "hours_ge_2500": 90,
+   "ge_1600_with_actual_ge_500": 66,
+   "ge_1600_in_event_family": 3
+  },
+  "ordc_total_held_pctl_year": {
+   "2058": 1.0,
+   "2971": 2.3,
+   "4578": 1.1,
+   "4623": 5.0,
+   "4626": 5.0,
+   "5369": 2.8,
+   "5484": 2.4,
+   "5777": 0.9,
+   "5943": 3.1,
+   "5945": 2.4,
+   "6399": 1.4,
+   "7001": 15.3,
+   "7145": 91.9,
+   "7480": 1.9
+  },
+  "gap_base_rates_mw": {
+   "demand_gap_mean": 98.0,
+   "demand_gap_p50": 29.0,
+   "wind_gap_mean": -72.0,
+   "solar_gap_mean": 93.0,
+   "netload_gap_mean": 118.0,
+   "netload_gap_p90": 1437.0
+  }
+ },
+ "rows": [
+  {
+   "h": 2058,
+   "month": 3,
+   "hod": 18,
+   "model": 75.9,
+   "actual": 742.24,
+   "actual_side": {
+    "demand": 45991.0,
+    "wind": 6560.0,
+    "solar": 566.0,
+    "net_load": 38865.0,
+    "ramp1": 1020.0,
+    "ramp3": 4872.0,
+    "interchange": -786.0,
+    "ties": {
+     "CEN": -191.0,
+     "SWPP": -596.0
+    },
+    "net_load_pctl_year": 66.3,
+    "net_load_pctl_peers": 90.3,
+    "ramp3_pctl_month": 84.7
+   },
+   "model_side": {
+    "demand": 45205.0,
+    "wind": 6416.0,
+    "solar": 774.0,
+    "net_load": 38015.0,
+    "thermal": 32672.0,
+    "thermal_pctl_month": 98.7,
+    "storage_net": 901.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 2525.68,
+    "ordc_adder": 25.44,
+    "reserve_shortfall_mw": 4353.4,
+    "max_family_dual": 833.33,
+    "families": {
+     "RegUp_withheld": {
+      "dual": 833.33,
+      "req": 409.0,
+      "held": 409.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": 833.33,
+      "req": 1203.0,
+      "held": 1203.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 0.0,
+      "held": 0.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": 833.33,
+      "req": 4015.0,
+      "held": 3217.0,
+      "short": 798.0
+     },
+     "ercot_ordc_total": {
+      "dual": 25.68,
+      "req": 8384.0,
+      "held": 4828.0,
+      "short": 3555.0
+     }
+    },
+    "rtordpa_overlay": 4.22
+   },
+   "netload_gap_mw": 850.0,
+   "gap_components_mw": {
+    "demand": 786.0,
+    "wind": -144.0,
+    "solar": 208.0
+   },
+   "outage": {
+    "overlay_daily_mw": 24028.0,
+    "overlay_daily_pctl_year": 99.2,
+    "hourly_all_mw": 2292.0,
+    "hourly_all_pctl_year": 94.4,
+    "hourly_short_mw": 0.0
+   },
+   "drivers": [
+    "outage"
+   ]
+  },
+  {
+   "h": 2971,
+   "month": 5,
+   "hod": 19,
+   "model": 35.36,
+   "actual": 685.6,
+   "actual_side": {
+    "demand": 52693.0,
+    "wind": 10591.0,
+    "solar": 279.0,
+    "net_load": 41823.0,
+    "ramp1": 2953.0,
+    "ramp3": 6662.0,
+    "interchange": -218.0,
+    "ties": {
+     "CEN": 0.0,
+     "SWPP": -218.0
+    },
+    "net_load_pctl_year": 73.8,
+    "net_load_pctl_peers": 51.6,
+    "ramp3_pctl_month": 91.7
+   },
+   "model_side": {
+    "demand": 52475.0,
+    "wind": 11354.0,
+    "solar": 265.0,
+    "net_load": 40856.0,
+    "thermal": 35893.0,
+    "thermal_pctl_month": 74.6,
+    "storage_net": 1009.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 2.51,
+    "ordc_adder": 2.5,
+    "reserve_shortfall_mw": 2598.8,
+    "max_family_dual": 2.51,
+    "families": {
+     "RegUp_withheld": {
+      "dual": -0.0,
+      "req": 188.0,
+      "held": 389.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": -0.0,
+      "req": 900.0,
+      "held": 900.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 0.0,
+      "held": 0.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": -0.0,
+      "req": 4699.0,
+      "held": 4699.0,
+      "short": 0.0
+     },
+     "ercot_ordc_total": {
+      "dual": 2.51,
+      "req": 8587.0,
+      "held": 5988.0,
+      "short": 2599.0
+     }
+    },
+    "rtordpa_overlay": 2.77
+   },
+   "netload_gap_mw": 967.0,
+   "gap_components_mw": {
+    "demand": 218.0,
+    "wind": 763.0,
+    "solar": -14.0
+   },
+   "outage": {
+    "overlay_daily_mw": 13424.0,
+    "overlay_daily_pctl_year": 66.8,
+    "hourly_all_mw": 856.0,
+    "hourly_all_pctl_year": 64.7,
+    "hourly_short_mw": 856.0
+   },
+   "drivers": [
+    "ramp"
+   ]
+  },
+  {
+   "h": 4578,
+   "month": 7,
+   "hod": 18,
+   "model": 175.41,
+   "actual": 2014.26,
+   "actual_side": {
+    "demand": 76446.0,
+    "wind": 9831.0,
+    "solar": 3633.0,
+    "net_load": 62982.0,
+    "ramp1": 1377.0,
+    "ramp3": 1110.0,
+    "interchange": -724.0,
+    "ties": {
+     "CEN": 90.0,
+     "SWPP": -814.0
+    },
+    "net_load_pctl_year": 98.1,
+    "net_load_pctl_peers": 89.2,
+    "ramp3_pctl_month": 51.6
+   },
+   "model_side": {
+    "demand": 75722.0,
+    "wind": 9727.0,
+    "solar": 4403.0,
+    "net_load": 61592.0,
+    "thermal": 55574.0,
+    "thermal_pctl_month": 97.3,
+    "storage_net": 183.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 3341.88,
+    "ordc_adder": 8.27,
+    "reserve_shortfall_mw": 3814.8,
+    "max_family_dual": 833.33,
+    "families": {
+     "RegUp_withheld": {
+      "dual": 833.33,
+      "req": 319.0,
+      "held": 319.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": 833.33,
+      "req": 1214.0,
+      "held": 1214.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": 833.33,
+      "req": 1490.0,
+      "held": 1490.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": 833.33,
+      "req": 2586.0,
+      "held": 1883.0,
+      "short": 703.0
+     },
+     "ercot_ordc_total": {
+      "dual": 8.55,
+      "req": 8017.0,
+      "held": 4905.0,
+      "short": 3112.0
+     }
+    },
+    "rtordpa_overlay": 1.82
+   },
+   "netload_gap_mw": 1390.0,
+   "gap_components_mw": {
+    "demand": 724.0,
+    "wind": -104.0,
+    "solar": 770.0
+   },
+   "outage": {
+    "overlay_daily_mw": 1809.0,
+    "overlay_daily_pctl_year": 13.2,
+    "hourly_all_mw": 0.0,
+    "hourly_all_pctl_year": 41.0,
+    "hourly_short_mw": 0.0
+   },
+   "drivers": [
+    "UNATTRIBUTED"
+   ]
+  },
+  {
+   "h": 4623,
+   "month": 7,
+   "hod": 15,
+   "model": 49.94,
+   "actual": 624.93,
+   "actual_side": {
+    "demand": 81125.0,
+    "wind": 13628.0,
+    "solar": 11029.0,
+    "net_load": 56468.0,
+    "ramp1": 1686.0,
+    "ramp3": 7395.0,
+    "interchange": -743.0,
+    "ties": {
+     "CEN": 0.0,
+     "SWPP": -743.0
+    },
+    "net_load_pctl_year": 92.2,
+    "net_load_pctl_peers": 45.2,
+    "ramp3_pctl_month": 84.8
+   },
+   "model_side": {
+    "demand": 80382.0,
+    "wind": 13796.0,
+    "solar": 11384.0,
+    "net_load": 55203.0,
+    "thermal": 49544.0,
+    "thermal_pctl_month": 75.7,
+    "storage_net": 343.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 0.0,
+    "ordc_adder": 0.0,
+    "reserve_shortfall_mw": 364.4,
+    "max_family_dual": 0.0,
+    "families": {
+     "RegUp_withheld": {
+      "dual": -0.0,
+      "req": 281.0,
+      "held": 1782.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": -0.0,
+      "req": 1163.0,
+      "held": 1163.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 1508.0,
+      "held": 1508.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": -0.0,
+      "req": 2825.0,
+      "held": 2980.0,
+      "short": 0.0
+     },
+     "ercot_ordc_total": {
+      "dual": 0.0,
+      "req": 7797.0,
+      "held": 7433.0,
+      "short": 364.0
+     }
+    },
+    "rtordpa_overlay": 0.0
+   },
+   "netload_gap_mw": 1265.0,
+   "gap_components_mw": {
+    "demand": 743.0,
+    "wind": 168.0,
+    "solar": 355.0
+   },
+   "outage": {
+    "overlay_daily_mw": 1510.0,
+    "overlay_daily_pctl_year": 11.2,
+    "hourly_all_mw": 0.0,
+    "hourly_all_pctl_year": 41.0,
+    "hourly_short_mw": 0.0
+   },
+   "drivers": [
+    "UNATTRIBUTED"
+   ]
+  },
+  {
+   "h": 4626,
+   "month": 7,
+   "hod": 18,
+   "model": 58.07,
+   "actual": 594.8,
+   "actual_side": {
+    "demand": 78857.0,
+    "wind": 17278.0,
+    "solar": 4474.0,
+    "net_load": 57105.0,
+    "ramp1": 1592.0,
+    "ramp3": 637.0,
+    "interchange": -651.0,
+    "ties": {
+     "CEN": 161.0,
+     "SWPP": -812.0
+    },
+    "net_load_pctl_year": 92.8,
+    "net_load_pctl_peers": 36.6,
+    "ramp3_pctl_month": 47.2
+   },
+   "model_side": {
+    "demand": 78206.0,
+    "wind": 16914.0,
+    "solar": 4335.0,
+    "net_load": 56957.0,
+    "thermal": 51174.0,
+    "thermal_pctl_month": 83.1,
+    "storage_net": 316.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 0.01,
+    "ordc_adder": 0.01,
+    "reserve_shortfall_mw": 648.1,
+    "max_family_dual": 0.01,
+    "families": {
+     "RegUp_withheld": {
+      "dual": -0.0,
+      "req": 325.0,
+      "held": 1193.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": -0.0,
+      "req": 1239.0,
+      "held": 2132.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 1519.0,
+      "held": 1519.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": -0.0,
+      "req": 2586.0,
+      "held": 2586.0,
+      "short": 0.0
+     },
+     "ercot_ordc_total": {
+      "dual": 0.01,
+      "req": 8078.0,
+      "held": 7430.0,
+      "short": 648.0
+     }
+    },
+    "rtordpa_overlay": 0.0
+   },
+   "netload_gap_mw": 148.0,
+   "gap_components_mw": {
+    "demand": 651.0,
+    "wind": -364.0,
+    "solar": -139.0
+   },
+   "outage": {
+    "overlay_daily_mw": 1510.0,
+    "overlay_daily_pctl_year": 11.2,
+    "hourly_all_mw": 765.0,
+    "hourly_all_pctl_year": 64.1,
+    "hourly_short_mw": 765.0
+   },
+   "drivers": [
+    "UNATTRIBUTED"
+   ]
+  },
+  {
+   "h": 5369,
+   "month": 8,
+   "hod": 17,
+   "model": 78.44,
+   "actual": 676.07,
+   "actual_side": {
+    "demand": 83120.0,
+    "wind": 13208.0,
+    "solar": 7967.0,
+    "net_load": 61945.0,
+    "ramp1": 820.0,
+    "ramp3": 1115.0,
+    "interchange": -815.0,
+    "ties": {
+     "CEN": -1.0,
+     "SWPP": -815.0
+    },
+    "net_load_pctl_year": 97.4,
+    "net_load_pctl_peers": 29.0,
+    "ramp3_pctl_month": 55.1
+   },
+   "model_side": {
+    "demand": 82305.0,
+    "wind": 13170.0,
+    "solar": 8662.0,
+    "net_load": 60473.0,
+    "thermal": 55071.0,
+    "thermal_pctl_month": 76.9,
+    "storage_net": 71.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 0.15,
+    "ordc_adder": 0.14,
+    "reserve_shortfall_mw": 1366.3,
+    "max_family_dual": 0.15,
+    "families": {
+     "RegUp_withheld": {
+      "dual": -0.0,
+      "req": 289.0,
+      "held": 587.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": -0.0,
+      "req": 1116.0,
+      "held": 2023.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 1516.0,
+      "held": 1516.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": -0.0,
+      "req": 1923.0,
+      "held": 2139.0,
+      "short": 0.0
+     },
+     "ercot_ordc_total": {
+      "dual": 0.15,
+      "req": 7632.0,
+      "held": 6266.0,
+      "short": 1366.0
+     }
+    },
+    "rtordpa_overlay": 0.0
+   },
+   "netload_gap_mw": 1472.0,
+   "gap_components_mw": {
+    "demand": 815.0,
+    "wind": -38.0,
+    "solar": 695.0
+   },
+   "outage": {
+    "overlay_daily_mw": 2234.0,
+    "overlay_daily_pctl_year": 18.1,
+    "hourly_all_mw": 0.0,
+    "hourly_all_pctl_year": 41.0,
+    "hourly_short_mw": 0.0
+   },
+   "drivers": [
+    "UNATTRIBUTED"
+   ]
+  },
+  {
+   "h": 5484,
+   "month": 8,
+   "hod": 12,
+   "model": 166.75,
+   "actual": 549.51,
+   "actual_side": {
+    "demand": 78761.0,
+    "wind": 3152.0,
+    "solar": 12948.0,
+    "net_load": 62661.0,
+    "ramp1": 5899.0,
+    "ramp3": 21134.0,
+    "interchange": -815.0,
+    "ties": {
+     "CEN": 0.0,
+     "SWPP": -815.0
+    },
+    "net_load_pctl_year": 97.9,
+    "net_load_pctl_peers": 87.1,
+    "ramp3_pctl_month": 100.0
+   },
+   "model_side": {
+    "demand": 77946.0,
+    "wind": 3752.0,
+    "solar": 12220.0,
+    "net_load": 61973.0,
+    "thermal": 56533.0,
+    "thermal_pctl_month": 86.2,
+    "storage_net": 12.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 0.65,
+    "ordc_adder": 0.63,
+    "reserve_shortfall_mw": 1925.7,
+    "max_family_dual": 0.65,
+    "families": {
+     "RegUp_withheld": {
+      "dual": -0.0,
+      "req": 339.0,
+      "held": 339.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": -0.0,
+      "req": 930.0,
+      "held": 1891.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 1322.0,
+      "held": 1338.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": -0.0,
+      "req": 2442.0,
+      "held": 2442.0,
+      "short": 0.0
+     },
+     "ercot_ordc_total": {
+      "dual": 0.65,
+      "req": 7935.0,
+      "held": 6009.0,
+      "short": 1926.0
+     }
+    },
+    "rtordpa_overlay": 0.0
+   },
+   "netload_gap_mw": 688.0,
+   "gap_components_mw": {
+    "demand": 815.0,
+    "wind": 600.0,
+    "solar": -728.0
+   },
+   "outage": {
+    "overlay_daily_mw": 1234.0,
+    "overlay_daily_pctl_year": 7.7,
+    "hourly_all_mw": 0.0,
+    "hourly_all_pctl_year": 41.0,
+    "hourly_short_mw": 0.0
+   },
+   "drivers": [
+    "ramp"
+   ]
+  },
+  {
+   "h": 5777,
+   "month": 8,
+   "hod": 17,
+   "model": 91.5,
+   "actual": 538.94,
+   "actual_side": {
+    "demand": 74351.0,
+    "wind": 6367.0,
+    "solar": 7662.0,
+    "net_load": 60322.0,
+    "ramp1": 788.0,
+    "ramp3": 2079.0,
+    "interchange": -814.0,
+    "ties": {
+     "CEN": 0.0,
+     "SWPP": -814.0
+    },
+    "net_load_pctl_year": 96.1,
+    "net_load_pctl_peers": 16.1,
+    "ramp3_pctl_month": 62.5
+   },
+   "model_side": {
+    "demand": 73537.0,
+    "wind": 6302.0,
+    "solar": 7536.0,
+    "net_load": 59699.0,
+    "thermal": 54279.0,
+    "thermal_pctl_month": 73.4,
+    "storage_net": 0.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 1675.22,
+    "ordc_adder": 8.41,
+    "reserve_shortfall_mw": 3405.3,
+    "max_family_dual": 416.67,
+    "families": {
+     "RegUp_withheld": {
+      "dual": 416.67,
+      "req": 299.0,
+      "held": 299.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": 416.67,
+      "req": 1204.0,
+      "held": 1204.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": 416.67,
+      "req": 1571.0,
+      "held": 1571.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": 416.67,
+      "req": 1923.0,
+      "held": 1614.0,
+      "short": 309.0
+     },
+     "ercot_ordc_total": {
+      "dual": 8.55,
+      "req": 7785.0,
+      "held": 4689.0,
+      "short": 3097.0
+     }
+    },
+    "rtordpa_overlay": 0.0
+   },
+   "netload_gap_mw": 623.0,
+   "gap_components_mw": {
+    "demand": 814.0,
+    "wind": -65.0,
+    "solar": -126.0
+   },
+   "outage": {
+    "overlay_daily_mw": 1942.0,
+    "overlay_daily_pctl_year": 13.7,
+    "hourly_all_mw": 622.0,
+    "hourly_all_pctl_year": 57.4,
+    "hourly_short_mw": 622.0
+   },
+   "drivers": [
+    "UNATTRIBUTED"
+   ]
+  },
+  {
+   "h": 5943,
+   "month": 9,
+   "hod": 15,
+   "model": 64.79,
+   "actual": 536.53,
+   "actual_side": {
+    "demand": 81671.0,
+    "wind": 8212.0,
+    "solar": 12201.0,
+    "net_load": 61258.0,
+    "ramp1": 1405.0,
+    "ramp3": 5534.0,
+    "interchange": -815.0,
+    "ties": {
+     "CEN": 0.0,
+     "SWPP": -814.0
+    },
+    "net_load_pctl_year": 96.9,
+    "net_load_pctl_peers": 80.0,
+    "ramp3_pctl_month": 79.3
+   },
+   "model_side": {
+    "demand": 80856.0,
+    "wind": 8299.0,
+    "solar": 12237.0,
+    "net_load": 60320.0,
+    "thermal": 54480.0,
+    "thermal_pctl_month": 94.3,
+    "storage_net": 388.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 0.07,
+    "ordc_adder": 0.06,
+    "reserve_shortfall_mw": 1289.5,
+    "max_family_dual": 0.07,
+    "families": {
+     "RegUp_withheld": {
+      "dual": -0.0,
+      "req": 284.0,
+      "held": 284.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": -0.0,
+      "req": 1180.0,
+      "held": 2381.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 1569.0,
+      "held": 1569.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": -0.0,
+      "req": 2242.0,
+      "held": 2242.0,
+      "short": 0.0
+     },
+     "ercot_ordc_total": {
+      "dual": 0.07,
+      "req": 7766.0,
+      "held": 6476.0,
+      "short": 1289.0
+     }
+    },
+    "rtordpa_overlay": 2.49
+   },
+   "netload_gap_mw": 938.0,
+   "gap_components_mw": {
+    "demand": 815.0,
+    "wind": 87.0,
+    "solar": 36.0
+   },
+   "outage": {
+    "overlay_daily_mw": 844.0,
+    "overlay_daily_pctl_year": 2.2,
+    "hourly_all_mw": 0.0,
+    "hourly_all_pctl_year": 41.0,
+    "hourly_short_mw": 0.0
+   },
+   "drivers": [
+    "UNATTRIBUTED"
+   ]
+  },
+  {
+   "h": 5945,
+   "month": 9,
+   "hod": 17,
+   "model": 125.34,
+   "actual": 843.08,
+   "actual_side": {
+    "demand": 79939.0,
+    "wind": 9781.0,
+    "solar": 7621.0,
+    "net_load": 62537.0,
+    "ramp1": 675.0,
+    "ramp3": 2684.0,
+    "interchange": -808.0,
+    "ties": {
+     "CEN": 6.0,
+     "SWPP": -814.0
+    },
+    "net_load_pctl_year": 97.9,
+    "net_load_pctl_peers": 82.2,
+    "ramp3_pctl_month": 62.9
+   },
+   "model_side": {
+    "demand": 79131.0,
+    "wind": 10072.0,
+    "solar": 7509.0,
+    "net_load": 61550.0,
+    "thermal": 55986.0,
+    "thermal_pctl_month": 96.0,
+    "storage_net": 78.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 0.31,
+    "ordc_adder": 0.3,
+    "reserve_shortfall_mw": 1804.4,
+    "max_family_dual": 0.31,
+    "families": {
+     "RegUp_withheld": {
+      "dual": -0.0,
+      "req": 343.0,
+      "held": 383.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": -0.0,
+      "req": 1120.0,
+      "held": 1120.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 1151.0,
+      "held": 1151.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": -0.0,
+      "req": 2053.0,
+      "held": 3374.0,
+      "short": 0.0
+     },
+     "ercot_ordc_total": {
+      "dual": 0.31,
+      "req": 7833.0,
+      "held": 6028.0,
+      "short": 1804.0
+     }
+    },
+    "rtordpa_overlay": 5.44
+   },
+   "netload_gap_mw": 987.0,
+   "gap_components_mw": {
+    "demand": 808.0,
+    "wind": 291.0,
+    "solar": -112.0
+   },
+   "outage": {
+    "overlay_daily_mw": 844.0,
+    "overlay_daily_pctl_year": 2.2,
+    "hourly_all_mw": 0.0,
+    "hourly_all_pctl_year": 41.0,
+    "hourly_short_mw": 0.0
+   },
+   "drivers": [
+    "UNATTRIBUTED"
+   ]
+  },
+  {
+   "h": 6399,
+   "month": 9,
+   "hod": 15,
+   "model": 77.06,
+   "actual": 590.14,
+   "actual_side": {
+    "demand": 77104.0,
+    "wind": 4337.0,
+    "solar": 11476.0,
+    "net_load": 61291.0,
+    "ramp1": 735.0,
+    "ramp3": 4675.0,
+    "interchange": -815.0,
+    "ties": {
+     "CEN": 0.0,
+     "SWPP": -814.0
+    },
+    "net_load_pctl_year": 96.9,
+    "net_load_pctl_peers": 81.1,
+    "ramp3_pctl_month": 74.4
+   },
+   "model_side": {
+    "demand": 76289.0,
+    "wind": 6067.0,
+    "solar": 11571.0,
+    "net_load": 58652.0,
+    "thermal": 52841.0,
+    "thermal_pctl_month": 89.7,
+    "storage_net": 316.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 1.3,
+    "ordc_adder": 1.28,
+    "reserve_shortfall_mw": 2399.2,
+    "max_family_dual": 1.3,
+    "families": {
+     "RegUp_withheld": {
+      "dual": -0.0,
+      "req": 272.0,
+      "held": 272.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": -0.0,
+      "req": 1123.0,
+      "held": 1123.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 1502.0,
+      "held": 1593.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": -0.0,
+      "req": 2242.0,
+      "held": 2242.0,
+      "short": 0.0
+     },
+     "ercot_ordc_total": {
+      "dual": 1.3,
+      "req": 7629.0,
+      "held": 5230.0,
+      "short": 2399.0
+     }
+    },
+    "rtordpa_overlay": 0.0
+   },
+   "netload_gap_mw": 2639.0,
+   "gap_components_mw": {
+    "demand": 815.0,
+    "wind": 1730.0,
+    "solar": 95.0
+   },
+   "outage": {
+    "overlay_daily_mw": 2423.0,
+    "overlay_daily_pctl_year": 18.6,
+    "hourly_all_mw": 0.0,
+    "hourly_all_pctl_year": 41.0,
+    "hourly_short_mw": 0.0
+   },
+   "drivers": [
+    "netload_gap:wind"
+   ]
+  },
+  {
+   "h": 7001,
+   "month": 10,
+   "hod": 17,
+   "model": 44.13,
+   "actual": 696.48,
+   "actual_side": {
+    "demand": 53563.0,
+    "wind": 1629.0,
+    "solar": 2442.0,
+    "net_load": 49492.0,
+    "ramp1": 4477.0,
+    "ramp3": 9135.0,
+    "interchange": -111.0,
+    "ties": {
+     "CEN": -111.0,
+     "SWPP": 0.0
+    },
+    "net_load_pctl_year": 85.7,
+    "net_load_pctl_peers": 90.3,
+    "ramp3_pctl_month": 95.6
+   },
+   "model_side": {
+    "demand": 53452.0,
+    "wind": 1598.0,
+    "solar": 2370.0,
+    "net_load": 49484.0,
+    "thermal": 44503.0,
+    "thermal_pctl_month": 98.4,
+    "storage_net": 0.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 0.31,
+    "ordc_adder": 0.31,
+    "reserve_shortfall_mw": 1757.9,
+    "max_family_dual": 0.31,
+    "families": {
+     "RegUp_withheld": {
+      "dual": -0.0,
+      "req": 724.0,
+      "held": 724.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": -0.0,
+      "req": 1869.0,
+      "held": 1869.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 2875.0,
+      "held": 3167.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": -0.0,
+      "req": 2251.0,
+      "held": 2251.0,
+      "short": 0.0
+     },
+     "ercot_ordc_total": {
+      "dual": 0.31,
+      "req": 9769.0,
+      "held": 8011.0,
+      "short": 1758.0
+     }
+    },
+    "rtordpa_overlay": 0.33
+   },
+   "netload_gap_mw": 8.0,
+   "gap_components_mw": {
+    "demand": 111.0,
+    "wind": -31.0,
+    "solar": -72.0
+   },
+   "outage": {
+    "overlay_daily_mw": 8913.0,
+    "overlay_daily_pctl_year": 45.5,
+    "hourly_all_mw": 0.0,
+    "hourly_all_pctl_year": 41.0,
+    "hourly_short_mw": 0.0
+   },
+   "drivers": [
+    "ramp"
+   ]
+  },
+  {
+   "h": 7145,
+   "month": 10,
+   "hod": 17,
+   "model": 39.31,
+   "actual": 650.12,
+   "actual_side": {
+    "demand": 55975.0,
+    "wind": 9310.0,
+    "solar": 1261.0,
+    "net_load": 45404.0,
+    "ramp1": 2997.0,
+    "ramp3": 5591.0,
+    "interchange": -776.0,
+    "ties": {
+     "CEN": 38.0,
+     "SWPP": -814.0
+    },
+    "net_load_pctl_year": 80.3,
+    "net_load_pctl_peers": 76.3,
+    "ramp3_pctl_month": 83.1
+   },
+   "model_side": {
+    "demand": 55199.0,
+    "wind": 10348.0,
+    "solar": 1217.0,
+    "net_load": 43633.0,
+    "thermal": 38859.0,
+    "thermal_pctl_month": 91.9,
+    "storage_net": 0.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 0.0,
+    "ordc_adder": 0.0,
+    "reserve_shortfall_mw": 183.7,
+    "max_family_dual": 0.0,
+    "families": {
+     "RegUp_withheld": {
+      "dual": -0.0,
+      "req": 724.0,
+      "held": 985.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": -0.0,
+      "req": 1856.0,
+      "held": 1856.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 2875.0,
+      "held": 4480.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": -0.0,
+      "req": 2251.0,
+      "held": 2251.0,
+      "short": 0.0
+     },
+     "ercot_ordc_total": {
+      "dual": 0.0,
+      "req": 9756.0,
+      "held": 9573.0,
+      "short": 184.0
+     }
+    },
+    "rtordpa_overlay": 0.0
+   },
+   "netload_gap_mw": 1771.0,
+   "gap_components_mw": {
+    "demand": 776.0,
+    "wind": 1038.0,
+    "solar": -44.0
+   },
+   "outage": {
+    "overlay_daily_mw": 12794.0,
+    "overlay_daily_pctl_year": 63.3,
+    "hourly_all_mw": 0.0,
+    "hourly_all_pctl_year": 41.0,
+    "hourly_short_mw": 0.0
+   },
+   "drivers": [
+    "netload_gap:wind"
+   ]
+  },
+  {
+   "h": 7480,
+   "month": 11,
+   "hod": 16,
+   "model": 43.39,
+   "actual": 607.34,
+   "actual_side": {
+    "demand": 55286.0,
+    "wind": 8831.0,
+    "solar": 4641.0,
+    "net_load": 41814.0,
+    "ramp1": 3121.0,
+    "ramp3": 8745.0,
+    "interchange": -873.0,
+    "ties": {
+     "CEN": -66.0,
+     "SWPP": -807.0
+    },
+    "net_load_pctl_year": 73.8,
+    "net_load_pctl_peers": 92.2,
+    "ramp3_pctl_month": 96.1
+   },
+   "model_side": {
+    "demand": 54413.0,
+    "wind": 8760.0,
+    "solar": 5051.0,
+    "net_load": 40602.0,
+    "thermal": 35228.0,
+    "thermal_pctl_month": 93.9,
+    "storage_net": 1315.0,
+    "slack": 0.0,
+    "dump": 0.0,
+    "reserve_price": 0.31,
+    "ordc_adder": 0.31,
+    "reserve_shortfall_mw": 1630.1,
+    "max_family_dual": 0.31,
+    "families": {
+     "RegUp_withheld": {
+      "dual": -0.0,
+      "req": 393.0,
+      "held": 575.0,
+      "short": 0.0
+     },
+     "RRS_withheld": {
+      "dual": -0.0,
+      "req": 1036.0,
+      "held": 1036.0,
+      "short": 0.0
+     },
+     "ECRS_withheld": {
+      "dual": -0.0,
+      "req": 1004.0,
+      "held": 1301.0,
+      "short": 0.0
+     },
+     "NonSpin": {
+      "dual": -0.0,
+      "req": 2878.0,
+      "held": 2878.0,
+      "short": 0.0
+     },
+     "ercot_ordc_total": {
+      "dual": 0.31,
+      "req": 7420.0,
+      "held": 5790.0,
+      "short": 1630.0
+     }
+    },
+    "rtordpa_overlay": 0.0
+   },
+   "netload_gap_mw": 1212.0,
+   "gap_components_mw": {
+    "demand": 873.0,
+    "wind": -71.0,
+    "solar": 410.0
+   },
+   "outage": {
+    "overlay_daily_mw": 19199.0,
+    "overlay_daily_pctl_year": 83.6,
+    "hourly_all_mw": 744.0,
+    "hourly_all_pctl_year": 60.4,
+    "hourly_short_mw": 744.0
+   },
+   "drivers": [
+    "ramp"
+   ]
+  }
+ ],
+ "driver_counts": {
+  "netload_gap": 2,
+  "ramp": 4,
+  "outage": 1,
+  "tie_export": 0,
+  "unattributed": 7
+ },
+ "priors": {
+  "P1_not_near_miss": {
+   "all_zero_shortfall": false,
+   "all_dual_le_5": false
+  },
+  "P2_ramp_hours": {
+   "n": 4,
+   "declared_ge": 8
+  },
+  "P3_tie_export_hours": {
+   "n": 0,
+   "declared_le": 3
+  },
+  "P4_netload_gap_hours": {
+   "n": 2,
+   "declared_ge": 5,
+   "wind_largest_component": 2
+  },
+  "P5_nonaug_outage_p75": {
+   "n": 2,
+   "of": 11,
+   "declared_ge": 5
+  }
+ }
+}
