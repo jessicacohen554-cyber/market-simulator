@@ -4325,20 +4325,18 @@
     {
       "param_id": "adequacy_demand_response_fraction_by_iso.NEISO",
       "display_name": "Adequacy Demand Response Fraction By Iso / Neiso",
-      "value": 0.09701369410988286,
+      "value": 0.08784299500831946,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
       "source": "Demand-response / load-management capacity products counted in the ISO's own adequacy construction, expressed as the netting fraction applied to the model's gross peak in :func:`market_sim.model.capacity. resolve_adequacy_requirement_mw` (``firm_peak = peak × (1 − fraction)``, netted BEFORE the FPR / (1+PRM)×ratio multiplication). These are standing DR programs whose enrollment/participation scales roughly with load, so a fraction regenerates for forward years and responds to changed conditions (rule 13 admissible: a market-design input, not an outcome). ISOs absent here net nothing (neutral fallback). * ERCOT (Dec 2025 CDR Seasonal Summary, summer-2026 peak-load-hour column): Load Resources providing RRS 935 + Non-Spin 50 + ECRS 300 + controllable LRs 20 + Emergency Response Service 2,750 + TDSP standard-offer load management 303 + distribution voltage reduction 1,162 = 5,520 MW on the 95,419 MW gross seasonal peak = 5.8%. Netting from the peak IS ERCOT's own construction (the CDR's \"Firm Peak Load\"). Rooftop-PV netting is EXCLUDED — EIA-930 demand is already net of behind-the-meter PV. * PJM (W2-D, closes gap G10 / W1-B B1): PJM does NOT net DR from its load forecast — DR clears the BRA as a SUPPLY-side capacity resource, so the published construct misaligns with this registry's netting form and the value is a documented reconciliation (rule 14), never a raw fraction of peak. Published anchors (2026/2027 BRA Report, posted 2025-07-22): DR cleared 5,795 MW UCAP (Table 6, RPM cleared + FRR-committed — offered equals cleared; includes the DR Accredited-UCAP factor) against the RTO Reliability Requirement of 146,105 MW UCAP (p.3). Because this registry nets the gross peak BEFORE the FPR multiplication, dividing DR by the published UCAP requirement (= peak × FPR) — not by the ICAP peak — makes the netted credit reproduce PJM's supply-side counting exactly under the published-FPR path: requirement = peak×FPR − f×peak×FPR = peak×FPR − DR×(peak/peak_PJM). Dividing by the ICAP forecast peak (159,329 MW → 3.64%) would silently scale DR by FPR ≈ 0.917, an 8% distortion with no basis in PJM's construct. Price Responsive Demand (105.5 MW UCAP 2026/27) is EXCLUDED — PJM nets PRD from the Reliability Requirement through a separate construct, and omitting it is conservative. Vintage anchored to the 2026/2027 BRA to match the model's other PJM adequacy anchors (THERMAL_ELCC_CLASS_RATING_BY_ISO, the 2026/27 FPR); the 2027/2028 BRA (posted 2025-12-17) has DR 7,641 MW UCAP on a 152,400 MW requirement (5.0%) after PJM moved DR to all-hours availability — refresh on a vintage re-anchor (a source-data change, rule 23), never a residual.",
-      "source_date": "2025",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source_date": "2026-05-01",
+      "page_or_table": "2026 CELT sheet 4.1 'Summary of CSOs', ISO New England Total, DCR Total, summer CSO, CCP 2026/2027 column ('Includes ARA 3 Results')",
+      "url": "https://www.iso-ne.com/static-assets/documents/100035/2026_celt.xlsx",
+      "notes": "capx-S4b re-vintage of the NEISO term (the multi-ISO source prose in 'source' describes the registry; the NEISO value is 2,639.682 MW demand-capacity-resource CSO incl. ARA 3 / 30,050 MW ARA-3 Net ICR = 8.78%, replacing the FCA-17 initial clearing 2,940/30,305 = 9.70%). Same-cycle pairing discipline: requirement-for-the-auction with obligations-from-the-auction (docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md; committed extract data/raw/capacity-market/icr-ara/neiso/). Re-derive on the next same-cycle publication, never a residual.",
       "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
+      "last_verified": "2026-08-30",
+      "flags": []
     },
     {
       "param_id": "adequacy_external_tie_firm_mw.CAISO",
@@ -4379,21 +4377,18 @@
     {
       "param_id": "adequacy_external_tie_firm_mw.NEISO",
       "display_name": "Adequacy External Tie Firm Mw / Neiso",
-      "value": 567.0,
+      "value": 409.31,
       "unit": "",
       "domain": "Uncategorized",
       "tier": 2,
-      "source": "FCA 17 cleared imports (NY/QC/NB), CSO-holding supply",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "Net import Capacity Supply Obligation for CCP 2026/2027 INCLUDING ARA 3 results (New Brunswick 177.0 + New York AC Ties 232.31 MW; HQ Phase I/II and Highgate 0 at this vintage) - the same-cycle restatement of the FCA-17 cleared-import credit it supersedes ('567 MW of imports from New York, Quebec, and New Brunswick', FCA 17 initial-results press release 2023-03-10). Moves with the capx-S4b requirement re-vintage so the adequacy comparison stays single-vintage; HQICC (1,009 MW at ARA 3) is netted in the Net ICR, not double-counted here.",
+      "source_date": "2026-05-01",
+      "page_or_table": "2026 CELT sheet 4.1 'Summary of CSOs', ISO NEW ENGLAND Net Import Total, summer CSO, CCP 2026/2027 column ('Includes ARA 3 Results')",
+      "url": "https://www.iso-ne.com/static-assets/documents/100035/2026_celt.xlsx",
+      "notes": "capx-S4b same-cycle re-vintage (docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md; committed extract data/raw/capacity-market/icr-ara/neiso/). Re-derive on the next same-cycle publication, never a residual.",
       "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated",
-        "needs-citation"
-      ]
+      "last_verified": "2026-08-30",
+      "flags": []
     },
     {
       "param_id": "as_revenue_per_kw_yr_by_iso.ERCOT.gas_cc",
@@ -34069,21 +34064,18 @@
     {
       "param_id": "planning_reserve_margin_by_iso.NEISO",
       "display_name": "Planning Reserve Margin By Iso / Neiso",
-      "value": 0.11015459007985928,
+      "value": 0.1276643650555389,
       "unit": "",
       "domain": "Reliability",
       "tier": 2,
-      "source": "Target planning reserve margin per ISO for the reserve-margin adequacy backstop (capacity.py::apply_reserve_margin_build). Each ISO sets its own installed-reserve-margin / planning-reserve-margin target through its resource-adequacy process; ERCOT's 13.75% is its economically-optimal RM and is NOT every ISO's target. The reserve-margin build resolves ``PLANNING_RESERVE_MARGIN_BY_ISO.get(iso, config.planning_reserve_margin)``, so an explicit ScenarioConfig.planning_reserve_margin still overrides this registry and an ISO absent here falls back to that scalar. Values are on the same nameplate/ICAP basis the backstop uses (firm gap over peak).",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "ISO-NE FCM Net-ICR-implied margin over the summer 50/50 peak (net of BTM PV), at the ARA-3 restatement of CCP 2026/2027 (capx-S4b re-vintage, rule 23 on the Nov 21 2025 ARA ICR filing; supersedes the original FCA-17 auction values 30,305/27,298 = 11.02%): Net ICR 30,050 MW / peak 26,648 MW - 1 = 12.77%. Filing: 'Installed Capacity Requirement, HQICCs and Other Related Values for the 2026-2027 and 2027-2028 CCPs for use in Annual Reconfiguration Auctions', FERC filing 2025-11-21, p.12 (ARA 3 table: ICR 31,059 / HQICC 1,009 / Net ICR 30,050 / 50/50 peak 26,648). The peaks embed the CELT 6.3 PDR reconstitution adjustments, keeping the same net-of-BTM-PV basis as the model's EIA-930 demand.",
+      "source_date": "2025-11-21",
+      "page_or_table": "p.12, 'ICR Related Values for ARA 3 for the 2026-2027 CCP (MW)'",
+      "url": "https://www.iso-ne.com/static-assets/documents/100029/icr_for_aras.pdf",
+      "notes": "capx-S4b same-cycle re-vintage (docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md). Committed extract + provenance: data/raw/capacity-market/icr-ara/neiso/ (re-fetch: scripts/data/fetch_isone_ara_requirements.py). Re-derive on the next same-cycle publication (next ARA ICR filing / CELT vintage / prompt-schedule CCP 2028/29 set), never a residual.",
       "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated",
-        "needs-citation"
-      ]
+      "last_verified": "2026-08-30",
+      "flags": []
     },
     {
       "param_id": "planning_reserve_margin_by_iso.NYISO",

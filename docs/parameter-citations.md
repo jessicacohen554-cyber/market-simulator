@@ -114,7 +114,7 @@ inline comment and still need a dated primary source — search the table for
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
 | `adequacy_demand_response_fraction_by_iso.ERCOT` | 0.058 | 2 | Load-side capacity products netted out of gross peak in the ISO's o… | 2025 | auto-generated |
-| `adequacy_demand_response_fraction_by_iso.NEISO` | 0.09701369410988286 | 2 | Demand-response / load-management capacity products counted in the … | 2025 | auto-generated |
+| `adequacy_demand_response_fraction_by_iso.NEISO` | 0.08784299500831946 | 2 | CCP 2026/27 demand-capacity-resource CSO incl. ARA 3 (2026 CELT 4.1… | 2026-05-01 |  |
 | `adequacy_demand_response_fraction_by_iso.PJM` | 0.03966325587762226 | 2 | PJM demand-response capacity counted in PJM's own adequacy construc… | 2025-07-22 |  |
 | `demand_growth_rates.CAISO.high` | 0.022 | 1 | California Energy Commission Integrated Energy Policy Report (IEPR)… | 2024-02 | modeled |
 | `demand_growth_rates.CAISO.high.long` | 0.035 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
@@ -831,7 +831,7 @@ inline comment and still need a dated primary source — search the table for
 | `planning_reserve_margin_by_iso.CAISO` | 0.15 | 2 | Target planning reserve margin per ISO for the reserve-margin adequ… |  | auto-generated, needs-citation |
 | `planning_reserve_margin_by_iso.ERCOT` | 0.1375 | 2 | Target planning reserve margin per ISO for the reserve-margin adequ… |  | auto-generated, needs-citation |
 | `planning_reserve_margin_by_iso.MISO` | 0.179 | 2 | Target planning reserve margin per ISO for the reserve-margin adequ… |  | auto-generated, needs-citation |
-| `planning_reserve_margin_by_iso.NEISO` | 0.11015459007985928 | 2 | Target planning reserve margin per ISO for the reserve-margin adequ… |  | auto-generated, needs-citation |
+| `planning_reserve_margin_by_iso.NEISO` | 0.1276643650555389 | 2 | ISO-NE FCM Net-ICR-implied margin at the ARA-3 restatement of CCP 2… | 2025-11-21 |  |
 | `planning_reserve_margin_by_iso.NYISO` | 0.244 | 2 | Target planning reserve margin per ISO for the reserve-margin adequ… |  | auto-generated, needs-citation |
 | `planning_reserve_margin_by_iso.PJM` | 0.178 | 2 | Target planning reserve margin per ISO for the reserve-margin adequ… |  | auto-generated, needs-citation |
 | `planning_reserve_margin_icap_to_ucap_ratio_by_iso.MISO` | 0.9325842696629213 | 2 | ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP… | 2026-07 | auto-generated |
@@ -1656,7 +1656,7 @@ inline comment and still need a dated primary source — search the table for
 |---|---|---|---|---|---|
 | `adequacy_external_tie_firm_mw.CAISO` | 3371.0 | 2 | DMM 2024 Table 15.6 RA Imports (= model firm import tranches) | 2024 | auto-generated |
 | `adequacy_external_tie_firm_mw.ERCOT` | 817.0 | 2 | Firm import contribution of asynchronous external ties counted by t… | 2023 | auto-generated |
-| `adequacy_external_tie_firm_mw.NEISO` | 567.0 | 2 | FCA 17 cleared imports (NY/QC/NB), CSO-holding supply |  | auto-generated, needs-citation |
+| `adequacy_external_tie_firm_mw.NEISO` | 409.31 | 2 | Net import CSO for CCP 2026/27 incl. ARA 3 (2026 CELT 4.1) — same-c… | 2026-05-01 |  |
 | `as_saturation_ref_gw_by_iso.ERCOT` | 4.0 | 2 | ERCOT AS-eligible (storage) fleet at the 2023 AS-revenue calibratio… | 2023 | auto-generated |
 | `atb_tech_wacc_real.solar` | 0.042271 | 2 | ATB 2024 WACC Real Market, UtilityPV @2026 | 2024 | auto-generated |
 | `atb_tech_wacc_real.wind` | 0.050352 | 2 | ATB 2024 WACC Real Market, LandbasedWind @2026 | 2024 | auto-generated |

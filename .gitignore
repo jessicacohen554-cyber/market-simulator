@@ -334,6 +334,15 @@ frontend/data/forecast/program-status.js
 /results/ff-t1f-s4hydro/*/*/*/hourly/
 /results/ff-t1f-s4hydro/*/*/*/year_*_floor_retentions.json
 
+# capx-S4b NEISO ARA re-vintage control/treatment pair (run ids
+# neiso-2026-2030-s4b-ara / -control, pre-declared in
+# docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md §4) — same class
+# and same slim-vs-heavy split as /results/ff-t1f-s4hydro/ above.
+/results/ff-t1f-s4b-ara/*/*/*/*.parquet
+/results/ff-t1f-s4b-ara/*/*/*/*.npz
+/results/ff-t1f-s4b-ara/*/*/*/hourly/
+/results/ff-t1f-s4b-ara/*/*/*/year_*_floor_retentions.json
+
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
 # D-28 option A step 3). Same class as /results/ffr7b2/ above, of which this is

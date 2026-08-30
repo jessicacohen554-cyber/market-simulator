@@ -1856,19 +1856,26 @@ PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
     # summer 50/50 peak-load forecast. FF-2B (2026-07-19) replaced the prior
     # 0.157 NERC-reference-margin stand-in with ISO-NE's own Net ICR construction
     # (capacity-clearing flip memo R-7(i); rule 12 -- prefer the ISO's published
-    # value over a generic estimate). Vintage = CCP 2026/2027 (FCA 17), the
+    # value over a generic estimate). Vintage anchor = CCP 2026/2027, the
     # delivery year covering the 2026 forecast base year, matching the vintage
-    # the other capacity anchors use: Net ICR 30,305 MW / summer 50/50 peak
-    # 27,298 MW - 1 = 11.02%. Both are ISO-NE's own published, forward-
-    # regenerable values (recomputed each FCA), and the 50/50 peak is on the same
-    # "Net (with Reductions for BTM PV)" basis as the model's EIA-930 demand, so
-    # the margin pairs cleanly with the model's peak. Source: ISO New England,
-    # "Installed Capacity Requirement, Related Values, and HQICCs for the
-    # 2026-2027 Capacity Commitment Period" (FCA 17), FERC Docket ER23-405-000,
-    # filed 2022-11-08: ICR 31,306 MW, HQICC 1,001 MW, Net ICR 30,305 MW (p.2-3);
-    # 50/50 summer peak 27,298 MW (p.9-10, 2022 CELT). Kept as an explicit
-    # expression so both published MW values stay traceable (rule 5).
-    "NEISO": 30_305.0 / 27_298.0 - 1.0,  # Net ICR / 50-50 peak - 1 = 0.1102 (FCA 17)
+    # the other capacity anchors use; value vintage = ISO-NE's NEWEST same-cycle
+    # restatement of that CCP (rule 23: re-derive on publication): the ARA 3
+    # ICR-Related Values, Net ICR 30,050 MW / summer 50/50 peak 26,648 MW - 1
+    # = 12.77% (capx-S4b re-vintage 2026-08-30, superseding the original FCA-17
+    # auction values 30,305 / 27,298 = 11.02%, Docket ER23-405-000). Both are
+    # ISO-NE's own published, forward-regenerable values (recomputed each
+    # FCA/ARA cycle), and the 50/50 peak is on the same "Net (with Reductions
+    # for BTM PV)" basis as the model's EIA-930 demand (the filing's peaks embed
+    # the CELT §6.3 PDR reconstitution adjustments), so the margin pairs cleanly
+    # with the model's peak. Source: ISO New England, "Installed Capacity
+    # Requirement, HQICCs and Other Related Values for the 2026-2027 and
+    # 2027-2028 CCPs for use in Annual Reconfiguration Auctions", FERC filing
+    # 2025-11-21, p.12 (ARA 3 of CCP 2026-27): ICR 31,059 MW, HQICC 1,009 MW,
+    # Net ICR 30,050 MW, 50/50 summer peak 26,648 MW. Committed extract +
+    # source identities: data/raw/capacity-market/icr-ara/neiso/. Kept as an
+    # explicit expression so both published MW values stay traceable (rule 5).
+    "NEISO": 30_050.0 / 26_648.0
+    - 1.0,  # Net ICR / 50-50 peak - 1 = 0.1277 (ARA 3, CCP 2026/27)
 }
 
 # Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 retirement
@@ -2450,19 +2457,24 @@ ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
     # — as capacity SUPPLY that holds a Capacity Supply Obligation against the
     # Net ICR, exactly the PJM situation (DR is a cleared supply product, not a
     # load-forecast netting), so — as for PJM — the value is a documented
-    # reconciliation (rule 14), never a raw fraction of peak. FCA 17 (CCP
-    # 2026/2027) cleared 2,940 MW of demand resources (ISO-NE FCA 17
-    # initial-results press release, 2023-03-10: "2,940 MW (including 130 MW new)
-    # of demand resources, including energy efficiency, load management, and
-    # distributed generation resources"). Divided by the Net ICR requirement
-    # (30,305 MW — the quantity these resources clear against, NOT the ICAP peak),
-    # so under the Net-ICR requirement path the netted credit reproduces ISO-NE's
-    # own supply-side counting: requirement = peak × (1 − f) × (1 + PRM_NetICR) =
+    # reconciliation (rule 14), never a raw fraction of peak. Vintage = the
+    # ARA-3 restatement of CCP 2026/2027 (capx-S4b re-vintage 2026-08-30,
+    # rule 23 on the Nov 21 2025 ARA ICR filing; supersedes the FCA-17 initial
+    # clearing, 2,940 MW / 30,305 MW): the demand-capacity-resource CSO total
+    # INCLUDING ARA 3 results, 2,639.682 MW summer (2026 CELT Report, sheet
+    # 4.1 "Summary of CSOs", ISO New England Total DCR Total — the same-cycle
+    # companion of the ARA-3 Net ICR: requirement-for-the-auction paired with
+    # obligations-from-the-auction, the exact FCA-17 pairing discipline at the
+    # newer vintage; committed extract data/raw/capacity-market/icr-ara/neiso/).
+    # Divided by the ARA-3 Net ICR (30,050 MW — the quantity these resources
+    # clear against, NOT the ICAP peak), so under the Net-ICR requirement path
+    # the netted credit reproduces ISO-NE's own supply-side counting:
+    # requirement = peak × (1 − f) × (1 + PRM_NetICR) =
     # (peak / CELT_peak) × (Net_ICR − DR) when peak = CELT_peak. Recurring FCM
     # product that regenerates each delivery year and scales with enrolment
-    # (rule 13). Refresh on a vintage re-anchor (source-data change, rule 23),
-    # never a residual.
-    "NEISO": 2_940.0 / 30_305.0,
+    # (rule 13). Refresh on a vintage re-anchor or a newer same-cycle
+    # publication (source-data change, rule 23), never a residual.
+    "NEISO": 2_639.682 / 30_050.0,
 }
 
 # Firm import capacity counted by the ISO's own resource-adequacy ledger,
@@ -2516,15 +2528,22 @@ ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
 #   rule 13; the 2025 DMM report is not yet published). NOT the Maximum Import
 #   Capability (16,148 MW) — the MIC is a deliverability LIMIT, not the RA
 #   capacity actually contracted, and crediting it would overstate.
-# * NEISO (FF-2B, 2026-07-19): 567 MW of import capacity that cleared FCA 17
-#   (CCP 2026/2027) holding Capacity Supply Obligations — "567 MW of imports
-#   from New York, Québec, and New Brunswick" (ISO-NE FCA 17 initial-results
-#   press release, 2023-03-10). These are Import Capacity Resources that count
-#   as SUPPLY toward the Net ICR; the HQICC tie benefit (1,001 MW) is already
-#   netted from the requirement (Net ICR = ICR − HQICC, see the NEISO
-#   PLANNING_RESERVE_MARGIN entry) and is NOT double-counted here. The model's
-#   HQ_import node hosts imports in dispatch but the accredited ledger omits the
-#   cleared import CSOs — case (b) above. Recurring FCM product (rule 13).
+# * NEISO (FF-2B, 2026-07-19; ARA-3 re-vintage capx-S4b, 2026-08-30): the net
+#   import Capacity Supply Obligation for CCP 2026/2027 INCLUDING ARA 3
+#   results — 409.31 MW (2026 CELT Report, sheet 4.1 "Summary of CSOs",
+#   ISO NEW ENGLAND Net Import Total: New Brunswick 177.0 + New York AC Ties
+#   232.31; committed extract data/raw/capacity-market/icr-ara/neiso/). It
+#   moves with the requirement re-vintage because it is the same-cycle
+#   restatement of the FCA-17 cleared-import credit it supersedes ("567 MW of
+#   imports from New York, Québec, and New Brunswick", FCA 17 initial-results
+#   press release, 2023-03-10) — holding it at the FCA-17 print against an
+#   ARA-3 requirement would mix vintages inside one adequacy comparison.
+#   These are Import Capacity Resources that count as SUPPLY toward the Net
+#   ICR; the HQICC tie benefit (1,009 MW at ARA 3) is already netted from the
+#   requirement (Net ICR = ICR − HQICC, see the NEISO PLANNING_RESERVE_MARGIN
+#   entry) and is NOT double-counted here. The model's HQ_import node hosts
+#   imports in dispatch but the accredited ledger omits the cleared import
+#   CSOs — case (b) above. Recurring FCM product (rule 13).
 # * NYISO (capx D-2 external-capacity intake, 2026-08-25, closing the FC-1 I7
 #   base-year gap of FINDING-capx-d2-adequacy-nyiso-2026-08-24.md §6):
 #   2,749.9 MW UCAP = 3,168.5 MW ICAP × (1 − 0.1321). The 3,168.5 MW is
@@ -2567,7 +2586,7 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
     "ERCOT": 817.0,
     "PJM": 1_281.7,  # 2026/2027 BRA Report Table 7 (cleared import UCAP)
     "CAISO": 3_371.0,  # DMM 2024 Table 15.6 RA Imports (= model firm import tranches)
-    "NEISO": 567.0,  # FCA 17 cleared imports (NY/QC/NB), CSO-holding supply
+    "NEISO": 409.31,  # CCP 2026/27 net import CSO incl. ARA 3 (2026 CELT 4.1)
     # 2026 Gold Book Table V-1 Summer-2026 external purchases (ICAP) × the
     # published NYCA ICAP→UCAP translation factor — same factor as the
     # requirement side (one basis, rule 19); see the citation block above.
