@@ -1,16 +1,19 @@
-# capx director — prompt pack (revised at refresh #8, 2026-08-30; first issued 2026-08-25)
+# capx director — prompt pack (revised at refresh #9, 2026-08-30; first issued 2026-08-25)
 
 Canonical text of the session prompts live on the capacity-expansion (Forecast Finalization)
 track. Ledger: `docs/handoffs/capx-director-ledger-2026-08.md`. Signatures:
 `docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5. Revisions at r#8: D7 LANDED
 (`ca8b749`) and drops from the live set; D10 corrected for the nyiso-155 keeper state; D11
 RE-SCOPED to D11-R (the D-1 volume rule — ledger §0e.3), never run in its original form.
+Revision at r#9: every prompt's freeze guardrail updated to the TIER-SCOPED state (owner card 6,
+executed 2026-08-30 — locked test frozen for every ISO; validation governed by the `complete`
+marker + --holdout-authorized; nothing a capx lane touches either way).
 
 | lane | status | branch | model | profile | heavy slot? |
 |---|---|---|---|---|---|
 | **D10** NYISO T1-X crossover | reissued r#8 (corrected) | `claude/capx-d10-nyiso-t1x` | Fable | nyiso | no |
 | **D11-R** D-1 entry volume rule | re-scoped + issued r#8 | `claude/capx-d11r-entry-volume-rule` | Fable | ercot | no (Phase 0 first; A/B is light) |
-| **S-123** MISO adequacy package | issued r#5, not started — **HELD until r#9 by owner ruling (r#8 sitting, 2026-08-30)** | `claude/capx-s123-miso-adequacy` | Fable | miso | only if it re-measures (MISO = no co-run) |
+| **S-123** MISO adequacy package | issued r#5, not started — **r#9 check FAILED: miso-190 in flight; stays held on the start-time check** (no new MISO backcast branch in flight) | `claude/capx-s123-miso-adequacy` | Fable | miso | only if it re-measures (MISO = no co-run) |
 | **S-4** NEISO hydro accreditation | reissued r#8 (unchanged) | `claude/capx-s4-neiso-hydro` | Fable | neiso | no |
 | **S-5** PJM requirement horizon-edge | issued r#5, not started — ready when a heavy slot frees | `claude/capx-s5-pjm-horizon-edge` | Fable | pjm | no (S-6 is the heavy one, strictly after) |
 
@@ -76,7 +79,7 @@ MECHANISM MATRIX (rule 28): this session tests no mechanism and must mint NO cel
 do not edit, any cell whose fc posture your reading contradicts.
 
 GUARDRAILS: no LP, no solve, no registration. NO out-of-training backcast year solved, scored or
-registered — holdout spend freeze ACTIVE, `final` empty, `complete` = {NEISO, NYISO, PJM}
+registered — the spend freeze is TIER-SCOPED since 2026-08-26 (locked test 2019/H1-2026 frozen for every ISO; validation 2020-2022 governed by the `complete` marker + --holdout-authorized alone — a lane of THIS track touches neither), `final` EMPTY, `complete` = {NEISO, NYISO, PJM}
 (rule 22). No measured-outcome feedback (rule 13). Touch NO backcast keeper shard, status/*.js,
 calibration-complete.json, offer curve or commitment bridge. No new GitHub Actions workflows, no
 CI offloading (private repo, billed minutes). Push per CLAUDE.md Git & Pushing; on HTTP 408 set
@@ -155,8 +158,8 @@ the same PR (CI enforces this) and must appear in run_config.json (rule 24).
 
 GUARDRAILS: the crossover's 2023-2025 scored window is BACKCAST-tier on the scoring side — score
 ONLY against already-committed benchmark artifacts and solve NO year outside the leg's own
-2023-2027 definition. NO out-of-training backcast year solved, scored or registered; holdout spend
-freeze ACTIVE, `final` empty (rule 22). No measured-outcome feedback (rule 13). NYISO's backcast
+2023-2027 definition. NO out-of-training backcast year solved, scored or registered;
+the spend freeze is TIER-SCOPED since 2026-08-26 (locked test 2019/H1-2026 frozen for every ISO; validation 2020-2022 governed by the `complete` marker + --holdout-authorized alone — a lane of THIS track touches neither), `final` EMPTY (rule 22). No measured-outcome feedback (rule 13). NYISO's backcast
 lane is LIVE and owner-managed (keeper NOT-YET; the nyiso-156 winter-intake legs may run
 concurrently in the owner's own sessions) — touch NO backcast keeper shard, status/*.js,
 calibration-complete.json, offer curve, commitment bridge, or anything the intake spec names;
@@ -257,7 +260,7 @@ entry_lookahead_reprice or entry_forward_expectation_signal cells. Rule 25: noth
 crosses an ISO boundary.
 
 GUARDRAILS: forecast-mode 2026+ runs are UNRESTRICTED. NO out-of-training backcast year solved,
-scored or registered — freeze ACTIVE, `final` empty (rule 22). No measured-outcome feedback
+scored or registered — the spend freeze is TIER-SCOPED since 2026-08-26 (locked test 2019/H1-2026 frozen for every ISO; validation 2020-2022 governed by the `complete` marker + --holdout-authorized alone — a lane of THIS track touches neither), `final` EMPTY (rule 22). No measured-outcome feedback
 (rule 13). DECONFLICTION IS SHARP: ERCOT's backcast lane is LIVE RIGHT NOW (branch
 claude/ercot-backcast-calibration-* in flight at charter time) — touch NO backcast keeper shard,
 status/*.js, calibration-complete.json, offer curve, commitment bridge, ORDC/scarcity mechanism
@@ -356,7 +359,7 @@ row plus a cell line in EVERY shard in the same PR (CI enforces this) and must a
 run_config.json (rule 24). Update ONLY the MISO shard.
 
 GUARDRAILS: forecast-mode 2026+ UNRESTRICTED; NO out-of-training backcast year solved, scored or
-registered — freeze ACTIVE, `final` empty, MISO holds NEITHER marker (rule 22). No
+registered — the spend freeze is TIER-SCOPED since 2026-08-26 (locked test 2019/H1-2026 frozen for every ISO; validation 2020-2022 governed by the `complete` marker + --holdout-authorized alone — a lane of THIS track touches neither), `final` EMPTY, MISO holds NEITHER marker (rule 22). No
 measured-outcome feedback (rule 13). DECONFLICTION: MISO's backcast lane is LIVE and active —
 touch NO backcast keeper shard, status/*.js, calibration-complete.json, offer curve, commitment
 bridge or MISO backcast matrix cell. S-1 changes the requirement that ALSO feeds the retirement
@@ -431,8 +434,10 @@ run_config.json (rule 24). Update ONLY the NEISO shard. Rule 25: derive NEISO's 
 NEISO's own published record — never transfer another ISO's.
 
 GUARDRAILS: forecast-mode 2026+ UNRESTRICTED; data intake unrestricted and no-LP. NO
-out-of-training backcast year solved, scored or registered — freeze ACTIVE, `final` empty
-(rule 22). No measured-outcome feedback (rule 13). NEISO's backcast lane is CALIBRATED and holds a
+out-of-training backcast year solved, scored or registered by this lane — the spend freeze is
+TIER-SCOPED since 2026-08-26 (locked test 2019/H1-2026 frozen for every ISO; validation 2020-2022
+governed by the `complete` marker + --holdout-authorized alone — a lane of THIS track touches
+neither), `final` EMPTY (rule 22). No measured-outcome feedback (rule 13). NEISO's backcast lane is CALIBRATED and holds a
 `complete` marker — touch NO backcast keeper shard, status/*.js, calibration-complete.json, offer
 curve or commitment bridge. No new GitHub Actions workflows, no CI offloading (private repo,
 billed minutes). Push per CLAUDE.md Git & Pushing; blob-verify any >=300-line file after push
@@ -517,7 +522,7 @@ field it needs its matrix row plus a cell line in EVERY shard in the same PR (CI
 and must appear in run_config.json (rule 24). Update ONLY the PJM shard.
 
 GUARDRAILS: forecast-mode 2026+ UNRESTRICTED. NO out-of-training backcast year solved, scored or
-registered — freeze ACTIVE, `final` empty (rule 22). No measured-outcome feedback (rule 13). PJM's
+registered — the spend freeze is TIER-SCOPED since 2026-08-26 (locked test 2019/H1-2026 frozen for every ISO; validation 2020-2022 governed by the `complete` marker + --holdout-authorized alone — a lane of THIS track touches neither), `final` EMPTY (rule 22). No measured-outcome feedback (rule 13). PJM's
 backcast lane is CALIBRATED and holds a `complete` marker — touch NO backcast keeper shard,
 status/*.js, calibration-complete.json, offer curve or commitment bridge. Verify your change
 cannot reach the backcast path (the calibration backcast solves every year as its own base year
