@@ -1,0 +1,428 @@
+{
+ "A_partition": {
+  "adjudication": {
+   "P-A": "FAILS K2 + K4: no committed census/DMM row names a coast<->Kern element (Diablo Canyon's second 500 kV outlet is absent from the census), and SLAP_PGZP mixes coastal-SLO with west-Kern-fringe pnodes (A.3) so the committed load instrument cannot partition coast from Kern",
+   "P-A-prime": "PASSES K1 (two separate element-grounded cuts with different year-varying binding profiles express the caiso-218 \u00a7C non-monotone year vector; not a single static link), K2 (every new boundary element atlas-anchored: TESLA/MOSSLD/LASAGUIL/PANOCHE=NP15-side, GATES/MIDWAY/DIABLO=ZP26-side, VINCENT/WIRLWIND=SP15), K3 (Fresno mass inside FSNO, the Gates-Midway complex ON the FSNO<->ZP26 boundary, Kern local 115 kV family enumerated as below-zonal-grain in the sufficiency list; no SP15 cut), K4 (load = SLAP_PGF1 via the caiso-172 machinery; gen = crosswalk+atlas+county tiers, sections B/C)",
+   "P-B": "FAILS K3 by construction: a joint Fresno+Kern pocket makes Gates-Midway #1 500 kV pocket-INTERNAL \u2014 the named off-peak complex becomes unrepresentable",
+   "P-C": "FAILS K3 (Fresno leg): leaves the larger census off-peak family (Fresno 14/19) and the highest-frequency DMM binder (Moss Landing-Las Aguilas) invisible inside NP15"
+  },
+  "atlas_hub_anchors": {
+   "DIABLO": [
+    "ZP26"
+   ],
+   "GATES": [
+    "ZP26"
+   ],
+   "LASAGUIL": [
+    "NP15"
+   ],
+   "MIDWAY": [
+    "ZP26"
+   ],
+   "MOSSLD": [
+    "NP15"
+   ],
+   "PANOCHE": [
+    "NP15"
+   ],
+   "SCHLNDLR": [
+    "NP15"
+   ],
+   "TESLA": [
+    "NP15"
+   ],
+   "VINCENT": [
+    "SP15"
+   ],
+   "WIRLWIND": [
+    "SP15"
+   ]
+  },
+  "census_control": {
+   "fresno_off_peak": [
+    14,
+    19
+   ],
+   "kern_off_peak": [
+    7,
+    10
+   ],
+   "reproduces_caiso219": true,
+   "sce_northern_off_peak": [
+    2,
+    8
+   ],
+   "tehachapi_off_peak_rows": 0,
+   "tehachapi_rows": 3
+  },
+  "partition_spec": {
+   "links": [
+    {
+     "a": "NP15",
+     "b": "FSNO",
+     "boundary_adjacent_census_rows": [
+      "NEW-Metcalf-Mosslanding 500kV (On-Peak)"
+     ],
+     "elements": [
+      {
+       "binding_record": "2024: bound 6.5% of hours, HE10-16, winter-heavy",
+       "constraint_id": "30040_TESLA_500_30050_LOSBANOS_500_BR_1_1",
+       "direction_binding": "S->N",
+       "dmm_2023_avg_binding_limit_mw": 1600.0,
+       "name": "Tesla-Los Banos #1 500 kV"
+      },
+      {
+       "binding_record": "2023: >70% of congestion 9a-3p Apr-Oct; 2024: bound 24% of ALL hours; Q3-2025: 27%, HE9-16",
+       "constraint_id": "30750_MOSSLD_230_30797_LASAGUIL_230_BR_1_1",
+       "direction_binding": "S->N",
+       "dmm_2023_avg_binding_limit_mw": 340.0,
+       "name": "Moss Landing-Las Aguilas 230 kV"
+      }
+     ],
+     "limit_status": "NOT ARMED \u2014 DMM 2023 scalars are evidence only; real ratings CEII (caiso-218/219)",
+     "purpose": "the cut between the valley pocket and Bay/coastal load \u2014 both elements are TH_NP15-internal today, i.e. INVISIBLE at hub grain; Moss Landing-Las Aguilas is the record's highest-frequency binder (24%/27% of ALL hours 2024/Q3-2025)",
+     "status": "NEW"
+    },
+    {
+     "a": "FSNO",
+     "b": "ZP26",
+     "census_boundary_rows": [
+      "Diablo-Gates 500 kV line (Off-Peak; locations Kern, Fresno)",
+      "Cal Flat-Gates 230 kV line (Off-Peak; locations Kern, Los Padres)",
+      "Gates 500/230kV TB #11 / #12 (Off-Peak; locations Fresno, Kern) \u2014 the boundary complex's own transformers"
+     ],
+     "elements": [
+      {
+       "binding_record": "2023: >80% of congestion 8a-3p, 90% Sep-Dec; 2024: bound 9% of ALL hours, HE9-15",
+       "constraint_id": "30055_GATES1_500_30060_MIDWAY_500_BR_1_1",
+       "direction_binding": "S->N",
+       "dmm_2023_avg_binding_limit_mw": 2500.0,
+       "name": "Gates-Midway #1 500 kV"
+      }
+     ],
+     "limit_status": "NOT ARMED",
+     "purpose": "the Gates-Midway cut the charter names \u2014 the census's off-peak mass converges on this complex from both sides (Fresno 14/19 + Kern 7/10); separates Kern/coastal export mass (incl. the Tehachapi trunk arriving at Midway) from the valley pocket",
+     "status": "NEW"
+    },
+    {
+     "a": "ZP26",
+     "b": "SP15_rest",
+     "elements": [
+      {
+       "binding_record": "2023: 50% of congestion 5-8pm, >90% Jun-Aug; prominent again Q3-2025",
+       "constraint_id": "30060_MIDWAY_500_24156_VINCENT_500_BR_2_3",
+       "direction_binding": "N->S",
+       "dmm_2023_avg_binding_limit_mw": 2100.0,
+       "name": "Midway-Vincent #2 500 kV"
+      },
+      {
+       "binding_record": "after 6pm, Jul-Sep 2023; CP6/CP10 appear in 2024/2025 censuses",
+       "constraint_id": "6410_CP1_NG",
+       "direction_binding": "N->S",
+       "dmm_2023_avg_binding_limit_mw": 1600.0,
+       "name": "Path 26 Control Point 1 nomogram (protects Midway-Whirlwind for Midway-Vincent #1+#2 contingency)"
+      }
+     ],
+     "note": "Midway-Whirlwind 500 kV (the TRTP Tehachapi collector trunk, WIRLWIND=TH_SP15 / MIDWAY=TH_ZP26 in the atlas) terminates on this boundary and is managed by the CP nomogram family",
+     "status": "EXISTING (4,000 MW Path 26) \u2014 element identities now stated"
+    },
+    {
+     "disposition": "REPLACED by the NP15-FSNO-ZP26 chain; Path 15 proper (Los Banos-Gates 500 kV, Panoche-Gates 230 kV #1/#2) becomes FSNO-INTERNAL spine \u2014 consistent with the DMM record, in which Los Banos-Gates itself is NOT a top binder while the two chain cuts are",
+     "internal_elements": [
+      {
+       "binding_record": "2023 Q1, 9a-4p",
+       "constraint_id": "30790_PANOCHE_230_30900_GATES_230_BR_2_1",
+       "direction_binding": "S->N",
+       "dmm_2023_avg_binding_limit_mw": 200.0,
+       "name": "Panoche-Gates #2 230 kV"
+      }
+     ],
+     "replaced": "NP15<->ZP26 5,400 MW (Path 15, Los Banos-Gates)"
+    },
+    {
+     "a": "WECC_import",
+     "b": "NP15",
+     "status": "unchanged (COI 4,800)"
+    },
+    {
+     "a": "WECC_import",
+     "b": "SP15_rest",
+     "status": "unchanged (Path 46 10,623)"
+    },
+    {
+     "a": "SP15_rest",
+     "b": "LA_BASIN",
+     "status": "unchanged (LCT import cap, one-way)"
+    },
+    {
+     "a": "SP15_rest",
+     "b": "SDGE",
+     "status": "unchanged (Path 44 LCT cap, one-way)"
+    }
+   ],
+   "proposal": "P-A-prime",
+   "zones": {
+    "FSNO": {
+     "carved_from": "NP15 (gen side also claims the Gates-complex substations from old ZP26; zero crosswalk plants sit there today)",
+     "content": "San Joaquin Valley pocket: Los Banos / Las Aguilas / Panoche / Westlands-Kings solar belt / Fresno metro / the Gates complex",
+     "load_instrument": "SLAP_PGF1 share of DLAP_PGAE (section C)",
+     "purpose": "the off-peak Local-strandedness pocket the census puts at PG&E Fresno (14/19 off-peak) \u2014 lets valley surplus strand and price sub-zonally instead of flowing frictionlessly to Bay load and southern absorbers (caiso-221 \u00a7E.1)",
+     "status": "NEW"
+    },
+    "LA_BASIN": {
+     "status": "unchanged"
+    },
+    "NP15": {
+     "note": "old NP15 minus FSNO; keeps COI import",
+     "status": "residual"
+    },
+    "SDGE": {
+     "status": "unchanged"
+    },
+    "SP15_rest": {
+     "note": "Tehachapi 0/3 off-peak (census): NO SP15-side cut is supported",
+     "status": "unchanged"
+    },
+    "WECC_import": {
+     "status": "unchanged"
+    },
+    "ZP26": {
+     "note": "SLAP_PGZP + SLAP_PGKN load; Kern/Midway complex + SLO coastal gen (Diablo, Topaz, CVSR)",
+     "status": "unchanged scope"
+    }
+   }
+  },
+  "slap_pgzp_straddle": {
+   "coastal_slo_examples": [
+    "ATASCDRO_6_N001",
+    "BAYWOOD_6_N001",
+    "CAYUCOS_6_N001",
+    "CAYUCOS_6_N006",
+    "MORROBAY_2_N001",
+    "MORROBAY_2_N015"
+   ],
+   "note": "name-geography is corroboration only; the operative P-A kill is K2 (no committed census/DMM element separates coast from Kern)",
+   "west_kern_fringe_examples": [
+    "3EMIDIO_6_N001",
+    "3EMIDIO_6_N002",
+    "3EMIDIO_6_N003",
+    "ALPAUGH_1_N001",
+    "ALPAUGH_1_N004",
+    "ALPAUGH_7_N002"
+   ]
+  }
+ },
+ "B_membership": {
+  "summary": {
+   "by_subzone_mw": {
+    "FSNO": 2701.2,
+    "NP15": 6732.1,
+    "SP15_side": 25776.0,
+    "ZP26": 5363.1
+   },
+   "fsno": {
+    "by_method_mw": {
+     "county:Fresno": 1191.1,
+     "county:Kings": 991.3,
+     "county:Madera": 32.8,
+     "county:Merced": 203.0,
+     "slap-coloc:PGF1": 283.0
+    },
+    "by_tech_mw": {
+     "battery": 183.6,
+     "biomass_other": 2.0,
+     "gas_cc": 36.2,
+     "gas_ct": 184.8,
+     "gas_other": 49.6,
+     "hydro": 233.7,
+     "solar": 2011.3,
+     "unlisted": 0.0
+    },
+    "mw": 2701.2,
+    "plants": 42
+   },
+   "gen_pnode_map": {
+    "by_subzone": {
+     "FSNO": 60,
+     "NP15": 653,
+     "SP15_side": 1108,
+     "ZP26": 187
+    },
+    "gates_claim_n": 1,
+    "n_pnodes": 2008,
+    "np15_hub_default_n": 421
+   },
+   "mw_total": 40572.4,
+   "np15_pool_honesty": {
+    "county_decided_mw": 6421.9,
+    "county_from_eia860_mw": 1661.1,
+    "default_np15_mw": 0.0,
+    "default_np15_plants": 0,
+    "note": "default-np15 mass is 'right by default', not measured \u2014 enumerated per the precommit honesty duty",
+    "slap_coloc_mw": 3011.4,
+    "th_np15_mw": 9433.3,
+    "th_np15_plants": 132
+   },
+   "plants_total": 446,
+   "unjoined_egrid2023_ciso": {
+    "four_county_mw": 5336.3,
+    "four_county_plants": 116,
+    "helms_check": {
+     "county": "Fresno",
+     "in_unjoined": true
+    },
+    "mw": 48720.2,
+    "note": "eGRID2023 CISO base (82.8 GW) is NOT the model member-fleet denominator (caiso-217: 94.3 GW incl. newer EIA-860 vintages); used here only to enumerate the unjoined cohort honestly",
+    "plants": 1132
+   }
+  },
+  "witnesses": {
+   "Alta (Tehachapi) -> SP15_side": "SP15_side",
+   "American Kings -> FSNO": "FSNO",
+   "CVSR/California Valley -> ZP26": "ZP26",
+   "Diablo Canyon -> ZP26": "ZP26",
+   "Five Points/SCHLNDLR -> FSNO": "FSNO",
+   "Henrietta -> FSNO": "FSNO/ZP26",
+   "Moss Landing -> NP15": "NP15",
+   "Mustang -> FSNO": "FSNO/SP15_side",
+   "Slate -> FSNO": "FSNO",
+   "Topaz -> ZP26": "ZP26"
+  }
+ },
+ "C_ldf_split": {
+  "gates": {
+   "G1 2023 LDF partitions the LAP": {
+    "detail": "sum=100.000",
+    "pass": true
+   },
+   "G1 2024 LDF partitions the LAP": {
+    "detail": "sum=100.000",
+    "pass": true
+   },
+   "G1 2025 LDF partitions the LAP": {
+    "detail": "sum=100.000",
+    "pass": true
+   },
+   "G2 2023 residue bounded": {
+    "detail": "2.473 <= 5.0",
+    "pass": true
+   },
+   "G2 2024 residue bounded": {
+    "detail": "2.152 <= 5.0",
+    "pass": true
+   },
+   "G2 2025 residue bounded": {
+    "detail": "2.152 <= 5.0",
+    "pass": true
+   },
+   "G3 2023 tier-1 support": {
+    "detail": "483 >= 300",
+    "pass": true
+   },
+   "G3 2024 tier-1 support": {
+    "detail": "488 >= 300",
+    "pass": true
+   },
+   "G3 2025 tier-1 support": {
+    "detail": "492 >= 300",
+    "pass": true
+   },
+   "G4 FSNO inter-year stability": {
+    "detail": "spread=0.0002",
+    "pass": true
+   },
+   "G4 NP15 inter-year stability": {
+    "detail": "spread=0.0010",
+    "pass": true
+   },
+   "G4 ZP26 inter-year stability": {
+    "detail": "spread=0.0011",
+    "pass": true
+   },
+   "G5 hub-level reconciliation |dZP26| <= 0.010": {
+    "detail": "|0.114794 - 0.116049| = 0.001255",
+    "pass": true
+   },
+   "all_pass": true
+  },
+  "iso_level_reporting_only": {
+   "note": "PG&E TAC total share 0.4615 x bucket weight \u2014 REPORTING, nothing armed",
+   "shares": {
+    "FSNO": 0.061191,
+    "NP15": 0.347332,
+    "ZP26": 0.052977
+   }
+  },
+  "mean_weights": {
+   "FSNO": 0.132592,
+   "NP15": 0.752614,
+   "ZP26": 0.114794
+  },
+  "per_year": [
+   {
+    "fsno_pts": 12.9333,
+    "fsno_weight": 0.132613,
+    "ldf_sum": 100.0,
+    "n_tier1_nodes": 483,
+    "n_windows": 6,
+    "np15_pts": 73.3436,
+    "np15_weight": 0.752036,
+    "unassigned_pts": 2.4733,
+    "year": 2023,
+    "zp26_pts": 11.2497,
+    "zp26_weight": 0.11535
+   },
+   {
+    "fsno_pts": 12.9827,
+    "fsno_weight": 0.132682,
+    "ldf_sum": 100.0,
+    "n_tier1_nodes": 488,
+    "n_windows": 8,
+    "np15_pts": 73.6833,
+    "np15_weight": 0.753036,
+    "unassigned_pts": 2.1518,
+    "year": 2024,
+    "zp26_pts": 11.1823,
+    "zp26_weight": 0.114282
+   },
+   {
+    "fsno_pts": 12.9628,
+    "fsno_weight": 0.13248,
+    "ldf_sum": 100.0,
+    "n_tier1_nodes": 492,
+    "n_windows": 6,
+    "np15_pts": 73.6568,
+    "np15_weight": 0.752771,
+    "unassigned_pts": 2.1525,
+    "year": 2025,
+    "zp26_pts": 11.2279,
+    "zp26_weight": 0.114749
+   }
+  ],
+  "two_way_control": {
+   "committed_per_year": [
+    0.116607,
+    0.115536,
+    0.116004
+   ],
+   "committed_zp26_weight": 0.116049,
+   "exact_match": true,
+   "replicated_per_year": [
+    0.116607,
+    0.115536,
+    0.116004
+   ],
+   "replicated_zp26_weight_mean": 0.116049
+  }
+ },
+ "precommit": "results/calibration/PRECOMMIT-caiso223-subzonal-scope-2026-08-30.md",
+ "probe": "caiso-223 sub-zonal scope (zero-solve; precommit-registered)",
+ "sources": {
+  "atlas": "data/raw/caiso-atlas/{ATL_LDF,ATL_PNODE_MAP}.csv (caiso-172 snapshots)",
+  "census": "results/calibration/_caiso219_deliverability_census.json",
+  "committed_split": "data/raw/zone-specific-demand/CAISO/CAISO_path15_load_split.json",
+  "crosswalk": "data/raw/reference/caiso-plant-hub-membership.csv (caiso-217)",
+  "dmm_elements": "FINDING-caiso218-path-limit-survey-2026-08-24.md \u00a7B (DMM 2023 annual ch.6)",
+  "egrid": "data/raw/fleet-egrid/egrid2023_data_rev2.xlsx PLNT23 (county tier only)"
+ }
+}

@@ -1,0 +1,935 @@
+{
+ "n_pages": 108,
+ "page_census": [
+  {
+   "is_section_header": false,
+   "page": 1,
+   "raster_only": false,
+   "section": null,
+   "text_lines": 3,
+   "title": "Attachment B2"
+  },
+  {
+   "is_section_header": false,
+   "page": 2,
+   "raster_only": false,
+   "section": null,
+   "text_lines": 7,
+   "title": "Changes from previous version"
+  },
+  {
+   "is_section_header": true,
+   "page": 3,
+   "raster_only": false,
+   "section": "SCE Northern",
+   "text_lines": 3,
+   "title": "SCE Northern Interconnection Area Deliverability"
+  },
+  {
+   "is_section_header": false,
+   "page": 4,
+   "raster_only": false,
+   "section": "SCE Northern",
+   "text_lines": 30,
+   "title": "Antelope-Vincent On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 5,
+   "raster_only": false,
+   "section": "SCE Northern",
+   "text_lines": 30,
+   "title": "Vincent-Lugo On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 6,
+   "raster_only": true,
+   "section": "SCE Northern",
+   "text_lines": 2,
+   "title": "Pardee-Sylmar On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 7,
+   "raster_only": false,
+   "section": "SCE Northern",
+   "text_lines": 30,
+   "title": "Windhub On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 8,
+   "raster_only": true,
+   "section": "SCE Northern",
+   "text_lines": 2,
+   "title": "Moorpark-Pardee On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 9,
+   "raster_only": true,
+   "section": "SCE Northern",
+   "text_lines": 2,
+   "title": "North of Magunden On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 10,
+   "raster_only": true,
+   "section": "SCE Northern",
+   "text_lines": 2,
+   "title": "South of Magunden On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 11,
+   "raster_only": true,
+   "section": "SCE Northern",
+   "text_lines": 2,
+   "title": "South of Magunden Off-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 12,
+   "raster_only": true,
+   "section": "SCE Northern",
+   "text_lines": 2,
+   "title": "Antelope-Neenach On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 13,
+   "raster_only": true,
+   "section": "SCE Northern",
+   "text_lines": 2,
+   "title": "Antelope-Neenach Off-Peak Constraint"
+  },
+  {
+   "is_section_header": true,
+   "page": 14,
+   "raster_only": true,
+   "section": "SCE Metro",
+   "text_lines": 2,
+   "title": "SCE Metro Interconnection Area Deliverability Constraints"
+  },
+  {
+   "is_section_header": false,
+   "page": 15,
+   "raster_only": true,
+   "section": "SCE Metro",
+   "text_lines": 2,
+   "title": "Del Amo \u2013 Barre On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 16,
+   "raster_only": true,
+   "section": "SCE Metro",
+   "text_lines": 2,
+   "title": "Hinson - Del Amo On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 17,
+   "raster_only": true,
+   "section": "SCE Metro",
+   "text_lines": 2,
+   "title": "SCE Metro Area Default Constraint"
+  },
+  {
+   "is_section_header": true,
+   "page": 18,
+   "raster_only": false,
+   "section": "SCE North of Lugo",
+   "text_lines": 3,
+   "title": "SCE North of Lugo (NOL) Interconnection Area"
+  },
+  {
+   "is_section_header": false,
+   "page": 19,
+   "raster_only": false,
+   "section": "SCE North of Lugo",
+   "text_lines": 22,
+   "title": "Control to Inyokern Constraint On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 20,
+   "raster_only": false,
+   "section": "SCE North of Lugo",
+   "text_lines": 22,
+   "title": "South of Kramer Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 21,
+   "raster_only": false,
+   "section": "SCE North of Lugo",
+   "text_lines": 22,
+   "title": "Victor \u2013 Lugo Area Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 22,
+   "raster_only": false,
+   "section": "SCE North of Lugo",
+   "text_lines": 22,
+   "title": "Lugo 500/230 kV Transformer Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 23,
+   "raster_only": false,
+   "section": "SCE North of Lugo",
+   "text_lines": 22,
+   "title": "Calcite to Lugo Area Constraint"
+  },
+  {
+   "is_section_header": true,
+   "page": 24,
+   "raster_only": false,
+   "section": "SCE Eastern",
+   "text_lines": 3,
+   "title": "SCE Eastern Interconnection Area Deliverability"
+  },
+  {
+   "is_section_header": false,
+   "page": 25,
+   "raster_only": true,
+   "section": "SCE Eastern",
+   "text_lines": 2,
+   "title": "Colorado River 500/230 kV On-Peak Constraint (230 kV bus only)"
+  },
+  {
+   "is_section_header": false,
+   "page": 26,
+   "raster_only": true,
+   "section": "SCE Eastern",
+   "text_lines": 2,
+   "title": "DCRT On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 27,
+   "raster_only": true,
+   "section": "SCE Eastern",
+   "text_lines": 2,
+   "title": "Devers-Red Bluff On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 28,
+   "raster_only": true,
+   "section": "SCE Eastern",
+   "text_lines": 2,
+   "title": "Eagle Mountain On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 29,
+   "raster_only": true,
+   "section": "SCE Eastern",
+   "text_lines": 2,
+   "title": "Etiwanda-Rancho Vista On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 30,
+   "raster_only": true,
+   "section": "SCE Eastern",
+   "text_lines": 2,
+   "title": "Red Bluff 500/230 kV On-Peak Constraint (230 kV only)"
+  },
+  {
+   "is_section_header": false,
+   "page": 31,
+   "raster_only": true,
+   "section": "SCE Eastern",
+   "text_lines": 2,
+   "title": "Serrano-Alberhill-Valley On-Peak Constraint"
+  },
+  {
+   "is_section_header": true,
+   "page": 32,
+   "raster_only": false,
+   "section": "East of Pisgah",
+   "text_lines": 3,
+   "title": "East of Pisgah Interconnection Area Deliverability"
+  },
+  {
+   "is_section_header": false,
+   "page": 33,
+   "raster_only": false,
+   "section": "East of Pisgah",
+   "text_lines": 39,
+   "title": "GLW Area Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 34,
+   "raster_only": false,
+   "section": "East of Pisgah",
+   "text_lines": 23,
+   "title": "Sloan Canyon \u2013 Eldorado 500 kV Area Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 35,
+   "raster_only": false,
+   "section": "East of Pisgah",
+   "text_lines": 47,
+   "title": "Lugo-Victorville Area Constraint"
+  },
+  {
+   "is_section_header": true,
+   "page": 36,
+   "raster_only": true,
+   "section": "SDG&E",
+   "text_lines": 2,
+   "title": "SDG&E Interconnection Area Deliverability Constraints"
+  },
+  {
+   "is_section_header": false,
+   "page": 37,
+   "raster_only": false,
+   "section": "SDG&E",
+   "text_lines": 27,
+   "title": "Capistrano-San Onofre 230 kV On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 38,
+   "raster_only": true,
+   "section": "SDG&E",
+   "text_lines": 2,
+   "title": "Chicarita 138 kV On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 39,
+   "raster_only": true,
+   "section": "SDG&E",
+   "text_lines": 2,
+   "title": "El Cajon 69 kV On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 40,
+   "raster_only": true,
+   "section": "SDG&E",
+   "text_lines": 2,
+   "title": "Miguel 69 kV On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 41,
+   "raster_only": false,
+   "section": "SDG&E",
+   "text_lines": 31,
+   "title": "Encina - San Luis Rey 230 kV On-Peak/Off-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 42,
+   "raster_only": true,
+   "section": "SDG&E",
+   "text_lines": 2,
+   "title": "San Luis Rey-San Onofre 230 kV On-Peak/Off-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 43,
+   "raster_only": false,
+   "section": "SDG&E",
+   "text_lines": 30,
+   "title": "Ocean Ranch 69 kV On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 44,
+   "raster_only": false,
+   "section": "SDG&E",
+   "text_lines": 31,
+   "title": "Otay Mesa 230 kV On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 45,
+   "raster_only": false,
+   "section": "SDG&E",
+   "text_lines": 32,
+   "title": "Silvergate - Bay Blvd 230 kV On-Peak/Off-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 46,
+   "raster_only": true,
+   "section": "SDG&E",
+   "text_lines": 2,
+   "title": "Silvergate-Old Town 230 kV On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 47,
+   "raster_only": false,
+   "section": "SDG&E",
+   "text_lines": 37,
+   "title": "Talega 230 kV On-Peak Constraint"
+  },
+  {
+   "is_section_header": false,
+   "page": 48,
+   "raster_only": true,
+   "section": "SDG&E",
+   "text_lines": 2,
+   "title": "Trabuco-Capistrano 138 kV On-Peak Constraint"
+  },
+  {
+   "is_section_header": true,
+   "page": 49,
+   "raster_only": false,
+   "section": "PG&E North of Greater Bay",
+   "text_lines": 3,
+   "title": "PG&E North of Greater Bay Interconnection Area"
+  },
+  {
+   "is_section_header": false,
+   "page": 50,
+   "raster_only": true,
+   "section": "PG&E North of Greater Bay",
+   "text_lines": 2,
+   "title": "Collinsville-Tesla 500 kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 51,
+   "raster_only": true,
+   "section": "PG&E North of Greater Bay",
+   "text_lines": 2,
+   "title": "Woodland - Davis 115kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 52,
+   "raster_only": true,
+   "section": "PG&E North of Greater Bay",
+   "text_lines": 2,
+   "title": "Cortina-Eagle Rock 115 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 53,
+   "raster_only": true,
+   "section": "PG&E North of Greater Bay",
+   "text_lines": 2,
+   "title": "Bell-Placer 115kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 54,
+   "raster_only": true,
+   "section": "PG&E North of Greater Bay",
+   "text_lines": 2,
+   "title": "Carberry-Round Mountain 230kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 55,
+   "raster_only": true,
+   "section": "PG&E North of Greater Bay",
+   "text_lines": 2,
+   "title": "Rocklin-Pleasant Grove 115kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 56,
+   "raster_only": true,
+   "section": "PG&E North of Greater Bay",
+   "text_lines": 2,
+   "title": "Bellota-Weber 230kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 57,
+   "raster_only": true,
+   "section": "PG&E North of Greater Bay",
+   "text_lines": 2,
+   "title": "Rio Oso-Brighton 230kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 58,
+   "raster_only": true,
+   "section": "PG&E North of Greater Bay",
+   "text_lines": 2,
+   "title": "Rio Oso-Lockeford 230kV line"
+  },
+  {
+   "is_section_header": true,
+   "page": 59,
+   "raster_only": false,
+   "section": "PG&E Greater Bay",
+   "text_lines": 3,
+   "title": "PG&E Greater Bay Interconnection Area Deliverability"
+  },
+  {
+   "is_section_header": false,
+   "page": 60,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Dumbarton-Newark 115 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 61,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Eastshore-San Mateo 230 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 62,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Lakeville-Ignacio 230 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 63,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Sobrante-Moraga 230 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 64,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Windmaster-Delta pumps 230 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 65,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Contra Costa - Windmaster 230 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 66,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Tesla-Tracy-Pump 230 kV line #2"
+  },
+  {
+   "is_section_header": false,
+   "page": 67,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Contra Costa #1 115kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 68,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Kasson Jct-Heinz 115 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 69,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Newark-Newark Distribution 115 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 70,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Tesla-Bellota 230 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 71,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Eight Mile-Tesla 230 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 72,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Grant - Eastshore #2 line 115 kV"
+  },
+  {
+   "is_section_header": false,
+   "page": 73,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Salado-Crow Creek Sw Sta 60 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 74,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Tesla-Salado 115 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 75,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Morganhill-Metcalf 115kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 76,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Tesla-Tracy Pump 230 kV Line #1"
+  },
+  {
+   "is_section_header": false,
+   "page": 77,
+   "raster_only": true,
+   "section": "PG&E Greater Bay",
+   "text_lines": 2,
+   "title": "Birds Landing-Contra Costa 230kV Line"
+  },
+  {
+   "is_section_header": true,
+   "page": 78,
+   "raster_only": true,
+   "section": "PG&E Kern",
+   "text_lines": 2,
+   "title": "PG&E Kern Interconnection Area Deliverability Constraints"
+  },
+  {
+   "is_section_header": false,
+   "page": 79,
+   "raster_only": true,
+   "section": "PG&E Kern",
+   "text_lines": 2,
+   "title": "Cal Flat-Gates 230 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 80,
+   "raster_only": true,
+   "section": "PG&E Kern",
+   "text_lines": 2,
+   "title": "Q1959 SS-Gates 230 kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 81,
+   "raster_only": true,
+   "section": "PG&E Kern",
+   "text_lines": 2,
+   "title": "Smyrna-Atwell Jct 115kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 82,
+   "raster_only": true,
+   "section": "PG&E Kern",
+   "text_lines": 2,
+   "title": "Kern 230/115kV TB #4"
+  },
+  {
+   "is_section_header": false,
+   "page": 83,
+   "raster_only": true,
+   "section": "PG&E Kern",
+   "text_lines": 2,
+   "title": "Maricopa-Copus 70 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 84,
+   "raster_only": true,
+   "section": "PG&E Kern",
+   "text_lines": 2,
+   "title": "Midway-Taft 115 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 85,
+   "raster_only": true,
+   "section": "PG&E Kern",
+   "text_lines": 2,
+   "title": "Kern-Tevis-Stockdale-Lamont 115kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 86,
+   "raster_only": true,
+   "section": "PG&E Kern",
+   "text_lines": 2,
+   "title": "Midway 230/115kV TB #3"
+  },
+  {
+   "is_section_header": false,
+   "page": 87,
+   "raster_only": true,
+   "section": "PG&E Kern",
+   "text_lines": 2,
+   "title": "Semitropic-Midway 115kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 88,
+   "raster_only": true,
+   "section": "PG&E Kern",
+   "text_lines": 2,
+   "title": "Midway-Buena Vista Jct 230kV Line"
+  },
+  {
+   "is_section_header": true,
+   "page": 89,
+   "raster_only": false,
+   "section": "PG&E Fresno",
+   "text_lines": 3,
+   "title": "PG&E Fresno Interconnection Area Deliverability"
+  },
+  {
+   "is_section_header": false,
+   "page": 90,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Gates 500/230kV TB #12"
+  },
+  {
+   "is_section_header": false,
+   "page": 91,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Gates 500/230kV TB #11"
+  },
+  {
+   "is_section_header": false,
+   "page": 92,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Gates 230/70kV TB #5"
+  },
+  {
+   "is_section_header": false,
+   "page": 93,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Tranquility-Helm 230kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 94,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Dairyland-Chowchilla 115kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 95,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Chowchilla-Le grand 115kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 96,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Los Banos 500/230kV TB"
+  },
+  {
+   "is_section_header": false,
+   "page": 97,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Schindler 115/70kV TB #1"
+  },
+  {
+   "is_section_header": false,
+   "page": 98,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Panoche - Mendota 115 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 99,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Panoche-Oro Loma 115kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 100,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Borden-Storey #1 230kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 101,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Merced 115/70kV TB#2"
+  },
+  {
+   "is_section_header": false,
+   "page": 102,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Helm 230/70kV TB #1"
+  },
+  {
+   "is_section_header": false,
+   "page": 103,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Oro Loma-El Nido 115kV Line"
+  },
+  {
+   "is_section_header": false,
+   "page": 104,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Diablo-Gates 500 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 105,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Mustang-Henrietta 230 kV line"
+  },
+  {
+   "is_section_header": false,
+   "page": 106,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Gates-Panoche 230 kV #1 and #2 Lines"
+  },
+  {
+   "is_section_header": false,
+   "page": 107,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Metcalf-Mosslanding 500kV"
+  },
+  {
+   "is_section_header": false,
+   "page": 108,
+   "raster_only": true,
+   "section": "PG&E Fresno",
+   "text_lines": 2,
+   "title": "Melones-Cottle 230kV line"
+  }
+ ],
+ "pgae_kern_fresno": {
+  "all_raster_only": true,
+  "census_concordance_note": "titles match the _caiso219 Attachment-A census rows 1:1 with one naming delta: B2-2024 carries 'Q1959 SS-Gates 230 kV Line' where Attachment A names 'Gates-Arco 230 kV Line'",
+  "n_constraint_pages": 29,
+  "titles": [
+   "Cal Flat-Gates 230 kV line",
+   "Q1959 SS-Gates 230 kV Line",
+   "Smyrna-Atwell Jct 115kV Line",
+   "Kern 230/115kV TB #4",
+   "Maricopa-Copus 70 kV line",
+   "Midway-Taft 115 kV line",
+   "Kern-Tevis-Stockdale-Lamont 115kV line",
+   "Midway 230/115kV TB #3",
+   "Semitropic-Midway 115kV Line",
+   "Midway-Buena Vista Jct 230kV Line",
+   "Gates 500/230kV TB #12",
+   "Gates 500/230kV TB #11",
+   "Gates 230/70kV TB #5",
+   "Tranquility-Helm 230kV Line",
+   "Dairyland-Chowchilla 115kV Line",
+   "Chowchilla-Le grand 115kV Line",
+   "Los Banos 500/230kV TB",
+   "Schindler 115/70kV TB #1",
+   "Panoche - Mendota 115 kV line",
+   "Panoche-Oro Loma 115kV Line",
+   "Borden-Storey #1 230kV line",
+   "Merced 115/70kV TB#2",
+   "Helm 230/70kV TB #1",
+   "Oro Loma-El Nido 115kV Line",
+   "Diablo-Gates 500 kV line",
+   "Mustang-Henrietta 230 kV line",
+   "Gates-Panoche 230 kV #1 and #2 Lines",
+   "Metcalf-Mosslanding 500kV",
+   "Melones-Cottle 230kV line"
+  ]
+ },
+ "probe": "caiso-223 Attachment B2 distillation (membership evidence only; no MW read)",
+ "revision": "08/28/2024",
+ "sce_control_windhub_labels": [
+  "Big Creek 1, 2, 2A, 3, 4, 8",
+  "Midway",
+  "Mammoth Pool",
+  "Eastwood Generation",
+  "Rector 60/70 kV",
+  "Springville Constraint",
+  "Vestal",
+  "Magunden",
+  "Windhub",
+  "Pastoria",
+  "Whirlwind",
+  "Bailey",
+  "Warne",
+  "Antelope",
+  "Goleta Santa Clara Vincent",
+  "Pardee",
+  "Moorpark",
+  "Saugus",
+  "Sylmar Rio Hondo Lugo",
+  "Ormond Beach Gould",
+  "Eagle Rock",
+  "Goodrich",
+  "Mesa Mesa"
+ ],
+ "source_sha256": "c85adc10a6f7a7a76b2164c9f4715651361926a8708c59b1b8ef1f64690d334a",
+ "source_url": "https://www.caiso.com/documents/attachment-b2-deliverability-constraint-boundary-diagrams-2024.pdf",
+ "verdict": "FETCH SUCCEEDED; the PG&E Kern/Fresno boundary pages are RASTER-ONLY, so the DFAX-circle substation lists for the proposed FSNO/ZP26 boundaries are NOT text-extractable \u2014 recorded as the membership-sharpener gap for a future round (image-grain extraction or a CAISO ask). The per-constraint diagram inventory itself corroborates the census: every off-peak Kern/Fresno constraint has a defined boundary diagram in the 2024 revision."
+}
