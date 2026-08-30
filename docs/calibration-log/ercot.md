@@ -11992,8 +11992,17 @@ WINNER** (min |C3a-2023|, also min C3b). Every point: zero shed, off-season
 intact, coal +0.0993 TWh vs the ercot-234 baseline (+0.0001 vs the k24
 keeper), spur 68 banded / 74 lidless (unchanged — the lift saturated), D-4
 FAIL rows inherited-identical. August $221.18 vs actual $220.16 (within
-$1); the ≥$1,000 tail EXACT (59 vs 59); reported structure residual:
-[500,1000) under 18 vs 43, [200,500) over 103 vs 77.
+$1); the ≥$1,000 tail 59 vs 61 *[CORRECTED 2026-08-26 by owner
+authorization ("full correction pass"), per ercot-237 Amendment 1: this
+entry originally read "EXACT (59 vs 59)" — the actual-side 59 was a
+HARDCODED constant in `ercot235_offer2023_sweep.py`, copied into the
+ercot-236 scorer, never computed from data; the true actual count is 61
+(77+43+61 = 181 = `actual_tail.json` ERCOT-2023 rt_gt, where the
+registered decomposition summed to 179 ≠ 181; hour-level identity 36/59).
+No scored criterion moves — C3a/C3b/C3c never read these constants. The
+constants are now DERIVED from the actual series and cross-checked
+against `actual_tail.json` in both probe scripts.]*; reported structure
+residual: [500,1000) under 18 vs 43, [200,500) over 103 vs 77.
 
 ### ercot-236 PROMOTION ADDENDUM (same session) — `2026-08-25-236-swcap-clip-k33` PROMOTED TO KEEPER on the owner's standing signature
 

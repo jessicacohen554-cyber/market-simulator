@@ -72,8 +72,14 @@ Min |official C3a-2023| over clean candidates {24: 13.5, 27: 11.4, 30: 9.3,
 `results/calibration/ercot236_k33_clip`). **The first ERCOT configuration in
 program history to land ALL THREE 2023 price criteria inside their bands:
 C3a −7.3 % PASS · C3b 0.102 PASS · C3c 180/181 PASS.** August lands $221.18
-vs actual $220.16 (within $1); the ≥$1,000 deep tail is EXACT (59 model vs
-59 actual hours); the k→C3a response on the clipped surface is monotone
+vs actual $220.16 (within $1); the ≥$1,000 deep tail is 59 model vs 61
+actual hours *[CORRECTED 2026-08-26 by owner authorization, per ercot-237
+Amendment 1: this finding originally read "EXACT (59 model vs 59 actual
+hours)" — the actual-side 59 was a hardcoded constant in
+`ercot235_offer2023_sweep.py`, copied into the ercot-236 scorer, never
+computed from data; the true actual count is 61 (77+43+61 = 181 =
+`actual_tail.json` rt_gt). No scored criterion moves.]*; the k→C3a
+response on the clipped surface is monotone
 (−13.5 → −11.4 → −9.3 → −7.3 across 24/27/30/33) and the charter's (24, 33]
 bracket ends in the band's interior. Reported structure residual: the
 [500, 1000) band under-fills (18 vs 43) while [200, 500) over-fills (103 vs
