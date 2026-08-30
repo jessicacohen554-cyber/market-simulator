@@ -159,6 +159,12 @@ VERDICT_MAP = {
     # `miso-t1x-ffr2a`; the pre-fix `miso-2023-2027-crossover-ffr3a2` stays
     # unmapped and renders score-only, exactly as it did before.
     "miso-2023-2027-crossover-ffr3a4": "miso-2023-2027-crossover-ffr3a4-t1x",
+    # capx-D10 (2026-08-30) measured NYISO's FIRST-EVER T1-X crossover — no
+    # prior `nyiso-t1x` key existed anywhere, so the bare per-tier key IS this
+    # run's own verdict (the LIVE-vintage convention) and cannot contradict any
+    # other run's score. Chartered by owner card A (A-A, 2026-08-25) so §2.1b
+    # leg (c) closes on a MEASURED FC-4 rather than an absent one.
+    "nyiso-2023-2027-crossover-capxd10": "nyiso-t1x",
 }
 
 
