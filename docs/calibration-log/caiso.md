@@ -9846,3 +9846,60 @@ Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
   anchor item unchanged.
 
 **Next number: caiso-220.**
+
+## caiso-220 (2026-08-26) — THE FUNDED caiso-217 REPLAY LANDED, SCORED, REGISTERED AND **PROMOTED**: keeper `2026-08-17-caiso-200-h1-memberpanel` → `2026-08-26-caiso-220-c1-crosswalk` — the measured generator-hub-membership crosswalk's solve-side effect is finally ON THE RECORD (C3a improves in all three years, +4.0/+12.5/+15.5 vs +4.1/+12.8/+15.7; the Path-15 split machinery ENGAGES, 0 → 50/40/17 h > $15) — and **C3a is NOT closed; NOT-YET stands**, exactly as pre-registered
+
+- **Charter**: the owner's 2026-08-26 handoff ("CLOSE THE C3a LEVEL OVERRUN
+  IN 2024/2025 … including 'the lever is refuted' if that is what the
+  measurement says") + the owner's in-session promotion standard (verbatim
+  caiso-217 wording). Off-queue: queue EMPTY, both ranked successors
+  CEII-blocked (caiso-218/219); the one funded-admissible solve object was
+  the caiso-217 registration debt (filed item 8).
+- **Pre-registration BEFORE the solve**:
+  `docs/PRECOMMIT-caiso220-c1-crosswalk-replay-2026-08-26.md` — the
+  committed caiso-216 §G gate table adopted verbatim; expected
+  sign/magnitude from committed bytes (the caiso-217 secondary claim inside
+  the window); STOP rules; the keeper proposal pre-registered.
+- **The solve**: ONE 3-year invocation via `--replay-bundle` on the
+  caiso-200 keeper bundle (251 kwargs from `meta.json`, no `--set`; years
+  sequential; per-year checkpoint pushes). Environment repairs only
+  (recipe-neutral, logged): `data/clean` rebuilt (49/51; the 2 failures are
+  ERCOT/MISO corpus datatypes off the CAISO path) and the container's
+  missing tz database installed. The container RESTARTED mid-report — the
+  checkpoint discipline held; the bundle survived and nothing was lost.
+- **Scored (registered `2026-08-26-caiso-220-c1-crosswalk`)**: NOT-YET, 8
+  criteria, ONE load-bearing FAIL — C3a +4.0 (PASS) /+12.5/+15.5 % (model
+  lw 56.31/38.96/39.76 vs RT 54.17/34.65/34.42). C3b PASS 0.100/0.177/0.180
+  vs baseline 0.098/0.179/0.182 — 2025 tripwire did NOT fire (margin
+  0.020); 2023 +0.002 DISCLOSED. C1 12/12 free 8/8; C2/C4 PASS; C3c the
+  single ledgered caveat carried (2024 magnitude 1h→0h re-measured; 2025
+  not gated); C6 attested at promotion (`gen_caiso220_attestation.py`; DOF
+  **11/7** = 10/7 + the crosswalk measured-input row; the stale
+  `offer_curve_by_group` text annotated — filed item 1 discharged); C8
+  PASS; D-A essentially unchanged (66.6/72.2/87.8 % vs 67.0/73.3/89.2 %,
+  phase flags identical). The caiso-217 secondary numbers reproduced
+  EXACTLY — they are now committed measurement.
+- **Split witness** (`scripts/probes/_caiso220_zonal_decomp.py` +
+  `results/calibration/_caiso220_zonal_decomp.json`): model NP15−SP15 >
+  $15 hours **0 → 50/40/17** vs reality 1,310/1,691/1,347; per-zone C3a
+  moves the right way in every zone but ZP26 (2024 NP15 −6.6→−3.5 %,
+  LA_BASIN +27.1→+23.6 %, SDGE +22.1→+18.8 %, SP15_rest +23.8→+20.4 %;
+  ZP26 +16.8→+18.0 % — it now prices with the south more of the time,
+  itself reality's structure). Residual attribution unchanged: the
+  caiso-215 §F H4 south-belly strandedness, both lever routes CEII-blocked
+  (filed item 9).
+- **Promotion** (owner act, pre-registered rule): 2023 in band ✓, C6/C8
+  PASS ✓ → promoted on the owner's standing in-session instruction. The
+  decisive structural fact: the crosswalk is ACTIVE DATA at HEAD, so the
+  caiso-200 bundle no longer reproduces — caiso-220 is the same recipe's
+  honest current score with measured membership replacing the
+  lat-cut/county-lift estimate [R-ACCURATE]. No `complete` re-key due
+  (CAISO holds no marker).
+- **Records**: bundle + registry sidecar + run payload (blob-verified) +
+  bench ×3 (HARD-STALE parts re-stamped — filed item 5 discharged) +
+  keeper shard + status; matrix shard stamps + evidence appends + §5.2
+  header re-stamp + caiso-220 block (`check_mechanism_matrix.py` all
+  green); `FINDING-caiso220-c1-crosswalk-replay-2026-08-26.md`. Filed
+  items 1, 5, 8 DISCHARGED; items 3, 4, 6, 7, 9 carried.
+
+**Next number: caiso-221.**
