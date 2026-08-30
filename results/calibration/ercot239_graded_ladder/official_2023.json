@@ -1,0 +1,11 @@
+[
+ {
+  "year": 2023,
+  "c3a_model": 38.59,
+  "c3a_actual": 64.32,
+  "c3a_magnitude": "-40.0%",
+  "c3b_nrmse": "0.736",
+  "c3c_model_h": 70,
+  "c3c_actual_rt_h": 181
+ }
+]
