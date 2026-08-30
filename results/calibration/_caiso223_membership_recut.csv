@@ -1,0 +1,447 @@
+plant_code,plant_name,tech,capacity_mw,hub,pnode,county,county_source,subzone,method
+250,Kerckhoff,hydro,22.6,TH_NP15,KERCK1G1_7_B2,Fresno,egrid2023,FSNO,slap-coloc:PGF1
+254,Kings River PH,hydro,48.6,TH_NP15,KINGSRIV_7_B1,Fresno,egrid2023,FSNO,county:Fresno
+258,Merced Falls,hydro,3.4,TH_NP15,MERCEDFL_7_N002,Merced,egrid2023,FSNO,slap-coloc:PGF1
+276,San Joaquin 2,hydro,2.8,TH_NP15,SJNO2_6_B1,Madera,egrid2023,FSNO,slap-coloc:PGF1
+277,San Joaquin 3,hydro,4.0,TH_NP15,CRANEVLY_6_N003,Madera,egrid2023,FSNO,slap-coloc:PGF1
+293,A G Wishon,hydro,12.8,TH_NP15,WISHON1_7_B2,Madera,egrid2023,FSNO,county:Madera
+682,Kerckhoff 2,hydro,139.5,TH_NP15,KERCKHOF_7_B1,Fresno,egrid2023,FSNO,county:Fresno
+10156,Fresno Cogen Partners,gas_ct,86.8,TH_NP15,AGRICO_7_NBT1,Fresno,egrid2023,FSNO,county:Fresno
+10405,Kingsburg Cogen,gas_cc,36.2,TH_NP15,KINGSBUR_7_B1,Fresno,egrid2023,FSNO,county:Fresno
+55807,Henrietta Peaker,gas_ct,98.0,TH_NP15,GWFGT1_7_N003,Kings,egrid2023,FSNO,county:Kings
+56185,Chowchilla II,gas_other,49.6,TH_NP15,STOREY1_2_N003,Madera,egrid2023,FSNO,slap-coloc:PGF1
+57497,Stroud Solar Station,solar,20.0,TH_NP15,STROUD_6_N003,Fresno,egrid2023,FSNO,slap-coloc:PGF1
+57498,Five Points Solar Station,solar,15.0,TH_NP15,SCHLNDLR_7_N002,Fresno,egrid2023,FSNO,slap-coloc:PGF1
+57499,Westside Solar Station,solar,15.0,TH_NP15,SCHLNDLR_7_N002,Fresno,egrid2023,FSNO,slap-coloc:PGF1
+57521,Giffen,solar,10.0,TH_NP15,GIFFGEN_7_N001,Fresno,egrid2023,FSNO,county:Fresno
+57522,Cantua Solar Station,solar,20.0,TH_NP15,CANTGEN_7_N002,Fresno,egrid2023,FSNO,slap-coloc:PGF1
+57891,Guernsey Solar Station,solar,20.0,TH_NP15,GUERSEY_7_N001,Kings,egrid2023,FSNO,slap-coloc:PGF1
+58148,RE Kansas South LLC,solar,20.0,TH_NP15,KANSASGN_7_N002,Kings,egrid2023,FSNO,slap-coloc:PGF1
+59150,RE Mustang LLC,battery,175.0,TH_NP15,MUSTANGS_2_B1,Kings,egrid2023,FSNO,county:Kings
+59265,Merced Solar LLC,solar,1.5,TH_NP15,MERCED_7_N002,Merced,egrid2023,FSNO,slap-coloc:PGF1
+59267,Mission Solar LLC,solar,1.5,TH_NP15,MERCED_7_N002,Merced,egrid2023,FSNO,slap-coloc:PGF1
+59522,Giffen Solar Park,solar,20.0,TH_NP15,GIFFGEN_7_N001,Fresno,egrid2023,FSNO,county:Fresno
+59523,Five Points Solar Park,solar,60.0,TH_NP15,SCHLNDLR_7_N002,Fresno,egrid2023,FSNO,slap-coloc:PGF1
+59525,Wright Solar Park,solar,200.0,TH_NP15,WRGTSRGN_7_N001,Merced,egrid2023,FSNO,county:Merced
+59737,Aspiration G,solar,9.0,TH_NP15,GIFFEN_6_B1,Fresno,egrid2023,FSNO,slap-coloc:PGF1
+59738,Citizen B,solar,5.0,TH_NP15,SOLBGEN_7_N001,Fresno,egrid2023,FSNO,slap-coloc:PGF1
+59870,"Little Bear Solar 1, LLC",solar,40.0,TH_NP15,LTBERA03_7_N001,Fresno,egrid2023,FSNO,county:Fresno
+59915,Oro Loma,solar,20.0,TH_NP15,OROLOM_7_N001,Fresno,egrid2023,FSNO,county:Fresno
+60027,Adera Solar,solar,20.0,TH_NP15,ADERAG1_7_N001,Madera,egrid2023,FSNO,county:Madera
+60777,"American Kings Solar, LLC",solar,128.0,TH_NP15,AKINGS02_7_N001,Kings,egrid2023,FSNO,county:Kings
+61995,UC Merced Solar Hybrid,battery,5.0,TH_NP15,MERCED_7_N002,Merced,egrid2023,FSNO,slap-coloc:PGF1
+62015,Mustang Two,solar,150.0,TH_NP15,MUSTANGS_2_B1,Kings,egrid2023,FSNO,county:Kings
+63727,Slate Hybrid,solar,440.3,TH_NP15,SLATE_7_N001,Kings,egrid2023,FSNO,county:Kings
+64693,Dos Palos,unlisted,0.0,TH_NP15,DOSPAL_7_N003,Merced,egrid2023,FSNO,county:Merced
+64908,Scarlet Solar (CA),solar,240.0,TH_NP15,SCARLT_7_CN1,Fresno,eia860,FSNO,county:Fresno
+65570,West Valley Mission CCD Solar Project,battery,3.6,TH_NP15,MERCED_7_N002,Santa Clara,egrid2023,FSNO,slap-coloc:PGF1
+66506,West Tambo Clean Power II,solar,2.0,TH_NP15,LVNGSTN_7_N001,Merced,eia860,FSNO,slap-coloc:PGF1
+66951,Scarlet II Hybrid,solar,350.0,TH_NP15,SCARLT_7_CN1,Fresno,eia860,FSNO,county:Fresno
+67287,Dos Palos Clean Power,solar,3.0,TH_NP15,DOSPAL_7_N003,Merced,eia860,FSNO,county:Merced
+67848,Luna Valley,solar,200.0,TH_NP15,LUNAVL_7_ND001,Fresno,eia860,FSNO,county:Fresno
+68808,Dos Palos Cooperative Gin,solar,1.0,TH_NP15,DOSPALS_7_N002,Merced,eia860,FSNO,slap-coloc:PGF1
+68837,Godinho Dairy Digester,biomass_other,2.0,TH_NP15,CANAL_7_N001,Merced,eia860,FSNO,slap-coloc:PGF1
+34,Rollins,hydro,12.1,TH_NP15,ROLLINSF_7_B1,Placer,egrid2023,NP15,county-other:Placer
+180,Volta 2,hydro,1.0,TH_NP15,VOLTA2_7_N001,Shasta,egrid2023,NP15,slap-coloc:PGNP
+214,Alta Powerhouse,hydro,1.0,TH_NP15,BONNIEN_7_N002,Placer,egrid2023,NP15,slap-coloc:PGSI
+219,Belden,hydro,117.9,TH_NP15,BELDEN_7_B1,Plumas,egrid2023,NP15,county-other:Plumas
+222,Caribou 1,hydro,73.8,TH_NP15,CARABOU_7_B1,Plumas,egrid2023,NP15,county-other:Plumas
+224,Centerville PH,hydro,6.4,TH_NP15,CNTRVL12_7_N002,Butte,egrid2023,NP15,slap-coloc:PGNP
+225,Chili Bar,hydro,8.3,TH_NP15,PLCRVLB2_7_N002,El Dorado,egrid2023,NP15,county-other:El Dorado
+227,Coleman PH,hydro,12.1,TH_NP15,COLEMAN_6_B1,Shasta,egrid2023,NP15,county-other:Shasta
+231,Cresta,hydro,73.8,TH_NP15,CRESTA_2_B1,Butte,egrid2023,NP15,county-other:Butte
+232,De Sabla,hydro,18.4,TH_NP15,DESABLA_6_B1,Butte,egrid2023,NP15,county-other:Butte
+235,Drum 1,hydro,49.2,TH_NP15,DRUM_1_B1,Placer,egrid2023,NP15,county-other:Placer
+237,Dutch Flat,hydro,22.0,TH_NP15,DTCHFL1_1_B1,Placer,egrid2023,NP15,county-other:Placer
+238,El Dorado,hydro,20.0,TH_NP15,ELDORU1_7_B2,El Dorado,egrid2023,NP15,slap-coloc:PGSI
+239,Electra,hydro,102.5,TH_NP15,ELECTRA_2_B1,Amador,egrid2023,NP15,county-other:Amador
+241,Halsey,hydro,13.6,TH_NP15,HALSEYF_7_B1,Placer,egrid2023,NP15,slap-coloc:PGSI
+242,Hamilton Branch,hydro,5.3,TH_NP15,HAMILBR_7_N002,Plumas,egrid2023,NP15,slap-coloc:PGNP
+243,Hat Creek 1,hydro,10.0,TH_NP15,HATCRK1_6_B1,Shasta,egrid2023,NP15,slap-coloc:PGNP
+244,Hat Creek 2,hydro,10.0,TH_NP15,HATCRK2_6_B1,Shasta,egrid2023,NP15,county-other:Shasta
+246,Humboldt Bay,gas_other,167.0,TH_NP15,HMBUNIT1_7_GN010,Humboldt,egrid2023,NP15,county-other:Humboldt
+248,Inskip,hydro,7.6,TH_NP15,INSKIP_6_B1,Tehama,egrid2023,NP15,county-other:Tehama
+260,Dynegy Moss Landing Power Plant Hybrid,gas_cc,1848.0,TH_NP15,MOSSLD_1_N055,Monterey,egrid2023,NP15,slap-coloc:PGCC
+264,Phoenix,hydro,1.6,TH_NP15,PHOENIX_7_N001,Tuolumne,egrid2023,NP15,county-other:Tuolumne
+265,Pit 1,hydro,69.2,TH_NP15,PIT1_2_B1,Shasta,egrid2023,NP15,slap-coloc:PGNP
+266,Pit 3,hydro,80.1,TH_NP15,PIT3_2_B1,Shasta,egrid2023,NP15,slap-coloc:PGNP
+268,Pit 5,hydro,141.6,TH_NP15,PIT5_7_N001,Shasta,egrid2023,NP15,slap-coloc:PGNP
+274,Potter Valley,hydro,9.4,TH_NP15,POTTRVLY_7_N003,Mendocino,egrid2023,NP15,slap-coloc:PGNC
+275,Rock Creek,hydro,126.0,TH_NP15,ROCKCRK_2_B1,Plumas,egrid2023,NP15,county-other:Plumas
+280,South,hydro,6.7,TH_NP15,SOUTHG_7_B1,Tehama,egrid2023,NP15,county-other:Tehama
+281,Spaulding 1,hydro,7.0,TH_NP15,SPAULD3_7_B1,Nevada,egrid2023,NP15,county-other:Nevada
+282,Spaulding 2,hydro,3.7,TH_NP15,SPAULD3_7_B1,Nevada,egrid2023,NP15,county-other:Nevada
+283,Spaulding 3,hydro,6.6,TH_NP15,SPAULD3_7_B1,Nevada,egrid2023,NP15,county-other:Nevada
+284,Spring Gap,hydro,6.0,TH_NP15,SPRNGGP_7_B1,Tuolumne,egrid2023,NP15,county-other:Tuolumne
+285,Stanislaus,hydro,81.9,TH_NP15,STANISLS_1_B1,Tuolumne,egrid2023,NP15,slap-coloc:PGST
+290,Volta 1,hydro,8.5,TH_NP15,VOLTA1_7_B1,Shasta,egrid2023,NP15,county-other:Shasta
+292,Wise,hydro,16.4,TH_NP15,WISE1_7_B1,Placer,egrid2023,NP15,county-other:Placer
+410,McSwain,hydro,9.0,TH_NP15,MCSWAIN_6_N001,Mariposa,egrid2023,NP15,county-other:Mariposa
+414,Beardsley,hydro,10.0,TH_NP15,BEARDSLY_7_B1,Tuolumne,egrid2023,NP15,county-other:Tuolumne
+417,Forbestown,hydro,41.9,TH_NP15,FORBSTWN_7_B1,Butte,egrid2023,NP15,county-other:Butte
+454,Colgate,hydro,315.0,TH_NP15,COLGATE_2_B1,Yuba,egrid2023,NP15,county-other:Yuba
+626,Oak Flat,hydro,1.4,TH_NP15,BCKSCRK_2_B1,Plumas,egrid2023,NP15,slap-coloc:PGSI
+714,Toadtown,hydro,1.8,TH_NP15,TOADTWN_7_N002,Butte,egrid2023,NP15,slap-coloc:PGNP
+7229,Black Butte,hydro,6.1,TH_NP15,BLCKBUTT_7_B1,Tehama,egrid2023,NP15,county-other:Tehama
+7231,Gianera,gas_ct,64.6,TH_NP15,CSCGNRA1_7_N101,Santa Clara,egrid2023,NP15,county-other:Santa Clara
+7338,Grizzly,hydro,22.0,TH_NP15,GRIZZLY_7_N101,Plumas,egrid2023,NP15,slap-coloc:PGEB
+7451,Lodi,gas_ct,27.4,TH_NP15,LODI25CT_7_B1,San Joaquin,egrid2023,NP15,county-other:San Joaquin
+10034,Gilroy Power Plant,gas_cc,130.0,TH_NP15,GILROYF_1_B1,Santa Clara,egrid2023,NP15,slap-coloc:PGSB
+10342,Marathon Bay Area Cogen,gas_cc,113.5,TH_NP15,FOSTERW_7_N004,Contra Costa,egrid2023,NP15,slap-coloc:PGEB
+10707,Cove Hydroelectric,hydro,5.0,TH_NP15,COVERD_7_N004,Shasta,egrid2023,NP15,county-other:Shasta
+10748,Marina Landfill Gas,biomass_other,5.1,TH_NP15,CSTRVLLE_1_N003,Monterey,egrid2023,NP15,slap-coloc:PGCC
+10880,Bidwell Ditch Project,hydro,1.8,TH_NP15,HATLOSCK_6_GN001,Shasta,egrid2023,NP15,county-other:Shasta
+10881,Roaring Creek Water Power,hydro,2.0,TH_NP15,COVERD_7_N004,Shasta,egrid2023,NP15,county-other:Shasta
+10882,Hatchet Creek Project,hydro,6.8,TH_NP15,COVERD_7_N004,Shasta,egrid2023,NP15,county-other:Shasta
+50110,Sierra Pacific Burney Facility,biomass_other,20.0,TH_NP15,SPI-BURN_7_N003,Shasta,egrid2023,NP15,county-other:Shasta
+50112,Sierra Pacific Quincy Facility,biomass_other,35.2,TH_NP15,SPI-QUCY_7_N002,Plumas,egrid2023,NP15,slap-coloc:PGNP
+50180,Olsen,hydro,5.0,TH_NP15,OLSEN_6_N001,Shasta,egrid2023,NP15,county-other:Shasta
+50219,Frankenheimer Power Plant,hydro,5.3,TH_NP15,COTTLE_7_N002,Stanislaus,egrid2023,NP15,slap-coloc:PGNP
+50293,Wadham Energy,biomass_other,29.1,TH_NP15,WADHAM_7_B1,Colusa,egrid2023,NP15,county-other:Colusa
+50546,Bowman,hydro,3.6,TH_NP15,BOWMNTAP_6_B1,Nevada,egrid2023,NP15,county-other:Nevada
+54261,Warm Springs Hydro Project,hydro,2.7,TH_NP15,GYSRVLLE_6_N005,Sonoma,egrid2023,NP15,slap-coloc:PGFG
+54517,Sierra Pacific Sonora,biomass_other,7.5,TH_NP15,PEORIA_7_N003,Tuolumne,egrid2023,NP15,slap-coloc:PGST
+55009,Montgomery Creek Hydro,hydro,2.6,TH_NP15,COVERD_7_N004,Shasta,egrid2023,NP15,county-other:Shasta
+55333,Delta Energy Center,gas_cc,943.5,TH_NP15,DELTAPMP_2_N008,Contra Costa,egrid2023,NP15,county-other:Contra Costa
+55748,Los Esteros Critical Energy Center,gas_cc,306.1,TH_NP15,LECEFBGN_7_N003,Santa Clara,egrid2023,NP15,county-other:Santa Clara
+55855,Wolfskill Energy Center,gas_ct,48.0,TH_NP15,WOLFSKIL_7_B1,Solano,egrid2023,NP15,county-other:Solano
+56184,Red Bluff,gas_other,46.4,TH_NP15,REDBLFF_6_N008,Tehama,egrid2023,NP15,slap-coloc:PGNP
+57041,Vaca Dixon Solar Station,solar,2.0,TH_NP15,VACADIX_1_GN001,Solano,egrid2023,NP15,slap-coloc:PGNP
+57133,G2 Energy Ostrom Road LLC,biomass_other,3.5,TH_NP15,WHEATLND_6_N006,Yuba,egrid2023,NP15,slap-coloc:PGSI
+57483,Mariposa Energy Project,gas_ct,199.6,TH_NP15,KELSO1_7_N001,Alameda,egrid2023,NP15,county-other:Alameda
+57559,Sunset Reservoir North Basin,solar,4.5,TH_NP15,MARTINC_1_GN001,San Francisco,egrid2023,NP15,slap-coloc:PGSF
+57988,Lincoln Landfill,biomass_other,4.8,TH_NP15,PLSNTGR_6_N013,Placer,egrid2023,NP15,slap-coloc:PGSI
+58436,Ameresco San Joaquin,biomass_other,4.4,TH_NP15,CORRAL1_6_N002,San Joaquin,egrid2023,NP15,county-other:San Joaquin
+58437,Ameresco Forward,biomass_other,4.4,TH_NP15,WEBER_2_N021,San Joaquin,egrid2023,NP15,slap-coloc:PGNP+PGST
+58578,Sonora 1,solar,1.5,TH_NP15,PEORIA_7_N003,Tuolumne,egrid2023,NP15,slap-coloc:PGST
+59550,Putah Creek Solar Farm,solar,2.0,TH_NP15,PUTHCR_7_N004,Yolo,egrid2023,NP15,county-other:Yolo
+59658,SPI Anderson 2,biomass_other,30.2,TH_NP15,Q643G_7_N001,Shasta,egrid2023,NP15,slap-coloc:PGNP
+61115,Manteca Land PV,solar,1.0,TH_NP15,MANTECA_1_N033,San Joaquin,egrid2023,NP15,slap-coloc:PGST
+61801,"Cascade Energy Storage, LLC",battery,25.0,TH_NP15,CASCES_7_N008,San Joaquin,eia860,NP15,county-other:San Joaquin
+62564,Elkhorn Battery Energy Storage System,battery,182.5,TH_NP15,ELKHRN_7_N001,Monterey,egrid2023,NP15,county-other:Monterey
+64326,Summit Winds,wind,57.5,TH_NP15,DYERSM3_7_N001,Alameda,egrid2023,NP15,county-other:Alameda
+64743,Tierra Buena Energy Storage,battery,5.0,TH_NP15,PEASE_7_N001,Sutter,egrid2023,NP15,slap-coloc:PGSI
+66088,Putah Creek Solar Farm North,solar,3.0,TH_NP15,PUTHCR_7_N004,Yolo,egrid2023,NP15,county-other:Yolo
+66270,Proxima,battery,352.0,TH_NP15,PROXSR_7_N003,Stanislaus,eia860,NP15,county-other:Stanislaus
+66650,Bear Canyon,battery,13.0,TH_NP15,BERCYN_7_N001,Lake,eia860,NP15,county-other:Lake
+66669,West Ford Flat,battery,25.0,TH_NP15,WDFRDF_7_N001,Lake,eia860,NP15,county-other:Lake
+67092,Paulsell,battery,35.0,TH_NP15,PALSEL_7_N005,Stanislaus,eia860,NP15,county-other:Stanislaus
+67288,Foster Clean Power A,battery,4.3,TH_NP15,ARCATA_6_N001,Humboldt,eia860,NP15,slap-coloc:PGHB
+67360,Hat Creek Bioenergy,biomass_other,3.6,TH_NP15,BURNEY_7_N001,Shasta,eia860,NP15,slap-coloc:PGNP
+67680,Kola Energy Center,battery,400.0,TH_NP15,KOLA_7_B1N004,San Joaquin,eia860,NP15,county-other:San Joaquin
+67770,Pittsburg RV Solar,unlisted,0.0,TH_NP15,KIRKER_1_N001,Contra Costa,eia860,NP15,slap-coloc:PGEB
+67859,Foster Clean Power B,battery,5.2,TH_NP15,ARCATA_6_N001,Humboldt,eia860,NP15,slap-coloc:PGHB
+289,Tule River,hydro,8.4,TH_SP15,SPRINGVL_6_N020,Tulare,egrid2023,SP15_side,hub:unchanged
+315,AES Alamitos LLC,gas_st,1115.0,TH_SP15,ALAMT3G_7_B1,Los Angeles,egrid2023,SP15_side,hub:unchanged
+317,Big Creek 1,hydro,88.4,TH_SP15,BIGCRK1_2_B1,Fresno,egrid2023,SP15_side,hub:unchanged
+318,Big Creek 2,hydro,66.6,TH_SP15,BIGCRK1_2_B1,Fresno,egrid2023,SP15_side,hub:unchanged
+319,Big Creek 3,hydro,174.5,TH_SP15,BIGCRK1_2_B1,Fresno,egrid2023,SP15_side,hub:unchanged
+320,Big Creek 4,hydro,100.0,TH_SP15,BIGCRK1_2_B1,Madera,egrid2023,SP15_side,hub:unchanged
+321,Big Creek 8,hydro,75.0,TH_SP15,BIGCRK1_2_B1,Fresno,egrid2023,SP15_side,hub:unchanged
+322,Big Creek 2A,hydro,110.0,TH_SP15,BIGCRK1_2_B1,Fresno,egrid2023,SP15_side,hub:unchanged
+330,,unlisted,0.0,TH_SP15,ELSEGNDO_2_B1,Los Angeles,egrid2023,SP15_side,hub:unchanged
+332,Fontana,hydro,3.0,TH_SP15,ETIWND_6_N026,San Bernardino,egrid2023,SP15_side,hub:unchanged
+337,Kaweah 1,hydro,2.3,TH_SP15,RECTOR_6_N013,Tulare,egrid2023,SP15_side,hub:unchanged
+341,Long Beach Generation,gas_ct,252.0,TH_SP15,HINSON_2_B1,Los Angeles,egrid2023,SP15_side,hub:unchanged
+356,,unlisted,0.0,TH_SP15,REDON5G_7_B1,Los Angeles,egrid2023,SP15_side,hub:unchanged
+361,Santa Ana 1,hydro,3.2,TH_SP15,JOANEC_7_N001,San Bernardino,egrid2023,SP15_side,hub:unchanged
+363,Santa Ana 3,hydro,3.1,TH_SP15,JOANEC_7_N001,San Bernardino,egrid2023,SP15_side,hub:unchanged
+422,Glenarm,gas_ct,265.6,TH_SP15,UNIT5GT_7_N001,Los Angeles,egrid2023,SP15_side,hub:unchanged
+481,Perris,hydro,7.9,TH_SP15,VALLEYSC_1_N202,Riverside,egrid2023,SP15_side,hub:unchanged
+482,Rio Hondo,hydro,1.9,TH_SP15,CENTERS_6_N010,Los Angeles,egrid2023,SP15_side,hub:unchanged
+483,Coyote Creek,hydro,3.1,TH_SP15,OLINDA_6_N007,Orange,egrid2023,SP15_side,hub:unchanged
+484,Red Mountain,hydro,5.9,TH_SP15,VALLEYSC_1_N202,San Diego,egrid2023,SP15_side,hub:unchanged
+745,Etiwanda,hydro,23.9,TH_SP15,ETIWND_6_N026,San Bernardino,egrid2023,SP15_side,hub:unchanged
+905,Alamo,hydro,19.6,TH_SP15,ALAMOSC_7_N001,Los Angeles,egrid2023,SP15_side,hub:unchanged
+6646,San Dimas,hydro,9.9,TH_SP15,PADUA_6_N004,Los Angeles,egrid2023,SP15_side,hub:unchanged
+7072,Mojave Siphon,hydro,32.7,TH_SP15,WSTWND_7_N003,San Bernardino,egrid2023,SP15_side,hub:unchanged
+7148,San Gorgonio 1,unlisted,0.0,TH_SP15,GARNET_1_N106,Riverside,eia860,SP15_side,hub:unchanged
+8076,Ellwood,gas_ct,58.0,TH_SP15,GOLETA_6_N067,Santa Barbara,egrid2023,SP15_side,hub:unchanged
+10115,Grossmont Hospital,gas_ct,4.5,TH_SP15,MURRAYGN_7_N018,San Diego,egrid2023,SP15_side,hub:unchanged
+10139,Isabella Hydro Project,hydro,11.8,TH_SP15,VESTAL_6_N006,Kern,egrid2023,SP15_side,hub:unchanged
+10162,Whitewater Hydro Plant,hydro,1.3,TH_SP15,GARNET_1_N106,Riverside,egrid2023,SP15_side,hub:unchanged
+10169,Carson Cogeneration,gas_cc,55.8,TH_SP15,ICEGEN_7_B1,Los Angeles,egrid2023,SP15_side,hub:unchanged
+10213,El Segundo Cogen,gas_cc,180.1,TH_SP15,ELSEGNDO_2_B1,Los Angeles,egrid2023,SP15_side,hub:unchanged
+10437,Sunray 2,solar,20.0,TH_SP15,SEGS1G_7_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+10444,"Lockhart Solar PV, LLC",battery,169.4,TH_SP15,LCKHT1_7_N003,San Bernardino,egrid2023,SP15_side,hub:unchanged
+10472,Puente Hills Energy Recovery,biomass_other,50.0,TH_SP15,WALNUT_6_N007,Los Angeles,egrid2023,SP15_side,hub:unchanged
+10718,Karen Avenue Wind Farm,wind,11.7,TH_SP15,GARNET_1_N106,Riverside,egrid2023,SP15_side,hub:unchanged
+10776,E F Oxnard Energy Facility,gas_ct,48.5,TH_SP15,SNCLRA_7_CN1,Ventura,egrid2023,SP15_side,hub:unchanged
+50464,Oxnard,gas_ct,68.7,TH_SP15,CHARMNGN_7_N001,Ventura,egrid2023,SP15_side,hub:unchanged
+50485,Altech III,unlisted,0.0,TH_SP15,ALTWD1_7_N003,Riverside,eia860,SP15_side,hub:unchanged
+50535,Mesa Wind Power LLC,wind,30.0,TH_SP15,PANERO_1_N001,Riverside,eia860,SP15_side,hub:unchanged
+50837,Southeast Resource Recovery,unlisted,0.0,TH_SP15,HINSON_2_B1,Los Angeles,egrid2023,SP15_side,hub:unchanged
+50850,CamChino Leasing LLC,gas_cc,30.8,TH_SP15,CIMGEN_7_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+54015,MM West Covina,biomass_other,6.8,TH_SP15,WALNUT_6_N007,Los Angeles,egrid2023,SP15_side,hub:unchanged
+54749,Goal Line LP,gas_cc,51.4,TH_SP15,GOALLINE_6_N001,San Diego,egrid2023,SP15_side,hub:unchanged
+55077,Desert Star Energy Center,gas_cc,537.3,TH_SP15,MRCHNT13_7_N001,Clark,egrid2023,SP15_side,hub:unchanged
+55339,Phoenix Wind Power LLC,wind,2.1,TH_SP15,GARNET_1_N106,Riverside,egrid2023,SP15_side,hub:unchanged
+55510,Border Hybrid Energy Center,gas_ct,114.6,TH_SP15,BORDER_6_B1,San Diego,egrid2023,SP15_side,hub:unchanged
+55512,Cuyamaca Peak Energy Plant,gas_ct,48.7,TH_SP15,ELCAJN_7_N004,San Diego,egrid2023,SP15_side,hub:unchanged
+55513,CalPeak Power Enterprise Peaker Plant,gas_ct,58.9,TH_SP15,ESCNDO_7_N002,San Diego,egrid2023,SP15_side,hub:unchanged
+55518,High Desert Power Plant,gas_cc,960.0,TH_SP15,ROADWAY_1_N019,San Bernardino,egrid2023,SP15_side,hub:unchanged
+55538,Escondido Energy Center,gas_ct,54.0,TH_SP15,ESCNDO_7_N002,San Diego,egrid2023,SP15_side,hub:unchanged
+55540,Chula Vista Energy Center,gas_ct,37.2,TH_SP15,OTAY_6_B1,San Diego,egrid2023,SP15_side,hub:unchanged
+55935,Drews Generating Facility,gas_ct,44.8,TH_SP15,DREWSR_7_N002,San Bernardino,egrid2023,SP15_side,hub:unchanged
+56039,H. Gonzales,gas_ct,11.8,TH_SP15,VERNON_6_N005,Los Angeles,egrid2023,SP15_side,hub:unchanged
+56041,Malburg,gas_cc,130.0,TH_SP15,VERNON_6_N005,Los Angeles,egrid2023,SP15_side,hub:unchanged
+56112,Mountain View III,wind,22.4,TH_SP15,MTWIND_7_N004,Riverside,egrid2023,SP15_side,hub:unchanged
+56143,Riverside Energy Resource Center,gas_ct,196.0,TH_SP15,RERCU3_7_GN001,Riverside,egrid2023,SP15_side,hub:unchanged
+56232,Miramar Energy Facility,gas_ct,106.0,TH_SP15,MRGT_6_NODE1,San Diego,egrid2023,SP15_side,hub:unchanged
+56302,Oasis Wind,wind,60.3,TH_SP15,VOYAGRG1_7_N001,Kern,egrid2023,SP15_side,hub:unchanged
+56472,Grapeland Hybrid,gas_ct,59.8,TH_SP15,ETIWND_6_N026,San Bernardino,egrid2023,SP15_side,hub:unchanged
+56474,Barre Peaker,gas_ct,49.8,TH_SP15,BARRE_2_N043,Orange,egrid2023,SP15_side,hub:unchanged
+56939,Solar Blythe LLC,solar,21.0,TH_SP15,BLYTHES1_7_N002,Riverside,egrid2023,SP15_side,hub:unchanged
+57001,El Cajon Energy Center,gas_ct,60.5,TH_SP15,ELCAJN_7_N004,San Diego,egrid2023,SP15_side,hub:unchanged
+57008,SunEdison Procter & Gamble Oxnard,solar,1.0,TH_SP15,CHARMNGN_7_N001,Ventura,egrid2023,SP15_side,hub:unchanged
+57073,Ivanpah 2,solar,133.4,TH_SP15,IVANPA_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+57074,Ivanpah 1,solar,126.0,TH_SP15,IVANPA_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+57075,Ivanpah 3,solar,133.4,TH_SP15,IVANPA_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+57205,CM48,solar,48.0,TH_SP15,COPPERMT_6_GN001,Clark,egrid2023,SP15_side,hub:unchanged
+57282,Alta Wind Energy Center I,wind,150.0,TH_SP15,ALTA1G_7_B1,Kern,egrid2023,SP15_side,hub:unchanged
+57291,Alta Wind Energy Center II,wind,150.0,TH_SP15,ALTA1G_7_B1,Kern,egrid2023,SP15_side,hub:unchanged
+57292,Alta Wind Energy Center III,wind,150.0,TH_SP15,ALTA1G_7_B1,Kern,egrid2023,SP15_side,hub:unchanged
+57293,Alta Wind Energy Center IV,wind,102.0,TH_SP15,ALTA1G_7_B1,Kern,egrid2023,SP15_side,hub:unchanged
+57294,Alta Wind Energy Center V,wind,168.0,TH_SP15,ALTA1G_7_B1,Kern,egrid2023,SP15_side,hub:unchanged
+57295,Alpine Solar,solar,66.0,TH_SP15,NEENCHGN_7_N001,Los Angeles,egrid2023,SP15_side,hub:unchanged
+57302,Garnet Wind Energy Center,wind,6.5,TH_SP15,GARNET_1_N106,Riverside,egrid2023,SP15_side,hub:unchanged
+57331,Mojave Solar Project,solar,280.0,TH_SP15,LCKHT1_7_N003,San Bernardino,egrid2023,SP15_side,hub:unchanged
+57373,Agua Caliente Solar Project,solar,347.7,TH_SP15,AGUCALG1_7_B1,Yuma,egrid2023,SP15_side,hub:unchanged
+57378,AV Solar Ranch One,solar,253.0,TH_SP15,AVSOLAR_7_N008,Los Angeles,egrid2023,SP15_side,hub:unchanged
+57459,Mountain View IV,wind,49.0,TH_SP15,BLAST_7_N005,Riverside,egrid2023,SP15_side,hub:unchanged
+57482,"Sentinel Energy Center, LLC",gas_ct,800.0,TH_SP15,TOT032G1_7_N001,Riverside,egrid2023,SP15_side,hub:unchanged
+57484,Manzana Wind LLC,wind,189.0,TH_SP15,MANZNA_7_N011,Kern,egrid2023,SP15_side,hub:unchanged
+57555,Pio Pico Energy Center,gas_ct,395.4,TH_SP15,PIOPICO1_7_N001,San Diego,egrid2023,SP15_side,hub:unchanged
+57707,Mesquite Solar 1,solar,170.0,TH_SP15,MSOLAR_7_NBT1,Maricopa,egrid2023,SP15_side,hub:unchanged
+57722,North Palm Springs 4A,solar,4.0,TH_SP15,GARNET_1_N106,Riverside,egrid2023,SP15_side,hub:unchanged
+57774,Windstar 1,wind,120.0,TH_SP15,WNDSTRG1_7_B1,Kern,egrid2023,SP15_side,hub:unchanged
+57833,Mustang Hills LLC,wind,150.0,TH_SP15,ALTA1G_7_B1,Kern,egrid2023,SP15_side,hub:unchanged
+57835,Alta Wind VIII,wind,150.0,TH_SP15,ALTA1G_7_B1,Kern,egrid2023,SP15_side,hub:unchanged
+57901,El Segundo Energy Center LLC,gas_cc,537.4,TH_SP15,ELSEGNDO_2_B1,Los Angeles,eia860,SP15_side,hub:unchanged
+57913,Tule Wind LLC,wind,143.0,TH_SP15,TULEWC1_7_N001,San Diego,egrid2023,SP15_side,hub:unchanged
+57977,High Sierra Cogeneration Plant,gas_other,6.2,TH_SP15,SIERRA_7_N001,Lassen,egrid2023,SP15_side,hub:unchanged
+57993,"Desert Sunlight 300, LLC",solar,313.7,TH_SP15,DSRTSN_7_NBT3,Riverside,egrid2023,SP15_side,hub:unchanged
+58007,Brea Expansion Plant,biomass_other,35.7,TH_SP15,OLINDA_6_N007,Orange,egrid2023,SP15_side,hub:unchanged
+58017,Copper Mountain Solar 2,solar,154.0,TH_SP15,LSCM92_7_N005,Clark,egrid2023,SP15_side,hub:unchanged
+58073,SEPV 1,solar,2.0,TH_SP15,LNCSTR_7_NODE1,Los Angeles,egrid2023,SP15_side,hub:unchanged
+58074,SEPV 2,solar,2.0,TH_SP15,LNCSTR_7_NODE1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+58122,Delano Energy Center,gas_ct,60.5,TH_SP15,VESTAL_6_N006,Tulare,egrid2023,SP15_side,hub:unchanged
+58149,TA-High Desert LLC,solar,20.0,TH_SP15,TOT427A_7_N001,Los Angeles,egrid2023,SP15_side,hub:unchanged
+58202,RE Victor Phelan Solar One LLC,solar,20.0,TH_SP15,VICTOR_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+58227,SEPV9 Power Plant,solar,9.0,TH_SP15,DEVERS_1_N111,San Bernardino,egrid2023,SP15_side,hub:unchanged
+58233,Wagner Wind LLC,wind,6.0,TH_SP15,GARNET_1_N106,Riverside,egrid2023,SP15_side,hub:unchanged
+58234,SEPV 8,solar,12.0,TH_SP15,LNCSTR_7_NODE1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+58309,Porterville Solar,solar,3.5,TH_SP15,VESTAL_6_N006,Tulare,egrid2023,SP15_side,hub:unchanged
+58354,Radiance Solar 4,solar,1.5,TH_SP15,DELSUR_6_N008,Los Angeles,egrid2023,SP15_side,hub:unchanged
+58355,Radiance Solar 5,solar,1.5,TH_SP15,DELSUR_6_N008,Los Angeles,egrid2023,SP15_side,hub:unchanged
+58394,Alta Wind X,wind,138.0,TH_SP15,ALTA6E2_7_N002,Kern,egrid2023,SP15_side,hub:unchanged
+58395,Alta Wind XI,wind,90.0,TH_SP15,ALTA6B2_7_N003,Kern,egrid2023,SP15_side,hub:unchanged
+58417,Lone Valley Solar Park I LLC,solar,10.0,TH_SP15,VICTOR_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+58418,Victor Dry Farm Ranch A,solar,5.0,TH_SP15,VICTOR_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+58419,Victor Dry Farm Ranch B,solar,5.0,TH_SP15,DELSUR_6_N008,San Bernardino,egrid2023,SP15_side,hub:unchanged
+58446,Arrache 4013,solar,1.5,TH_SP15,OASISC1_7_N002,Los Angeles,egrid2023,SP15_side,hub:unchanged
+58450,Vinam,solar,1.5,TH_SP15,OASISC1_7_N002,Los Angeles,egrid2023,SP15_side,hub:unchanged
+58451,Ma,solar,1.5,TH_SP15,OASISC1_7_N002,Los Angeles,egrid2023,SP15_side,hub:unchanged
+58452,Horn,solar,1.5,TH_SP15,DELSUR_6_N008,Los Angeles,egrid2023,SP15_side,hub:unchanged
+58514,Desert Hot Springs Solar,solar,2.3,TH_SP15,DEVERS_1_N111,Riverside,egrid2023,SP15_side,hub:unchanged
+58528,Garnet Solar Generation Station I LLC,solar,4.0,TH_SP15,GARNET_1_N106,Riverside,egrid2023,SP15_side,hub:unchanged
+58542,"Desert Sunlight 250, LLC",solar,249.7,TH_SP15,DSRTSN_7_NBT3,Riverside,egrid2023,SP15_side,hub:unchanged
+58581,Oltmans SCE at Champagne,solar,1.0,TH_SP15,ETIWND_6_N026,San Bernardino,egrid2023,SP15_side,hub:unchanged
+58590,Cascade Solar,solar,18.5,TH_SP15,DEVERS_1_N111,San Bernardino,egrid2023,SP15_side,hub:unchanged
+58644,Silver State Solar Power South,solar,260.1,TH_SP15,PRIMM_2_B1,Clark,egrid2023,SP15_side,hub:unchanged
+58750,Lancaster Dry Farm Ranch B,solar,5.0,TH_SP15,DELSUR_6_N008,Los Angeles,egrid2023,SP15_side,hub:unchanged
+58757,Summer North Solar,solar,6.5,TH_SP15,DELSUR_6_N008,Los Angeles,egrid2023,SP15_side,hub:unchanged
+58761,Expressway Solar A,solar,2.0,TH_SP15,VICTOR_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+58762,Expressway Solar B,solar,2.0,TH_SP15,VICTOR_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+58909,Ramona 1,solar,2.0,TH_SP15,CRELMN_7_N001,San Diego,egrid2023,SP15_side,hub:unchanged
+58911,Ramona 2,solar,5.0,TH_SP15,CRELMN_7_N001,San Diego,egrid2023,SP15_side,hub:unchanged
+59182,Hesperia,solar,1.5,TH_SP15,VICTOR_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+59219,Porterville 6 and 7,solar,3.0,TH_SP15,VESTAL_6_N006,Tulare,egrid2023,SP15_side,hub:unchanged
+59237,Lone Valley Solar Park II LLC,solar,20.0,TH_SP15,VICTOR_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+59262,Lancaster Little Rock,solar,5.0,TH_SP15,LITLRKC1_7_N003,Los Angeles,egrid2023,SP15_side,hub:unchanged
+59273,SEPV Palmdale East,solar,10.0,TH_SP15,LITLRKC1_7_N003,Los Angeles,egrid2023,SP15_side,hub:unchanged
+59422,SCE-Snowline-White Road (North),solar,1.5,TH_SP15,VICTOR_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+59440,"Adelanto Solar II, LLC",solar,7.0,TH_SP15,VICTOR_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+59441,"Adelanto Solar, LLC",solar,20.0,TH_SP15,VICTOR_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+59469,Alamo Solar,solar,20.0,TH_SP15,VICTOR_2_B1,San Bernardino,egrid2023,SP15_side,hub:unchanged
+59528,Solar Oasis LLC,solar,20.0,TH_SP15,OASISC1_7_N002,Los Angeles,egrid2023,SP15_side,hub:unchanged
+59536,Coronus Adelanto West 1,solar,1.5,TH_SP15,ROADWAY_1_N019,San Bernardino,egrid2023,SP15_side,hub:unchanged
+59537,Coronus Adelanto West 2,solar,1.5,TH_SP15,ROADWAY_1_N019,San Bernardino,egrid2023,SP15_side,hub:unchanged
+59599,Tropico Solar PV Plant,solar,14.0,TH_SP15,VALTNEGN_7_N002,Tulare,egrid2023,SP15_side,hub:unchanged
+59600,Nicolis Solar PV Plant,solar,20.0,TH_SP15,VESTAL_6_N006,Tulare,egrid2023,SP15_side,hub:unchanged
+59610,"AP North Lake I, LP",solar,20.0,TH_SP15,VALLEYSC_1_N202,Riverside,egrid2023,SP15_side,hub:unchanged
+59730,SEPV 18,solar,2.0,TH_SP15,LNCSTR_7_NODE1,Los Angeles,egrid2023,SP15_side,hub:unchanged
+59740,SEPV Mojave West,solar,20.0,TH_SP15,SUNSPTA_7_N002,Kern,egrid2023,SP15_side,hub:unchanged
+59814,"Copper Mountain Solar 4, LLC",solar,93.6,TH_SP15,LSQ855_7_N001,Clark,egrid2023,SP15_side,hub:unchanged
+59826,Sunshine Valley Solar,solar,103.5,TH_SP15,SUNSLRG1_7_N001,Nye,egrid2023,SP15_side,hub:unchanged
+59878,Windhub Solar A LLC,solar,20.0,TH_SP15,SUNSPTGN_7_N001,Kern,egrid2023,SP15_side,hub:unchanged
+59942,Morgan Lancaster 1,solar,1.5,TH_SP15,OASISC1_7_N002,Los Angeles,egrid2023,SP15_side,hub:unchanged
+60032,SunE Rochester,solar,1.0,TH_SP15,ETIWND_6_N026,San Bernardino,egrid2023,SP15_side,hub:unchanged
+60086,US-TOPCO (Soccer Center),solar,3.0,TH_SP15,OASISC1_7_N002,Los Angeles,egrid2023,SP15_side,hub:unchanged
+60092,"Blythe Solar II, LLC",solar,246.2,TH_SP15,CENTPD_7_N003,Riverside,egrid2023,SP15_side,hub:unchanged
+60093,"Blythe Solar 110, LLC",solar,172.8,TH_SP15,CENTPD_7_N003,Riverside,egrid2023,SP15_side,hub:unchanged
+60094,"Blythe Solar III, LLC Hybrid",solar,251.8,TH_SP15,CENTPD_7_N003,Riverside,egrid2023,SP15_side,hub:unchanged
+60095,"Blythe Solar IV, LLC",solar,184.4,TH_SP15,CENTPD_7_N003,Riverside,egrid2023,SP15_side,hub:unchanged
+60280,Summer Solar LLC,solar,20.0,TH_SP15,DELSUR_6_N008,Los Angeles,egrid2023,SP15_side,hub:unchanged
+60307,"Mesquite Solar 2, LLC",solar,100.0,TH_SP15,MSOLAR_7_NBT1,Maricopa,egrid2023,SP15_side,hub:unchanged
+60308,"Mesquite Solar 3, LLC",solar,150.0,TH_SP15,MSOLAR_7_NBT1,Maricopa,egrid2023,SP15_side,hub:unchanged
+60324,"Willow Spring Solar, LLC",solar,107.9,TH_SP15,TUMBWD_7_N002,Kern,egrid2023,SP15_side,hub:unchanged
+60558,Solar Blythe 2,solar,20.0,TH_SP15,CENTPD_7_N003,Riverside,egrid2023,SP15_side,hub:unchanged
+60572,White Wing Solar,solar,179.0,TH_SP15,WHITEW_7_N001,Yuma,eia860,SP15_side,hub:unchanged
+60594,Voyager Wind I,wind,131.1,TH_SP15,VOYAGRG1_7_N001,Kern,egrid2023,SP15_side,hub:unchanged
+60698,Stanton Energy Reliability Center Hybrid,battery,161.0,TH_SP15,STANTNG1_7_N001,Orange,egrid2023,SP15_side,hub:unchanged
+60827,"Sun Streams, LLC",solar,160.0,TH_SP15,SUNST234_7_N001,Maricopa,egrid2023,SP15_side,hub:unchanged
+60995,Ramona Solar Energy,solar,4.3,TH_SP15,CRELMN_7_N001,San Diego,egrid2023,SP15_side,hub:unchanged
+61167,Aratina Solar Center 1B,unlisted,0.0,TH_SP15,TWINKL_7_N002,San Bernardino,eia860,SP15_side,hub:unchanged
+61215,Green Beanworks C PV,solar,3.0,TH_SP15,LITLRKC1_7_N003,Los Angeles,egrid2023,SP15_side,hub:unchanged
+61216,Green Beanworks D PV,solar,3.0,TH_SP15,OASISC1_7_N002,Los Angeles,egrid2023,SP15_side,hub:unchanged
+61339,Green Beanworks B PV,solar,3.0,TH_SP15,PIUTE12_7_N002,Los Angeles,egrid2023,SP15_side,hub:unchanged
+61366,Top Gun Energy Storage,battery,30.0,TH_SP15,MRGT_6_NODE1,San Diego,egrid2023,SP15_side,hub:unchanged
+61445,Gaskell West 1 Solar Facility,solar,20.0,TH_SP15,GASKW1_7_N005,Kern,egrid2023,SP15_side,hub:unchanged
+61447,RE Gaskell West 3 LLC,solar,20.0,TH_SP15,GASKW1_7_N005,Kern,egrid2023,SP15_side,hub:unchanged
+61448,RE Gaskell West 4 LLC,solar,20.0,TH_SP15,GASKW1_7_N005,Kern,egrid2023,SP15_side,hub:unchanged
+61449,RE Gaskell West 5 LLC,solar,20.0,TH_SP15,GASKW1_7_N005,Kern,egrid2023,SP15_side,hub:unchanged
+61582,Voyager Wind II,wind,128.7,TH_SP15,VOYAGRG1_7_N001,Kern,egrid2023,SP15_side,hub:unchanged
+61583,Voyager Wind III,wind,43.2,TH_SP15,VOYAGRG1_7_N001,Kern,egrid2023,SP15_side,hub:unchanged
+61584,Voyager Wind IV,wind,21.6,TH_SP15,VOYAGRG1_7_N001,Kern,egrid2023,SP15_side,hub:unchanged
+62056,Lancaster,solar,3.0,TH_SP15,LITLRKC1_7_N003,Los Angeles,egrid2023,SP15_side,hub:unchanged
+62115,AES Alamitos Energy Center,gas_cc,678.0,TH_SP15,ALAMIT_7_NBT2,Los Angeles,eia860,SP15_side,hub:unchanged
+62177,"Desert Harvest, LLC",solar,80.0,TH_SP15,DSRTHV3_7_N001,Riverside,egrid2023,SP15_side,hub:unchanged
+62288,"Valentine Solar, LLC",solar,111.2,TH_SP15,VALTNEGN_7_N002,Kern,egrid2023,SP15_side,hub:unchanged
+62497,Orange County Energy Storage 2,battery,9.0,TH_SP15,JOHANNA_6_N04,Orange,egrid2023,SP15_side,hub:unchanged
+62499,Orange County Energy Storage 3,battery,6.0,TH_SP15,JOHANNA_6_N04,Orange,egrid2023,SP15_side,hub:unchanged
+62801,Vallecito,battery,10.0,TH_SP15,GOLETA_6_N067,Santa Barbara,egrid2023,SP15_side,hub:unchanged
+63440,Sun Streams 2,solar,150.0,TH_SP15,SUNST234_7_N001,Maricopa,egrid2023,SP15_side,hub:unchanged
+63482,Point Wind,wind,64.5,TH_SP15,TEHAPI1_6_N003,Kern,egrid2023,SP15_side,hub:unchanged
+63508,Camino Solar Hybrid,solar,44.0,TH_SP15,MANZNA_7_N011,Kern,eia860,SP15_side,hub:unchanged
+63834,Gateway Energy Storage System,battery,250.0,TH_SP15,GATEWYGN_7_N001,San Diego,egrid2023,SP15_side,hub:unchanged
+63941,Oasis Alta,wind,14.4,TH_SP15,VOYAGRG1_7_N001,Kern,egrid2023,SP15_side,hub:unchanged
+63943,Coso Battery Storage,battery,60.0,TH_SP15,BLM W_2_COSBT1GN,Inyo,egrid2023,SP15_side,hub:unchanged
+64103,Desert Harvest II LLC,solar,105.0,TH_SP15,DSRTHV3_7_N001,Riverside,egrid2023,SP15_side,hub:unchanged
+64209,Bellefield 2 Solar & Energy Storage Farm,unlisted,0.0,TH_SP15,BELLEF_7_CN01,Kern,eia860,SP15_side,hub:unchanged
+64210,Bellefield Solar and Energy Storage Farm,solar,1000.0,TH_SP15,BELLEF_7_CN01,Kern,eia860,SP15_side,hub:unchanged
+64323,Coachella Hills Wind,wind,61.2,TH_SP15,ALTWD1_7_N003,Riverside,egrid2023,SP15_side,hub:unchanged
+64611,SEPV Sierra,battery,11.3,TH_SP15,LNCSTRC1_7_N002,Los Angeles,egrid2023,SP15_side,hub:unchanged
+64612,Kearny North Energy Storage,battery,10.0,TH_SP15,KEARNY_7_GNU1N,San Diego,egrid2023,SP15_side,hub:unchanged
+64614,Kearny South Energy Storage,battery,10.0,TH_SP15,KEARNY_7_GNU1N,San Diego,egrid2023,SP15_side,hub:unchanged
+64633,Rexford Solar Farm,solar,540.0,TH_SP15,REXFRD_7_NBT1,Tulare,eia860,SP15_side,hub:unchanged
+64851,Daggett 2,battery,313.0,TH_SP15,CMBLND_7_N002,San Bernardino,egrid2023,SP15_side,hub:unchanged
+64877,Edwards Sanborn E3,battery,38.1,TH_SP15,EDWARD_7_CN1,Kern,egrid2023,SP15_side,hub:unchanged
+64878,Edwards Sanborn E1A,battery,293.3,TH_SP15,EDWARD_7_CN1,Kern,egrid2023,SP15_side,hub:unchanged
+64879,Edwards Sanborn E2,battery,257.8,TH_SP15,EDWARD_7_CN1,Kern,egrid2023,SP15_side,hub:unchanged
+64928,Edwards Sanborn S3,battery,70.7,TH_SP15,EDWARD_7_CN1,Kern,egrid2023,SP15_side,hub:unchanged
+64929,Edwards Sanborn S1,battery,84.6,TH_SP15,EDWARD_7_CN1,Kern,egrid2023,SP15_side,hub:unchanged
+65053,Blythe Mesa Solar II,battery,335.6,TH_SP15,CENTPD_7_N003,Riverside,egrid2023,SP15_side,hub:unchanged
+65140,Crimson,battery,350.0,TH_SP15,CRIMSN_7_CN3,Riverside,egrid2023,SP15_side,hub:unchanged
+65396,Black Walnut Energy Storage LLC,battery,15.0,TH_SP15,SNCLRA_7_CN1,Ventura,eia860,SP15_side,hub:unchanged
+65397,Santa Paula Energy Storage LLC,battery,30.0,TH_SP15,SAUGUS_6_N009,Ventura,eia860,SP15_side,hub:unchanged
+65456,Separator (Etiwanda) BESS,battery,112.5,TH_SP15,ETIWND_6_N026,San Bernardino,eia860,SP15_side,hub:unchanged
+65656,"Ortega Grid, LLC",battery,20.0,TH_SP15,VALLEYSC_1_N202,Riverside,eia860,SP15_side,hub:unchanged
+65674,Edwards Sanborn E1B,battery,290.4,TH_SP15,EDWARD_7_CN1,Kern,egrid2023,SP15_side,hub:unchanged
+65675,Edwards Sanborn E4,battery,248.9,TH_SP15,EDWARD_7_CN1,Kern,egrid2023,SP15_side,hub:unchanged
+65676,Edwards Sanborn E5,battery,115.0,TH_SP15,EDWARD_7_CN1,Kern,egrid2023,SP15_side,hub:unchanged
+65677,Edwards Sanborn S4,battery,60.0,TH_SP15,EDWARD_7_CN1,Kern,egrid2023,SP15_side,hub:unchanged
+65734,Oberon Solar Project,battery,375.0,TH_SP15,REDBLUFF_2_B1,Riverside,egrid2023,SP15_side,hub:unchanged
+65735,Oberon II Solar Project,battery,375.0,TH_SP15,REDBLUFF_2_B1,Riverside,egrid2023,SP15_side,hub:unchanged
+65789,Santa Ana Storage 3,unlisted,0.0,TH_SP15,JOANEC_7_N001,Orange,eia860,SP15_side,hub:unchanged
+65857,Sunlight Storage,battery,230.0,TH_SP15,DSRTSN_7_NBT3,Riverside,egrid2023,SP15_side,hub:unchanged
+65889,"Nighthawk Energy Storage, LLC",unlisted,0.0,TH_SP15,NITHWK_7_N001,San Diego,eia860,SP15_side,hub:unchanged
+65933,Sagebrush ESS,battery,80.0,TH_SP15,WSTWND_7_N003,Kern,egrid2023,SP15_side,hub:unchanged
+65962,"Mesquite Solar 4, LLC",solar,62.5,TH_SP15,MSOLAR_7_NBT1,Maricopa,eia860,SP15_side,hub:unchanged
+65970,Sheep Creek Community Solar Farm,solar,3.0,TH_SP15,RDWAY_7_N002,San Bernardino,egrid2023,SP15_side,hub:unchanged
+66265,Paradise Energy Storage,battery,10.0,TH_SP15,PARDSE_7_N001,San Diego,eia860,SP15_side,hub:unchanged
+66266,Clairemont Energy Storage,battery,10.0,TH_SP15,CLRMNT_6_N001,San Diego,eia860,SP15_side,hub:unchanged
+66278,Elliott Energy Storage,battery,10.0,TH_SP15,ELLIOTT_7_N001,San Diego,eia860,SP15_side,hub:unchanged
+66280,Pala Gomez Creek BESS,battery,10.0,TH_SP15,PALA_7_N001,San Diego,eia860,SP15_side,hub:unchanged
+66286,Peregrine Energy Storage LLC,battery,200.0,TH_SP15,PERGRN_7_N001,San Diego,eia860,SP15_side,hub:unchanged
+66394,"Goleta Energy Storage, LLC",battery,60.0,TH_SP15,GOLETA_6_N067,Santa Barbara,egrid2023,SP15_side,hub:unchanged
+66423,Stanton Battery Energy Storage,battery,68.8,TH_SP15,STANTNG1_7_N001,Orange,egrid2023,SP15_side,hub:unchanged
+66494,Menifee Power Bank,battery,680.0,TH_SP15,MPBBT5_7_CN1,Riverside,eia860,SP15_side,hub:unchanged
+66505,EnerSmart Chula Vista Sub Station,battery,6.0,TH_SP15,OTAY_6_B1,San Diego,eia860,SP15_side,hub:unchanged
+66532,BCE Los Alamitos 2,solar,20.0,TH_SP15,ALASB2_7_NSB2,Orange,egrid2023,SP15_side,hub:unchanged
+66533,BCE Los Alamitos 1,solar,20.0,TH_SP15,ALASB1_7_NSB1,Orange,egrid2023,SP15_side,hub:unchanged
+66575,Sunlight Storage II,battery,230.0,TH_SP15,DSRTSN_7_NBT3,Riverside,eia860,SP15_side,hub:unchanged
+66598,Baldy Mesa Solar & Storage,battery,225.0,TH_SP15,HAMLIN_115_N004,San Bernardino,eia860,SP15_side,hub:unchanged
+66636,McFarland A Solar and Storage,battery,300.0,TH_SP15,MCFLND_7_N005,Yuma,egrid2023,SP15_side,hub:unchanged
+66637,McFarland B Solar and Storage,battery,450.0,TH_SP15,MCFLND_7_N005,Yuma,eia860,SP15_side,hub:unchanged
+66677,Visalia CSG LLC,solar,3.0,TH_SP15,RECTOR_6_N013,Tulare,eia860,SP15_side,hub:unchanged
+66699,Lockhart Solar PV II,battery,144.1,TH_SP15,LCKHT1_7_N003,San Bernardino,egrid2023,SP15_side,hub:unchanged
+66726,Inland Empire Energy Storage,battery,70.0,TH_SP15,ETIWND_6_N026,San Bernardino,eia860,SP15_side,hub:unchanged
+66754,EnerSmart El Cajon BESS,unlisted,0.0,TH_SP15,GRNITE_7_N002,San Diego,eia860,SP15_side,hub:unchanged
+66757,Bottleneck Energy Storage,battery,80.0,TH_SP15,VESTAL_6_N006,Tulare,eia860,SP15_side,hub:unchanged
+66885,Baldy Mesa 2_Silver Peak Hybrid,battery,75.0,TH_SP15,ROADWAY_1_N019,San Bernardino,eia860,SP15_side,hub:unchanged
+66946,"Lockhart ESS, LLC",battery,45.0,TH_SP15,LCKHT1_7_N003,San Bernardino,eia860,SP15_side,hub:unchanged
+66949,Sagebrush Solar 2 ESS 40,battery,40.0,TH_SP15,WSTWND_7_N003,Kern,eia860,SP15_side,hub:unchanged
+66950,Sagebrush Solar 2 ESS 59,battery,59.0,TH_SP15,WSTWND_7_N003,Kern,eia860,SP15_side,hub:unchanged
+66959,CPA Wilmington 1,solar,1.8,TH_SP15,HINSON_2_B1,Los Angeles,eia860,SP15_side,hub:unchanged
+67105,Pastoria Solar,unlisted,0.0,TH_SP15,PASTSR_7_CN002,Kern,eia860,SP15_side,hub:unchanged
+67247,Mesa Wind Repower,unlisted,0.0,TH_SP15,PANERO_1_N001,Riverside,eia860,SP15_side,hub:unchanged
+67498,McFarland C,battery,185.0,TH_SP15,MCFLND_7_N005,Yuma,eia860,SP15_side,hub:unchanged
+67533,RB Inyokern Solar WDAT 1203 (CSG),solar,19.9,TH_SP15,INYOKN_7_N003,Kern,eia860,SP15_side,hub:unchanged
+67534,RB Inyokern Solar WDAT 1281 (CSG),solar,11.9,TH_SP15,INYOKN_7_N003,Kern,eia860,SP15_side,hub:unchanged
+67734,Silver State South Storage,battery,200.0,TH_SP15,PRIMM_2_B1,Clark,eia860,SP15_side,hub:unchanged
+67764,Rosamond South 1,battery,257.0,TH_SP15,RSMNDS_7_N007,Kern,eia860,SP15_side,hub:unchanged
+67828,Mordor ES1,battery,25.0,TH_SP15,CALGEN_7_N001,Inyo,eia860,SP15_side,hub:unchanged
+67878,Chula Vista Energy Center 2,unlisted,0.0,TH_SP15,OTAY_6_B1,San Diego,eia860,SP15_side,hub:unchanged
+68321,Atlas BESS IV LLC,unlisted,0.0,TH_SP15,ATLASC_6_N019,La Paz,eia860,SP15_side,hub:unchanged
+68322,Atlas VII,battery,300.0,TH_SP15,ATLASC_6_N019,La Paz,eia860,SP15_side,hub:unchanged
+68323,Atlas VIII,unlisted,0.0,TH_SP15,ATLASC_6_N019,La Paz,eia860,SP15_side,hub:unchanged
+68324,Atlas IX,battery,150.0,TH_SP15,ATLASC_6_N019,La Paz,eia860,SP15_side,hub:unchanged
+68485,Rexford 2 Solar Farm,unlisted,0.0,TH_SP15,REXFRD_7_NBT1,Tulare,eia860,SP15_side,hub:unchanged
+68509,"Ventasso Energy Storage, LLC",unlisted,0.0,TH_SP15,VENTSO_7_N2,San Diego,eia860,SP15_side,hub:unchanged
+68541,Palmdale Water District HQ,unlisted,0.0,TH_SP15,LITLRKC1_7_N003,Los Angeles,eia860,SP15_side,hub:unchanged
+68542,Palmdale Water District 6MG Tank,unlisted,0.0,TH_SP15,LITLRKC1_7_N003,Los Angeles,eia860,SP15_side,hub:unchanged
+68661,Aratina Solar Center 1A,unlisted,0.0,TH_SP15,TWINKL_7_N002,San Bernardino,eia860,SP15_side,hub:unchanged
+68798,Lockheed Martin Palmdale Solar PV,solar,20.9,TH_SP15,LITLRKC1_7_N003,Los Angeles,eia860,SP15_side,hub:unchanged
+68844,CalPortland Company Mojave Wind,wind,23.5,TH_SP15,WSTWND_7_N003,Kern,eia860,SP15_side,hub:unchanged
+68846,Edwards Sanborn 1C,solar,148.0,TH_SP15,EDWARD_7_CN1,Kern,eia860,SP15_side,hub:unchanged
+69054,ATLAS II,unlisted,0.0,TH_SP15,ATLASC_6_N019,La Paz,eia860,SP15_side,hub:unchanged
+69648,Rosamond South II,unlisted,0.0,TH_SP15,RSMNDS_7_N007,Kern,eia860,SP15_side,hub:unchanged
+69806,"Gaskell West Storage 1, LLC",unlisted,0.0,TH_SP15,GASKW1_7_N005,Kern,eia860,SP15_side,hub:unchanged
+69964,Baldy Mesa Storage,unlisted,0.0,TH_SP15,HAMLIN_115_N004,San Bernardino,eia860,SP15_side,hub:unchanged
+6099,Diablo Canyon,nuclear,2323.0,TH_ZP26,DIABLO_5_B1,San Luis Obispo,egrid2023,ZP26,hub:unchanged
+7911,Kern Canyon,hydro,11.5,TH_ZP26,KRNCNYN_6_N001,Kern,egrid2023,ZP26,hub:unchanged
+50037,Rio Bravo Hydro Project,hydro,14.0,TH_ZP26,RIOBRVQF_6_N001,Kern,egrid2023,ZP26,hub:unchanged
+52081,Cymric 31X Cogen,gas_ct,6.8,TH_ZP26,CYMRIC_1_N004,Kern,egrid2023,ZP26,hub:unchanged
+52082,Cymric 6Z Cogen,gas_ct,6.8,TH_ZP26,CYMRIC_1_N004,Kern,egrid2023,ZP26,hub:unchanged
+52085,Taft 26C Cogen,gas_ct,12.4,TH_ZP26,CADET_6_N002,Kern,egrid2023,ZP26,hub:unchanged
+52086,Coalinga 25D Cogen,gas_ct,13.6,TH_ZP26,DERRICK_6_N002,Fresno,egrid2023,ZP26,hub:unchanged
+52104,Cymric 36W Cogen,gas_ct,12.4,TH_ZP26,CYMRIC_1_N004,Kern,egrid2023,ZP26,hub:unchanged
+54410,Western Power & Steam Inc,gas_ct,27.7,TH_ZP26,DEXZEL_1_N001,Kern,egrid2023,ZP26,hub:unchanged
+55400,Elk Hills Power LLC,gas_cc,623.0,TH_ZP26,ELKHILLS_7_N001,Kern,egrid2023,ZP26,hub:unchanged
+57359,Avenal Park,solar,6.0,TH_ZP26,AVENAL_6_GN001,Kings,egrid2023,ZP26,hub:unchanged
+57360,Sun City Project LLC,solar,20.0,TH_ZP26,AVENAL_6_GN001,Kings,egrid2023,ZP26,hub:unchanged
+57361,Sand Drag LLC,solar,19.0,TH_ZP26,AVENAL_6_GN001,Kings,egrid2023,ZP26,hub:unchanged
+57439,California Valley Solar Ranch,solar,249.8,TH_ZP26,CAVLSRGN_7_B1,San Luis Obispo,egrid2023,ZP26,hub:unchanged
+57523,Huron Solar Station,solar,20.0,TH_ZP26,HURONGEN_7_ND002,Fresno,egrid2023,ZP26,hub:unchanged
+57650,Regulus Solar Project,solar,60.0,TH_ZP26,LAMONT_1_B4,Kern,egrid2023,ZP26,hub:unchanged
+57695,Topaz Solar Farm,solar,585.9,TH_ZP26,TOPAZC1_7_N021,San Luis Obispo,egrid2023,ZP26,hub:unchanged
+57892,Gates Solar Station,solar,20.0,TH_ZP26,GATESBK4_7_N002,Fresno,egrid2023,ZP26,hub:unchanged
+58206,West Gates Solar Station,solar,10.0,TH_ZP26,GATESBK4_7_N002,Fresno,egrid2023,ZP26,hub:unchanged
+58366,Atwell Island,solar,20.2,TH_ZP26,ATWELL_1_N001,Tulare,egrid2023,ZP26,hub:unchanged
+58699,ABEC Bidart-Old River LLC,biomass_other,2.0,TH_ZP26,OLDRIVR_6_N007,Kern,egrid2023,ZP26,hub:unchanged
+58831,Redcrest Solar Farm,solar,16.6,TH_ZP26,LAMONT_1_B4,Kern,egrid2023,ZP26,hub:unchanged
+59008,Woodmere Solar Farm,solar,15.0,TH_ZP26,LAMONT_1_B4,Kern,egrid2023,ZP26,hub:unchanged
+59009,Hayworth Solar,solar,27.0,TH_ZP26,LAMONT_1_B4,Kern,egrid2023,ZP26,hub:unchanged
+59253,Wildwood Solar II,solar,15.0,TH_ZP26,WLDWDG2_7_N001,Kern,egrid2023,ZP26,hub:unchanged
+59380,"Wildwood Solar I, LLC",solar,19.5,TH_ZP26,WLDWDG2_7_N001,Kern,egrid2023,ZP26,hub:unchanged
+59638,Coronal Lost Hills,solar,20.0,TH_ZP26,TWISSLMN_6_N005,Kern,egrid2023,ZP26,hub:unchanged
+60142,Lemoore 1,solar,1.5,TH_ZP26,HENRTA_7_N002,Kings,egrid2023,ZP26,hub:unchanged
+60275,Westside Solar Power PV1,solar,2.0,TH_ZP26,HENRTA_7_N002,Kings,egrid2023,ZP26,hub:unchanged
+60490,Redwood 4 Solar Farm,solar,20.0,TH_ZP26,LAMONT_1_B4,Kern,egrid2023,ZP26,hub:unchanged
+60641,Henrietta D Energy Storage LLC,battery,10.0,TH_ZP26,HENRTA_7_N002,Kings,egrid2023,ZP26,hub:unchanged
+61116,Delano Land 1,solar,1.0,TH_ZP26,SMYRNA2_1_N009,Kern,egrid2023,ZP26,hub:unchanged
+61846,Tulare BioMAT Fuel Cell,biomass_other,2.8,TH_ZP26,T0304_7_N003,Tulare,egrid2023,ZP26,hub:unchanged
+62113,Strauss Wind Farm,wind,95.3,TH_ZP26,STRAUS34_7_N001,Santa Barbara,egrid2023,ZP26,hub:unchanged
+62547,Aquamarine,solar,250.0,TH_ZP26,AQUAWS_7_CN1,Kings,egrid2023,ZP26,hub:unchanged
+63849,Chestnut,battery,285.6,TH_ZP26,CHESTN_7_NBT1,Kings,egrid2023,ZP26,hub:unchanged
+64197,"Fifth Standard Solar PV, LLC (Hybrid)",battery,287.0,TH_ZP26,FIFTHS_7_N002,Fresno,egrid2023,ZP26,hub:unchanged
+66661,Electrolyte BESS,battery,99.4,TH_ZP26,HENRTA_7_N002,Kings,eia860,ZP26,hub:unchanged
+66807,SEPV Cuyama Hybrid,battery,4.6,TH_ZP26,CUYAMAGN_7_NSB1,Santa Barbara,egrid2023,ZP26,hub:unchanged
+66809,Avenue 26 Solar,solar,7.6,TH_ZP26,TULRLK_7_N015,Madera,eia860,ZP26,hub:unchanged
+66890,"SF Azalea, LLC",solar,98.0,TH_ZP26,AZALEA_7_N001,Kern,eia860,ZP26,hub:unchanged
+67747,Nachtigall 1836-WD,solar,4.6,TH_ZP26,CHARCA_12_ND002,Kern,eia860,ZP26,hub:unchanged
+67748,Terry 1818-WD,solar,4.6,TH_ZP26,WASCO_12_N008,Kern,eia860,ZP26,hub:unchanged
+68027,Lemoore West,solar,7.9,TH_ZP26,HENRTA_7_N002,Kings,eia860,ZP26,hub:unchanged
+68589,"Community Solar Utica 1, LLC",solar,3.0,TH_ZP26,TULRLK_7_N015,Kings,eia860,ZP26,hub:unchanged
+68840,Da Silva Dairy,solar,1.0,TH_ZP26,AVENAL_6_GN001,San Joaquin,eia860,ZP26,hub:unchanged

@@ -10126,3 +10126,82 @@ this entry + the packet's appended §9 addendum; no other file.
 
 **Next number: caiso-224** (caiso-223 is spoken for — dispatched as the
 route-(iii) opening round; its entry lands as its own lane's append).
+
+## caiso-223 (2026-08-30) — SUB-ZONAL TOPOLOGY PROGRAM, OPENING ROUND (owner armed caiso-222 Q2 route (iii); representation-grain prep, NOT a lever): the partition is PROPOSED AND ADJUDICATED (P-A′ — one new San-Joaquin-Valley pocket zone **FSNO** between two element-grounded cuts; the single 5,400 MW Path-15 link, whose own elements the DMM record does NOT show binding, is replaced by the chain and becomes FSNO-internal spine), MEMBERSHIP DERIVED (42 crosswalk plants / 2,701 MW → FSNO, zero silent defaults; pnode map committed), LOAD SPLIT MEASURED (caiso-172 ATL_LDF method 3-way: FSNO 0.1326 / ZP26 0.1148 / NP15 0.7526 of DLAP_PGAE; gates 13/13 PASS; two-way control EXACT vs the committed caiso-172 artifact). ZERO-SOLVE; nothing armed, registered, or re-opened; the round ends at the sufficiency gap list
+
+Keeper `2026-08-26-caiso-220-c1-crosswalk` UNCHANGED (NOT-YET, C3a alone;
+C3c ledgered); the caiso-201 terminal rest (per today's Q1 ruling: terminal
+rest + map) UNDISTURBED; no `ScenarioConfig` field (charter's
+stop-and-report clause never fired); reads stayed in 2023–2025 with the
+freeze ACTIVE. Method + gates fixed ex ante and pushed first
+(`PRECOMMIT-caiso223-subzonal-scope-2026-08-30.md`). Record:
+`FINDING-caiso223-subzonal-scope-2026-08-30.md`; probes
+`_caiso223_subzonal_scope.py` / `_caiso223_b2_extract.py`; artifacts
+`_caiso223_subzonal_scope.json`, `_caiso223_membership_recut.csv`,
+`_caiso223_pnode_subzone_map.csv`, `_caiso223_b2_boundaries.json`.
+
+- **The structural fact** (committed atlas + DMM bytes): the two cuts that
+  actually bind are invisible at hub grain — Tesla–Los Banos #1 500 kV
+  (1,600 MW) + Moss Landing–Las Aguilas 230 kV (340 MW; 24 %/27 % of ALL
+  hours 2024/Q3-2025) are TH_NP15-internal, Gates–Midway #1 500 kV
+  (2,500 MW; 90 % of 2023 congestion Sep–Dec) is TH_ZP26-internal — while
+  the enforced Los Banos–Gates cut is not a top binder. The partition puts
+  the census's off-peak mass (Fresno 14/19 + Kern 7/10 at Gates–Midway) on
+  and inside model boundaries; Tehachapi 0/3 ⇒ no SP15 cut.
+- **Adjudication (precommit K1–K4)**: P-B (joint Fresno+Kern pocket) OUT —
+  makes Gates–Midway internal; P-C (Kern-only) OUT — leaves the larger
+  Fresno family + the highest-frequency binder invisible; P-A (adds a
+  coast/Kern ZP26 split) OUT — no committed coast↔Kern element exists
+  (Diablo–Midway absent from the census) and SLAP_PGZP mixes coastal-SLO
+  with west-Kern-fringe pnodes. **P-A′ proposed**: links NP15↔FSNO
+  {Tesla–Los Banos, Moss Landing–Las Aguilas}, FSNO↔ZP26 {Gates–Midway #1,
+  Diablo–Gates, Cal Flat–Gates, the Gates TBs}; ZP26↔SP15_rest keeps 4,000
+  with element identities now stated (Midway–Vincent #2, CP1 nomogram,
+  Midway–Whirlwind terminating on the boundary). Escapes the caiso-218
+  §F.3 dead class: two boundaries whose elements bind in different years
+  make the year-varying geometry expressible.
+- **Membership**: crosswalk re-cut FSNO 42 / 2,701 MW (solar 2,011, hydro
+  234, battery 184, gas ~271); TH_NP15 pool fully decided — slap-coloc
+  3,011 MW + county 6,422 MW (EIA-860 fill 1,661 MW for post-eGRID-vintage
+  plants: Scarlet 590 / Luna Valley 200 → FSNO; Kola/Proxima → NP15 by
+  their own EIA-860 counties) + 0 default. Witnesses land (Mustang-Hills
+  and Henrietta-D collisions resolved honestly; the 10 MW Henrietta-D
+  TH_ZP26 rule artifact reported, not patched). Unjoined four-county mass
+  enumerated: 5,336 MW / 116 plants incl. Helms (→ FSNO by county) — the
+  pocket holds its own absorbers. B2 fetch SUCCEEDED (108-page 08/28/2024
+  revision, sha256 recorded): diagram inventory corroborates the census
+  1:1, but every PG&E Kern/Fresno page is RASTER-ONLY — the DFAX
+  substation lists are a recorded sharpener gap, not extractable text.
+- **Load split** (zero free parameters, R-MEASURED-admissible like the
+  caiso-172 keeper input): FSNO 0.132613/0.132682/0.132480 (spread 0.0002),
+  ZP26 0.115350/0.114282/0.114749, NP15 balance; residue 2.2–2.5 pts
+  reported and excluded. G1–G5 all PASS incl. the exact two-way replication
+  (0.116607/0.115536/0.116004 — bit-equal to the committed JSON) and
+  |ZP26₃way − 0.116049| = 0.001255. ISO-level reporting: FSNO ≈ 6.1 %,
+  ZP26 ≈ 5.3 % of load.
+- **Sufficiency statement** (FINDING §D, the round's terminal deliverable):
+  untested and untestable without the program (caiso-222 §(iii) verbatim).
+  Link limits stay CEII-walled; the one thin path (DMM 2023 scalars, now
+  sitting on these boundaries) keeps its three unwaivable qualifications
+  with rule-13/14 admissibility DELIBERATELY unadjudicated; W-2/W-3 are
+  the feeds. The caiso-221 C-E bound scaled to the measured FSNO+ZP26
+  shares illustrates the direct pocket-floor channel at ≈
+  −$0.23/−$0.32/−$0.25 lw vs required −$0.85/−$1.90 — the program's C3a
+  case rests on CHANGED SYSTEM DISPATCH (Helms + pocket batteries now
+  inside the cut with 2 GW of its solar), sizable only by a chartered
+  solve round (a NEW owner charter; none requested). Kern's local 115/230
+  family is below zonal grain — excluded honestly. Design risk carried:
+  static single-vintage limits may fail the caiso-218 §C way; the
+  outage-driven derate channel is the watch.
+- **Records**: NO matrix row/cell/§5.2 block (nothing tested; no
+  ScenarioConfig field; the lane's ruling records belong to the
+  audit-rulings session, whose caiso-222 rulings entry above this one
+  landed first — this lane rebased onto it per the dispatch protocol).
+  Filed items unchanged (4; 9 — this round gives the CEII map its concrete
+  consumer: the §A partition is what route-(ii)/W-2 data would feed).
+  DO-NOT-REDO adds (FINDING §E): the P-A/B/C kills stand absent new
+  committed evidence; never re-attempt text extraction of the raster-only
+  B2 PG&E pages (new revision / image-grain / CAISO ask only); nothing
+  here is an armable limit.
+
+**Next number: caiso-224.**
