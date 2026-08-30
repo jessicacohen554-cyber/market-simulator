@@ -8135,3 +8135,69 @@ pair untouched (rule 14); no scarcity parameter (rule 19); C3c queue closed
 (nyiso-137 clock caveat honoured — only arm-vs-control deltas read).
 
 Next shorthand: nyiso-158.
+
+## 2026-08-30 — nyiso-158: post-seam phase-0 — the binding-depth differential IS the measured Transco step, the sharpened iroquois re-open bar is UNREACHABLE BY ANY MEASURED DRIVER, C3b-2025 is WHOLLY the two faces, and the CE-util overshoot is NOT an envelope defect
+
+**NO SOLVE.** Committed-artifacts-only diagnosis of the three rubric failures
+on the nyiso-157 keeper (`2026-08-30-nyiso-157-par-attribution`, NOT-YET).
+Records: `results/calibration/FINDING-nyiso158-winter-binding-depth-phase0-2026-08-30.md`
++ `_nyiso158_winter_phase0.json`. Zero fitted scalars; freeze ACTIVE; nothing
+armed, disarmed, rescaled or scoped; no cell verdict moves (nothing tested —
+one evidence append on the standing iroquois R, below).
+
+**(1) The winter binding-depth differential decomposed.** The west base
+surplus (nuclear+hydro+wind+attributed-UW-envelope−UW demand) is ~3.0–3.6 GW
+in EVERY winter month of all three years — near-constant. What moved is the
+denominator: the applied measured CE TTC steps 1,875–1,950 (Jan/Feb-2023) →
+3,050–3,175 MW (object months), the NY Transco upgrade, +1,200–1,300 MW =
+80–107 % of the headroom change alone (2025 hydro decline −290/−560 MW and
+UW demand growth deepen it; envelope/wind offset part). Measured against
+P-32's own conduct, **Feb-2023-like ~98 % binding does not exist in reality
+anywhere**: real Feb-2023 sat ≥95 % of its limit only 14.6 % of hours (mean
+util 0.904) — the model's 96–100 % is LP bang-bang saturation of the small
+pre-Transco pipe — and the object months measure bind95 6.5–26.9 % vs the
+keeper's 13.2–41.9 %, i.e. the keeper's object-month binding FREQUENCY is
+inside the measured bracket. **Driver search verdict: NONE** — measured RT
+limits would LOOSEN the object months (BLOCKER-C direction reproduced, not
+re-opened), the measured seam envelope/hydro/demand all move the wrong way,
+and reality itself is partial-binding. The sharpened re-open condition's
+first leg is closed on measurement; the condition reduces to its second leg:
+**Leg 2 (owner-executable AORR intake) is the only identified route to the
+winter face.** Supporting: the companion dose-response (W-K3a recovery tracks
+binding fraction 13 %→0.07–0.14 … 96–100 %→0.54–1.65) and Feb-2024 (the one
+winter month with hourly LMP+P-32 on disk): ~96 % of the real CH−UW premium
+mass forms OUTSIDE bind95 hours — a cutset-binding mechanism of any depth
+cannot produce it.
+
+**(2) C3b-2025 has no third component.** Scorer-exact reproduction (payload
+pMon·dMon vs bench rt_lw_mon): arm 0.2034 / control 0.1973 to the digit. The
+four face months carry **98.4 %** of the squared error (Jan 27.3 / Feb 25.7 /
+Jun 35.6 / Jul 9.8; the other eight months 1.6 % combined, max |err| $3.4).
+Month-replacement counterfactuals: winter face closed → 0.1394, summer face
+closed → 0.1503, both → 0.0255 — **either adjudicated face alone returns
+C3b-2025 under the 0.20 bar**. The arm's knife-edge crossing is the same two
+faces deepening ~$1–2/month; no new month enters. C3b closes with the faces
+and needs no lever of its own.
+
+**(3) The CE-utilisation overshoot (0.975/0.763/0.784 vs 0.807/0.616/0.591)
+is NOT an identification defect in the attributed UW envelope.** The measured
+object reproduces exactly (median hourly flow/limit; complete P-32 sample, no
+availability conditioning; K7 shares to 4dp; the p90×(month×hod) caps track
+realized p90 faithfully). Decomposition: denominator artifact small
+(0.053/0.008/0.009 — monthly-mean DAM TTC vs hourly RT limits); the numerator
+is the object — the LP moves +355/+439/+577 MW more across CE at the median
+than the measured interface, from (a) LP pinning with zero operating margin
+(reality bind98 ≤1.5 % in every month; model-class family of the ledgered
+C3c), (b) placement freedom under the EIA-930-pinned monthly total, and
+(c) **missing east-side commitment — the BLOCKER-B/Leg-2 object seen from the
+flow side**. PREREG-nyiso126 §8-3 honoured: nothing rescaled, nothing scoped,
+no mechanism proposed from this residual.
+
+Matrix: `nyiso_iroquois_winter_spread` stays **R** — evidence appended to the
+cell (first re-open leg closed on measurement; condition now effectively
+Leg-2-only). No other cell touched. Keeper, determination, frontier
+disposition all unchanged. Leg 2 remains owner-court; if the AORR files land,
+the nyiso-97 §4 identifiability gate runs BEFORE any mechanism prereg
+(INTAKE-SPEC-nyiso156 §2, fail-closed).
+
+Next shorthand: nyiso-159.
