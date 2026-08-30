@@ -454,3 +454,45 @@ run. **Both Q1 and Q2 are decidable as written; if the owner rules nothing,
 NOT-YET stands and the lane stays at rest. THE OWNER MERGES.**
 
 **Next number: caiso-223.**
+
+---
+
+## §9 — OWNER RULINGS (2026-08-30 PM sitting) — APPENDED POST-DELIVERY by the audit-rulings records lane (append-only: nothing above this rule is rewritten)
+
+The owner ruled on both questions the day the packet was delivered. Both
+rulings are ON-MENU (§1(c) option 3; the §E/Q2 route census). Recorded by
+the dispatched records lane under the standing recorded deviation (the
+director pushes nothing; records land through the lane; THE OWNER MERGES).
+This section is where the §7 filed-items disposition lands.
+
+* **Q1 = §1(c) OPTION 3 — TERMINAL REST + MAP.** The C3a residual is
+  designated **ATTRIBUTED AND CLOSED AT THIS REPRESENTATION GRAIN**:
+  caiso-221 §E + this packet ARE the record; the Q2 routes are the ONLY
+  re-openers. Determination text, keeper
+  (`2026-08-26-caiso-220-c1-crosswalk`, NOT-YET) and markers all
+  UNCHANGED; **no rubric motion, no scorer change, no shard keeper
+  change**. The caiso-186 NO stands un-overturned; the caiso-201 rest is
+  now a terminal rest with this decision map.
+* **Q2 — ROUTES (i) AND (iii) ARMED/CHARTERED; ROUTE (ii) DECLINED.**
+  * **(i) ARMED**: W-1/W-2/W-3 of the §(i) table are **standing watch
+    items**, each with its cheap test exactly as tabled, under the
+    pre-stated trigger duty (§(i), unchanged): any W-item landing
+    re-opens as a **data-intake session first, never a solve**, under the
+    caiso-218 §F.2/§F.3 fences.
+  * **(iii) CHARTERED**: the opening round is dispatched as
+    **caiso-223**, its own lane; the §(iii) honest scoping note is its
+    starting record, qualifications (a)–(c) un-waived (the DMM scalars'
+    admissibility as link limits remains UNADJUDICATED until that lane's
+    own rule-13/14 adjudication and precommit).
+  * **(ii) DECLINED**: no CEII filing/agreement class (A-1/A-2/A-3) is
+    executed; the two structural costs stand as §(ii) states them.
+    Nothing is pre-granted; the composability note (CEII only composes
+    with route (iii)) remains on the record for any future owner act.
+* **Filed items after the rulings**: **4 carried** (standing duty,
+  unchanged); **9 carried — Q2 is its standing decision map, now RULED on
+  all three routes** (armed / chartered / declined). §8 DO-NOT-REDO
+  carries whole, and item 2 is now live duty: the armed watch tests are
+  the ONLY sanctioned re-checks of the caiso-218/219 walls.
+* Log: `docs/calibration-log/caiso.md`, 2026-08-30 "caiso-222 OWNER
+  RULINGS (PM sitting)" entry (the executing lane's record, with the
+  landed shas in the program ledger, `docs/model-audit-release-plan-2026-08.md` §8).
