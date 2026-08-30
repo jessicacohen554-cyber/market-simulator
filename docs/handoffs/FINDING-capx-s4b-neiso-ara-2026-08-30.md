@@ -148,8 +148,99 @@ MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1 \
 
 ## 5. The measured pair
 
-TBD — filled by this session after the solves.
+Both arms solved 5/5 years at one HEAD (`88baa9d`, the intake commit; the control's
+FCA-17 reversion was applied for exactly the duration of its solve and restored from
+HEAD, verified by re-resolving the three constants), sequentially, `--golden-posture`,
+identical cache key `9a7f68fc7dcac931` exactly as §4 pre-declared (registry constants,
+not `ScenarioConfig` fields — byte-identical `run_config.json` in both arms).
+Treatment 8.0 min / 3.17 GB; control 7.5 min / 3.22 GB.
 
-## 6. Registration + board refresh
+### 5.1 The per-year I7 ledger (firm = peak × (1 + rm); requirement = peak × factor)
 
-TBD — filled by this session after registration.
+| year | peak MW | control firm | control I7 | treatment firm | treatment I7 | T − C | §4 arithmetic |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 2026 | 24,889.7 | 29,134.3 | **+4,183.5** | 28,976.6 | **+3,374.8** | −808.6 | +3,374.8 |
+| 2027 | 25,213.3 | 26,203.1 | **+928.0** | 26,744.8 | **+810.2** | −117.8 | +110.8 |
+| 2028 | 25,541.1 | 26,149.1 | **+545.4** | 26,690.7 | **+419.0** | −126.4 | −280.4 |
+| 2029 | 25,873.1 | 26,405.3 | **+468.7** | 26,946.9 | **+333.6** | −135.0 | −365.7 |
+| 2030 | 26,209.5 | 27,615.1 | **+1,341.4** | 28,156.8 | **+1,197.5** | −143.8 | +498.2 |
+
+(Control factor 1.0024544; treatment factor 1.0286069.)
+
+### 5.2 Scorecard vs. the pre-declaration — every check lands, one response dominates
+
+1. **The control reproduces the S-4V treatment ledger BIT-FOR-BIT** — every year's
+   peak and firm identical to §4's quoted S-4V values to the 0.1 MW (drift column
+   −0.0 throughout). Zero epoch drift since S-4V: the attribution is clean at one
+   HEAD with no drift disclosure needed (unlike both prior NEISO/NYISO lanes).
+2. **The 2026 base-year isolation is EXACT**: T − C = −808.6 MW = −651.0
+   (requirement, factor Δ × peak) − 157.7 (import credit), endogenous response 0.0 —
+   §4 predicted ≈ −808.7 and +3,374.8 of I7; measured +3,374.8.
+3. **The pre-declared 2028/2029 re-opening did NOT materialize, and the reason is
+   §4's declared response #1 at full magnitude.** The reliability floor — the same
+   requirement, second verb — answers the higher requirement by RETAINING
+   **699.3 MW of 2027 gas-CC exits** the FCA-17 requirement had released: control
+   2027 exits 2,931.1 MW vs treatment 2,231.8 MW, all fuel `gas_cc`, all reason
+   `economic`. The retained set (8 tranches): p50002 Central CHP 30.0 + 117.0,
+   p10726 Central 33.1 + 194.0, p3236 Central 21.2, p54324 Central 173.1, p55068
+   North 87.1 + 43.8 — the mirror image of S-4V's measurement, where the hydro
+   credit's headroom RELEASED 324.9 MW of the same plants (p55068, p10726). The
+   decomposition closes to ≤ 0.1 MW in every year: out-year T − C = −(requirement Δ)
+   − 157.7 + 699.3 = −117.8 / −126.4 / −135.0 / −143.8.
+4. **§4 response #2 (backstop) did not fire**: backstop 0 MW and builds identical in
+   both arms (2029 wind 712.6 + solar 1,089.4; 2030 economic gas-CC 1,000 + wind +
+   solar) — no I7 clearance is bought by backstop construction.
+5. **I12 improved as a mechanical consequence, not a target**: the requirement-implied
+   band re-derives from the ARA-3 factor ([0.2 %, 15.2 %] → [2.9 %, 17.9 %]) and the
+   import-credit cut lowers 2026 firm (rm 17.1 % → 16.4 %), so the S-4V-era lone
+   I12-2026 WARN clears — treatment invariants **0 FAIL, 0 WARN (14 scored)**;
+   control reproduces the S-4V shape (1 WARN, I12-2026 17.1 %).
+
+### 5.3 The honest headline
+
+**The requirement move is real and larger than charter-declared — +651…686 MW/yr of
+requirement plus −157.7 MW of import credit — and 2028 still holds, because the
+model's floor mechanism holds ~699 MW of gas-CC the weaker requirement would have
+retired.** Two honesty notes at full magnitude:
+- The 2028/2029 clearances (+419.0 / +333.6 MW) are **floor-dependent**: without the
+  retention response the arithmetic lands at −280/−366. The floor is a standing
+  structural mechanism (spec §5.2, one-requirement-two-verbs), measured here against
+  a zero-drift control, its retained units named — not a tuned input. But a reader
+  should know the sign of these two years now rides on the floor's response, exactly
+  as it previously rode on epoch drift (S-4V §5.4) — each successive measurement has
+  moved the margin down (+545 → +419, +469 → +334).
+- §4's suspicion clause ("a result landing just clear is the suspicious one") is
+  answered by the attribution closing to 0.1 MW with a named, symmetric mechanism —
+  the same floor S-4V measured in the loosening direction (324.9 MW) responds here
+  in the tightening direction (699.3 MW). Nothing was re-tuned; the sourced 0.7352
+  hydro factor was not touched; every input value is the filing's/CELT's own print.
+
+### 5.4 FC re-score
+
+**Bare `neiso-t1f` (the live leg, scored at `88baa9d5c71b`, cache
+`9a7f68fc7dcac931`, rubric v1.0 t1f): `PROMOTE-WITH-CAVEATS`** — determination
+unchanged from S-4V with **strictly fewer caveats**: FC-1 **PASS** (all 14
+invariants; was CAVEAT on the I12 WARN), FC-2 **PASS** (row 1 I12 in-band; row 3
+cobweb PASS; row 4 backstop 0 %), FC-7 CAVEAT (the program-wide absent DOF ledger,
+unchanged), FC-8 PASS (8.0 min). Leg (b) therefore does **not** flip back — the
+charter's pre-declared flip risk is measured and answered.
+
+## 6. Registration + board refresh (rule 15, forecast namespace only)
+
+Registered runs (single path, `scripts/register_forecast_run.py --summary`):
+**`neiso-2026-2030-s4b-ara`** (treatment, `verdict_key: neiso-t1f`) and
+**`neiso-2026-2030-s4b-ara-control`** (labelled diagnostic,
+`verdict_key: neiso-t1f-s4bcontrol`) — the run ids §4 pre-declared, `s4b_arm`
+labels in the sidecar meta. `ff-verdicts.json` merged per the preserve-then-
+overwrite convention: the S-4V measurement preserved verbatim under
+**`neiso-t1f-s4hydro`**, the treatment overwriting the bare key, the control at
+**`neiso-t1f-s4bcontrol`**; `-ffr3a2` / `-s4control` / `-ff2d` all untouched. The
+NEISO board block refreshed (T1-F rows, `fc` map, gate (b) detail, gate note, the
+sources provenance line) with lane D14's leg-(c) content kept verbatim. Committed
+per bundle: canonical sidecar (`frontend/data/hindcast/<id>.json`),
+`full_horizon_summary.json`, `run_config.json`, `forecast_verdict.json`, per-year
+`evolution_2026..2030.json`, resolved `config.yaml`; heavy dispatch outputs stay
+gitignored (§4's `.gitignore` block). The generated registry/runs/manifest
+namespace files remain gitignored (the Pages deploy is their writer). The backcast
+registry was not written to; no mechanism-matrix cell is minted (data intake, no
+representation change — charter guardrail).
