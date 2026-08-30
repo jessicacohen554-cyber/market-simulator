@@ -319,6 +319,21 @@ frontend/data/forecast/program-status.js
 # floor-retention scratch are excluded, per the pack-size rule in Git & Pushing.
 /results/ff-t1f-extcap/*/*/*/*.parquet
 /results/ff-t1f-extcap/*/*/*/year_*_floor_retentions.json
+# capx-S4 NEISO hydro-accreditation T1-F control/treatment pair
+# (run_full_horizon --out-dir; registered runs neiso-2026-2030-s4hydro and
+# neiso-2026-2030-s4hydro-control). Exactly the FFR-4E/FFR-4F/capx-D2 class:
+# the SLIM artifacts ARE committed and cited by
+# docs/handoffs/FINDING-capx-s4-neiso-hydro-2026-08-30.md §5 — the two
+# full_horizon_summary.json + run_config.json (FC-7's requirement), the
+# per-year evolution ledgers (the I7 accredited/requirement trail) and the
+# resolved config.yaml. Only the regenerable per-year dispatch outputs and
+# floor-retention scratch are excluded, per the pack-size rule in Git &
+# Pushing.
+/results/ff-t1f-s4hydro/*/*/*/*.parquet
+/results/ff-t1f-s4hydro/*/*/*/*.npz
+/results/ff-t1f-s4hydro/*/*/*/hourly/
+/results/ff-t1f-s4hydro/*/*/*/year_*_floor_retentions.json
+
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
 # D-28 option A step 3). Same class as /results/ffr7b2/ above, of which this is
