@@ -12267,6 +12267,59 @@ blob-verified 1e2861d7 before measurement; the session's opening `git push`
 HTTP-500 storm resolved by re-deriving the head on the moved main — the
 fresh-base rule, not a transport conclusion).
 
+### ercot-239 ROUND-2 ADDENDUM (same session, executed after ercot-240 merged) — THE AUGUST STEEPNESS OBJECT ADJUDICATED BY A/B: the measured graded `peak_ladder` is structurally CLEAN (all five kills PASS; lidless spur COLLAPSES 74 → 11) and CANNOT carry the 2023 fit (C3a −7.3 % → −40.0 %, C3b 0.102 → 0.736, C3c 180 → 70 — the pre-k33 state restored); REGISTERED `2026-08-30-239-graded-ladder` + ESCALATED, keeper untouched
+
+**Handoff priority 2, worked under
+`docs/PRECOMMIT-ercot239-graded-ladder-2026-08-30.md`** (pushed +
+blob-verified 6bdba198 before any measurement; Amendment 1 re-based the
+G-A(iv) proxy to the measured invariant — all 6 non-inert
+conditional-surface cells are TOP-rung cells where the candidate is
+bit-identical by construction — before any solve). Full record:
+`docs/FINDING-ercot239-graded-ladder-2026-08-30.md`; census
+`results/calibration/ercot239_gradedladder_phase0.json`; A/B
+`results/calibration/ercot239_gradedladder_ab.json`.
+
+**Design:** candidate = the carve-out recipe with the four measured
+classes' flat k33-scaled `peak_ladder`s regraded to the COMMITTED 60-Day
+DAM dispersion artifact (`offer_curve_dam_hrmults_ladder.json`,
+p10/p30/p50/p70/p90) × a per-class identity anchor preserving the
+incumbent top rung exactly (zero new scalars; the ledgered k becomes the
+class-top anchor). Stage-A census first: the incumbent posts ZERO gas
+peak tranches inside [500,1000) at Aug-2023 gas (the crushed transition
+is a literal offer-domain void: August-afternoon λ occupies [300,450)
+and ≥$1,150 with nothing in [450,500) ∪ [1000,1150)); the candidate
+populates the band with 6 rungs across 3 classes. Stage-B: control
+replay reproduced the keeper's officials TO THE DIGIT (V-0; env matched
+to the keeper's recorded highspy 1.15.1 / pandas 3.0.5 — the ercot-212
+lesson applied ex ante; control not registered, pre-decided branch) vs
+ONE armed member.
+
+**Result:** kills ALL CLEAN — zero shed, off-season intact, coal
+−0.09 TWh, CT/ST |Δ| ≤ 0.24 TWh (the imported ercot33 CT↔ST failure
+mode absent at 8× margin), and the lidless spur collapses 74 → 11
+(banded 68 → 11): the ercot-225 spur population is measured to be
+ENTIRELY the flat lower rungs' product. But the officials collapse to
+the ercot-234 pre-k33 state (August lw 221.18 → 91.77 vs actual 220.16;
+bands 49/11/10 vs actual 77/43/61 — the band did not gain: hours fell
+PAST it). **The adjudication: the 2023 August fit requires ~100 % of the
+CC/CT peak band at the wall where the measured DAM dispersion posts
+~20 % — the crushed transition, the spur cost and the August level are
+ONE lever's three faces, and no offer-surface SHAPE repair at the
+measured dispersion exists.** Sharpens ercot-217 + ercot-239 round 1:
+the ECRS-era conduct prices far more capacity at scarcity levels in
+tight hours than the DAM book shows; any faithful repair is a
+tightness-conditioned RT/SCED-identified conduct object (SCED-CT
+corpus), owner's court. **Outcome rule 3 applied: registered (NOT-YET,
+sidecar marked REJECTED PROBE — escalated; retention pruned ercot204) +
+ESCALATED with the full A/B table (FINDING §4; session recommends
+keeping the incumbent carve-out, with the RT/SCED conduct lane as the
+queue item); keeper and `config_partition` untouched.** Matrix: the
+`offer_curve_by_group` cell's evidence line carries the A/B citation
+(rule 26(b)); no verdict letter moves (the recipe row's K is the armed
+keeper's). Hygiene: two precommitted 2023-only solves, nothing else;
+no `--holdout-authorized`, no marker; ERCOT-only; parity check OK;
+payload blob a7817ab2 push-verified.
+
 **Next shorthand: ercot-240** (ercot-199 remains unclaimed)
 
 ## ercot-240 — 2026-08-30 — THE EVENT-HOUR DEMAND GAP ADJUDICATED (ZERO-SOLVE, precommitted; FINDING-ercot239 §6 OBJECT 2, owner PM charter): the +651…+873 MW "demand gap" is the DC-TIE NET IMPORT IDENTITY — exactly, at every finite 2023 hour (residual 0.0 MW, share 1.000) — the model's demand input serves the measured NET-GENERATION boundary correctly; all three chartered demand-source candidates (4CP/load response, 930-vs-MIS boundary, weather-hour alignment) REFUTED as gap carriers; the phase-0 "demand understatement" framing WITHDRAWN by measurement
