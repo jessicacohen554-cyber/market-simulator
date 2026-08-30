@@ -278,3 +278,157 @@ scoring and no registration was performed to produce this signature record.
 
 The director's ledger (`docs/handoffs/capx-director-ledger-2026-08.md` §3) is updated in the same
 session, and the card body above is preserved **as put** — the ercot-233 card Y pattern.
+
+---
+
+## 6. ADDENDUM — THREE FURTHER RULINGS AT THE r#13 SITTING, 2026-08-30 (Q7 · Q8 · Q9)
+
+> **Why they are appended here rather than filed separately.** Q7 is the direct successor of
+> card A — it settles what card A's leg (c) *measures* — and Q8 is the direct successor of
+> card B, which chartered the lane (D11 → D11-R) whose report Q8 rules on. Keeping the
+> signature record in **one document** is the point: an owner reading card A should not have to
+> discover elsewhere that its leg-(c) reading was later made literal. Appended verbatim from the
+> director's ledger (`docs/handoffs/capx-director-ledger-2026-08.md` §0j.3 and §3) by lane
+> **D13** on 2026-08-30. **§§0–5 above are untouched, preserved as put.** These three were ruled
+> at an in-session decision card at the r#13 sitting, not on this card's body; this addendum is
+> their record, not a re-presentation.
+
+**Status: RULED — 2026-08-30 (r#13 sitting).** Q7 and Q8 were ruled **at the director's
+recommendation** in Q8's case and **at the finding's own recommendation** in Q7's; Q9 is an
+answered factual check, not a decision.
+
+| # | question | ruling | vs. recommendation |
+|---|---|---|---|
+| **Q7** | Leg-(c) semantics: the board carried **two** readings at once | **MEASURED CLOSES THE LEG** | at the charter-literal reading + card A-A as signed |
+| **Q8** | Arm `entry_margin_exhaustion` as the ERCOT forecast default? | **HOLD UNTIL D12** | at the D11-R finding's own §5 recommendation |
+| **Q9** | Is the miso-190 backcast session still running? | **STILL RUNNING** | factual answer; no decision |
+
+---
+
+### 6.1 Q7 — leg-(c) semantics: what the leg measures
+
+**The question.** After lane D10 registered NYISO's first-ever T1-X on 2026-08-30, the gate board
+carried **two contradictory leg-(c) semantics simultaneously**:
+
+* the **D7-era in-band reading**, under which ERCOT, PJM and MISO — each with a *measured,
+  registered* FC-4 that **FAILs its band** — read leg (c) `fail`; and
+* the **pass-on-measurement reading**, under which D10 closed NYISO's leg (c) on a measured FC-4
+  that also FAILs, its cell asserting in passing that "ERCOT/PJM/MISO all carry FC-4 FAIL and
+  their leg (c) reads pass" — **false at the time it was written**.
+
+The director found this at refresh #13 and **escalated rather than edited**, because resolving it
+moves three gate legs, which is outside a records lane's remit.
+
+**Options presented.**
+
+* **(Q7-A) MEASURED CLOSES THE LEG — RECOMMENDED.** Read §2.1b(2)(c) literally: it requires the
+  crossover input gap (FC-4) *"measured and reported"* plus FF-3E readiness green, and **nowhere
+  requires FC-4 to be in-band**. ERCOT/PJM/MISO flip `fail` → `pass`, with their FC-4 FAIL
+  magnitudes reported at full magnitude; NYISO's PASS stands; leg (c) then fails only where no
+  T1-X exists (NEISO, CAISO). This is also what **card A-A** says on its face — leg (c) "closes
+  on a measured FC-4 rather than on an unscored cell" (§1.3, §5.1).
+* **(Q7-B) In-band closes the leg.** Keep the D7 reading and *reverse* D10: NYISO's leg (c) goes
+  back to `fail`, and leg (c) becomes a second quality bar on top of leg (b). Rejected: it makes
+  leg (c) redundant with leg (b) — the very reason leg (c) exists as a separate leg is that it
+  carries the *measurement* requirement (the reading D7 itself recorded for NYISO) — and it
+  would reverse a signed disposition on no new evidence.
+* **(Q7-C) Leave both readings standing, decide per ISO.** Rejected on sight: it is the defect,
+  not a resolution.
+
+**RULING, verbatim from the ledger §3:**
+
+> **RULED 2026-08-30 (r#13 sitting) — MEASURED CLOSES THE LEG**, per the charter-literal
+> §2.1b(c) test ("measured and reported" + readiness green) and card A-A as signed ("closes on a
+> measured FC-4"). ERCOT/PJM/MISO leg (c) → pass-on-measurement, FC-4 FAIL magnitudes stay at
+> full magnitude; NYISO's PASS stands; the in-band reading is superseded. Execution = lane D13.
+> No §2.1b gate opens (all three fail other legs).
+
+**Consequences adopted.** Three `c_crossover_gap` cells flip `fail` → `pass`, each stating its
+FC-4 FAIL magnitudes at full magnitude and that the leg passes **on measurement, not on the
+verdict**. MISO's `closed_on` drops `"c"`. NEISO and CAISO stay `fail`, annotated with *why*
+(neither has ever run a T1-X — the one failure card A-A deliberately preserved). NYISO's D10
+cell is **annotated, not rewritten**: its claim was false when written and is true only after
+execution. **No gate opens** — ERCOT and MISO still fail (a) and (b), PJM still fails (b), and
+leg (d) is `none` everywhere. Nothing is re-scored: no `fc` entry, determination or verdict moves.
+
+**Execution lane: D13 BOARD RECONCILE** (records only; `docs/FINDING-capx-d13-board-reconcile-2026-08-30.md`).
+
+---
+
+### 6.2 Q8 — arming `entry_margin_exhaustion` as the ERCOT forecast default
+
+**The question.** Card B (B-C, §5.1) held the shipped `entry_lookahead_reprice` default and
+chartered the developer-pro-forma successor; the successor was re-scoped at r#8 into **D11-R**,
+which productionized the measured **margin-exhaustion entry volume rule** behind a new
+default-OFF `ScenarioConfig.entry_margin_exhaustion` and A/B'd it on ERCOT's T1-H leg
+(`docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`). Arm it as the ERCOT
+forecast default, or hold?
+
+**The record it was ruled on** (all measured, all committed): zero DOF confirmed — the live walk
+re-invokes `runner._lookahead_reprice_signal` itself, delta-anchored, byte-identical when off.
+Four-anchor terminal reserve margin: shipped bang-bang **25.19 %** (control, reproducing the
+committed bracket exactly) / disarm raw duals 40.24 / forward-expectation 40.38 / L-1b offline
+18.7 / **live arm 22.02 %** — damping **−3.17 pp**. The **B-2 cobweb SURVIVES**
+(−12.65/+5.20/+10.47 vs the registered −10.46/+6.11/+10.54): the implementation-sanity test,
+passed. And the named degradation, reported against interest: **on the live reserve leg the gas
+half is INERT** — gas builds to the same caps in both arms, because the prior year's realized
+post-solve ORDC adder carries the margin past exhaustion — so all damping comes from VRE and
+storage, and the 2023–2025 addition bands FAIL in both arms with the arm worse on four of five.
+
+**Options presented.**
+
+* **(Q8-A) HOLD UNTIL D12 — RECOMMENDED (the finding's own §5).** Arming now would bake in the
+  split *"margin-exhaustion for VRE/storage, bang-bang for gas"* — a posture whose gas
+  behaviour is decided by a reserve leg **D12 may re-found**. Cell stays `O`; the A/B stands as
+  the measured record; D12's report re-opens the decision.
+* **(Q8-B) Arm now, describing honestly what arms.** Defensible — the structural case for the
+  rule is construction-independent and zero-DOF — but it ships a default whose gas half is a
+  known artifact of a leg under active adjudication.
+* **(Q8-C) Reject the mechanism.** Not supported by the record: the rule does what it claims
+  where the margin can exhaust, the cobweb survives as real dynamics, and the damping is
+  parameter-free. Rejecting would be an unearned `R`.
+
+**RULING, verbatim from the ledger §3:**
+
+> **RULED 2026-08-30 (r#13 sitting) — HOLD UNTIL D12**, at the finding's §5 recommendation. The
+> gas half is inert on the live reserve leg, so arming now would bake in the VRE/storage-only
+> split; D12 adjudicates the scarcity basis first and its report re-opens the decision. Matrix
+> cell stays **O**.
+
+**Consequences adopted.** No default changes; `entry_margin_exhaustion` stays shipped-OFF. The
+ERCOT matrix cell stays **`O`** (measured, owner escalation) — no verdict is minted, and the
+cell is **not** licensed for re-test as `R`/`I`/`G`. **D12 SCARCITY-CONSISTENT DELTA BASIS is
+RELEASED** by D11-R's report (the r#8 ratified sequencing is satisfied) and its result is the
+arming re-decision's input. Nothing on the gate board moves.
+
+**Execution: none required** — the hold is the status quo. The currency stamp (measurement,
+cell, ruling) is carried onto the board's ERCOT block by lane D13.
+
+---
+
+### 6.3 Q9 — is the miso-190 backcast session still running?
+
+**The question.** Whether miso-190 is still in flight governs two scheduling checks: the **S-123
+start-time check** (MISO adequacy package) and **S-6**'s heavy solo compute slot (PJM 8.8 GB /
+MISO 9.6 GB are no-co-run).
+
+**ANSWERED 2026-08-30 (r#13 sitting) — STILL RUNNING.** Its branch is fully merged at `9cd6dc6`,
+but the A/B solve is not yet registered — the scorer committed before it runs.
+
+**Consequences.** The **S-123 start-time check FAILS a fifth consecutive time** and S-123 stays
+held; **S-6 stays held** on the same heavy slot. Both are re-checked every refresh. No decision
+is taken and nothing on the board moves.
+
+---
+
+### 6.4 What these three rulings did NOT do
+
+Unchanged by all three, on the same terms as §4 and §5.2: **no backcast keeper, marker,
+`status/*.js`, `calibration-complete.json`, offer curve, commitment bridge or backcast matrix
+cell** is touched. The **holdout spend freeze stays ACTIVE** (tier-scoped: locked test frozen for
+every ISO; validation governed by the `complete` marker plus `--holdout-authorized`) and `final`
+stays empty. **No §2.1b full-solve is authorized and NO ISO's gate opened** — Q7 moves three
+legs and every one of those three ISOs still fails another leg; leg (d) remains `none` for all
+six. No forecast default, posture or `flip_config` entry changes. No `R`/`I`/`G` matrix cell is
+licensed for re-test, and no verdict, determination or `fc` scorecard entry is minted or edited.
+**No solve, no scoring and no registration was performed to produce this addendum.**
