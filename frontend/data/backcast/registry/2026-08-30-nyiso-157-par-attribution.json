@@ -3,7 +3,7 @@
   "label": "nyiso 157 par attribution",
   "date": "2026-08-30",
   "shorthand": "nyiso-157-par-attribution",
-  "definition": "nyiso-157 Leg-1 arm: + nyiso_seam_par_attribution (standing PREREG nyiso-126 + nyiso-127 addenda; re-test of the nyiso-127 R at the nyiso-155 HEAD under the 2026-08-30 owner ruling)",
+  "definition": "(KEEPER, promoted 2026-08-30 by owner ruling, superseding 2026-08-25-nyiso-155-hydro-repair) nyiso-157 Leg-1 arm: + nyiso_seam_par_attribution — all four NYISO_external border-link caps rebuilt from NYISO's measured MIS P-32 per-neighbour schedules under the published NY-NJ PAR attribution and published P-33 outage availability, replacing the former keeper's four hand-static lumped border caps; zero free parameters. Gives the model its first real zonal price separation (2025 Central-East utilisation 0.381 -> 0.784; Jan+Feb-2025 binding hours 34 -> 435). DETERMINATION NOT-YET — C1 14/14 free 10/10, C2/C4/C6/C8 PASS; FAILING C3a (2025 -12.0%, deepened from the superseded keeper's -10.8%), C3b (2025 monthly NRMSE 0.203, crossing the 0.20 bar from 0.197) and C3c (1/0/0 h vs RT 10/13/42, counts bit-identical to the control and both prior keepers — FAIL only because the C3c standing-rule lone-failure guard is silenced by C3a/C3b). Promoted explicitly OVER these two gate regressions on rules 14 [R-ACCURATE] + 1 [R-STRUCT]; see keepers/NYISO.json promotion_note for the full record.",
   "years": [
     2023,
     2024,

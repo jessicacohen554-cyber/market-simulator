@@ -162,6 +162,18 @@ def _emit(bundle: Path, attested_by: str, extra_entries: list[dict]) -> None:
     base = json.loads((KEEPER / "calibration_attestation.json").read_text())
     doc = json.loads(json.dumps(base))
     doc["governance"]["attested_by"] = attested_by
+    # The keeper base's governance.note describes ITS promoted mechanism (the
+    # nyiso-152 duty-role text, carried through 155) — stale for these bundles
+    # (keeper-auditor flag, nyiso-157). Re-stamp it to this session's chain;
+    # the note's mechanism story is superseded by attested_by's specifics.
+    doc["governance"]["note"] = (
+        "nyiso-157 chain (2026-08-30): the nyiso-155 keeper recipe, plus (arm "
+        "bundles only) the eastern-seam PAR attribution and, on the companion, "
+        "the iroquois winter spread — see attested_by for this bundle's exact "
+        "role and evidence. The prior keeper lineage's mechanism notes "
+        "(duty-role cohort, hydro repair) live in their own bundles' "
+        "attestations and the keeper shard's promotion-note chain."
+    )
     fp = doc["free_parameters"]
     names = [e.get("name") for e in fp["entries"]]
     for entry in extra_entries:
