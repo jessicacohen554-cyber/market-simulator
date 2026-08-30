@@ -1015,7 +1015,7 @@ def _storage_portfolio_elcc_dilution(existing_storage_mw: float, iso: str) -> fl
 
 
 def resolve_forecast_pool_requirement(iso: str, year: int | None) -> float | None:
-    """Return the ISO's published Forecast Pool Requirement for ``year``, or None.
+    """Return the FPR governing ``iso``'s ``year`` (published, or held-last), or None.
 
     PJM (post-CIFP) publishes a Forecast Pool Requirement (FPR) — the
     reliability requirement stated on its OWN UCAP basis as a fraction of
@@ -1028,13 +1028,50 @@ def resolve_forecast_pool_requirement(iso: str, year: int | None) -> float | Non
     ``(1 + PRM) x ratio`` construction). ``year=None`` returns ``None`` so a
     caller that cannot resolve a delivery year keeps the fallback path
     byte-identically (R2, accreditation-basis memo 2026-07-12 §4.2).
+
+    **HOLD-LAST-FPR — the declared convention beyond the published table**
+    (owner signature card C-A, 2026-08-25,
+    ``docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md`` §3.3/§5.1;
+    implemented by capx lane S-5): a delivery year STRICTLY AFTER the ISO's
+    last published FPR returns that last published value, never the stale
+    fallback composite. Precedent: :func:`config.capacity_market.
+    resolve_demand_curve_vintage` / :func:`forward_net_cone_anchor` declare
+    exactly this forward-carry for the demand curve's own forward values
+    ("year after the latest vintage HOLDS-LAST to it — the forward-carry a
+    forecast uses"). Rationale, measured in
+    ``docs/handoffs/FINDING-capx-d2b-i7-ledger-2026-08-25.md`` §5.2: the
+    fallback composite's IRM half is two vintages stale against PJM's own
+    rising series (2027/28 IRM 20.0 %; FPR 0.9170 → 0.9260 → 0.9401), so
+    falling through to it dropped the requirement discontinuously by 3.18 %
+    of peak at the 2028/29 → 2029/30 table edge — 5,492 MW at the 2030 peak.
+    Hold-last is the LESS lenient reading and is superseded per delivery year
+    the moment the ISO publishes that year's parameters (rule 23
+    ``[R-FROZEN-DERIVE]``: intake on publication, never against a residual —
+    PJM's 2029/30 checked unpublished as of 2026-08-30, BRA scheduled
+    Dec 2026). Delivery years BEFORE the first published entry still return
+    ``None`` (pre-CIFP years keep the fallback composite deliberately), as
+    does an in-table gap: the convention extends the table's FORWARD edge
+    only, so every in-table and pre-table year — every backcast year — is
+    byte-identical.
     """
     if year is None:
         return None
     table = FORECAST_POOL_REQUIREMENT_BY_ISO.get(iso)
     if not table:
         return None
-    return table.get(capdel.resolve_delivery_year(iso, year))
+    label = capdel.resolve_delivery_year(iso, year)
+    fpr = table.get(label)
+    if fpr is not None:
+        return fpr
+    # HOLD-LAST-FPR (card C-A, 2026-08-25 — see docstring): strictly beyond
+    # the last published delivery year, hold its FPR. Delivery-year labels
+    # order by their leading start year (planning-year ISOs "YYYY/YYYY+1",
+    # CAISO bare "YYYY" — same ``int(label[:4])`` parse as
+    # ``forward_net_cone_anchor``'s vintage carry).
+    last_label = max(table, key=lambda lbl: int(lbl[:4]))
+    if int(label[:4]) > int(last_label[:4]):
+        return table[last_label]
+    return None
 
 
 def resolve_adequacy_requirement_mw(
@@ -1053,10 +1090,13 @@ def resolve_adequacy_requirement_mw(
        reserve margin and the ICAP->UCAP conversion already folded into the
        one published number. This is literally the ISO's own construction
        (devintages the mixed-vintage ``1.178 x 0.7699 = 0.907`` composite the
-       fallback builds onto the published 2026/2027 FPR ``0.9170``).
+       fallback builds onto the published 2026/2027 FPR ``0.9170``). Beyond
+       the ISO's LAST published FPR the resolver HOLDS-LAST (card C-A
+       2026-08-25 — see its docstring), so a forecast horizon never falls off
+       the published series onto the stale composite mid-horizon.
     2. **Fallback ``firm peak x (1 + PRM_iso) x icap_to_ucap_ratio_iso``**
        (byte-identical to the pre-R2 behaviour) for any ISO/year without a
-       published FPR. The ``icap_to_ucap_ratio`` factor (stage-5 §6 ICAP/UCAP
+       published or held-last FPR. The ``icap_to_ucap_ratio`` factor (stage-5 §6 ICAP/UCAP
        pairing audit, 2026-07-06) corrects a basis mismatch for ISOs whose
        registered PRM is stated on INSTALLED capacity (PJM's IRM, MISO's
        ICAP-basis PRM) while :func:`accredited_firm_capacity_mw` counts their

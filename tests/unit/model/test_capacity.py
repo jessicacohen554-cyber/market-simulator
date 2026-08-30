@@ -2303,34 +2303,87 @@ class TestForecastPoolRequirement(unittest.TestCase):
             places=3,
         )
 
-    def test_falls_back_when_no_published_fpr(self):
+    def test_falls_back_before_first_published_fpr(self):
         from market_sim.config.constants import (
             ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
         )
 
         cfg = ScenarioConfig(iso="PJM")
         peak = 160_560.0
-        # Model year 2030 -> delivery 2030/2031 -> no published FPR -> the
-        # (1 + PRM) x icap_to_ucap_ratio fallback (byte-identical to pre-R2),
-        # on the DR-netted firm peak.
+        # Model year 2024 -> delivery 2024/2025 -> BEFORE the first published
+        # post-CIFP FPR (2025/2026) -> the (1 + PRM) x icap_to_ucap_ratio
+        # fallback (byte-identical to pre-R2), on the DR-netted firm peak.
+        # Pre-table years deliberately keep the fallback (hold-last extends
+        # the table's FORWARD edge only, card C-A 2026-08-25) — this is what
+        # keeps every backcast year byte-identical.
         dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"]
         ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["PJM"]
         expected = (
             peak * (1.0 - dr) * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO["PJM"]) * ratio
         )
-        self.assertIsNone(resolve_forecast_pool_requirement("PJM", 2030))
+        self.assertIsNone(resolve_forecast_pool_requirement("PJM", 2024))
         self.assertAlmostEqual(
-            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2030),
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2024),
             expected,
             places=3,
         )
 
+    def test_holds_last_published_fpr_beyond_table(self):
+        # HOLD-LAST-FPR (owner card C-A, 2026-08-25; the
+        # resolve_demand_curve_vintage / forward_net_cone_anchor forward-carry
+        # precedent): a delivery year strictly beyond the last published FPR
+        # holds that value — never the stale (1 + PRM) x ratio composite,
+        # whose IRM half is two vintages behind PJM's own rising series
+        # (FINDING-capx-d2b-i7-ledger-2026-08-25.md §5.2: the composite
+        # dropped the bar 3.18 % of peak crossing 2028/29 -> 2029/30).
+        last = FORECAST_POOL_REQUIREMENT_BY_ISO["PJM"]["2028/2029"]
+        for year in (2029, 2030, 2050):
+            self.assertEqual(resolve_forecast_pool_requirement("PJM", year), last)
+
+    def test_requirement_uses_held_last_fpr_beyond_table(self):
+        from market_sim.config.constants import (
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+        )
+
+        cfg = ScenarioConfig(iso="PJM")
+        peak = 160_560.0
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"]
+        last = FORECAST_POOL_REQUIREMENT_BY_ISO["PJM"]["2028/2029"]
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2030),
+            peak * (1.0 - dr) * last,
+            places=3,
+        )
+        # And the held bar sits ABOVE the stale composite it replaces — the
+        # direction of the correction is against leniency, by construction.
+        ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["PJM"]
+        composite = (
+            peak * (1.0 - dr) * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO["PJM"]) * ratio
+        )
+        self.assertGreater(
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2030), composite
+        )
+
+    def test_hold_last_never_bridges_an_in_table_gap(self):
+        # An absent delivery year BETWEEN published entries falls back (None):
+        # the convention extends the forward edge only; a mid-table hole is a
+        # data problem hold-last must not paper over.
+        with mock.patch.dict(
+            FORECAST_POOL_REQUIREMENT_BY_ISO,
+            {"PJM": {"2025/2026": 0.9380, "2028/2029": 0.9401}},
+            clear=False,
+        ):
+            self.assertIsNone(resolve_forecast_pool_requirement("PJM", 2026))
+            self.assertEqual(resolve_forecast_pool_requirement("PJM", 2029), 0.9401)
+
     def test_year_none_is_fallback_byte_identical(self):
         cfg = ScenarioConfig(iso="PJM")
         peak = 160_560.0
+        # year=None keeps the fallback path; 2024 (pre-table) resolves the
+        # same construction, so the two must agree byte-identically.
         self.assertAlmostEqual(
             resolve_adequacy_requirement_mw(cfg, "PJM", peak),
-            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2030),
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2024),
             places=6,
         )
 
@@ -2692,29 +2745,36 @@ class TestReserveMarginBuild(unittest.TestCase):
         from market_sim.model.capacity import apply_reserve_margin_build
 
         # Registry PJM target (~0.178) vs an explicit, higher override (0.30).
+        # The FPR registry is cleared throughout: at year=2030 the held-last
+        # FPR (card C-A) would otherwise govern both calls and neither PRM
+        # value would be read — this test isolates the (1 + PRM) fallback.
         registry_config = ScenarioConfig(reserve_margin_build_enabled=True)
-        _, built_registry = apply_reserve_margin_build(
-            [],
-            firm_capacity_mw=5000.0,
-            peak_demand_mw=8000.0,
-            year=2030,
-            config=registry_config,
-            iso="PJM",
-        )
-        override_config = ScenarioConfig(
-            reserve_margin_build_enabled=True,
-            planning_reserve_margin=0.30,
-        )
-        with mock.patch.dict(PLANNING_RESERVE_MARGIN_BY_ISO, clear=False) as registry:
-            del registry["PJM"]
-            _, built_override = apply_reserve_margin_build(
+        with mock.patch.dict(FORECAST_POOL_REQUIREMENT_BY_ISO, clear=False) as fpr:
+            del fpr["PJM"]
+            _, built_registry = apply_reserve_margin_build(
                 [],
                 firm_capacity_mw=5000.0,
                 peak_demand_mw=8000.0,
                 year=2030,
-                config=override_config,
+                config=registry_config,
                 iso="PJM",
             )
+            override_config = ScenarioConfig(
+                reserve_margin_build_enabled=True,
+                planning_reserve_margin=0.30,
+            )
+            with mock.patch.dict(
+                PLANNING_RESERVE_MARGIN_BY_ISO, clear=False
+            ) as registry:
+                del registry["PJM"]
+                _, built_override = apply_reserve_margin_build(
+                    [],
+                    firm_capacity_mw=5000.0,
+                    peak_demand_mw=8000.0,
+                    year=2030,
+                    config=override_config,
+                    iso="PJM",
+                )
         self.assertGreater(built_override, built_registry)
 
     def test_iso_absent_from_registry_falls_back_to_scalar(self):
@@ -2746,10 +2806,16 @@ class TestReserveMarginBuild(unittest.TestCase):
             mock.patch.dict(
                 ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO, clear=False
             ) as dr_registry,
+            mock.patch.dict(
+                FORECAST_POOL_REQUIREMENT_BY_ISO, clear=False
+            ) as fpr_registry,
         ):
             del registry["PJM"]
             del ratio_registry["PJM"]
             del dr_registry["PJM"]
+            # Held-last FPR (card C-A) would govern 2030 otherwise — cleared
+            # with the rest: "absent from EVERY adequacy registry".
+            del fpr_registry["PJM"]
             _, built_fallback = apply_reserve_margin_build(
                 [],
                 firm_capacity_mw=5000.0,

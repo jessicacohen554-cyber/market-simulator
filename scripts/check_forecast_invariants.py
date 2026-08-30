@@ -433,10 +433,16 @@ def check_i7_reliability_floor(run: Run) -> Result:
       ``accredited_firm_mw / peak − 1``, from
       :func:`market_sim.model.capacity.accredited_firm_capacity_mw`) — must
       clear the model's own requirement
-      (:func:`market_sim.model.capacity.resolve_adequacy_requirement_mw` — firm
-      peak × (1 + per-ISO PRM) × ICAP/UCAP ratio). Checker and model now measure
-      the same quantity, so the adequacy backstop (default-on for these ISOs)
-      satisfies I7 honestly rather than by coincidence.
+      (:func:`market_sim.model.capacity.resolve_adequacy_requirement_mw` —
+      the published/held-last FPR of the ledger year's delivery year where one
+      exists, else firm peak × (1 + per-ISO PRM) × ICAP/UCAP ratio). The
+      ledger ``year`` is threaded to the resolver (D-1 checker repair, bundled
+      with owner card C-A 2026-08-25: the year-less call graded 2026–2028
+      against the LOWER fallback composite while the model built to the
+      published FPR — checker and model must grade the same bar). Checker and
+      model now measure the same quantity, so the adequacy backstop
+      (default-on for these ISOs) satisfies I7 honestly rather than by
+      coincidence.
 
     * **Energy-only ISOs** (ERCOT) — a **retirement-bounded** floor: evolution
       must not over-retire the thermal fleet below the reliability floor, but a
@@ -462,7 +468,9 @@ def check_i7_reliability_floor(run: Run) -> Result:
             if rm is None or peak <= 0.0:
                 continue  # no firm-capacity accounting persisted this year
             accredited_firm = peak * (1.0 + rm)
-            requirement = resolve_adequacy_requirement_mw(run.config, run.iso, peak)
+            requirement = resolve_adequacy_requirement_mw(
+                run.config, run.iso, peak, year
+            )
             if accredited_firm < requirement - T.reliability_slack_mw:
                 problems.append(
                     f"{year}: accredited firm {accredited_firm:.0f} < "
@@ -602,10 +610,15 @@ def check_i12_reserve_margin(run: Run) -> Result:
 
     * **Capacity-market ISOs** — per-year floor = the model's own
       requirement-implied margin, ``resolve_adequacy_requirement_mw / peak −
-      1`` — the same quantity I7 floors on, stated as a margin. The band
-      then adds ``reserve_margin_band_pp`` of headroom on top, so I12's only
-      independent signal is sustained over-procurement (the BLK-10 backstop
-      over-build class), exactly as it is for energy-only ISOs.
+      1`` — the same quantity I7 floors on, stated as a margin, with the
+      ledger ``year`` threaded (D-1 repair, card C-A 2026-08-25 — same bar
+      the model builds to: published/held-last FPR where one exists). The
+      floor therefore MOVES across the horizon where the FPR series does;
+      the summary line prints the first year's band (and the last, when it
+      differs). The band adds ``reserve_margin_band_pp`` of headroom on top,
+      so I12's only independent signal is sustained over-procurement (the
+      BLK-10 backstop over-build class), exactly as it is for energy-only
+      ISOs.
     * **Energy-only ISOs** (ERCOT) — the legacy scalar floor
       (``config.planning_reserve_margin``), byte-identical to the pre-W2-D
       behaviour.
@@ -625,13 +638,15 @@ def check_i12_reserve_margin(run: Run) -> Result:
             if peak is None or peak <= 0.0:
                 continue  # no firm-capacity accounting persisted this year
             floor = (
-                resolve_adequacy_requirement_mw(run.config, run.iso, peak) / peak - 1.0
+                resolve_adequacy_requirement_mw(run.config, run.iso, peak, year) / peak
+                - 1.0
             )
         else:
             floor = scalar_floor
         hi = floor + T.reserve_margin_band_pp
-        if not bands:
-            bands.append(f"[{floor:.1%}, {hi:.1%}]")
+        band_label = f"[{floor:.1%}, {hi:.1%}]"
+        if not bands or bands[-1] != band_label:
+            bands.append(band_label)
         if rm < floor - 1e-6 or rm > hi + 1e-6:
             out_years.append(year)
             detail.append(f"{year}:{rm:.1%} (band [{floor:.1%}, {hi:.1%}])")
@@ -645,7 +660,13 @@ def check_i12_reserve_margin(run: Run) -> Result:
         "I12",
         "reserve-margin band",
         status,
-        f"{basis} {bands[0] if bands else '[n/a]'}; "
+        f"{basis} "
+        + (
+            (bands[0] + (f"..{bands[-1]}" if len(bands) > 1 else ""))
+            if bands
+            else "[n/a]"
+        )
+        + "; "
         + ("all in-band" if not detail else "out: " + ", ".join(detail)),
     )
 
