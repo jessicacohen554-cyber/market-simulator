@@ -91,12 +91,12 @@ data/raw/caiso-public-bids/*
 # data/raw/transfer-constraint-binding/MISO/README.md provenance table).
 data/raw/transfer-constraint-binding/MISO/*_bc_HIST.csv.gz
 
-# MISO annual M2M/CMP flowgate settlement mirrors (~13-20 MB raw each;
-# seam-class binding record, rule-13 line in the schema header): refetch
-# with scripts/data/fetch_miso_m2m_flowgates.py (see
-# data/raw/miso-m2m-flowgates/README.md provenance table).
-data/raw/miso-m2m-flowgates/*
-!data/raw/miso-m2m-flowgates/README.md
+# MISO annual M2M/CMP flowgate settlement mirrors
+# (data/raw/miso-m2m-flowgates/) are TRACKED since 2026-08-30 — owner card
+# ruling: regenerate_clean.py must rebuild all 51 datatypes from a fresh
+# clone, and this was the one datatype with no raw mirror (~5.4 MB gzipped
+# total). Do not re-add an ignore here; the miso-176 gitignored posture is
+# retired (see that directory's README.md).
 
 # PJM DataMiner2 DA virtual-bid feeds (hrl_da_incs_decs, hrl_dmd_bids): same
 # non-member redistribution restriction as pjm-energy-offers; refetch with
