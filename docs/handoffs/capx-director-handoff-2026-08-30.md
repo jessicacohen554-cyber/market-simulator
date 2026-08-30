@@ -72,13 +72,14 @@ content as current.
     "confirm-pair, then arm"); a contradiction arms nothing and returns to the owner. When it
     lands, verify which branch it took and stamp the ledger; a contradiction is a decision
     card, not a director call.
-  · **D5-R** (crossover-scorer coal-grain repair) — VERDICT-MOVING zero-solve re-score under
-    D5 §5.2's pre-declared table (expected: co2 leaves PJM's and MISO's FC-4 FAIL sets; ERCOT
-    2023/24 stays FAIL on honest volume error; NYISO exact no-op, NEISO ≲0.4% — any control
-    movement stops the lane). LIKELY ALREADY LANDED at handoff time via branch
-    claude/crossover-co2-grain-repair-oycsy6 (PR #4388: scorer repair + a FOUR-bundle rescore;
-    the prompt named five keys) — on your first refresh verify its controls FIRST, confirm
-    whether the fifth (neiso-t1x) bundle was rescored or why not, and mark the lane.
+  · **D5-R — LANDED AND VERIFIED at r#17 (do not redo).** PR #4388: every cell within ±0.2pp
+    of the §5.2 table; ALL hard controls pass (NYISO byte-identical, family rows deep-equal);
+    PJM+MISO co2 left the FC-4 FAIL sets, ERCOT 2023/24 stayed FAIL honest; the fifth-bundle
+    skip (neiso-capxd14) adjudicated sound — its generic-COAL is 0.001 TWh, bound ~0.004% ≪
+    the ≲0.4% ceiling (ledger §0n.1–2). Carry-forward: the LIVE gate keys (ercot-t1x,
+    pjm/miso-ffr3a3/-3a4) still hold the mismeasured co2 rows — bundles never committed, not
+    re-scorable; the board co2 annotation is a NAMED PENDING RECORDS ITEM (ledger §0n.3),
+    deferred to the next records act to avoid mid-wave program-status.json contention.
   · **S-4b** (NEISO ARA requirement re-vintage) — the leg-(d) gate. "Ship nothing" is an
     honourable outcome if the ARA-cycle DR companion is unlocatable.
   · **S-123** (MISO adequacy package: S-1 requirement re-vintage + S-2 external-capacity
@@ -158,7 +159,7 @@ STANDING GUARDRAILS every prompt you issue must restate:
 DUTIES EVERY REFRESH: fetch main; diff reality vs the ledger; report a short scoreboard leading
 with what changed, calling out backcast-track movement explicitly; when S-4b lands, RE-PRESENT
 THE NEISO LEG-(d) DECISION CARD on its measured result; when D12-C lands, verify which branch
-(armed vs contradiction) it took; when D5-R lands, check its controls before its headline;
+(armed vs contradiction) it took; (D5-R control check: DONE at r#17 — do not redo);
 re-run the S-6 heavy-slot check; issue the next batch (default 2-3, ask if unclear) as fenced
 code blocks; escalate owner-tier items as clickable decision cards rather than deciding them.
 Commit and push the ledger on every refresh that changes it, blob-verified.
