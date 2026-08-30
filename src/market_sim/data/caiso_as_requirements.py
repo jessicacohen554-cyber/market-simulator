@@ -48,7 +48,10 @@ CAISO_AS_REQ_DIR: Path = RAW_DATA_DIR / "CAISO-AS"
 #: toward an in-region must-procure floor).
 REGION_ZONES: dict[str, tuple[str, ...]] = {
     "AS_SP26": ("LA_BASIN", "SDGE", "SP15_rest"),
-    "AS_NP26": ("NP15", "ZP26"),
+    # FSNO (caiso-224 sub-zonal partition, carved from NP15) is north of
+    # Path 26 by construction; listing it here is inert whenever the zone is
+    # not in the active topology (zone-name matching finds nothing).
+    "AS_NP26": ("NP15", "FSNO", "ZP26"),
 }
 
 #: (ANC_TYPE, bound) -> XML_DATA_ITEM. Spin/non-spin only — the upward

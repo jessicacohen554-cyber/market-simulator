@@ -522,6 +522,69 @@ def _caiso_config() -> ISOConfig:
             cap_mw=7500.0,
         ),
     ]
+    # caiso-224 FSNO sub-zonal partition (ScenarioConfig
+    # caiso_fsno_subzonal_topology, default off — armed process-wide via
+    # config.topology_variant so the LP and every bare get_iso_config()
+    # consumer see the same 7-zone topology). The caiso-223 P-A' partition
+    # applied verbatim (FINDING-caiso223-subzonal-scope-2026-08-30.md §A;
+    # PRECOMMIT-caiso224-fsno-arm-2026-08-30.md §1):
+    # a new FSNO San-Joaquin-Valley pocket zone between the two cuts the DMM
+    # record shows binding, replacing the single Path-15 link (whose own
+    # elements are not top binders — Los Banos-Gates / Panoche-Gates become
+    # FSNO-internal spine). Every number is a committed measured input
+    # [R-MEASURED, R-ACCURATE], zero free parameters:
+    #   load: PG&E TAC 0.4615 × the caiso-223 §C measured 3-way ATL_LDF
+    #     split {NP15 0.752614, FSNO 0.132592, ZP26 0.114794}
+    #     (results/calibration/_caiso223_subzonal_scope.json, gates 13/13);
+    #   links: DMM 2023-annual published element average binding limits
+    #     (CAISO DMM 2023 Annual Report on Market Issues & Performance) —
+    #     NP15<->FSNO = Tesla-Los Banos #1 500 kV 1,600 + Moss Landing-Las
+    #     Aguilas 230 kV 340 = 1,940 MW; FSNO<->ZP26 = Gates-Midway #1
+    #     500 kV 2,500 MW. Lower-bound reconciliation (parallel unrated
+    #     elements omitted) documented per rule 14 in the precommit §2.
+    # The removed link also retires the ("NP15","ZP26") row of
+    # CAISO_PATH_DIRECTIONAL_RATINGS for the armed variant (its pair no
+    # longer exists — both directions tighten under the chain; declared in
+    # the precommit §2, not a silent drop).
+    from market_sim.config.topology_variant import caiso_fsno_partition_active
+
+    if caiso_fsno_partition_active():
+        # 0.4615 (PGE-TAC share, derive_load_shares) × the measured 3-way
+        # weights at 6 dp, NP15 the exact residual so the three sum to 0.4615
+        # and the seven to 1.0 (the same residual convention as SP15_rest
+        # above; caiso-223 §C reports these very values: FSNO 0.061191 /
+        # ZP26 0.052977 / NP15 0.347332).
+        zones = [
+            Zone(name="NP15", iso="CAISO", load_share=0.347332),
+            Zone(name="FSNO", iso="CAISO", load_share=0.061191),
+            Zone(name="ZP26", iso="CAISO", load_share=0.052977),
+            Zone(name="LA_BASIN", iso="CAISO", load_share=0.374),
+            Zone(name="SDGE", iso="CAISO", load_share=0.091),
+            Zone(name="SP15_rest", iso="CAISO", load_share=0.0735),
+            Zone(name="WECC_import", iso="CAISO", load_share=0.0),
+        ]
+        # Rounding to 6 dp leaves the three PG&E shares summing within the
+        # validate_topology 1e-6 tolerance of 0.4615 (0.347332 + 0.061191 +
+        # 0.052977 = 0.4615 exactly).
+        links = [
+            TransferLink(from_zone="NP15", to_zone="FSNO", ttc_mw=1940.0),
+            TransferLink(from_zone="FSNO", to_zone="ZP26", ttc_mw=2500.0),
+            TransferLink(from_zone="ZP26", to_zone="SP15_rest", ttc_mw=4000.0),
+            TransferLink(from_zone="WECC_import", to_zone="NP15", ttc_mw=4800.0),
+            TransferLink(from_zone="WECC_import", to_zone="SP15_rest", ttc_mw=10623.0),
+            TransferLink(
+                from_zone="SP15_rest",
+                to_zone="LA_BASIN",
+                ttc_mw=_LA_BASIN_IMPORT_CAP_MW,
+                is_bidirectional=False,
+            ),
+            TransferLink(
+                from_zone="SP15_rest",
+                to_zone="SDGE",
+                ttc_mw=_SDGE_IMPORT_CAP_MW,
+                is_bidirectional=False,
+            ),
+        ]
     # CAISO VOLL: $2,000/MWh — represents the CAISO administrative price cap
     # for real-time energy. CAISO's bid cap is lower than ERCOT's because
     # CAISO has capacity-market-like mechanisms (RA program) that provide

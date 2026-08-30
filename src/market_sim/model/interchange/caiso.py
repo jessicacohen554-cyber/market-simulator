@@ -1926,6 +1926,26 @@ _CAISO_MONTH_HOURS: tuple[int, ...] = tuple(
 CAISO_LOSS_LINK_TIEBREAK_EPS = 1e-3
 
 
+# FSNO sub-zonal partition (caiso-224): the pocket has no trading hub of its
+# own (no TH_FSNO exists), so no per-zone delivery-factor deviation can be
+# derived for it from the frozen caiso-164 estimator's sources. Under the
+# armed partition FSNO inherits its parent NP15's surface row — the
+# precommit §3 parent-inheritance rule (zero new tunables; deriving a
+# sub-zonal anchor from SLAP_PGF1 is the recorded sharpener). Inert when
+# FSNO is not in the topology.
+_CAISO_LOSS_SURFACE_PARENT: dict[str, str] = {"FSNO": "NP15"}
+
+
+def _caiso_loss_surface_row(surface: dict, zone: str) -> np.ndarray:
+    """Return a zone's loss-surface deviation row, via its declared parent
+    when the zone itself has no derived row (FSNO -> NP15; caiso-224)."""
+    if zone not in surface:
+        parent = _CAISO_LOSS_SURFACE_PARENT.get(zone)
+        if parent is not None and parent in surface:
+            zone = parent
+    return np.asarray(surface[zone], dtype=float)
+
+
 def _caiso_internal(from_zone: str, to_zone: str) -> bool:
     """Whether a link joins two internal CAISO zones (WECC nodes excluded).
 
@@ -2089,8 +2109,8 @@ def build_caiso_link_loss(
                 "energy on reverse flow)"
             )
         try:
-            dev_from = np.asarray(surface[ln.from_zone], dtype=float)
-            dev_to = np.asarray(surface[ln.to_zone], dtype=float)
+            dev_from = _caiso_loss_surface_row(surface, ln.from_zone)
+            dev_to = _caiso_loss_surface_row(surface, ln.to_zone)
         except KeyError as exc:
             raise ValueError(
                 f"loss surface has no zone {exc.args[0]!r} — regenerate "

@@ -198,6 +198,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     caiso_ps_plant_params: { cell: "." },
     measured_interface_limits: { cell: "U" },
     internal_congestion_split: { cell: "." },
+    caiso_fsno_subzonal_topology: { cell: "." },
     tsa_transfer_derate: { cell: "." },
     scuc_load_pocket_commitment: { cell: "." },
     pjm_congestion_star: { cell: "." },

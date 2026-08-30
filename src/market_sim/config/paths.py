@@ -264,6 +264,15 @@ TX_UNIT_OUTAGES_CSV: Path = REFERENCE_DIR / "tx-jan-aug23-unit-outages.csv"
 # over the geographic lat/county estimate [R-ACCURATE].
 CAISO_HUB_MEMBERSHIP_CSV: Path = REFERENCE_DIR / "caiso-plant-hub-membership.csv"
 
+# Measured CAISO plant->sub-zone membership for the FSNO sub-zonal partition
+# (caiso-223 §B recut of the caiso-217 crosswalk — the committed
+# results/calibration/_caiso223_membership_recut.csv rows with subzone in
+# {FSNO, NP15, ZP26}; SP15-side rows are hub-unchanged by construction).
+# Read by data.zone_assignment ONLY when ScenarioConfig
+# caiso_fsno_subzonal_topology is armed (config.topology_variant)
+# [R-MEASURED; PRECOMMIT-caiso224-fsno-arm-2026-08-30.md §1].
+CAISO_FSNO_SUBZONE_CSV: Path = REFERENCE_DIR / "caiso-fsno-subzone-membership.csv"
+
 # Supply-consistent CAISO backcast demand series (caiso-80, owner-signed
 # Option A; FINDING-caiso80-demand-basis-wedge-2026-07-13). Derived measured
 # artifact written by scripts/data/derive_caiso_supply_consistent_demand.py, read

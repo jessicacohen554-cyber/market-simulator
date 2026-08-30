@@ -1,0 +1,179 @@
+plant_code,plant_name,capacity_mw,hub,subzone,method
+34,Rollins,12.1,TH_NP15,NP15,county-other:Placer
+180,Volta 2,1.0,TH_NP15,NP15,slap-coloc:PGNP
+214,Alta Powerhouse,1.0,TH_NP15,NP15,slap-coloc:PGSI
+219,Belden,117.9,TH_NP15,NP15,county-other:Plumas
+222,Caribou 1,73.8,TH_NP15,NP15,county-other:Plumas
+224,Centerville PH,6.4,TH_NP15,NP15,slap-coloc:PGNP
+225,Chili Bar,8.3,TH_NP15,NP15,county-other:El Dorado
+227,Coleman PH,12.1,TH_NP15,NP15,county-other:Shasta
+231,Cresta,73.8,TH_NP15,NP15,county-other:Butte
+232,De Sabla,18.4,TH_NP15,NP15,county-other:Butte
+235,Drum 1,49.2,TH_NP15,NP15,county-other:Placer
+237,Dutch Flat,22.0,TH_NP15,NP15,county-other:Placer
+238,El Dorado,20.0,TH_NP15,NP15,slap-coloc:PGSI
+239,Electra,102.5,TH_NP15,NP15,county-other:Amador
+241,Halsey,13.6,TH_NP15,NP15,slap-coloc:PGSI
+242,Hamilton Branch,5.3,TH_NP15,NP15,slap-coloc:PGNP
+243,Hat Creek 1,10.0,TH_NP15,NP15,slap-coloc:PGNP
+244,Hat Creek 2,10.0,TH_NP15,NP15,county-other:Shasta
+246,Humboldt Bay,167.0,TH_NP15,NP15,county-other:Humboldt
+248,Inskip,7.6,TH_NP15,NP15,county-other:Tehama
+250,Kerckhoff,22.6,TH_NP15,FSNO,slap-coloc:PGF1
+254,Kings River PH,48.6,TH_NP15,FSNO,county:Fresno
+258,Merced Falls,3.4,TH_NP15,FSNO,slap-coloc:PGF1
+260,Dynegy Moss Landing Power Plant Hybrid,1848.0,TH_NP15,NP15,slap-coloc:PGCC
+264,Phoenix,1.6,TH_NP15,NP15,county-other:Tuolumne
+265,Pit 1,69.2,TH_NP15,NP15,slap-coloc:PGNP
+266,Pit 3,80.1,TH_NP15,NP15,slap-coloc:PGNP
+268,Pit 5,141.6,TH_NP15,NP15,slap-coloc:PGNP
+274,Potter Valley,9.4,TH_NP15,NP15,slap-coloc:PGNC
+275,Rock Creek,126.0,TH_NP15,NP15,county-other:Plumas
+276,San Joaquin 2,2.8,TH_NP15,FSNO,slap-coloc:PGF1
+277,San Joaquin 3,4.0,TH_NP15,FSNO,slap-coloc:PGF1
+280,South,6.7,TH_NP15,NP15,county-other:Tehama
+281,Spaulding 1,7.0,TH_NP15,NP15,county-other:Nevada
+282,Spaulding 2,3.7,TH_NP15,NP15,county-other:Nevada
+283,Spaulding 3,6.6,TH_NP15,NP15,county-other:Nevada
+284,Spring Gap,6.0,TH_NP15,NP15,county-other:Tuolumne
+285,Stanislaus,81.9,TH_NP15,NP15,slap-coloc:PGST
+290,Volta 1,8.5,TH_NP15,NP15,county-other:Shasta
+292,Wise,16.4,TH_NP15,NP15,county-other:Placer
+293,A G Wishon,12.8,TH_NP15,FSNO,county:Madera
+410,McSwain,9.0,TH_NP15,NP15,county-other:Mariposa
+414,Beardsley,10.0,TH_NP15,NP15,county-other:Tuolumne
+417,Forbestown,41.9,TH_NP15,NP15,county-other:Butte
+454,Colgate,315.0,TH_NP15,NP15,county-other:Yuba
+626,Oak Flat,1.4,TH_NP15,NP15,slap-coloc:PGSI
+682,Kerckhoff 2,139.5,TH_NP15,FSNO,county:Fresno
+714,Toadtown,1.8,TH_NP15,NP15,slap-coloc:PGNP
+6099,Diablo Canyon,2323.0,TH_ZP26,ZP26,hub:unchanged
+7229,Black Butte,6.1,TH_NP15,NP15,county-other:Tehama
+7231,Gianera,64.6,TH_NP15,NP15,county-other:Santa Clara
+7338,Grizzly,22.0,TH_NP15,NP15,slap-coloc:PGEB
+7451,Lodi,27.4,TH_NP15,NP15,county-other:San Joaquin
+7911,Kern Canyon,11.5,TH_ZP26,ZP26,hub:unchanged
+10034,Gilroy Power Plant,130.0,TH_NP15,NP15,slap-coloc:PGSB
+10156,Fresno Cogen Partners,86.8,TH_NP15,FSNO,county:Fresno
+10342,Marathon Bay Area Cogen,113.5,TH_NP15,NP15,slap-coloc:PGEB
+10405,Kingsburg Cogen,36.2,TH_NP15,FSNO,county:Fresno
+10707,Cove Hydroelectric,5.0,TH_NP15,NP15,county-other:Shasta
+10748,Marina Landfill Gas,5.1,TH_NP15,NP15,slap-coloc:PGCC
+10880,Bidwell Ditch Project,1.8,TH_NP15,NP15,county-other:Shasta
+10881,Roaring Creek Water Power,2.0,TH_NP15,NP15,county-other:Shasta
+10882,Hatchet Creek Project,6.8,TH_NP15,NP15,county-other:Shasta
+50037,Rio Bravo Hydro Project,14.0,TH_ZP26,ZP26,hub:unchanged
+50110,Sierra Pacific Burney Facility,20.0,TH_NP15,NP15,county-other:Shasta
+50112,Sierra Pacific Quincy Facility,35.2,TH_NP15,NP15,slap-coloc:PGNP
+50180,Olsen,5.0,TH_NP15,NP15,county-other:Shasta
+50219,Frankenheimer Power Plant,5.3,TH_NP15,NP15,slap-coloc:PGNP
+50293,Wadham Energy,29.1,TH_NP15,NP15,county-other:Colusa
+50546,Bowman,3.6,TH_NP15,NP15,county-other:Nevada
+52081,Cymric 31X Cogen,6.8,TH_ZP26,ZP26,hub:unchanged
+52082,Cymric 6Z Cogen,6.8,TH_ZP26,ZP26,hub:unchanged
+52085,Taft 26C Cogen,12.4,TH_ZP26,ZP26,hub:unchanged
+52086,Coalinga 25D Cogen,13.6,TH_ZP26,ZP26,hub:unchanged
+52104,Cymric 36W Cogen,12.4,TH_ZP26,ZP26,hub:unchanged
+54261,Warm Springs Hydro Project,2.7,TH_NP15,NP15,slap-coloc:PGFG
+54410,Western Power & Steam Inc,27.7,TH_ZP26,ZP26,hub:unchanged
+54517,Sierra Pacific Sonora,7.5,TH_NP15,NP15,slap-coloc:PGST
+55009,Montgomery Creek Hydro,2.6,TH_NP15,NP15,county-other:Shasta
+55333,Delta Energy Center,943.5,TH_NP15,NP15,county-other:Contra Costa
+55400,Elk Hills Power LLC,623.0,TH_ZP26,ZP26,hub:unchanged
+55748,Los Esteros Critical Energy Center,306.1,TH_NP15,NP15,county-other:Santa Clara
+55807,Henrietta Peaker,98.0,TH_NP15,FSNO,county:Kings
+55855,Wolfskill Energy Center,48.0,TH_NP15,NP15,county-other:Solano
+56184,Red Bluff,46.4,TH_NP15,NP15,slap-coloc:PGNP
+56185,Chowchilla II,49.6,TH_NP15,FSNO,slap-coloc:PGF1
+57041,Vaca Dixon Solar Station,2.0,TH_NP15,NP15,slap-coloc:PGNP
+57133,G2 Energy Ostrom Road LLC,3.5,TH_NP15,NP15,slap-coloc:PGSI
+57359,Avenal Park,6.0,TH_ZP26,ZP26,hub:unchanged
+57360,Sun City Project LLC,20.0,TH_ZP26,ZP26,hub:unchanged
+57361,Sand Drag LLC,19.0,TH_ZP26,ZP26,hub:unchanged
+57439,California Valley Solar Ranch,249.8,TH_ZP26,ZP26,hub:unchanged
+57483,Mariposa Energy Project,199.6,TH_NP15,NP15,county-other:Alameda
+57497,Stroud Solar Station,20.0,TH_NP15,FSNO,slap-coloc:PGF1
+57498,Five Points Solar Station,15.0,TH_NP15,FSNO,slap-coloc:PGF1
+57499,Westside Solar Station,15.0,TH_NP15,FSNO,slap-coloc:PGF1
+57521,Giffen,10.0,TH_NP15,FSNO,county:Fresno
+57522,Cantua Solar Station,20.0,TH_NP15,FSNO,slap-coloc:PGF1
+57523,Huron Solar Station,20.0,TH_ZP26,ZP26,hub:unchanged
+57559,Sunset Reservoir North Basin,4.5,TH_NP15,NP15,slap-coloc:PGSF
+57650,Regulus Solar Project,60.0,TH_ZP26,ZP26,hub:unchanged
+57695,Topaz Solar Farm,585.9,TH_ZP26,ZP26,hub:unchanged
+57891,Guernsey Solar Station,20.0,TH_NP15,FSNO,slap-coloc:PGF1
+57892,Gates Solar Station,20.0,TH_ZP26,ZP26,hub:unchanged
+57988,Lincoln Landfill,4.8,TH_NP15,NP15,slap-coloc:PGSI
+58148,RE Kansas South LLC,20.0,TH_NP15,FSNO,slap-coloc:PGF1
+58206,West Gates Solar Station,10.0,TH_ZP26,ZP26,hub:unchanged
+58366,Atwell Island,20.2,TH_ZP26,ZP26,hub:unchanged
+58436,Ameresco San Joaquin,4.4,TH_NP15,NP15,county-other:San Joaquin
+58437,Ameresco Forward,4.4,TH_NP15,NP15,slap-coloc:PGNP+PGST
+58578,Sonora 1,1.5,TH_NP15,NP15,slap-coloc:PGST
+58699,ABEC Bidart-Old River LLC,2.0,TH_ZP26,ZP26,hub:unchanged
+58831,Redcrest Solar Farm,16.6,TH_ZP26,ZP26,hub:unchanged
+59008,Woodmere Solar Farm,15.0,TH_ZP26,ZP26,hub:unchanged
+59009,Hayworth Solar,27.0,TH_ZP26,ZP26,hub:unchanged
+59150,RE Mustang LLC,175.0,TH_NP15,FSNO,county:Kings
+59253,Wildwood Solar II,15.0,TH_ZP26,ZP26,hub:unchanged
+59265,Merced Solar LLC,1.5,TH_NP15,FSNO,slap-coloc:PGF1
+59267,Mission Solar LLC,1.5,TH_NP15,FSNO,slap-coloc:PGF1
+59380,"Wildwood Solar I, LLC",19.5,TH_ZP26,ZP26,hub:unchanged
+59522,Giffen Solar Park,20.0,TH_NP15,FSNO,county:Fresno
+59523,Five Points Solar Park,60.0,TH_NP15,FSNO,slap-coloc:PGF1
+59525,Wright Solar Park,200.0,TH_NP15,FSNO,county:Merced
+59550,Putah Creek Solar Farm,2.0,TH_NP15,NP15,county-other:Yolo
+59638,Coronal Lost Hills,20.0,TH_ZP26,ZP26,hub:unchanged
+59658,SPI Anderson 2,30.2,TH_NP15,NP15,slap-coloc:PGNP
+59737,Aspiration G,9.0,TH_NP15,FSNO,slap-coloc:PGF1
+59738,Citizen B,5.0,TH_NP15,FSNO,slap-coloc:PGF1
+59870,"Little Bear Solar 1, LLC",40.0,TH_NP15,FSNO,county:Fresno
+59915,Oro Loma,20.0,TH_NP15,FSNO,county:Fresno
+60027,Adera Solar,20.0,TH_NP15,FSNO,county:Madera
+60142,Lemoore 1,1.5,TH_ZP26,ZP26,hub:unchanged
+60275,Westside Solar Power PV1,2.0,TH_ZP26,ZP26,hub:unchanged
+60490,Redwood 4 Solar Farm,20.0,TH_ZP26,ZP26,hub:unchanged
+60641,Henrietta D Energy Storage LLC,10.0,TH_ZP26,ZP26,hub:unchanged
+60777,"American Kings Solar, LLC",128.0,TH_NP15,FSNO,county:Kings
+61115,Manteca Land PV,1.0,TH_NP15,NP15,slap-coloc:PGST
+61116,Delano Land 1,1.0,TH_ZP26,ZP26,hub:unchanged
+61801,"Cascade Energy Storage, LLC",25.0,TH_NP15,NP15,county-other:San Joaquin
+61846,Tulare BioMAT Fuel Cell,2.8,TH_ZP26,ZP26,hub:unchanged
+61995,UC Merced Solar Hybrid,5.0,TH_NP15,FSNO,slap-coloc:PGF1
+62015,Mustang Two,150.0,TH_NP15,FSNO,county:Kings
+62113,Strauss Wind Farm,95.3,TH_ZP26,ZP26,hub:unchanged
+62547,Aquamarine,250.0,TH_ZP26,ZP26,hub:unchanged
+62564,Elkhorn Battery Energy Storage System,182.5,TH_NP15,NP15,county-other:Monterey
+63727,Slate Hybrid,440.3,TH_NP15,FSNO,county:Kings
+63849,Chestnut,285.6,TH_ZP26,ZP26,hub:unchanged
+64197,"Fifth Standard Solar PV, LLC (Hybrid)",287.0,TH_ZP26,ZP26,hub:unchanged
+64326,Summit Winds,57.5,TH_NP15,NP15,county-other:Alameda
+64693,Dos Palos,0.0,TH_NP15,FSNO,county:Merced
+64743,Tierra Buena Energy Storage,5.0,TH_NP15,NP15,slap-coloc:PGSI
+64908,Scarlet Solar (CA),240.0,TH_NP15,FSNO,county:Fresno
+65570,West Valley Mission CCD Solar Project,3.6,TH_NP15,FSNO,slap-coloc:PGF1
+66088,Putah Creek Solar Farm North,3.0,TH_NP15,NP15,county-other:Yolo
+66270,Proxima,352.0,TH_NP15,NP15,county-other:Stanislaus
+66506,West Tambo Clean Power II,2.0,TH_NP15,FSNO,slap-coloc:PGF1
+66650,Bear Canyon,13.0,TH_NP15,NP15,county-other:Lake
+66661,Electrolyte BESS,99.4,TH_ZP26,ZP26,hub:unchanged
+66669,West Ford Flat,25.0,TH_NP15,NP15,county-other:Lake
+66807,SEPV Cuyama Hybrid,4.6,TH_ZP26,ZP26,hub:unchanged
+66809,Avenue 26 Solar,7.6,TH_ZP26,ZP26,hub:unchanged
+66890,"SF Azalea, LLC",98.0,TH_ZP26,ZP26,hub:unchanged
+66951,Scarlet II Hybrid,350.0,TH_NP15,FSNO,county:Fresno
+67092,Paulsell,35.0,TH_NP15,NP15,county-other:Stanislaus
+67287,Dos Palos Clean Power,3.0,TH_NP15,FSNO,county:Merced
+67288,Foster Clean Power A,4.3,TH_NP15,NP15,slap-coloc:PGHB
+67360,Hat Creek Bioenergy,3.6,TH_NP15,NP15,slap-coloc:PGNP
+67680,Kola Energy Center,400.0,TH_NP15,NP15,county-other:San Joaquin
+67747,Nachtigall 1836-WD,4.6,TH_ZP26,ZP26,hub:unchanged
+67748,Terry 1818-WD,4.6,TH_ZP26,ZP26,hub:unchanged
+67770,Pittsburg RV Solar,0.0,TH_NP15,NP15,slap-coloc:PGEB
+67848,Luna Valley,200.0,TH_NP15,FSNO,county:Fresno
+67859,Foster Clean Power B,5.2,TH_NP15,NP15,slap-coloc:PGHB
+68027,Lemoore West,7.9,TH_ZP26,ZP26,hub:unchanged
+68589,"Community Solar Utica 1, LLC",3.0,TH_ZP26,ZP26,hub:unchanged
+68808,Dos Palos Cooperative Gin,1.0,TH_NP15,FSNO,slap-coloc:PGF1
+68837,Godinho Dairy Digester,2.0,TH_NP15,FSNO,slap-coloc:PGF1
+68840,Da Silva Dairy,1.0,TH_ZP26,ZP26,hub:unchanged

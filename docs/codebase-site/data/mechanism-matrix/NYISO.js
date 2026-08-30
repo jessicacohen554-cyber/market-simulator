@@ -199,6 +199,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     caiso_ps_plant_params: { cell: "." },
     measured_interface_limits: { cell: "G", ev: "nyiso-109 (refused ex-ante on NYISO's own MIS P-32 flow-vs-limit measurement; results/calibration/_nyiso109_trough_offer_stack.json)" },
     internal_congestion_split: { cell: "." },
+    caiso_fsno_subzonal_topology: { cell: "." },
     tsa_transfer_derate: { cell: "G", ev: "nyiso-95 (docs/FINDING-nyiso95-tsa-derate-not-identifiable-2026-07-28.md)" },
     scuc_load_pocket_commitment: { cell: "G", ev: "nyiso-97 (docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md)" },
     pjm_congestion_star: { cell: "." },
