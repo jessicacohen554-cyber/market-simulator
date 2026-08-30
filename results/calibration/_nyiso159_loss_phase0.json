@@ -1,0 +1,2476 @@
+{
+ "session": "nyiso-159",
+ "phase": "phase-0 loss-component identification (no solve)",
+ "keeper": "2026-08-30-nyiso-157-par-attribution",
+ "no_solve": true,
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "constructions": {
+  "source": "data/clean/lmp/NYISO/RTM/lmp_<yr>.parquet \u2014 NYISO MIS P-24A 5-min RT zonal LBMP, hourly means, curated by the frozen scripts/data/curate_lmp.py contract; 36/36 months intaken nyiso-159 via scripts/data/fetch_nyiso_zonal_lmp.py",
+  "aggregation": "model zone = SIMPLE MEAN of member A-K zones (derive_actual_lmp.NYISO_ZONE_MAP / nyiso_zone_hourly \u2014 the scoring actuals' own convention)",
+  "identity": "NYISO posts LBMP = E + MCL - MCC (losses add, congestion subtracts); E recovered per zone-hour as LBMP - MCL + MCC and its cross-zone spread measured",
+  "estimator": "dev_z,m = sum_h MCL_z,h / sum_h E_h \u2014 the frozen MISO/PJM/CAISO delivery-factor deviation estimator on NYISO's own posted components (rule 25: nothing crosses an ISO boundary)",
+  "lw_weights": "keeper hourly zonal demand (the measured-load pin), used as weights only"
+ },
+ "contract_checks": {
+  "2023": {
+   "hours": 8759,
+   "months_present": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "identity_max_abs_residual_usd": {
+    "Capital_Hudson": 0.006333333333334856,
+    "Lower_Hudson": 0.005222222222222683,
+    "NYC": 0.008166666666669542,
+    "Long_Island": 0.0061666666666710945
+   },
+   "e_cross_zone_spread_p99_usd": 0.007500000000001359,
+   "e_cross_zone_spread_max_usd": 0.012499999999995737
+  },
+  "2024": {
+   "hours": 8783,
+   "months_present": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "identity_max_abs_residual_usd": {
+    "Capital_Hudson": 0.007500000000000728,
+    "Lower_Hudson": 0.005111111111115951,
+    "NYC": 0.0066666666666659324,
+    "Long_Island": 0.006833333333331915
+   },
+   "e_cross_zone_spread_p99_usd": 0.007500000000000284,
+   "e_cross_zone_spread_max_usd": 0.010000000000005116
+  },
+  "2025": {
+   "hours": 8757,
+   "months_present": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "identity_max_abs_residual_usd": {
+    "Capital_Hudson": 0.006833333333332803,
+    "Lower_Hudson": 0.0052380952380985946,
+    "NYC": 0.008833333333336801,
+    "Long_Island": 0.007333333333333691
+   },
+   "e_cross_zone_spread_p99_usd": 0.007500000000003837,
+   "e_cross_zone_spread_max_usd": 0.014999999999997016
+  }
+ },
+ "zone_month_components": {
+  "2023": {
+   "1": {
+    "Upstate_West": {
+     "lbmp": 32.258,
+     "mcl": 0.04,
+     "mcc": -0.267
+    },
+    "Capital_Hudson": {
+     "lbmp": 43.603,
+     "mcl": 1.992,
+     "mcc": -9.66
+    },
+    "Lower_Hudson": {
+     "lbmp": 40.44,
+     "mcl": 2.54,
+     "mcc": -5.95
+    },
+    "NYC": {
+     "lbmp": 40.544,
+     "mcl": 2.76,
+     "mcc": -5.832
+    },
+    "Long_Island": {
+     "lbmp": 49.23,
+     "mcl": 3.124,
+     "mcc": -14.155
+    }
+   },
+   "2": {
+    "Upstate_West": {
+     "lbmp": 26.565,
+     "mcl": -0.166,
+     "mcc": -0.787
+    },
+    "Capital_Hudson": {
+     "lbmp": 59.823,
+     "mcl": 1.581,
+     "mcc": -32.297
+    },
+    "Lower_Hudson": {
+     "lbmp": 47.832,
+     "mcl": 1.726,
+     "mcc": -20.161
+    },
+    "NYC": {
+     "lbmp": 48.357,
+     "mcl": 1.866,
+     "mcc": -20.546
+    },
+    "Long_Island": {
+     "lbmp": 70.224,
+     "mcl": 2.154,
+     "mcc": -42.125
+    }
+   },
+   "3": {
+    "Upstate_West": {
+     "lbmp": 17.987,
+     "mcl": 0.195,
+     "mcc": -2.308
+    },
+    "Capital_Hudson": {
+     "lbmp": 39.027,
+     "mcl": 0.774,
+     "mcc": -22.768
+    },
+    "Lower_Hudson": {
+     "lbmp": 31.848,
+     "mcl": 1.075,
+     "mcc": -15.289
+    },
+    "NYC": {
+     "lbmp": 31.991,
+     "mcl": 1.184,
+     "mcc": -15.322
+    },
+    "Long_Island": {
+     "lbmp": 37.799,
+     "mcl": 1.27,
+     "mcc": -21.043
+    }
+   },
+   "4": {
+    "Upstate_West": {
+     "lbmp": 20.175,
+     "mcl": 0.218,
+     "mcc": -2.074
+    },
+    "Capital_Hudson": {
+     "lbmp": 33.995,
+     "mcl": 0.785,
+     "mcc": -15.327
+    },
+    "Lower_Hudson": {
+     "lbmp": 30.543,
+     "mcl": 1.275,
+     "mcc": -11.385
+    },
+    "NYC": {
+     "lbmp": 30.698,
+     "mcl": 1.418,
+     "mcc": -11.397
+    },
+    "Long_Island": {
+     "lbmp": 30.552,
+     "mcl": 1.376,
+     "mcc": -11.292
+    }
+   },
+   "5": {
+    "Upstate_West": {
+     "lbmp": 16.09,
+     "mcl": -0.016,
+     "mcc": -0.271
+    },
+    "Capital_Hudson": {
+     "lbmp": 23.013,
+     "mcl": 0.71,
+     "mcc": -6.468
+    },
+    "Lower_Hudson": {
+     "lbmp": 22.086,
+     "mcl": 1.151,
+     "mcc": -5.099
+    },
+    "NYC": {
+     "lbmp": 22.458,
+     "mcl": 1.286,
+     "mcc": -5.336
+    },
+    "Long_Island": {
+     "lbmp": 26.293,
+     "mcl": 1.41,
+     "mcc": -9.047
+    }
+   },
+   "6": {
+    "Upstate_West": {
+     "lbmp": 24.608,
+     "mcl": 0.191,
+     "mcc": 0.004
+    },
+    "Capital_Hudson": {
+     "lbmp": 27.977,
+     "mcl": 1.187,
+     "mcc": -2.369
+    },
+    "Lower_Hudson": {
+     "lbmp": 26.982,
+     "mcl": 1.407,
+     "mcc": -1.154
+    },
+    "NYC": {
+     "lbmp": 27.374,
+     "mcl": 1.573,
+     "mcc": -1.38
+    },
+    "Long_Island": {
+     "lbmp": 35.232,
+     "mcl": 1.851,
+     "mcc": -8.959
+    }
+   },
+   "7": {
+    "Upstate_West": {
+     "lbmp": 32.874,
+     "mcl": 0.333,
+     "mcc": 0.17
+    },
+    "Capital_Hudson": {
+     "lbmp": 35.152,
+     "mcl": 1.585,
+     "mcc": -0.858
+    },
+    "Lower_Hudson": {
+     "lbmp": 36.004,
+     "mcl": 2.184,
+     "mcc": -1.11
+    },
+    "NYC": {
+     "lbmp": 39.053,
+     "mcl": 2.464,
+     "mcc": -3.879
+    },
+    "Long_Island": {
+     "lbmp": 47.585,
+     "mcl": 2.888,
+     "mcc": -11.987
+    }
+   },
+   "8": {
+    "Upstate_West": {
+     "lbmp": 24.097,
+     "mcl": 0.079,
+     "mcc": 1.503
+    },
+    "Capital_Hudson": {
+     "lbmp": 29.774,
+     "mcl": 1.117,
+     "mcc": -3.136
+    },
+    "Lower_Hudson": {
+     "lbmp": 29.834,
+     "mcl": 1.69,
+     "mcc": -2.622
+    },
+    "NYC": {
+     "lbmp": 30.826,
+     "mcl": 1.939,
+     "mcc": -3.365
+    },
+    "Long_Island": {
+     "lbmp": 42.61,
+     "mcl": 2.481,
+     "mcc": -14.608
+    }
+   },
+   "9": {
+    "Upstate_West": {
+     "lbmp": 30.988,
+     "mcl": 0.276,
+     "mcc": -0.08
+    },
+    "Capital_Hudson": {
+     "lbmp": 35.315,
+     "mcl": 1.417,
+     "mcc": -3.266
+    },
+    "Lower_Hudson": {
+     "lbmp": 35.878,
+     "mcl": 1.945,
+     "mcc": -3.301
+    },
+    "NYC": {
+     "lbmp": 37.548,
+     "mcl": 2.273,
+     "mcc": -4.643
+    },
+    "Long_Island": {
+     "lbmp": 46.021,
+     "mcl": 2.745,
+     "mcc": -12.645
+    }
+   },
+   "10": {
+    "Upstate_West": {
+     "lbmp": 24.748,
+     "mcl": 0.152,
+     "mcc": -0.249
+    },
+    "Capital_Hudson": {
+     "lbmp": 26.802,
+     "mcl": 1.025,
+     "mcc": -1.43
+    },
+    "Lower_Hudson": {
+     "lbmp": 27.73,
+     "mcl": 1.502,
+     "mcc": -1.881
+    },
+    "NYC": {
+     "lbmp": 30.877,
+     "mcl": 1.718,
+     "mcc": -4.812
+    },
+    "Long_Island": {
+     "lbmp": 34.352,
+     "mcl": 1.968,
+     "mcc": -8.036
+    }
+   },
+   "11": {
+    "Upstate_West": {
+     "lbmp": 26.181,
+     "mcl": -0.145,
+     "mcc": -0.874
+    },
+    "Capital_Hudson": {
+     "lbmp": 33.255,
+     "mcl": 1.086,
+     "mcc": -6.716
+    },
+    "Lower_Hudson": {
+     "lbmp": 32.336,
+     "mcl": 1.5,
+     "mcc": -5.383
+    },
+    "NYC": {
+     "lbmp": 32.585,
+     "mcl": 1.677,
+     "mcc": -5.455
+    },
+    "Long_Island": {
+     "lbmp": 40.001,
+     "mcl": 2.056,
+     "mcc": -12.493
+    }
+   },
+   "12": {
+    "Upstate_West": {
+     "lbmp": 27.353,
+     "mcl": -0.301,
+     "mcc": 0.33
+    },
+    "Capital_Hudson": {
+     "lbmp": 29.377,
+     "mcl": 1.048,
+     "mcc": -0.345
+    },
+    "Lower_Hudson": {
+     "lbmp": 29.642,
+     "mcl": 1.472,
+     "mcc": -0.186
+    },
+    "NYC": {
+     "lbmp": 30.495,
+     "mcl": 1.636,
+     "mcc": -0.874
+    },
+    "Long_Island": {
+     "lbmp": 35.029,
+     "mcl": 2.15,
+     "mcc": -4.895
+    }
+   }
+  },
+  "2024": {
+   "1": {
+    "Upstate_West": {
+     "lbmp": 43.891,
+     "mcl": -0.708,
+     "mcc": 0.046
+    },
+    "Capital_Hudson": {
+     "lbmp": 56.145,
+     "mcl": 2.101,
+     "mcc": -9.399
+    },
+    "Lower_Hudson": {
+     "lbmp": 55.156,
+     "mcl": 3.102,
+     "mcc": -7.409
+    },
+    "NYC": {
+     "lbmp": 66.795,
+     "mcl": 3.512,
+     "mcc": -18.637
+    },
+    "Long_Island": {
+     "lbmp": 64.592,
+     "mcl": 4.061,
+     "mcc": -15.886
+    }
+   },
+   "2": {
+    "Upstate_West": {
+     "lbmp": 27.516,
+     "mcl": -0.498,
+     "mcc": 0.399
+    },
+    "Capital_Hudson": {
+     "lbmp": 29.641,
+     "mcl": 1.148,
+     "mcc": -0.08
+    },
+    "Lower_Hudson": {
+     "lbmp": 30.349,
+     "mcl": 1.765,
+     "mcc": -0.171
+    },
+    "NYC": {
+     "lbmp": 32.049,
+     "mcl": 1.978,
+     "mcc": -1.658
+    },
+    "Long_Island": {
+     "lbmp": 35.022,
+     "mcl": 2.364,
+     "mcc": -4.245
+    }
+   },
+   "3": {
+    "Upstate_West": {
+     "lbmp": 24.228,
+     "mcl": -0.327,
+     "mcc": 0.661
+    },
+    "Capital_Hudson": {
+     "lbmp": 25.892,
+     "mcl": 0.838,
+     "mcc": 0.161
+    },
+    "Lower_Hudson": {
+     "lbmp": 26.484,
+     "mcl": 1.086,
+     "mcc": -0.183
+    },
+    "NYC": {
+     "lbmp": 27.27,
+     "mcl": 1.24,
+     "mcc": -0.815
+    },
+    "Long_Island": {
+     "lbmp": 27.474,
+     "mcl": 1.374,
+     "mcc": -0.886
+    }
+   },
+   "4": {
+    "Upstate_West": {
+     "lbmp": 24.929,
+     "mcl": -0.139,
+     "mcc": 0.147
+    },
+    "Capital_Hudson": {
+     "lbmp": 25.876,
+     "mcl": 0.663,
+     "mcc": 0.001
+    },
+    "Lower_Hudson": {
+     "lbmp": 26.646,
+     "mcl": 1.388,
+     "mcc": -0.044
+    },
+    "NYC": {
+     "lbmp": 28.387,
+     "mcl": 1.607,
+     "mcc": -1.566
+    },
+    "Long_Island": {
+     "lbmp": 30.855,
+     "mcl": 1.627,
+     "mcc": -4.014
+    }
+   },
+   "5": {
+    "Upstate_West": {
+     "lbmp": 23.92,
+     "mcl": 0.066,
+     "mcc": 0.274
+    },
+    "Capital_Hudson": {
+     "lbmp": 24.61,
+     "mcl": 0.818,
+     "mcc": 0.336
+    },
+    "Lower_Hudson": {
+     "lbmp": 26.805,
+     "mcl": 1.511,
+     "mcc": -1.165
+    },
+    "NYC": {
+     "lbmp": 28.799,
+     "mcl": 1.724,
+     "mcc": -2.947
+    },
+    "Long_Island": {
+     "lbmp": 30.022,
+     "mcl": 1.817,
+     "mcc": -4.077
+    }
+   },
+   "6": {
+    "Upstate_West": {
+     "lbmp": 28.597,
+     "mcl": 0.165,
+     "mcc": 0.267
+    },
+    "Capital_Hudson": {
+     "lbmp": 30.875,
+     "mcl": 1.287,
+     "mcc": -0.889
+    },
+    "Lower_Hudson": {
+     "lbmp": 32.675,
+     "mcl": 1.896,
+     "mcc": -2.08
+    },
+    "NYC": {
+     "lbmp": 34.156,
+     "mcl": 2.184,
+     "mcc": -3.272
+    },
+    "Long_Island": {
+     "lbmp": 44.398,
+     "mcl": 2.426,
+     "mcc": -13.273
+    }
+   },
+   "7": {
+    "Upstate_West": {
+     "lbmp": 38.095,
+     "mcl": 0.032,
+     "mcc": -0.082
+    },
+    "Capital_Hudson": {
+     "lbmp": 44.679,
+     "mcl": 1.872,
+     "mcc": -4.825
+    },
+    "Lower_Hudson": {
+     "lbmp": 42.515,
+     "mcl": 2.9,
+     "mcc": -1.634
+    },
+    "NYC": {
+     "lbmp": 44.148,
+     "mcl": 3.319,
+     "mcc": -2.848
+    },
+    "Long_Island": {
+     "lbmp": 53.93,
+     "mcl": 3.49,
+     "mcc": -12.459
+    }
+   },
+   "8": {
+    "Upstate_West": {
+     "lbmp": 32.127,
+     "mcl": 0.059,
+     "mcc": 0.228
+    },
+    "Capital_Hudson": {
+     "lbmp": 33.757,
+     "mcl": 1.405,
+     "mcc": -0.056
+    },
+    "Lower_Hudson": {
+     "lbmp": 34.661,
+     "mcl": 2.001,
+     "mcc": -0.363
+    },
+    "NYC": {
+     "lbmp": 35.951,
+     "mcl": 2.35,
+     "mcc": -1.305
+    },
+    "Long_Island": {
+     "lbmp": 40.192,
+     "mcl": 2.464,
+     "mcc": -5.431
+    }
+   },
+   "9": {
+    "Upstate_West": {
+     "lbmp": 30.34,
+     "mcl": -0.067,
+     "mcc": -0.366
+    },
+    "Capital_Hudson": {
+     "lbmp": 31.17,
+     "mcl": 1.04,
+     "mcc": -0.089
+    },
+    "Lower_Hudson": {
+     "lbmp": 31.632,
+     "mcl": 1.362,
+     "mcc": -0.229
+    },
+    "NYC": {
+     "lbmp": 32.921,
+     "mcl": 1.704,
+     "mcc": -1.176
+    },
+    "Long_Island": {
+     "lbmp": 32.687,
+     "mcl": 1.648,
+     "mcc": -0.998
+    }
+   },
+   "10": {
+    "Upstate_West": {
+     "lbmp": 30.814,
+     "mcl": -0.073,
+     "mcc": 0.162
+    },
+    "Capital_Hudson": {
+     "lbmp": 32.358,
+     "mcl": 1.15,
+     "mcc": -0.158
+    },
+    "Lower_Hudson": {
+     "lbmp": 32.828,
+     "mcl": 1.484,
+     "mcc": -0.295
+    },
+    "NYC": {
+     "lbmp": 33.217,
+     "mcl": 1.775,
+     "mcc": -0.393
+    },
+    "Long_Island": {
+     "lbmp": 31.899,
+     "mcl": 1.618,
+     "mcc": 0.768
+    }
+   },
+   "11": {
+    "Upstate_West": {
+     "lbmp": 30.343,
+     "mcl": -0.494,
+     "mcc": 0.357
+    },
+    "Capital_Hudson": {
+     "lbmp": 33.172,
+     "mcl": 1.31,
+     "mcc": -0.667
+    },
+    "Lower_Hudson": {
+     "lbmp": 33.64,
+     "mcl": 1.843,
+     "mcc": -0.603
+    },
+    "NYC": {
+     "lbmp": 34.673,
+     "mcl": 2.097,
+     "mcc": -1.382
+    },
+    "Long_Island": {
+     "lbmp": 35.359,
+     "mcl": 2.113,
+     "mcc": -2.051
+    }
+   },
+   "12": {
+    "Upstate_West": {
+     "lbmp": 60.881,
+     "mcl": -1.321,
+     "mcc": 0.355
+    },
+    "Capital_Hudson": {
+     "lbmp": 71.907,
+     "mcl": 3.268,
+     "mcc": -6.081
+    },
+    "Lower_Hudson": {
+     "lbmp": 71.974,
+     "mcl": 4.247,
+     "mcc": -5.17
+    },
+    "NYC": {
+     "lbmp": 74.428,
+     "mcl": 4.515,
+     "mcc": -7.356
+    },
+    "Long_Island": {
+     "lbmp": 78.997,
+     "mcl": 5.305,
+     "mcc": -11.136
+    }
+   }
+  },
+  "2025": {
+   "1": {
+    "Upstate_West": {
+     "lbmp": 90.165,
+     "mcl": -2.028,
+     "mcc": -1.026
+    },
+    "Capital_Hudson": {
+     "lbmp": 127.03,
+     "mcl": 5.226,
+     "mcc": -30.637
+    },
+    "Lower_Hudson": {
+     "lbmp": 119.249,
+     "mcl": 6.938,
+     "mcc": -21.144
+    },
+    "NYC": {
+     "lbmp": 134.492,
+     "mcl": 7.579,
+     "mcc": -35.746
+    },
+    "Long_Island": {
+     "lbmp": 130.856,
+     "mcl": 8.626,
+     "mcc": -31.063
+    }
+   },
+   "2": {
+    "Upstate_West": {
+     "lbmp": 87.146,
+     "mcl": -2.105,
+     "mcc": 0.963
+    },
+    "Capital_Hudson": {
+     "lbmp": 114.231,
+     "mcl": 5.173,
+     "mcc": -18.844
+    },
+    "Lower_Hudson": {
+     "lbmp": 100.115,
+     "mcl": 5.24,
+     "mcc": -4.661
+    },
+    "NYC": {
+     "lbmp": 111.782,
+     "mcl": 5.728,
+     "mcc": -15.84
+    },
+    "Long_Island": {
+     "lbmp": 111.539,
+     "mcl": 6.785,
+     "mcc": -14.54
+    }
+   },
+   "3": {
+    "Upstate_West": {
+     "lbmp": 42.344,
+     "mcl": -0.771,
+     "mcc": -0.082
+    },
+    "Capital_Hudson": {
+     "lbmp": 48.34,
+     "mcl": 1.781,
+     "mcc": -3.527
+    },
+    "Lower_Hudson": {
+     "lbmp": 47.529,
+     "mcl": 1.829,
+     "mcc": -2.668
+    },
+    "NYC": {
+     "lbmp": 51.301,
+     "mcl": 2.191,
+     "mcc": -6.078
+    },
+    "Long_Island": {
+     "lbmp": 48.812,
+     "mcl": 2.144,
+     "mcc": -3.636
+    }
+   },
+   "4": {
+    "Upstate_West": {
+     "lbmp": 37.193,
+     "mcl": -0.388,
+     "mcc": 0.427
+    },
+    "Capital_Hudson": {
+     "lbmp": 39.525,
+     "mcl": 1.222,
+     "mcc": -0.296
+    },
+    "Lower_Hudson": {
+     "lbmp": 40.146,
+     "mcl": 1.881,
+     "mcc": -0.258
+    },
+    "NYC": {
+     "lbmp": 45.565,
+     "mcl": 2.328,
+     "mcc": -5.23
+    },
+    "Long_Island": {
+     "lbmp": 45.098,
+     "mcl": 1.929,
+     "mcc": -5.161
+    }
+   },
+   "5": {
+    "Upstate_West": {
+     "lbmp": 29.726,
+     "mcl": -0.691,
+     "mcc": 1.276
+    },
+    "Capital_Hudson": {
+     "lbmp": 32.564,
+     "mcl": 0.923,
+     "mcc": 0.052
+    },
+    "Lower_Hudson": {
+     "lbmp": 33.764,
+     "mcl": 1.8,
+     "mcc": -0.271
+    },
+    "NYC": {
+     "lbmp": 34.685,
+     "mcl": 2.108,
+     "mcc": -0.884
+    },
+    "Long_Island": {
+     "lbmp": 43.694,
+     "mcl": 2.331,
+     "mcc": -9.67
+    }
+   },
+   "6": {
+    "Upstate_West": {
+     "lbmp": 53.558,
+     "mcl": 0.155,
+     "mcc": 0.997
+    },
+    "Capital_Hudson": {
+     "lbmp": 58.768,
+     "mcl": 2.28,
+     "mcc": -2.088
+    },
+    "Lower_Hudson": {
+     "lbmp": 64.703,
+     "mcl": 4.396,
+     "mcc": -5.906
+    },
+    "NYC": {
+     "lbmp": 65.845,
+     "mcl": 4.944,
+     "mcc": -6.499
+    },
+    "Long_Island": {
+     "lbmp": 79.061,
+     "mcl": 4.797,
+     "mcc": -19.863
+    }
+   },
+   "7": {
+    "Upstate_West": {
+     "lbmp": 63.541,
+     "mcl": 0.811,
+     "mcc": -0.145
+    },
+    "Capital_Hudson": {
+     "lbmp": 66.813,
+     "mcl": 2.403,
+     "mcc": -1.826
+    },
+    "Lower_Hudson": {
+     "lbmp": 74.95,
+     "mcl": 4.004,
+     "mcc": -8.362
+    },
+    "NYC": {
+     "lbmp": 82.715,
+     "mcl": 4.588,
+     "mcc": -15.543
+    },
+    "Long_Island": {
+     "lbmp": 90.229,
+     "mcl": 4.335,
+     "mcc": -23.31
+    }
+   },
+   "8": {
+    "Upstate_West": {
+     "lbmp": 41.435,
+     "mcl": 0.56,
+     "mcc": -0.476
+    },
+    "Capital_Hudson": {
+     "lbmp": 41.312,
+     "mcl": 1.007,
+     "mcc": 0.094
+    },
+    "Lower_Hudson": {
+     "lbmp": 42.218,
+     "mcl": 1.441,
+     "mcc": -0.378
+    },
+    "NYC": {
+     "lbmp": 42.7,
+     "mcl": 1.728,
+     "mcc": -0.573
+    },
+    "Long_Island": {
+     "lbmp": 43.373,
+     "mcl": 1.621,
+     "mcc": -1.353
+    }
+   },
+   "9": {
+    "Upstate_West": {
+     "lbmp": 38.936,
+     "mcl": 0.16,
+     "mcc": -2.892
+    },
+    "Capital_Hudson": {
+     "lbmp": 36.334,
+     "mcl": 0.932,
+     "mcc": 0.482
+    },
+    "Lower_Hudson": {
+     "lbmp": 38.37,
+     "mcl": 1.548,
+     "mcc": -0.938
+    },
+    "NYC": {
+     "lbmp": 38.889,
+     "mcl": 1.922,
+     "mcc": -1.083
+    },
+    "Long_Island": {
+     "lbmp": 41.386,
+     "mcl": 1.604,
+     "mcc": -3.898
+    }
+   },
+   "10": {
+    "Upstate_West": {
+     "lbmp": 43.02,
+     "mcl": -0.027,
+     "mcc": 0.027
+    },
+    "Capital_Hudson": {
+     "lbmp": 44.045,
+     "mcl": 1.036,
+     "mcc": 0.064
+    },
+    "Lower_Hudson": {
+     "lbmp": 45.382,
+     "mcl": 1.925,
+     "mcc": -0.383
+    },
+    "NYC": {
+     "lbmp": 45.963,
+     "mcl": 2.263,
+     "mcc": -0.627
+    },
+    "Long_Island": {
+     "lbmp": 42.33,
+     "mcl": 1.64,
+     "mcc": 2.383
+    }
+   },
+   "11": {
+    "Upstate_West": {
+     "lbmp": 51.32,
+     "mcl": -0.594,
+     "mcc": 0.402
+    },
+    "Capital_Hudson": {
+     "lbmp": 54.503,
+     "mcl": 1.807,
+     "mcc": -0.378
+    },
+    "Lower_Hudson": {
+     "lbmp": 55.191,
+     "mcl": 2.557,
+     "mcc": -0.317
+    },
+    "NYC": {
+     "lbmp": 55.794,
+     "mcl": 2.955,
+     "mcc": -0.522
+    },
+    "Long_Island": {
+     "lbmp": 58.584,
+     "mcl": 2.919,
+     "mcc": -3.348
+    }
+   },
+   "12": {
+    "Upstate_West": {
+     "lbmp": 89.421,
+     "mcl": -2.168,
+     "mcc": 1.422
+    },
+    "Capital_Hudson": {
+     "lbmp": 100.569,
+     "mcl": 4.476,
+     "mcc": -3.082
+    },
+    "Lower_Hudson": {
+     "lbmp": 97.886,
+     "mcl": 4.168,
+     "mcc": -0.708
+    },
+    "NYC": {
+     "lbmp": 98.214,
+     "mcl": 4.494,
+     "mcc": -0.709
+    },
+    "Long_Island": {
+     "lbmp": 111.01,
+     "mcl": 5.548,
+     "mcc": -12.451
+    }
+   }
+  }
+ },
+ "dev_surface": {
+  "2023": {
+   "1": {
+    "Upstate_West": 0.001245,
+    "Capital_Hudson": 0.062358,
+    "Lower_Hudson": 0.079488,
+    "NYC": 0.086397,
+    "Long_Island": 0.097767
+   },
+   "2": {
+    "Upstate_West": -0.006398,
+    "Capital_Hudson": 0.060954,
+    "Lower_Hudson": 0.06654,
+    "NYC": 0.07194,
+    "Long_Island": 0.08303
+   },
+   "3": {
+    "Upstate_West": 0.012571,
+    "Capital_Hudson": 0.049986,
+    "Lower_Hudson": 0.069412,
+    "NYC": 0.076455,
+    "Long_Island": 0.082039
+   },
+   "4": {
+    "Upstate_West": 0.012189,
+    "Capital_Hudson": 0.043871,
+    "Lower_Hudson": 0.071299,
+    "NYC": 0.079313,
+    "Long_Island": 0.076965
+   },
+   "5": {
+    "Upstate_West": -0.001039,
+    "Capital_Hudson": 0.044812,
+    "Lower_Hudson": 0.072687,
+    "NYC": 0.081199,
+    "Long_Island": 0.089054
+   },
+   "6": {
+    "Upstate_West": 0.00782,
+    "Capital_Hudson": 0.048599,
+    "Lower_Hudson": 0.057593,
+    "NYC": 0.06441,
+    "Long_Island": 0.075812
+   },
+   "7": {
+    "Upstate_West": 0.010193,
+    "Capital_Hudson": 0.048446,
+    "Lower_Hudson": 0.066768,
+    "NYC": 0.075327,
+    "Long_Island": 0.088299
+   },
+   "8": {
+    "Upstate_West": 0.003086,
+    "Capital_Hudson": 0.04375,
+    "Lower_Hudson": 0.066226,
+    "NYC": 0.075963,
+    "Long_Island": 0.097204
+   },
+   "9": {
+    "Upstate_West": 0.009024,
+    "Capital_Hudson": 0.046272,
+    "Lower_Hudson": 0.063496,
+    "NYC": 0.074216,
+    "Long_Island": 0.089602
+   },
+   "10": {
+    "Upstate_West": 0.006237,
+    "Capital_Hudson": 0.042113,
+    "Lower_Hudson": 0.061691,
+    "NYC": 0.070544,
+    "Long_Island": 0.080835
+   },
+   "11": {
+    "Upstate_West": -0.005712,
+    "Capital_Hudson": 0.042654,
+    "Lower_Hudson": 0.058951,
+    "NYC": 0.065903,
+    "Long_Island": 0.080781
+   },
+   "12": {
+    "Upstate_West": -0.010752,
+    "Capital_Hudson": 0.037446,
+    "Lower_Hudson": 0.052585,
+    "NYC": 0.05846,
+    "Long_Island": 0.076821
+   }
+  },
+  "2024": {
+   "1": {
+    "Upstate_West": -0.015857,
+    "Capital_Hudson": 0.047059,
+    "Lower_Hudson": 0.069486,
+    "NYC": 0.078661,
+    "Long_Island": 0.090968
+   },
+   "2": {
+    "Upstate_West": -0.01753,
+    "Capital_Hudson": 0.040407,
+    "Lower_Hudson": 0.062117,
+    "NYC": 0.069611,
+    "Long_Island": 0.083192
+   },
+   "3": {
+    "Upstate_West": -0.01295,
+    "Capital_Hudson": 0.033233,
+    "Lower_Hudson": 0.043064,
+    "NYC": 0.049181,
+    "Long_Island": 0.054475
+   },
+   "4": {
+    "Upstate_West": -0.005495,
+    "Capital_Hudson": 0.026311,
+    "Lower_Hudson": 0.055056,
+    "NYC": 0.063715,
+    "Long_Island": 0.064537
+   },
+   "5": {
+    "Upstate_West": 0.002742,
+    "Capital_Hudson": 0.033914,
+    "Lower_Hudson": 0.06264,
+    "NYC": 0.071458,
+    "Long_Island": 0.075293
+   },
+   "6": {
+    "Upstate_West": 0.005757,
+    "Capital_Hudson": 0.044839,
+    "Lower_Hudson": 0.066073,
+    "NYC": 0.076108,
+    "Long_Island": 0.084532
+   },
+   "7": {
+    "Upstate_West": 0.000831,
+    "Capital_Hudson": 0.049299,
+    "Lower_Hudson": 0.076349,
+    "NYC": 0.087372,
+    "Long_Island": 0.091879
+   },
+   "8": {
+    "Upstate_West": 0.001821,
+    "Capital_Hudson": 0.043489,
+    "Lower_Hudson": 0.06196,
+    "NYC": 0.072754,
+    "Long_Island": 0.076308
+   },
+   "9": {
+    "Upstate_West": -0.00224,
+    "Capital_Hudson": 0.034626,
+    "Lower_Hudson": 0.04535,
+    "NYC": 0.056728,
+    "Long_Island": 0.054871
+   },
+   "10": {
+    "Upstate_West": -0.002358,
+    "Capital_Hudson": 0.037046,
+    "Lower_Hudson": 0.047798,
+    "NYC": 0.057152,
+    "Long_Island": 0.052112
+   },
+   "11": {
+    "Upstate_West": -0.01582,
+    "Capital_Hudson": 0.042001,
+    "Lower_Hudson": 0.059096,
+    "NYC": 0.06721,
+    "Long_Island": 0.067746
+   },
+   "12": {
+    "Upstate_West": -0.021116,
+    "Capital_Hudson": 0.052247,
+    "Lower_Hudson": 0.067893,
+    "NYC": 0.072178,
+    "Long_Island": 0.084796
+   }
+  },
+  "2025": {
+   "1": {
+    "Upstate_West": -0.022247,
+    "Capital_Hudson": 0.057326,
+    "Lower_Hudson": 0.076097,
+    "NYC": 0.083131,
+    "Long_Island": 0.094618
+   },
+   "2": {
+    "Upstate_West": -0.023331,
+    "Capital_Hudson": 0.057343,
+    "Lower_Hudson": 0.058083,
+    "NYC": 0.063493,
+    "Long_Island": 0.075215
+   },
+   "3": {
+    "Upstate_West": -0.017907,
+    "Capital_Hudson": 0.041392,
+    "Lower_Hudson": 0.042513,
+    "NYC": 0.050925,
+    "Long_Island": 0.049822
+   },
+   "4": {
+    "Upstate_West": -0.010197,
+    "Capital_Hudson": 0.032156,
+    "Lower_Hudson": 0.049494,
+    "NYC": 0.061242,
+    "Long_Island": 0.050759
+   },
+   "5": {
+    "Upstate_West": -0.021811,
+    "Capital_Hudson": 0.029116,
+    "Lower_Hudson": 0.056798,
+    "NYC": 0.0665,
+    "Long_Island": 0.073549
+   },
+   "6": {
+    "Upstate_West": 0.00284,
+    "Capital_Hudson": 0.041903,
+    "Lower_Hudson": 0.080814,
+    "NYC": 0.09089,
+    "Long_Island": 0.088172
+   },
+   "7": {
+    "Upstate_West": 0.012963,
+    "Capital_Hudson": 0.038391,
+    "Lower_Hudson": 0.063979,
+    "NYC": 0.073316,
+    "Long_Island": 0.069272
+   },
+   "8": {
+    "Upstate_West": 0.013873,
+    "Capital_Hudson": 0.02493,
+    "Lower_Hudson": 0.035678,
+    "NYC": 0.042781,
+    "Long_Island": 0.040124
+   },
+   "9": {
+    "Upstate_West": 0.004468,
+    "Capital_Hudson": 0.02596,
+    "Lower_Hudson": 0.043125,
+    "NYC": 0.053549,
+    "Long_Island": 0.0447
+   },
+   "10": {
+    "Upstate_West": -0.000629,
+    "Capital_Hudson": 0.024041,
+    "Lower_Hudson": 0.044687,
+    "NYC": 0.052541,
+    "Long_Island": 0.038063
+   },
+   "11": {
+    "Upstate_West": -0.011361,
+    "Capital_Hudson": 0.034543,
+    "Lower_Hudson": 0.048872,
+    "NYC": 0.056482,
+    "Long_Island": 0.055788
+   },
+   "12": {
+    "Upstate_West": -0.023311,
+    "Capital_Hudson": 0.048122,
+    "Lower_Hudson": 0.044809,
+    "NYC": 0.048322,
+    "Long_Island": 0.059653
+   }
+  }
+ },
+ "spread_vs_uw_monthly": {
+  "2023": {
+   "1": {
+    "Capital_Hudson": {
+     "total": 11.346,
+     "loss": 1.953,
+     "cong": 9.393
+    },
+    "Lower_Hudson": {
+     "total": 8.183,
+     "loss": 2.5,
+     "cong": 5.683
+    },
+    "NYC": {
+     "total": 8.286,
+     "loss": 2.721,
+     "cong": 5.565
+    },
+    "Long_Island": {
+     "total": 16.972,
+     "loss": 3.084,
+     "cong": 13.888
+    }
+   },
+   "2": {
+    "Capital_Hudson": {
+     "total": 33.257,
+     "loss": 1.747,
+     "cong": 31.51
+    },
+    "Lower_Hudson": {
+     "total": 21.266,
+     "loss": 1.892,
+     "cong": 19.374
+    },
+    "NYC": {
+     "total": 21.792,
+     "loss": 2.032,
+     "cong": 19.759
+    },
+    "Long_Island": {
+     "total": 43.658,
+     "loss": 2.32,
+     "cong": 41.338
+    }
+   },
+   "3": {
+    "Capital_Hudson": {
+     "total": 21.04,
+     "loss": 0.579,
+     "cong": 20.46
+    },
+    "Lower_Hudson": {
+     "total": 13.861,
+     "loss": 0.88,
+     "cong": 12.981
+    },
+    "NYC": {
+     "total": 14.004,
+     "loss": 0.989,
+     "cong": 13.015
+    },
+    "Long_Island": {
+     "total": 19.812,
+     "loss": 1.076,
+     "cong": 18.736
+    }
+   },
+   "4": {
+    "Capital_Hudson": {
+     "total": 13.82,
+     "loss": 0.567,
+     "cong": 13.253
+    },
+    "Lower_Hudson": {
+     "total": 10.368,
+     "loss": 1.057,
+     "cong": 9.311
+    },
+    "NYC": {
+     "total": 10.523,
+     "loss": 1.2,
+     "cong": 9.323
+    },
+    "Long_Island": {
+     "total": 10.377,
+     "loss": 1.158,
+     "cong": 9.218
+    }
+   },
+   "5": {
+    "Capital_Hudson": {
+     "total": 6.923,
+     "loss": 0.726,
+     "cong": 6.197
+    },
+    "Lower_Hudson": {
+     "total": 5.996,
+     "loss": 1.168,
+     "cong": 4.828
+    },
+    "NYC": {
+     "total": 6.368,
+     "loss": 1.302,
+     "cong": 5.066
+    },
+    "Long_Island": {
+     "total": 10.203,
+     "loss": 1.427,
+     "cong": 8.776
+    }
+   },
+   "6": {
+    "Capital_Hudson": {
+     "total": 3.369,
+     "loss": 0.996,
+     "cong": 2.373
+    },
+    "Lower_Hudson": {
+     "total": 2.374,
+     "loss": 1.216,
+     "cong": 1.159
+    },
+    "NYC": {
+     "total": 2.766,
+     "loss": 1.382,
+     "cong": 1.384
+    },
+    "Long_Island": {
+     "total": 10.623,
+     "loss": 1.66,
+     "cong": 8.963
+    }
+   },
+   "7": {
+    "Capital_Hudson": {
+     "total": 2.279,
+     "loss": 1.251,
+     "cong": 1.027
+    },
+    "Lower_Hudson": {
+     "total": 3.131,
+     "loss": 1.851,
+     "cong": 1.28
+    },
+    "NYC": {
+     "total": 6.179,
+     "loss": 2.131,
+     "cong": 4.049
+    },
+    "Long_Island": {
+     "total": 14.711,
+     "loss": 2.555,
+     "cong": 12.157
+    }
+   },
+   "8": {
+    "Capital_Hudson": {
+     "total": 5.677,
+     "loss": 1.038,
+     "cong": 4.639
+    },
+    "Lower_Hudson": {
+     "total": 5.736,
+     "loss": 1.611,
+     "cong": 4.125
+    },
+    "NYC": {
+     "total": 6.729,
+     "loss": 1.86,
+     "cong": 4.869
+    },
+    "Long_Island": {
+     "total": 18.513,
+     "loss": 2.402,
+     "cong": 16.111
+    }
+   },
+   "9": {
+    "Capital_Hudson": {
+     "total": 4.327,
+     "loss": 1.141,
+     "cong": 3.186
+    },
+    "Lower_Hudson": {
+     "total": 4.89,
+     "loss": 1.669,
+     "cong": 3.221
+    },
+    "NYC": {
+     "total": 6.559,
+     "loss": 1.997,
+     "cong": 4.562
+    },
+    "Long_Island": {
+     "total": 15.033,
+     "loss": 2.468,
+     "cong": 12.564
+    }
+   },
+   "10": {
+    "Capital_Hudson": {
+     "total": 2.054,
+     "loss": 0.873,
+     "cong": 1.181
+    },
+    "Lower_Hudson": {
+     "total": 2.982,
+     "loss": 1.35,
+     "cong": 1.632
+    },
+    "NYC": {
+     "total": 6.129,
+     "loss": 1.566,
+     "cong": 4.563
+    },
+    "Long_Island": {
+     "total": 9.603,
+     "loss": 1.816,
+     "cong": 7.787
+    }
+   },
+   "11": {
+    "Capital_Hudson": {
+     "total": 7.074,
+     "loss": 1.231,
+     "cong": 5.843
+    },
+    "Lower_Hudson": {
+     "total": 6.155,
+     "loss": 1.646,
+     "cong": 4.509
+    },
+    "NYC": {
+     "total": 6.404,
+     "loss": 1.823,
+     "cong": 4.581
+    },
+    "Long_Island": {
+     "total": 13.82,
+     "loss": 2.201,
+     "cong": 11.619
+    }
+   },
+   "12": {
+    "Capital_Hudson": {
+     "total": 2.024,
+     "loss": 1.349,
+     "cong": 0.675
+    },
+    "Lower_Hudson": {
+     "total": 2.289,
+     "loss": 1.772,
+     "cong": 0.516
+    },
+    "NYC": {
+     "total": 3.142,
+     "loss": 1.937,
+     "cong": 1.205
+    },
+    "Long_Island": {
+     "total": 7.676,
+     "loss": 2.451,
+     "cong": 5.225
+    }
+   }
+  },
+  "2024": {
+   "1": {
+    "Capital_Hudson": {
+     "total": 12.254,
+     "loss": 2.809,
+     "cong": 9.445
+    },
+    "Lower_Hudson": {
+     "total": 11.265,
+     "loss": 3.81,
+     "cong": 7.455
+    },
+    "NYC": {
+     "total": 22.904,
+     "loss": 4.22,
+     "cong": 18.684
+    },
+    "Long_Island": {
+     "total": 20.701,
+     "loss": 4.769,
+     "cong": 15.932
+    }
+   },
+   "2": {
+    "Capital_Hudson": {
+     "total": 2.125,
+     "loss": 1.646,
+     "cong": 0.479
+    },
+    "Lower_Hudson": {
+     "total": 2.833,
+     "loss": 2.263,
+     "cong": 0.57
+    },
+    "NYC": {
+     "total": 4.534,
+     "loss": 2.476,
+     "cong": 2.058
+    },
+    "Long_Island": {
+     "total": 7.506,
+     "loss": 2.862,
+     "cong": 4.644
+    }
+   },
+   "3": {
+    "Capital_Hudson": {
+     "total": 1.665,
+     "loss": 1.165,
+     "cong": 0.5
+    },
+    "Lower_Hudson": {
+     "total": 2.257,
+     "loss": 1.412,
+     "cong": 0.844
+    },
+    "NYC": {
+     "total": 3.042,
+     "loss": 1.567,
+     "cong": 1.475
+    },
+    "Long_Island": {
+     "total": 3.247,
+     "loss": 1.7,
+     "cong": 1.546
+    }
+   },
+   "4": {
+    "Capital_Hudson": {
+     "total": 0.948,
+     "loss": 0.802,
+     "cong": 0.146
+    },
+    "Lower_Hudson": {
+     "total": 1.717,
+     "loss": 1.527,
+     "cong": 0.191
+    },
+    "NYC": {
+     "total": 3.458,
+     "loss": 1.745,
+     "cong": 1.713
+    },
+    "Long_Island": {
+     "total": 5.927,
+     "loss": 1.766,
+     "cong": 4.161
+    }
+   },
+   "5": {
+    "Capital_Hudson": {
+     "total": 0.69,
+     "loss": 0.752,
+     "cong": -0.063
+    },
+    "Lower_Hudson": {
+     "total": 2.884,
+     "loss": 1.445,
+     "cong": 1.439
+    },
+    "NYC": {
+     "total": 4.878,
+     "loss": 1.658,
+     "cong": 3.22
+    },
+    "Long_Island": {
+     "total": 6.101,
+     "loss": 1.751,
+     "cong": 4.351
+    }
+   },
+   "6": {
+    "Capital_Hudson": {
+     "total": 2.278,
+     "loss": 1.122,
+     "cong": 1.156
+    },
+    "Lower_Hudson": {
+     "total": 4.078,
+     "loss": 1.731,
+     "cong": 2.347
+    },
+    "NYC": {
+     "total": 5.558,
+     "loss": 2.019,
+     "cong": 3.539
+    },
+    "Long_Island": {
+     "total": 15.8,
+     "loss": 2.261,
+     "cong": 13.54
+    }
+   },
+   "7": {
+    "Capital_Hudson": {
+     "total": 6.584,
+     "loss": 1.841,
+     "cong": 4.743
+    },
+    "Lower_Hudson": {
+     "total": 4.42,
+     "loss": 2.868,
+     "cong": 1.552
+    },
+    "NYC": {
+     "total": 6.053,
+     "loss": 3.287,
+     "cong": 2.765
+    },
+    "Long_Island": {
+     "total": 15.835,
+     "loss": 3.458,
+     "cong": 12.377
+    }
+   },
+   "8": {
+    "Capital_Hudson": {
+     "total": 1.629,
+     "loss": 1.346,
+     "cong": 0.284
+    },
+    "Lower_Hudson": {
+     "total": 2.533,
+     "loss": 1.942,
+     "cong": 0.591
+    },
+    "NYC": {
+     "total": 3.824,
+     "loss": 2.291,
+     "cong": 1.533
+    },
+    "Long_Island": {
+     "total": 8.065,
+     "loss": 2.406,
+     "cong": 5.659
+    }
+   },
+   "9": {
+    "Capital_Hudson": {
+     "total": 0.831,
+     "loss": 1.108,
+     "cong": -0.277
+    },
+    "Lower_Hudson": {
+     "total": 1.293,
+     "loss": 1.43,
+     "cong": -0.137
+    },
+    "NYC": {
+     "total": 2.582,
+     "loss": 1.771,
+     "cong": 0.81
+    },
+    "Long_Island": {
+     "total": 2.348,
+     "loss": 1.716,
+     "cong": 0.632
+    }
+   },
+   "10": {
+    "Capital_Hudson": {
+     "total": 1.544,
+     "loss": 1.223,
+     "cong": 0.32
+    },
+    "Lower_Hudson": {
+     "total": 2.014,
+     "loss": 1.557,
+     "cong": 0.457
+    },
+    "NYC": {
+     "total": 2.403,
+     "loss": 1.848,
+     "cong": 0.555
+    },
+    "Long_Island": {
+     "total": 1.085,
+     "loss": 1.691,
+     "cong": -0.607
+    }
+   },
+   "11": {
+    "Capital_Hudson": {
+     "total": 2.828,
+     "loss": 1.804,
+     "cong": 1.025
+    },
+    "Lower_Hudson": {
+     "total": 3.297,
+     "loss": 2.337,
+     "cong": 0.96
+    },
+    "NYC": {
+     "total": 4.33,
+     "loss": 2.59,
+     "cong": 1.739
+    },
+    "Long_Island": {
+     "total": 5.015,
+     "loss": 2.607,
+     "cong": 2.409
+    }
+   },
+   "12": {
+    "Capital_Hudson": {
+     "total": 11.026,
+     "loss": 4.589,
+     "cong": 6.437
+    },
+    "Lower_Hudson": {
+     "total": 11.093,
+     "loss": 5.568,
+     "cong": 5.525
+    },
+    "NYC": {
+     "total": 13.547,
+     "loss": 5.836,
+     "cong": 7.711
+    },
+    "Long_Island": {
+     "total": 18.117,
+     "loss": 6.626,
+     "cong": 11.491
+    }
+   }
+  },
+  "2025": {
+   "1": {
+    "Capital_Hudson": {
+     "total": 36.865,
+     "loss": 7.254,
+     "cong": 29.611
+    },
+    "Lower_Hudson": {
+     "total": 29.084,
+     "loss": 8.966,
+     "cong": 20.119
+    },
+    "NYC": {
+     "total": 44.327,
+     "loss": 9.607,
+     "cong": 34.72
+    },
+    "Long_Island": {
+     "total": 40.692,
+     "loss": 10.654,
+     "cong": 30.037
+    }
+   },
+   "2": {
+    "Capital_Hudson": {
+     "total": 27.085,
+     "loss": 7.278,
+     "cong": 19.807
+    },
+    "Lower_Hudson": {
+     "total": 12.969,
+     "loss": 7.345,
+     "cong": 5.624
+    },
+    "NYC": {
+     "total": 24.636,
+     "loss": 7.833,
+     "cong": 16.803
+    },
+    "Long_Island": {
+     "total": 24.393,
+     "loss": 8.89,
+     "cong": 15.503
+    }
+   },
+   "3": {
+    "Capital_Hudson": {
+     "total": 5.996,
+     "loss": 2.552,
+     "cong": 3.444
+    },
+    "Lower_Hudson": {
+     "total": 5.185,
+     "loss": 2.6,
+     "cong": 2.585
+    },
+    "NYC": {
+     "total": 8.957,
+     "loss": 2.962,
+     "cong": 5.995
+    },
+    "Long_Island": {
+     "total": 6.468,
+     "loss": 2.915,
+     "cong": 3.554
+    }
+   },
+   "4": {
+    "Capital_Hudson": {
+     "total": 2.332,
+     "loss": 1.61,
+     "cong": 0.723
+    },
+    "Lower_Hudson": {
+     "total": 2.954,
+     "loss": 2.269,
+     "cong": 0.685
+    },
+    "NYC": {
+     "total": 8.372,
+     "loss": 2.715,
+     "cong": 5.657
+    },
+    "Long_Island": {
+     "total": 7.905,
+     "loss": 2.317,
+     "cong": 5.588
+    }
+   },
+   "5": {
+    "Capital_Hudson": {
+     "total": 2.838,
+     "loss": 1.614,
+     "cong": 1.224
+    },
+    "Lower_Hudson": {
+     "total": 4.038,
+     "loss": 2.491,
+     "cong": 1.546
+    },
+    "NYC": {
+     "total": 4.959,
+     "loss": 2.799,
+     "cong": 2.16
+    },
+    "Long_Island": {
+     "total": 13.967,
+     "loss": 3.022,
+     "cong": 10.945
+    }
+   },
+   "6": {
+    "Capital_Hudson": {
+     "total": 5.209,
+     "loss": 2.125,
+     "cong": 3.084
+    },
+    "Lower_Hudson": {
+     "total": 11.144,
+     "loss": 4.242,
+     "cong": 6.903
+    },
+    "NYC": {
+     "total": 12.286,
+     "loss": 4.79,
+     "cong": 7.496
+    },
+    "Long_Island": {
+     "total": 25.502,
+     "loss": 4.642,
+     "cong": 20.86
+    }
+   },
+   "7": {
+    "Capital_Hudson": {
+     "total": 3.273,
+     "loss": 1.591,
+     "cong": 1.681
+    },
+    "Lower_Hudson": {
+     "total": 11.409,
+     "loss": 3.193,
+     "cong": 8.217
+    },
+    "NYC": {
+     "total": 19.175,
+     "loss": 3.777,
+     "cong": 15.398
+    },
+    "Long_Island": {
+     "total": 26.688,
+     "loss": 3.524,
+     "cong": 23.164
+    }
+   },
+   "8": {
+    "Capital_Hudson": {
+     "total": -0.123,
+     "loss": 0.447,
+     "cong": -0.569
+    },
+    "Lower_Hudson": {
+     "total": 0.783,
+     "loss": 0.881,
+     "cong": -0.098
+    },
+    "NYC": {
+     "total": 1.265,
+     "loss": 1.168,
+     "cong": 0.097
+    },
+    "Long_Island": {
+     "total": 1.938,
+     "loss": 1.06,
+     "cong": 0.878
+    }
+   },
+   "9": {
+    "Capital_Hudson": {
+     "total": -2.603,
+     "loss": 0.771,
+     "cong": -3.374
+    },
+    "Lower_Hudson": {
+     "total": -0.567,
+     "loss": 1.387,
+     "cong": -1.954
+    },
+    "NYC": {
+     "total": -0.048,
+     "loss": 1.761,
+     "cong": -1.809
+    },
+    "Long_Island": {
+     "total": 2.45,
+     "loss": 1.444,
+     "cong": 1.006
+    }
+   },
+   "10": {
+    "Capital_Hudson": {
+     "total": 1.025,
+     "loss": 1.063,
+     "cong": -0.037
+    },
+    "Lower_Hudson": {
+     "total": 2.362,
+     "loss": 1.952,
+     "cong": 0.41
+    },
+    "NYC": {
+     "total": 2.943,
+     "loss": 2.29,
+     "cong": 0.653
+    },
+    "Long_Island": {
+     "total": -0.689,
+     "loss": 1.667,
+     "cong": -2.356
+    }
+   },
+   "11": {
+    "Capital_Hudson": {
+     "total": 3.182,
+     "loss": 2.402,
+     "cong": 0.781
+    },
+    "Lower_Hudson": {
+     "total": 3.871,
+     "loss": 3.151,
+     "cong": 0.719
+    },
+    "NYC": {
+     "total": 4.474,
+     "loss": 3.549,
+     "cong": 0.924
+    },
+    "Long_Island": {
+     "total": 7.263,
+     "loss": 3.513,
+     "cong": 3.75
+    }
+   },
+   "12": {
+    "Capital_Hudson": {
+     "total": 11.148,
+     "loss": 6.644,
+     "cong": 4.504
+    },
+    "Lower_Hudson": {
+     "total": 8.466,
+     "loss": 6.336,
+     "cong": 2.13
+    },
+    "NYC": {
+     "total": 8.794,
+     "loss": 6.663,
+     "cong": 2.131
+    },
+    "Long_Island": {
+     "total": 21.589,
+     "loss": 7.717,
+     "cong": 13.873
+    }
+   }
+  }
+ },
+ "annual_gradient": {
+  "2023": {
+   "Capital_Hudson": {
+    "measured_total": 9.26,
+    "measured_loss": 1.117,
+    "measured_cong": 8.143,
+    "model_total": 9.957
+   },
+   "Lower_Hudson": {
+    "measured_total": 7.168,
+    "measured_loss": 1.55,
+    "measured_cong": 5.618,
+    "model_total": 9.957
+   },
+   "NYC": {
+    "measured_total": 8.146,
+    "measured_loss": 1.744,
+    "measured_cong": 6.402,
+    "model_total": 10.003
+   },
+   "Long_Island": {
+    "measured_total": 15.726,
+    "measured_loss": 2.051,
+    "measured_cong": 13.675,
+    "model_total": 10.68
+   }
+  },
+  "2024": {
+   "Capital_Hudson": {
+    "measured_total": 3.731,
+    "measured_loss": 1.689,
+    "measured_cong": 2.041,
+    "model_total": 1.387
+   },
+   "Lower_Hudson": {
+    "measured_total": 4.165,
+    "measured_loss": 2.331,
+    "measured_cong": 1.834,
+    "model_total": 1.389
+   },
+   "NYC": {
+    "measured_total": 6.463,
+    "measured_loss": 2.616,
+    "measured_cong": 3.847,
+    "model_total": 1.6
+   },
+   "Long_Island": {
+    "measured_total": 9.176,
+    "measured_loss": 2.809,
+    "measured_cong": 6.367,
+    "model_total": 2.254
+   }
+  },
+  "2025": {
+   "Capital_Hudson": {
+    "measured_total": 7.929,
+    "measured_loss": 2.924,
+    "measured_cong": 5.005,
+    "model_total": 3.076
+   },
+   "Lower_Hudson": {
+    "measured_total": 7.635,
+    "measured_loss": 3.716,
+    "measured_cong": 3.919,
+    "model_total": 3.076
+   },
+   "NYC": {
+    "measured_total": 11.633,
+    "measured_loss": 4.14,
+    "measured_cong": 7.493,
+    "model_total": 3.274
+   },
+   "Long_Island": {
+    "measured_total": 14.815,
+    "measured_loss": 4.257,
+    "measured_cong": 10.557,
+    "model_total": 3.714
+   }
+  }
+ },
+ "face_months": {
+  "2023": {
+   "lw_premium_by_month": {
+    "1": {
+     "lw_loss_premium": 1.696,
+     "lw_total_premium": 6.923
+    },
+    "2": {
+     "lw_loss_premium": 1.31,
+     "lw_total_premium": 18.533
+    },
+    "3": {
+     "lw_loss_premium": 0.591,
+     "lw_total_premium": 10.802
+    },
+    "4": {
+     "lw_loss_premium": 0.679,
+     "lw_total_premium": 7.255
+    },
+    "5": {
+     "lw_loss_premium": 0.775,
+     "lw_total_premium": 4.689
+    },
+    "6": {
+     "lw_loss_premium": 0.872,
+     "lw_total_premium": 2.879
+    },
+    "7": {
+     "lw_loss_premium": 1.303,
+     "lw_total_premium": 4.422
+    },
+    "8": {
+     "lw_loss_premium": 1.152,
+     "lw_total_premium": 5.704
+    },
+    "9": {
+     "lw_loss_premium": 1.223,
+     "lw_total_premium": 4.964
+    },
+    "10": {
+     "lw_loss_premium": 0.943,
+     "lw_total_premium": 3.702
+    },
+    "11": {
+     "lw_loss_premium": 1.142,
+     "lw_total_premium": 5.201
+    },
+    "12": {
+     "lw_loss_premium": 1.235,
+     "lw_total_premium": 2.43
+    }
+   },
+   "annual_lw_weights": {
+    "Upstate_West": 0.3508,
+    "Capital_Hudson": 0.1368,
+    "Lower_Hudson": 0.0548,
+    "NYC": 0.3275,
+    "Long_Island": 0.1302
+   }
+  },
+  "2024": {
+   "lw_premium_by_month": {
+    "1": {
+     "lw_loss_premium": 2.602,
+     "lw_total_premium": 12.518
+    },
+    "2": {
+     "lw_loss_premium": 1.536,
+     "lw_total_premium": 2.912
+    },
+    "3": {
+     "lw_loss_premium": 0.974,
+     "lw_total_premium": 1.775
+    },
+    "4": {
+     "lw_loss_premium": 0.998,
+     "lw_total_premium": 2.131
+    },
+    "5": {
+     "lw_loss_premium": 0.956,
+     "lw_total_premium": 2.65
+    },
+    "6": {
+     "lw_loss_premium": 1.207,
+     "lw_total_premium": 4.415
+    },
+    "7": {
+     "lw_loss_premium": 1.941,
+     "lw_total_premium": 5.19
+    },
+    "8": {
+     "lw_loss_premium": 1.357,
+     "lw_total_premium": 2.667
+    },
+    "9": {
+     "lw_loss_premium": 1.036,
+     "lw_total_premium": 1.339
+    },
+    "10": {
+     "lw_loss_premium": 1.081,
+     "lw_total_premium": 1.254
+    },
+    "11": {
+     "lw_loss_premium": 1.567,
+     "lw_total_premium": 2.644
+    },
+    "12": {
+     "lw_loss_premium": 3.716,
+     "lw_total_premium": 8.929
+    }
+   },
+   "annual_lw_weights": {
+    "Upstate_West": 0.349,
+    "Capital_Hudson": 0.1367,
+    "Lower_Hudson": 0.0559,
+    "NYC": 0.3287,
+    "Long_Island": 0.1297
+   }
+  },
+  "2025": {
+   "lw_premium_by_month": {
+    "1": {
+     "lw_loss_premium": 6.072,
+     "lw_total_premium": 26.698
+    },
+    "2": {
+     "lw_loss_premium": 5.169,
+     "lw_total_premium": 15.805
+    },
+    "3": {
+     "lw_loss_premium": 1.858,
+     "lw_total_premium": 4.926
+    },
+    "4": {
+     "lw_loss_premium": 1.55,
+     "lw_total_premium": 4.286
+    },
+    "5": {
+     "lw_loss_premium": 1.682,
+     "lw_total_premium": 4.078
+    },
+    "6": {
+     "lw_loss_premium": 2.721,
+     "lw_total_premium": 8.73
+    },
+    "7": {
+     "lw_loss_premium": 2.107,
+     "lw_total_premium": 10.908
+    },
+    "8": {
+     "lw_loss_premium": 0.636,
+     "lw_total_premium": 0.698
+    },
+    "9": {
+     "lw_loss_premium": 0.955,
+     "lw_total_premium": -0.09
+    },
+    "10": {
+     "lw_loss_premium": 1.231,
+     "lw_total_premium": 1.158
+    },
+    "11": {
+     "lw_loss_premium": 2.141,
+     "lw_total_premium": 3.083
+    },
+    "12": {
+     "lw_loss_premium": 4.484,
+     "lw_total_premium": 7.74
+    }
+   },
+   "annual_lw_weights": {
+    "Upstate_West": 0.3444,
+    "Capital_Hudson": 0.1387,
+    "Lower_Hudson": 0.0561,
+    "NYC": 0.3306,
+    "Long_Island": 0.1302
+   }
+  }
+ },
+ "materiality": {
+  "bench_rt_lw": {
+   "2023": {
+    "rt_lw_annual": 32.25,
+    "rt_lw_mon": [
+     38.88,
+     44.5,
+     27.22,
+     26.58,
+     20.41,
+     28.04,
+     37.92,
+     29.65,
+     41.51,
+     28.14,
+     30.97,
+     29.73
+    ]
+   },
+   "2024": {
+    "rt_lw_annual": 38.12,
+    "rt_lw_mon": [
+     52.63,
+     30.05,
+     26.15,
+     27.18,
+     26.45,
+     35.26,
+     46.55,
+     36.44,
+     32.09,
+     32.59,
+     33.14,
+     68.99
+    ]
+   },
+   "2025": {
+    "rt_lw_annual": 66.43,
+    "rt_lw_mon": [
+     111.2,
+     99.4,
+     46.98,
+     40.65,
+     33.73,
+     78.42,
+     79.63,
+     45.63,
+     40.43,
+     45.68,
+     55.07,
+     98.12
+    ]
+   }
+  },
+  "keeper_c3a": {
+   "2023": "+1.0%",
+   "2024": "-2.0%",
+   "2025": "-12.0% (58.45 vs lw 66.43)"
+  },
+  "annual_lw_loss_premium_vs_uw_usd": {
+   "2023": 1.076,
+   "2024": 1.585,
+   "2025": 2.537
+  },
+  "annual_lw_total_premium_vs_uw_usd": {
+   "2023": 6.374,
+   "2024": 4.057,
+   "2025": 7.303
+  },
+  "note": "the LW loss premium is the measured additive downstate LOSS floor the lossless model omits; as a share of the 2025 C3a gap (66.43 - 58.45 = 7.98 $/MWh) it bounds what the loss surface can close ex ante. It is a FLOOR component: congestion dominates the object months (nyiso-158 \u00a71.5) and is NOT addressed here."
+ },
+ "adverse_cases": {
+  "c3a_2023_up_side": {
+   "keeper": "+1.0%",
+   "band_headroom_pp": 9.0,
+   "predicted_push_pp": 3.34,
+   "note": "upper bound: assumes the full annual LW loss premium materializes as model LW price uplift"
+  },
+  "c3a_2025_upstate_relocation": {
+   "gate": "arm Upstate_West annual mean dual within +/-0.75 $/MWh of control every year (W-K3d class: the surface must not relocate error upstate; UW is the persistent SENDER so its dual is set by its own balance \u2014 any move is second-order through dispatch reshuffle and must stay small)"
+  }
+ }
+}
