@@ -482,6 +482,9 @@ results/calibration/*/*/hourly/unit_hourly_*.parquet
 results/calibration/*/*/hourly/network_*.parquet
 results/calibration/*/solve.log
 results/calibration/*-capdel-probe.log
+# miso-188: replay launch logs (transient stdout capture of in-session
+# replay_keeper invocations; the solve itself writes the ignored solve.log)
+results/calibration/*.launch.log
 results/calibration/*/_shared/
 results/calibration/_shared/
 results/calibration/logs/
