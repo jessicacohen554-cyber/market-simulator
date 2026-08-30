@@ -748,6 +748,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # cached run keeps its key; an armed run splits every internal CAISO link
     # into a lossy one-way pair and so gets a distinct key.
     "caiso_zonal_loss_surface",
+    # nyiso-159 NYISO marginal-loss surface (default off): registered at
+    # introduction, so like its CAISO predecessor it never moves the pinned
+    # default key. Dropped from the hash at its default so every pre-existing
+    # cached run keeps its key; an armed run splits the four internal chain
+    # links into lossy one-way pairs and so gets a distinct key.
+    "nyiso_zonal_loss_surface",
     # nyiso-100 mis-attributed simultaneous-import retire (default off): the
     # same one-line remedy as pjm_apsouth_interface_cut / pjm_zonal_loss_surface
     # above -- the field landed on main (2cc1179) unregistered and so entered
@@ -1411,6 +1417,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "coal_committed_takeorpay_sunk_fixed": "False",
     "pjm_zonal_loss_surface": "False",
     "caiso_zonal_loss_surface": "False",
+    "nyiso_zonal_loss_surface": "False",
     "nyiso_import_sil_retire": "False",
     "nyiso_seam_deliverability_envelope": "False",
     "nyiso_seam_par_attribution": "False",
@@ -11950,6 +11957,42 @@ class ScenarioConfig:
     # byte-identical off.
     caiso_zonal_loss_surface: bool = False
 
+    # NYISO marginal transmission-loss surface on the internal N-S chain
+    # (nyiso-159; charter results/calibration/
+    # PREREG-nyiso159-zonal-loss-surface-2026-08-30.md). The NYISO test of the
+    # shared zonal_loss_surface row. When True for NYISO, the four internal
+    # chain links (UW<->CH, CH<->LH, LH<->NYC, NYC<->LI) are split into
+    # one-way loss pairs (interchange.apply_nyiso_zonal_loss_links) and each
+    # direction's receiving-side marginal loss fraction
+    #   eps_(x->y),m = max(0, (dev_y,m - dev_x,m) / (1 + dev_y,m))
+    # enters the energy balance (dispatch.build_constraints link_loss), where
+    # dev is the measured per-zone monthly delivery-factor deviation
+    # dev_z = sum(MCL_z)/sum(E) derived by
+    # scripts/data/derive_nyiso_loss_surface.py from NYISO's own posted RT
+    # LBMP component record (LBMP = E + MCL - MCC, MST §17.1 / Manual 12; the
+    # RT basis is a declared per-ISO divergence from CAISO's DA — NYISO's
+    # scored target and committed component series are RT); per-year rows for
+    # a backcast train year, pooled rows for a forecast year.
+    #
+    # WHY: nyiso-159 phase-0 measured that the LOSS component of the downstate
+    # gradient (LW annual loss premium over Upstate_West $1.08/$1.59/$2.54 in
+    # 2023/2024/2025) is a sign-stable, monotone (UW<CH<LH<NYC<LI, 36/36
+    # months) additive floor the lossless LP has NO representation of in any
+    # hour — in 2024-2025 the measured loss component alone equals or exceeds
+    # the model's ENTIRE zonal spread. Rule 14 [R-ACCURATE] prefers the
+    # measured physical network property. Congestion dominates the C3b face
+    # months and is NOT addressed here; the mechanism is bounded ex ante at
+    # the measured loss premium and must not be quoted as closing the winter/
+    # summer faces (nyiso-158 routes those to Leg 2 / the ledgered C3c).
+    #
+    # Rule 25 [R-ISO-SCOPE]: the surface is NYISO's own posted components,
+    # read from NYISO_loss_surface.csv; no value crosses from the MISO/PJM/
+    # CAISO analogues, whose per-ISO verdicts are their own (rule 28(d)).
+    # Rule 13 [R-MEASURED]: a network property that regenerates every year
+    # from the same public feed and responds to changed grid conditions. Off
+    # by default; byte-identical off.
+    nyiso_zonal_loss_surface: bool = False
+
     # ERCOT West Texas Export corridor VRE curtailment-share driver
     # (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology-
     # scope-2026-07.md, WP-B). When True in backcast mode for ERCOT, the West and
@@ -14714,6 +14757,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_zonal_loss_surface": 3,
     "pjm_zonal_loss_surface": 3,
     "caiso_zonal_loss_surface": 3,
+    "nyiso_zonal_loss_surface": 3,
     "caiso_commitment_posture": 1,
     "caiso_reserve_online_scoped": 1,
     "ercot_load_resource_reserve": 1,

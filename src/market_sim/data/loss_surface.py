@@ -43,6 +43,7 @@ _DERIVE_SCRIPT = {
     "MISO": "scripts/data/derive_miso_loss_surface.py",
     "PJM": "scripts/data/derive_pjm_loss_surface.py",
     "CAISO": "scripts/data/derive_caiso_loss_surface.py",
+    "NYISO": "scripts/data/derive_nyiso_loss_surface.py",
 }
 
 # Pooled-surface sentinel year (matches the derives' POOLED_YEAR).
