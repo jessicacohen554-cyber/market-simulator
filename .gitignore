@@ -366,6 +366,16 @@ frontend/data/forecast/program-status.js
 /results/ff-t3-neiso-golden/*/*/*/year_*_floor_retentions.json
 /results/ff-t3-neiso-golden/*.log
 
+# capx-S6 PJM T1-F ledger run (run id pjm-2026-2030-s6-ledger, pre-declared in
+# docs/handoffs/FINDING-capx-s6-pjm-ledger-2026-08-30.md §3) — same class and
+# same slim-vs-heavy split as /results/ff-t1f-s4hydro/ above, plus the
+# in-session build/solve logs.
+/results/ff-t1f-s6-pjm/*/*/*/*.parquet
+/results/ff-t1f-s6-pjm/*/*/*/*.npz
+/results/ff-t1f-s6-pjm/*/*/*/hourly/
+/results/ff-t1f-s6-pjm/*/*/*/year_*_floor_retentions.json
+/results/ff-t1f-s6-pjm/*.log
+
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
 # D-28 option A step 3). Same class as /results/ffr7b2/ above, of which this is
