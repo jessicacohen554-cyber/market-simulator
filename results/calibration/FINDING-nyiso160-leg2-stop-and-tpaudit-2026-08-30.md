@@ -90,9 +90,46 @@ capacity-deliverability and nyiso-interface-flows partitions fail loudly
 when absent (both mechanisms correctly refuse to silently no-op). That is
 the clean-tree contract working as designed, not drift.
 
-## §3 — Audit verdict
+## §3 — Audit verdict: THE KEEPER REPLAYS IDENTICALLY AT HEAD — no drift to close
 
-<!-- AUDIT-VERDICT: filled from _nyiso160_tpaudit.json after the replay -->
+Record: `results/calibration/_nyiso160_tpaudit.json`. The replay solved at
+the branch head `cda9b18` (= main `74775c4` + this session's records commit;
+no solve-affecting file differs from main).
+
+* **A1 — bit-identical in every scored object, all three years.** Max abs
+  divergence replay-vs-keeper is **0.0** on every value column of every
+  hourly sidecar: zonal `price` / `slack` / `dump` / `demand` /
+  `reserve_price` (52,560 rows/yr), per-class `mw`, reserve-family `dual` /
+  `requirement_mw` / `held_mw` / `shortfall_mw`, and storage `charge_mw` /
+  `discharge_mw`. Max zonal |Δprice| = 0.0 in 2023, 2024 and 2025 — the
+  same zero distance the nyiso-159 K5/K6 legs measured, now re-established
+  at the current head.
+* **A2 — the scorecard reproduces to the recorded digit.** Replay C3a on the
+  committed-anchor basis: **+2.35 / −1.21 / −11.48 %** vs the keeper's
+  committed +2.35 / −1.21 / −11.48 (Δ = 0.00 pp everywhere; identical
+  load-weighted λ to 4 dp: 33.0071 / 37.6598 / 58.8071).
+* **A3 — zero differing levers.** The recorded config surfaces diff empty
+  after the fail-closed schema-growth adjudication: the only two differing
+  keys (`entry_forward_reserve_leg`, `ercot_offer_surface_cleared_share_rt_room`)
+  are ScenarioConfig fields REGISTERED AFTER the keeper's recipe was
+  recorded (the latter by ercot-242, merged at the same head), absent from
+  the keeper's surface and recorded in the replay at their registered
+  default `False` — rule-24 surface widening, with the A1 bit-identity
+  independently proving both inert on this recipe. No lever moved.
+* **Legitimacy diagnostics** regenerate gate-identical to the keeper's
+  committed artifact (every D-gate equal; the only content difference is
+  the bundle-name string inside D9 row labels). The generation-time
+  module warning on the replayed bundle is the identical state the
+  keeper's own committed diagnostics carry — C8 scores PASS from contents,
+  as the keeper's determination records.
+
+**Verdict: no G1-class drift exists at this head** (contrast nyiso-155 §4,
+where the then-keeper did not reproduce bit-identically and 2023/2024
+reshuffled). The touchpoint-prep condition — the keeper recipe frozen,
+reproducible at HEAD, nothing left to prepare — is SATISFIED as of this
+audit. Should NYISO's validation authorization be re-granted (a new owner
+`complete` declaration once the keeper scores CALIBRATED — Q5-W's stated
+re-entry route), the recipe replays as-committed with no repair step.
 
 ## §4 — What this session did NOT do
 

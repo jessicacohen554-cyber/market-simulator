@@ -8305,3 +8305,58 @@ surface is the restored measured FLOOR, not object-month work; no cutset,
 TTC, seam or C3c parameter moved.
 
 Next shorthand: nyiso-160.
+
+## 2026-08-30 — nyiso-160: Leg 2 (the MyNYISO AORR intake) STOPPED WITH CAUSE at access — the winter face is identification-blocked on both legs; the touchpoint-prep audit run in its place proves the keeper replays BIT-IDENTICALLY at HEAD
+
+Executes the Leg-2 charter (`INTAKE-SPEC-nyiso156-winter-locational-2026-08-30`
+§2) to its Step-1 gate and stops there, exactly as the handoff pre-committed.
+Records: `results/calibration/FINDING-nyiso160-leg2-stop-and-tpaudit-2026-08-30.md`;
+`scripts/probes/_nyiso160_tpaudit.py` → `_nyiso160_tpaudit.json`;
+run `2026-08-30-nyiso-160-tpaudit-replay` (bundle `nyiso160_tpaudit_replay`);
+`scripts/gen_nyiso160_attestation.py`. Freeze ACTIVE (2023–2025 only, no
+`--holdout-authorized` — NYISO holds no `complete` marker since Q5-W).
+
+**(1) The stop.** The AORR artifacts had not landed in `data/raw` (verified:
+none anywhere in tree or history), and the owner, asked in-session, answered
+**"Cannot produce them"** (no MyNYISO access). The leg closes at ACCESS — the
+nyiso-97 stop-if-walled class; the §2 identifiability gate never ran because
+its input never existed, so the stop record stands in place of a gate verdict.
+NO substitute winter mechanism invented (nyiso-158 §1.4 measured that no
+admissible driver reaches the winter face; the nyiso-97 §5 re-open bar binds
+verbatim through the spec). With Leg 1 executed (nyiso-157) and its companion
+chain closed on measurement (nyiso-158), **the winter face of C3a-2025 is now
+identification-blocked on both legs**; the summer face stays the ledgered
+model-class C3c. Determination consequence: none — the keeper already reads
+NOT-YET on exactly {C3a-2025 −11.5%, C3c}. Re-open = the nyiso-97 conditions
+only (public AORR posting restored / FERC-PSC docket / owner-supplied access
+whose rows carry derivable parameters, gate first, fail-closed). Matrix:
+no cell verdict moves (nothing tested); `scuc_load_pocket_commitment` stays
+**G** with this stop appended to its evidence; §5.5 carries the dated
+annotation.
+
+**(2) The audit (the handoff's designated fallback).** Zero-delta replay of
+keeper `2026-08-30-nyiso-159-loss-surface` at HEAD (`replay_keeper.py`, years
+2023 2024 2025 sequential, no `--set`), audited by the committed-bytes probe:
+**A1** max abs divergence **0.0** on every hourly-sidecar value column, all
+three years (max zonal |Δprice| 0.0 ×3); **A2** C3a +2.35/−1.21/−11.48 vs
+committed +2.35/−1.21/−11.48 (Δ 0.00 pp; lw-λ identical to 4 dp); **A3** zero
+differing levers — the two differing recorded keys
+(`entry_forward_reserve_leg`, `ercot_offer_surface_cleared_share_rt_room`)
+are post-recording rule-24 schema growth at registered default `False`,
+proven inert by A1 (adjudicated fail-closed against the live ScenarioConfig
+defaults, never hardcoded). Legitimacy diagnostics regenerate gate-identical.
+**Verdict: NO G1-class drift** (contrast nyiso-155 §4) — the touchpoint-prep
+condition (recipe frozen, reproducible at HEAD, nothing left to prepare) is
+SATISFIED. Environment note: the audit's only repairs were disposable
+`data/clean` regenerations (capacity-deliverability, nyiso-interface-flows
+fail loudly when absent — the clean-tree contract working, not drift).
+
+**(3) Posture.** Keeper UNCHANGED; nothing armed, disarmed or re-tuned; the
+loss-surface derive stays frozen (rule 23); the replay run is registered as
+an audit probe (rule 15; retention pruned `2026-08-22-nyiso-149-basis-probe`)
+and is NEVER a keeper candidate — it is the keeper itself, re-established at
+HEAD. The lane's live route to CALIBRATED remains exactly the nyiso-158/159
+routing: the winter face waits on an identification source that now requires
+a nyiso-97 re-open event; the summer face is the ledgered C3c.
+
+Next shorthand: nyiso-161.
