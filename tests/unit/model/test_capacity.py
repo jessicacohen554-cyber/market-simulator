@@ -2604,6 +2604,134 @@ class TestNyisoExternalCapacityIntake(unittest.TestCase):
         self.assertLess(value, 4_350.0)
 
 
+class TestMisoAdequacyPackage(unittest.TestCase):
+    """capx S-123 (2026-08-30): the MISO adequacy package — S-1 + S-2 + S-3a.
+
+    Executes the three published-source terms chartered by
+    FINDING-capx-d2b-i7-ledger-2026-08-25.md §8/§10 against the 6,037 MW MISO
+    2026 base-year I7 gap: the PY 2025-26 same-document PRM re-vintage (S-1),
+    the PRA external-resource ZRC intake (S-2), and the LMR/DR documented
+    reconciliation (S-3a). Published operands only, none sized against the
+    residual (rules 5/13/21/23); every pin below is a value from the PY
+    2025/26 PRA Results Posting or the PY 2025-26 LOLE Study.
+    """
+
+    # PY 2025/26 PRA Results Posting, p.22 Summer trend table (cleared ZRC).
+    PRA_SUMMER_CLEARED = {
+        "generation": 120_738.6,
+        "external_resources": 3_505.9,
+        "btm_generation": 4_282.8,
+        "demand_resources": 9_004.4,
+        "energy_efficiency": 27.6,
+    }
+    # p.18 Summer zonal results, System column.
+    PRA_SUMMER_INITIAL_PRMR = 135_213.4
+    PRA_SUMMER_COMMITTED = 137_559.3
+
+    def test_s1_prm_pair_is_same_document_py2025_26(self):
+        # Both halves from the PY 2025-26 LOLE Study Module E-1 (ICAP 15.7%,
+        # UCAP 7.9%), so the composite is the document's own UCAP requirement
+        # peak x 1.079 — no longer the mixed-vintage peak x 1.09952.
+        from market_sim.config.constants import PLANNING_RESERVE_MARGIN_BY_ISO
+
+        self.assertAlmostEqual(PLANNING_RESERVE_MARGIN_BY_ISO["MISO"], 0.157)
+        ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["MISO"]
+        self.assertAlmostEqual(ratio, 1.079 / 1.157, places=9)
+        self.assertAlmostEqual(
+            (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO["MISO"]) * ratio, 1.079, places=9
+        )
+
+    def test_s2_registry_is_the_pra_summer_cleared_external_zrc(self):
+        from market_sim.config.constants import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+
+        # The posting's own five category rows sum to the System committed
+        # total — the entry is one row of MISO's own supply accounting.
+        self.assertAlmostEqual(
+            sum(self.PRA_SUMMER_CLEARED.values()), self.PRA_SUMMER_COMMITTED, places=1
+        )
+        self.assertAlmostEqual(
+            ADEQUACY_EXTERNAL_TIE_FIRM_MW["MISO"],
+            self.PRA_SUMMER_CLEARED["external_resources"],
+            places=6,
+        )
+
+    def test_s2_zrc_basis_needs_no_conversion_factor(self):
+        # One basis (rule 19): a ZRC is 1 MW of SAC — MISO's UCAP-equivalent
+        # unit, the basis the (1 + PRM_UCAP) requirement is stated on — so
+        # unlike the NYISO Gold-Book entry the published operand enters
+        # verbatim, with no ICAP->UCAP factor to diverge from the requirement
+        # side.
+        from market_sim.config.constants import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+
+        self.assertEqual(ADEQUACY_EXTERNAL_TIE_FIRM_MW["MISO"], 3_505.9)
+
+    def test_s2_accredited_ledger_includes_miso_external_firm(self):
+        from market_sim.config.constants import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+        from market_sim.model.capacity import (
+            _firm_import_mw,
+            accredited_firm_capacity_mw,
+        )
+
+        expected = ADEQUACY_EXTERNAL_TIE_FIRM_MW["MISO"]
+        self.assertAlmostEqual(_firm_import_mw("MISO"), expected, places=6)
+        with no_hydro_accreditation():
+            self.assertAlmostEqual(
+                accredited_firm_capacity_mw([], iso="MISO"), expected, places=6
+            )
+
+    def test_s2_entry_is_not_the_dispatch_floor_or_the_erz_column(self):
+        # The rejected bases, pinned so a future edit cannot silently swap
+        # them in: the 1,400 MW Manitoba firm-hydro dispatch constant (an
+        # inherited ladder spec constant, not a published RA accreditation)
+        # and the zonal tables' ERZ-column committed 1,580.1 MW (only the
+        # portion clearing in the External Resource Zones proper — the
+        # category row is MISO's full external-resource supply count).
+        from market_sim.config.constants import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+
+        value = ADEQUACY_EXTERNAL_TIE_FIRM_MW["MISO"]
+        self.assertNotAlmostEqual(value, 1_400.0, places=0)
+        self.assertNotAlmostEqual(value, 1_580.1, places=0)
+
+    def test_s3a_dr_fraction_is_the_documented_reconciliation(self):
+        # Cleared Demand Resources over the pre-auction Initial PRMR (the PJM
+        # divide-by-published-requirement construction) — and NOT the BTMG/EE
+        # categories, excluded conservatively (metered-demand embedding).
+        from market_sim.config.constants import (
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+        )
+
+        f = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["MISO"]
+        self.assertAlmostEqual(
+            f,
+            self.PRA_SUMMER_CLEARED["demand_resources"] / self.PRA_SUMMER_INITIAL_PRMR,
+            places=9,
+        )
+        with_btmg_ee = (
+            self.PRA_SUMMER_CLEARED["demand_resources"]
+            + self.PRA_SUMMER_CLEARED["btm_generation"]
+            + self.PRA_SUMMER_CLEARED["energy_efficiency"]
+        ) / self.PRA_SUMMER_INITIAL_PRMR
+        self.assertLess(f, with_btmg_ee)
+
+    def test_package_requirement_composition(self):
+        # The fallback resolver composes the three terms exactly:
+        # requirement = peak x (1 - f_DR) x (1 + 0.157) x (1.079/1.157)
+        #             = peak x (1 - f_DR) x 1.079   (MISO publishes no FPR).
+        from market_sim.config.constants import (
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+        )
+        from market_sim.model.capacity import resolve_adequacy_requirement_mw
+
+        config = ScenarioConfig(iso="MISO")
+        peak = 128_548.607  # the committed FFR-1C 2026 ledger peak
+        f = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["MISO"]
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(config, "MISO", peak, 2026),
+            peak * (1.0 - f) * 1.079,
+            places=3,
+        )
+
+
 class TestReserveMarginBuild(unittest.TestCase):
     """The adequacy backstop: force-build firm capacity to the reserve margin."""
 
