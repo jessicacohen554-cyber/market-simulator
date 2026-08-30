@@ -766,7 +766,19 @@ def compose_report(year: int, bundle: Path, capture_dir: Path) -> dict:
                 "not re-derived."
             ),
         },
-        "legs": legs,
+        # Per-row committed run stats stay in the capture dir; the committed
+        # artifact carries their equality verdict (HP-1) and deltas (HP-3),
+        # not ~800 rows of per-unit lists.
+        "legs": {
+            leg: {
+                **doc,
+                "calls": [
+                    {k: v for k, v in call.items() if k != "committed_rows"}
+                    for call in doc["calls"]
+                ],
+            }
+            for leg, doc in legs.items()
+        },
     }
     return report
 
