@@ -3740,3 +3740,237 @@ your branch when done.
     staleness **Δ = 1/10 WARN-level** (exit 0) · bench **0 STALE / 6
     engine-drift WARNs** (exit 0). The board stays **v14** — this motion
     is the NEXT cycle's to board.
+- 2026-08-30 — **DIRECTOR RECORDS v15 — the ruling-execution cycle: all four
+  PM-sitting rulings EXECUTED, ZERO keeper promotions (a board first), the
+  four-instrument alignment repaired by marker withdrawal rather than by a
+  calibration win, and one adverse finding that no gate could have caught.**
+  Board refreshed v14 → **v15** at
+  `docs/handoffs/audit-program-director-board-2026-08.md`; this entry is the
+  §8 half of the same refresh. Records lane, **ZERO SOLVES** — every figure
+  read from committed bytes at the pin (rule 22 `[R-HOLDOUT]`: nothing solved,
+  scored or registered, so no holdout tier was spent in any ISO).
+  - **(a) PIN.** **`69ae4dc7`** (merge of #4359), `origin/main`, 2026-08-30
+    12:25 PDT. Pinned ONCE after `origin/main` advanced **five times** during
+    measurement (`f9eb73c7` → `a2820bdb` → `51f8200f` → `f02f0a4a` →
+    `69ae4dc7`) and then held stable across two polling rounds (≈ 5 min). The
+    director's derivation base **`158a688` (merge of #4354) was REACHABLE BUT
+    5 MERGED PRs STALE** (#4355–#4359) by the time this lane measured; both
+    states are recorded on the board as separate labelled measurements per the
+    v14 amendment. **v15 cycle window `def338e..69ae4dc7` = 66 commits, 42
+    non-merge, 24 merged PRs (#4336–#4359).**
+  - **(b) THE FOUR RULINGS — ALL EXECUTED, verified at the pin, not quoted
+    from the dispatch.** **R-1**: the NYISO `frontier` block carries
+    `currency_annotation_2026-08-30` (#4342, `4c63b05`) — an annotation that
+    rewrites no declaration text and keeps `keeper_at_declaration`, naming both
+    post-declaration moves and the current `NOT-YET`. **This retires v14 owner
+    queue item 1 / v13 item 7, the board's top item for two cycles.** **R-2**:
+    ercot-240 chartered (#4341) and CLOSED the same day (#4344/#4345/#4348) —
+    the event-hour "demand gap" is the **DC-TIE NET IMPORT IDENTITY, exactly
+    and everywhere**; the model's demand input is **not** understating demand
+    (it serves the measured net-generation boundary correctly), and all three
+    chartered demand-source candidates are REFUTED as gap carriers. **R-3**:
+    caiso-222 Q1 ruled **TERMINAL REST + MAP** (#4342, `634927a`) — the CAISO
+    C3a residual is attributed and closed **at this representation grain**.
+    **R-4**: Q2 routes **(i) ARMED** (W-1/W-2/W-3 as standing watch items, the
+    only sanctioned re-checks of the Q1 rest) and **(iii) CHARTERED**, route
+    **(ii) CEII access DECLINED**; route (iii) executed same-day as
+    **caiso-223** (#4347/#4350) — partition **P-A′** adjudicated (one FSNO
+    pocket zone between two element-grounded cuts, replacing a Path-15 link the
+    DMM record says does **not** bind), membership derived (**42 plants /
+    2,701 MW**, zero silent defaults), LDF measured 3-way (**FSNO 0.1326 /
+    ZP26 0.1148 / NP15 0.7526**, **gates 13/13 PASS**, two-way control EXACT
+    vs the committed caiso-172 artifact), **zero-solve, nothing armed, keeper
+    unchanged**, ending on a sufficiency gap list.
+  - **(c) ZERO KEEPER PROMOTIONS — the first such cycle this board has
+    recorded**, after nine promotion events in v14's five days. Re-derived,
+    not asserted: all six `keepers/<ISO>.json` `keeper` fields compared
+    **byte-for-byte at `def338e` and at the pin** (all UNCHANGED), and
+    `git diff` over `frontend/data/backcast/keepers/` returns **empty** across
+    `158a688..69ae4dc7`. The only keeper-shard byte-motion in the window is
+    R-1's annotation. Keeper table, all six determinations and all eighteen
+    C3a(RT) magnitudes re-parsed from the status shards and **unchanged in
+    every cell**: ERCOT two-config (forward `CALIBRATED` on span / carve-out
+    `CALIBRATED` / registered 3-yr `NOT-YET`), PJM **CALIBRATED** 8/8/0/0,
+    NEISO **CALIBRATED** 8/7/0/1, CAISO `NOT-YET` 8/6/1/1, NYISO `NOT-YET`
+    8/5/3/0, MISO `NOT-YET` 8/6/1/1.
+  - **(d) THE ALIGNMENT BREAK v14 REPORTED IS REPAIRED — BY MARKER WITHDRAWAL,
+    NOT BY A CALIBRATION WIN.** The capx **Q5-W** lane (#4343 — a DIFFERENT
+    program acting on the shared marker file under its own charter) withdrew
+    **NYISO's `complete` marker** on the uniform rule *a `complete` marker
+    cannot stand on a NOT-YET keeper*, the 2026-08-06 CAISO precedent applied
+    evenly. At the pin: **CALIBRATED = `complete` = forecast gate-(a) passers
+    = {PJM, NEISO}** (three instruments agreeing) while **`frontier` =
+    {PJM, NYISO, NEISO}** is now the **lone misaligned instrument**. Recorded
+    as state, not drift, and stated honestly on the board: the break closed
+    because an instrument was *withdrawn*, not because NYISO improved — and
+    the misalignment **moved** rather than vanished. `withdrawn` = {NYISO,
+    CAISO}; **`final` remains EMPTY (`_note` only)**.
+  - **(e) FORECAST BOARD — THE FIRST GATE-(a) TRANSITION THIS BOARD HAS
+    RECORDED, and it closed downward.** Every
+    `gate.a_keeper_marker.detail` in the committed seed re-compared
+    field-by-field against the live shards and the live `complete` block:
+    **NYISO flipped pass → FAIL** (charter §2.1b(2)(a) tests keeper **AND**
+    marker; the keeper is unchanged and current, the marker is gone).
+    Passers = **{PJM, NEISO}**, still exactly the `complete` set. **Stale seed
+    stamps improved for the first time, 4 → 3** (ERCOT, CAISO, MISO) — the
+    Q5-W lane re-stamped NYISO in the same act that flipped the gate, which is
+    the right pattern: the lane that moves a marker re-stamps the board it
+    drives. Gates (b)/(c) remain UNSCORED. **No forecast run was solved or
+    re-scored by this lane.**
+  - **(f) NEW ADVERSE FINDING (board E-7) — A RETENTION PRUNE REMOVED A
+    STAGE-0 GOLDEN'S PROVENANCE RUN, AND EVERY GATE STAYED GREEN.** The
+    WS3 manifest maps the ERCOT golden to
+    `keeper_id: 2026-08-15-ercot204-rule26-delete`; **that run's registry
+    sidecar was DELETED this window** (`e51a8a7d`, #4356) under **top-15
+    retention**, in the same commit that registered the 239 graded ladder, and
+    its bundle dir went with it. **The prune is legitimate and correctly
+    executed** (rule 15 `[R-DASHBOARD]` policy, long-superseded run, parity
+    exits 0) — which is the point: **registry retention and the golden
+    manifest reference the same run ids and know nothing about each other**, so
+    a correct act in one silently degraded provenance in the other. Stated
+    precisely rather than alarmingly: at the pin **none** of the five golden
+    `keeper_id`s resolves to a registered sidecar, but ERCOT's is the only one
+    that demonstrably **left this window** (its deletion commit exists); the
+    other four never had a registry path under those exact ids — a different
+    condition, recorded as such. The manifest is **byte-unmoved** across all 66
+    commits, and the per-file `content_hashes` are unaffected and remain the
+    verification instrument. Net effect: the ERCOT row now carries **two**
+    broken provenance links (the pruned run plus the still-unresolvable
+    `af1ccb6`). **Recommended fix is on the manifest side (self-contained
+    provenance), NOT exempting golden runs from retention** — that would
+    re-create the parity gate's dead-bundle class. Added to the board's Watch
+    and as RESTART CHECKLIST step 11.
+  - **(g) FIVE CALIBRATION ROUNDS, ONE CLEAN REJECTION, ZERO KEEPER RISK.**
+    **ercot-239 r2's armed solve — v14's outstanding look-for — APPEARED AND
+    CLOSED REJECTED** (#4356): `2026-08-30-239-graded-ladder` (ERCOT, 2023
+    only) rejected **on its own pre-registered gates** (kills clean, officials
+    collapse to pre-k33, spur **74 → 11**), escalated, **keeper untouched**;
+    r3 then precommitted (#4359) and attributed h3068-2024. **ercot-241**
+    phase-0 measured (#4349/#4358): kills clear, **Phase-1 gate OPEN**,
+    dependence position/participation-carried. **nyiso-158** (#4339): the
+    winter binding-depth differential **is the measured Transco TTC step**,
+    **no measured driver reaches the sharpened iroquois re-open bar**,
+    **C3b-2025 is wholly the two faces** (98.4 % of squared error). **nyiso-159**
+    (#4352): loss component measured on the completed 36-month record + PREREG.
+    **caiso-223 → caiso-224** per (b). The board's durable lesson — *a negative
+    result with a bitwise proof beats a positive one without* — is now four
+    consecutive instances across three ISOs, and this cycle is its cleanest
+    demonstration: **five sharpened addresses, zero keepers moved.**
+  - **(h) GATES — ALL FIVE GREEN AT THE PIN**, re-run by this lane with exit
+    codes captured directly and unpiped, never quoted: `audit_keepers.py`
+    **PASS 0 failures / 0 warnings** (exit 0, now over `complete` = {NEISO,
+    PJM}) · `check_registry_payload_parity.py` **exit 0** (56 runs checked, 93
+    bundle dirs swept, 0 known-unsynced tolerated — held across a prune AND a
+    registration) · `check_mechanism_matrix.py` **exit 0** (base + 6 ISO
+    shards; anchors 192 field + 49 row + 151 path; keeper stamps and §5.x
+    headers match every shard) · `check_forecast_staleness.py` **exit 0,
+    Δ = 3/10**, 59 stamped / 27 scored board-wide, **31 of 43 verdict stamps
+    undated**, 14 config epochs, **board inputs all present** ·
+    `check_bench_freshness.py` **exit 0, 20 parts, 0 STALE**, 6 engine-drift
+    WARNs. **Two readings moved vs the director's `158a688` derivation —
+    staleness Δ 1 → 3 and bench drift 13 → 15 commits — both caused by the
+    capx D11-R engine landing (#4355) adding `entry_margin_exhaustion` under
+    `src/market_sim/`: a DIFFERENT program's engine change moving this
+    program's freshness instruments.** Neither is gated. **Staleness-trap
+    check performed before any stamped/scored count was quoted:
+    `frontend/data/hindcast/` is PRESENT (16 entries).**
+  - **(i) HOLDOUT INVARIANT RE-VERIFIED BY WALKING EVERY SIDECAR, not
+    restated.** **56** registered sidecars; solve-year histogram **{2022: 2,
+    2023: 54, 2024: 51, 2025: 51}** (per-ISO: ERCOT 15, MISO 15, NYISO 15,
+    PJM 5, NEISO 4, CAISO 2). The scan for any year in {≤2018, 2019, 2026}
+    returns **NONE**. The only out-of-training registrations remain the two
+    authorized 2022 validation touchpoints; **no ISO has ever spent a
+    locked-test year**, and NEISO's one-shot stays **NEVER GRANTED, not spent**
+    (D-23). *Motion note: the count is unchanged from v14's post-pin 56 because
+    this window pruned one 3-year run (`ercot204`) and registered one 2023-only
+    run (`239-graded-ladder`) — the 2024/2025 decrements are that trade, not a
+    lost year.*
+  - **(j) WORKSTREAMS BYTE-UNMOVED for a THIRD consecutive cycle**, verified
+    rather than assumed: over the full 66-commit window
+    `git diff --name-status` returns **empty** for `.github/workflows/` and for
+    `results/regression-goldens/`. WS1 ~93 % · WS2 done · WS3 paused ~74 %
+    (**PJM golden never captured — SEVENTH board**; `af1ccb6` still
+    unresolvable) · WS4 ~60 % · WS5 Job 1 done · WS6 done, gate green.
+    **Program stays PARKED AT G1; G2 doubly parked** (WS3/PERF-B *and* the
+    golden tier); freeze **deferred by owner direction**. 🆕 **New datum for
+    the freeze, cutting the other way from v14's:** this window landed **zero
+    promotions** while running five calibration rounds — the cheap re-capture
+    window the checklist says has never existed exists right now, and it is
+    fragile (two lanes were live at the pin).
+  - **(k) LANE STATE BY BRANCH, never by plausible-sounding commit.** At the
+    pin: **ONE open PR** (#4360, caiso-224 — live `list_pull_requests`) and
+    **TWO branches ahead of `main`** (`claude/caiso-backcast-next-run-5u7ob7`
+    +2; `claude/ercot-239-residual-queue-lbkvbf` +1, no PR), each tip tested
+    for ancestry **inside** `origin/main` rather than read off the `ls-remote`
+    listing. **This ends four consecutive cycles of "no audit-adjacent lane is
+    running."** `miso-190`'s **registration watch stays OPEN for a third
+    cycle** — verified by the absence of any `miso-19*` registry sidecar, not
+    by the branch (which sits 139 commits behind main with nothing unmerged).
+    The capx desk merged **seven** PRs this window (#4336/#4337/#4340/#4343/
+    #4353/#4354/#4355) and is again **exactly the class of plausible-sounding
+    commits that would fool a commit-list scan** — two of them genuinely
+    touched this program's surfaces ((d) and (h)), five did not.
+  - **(l) OWNER QUEUE — four items retired by ruling, ONE NEW.** Retired:
+    the NYISO frontier citation (R-1), the ercot-240 demand-gap question
+    (R-2), the caiso-222 Q1 disposition (R-3), the Q2 route census (R-4);
+    plus the ercot-239 armed-solve look-for, closed rejected. **NEW item 1 —
+    the four-instrument divergence now sits on `frontier` ALONE: should a
+    ratified `frontier` entry carry a standing currency rule** (auto-annotate
+    on promotion, or lapse when its ISO leaves `complete`), **or is R-1's hand
+    annotation the permanent pattern?** Nothing checks this and **nothing is
+    spendable on it** — a frontier is a dated lever-queue statement, not a
+    holdout authorization — so it is a published-consistency question, not a
+    governance breach; a records-only change either way, and the board takes no
+    position on the answer. Carried: the freeze/WS3 restart (with (j)'s new
+    datum), NEISO `final` **DATA-BLOCKED** on the 2025 EIA-923 FINAL vintage,
+    the dormant ERCOT rule-16 waiver qualifier, the cross-ISO scorer-change
+    precedent (**with #4343 logged beside it as an adjacent instance — a
+    different program writing this program's marker file, correctly and under
+    a uniform rule, but the same structural shape**), the T1-H capacity-entry
+    defect, the CAISO NOT-YET determination (now carrying R-3's ruled
+    disposition), and the nyiso-148 dear-gas note.
+  - **(m) PROTOCOL — one amendment ADDED.** *Re-derive the table that "cannot
+    have changed."* The Stage-0 staleness table's promotion counts were
+    unchanged in every row this cycle (nothing promoted) and reading it forward
+    from v14 would have been defensible and wrong: **re-deriving it is what
+    surfaced (f)**, which changed no count and no gate. The board's existing
+    rule *trust no table, including this one* now carries the corollary that
+    **a table whose headline numbers are stable can still be materially
+    stale.** The v14 amendments held: pin-once-then-record-motion was applied
+    literally (gates run twice — an early read at `f9eb73c7`, the authoritative
+    read at the pin — and two readings had moved between them), and the
+    dispatch-vs-launch branch check **passed for a second consecutive cycle**,
+    with v14's step 0 (find the branches of lanes dispatched without one)
+    executed and RESOLVED.
+  - **(n) SCOPE AND RECORDS INTEGRITY.** **Exactly two files**, as chartered:
+    the board and this §8 entry. **Nothing else touched** — no `src/`, no
+    keeper shard, no marker file, no workflow, **no mechanism-matrix row**
+    (nothing was tested; records only, so rule 26 `[R-MECH-MATRIX]` duty (b)
+    does not attach), no lane-in-flight surface, no capx-* file. Two commits,
+    each pushed over `git push` on a **freshly-fetched base** (rule 27
+    `[R-PUSH]`) and **BLOB-VERIFIED before the next** (fetched back; line count
+    + sha256 + git blob sha compared — the board verified at **1,097 lines**,
+    sha256 `7ff81148c717054a`, blob `daf2f67ca9c3`, byte-identical). The board
+    was assembled by **extracting v14's retained history blocks from the
+    file's own committed bytes** rather than retyping them, and both retained
+    blocks were verified **present verbatim** in the result. This §8 append is
+    verified **APPEND-ONLY by byte-identity of the full 3,742-line /
+    270,540-byte pre-edit prefix**; **the 2026-08-30 PM sitting's entry
+    (#4346), including its sub-entry (k), is untouched.** v14's cycle section
+    and lane-state table are retained as history, as v14 did for v13. **The
+    director pushed nothing; this lane is the write path, and the owner
+    merges.**
+  - **(o) POST-PIN MOTION — ONE labelled follow-up measurement at `4c93575`
+    (merge of #4362), taken under the v14 sanctioned exception because both
+    lanes this refresh records as LIVE resolved while it was being written; the
+    pin is NOT moved.** **caiso-224 MERGED** (#4360) and **ercot-239 r3
+    MERGED** (#4361), so at `4c93575` there are **zero branches ahead of main
+    and zero open PRs** again — (k)'s reading stands as a true dated statement
+    of the pin, and this is its resolution. **Keeper shards, the marker file
+    and the registry verified BYTE-UNMOVED `69ae4dc7` → `4c93575`**, so every
+    keeper-table, marker, holdout and Stage-0 figure stands. **All five gates
+    re-run GREEN at `4c93575`** (exit codes direct): audit **PASS 0/0** ·
+    parity **exit 0, 56/93/0** · matrix **exit 0** · staleness **exit 0,
+    Δ = 4/10** · bench **exit 0, 0 STALE / 6 engine-drift**. The single moving
+    reading is staleness **Δ 3 → 4**, continuing (h)'s cross-program drift.
+    **Nothing in (a)–(n) changes.**
