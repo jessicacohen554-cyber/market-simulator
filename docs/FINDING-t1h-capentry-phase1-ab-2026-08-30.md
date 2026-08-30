@@ -200,6 +200,27 @@ bands, recall, additions (above), every other stream.
 | **K1 REJECTED** | some addition-metric band moves AWAY from actuals by more (in \|err_frac\|) than the sum of the improvements on the others | every Δ\|err\| = 0.0000; worsenings {} | **NO** |
 | **K2 INERT** | indistinguishable from control on every addition metric AND every storage-mix row | addition metrics indistinguishable, but the storage mix differs in every row (tech set, duration, li-ion share) | **NO** |
 
+### 3.5 Invariant blocks (declared post-registration; the FR-24 ledger duty)
+
+Both sidecars carry **I3 FAIL** — the standing **FR-6** ERCOT energy-only
+scarcity-slack cause (`invariant-failures.json` `dominant_open_causes`), the
+same ident the registered `…-t1h-refresh` sidecar carries. Detail strings at
+full magnitude: control **2023 slack 0.01 % of load**, repair **2023 slack
+0.04 % of load** (refresh: 0.02 %). The repair's larger 2023 slack is the
+same physics as its RM-path shift (§3.3): the 5.6 h li-ion fleet covers
+fewer 2023 scarcity hours than the control's 64 h build — reported here as
+the third full-magnitude coupling. Sub-band diagnostic magnitudes; no scored
+metric moves (§3.1). Both runs are declared in
+`frontend/data/hindcast/invariant-failures.json` (`capentry_note`) per that
+ledger's `how_to_update` contract — one commit after the registration,
+because the registration PR was merged before this ledger duty was executed.
+Declaration is not absolution: FR-6 stays the open root cause. Observed and
+recorded, not acted on (out of this lane's scope): ten other committed
+sidecars carry undeclared FAILs of the same family pattern (`t1h-refresh`,
+the capx `t1h-d11r-*`/`t1h-d12c-*` pairs on I3; caiso/neiso/pjm rows on
+I6/I7/I9), which keep the `forecast-invariant-artifacts` CI job red on main
+until their owning lanes declare them.
+
 ## 4. Verdict, and what is recorded for the owner
 
 **Both kill-gates pass → the candidate verdict is recorded with ARMING OPEN**
