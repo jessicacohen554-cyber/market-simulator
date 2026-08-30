@@ -12593,4 +12593,60 @@ registration incl. rejection; parity check OK; push integrity per rule 27
 (every ≥300-line file blob-verified on push, small packs off a fresh main
 base); no workflows, no CI solves.
 
-**Next shorthand: ercot-243** (ercot-199 remains unclaimed)
+## ercot-243 — 2026-08-30 — LANE 2 EXECUTED AND KILLED AT CENSUS (ZERO-SOLVE, precommitted): the 2024/2025 event-exit-hour population is h3068-2024 ALONE — K-1 fires (2025 carries ZERO adaptive floors; the model's exit timing is RIGHT at 11 of 12 real event collapses, S1=S2=0) and K-3 fires too (trailing set {h2828 release-WRONG $238, h3068 release-RIGHT $110}) — the release-guard EXIT condition is NOT re-identifiable on current evidence, the A/B license is NOT spent, no threshold touched, keeper untouched
+
+**Branch `claude/ercot-243-release-exit-r7owkv`. ZERO-SOLVE.** Charter:
+the ercot-243 handoff (lane 2, the ercot-223 release-guard exit
+condition; entry edge h3064 out of scope). Precommit
+`docs/PRECOMMIT-ercot243-release-exit-phase0-2026-08-30.md` pushed +
+blob-verified (045cd014) BEFORE any measurement; construction ran as
+declared (one implementation repair: finite-mask in the alignment
+correlation — EIA-930 2025 carries NaN Demand hours; lag-0 asserted both
+years, corr 0.9996/0.9998). Probe
+`scripts/probes/ercot243_release_exit_phase0.py` →
+`results/calibration/ercot243_release_exit_phase0.json`; full record
+`docs/FINDING-ercot243-release-exit-phase0-2026-08-30.md`.
+
+**The census (V-0 exact — 798.20/110.41/floor 523.12, p_hat × VOLL
+identity to $0.01):** signature = actual first-collapse after a real
+event (A1–A3) + model-still-in-event with reserve steps (M1) + guard
+floor held (M2) + storage re-timing (M3) + release-within-2h (M4) +
+net-load aligned ≤2,500 MW (M5) + measured RTORPA/RTORDPA < $50 (M6).
+Result: 12 A1–A3 candidates on the forward span (2024: 9, 2025: 3);
+the model had ALREADY released at 11; exactly ONE census hour — h3068
+itself (population prior 1–3 point 2, observed 1, no breach). 2024
+floored/released window hours 563/5 (the ercot-223 breadth unchanged);
+2025 floored hours ZERO — the self-extinction persists in the forward
+keeper, so 2025 structurally cannot carry a guard exit lag.
+
+**The separation test (structural trailing-edge candidate, zero new
+constants):** trailing set = 2 hours, both 2024 hod-20 — h3068
+(release-RIGHT) and h2828 Apr-28 (release-WRONG: actual $238.04 still
+elevated; nuance reported unrewritten — its $285.52 floor was
+inframarginal, storage discharged 1,195.6 MW through it, so a release
+there is plausibly near-inert, but the declared T2 bar is zero and
+mechanical). T1 PASS, T2 FAIL.
+
+**Disposition (the precommit's kill rule executed):** KILL recorded —
+K-1 + K-3; no Phase-1 precommit, no A/B, no threshold search; the
+threshold form is additionally NOT measurable zero-solve (the pass-1
+settle series is not a committed artifact; h3068's $675 exists only in
+the ercot-223 record). DO-NOT-REDO entry minted: the release-guard EXIT
+condition (trailing-edge AND threshold forms) is KILLED-AT-CENSUS
+2026-08-30 — do not re-open without a new exit-lag hour in future data
+or an owner pass-1-settle instrumentation charter (cost: one sidecar
+column; benefit at current evidence: one hour of one year). The h3068
+singleton stays a named member of the forward span's ledgered C3c
+family, at full magnitude. Matrix: evidence NOTE appended to the
+`ercot_storage_adaptive_expectation` cell, verdict K unchanged. OWNER
+FLAG (not executed, unchartered): the 2024/2025 all-resource SCED
+conduct corpus intake (PRECOMMIT-ercot242 §6) remains the blocker on
+the forward-regime SCED conduct identification.
+
+**Hygiene:** zero solves; years read ⊂ {2024, 2025}; no
+`--holdout-authorized`, freeze respected (rule 22); ERCOT only
+(rule 25); no run produced (rule 15 not triggered); zero fitted scalars;
+push integrity per rule 27 (blob-verify on every ≥300-line pushed file,
+small packs off a fresh main base); no workflows, no CI solves.
+
+**Next shorthand: ercot-244** (ercot-199 remains unclaimed)

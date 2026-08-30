@@ -1,0 +1,140 @@
+{
+ "session": "ercot-243 Phase-0",
+ "bundle": "ercot234_eastex_identity (forward keeper)",
+ "precommit": "docs/PRECOMMIT-ercot243-release-exit-phase0-2026-08-30.md",
+ "v0": {
+  "model_h3068": 798.2,
+  "actual_h3068": 110.41,
+  "floor_h3068": 523.12
+ },
+ "alignment_lag_corr": {
+  "2024": {
+   "-1": 0.9828,
+   "0": 0.9996,
+   "1": 0.9848
+  },
+  "2025": {
+   "-1": 0.9807,
+   "0": 0.9998,
+   "1": 0.9829
+  }
+ },
+ "floored_counts": {
+  "2024": {
+   "floored_window_hours": 563,
+   "guard_released_window_hours": 5
+  },
+  "2025": {
+   "floored_window_hours": 0,
+   "guard_released_window_hours": 0
+  }
+ },
+ "population": [
+  {
+   "year": 2024,
+   "h": 3068,
+   "hod": 20,
+   "model_lw": 798.2,
+   "actual_rt": 110.41,
+   "actual_prev6_max": 3048.98,
+   "floor_usd": 523.12,
+   "fam_dual_max": 416.67,
+   "ordc_total_short": 2566.7,
+   "storage_dis": 0.0,
+   "storage_dis_next2": [
+    1065.7,
+    0.0
+   ],
+   "model_next2": [
+    53.4,
+    32.82
+   ],
+   "netload_gap": 334.0,
+   "rtorpa": 8.95,
+   "rtordpa": 3.43
+  }
+ ],
+ "strata": {
+  "S1_extended_holds": [],
+  "S2_nonguard_exit_lags": [],
+  "S3_model_already_released_count": 11
+ },
+ "trailing_set": [
+  {
+   "year": 2024,
+   "h": 2828,
+   "hod": 20,
+   "model_lw": 1068.68,
+   "actual_rt": 238.04,
+   "actual_prev6_max": 1259.83,
+   "floor_usd": 285.52,
+   "fam_dual_max": 416.67,
+   "ordc_total_short": 4389.0,
+   "storage_dis": 1195.6,
+   "storage_dis_next2": [
+    696.0,
+    68.0
+   ],
+   "model_next2": [
+    150.35,
+    70.76
+   ],
+   "netload_gap": -55.0,
+   "rtorpa": 24.52,
+   "rtordpa": 3.53,
+   "day_released_hods": [
+    18,
+    19
+   ],
+   "classification": "release-WRONG"
+  },
+  {
+   "year": 2024,
+   "h": 3068,
+   "hod": 20,
+   "model_lw": 798.2,
+   "actual_rt": 110.41,
+   "actual_prev6_max": 3048.98,
+   "floor_usd": 523.12,
+   "fam_dual_max": 416.67,
+   "ordc_total_short": 2566.7,
+   "storage_dis": 0.0,
+   "storage_dis_next2": [
+    1065.7,
+    0.0
+   ],
+   "model_next2": [
+    53.4,
+    32.82
+   ],
+   "netload_gap": 334.0,
+   "rtorpa": 8.95,
+   "rtordpa": 3.43,
+   "day_released_hods": [
+    17,
+    18,
+    19
+   ],
+   "classification": "release-RIGHT"
+  }
+ ],
+ "separation": {
+  "T1_population_in_trailing_set": true,
+  "T2_release_wrong_zero": false,
+  "n_trailing": 2,
+  "n_release_right": 1,
+  "n_release_wrong": 1
+ },
+ "prior_check": {
+  "declared_population_prior": "1-3 (point 2)",
+  "observed": 1,
+  "order_of_magnitude_breach": false
+ },
+ "kills": {
+  "K1_population_h3068_alone_or_empty": true,
+  "K2_T1_fails": false,
+  "K3_T2_fails_release_wrong_gt_0": true,
+  "K4_S2_exceeds_population": false
+ },
+ "verdict": "KILL: K1_population_h3068_alone_or_empty, K3_T2_fails_release_wrong_gt_0"
+}
