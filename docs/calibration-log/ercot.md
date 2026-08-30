@@ -12344,6 +12344,28 @@ Matrix: evidence NOTE on the `ercot_storage_adaptive_expectation` cell
 `--holdout-authorized`; ERCOT only; no run produced (rule 15 not
 triggered).
 
+### ercot-239 PROMOTION ADJUDICATION (post-close, owner sitting) — the owner renewed the standing structural signature on the escalated graded-ladder run (*"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.."*); adjudication: **NOT RECOMMENDED — NO PROMOTION, keeper unchanged**
+
+`2026-08-30-239-graded-ladder` is NOT a recommended keeper candidate.
+Basis, applying the standard's both halves: the structural-integrity gain
+is real but narrow (the measured DAM dispersion restored on the ladder;
+lidless spur 74 → 11; zero damage on all five kills), while the "gates
+regress" half is not a marginal regression — THREE load-bearing criteria
+fail at full magnitude (C3a −40.0 %, C3b 0.736, C3c 70/181), returning
+2023 to the pre-carve-out state the carve-out exists to fix, and
+promotion would surrender the program's only zero-caveat `CALIBRATED`
+determination. The deeper reason it is not structurally superior:
+rounds 1–3 measured that real 2023 conduct priced far MORE capacity at
+scarcity levels than the DAM book shows (the prints were SCED
+energy-lambda; the wall needs ~5× the DAM dispersion), so the DAM-graded
+ladder is likely FARTHER from realized RT conduct than the flat wall it
+replaces — the faithful shape is RT/SCED-identified and
+tightness-conditioned, the chartered successor lane. The incumbent
+partition stands exactly as ruled 2026-08-26: forward
+`2026-08-25-234-eastex-identity` + carve-out
+`2026-08-25-236-swcap-clip-k33`. The rejected run stays registered with
+its REJECTED-PROBE sidecar marking; no re-key, no auditor run needed.
+
 **SESSION ercot-239 CLOSE — the three handoff priorities all delivered:**
 (1) the 14-hour missed-event family characterized (conduct, adder-free —
 object 2 subsequently adjudicated by ercot-240 as the DC-tie identity);
