@@ -8,7 +8,7 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 
 **Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #10) ·
 **HEAD at refresh:** `9f73357` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting** (§3)
-**Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-26.md`
+**Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (supersedes the 2026-08-26 handoff)
 
 ---
 
