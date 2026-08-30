@@ -1241,11 +1241,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # the scope is armed so the off path stays byte-identical (the
         # CHP-flag join reads the year too).
         _rvs = getattr(config, "retiree_vintage_status_scope", False)
+        # miso-190 partial-plant exit carry: forecast-parity threading of the
+        # same gated membership widening (leg 1 only — the mothball re-carry
+        # is deliberately not wired here, per the Cottonwood owner default).
+        _ppx = getattr(config, "partial_plant_exit_carry", False)
         retired_within_window = load_retired_within_window(
             iso,
             iso_config,
-            year=int(config.weather_year) if _rvs else None,
+            year=int(config.weather_year) if (_rvs or _ppx) else None,
             vintage_status_scope=_rvs,
+            partial_plant_exit_carry=_ppx,
         )
 
     campd_bins = load_or_synthesize_bins(config, iso, iso_config, retired_within_window)

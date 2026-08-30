@@ -2966,6 +2966,11 @@ def run_year(
             # before their formal retirement date). Default-off; byte-inert
             # while off.
             vintage_status_scope=getattr(config, "retiree_vintage_status_scope", False),
+            # miso-190 partial-plant exit carry: ALSO inject units retired
+            # mid-window whose plants survive, timed out at unit grain on
+            # their own actual retirement months. Default-off; byte-inert
+            # while off.
+            partial_plant_exit_carry=getattr(config, "partial_plant_exit_carry", False),
         )
         if config.mode == "backcast"
         else []
@@ -2982,7 +2987,13 @@ def run_year(
     # docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md.
     if config.mode == "backcast" and config.carry_operating_mothballs:
         retired_units = retired_units + load_mothballed_but_operating(
-            iso, iso_config, year=year
+            iso,
+            iso_config,
+            year=year,
+            # miso-190: widen the snapshot status set {OA} -> {OA, OS, SB}
+            # under the same vintage-OP oracle (Big Cajun 2-1, Warrick-2).
+            # Default-off; byte-inert while off.
+            partial_plant_exit_carry=getattr(config, "partial_plant_exit_carry", False),
         )
 
     # Resolve the per-plant bin frame, then build the base fleet and the

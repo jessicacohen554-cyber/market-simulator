@@ -109,6 +109,37 @@ def _eia860_retiree_coal_supply() -> dict[int, str]:
     return out
 
 
+# Flag-gated registry of the partial-plant exit carry's injected coal units
+# (miso-190, ScenarioConfig.partial_plant_exit_carry,
+# PREREG-miso190-partial-plant-exit-carry-2026-08-30). Populated ONLY by
+# data/fleet/eia860.py::_register_partial_exit_coal_supply when that gated
+# channel injects units, from each unit's own committed EIA-860
+# ``Energy Source 1`` code through the canonical COAL_CODE_TO_SUPPLY — the
+# identical fallback the whole-plant retiree parquet bakes in at build time
+# and the EIA-923 benchmark applies at class time. Consulted LAST in
+# coal_supply_class so it can never override an existing resolution, and
+# empty (every path byte-identical) while the flag is off. Deliberately NOT
+# an ambient read of the retired-and-canceled sheet: an ungated fallback
+# would change classification (and so offers) for any unresolved fleet plant
+# with an old retired coal row — measured EMPTY at the 2026-08-30 vintage
+# (`_miso190_partial_exit_phase0.json`), but gated on principle (rule 25).
+_PARTIAL_EXIT_COAL_SUPPLY: dict[int, str] = {}
+
+
+def register_partial_exit_coal_supply(mapping: dict[int, str]) -> None:
+    """Register injected partial-plant exit units' coal supply classes.
+
+    Called by the gated partial-plant exit carry
+    (``data/fleet/eia860.py::load_retired_within_window`` with
+    ``partial_plant_exit_carry=True``) so an injected coal unit whose plant
+    no other source resolves (A B Brown 6137 → bituminous, Dan E Karn 1702
+    → prb) reports in its bench-matched ``COAL_*`` class instead of a bare
+    ``COAL`` row the EIA-923 benchmark never has. Lowest-priority source —
+    see :func:`coal_supply_class`.
+    """
+    _PARTIAL_EXIT_COAL_SUPPLY.update({int(k): str(v) for k, v in mapping.items()})
+
+
 def coal_supply_class(plant_code: int) -> str:
     """Return a plant's coal supply class, or ``""`` if unclassified.
 
@@ -123,6 +154,10 @@ def coal_supply_class(plant_code: int) -> str:
        EIA-923 benchmark already applies, covering coal plants that retired
        with no recent receipts so they are ranked rather than left in the
        generic ``COAL`` bucket.
+    4. The flag-gated partial-plant exit registry
+       (:data:`_PARTIAL_EXIT_COAL_SUPPLY`) — the same energy-source-code
+       fallback for units the gated miso-190 channel injects; empty while
+       ``partial_plant_exit_carry`` is off.
     """
     base = COAL_PLANT_SUPPLY.get(int(plant_code))
     if base:
@@ -130,7 +165,10 @@ def coal_supply_class(plant_code: int) -> str:
     derived = _derived_coal_supply().get(int(plant_code))
     if derived:
         return derived
-    return _eia860_retiree_coal_supply().get(int(plant_code), "")
+    retiree = _eia860_retiree_coal_supply().get(int(plant_code))
+    if retiree:
+        return retiree
+    return _PARTIAL_EXIT_COAL_SUPPLY.get(int(plant_code), "")
 
 
 # ---------------------------------------------------------------------------
