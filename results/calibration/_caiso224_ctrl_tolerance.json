@@ -1,0 +1,70 @@
+{
+ "precommit": "PRECOMMIT-caiso224-fsno-arm-2026-08-30.md",
+ "baseline": "caiso220_c1_crosswalk",
+ "control": "caiso224_a0_control",
+ "tolerance": {
+  "dC3a_pp": 0.1,
+  "dC3b": 0.005
+ },
+ "per_year": {
+  "2023": {
+   "system": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "price": 0.0,
+     "slack": 0.0
+    }
+   },
+   "class_hourly": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "mw": 0.0
+    }
+   }
+  },
+  "2024": {
+   "system": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "price": 0.0,
+     "slack": 0.0
+    }
+   },
+   "class_hourly": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "mw": 0.0
+    }
+   }
+  },
+  "2025": {
+   "system": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "price": 0.0,
+     "slack": 0.0
+    }
+   },
+   "class_hourly": {
+    "max_abs_delta_any_column": 0.0,
+    "worst_columns": {
+     "year": 0.0,
+     "hour": 0.0,
+     "mw": 0.0
+    }
+   }
+  }
+ },
+ "bit_zero_all_years": true,
+ "noise_floor_statement": "BIT-ZERO: max |\u0394| = 0.0 over every zone-hour (system, prices included) and every class-hour (class_hourly) of all three years \u2014 \u0394C3a = 0.0 pp and \u0394C3b = 0.000 identically; the ratified tolerance is met with a noise floor of exactly zero, quoted before any treated delta was read. Also the measured evidence that the head drift since the caiso-220 solve AND the caiso-224 FSNO partition plumbing (flag off) are inert on the CAISO default solve path."
+}

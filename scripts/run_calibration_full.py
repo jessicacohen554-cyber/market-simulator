@@ -3626,6 +3626,20 @@ def solve_and_persist(
     _solve_kwargs_snapshot = {
         k: v for k, v in locals().items() if k not in _REUSE_KWARG_EXEMPT
     }
+    # caiso-224: arm/disarm the FSNO sub-zonal partition BEFORE this
+    # orchestrator's own get_iso_config / load_demand pre-loads. run_year sets
+    # the same context from its resolved config, but the demand threaded into
+    # it below is loaded HERE — an unset context at this point is exactly the
+    # caiso-80/nyiso-87 single-demand-load defect class, and the arm's first
+    # launch died on it (8-zone fleet vs 7-zone threaded demand,
+    # "axis 0 index 7 exceeds matrix dimension 7"). Read from the generic
+    # prb_overrides channel, the same way caiso_endogenous_wecc_node is below.
+    from market_sim.config.topology_variant import set_caiso_fsno_partition
+
+    set_caiso_fsno_partition(
+        iso == "CAISO"
+        and bool((prb_overrides or {}).get("caiso_fsno_subzonal_topology", False))
+    )
     iso_config = get_iso_config(iso)
     # caiso-110: the endogenous WECC-West node keeps the SINGLE WECC_import zone
     # (no per-hub split — run_year does not split it either), so this caller's
