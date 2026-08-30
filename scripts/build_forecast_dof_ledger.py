@@ -50,10 +50,12 @@ meaning pinned here):
   frozen derive script (rule 23); admissible under rule 13;
 * ``residual`` — chosen (wholly or finally) against a backcast residual;
   MUST carry an open ``root_cause`` (rule 21) or the ledger is malformed;
-* ``design-decision`` — an owner-signed structural/reproducibility posture
-  (e.g. the D-10 forecast warm-start posture). Valid ONLY for non-magnitude
-  values (booleans / selectors): a numeric magnitude can never be identified
-  by decision alone, and the builder refuses to attach this token to one;
+* ``design-decision`` — a structural/reproducibility posture identified to a
+  signed owner decision or a committed decision record (e.g. the D-10
+  forecast warm-start posture; the hindcast harness's production-scarcity
+  footing). Valid ONLY for non-magnitude values (booleans / selectors): a
+  numeric magnitude can never be identified by decision alone, and the
+  builder refuses to attach this token to one;
 * ``unattested`` — NOT an identification. The token an UNIDENTIFIED entry
   carries so FC-7 keeps scoring it as unproven.
 
@@ -206,6 +208,11 @@ SCENARIO_SELECTORS = frozenset(
         "crossover_forward_year",
         "run_id",
         "notes",
+        # Harness-mode markers, same class as `mode`: they say WHICH kind of
+        # run this is (a hindcast-harness leg seeded from WHICH EIA-860 fleet
+        # snapshot), not how it is tuned.
+        "hindcast",
+        "eia860_vintage_year",
     }
 )
 
@@ -308,6 +315,25 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
             "default_scenario_overrides cite block"
         ),
         "requires": "iso-registry",
+    },
+    # --- Hindcast/crossover harness posture ----------------------------------
+    ("*", "scarcity_pricing_enabled"): {
+        "identification": "design-decision",
+        "source": (
+            "Harness adoption of each ISO's PRODUCTION scarcity footing (the "
+            "master switch engages the ISO's registered "
+            "default_scenario_overrides scarcity cell): the capacity screens "
+            "must see the same price formation the forecast uses. Root cause "
+            "recorded on the s2 run (screens priced against bare "
+            "perfect-foresight duals -> 9.7 GW over-retirement, 94% false)"
+        ),
+        "evidence": (
+            "scripts/run_capacity_hindcast.py::build_config docstring; "
+            "docs/hindcast-reports/ercot-2021-2025-realized-s2-2026-07-05.md "
+            "root cause 1"
+        ),
+        "expected": True,
+        "provenance": "runner-posture",
     },
     # --- Forecast-bundle runner posture --------------------------------------
     ("*", "forecast_xyear_warmstart"): {
@@ -871,6 +897,17 @@ def build_ledger(
         "n_by_group": dict(sorted(by_group.items())),
         "entries": entries,
     }
+    recon = run_config.get("reconstruction")
+    if isinstance(recon, dict):
+        # A ledger built from a RECONSTRUCTED run_config inherits that label:
+        # it enumerates the reconstruction's parameters, and its honesty is
+        # bounded by the reconstruction's own evidence chain.
+        ledger["basis"] = (
+            "RECONSTRUCTED run_config — "
+            + str(recon.get("status", "see the run_config's reconstruction block"))
+            + "; evidence chain and verification in the sibling "
+            "run_config.json `reconstruction` block"
+        )
     if epoch_drift:
         ledger["epoch_drift"] = epoch_drift
     gaps = _epoch_field_gaps(sc, defaults)
