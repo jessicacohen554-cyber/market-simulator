@@ -1,0 +1,1201 @@
+{
+ "session": "nyiso-158",
+ "phase": 0,
+ "keeper": "2026-08-30-nyiso-157-par-attribution",
+ "bundles": {
+  "arm": "nyiso157_pararm_B",
+  "control": "nyiso157_parctl_A"
+ },
+ "no_solve": true,
+ "constructions": {
+  "model_binding": "hourly/system_<yr>.parquet: price(Capital_Hudson)-price(Upstate_West) > $0.50 (EXECNOTE-nyiso157 SS5 primary committed-format signal; slim bundles carry no network sidecar)",
+  "measured_binding": "data/raw/NYISO/interface-flows (MIS P-32): CENTRAL EAST - VC hourly flow_mw / positive_limit_mw; bindXX = fraction of month hours with util >= 0.XX; sample 100% valid limits all three years",
+  "measured_ce_util": "median over all year hours of hourly flow/limit (reproduces the recorded 0.807/0.616/0.591 exactly)",
+  "c3b": "scorer-exact: payload pMon demand-weighted by dMon vs bench rt_lw_mon; NRMSE=rmse/mean(actual) (calibration_verdict.score_price_shape)"
+ },
+ "t1_model_binding_monthly": {
+  "arm": {
+   "2023": {
+    "1": {
+     "bind_h": 744,
+     "bind_frac": 1.0,
+     "mean_spread": 12.89
+    },
+    "2": {
+     "bind_h": 647,
+     "bind_frac": 0.963,
+     "mean_spread": 10.99
+    },
+    "3": {
+     "bind_h": 688,
+     "bind_frac": 0.925,
+     "mean_spread": 5.47
+    },
+    "4": {
+     "bind_h": 683,
+     "bind_frac": 0.949,
+     "mean_spread": 6.21
+    },
+    "5": {
+     "bind_h": 744,
+     "bind_frac": 1.0,
+     "mean_spread": 28.07
+    },
+    "6": {
+     "bind_h": 553,
+     "bind_frac": 0.768,
+     "mean_spread": 3.53
+    },
+    "7": {
+     "bind_h": 453,
+     "bind_frac": 0.609,
+     "mean_spread": 1.62
+    },
+    "8": {
+     "bind_h": 744,
+     "bind_frac": 1.0,
+     "mean_spread": 12.93
+    },
+    "9": {
+     "bind_h": 701,
+     "bind_frac": 0.974,
+     "mean_spread": 12.35
+    },
+    "10": {
+     "bind_h": 744,
+     "bind_frac": 1.0,
+     "mean_spread": 13.4
+    },
+    "11": {
+     "bind_h": 720,
+     "bind_frac": 1.0,
+     "mean_spread": 11.53
+    },
+    "12": {
+     "bind_h": 93,
+     "bind_frac": 0.125,
+     "mean_spread": 0.38
+    }
+   },
+   "2024": {
+    "1": {
+     "bind_h": 200,
+     "bind_frac": 0.269,
+     "mean_spread": 8.62
+    },
+    "2": {
+     "bind_h": 62,
+     "bind_frac": 0.092,
+     "mean_spread": 0.14
+    },
+    "3": {
+     "bind_h": 2,
+     "bind_frac": 0.003,
+     "mean_spread": 0.0
+    },
+    "4": {
+     "bind_h": 24,
+     "bind_frac": 0.033,
+     "mean_spread": 0.02
+    },
+    "5": {
+     "bind_h": 87,
+     "bind_frac": 0.117,
+     "mean_spread": 0.24
+    },
+    "6": {
+     "bind_h": 376,
+     "bind_frac": 0.522,
+     "mean_spread": 1.67
+    },
+    "7": {
+     "bind_h": 291,
+     "bind_frac": 0.391,
+     "mean_spread": 1.76
+    },
+    "8": {
+     "bind_h": 115,
+     "bind_frac": 0.155,
+     "mean_spread": 0.26
+    },
+    "9": {
+     "bind_h": 4,
+     "bind_frac": 0.006,
+     "mean_spread": 0.01
+    },
+    "10": {
+     "bind_h": 6,
+     "bind_frac": 0.008,
+     "mean_spread": 0.04
+    },
+    "11": {
+     "bind_h": 475,
+     "bind_frac": 0.66,
+     "mean_spread": 3.34
+    },
+    "12": {
+     "bind_h": 98,
+     "bind_frac": 0.132,
+     "mean_spread": 0.4
+    }
+   },
+   "2025": {
+    "1": {
+     "bind_h": 312,
+     "bind_frac": 0.419,
+     "mean_spread": 6.98
+    },
+    "2": {
+     "bind_h": 123,
+     "bind_frac": 0.183,
+     "mean_spread": 1.96
+    },
+    "3": {
+     "bind_h": 517,
+     "bind_frac": 0.695,
+     "mean_spread": 5.16
+    },
+    "4": {
+     "bind_h": 530,
+     "bind_frac": 0.736,
+     "mean_spread": 6.96
+    },
+    "5": {
+     "bind_h": 710,
+     "bind_frac": 0.954,
+     "mean_spread": 9.32
+    },
+    "6": {
+     "bind_h": 322,
+     "bind_frac": 0.447,
+     "mean_spread": 2.22
+    },
+    "7": {
+     "bind_h": 1,
+     "bind_frac": 0.001,
+     "mean_spread": 0.0
+    },
+    "8": {
+     "bind_h": 2,
+     "bind_frac": 0.003,
+     "mean_spread": 0.0
+    },
+    "9": {
+     "bind_h": 8,
+     "bind_frac": 0.011,
+     "mean_spread": 0.01
+    },
+    "10": {
+     "bind_h": 69,
+     "bind_frac": 0.093,
+     "mean_spread": 0.38
+    },
+    "11": {
+     "bind_h": 307,
+     "bind_frac": 0.426,
+     "mean_spread": 2.6
+    },
+    "12": {
+     "bind_h": 102,
+     "bind_frac": 0.137,
+     "mean_spread": 1.19
+    }
+   }
+  },
+  "control": {
+   "2023": {
+    "1": {
+     "bind_h": 63,
+     "bind_frac": 0.085,
+     "mean_spread": 0.15
+    },
+    "2": {
+     "bind_h": 48,
+     "bind_frac": 0.071,
+     "mean_spread": 1.37
+    },
+    "3": {
+     "bind_h": 174,
+     "bind_frac": 0.234,
+     "mean_spread": 0.52
+    },
+    "4": {
+     "bind_h": 108,
+     "bind_frac": 0.15,
+     "mean_spread": 0.3
+    },
+    "5": {
+     "bind_h": 58,
+     "bind_frac": 0.078,
+     "mean_spread": 0.12
+    },
+    "6": {
+     "bind_h": 4,
+     "bind_frac": 0.006,
+     "mean_spread": 0.01
+    },
+    "7": {
+     "bind_h": 21,
+     "bind_frac": 0.028,
+     "mean_spread": 0.1
+    },
+    "8": {
+     "bind_h": 289,
+     "bind_frac": 0.388,
+     "mean_spread": 1.02
+    },
+    "9": {
+     "bind_h": 331,
+     "bind_frac": 0.46,
+     "mean_spread": 1.89
+    },
+    "10": {
+     "bind_h": 243,
+     "bind_frac": 0.327,
+     "mean_spread": 0.67
+    },
+    "11": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": -0.0
+    },
+    "12": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    }
+   },
+   "2024": {
+    "1": {
+     "bind_h": 70,
+     "bind_frac": 0.094,
+     "mean_spread": 3.32
+    },
+    "2": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    },
+    "3": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    },
+    "4": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    },
+    "5": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    },
+    "6": {
+     "bind_h": 5,
+     "bind_frac": 0.007,
+     "mean_spread": 0.01
+    },
+    "7": {
+     "bind_h": 33,
+     "bind_frac": 0.044,
+     "mean_spread": 0.1
+    },
+    "8": {
+     "bind_h": 1,
+     "bind_frac": 0.001,
+     "mean_spread": 0.0
+    },
+    "9": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    },
+    "10": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    },
+    "11": {
+     "bind_h": 4,
+     "bind_frac": 0.006,
+     "mean_spread": 0.02
+    },
+    "12": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    }
+   },
+   "2025": {
+    "1": {
+     "bind_h": 34,
+     "bind_frac": 0.046,
+     "mean_spread": 0.28
+    },
+    "2": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": -0.0
+    },
+    "3": {
+     "bind_h": 23,
+     "bind_frac": 0.031,
+     "mean_spread": 0.05
+    },
+    "4": {
+     "bind_h": 20,
+     "bind_frac": 0.028,
+     "mean_spread": 0.07
+    },
+    "5": {
+     "bind_h": 15,
+     "bind_frac": 0.02,
+     "mean_spread": 0.03
+    },
+    "6": {
+     "bind_h": 38,
+     "bind_frac": 0.053,
+     "mean_spread": 0.17
+    },
+    "7": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    },
+    "8": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    },
+    "9": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    },
+    "10": {
+     "bind_h": 5,
+     "bind_frac": 0.007,
+     "mean_spread": 0.01
+    },
+    "11": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    },
+    "12": {
+     "bind_h": 0,
+     "bind_frac": 0.0,
+     "mean_spread": 0.0
+    }
+   }
+  }
+ },
+ "t1_measured_ce_binding_monthly": {
+  "2023": {
+   "1": {
+    "bind98": 0.015,
+    "bind95": 0.22,
+    "bind90": 0.68,
+    "mean_util": 0.91,
+    "mean_flow_mw": 1748.0,
+    "p50_limit_mw": 1920.0,
+    "p10_limit_mw": 1703.0
+   },
+   "2": {
+    "bind98": 0.009,
+    "bind95": 0.146,
+    "bind90": 0.717,
+    "mean_util": 0.904,
+    "mean_flow_mw": 1619.0,
+    "p50_limit_mw": 1780.0,
+    "p10_limit_mw": 1670.0
+   },
+   "3": {
+    "bind98": 0.003,
+    "bind95": 0.052,
+    "bind90": 0.637,
+    "mean_util": 0.892,
+    "mean_flow_mw": 1337.0,
+    "p50_limit_mw": 1535.0,
+    "p10_limit_mw": 1110.0
+   },
+   "4": {
+    "bind98": 0.0,
+    "bind95": 0.013,
+    "bind90": 0.339,
+    "mean_util": 0.822,
+    "mean_flow_mw": 1155.0,
+    "p50_limit_mw": 1185.0,
+    "p10_limit_mw": 1080.0
+   },
+   "5": {
+    "bind98": 0.005,
+    "bind95": 0.039,
+    "bind90": 0.402,
+    "mean_util": 0.848,
+    "mean_flow_mw": 1337.0,
+    "p50_limit_mw": 1600.0,
+    "p10_limit_mw": 1265.0
+   },
+   "6": {
+    "bind98": 0.0,
+    "bind95": 0.003,
+    "bind90": 0.008,
+    "mean_util": 0.672,
+    "mean_flow_mw": 1250.0,
+    "p50_limit_mw": 1850.0,
+    "p10_limit_mw": 1680.0
+   },
+   "7": {
+    "bind98": 0.0,
+    "bind95": 0.003,
+    "bind90": 0.019,
+    "mean_util": 0.672,
+    "mean_flow_mw": 1214.0,
+    "p50_limit_mw": 1805.0,
+    "p10_limit_mw": 1715.0
+   },
+   "8": {
+    "bind98": 0.003,
+    "bind95": 0.016,
+    "bind90": 0.117,
+    "mean_util": 0.758,
+    "mean_flow_mw": 1194.0,
+    "p50_limit_mw": 1690.0,
+    "p10_limit_mw": 1240.0
+   },
+   "9": {
+    "bind98": 0.0,
+    "bind95": 0.011,
+    "bind90": 0.126,
+    "mean_util": 0.724,
+    "mean_flow_mw": 1119.0,
+    "p50_limit_mw": 1525.0,
+    "p10_limit_mw": 1320.0
+   },
+   "10": {
+    "bind98": 0.0,
+    "bind95": 0.003,
+    "bind90": 0.103,
+    "mean_util": 0.746,
+    "mean_flow_mw": 1148.0,
+    "p50_limit_mw": 1545.0,
+    "p10_limit_mw": 1365.0
+   },
+   "11": {
+    "bind98": 0.003,
+    "bind95": 0.022,
+    "bind90": 0.351,
+    "mean_util": 0.799,
+    "mean_flow_mw": 1217.0,
+    "p50_limit_mw": 1490.0,
+    "p10_limit_mw": 1230.0
+   },
+   "12": {
+    "bind98": 0.001,
+    "bind95": 0.001,
+    "bind90": 0.019,
+    "mean_util": 0.6,
+    "mean_flow_mw": 1612.0,
+    "p50_limit_mw": 2905.0,
+    "p10_limit_mw": 1935.0
+   },
+   "annual": {
+    "util_median": 0.807,
+    "util_mean": 0.778,
+    "flow_median_mw": 1297.0,
+    "rt_limit_median_mw": 1725.0
+   }
+  },
+  "2024": {
+   "1": {
+    "bind98": 0.008,
+    "bind95": 0.172,
+    "bind90": 0.265,
+    "mean_util": 0.742,
+    "mean_flow_mw": 2322.0,
+    "p50_limit_mw": 3045.0,
+    "p10_limit_mw": 2960.0
+   },
+   "2": {
+    "bind98": 0.0,
+    "bind95": 0.014,
+    "bind90": 0.075,
+    "mean_util": 0.729,
+    "mean_flow_mw": 2228.0,
+    "p50_limit_mw": 3030.0,
+    "p10_limit_mw": 2925.0
+   },
+   "3": {
+    "bind98": 0.0,
+    "bind95": 0.0,
+    "bind90": 0.0,
+    "mean_util": 0.455,
+    "mean_flow_mw": 1319.0,
+    "p50_limit_mw": 2915.0,
+    "p10_limit_mw": 2720.0
+   },
+   "4": {
+    "bind98": 0.0,
+    "bind95": 0.0,
+    "bind90": 0.014,
+    "mean_util": 0.51,
+    "mean_flow_mw": 1440.0,
+    "p50_limit_mw": 2830.0,
+    "p10_limit_mw": 2670.0
+   },
+   "5": {
+    "bind98": 0.0,
+    "bind95": 0.0,
+    "bind90": 0.003,
+    "mean_util": 0.568,
+    "mean_flow_mw": 1583.0,
+    "p50_limit_mw": 2830.0,
+    "p10_limit_mw": 2580.0
+   },
+   "6": {
+    "bind98": 0.0,
+    "bind95": 0.01,
+    "bind90": 0.025,
+    "mean_util": 0.653,
+    "mean_flow_mw": 1813.0,
+    "p50_limit_mw": 2850.0,
+    "p10_limit_mw": 2565.0
+   },
+   "7": {
+    "bind98": 0.001,
+    "bind95": 0.001,
+    "bind90": 0.026,
+    "mean_util": 0.704,
+    "mean_flow_mw": 1966.0,
+    "p50_limit_mw": 2815.0,
+    "p10_limit_mw": 2530.0
+   },
+   "8": {
+    "bind98": 0.0,
+    "bind95": 0.0,
+    "bind90": 0.001,
+    "mean_util": 0.546,
+    "mean_flow_mw": 1461.0,
+    "p50_limit_mw": 2820.0,
+    "p10_limit_mw": 1975.0
+   },
+   "9": {
+    "bind98": 0.001,
+    "bind95": 0.001,
+    "bind90": 0.007,
+    "mean_util": 0.477,
+    "mean_flow_mw": 1170.0,
+    "p50_limit_mw": 2570.0,
+    "p10_limit_mw": 2160.0
+   },
+   "10": {
+    "bind98": 0.0,
+    "bind95": 0.0,
+    "bind90": 0.0,
+    "mean_util": 0.525,
+    "mean_flow_mw": 1440.0,
+    "p50_limit_mw": 2695.0,
+    "p10_limit_mw": 2500.0
+   },
+   "11": {
+    "bind98": 0.0,
+    "bind95": 0.035,
+    "bind90": 0.111,
+    "mean_util": 0.714,
+    "mean_flow_mw": 1950.0,
+    "p50_limit_mw": 2890.0,
+    "p10_limit_mw": 2355.0
+   },
+   "12": {
+    "bind98": 0.008,
+    "bind95": 0.065,
+    "bind90": 0.223,
+    "mean_util": 0.791,
+    "mean_flow_mw": 2420.0,
+    "p50_limit_mw": 3065.0,
+    "p10_limit_mw": 2935.0
+   },
+   "annual": {
+    "util_median": 0.616,
+    "util_mean": 0.617,
+    "flow_median_mw": 1728.0,
+    "rt_limit_median_mw": 2865.0
+   }
+  },
+  "2025": {
+   "1": {
+    "bind98": 0.013,
+    "bind95": 0.269,
+    "bind90": 0.507,
+    "mean_util": 0.884,
+    "mean_flow_mw": 2807.0,
+    "p50_limit_mw": 3205.0,
+    "p10_limit_mw": 2995.0
+   },
+   "2": {
+    "bind98": 0.004,
+    "bind95": 0.077,
+    "bind90": 0.256,
+    "mean_util": 0.802,
+    "mean_flow_mw": 2433.0,
+    "p50_limit_mw": 3015.0,
+    "p10_limit_mw": 2900.0
+   },
+   "3": {
+    "bind98": 0.011,
+    "bind95": 0.032,
+    "bind90": 0.073,
+    "mean_util": 0.64,
+    "mean_flow_mw": 1640.0,
+    "p50_limit_mw": 2650.0,
+    "p10_limit_mw": 2169.0
+   },
+   "4": {
+    "bind98": 0.0,
+    "bind95": 0.015,
+    "bind90": 0.051,
+    "mean_util": 0.586,
+    "mean_flow_mw": 1457.0,
+    "p50_limit_mw": 2535.0,
+    "p10_limit_mw": 2165.0
+   },
+   "5": {
+    "bind98": 0.0,
+    "bind95": 0.004,
+    "bind90": 0.039,
+    "mean_util": 0.622,
+    "mean_flow_mw": 1560.0,
+    "p50_limit_mw": 2485.0,
+    "p10_limit_mw": 2295.0
+   },
+   "6": {
+    "bind98": 0.0,
+    "bind95": 0.0,
+    "bind90": 0.001,
+    "mean_util": 0.53,
+    "mean_flow_mw": 1553.0,
+    "p50_limit_mw": 2985.0,
+    "p10_limit_mw": 2644.0
+   },
+   "7": {
+    "bind98": 0.0,
+    "bind95": 0.0,
+    "bind90": 0.001,
+    "mean_util": 0.453,
+    "mean_flow_mw": 1401.0,
+    "p50_limit_mw": 3060.0,
+    "p10_limit_mw": 2925.0
+   },
+   "8": {
+    "bind98": 0.0,
+    "bind95": 0.0,
+    "bind90": 0.0,
+    "mean_util": 0.324,
+    "mean_flow_mw": 961.0,
+    "p50_limit_mw": 3015.0,
+    "p10_limit_mw": 2780.0
+   },
+   "9": {
+    "bind98": 0.0,
+    "bind95": 0.0,
+    "bind90": 0.0,
+    "mean_util": 0.42,
+    "mean_flow_mw": 1170.0,
+    "p50_limit_mw": 2790.0,
+    "p10_limit_mw": 2555.0
+   },
+   "10": {
+    "bind98": 0.0,
+    "bind95": 0.0,
+    "bind90": 0.0,
+    "mean_util": 0.43,
+    "mean_flow_mw": 1194.0,
+    "p50_limit_mw": 2790.0,
+    "p10_limit_mw": 2630.0
+   },
+   "11": {
+    "bind98": 0.001,
+    "bind95": 0.019,
+    "bind90": 0.071,
+    "mean_util": 0.623,
+    "mean_flow_mw": 1667.0,
+    "p50_limit_mw": 2820.0,
+    "p10_limit_mw": 2230.0
+   },
+   "12": {
+    "bind98": 0.003,
+    "bind95": 0.017,
+    "bind90": 0.069,
+    "mean_util": 0.731,
+    "mean_flow_mw": 2173.0,
+    "p50_limit_mw": 2965.0,
+    "p10_limit_mw": 2900.0
+   },
+   "annual": {
+    "util_median": 0.591,
+    "util_mean": 0.586,
+    "flow_median_mw": 1620.0,
+    "rt_limit_median_mw": 2900.0
+   }
+  }
+ },
+ "t1_component_ledger_winter": [
+  {
+   "year": 2023,
+   "month": 1,
+   "Up_envM": 2917.0,
+   "Ca_envM": 0.0,
+   "NY_envM": 1031.0,
+   "Lo_envM": 1095.0,
+   "UW_measnet": 2295.0,
+   "nuc": 3326.0,
+   "hyd": 3333.0,
+   "wind": 420.0,
+   "imp_cls": 3257.0,
+   "UW_dem": 6397.0,
+   "east_dem": 10670.0,
+   "ttc": 1950.0,
+   "west_base_surplus": 3599.0,
+   "gap_to_ttc": 1649.0
+  },
+  {
+   "year": 2023,
+   "month": 2,
+   "Up_envM": 2462.0,
+   "Ca_envM": 14.0,
+   "NY_envM": 1113.0,
+   "Lo_envM": 1107.0,
+   "UW_measnet": 1840.0,
+   "nuc": 3257.0,
+   "hyd": 3159.0,
+   "wind": 757.0,
+   "imp_cls": 2969.0,
+   "UW_dem": 6309.0,
+   "east_dem": 10704.0,
+   "ttc": 1875.0,
+   "west_base_surplus": 3326.0,
+   "gap_to_ttc": 1451.0
+  },
+  {
+   "year": 2023,
+   "month": 12,
+   "Up_envM": 1308.0,
+   "Ca_envM": 284.0,
+   "NY_envM": 1071.0,
+   "Lo_envM": 999.0,
+   "UW_measnet": 671.0,
+   "nuc": 3293.0,
+   "hyd": 3288.0,
+   "wind": 731.0,
+   "imp_cls": 2213.0,
+   "UW_dem": 6158.0,
+   "east_dem": 10650.0,
+   "ttc": 2725.0,
+   "west_base_surplus": 2462.0,
+   "gap_to_ttc": -263.0
+  },
+  {
+   "year": 2024,
+   "month": 1,
+   "Up_envM": 2862.0,
+   "Ca_envM": 36.0,
+   "NY_envM": 1094.0,
+   "Lo_envM": 939.0,
+   "UW_measnet": 1573.0,
+   "nuc": 3293.0,
+   "hyd": 3379.0,
+   "wind": 715.0,
+   "imp_cls": 2712.0,
+   "UW_dem": 6657.0,
+   "east_dem": 11416.0,
+   "ttc": 3050.0,
+   "west_base_surplus": 3592.0,
+   "gap_to_ttc": 542.0
+  },
+  {
+   "year": 2024,
+   "month": 2,
+   "Up_envM": 1888.0,
+   "Ca_envM": 17.0,
+   "NY_envM": 1063.0,
+   "Lo_envM": 829.0,
+   "UW_measnet": 1142.0,
+   "nuc": 3293.0,
+   "hyd": 3443.0,
+   "wind": 758.0,
+   "imp_cls": 1993.0,
+   "UW_dem": 6259.0,
+   "east_dem": 10783.0,
+   "ttc": 3075.0,
+   "west_base_surplus": 3123.0,
+   "gap_to_ttc": 48.0
+  },
+  {
+   "year": 2024,
+   "month": 12,
+   "Up_envM": 2694.0,
+   "Ca_envM": 81.0,
+   "NY_envM": 757.0,
+   "Lo_envM": 775.0,
+   "UW_measnet": 1593.0,
+   "nuc": 3259.0,
+   "hyd": 3067.0,
+   "wind": 905.0,
+   "imp_cls": 2167.0,
+   "UW_dem": 6529.0,
+   "east_dem": 11457.0,
+   "ttc": 3075.0,
+   "west_base_surplus": 3396.0,
+   "gap_to_ttc": 321.0
+  },
+  {
+   "year": 2025,
+   "month": 1,
+   "Up_envM": 3129.0,
+   "Ca_envM": 77.0,
+   "NY_envM": 680.0,
+   "Lo_envM": 850.0,
+   "UW_measnet": 2457.0,
+   "nuc": 3246.0,
+   "hyd": 2866.0,
+   "wind": 1128.0,
+   "imp_cls": 3037.0,
+   "UW_dem": 6863.0,
+   "east_dem": 12190.0,
+   "ttc": 3175.0,
+   "west_base_surplus": 3506.0,
+   "gap_to_ttc": 331.0
+  },
+  {
+   "year": 2025,
+   "month": 2,
+   "Up_envM": 2933.0,
+   "Ca_envM": 53.0,
+   "NY_envM": 1101.0,
+   "Lo_envM": 775.0,
+   "UW_measnet": 1951.0,
+   "nuc": 3239.0,
+   "hyd": 2595.0,
+   "wind": 946.0,
+   "imp_cls": 2770.0,
+   "UW_dem": 6679.0,
+   "east_dem": 11671.0,
+   "ttc": 3075.0,
+   "west_base_surplus": 3034.0,
+   "gap_to_ttc": -41.0
+  },
+  {
+   "year": 2025,
+   "month": 12,
+   "Up_envM": 1435.0,
+   "Ca_envM": 29.0,
+   "NY_envM": 1122.0,
+   "Lo_envM": 663.0,
+   "UW_measnet": 898.0,
+   "nuc": 3326.0,
+   "hyd": 2872.0,
+   "wind": 1124.0,
+   "imp_cls": 1801.0,
+   "UW_dem": 6712.0,
+   "east_dem": 12002.0,
+   "ttc": 2900.0,
+   "west_base_surplus": 2045.0,
+   "gap_to_ttc": -855.0
+  }
+ ],
+ "t1_applied_ttc_monthly": {
+  "2023": [
+   1950.0,
+   1875.0,
+   1550.0,
+   1450.0,
+   1600.0,
+   1900.0,
+   1775.0,
+   1650.0,
+   1550.0,
+   1575.0,
+   1525.0,
+   2725.0
+  ],
+  "2024": [
+   3050.0,
+   3075.0,
+   3000.0,
+   2875.0,
+   2825.0,
+   2750.0,
+   2800.0,
+   2700.0,
+   2525.0,
+   2825.0,
+   2750.0,
+   3075.0
+  ],
+  "2025": [
+   3175.0,
+   3075.0,
+   2725.0,
+   2500.0,
+   2525.0,
+   2925.0,
+   3025.0,
+   3000.0,
+   2850.0,
+   2850.0,
+   2725.0,
+   2900.0
+  ]
+ },
+ "t1_driver_search": {
+  "verdict": "NONE \u2014 no admissible measured driver produces Feb-2023-like depth in the object months",
+  "checked": {
+   "measured_ce_limits": "REFUTED direction: RT limit medians in object months (2900-3205) sit AT/ABOVE the applied DAM monthly means (2825-3175); p10 RT limits 2900-2995 >= applied. Adopting them binds LESS. (BLOCKER-C stands closed; not re-opened.)",
+   "attributed_uw_envelope": "measured, moves the WRONG WAY: UW realized attributed net mean 1128 -> 741 MW (2023 -> 2025 annual); envelope is already the measured p90 (PREREG SS8-3: no rescale)",
+   "upstate_hydro": "measured (EIA-930 pinned, rule 14): Feb monthly mean 3159 -> 2595 MW (2023 -> 2025), -564 MW \u2014 wrong way",
+   "nuclear_wind": "nuclear ~flat (3257 -> 3239); wind +189 MW Feb \u2014 an order too small vs the +1200 MW TTC step",
+   "uw_demand": "grows +370 MW Feb (2023 -> 2025) \u2014 wrong way",
+   "reality_itself": "the measured interface does NOT exhibit Feb-2023-like depth in the object months: bind95 6.5% (Dec-24) / 26.9% (Jan-25) / 7.7% (Feb-25); even Feb-2023 measured bind95 is 14.6% (bind90 71.7%) \u2014 the model's 96-100% Jan/Feb-2023 binding is LP saturation of the small pre-Transco pipe, not a real regime"
+  },
+  "dominant_term": "the measured Transco TTC step: applied CE TTC 1875-1950 (Jan/Feb-2023) -> 3050-3175 (object months), +1200-1300 MW, vs a near-constant measured west base surplus (nuc+hyd+wind+envelope-UWdem ~= 3.0-3.6 GW every winter month)",
+  "dose_response_note": "iroquois W-K3a recovery tracks the keeper's binding fraction: 13% binding -> 0.07-0.14, 18% -> 0.14-0.16, 42% -> 0.41-0.51, 96-100% -> 0.54-1.65 (_nyiso157_iroq_gates.json rows vs this file's t1_model_binding_monthly)"
+ },
+ "t2_c3b_2025": {
+  "actual_rt_lw_mon": [
+   111.2,
+   99.4,
+   46.98,
+   40.65,
+   33.73,
+   78.42,
+   79.63,
+   45.63,
+   40.43,
+   45.68,
+   55.07,
+   98.12
+  ],
+  "arm": {
+   "nrmse": 0.2034,
+   "model_mon": [
+    87.42,
+    76.34,
+    45.95,
+    39.67,
+    34.85,
+    51.28,
+    65.38,
+    48.35,
+    42.52,
+    44.36,
+    53.0,
+    94.73
+   ],
+   "err_mon": [
+    -23.8,
+    -23.1,
+    -1.0,
+    -1.0,
+    1.1,
+    -27.1,
+    -14.3,
+    2.7,
+    2.1,
+    -1.3,
+    -2.1,
+    -3.4
+   ],
+   "sq_share_pct": [
+    27.3,
+    25.7,
+    0.1,
+    0.0,
+    0.1,
+    35.6,
+    9.8,
+    0.4,
+    0.2,
+    0.1,
+    0.2,
+    0.6
+   ],
+   "counterfactual_nrmse": {
+    "winter_janfeb": 0.1394,
+    "summer_junjul": 0.1503,
+    "both_faces": 0.0255
+   },
+   "four_face_months_sq_share_pct": 98.4
+  },
+  "control": {
+   "nrmse": 0.1973,
+   "model_mon": [
+    89.07,
+    76.66,
+    47.5,
+    41.33,
+    37.78,
+    51.98,
+    65.4,
+    48.21,
+    42.53,
+    44.52,
+    53.72,
+    95.17
+   ],
+   "err_mon": [
+    -22.1,
+    -22.7,
+    0.5,
+    0.7,
+    4.0,
+    -26.4,
+    -14.2,
+    2.6,
+    2.1,
+    -1.2,
+    -1.4,
+    -3.0
+   ],
+   "sq_share_pct": [
+    25.1,
+    26.5,
+    0.0,
+    0.0,
+    0.8,
+    35.9,
+    10.4,
+    0.3,
+    0.2,
+    0.1,
+    0.1,
+    0.4
+   ],
+   "counterfactual_nrmse": {
+    "winter_janfeb": 0.1372,
+    "summer_junjul": 0.1446,
+    "both_faces": 0.0283
+   },
+   "four_face_months_sq_share_pct": 97.9
+  }
+ },
+ "t2_verdict": "C3b-2025 is WHOLLY the two-face object: Jan+Feb+Jun+Jul carry 98.3% (arm) / 97.9% (control) of the squared error; either face closed alone returns NRMSE under the 0.20 bar (arm: winter-closed 0.1394, summer-closed 0.1503; both 0.0255). No third component; it closes with the faces and needs no lever of its own. The arm's 0.1973->0.2034 crossing is the same two faces deepening ~$1-2/mo, no new month enters.",
+ "t3_ce_overshoot": {
+  "model_vs_measured_util": {
+   "2023": [
+    0.975,
+    0.807
+   ],
+   "2024": [
+    0.763,
+    0.616
+   ],
+   "2025": [
+    0.784,
+    0.591
+   ]
+  },
+  "denominator_split": {
+   "2023": {
+    "measured_util_at_rt_limits": 0.807,
+    "measured_util_at_applied_ttc": 0.753,
+    "denominator_artifact": 0.053,
+    "model_util": 0.975,
+    "numerator_overshoot_mw_at_median": 355.0
+   },
+   "2024": {
+    "measured_util_at_rt_limits": 0.616,
+    "measured_util_at_applied_ttc": 0.608,
+    "denominator_artifact": 0.008,
+    "model_util": 0.763,
+    "numerator_overshoot_mw_at_median": 439.0
+   },
+   "2025": {
+    "measured_util_at_rt_limits": 0.591,
+    "measured_util_at_applied_ttc": 0.581,
+    "denominator_artifact": 0.009,
+    "model_util": 0.784,
+    "numerator_overshoot_mw_at_median": 577.0
+   }
+  },
+  "envelope_construction_audit": {
+   "2023": {
+    "winter_months": {
+     "1": {
+      "realized_mean": 2295.0,
+      "realized_p90": 2957.0,
+      "export_hour_share": 0.0
+     },
+     "2": {
+      "realized_mean": 1840.0,
+      "realized_p90": 2526.0,
+      "export_hour_share": 0.0
+     },
+     "12": {
+      "realized_mean": 671.0,
+      "realized_p90": 1447.0,
+      "export_hour_share": 0.101
+     }
+    },
+    "annual_realized_mean": 1128.0
+   },
+   "2024": {
+    "winter_months": {
+     "1": {
+      "realized_mean": 1573.0,
+      "realized_p90": 2934.0,
+      "export_hour_share": 0.028
+     },
+     "2": {
+      "realized_mean": 1142.0,
+      "realized_p90": 2037.0,
+      "export_hour_share": 0.039
+     },
+     "12": {
+      "realized_mean": 1593.0,
+      "realized_p90": 2780.0,
+      "export_hour_share": 0.005
+     }
+    },
+    "annual_realized_mean": 1019.0
+   },
+   "2025": {
+    "winter_months": {
+     "1": {
+      "realized_mean": 2457.0,
+      "realized_p90": 3246.0,
+      "export_hour_share": 0.0
+     },
+     "2": {
+      "realized_mean": 1951.0,
+      "realized_p90": 2993.0,
+      "export_hour_share": 0.0
+     },
+     "12": {
+      "realized_mean": 898.0,
+      "realized_p90": 1514.0,
+      "export_hour_share": 0.078
+     }
+    },
+    "annual_realized_mean": 741.0
+   },
+   "verdict": "NO identification defect found in the measured object: P-32 sample complete (100% valid limits, all three years); PAR availability conditioning verified (K7 reproduces nyiso-127 shares to 4dp); the p90 x (month x hod)-bin caps track the realized p90 faithfully (winter export-hour share ~0 except Dec 5-10%); the caps exceeding realized MEANS by 1.5-1.9x is what a p90 capability bound over a supply distribution IS, not an error. PREREG-nyiso126 SS8-3 honoured: nothing rescaled, nothing scoped."
+  },
+  "numerator_decomposition": {
+   "1_lp_pinning_no_operating_margin": "reality holds CE below its limit in nearly every hour (bind98 <= 1.5% in every month of all three years) while the LP pins flow at the cap whenever east marginal cost exceeds west (annual spread-hours 86%/20%/34%); same model-class family as the ledgered C3c (no conduct/security margin in an LP)",
+   "2_placement_freedom_within_pinned_total": "nyiso_import_reconciliation pins the MONTHLY total to EIA-930; placement across border links is LP-free within the p90 caps, so cheap-west hub import fills UW toward cap in expensive-east hours where reality delivered mean depth",
+   "3_missing_east_side_commitment": "every real in-city/downstate AORR-committed MW absent from the model is replaced by an import across CE \u2014 the BLOCKER-B / Leg-2 object itself, seen from the flow side",
+   "denominator_artifact_share_of_gap": "0.054/0.008/0.010 of the 0.168-0.193 util gap (small)"
+  }
+ },
+ "adjacent_evidence_feb2024_premium_split": {
+  "construction": "only winter month with BOTH hourly zonal RT LMP (data/clean/lmp/NYISO/RTM) and P-32 on disk; CH-UW spread = mean(CAPITL,HUD VL) - mean(5 upstate zones)",
+  "actual_ch_uw_monthly_mean_usd": 2.3,
+  "bind95_frac": 0.014,
+  "premium_mass_in_bind95_pct": 3.8,
+  "bind90_frac": 0.075,
+  "premium_mass_in_bind90_pct": 12.3,
+  "note": "even in a winter month, ~96% of the real downstate premium mass forms OUTSIDE CE-binding hours; the LP's spread is 100% inside binding hours by construction (equal duals otherwise). Object months not measurable on-disk (RTM coverage: 2023 Jun+Dec, 2024 Feb-Jun+Sep, 2025 Aug only); implied in-bind per-hour spread if ALL mass were in-bind: Jan-25 $137/h, Dec-24 $169/h, Feb-25 $352/h x 52h (implausible), so a substantial non-binding-hour component exists in at least Feb-2025."
+ }
+}
