@@ -173,7 +173,11 @@ class TestHoldoutMarkerTiers:
         assert not (hp.LOCKED_TEST_YEARS & hp.CALIBRATION_YEARS)
 
     def test_freeze_still_outranks_both_markers(self, tmp_path):
-        """A freeze suspends every tier's authorization, marker or not."""
+        """A freeze suspends every tier's authorization, marker or not.
+
+        No ``scope`` key here — the pre-2026-08-26 file shape — so the
+        fail-closed ``frozen_tiers`` reader must treat it as a FULL freeze.
+        """
         root = _repo_with_marker(
             tmp_path, complete=self.VAL_ONLY, final={"NYISO": {"declared": "x"}}
         )
@@ -183,6 +187,116 @@ class TestHoldoutMarkerTiers:
         for year in (2022, 2019):
             with pytest.raises(SystemExit, match="ACTIVE HOLDOUT SPEND FREEZE"):
                 _RCF.enforce_holdout_year_gate([year], "NYISO", True, root)
+
+
+# ---------------------------------------------------------------------------
+# Tier-scoped freeze (CLAUDE.md rule 22; owner ruling 2026-08-26, card 6)
+#
+# The freeze became TIER-SCOPED: `scope.tiers` names the frozen tiers and
+# holdout_policy.frozen_tiers is the single fail-closed reader. The steady
+# state after the ruling is an ACTIVE freeze over the locked tier only —
+# validation years fall through to the tier-marker check, locked-test years
+# are refused for EVERY ISO even with a `final` marker present. These tests
+# pin exactly that separation, plus every fail-closed degenerate shape.
+# ---------------------------------------------------------------------------
+
+
+class TestTierScopedFreeze:
+    VAL_ONLY = {"NYISO": {"declared": "2026-07-31"}}
+
+    def _freeze(self, root: Path, doc: dict) -> None:
+        (root / "frontend/data/backcast/holdout-freeze.json").write_text(
+            json.dumps(doc)
+        )
+
+    LOCKED_ONLY = {
+        "active": True,
+        "declared": "2026-07-25",
+        "scope": {"tiers": ["locked_test"]},
+    }
+
+    def test_locked_scope_frees_validation_for_marked_iso(self, tmp_path):
+        """The 2026-08-26 end state: 2020-2022 spendable on `complete` + flag."""
+        root = _repo_with_marker(tmp_path, complete=self.VAL_ONLY)
+        self._freeze(root, self.LOCKED_ONLY)
+        for year in (2020, 2021, 2022):
+            _RCF.enforce_holdout_year_gate([year], "NYISO", True, root)
+
+    def test_locked_scope_still_refuses_validation_for_unmarked_iso(self, tmp_path):
+        """Lifting the freeze does NOT bypass the marker gate."""
+        root = _repo_with_marker(tmp_path, complete=self.VAL_ONLY)
+        self._freeze(root, self.LOCKED_ONLY)
+        with pytest.raises(SystemExit, match=r"ERCOT is not in the 'complete' block"):
+            _RCF.enforce_holdout_year_gate([2022], "ERCOT", True, root)
+
+    def test_locked_scope_refuses_locked_years_even_with_final_marker(self, tmp_path):
+        """THE check that matters: the frozen tier outranks even a `final` marker."""
+        root = _repo_with_marker(
+            tmp_path, complete=self.VAL_ONLY, final={"NYISO": {"declared": "x"}}
+        )
+        self._freeze(root, self.LOCKED_ONLY)
+        for year in (2018, 2019, 2026):
+            with pytest.raises(SystemExit, match="ACTIVE HOLDOUT SPEND FREEZE"):
+                _RCF.enforce_holdout_year_gate([year], "NYISO", True, root)
+
+    def test_mixed_years_refuse_on_the_frozen_subset_first(self, tmp_path):
+        """A --year spanning both tiers is refused naming the frozen years."""
+        root = _repo_with_marker(tmp_path, complete=self.VAL_ONLY)
+        self._freeze(root, self.LOCKED_ONLY)
+        with pytest.raises(SystemExit, match=r"\[2019\].*ACTIVE HOLDOUT SPEND FREEZE"):
+            _RCF.enforce_holdout_year_gate([2022, 2019], "NYISO", True, root)
+
+    def test_empty_or_unparseable_scope_fails_closed_to_full_freeze(self, tmp_path):
+        """An active freeze naming no recognizable tier covers every tier."""
+        root = _repo_with_marker(tmp_path, complete=self.VAL_ONLY)
+        for scope in (
+            {"tiers": []},
+            {"tiers": "locked_test"},
+            {"tiers": ["bogus"]},
+            {},
+        ):
+            self._freeze(root, {"active": True, "scope": scope})
+            for year in (2022, 2019):
+                with pytest.raises(SystemExit, match="ACTIVE HOLDOUT SPEND FREEZE"):
+                    _RCF.enforce_holdout_year_gate([year], "NYISO", True, root)
+
+    def test_inactive_freeze_covers_nothing(self, tmp_path):
+        """active:false defers entirely to the tier-marker gate."""
+        root = _repo_with_marker(tmp_path, complete=self.VAL_ONLY)
+        self._freeze(root, {"active": False, "scope": {"tiers": ["locked_test"]}})
+        _RCF.enforce_holdout_year_gate([2022], "NYISO", True, root)
+        with pytest.raises(SystemExit, match=r"'final' block"):
+            _RCF.enforce_holdout_year_gate([2019], "NYISO", True, root)
+
+    def test_frozen_tiers_reader_fail_closed_table(self):
+        """Pin the single reader's behaviour on every degenerate shape."""
+        ft = holdout_policy.frozen_tiers
+        both = frozenset({holdout_policy.TIER_VALIDATION, holdout_policy.TIER_LOCKED})
+        assert ft({}) == frozenset()
+        assert ft(None) == frozenset()
+        assert ft({"active": False}) == frozenset()
+        assert ft({"active": True}) == both
+        assert ft({"active": True, "scope": {}}) == both
+        assert ft({"active": True, "scope": {"tiers": []}}) == both
+        assert ft({"active": True, "scope": {"tiers": ["nonsense"]}}) == both
+        assert ft({"active": True, "scope": {"tiers": "locked_test"}}) == both
+        assert ft({"active": True, "scope": {"tiers": ["locked_test"]}}) == frozenset(
+            {holdout_policy.TIER_LOCKED}
+        )
+        assert (
+            ft({"active": True, "scope": {"tiers": ["validation", "locked_test"]}})
+            == both
+        )
+
+    def test_live_repo_freeze_file_scope_is_locked_test_only(self):
+        """The committed file expresses the 2026-08-26 ruling: active, locked-only."""
+        doc = json.loads(
+            (REPO_ROOT / "frontend/data/backcast/holdout-freeze.json").read_text()
+        )
+        assert doc["active"] is True
+        assert holdout_policy.frozen_tiers(doc) == frozenset(
+            {holdout_policy.TIER_LOCKED}
+        )
 
 
 _TAIL_SPEC = importlib.util.spec_from_file_location(
