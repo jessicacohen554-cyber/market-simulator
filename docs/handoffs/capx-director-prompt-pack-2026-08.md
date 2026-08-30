@@ -1,4 +1,4 @@
-# capx director — prompt pack (revised at refresh #14, 2026-08-30; first issued 2026-08-25)
+# capx director — prompt pack (revised at refresh #15, 2026-08-30; first issued 2026-08-25)
 
 Canonical text of the session prompts live on the capacity-expansion (Forecast Finalization)
 track. Ledger: `docs/handoffs/capx-director-ledger-2026-08.md`. Signatures:
@@ -743,7 +743,7 @@ statement, and explicit confirmation that S-6 is now unblocked. Report to the ow
 
 ---
 
-## D13 — board reconcile (new at r#13; records lane executing the Q7 ruling)
+## D13 — board reconcile (r#13) — **LANDED PR #4372; historical record, do not re-run**
 
 ```
 You are the D13 BOARD RECONCILE session of the capacity-expansion (Forecast Finalization) track,
@@ -815,7 +815,7 @@ annotation. Report to the owner.
 
 ---
 
-## D14 — NEISO T1-X crossover (new at r#13; the D10 analog on the new lead ISO)
+## D14 — NEISO T1-X crossover (r#13) — **LANDED PR #4376; historical record, do not re-run**
 
 ```
 You are the D14 NEISO T1-X CROSSOVER session of the capacity-expansion (Forecast Finalization)
@@ -897,7 +897,7 @@ owner.
 
 ---
 
-## D12 — scarcity-consistent delta basis (new at r#13; released by D11-R's report)
+## D12 — scarcity-consistent delta basis (r#13) — **LANDED PR #4373; Q10 ruled confirm-pair-then-arm (see D12-C); historical record, do not re-run**
 
 ```
 You are the D12 SCARCITY-CONSISTENT DELTA BASIS session of the capacity-expansion (Forecast
@@ -972,7 +972,7 @@ Q8 re-decision card material. Report to the owner; the director folds it into th
 
 ---
 
-## S-4b — NEISO ARA requirement re-vintage (new at r#13; dispatch strictly AFTER D14 merges)
+## S-4b — NEISO ARA requirement re-vintage (r#13; RELEASED at r#15 — D14 merged; now also gates NEISO's leg-(d) card per Q11)
 
 ```
 You are the S-4b NEISO ARA REQUIREMENT RE-VINTAGE session of the capacity-expansion (Forecast
@@ -1034,7 +1034,7 @@ re-scored leg, and the board refresh. Report to the owner.
 
 ---
 
-## D5 — three-ISO crossover CO2 derivation (issued at r#14; re-scoped from the retired PJM-first form)
+## D5 — three-ISO crossover CO2 derivation (r#14) — **LANDED PR #4374; Q12 ruled full-fix (see D5-R); historical record, do not re-run**
 
 ```
 You are the D5 CROSSOVER CO2 DERIVATION session of the capacity-expansion (Forecast
@@ -1104,4 +1104,150 @@ EXIT: docs/handoffs/FINDING-capx-d5-crossover-co2-<date>.md with the pre-declare
 the per-ISO-per-year decomposition table (NYISO control included), the traced chain with file
 citations, the derivation-defect vs input-gap adjudication, and the recommended successor
 lane(s). Report to the owner; the director folds it into the queue.
+```
+
+---
+
+## D12-C — arming confirmation pair (new at r#15; executes the Q10 ruling: confirm, then arm)
+
+```
+You are the D12-C ARMING CONFIRMATION PAIR session of the capacity-expansion (Forecast
+Finalization) track, executing the owner's Q10 ruling (r#15 sitting, 2026-08-30: "Confirm-pair,
+then arm" — docs/handoffs/capx-director-ledger-2026-08.md §0l.2/§3). You run ONE closed-loop
+A/B; ON A CONFIRMING RECORD YOU ARM BOTH FIELDS as ERCOT forecast defaults in the same session
+— that arming is pre-authorized by the ruling and needs no further ask. A CONTRADICTING record
+arms NOTHING and returns to the owner at full magnitude.
+
+DATA PROFILE: ercot
+MODEL ASSIGNMENT: Fable (edits defaults in config — rule 27).
+BRANCH: claude/capx-d12c-confirm-pair — create FRESH off origin/main (git fetch origin main
+first) and rebase before pushing.
+
+READ FIRST: docs/handoffs/FINDING-capx-d12-scarcity-basis-2026-08-30.md (§0, §5, §7 —
+the adjudication and its open-loop predictions) + PREDECL-capx-d12-scarcity-basis-2026-08-30.md;
+docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md §3 (the A/B protocol you are
+repeating and its committed control bracket).
+
+THE PAIR. On the ERCOT `ercot-2021-2025-realized` T1-H leg at the registered posture, same
+HEAD, both invocations solved by this session, years sequential within each (rule 12):
+- CONTROL: bare invocation — must reproduce the committed registered bracket EXACTLY (the
+  D11-R control did: cache key 28cef3500ec1fd9e, RM 19.00→8.54→14.65→25.19, additions
+  verbatim). Any control drift is a stop-the-line finding, not a baseline.
+- ARM: exactly TWO run_config fields differ, as the single logical delta:
+  entry_margin_exhaustion=True + entry_forward_reserve_leg=True. Hard-fail the probe unless
+  the delta condition holds (reuse/extend scripts/probes/entry_volume_rule_compare.py).
+
+PRE-DECLARED EXPECTATIONS (write them in the finding BEFORE the arm solves; they are D12's
+open-loop arithmetic, and the pair exists to test them closed-loop):
+- The exhaustion walk on the consistent leg reproduces D12's reconstruction: expected terminal
+  RM ≈ 18.71 % (2024-step ≈ 18.08 % variant per §5.1), no 6 GW phantom gas at the entering-2024
+  and entering-2025 steps (those margins are negative on the forward leg).
+- Scored gas addition bands improve (gas_cc toward 6 GW, gas_ct toward 4.571; CT |err| toward
+  0.879) — attached evidence, never the verdict (rule 1).
+- B-2 posture re-measured and reported (the cobweb under the armed pair — whatever it shows).
+- State your numeric confirmation tolerance ex ante (from D12's own reproduction error, $0.05
+  on margins; a sensible RM tolerance follows) — do not choose it after seeing the arm.
+
+THEN, ON CONFIRMATION (all pre-declared checks inside tolerance): ARM — flip BOTH fields to
+the ERCOT forecast defaults via the ISOConfig/default route (cite the Q10 ruling verbatim in
+the citation block), update the ERCOT matrix shard cells in this session (rule 28b:
+entry_margin_exhaustion O → K-forecast-armed with this pair as evidence; the
+entry_forward_reserve_leg row's ERCOT cell likewise; sister-ISO cells enter/stay U — rule 26,
+verdicts are ERCOT's), and record the armed posture honestly: the volume rule with its gas
+half live on a one-object margin. ON CONTRADICTION: arm nothing, leave cells O, FINDING at
+full magnitude with the divergence decomposed, report back — the owner re-decides.
+
+REGISTRATION (rule 15): both arms on the FORECAST namespace with run_config.json committed
+(`ercot-2021-2025-realized-t1h-d12c-{control,armed}`), never the backcast registry.
+
+DECONFLICTION: the audit-track T1-H capacity-entry lane is live and has ceded defect D-1 to
+this track (its precommit's dedup gate) — do not take its storage/wind scope; you both touch
+the ERCOT matrix shard, so fetch/rebase carefully. The ercot-242 backcast lane is in flight
+(different surfaces). Check git ls-remote --heads origin at start. ERCOT T1-H is not heavy,
+but the ≤2 concurrent heavy cap is shared with the owner's backcast solves (caiso-224 may be
+solving) — you fit, but launch nothing larger.
+
+GUARDRAILS: NO out-of-training backcast year solved, scored or registered; freeze TIER-SCOPED
+(locked test frozen for every ISO; validation by `complete` marker + --holdout-authorized —
+you touch neither). No measured-outcome feedback (rule 13); nothing tuned to land the
+confirmation (rule 21) — the tolerance is declared before the arm runs. Touch NO backcast
+keeper shard, status/*.js, calibration-complete.json, offer curve or commitment bridge. No new
+GitHub Actions workflows, no CI offloading. Push per CLAUDE.md Git & Pushing; blob-verify any
+≥300-line file after push (rule 27) — the config file carrying the default flip qualifies.
+
+EXIT: docs/handoffs/FINDING-capx-d12c-confirm-pair-<date>.md with the pre-declared
+expectations vs measured, the confirm/contradict verdict, and — on confirm — the armed default
+diff, matrix stamps, and the honest posture description. Report to the owner either way.
+```
+
+---
+
+## D5-R — crossover-scorer coal-grain repair (new at r#15; executes the Q12 ruling: full fix)
+
+```
+You are the D5-R SCORER COAL-GRAIN REPAIR session of the capacity-expansion (Forecast
+Finalization) track, executing the owner's Q12 ruling (r#15 sitting, 2026-08-30: full fix,
+D5's preference (a) — docs/handoffs/capx-director-ledger-2026-08.md §0l.2/§3). This is a
+scorer-side repair + ZERO-SOLVE re-score: no model input, rate, curve, or default changes; no
+LP solves.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (edits scripts/score_*.py — rule 27).
+BRANCH: claude/capx-d5r-scorer-coal-grain — create FRESH off origin/main (git fetch origin
+main first) and rebase before pushing.
+
+READ FIRST: docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md — §0 (the mechanism),
+§2 (the rate-exoneration measurement), §5.1 (the fix you are implementing), §5.2 (THE
+PRE-DECLARED EXPECTATION TABLE — your honesty gate), §5.3 (what is explicitly not recommended).
+Also docs/handoffs/FINDING-capx-d14-neiso-t1x-2026-08-30.md finding 1 (NEISO as second control).
+
+THE FIX (D5 §5.1 preference (a), as ruled): in scripts/score_crossover.py, map each model coal
+generator to its supply class at gmModel-build time via the repo's CANONICAL chain —
+`coal_supply_class` on `plant_code`, falling back to generic `COAL` exactly as
+`run_calibration_full.py::_coal_supply_class` does. One taxonomy chain, no second map
+(rule 19 [R-ONE-MECH]); this puts the crossover on the keeper's own basis and repairs the C1
+fuelmix coal rows (~60 TWh/ISO-yr phantom) in the same stroke. Tests: trivial-first (a
+synthetic two-plant fixture through the mapping), plus a regression asserting the NYISO no-op.
+
+THE RE-SCORE (zero-solve): re-score the committed crossover bundles via the rescore path
+(scripts/rescore_forecast_verdicts.py / score_crossover.py --rescore) and re-emit the affected
+verdicts — the live keys `ercot-t1x`, `pjm-2023-2027-crossover-ffr3a3-t1x`,
+`miso-2023-2027-crossover-ffr3a4-t1x`, `nyiso-t1x`, `neiso-t1x` — PRESERVE-THEN-OVERWRITE:
+keep each pre-repair record under a `-pre-d5r` suffix so the superseded baseline stays
+committed, exactly the namespace's convention. Update the affected FC-4 cells/blocking rows on
+the board (frontend/data/forecast/program-status.json) with the re-scored magnitudes and a
+citation to this repair; leg (c) statuses DO NOT move (measured-closes, Q7 — a re-scored
+measurement is still measured); state explicitly that no gate leg changes.
+
+THE HONESTY GATE (D5 §5.2, pre-declared before this lane existed — measure against it and
+report every deviation at full magnitude):
+- NYISO must be an EXACT no-op; NEISO moves ≲0.4 %. Any control movement means the fix touched
+  more than the unmapped-coal seam — STOP, do not commit the re-score, report.
+- MISO's coal_twh and PJM's gas_twh family rows must be untouched (already grain-reconciled).
+- Expected outcomes (existing bands, K unchanged): ERCOT co2 → −25.3/−23.2/+1.3 % (2023/24
+  still FAIL — the honest volume gap; 2025 PASS); PJM → −7.6/−10.5/−1.3 % (co2 leaves PJM's
+  FC-4 FAIL set); MISO → +1.2/−1.9/+13.4 % (co2 leaves MISO's FAIL set). Offsets up to the
+  finding's stated ~2-3 pp are anticipated for the (a) fix; anything beyond is a deviation to
+  report, never to absorb.
+- Also record D5's corollary 2 where the board cites FC-4 co2: as constructed the metric scores
+  volume/mix + mapping, not rate error (rate is measured separately, §2's own-rate comparison)
+  — an instrument property to document, not to "fix" here.
+
+RULE 28: this tests no mechanism and adds no ScenarioConfig field — no matrix row, no cell
+verdict. t1x DETERMINATIONS may move on the re-score (e.g. a FAIL row leaving a set) — re-emit
+them from the scorer honestly; you decide nothing, the scorer does.
+
+GUARDRAILS: NO solves; NO out-of-training backcast year touched; freeze TIER-SCOPED (you touch
+neither tier). No measured-outcome feedback (rule 13): bench data enters only through the
+scorer's own intensity reconciliation, never a model input. Touch NO backcast surface except
+score_crossover.py itself if shared (it is a forecast scorer; if any backcast scorer imports
+the changed seam, measure and report the backcast-side effect — expected: none, the keepers
+score through calibration_verdict.py whose PLANT_GROUP_MEMBERS patch already handled this
+seam). The C1 fuelmix repair changes crossover-scored fuelmix rows — report those before/after
+too. No new GitHub Actions workflows. Push per CLAUDE.md Git & Pushing; blob-verify
+score_crossover.py and program-status.json after push (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-d5r-scorer-coal-grain-<date>.md with the diff summary, the
+§5.2 table measured-vs-predeclared (controls first), the re-emitted verdicts, the board
+before/after, and the no-gate-moved statement. Report to the owner.
 ```
