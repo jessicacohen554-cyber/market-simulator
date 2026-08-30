@@ -1946,3 +1946,66 @@ keys plus 4 born-at-default fields; every other lane reads OK with a
 `superseded.former_keeper` convention at their next promotion** — a lane
 that wants the protection writes the structured block instead of (or beside)
 its free-form supersession prose. No verdict, keeper, or matrix cell moves.
+
+## 2026-08-30 — Q5 RE-RULED at capx r#12: NYISO `complete` marker WITHDRAWN (CAISO precedent applied UNIFORMLY) — the written reconciliation lands
+
+**Owner ruling, capacity-expansion director refresh-#12 decision card** (recorded
+`docs/handoffs/capx-director-ledger-2026-08.md` §0i.2 and §3 Q5; option selected
+on the card, verbatim label: *"Withdraw the marker (CAISO precedent)"*),
+superseding the r#8 WAIT-FOR-WINTER-INTAKE ruling after Q5's recurrence clause
+fired: the nyiso-157 promotion (2026-08-30) re-keyed the marker onto a **second
+consecutive NOT-YET keeper** with the fail set widened (nyiso-155 {C3a-2025,
+C3c} → nyiso-157 {C3a-2025 −12.0 %, C3b-2025 0.203 knife-edge, C3c
+silenced-lone}). Executed by the Q5-W governance records lane — **records only:
+no solve, no re-score, no keeper change**. Record:
+`docs/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md`.
+
+### The uniform rule — what Q5's written reconciliation says
+
+**A `complete` marker cannot stand on a NOT-YET keeper.** The 2026-08-06 CAISO
+precedent governs every recurrence, whatever produced the NOT-YET — a rubric
+re-score (CAISO) or a structure-over-gates keeper promotion (NYISO). The
+**structural-integrity formula remains the standard for KEEPER promotions** —
+nyiso-155 and nyiso-157 stand untouched as keepers, and the keeper shard was not
+touched — **but it no longer sustains a `complete` marker** on a NOT-YET
+determination. The two precedents that pointed opposite ways (ledger §3 Q5) are
+reconciled in writing, the way the director asked; the owner took option (ii)
+(uniform withdrawal) over the director's recommended option (i), recorded
+plainly.
+
+### Governance consequence — NYISO `complete` withdrawn
+
+The NYISO entry moved from `complete` to `withdrawn` in
+`frontend/data/backcast/calibration-complete.json` (declared 2026-07-31,
+withdrawn 2026-08-30), in the CAISO precedent's recorded form: the withdrawal
+entry preserves `keeper_at_declaration` (2026-07-30-nyiso-100-silretire), the
+full `rekey_history` (11 promotions), the frontier history, and the prior
+2026-07-19 phantom-outage withdrawal verbatim (nested as
+`prior_withdrawal_2026_07_19`) — nothing erased. `complete` = **{NEISO, PJM}**.
+
+**Nothing was spent, so nothing is lost.** Verified from the committed record at
+withdrawal: all 15 NYISO registry sidecars declare solve years ⊂ {2023, 2024,
+2025} and `bench/NYISO/` holds exactly 2023/2024/2025 — no NYISO
+out-of-training year was ever solved, scored or registered, in the freeze era or
+in the four-day 2026-08-26 → 2026-08-30 spendable window. **The validation-tier
+(2020–2022) touchpoint authorization lapses with the marker**: the tier-aware
+gates (`scripts/lib/holdout_policy.py`) re-block every NYISO out-of-training
+solve/score/registration — verified post-edit, `authorized(NYISO, 2022)` is now
+`False`. The locked test (2019, H1-2026) was never authorized and is unaffected;
+`holdout-freeze.json` untouched (locked test stays frozen for every ISO).
+
+**Both surfaces flipped in one session** (the charter's point — they cannot
+disagree): the forecast board `frontend/data/forecast/program-status.json` NYISO
+gate leg (a) moves pass → **fail** on the marker, `marker_complete` → false,
+`closed_on` → ["a","c"], keeper display re-keyed to nyiso-157, headline +
+gate_reading rewritten. Leg (b) untouched (PROMOTE-WITH-CAVEATS is the bare
+`nyiso-t1f` verdict; no marker moves a bare verdict); legs (c)/(d) untouched; no
+forecast-provenance stamp fields written (the D7 discipline). NYISO's gate reads
+**(a) fail · (b) PASS · (c) fail · (d) none** — no ISO now holds (a)+(b) both.
+
+**Re-entry** is a NEW explicit owner declaration once NYISO's designated keeper
+again scores CALIBRATED (expected route: `INTAKE-SPEC-nyiso156-winter-locational`
+Leg 2 + the C3c standing rule — the intake authorization is unaffected; rule 22:
+what is held out is the score, never the data). `scripts/audit_keepers.py`
+passes clean after the change (M1 iterates {NEISO, PJM}; no NYISO entry to
+verify once absent).
