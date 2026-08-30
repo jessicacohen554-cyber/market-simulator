@@ -10057,3 +10057,72 @@ computed mechanically from the scored tables; no scorer constant modified).
   caiso-218/219 walls; never quote the packet as a recommendation.
 
 **Next number: caiso-223.**
+
+## 2026-08-30 — caiso-222 OWNER RULINGS (PM sitting): Q1 = TERMINAL REST + MAP (packet §1(c) option 3) — the C3a residual is designated ATTRIBUTED AND CLOSED at this representation grain; Q2 = routes (i) AND (iii) ARMED/CHARTERED, route (ii) CEII access DECLINED — W-1/W-2/W-3 armed as standing watch items with their cheap tests, caiso-223 dispatched as the route-(iii) opening round. NO SOLVE, no rubric motion, no scorer change; determination text, keeper and markers all UNCHANGED
+
+**Owner rulings, 2026-08-30 PM sitting, on
+`results/calibration/ASSESSMENT-caiso222-owner-sitting-2026-08-30.md` (both
+ON-MENU: Q1 option 3 of §1(c); Q2 over the §E route census).** Recorded by
+the dispatched audit-rulings records lane (`claude/audit-rulings-0830pm`)
+under the standing recorded deviation: the director pushes nothing; records
+land through the dispatched lane; THE OWNER MERGES. CAISO records only —
+this entry + the packet's appended §9 addendum; no other file.
+
+- **Q1 = TERMINAL REST + MAP.** The C3a residual (+12.5 %/+15.5 %
+  2024/2025 on keeper `2026-08-26-caiso-220-c1-crosswalk`) is designated
+  **ATTRIBUTED AND CLOSED AT THIS REPRESENTATION GRAIN**: caiso-221 §E +
+  the caiso-222 packet ARE the standing record, and the Q2 routes are the
+  ONLY re-openers. The caiso-201 rest becomes a **terminal rest with a
+  decision map**, not an implicit pause. Determination text (NOT-YET,
+  basis *"undocumented out-of-tolerance (FAIL) criteria: price_mean"*),
+  keeper, `calibration-complete.json` (no CAISO marker) and
+  `holdout-freeze.json` (ACTIVE) all **UNCHANGED**; **no rubric motion, no
+  scorer change, no shard keeper change** — the caiso-186 NO stands
+  un-overturned, exactly as the packet's §1 verdict measured it.
+- **Q2 route (i) ARMED — W-1/W-2/W-3 are STANDING WATCH ITEMS**, each with
+  its cheap sanctioned test (packet §(i) table, verbatim source):
+  - **W-1** — PATH15_BG/PATH26_BG re-entering the OASIS TI universe
+    (reversal of the 2018-11-01 discontinuation: the hourly
+    `TRNS_RATING_*` stack / `RATING_ATC` / `CURTAILED_OTC_MW`). Cheap
+    test: `ti_id=PATH15_BG`/`PATH26_BG` returns ERR 1000 today and the
+    July-2024 FNM ITC/BG reference carries no Path 15/26 entry — either
+    changing is the trigger.
+  - **W-2** — a limit/flow field appearing in the
+    `PRC_NOMOGRAM`/`PRC_CNSTR`/`PRC_RTM_FLOWGATE` constraint-report family
+    for the named corridor elements (the census already holds the element
+    identities; only the limit field is missing). Cheap test: the report
+    family growing a limit/flow column vs spec v5.1.1. Feeds route
+    (iii)'s grain, not the single cut.
+  - **W-3** — DMM element-limit MW beyond the 2023-annual scalars
+    (2,500/340/1,600/200/≈2,100/1,600). Cheap test: each new DMM
+    annual/quarterly — does it print element limit MW?
+  - **Trigger duty, pre-stated:** any W-item landing re-opens as a
+    **DATA-INTAKE session first, never a solve** (schema → `write_clean`
+    seam → then a chartered arm with its own precommit), under the
+    caiso-218 §F.2/§F.3 fences — no cap backed out of binding hours or
+    split counts, and the static single-link class stays dead whatever is
+    published (any future limit-side object must be year-varying +
+    element-grounded, or sub-zonal).
+- **Q2 route (iii) CHARTERED** — the sub-zonal topology program's opening
+  round is dispatched as **caiso-223, its own lane** (it owns its NEW
+  scoping docs; this entry pre-empts nothing). The packet's §(iii) honest
+  scoping note is its starting record, qualifications (a)–(c) un-waived
+  (single 2023 vintage; top-congestion elements only; admissibility of the
+  DMM scalars as link limits UNADJUDICATED — needs its own rule-13/14
+  adjudication and precommit).
+- **Q2 route (ii) DECLINED** — CEII access (A-1 FERC 18 C.F.R. §388.113 /
+  A-2 CAISO participant channels / A-3 WECC-RC classes) is DECLINED by
+  owner ruling; the two structural costs stand as the packet states them
+  (NDA-bound bytes cannot enter this public repository; a rating unlocks
+  nothing at pool grain). Nothing is pre-granted; composability with a
+  future route-(iii) owner act remains recorded in the packet.
+- **Records**: this entry + the packet §9 addendum (append-only; the §7
+  filed-items disposition — item 9 stays carried with Q2 as its decision
+  map, now RULED on all three routes). **No matrix cell moves** (nothing
+  was tested — these are records of owner rulings, rule 28b untriggered).
+  Keeper shard untouched; dashboard untouched. Packet DO-NOT-REDO 2 is now
+  live duty: the armed watch tests are the ONLY sanctioned re-checks of
+  the caiso-218/219 walls.
+
+**Next number: caiso-224** (caiso-223 is spoken for — dispatched as the
+route-(iii) opening round; its entry lands as its own lane's append).
