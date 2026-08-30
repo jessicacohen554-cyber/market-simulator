@@ -1,0 +1,400 @@
+{
+ "probe": "ercot244_online_cap_phase0",
+ "precommit": "docs/PRECOMMIT-ercot244-online-cap-phase0-2026-08-30.md",
+ "bundle": "results/calibration/ercot234_eastex_identity",
+ "scored_years": [
+  2024,
+  2025
+ ],
+ "report_years": [
+  2023
+ ],
+ "2023": {
+  "v0": {
+   "model_tail_gt200": 72,
+   "actual_tail_gt200": 181,
+   "demand_lag_corr": {
+    "-1": 0.9863113429631353,
+    "0": 0.9996832663664366,
+    "1": 0.9865130663084261
+   },
+   "rtolhsl_evening_mean_gw": 58.87309040938992
+  },
+  "eia_subtracted_columns": [
+   "NG: WAT",
+   "NG: SUN",
+   "NG: WND",
+   "NG: BAT",
+   "NG: UES",
+   "NG: OTH"
+  ],
+  "slow_classes_resolved": [
+   "CC_CHP",
+   "CC_REGULAR",
+   "COAL_LIGNITE",
+   "COAL_PRB",
+   "nuclear",
+   "ST_CHP",
+   "ST_GAS"
+  ],
+  "populations": {
+   "missed": 115,
+   "hit": 66,
+   "ordinary": 8536,
+   "nan_cap_hours": 0
+  },
+  "census": {
+   "binds": 1818,
+   "binds_missed": 6,
+   "binds_hit": 0,
+   "binds_ordinary": 1804,
+   "binds_buffer": 8,
+   "away_binds": 1048,
+   "reach_frac_missed": 0.0522,
+   "depth_missed_p50_mw": 1993.4,
+   "depth_missed_p90_mw": 3046.3,
+   "depth_ordinary_p50_mw": 1350.1,
+   "depth_ordinary_p90_mw": 3342.5,
+   "F_minus_cap_p50_all_mw": -2727.4,
+   "F_minus_cap_p99_all_mw": 3980.7,
+   "p_slow_gt_cap_hours": 39,
+   "cap_le0_hours": 0
+  },
+  "levels_gw": {
+   "cap_mean": 41.03,
+   "cap_evening_mean": 44.32,
+   "F_mean": 37.81,
+   "F_evening_mean": 42.94,
+   "p_slow_mean": 33.29,
+   "held_fast_mean": 4.52
+  },
+  "bind_hours_missed_hit": [
+   {
+    "hour": 706,
+    "set": "missed",
+    "actual": 212.66,
+    "model_maxz": 40.89,
+    "model_dw": 40.89,
+    "F_mw": 52396.1,
+    "cap_mw": 50075.2,
+    "depth_mw": 2320.9
+   },
+   {
+    "hour": 2970,
+    "set": "missed",
+    "actual": 301.49,
+    "model_maxz": 28.0,
+    "model_dw": 28.0,
+    "F_mw": 40538.3,
+    "cap_mw": 38872.4,
+    "depth_mw": 1665.9
+   },
+   {
+    "hour": 6761,
+    "set": "missed",
+    "actual": 219.87,
+    "model_maxz": 45.2,
+    "model_dw": 45.2,
+    "F_mw": 51035.3,
+    "cap_mw": 48074.5,
+    "depth_mw": 2960.8
+   },
+   {
+    "hour": 7145,
+    "set": "missed",
+    "actual": 650.12,
+    "model_maxz": 39.31,
+    "model_dw": 39.31,
+    "F_mw": 48221.3,
+    "cap_mw": 46846.5,
+    "depth_mw": 1374.8
+   },
+   {
+    "hour": 7590,
+    "set": "missed",
+    "actual": 233.35,
+    "model_maxz": 40.61,
+    "model_dw": 40.61,
+    "F_mw": 36689.2,
+    "cap_mw": 36584.2,
+    "depth_mw": 105.1
+   },
+   {
+    "hour": 8118,
+    "set": "missed",
+    "actual": 421.51,
+    "model_maxz": 36.28,
+    "model_dw": 36.28,
+    "F_mw": 44354.1,
+    "cap_mw": 41222.4,
+    "depth_mw": 3131.7
+   }
+  ],
+  "diagnostics": {
+   "D_V1_credit_augmented": {
+    "binds": 610,
+    "binds_missed": 4,
+    "binds_ordinary": 601,
+    "lr_mean_mw": 883.7,
+    "sto_mean_mw": 1248.7
+   },
+   "D_V2_no_othwat": {
+    "binds": 1694,
+    "binds_missed": 5,
+    "binds_ordinary": 1682
+   },
+   "D_V3_reserve_nesting": {
+    "reserve_cap_slack_at_B_p10_mw": 597.3,
+    "reserve_cap_slack_at_B_p50_mw": 2669.8,
+    "reserve_cap_slack_at_B_p90_mw": 5158.2
+   }
+  }
+ },
+ "2024": {
+  "v0": {
+   "model_tail_gt200": 22,
+   "actual_tail_gt200": 53,
+   "demand_lag_corr": {
+    "-1": 0.9827742617861829,
+    "0": 0.9996290478329931,
+    "1": 0.9848212906635426
+   },
+   "rtolhsl_evening_mean_gw": 62.6406395567631
+  },
+  "eia_subtracted_columns": [
+   "NG: WAT",
+   "NG: SUN",
+   "NG: WND",
+   "NG: BAT",
+   "NG: UES",
+   "NG: OTH"
+  ],
+  "slow_classes_resolved": [
+   "CC_CHP",
+   "CC_REGULAR",
+   "COAL_LIGNITE",
+   "COAL_PRB",
+   "nuclear",
+   "ST_CHP",
+   "ST_GAS"
+  ],
+  "populations": {
+   "missed": 36,
+   "hit": 17,
+   "ordinary": 8676,
+   "nan_cap_hours": 0
+  },
+  "census": {
+   "binds": 985,
+   "binds_missed": 3,
+   "binds_hit": 0,
+   "binds_ordinary": 979,
+   "binds_buffer": 3,
+   "away_binds": 528,
+   "reach_frac_missed": 0.0833,
+   "depth_missed_p50_mw": 683.1,
+   "depth_missed_p90_mw": 1946.6,
+   "depth_ordinary_p50_mw": 1315.9,
+   "depth_ordinary_p90_mw": 3868.4,
+   "F_minus_cap_p50_all_mw": -4693.6,
+   "F_minus_cap_p99_all_mw": 4013.3,
+   "p_slow_gt_cap_hours": 0,
+   "cap_le0_hours": 0
+  },
+  "levels_gw": {
+   "cap_mean": 43.89,
+   "cap_evening_mean": 46.76,
+   "F_mean": 38.58,
+   "F_evening_mean": 43.92,
+   "p_slow_mean": 32.8,
+   "held_fast_mean": 5.78
+  },
+  "bind_hours_missed_hit": [
+   {
+    "hour": 2779,
+    "set": "missed",
+    "actual": 339.33,
+    "model_maxz": 34.22,
+    "model_dw": 34.22,
+    "F_mw": 36693.6,
+    "cap_mw": 36010.5,
+    "depth_mw": 683.1
+   },
+   {
+    "hour": 3714,
+    "set": "missed",
+    "actual": 346.76,
+    "model_maxz": 70.67,
+    "model_dw": 70.67,
+    "F_mw": 54717.1,
+    "cap_mw": 52454.6,
+    "depth_mw": 2262.5
+   },
+   {
+    "hour": 8345,
+    "set": "missed",
+    "actual": 443.05,
+    "model_maxz": 39.31,
+    "model_dw": 39.31,
+    "F_mw": 43641.9,
+    "cap_mw": 43160.9,
+    "depth_mw": 481.0
+   }
+  ],
+  "diagnostics": {
+   "D_V1_credit_augmented": {
+    "binds": 210,
+    "binds_missed": 0,
+    "binds_ordinary": 209,
+    "lr_mean_mw": 903.8,
+    "sto_mean_mw": 2148.0
+   },
+   "D_V2_no_othwat": {
+    "binds": 834,
+    "binds_missed": 2,
+    "binds_ordinary": 829
+   },
+   "D_V3_reserve_nesting": {
+    "reserve_cap_slack_at_B_p10_mw": -1619.2,
+    "reserve_cap_slack_at_B_p50_mw": 1402.1,
+    "reserve_cap_slack_at_B_p90_mw": 4303.7
+   }
+  }
+ },
+ "2025": {
+  "v0": {
+   "model_tail_gt200": 1,
+   "actual_tail_gt200": 31,
+   "demand_lag_corr": {
+    "-1": 0.9806705036245008,
+    "0": 0.9997518184475426,
+    "1": 0.9829427191738316
+   },
+   "rtolhsl_evening_mean_gw": 67.80603401363469
+  },
+  "eia_subtracted_columns": [
+   "NG: WAT",
+   "NG: SUN",
+   "NG: WND",
+   "NG: BAT",
+   "NG: UES",
+   "NG: OTH"
+  ],
+  "slow_classes_resolved": [
+   "CC_CHP",
+   "CC_REGULAR",
+   "COAL_LIGNITE",
+   "COAL_PRB",
+   "nuclear",
+   "ST_CHP",
+   "ST_GAS"
+  ],
+  "populations": {
+   "missed": 31,
+   "hit": 0,
+   "ordinary": 8692,
+   "nan_cap_hours": 648
+  },
+  "census": {
+   "binds": 865,
+   "binds_missed": 3,
+   "binds_hit": 0,
+   "binds_ordinary": 858,
+   "binds_buffer": 4,
+   "away_binds": 424,
+   "reach_frac_missed": 0.0968,
+   "depth_missed_p50_mw": 3635.2,
+   "depth_missed_p90_mw": 4053.6,
+   "depth_ordinary_p50_mw": 1708.3,
+   "depth_ordinary_p90_mw": 4497.3,
+   "F_minus_cap_p50_all_mw": -6503.3,
+   "F_minus_cap_p99_all_mw": 4590.3,
+   "p_slow_gt_cap_hours": 1,
+   "cap_le0_hours": 0
+  },
+  "levels_gw": {
+   "cap_mean": 47.09,
+   "cap_evening_mean": 49.57,
+   "F_mean": 39.76,
+   "F_evening_mean": 45.39,
+   "p_slow_mean": 33.38,
+   "held_fast_mean": 6.38
+  },
+  "bind_hours_missed_hit": [
+   {
+    "hour": 342,
+    "set": "missed",
+    "actual": 306.04,
+    "model_maxz": 43.6,
+    "model_dw": 43.6,
+    "F_mw": 55853.1,
+    "cap_mw": 51694.8,
+    "depth_mw": 4158.3
+   },
+   {
+    "hour": 343,
+    "set": "missed",
+    "actual": 1142.91,
+    "model_maxz": 97.32,
+    "model_dw": 97.32,
+    "F_mw": 53033.6,
+    "cap_mw": 52782.9,
+    "depth_mw": 250.7
+   },
+   {
+    "hour": 4604,
+    "set": "missed",
+    "actual": 477.33,
+    "model_maxz": 43.18,
+    "model_dw": 43.18,
+    "F_mw": 53718.9,
+    "cap_mw": 50083.7,
+    "depth_mw": 3635.2
+   }
+  ],
+  "diagnostics": {
+   "D_V1_credit_augmented": {
+    "binds": 314,
+    "binds_missed": 2,
+    "binds_ordinary": 309,
+    "lr_mean_mw": 787.2,
+    "sto_mean_mw": 2514.8
+   },
+   "D_V2_no_othwat": {
+    "binds": 833,
+    "binds_missed": 3,
+    "binds_ordinary": 826
+   },
+   "D_V3_reserve_nesting": {
+    "reserve_cap_slack_at_B_p10_mw": -1552.6,
+    "reserve_cap_slack_at_B_p50_mw": 1370.6,
+    "reserve_cap_slack_at_B_p90_mw": 4304.6
+   }
+  }
+ },
+ "verdict": {
+  "per_year": {
+   "2024": {
+    "K_A_cap_le0": false,
+    "K_A_pslow_gt_cap": false,
+    "K_B_reach_below_020": true,
+    "K_C_ordinary_gt150": true,
+    "K_C_ordinary_gt_missed": true,
+    "K_C_away_gt_third": true
+   },
+   "2025": {
+    "K_A_cap_le0": false,
+    "K_A_pslow_gt_cap": false,
+    "K_B_reach_below_020": true,
+    "K_C_ordinary_gt150": true,
+    "K_C_ordinary_gt_missed": true,
+    "K_C_away_gt_third": true
+   }
+  },
+  "K_A_fires": false,
+  "K_B_fires": true,
+  "K_C_fires": true,
+  "any_kill_fires": true,
+  "phase1_licensed": false
+ }
+}
