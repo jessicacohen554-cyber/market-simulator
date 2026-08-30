@@ -1,0 +1,358 @@
+{
+ "A5_required_moves_usd": {
+  "2023": -7.56,
+  "2024": -0.85,
+  "2025": -1.9
+ },
+ "A5_transfer_provenance": "caiso-220 committed point: static cut-15 exceedance +104/+246/+453 h (caiso-216 L2 17/234/289 -> caiso-217 realized 121/480/742) bought scored C3a -$0.05/-$0.10/-$0.07; the LP re-equilibration crushed 742 static h to 17 scored >$15 h in 2025, so static-hour ceilings OVERSTATE scored reach.",
+ "census_offpeak_geography": {
+  "East of Pisgah (EOP)": "2/3",
+  "PG&E Fresno": "14/19",
+  "PG&E Greater Bay": "0/18",
+  "PG&E Kern": "7/10",
+  "PG&E North of Greater Bay": "0/9",
+  "SCE Eastern": "4/7",
+  "SCE Metro": "0/2",
+  "SCE North of Lugo (NOL)": "0/5",
+  "SCE Northern": "2/8",
+  "SDG&E": "3/12"
+ },
+ "years": {
+  "2023": {
+   "A0_controls": {
+    "addback_vs_workbook_ratio": 1.0,
+    "hsl_addback_twh": {
+     "solar": 2.509,
+     "wind": 0.151
+    },
+    "max_demand_row_err_mw": 0.0,
+    "model_spill_gwh": 482.16,
+    "recon_pot_vs_hsl_annual_ratio": {
+     "solar": 1.003,
+     "wind": 1.0
+    },
+    "workbook_reason_twh": {
+     "Local": 2.071,
+     "System": 0.589
+    }
+   },
+   "A1_addback_placement": {
+    "addback_belly_share": 0.755,
+    "addback_north_twh": 0.428,
+    "local_share_of_record": 0.779,
+    "north_share_belly_only": 0.159,
+    "north_share_of_addback": 0.161,
+    "zone_solar_pot_share_annual": {
+     "LA_BASIN": 0.076,
+     "NP15": 0.154,
+     "SDGE": 0.097,
+     "SP15_rest": 0.518,
+     "ZP26": 0.155
+    }
+   },
+   "A2_regime_decomposition": {
+    "above_floor__local_active": {
+     "hours": 431,
+     "lw_usd": 0.865,
+     "model_sp15rest_lambda_p50": 26.83,
+     "south_gap_musd": 179.34
+    },
+    "above_floor__no_curtailment": {
+     "hours": 1,
+     "lw_usd": 0.003,
+     "model_sp15rest_lambda_p50": 40.83,
+     "south_gap_musd": 0.64
+    },
+    "above_floor__system_active": {
+     "hours": 219,
+     "lw_usd": 0.389,
+     "model_sp15rest_lambda_p50": 21.42,
+     "south_gap_musd": 80.61
+    },
+    "above_floor__ti_export": {
+     "hours": 143,
+     "lw_usd": 0.223,
+     "model_sp15rest_lambda_p50": 15.95,
+     "south_gap_musd": 46.15
+    },
+    "model_above_floor": {
+     "hours": 436,
+     "lw_usd": 0.874,
+     "model_sp15rest_lambda_p50": 26.79,
+     "south_gap_musd": 181.2
+    },
+    "model_already_floored": {
+     "hours": 252,
+     "lw_usd": 0.008,
+     "model_sp15rest_lambda_p50": -20.0,
+     "south_gap_musd": 1.66
+    },
+    "sneg_hours": 688,
+    "sneg_total": {
+     "hours": 688,
+     "lw_usd": 0.882,
+     "model_sp15rest_lambda_p50": 8.1,
+     "south_gap_musd": 182.86
+    },
+    "year_south_gap_lw_usd": 1.831,
+    "year_south_gap_musd": 379.67
+   },
+   "A2b_depth_witness": {
+    "charge_in_convertible_p50_mw": 3542.83,
+    "charge_in_convertible_p95_mw": 4868.14,
+    "iso_storage_power_mw": 9570.0,
+    "min_power_headroom_in_convertible_mw": 4221.59
+   },
+   "A3_perfect_conversion": {
+    "required_move": -7.56,
+    "skirt_sub20_hours": 1896,
+    "skirt_sub20_lw_usd_ceiling": -2.636,
+    "sneg_clears_requirement": null,
+    "sneg_lw_usd_ceiling": -0.95
+   },
+   "A4_candidates": {
+    "C_A_replacement": {
+     "addback_north_belly_mean_mw": 145.63,
+     "ceiling_lw_usd": -0.02,
+     "delta_hours": 41,
+     "hours_over_path": 162
+    },
+    "C_B_as_reservation": {
+     "reserve_1gw_hours_over_path_plus_storage": 0,
+     "reserve_2gw_hours_over_path_plus_storage": 0
+    },
+    "C_E_pocket_load_share": {
+     "ceiling_lw_usd": -0.107,
+     "zp26_demand_share": 0.052
+    },
+    "base_L2_hours_over_path": 121,
+    "base_L2_hours_over_path_plus_storage": 0,
+    "south_storage_power_mw": 6328.0
+   }
+  },
+  "2024": {
+   "A0_controls": {
+    "addback_vs_workbook_ratio": 1.0,
+    "hsl_addback_twh": {
+     "solar": 3.17,
+     "wind": 0.229
+    },
+    "max_demand_row_err_mw": 0.0,
+    "model_spill_gwh": 1184.49,
+    "recon_pot_vs_hsl_annual_ratio": {
+     "solar": 1.002,
+     "wind": 1.0
+    },
+    "workbook_reason_twh": {
+     "Local": 3.128,
+     "System": 0.271
+    }
+   },
+   "A1_addback_placement": {
+    "addback_belly_share": 0.7,
+    "addback_north_twh": 0.501,
+    "local_share_of_record": 0.92,
+    "north_share_belly_only": 0.145,
+    "north_share_of_addback": 0.147,
+    "zone_solar_pot_share_annual": {
+     "LA_BASIN": 0.068,
+     "NP15": 0.147,
+     "SDGE": 0.091,
+     "SP15_rest": 0.53,
+     "ZP26": 0.164
+    }
+   },
+   "A2_regime_decomposition": {
+    "above_floor__local_active": {
+     "hours": 630,
+     "lw_usd": 1.451,
+     "model_sp15rest_lambda_p50": 24.54,
+     "south_gap_musd": 307.98
+    },
+    "above_floor__no_curtailment": {
+     "hours": 22,
+     "lw_usd": 0.045,
+     "model_sp15rest_lambda_p50": 31.9,
+     "south_gap_musd": 9.6
+    },
+    "above_floor__system_active": {
+     "hours": 249,
+     "lw_usd": 0.592,
+     "model_sp15rest_lambda_p50": 24.3,
+     "south_gap_musd": 125.62
+    },
+    "above_floor__ti_export": {
+     "hours": 147,
+     "lw_usd": 0.243,
+     "model_sp15rest_lambda_p50": 8.61,
+     "south_gap_musd": 51.62
+    },
+    "model_above_floor": {
+     "hours": 655,
+     "lw_usd": 1.503,
+     "model_sp15rest_lambda_p50": 24.66,
+     "south_gap_musd": 319.03
+    },
+    "model_already_floored": {
+     "hours": 575,
+     "lw_usd": 0.439,
+     "model_sp15rest_lambda_p50": -19.31,
+     "south_gap_musd": 93.08
+    },
+    "sneg_hours": 1230,
+    "sneg_total": {
+     "hours": 1230,
+     "lw_usd": 1.942,
+     "model_sp15rest_lambda_p50": 1.39,
+     "south_gap_musd": 412.11
+    },
+    "year_south_gap_lw_usd": 4.257,
+    "year_south_gap_musd": 903.37
+   },
+   "A2b_depth_witness": {
+    "charge_in_convertible_p50_mw": 4057.57,
+    "charge_in_convertible_p95_mw": 7392.59,
+    "iso_storage_power_mw": 13208.9,
+    "min_power_headroom_in_convertible_mw": 5404.78
+   },
+   "A3_perfect_conversion": {
+    "required_move": -0.85,
+    "skirt_sub20_hours": 2300,
+    "skirt_sub20_lw_usd_ceiling": -3.354,
+    "sneg_clears_requirement": true,
+    "sneg_lw_usd_ceiling": -2.002
+   },
+   "A4_candidates": {
+    "C_A_replacement": {
+     "addback_north_belly_mean_mw": 157.39,
+     "ceiling_lw_usd": -0.021,
+     "delta_hours": 52,
+     "hours_over_path": 532
+    },
+    "C_B_as_reservation": {
+     "reserve_1gw_hours_over_path_plus_storage": 0,
+     "reserve_2gw_hours_over_path_plus_storage": 0
+    },
+    "C_E_pocket_load_share": {
+     "ceiling_lw_usd": -0.147,
+     "zp26_demand_share": 0.051
+    },
+    "base_L2_hours_over_path": 480,
+    "base_L2_hours_over_path_plus_storage": 0,
+    "south_storage_power_mw": 9531.1
+   }
+  },
+  "2025": {
+   "A0_controls": {
+    "addback_vs_workbook_ratio": 1.0,
+    "hsl_addback_twh": {
+     "solar": 3.482,
+     "wind": 0.283
+    },
+    "max_demand_row_err_mw": 0.0,
+    "model_spill_gwh": 848.9,
+    "recon_pot_vs_hsl_annual_ratio": {
+     "solar": 1.003,
+     "wind": 1.0
+    },
+    "workbook_reason_twh": {
+     "Local": 3.143,
+     "System": 0.622
+    }
+   },
+   "A1_addback_placement": {
+    "addback_belly_share": 0.716,
+    "addback_north_twh": 0.593,
+    "local_share_of_record": 0.835,
+    "north_share_belly_only": 0.154,
+    "north_share_of_addback": 0.157,
+    "zone_solar_pot_share_annual": {
+     "LA_BASIN": 0.062,
+     "NP15": 0.152,
+     "SDGE": 0.1,
+     "SP15_rest": 0.521,
+     "ZP26": 0.165
+    }
+   },
+   "A2_regime_decomposition": {
+    "above_floor__local_active": {
+     "hours": 496,
+     "lw_usd": 0.914,
+     "model_sp15rest_lambda_p50": 25.02,
+     "south_gap_musd": 188.0
+    },
+    "above_floor__no_curtailment": {
+     "hours": 7,
+     "lw_usd": 0.014,
+     "model_sp15rest_lambda_p50": 31.93,
+     "south_gap_musd": 2.95
+    },
+    "above_floor__system_active": {
+     "hours": 185,
+     "lw_usd": 0.334,
+     "model_sp15rest_lambda_p50": 24.92,
+     "south_gap_musd": 68.66
+    },
+    "above_floor__ti_export": {
+     "hours": 90,
+     "lw_usd": 0.103,
+     "model_sp15rest_lambda_p50": 9.74,
+     "south_gap_musd": 21.14
+    },
+    "model_above_floor": {
+     "hours": 508,
+     "lw_usd": 0.938,
+     "model_sp15rest_lambda_p50": 25.13,
+     "south_gap_musd": 192.79
+    },
+    "model_already_floored": {
+     "hours": 456,
+     "lw_usd": 0.163,
+     "model_sp15rest_lambda_p50": -19.07,
+     "south_gap_musd": 33.52
+    },
+    "sneg_hours": 964,
+    "sneg_total": {
+     "hours": 964,
+     "lw_usd": 1.101,
+     "model_sp15rest_lambda_p50": 1.4,
+     "south_gap_musd": 226.31
+    },
+    "year_south_gap_lw_usd": 4.103,
+    "year_south_gap_musd": 843.62
+   },
+   "A2b_depth_witness": {
+    "charge_in_convertible_p50_mw": 6449.72,
+    "charge_in_convertible_p95_mw": 9528.71,
+    "iso_storage_power_mw": 17526.0,
+    "min_power_headroom_in_convertible_mw": 7486.02
+   },
+   "A3_perfect_conversion": {
+    "required_move": -1.9,
+    "skirt_sub20_hours": 2150,
+    "skirt_sub20_lw_usd_ceiling": -2.673,
+    "sneg_clears_requirement": false,
+    "sneg_lw_usd_ceiling": -1.174
+   },
+   "A4_candidates": {
+    "C_A_replacement": {
+     "addback_north_belly_mean_mw": 189.47,
+     "ceiling_lw_usd": -0.007,
+     "delta_hours": 48,
+     "hours_over_path": 790
+    },
+    "C_B_as_reservation": {
+     "reserve_1gw_hours_over_path_plus_storage": 0,
+     "reserve_2gw_hours_over_path_plus_storage": 0
+    },
+    "C_E_pocket_load_share": {
+     "ceiling_lw_usd": -0.114,
+     "zp26_demand_share": 0.05
+    },
+    "base_L2_hours_over_path": 742,
+    "base_L2_hours_over_path_plus_storage": 0,
+    "south_storage_power_mw": 13320.8
+   }
+  }
+ }
+}
