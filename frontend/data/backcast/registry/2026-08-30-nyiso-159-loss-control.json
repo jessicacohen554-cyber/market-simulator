@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-30-nyiso-159-loss-control",
+  "label": "nyiso 159 loss control",
+  "date": "2026-08-30",
+  "shorthand": "nyiso-159-loss-control",
+  "definition": "nyiso-159 control: zero-delta replay of 2026-08-30-nyiso-157-par-attribution at HEAD",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-30-nyiso-159-loss-control.js",
+  "bundle": "results/calibration/nyiso159_lossctl_A"
+}

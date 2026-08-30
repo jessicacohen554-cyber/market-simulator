@@ -8236,3 +8236,72 @@ entry: `governance.md` 2026-08-30.
 
 Next shorthand: nyiso-159 (unchanged from the nyiso-158 entry above — Q5-W
 is a governance lane, not an nyiso-N session).
+
+## 2026-08-30 — nyiso-159 (execution): the zonal loss surface DERIVED, ARMED and PROMOTED by owner ruling — load-bearing C3b RETURNS TO PASS, the fail set narrows to {C3a-2025, C3c}
+
+Executes `PREREG-nyiso159-zonal-loss-surface-2026-08-30.md` (filed with the
+phase-0 finding by this session's earlier commit, PR #4352). Zero fitted
+scalars end to end; freeze ACTIVE (2023–2025 only). Records:
+`scripts/data/derive_nyiso_loss_surface.py` (frozen rule 23) →
+`data/raw/iso-specific-transmission/NYISO_loss_surface.csv`;
+`scripts/probes/_nyiso159_loss_ab_gates.py` → `_nyiso159_loss_ab_gates.json`;
+runs `2026-08-30-nyiso-159-loss-control` / `2026-08-30-nyiso-159-loss-surface`
+(bundles `nyiso159_lossctl_A` / `nyiso159_lossarm_B`);
+`scripts/gen_nyiso159_attestation.py`.
+
+**(1) Identification and offline acceptance (§2–§3).** The 36-month RT
+component record re-staged byte-identically to the phase-0 record
+(8,759/8,783/8,757 usable hours; E-identity max $0.0150 vs the $0.02
+publication-rounding bound). The derive reproduces the committed phase-0 dev
+surface to 6 dp, and the §3 acceptance gate held **12/12 pair-years in
+[0.5×, 1.5×]** (ratios 0.93–1.02×) before any solve was spent.
+
+**(2) Mechanism.** `ScenarioConfig.nyiso_zonal_loss_surface` (default off,
+registered at introduction — pinned default key `603c2498bf71d21d` unmoved),
+step 10 of the interchange transform ladder
+(`interchange.nyiso.apply_nyiso_zonal_loss_links` + `build_nyiso_link_loss`),
+`NYISO_LOSS_LINK_TIEBREAK_EPS = 1e-3` (the rule-9 ε class, declared in
+NYISO's own module per rule 25). Unit suite 12/12
+(`tests/iso/nyiso/test_nyiso_zonal_loss_surface.py`); NYISO directory sweep
+242 passed.
+
+**(3) The A/B (§4–§5).** Control replays the keeper **bit-identically**
+(max zonal |Δprice| 0.0 in all three years — K5/K6 at zero distance). Gates:
+K1/K2/K6/ADVERSE **PASS**; **P1 10/12 pair-years in band** — meeting the ≥10
+bar — with ONE outer miss (0.23× vs the 0.25 floor) on the
+smallest-denominator pair (NYC→LI 2024, measured ΔMCL $0.19/MWh, where the
+measured July gradient flip clamps the fraction and the 1,650 MW cable's
+congestion dominates); LOYO breaks only through that same cell. **W-K3d fires
+on magnitude** (UW annual mean −1.22/−1.71 $ in 2024/2025 vs the 0.75 bound)
+and is adjudicated against its own premise by the actual-anchored
+decomposition (`WK3d_actual_anchor`): the arm moves UW **toward** the
+measured relative gradient in both years (UW-below-LW 6.6→10.5 % vs measured
+13.3 % in 2024; 8.8→12.2 % vs measured 16.4 % in 2025) and 2024's absolute UW
+error improves ($1.86→$0.64) — in unbound hours the lossless LP's east–west
+parity WAS the bias the phase-0 premise ("UW's dual is set by its own
+balance") assumed away. Reported at full magnitude, never patched.
+
+**(4) Effect and promotion.** C3a +1.00→+2.35 / −1.96→−1.21 / −12.01→−11.48
+(2025 uplift +$0.36 LW, below the phase-0 upper bound because the surface
+moves west zones down as it moves downstate up — the LW-weighted net is
+smaller than the downstate-only bound). **Load-bearing C3b returns to PASS**
+— the 0.203 knife-edge the nyiso-157 promotion accepted is recovered
+(probe-basis NRMSE 0.2268→0.2224). C3c deltas only (not lone — C3a also
+fails — so the standing rule stays silent and both stand). Determination
+verified from committed artifacts (`calibration_verdict --run-id`):
+**NOT-YET on {C3a-2025 −11.5 %, C3c}** — strictly narrower than the
+superseded keeper's {C3a, C3b, C3c}; not worse, so D-5(b) does not stop it
+(and NYISO holds no `complete` marker since Q5-W). **OWNER RULED PROMOTE**
+(in-session, the standing-disposition formula of nyiso-155/157): keeper →
+`2026-08-30-nyiso-159-loss-surface`. `audit_keepers --iso NYISO` PASS 0/0.
+Matrix: `zonal_loss_surface` NYISO cell `·` → **K**; keeper + gates stamps
+and the §5.5 prose header re-stamped.
+
+**(5) What stays open, unchanged.** C3a-2025's faces stay routed exactly as
+nyiso-158 adjudicated: the winter face to **Leg 2** (the owner-executable
+AORR intake, `INTAKE-SPEC-nyiso156` §2 identifiability gate first,
+fail-closed) and the summer face to the ledgered model-class C3c. The loss
+surface is the restored measured FLOOR, not object-month work; no cutset,
+TTC, seam or C3c parameter moved.
+
+Next shorthand: nyiso-160.
