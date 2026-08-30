@@ -3974,3 +3974,41 @@ your branch when done.
     Δ = 4/10** · bench **exit 0, 0 STALE / 6 engine-drift**. The single moving
     reading is staleness **Δ 3 → 4**, continuing (h)'s cross-program drift.
     **Nothing in (a)–(n) changes.**
+- 2026-08-30 — **DIRECTOR DECISION CARDS — FOUR OWNER RULINGS, served as
+  clickable cards at the owner's direction ("give me decision cards … make
+  real progress") and EXECUTED IN-SESSION.** Deviation change, owner-directed:
+  the director session executes this sitting's work directly (records +
+  capture + charter) rather than dispatching records lanes — the prior
+  "issue prompts, push nothing" deviation is superseded for this sitting by
+  the owner's explicit instruction to stop routing work through
+  documentation prompts. Zero solves of any backcast year outside each
+  keeper's own recorded 2023–2025 span; no marker, freeze or holdout file
+  touched.
+  - **CARD 1 — G2 restart: "PJM capture only" RULED.** The full
+    freeze+golden-tier restart and the captures-only option are DECLINED for
+    now; one lane captures the never-captured PJM stage-0 golden
+    (keeper `2026-08-15-pjm-162-inputclock`, stable six cycles, 8/8 zero
+    caveats) via `scripts/capture_keeper_goldens.py`, its recorded 2023–2025
+    years only. Everything else stays parked; the program remains at G1.
+  - **CARD 2 — T1-H capacity-entry defect: "CHARTER BOTH LEGS NOW" RULED.**
+    The storage-entry/backstop leg AND the wind leg (A-7 / v13 item 11,
+    homeless three boards) get a charter and a lane this sitting:
+    `docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md`. Phase-0 is zero-solve
+    characterization from committed T1-H artifacts; any arming remains an
+    owner decision on the A/B record.
+  - **CARD 3 — CROSS-LANE RE-GRADE: "RE-VERIFY REQUIRED" RULED (standing
+    rule).** A scorer or shared-file change that flips another lane's or
+    program's committed state requires the affected lane's own D-5(b)-style
+    re-verification (committed artifacts, never a solve) before the flip
+    publishes; a disagreeing re-verification stops the flip and escalates.
+    Full text: `docs/calibration-log/governance.md` 2026-08-30 entry.
+    Retires the queue item carried since v13.
+  - **CARD 4 — NYISO FRONTIER REVERTED (owner, verbatim): "NYISO is not
+    frontier it was reverted bc it's not yet so it's PJM and NEISO only."**
+    Executed as the append-only `reverted_2026-08-30` key in
+    `keepers/NYISO.json` `frontier` (ratification + R-1 annotation retained
+    as history); `status/NYISO.js` rebuilt; `audit_keepers.py` PASS 0/0
+    post-edit. **All four instruments now align: CALIBRATED = `complete` =
+    gate-(a) passers = frontier = {PJM, NEISO}.** Retires v15 queue item 1;
+    the standing rule going forward is marker-master (a frontier does not
+    survive its ISO leaving CALIBRATED/`complete`).

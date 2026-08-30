@@ -2009,3 +2009,42 @@ Leg 2 + the C3c standing rule — the intake authorization is unaffected; rule 2
 what is held out is the score, never the data). `scripts/audit_keepers.py`
 passes clean after the change (M1 iterates {NEISO, PJM}; no NYISO entry to
 verify once absent).
+
+## 2026-08-30 — TWO OWNER RULINGS (director decision cards): the CROSS-LANE RE-GRADE RULE (re-verify required) and the NYISO FRONTIER REVERT (frontier = {PJM, NEISO})
+
+**Authority.** Owner rulings 2026-08-30, served as decision cards in the
+program-director session and executed in-session the same sitting. Records
+only: no solve, no re-scoring, no determination change, no mechanism cell
+moved. Durable copies: this entry + the keeper-shard edit below + the audit
+plan §8 ledger.
+
+**Ruling 1 — CROSS-LANE RE-GRADE: RE-VERIFY REQUIRED (standing rule).** The
+question carried since the nyiso-143 D-4 rider (one lane's scorer change
+flipping a shared-benchmark determination) and given a second instance by
+#4343 (the capx Q5-W lane writing this program's marker file): may one lane's
+act re-grade another lane's/program's committed record? **Ruled: a scorer or
+shared-file change that flips another ISO's or another program's committed
+state requires the AFFECTED lane's own re-verification (rule 22 D-5(b)
+style: from committed artifacts, never a solve) BEFORE the flip publishes.**
+Uniform rules (like Q5-W's "a `complete` marker cannot stand on a NOT-YET
+keeper") remain legal — the affected lane confirms rather than vetoes; a
+re-verification that DISAGREES stops the flip and escalates to the owner.
+Retires owner-queue item "cross-ISO scorer-change precedent" (carried since
+v13). Both historical instances stand as correct in substance; neither is
+re-opened.
+
+**Ruling 2 — NYISO FRONTIER REVERTED; the frontier set is {PJM, NEISO}
+ONLY.** Owner, verbatim: *"NYISO is not frontier it was reverted bc it's not
+yet so it's PJM and NEISO only."* Executed as an append-only
+`reverted_2026-08-30` key in the `frontier` block of
+`frontend/data/backcast/keepers/NYISO.json` (the 2026-08-23 ratification and
+its R-1 currency annotation are retained verbatim as the dated historical
+record; the new key is the live state: NYISO holds NO frontier declaration).
+`status/NYISO.js` regenerated (`build_status.py --iso NYISO`;
+`shared.js` rebuilt byte-identical); `audit_keepers.py` PASS 0/0 post-edit.
+**Effect: all four instruments now align — CALIBRATED = `complete` =
+forecast gate-(a) passers = frontier = {PJM, NEISO}.** Retires v15
+owner-queue item 1 (the frontier currency question) by making the marker
+the master: a frontier ratification does not survive its ISO leaving
+CALIBRATED/`complete`; re-entry is a fresh owner ratification on a
+then-current assessment.
