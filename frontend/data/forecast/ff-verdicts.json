@@ -915,8 +915,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-24T05:28:39Z",
-   "scored_at_sha": "4fc57ecdd57a"
+   "scored_at_date": "2026-08-30T17:18:17Z",
+   "scored_at_sha": "67f1557422ce"
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
@@ -1019,8 +1019,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-24T05:28:39Z",
-   "scored_at_sha": "4fc57ecdd57a"
+   "scored_at_date": "2026-08-30T17:18:18Z",
+   "scored_at_sha": "67f1557422ce"
   },
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
@@ -1978,8 +1978,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-24T05:28:39Z",
-   "scored_at_sha": "4fc57ecdd57a"
+   "scored_at_date": "2026-08-30T17:18:18Z",
+   "scored_at_sha": "67f1557422ce"
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
@@ -2082,8 +2082,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-24T05:28:39Z",
-   "scored_at_sha": "4fc57ecdd57a"
+   "scored_at_date": "2026-08-30T17:18:18Z",
+   "scored_at_sha": "67f1557422ce"
   },
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
@@ -2678,8 +2678,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-24T05:28:39Z",
-   "scored_at_sha": "4fc57ecdd57a"
+   "scored_at_date": "2026-08-30T17:18:18Z",
+   "scored_at_sha": "67f1557422ce"
   },
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
@@ -3417,8 +3417,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-24T05:28:39Z",
-   "scored_at_sha": "4fc57ecdd57a"
+   "scored_at_date": "2026-08-30T17:18:18Z",
+   "scored_at_sha": "67f1557422ce"
   },
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
@@ -4415,8 +4415,8 @@
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-24T05:28:39Z",
-   "scored_at_sha": "4fc57ecdd57a"
+   "scored_at_date": "2026-08-30T17:18:18Z",
+   "scored_at_sha": "67f1557422ce"
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
