@@ -11,10 +11,10 @@ marker + --holdout-authorized; nothing a capx lane touches either way).
 
 | lane | status | branch | model | profile | heavy slot? |
 |---|---|---|---|---|---|
-| **D10** NYISO T1-X crossover | reissued r#8 (corrected) | `claude/capx-d10-nyiso-t1x` | Fable | nyiso | no |
-| **D11-R** D-1 entry volume rule | re-scoped + issued r#8 | `claude/capx-d11r-entry-volume-rule` | Fable | ercot | no (Phase 0 first; A/B is light) |
-| **S-123** MISO adequacy package | issued r#5, not started — **r#9 check FAILED: miso-190 in flight; stays held on the start-time check** (no new MISO backcast branch in flight) | `claude/capx-s123-miso-adequacy` | Fable | miso | only if it re-measures (MISO = no co-run) |
-| **S-4** NEISO hydro accreditation | reissued r#8 (unchanged) | `claude/capx-s4-neiso-hydro` | Fable | neiso | no |
+| **D10** NYISO T1-X crossover | reissued r#8 (corrected) — **still unstarted at r#10; highest-value light lane** | `claude/capx-d10-nyiso-t1x` | Fable | nyiso | no |
+| **D11-R** D-1 entry volume rule | **RUNNING since r#10** (owner-dispatched 2026-08-30) | `claude/capx-d11r-entry-volume-rule` | Fable | ercot | no (Phase 0 first; A/B is light) |
+| **S-123** MISO adequacy package | issued r#5, not started — **r#10 check FAILED again: miso-190 in flight; held on the start-time check** | `claude/capx-s123-miso-adequacy` | Fable | miso | only if it re-measures (MISO = no co-run) |
+| **S-4** NEISO hydro accreditation | **LANDED r#10** (PR #4312; factor 0.7352) — **T1-F verification pair + FC-1 re-score + forecast registration still owed**; historical prompt below | `claude/capx-s4-neiso-hydro-syqu7m` | Fable | neiso | no |
 | **S-5** PJM requirement horizon-edge | issued r#5, not started — ready when a heavy slot frees | `claude/capx-s5-pjm-horizon-edge` | Fable | pjm | no (S-6 is the heavy one, strictly after) |
 
 **Suggested order (r#8, per the owner sitting 2026-08-30):** D10 + D11-R + S-4 now (all light —
@@ -261,12 +261,13 @@ crosses an ISO boundary.
 
 GUARDRAILS: forecast-mode 2026+ runs are UNRESTRICTED. NO out-of-training backcast year solved,
 scored or registered — the spend freeze is TIER-SCOPED since 2026-08-26 (locked test 2019/H1-2026 frozen for every ISO; validation 2020-2022 governed by the `complete` marker + --holdout-authorized alone — a lane of THIS track touches neither), `final` EMPTY (rule 22). No measured-outcome feedback
-(rule 13). DECONFLICTION IS SHARP: ERCOT's backcast lane is LIVE RIGHT NOW (branch
-claude/ercot-backcast-calibration-* in flight at charter time) — touch NO backcast keeper shard,
-status/*.js, calibration-complete.json, offer curve, commitment bridge, ORDC/scarcity mechanism
-or ERCOT backcast matrix cell; if your root cause reaches backcast territory, STOP at a FINDING
-and hand back. Check the ≤2-heavy concurrent cap (rule 12) BEFORE launching solves — it is
-SHARED with the owner's backcast solves and up to three backcast sessions are in flight. Years
+(rule 13). DECONFLICTION IS SHARP: ERCOT's backcast lane is ACTIVE this period (check
+`git ls-remote --heads origin` at start for in-flight backcast branches) — touch NO backcast
+keeper shard, status/*.js, calibration-complete.json, offer curve, commitment bridge,
+ORDC/scarcity mechanism or ERCOT backcast matrix cell; if your root cause reaches backcast
+territory, STOP at a FINDING and hand back. Check the ≤2-heavy concurrent cap (rule 12) BEFORE
+launching solves — it is SHARED with the owner's backcast solves, which start and land without
+notice. Years
 sequential within a run. No new GitHub Actions workflows, no CI offloading (private repo, billed
 minutes). Push per CLAUDE.md Git & Pushing (on HTTP 408 set http.version HTTP/1.1 and retry);
 blob-verify any >=300-line file after push (rule 27).
