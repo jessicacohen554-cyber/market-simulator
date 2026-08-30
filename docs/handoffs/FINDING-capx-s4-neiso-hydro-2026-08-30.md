@@ -21,8 +21,18 @@ measured it LOAD-BEARING (`FINDING-capx-d2b-i7-ledger-2026-08-25.md` §4.3: the 
    `HYDRO_ACCREDITATION_CREDIT_BY_ISO["NEISO"] = 1_396.472 / 1_899.5`.
 2. **Direction was declared before the number was looked at** (§2): below ~0.39 flips 2027 to
    FAIL, above ~0.62 clears 2028 outright. The sourced 0.7352 landed ABOVE the upper
-   threshold, and the verification pair (§5) confirms the ledger movement: TBD.
-3. **NEISO's 2028 I7 leg is now decidable**: TBD (verification-run result).
+   threshold, and the verification pair (§5) confirms the ledger movement *(S-4V,
+   2026-08-30)*: the credited term lands **+446.7 MW, exact to the digit in the 2026
+   base-year isolation**, and I7-2028 clears in the treatment by **+545.4 MW** —
+   with the honest §5.4 decomposition that the PASS at today's HEAD is
+   over-determined (the control clears too, on epoch drift alone).
+3. **NEISO's 2028 I7 leg is now decidable — and it reads PASS in every year 2026–2030**
+   *(S-4V, 2026-08-30)*: the bare `neiso-t1f` verdict is re-scored
+   `HOLD → PROMOTE-WITH-CAVEATS` (I7 PASS ×5; the caveats are the pre-existing
+   I12-2026 over-build WARN, now 17.1 %, and the program-wide DOF-ledger gap). The
+   D2-B undecidability is resolved twice over — the uncited 0.50 is replaced by the
+   published record, and independently the 2026-08 epoch drift closed the old
+   218 MW gap on its own (§5.4).
 4. **The FCA-vintage refresh half of the charter closes as NO-SWAP, with the newer
    publication reported at full magnitude** (§6): ISO-NE's CCP 2028/29 values — the trigger
    D2-B §4.4 anticipated — are NOT yet published; the newest published requirement set is the
@@ -243,6 +253,123 @@ in-flight backcast branches (`claude/caiso-south-belly-pricing-24uv07`,
 non-memory-bound run (9.2 min / ≤ 4.3 GB recorded), run solo and sequentially in this
 container — inside the ≤ 2-heavy cap whatever those branches are doing.
 
+### 5.2 The measured pair (S-4V, 2026-08-30)
+
+Both arms solved 5/5 years at one HEAD (`6136a29` + this branch's results-only
+commits; solve code identical to `6136a29`), sequentially, `--golden-posture`
+resolving curve-ON, identical cache key `9a7f68fc7dcac931` (the registry constant is
+not a `ScenarioConfig` field, exactly as §5.1 stated in advance):
+
+- **TREATMENT** `results/ff-t1f-s4hydro/neiso` — 7.5 min wall, 3.25 GB peak RSS.
+- **CONTROL** `results/ff-t1f-s4hydro/neiso-control` — 7.5 min. The one-line
+  reversion was applied for exactly the duration of this solve and then restored
+  from HEAD (`git checkout`), verified by re-resolving the credit (0.735179).
+
+Per-year I7 ledger, both arms (firm = peak × (1 + rm); requirement = peak ×
+1.0024544, the FCA-17 factor re-verified byte-identical at this HEAD after the S-5
+FPR hold-last landing — NEISO has no FPR table entry, so the D-1 year-threaded
+checker repair is a no-op here):
+
+| year | peak MW | control firm | control I7 | treatment firm | treatment I7 | T − C |
+|---|---:|---:|---:|---:|---:|---:|
+| 2026 | 24,889.7 | 28,687.6 | **+3,736.8** | 29,134.3 | **+4,183.5** | **+446.7** |
+| 2027 | 25,213.3 | 26,081.3 | **+806.2** | 26,203.1 | **+928.0** | +121.8 |
+| 2028 | 25,541.1 | 26,027.3 | **+423.6** | 26,149.1 | **+545.4** | +121.8 |
+| 2029 | 25,873.1 | 26,283.4 | **+346.8** | 26,405.3 | **+468.7** | +121.9 |
+| 2030 | 26,209.5 | 27,493.3 | **+1,219.6** | 27,615.1 | **+1,341.4** | +121.8 |
+
+**I7 passes in every year of BOTH arms.** Invariants: 0 FAIL / 1 WARN in both — the
+WARN is I12, out-years {2026} only (treatment 17.1 %, control 15.3 %, band cap
+15.2 %); the epoch's 2028 below-floor excursion is gone in both arms.
+
+### 5.3 Expectation vs. measurement — the scorecard
+
+1. **The isolation is EXACT.** 2026 (base year, no evolution): treatment − control
+   accredited firm = **+446.7 MW to the digit** (29,134.3 − 28,687.6), and the
+   control's 2026 ledger reproduces the D2-B/FFR-3A-2 epoch ledger **bit-for-bit**
+   (peak 24,889.729 identical to the millwatt — zero demand drift, unlike the NYISO
+   lane's −341.4 MW — and firm 28,687.6 exact). Both of §5.1's contradiction
+   triggers are therefore negative: 2028 clears, and the isolated delta is exactly
+   +446.7 MW.
+2. **2028 clears — by +545.4 MW, not the ledger-basis ≈ +229.** The D2-B arithmetic
+   assumed the epoch ledger otherwise unchanged; the solve decomposes the
+   difference into exactly the two responses §5.1 flagged in advance:
+   - **Epoch drift (control vs. FFR-3A-2): +641.3 MW of 2028 firm.** The 2027 exit
+     wave shrank from the epoch's 3,297.9 MW to **2,606.2 MW** (−691.7) at today's
+     HEAD, on the generic 0.50 and an identical demand path and base fleet — so
+     **the control clears 2028 (+423.6 MW) with no help from the factor.** (A
+     −50.3 MW step-timing residual on the 54.0 MW coal exit — netted in the 2028
+     ledger year at HEAD, in 2029 at the epoch — closes the reconciliation.) The
+     drift accumulated over 2026-08-03 → 08-30; the one *documented unconditional
+     exit-set change* in that window is the FFR-3F G3 cap-grain fix (`2adfb49` —
+     the very change FFR-3A-3 re-measured the T1-H battery for). Commit-level
+     attribution of the drift was not chartered and is not claimed; the pair
+     *measures* its total.
+   - **Floor-headroom response (treatment vs. control): the +446.7 MW input credit
+     nets to +121.8 MW of equilibrium ledger.** With the credit in place, the
+     reliability floor gains headroom and the 2027 retirement screen admits
+     **324.9 MW more gas-CC exit** (p55068 North peak 43.8 + committed 87.1;
+     p10726 Central econ 194.0 — the treatment's exit set is a strict superset of
+     the control's; `confirmed_derates` = 0 in both arms, both keys summed per the
+     D2-B method note). 446.7 − 324.9 = **+121.8 MW**, carried essentially
+     unchanged through 2030 (builds are identical in both arms: 2029 wind 712.6 +
+     solar 1,089.4; 2030 economic gas-CC 1,000 + wind 287.4 + solar 910.6;
+     **backstop 0 MW in both arms** — the epoch's 11.7 % share is also a drift
+     casualty, not a factor effect).
+   The decomposition closes exactly: control +423.6 + equilibrium +121.8 =
+   treatment **+545.4**.
+3. **I12 landed on the pre-declared numbers.** 2026 moved 15.3 % → **17.1 %**
+   (predicted ≈ 17.1 — the arithmetic consequence of adding real firm supply to an
+   already-over-band base year, a pre-existing over-build signal, not a defect of
+   the intake); 2028 re-entered the band (+2.38 % T / +1.90 % C vs. predicted
+   ≈ +1.1 — more clearance, via the drift). 2027 stayed in-band in both arms.
+4. **The determination flipped exactly as declared: HOLD → PROMOTE-WITH-CAVEATS**
+   (both arms; the treatment is the live leg). One phrasing inconsistency inside
+   §5.1 itself, resolved in favor of its own item 5: item 6 wrote "FC-1 PASS if
+   I7-2028 was the sole FAIL", but item 5 had already predicted the I12-2026 WARN
+   persists — and FC-1 consumes a WARN as CAVEAT — so FC-1 reads **CAVEAT
+   (WARN ['I12'])**, not PASS. Mechanical, pre-implied by the declaration's own
+   item 5, determination unaffected.
+
+### 5.4 The honest headline: at THIS head, the 2028 sign no longer rides on the factor
+
+D2-B's finding was that at the FFR-3A-2 epoch the 2028 verdict sat **inside the
+uncited 0.50 input's band** — undecidable at that input fidelity. The pair resolves
+that undecidability *twice over*: the uncited input is replaced by ISO-NE's own
+published record (S-4), **and** independently, 26 days of epoch drift closed the old
+218 MW gap on their own (+423.6 MW in the control). The intake therefore buys — at
+this HEAD — **input fidelity and +121.8 MW of equilibrium margin (+446.7 MW of
+credited input), not the sign**; had the drift gone the other way, it would have
+been the sign. This is the NYISO extcap lane's "over-determined PASS" disclosure,
+reproduced in its NEISO form: there the drift was on the demand side (−341.4 MW
+peak), here it is on the retirement side (−691.7 MW of 2027 exits) with the demand
+path bit-identical. Per rules 13/14/21 nothing here re-opens the factor: it is
+sourced, its direction was declared before computation, and the drift is a property
+of HEAD, not of the input.
+
+### 5.5 FC re-score and registration (rule 15, forecast namespace only)
+
+**Bare `neiso-t1f` (the live leg, scored at `60e19610e454`, cache
+`9a7f68fc7dcac931`, rubric v1.0 t1f): `PROMOTE-WITH-CAVEATS`** — FC-1 CAVEAT (lone
+I12-2026 WARN at 17.1 %; was FAIL ['I7']), FC-2 CAVEAT (row 1 I12; row 3 cobweb
+PASS; **row 4 backstop share 0 % PASS** — was 11.7 % CAVEAT), FC-7 CAVEAT (the
+program-wide absent DOF ledger, unchanged), FC-8 PASS (7.5 min). The FFR-3A-2
+measurement is preserved verbatim under **`neiso-t1f-ffr3a2`** (HOLD), per the
+preserve-then-overwrite convention; the control is on the record under
+**`neiso-t1f-s4control`** (PROMOTE-WITH-CAVEATS, provenance labelled as the
+uncommitted-diagnostic arm); the `-ff2d` baseline is untouched.
+
+Registered runs (single path, `scripts/register_forecast_run.py --summary`):
+**`neiso-2026-2030-s4hydro`** (treatment, `verdict_key: neiso-t1f`) and
+**`neiso-2026-2030-s4hydro-control`** (labelled diagnostic,
+`verdict_key: neiso-t1f-s4control`) — the exact run ids S-4's own `.gitignore`
+block pre-declared. Committed per bundle: canonical sidecar
+(`frontend/data/hindcast/<id>.json`), `full_horizon_summary.json`,
+`run_config.json` (FC-7), `forecast_verdict.json`, per-year
+`evolution_2026..2030.json`, resolved `config.yaml`; heavy dispatch outputs stay
+gitignored. The generated registry/runs/manifest namespace files remain gitignored
+(the Pages deploy is their writer). The backcast registry was not written to.
+
 ## 6. The FCA-vintage half — NO-SWAP, newer publication reported
 
 The charter: *"Refresh the FCA vintage in the same session if ISO-NE has published a newer
@@ -293,4 +420,22 @@ session's name, so it was left for a housekeeping round.
 
 ## 8. Answer to the chartered question
 
-**Is NEISO's 2028 I7 leg now decidable?** TBD.
+**Is NEISO's 2028 I7 leg now decidable?** *(Answered by the S-4V verification
+session, 2026-08-30 — §5.2–§5.5 carry the measurement.)*
+
+**YES — decidable, and it reads PASS, in 2028 and in every other year of the
+window.** The treatment (HEAD as shipped) clears I7 2026–2030 by +4,183.5 /
++928.0 / +545.4 / +468.7 / +1,341.4 MW, and the bare `neiso-t1f` re-scores
+`HOLD → PROMOTE-WITH-CAVEATS`. The decidability claim is the stronger half: the
+949.75 MW uncited-input band D2-B identified is gone — the hydro term is now
+ISO-NE's own published aggregate (1,396.5 MW, +446.7 exact in the base-year
+isolation) — and the verdict no longer sits inside any input's uncertainty band.
+The honesty rider (§5.4): at this HEAD the *sign* of 2028 is over-determined —
+epoch drift since 2026-08-03 (the 2027 exit wave shrank 691.7 MW) clears the year
+even on the generic 0.50 — so what the factor buys today is input fidelity and
++121.8 MW of equilibrium margin, with the floor-headroom response (324.9 MW of
+additional admitted gas-CC exit) absorbing the rest of the credit. The successor
+question this leaves open is S-4b's (§6): the ARA-vintage requirement refresh,
+≈ +380 MW of requirement, which is larger than every 2027–2029 margin in the
+control arm and would re-tighten exactly the years this pair just cleared —
+**S-4b is now charterable** with the pair as its measured baseline.
