@@ -1,0 +1,121 @@
+{
+ "precommit": "PRECOMMIT-caiso224-fsno-arm-2026-08-30.md",
+ "control": "caiso224_a0_control",
+ "arm": "caiso224_b1_fsno",
+ "per_year": {
+  "2023": {
+   "control": {
+    "ns_split_gt15_h": 52,
+    "reality_ns_split_h": 1310,
+    "lw_price": 56.3126,
+    "np15_neg_h": 315
+   },
+   "arm": {
+    "ns_split_gt15_h": 1556,
+    "reality_ns_split_h": 1310,
+    "lw_price": 56.1084,
+    "fsno_np15_gt15_h": 126,
+    "fsno_zp26_gt15_h": 1109,
+    "fsno_np15_engaged_h": 2506,
+    "fsno_zp26_engaged_h": 6898,
+    "fsno_neg_h": 162,
+    "fsno_le_m5_h": 157,
+    "fsno_mean_price": 56.6457,
+    "np15_neg_h": 98
+   },
+   "arm_boundaries": {
+    "NP15<->FSNO": {
+     "binding_share": 0.3054,
+     "f1_ceiling": 0.27,
+     "fires_f1": true
+    },
+    "FSNO<->ZP26": {
+     "binding_share": 0.2515,
+     "f1_ceiling": 0.27,
+     "fires_f1": false
+    }
+   }
+  },
+  "2024": {
+   "control": {
+    "ns_split_gt15_h": 40,
+    "reality_ns_split_h": 1691,
+    "lw_price": 38.9625,
+    "np15_neg_h": 570
+   },
+   "arm": {
+    "ns_split_gt15_h": 1359,
+    "reality_ns_split_h": 1691,
+    "lw_price": 39.1841,
+    "fsno_np15_gt15_h": 366,
+    "fsno_zp26_gt15_h": 853,
+    "fsno_np15_engaged_h": 2770,
+    "fsno_zp26_engaged_h": 6828,
+    "fsno_neg_h": 374,
+    "fsno_le_m5_h": 369,
+    "fsno_mean_price": 38.7339,
+    "np15_neg_h": 121
+   },
+   "arm_boundaries": {
+    "NP15<->FSNO": {
+     "binding_share": 0.3547,
+     "f1_ceiling": 0.27,
+     "fires_f1": true
+    },
+    "FSNO<->ZP26": {
+     "binding_share": 0.2059,
+     "f1_ceiling": 0.27,
+     "fires_f1": false
+    }
+   }
+  },
+  "2025": {
+   "control": {
+    "ns_split_gt15_h": 14,
+    "reality_ns_split_h": 1347,
+    "lw_price": 39.7551,
+    "np15_neg_h": 504
+   },
+   "arm": {
+    "ns_split_gt15_h": 1186,
+    "reality_ns_split_h": 1347,
+    "lw_price": 39.5967,
+    "fsno_np15_gt15_h": 512,
+    "fsno_zp26_gt15_h": 558,
+    "fsno_np15_engaged_h": 2627,
+    "fsno_zp26_engaged_h": 6017,
+    "fsno_neg_h": 428,
+    "fsno_le_m5_h": 376,
+    "fsno_mean_price": 38.4613,
+    "np15_neg_h": 175
+   },
+   "arm_boundaries": {
+    "NP15<->FSNO": {
+     "binding_share": 0.338,
+     "f1_ceiling": 0.27,
+     "fires_f1": true
+    },
+    "FSNO<->ZP26": {
+     "binding_share": 0.1621,
+     "f1_ceiling": 0.27,
+     "fires_f1": false
+    }
+   }
+  }
+ },
+ "f2": {
+  "arm_ns_split_vector": [
+   1556,
+   1359,
+   1186
+  ],
+  "reality_vector": [
+   1310,
+   1691,
+   1347
+  ],
+  "arm_strictly_year_ordered": true,
+  "reality_monotone": false,
+  "fires_f2": true
+ }
+}
