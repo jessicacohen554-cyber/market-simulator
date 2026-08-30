@@ -123,6 +123,27 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         "ercot236_k24_clip",
         "ercot236_k27_clip",
         "ercot236_k30_clip",
+        # caiso-224 FSNO arc, MID-CONCLUSION (2026-08-30) — INTERIM ENTRIES.
+        # Both dirs are deliberate artifacts of an arc that has not yet reached
+        # its verdict, so they must outlive their absent sidecars until it does.
+        #  * caiso224_a0_control (fd428d8 "A0 control complete: G-CTRL BIT-ZERO
+        #    vs the committed caiso-220 keeper sidecars"; 4213c90 legitimacy
+        #    diagnostics; 183a690 + d112f1e hourly checkpoints) is the G-CTRL
+        #    control arm, reconciled BIT-ZERO against the committed caiso-220
+        #    keeper sidecars. Being bit-identical to an already-registered run,
+        #    it is deliberately NOT registered a second time — the miso170_layup
+        #    precedent above, same reasoning, same class.
+        #  * caiso224_b1_fsno (3ec3549 + 63a5678 hourly checkpoints; completed
+        #    by 7f84d8a "B1 arm complete: bundle slim files + split-witness/
+        #    F1-F2 artifact", PR #4395) is COMPLETE but its verdict and
+        #    registration had not landed when this gate repair was dispatched;
+        #    its falsifier probe was pre-registered at 995eedb.
+        # INTERIM: these two entries are the caiso-224 continuation's to remove.
+        # That session registers or prunes both bundles at arc conclusion and
+        # deletes these lines in the same change — a stale entry here is a
+        # re-armable hole in the gate.
+        "caiso224_a0_control",
+        "caiso224_b1_fsno",
         # --- NYISO A/B RECIPE DIRS (ws6-parity-repair, 2026-08-20) ----------
         # A SECOND admissible class, adjudicated on the merits rather than on
         # the `_recipe` naming pattern: a `--replay-bundle` RECIPE dir. These
