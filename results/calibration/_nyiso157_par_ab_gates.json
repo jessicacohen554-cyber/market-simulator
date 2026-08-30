@@ -1,0 +1,670 @@
+{
+ "probe": "nyiso-157 eastern-seam PAR attribution RE-TEST A/B",
+ "prereg": [
+  "results/calibration/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md",
+  "results/calibration/PREREG-nyiso127-addendum-eastern-seam-availability-source-2026-08-05.md",
+  "results/calibration/PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md",
+  "results/calibration/EXECNOTE-nyiso157-leg1-execution-2026-08-30.md"
+ ],
+ "arms": {
+  "A_control": "nyiso157_parctl_A",
+  "B_par": "nyiso157_pararm_B"
+ },
+ "gates": {
+  "K1_single_delta": {
+   "differing_keys": {
+    "coal_prb_sigmoid_overrides.nyiso_seam_par_attribution": {
+     "A": null,
+     "B": true
+    },
+    "nyiso_seam_par_attribution": {
+     "A": false,
+     "B": true
+    }
+   },
+   "n_differing": 2,
+   "expected": [
+    "nyiso_seam_par_attribution"
+   ],
+   "passed": false
+  },
+  "K2_no_new_unserved": {
+   "per_year": {
+    "2023": {
+     "control_slack_hours": 0,
+     "arm_slack_hours": 0,
+     "new_on_arm": []
+    },
+    "2024": {
+     "control_slack_hours": 0,
+     "arm_slack_hours": 0,
+     "new_on_arm": []
+    },
+    "2025": {
+     "control_slack_hours": 0,
+     "arm_slack_hours": 0,
+     "new_on_arm": []
+    }
+   },
+   "passed": true
+  },
+  "K3_c1_no_regress": {
+   "control": {
+    "headline": "C1 all 14/14 \u00b7 free 10/10",
+    "all_pass": 14,
+    "all_total": 14,
+    "free_pass": 10,
+    "free_total": 10
+   },
+   "arm": {
+    "headline": "C1 all 14/14 \u00b7 free 10/10",
+    "all_pass": 14,
+    "all_total": 14,
+    "free_pass": 10,
+    "free_total": 10
+   },
+   "passed": true
+  },
+  "K5_reconciliation_band": {
+   "band_frac": 0.02,
+   "per_year": {
+    "2023": {
+     "measured_twh": [
+      2.473,
+      2.0362,
+      2.7988,
+      2.2283,
+      1.6473,
+      1.609,
+      2.1274,
+      2.1745,
+      2.0294,
+      1.6728,
+      1.043,
+      1.614
+     ],
+     "A_monthly_twh": [
+      "2.5224",
+      "2.0769",
+      "2.8548",
+      "2.2729",
+      "1.6802",
+      "1.6412",
+      "2.17",
+      "2.2179",
+      "2.07",
+      "1.7063",
+      "1.0638",
+      "1.6463"
+     ],
+     "B_monthly_twh": [
+      "2.4235",
+      "1.9954",
+      "2.7428",
+      "2.1838",
+      "1.6143",
+      "1.6412",
+      "2.17",
+      "2.131",
+      "2.0247",
+      "1.7063",
+      "1.0638",
+      "1.6463"
+     ],
+     "A_max_dev_twh": 0.056,
+     "B_max_dev_twh": 0.056,
+     "control_baseline_excess_twh": 0.0,
+     "arm_inside_band_plus_baseline": true,
+     "annual_net_conserved": false,
+     "annual_twh": {
+      "A": 23.9228,
+      "B": 23.3431,
+      "measured": 23.4537
+     }
+    },
+    "2024": {
+     "measured_twh": [
+      1.9779,
+      1.3127,
+      1.7419,
+      1.029,
+      1.1781,
+      2.208,
+      2.6162,
+      2.4346,
+      1.8562,
+      1.2734,
+      1.1381,
+      1.5807
+     ],
+     "A_monthly_twh": [
+      "2.0175",
+      "1.339",
+      "1.7768",
+      "1.0496",
+      "1.2017",
+      "2.2521",
+      "2.6685",
+      "2.4833",
+      "1.8933",
+      "1.2988",
+      "1.1608",
+      "1.6123"
+     ],
+     "B_monthly_twh": [
+      "2.0175",
+      "1.339",
+      "1.7768",
+      "1.0496",
+      "1.2017",
+      "2.2521",
+      "2.5721",
+      "2.4833",
+      "1.8933",
+      "1.2988",
+      "1.1608",
+      "1.6123"
+     ],
+     "A_max_dev_twh": 0.0523,
+     "B_max_dev_twh": 0.0487,
+     "control_baseline_excess_twh": 0.0,
+     "arm_inside_band_plus_baseline": true,
+     "annual_net_conserved": true,
+     "annual_twh": {
+      "A": 20.7538,
+      "B": 20.6575,
+      "measured": 20.3469
+     }
+    },
+    "2025": {
+     "measured_twh": [
+      2.3059,
+      1.8755,
+      1.4519,
+      1.2727,
+      1.255,
+      1.7627,
+      2.1376,
+      1.4751,
+      1.566,
+      1.4259,
+      1.2444,
+      1.3139
+     ],
+     "A_monthly_twh": [
+      "2.2598",
+      "1.8792",
+      "1.4809",
+      "1.2982",
+      "1.2801",
+      "1.798",
+      "2.1803",
+      "1.5046",
+      "1.5973",
+      "1.4544",
+      "1.2693",
+      "1.3402"
+     ],
+     "B_monthly_twh": [
+      "2.2598",
+      "1.8613",
+      "1.4809",
+      "1.2982",
+      "1.2611",
+      "1.798",
+      "2.1803",
+      "1.5046",
+      "1.5973",
+      "1.4544",
+      "1.2693",
+      "1.3402"
+     ],
+     "A_max_dev_twh": 0.0461,
+     "B_max_dev_twh": 0.0461,
+     "control_baseline_excess_twh": 0.0,
+     "arm_inside_band_plus_baseline": true,
+     "annual_net_conserved": true,
+     "annual_twh": {
+      "A": 19.3422,
+      "B": 19.3053,
+      "measured": 19.0866
+     }
+    }
+   },
+   "passed": false
+  },
+  "K6_control_reproduces_respecified": {
+   "original_wording": "control must reproduce the nyiso-125 keeper's C3a to +/-0.2 pp (parent PREREG \u00a77 K6, 2026-08-04)",
+   "respecified": "control must reproduce the CURRENT keeper 2026-08-25-nyiso-155-hydro-repair committed scorecard (+6.8 / -1.7 / -10.8 %) to +/-0.2 pp (EXECNOTE \u00a73)",
+   "tolerance_pp": 0.2,
+   "per_year": {
+    "2023": {
+     "control_c3a_pct": 6.81,
+     "keeper_committed_pct": 6.8,
+     "delta_pp": 0.01
+    },
+    "2024": {
+     "control_c3a_pct": -1.74,
+     "keeper_committed_pct": -1.7,
+     "delta_pp": -0.04
+    },
+    "2025": {
+     "control_c3a_pct": -10.82,
+     "keeper_committed_pct": -10.8,
+     "delta_pp": -0.02
+    }
+   },
+   "passed": true
+  },
+  "K7_availability_rule": {
+   "discharged_at": "PREREG-nyiso127-addendum \u00a76 (ParFlows corroboration)",
+   "per_year": {
+    "2023": {
+     "got": {
+      "NYC": 0.0698,
+      "Upstate_West": 0.4727,
+      "Capital_Hudson": 0.4575
+     },
+     "recorded_nyiso127": {
+      "Capital_Hudson": 0.4575,
+      "Upstate_West": 0.4727,
+      "NYC": 0.0698
+     },
+     "match": true
+    },
+    "2024": {
+     "got": {
+      "NYC": 0.0677,
+      "Upstate_West": 0.4641,
+      "Capital_Hudson": 0.4682
+     },
+     "recorded_nyiso127": {
+      "Capital_Hudson": 0.4682,
+      "Upstate_West": 0.4641,
+      "NYC": 0.0677
+     },
+     "match": true
+    },
+    "2025": {
+     "got": {
+      "NYC": 0.0683,
+      "Upstate_West": 0.468,
+      "Capital_Hudson": 0.4637
+     },
+     "recorded_nyiso127": {
+      "Capital_Hudson": 0.4637,
+      "Upstate_West": 0.468,
+      "NYC": 0.0683
+     },
+     "match": true
+    }
+   },
+   "passed": true
+  },
+  "K8_K9_attribution_coverage": {
+   "per_year": {
+    "2023": {
+     "posted_rows": 11,
+     "unattributed": [],
+     "duplicate_in_map": []
+    },
+    "2024": {
+     "posted_rows": 11,
+     "unattributed": [],
+     "duplicate_in_map": []
+    },
+    "2025": {
+     "posted_rows": 11,
+     "unattributed": [],
+     "duplicate_in_map": []
+    }
+   },
+   "passed": true
+  }
+ },
+ "K4_liveness": {
+  "max_zonal_abs_dlmp": {
+   "2023": 93.1122,
+   "2024": 63.977,
+   "2025": 71.4892
+  },
+  "live": true,
+  "passed": true
+ },
+ "report": {
+  "P2_P3_prices": {
+   "2023": {
+    "annual_mean_nyc_minus_uw": {
+     "A": 0.589,
+     "B": 10.003
+    },
+    "c3a_pct": {
+     "A": 6.81,
+     "B": 1.0
+    },
+    "lw_lambda": {
+     "A": 34.4465,
+     "B": 32.5723
+    }
+   },
+   "2024": {
+    "annual_mean_nyc_minus_uw": {
+     "A": 0.635,
+     "B": 1.6
+    },
+    "c3a_pct": {
+     "A": -1.74,
+     "B": -1.96
+    },
+    "lw_lambda": {
+     "A": 37.4554,
+     "B": 37.3718
+    }
+   },
+   "2025": {
+    "annual_mean_nyc_minus_uw": {
+     "A": 0.364,
+     "B": 3.274
+    },
+    "c3a_pct": {
+     "A": -10.82,
+     "B": -12.01
+    },
+    "lw_lambda": {
+     "A": 59.241,
+     "B": 58.4522
+    }
+   }
+  },
+  "P4_upstate_envelope": {
+   "static_uw_mw": 3000.0,
+   "per_year": {
+    "2023": {
+     "Capital_Hudson": {
+      "import_p50": 427.4,
+      "export_p50": 604.6
+     },
+     "Long_Island": {
+      "import_p50": 1012.4,
+      "export_p50": 0.0
+     },
+     "NYC": {
+      "import_p50": 1037.0,
+      "export_p50": 0.0
+     },
+     "Upstate_West": {
+      "import_p50": 1596.8,
+      "export_p50": 0.0
+     }
+    },
+    "2024": {
+     "Capital_Hudson": {
+      "import_p50": 247.0,
+      "export_p50": 738.1
+     },
+     "Long_Island": {
+      "import_p50": 986.0,
+      "export_p50": 0.0
+     },
+     "NYC": {
+      "import_p50": 912.9,
+      "export_p50": 0.0
+     },
+     "Upstate_West": {
+      "import_p50": 1767.0,
+      "export_p50": 0.0
+     }
+    },
+    "2025": {
+     "Capital_Hudson": {
+      "import_p50": 450.4,
+      "export_p50": 654.5
+     },
+     "Long_Island": {
+      "import_p50": 990.0,
+      "export_p50": 0.0
+     },
+     "NYC": {
+      "import_p50": 1053.0,
+      "export_p50": 0.0
+     },
+     "Upstate_West": {
+      "import_p50": 1221.6,
+      "export_p50": 69.6
+     }
+    }
+   },
+   "nyiso127_lp_reference_p50": {
+    "Capital_Hudson": 427,
+    "Upstate_West": 1597,
+    "NYC": 1037,
+    "Long_Island": 1012
+   }
+  },
+  "companion_condition": {
+   "thresholds": {
+    "spread_usd": 0.5,
+    "arm_min_h_janfeb_2025": 24,
+    "control_max_h": 6,
+    "measured_jan_gradient_usd": 14.83
+   },
+   "per_year": {
+    "2023": {
+     "A": {
+      "janfeb_binding_hours": 111,
+      "annual_binding_hours": 1339,
+      "janfeb_mean_ch_minus_uw": 0.725,
+      "janfeb_mean_nyc_minus_uw": 0.725
+     },
+     "B": {
+      "janfeb_binding_hours": 1391,
+      "annual_binding_hours": 7514,
+      "janfeb_mean_ch_minus_uw": 11.989,
+      "janfeb_mean_nyc_minus_uw": 11.989
+     }
+    },
+    "2024": {
+     "A": {
+      "janfeb_binding_hours": 70,
+      "annual_binding_hours": 113,
+      "janfeb_mean_ch_minus_uw": 1.746,
+      "janfeb_mean_nyc_minus_uw": 1.924
+     },
+     "B": {
+      "janfeb_binding_hours": 262,
+      "annual_binding_hours": 1740,
+      "janfeb_mean_ch_minus_uw": 4.596,
+      "janfeb_mean_nyc_minus_uw": 4.596
+     }
+    },
+    "2025": {
+     "A": {
+      "janfeb_binding_hours": 34,
+      "annual_binding_hours": 135,
+      "janfeb_mean_ch_minus_uw": 0.145,
+      "janfeb_mean_nyc_minus_uw": 0.24
+     },
+     "B": {
+      "janfeb_binding_hours": 435,
+      "annual_binding_hours": 3003,
+      "janfeb_mean_ch_minus_uw": 4.595,
+      "janfeb_mean_nyc_minus_uw": 4.599
+     }
+    }
+   },
+   "cutset_binds_2025": false
+  },
+  "scorecards": {
+   "A_control": {
+    "determination": "NOT-YET",
+    "reasons": [
+     "governance gate UNATTESTED: no governance attestation in bundle"
+    ],
+    "criteria": {
+     "fuelmix": "PASS",
+     "sysvol": "PASS",
+     "price_mean": "FAIL",
+     "price_shape": "PASS",
+     "price_tail": "FAIL",
+     "dispatch_corr": "PASS",
+     "governance": "UNATTESTED",
+     "forced_share": "PASS"
+    },
+    "free_class_headline": "C1 all 14/14 \u00b7 free 10/10"
+   },
+   "B_par": {
+    "determination": "NOT-YET",
+    "reasons": [
+     "governance gate UNATTESTED: no governance attestation in bundle"
+    ],
+    "criteria": {
+     "fuelmix": "PASS",
+     "sysvol": "PASS",
+     "price_mean": "FAIL",
+     "price_shape": "FAIL",
+     "price_tail": "FAIL",
+     "dispatch_corr": "PASS",
+     "governance": "UNATTESTED",
+     "forced_share": "PASS"
+    },
+    "free_class_headline": "C1 all 14/14 \u00b7 free 10/10"
+   }
+  },
+  "LOYO_consistency": {
+   "full_span": {
+    "K2": true,
+    "K4_live": true,
+    "K6": true
+   },
+   "held_out": {
+    "2023": {
+     "K2": true,
+     "K4_live": true,
+     "K6": true
+    },
+    "2024": {
+     "K2": true,
+     "K4_live": true,
+     "K6": true
+    },
+    "2025": {
+     "K2": true,
+     "K4_live": true,
+     "K6": true
+    }
+   },
+   "verdict_flips_on": [],
+   "passed": true
+  },
+  "side_effects_full_magnitude": {
+   "2023": {
+    "class_twh": {
+     "A": {
+      "CC_CHP": 16.02359962463379,
+      "CC_REGULAR": 31.594499588012695,
+      "CT_CHP": 1.4652999639511108,
+      "CT_PEAKER": 0.33709999918937683,
+      "OTHER": 2.1972999572753906,
+      "ST_CHP": 1.104599952697754,
+      "ST_GAS": 10.36620044708252,
+      "biomass": 0.8395000100135803,
+      "hydro": 26.832799911499023,
+      "import": 23.922800064086914,
+      "nuclear": 27.48710060119629,
+      "oil": 0.11249999701976776,
+      "solar": 0.28110000491142273,
+      "wind": 4.600900173187256
+     },
+     "B": {
+      "CC_CHP": 15.04580020904541,
+      "CC_REGULAR": 32.69020080566406,
+      "CT_CHP": 1.6368999481201172,
+      "CT_PEAKER": 0.35120001435279846,
+      "OTHER": 2.1972999572753906,
+      "ST_CHP": 1.1447999477386475,
+      "ST_GAS": 10.870100021362305,
+      "biomass": 0.8395000100135803,
+      "hydro": 26.613300323486328,
+      "import": 23.34309959411621,
+      "nuclear": 27.48710060119629,
+      "oil": 0.1460999995470047,
+      "solar": 0.27970001101493835,
+      "wind": 4.590199947357178
+     }
+    }
+   },
+   "2024": {
+    "class_twh": {
+     "A": {
+      "CC_CHP": 18.176599502563477,
+      "CC_REGULAR": 36.77109909057617,
+      "CT_CHP": 1.228700041770935,
+      "CT_PEAKER": 0.24079999327659607,
+      "OTHER": 2.2014000415802,
+      "ST_CHP": 1.1140999794006348,
+      "ST_GAS": 8.755599975585938,
+      "biomass": 0.7597000002861023,
+      "hydro": 26.73900032043457,
+      "import": 20.753799438476562,
+      "nuclear": 26.95319938659668,
+      "oil": 0.3425999879837036,
+      "solar": 0.5860999822616577,
+      "wind": 6.011600017547607
+     },
+     "B": {
+      "CC_CHP": 18.157699584960938,
+      "CC_REGULAR": 36.867000579833984,
+      "CT_CHP": 1.222100019454956,
+      "CT_PEAKER": 0.23350000381469727,
+      "OTHER": 2.2014000415802,
+      "ST_CHP": 1.1039999723434448,
+      "ST_GAS": 8.756199836730957,
+      "biomass": 0.7597000002861023,
+      "hydro": 26.73900032043457,
+      "import": 20.657499313354492,
+      "nuclear": 26.95319938659668,
+      "oil": 0.3950999975204468,
+      "solar": 0.5860999822616577,
+      "wind": 6.011600017547607
+     }
+    }
+   },
+   "2025": {
+    "class_twh": {
+     "A": {
+      "CC_CHP": 19.513700485229492,
+      "CC_REGULAR": 35.23680114746094,
+      "CT_CHP": 1.7329000234603882,
+      "CT_PEAKER": 0.9207000136375427,
+      "OTHER": 1.9483000040054321,
+      "ST_CHP": 1.440600037574768,
+      "ST_GAS": 9.377099990844727,
+      "biomass": 0.6723999977111816,
+      "hydro": 24.058900833129883,
+      "import": 19.342199325561523,
+      "nuclear": 28.34160041809082,
+      "oil": 1.1220999956130981,
+      "solar": 0.9812999963760376,
+      "wind": 7.048699855804443
+     },
+     "B": {
+      "CC_CHP": 19.44529914855957,
+      "CC_REGULAR": 35.40140151977539,
+      "CT_CHP": 1.7342000007629395,
+      "CT_PEAKER": 0.8910999894142151,
+      "OTHER": 1.9483000040054321,
+      "ST_CHP": 1.4378000497817993,
+      "ST_GAS": 9.298399925231934,
+      "biomass": 0.6723999977111816,
+      "hydro": 24.058900833129883,
+      "import": 19.305299758911133,
+      "nuclear": 28.34160041809082,
+      "oil": 1.1984000205993652,
+      "solar": 0.9812999963760376,
+      "wind": 7.048699855804443
+     }
+    }
+   }
+  }
+ }
+}
