@@ -192,18 +192,28 @@ def _measured_dmcl(year: int) -> dict[tuple[str, str], float]:
 # the pre-registered gates
 # --------------------------------------------------------------------------- #
 def k1_single_delta() -> dict:
-    """K1 — exactly one differing recorded key, the flag under test."""
+    """K1 — exactly one differing recorded LEVER, the flag under test.
+
+    ``replay_keeper --set`` applies its override through the generic
+    ``prb_overrides`` transport, so the SAME flag is recorded a second time as
+    ``coal_prb_sigmoid_overrides.<flag>``. That echo is the delivery channel's
+    record of the one delta, not a second lever; it is classified here (and
+    reported), never silently dropped.
+    """
     a, b = _config_block(ARM_A), _config_block(ARM_B)
     diff = {
         k: {"A": a.get(k), "B": b.get(k)}
         for k in sorted(set(a) | set(b))
         if a.get(k) != b.get(k)
     }
+    transport_echo = f"coal_prb_sigmoid_overrides.{FLAG}"
+    levers = sorted(k for k in diff if k != transport_echo)
     return {
         "differing_keys": diff,
-        "n_differing": len(diff),
+        "transport_echo_of_same_flag": sorted(k for k in diff if k == transport_echo),
+        "n_differing_levers": len(levers),
         "expected": [FLAG],
-        "passed": sorted(diff) == [FLAG],
+        "passed": levers == [FLAG],
     }
 
 
@@ -350,6 +360,37 @@ def loyo_consistency() -> dict:
 # --------------------------------------------------------------------------- #
 # reports (full magnitude, never gated)
 # --------------------------------------------------------------------------- #
+def wk3d_actual_anchor_report() -> dict:
+    """W-K3d adjudication evidence — is the UW move toward or away from the
+    MEASURED actual? The gate bounds |arm - control|; this report anchors the
+    same move on the measured UW annual mean LBMP and the UW-vs-LW relative
+    position, so the direction of the move is adjudicable, not just its size.
+    """
+    out = {}
+    for year in YEARS:
+        df = pd.read_parquet(CLEAN_RTM / f"lmp_{year}.parquet")
+        df = df[df["zone"].isin(ZONE_MAP["Upstate_West"])]
+        piv = df.pivot_table(
+            index="interval_start_utc", columns="zone", values="lmp_usd_per_mwh"
+        )
+        actual_uw = float(piv.mean(axis=1).mean())
+        a = float(np.nanmean(_zone_price(ARM_A, year, "Upstate_West")))
+        b = float(np.nanmean(_zone_price(ARM_B, year, "Upstate_West")))
+        out[year] = {
+            "actual_uw_mean": round(actual_uw, 2),
+            "control_uw_mean": round(a, 2),
+            "arm_uw_mean": round(b, 2),
+            "control_uw_error": round(a - actual_uw, 2),
+            "arm_uw_error": round(b - actual_uw, 2),
+            "uw_below_lw_pct": {
+                "actual": round(100.0 * (1.0 - actual_uw / ACTUAL_RT_LW[year]), 1),
+                "control": round(100.0 * (1.0 - a / _lw_lambda(ARM_A, year)), 1),
+                "arm": round(100.0 * (1.0 - b / _lw_lambda(ARM_B, year)), 1),
+            },
+        }
+    return out
+
+
 def prices_report() -> dict:
     """C3a / LW lambda / zonal gradient per arm-year (P3 honesty check)."""
     out = {}
@@ -438,6 +479,7 @@ def main() -> int:
         "report": {
             "K5_offstate_and_drift": k5_drift_report(),
             "prices": prices_report(),
+            "WK3d_actual_anchor": wk3d_actual_anchor_report(),
             "c3b_monthly": c3b_monthly_report(),
             "scorecards": scorecards(),
         },
