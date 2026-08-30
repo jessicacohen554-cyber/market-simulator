@@ -21,9 +21,14 @@ diagnosis) and are NEVER an LP or derive input. The FFE columns are a CMP
 market-design quantity, admissible in kind subject to rule 17's forward
 story in whatever mechanism would consume them.
 
-The bulk mirrors are gitignored (~13-20 MB raw each; precedent: bc_HIST) —
-this script is the reproducibility path, and the raw README records each
-mirror's sha256/size/rows at fetch time.
+The mirrors are TRACKED in git (~1.5-2.1 MB gzipped each; owner ruling
+2026-08-30 — ``scripts/regenerate_clean.py`` must rebuild all 51 datatypes
+from a fresh clone, and this was the one datatype whose raw mirror was
+absent). This script is the re-fetch/verification path: the gzip container
+is written deterministically (mtime=0, no filename field), so refetching an
+unchanged source reproduces the committed mirror byte-for-byte and
+``data/raw/miso-m2m-flowgates/SHA256SUMS.txt`` verifies either direction.
+The raw README records each mirror's raw-csv sha256/size/rows at fetch time.
 
 Quarantine (CLAUDE.md rule 22): defaults to the 2023-2025 train window;
 any other year requires ``--allow-out-of-train`` and session-logged owner
@@ -86,8 +91,14 @@ def fetch_year(year: int, force: bool = False) -> Path:
     body = _fetch(_URL.format(year=year))
     digest = hashlib.sha256(body).hexdigest()
     n_lines = body.count(b"\n")
-    with gzip.open(out, "wb", compresslevel=9) as fh:
-        fh.write(body)
+    # Deterministic gzip container (mtime=0, empty filename field): the
+    # mirrors are tracked, so an unchanged source must refetch byte-identical
+    # to the committed file (SHA256SUMS.txt / git diff verify it directly).
+    with out.open("wb") as raw_fh:
+        with gzip.GzipFile(
+            filename="", mode="wb", fileobj=raw_fh, compresslevel=9, mtime=0
+        ) as fh:
+            fh.write(body)
     log.info(
         "%s: %d bytes raw (%d lines) sha256=%s -> %s",
         _URL.format(year=year),

@@ -255,6 +255,9 @@ uv run python scripts/probes/entry_signal_fwd_expectation_compare.py \
 `data/clean` is derived and gitignored: run
 `PYTHONPATH=. uv run python scripts/regenerate_clean.py` first (50/51
 datatypes succeed on this tree; the one failure is a MISO raw mirror absent
-from the profile and irrelevant here). Evolution ledgers stay uncommitted
+from the profile and irrelevant here). *(Historical since 2026-08-30: the
+`miso-m2m-flowgates` mirrors are tracked in-repo — owner card ruling,
+`docs/handoffs/miso-m2m-flowgates-raw-mirror-2026-08.md` — so a tree whose
+hydration covers the MISO subtrees regenerates 51/51.)* Evolution ledgers stay uncommitted
 per repo policy; the probe artifact carries both arms' per-step rows, and
 the committed dumps carry every §4 number.

@@ -19,10 +19,10 @@
 # dispatch outcomes; they exist for validation/diagnosis ONLY and are
 # never a solve input.
 #
-# Curated by scripts/data/curate_miso_m2m_flowgates.py from the gitignored
+# Curated by scripts/data/curate_miso_m2m_flowgates.py from the tracked
 # source mirrors under data/raw/miso-m2m-flowgates/ (fetched by
-# scripts/data/fetch_miso_m2m_flowgates.py; sha256 identity in that
-# directory's README.md).
+# scripts/data/fetch_miso_m2m_flowgates.py; raw-csv sha256 identity in that
+# directory's README.md, committed-file identity in its SHA256SUMS.txt).
 datatype: miso-m2m-flowgates
 schema_version: 1
 title: MISO M2M/CMP seam flowgate settlement record (hourly)
