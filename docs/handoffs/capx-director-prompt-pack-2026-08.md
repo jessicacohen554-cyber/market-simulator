@@ -371,7 +371,9 @@ run_config.json (rule 24). Update ONLY the MISO shard.
 
 GUARDRAILS: forecast-mode 2026+ UNRESTRICTED; NO out-of-training backcast year solved, scored or
 registered — the spend freeze is TIER-SCOPED since 2026-08-26 (locked test 2019/H1-2026 frozen for every ISO; validation 2020-2022 governed by the `complete` marker + --holdout-authorized alone — a lane of THIS track touches neither), `final` EMPTY, MISO holds NEITHER marker (rule 22). No
-measured-outcome feedback (rule 13). DECONFLICTION: MISO's backcast lane is LIVE and active —
+measured-outcome feedback (rule 13). DECONFLICTION: miso-190 CONCLUDED 2026-08-30 (arm rejected
+on its own prereg kill; keeper miso-188-rvsscope unchanged) but a successor MISO backcast lane
+may open at any time — check git ls-remote --heads origin at start, and either way
 touch NO backcast keeper shard, status/*.js, calibration-complete.json, offer curve, commitment
 bridge or MISO backcast matrix cell. S-1 changes the requirement that ALSO feeds the retirement
 reliability floor: if your change reaches backcast-solve behaviour, STOP at a FINDING and hand
