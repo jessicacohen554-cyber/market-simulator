@@ -207,3 +207,28 @@ item 2.
 * Amendment protocol: any construction deviation discovered mid-round is
   recorded as an Amendment BEFORE further measurement/solve, pushed; the
   FINDING cites it.
+
+## Amendment 1 (2026-08-30, recorded after Stage A ran and BEFORE any
+## Stage-B solve) — G-A(iv) declared a stricter PROXY than the invariant
+## it guards; the census measures the invariant itself, and it holds
+
+Stage A measured G-A(iv) FALSE as declared: the armed conditional surface
+is not fully inert in the incumbent — 6 cells carry ratio > 1 (CC_CHP
+bins 2–3 and ST_GAS bins 0–3, ratios 1.13–2.00). The declared purpose of
+(iv) was "so the candidate cannot regress an armed mechanism"; full
+inertness was a sufficient condition for that, not the condition itself.
+The census proves the actual invariant directly: **every ratio > 1 cell
+is a TOP-rung cell (rung index 4), and the candidate's top rung equals
+the incumbent scalar by construction (§0: the class-top anchor is
+preserved exactly)** — so on every one of the 6 cells the conditional
+markup operates on an identically-baked rung and produces bit-identical
+output under incumbent and candidate; on the graded lower rungs (the only
+rungs whose baked height changes) every bin's ratio is ≤ 1 on both sides
+(clamped, no reprice). **Re-based G-A(iv′), measured TRUE from the
+committed census:** every A-2 cell with ratio > 1 has rung index = top
+AND the candidate's top-rung multiplier equals the incumbent scalar for
+that class. With (i)–(iii) TRUE as declared, Stage B PROCEEDS. No Stage-B
+kill, no outcome rule, and no candidate value changes; the
+conditional-surface contract generalization stays FILED (it becomes
+load-bearing only if a future recipe grades the top rung away from the
+scalar, which this candidate never does).
