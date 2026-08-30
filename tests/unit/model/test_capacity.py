@@ -2475,11 +2475,11 @@ class TestFF2BAdequacyBasis(unittest.TestCase):
     def test_neiso_prm_is_net_icr_over_5050_peak(self):
         from market_sim.config.constants import PLANNING_RESERVE_MARGIN_BY_ISO
 
-        # FCA 17 (CCP 2026/2027), Docket ER23-405-000: Net ICR 30,305 MW,
-        # summer 50/50 peak 27,298 MW.
+        # ARA 3 of CCP 2026/2027 (ARA ICR filing, 2025-11-21, p.12; capx-S4b
+        # re-vintage): Net ICR 30,050 MW, summer 50/50 peak 26,648 MW.
         self.assertAlmostEqual(
             PLANNING_RESERVE_MARGIN_BY_ISO["NEISO"],
-            30_305.0 / 27_298.0 - 1.0,
+            30_050.0 / 26_648.0 - 1.0,
             places=6,
         )
 
@@ -2488,20 +2488,22 @@ class TestFF2BAdequacyBasis(unittest.TestCase):
             ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
         )
 
-        # FCA 17 cleared 2,940 MW demand resources against the 30,305 MW Net ICR.
+        # CCP 2026/27 demand-resource CSO incl. ARA 3 results (2026 CELT 4.1):
+        # 2,639.682 MW against the ARA-3 Net ICR of 30,050 MW.
         self.assertAlmostEqual(
-            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["NEISO"] * 30_305.0,
-            2_940.0,
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["NEISO"] * 30_050.0,
+            2_639.682,
             places=6,
         )
 
     def test_neiso_requirement_netting_reproduces_net_icr_minus_dr(self):
         # At ISO-NE's own 50/50 peak the DR-netted requirement equals its own
-        # construction: Net ICR minus the cleared supply-side demand resources.
+        # construction: Net ICR minus the supply-side demand-resource CSOs
+        # (both at the ARA-3 vintage of CCP 2026/27).
         cfg = ScenarioConfig(iso="NEISO")
         self.assertAlmostEqual(
-            resolve_adequacy_requirement_mw(cfg, "NEISO", 27_298.0),
-            30_305.0 - 2_940.0,
+            resolve_adequacy_requirement_mw(cfg, "NEISO", 26_648.0),
+            30_050.0 - 2_639.682,
             places=3,
         )
 
@@ -2513,7 +2515,8 @@ class TestFF2BAdequacyBasis(unittest.TestCase):
         )
 
         self.assertEqual(ADEQUACY_EXTERNAL_TIE_FIRM_MW["CAISO"], 3_371.0)
-        self.assertEqual(ADEQUACY_EXTERNAL_TIE_FIRM_MW["NEISO"], 567.0)
+        # CCP 2026/27 net import CSO incl. ARA 3 (2026 CELT 4.1; capx-S4b).
+        self.assertEqual(ADEQUACY_EXTERNAL_TIE_FIRM_MW["NEISO"], 409.31)
         # One resolver, and an empty fleet accredits exactly the firm import.
         self.assertEqual(_firm_import_mw("CAISO"), 3_371.0)
         self.assertEqual(_firm_import_mw(None), 0.0)
@@ -2524,7 +2527,7 @@ class TestFF2BAdequacyBasis(unittest.TestCase):
                 accredited_firm_capacity_mw([], iso="CAISO"), 3_371.0, places=6
             )
             self.assertAlmostEqual(
-                accredited_firm_capacity_mw([], iso="NEISO"), 567.0, places=6
+                accredited_firm_capacity_mw([], iso="NEISO"), 409.31, places=6
             )
 
 

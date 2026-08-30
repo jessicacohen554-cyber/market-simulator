@@ -1,0 +1,41 @@
+source,published,ccp,vintage,metric,season,value_mw
+icr_for_aras.pdf,2025-11-21,2026-2027,ARA 3,icr,summer,31059.0
+icr_for_aras.pdf,2025-11-21,2026-2027,ARA 3,hqicc,summer,1009.0
+icr_for_aras.pdf,2025-11-21,2026-2027,ARA 3,net_icr,summer,30050.0
+icr_for_aras.pdf,2025-11-21,2026-2027,ARA 3,peak_50_50_net_btm_pv,summer,26648.0
+icr_for_aras.pdf,2025-11-21,2027-2028,ARA 2,icr,summer,30896.0
+icr_for_aras.pdf,2025-11-21,2027-2028,ARA 2,hqicc,summer,1041.0
+icr_for_aras.pdf,2025-11-21,2027-2028,ARA 2,net_icr,summer,29855.0
+icr_for_aras.pdf,2025-11-21,2027-2028,ARA 2,peak_50_50_net_btm_pv,summer,26417.0
+2026_celt.xlsx,2026-05-01,2026/2027,Includes ARA 3 Results,active_dcr_cso,summer,384.96
+2026_celt.xlsx,2026-05-01,2026/2027,Includes ARA 3 Results,active_dcr_cso,winter,383.81
+2026_celt.xlsx,2026-05-01,2026/2027,Includes ARA 3 Results,passive_dcr_cso,summer,2254.722
+2026_celt.xlsx,2026-05-01,2026/2027,Includes ARA 3 Results,passive_dcr_cso,winter,2106.602
+2026_celt.xlsx,2026-05-01,2026/2027,Includes ARA 3 Results,dcr_cso_total,summer,2639.682
+2026_celt.xlsx,2026-05-01,2026/2027,Includes ARA 3 Results,dcr_cso_total,winter,2490.412
+2026_celt.xlsx,2026-05-01,2026/2027,Includes ARA 3 Results,net_import_cso,summer,409.31
+2026_celt.xlsx,2026-05-01,2026/2027,Includes ARA 3 Results,net_import_cso,winter,409.31
+2026_celt.xlsx,2026-05-01,2027/2028,Includes ARA 1 Results,active_dcr_cso,summer,534.379
+2026_celt.xlsx,2026-05-01,2027/2028,Includes ARA 1 Results,active_dcr_cso,winter,534.079
+2026_celt.xlsx,2026-05-01,2027/2028,Includes ARA 1 Results,passive_dcr_cso,summer,2005.687
+2026_celt.xlsx,2026-05-01,2027/2028,Includes ARA 1 Results,passive_dcr_cso,winter,1962.536
+2026_celt.xlsx,2026-05-01,2027/2028,Includes ARA 1 Results,dcr_cso_total,summer,2540.066
+2026_celt.xlsx,2026-05-01,2027/2028,Includes ARA 1 Results,dcr_cso_total,winter,2496.615
+2026_celt.xlsx,2026-05-01,2027/2028,Includes ARA 1 Results,net_import_cso,summer,614.835
+2026_celt.xlsx,2026-05-01,2027/2028,Includes ARA 1 Results,net_import_cso,winter,304.2
+2025_celt.xlsx,2025-05-01,2026/2027,Includes ARA 1 Results,active_dcr_cso,summer,584.373
+2025_celt.xlsx,2025-05-01,2026/2027,Includes ARA 1 Results,active_dcr_cso,winter,582.775
+2025_celt.xlsx,2025-05-01,2026/2027,Includes ARA 1 Results,passive_dcr_cso,summer,2314.068
+2025_celt.xlsx,2025-05-01,2026/2027,Includes ARA 1 Results,passive_dcr_cso,winter,2125.617
+2025_celt.xlsx,2025-05-01,2026/2027,Includes ARA 1 Results,dcr_cso_total,summer,2898.441
+2025_celt.xlsx,2025-05-01,2026/2027,Includes ARA 1 Results,dcr_cso_total,winter,2708.392
+2025_celt.xlsx,2025-05-01,2026/2027,Includes ARA 1 Results,net_import_cso,summer,564.079
+2025_celt.xlsx,2025-05-01,2026/2027,Includes ARA 1 Results,net_import_cso,winter,564.079
+2025_celt.xlsx,2025-05-01,2027/2028,Includes FCA 18 Results,active_dcr_cso,summer,539.396
+2025_celt.xlsx,2025-05-01,2027/2028,Includes FCA 18 Results,active_dcr_cso,winter,539.791
+2025_celt.xlsx,2025-05-01,2027/2028,Includes FCA 18 Results,passive_dcr_cso,summer,2064.828
+2025_celt.xlsx,2025-05-01,2027/2028,Includes FCA 18 Results,passive_dcr_cso,winter,1949.177
+2025_celt.xlsx,2025-05-01,2027/2028,Includes FCA 18 Results,dcr_cso_total,summer,2604.224
+2025_celt.xlsx,2025-05-01,2027/2028,Includes FCA 18 Results,dcr_cso_total,winter,2488.968
+2025_celt.xlsx,2025-05-01,2027/2028,Includes FCA 18 Results,net_import_cso,summer,464.835
+2025_celt.xlsx,2025-05-01,2027/2028,Includes FCA 18 Results,net_import_cso,winter,154.2
