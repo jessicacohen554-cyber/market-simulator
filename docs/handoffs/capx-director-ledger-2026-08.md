@@ -6,11 +6,38 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #15) ·
-**HEAD at refresh:** `a6e68e2` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #16) ·
+**HEAD at refresh:** `b5050e9` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (supersedes the 2026-08-26 handoff; state section refreshed at r#13)
 
 ---
+
+## 0m. Refresh #16 (2026-08-30, HEAD `b5050e9`) — pre-launch check: the r#15 wave (D12-C · D5-R · S-4b · S-123) is CURRENT VERBATIM; backcast-only movement
+
+**1. WAVE VERIFIED CURRENT.** No capx branch exists at `b5050e9`; the forecast surfaces
+(`program-status.json`, `ff-verdicts.json`) are untouched since D14's board edit (`a65d4e5`).
+All four prompts launch as written. Minor staleness, harmless by construction (each prompt
+checks `git ls-remote` at start): D12-C's deconfliction line lists ercot-242 as in flight — it
+has since CONCLUDED. S-6 STAYS HELD: caiso-224 is still actively solving (B1-arm 2023 sidecar
+checkpoint landed this window).
+
+**2. BACKCAST MOVEMENT (watch only, nothing touches this track's gates):**
+- **NYISO keeper PROMOTED → `2026-08-30-nyiso-159-loss-surface`** (owner ruling; the measured
+  zonal loss-surface A/B registered `nyiso-159-loss-{control,surface}`; fail set NARROWS;
+  status part rebuilt after the frontier-withdrawal merge). Marker stays withdrawn — re-entry
+  still requires a CALIBRATED keeper (Q5-W).
+- **nyiso-160: winter-intake Leg 2 STOPPED WITH CAUSE — the AORR files are unproducible**;
+  touchpoint-prep audit method recorded. WATCH: Leg 2 was the designated route back to
+  CALIBRATED and marker re-entry for NYISO; with it stopped, the re-entry route is open
+  question territory for the BACKCAST track (not this track's to charter), and the NEISO-led
+  gate board is unaffected.
+- **ercot-242 CONCLUDED** (room-axis Phase-1 armed probe REJECTED-AS-ARMED on its own gates,
+  registered + escalated, matrix cell R; branch deleted). **ercot-243 opened and STOPPED at
+  Phase-0 census** (population = h3068-2024 alone; K-1/K-3 kills fire — precommit discipline
+  again). **o7 CLOSED** (HP-1 holds; the pricing channel ≈ zero; audit row closed).
+  **miso-191** (miso-190's binning-aware successor) landed its PREREG + delivery commits and
+  its branch is deleted — no MISO backcast branch in flight, S-123's check still passes.
+- In flight at `b5050e9`: `caiso-backcast-next-run` (caiso-224) ONLY.
 
 ## 0l. Refresh #15 (2026-08-30, HEAD `a6e68e2`) — the ENTIRE four-lane wave LANDED (D13 · D14 · D12 · D5); NEISO is the first (a)+(b)+(c) ISO; three rulings (Q10/Q11/Q12); D12-C + D5-R chartered; S-4b + S-123 RELEASED
 
