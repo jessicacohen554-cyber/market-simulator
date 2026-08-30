@@ -1,0 +1,652 @@
+{
+  "run_id": "ercot-2021-2025-realized-t1h-d11r-control",
+  "meta": {
+    "kind": "hindcast",
+    "crossover": false,
+    "forward_from_base": false,
+    "arm": null,
+    "base_year": null,
+    "holdout_freeze_active_at_launch": true,
+    "iso": "ERCOT",
+    "variant": "realized",
+    "energy_only_floor": false,
+    "entry_lookahead_reprice": true,
+    "retirement_rule": "pipeline",
+    "limited_foresight_dispatch": false,
+    "capacity_market_clearing": false,
+    "capacity_market_clearing_by_iso": {
+      "PJM": true,
+      "MISO": true,
+      "CAISO": true,
+      "NEISO": true
+    },
+    "capacity_clearing_posture": "shipped",
+    "capacity_market_clearing_forced": false,
+    "correlated_forced_outage": true,
+    "entry_screen_diagnostics": false,
+    "entry_vre_capacity_revenue": false,
+    "entry_rate_limits": true,
+    "entry_commissioning_lag": true,
+    "exit_rate_limits": false,
+    "capacity_screen_unified_lookahead": true,
+    "capacity_screen_scarcity_restoration": true,
+    "entry_pipeline_aware_signal": true,
+    "entry_forward_expectation_signal": false,
+    "entry_margin_exhaustion": false,
+    "smr_available_year": 2030,
+    "hindcast_verified_announced_exits": true,
+    "vre_procurement_additions_enabled": true,
+    "renewable_elcc_curves": true,
+    "gas_price_path": "hindcast_realized",
+    "crossover_forward_year": null,
+    "crossover_forward_gas_path": null,
+    "demand_growth_vintage": null,
+    "weather_posture": null,
+    "vintage_year": 2020,
+    "start_year": 2021,
+    "end_year": 2025,
+    "cache_key": "28cef3500ec1fd9e",
+    "bundle": "results/hindcast/ercot-2021-2025-realized-t1h-d11r-control/ERCOT/28cef3500ec1fd9e",
+    "solved_years": [
+      2021,
+      2023,
+      2024,
+      2025
+    ],
+    "bridged_years": [
+      2022
+    ],
+    "leakage_violations": [],
+    "started_utc": "2026-08-30T17:30:14Z"
+  },
+  "score": {
+    "iso": "ERCOT",
+    "variant": "realized",
+    "scored_years": [
+      2023,
+      2024,
+      2025
+    ],
+    "retirements": {
+      "total_gw": {
+        "actual": 2.294,
+        "model": 0.0,
+        "err_frac": -1.0,
+        "band": "FAIL"
+      },
+      "per_fuel": {
+        "biomass": {
+          "actual_gw": 0.019,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "coal": {
+          "actual_gw": 1.008,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_cc": {
+          "actual_gw": 0.271,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_ct": {
+          "actual_gw": 0.102,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_st": {
+          "actual_gw": 0.888,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "oil": {
+          "actual_gw": 0.005,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        }
+      },
+      "unit_recall_gt300": {
+        "n_big_actual": 0,
+        "matched": 0,
+        "recall": null,
+        "grain": "fuel-mw-coverage",
+        "member_rule": "reachable-set (D-24)",
+        "n_target_large": 2,
+        "n_excluded_unreachable": 2,
+        "n_a": true,
+        "n_a_reason": "no target exit >= 300 MW is reachable by an admissible channel on this run's fleet basis \u2014 reported n/a, never 0/N (D-24)",
+        "plant_recall_frac": null,
+        "plant_matched": 0,
+        "band": "SKIP"
+      },
+      "false_retire": {
+        "false_gw": 0.0,
+        "frac_of_model": 0.0,
+        "grain": "per-fuel-excess",
+        "band": "PASS"
+      },
+      "reachability": {
+        "decision": "D-24, signed 2026-08-06 (sitting Addendum X.6)",
+        "rule": "a target exit gates the >=300 MW recall metric only if the unit exists in the run's fleet basis AND its exit is reachable by an admissible channel \u2014 economic (no exclusion recorded) or instrument-driven with instrument_date <= the run's vintage cutoff. Unreachable exits leave the denominator and are reported here, NON-GATED.",
+        "vintage_cutoff": "2020-12-31",
+        "large_unit_mw": 300.0,
+        "evidence": {
+          "target": "data/raw/_validation-source/capacity_actuals_ercot.csv",
+          "confirmed_registry": "data/raw/confirmed-retirements/ercot.csv",
+          "exit_decode": "docs/handoffs/ffr-7c/exit-decode-2026-08-06.json",
+          "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+        },
+        "applicability": {
+          "use_campd_bins": true,
+          "fleet_evidence_applied": true,
+          "forecast_fossil_retirement_economic": true,
+          "economic_evidence_applied": true
+        },
+        "fail_closed": "excludes only on positive, cited evidence; a unit with no evidence either way stays IN the member set",
+        "applied": true,
+        "members": [],
+        "excluded": [
+          {
+            "unit_id": "56611_S01",
+            "unit_name": "Sandy Creek 1",
+            "mw": 1008.0,
+            "fuel": "coal",
+            "exit_year": 2025,
+            "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+            "reason": "no_instrument",
+            "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 73.41 vs bar 58.5 $/kW-yr in 2024 (unit_net), bar-invariant), and no confirmed-registry instrument exists",
+            "gated": true,
+            "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+          },
+          {
+            "unit_id": "3548_2",
+            "unit_name": "Decker Creek 2",
+            "mw": 405.0,
+            "fuel": "gas_st",
+            "exit_year": 2022,
+            "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+            "reason": "not_in_fleet_basis",
+            "why": "ABSENT (3548 carries only CT8, CT_PEAKER 206.0 MW) \u2014 no screen can retire capacity the run's fleet never carried",
+            "gated": true,
+            "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+          },
+          {
+            "unit_id": "3612_2",
+            "unit_name": "V H Braunig 2",
+            "mw": 252.0,
+            "fuel": "gas_st",
+            "exit_year": 2025,
+            "driver": "confirmed instrument ercot-nso-braunig-2 (rto_deactivation, instrument_date 2024-03-13)",
+            "reason": "post_vintage_instrument",
+            "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 63.35 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-2, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
+            "gated": false,
+            "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+          },
+          {
+            "unit_id": "3612_1",
+            "unit_name": "V H Braunig 1",
+            "mw": 225.0,
+            "fuel": "gas_st",
+            "exit_year": 2025,
+            "driver": "confirmed instrument ercot-nso-braunig-1 (rto_deactivation, instrument_date 2024-03-13)",
+            "reason": "post_vintage_instrument",
+            "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 69.74 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-1, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
+            "gated": false,
+            "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+          },
+          {
+            "unit_id": "52120_G-66",
+            "unit_name": "Freeport Energy G-66",
+            "mw": 119.0,
+            "fuel": "gas_cc",
+            "exit_year": 2023,
+            "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+            "reason": "no_instrument",
+            "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 176.44 vs bar 30.0 $/kW-yr in 2022 (class_proxy), bar-invariant), and no confirmed-registry instrument exists",
+            "gated": false,
+            "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+          }
+        ],
+        "n_target_large": 2,
+        "n_members": 0,
+        "n_excluded_gated": 2,
+        "note": "NON-GATED diagnostic. Rows here left the recall denominator (or were never in it, below the size threshold); nothing in this block bands, and no verdict reads off it."
+      }
+    },
+    "retirements_is": {
+      "total_gw": {
+        "actual": 2.294,
+        "model": 0.0,
+        "err_frac": -1.0,
+        "band": "FAIL"
+      },
+      "per_fuel": {
+        "biomass": {
+          "actual_gw": 0.019,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "coal": {
+          "actual_gw": 1.008,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_cc": {
+          "actual_gw": 0.271,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_ct": {
+          "actual_gw": 0.102,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_st": {
+          "actual_gw": 0.888,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "oil": {
+          "actual_gw": 0.005,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        }
+      },
+      "unit_recall_gt300": {
+        "n_big_actual": 0,
+        "matched": 0,
+        "recall": null,
+        "grain": "fuel-mw-coverage",
+        "member_rule": "reachable-set (D-24)",
+        "n_target_large": 2,
+        "n_excluded_unreachable": 2,
+        "n_a": true,
+        "n_a_reason": "no target exit >= 300 MW is reachable by an admissible channel on this run's fleet basis \u2014 reported n/a, never 0/N (D-24)",
+        "plant_recall_frac": null,
+        "plant_matched": 0,
+        "band": "SKIP"
+      },
+      "false_retire": {
+        "false_gw": 0.0,
+        "frac_of_model": 0.0,
+        "grain": "per-fuel-excess",
+        "band": "PASS"
+      },
+      "reachability": {
+        "decision": "D-24, signed 2026-08-06 (sitting Addendum X.6)",
+        "rule": "a target exit gates the >=300 MW recall metric only if the unit exists in the run's fleet basis AND its exit is reachable by an admissible channel \u2014 economic (no exclusion recorded) or instrument-driven with instrument_date <= the run's vintage cutoff. Unreachable exits leave the denominator and are reported here, NON-GATED.",
+        "vintage_cutoff": "2020-12-31",
+        "large_unit_mw": 300.0,
+        "evidence": {
+          "target": "data/raw/_validation-source/capacity_actuals_ercot.csv",
+          "confirmed_registry": "data/raw/confirmed-retirements/ercot.csv",
+          "exit_decode": "docs/handoffs/ffr-7c/exit-decode-2026-08-06.json",
+          "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+        },
+        "applicability": {
+          "use_campd_bins": true,
+          "fleet_evidence_applied": true,
+          "forecast_fossil_retirement_economic": true,
+          "economic_evidence_applied": true
+        },
+        "fail_closed": "excludes only on positive, cited evidence; a unit with no evidence either way stays IN the member set",
+        "applied": true,
+        "members": [],
+        "excluded": [
+          {
+            "unit_id": "56611_S01",
+            "unit_name": "Sandy Creek 1",
+            "mw": 1008.0,
+            "fuel": "coal",
+            "exit_year": 2025,
+            "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+            "reason": "no_instrument",
+            "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 73.41 vs bar 58.5 $/kW-yr in 2024 (unit_net), bar-invariant), and no confirmed-registry instrument exists",
+            "gated": true,
+            "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+          },
+          {
+            "unit_id": "3548_2",
+            "unit_name": "Decker Creek 2",
+            "mw": 405.0,
+            "fuel": "gas_st",
+            "exit_year": 2022,
+            "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+            "reason": "not_in_fleet_basis",
+            "why": "ABSENT (3548 carries only CT8, CT_PEAKER 206.0 MW) \u2014 no screen can retire capacity the run's fleet never carried",
+            "gated": true,
+            "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+          },
+          {
+            "unit_id": "3612_2",
+            "unit_name": "V H Braunig 2",
+            "mw": 252.0,
+            "fuel": "gas_st",
+            "exit_year": 2025,
+            "driver": "confirmed instrument ercot-nso-braunig-2 (rto_deactivation, instrument_date 2024-03-13)",
+            "reason": "post_vintage_instrument",
+            "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 63.35 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-2, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
+            "gated": false,
+            "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+          },
+          {
+            "unit_id": "3612_1",
+            "unit_name": "V H Braunig 1",
+            "mw": 225.0,
+            "fuel": "gas_st",
+            "exit_year": 2025,
+            "driver": "confirmed instrument ercot-nso-braunig-1 (rto_deactivation, instrument_date 2024-03-13)",
+            "reason": "post_vintage_instrument",
+            "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 69.74 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-1, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
+            "gated": false,
+            "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+          },
+          {
+            "unit_id": "52120_G-66",
+            "unit_name": "Freeport Energy G-66",
+            "mw": 119.0,
+            "fuel": "gas_cc",
+            "exit_year": 2023,
+            "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+            "reason": "no_instrument",
+            "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 176.44 vs bar 30.0 $/kW-yr in 2022 (class_proxy), bar-invariant), and no confirmed-registry instrument exists",
+            "gated": false,
+            "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+          }
+        ],
+        "n_target_large": 2,
+        "n_members": 0,
+        "n_excluded_gated": 2,
+        "note": "NON-GATED diagnostic. Rows here left the recall denominator (or were never in it, below the size threshold); nothing in this block bands, and no verdict reads off it."
+      },
+      "reversal_exposure_gw": 0.0,
+      "reversal_instruments": [],
+      "reversal_rows": []
+    },
+    "is_cutoff": "2020-12-31",
+    "additions": {
+      "basis": "decision",
+      "by_tech": {
+        "wind": {
+          "actual_gw": 12.663,
+          "model_gw": 0.35,
+          "err_frac": -0.972,
+          "band": "FAIL"
+        },
+        "solar": {
+          "actual_gw": 25.08,
+          "model_gw": 17.987,
+          "err_frac": -0.283,
+          "band": "FAIL"
+        },
+        "gas_cc": {
+          "actual_gw": 0.244,
+          "model_gw": 9.0,
+          "err_frac": 35.885,
+          "band": "FAIL"
+        },
+        "gas_ct": {
+          "actual_gw": 3.692,
+          "model_gw": 7.571,
+          "err_frac": 1.05,
+          "band": "FAIL"
+        },
+        "storage": {
+          "actual_gw": 13.691,
+          "model_gw": 5.0,
+          "err_frac": -0.635,
+          "band": "FAIL"
+        }
+      },
+      "shares": {
+        "wind": {
+          "actual_share": 0.228,
+          "model_share": 0.009,
+          "delta_pp": -0.22,
+          "band": "FAIL"
+        },
+        "solar": {
+          "actual_share": 0.452,
+          "model_share": 0.451,
+          "delta_pp": -0.002,
+          "band": "PASS"
+        },
+        "gas_cc": {
+          "actual_share": 0.004,
+          "model_share": 0.226,
+          "delta_pp": 0.221,
+          "band": "FAIL"
+        },
+        "gas_ct": {
+          "actual_share": 0.067,
+          "model_share": 0.19,
+          "delta_pp": 0.123,
+          "band": "FAIL"
+        },
+        "storage": {
+          "actual_share": 0.247,
+          "model_share": 0.125,
+          "delta_pp": -0.122,
+          "band": "FAIL"
+        }
+      },
+      "actual_total_gw": 55.436,
+      "model_total_gw": 39.908
+    },
+    "additions_cod_basis": {
+      "basis": "cod",
+      "by_tech": {
+        "wind": {
+          "actual_gw": 12.663,
+          "model_gw": 0.35,
+          "err_frac": -0.972,
+          "band": "FAIL"
+        },
+        "solar": {
+          "actual_gw": 25.08,
+          "model_gw": 11.987,
+          "err_frac": -0.522,
+          "band": "FAIL"
+        },
+        "gas_cc": {
+          "actual_gw": 0.244,
+          "model_gw": 6.0,
+          "err_frac": 23.59,
+          "band": "FAIL"
+        },
+        "gas_ct": {
+          "actual_gw": 3.692,
+          "model_gw": 4.571,
+          "err_frac": 0.238,
+          "band": "FAIL"
+        },
+        "storage": {
+          "actual_gw": 13.691,
+          "model_gw": 5.0,
+          "err_frac": -0.635,
+          "band": "FAIL"
+        }
+      },
+      "shares": {
+        "wind": {
+          "actual_share": 0.228,
+          "model_share": 0.013,
+          "delta_pp": -0.216,
+          "band": "FAIL"
+        },
+        "solar": {
+          "actual_share": 0.452,
+          "model_share": 0.43,
+          "delta_pp": -0.023,
+          "band": "PASS"
+        },
+        "gas_cc": {
+          "actual_share": 0.004,
+          "model_share": 0.215,
+          "delta_pp": 0.211,
+          "band": "FAIL"
+        },
+        "gas_ct": {
+          "actual_share": 0.067,
+          "model_share": 0.164,
+          "delta_pp": 0.097,
+          "band": "FAIL"
+        },
+        "storage": {
+          "actual_share": 0.247,
+          "model_share": 0.179,
+          "delta_pp": -0.068,
+          "band": "FAIL"
+        }
+      },
+      "actual_total_gw": 55.436,
+      "model_total_gw": 27.908
+    },
+    "additions_basis": {
+      "additions_basis": "decision",
+      "basis_definition": "an addition counts in the year the model DECIDED to build it (entry_pipeline decision_year); pipeline commissionings are reversed out of their cod_year",
+      "decision": "D-9(ii), signed 2026-08-04 (sitting Addendum K.2)",
+      "ledger_year_span": [
+        2021,
+        2025
+      ],
+      "pipeline_rows": {
+        "decided": 9,
+        "commissioned": 6
+      },
+      "decided_in_window_cod_after_window_gw": {
+        "gas_cc": 3.0,
+        "gas_ct": 3.0,
+        "solar": 6.0
+      },
+      "commissioned_in_window_decided_before_window_gw": {},
+      "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
+      "entry_commissioning_lag": true
+    },
+    "co2": {
+      "model": {
+        "2023": 167539465.38799906,
+        "2024": 155434858.85514897,
+        "2025": 188208784.6196758
+      },
+      "actual": {
+        "2023": 191435844.4022851,
+        "2024": 191324345.6416519,
+        "2025": 193564905.05488053
+      }
+    },
+    "baselines": {
+      "announced": {
+        "retire_gw": 65.381,
+        "add_gw": 147.445,
+        "note": "2020-vintage planned schedule"
+      }
+    },
+    "bands": {
+      "thermal_gw_retired_total_frac": 0.1,
+      "thermal_gw_retired_perfuel_frac": 0.2,
+      "retire_recall_min": 0.7,
+      "false_retire_frac_max": 0.15,
+      "retire_timing_years_max": 1.5,
+      "add_gw_frac_default": 0.15,
+      "add_gw_frac_storage": 0.25,
+      "techmix_share_pp_max": 0.05,
+      "co2_2025_frac": 0.1
+    },
+    "generated_utc": "2026-08-30T18:49:25Z"
+  },
+  "invariants": [
+    {
+      "ident": "I1",
+      "name": "energy balance",
+      "status": "PASS",
+      "detail": "max |supply\u2212demand| = 1.004e-09 MW (year 2023); tol 1.0"
+    },
+    {
+      "ident": "I2",
+      "name": "no NaN/inf",
+      "status": "PASS",
+      "detail": "clean"
+    },
+    {
+      "ident": "I3",
+      "name": "unserved/dump",
+      "status": "FAIL",
+      "detail": "2023: slack 0.01% of load"
+    },
+    {
+      "ident": "I4",
+      "name": "capacity accounting",
+      "status": "PASS",
+      "detail": "closes"
+    },
+    {
+      "ident": "I5",
+      "name": "no retire-and-reenter",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I6",
+      "name": "econ-retirement sanity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I7",
+      "name": "reliability floor",
+      "status": "PASS",
+      "detail": "held"
+    },
+    {
+      "ident": "I8",
+      "name": "planned-additions gating",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I9",
+      "name": "storage integrity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I10",
+      "name": "RPS dual sign+stability",
+      "status": "PASS",
+      "detail": "\u22650, stable"
+    },
+    {
+      "ident": "I11",
+      "name": "one-pass",
+      "status": "PASS",
+      "detail": "single pass"
+    },
+    {
+      "ident": "I12",
+      "name": "reserve-margin band",
+      "status": "WARN",
+      "detail": "scalar floor [13.8%, 28.7%]; out: 2023:8.5% (band [13.8%, 28.7%])"
+    },
+    {
+      "ident": "I13",
+      "name": "cobweb detector",
+      "status": "PASS",
+      "detail": "smooth"
+    },
+    {
+      "ident": "I14",
+      "name": "price sanity",
+      "status": "WARN",
+      "detail": "2023: LW $86.1 outside [0.5\u00d7,3.0\u00d7] CC MC $23.9"
+    }
+  ],
+  "registered_utc": "2026-08-30T18:51:20Z",
+  "provenance": {
+    "schema": "forecast-provenance/v1",
+    "scored_at_sha": "c2ebb74fa7f1",
+    "scored_at_date": "2026-08-30T18:51:20Z",
+    "cache_epoch": "28cef3500ec1fd9e"
+  }
+}

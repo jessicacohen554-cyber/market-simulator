@@ -54,3 +54,13 @@ ENTRY_COD_LAG_YEARS: dict[str, int] = {
     "gas_ct": 2,
 }
 ENTRY_COD_LAG_DEFAULT_YEARS: int = 2
+
+# Tranche size (MW) for the margin-exhaustion entry walk (gated:
+# ScenarioConfig.entry_margin_exhaustion). A RESOLUTION constant, not a
+# tunable (rule 21 [R-DOF]): the L-1b allocator counterfactual measured that
+# halving it moves no reported build by more than one tranche
+# (docs/FINDING-entry-signal-l1-2026-08.md §2.1, probe
+# scripts/probes/entry_signal_l1b_allocator_counterfactual.py TRANCHE_MW),
+# and tests/unit/model/test_entry_margin_exhaustion.py re-asserts the
+# invariance property on the live walk. Carried verbatim from the probe.
+ENTRY_EXHAUSTION_TRANCHE_MW: float = 250.0

@@ -1110,6 +1110,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the HOUSE-3 insertion convention. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "entry_forward_expectation_signal",
+    # D11-R margin-exhaustion entry volume rule (GATED default-off): dropped
+    # from the hash at its default so every pre-existing cache key is
+    # byte-stable; an armed run replaces the allocators' bang-bang volume rule
+    # (a clearing tech builds its full cap) with the walk that builds until
+    # the screen's own repriced margin is exhausted, and hashes distinctly.
+    # SHARED field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline).
+    "entry_margin_exhaustion",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1484,6 +1492,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # the same commit as its _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119
     # discipline). Shared field — very end, per HOUSE-3.
     "entry_forward_expectation_signal": "False",
+    # Added by the D11-R entry-volume-rule lane WITH the field, in the same
+    # commit as its _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119
+    # discipline). Shared field — very end, per HOUSE-3.
+    "entry_margin_exhaustion": "False",
 }
 
 
@@ -4148,6 +4160,45 @@ class ScenarioConfig:
     # ERCOT T1-H arm at the registered t1h posture plus this ONE field,
     # scored against the committed bracketing pair
     # results/hindcast/ercot-2021-2025-realized-t1h-{control,disarm}.
+    entry_margin_exhaustion: bool = False  # GATED default-OFF (D11-R entry
+    # volume rule; chartered by the capx director ledger §0e.3 on
+    # docs/FINDING-entry-signal-forward-expectation-2026-08-25.md §3/§7(b)).
+    # REPLACES the allocators' bang-bang volume rule — a technology clearing
+    # its screen by $1 builds its full cap (new_entry.py allocation loop /
+    # storage.py winner-take-share split) — with the one closure the model
+    # already contains (rule 21 [R-DOF], the L-1b precommit's words): BUILD
+    # UNTIL THE SCREEN'S OWN REPRICED MARGIN IS EXHAUSTED, bounded by the
+    # SAME caps (per-tech queue caps, growth ladder, shared ISO budget;
+    # storage annual cap / share cap / ceiling). Measured offline first:
+    # docs/FINDING-entry-signal-l1-2026-08.md §2 (probe
+    # scripts/probes/entry_signal_l1b_allocator_counterfactual.py) — terminal
+    # RM 18.7 % vs the shipped 25.2 %, with the B-2 cobweb SURVIVING (real
+    # market dynamics, never the target). Mechanics: capacity is added in
+    # ENTRY_EXHAUSTION_TRANCHE_MW tranches (a resolution constant, measured
+    # invariant at half-step); after each tranche the entering-year signal is
+    # re-priced by the SAME lookahead instrument that produced it
+    # (runner._lookahead_reprice_signal re-invoked with the walk's additions
+    # entering through the model's own seams: thermal at entrant variable
+    # cost x (1 - EFORD) into the merit stack, VRE/must-run as CF-shaped
+    # net-load reduction, storage through the peak-shave + AS-share terms),
+    # the walk signal is the consumed screen signal plus
+    # entry_price_signal_alpha x the within-walk delta (exact through the
+    # EWMA blend and the forward-expectation composition, both affine in
+    # S_entering), and the hourly reserve-price legs shift by the same
+    # within-walk expected-ORDC adder delta floored at zero (a within-
+    # instrument, within-year difference — zero at walk start, so the
+    # screen's own margins are reproduced exactly before any tranche).
+    # ONE mechanism, one field, BOTH allocators (rule 19 [R-ONE-MECH]): the
+    # thermal/VRE screen and the storage screen walk one shared repricer
+    # state in their live decision order (thermal first, then storage —
+    # sequential-with-shared-state reproduces every measured L-1b step).
+    # Zero fitted parameters: every quantity in the exhaustion condition
+    # already exists in the screen. Requires entry_lookahead_reprice (the
+    # repricing instrument IS the lookahead stack; with the reprice disarmed
+    # there is nothing to re-price — refused in __post_init__ rather than
+    # silently inert, the FFR-8A pattern). Forecast machinery only; coerced
+    # off in a plain backcast alongside entry_lookahead_reprice. Default off
+    # is byte-identical (the allocators' bang-bang paths are untouched).
     vre_procurement_additions_enabled: bool = False  # GATED default-OFF
     # (FFR-5E, owner decision D-18(a), sitting Addendum S.2/S.5 signed
     # 2026-08-05; design docs/handoffs/ffr-5b-procurement-channel-design-
@@ -13383,6 +13434,13 @@ class ScenarioConfig:
             # below then cannot misfire on a backcast inheriting a forecast
             # arming.
             self.entry_forward_expectation_signal = False
+            # The margin-exhaustion volume rule likewise rides the reprice's
+            # own instrument (screens-only forecast machinery — a backcast
+            # runs no capacity evolution), so it coerces off with it: same
+            # byte-stability rationale, and the requires-reprice refusal
+            # below then cannot misfire on a backcast inheriting a forecast
+            # arming.
+            self.entry_margin_exhaustion = False
 
         # ENTRY-SIGNAL forward-expectation signal: the field re-levels the
         # lookahead reprice's OWN object; with the reprice disarmed the
@@ -13399,6 +13457,23 @@ class ScenarioConfig:
                 "(docs/FINDING-entry-signal-disarm-2026-08.md §6); with the "
                 "reprice disarmed the screens read raw econ_prices and there "
                 "is nothing to re-level."
+            )
+
+        # D11-R margin-exhaustion volume rule: the walk's repricing
+        # instrument IS the lookahead stack (runner._lookahead_reprice_signal
+        # re-invoked with the walk's additions). With the reprice disarmed
+        # the screens read raw econ_prices — a fixed array with no
+        # capacity-response instrument — so exhaustion could never bind and
+        # the walk would silently reproduce bang-bang. Refused rather than
+        # silently inert (the FFR-8A refusal pattern; rule 19 [R-ONE-MECH]).
+        if self.entry_margin_exhaustion and not self.entry_lookahead_reprice:
+            raise ValueError(
+                "entry_margin_exhaustion requires entry_lookahead_reprice: "
+                "the margin-exhaustion walk re-prices the lookahead "
+                "instrument's own signal after each tranche "
+                "(docs/FINDING-entry-signal-l1-2026-08.md §2); with the "
+                "reprice disarmed there is no repricing instrument and the "
+                "walk would silently reproduce the bang-bang allocation."
             )
 
         # FF-1B correlated cold-event forced-outage derate: the mechanism is
