@@ -1,0 +1,306 @@
+{
+ "probe": "_miso191_binning_phase0",
+ "charter": "FINDING-miso190 \u00a74 named successor (binning-aware unit-grain exit timing), granted by the miso-191 handoff",
+ "ask_a_verdict_validation": {
+  "run_id": "2026-08-30-miso-188-rvsscope",
+  "determination": "NOT-YET",
+  "failing_criteria": [
+   "C3a-2025 -12.2965%"
+  ],
+  "c1": "16/16 all / 12/12 free",
+  "note": "reproduced zero-solve from committed artifacts this session"
+ },
+ "form_freeze": {
+  "chosen": "a",
+  "name": "date-scoped exit-cohort bins per plant x retirement month",
+  "reasons": [
+   "Rule 19 [R-ONE-MECH]: the COD ramp is THE single COD/exit-timing mechanism for the whole fleet (arrays.py cod-ramp block); form (a) delivers unit-grain timing THROUGH it via the existing effective_cod per-unit-retirement preference (the Homer City seam), while form (b) would mint a second, parallel exit-timing channel (a bin-level monthly availability mask) for the same phenomenon.",
+   "Blast radius: form (a) touches only the two fleet-build functions (fleet_to_bins aggregation key + retirement column carry; bins_to_fleet retirement stamp + cohort bin id); form (b) would thread a new mask channel through the vectorized availability builder where it multiplies into outage overlays, seasonal derates and min_gen floors.",
+   "Fidelity: under (a) the surviving plant's bin aggregates only surviving units, so its capacity-weighted heat rate and tranche split are computed on the capacity that actually survives; under (b) dead capacity stays inside the bin's heat-rate weighting and tranche percentages forever.",
+   "Precedent: the whole-plant retiree channel already validates the 'retiree rows form their own bins and the COD ramp ages them out' topology in production keepers (Mystic, Grand Tower) \u2014 form (a) is that topology at (plant x exit-month) grain."
+  ],
+  "scope": "cohort routing applies ONLY to leg-1 partial-exit injected units (loader-stamped provenance); whole-plant retiree-channel plants keep plant-collapsed timing in both legs (identical to the keeper), and leg-2 OS/SB re-carries keep whole-year vintage scoping (they behaved in miso-190). Operable-fleet units with ANNOUNCED future planned retirements are untouched \u2014 routing them would restructure live plants' bins on announcement data, far beyond the charter."
+ },
+ "witness_ceilings": {
+  "994": {
+   "plant": "AES Petersburg",
+   "tech": "coal",
+   "exited_units": [
+    {
+     "generator_id": "ST2",
+     "retirement": "2023-06",
+     "net_summer_mw": 421.8
+    }
+   ],
+   "exited_mw": 421.8,
+   "surviving_units": [
+    {
+     "generator_id": "4",
+     "technology": "Conventional Steam Coal",
+     "net_summer_mw": 529.6
+    },
+    {
+     "generator_id": "ST3",
+     "technology": "Conventional Steam Coal",
+     "net_summer_mw": 527.6
+    }
+   ],
+   "surviving_same_tech_mw": 1057.2,
+   "first_exit_month": "2023-06",
+   "last_exit_month": "2023-06",
+   "post_exit_ceiling_mw": 1057.2
+  },
+  "1400": {
+   "plant": "Teche",
+   "tech": "gas_st",
+   "exited_units": [
+    {
+     "generator_id": "3",
+     "retirement": "2024-06",
+     "net_summer_mw": 250.0
+    }
+   ],
+   "exited_mw": 250.0,
+   "surviving_units": [],
+   "surviving_same_tech_mw": 0.0,
+   "first_exit_month": "2024-06",
+   "last_exit_month": "2024-06",
+   "post_exit_ceiling_mw": 0.0
+  },
+  "1702": {
+   "plant": "Dan E Karn",
+   "tech": "coal",
+   "exited_units": [
+    {
+     "generator_id": "1A",
+     "retirement": "2023-05",
+     "net_summer_mw": 127.5
+    },
+    {
+     "generator_id": "1B",
+     "retirement": "2023-05",
+     "net_summer_mw": 127.5
+    },
+    {
+     "generator_id": "2A",
+     "retirement": "2023-05",
+     "net_summer_mw": 115.5
+    },
+    {
+     "generator_id": "2B",
+     "retirement": "2023-05",
+     "net_summer_mw": 115.5
+    }
+   ],
+   "exited_mw": 486.0,
+   "surviving_units": [],
+   "surviving_same_tech_mw": 0.0,
+   "first_exit_month": "2023-05",
+   "last_exit_month": "2023-05",
+   "post_exit_ceiling_mw": 0.0
+  },
+  "4014": {
+   "plant": "Wheaton",
+   "tech": "gas_ct",
+   "exited_units": [
+    {
+     "generator_id": "1",
+     "retirement": "2025-05",
+     "net_summer_mw": 44.0
+    },
+    {
+     "generator_id": "2",
+     "retirement": "2025-05",
+     "net_summer_mw": 51.0
+    },
+    {
+     "generator_id": "3",
+     "retirement": "2025-05",
+     "net_summer_mw": 44.0
+    },
+    {
+     "generator_id": "4",
+     "retirement": "2025-05",
+     "net_summer_mw": 47.0
+    }
+   ],
+   "exited_mw": 186.0,
+   "surviving_units": [],
+   "surviving_same_tech_mw": 0.0,
+   "first_exit_month": "2025-05",
+   "last_exit_month": "2025-05",
+   "post_exit_ceiling_mw": 0.0
+  },
+  "4041": {
+   "plant": "South Oak Creek",
+   "tech": "coal",
+   "exited_units": [
+    {
+     "generator_id": "5",
+     "retirement": "2024-05",
+     "net_summer_mw": 242.2
+    },
+    {
+     "generator_id": "6",
+     "retirement": "2024-05",
+     "net_summer_mw": 253.8
+    }
+   ],
+   "exited_mw": 496.0,
+   "surviving_units": [
+    {
+     "generator_id": "7",
+     "technology": "Conventional Steam Coal",
+     "net_summer_mw": 306.5
+    },
+    {
+     "generator_id": "8",
+     "technology": "Conventional Steam Coal",
+     "net_summer_mw": 309.5
+    }
+   ],
+   "surviving_same_tech_mw": 616.0,
+   "first_exit_month": "2024-05",
+   "last_exit_month": "2024-05",
+   "post_exit_ceiling_mw": 616.0
+  },
+  "6090": {
+   "plant": "Sherburne County",
+   "tech": "coal",
+   "exited_units": [
+    {
+     "generator_id": "2",
+     "retirement": "2023-12",
+     "net_summer_mw": 682.0
+    }
+   ],
+   "exited_mw": 682.0,
+   "surviving_units": [
+    {
+     "generator_id": "1",
+     "technology": "Conventional Steam Coal",
+     "net_summer_mw": 680.0
+    },
+    {
+     "generator_id": "3",
+     "technology": "Conventional Steam Coal",
+     "net_summer_mw": 876.0
+    }
+   ],
+   "surviving_same_tech_mw": 1556.0,
+   "first_exit_month": "2023-12",
+   "last_exit_month": "2023-12",
+   "post_exit_ceiling_mw": 1556.0
+  },
+  "6137": {
+   "plant": "A B Brown",
+   "tech": "coal",
+   "exited_units": [
+    {
+     "generator_id": "1",
+     "retirement": "2023-10",
+     "net_summer_mw": 245.0
+    },
+    {
+     "generator_id": "2",
+     "retirement": "2023-10",
+     "net_summer_mw": 240.0
+    }
+   ],
+   "exited_mw": 485.0,
+   "surviving_units": [],
+   "surviving_same_tech_mw": 0.0,
+   "first_exit_month": "2023-10",
+   "last_exit_month": "2023-10",
+   "post_exit_ceiling_mw": 0.0
+  },
+  "8056": {
+   "plant": "Waterford 1 & 2",
+   "tech": "gas_st",
+   "exited_units": [
+    {
+     "generator_id": "1",
+     "retirement": "2024-03",
+     "net_summer_mw": 409.5
+    }
+   ],
+   "exited_mw": 409.5,
+   "surviving_units": [
+    {
+     "generator_id": "2",
+     "technology": "Natural Gas Steam Turbine",
+     "net_summer_mw": 417.3
+    }
+   ],
+   "surviving_same_tech_mw": 417.3,
+   "first_exit_month": "2024-03",
+   "last_exit_month": "2024-03",
+   "post_exit_ceiling_mw": 417.3
+  }
+ },
+ "wholeplant_staggered_exits_not_in_scope": {
+  "1024": {
+   "plant": "Crawfordsville Power Plant",
+   "n_units": 2,
+   "mw": 11.5,
+   "distinct_exit_months": [
+    "2023-02",
+    "2024-04"
+   ]
+  },
+  "52006": {
+   "plant": "LaO Energy Systems",
+   "n_units": 6,
+   "mw": 384.0,
+   "distinct_exit_months": [
+    "2024-04",
+    "2024-10",
+    "2024-12"
+   ]
+  }
+ },
+ "leg2_pooling": {
+  "6055": {
+   "plant": "Big Cajun 2",
+   "operable_rows": [
+    {
+     "generator_id": "2",
+     "technology": "Natural Gas Steam Turbine",
+     "net_summer_mw": 546.4,
+     "status": "OP"
+    },
+    {
+     "generator_id": "3",
+     "technology": "Conventional Steam Coal",
+     "net_summer_mw": 551.3,
+     "status": "OP"
+    }
+   ],
+   "operable_coal_mw": 551.3
+  },
+  "6705": {
+   "plant": "Warrick",
+   "operable_rows": [
+    {
+     "generator_id": "1",
+     "technology": "Conventional Steam Coal",
+     "net_summer_mw": 153.1,
+     "status": "OP"
+    },
+    {
+     "generator_id": "3",
+     "technology": "Conventional Steam Coal",
+     "net_summer_mw": 120.2,
+     "status": "OP"
+    },
+    {
+     "generator_id": "4",
+     "technology": "Conventional Steam Coal",
+     "net_summer_mw": 265.4,
+     "status": "OP"
+    }
+   ],
+   "operable_coal_mw": 538.7
+  }
+ }
+}
