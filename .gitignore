@@ -353,6 +353,19 @@ frontend/data/forecast/program-status.js
 /results/ff-t1f-s123/*/*/*/year_*_floor_retentions.json
 /results/ff-t1f-s123/*.log
 
+# capx T3-NEISO-GOLDEN — the program's FIRST §2.1b-authorized full-horizon
+# campaign (owner ruling Q13, r#17 sitting 2026-08-30: NEISO 2026-2050 T3 BAU
+# golden, this campaign only; run id neiso-2026-2050-t3-golden-bau,
+# docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md). Same class and
+# same slim-vs-heavy split as /results/ff-t1f-s4hydro/ above (the committed
+# record is config.yaml + evolution_<year>.json + full_horizon_summary +
+# run_config + forecast_verdict), plus the in-session build/solve logs.
+/results/ff-t3-neiso-golden/*/*/*/*.parquet
+/results/ff-t3-neiso-golden/*/*/*/*.npz
+/results/ff-t3-neiso-golden/*/*/*/hourly/
+/results/ff-t3-neiso-golden/*/*/*/year_*_floor_retentions.json
+/results/ff-t3-neiso-golden/*.log
+
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
 # D-28 option A step 3). Same class as /results/ffr7b2/ above, of which this is
