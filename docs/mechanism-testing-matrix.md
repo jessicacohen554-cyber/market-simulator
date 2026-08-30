@@ -5079,6 +5079,46 @@ loss.
 
 ### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-30-miso-188-rvsscope` (**PROMOTED miso-188, 2026-08-30** on the PREREG's own pre-registered rule, PREREG-miso188 §4: S-0/S-1/S-2/S-4 clean + charter kill silent + zero PASS→FAIL flips — the first MISO promotion since miso-160 to clear its own PREREG condition without owner escalation. Single delta `retiree_vintage_status_scope=true`, the retiree-channel vintage-status oracle (NEW field + matrix row): a within-window retiree unit is dropped for solve year Y iff its latest committed EIA-860 vintage ≤ Y status is non-OP, fail-open — removing 28 dark units / 1,434 MW led by Grand Tower (862, 511 MW CC: OS in vintage_2023, CAMPD 0.0 GWh 2022–2024, yet carried in-merit 3.55 TWh 2023 + 1.23 TWh Jan–Apr 2024, exactly the C1 excess window) while keeping Rush Island (OP, really ran). **C1 fuelmix CC_REGULAR-2024 +8.037 FAIL → +6.820 PASS** (the single criterion flip; C1 16/16, free 12/12; S-2 CC fall 1.2114 TWh ≈ the full phantom), C3a-2024 −4.64 → −4.30 %, C3a-2023 +2.40 → +3.50 % (the PREREG's declared in-band adverse face), C3a-2025 −12.3185 → −12.2965 % (no 2025 claim); determination narrows to **NOT-YET on {C3a-2025} ALONE**, C3c the single ledgered caveat, ledger 36/2 (new entry MEASURED). Named-not-built successor: the partial-plant mid-window exit gap (5.93 TWh 2023 / 0.57 TWh 2024 of measured generation from units in neither the operable snapshot nor the whole-plant retiree channel — Sherco-2, SOC 5+6, A B Brown, Karn, Big Cajun 2-1 OS; needs unit-grain COD timing, its own charter). Superseding `2026-08-26-miso-187-nucavail` — **PROMOTED miso-187, 2026-08-26** under the owner's in-session directive resolving the PREREG-miso187 §4 structural-split escalation — S-3 PASS (+0.298 GW toward the measured South outflow, matching the +0.299 ex-ante static reach) with S-2 unchanged (7/47) and C3a-2025 UNCHANGED to 4 dp, ZERO criterion flips; single delta `nuclear_unit_availability=true`, the per-reactor NRC-daily nuclear availability layer over the new 13-reactor `NRC_TO_EIA["MISO"]` crosswalk, monthly energy reconciled to the verified EIA-923 anchor; determination NOT-YET on {C3a-2025 −12.3%, C1 fuelmix CC_REGULAR 2024 +8.04 vs ±8.00 TWh}, C3c the single ledgered caveat, superseding `2026-08-25-miso-186-statusscope` — **PROMOTED miso-186, 2026-08-25** under the owner posture directive: structural S-2/S-3 PASS with the scored regression disclosed at full magnitude; single delta `unit_outage_fleet_status_scope=true`, the CAMPD mothball double-count repair; that keeper had superseded `2026-08-22-miso-177-rho-measured`; that keeper had superseded `2026-08-22-miso-175-hourkey` — the measured-rho re-gate of the same-day owner RHO_CLIP band ruling; the standing miso-169/nyiso-144 floor escalation is CLOSED: refuted, deleted, re-solved), **NOT-YET on C3a-2025 (−11.7 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, miso-175 (2026-08-22) EXECUTED item 1 (the seam-envelope hour-key rotation — now the keeper); miso-176 (2026-08-22) EXECUTED item 3 (the M2M/CMP seam-class intake + binding-reality measurement — `m2m_seam_entitlement_cap` minted `G`, no LP); the remaining two (the coincident-peak seam-response object [OWNER admissibility ruling needed, now holding miso-176's binding evidence], the South under-export) stay NAMED, NOT CHARTERED — see the stamps below and the standing OWNER items. **miso-178 (2026-08-23) delivered the re-charter's measurement: the full C3a-2025 anatomy on the measured-rho keeper + the RANKED lever plan — the queue now carries the D-1 across-unit offer-level-dispersion charter ask (top), the D-2 5(i) seam-response ruling, and the D-3 South under-export evidence charter (FINDING-miso178 §7–§10; its stamp below).** **miso-179 (2026-08-23) EXECUTED the granted D-1 charter and REFUTED it at its own pre-registered no-LP pre-checks — `miso_offer_level_dispersion` minted `R`, no field ever created, keeper unchanged: the model already carries 0.541× the eligible book's across-unit spread at the 2025 summer top-decile margin (kill ≥ 0.5), and the granted rank-mapped LEVEL form statically predicts C3a-2023 +1.28 → −40.1 % (the miso-145 level warning at rank grain; the miso-178 §7 kill-risk (b) population non-identifiability materialized). The queue now carries the D-2 5(i) ruling, the D-3 South evidence charter, and the NEW anchored SPREAD-ONLY successor ask (owner decision — the measured residual is a top-decile tail steepening, +$40 at p95 / +$110 at p99; its stamp below).** **miso-180 (2026-08-23) EXECUTED the granted D-1b successor charter end to end and measured it INERT — `miso_offer_spread_anchored` minted `I` (built, gated default-off, both A/B runs registered), keeper unchanged: the ex-ante-identified anchor (r = 0.875, the model/book H* crossing) grafted the measured above-anchor rise exactly as designed (body untouched to 3 decimals, ceilings respected) and the LP realized only +0.132 pp of the predicted +0.592 on C3a-2025 — Δ₁ did not collapse (+10.50 → +10.45) and the South dipole moved AWAY from zero (+16.96 → +17.15%). The across-unit dispersion family is now fully adjudicated (level R / spread I); the residual is NOT an offer-surface object — the queue carries the D-2 5(i) seam-response ruling (the +2.1 GW binding-hour import excess, now the largest named object) and the D-3 South evidence charter (its stamp below).**
 
+> **QUEUE STAMP miso-189 (2026-08-30) — STANDING OWNER ITEM (6), THE
+> MISO-ILLINOIS $8.22/MMBtu SCARCE DELIVERED-GAS OBSERVATION, PHASE-0'D
+> ZERO-SOLVE AND REFUTED ON ITS OWN PRE-DECLARED RULE — the lane is at its
+> adjudicated frontier on C3a-2025 and the D-4 posture ruling is the
+> owner's.** The one named, never-adjudicated candidate touching 2025 scarce
+> price formation (FINDING-miso186 §1 Leg R/S → FINDING-miso188 §7 item 6)
+> was measured against the keeper's own input with the adjudication rule
+> frozen in the probe docstring BEFORE any quantity was computed (CANDIDATE
+> iff measured − model ≥ +$0.50/MMBtu on the 2025 scarce set, zone-book or
+> matched-plant grain). Footing exact (scarce 11/14/47; the rebuilt 2025
+> Illinois book 8.218 vs the committed 8.2179). **The result: the model's
+> Illinois book sits $4.2/MMBtu ABOVE the best of six measured comparators
+> (F923 IL burn-weighted 4.05, zone-plants 3.96, HH+MISO-basis 3.42,
+> HH+IL-zone-basis 3.07, Chicago Citygate on the exact scarce days 2.86, EIA
+> IL citygate 3.42), and on the matched-plant grain the model reproduces the
+> reporting plants' own F923 prints to −0.33** — the $8.22 is measured
+> across-plant dispersion (rarely-run IL CTs' own prints: Venice
+> $11.2–12.4, Goose Creek $13.9–15.4, Raccoon Creek $20.5–22.7 on 2.3–2.8k
+> MMBtu/month takes) carried faithfully per plant, NOT a wiring artifact and
+> NOT a fallback inflation (the fallback side is the cheap side, $4.59).
+> **Reconciliation duty discharged: the scarce-set evidence CORROBORATES
+> both grounds of the miso-156 `gas_hub_basis_overlay` R** (the fuel channel
+> points backwards in the scarce set exactly as at the annual grain; the
+> per-plant F923 fidelity is measured directly) — the R stands, the
+> DO-NOT-REDO record gains a second citation, no cell verdict moves. Residue
+> with ADVERSE sign, owner-court, NOT a lane lever: the
+> marginal-vs-average-delivered-cost question (a near-idle CT's F923 print
+> amortizes fixed charges over tiny takes and overstates the marginal
+> commodity MMBtu, ≈$3–4 spot+transport; repricing would LOWER scarce
+> prices). NO LP, no registration owed (the miso-156 no-solve precedent);
+> keeper `2026-08-30-miso-188-rvsscope` UNCHANGED; ask C (partial-plant
+> mid-window exit charter) not granted, not built. The C3a-2025 queue is now
+> EMPTY of named candidates at every grain: the direction object stays the
+> adjudicated ~3.3 GW mc-idled/flat-stack MODEL-CLASS residual (offer family
+> EXHAUSTED miso-179 R / miso-180 I; ORDC family G by owner ruling
+> miso-163), folding into the standing owner D-4 posture question with the
+> ~1.3 GW scarce-export concession. Records:
+> `FINDING-miso189-illinois-scarce-gas-phase0-2026-08-30.md`,
+> `_miso189_illinois_gas_phase0.json`, probe
+> `scripts/probes/_miso189_illinois_gas_phase0.py`.**
 > **QUEUE STAMP miso-188 (2026-08-30) — THE C1 CC_REGULAR-2024 CHARTER (the
 > miso-188 handoff ask B, superseding miso-187 §6's report-only posture on
 > that object) EXECUTED END TO END AND PROMOTED ON THE PREREG'S OWN RULE.**

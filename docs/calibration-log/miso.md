@@ -9005,3 +9005,63 @@ unit-grain exit timing in the plant-keyed COD mechanism. Records:
 `PREREG-miso188-retiree-vintage-status-scope-2026-08-30.md`,
 `_miso188_ab_gates.json`; probe `scripts/probes/_miso188_ab_gates.py`;
 attestation `scripts/gen_miso188_attestation.py`.
+
+## miso-189 (2026-08-30) — standing owner item (6), the MISO-Illinois $8.22/MMBtu scarce delivered-gas observation, phase-0'd ZERO-SOLVE and REFUTED on its own pre-declared rule; NO solve, keeper UNCHANGED (`2026-08-30-miso-188-rvsscope`); the C3a-2025 lane stands at its adjudicated frontier pending the owner's D-4 posture ruling
+
+**Charter:** the miso-189 handoff — ask A (zero-solve validation), ask B (the
+$8.22 observation, phase-0 first, PREREG+solve only if the measured record
+exceeds the model's input), ask C (partial-plant exit charter — owner-grant
+only; not granted, not built). **Ask A PASS:** `calibration_verdict.py`
+reproduces the registered determination exactly (NOT-YET on {C3a-2025 −12.3%}
+alone; C1 16/16 · 12/12 free; C3c the single ledgered caveat; C6 attested;
+C8 PASS with the 2025 ST_GAS grounded note).
+
+**Ask B — the phase-0** (probe `scripts/probes/_miso189_illinois_gas_phase0.py`,
+adjudication rule frozen in the docstring BEFORE any quantity was computed:
+CANDIDATE iff measured − model ≥ +$0.50/MMBtu on the 2025 scarce set, either
+grain; record `_miso189_illinois_gas_phase0.json`). Footing exact: scarce
+sets 11/14/47; the rebuilt 2025 Illinois book 8.218 vs the committed
+miso-186 8.2179 (and 2023/2024 books reproduce to 3 dp under the miso-188
+fleet). **The result — REFUTED at both grains:**
+
+* **Zone-book grain:** the model's Illinois book sits **$4.2/MMBtu ABOVE the
+  best of six measured comparators** (F923 IL-state burn-weighted 4.050;
+  IL-zone plants 3.955; HH+MISO-ISO-basis 3.423; HH+IL-zone-basis 3.071;
+  Chicago Citygate on the exact 47 scarce days 2.861; EIA IL citygate 3.419).
+* **Matched-plant grain:** model 10.931 vs the reporting plants' own F923
+  prints 10.599 (gap −0.33 = the mean-preserving daily-shape factor on the
+  scarce days) — the model carries the measured record faithfully.
+* **What the $8.22 is:** measured across-plant dispersion. The IL scarce-hour
+  gas capacity is dominated by rarely-run CTs whose OWN F923 prints run high
+  on tiny takes (Venice $11.2–12.4 on 20–25k MMBtu/mo; Goose Creek
+  $13.9–15.4 on 6–7k; Raccoon Creek $20.5–22.7 on 2.3–2.8k) while the burn
+  concentrates at ~$3.0 CCs (Holland 1.85M MMBtu Sep at $3.00). The
+  fallback side of the book is the CHEAP side ($4.59, 42% of capacity) —
+  no wiring artifact, no fallback inflation.
+
+**Reconciliation duty (explicit, per charter):** the scarce-set evidence
+CORROBORATES both grounds of the miso-156 `gas_hub_basis_overlay` `R` —
+ground (1)'s backwards fuel channel holds scarce-set-scoped (model above
+measured), ground (2)'s per-plant F923 fidelity is measured directly at the
+scarce grain (−0.33). The `R` stands; its ev cell gains the corroboration
+citation; no cell verdict moves. **Against interest:** 2023/2024
+matched-plant gaps are +0.271/+0.046 (the candidate's direction, both under
+the +0.50 line, in in-band years); the 2025 F923 vintage is preliminary
+(8 IL reporters — missing cheap CCs would bias the measured comparators UP,
+strengthening the refutation); and the exposed marginal-vs-average
+delivered-cost question (a near-idle CT's print amortizes fixed charges;
+marginal commodity ≈ $3–4) has ADVERSE sign for C3a-2025 and goes to owner
+court, never this lane.
+
+**The lane state:** owner item (5←6) CLOSED by this phase-0; the C3a-2025
+queue is EMPTY of named candidates at every grain. The −12.30% object
+remains the adjudicated ~3.3 GW mc-idled/flat-stack MODEL-CLASS residual
+(offer family EXHAUSTED miso-179 `R` / miso-180 `I`; ORDC family `G`
+miso-163) folding into the standing **owner D-4 posture question with the
+~1.3 GW scarce-export concession**. Open owner items: the D-4 posture ruling
+(the lane's only open road), the partial-plant mid-window exit charter
+(FINDING-miso188 §6.6), the C8 provenance floor, diagnostics exposure,
+RHO_CLIP band, and the new §7.3 marginal-cost residue. No dashboard
+registration owed (no solve; the miso-156 precedent).
+
+Finding: `FINDING-miso189-illinois-scarce-gas-phase0-2026-08-30.md`.
