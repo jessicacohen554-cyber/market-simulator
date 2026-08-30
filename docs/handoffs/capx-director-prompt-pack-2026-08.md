@@ -1110,7 +1110,7 @@ lane(s). Report to the owner; the director folds it into the queue.
 
 ---
 
-## D12-C — arming confirmation pair (new at r#15; executes the Q10 ruling: confirm, then arm)
+## D12-C — arming confirmation pair (r#15) — **CONCLUDED PR #4406: CONTRADICTION (V-2), nothing armed; Q15 ruled ARM at r#18 (see D12-A); historical record, do not re-run**
 
 ```
 You are the D12-C ARMING CONFIRMATION PAIR session of the capacity-expansion (Forecast
@@ -1393,4 +1393,66 @@ wall/RSS vs projected, the horizon record (fleet evolution trajectory, entry/exi
 price/RM paths at reporting grain), the carried caveats verbatim, registration +
 board-stamp confirmation. Report to the owner; the director stamps the ledger on its
 refresh.
+```
+
+## D12-A — arming execution (r#18; executes the Q15 ruling on the D12-C contradiction record)
+
+```
+You are the D12-A ARMING EXECUTION session of the capacity-expansion (Forecast Finalization
+Program) track. ZERO SOLVES. You execute owner ruling Q15 (r#18 sitting, 2026-08-30,
+docs/handoffs/capx-director-ledger-2026-08.md §3): on the D12-C confirmation pair's measured
+record — CONTRADICTING on the single V-2 window, every other criterion and every structural
+claim confirmed — the owner judged the record CONFIRMING-IN-SUBSTANCE per the finding's own
+§4.3 clause and DIRECTED the arming of BOTH fields as ERCOT forecast defaults.
+DATA PROFILE: code
+MODEL: Opus/Fable (rule 27 — this edits src/market_sim/config). BRANCH:
+claude/capx-d12a-arming — fresh off origin/main (git fetch origin main first); check
+`git ls-remote --heads origin` for in-flight branches (expect the T3 NEISO golden open —
+no surface overlap; rebase care on the ERCOT matrix shard).
+
+READ FIRST: docs/handoffs/FINDING-capx-d12c-confirm-pair-2026-08-30.md (§1.4 = the exact
+execution list confirmation would have triggered — you execute it under Q15 instead; §4.2 =
+the V-2 miss you must describe honestly); FINDING-capx-d12-scarcity-basis-2026-08-30.md §5
+(the mechanism being armed); the ERCOT shard docs/codebase-site/data/mechanism-matrix/ERCOT.js.
+
+THE EDIT (the §1.4 list, adapted to the Q15 route):
+1. Flip `entry_margin_exhaustion` and `entry_forward_reserve_leg` to ERCOT forecast defaults
+   via the ISOConfig `default_scenario_overrides` route (the FFR-9C stage-B pattern). In the
+   citation block cite Q10 ("confirm-pair, then arm") AND Q15 verbatim (owner direction on a
+   contradiction record judged confirming-in-substance), and describe the posture honestly:
+   ERCOT forecast entry becomes exhaustion-bounded on the entering year's own expected-ORDC
+   surface for every candidate class; the V-2 entering-2022 gas_cc window missed [750,1250]
+   at 0 MW — a pre-declaration derivation error (offline walk's restricted candidate set),
+   conservative direction, tolerance never widened (rule 21).
+2. ERCOT matrix shard cells: `entry_margin_exhaustion` O → K-forecast-armed and
+   `entry_forward_reserve_leg` likewise, evidence = the registered pair
+   (`ercot-2021-2025-realized-t1h-d12c-{control,armed}`) + Q15. Sister-ISO cells stay U
+   (rule 26). Rule 28b: your own shard, this session.
+3. VERIFICATION, zero-solve: after the flip, the resolved ERCOT ScenarioConfig carries both
+   fields True and `ScenarioConfig.cache_key()` for the bare ERCOT T1-H construction
+   reproduces `f061b2646bfaac8b` — the D12-C armed bundle's key: the registered armed run IS
+   the record of the new default posture (state this in the finding; no re-solve, no
+   re-registration — both bundles are already registered). Run the repo's fast checks and
+   update any default-assertion tests the flip breaks (assert the NEW default with the Q15
+   citation, never weaken a test).
+4. NO other surface: backcast untouched by construction (backcast runs no capacity
+   evolution); no board edit (the director stamps the board on its refresh); no new
+   ScenarioConfig field (both fields exist — no new matrix row).
+
+CROSS-TRACK NOTE (carry into the finding): the arming moves ERCOT forecast defaults under
+the audit track's T1-H capacity-entry lane. Their registered-posture control bundles are
+unaffected (committed run_configs pin their values), but any FUTURE bare ERCOT T1-H/forecast
+invocation lands on the armed defaults — flag it in the finding so their next session sees
+it; do not touch their surfaces.
+
+GUARDRAILS: zero solves; no out-of-training backcast year touched (freeze TIER-SCOPED, you
+touch neither tier); no measured-outcome feedback (rule 13); no value invented (rule 21 —
+you flip two booleans and cite two rulings). Push per CLAUDE.md Git & Pushing (HTTP/1.1
+retry on 408/500; note: git push to a NOT-YET-EXISTING remote branch has failed repeatedly
+through this proxy until the branch exists — if it 500s persistently, create the branch via
+the API first, then push); blob-verify every ≥300-line file after push (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md — the edit, the cache-key
+verification, the honest posture description with the V-2 miss, the cross-track flag, test
+results. Report to the owner; the director stamps board + ledger on its refresh.
 ```
