@@ -974,7 +974,7 @@ Q8 re-decision card material. Report to the owner; the director folds it into th
 
 ---
 
-## S-4b — NEISO ARA requirement re-vintage (r#13; RELEASED at r#15 — D14 merged; now also gates NEISO's leg-(d) card per Q11)
+## S-4b — NEISO ARA requirement re-vintage (r#13) — **LANDED PRs #4392/#4396; leg (b) strengthened, Q13 card presented at r#17; historical record, do not re-run**
 
 ```
 You are the S-4b NEISO ARA REQUIREMENT RE-VINTAGE session of the capacity-expansion (Forecast
@@ -1184,7 +1184,7 @@ diff, matrix stamps, and the honest posture description. Report to the owner eit
 
 ---
 
-## D5-R — crossover-scorer coal-grain repair (new at r#15; executes the Q12 ruling: full fix)
+## D5-R — crossover-scorer coal-grain repair (r#15) — **LANDED PR #4388, controls verified at r#17; historical record, do not re-run**
 
 ```
 You are the D5-R SCORER COAL-GRAIN REPAIR session of the capacity-expansion (Forecast
@@ -1252,4 +1252,145 @@ score_crossover.py and program-status.json after push (rule 27).
 EXIT: docs/handoffs/FINDING-capx-d5r-scorer-coal-grain-<date>.md with the diff summary, the
 §5.2 table measured-vs-predeclared (controls first), the re-emitted verdicts, the board
 before/after, and the no-gate-moved statement. Report to the owner.
+```
+
+## CAISO-224-FIN — finish the caiso-224 FSNO arm round (r#17; OWNER-REQUESTED backcast-track completion — a director-boundary exception recorded in the ledger; gates S-6's release)
+
+```
+You are the CAISO-224 FINISHER session for the market-simulator repo — completing the
+caiso-224 FSNO sub-zonal arm round whose session ran out of context after its solves
+completed but BEFORE registration, adjudication and records landed. This is BACKCAST-track
+completion work, drafted by the capacity-expansion director at the owner's explicit request
+(capx r#17 sitting, Q14). ZERO SOLVES: every solve artifact is already committed.
+DATA PROFILE: code (widen via `python3 scripts/hydrate_data.py --profile caiso` ONLY if a
+scoring input is genuinely missing from the committed artifacts — a solve replay is NOT
+licensed under any circumstance).
+MODEL: Opus/Fable (rule 27). BRANCH: claude/caiso-224-fsno-finisher — fresh off origin/main
+(git fetch origin main first). Check `git ls-remote --heads origin` at start for in-flight
+branches; do not trust this prompt's snapshot.
+
+STATE ON MAIN (verify, don't trust): the round's precommit is
+results/calibration/PRECOMMIT-caiso224-fsno-arm-2026-08-30.md (§5 = pre-registered gates and
+falsifiers, §6 = the records this round owes). Committed and complete:
+- results/calibration/caiso224_a0_control/ (A0 control — reproduced the caiso-220 keeper
+  G-CTRL BIT-ZERO) and results/calibration/caiso224_b1_fsno/ (the FSNO arm, 2023/24/25 —
+  hourly sidecars, legitimacy_diagnostics.json, meta.json, run_config.json).
+- results/calibration/_caiso224_ctrl_tolerance.json and _caiso224_split_witness.json (the §5
+  primary witness + F1/F2 measurements, computed post-B1 over all three years).
+- The mechanism row/cells for `caiso_fsno_subzonal_topology` were minted when the gated field
+  landed; the CAISO cell VERDICT stamp is still owed.
+
+WHAT REMAINS (precommit §6, executed faithfully — the precommit governs, not anyone's
+recollection of intent):
+1. ADJUDICATE per §5 from the committed artifacts. The committed witness record shows, and
+   you must re-read rather than take from this prompt: F1 (over-trapping) FIRES all three
+   years on NP15<->FSNO (binding_share 0.3054/0.3547/0.3380 vs the 0.27 DMM ceiling) and F2
+   (static-vintage) FIRES (arm split vector [1556,1359,1186] strictly year-ordered vs
+   reality's non-monotone [1310,1691,1347]). Per §5's own pre-registered rule, F1 firing ⇒
+   the static DMM-cap arm is **R for keeper purposes** (the partition REPRESENTATION remains;
+   W-2/W-3 are the named upgrade feeds; F2 additionally records the backcast-admissible
+   transmission-outage derate channel as the WATCH, not armed). §5's verdict space is
+   K/O/R and NEVER auto-promoted: if your full-guard evaluation somehow reads K, STOP and
+   put a decision card to the owner — promotion is an owner act; do NOT touch the keeper.
+2. GUARDS, from committed artifacts only (calibration_verdict.py --run-id pattern — never a
+   solve): C1 rows re-scored (the zonal recut must not flip fuel-mix rows); the C3b tripwire
+   (any year worsening >0.005 EMD named to a mechanism); C2/C4/C8 re-scored; C3a movement
+   reported at FULL magnitude against the §5 pre-bound (direct pocket-floor channel ≈
+   −$0.23/−$0.32/−$0.25 lw; full 2025 close NOT expected ex ante).
+3. REGISTER BOTH BUNDLES on the BACKCAST dashboard (rule 15): calibration-report skill /
+   scripts/dashboard_add_run.py + build_manifest.py, control and arm alike, rejected-probe
+   labelling per the verdict; honour top-15 retention. The run payload
+   (frontend/data/backcast/runs/<id>.js) goes over `git push` (push_files cannot carry it);
+   if git push hits HTTP 408/500, set `git config http.version HTTP/1.1` and retry BEFORE
+   concluding anything (CLAUDE.md Git & Pushing §2 — the 500s are transport, not pack size).
+4. RECORDS: FINDING-caiso224-fsno-arm-2026-08-30.md (the adjudication, F1/F2 at full
+   magnitude, guard scores, the honest witness result — the split RESTORATION is real
+   (52/40/17 control → 1556/1359/1186 arm vs reality 1310/1691/1347) AND both falsifiers
+   fire; both facts are the record); docs/calibration-log/caiso.md entry; the CAISO matrix
+   shard cell verdict stamp (rule 28b — your OWN shard only, expected R with the citation).
+5. UNTOUCHED, verbatim: the CAISO keeper (2026-08-26-caiso-220-c1-crosswalk), every keeper
+   shard, calibration-complete.json, holdout-freeze.json, every other ISO's shard, all
+   forecast-namespace surfaces.
+
+GUARDRAILS: reads stay in 2023–2025 (rule 22 — no out-of-training year solved, scored or
+registered); no measured-outcome feedback (rule 13); no src/market_sim edits; no new
+workflows/CI offloading; push per CLAUDE.md Git & Pushing, blob-verify every ≥300-line file
+after push on either transport (rule 27). THE OWNER MERGES.
+
+EXIT: registration + finding + log + matrix stamp committed and pushed; report the verdict
+and the C3a movement to the owner. Your landing RELEASES lane S-6 (the director sequences
+it) — say so in your report.
+```
+
+## T3-NEISO-GOLDEN — the FIRST §2.1b-authorized full-horizon campaign (r#17; owner ruling Q13)
+
+```
+You are the T3-NEISO-GOLDEN session of the capacity-expansion (Forecast Finalization
+Program) track — executing the FIRST full-solve campaign ever authorized under the §2.1b
+gate. AUTHORIZATION (leg (d), owner ruling Q13, capx r#17 sitting 2026-08-30, recorded in
+docs/handoffs/capx-director-ledger-2026-08.md §3): ISO=NEISO, window=2026–2050 T3 BAU
+golden, budget ~1.0 h wall / ~4.3 GB RSS (the FF-3E projected table), THIS CAMPAIGN ONLY —
+no standing authorization, and any gate-condition regression re-closes the gate (charter
+§2.1b(2)(d)). Cite this authorization verbatim in your finding and the board stamp.
+DATA PROFILE: neiso
+MODEL: Opus/Fable (rule 27). BRANCH: claude/capx-t3-neiso-golden — fresh off origin/main
+(git fetch origin main first); check `git ls-remote --heads origin` for in-flight branches.
+
+READ FIRST: docs/forecast-development-plan-2026-07.md §2.1b (the gate you are executing) +
+§2.1a (posture); docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md (the CURRENT
+requirement bar — ARA-3 factor 1.0286103, DR 0.08784, imports 409.31 — and §5.3's
+floor-dependence honesty notes, which you carry verbatim); FINDING-capx-s4-neiso-hydro +
+FINDING-capx-d14-neiso-t1x (the composition caveat); the NEISO block of
+frontend/data/forecast/program-status.json.
+
+THE RUN — zero config invention, HEAD defaults at golden posture (exactly the S-4b
+treatment construction, extended to the authorized window):
+  MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1 \
+    python scripts/run_full_horizon.py --iso NEISO --start-year 2026 --end-year 2050 \
+    --golden-posture --full-solve-authorized --out-dir results/ff-t3-neiso-golden/bau
+- --full-solve-authorized is the FF-3E schedulability guard for >5 solve-years; it is
+  licensed by the Q13 authorization above and by nothing else. Years run SEQUENTIALLY
+  within the invocation (rule 12) — never parallelize the year loop.
+- PRE-DECLARE in the finding BEFORE launching: expected wall/RSS (~1.0 h / ~4.3 GB;
+  report measured vs projected), and the caveats the campaign record carries WITHOUT
+  re-tuning anything: (i) 2028/29 I7 margins are floor-dependent (+419.0/+333.6 MW riding
+  on the 699.3 MW retention response, S-4b §5.3); (ii) D14's retirement-composition miss
+  (exit recall 2/6 in the crossover window) — out-year fleet composition inherits this
+  known defect and the record SAYS SO; (iii) FC-7 program-wide DOF-ledger gap. Out-year
+  behavior (2031+) is REPORTED, never judged against actuals (none exist) and never
+  back-tuned (rule 13).
+- Commit per-year evolution artifacts as checkpoints as the horizon progresses (the T1-F
+  evolution_<year>.json pattern), so a mid-horizon failure preserves the record. If the
+  solve breaks mid-horizon, the failure record IS the deliverable — report at full
+  magnitude; never register a partial run as complete.
+- HEAVY-SLOT: ~4.3 GB is co-runnable, but NOT alongside a PJM (8.8 GB) or MISO (9.6 GB)
+  no-co-run measure — check in-flight branches and recent solve checkpoints before
+  launching; if the S-6 PJM ledger run is in flight, WAIT for it (it is short).
+
+REGISTRATION (rule 15, FORECAST namespace ONLY — never the backcast registry):
+scripts/register_forecast_run.py --summary, run id neiso-2026-2050-t3-golden-bau,
+committing run_config.json (a bundle without one scores FC-7 FAIL), full_horizon_summary,
+per-year evolution files, resolved config; heavy dispatch outputs stay gitignored.
+Preserve-then-overwrite on any existing verdict key (no t3 key exists today — verify).
+
+BOARD (program-status.json, NEISO block only): stamp leg d_owner_auth with the Q13
+authorization (date, sitting, ISO/window/budget, scope: this campaign only), flip
+gate.open accordingly with the scope stated, and add the T3 campaign row after
+registration lands. Keep D14's leg-(c) and S-4b's leg-(b) content verbatim. Rebase care:
+D12-C and S-123 are in flight and may touch adjacent board blocks.
+
+GUARDRAILS: forecast-mode 2026+ is UNRESTRICTED (no out-of-training backcast year solved,
+scored or registered; freeze TIER-SCOPED, you touch neither tier; measured overlays are
+backcast-only by construction). No measured-outcome feedback (rule 13); no value
+reverse-engineered to clear an invariant (rule 21). No new mechanism, no ScenarioConfig
+field, no matrix duty (shipped defaults only — if you find yourself wanting a config
+change, STOP: that is a different lane). Touch NO backcast surface. No new GitHub Actions
+workflows. Push per CLAUDE.md Git & Pushing (HTTP/1.1 retry on 408/500 before any
+conclusion about pack size); blob-verify every ≥300-line file after push (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-t3-neiso-golden-<date>.md — the pre-declaration, measured
+wall/RSS vs projected, the horizon record (fleet evolution trajectory, entry/exit waves,
+price/RM paths at reporting grain), the carried caveats verbatim, registration +
+board-stamp confirmation. Report to the owner; the director stamps the ledger on its
+refresh.
 ```
