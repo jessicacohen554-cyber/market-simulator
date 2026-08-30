@@ -143,9 +143,11 @@ the hindcast harness record (FFR-3R), CLI `--entry-margin-exhaustion` /
 ### 3.1 Posture, verified
 
 Both invocations solved by this session on one HEAD (branch
-`claude/capx-d11r-entry-volume-rule`, base `origin/main` @ `4c13fa2` + this
-lane's mechanism commit), concurrently (rule 12), years sequential within
-each; solved [2021, 2023, 2024, 2025], bridged [2022]. **The control (bare
+`claude/capx-d11r-entry-volume-rule` — solved at `origin/main` @ `4c13fa2` +
+this lane's mechanism commits, later rebased unchanged onto `158a6882`, the
+miso-190 merge; the rebase touched only matrix prose, no solve-path file),
+concurrently (rule 12), years sequential within each; solved
+[2021, 2023, 2024, 2025], bridged [2022]. **The control (bare
 invocation) reproduces the committed registered posture EXACTLY**: cache key
 `28cef3500ec1fd9e` (the t1h-refresh / fwd-exp bracket key), RM path
 19.00 → 8.54 → 14.65 → 25.19 to the basis point, and the committed additions
