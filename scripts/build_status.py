@@ -512,6 +512,43 @@ def build_part(iso: str) -> dict | None:
     # docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md).
     if rec.get("standing_note"):
         verdict["standing_note"] = rec["standing_note"]
+    # Owner-declared CONFIG PARTITION (the shard's "config_partition" block —
+    # the two-config keeper structure, owner ruling 2026-08-26): the ISO's
+    # training window is covered by more than one designated config (e.g.
+    # ERCOT's 2023 ECRS-regime carve-out vs the 2024/2025 forward keeper).
+    # Each config is scored LIVE here, twice: on its designated span (the
+    # partition read) and on its full registered span (so a NOT-YET half can
+    # never be laundered out of view by the partition). The page renders BOTH
+    # configs with year spans and their own determinations — never only the
+    # more flattering one. The primary `keeper` verdict above stays the
+    # forward keeper's registered full-span determination, unrestricted.
+    if rec.get("config_partition"):
+        cp = rec["config_partition"]
+        scored_configs = []
+        for cfg in cp.get("configs", []):
+            span = [int(y) for y in cfg.get("years", [])]
+            span_v = cv.determine(cfg["run_id"], years=span)
+            full_v = cv.determine(cfg["run_id"])
+            scored_configs.append(
+                {
+                    "role": cfg.get("role"),
+                    "label": cfg.get("label"),
+                    "run_id": cfg["run_id"],
+                    "years": span,
+                    "determination": span_v["determination"],
+                    "reasons": span_v.get("reasons", []),
+                    "grade_summary": span_v.get("grade_summary"),
+                    "registered_determination": full_v["determination"],
+                    "registered_reasons": full_v.get("reasons", []),
+                    "registered_years": full_v.get("target_years", []),
+                }
+            )
+        verdict["config_partition"] = {
+            "declared": cp.get("declared"),
+            "ruling": cp.get("ruling"),
+            "coverage_invariant": cp.get("coverage_invariant"),
+            "configs": scored_configs,
+        }
     d7 = statmode.get("isos", {}).get(iso)
     if d7:
         # REPORTED line, never gating: the overlay-vs-statistical fail

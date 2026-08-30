@@ -79,6 +79,16 @@ def _protected_run_ids() -> set[str]:
       frozen ``STATMODE_PROBE_RUNS`` provenance from dangling again.
     """
     protected: set[str] = set(keeper_store.keeper_list())
+    # Config-partition members (the two-config keeper structure, owner ruling
+    # 2026-08-26): every run a shard's `config_partition` designates is a live
+    # keeper config — the Calibration Status page scores it on every rebuild,
+    # so pruning it would break the page exactly like pruning the keeper.
+    for iso in keeper_store.iso_list():
+        shard = keeper_store.load_shard(iso) or {}
+        for cfg in (shard.get("config_partition") or {}).get("configs", []):
+            rid = cfg.get("run_id")
+            if isinstance(rid, str) and rid:
+                protected.add(rid)
     # Structural-prior source payloads (frozen provenance) are never pruned.
     protected.update(STATMODE_PROBE_RUNS.values())
     for path in REGISTRY_DIR.glob("*.json"):

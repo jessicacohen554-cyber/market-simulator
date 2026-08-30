@@ -2763,16 +2763,28 @@ def free_class_score(iso: str, records: list[dict]) -> dict:
     }
 
 
-def determine(run_id: str) -> dict:
-    """Score one run from its committed artifacts (rubric §2)."""
-    return determine_from_artifacts(run_id, load_artifacts(run_id))
+def determine(run_id: str, years: list[int] | None = None) -> dict:
+    """Score one run from its committed artifacts (rubric §2).
+
+    ``years`` restricts scoring to a designated span (owner two-config keeper
+    ruling, 2026-08-26): the SAME rubric is applied to the SAME committed
+    artifacts over only the named years. A span-restricted verdict carries
+    ``span_restricted`` so it can never be mistaken for the run's registered
+    full-span determination.
+    """
+    return determine_from_artifacts(run_id, load_artifacts(run_id), years=years)
 
 
-def determine_from_artifacts(run_id: str, art: dict) -> dict:
+def determine_from_artifacts(
+    run_id: str, art: dict, years: list[int] | None = None
+) -> dict:
     """Score one run's loaded artifacts and return the full verdict dict.
 
     Split out from :func:`determine` so the decision logic can be unit-tested on
-    synthetic artifacts without reading files.
+    synthetic artifacts without reading files. ``years`` (optional) restricts
+    the scored span — see :func:`determine`; both the target and scorable sets
+    are filtered so ``data_blocked_years`` never reports a year the span
+    deliberately excludes.
     """
     sidecar, payload, bench = art["sidecar"], art["payload"], art["bench"]
     iso = sidecar.get("iso", "ERCOT")
@@ -2780,6 +2792,10 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
 
     target_years = [int(y) for y in sidecar.get("years", [])]
     scorable_years = sorted(int(y) for y in (payload or {}).get("years", {}))
+    if years is not None:
+        span = sorted(int(y) for y in years)
+        target_years = [y for y in target_years if y in span]
+        scorable_years = [y for y in scorable_years if y in span]
     data_blocked = sorted(set(target_years) - set(scorable_years))
 
     # Score every criterion-year.
@@ -2997,7 +3013,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         if recs:
             reported[cid] = {"label": label, "records": recs}
 
-    return {
+    out = {
         "run_id": run_id,
         "iso": iso,
         "label": sidecar.get("label", run_id),
@@ -3023,6 +3039,13 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         },
         "ledger_entries": exceptions,
     }
+    # Present ONLY on a span-restricted verdict (two-config keeper structure,
+    # owner ruling 2026-08-26) so an unrestricted verdict's payload is
+    # byte-identical to the pre-partition scorer's — a span verdict can never
+    # be mistaken for the run's registered full-span determination.
+    if years is not None:
+        out["span_restricted"] = sorted(int(y) for y in years)
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -3039,6 +3062,12 @@ def render_text(v: dict) -> str:
     lines.append(f"  run {v['run_id']}  ({v['iso']}: {v['label']})")
     yrs = ", ".join(map(str, v["scorable_years"])) or "none"
     lines.append(f"  scorable years: {yrs}")
+    if v.get("span_restricted"):
+        lines.append(
+            "  SPAN-RESTRICTED verdict (designated config span "
+            + ", ".join(map(str, v["span_restricted"]))
+            + ") — NOT the run's registered full-span determination"
+        )
     if v["data_blocked_years"]:
         lines.append(
             "  data-blocked years: " + ", ".join(map(str, v["data_blocked_years"]))
@@ -3176,6 +3205,17 @@ def main() -> None:
         help="bundle dir (results/calibration/<name>) or a run id",
     )
     ap.add_argument("--run-id", help="run id (alternative to the positional bundle)")
+    ap.add_argument(
+        "--years",
+        nargs="+",
+        type=int,
+        help=(
+            "score only these years of the run's committed artifacts (a "
+            "designated config span under the two-config keeper structure, "
+            "owner ruling 2026-08-26). The verdict is marked SPAN-RESTRICTED "
+            "and is never the run's registered determination."
+        ),
+    )
     ap.add_argument("--json", action="store_true", help="emit the machine verdict JSON")
     ap.add_argument(
         "--write-metrics",
@@ -3190,12 +3230,18 @@ def main() -> None:
     if not target:
         ap.error("provide a bundle dir or --run-id")
     run_id = args.run_id or resolve_run_id(target)
-    verdict = determine(run_id)
+    verdict = determine(run_id, years=args.years)
     if args.json:
         print(json.dumps(verdict, indent=2))
     else:
         print(render_text(verdict))
     if args.write_metrics:
+        if args.years:
+            ap.error(
+                "--write-metrics with --years would bake a span-restricted "
+                "verdict into the bundle's metrics.json — refused; the sidecar "
+                "carries only the registered full-span verdict."
+            )
         path = write_metrics_sidecar(bundle_dir_for(run_id), verdict)
         print(f"wrote {path.relative_to(REPO)}")
     # Exit nonzero on NOT-YET so a CI gate / the forecast-validation check can

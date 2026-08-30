@@ -129,6 +129,46 @@
       return d.innerHTML;
     }
 
+    /* Owner-declared CONFIG PARTITION (two-config keeper structure, owner
+       ruling 2026-08-26): the ISO's training window is covered by more than
+       one designated config, each scored on its own span. The page must show
+       EVERY config's span and determination — a single badge would launder
+       the partition into whichever half reads better. */
+    function partitionConfigs(keeper) {
+      const cp = keeper.config_partition;
+      return (cp && cp.configs && cp.configs.length) ? cp.configs : null;
+    }
+
+    /** Compact year-span label: [2024,2025] -> "2024–25", [2023] -> "2023". */
+    function spanLabel(years) {
+      if (!years || !years.length) return '';
+      if (years.length === 1) return String(years[0]);
+      const a = years[0], b = years[years.length - 1];
+      return `${a}–${String(b).slice(-2)}`;
+    }
+
+    /** The card's accent class under a partition: the WORST config span
+        determination wins (conservative — a NOT-YET half always colors the
+        card, never the flattering half). */
+    function partitionWorstDet(configs) {
+      const rank = det => {
+        const d = (det || '').toUpperCase();
+        if (d.includes('NOT')) return 0;
+        if (d.includes('CAVEAT')) return 1;
+        return 2;
+      };
+      let worst = configs[0].determination;
+      for (const c of configs) if (rank(c.determination) < rank(worst)) worst = c.determination;
+      return worst;
+    }
+
+    /** One badge per partition config, span-labelled. */
+    function partitionBadges(configs) {
+      return configs.map(c =>
+        `<span class="cs-badge ${detClass(c.determination)}" title="${esc(c.label || c.role || '')} — registered full-span determination: ${esc(c.registered_determination || c.determination)}">${esc(spanLabel(c.years))} ${detLabel(c.determination)}</span>`
+      ).join('\n              ');
+    }
+
     /** Format model/actual values for display. */
     function fmtVal(v) {
       if (v === null || v === undefined) return '—';
@@ -145,30 +185,46 @@
       grid.innerHTML = '';
 
       keepers.forEach(keeper => {
-        const dc = detClass(effectiveDet(keeper));
+        const configs = partitionConfigs(keeper);
+        const dc = detClass(configs ? partitionWorstDet(configs) : effectiveDet(keeper));
         const card = document.createElement('div');
         card.className = `cs-card ${dc}`;
         card.tabIndex = 0;
         card.setAttribute('role', 'button');
-        card.setAttribute('aria-label', `${keeper.iso} — ${detLabel(effectiveDet(keeper))}`);
+        card.setAttribute(
+          'aria-label',
+          configs
+            ? `${keeper.iso} — ${configs.map(c => `${spanLabel(c.years)}: ${detLabel(c.determination)}`).join(', ')}`
+            : `${keeper.iso} — ${detLabel(effectiveDet(keeper))}`
+        );
         card.dataset.iso = keeper.iso;
 
         // Color accent from ISO palette
         const colorVar = isoColorVar(keeper.iso);
 
         // Header (frontier = owner-declared "frontier achieved": every named
-        // admissible mechanism tried on record; declarative, never gating)
+        // admissible mechanism tried on record; declarative, never gating).
+        // Under a config partition: one span-labelled badge PER config —
+        // never a single badge for a partitioned ISO.
         let html = `
           <div class="cs-card-header">
             <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
             <span class="cs-badges">
               ${frontierActive(keeper) ? `<span class="cs-badge det-frontier" title="Frontier achieved ${esc(keeper.frontier.declared || '')}: ${esc(keeper.frontier.note || '')}">FRONTIER</span>` : ''}
-              <span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>
+              ${configs ? partitionBadges(configs) : `<span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>`}
             </span>
           </div>`;
 
         // Keeper info
-        if (keeper.run_id) {
+        if (configs) {
+          for (const c of configs) {
+            const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(c.run_id)}`;
+            html += `
+          <div class="cs-keeper-info">
+            ${esc(spanLabel(c.years))} ${esc((c.role || '').toUpperCase())}: <a class="run-id-link" href="${runLink}" title="View in Run Explorer">${esc(c.run_id)}</a>
+          </div>`;
+          }
+        } else if (keeper.run_id) {
           const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(keeper.run_id)}`;
           html += `
           <div class="cs-keeper-info">
@@ -258,20 +314,56 @@
 
     function renderDetail(keeper) {
       const pane = document.getElementById('detailPane');
-      const dc = detClass(effectiveDet(keeper));
+      const configs = partitionConfigs(keeper);
+      const dc = detClass(configs ? partitionWorstDet(configs) : effectiveDet(keeper));
       const colorVar = isoColorVar(keeper.iso);
 
       let html = `<div class="bc-panel">`;
 
-      // Header
+      // Header — under a config partition, one span-labelled badge per config.
       html += `
         <div class="cs-results-header">
           <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
           <span class="cs-badges">
             ${frontierActive(keeper) ? `<span class="cs-badge det-frontier">FRONTIER ACHIEVED${keeper.frontier.declared ? ' ' + esc(keeper.frontier.declared) : ''}</span>` : ''}
-            <span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>
+            ${configs ? partitionBadges(configs) : `<span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>`}
           </span>
         </div>`;
+
+      // Config partition — owner-declared two-config keeper structure
+      // (keepers/<ISO>.json "config_partition"). Every designated config is
+      // shown with its year span, its span determination AND its registered
+      // full-span determination, so no half of the partition is ever hidden.
+      if (configs) {
+        const cp = keeper.config_partition;
+        html += `<div class="cs-reason" style="margin-top: 8px;">`;
+        if (cp.ruling) {
+          html += `
+          <p style="margin: 4px 0;">
+            <span class="cs-tag tag-lim">CONFIG PARTITION${cp.declared ? ' ' + esc(cp.declared) : ''}</span>
+            Owner ruling, verbatim: &ldquo;${esc(cp.ruling)}&rdquo;
+          </p>`;
+        }
+        if (cp.coverage_invariant) {
+          html += `<p style="margin: 4px 0; opacity: .85;">${esc(cp.coverage_invariant)}</p>`;
+        }
+        for (const c of configs) {
+          const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(c.run_id)}`;
+          const regDiffers = c.registered_determination && c.registered_determination !== c.determination;
+          html += `
+          <p style="margin: 6px 0;">
+            <span class="cs-badge ${detClass(c.determination)}">${esc(spanLabel(c.years))} ${detLabel(c.determination)}</span>
+            <strong>${esc(c.label || c.role || '')}</strong> &mdash;
+            <a class="run-id-link" href="${runLink}">${esc(c.run_id)}</a>
+            (scored on its designated span ${esc((c.years || []).join(', '))})${
+              regDiffers
+                ? `. Registered full-span (${esc((c.registered_years || []).join(', '))}) determination: <strong>${esc(c.registered_determination)}</strong>${c.registered_reasons && c.registered_reasons.length ? ` &mdash; ${esc(c.registered_reasons[0])}` : ''}`
+                : ''
+            }
+          </p>`;
+        }
+        html += `</div>`;
+      }
 
       // Frontier note — owner-declared designation (keepers.json "frontier"):
       // the admissible-mechanism inventory is exhausted on record; remaining
