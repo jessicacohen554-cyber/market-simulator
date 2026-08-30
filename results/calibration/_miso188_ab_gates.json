@@ -1,0 +1,246 @@
+{
+ "prereg": "PREREG-miso188-retiree-vintage-status-scope-2026-08-30.md \u00a74",
+ "keeper": "2026-08-26-miso-187-nucavail",
+ "control": "miso188_rvs_A",
+ "arm": "miso188_rvs_B",
+ "S0": {
+  "gate": "S-0",
+  "files": [
+   {
+    "file": "class_hourly_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   }
+  ],
+  "passed": true
+ },
+ "S1": {
+  "gate": "S-1",
+  "arm_flag": true,
+  "control_flag": false,
+  "witness_mwh": {
+   "862": {
+    "2023": {
+     "control": 3526022.5,
+     "arm": 0.0
+    },
+    "2024": {
+     "control": 1202631.5,
+     "arm": 0.0
+    },
+    "2025": {
+     "control": 0.0,
+     "arm": 0.0
+    }
+   },
+   "6155": {
+    "2023": {
+     "control": 819707.0,
+     "arm": 822895.375
+    },
+    "2024": {
+     "control": 553363.1875,
+     "arm": 556701.3125
+    },
+    "2025": {
+     "control": 0.0,
+     "arm": 0.0
+    }
+   },
+   "1047": {
+    "2023": {
+     "control": 828065.875,
+     "arm": 832360.875
+    },
+    "2024": {
+     "control": 0.0,
+     "arm": 0.0
+    },
+    "2025": {
+     "control": 0.0,
+     "arm": 0.0
+    }
+   },
+   "202": {
+    "2023": {
+     "control": 246353.65625,
+     "arm": 0.0
+    },
+    "2024": {
+     "control": 109343.390625,
+     "arm": 0.0
+    },
+    "2025": {
+     "control": 0.0,
+     "arm": 0.0
+    }
+   },
+   "2050": {
+    "2023": {
+     "control": 137002.625,
+     "arm": 0.0
+    },
+    "2024": {
+     "control": 0.0,
+     "arm": 0.0
+    },
+    "2025": {
+     "control": 0.0,
+     "arm": 0.0
+    }
+   },
+   "10075": {
+    "2023": {
+     "control": 187719.9375,
+     "arm": 0.0
+    },
+    "2024": {
+     "control": 0.0,
+     "arm": 0.0
+    },
+    "2025": {
+     "control": 0.0,
+     "arm": 0.0
+    }
+   }
+  },
+  "grand_tower_ok": true,
+  "dark_drops_ok": true,
+  "rush_island_ok": true,
+  "lansing_ok": true,
+  "passed": true
+ },
+ "S2": {
+  "gate": "S-2",
+  "years": {
+   "2023": {
+    "control_cc_twh": 143.5223,
+    "arm_cc_twh": 140.8136
+   },
+   "2024": {
+    "control_cc_twh": 152.4707,
+    "arm_cc_twh": 151.2593
+   },
+   "2025": {
+    "control_cc_twh": 136.4585,
+    "arm_cc_twh": 136.4246
+   }
+  },
+  "fall_2024_twh": 1.2114,
+  "passed": true
+ },
+ "S4": {
+  "gate": "S-4",
+  "d4_fail_control": [],
+  "d4_fail_arm": [],
+  "new_d4_fails": [],
+  "c8_arm_not_fail": true,
+  "passed": true
+ },
+ "S5": {
+  "gate": "S-5 (report + escalation, not a kill)",
+  "c3a_control_pct": {
+   "2023": 2.4049,
+   "2024": -4.644,
+   "2025": -12.3185
+  },
+  "c3a_arm_pct": {
+   "2023": 3.5008,
+   "2024": -4.3034,
+   "2025": -12.2965
+  },
+  "c1_cc_regular_2024_control": {
+   "err_twh": 8.037,
+   "status": "FAIL",
+   "model": 151.511,
+   "actual": 143.474
+  },
+  "c1_cc_regular_2024_arm": {
+   "err_twh": 6.82,
+   "status": "PASS",
+   "model": 150.294,
+   "actual": 143.474
+  },
+  "criterion_status_flips": {
+   "fuelmix|CC_REGULAR|2024": "FAIL -> PASS"
+  },
+  "pass_to_fail_flips": {},
+  "band_exit_2023_2024": {
+   "2023": false,
+   "2024": false
+  },
+  "determination_control": "NOT-YET",
+  "determination_arm": "NOT-YET",
+  "escalation_fires": false
+ },
+ "_c1_cc_2024_improves": true,
+ "charter_kill_fires": false,
+ "verdict": "PROMOTE per PREREG-miso188 \u00a74 (all gates clean, zero PASS->FAIL flips)"
+}
