@@ -350,6 +350,22 @@ def inject_reference_price_mc(
 
     Returns ``True`` when at least one seam row was priced, ``False`` when the
     fleet has no reference-price node (so a non-reference run is untouched).
+
+    Raises:
+        ValueError: FAIL CLOSED when the fleet DOES carry reference-price band
+            rows but one or more of them can be priced by neither the
+            flow-responsive per-band path nor the flat aggregate — i.e. no
+            neighbor of the armed interface resolves a seam load shape for
+            ``year`` (every year ≥ 2026 at HEAD: no EIA-930 extract carries a
+            full calendar year there). Returning quietly would leave those
+            rows on the mc = 0 placeholder from
+            :func:`build_reference_price_node` with LIVE bounds — free import
+            capacity and free export sinks in the LP (S-123 finding §5,
+            ``docs/handoffs/FINDING-capx-s123-miso-adequacy-2026-08-30.md``).
+            Backcast years covered by the measured seam ladders are unaffected:
+            every armed ISO resolves at least one neighbor shape in 2018–2025,
+            so this path prices every row there and the ladder displaces them
+            downstream exactly as before.
     """
     from dataclasses import replace
 
@@ -377,6 +393,9 @@ def inject_reference_price_mc(
     border = wecc_border_carbon_adder(carbon_price) if carbon_price > 0.0 else 0.0
     # Cache each neighbor's (export, import) tranche price matrices once.
     tranches: dict[str, tuple | None] = {}
+    # Seam band rows matched below but priced by NEITHER path, per seam name.
+    # Non-empty after the loop is the fail-closed condition — see the raise.
+    unpriced_rows: dict[str, list[int]] = {}
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
         if _REF_IMPORT_MARK in uid:
@@ -420,8 +439,47 @@ def inject_reference_price_mc(
                 aggregate - hurdle if is_export else aggregate + hurdle + carbon_adder
             )
         else:
+            unpriced_rows.setdefault(name, []).append(row)
             continue
         applied = True
+    if unpriced_rows:
+        # FAIL CLOSED (S-123 finding §5, director mechanism decision capx-D16):
+        # these band rows exist because the reference interface is armed, yet no
+        # seam load shape resolved for this solve year, so neither the per-band
+        # nor the aggregate path priced them. Returning False here would leave
+        # them on the mc = 0 placeholder from build_reference_price_node with
+        # LIVE bounds — free import capacity and free export sinks in the LP.
+        # A flat gas × HR fallback price is deliberately NOT synthesized in
+        # their place: that would be a new price input needing its own
+        # identification and mechanism-matrix row (rules 5 [R-NO-MAGIC],
+        # 24 [R-REGISTRY], 28 [R-MECH-MATRIX]) — a guard that refuses is not a
+        # mechanism. Backcast-armed years covered by the measured seam ladders
+        # never reach this raise: every armed ISO resolves at least one
+        # neighbor shape in 2018–2025, so every row above is priced there and
+        # the ladders displace them downstream (step 4) exactly as before.
+        rows = [r for rows_ in unpriced_rows.values() for r in rows_]
+        free_import_mw = float(np.sum(np.maximum(fleet_arrays.pmax[rows], 0.0)))
+        free_export_mw = float(-np.sum(np.minimum(fleet_arrays.pmin[rows], 0.0)))
+        detail = ", ".join(
+            f"{n} (ba {specs[n].ba_code}, proxy {specs[n].proxy_ba})"
+            if n in specs
+            else f"{n} (not in INTERFACE_NEIGHBORS['{iso}'])"
+            for n in unpriced_rows
+        )
+        raise ValueError(
+            f"{iso} {year}: reference-price interface is armed but NO seam load "
+            f"shape resolved for this solve year — {len(rows)} band rows across "
+            f"{len(unpriced_rows)} seam(s) [{detail}] would enter the LP with "
+            f"the mc=0 placeholder from build_reference_price_node and LIVE "
+            f"bounds ({free_import_mw:,.0f} MW of free import capacity and "
+            f"{free_export_mw:,.0f} MW of free export sinks). Refusing to build "
+            f"a free seam (fail closed; S-123 finding §5, docs/handoffs/"
+            f"FINDING-capx-s123-miso-adequacy-2026-08-30.md). A seam prices "
+            f"only when its EIA-930 extract (ba_code, else proxy_ba) covers the "
+            f"full solve year; at HEAD no extract covers any year >= 2026. To "
+            f"arm the reference interface for {year}, intake a load-shape "
+            f"source covering it first — no fallback price is synthesized here."
+        )
     return applied
 
 
@@ -929,7 +987,10 @@ def apply_reference_price_seam_injections(
     19), and the ``miso_firm_import_floor`` mirror. Self-gates on
     ``config.reference_price_interface`` and INTERFACE_NEIGHBORS membership
     exactly as the monolith did, so a registry entry for an ISO with no seam
-    registry is a byte-identical no-op.
+    registry is a byte-identical no-op. When armed for a solve year in which
+    no neighbor resolves a seam load shape (every year ≥ 2026 at HEAD),
+    :func:`inject_reference_price_mc` FAILS CLOSED with :class:`ValueError`
+    rather than leaving the mc = 0 band rows live (S-123 finding §5).
     """
     from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
 

@@ -440,5 +440,122 @@ class TestReferencePriceNode(unittest.TestCase):
         )
 
 
+class TestReferencePriceFailClosed(unittest.TestCase):
+    """The armed-interface no-shape guard (S-123 finding §5, capx-D16).
+
+    An armed reference interface whose solve year resolves NO seam load shape
+    (every year ≥ 2026 at HEAD) must refuse loudly instead of leaving the
+    band rows on the mc = 0 placeholder with live bounds — up to the full
+    interface capability of free imports (and free export sinks) in the LP.
+    Hermetic: the loader is monkeypatched empty, so these run with no data
+    files and regardless of future extract intakes.
+    """
+
+    @staticmethod
+    def _seam_fleet(iso: str, extra=None):
+        """A minimal struct-of-arrays fleet: one ordinary unit + the seam node."""
+        from types import SimpleNamespace
+
+        from market_sim.model.transmission import build_reference_price_node
+
+        gens = build_reference_price_node(iso, extra_neighbors=extra)
+        unit_ids = ["ordinary_unit"] + [g.unit_id for g in gens]
+        return (
+            SimpleNamespace(
+                unit_ids=unit_ids,
+                pmax=np.array([100.0] + [g.pmax_mw for g in gens]),
+                pmin=np.array([0.0] + [g.pmin_mw for g in gens]),
+            ),
+            len(unit_ids),
+        )
+
+    def test_armed_no_shape_year_raises(self):
+        """Trivial case first: armed seam + no shape ⇒ ValueError, not mc=0."""
+        from market_sim.model.transmission import inject_reference_price_mc
+
+        np_mod._eia_hourly_frame_filled = _FakeFrames({})  # no BA resolves
+        try:
+            fa, n = self._seam_fleet("MISO")
+            mc = np.zeros((n, _HOURS))
+            with self.assertRaises(ValueError) as ctx:
+                inject_reference_price_mc(fa, mc, "MISO", 2035)
+        finally:
+            np_mod._eia_hourly_frame_filled = _eia_hourly_frame_filled
+        msg = str(ctx.exception)
+        # Loud and specific: ISO, year, every unpriced seam with its BA, the
+        # free capacity at stake, and the S-123 citation.
+        self.assertIn("MISO 2035", msg)
+        for seam in ("PJM", "SPP", "South"):
+            self.assertIn(seam, msg)
+        self.assertIn("S-123", msg)
+        self.assertIn("free import", msg)
+        # The free import capacity named is the summed interface capability of
+        # the unpriced seams (the S-123 §5 "~14.3 GW" for MISO's registry).
+        total = sum(s.interface_limit_mw for s in INTERFACE_NEIGHBORS["MISO"])
+        self.assertIn(f"{total:,.0f} MW", msg)
+
+    def test_extra_neighbor_rows_are_guarded_too(self):
+        """Bands built via extra_neighbors (Manitoba) are covered by the raise."""
+        from market_sim.config.interchange_config import MISO_MANITOBA_SEAM_SPEC
+        from market_sim.model.transmission import inject_reference_price_mc
+
+        np_mod._eia_hourly_frame_filled = _FakeFrames({})
+        try:
+            fa, n = self._seam_fleet("MISO", extra=[MISO_MANITOBA_SEAM_SPEC])
+            mc = np.zeros((n, _HOURS))
+            with self.assertRaises(ValueError) as ctx:
+                inject_reference_price_mc(fa, mc, "MISO", 2035)
+        finally:
+            np_mod._eia_hourly_frame_filled = _eia_hourly_frame_filled
+        self.assertIn("Manitoba", str(ctx.exception))
+
+    def test_no_node_fleet_still_returns_false_quietly(self):
+        """The documented benign False — a fleet with NO seam rows — is kept,
+        even in a no-shape year (a non-reference run stays untouched)."""
+        from types import SimpleNamespace
+
+        from market_sim.model.transmission import inject_reference_price_mc
+
+        np_mod._eia_hourly_frame_filled = _FakeFrames({})
+        try:
+            fa = SimpleNamespace(unit_ids=["gas_cc_x", "coal_y"])
+            mc = np.full((2, _HOURS), 50.0)
+            self.assertFalse(inject_reference_price_mc(fa, mc, "MISO", 2035))
+        finally:
+            np_mod._eia_hourly_frame_filled = _eia_hourly_frame_filled
+        np.testing.assert_array_equal(mc, 50.0)
+
+    def test_resolved_year_never_raises_and_prices_every_row(self):
+        """A year whose shape resolves is untouched by the guard: every band
+        row leaves the mc=0 placeholder (integration; real extracts)."""
+        from market_sim.model.transmission import inject_reference_price_mc
+
+        fa, n = self._seam_fleet("MISO")
+        mc = np.zeros((n, 8760))
+        if not inject_reference_price_mc(fa, mc, "MISO", 2023):
+            self.skipTest("EIA-930 neighbor extracts not present")
+        self.assertTrue(np.all(np.any(mc[1:] != 0.0, axis=1)))
+        np.testing.assert_array_equal(mc[0], 0.0)  # ordinary row untouched
+
+    def test_default_off_forecast_step_is_a_noop(self):
+        """The registry step with the default config (reference_price_interface
+        off) never reaches the injector: mc and bounds untouched, no raise,
+        even in a no-shape year with seam rows present."""
+        from market_sim.model.interchange.import_nodes import (
+            apply_reference_price_seam_injections,
+        )
+
+        np_mod._eia_hourly_frame_filled = _FakeFrames({})
+        try:
+            fa, n = self._seam_fleet("MISO")
+            mc = np.full((n, _HOURS), 7.0)
+            apply_reference_price_seam_injections(
+                fa, mc, ScenarioConfig(), "MISO", 2035
+            )
+        finally:
+            np_mod._eia_hourly_frame_filled = _eia_hourly_frame_filled
+        np.testing.assert_array_equal(mc, 7.0)
+
+
 if __name__ == "__main__":
     unittest.main()
