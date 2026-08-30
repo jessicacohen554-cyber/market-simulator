@@ -180,6 +180,38 @@ class TestDeladderDelta(unittest.TestCase):
                 self.map, self.c_mc, bad, _pmax(COARSE_ROWS), _pmax(REFINED_ROWS)
             )
 
+    def test_candidate_rows_stay_bitwise_even_at_one_ulp(self):
+        # The candidate control keeps full precommit-§1.2 strength: a 1-ULP
+        # difference on a body row is still a stop, never tolerated.
+        bad = self.r_mc.copy()
+        bad[0, 3] = np.nextafter(bad[0, 3], np.inf)
+        with self.assertRaisesRegex(ValueError, "more than SCHEME R1"):
+            h.compute_deladder_delta(
+                self.map, self.c_mc, bad, _pmax(COARSE_ROWS), _pmax(REFINED_ROWS)
+            )
+
+    def test_noncandidate_fp_reassociation_is_disclosed_not_fatal(self):
+        # The measured real-year case (o7 finding): a plant-aggregate value
+        # conserved by R1 but FP-reassociated — 1-ULP scale on a NON-candidate
+        # row. Passes, with the pair disclosed at full magnitude.
+        bad = self.r_mc.copy()
+        bad[5, :] = np.nextafter(bad[5, :], np.inf)  # the peaker row, ~2.8e-14
+        delta, diag = h.compute_deladder_delta(
+            self.map, self.c_mc, bad, _pmax(COARSE_ROWS), _pmax(REFINED_ROWS)
+        )
+        np.testing.assert_array_equal(delta[[0, 1, 5]], 0.0)
+        pairs = diag["noncandidate_fp_pairs"]
+        self.assertEqual([p["refined_row"] for p in pairs], [5])
+        self.assertLess(pairs[0]["max_abs_diff_usd_mwh"], 1e-12)
+
+    def test_noncandidate_diff_beyond_fp_scale_is_a_stop(self):
+        bad = self.r_mc.copy()
+        bad[5, 7] += 1e-6  # beyond FP-reassociation magnitude
+        with self.assertRaisesRegex(ValueError, "beyond FP-reassociation"):
+            h.compute_deladder_delta(
+                self.map, self.c_mc, bad, _pmax(COARSE_ROWS), _pmax(REFINED_ROWS)
+            )
+
     def test_capacity_violation_is_a_stop(self):
         bad = _pmax(REFINED_ROWS)
         bad[3] = 12.0  # sub-slice no longer parent/n
