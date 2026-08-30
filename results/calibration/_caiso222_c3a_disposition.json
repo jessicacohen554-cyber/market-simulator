@@ -1,0 +1,661 @@
+{
+ "configs": {
+  "2026-08-15-pjm-162-inputclock": {
+   "c3a_records": [
+    {
+     "magnitude": "+6.2%",
+     "status": "PASS",
+     "year": 2023
+    },
+    {
+     "magnitude": "-0.8%",
+     "status": "PASS",
+     "year": 2024
+    },
+    {
+     "magnitude": "-7.7%",
+     "status": "PASS",
+     "year": 2025
+    }
+   ],
+   "criterion_table": {
+    "dispatch_corr": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "supporting"
+    },
+    "forced_share": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "fuelmix": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "governance": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "price_mean": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "price_shape": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "price_tail": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "supporting"
+    },
+    "sysvol": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    }
+   },
+   "data_blocked_years": [],
+   "determination": "CALIBRATED",
+   "disposition_variants": {
+    "E_budget1": "CALIBRATED",
+    "E_budget2": "CALIBRATED",
+    "S_budget1": "CALIBRATED",
+    "S_budget2": "CALIBRATED"
+   },
+   "fails": [],
+   "grade_summary": {
+    "commercial_grade": 0,
+    "fails": 0,
+    "ledgered": 0,
+    "scored": 8,
+    "target_grade": 8
+   },
+   "iso": "PJM",
+   "reasons": [],
+   "span_restricted": false
+  },
+  "2026-08-17-neiso-99-joint-p1": {
+   "c3a_records": [
+    {
+     "magnitude": "+3.1%",
+     "status": "PASS",
+     "year": 2023
+    },
+    {
+     "magnitude": "+5.7%",
+     "status": "PASS",
+     "year": 2024
+    },
+    {
+     "magnitude": "+1.7%",
+     "status": "PASS",
+     "year": 2025
+    }
+   ],
+   "criterion_table": {
+    "dispatch_corr": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "supporting"
+    },
+    "forced_share": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "fuelmix": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "governance": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "price_mean": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "price_shape": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "price_tail": {
+     "caveat_kind": "ledgered",
+     "status": "CAVEAT",
+     "tier": "supporting"
+    },
+    "sysvol": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    }
+   },
+   "data_blocked_years": [],
+   "determination": "CALIBRATED",
+   "disposition_variants": {
+    "E_budget1": "CALIBRATED",
+    "E_budget2": "CALIBRATED",
+    "S_budget1": "CALIBRATED",
+    "S_budget2": "CALIBRATED"
+   },
+   "fails": [],
+   "grade_summary": {
+    "commercial_grade": 0,
+    "fails": 0,
+    "ledgered": 1,
+    "scored": 8,
+    "target_grade": 7
+   },
+   "iso": "NEISO",
+   "reasons": [
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+   ],
+   "span_restricted": false
+  },
+  "2026-08-25-234-eastex-identity": {
+   "c3a_records": [
+    {
+     "magnitude": "-39.7%",
+     "status": "FAIL",
+     "year": 2023
+    },
+    {
+     "magnitude": "-0.2%",
+     "status": "PASS",
+     "year": 2024
+    },
+    {
+     "magnitude": "-7.9%",
+     "status": "PASS",
+     "year": 2025
+    }
+   ],
+   "criterion_table": {
+    "dispatch_corr": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "supporting"
+    },
+    "forced_share": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "fuelmix": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "governance": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "price_mean": {
+     "caveat_kind": null,
+     "status": "FAIL",
+     "tier": "load-bearing"
+    },
+    "price_shape": {
+     "caveat_kind": null,
+     "status": "FAIL",
+     "tier": "load-bearing"
+    },
+    "price_tail": {
+     "caveat_kind": "ledgered",
+     "status": "CAVEAT",
+     "tier": "supporting"
+    },
+    "sysvol": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    }
+   },
+   "data_blocked_years": [],
+   "determination": "NOT-YET",
+   "disposition_variants": {
+    "E_budget1": "NOT-YET",
+    "E_budget2": "NOT-YET",
+    "S_budget1": "NOT-YET",
+    "S_budget2": "NOT-YET"
+   },
+   "fails": [
+    "price_mean",
+    "price_shape"
+   ],
+   "grade_summary": {
+    "commercial_grade": 0,
+    "fails": 2,
+    "ledgered": 1,
+    "scored": 8,
+    "target_grade": 5
+   },
+   "iso": "ERCOT",
+   "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+   ],
+   "span_restricted": false
+  },
+  "2026-08-25-234-eastex-identity@2024-2025": {
+   "c3a_records": [
+    {
+     "magnitude": "-0.2%",
+     "status": "PASS",
+     "year": 2024
+    },
+    {
+     "magnitude": "-7.9%",
+     "status": "PASS",
+     "year": 2025
+    }
+   ],
+   "criterion_table": {
+    "dispatch_corr": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "supporting"
+    },
+    "forced_share": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "fuelmix": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "governance": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "price_mean": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "price_shape": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "price_tail": {
+     "caveat_kind": "ledgered",
+     "status": "CAVEAT",
+     "tier": "supporting"
+    },
+    "sysvol": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    }
+   },
+   "data_blocked_years": [],
+   "determination": "CALIBRATED",
+   "disposition_variants": {
+    "E_budget1": "CALIBRATED",
+    "E_budget2": "CALIBRATED",
+    "S_budget1": "CALIBRATED",
+    "S_budget2": "CALIBRATED"
+   },
+   "fails": [],
+   "grade_summary": {
+    "commercial_grade": 0,
+    "fails": 0,
+    "ledgered": 1,
+    "scored": 8,
+    "target_grade": 7
+   },
+   "iso": "ERCOT",
+   "reasons": [
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+   ],
+   "span_restricted": true
+  },
+  "2026-08-25-236-swcap-clip-k33": {
+   "c3a_records": [
+    {
+     "magnitude": "-7.3%",
+     "status": "PASS",
+     "year": 2023
+    }
+   ],
+   "criterion_table": {
+    "dispatch_corr": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "supporting"
+    },
+    "forced_share": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "fuelmix": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "governance": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "price_mean": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "price_shape": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "price_tail": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "supporting"
+    },
+    "sysvol": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    }
+   },
+   "data_blocked_years": [],
+   "determination": "CALIBRATED",
+   "disposition_variants": {
+    "E_budget1": "CALIBRATED",
+    "E_budget2": "CALIBRATED",
+    "S_budget1": "CALIBRATED",
+    "S_budget2": "CALIBRATED"
+   },
+   "fails": [],
+   "grade_summary": {
+    "commercial_grade": 0,
+    "fails": 0,
+    "ledgered": 0,
+    "scored": 8,
+    "target_grade": 8
+   },
+   "iso": "ERCOT",
+   "reasons": [],
+   "span_restricted": false
+  },
+  "2026-08-25-nyiso-155-hydro-repair": {
+   "c3a_records": [
+    {
+     "magnitude": "+6.8%",
+     "status": "PASS",
+     "year": 2023
+    },
+    {
+     "magnitude": "-1.7%",
+     "status": "PASS",
+     "year": 2024
+    },
+    {
+     "magnitude": "-10.8%",
+     "status": "FAIL",
+     "year": 2025
+    }
+   ],
+   "criterion_table": {
+    "dispatch_corr": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "supporting"
+    },
+    "forced_share": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "fuelmix": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "governance": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "price_mean": {
+     "caveat_kind": null,
+     "status": "FAIL",
+     "tier": "load-bearing"
+    },
+    "price_shape": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "price_tail": {
+     "caveat_kind": null,
+     "status": "FAIL",
+     "tier": "supporting"
+    },
+    "sysvol": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    }
+   },
+   "data_blocked_years": [],
+   "determination": "NOT-YET",
+   "disposition_variants": {
+    "E_budget1": "NOT-YET",
+    "E_budget2": "CALIBRATED",
+    "S_budget1": "NOT-YET",
+    "S_budget2": "NOT-YET"
+   },
+   "fails": [
+    "price_mean",
+    "price_tail"
+   ],
+   "grade_summary": {
+    "commercial_grade": 0,
+    "fails": 2,
+    "ledgered": 0,
+    "scored": 8,
+    "target_grade": 6
+   },
+   "iso": "NYISO",
+   "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_tail"
+   ],
+   "span_restricted": false
+  },
+  "2026-08-26-caiso-220-c1-crosswalk": {
+   "c3a_records": [
+    {
+     "magnitude": "+4.0%",
+     "status": "PASS",
+     "year": 2023
+    },
+    {
+     "magnitude": "+12.5%",
+     "status": "FAIL",
+     "year": 2024
+    },
+    {
+     "magnitude": "+15.5%",
+     "status": "FAIL",
+     "year": 2025
+    }
+   ],
+   "criterion_table": {
+    "dispatch_corr": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "supporting"
+    },
+    "forced_share": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "fuelmix": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "governance": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "price_mean": {
+     "caveat_kind": null,
+     "status": "FAIL",
+     "tier": "load-bearing"
+    },
+    "price_shape": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "price_tail": {
+     "caveat_kind": "ledgered",
+     "status": "CAVEAT",
+     "tier": "supporting"
+    },
+    "sysvol": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    }
+   },
+   "data_blocked_years": [],
+   "determination": "NOT-YET",
+   "disposition_variants": {
+    "E_budget1": "NOT-YET",
+    "E_budget2": "CALIBRATED",
+    "S_budget1": "NOT-YET",
+    "S_budget2": "CALIBRATED"
+   },
+   "fails": [
+    "price_mean"
+   ],
+   "grade_summary": {
+    "commercial_grade": 0,
+    "fails": 1,
+    "ledgered": 1,
+    "scored": 8,
+    "target_grade": 6
+   },
+   "iso": "CAISO",
+   "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+   ],
+   "span_restricted": false
+  },
+  "2026-08-30-miso-188-rvsscope": {
+   "c3a_records": [
+    {
+     "magnitude": "+3.5%",
+     "status": "PASS",
+     "year": 2023
+    },
+    {
+     "magnitude": "-4.3%",
+     "status": "PASS",
+     "year": 2024
+    },
+    {
+     "magnitude": "-12.3%",
+     "status": "FAIL",
+     "year": 2025
+    }
+   ],
+   "criterion_table": {
+    "dispatch_corr": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "supporting"
+    },
+    "forced_share": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "fuelmix": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "governance": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "protective"
+    },
+    "price_mean": {
+     "caveat_kind": null,
+     "status": "FAIL",
+     "tier": "load-bearing"
+    },
+    "price_shape": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    },
+    "price_tail": {
+     "caveat_kind": "ledgered",
+     "status": "CAVEAT",
+     "tier": "supporting"
+    },
+    "sysvol": {
+     "caveat_kind": null,
+     "status": "PASS",
+     "tier": "load-bearing"
+    }
+   },
+   "data_blocked_years": [],
+   "determination": "NOT-YET",
+   "disposition_variants": {
+    "E_budget1": "NOT-YET",
+    "E_budget2": "CALIBRATED",
+    "S_budget1": "NOT-YET",
+    "S_budget2": "CALIBRATED"
+   },
+   "fails": [
+    "price_mean"
+   ],
+   "grade_summary": {
+    "commercial_grade": 0,
+    "fails": 1,
+    "ledgered": 1,
+    "scored": 8,
+    "target_grade": 6
+   },
+   "iso": "MISO",
+   "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+   ],
+   "span_restricted": false
+  }
+ },
+ "constants": {
+  "LEDGERABLE_CRITERIA": [
+   "price_tail"
+  ],
+  "MAX_LEDGERED_CAVEATS": 1,
+  "MAX_PROTECTIVE_CAVEATS": 0,
+  "price_mean_tier": "load-bearing",
+  "price_tail_tier": "supporting"
+ },
+ "rubric_version": 3.5
+}
