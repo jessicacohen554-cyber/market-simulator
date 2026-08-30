@@ -2,7 +2,10 @@
 
 **Opened** 2026-07-25 by owner instruction, out of `neiso-63`
 (`results/calibration/FINDING-neiso63-campd-economic-layup-2026-07.md`).
-**Status:** ADOPTED-AS-IMPROVEMENT (owner verdict 2026-07-26, §8) — freeze HELD.
+**Status:** **CLOSED WITH CAUSE (owner ruling 2026-08-26, §10)** — guard
+ADOPTED-AS-IMPROVEMENT (owner verdict 2026-07-26, §8); freeze LIFTED for the
+VALIDATION tier only, locked test stays frozen. The detector question remains
+OPEN and is carried explicitly (§10).
 **Scope:** all six ISOs.
 **Model assignment:** Opus or Fable (writes `scripts/lib/outage_detect.py`, a
 core-infrastructure path — CLAUDE.md rule 27).
@@ -270,6 +273,13 @@ availability.
 locked-test year may be solved, scored, or registered until this charter reaches
 a decision. Data intake is unaffected.
 
+**[SUPERSEDED 2026-08-26 by the closure ruling (§10).** The charter has reached
+its decision and the freeze is now TIER-SCOPED rather than total: the
+VALIDATION tier (2020–2022) is lifted — governed by the `complete` marker +
+`--holdout-authorized` alone — while the LOCKED TEST (2019, H1-2026) stays
+frozen for every ISO, `final` marker or not. The paragraph above is retained
+verbatim as the record of the governance state while the charter was open.]
+
 No marker or frontier has been withdrawn on this finding. Unlike nyiso-63 the
 NEISO determination held and the fit improved, so the evidence does not yet meet
 the withdrawal bar — but the NEISO frontier (2026-07-11) and calibration-complete
@@ -496,3 +506,72 @@ arises**; the guard stands exactly as §8 adopted it. Record:
 states what would falsify the null: a block-integral construction whose veto
 set is *materially disjoint* from the window-grain cut's, which then clears D1
 on the disjoint part).
+
+## 10. CLOSED WITH CAUSE — owner ruling 2026-08-26; the cause stated, not implied
+
+**The ruling (owner, program-director sitting 2026-08-26, card 6 — the O4/O5
+decision card `docs/audit/AUDIT-FOLLOWUP-o5-o4-2026-08-18.md` §2.4, option (A)
+taken as recommended), verbatim:**
+
+> Close the layup charter with cause; lift the freeze for the VALIDATION tier
+> (2020-2022) for ISOs holding a `complete` marker. `final` stays empty and the
+> locked test stays frozen. Restores the diagnostic touchpoint loop.
+
+**What the cause is.** This closure takes §7's "Closed with cause" leg on §9's
+*explained* branch — and one clause of §7's wording is met only in a weaker
+form, which is recorded here rather than papered over. §7 asked for "the
+extract is confirmed fit for purpose on evidence". What the four investigation
+lanes actually established (§9) is that the extract is the best **buildable**
+representation: the residual over-count is a definitional seam (published
+series measure *unavailability*; the CEMS detector measures *non-operation*),
+confirmed against a published instrument, and **not recoverable by any
+discriminator the admissible inputs support** — the published-side re-measure
+PASSED, the commitment-economics discriminator was NEGATIVE, the LP-side
+closure was NEGATIVE, and the cross-ISO day-grain replacement was NEGATIVE.
+"Best buildable" is a cause for closing a charter whose every further lane is
+measured shut; it is not a finding that the input is unimpeachable.
+
+**The detector question therefore REMAINS OPEN, and what that costs is stated
+plainly:** the post-guard `CC_REGULAR` capacity-weighted outage share is
+**14.2–36.7 %**, with **17 of 18 ISO-years above the ~10–15 % EFOR+planned
+norm ceiling** (audit row O4 re-measurement, 2026-08-18,
+`results/calibration/_audit_followup_o4_cc_envelope.json`). **Every keeper's
+availability envelope inherits that seam.** It is carried explicitly — in the
+freeze file's 2026-08-26 `history` entry, in audit row O4's resolution, and
+here — as a documented definitional scope difference, so any future reader
+sees the measured number and the four negative lanes together rather than a
+silently accepted input. The lift is a decision to **proceed with a known-open
+input question**, on the asymmetry the owner relied on in both prior narrow
+lifts: validation years are iterable, re-spendable, model-selection-only
+evidence, so spending one against an imperfect envelope costs nothing
+irreversible and re-opens the diagnostic touchpoint loop (rule 22) that has
+already surfaced two real input defects (neiso-85/86); locked-test years are
+touch-once, and they stay frozen.
+
+**Execution (2026-08-26 holdout-governance records lane; no LP, no solve, no
+year spent):**
+
+- `frontend/data/backcast/holdout-freeze.json` re-scoped — `active: true`,
+  `scope.tiers = ["locked_test"]`, history appended (never rewritten), the
+  original 2026-07-25 `reason` preserved verbatim.
+- The scope is enforced by the single fail-closed reader
+  `scripts/lib/holdout_policy.frozen_tiers` (an active freeze with no
+  parseable scope covers every tier), consumed by
+  `run_calibration_full.enforce_holdout_year_gate` — the choke point every
+  solve path routes through.
+- Verified behaviourally across all three rule-22 enforcement paths (the CLI
+  year gate, `legitimacy_diagnostics.run_d6_quarantine`,
+  `scripts/audit_keepers.py` H1), 55/55 invocations as required — including
+  the one that matters: **2019 and H1-2026 refused for every one of the six
+  ISOs, with and without `--holdout-authorized`**. Record:
+  `docs/FINDING-holdout-governance-2026-08-26.md`.
+- `calibration-complete.json`'s `final` block is untouched and still empty; no
+  ISO's marker changed.
+
+**What this closure does NOT do.** It does not resolve the detector question
+(nothing further is buildable on the evidence — §9); it does not grant any
+locked test (`final` stays empty; per the same sitting's card 7, any future
+`final` grant is additionally preconditioned on the ISO's 2020–2022
+touchpoints having been run and the loop having stopped surfacing repairs);
+and it does not close the §5 blast-radius re-tune lanes, which continue in
+their own ISO lanes on the corrected envelope.
