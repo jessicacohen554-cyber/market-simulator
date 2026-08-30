@@ -7,7 +7,10 @@ re-score definitions (RG-1/RG-2) and the owner's 2023 object reported first.
 
 Conventions: the standard analyzer's demand-weighted P1 system price
 (`_ercot89_span_check.py`), the committed actual RT parquet, spurious =
-model in [150,500] & actual < $150, tail caught = model>200 & actual>200.
+model >= $150 & actual < $150 (LIDLESS since the ercot-225 card's Option A,
+owner-signed 2026-08-26 — the gate must not be escapable by overshooting
+the band top; the [150,500]-band and >500-top split stays reported as
+``spurious_band`` / ``spurious_top``), tail caught = model>200 & actual>200.
 
 Read-only: consumes the two bundles' hourly sidecars; solves nothing.
 
@@ -73,12 +76,18 @@ def year_stats(m: np.ndarray, a: np.ndarray) -> dict:
     """Level / spurious / tail stats on the shared conventions."""
     ok = np.isfinite(m) & np.isfinite(a)
     m, a = m[ok], a[ok]
-    spur = (m >= MID_BAND[0]) & (m <= MID_BAND[1]) & (a < MID_BAND[0])
+    # Gated count LIDLESS (ercot-225 Option A, owner-signed 2026-08-26);
+    # the band/top split is the kept report decomposition.
+    lo = a < MID_BAND[0]
+    spur = (m >= MID_BAND[0]) & lo
+    spur_band = (m >= MID_BAND[0]) & (m <= MID_BAND[1]) & lo
     hi = a > 200.0
     return {
         "c3a_hub_pct": round(float((m.mean() - a.mean()) / a.mean() * 100.0), 2),
         "nrmse": round(float(np.sqrt(np.mean((m - a) ** 2)) / a.mean()), 4),
         "spurious": int(spur.sum()),
+        "spurious_band": int(spur_band.sum()),
+        "spurious_top": int(((m > MID_BAND[1]) & lo).sum()),
         "tail_model": int((m > 200.0).sum()),
         "tail_caught": int((hi & (m > 200.0)).sum()),
         "tail_actual": int(hi.sum()),
