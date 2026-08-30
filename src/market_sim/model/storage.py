@@ -1932,7 +1932,8 @@ def apply_storage_new_entry(
             best_margin = 0.0
             for tech_name, tech in STORAGE_TECHS.items():
                 room = min(per_tech_cap - built.get(tech_name, 0.0), remaining)
-                if room <= 0.0:
+                # 1e-6 MW: numerical guard against float-residue room.
+                if room <= 1e-6:
                     continue
                 m = _stack_margin(tech_name, tech, sig_walk, fleet_walk_mw)
                 if m > best_margin:

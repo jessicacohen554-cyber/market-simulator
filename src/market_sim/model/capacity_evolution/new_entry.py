@@ -1584,7 +1584,9 @@ def apply_economic_new_entry(
         # ------------------------------------------------------------------
         _prices0 = np.asarray(prices, dtype=float)
         _T = int(_prices0.shape[-1])
-        sig_walk = _prices0
+        # Identical to _prices0 at a fresh walk (the delta is zero before any
+        # tranche); honors any state a caller committed before this screen.
+        sig_walk = entry_reprice.signal(_prices0)
         _r_fast0 = (
             None
             if reserve_price_signal is None
@@ -1645,7 +1647,9 @@ def apply_economic_new_entry(
             best_tech: str | None = None
             best_margin = 0.0
             for t in cand_techs:
-                if _walk_room(t) <= 0.0:
+                # 1e-6 MW: numerical guard against float-residue room (a
+                # milliwatt is below any physical resolution, not a tunable).
+                if _walk_room(t) <= 1e-6:
                     continue
                 m = _walk_margin(t)
                 if m > best_margin:

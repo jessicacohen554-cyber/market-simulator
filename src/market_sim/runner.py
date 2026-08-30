@@ -3801,12 +3801,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                             if p1 > 0.0 and e1 > 0.0:
                                 # Energy-weighted RTE of base fleet + walk
                                 # tranches — the same aggregation
-                                # _storage_shave_terms uses.
-                                rte1 = max(
-                                    (rte0 * e0 + (rte_added or 0.0) * d_energy_mwh)
-                                    / e1,
-                                    1e-6,
-                                )
+                                # _storage_shave_terms uses. At zero walk
+                                # storage keep rte0 verbatim (no ulp drift
+                                # against the seam's own call).
+                                if d_energy_mwh == 0.0:
+                                    rte1 = max(rte0, 1e-6)
+                                else:
+                                    rte1 = max(
+                                        (rte0 * e0 + (rte_added or 0.0) * d_energy_mwh)
+                                        / e1,
+                                        1e-6,
+                                    )
                                 if _sb is not None:
                                     _f = float(ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC)
                                     shave = ((1.0 - _f) * p1, (1.0 - _f) * e1, rte1)
