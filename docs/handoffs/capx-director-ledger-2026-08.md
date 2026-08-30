@@ -8,7 +8,7 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 
 **Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #16) ·
 **HEAD at refresh:** `b5050e9` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
-**Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (supersedes the 2026-08-26 handoff; state section refreshed at r#13)
+**Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (REWRITTEN at r#16 — the four-lane wave in flight, the Q10 auto-arm authorization, and the standing leg-(d) re-present duty)
 
 ---
 
