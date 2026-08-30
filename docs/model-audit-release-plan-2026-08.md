@@ -3572,3 +3572,139 @@ your branch when done.
     **APPEND-ONLY by diffing the full 3,413-line pre-edit prefix against
     the prior blob for byte-identity**, and the board blob-verified after
     push (fetched back; line count + hash compared).
+- 2026-08-30 — **AUDIT-RULINGS PM — the sitting's four rulings executed and
+  ledgered; the v14 records-ordering deviation recorded honestly; gates
+  re-measured all-green at the lane's runtime tree.** Executing lane
+  `claude/audit-rulings-0830pm` (branch
+  `claude/audit-rulings-0830pm-thxtdd`), dispatched by the 2026-08-30 PM
+  sitting; it SUPERSEDES the withdrawn `claude/audit-records-v14-correction`
+  prompt (written but NEVER LAUNCHED, overtaken by this charter — no such
+  branch on the remote at runtime). Standing recorded deviation, restated:
+  the director pushes NOTHING; records land through this dispatched lane;
+  THE OWNER MERGES. ZERO SOLVES (rule 22 [R-HOLDOUT]); no `src/`, no other
+  keeper shard, no holdout file, no workflow, no matrix mechanism row
+  (nothing tested — records only). PUSH FIRST, BATCH NOTHING: three
+  commits in charter order, each pushed and blob-verified before the next,
+  so this entry cites its own sitting's landed shas.
+  - **(a) R-1 EXECUTED — NYISO frontier currency annotation (v14 decision
+    queue item 5, HELD → RESOLVED): commit `4c63b05`.** Append-only dated
+    key `currency_annotation_2026-08-30` in the `frontier` block of
+    `frontend/data/backcast/keepers/NYISO.json`: the ratification note's
+    inline "KEEPER: 2026-08-22-nyiso-152-duty-complete, determination
+    CALIBRATED" describes the keeper AT DECLARATION
+    (`keeper_at_declaration`, unchanged); the keeper has since moved twice
+    (155-hydro-repair 2026-08-25, then 2026-08-30-nyiso-157-par-attribution,
+    current determination NOT-YET); the ratification itself is UNCHANGED.
+    No declaration text rewritten; nothing else in the shard touched.
+    `audit_keepers.py` S1 forced the one standing consequence:
+    `status/NYISO.js` regenerated via `build_status.py --iso NYISO` (the
+    shard is embedded in the status part; `shared.js` rebuilt
+    byte-identical, so only the two files moved) — with it **PASS 0/0
+    restored** (exit 0). Rule-22/M1 keeper-shard-edit duty DISCHARGED: the
+    independent `calibration-keeper-auditor --iso NYISO` ran post-push —
+    **PASS, 0 failures / 0 warnings, zero edits**, all three surfaces
+    (registry sidecar, status part, `calibration-complete.json` M1a/M1b)
+    verified against the live NOT-YET verdict, M1b independently re-derived
+    via `calibration_verdict.py --run-id
+    2026-08-30-nyiso-157-par-attribution`.
+  - **(b) R-2 LEDGERED — the ercot-240 charter (dispatched as its own lane
+    by the sitting).** Of FINDING-ercot239 §6's three named candidate
+    objects: **OBJECT 2 CHARTERED** — the event-hour demand gap
+    (+651…+873 MW in 12 of 14 event hours vs the +98 MW year mean), one
+    bounded ZERO-SOLVE characterization pass before any input change;
+    **OBJECTS 1 AND 3 NOT CHARTERED** — the off-core conduct object (11 h +
+    h2058, sitting under the ercot-217 adjudication) and the two wind hours
+    (h6399/h7145) — both REMAIN on the owner-visible queue, which is
+    FINDING-ercot239 §6 itself (titled "NOT chartered — owner-visible
+    queue"). Launch state at this lane's runtime: **LAUNCHED** — branch
+    `claude/ercot-240-demand-gap-xbdwn5`, precommit
+    `docs/PRECOMMIT-ercot240-eventhour-demandgap-2026-08-30.md` merged
+    **#4341** (`6829f64`, this lane's base); no finding yet.
+  - **(c) R-3 EXECUTED — caiso-222 Q1 = TERMINAL REST + MAP (packet §1(c)
+    OPTION 3): commit `634927a`.** The CAISO C3a residual (+12.5/+15.5 %
+    2024/2025 on keeper `2026-08-26-caiso-220-c1-crosswalk`) is designated
+    **ATTRIBUTED AND CLOSED at this representation grain** — caiso-221 §E
+    + the caiso-222 packet ARE the record; the Q2 routes are the ONLY
+    re-openers; determination text, keeper and markers ALL UNCHANGED; no
+    rubric motion, no scorer change, no shard keeper change — the
+    caiso-186 NO stands un-overturned, and the caiso-201 rest becomes a
+    terminal rest with a decision map. Landed per the packet's §7
+    filed-items conventions: `docs/calibration-log/caiso.md` "caiso-222
+    OWNER RULINGS" entry + the packet's appended §9, both verified
+    APPEND-ONLY by prefix byte-identity, CAISO records only.
+  - **(d) R-4 EXECUTED — caiso-222 Q2: routes (i) AND (iii)
+    ARMED/CHARTERED, route (ii) DECLINED (same commit `634927a`).**
+    **W-1/W-2/W-3 ARMED as standing watch items** with their cheap tests
+    (W-1 the PATH15_BG/PATH26_BG TI-universe ERR-1000 flip; W-2 a
+    limit/flow field appearing in PRC_NOMOGRAM/PRC_CNSTR/PRC_RTM_FLOWGATE;
+    W-3 DMM element-limit MW beyond the 2023 annual) and the pre-stated
+    trigger duty: any W-item landing re-opens as a DATA-INTAKE session
+    first, NEVER a solve, under the caiso-218 §F.2/§F.3 fences. **Route
+    (iii) CHARTERED** — opening round dispatched as **caiso-223**, its own
+    lane (owns its new sub-zonal scoping docs; no branch yet at this
+    lane's runtime). **Route (ii) CEII access DECLINED** by owner ruling
+    (no A-1/A-2/A-3 filing/agreement class executed; both structural costs
+    stand as the packet states them).
+  - **(e) THE CYCLE'S LANDINGS, verified against main at runtime:**
+    **#4333** (`374152f`) the caiso-222 packet + disposition probe/JSON +
+    the caiso-205 pair prune · **#4332/#4334** (`65a39e3`/`7532f18`) O7
+    construction UNDERWAY — the precommit, then
+    `scripts/probes/o7_attribution_harness.py` + its toy-system tests
+    (verified present at main; the lane branch since merged-and-deleted) ·
+    **#4335** (`def338e`) board v14 LANDED (refresh derived at pin
+    `0a5e896`) · **#4338** (`97ab0a5`) the v14 BOARD addendum recording
+    post-pin resolution — all five gates green at `def338e` — whose two
+    resolvers verified: **#4324** (the bench-restamp lane's second half;
+    `f608370` pruned the orphaned `caiso217_crosswalk` bundle → parity
+    GREEN, v14 item (f) now EXECUTED) and **#4325** (the FF-2D verdict
+    re-score → staleness RESET, item (g) executed).
+  - **(f) THE v14 RECORDS-ORDERING DEVIATION, recorded honestly and no
+    worse.** PR **#4330** (`5b181ee`, merged 10:30:30 −07:00) carried the
+    v14 §8 entry stating "Board refreshed to **v14** by a dispatched
+    records lane" — **~12 minutes BEFORE #4335 (`def338e`, 10:42:44)
+    landed the board**. That is a **PUSH-FIRST-BATCH-NOTHING ordering
+    violation that made the ledger transiently false** — the v14 entry's
+    own protocol line ("a refresh is complete when the records lane has
+    landed both files") names the exact duty it broke — and it is **NOT a
+    false record**: the same lane landed the board minutes later with the
+    content the entry described. **The successor director's initial
+    claimed-vs-landed classification of this event is WITHDRAWN in the
+    same breath, named as such** — "claimed but never landed" was the
+    wrong category; "landed out of order" is the honest one. Nothing is
+    rewritten; this sub-entry is the correction of record.
+  - **(g) GATES RE-MEASURED at this lane's runtime tree** (base `6829f64`
+    + `4c63b05` + `634927a`; exit codes captured directly, never through a
+    pipe — `script | tail; echo $?` reads tail's exit): `audit_keepers.py`
+    **PASS 0/0** (exit 0) · parity **OK — 56 runs checked, 93 bundle dirs
+    swept, 0 tolerated** (exit 0) · mechanism-matrix **GREEN, all four
+    checks** (exit 0) · forecast staleness **Δ = 1 of 10, WARN-level**
+    (exit 0; Δ read 0 at `97ab0a5` minutes earlier — the #4339–#4341
+    merges moved it; 31 of 40 verdict stamps still record no scored-at
+    date, the standing WARN) · bench **0 STALE of 20** (exit 0; 6
+    engine-drift WARNs — ERCOT 2023–2025 + NYISO 2023–2025 — not gated).
+    Main moved DURING this lane: **#4339** (nyiso-158 winter-face phase-0,
+    the NYISO desk), **#4340** (capx S-5 — a DIFFERENT program's ledger,
+    per the v13 conflation warning), **#4341** (the ercot-240 precommit,
+    (b) above).
+  - **(h) LANES IN FLIGHT at runtime** (branch-checked per the v13
+    protocol): miso-190 — `claude/miso-190-backcast-calibration-okt1cn`
+    exists, tip `9cd6dc6` at/behind main, NOTHING unmerged, and NO
+    miso-190 registration in the backcast registry (newest MISO = the
+    miso-188 pair) — **the registration watch stays OPEN** · ercot-240 —
+    LAUNCHED, (b) above · caiso-223 — dispatched this sitting, no branch
+    yet · the ercot-239 August-steepness round — its phase-0 records
+    merged (#4329/#4331), branch deleted, the priority-2 round not yet
+    re-appeared as a branch.
+  - **(i) BOARD NOT BUMPED.** v14 is current (landed `def338e`, addendum
+    `97ab0a5`); **v15 belongs to the next cycle**. This lane touched
+    neither board file.
+  - **(j) RECORDS INTEGRITY.** Five files across three commits — R-1
+    (`4c63b05`: the NYISO shard + its S1-mandated status part), R-3+R-4
+    (`634927a`: the CAISO log + the packet §9), then this §8 increment —
+    each pushed over `git push` on a freshly-fetched base (rule 27
+    [R-PUSH]) and BLOB-VERIFIED before the next commit (fetched back; line
+    count + sha256 + git blob sha compared). This §8 append verified
+    **APPEND-ONLY by diffing the full 3,574-line / 258,927-byte pre-edit
+    prefix for byte-identity**; the CAISO log and packet appends verified
+    the same way. No lane-in-flight surface touched; all capx-* files
+    untouched.
