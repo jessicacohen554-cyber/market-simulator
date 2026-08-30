@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-26-caiso-220-c1-crosswalk",
+  "label": "caiso 220 c1 crosswalk",
+  "date": "2026-08-26",
+  "shorthand": "caiso-220-c1-crosswalk",
+  "definition": "caiso-220: the funded caiso-217 replay (registration-debt repair) - caiso-200 keeper recipe, crosswalk auto-active as data, caiso-216 SG gate table",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-26-caiso-220-c1-crosswalk.js",
+  "bundle": "results/calibration/caiso220_c1_crosswalk"
+}
