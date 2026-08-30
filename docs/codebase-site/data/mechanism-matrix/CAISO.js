@@ -255,6 +255,8 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     entry_forward_expectation_signal: { cell: "U", fc: "U" },
     entry_margin_exhaustion: { cell: "U", fc: "U" },
     entry_forward_reserve_leg: { cell: "U", fc: "U" },
+    storage_entry_availability_gate: { cell: "U", fc: "U" },
+    storage_entry_cost_normalized_rank: { cell: "U", fc: "U" },
     entry_vre_capacity_revenue: { cell: "U", fc: "U" },
     vre_procurement_additions: { cell: "U", fc: "U" },
     smr_available_year: { cell: "U", fc: "U" },

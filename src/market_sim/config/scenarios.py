@@ -1148,6 +1148,17 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "entry_forward_reserve_leg",
+    # T1-H capacity-entry Phase-1 Leg A storage pair (GATED default-off, D-2 /
+    # D-3 repairs): dropped from the hash at their False defaults so every
+    # pre-existing cache key is byte-stable — off, the candidate pool is the
+    # full STORAGE_TECHS registry and the rank score IS the margin,
+    # byte-identical by construction. An armed run restricts the storage
+    # entry pool to measured-available technologies (a different build) /
+    # re-orders the clearing technologies (a different build mix) and hashes
+    # distinctly. SHARED fields — very end, per HOUSE-3. Registered IN THE
+    # SAME COMMIT as the fields (the nyiso-119 discipline).
+    "storage_entry_availability_gate",
+    "storage_entry_cost_normalized_rank",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1538,6 +1549,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # as its _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     # Shared field — very end, per HOUSE-3.
     "entry_forward_reserve_leg": "False",
+    # Added by the T1-H capacity-entry Phase-1 lane WITH the fields, in the
+    # same commit as their _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119
+    # discipline). Shared fields — very end, per HOUSE-3.
+    "storage_entry_availability_gate": "False",
+    "storage_entry_cost_normalized_rank": "False",
 }
 
 
@@ -4292,6 +4308,61 @@ class ScenarioConfig:
     # neighbour) falls back to the shipped realized leg for that year —
     # degrade-to-shipped, never a third construction. Default off is
     # byte-identical (the realized-leg threading is untouched).
+    storage_entry_availability_gate: bool = False  # GATED default-OFF (D-2
+    # storage availability-year gate; charter
+    # docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md Phase-1 Leg A, defect
+    # register docs/FINDING-entry-screen-t1h-2026-08.md D-2/L-3, census
+    # docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §2). The storage
+    # entry screen iterates STORAGE_TECHS unconditionally on BOTH allocation
+    # rules — no availability-year gate, while the thermal path gates every
+    # emerging tech through _EMERGING_AVAILABLE_YEAR — so a 2023 ERCOT
+    # decision year builds 3 GW of 100-hour iron-air (1,875x the entire US
+    # metal-air installed base, decided one year before that base's first
+    # megawatt) + 2 GW of vanadium flow (6.2x the US flow-battery base).
+    # ARMED: storage._storage_entry_candidates admits a technology only
+    # at/after its measured first-US-operating year
+    # (constants.STORAGE_TECH_AVAILABLE_YEAR — the EIA-860 energy-storage
+    # schedule's first year with nonzero national operating capacity of the
+    # class, FAIL-CLOSED None for a class with zero national base ever, e.g.
+    # the modeled non-cavern adiabatic CAES; full derivation at the
+    # constant). ONE gate consumed by BOTH the bang-bang split and the D11-R
+    # margin-exhaustion walk (rule 19 [R-ONE-MECH]); the same mechanism the
+    # thermal path already carries, extended to storage — zero new free
+    # parameters (rule 21), measured years only (rule 13: regenerates from
+    # any EIA-860 vintage and responds to actual deployment). Pre-registered
+    # (Phase-0 §2.2 item 5): alone this gate makes the ERCOT storage volume
+    # band WORSE (the −63.5% band can only fall further) — it is proposed
+    # because the model must not build technologies that do not exist, never
+    # on the residual (rule 1 [R-STRUCT]); the paired D-3 rank repair below
+    # is where the li-ion mix returns. Forecast machinery only (a backcast
+    # runs no capacity evolution); coerced off in a plain backcast for
+    # cache-key byte-stability. Default off is byte-identical (the ungated
+    # helper returns the full STORAGE_TECHS pool in registry order).
+    storage_entry_cost_normalized_rank: bool = False  # GATED default-OFF
+    # (D-3 cost-normalized storage tech selection; same charter/defect
+    # register as storage_entry_availability_gate above, Phase-0 replay
+    # docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §3). The storage
+    # screen ranks clearing technologies on ABSOLUTE $/MW-yr margin (the
+    # bang-bang sort and the walk's per-tranche pick alike), which is
+    # structurally biased toward the most capital-intensive machine — a
+    # bigger machine earns a bigger absolute margin: Phase-0 measured
+    # flow_battery 2nd of 6 absolute and LAST of 6 per $/kW (a six-place
+    # swing), li_ion_4hr last absolute and 3rd per $/kW, so li-ion cleared
+    # +$1.47M/MW-yr in entering-2023 and still built zero. ARMED:
+    # storage._storage_entry_rank_score ranks on margin per unit capital
+    # cost (margin / STORAGE_TECHS[tech]["capex_per_kw"] — the developer's
+    # actual ranking object, return per dollar deployed) on BOTH allocation
+    # rules (rule 19). Sign-preserving, so WHICH technologies clear is
+    # unchanged — only the order among clearing techs moves. Zero new free
+    # parameters (rule 21 [R-DOF]: a ratio of two quantities the screen
+    # already holds; Phase-0 §3.2 shows the build mix is invariant to the
+    # cost denominator, capital vs annualized). Joint signature with the
+    # D-2 gate (Phase-0 §3.3): li_ion_4hr 3,000 + li_ion_8hr 2,000 — the
+    # 1.6-hour-class technology ERCOT actually built — and the
+    # cost-normalized pick is invariant to which li-ion durations the gate
+    # admits, where the absolute metric is not. Forecast machinery only;
+    # coerced off in a plain backcast for cache-key byte-stability. Default
+    # off is byte-identical (the ungated score IS the margin).
     vre_procurement_additions_enabled: bool = False  # GATED default-OFF
     # (FFR-5E, owner decision D-18(a), sitting Addendum S.2/S.5 signed
     # 2026-08-05; design docs/handoffs/ffr-5b-procurement-channel-design-
@@ -13631,6 +13702,14 @@ class ScenarioConfig:
             # refusal below then cannot misfire on a backcast inheriting a
             # forecast arming.
             self.entry_forward_reserve_leg = False
+            # The two storage-entry-screen repairs (D-2 availability gate,
+            # D-3 cost-normalized rank) touch only apply_storage_new_entry —
+            # screens-only forecast machinery a backcast never calls (a
+            # backcast runs no capacity evolution) — so they coerce off for
+            # the same cache-key byte-stability rationale: a backcast
+            # inheriting a forecast arming stays on its existing key.
+            self.storage_entry_availability_gate = False
+            self.storage_entry_cost_normalized_rank = False
 
         # ENTRY-SIGNAL forward-expectation signal: the field re-levels the
         # lookahead reprice's OWN object; with the reprice disarmed the

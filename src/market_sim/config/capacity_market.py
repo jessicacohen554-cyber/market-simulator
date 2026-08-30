@@ -419,6 +419,57 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
     },
 }
 
+# First calendar year each STORAGE_TECHS technology class is admissible for
+# economic new entry, consumed by model.storage._storage_entry_candidates
+# under ScenarioConfig.storage_entry_availability_gate (GATED default OFF) —
+# the storage analogue of the thermal path's _EMERGING_AVAILABLE_YEAR gate
+# (capacity_evolution/new_entry.py). Repairs defect D-2 of
+# docs/FINDING-entry-screen-t1h-2026-08.md (the T1-H lane decided 3 GW of
+# 100-hour iron-air + 2 GW of vanadium flow in a 2023 ERCOT decision year);
+# charter docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md Phase-1 Leg A.
+#
+# DERIVATION (measured, never invented — rule 5 [R-NO-MAGIC]; the Phase-0
+# census, docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §2.2, is the
+# committed record): each year is the FIRST YEAR WITH NONZERO NATIONAL
+# OPERATING CAPACITY of the technology class in the EIA-860 2025 Early
+# Release energy-storage schedule
+# (data/raw/eia-860/eia860_energy_storage_operable.parquet, min "Operating
+# Year" per "Storage Technology 1" code). A class with zero national
+# operating base EVER is FAIL-CLOSED (None = never admissible) until a first
+# observed year exists in the data. Rule 13 [R-MEASURED] admissibility: a
+# first-commercial-operation year is a market fact that regenerates for any
+# forward year from the then-current EIA-860 vintage and responds to actual
+# deployment (a class's first COD landing moves its gate), and it is an
+# INPUT (eligibility), never a pin of the model's build volume to observed
+# CODs.
+#
+#   LIB (all li-ion durations): first US operating year 2012
+#       (42,350.6 MW / 957 units operable at the 2025 ER). The three li-ion
+#       entries share the LIB class — EIA-860 classes by chemistry, not
+#       duration.
+#   FLB (vanadium redox flow):  first US operating year 2017
+#       (321.0 MW / 11 units).
+#   MAB (metal-air, iron-air):  first US operating year 2024
+#       (1.6 MW / 1 unit — Form Energy's first COD).
+#   compressed_air: None (FAIL-CLOSED). The class this entry models is
+#       NON-CAVERN ADIABATIC CAES (its own capex comment above), and the
+#       EIA-860 record contains ZERO MW of it ever: CAES is absent from the
+#       energy-storage schedule entirely, and the only US CAES generator
+#       (eia860_generator_operable.parquet, Prime Mover "CE": McIntosh AL,
+#       110 MW, Operating Year 1991) is a DIABATIC salt-cavern unit — the
+#       geology-gated technology the capex comment above explicitly says
+#       this ISO-agnostic screen does not model. It therefore cannot supply
+#       the modeled class's first observed year, and the gate fails closed.
+STORAGE_TECH_AVAILABLE_YEAR: dict[str, int | None] = {
+    "li_ion_4hr": 2012,  # EIA-860 2025 ER, LIB class first operating year
+    "li_ion_8hr": 2012,  # EIA-860 2025 ER, LIB class first operating year
+    "li_ion_12hr": 2012,  # EIA-860 2025 ER, LIB class first operating year
+    "iron_air": 2024,  # EIA-860 2025 ER, MAB class first operating year
+    "flow_battery": 2017,  # EIA-860 2025 ER, FLB class first operating year
+    "compressed_air": None,  # fail-closed: zero national base of the modeled
+    # (non-cavern adiabatic) class ever — see derivation note above
+}
+
 # Storage power capacity (MW) for the base year (2026).
 # Subsequent years grow via economics-based new entry, not this constant.
 # Source: ERCOT Monthly Dec 2025 — battery capacity ~17 GW.

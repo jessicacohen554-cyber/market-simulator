@@ -4012,3 +4012,29 @@ your branch when done.
     gate-(a) passers = frontier = {PJM, NEISO}.** Retires v15 queue item 1;
     the standing rule going forward is marker-master (a frontier does not
     survive its ISO leaving CALIBRATED/`complete`).
+- 2026-08-30 — **CARD 1 EXECUTED — THE PJM STAGE-0 GOLDEN IS CAPTURED, the
+  never-taken capture of six consecutive boards.** In-session by the
+  program-director desk under the owner's decision-card ruling ("PJM capture
+  only"). `scripts/capture_keeper_goldens.py --iso PJM --stage-tag
+  perfb-stage0` re-solved keeper `2026-08-15-pjm-162-inputclock` on its
+  recorded 2023–2025 span, determinism pinned (HIGHS threads 1, warm-start
+  pinned). **Fidelity oracle: 256 recorded flags replayed identically;
+  `scenario_config` 713 matched, 0 drifted; 15 HEAD-only meta keys reported
+  (post-freeze ScenarioConfig additions, expected).** The committed
+  `results/regression-goldens/perfb-stage0/manifest.json` now carries ALL SIX
+  keepers, and the PJM entry's provenance sha `1cfea72` is REACHABLE IN
+  MAIN'S HISTORY (merged as #4369) — the af1ccb6 unresolvable-provenance
+  defect is not repeated; per-file content hashes present (7 files/year
+  class, 8760 h). Operational record, honest: the first attempt died on the
+  container's 13.3 GiB cgroup RAM limit (memcg OOM at 13.9 GB RSS) and
+  succeeded after a 12 GB swapfile was enabled (memsw unbounded — the LP
+  spills instead of dying); the run required a re-fetch of the converted
+  `pjm-da-virtuals` corpus (36 monthly parquets, per its README's sanctioned
+  route — the keeper arms `pjm_da_virtual_bids`, whose loader hard-fails
+  rather than no-ops); and the solve WARNed "no hydro-plant-modes clean
+  partition for PJM" (recorded verbatim; fidelity unaffected — PJM hydro
+  runs on the EIA-923/930 monthly budget). Stage-0 coverage moves from
+  0-of-6-effective + PJM-never-captured to: **PJM CURRENT against its live
+  keeper**; the five other captures remain stale and ERCOT's carve-out
+  config still has no golden (WS3 stays parked — this was the scoped
+  capture, not a restart).

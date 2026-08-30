@@ -31,6 +31,7 @@ from market_sim.config.constants import (
     STORAGE_ELCC_BY_DURATION_BY_ISO,
     STORAGE_ELCC_SATURATION_EXPONENT,
     STORAGE_MEASURED_BASE_FLEET_ISOS,
+    STORAGE_TECH_AVAILABLE_YEAR,
     STORAGE_TECH_BUILD_SHARE_CAP,
     STORAGE_TECH_POWER_SHARE,
     STORAGE_TECHS,
@@ -1752,6 +1753,67 @@ def _deliverability_capacity_factor(
     return priced / total
 
 
+def _storage_entry_candidates(
+    year: int, config: ScenarioConfig
+) -> list[tuple[str, dict]]:
+    """Return the ``STORAGE_TECHS`` items admissible for new entry in ``year``.
+
+    THE ONE eligibility gate both storage allocation rules consume (rule 19
+    [R-ONE-MECH]): the bang-bang split and the D11-R margin-exhaustion walk
+    each iterate exactly this list, so a technology is either admissible on
+    both paths or on neither.
+
+    Gated by ``config.storage_entry_availability_gate`` (GATED default OFF —
+    the D-2 repair, docs/FINDING-entry-screen-t1h-2026-08.md §6 /
+    docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md Phase-1 Leg A). Off, the
+    full ``STORAGE_TECHS`` pool is returned in registry order — byte-identical
+    to the ungated legacy behaviour. On, a technology is admissible only from
+    its measured first-US-operating year (``STORAGE_TECH_AVAILABLE_YEAR``,
+    derived from the EIA-860 energy-storage schedule — see the constant's
+    derivation note), the storage analogue of the thermal path's
+    ``_EMERGING_AVAILABLE_YEAR`` gate. FAIL-CLOSED: a technology whose mapping
+    entry is ``None`` (zero national operating base ever) or that is missing
+    from the mapping entirely is never admissible.
+    """
+    if not getattr(config, "storage_entry_availability_gate", False):
+        return list(STORAGE_TECHS.items())
+    admitted: list[tuple[str, dict]] = []
+    for tech_name, tech in STORAGE_TECHS.items():
+        available_year = STORAGE_TECH_AVAILABLE_YEAR.get(tech_name)
+        if available_year is None or year < available_year:
+            continue
+        admitted.append((tech_name, tech))
+    return admitted
+
+
+def _storage_entry_rank_score(
+    tech_name: str, margin: float, config: ScenarioConfig
+) -> float:
+    """Return the ranking score for one storage entry candidate's margin.
+
+    THE ONE ranking object both storage allocation rules consume (rule 19
+    [R-ONE-MECH]). Gated by ``config.storage_entry_cost_normalized_rank``
+    (GATED default OFF — the D-3 repair): off, the score IS the absolute
+    ``$/MW-yr`` margin, byte-identical to the shipped ranking. On, the score
+    is margin per unit capital cost — ``margin /
+    STORAGE_TECHS[tech]["capex_per_kw"]`` — the developer's actual ranking
+    object (return per dollar deployed), which removes the shipped metric's
+    structural bias toward the most capital-intensive machine (a bigger
+    machine earns a bigger absolute margin; Phase-0 measured flow_battery 2nd
+    of 6 absolute and LAST per $/kW,
+    docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §3.2). Rule 21
+    [R-DOF]: a ratio of two quantities the screen already holds — no new
+    parameter; the Phase-0 §3.2 sensitivity shows the build mix is invariant
+    to the cost denominator (capital vs annualized). Sign-preserving
+    (``capex_per_kw`` > 0), so a technology clears (score > 0) iff its margin
+    clears — the flag changes the ORDER among clearing technologies, never
+    which technologies clear.
+    """
+    if not getattr(config, "storage_entry_cost_normalized_rank", False):
+        return margin
+    return margin / float(STORAGE_TECHS[tech_name]["capex_per_kw"])
+
+
 def apply_storage_new_entry(
     existing_storage: list[StorageUnit],
     prices: np.ndarray,
@@ -1789,7 +1851,17 @@ def apply_storage_new_entry(
     Profitable techs are ranked by margin and built in merit order, but no
     single tech may take more than ``STORAGE_TECH_BUILD_SHARE_CAP`` of one
     year's budget, so the build diversifies across durations rather than the
-    top-margin tech monopolizing it. Two caps bind independently:
+    top-margin tech monopolizing it.
+
+    Two GATED default-OFF repairs, each shared by BOTH allocation rules
+    through one helper (rule 19; charter
+    ``docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md`` Phase-1 Leg A):
+    ``config.storage_entry_availability_gate`` (D-2) restricts the candidate
+    pool to technologies at/after their measured first-US-operating year
+    (:func:`_storage_entry_candidates` over ``STORAGE_TECH_AVAILABLE_YEAR``,
+    fail-closed), and ``config.storage_entry_cost_normalized_rank`` (D-3)
+    ranks clearing candidates on margin per unit capital cost instead of
+    absolute $/MW-yr (:func:`_storage_entry_rank_score`). Two caps bind independently:
     - STORAGE_ANNUAL_BUILD_CAP_MW per ISO per year
     - STORAGE_DEPLOYMENT_CEILING_MW cumulative per ISO
 
@@ -1922,6 +1994,10 @@ def apply_storage_new_entry(
         built: dict[str, float] = {}
         order_first: list[str] = []
         fleet_walk_mw = existing_mw
+        # Shared eligibility gate (D-2, rule 19): the walk iterates the SAME
+        # admitted pool as the bang-bang split below. Ungated = the full
+        # STORAGE_TECHS pool, byte-identical.
+        candidates = _storage_entry_candidates(year, config)
         _max_steps = (
             int(budget // ENTRY_EXHAUSTION_TRANCHE_MW) + 2 * len(STORAGE_TECHS) + 4
         )
@@ -1929,15 +2005,20 @@ def apply_storage_new_entry(
             if remaining <= 0.0:
                 break
             best_tech: str | None = None
-            best_margin = 0.0
-            for tech_name, tech in STORAGE_TECHS.items():
+            best_score = 0.0
+            for tech_name, tech in candidates:
                 room = min(per_tech_cap - built.get(tech_name, 0.0), remaining)
                 # 1e-6 MW: numerical guard against float-residue room.
                 if room <= 1e-6:
                     continue
                 m = _stack_margin(tech_name, tech, sig_walk, fleet_walk_mw)
-                if m > best_margin:
-                    best_margin, best_tech = m, tech_name
+                # Shared ranking object (D-3, rule 19): identical to the
+                # bang-bang sort key below. Sign-preserving, so the
+                # exhaustion condition (clear zero) is unchanged; ungated
+                # the score IS the margin, byte-identical.
+                score = _storage_entry_rank_score(tech_name, m, config)
+                if score > best_score:
+                    best_score, best_tech = score, tech_name
             if best_tech is None:
                 break
             tech = STORAGE_TECHS[best_tech]
@@ -1960,11 +2041,18 @@ def apply_storage_new_entry(
             )
         return fleet
 
+    # Shared eligibility gate (D-2) + shared ranking object (D-3) — the same
+    # two seams the D11-R walk above consumes (rule 19 [R-ONE-MECH]). Both
+    # GATED default OFF: ungated, the pool is the full STORAGE_TECHS registry
+    # and the sort key is the absolute margin — byte-identical to the shipped
+    # winner-take-share split.
     margins: list[tuple[float, str]] = []
-    for tech_name, tech in STORAGE_TECHS.items():
+    for tech_name, tech in _storage_entry_candidates(year, config):
         margin = _stack_margin(tech_name, tech, prices, existing_mw)
         if margin > 0.0:
-            margins.append((margin, tech_name))
+            margins.append(
+                (_storage_entry_rank_score(tech_name, margin, config), tech_name)
+            )
 
     margins.sort(key=lambda m: m[0], reverse=True)
 
