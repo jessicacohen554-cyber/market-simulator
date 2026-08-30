@@ -8040,3 +8040,98 @@ NOT-YET); no determination touched; no cell verdict moves (nothing tested);
 freeze ACTIVE, untouched; zero fitted scalars.
 
 Next shorthand: nyiso-157 (the Leg-1 executor).
+
+---
+
+## 2026-08-30 — nyiso-157: Leg 1 EXECUTED — the seam PAR attribution re-tested and PROMOTED by owner ruling; the iroquois companion re-tested on its recorded condition and REJECTED; the nyiso-127 execution record restored
+
+**Keeper → `2026-08-30-nyiso-157-par-attribution`** (bundle
+`results/calibration/nyiso157_pararm_B`), superseding
+`2026-08-25-nyiso-155-hydro-repair`. Three solves, all registered (rule 15):
+`2026-08-30-nyiso-157-par-control` (zero-delta), `-par-attribution` (the seam
+arm), `-iroquois-companion` (rejected). Freeze ACTIVE; every solved year ∈
+{2023, 2024, 2025}.
+
+**(0) RECORD CORRECTION FIRST (EXECNOTE §1, pushed before any solve).** The
+nyiso-156b §0 correction was itself incomplete: the seam lane was not merely
+authorization-blocked — it was EXECUTED AND REJECTED at nyiso-127 on
+2026-08-05 under an owner authorization given that day (PRs #3570 intake /
+#3582 wiring / #3584 both solved arms / #3586 "REJECTED — kill gate K3
+fires"; runs `2026-08-05-nyiso-127-{control,par-attribution}`, registered
+then retention-pruned 2026-08-15 — the keeper shard's own site_retention_note
+lists them). A session-number collision (the caiso-186 class) kept the
+execution out of this log: the holdout-readiness sitting wrote the nyiso-127
+entry ("NOT executed — owner-gated") before the authorization landed, and no
+entry for the execution sitting was ever written. Handoff steps 1–2 (intake,
+build) were therefore ALREADY DONE at HEAD; this session verified them
+(zone_shares reproduces `_nyiso127_par_phase0.json` to 4dp) and re-tested.
+
+**(1) THE RE-TEST IS LICENSED, NOT RE-LITIGATED.** DO-NOT-REDO on the R cell
+is satisfied by (a) the 2026-08-30 owner ruling itself (postdates the R,
+orders exactly this execution), and (b) the moved baseline: the nyiso-128/129
+solar-basis repair moved the exact quantity K3 fired on (ST_GAS volume), and
+the nyiso-125-era HEAD stopped reproducing one day after the rejection.
+Measured this session: **K3 does NOT re-fire** — C1 14/14 · free 10/10 on
+BOTH arms.
+
+**(2) THE A/B (standing preregs nyiso-126 + nyiso-127 addenda; K6
+re-specified per EXECNOTE §3).** Control BIT-IDENTICAL to the committed
+keeper in zonal prices in all three years (max |Δprice| 0.0 — no G1 drift;
+K6 passes exactly: C3a +6.81/−1.74/−10.82 vs committed +6.8/−1.7/−10.8).
+Every standing kill gate SILENT (K1–K9; two scorer-instrument artifacts
+corrected and documented in `_nyiso157_par_ab_gates.json`: the K1
+dual-channel echo of the single `--set` flag, and a session-authored K5
+conservation leg that penalized the arm for landing CLOSER to the measured
+EIA-930 annual net than the control — the prereg-text K5 passes). LOYO
+consistent, no flips. **P1 CONFIRMED**: external>Capital_Hudson
+permanently-bound share 1.000 → 0.596 (2025), CE utilisation 0.381 → 0.784
+vs measured 0.591 (overshoot reported: 2023 0.975 vs 0.807); the model's
+first real zonal separation — Jan+Feb-2025 CH−UW binding hours 34 → 435,
+NYC−UW winter gradient 0.24 → 4.60 $/MWh vs measured 14.83. **P3 CONFIRMED**:
+C3a-2025 −10.8 → −12.0 % (the seam alone was never predicted to close it).
+C3a-2023 +6.8 → **+1.0 %**; 2024 −1.7 → −2.0. **Reported against interest:**
+C3b-2025 monthly NRMSE 0.1973 → 0.2034 crosses the 0.20 bar (the control
+itself sits 0.0027 under it) — a NEW load-bearing knife-edge FAIL. C3c
+bit-identical 1/0/0 h. Zero new failing D-rows (the three FAIL D-4 rows are
+the keeper's own).
+
+**(3) PROMOTION BY OWNER RULING (in-session, verbatim: "Is this a
+recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper..").** Recommended and
+promoted on rules 14+1: measured attribution over hand statics, zero free
+parameters (+1 DOF entry, 0 scalars, n_residual 6; attested, C6 PASS).
+Determination **NOT-YET on {C3a, C3b, C3c}, written explicitly on the
+ruling** (D-5(b) resolved by it — the nyiso-120/155 precedent class; the
+worse basis is never silently written). `calibration-complete.json` re-keyed
+with the re-verified determination; `audit_keepers --iso NYISO` PASS 0/0
+(E11 recipe delta declared: exactly `nyiso_seam_par_attribution`
+False→True through both recording channels). The deepened 2025 miss is the
+winter face of the nyiso-156 two-face object measured on an honest seam —
+the statics were masking part of it, exactly as rule 14 predicts.
+
+**(4) THE COMPANION CHAIN RAN AND CLOSED.** The seam arm met nyiso-150's
+recorded re-open condition (the cutset binds), so
+`nyiso_iroquois_winter_spread` was re-tested as its pre-registered companion
+(`PREREG-nyiso157-iroquois-companion-2026-08-30.md`, blob-verified BEFORE the
+solve; nyiso-150 W-gates verbatim, control re-based to the seam arm) and
+**REJECTED on its own gates** (`_nyiso157_iroq_gates.json`): W-K3a recovery
+0.07–0.16 in Dec-2024/Feb-2025 vs ≥0.30 — while Feb-2023, where the cutset
+binds ~98 % of winter hours, recovers 0.54–1.65. **The decisive measurement:
+the fuel-side flag transmits exactly where the cutset binds HARD; 18–31 %
+winter binding is not enough.** W-K3b annual gradient unmoved (3.71 → 3.67 vs
+actual 14.83); W-K3c UW-2023 worsens; W-K3d relocation; W-K5 C1 PASS→FAIL.
+Cell stays R with the re-open condition sharpened by measurement. **The
+2024/2025 winter face needs more than seam+fuel: Leg 2 (the owner-executable
+MyNYISO as-enforced AORR access, spec §2) is the remaining identified
+route.** The EXECNOTE §5 conjunction's control-leg (<6 h) mis-modeled
+"effectively none" (control binds 34 h); both readings reported.
+
+Matrix: `nyiso_seam_par_attribution` R → **K** (nyiso-127 rejection record
+preserved in the ev); `nyiso_iroquois_winter_spread` stays **R** (companion
+outcome appended); `seam_flow_envelopes` K annotated superseded-at-runtime
+(rule 19); shard keeper/gates stamps + §5.5 prose header re-stamped;
+`check_mechanism_matrix` clean. Zero fitted scalars anywhere; hydro input
+pair untouched (rule 14); no scarcity parameter (rule 19); C3c queue closed
+(nyiso-137 clock caveat honoured — only arm-vs-control deltas read).
+
+Next shorthand: nyiso-158.
