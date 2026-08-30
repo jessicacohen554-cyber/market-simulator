@@ -9980,3 +9980,80 @@ Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
   its all-hours basis.
 
 **Next number: caiso-222.**
+
+
+## 2026-08-30 — caiso-222 THE POST-CLOSURE OWNER SITTING PREP (caiso-186 pattern): the two-question decision packet delivered from committed bytes — Q1's re-measured arithmetic does NOT overturn the caiso-186 NO (3 flips to full CALIBRATED at 3–4 protective-rule motions, vs 1 flip to C-W-C at "TWO" then), Q2's re-open-route census names the watch tests / access classes / the one thin sub-zonal data path, and filed item 3 is EXECUTED (caiso-205 pair pruned). NO LP, NO SOLVE, nothing armed, nothing registered, no cell verdict moves
+
+**Session caiso-222** (owner handoff 2026-08-30; decision-support only). Keeper
+**UNCHANGED** at `2026-08-26-caiso-220-c1-crosswalk` (NOT-YET on C3a alone,
++4.0 PASS/+12.5/+15.5; C3c the single ledgered caveat; DOF 11/7). Freeze
+ACTIVE, no marker, 2023–2025 only — every Q1 number is a training-window
+number. Packet:
+`results/calibration/ASSESSMENT-caiso222-owner-sitting-2026-08-30.md`;
+instrument `scripts/probes/_caiso222_c3a_disposition.py` →
+`results/calibration/_caiso222_c3a_disposition.json` (the verdict scorer at
+HEAD over every designated config + the disposition-variant arithmetic
+computed mechanically from the scored tables; no scorer constant modified).
+
+- **Q1 (the C3a disposition question, re-measured).** Live C3a FAILs today:
+  CAISO +12.5/+15.5 (sole FAIL), MISO −12.3 (sole), NYISO −10.8 (plus an
+  UNLEDGERED C3c FAIL ×3 — nyiso-155); ERCOT is a TWO-CONFIG keeper (owner
+  2026-08-26) whose designated configs both pass C3a (carve-out −7.3 %)
+  while its registered 3-yr record keeps C3a-2023 −39.7 % + C3b-2023
+  published at full magnitude. Measured mechanically: at ledgered budget 1
+  a C3a-ledgerability amendment flips NOBODY (every C3a-failer already
+  spends the slot on C3c — caiso-186 §b.2.3 reproduced); at budget 2 the
+  explicit-entry form flips **THREE ISOs (CAISO, MISO, NYISO) to full
+  CALIBRATED** under v3.3's generic non-downgrade — NYISO via a cascade
+  that defeats the C3c standing rule's lone-failure guard — and the
+  standing-rule form flips two (NYISO's two-FAIL shape blocks both lone
+  guards). Honest motion count: **3–4 protective-rule moves**
+  (`LEDGERABLE_CRITERIA` + the v3.0 supporting-tier-only model-class guard
+  + budget 1→2, plus the v3.3 scoping decision) vs caiso-186's "TWO". The
+  magnitude-bar argument survives (+15.5 admitted ⇒ −39.7 admitted on the
+  same words). The one genuinely NEW fact the other way: caiso-221 gives
+  C3a exactly the v3.0 model-class exhaustion-record shape — a values
+  question the packet prices but does not decide. **No recommendation
+  beyond the arithmetic; the caiso-186 NO stands unless the owner rules
+  otherwise.** CAISO under each option: (1) status quo NOT-YET; (2)
+  amended-ledger → CALIBRATED as implemented (C-W-C only with the fourth
+  motion), MISO + NYISO flipping the same day; (3) accepted permanent
+  NOT-YET with caiso-221 §E + this packet as the terminal standing record.
+- **Q2 (re-open-route census; feasibility + trigger, no survey re-do).**
+  (i) Publication watch items with cheap sanctioned tests: PATH15_BG/
+  PATH26_BG ERR-1000 flip (⇒ the caiso-218 §B route-1 zero-new-plumbing
+  hourly-rating intake); a limit/flow column appearing in
+  PRC_NOMOGRAM/PRC_CNSTR/PRC_RTM_FLOWGATE for the named corridor elements;
+  DMM element-limit MW beyond the 2023-annual vintage. (ii) CEII access
+  classes: 18 C.F.R. §388.113 CEII request (Form 715), CRR-participant FNM
+  registration, RC-West classes — with the two structural costs stated
+  (NDA-bound bytes cannot enter the public repo; a rating buys nothing at
+  pool grain per caiso-221 C-E, so CEII only composes with route iii).
+  (iii) The sub-zonal topology program has EXACTLY ONE data path not
+  reducing to (i)/(ii): the DMM 2023-annual element average-binding-limit
+  scalars — single-vintage, top-elements-only, admissibility UNADJUDICATED;
+  cost class = an owner-chartered representation-grain program, never a
+  lever. All three routes owner-gated; none recommended.
+- **Filed item 3 EXECUTED**: the caiso-205 pair
+  (`2026-08-19-caiso205-{ctl-headbase,arm-adaptive}`) pruned via
+  `prune_iso_runs.py` under the standing 2026-08-15 site-retention
+  directive (adjudication: predates the keeper, adjudicated-inert A/B, not
+  a keeper candidate; its own filing text said "comes off at the next
+  promotion in the ordinary way"). No governance citation dangled (no
+  `--force-uncite` needed); durable evidence retained (FINDING-caiso205 +
+  PRECOMMIT + `caiso205_gates.json` + matrix cell + this log + git
+  history); `audit_keepers --iso CAISO` PASS 0/0 after. caiso-200 retained
+  (immediate-prior keeper / `--replay-bundle` base; out of item-3 scope).
+- **Records**: matrix §5.2 caiso-222 block; CAISO shard `gates` stamp
+  prepended + one evidence append (`ercot_storage_adaptive_expectation`,
+  the prune note) — **NO cell verdict moves**. Filed items after: **3
+  DISCHARGED**; 4 carried; **9 carried — Q2 is its standing decision map**.
+  Cross-lane items unchanged (the bench-staleness warnings observed
+  unchanged on the NEISO/PJM scorer runs — already adjudicated, off-lane).
+- **DO-NOT-REDO adds (ASSESSMENT §8)**: never re-derive the caiso-222
+  disposition arithmetic while the keeper set + rubric version stand (the
+  JSON carries it; re-run the probe only after a promotion or rubric
+  change); the Q2 watch tests are the ONLY sanctioned re-checks of the
+  caiso-218/219 walls; never quote the packet as a recommendation.
+
+**Next number: caiso-223.**
