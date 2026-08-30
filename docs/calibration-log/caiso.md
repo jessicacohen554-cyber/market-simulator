@@ -10205,3 +10205,55 @@ freeze ACTIVE. Method + gates fixed ex ante and pushed first
   here is an armable limit.
 
 **Next number: caiso-224.**
+
+## caiso-224 (2026-08-30) — THE FSNO SUB-ZONAL ARM ROUND (caiso-222 Q2 route (iii) solve round, precommit-governed; solves by the caiso-backcast-next-run session, completion by the owner-requested FINISHER session, capx r#17 Q14): the partition WORKS AS STRUCTURE — north–south separation restored 52/40/14 h → **1,556/1,359/1,186 h** vs reality's 1,310/1,691/1,347, negative-price mass migrating INTO the pocket (NP15 315/570/504 → 98/121/175 neg h; FSNO 162/374/428) — AND the static DMM-cap arm is **FALSIFIED exactly as pre-registered**: F1 fires all three years on NP15↔FSNO (binding share 0.3054/0.3547/0.3380 vs the 0.27 DMM ceiling) and F2 fires (arm split vector strictly year-ordered vs reality's non-monotone). **Verdict R for keeper purposes**; the partition representation remains; W-2/W-3 the upgrade feeds; transmission-outage derates the recorded WATCH. NOT-YET stands; keeper untouched
+
+- **The record:** `PRECOMMIT-caiso224-fsno-arm-2026-08-30.md` (§5 gates and
+  falsifiers fixed ex ante) → solve session committed both bundles + the §5
+  witness (`_caiso224_ctrl_tolerance.json` BIT-ZERO — max |Δ| = 0.0 on every
+  zone-hour and class-hour of all three years vs the caiso-220 keeper
+  sidecars; `_caiso224_split_witness.json` the F1/F2 measurements) and ran
+  out of context before registration → the FINISHER session adjudicated,
+  registered and recorded, ZERO solves. Full adjudication:
+  `results/calibration/FINDING-caiso224-fsno-arm-2026-08-30.md`.
+- **Registered** (rule 15): `2026-08-30-caiso-224-a0-control` (PROBE —
+  bit-zero control) and `2026-08-30-caiso-224-b1-fsno` (PROBE — R). The
+  payloads were rendered from the committed slim artifacts (container
+  reclaimed): per-plant panels intentionally EMPTY — no per-plant model
+  hourly survives; class/system/price surfaces exact (payload lw LMP ≡ the
+  committed witness to <$0.002; benchmark parquets rebuilt HASH-IDENTICAL to
+  the solve's frozen meta refs; C4 gas fuelRow repaired onto the native CEMS
+  basis and the REPORTED-ONLY co2 block stripped by
+  `scripts/probes/_caiso224_payload_fuelrow_fix.py`; committed bench parts
+  restored byte-identical; the keeper's verdict re-scored byte-identical
+  after every operation). Finding §F carries the full disclosure.
+- **Guards** (scorer at HEAD, both runs `NOT-YET` on the expected
+  probe-pair `governance UNATTESTED`): C1 PASS both, ZERO row flips (arm
+  moves CC_REGULAR toward actuals: 2023 −3.09 → −1.02 TWh, 2024 −0.13 →
+  +1.05); C2 PASS; C4 PASS (arm improves gas NRMSE all years:
+  0.283/0.263/0.291 → 0.267/0.250/0.278); C8 PASS with forcing REDUCED
+  (CC_REGULAR 6.5/7.3/9.2 % → 5.3/5.6/6.6 %). **C3a at full magnitude:**
+  lw Δ −$0.20 / **+$0.22 (wrong way)** / −$0.16 vs the §5 direct-channel
+  pre-bound −0.23/−0.32/−0.25 — 2024's changed-system-dispatch channel nets
+  POSITIVE against the direct pull in reality's peak-separation year (the F1
+  over-trapping signature); band-pass needs (−0.85 / −1.90) not approached,
+  full 2025 close was pre-stated NOT expected. **C3b tripwire FIRES 2024**
+  (+0.015: 0.177 → 0.192, monthly lw NRMSE), named to the falsified static
+  caps; 2023/2025 improve (−0.003/−0.007). C3c unchanged vs keeper (same
+  energy-only basis, same 0-hour counts; FAIL stands un-ledgered on an
+  unattested probe pair — pjm-158 precedent).
+- **Instrument note:** the caiso-220 entry's split count (0 → 50/40/17 h)
+  was the `_caiso220_zonal_decomp` instrument; the caiso-224 witness
+  re-measures the same bit-zero surface with its own >$15 construction
+  (52/40/14) and applies it IDENTICALLY to control, arm and reality — the
+  cross-member comparison is definition-consistent by construction.
+- **Disposition:** `caiso_fsno_subzonal_topology` stays default-off; CAISO
+  matrix shard cell stamped **R** (this session, rule 28b). The partition
+  REPRESENTATION (P-A′ + caiso-223 membership + measured 3-way load split)
+  is unrefuted and remains the standing sub-zonal representation. Re-arming
+  runs through W-2/W-3 (caiso-222 §(i)) or the F2-named
+  transmission-outage derate channel (rule-13 admissible, today unpublished
+  for these elements) — data intake first, own precommit, caiso-218 §F
+  fences intact; never a re-tune of these caps.
+
+**Next number: caiso-225.**
