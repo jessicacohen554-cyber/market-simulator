@@ -9903,3 +9903,80 @@ Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
   items 1, 5, 8 DISCHARGED; items 3, 4, 6, 7, 9 carried.
 
 **Next number: caiso-221.**
+
+## caiso-221 (2026-08-30) — THE SOUTH-BELLY SURPLUS-PRICING DESIGN PHASE (caiso-215 §F H4, ranked item 1): the object is **KILLED WITH MEASUREMENT** — the admissible curtailment-quantity class is ALREADY CONSUMED (the keeper's potential IS delivered + the full reported record), every remaining admissible instrument's ceiling is ≤ 2 % of the required move, and the regime itself is UNDERSIZED for 2025 (perfect conversion −$1.17 vs required −$1.90). NOT-YET stands; the residual is attributed and closed at this grain
+
+- **Charter**: the owner's 2026-08-30 handoff — the caiso-215 §G item-1
+  design/intake phase ("DESIGN/INTAKE FIRST, NO SOLVE unless the design
+  passes the rule-13 test and gets its own precommit"; deliverable (a) an
+  admissible representation + funding ask under a §G-style gate table, or
+  (b) an honest kill with measurement). **The answer is (b).** NO LP, NO
+  SOLVE, nothing armed, nothing registered; queue EMPTY, session off-queue
+  under the owner charter.
+- **Instrument**: `scripts/probes/_caiso221_surplus_design.py` +
+  `results/calibration/_caiso221_surplus_design.json` (committed;
+  deterministic). The licensed caiso-105/131 fleet-only assembly rebuilt
+  from the caiso-220 keeper's own `meta.json`; hub actuals / workbook /
+  EIA-930 via the committed caiso-215/216 probes. Controls: demand
+  row-match 0.0 MW ×3 years; recon potential = HSL parquet at 1.000–1.003;
+  model spill 482/1,184/849 GWh; base cut-15 L2 exceedance reproduces the
+  committed caiso-217 realized **121/480/742 EXACTLY** at HEAD.
+- **Leg 1 — the admissible class is spent.** The rule-13 test admits
+  measured curtailment/surplus QUANTITIES as inputs; the keeper already
+  consumes exactly that — `build_caiso_hsl.py` HSL = EIA-930 delivered +
+  reported curtailment (2.66/3.40/3.77 TWh, = the workbook at ratio 1.000),
+  fed as the renewable upper bound and re-curtailed endogenously
+  (`caiso_solar_endogenous_spill`). Nothing is left to intake.
+- **Leg 2 — every remaining admissible instrument is ceiling-dead** (vs
+  required 2024 −$0.85 / 2025 −$1.90 / 2023 headroom −$7.56): (C-A)
+  re-placing the 14.7–16.1 % north-placed add-back share south buys
+  +41/+52/+48 static hours-over-path = **−$0.02 lw** at the caiso-220
+  static→scored transfer; (C-B) the measured AS-award charge reservation is
+  **rule-19 barred** on the armed `caiso_storage_shape_anchor` envelope
+  (it embeds the AS holdback — `scenarios.py` hard-error) AND moves **0**
+  static hours over path+storage even at 2 GW; (C-E) the Gates–Midway
+  gen-pocket is **load-share-dead independent of the CEII wall** — the
+  GENEROUS whole-ZP26-at-floor bound is −$0.11/−$0.15/−$0.11 (demand share
+  5.0–5.2 %), and the export limit weakly RAISES the 56 %-load south
+  outside the pocket. C-C the delivered-cap pin, C-H price overlays:
+  forbidden; C-D imports, C-G exports: adjudicated (R cells stand, C3b
+  tripwire never fired).
+- **Leg 3 — the regime is undersized for 2025.** Regime decomposition
+  (s-neg = TH_SP15 RT < 0: 688/1,230/964 h): the model ALREADY floors
+  252/575/456 h at −$19..−$20; the convertible mass is 436/655/508 h at
+  p50 $25–27, **96–99 % Local-curtailment-active** (hours with no
+  curtailment: 1/22/7). Perfect conversion of every convertible cell =
+  **−$0.95 / −$2.00 / −$1.17 lw**: 2024 clears at 42 % capture; **2025
+  cannot clear at 100 %** (62 % of the requirement exists in the regime);
+  the balance is the caiso-202 §B sub-$60 positive-price level structure.
+  2023 safety confirmed (−$0.95 vs −$7.56 headroom). *(Sharpens the
+  caiso-215 §G "46 % closes 2025" line — that 46 % is of the south's
+  ALL-HOURS error; at regime grain the number is > 100 %.)*
+- **Verdict**: NOT-YET stands on `2026-08-26-caiso-220-c1-crosswalk`; the
+  lane returns to the caiso-201 rest. The C3a residual attribution is
+  final at this representation grain: (i) Local-strandedness convertible
+  mass (+1.50/+0.94 lw 2024/25) needing sub-zonal topology that is
+  CEII-walled and load-share-dead at pool grain; (ii) the floor-depth
+  channel (+0.44/+0.16 lw, offer-side, rule-23 frozen, undersized);
+  (iii) 2025's ≈+0.7 lw in positive-price hours (caiso-202 §B). Re-opening
+  requires a CAISO publication change, CEII access, or an owner-chartered
+  sub-zonal topology program.
+- **Records**: `results/calibration/FINDING-caiso221-surplus-pricing-design-2026-08-30.md`;
+  probe + JSON; matrix §5.2 caiso-221 block; CAISO shard gates stamp.
+  **Filed item 6 DISCHARGED** — `zonal_gas_basis` K→R (caiso-203-style
+  bookkeeping re-adjudication: the K was unsupported by any committed
+  artifact; every committed CAISO `run_config.json` carries
+  `caiso_zonal_gas_basis: false`; caiso-215 §F H3 is the standing ex-ante
+  evidence; the NP15-winter carve-out stands). **Filed item 7 DISCHARGED**
+  — `solar_deliverability` leg note: the K rides the endogenous-spill leg
+  on this keeper. Items 3, 4 carried; **item 9 carried, STRENGTHENED**
+  (the CEII wall is no longer the only kill). Cross-lane items unchanged.
+- **DO-NOT-REDO adds (FINDING §G)**: never re-propose measured curtailment
+  quantities as a NEW C3a lever (consumed; placement ceiling −$0.02);
+  never arm `caiso_storage_as_reservation` on the shape-anchor keeper
+  (rule 19); the gen-pocket class is dead on load-share arithmetic
+  independent of CEII; never charter a C3a-2025 close through the
+  surplus-pricing regime; never quote the caiso-215 "46 %" sizing without
+  its all-hours basis.
+
+**Next number: caiso-222.**
