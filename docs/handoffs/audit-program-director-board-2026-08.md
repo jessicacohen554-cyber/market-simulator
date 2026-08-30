@@ -26,6 +26,13 @@
 > Plus a **scorer-only FF-2D re-score AUTHORIZED** at the FR-21 staleness
 > threshold (Δ = 12 of 10 at the pin). See D-1…D-7.
 >
+> **⚡ AND RESOLVED WITHIN THE HOUR — recorded at `def338e` (merge of #4335,
+> this board's own landing): EVERY dispatched lane executed** (prune #4324,
+> FF-2D re-score #4325, O7 harness probe #4332/#4334) **and ALL FIVE GATES
+> READ GREEN** — audit 0/0 · parity 0 · matrix 0 · staleness Δ = 0 ·
+> bench 0 STALE. The first fully-green gate table this board has ever
+> carried. See the ⚡ POST-PIN RESOLUTION block in the Snapshot.
+>
 > ### 🔴 AND: THE CALIBRATED SET NO LONGER EQUALS THE `complete` SET — THE FOUR-INSTRUMENT ALIGNMENT v13 REPORTED IS BROKEN
 >
 > Two consecutive owner-decided NYISO promotions (**nyiso-155** over a gate
@@ -92,7 +99,27 @@ FF-2D re-score lanes dispatched at the sitting **show no branch yet.**
 **Headline, one line: every sitting ruling landed or has a lane, nine keeper
 promotions across four ISOs plus a partition landed in five days, the bench
 gate went green by ruled re-stamp — and the audit workstreams did not move at
-all.** Verified
+all.**
+
+**⚡ POST-PIN RESOLUTION — one labelled follow-up measurement at `def338e`
+(merge of #4335, this board's own landing), taken because every dispatched
+lane resolved while this lane was writing:** the caiso-217 **PRUNE EXECUTED**
+(#4324, `f608370` — the bundle is gone and parity exits 0); the **FF-2D
+RE-SCORE EXECUTED** (#4325 — the 7 re-scorable verdicts re-scored at HEAD,
+FR-21 **reset to Δ = 0**, newest scored 2026-08-30T17:18:18Z;
+`docs/FINDING-ff2d-verdict-rescore-2026-08-30.md`); the **O7
+ATTRIBUTION-HARNESS lane ran its probe phase** (#4332 ex-ante precommit
+`docs/PRECOMMIT-o7-attribution-harness-2026-08-30.md`, #4334 probe +
+toy-system tests); the §8 ledger (#4330) and this board (#4335) merged; and
+**caiso-222 landed an owner-sitting packet + C3a disposition probe and
+executed the caiso-205 pair prune** (#4333 — registered sidecars 58 → **56**,
+histogram {2022: 2, 2023: 54, 2024: 52, 2025: 52}, still no locked-test year
+ever). **Keeper shards and markers verified byte-unchanged
+`0a5e896` → `def338e`**, so every keeper-table figure stands. **ALL FIVE
+GATES RE-RUN GREEN at `def338e`: audit_keepers 0/0 · parity exit 0 · matrix
+exit 0 · staleness Δ = 0/10 · bench 0 STALE** — the first fully-green gate
+table in this board's history, and it is green by executed rulings, not by
+allowlist growth. Verified
 rather than assumed: `git diff --name-status` over the full window returns
 **empty** for `.github/workflows/` and `results/regression-goldens/`. The one
 change from v13's version of that sentence: **this board and the plan DID
@@ -222,7 +249,9 @@ P1-ladder leg of any future R1 A/B **bit-identical in P0 by construction**
 (hash-provable), restoring attribution with the keeper and the mechanism
 untouched; **keeper-moving restoration DECLINED; accept-as-limitation
 DECLINED.** Lane dispatched the same sitting (src/ + ERCOT probes surface; no
-branch visible yet at the pin).
+branch visible yet at the pin). **⚡ Post-pin: the lane ran** — ex-ante
+precommit (#4332, HP-1..HP-3, capture-dir discipline) and the harness probe +
+toy-system tests (#4334) merged by `def338e`.
 
 ### D-5 · 🟢 BENCH FINGERPRINTS — RULED, AND EXECUTED BEFORE THIS BOARD LANDED
 
@@ -250,6 +279,10 @@ goes. Lane dispatched the same sitting (the bench-restamp lane's second half).
 **At the pin the bundle dir still exists and
 `check_registry_payload_parity.py` still exits 1 on exactly that one dir** —
 the red is now a ruled-disposition-in-flight, not an open decision.
+**⚡ Post-pin: EXECUTED** (#4324, `f608370`) — the bundle is pruned via
+`dashboard_add_run.prune_iso` and **parity exits 0 at `def338e`**. The
+recurring-red era ends by executed ruling; the class-level carve-out (B-8)
+remains unbuilt and stays on the restart checklist.
 
 ### D-7 · 🟠 FR-21 AT THRESHOLD — SCORER-ONLY FF-2D RE-SCORE AUTHORIZED (ZERO SOLVES)
 
@@ -261,7 +294,12 @@ scorer-only FF-2D verdict re-score lane is AUTHORIZED — zero solves.**
 Dispatched the same sitting (surface: `frontend/data/forecast/`; no branch
 visible yet at the pin). **At the pin Δ has grown to 12** — the WARN now
 names 12 solve-affecting commits past the evidence, and the re-score lane's
-case is stronger than when it was authorized.
+case is stronger than when it was authorized. **⚡ Post-pin: EXECUTED**
+(#4325) — the 7 re-scorable verdicts re-scored at HEAD, `ff-verdicts.json`
+refreshed, and **FR-21 reset to Δ = 0 at `def338e`** (newest scored
+2026-08-30T17:18:18Z; `docs/FINDING-ff2d-verdict-rescore-2026-08-30.md`).
+The **31-of-40 undated-stamp caveat persists** — those verdicts predate the
+stamped scorer and stay freshness-UNKNOWN until each is re-scored through it.
 
 ---
 
@@ -585,7 +623,9 @@ pin, run not quoted. Rubric **v3.5**.
 
 **NO ISO HAS EVER SPENT A LOCKED-TEST YEAR** — re-verified at the pin, not
 restated. Across all **58** registered sidecars the solve-year histogram is
-**{2022: 2, 2023: 56, 2024: 54, 2025: 54}**; the only out-of-training
+**{2022: 2, 2023: 56, 2024: 54, 2025: 54}** (⚡ post-pin, after #4333's
+caiso-205 pair prune: **56** sidecars, {2022: 2, 2023: 54, 2024: 52,
+2025: 52} — the invariant holds at both pins); the only out-of-training
 registrations remain the two authorized 2022 validation touchpoints. **No
 2019, no H1-2026, for any ISO** (`[R-HOLDOUT]`). NEISO's one-shot stays
 **NEVER GRANTED, not spent** (D-23). This line is re-verified and republished
@@ -619,7 +659,7 @@ cells.**
 | WS3 `PERF` | PERF-A ✓. **PERF-B PAUSED BY OWNER.** Stage-0: **5 of 6 ISOs captured**, **PJM never captured**. Changes (c)/(d)/(e) merged, (a)/(b) unstarted. `results/regression-goldens/` byte-unmoved again this window | **Paused ~74 %** | **Paused, not blocked — and blocked TWICE at G2.** **0 of 6 goldens match their keeper for a FIFTH consecutive cycle** — every gap held or widened (see Stage-0), and ERCOT now needs **two** captures (forward + carve-out) for full coverage. With the tier parked, byte-green cannot be *claimed* even if captures were current |
 | WS4 `DOCS` | DOCS-A **completed** (#3999 + #4005); DOCS-B held | **In progress ~60 %** | **DOCS-B gated at G2 — waiting by design** |
 | WS5 `SITE` | **Job 1 (site factual repair, pre-G3) COMPLETE ACROSS BOTH PASSES** (#4120/#4121, #4187/#4191). Job 2 = **SITE-A**, not started | **Job 1 COMPLETED · Job 2 not started** | **SITE-A gated at G3 — waiting by design.** Deferral list unchanged |
-| WS6 `BLOAT` | Prunes B-1..B-8 merged; **BLOAT-2 CLOSED**; **BLOAT-3 ADJUDICATED and EXECUTED** (BLOAT-S2, −444.5 MiB at tip). The chartered work stays completed | **Completed (charter) · gate 🟠 RED with a RULED disposition** | **🔴 RED at this pin** (`exit 1`) on exactly one dir, `caiso217_crosswalk` — but the open decision v13 carried is **CLOSED: the owner ruled PRUNE** (D-6), and the red clears when the dispatched lane executes `dashboard_add_run.prune_iso`. The class-level allowlist carve-out (B-8) **still does not exist** — the structural fix outlives this instance |
+| WS6 `BLOAT` | Prunes B-1..B-8 merged; **BLOAT-2 CLOSED**; **BLOAT-3 ADJUDICATED and EXECUTED** (BLOAT-S2, −444.5 MiB at tip). The chartered work stays completed | **Completed (charter) · gate 🟢 GREEN post-pin** | **🔴 RED at the pin** (`exit 1`) on exactly one dir, `caiso217_crosswalk` — the owner ruled PRUNE (D-6) — **⚡ and post-pin the prune EXECUTED (#4324): parity `exit 0` at `def338e`**, green by executed ruling rather than allowlist growth. The class-level carve-out (B-8) **still does not exist** — the structural fix outlives this instance |
 | — `BENCH FRESHNESS` | `check_bench_freshness.py` / audit S1 lineage | **🟢 GREEN at this pin — 0 STALE of 20 parts** | **The ruled re-stamp EXECUTED (#4321)**: 8 pre-stamp NEISO/PJM parts re-stamped, content bytes untouched, NOT a regeneration, CI wiring explicitly DECLINED (D-5). Six engine-drift WARNs remain (ERCOT @ 13 commits, NYISO @ 16, 2023–2025 each) — not gated; regenerate before trusting a *marginal* C1 verdict |
 | — `GOLDEN-TIER-FIX` | **COMPLETED and independently verified** (#4014); first cron RED, diagnosed + fixed same-day (#4071), verified by full local four-step replay | **Completed · tier PARKED** | **🅿️ PARKED BY OWNER RULING 2026-08-22, unchanged.** CI proof **deliberately unspent**. Consequence: byte-green cannot be CLAIMED for G2 while the tier is paused |
 | — `MATRIX GUARD` | rule 26 `[R-MECH-MATRIX]` CI enforcement | **🟢 GREEN at this pin** | `check_mechanism_matrix.py` **exit 0**, run not quoted: integrity OK across the base file + **6 ISO shards**; anchors **192 field + 49 row + 151 path**, 0 unresolvable beyond the ratchet; **keeper stamps AND §5.x prose headers match every `keepers/<ISO>.json`** — holding across four promotions, a partition declaration and the nyiso-157 re-stamp this window |
@@ -676,12 +716,12 @@ five held ISOs widened (ERCOT, CAISO, NYISO, MISO — the four that promoted).
      window; ERCOT now needs TWO captures — see Stage-0), (c)/(d)/(e) merged,
      (a)/(b) unstarted, the golden tier parked so byte-green cannot be
      claimed, and the manifest's `git_sha` `af1ccb6` still unresolvable.
-  2. **One completed fast-tier-green `ci.yml` run** — **🟠 OBTAINABLE ONCE THE
-     RULED PRUNE LANDS.** The matrix guard is green at the pin (exit 0). The
-     parity gate is red on exactly `caiso217_crosswalk` — but v13's "this leg
-     now needs a decision" is **ANSWERED: the owner ruled PRUNE** (D-6). When
-     the dispatched lane executes it, this leg goes decision-free again;
-     re-run the gates rather than trusting this line.
+  2. **One completed fast-tier-green `ci.yml` run** — **🟢 OBTAINABLE AND
+     DECISION-FREE AGAIN.** The matrix guard is green at the pin (exit 0);
+     the parity gate was red on exactly `caiso217_crosswalk` with the prune
+     RULED (D-6) — **⚡ and post-pin the prune EXECUTED (#4324): both guards
+     exit 0 at `def338e`.** This is the one G2 leg closeable today without
+     an owner decision; re-run the gates rather than trusting this line.
   3. **A keeper freeze** — **owner call, DEFERRED BY OWNER DIRECTION rather
      than unanswered, and the deferral is visibly active policy:** NINE
      promotion events and a partition landed in this five-day window alone
@@ -691,11 +731,12 @@ five held ISOs widened (ERCOT, CAISO, NYISO, MISO — the four that promoted).
 
   On declaration the PM notifies the FFR desk (Q.2 battery).
 - **G3** — unchanged: after G2, **DOCS-B** + the **BLOAT leg**. BLOAT's
-  charter is satisfied (#4031 + #4047); its parity gate is **red at the pin
-  with a RULED disposition** (prune, D-6) — read it as
-  *satisfied-in-charter, gate-red-in-flight*, clearing on execution rather
-  than awaiting a decision. The golden-tier proof leg is satisfied by #4014 +
-  the green dispatch **as evidence**, though the tier itself remains parked.
+  charter is satisfied (#4031 + #4047); its parity gate was red at the pin
+  with the prune RULED (D-6) — **⚡ post-pin the prune executed and the gate
+  is GREEN at `def338e`**, so read the leg as *satisfied-in-charter and
+  gate-green-in-fact* for the first time since v12. The golden-tier proof
+  leg is satisfied by #4014 + the green dispatch **as evidence**, though the
+  tier itself remains parked.
 - **G4** — unchanged: SITE-A + AUDIT-B. **WS5 Job 1 is not a G4 leg.**
 
 ## Watch
@@ -715,7 +756,8 @@ five held ISOs widened (ERCOT, CAISO, NYISO, MISO — the four that promoted).
   a future parity red, check whether the named dirs belong to a running lane
   — **never recommend pruning a dir a live lane owns.** And the class-level
   allowlist carve-out (B-8) **still does not exist**; the allowlist stands at
-  26 named entries.
+  26 named entries. **⚡ Post-pin: the ruled prune EXECUTED (#4324) and
+  parity exits 0 at `def338e`** — green by executed ruling.
 - **🟢 NEW — THE BENCH-FRESHNESS GATE WENT GREEN BY RULED RE-STAMP, AND THE
   RECORD SHOWS WHY THAT WAS LEGITIMATE.** The 8 stale parts were adjudicated
   **UNLABELLED, not wrong** before any ruling
@@ -724,12 +766,14 @@ five held ISOs widened (ERCOT, CAISO, NYISO, MISO — the four that promoted).
   declined** — so the green is a labelling repair, not a regeneration and not
   a new gate. Six engine-drift WARNs remain (ERCOT @ 13, NYISO @ 16 commits)
   — regenerate before trusting a *marginal* C1 verdict.
-- **🟠 FORECAST-BOARD STALENESS IS PAST THRESHOLD AND STILL GROWING — Δ = 12
-  of 10 at the pin** (10 at dispatch), newest scored verdict evidence
-  2026-08-25, **31 of 40 verdict stamps undated** (freshness UNKNOWN), 11
-  config epochs on the board. The authorized scorer-only FF-2D re-score lane
-  (D-7) is the remedy in flight; until it lands, treat the forecast board's
-  verdicts as describing older code.
+- **🟢 FORECAST-BOARD STALENESS — THRESHOLD BREACH RESOLVED POST-PIN.** Δ ran
+  10 (dispatch) → 12 (pin) → **⚡ 0 at `def338e`**: the authorized scorer-only
+  FF-2D re-score executed (#4325), re-scoring the 7 re-scorable verdicts at
+  HEAD and resetting FR-21. What remains on watch: **31 of 40 verdict stamps
+  are still undated** (they predate the stamped scorer — freshness UNKNOWN
+  until each passes through it) and **11 config epochs** sit on the board;
+  confirm mixed-vintage comparison is intended before reading any cross-run
+  delta as a model effect.
 - **🔴 CARRIED — THE STAGE-0 MANIFEST'S PROVENANCE SHA DOES NOT RESOLVE.**
   `af1ccb6` is still not a valid object at this pin. The per-file
   `content_hashes` remain the verification instrument. Resolve which of
@@ -845,6 +889,9 @@ card SIGNED, Option A**). What remains:
    +12.5 %/+15.5 % — owner ruling 5 stands: **C3a must genuinely pass;
    NOT-YET is the honest fallback.** The next CAISO rung per caiso-219/221
    remains the GATES–MIDWAY relocation and the value-stack thread.
+   **⚡ Post-pin: caiso-222 landed an owner-sitting packet + C3a disposition
+   probe (#4333)** — the disposition question is now packaged for the owner;
+   read that packet before serving this item again.
 8. **🟠 CARRIED NOTE — the nyiso-148 2025 dear-gas level card**: no
    signature or decline recorded for it in any window since; its same-day
    UPDATE block should be read before its numbers (the keeper it names is
@@ -857,8 +904,8 @@ card SIGNED, Option A**). What remains:
    - ~~**bench fingerprint staleness**~~ — **RULED AND EXECUTED**: re-stamp
      of the 8, content untouched, no CI wiring (#4321; D-5).
    - ~~**caiso-217 registration debt / v13 item 12**~~ — **RULED: PRUNE**
-     (D-6). Execution is lane work, not an owner decision; the red parity
-     gate clears when it lands.
+     (D-6), **⚡ and EXECUTED post-pin (#4324)** — parity green at
+     `def338e`.
    - ~~**the ercot-225 G-SPUR band-top gate card / v13 item 7**~~ —
      **SIGNED, Option A**, by the ercot-238 session (D-2), before any
      post-repair keeper was graded lidless.
@@ -885,21 +932,24 @@ that window:
 
 | Lane (dispatch name) | Branch | State at the pin |
 |---|---|---|
-| **Records v14 (this lane)** | `claude/director-records-v14-ledger-lhywlm` | **🟢 WORKING** — the §8 ledger entry pushed and blob-verified; this board is its second file |
+| **Records v14 (this lane)** | `claude/director-records-v14-ledger-lhywlm` | **🟢 WORKING** — the §8 ledger entry pushed, blob-verified, **⚡ and merged (#4330)**; this board is its second file (v14 base merged #4335; this post-pin addendum follows on the recreated branch) |
 | **MISO backcast calibration (miso-190)** | `claude/miso-190-backcast-calibration-okt1cn` | Branch exists, **tip AT main, nothing unmerged** — the miso-190 PREREG + gates instrument are committed (frozen before the mechanism exists); the miso-188 registration + promotion were already in main at the dispatch base |
-| **NYISO eastern-seam PAR Leg-1** | `claude/nyiso-eastern-seam-par-leg1-w7s8mm` | **MERGED AND BRANCH DELETED** — #4318 (Leg-1 A/B registered; iroquois companion REJECTED on its own W-gates) + **#4323 (nyiso-157 PROMOTED by owner ruling — this board's base sha)** |
-| **Bench re-stamp / caiso-217 prune** | `claude/backcast-bench-restamp-ns7tl7` | **HALF-LANDED, BRANCH DELETED** — #4321 executed the re-stamp (bench gate green); **the prune half is outstanding** (parity still red on `caiso217_crosswalk`) |
-| **O7 attribution harness** | — | **Dispatched at the sitting; NO BRANCH VISIBLE YET** (surface: `src/` + ERCOT probes) |
-| **FF-2D verdict re-score** | — | **Dispatched at the sitting; NO BRANCH VISIBLE YET** (surface: `frontend/data/forecast/`) |
+| **NYISO eastern-seam PAR Leg-1** | `claude/nyiso-eastern-seam-par-leg1-w7s8mm` | **MERGED AND BRANCH DELETED** — #4318 (Leg-1 A/B registered; iroquois companion REJECTED on its own W-gates) + **#4323 (nyiso-157 PROMOTED by owner ruling — this board's base sha)**; ⚡ #4326 added the keeper-auditor pass (sidecar house-style repair, stale governance.note re-stamped at the generator) |
+| **Bench re-stamp / caiso-217 prune** | `claude/backcast-bench-restamp-ns7tl7` | At the pin: half-landed (#4321, re-stamp — bench gate green). **⚡ Post-pin: FULLY LANDED — the prune executed (#4324, `f608370`), parity `exit 0` at `def338e`.** Branch deleted |
+| **O7 attribution harness** | `claude/o7-ercot-attribution-harness-aa7yeu` | At the pin: no branch yet. **⚡ Post-pin: RAN ITS PROBE PHASE AND MERGED** — #4332 (ex-ante precommit, HP-1..HP-3) + #4334 (harness probe + toy-system tests, per-row stats kept capture-dir-only). Branch deleted |
+| **FF-2D verdict re-score** | `claude/ff-2d-verdict-rescore-jh3xfs` | At the pin: no branch yet. **⚡ Post-pin: EXECUTED AND MERGED** — #4325 (7 re-scorable verdicts re-scored, FR-21 reset to Δ = 0, finding filed). Branch deleted |
+| ⚡ caiso-222 owner-sitting packet | `claude/caiso-c3a-owner-decision-zwib71` | **Post-pin: MERGED #4333** — owner-sitting packet + C3a disposition probe, caiso-205 pair prune executed (sidecars 58 → 56), matrix §5.2 + CAISO shard gates stamp recorded. Branch deleted |
 | ercot-239 residual queue | `claude/ercot-239-residual-queue-lbkvbf` | Merged **#4320/#4322** (zero-solve Phase-0 precommits + Amendment 1); branch survives at main — **not an audit-program lane** |
 | caiso-221 south-belly | `claude/caiso-south-belly-pricing-24uv07` | Merged **#4316** (object killed with measurement); branch survives at main |
 | capx-director desk | `claude/capx-director-session-pacv16` | **A DIFFERENT PROGRAM** (#4317/#4319 — the capx ledger, per the v13 conflation warning); not this board's work |
 
-**The honest reading: the two sitting-dispatched lanes with no branch yet
-(O7 harness, FF-2D re-score) are the ones to look for next cycle — by
-BRANCH, not by a plausible-sounding commit.** A lane that has run leaves a
-branch; this cycle every launched lane's branch was found, and the two
-unstarted ones are named rather than assumed launched.
+**The honest reading, post-pin: EVERY sitting-dispatched lane has now run,
+merged, and deleted its branch** — the two this table originally named as
+look-fors (O7 harness, FF-2D re-score) both appeared and merged within the
+hour. At `def338e` the only surviving lane branches are this records lane's
+and `miso-190` (at main, nothing unmerged). The branch check did its job in
+both directions this cycle: every launched lane's branch was found, and
+nothing was assumed launched without one.
 
 ### v13's lane state, retained as history (at `99c8cf5`)
 
@@ -957,7 +1007,14 @@ both files.**
   record dispatch-time facts and pin facts as separate, labelled states**
   (as D-5's "ruled AND executed" and D-3's "🆕 at the pin" do). The shard
   HISTORY, not the dispatch's endpoint list, is the promotion record — the
-  deltas block compressed nine promotion events to four endpoints.
+  deltas block compressed nine promotion events to four endpoints. **The one
+  sanctioned exception to "pin once": when the states this board records
+  RESOLVE while the lane is writing** — here, every dispatched lane executed
+  within the hour — **take ONE labelled follow-up measurement (the ⚡ blocks,
+  all stamped `def338e`) rather than shipping a board that says "outstanding"
+  about finished work or silently re-pinning everything.** Ledger entries are
+  append-only and keep the sitting's facts; the board carries both labelled
+  states.
 
 **Carried, restated in one line each** (full text in v10–v13): run the gates,
 never quote them (exit codes captured directly, not through a pipe) · quote no
@@ -979,16 +1036,17 @@ and the CI proof stays deliberately unspent.
 
 **Do these in order. Do not start at change (a).**
 
-0. **🟠 `main` IS HALF-GREEN AT v14 — re-run at `0a5e896`, not quoted:**
-   `check_mechanism_matrix.py` **exit 0** · `check_forecast_staleness.py`
-   **exit 0 with a live FR-21 WARN (Δ = 12/10)** — the authorized FF-2D
-   re-score lane is the remedy; check whether it has landed ·
-   `check_registry_payload_parity.py` **exit 1** on `caiso217_crosswalk` —
-   **the prune is RULED (D-6)**; if it has not executed yet, that is lane
-   work in flight, not a decision to make · `audit_keepers.py` **PASS 0/0**
-   · `check_bench_freshness.py` **0 STALE of 20** (ruled re-stamp executed,
-   #4321; six ungated engine-drift WARNs). **Always re-run all five rather
-   than reading this line.**
+0. **🟢 `main` IS FULLY GREEN AT v14's POST-PIN READ — re-run at `def338e`,
+   not quoted: ALL FIVE CHECKS PASS.** `audit_keepers.py` **PASS 0/0** ·
+   `check_registry_payload_parity.py` **exit 0** (the ruled caiso-217 prune
+   executed, #4324) · `check_mechanism_matrix.py` **exit 0** ·
+   `check_forecast_staleness.py` **exit 0, Δ = 0/10** (the authorized FF-2D
+   re-score executed, #4325; the 31/40 undated-stamp WARN persists) ·
+   `check_bench_freshness.py` **0 STALE of 20** (ruled re-stamp executed,
+   #4321; six ungated engine-drift WARNs). The first fully-green step-0 in
+   this checklist's history — and it is green by executed rulings. **Always
+   re-run all five rather than reading this line**; at this repo's merge
+   cadence the reading ages in hours.
 0b. **🟢 v13's TWO-ISO REPRODUCTION WARNING IS RESOLVED BY EVENTS — BUT ITS
    LESSON IS PROMOTED INTO THE GOLDEN QUESTION.** The two bundles that did
    not reproduce at HEAD are no longer the designated keepers: ERCOT
