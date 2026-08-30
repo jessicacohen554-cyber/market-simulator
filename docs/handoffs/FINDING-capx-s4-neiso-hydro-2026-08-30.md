@@ -147,7 +147,101 @@ re-derive on a newer vintage or census (rule 23), never a residual.
 
 ## 5. Verification — the T1-F pair
 
-TBD (control/treatment runs + FC-1 re-score + registration).
+*Completed by the S-4V verification session (director ledger lane S-4V), 2026-08-30 —
+the verification half S-4's charter owed. §5.1 is the pre-declared expectation,
+written and committed BEFORE any run was launched (rules 13/21; S-4's own §2 is the
+model case); the sections after it carry the measured results and were written after.*
+
+### 5.1 Pre-declared expectation (recorded and committed before any solve)
+
+**The construction.** One control/treatment pair at one HEAD, years sequential within
+each run (rule 12), both arms invoked identically:
+
+```
+MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1 \
+  python scripts/run_full_horizon.py --iso NEISO --start-year 2026 --end-year 2030 \
+  --golden-posture --out-dir results/ff-t1f-s4hydro/<arm>
+```
+
+- **TREATMENT** (`results/ff-t1f-s4hydro/neiso`, run id `neiso-2026-2030-s4hydro`):
+  HEAD as shipped — the S-4 factor needs no flag; it is the default registry
+  construction.
+- **CONTROL** (`results/ff-t1f-s4hydro/neiso-control`, run id
+  `neiso-2026-2030-s4hydro-control`): identical invocation with exactly ONE local,
+  UNCOMMITTED edit — the `"NEISO"` key of `HYDRO_ACCREDITATION_CREDIT_BY_ISO`
+  (`config/capacity_market.py`) removed, so `resolve_hydro_capacity_credit("NEISO")`
+  falls back to the generic `RENEWABLE_CAPACITY_CREDIT["hydro"] = 0.50`. A diagnostic
+  arm for attribution only, never a shippable configuration; the edit is reverted the
+  moment the control solve ends. NOTE: the registry constant is not a
+  `ScenarioConfig` field, so the two arms share one cache key and byte-identical
+  `run_config.json` — the labelling therefore lives in the run ids, the sidecar meta
+  (`s4v_arm`), the verdict keys, and this finding, and is stated here in advance.
+
+**Why `--golden-posture` when the charter's invocation sketch said "no flag involved"
+— decided and recorded ex ante.** The parenthetical is about the *factor* (a registry
+constant, in the default construction, no flag) and that remains true. The posture
+flag is required for the pair to be interpretable at all: the live bare `neiso-t1f`
+verdict this pair re-scores was measured by FFR-3A-2 under the shipped NEISO T1-F
+posture — `--golden-posture`, resolved curve-ON (`ffr-3a2-battery-close-2026-08-03.md`
+§2: "everywhere except NYISO"; cache key `9f2cc6ecd30704ca`) — and the D2-B ledger
+arithmetic the expectation below is built on reproduces exactly that leg. Since owner
+decision C.4(a) B1 (2026-08-03), `--golden-posture` reads the SHIPPED
+`ScenarioConfig.capacity_market_clearing_by_iso` field (`{PJM, MISO, CAISO, NEISO:
+True}`) — golden posture and shipped posture are one answer, not two. A bare
+invocation, by contrast, resolves NEISO curve-OFF through `reference_config`'s
+explicit `capacity_market_clearing_by_iso=None` (the P-3A probe pin), which would
+overwrite the bare key with a silent posture swap and confound the attribution with
+a second difference. The NYISO precedent's "plain like FFR-3A-2's NYISO leg" carries
+the same rule — match the ISO's own T1-F posture — and NYISO is simply the one ISO
+whose shipped posture IS the plain default.
+
+**The expectation, from D2-B's committed arithmetic**
+(`FINDING-capx-d2b-i7-ledger-2026-08-25.md` §4.1/§4.3), stated before any solve:
+
+1. **Hydro ledger term** moves 949.75 → 1,396.472 MW: isolated delta **+446.72 MW**
+   (1,899.5 × (0.7352 − 0.50)), conditional on the accreditation basis
+   `modelled_hydro_nameplate_mw("NEISO")` still evaluating to 1,899.5 MW at this HEAD
+   (verified as an input check before solving; any census drift is reported, not
+   absorbed).
+2. **2026 (base year — no evolution runs):** treatment − control accredited firm =
+   **exactly +446.7 MW**, nothing else moved on the supply side. This is the clean
+   isolation leg: a 2026 delta ≠ +446.7 MW CONTRADICTS the expectation.
+3. **2028 I7 on the D2-B ledger basis:** 25,386 + 446.7 = 25,832.7 vs requirement
+   25,604 → **clears by ≈ +229 MW**. This is the charter's headline expectation. It
+   is *ledger-basis* arithmetic: the solved delta may differ because the evolved
+   years respond (the reliability floor gains headroom, so the 2027 exit wave — the
+   BLK-10 curve-ON over-retirement, 3,297.9 MW single-year — may deepen; the
+   backstop's need shrinks; entry screens see different reserve prices). Exits are
+   decomposed summing BOTH `retirements` and `confirmed_derates` (D2-B §1 method
+   note).
+4. **2026/2027 I7 stay passing in both arms** (2027's epoch margin was thin, ≈ +114
+   MW at rm 0.70 %; the factor should move it to structurally held).
+5. **I12 (FC-2 row 1), pre-declared so it cannot read as a surprise:** 2026 moves
+   FURTHER ABOVE the 15.2 % band cap (≈ 15.26 % + 446.7/24,889.7 ≈ **+17.1 %**) — the
+   arithmetic consequence of adding real firm supply to a base year already over the
+   band; 2028 re-enters the band (≈ +1.1 %). FC-2 row 1 therefore stays CAVEAT (high
+   side), and that is a *pre-existing over-build signal at the base year*, not a
+   defect of this intake.
+6. **Expected determination:** HOLD → **PROMOTE-WITH-CAVEATS** (FC-1 PASS if I7-2028
+   was the sole FAIL at this HEAD; FC-2 CAVEAT on the 2026 band; FC-7 CAVEAT on the
+   program-wide absent DOF ledger). The backstop share (11.7 % CAVEAT at the epoch)
+   should not rise; whether it crosses the 10 % PASS line is not predictable from
+   arithmetic and is simply reported.
+7. **Control at today's HEAD** is expected to reproduce the FFR-3A-2 shape (I7-2028
+   FAIL ≈ 218 MW) modulo epoch drift since 2026-08-03; the control-vs-FFR-3A-2 delta
+   IS the epoch-drift disclosure (the NYISO extcap lane's −341.4 MW peak-drift
+   pattern), and the treatment-vs-control delta at one HEAD is the clean attribution.
+
+**If the measurement CONTRADICTS this — 2028 does not clear in the treatment, or the
+2026 isolated delta is not ≈ +446.7 MW — the contradiction is the headline, reported
+at full magnitude, and the factor is NOT touched: it is sourced (rule 14), so a
+surprise is a discovered attribution question, never a reason to revert.**
+
+Concurrency check at launch (rule 12): `git ls-remote --heads origin` shows two
+in-flight backcast branches (`claude/caiso-south-belly-pricing-24uv07`,
+`claude/miso-190-backcast-calibration-okt1cn`); the NEISO T1-F leg is the light,
+non-memory-bound run (9.2 min / ≤ 4.3 GB recorded), run solo and sequentially in this
+container — inside the ≤ 2-heavy cap whatever those branches are doing.
 
 ## 6. The FCA-vintage half — NO-SWAP, newer publication reported
 
