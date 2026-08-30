@@ -154,7 +154,15 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       respond to a locked-test result** without designating a new never-touched year as its
       replacement. This is the honest out-of-sample number. (2019 is the clean-regime test;
       H1-2026 is the forward-edge test. Pre-2020 years exercise a structurally different fleet —
-      grade against regime drift, not raw MAE.)
+      grade against regime drift, not raw MAE.) **Scheduling precondition (owner ruling
+      2026-08-26, card 7 — standing policy, not a schedule and not a grant):** an ISO becomes
+      eligible to be *considered* for `final` only after its 2020–2022 validation touchpoints
+      have been run AND the touchpoint loop has stopped surfacing repairs — the one-shot is
+      spent against the most-prepared config, which is the design intent. Eligibility is never
+      a grant: `final` remains an explicit owner act, per ISO, every time. (No ISO has ever
+      spent a locked-test year; NEISO's 2019 additionally reads NOT YET on the merits —
+      unsolvable at HEAD, non-discriminating on C3c. Genealogy:
+      `docs/governance/rule-history.md` §4, 2026-08-26.)
     - **The two tiers carry SEPARATE markers** (owner decision 2026-07-31), because one
       declaration must never spend both: `calibration-complete.json`'s **`complete`** block
       authorizes the validation ladder and **`final`** authorizes the locked test. An ISO in
@@ -177,7 +185,12 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6;
       genealogy in `docs/governance/rule-history.md` §4.)* Tier
       membership and the block mapping live in `scripts/lib/holdout_policy.py`; the
-      **holdout spend freeze** (`holdout-freeze.json`) outranks both blocks and is checked first.
+      **holdout spend freeze** (`holdout-freeze.json`) outranks both blocks for every tier
+      within its scope and is checked first — TIER-SCOPED since the 2026-08-26 owner ruling
+      (card 6): its `scope.tiers`, read by the fail-closed `holdout_policy.frozen_tiers`
+      (no parseable scope ⇒ every tier frozen), currently names the locked test alone, so
+      validation-tier spends are governed by the `complete` marker + `--holdout-authorized`
+      while 2019/H1-2026 stay frozen for every ISO, `final` marker or not.
     - **C3c STANDING RULE (owner, 2026-08-06; EXTENDED TO EVERY YEAR 2026-08-09;
       NON-DOWNGRADING SINCE 2026-08-17): a LONE C3c
       failure in ANY year — training, validation or locked test — is an AUTO-LEDGERED

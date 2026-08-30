@@ -203,6 +203,44 @@ genealogy is owned by** `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(
   rests — it does not ledger, does not lower a band, and does not declare. The `complete`
   marker stayed absent, `final` stayed moot, `holdout-freeze.json` stayed ACTIVE and no
   out-of-training year was touched, so the rule's enforcement machinery was never engaged.
+- **2026-08-26 — the spend freeze becomes TIER-SCOPED; validation tier lifted, locked test
+  stays frozen** (owner ruling, program-director sitting card 6 — the O4/O5 decision card
+  `docs/audit/AUDIT-FOLLOWUP-o5-o4-2026-08-18.md` §2.4, option (A) taken as recommended;
+  verbatim: *"Close the layup charter with cause; lift the freeze for the VALIDATION tier
+  (2020-2022) for ISOs holding a `complete` marker. `final` stays empty and the locked test
+  stays frozen. Restores the diagnostic touchpoint loop."*). The freeze, previously a boolean
+  that suspended every tier at once, gains a `scope.tiers` read by the single fail-closed
+  reader `holdout_policy.frozen_tiers` (an active freeze with no parseable scope covers
+  every tier — the prior shape and behaviour). Steady state after the ruling: `active: true`,
+  `scope.tiers = ["locked_test"]` — 2020–2022 are governed by the `complete` marker +
+  `--holdout-authorized` alone, and 2019/H1-2026 (and every fail-closed year such as 2018)
+  stay frozen for every ISO, `final` marker or not. The CAMPD economic-layup charter is
+  CLOSED WITH CAUSE in the same ruling (`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md`
+  §10), the cause stated honestly: the detector/seam question REMAINS OPEN (post-guard CC
+  envelope 14.2–36.7 %, 17/18 ISO-years above the ~10–15 % norm) and is carried explicitly
+  as a documented definitional seam every keeper's availability envelope inherits — the lift
+  is a decision to proceed WITH a known-open input question on the iterable tier, not a
+  finding that it closed. Verified behaviourally on all three enforcement gates (55/55
+  invocations, including the locked-test refusal for all six ISOs with and without the
+  flag). Execution record: `docs/FINDING-holdout-governance-2026-08-26.md`.
+- **2026-08-26 — locked-test scheduling gates on the validation ladder** (owner ruling,
+  same sitting, card 7 — a STANDING POLICY amendment to the rule's locked-test clause,
+  not a schedule and not a grant; verbatim: *"Locked test is scheduled only after an ISO
+  has run its 2020-2022 touchpoints and the loop has stopped surfacing repairs. Spends the
+  one-shot against the most-prepared config, which is the whole design intent."*). The
+  standing precondition for any future `final` grant is therefore: an ISO becomes eligible
+  to be **considered** for `final` only after (i) its 2020–2022 validation touchpoints have
+  been run and (ii) the touchpoint loop has stopped surfacing repairs. **Eligibility is not
+  a grant** — `final` remains an explicit owner act, per ISO, every time, and adding an ISO
+  to `final` still spends the single most irreversible resource in the policy. Two
+  constraints already on record are restated so this cannot be read as a green light:
+  **NEISO's 2019 basis is UNREPAIRABLE** (ISO-NE migrated its newswire mid-2018 and the
+  Mar–Jun recaps were never carried over — `FINDING-neiso86-gas-basis-intake-2026-08-06.md`
+  §5.1) and its `final` readiness reads **NOT YET on the merits** (2019 unsolvable at HEAD;
+  cannot discriminate on C3c); and **NO ISO HAS EVER SPENT A LOCKED-TEST YEAR** — `final`
+  carries only its `_note`, and the 2026-08-26 ruling changes no marker. Recorded in
+  CLAUDE.md rule 22's locked-test bullet, audit row O6, and
+  `docs/FINDING-holdout-governance-2026-08-26.md`.
 
 ## 5. Rule 27 `[R-PUSH]` — the 2026-07-15 `constants.py` truncation incident
 
