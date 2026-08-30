@@ -1,26 +1,28 @@
-# capx director — prompt pack (six live lanes, 2026-08-25)
+# capx director — prompt pack (revised at refresh #8, 2026-08-30; first issued 2026-08-25)
 
-Canonical text of the six session prompts live on the capacity-expansion (Forecast Finalization)
+Canonical text of the session prompts live on the capacity-expansion (Forecast Finalization)
 track. Ledger: `docs/handoffs/capx-director-ledger-2026-08.md`. Signatures:
-`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5.
+`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5. Revisions at r#8: D7 LANDED
+(`ca8b749`) and drops from the live set; D10 corrected for the nyiso-155 keeper state; D11
+RE-SCOPED to D11-R (the D-1 volume rule — ledger §0e.3), never run in its original form.
 
 | lane | status | branch | model | profile | heavy slot? |
 |---|---|---|---|---|---|
-| **D7-NYISO** gate re-score | reissued (issued r#5, not started) | `claude/capx-d7-nyiso-gate` | Opus | code | no |
-| **D10** NYISO T1-X crossover | new — chartered by card A (A-A) | `claude/capx-d10-nyiso-t1x` | Fable | nyiso | no |
-| **D11** entry-signal pro-forma | new — chartered by card B (B-C) | `claude/capx-d11-entry-proforma` | Fable | ercot | no (design first) |
-| **S-123** MISO adequacy package | reissued (issued r#5, not started) | `claude/capx-s123-miso-adequacy` | Fable | miso | only if it re-measures |
-| **S-4** NEISO hydro accreditation | reissued (issued r#5, not started) | `claude/capx-s4-neiso-hydro` | Fable | neiso | no |
-| **S-5** PJM requirement horizon-edge | new — unblocked by card C (C-A) | `claude/capx-s5-pjm-horizon-edge` | Fable | pjm | no (S-6 is the heavy one, strictly after) |
+| **D10** NYISO T1-X crossover | reissued r#8 (corrected) | `claude/capx-d10-nyiso-t1x` | Fable | nyiso | no |
+| **D11-R** D-1 entry volume rule | re-scoped + issued r#8 | `claude/capx-d11r-entry-volume-rule` | Fable | ercot | no (Phase 0 first; A/B is light) |
+| **S-123** MISO adequacy package | issued r#5, not started — releasable after a start-time check (no new MISO backcast branch in flight; miso-188 merged 2026-08-30) | `claude/capx-s123-miso-adequacy` | Fable | miso | only if it re-measures (MISO = no co-run) |
+| **S-4** NEISO hydro accreditation | reissued r#8 (unchanged) | `claude/capx-s4-neiso-hydro` | Fable | neiso | no |
+| **S-5** PJM requirement horizon-edge | issued r#5, not started — ready when a heavy slot frees | `claude/capx-s5-pjm-horizon-edge` | Fable | pjm | no (S-6 is the heavy one, strictly after) |
 
-**Suggested order:** D7 first (cheap, records-only, the board currently understates where the
-program stands), then D10 + S-123 in parallel. D11 and S-5 are independent. Only S-123's optional
-re-measure and the later S-6 contend for the ≤2 heavy-solve cap, which is SHARED with the owner's
-concurrent backcast solves.
+**Suggested order (r#8):** D10 + D11-R + S-4 now (all light — CAISO and ERCOT backcast branches
+are in flight and may hold the heavy slots). S-5 and S-123 next as slots free (S-123 with a
+start-time check that no new MISO backcast branch is in flight — miso-188 merged mid-refresh).
+Only S-123's optional re-measure and the later S-6 contend for the ≤2 heavy-solve cap, which is
+SHARED with the owner's concurrent backcast solves.
 
 ---
 
-## D7-NYISO — gate re-score + leg-(c) harmonisation
+## D7-NYISO — gate re-score + leg-(c) harmonisation — **LANDED `ca8b749` (PR #4289); historical record, do not re-run**
 
 ```
 You are the D7-NYISO GATE RE-SCORE session of the capacity-expansion (Forecast
@@ -102,13 +104,16 @@ BRANCH: claude/capx-d10-nyiso-t1x — create FRESH off origin/main (git fetch or
 and rebase before pushing.
 
 WHY THIS EXISTS. NYISO cleared FC-1 on 2026-08-25 and is the first ISO in the program to pass
-both §2.1b legs that depend on model quality: (a) PASS (marker + keeper
-2026-08-22-nyiso-152-duty-complete, CALIBRATED) and (b) PASS (FC-1 and FC-2 both PASS on the bare
-`nyiso-t1f` key; determination PROMOTE-WITH-CAVEATS). Leg (c) is one of the two things left, and
-the owner signed the reading that an ISO with no T1-X run FAILS it. THIS SESSION CLOSES LEG (c)
-ON MEASUREMENT: run NYISO's T1-X crossover so FC-4 is measured and reported rather than absent.
-NYISO has never had one — no `nyiso-t1x` key exists in ff-verdicts.json and FC-4 reads n/a in
-every NYISO verdict.
+both §2.1b legs that depend on model quality: (a) PASS on the charter's literal test — the
+`complete` marker plus the designated full-span keeper, which is now
+`2026-08-25-nyiso-155-hydro-repair` (NOT-YET; the marker/keeper reconciliation is open owner
+question Q5 in the director's ledger §3 — you take gate (a) as PASS and do NOT re-read it in
+either direction) — and (b) PASS (FC-1 and FC-2 both PASS on the bare `nyiso-t1f` key;
+determination PROMOTE-WITH-CAVEATS). D7 landed the signed leg-(c) harmonisation on 2026-08-26,
+so leg (c) now reads a measured `fail` awaiting exactly this run, and the owner signed the
+reading that an ISO with no T1-X run FAILS it. THIS SESSION CLOSES LEG (c) ON MEASUREMENT: run
+NYISO's T1-X crossover so FC-4 is measured and reported rather than absent. NYISO has never had
+one — no `nyiso-t1x` key exists in ff-verdicts.json and FC-4 reads n/a in every NYISO verdict.
 
 TASK — build, solve, score and register a NYISO T1-X crossover leg.
 - Read docs/handoffs/ffr-3a2-battery-close-2026-08-03.md and
@@ -151,11 +156,13 @@ GUARDRAILS: the crossover's 2023-2025 scored window is BACKCAST-tier on the scor
 ONLY against already-committed benchmark artifacts and solve NO year outside the leg's own
 2023-2027 definition. NO out-of-training backcast year solved, scored or registered; holdout spend
 freeze ACTIVE, `final` empty (rule 22). No measured-outcome feedback (rule 13). NYISO's backcast
-lane is CALIBRATED with an owner-ratified frontier — touch NO backcast keeper shard, status/*.js,
-calibration-complete.json, offer curve or commitment bridge. No new GitHub Actions workflows, no
-CI offloading (private repo, billed minutes). Push per CLAUDE.md Git & Pushing (run payloads over
-git push; on HTTP 408 set http.version HTTP/1.1 and retry); blob-verify any >=300-line file after
-push (rule 27).
+lane is LIVE and owner-managed (keeper NOT-YET; the nyiso-156 winter-intake legs may run
+concurrently in the owner's own sessions) — touch NO backcast keeper shard, status/*.js,
+calibration-complete.json, offer curve, commitment bridge, or anything the intake spec names;
+your crossover runs at your own fetched HEAD and its FINDING records that HEAD. No new GitHub
+Actions workflows, no CI offloading (private repo, billed minutes). Push per CLAUDE.md Git &
+Pushing (run payloads over git push; on HTTP 408 set http.version HTTP/1.1 and retry);
+blob-verify any >=300-line file after push (rule 27).
 
 EXIT: docs/handoffs/FINDING-capx-d10-nyiso-t1x-<date>.md with the measured FC-4 at full magnitude,
 the registered leg, and the leg-(c) verdict. Report to the owner.
@@ -163,81 +170,107 @@ the registered leg, and the leg-(c) verdict. Report to the owner.
 
 ---
 
-## D11 — developer pro-forma entry signal (chartered by card B, B-C)
+## D11-R — the D-1 entry volume rule (re-scoped at director refresh #8; supersedes D11, never run)
+
+*(The original D11 pro-forma-signal prompt, issued 2026-08-25, was superseded BEFORE FIRST RUN by
+the director's refresh-#8 re-scope — ledger §0e.3. The forward-expectation A/B measured trajectory
+invariance across three signal constructions and its own adjudication recommended "(b) first —
+rest the signal lane and charter D-1's volume rule." The B-C object charter is intact: margin
+exhaustion is the allocator half of the developer pro-forma. The signal lane's successor rung —
+the scarcity-consistent delta basis — is queued as D12, owner-gated at the finding's §7
+escalation.)*
 
 ```
-You are the D11 ENTRY-SIGNAL PRO-FORMA session of the capacity-expansion (Forecast Finalization)
-track, chartered by the owner's signature on card B (B-C, 2026-08-25 —
-docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md §5) and recorded in the director's
-ledger (docs/handoffs/capx-director-ledger-2026-08.md, lane D11).
+You are the D11-R ENTRY VOLUME RULE session of the capacity-expansion (Forecast Finalization)
+track. Lane chartered by the owner's card-B signature (B-C, 2026-08-25 —
+docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md §5), re-scoped by the director at
+refresh #8 on the forward-expectation A/B's evidence (ledger:
+docs/handoffs/capx-director-ledger-2026-08.md §0e.3, lane D11-R).
 
 DATA PROFILE: ercot
 MODEL ASSIGNMENT: Fable (edits src/market_sim/ — Opus or Fable, NEVER Sonnet, rule 27).
-BRANCH: claude/capx-d11-entry-proforma — create FRESH off origin/main (git fetch origin main
+BRANCH: claude/capx-d11r-entry-volume-rule — create FRESH off origin/main (git fetch origin main
 first) and rebase before pushing.
 
-WHY THIS EXISTS, IN THE PROBE'S OWN WORDS. The ERCOT entry-signal disarm probe adjudicated its
-cell fc K -> O and refused to self-adopt (commit 2aaaffa): the disarm repairs measured L-1 signal
-defects — locational dispersion where the shipped object is zone-flat by construction, steady
-long-duration storage entry, wind entering at all — but trades a forward-looking-but-structurally-
-wrong object for a structurally-right-but-backward-looking one, and worsens terminal reserve
-margin 25.19% -> 40.24%. ITS DECISIVE SENTENCE: "Neither construction is the developer
-pro-forma." The owner signed B-C: the shipped default HOLDS (entry_lookahead_reprice=True, cell
-stays O, no verdict minted) and THIS LANE BUILDS THE OBJECT THE ENTRY SCREEN IS ACTUALLY MEANT TO
-REPRESENT, rather than ratifying either known-wrong construction as a default.
+WHY THIS EXISTS — THE EVIDENCE THAT RE-POINTED THIS LANE. Three entry-signal constructions
+spanning a ~$200/MWh swing in the entering-2024 mean produce ONE trajectory: terminal RM 25.19 %
+(shipped zone-flat), 40.24 % (disarm, raw duals), 40.38 % (forward-expectation composition).
+docs/FINDING-entry-signal-forward-expectation-2026-08-25.md §3: once the locational object lets
+storage and wind clear at all, volumes are set by QUEUE_CAP_PER_TECH_GW /
+STORAGE_ANNUAL_BUILD_CAP_MW and the top-2 share split — a technology clearing by $1 builds its
+full cap (new_entry.py:1441, storage.py:1892-1901). "D-1 owns the trajectory; the signal lane
+should not be re-chartered against it." Its §7 adjudication recommends exactly this lane.
+DO NOT build any signal construction in this session — the shipped default HOLDS
+(entry_lookahead_reprice=True, its cell and the entry_forward_expectation_signal cell both stay
+as adjudicated), and the pro-forma/scarcity-basis question is a separate owner-gated rung (D12).
 
-READ FIRST: docs/FINDING-entry-signal-l1-2026-08.md (the L-1/L-1b measurements — these are your
-SPECIFICATION, they say exactly what a correct signal must reproduce), docs/FINDING-entry-signal-
-disarm-2026-08.md (the adjudication), docs/FINDING-entry-screen-t1h-2026-08.md, and
-model-methodology-spec.md §5.2/§5.4 plus CLAUDE.md's capacity-evolution step 3/5 summary for what
-the screen currently does. The screen's stated basis is the attainable pro-forma inframarginal
-margin (Potomac-SOM net revenue), never gross revenue and never realized dispatch — start there.
+THE CONSTRUCTION IS ALREADY NAMED AND PRE-MEASURED — YOU PRODUCTIONIZE IT, YOU DO NOT INVENT IT.
+docs/FINDING-entry-signal-l1-2026-08.md §2 (L-1b) measured the MARGIN-EXHAUSTION closure offline
+(probe: scripts/probes/entry_signal_l1b_allocator_counterfactual.py): add capacity in tranches
+until the screen's own REPRICED margin is exhausted, bounded by the SAME caps. It is the
+precommit's named admissible closure, in its own words: "an equilibrium condition the model
+already contains — build until the screen's own repriced margin is exhausted — never a tuned
+elasticity or damping coefficient" (rule 21 [R-DOF]). Measured offline: terminal RM 18.7 % vs
+shipped 25.2 %; ~6.5 pp of the recovery overshoot is bang-bang volume; amplitude lives at the
+shoulders (2022: exhaustion supports 1.0 GW where bang-bang built 4.571; 2024: 3 GW vs 6); the
+2023 peak is cap-bound under BOTH rules; and the B-2 cobweb SURVIVES (swings −10.5/+1.6/+8.6 pp)
+— B-2 is real market dynamics and is NOT your target. If your implementation kills the
+oscillation outright, that is a red flag against the implementation, not a success.
 
-TASK — PHASE 0 FIRST, AND IT MAY BE THE WHOLE SESSION. Before building anything, establish and
-write down: (a) what a developer pro-forma entry signal IS, in terms this model can compute —
-which revenues, over which horizon, discounted how, against which cost basis; (b) which of its
-inputs the model already has honestly and which would have to be invented; (c) whether it is
-IDENTIFIABLE without a fitted parameter (rule 21 [R-DOF]: a residual that can only be closed by a
-tuned value is an open root-cause issue, not a parameter). IF PHASE 0 SHOWS THE OBJECT NEEDS A
-FREE PARAMETER OR AN UNSOURCEABLE INPUT, STOP AND REPORT THAT — a clean non-viability verdict is
-a complete and valuable outcome for this lane, and is preferable to shipping a third construction
-that is wrong in a new way. The repo's Phase-0 stop precedent is well established (see
-FINDING-ercot201, FINDING-ercot208, caiso-218/219).
+READ FIRST: FINDING-entry-signal-l1-2026-08.md (§2 especially), the L-1b probe source,
+FINDING-entry-signal-forward-expectation-2026-08-25.md §3/§7, FINDING-entry-screen-t1h-2026-08.md
+(the D-1 rows), new_entry.py's allocator and storage.py's winner-take-share split, and
+model-methodology-spec.md §5.4/§5.5.
 
-IF PHASE 0 CLEARS, build it behind a NEW default-OFF ScenarioConfig field, A/B it against the
-shipped default on an ERCOT T1-F leg, and report against the L-1 measurements: does it reproduce
-locational dispersion, steady long-duration storage entry, and wind entry, WITHOUT the disarm's
-terminal-reserve-margin blow-out? Report terminal RM for all three constructions (shipped 25.19%,
-disarmed 40.24%, yours) at full magnitude.
+TASK:
+1. PHASE 0 — RECONCILE THE PROBE TO THE LIVE ALLOCATOR. Establish exactly what the offline
+   counterfactual did (tranche size, repricing step, cap interaction, both screens or thermal
+   only) and what the live equivalent must do in new_entry.py AND storage.py (the storage
+   allocator has the same defect via the top-2 absolute-margin split). Confirm zero-DOF: every
+   quantity in the exhaustion condition must already exist in the screen; if you find yourself
+   needing a tranche-size or step-count choice that moves the answer, that is a free parameter —
+   STOP and report it (Phase-0 stop is an honourable exit; precedent FINDING-ercot201/208,
+   caiso-218/219).
+2. IMPLEMENT behind a NEW default-OFF ScenarioConfig field, applying to both the thermal and
+   storage allocators (one mechanism, one field — rule 19; do not ship a thermal-only half unless
+   Phase 0 shows the storage split is genuinely a different object, and say so if so).
+3. A/B on an ERCOT T1-F leg: arm vs control, same HEAD, years sequential. Report at full
+   magnitude: per-step build volumes by tech, terminal RM against the four known anchors (shipped
+   25.19 / disarm 40.24 / fwd 40.38 / L-1b offline 18.7 %), whether B-2 survives, and the
+   secondary L-1b observation (under repricing the second storage slot flips flow_battery ->
+   compressed_air — report what your construction does to the storage mix, li-ion included).
+   Register BOTH arms on the FORECAST namespace via scripts/register_forecast_run.py with
+   run_config.json COMMITTED (FC-7); never the backcast registry (rule 15).
 
-RULE 1 [R-STRUCT] GOVERNS AND CUTS BOTH WAYS HERE, exactly as the probe said: do not adopt your
-construction because bands improved, and do not reject it because one worsened. The question is
-whether it is the real object. Nothing in this lane is promoted to a default without a further
-owner decision — the B-C signature chartered the construction, not its arming.
+RULE 1 [R-STRUCT] CUTS BOTH WAYS: do not adopt because the RM band improved, do not reject
+because one worsened. The question is whether exhaustion-bounded volume is the real allocator
+object — a developer builds until the expected margin no longer clears cost, which is why this
+re-scope stays inside the B-C charter. ARMING IS THE OWNER'S DECISION: recommend, never arm.
 
 MECHANISM MATRIX (rule 28): read docs/mechanism-testing-matrix.md §5 ERCOT lever queue and
-docs/codebase-site/data/mechanism-matrix/ERCOT.js. DO NOT re-test the entry_lookahead_reprice cell
-— it is adjudicated O with the disarm probe's evidence and the owner has just held the default;
-you are building a distinct object. A NEW ScenarioConfig field REQUIRES its row in
-docs/codebase-site/data/mechanism-matrix.js plus a cell line in EVERY ISO shard in the same PR (CI
-enforces this), must appear in run_config.json (rule 24), and its ERCOT cell gets your verdict in
-THIS session whatever the outcome, rejections included. Rule 25: nothing you derive crosses an ISO
-boundary; ERCOT parameters are ERCOT's.
+docs/codebase-site/data/mechanism-matrix/ERCOT.js. Your NEW ScenarioConfig field requires its row
+in docs/codebase-site/data/mechanism-matrix.js plus a cell line in EVERY ISO shard in the same PR
+(CI enforces this), must appear in run_config.json (rule 24), and its ERCOT cell gets your
+verdict in THIS session whatever the outcome, rejections included. Do NOT touch the
+entry_lookahead_reprice or entry_forward_expectation_signal cells. Rule 25: nothing you derive
+crosses an ISO boundary.
 
 GUARDRAILS: forecast-mode 2026+ runs are UNRESTRICTED. NO out-of-training backcast year solved,
 scored or registered — freeze ACTIVE, `final` empty (rule 22). No measured-outcome feedback
-(rule 13). DECONFLICTION IS SHARP HERE: ERCOT's backcast lane is LIVE (card Y signed Y-C, the 2023
-price object stays open) — touch NO backcast keeper shard, status/*.js, calibration-complete.json,
-offer curve, commitment bridge, ORDC/scarcity mechanism or ERCOT backcast matrix cell. If your
-root cause reaches backcast territory, STOP at a FINDING and hand back. No new GitHub Actions
-workflows, no CI offloading (private repo, billed minutes). Years sequential within a run;
-≤2 heavy concurrent, SHARED with the owner's backcast solves. Push per CLAUDE.md Git & Pushing;
+(rule 13). DECONFLICTION IS SHARP: ERCOT's backcast lane is LIVE RIGHT NOW (branch
+claude/ercot-backcast-calibration-* in flight at charter time) — touch NO backcast keeper shard,
+status/*.js, calibration-complete.json, offer curve, commitment bridge, ORDC/scarcity mechanism
+or ERCOT backcast matrix cell; if your root cause reaches backcast territory, STOP at a FINDING
+and hand back. Check the ≤2-heavy concurrent cap (rule 12) BEFORE launching solves — it is
+SHARED with the owner's backcast solves and up to three backcast sessions are in flight. Years
+sequential within a run. No new GitHub Actions workflows, no CI offloading (private repo, billed
+minutes). Push per CLAUDE.md Git & Pushing (on HTTP 408 set http.version HTTP/1.1 and retry);
 blob-verify any >=300-line file after push (rule 27).
 
-EXIT: docs/handoffs/FINDING-capx-d11-entry-proforma-<date>.md — the Phase-0 adjudication (viable
-or not, with the identifiability answer), the construction and its A/B if built, the three-way
-terminal-RM comparison, and an explicit recommendation on arming that the OWNER decides, not this
-session. Report to the owner.
+EXIT: docs/handoffs/FINDING-capx-d11r-entry-volume-rule-<date>.md — the Phase-0 reconciliation
+(zero-DOF confirmed or the named free parameter that stopped you), the implementation, the A/B
+with the four-anchor terminal-RM comparison and B-2 survival, the matrix cell verdict, and an
+explicit arming recommendation that the OWNER decides, not this session. Report to the owner.
 ```
 
 ---
