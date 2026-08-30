@@ -275,6 +275,11 @@ def evolve_fleet(
     price_signal = _prior_attr(prior_results, "price_signal", None)
     if price_signal is not None:
         prices = price_signal
+    # D11-R margin-exhaustion walk state (GATED entry_margin_exhaustion):
+    # consumed by the step-5 entry screen only — the retirement/CCS screens
+    # (steps 2-3) run before any tranche is committed, so they see the
+    # unamended signal exactly as today. None unarmed (byte-identical).
+    entry_reprice = _prior_attr(prior_results, "entry_reprice", None)
     peak_demand = float(_prior_attr(prior_results, "peak_demand", 0.0) or 0.0)
     # Peak used by the peak-anchored adequacy mechanisms (floor + backstop):
     # the entering year's known peak when the runner supplies it (plan §2.3
@@ -737,6 +742,7 @@ def evolve_fleet(
             entry_rate_caps_mw=entry_rate_caps_mw,
             entry_pipeline=entry_pipeline,
             procured_flow_mw=_procured_flow_mw or None,
+            entry_reprice=entry_reprice,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
         # Decision-grain accounting: in-year builds (fleet diff + VRE screen

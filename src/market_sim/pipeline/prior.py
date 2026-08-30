@@ -76,6 +76,14 @@ class PriorYearResults:
     # active) keeps the screens on the legacy annual AS credits.
     reserve_price_signal: "np.ndarray | None" = None
     reserve_price_signal_slow: "np.ndarray | None" = None
+    # D11-R margin-exhaustion walk state (GATED entry_margin_exhaustion —
+    # runner._EntryRepriceWalk, one per priced entering year, rebound per
+    # entering year like price_signal): the repricer both entry allocators
+    # walk, sharing one accumulated capacity state in their live decision
+    # order (thermal/VRE first, then storage). ``None`` (unarmed, or an
+    # entering year the seam never priced) keeps both allocators on their
+    # bang-bang paths byte-identically.
+    entry_reprice: "object | None" = None
     # Zonal hourly renewable CF profiles ((n_zones, T), rows ordered as
     # ``zone_names``) so the VRE new-entry screen values a candidate's actual
     # capture shape against its build zone's prices instead of a flat mean

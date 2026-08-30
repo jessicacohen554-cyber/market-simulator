@@ -618,6 +618,8 @@ def _lookahead_reprice_signal(
     hourly_availability: bool = False,
     scarcity_restoration: dict | None = None,
     diagnostics: dict | None = None,
+    extra_stack: "tuple[np.ndarray, np.ndarray] | None" = None,
+    extra_vre: np.ndarray | None = None,
 ) -> np.ndarray:
     """Stack re-price of the entering year's known net load (plan §2.3.2).
 
@@ -678,6 +680,16 @@ def _lookahead_reprice_signal(
       per-hour cumulative stack replaces the scalar one; the merit order
       (time-mean mc) is unchanged.
 
+    **Margin-exhaustion walk seams (D11-R ``entry_margin_exhaustion``,
+    GATED).** ``extra_stack`` is ``(mc_1d, cap_1d)`` — the walk's accumulated
+    thermal tranches, appended to the merit stack at the entrant's variable
+    cost and availability-derated capacity (the same append the FFR-5C
+    pipeline rows use; a flat capacity row under hourly availability).
+    ``extra_vre`` is a ``(T,)`` MW profile added to the net-load VRE term —
+    the walk's VRE tranches at their build zone's hourly CF (and must-run
+    tranches at their flat screen CF). Both ``None`` — the default and every
+    unarmed path — is byte-identical.
+
     Returns:
         ``(n_zones, T)`` system-wide hourly price signal (every zone sees the
         same stack price, matching the screens' system-level use).
@@ -693,6 +705,10 @@ def _lookahead_reprice_signal(
         vre = (result.wind_dispatched + result.solar_dispatched).sum(axis=0)  # (T,)
     if pipeline_vre is not None:
         vre = vre + np.asarray(pipeline_vre, dtype=float)
+    if extra_vre is not None:
+        # D11-R walk tranches (VRE / must-run): CF-shaped output enters the
+        # net-load VRE term, the model's own representation of both classes.
+        vre = vre + np.asarray(extra_vre, dtype=float)
     net_load = demand_next - vre
     # FFR-8A: the system net load BEFORE the storage shave — the axis the
     # committed-capability share tables were derived on (demand - wind -
@@ -721,6 +737,13 @@ def _lookahead_reprice_signal(
                 * np.asarray(pipeline_arrays.availability, dtype=float).mean(axis=1),
             ]
         )
+    if extra_stack is not None:
+        # D11-R walk tranches (thermal): entrant variable cost against
+        # availability-derated capacity — the same static-stack basis as the
+        # fleet and pipeline rows above.
+        _ex_mc, _ex_cap = extra_stack
+        mc_gen = np.concatenate([mc_gen, np.asarray(_ex_mc, dtype=float)])
+        cap_gen = np.concatenate([cap_gen, np.asarray(_ex_cap, dtype=float)])
     order = np.argsort(mc_gen, kind="stable")
     mc_sorted = mc_gen[order]
     # FFR-8A element E2 (armed only): the pre-RTC design procures the AS plan
@@ -756,6 +779,19 @@ def _lookahead_reprice_signal(
                     cap_ht,
                     np.asarray(pipeline_arrays.pmax, dtype=float)[:, None]
                     * np.asarray(pipeline_arrays.availability, dtype=float),
+                ]
+            )
+        if extra_stack is not None:
+            # Walk tranches carry a flat availability-derated capacity (the
+            # tranche's EFORD derate is already inside cap_1d), broadcast
+            # over the hours so the row count matches ``order``.
+            cap_ht = np.concatenate(
+                [
+                    cap_ht,
+                    np.broadcast_to(
+                        np.asarray(extra_stack[1], dtype=float)[:, None],
+                        (np.asarray(extra_stack[1]).size, cap_ht.shape[1]),
+                    ),
                 ]
             )
         cum_cap_ht = np.cumsum(cap_ht[order], axis=0)  # (n_gen, T)
@@ -860,6 +896,94 @@ def _forward_expectation_signal(
         sig_curr_flat, dtype=float
     )
     return np.asarray(econ_prices, dtype=float) + delta[None, :]
+
+
+class _EntryRepriceWalk:
+    """Shared repricer state for the margin-exhaustion entry walk (D11-R).
+
+    The live productionization of the L-1b closure
+    (``docs/FINDING-entry-signal-l1-2026-08.md`` §2, gated
+    ``entry_margin_exhaustion``): one object per priced entering year,
+    threaded through ``prior_results.entry_reprice`` into BOTH allocators —
+    the thermal/VRE screen (``apply_economic_new_entry``) first, then the
+    storage screen (``apply_storage_new_entry``) — so the two walks share one
+    accumulated capacity state in their live decision order (rule 19
+    ``[R-ONE-MECH]``: one mechanism, one state).
+
+    ``reprice_fn(extra_stack, extra_vre, d_power_mw, d_energy_mwh, rte_added)``
+    is a closure over the seam's own :func:`_lookahead_reprice_signal` inputs
+    (built in ``_screen_signal_for``), returning ``(flat_signal, adder)`` at
+    the given walk additions — so the repricing is the SAME instrument that
+    produced the screens' signal, re-invoked, never a model of it. At zero
+    additions it reproduces the seam's own call bitwise, which anchors the
+    delta construction exactly (the probe's own trick): the walk signal is
+    ``consumed + alpha x (S(state) - S(0))`` where ``alpha`` is the screen's
+    EWMA blend coefficient (the consumed signal is affine in S_entering
+    through both the blend and the forward-expectation composition), and the
+    hourly reserve-price legs shift by the raw within-walk adder delta
+    (:meth:`reserve_delta`), floored at zero by the caller — a
+    within-instrument, within-year difference, zero before any tranche.
+
+    Zero fitted parameters (rule 21 ``[R-DOF]``): every increment enters
+    through the model's own seams (thermal at entrant variable cost x
+    ``1 - EFORD`` into the merit stack; VRE and must-run as CF-shaped
+    net-load reduction; storage through the peak-shave + AS-share terms).
+    """
+
+    def __init__(self, reprice_fn, alpha: float):
+        self._reprice = reprice_fn
+        self._alpha = float(alpha)
+        self._mc: list[float] = []
+        self._cap: list[float] = []
+        self._vre: np.ndarray | None = None
+        # (power_mw, energy_mwh, rte) per committed storage tranche.
+        self._storage: list[tuple[float, float, float]] = []
+        self._s0, self._a0 = self._eval()
+        self._sig = self._s0
+        self._adder = self._a0
+
+    def _eval(self) -> tuple[np.ndarray, np.ndarray]:
+        """Re-invoke the seam's instrument at the current walk state."""
+        extra_stack = (
+            (np.asarray(self._mc, dtype=float), np.asarray(self._cap, dtype=float))
+            if self._mc
+            else None
+        )
+        d_p = sum(mw for mw, _, _ in self._storage)
+        d_e = sum(mwh for _, mwh, _ in self._storage)
+        rte_added = (
+            sum(mwh * rte for _, mwh, rte in self._storage) / d_e if d_e > 0.0 else None
+        )
+        return self._reprice(extra_stack, self._vre, d_p, d_e, rte_added)
+
+    def add_thermal(self, var_cost: float, mw: float, availability: float) -> None:
+        """Commit a thermal tranche: merit-stack row at derated capacity."""
+        self._mc.append(float(var_cost))
+        self._cap.append(float(mw) * float(availability))
+        self._sig, self._adder = self._eval()
+
+    def add_net_load_reduction(self, profile_mw: np.ndarray) -> None:
+        """Commit a VRE/must-run tranche: (T,) MW output into the VRE term."""
+        profile_mw = np.asarray(profile_mw, dtype=float)
+        self._vre = profile_mw if self._vre is None else self._vre + profile_mw
+        self._sig, self._adder = self._eval()
+
+    def add_storage(self, mw: float, duration_hr: float, rte: float) -> None:
+        """Commit a storage tranche: shave + AS-share terms move with it."""
+        self._storage.append((float(mw), float(mw) * float(duration_hr), float(rte)))
+        self._sig, self._adder = self._eval()
+
+    def signal(self, consumed: np.ndarray) -> np.ndarray:
+        """The consumed screen signal shifted by the walk's own delta."""
+        consumed = np.asarray(consumed, dtype=float)
+        delta = self._alpha * (self._sig - self._s0)
+        if consumed.ndim == 2:
+            return consumed + delta[None, : consumed.shape[1]]
+        return consumed + delta[: consumed.shape[0]]
+
+    def reserve_delta(self) -> np.ndarray:
+        """(T,) within-walk expected-ORDC adder delta (0 before any tranche)."""
+        return self._adder - self._a0
 
 
 def _pipeline_lookahead_terms(
@@ -1589,6 +1713,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             _uni_sig = unified_signals.get(year)
             if _uni_sig is not None:
                 prior_results.price_signal = _uni_sig
+        # D11-R: rebind THIS entering year's own margin-exhaustion walk (the
+        # same per-entering-year pattern as the unified-signal swap above —
+        # after a bridge the walk stored for next_year is the wrong entering
+        # year's instrument). Unarmed the dict is empty (byte-identical).
+        if (
+            getattr(config, "entry_margin_exhaustion", False)
+            and prior_results is not None
+        ):
+            prior_results.entry_reprice = entry_walks.get(year)
 
         # T1-FF Arm R given-weather rebind (FH-1, hindcast-forward plan §2.1):
         # a solved forward year re-seeds the weather base from ITSELF — the
@@ -1841,6 +1974,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     "storage_as_revenue_per_mw_yr"
                 ),
                 reserve_position=curve_reserve_position,
+                # D11-R: the SAME walk state the thermal screen just walked
+                # (evolve_fleet step 5), so this year's thermal tranches are
+                # already in the storage walk's starting signal. None
+                # unarmed (byte-identical).
+                entry_reprice=prior_results.get("entry_reprice"),
             )
         storage = storage_units_to_arrays(storage_units, zone_names)
 
@@ -3319,6 +3457,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         else:
             lookahead_next_ok = year < END_YEAR
         unified_signals = {}
+        # D11-R margin-exhaustion walk state, one per priced entering year
+        # (mirrors unified_signals): built by _screen_signal_for when
+        # entry_margin_exhaustion is armed, bound into prior_results so the
+        # entry screens can walk the SAME instrument that priced their
+        # signal. Empty unarmed (byte-identical).
+        entry_walks: dict[int, _EntryRepriceWalk] = {}
         # ENTRY-SIGNAL forward-expectation state: the S_current evaluation
         # depends only on THIS solved year (its dispatched demand, its stack
         # basis), never on the entering year, so one evaluation serves every
@@ -3416,6 +3560,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # two disjoint uses; the entering year's separate wind/solar
                 # potentials feed the forward AS-requirement drivers; the
                 # fleet's forced-outage sigma feeds the tail's expectation.
+                # D11-R walk closure input: the PRE-split full storage terms,
+                # so the walk can recompute the seam's own shave/AS split
+                # with its accumulated storage tranches folded in.
+                _uni_storage_full = _uni_storage
                 _scar_bundle = None
                 if scarcity_screens and _uni_storage is not None:
                     _p_mw, _e_mwh, _rte = _uni_storage
@@ -3620,6 +3768,83 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     0.0 if _pipe_vre is None else float(_pipe_vre.sum()),
                     "on" if unified_screens else "off",
                 )
+                # D11-R margin-exhaustion walk (GATED entry_margin_exhaustion,
+                # default OFF ⇒ byte-identical): hand the entry screens a
+                # repricer over THIS seam's own instrument at THIS entering
+                # year's inputs. The closure re-invokes
+                # _lookahead_reprice_signal with the walk's additions entering
+                # through the model's own seams; at zero additions it
+                # reproduces the ``sig`` call above bitwise, anchoring the
+                # walk's delta construction exactly.
+                if getattr(config, "entry_margin_exhaustion", False):
+
+                    def _walk_reprice(
+                        extra_stack,
+                        extra_vre_walk,
+                        d_power_mw,
+                        d_energy_mwh,
+                        rte_added,
+                        _dnt=demand_next_total,
+                        _pa=_pipe_arrays,
+                        _pm=_pipe_mc,
+                        _pv=_pipe_vre,
+                        _uv=_uni_vre,
+                        _usf=_uni_storage_full,
+                        _sb=_scar_bundle,
+                        _ey=entering_year,
+                    ):
+                        """(flat_signal, adder) at the given walk additions."""
+                        shave = None
+                        if unified_screens:
+                            p0, e0, rte0 = _usf if _usf is not None else (0.0, 0.0, 0.0)
+                            p1, e1 = p0 + d_power_mw, e0 + d_energy_mwh
+                            if p1 > 0.0 and e1 > 0.0:
+                                # Energy-weighted RTE of base fleet + walk
+                                # tranches — the same aggregation
+                                # _storage_shave_terms uses.
+                                rte1 = max(
+                                    (rte0 * e0 + (rte_added or 0.0) * d_energy_mwh)
+                                    / e1,
+                                    1e-6,
+                                )
+                                if _sb is not None:
+                                    _f = float(ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC)
+                                    shave = ((1.0 - _f) * p1, (1.0 - _f) * e1, rte1)
+                                else:
+                                    shave = (p1, e1, rte1)
+                        scar = _sb
+                        if _sb is not None and d_power_mw > 0.0:
+                            _f = float(ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC)
+                            scar = dict(_sb)
+                            scar["storage_as_mw"] = (
+                                float(_sb["storage_as_mw"]) + _f * d_power_mw
+                            )
+                        _d: dict = {}
+                        s = _lookahead_reprice_signal(
+                            wx_config,
+                            _ey,
+                            base_demand,
+                            fleet_arrays,
+                            mc_cost,
+                            result,
+                            len(zone_names),
+                            demand_next_total=_dnt,
+                            pipeline_mc=_pm,
+                            pipeline_arrays=_pa,
+                            pipeline_vre=_pv,
+                            vre_capacity_potential=_uv,
+                            storage_shave=shave,
+                            hourly_availability=unified_screens,
+                            scarcity_restoration=scar,
+                            diagnostics=_d,
+                            extra_stack=extra_stack,
+                            extra_vre=extra_vre_walk,
+                        )
+                        return s[0], np.asarray(_d["adder_usd_mwh"], dtype=float)
+
+                    entry_walks[entering_year] = _EntryRepriceWalk(
+                        _walk_reprice, float(config.entry_price_signal_alpha)
+                    )
                 return sig
 
             price_signal = _screen_signal_for(next_year)
@@ -3718,6 +3943,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             dispatch_result=result,
             prices=econ_prices,
             price_signal=price_signal,
+            # D11-R margin-exhaustion walk for the entering year the stored
+            # price_signal prices (rebound per entering year at the top of
+            # the next iteration, mirroring the unified-signal swap). None
+            # unarmed — the allocators then keep their bang-bang paths.
+            entry_reprice=entry_walks.get(next_year),
             peak_demand=peak_demand,
             planned_additions=planned_additions,
             procured_vre_additions=procured_vre_additions,

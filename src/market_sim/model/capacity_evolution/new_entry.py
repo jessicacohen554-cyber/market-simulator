@@ -51,6 +51,7 @@ from market_sim.config.constants import (
 from market_sim.config.entry_config import (
     ENTRY_COD_LAG_DEFAULT_YEARS,
     ENTRY_COD_LAG_YEARS,
+    ENTRY_EXHAUSTION_TRANCHE_MW,
 )
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.reserve_config import (
@@ -812,6 +813,7 @@ def apply_economic_new_entry(
     entry_rate_caps_mw: dict[str, float] | None = None,
     entry_pipeline: list[dict] | None = None,
     procured_flow_mw: dict[str, float] | None = None,
+    entry_reprice=None,
 ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Build new capacity for technologies that clear their LCOE.
 
@@ -943,6 +945,19 @@ def apply_economic_new_entry(
             independent of ``entry_pipeline_aware_signal``. ``None``
             (default, and always ``None`` while the gate is off) is
             byte-identical.
+        entry_reprice: D11-R margin-exhaustion walk state
+            (``runner._EntryRepriceWalk``, GATED ``entry_margin_exhaustion``).
+            When supplied, the bang-bang allocation — each clearing tech
+            builds ``min(per-tech room, ISO budget)`` — is REPLACED by the
+            L-1b closure (``docs/FINDING-entry-signal-l1-2026-08.md`` §2):
+            capacity is added in ``ENTRY_EXHAUSTION_TRANCHE_MW`` tranches to
+            the best-margin candidate, the screen's own signal (and hourly
+            reserve legs) are re-priced through the walk after every tranche,
+            and the walk stops when no candidate's repriced margin clears
+            zero or every cap binds — the SAME caps as the bang-bang path.
+            The walk state is shared with the storage screen (which runs
+            after this one). ``None`` (default) keeps the bang-bang loop
+            byte-identically.
 
     Returns:
         Tuple ``(fleet, renewable_additions)`` -- the fleet with entering
@@ -954,6 +969,13 @@ def apply_economic_new_entry(
     # ``_diag`` so the decision path is untouched when diagnostics are off.
     _diag = screen_ledger is not None
     _rows: dict[str, dict] = {}
+    # D11-R walk re-evaluation records: per candidate, the signal-dependent
+    # revenue construction plus its signal-independent terms, so the walk can
+    # recompute each margin at the repriced signal without re-running the
+    # screen body (every non-price term is held exactly as screened).
+    # Populated only when the walk is armed; empty otherwise.
+    _walk = entry_reprice is not None
+    _calc: dict[str, dict] = {}
     iso_config = get_iso_config(iso)
     # Fail loudly when an ISO lacks queue-cap data: a silent default of
     # zero would suppress all new entry and quietly break every forecast.
@@ -1046,6 +1068,17 @@ def apply_economic_new_entry(
             margin = revenue - annual_cost_emerging
             if margin > 0.0:
                 margins.append((margin, tech))
+            if _walk:
+                # Emerging techs are screened as flat-CF output at the mean
+                # price; the walk re-evaluates on the same basis and their
+                # tranches enter as flat CF-shaped net-load reduction (the
+                # screen's own representation).
+                _calc[tech] = {
+                    "kind": "flat_cf",
+                    "cf": float(cf),
+                    "fixed_rev": float(attribute_rev),
+                    "annual_cost": float(annual_cost_emerging),
+                }
             if _diag:
                 _rows[tech] = {
                     "tech": tech,
@@ -1143,6 +1176,25 @@ def apply_economic_new_entry(
             margin = effective_revenue - fixed_cost
             if margin > 0.0:
                 margins.append((margin, tech))
+            if _walk:
+                # Dispatchable thermal: the walk re-evaluates the hourly
+                # best-use integral max(price - vc, r) on the repriced signal
+                # and repriced reserve legs; capacity payment, annual AS
+                # credit and fixed cost are held exactly as screened. The
+                # tranche increment is the probe's own: entrant variable cost
+                # against EFORD-derated capacity into the merit stack.
+                _calc[tech] = {
+                    "kind": "thermal",
+                    "var_cost": float(var_cost),
+                    "reserve_tier": (
+                        None
+                        if r_tech is None
+                        else ("slow" if tech in QUICK_START_FUEL_TYPES else "fast")
+                    ),
+                    "fixed_rev": float(capacity_payment + as_credit),
+                    "annual_cost": float(fixed_cost),
+                    "avail": float(1.0 - EFORD[tech]),
+                }
             if _diag:
                 _rows[tech] = {
                     "tech": tech,
@@ -1282,6 +1334,25 @@ def apply_economic_new_entry(
         margin = effective_revenue - annual_cost
         if margin > 0.0:
             margins.append((margin, tech))
+        if _walk:
+            # VRE / must-run: the walk re-values the screened CF basis (the
+            # build zone's hourly profile, or the scalar base-CF fallback)
+            # against the repriced signal; attribute and capacity payments
+            # are held as screened (their CF term is signal-independent).
+            # The tranche increment is the same CF basis as MW of CF-shaped
+            # output into the net-load VRE term.
+            _zi = None
+            if cf_profile is not None and zone_names:
+                _tz = get_renewable_zone(iso_config.name, tech)
+                _zi = zone_names.index(_tz) if _tz in zone_names else None
+            _calc[tech] = {
+                "kind": "vre_profile" if cf_profile is not None else "flat_cf",
+                "cf": float(base_cf),
+                "cf_profile": cf_profile,
+                "zone_idx": _zi,
+                "fixed_rev": float(_attr_rev + vre_capacity_payment),
+                "annual_cost": float(annual_cost),
+            }
         if _diag:
             # Re-derive the capex decomposition with the SAME helpers
             # compute_lcoe uses (no drift): base -> Wright -> ITC. VRE earns
@@ -1418,58 +1489,16 @@ def apply_economic_new_entry(
     _lag_on = bool(getattr(config, "entry_commissioning_lag", False)) and (
         entry_pipeline is not None
     )
-    for seq, (_, tech) in enumerate(margins):
-        if remaining <= 0.0:
-            if _diag and tech in _rows:
-                _rows[tech]["build_mw"] = 0.0
-                _rows[tech]["binding_cap"] = "iso_budget_exhausted"
-            continue
-        # Each tech is capped by its (possibly shared) per-tech queue limit
-        # and by what is left of the shared ISO budget; both bind. The
-        # growth ladder and the pending queue (when armed) bind on top.
-        group = _QUEUE_CAP_GROUP.get(tech, tech)
-        if group not in group_remaining:
-            group_remaining[group] = max(
-                0.0,
-                per_tech_cap_gw.get(group, 0.0) * 1000.0
-                - _pending_netting_mw.get(tech, 0.0)
-                # FFR-5E: this year's procured commissioning flow (§2.3(b)).
-                # wind/solar carry no _QUEUE_CAP_GROUP entry, so group == tech
-                # and the tech-keyed flow maps 1:1 onto the group budget.
-                - _procured_netting_mw.get(tech, 0.0),
-            )
-        build_mw = min(group_remaining[group], remaining)
-        _cap_label = None
-        if entry_rate_caps_mw is not None and tech in entry_rate_caps_mw:
-            if tech not in _ladder_remaining:
-                _ladder_remaining[tech] = max(
-                    0.0,
-                    float(entry_rate_caps_mw[tech])
-                    - _pending_netting_mw.get(tech, 0.0),
-                )
-            if _ladder_remaining[tech] < build_mw:
-                build_mw = _ladder_remaining[tech]
-                _cap_label = "growth_ladder"
-        if build_mw <= 0.0:
-            if _diag and tech in _rows:
-                _rows[tech]["build_mw"] = 0.0
-                _rows[tech]["binding_cap"] = _cap_label or "per_tech_cap_zero"
-            continue
-        remaining -= build_mw
-        group_remaining[group] -= build_mw
-        if tech in _ladder_remaining:
-            _ladder_remaining[tech] -= build_mw
-        if _diag and tech in _rows:
-            _rows[tech]["build_mw"] = float(build_mw)
-            _rows[tech]["binding_cap"] = _cap_label or (
-                "per_tech_cap"
-                if build_mw >= per_tech_cap_gw.get(group, 0.0) * 1000.0 - 1e-6
-                else "iso_budget"
-            )
-        # Commissioning: in-year (byte-identical default), or deferred to the
-        # measured clearance→COD lag (entry_commissioning_lag) — the decision
-        # is booked as a pending-pipeline row that evolve_fleet commissions at
-        # cod_year, with both years carried into the evolution ledger.
+
+    def _commission(tech: str, build_mw: float, seq: int) -> None:
+        """Book one tech's cleared MW — pipeline row, generator, or VRE pool.
+
+        Commissioning: in-year (byte-identical default), or deferred to the
+        measured clearance→COD lag (entry_commissioning_lag) — the decision
+        is booked as a pending-pipeline row that evolve_fleet commissions at
+        cod_year, with both years carried into the evolution ledger. Shared
+        verbatim by the bang-bang loop and the margin-exhaustion walk.
+        """
         _cod_lag = (
             ENTRY_COD_LAG_YEARS.get(tech, ENTRY_COD_LAG_DEFAULT_YEARS) if _lag_on else 0
         )
@@ -1509,6 +1538,199 @@ def apply_economic_new_entry(
                         tech, build_mw, zone, year, seq, config, iso_config.name
                     )
                 )
+
+    def _init_group(tech: str) -> str:
+        """Resolve/initialize a tech's (possibly shared) cap-group budget."""
+        group = _QUEUE_CAP_GROUP.get(tech, tech)
+        if group not in group_remaining:
+            group_remaining[group] = max(
+                0.0,
+                per_tech_cap_gw.get(group, 0.0) * 1000.0
+                - _pending_netting_mw.get(tech, 0.0)
+                # FFR-5E: this year's procured commissioning flow (§2.3(b)).
+                # wind/solar carry no _QUEUE_CAP_GROUP entry, so group == tech
+                # and the tech-keyed flow maps 1:1 onto the group budget.
+                - _procured_netting_mw.get(tech, 0.0),
+            )
+        return group
+
+    def _init_ladder(tech: str) -> None:
+        """Initialize a tech's growth-ladder budget (no-op when uncapped)."""
+        if (
+            entry_rate_caps_mw is not None
+            and tech in entry_rate_caps_mw
+            and tech not in _ladder_remaining
+        ):
+            _ladder_remaining[tech] = max(
+                0.0,
+                float(entry_rate_caps_mw[tech]) - _pending_netting_mw.get(tech, 0.0),
+            )
+
+    if entry_reprice is not None:
+        # ------------------------------------------------------------------
+        # D11-R margin-exhaustion walk (GATED entry_margin_exhaustion): the
+        # L-1b closure, live. Rule 21 [R-DOF], in the precommit's words: the
+        # volume rule is an equilibrium condition the model already contains
+        # — build until the screen's OWN repriced margin is exhausted,
+        # bounded by the SAME caps — never a tuned elasticity or damping
+        # coefficient. Each tranche goes to the current best-margin
+        # candidate; its physical increment enters the lookahead instrument
+        # through the model's own seams (entry_reprice) and every margin is
+        # re-evaluated on the repriced signal (and repriced hourly reserve
+        # legs) before the next tranche. Stops when no candidate clears zero
+        # or every cap binds. The final tranche may be partial so a cap
+        # binds exactly where the bang-bang path's would (the probe's
+        # quantization note, removed).
+        # ------------------------------------------------------------------
+        _prices0 = np.asarray(prices, dtype=float)
+        _T = int(_prices0.shape[-1])
+        sig_walk = _prices0
+        _r_fast0 = (
+            None
+            if reserve_price_signal is None
+            else np.asarray(reserve_price_signal, dtype=float)
+        )
+        _r_slow0 = (
+            None
+            if reserve_price_signal_slow is None
+            else np.asarray(reserve_price_signal_slow, dtype=float)
+        )
+        r_fast_walk, r_slow_walk = _r_fast0, _r_slow0
+
+        def _walk_room(tech: str) -> float:
+            """Remaining buildable MW under every cap that binds this tech."""
+            group = _init_group(tech)
+            room = min(group_remaining[group], remaining)
+            _init_ladder(tech)
+            if tech in _ladder_remaining:
+                room = min(room, _ladder_remaining[tech])
+            return room
+
+        def _walk_margin(tech: str) -> float:
+            """The screen's own margin re-evaluated at the walk signal."""
+            c = _calc[tech]
+            if c["kind"] == "thermal":
+                ph = sig_walk.mean(axis=0) if sig_walk.ndim > 1 else sig_walk
+                hv = np.maximum(ph - c["var_cost"], 0.0)
+                if c["reserve_tier"] is not None:
+                    r_t = r_slow_walk if c["reserve_tier"] == "slow" else r_fast_walk
+                    if r_t is None:
+                        # Mirrors the screen: tier requested, leg absent.
+                        r_t = np.zeros_like(hv)
+                    n = min(hv.size, r_t.size)
+                    hv = np.maximum(hv[:n], r_t[:n])
+                return float(hv.sum()) + c["fixed_rev"] - c["annual_cost"]
+            if c["kind"] == "vre_profile":
+                zi = c["zone_idx"]
+                pr = (
+                    sig_walk[zi] if (zi is not None and sig_walk.ndim > 1) else sig_walk
+                )
+                rev = _pkg_ns().estimate_expected_revenue(pr, c["cf_profile"])
+                return rev + c["fixed_rev"] - c["annual_cost"]
+            rev = _pkg_ns().estimate_expected_revenue(sig_walk, c["cf"])
+            return rev + c["fixed_rev"] - c["annual_cost"]
+
+        walk_built: dict[str, float] = {}
+        order_first: list[str] = []
+        cand_techs = [t for _, t in margins if t in _calc]
+        # Iteration bound derived from the budgets (never a step-count
+        # choice): the ISO budget in whole tranches, plus one possible
+        # partial tranche per candidate at each cap.
+        _max_steps = (
+            int(remaining // ENTRY_EXHAUSTION_TRANCHE_MW) + 2 * len(cand_techs) + 4
+        )
+        for _ in range(_max_steps):
+            if remaining <= 0.0:
+                break
+            best_tech: str | None = None
+            best_margin = 0.0
+            for t in cand_techs:
+                if _walk_room(t) <= 0.0:
+                    continue
+                m = _walk_margin(t)
+                if m > best_margin:
+                    best_margin, best_tech = m, t
+            if best_tech is None:
+                break
+            tranche = min(ENTRY_EXHAUSTION_TRANCHE_MW, _walk_room(best_tech))
+            group = _QUEUE_CAP_GROUP.get(best_tech, best_tech)
+            remaining -= tranche
+            group_remaining[group] -= tranche
+            if best_tech in _ladder_remaining:
+                _ladder_remaining[best_tech] -= tranche
+            walk_built[best_tech] = walk_built.get(best_tech, 0.0) + tranche
+            if best_tech not in order_first:
+                order_first.append(best_tech)
+            c = _calc[best_tech]
+            if c["kind"] == "thermal":
+                entry_reprice.add_thermal(c["var_cost"], tranche, c["avail"])
+            elif c["kind"] == "vre_profile":
+                entry_reprice.add_net_load_reduction(
+                    np.asarray(c["cf_profile"], dtype=float) * tranche
+                )
+            else:
+                entry_reprice.add_net_load_reduction(
+                    np.full(_T, c["cf"] * tranche, dtype=float)
+                )
+            sig_walk = entry_reprice.signal(_prices0)
+            rd = np.asarray(entry_reprice.reserve_delta(), dtype=float)
+            if _r_fast0 is not None:
+                n = min(_r_fast0.size, rd.size)
+                r_fast_walk = np.maximum(0.0, _r_fast0[:n] + rd[:n])
+            if _r_slow0 is not None:
+                n = min(_r_slow0.size, rd.size)
+                r_slow_walk = np.maximum(0.0, _r_slow0[:n] + rd[:n])
+        for seq, tech in enumerate(order_first):
+            _commission(tech, walk_built[tech], seq)
+        if _diag:
+            for _, tech in margins:
+                if tech not in _rows:
+                    continue
+                built = walk_built.get(tech, 0.0)
+                _rows[tech]["build_mw"] = float(built)
+                if built <= 0.0 and _walk_room(tech) <= 0.0:
+                    _rows[tech]["binding_cap"] = "per_tech_cap_zero"
+                elif _walk_room(tech) <= 0.0:
+                    _rows[tech]["binding_cap"] = (
+                        "iso_budget_exhausted" if remaining <= 0.0 else "per_tech_cap"
+                    )
+                else:
+                    _rows[tech]["binding_cap"] = "margin_exhausted"
+    else:
+        for seq, (_, tech) in enumerate(margins):
+            if remaining <= 0.0:
+                if _diag and tech in _rows:
+                    _rows[tech]["build_mw"] = 0.0
+                    _rows[tech]["binding_cap"] = "iso_budget_exhausted"
+                continue
+            # Each tech is capped by its (possibly shared) per-tech queue
+            # limit and by what is left of the shared ISO budget; both bind.
+            # The growth ladder and the pending queue (when armed) bind on
+            # top.
+            group = _init_group(tech)
+            build_mw = min(group_remaining[group], remaining)
+            _cap_label = None
+            _init_ladder(tech)
+            if tech in _ladder_remaining and _ladder_remaining[tech] < build_mw:
+                build_mw = _ladder_remaining[tech]
+                _cap_label = "growth_ladder"
+            if build_mw <= 0.0:
+                if _diag and tech in _rows:
+                    _rows[tech]["build_mw"] = 0.0
+                    _rows[tech]["binding_cap"] = _cap_label or "per_tech_cap_zero"
+                continue
+            remaining -= build_mw
+            group_remaining[group] -= build_mw
+            if tech in _ladder_remaining:
+                _ladder_remaining[tech] -= build_mw
+            if _diag and tech in _rows:
+                _rows[tech]["build_mw"] = float(build_mw)
+                _rows[tech]["binding_cap"] = _cap_label or (
+                    "per_tech_cap"
+                    if build_mw >= per_tech_cap_gw.get(group, 0.0) * 1000.0 - 1e-6
+                    else "iso_budget"
+                )
+            _commission(tech, build_mw, seq)
 
     if _diag:
         # Unprofitable candidates never enter the margins loop; record their

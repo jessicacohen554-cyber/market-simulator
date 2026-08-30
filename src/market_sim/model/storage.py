@@ -37,6 +37,7 @@ from market_sim.config.constants import (
     STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO,
     WRIGHT_REFERENCE_GW,
 )
+from market_sim.config.entry_config import ENTRY_EXHAUSTION_TRANCHE_MW
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.paths import RAW_DATA_DIR
 from market_sim.config.scenarios import ScenarioConfig
@@ -1361,9 +1362,7 @@ def load_eia860_pumped_storage(
                     monthly_energy_mwh=(
                         [float(x) for x in monthly_e] if ramped else None
                     ),
-                    charge_power_cap_mw=(
-                        float(pump) if pump is not None else None
-                    ),
+                    charge_power_cap_mw=(float(pump) if pump is not None else None),
                 )
             )
         # Remove the split plants' capacity from the zone aggregates so the
@@ -1763,8 +1762,17 @@ def apply_storage_new_entry(
     deliverability_headroom: dict[str, float] | None = None,
     endogenous_as_revenue_per_mw_yr: float | None = None,
     reserve_position: float | None = None,
+    entry_reprice=None,
 ) -> list[StorageUnit]:
     """Add storage whose stacked value beats its annualized cost.
+
+    ``entry_reprice`` (D11-R, GATED ``entry_margin_exhaustion``;
+    ``runner._EntryRepriceWalk``) replaces the winner-take-share split below
+    with the margin-exhaustion walk: tranches to the best-margin tech, the
+    signal repriced through the walk's shave/AS-share terms after every
+    tranche, the same caps binding — sharing ONE walk state with the thermal
+    screen that ran before this call. ``None`` (default) keeps the split
+    byte-identically.
 
     Each tech in STORAGE_TECHS is screened on a value stack:
     - **Energy arbitrage** over duration-sized windows (so long-duration
@@ -1851,17 +1859,27 @@ def apply_storage_new_entry(
         iso_config, deliverability_headroom
     )
 
-    margins: list[tuple[float, str]] = []
-    for tech_name, tech in STORAGE_TECHS.items():
+    def _stack_margin(tech_name: str, tech: dict, price_arr, fleet_mw: float) -> float:
+        """One tech's full value-stack margin at the given prices/fleet state.
+
+        The single margin construction both allocation rules evaluate: the
+        bang-bang path calls it once per tech at the screened prices and the
+        start-of-year fleet; the margin-exhaustion walk re-calls it per
+        tranche at the repriced walk signal and the walk-grown fleet MW (the
+        AS-saturation and ELCC-saturation curves are the model's own
+        responses to added storage, so the walk evaluates them at its own
+        state — rule 21 [R-DOF]: existing response curves, no new
+        coefficient).
+        """
         revenue = estimate_storage_revenue(
-            prices,
+            price_arr,
             int(tech["duration_hr"]),
             _storage_rte(tech_name, config),
             degradation_cost_per_mwh=_degradation_cost_per_mwh(tech_name, config),
         )
         capacity_value = (
             estimate_capacity_value(
-                tech_name, existing_mw, config, iso, reserve_position, year=year
+                tech_name, fleet_mw, config, iso, reserve_position, year=year
             )
             * deliverability_factor
         )
@@ -1870,18 +1888,80 @@ def apply_storage_new_entry(
         # value stack above. Under the endogenous co-opt the AS duty is already
         # priced in dispatch, so the credit is DERIVED from that solve's reserve
         # duals (mutually exclusive with the exogenous rate, rule 19); otherwise
-        # it is the exogenous rate, saturating on the existing storage fleet so
-        # each year's marginal build sees the AS rate at the current penetration.
+        # it is the exogenous rate, saturating on the storage fleet so each
+        # marginal build sees the AS rate at the current penetration.
         if getattr(config, "ercot_storage_as_endogenous", False):
             as_revenue = float(endogenous_as_revenue_per_mw_yr or 0.0)
         else:
-            as_revenue = as_revenue_per_mw_yr("storage", existing_mw, config)
+            as_revenue = as_revenue_per_mw_yr("storage", fleet_mw, config)
         ref_key = "li_ion" if "li_ion" in tech_name else tech_name
         cum_gw = cumulative.get(ref_key) if cumulative else None
         cost = compute_storage_annual_cost(
             tech_name, year, config, cumulative_gw=cum_gw
         )
-        margin = revenue + capacity_value + as_revenue - cost
+        return revenue + capacity_value + as_revenue - cost
+
+    if entry_reprice is not None:
+        # ------------------------------------------------------------------
+        # D11-R margin-exhaustion walk (GATED entry_margin_exhaustion): the
+        # storage half of the L-1b closure, sharing ONE walk state with the
+        # thermal screen that ran before this call (rule 19 [R-ONE-MECH]) —
+        # its thermal tranches are already in the repriced signal this walk
+        # starts from. Tranches go to the best-margin tech under the SAME
+        # caps (annual budget, per-tech share cap, deployment ceiling via
+        # ``budget``); each tranche's shave + AS-share terms re-price the
+        # signal and grow the saturation state before the next margin is
+        # read. Stops when no tech's repriced margin clears zero or the
+        # budget binds. The final tranche may be partial so a cap binds
+        # exactly where the bang-bang split's would.
+        # ------------------------------------------------------------------
+        _prices0 = np.asarray(prices, dtype=float)
+        sig_walk = entry_reprice.signal(_prices0)
+        per_tech_cap = budget * STORAGE_TECH_BUILD_SHARE_CAP
+        remaining = budget
+        built: dict[str, float] = {}
+        order_first: list[str] = []
+        fleet_walk_mw = existing_mw
+        _max_steps = (
+            int(budget // ENTRY_EXHAUSTION_TRANCHE_MW) + 2 * len(STORAGE_TECHS) + 4
+        )
+        for _ in range(_max_steps):
+            if remaining <= 0.0:
+                break
+            best_tech: str | None = None
+            best_margin = 0.0
+            for tech_name, tech in STORAGE_TECHS.items():
+                room = min(per_tech_cap - built.get(tech_name, 0.0), remaining)
+                if room <= 0.0:
+                    continue
+                m = _stack_margin(tech_name, tech, sig_walk, fleet_walk_mw)
+                if m > best_margin:
+                    best_margin, best_tech = m, tech_name
+            if best_tech is None:
+                break
+            tech = STORAGE_TECHS[best_tech]
+            room = min(per_tech_cap - built.get(best_tech, 0.0), remaining)
+            tranche = min(ENTRY_EXHAUSTION_TRANCHE_MW, room)
+            built[best_tech] = built.get(best_tech, 0.0) + tranche
+            remaining -= tranche
+            fleet_walk_mw += tranche
+            if best_tech not in order_first:
+                order_first.append(best_tech)
+            entry_reprice.add_storage(
+                tranche, float(tech["duration_hr"]), _storage_rte(best_tech, config)
+            )
+            sig_walk = entry_reprice.signal(_prices0)
+        for seq, tech_name in enumerate(order_first):
+            fleet.extend(
+                _build_new_storage_units(
+                    iso_config, tech_name, config, built[tech_name], year, seq
+                )
+            )
+        return fleet
+
+    margins: list[tuple[float, str]] = []
+    for tech_name, tech in STORAGE_TECHS.items():
+        margin = _stack_margin(tech_name, tech, prices, existing_mw)
         if margin > 0.0:
             margins.append((margin, tech_name))
 
