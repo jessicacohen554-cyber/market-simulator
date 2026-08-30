@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-30-miso-190-control",
+  "label": "miso 190 control",
+  "date": "2026-08-30",
+  "shorthand": "miso-190-control",
+  "definition": "miso-190 CONTROL: byte-faithful keeper replay at HEAD (partial_plant_exit_carry default off)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-30-miso-190-control.js",
+  "bundle": "results/calibration/miso190_ppx_A"
+}

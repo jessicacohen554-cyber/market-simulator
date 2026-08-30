@@ -9065,3 +9065,53 @@ RHO_CLIP band, and the new §7.3 marginal-cost residue. No dashboard
 registration owed (no solve; the miso-156 precedent).
 
 Finding: `FINDING-miso189-illinois-scarce-gas-phase0-2026-08-30.md`.
+
+## miso-190 (2026-08-30) — the partial-plant mid-window exit charter executed and REJECTED on the PREREG's own S-1 kill: the census is real, but MISO's plant-binned LP discards per-unit retirements and the arm runs the dead units past their deaths; keeper UNCHANGED (`2026-08-30-miso-188-rvsscope`)
+
+**Charter:** the miso-190 handoff — ask A (zero-solve validation), ask B
+(the FINDING-miso188 §6.6 partial-plant exit repair, granted). **Ask A
+PASS:** `calibration_verdict.py` reproduces the keeper's determination
+exactly (NOT-YET on {C3a-2025 −12.3%} alone).
+
+**Phase-0** (zero-solve, committed before the PREREG): 59 leg-1
+partial-plant retiree units / 3,999 MW at unit grain + 31 leg-2
+snapshot-OS/SB units (Big Cajun 2-1 517 MW, Warrick-2 126 MW at ≥40 MW);
+oracle-kept measured gross **7.683 / 0.597 / 0.010 TWh** (2023/2024/2025);
+the charter's 5.93 reconciles exactly as named-set-minus-Karn (CAMPD
+unit-id mapping gap: EIA 1A/1B/2A/2B vs boilers 1/2); Warrick-2's 1.038
+TWh (2023) a new find. PREREG pushed + blob-verified BEFORE the mechanism
+(`PREREG-miso190-partial-plant-exit-carry-2026-08-30.md`); mechanism
+landed gated default-off (`partial_plant_exit_carry`: leg-1 membership
+widening + leg-2 status widening {OA}→{OA,OS,SB} + gated coal supply
+registry; default cache key verified unmoved; 17 unit tests).
+
+**The A/B** (both legs registered: `2026-08-30-miso-190-control` /
+`2026-08-30-miso-190-ppexit`): S-0 value-identical control (4th straight
+clean HEAD reproduction). The LOADER acted exactly as designed (59 units
+injected; armed oracle drops 51/1,708 MW incl. Dallman-3/Weston-2; leg-2
+re-carry year-scoped correctly, Warrick-2 2023-only). **But the frozen
+S-1 unit-grain witnesses found the LP is PLANT-BINNED
+(`COAL_MISO-West_p6090_*` tranches): per-unit retirements are discarded
+at `fleet_to_bins`, the surviving plants' COD entries carry no exit, and
+the injected units run past their real deaths** — Karn +1.99/+2.76 TWh
+and A B Brown +2.07/+2.97 TWh in 2024/2025 vs control (both plants' coal
+fully dead by late 2023); Sherco +2.58/+2.90; ~10 TWh/yr of measured-dead
+dispatch; S-2's +7.0 TWh 2023 rise poisoned by the same phantom. Charter
+kill 2 fires (coal C1 improves while the flag did not act as specified) —
+**REJECTED per the PREREG's own rule; cell U → R; keeper unchanged.** The
+owner's in-session posture directive ("structural integrity improves but
+gates regress may still be a keeper") was considered and does not reach
+this arm: the arm's fleet is LESS faithful than the control's.
+
+**Named successor (its own charter):** binning-aware unit-grain exit
+timing — (a) date-scoped exit-cohort bins per plant (the Grand Tower
+topology generalized), or (b) a monthly bin-capacity derate equal to the
+exited units' capacity from each exit month; witnessed at PLANT grain
+(unit ids do not exist in the LP). The census, sizing, oracle verdicts,
+coal supply registry and leg 2 carry over unchanged. Also disclosed: the
+first arm attempt was OOM-killed (container restart dropped the swapfile),
+relaunched clean; the S-1 exit-timing/oracle-drop witnesses as frozen
+were vacuous in a binned fleet (matched no rows) — the presence witnesses
+failed honestly and the plant-grain drill is the decisive evidence.
+
+Finding: `FINDING-miso190-partial-plant-exit-carry-2026-08-30.md`.
