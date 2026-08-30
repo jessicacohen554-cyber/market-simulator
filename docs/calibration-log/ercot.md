@@ -12649,4 +12649,93 @@ the forward-regime SCED conduct identification.
 push integrity per rule 27 (blob-verify on every ≥300-line pushed file,
 small packs off a fresh main base); no workflows, no CI solves.
 
-**Next shorthand: ercot-244** (ercot-199 remains unclaimed)
+## ercot-244 — 2026-08-30 — THE ERCOT-155 NAMED SUCCESSOR RE-OPENED UNDER OWNER CHARTER AND KILLED AT CENSUS (ZERO-SOLVE, precommitted): the rtolhsl-based energy-side online-capability ceiling — re-identified on the FORWARD keeper against the forward span's ledgered C3c — fires K-B (reach 3/36 and 3/31 missed hours = 8.3/9.7 %) and K-C on all three legs in BOTH scored years (ordinary binds 979/858 vs bar 150; away-binds over half), with K-A CLEAN and every V-0 anchor exact — the adjudication is structural: on a composition-correct keeper an AGGREGATE ceiling has nothing to grab at the events (the ercot-159 reach was that era's composition error), and the defect is per-unit commitment-state HEADROOM ACCESS, which no utilization cap expresses; the A/B license is NOT spent
+
+**Session scope.** The ercot-244 owner handoff chartered the §5.1 item-9
+successor — `energy_online_capability_cap`, an energy-side measured
+online-capability ceiling identified from `rtolhsl` — as Phase-0
+zero-solve identification with ONE forward-span A/B licensed only on a
+clean pass. The matrix cell stood at **R** (ercot-159, 2026-08-04: the
+2023-only SCED conditional envelope, rejected in-solve on 4 kills); the
+precommit (`docs/PRECOMMIT-ercot244-online-cap-phase0-2026-08-30.md`,
+pushed + blob-verified 52ab16e5 BEFORE any measurement) reconciled the
+re-open under `[R-MECH-MATRIX]` duty (a)'s new-evidence clause: the
+forward span was byte-inert in the ercot-159 arm (never tested), the
+object moved to the forward keeper's ledgered C3c (two-config ruling),
+ercot-241/242 adjudicated the dependence position/participation-carried,
+and the instrument differs (hourly measured rtolhsl vs the SCED
+envelope). The ercot-159 DO-NOT-REDO honoured — nothing re-ran the
+envelope or re-grained it; its over-fire signature became this lane's
+kill K-C.
+
+**Construction (fixed a priori, zero fitted scalars).** CAP(t) =
+rtolhsl(t) − Σ non-thermal EIA-930 net gen (everything but NG/COL/NUC —
+deliberately LOOSE-side: curtailment headroom, idle storage capability
+and the whole online quick-start HSL ride inside the ceiling, so every
+approximation biases toward inertness, never over-fire). Model point
+F(t) = P(CC_REGULAR + CC_CHP + ST_GAS + ST_CHP + COAL_PRB +
+COAL_LIGNITE + NUCLEAR) + held(RegUp + RRS + ECRS) from the committed
+`ercot234_eastex_identity` sidecars — the ercot-159 census formula on
+the current keeper. One implementation repair, construction unchanged:
+fast-product held MW sums over the time-DISJOINT `_withheld`/`_released`
+window families (the 2024-08-01 ECRS reform and RTC+B gates split a
+straddling year's product; the plain-name read would have missed 2025's
+un-split `ECRS`).
+
+**Census (probe `scripts/probes/ercot244_online_cap_phase0.py` →
+`results/calibration/ercot244_online_cap_phase0.json`).** V-0 exact:
+model tails 22/1, actual 53/31 to the hour; EIA-930 lag-0 (0.9996+);
+rtolhsl hod-17–21 means 58.873/62.641/67.806 GW = the card's figures to
+the hundredth. 2024: binds 985 — 979 ordinary (actual < $150), 3 of 36
+missed, 0 hit, away 528. 2025: binds 865 — 858 ordinary, 3 of 31
+missed, away 424 (648 RTC+B NaN hours excluded). 2023 report-only:
+1,818 binds, 1,804 ordinary, 6 of 115. Ordinary depths p50 1.3–1.7 GW,
+p90 3.9–4.5 GW — deep, not grazing. K-A clean (CAP ≤ 0 never; P_slow
+alone > CAP in 0/1 scored-year hours). Disclosed variants D-V1
+(credit-augmented) and D-V2 (no OTH/WAT) reproduce the same
+ordinary-dominated shape (reach ≤ 2–3 hours everywhere). D-V3: the
+armed credit-netted reserve cap holds p50 ~1.4 GW slack at the binding
+hours with p10 NEGATIVE — part of the would-be margin is already owned.
+
+**The structural finding
+(`docs/FINDING-ercot244-online-cap-phase0-2026-08-30.md`).** At 33/36
+and 28/31 missed hours the model sits UNDER the measured ceiling: a
+C1/C2/C3a-passing model's slow utilization tracks reality's slow
+generation, which respects reality's own online HSL by physics — so a
+utilization cap can only bind where composition deviates ABOVE the
+online total, which on this keeper is ~1,000 ORDINARY hours a year
+(the model leans slow-heavy + holds 5.8–6.4 GW fast AS on thermal
+where reality committed lean), not the events. The card's 15.3–17.5 GW
+phantom cushion is HEADROOM the LP can access at marginal cost, not
+utilization above online capability — an aggregate quantity ceiling
+cannot express it. The ercot-159 reach ($105 → $813 at the 2023 missed
+set) is thereby explained as that era's composition error (C3a
+−24.5 %), since repaired by other means: the mechanism family's
+apparent power was borrowed from a defect that no longer exists.
+DO-NOT-REDO: any aggregate-RHS ceiling variant on this object. Named
+successor (unowned, unchartered, an owner decision): per-unit/per-class
+commitment-state representation of slow-start reachability — the
+ercot-159 "commitment level in ordinary hours" object plus the
+ercot-241/242 participation residue, now backed by the standing §2.3
+measurement (model slow+held above the measured online total in ~11 %
+of forward-span hours, a-fortiori under a loose ceiling). OWNER FLAGS
+(not executed): the 2024/2025 all-resource SCED conduct corpus intake
+(PRECOMMIT-ercot242 §6) blocks any per-type forward-regime
+identification; the ordinary-hour composition measurement is recorded
+for a future charter. Matrix: evidence NOTE appended to the
+`energy_online_capability_cap` cell, verdict R unchanged (no mechanism
+tested — no arm, no solve). The forward span's ledgered C3c (22/53,
+1/31) stays the honest record at full magnitude.
+
+**Hygiene:** zero solves; the Phase-1 A/B license NOT spent; reads ⊂
+{2023, 2024, 2025}; no `--holdout-authorized`, freeze respected
+(rule 22); ERCOT only (rule 25); no run produced (rule 15 not
+triggered); zero fitted scalars; probe run under the keeper-pinned env
+(python 3.11.15 / pandas 3.0.5 / pyarrow 25.0.1) in a venv outside the
+project directory; push integrity per rule 27 (blob-verify on every
+≥300-line pushed file; the transient receive-pack HTTP 500s were
+retried per the Git & Pushing runbook and the precommit landed via the
+licensed `push_files` small-commit path, blob-verified byte-identical);
+no workflows, no CI solves.
+
+**Next shorthand: ercot-245** (ercot-199 remains unclaimed)
