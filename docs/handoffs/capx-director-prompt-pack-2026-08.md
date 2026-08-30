@@ -1,4 +1,4 @@
-# capx director — prompt pack (revised at refresh #9, 2026-08-30; first issued 2026-08-25)
+# capx director — prompt pack (revised at refresh #11, 2026-08-30; first issued 2026-08-25)
 
 Canonical text of the session prompts live on the capacity-expansion (Forecast Finalization)
 track. Ledger: `docs/handoffs/capx-director-ledger-2026-08.md`. Signatures:
@@ -8,21 +8,25 @@ RE-SCOPED to D11-R (the D-1 volume rule — ledger §0e.3), never run in its ori
 Revision at r#9: every prompt's freeze guardrail updated to the TIER-SCOPED state (owner card 6,
 executed 2026-08-30 — locked test frozen for every ISO; validation governed by the `complete`
 marker + --holdout-authorized; nothing a capx lane touches either way).
+Revision at r#11: **S-4V added** — S-4 landed its intake (PR #4312) but ended before its
+verification pair ran; the owed §5 (pair + FC-1 re-score + registration + finding TBDs + cell
+re-stamp + board refresh) is chartered as its own lane below.
 
 | lane | status | branch | model | profile | heavy slot? |
 |---|---|---|---|---|---|
-| **D10** NYISO T1-X crossover | reissued r#8 (corrected) — **still unstarted at r#10; highest-value light lane** | `claude/capx-d10-nyiso-t1x` | Fable | nyiso | no |
-| **D11-R** D-1 entry volume rule | **RUNNING since r#10** (owner-dispatched 2026-08-30) | `claude/capx-d11r-entry-volume-rule` | Fable | ercot | no (Phase 0 first; A/B is light) |
-| **S-123** MISO adequacy package | issued r#5, not started — **r#10 check FAILED again: miso-190 in flight; held on the start-time check** | `claude/capx-s123-miso-adequacy` | Fable | miso | only if it re-measures (MISO = no co-run) |
-| **S-4** NEISO hydro accreditation | **LANDED r#10** (PR #4312; factor 0.7352) — **T1-F verification pair + FC-1 re-score + forecast registration still owed**; historical prompt below | `claude/capx-s4-neiso-hydro-syqu7m` | Fable | neiso | no |
+| **D10** NYISO T1-X crossover | reissued r#8 (corrected) — **still unstarted at r#11; highest-value light lane** | `claude/capx-d10-nyiso-t1x` | Fable | nyiso | no |
+| **D11-R** D-1 entry volume rule | **RUNNING since r#10** (owner-dispatched 2026-08-30; nothing pushed at r#11) | `claude/capx-d11r-entry-volume-rule` | Fable | ercot | no (Phase 0 first; A/B is light) |
+| **S-123** MISO adequacy package | issued r#5, not started — **check FAILED at r#9/r#10/r#11: miso-190 in flight; held on the start-time check** | `claude/capx-s123-miso-adequacy` | Fable | miso | only if it re-measures (MISO = no co-run) |
+| **S-4** NEISO hydro accreditation | **LANDED r#10** (PR #4312; factor 0.7352) — historical prompt below; its owed verification is lane **S-4V** | `claude/capx-s4-neiso-hydro-syqu7m` | Fable | neiso | no |
+| **S-4V** NEISO verification | **NEW at r#11** — completes S-4's §5: pair, re-score, registration, finding TBDs, cell re-stamp, board refresh | `claude/capx-s4v-neiso-verification` | Fable | neiso | no (9.2 min/leg) |
 | **S-5** PJM requirement horizon-edge | issued r#5, not started — ready when a heavy slot frees | `claude/capx-s5-pjm-horizon-edge` | Fable | pjm | no (S-6 is the heavy one, strictly after) |
 
-**Suggested order (r#8, per the owner sitting 2026-08-30):** D10 + D11-R + S-4 now (all light —
-CAISO and ERCOT backcast branches are in flight and may hold the heavy slots; D11-R re-scope
-RATIFIED). S-5 next as a heavy slot frees. S-123 is HELD until r#9 by owner ruling. D12 is
-chartered only after D11-R reports (owner-ratified sequencing). Only S-123's optional re-measure
-and the later S-6 contend for the ≤2 heavy-solve cap, which is SHARED with the owner's
-concurrent backcast solves.
+**Suggested order (r#11):** S-4V + D10 now (both light; S-4V unblocks S-4b and possibly a
+second (a)+(b)-PASS ISO). S-5 as a heavy slot frees (its re-score self-gates; PJM quiet on the
+backcast side). S-123 held on its start-time check (miso-190 in flight). D12 is chartered only
+after D11-R reports (owner-ratified sequencing). Only S-123's optional re-measure and the later
+S-6 contend for the ≤2 heavy-solve cap, which is SHARED with the owner's concurrent backcast
+solves.
 
 ---
 
@@ -448,6 +452,113 @@ EXIT: docs/handoffs/FINDING-capx-s4-neiso-hydro-<date>.md — the sourced class 
 primary citation (or the explicit could-not-source verdict), the pre-declared direction statement,
 the re-scored I7 for 2026-2028, and a clear answer to whether NEISO's 2028 leg is now decidable.
 Report to the owner.
+```
+
+---
+
+## S-4V — NEISO verification (new at r#11; completes S-4's owed §5)
+
+```
+You are the S-4V NEISO VERIFICATION session of the capacity-expansion (Forecast Finalization)
+track, chartered by the capacity-expansion director (ledger:
+docs/handoffs/capx-director-ledger-2026-08.md, lane S-4V — the verification half S-4's charter
+owed).
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Fable (Opus or Fable, NEVER Sonnet, rule 27).
+BRANCH: claude/capx-s4v-neiso-verification — create FRESH off origin/main (git fetch origin
+main first) and rebase before pushing.
+
+WHY THIS EXISTS. S-4 landed 2026-08-30 (PR #4312):
+HYDRO_ACCREDITATION_CREDIT_BY_ISO["NEISO"] = 1_396.472 / 1_899.5 (= 0.7352) — ISO-NE's own
+per-resource August 2026 summer SCC aggregate over the 244-asset active conventional-hydro
+fleet, divided by the model's own accreditation basis; zero free parameters, direction
+pre-declared before computation. But the session ended before its verification pair ran:
+docs/handoffs/FINDING-capx-s4-neiso-hydro-2026-08-30.md §5 reads TBD, headline items 2/3 read
+TBD, §8's chartered question ("is NEISO's 2028 I7 leg now decidable?") is unanswered, and the
+forecast namespace is byte-unchanged since 2026-08-26 — the board still shows NEISO FC-1 FAIL
+on the generic 0.50 the shipped factor replaced. You complete S-4's §5. Read the S-4 finding
+in full first, plus the worked example for the whole flow:
+docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md §4 (re-score + honest decomposition)
+and its registration mechanics.
+
+PRE-DECLARED EXPECTATION — write it into the finding BEFORE running anything, then run (rules
+13/21; S-4's own §2 is the model case). From D2-B's committed arithmetic
+(FINDING-capx-d2b-i7-ledger-2026-08-25.md §4.3): the credited hydro term moves 949.75 →
+1,396.5 MW (+446.7 MW) against a 218 MW 2028 gap, so I7-2028 is expected to clear by
+≈ +229 MW ON THE D2-B LEDGER BASIS; 2026/2027 already passed and should stay passing. HEAD has
+moved since the FFR-3A-2 epoch, so decompose the measured delta honestly against this
+prediction — the NYISO extcap lane's demand-drift disclosure (−341.4 MW, its finding §4) is
+the pattern. If the measurement CONTRADICTS the expectation (2028 does not clear, or the hydro
+term's isolated delta is not ≈ +446.7 MW), that is the headline, reported at full magnitude —
+and the factor is NOT touched: it is sourced (rule 14), so a surprise is a discovered
+attribution question, never a reason to revert.
+
+TASK:
+1. CONTROL/TREATMENT PAIR at ONE HEAD, years sequential within each run:
+   - TREATMENT: scripts/run_full_horizon.py --iso NEISO --start-year 2026 --end-year 2030,
+     HEAD defaults (the shipped factor is in the default construction — no flag involved).
+   - CONTROL: identical invocation with the one NEISO registry entry locally reverted (remove
+     the "NEISO" key so resolve_hydro_capacity_credit falls back to the generic 0.50) — an
+     UNCOMMITTED diagnostic arm for attribution only, never a shippable configuration; label
+     it control everywhere and state in the finding exactly what the reversion was.
+   NEISO is light (T1-F recorded 9.2 min, not memory-bound) — but check
+   `git ls-remote --heads origin` for in-flight backcast branches and the ≤2-heavy concurrent
+   cap (rule 12) before launching; the cap is SHARED with the owner's backcast solves, which
+   start and land without notice.
+2. RE-SCORE FC-1 from the pair: the 2026/2027/2028 I7 rows at full magnitude in BOTH arms,
+   the hydro-term delta isolated (an evolution ledger's exits live in BOTH `retirements` and
+   `confirmed_derates` — sum both), FC-2/I12 re-read, and the determination the re-score
+   produces, whatever it is.
+3. REGISTER on the FORECAST namespace via scripts/register_forecast_run.py (rule 15; NEVER
+   the backcast registry), run_config.json COMMITTED for both bundles (FC-7):
+   - the TREATMENT as the live leg, verdict_key `neiso-t1f`, following the
+     preserve-then-overwrite convention exactly as the NYISO extcap lane did: first preserve
+     the current bare content under the epoch-suffixed key its provenance names (the NYISO
+     precedent used `-ffr3a2`), then write the re-score to the bare key. The `-ff2d` baseline
+     is untouched.
+   - the CONTROL as a labelled diagnostic leg under its own suffixed key (e.g.
+     `neiso-t1f-s4control`), so the pair is on the record.
+4. COMPLETE THE FINDING IN PLACE: fill §5, headline items 2/3, and §8 of
+   FINDING-capx-s4-neiso-hydro-2026-08-30.md with the measured results, as a dated
+   verification-session addendum naming this session — do not rewrite S-4's own record.
+5. BOARD REFRESH (D7-class records discipline, delegated by the director): update the NEISO
+   block of frontend/data/forecast/program-status.json to the measured post-verification
+   state — fc rows, blocking_rows, t1f_determination — citing the finding and the bare-key
+   verdict. Re-read NEISO's four §2.1b gate legs against the criteria rather than asserting
+   them; if leg (b) flips on the measured determination, say so plainly (NEISO would be the
+   program's second (a)+(b)-PASS ISO). Leg (d) is owner authorization — untouched. NO other
+   ISO's block is edited; if anything beyond NEISO's own measured state seems to need
+   editing, STOP and route it to the director instead.
+6. MECHANISM MATRIX (rule 28): re-stamp the existing `hydro_accreditation` row's NEISO cell
+   (O since FFR-1C) from this verification pair, per S-4's own §4 commitment — NEISO shard
+   ONLY (docs/codebase-site/data/mechanism-matrix/NEISO.js), evidence citation to the
+   finding. A registry constant is an input, not a mechanism — no new row, no other cell,
+   no other shard.
+
+OUT OF SCOPE: the ARA requirement re-vintage (≈ +380 MW, S-4 finding §6) is lane S-4b,
+chartered separately AFTER you land — do not adopt it here, even partially, and do not "pair"
+it with your re-score. The FCA-vintage NO-SWAP stands as S-4 closed it.
+
+GUARDRAILS: forecast-mode 2026+ runs are UNRESTRICTED. NO out-of-training backcast year
+solved, scored or registered — the spend freeze is TIER-SCOPED since 2026-08-26 (locked test
+2019/H1-2026 frozen for every ISO; validation 2020-2022 governed by the `complete` marker +
+--holdout-authorized alone — a lane of THIS track touches neither), `final` EMPTY (rule 22).
+No measured-outcome feedback (rule 13): the pair attributes a shipped input's effect —
+nothing is tuned to a residual, and no value is reverse-engineered to clear an invariant
+(rule 21). NEISO's backcast lane is CALIBRATED and holds a `complete` marker — touch NO
+backcast keeper shard, status/*.js, calibration-complete.json, offer curve or commitment
+bridge. No new GitHub Actions workflows, no CI offloading (private repo, billed minutes).
+Push per CLAUDE.md Git & Pushing (run payloads over git push; on HTTP 408 set
+`git config http.version HTTP/1.1` and retry before concluding anything about pack size);
+blob-verify any >=300-line file after push (rule 27) — program-status.json and the finding
+both qualify.
+
+EXIT: the completed finding (§5/§8 and headline TBDs filled), both legs registered with
+run_config.json committed, the refreshed NEISO board block, the re-stamped NEISO matrix
+cell, and a plain statement of (a) whether NEISO's 2028 I7 leg is now decidable and what it
+reads, (b) what NEISO's §2.1b gate reads after this lands, and (c) that S-4b is now
+charterable. Report to the owner.
 ```
 
 ---

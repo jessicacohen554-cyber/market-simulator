@@ -6,11 +6,54 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #10) ·
-**HEAD at refresh:** `9f73357` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting** (§3)
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #11) ·
+**HEAD at refresh:** `9405aad` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (supersedes the 2026-08-26 handoff)
 
 ---
+
+## 0h. Refresh #11 (2026-08-30, HEAD `9405aad`) — S-4's verification pair still owed → S-4V chartered; nyiso-157's Iroquois companion honestly REJECTED; ercot-239 opens
+
+**1. THE FORECAST NAMESPACE IS BYTE-UNCHANGED since D7 (`ca8b749`, 2026-08-26)** — S-4's T1-F
+verification pair, FC-1 re-score, leg registration and board refresh did NOT land in the merge
+window; the board still shows NEISO FC-1 FAIL on the generic 0.50 the shipped 0.7352 replaced.
+**S-4V is chartered this refresh** (the batch's one new lane): control/treatment pair at one
+HEAD, FC-1 re-score, forecast-namespace registration (preserve-then-overwrite on the bare
+`neiso-t1f` key), completion of the S-4 finding's §5/§8 TBDs in place, the NEISO
+`hydro_accreditation` matrix-cell re-stamp S-4's §4 committed to, and the NEISO board block
+refresh under D7-class records discipline (delegated to the lane). Expected effect,
+pre-declared in the prompt from D2-B's committed arithmetic: hydro term 949.75 → 1,396.5 MW
+(+446.7) against the 218 MW 2028 gap ⇒ 2028 clears by ≈ +229 MW on the D2-B basis; a
+contradiction reports at full magnitude and never touches the sourced factor (rule 14).
+If leg (b) flips on the measured determination, NEISO becomes the SECOND ISO with (a)+(b)
+both PASS — its leg (c) then awaits a NEISO T1-X (a future D10 analog). S-4b stays queued
+until S-4V lands.
+
+**2. D11-R: still running, still nothing pushed** (no `capx-d11r` branch at `9405aad`;
+owner-dispatched at r#10). D12 stays queued behind its report per the ratified sequencing.
+D10 and S-5 remain unstarted — re-presented this refresh (D10 is still the highest-value
+light lane).
+
+**3. BACKCAST MOVEMENT (three commits since r#10):** nyiso-157 attested C6 on both Leg-1 A/B
+bundles (`4d356f8`) and then solved the Iroquois companion arm — **REJECTED on its own
+pre-filed W-gates** and registered anyway (`2026-08-30-nyiso-157-iroquois-companion`,
+PR #4318; `2026-08-20-nyiso-147a-chp-btm` pruned for top-15 retention). The
+prereg-before-solve discipline working exactly as designed: the companion was refuted by
+gates frozen before the solve, and the Leg-1 PAR-attribution arm stands on its own A/B
+(promotion decision still the backcast track's; branch open). **ercot-239 opened** (PR
+#4320): PRECOMMIT-only Phase-0 driver characterization of the 14-hour missed-event family
+(2023 carve-out lane object — model < $200 while actual ≥ $500; stated prior:
+availability/outage/net-load-ramp representation, not offer curve; zero-solve, precommit
+pushed before measurement). caiso-221's records commit sits on its branch unmerged;
+miso-190's branch is open.
+
+**4. S-123 START-TIME CHECK: FAILS a third time** (miso-190 in flight at `9405aad`). Held on
+the check, re-run next refresh — no owner action needed.
+
+**5. STATE VERIFIED UNCHANGED:** all six keepers as the r#10 watch table (ERCOT two-config
+234+236, MISO miso-188-rvsscope, CAISO caiso-220, NEISO neiso-99, NYISO nyiso-155,
+PJM pjm-162); `complete` = {NEISO, NYISO, PJM}, `final` EMPTY; freeze tier-scoped to locked
+test. Bare verdicts: nyiso-t1f PROMOTE-WITH-CAVEATS, all others HOLD.
 
 ## 0g. Refresh #10 (2026-08-30, HEAD `9f73357`) — S-4 LANDED (factor 0.7352, verification pair pending); D11-R RUNNING; ERCOT becomes a two-config keeper
 
@@ -376,12 +419,13 @@ the gap.
 | **D2-NYISO-INTAKE** | Gold Book external capacity | **LANDED — I7 CLEARED** `3786191` | `capx-d2-nyiso-extcap-sewmyx` | Fable | §0.1. First FC-1 PASS in the program. |
 | **D2-B I7 LEDGER DECOMPOSITION** | Reproduce/decompose MISO, CAISO, NEISO, PJM | **LANDED** `5dda152` | `capx-d2b-i7-ledger-xaakeu` | Fable | §0.3. Six successor lanes named (S-1..S-6). |
 | **D7-NYISO GATE RE-SCORE** | Refresh the board to the extcap re-score; re-read NYISO's four legs; **apply the card-A leg-(c) harmonisation** (CAISO + NYISO `na`→`fail`, `"c"` into both `closed_on`) | **LANDED** `ca8b749` (PR #4289) | `claude/capx-d7-nyiso-gate` | Opus | §0d.1. Board re-scored, no gate moved, Q5 tension recorded verbatim. |
-| **D10 NYISO T1-X CROSSOVER** | Run NYISO's T1-X so gate leg (c) closes on a measured FC-4 | **REISSUED r#8** (pack corrected for the nyiso-155 keeper state) | `claude/capx-d10-nyiso-t1x` | Fable | The signature's own consequence: the lead ISO's blocker becomes a run rather than an ambiguity. |
-| **D11-R ENTRY VOLUME RULE (D-1)** | Productionize the L-1b margin-exhaustion closure — the measured zero-DOF volume rule — behind a default-OFF field; A/B on ERCOT T1-F | **RUNNING since r#10** (owner-dispatched 2026-08-30; ratified at the r#8 sitting) | `claude/capx-d11r-entry-volume-rule` | Fable | §0e.3/§0e.5/§0g.2. Trajectory invariance (fwd-expectation §3) + the finding's own §7(b) recommendation. Pro-forma build held in abeyance; B-C object charter intact. |
+| **D10 NYISO T1-X CROSSOVER** | Run NYISO's T1-X so gate leg (c) closes on a measured FC-4 | **REISSUED r#8; still unstarted at r#11** (re-presented every refresh — highest-value light lane) | `claude/capx-d10-nyiso-t1x` | Fable | The signature's own consequence: the lead ISO's blocker becomes a run rather than an ambiguity. |
+| **D11-R ENTRY VOLUME RULE (D-1)** | Productionize the L-1b margin-exhaustion closure — the measured zero-DOF volume rule — behind a default-OFF field; A/B on ERCOT T1-F | **RUNNING since r#10** (owner-dispatched 2026-08-30; nothing pushed at r#11) | `claude/capx-d11r-entry-volume-rule` | Fable | §0e.3/§0e.5/§0g.2. Trajectory invariance (fwd-expectation §3) + the finding's own §7(b) recommendation. Pro-forma build held in abeyance; B-C object charter intact. |
 | **D12 SCARCITY-CONSISTENT DELTA BASIS** | The fwd-expectation §4 named successor: both `S` evaluations on one scarcity basis, exact arithmetic on existing objects | QUEUED — **owner-ratified sequencing (r#8 sitting): charter only after D11-R reports** | — | Fable | §7 escalation RESOLVED: (b) first, (a) behind it. The two-scarcity-objects defect (composed entering-2024 mean −$48.22/MWh, solar capture −$185/MWh) is its evidence. |
-| **S-123 MISO ADEQUACY PACKAGE** | S-1 requirement re-vintage + S-2 external-capacity intake + S-3 ledger differencing | **ISSUED 2026-08-25 — r#9 start-time check FAILED (miso-190 in flight); held on the check, re-run every refresh** | `claude/capx-s123-miso-adequacy` | Fable | D2-B's own top recommendation: three independent published-source terms, none sized against the residual. Rides with **D9** (SOCO forecast fallback). The owner's r#8 hold-until-r#9 is discharged; the check itself now governs. |
-| **S-4 NEISO HYDRO ACCREDITATION** | Per-resource ISO-NE SCC → class factor, replacing the generic 0.50 | **LANDED** PR #4312 — **verification pair PENDING** (§0g.1) | `claude/capx-s4-neiso-hydro-syqu7m` | Fable | Factor 0.7352 sourced, above the pre-declared 0.62 clearing threshold. FC-1 re-score + leg registration + board refresh still owed. |
-| **S-4b NEISO REQUIREMENT RE-VINTAGE** | Adopt the published Nov 21 2025 ARA filing pair (≈ +380 MW of requirement — bigger than the old 218 MW gap) | QUEUED — charter once S-4's verification pair lands | — | Fable | Surfaced by S-4's finding §0.4; rule 23 (on publication, not on a residual). |
+| **S-123 MISO ADEQUACY PACKAGE** | S-1 requirement re-vintage + S-2 external-capacity intake + S-3 ledger differencing | **ISSUED 2026-08-25 — start-time check FAILED at r#9, r#10 AND r#11 (miso-190 in flight); held on the check, re-run every refresh** | `claude/capx-s123-miso-adequacy` | Fable | D2-B's own top recommendation: three independent published-source terms, none sized against the residual. Rides with **D9** (SOCO forecast fallback). The owner's r#8 hold-until-r#9 is discharged; the check itself now governs. |
+| **S-4 NEISO HYDRO ACCREDITATION** | Per-resource ISO-NE SCC → class factor, replacing the generic 0.50 | **LANDED** PR #4312 — verification half chartered as **S-4V** (r#11) | `claude/capx-s4-neiso-hydro-syqu7m` | Fable | Factor 0.7352 sourced, above the pre-declared 0.62 clearing threshold. Finding §5/§8 TBDs are S-4V's to fill. |
+| **S-4V NEISO VERIFICATION** | Complete S-4's owed §5: control/treatment T1-F pair at one HEAD, FC-1 re-score, forecast registration (preserve-then-overwrite on bare `neiso-t1f`), finding TBDs, NEISO `hydro_accreditation` cell re-stamp, NEISO board block refresh | **ISSUED r#11** | `claude/capx-s4v-neiso-verification` | Fable | Pre-declared: 2028 clears by ≈ +229 MW on the D2-B basis (+446.7 MW hydro term vs 218 MW gap); a contradiction reports at full magnitude, factor untouched (rule 14). |
+| **S-4b NEISO REQUIREMENT RE-VINTAGE** | Adopt the published Nov 21 2025 ARA filing pair (≈ +380 MW of requirement — bigger than the old 218 MW gap) | QUEUED — charter once S-4V lands | — | Fable | Surfaced by S-4's finding §0.4; rule 23 (on publication, not on a residual). Blocked in S-4 on the missing ARA-cycle DR companion (finding §6.3) — S-4b's first job is locating one. |
 | **S-5 PJM REQUIREMENT HORIZON-EDGE** | Implement hold-last-FPR + the D-1 checker repair; re-score PJM's T1-F leg | **UNBLOCKED by card C (C-A), 2026-08-25 — charter next** | — | Fable | Convention is now declared, so this is implementation + a scorer/governance round, not a decision. Expect PJM's I7 miss to restate 366 MW → ~5.9 GW with 2029 plausibly joining. |
 | **S-6 PJM T1-F LEDGER RUN** | The minimum run that makes PJM's supply side observable | QUEUED — **strictly after S-5** | — | Fable | Solo heavy slot (8.8 GB, no co-run). Running it before S-5 would measure against a bar we already know is wrong. |
 | **D5 FC-4 CO2 CROSSOVER** | Attribute the crossover CO2 miss | **RE-SCOPED, still not started** | `claude/capx-d5-crossover-co2` | Fable | **Its PJM-first rationale is refuted** (§0.3): PJM is no longer closest. Re-point to the ISO whose gate is actually live, or run it as a three-ISO derivation question (ERCOT 43–50 %, PJM 43–58 %, MISO 63–76 %). |
@@ -392,10 +436,13 @@ the gap.
 | **D9 MISO SOCO FORECAST FALLBACK** | `ba_code="SOCO"` live only in the forecast path | QUEUED — **rides with S-123** | — | Fable | Handed in by miso-183. |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
-## 2. Backcast-track watch (last seen 2026-08-30 @ `9f73357`, refresh #10)
+## 2. Backcast-track watch (last seen 2026-08-30 @ `9405aad`, refresh #11)
 
 | item | state |
 |---|---|
+| NYISO (r#11) | nyiso-157: C6 attested on both Leg-1 A/B bundles (`4d356f8`); **Iroquois companion arm REJECTED on its own pre-filed W-gates**, registered `2026-08-30-nyiso-157-iroquois-companion` (PR #4318; nyiso-147a-chp-btm pruned, top-15). Leg-1 PAR-attribution arm stands; promotion decision the backcast track's; branch open. |
+| ERCOT (r#11) | **ercot-239 opened** (PR #4320): PRECOMMIT-only Phase-0 driver characterization of the 14-hour missed-event family (2023 carve-out lane; model < $200 while actual ≥ $500; stated prior: availability/outage/net-load-ramp representation object). Zero-solve; precommit pushed before measurement. Branch open. |
+| Branches in flight (r#11) | `caiso-south-belly-pricing-24uv07` (records commit unmerged) · `ercot-239-residual-queue-lbkvbf` · `miso-190-backcast-calibration-okt1cn` · `nyiso-eastern-seam-par-leg1-w7s8mm`. **S-123 check FAILS on the MISO one — third consecutive refresh.** |
 | ERCOT (r#10) | **TWO-CONFIG KEEPER** (owner ruling 3, 2026-08-26, executed `db8836a5`): forward keeper **`2026-08-25-234-eastex-identity`** (2024–2025 designated span, CALIBRATED, C3c ledgered ×2 — "the configuration the MODEL USES GOING FORWARD, forecast lane included") + 2023 carve-out `236-swcap-clip-k33`. Registered 3-year NOT-YET (C3a/C3b-2023) stands published. Q6 terrain moved by owner act; Q6 stays RULED-HOLD (§0g.3). |
 | NYISO (r#10) | **nyiso-157 Leg-1 A/B registered** (control + arm, 2023–2025): PAR attribution restores the downstate gradient (NYC−UW 2023 annual mean $0.59 → $10.00, measured ≈ $14.8; C3a-2023 +6.8 → +1.0 %); Iroquois companion prereg filed BEFORE its solve; lane continues, branch open. |
 | MISO / CAISO (r#10) | miso-190 mechanism landed (`partial_plant_exit_carry`, gated default-off; A/B scorer committed before running; branch open). caiso-221 killed the south-belly surplus-pricing design object with measurement (branch open). Card 10: decision-1 warm-start flip CLOSED-OVERTAKEN. |
@@ -501,6 +548,7 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-08-30 | **D10 NYISO T1-X (reissued)** | `claude/capx-d10-nyiso-t1x` | Fable | nyiso | r#8 batch — pack corrected for nyiso-155 keeper state; **still unstarted at r#10** |
 | 2026-08-30 | **D11-R ENTRY VOLUME RULE** | `claude/capx-d11r-entry-volume-rule` | Fable | ercot | r#8 batch — re-scoped per §0e.3; **RUNNING since r#10** |
 | 2026-08-30 | **S-4 NEISO HYDRO (reissued)** | `claude/capx-s4-neiso-hydro` | Fable | neiso | r#8 batch — **LANDED at r#10** (PR #4312, verification pair pending) |
+| 2026-08-30 | **S-4V NEISO VERIFICATION** | `claude/capx-s4v-neiso-verification` | Fable | neiso | r#11 batch — new charter (S-4's owed verification half); D10 + S-5 re-presented unchanged alongside it |
 
 ## 5. History (compacted)
 
