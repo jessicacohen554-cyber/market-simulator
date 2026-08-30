@@ -119,7 +119,8 @@ recorded in-session before launching the T1-F leg.
 **Run:** `run_full_horizon.py --iso NYISO --start-year 2026 --end-year 2030`
 (HEAD defaults — the NYISO T1-F posture, plain like FFR-3A-2's NYISO leg), on a
 freshly regenerated `data/clean` (50/51 datatypes; the one failure is
-`miso-m2m-flowgates`, a MISO-only mirror absent on disk, irrelevant here).
+`miso-m2m-flowgates`, a MISO-only mirror absent on disk, irrelevant here —
+*mirrors tracked in-repo since 2026-08-30, 51/51 on a fully-hydrated tree*).
 Solved 5/5 years, wall 13.1 min, peak RSS 2.82 GB, cache key
 `fdd84d51e31ffc82`, scored at sha `ea4e4faf65de`.
 

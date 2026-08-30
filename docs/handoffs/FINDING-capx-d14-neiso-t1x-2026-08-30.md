@@ -102,7 +102,9 @@ Two environment notes for successors, neither a defect of this leg:
 
 - The container ships no Python env (`uv sync` first — FFR-3A-2 §0.2) and no `data/clean`
   (`scripts/regenerate_clean.py`, ~50 min here; the only failure was `miso-m2m-flowgates`, whose
-  raw is outside the `neiso` hydration profile — irrelevant).
+  raw is outside the `neiso` hydration profile — irrelevant). *(That failure had a second cause,
+  now gone: the mirrors were absent from git entirely; tracked since 2026-08-30 —
+  `miso-m2m-flowgates-raw-mirror-2026-08.md` — so a fully-hydrated tree regenerates 51/51.)*
 - The runner logs `NEISO zonal load file not found (data/raw/zone-specific-demand/NEISO/
   NEISO_load_hourly_2025.csv); skipping`. This is a property of the repository, not the session:
   the clone is FULL (hydration reported every blob local) and **no `NEISO/` subtree exists under
