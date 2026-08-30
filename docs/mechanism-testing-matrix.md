@@ -9499,6 +9499,25 @@ object**: no admissible lever exists until new data does — the live decision
 (intake authorization vs standing NOT-YET) is the owner's, on the card.
 Evidence: `results/calibration/_nyiso156_offer_level_phase0.json`,
 `PRECOMMIT-nyiso156-offer-level-phase0-2026-08-25.md`.
+**RULED 2026-08-30 (nyiso-156b): Q1 = OPTION A — the winter identification
+intake is AUTHORIZED** (spec:
+`docs/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`). Two legs:
+**Leg 1**, the nyiso-126 eastern-seam PAR attribution — its owner gate is
+LIFTED and the lane is session-executable under the STANDING
+`PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md` (intake: MIS P-34
+`ParFlows` 2023–2025, public; K6 re-specified onto the current keeper with
+the original reported; P3 stands: the seam alone is NOT predicted to close
+C3a-2025; if it passes and lets the west→east cutset bind,
+`nyiso_iroquois_winter_spread` (R) re-opens on its recorded companion
+condition); **Leg 2**, the MyNYISO as-enforced AORR access — OWNER-EXECUTABLE
+ONLY, then the nyiso-97 §4 content test decides identifiability, fail-closed.
+**Record correction carried with the ruling:** the "seam half UNIDENTIFIABLE
+… nyiso-125's rule-20 refusal, standing" line above (and in the nyiso-156
+card §3) was STALE when written — nyiso-126 discharged that refusal on
+identification the same day and the lane was authorization-blocked, not
+identification-blocked; originals preserved unedited. The "DO NOT open a
+lane against this object" bar above now reads with this ruling's carve-out:
+the two authorized legs, under their stated gates, are the lane.
 
 **FRONTIER STATUS 2026-08-22 (nyiso-150) — STILL NOT-YET; the queue is shorter
 and sharper. KEEPER UNCHANGED (`2026-08-22-nyiso-149-duty-curve`, CALIBRATED,

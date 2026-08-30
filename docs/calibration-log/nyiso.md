@@ -7998,3 +7998,45 @@ scalars; hydro input pair untouched (rule 14; volume statistics quoted
 nowhere).
 
 Next shorthand: nyiso-157.
+
+---
+
+## 2026-08-30 — nyiso-156b: Q1 RULED — OPTION A, the winter identification intake AUTHORIZED; spec filed; the seam leg's stale "unidentifiable" record corrected
+
+**NO SOLVE.** Owner ruling on the nyiso-156 card's Q1, delivered in-session
+on the §5 options as presented: **"A: Authorize winter intake"** (option text
+named both sources — the MyNYISO as-enforced AORR access AND "a source
+splitting the Capital_Hudson seam leg"). Executed as
+`docs/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`, two legs:
+
+* **Leg 1 (SESSION-EXECUTABLE — the nyiso-126 owner gate is LIFTED):** the
+  eastern-seam PAR attribution under the STANDING
+  `PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md` (published NY-NJ
+  PAR shares 47/21/32, zero free parameters; new NYC AC border path). Intake:
+  NYISO MIS P-34 `ParFlows` 2023–2025 (~87 MB, public, verified fetchable)
+  under the data contract. K6 baseline re-specified onto the CURRENT keeper
+  with the original reported alongside (nyiso-115/117/119 discipline); P3
+  honesty stands — the seam alone is NOT predicted to close C3a-2025. If the
+  arm passes AND lets the west→east cutset bind, `nyiso_iroquois_winter_spread`
+  (R) becomes re-testable on its recorded companion condition — new evidence,
+  DO-NOT-REDO satisfied.
+* **Leg 2 (OWNER-EXECUTABLE ONLY):** MyNYISO → Reports & Info → the
+  current-vintage as-enforced AORR (successors of Table B.4 LRR 1–3, ARR
+  37/66/28). On receipt the nyiso-97 §4 content test re-runs against the
+  current vintage — PASS yields a commitment-bridge-class prereg; FAIL closes
+  the leg with cause exactly as nyiso-97 closed. No parameter is ever backed
+  out of the residual to fill a qualitative row.
+
+**Record correction (spec §0, card banner, same commit):** nyiso-150 §4's
+"seam half UNIDENTIFIABLE from public data — nyiso-125's rule-20 refusal,
+standing", inherited by the nyiso-156 card §3, was STALE when written: the
+refusal was discharged on identification the same day (nyiso-126, log
+2026-08-04: "it is discharged on identification"); the lane was
+authorization-blocked, not identification-blocked. Originals preserved
+unedited; no measurement or verdict changes.
+
+Q2 remains dissolved. Keeper UNCHANGED (`2026-08-25-nyiso-155-hydro-repair`,
+NOT-YET); no determination touched; no cell verdict moves (nothing tested);
+freeze ACTIVE, untouched; zero fitted scalars.
+
+Next shorthand: nyiso-157 (the Leg-1 executor).
