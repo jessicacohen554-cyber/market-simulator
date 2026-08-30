@@ -1105,10 +1105,13 @@ measured on every registered run) but its keeper reference is stale.
    bullet; `rule-history.md` §4; `docs/FINDING-holdout-governance-2026-08-26.md`.
 5. **🟠 O7 — ERCOT P0 bit-identity proof forfeited** (accept-and-document, or
    charter restoration). Unmoved two cycles.
-6. **🟠 decision-1 ack** — warm-start closed-overtaken; **still unacked, now
-   EIGHTEEN cycles**. A one-word ack retires it. It is the longest-standing item
-   on the board and the cheapest, and it has now outlasted every other item that
-   was open when it was raised.
+6. **🟢 decision-1 ack — ACKNOWLEDGED BY THE OWNER 2026-08-26 (card 10);
+   RETIRED from the queue after twenty-one cycles.** The warm-start flip stands
+   CLOSED — OVERTAKEN BY EVENTS exactly as the G1 declaration recorded it (D-9
+   flipped, D-10 disarmed, no flip ships); the ack is a records line only — no
+   code, no config, no determination. Queue removals executed at plan §6 item 1
+   + §8 ledger and the PERF-A memo header. Record:
+   `docs/FINDING-holdout-governance-2026-08-26.md`.
 7. **🔴 NEW AND UNSIGNED FOR FOUR DAYS — the ercot-225 G-SPUR BAND-TOP GATE
    CARD** (`results/calibration/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`),
    **Option A recommended**, drafted 2026-08-21, **no RESOLUTION block recorded

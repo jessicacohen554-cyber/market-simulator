@@ -484,6 +484,14 @@ main before dispatch.
 
 1. `forecast_xyear_warmstart` default flip — **DEFERRED to G1**: no pre-authorization;
    PERF-A runs now and the owner decides on its memo's bundle-diff evidence.
+   **CLOSED — OVERTAKEN BY EVENTS, ACKNOWLEDGED BY THE OWNER 2026-08-26**
+   (program-director sitting, card 10, after twenty-one director cycles
+   outstanding): the decision was made at K.3 — D-9 flipped the default, D-10
+   disarmed the forecast lane, no flip ships — per the PERF-A memo
+   (`docs/handoffs/perf-a-warmstart-decision-memo-2026-08.md`), whose §3
+   option (A) the G1 declaration recorded on 2026-08-16 with "owner ack
+   requested". The ack is now on record; the item leaves the queue. Records
+   line only — no code, no config, no determination.
 2. D-5 `patches/pjm-m1-code.patch` — **SIGNED: apply path pre-authorized.** If
    DEBUG-A confirms the defect still exists on main, the fix is chartered (DEBUG-B if
    solve-affecting — full-span PJM re-solve + registration) without another
@@ -3388,3 +3396,18 @@ your branch when done.
     byte-identity, not by inspection.** **No `src/`, no keeper shard, no holdout
     file, no backcast registry file, no `.github/workflows/` file and no ISO
     mechanism-matrix shard was touched by this lane.**
+- 2026-08-26 — **decision-1 ACKNOWLEDGED CLOSED-OVERTAKEN by the owner and
+  dropped from the queue** (program-director sitting, card 10; executed by the
+  holdout-governance records lane). The warm-start default flip (§6 decision 1)
+  was adjudicated at K.3 — D-9 flipped the default ON, D-10 disarmed the
+  forecast lane through `shipped_forecast_xyear_warmstart()`, no flip ships —
+  and the G1 declaration (2026-08-16) recorded it CLOSED — OVERTAKEN BY EVENTS
+  with "owner ack requested". The ack arrived after **twenty-one director
+  cycles**; this entry retires it everywhere the queue is enumerated (§6 item 1
+  annotated, director-board item 6 retired, the PERF-A memo's STATUS header
+  updated). **A records line only — no code, no config, no determination
+  changed.** The same sitting's cards 6 and 7 (validation-tier freeze lift with
+  the layup charter closed with cause; the standing locked-test scheduling
+  precondition) are recorded in `docs/governance/rule-history.md` §4 and
+  `docs/FINDING-holdout-governance-2026-08-26.md`, which is also this entry's
+  execution record.
