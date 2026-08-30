@@ -148,3 +148,19 @@ Any deviation from §1–§2's constructions discovered mid-round (a V-0
 membership mismatch, a source column absent, a join that cannot be made)
 is recorded as an Amendment to this precommit BEFORE any further
 measurement, pushed, and the FINDING cites it — never silently absorbed.
+
+## Amendment 1 (2026-08-30, recorded before any characterization ran) —
+## the V-0 cross-check's cited artifact does not carry the corner hour's list
+
+§1 declared V-0 "list-identical to the committed
+`results/calibration/ercot237_bandswap_phase0.json` cell-hour lists". On
+first run the probe hard-stopped on a KeyError: that JSON carries hour
+lists only for off-diagonal cells touching `[200,500)` or `[500,1000)`
+(the ercot-237 precommit's own recording rule), so the `lt_200|ge_1000`
+cell (h4578) has a recorded COUNT (1, in `joint_band_matrix`) but no hour
+list. No measurement had run; the recomputed population itself matched
+the declared 14-hour expectation exactly. **Amended V-0 construction:**
+list-identity is checked against the committed `lt_200|500_1000` cell
+list (13 h) plus the `lt_200|ge_1000` COUNT == 1, with h4578's identity
+carried by the FINDING-ercot237 §3 naming and by the recomputed
+population equality (both already asserted). No other change to §1–§3.
