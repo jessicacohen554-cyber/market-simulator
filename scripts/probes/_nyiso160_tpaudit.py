@@ -24,7 +24,16 @@ Checks, all on committed-format artifacts (the nyiso-155/157/159 readers):
 * **A3 recipe identity** — the recorded config surface (scenario block merged
   over flat meta keys, the nyiso-155 template) diffed key-by-key; volatile
   provenance keys (timestamp, note, git shas, environment) excluded.  A
-  zero-delta replay must show ZERO differing levers.
+  zero-delta replay must show ZERO differing levers.  One diff class is
+  adjudicated rather than failed, fail-closed: a key ABSENT from the
+  keeper's recorded surface whose replay value equals the field's
+  REGISTERED ``ScenarioConfig`` default (read from the live class, never
+  hardcoded here) is **schema growth** — the recorded surface widened when
+  a later session registered a new default-off field (rule 24 makes every
+  new tunable appear in the recording), not a lever moved on this recipe.
+  Schema-growth keys are reported by name; any other mismatch (value vs
+  value, or a replay value differing from the registered default) is
+  recipe drift and fails the leg.
 
 Output: ``results/calibration/_nyiso160_tpaudit.json``.
 """
@@ -130,15 +139,48 @@ def _config_block(bundle: Path) -> dict:
     return block
 
 
+def _scenario_default(key: str):
+    """Registered ScenarioConfig default for one field (sentinel if absent)."""
+    import dataclasses
+
+    from market_sim.config.scenarios import ScenarioConfig
+
+    for field in dataclasses.fields(ScenarioConfig):
+        if field.name == key:
+            if field.default is not dataclasses.MISSING:
+                return field.default
+            if field.default_factory is not dataclasses.MISSING:  # type: ignore[misc]
+                return field.default_factory()  # type: ignore[misc]
+            return _NO_DEFAULT
+    return _NO_DEFAULT
+
+
+_NO_DEFAULT = object()
+
+
 def _recipe_diff() -> dict:
-    """Key-by-key diff of the recorded config surfaces."""
+    """Key-by-key diff of the recorded config surfaces.
+
+    A key absent from the keeper's surface whose replay value equals the
+    field's registered ScenarioConfig default is classified schema growth
+    (see module docstring); everything else differing is recipe drift.
+    """
     a, b = _config_block(KEEPER), _config_block(REPLAY)
-    differing = {
-        k: {"keeper": a.get(k), "replay": b.get(k)}
-        for k in sorted(set(a) | set(b))
-        if a.get(k) != b.get(k)
+    drift: dict = {}
+    schema_growth: dict = {}
+    for k in sorted(set(a) | set(b)):
+        if a.get(k) == b.get(k):
+            continue
+        if k not in a and k in b and b[k] == _scenario_default(k):
+            schema_growth[k] = {"replay_recorded_default": b[k]}
+        else:
+            drift[k] = {"keeper": a.get(k), "replay": b.get(k)}
+    return {
+        "n_differing_levers": len(drift),
+        "differing_levers": drift,
+        "n_schema_growth_keys": len(schema_growth),
+        "schema_growth_keys": schema_growth,
     }
-    return {"n_differing_keys": len(differing), "differing_keys": differing}
 
 
 def main() -> int:
@@ -177,7 +219,7 @@ def main() -> int:
             a2_pass = False
 
     a3 = _recipe_diff()
-    a3_pass = a3["n_differing_keys"] == 0
+    a3_pass = a3["n_differing_levers"] == 0
 
     record = {
         "probe": "nyiso-160 touchpoint-prep audit (HEAD replay identity)",

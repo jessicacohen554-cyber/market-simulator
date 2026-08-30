@@ -1,0 +1,155 @@
+{
+ "probe": "nyiso-160 touchpoint-prep audit (HEAD replay identity)",
+ "keeper": "2026-08-30-nyiso-159-loss-surface",
+ "keeper_bundle": "results/calibration/nyiso159_lossarm_B",
+ "replay_bundle": "results/calibration/nyiso160_tpaudit_replay",
+ "leg2_status": "STOPPED WITH CAUSE \u2014 owner cannot produce the MyNYISO AORR files (INTAKE-SPEC-nyiso156 \u00a72); no substitute winter mechanism invented (nyiso-158 \u00a71.4)",
+ "A1_replay_identity": {
+  "per_year_sidecar_max_abs_delta": {
+   "2023": {
+    "system": {
+     "rows_keeper": 52560,
+     "rows_replay": 52560,
+     "price": 0.0,
+     "slack": 0.0,
+     "dump": 0.0,
+     "demand": 0.0,
+     "reserve_price": 0.0
+    },
+    "class_hourly": {
+     "rows_keeper": 122640,
+     "rows_replay": 122640,
+     "mw": 0.0
+    },
+    "reserve_family": {
+     "rows_keeper": 78840,
+     "rows_replay": 78840,
+     "dual": 0.0,
+     "requirement_mw": 0.0,
+     "held_mw": 0.0,
+     "shortfall_mw": 0.0
+    },
+    "storage": {
+     "rows_keeper": 17520,
+     "rows_replay": 17520,
+     "charge_mw": 0.0,
+     "discharge_mw": 0.0
+    }
+   },
+   "2024": {
+    "system": {
+     "rows_keeper": 52560,
+     "rows_replay": 52560,
+     "price": 0.0,
+     "slack": 0.0,
+     "dump": 0.0,
+     "demand": 0.0,
+     "reserve_price": 0.0
+    },
+    "class_hourly": {
+     "rows_keeper": 122640,
+     "rows_replay": 122640,
+     "mw": 0.0
+    },
+    "reserve_family": {
+     "rows_keeper": 78840,
+     "rows_replay": 78840,
+     "dual": 0.0,
+     "requirement_mw": 0.0,
+     "held_mw": 0.0,
+     "shortfall_mw": 0.0
+    },
+    "storage": {
+     "rows_keeper": 17520,
+     "rows_replay": 17520,
+     "charge_mw": 0.0,
+     "discharge_mw": 0.0
+    }
+   },
+   "2025": {
+    "system": {
+     "rows_keeper": 52560,
+     "rows_replay": 52560,
+     "price": 0.0,
+     "slack": 0.0,
+     "dump": 0.0,
+     "demand": 0.0,
+     "reserve_price": 0.0
+    },
+    "class_hourly": {
+     "rows_keeper": 122640,
+     "rows_replay": 122640,
+     "mw": 0.0
+    },
+    "reserve_family": {
+     "rows_keeper": 78840,
+     "rows_replay": 78840,
+     "dual": 0.0,
+     "requirement_mw": 0.0,
+     "held_mw": 0.0,
+     "shortfall_mw": 0.0
+    },
+    "storage": {
+     "rows_keeper": 17520,
+     "rows_replay": 17520,
+     "charge_mw": 0.0,
+     "discharge_mw": 0.0
+    }
+   }
+  },
+  "max_zonal_dlmp": {
+   "2023": 0.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "byte_identical_scored_objects": true
+ },
+ "A2_scorecard_reproduction": {
+  "tolerance_pp": 0.2,
+  "per_year": {
+   "2023": {
+    "replay_c3a_pct": 2.35,
+    "keeper_recomputed_c3a_pct": 2.35,
+    "keeper_committed_c3a_pct": 2.35,
+    "delta_vs_committed_pp": 0.0,
+    "replay_lw_lambda": 33.0071,
+    "keeper_lw_lambda": 33.0071
+   },
+   "2024": {
+    "replay_c3a_pct": -1.21,
+    "keeper_recomputed_c3a_pct": -1.21,
+    "keeper_committed_c3a_pct": -1.21,
+    "delta_vs_committed_pp": 0.0,
+    "replay_lw_lambda": 37.6598,
+    "keeper_lw_lambda": 37.6598
+   },
+   "2025": {
+    "replay_c3a_pct": -11.48,
+    "keeper_recomputed_c3a_pct": -11.48,
+    "keeper_committed_c3a_pct": -11.48,
+    "delta_vs_committed_pp": 0.0,
+    "replay_lw_lambda": 58.8071,
+    "keeper_lw_lambda": 58.8071
+   }
+  },
+  "passed": true
+ },
+ "A3_recipe_identity": {
+  "n_differing_levers": 0,
+  "differing_levers": {},
+  "n_schema_growth_keys": 2,
+  "schema_growth_keys": {
+   "entry_forward_reserve_leg": {
+    "replay_recorded_default": false
+   },
+   "ercot_offer_surface_cleared_share_rt_room": {
+    "replay_recorded_default": false
+   }
+  },
+  "passed": true
+ },
+ "verdict": {
+  "replays_identically": true,
+  "drift_class": null
+ }
+}

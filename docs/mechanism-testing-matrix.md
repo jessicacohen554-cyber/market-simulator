@@ -9744,6 +9744,19 @@ identification the same day and the lane was authorization-blocked, not
 identification-blocked; originals preserved unedited. The "DO NOT open a
 lane against this object" bar above now reads with this ruling's carve-out:
 the two authorized legs, under their stated gates, are the lane.
+**LEG-2 STOPPED WITH CAUSE 2026-08-30 (nyiso-160):** the owner, asked
+in-session, answered the MyNYISO AORR files **cannot be produced** — the leg
+closes at ACCESS (the nyiso-97 stop-if-walled class; the §4 identifiability
+gate never ran because its input never existed). With Leg 1 executed and its
+companion chain closed on measurement (nyiso-157/158), **the winter face of
+C3a-2025 is identification-blocked on both legs**; no substitute winter
+mechanism exists or may be invented (nyiso-158 §1.4; the nyiso-97 §5 re-open
+bar restated as binding in the spec). Re-open = the nyiso-97 conditions
+only. In its place the session ran the touchpoint-prep audit: the nyiso-159
+keeper **replays bit-identically at HEAD** (registered
+`2026-08-30-nyiso-160-tpaudit-replay`; zero differing levers; no G1 drift).
+Record: `results/calibration/FINDING-nyiso160-leg2-stop-and-tpaudit-2026-08-30.md`
++ `_nyiso160_tpaudit.json`.
 
 **FRONTIER STATUS 2026-08-22 (nyiso-150) — STILL NOT-YET; the queue is shorter
 and sharper. KEEPER UNCHANGED (`2026-08-22-nyiso-149-duty-curve`, CALIBRATED,

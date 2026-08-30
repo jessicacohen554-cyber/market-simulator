@@ -202,7 +202,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     internal_congestion_split: { cell: "." },
     caiso_fsno_subzonal_topology: { cell: "." },
     tsa_transfer_derate: { cell: "G", ev: "nyiso-95 (docs/FINDING-nyiso95-tsa-derate-not-identifiable-2026-07-28.md)" },
-    scuc_load_pocket_commitment: { cell: "G", ev: "nyiso-97 (docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md)" },
+    scuc_load_pocket_commitment: { cell: "G", ev: "nyiso-97 (docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md); nyiso-160: the authorized Leg-2 AORR intake (INTAKE-SPEC-nyiso156 §2) STOPPED WITH CAUSE at access — the owner cannot produce the MyNYISO files; the nyiso-97 re-open bar stands unchanged (results/calibration/FINDING-nyiso160-leg2-stop-and-tpaudit-2026-08-30.md)" },
     pjm_congestion_star: { cell: "." },
     pjm_apsouth_cut: { cell: "." },
     pjm_external_net_position_cut: { cell: "." },
