@@ -17,6 +17,8 @@ Trivial-first, no LP solve. Covers:
 
 from __future__ import annotations
 
+import json
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -52,7 +54,7 @@ def _result(dispatch, prices, wind, solar, emissions=None):
     )
 
 
-def _context(fuel_types, plant_groups, emission_rate, pmax):
+def _context(fuel_types, plant_groups, emission_rate, pmax, unit_ids=None):
     n = len(fuel_types)
     return FleetContext(
         fuel_types=list(fuel_types),
@@ -61,7 +63,7 @@ def _context(fuel_types, plant_groups, emission_rate, pmax):
         efficiency_bins=["x"] * n,
         heat_rates=[8.0] * n,
         zones=["z0"] * n,
-        unit_ids=[f"G{i}" for i in range(n)],
+        unit_ids=list(unit_ids) if unit_ids else [f"G{i}" for i in range(n)],
         wind_cap_mw=1000.0,
         solar_cap_mw=1000.0,
         wind_potential_mwh=0.0,
@@ -288,7 +290,7 @@ def test_build_gmmodel_classes_and_twh():
         emission_rate=[0.4, 0.0],
         pmax=[600.0, 1200.0],
     )
-    gm = X.build_gmmodel(res, ctx)
+    gm = X.build_gmmodel(res, ctx, "ERCOT")
     assert gm["CC_REGULAR"] == pytest.approx(2.0)
     assert gm["nuclear"] == pytest.approx(1.0)  # via _FUEL_TO_CLASS
     assert gm["wind"] == pytest.approx(2.0)
@@ -394,7 +396,11 @@ def test_capacity_events_degrade_without_actuals_target(monkeypatch, tmp_path):
     assert out["additions_basis"] is None
     assert "no committed exit/addition target" in out["capacity_events_note"]
     assert "CAISO" in out["capacity_events_note"]
-    assert out["co2"] == {"model": {"2023": 1.0}, "actual": {"2023": 2.0}}
+    assert out["co2"]["model"] == {"2023": 1.0}
+    assert out["co2"]["actual"] == {"2023": 2.0}
+    # The capacity-track actual carries its basis label (FINDING §2.3 hygiene)
+    # so it is never conflated with the FC-4 eGRID basis in the same file.
+    assert "FC-4 eGRID basis" in out["co2"]["actual_basis"]
 
 
 def test_report_renders_capacity_events_degrade(tmp_path):
@@ -555,3 +561,189 @@ def test_rubric_metric_names_match_the_scorer_bands():
     assert emitted == set(FV.CROSSOVER_COMMERCIAL)
     assert X.QUARANTINE_FROM == FV.CROSSOVER_QUARANTINE_FLOOR
     assert tuple(X.SCORED_YEARS) == tuple(FV.CROSSOVER_SCORED_YEARS)
+
+
+# --------------------------------------------------------------------------- #
+# Coal class-grain repair (FINDING-capx-d5-crossover-co2-2026-08-30 §5.1):
+# an unsplit-COAL fleet vs a rank-keyed bench
+# --------------------------------------------------------------------------- #
+def test_build_gmmodel_splits_generic_coal_to_supply_class():
+    """The unsplit-COAL fleet lands on the bench's rank keys (option (a)).
+
+    Plant 6180 (Oak Grove) is in the hand-curated ``COAL_PLANT_SUPPLY`` map
+    (lignite) — the first hop of the canonical chain, so this test needs no
+    derived CSVs. A plant code the chain cannot resolve stays generic ``COAL``
+    (the keeper's own residual bucket), never a wrong rank.
+    """
+    T = 2
+    dispatch = np.array([[0.5e6, 0.5e6], [0.25e6, 0.25e6]])  # 2.0 / 1.0 TWh
+    res = _result(dispatch, np.zeros((1, T)), np.zeros((1, T)), np.zeros((1, T)))
+    ctx = _context(
+        fuel_types=["coal", "coal"],
+        plant_groups=["COAL", "COAL"],  # the crossover fleet's generic class
+        emission_rate=[1.0, 1.0],
+        pmax=[600.0, 600.0],
+        unit_ids=["COAL_North_p6180_mustrun", "COAL_West_p999999_econ"],
+    )
+    gm = X.build_gmmodel(res, ctx, "ERCOT")
+    assert gm["COAL_LIGNITE"] == pytest.approx(1.0)  # curated: 6180 -> lignite
+    assert gm["COAL"] == pytest.approx(0.5)  # unresolvable stays generic
+    # The split coal is now visible to the bench-intensity CO2 construction —
+    # the seam model_co2_mt_fullplant iterates bench keys over.
+    ybench = {"co2": {"intensity": {"COAL_LIGNITE": 1.1}, "btmClass": {}}}
+    assert X.model_co2_mt_fullplant(gm, ybench) == pytest.approx(1.1)
+
+
+def test_build_gmmodel_splits_coal_numeric_head_for_non_ercot():
+    """Non-ERCOT EIA-860 fleets name units ``{plant_code}_{gen}`` — the
+    numeric-head parse feeds the same canonical chain (3470 W A Parish is
+    curated PRB)."""
+    T = 1
+    dispatch = np.array([[1.0e6]])
+    res = _result(dispatch, np.zeros((1, T)), np.zeros((1, T)), np.zeros((1, T)))
+    ctx = _context(
+        fuel_types=["coal"],
+        plant_groups=[""],  # per-plant fleet: class via the fuel fallback
+        emission_rate=[1.0],
+        pmax=[600.0],
+        unit_ids=["3470_ST5"],
+    )
+    gm = X.build_gmmodel(res, ctx, "PJM")
+    assert gm == {"COAL_PRB": 1.0, "wind": 0.0, "solar": 0.0}
+
+
+def test_bench_coal_intensity_is_actual_co2_weighted():
+    ybench = {
+        "co2": {
+            "intensity": {"COAL_PRB": 1.0, "COAL_LIGNITE": 1.1, "CC_REGULAR": 0.4},
+            "btmClass": {},
+        },
+        "classFull": {"COAL_PRB": 40.0, "COAL_LIGNITE": 20.0},
+    }
+    # weights = actual CO2: PRB 40*1.0=40, LIG 20*1.1=22 -> (40*1.0+22*1.1)/62
+    assert X.bench_coal_intensity(ybench) == pytest.approx((40.0 + 24.2) / 62.0)
+    # no coal intensity at all (NYISO) -> 0.0, the caller's no-op signal
+    assert X.bench_coal_intensity({"co2": {"intensity": {"CC_REGULAR": 0.4}}}) == 0.0
+
+
+def _rescore_bundle(tmp_path, iso, ds_metrics_co2, coal_fam, per_class, flat):
+    """Materialize a minimal committed crossover bundle for the rescore mode."""
+    bundle = tmp_path / f"{iso.lower()}-rescore"
+    cache = bundle / iso / "k"
+    cache.mkdir(parents=True)
+    (bundle / "meta.json").write_text(
+        json.dumps(
+            {"kind": "crossover", "iso": iso, "bundle": str(cache), "cache_key": "k"}
+        )
+    )
+    score = {
+        "run_id": bundle.name,
+        "iso": iso,
+        "scored_years": [2023, 2024, 2025],
+        "metrics": flat,
+        "dispatch_skill": {
+            "metrics": {
+                "co2": ds_metrics_co2,
+                "fuelmix": {"2023": {"forecast_per_class": per_class}},
+                "price_mean": {"2023": {"forecast_err": 0.1}},
+                "price_shape": {},
+            },
+            "family_volume": {"coal_twh": coal_fam, "gas_twh": {}},
+        },
+        "co2": {"model": {}, "actual": {}},
+    }
+    (cache / "crossover_score.json").write_text(json.dumps(score))
+    return bundle, cache
+
+
+def test_coal_grain_rescore_moves_only_the_co2_seam(tmp_path, monkeypatch):
+    ybench = {
+        "co2": {
+            "egrid": 100.0,
+            "intensity": {"COAL_PRB": 1.0, "COAL_LIGNITE": 1.1, "CC_REGULAR": 0.4},
+            "btmClass": {},
+        },
+        "classFull": {"COAL_PRB": 40.0, "COAL_LIGNITE": 20.0},
+    }
+    monkeypatch.setattr(X, "load_bench_year", lambda iso, year: ybench)
+    co2_row = {
+        "forecast_err": 0.5,
+        "forecast_signed": -0.5,
+        "keeper_backcast_err": None,
+        "input_gap": None,
+        "unit": "frac (|Δ|/actual)",
+        "forecast_status": "FAIL",
+    }
+    per_class = {"COAL_PRB": {"model": 0.0}, "COAL_LIGNITE": {"model": 0.0}}
+    coal_fam = {"2023": {"forecast_detail": {"model_twh": 30.0}, "gated": True}}
+    flat = [
+        {
+            "metric": "co2",
+            "year": 2023,
+            "forecast_abs_err_frac": 0.5,
+            "keeper_abs_err_frac": None,
+        }
+    ]
+    bundle, cache = _rescore_bundle(
+        tmp_path, "ERCOT", {"2023": dict(co2_row)}, coal_fam, per_class, flat
+    )
+    X.coal_grain_rescore(bundle, tmp_path)
+    out = json.loads((cache / "crossover_score.json").read_text())
+    # S = 100*(1-0.5) = 50; unsplit = 30 - 0 TWh; i = (40+24.2)/62
+    expected = (50.0 + 30.0 * ((40.0 + 24.2) / 62.0) - 100.0) / 100.0
+    row = out["dispatch_skill"]["metrics"]["co2"]["2023"]
+    assert row["forecast_signed"] == pytest.approx(expected, abs=1e-4)
+    assert row["forecast_err"] == pytest.approx(abs(expected), abs=1e-4)
+    assert out["metrics"][0]["forecast_abs_err_frac"] == pytest.approx(
+        abs(expected), abs=1e-4
+    )
+    # The controls: family volume rows and C1 records are byte-untouched.
+    assert out["dispatch_skill"]["family_volume"]["coal_twh"] == coal_fam
+    assert (
+        out["dispatch_skill"]["metrics"]["fuelmix"]["2023"]["forecast_per_class"]
+        == per_class
+    )
+    assert out["dispatch_skill"]["metrics"]["price_mean"] == {
+        "2023": {"forecast_err": 0.1}
+    }
+    # Provenance: the rescore block records the arithmetic.
+    ry = out["rescore_co2_grain"]["per_year"]["2023"]
+    assert ry["unsplit_coal_twh"] == pytest.approx(30.0)
+    assert ry["signed_before"] == pytest.approx(-0.5)
+    # Report-only hygiene: the capacity-track co2 basis is labelled.
+    assert "STATE SUM" in out["co2"]["actual_basis"]
+
+
+def test_coal_grain_rescore_is_a_noop_without_coal(tmp_path, monkeypatch):
+    """The NYISO control: no coal family, no coal intensity -> nothing moves."""
+    ybench = {
+        "co2": {"egrid": 26.9, "intensity": {"CC_REGULAR": 0.4}, "btmClass": {}},
+        "classFull": {"CC_REGULAR": 60.0},
+    }
+    monkeypatch.setattr(X, "load_bench_year", lambda iso, year: ybench)
+    co2_row = {
+        "forecast_err": 0.1013,
+        "forecast_signed": 0.1013,
+        "keeper_backcast_err": None,
+        "input_gap": None,
+        "unit": "frac (|Δ|/actual)",
+        "forecast_status": "FAIL",
+    }
+    flat = [
+        {
+            "metric": "co2",
+            "year": 2023,
+            "forecast_abs_err_frac": 0.1013,
+            "keeper_abs_err_frac": None,
+        }
+    ]
+    bundle, cache = _rescore_bundle(
+        tmp_path, "NYISO", {"2023": dict(co2_row)}, {}, {}, flat
+    )
+    X.coal_grain_rescore(bundle, tmp_path)
+    out = json.loads((cache / "crossover_score.json").read_text())
+    row = out["dispatch_skill"]["metrics"]["co2"]["2023"]
+    assert row["forecast_signed"] == pytest.approx(0.1013, abs=1e-6)
+    assert row["forecast_err"] == pytest.approx(0.1013, abs=1e-6)
+    assert out["metrics"][0]["forecast_abs_err_frac"] == pytest.approx(0.1013, abs=1e-6)
+    assert out["rescore_co2_grain"]["per_year"]["2023"]["unsplit_coal_twh"] == 0.0

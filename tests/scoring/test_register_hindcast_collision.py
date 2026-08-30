@@ -93,3 +93,53 @@ def test_build_sidecar_calls_the_guard(tmp_path, monkeypatch):
 
     with pytest.raises(SystemExit, match="run-id collision"):
         RH.build_sidecar(bundle)
+
+
+def _scoring_only_bundle(tmp_path) -> Path:
+    """A committed-shape crossover bundle: score JSON only, no parquets."""
+    bundle = tmp_path / "miso-2023-2027-crossover-ffr2a"
+    cache = bundle / "MISO" / "k"
+    cache.mkdir(parents=True)
+    (bundle / "meta.json").write_text(
+        json.dumps({**_meta(), "bundle": str(cache), "cache_key": "k"})
+    )
+    (cache / "crossover_score.json").write_text(json.dumps({"iso": "MISO"}))
+    return bundle
+
+
+def test_preserve_invariants_never_recomputes_over_an_absent_cache(
+    tmp_path, monkeypatch
+):
+    """Scoring-only registration with no prior sidecar carries NO invariants.
+
+    The dispatch parquets are intentionally uncommitted, so recomputing the
+    battery over the bare committed bundle would emit vacuously-PASS rows —
+    evidence that is not. The audit-tolerated shape for a scoring-only
+    registration is an ABSENT block (``check_forecast_invariants.audit_sidecars``),
+    and that is what ``--preserve-invariants`` must produce when there is
+    nothing to preserve.
+    """
+    bundle = _scoring_only_bundle(tmp_path)
+    sidecar_dir = tmp_path / "sidecars"
+    sidecar_dir.mkdir()
+    monkeypatch.setattr(RH, "SIDECAR_DIR", sidecar_dir)
+
+    out = RH.build_sidecar(bundle, preserve_invariants=True)
+    assert "invariants" not in out
+    assert out["score"] == {"iso": "MISO"}
+
+
+def test_preserve_invariants_reuses_the_committed_block(tmp_path, monkeypatch):
+    bundle = _scoring_only_bundle(tmp_path)
+    sidecar_dir = tmp_path / "sidecars"
+    sidecar_dir.mkdir()
+    stored = [
+        {"ident": "I1", "name": "energy balance", "status": "PASS", "detail": "x"}
+    ]
+    (sidecar_dir / f"{bundle.name}.json").write_text(
+        json.dumps({"run_id": bundle.name, "meta": _meta(), "invariants": stored})
+    )
+    monkeypatch.setattr(RH, "SIDECAR_DIR", sidecar_dir)
+
+    out = RH.build_sidecar(bundle, preserve_invariants=True)
+    assert out["invariants"] == stored

@@ -185,7 +185,7 @@ def crossover_actual_co2(iso: str, years) -> dict[int, float]:
 # --------------------------------------------------------------------------- #
 # ypay reconstruction from the crossover DispatchResult
 # --------------------------------------------------------------------------- #
-def build_gmmodel(res: DispatchResult, ctx) -> dict[str, float]:
+def build_gmmodel(res: DispatchResult, ctx, iso: str) -> dict[str, float]:
     """Grid-delivered model generation mix ``{class: TWh}`` for one year.
 
     Fossil gas/coal generators are bucketed by their model ``plant_group``
@@ -194,11 +194,45 @@ def build_gmmodel(res: DispatchResult, ctx) -> dict[str, float]:
     :data:`_FUEL_TO_CLASS`. Wind/solar come from the dispatched renewable arrays.
     All grid-delivered (the LP dispatch is grid-only), matching the bench
     ``classFull`` basis (EIA-923 − BTM). TWh = MWh / 1e6.
+
+    A generator landing on the generic ``COAL`` class (the crossover fleet
+    carries its whole coal fleet that way — the canonical
+    ``plant_taxonomy`` class, which no bench keys on) is split to its supply
+    class (``COAL_PRB``/``COAL_LIGNITE``/``COAL_BIT``/``COAL_WC``) through
+    the SAME chain the keeper backcast uses:
+    ``run_calibration_full._coal_supply_class`` on the plant code parsed from
+    the unit id (``_plant_codes_from_unit_ids``) — one taxonomy chain, no
+    second map (rule 19 ``[R-ONE-MECH]``). This is the third bridge over the
+    model-vs-bench class-grain seam :func:`_family_volume` documents (the
+    first two: the family rows there; ``PLANT_GROUP_MEMBERS`` in
+    ``calibration_verdict``, rubric v2.8). Unsplit, the model's whole coal
+    fleet was invisible to :func:`model_co2_mt_fullplant` (which iterates
+    the bench's intensity keys) and read 0.0 in every C1 coal-rank row — the
+    FC-4 co2 defect traced in
+    ``docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md``. A plant
+    the chain cannot resolve stays generic ``COAL`` — the keeper's own
+    residual bucket, so the two lanes remain on one basis.
     """
+    # Lazy import: the canonical coal-rank chain + unit-id plant-code parse
+    # live in the calibration runner (a heavy sibling); imported at call time
+    # so module import stays light (same pattern as register_hindcast's lazy
+    # check_forecast_invariants import).
+    from scripts.run_calibration_full import (  # noqa: PLC0415
+        _coal_supply_class,
+        _plant_codes_from_unit_ids,
+    )
+
     dispatch = np.asarray(res.dispatch, dtype=float)
     gen_twh = dispatch.sum(axis=1) / 1e6  # (n_gen,)
     fuels = list(ctx.fuel_types)
     groups = list(ctx.plant_groups) if ctx.plant_groups else []
+    # numeric_head off for ERCOT — its CAMPD unit ids carry a ``p{code}``
+    # token, and its nuclear shares the ``{code}_{gen}`` shape without being
+    # plant-code keyed. The exact call run_calibration_full._dispatch_frame
+    # makes, so the crossover and the keeper parse codes identically.
+    plant_codes = _plant_codes_from_unit_ids(
+        list(ctx.unit_ids), numeric_head=iso.upper() != "ERCOT"
+    )
     gm: dict[str, float] = {}
     for g in range(dispatch.shape[0]):
         grp = groups[g] if g < len(groups) else ""
@@ -207,6 +241,8 @@ def build_gmmodel(res: DispatchResult, ctx) -> dict[str, float]:
         else:
             ft = fuels[g] if g < len(fuels) else ""
             cls = _FUEL_TO_CLASS.get(ft, "OTHER")
+        if cls == "COAL":
+            cls = _coal_supply_class(int(plant_codes[g]))
         gm[cls] = gm.get(cls, 0.0) + float(gen_twh[g])
     gm["wind"] = (
         gm.get("wind", 0.0) + float(np.asarray(res.wind_dispatched).sum()) / 1e6
@@ -300,13 +336,14 @@ def model_co2_mt_physical(res: DispatchResult, ctx) -> float:
     return round(float((gen_mwh * rate).sum()) / 1e6, 4)
 
 
-def build_ypay(bundle_dir: Path, year: int) -> tuple[dict, dict]:
+def build_ypay(bundle_dir: Path, year: int, iso: str) -> tuple[dict, dict]:
     """Minimal per-year ``ypay`` for the crossover forecast run + extras.
 
     Returns ``(ypay, extras)`` where ``ypay`` carries the keys the reused
     scorers read — ``gmModel`` (C1/C5a), ``lmp`` (C3a/C3b), ``co2.model`` (C5a
     full-plant) — and ``extras`` carries reconstruction provenance
-    (``physical_co2_mt``, ``has_demand``). Scoreable years only.
+    (``physical_co2_mt``, ``has_demand``). Scoreable years only. ``iso``
+    steers the coal supply-class split (:func:`build_gmmodel`).
     """
     _assert_scoreable_year(year)
     p = bundle_dir / f"year_{year}.parquet"
@@ -315,7 +352,7 @@ def build_ypay(bundle_dir: Path, year: int) -> tuple[dict, dict]:
     res = from_parquet(DispatchResult, p)
     ctx = read_fleet_context(p)
     demand = read_demand(p)
-    gm = build_gmmodel(res, ctx)
+    gm = build_gmmodel(res, ctx, iso)
     ypay = {
         "gmModel": gm,
         "lmp": build_lmp(res, demand),
@@ -548,7 +585,7 @@ def score_dispatch_skill(bundle_dir: Path, iso: str, keeper_run_id: str | None) 
     for year in SCORED_YEARS:
         if not (bundle_dir / f"year_{year}.parquet").exists():
             continue
-        ypay, extras = build_ypay(bundle_dir, year)
+        ypay, extras = build_ypay(bundle_dir, year, iso)
         extras_by_year[year] = extras
         ybench = bench[year]
 
@@ -773,7 +810,11 @@ def score_capacity_events(
             "additions": None,
             "additions_cod_basis": None,
             "additions_basis": None,
-            "co2": {"model": model_co2, "actual": actual_co2},
+            "co2": {
+                "model": model_co2,
+                "actual": actual_co2,
+                "actual_basis": CH.actual_co2_basis(iso),
+            },
         }
     mret = CH.model_retirements(ledgers)
     madd = CH.model_additions(ledgers, basis=CH.ADDITIONS_BASIS_DECISION)
@@ -815,7 +856,11 @@ def score_capacity_events(
         "additions": add,
         "additions_cod_basis": add_cod,
         "additions_basis": add_basis,
-        "co2": {"model": model_co2, "actual": actual_co2},
+        "co2": {
+            "model": model_co2,
+            "actual": actual_co2,
+            "actual_basis": CH.actual_co2_basis(iso),
+        },
     }
 
 
@@ -862,6 +907,191 @@ def forward_invariants(bundle_dir: Path, meta: dict) -> dict:
         ),
         "per_year": per_year,
     }
+
+
+# --------------------------------------------------------------------------- #
+# --rescore-co2-grain — zero-solve FC-4 co2 class-grain repair on a committed
+# crossover_score.json (dispatch parquets NOT required; T-R8 --rescore pattern)
+# --------------------------------------------------------------------------- #
+def bench_coal_intensity(ybench: dict) -> float:
+    """The bench's actual-coal-CO2-weighted mean coal intensity (t/MWh).
+
+    ``Σ_r i_r·w_r / Σ_r w_r`` over the bench's coal-rank intensity keys
+    (``COAL_*``), with each rank weighted by its actual full-plant CO2
+    ``w_r = (classFull_r + btmClass_r) × i_r`` — the same full-plant basis the
+    FC-4 co2 metric scores on. 0.0 when the bench carries no coal intensity
+    (e.g. NYISO), which a caller must treat as "no coal to value".
+    """
+    co2b = ybench.get("co2") or {}
+    inten = co2b.get("intensity") or {}
+    btm = co2b.get("btmClass") or {}
+    cf = ybench.get("classFull") or {}
+    ranks = [c for c in inten if c.startswith("COAL_")]
+    w = {
+        c: (float(cf.get(c) or 0.0) + float(btm.get(c) or 0.0)) * float(inten[c])
+        for c in ranks
+    }
+    tot = sum(w.values())
+    if tot <= 0.0:
+        return 0.0
+    return sum(float(inten[c]) * w[c] for c in ranks) / tot
+
+
+def coal_grain_rescore(bundle: Path, report_dir: Path) -> dict:
+    """Repair the FC-4 co2 rows of a committed ``crossover_score.json`` in place.
+
+    The committed crossover bundles carry only their score JSON (the dispatch
+    parquets are gitignored by design), so the :func:`build_gmmodel` supply-class
+    split cannot re-run on them. This mode applies the SAME grain repair at
+    family grain, from committed artifacts alone (FINDING-capx-d5-crossover-co2
+    §5.1 option (b) arithmetic, the documented rule 14 ``[R-ACCURATE]``
+    boundary-reconcile case — the construction :func:`_family_volume` already
+    uses for the volume rows): the model's unsplit ``COAL`` energy (coal-family
+    ``model_twh`` minus the split-rank model rows, all committed) is valued at
+    :func:`bench_coal_intensity` and added to the scored model CO2
+    ``S = egrid × (1 + forecast_signed)`` (the exact identity of the committed
+    row). Everything else — family volume rows, C1 records, price metrics,
+    keeper columns — is left byte-untouched: the repair touches ONLY the co2
+    seam, and an ISO with no coal family (NYISO, the control) is a structural
+    no-op. Re-banding reuses :func:`calibration_verdict.score_co2` verbatim.
+    No LP is solved and no model input changes (rule 13 ``[R-MEASURED]`` —
+    scorer-side only).
+    """
+    meta = json.loads((bundle / "meta.json").read_text())
+    if meta.get("kind") not in ("crossover", "full_forward"):
+        raise SystemExit(
+            f"{bundle}/meta.json is kind={meta.get('kind')!r} — "
+            "--rescore-co2-grain only applies to crossover/full_forward scores."
+        )
+    iso = meta["iso"]
+    cache_dir = Path(meta["bundle"])
+    if not cache_dir.exists():
+        cache_dir = bundle / iso / meta["cache_key"]
+    score_path = cache_dir / "crossover_score.json"
+    if not score_path.exists():
+        raise SystemExit(f"no committed crossover score to rescore: {score_path}")
+    score = json.loads(score_path.read_text())
+    ds = score["dispatch_skill"]
+
+    per_year: dict[str, dict] = {}
+    for year in SCORED_YEARS:
+        row = ds["metrics"].get("co2", {}).get(str(year))
+        if not row or row.get("forecast_signed") is None:
+            continue
+        ybench = load_bench_year(iso, year)
+        egrid = (ybench.get("co2") or {}).get("egrid")
+        if egrid is None:
+            continue
+        # Committed model coal energy the broken grain dropped: the family
+        # model total minus whatever already sits on split-rank rows (0.0 in
+        # every affected bundle; absent entirely for a no-coal ISO).
+        fam = ds.get("family_volume", {}).get("coal_twh", {}).get(str(year)) or {}
+        det = fam.get("forecast_detail") or {}
+        pc = (
+            ds["metrics"]
+            .get("fuelmix", {})
+            .get(str(year), {})
+            .get("forecast_per_class", {})
+        )
+        split_twh = sum(
+            float(v.get("model") or 0.0) for k, v in pc.items() if k.startswith("COAL_")
+        )
+        unsplit_twh = max(0.0, float(det.get("model_twh") or 0.0) - split_twh)
+        ibar = bench_coal_intensity(ybench)
+        if unsplit_twh > 0.0 and ibar <= 0.0:
+            raise SystemExit(
+                f"{iso} {year}: {unsplit_twh:.2f} TWh unsplit model COAL but "
+                "the bench carries no coal intensity to value it — refusing "
+                "to drop it silently."
+            )
+        old_signed = float(row["forecast_signed"])
+        s_before = float(egrid) * (1.0 + old_signed)  # exact committed identity
+        s_after = s_before + ibar * unsplit_twh
+        rec = V.score_co2(year, {"co2": {"model": round(s_after, 4)}}, ybench)
+        new_signed = V._pct(s_after, float(egrid))
+        row["forecast_signed"] = round(new_signed, 4)
+        row["forecast_err"] = round(abs(new_signed), 4)
+        row["forecast_status"] = rec["status"]
+        k = row.get("keeper_backcast_err")
+        row["input_gap"] = _input_gap(
+            {"err": abs(new_signed)}, None if k is None else {"err": k}
+        )
+        row["basis"] = (
+            "full-plant (bench intensities, BTM added back); unsplit model "
+            "COAL valued at the bench's actual-coal-CO2-weighted mean coal "
+            "intensity (class-grain rescore)"
+        )
+        for m in score.get("metrics", []):
+            if m.get("metric") == "co2" and int(m.get("year", -1)) == year:
+                m["forecast_abs_err_frac"] = round(abs(new_signed), 4)
+        per_year[str(year)] = {
+            "unsplit_coal_twh": round(unsplit_twh, 3),
+            "coal_intensity_t_per_mwh": round(ibar, 4),
+            "model_co2_mt_before": round(s_before, 4),
+            "model_co2_mt_after": round(s_after, 4),
+            "signed_before": round(old_signed, 4),
+            "signed_after": round(new_signed, 4),
+            "status_after": rec["status"],
+        }
+
+    # Report-only basis hygiene (FINDING §2.3): label the capacity-track co2
+    # block's CAMPD footprint basis so it is never again decomposed against
+    # the FC-4 eGRID rows in the same file.
+    if isinstance(score.get("co2"), dict):
+        score["co2"]["actual_basis"] = CH.actual_co2_basis(iso)
+
+    score["rescore_co2_grain"] = {
+        "task": "crossover-co2-grain-repair",
+        "note": (
+            "FC-4 co2 class-grain repair (FINDING-capx-d5-crossover-co2 "
+            "2026-08-30 §5.1): the model's unsplit COAL family energy, "
+            "dropped by the bench-intensity-key iteration, valued at the "
+            "bench's actual-coal-CO2-weighted mean coal intensity. Zero "
+            "solve; committed artifacts only; family volume rows and C1 "
+            "records untouched."
+        ),
+        "utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "per_year": per_year,
+    }
+    score_path.write_text(json.dumps(score, indent=2))
+
+    # Append the re-score section to the committed report (T-R8 pattern).
+    reports = sorted(report_dir.glob(f"{bundle.name}-crossover-*.md"))
+    if reports and per_year:
+        stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        L = ["", f"## Re-score — FC-4 co2 class-grain repair ({stamp})", ""]
+        L.append(
+            "Zero-solve rescore of the committed score: the model's unsplit "
+            "`COAL` family energy (dropped from the scored CO2 by the "
+            "bench-intensity-key iteration) is valued at the bench's "
+            "actual-coal-CO2-weighted mean coal intensity. Volume/price rows "
+            "untouched. See `rescore_co2_grain` in `crossover_score.json`."
+        )
+        L.append("")
+        L.append(
+            "| year | co2 signed before | after | unsplit COAL TWh | ī_coal | status |"
+        )
+        L.append("|---|--:|--:|--:|--:|:--|")
+        for y, d in per_year.items():
+            L.append(
+                f"| {y} | {d['signed_before']:+.1%} | {d['signed_after']:+.1%} "
+                f"| {d['unsplit_coal_twh']} | {d['coal_intensity_t_per_mwh']} "
+                f"| {d['status_after']} |"
+            )
+        rp = reports[-1]
+        rp.write_text(rp.read_text().rstrip() + "\n" + "\n".join(L) + "\n")
+        print(f"[rescore-co2] report appended: {rp}")
+
+    for y, d in per_year.items():
+        print(
+            f"[rescore-co2] {iso} {y}: {d['signed_before']:+.1%} -> "
+            f"{d['signed_after']:+.1%} (unsplit {d['unsplit_coal_twh']} TWh "
+            f"@ {d['coal_intensity_t_per_mwh']} t/MWh) {d['status_after']}"
+        )
+    if not per_year:
+        print(f"[rescore-co2] {iso} {bundle.name}: no scorable co2 rows — no-op")
+    print(f"[rescore-co2] score.json: {score_path}")
+    return score
 
 
 # --------------------------------------------------------------------------- #
@@ -1152,7 +1382,21 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--report-dir", type=Path, default=Path("docs/hindcast-reports")
     )
+    parser.add_argument(
+        "--rescore-co2-grain",
+        action="store_true",
+        help=(
+            "Zero-solve FC-4 co2 class-grain repair on the committed "
+            "crossover_score.json (no dispatch parquets needed): value the "
+            "model's unsplit COAL family energy at the bench's actual-coal-"
+            "CO2-weighted mean intensity and re-band. Appends a re-score "
+            "section to the existing report. No LP, no model input change."
+        ),
+    )
     args = parser.parse_args(argv)
+    if args.rescore_co2_grain:
+        coal_grain_rescore(args.bundle, args.report_dir)
+        return 0
     score_crossover(args.bundle, args.report_dir)
     return 0
 

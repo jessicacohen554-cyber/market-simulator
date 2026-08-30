@@ -259,7 +259,7 @@
           "input_gap": null,
           "unit": "frac (|\u0394|/actual)",
           "forecast_status": "FAIL",
-          "basis": "full-plant (bench intensities, BTM added back)"
+          "basis": "full-plant (bench intensities, BTM added back); unsplit model COAL valued at the bench's actual-coal-CO2-weighted mean coal intensity (class-grain rescore)"
         },
         "2024": {
           "forecast_err": 0.1034,
@@ -268,7 +268,7 @@
           "input_gap": null,
           "unit": "frac (|\u0394|/actual)",
           "forecast_status": "FAIL",
-          "basis": "full-plant (bench intensities, BTM added back)"
+          "basis": "full-plant (bench intensities, BTM added back); unsplit model COAL valued at the bench's actual-coal-CO2-weighted mean coal intensity (class-grain rescore)"
         },
         "2025": {
           "forecast_err": 0.0392,
@@ -277,7 +277,7 @@
           "input_gap": null,
           "unit": "frac (|\u0394|/actual)",
           "forecast_status": "PASS",
-          "basis": "full-plant (bench intensities, BTM added back)"
+          "basis": "full-plant (bench intensities, BTM added back); unsplit model COAL valued at the bench's actual-coal-CO2-weighted mean coal intensity (class-grain rescore)"
         }
       }
     },
@@ -706,7 +706,8 @@
       "2023": 29406394.148144126,
       "2024": 31467951.16155654,
       "2025": 33306111.574063625
-    }
+    },
+    "actual_basis": "CAMPD unit-level co2Mass, facility-exact EIA-860 BA crosswalk (NYISO plants only; metric tonnes) \u2014 capacity-track basis, not the FC-4 eGRID basis"
   },
   "bands": {
     "thermal_gw_retired_total_frac": 0.1,
@@ -744,6 +745,40 @@
         "dispatch_nonneg": true,
         "price_finite": true,
         "n_gen": 458
+      }
+    }
+  },
+  "rescore_co2_grain": {
+    "task": "crossover-co2-grain-repair",
+    "note": "FC-4 co2 class-grain repair (FINDING-capx-d5-crossover-co2 2026-08-30 \u00a75.1): the model's unsplit COAL family energy, dropped by the bench-intensity-key iteration, valued at the bench's actual-coal-CO2-weighted mean coal intensity. Zero solve; committed artifacts only; family volume rows and C1 records untouched.",
+    "utc": "2026-08-30T21:34:49Z",
+    "per_year": {
+      "2023": {
+        "unsplit_coal_twh": 0.0,
+        "coal_intensity_t_per_mwh": 0.0,
+        "model_co2_mt_before": 29.6921,
+        "model_co2_mt_after": 29.6921,
+        "signed_before": 0.1013,
+        "signed_after": 0.1013,
+        "status_after": "FAIL"
+      },
+      "2024": {
+        "unsplit_coal_twh": 0.0,
+        "coal_intensity_t_per_mwh": 0.0,
+        "model_co2_mt_before": 31.8739,
+        "model_co2_mt_after": 31.8739,
+        "signed_before": 0.1034,
+        "signed_after": 0.1034,
+        "status_after": "FAIL"
+      },
+      "2025": {
+        "unsplit_coal_twh": 0.0,
+        "coal_intensity_t_per_mwh": 0.0,
+        "model_co2_mt_before": 29.4457,
+        "model_co2_mt_after": 29.4457,
+        "signed_before": 0.0392,
+        "signed_after": 0.0392,
+        "status_after": "PASS"
       }
     }
   }

@@ -61,3 +61,13 @@ Crossover forecast-mode run: **2023-2025** on realized inputs scored for dispatc
 |---|--:|--:|:--|:--|
 | 2026 | 345.3284 | 551.946 | True | True |
 | 2027 | 323.785 | 562.774 | True | True |
+
+## Re-score — FC-4 co2 class-grain repair (2026-08-30)
+
+Zero-solve rescore of the committed score: the model's unsplit `COAL` family energy (dropped from the scored CO2 by the bench-intensity-key iteration) is valued at the bench's actual-coal-CO2-weighted mean coal intensity. Volume/price rows untouched. See `rescore_co2_grain` in `crossover_score.json`.
+
+| year | co2 signed before | after | unsplit COAL TWh | ī_coal | status |
+|---|--:|--:|--:|--:|:--|
+| 2023 | -63.3% | +1.2% | 187.628 | 1.0029 | PASS |
+| 2024 | -59.9% | -1.8% | 167.623 | 0.9891 | PASS |
+| 2025 | -77.1% | +13.4% | 272.622 | 0.993 | FAIL |
