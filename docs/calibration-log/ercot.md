@@ -12101,3 +12101,100 @@ k_peak scalar is in-sample-2023-only, so 2022 would be the first
 held-out evidence on this surface — put to the owner, not taken).
 
 **Next shorthand: ercot-238** (ercot-199 remains unclaimed)
+
+---
+
+## ercot-238 — 2026-08-30 — THE 2026-08-26 PROGRAM-DIRECTOR SITTING EXECUTED: three signed owner rulings, zero solves. (1) The 59→61 band-count FULL CORRECTION PASS (seven surfaces, constants de-hardcoded); (2) the ercot-225 G-SPUR band-top gate SIGNED Option A and revised (lidless gate, 9/12/1 baseline, zero standing verdicts moved, the ercot-215 strict-leg FAIL exonerated); (3) ERCOT BECOMES A TWO-CONFIG KEEPER — forward `2026-08-25-234-eastex-identity` (2024–2025) + 2023 carve-out `2026-08-25-236-swcap-clip-k33`, and the forward keeper ON ITS OWN SPAN reads CALIBRATED where its registered 3-year record is NOT-YET
+
+**Branch `claude/ercot-governance-rulings-0826-9xqfaw`. NO SOLVE, NO LP, NO
+re-bundle, no registration change; every number read from committed
+artifacts. Rulings worked in order, each pushed before the next (ruling 1
+was merged to main by the owner as PR #4301 mid-session).**
+
+**RULING 1 — the false band count corrected ("full correction pass").**
+The actual ≥$1,000 band count was hardcoded at 59 in
+`ercot235_offer2023_sweep.py`, copied into the ercot-236 scorer, and wrong —
+true count **61** (77+43+61 = 181 = `actual_tail.json` rt_gt; ercot-237
+Amendment 1). Constants DE-HARDCODED at the source: both probe scripts now
+DERIVE the actual band counts from the actual series, cross-checked against
+`actual_tail.json` (fails loudly on mismatch; derivation verified to
+reproduce 77/43/61). The "EXACT (59 vs 59)" prose corrected VISIBLY (each
+surface records the 2026-08-26 owner-authorized amendment, never silently
+rewritten) on the six named surfaces — this log's ercot-236 entry (the sole
+log carrier; the ercot-235 entry's 180/181 is a different statistic), keeper
+shard, registry sidecar, status part (rebuilt; `--check` confirmed only
+prose + timestamp moved), matrix §5.1, `mechanism-matrix/ERCOT.js` — plus a
+SEVENTH found in the pass and fixed:
+`docs/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md` line 75. The
+FINDING/PRECOMMIT-ercot237 docs (which record the defect correctly) and the
+unrelated 59/59/59 ORDC step counts were left untouched. **No scored
+criterion moved; the ercot-236 determination stays CALIBRATED.**
+
+**RULING 2 — the ercot-225 card SIGNED: Option A.** The card is the spec.
+G-SPUR now gates the lidless `S_nolid = #{model ≥ 150 & actual < 150}` in
+the live scorers (`ercot221_gates._spur_hours`, inherited by
+`ercot226_gates`; `_ercot173_ab.year_stats`), bar semantics unchanged in
+form (+5/yr baseline-bar; no-increase A/B); `S_band`/`S_top` kept as the
+reported decomposition. `SPUR_BASELINE` re-minted **9/11/1 → 9/12/1** in the
+same commit, re-derived from the `ercot215_decontam_B` committed sidecars
+(the +1 is h3068-2024, card §4c) and verified list-identical — the card §6
+hour-list hygiene defect repaired simultaneously. Verdict preservation
+re-verified against the committed `ercot225_gspur_bandtop_reread.json`:
+**zero standing verdicts move; the sole flip is the exoneration** of
+ercot-215's recorded strict-leg artifact FAIL (lidless 24→9 / 14→12 / 1→1).
+The four post-card registered runs (231/234/235/236) checked from committed
+gates/score JSONs: s_top = 0 on every gated population (lidless ≡ banded —
+ercot-231's REJECTED-AS-ARMED and ercot-234's PASS unchanged; ercot-235/236
+spur readings were report-only). RESOLUTIONS block appended to the card;
+matrix §5.1 + ERCOT.js re-stamped CLOSED BY OWNER DECISION; smoke test on
+the committed ercot-215 A/B pair reproduces 9/12/1 with G-SPUR PASS.
+Scorer-only — historical gates JSONs stand unrewritten.
+
+**RULING 3 — the TWO-CONFIG KEEPER (structural).** Full record:
+`docs/FINDING-ercot-two-config-keeper-2026-08-26.md`. Owner verbatim: *"The
+keeper should be the 2023 config that works plus the 2024-2025 keeper from
+before, so two different configurations with 2024/2025 config being the
+forward keeper for use in the model and 2023 as a carve out designed to
+address unique market conditions for that year."* Forward-keeper identity
+VERIFIED (the ercot-235 charter and both promotion addenda designate
+`2026-08-25-234-eastex-identity` "the cross-year recipe"; reverting to
+ercot-231 would re-arm the mis-attributed NE_LOB input, rule 14). **THE
+HEADLINE: the forward keeper scored on its designated span {2024, 2025}
+reads `CALIBRATED`** (C1/C2/C3a/C3b/C4/C6/C8 PASS; lone ledgered C3c ×2,
+non-downgrading under rubric v3.3) **where its registered 3-year
+determination is `NOT-YET` on {C3a-2023 −39.7 %, C3b-2023 0.730} — both
+failures 2023-only, the year the carve-out covers.** Both registered
+determinations re-verified from committed artifacts
+(`calibration_verdict.py --run-id`, no solve): ercot-234 3-year NOT-YET
+exact, ercot-236 2023 CALIBRATED exact. **COVERAGE INVARIANT: every year of
+2023–2025 is covered by exactly one designated config — a config carve,
+never a year drop** — and the machinery was EXTENDED so the published
+surface renders BOTH halves rather than forcing a single-keeper field:
+`calibration_verdict.py` gained span-restricted scoring (`--years`, verdict
+stamped SPAN-RESTRICTED, unrestricted payloads byte-identical, span
+`--write-metrics` refused); the keeper shard gained the `config_partition`
+block (ruling verbatim + invariant + both configs, standing note rewritten
+under the X-2 discipline with the prior note preserved); `build_status.py`
+scores each config live on its span AND its registered span (the primary
+keeper verdict stays the forward keeper's registered NOT-YET —
+conservative); `calibration-status.js` renders one span-labelled badge per
+config with the card accent taking the WORST half;
+`dashboard_add_run._protected_run_ids` protects partition members from
+retention. **FORECAST-LANE INHERITANCE: forward runs take the ercot-234
+recipe; the carve-out's two deltas (`ercot_offer_swcap_clip` armed, k_peak
+33.0) do not leak forward** (clip default-off; the forward run_config
+carries neither). Checks: `build_status.py --check` parts in sync 6/6 (the
+five other ISOs' parts byte-unchanged — rule 25); `audit_keepers.py` full
+PASS 0/0 (the handoff's pre-existing S1 failure no longer reproduces at this
+HEAD — fixed by its owning lane, untouched here); `check_mechanism_matrix.py`
+clean; matrix §5.1 + ERCOT.js re-stamped to the two-config structure (ERCOT
+shard only).
+
+**Hygiene:** zero solves; years referenced ⊂ {2023, 2024, 2025}; no marker
+touched, no `--holdout-authorized` (rule 22; the spend freeze respected);
+ERCOT-only shards/status/matrix (rule 25); no CI job, no workflow; push
+integrity per rule 27 (local edits, exact on-disk bytes, blob-verified after
+each push; the mid-session HTTP hangs were the owner's merge-and-delete of
+the ruling-1 branch, resolved by rebasing onto the merged main).
+
+**Next shorthand: ercot-239** (ercot-199 remains unclaimed)
