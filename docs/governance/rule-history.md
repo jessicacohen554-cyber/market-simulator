@@ -103,6 +103,59 @@ calibration rubric**, which is where the scorer-side definitions live:
   ST_GAS` (~60 %) now FAIL with an explicit *"no declared D-4 window"* diagnosis
   instead of a flat over-cap fail, which names exactly what would ground them.
 
+- **Rubric v3.1 — owner amendment 2026-08-06, C7 retired outright.** The
+  directive's C7 half (verbatim, session-logged): *"… we should drop [C7] from
+  the calibration report and declaration altogether if no other commercial
+  grade model is gating or publishing on that."* The check came back empty —
+  no commercial-grade comparable gates or publishes diurnal-shape accuracy
+  (the rubric §8 comparables row scores C6/C7/C8 "beyond commercial practice",
+  i.e. with no external anchor at all) — so the standalone C7 diurnal-shape
+  gate that shared rule 20's materiality floor was **RETIRED**: dropped from
+  the report AND the determination, with `score_shape` and `C7_GATED_CLASSES`
+  deleted per rule 26 `[R-DELETE]` (a harder removal than the C5a/C5b/C5c
+  demotions, which stayed computed and `REPORTED_ONLY`). The D-1 measurement
+  itself is untouched: it stays in `legitimacy_diagnostics.json`, and rule
+  20's grounded-above-budget escalation still gates on it through C8's shape
+  leg — now its sole gating path (CLAUDE.md rule 20 records this in place).
+  The same amendment's ledgering half (`LEDGERABLE_CRITERIA` → `{price_tail}`,
+  budgets 1→0 protective / 3→1 ledgered) is rule-22-adjacent and its effects
+  (the CAISO reversion) are itemized at the canonical narrative:
+  `docs/calibration-determination-rubric.md` §9 (v3.1).
+
+- **Rubric v3.5 — owner decision 2026-08-25, diurnal price amplitude added
+  REPORTED-ONLY and BAND-FREE. No CLAUDE.md rule text changed** — indexed here
+  because it is v3.1's disposition (gate not built, measurement kept) applied
+  to *prices*, answering the owner call filed by neiso-74 and re-filed by
+  xiso-1 on 2026-08-01. The owner selected **option (B)** of
+  `docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md` — *"(B) ADD IT
+  AS REPORTED-ONLY — measured, published, no status, no budget"* — in the
+  card's recommended band-free form. *(Per §7.1's provenance convention on the
+  word "verbatim": the ruling was a selection among the card's written
+  options, so what is quoted is the option text the owner signed, not
+  free-form owner prose.)* The scorer gains **D-A**
+  (`calibration_verdict.score_diurnal_amplitude`): the hour-of-day amplitude
+  ratio, phase check and hod correlation are published on every run with **no
+  band, no threshold and no verdict** — the stream is NOT in `CRITERIA`, so it
+  can contribute no status, consume no caveat budget, add no reason line, and
+  cannot perturb the C3c standing rule's lone-failure test (measured over
+  `CRITERIA` membership since v3.2); `LEDGERABLE_CRITERIA` (`{price_tail}`)
+  and `MAX_LEDGERED_CAVEATS` (1) are unchanged. **Band-free** because the
+  xiso-6 sweep measured a gating criterion as vacuous below a 25 % amplitude
+  floor and universal above 45 %, with no external comparable anywhere in the
+  20–45 % window to anchor a band — the exact ground C7 was retired on.
+  Verified determination-neutral over all 55 registered runs at amendment
+  (zero determination / per-criterion / caveat diffs; pinned by
+  `DiurnalAmplitudeReportedOnlyTests.test_IT_CANNOT_GATE`), and **re-verified
+  2026-08-30 over the then-current six-keeper roster** (ERCOT `CALIBRATED`,
+  PJM `CALIBRATED`, CAISO `NOT-YET`, NYISO `NOT-YET`, NEISO `CALIBRATED`,
+  MISO `NOT-YET` — every pair identical with the measurement ablated). Two
+  things the ruling deliberately does NOT do, recorded on the card stamp:
+  NEISO's storage-side PS DO-NOT-REDO is not lifted (a rubric disclosure
+  changes no dispatch), and the defect itself is not closed (a disclosure
+  obliges no repair). Canonical narrative:
+  `docs/calibration-determination-rubric.md` §9 (v3.5); cross-ISO log entry:
+  `docs/calibration-log/governance.md` (2026-08-25).
+
 ## 4. Rule 22 `[R-HOLDOUT]` — holdout tiers
 
 The rule's normative text (the three tiers and their year assignments, the
@@ -407,6 +460,7 @@ DO-NOT-REDO discipline exists to prevent.
 
 | date | change |
 |---|---|
+| 2026-08-30 | §3: indexed rubric **v3.1**'s C7 retirement (owner directive verbatim) and rubric **v3.5** (owner option-(B) decision of 2026-08-25 — diurnal price amplitude added REPORTED-ONLY and BAND-FREE; no CLAUDE.md rule text changed) alongside the rule-20 genealogy they extend. v3.5 re-verified determination-neutral over the 2026-08-30 six-keeper roster. Canonical narratives stay in the rubric §9; index entries only. |
 | 2026-08-17 | §4: recorded rubric **v3.3** — the owner's amendment that a ledgered C3c caveat is REPORTED but no longer DOWNGRADES the determination, withdrawing the "never `CALIBRATED`" half of CLAUDE.md rule 22 guard (d). 6 registered runs re-score `CALIBRATED-WITH-CAVEATS → CALIBRATED`, 2 of them keepers (NYISO, NEISO); holdout tiers untouched. |
 | 2026-08-17 | §4: recorded the first lane RESTED at `NOT-YET` (CAISO, session caiso-201, owner ruling Q1). No rule text changed — the entry exists so the precedent that an exhausted lane with a genuinely failing load-bearing criterion *rests* rather than ledgers or declares is citable. |
 | 2026-08-23 | §7.1 MISO entry annotated with the owner's 2026-08-18 LANE-CLOSURE LIFT (session miso-178): the entry previously read as if the miso-163 closure stood. Lift scope recorded — the C3a-2025 lane re-opens, the `ordc_scarcity_overlay` cell stays `G`, the narrowed re-opening test is unchanged. Decision-record annotation only; no norm touched. |
