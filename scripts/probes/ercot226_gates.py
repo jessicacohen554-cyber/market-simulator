@@ -1,15 +1,14 @@
 """ercot-226 A/B gate scorer — the PRECOMMIT-ercot226 §5.3 table.
 
-A thin wrapper over the FROZEN ``ercot221_gates`` constructions (imported,
-never edited — its ``SPUR_BASELINE`` hour-list hygiene defect is a chartered
-item of the unsigned ercot-225 card and is deliberately not touched here):
+A thin wrapper over the shared ``ercot221_gates`` constructions (imported):
 
 * adds ``--years`` (default: 2023 only — the W-2 single-year probe shape);
-* adds the ercot-225 card's REPORT-ONLY lidless G-SPUR decomposition
-  (``S_nolid = #{model >= 150 & actual < 150}``, ``S_band`` = the standing
-  banded count, ``S_top = #{model > 500 & actual < 150}``) — the BANDED form
-  with the standing +5/yr bar remains the gate, exactly as the keeper was
-  gated (the card awaits owner sign-off; no gate file changes);
+* G-SPUR is gated on the LIDLESS count inherited from ``ercot221_gates``
+  (``S_nolid = #{model >= 150 & actual < 150}``, +5/yr bar vs the re-minted
+  9/12/1 baseline) since the ercot-225 card's Option A was owner-signed
+  2026-08-26; the ``S_band``/``S_top`` split stays as the kept report
+  decomposition (its ``SPUR_BASELINE`` hour-list hygiene defect was repaired
+  in the same signature commit);
 * adds the precommit §5.3 withheld-family diagnostics from
   ``hourly/reserve_family_<y>.parquet``: VOLL-shortfall engagement hours on
   any ``*_withheld`` or ``*_held`` family (the manufactured-shortage
@@ -63,7 +62,9 @@ VOLL_EPS = 1.0  # $/MWh — "dual at VOLL" tolerance for the engagement count
 
 
 def _spur_lidless(m: np.ndarray, a: np.ndarray) -> dict:
-    """The ercot-225 card's Option-A vocabulary, REPORT-ONLY."""
+    """The ercot-225 card's Option-A vocabulary (Option A owner-signed
+    2026-08-26: ``s_nolid`` is now the gated count; ``s_band``/``s_top``
+    the kept report decomposition)."""
     mm = np.nan_to_num(m)
     aa = np.nan_to_num(a, nan=1e9)
     lo = aa < MID_BAND[0]
@@ -283,7 +284,8 @@ def main() -> None:
         "G-CAP": {"violations": gcap_viol, "pass": gcap_viol == 0},
         "G-SPUR": {
             "pass": not spur_fail,
-            "bar": f"+{SPUR_BAR}/yr vs banded baseline (lidless REPORT-ONLY)",
+            "bar": f"+{SPUR_BAR}/yr vs 9/12/1 (LIDLESS, ercot-225 Option A "
+            "owner-signed 2026-08-26; band/top decomposition reported)",
         },
         "G-SHED": {"pass": not shed_fail},
         "G-BAT": {"pass": not gbat_fail},

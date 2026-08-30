@@ -27,10 +27,20 @@ sys.path.insert(0, str(REPO / "src"))
 YEARS = (2023, 2024, 2025)
 VOLL = 5000.0
 MID_BAND = (150.0, 500.0)
-#: Keeper G-SPUR baselines (energy-made; ercot-215 promotion note).
+#: G-SPUR baselines — LIDLESS (ercot-225 card Option A, owner-signed
+#: 2026-08-26): the gated count is S_nolid = #{model >= 150 & actual < 150};
+#: a gate whose purpose is "no new spurious high-price hours" must not be
+#: escapable by overshooting the band top. Re-minted 9/12/1 from the
+#: `ercot215_decontam_B` committed sidecars (the card §2/§7; verified
+#: against results/calibration/ercot225_gspur_bandtop_reread.json): the
+#: 2024 +1 over the old banded 9/11/1 is h3068 (May 8 2024 20:00 CST, the
+#: standing band-top-blind hour in every lineage, card §4c). The hour
+#: IDENTITIES simultaneously repair the card §6 hygiene defect — the prior
+#: lists here did not match the baseline bundle's own hours on this file's
+#: own construction (counts agreed; identities did not).
 SPUR_BASELINE: dict[int, list[int]] = {
-    2023: [4283, 4404, 4547, 4548, 4571, 4572, 4593, 4832, 5024],
-    2024: [4749, 4750, 4751, 4772, 4773, 4796, 4797, 5828, 5829, 5852, 6501],
+    2023: [5438, 5439, 5443, 5660, 5684, 5731, 5804, 5821, 5822],
+    2024: [336, 337, 338, 339, 345, 346, 347, 348, 349, 2540, 2829, 3068],
     2025: [3355],
 }
 SPUR_BAR = 5
@@ -72,14 +82,30 @@ def _actual(year: int) -> np.ndarray:
 
 
 def _spur_hours(m: np.ndarray, a: np.ndarray) -> list[int]:
+    """The GATED spurious set — LIDLESS since the ercot-225 Option A
+    signature (owner, 2026-08-26): model >= $150 & actual < $150, no upper
+    bound, so pricing a phantom hour past the band top cannot remove it
+    from the count. The band/top split stays reported via
+    :func:`_spur_decomposition`."""
     mm = np.nan_to_num(m)
     aa = np.nan_to_num(a, nan=1e9)
-    return [
-        int(h)
-        for h in np.where(
-            (mm >= MID_BAND[0]) & (mm <= MID_BAND[1]) & (aa < MID_BAND[0])
-        )[0]
-    ]
+    return [int(h) for h in np.where((mm >= MID_BAND[0]) & (aa < MID_BAND[0]))[0]]
+
+
+def _spur_decomposition(m: np.ndarray, a: np.ndarray) -> dict:
+    """The KEPT report decomposition (ercot-225 card Option A): S_band =
+    the former banded count (model in [150, 500]), S_top = the overshoot
+    past the band top (model > 500)."""
+    mm = np.nan_to_num(m)
+    aa = np.nan_to_num(a, nan=1e9)
+    lo = aa < MID_BAND[0]
+    band = np.where((mm >= MID_BAND[0]) & (mm <= MID_BAND[1]) & lo)[0]
+    top = np.where((mm > MID_BAND[1]) & lo)[0]
+    return {
+        "s_band": int(band.size),
+        "s_top": int(top.size),
+        "s_top_hours": [int(h) for h in top],
+    }
 
 
 def _model_hour_utc(year: int) -> np.ndarray:
@@ -225,6 +251,7 @@ def main() -> None:
                 "gcap_violations": viol,
                 "spur_hours": spur,
                 "spur_count": len(spur),
+                "spur_decomposition": _spur_decomposition(m["price"], a),
                 "shed_hours": shed,
                 "c3a_probe_pct": round(
                     float((mm.mean() - aa.mean()) / aa.mean() * 100.0), 2
@@ -259,7 +286,11 @@ def main() -> None:
     out["d5_adaptive_rows_arm"] = _d5_adaptive_rows(arm_b)
     out["gates"] = {
         "G-CAP": {"violations": gcap_viol, "pass": gcap_viol == 0},
-        "G-SPUR": {"pass": not spur_fail, "bar": f"+{SPUR_BAR}/yr vs 9/11/1"},
+        "G-SPUR": {
+            "pass": not spur_fail,
+            "bar": f"+{SPUR_BAR}/yr vs 9/12/1 (LIDLESS, ercot-225 Option A "
+            "owner-signed 2026-08-26; band/top decomposition reported)",
+        },
         "G-SHED": {"pass": not shed_fail},
         "G-BAT": {"pass": not gbat_fail, "tol": GBAT_TOL},
         "G-D2": {

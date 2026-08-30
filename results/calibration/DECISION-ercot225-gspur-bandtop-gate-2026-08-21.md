@@ -124,3 +124,49 @@ two scorer functions drop an upper-bound comparison at their next use.
 **If the owner declines (Option C) or takes Option B, the queue item closes
 with this card as the recorded adjudication either way — the measurement
 does not need repeating.**
+
+---
+
+## RESOLUTIONS (appended 2026-08-26 — the card body above is preserved as put)
+
+**SIGNED: Option A** (owner, program-director sitting 2026-08-26). Executed
+same-day by the governance-records session under the sitting's ruling 2
+("the card is the spec — implement exactly what its Option A says and
+nothing beyond it"). The §7 checklist as executed:
+
+1. **Gate construction revised in the live scorers.** `ercot221_gates.py`
+   `_spur_hours` (the shared construction `ercot226_gates.py` imports) now
+   gates the lidless `S_nolid = #{model >= 150 & actual < 150}` with the
+   band/top decomposition reported via the new `_spur_decomposition`;
+   `_ercot173_ab.py` `year_stats` drops the lid from its gated `spurious`
+   (no-increase semantics unchanged in form) and reports
+   `spurious_band`/`spurious_top`. The rationale carried into the code, in
+   this card's terms: a gate whose purpose is "no new spurious high-price
+   hours" must not be escapable by overshooting the band top.
+2. **`SPUR_BASELINE` re-minted 9/12/1** in the same commit, re-derived from
+   the `ercot215_decontam_B` committed sidecars under the revised
+   construction (derivation re-run at execution: 9/12/1 exactly, the 2024
+   +1 = h3068). The §6 hygiene defect is repaired simultaneously — the hour
+   lists are now the baseline bundle's own identities on the file's own
+   construction (2023 [5438, 5439, 5443, 5660, 5684, 5731, 5804, 5821,
+   5822]; 2024 [336–339, 345–349, 2540, 2829] + top hour 3068; 2025
+   [3355]), verified list-identical against the derivation.
+3. **No re-solve, no re-bundle, no registration change** — scorer-only,
+   exactly as the card's numbers demonstrate. Historical gates JSONs stand
+   unrewritten as records of what was measured at the time.
+4. **Matrix §5.1 re-stamped** (queue item CLOSED BY OWNER DECISION) in
+   `docs/mechanism-testing-matrix.md` and
+   `docs/codebase-site/data/mechanism-matrix/ERCOT.js`.
+
+**Verdict preservation re-verified at execution against the committed
+`ercot225_gspur_bandtop_reread.json`:** the §5 table reproduces exactly —
+V1/V5/V6 PASS, V2/V4 FAIL a fortiori, V3 the sole flip (the ercot-215
+strict-leg artifact FAIL is EXONERATED: lidless 24→9 / 14→12 / 1→1,
+strictly improving every year). The four runs registered AFTER this card
+(2026-08-24-231-tie-zone-measured, 2026-08-25-234-eastex-identity,
+2026-08-25-235-2023-discrete-k24, 2026-08-25-236-swcap-clip-k33) were
+additionally checked from their committed gates/score JSONs: every one has
+s_top = 0 on its gated populations (lidless ≡ banded — ercot-231's
+REJECTED-AS-ARMED on G-SPUR and ercot-234's PASS are unchanged), and the
+ercot-235/236 spur readings were report-only, never a verdict basis. **No
+verdict of any standing run changes under the revision.**
