@@ -346,6 +346,93 @@ def _ercot_config() -> ISOConfig:
         # all five armed. NOTE the pair constraint: the two capacity-screen flags
         # must be turned off TOGETHER — __post_init__ refuses restoration without
         # the lookahead (FFR-8A), so switching off only one RAISES.
+        #
+        # D12-A ARMING — entry_margin_exhaustion + entry_forward_reserve_leg
+        # ARMED AS THE ERCOT FORECAST DEFAULT by owner ruling Q15 (r#18
+        # sitting, 2026-08-30, docs/handoffs/capx-director-ledger-2026-08.md
+        # §3), executing Q10's confirm-then-arm protocol; lane record
+        # docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md. The two rows
+        # move as ONE unit — the D12-C pair's single logical delta; a posture
+        # shipping one without the other was never solved (rule 13
+        # [R-MEASURED]).
+        #
+        # Q10 (r#15 sitting, 2026-08-30), verbatim: "CONFIRM-PAIR, THEN ARM.
+        # Lane D12-C chartered: ONE arm-vs-control A/B on the ERCOT T1-H leg
+        # at the registered posture with the TWO fields
+        # (entry_margin_exhaustion + entry_forward_reserve_leg) as the single
+        # logical delta, measuring the closed loop D12 open-loop-predicted.
+        # Arming auto-executes on a confirming record (both flip to ERCOT
+        # forecast defaults, honestly described); a contradiction does NOT
+        # arm and comes back to the owner at full magnitude."
+        #
+        # The measured record (FINDING-capx-d12c-confirm-pair-2026-08-30.md
+        # §4) was CONTRADICTING on exactly ONE of the five pre-declared
+        # verdict windows, so the pair armed nothing and escalated per its
+        # own protocol. Q15 (r#18 sitting, 2026-08-30), verbatim: "ARM BOTH
+        # FIELDS (entry_margin_exhaustion + entry_forward_reserve_leg → ERCOT
+        # forecast defaults), the owner judging the record
+        # confirming-in-substance per the finding's own §4.3 clause. The V-2
+        # miss is described honestly in the arming citation; matrix cells O →
+        # K-forecast-armed on the registered pair's evidence; sister-ISO
+        # cells stay U (rule 26). Execution = lane D12-A (zero-solve; prompt
+        # in the pack)."
+        #
+        # THE HONEST POSTURE. Armed, ERCOT forecast entry is
+        # exhaustion-bounded on the entering year's OWN expected-ORDC surface
+        # for every candidate class: both entry allocators build in repriced
+        # 250 MW tranches until the screen's one-object forward margin
+        # (energy leg + the SAME instrument invocation's expected-ORDC
+        # reserve adder — never the prior year's realized adder) is
+        # exhausted, bounded by the same caps as bang-bang. THE V-2 MISS,
+        # carried at full magnitude: the pair's entering-2022 gas_cc build
+        # was 0 MW, OUTSIDE the pre-declared [750, 1,250] MW window (the
+        # offline B-walk's 1,000 ± 1 tranche). Not a construction defect —
+        # the armed run's start margin was bit-identical to the committed
+        # +$45,930.9/MW-yr — but a pre-declaration derivation error: the
+        # window came from the offline walk's RESTRICTED candidate set (VRE
+        # held at shipped) while the live walk fields every class, so solar
+        # won the early tranches and exhausted cc's margin before a tranche
+        # cleared. Direction conservative (MORE exhaustion by the same
+        # mechanism on the same one-object margin); every other criterion
+        # and every structural claim confirmed (V-1/V-3/V-4/V-5 + both
+        # gates; terminal RM 15.84 % inside the ex-ante [15.0, 21.0] band);
+        # the tolerance was never widened after the record (rule 21
+        # [R-DOF]).
+        #
+        # EVIDENCE = the registered D12-C pair (forecast namespace, both
+        # bundles committed with run_config.json):
+        #   ercot-2021-2025-realized-t1h-d12c-control  key 28cef3500ec1fd9e
+        #   ercot-2021-2025-realized-t1h-d12c-armed    key f061b2646bfaac8b
+        # The ARMED bundle IS the record of this default posture: after this
+        # flip a bare ERCOT T1-H invocation resolves to exactly its config —
+        # verified zero-solve at arming (bare build_config + resolution
+        # reproduces f061b2646bfaac8b bit-equal; no re-solve, no
+        # re-registration). CACHE EPOCH, ERCOT forecast lane only: the
+        # resolved bare-construction default key moves 8d9ef77edb3e44cb ->
+        # 68a207068509f2b0 (and the bare T1-H key 28cef3500ec1fd9e ->
+        # f061b2646bfaac8b); the GLOBAL pin 603c2498bf71d21d, both
+        # ScenarioConfig field defaults (False — the unarmed pole, so armed
+        # runs ENTER the digest), every backcast key (both fields are
+        # _CACHE_KEY_OPTIONAL_FIELDS members AND backcast-coerced off) and
+        # every other ISO's resolution are UNMOVED. Pinned by
+        # tests/unit/config/test_ercot_stageb_arming.py (TestD12AArming) and
+        # tests/unit/config/test_iso_override_precedence.py.
+        #
+        # The control arm stays expressible (OVERRIDE-FIX precedence): an
+        # explicit --no-entry-margin-exhaustion /
+        # --no-entry-forward-reserve-leg (or constructor False) wins over
+        # these rows, and committed registered-posture bundles pin their own
+        # values in run_config.json. DEPENDENCY WALL: the reserve leg
+        # requires entry_lookahead_reprice AND screen_reserve_value_enabled,
+        # and the exhaustion walk requires the reprice (__post_init__
+        # refusals) — an ERCOT leg that disarms the reprice or the
+        # screen-reserve mechanism must now disarm these two WITH it or
+        # construction RAISES, the same discipline as the stage-B screen
+        # pair above. The retirement screens' internally-consistent backward
+        # pair is untouched (the D12 finding's own scope line). Rule 25
+        # [R-ISO-SCOPE]: ERCOT ONLY — the verdicts are the ERCOT pair's;
+        # sister ISOs stay U and derive their own parameters from their own
+        # markets.
         default_scenario_overrides={
             "scarcity_price_overlay": True,
             "capacity_screen_unified_lookahead": True,
@@ -353,6 +440,11 @@ def _ercot_config() -> ISOConfig:
             "entry_pipeline_aware_signal": True,
             "smr_available_year": 2030,
             "vre_procurement_additions_enabled": True,
+            # D12-A (owner ruling Q15): the margin-exhaustion entry volume
+            # rule with its scarcity-consistent forward reserve leg — one
+            # unit, see the D12-A block above.
+            "entry_margin_exhaustion": True,
+            "entry_forward_reserve_leg": True,
         },
     )
 

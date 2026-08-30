@@ -82,6 +82,20 @@ STAGE_B = {
     "vre_procurement_additions_enabled": True,
 }
 
+# ERCOT armings that landed AFTER D-30 on the same seam. The D-30 poles above
+# are declared relative to a resolution that carries stage B and NOTHING
+# later, so the live resolved config is stripped of these before either pole
+# is evaluated — otherwise this probe would falsely report the D-30 epoch
+# broken every time a later arming moves the live key. Each entry cites its
+# own epoch declaration; its probe owns the live pole.
+#   D12-A (owner ruling Q15, 2026-08-30): entry_margin_exhaustion +
+#   entry_forward_reserve_leg — 8d9ef77edb3e44cb -> 68a207068509f2b0,
+#   declared by scripts/probes/_d12a_arming_cache_epoch.py.
+POST_D30_ARMINGS = (
+    "entry_margin_exhaustion",
+    "entry_forward_reserve_leg",
+)
+
 OTHER_ISOS = ("CAISO", "MISO", "NYISO", "NEISO", "PJM")
 
 
@@ -106,14 +120,19 @@ def main() -> int:
         )
 
     # --- read 2: the ERCOT epoch — resolved key moves between the poles ---
-    resolved = apply_iso_scenario_defaults(ScenarioConfig(iso="ERCOT"), "ERCOT")
-    armed_values = {f: getattr(resolved, f) for f in STAGE_B}
+    live = apply_iso_scenario_defaults(ScenarioConfig(iso="ERCOT"), "ERCOT")
+    armed_values = {f: getattr(live, f) for f in STAGE_B}
     reads["ercot_resolved_values"] = armed_values
     if armed_values != STAGE_B:
         failures.append(f"ERCOT resolution wrong: {armed_values} != {STAGE_B}")
 
-    armed_key = resolved.cache_key()
+    # Evaluate the D-30 poles at the D-30 posture: strip the post-D-30
+    # armings (see POST_D30_ARMINGS) from the live resolution first.
     defaults = ScenarioConfig(iso="ERCOT")
+    resolved = dataclasses.replace(
+        live, **{f: getattr(defaults, f) for f in POST_D30_ARMINGS}
+    )
+    armed_key = resolved.cache_key()
     pre_arm = dataclasses.replace(
         resolved, **{f: getattr(defaults, f) for f in STAGE_B}
     )
