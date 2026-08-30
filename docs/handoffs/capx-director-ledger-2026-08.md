@@ -6,11 +6,41 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #13) ·
-**HEAD at refresh:** `f9eb73c` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #14) ·
+**HEAD at refresh:** `1421c4a` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (supersedes the 2026-08-26 handoff; state section refreshed at r#13)
 
 ---
+
+## 0k. Refresh #14 (2026-08-30, HEAD `1421c4a`) — r#13 batch verified CURRENT (none dispatched yet); D5 issued as the wave's addition; backcast-only movement
+
+**1. THE r#13 BATCH IS CURRENT VERBATIM.** No capx branch exists at `1421c4a` (D13/D14/D12
+undispatched; S-4b staged behind D14) and the surfaces they edit are untouched since r#13:
+`program-status.json` and `ff-verdicts.json` last moved at D10's merge (`158a688`), so D13's
+edit list is exact, D14 displaces nothing, and D12's evidence set is unchanged. The director
+r#13 commit merged cleanly (PR #4362, no merge-behind gap).
+
+**2. D5 ISSUED — the three-ISO crossover CO2 derivation question, now fully evidenced.**
+D10's NYISO measurement (co2 10.1/10.3/3.9 %) completed the scope D2-B's re-scope predicted:
+the 43–76 % miss is ERCOT/PJM/MISO's, and the discriminant hypothesis (what the three share
+and NYISO lacks — a material coal fleet; the coal_twh crossover rows FAIL in ERCOT and PJM) is
+PRE-DECLARED in the charter as a hypothesis to test, not assume. Zero-solve attribution lane
+on the committed crossover bundles; no board edit (D13's or a later refresh's job); no tuning.
+
+**3. BACKCAST MOVEMENT (all of it — no forecast-surface touches):** ercot-239 r2/r3: the
+graded-ladder arm was A/B-REJECTED on its own kills (officials collapse to pre-k33; spur
+74→11), escalated, and the owner sitting adjudicated promotion NOT RECOMMENDED — keeper
+unchanged; h3068-2024 attributed (event-exit lag). ercot-241 phase-0 measured the off-core
+conduct screen — kills clear, Phase-1 gate OPEN. caiso-224 minted `caiso_fsno_subzonal_topology`
+(gated default-off, matrix row by its own lane) + G-CTRL comparator probe; branch in flight.
+nyiso-159 landed `nyiso_zonal_loss_surface` (measured delivery-factor surface, PREREG-first).
+Audit-records v15 cycle executed (four rulings, zero promotions).
+
+**4. Q9 CHECK RE-RUN: miso-190 head unchanged (`9cd6dc6`), A/B still unregistered — STILL
+RUNNING. S-123 fails a SIXTH consecutive check; S-6 stays held.** Housekeeping: the
+`capx-s4-neiso-hydro-syqu7m` branch is a fully-merged stale leftover — safe for the owner to
+delete. In-flight backcast branches: caiso-224, ercot-241, miso-190 (D12's start-time
+deconfliction covers the ERCOT one).
 
 ## 0j. Refresh #13 (2026-08-30, HEAD `f9eb73c`) — ALL FIVE in-flight lanes LANDED (D10 · S-4V · S-5 · Q5-W · D11-R); NEISO takes the program lead with (a)+(b) both PASS; three owner rulings; D12/D13/D14 issued
 
@@ -578,7 +608,7 @@ the gap.
 | **S-4b NEISO REQUIREMENT RE-VINTAGE** | Adopt the published Nov 21 2025 ARA filing pair (≈ +380 MW of requirement — bigger than the old 218 MW gap) | **PROMPT WRITTEN r#13 — dispatch strictly AFTER D14 merges** (both edit ff-verdicts.json + the NEISO board block) | `claude/capx-s4b-neiso-ara` | Fable | Rule 23 (on publication, not on a residual). First job: locate the ARA-cycle DR companion (S-4 finding §6.3). Pre-declared: +380 MW vs the +229 MW clearance ⇒ 2028 plausibly RE-OPENS ≈ −151 MW and leg (b) may flip back — reported at full magnitude if so. |
 | **S-5 PJM REQUIREMENT HORIZON-EDGE** | Implement hold-last-FPR + the D-1 checker repair; re-score PJM's T1-F leg | **LANDED** PR #4340 — hold-last-FPR in `resolve_forecast_pool_requirement` (zero DOF), checker year-threading repaired, **I7 2030 restates 366 MW → 5,858 MW, 2029 plausibly joins**; no solve, no registration; board restatement carried by D13 | `claude/capx-s5-pjm-horizon-edge` | Fable | The worse reported result, produced on purpose (the card's own arithmetic). 2029/30 intake pointer at the table edge (BRA Dec 2026). **S-6 unblocked.** |
 | **S-6 PJM T1-F LEDGER RUN** | The minimum run that makes PJM's supply side observable, against the corrected (hold-last) bar | **UNBLOCKED by S-5 — HELD on the heavy-slot check (Q9: miso-190 still running; PJM 8.8 GB is no-co-run)**; re-run the check every refresh | — | Fable | Measures whether 2029 actually joins the fail set and the true 2030 magnitude on the supply side. |
-| **D5 FC-4 CO2 CROSSOVER** | Attribute the crossover CO2 miss | **RE-SCOPED, still not started** | `claude/capx-d5-crossover-co2` | Fable | **Confirmed a three-ISO derivation question by D10's measurement** (NYISO co2 10.1/10.3/3.9 % — does NOT reproduce the miss): scope is ERCOT 43–50 %, PJM 43–58 %, MISO 63–76 %. |
+| **D5 FC-4 CO2 CROSSOVER** | Attribute the three-ISO crossover CO2 miss (ERCOT 43–50 %, PJM 43–58 %, MISO 63–76 %) by exact decomposition on the committed bundles | **ISSUED r#14** — zero-solve attribution lane; the NYISO ~10 % discriminant (coal hypothesis) pre-declared as a hypothesis to TEST | `claude/capx-d5-crossover-co2` | Fable | Confirmed three-ISO by D10's measurement. No board edit, no tuning; FINDING + repair recommendation only. |
 | **D3 MISO RETIREMENT / G3** | G3 cap-grain `retire.total_gw` t1h regression | QUEUED | — | Fable | I13 cobweb half confirmed superseded. |
 | **D4-I3 ERCOT** | I3 scarcity-slack invariant (net-revenue half HELD) | QUEUED at half scope | — | Fable | Q1 answered: card Y signed **Y-C**, arc stays open. |
 | **D6 FC-3 CURVE-ON OVER-FIRE** | Four T1-H curve legs | QUEUED | — | Fable | — |
@@ -718,6 +748,7 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-08-30 | **D14 NEISO T1-X CROSSOVER** | `claude/capx-d14-neiso-t1x` | Fable | neiso | r#13 batch — the D10 analog on the new lead ISO; success ⇒ first (a)+(b)+(c) ISO |
 | 2026-08-30 | **D12 SCARCITY-CONSISTENT DELTA BASIS** | `claude/capx-d12-scarcity-basis` | Fable | ercot | r#13 batch — released by D11-R's report; feeds the Q8 arming re-decision |
 | 2026-08-30 | **S-4b NEISO ARA RE-VINTAGE** | `claude/capx-s4b-neiso-ara` | Fable | neiso | r#13 — prompt written; **dispatch strictly after D14 merges** (shared NEISO surfaces) |
+| 2026-08-30 | **D5 CROSSOVER CO2 DERIVATION** | `claude/capx-d5-crossover-co2` | Fable | code (widen as needed) | r#14 — zero-solve three-ISO attribution on the committed crossover bundles; r#13 batch verified current alongside it |
 
 ## 5. History (compacted)
 
