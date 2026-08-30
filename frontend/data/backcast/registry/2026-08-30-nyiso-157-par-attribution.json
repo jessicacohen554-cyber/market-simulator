@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-30-nyiso-157-par-attribution",
+  "label": "nyiso 157 par attribution",
+  "date": "2026-08-30",
+  "shorthand": "nyiso-157-par-attribution",
+  "definition": "nyiso-157 Leg-1 arm: + nyiso_seam_par_attribution (standing PREREG nyiso-126 + nyiso-127 addenda; re-test of the nyiso-127 R at the nyiso-155 HEAD under the 2026-08-30 owner ruling)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-30-nyiso-157-par-attribution.js",
+  "bundle": "results/calibration/nyiso157_pararm_B"
+}
