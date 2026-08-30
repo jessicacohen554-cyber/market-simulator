@@ -12198,3 +12198,73 @@ each push; the mid-session HTTP hangs were the owner's merge-and-delete of
 the ruling-1 branch, resolved by rebasing onto the merged main).
 
 **Next shorthand: ercot-239** (ercot-199 remains unclaimed)
+
+---
+
+## ercot-239 — 2026-08-30 — THE POST-TWO-CONFIG RESIDUAL QUEUE, PRIORITY 1 EXECUTED: Phase-0 driver characterization of the 14-hour missed-event family (ZERO-SOLVE, precommitted) — the events are MEASURED ENERGY-LAMBDA scarcity in tight-room hours that NO reserve adder carried (published RTORPA ≈ 0 in 12/14, RTORDPA ≤ $5.44 in all 14, system λ ≈ the print in every hour); the model RANKS 12/14 inside its own bottom-5 % ORDC room yet prices it $0.00–$25.68; the availability/outage/net-load-ramp priors largely REFUTED; the object is offer-surface CONDUCT off the August core — the ercot-217 adjudicated episode, now enumerated at hour grain
+
+**Branch `claude/ercot-239-residual-queue-lbkvbf`. ZERO-SOLVE round 1 of the
+handoff's residual queue; keeper structure (forward
+`2026-08-25-234-eastex-identity` + 2023 carve-out
+`2026-08-25-236-swcap-clip-k33`) UNTOUCHED; no lever armed, no matrix cell
+changed (nothing tested).** Precommit
+`docs/PRECOMMIT-ercot239-missedevents-phase0-2026-08-30.md` pushed +
+blob-verified BEFORE any measurement; Amendment 1 (V-0 cross-check re-based:
+the committed ercot-237 JSON never carried the `lt_200|ge_1000` hour list)
+and Amendment 2 (the committed measured ORDC/reserves series added as a
+report-only panel) recorded and pushed before the measurements they cover.
+Probe `scripts/probes/ercot239_missedevents_phase0.py` →
+`results/calibration/ercot239_missedevents_phase0.json`; full record
+`docs/FINDING-ercot239-missedevents-phase0-2026-08-30.md`.
+
+**What the measurements showed (V-0 exact; all 14 hours reproduced):**
+(1) the real prints are RTLMP-side — measured `system_lambda` reproduces
+the RT print in every event hour (h4578: λ 2008 vs RT 2014) with published
+RTORPA ≤ $6.66 in 12/14 (h2971 $224, h2058 $28) and RTORDPA ≤ $5.44 in all
+14, so the armed measured-RTORDPA overlay is CORRECTLY ~0 here and no
+adder/overlay channel can carry these hours in model or reality; (2) the
+hours are genuinely tight — measured RTOLCAP at p0.1–p17.1 of year in all
+14, and the model's own ORDC room at ≤ p5 of ITS year in 12/14 (h7001
+p15.3; h7145 p91.9) with 0.2–3.6 GW room shortfall in every hour — P1
+("far from scarcity") REFUTED in the informative direction: the model's
+tightness RANKING is nearly perfectly aligned with reality's events while
+its ORDC prices that room $0.00–$25.68 (and the REAL ORDC priced ≈ 0 there
+too — both curves are flat at those room levels, consistently); (3) the
+fixed ex-ante actual-side drivers under-fire: ramp 4/14 (P2 refuted),
+≥1.5 GW net-load gap 2/14, both wind-led (h6399 2.6 GW, h7145 1.8 GW — P4
+refuted), outage 1/14 (h2058, March, overlay p99.2 — P5 refuted 2/11),
+tie exports 0/14 (P3 CONFIRMED; ERCOT net-IMPORTED 111–873 MW in every
+event hour), 7/14 UNATTRIBUTED at the declared thresholds (kill K-2
+honoured); (4) one below-threshold systematic: the event-hour demand gap
+(EIA-930 actual − model) is +651…+873 MW in 12/14 vs a +98 MW year mean.
+
+**Family anatomy (FINDING §4):** an 11-hour conduct core (tight room, flat
+curves, reality's offer stack printed $537–$2,014, model mid-merit
+$35–$175 — the k=33 lift covers the August core; these are the SAME
+phenomenon OFF-core), two wind misses (h6399/h7145, the only clean
+net-load-representation members), and h2058 (outage-season compound). The
+withheld-family ORDC steps fire in 3 hours ($833.33 = VOLL/6; h5777 all
+four families at $416.67 = VOLL/12) — the `reserve_price` sidecar reaches
+$1,675–$3,342 there without touching the scored price; the ercot-212
+anatomy of that seam stands unrevisited.
+
+**Owner-visible queue out of this round (FINDING §6):** (1) the off-core
+conduct object — any lever is a new precommitted round UNDER the ercot-217
+adjudication; the rule-13-admissible direction is a MEASURED conduct
+parameterization (60-Day SCED offer dependence on room/net-load,
+`data/raw/ERCOT/SCED-CT`), never a band-targeted lift; (2) the event-hour
+demand gap (+0.7–0.9 GW in 12/14) — one bounded zero-solve pass at the
+demand source; (3) the two wind hours. Ruled OUT and staying closed:
+overlay completeness (RTORDPA correctly ~0; ercot-203 untouched), the
+ORDC/adder channel (real curve equally flat; ercot-212 net-credits R
+stands), the outage overlay, tie flows.
+
+**Hygiene:** zero solves; years ⊂ {2023}; no `--holdout-authorized`, no
+marker (rule 22; spend freeze respected); ERCOT surfaces only (rule 25);
+no run produced ⇒ rule 15 not triggered; no matrix stamp (no mechanism
+tested, ercot-237 precedent); push integrity per rule 27 (precommit
+blob-verified 1e2861d7 before measurement; the session's opening `git push`
+HTTP-500 storm resolved by re-deriving the head on the moved main — the
+fresh-base rule, not a transport conclusion).
+
+**Next shorthand: ercot-240** (ercot-199 remains unclaimed)

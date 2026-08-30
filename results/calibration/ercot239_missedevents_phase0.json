@@ -118,6 +118,159 @@
    "7145": 91.9,
    "7480": 1.9
   },
+  "measured_reserves": {
+   "source": "data/raw/ercot/ercot_2023_ordc_reserves_hourly.parquet",
+   "at_event_hours": {
+    "2058": {
+     "rtolcap": 5748.0,
+     "rtolcap_pctl_year": 0.4,
+     "prc": 4837.0,
+     "prc_pctl_year": 1.5,
+     "rtorpa": 27.52,
+     "system_lambda": 702.85,
+     "model_ordc_held": 4828.0,
+     "model_minus_measured_room": -920.0
+    },
+    "2971": {
+     "rtolcap": 4649.0,
+     "rtolcap_pctl_year": 0.1,
+     "prc": 4132.0,
+     "prc_pctl_year": 0.1,
+     "rtorpa": 223.59,
+     "system_lambda": 509.64,
+     "model_ordc_held": 5988.0,
+     "model_minus_measured_room": 1340.0
+    },
+    "4578": {
+     "rtolcap": 7164.0,
+     "rtolcap_pctl_year": 3.7,
+     "prc": 5334.0,
+     "prc_pctl_year": 7.2,
+     "rtorpa": 4.34,
+     "system_lambda": 2008.14,
+     "model_ordc_held": 4905.0,
+     "model_minus_measured_room": -2259.0
+    },
+    "4623": {
+     "rtolcap": 8960.0,
+     "rtolcap_pctl_year": 16.0,
+     "prc": 5645.0,
+     "prc_pctl_year": 14.0,
+     "rtorpa": 0.0,
+     "system_lambda": 632.26,
+     "model_ordc_held": 7433.0,
+     "model_minus_measured_room": -1527.0
+    },
+    "4626": {
+     "rtolcap": 9099.0,
+     "rtolcap_pctl_year": 17.1,
+     "prc": 5597.0,
+     "prc_pctl_year": 12.8,
+     "rtorpa": 0.0,
+     "system_lambda": 651.96,
+     "model_ordc_held": 7430.0,
+     "model_minus_measured_room": -1668.0
+    },
+    "5369": {
+     "rtolcap": 8990.0,
+     "rtolcap_pctl_year": 16.3,
+     "prc": 6360.0,
+     "prc_pctl_year": 36.9,
+     "rtorpa": 0.06,
+     "system_lambda": 666.22,
+     "model_ordc_held": 6266.0,
+     "model_minus_measured_room": -2725.0
+    },
+    "5484": {
+     "rtolcap": 8126.0,
+     "rtolcap_pctl_year": 9.1,
+     "prc": 5887.0,
+     "prc_pctl_year": 21.0,
+     "rtorpa": 1.05,
+     "system_lambda": 557.81,
+     "model_ordc_held": 6009.0,
+     "model_minus_measured_room": -2117.0
+    },
+    "5777": {
+     "rtolcap": 7412.0,
+     "rtolcap_pctl_year": 4.9,
+     "prc": 5828.0,
+     "prc_pctl_year": 19.4,
+     "rtorpa": 6.66,
+     "system_lambda": 535.85,
+     "model_ordc_held": 4689.0,
+     "model_minus_measured_room": -2723.0
+    },
+    "5943": {
+     "rtolcap": 8259.0,
+     "rtolcap_pctl_year": 10.1,
+     "prc": 6036.0,
+     "prc_pctl_year": 25.1,
+     "rtorpa": 0.02,
+     "system_lambda": 584.18,
+     "model_ordc_held": 6476.0,
+     "model_minus_measured_room": -1783.0
+    },
+    "5945": {
+     "rtolcap": 8320.0,
+     "rtolcap_pctl_year": 10.4,
+     "prc": 6074.0,
+     "prc_pctl_year": 26.3,
+     "rtorpa": 0.35,
+     "system_lambda": 961.2,
+     "model_ordc_held": 6028.0,
+     "model_minus_measured_room": -2292.0
+    },
+    "6399": {
+     "rtolcap": 7861.0,
+     "rtolcap_pctl_year": 7.2,
+     "prc": 5619.0,
+     "prc_pctl_year": 13.4,
+     "rtorpa": 0.7,
+     "system_lambda": 701.45,
+     "model_ordc_held": 5230.0,
+     "model_minus_measured_room": -2632.0
+    },
+    "7001": {
+     "rtolcap": 8350.0,
+     "rtolcap_pctl_year": 10.7,
+     "prc": 6347.0,
+     "prc_pctl_year": 36.4,
+     "rtorpa": 0.27,
+     "system_lambda": 756.95,
+     "model_ordc_held": 8011.0,
+     "model_minus_measured_room": -339.0
+    },
+    "7145": {
+     "rtolcap": 8398.0,
+     "rtolcap_pctl_year": 11.1,
+     "prc": 6164.0,
+     "prc_pctl_year": 29.6,
+     "rtorpa": 0.0,
+     "system_lambda": 637.9,
+     "model_ordc_held": 9573.0,
+     "model_minus_measured_room": 1175.0
+    },
+    "7480": {
+     "rtolcap": 8569.0,
+     "rtolcap_pctl_year": 12.4,
+     "prc": 6135.0,
+     "prc_pctl_year": 28.6,
+     "rtorpa": 0.23,
+     "system_lambda": 600.75,
+     "model_ordc_held": 5790.0,
+     "model_minus_measured_room": -2779.0
+    }
+   },
+   "year_base": {
+    "rtorpa_hours_ge_100": 17,
+    "rtorpa_hours_ge_500": 2,
+    "rtolcap_p5": 7427.0,
+    "rtolcap_p50": 12745.0,
+    "model_held_p5": 7432.0,
+    "model_held_p50": 8545.0
+   }
+  },
   "gap_base_rates_mw": {
    "demand_gap_mean": 98.0,
    "demand_gap_p50": 29.0,
