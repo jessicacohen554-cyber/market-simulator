@@ -445,6 +445,27 @@ Probe `scripts/probes/ercot245_commitment_state_phase0.py` →
   mechanism + tests, then A/B bundles + registration + payloads, then
   FINDING/log/matrix.
 
+## Amendment 1 (2026-08-30, pushed BEFORE the census re-runs — the §7 convention)
+
+The first probe run STOPPED at V-0(d) as designed: the all-restype online-HSL
+sum reconciles with `rtolhsl` in SHAPE (hourly corr passes the ≥ 0.985 leg)
+but sits +4,948 MW above it at the median — outside the ±3 GW level band. The
+stop-and-investigate decomposition (sample days spanning the year, committed
+in the probe JSON on the re-run) attributes the offset: the published
+NP6-905 `rtolhsl` series does NOT carry ESR (PWRSTR) online HSL (~2.5 GW of
+the gap; dropping storage from the sum leaves +2.4 GW at corr 0.994), while
+wind/solar are unambiguously inside it (dropping them collapses corr to 0.80
+and the gap to −12.6 GW); the ~2.4 GW residual (~4 % of a ~60 GW series) is
+consistent with publication-side composition trims (private-use-network
+self-serve) not observable in the disclosure. **The anchor's level leg
+assumed ESR inclusion; that assumption was wrong, and no census quantity
+reads this sum** — the four slow-class constructions, the transfer structure
+and every kill are untouched. Re-declared V-0(d), graded on the re-run:
+(i) corr ≥ 0.985 on the all-restype sum (unchanged); (ii) the ±3 GW median
+level band graded on the STORAGE-EXCLUDED sum; (iii) the raw-sum gap, the
+storage online-HSL mean and the decomposition committed to the JSON as the
+series-composition record. Nothing else changes; the kills stay frozen.
+
 ## 8. Owner-visible flag (not executed here, per the charter)
 
 The 2024/2025 all-resource SCED conduct corpus intake (PRECOMMIT-ercot242
