@@ -14,7 +14,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import CAISO_TAC_ZONE_WEIGHTS, HOURS_PER_YEAR
+from market_sim.config.constants import (
+    CAISO_TAC_ZONE_WEIGHTS,
+    CAISO_TAC_ZONE_WEIGHTS_FSNO,
+    HOURS_PER_YEAR,
+)
 from market_sim.config.paths import ZONE_DEMAND_DIR
 
 from .frames import (
@@ -287,6 +291,47 @@ def load_zonal_shares(iso: str, year: int, zone_names: list[str]) -> np.ndarray 
         ``(n_zones, HOURS_PER_YEAR)`` float64 array, or ``None`` if no measured
         source (clean parquet or raw file) is available for this ISO-year.
     """
+    # CAISO FSNO sub-zonal partition (caiso-224): the 7-zone caller list is
+    # served by exact scalar re-split of the 6-zone measured shares — no new
+    # hourly series exists (see _caiso_fsno_rescale).
+    if iso == "CAISO" and "FSNO" in zone_names:
+        return _caiso_fsno_rescale(iso, year, zone_names)
+    return _load_zonal_shares_base(iso, year, zone_names)
+
+
+def _caiso_fsno_rescale(
+    iso: str, year: int, zone_names: list[str]
+) -> np.ndarray | None:
+    """Serve 7-zone CAISO shares by re-splitting the measured 6-zone shares.
+
+    The NP15/ZP26 hourly shares are, by construction, the one measured
+    PGE-TAC hourly share scaled by the two static caiso-172 weights (no
+    hourly sub-TAC series is published — constants.CAISO_TAC_ZONE_WEIGHTS
+    note). Under the FSNO partition the same PGE-TAC shape is re-split by
+    the caiso-223 measured 3-way weights
+    (``constants.CAISO_TAC_ZONE_WEIGHTS_FSNO``): recover the PGE-TAC hourly
+    share from the 2-way NP15 row (÷ 0.883951), then emit NP15/FSNO/ZP26 as
+    three proportional copies. The 3-way weights sum to 1.0 exactly as the
+    2-way pair does, so every column total is preserved and both the clean
+    parquet and the raw fallback serve the armed variant unchanged
+    (caiso-224; PRECOMMIT-caiso224-fsno-arm-2026-08-30.md §1).
+    """
+    base_names = [z for z in zone_names if z != "FSNO"]
+    base = _load_zonal_shares_base(iso, year, base_names)
+    if base is None:
+        return None
+    pge = base[base_names.index("NP15")] / CAISO_TAC_ZONE_WEIGHTS["PGE-TAC"]["NP15"]
+    out = np.zeros((len(zone_names), base.shape[1]), dtype=float)
+    for i, zone in enumerate(zone_names):
+        w3 = CAISO_TAC_ZONE_WEIGHTS_FSNO.get(zone)
+        out[i] = pge * w3 if w3 is not None else base[base_names.index(zone)]
+    return _validate_zonal_shares(iso, year, zone_names, out, "fsno-rescale")
+
+
+def _load_zonal_shares_base(
+    iso: str, year: int, zone_names: list[str]
+) -> np.ndarray | None:
+    """Backend of :func:`load_zonal_shares` for the ISO's base zone list."""
     seam = _read_clean_seam()
     if seam is not None:
         read_clean, clean_exists = seam

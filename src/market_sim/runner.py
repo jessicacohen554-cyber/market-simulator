@@ -1165,6 +1165,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # the config -- a no-op for the neutral "current" default.
     config = resolve_policy_bundle(config)
 
+    # Arm/disarm the CAISO FSNO sub-zonal partition for this run BEFORE the
+    # first get_iso_config / zone-lookup call, so the LP and every bare
+    # get_iso_config() consumer see the same topology (caiso-224; the
+    # run_calibration.run_year seam is this line's backcast twin —
+    # config.topology_variant module docstring has the full rationale).
+    from market_sim.config.topology_variant import set_caiso_fsno_partition
+
+    set_caiso_fsno_partition(
+        iso == "CAISO" and getattr(config, "caiso_fsno_subzonal_topology", False)
+    )
+
     iso_config = get_iso_config(iso)
     # Apply ISO-level scenario defaults (e.g. CAISO negative_renewable_offers)
     # for fields the caller has not explicitly set. The rule lives in ONE place

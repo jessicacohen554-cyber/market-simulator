@@ -3682,6 +3682,24 @@ CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
     "MWD-TAC": {"SP15_rest": 1.0},
 }
 
+# The MEASURED 3-way PG&E TAC split for the FSNO sub-zonal partition
+# (caiso-223 §C: the caiso-172 ATL_LDF construction generalized 3-way over
+# DLAP_PGAE, day-weighted 2023-2025, gates 13/13 PASS, two-way control exact
+# vs the committed caiso-172 artifact; source
+# results/calibration/_caiso223_subzonal_scope.json). Consumed by
+# data.eia930.zonal_shares ONLY when ScenarioConfig
+# caiso_fsno_subzonal_topology is armed (caiso-224): the hourly PG&E TAC
+# share is re-split by exact scalar rescale — NP15/FSNO/ZP26 are three
+# proportional copies of the one measured PGE-TAC shape, exactly as the
+# 2-way NP15/ZP26 split above is two (no hourly sub-TAC series is published;
+# see the CAISO_TAC_ZONE_WEIGHTS note). Frozen derive [R-FROZEN-DERIVE]:
+# re-derives only when its source data updates, never against a residual.
+CAISO_TAC_ZONE_WEIGHTS_FSNO: dict[str, float] = {
+    "NP15": 0.752614,
+    "FSNO": 0.132592,
+    "ZP26": 0.114794,
+}
+
 # NYISO local self-supply floors (transmission.inject_nyiso_local_selfsupply,
 # gated on ScenarioConfig.nyiso_local_selfsupply). Per downstate load-pocket
 # zone, the fraction of that zone's hourly load that must be met by IN-ZONE

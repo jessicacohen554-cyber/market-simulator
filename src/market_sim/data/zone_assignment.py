@@ -23,6 +23,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.paths import (
+    CAISO_FSNO_SUBZONE_CSV,
     CAISO_HUB_MEMBERSHIP_CSV,
     CAMPD_BINS_CSV,
     EIA_860_DIR,
@@ -160,6 +161,22 @@ CAISO_CENTRAL_COAST_NP15_COUNTIES: frozenset[int] = frozenset(
         79,  # San Luis Obispo (Diablo Canyon)
         53,  # Monterey (Moss Landing)
         69,  # San Benito
+    }
+)
+
+# FSNO pocket county FIPS codes (state 6 = California) — the caiso-223 §B
+# county tier of the FSNO sub-zonal partition (caiso-224, gated on
+# ScenarioConfig caiso_fsno_subzonal_topology via config.topology_variant):
+# a CAISO plant with NO measured sub-zone row whose eGRID county sits in the
+# San Joaquin Valley pocket re-cuts from its NP15/ZP26 lat-band estimate to
+# FSNO (Helms PS in Fresno county is the canonical case). Mirrors
+# scripts/probes/_caiso223_subzonal_scope.py FSNO_COUNTIES.
+CAISO_FSNO_COUNTIES: frozenset[int] = frozenset(
+    {
+        19,  # Fresno (Helms, Kerckhoff, the Westlands solar belt)
+        31,  # Kings (Mustang, American Kings, Henrietta)
+        39,  # Madera
+        47,  # Merced
     }
 )
 
@@ -1148,6 +1165,37 @@ def _load_caiso_hub_membership_cached(use_clean: bool) -> dict[int, str]:
     return out
 
 
+def load_caiso_fsno_subzone_membership() -> dict[int, str]:
+    """Return ``{plant_code: subzone}`` for the FSNO sub-zonal partition.
+
+    The caiso-223 §B measured membership recut promoted to
+    ``data/raw/reference/caiso-fsno-subzone-membership.csv`` (subzone ∈
+    {FSNO, NP15, ZP26}; SP15-side rows are hub-unchanged by construction and
+    deliberately absent). Consumed by the CAISO carve in
+    :func:`_build_zone_lookup_cached` ONLY when the FSNO partition is armed
+    (caiso-224; PRECOMMIT-caiso224-fsno-arm-2026-08-30.md §1). Reads the raw
+    CSV on both the raw and clean paths — it is the same measured input
+    either way (the caiso-217 hub first-check precedent); returns an empty
+    dict when the file is absent.
+    """
+    return dict(_load_caiso_fsno_subzone_cached())
+
+
+@lru_cache(maxsize=1)
+def _load_caiso_fsno_subzone_cached() -> dict[int, str]:
+    """Cache-bearing core of :func:`load_caiso_fsno_subzone_membership`."""
+    if not CAISO_FSNO_SUBZONE_CSV.exists():
+        return {}
+    raw = pd.read_csv(CAISO_FSNO_SUBZONE_CSV, usecols=["plant_code", "subzone"])
+    out: dict[int, str] = {}
+    for code, subzone in zip(raw["plant_code"], raw["subzone"]):
+        oris = _to_int(code)
+        if oris is None or subzone is None or subzone != subzone:
+            continue
+        out[oris] = str(subzone)
+    return out
+
+
 def _caiso_zone_from_hub(hub: str, geo_zone: str | None) -> str:
     """Resolve a measured hub membership onto the CAISO model zones.
 
@@ -1186,12 +1234,23 @@ def build_zone_lookup(iso: str) -> dict[int, str]:
     solved year. The cache is keyed ``(iso, use_clean)`` and the public
     function returns a fresh shallow copy per call, so a caller mutating its
     dict can never poison another's.
+
+    The cache key also carries the CAISO FSNO-partition state
+    (``config.topology_variant``), so an in-process variant toggle (tests;
+    the arm/control pair share nothing in-process) can never serve a lookup
+    built under the other topology.
     """
-    return dict(_build_zone_lookup_cached(iso.upper(), _use_clean()))
+    from market_sim.config.topology_variant import caiso_fsno_partition_active
+
+    iso_u = iso.upper()
+    fsno = caiso_fsno_partition_active() if iso_u == "CAISO" else False
+    return dict(_build_zone_lookup_cached(iso_u, _use_clean(), fsno))
 
 
 @lru_cache(maxsize=16)
-def _build_zone_lookup_cached(iso: str, use_clean: bool) -> dict[int, str]:
+def _build_zone_lookup_cached(
+    iso: str, use_clean: bool, caiso_fsno: bool = False
+) -> dict[int, str]:
     """Cache-bearing core of :func:`build_zone_lookup` (already-uppercased ISO)."""
     ba_code = _ISO_TO_BA_CODE.get(iso)
     if ba_code is None:
@@ -1202,6 +1261,9 @@ def _build_zone_lookup_cached(iso: str, use_clean: bool) -> dict[int, str]:
     subset = df[ba == ba_code]
 
     lookup: dict[int, str] = {}
+    # eGRID county per plant, kept only for the CAISO FSNO county tier below
+    # (state FIPS, county FIPS); the base zone rule consumes county inline.
+    counties: dict[int, tuple[int | None, int | None]] = {}
     for row in subset.itertuples(index=False):
         oris = _to_int(row.ORISPL)
         if oris is None:
@@ -1213,6 +1275,8 @@ def _build_zone_lookup_cached(iso: str, use_clean: bool) -> dict[int, str]:
             _to_int(row.FIPSST),
             _to_int(row.FIPSCNTY),
         )
+        if caiso_fsno:
+            counties[oris] = (_to_int(row.FIPSST), _to_int(row.FIPSCNTY))
 
     if iso in _EIA860_SUPPLEMENT_ISOS:
         for oris, zone in _eia860_ba_zones(iso).items():
@@ -1230,6 +1294,33 @@ def _build_zone_lookup_cached(iso: str, use_clean: bool) -> dict[int, str]:
             geo_zone = lookup.get(oris)
             if geo_zone is not None:
                 lookup[oris] = _caiso_zone_from_hub(hub, geo_zone)
+
+    # CAISO FSNO sub-zonal carve (caiso-224, armed via config.topology_variant
+    # from ScenarioConfig caiso_fsno_subzonal_topology; the caiso-223 §B
+    # measured membership applied verbatim). Two tiers, mirroring caiso-223:
+    # (1) the measured sub-zone recut of the crosswalk pool overrides the hub
+    #     first-check above (it IS that first-check at sub-zonal grain —
+    #     including honest non-moves like Henrietta-D staying ZP26);
+    # (2) an unjoined plant whose eGRID county sits in the FSNO pocket and
+    #     whose geographic estimate is NP15/ZP26 re-cuts to FSNO (the county
+    #     tier — Helms PS is the canonical case). The guard never pulls
+    #     SP15-side or out-of-state plants north. EIA-860-supplement plants
+    #     without an eGRID county keep their estimate (the caiso-223
+    #     enumeration's own base was the eGRID CISO cohort).
+    if iso == "CAISO" and caiso_fsno:
+        subzone_map = load_caiso_fsno_subzone_membership()
+        for oris, zone in lookup.items():
+            measured = subzone_map.get(oris)
+            if measured is not None:
+                lookup[oris] = measured
+                continue
+            fips_state, fips_county = counties.get(oris, (None, None))
+            if (
+                fips_state == _CALIFORNIA_FIPS
+                and fips_county in CAISO_FSNO_COUNTIES
+                and zone in ("NP15", "ZP26")
+            ):
+                lookup[oris] = "FSNO"
 
     # Clean-backed reference crosswalk supplement (default OFF, gated by
     # MARKET_SIM_USE_CLEAN). When enabled, the curated ERCOT bin-assignments

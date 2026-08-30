@@ -1017,6 +1017,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "caiso_storage_adaptive_expectation",
     "caiso_adaptive_half_life_days",
     "caiso_adaptive_beta",
+    # caiso-224 FSNO sub-zonal partition (default off): dropped from the hash
+    # at its default so every pre-existing cached run keeps its key — the
+    # field's docstring promises byte-identical off. An armed run solves a
+    # 7-zone CAISO topology and so gets a distinct key.
+    "caiso_fsno_subzonal_topology",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -1463,6 +1468,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_storage_adaptive_expectation": "False",
     "caiso_adaptive_half_life_days": "30.0",
     "caiso_adaptive_beta": "0.5945",
+    # Added by caiso-224 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "caiso_fsno_subzonal_topology": "False",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
@@ -6426,6 +6434,27 @@ class ScenarioConfig:
     # construction). Carried by model.storage.caiso_charge_allocation_params
     # + dispatch._build_storage_alloc_rows via run_calibration.run_year.
     # Default off (byte-identical); CAISO-only.
+    caiso_fsno_subzonal_topology: bool = False  # Arm the caiso-223 P-A' FSNO
+    # sub-zonal partition (caiso-222 Q2 route (iii), owner-chartered; solve
+    # round PRECOMMIT-caiso224-fsno-arm-2026-08-30.md): a new FSNO San-Joaquin
+    # -Valley pocket zone carved from NP15 between two element-grounded cuts.
+    # The single NP15<->ZP26 5,400 MW Path-15 link (whose own elements the DMM
+    # record does NOT show binding) is replaced by NP15<->FSNO at 1,940 MW
+    # (Tesla-Los Banos #1 1,600 + Moss Landing-Las Aguilas 340) and
+    # FSNO<->ZP26 at 2,500 MW (Gates-Midway #1) — DMM 2023-annual published
+    # element average-binding-limit MW, rule-13 adjudicated as measured
+    # operating limits (the same input class as the WECC catalog statics
+    # seeding every CAISO link) with the rule-14 lower-bound parallel-path
+    # misalignment documented in the precommit §2. Load re-cut by the
+    # caiso-223 §C measured 3-way ATL_LDF split of the PG&E TAC share
+    # (constants.CAISO_TAC_ZONE_WEIGHTS_FSNO); fleet re-cut by the caiso-223
+    # §B measured membership (data/raw/reference/caiso-fsno-subzone-
+    # membership.csv + the Fresno/Kings/Madera/Merced county tier). Zero free
+    # parameters — every number is a committed measured input. Applied
+    # process-wide via config.topology_variant (set at both lanes' config
+    # seams) so the LP and every data consumer see the same 7-zone topology.
+    # Default off — base topology byte-identical (registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS); CAISO-only [R-ISO-SCOPE].
     caiso_intertie_reference_price: bool = False  # Price each CAISO per-hub WECC
     # corridor from the FORWARD reference-price formula instead of the measured
     # OASIS hub LMP: per-hub price = (henry_hub[year] + gas_basis) × neighbor
@@ -14803,6 +14832,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_storage_shape_anchor": 1,
     "caiso_ps_plant_params": 1,
     "caiso_charge_allocation_schedule": 1,
+    "caiso_fsno_subzonal_topology": 1,
     "cod_ramp_enabled": 3,
     "coal_prb_contract_passthrough": 3,
     "coal_prb_passthrough": 3,

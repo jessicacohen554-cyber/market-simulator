@@ -149,6 +149,13 @@ def _apply_meanzero_zonal_gas_basis(
     basis = _zonal_gas_basis_by_zone(path, year)
     if basis is None:
         return
+    # CAISO FSNO sub-zonal partition (caiso-224): FSNO is carved from NP15
+    # inside PG&E citygate territory, so it inherits NP15's measured basis —
+    # the precommit §3 parent-inheritance rule. Without this alias the
+    # zone_names loop below would silently hand FSNO gas a 0.0 basis (~$4/
+    # MMBtu below citygate). Inert when FSNO is not in the topology.
+    if iso == "CAISO" and "FSNO" not in basis:
+        basis["FSNO"] = basis.get("NP15", 0.0)
     from market_sim.config.iso_configs import get_iso_config
 
     zone_names = get_iso_config(config.iso).zone_names

@@ -2224,6 +2224,17 @@ def run_year(
     set_eia860_vintage(
         config.eia860_vintage_year if config.mode == "backcast" else None
     )
+    # Arm/disarm the CAISO FSNO sub-zonal partition for this solve BEFORE the
+    # first get_iso_config / zone-lookup call, so the LP and every bare
+    # get_iso_config() consumer (renewables shares, hydro budgets, storage
+    # fleets, zonal gas basis, …) see the same topology — the
+    # set_eia860_vintage pattern directly above (caiso-224;
+    # config.topology_variant module docstring has the full rationale).
+    from market_sim.config.topology_variant import set_caiso_fsno_partition
+
+    set_caiso_fsno_partition(
+        iso == "CAISO" and getattr(config, "caiso_fsno_subzonal_topology", False)
+    )
     iso_config = get_iso_config(iso)
     # Year-varying interface limits (e.g. NYISO Central-East jumps with the AC
     # Transmission project in service Dec 2023) — applied before the import
