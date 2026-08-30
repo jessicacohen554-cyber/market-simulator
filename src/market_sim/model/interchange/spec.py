@@ -1050,6 +1050,27 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             hr_by_year={2023: 9.24, 2024: 10.65, 2025: 7.7},
         ),
         NeighborInterface(
+            # ba_code adjudicated by capx S-123 / director item D9 (2026-08-30,
+            # closing the item miso-183 handed forward): SOCO is the one
+            # southern counterparty MISO essentially never exports to
+            # (0.1-0.3% of gross; the measured seam is TVA at 79-86% of gross
+            # export — FINDING-miso182-south-export-driver-2026-08-24.md), so
+            # as the seam's representative BA it is a rule-14 [R-ACCURATE]
+            # misfit. It is retained UNCHANGED because its only role — the
+            # EIA-930 load shape of the gas-elastic reference-price fallback —
+            # is unreachable at HEAD everywhere it matters: (a) backcast
+            # keeper years 2023-2025 are fully displaced by the armed measured
+            # seam ladder (MISO_SEAM_LADDER_BY_YEAR covers every band row);
+            # (b) forecast configs leave reference_price_interface OFF (MISO
+            # forecast interchange is the Manitoba firm block alone); (c) an
+            # armed-interface solve year >= 2026 resolves NO seam load shape
+            # at all (no extract covers those calendar years), so the fallback
+            # this code names never fires there either. The accurate re-point
+            # (ba_code="TVA" + an EIA-930 TVA hourly extract intake) is routed,
+            # not shipped — it would change no reachable behaviour today.
+            # FINDING-capx-s123-miso-adequacy-2026-08-30.md carries the full
+            # trace, including the routed armed-interface degradation (seam
+            # rows keep their mc=0 build placeholder when no shape resolves).
             name="South",
             ba_code="SOCO",
             gas_basis=0.0,

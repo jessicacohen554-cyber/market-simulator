@@ -1894,9 +1894,21 @@ PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
     # PJM Installed Reserve Margin, raised to ~17.8% for the 2025/2026 delivery
     # year. Source: PJM 2024 IRM/FPR study (PC, 2024-03-20), IRM ~17.8%.
     "PJM": 0.178,
-    # MISO ICAP Planning Reserve Margin Requirement (PRMR). Source: MISO
-    # Planning Year 2024-25 LOLE Study Report (ICAP PRM ~17.9%).
-    "MISO": 0.179,
+    # MISO Summer ICAP Planning Reserve Margin, PY 2025-26 — the SAME DOCUMENT
+    # as the ICAP→UCAP conversion below
+    # (PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["MISO"] = 1.079/1.157):
+    # MISO PY 2025-26 LOLE Study Report, Module E-1, Summer PRM stated both
+    # ways — ICAP 15.7%, UCAP 7.9%. The composite requirement is therefore
+    # peak × 1.157 × (1.079/1.157) = peak × 1.079, exactly the document's own
+    # UCAP-stated requirement construction. Re-vintaged 2026-08-30 (capx
+    # S-123 lane S-1; rule 23 — the SOURCE DATA updated: PY 2025-26 publishes
+    # both halves of the pair, where the prior 0.179 was the PY 2024-25 ICAP
+    # PRM crossed with the PY 2025-26 conversion, a mixed-vintage composite
+    # (peak × 1.09952) equal to NEITHER planning year's published requirement.
+    # Expected effect, declared in advance so it cannot be back-fitted:
+    # −2,637.4 MW of requirement at the FFR-1C 2026 peak —
+    # FINDING-capx-d2b-i7-ledger-2026-08-25.md §2.3.)
+    "MISO": 0.157,
     # NYCA Installed Reserve Margin set by NYSRC. Source: NYSRC 2025-2026 IRM
     # Final Base Case (24.4%); NYISO's IRM is structurally high (locality +
     # transmission-security constraints).
@@ -2503,6 +2515,41 @@ ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
     # 5,795 MW UCAP DR ÷ 146,105 MW UCAP RTO Reliability Requirement = 3.97%
     # (2026/2027 BRA Report Table 6 / p.3 — reconciliation documented above).
     "PJM": 5_795.0 / 146_105.0,
+    # MISO (capx S-123 lane S-3a, 2026-08-30 — the LMR reconciliation named by
+    # FINDING-capx-d2b-i7-ledger-2026-08-25.md §2.2b): MISO does NOT net
+    # load-modifying resources from its load forecast — LMRs qualify as ZRCs
+    # and clear the Planning Resource Auction as capacity SUPPLY toward the
+    # PRMR (the exact PJM situation: DR is a cleared supply product), so the
+    # value is a documented reconciliation (rule 14), never a raw fraction of
+    # peak. Numerator: Demand Resources CLEARED in the PY 2025/26 PRA, Summer
+    # 2025 season = 9,004.4 MW ZRC (offered equals cleared) — PY 2025/26 PRA
+    # Results Posting (05/29/2025, corrections), p.22 "Summer Supply Offered
+    # and Cleared Comparison Trend", category "Demand Resources".
+    # Denominator: the System Summer INITIAL PRMR = 135,213.4 MW SAC (same
+    # posting, p.18 zonal-results System column) — the pre-auction
+    # requirement, peak_forecast × (1 + PRM_UCAP), the exact analogue of the
+    # PJM entry's pre-auction RTO Reliability Requirement. Because this
+    # registry nets the gross peak BEFORE the (1 + PRM) × ratio
+    # multiplication, dividing by the published requirement (not the ICAP
+    # peak) makes the netted credit reproduce MISO's supply-side counting:
+    # netted MW = f × peak × 1.079 = 9,004.4 × (model peak × 1.079 /
+    # 135,213.4) — exactly the cleared DR when the model's peak matches
+    # MISO's forecast. The other two LMR-side categories are EXCLUDED,
+    # conservatively (the PJM PRD-exclusion precedent — omitting
+    # under-credits, never overstates): Behind-the-Meter Generation (Summer
+    # cleared 4,282.8 MW ZRC) because an unmeasurable share of registered
+    # BTMG operates at peak in the normal course and is then already embedded
+    # in the model's EIA-930 metered demand path, so netting the full ZRC
+    # would risk a double count; Energy Efficiency (27.6 MW) because realized
+    # EE is embedded in metered demand by construction (and is immaterial).
+    # Routed refinement: an operating-mode split of MISO's registered BTMG
+    # fleet would license the BTMG share — a published-source intake, never a
+    # residual fit. Rule 13: DR participation is a recurring seasonal market
+    # product that responds to conditions (Summer cleared: 7,694.6 in 2023 →
+    # 8,109.4 in 2024 → 9,004.4 in 2025, same table). Vintage = PY 2025-26,
+    # the MISO anchor vintage (see the external-tie and PRM entries); refresh
+    # together on a PY 2026-27 re-anchor (rule 23).
+    "MISO": 9_004.4 / 135_213.4,
     # NEISO (FF-2B, 2026-07-19): ISO-NE's Forward Capacity Market clears Demand
     # Resources — energy efficiency, load management, and distributed generation
     # — as capacity SUPPLY that holds a Capacity Supply Obligation against the
@@ -2534,10 +2581,11 @@ ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
 # :func:`market_sim.model.capacity._firm_import_mw`) exactly where each ISO's
 # own ledger counts it. Two provenance cases share this one registry (rule 19,
 # one mechanism per phenomenon — "firm import the adequacy ledger counts"):
-#   (a) ISOs the model has NO import node for (ERCOT, PJM, NYISO) — the firm
-#       tie is otherwise entirely absent from the persistent fleet, so this is
-#       its only adequacy entry (NYISO's dispatch-side imports flow through the
-#       interchange model, not fleet units — see its bullet below).
+#   (a) ISOs the model has NO import node for (ERCOT, PJM, NYISO, MISO) — the
+#       firm tie is otherwise entirely absent from the persistent fleet, so this
+#       is its only adequacy entry (NYISO's and MISO's dispatch-side imports
+#       flow through the interchange model — for MISO the Manitoba firm-hydro
+#       block, never fleet units — see their bullets below).
 #   (b) ISOs whose import node DOES live in the dispatch topology (CAISO's
 #       WECC_import, NEISO's HQ_import — FF-2B, 2026-07-19). This adequacy
 #       credit does NOT double-count the dispatch node: the accredited ledger
@@ -2633,6 +2681,43 @@ ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
 #   are re-published annually and respond to conditions (Table V-1: 3,168.5
 #   in 2026 → 3,149.3 in 2027 → 3,299.9 in 2028) — a recurring ICAP-market
 #   product, never an outcome pin.
+# * MISO (capx S-123 lane S-2, 2026-08-30, the second instance of the NYISO
+#   external-capacity defect — FINDING-capx-d2b-i7-ledger-2026-08-25.md
+#   §2.2a/§6): 3,505.9 MW ZRC = the External Resources CLEARED in the
+#   PY 2025/26 Planning Resource Auction, Summer 2025 season. Source: MISO
+#   PY 2025/26 PRA Results Posting (05/29/2025, corrections —
+#   https://cdn.misoenergy.org/2025%20PRA%20Results%20Posting%2020250529_Corrections694160.pdf),
+#   p.22 "Summer Supply Offered and Cleared Comparison Trend", Planning
+#   Resource category "External Resources", Cleared (ZRC) Summer 2025 —
+#   offered equals cleared (3,505.9 both). This is the categorical row of
+#   MISO's own supply accounting: the five category rows (Generation /
+#   External Resources / BTM Generation / Demand Resources / Energy
+#   Efficiency) sum to the System committed total 137,559.3 MW, i.e. exactly
+#   what MISO's ledger counted toward the PRMR. Basis: one ZRC = 1 MW of
+#   Seasonal Accredited Capacity (SAC), MISO's availability-based
+#   UCAP-equivalent unit — the SAME basis as the requirement side's
+#   peak × (1 + PRM_UCAP 7.9%) construction from the same planning year's
+#   LOLE study (see PLANNING_RESERVE_MARGIN_BY_ISO), so no conversion factor
+#   is needed: the NYISO entry's × 0.8679 one-basis translation is the
+#   identity here (rule 19, one basis across both sides). Season = Summer,
+#   matching the summer-peak adequacy ledger (the same season discipline as
+#   the MISO DLOL hydro credit below). Vintage = PY 2025-26, the anchor
+#   vintage of EVERY other MISO adequacy input (PRM pair, DLOL hydro credit,
+#   RBDC/CONE) — deliberately NOT the PY 2026-27 posting, which would remake
+#   the mixed-vintage composite the S-1 re-vintage just removed; refresh all
+#   four operands together on a PY 2026-27 re-anchor (rule 23, source-data
+#   change). It is deliberately NOT the model's 1,400 MW Manitoba firm-hydro
+#   dispatch constant (an inherited ladder spec constant —
+#   MISO_FIRM_IMPORT_DEFAULT_ISOS / interchange spec — not a published RA
+#   accreditation), NOT the zonal tables' ERZ-column committed 1,580.1 MW
+#   (only the portion clearing in the External Resource Zones proper; the
+#   category row is MISO's full external-resource supply count), and NOT any
+#   CIL (a deliverability LIMIT — the CAISO-entry discipline). Rule 13: the
+#   PRA re-clears every planning year and the quantity responds to conditions
+#   (Summer cleared external ZRC: 4,072.5 in 2023 → 4,309.8 in 2024 → 3,505.9
+#   in 2025, same table). Dispatch-side MISO imports flow through the
+#   interchange model, never the persistent fleet — provenance case (a), no
+#   double-count.
 ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
     "ERCOT": 817.0,
     "PJM": 1_281.7,  # 2026/2027 BRA Report Table 7 (cleared import UCAP)
@@ -2642,6 +2727,9 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
     # published NYCA ICAP→UCAP translation factor — same factor as the
     # requirement side (one basis, rule 19); see the citation block above.
     "NYISO": 3_168.5 * (1.0 - 0.1321),
+    # PY 2025/26 PRA Summer cleared External Resources (ZRC = SAC MW, already
+    # the requirement side's UCAP-equivalent basis); see the citation block.
+    "MISO": 3_505.9,
 }
 
 # Conventional-hydro accreditation for the same adequacy ledger, per ISO — the
@@ -2786,7 +2874,10 @@ HYDRO_ACCREDITATION_CREDIT_BY_ISO: dict[str, float] = {
 #     conversion, stable year to year even as the target IRM itself moves).
 #   MISO: (1 + PRM_UCAP) / (1 + PRM_ICAP) = 1.079 / 1.157 = 0.9326 (PY
 #     2025-2026 LOLE Study Report, Module E-1 — Summer PRM stated both ways:
-#     ICAP 15.7%, UCAP 7.9%).
+#     ICAP 15.7%, UCAP 7.9%). Since the capx S-123 / S-1 re-vintage
+#     (2026-08-30) the PRM entry above is the SAME document's ICAP 15.7%, so
+#     the pair composes to the document's own peak × 1.079 UCAP requirement
+#     rather than the former mixed-vintage composite.
 #   NYISO: 1 - NYCA translation factor = 1 - 0.1321 = 0.8679. NYISO states its
 #     NYCA Minimum UCAP Requirement as ICAP requirement x (1 - translation
 #     factor), where the translation factor ("Derate Factor") is the qualified
