@@ -1,0 +1,1308 @@
+{
+ "session": "ercot-239 round 3",
+ "bundle": "ercot234_eastex_identity (forward keeper)",
+ "precommit": "docs/PRECOMMIT-ercot239-h3068-phase0-2026-08-30.md",
+ "v0": {
+  "model_h3068": 798.2,
+  "actual_h3068": 110.41
+ },
+ "alignment_lag_corr": {
+  "-1": 0.9828,
+  "0": 0.9996,
+  "1": 0.9848
+ },
+ "window": [
+  {
+   "h": 3060,
+   "hod": 12,
+   "model_lw": 37.86,
+   "model_price_minmax": [
+    37.9,
+    37.9
+   ],
+   "actual_rt": 55.62,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 37864.0,
+   "wind": 6451.0,
+   "solar": 15904.0,
+   "storage_charge": 15.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 64187.0,
+   "model_net_load": 41833.0,
+   "actual_demand": 64283.0,
+   "actual_net_load": 42698.0,
+   "interchange": -96.0,
+   "measured": {
+    "rtolcap": 10772.0,
+    "rtolcap_pctl": 12.5,
+    "prc": 7432.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 66.06
+   }
+  },
+  {
+   "h": 3061,
+   "hod": 13,
+   "model_lw": 62.83,
+   "model_price_minmax": [
+    62.8,
+    62.8
+   ],
+   "actual_rt": 60.24,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 41243.0,
+   "wind": 5152.0,
+   "solar": 15780.0,
+   "storage_charge": 200.0,
+   "storage_discharge": 170.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 66303.0,
+   "model_net_load": 45372.0,
+   "actual_demand": 66566.0,
+   "actual_net_load": 45643.0,
+   "interchange": -263.0,
+   "measured": {
+    "rtolcap": 10337.0,
+    "rtolcap_pctl": 10.1,
+    "prc": 7521.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 74.18
+   }
+  },
+  {
+   "h": 3062,
+   "hod": 14,
+   "model_lw": 80.13,
+   "model_price_minmax": [
+    80.1,
+    80.1
+   ],
+   "actual_rt": 108.0,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": 0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": 0.0,
+     "short": 324.0
+    }
+   },
+   "thermal": 42774.0,
+   "wind": 5488.0,
+   "solar": 15635.0,
+   "storage_charge": 162.0,
+   "storage_discharge": 138.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 68087.0,
+   "model_net_load": 46963.0,
+   "actual_demand": 68307.0,
+   "actual_net_load": 47566.0,
+   "interchange": -220.0,
+   "measured": {
+    "rtolcap": 9252.0,
+    "rtolcap_pctl": 4.8,
+    "prc": 7133.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 135.65
+   }
+  },
+  {
+   "h": 3063,
+   "hod": 15,
+   "model_lw": 121.92,
+   "model_price_minmax": [
+    121.9,
+    121.9
+   ],
+   "actual_rt": 257.43,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 1666.98,
+   "ordc_adder": 0.3,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": 416.67,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": 416.67,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": 416.67,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": 416.67,
+     "short": 283.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": 0.31,
+     "short": 1676.0
+    }
+   },
+   "thermal": 44165.0,
+   "wind": 5366.0,
+   "solar": 14825.0,
+   "storage_charge": 4.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 68692.0,
+   "model_net_load": 48501.0,
+   "actual_demand": 68911.0,
+   "actual_net_load": 49318.0,
+   "interchange": -219.0,
+   "measured": {
+    "rtolcap": 8489.0,
+    "rtolcap_pctl": 2.1,
+    "prc": 7162.0,
+    "rtorpa": 0.12,
+    "rtordpa": 0.0,
+    "system_lambda": 313.22
+   }
+  },
+  {
+   "h": 3064,
+   "hod": 16,
+   "model_lw": 244.99,
+   "model_price_minmax": [
+    245.0,
+    245.0
+   ],
+   "actual_rt": 965.64,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 5001.3,
+   "ordc_adder": 1.23,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": 1250.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": 1250.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": 1250.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": 1250.0,
+     "short": 887.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": 1.3,
+     "short": 2394.0
+    }
+   },
+   "thermal": 45079.0,
+   "wind": 5926.0,
+   "solar": 12996.0,
+   "storage_charge": 11.0,
+   "storage_discharge": 9.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 68340.0,
+   "model_net_load": 49417.0,
+   "actual_demand": 68559.0,
+   "actual_net_load": 50245.0,
+   "interchange": -219.0,
+   "measured": {
+    "rtolcap": 7974.0,
+    "rtolcap_pctl": 1.2,
+    "prc": 6925.0,
+    "rtorpa": 0.83,
+    "rtordpa": 0.0,
+    "system_lambda": 1044.31
+   }
+  },
+  {
+   "h": 3065,
+   "hod": 17,
+   "model_lw": 2127.4,
+   "model_price_minmax": [
+    2127.4,
+    2127.4
+   ],
+   "actual_rt": 996.53,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 6675.22,
+   "ordc_adder": 0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": 1666.67,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": 1666.67,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": 1666.67,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": 1666.67,
+     "short": 1259.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": 8.55,
+     "short": 2994.0
+    }
+   },
+   "thermal": 46436.0,
+   "wind": 5914.0,
+   "solar": 9874.0,
+   "storage_charge": 219.0,
+   "storage_discharge": 261.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 66607.0,
+   "model_net_load": 50819.0,
+   "actual_demand": 66828.0,
+   "actual_net_load": 50805.0,
+   "interchange": -221.0,
+   "measured": {
+    "rtolcap": 7724.0,
+    "rtolcap_pctl": 0.8,
+    "prc": 6729.0,
+    "rtorpa": 3.24,
+    "rtordpa": 0.0,
+    "system_lambda": 1038.19
+   }
+  },
+  {
+   "h": 3066,
+   "hod": 18,
+   "model_lw": 4924.65,
+   "model_price_minmax": [
+    4924.7,
+    4924.7
+   ],
+   "actual_rt": 2450.87,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 15540.24,
+   "ordc_adder": 0.0,
+   "rtordpa_overlay": 0.03,
+   "families": {
+    "RegUp_withheld": {
+     "dual": 3750.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": 3750.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": 3750.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": 3750.0,
+     "short": 3192.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": 540.24,
+     "short": 5368.0
+    }
+   },
+   "thermal": 46836.0,
+   "wind": 6385.0,
+   "solar": 4093.0,
+   "storage_charge": 0.0,
+   "storage_discharge": 2189.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 63843.0,
+   "model_net_load": 53364.0,
+   "actual_demand": 64079.0,
+   "actual_net_load": 53545.0,
+   "interchange": -236.0,
+   "measured": {
+    "rtolcap": 5468.0,
+    "rtolcap_pctl": 0.0,
+    "prc": 5111.0,
+    "rtorpa": 177.96,
+    "rtordpa": 0.03,
+    "system_lambda": 2419.99
+   }
+  },
+  {
+   "h": 3067,
+   "hod": 19,
+   "model_lw": 5000.0,
+   "model_price_minmax": [
+    5000.0,
+    5000.0
+   ],
+   "actual_rt": 3048.98,
+   "slack": 600.2,
+   "dump": 0.0,
+   "reserve_price": 15792.64,
+   "ordc_adder": 0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": 3834.13,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": 3834.13,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": 3834.13,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": 3750.0,
+     "short": 3357.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": 540.24,
+     "short": 5601.0
+    }
+   },
+   "thermal": 47064.0,
+   "wind": 7494.0,
+   "solar": 183.0,
+   "storage_charge": 0.0,
+   "storage_discharge": 2227.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 61907.0,
+   "model_net_load": 54230.0,
+   "actual_demand": 62126.0,
+   "actual_net_load": 54293.0,
+   "interchange": -219.0,
+   "measured": {
+    "rtolcap": 5094.0,
+    "rtolcap_pctl": 0.0,
+    "prc": 4778.0,
+    "rtorpa": 178.58,
+    "rtordpa": 0.0,
+    "system_lambda": 2368.19
+   }
+  },
+  {
+   "h": 3068,
+   "hod": 20,
+   "model_lw": 798.2,
+   "model_price_minmax": [
+    798.2,
+    798.2
+   ],
+   "actual_rt": 110.41,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 1669.18,
+   "ordc_adder": 0.0,
+   "rtordpa_overlay": 3.43,
+   "families": {
+    "RegUp_withheld": {
+     "dual": 416.67,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": 416.67,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": 416.67,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": 416.67,
+     "short": 298.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": 2.51,
+     "short": 2567.0
+    }
+   },
+   "thermal": 46423.0,
+   "wind": 9781.0,
+   "solar": 0.0,
+   "storage_charge": 0.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 523.12,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 60543.0,
+   "model_net_load": 50762.0,
+   "actual_demand": 60576.0,
+   "actual_net_load": 50428.0,
+   "interchange": -33.0,
+   "measured": {
+    "rtolcap": 7890.0,
+    "rtolcap_pctl": 1.0,
+    "prc": 6374.0,
+    "rtorpa": 8.95,
+    "rtordpa": 3.43,
+    "system_lambda": 99.36
+   }
+  },
+  {
+   "h": 3069,
+   "hod": 21,
+   "model_lw": 53.4,
+   "model_price_minmax": [
+    53.4,
+    53.4
+   ],
+   "actual_rt": 29.57,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 40887.0,
+   "wind": 11265.0,
+   "solar": 0.0,
+   "storage_charge": 0.0,
+   "storage_discharge": 1066.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 57362.0,
+   "model_net_load": 46097.0,
+   "actual_demand": 57391.0,
+   "actual_net_load": 45642.0,
+   "interchange": -29.0,
+   "measured": {
+    "rtolcap": 10859.0,
+    "rtolcap_pctl": 13.1,
+    "prc": 7753.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 39.46
+   }
+  },
+  {
+   "h": 3070,
+   "hod": 22,
+   "model_lw": 32.82,
+   "model_price_minmax": [
+    32.8,
+    32.8
+   ],
+   "actual_rt": 21.83,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 35844.0,
+   "wind": 13481.0,
+   "solar": 0.0,
+   "storage_charge": 0.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 53306.0,
+   "model_net_load": 39825.0,
+   "actual_demand": 53315.0,
+   "actual_net_load": 40083.0,
+   "interchange": -9.0,
+   "measured": {
+    "rtolcap": 13787.0,
+    "rtolcap_pctl": 33.6,
+    "prc": 8745.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 32.0
+   }
+  },
+  {
+   "h": 3071,
+   "hod": 23,
+   "model_lw": 26.42,
+   "model_price_minmax": [
+    26.4,
+    26.4
+   ],
+   "actual_rt": 17.42,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 31755.0,
+   "wind": 14720.0,
+   "solar": 0.0,
+   "storage_charge": 390.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.1,
+    "s_model_day": 1.0
+   },
+   "model_demand": 50025.0,
+   "model_net_load": 35305.0,
+   "actual_demand": 50016.0,
+   "actual_net_load": 35599.0,
+   "interchange": 9.0,
+   "measured": {
+    "rtolcap": 15745.0,
+    "rtolcap_pctl": 47.2,
+    "prc": 9215.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 23.85
+   }
+  },
+  {
+   "h": 3072,
+   "hod": 0,
+   "model_lw": 26.42,
+   "model_price_minmax": [
+    26.4,
+    26.4
+   ],
+   "actual_rt": 18.02,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 32243.0,
+   "wind": 14071.0,
+   "solar": 0.0,
+   "storage_charge": 2305.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.18,
+    "s_model_day": 0.0
+   },
+   "model_demand": 47950.0,
+   "model_net_load": 33879.0,
+   "actual_demand": 47878.0,
+   "actual_net_load": 33308.0,
+   "interchange": 72.0,
+   "measured": {
+    "rtolcap": 16973.0,
+    "rtolcap_pctl": 55.0,
+    "prc": 9310.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 25.97
+   }
+  },
+  {
+   "h": 3073,
+   "hod": 1,
+   "model_lw": 25.01,
+   "model_price_minmax": [
+    25.0,
+    25.0
+   ],
+   "actual_rt": 18.2,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 29841.0,
+   "wind": 13254.0,
+   "solar": 0.0,
+   "storage_charge": 586.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.18,
+    "s_model_day": 0.0
+   },
+   "model_demand": 46450.0,
+   "model_net_load": 33196.0,
+   "actual_demand": 46369.0,
+   "actual_net_load": 32964.0,
+   "interchange": 81.0,
+   "measured": {
+    "rtolcap": 16154.0,
+    "rtolcap_pctl": 49.8,
+    "prc": 9271.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 26.57
+   }
+  },
+  {
+   "h": 3074,
+   "hod": 2,
+   "model_lw": 25.01,
+   "model_price_minmax": [
+    25.0,
+    25.0
+   ],
+   "actual_rt": 19.52,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 29885.0,
+   "wind": 12804.0,
+   "solar": 0.0,
+   "storage_charge": 1058.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.18,
+    "s_model_day": 0.0
+   },
+   "model_demand": 45572.0,
+   "model_net_load": 32768.0,
+   "actual_demand": 45528.0,
+   "actual_net_load": 33481.0,
+   "interchange": 44.0,
+   "measured": {
+    "rtolcap": 15416.0,
+    "rtolcap_pctl": 44.9,
+    "prc": 8980.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 27.79
+   }
+  },
+  {
+   "h": 3075,
+   "hod": 3,
+   "model_lw": 25.01,
+   "model_price_minmax": [
+    25.0,
+    25.0
+   ],
+   "actual_rt": 21.76,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 30276.0,
+   "wind": 11566.0,
+   "solar": 0.0,
+   "storage_charge": 104.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.18,
+    "s_model_day": 0.0
+   },
+   "model_demand": 45679.0,
+   "model_net_load": 34113.0,
+   "actual_demand": 45632.0,
+   "actual_net_load": 34331.0,
+   "interchange": 47.0,
+   "measured": {
+    "rtolcap": 14017.0,
+    "rtolcap_pctl": 35.3,
+    "prc": 8525.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 31.32
+   }
+  },
+  {
+   "h": 3076,
+   "hod": 4,
+   "model_lw": 26.55,
+   "model_price_minmax": [
+    26.5,
+    26.5
+   ],
+   "actual_rt": 35.29,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 32538.0,
+   "wind": 10607.0,
+   "solar": 0.0,
+   "storage_charge": 0.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.18,
+    "s_model_day": 0.0
+   },
+   "model_demand": 47086.0,
+   "model_net_load": 36479.0,
+   "actual_demand": 46952.0,
+   "actual_net_load": 36387.0,
+   "interchange": 134.0,
+   "measured": {
+    "rtolcap": 11774.0,
+    "rtolcap_pctl": 19.3,
+    "prc": 7667.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 39.62
+   }
+  },
+  {
+   "h": 3077,
+   "hod": 5,
+   "model_lw": 28.53,
+   "model_price_minmax": [
+    28.5,
+    28.5
+   ],
+   "actual_rt": 58.83,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 34388.0,
+   "wind": 10851.0,
+   "solar": 27.0,
+   "storage_charge": 0.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.18,
+    "s_model_day": 0.0
+   },
+   "model_demand": 49217.0,
+   "model_net_load": 38338.0,
+   "actual_demand": 49187.0,
+   "actual_net_load": 38758.0,
+   "interchange": 30.0,
+   "measured": {
+    "rtolcap": 9481.0,
+    "rtolcap_pctl": 5.8,
+    "prc": 6450.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 61.74
+   }
+  },
+  {
+   "h": 3078,
+   "hod": 6,
+   "model_lw": 27.72,
+   "model_price_minmax": [
+    27.7,
+    27.7
+   ],
+   "actual_rt": 42.28,
+   "slack": 0.0,
+   "dump": 0.0,
+   "reserve_price": 0.0,
+   "ordc_adder": -0.0,
+   "rtordpa_overlay": 0.0,
+   "families": {
+    "RegUp_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "RRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_withheld": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "NonSpin": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ECRS_released": {
+     "dual": -0.0,
+     "short": 0.0
+    },
+    "ercot_ordc_total": {
+     "dual": -0.0,
+     "short": 0.0
+    }
+   },
+   "thermal": 33782.0,
+   "wind": 10778.0,
+   "solar": 1931.0,
+   "storage_charge": 0.0,
+   "storage_discharge": 0.0,
+   "adaptive": {
+    "floor_usd": 0.0,
+    "p_hat_day": 0.18,
+    "s_model_day": 0.0
+   },
+   "model_demand": 50442.0,
+   "model_net_load": 37733.0,
+   "actual_demand": 50536.0,
+   "actual_net_load": 38330.0,
+   "interchange": -94.0,
+   "measured": {
+    "rtolcap": 10109.0,
+    "rtolcap_pctl": 9.0,
+    "prc": 6778.0,
+    "rtorpa": 0.0,
+    "rtordpa": 0.0,
+    "system_lambda": 43.36
+   }
+  }
+ ],
+ "release": {
+  "actual_price": {
+   "peak_h": 3067,
+   "release_h": 3068
+  },
+  "model_price": {
+   "peak_h": 3067,
+   "release_h": 3069
+  },
+  "actual_net_load": {
+   "peak_h": 3067,
+   "release_h": 3068
+  },
+  "model_net_load": {
+   "peak_h": 3067,
+   "release_h": 3068
+  },
+  "price_release_lag_h": 1,
+  "netload_release_lag_h": 0
+ },
+ "attribution": {
+  "3067": {
+   "model_lw": 5000.0,
+   "legs": {
+    "adaptive_floor_usd": 0.0,
+    "reserve_price": 15792.64,
+    "ordc_adder": 0.0
+   },
+   "within_150": [],
+   "storage_discharge": 2227.0
+  },
+  "3068": {
+   "model_lw": 798.2,
+   "legs": {
+    "adaptive_floor_usd": 523.12,
+    "reserve_price": 1669.18,
+    "ordc_adder": 0.0
+   },
+   "within_150": [],
+   "storage_discharge": 0.0
+  },
+  "3069": {
+   "model_lw": 53.4,
+   "legs": {
+    "adaptive_floor_usd": 0.0,
+    "reserve_price": 0.0,
+    "ordc_adder": -0.0
+   },
+   "within_150": [
+    "adaptive_floor_usd",
+    "ordc_adder",
+    "reserve_price"
+   ],
+   "storage_discharge": 1066.0
+  }
+ },
+ "priors": {
+  "P1_adaptive_hold": {
+   "lw_minus_floor": 275.08,
+   "within_150": false,
+   "storage_discharge_ge_500": false
+  },
+  "P2_reality_released": {
+   "actual_h3068_lt_200": true,
+   "actual_h3066_h3067_ge_500": [
+    2450.87,
+    3048.98
+   ],
+   "rtorpa_rtordpa_lt_50": true
+  },
+  "P3_netload_lag_le_1": 0,
+  "P4_no_reserve_scarcity": {
+   "all_zero_shortfall": false,
+   "max_dual": 416.67
+  }
+ }
+}

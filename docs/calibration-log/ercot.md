@@ -12320,6 +12320,47 @@ keeper's). Hygiene: two precommitted 2023-only solves, nothing else;
 no `--holdout-authorized`, no marker; ERCOT-only; parity check OK;
 payload blob a7817ab2 push-verified.
 
+### ercot-239 ROUND-3 ADDENDUM (same session) — h3068-2024 FULLY ATTRIBUTED (ZERO-SOLVE, precommitted): the standing band-top-blind hour is the EXIT EDGE of a one-hour-late model event on perfectly time-aligned inputs — net-load release lag 0, price lag 1; at h3068 the model still holds reserve steps ($416.67, NonSpin short 298 MW) and prices $798 on the thermal wall with storage at 0 MW (the ercot-223 record's own 938 MWh h3068→h3069 re-timing) where reality had collapsed to $110 (RTORPA $8.95, RTOLCAP recovered)
+
+Precommit `docs/PRECOMMIT-ercot239-h3068-phase0-2026-08-30.md` pushed +
+blob-verified before measurement; V-0 exact (798.20/110.41). Probe
+`scripts/probes/ercot239_h3068_phase0.py` →
+`results/calibration/ercot239_h3068_phase0.json`; full record
+`docs/FINDING-ercot239-h3068-phase0-2026-08-30.md`. Priors: P2/P3
+CONFIRMED (reality released at h3068; net-load lag 0 — inputs
+exonerated), P1 REFUTED as declared (the $798 is not the adaptive
+floor's PRICE — the adaptive/release-guard complex acts on the
+WITHHOLDING side: storage discharges 1,066 MW into the $53 h3069
+instead of the $798 h3068), P4 REFUTED (the hold IS co-opt scarcity
+decaying one hour late). Bonus edge: the model also ENTERS late (h3064
+model $245 vs actual $966 at the same 50 GW net load — the round-1
+conduct theme at the event's front edge) and overshoots the top ($5,000
+vs $3,049). Queue statement (FINDING §4): the admissible repair
+direction is the ercot-223 event-release guard's EXIT condition
+(pass-1 settle $675 < $1,000 — one fixed threshold from releasing), its
+own owner-visible round; the entry edge joins the RT/SCED conduct lane.
+Matrix: evidence NOTE on the `ercot_storage_adaptive_expectation` cell
+(no verdict moved). Zero solves; years ⊂ {2024}; no marker, no
+`--holdout-authorized`; ERCOT only; no run produced (rule 15 not
+triggered).
+
+**SESSION ercot-239 CLOSE — the three handoff priorities all delivered:**
+(1) the 14-hour missed-event family characterized (conduct, adder-free —
+object 2 subsequently adjudicated by ercot-240 as the DC-tie identity);
+(2) the August steepness adjudicated by A/B (no measured-dispersion shape
+repair exists; the spur and the fit are one lever; REJECTED probe
+`2026-08-30-239-graded-ladder` registered + escalated); (3) h3068-2024
+attributed (event-exit lag). Keeper structure UNTOUCHED throughout:
+forward `2026-08-25-234-eastex-identity` + carve-out
+`2026-08-25-236-swcap-clip-k33`. OWNER QUEUE out of the session: (a) the
+graded-ladder escalation (FINDING-ercot239-graded-ladder §4 — session
+recommends keeping the incumbent carve-out); (b) the RT/SCED
+tightness-conditioned conduct identification lane (rounds 1–3 converge on
+it: missed events, the wall's 5× dispersion excess, the h3064 entry
+edge); (c) the ercot-223 release-guard exit condition (h3068); (d) the
+conditional-surface per-rung contract generalization (FILED,
+load-bearing only for a graded top rung).
+
 **Next shorthand: ercot-240** (ercot-199 remains unclaimed)
 
 ## ercot-240 — 2026-08-30 — THE EVENT-HOUR DEMAND GAP ADJUDICATED (ZERO-SOLVE, precommitted; FINDING-ercot239 §6 OBJECT 2, owner PM charter): the +651…+873 MW "demand gap" is the DC-TIE NET IMPORT IDENTITY — exactly, at every finite 2023 hour (residual 0.0 MW, share 1.000) — the model's demand input serves the measured NET-GENERATION boundary correctly; all three chartered demand-source candidates (4CP/load response, 930-vs-MIS boundary, weather-hour alignment) REFUTED as gap carriers; the phase-0 "demand understatement" framing WITHDRAWN by measurement
