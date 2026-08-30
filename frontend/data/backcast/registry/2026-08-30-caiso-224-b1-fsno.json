@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-30-caiso-224-b1-fsno",
+  "label": "caiso 224 b1 fsno",
+  "date": "2026-08-30",
+  "shorthand": "caiso-224-b1-fsno",
+  "definition": "caiso-224 B1 (PROBE \u2014 R, falsified per precommit \u00a75): P-A\u2032 FSNO sub-zonal partition armed \u2014 caiso-223 measured membership/load split, DMM 2023 element caps 1,940/2,500 MW (PRECOMMIT-caiso224-fsno-arm-2026-08-30.md \u00a71\u2013\u00a72). The north\u2013south split RESTORATION is real (control 52/40/14 h >$15 \u2192 arm 1556/1359/1186 h vs reality 1310/1691/1347) AND both falsifiers fire: F1 all three years on NP15\u2194FSNO (binding share 0.3054/0.3547/0.3380 vs the 0.27 DMM ceiling \u2014 the lower-bound element caps over-trap) and F2 (arm split vector strictly year-ordered vs reality's non-monotone \u2014 single-vintage statics insufficient at this grain). Static DMM-cap arm is R for keeper purposes; the partition REPRESENTATION remains, W-2/W-3 are the upgrade feeds, transmission-outage derates the recorded WATCH. C3a lw movement \u22120.20/+0.22/\u22120.16 $/MWh vs the \u00a75 direct-channel pre-bound \u22120.23/\u22120.32/\u22120.25; C3b-2024 tripwire +0.015 NRMSE named to the falsified caps. Slim-render registration (container reclaimed): per-plant panels intentionally EMPTY. FINDING-caiso224-fsno-arm-2026-08-30.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-30-caiso-224-b1-fsno.js",
+  "bundle": "results/calibration/caiso224_b1_fsno"
+}
