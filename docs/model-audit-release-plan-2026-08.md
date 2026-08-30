@@ -3708,3 +3708,35 @@ your branch when done.
     prefix for byte-identity**; the CAISO log and packet appends verified
     the same way. No lane-in-flight surface touched; all capx-* files
     untouched.
+  - **(k) POST-MEASUREMENT MOTION — main moved again BEFORE this entry
+    landed; recorded rather than rewritten (the (f) lesson applied to this
+    lane's own entry).** Between this lane's second push and this entry's
+    landing: **#4342** (merge `4bece03`) merged this lane's OWN first two
+    commits (`4c63b05` + `634927a`) — the branch auto-deleted mid-lane and
+    was re-created by the §8 push, and the §8 commit was then REBASED onto
+    the moved main (`3ebbd46`, merge of #4345) per the merged-branch rule
+    as `17757fa`, the entry text above kept VERBATIM as the dated record
+    it is; this (k) increment lands as its own follow-on commit. **#4343**
+    (the capx Q5-W records lane — a DIFFERENT program's ruling executed on
+    the shared marker file, per its own charter): NYISO's `complete`
+    marker WITHDRAWN to the `withdrawn` block under the Q5 uniform rule
+    ("a `complete` marker cannot stand on a NOT-YET keeper" — the
+    2026-08-06 CAISO precedent made standing; forecast board gate (a)
+    flipped in the same act) — `complete` is now **{NEISO, PJM}**; nothing
+    was ever spent under the withdrawn marker, and (a)'s auditor record
+    stands as a true dated verification of the pre-withdrawal state.
+    **#4344/#4345**: the (b)-chartered ercot-240 zero-solve pass
+    COMPLETED the same day —
+    `docs/FINDING-ercot240-eventhour-demandgap-2026-08-30.md` ADJUDICATES
+    the event-hour "demand gap" as the **DC-TIE NET IMPORT IDENTITY,
+    exactly and everywhere** (the model's demand input is NOT understating
+    real demand — it serves the measured net-generation boundary
+    correctly; all three chartered demand-source candidates REFUTED as
+    gap carriers) — (b)'s "no finding yet" and (h)'s ercot-240 line are
+    SUPERSEDED by that landing. Gates re-run at the rebased tree
+    (`3ebbd46` + `17757fa`; exit codes captured directly, unpiped):
+    audit_keepers **PASS 0/0** (exit 0, now over `complete` = {NEISO,
+    PJM}) · parity **OK 56/93/0** (exit 0) · matrix **GREEN** (exit 0) ·
+    staleness **Δ = 1/10 WARN-level** (exit 0) · bench **0 STALE / 6
+    engine-drift WARNs** (exit 0). The board stays **v14** — this motion
+    is the NEXT cycle's to board.
