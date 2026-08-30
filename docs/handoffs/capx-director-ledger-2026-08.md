@@ -6,11 +6,99 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #12) ·
-**HEAD at refresh:** `65a39e3` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW (CAISO precedent)** (§3)
-**Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (supersedes the 2026-08-26 handoff)
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-30 (refresh #13) ·
+**HEAD at refresh:** `f9eb73c` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
+**Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (supersedes the 2026-08-26 handoff; state section refreshed at r#13)
 
 ---
+
+## 0j. Refresh #13 (2026-08-30, HEAD `f9eb73c`) — ALL FIVE in-flight lanes LANDED (D10 · S-4V · S-5 · Q5-W · D11-R); NEISO takes the program lead with (a)+(b) both PASS; three owner rulings; D12/D13/D14 issued
+
+**1. THE ENTIRE IN-FLIGHT SET CLEARED IN ONE MERGE WINDOW — five lanes, zero refusals, every
+deliverable where its charter said it would be.**
+
+- **Q5-W LANDED** (PR #4343, `ecc2d60`; `docs/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md`):
+  NYISO's `complete` marker WITHDRAWN on the r#12 ruling, both surfaces in one session —
+  `complete` = **{NEISO, PJM}**, board NYISO gate (a) PASS → fail. Keeper nyiso-157 untouched;
+  validation-tier authorization lapsed with the marker; re-entry = new owner declaration on a
+  CALIBRATED keeper (winter-intake route).
+- **S-4V LANDED** (PRs #4337/#4353): the verification pair ran at one HEAD and **the bare
+  `neiso-t1f` key flips HOLD → PROMOTE-WITH-CAVEATS** (treatment: I7 PASS all five years, sole
+  WARN the pre-declared I12-2026 17.1 % vs 15.2 % cap; FC-1/FC-2/FC-7 all CAVEAT-not-FAIL).
+  **Honest attribution recorded on the record: the CONTROL arm ALSO clears 2028 — epoch drift
+  alone flips the year — so the flip is NOT solely S-4's factor; the factor's isolated effect is
+  exact** (control preserved as `neiso-t1f-s4control`). Board NEISO block refreshed and the
+  `hydro_accreditation` matrix cell re-stamped O → K by the lane itself. S-4's finding §5/§8
+  TBDs filled. **S-4b UNBLOCKS.**
+- **S-5 LANDED** (PR #4340; `docs/handoffs/FINDING-capx-s5-pjm-horizon-edge-2026-08-30.md`):
+  hold-last-FPR implemented as the declared convention in `resolve_forecast_pool_requirement`
+  (card C-A cited in code; zero DOF — the held value is the table's own last published entry),
+  D-1 checker year-threading repaired (I7/I12 now grade the same bar the model builds to), and
+  **PJM's 2030 I7 miss restates 366 MW → 5,858 MW (3.39 % of peak), 2029 plausibly joining**
+  (flagged inference; S-6 measures it). No solve, no registration — the FINDING is the
+  director's D7-class input, so **the board's PJM block restatement is OWED → carried by D13**.
+  Rule-23 check done on publication terms: 2029/30 BRA is Dec 2026; intake pointer at the table
+  edge. **S-6 UNBLOCKS** (held on the heavy slot, §0j.3).
+- **D10 LANDED** (PR #4354; `docs/handoffs/FINDING-capx-d10-nyiso-t1x-2026-08-30.md`): NYISO's
+  FIRST-EVER T1-X (`nyiso-2023-2027-crossover-capxd10`, ~10 min, <3 GB, shipped posture verified
+  in the resolved config), **FC-4 measured and reported at FULL MAGNITUDE: FAIL** — price 2023
+  +29.9 % / 2024 +2.5 % / 2025 −24.0 %; **co2 10.1 / 10.3 / 3.9 % — NYISO does NOT reproduce
+  the program-wide 43–76 % crossover co2 miss** (D5 evidence: the derivation question is
+  ERCOT/PJM/MISO's, not universal). Quarantine PASS (no H1-2026 read). Registered `nyiso-t1x`
+  with run_config.json (no D8 debt). **Leg (c) closes on measurement: NYISO gate now
+  (a) fail · (b) PASS · (c) PASS · (d) none.**
+- **D11-R LANDED** (PR #4355; `docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`):
+  `entry_margin_exhaustion` shipped default-OFF (one field, both allocators, rule 19; matrix row
+  + all-shard cells), zero-DOF confirmed (the walk re-invokes `runner._lookahead_reprice_signal`
+  itself, delta-anchored; byte-identical off). A/B on ERCOT T1-H at the registered posture,
+  control reproduces the committed bracket EXACTLY (RM 19.00→8.54→14.65→25.19, additions
+  verbatim). **Four-anchor terminal RM: shipped 25.19 / disarm 40.24 / fwd-exp 40.38 / offline
+  18.7 / LIVE ARM 22.02 % (−3.17 pp). B-2 cobweb SURVIVES** (−12.65/+5.20/+10.47 vs
+  −10.46/+6.11/+10.54) — the implementation-sanity test passed. Named degradation vs offline:
+  **the live reserve leg keeps the GAS half inert** (gas builds to caps in both arms; the
+  prior-year realized ORDC leg carries the margin past exhaustion), so arming now = honest
+  split "margin-exhaustion for VRE/storage, bang-bang for gas". Both arms registered
+  `ercot-2021-2025-realized-t1h-d11r-{control,exhaustion}` with run_config.json; ERCOT matrix
+  cell **O** (measured, owner escalation). Finding §5 recommends HOLD arming until D12. **D12
+  RELEASES** (the r#8 ratified sequencing is satisfied — D11-R has reported).
+
+**2. THE PROGRAM LEAD PASSES TO NEISO — the second ISO ever to hold (a)+(b), and the first to
+hold them simultaneously with a live marker.** NEISO: (a) PASS (`complete` member, CALIBRATED
+full-span keeper neiso-99-joint-p1) · (b) PASS (PROMOTE-WITH-CAVEATS on bare `neiso-t1f`) ·
+(c) fail — the ONLY genuinely-unrun T1-X among the measured reading's fail set · (d) none.
+**A NEISO T1-X (D14, issued this refresh) would make NEISO the first ISO in program history
+with (a)+(b)+(c) all satisfied, leaving only leg (d) — the explicit owner authorization.**
+NYISO holds (b)+(c) but fails (a) on the withdrawn marker.
+
+**3. THREE OWNER RULINGS AT THE r#13 SITTING (decision cards, this session — §3 Q7/Q8/Q9):**
+- **Q7 — leg-(c) semantics: MEASURED CLOSES THE LEG** (charter-literal §2.1b(c) + card A-A as
+  signed). ERCOT/PJM/MISO leg (c) flips fail → pass-on-measurement (their FC-4 FAILs stay
+  reported at full magnitude); NYISO's D10 PASS stands. The D7-era in-band reading is
+  superseded; D10's cell claim about the other ISOs becomes true once D13 executes. Discovered
+  and escalated this refresh: the board carried BOTH readings simultaneously (D7 wrote the
+  measured ISOs fail-on-band; D10 wrote NYISO pass-on-measurement citing the others as pass —
+  false at the time of writing).
+- **Q8 — D11-R arming: HOLD until D12 adjudicates the scarcity basis** (the finding's own §5
+  recommendation). Matrix cell stays O; the A/B is the standing measured record; re-decide on
+  D12's report.
+- **Q9 — miso-190: STILL RUNNING** (branch fully merged at `9cd6dc6` but the A/B solve is not
+  yet registered — scorer committed before it runs). **S-123 start-time check FAILS a FIFTH
+  time; S-6 held on the same heavy slot** (PJM 8.8 GB / MISO 9.6 GB are no-co-run). Both re-run
+  next refresh.
+- Also verified this sitting: the top-level board prose (headline/gate_reading) is STALE against
+  its own NEISO/NYISO blocks — still says "no ISO holds (a) and (b) both" and "leg (c) fails
+  for all six". D13 carries the reconcile.
+
+**4. BATCH ISSUED (r#13): D13 BOARD RECONCILE (records; executes Q7 + the S-5 PJM restatement
++ D11-R/S-4V/D10 currency + the stale-prose repair), D14 NEISO T1-X CROSSOVER (the D10 analog;
+the program's highest-value light lane), D12 SCARCITY-CONSISTENT DELTA BASIS (released by
+D11-R's report; its result is the arming re-decision's input).** S-4b's prompt is written and
+in the pack, **dispatch strictly after D14 merges** (both edit ff-verdicts.json + the NEISO
+board block; S-4b's pre-declared arithmetic: +380 MW requirement vs the +229 MW post-hydro
+clearance ⇒ 2028 plausibly RE-OPENS ≈ −151 MW and leg (b) may flip back — reported at full
+magnitude if so, factor and requirement both sourced, nothing reverse-engineered). S-6 and
+S-123 held on Q9. D5 stays queued, now carrying D10's evidence (NYISO co2 ~10 % ⇒ three-ISO
+derivation question confirmed as the right scope).
 
 ## 0i. Refresh #12 (2026-08-30, HEAD `65a39e3`) — NYISO keeper → nyiso-157 (NOT-YET, fail set WIDENED); Q5's recurrence clause FIRED and the owner ruled WITHDRAW; FF-2D re-score benign
 
@@ -478,17 +566,19 @@ the gap.
 | **D2-NYISO-INTAKE** | Gold Book external capacity | **LANDED — I7 CLEARED** `3786191` | `capx-d2-nyiso-extcap-sewmyx` | Fable | §0.1. First FC-1 PASS in the program. |
 | **D2-B I7 LEDGER DECOMPOSITION** | Reproduce/decompose MISO, CAISO, NEISO, PJM | **LANDED** `5dda152` | `capx-d2b-i7-ledger-xaakeu` | Fable | §0.3. Six successor lanes named (S-1..S-6). |
 | **D7-NYISO GATE RE-SCORE** | Refresh the board to the extcap re-score; re-read NYISO's four legs; **apply the card-A leg-(c) harmonisation** (CAISO + NYISO `na`→`fail`, `"c"` into both `closed_on`) | **LANDED** `ca8b749` (PR #4289) | `claude/capx-d7-nyiso-gate` | Opus | §0d.1. Board re-scored, no gate moved, Q5 tension recorded verbatim. |
-| **D10 NYISO T1-X CROSSOVER** | Run NYISO's T1-X so gate leg (c) closes on a measured FC-4 | **IN FLIGHT since r#11 dispatch** (nothing pushed at r#12). WHY doubly stale (cites nyiso-155 + gate (a) PASS) — charter unaffected by the Q5-W withdrawal; leg (c) closes on measurement regardless | `claude/capx-d10-nyiso-t1x` | Fable | Card A's own consequence. Its closing gate statement reads the live board. |
-| **Q5-W NYISO MARKER WITHDRAWAL** | Execute the r#12 Q5 ruling: withdraw NYISO from `complete` (CAISO precedent, uniform), flip board gate (a), FINDING + audit | **ISSUED r#12** — governance RECORDS lane, NOT a capx lane (it edits calibration-complete.json + the board's NYISO block, both surfaces one session) | `claude/q5w-nyiso-marker-withdrawal` | Fable/Opus | Keeper untouched (nyiso-157 stands). Re-entry = new owner declaration on a CALIBRATED keeper. Validation-tier authorization lapses with the marker. |
-| **D11-R ENTRY VOLUME RULE (D-1)** | Productionize the L-1b margin-exhaustion closure — the measured zero-DOF volume rule — behind a default-OFF field; A/B on ERCOT T1-F | **RUNNING since r#10** (owner-dispatched 2026-08-30; nothing pushed at r#11) | `claude/capx-d11r-entry-volume-rule` | Fable | §0e.3/§0e.5/§0g.2. Trajectory invariance (fwd-expectation §3) + the finding's own §7(b) recommendation. Pro-forma build held in abeyance; B-C object charter intact. |
-| **D12 SCARCITY-CONSISTENT DELTA BASIS** | The fwd-expectation §4 named successor: both `S` evaluations on one scarcity basis, exact arithmetic on existing objects | QUEUED — **owner-ratified sequencing (r#8 sitting): charter only after D11-R reports** | — | Fable | §7 escalation RESOLVED: (b) first, (a) behind it. The two-scarcity-objects defect (composed entering-2024 mean −$48.22/MWh, solar capture −$185/MWh) is its evidence. |
-| **S-123 MISO ADEQUACY PACKAGE** | S-1 requirement re-vintage + S-2 external-capacity intake + S-3 ledger differencing | **ISSUED 2026-08-25 — start-time check FAILED at r#9, r#10 AND r#11 (miso-190 in flight); held on the check, re-run every refresh** | `claude/capx-s123-miso-adequacy` | Fable | D2-B's own top recommendation: three independent published-source terms, none sized against the residual. Rides with **D9** (SOCO forecast fallback). The owner's r#8 hold-until-r#9 is discharged; the check itself now governs. |
+| **D10 NYISO T1-X CROSSOVER** | Run NYISO's T1-X so gate leg (c) closes on a measured FC-4 | **LANDED** PR #4354 — FC-4 measured FAIL at full magnitude (price +29.9/+2.5/−24.0 %; co2 ~10 %, NOT the program-wide miss), quarantine PASS, registered `nyiso-t1x` with run_config.json; **NYISO leg (c) → PASS on measurement** | `claude/capx-d10-nyiso-t1x` | Fable | Card A's own consequence, executed. D5 evidence: the co2 derivation question is three-ISO, not universal. |
+| **Q5-W NYISO MARKER WITHDRAWAL** | Execute the r#12 Q5 ruling: withdraw NYISO from `complete` (CAISO precedent, uniform), flip board gate (a), FINDING + audit | **LANDED** PR #4343 (`ecc2d60`) — both surfaces one session; `complete` = {NEISO, PJM}; NYISO gate (a) → fail | `claude/q5w-nyiso-marker-withdrawal` | Fable/Opus | Keeper untouched (nyiso-157 stands). Re-entry = new owner declaration on a CALIBRATED keeper. Validation-tier authorization lapsed. |
+| **D11-R ENTRY VOLUME RULE (D-1)** | Productionize the L-1b margin-exhaustion closure — the measured zero-DOF volume rule — behind a default-OFF field; A/B on ERCOT T1-H | **LANDED** PR #4355 — `entry_margin_exhaustion` shipped default-OFF, zero-DOF confirmed; live arm 22.02 % vs shipped 25.19 (−3.17 pp), B-2 survives; gas half inert on the live reserve leg; matrix cell **O**; **arming RULED Q8: HOLD until D12** | `claude/capx-d11r-entry-volume-rule` | Fable | §0j.1. Both A/B arms registered on the forecast namespace with run_config.json. |
+| **D12 SCARCITY-CONSISTENT DELTA BASIS** | The fwd-expectation §4 named successor: both `S` evaluations on one scarcity basis, exact arithmetic on existing objects | **ISSUED r#13** — released by D11-R's report (r#8 ratified sequencing satisfied); its result is the Q8 arming re-decision's input | `claude/capx-d12-scarcity-basis` | Fable | Evidence: two-scarcity-objects defect (composed entering-2024 mean −$48.22/MWh, solar capture −$185/MWh) + D11-R finding §4 (reserve leg carries gas past exhaustion). |
+| **D13 BOARD RECONCILE** | Execute Q7 (leg-(c) measured-closes: ERCOT/PJM/MISO fail→pass), S-5's PJM restatement (366 MW → 5,858 MW), D11-R/S-4V/D10 board currency, repair the stale headline/gate_reading prose ("no ISO holds (a)+(b)" is now false) | **ISSUED r#13** — records lane, zero-solve | `claude/capx-d13-board-reconcile` | Fable/Opus | No verdict re-scored; the ruled three leg-(c) cells are the only gate-leg moves; FC-4 FAIL magnitudes stay at full magnitude. |
+| **D14 NEISO T1-X CROSSOVER** | Run NEISO's first-ever T1-X so leg (c) closes on a measured FC-4 — the D10 analog on the new lead ISO | **ISSUED r#13** — the program's highest-value light lane: success ⇒ NEISO is the FIRST ISO with (a)+(b)+(c), leaving only leg (d) | `claude/capx-d14-neiso-t1x` | Fable | Report FC-4 honestly whatever it says; adds `neiso-t1x`, displaces nothing. |
+| **S-123 MISO ADEQUACY PACKAGE** | S-1 requirement re-vintage + S-2 external-capacity intake + S-3 ledger differencing | **ISSUED 2026-08-25 — start-time check FAILED at r#9–r#13 (five consecutive; Q9: miso-190 confirmed still running); held on the check, re-run every refresh** | `claude/capx-s123-miso-adequacy` | Fable | D2-B's own top recommendation: three independent published-source terms, none sized against the residual. Rides with **D9** (SOCO forecast fallback). |
 | **S-4 NEISO HYDRO ACCREDITATION** | Per-resource ISO-NE SCC → class factor, replacing the generic 0.50 | **LANDED** PR #4312 — verification half chartered as **S-4V** (r#11) | `claude/capx-s4-neiso-hydro-syqu7m` | Fable | Factor 0.7352 sourced, above the pre-declared 0.62 clearing threshold. Finding §5/§8 TBDs are S-4V's to fill. |
-| **S-4V NEISO VERIFICATION** | Complete S-4's owed §5: control/treatment T1-F pair at one HEAD, FC-1 re-score, forecast registration (preserve-then-overwrite on bare `neiso-t1f`), finding TBDs, NEISO `hydro_accreditation` cell re-stamp, NEISO board block refresh | **ISSUED r#11** | `claude/capx-s4v-neiso-verification` | Fable | Pre-declared: 2028 clears by ≈ +229 MW on the D2-B basis (+446.7 MW hydro term vs 218 MW gap); a contradiction reports at full magnitude, factor untouched (rule 14). |
-| **S-4b NEISO REQUIREMENT RE-VINTAGE** | Adopt the published Nov 21 2025 ARA filing pair (≈ +380 MW of requirement — bigger than the old 218 MW gap) | QUEUED — charter once S-4V lands | — | Fable | Surfaced by S-4's finding §0.4; rule 23 (on publication, not on a residual). Blocked in S-4 on the missing ARA-cycle DR companion (finding §6.3) — S-4b's first job is locating one. |
-| **S-5 PJM REQUIREMENT HORIZON-EDGE** | Implement hold-last-FPR + the D-1 checker repair; re-score PJM's T1-F leg | **UNBLOCKED by card C (C-A), 2026-08-25 — charter next** | — | Fable | Convention is now declared, so this is implementation + a scorer/governance round, not a decision. Expect PJM's I7 miss to restate 366 MW → ~5.9 GW with 2029 plausibly joining. |
-| **S-6 PJM T1-F LEDGER RUN** | The minimum run that makes PJM's supply side observable | QUEUED — **strictly after S-5** | — | Fable | Solo heavy slot (8.8 GB, no co-run). Running it before S-5 would measure against a bar we already know is wrong. |
-| **D5 FC-4 CO2 CROSSOVER** | Attribute the crossover CO2 miss | **RE-SCOPED, still not started** | `claude/capx-d5-crossover-co2` | Fable | **Its PJM-first rationale is refuted** (§0.3): PJM is no longer closest. Re-point to the ISO whose gate is actually live, or run it as a three-ISO derivation question (ERCOT 43–50 %, PJM 43–58 %, MISO 63–76 %). |
+| **S-4V NEISO VERIFICATION** | Complete S-4's owed §5: control/treatment T1-F pair at one HEAD, FC-1 re-score, forecast registration (preserve-then-overwrite on bare `neiso-t1f`), finding TBDs, NEISO `hydro_accreditation` cell re-stamp, NEISO board block refresh | **LANDED** PRs #4337/#4353 — bare `neiso-t1f` HOLD → **PROMOTE-WITH-CAVEATS** (I7 PASS ×5, sole WARN the pre-declared I12-2026); control preserved as `neiso-t1f-s4control`; matrix cell O → K; board block refreshed | `claude/capx-s4v-neiso-verification` | Fable | **Honest attribution: the control ALSO clears 2028 — epoch drift alone flips the year; the factor's isolated effect is exact.** NEISO takes the (a)+(b) lead. |
+| **S-4b NEISO REQUIREMENT RE-VINTAGE** | Adopt the published Nov 21 2025 ARA filing pair (≈ +380 MW of requirement — bigger than the old 218 MW gap) | **PROMPT WRITTEN r#13 — dispatch strictly AFTER D14 merges** (both edit ff-verdicts.json + the NEISO board block) | `claude/capx-s4b-neiso-ara` | Fable | Rule 23 (on publication, not on a residual). First job: locate the ARA-cycle DR companion (S-4 finding §6.3). Pre-declared: +380 MW vs the +229 MW clearance ⇒ 2028 plausibly RE-OPENS ≈ −151 MW and leg (b) may flip back — reported at full magnitude if so. |
+| **S-5 PJM REQUIREMENT HORIZON-EDGE** | Implement hold-last-FPR + the D-1 checker repair; re-score PJM's T1-F leg | **LANDED** PR #4340 — hold-last-FPR in `resolve_forecast_pool_requirement` (zero DOF), checker year-threading repaired, **I7 2030 restates 366 MW → 5,858 MW, 2029 plausibly joins**; no solve, no registration; board restatement carried by D13 | `claude/capx-s5-pjm-horizon-edge` | Fable | The worse reported result, produced on purpose (the card's own arithmetic). 2029/30 intake pointer at the table edge (BRA Dec 2026). **S-6 unblocked.** |
+| **S-6 PJM T1-F LEDGER RUN** | The minimum run that makes PJM's supply side observable, against the corrected (hold-last) bar | **UNBLOCKED by S-5 — HELD on the heavy-slot check (Q9: miso-190 still running; PJM 8.8 GB is no-co-run)**; re-run the check every refresh | — | Fable | Measures whether 2029 actually joins the fail set and the true 2030 magnitude on the supply side. |
+| **D5 FC-4 CO2 CROSSOVER** | Attribute the crossover CO2 miss | **RE-SCOPED, still not started** | `claude/capx-d5-crossover-co2` | Fable | **Confirmed a three-ISO derivation question by D10's measurement** (NYISO co2 10.1/10.3/3.9 % — does NOT reproduce the miss): scope is ERCOT 43–50 %, PJM 43–58 %, MISO 63–76 %. |
 | **D3 MISO RETIREMENT / G3** | G3 cap-grain `retire.total_gw` t1h regression | QUEUED | — | Fable | I13 cobweb half confirmed superseded. |
 | **D4-I3 ERCOT** | I3 scarcity-slack invariant (net-revenue half HELD) | QUEUED at half scope | — | Fable | Q1 answered: card Y signed **Y-C**, arc stays open. |
 | **D6 FC-3 CURVE-ON OVER-FIRE** | Four T1-H curve legs | QUEUED | — | Fable | — |
@@ -496,10 +586,15 @@ the gap.
 | **D9 MISO SOCO FORECAST FALLBACK** | `ba_code="SOCO"` live only in the forecast path | QUEUED — **rides with S-123** | — | Fable | Handed in by miso-183. |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
-## 2. Backcast-track watch (last seen 2026-08-30 @ `65a39e3`, refresh #12)
+## 2. Backcast-track watch (last seen 2026-08-30 @ `f9eb73c`, refresh #13)
 
 | item | state |
 |---|---|
+| NYISO (r#13) | **nyiso-158 phase-0 winter-face diagnosis landed** (PR #4339): the binding-depth differential is the measured Transco TTC step; no measured driver reaches the sharpened Iroquois re-open bar (first leg closed, Leg-2-only); C3b-2025 is WHOLLY the two faces (98.4 % of sq error — either face alone restores the band); CE-util overshoot adjudicated not-an-envelope-defect. **nyiso-159 opened** (PR #4352): phase-0 loss-component measurement on the 36-month record + PREREG of the zonal loss surface. Both merged; no NYISO branch in flight. |
+| ERCOT (r#13) | **ercot-240 CLOSED in one arc** (PRs #4341/#4344/#4345/#4348): the event-hour demand gap is adjudicated the DC-tie import identity. **ercot-241 opened + merged** (PR #4349): Phase-0 precommit for the off-core conduct-parameterization screen. ercot-239 Stage-A census + Stage-B A/B driver landed (PRs #4351 etc.); the o7 attribution harness landed (PR #4334). |
+| CAISO (r#13) | caiso-222 owner-sitting rulings recorded (R-1 keeper-currency annotation, Q1 terminal rest, Q2 routes armed/declined; PRs #4333/#4342/#4346). **caiso-223 sub-zonal scope round landed** (PRs #4347/#4350): partition adjudicated, membership derived, 3-way LDF split measured (gates 13/13 PASS), sufficiency gap list filed. |
+| Governance (r#13) | The 2026-08-30 PM sitting executed four rulings (v14 ordering deviation recorded, gates re-measured green); director-records v14 board refreshed at re-derived pin. |
+| Branches in flight (r#13) | `miso-190-backcast-calibration-okt1cn` ONLY — fully merged at `9cd6dc6` but **A/B solve NOT yet registered (scorer committed before it runs); owner confirms STILL RUNNING (Q9). S-123 check FAILS fifth consecutive; S-6 held on the same heavy slot.** |
 | NYISO (r#12) | **Keeper → `2026-08-30-nyiso-157-par-attribution`** (owner ruling, structural-integrity formula, third application; D-5(b) stop fired and resolved by the ruling; keeper-auditor PASS). Determination **NOT-YET on {C3a-2025 −12.0 %, C3b-2025 0.203 knife-edge, C3c silenced-lone}** — fail set WIDENED vs nyiso-155. 2023 +1.0 % / 2024 −2.0 % PASS; first real zonal separation (CE util 0.381→0.784). Marker re-keyed at promotion, then **WITHDRAWN by the r#12 Q5 ruling (execution: lane Q5-W)**. Successor: intake Leg 2 (winter face). |
 | ERCOT (r#12) | ercot-239 Phase-0 COMPLETE: missed-event family = measured energy-lambda scarcity in tight-room hours no reserve adder carried; precommit's availability/outage/ramp priors REFUTED; object = offer-surface conduct off the August core (ercot-217 episode). Successor o7 attribution-harness precommit landed ex ante (PR #4332). Both branches merged & deleted. |
 | Forecast namespace (r#12) | FF-2D re-score (PR #4325): all 7 re-scorable verdicts byte-identical at HEAD, provenance-only diff, FR-21 gate reset. Bare keys unchanged. Benign — verified, not assumed. |
@@ -530,13 +625,18 @@ the gap.
 **Deconfliction: clean.** D2-B explicitly stopped at a FINDING on the one MISO root cause that
 reaches shared solve machinery (S-1), per its charter.
 
-## 3. Owner-tier questions — ALL SIX NOW ANSWERED (Q5/Q6 ruled at the r#8 sitting, 2026-08-30)
+## 3. Owner-tier questions — NINE ANSWERED (Q5/Q6 at the r#8 sitting; Q5 re-ruled r#12; Q7/Q8/Q9 at the r#13 sitting, 2026-08-30)
 
 Full signature record and the consequences adopted:
-**`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5.**
+**`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5** (cards A/B/C/Y);
+Q7–Q9 were ruled via in-session decision cards at r#13 and are recorded here + in §0j.3
+(execution of Q7 = lane D13).
 
 | # | question | resolution |
 |---|---|---|
+| ~~Q7~~ | Leg-(c) semantics: the board carried BOTH readings (D7 wrote ERCOT/PJM/MISO fail-on-band; D10 wrote NYISO pass-on-measurement) | **RULED 2026-08-30 (r#13 sitting) — MEASURED CLOSES THE LEG**, per the charter-literal §2.1b(c) test ("measured and reported" + readiness green) and card A-A as signed ("closes on a measured FC-4"). ERCOT/PJM/MISO leg (c) → pass-on-measurement, FC-4 FAIL magnitudes stay at full magnitude; NYISO's PASS stands; the in-band reading is superseded. Execution = lane D13. No §2.1b gate opens (all three fail other legs). |
+| ~~Q8~~ | Arm `entry_margin_exhaustion` as the ERCOT forecast default? (D11-R's escalation) | **RULED 2026-08-30 (r#13 sitting) — HOLD UNTIL D12**, at the finding's §5 recommendation. The gas half is inert on the live reserve leg, so arming now would bake in the VRE/storage-only split; D12 adjudicates the scarcity basis first and its report re-opens the decision. Matrix cell stays **O**. |
+| ~~Q9~~ | Is the miso-190 backcast session still running? (governs the S-123 start-time check + S-6's heavy slot) | **ANSWERED 2026-08-30 (r#13 sitting) — STILL RUNNING.** S-123 held (fifth consecutive check fail); S-6 held on the heavy slot. Both re-checked every refresh. |
 | ~~Q1~~ | ERCOT 2023 arc settled? | **ANSWERED** — card Y signed **Y-C**, hold open ⇒ D4 = I3-invariant half only. |
 | ~~Q2~~ | Leg-(c) consistency (card A) | **SIGNED 2026-08-25 — (A-A), at the recommendation.** CAISO + NYISO move `na`→`fail`, `"c"` into both `closed_on`; NEISO unchanged. **NYISO T1-X chartered (D10)** so leg (c) closes on a measured FC-4. No gate opened; leg (d) untouched. |
 | ~~Q3~~ | `entry_lookahead_reprice` disarm default (card B) | **SIGNED 2026-08-25 — (B-C), at the recommendation.** Shipped default HOLDS, cell stays `O`, no verdict minted. **Developer-pro-forma construction chartered (D11).** Neither known-wrong object is ratified. |
@@ -613,7 +713,11 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-08-30 | **D11-R ENTRY VOLUME RULE** | `claude/capx-d11r-entry-volume-rule` | Fable | ercot | r#8 batch — re-scoped per §0e.3; **RUNNING since r#10** |
 | 2026-08-30 | **S-4 NEISO HYDRO (reissued)** | `claude/capx-s4-neiso-hydro` | Fable | neiso | r#8 batch — **LANDED at r#10** (PR #4312, verification pair pending) |
 | 2026-08-30 | **S-4V NEISO VERIFICATION** | `claude/capx-s4v-neiso-verification` | Fable | neiso | r#11 batch — new charter (S-4's owed verification half); D10 + S-5 re-presented unchanged alongside it. **All three dispatched by the owner (in flight at r#12)** |
-| 2026-08-30 | **Q5-W NYISO MARKER WITHDRAWAL** | `claude/q5w-nyiso-marker-withdrawal` | Fable/Opus | code | r#12 — governance records lane executing the owner's r#12 Q5 ruling (WITHDRAW, CAISO precedent) |
+| 2026-08-30 | **Q5-W NYISO MARKER WITHDRAWAL** | `claude/q5w-nyiso-marker-withdrawal` | Fable/Opus | code | r#12 — governance records lane executing the owner's r#12 Q5 ruling (WITHDRAW, CAISO precedent). **LANDED at r#13** (PR #4343) — as did D10 (PR #4354), S-4V (PRs #4337/#4353), S-5 (PR #4340) and D11-R (PR #4355): the whole in-flight set |
+| 2026-08-30 | **D13 BOARD RECONCILE** | `claude/capx-d13-board-reconcile` | Fable/Opus | code | r#13 batch — records lane: Q7 execution + S-5 PJM restatement + landed-lane board currency + stale-prose repair |
+| 2026-08-30 | **D14 NEISO T1-X CROSSOVER** | `claude/capx-d14-neiso-t1x` | Fable | neiso | r#13 batch — the D10 analog on the new lead ISO; success ⇒ first (a)+(b)+(c) ISO |
+| 2026-08-30 | **D12 SCARCITY-CONSISTENT DELTA BASIS** | `claude/capx-d12-scarcity-basis` | Fable | ercot | r#13 batch — released by D11-R's report; feeds the Q8 arming re-decision |
+| 2026-08-30 | **S-4b NEISO ARA RE-VINTAGE** | `claude/capx-s4b-neiso-ara` | Fable | neiso | r#13 — prompt written; **dispatch strictly after D14 merges** (shared NEISO surfaces) |
 
 ## 5. History (compacted)
 
