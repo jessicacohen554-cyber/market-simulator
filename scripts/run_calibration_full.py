@@ -8130,8 +8130,14 @@ HOLDOUT_CALIBRATION_YEARS: frozenset[int] = frozenset({2023, 2024, 2025})
 HOLDOUT_MARKER_FILE = "frontend/data/backcast/calibration-complete.json"
 # Holdout SPEND FREEZE (CLAUDE.md rule 22, declared 2026-07-25). A freeze
 # SUSPENDS the authorization a calibration-complete marker grants without
-# withdrawing the marker: while it is active no out-of-training year may be
-# solved for ANY ISO, even with --holdout-authorized and a marker present.
+# withdrawing the marker: while a tier is within the active freeze's scope, no
+# year of that tier may be solved for ANY ISO, even with --holdout-authorized
+# and a marker present. TIER-SCOPED since the 2026-08-26 owner ruling
+# (program-director sitting card 6): the VALIDATION tier is lifted for ISOs
+# holding a `complete` marker (the marker check below still governs them) and
+# the LOCKED TEST stays frozen; the scope is read by the single fail-closed
+# reader holdout_policy.frozen_tiers, under which a freeze file with no
+# parseable scope covers every tier (the pre-2026-08-26 behaviour).
 # Deliberately additive — calibration-complete.json is untouched, so already-
 # registered out-of-training bundles stay CI-legal and no prior one-shot is
 # invalidated. Checked BEFORE the marker test below (fail closed).
@@ -8155,17 +8161,30 @@ def enforce_holdout_year_gate(
     breach = sorted(set(years) - HOLDOUT_CALIBRATION_YEARS)
     if not breach:
         return
-    # Freeze first, fail closed: an active freeze outranks BOTH the flag and the
-    # marker, so a frozen window cannot be spent by an authorized one-shot.
+    # Freeze first, fail closed: an active freeze outranks BOTH the flag and
+    # the marker for every tier within its scope, so a frozen tier cannot be
+    # spent by an authorized one-shot. TIER-SCOPED (2026-08-26 owner ruling):
+    # holdout_policy.frozen_tiers reads the freeze's scope and fails closed —
+    # no parseable scope means every tier is frozen — so a breach year whose
+    # tier is NOT frozen (today: the validation ladder) falls through to the
+    # tier-marker check below, which is what governs it.
     freeze_path = repo / HOLDOUT_FREEZE_FILE
     if freeze_path.exists():
         freeze = json.loads(freeze_path.read_text())
-        if freeze.get("active"):
+        frozen = holdout_policy.frozen_tiers(freeze)
+        frozen_breach = sorted(
+            y for y in breach if holdout_policy.tier_for_year(y) in frozen
+        )
+        if frozen_breach:
+            frozen_tier_names = sorted(
+                {holdout_policy.tier_for_year(y) for y in frozen_breach}
+            )
             raise SystemExit(
-                f"error: --year {breach} is under an ACTIVE HOLDOUT SPEND "
-                f"FREEZE (declared {freeze.get('declared', '?')} by "
-                f"{freeze.get('by', '?')}), which suspends every ISO's "
-                "out-of-training authorization regardless of "
+                f"error: --year {frozen_breach} ({'/'.join(frozen_tier_names)}"
+                " tier) is under an ACTIVE HOLDOUT SPEND FREEZE "
+                f"(declared {freeze.get('declared', '?')}, frozen tiers "
+                f"{sorted(frozen)}), which suspends every ISO's "
+                "authorization for those tiers regardless of "
                 "--holdout-authorized or a calibration-complete marker. "
                 f"Reason: {freeze.get('reason', 'see the freeze file')} "
                 f"Lifts when: {freeze.get('lifts_when', 'owner action')} "

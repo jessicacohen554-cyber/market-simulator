@@ -1071,14 +1071,17 @@ measured on every registered run) but its keeper reference is stale.
    whenever the direction changes, and v12 adds one fact to it: **the manifest's
    provenance sha no longer resolves**, so a restart now carries a verification
    step it did not carry before.
-2. **🔴 VALIDATION-FREEZE LIFT — the O4/O5 card, recommendation (A).**
-   `AUDIT-FOLLOWUP-o5-o4-2026-08-18.md` §2.4: **close the charter with cause,
-   lift the VALIDATION tier only, leave `final` EMPTY.** The detector question is
-   closed on evidence; *"resolve the detector question"* is not among the
-   choices. **Unmoved for a FIFTH cycle.** `holdout-freeze.json` is still
-   `active: true` and outranks every marker — re-read at this pin, not restated.
-   **Recommendation unchanged: (A) — close the charter with cause, lift the
-   VALIDATION tier ONLY, leave `final` EMPTY.**
+2. **🟢 VALIDATION-FREEZE LIFT — SIGNED (A) 2026-08-26 AND EXECUTED; retire
+   from the queue.** Owner ruling (program-director sitting 2026-08-26, card 6)
+   took `AUDIT-FOLLOWUP-o5-o4-2026-08-18.md` §2.4 option (A) verbatim: the
+   layup charter is **closed with cause** (its new §10 — the detector/seam
+   question REMAINS OPEN and is carried explicitly), and `holdout-freeze.json`
+   is **re-scoped, not lifted outright**: `active: true` with `scope.tiers =
+   ["locked_test"]`, so 2020–2022 are spendable by `complete` ISOs under
+   `--holdout-authorized` while **2019/H1-2026 stay frozen for every ISO** —
+   verified behaviourally on all three rule-22 gates, 55/55 invocations.
+   `final` untouched and still empty. Audit row O4 → RESOLVED. Record:
+   `docs/FINDING-holdout-governance-2026-08-26.md`.
 3. **🟠 NEISO `final` GRANT.** neiso-101 closed the **data half** of precondition
    #2 with zero tracked files modified; **its entire residual is the grant
    itself**. It also recommends dropping `bench/NEISO/2019` from the precondition
@@ -1113,9 +1116,13 @@ measured on every registered run) but its keeper reference is stale.
 8. **🟠 CARRIED — rule on the cross-ISO scorer-change precedent** (nyiso-143 D-4
    rider + the shared-benchmark determination flip). Both are one lane's act
    re-grading another's committed record.
-9. **🟠 CARRIED — the `holdout-freeze.json` prose conflict.** Verified still
-   present. Committed governance data disagreeing with the governing rule.
-   **Still the cheapest correctness item on the board.**
+9. **🟢 CARRIED — the `holdout-freeze.json` prose conflict — CORRECTED
+   2026-08-26 as part of the card-6 scope edit; retire from the queue.** The
+   freeze file's `note` was rewritten for the tier-scoped lift and the
+   offending sentence now states the amended rule 22 (intake needs NO
+   authorization; the score is held out, never the data), with the old
+   Option-2 wording preserved as a bracketed correction notice. Record:
+   `docs/FINDING-holdout-governance-2026-08-26.md`.
 10. **🟠 CARRIED — caiso NOT-YET determination.** The CAISO packet has **moved
     substantively this window for the first time in three cycles**: caiso-215
     localised C3a to the Path-15 south and **eliminated the entire mean-zero

@@ -55,9 +55,14 @@ CALIBRATION_YEARS: frozenset[int] = frozenset({2023, 2024, 2025})
 # so both the message text and the join are identical across the three gates.
 MARKER_FILE: str = "frontend/data/backcast/calibration-complete.json"
 
-# Holdout SPEND FREEZE file (rule 22): while its ``active`` key is true, NO
-# out-of-training year may be solved/scored/registered for ANY ISO — the
-# freeze outranks both marker blocks. Value-equal to
+# Holdout SPEND FREEZE file (rule 22): while its ``active`` key is true, no
+# year of a tier within its ``scope.tiers`` may be solved/scored/registered for
+# ANY ISO — the freeze outranks both marker blocks for the tiers it covers.
+# TIER-SCOPED since 2026-08-26 (owner ruling, program-director sitting card 6:
+# validation tier lifted for `complete` ISOs, locked test stays frozen);
+# ``frozen_tiers`` below is the single reader of the scope and FAILS CLOSED —
+# an active freeze with no parseable ``scope.tiers`` covers every tier, which
+# is exactly the pre-2026-08-26 file shape and behaviour. Value-equal to
 # ``run_calibration_full.HOLDOUT_FREEZE_FILE`` (kept as a separate literal per
 # this repo's existing convention; a parity test asserts they agree). This
 # module stays import-free, so consumers do their own json read of the file.
@@ -216,6 +221,46 @@ def marker_blocks(marker_doc: dict) -> dict[str, dict]:
     """
     doc = marker_doc or {}
     return {tier: (doc.get(block) or {}) for tier, block in TIER_MARKER_BLOCK.items()}
+
+
+def frozen_tiers(freeze_doc: dict) -> frozenset[str]:
+    """Return the non-train tiers an ACTIVE spend freeze covers.
+
+    The single reader of ``holdout-freeze.json``'s tier scope (rule 22; the
+    freeze outranks both marker blocks for the tiers it covers). TIER-SCOPED
+    since the 2026-08-26 owner ruling (program-director sitting card 6), which
+    lifted the freeze for the VALIDATION tier while keeping the LOCKED TEST
+    frozen — expressed as ``scope.tiers = ["locked_test"]`` with ``active``
+    still true, so the steady state remains an active freeze over the
+    touch-once tier rather than a lapsed one.
+
+    FAILS CLOSED on every degenerate shape: an inactive freeze covers nothing;
+    an active freeze whose ``scope.tiers`` is missing, empty, or unparseable
+    covers EVERY tier (the pre-2026-08-26 file shape and behaviour, so a
+    legacy or mangled freeze file can only ever be stricter than intended,
+    never looser). Unknown tier names are ignored — they can never widen the
+    set of spendable years, only fail to narrow the frozen ones.
+
+    Args:
+        freeze_doc: Parsed ``holdout-freeze.json`` (or ``{}`` / None).
+
+    Returns:
+        Frozenset drawn from ``{TIER_VALIDATION, TIER_LOCKED}``.
+    """
+    all_tiers = frozenset({TIER_VALIDATION, TIER_LOCKED})
+    doc = freeze_doc or {}
+    if not doc.get("active"):
+        return frozenset()
+    scope = doc.get("scope")
+    if not isinstance(scope, dict):
+        return all_tiers
+    tiers = scope.get("tiers")
+    if not isinstance(tiers, (list, tuple)):
+        return all_tiers
+    named = frozenset(t for t in tiers if isinstance(t, str)) & all_tiers
+    # Fail closed: an active freeze that names no recognizable tier is a full
+    # freeze, never a no-op.
+    return named or all_tiers
 
 
 def authorized(marker_doc: dict, iso: str, tier: str) -> bool:
