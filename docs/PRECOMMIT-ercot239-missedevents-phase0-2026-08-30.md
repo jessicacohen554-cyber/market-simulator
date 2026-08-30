@@ -164,3 +164,24 @@ list-identity is checked against the committed `lt_200|500_1000` cell
 list (13 h) plus the `lt_200|ge_1000` COUNT == 1, with h4578's identity
 carried by the FINDING-ercot237 §3 naming and by the recomputed
 population equality (both already asserted). No other change to §1–§3.
+
+## Amendment 2 (2026-08-30, recorded after the declared M-1…M-5 measurements
+## ran and before any further measurement) — ONE added report-only source:
+## the committed measured ORDC/reserves series
+
+The declared measurements surfaced that the model-side reserve state is
+the discriminating panel (M-2: the keeper's ORDC total room is bottom-5 %
+tight in 12 of the 14 hours while pricing $0.00–$25.68), which makes the
+committed MEASURED real-time reserve series the missing actual-side
+counterpart. **Added source (report-only, no selection function, no
+threshold, no attribution-rule change):**
+`data/raw/ercot/ercot_2023_ordc_reserves_hourly.parquet`
+(`scripts/data/fetch_ercot_ordc_reserves.py` intake; the ercot-198/-212
+record's series) — columns `rtolcap` (real-time online reserve capacity,
+the measured room), `prc`, and published `rtorpa` / `rtordpa`, reported at
+the 14 event hours with year-percentile framing exactly like the other
+M-1 panels. Purpose: distinguish "the model's room is too generous vs the
+measured room" from "the room matches and the mapping/price channel is
+the object". M-5 attribution rules, thresholds, and every declared prior
+are UNCHANGED — this panel grades nothing; it is context for the FINDING
+and the owner queue.
