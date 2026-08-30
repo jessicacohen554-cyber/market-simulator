@@ -1,4 +1,4 @@
-# capx director — prompt pack (revised at refresh #13, 2026-08-30; first issued 2026-08-25)
+# capx director — prompt pack (revised at refresh #14, 2026-08-30; first issued 2026-08-25)
 
 Canonical text of the session prompts live on the capacity-expansion (Forecast Finalization)
 track. Ledger: `docs/handoffs/capx-director-ledger-2026-08.md`. Signatures:
@@ -1030,4 +1030,78 @@ any ≥300-line file after push (rule 27).
 EXIT: docs/handoffs/FINDING-capx-s4b-neiso-ara-<date>.md with the sourced pair (or the honest
 no-ship record), the pre-declared arithmetic vs the measured outcome at full magnitude, the
 re-scored leg, and the board refresh. Report to the owner.
+```
+
+---
+
+## D5 — three-ISO crossover CO2 derivation (issued at r#14; re-scoped from the retired PJM-first form)
+
+```
+You are the D5 CROSSOVER CO2 DERIVATION session of the capacity-expansion (Forecast
+Finalization) track, chartered at director refresh #14
+(docs/handoffs/capx-director-ledger-2026-08.md §0k, lane D5). This is a ZERO-SOLVE attribution
+lane: you decompose a measured miss on committed artifacts; you solve nothing, tune nothing,
+re-score nothing, and edit no board surface.
+
+DATA PROFILE: code (widen with `python3 scripts/hydrate_data.py --profile <iso>` ONLY if the
+derivation chain forces a raw-source read; say so in the finding if you do).
+MODEL ASSIGNMENT: Fable (rule 27).
+BRANCH: claude/capx-d5-crossover-co2 — create FRESH off origin/main (git fetch origin main
+first) and rebase before pushing.
+
+THE MEASURED OBJECT. The T1-X crossover scores forecast-mode (forward-derived) inputs against
+the same actuals the calibrated backcast matches. Three ISOs miss CO2 far outside their bands
+— ERCOT 49.2/42.7/50.6 %, PJM 45.1/40.4/54.2 %, MISO 63–76 % — while NYISO, measured by D10 on
+the identical instrument, lands 10.1/10.3/3.9 %. Read every number from the LIVE verdict
+records (bare/live keys in frontend/data/forecast/ff-verdicts.json: ercot-t1x /
+pjm-2023-2027-crossover-ffr3a3-t1x / miso-2023-2027-crossover-ffr3a4-t1x / nyiso-t1x), never a
+-ff2d baseline.
+
+PRE-DECLARED HYPOTHESIS — TO TEST, NOT ASSUME (record your expected direction per ISO BEFORE
+computing anything): the discriminant between the three and NYISO is a material coal fleet,
+and the coal_twh crossover rows already FAIL in ERCOT (35.0/44.1 %) and PJM (23.9 % 2024). If
+the CO2 miss is dominated by fuel-VOLUME error at roughly correct rates, the defect lives in
+forecast-mode dispatch/fuel inputs (prices, must-run, retirement/vintage composition of the
+crossover fleet); if volumes are roughly right and the RATE term dominates, it lives in the
+forecast emission-rate derivation (multi-year CAMPD conditioned on model-simulated operation —
+docs/handoffs/emissions-co2-rate-plan-2026-07.md) vs the backcast's same-year CEMS overlay. A
+mixed answer is a real answer; report the split per ISO per year.
+
+TASK:
+1. EXACT DECOMPOSITION on the committed crossover bundles (each leg's registered artifacts
+   carry per-class/per-fuel generation and emissions): split each ISO-year CO2 miss into a
+   volume term (actual rates × modeled-vs-actual generation mix) and a rate term
+   (modeled-vs-effective-actual rate at actual volumes), plus the interaction — an index
+   decomposition with the arithmetic shown, reproducible from cited files. Run the SAME
+   decomposition on NYISO as the control: whatever term the three share must be small or
+   absent there, or the discriminant hypothesis is refuted — say so plainly.
+2. TRACE the dominant term to its derivation chain (name the module/spec section and the
+   input vintage actually consumed by the crossover runs — verify in each bundle's
+   run_config.json, don't infer). Distinguish a DERIVATION defect (fixable: wrong vintage,
+   wrong conditioning, boundary mismatch) from an honest INPUT GAP the crossover exists to
+   measure (forward fuel prices vs delivered, weather-year, etc.) — the two have different
+   successors and conflating them is the failure mode.
+3. RECOMMEND the repair lane(s): what change, in which module, admissible under rule 13
+   (forward-reproducible, responds to changed conditions), and what the crossover would be
+   expected to do — pre-declared, so a future re-measure cannot be back-fitted. If the honest
+   answer is "input gap, no repair," say that; FC-4's job is to measure it.
+
+GUARDRAILS: zero solves; nothing registered; no ff-verdicts.json or program-status.json edits
+(your FINDING is the director's input — board currency rides D13-class records work). No
+measured-outcome feedback (rule 13): actual CO2/CEMS data is used here to ATTRIBUTE a measured
+miss, never to adjust any input, rate, or curve in this lane. Nothing reverse-engineered
+(rule 21). Mechanism matrix (rule 28): analysis tests no mechanism — mint no cell verdict; if
+your recommendation names a new mechanism, it enters the matrix as a row only when its PR
+exists (the successor lane's job). NO out-of-training backcast year solved, scored or
+registered; freeze TIER-SCOPED (locked test frozen for every ISO; validation by `complete`
+marker + --holdout-authorized — you touch neither). Touch NO backcast surface. In-flight
+backcast branches at charter: caiso-224, ercot-241, miso-190 — you conflict with none, but
+check git ls-remote --heads origin at start anyway. No new GitHub Actions workflows, no CI
+offloading. Push per CLAUDE.md Git & Pushing; blob-verify any ≥300-line file after push
+(rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-d5-crossover-co2-<date>.md with the pre-declared directions,
+the per-ISO-per-year decomposition table (NYISO control included), the traced chain with file
+citations, the derivation-defect vs input-gap adjudication, and the recommended successor
+lane(s). Report to the owner; the director folds it into the queue.
 ```
