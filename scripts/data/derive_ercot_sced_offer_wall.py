@@ -68,8 +68,11 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
+sys.path.insert(
+    0, str(REPO)
+)  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO / "scripts"))  # lib.positiontail on direct run
 
 from market_sim.config.paths import CALIBRATION_DIR, ERCOT_MIS_DIR  # noqa: E402
 
@@ -86,6 +89,13 @@ from scripts.data.derive_ercot_dam_cleared_share import (  # noqa: E402
 
 SCED_DIR = ERCOT_MIS_DIR
 DEFAULT_OUT = CALIBRATION_DIR / "ercot_sced_offer_wall_condbinned.json"
+
+# ercot-242 room-binned vintage (PRECOMMIT-ercot242-room-axis-phase1 §1.2):
+# the measured-room percentile grid, fixed ex ante at ercot-241 §2 (a grid
+# convention like NETLOAD_PCT_EDGES, never adjusted), and the vintage tag the
+# offer_surfaces both-direction guard keys on.
+ROOM_PCT_EDGES: tuple[float, ...] = (0.02, 0.05, 0.10, 0.175, 0.30, 0.50, 0.70)
+ROOMBINNED_TAG = "room-binned-rtolcap-pct"
 
 _STD_TZ = "Etc/GMT+6"  # ERCOT fixed standard-time clock (derive_actual_lmp)
 
@@ -513,6 +523,271 @@ def derive_year_continuous(
     return out, coverage, [p.name for p in files]
 
 
+def _room_bin_hourly(year: int) -> tuple[np.ndarray, list[str]]:
+    """Hourly measured room-bin index for ``year`` (−1 where rtolcap is NaN).
+
+    The ercot-241 §2 construction verbatim: room percentile = the year
+    fraction of NaN-dropped measured ``rtolcap`` values ≤ the hour's value,
+    from the measured ORDC reserves parquet; binned on the fixed
+    :data:`ROOM_PCT_EDGES` grid (``searchsorted(..., side="right")``, the
+    net-load convention). Returns ``(room_bin (HOURS,), [source file name])``.
+    """
+    path = SCED_DIR / f"ercot_{year}_ordc_reserves_hourly.parquet"
+    mo = (
+        pd.read_parquet(path, columns=["hour", "rtolcap"])
+        .sort_values("hour")
+        .reset_index(drop=True)
+    )
+    if len(mo) != HOURS:
+        raise SystemExit(
+            f"--room-binned: measured ORDC rows {len(mo)} != {HOURS} ({path})"
+        )
+    rt = mo["rtolcap"].to_numpy(float)
+    valid = np.sort(rt[~np.isnan(rt)])
+    if valid.size == 0:
+        raise SystemExit(f"--room-binned: rtolcap all-NaN in {path}")
+    # fraction-<= percentile: searchsorted(right) over the sorted valid values
+    # == (valid <= x).mean() for every finite x (the ercot-241 probe statistic).
+    pct = np.where(
+        np.isnan(rt),
+        np.nan,
+        np.searchsorted(valid, rt, side="right") / float(valid.size),
+    )
+    room_bin = np.where(
+        np.isnan(pct),
+        -1,
+        np.searchsorted(np.asarray(ROOM_PCT_EDGES), pct, side="right"),
+    ).astype(int)
+    return room_bin, [path.name]
+
+
+def derive_year_room(
+    year: int, gas_day: pd.Series, room_bin: np.ndarray
+) -> tuple[dict, dict, list[str]]:
+    """One year's (class × net-load bin × room bin) spare-offer surface.
+
+    The IDENTICAL statistic :func:`derive_year` computes per net-load bin —
+    the MW-weighted :data:`LADDER_QUANTILES` of online-spare SCED2 segment
+    multipliers — keyed per (net-load bin, measured room bin), plus each
+    cell's position tail above p90 (``lib.positiontail.tail_support``, the
+    ercot-181 statistic on the cell's own population). Streaming accumulation
+    exactly as the stepped derive, with the ``_chunk_segments`` hour key
+    carrying a combined (net-load bin, room bin) code (the
+    :func:`derive_year_continuous` precedent of re-keying the same leg).
+
+    Per class the return carries the room table AND the ungrouped parent
+    ladder recomputed from the union of all room bins (NaN-room segments
+    included) — the caller asserts the parent reproduces the frozen stepped
+    artifact byte-exactly (the corpus-integrity anchor, PRECOMMIT-ercot242
+    §1.2). Zero fitted scalars; year-scoped with no pooled fallback.
+    """
+    from lib.positiontail import tail_support
+
+    files = _sced_source_files(year)
+    pct = _netload_pct(year)
+    edges = np.asarray(NETLOAD_PCT_EDGES)
+    nl_bin = np.searchsorted(edges, pct, side="right")  # (HOURS,)
+    n_bins = len(edges) + 1
+    n_room = len(ROOM_PCT_EDGES) + 1
+    # Combined per-hour key for the shared streaming leg: nl_bin * stride +
+    # (room_bin + 1); code % stride == 0 marks a NaN-room hour (parent-only).
+    stride = n_room + 1
+    hour_key = nl_bin * stride + (room_bin + 1)
+
+    mult_acc: dict[tuple, list[np.ndarray]] = {}
+    mw_acc: dict[tuple, list[np.ndarray]] = {}
+    ts_seen: dict[tuple, set] = {}
+    day_seen: dict[tuple, set] = {}
+    saw_rows = False
+    for path in files:
+        df = pd.read_parquet(path, columns=_READ_COLS)
+        df = _delivery_year_rows(df, year)
+        df = df[df["Resource Type"].isin(CLASS_OF_RESTYPE)]
+        stat = df["Telemetered Resource Status"].astype(str).str.strip()
+        df = _coerce_sced_numeric(df[stat.str.startswith("ON")].copy())
+        seg = _chunk_segments(df, gas_day, hour_key)
+        del df
+        if seg.empty:
+            continue
+        saw_rows = True
+        for (cls, code), grp in seg.groupby(["cls", "bin"], sort=False):
+            key = (cls, int(code) // stride, int(code) % stride - 1)
+            mult_acc.setdefault(key, []).append(grp["mult"].to_numpy())
+            mw_acc.setdefault(key, []).append(grp["mw"].to_numpy())
+            ts_seen.setdefault(key, set()).update(grp["ts"].tolist())
+            day_seen.setdefault(key, set()).update(grp["day"].tolist())
+        del seg
+    if not saw_rows:
+        return {}, {}, [p.name for p in files]
+
+    def _ladder(mult: np.ndarray, mw: np.ndarray) -> list[list[float]]:
+        qs = _weighted_quantiles(mult.astype(float), mw.astype(float), LADDER_QUANTILES)
+        return [[float(q), round(m, 3)] for q, m in zip(LADDER_QUANTILES, qs)]
+
+    out: dict[str, dict] = {}
+    coverage: dict[str, list[list[dict]]] = {}
+    for cls in sorted({c for (c, _b, _r) in mult_acc}):
+        parent: list[list[list[float]]] = []
+        ladders: list[list] = []
+        tails: list[list] = []
+        cov: list[list[dict]] = []
+        for b in range(n_bins):
+            # parent = union over every room bin incl. the NaN-room −1 code
+            p_mult = [
+                np.concatenate(mult_acc[(cls, b, r)])
+                for r in range(-1, n_room)
+                if (cls, b, r) in mult_acc
+            ]
+            p_mw = [
+                np.concatenate(mw_acc[(cls, b, r)])
+                for r in range(-1, n_room)
+                if (cls, b, r) in mult_acc
+            ]
+            if p_mult:
+                parent.append(_ladder(np.concatenate(p_mult), np.concatenate(p_mw)))
+            else:
+                parent.append([[float(q), float("nan")] for q in LADDER_QUANTILES])
+            row_l: list = []
+            row_t: list = []
+            row_c: list[dict] = []
+            for r in range(n_room):
+                key = (cls, b, r)
+                if key in mult_acc:
+                    mult = np.concatenate(mult_acc[key])
+                    mw = np.concatenate(mw_acc[key])
+                    row_l.append(_ladder(mult, mw))
+                    row_t.append(tail_support(mult, mw))
+                    row_c.append(
+                        {
+                            "segments": int(mult.size),
+                            "intervals": len(ts_seen[key]),
+                            "days": len(day_seen[key]),
+                        }
+                    )
+                else:
+                    row_l.append(None)
+                    row_t.append([])
+                    row_c.append({"segments": 0, "intervals": 0, "days": 0})
+            ladders.append(row_l)
+            tails.append(row_t)
+            cov.append(row_c)
+        out[cls] = {"ladder": parent, "ladder_room": ladders, "tail_room": tails}
+        coverage[cls] = cov
+    return out, coverage, [p.name for p in files]
+
+
+def _main_room_binned(args) -> None:
+    """ercot-242: write the room-binned vintage (PRECOMMIT-ercot242 §1.2).
+
+    A NEW artifact (``ercot_sced_offer_wall_roombinned.json`` unless ``--out``
+    overrides) for the ``ercot_offer_surface_cleared_share_rt_room`` gate —
+    the frozen stepped artifact is never modified. Each year's ungrouped
+    parent ladders must REPRODUCE the frozen artifact's byte-exactly (a
+    drifted corpus or construction is stop-the-line, never papered over —
+    the ercot-181 anchor pattern), and the measured hourly room-bin index is
+    embedded per year so the apply seam reads this artifact alone.
+    """
+    frozen = json.loads(DEFAULT_OUT.read_text())
+    gas_day = _gas_day_series()
+    per_year: dict[int, dict] = {}
+    coverage: dict[str, dict] = {}
+    sources: dict[str, list[str]] = {}
+    room_hourly: dict[str, list[int]] = {}
+    for y in args.years:
+        room_bin, room_src = _room_bin_hourly(y)
+        per_year[y], cov, files = derive_year_room(y, gas_day, room_bin)
+        coverage[str(y)] = cov
+        sources[str(y)] = files + room_src
+        room_hourly[str(y)] = [int(v) for v in room_bin]
+        for cls, entry in per_year[y].items():
+            frozen_tbl = frozen.get(cls, {}).get("years", {}).get(str(y))
+            if not frozen_tbl:
+                raise SystemExit(
+                    f"--room-binned: frozen artifact has no {cls} year {y} "
+                    "block to anchor the room table on"
+                )
+            if entry["ladder"] != frozen_tbl["ladder"]:
+                raise SystemExit(
+                    f"--room-binned: re-derived {cls} {y} parent ladder does "
+                    "not reproduce the frozen artifact's — the corpus or a "
+                    "construction has drifted; STOP (rule 23: re-derive only "
+                    "on a source-data update, and then the frozen artifact "
+                    "first)"
+                )
+            n_cells = sum(
+                1 for row in entry["ladder_room"] for c in row if c is not None
+            )
+            print(
+                f"{y} {cls}: parent ladder reproduces frozen; "
+                f"{n_cells} measured room cells"
+            )
+
+    classes = sorted({c for d in per_year.values() for c in d})
+    result: dict = {
+        "_provenance": {
+            "source": (
+                "ERCOT 60-Day SCED Disclosure Gen Resource Data (NP3-965), "
+                "full-year publication-month corpus, rows filtered to "
+                "delivery years "
+                + "-".join(str(y) for y in args.years)
+                + "; measured room = rtolcap from the measured ORDC reserves "
+                "parquet (per-year source in source_files)"
+            ),
+            "method": (
+                "IDENTICAL statistic to the stepped vintage (MW-weighted "
+                "quantile ladder of online-spare SCED2 segment multipliers, "
+                "plus the ercot-181 tail_support position tail above p90 per "
+                "cell), keyed per (class x armed net-load bin x measured "
+                "room bin); the ungrouped parent ladder is re-derived from "
+                "the union of all room bins (NaN-room segments included) and "
+                "asserted byte-identical to the frozen stepped artifact "
+                "(PRECOMMIT-ercot242-room-axis-phase1-2026-08-30.md section "
+                "1.2, zero fitted scalars)"
+            ),
+            "driver": (
+                "system net-load percentile within year (EIA-930, "
+                "forward-native) x measured RTOLCAP within-year percentile "
+                "(year fraction <=, NaN-dropped — the ercot-241 section 2 "
+                "construction; forward-native analogue = the model's own "
+                "reserve-room state, declared not armed: rule 13)"
+            ),
+            "conditioning": ROOMBINNED_TAG,
+            "netload_pct_edges": list(NETLOAD_PCT_EDGES),
+            "room_pct_edges": list(ROOM_PCT_EDGES),
+            "ladder_quantiles": list(LADDER_QUANTILES),
+            "hcap_usd_mwh": HCAP_USD_MWH,
+            "iso": "ERCOT",
+            "classes": {"CC": ["CCGT90", "CCLE90"], "CT": ["SCGT90", "SCLE90"]},
+            "year_scoped": (
+                "Per-year tables + per-year embedded room_bin_hourly, NO "
+                "pooled fallback (rule 13): a year absent from this artifact "
+                "keeps the incumbent RT basis byte-identical"
+            ),
+            "source_files": sources,
+            "room_cell_coverage": coverage,
+            "frozen": (
+                "rule 23 — re-derive only on a SCED/ORDC source-data update, "
+                "never because a residual moved; the stepped artifact is "
+                "untouched by this vintage"
+            ),
+        },
+        "room_bin_hourly": room_hourly,
+    }
+    for cls in classes:
+        result[cls] = {
+            "years": {
+                str(y): per_year[y][cls] for y in args.years if cls in per_year[y]
+            }
+        }
+    out = (
+        args.out
+        if args.out != DEFAULT_OUT
+        else CALIBRATION_DIR / "ercot_sced_offer_wall_roombinned.json"
+    )
+    out.write_text(json.dumps(result, indent=1))
+    print(f"wrote {out} (frozen artifact untouched)")
+
+
 def _main_position_tail(args) -> None:
     """ERCOT-181: write the position-tail vintage (PRECOMMIT-ercot181 §3).
 
@@ -608,11 +883,28 @@ def main() -> None:
         "step points above p90 (PRECOMMIT-ercot181 §3); the frozen artifact "
         "is never touched",
     )
+    ap.add_argument(
+        "--room-binned",
+        action="store_true",
+        help="ercot-242: write the room-binned vintage "
+        "(ercot_sced_offer_wall_roombinned.json) — the stepped statistic + "
+        "ercot-181 tail per (class x net-load bin x measured RTOLCAP room "
+        "bin), parent ladders asserted byte-identical to the frozen stepped "
+        "artifact (PRECOMMIT-ercot242-room-axis-phase1 section 1.2); the "
+        "frozen artifact is never touched",
+    )
     args = ap.parse_args()
-    if sum([args.continuous, args.top_scoped, args.position_tail]) > 1:
+    if (
+        sum([args.continuous, args.top_scoped, args.position_tail, args.room_binned])
+        > 1
+    ):
         raise SystemExit(
-            "--continuous, --top-scoped and --position-tail are mutually exclusive"
+            "--continuous, --top-scoped, --position-tail and --room-binned "
+            "are mutually exclusive"
         )
+    if args.room_binned:
+        _main_room_binned(args)
+        return
     if args.position_tail:
         _main_position_tail(args)
         return

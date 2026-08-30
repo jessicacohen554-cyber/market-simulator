@@ -1762,6 +1762,18 @@ def build_ercot_offer_surface_cleared_share_markup(
       byte-identical. The RT leg is never state-weighted (the SCED spare is
       measured on the online fleet — the commitment state is already
       conditioned into the surface). ST_GAS stays DAM-basis (rule 19).
+    * ``ercot_offer_surface_cleared_share_rt_room`` (ercot-242, default off)
+      conditions the SAME RT ladder read per (class × net-load bin ×
+      measured RTOLCAP room bin) from the room-binned artifact
+      (``derive_ercot_sced_offer_wall.py --room-binned``): where the year's
+      embedded measured hourly room bin and the cell exist, the cell's
+      ladder (+ its own ercot-181 position tail) replaces the year-level
+      bin ladder in the interp — one mechanism, finer conditioning
+      (rule 19), zero fitted scalars. NaN-room hours, unmeasured cells and
+      years absent from the room artifact keep the incumbent RT basis
+      byte-identical (year-scoped, rule 13; PRECOMMIT-ercot242 §1.3).
+      Requires the RT leg; refuses the span re-anchor and the
+      conditioning-grain vintages.
     * ``ercot_faststart_pool_offer`` (ERCOT-88) is a SEPARATE builder
       (:func:`build_ercot_faststart_pool_markup`) that REPLACES every
       surface's markup — this wall's included — on the fast-start rows above
@@ -1803,6 +1815,17 @@ def build_ercot_offer_surface_cleared_share_markup(
                 "wall to re-price on its own)."
             )
         if (
+            getattr(config, "ercot_offer_surface_cleared_share_rt_room", False)
+            and config.iso == "ERCOT"
+        ):
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_rt_room conditions the "
+                "cleared-share wall's RT ladder — arm "
+                "ercot_offer_surface_cleared_share and "
+                "ercot_offer_surface_cleared_share_rt too (the room axis has "
+                "no RT ladder to condition on its own)."
+            )
+        if (
             getattr(config, "ercot_shoulder_online_span", False)
             and config.iso == "ERCOT"
         ):
@@ -1832,6 +1855,33 @@ def build_ercot_offer_surface_cleared_share_markup(
         raise ValueError(
             "ercot_offer_surface_cleared_share_rt_mode must be 'replace' "
             f"(composition A) or 'tier' (composition B), got {rt_mode!r}"
+        )
+    # ercot-242 room-axis extension of the RT leg (PRECOMMIT-ercot242 §1.3):
+    # conditions the SAME RT ladder read per (class x net-load bin x measured
+    # room bin). Requires the RT leg; refuses the shoulder-span re-anchor and
+    # the conditioning-grain vintages (one vintage per family, the ercot-181
+    # guard pattern).
+    room_flag = getattr(config, "ercot_offer_surface_cleared_share_rt_room", False)
+    if room_flag and not rt_flag:
+        raise ValueError(
+            "ercot_offer_surface_cleared_share_rt_room conditions the RT/SCED "
+            "ladder per measured room bin — arm "
+            "ercot_offer_surface_cleared_share_rt too (there is no RT ladder "
+            "to condition without it)."
+        )
+    if room_flag and getattr(config, "ercot_shoulder_online_span", False):
+        raise ValueError(
+            "ercot_offer_surface_cleared_share_rt_room and "
+            "ercot_shoulder_online_span both re-shape the RT ladder read — "
+            "arming both is undeclared composition (PRECOMMIT-ercot242 §1.1); "
+            "arm exactly one."
+        )
+    if room_flag and _contpct_mode(config) is not None:
+        raise ValueError(
+            "ercot_offer_surface_cleared_share_rt_room cannot be armed "
+            "together with a conditioning-grain gate "
+            "(ercot_offer_surface_continuous / ercot_offer_surface_top_scoped)"
+            " — one vintage per family (PRECOMMIT-ercot242 §1.1)."
         )
     # ERCOT-181 position-tail completion (PRECOMMIT-ercot181 §3): the wall's
     # tail extends the RT/SCED ladder — the measured population whose top
@@ -2039,6 +2089,107 @@ def build_ercot_offer_surface_cleared_share_markup(
                 year,
             )
 
+    # ercot-242 room-axis extension (PRECOMMIT-ercot242 §1.3): the measured
+    # (class x net-load bin x room bin) surface conditions the SAME RT ladder
+    # read where the year's measured room bin and the cell exist; NaN-room
+    # hours, unmeasured cells and years absent from the room artifact keep
+    # the incumbent RT basis byte-identical (year-scoped, rule 13). The room
+    # leg carries its own per-cell position tails (the ercot-181 statistic on
+    # each cell's own population), read through the same _positiontail_xy.
+    rt_room: dict[str, np.ndarray] = {}  # cls -> (n_bins, n_room, n_q)
+    rt_room_tails: dict[str, list] = {}  # cls -> [n_bins][n_room] tail lists
+    room_hour: "np.ndarray | None" = None  # (T,) int room bin, -1 = no room
+    if room_flag and rt_walls:
+        room_path = getattr(
+            config, "ercot_offer_surface_cleared_share_rt_room_path", None
+        )
+        if not room_path:
+            from market_sim.config import paths as _paths
+
+            room_path = str(
+                _paths.CALIBRATION_DIR / "ercot_sced_offer_wall_roombinned.json"
+            )
+        room_surface = json.loads(Path(room_path).read_text())
+        room_prov = room_surface.get("_provenance", {})
+        if str(room_prov.get("conditioning")) != "room-binned-rtolcap-pct":
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_rt_room: surface vintage "
+                f"mismatch — the JSON is conditioned "
+                f"{room_prov.get('conditioning')!r} but the room gate wants "
+                "'room-binned-rtolcap-pct'. Re-derive scripts/data/"
+                "derive_ercot_sced_offer_wall.py --room-binned"
+            )
+        room_edges_a = tuple(float(x) for x in room_prov.get("netload_pct_edges", ()))
+        room_q = np.asarray(room_prov.get("ladder_quantiles", ()), dtype=float)
+        room_pct_edges = tuple(float(x) for x in room_prov.get("room_pct_edges", ()))
+        if room_edges_a != edges or not np.array_equal(room_q, ladder_q):
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_rt_room: room artifact bin "
+                f"geometry (edges {room_edges_a}, quantiles {room_q.tolist()})"
+                f" != DAM wall geometry (edges {edges}, quantiles "
+                f"{ladder_q.tolist()}) — re-derive "
+                "scripts/data/derive_ercot_sced_offer_wall.py --room-binned"
+            )
+        if not room_pct_edges:
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_rt_room: room artifact "
+                "carries no room_pct_edges — re-derive "
+                "scripts/data/derive_ercot_sced_offer_wall.py --room-binned"
+            )
+        n_room = len(room_pct_edges) + 1
+        rbh = room_surface.get("room_bin_hourly", {}).get(str(year))
+        if rbh is not None and len(rbh) >= hours:
+            room_hour = np.asarray(rbh[:hours], dtype=int)
+            if room_hour.max() >= n_room:
+                raise ValueError(
+                    "ercot_offer_surface_cleared_share_rt_room: embedded "
+                    f"room_bin_hourly max {int(room_hour.max())} exceeds the "
+                    f"artifact's {n_room} room bins — re-derive"
+                )
+        for cls_key in set(class_of.values()):
+            tbl = (
+                room_surface.get(cls_key, {}).get("years", {}).get(str(year))
+            )  # year-scoped: no pooled fallback
+            if not tbl:
+                continue
+            parent = np.array(
+                [[float(pt[1]) for pt in lad_b] for lad_b in tbl.get("ladder", ())],
+                dtype=float,
+            )
+            base = rt_walls.get(cls_key)
+            if (
+                base is None
+                or parent.shape != base.shape
+                or not np.allclose(parent, base, equal_nan=True)
+            ):
+                raise ValueError(
+                    "ercot_offer_surface_cleared_share_rt_room: the room "
+                    f"artifact's {cls_key} {year} parent ladder does not "
+                    "match the armed RT artifact's — the two vintages have "
+                    "drifted apart; re-derive both from the same corpus "
+                    "(PRECOMMIT-ercot242 §1.3 geometry assert)"
+                )
+            lr = tbl.get("ladder_room", ())
+            if len(lr) != n_bins:
+                continue
+            arr = np.full((n_bins, n_room, ladder_q.size), np.nan)
+            for b in range(n_bins):
+                for r in range(min(n_room, len(lr[b]))):
+                    cell = lr[b][r]
+                    if cell:
+                        arr[b, r, :] = [float(pt[1]) for pt in cell]
+            rt_room[cls_key] = arr
+            rt_room_tails[cls_key] = tbl.get("tail_room")
+        if room_hour is None or not rt_room:
+            logger.info(
+                "ERCOT cleared-share RT room axis: year %s absent from the "
+                "room artifact — RT basis retained byte-identical "
+                "(year-scoped, rule 13)",
+                year,
+            )
+            room_hour = None
+            rt_room = {}
+
     # ERCOT-89 shoulder online-span anchor (ercot_shoulder_online_span): the
     # measured CONDITIONAL online span (mean telemetered ON share of non-OUT
     # capability per net-load bin x season x 4h block,
@@ -2169,6 +2320,41 @@ def build_ercot_offer_surface_cleared_share_markup(
                 mult_h = mult_b[hour_bin]  # (T,); 0 where no floor
                 rt_mult_h = rt_mult_b[hour_bin]
                 rt_has_h = rt_has[hour_bin]
+                # ercot-242 room axis: where the hour's measured room bin and
+                # the (class, nl bin, room bin) cell exist, the RT ladder
+                # read uses the cell's ladder (+ its own tail) — same rel,
+                # same interp; everywhere else the incumbent RT value stands
+                # byte-identical (PRECOMMIT-ercot242 §1.3).
+                if room_hour is not None and cls_key in rt_room:
+                    rr = rt_room[cls_key]  # (n_bins, n_room, n_q)
+                    rr_tails = rt_room_tails.get(cls_key)
+                    room_mult_b = np.full(rr.shape[:2], np.nan)
+                    for b in range(n_bins):
+                        if not np.isfinite(bnd[b]) or bnd[b] >= 1.0 or s_g <= bnd[b]:
+                            continue
+                        if not rt_has[b]:
+                            continue
+                        rel = (s_g - bnd[b]) / (1.0 - bnd[b])
+                        for r in range(rr.shape[1]):
+                            vals = rr[b, r]
+                            if not np.isfinite(vals).all():
+                                continue
+                            cell_tail = (
+                                rr_tails[b][r]
+                                if pt_armed and rr_tails is not None
+                                else None
+                            )
+                            if cell_tail:
+                                xs, ys = _positiontail_xy(ladder_q, vals, cell_tail)
+                                room_mult_b[b, r] = float(np.interp(rel, xs, ys))
+                            else:
+                                room_mult_b[b, r] = float(
+                                    np.interp(rel, ladder_q, vals)
+                                )
+                    rh_safe = np.where(room_hour >= 0, room_hour, 0)
+                    room_vals_h = room_mult_b[hour_bin, rh_safe]
+                    use_room = (room_hour >= 0) & np.isfinite(room_vals_h) & rt_has_h
+                    rt_mult_h = np.where(use_room, room_vals_h, rt_mult_h)
             else:
                 # ERCOT-89 span-anchored geometry: rel is TIME-varying — the
                 # ladder is stretched over [boundary, span(cell)] instead of
@@ -2277,6 +2463,16 @@ def build_ercot_offer_surface_cleared_share_markup(
             n_rt_priced,
             year,
             sorted(rt_walls),
+        )
+    if room_flag and rt_room and room_hour is not None:
+        logger.info(
+            "ERCOT cleared-share RT room axis (ercot-242): %d of %d hours "
+            "carry a measured room bin (year %s, classes %s); NaN-room hours "
+            "and unmeasured cells keep the incumbent RT basis byte-identical",
+            int((room_hour >= 0).sum()),
+            hours,
+            year,
+            sorted(rt_room),
         )
     return markup
 

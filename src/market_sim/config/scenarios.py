@@ -1013,6 +1013,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario, and hashes distinctly. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "ercot_offer_swcap_clip",
+    # ercot-242 room-axis extension of the RT/SCED wall (GATED default off) +
+    # its path: dropped from the hash at their defaults so every pre-existing
+    # cache key stays byte-stable (the off path never loads the room artifact
+    # — byte-identical by construction); an armed run re-prices the RT-leg
+    # rows on the room-conditioned ladder, a different scenario, and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the fields (the nyiso-119
+    # discipline).
+    "ercot_offer_surface_cleared_share_rt_room",
+    "ercot_offer_surface_cleared_share_rt_room_path",
     # caiso-205 CAISO leg of the adaptive-expectation family (GATED default
     # off) + its two rule-23 identified constants: dropped from the hash at
     # their defaults so every pre-existing cache key stays byte-stable (the
@@ -1470,6 +1479,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-236 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_offer_swcap_clip": "False",
+    # Added by ercot-242 WITH the fields, in the same commit as their
+    # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
+    "ercot_offer_surface_cleared_share_rt_room": "False",
+    "ercot_offer_surface_cleared_share_rt_room_path": "None",
     # Added by caiso-205 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "caiso_storage_adaptive_expectation": "False",
@@ -9058,6 +9071,27 @@ class ScenarioConfig:
     # everywhere and floors at max(DAM, RT) — the RT ladder rides above the
     # DAM wall's reach where measured. Any other value is a hard error.
     ercot_offer_surface_cleared_share_rt_mode: str = "replace"
+    # ercot-242 room-axis extension of the RT/SCED wall (default off;
+    # PRECOMMIT-ercot242-room-axis-phase1-2026-08-30.md §1). Conditions the
+    # SAME RT ladder read (same rows, same boundary, same rel geometry, same
+    # gas-day normalization — one mechanism, finer conditioning, rule 19)
+    # per (class x armed net-load bin x measured RTOLCAP room bin), from the
+    # room-binned artifact (scripts/data/derive_ercot_sced_offer_wall.py
+    # --room-binned; zero fitted scalars, both bin grids fixed ex ante).
+    # Backcast conditioner = the artifact's embedded measured hourly room-bin
+    # index (rtolcap year-percentile, the ercot-241 §2 construction — the
+    # measured-overlay pattern; forward-native analogue = the model's own
+    # reserve-room state, declared not armed: rule 13). YEAR-SCOPED: hours
+    # with NaN room, unmeasured cells and years absent from the room artifact
+    # keep the incumbent RT basis byte-identical; default off is
+    # byte-identical off by construction. Requires
+    # ercot_offer_surface_cleared_share_rt; refuses shoulder-span and the
+    # conditioning-grain vintages (one vintage per family, the ercot-181
+    # guard pattern). ERCOT-gated (rule 25).
+    ercot_offer_surface_cleared_share_rt_room: bool = False
+    # Path to the room-binned SCED offer-wall JSON (default:
+    # data/raw/_validation-source/ercot_sced_offer_wall_roombinned.json).
+    ercot_offer_surface_cleared_share_rt_room_path: str | None = None
     # ERCOT-88 offline fast-start pool offer (default off; charter §9 of
     # docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md). The
     # ERCOT-87 measurement adjudicated that the $150-500 moderate-tightness
@@ -14733,6 +14767,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_offer_surface_cleared_share_rt": 1,
     "ercot_offer_surface_cleared_share_rt_path": 3,
     "ercot_offer_surface_cleared_share_rt_mode": 1,
+    "ercot_offer_surface_cleared_share_rt_room": 1,
+    "ercot_offer_surface_cleared_share_rt_room_path": 3,
     "ercot_faststart_pool_offer": 1,
     "ercot_faststart_pool_offer_path": 3,
     "ercot_offline_commit_offer": 1,
