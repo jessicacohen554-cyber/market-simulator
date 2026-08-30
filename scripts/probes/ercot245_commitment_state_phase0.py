@@ -185,6 +185,7 @@ def scan_corpus_2023() -> dict:
     online_hsl = {c: np.zeros(8760) for c in CENSUS}     # Σ HSL, online-ish rows
     startable_hsl = {c: np.zeros(8760) for c in CENSUS}  # Σ HSL, OFFQS/OFFNS rows
     total_online_hsl = np.zeros(8760)                    # ALL restypes (V-0 d)
+    storage_online_hsl = np.zeros(8760)                  # PWRSTR (Amendment 1)
     n_iv = np.zeros(8760, dtype=np.int64)                # distinct SCED stamps
     hsl_lists: dict[str, list[np.ndarray]] = {}          # train -> HSL rows (slow)
     train_class: dict[str, str] = {}
@@ -207,6 +208,8 @@ def scan_corpus_2023() -> dict:
         # all-restype online HSL (V-0 d reconciliation)
         m_on = np.isin(df["state"].to_numpy(object), ONLINE_STATES)
         np.add.at(total_online_hsl, hoy[m_on], _nan0(df["HSL"])[m_on])
+        m_sto = m_on & (df["Resource Type"].to_numpy(object) == "PWRSTR")
+        np.add.at(storage_online_hsl, hoy[m_sto], _nan0(df["HSL"])[m_sto])
         # slow-universe rows
         sl = df[df["Resource Type"].isin(SLOW_RESTYPES)]
         if sl.empty:
@@ -250,6 +253,7 @@ def scan_corpus_2023() -> dict:
     covered = n_iv > 0
     out = {"n_iv": n_iv, "covered": covered,
            "total_online_hsl": total_online_hsl / niv,
+           "storage_online_hsl": storage_online_hsl / niv,
            "cap_ref": cap_ref, "train_class": train_class}
     for c in CENSUS:
         onl = online_hsl[c] / niv
@@ -456,11 +460,19 @@ def main() -> None:
     corp = scan_corpus_2023()
     cov23 = corp["covered"]
     tot = corp["total_online_hsl"]
+    sto = corp["storage_online_hsl"]
     fin = cov23 & np.isfinite(rtolhsl[2023])
     corr_d = float(np.corrcoef(tot[fin], rtolhsl[2023][fin])[0, 1])
-    gap_med = float(np.median(tot[fin] - rtolhsl[2023][fin]))
+    gap_raw = float(np.median(tot[fin] - rtolhsl[2023][fin]))
+    # Amendment 1: the published rtolhsl carries no ESR online HSL — the level
+    # leg is graded on the storage-excluded sum; the raw gap is committed as
+    # the series-composition record.
+    gap_med = float(np.median((tot - sto)[fin] - rtolhsl[2023][fin]))
     v0["corpus_recon"] = {"corr": round(corr_d, 4),
-                          "median_gap_mw": round(gap_med, 1),
+                          "median_gap_storage_excluded_mw": round(gap_med, 1),
+                          "median_gap_raw_mw": round(gap_raw, 1),
+                          "storage_online_hsl_mean_mw":
+                          round(float(np.mean(sto[fin])), 1),
                           "covered_hours": int(cov23.sum())}
     assert corr_d >= 0.985, f"V-0(d) FAIL: corpus-vs-rtolhsl corr {corr_d:.4f}"
     assert abs(gap_med) <= 3000.0, f"V-0(d) FAIL: median gap {gap_med:.0f} MW"
